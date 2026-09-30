@@ -1,0 +1,21 @@
+{
+  "name": "spiritfire-dawn",
+  "private": true,
+  "version": "0.1.0",
+  "description": "灵火破晓 — 浏览器 FPS 肉鸽（Three.js + TypeScript + Vite）",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@types/three": "^0.186.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.1"
+  }
+}

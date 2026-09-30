@@ -1,0 +1,17 @@
+/*
+ * 灵火破晓 · 界面样式入口（main.ts 已 import 本文件）。
+ * 东方奇幻：墨黑底、朱砂与鎏金点缀、细描边、CSS 渐变纸纹 / 云纹。不引用外部字体与图片。
+ *
+ *  base.css      设计令牌、按钮、面板边框、印章、toast、横幅、黑幕
+ *  menu.css      主菜单（竖排书法标题、朱日、远山、火星）
+ *  panels.css    英雄选择、天赋、操作说明
+ *  hud.css       HUD 四角：生命护盾、武器弹药、技能冲刺、关卡信息、交互提示
+ *  combat.css    准星、命中标记、狙击镜、受击反馈、敌人血条、Boss 血条、Tab 面板
+ *  overlays.css  暂停、结算、秘卷三选一（挂轴）、设置控件
+ */
+@import './css/base.css';
+@import './css/menu.css';
+@import './css/panels.css';
+@import './css/hud.css';
+@import './css/combat.css';
+@import './css/overlays.css';

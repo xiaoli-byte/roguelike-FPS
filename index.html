@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>灵火破晓</title>
+    <style>
+      html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #07080b; }
+      #app { position: fixed; inset: 0; user-select: none; -webkit-user-select: none; }
+      #game-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; outline: none; }
+      #world-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+      #ui-root { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="game-canvas" tabindex="0"></canvas>
+      <div id="world-layer"></div>
+      <div id="ui-root"></div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
