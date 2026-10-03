@@ -27,6 +27,9 @@
 .gf-hud__corner--br {
   right: 30px;
   bottom: 22px;
+  /* 武器技能图标（左）+ 武器槽（右），底部对齐 */
+  display: flex;
+  align-items: flex-end;
 }
 
 .gf-hud__corner--bc {
@@ -337,6 +340,49 @@
   font-size: 10px;
 }
 
+/* 形态徽记（双形态武器：魔刀千刃「斩」朱红 /「千刃」暗金）；变形时翻入 */
+.gf-weapon__form {
+  display: inline-grid;
+  place-items: center;
+  min-width: 24px;
+  height: 22px;
+  padding: 0 6px;
+  font: 15px/1 var(--font-display);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  border-radius: 2px;
+}
+
+.gf-weapon__form.is-melee {
+  color: #fff3e6;
+  background: linear-gradient(180deg, var(--cinnabar-hi), var(--cinnabar) 60%, var(--cinnabar-lo));
+  box-shadow: inset 0 0 0 1px rgba(255, 214, 190, 0.45), 0 0 10px rgba(255, 74, 48, 0.45);
+  text-shadow: 0 1px 2px rgba(60, 8, 4, 0.8);
+}
+
+.gf-weapon__form.is-ranged {
+  color: #1c1306;
+  background: linear-gradient(180deg, var(--gold-hi), var(--gold) 60%, #8d6c2e);
+  box-shadow: inset 0 0 0 1px rgba(255, 246, 220, 0.5), 0 0 10px rgba(212, 169, 85, 0.45);
+}
+
+.gf-weapon__main.is-morphing .gf-weapon__form {
+  animation: gf-form-flip 0.25s var(--ease-out);
+}
+
+@keyframes gf-form-flip {
+  0% { transform: perspective(90px) rotateX(90deg); filter: brightness(2.2); }
+  70% { transform: perspective(90px) rotateX(-12deg); filter: brightness(1.4); }
+  100% { transform: perspective(90px) rotateX(0deg); filter: brightness(1); }
+}
+
+/* 三相徽记（三才转轮等 elementLabel 武器）：火 / 雷 / 蚀三色渐变 */
+.gf-weapon__elem.is-tri {
+  background: linear-gradient(135deg, #ff6a1f, #6fd8ff, #9dff4a);
+  color: #111;
+  box-shadow: 0 0 10px rgba(232, 214, 160, 0.8);
+}
+
 .gf-weapon__ammo {
   display: flex;
   align-items: baseline;
@@ -375,6 +421,62 @@
 .gf-weapon__main.is-infinite .gf-weapon__reserve {
   color: var(--gold-hi);
   text-shadow: 0 0 14px rgba(244, 216, 147, 0.6);
+}
+
+/* 近战形态：弹药 ∞（不耗弹，缩小），备弹位置换成「刃 N」（弹匣里的飞刃数 = 回刃进度：放大，按储量 --fill 由灰转朱红） */
+.gf-weapon__mag.is-inf {
+  font-size: 28px;
+  color: #ffe9dc;
+  text-shadow: 0 0 14px rgba(255, 74, 48, 0.5), 0 2px 10px rgba(0, 0, 0, 0.75);
+}
+
+.gf-weapon__reserve.is-blades {
+  --fill: 0;
+  margin-left: 6px;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: color-mix(in srgb, #ff6a4a calc(var(--fill) * 100%), #a8968c);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+  transition: color 0.15s ease;
+}
+
+/* 双形态：徽记下方的「右键 ⇄ 另一形态」提示；前几次变形后（is-off）淡出并收起 */
+.gf-weapon__formhint {
+  max-height: 16px;
+  margin-top: 2px;
+  font-size: 11px;
+  line-height: 14px;
+  letter-spacing: 0.06em;
+  color: var(--paper-2);
+  opacity: 0.6;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: opacity 0.6s ease, max-height 0.3s ease 0.6s, margin-top 0.3s ease 0.6s;
+}
+
+.gf-weapon__formhint.is-off {
+  max-height: 0;
+  margin-top: 0;
+  opacity: 0;
+}
+
+/* 换形一击窗口：右边框朱红光晕往返脉动 */
+.gf-weapon__main.is-strike {
+  border-right-color: #ff4a30;
+  animation: gf-weapon-strike 0.3s ease-in-out infinite alternate;
+}
+
+@keyframes gf-weapon-strike {
+  from { box-shadow: 3px 0 8px -3px rgba(255, 74, 48, 0.45), inset -10px 0 14px -10px rgba(255, 74, 48, 0.25); }
+  to { box-shadow: 6px 0 20px -3px rgba(255, 74, 48, 0.95), inset -22px 0 26px -14px rgba(255, 74, 48, 0.55); }
+}
+
+/* 减少动态效果时改为常亮光晕（全局规则会把动画压成一帧） */
+@media (prefers-reduced-motion: reduce) {
+  .gf-weapon__main.is-strike {
+    box-shadow: 5px 0 16px -3px rgba(255, 74, 48, 0.8);
+  }
 }
 
 .gf-weapon__reload {
@@ -554,6 +656,53 @@
 @keyframes gf-skill-active {
   from { box-shadow: 0 0 0 2px var(--gold-hi), 0 0 12px rgba(255, 200, 110, 0.4); }
   to { box-shadow: 0 0 0 2px var(--gold-hi), 0 0 28px rgba(255, 170, 80, 0.85); }
+}
+
+/* 武器技能（魔刀千刃「千刃·无间」）：SkillIcon 的结构与样式，略小、朱红冷却环，放在武器槽左侧 */
+.gf-wskill {
+  position: relative;
+  z-index: 1;
+  width: 64px;
+  margin: 0 -22px 10px 0;
+}
+
+.gf-wskill .gf-skill__disc {
+  width: 52px;
+  height: 52px;
+  background: radial-gradient(circle at 50% 35%, #34191a, #0b090d 72%);
+  box-shadow: 0 0 0 1px rgba(255, 90, 60, 0.3), 0 6px 16px rgba(0, 0, 0, 0.55);
+}
+
+.gf-wskill .gf-skill__prog {
+  stroke: var(--cinnabar-hi);
+}
+
+.gf-wskill .gf-skill__glyph {
+  font-size: 24px;
+  color: #ffeadf;
+  text-shadow: 0 0 10px rgba(255, 90, 60, 0.6);
+}
+
+.gf-wskill .gf-skill__cd {
+  font-size: 18px;
+}
+
+.gf-wskill .gf-skill__name {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+
+.gf-wskill.is-active .gf-skill__disc {
+  animation: gf-wskill-active 0.35s ease-in-out infinite alternate;
+}
+
+.gf-wskill.is-active .gf-skill__prog {
+  stroke: #ffb39a;
+}
+
+@keyframes gf-wskill-active {
+  from { box-shadow: 0 0 0 2px var(--cinnabar-hi), 0 0 10px rgba(255, 74, 48, 0.4); }
+  to { box-shadow: 0 0 0 2px var(--cinnabar-hi), 0 0 24px rgba(255, 74, 48, 0.9); }
 }
 
 .gf-dash {

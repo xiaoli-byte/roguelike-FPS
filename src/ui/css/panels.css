@@ -1,189 +1,862 @@
 /* 主菜单子页面：英雄选择、天赋、操作说明 */
 
-/* ═════════════════════════ 英雄选择 ═════════════════════════ */
+/* ═════════════════════════ 英雄选择 ═════════════════════════
+ * 左侧名录（竖排条目）+ 右侧详情。详情以 3D 预览舞台为视觉中心：
+ * 左列舞台（约 55%）占满详情区整个高度，英雄全身站在祭台上；右列（约 45%）上为名字区、下为信息栏。
+ * 宽屏时面板定高（menu.css .gf-menu__panel--heroes），只有信息栏自身滚动，页脚始终可见。
+ * 1280×720 推算：面板 624px − 边框 2 − 内边距 40 = 582；标题区 ≈ 66.5、页脚 ≈ 67 → 详情区 ≈ 448px
+ * （舞台 ≈ 491×448）；右列名字区 ≈ 80 + 行距 10 → 信息栏可视 ≈ 358px，其余内容在信息栏内滚动。
+ * --hero 由 JS 写入当前英雄色；--hero-tint 注册为颜色，切换英雄时舞台微光、标签、进度条平滑过渡。
+ */
+
+@property --hero-tint {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #d4a955;
+}
 
 .gf-heroes {
   --hero: var(--gold);
-}
-
-.gf-heroes__grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
-}
-
-.gf-hero {
-  --hero: var(--gold);
-  position: relative;
+  --hero-tint: var(--hero);
+  flex: 1 1 auto;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  padding: 24px 22px 18px;
-  text-align: left;
-  background:
-    radial-gradient(90% 50% at 20% 0%, color-mix(in srgb, var(--hero) 18%, transparent), transparent 70%),
-    linear-gradient(180deg, #17141b, #0d0b10 70%);
-  border: 1px solid rgba(255, 244, 220, 0.08);
-  outline: none;
-  cursor: pointer;
-  overflow: hidden;
-  transition: transform 0.3s var(--ease-out), border-color 0.25s ease, box-shadow 0.3s ease, opacity 0.25s ease;
-  /* backwards：动画结束后让 :hover / .is-selected 的 transform 生效 */
-  animation: gf-card-in 0.55s var(--ease-out) backwards;
-  animation-delay: calc(var(--i, 0) * 0.08s + 0.05s);
+  transition: --hero-tint 0.45s ease;
 }
 
-.gf-hero::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, var(--hero), transparent);
+.gf-heroes__head {
+  flex: none;
+  margin-bottom: 14px;
 }
 
-.gf-hero:hover {
-  transform: translateY(-3px);
-  border-color: color-mix(in srgb, var(--hero) 50%, transparent);
+.gf-heroes__head .gf-panel__title {
+  line-height: 1.25;
 }
 
-.gf-hero.is-selected {
-  transform: translateY(-6px);
-  border-color: var(--gold);
-  box-shadow: 0 0 0 1px var(--gold), 0 22px 44px color-mix(in srgb, var(--hero) 26%, transparent);
+.gf-heroes__foot {
+  flex: none;
+  margin-top: 14px;
+  padding-top: 14px;
 }
 
-.gf-heroes__grid:has(.is-selected) .gf-hero:not(.is-selected) {
-  opacity: 0.66;
+.gf-heroes__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: clamp(204px, 17.5vw, 240px) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: 26px;
 }
 
-.gf-heroes__grid:has(.is-selected) .gf-hero:not(.is-selected):hover {
-  opacity: 0.9;
+/* 切换英雄：文字短暂淡出（0.09s）→ 更新 → 淡入（0.15s） */
+.gf-hero-swap {
+  transition: opacity 0.15s ease, transform 0.15s var(--ease-out);
 }
 
+.gf-heroes.is-swapping .gf-hero-swap {
+  opacity: 0;
+  transform: translateX(-6px);
+  transition-duration: 0.09s;
+}
+
+/* 天赋卡片也使用这个入场动画 */
 @keyframes gf-card-in {
   from { opacity: 0; transform: translateY(22px); }
   to { opacity: 1; transform: none; }
 }
 
-.gf-hero__index {
-  position: absolute;
-  top: 12px;
-  right: 14px;
-  font: 600 12px/1 var(--font-num);
-  color: var(--paper-3);
-  border: 1px solid var(--line-soft);
-  padding: 4px 7px;
+/* ───────── 名录 ───────── */
+
+.gf-heroes__roster {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
-.gf-hero__top {
+.gf-heroes__label {
+  flex: none;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-size: 12px;
+  letter-spacing: 0.4em;
+  color: var(--paper-3);
 }
 
-.gf-hero__medal {
+.gf-heroes__label::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--line-soft), transparent);
+}
+
+.gf-heroes__list {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gf-hero-tab {
+  --hero: var(--gold);
+  position: relative;
+  flex: 1 1 0;
+  min-height: 76px;
+  max-height: 152px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px 12px 18px;
+  text-align: left;
+  user-select: none;
+  background:
+    radial-gradient(80% 100% at 0% 50%, color-mix(in srgb, var(--hero) 12%, transparent), transparent 72%),
+    linear-gradient(180deg, #17141b, #0d0b10);
+  border: 1px solid rgba(255, 244, 220, 0.08);
+  outline: none;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: transform 0.3s var(--ease-out), opacity 0.25s ease, border-color 0.25s ease, box-shadow 0.3s ease;
+  /* backwards：入场结束后由 :hover / .is-selected 的 transform 接管 */
+  animation: gf-hero-tab-in 0.5s var(--ease-out) backwards;
+  animation-delay: calc(var(--i, 0) * 0.07s + 0.05s);
+}
+
+@keyframes gf-hero-tab-in {
+  from { opacity: 0; transform: translateX(-16px); }
+}
+
+/* 英雄色左边线 */
+.gf-hero-tab::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: -1px;
+  bottom: -1px;
+  width: 2px;
+  background: linear-gradient(180deg, transparent, var(--hero), transparent);
+  opacity: 0.4;
+  transition: opacity 0.25s ease, width 0.25s var(--ease-out), box-shadow 0.25s ease;
+}
+
+/* 选中时指向详情区的小尖角 */
+.gf-hero-tab::after {
+  content: "";
+  position: absolute;
+  right: -6px;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  margin-top: -5px;
+  background: #110e14;
+  border-top: 1px solid var(--gold);
+  border-right: 1px solid var(--gold);
+  transform: rotate(45deg) scale(0);
+  transition: transform 0.3s var(--ease-spring);
+}
+
+.gf-hero-tab:hover {
+  opacity: 0.88;
+  transform: translateX(2px);
+  border-color: color-mix(in srgb, var(--hero) 45%, transparent);
+}
+
+.gf-hero-tab.is-selected {
+  opacity: 1;
+  transform: translateX(6px);
+  border-color: var(--gold);
+  background:
+    radial-gradient(90% 110% at 0% 50%, color-mix(in srgb, var(--hero) 24%, transparent), transparent 74%),
+    linear-gradient(180deg, #1c1820, #110e14);
+  box-shadow:
+    inset 0 0 0 1px rgba(244, 216, 147, 0.12),
+    0 0 18px rgba(212, 169, 85, 0.14),
+    0 14px 32px color-mix(in srgb, var(--hero) 18%, transparent);
+}
+
+.gf-hero-tab.is-selected::before {
+  width: 4px;
+  opacity: 1;
+  background: var(--hero);
+  box-shadow: 0 0 12px var(--hero);
+}
+
+.gf-hero-tab.is-selected::after {
+  transform: rotate(45deg) scale(1);
+}
+
+.gf-hero-tab__medal {
   flex: none;
-  width: 68px;
-  height: 68px;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
   display: grid;
   place-items: center;
   border: 1.5px solid var(--hero);
   background: radial-gradient(circle at 36% 30%, color-mix(in srgb, var(--hero) 48%, #000), #0b090d 72%);
   box-shadow:
-    0 0 22px color-mix(in srgb, var(--hero) 38%, transparent),
-    inset 0 0 0 4px #0b090d,
-    inset 0 0 0 5px color-mix(in srgb, var(--hero) 45%, transparent);
+    0 0 18px color-mix(in srgb, var(--hero) 32%, transparent),
+    inset 0 0 0 3px #0b090d,
+    inset 0 0 0 4px color-mix(in srgb, var(--hero) 45%, transparent);
+  transition: transform 0.35s var(--ease-spring), filter 0.25s ease;
 }
 
-.gf-hero__glyph {
+.gf-hero-tab.is-selected .gf-hero-tab__medal {
+  transform: scale(1.06);
+}
+
+.gf-hero-tab__glyph {
   font-family: var(--font-display);
-  font-size: 38px;
+  font-size: 30px;
   line-height: 1;
   color: #fff4e0;
-  text-shadow: 0 0 12px color-mix(in srgb, var(--hero) 70%, transparent);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--hero) 70%, transparent);
 }
 
-.gf-hero__name {
+.gf-hero-tab__names {
+  min-width: 0;
+}
+
+.gf-hero-tab__name {
   font-family: var(--font-display);
-  font-size: 32px;
-  line-height: 1.1;
+  font-size: 23px;
+  line-height: 1.15;
   letter-spacing: 0.16em;
   color: var(--paper);
 }
 
-.gf-hero__title {
-  margin-top: 4px;
-  font-size: 13px;
-  letter-spacing: 0.34em;
+.gf-hero-tab__title {
+  margin-top: 2px;
+  font-size: 12px;
+  letter-spacing: 0.3em;
   color: var(--hero);
+  white-space: nowrap;
 }
 
-.gf-hero__desc {
-  margin: 14px 0 12px;
-  font-size: 13px;
-  line-height: 1.65;
+.gf-hero-tab__role {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
+  color: var(--paper-3);
+  white-space: nowrap;
+}
+
+.gf-hero-tab__role::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  flex: none;
+  background: var(--hero);
+  transform: rotate(45deg);
+  opacity: 0.85;
+}
+
+.gf-hero-tab__index {
+  position: absolute;
+  top: 9px;
+  right: 10px;
+  font: 600 11px/1 var(--font-num);
+  color: var(--paper-3);
+  border: 1px solid var(--line-soft);
+  padding: 3px 6px;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.gf-hero-tab.is-selected .gf-hero-tab__index {
+  color: var(--gold-hi);
+  border-color: var(--gold-lo);
+}
+
+.gf-hero-tab__lock {
+  position: absolute;
+  right: 11px;
+  bottom: 10px;
+  width: 15px;
+  height: 15px;
+  color: var(--paper-3);
+}
+
+.gf-hero-tab.is-locked .gf-hero-tab__medal {
+  filter: grayscale(0.85) brightness(0.75);
+}
+
+.gf-hero-tab.is-locked .gf-hero-tab__name {
   color: var(--paper-2);
 }
 
-.gf-hero__stats {
+/* ───────── 详情 ───────── */
+
+/* 舞台跨两行；右列：名字区（auto）+ 信息栏（余下高度，自身滚动） */
+.gf-hero-detail {
+  min-width: 0;
+  min-height: 0;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: minmax(0, 55fr) minmax(290px, 45fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas:
+    "stage head"
+    "stage info";
+  gap: 12px 22px;
+}
+
+.gf-hero-detail__head {
+  grid-area: head;
+  min-width: 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+/* 名字 + 称号独占一行；定位 / 标签与上手难度并排在第二行（放不下时自动折行） */
+.gf-hero-detail__ident {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  min-width: 0;
+}
+
+.gf-hero-detail__names {
+  flex: 1 0 100%;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 2px 14px;
+}
+
+.gf-hero-detail__name {
+  font-family: var(--font-display);
+  font-size: clamp(34px, 4.8vh, 48px);
+  line-height: 1.05;
+  letter-spacing: 0.18em;
+  color: var(--paper);
+  text-shadow:
+    0 2px 14px rgba(0, 0, 0, 0.6),
+    0 0 28px color-mix(in srgb, var(--hero-tint) 30%, transparent);
+}
+
+.gf-hero-detail__title {
+  font-size: 13px;
+  letter-spacing: 0.42em;
+  color: var(--hero-tint);
+  white-space: nowrap;
+}
+
+.gf-hero-detail__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 6px;
 }
 
-.gf-hero__stat {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  padding: 6px 4px;
+.gf-hero-role {
+  padding: 2px 10px;
+  font-size: 12.5px;
+  letter-spacing: 0.16em;
+  color: #fff4e0;
+  background: color-mix(in srgb, var(--hero-tint) 24%, rgba(7, 6, 10, 0.7));
+  border: 1px solid color-mix(in srgb, var(--hero-tint) 60%, transparent);
+}
+
+.gf-hero-tag {
+  padding: 2px 8px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--paper-2);
   border: 1px solid var(--line-soft);
   background: rgba(7, 6, 10, 0.45);
 }
 
-.gf-hero__stat span {
-  font-size: 11.5px;
+.gf-hero-diff {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  letter-spacing: 0.12em;
   color: var(--paper-3);
-  letter-spacing: 0.2em;
+  white-space: nowrap;
 }
 
-.gf-hero__stat b {
-  font: 600 19px/1.1 var(--font-num);
+.gf-hero-diff__pips {
+  display: inline-flex;
+  gap: 7px;
+  padding: 0 3px;
+}
+
+.gf-hero-diff__pip {
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--gold-lo);
+  transform: rotate(45deg);
+}
+
+.gf-hero-diff__pip.is-on {
+  background: var(--gold);
+  border-color: var(--gold-hi);
+  box-shadow: 0 0 6px rgba(244, 216, 147, 0.55);
+}
+
+.gf-hero-diff b {
+  font-weight: 500;
+  color: var(--paper-2);
+}
+
+/* 描述与要诀：信息栏的第一块 */
+.gf-hero-detail__lore {
+  min-width: 0;
+}
+
+.gf-hero-detail__desc {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--paper-2);
+}
+
+/* 要诀：小号鎏金引言 */
+.gf-hero-detail__tip {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 9px;
+  padding: 4px 12px;
+  border-left: 2px solid var(--gold);
+  background: linear-gradient(90deg, rgba(212, 169, 85, 0.1), transparent 80%);
+  font-family: var(--font-display);
+  font-size: 15px;
+  letter-spacing: 0.06em;
+  color: var(--gold-hi);
+}
+
+.gf-hero-detail__tiplabel {
+  flex: none;
+  padding: 0 6px;
+  font: 500 11px/1.6 var(--font-body);
+  letter-spacing: 0.24em;
+  color: var(--gold);
+  border: 1px solid var(--gold-lo);
+}
+
+/* ───────── 3D 预览舞台（HeroPreview 的 host；canvas 透明，底色由这里负责） ───────── */
+
+/*
+ * 对齐用的变量：--gf-stage-horizon（视平线）/ --gf-stage-feet（英雄脚底）/ --gf-stage-focus（胸口）由 HeroPreview
+ * 按取景写入（px，自舞台顶边起）；WebGL 不可用时用这里的默认值。
+ * --gf-stage-plate 是底部名牌占用的高度（bottom + 名牌高），HeroPreview 读取它，保证英雄的脚落在名牌之上。
+ */
+.gf-hero-stage {
+  --gf-stage-plate: 54px;
+  --horizon: var(--gf-stage-horizon, 56%);
+  --feet: var(--gf-stage-feet, calc(100% - 64px));
+  --focus: var(--gf-stage-focus, 40%);
+  grid-area: stage;
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  isolation: isolate;
+  user-select: none;
+  cursor: grab;
+  border: 1px solid var(--line-soft);
+  background:
+    /* 英雄身后的英雄色柔光（衬出剪影） */
+    radial-gradient(40% 36% at 50% var(--focus), color-mix(in srgb, var(--hero-tint) 22%, transparent), transparent 72%),
+    /* 脚下符文环映在地面上的光 */
+    radial-gradient(50% 8% at 50% var(--feet), color-mix(in srgb, var(--hero-tint) 24%, transparent), transparent 75%),
+    /* 视平线以下的地面略亮一点 */
+    linear-gradient(180deg, transparent var(--horizon), color-mix(in srgb, var(--hero-tint) 6%, rgba(6, 5, 8, 0.5))),
+    radial-gradient(120% 90% at 50% 0%, #1a1520 0%, #0c0a0f 58%, #060508 100%);
+  box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.6);
+}
+
+.gf-hero-stage:active {
+  cursor: grabbing;
+}
+
+.gf-hero-stage.is-fallback,
+.gf-hero-stage.is-locked {
+  cursor: default;
+}
+
+/* 视平线描边（在英雄身后，很淡） */
+.gf-hero-stage::before {
+  content: "";
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  top: var(--horizon);
+  height: 1px;
+  z-index: 0;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--hero-tint) 55%, var(--gold)) 50%, transparent);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* 地面透视格：自视平线向下（祭台立在远处的地面上，地面只在英雄身后露出） */
+.gf-hero-stage::after {
+  content: "";
+  position: absolute;
+  left: -40%;
+  right: -40%;
+  top: var(--horizon);
+  height: 60%;
+  z-index: 0;
+  background:
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--hero-tint) 26%, transparent) 0 1px, transparent 1px 46px),
+    repeating-linear-gradient(0deg, color-mix(in srgb, var(--hero-tint) 18%, transparent) 0 1px, transparent 1px 30px);
+  transform: perspective(240px) rotateX(62deg);
+  transform-origin: 50% 0;
+  -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.75), transparent 70%);
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.75), transparent 70%);
+  opacity: 0.32;
+  pointer-events: none;
+}
+
+.gf-hero-stage canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* 英雄单字水印：英雄身后的装饰 + WebGL 不可用时的 2D 兜底 */
+.gf-hero-stage__mark {
+  position: absolute;
+  inset: 0 0 18% 0;
+  z-index: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-size: clamp(150px, 30vh, 300px);
+  line-height: 1;
+  color: var(--hero-tint);
+  opacity: 0.06;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.gf-hero-stage.is-fallback .gf-hero-stage__mark {
+  opacity: 0.3;
+  color: color-mix(in srgb, var(--hero-tint) 70%, #fff4e0);
+  text-shadow:
+    0 0 30px color-mix(in srgb, var(--hero-tint) 60%, transparent),
+    0 0 80px color-mix(in srgb, var(--hero-tint) 30%, transparent);
+  animation: gf-stage-breathe 5s ease-in-out infinite alternate;
+}
+
+@keyframes gf-stage-breathe {
+  from { opacity: 0.24; }
+  to { opacity: 0.36; }
+}
+
+/* 四角细线 */
+.gf-hero-stage__frame {
+  --c: color-mix(in srgb, var(--hero-tint) 50%, var(--gold));
+  --l: 16px;
+  --w: 1px;
+  position: absolute;
+  inset: 8px;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    linear-gradient(var(--c), var(--c)) top left / var(--l) var(--w),
+    linear-gradient(var(--c), var(--c)) top left / var(--w) var(--l),
+    linear-gradient(var(--c), var(--c)) top right / var(--l) var(--w),
+    linear-gradient(var(--c), var(--c)) top right / var(--w) var(--l),
+    linear-gradient(var(--c), var(--c)) bottom left / var(--l) var(--w),
+    linear-gradient(var(--c), var(--c)) bottom left / var(--w) var(--l),
+    linear-gradient(var(--c), var(--c)) bottom right / var(--l) var(--w),
+    linear-gradient(var(--c), var(--c)) bottom right / var(--w) var(--l);
+  background-repeat: no-repeat;
+  opacity: 0.7;
+}
+
+.gf-hero-stage__hint {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11.5px;
+  letter-spacing: 0.24em;
+  color: var(--paper-3);
+  pointer-events: none;
+}
+
+.gf-hero-stage__hint::before {
+  content: "";
+  width: 12px;
+  height: 1px;
+  background: var(--paper-3);
+}
+
+/* 底部名牌：英雄名 · 称号（高度 = bottom 16 + 6×2 + 17×1.4 + 2 ≈ 54px，与 --gf-stage-plate 对应） */
+.gf-hero-stage__plate {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 16px;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  padding: 0 16px;
+  pointer-events: none;
+}
+
+.gf-hero-stage__plaque {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 12px;
+  max-width: 100%;
+  padding: 6px 30px;
+  white-space: nowrap;
+  overflow: hidden;
+  font-family: var(--font-display);
+  line-height: 1.4;
+  background: linear-gradient(90deg, transparent, rgba(7, 6, 10, 0.85) 16%, rgba(7, 6, 10, 0.85) 84%, transparent);
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+  border-image: linear-gradient(90deg, transparent, var(--gold-lo) 20%, var(--gold) 50%, var(--gold-lo) 80%, transparent) 1;
+}
+
+.gf-hero-stage__pname {
+  font-size: 17px;
+  font-weight: inherit;
+  letter-spacing: 0.24em;
+  color: var(--paper);
+  text-shadow: 0 0 12px color-mix(in srgb, var(--hero-tint) 45%, transparent);
+}
+
+.gf-hero-stage__ptitle {
+  font-size: 14px;
+  letter-spacing: 0.28em;
+  color: color-mix(in srgb, var(--hero-tint) 55%, var(--gold-hi));
+}
+
+.gf-hero-stage__dot {
+  align-self: center;
+  width: 4px;
+  height: 4px;
+  flex: none;
+  background: var(--gold-lo);
+  transform: rotate(45deg);
+}
+
+/* 未解锁遮罩 */
+.gf-hero-stage__lock {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: radial-gradient(70% 60% at 50% 45%, rgba(7, 6, 10, 0.6), rgba(7, 6, 10, 0.9));
+  backdrop-filter: grayscale(1) blur(2px);
+  cursor: default;
+}
+
+.gf-hero-stage__lockicon {
+  width: 34px;
+  height: 34px;
+  color: var(--paper-3);
+}
+
+.gf-hero-stage__locktext {
+  font-family: var(--font-display);
+  font-size: 24px;
+  letter-spacing: 0.3em;
+  padding-left: 0.3em;
+  color: var(--paper-2);
+}
+
+.gf-hero-stage__locknote {
+  margin-bottom: 4px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--paper-3);
+}
+
+/* ───────── 信息栏 ───────── */
+
+.gf-hero-info {
+  grid-area: info;
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 4px 2px 0;
+}
+
+/* 还有内容未显示时，底部渐隐提示可以滚动（支持滚动驱动动画的浏览器；不可滚动时时间线无效，不渐隐） */
+@property --gf-info-fade {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+@supports (animation-timeline: scroll()) {
+  .gf-hero-info {
+    -webkit-mask-image: linear-gradient(180deg, #000 calc(100% - var(--gf-info-fade)), transparent);
+    mask-image: linear-gradient(180deg, #000 calc(100% - var(--gf-info-fade)), transparent);
+    animation-name: gf-hero-info-fade;
+    animation-duration: auto;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-timeline: scroll(self);
+  }
+
+  @keyframes gf-hero-info-fade {
+    0%, 90% { --gf-info-fade: 28px; }
+    100% { --gf-info-fade: 0px; }
+  }
+}
+
+.gf-hero-sect__title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 9px;
+  font-size: 12px;
+  font-weight: inherit;
+  letter-spacing: 0.36em;
+  color: var(--paper-3);
+}
+
+.gf-hero-sect__title::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  flex: none;
+  background: var(--gold);
+  transform: rotate(45deg);
+  box-shadow: 0 0 6px rgba(244, 216, 147, 0.5);
+}
+
+.gf-hero-sect__title::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--line-soft), transparent);
+}
+
+/* 基础属性对比条：三项并排，每项「名称 … 数值」在上、进度条在下 */
+.gf-hero-bars {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.gf-hero-bar {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    "label value"
+    "track track";
+  align-items: baseline;
+  gap: 6px 8px;
+}
+
+.gf-hero-bar__label {
+  grid-area: label;
+  font-size: 12.5px;
+  letter-spacing: 0.14em;
+  color: var(--paper-2);
+}
+
+.gf-hero-bar__track {
+  grid-area: track;
+  position: relative;
+  height: 8px;
+  overflow: hidden;
+  background: rgba(7, 6, 10, 0.7);
+  border: 1px solid var(--line-soft);
+}
+
+/* 刻度：分成十格 */
+.gf-hero-bar__track::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: repeating-linear-gradient(90deg, transparent 0 calc(10% - 1px), rgba(7, 6, 10, 0.85) calc(10% - 1px) 10%);
+  pointer-events: none;
+}
+
+.gf-hero-bar__fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--hero-tint) 35%, #1a0f08), var(--hero-tint));
+  box-shadow: 0 0 10px color-mix(in srgb, var(--hero-tint) 45%, transparent);
+  transform-origin: left center;
+  transition: width 0.45s var(--ease-out);
+  animation: gf-hero-bar-in 0.7s var(--ease-out) 0.15s backwards;
+}
+
+@keyframes gf-hero-bar-in {
+  from { transform: scaleX(0); }
+}
+
+.gf-hero-bar__value {
+  grid-area: value;
+  font: 600 17px/1 var(--font-num);
+  text-align: right;
   color: var(--paper);
 }
 
-.gf-hero__extras {
+/* 额外属性：位于「基础属性」标题行，排在分隔线之后（order 越过 ::after） */
+.gf-hero-extras {
+  order: 1;
   display: flex;
   flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 6px;
-  margin-top: 8px;
+  min-width: 0;
+  letter-spacing: 0.06em;
 }
 
-.gf-hero__extra {
-  font-size: 12px;
-  padding: 2px 8px;
+.gf-hero-extra {
+  padding: 1px 7px;
+  font-size: 11.5px;
+  line-height: 1.5;
   color: var(--gold-hi);
+  white-space: nowrap;
   border: 1px solid var(--gold-lo);
   background: rgba(212, 169, 85, 0.08);
 }
 
-.gf-hero__skills {
+/* 技能 */
+.gf-hero-skills {
   display: flex;
   flex-direction: column;
-  gap: 11px;
-  margin-top: 16px;
+  gap: 10px;
 }
 
-.gf-hero__skill {
+.gf-hero-skill {
   display: grid;
-  grid-template-columns: 38px 1fr;
+  grid-template-columns: 36px minmax(0, 1fr);
   gap: 10px;
   align-items: start;
 }
 
-.gf-hero__key {
+.gf-hero-skill__key {
   position: relative;
   isolation: isolate;
   width: 34px;
@@ -191,94 +864,340 @@
   display: grid;
   place-items: center;
   font: 700 14px/1 var(--font-num);
-  color: var(--hero);
+  color: var(--hero-tint);
 }
 
 /* 菱形底座 */
-.gf-hero__key::before {
+.gf-hero-skill__key::before {
   content: "";
   position: absolute;
   inset: 5px;
   z-index: -1;
-  border: 1px solid color-mix(in srgb, var(--hero) 70%, transparent);
-  background: color-mix(in srgb, var(--hero) 12%, #0b090d);
+  border: 1px solid color-mix(in srgb, var(--hero-tint) 70%, transparent);
+  background: color-mix(in srgb, var(--hero-tint) 12%, #0b090d);
   transform: rotate(45deg);
 }
 
-.gf-hero__skill--passive .gf-hero__key {
+.gf-hero-skill--passive .gf-hero-skill__key {
   font: 500 11px/1 var(--font-body);
   color: var(--paper-2);
 }
 
-.gf-hero__sname {
+.gf-hero-skill__name {
   font-size: 14.5px;
-  color: var(--paper);
   letter-spacing: 0.06em;
+  color: var(--paper);
 }
 
-.gf-hero__smeta {
+.gf-hero-skill__meta {
   margin-left: 8px;
   font-size: 11.5px;
-  color: var(--paper-3);
   letter-spacing: 0.02em;
+  color: var(--paper-3);
 }
 
-.gf-hero__sdesc {
+.gf-hero-skill__desc {
   margin-top: 2px;
   font-size: 12.5px;
-  line-height: 1.55;
+  line-height: 1.5;
   color: var(--paper-2);
 }
 
-.gf-hero__weapon {
+/* 初始武器 */
+.gf-hero-weapon__head {
   display: flex;
   align-items: baseline;
-  gap: 8px;
-  margin-top: auto;
-  padding-top: 14px;
-  border-top: 1px dashed var(--line-soft);
+  flex-wrap: wrap;
+  gap: 4px 10px;
 }
 
-.gf-hero__skills + .gf-hero__weapon {
-  margin-top: 16px;
-}
-
-.gf-hero__wlabel,
-.gf-hero__wcat {
-  font-size: 12px;
-  color: var(--paper-3);
+.gf-hero-weapon__name {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: inherit;
   letter-spacing: 0.1em;
-}
-
-.gf-hero__weapon b {
-  font-size: 15px;
   color: var(--gold-hi);
-  letter-spacing: 0.08em;
 }
 
-.gf-hero__lock {
-  position: absolute;
-  inset: 0;
+.gf-hero-weapon__cat {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--paper-3);
+}
+
+.gf-hero-weapon__mode,
+.gf-hero-weapon__elem {
+  align-self: center;
+  padding: 1px 7px;
+  font-size: 11.5px;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  border: 1px solid var(--gold-lo);
+}
+
+.gf-hero-weapon__elem {
+  --elem: var(--gold);
+  color: var(--elem);
+  border-color: color-mix(in srgb, var(--elem) 50%, transparent);
+}
+
+.gf-hero-weapon__cells {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 9px;
+}
+
+.gf-hero-weapon__cell {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 12px;
-  background: rgba(7, 6, 10, 0.8);
-  backdrop-filter: grayscale(1);
+  gap: 4px;
+  padding: 8px 4px 6px;
+  border: 1px solid var(--line-soft);
+  background: rgba(7, 6, 10, 0.45);
 }
 
-.gf-hero__lockicon {
-  width: 34px;
-  height: 34px;
+.gf-hero-weapon__num {
+  font: 600 17px/1 var(--font-num);
+  color: var(--paper);
+  white-space: nowrap;
+}
+
+.gf-hero-weapon__num small {
+  margin-left: 2px;
+  font: 400 10.5px/1 var(--font-body);
   color: var(--paper-3);
 }
 
-.gf-hero__locktext {
-  font-family: var(--font-display);
-  font-size: 22px;
-  letter-spacing: 0.3em;
-  color: var(--paper-2);
+.gf-hero-weapon__label {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--paper-3);
+}
+
+.gf-hero-weapon__desc {
+  margin-top: 8px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--paper-3);
+}
+
+/* ───────── 高度偏紧（1280×720、1366×768 等）：收紧留白 ───────── */
+
+@media (max-height: 780px) {
+  .gf-heroes__head {
+    margin-bottom: 10px;
+  }
+
+  .gf-heroes__head .gf-panel__sub {
+    margin-top: 2px;
+  }
+
+  .gf-heroes__foot {
+    margin-top: 12px;
+    padding-top: 12px;
+  }
+
+  .gf-hero-detail {
+    row-gap: 10px;
+  }
+
+  .gf-hero-detail__head {
+    padding-bottom: 10px;
+  }
+
+  .gf-hero-detail__desc {
+    line-height: 1.6;
+  }
+
+  .gf-hero-detail__tip {
+    margin-top: 6px;
+  }
+
+  .gf-hero-tab {
+    padding: 10px 14px 10px 16px;
+  }
+
+  .gf-hero-info {
+    gap: 14px;
+  }
+}
+
+/* ───────── 窄屏 / 矮屏：名录横排在上，详情单栏堆叠，面板整体滚动 ───────── */
+
+@media (max-width: 900px), (max-height: 560px) {
+  .gf-heroes {
+    display: block;
+  }
+
+  .gf-heroes__body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* 面板整体滚动时页脚吸在面板底边，「出征」始终可见（左右延伸盖住面板内边距；
+     bottom 取负的面板下内边距，贴住面板底边，下方不再露出滚动中的正文） */
+  .gf-heroes__foot {
+    position: sticky;
+    bottom: -20px;
+    z-index: 4;
+    margin: 16px -20px 0;
+    padding: 12px 20px 14px;
+    background: linear-gradient(180deg, rgba(14, 12, 17, 0.9), rgba(12, 10, 15, 0.98) 45%);
+    box-shadow: 0 -10px 18px rgba(5, 4, 7, 0.55);
+  }
+
+  .gf-heroes__foot .gf-btn--wide {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .gf-heroes__label {
+    display: none;
+  }
+
+  .gf-heroes__list {
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .gf-hero-tab {
+    min-width: 0;
+    min-height: 0;
+    max-height: none;
+    gap: 10px;
+    padding: 9px 12px;
+  }
+
+  .gf-hero-tab:hover {
+    transform: translateY(-1px);
+  }
+
+  .gf-hero-tab.is-selected {
+    transform: translateY(-3px);
+  }
+
+  /* 横排时英雄色线移到底边，不显示尖角 */
+  .gf-hero-tab::before {
+    left: -1px;
+    right: -1px;
+    top: auto;
+    bottom: -1px;
+    width: auto;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--hero), transparent);
+  }
+
+  .gf-hero-tab.is-selected::before {
+    width: auto;
+    height: 3px;
+  }
+
+  .gf-hero-tab::after {
+    display: none;
+  }
+
+  .gf-hero-tab__medal {
+    width: 38px;
+    height: 38px;
+  }
+
+  .gf-hero-tab__glyph {
+    font-size: 21px;
+  }
+
+  .gf-hero-tab__name {
+    font-size: 18px;
+  }
+
+  .gf-hero-tab__title,
+  .gf-hero-tab__role {
+    display: none;
+  }
+
+  .gf-hero-tab__index {
+    top: 6px;
+    right: 6px;
+    padding: 2px 4px;
+    font-size: 10px;
+  }
+
+  /* 单栏堆叠：舞台提到最前（紧接名录，英雄是一进来就看到的主角）→ 名字区 → 信息栏；
+     舞台名牌上已有名字与称号 */
+  .gf-hero-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* 单栏时舞台仍要够高，英雄才不至于太小（名牌也缩小一点，多留给英雄） */
+  .gf-hero-stage {
+    --gf-stage-plate: 46px;
+    order: -1;
+    flex: none;
+    height: clamp(320px, min(64vw, 70vh), 400px);
+  }
+
+  .gf-hero-stage__plate {
+    bottom: 12px;
+  }
+
+  .gf-hero-stage__plaque {
+    padding: 5px 22px;
+  }
+
+  .gf-hero-stage__pname {
+    font-size: 15px;
+  }
+
+  .gf-hero-stage__ptitle {
+    font-size: 12.5px;
+  }
+
+  .gf-hero-stage__mark {
+    font-size: 150px;
+  }
+
+  .gf-hero-info {
+    overflow: visible;
+    scrollbar-gutter: auto;
+    padding-right: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  /* 竖屏手机：舞台按屏宽放大，但给上方名录与下方吸底页脚留出位置（约 380px），首屏即可看到完整的英雄与名牌 */
+  .gf-hero-stage {
+    height: clamp(300px, min(105vw, 100vh - 380px), 440px);
+  }
+
+  .gf-hero-tab {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    gap: 6px;
+    padding: 10px 6px 8px;
+    text-align: center;
+  }
+
+  .gf-hero-tab__medal {
+    width: 34px;
+    height: 34px;
+  }
+
+  .gf-hero-tab__glyph {
+    font-size: 19px;
+  }
+
+  .gf-hero-tab__name {
+    font-size: 16px;
+    letter-spacing: 0.08em;
+  }
+
+  .gf-hero-weapon__cells {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 /* ═════════════════════════ 天赋 ═════════════════════════ */
@@ -428,7 +1347,6 @@
 /* ───────── 窄屏 ───────── */
 
 @media (max-width: 900px), (max-height: 560px) {
-  .gf-heroes__grid,
   .gf-talents__grid,
   .gf-controls__list {
     grid-template-columns: minmax(0, 1fr);

@@ -1,6 +1,7 @@
 /**
  * UI 管理器（IUI 实现）：组合 HUD、主菜单、暂停、结算、秘卷三选一、提示与黑幕，
- * 监听 game:stateChanged 管理各界面显隐。所有 DOM 挂在 ctx.dom.ui 下。
+ * 监听 game:stateChanged 管理各界面显隐；元素反应首次出现时弹出教学提示（ReactionTips）。
+ * 所有 DOM 挂在 ctx.dom.ui 下。
  *
  * 层级（由下到上）：HUD（含敌人血条 / 准星 / Boss 条 / 交互提示 / Tab 面板）→ 横幅 →
  * 主菜单 / 暂停 / 结算 / 秘卷选择 → toast → 黑幕。
@@ -13,6 +14,10 @@ import { SummaryScreen } from './SummaryScreen';
 import { ScrollChoice } from './ScrollChoice';
 import { Banner, PromptCard, Toasts } from './Notify';
 import { Fade } from './Fade';
+import { ReactionTips } from './ReactionTips';
+
+/** 元素反应教学提示的显示时长（文案较长，比普通 toast 多留一会儿） */
+const REACTION_TIP_MS = 4500;
 
 export class UIManager implements IUI {
   private hud: HUD;
@@ -52,12 +57,19 @@ export class UIManager implements IUI {
       ev.on('coins:changed', ({ delta }) => this.hud.onCoins(delta)),
       ev.on('skill:used', ({ slot }) => this.hud.onSkillUsed(slot)),
       ev.on('weapon:switched', () => this.hud.onWeaponSwitched()),
+      ev.on('weapon:skillUsed', () => this.hud.onWeaponSkillUsed()),
+      ev.on('weapon:formChanged', () => this.hud.onWeaponFormChanged()),
+      ev.on('weapon:skillImpale', ({ points }) => this.hud.onWeaponImpale(points)),
       ev.on('run:started', () => {
         this.hud.reset();
         this.choice.hide(true);
       }),
       ev.on('stage:loaded', () => this.hud.reset()),
     );
+    // 元素反应首次提示（每局每种反应一次）
+    const tips = new ReactionTips(this.ctx, (text, color) => this.toasts.push(text, color, REACTION_TIP_MS));
+    tips.init();
+    this.offs.push(() => tips.dispose());
     // 捕获阶段处理 UI 快捷键：命中时阻止冒泡，避免 Input 把数字键 / Esc 当成游戏操作
     window.addEventListener('keydown', this.onKey, true);
   }

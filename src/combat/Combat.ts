@@ -1,14 +1,18 @@
 /**
  * 战斗核心：伤害管线（倍率 → 暴击 → 分层 → 反馈 → 元素附着 → 吸血 → 击退 → 死亡）、
- * 玩家受伤结算、范围爆炸、状态推进与伤害修饰器。
+ * 玩家受伤结算、范围爆炸、状态推进、元素反应与伤害修饰器。
  *
  * 所有伤害一律经过这里（DESIGN.md 14.3）。击杀计数、伤害统计、击杀魂晶、killHeal / killShield / lifesteal
  * 都在这里结算；金币掉落由掉落系统监听 'enemy:killed' 处理。
+ *
+ * 元素附着统一走私有 attach()：先判定元素反应（ReactionSystem.tryReact，只入队），再照常施加状态。
+ * 反应效果在 update() 开头的 reactions.flush() 执行（docs/arsenal-expansion.md 第 2 节）。
  */
 import * as THREE from 'three';
 import type {
-  DamageRequest, DamageResult, Element, ExplosionOptions, GameContext, ICombat, IEnemy,
-  IncomingDamageModifier, OutgoingDamageModifier, StatusId,
+  DamageRequest, DamageResult, DetonateOpts, DetonateOutcome, Element, ExplosionOptions, GameContext,
+  ICombat, IEnemy, IncomingDamageModifier, OutgoingDamageModifier, ReactionId, StatusApplyOpts, StatusId,
+  TriggerReactionOpts,
 } from '../core/types';
 import { ELEMENT_COLORS } from '../core/types';
 import { clamp, clamp01 } from '../core/math';
@@ -19,6 +23,8 @@ import {
 import { STATUS_POWER_CAP, StatusSystem } from './Status';
 import { HitFeedback } from './Feedback';
 import { blastPlayer, explosionShake, lineClear } from './Blast';
+import { ReactionSystem } from './Reactions';
+import type { AttachSource, ReactionHost } from './Reactions';
 
 /** 单次吸血上限：最大生命的 5%（至少 2 点） */
 const LIFESTEAL_CAP_RATIO = 0.05;
@@ -32,30 +38,42 @@ const _spark = new THREE.Vector3();
 const _kb = new THREE.Vector3();
 const _c = new THREE.Vector3();
 
-export class Combat implements ICombat {
+/** 附着来源（attach → tryReact 同步读取后即不再引用，可复用） */
+const _hitSrc: AttachSource = { weaponUid: undefined, scale: undefined, point: undefined };
+const _applySrc: AttachSource = { weaponUid: undefined, scale: undefined, point: undefined };
+const _rxSrc: AttachSource = { weaponUid: undefined, scale: undefined, point: undefined };
+
+export class Combat implements ICombat, ReactionHost {
   private outgoing: OutgoingDamageModifier[] = [];
   private incoming: IncomingDamageModifier[] = [];
   private readonly status: StatusSystem;
   private readonly feedback: HitFeedback;
+  private readonly reactions: ReactionSystem;
   private readonly layerOut = newLayerOutcome();
   private explodeDepth = 0;
   private readonly queryBufs: IEnemy[][] = [];
+  /** 最近一次 attach 引发的反应（attach 末尾写入，调用方立即读取） */
+  private lastReaction: ReactionId | null = null;
 
   constructor(readonly ctx: GameContext) {
     this.status = new StatusSystem(ctx, this);
     this.feedback = new HitFeedback(ctx);
+    this.reactions = new ReactionSystem(ctx, this, this.status, this.feedback);
   }
 
   // ───────────── 生命周期 ─────────────
 
   update(dt: number): void {
+    // 先执行到期的反应（武器 / 投射物本帧引发的反应同帧可见），再推进状态
+    this.reactions.flush();
     this.feedback.flush();
     this.status.update(dt);
     this.feedback.flush();
   }
 
-  /** 换关 / 新开一局：清掉状态内部数据与待刷新的反馈。修饰器由安装方自行移除，这里不动。 */
+  /** 换关 / 新开一局：清掉反应队列 / 熔池、状态内部数据与待刷新的反馈。修饰器由安装方自行移除，这里不动。 */
   clear(): void {
+    this.reactions.clear();
     this.status.clear();
     this.feedback.clear();
     this.explodeDepth = 0;
@@ -79,8 +97,8 @@ export class Combat implements ICombat {
       isCrit = !!req.forceCrit || !!req.headshot || (req.canCrit !== false && ctx.rng.next() < stats.get('critChance'));
     }
 
-    // 2) 倍率
-    let mult = statMultiplier(stats, enemy, req) * enemy.damageTakenMult;
+    // 2) 倍率（含封脉首领「脉滞」易伤）
+    let mult = statMultiplier(stats, enemy, req) * enemy.damageTakenMult * this.reactions.vulnMult(enemy);
     if (req.element === 'shock' && enemy.statuses.has('shock')) mult *= SHOCK_MARK_BONUS;
     if (isCrit) mult *= (req.critMult ?? 2) * stats.mult('critDamagePct');
     mult *= this.outgoingMultiplier(enemy, req, isCrit);
@@ -103,6 +121,7 @@ export class Combat implements ICombat {
       armorBroken: lo.armorBroken,
       element: req.element,
       statusApplied: null,
+      reaction: null,
     };
 
     if (effective <= 0) {
@@ -123,22 +142,16 @@ export class Combat implements ICombat {
       this.feedback.breakSound('armor', _c);
     }
 
-    // 4) 元素附着（放在事件之前，好让监听者看到 statusApplied）
+    // 4) 元素附着与反应判定（放在事件之前，好让监听者看到 statusApplied / reaction）
     if (!statusSource && req.element !== 'none') {
       const chance = (req.elementChance ?? 0) + stats.get('elementChancePct');
       if (chance > 0 && ctx.rng.next() < chance) {
         const sid = ELEMENT_STATUS[req.element];
         if (sid) {
           const power = Math.min(effective, enemy.maxHp * STATUS_POWER_CAP);
-          if (killed) {
-            // 击杀的一击：状态没有意义，但雷殛照样弹射
-            if (sid === 'shock') {
-              this.status.chainFrom(enemy, power, depth);
-              result.statusApplied = sid;
-            }
-          } else if (this.status.apply(enemy, sid, power, undefined, depth)) {
-            result.statusApplied = sid;
-          }
+          _hitSrc.weaponUid = req.weaponUid;
+          if (this.attach(enemy, sid, power, depth, _hitSrc, killed)) result.statusApplied = sid;
+          result.reaction = this.lastReaction;
         }
       }
     }
@@ -237,7 +250,7 @@ export class Combat implements ICombat {
 
   previewMultiplier(enemy: IEnemy, req: DamageRequest): number {
     const stats = this.ctx.player.stats;
-    let m = statMultiplier(stats, enemy, req) * enemy.damageTakenMult;
+    let m = statMultiplier(stats, enemy, req) * enemy.damageTakenMult * this.reactions.vulnMult(enemy);
     if (req.element === 'shock' && enemy.statuses.has('shock')) m *= SHOCK_MARK_BONUS;
     m *= this.outgoingMultiplier(enemy, req, false);
     return m * layerMultiplier(stats, req.element, topLayer(enemy));
@@ -352,8 +365,59 @@ export class Combat implements ICombat {
 
   // ───────────── 状态 / 修饰器 ─────────────
 
-  applyStatus(enemy: IEnemy, id: StatusId, power: number, duration?: number): void {
-    this.status.apply(enemy, id, power, duration, 0);
+  /**
+   * 直接施加状态。burn / shock / corrode 先判定元素反应（强度钳到最大生命 × 0.5）；stun / slow 直接施加。
+   * 不会同步造成反应伤害（反应只入队），可在任意事件回调里调用。现有调用不传 opts，行为不变（多了反应判定）。
+   */
+  applyStatus(enemy: IEnemy, id: StatusId, power: number, duration?: number, opts?: StatusApplyOpts): void {
+    const depth = opts?.depth ?? 0;
+    if (id === 'burn' || id === 'shock' || id === 'corrode') {
+      _applySrc.weaponUid = opts?.weaponUid;
+      _applySrc.scale = opts?.reactionScale;
+      this.attach(enemy, id, Math.min(power, enemy.maxHp * STATUS_POWER_CAP), depth, _applySrc, false, duration);
+    } else {
+      this.status.apply(enemy, id, power, duration, depth);
+    }
+  }
+
+  // ───────────── 元素反应 ─────────────
+
+  /**
+   * 元素附着的统一入口：先判定反应（必须在 apply 之前——雷殛第 3 层会自删并眩晕；击杀那一击状态还没清空），
+   * 再照常施加。killed（击杀那一击）时状态没有意义，只做雷殛弹射（现有规则）。
+   * 返回状态是否施加成功；引发的反应写入 this.lastReaction（末尾写，嵌套调用不会覆盖调用方读到的值）。
+   */
+  private attach(
+    enemy: IEnemy, sid: StatusId, power: number, depth: number, src: AttachSource | null, killed: boolean, duration?: number,
+  ): boolean {
+    const rx = sid === 'burn' || sid === 'shock' || sid === 'corrode'
+      ? this.reactions.tryReact(enemy, sid, power, depth, src, killed)
+      : null;
+    let applied = false;
+    if (killed) {
+      if (sid === 'shock') {
+        this.status.chainFrom(enemy, power, depth);
+        applied = true;
+      }
+    } else {
+      applied = this.status.apply(enemy, sid, power, duration, depth);
+    }
+    this.lastReaction = rx;
+    return applied;
+  }
+
+  /** ReactionHost：反应扩散出去的元素（焚雷点燃、熔池附蚀、封脉导流），同样会判定反应 */
+  attachFromReaction(enemy: IEnemy, sid: 'burn' | 'shock' | 'corrode', power: number, depth: number, weaponUid?: number): void {
+    _rxSrc.weaponUid = weaponUid;
+    this.attach(enemy, sid, Math.min(power, enemy.maxHp * STATUS_POWER_CAP), depth, _rxSrc, false);
+  }
+
+  triggerReaction(enemy: IEnemy, id: ReactionId, power: number, opts?: TriggerReactionOpts): boolean {
+    return this.reactions.trigger(enemy, id, power, opts);
+  }
+
+  detonate(enemy: IEnemy, opts: DetonateOpts): DetonateOutcome | null {
+    return this.reactions.detonate(enemy, opts);
   }
 
   addOutgoingModifier(fn: OutgoingDamageModifier): () => void {

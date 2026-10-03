@@ -18,6 +18,13 @@ export const WEAPON_NAMES: Record<string, { name: string; category: string }> = 
   beam: { name: '雷弧发射器', category: '光束' },
   minigun: { name: '旋风机炮', category: '重武器' },
   swarm: { name: '蜂群飞弹', category: '发射器' },
+  flamer: { name: '朱雀吐息', category: '喷火器' },
+  stormpod: { name: '青冥雷蛊', category: '发射器' },
+  magmashot: { name: '赤蛟霰铳', category: '霰弹枪' },
+  trinity: { name: '三才转轮', category: '手枪' },
+  railgun: { name: '贯虹灵炮', category: '蓄能炮' },
+  lantern: { name: '蚀蛊灯', category: '蛊灯' },
+  demon_blade: { name: '魔刀千刃', category: '刀' },
 };
 
 export function weaponName(defId: string): string {
@@ -35,6 +42,30 @@ export function heroGlyph(hero: HeroDef | null | undefined): string {
 export function heroColor(hero: HeroDef | null | undefined): string {
   return hero ? cssHex(hero.color) : '#d6ae5c';
 }
+
+/** 英雄选择界面的定位 / 上手难度 / 玩法标签 / 心得 */
+export interface HeroMeta {
+  role: string;
+  /** 上手难度：1 简单、2 中等、3 进阶 */
+  difficulty: 1 | 2 | 3;
+  tags: string[];
+  tip: string;
+}
+
+export const HERO_META: Record<string, HeroMeta> = {
+  fox: { role: '火焰爆发', difficulty: 2, tags: ['灼烧', '范围', '爆发'], tip: '先用燃爆雷点燃敌群，再借余烬被动收割' },
+  falcon: { role: '雷电机动', difficulty: 3, tags: ['雷殛', '空战', '精准'], tip: '保持滞空：二段跳 + 滑翔时伤害更高' },
+  bear: { role: '近战坦克', difficulty: 1, tags: ['护盾', '控制', '霰弹'], tip: '顶在前线，用磐石壁垒扛住首领大招' },
+};
+
+const DEFAULT_HERO_META: HeroMeta = { role: '均衡', difficulty: 2, tags: [], tip: '' };
+
+export function heroMeta(hero: HeroDef | null | undefined): HeroMeta {
+  return (hero && HERO_META[hero.id]) || DEFAULT_HERO_META;
+}
+
+/** 上手难度文字（下标即难度） */
+export const DIFFICULTY_NAMES: readonly string[] = ['', '简单', '中等', '进阶'];
 
 /** 元素单字标记 */
 export const ELEMENT_GLYPH: Record<Element, string> = { none: '', fire: '火', shock: '雷', corrode: '蚀' };
@@ -85,11 +116,12 @@ export const CONTROLS: { keys: string[]; action: string; together?: boolean }[] 
   { keys: ['空格'], action: '跳跃（部分英雄可二段跳）' },
   { keys: ['Shift'], action: '冲刺（有充能与冷却）' },
   { keys: ['左键'], action: '射击' },
-  { keys: ['右键'], action: '瞄准（缩放视野、降低散布）' },
+  { keys: ['右键'], action: '瞄准（缩放视野、降低散布）；持魔刀千刃时切换形态' },
   { keys: ['R'], action: '换弹' },
   { keys: ['1', '2', '滚轮', 'X'], action: '切换武器' },
   { keys: ['Q'], action: '主技能（长冷却）' },
   { keys: ['E'], action: '副技能（多充能投掷类）' },
+  { keys: ['V', '中键'], action: '武器技能（魔刀千刃：千刃·无间）' },
   { keys: ['F'], action: '交互：拾取武器、开宝箱、购买、进入传送门' },
   { keys: ['Tab'], action: '按住查看已获得秘卷与属性' },
   { keys: ['Esc', 'P'], action: '暂停' },

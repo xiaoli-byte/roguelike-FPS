@@ -18,11 +18,17 @@ export const KEY_STATS: StatKey[] = [
 /** 数值越低越好的属性 */
 const LOWER_IS_BETTER = new Set<StatKey>(['shieldRegenDelay', 'dashCooldown', 'spreadPct', 'recoilPct']);
 
+/** 显示为带符号加成（+N%）的非 Pct 属性 */
+const SIGNED_STATS = new Set<StatKey>(['skillHaste', 'reactionHaste']);
+
+/** 三相元素（elementLabel）的文字颜色：三才转轮的鎏金色 */
+const TRI_ELEMENT_CSS = '#e8d6a0';
+
 const ALL_STATS = Object.keys(STAT_INFO) as StatKey[];
 
 /** 属性的「绝对值」显示：Pct 类显示为带符号加成，其余显示当前值 */
 export function formatStatValue(key: StatKey, v: number): string {
-  if (key.endsWith('Pct') || key === 'skillHaste') return formatStat(key, v);
+  if (key.endsWith('Pct') || SIGNED_STATS.has(key)) return formatStat(key, v);
   switch (STAT_INFO[key].format) {
     case 'pct':
       return `${Math.round(v * 100)}%`;
@@ -59,7 +65,7 @@ export function renderStatGrid(ctx: GameContext, parent: HTMLElement, keys: read
     if (Math.abs(delta) > 1e-6) {
       const better = LOWER_IS_BETTER.has(k) ? delta < 0 : delta > 0;
       val.classList.add(better ? 'is-buff' : 'is-debuff');
-      if (!(k.endsWith('Pct') || k === 'skillHaste')) h('span', 'gf-stat__delta', row, formatStat(k, delta));
+      if (!(k.endsWith('Pct') || SIGNED_STATS.has(k))) h('span', 'gf-stat__delta', row, formatStat(k, delta));
     }
   }
 }
@@ -182,7 +188,11 @@ export class InventoryPanel {
     const meta = h('div', 'gf-arm__meta', card);
     h('span', null, meta, desc?.rarityName || RARITY_NAMES[w.rarity] || '');
     if (desc?.category) h('span', null, meta, desc.category);
-    if (w.element !== 'none') {
+    if (desc?.elementLabel) {
+      // 特殊元素显示（三才转轮：火 → 雷 → 蚀 轮转）
+      const el = h('span', 'gf-arm__elem', meta, `${desc.elementLabel} 轮转`);
+      el.style.color = TRI_ELEMENT_CSS;
+    } else if (w.element !== 'none') {
       const el = h('span', 'gf-arm__elem', meta, `${ELEMENT_GLYPH[w.element]} ${ELEMENT_NAMES[w.element]}`);
       el.style.color = elementCss(w.element);
     }

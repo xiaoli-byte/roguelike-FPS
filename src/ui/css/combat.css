@@ -90,6 +90,41 @@
   opacity: 0.9;
 }
 
+/* 蓄力环（贯虹灵炮等蓄力武器）：--p 为 0..1 进度；满蓄 is-full 转金色并轻微脉动。
+   外层只负责描边阴影，圆环本体画在 ::before 上（mask 会裁掉自身的 filter 阴影） */
+.gf-xhair__charge {
+  --p: 0;
+  --cc: #e2d4ff;
+  position: absolute;
+  left: -23px;
+  top: -23px;
+  width: 46px;
+  height: 46px;
+  pointer-events: none;
+  filter: drop-shadow(0 0 1.5px rgba(0, 0, 0, 0.95));
+}
+
+.gf-xhair__charge::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(var(--cc) calc(var(--p) * 360deg), rgba(255, 249, 238, 0.16) 0);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2.5px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2.5px));
+}
+
+.gf-xhair__charge.is-full {
+  --cc: #ffe08a;
+  filter: drop-shadow(0 0 1.5px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 6px rgba(255, 224, 138, 0.85));
+  animation: gf-charge-full 0.45s ease-in-out infinite alternate;
+}
+
+@keyframes gf-charge-full {
+  from { transform: scale(1); }
+  to { transform: scale(1.08); }
+}
+
 /* 命中标记 */
 .gf-hitmark {
   position: absolute;
@@ -380,6 +415,43 @@
   font: 700 9px/1 var(--font-num);
   color: #fff;
   text-shadow: 0 0 2px #000, 0 0 2px #000;
+}
+
+/* 元素反应提示（EnemyBars 按元素状态种数切换）：
+   is-reactive = 两种元素相遇，可反应（1.2 秒呼吸外发光）；
+   is-primed = 三相齐聚，再补一种就是「归墟」（紫色 #c89bff，0.6 秒急促外发光）。
+   发光画在 ::before 上只动画 opacity，避免逐帧重绘 box-shadow */
+.gf-ebar__badge::before {
+  --glow: var(--badge);
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  box-shadow: 0 0 5px 1px var(--glow), 0 0 12px 2px var(--glow);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.gf-ebar__status.is-reactive .gf-ebar__badge:not([hidden])::before {
+  animation: gf-ebar-breathe 1.2s ease-in-out infinite;
+}
+
+.gf-ebar__status.is-primed .gf-ebar__badge:not([hidden])::before {
+  --glow: #c89bff;
+  animation: gf-ebar-breathe 0.6s ease-in-out infinite;
+}
+
+@keyframes gf-ebar-breathe {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 1; }
+}
+
+/* 减少动态效果时改为常亮发光（全局规则会把动画压成一帧） */
+@media (prefers-reduced-motion: reduce) {
+  .gf-ebar__status.is-reactive .gf-ebar__badge:not([hidden])::before,
+  .gf-ebar__status.is-primed .gf-ebar__badge:not([hidden])::before {
+    opacity: 0.8;
+  }
 }
 
 .gf-ebar__row {
@@ -806,4 +878,80 @@
   .gf-tab__col {
     max-height: none;
   }
+}
+
+/* ═════════════════════════ 近战准星（魔刀千刃「斩」形态） ═════════════════════════
+   四条准星线换成左右两道弧形括号（上下线隐藏）；张开程度仍随 --gap（武器系统给近战形态固定散布） */
+.gf-xhair.is-melee .gf-xhair__line--t,
+.gf-xhair.is-melee .gf-xhair__line--b {
+  opacity: 0;
+}
+
+.gf-xhair.is-melee .gf-xhair__line--l,
+.gf-xhair.is-melee .gf-xhair__line--r {
+  width: 8px;
+  height: 22px;
+  background: none;
+  border: 2px solid var(--xc);
+  box-shadow: none;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.9));
+  transition: border-color 0.08s ease;
+}
+
+.gf-xhair.is-melee .gf-xhair__line--l {
+  border-right: 0;
+  border-radius: 100% 0 0 100% / 50% 0 0 50%;
+}
+
+.gf-xhair.is-melee .gf-xhair__line--r {
+  border-left: 0;
+  border-radius: 0 100% 100% 0 / 0 50% 50% 0;
+}
+
+/* 攻击距离：下一段斩击此刻能砍到敌人（武器系统按扇形判定，is-target）时括号朱红并收紧（--gap 由 Crosshair 减 4px）；
+   距离外括号变淡，远处的敌人不会让括号变红 */
+.gf-xhair.is-melee .gf-xhair__reticle.is-target {
+  --xc: #ff4a30;
+}
+
+.gf-xhair.is-melee:not(.is-strike) .gf-xhair__reticle:not(.is-target) .gf-xhair__line--l,
+.gf-xhair.is-melee:not(.is-strike) .gf-xhair__reticle:not(.is-target) .gf-xhair__line--r {
+  opacity: 0.55;
+}
+
+/* 换形一击窗口（双形态武器变形后 2 秒内的第一次攻击 +50%）：准星与中心点朱红，0.3 秒往返脉动 */
+.gf-xhair.is-strike .gf-xhair__reticle {
+  --xc: #ff4a30;
+  animation: gf-xhair-strike 0.3s ease-in-out infinite alternate;
+}
+
+@keyframes gf-xhair-strike {
+  from { filter: drop-shadow(0 0 1px rgba(255, 74, 48, 0.35)); }
+  to { filter: drop-shadow(0 0 6px rgba(255, 74, 48, 0.95)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gf-xhair.is-strike .gf-xhair__reticle {
+    filter: drop-shadow(0 0 4px rgba(255, 74, 48, 0.8));
+  }
+}
+
+/* ═════════════════════════ 武器技能贯穿（千刃·无间） ═════════════════════════
+   朱红暗角闪（0.12 秒，Crosshair 写 opacity）与视野外刃印的方向刃光（复用受击方向弧的形状，朱红、更窄更亮） */
+.gf-bladeflash {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(255, 58, 36, 0.32) 80%, rgba(176, 26, 14, 0.75) 100%);
+  will-change: opacity;
+}
+
+.gf-dmgdir__arc.gf-dmgdir__arc--blade {
+  border-width: 4px;
+  border-top-color: rgba(255, 74, 48, 1);
+  -webkit-mask-image: linear-gradient(90deg, transparent 36%, #000 47%, #000 53%, transparent 64%);
+  mask-image: linear-gradient(90deg, transparent 36%, #000 47%, #000 53%, transparent 64%);
+  filter: drop-shadow(0 -2px 8px rgba(255, 74, 48, 0.95)) drop-shadow(0 0 2px rgba(255, 230, 220, 0.6));
 }

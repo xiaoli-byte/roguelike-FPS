@@ -1,5 +1,6 @@
 /**
- * 投射物的程序化外观：7 种造型（orb / bolt / rocket / arrow / grenade / shard / flame）+ 带状拖尾。
+ * 投射物的程序化外观：8 种造型（orb / bolt / rocket / arrow / grenade / shard / flame / blade）+ 带状拖尾。
+ * 'blade' 为魔刀千刃的飞刃：压扁的暗钢刃片 + 元素色刃光层 + 白热血槽，绕刃面法线高速自旋。
  *
  * - 几何体、共享的受光材质、发光贴图全部模块级缓存，永不释放。
  * - 每个 ProjectileView 自带一套发光材质（换色 / 淡出不影响别人），由 ProjectileSystem 对象池复用。
@@ -81,7 +82,13 @@ const M = {
   metal: lazy(() => new THREE.MeshStandardMaterial({ color: 0x2c2f36, metalness: 0.55, roughness: 0.42 })),
   wood: lazy(() => new THREE.MeshStandardMaterial({ color: 0x6b5238, roughness: 0.8 })),
   bone: lazy(() => new THREE.MeshStandardMaterial({ color: 0xd9cdb0, roughness: 0.7 })),
+  /** 飞刃的暗钢（平直着色，刃面棱角分明） */
+  steel: lazy(() => new THREE.MeshStandardMaterial({ color: 0x50525c, metalness: 0.45, roughness: 0.35, flatShading: true })),
 };
+
+/** 飞刃自旋（弧度 / 秒，绕刃面法线）与摆动 */
+const BLADE_SPIN = 24;
+const BLADE_WOBBLE = 0.2;
 
 function additive(opacity: number): THREE.MeshBasicMaterial {
   return new THREE.MeshBasicMaterial({
@@ -119,6 +126,9 @@ export function viewSize(kind: ProjectileVisual, radius: number, scale: number):
 export function tailOffset(kind: ProjectileVisual): number {
   return kind === 'rocket' ? 0.42 : kind === 'arrow' ? 0.45 : 0;
 }
+
+/** 全部造型（换关时逐一预热；新增造型记得加进来） */
+export const PROJECTILE_VISUALS: readonly ProjectileVisual[] = ['orb', 'bolt', 'rocket', 'arrow', 'grenade', 'shard', 'flame', 'blade'];
 
 // ───────────────────────────── 投射物外观 ─────────────────────────────
 
@@ -186,6 +196,17 @@ export class ProjectileView {
         this.glow.position.z = -1.1;
         this.glowOpacity = 0.55;
         this.haloScale = 3.4;
+        break;
+      }
+      case 'blade': {
+        // 魔刀飞刃：压扁八面体刃片（宽 0.95 × 厚 0.18 × 长 2.4 个半径），外裹略大的刃光层，中间一道白热血槽
+        this.coreWhiten = 0.7;
+        this.mesh(G.octa(), M.steel()).scale.set(0.95, 0.18, 2.4);
+        this.glow = this.mesh(G.octa(), this.glowMat);
+        this.glow.scale.set(1.3, 0.32, 2.9);
+        this.glowOpacity = 0.6;
+        this.mesh(G.octa(), this.coreMat).scale.set(0.32, 0.22, 1.9);
+        this.haloScale = 2.0;
         break;
       }
       case 'shard': {
@@ -321,6 +342,12 @@ export class ProjectileView {
       case 'arrow':
         this.halo.scale.setScalar(hs * (1 + pulseAmp * Math.sin(age * 14 + this.phase)));
         if (this.accent) this.accent.scale.z = this.accentLen * (0.85 + 0.3 * Math.random());
+        break;
+      case 'blade':
+        // 刃片在自身平面内高速旋转（像掷出的飞刀），并绕长轴轻微摆动
+        this.spin.rotation.y += dt * BLADE_SPIN;
+        this.spin.rotation.z = BLADE_WOBBLE * Math.sin(age * 25 + this.phase);
+        this.halo.scale.setScalar(hs * (1 + pulseAmp * Math.sin(age * 12 + this.phase)));
         break;
       case 'shard':
         this.spin.rotation.z += dt * 9;

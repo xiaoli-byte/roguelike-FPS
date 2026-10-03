@@ -5,6 +5,7 @@
  * - 暴击：更大、金色描边、弹跳缩放。颜色：护盾蓝 / 护甲黄 / 生命白 / 元素色 / 治疗绿 / 玩家受伤红。
  * - 同一位置短时间内的同类伤害合并成一个数字（霰弹 9 颗弹丸只显示一个总数），合并时再弹一下。
  * - 玩家自己的受伤 / 治疗数字锚在准星下方（锚点离相机太近时）。
+ * - 元素反应浮字（kind 'reaction'）：显示 opts.text、颜色取 opts.color，不参与合并，big 时更大（归墟）。
  * 样式自己注入（ui/styles.css 归 UI 模块）。
  */
 import * as THREE from 'three';
@@ -16,8 +17,10 @@ const STYLE_ID = 'fx-damage-number-style';
 /** 合并窗口：数字出生后多久内还能继续累加 */
 const MERGE_WINDOW = 0.45;
 const MERGE_DIST_SQ = 1.1 * 1.1;
+/** 反应浮字寿命 */
+const REACTION_LIFE = 0.9;
 
-type Kind = DamageLayer | 'heal' | 'player' | 'immune';
+type Kind = DamageLayer | 'heal' | 'player' | 'immune' | 'reaction';
 
 const LAYER_CSS: Record<string, string> = {
   health: '#ffffff',
@@ -26,10 +29,23 @@ const LAYER_CSS: Record<string, string> = {
   heal: '#6dff8a',
   player: '#ff4a3d',
   immune: '#b9bec8',
+  reaction: '#ffd84a',
 };
 
 function hexCss(hex: number): string {
-  return '#' + hex.toString(16).padStart(6, '0');
+  return '#' + (hex & 0xffffff).toString(16).padStart(6, '0');
+}
+
+/** 反应浮字颜色的 CSS 缓存（颜色种类很少） */
+const reactionCss = new Map<number, string>();
+function reactionColor(hex: number | undefined): string {
+  if (hex === undefined || !Number.isFinite(hex)) return LAYER_CSS.reaction;
+  let css = reactionCss.get(hex);
+  if (!css) {
+    css = hexCss(hex);
+    reactionCss.set(hex, css);
+  }
+  return css;
 }
 
 const ELEMENT_CSS: Record<Element, string> = {
@@ -64,6 +80,8 @@ const CSS = `
 .fx-dn.fx-dn-player { font-size: 24px; }
 .fx-dn.fx-dn-heal { font-size: 22px; }
 .fx-dn.fx-dn-immune { font-size: 17px; font-weight: 800; letter-spacing: 2px; }
+.fx-dn.fx-dn-reaction { font-size: 18px; font-weight: 800; letter-spacing: 2px; }
+.fx-dn.fx-dn-reaction-big { font-size: 22px; }
 `;
 
 interface DN {
@@ -84,6 +102,8 @@ interface DN {
   kind: Kind;
   element: Element;
   amount: number;
+  /** 反应浮字的文本（其他种类为空串） */
+  text: string;
   stamp: number;
   // 缓存上次写入的样式，避免无谓的 DOM 写
   shown: boolean;
@@ -116,7 +136,7 @@ export class DamageNumbers {
       host.appendChild(el);
       this.pool.push({
         el, active: false, x: 0, y: 0, z: 0, screen: false, sx: 0.5, sy: 0.5, age: 0, life: 1, pop: 0,
-        driftX: 0, rise: 0, crit: false, kind: 'health', element: 'none', amount: 0, stamp: 0,
+        driftX: 0, rise: 0, crit: false, kind: 'health', element: 'none', amount: 0, text: '', stamp: 0,
         shown: false, lastOpacity: -1, className: 'fx-dn',
       });
     }
@@ -135,6 +155,10 @@ export class DamageNumbers {
   spawn(pos: THREE.Vector3, amount: number, opts: DamageNumberOpts | undefined, camPos: THREE.Vector3): void {
     if (!this.host || this.pool.length === 0) return;
     const kind: Kind = opts?.kind ?? 'health';
+    if (kind === 'reaction') {
+      this.spawnReaction(pos, opts);
+      return;
+    }
     const crit = !!opts?.crit && kind !== 'heal' && kind !== 'player' && kind !== 'immune';
     const element: Element = opts?.element ?? 'none';
     if (kind !== 'immune' && !(amount > 0)) return;
@@ -176,6 +200,7 @@ export class DamageNumbers {
     d.kind = kind;
     d.element = element;
     d.amount = kind === 'immune' ? 0 : amount;
+    d.text = '';
     d.stamp = ++this.stamp;
 
     let cls = 'fx-dn';
@@ -190,6 +215,39 @@ export class DamageNumbers {
     }
     d.el.style.color = this.colorFor(kind, element, crit);
     d.el.textContent = this.format(d.amount, kind);
+    d.lastOpacity = -1;
+    this.activeCount++;
+  }
+
+  /** 反应浮字：允许 amount 为 0、不参与合并、寿命 0.9 秒，文本 / 颜色取自 opts */
+  private spawnReaction(pos: THREE.Vector3, opts: DamageNumberOpts | undefined): void {
+    const text = opts?.text;
+    if (!text) return;
+    const big = !!opts?.big;
+    const d = this.take();
+    d.active = true;
+    d.screen = false;
+    d.x = pos.x + (Math.random() - 0.5) * 0.2;
+    d.y = pos.y;
+    d.z = pos.z + (Math.random() - 0.5) * 0.2;
+    d.age = 0;
+    d.pop = 0;
+    d.life = REACTION_LIFE;
+    d.driftX = (Math.random() - 0.5) * 24;
+    d.rise = big ? 46 : 40;
+    d.crit = false;
+    d.kind = 'reaction';
+    d.element = 'none';
+    d.amount = 0;
+    d.text = text;
+    d.stamp = ++this.stamp;
+    const cls = big ? 'fx-dn fx-dn-reaction fx-dn-reaction-big' : 'fx-dn fx-dn-reaction';
+    if (cls !== d.className) {
+      d.el.className = cls;
+      d.className = cls;
+    }
+    d.el.style.color = reactionColor(opts?.color);
+    d.el.textContent = text;
     d.lastOpacity = -1;
     this.activeCount++;
   }

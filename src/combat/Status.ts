@@ -5,6 +5,7 @@
  *   链式冷却、首领眩晕抗性、粒子计时）放在 WeakMap 里，敌人被回收后自动释放。
  * - 每帧先把 slowMult / damageTakenMult 重置为 1 再按状态写入，保证不会累积。
  * - 持续伤害走 Combat.damageEnemy（source 'status'、不暴击、procDepth 1）。
+ * - 元素反应的判定在 Combat.attach（施加之前）；这里只提供「归墟」消耗与「崩解」所需的剩余伤害查询。
  */
 import * as THREE from 'three';
 import type { DamageRequest, DamageResult, Element, GameContext, IEnemy, StatusId, StatusInstance } from '../core/types';
@@ -274,6 +275,41 @@ export class StatusSystem {
         ctx.audio.play('shock_zap', { position: source.position, volume: 0.65, pitch: 0.9 + Math.random() * 0.25 });
       }
     }
+  }
+
+  // ───────────── 元素反应支持（docs/arsenal-expansion.md 2.2 / 2.5） ─────────────
+
+  /**
+   * 消耗状态（只有「归墟」会调用）。
+   * burn：返回剩余伤害的结清值 Σ各层强度 × 0.22 × ceil(剩余秒 / 0.5)（≤ 1.76 × Σ），并清空灼烧；
+   * shock：直接移除，返回 0（雷殛没有结清值）。蚀化设计上永不被消耗，不提供。
+   */
+  consume(enemy: IEnemy, id: 'burn' | 'shock'): number {
+    const st = enemy.statuses;
+    if (id === 'shock') {
+      st.delete('shock');
+      return 0;
+    }
+    const cash = this.dotRemaining(enemy, 'burn');
+    st.delete('burn');
+    const d = this.data.get(enemy);
+    if (d) d.burnPowers.length = 0;
+    return cash;
+  }
+
+  /**
+   * 持续伤害的剩余总量（不修改状态）：
+   * burn = Σ各层强度 × 0.22 × ceil(剩余秒 / 0.5)；corrode = 强度 × 0.08 × ceil(剩余秒 / 0.5)。
+   */
+  dotRemaining(enemy: IEnemy, id: 'burn' | 'corrode'): number {
+    const inst = enemy.statuses.get(id);
+    if (!inst || !(inst.remaining > 0)) return 0;
+    if (id === 'burn') {
+      const d = this.data.get(enemy);
+      const total = d && d.burnPowers.length > 0 ? sum(d.burnPowers) : inst.power;
+      return total * BURN_RATIO * Math.ceil(inst.remaining / BURN_TICK);
+    }
+    return inst.power * CORRODE_RATIO * Math.ceil(inst.remaining / CORRODE_TICK);
   }
 
   private stun(enemy: IEnemy, d: StatusData, seconds: number): boolean {

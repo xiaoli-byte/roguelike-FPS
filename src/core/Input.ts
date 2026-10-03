@@ -5,12 +5,12 @@
 export type Action =
   | 'forward' | 'back' | 'left' | 'right'
   | 'jump' | 'dash' | 'reload' | 'interact'
-  | 'skillPrimary' | 'skillSecondary'
+  | 'skillPrimary' | 'skillSecondary' | 'weaponSkill'
   | 'weapon1' | 'weapon2' | 'swapWeapon'
   | 'pause' | 'inventory'
   | 'fire' | 'aim';
 
-/** 键盘动作绑定（KeyboardEvent.code）。fire/aim 走鼠标按键。 */
+/** 键盘动作绑定（KeyboardEvent.code）。fire / aim 走鼠标按键；weaponSkill 键盘 V 与鼠标中键都可触发。 */
 export const DEFAULT_BINDINGS: Record<Action, string[]> = {
   forward: ['KeyW', 'ArrowUp'],
   back: ['KeyS', 'ArrowDown'],
@@ -22,6 +22,8 @@ export const DEFAULT_BINDINGS: Record<Action, string[]> = {
   interact: ['KeyF'],
   skillPrimary: ['KeyQ'],
   skillSecondary: ['KeyE'],
+  /** 武器技能（魔刀千刃「千刃·无间」）；另绑定鼠标中键，见 MOUSE_ACTIONS */
+  weaponSkill: ['KeyV'],
   weapon1: ['Digit1'],
   weapon2: ['Digit2'],
   swapWeapon: ['KeyX'],
@@ -31,7 +33,10 @@ export const DEFAULT_BINDINGS: Record<Action, string[]> = {
   aim: [],
 };
 
-const MOUSE_ACTIONS: Partial<Record<Action, number>> = { fire: 0, aim: 2 };
+/** 鼠标按键绑定（MouseEvent.button）：0 左键 / 1 中键 / 2 右键 */
+const MOUSE_ACTIONS: Partial<Record<Action, number>> = { fire: 0, aim: 2, weaponSkill: 1 };
+/** 鼠标中键：按下时 preventDefault，避免浏览器进入自动滚动 / 中键粘贴 */
+const MIDDLE_BUTTON = 1;
 
 const PREVENT_DEFAULT = new Set(['Tab', 'Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6']);
 
@@ -79,6 +84,7 @@ export class Input {
 
     window.addEventListener('mousedown', (e) => {
       if (!this.locked && !this.freeLook && e.target !== canvas) return;
+      if (e.button === MIDDLE_BUTTON) e.preventDefault();
       this.buttons.add(e.button);
       this.buttonsPressed.add(e.button);
     });
@@ -102,6 +108,10 @@ export class Input {
       },
       { passive: true },
     );
+    // 中键单击（auxclick）在部分浏览器会打开链接 / 粘贴：游戏中一律拦截
+    window.addEventListener('auxclick', (e) => {
+      if (e.button === MIDDLE_BUTTON && (this.locked || e.target === canvas)) e.preventDefault();
+    });
     canvas.addEventListener('contextmenu', (e) => e.preventDefault());
     window.addEventListener('contextmenu', (e) => {
       if (this.locked) e.preventDefault();

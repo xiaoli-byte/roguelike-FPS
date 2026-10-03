@@ -1,5 +1,5 @@
 /**
- * 第一人称镜头表现：行走晃动（并给出步点）、侧移倾斜、落地下沉、受击抖动、
+ * 第一人称镜头表现：行走晃动（并给出步点）、侧移倾斜、落地下沉、受击抖动与镜头冲击（斩击命中）、
  * 屏幕震动（读取并衰减 ctx.cameraFx）、FOV（设置 + 武器开镜 + 冲刺 / 高速）、死亡倒地。
  * 只影响相机，不影响玩法用的 eye 与瞄准方向。
  */
@@ -78,6 +78,12 @@ export class CameraRig {
     const dir = side === 0 ? (Math.random() < 0.5 ? -1 : 1) : Math.sign(side);
     this.punchRollVel += dir * 1.1 * s;
     this.punchPitchVel += 0.6 * s;
+  }
+
+  /** 镜头冲击（斩击命中等）：直接给受击弹簧角速度冲量（弧度/秒），自然回弹 */
+  punch(roll: number, pitch: number): void {
+    if (Number.isFinite(roll)) this.punchRollVel += roll;
+    if (Number.isFinite(pitch)) this.punchPitchVel += pitch;
   }
 
   dashKick(): void {

@@ -1,6 +1,7 @@
 /**
  * 敌人头顶血条：对活着的非 Boss 敌人（精英，或任一层未满）投影头顶位置，
  * 显示分层血条（护盾 / 护甲 / 生命）、精英名称与状态小标。DOM 池复用，不每帧重建。
+ * 状态行按身上元素状态种数提示元素反应：两种 = 可反应（is-reactive），三种 = 归墟就绪（is-primed）。
  */
 import * as THREE from 'three';
 import type { GameContext, IEnemy } from '../core/types';
@@ -17,9 +18,15 @@ const _pos = new THREE.Vector3();
 const _fwd = new THREE.Vector3();
 const _rel = new THREE.Vector3();
 
+/** 状态行的反应提示：0 无，1 可反应（两种元素状态），2 归墟就绪（三种齐聚） */
+const REACT_NONE = 0;
+const REACT_PAIR = 1;
+const REACT_PRIMED = 2;
+
 interface BarSlot {
   el: HTMLDivElement;
   nameEl: HTMLDivElement;
+  statusEl: HTMLDivElement;
   shieldRow: HTMLDivElement;
   shieldFill: HTMLDivElement;
   armorRow: HTMLDivElement;
@@ -44,6 +51,8 @@ interface BarSlot {
   name: string;
   statusMask: number;
   stacks: number[];
+  /** 当前写入 DOM 的反应提示（REACT_*） */
+  reactState: number;
   occluded: boolean;
   occlNext: number;
 }
@@ -189,12 +198,14 @@ export class EnemyBars {
 
   private syncStatus(s: BarSlot, e: IEnemy): void {
     let mask = 0;
+    let elems = 0;
     for (let i = 0; i < STATUS_BADGES.length; i++) {
       const b = STATUS_BADGES[i];
       const st = e.statuses.get(b.id);
       const on = b.id === 'stun' ? e.stunTime > 0 || !!st : !!st;
       if (!on) continue;
       mask |= 1 << i;
+      if (b.id === 'burn' || b.id === 'shock' || b.id === 'corrode') elems++;
       const stacks = st && b.id !== 'stun' ? st.stacks : 0;
       if (stacks !== s.stacks[i]) {
         s.stacks[i] = stacks;
@@ -207,6 +218,13 @@ export class EnemyBars {
         if ((mask & bit) !== (s.statusMask & bit)) s.badges[i].hidden = !(mask & bit);
       }
       s.statusMask = mask;
+    }
+    // 元素反应提示：两种相遇即可反应，三种齐聚再补一种就是「归墟」
+    const react = elems >= 3 ? REACT_PRIMED : elems === 2 ? REACT_PAIR : REACT_NONE;
+    if (react !== s.reactState) {
+      s.reactState = react;
+      s.statusEl.classList.toggle('is-reactive', react === REACT_PAIR);
+      s.statusEl.classList.toggle('is-primed', react === REACT_PRIMED);
     }
   }
 
@@ -263,9 +281,10 @@ export class EnemyBars {
     const hpFill = h('div', 'gf-ebar__fill', hpRow);
     el.hidden = true;
     return {
-      el, nameEl, shieldRow, shieldFill, armorRow, armorFill, hpFill, hpTrail, badges,
+      el, nameEl, statusEl: status, shieldRow, shieldFill, armorRow, armorFill, hpFill, hpTrail, badges,
       enemy: null, stamp: 0, x: -1, y: -1, scale: -1, opacity: -1, shield: -1, armor: -1, hp: -1, trail: 1,
-      trailHoldUntil: 0, hasShield: true, hasArmor: true, name: '\u0000', statusMask: 0, stacks: [0, 0, 0, 0],
+      trailHoldUntil: 0, hasShield: true, hasArmor: true, name: '\u0000', statusMask: 0,
+      stacks: STATUS_BADGES.map(() => 0), reactState: REACT_NONE,
       occluded: false, occlNext: 0,
     };
   }

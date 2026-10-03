@@ -81,13 +81,16 @@ export const ELEMENT_SCROLLS: ScrollDef[] = [
     description: '灼烧中的敌人死亡时，火焰蔓延至 5 米内所有敌人，附着强度为其最大生命每层 10% 的灼烧。',
     setup: (s, n, ctx) => {
       const burning = trackStatus(s, ctx, 'burn');
-      s.on('enemy:killed', ({ enemy }) => {
+      s.on('enemy:killed', ({ enemy, result }) => {
         if (!burning(enemy)) return;
+        // 蔓延的灼烧是击杀那一击的衍生附着：深度 + 1（直接击杀 → 1，可再引发一级反应；
+        // 反应 / 持续伤害造成的击杀 → 2，不再反应），免得反应击杀以 depth 0 重新起链、绕过连锁深度上限
+        const depth = Math.min(2, depthOf(result.request) + 1);
         const c = bodyCenter(enemy, _p);
         const power = enemy.maxHp * 0.1 * n;
         let spread = 0;
         forEachNear(ctx, c, 5, enemy, (e) => {
-          ctx.combat.applyStatus(e, 'burn', Math.min(power, e.maxHp * 0.5));
+          ctx.combat.applyStatus(e, 'burn', Math.min(power, e.maxHp * 0.5), undefined, { depth });
           spread++;
         });
         if (spread > 0) {

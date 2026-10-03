@@ -1,9 +1,11 @@
 /**
- * 游戏内 HUD：生命 / 护盾、武器与弹药、Q/E 技能与冲刺、右上角关卡信息与金币，
- * 并组合准星反馈、敌人血条、Boss 血条、Tab 面板。
+ * 游戏内 HUD：生命 / 护盾、武器与弹药（含双形态武器的形态徽记）、武器技能图标、Q/E 技能与冲刺、
+ * 右上角关卡信息与金币，并组合准星反馈、敌人血条、Boss 血条、Tab 面板。
  * 每帧只写变化了的文本 / 样式（缓存上次值），不重建 DOM。
  */
-import type { DamageResult, GameContext, GameState, IEnemy, SkillState, StageNode, WeaponInstance } from '../core/types';
+import type {
+  DamageResult, GameContext, GameState, IEnemy, SkillState, StageNode, WeaponForm, WeaponInstance, WeaponSkillState,
+} from '../core/types';
 import { RARITY_CSS } from '../core/types';
 import { clamp, clamp01 } from '../core/math';
 import type * as THREE from 'three';
@@ -157,13 +159,28 @@ class Vitals {
 
 // ───────────────────────────── 武器 ─────────────────────────────
 
+/** 双形态武器没有给出形态名时的兜底 [近战, 远程] */
+const DEFAULT_FORM_NAMES: readonly [string, string] = ['近战', '远程'];
+/** 形态徽记下的「右键 ⇄ 另一形态」提示：本次会话前几次变形后淡出 */
+const FORM_HINT_MORPHS = 5;
+/** 本次会话已变形的次数（跨关卡 / 跨局保留，提示只教一次） */
+let formHintMorphs = 0;
+
+/**
+ * 武器槽。双形态 / 召回武器（魔刀千刃，`IWeaponSystem.activeForm !== null`）额外显示：
+ * 形态徽记（斩 / 千刃）、近战形态弹药 ∞ + 「刃 N」回刃进度、远程形态备弹 ∞ 与「召回」提示、
+ * 变形中徽记翻转（is-morphing）、换形一击窗口边框发光（is-strike）。新字段全部可选，缺省按普通武器显示。
+ */
 class WeaponPanel {
   readonly root: HTMLDivElement;
   private main: HTMLDivElement;
+  private formEl: HTMLSpanElement;
+  private formHintEl: HTMLDivElement;
   private elemEl: HTMLSpanElement;
   private nameEl: HTMLSpanElement;
   private lvlEl: HTMLSpanElement;
   private magEl: HTMLSpanElement;
+  private sepEl: HTMLSpanElement;
   private reserveEl: HTMLSpanElement;
   private reloadRow: HTMLDivElement;
   private reloadFill: HTMLDivElement;
@@ -190,6 +207,11 @@ class WeaponPanel {
   private hint = '';
   private reloadQ = -2;
   private hasWeapon = true;
+  /** 当前显示的形态（null = 普通武器）与形态名（随武器变化从 describe 取） */
+  private form: WeaponForm | null = null;
+  private formNames: readonly [string, string] = DEFAULT_FORM_NAMES;
+  private morphing = false;
+  private strike = false;
 
   constructor(parent: HTMLElement, private readonly ctx: GameContext) {
     this.root = h('div', 'gf-weapon', parent);
@@ -200,13 +222,18 @@ class WeaponPanel {
 
     this.main = h('div', 'gf-weapon__main', this.root);
     const title = h('div', 'gf-weapon__title', this.main);
+    this.formEl = h('span', 'gf-weapon__form', title);
+    this.formEl.hidden = true;
     this.elemEl = h('span', 'gf-weapon__elem', title);
     this.nameEl = h('span', 'gf-weapon__name', title);
     this.lvlEl = h('span', 'gf-weapon__lvl', title);
+    // 双形态：徽记下方「右键 ⇄ 另一形态」（新玩家不知道右键已经不是开镜），前几次变形后淡出
+    this.formHintEl = h('div', 'gf-weapon__formhint', this.main);
+    this.formHintEl.hidden = true;
 
     const ammo = h('div', 'gf-weapon__ammo', this.main);
     this.magEl = h('span', 'gf-weapon__mag', ammo);
-    h('span', 'gf-weapon__sep', ammo, '/');
+    this.sepEl = h('span', 'gf-weapon__sep', ammo, '/');
     this.reserveEl = h('span', 'gf-weapon__reserve', ammo);
 
     this.reloadRow = h('div', 'gf-weapon__reload', this.main);
@@ -220,6 +247,25 @@ class WeaponPanel {
       [{ transform: 'translateX(14px)', opacity: 0.3 }, { transform: 'translateX(0)', opacity: 1 }],
       { duration: 220, easing: 'cubic-bezier(.2,.8,.2,1)' },
     );
+  }
+
+  /** 切换形态：武器槽提亮一下（与切枪的横移区分开；徽记翻转由 is-morphing 的 CSS 动画负责） */
+  morphPulse(): void {
+    this.main.animate([{ filter: 'brightness(1.8)' }, { filter: 'brightness(1)' }], { duration: 320, easing: 'ease-out' });
+  }
+
+  /** 变形计数：够 FORM_HINT_MORPHS 次后右键提示淡出（不再显示） */
+  onMorph(): void {
+    if (formHintMorphs >= FORM_HINT_MORPHS) return;
+    formHintMorphs++;
+    if (formHintMorphs >= FORM_HINT_MORPHS) this.formHintEl.classList.add('is-off');
+  }
+
+  /** 右键提示：「右键 ⇄ 另一形态名」；普通武器隐藏。已学会（is-off）时由 CSS 淡出并收起高度 */
+  private syncFormHint(form: WeaponForm | null): void {
+    this.formHintEl.hidden = form === null;
+    this.formHintEl.classList.toggle('is-off', formHintMorphs >= FORM_HINT_MORPHS);
+    if (form !== null) this.formHintEl.textContent = `右键 ⇄ ${this.formNames[form === 'melee' ? 1 : 0]}`;
   }
 
   reset(): void {
@@ -243,8 +289,12 @@ class WeaponPanel {
       this.nameEl.textContent = '空手';
       this.elemEl.hidden = true;
       this.lvlEl.hidden = true;
+      this.setForm(null);
+      this.setMorphState(false, false);
       this.magEl.textContent = '–';
       this.reserveEl.textContent = '–';
+      // 下次拿到武器时强制重写弹药数字
+      this.mag = this.reserve = -1;
     }
 
     // 副武器
@@ -260,7 +310,7 @@ class WeaponPanel {
         const d = this.describe(other);
         this.secName.textContent = other.level > 0 ? `${d.name} +${other.level}` : d.name;
         this.secRoot.style.setProperty('--rarity', d.color);
-        this.setElem(this.secElem, other);
+        this.setElem(this.secElem, other, d.elementLabel);
       }
     }
 
@@ -272,19 +322,23 @@ class WeaponPanel {
       this.reloadQ = q;
       if (q >= 0) this.reloadFill.style.transform = `scaleX(${(q / 100).toFixed(2)})`;
     }
+    // 召回式武器（远程形态）：换弹 = 召回、打空提示按 R 召回，永不「弹药耗尽」；近战形态不耗弹、无提示
     let hint = '';
-    if (reloading) hint = '换弹中';
-    else if (w && !this.infinite && this.mag === 0) hint = this.reserve > 0 ? '按 R 换弹' : '弹药耗尽';
+    const form = w ? this.form : null;
+    if (reloading) hint = form === 'ranged' ? '召回中' : '换弹中';
+    else if (w && form === 'ranged' && this.mag === 0) hint = '按 R 召回';
+    else if (w && form === null && !this.infinite && this.mag === 0) hint = this.reserve > 0 ? '按 R 换弹' : '弹药耗尽';
     if (hint !== this.hint) {
       this.hint = hint;
       this.hintEl.textContent = hint;
       this.reloadRow.classList.toggle('has-hint', !!hint);
-      this.reloadRow.classList.toggle('is-alert', hint === '按 R 换弹' || hint === '弹药耗尽');
+      this.reloadRow.classList.toggle('is-alert', hint === '按 R 换弹' || hint === '弹药耗尽' || hint === '按 R 召回');
     }
   }
 
   private syncMain(w: WeaponInstance): void {
     const ws = this.ctx.weapons;
+    let named = false;
     if (w.uid !== this.uid || w.level !== this.lvl || w.rarity !== this.rar || w.element !== this.elem || w.affixes.length !== this.aff) {
       this.uid = w.uid;
       this.lvl = w.level;
@@ -296,25 +350,48 @@ class WeaponPanel {
       this.main.style.setProperty('--rarity', d.color);
       this.lvlEl.hidden = w.level <= 0;
       this.lvlEl.textContent = `+${w.level}`;
-      this.setElem(this.elemEl, w);
+      this.setElem(this.elemEl, w, d.elementLabel);
+      this.formNames = d.formNames ?? DEFAULT_FORM_NAMES;
+      named = true;
     }
+
+    // 形态（双形态武器）：徽记、变形中、换形一击窗口
+    const form = ws.activeForm ?? null;
+    if (form !== this.form || named) this.setForm(form);
+    this.setMorphState(
+      form !== null && (ws.formMorphProgress ?? 1) < 1,
+      form !== null && (ws.formStrikeTime ?? 0) > 0,
+    );
+
     const cap = Math.max(1, ws.magCapacity(w));
     const mag = Math.max(0, Math.floor(w.mag));
     const reserve = Math.max(0, Math.floor(w.reserve));
     const infinite = (this.ctx.run.flags.infiniteAmmo ?? 0) > 0;
-    if (mag !== this.mag) {
-      this.mag = mag;
-      this.magEl.textContent = String(mag);
-    }
-    if (reserve !== this.reserve || infinite !== this.infinite) {
-      this.reserve = reserve;
-      this.reserveEl.textContent = infinite ? '∞' : String(reserve);
+    if (form === 'melee') {
+      // 近战形态不耗弹：主数字 ∞（缩小），备弹位置显示弹匣里的飞刃数（回刃进度，放大并按储量着色）
+      if (mag !== this.mag || cap !== this.cap) {
+        this.mag = mag;
+        this.magEl.textContent = '∞';
+        this.reserveEl.textContent = `刃 ${mag}`;
+        this.reserveEl.style.setProperty('--fill', clamp01(mag / cap).toFixed(2));
+      }
+    } else {
+      if (mag !== this.mag) {
+        this.mag = mag;
+        this.magEl.textContent = String(mag);
+      }
+      // 召回式武器不需要备弹：恒显示 ∞（-3 为它的缓存标记）
+      const rv = form === 'ranged' ? -3 : reserve;
+      if (rv !== this.reserve || infinite !== this.infinite) {
+        this.reserve = rv;
+        this.reserveEl.textContent = infinite || form === 'ranged' ? '∞' : String(reserve);
+      }
     }
     if (infinite !== this.infinite) {
       this.infinite = infinite;
       this.main.classList.toggle('is-infinite', infinite);
     }
-    const low = !infinite && mag <= Math.max(1, Math.ceil(cap * 0.25));
+    const low = form !== 'melee' && !infinite && mag <= Math.max(1, Math.ceil(cap * 0.25));
     if (low !== this.low || cap !== this.cap) {
       this.low = low;
       this.cap = cap;
@@ -322,19 +399,58 @@ class WeaponPanel {
     }
   }
 
-  private setElem(el: HTMLSpanElement, w: WeaponInstance): void {
-    const has = w.element !== 'none';
-    el.hidden = !has;
-    if (has) {
+  /** 形态显示切换（含切到普通武器 / 空手时 form = null）：徽记、弹药显示方式 */
+  private setForm(form: WeaponForm | null): void {
+    const changed = form !== this.form;
+    this.form = form;
+    this.formEl.hidden = form === null;
+    if (form !== null) this.formEl.textContent = this.formNames[form === 'melee' ? 0 : 1];
+    this.syncFormHint(form);
+    if (!changed) return;
+    this.formEl.classList.toggle('is-melee', form === 'melee');
+    this.formEl.classList.toggle('is-ranged', form === 'ranged');
+    this.magEl.classList.toggle('is-inf', form === 'melee');
+    this.sepEl.hidden = form === 'melee';
+    this.reserveEl.classList.toggle('is-blades', form === 'melee');
+    // 弹药的显示方式随形态变化：强制重写
+    this.mag = this.reserve = -1;
+  }
+
+  private setMorphState(morphing: boolean, strike: boolean): void {
+    if (morphing !== this.morphing) {
+      this.morphing = morphing;
+      this.main.classList.toggle('is-morphing', morphing);
+    }
+    if (strike !== this.strike) {
+      this.strike = strike;
+      this.main.classList.toggle('is-strike', strike);
+    }
+  }
+
+  /**
+   * 元素徽记：武器描述给出特殊元素显示（如三才转轮的「三相」）时取其首字并加 is-tri（三色渐变），
+   * 否则沿用元素单字。只在武器变化时调用（见 syncMain / 副武器的缓存条件）。
+   */
+  private setElem(el: HTMLSpanElement, w: WeaponInstance, label: string | undefined): void {
+    el.hidden = !label && w.element === 'none';
+    el.classList.toggle('is-tri', !!label);
+    if (label) {
+      el.textContent = label.charAt(0);
+    } else if (w.element !== 'none') {
       el.textContent = ELEMENT_GLYPH[w.element];
       el.style.setProperty('--elem', elementCss(w.element));
     }
   }
 
-  private describe(w: WeaponInstance): { name: string; color: string } {
+  private describe(w: WeaponInstance): { name: string; color: string; elementLabel?: string; formNames?: [string, string] } {
     try {
       const d = this.ctx.weapons.describe(w);
-      return { name: d.name || weaponName(w.defId), color: d.color || RARITY_CSS[w.rarity] || RARITY_CSS[0] };
+      return {
+        name: d.name || weaponName(w.defId),
+        color: d.color || RARITY_CSS[w.rarity] || RARITY_CSS[0],
+        elementLabel: d.elementLabel || undefined,
+        formNames: d.formNames,
+      };
     } catch {
       return { name: weaponName(w.defId), color: RARITY_CSS[w.rarity] || RARITY_CSS[0] };
     }
@@ -345,6 +461,35 @@ class WeaponPanel {
 
 const RING_R = 27;
 const RING_C = 2 * Math.PI * RING_R;
+
+/** 圆盘 + SVG 冷却环（SkillIcon / WeaponSkillIcon 共用结构），返回进度圆 */
+function buildRing(disc: HTMLElement): SVGCircleElement {
+  const svg = document.createElementNS(SVG_NS, 'svg');
+  svg.setAttribute('viewBox', '0 0 64 64');
+  svg.setAttribute('class', 'gf-skill__ring');
+  const track = document.createElementNS(SVG_NS, 'circle');
+  track.setAttribute('class', 'gf-skill__track');
+  const prog = document.createElementNS(SVG_NS, 'circle');
+  prog.setAttribute('class', 'gf-skill__prog');
+  for (const c of [track, prog]) {
+    c.setAttribute('cx', '32');
+    c.setAttribute('cy', '32');
+    c.setAttribute('r', String(RING_R));
+    svg.appendChild(c);
+  }
+  prog.style.strokeDasharray = RING_C.toFixed(2);
+  disc.appendChild(svg);
+  return prog;
+}
+
+/** 冷却秒数的显示量化：≥ 1 秒取整，< 1 秒保留一位小数；-1 = 不显示 */
+function cooldownQ(rem: number): number {
+  return rem > 0 ? (rem >= 1 ? Math.ceil(rem) : Math.ceil(rem * 10) / 10) : -1;
+}
+
+function cooldownText(q: number): string {
+  return q < 0 ? '' : q >= 1 ? String(q) : q.toFixed(1);
+}
 
 class SkillIcon {
   readonly root: HTMLDivElement;
@@ -366,22 +511,7 @@ class SkillIcon {
   constructor(parent: HTMLElement, key: string, private readonly ctx: GameContext) {
     this.root = h('div', 'gf-skill', parent);
     const disc = h('div', 'gf-skill__disc', this.root);
-    const svg = document.createElementNS(SVG_NS, 'svg');
-    svg.setAttribute('viewBox', '0 0 64 64');
-    svg.setAttribute('class', 'gf-skill__ring');
-    const track = document.createElementNS(SVG_NS, 'circle');
-    track.setAttribute('class', 'gf-skill__track');
-    const prog = document.createElementNS(SVG_NS, 'circle');
-    prog.setAttribute('class', 'gf-skill__prog');
-    for (const c of [track, prog]) {
-      c.setAttribute('cx', '32');
-      c.setAttribute('cy', '32');
-      c.setAttribute('r', String(RING_R));
-      svg.appendChild(c);
-    }
-    prog.style.strokeDasharray = RING_C.toFixed(2);
-    this.ring = prog;
-    disc.appendChild(svg);
+    this.ring = buildRing(disc);
     this.glyphEl = h('span', 'gf-skill__glyph', disc);
     this.cdEl = h('span', 'gf-skill__cd', disc);
     this.chargesEl = h('span', 'gf-skill__charges', disc);
@@ -439,10 +569,10 @@ class SkillIcon {
       this.empty = empty;
       this.root.classList.toggle('is-cooling', empty);
     }
-    const cdQ = empty && rem > 0 ? (rem >= 1 ? Math.ceil(rem) : Math.ceil(rem * 10) / 10) : -1;
+    const cdQ = empty ? cooldownQ(rem) : -1;
     if (cdQ !== this.cdQ) {
       this.cdQ = cdQ;
-      this.cdEl.textContent = cdQ < 0 ? '' : cdQ >= 1 ? String(cdQ) : cdQ.toFixed(1);
+      this.cdEl.textContent = cooldownText(cdQ);
     }
     let active = false;
     try {
@@ -454,6 +584,112 @@ class SkillIcon {
       this.active = active;
       this.root.classList.toggle('is-active', active);
     }
+  }
+}
+
+/**
+ * 武器技能图标（魔刀千刃「千刃·无间」，docs/demon-blade.md 10.9）：结构与 SkillIcon 相同
+ * （圆盘 + 冷却环 + 单字 + 冷却秒数 + 按键角标），放在右下角武器槽左侧。
+ * 当前武器没有武器技能（IWeaponSystem.weaponSkill 为 null 或未提供）时隐藏；冷却转好时闪一下。
+ */
+class WeaponSkillIcon {
+  readonly root: HTMLDivElement;
+  private ring: SVGCircleElement;
+  private glyphEl: HTMLSpanElement;
+  private cdEl: HTMLSpanElement;
+  private keyEl: HTMLSpanElement;
+  private nameEl: HTMLDivElement;
+
+  private id = '\u0000';
+  private prog = -1;
+  private cdQ = -2;
+  private cooling = false;
+  private active = false;
+  private present = true;
+  /** 上一帧的剩余冷却；-1 = 刚出现 / 刚重置（不触发就绪闪光） */
+  private lastRem = -1;
+
+  constructor(parent: HTMLElement, private readonly ctx: GameContext) {
+    this.root = h('div', 'gf-skill gf-wskill', parent);
+    const disc = h('div', 'gf-skill__disc', this.root);
+    this.ring = buildRing(disc);
+    this.glyphEl = h('span', 'gf-skill__glyph', disc);
+    this.cdEl = h('span', 'gf-skill__cd', disc);
+    this.keyEl = h('span', 'gf-skill__key', disc, 'V');
+    this.nameEl = h('div', 'gf-skill__name', this.root);
+    this.update(null);
+  }
+
+  flash(): void {
+    if (!this.present) return;
+    this.root.animate([{ filter: 'brightness(2.2)', transform: 'scale(1.12)' }, { filter: 'brightness(1)', transform: 'scale(1)' }], {
+      duration: 320,
+      easing: 'ease-out',
+    });
+  }
+
+  reset(): void {
+    this.id = '\u0000';
+    this.prog = -1;
+    this.cdQ = -2;
+    this.lastRem = -1;
+  }
+
+  update(s: WeaponSkillState | null): void {
+    const present = !!s;
+    if (present !== this.present) {
+      this.present = present;
+      this.root.hidden = !present;
+      this.lastRem = -1;
+    }
+    if (!s) return;
+
+    if (s.id !== this.id) {
+      this.id = s.id;
+      const name = s.name || '武器技能';
+      this.glyphEl.textContent = s.glyph || name.charAt(0);
+      this.nameEl.textContent = name;
+      this.keyEl.textContent = s.key || 'V';
+      this.root.title = this.describe(name);
+    }
+    const rem = Math.max(0, s.cooldownRemaining);
+    const total = s.cooldownTotal;
+    const prog = rem > 0 && total > 0 ? Math.round(clamp01(1 - rem / total) * 200) / 200 : rem > 0 ? 0 : 1;
+    if (prog !== this.prog) {
+      this.prog = prog;
+      this.ring.style.strokeDashoffset = (RING_C * (1 - prog)).toFixed(2);
+    }
+    const cooling = rem > 0;
+    if (cooling !== this.cooling) {
+      this.cooling = cooling;
+      this.root.classList.toggle('is-cooling', cooling);
+    }
+    // 冷却转好：闪一下提示可以再放
+    if (this.lastRem > 0 && !cooling) this.flash();
+    this.lastRem = rem;
+    const cdQ = cooldownQ(rem);
+    if (cdQ !== this.cdQ) {
+      this.cdQ = cdQ;
+      this.cdEl.textContent = cooldownText(cdQ);
+    }
+    const active = !!s.active;
+    if (active !== this.active) {
+      this.active = active;
+      this.root.classList.toggle('is-active', active);
+    }
+  }
+
+  /** 悬停说明：技能描述（只在技能变化时取一次 describe） */
+  private describe(name: string): string {
+    try {
+      const ws = this.ctx.weapons;
+      const w = ws.active;
+      const sk = w ? ws.describe(w).skill : undefined;
+      if (sk) return `${sk.name}（${sk.key} / 鼠标中键）：${sk.description}`;
+    } catch {
+      // 描述失败不影响图标本身
+    }
+    return name;
   }
 }
 
@@ -637,6 +873,7 @@ export class HUD {
   readonly root: HTMLDivElement;
   private vitals: Vitals;
   private weapon: WeaponPanel;
+  private wskill: WeaponSkillIcon;
   private skillQ: SkillIcon;
   private skillE: SkillIcon;
   private dash: DashPips;
@@ -657,6 +894,8 @@ export class HUD {
     const bl = h('div', 'gf-hud__corner gf-hud__corner--bl', this.root);
     this.vitals = new Vitals(bl, ctx);
     const br = h('div', 'gf-hud__corner gf-hud__corner--br', this.root);
+    // 武器技能图标在武器槽左侧（没有武器技能时隐藏，不占位）
+    this.wskill = new WeaponSkillIcon(br, ctx);
     this.weapon = new WeaponPanel(br, ctx);
     const bc = h('div', 'gf-hud__corner gf-hud__corner--bc', this.root);
     const skills = h('div', 'gf-skills', bc);
@@ -697,6 +936,7 @@ export class HUD {
     this.crosshair.reset();
     this.vitals.reset();
     this.weapon.reset();
+    this.wskill.reset();
     this.skillQ.reset();
     this.skillE.reset();
     this.dash.reset();
@@ -736,6 +976,22 @@ export class HUD {
     if (this.visible) this.weapon.pulse();
   }
 
+  /** 释放武器技能（weapon:skillUsed） */
+  onWeaponSkillUsed(): void {
+    if (this.visible) this.wskill.flash();
+  }
+
+  /** 双形态武器开始切换形态（weapon:formChanged） */
+  onWeaponFormChanged(): void {
+    this.weapon.onMorph();
+    if (this.visible) this.weapon.morphPulse();
+  }
+
+  /** 千刃贯穿结算（weapon:skillImpale）：朱红暗角闪 + 视野外刃印的方向刃光 */
+  onWeaponImpale(points: readonly THREE.Vector3[]): void {
+    if (this.visible) this.crosshair.onBladeImpale(points);
+  }
+
   // ───────────── 每帧 ─────────────
 
   update(dt: number, now: number, state: GameState): void {
@@ -743,6 +999,7 @@ export class HUD {
     const ctx = this.ctx;
     try { this.vitals.update(now); } catch (e) { this.fail('vitals', e); }
     try { this.weapon.update(); } catch (e) { this.fail('weapon', e); }
+    try { this.wskill.update(ctx.weapons.weaponSkill ?? null); } catch (e) { this.fail('weaponSkill', e); }
     try {
       this.skillQ.update(ctx.player.skills.primary);
       this.skillE.update(ctx.player.skills.secondary);
