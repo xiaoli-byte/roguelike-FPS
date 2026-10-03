@@ -6,7 +6,7 @@
  *  - 冰枪齐射：身后浮现 5（二阶段 7）支冰枪，各自的瞄准线追踪玩家，发射前 0.3 秒逐支锁定（持续移动即可闪避）。
  *  - 俯冲：高空盘旋并画出直线预警 → 沿线低空俯冲撞击（侧移 / 冲刺躲开；撞上掩体会眩晕）。二阶段连续两次并散射冰棱。
  *  - 寒霜新星：降到低空蓄力（地面预警圈）→ 近身爆发；之后在低空停留片刻（输出窗口）。
- *  - 召唤冰晶：在场地各处召唤 2（二阶段 3）个可击毁的冰晶（同时最多 4 个），存活时持续为妖后回复护盾。
+ *  - 召唤冰晶：在场地各处召唤 2（二阶段 3）个可击毁的冰晶（同时最多 4 个），存活时持续为妖后回复护盾（单个冰晶输送量有上限，耗尽后熄灭）。
  * 阶段：50% 展开极寒之翼（变紫、回复部分护盾、召唤冰晶）；此后弹幕更密，且 5 秒内妖后与冰晶都没挨打时护盾会自行再生。
  */
 import * as THREE from 'three';
@@ -42,8 +42,12 @@ const SHARD = 0x9fe8ff;
 const LOCK = 0xff5a7a;
 const MAX_LANCES = 7;
 const MAX_CRYSTALS = 4;
-/** 每个冰晶每秒为妖后回复的护盾（占护盾上限的比例） */
+/**
+ * 冰晶供能：每个已成形的冰晶每秒回复最大护盾的 CRYSTAL_REGEN，单个冰晶累计最多输送 CRYSTAL_CHARGE（之后熄灭）。
+ * 有上限是为了避免「冰晶回盾 > 玩家输出」时战斗无限拖长（实测稀有步枪无秘卷 400 秒打不完）。
+ */
 const CRYSTAL_REGEN = 0.008;
+const CRYSTAL_CHARGE = 0.1;
 
 const _v = new THREE.Vector3();
 const _m = new THREE.Vector3();
@@ -604,6 +608,7 @@ export class Matriarch extends BossBase {
       const e = this.ctx.enemies.spawn('boss_ice_crystal', { position: this.crystalPts[i].clone(), level: this.level });
       if (e instanceof IceCrystal) {
         e.owner = this;
+        e.charge = this.maxShield * CRYSTAL_CHARGE;
         this.crystals.push(e);
         this.minions.push(e);
         n++;
@@ -667,19 +672,24 @@ export class Matriarch extends BossBase {
     const bob = this.anim === 'dive' ? 0 : Math.sin(this.age * 1.1) * 0.35;
     this.flyTargetY = this.floorY() + this.hoverTarget + bob;
 
-    // 冰晶供能（每个已成形的冰晶每秒回复 0.8% 护盾上限）/ 二阶段 5 秒未受压制时自愈（每秒 2%）。
+    // 冰晶供能（每个已成形、仍有余能的冰晶每秒回复 0.8% 护盾上限，单个累计最多 10%）/ 二阶段 5 秒未受压制时自愈（每秒 2%）。
     // 「受压制」= 妖后或她的冰晶最近挨过打：玩家专心击碎冰晶时不会被额外惩罚
     this.aliveCrystals();
-    let linked = 0;
     if (this.lastHurtTime > this.pressedAt) this.pressedAt = this.lastHurtTime;
     for (const c of this.crystals) {
-      if (c.age >= c.spawnDuration) linked++;
       if (c.lastHurtTime > this.pressedAt) this.pressedAt = c.lastHurtTime;
     }
     if (this.shield < this.maxShield) {
-      let rate = linked * CRYSTAL_REGEN;
-      if (this.phase >= 1 && this.ctx.time.now - this.pressedAt > 5) rate += 0.02;
-      if (rate > 0) this.shield = Math.min(this.maxShield, this.shield + this.maxShield * rate * dt);
+      let gain = 0;
+      const per = this.maxShield * CRYSTAL_REGEN * dt;
+      for (const c of this.crystals) {
+        if (c.age < c.spawnDuration || c.charge <= 0) continue;
+        const g = Math.min(per, c.charge);
+        c.charge -= g;
+        gain += g;
+      }
+      if (this.phase >= 1 && this.ctx.time.now - this.pressedAt > 5) gain += this.maxShield * 0.02 * dt;
+      if (gain > 0) this.shield = Math.min(this.maxShield, this.shield + gain);
     }
 
     const target = this.phase >= 1 ? 1 : 0;

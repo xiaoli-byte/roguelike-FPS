@@ -1,5 +1,6 @@
 /**
  * 寒霜冰晶：霜翼妖后召唤的可击毁小怪。不移动、不攻击；存活时通过冰链为妖后回复护盾（回复逻辑在 Matriarch）。
+ * 每个冰晶的可输送能量有限（charge，由 Matriarch 召唤时设置）：耗尽后冰链熄灭、不再回盾，但仍可击碎。
  * 妖后陨落时随之崩解。
  */
 import * as THREE from 'three';
@@ -33,6 +34,8 @@ const _b = new THREE.Vector3();
 export class IceCrystal extends EnemyBase {
   /** 被供能的 Boss（由 Matriarch 在召唤后设置） */
   owner: EnemyBase | null = null;
+  /** 剩余可输送的护盾量（由 Matriarch 在召唤后设置）；≤ 0 时冰链熄灭 */
+  charge = 0;
   private link: BeamMesh | null = null;
   private spinner: THREE.Group | null = null;
   private halo: THREE.Mesh | null = null;
@@ -95,8 +98,9 @@ export class IceCrystal extends EnemyBase {
     const link = this.link;
     if (!link) return;
     const o = this.owner;
-    if (!this.alive || !o || !o.alive || this.age < this.spawnDuration) {
+    if (!this.alive || !o || !o.alive || this.age < this.spawnDuration || this.charge <= 0) {
       link.visible = false;
+      if (this.halo && this.charge <= 0) this.halo.visible = false;
       return;
     }
     _a.set(this.position.x, this.position.y + 1.3, this.position.z);

@@ -75,7 +75,10 @@ export class MainMenu {
       return { el: wrap, presence: new Presence(wrap, 300), refresh };
     };
     this.subs = {
-      heroes: mk(this.heroSelect.root, () => this.heroSelect.refresh()),
+      heroes: mk(this.heroSelect.root, () => {
+        this.heroSelect.refresh();
+        this.heroSelect.activate();
+      }),
       talents: mk(talents.root, () => {
         talents.refresh();
         this.refreshWallet();
@@ -83,7 +86,7 @@ export class MainMenu {
       settings: mk(settings.root, () => settings.refresh()),
       controls: mk(controls, () => undefined),
     };
-    this.subs.heroes.el.classList.add('gf-menu__panel--wide');
+    this.subs.heroes.el.classList.add('gf-menu__panel--wide', 'gf-menu__panel--heroes');
     this.subs.talents.el.classList.add('gf-menu__panel--talents');
     this.subs.settings.el.classList.add('gf-menu__panel--settings');
 
@@ -112,6 +115,7 @@ export class MainMenu {
   }
 
   hide(): void {
+    this.heroSelect.deactivate();
     this.presence.hide();
   }
 
@@ -143,6 +147,8 @@ export class MainMenu {
     const prev = this.view;
     this.view = view;
     this.root.dataset.view = view;
+    // 离开英雄选择页时停止 3D 预览渲染
+    if (view !== 'heroes') this.heroSelect.deactivate();
     for (const key of Object.keys(this.subs) as SubView[]) {
       const s = this.subs[key];
       if (key === view) {

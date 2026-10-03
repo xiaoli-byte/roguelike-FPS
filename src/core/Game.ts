@@ -62,7 +62,8 @@ export class Game implements IGame {
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.05;
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    // three r186 已移除 PCFSoft（首次渲染阴影时会被改成 PCF）；直接用 PCF，否则在那之前预编译的着色器缓存键对不上、全部白编
+    renderer.shadowMap.type = THREE.PCFShadowMap;
     renderer.autoClear = false;
     renderer.setClearColor(0x07080b, 1);
 

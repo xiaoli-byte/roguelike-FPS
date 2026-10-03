@@ -15,7 +15,7 @@ import * as THREE from 'three';
 import type { DamageRequest, Element, GameContext, IEnemy, IProjectileSystem, ProjectileSpec, ProjectileVisual } from '../core/types';
 import type { StaticBox, WorldRayHit } from '../world/Collision';
 import { clamp, clamp01, distSqPointSegment, raySphere, rayVerticalCapsule } from '../core/math';
-import { ProjectileView, tailOffset, Trail, viewSize } from './ProjectileVisuals';
+import { PROJECTILE_VISUALS, ProjectileView, tailOffset, Trail, viewSize } from './ProjectileVisuals';
 import { blastPlayer, lineClear } from './Blast';
 
 // ───────────── 参数 ─────────────
@@ -185,6 +185,40 @@ export class ProjectileSystem implements IProjectileSystem {
 
   init(): void {
     this.ctx.scene.add(this.group);
+    // 换关时（黑幕中）预热外观与着色器，避免第一次开火卡顿
+    this.ctx.events.on('stage:loaded', () => this.warmUp());
+  }
+
+  /**
+   * 每种造型取一个外观（池空时新建）+ 一条拖尾，缩成一点放在镜头前，预编译后再画一帧，然后隐藏放回对象池。
+   * 只 compile 不够：第一次真正绘制时驱动还要再准备一遍（实测十几毫秒），这一帧在黑幕下看不到。
+   * 受光材质随关卡灯光 / 雾变化，所以每次换关都做，已有的程序直接命中缓存。
+   */
+  private warmUp(): void {
+    const { renderer, scene, camera } = this.ctx;
+    camera.getWorldPosition(_tail).addScaledVector(camera.getWorldDirection(_dir), 2);
+    const views: ProjectileView[] = [];
+    for (const kind of PROJECTILE_VISUALS) {
+      const view = this.acquireView(kind);
+      view.setup(0xffffff, false, 1e-3);
+      view.root.position.copy(_tail);
+      views.push(view);
+    }
+    const trail = this.acquireTrail();
+    trail.reset(_tail, 0x000000, 0, 1);
+    trail.update(_tail);
+    try {
+      renderer.compile(this.group, camera, scene);
+      renderer.render(scene, camera);
+    } catch (err) {
+      console.warn('[Projectiles] 预热失败（不影响运行）', err);
+    }
+    for (const view of views) {
+      view.hide();
+      this.viewPools.get(view.kind)!.push(view);
+    }
+    trail.hide();
+    this.trailPool.push(trail);
   }
 
   // ───────────── 发射 ─────────────
@@ -233,7 +267,10 @@ export class ProjectileSystem implements IProjectileSystem {
     p.trail = null;
     // 敌方弩矢也带一条细拖尾：飞行方向一眼可读，方便侧移躲避
     const hostileArrow = p.owner === 'enemy' && (p.visual === 'arrow' || p.visual === 'bolt');
-    if (p.visual === 'rocket' || p.visual === 'grenade' || hostileArrow || (p.homing > 0 && p.visual !== 'arrow')) {
+    if (
+      p.visual === 'rocket' || p.visual === 'grenade' || p.visual === 'blade' || hostileArrow
+      || (p.homing > 0 && p.visual !== 'arrow')
+    ) {
       const trail = this.acquireTrail();
       let width: number;
       let spacing: number;
@@ -245,6 +282,10 @@ export class ProjectileSystem implements IProjectileSystem {
       } else if (p.visual === 'grenade') {
         width = 0.06 * p.size;
         spacing = 0.18;
+      } else if (p.visual === 'blade') {
+        // 魔刀千刃飞刃：细拖尾
+        width = 0.35 * p.size;
+        spacing = 0.16;
       } else if (hostileArrow) {
         width = p.visual === 'arrow' ? 0.05 * p.size : 0.7 * p.size;
         spacing = 0.15;
@@ -604,8 +645,8 @@ export class ProjectileSystem implements IProjectileSystem {
   /** 敌方投射物这一段是否碰到玩家；命中点写入 _hitPoint */
   private touchesPlayer(p: Projectile, origin: THREE.Vector3, dir: THREE.Vector3, segLen: number): boolean {
     const pl = this.ctx.player;
-    // 冲刺无敌帧内直接穿过（闪避手感）；其他无敌只是不掉血，投射物照常被吃掉
-    if (!pl.alive || (pl.isDashing && pl.invulnerableTime > 0)) return false;
+    // 冲刺 / 武器技能突进的无敌帧内直接穿过（闪避手感）；其他无敌只是不掉血，投射物照常被吃掉
+    if (!pl.alive || ((pl.isDashing || pl.isLunging) && pl.invulnerableTime > 0)) return false;
     const R = pl.radius + p.radius;
     const px = pl.position.x, pz = pl.position.z;
     // 水平粗筛

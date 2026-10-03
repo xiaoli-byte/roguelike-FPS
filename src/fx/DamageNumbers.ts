@@ -11,6 +11,7 @@
  * - 持续伤害的一跳（opts.dot）：约 0.75 倍字号、颜色压暗、半透明、不弹跳，只小幅上浮后停住；
  *   同目标（按跳伤节拍 + 最近锚点判断）同层同元素的连续跳伤累加成一个数字，锚点平滑跟随目标，
  *   最后一跳后再停留一会儿淡出。DOT 与直接命中各自合并、互不混算（同元素的直接命中照常用大字）。
+ * - 元素反应浮字（kind 'reaction'）：显示 opts.text、颜色取 opts.color，不参与合并，big 时更大（归墟）。
  * 样式自己注入（ui/styles.css 归 UI 模块）。
  */
 import * as THREE from 'three';
@@ -22,6 +23,8 @@ const STYLE_ID = 'fx-damage-number-style';
 /** 合并窗口：数字出生后多久内还能继续累加 */
 const MERGE_WINDOW = 0.45;
 const MERGE_DIST_SQ = 1.1 * 1.1;
+/** 反应浮字寿命 */
+const REACTION_LIFE = 0.9;
 
 // ── DOT（持续伤害一跳）──
 // 契约里没有目标 id，「同目标」靠两条线索判断：
@@ -52,7 +55,7 @@ const DOT_DIM = 0.78;
 /** 锚点跟随速度（1/秒） */
 const DOT_FOLLOW = 10;
 
-type Kind = DamageLayer | 'heal' | 'player' | 'immune';
+type Kind = DamageLayer | 'heal' | 'player' | 'immune' | 'reaction';
 
 const LAYER_CSS: Record<string, string> = {
   health: '#ffffff',
@@ -61,10 +64,23 @@ const LAYER_CSS: Record<string, string> = {
   heal: '#6dff8a',
   player: '#ff4a3d',
   immune: '#b9bec8',
+  reaction: '#ffd84a',
 };
 
 function hexCss(hex: number): string {
-  return '#' + hex.toString(16).padStart(6, '0');
+  return '#' + (hex & 0xffffff).toString(16).padStart(6, '0');
+}
+
+/** 反应浮字颜色的 CSS 缓存（颜色种类很少） */
+const reactionCss = new Map<number, string>();
+function reactionColor(hex: number | undefined): string {
+  if (hex === undefined || !Number.isFinite(hex)) return LAYER_CSS.reaction;
+  let css = reactionCss.get(hex);
+  if (!css) {
+    css = hexCss(hex);
+    reactionCss.set(hex, css);
+  }
+  return css;
 }
 
 const ELEMENT_CSS: Record<Element, string> = {
@@ -122,6 +138,16 @@ const CSS = `
 .fx-dn.fx-dn-player { font-size: 24px; }
 .fx-dn.fx-dn-heal { font-size: 22px; }
 .fx-dn.fx-dn-immune { font-size: 17px; font-weight: 800; letter-spacing: 2px; }
+.fx-dn.fx-dn-reaction {
+  font-size: 20px; font-weight: 900; letter-spacing: 3px;
+  padding: 3px 6px 3px 9px; border-radius: 3px;
+  background: rgba(10, 6, 12, 0.72);
+  box-shadow: inset 0 0 0 1px currentColor, 0 2px 8px rgba(0, 0, 0, 0.6);
+  text-shadow:
+    2px 0 0 #000, -2px 0 0 #000, 0 2px 0 #000, 0 -2px 0 #000,
+    1.5px 1.5px 0 #000, -1.5px 1.5px 0 #000, 1.5px -1.5px 0 #000, -1.5px -1.5px 0 #000;
+}
+.fx-dn.fx-dn-reaction-big { font-size: 25px; padding: 4px 8px 4px 11px; }
 `;
 
 interface DN {
@@ -148,6 +174,8 @@ interface DN {
   kind: Kind;
   element: Element;
   amount: number;
+  /** 反应浮字的文本（其他种类为空串） */
+  text: string;
   stamp: number;
   /** 最近一次生成 / 合并时的帧号 */
   frame: number;
@@ -188,7 +216,8 @@ export class DamageNumbers {
       this.pool.push({
         el, active: false, x: 0, y: 0, z: 0, tx: 0, ty: 0, tz: 0, ox: 0, oy: 0, oz: 0,
         screen: false, sx: 0.5, sy: 0.5, age: 0, life: 1, pop: 0,
-        driftX: 0, rise: 0, crit: false, dot: false, kind: 'health', element: 'none', amount: 0, stamp: 0, frame: -1, lastHit: 0,
+        driftX: 0, rise: 0, crit: false, dot: false, kind: 'health', element: 'none', amount: 0, text: '', stamp: 0,
+        frame: -1, lastHit: 0,
         shown: false, lastOpacity: -1, className: 'fx-dn',
       });
     }
@@ -209,6 +238,10 @@ export class DamageNumbers {
     if (!this.host || this.pool.length === 0) return;
     if (!Number.isFinite(pos.x) || !Number.isFinite(pos.y) || !Number.isFinite(pos.z)) return;
     const kind: Kind = opts?.kind ?? 'health';
+    if (kind === 'reaction') {
+      this.spawnReaction(pos, opts, frame);
+      return;
+    }
     const crit = !!opts?.crit && kind !== 'heal' && kind !== 'player' && kind !== 'immune';
     // DOT 本身不会暴击；万一和同帧的直接暴击被合成了一次调用，按暴击显示（那一下确实是暴击）
     const dot = !!opts?.dot && !crit && kind !== 'immune';
@@ -275,6 +308,7 @@ export class DamageNumbers {
     d.kind = kind;
     d.element = element;
     d.amount = kind === 'immune' ? 0 : amount;
+    d.text = '';
     d.stamp = ++this.stamp;
     d.frame = frame;
     this.dirty = true;
@@ -320,6 +354,46 @@ export class DamageNumbers {
       d.z = d.tz = d.z - hz;
     }
     this.dirty = true;
+  }
+
+  /** 反应浮字：允许 amount 为 0、不参与合并、寿命 0.9 秒，文本 / 颜色取自 opts */
+  private spawnReaction(pos: THREE.Vector3, opts: DamageNumberOpts | undefined, frame: number): void {
+    const text = opts?.text;
+    if (!text) return;
+    const big = !!opts?.big;
+    const d = this.take();
+    d.active = true;
+    d.screen = false;
+    d.ox = (Math.random() - 0.5) * 0.2;
+    d.oy = 0;
+    d.oz = (Math.random() - 0.5) * 0.2;
+    d.x = d.tx = pos.x + d.ox;
+    d.y = d.ty = pos.y + d.oy;
+    d.z = d.tz = pos.z + d.oz;
+    d.age = 0;
+    d.pop = 0;
+    d.lastHit = 0;
+    d.life = REACTION_LIFE;
+    d.driftX = (Math.random() - 0.5) * 24;
+    d.rise = big ? 46 : 40;
+    d.crit = false;
+    d.dot = false;
+    d.kind = 'reaction';
+    d.element = 'none';
+    d.amount = 0;
+    d.text = text;
+    d.stamp = ++this.stamp;
+    d.frame = frame;
+    this.dirty = true;
+    const cls = big ? 'fx-dn fx-dn-reaction fx-dn-reaction-big' : 'fx-dn fx-dn-reaction';
+    if (cls !== d.className) {
+      d.el.className = cls;
+      d.className = cls;
+    }
+    d.el.style.color = reactionColor(opts?.color);
+    d.el.textContent = text;
+    d.lastOpacity = -1;
+    this.activeCount++;
   }
 
   private colorFor(kind: Kind, element: Element, crit: boolean, dot: boolean): string {

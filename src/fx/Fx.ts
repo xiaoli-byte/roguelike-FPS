@@ -13,6 +13,7 @@
 import * as THREE from 'three';
 import type { DamageNumberOpts, GameContext, IFx } from '../core/types';
 import { clamp01 } from '../core/math';
+import { BladeFx } from './BladeFx';
 import {
   ParticlePool, particleScaleUniform,
   STYLE_CHUNK, STYLE_DUST, STYLE_EMBER, STYLE_FIREBALL, STYLE_GLOW, STYLE_MOTE, STYLE_SMOKE, STYLE_SPARK,
@@ -75,6 +76,8 @@ interface Emitter {
 }
 
 export class FxSystem implements IFx {
+  /** 魔刀千刃专用特效（fx/BladeFx.ts；构造函数中创建） */
+  readonly blade: BladeFx;
   private readonly root = new THREE.Group();
   private readonly glow = new ParticlePool(4000, true);
   private readonly smoke = new ParticlePool(1500, false);
@@ -96,6 +99,8 @@ export class FxSystem implements IFx {
     this.glow.points.renderOrder = ORDER_GLOW;
     this.smoke.points.renderOrder = ORDER_SMOKE;
     this.root.add(this.smoke.points, this.glow.points, this.ribbons.mesh, this.ground.group, this.flashes.group);
+    this.blade = new BladeFx(ctx, { glow: this.glow, sparks: this.sparks, ground: this.ground, flashes: this.flashes });
+    this.root.add(this.blade.group);
     for (let i = 0; i < EMITTERS; i++) {
       this.emitters.push({ active: false, x: 0, y: 0, z: 0, color: new THREE.Color(), age: 0, acc: 0, finale: false, stamp: 0 });
     }
@@ -543,9 +548,10 @@ export class FxSystem implements IFx {
     this.sparks.update(d, floorY);
     if (d > 0) this.updateEmitters(d);
 
-    // 线状特效先占批次容量，火花拖尾在后（容量不足时先丢火花）
+    // 线状特效先占批次容量，火花拖尾在后（容量不足时先丢火花）；魔刀特效的刃光带 / 拖尾也写进这一批
     this.ribbons.begin(_camPos, this.time);
     this.trails.update(d, this.ribbons);
+    this.blade.update(d, _camPos, this.ribbons);
     this.sparks.render(this.ribbons);
     this.ribbons.end();
 
@@ -564,6 +570,7 @@ export class FxSystem implements IFx {
     this.ground.clear();
     this.flashes.clear();
     this.numbers.clear();
+    this.blade.clear();
     for (const e of this.emitters) e.active = false;
   }
 

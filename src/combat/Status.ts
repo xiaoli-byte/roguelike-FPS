@@ -8,12 +8,14 @@
  * - 每帧先把 slowMult / damageTakenMult 重置为 1 再按状态写入，保证不会累积。
  * - 持续伤害走 Combat.damageEnemy（source 'status'、不暴击、procDepth 1）。
  * - 不可选中（enemy.untargetable）的敌人不会被施加任何状态；免疫眩晕（enemy.stunImmune）时眩晕直接忽略。
+ * - 元素反应的判定在 Combat.attach（施加之前）；这里只提供「归墟」消耗与「崩解」所需的剩余伤害查询。
  */
 import * as THREE from 'three';
 import type { DamageRequest, DamageResult, Element, GameContext, IEnemy, StatusId, StatusInstance } from '../core/types';
 import { ELEMENT_COLORS } from '../core/types';
 import { clamp } from '../core/math';
 import { lineClear } from './Blast';
+import { dotStatMultiplier } from './DamageCalc';
 
 // ───────────── 数值 ─────────────
 
@@ -45,6 +47,11 @@ const STUN_DEFAULT_DURATION = 1;
 
 /** power 上限 = 敌人最大生命 × 0.5 */
 export const STATUS_POWER_CAP = 0.5;
+
+/** 元素状态每一跳 / 弹射结算时用的元素（决定吃哪一类元素伤害属性） */
+export const STATUS_DOT_ELEMENT: Readonly<Record<'burn' | 'shock' | 'corrode', Element>> = {
+  burn: 'fire', shock: 'shock', corrode: 'corrode',
+};
 
 /**
  * 首领：眩晕时长 × 0.35 且不超过 0.35 秒，之后 6 秒内免疫，避免被控死。
@@ -310,6 +317,57 @@ export class StatusSystem {
     }
   }
 
+  // ───────────── 元素反应支持（docs/arsenal-expansion.md 2.2 / 2.5） ─────────────
+
+  /**
+   * 消耗状态（只有「归墟」会调用）。
+   * burn：返回剩余伤害的结清值（dotRemainingRaw：各层 power × BURN_RATIO × 该层剩余跳数，一层最多 8 跳 = power × 1.28），
+   * 并清空灼烧。结清值与 power 同口径、不含属性倍率——归墟以 source 'status'（不带反应标签）结算时会再乘一次；
+   * shock：直接移除，返回 0（雷殛没有结清值）。蚀化设计上永不被消耗，不提供。
+   */
+  consume(enemy: IEnemy, id: 'burn' | 'shock'): number {
+    const st = enemy.statuses;
+    if (id === 'shock') {
+      st.delete('shock');
+      return 0;
+    }
+    const cash = this.dotRemainingRaw(enemy, 'burn');
+    st.delete('burn');
+    const d = this.data.get(enemy);
+    if (d) d.burnStacks.length = 0;
+    return cash;
+  }
+
+  /**
+   * 持续伤害剩下的跳伤还会造成的总量（不修改状态，未计分层 / 修饰器）：未结算的 dotRemainingRaw × 每一跳会乘的属性倍率
+   * （元素类 Pct × 精英 / 首领 Pct）。「崩解」伤害带反应标签、只再乘 reactionDamagePct，所以这里先把属性倍率乘进去。
+   */
+  dotRemaining(enemy: IEnemy, id: 'burn' | 'corrode'): number {
+    const raw = this.dotRemainingRaw(enemy, id);
+    if (!(raw > 0)) return 0;
+    return raw * dotStatMultiplier(this.ctx.player.stats, enemy, STATUS_DOT_ELEMENT[id]);
+  }
+
+  /**
+   * 剩余跳伤总量（与 power 同口径，不含属性倍率）。跳伤按共享的 tickTimer 对齐：
+   * 剩余 r 秒、下一跳在 t 秒后时还剩 floor((r − t) / 间隔) + 1 跳（r < t 时为 0）。
+   * burn 逐层计算（每层有自己的到期时间）；corrode = 强度 × CORRODE_RATIO × 剩余跳数。
+   */
+  private dotRemainingRaw(enemy: IEnemy, id: 'burn' | 'corrode'): number {
+    const inst = enemy.statuses.get(id);
+    if (!inst || !(inst.remaining > 0)) return 0;
+    const t = Math.max(0, inst.tickTimer);
+    if (id === 'burn') {
+      const d = this.data.get(enemy);
+      if (!d || d.burnStacks.length === 0) return inst.power * BURN_RATIO * ticksLeft(inst.remaining, t, BURN_TICK);
+      let total = 0;
+      const stacks = d.burnStacks;
+      for (let i = 0; i < stacks.length; i++) total += stacks[i].power * ticksLeft(stacks[i].remaining, t, BURN_TICK);
+      return total * BURN_RATIO;
+    }
+    return inst.power * CORRODE_RATIO * ticksLeft(inst.remaining, t, CORRODE_TICK);
+  }
+
   private stun(enemy: IEnemy, d: StatusData, seconds: number): boolean {
     // 此刻免疫眩晕（首领出招中等）：什么都不做——不写状态、不播特效、不派发事件，也不记战斗侧的免疫计时
     if (enemy.stunImmune) return false;
@@ -530,4 +588,13 @@ export class StatusSystem {
     }
     return d;
   }
+}
+
+/**
+ * 剩余秒数 remaining、下一跳在 next 秒后、间隔 interval 时还剩几跳（与 update 的容差口径一致：
+ * 最后一跳与到期同帧也算）。
+ */
+function ticksLeft(remaining: number, next: number, interval: number): number {
+  if (!(remaining + TICK_EPS >= next) || !(interval > 0)) return 0;
+  return Math.floor((remaining + TICK_EPS - next) / interval) + 1;
 }

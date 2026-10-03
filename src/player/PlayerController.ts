@@ -1,5 +1,5 @@
 /**
- * 玩家控制器：第一人称运动（加速 / 摩擦 / 空中控制 / 土狼时间 / 跳跃缓冲 / 多段跳 / 滑翔 / 冲刺）、
+ * 玩家控制器：第一人称运动（加速 / 摩擦 / 空中控制 / 土狼时间 / 跳跃缓冲 / 多段跳 / 滑翔 / 冲刺 / 受控突进）、
  * 视角与后坐力回正、生命与护盾、英雄技能槽，以及相机表现（委托 CameraRig）。
  *
  * 约定：position 为脚底中心；eye = position + 1.62；yaw = 0 朝 −Z（见 core/math.ts dirFromYawPitch）。
@@ -53,6 +53,14 @@ const DASH_EXIT_KEEP = 0.45;
 const DASH_IFRAMES = 0.12;
 const DASH_LOCKOUT = 0.06;
 
+/**
+ * 受控突进（lunge，魔刀千刃的武器技能 = 硬突进 / 斩击前冲与追击 = 软突进，docs/demon-blade.md 10.5）：
+ * 本帧沿突进方向的实际推进不足期望的这个比例且撞墙时，视为被墙挡住、提前结束（斜蹭墙面时沿墙滑行）
+ */
+const LUNGE_BLOCK_FRAC = 0.35;
+/** 突进速度超过此值（米/秒）才有冲刺表现（FOV 冲击、取消行走晃动） */
+const LUNGE_FAST = 15;
+
 const LOOK_SENS = 0.0022;
 const PITCH_LIMIT = 89 * DEG;
 /**
@@ -104,6 +112,16 @@ export class PlayerController implements IPlayer {
   private dashDirX = 0;
   private dashDirZ = -1;
   private knockbackTimer = 0;
+  // 受控突进（lunge）：剩余秒数、水平单位方向、速度（米/秒）、结束时保留的水平速度
+  private lungeLeft = 0;
+  private lungeDirX = 0;
+  private lungeDirZ = -1;
+  private lungeSpeed = 0;
+  private lungeExit = 0;
+  /** 软突进（无无敌：斩击前冲 / 追击）：只抬高沿 dir 的速度下限，保留侧向速度、重力与跳跃 */
+  private lungeSoft = false;
+  /** 软突进开始时沿 dir 的速度（结束时速度不低于它：边跑边砍不减速） */
+  private lungeEntryAlong = 0;
   /** 本帧被外力抛起（applyImpulse 向上），不做贴地 */
   private forceAirborne = false;
   private strafeInput = 0;
@@ -159,6 +177,11 @@ export class PlayerController implements IPlayer {
 
   get dashCooldownRemaining(): number {
     return this._dashCdRemaining;
+  }
+
+  /** 正在被 lunge() 驱动位移 */
+  get isLunging(): boolean {
+    return this.lungeLeft > 0;
   }
 
   get skills(): { primary: SkillState | null; secondary: SkillState | null } {
@@ -217,6 +240,7 @@ export class PlayerController implements IPlayer {
     this.jumpBuffer = 0;
     this.airJumpsLeft = this.maxAirJumps();
     this.knockbackTimer = 0;
+    this.lungeLeft = 0;
     this.forceAirborne = false;
     this.recoilDebtPitch = 0;
     this.recoilDebtYaw = 0;
@@ -343,13 +367,29 @@ export class PlayerController implements IPlayer {
 
     this.updateDashCharges(dt);
 
+    // 硬突进（武器技能）：不响应冲刺开始与跳跃（jumpBuffer 照常计时，突进结束后仍可起跳），不受重力 / 滑翔影响。
+    // 软突进（斩击前冲 / 追击）：正常移动、跳跃、重力，只把沿突进方向的速度抬到下限；冲刺直接打断它
+    let lunging = this.lungeLeft > 0;
+    const hard = lunging && !this.lungeSoft;
+    /** 本帧硬突进推进的秒数：最后一帧只走剩余时间，总位移精确等于 dist */
+    const lungeStep = hard ? Math.min(dt, this.lungeLeft) : 0;
+
     // 冲刺开始
-    if (acceptInput && input.pressed('dash') && this._dashCharges >= 1 && !this._isDashing && this.dashLockout <= 0) {
+    if (!hard && acceptInput && input.pressed('dash') && this._dashCharges >= 1 && !this._isDashing && this.dashLockout <= 0) {
+      if (lunging) {
+        // 冲刺打断软突进（不施加出口速度，冲刺自己设速度）
+        this.lungeLeft = 0;
+        lunging = false;
+      }
       this.startDash(hasInput ? wx : -sy, hasInput ? wz : -cy);
     }
 
     let jumped = false;
-    if (this._isDashing) {
+    if (hard) {
+      v.x = this.lungeDirX * this.lungeSpeed;
+      v.z = this.lungeDirZ * this.lungeSpeed;
+      v.y = 0;
+    } else if (this._isDashing) {
       this.dashTime -= dt;
       v.x = this.dashDirX * DASH_SPEED;
       v.z = this.dashDirZ * DASH_SPEED;
@@ -357,10 +397,18 @@ export class PlayerController implements IPlayer {
       if (this.dashTime <= 0) this.endDash();
     } else {
       this.applyHorizontal(dt, maxSpeed, hasInput, wx, wz);
+      if (lunging) {
+        // 软突进：沿突进方向的速度不低于 lungeSpeed（已经更快时不变），侧向分量保留
+        const along = v.x * this.lungeDirX + v.z * this.lungeDirZ;
+        if (along < this.lungeSpeed) {
+          v.x += this.lungeDirX * (this.lungeSpeed - along);
+          v.z += this.lungeDirZ * (this.lungeSpeed - along);
+        }
+      }
     }
 
-    // 跳跃（可以打断冲刺，保留冲刺出口速度）
-    if (this.jumpBuffer > 0) {
+    // 跳跃（可以打断冲刺，保留冲刺出口速度；软突进中照常起跳 / 二段跳）
+    if (!hard && this.jumpBuffer > 0) {
       const grounded = (this._onGround && !this.forceAirborne) || this.coyote > 0;
       if (grounded) {
         if (this._isDashing) this.endDash();
@@ -374,10 +422,10 @@ export class PlayerController implements IPlayer {
     }
 
     // 重力 / 滑翔
-    const gliding = !this._isDashing && !this._onGround && !jumped && v.y < 0 &&
+    const gliding = !hard && !this._isDashing && !this._onGround && !jumped && v.y < 0 &&
       (ctx.run.flags.glide ?? 0) > 0 && acceptInput && input.down('jump');
     const vy0 = v.y;
-    if (!this._isDashing) {
+    if (!hard && !this._isDashing) {
       if (gliding) {
         // 滑翔：弱重力加速到滑翔下落速度为止；下落得更快时（高处才开伞）平滑刹到滑翔速度，不再叠加重力
         if (v.y > -GLIDE_FALL_SPEED) v.y = Math.max(-GLIDE_FALL_SPEED, v.y - GRAVITY * GLIDE_GRAVITY_MULT * dt);
@@ -392,17 +440,28 @@ export class PlayerController implements IPlayer {
       this.approachHorizontal(wx * maxSpeed, wz * maxSpeed, (GLIDE_AIR_ACCEL - AIR_ACCEL) * dt);
     }
 
-    // 碰撞求解
+    // 碰撞求解（突进同样走 moveBody：子步长 ≤ 0.28 米不穿墙，台阶自动抬升、下坡贴地，竖直位移为 0 不穿地）
     const prevVy = v.y;
     const wasGrounded = this._onGround && !this.forceAirborne && !jumped && v.y <= 0;
-    // 竖直位移取本帧初末速度的平均（梯形积分）：跳跃高度（约 1.42 米）与滞空时间不随帧率变化
-    _delta.set(v.x * dt, (vy0 + v.y) * 0.5 * dt, v.z * dt);
+    // 竖直位移取本帧初末速度的平均（梯形积分）：跳跃高度（约 1.42 米）与滞空时间不随帧率变化。
+    // 硬突进只走水平位移，最后一帧只走剩余时间
+    if (hard) _delta.set(v.x * lungeStep, 0, v.z * lungeStep);
+    else _delta.set(v.x * dt, (vy0 + v.y) * 0.5 * dt, v.z * dt);
+    const startX = this.position.x;
+    const startZ = this.position.z;
     const r = ctx.world.moveBody(this.position, RADIUS, HEIGHT, _delta, wasGrounded, STEP_HEIGHT, this.moveResult);
     const wasOnGround = this._onGround;
     this._onGround = r.onGround;
     this.forceAirborne = false;
     if (r.onGround && v.y < 0) v.y = 0;
     if (r.hitCeiling && v.y > 0) v.y = 0;
+    if (lunging && this.lungeLeft > 0) {
+      // 本帧沿突进方向的实际推进；撞墙且推进明显不足 = 被挡住，提前停下（斜蹭墙面时沿墙滑行继续）
+      const prog = (this.position.x - startX) * this.lungeDirX + (this.position.z - startZ) * this.lungeDirZ;
+      const step = hard ? lungeStep : dt;
+      this.lungeLeft -= dt;
+      if (this.lungeLeft <= 0 || (r.hitWall && prog < LUNGE_BLOCK_FRAC * this.lungeSpeed * step)) this.endLunge();
+    }
     if (r.hitWall) {
       // 沿墙滑动：去掉指向墙内的速度分量
       const n = r.wallNormal;
@@ -412,7 +471,8 @@ export class PlayerController implements IPlayer {
         v.z -= n.z * vn;
       }
     }
-    this.resolveBossOverlap();
+    // 硬突进（武器技能「无敌、穿过敌人」）本帧不被首领身体挡住；突进结束后若仍重叠，下一帧再推出去
+    if (!hard) this.resolveBossOverlap();
 
     if (this._onGround) {
       this.coyote = COYOTE_TIME;
@@ -579,11 +639,73 @@ export class PlayerController implements IPlayer {
   }
 
   /**
+   * 受控突进（IPlayer.lunge，docs/demon-blade.md 10.5）：沿水平方向 dir 在 time 秒内移动 dist 米。
+   * iframes > 0 为硬突进（匀速、悬停、无视输入与外力）；否则为软突进（只抬高沿 dir 的速度下限，见 IPlayer.lunge）。
+   * 位移在下一次 updateMovement 开始生效（武器系统在玩家之后更新）；新的突进覆盖进行中的，进行中的冲刺直接结束。
+   */
+  lunge(dir: THREE.Vector3, dist: number, time: number, iframes = 0, exitSpeed = 0): boolean {
+    if (!this._alive || !(dist > 0) || !(time > 0) || !Number.isFinite(dist) || !Number.isFinite(time)) return false;
+    let dx = dir.x;
+    let dz = dir.z;
+    let l = Math.hypot(dx, dz);
+    if (!(l > 1e-4)) {
+      this.getForward(_tmp);
+      dx = _tmp.x;
+      dz = _tmp.z;
+      l = Math.hypot(dx, dz) || 1;
+    }
+    if (this._isDashing) this.endDash();
+    this.lungeDirX = dx / l;
+    this.lungeDirZ = dz / l;
+    this.lungeLeft = time;
+    this.lungeSpeed = dist / time;
+    this.lungeExit = exitSpeed > 0 && Number.isFinite(exitSpeed) ? exitSpeed : 0;
+    this.lungeSoft = !(iframes > 0);
+    this.lungeEntryAlong = this.velocity.x * this.lungeDirX + this.velocity.z * this.lungeDirZ;
+    if (iframes > 0) this.invulnerableTime = Math.max(this.invulnerableTime, iframes);
+    if (!this.lungeSoft && this.lungeSpeed > LUNGE_FAST) this.rig.dashKick();
+    return true;
+  }
+
+  /** 立即结束进行中的突进（按出口规则处理速度）；不在突进时无效果 */
+  cancelLunge(): void {
+    if (this.lungeLeft > 0) this.endLunge();
+  }
+
+  /** 硬突进：水平速度 = dir × 出口速度；软突进：只把沿 dir 的速度回落到 max(出口速度, 突进开始时的沿 dir 速度)，侧向不动 */
+  private endLunge(): void {
+    this.lungeLeft = 0;
+    const v = this.velocity;
+    if (this.lungeSoft) {
+      const along = v.x * this.lungeDirX + v.z * this.lungeDirZ;
+      const cap = Math.max(this.lungeExit, this.lungeEntryAlong);
+      if (along > cap) {
+        v.x -= this.lungeDirX * (along - cap);
+        v.z -= this.lungeDirZ * (along - cap);
+      }
+      return;
+    }
+    v.x = this.lungeDirX * this.lungeExit;
+    v.z = this.lungeDirZ * this.lungeExit;
+  }
+
+  cameraPunch(roll: number, pitch: number): void {
+    if (!this._alive) return;
+    this.rig.punch(roll, pitch);
+  }
+
+  /**
    * 叠加速度冲量（击退 / 抛起 / 技能位移）。冲刺中冲刺会每帧覆盖速度，所以冲刺期间的冲量基本被「闪开」；
    * 需要在冲刺中生效的自身位移（例如裂地重击起跳）请先调用 cancelDash()。
+   * 硬突进（武器技能）期间忽略外力；软突进（斩击前冲 / 追击）被外力打断。
    */
   applyImpulse(v: THREE.Vector3): void {
     if (!Number.isFinite(v.x) || !Number.isFinite(v.y) || !Number.isFinite(v.z)) return;
+    if (this.lungeLeft > 0) {
+      // 硬突进（武器技能）不被外力打断；软突进（斩击前冲 / 追击）让位给外力（击退、英雄技能跃起），不施加出口速度
+      if (!this.lungeSoft) return;
+      this.lungeLeft = 0;
+    }
     this.velocity.add(v);
     if (v.y > 0.5) {
       this._onGround = false;
@@ -609,6 +731,7 @@ export class PlayerController implements IPlayer {
       this._isDashing = false;
       this.dashTime = 0;
     }
+    this.lungeLeft = 0;
     this.recoilDebtPitch = 0;
     this.recoilDebtYaw = 0;
     this.jumpBuffer = 0;
@@ -706,6 +829,7 @@ export class PlayerController implements IPlayer {
     this.hp = 0;
     this._isDashing = false;
     this.dashTime = 0;
+    this.lungeLeft = 0;
     this.recoilDebtPitch = 0;
     this.recoilDebtYaw = 0;
     if (!this.diedEmitted) {
@@ -792,7 +916,8 @@ export class PlayerController implements IPlayer {
     ri.maxSpeed = Math.max(1, this.stats.get('moveSpeed'));
     ri.onGround = this._onGround;
     ri.strafe = this.strafeInput;
-    ri.dashing = this._isDashing;
+    // 高速硬突进（武器技能）与冲刺同样的镜头表现；软突进（斩击前冲 / 追击）不算
+    ri.dashing = this._isDashing || (this.lungeLeft > 0 && !this.lungeSoft && this.lungeSpeed > LUNGE_FAST);
     ri.alive = this._alive;
     const stepped = this.rig.update(dt, ri, this.ctx.camera, this.eye, this.yaw, this.pitch);
     if (stepped) {

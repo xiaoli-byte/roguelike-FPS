@@ -3,7 +3,10 @@
  * 不产生任何副作用（除了 applyLayers 原地修改敌人的三层数值），便于 Combat 与 UI 预览复用。
  */
 import type { DamageLayer, DamageRequest, Element, IEnemy, StatKey, StatusId } from '../core/types';
+import { REACTION_TAG } from '../core/types';
 import type { Stats } from '../core/Stats';
+
+export { REACTION_TAG };
 
 /** 元素 × 层 的伤害倍率（DESIGN.md 第 5 节） */
 export const LAYER_MULT: Readonly<Record<Element, Readonly<Record<DamageLayer, number>>>> = {
@@ -55,9 +58,10 @@ export function withTag(tags: readonly string[] | undefined, tag: string): strin
 /**
  * 持续伤害（灼烧 / 蚀化跳伤）。雷殛弹射同样是 source 'status'（不暴击、只吃元素加成），
  * 但带 'chain' 标签，按直接命中处理（有命中火花与音效）。
+ * 元素反应伤害（'reaction' 标签）也按直接命中处理，只有熔池跳伤（再带 'dot'）算持续伤害。
  */
 export function isDot(req: DamageRequest): boolean {
-  return req.source === 'status' && !hasTag(req, 'chain');
+  return req.source === 'status' && !hasTag(req, 'chain') && (!hasTag(req, REACTION_TAG) || hasTag(req, 'dot'));
 }
 
 /**
@@ -68,8 +72,10 @@ export function isDot(req: DamageRequest): boolean {
  *  - status（DOT / 链式）：强度已由触发的那一击决定，只再吃元素类加成
  *  - 元素非 none：× elementDamagePct × 对应元素 Pct
  *  - 精英 × eliteDamagePct，首领 × bossDamagePct
+ *  - 元素反应（'reaction' 标签）：只乘 reactionDamagePct——反应威力取自附着强度，已含上面这些加成，避免二次相乘
  */
 export function statMultiplier(stats: Stats, enemy: IEnemy, req: DamageRequest): number {
+  if (hasTag(req, REACTION_TAG)) return stats.mult('reactionDamagePct');
   let m = 1;
   if (req.source !== 'status') {
     if (req.source === 'weapon' || req.source === 'melee' || hasTag(req, 'weapon')) m *= stats.mult('damagePct');
@@ -96,6 +102,24 @@ export function dotStatMultiplier(stats: Stats, enemy: IEnemy, element: Element)
   if (enemy.isElite) m *= stats.mult('eliteDamagePct');
   if (enemy.isBoss) m *= stats.mult('bossDamagePct');
   return m > 0 && Number.isFinite(m) ? m : 1;
+}
+
+/** 元素状态对应的元素（持续伤害每一跳按它取属性加成） */
+const DOT_ELEMENT = { burn: 'fire', shock: 'shock', corrode: 'corrode' } as const;
+
+/**
+ * 把「已含元素 / 精英 / 首领加成」的强度（命中伤害、反应伤害）折算成 applyStatus 的状态强度：
+ * 先钳到最大生命 × 0.5，再除掉每一跳结算时会再乘回的属性倍率，免得加成算两次。
+ */
+export function statusPowerFromDealt(stats: Stats, enemy: IEnemy, status: 'burn' | 'shock' | 'corrode', dealt: number): number {
+  const p = Math.min(Math.max(0, dealt), enemy.maxHp * 0.5) / dotStatMultiplier(stats, enemy, DOT_ELEMENT[status]);
+  return Number.isFinite(p) ? p : 0;
+}
+
+/** 状态强度（不含加成）对应的反应强度：乘回属性倍率 */
+export function reactionPowerFromStatus(stats: Stats, enemy: IEnemy, status: 'burn' | 'shock' | 'corrode', power: number): number {
+  const p = power * dotStatMultiplier(stats, enemy, DOT_ELEMENT[status]);
+  return Number.isFinite(p) ? Math.max(0, p) : 0;
 }
 
 /** 某元素打在某层上的最终倍率（含 shieldDamagePct / armorDamagePct） */

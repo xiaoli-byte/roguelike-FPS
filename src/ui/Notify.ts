@@ -15,6 +15,8 @@ interface ToastItem {
   count: number;
   timer: number;
   leaving: boolean;
+  /** 显示时长（毫秒） */
+  ms: number;
 }
 
 const TOAST_MAX = 4;
@@ -29,7 +31,8 @@ export class Toasts {
     this.root.setAttribute('aria-live', 'polite');
   }
 
-  push(text: string, color?: string): void {
+  /** ms：显示时长，缺省 2.8 秒（教学类长文案可以更长） */
+  push(text: string, color?: string, ms = TOAST_MS): void {
     if (!text) return;
     // 与最新一条相同：合并计数并刷新计时
     const last = this.items[this.items.length - 1];
@@ -37,6 +40,7 @@ export class Toasts {
       last.count++;
       last.countEl.textContent = `×${last.count}`;
       last.el.animate([{ transform: 'scale(1.06)' }, { transform: 'scale(1)' }], { duration: 180, easing: 'ease-out' });
+      last.ms = Math.max(last.ms, ms);
       this.schedule(last);
       return;
     }
@@ -47,7 +51,7 @@ export class Toasts {
     h('span', 'gf-toast__mark', el);
     h('span', 'gf-toast__text', el, text);
     const countEl = h('span', 'gf-toast__count', el);
-    const item: ToastItem = { el, countEl, text, count: 1, timer: 0, leaving: false };
+    const item: ToastItem = { el, countEl, text, count: 1, timer: 0, leaving: false, ms };
     this.items.push(item);
     this.schedule(item);
   }
@@ -58,7 +62,7 @@ export class Toasts {
 
   private schedule(item: ToastItem): void {
     window.clearTimeout(item.timer);
-    item.timer = window.setTimeout(() => this.dismiss(item, false), TOAST_MS);
+    item.timer = window.setTimeout(() => this.dismiss(item, false), item.ms);
   }
 
   private dismiss(item: ToastItem, fast: boolean): void {

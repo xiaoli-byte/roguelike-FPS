@@ -40,6 +40,8 @@ export const BASE_STATS: Record<StatKey, number> = {
   fireDamagePct: 0,
   shockDamagePct: 0,
   corrodeDamagePct: 0,
+  reactionDamagePct: 0,
+  reactionHaste: 0,
 
   skillDamagePct: 0,
   skillHaste: 0,
@@ -89,6 +91,8 @@ export const STAT_INFO: Record<StatKey, { name: string; format: StatFormat }> = 
   fireDamagePct: { name: '灼烧伤害', format: 'pct' },
   shockDamagePct: { name: '雷殛伤害', format: 'pct' },
   corrodeDamagePct: { name: '蚀化伤害', format: 'pct' },
+  reactionDamagePct: { name: '反应伤害', format: 'pct' },
+  reactionHaste: { name: '反应急速', format: 'pct' },
   skillDamagePct: { name: '技能伤害', format: 'pct' },
   skillHaste: { name: '技能急速', format: 'pct' },
   secondaryCharges: { name: '副技能充能', format: 'int' },

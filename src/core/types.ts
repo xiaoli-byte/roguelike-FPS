@@ -60,6 +60,7 @@ export type StatKey =
   | 'bossDamagePct' | 'eliteDamagePct' | 'shieldDamagePct' | 'armorDamagePct'
   // 元素
   | 'elementChancePct' | 'elementDamagePct' | 'fireDamagePct' | 'shockDamagePct' | 'corrodeDamagePct'
+  | 'reactionDamagePct' | 'reactionHaste'
   // 技能
   | 'skillDamagePct' | 'skillHaste' | 'secondaryCharges'
   // 经济 / 杂项
@@ -70,6 +71,47 @@ export type StatKey =
 export type DamageSource = 'weapon' | 'skill' | 'status' | 'explosion' | 'scroll' | 'melee';
 export type DamageLayer = 'shield' | 'armor' | 'health';
 export type StatusId = 'burn' | 'shock' | 'corrode' | 'stun' | 'slow';
+
+// ───── 元素反应（docs/arsenal-expansion.md 第 2 节） ─────
+export type ReactionId = 'thunderfire' | 'meltdown' | 'veinseal' | 'abyss';
+export const REACTION_IDS: readonly ReactionId[] = ['thunderfire', 'meltdown', 'veinseal', 'abyss'];
+export const REACTION_NAMES: Record<ReactionId, string> = { thunderfire: '焚雷', meltdown: '熔金', veinseal: '封脉', abyss: '归墟' };
+export const REACTION_COLORS: Record<ReactionId, number> = { thunderfire: 0xffd84a, meltdown: 0xff7a1a, veinseal: 0x5affd0, abyss: 0xc89bff };
+/** 反应伤害请求统一带的标签（第二个标签为反应 id） */
+export const REACTION_TAG = 'reaction';
+/** 引爆结果：引发了某个反应，或单一状态的「崩解」 */
+export type DetonateOutcome = ReactionId | 'collapse';
+export interface StatusApplyOpts {
+  /** 这次附着的 procDepth（缺省 0；>= 2 不会引发反应；只有 0 会触发雷殛弹射） */
+  depth?: number;
+  /** 归属武器（由它引发的反应带上该 weaponUid） */
+  weaponUid?: number;
+  /** 由这次附着引发的反应威力倍率（缺省 1；「万象」传 0.6） */
+  reactionScale?: number;
+}
+export interface TriggerReactionOpts {
+  depth?: number;
+  weaponUid?: number;
+  /** 反应中心；敌人已死时必须提供 */
+  point?: THREE.Vector3;
+  /** 无视该敌人该反应的内置冷却 */
+  ignoreIcd?: boolean;
+  /** 直接指定反应威力 B（跳过 k × power 与上下限） */
+  fixedBase?: number;
+  /** 威力倍率（缺省 1） */
+  scale?: number;
+  /** 透传到 'enemy:reaction'.tag（'echo' / 'nirvana' / 'kalpa'） */
+  tag?: string;
+}
+export interface DetonateOpts {
+  /** 引爆这一击的强度（通常 = 该次实际伤害；内部钳到最大生命 × 0.5） */
+  power: number;
+  /** 强度倍率，缺省 1 */
+  mult?: number;
+  depth?: number;
+  weaponUid?: number;
+  point?: THREE.Vector3;
+}
 
 export interface DamageRequest {
   /** 未乘任何倍率的基础伤害 */
@@ -115,6 +157,8 @@ export interface DamageResult {
   armorBroken: boolean;
   element: Element;
   statusApplied: StatusId | null;
+  /** 这一击的元素附着引发的反应（Combat 第 4 步写入，早于 'enemy:damaged'） */
+  reaction?: ReactionId | null;
 }
 
 export interface StatusInstance {
@@ -206,6 +250,8 @@ export interface GameEvents {
   'enemy:statusApplied': { enemy: IEnemy; status: StatusId; stacks: number };
   'enemy:shieldBroken': { enemy: IEnemy };
   'enemy:armorBroken': { enemy: IEnemy };
+  /** 反应效果执行完毕后派发（不在伤害管线内，监听者可以直接造成伤害）。point 为复用向量，保存请 clone */
+  'enemy:reaction': { enemy: IEnemy; reaction: ReactionId; point: THREE.Vector3; base: number; depth: number; hits: number; weaponUid?: number; origin: 'status' | 'detonate' | 'forced'; tag?: string; centerKilled: boolean; stunned: boolean };
   'player:damaged': { amount: number; toShield: number; toHp: number; element: Element; source: IEnemy | null; from: THREE.Vector3 | null };
   'player:shieldBroken': {};
   'player:healed': { amount: number };
@@ -218,6 +264,12 @@ export interface GameEvents {
   'weapon:reloaded': { weapon: WeaponInstance };
   'weapon:switched': { weapon: WeaponInstance | null; slot: number };
   'weapon:acquired': { weapon: WeaponInstance };
+  /** 双形态武器开始切换形态（form 为目标形态；docs/demon-blade.md 第 10 节） */
+  'weapon:formChanged': { weapon: WeaponInstance; form: WeaponForm };
+  /** 释放武器技能（魔刀千刃「千刃·无间」） */
+  'weapon:skillUsed': { weapon: WeaponInstance; skillId: string };
+  /** 「千刃·无间」贯穿结算（每次释放最多一次）：points 为各刃印敌人的身体中心（新建数组，HUD 画视野外方向提示） */
+  'weapon:skillImpale': { weapon: WeaponInstance; points: THREE.Vector3[] };
   'skill:used': { slot: 'primary' | 'secondary'; skillId: string };
   'stage:loaded': { stage: StageNode };
   'stage:cleared': { stage: StageNode };
@@ -313,6 +365,8 @@ export interface IPlayer extends System {
   readonly isDashing: boolean;
   readonly dashCharges: number;
   readonly dashCooldownRemaining: number;
+  /** 正在被 lunge() 驱动位移（魔刀千刃的武器技能突进 / 第三段前冲） */
+  readonly isLunging: boolean;
   readonly skills: { primary: SkillState | null; secondary: SkillState | null };
   maxHp(): number;
   maxShield(): number;
@@ -327,6 +381,19 @@ export interface IPlayer extends System {
   heal(amount: number): number;
   addShield(amount: number): number;
   applyImpulse(v: THREE.Vector3): void;
+  /**
+   * 受控突进：沿水平方向 dir（内部压平并归一化，调用方可传复用向量）在 time 秒内移动 dist 米。走正常碰撞求解（贴地、台阶），被墙挡住时提前结束。
+   * - iframes > 0（硬突进，武器技能）：invulnerableTime = max(当前, iframes)；匀速、忽略移动 / 冲刺 / 跳跃输入与外力，竖直速度为 0（空中释放时悬停）；
+   *   结束时水平速度设为 dir × exitSpeed（缺省 0）。
+   * - iframes = 0（软突进，斩击前冲 / 追击）：只把沿 dir 的速度分量抬到不低于 dist / time，侧向速度、重力、跳跃照常；
+   *   冲刺与外力直接打断它；结束时沿 dir 的速度回落到 max(exitSpeed, 突进开始时沿 dir 的速度)（边跑边砍不减速）。
+   * 新的 lunge 覆盖进行中的；teleport / 死亡 / 新开一局会结束它。返回 false 表示未执行（已死亡、dist 或 time 非正）。
+   */
+  lunge(dir: THREE.Vector3, dist: number, time: number, iframes?: number, exitSpeed?: number): boolean;
+  /** 立即结束进行中的突进（按上面的出口规则处理速度）；不在突进时无效果 */
+  cancelLunge(): void;
+  /** 镜头冲击（不改瞄准）：roll / pitch 为镜头弹簧的角速度冲量（弧度/秒，与受击抖动同一弹簧），正 pitch = 上仰 */
+  cameraPunch(roll: number, pitch: number): void;
   teleport(pos: THREE.Vector3, yaw?: number): void;
   /** 新开一局：设置英雄、重置属性（含天赋）、满血 */
   resetForRun(hero: HeroDef): void;
@@ -365,6 +432,33 @@ export interface WeaponDescription {
   stats: { label: string; value: string }[];
   /** 词条 / 特性描述 */
   traits: string[];
+  /** 元素的特殊显示（如三才转轮的「三相」）；有值时 UI 用它代替元素单字 */
+  elementLabel?: string;
+  /** 双形态武器的形态显示名 [近战, 远程]（魔刀千刃：['斩', '千刃']） */
+  formNames?: [string, string];
+  /** 武器技能（名称 / 按键提示 / 描述 / 基础冷却秒数），UI 单独成行显示 */
+  skill?: { name: string; key: string; description: string; cooldown: number };
+}
+
+/**
+ * 双形态武器的形态（docs/demon-blade.md）：'melee' = 近战形态（魔刀「斩」），'ranged' = 远程形态（魔刀「千刃」）。
+ */
+export type WeaponForm = 'melee' | 'ranged';
+
+/** 武器技能的 HUD 状态（IWeaponSystem.weaponSkill 返回复用对象，读取后不要保存引用） */
+export interface WeaponSkillState {
+  id: string;
+  name: string;
+  /** HUD 图标单字 */
+  glyph: string;
+  /** 按键提示（'V'） */
+  key: string;
+  /** 剩余冷却秒数（0 = 就绪） */
+  cooldownRemaining: number;
+  /** 当前实际冷却时长（已算 skillHaste），HUD 画冷却环 */
+  cooldownTotal: number;
+  /** 释放中（突进或等待贯穿） */
+  active: boolean;
 }
 
 export interface IWeaponSystem extends System {
@@ -377,6 +471,18 @@ export interface IWeaponSystem extends System {
   readonly reloadProgress: number;
   /** 当前准星扩散（弧度），HUD 用来画准星 */
   readonly currentSpread: number;
+  /** 蓄力武器的当前蓄力进度 0..1（非蓄力 / 未蓄力为 0） */
+  readonly chargeProgress?: number;
+  /** 当前武器的形态（非双形态武器 / 空手为 null） */
+  readonly activeForm?: WeaponForm | null;
+  /** 形态切换进度 0..1（1 = 已完成 / 未在切换） */
+  readonly formMorphProgress?: number;
+  /** 「换形一击」窗口剩余秒数（0 = 无窗口或已用掉；HUD 武器槽发光） */
+  readonly formStrikeTime?: number;
+  /** 当前武器的武器技能状态（当前武器没有武器技能时为 null） */
+  readonly weaponSkill?: WeaponSkillState | null;
+  /** 近战形态：下一段斩击此刻挥出能命中至少一名敌人（每 3 帧更新；非近战形态为 false，准星据此提示攻击距离） */
+  readonly meleeInRange?: boolean;
   /** 当前武器实际弹匣容量（含加成） */
   magCapacity(inst: WeaponInstance): number;
   reserveCapacity(inst: WeaponInstance): number;
@@ -554,9 +660,13 @@ export interface ICombat extends System {
   damagePlayer(amount: number, element: Element, source: IEnemy | null, from?: THREE.Vector3 | null): number;
   /** 范围伤害（玩家方）；返回命中敌人数量 */
   explode(center: THREE.Vector3, radius: number, req: DamageRequest, opts?: ExplosionOptions): number;
-  /** 直接施加状态 */
+  /** 直接施加状态。burn/shock/corrode 会先判定元素反应；不会同步造成伤害，可在任意事件回调里调用 */
   /** power 为「不含元素/精英/首领 Pct」的强度（每一跳结算时再乘），会钳制到最大生命 × 0.5 */
-  applyStatus(enemy: IEnemy, id: StatusId, power: number, duration?: number): void;
+  applyStatus(enemy: IEnemy, id: StatusId, power: number, duration?: number, opts?: StatusApplyOpts): void;
+  /** 强制引发一次反应（不需要也不消耗状态）；被预算 / 深度 / 冷却拒绝时返回 false。只入队，不同步造成伤害 */
+  triggerReaction(enemy: IEnemy, id: ReactionId, power: number, opts?: TriggerReactionOpts): boolean;
+  /** 引爆敌人身上已有的元素状态。只入队，不同步造成伤害 */
+  detonate(enemy: IEnemy, opts: DetonateOpts): DetonateOutcome | null;
   /** 修饰器在 clear()（换关）后依然保留，只能由返回的移除函数移除 */
   addOutgoingModifier(fn: OutgoingDamageModifier): () => void;
   addIncomingModifier(fn: IncomingDamageModifier): () => void;
@@ -564,7 +674,8 @@ export interface ICombat extends System {
   previewMultiplier?(enemy: IEnemy, req: DamageRequest): number;
 }
 
-export type ProjectileVisual = 'orb' | 'bolt' | 'rocket' | 'arrow' | 'grenade' | 'shard' | 'flame';
+/** 'blade' = 魔刀千刃的旋转飞刃（细拖尾） */
+export type ProjectileVisual = 'orb' | 'bolt' | 'rocket' | 'arrow' | 'grenade' | 'shard' | 'flame' | 'blade';
 
 export interface ProjectileSpec {
   owner: 'player' | 'enemy';
@@ -792,13 +903,48 @@ export interface IRunPlan {
 export interface DamageNumberOpts {
   crit?: boolean;
   element?: Element;
-  kind?: DamageLayer | 'heal' | 'player' | 'immune';
+  kind?: DamageLayer | 'heal' | 'player' | 'immune' | 'reaction';
   /** 持续伤害（DOT）的一跳：显示得更小、更暗、不弹跳 */
   dot?: boolean;
+  /** kind = 'reaction' 时显示的文本（如「焚雷」） */
+  text?: string;
+  /** kind = 'reaction' 时的颜色（hex） */
+  color?: number;
+  /** kind = 'reaction' 时使用大号字（归墟） */
+  big?: boolean;
+}
+
+/**
+ * 魔刀千刃的专用特效（docs/demon-blade.md 第 8、10 节）。所有方法按值复制传入的向量。
+ * 实现位于 fx/BladeFx.ts，由 FxSystem 持有（IFx.blade）、逐帧推进，并在 IFx.clear()（换关 / 开局）时清空。
+ */
+export interface IBladeFx {
+  /**
+   * 挥砍弧光：以 origin（通常为 player.eye）为圆心、朝 (yaw, pitch) 的扇形拖尾面片，约 0.12 秒扫过、0.2 秒淡出。
+   * segment：0 横斩（右 → 左）/ 1 回斩（左 → 右）/ 2 下劈（上 → 下）；range 为半径（米），halfAngle 为扇形半角（弧度）。
+   */
+  slashArc(origin: THREE.Vector3, yaw: number, pitch: number, segment: number, range: number, halfAngle: number, color: number): void;
+  /** 斩击命中点的刃光与火花；dir 为斩击方向（玩家 → 敌人，单位向量），heavy = 第三段 / 技能斩击 */
+  slashHit(point: THREE.Vector3, dir: THREE.Vector3, color: number, heavy: boolean): void;
+  /** 刃印：跟随敌人的旋转红色刃环，duration 秒后自动消失（敌人死亡 / 移除时提前消失） */
+  mark(enemy: IEnemy, duration: number, color: number): void;
+  /**
+   * 千刃贯穿：数十柄刃从四面八方射入敌人身体中心（同时移除该敌人的刃印），约 0.1–0.16 秒后到齐爆闪——
+   * 调用方应提前约 IMPALE_LEAD 调用，让刃群与伤害同时到达。目标在视野外时刃群从玩家眼前上方掠过再射向它。
+   */
+  impale(enemy: IEnemy, color: number): void;
+  /** 所有仍在显示的刃印淡出（技能被中止、不会贯穿时调用） */
+  clearMarks(): void;
+  /** 突进残影与风压线：本帧位移 from → to（脚底坐标）；突进期间每帧调用一次 */
+  dashTrail(from: THREE.Vector3, to: THREE.Vector3, color: number): void;
+  /** 飞刃召回：count 柄刃片从 from 飞向 to（主场景世界坐标；to 通常为 viewmodel 枪口的世界坐标） */
+  recall(from: THREE.Vector3, to: THREE.Vector3, count: number, color: number): void;
 }
 
 /** 所有方法都会按值复制传入的向量，调用方可以传复用的临时向量。 */
 export interface IFx extends System {
+  /** 魔刀千刃专用特效 */
+  readonly blade: IBladeFx;
   impact(point: THREE.Vector3, normal: THREE.Vector3 | null, color?: number, size?: number): void;
   enemyHit(point: THREE.Vector3, color?: number, crit?: boolean): void;
   tracer(from: THREE.Vector3, to: THREE.Vector3, color?: number, width?: number): void;
@@ -824,6 +970,8 @@ export interface IFx extends System {
 export type SfxId =
   | 'shot_pistol' | 'shot_smg' | 'shot_rifle' | 'shot_shotgun' | 'shot_sniper' | 'shot_launcher' | 'shot_beam' | 'shot_bow' | 'shot_heavy'
   | 'reload_start' | 'reload_end' | 'dry_fire' | 'weapon_switch'
+  // 魔刀千刃：挥砍破风 / 斩击命中 / 飞刃投掷 / 召回 / 变形 / 突进 / 千刃贯穿
+  | 'blade_swing' | 'blade_hit' | 'blade_throw' | 'blade_recall' | 'blade_morph' | 'blade_dash' | 'blade_impale'
   | 'hit' | 'hit_crit' | 'hit_shield' | 'hit_armor' | 'kill' | 'explosion'
   | 'player_hurt' | 'shield_break' | 'shield_recharge' | 'low_hp'
   | 'jump' | 'land' | 'dash' | 'footstep'

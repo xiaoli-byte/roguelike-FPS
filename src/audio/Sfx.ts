@@ -52,6 +52,14 @@ export const SFX_META: Record<SfxId, SfxMeta> = {
   reload_end: m(0.46, { prio: 3, throttle: 0.05 }),
   dry_fire: m(0.4, { prio: 3, throttle: 0.08, pitch: 0.02 }),
   weapon_switch: m(0.4, { prio: 3, throttle: 0.05 }),
+  // 魔刀千刃：挥砍 / 命中节流很短（三段连斩约每 0.3 秒一次），贯穿混响最多（「千刃」的空间感）
+  blade_swing: m(0.62, { prio: 3, throttle: 0.03, pitch: 0.05, send: 0.06 }),
+  blade_hit: m(0.5, { prio: 3, throttle: 0.04, pitch: 0.05, send: 0.08 }),
+  blade_throw: gun(0.95, 0.08),
+  blade_recall: m(0.62, { prio: 3, throttle: 0.08, send: 0.12 }),
+  blade_morph: m(0.42, { prio: 3, throttle: 0.08, send: 0.12 }),
+  blade_dash: m(0.55, { prio: 3, throttle: 0.1, send: 0.12 }),
+  blade_impale: m(0.7, { prio: 3, throttle: 0.1, pitch: 0.02, send: 0.3 }),
 
   hit: m(0.4, { throttle: 0.035, pitch: 0.06, send: 0.02 }),
   hit_crit: m(0.5, { throttle: 0.05, pitch: 0.02, send: 0.08, prio: 3 }),
@@ -84,7 +92,7 @@ export const SFX_META: Record<SfxId, SfxMeta> = {
   enemy_death: m(0.45, { throttle: 0.04, pitch: 0.1, prio: 1, send: 0.15 }),
   enemy_spawn: m(0.4, { throttle: 0.08, pitch: 0.08, prio: 0, send: 0.2 }),
   enemy_charge: m(0.5, { throttle: 0.1, pitch: 0.05, prio: 2 }),
-  boss_roar: m(0.8, { throttle: 0.3, pitch: 0.03, prio: 3, send: 0.4 }),
+  boss_roar: m(0.68, { throttle: 0.3, pitch: 0.03, prio: 3, send: 0.4 }),
   boss_slam: m(0.85, { throttle: 0.1, pitch: 0.04, prio: 3, send: 0.35 }),
   telegraph: m(0.5, { throttle: 0.06, pitch: 0.02, prio: 2, send: 0.12 }),
 
