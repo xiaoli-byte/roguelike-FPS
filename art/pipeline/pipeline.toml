@@ -1,0 +1,123 @@
+# 美术资产管线 · 全局配置
+# 规范说明见 art/README.md。单个资产的规格写在 registry.toml。
+
+[paths]
+source = "art/source"              # 源资产（白模、概念、高模、DCC 工程、审核图）
+runtime = "public/assets"          # 引擎可直接加载的发布目录（Vite 原样拷贝）
+manifest = "public/assets/manifest.json"
+
+[tools]
+blender = "C:/Program Files/Blender Foundation/Blender 5.2/blender.exe"
+comfyui_url = "http://127.0.0.1:8188"
+comfyui_output = "C:/Users/admin/ComfyUI/output"
+receiver_port = 8766               # 白模接收端口（src/dev/artExport.ts 里写死同一个值）
+
+# ───────────── 概念设计（2D）─────────────
+[concept]
+provider = "openai"
+model = "gpt-image-2.5-sunburst"   # 精修档：编辑时最贴合参考图；快速试稿可改 gpt-image-2.5-flare
+quality = "high"
+sheet_size = [2048, 1024]          # 四视图一行：正 / 左 / 背 / 右，每格 512×1024
+# 全项目统一的美术风格（每个资产的提示词都以它开头，保证风格一致）
+style = """
+Stylized hand-painted 3D game character art for a fast first-person shooter: chunky readable shapes,
+slightly exaggerated proportions, clean large color blocks with soft painterly gradients, subtle
+edge wear, warm desert-and-crimson palette with East-Asian wuxia fantasy motifs. Matte materials,
+no photorealism, no harsh specular highlights, no baked cast shadows, evenly lit.
+"""
+
+# ───────────── 高模（Hunyuan3D 2.1，本地 ComfyUI）─────────────
+[highpoly]
+checkpoint = "hunyuan_3d_v2.1.safetensors"
+checkpoint_mv = "hunyuan3d-dit-v2-mv_fp16.safetensors"   # 多视图模式（tencent/Hunyuan3D-2mv，fp16）
+latent_resolution_mv = 3072
+steps = 50
+cfg = 5.0
+shift = 1.0
+octree_resolution = 384
+num_chunks = 32000
+threshold = 0.6
+seed = 20261003
+input_size = 1024                  # 输入图：正方形、白底、主体占画面 85%
+input_fill = 0.85
+
+# ───────────── Blender 处理 ─────────────
+[build]
+bake_device = "GPU"                # GPU 不可用时自动退回 CPU
+ao_samples = 64
+bake_margin_px = 16
+cage_extrusion = 0.015             # 相对资产高度
+projection_sharpness = 3.0         # 多视图投影按法线朝向加权的指数
+max_bone_influences = 4
+
+[export]
+draco = true
+image_format = "WEBP"
+tangents = true
+
+# ───────────── 规格档（按资产类别）─────────────
+# lod_tris：各级 LOD 三角面上限；lod_distance：切换距离（米，LOD0 从 0 开始）
+# texture：贴图边长；texel_density：目标像素/米（只做提示）
+[classes.enemy_standard]
+category = "characters"
+lod_tris = [8000, 3500, 1500]
+lod_distance = [0, 14, 30]
+texture = 1024
+texel_density = 512
+max_file_kb = 1600
+
+[classes.enemy_large]
+category = "characters"
+lod_tris = [12000, 5000, 2000]
+lod_distance = [0, 18, 40]
+texture = 2048
+texel_density = 512
+max_file_kb = 3000
+
+[classes.boss]
+category = "characters"
+lod_tris = [30000, 12000, 5000]
+lod_distance = [0, 25, 60]
+texture = 2048
+texel_density = 512
+max_file_kb = 6000
+
+[classes.enemy_attachment]
+category = "attachments"           # 敌人挂点上的武器 / 盾 / 法器（静态网格，原点 = 挂点）
+lod_tris = [3000, 1000]
+lod_distance = [0, 14]
+texture = 1024
+texel_density = 1024
+max_file_kb = 700
+
+[classes.boss_attachment]
+category = "attachments"           # Boss 挂点上的大型武器（静态网格，原点 = 挂点）：体量大、Boss 战里离镜头近，预算高于普通挂件
+lod_tris = [6000, 2000]
+lod_distance = [0, 25]
+texture = 2048
+texel_density = 1024
+max_file_kb = 1500
+
+[classes.fp_arm]
+category = "weapons"               # 第一人称手臂（每位英雄一套左右手，静态网格挂在 Viewmodel 的 arm_r / arm_l 挂点）
+lod_tris = [8000, 2000]
+lod_distance = [0, 6]
+texture = 2048
+texel_density = 2048
+max_file_kb = 1500
+
+[classes.weapon_fp]
+category = "weapons"
+lod_tris = [12000, 3000]
+lod_distance = [0, 6]
+texture = 2048
+texel_density = 2048
+max_file_kb = 3000
+
+[classes.prop]
+category = "props"
+lod_tris = [2500, 900]
+lod_distance = [0, 20]
+texture = 512
+texel_density = 256
+max_file_kb = 600

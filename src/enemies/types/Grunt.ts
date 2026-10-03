@@ -20,8 +20,9 @@ export const GRUNT_DEF: EnemyDef = {
   damage: 12,
   coins: [2, 4],
   essence: 1,
-  headY: 1.62,
-  headRadius: 0.34,
+  // 头部 = 缠头巾的头（颈 1.52 → 巾顶 1.92，宽 0.37）；判定球随头骨移动（见 setHeadAnchor）
+  headY: 1.71,
+  headRadius: 0.22,
   knockbackResist: 0,
   color: 0xe0913a,
 };
@@ -99,9 +100,12 @@ export class Grunt extends StandardEnemy {
     part(h, Geo.box(0.37, 0.12, 0.37), flat(C.wrap), 0, 0.38, -0.01);
     part(h, Geo.ico(0.075), flat(C.sash), 0.1, 0.44, -0.12);
     part(h, Geo.box(0.08, 0.3, 0.05, 'top'), flat(C.wrap), 0, 0.36, -0.19, 0.35, 0, 0);
+    // 头心：头骨关节上方 0.23（静止时离地 0.86 + 0.62 + 0.23 = 1.71，与 GRUNT_DEF.headY 一致）
+    this.setHeadAnchor(h, 0, 0.23, 0.02);
 
     // 弯刀：握把朝下时刀身指向前方
     const blade = joint(r.handR, 0, -0.06, 0);
+    blade.name = 'scimitar'; // 挂点名：美术资产按它绑定（art/pipeline/registry.toml 的 blockout.attachment）
     blade.rotation.x = -0.25;
     part(blade, Geo.box(0.045, 0.045, 0.18), flat(C.grip), 0, 0, -0.03);
     part(blade, Geo.box(0.14, 0.05, 0.05), flat(C.gold, { metal: 0.6, rough: 0.4 }), 0, 0, 0.08);
@@ -122,6 +126,8 @@ export class Grunt extends StandardEnemy {
         if (d <= ENGAGE_RANGE && this.cooldown <= 0 && reach && this.sees && this.requestAttack('melee', 1.4)) {
           this.windTime = this.windup(SLASH_WINDUP, 0.28);
           this.setState('windup');
+          // 举刀低吼：身后的刀客也能听出来
+          this.ctx.audio.play('enemy_alert', { position: this.position, volume: 0.42, pitch: 1.25 + this.ctx.rng.range(0, 0.15) });
           break;
         }
         if (this.lungeCd <= 0 && d >= 4.5 && d <= 9 && reach && this.sees) {
@@ -134,7 +140,7 @@ export class Grunt extends StandardEnemy {
           this.lungeCd = 0.7;
         }
         if (d > 3.2 || !this.sees || !reach) {
-          this.navigate(p, this.speed, 1.4);
+          this.approachPlayer(this.speed, 1.4);
           if (d < 4) this.facePlayer(10, dt);
           else this.faceMovement(10, dt);
         } else {

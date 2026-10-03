@@ -1,0 +1,807 @@
+{
+  "id": "SK_Weapon_Revolver",
+  "display": "赤铜左轮",
+  "kind": "skeletal",
+  "class": "weapon_fp",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 20:46:21",
+          "files": {
+            "BO_SK_Weapon_Revolver_v001.glb": {
+              "path": "00_blockout/BO_SK_Weapon_Revolver_v001.glb",
+              "sha256": "f0adcc56e6a4c1fa14b16fe36f324861093582537635cdce1010124685571c8f"
+            },
+            "BO_SK_Weapon_Revolver_v001.json": {
+              "path": "00_blockout/BO_SK_Weapon_Revolver_v001.json",
+              "sha256": "30e51e1726875f25823d77cd6d33dd55e63621a463d4ba25542da04006ede3ca"
+            },
+            "BO_SK_Weapon_Revolver_v001_views.json": {
+              "path": "00_blockout/BO_SK_Weapon_Revolver_v001_views.json",
+              "sha256": "ddf58b1c68fda34960ce1d0b77367123547f168cb45465194a3c2e92c7959c66"
+            },
+            "BO_SK_Weapon_Revolver_v001_sheet.png": {
+              "path": "00_blockout/BO_SK_Weapon_Revolver_v001_sheet.png",
+              "sha256": "89220a48128da8bf053a49e9ce4337e63fe14b8b69720e4f164f3bbf3b98905b"
+            },
+            "BO_SK_Weapon_Revolver_v001_front.png": {
+              "path": "00_blockout/BO_SK_Weapon_Revolver_v001_front.png",
+              "sha256": "5ad7ce07482eaa7492f45dce2e698283d49951247bbf3af199fbac78c06876c4"
+            },
+            "BO_SK_Weapon_Revolver_v001_left.png": {
+              "path": "00_blockout/BO_SK_Weapon_Revolver_v001_left.png",
+              "sha256": "78615b693d6ee8a31cea28896dd5894ec79c9f07113e88ff30334d044212882c"
+            },
+            "BO_SK_Weapon_Revolver_v001_back.png": {
+              "path": "00_blockout/BO_SK_Weapon_Revolver_v001_back.png",
+              "sha256": "2e3f159430ab1ee408f597fc0082df5eaf6b644bf21a390aedc9c9be4ea477e7"
+            },
+            "BO_SK_Weapon_Revolver_v001_right.png": {
+              "path": "00_blockout/BO_SK_Weapon_Revolver_v001_right.png",
+              "sha256": "fc9dbc3b8a130ad052bb68741e1b2709852813b8ff8213081c6d99fdf54ce09c"
+            }
+          },
+          "source": {
+            "kind": "weapon",
+            "id": "revolver"
+          },
+          "joints": 3,
+          "bounds": {
+            "min": [
+              -0.03099999949336052,
+              -0.13398011500252974,
+              -0.2500000008940697
+            ],
+            "max": [
+              0.03099999949336052,
+              0.09000000021606684,
+              0.08330816082963374
+            ]
+          },
+          "blender_seconds": 7.0
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 20:47:25",
+          "files": {
+            "CN_SK_Weapon_Revolver_v001_sheet.png": {
+              "path": "01_concept/CN_SK_Weapon_Revolver_v001_sheet.png",
+              "sha256": "67cf76c6f2638324fcd5c37b55a19b94af3e5ecc52e2ad26d8263d79ec7bfb22"
+            },
+            "CN_SK_Weapon_Revolver_v001_front.png": {
+              "path": "01_concept/CN_SK_Weapon_Revolver_v001_front.png",
+              "sha256": "e3f9d41bde35264596e7e8f6dcabf0be03ecf77e233839fb62a0722ad2275625"
+            },
+            "CN_SK_Weapon_Revolver_v001_left.png": {
+              "path": "01_concept/CN_SK_Weapon_Revolver_v001_left.png",
+              "sha256": "88f276a313cf4a8406a9e09ca85ac2e75100a2c2b2b4d1ca48a0cfa5a4e76580"
+            },
+            "CN_SK_Weapon_Revolver_v001_back.png": {
+              "path": "01_concept/CN_SK_Weapon_Revolver_v001_back.png",
+              "sha256": "4f7c49d35d9c6f85ecda5e05341bb6119122a9b93b69fed3aabcba04b449a7aa"
+            },
+            "CN_SK_Weapon_Revolver_v001_right.png": {
+              "path": "01_concept/CN_SK_Weapon_Revolver_v001_right.png",
+              "sha256": "e0c43b98dd21bf00cacf212efc28801a0d6b2c60ada342a549323c6c690a3d23"
+            },
+            "CN_SK_Weapon_Revolver_v001_compare.png": {
+              "path": "01_concept/CN_SK_Weapon_Revolver_v001_compare.png",
+              "sha256": "218e03af81e254501acc2f468e7aba8edc02d0739a9200b4e41708546a538f41"
+            },
+            "CN_SK_Weapon_Revolver_v001_prompt.txt": {
+              "path": "01_concept/CN_SK_Weapon_Revolver_v001_prompt.txt",
+              "sha256": "1b8b86ac160852ab14e4f2cf95f462d7eabe813a7b1c5183d46bb8aadf89c618"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1964,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 506
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3144
+          },
+          "request_id": "req_1499e8c2cec54a119b5ad900bc2c7047",
+          "seconds": 29.7,
+          "registration": {
+            "front": {
+              "scale": 0.9341,
+              "offset": [
+                44,
+                172
+              ],
+              "iou": 0.778,
+              "iou_unregistered_scale": 0.9341
+            },
+            "left": {
+              "scale": 0.8933,
+              "offset": [
+                191,
+                193
+              ],
+              "iou": 0.927,
+              "iou_unregistered_scale": 0.9354
+            },
+            "back": {
+              "scale": 0.9175,
+              "offset": [
+                22,
+                182
+              ],
+              "iou": 0.792,
+              "iou_unregistered_scale": 0.9315
+            },
+            "right": {
+              "scale": 0.9201,
+              "offset": [
+                188,
+                182
+              ],
+              "iou": 0.911,
+              "iou_unregistered_scale": 0.9341
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.781,
+            "left": 0.927,
+            "back": 0.796,
+            "right": 0.916
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "赤铜云纹枪身、深钢转轮、木握把金饰；剪影 IoU 0.78–0.93",
+            "time": "2026-10-03 20:47:45"
+          }
+        }
+      ]
+    },
+    "matid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 20:48:15",
+          "files": {
+            "MID_SK_Weapon_Revolver_v001_sheet.png": {
+              "path": "01_concept/MID_SK_Weapon_Revolver_v001_sheet.png",
+              "sha256": "98c7d5ec076c576ee2b0fae11b12d3c9a3ecb78e8a8b39a9fef9fd1f712360f8"
+            },
+            "MID_SK_Weapon_Revolver_v001_front.png": {
+              "path": "01_concept/MID_SK_Weapon_Revolver_v001_front.png",
+              "sha256": "8515b10626980708d7a1e585a1700e3ef5161bdc77bca97f2e424b00f5a76a40"
+            },
+            "MID_SK_Weapon_Revolver_v001_left.png": {
+              "path": "01_concept/MID_SK_Weapon_Revolver_v001_left.png",
+              "sha256": "a2e784cfa4a5a37088a4e26664c1a558022130ff5f5b356879dc6f56d79fa477"
+            },
+            "MID_SK_Weapon_Revolver_v001_back.png": {
+              "path": "01_concept/MID_SK_Weapon_Revolver_v001_back.png",
+              "sha256": "dea174217659449dad7dede299afaf26c5c619de908324ca6e7a14b0a9e25995"
+            },
+            "MID_SK_Weapon_Revolver_v001_right.png": {
+              "path": "01_concept/MID_SK_Weapon_Revolver_v001_right.png",
+              "sha256": "150be46eb83de2207571f13c228f6cce80262323c51963ef91c614015af168d0"
+            },
+            "MID_SK_Weapon_Revolver_v001_compare.png": {
+              "path": "01_concept/MID_SK_Weapon_Revolver_v001_compare.png",
+              "sha256": "56d239000bcab03ae21061cc24b8778e4f979c29549cfb5981e0d8edfe8fdc76"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1699,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 241
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2879
+          },
+          "request_id": "req_a5ffbfaa5871427ebbb2fb9e5e5d1e21",
+          "seconds": 27.3,
+          "registration": {
+            "front": {
+              "scale": 0.898,
+              "offset": [
+                46,
+                173
+              ],
+              "iou": 0.916,
+              "iou_unregistered_scale": 0.898,
+              "purity": 0.997
+            },
+            "left": {
+              "scale": 0.8231,
+              "offset": [
+                190,
+                212
+              ],
+              "iou": 0.903,
+              "iou_unregistered_scale": 0.8619,
+              "purity": 1.0
+            },
+            "back": {
+              "scale": 0.8849,
+              "offset": [
+                20,
+                182
+              ],
+              "iou": 0.907,
+              "iou_unregistered_scale": 0.8849,
+              "purity": 0.997
+            },
+            "right": {
+              "scale": 0.8342,
+              "offset": [
+                182,
+                212
+              ],
+              "iou": 0.866,
+              "iou_unregistered_scale": 0.8874,
+              "purity": 0.998
+            }
+          },
+          "metal_ratio": {
+            "front": 0.815,
+            "left": 1.0,
+            "back": 0.798,
+            "right": 0.835
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 20:50:56",
+          "files": {
+            "HP_SK_Weapon_Revolver_v001_input_front.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Revolver_v001_input_front.png",
+              "sha256": "9c11991715ca19978b91b5fca75438d9bc91ee710b41f545f7f47cb2636583e4"
+            },
+            "HP_SK_Weapon_Revolver_v001_input_left.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Revolver_v001_input_left.png",
+              "sha256": "d40a0f24562f47627decb1a1034bcf75f4b8fa72c8456b530763fa091adb4bcd"
+            },
+            "HP_SK_Weapon_Revolver_v001_input_back.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Revolver_v001_input_back.png",
+              "sha256": "ba32866b85832f20e4e89cea7b68b74a05c15fccc928626f6013b4fe044b4d37"
+            },
+            "HP_SK_Weapon_Revolver_v001_input_right.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Revolver_v001_input_right.png",
+              "sha256": "976acf75f412e8686beb7c7915d4b580143cfdc0113ef30444f19fba5b063c7a"
+            },
+            "HP_SK_Weapon_Revolver_v001.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Revolver_v001.glb",
+              "sha256": "54c163e6cb22df85f45fce26419c4c098ccd200ff7cfed9d0abd0b3b6e193277"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -143,
+              113,
+              655,
+              912
+            ],
+            "scale": 1.2832080200501252
+          },
+          "seconds": 159.3,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 5.2
+        }
+      ]
+    },
+    "build": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 20:51:27",
+          "files": {
+            "SK_Weapon_Revolver_v001.blend": {
+              "path": "03_work/SK_Weapon_Revolver_v001.blend",
+              "sha256": "a3ce1294200237404ca30ef41ceeb84dadac79dcd5c7601981aaaba5845640b8"
+            },
+            "SK_Weapon_Revolver_v001.glb": {
+              "path": "04_export/SK_Weapon_Revolver_v001.glb",
+              "sha256": "6a9608c2e5f8b2d64af01ce9f7b4b3d1e1cde6f889b62ae0906cfa9a6e83ec47"
+            },
+            "SK_Weapon_Revolver_v001_metrics.json": {
+              "path": "03_work/SK_Weapon_Revolver_v001_metrics.json",
+              "sha256": "278e0eb34471426eb84ae45219fed0dec45f2b98258f466625c077c4a7834666"
+            },
+            "T_Weapon_Revolver_BC.png": {
+              "path": "03_work/textures_v001/T_Weapon_Revolver_BC.png",
+              "sha256": "bef74efea799a6845c48fae3ff9b9f8a802848e712d7b99d11e5502329dd753d"
+            },
+            "T_Weapon_Revolver_MetalMask.png": {
+              "path": "03_work/textures_v001/T_Weapon_Revolver_MetalMask.png",
+              "sha256": "66c30483911e8bcf3cf0ab9fe1709fde5d410db5a3dec22f98e9244a8979b749"
+            },
+            "T_Weapon_Revolver_N.png": {
+              "path": "03_work/textures_v001/T_Weapon_Revolver_N.png",
+              "sha256": "afb2e8c9686c9b60dc194b438174e41a738718624a69febd39c0e8027ea76116"
+            },
+            "T_Weapon_Revolver_ORM.png": {
+              "path": "03_work/textures_v001/T_Weapon_Revolver_ORM.png",
+              "sha256": "3e433bca0515f24baaaf799fa756e08f29b2ab3402113d70f6504235afe2effa"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1
+          },
+          "align_iou": 0.904,
+          "uncovered_ratio": 0.1346,
+          "lods": [
+            {
+              "tris": 11996,
+              "verts": 6000
+            },
+            {
+              "tris": 2996,
+              "verts": 1500
+            }
+          ],
+          "export_kb": 453.5,
+          "seconds": 30.2,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 21:03:23",
+          "files": {
+            "SK_Weapon_Revolver_v002.blend": {
+              "path": "03_work/SK_Weapon_Revolver_v002.blend",
+              "sha256": "69c9bfc773cd2566689f36427ec211571be693b93df9aef5080561fb9d3e10ec"
+            },
+            "SK_Weapon_Revolver_v002.glb": {
+              "path": "04_export/SK_Weapon_Revolver_v002.glb",
+              "sha256": "97c2034cde08c9bddc8dfbebacce4d627ffa4594138631f2db53f327ce448ad4"
+            },
+            "SK_Weapon_Revolver_v002_metrics.json": {
+              "path": "03_work/SK_Weapon_Revolver_v002_metrics.json",
+              "sha256": "a1d348cb624e1e500e96ae2b64434202f9537449ff66ea993f7125b361d8948c"
+            },
+            "T_Weapon_Revolver_BC.png": {
+              "path": "03_work/textures_v002/T_Weapon_Revolver_BC.png",
+              "sha256": "bef74efea799a6845c48fae3ff9b9f8a802848e712d7b99d11e5502329dd753d"
+            },
+            "T_Weapon_Revolver_E.png": {
+              "path": "03_work/textures_v002/T_Weapon_Revolver_E.png",
+              "sha256": "95cad92e1458780bc182a7a0eb637e3f5e880465bcef32ad8b1a4c48aad1cc54"
+            },
+            "T_Weapon_Revolver_MetalMask.png": {
+              "path": "03_work/textures_v002/T_Weapon_Revolver_MetalMask.png",
+              "sha256": "66c30483911e8bcf3cf0ab9fe1709fde5d410db5a3dec22f98e9244a8979b749"
+            },
+            "T_Weapon_Revolver_N.png": {
+              "path": "03_work/textures_v002/T_Weapon_Revolver_N.png",
+              "sha256": "f31c16907b5112ce17675c1b03028eb694943e2ebeb64dec10d1eb18b0353c2d"
+            },
+            "T_Weapon_Revolver_ORM.png": {
+              "path": "03_work/textures_v002/T_Weapon_Revolver_ORM.png",
+              "sha256": "3e433bca0515f24baaaf799fa756e08f29b2ab3402113d70f6504235afe2effa"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1,
+            "emid": 1
+          },
+          "align_iou": 0.904,
+          "uncovered_ratio": 0.1346,
+          "lods": [
+            {
+              "tris": 11996,
+              "verts": 6000
+            },
+            {
+              "tris": 2996,
+              "verts": 1500
+            }
+          ],
+          "export_kb": 453.5,
+          "seconds": 34.6,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 21:04:42",
+          "files": {
+            "SK_Weapon_Revolver_v003.blend": {
+              "path": "03_work/SK_Weapon_Revolver_v003.blend",
+              "sha256": "2e165dc306539a65233b1041255d6f6e99da326b6b02288e4cdeec27d9c43a9c"
+            },
+            "SK_Weapon_Revolver_v003.glb": {
+              "path": "04_export/SK_Weapon_Revolver_v003.glb",
+              "sha256": "c6b409ee0486856c929bad790197eff4b65842d7eb48cbe352f8f62b55d336f0"
+            },
+            "SK_Weapon_Revolver_v003_metrics.json": {
+              "path": "03_work/SK_Weapon_Revolver_v003_metrics.json",
+              "sha256": "7919f6ac0b5025b522bbe2c69af9d0f382b869f77ce5863dc9530bc25f089576"
+            },
+            "T_Weapon_Revolver_BC.png": {
+              "path": "03_work/textures_v003/T_Weapon_Revolver_BC.png",
+              "sha256": "bef74efea799a6845c48fae3ff9b9f8a802848e712d7b99d11e5502329dd753d"
+            },
+            "T_Weapon_Revolver_E.png": {
+              "path": "03_work/textures_v003/T_Weapon_Revolver_E.png",
+              "sha256": "95cad92e1458780bc182a7a0eb637e3f5e880465bcef32ad8b1a4c48aad1cc54"
+            },
+            "T_Weapon_Revolver_MetalMask.png": {
+              "path": "03_work/textures_v003/T_Weapon_Revolver_MetalMask.png",
+              "sha256": "66c30483911e8bcf3cf0ab9fe1709fde5d410db5a3dec22f98e9244a8979b749"
+            },
+            "T_Weapon_Revolver_N.png": {
+              "path": "03_work/textures_v003/T_Weapon_Revolver_N.png",
+              "sha256": "fccc72446879348fc78ed6085ca0897640042829a01574105fb162bf22671114"
+            },
+            "T_Weapon_Revolver_ORM.png": {
+              "path": "03_work/textures_v003/T_Weapon_Revolver_ORM.png",
+              "sha256": "3e433bca0515f24baaaf799fa756e08f29b2ab3402113d70f6504235afe2effa"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1,
+            "emid": 1
+          },
+          "align_iou": 0.904,
+          "uncovered_ratio": 0.1346,
+          "lods": [
+            {
+              "tris": 11996,
+              "verts": 6000
+            },
+            {
+              "tris": 2996,
+              "verts": 1500
+            }
+          ],
+          "export_kb": 492.0,
+          "seconds": 35.8,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 20:51:27",
+          "files": {
+            "SK_Weapon_Revolver_v001_validation.json": {
+              "path": "05_review/SK_Weapon_Revolver_v001_validation.json",
+              "sha256": "dd9179f85837e22f7d14ae7cd9cd17b19b7c69c76f90afc56180050038f824b0"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 21:03:23",
+          "files": {
+            "SK_Weapon_Revolver_v002_validation.json": {
+              "path": "05_review/SK_Weapon_Revolver_v002_validation.json",
+              "sha256": "dd9179f85837e22f7d14ae7cd9cd17b19b7c69c76f90afc56180050038f824b0"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 21:04:42",
+          "files": {
+            "SK_Weapon_Revolver_v003_validation.json": {
+              "path": "05_review/SK_Weapon_Revolver_v003_validation.json",
+              "sha256": "f344479bea5eea00b5905c57b4789551fe710f96d9847a2b269b95ce75da6b0e"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 20:51:35",
+          "files": {
+            "SK_Weapon_Revolver_v001_review.png": {
+              "path": "05_review/SK_Weapon_Revolver_v001_review.png",
+              "sha256": "176b141a1112982449f4fe12c90541c18b3cd8006076a71287a8574acbcd96f7"
+            }
+          },
+          "from_build": 1,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "试点：赤铜云纹左轮，转轮为独立刚体部件；三轴尺寸与白模吻合，0 警告",
+            "time": "2026-10-03 20:53:20"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 21:03:32",
+          "files": {
+            "SK_Weapon_Revolver_v002_review.png": {
+              "path": "05_review/SK_Weapon_Revolver_v002_review.png",
+              "sha256": "2ff53f09bded2a56c5e6a159276a9df0457a29a87622e8b7beace8304e675397"
+            }
+          },
+          "from_build": 2,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": []
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 21:04:51",
+          "files": {
+            "SK_Weapon_Revolver_v003_review.png": {
+              "path": "05_review/SK_Weapon_Revolver_v003_review.png",
+              "sha256": "07ead77ab1bfe65cd713369e6588910a1964867c46cdc870e2572c1345b26c99"
+            }
+          },
+          "from_build": 3,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "加入发光分区：云纹雕刻按实例发光（元素色 / 稀有度色），取代程序化发光平板",
+            "time": "2026-10-03 21:05:49"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 20:53:21",
+          "files": {
+            "SK_Weapon_Revolver.glb": {
+              "path": "@root/public/assets/weapons/SK_Weapon_Revolver.glb",
+              "sha256": "6a9608c2e5f8b2d64af01ce9f7b4b3d1e1cde6f889b62ae0906cfa9a6e83ec47"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/weapons/SK_Weapon_Revolver.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 21:05:50",
+          "files": {
+            "SK_Weapon_Revolver.glb": {
+              "path": "@root/public/assets/weapons/SK_Weapon_Revolver.glb",
+              "sha256": "c6b409ee0486856c929bad790197eff4b65842d7eb48cbe352f8f62b55d336f0"
+            }
+          },
+          "from_build": 3,
+          "url": "assets/weapons/SK_Weapon_Revolver.glb"
+        }
+      ]
+    },
+    "emid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:02:36",
+          "files": {
+            "EID_SK_Weapon_Revolver_v001_sheet.png": {
+              "path": "01_concept/EID_SK_Weapon_Revolver_v001_sheet.png",
+              "sha256": "ebf7193100da27e44713ebf4d87e81b96b87f8f3e9646bbac2b9ea16965d36ad"
+            },
+            "EID_SK_Weapon_Revolver_v001_front.png": {
+              "path": "01_concept/EID_SK_Weapon_Revolver_v001_front.png",
+              "sha256": "3302d7c91ab0159241118dd3108a97d152c6791d019093eaaee1445aa9cad16e"
+            },
+            "EID_SK_Weapon_Revolver_v001_left.png": {
+              "path": "01_concept/EID_SK_Weapon_Revolver_v001_left.png",
+              "sha256": "89da18aca773e0d60423d8f3eb879875864f18dd535ef4f398b06540f7c48476"
+            },
+            "EID_SK_Weapon_Revolver_v001_back.png": {
+              "path": "01_concept/EID_SK_Weapon_Revolver_v001_back.png",
+              "sha256": "2d7c4ace0e8718ca3fab344fbf96bb4cf362355b9ecf0326d91ba29554da3185"
+            },
+            "EID_SK_Weapon_Revolver_v001_right.png": {
+              "path": "01_concept/EID_SK_Weapon_Revolver_v001_right.png",
+              "sha256": "6b74b785b1dfc773c8f9125358b71a361fcfb0dc2814ef1f1c5f69fdc643f49e"
+            },
+            "EID_SK_Weapon_Revolver_v001_compare.png": {
+              "path": "01_concept/EID_SK_Weapon_Revolver_v001_compare.png",
+              "sha256": "82d7eb92197a452229cf23bd1640298e8c81e22653f1206b7847742dd00f787c"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1733,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 275
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2913
+          },
+          "request_id": "req_561d8b6bb04247b5901ab35725ae0d87",
+          "seconds": 28.8,
+          "registration": {
+            "front": {
+              "scale": 0.876,
+              "offset": [
+                65,
+                173
+              ],
+              "iou": 0.916,
+              "iou_unregistered_scale": 0.876,
+              "purity": 0.993
+            },
+            "left": {
+              "scale": 0.8186,
+              "offset": [
+                188,
+                212
+              ],
+              "iou": 0.914,
+              "iou_unregistered_scale": 0.844,
+              "purity": 0.986
+            },
+            "back": {
+              "scale": 0.8632,
+              "offset": [
+                23,
+                182
+              ],
+              "iou": 0.892,
+              "iou_unregistered_scale": 0.8632,
+              "purity": 0.993
+            },
+            "right": {
+              "scale": 0.8172,
+              "offset": [
+                182,
+                212
+              ],
+              "iou": 0.889,
+              "iou_unregistered_scale": 0.8557,
+              "purity": 1.0
+            }
+          },
+          "emissive_ratio": {
+            "front": 0.054,
+            "left": 0.073,
+            "back": 0.054,
+            "right": 0.0
+          }
+        }
+      ]
+    }
+  }
+}

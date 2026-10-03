@@ -23,8 +23,9 @@ export const MARKSMAN_DEF: EnemyDef = {
   damage: 30,
   coins: [3, 5],
   essence: 1,
-  headY: 1.62,
-  headRadius: 0.33,
+  // 头部 = 兜帽（1.50 → 1.87，宽 0.35）；判定球随头骨移动，瞄准低头时跟着走
+  headY: 1.69,
+  headRadius: 0.22,
   knockbackResist: 0,
   color: 0xff3040,
 };
@@ -110,9 +111,12 @@ export class Marksman extends StandardEnemy {
     this.glowPart(h, Geo.box(0.085, 0.085, 0.02), C.eye, C.eyeHot, 0.07, 0.18, 0.195);
     this.glowPart(h, Geo.box(0.05, 0.03, 0.02), C.eye2, C.eye2Hot, -0.07, 0.18, 0.192);
     part(h, Geo.torus(0.055, 0.012, 4, 10), flat(C.gold, { metal: 0.7 }), 0.07, 0.18, 0.2);
+    // 头心：0.88 + 0.62 + 0.19 = 1.69（与 MARKSMAN_DEF.headY 一致）
+    this.setHeadAnchor(h, 0, 0.19, 0.02);
 
     // 长火枪（挂在右肩窝，瞄准时按俯仰抬起）
     const gun = joint(t, GUN_X, GUN_Y, GUN_Z);
+    gun.name = 'musket'; // 挂点名：美术资产按它绑定（art/pipeline/registry.toml 的 blockout.attachment）
     this.gun = gun;
     part(gun, Geo.box(0.07, 0.13, 0.36), flat(C.wood), 0, -0.02, -0.02);
     part(gun, Geo.box(0.06, 0.07, 0.6), flat(C.wood), 0, 0, 0.42);

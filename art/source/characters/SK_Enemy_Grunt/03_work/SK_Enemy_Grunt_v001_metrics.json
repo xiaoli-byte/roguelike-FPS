@@ -1,0 +1,160 @@
+{
+  "steps": {
+    "导入清理": 2.9,
+    "对齐": 2.0,
+    "低模与 UV": 11.2,
+    "投影着色": 22.8,
+    "烘焙": 5.0,
+    "LOD": 0.9,
+    "骨骼蒙皮": 11.0,
+    "导出": 3.2
+  },
+  "highpoly": {
+    "faces": 479920,
+    "verts": 216099,
+    "loose_parts": 1,
+    "kept_parts": 1
+  },
+  "align": {
+    "yaw_deg": 180,
+    "iou": 0.832,
+    "iou_per_view": {
+      "front": 0.878,
+      "left": 0.784,
+      "back": 0.854,
+      "right": 0.787
+    },
+    "height_m": 2.0095,
+    "blockout_height_m": 1.9838
+  },
+  "projection": {
+    "uncovered_ratio": 0.3822
+  },
+  "bake_device": "OPTIX",
+  "textures": {
+    "T_Enemy_Grunt_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Enemy_Grunt_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Enemy_Grunt_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "skin": {
+    "bones": [
+      "hips",
+      "torso",
+      "head",
+      "armL",
+      "elbowL",
+      "handL",
+      "armR",
+      "elbowR",
+      "handR",
+      "legL",
+      "kneeL",
+      "legR",
+      "kneeR"
+    ],
+    "per_lod": {
+      "SK_Enemy_Grunt_LOD0": {
+        "unweighted_verts": 0,
+        "max_influences": 4
+      },
+      "SK_Enemy_Grunt_LOD1": {
+        "unweighted_verts": 0,
+        "max_influences": 4
+      },
+      "SK_Enemy_Grunt_LOD2": {
+        "unweighted_verts": 0,
+        "max_influences": 4
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SK_Enemy_Grunt_LOD0",
+      "tris": 123208,
+      "verts": 37743,
+      "uv_min": [
+        0.003877216950058937,
+        0.0038771657273173332
+      ],
+      "uv_max": [
+        0.9961227178573608,
+        0.9957563877105713
+      ],
+      "uv_utilization": 0.023,
+      "bbox_min": [
+        -0.6021,
+        -0.1907,
+        0.0021
+      ],
+      "bbox_max": [
+        0.5915,
+        0.2809,
+        2.0231
+      ]
+    },
+    {
+      "name": "SK_Enemy_Grunt_LOD1",
+      "tris": 122886,
+      "verts": 37582,
+      "uv_min": [
+        0.003877216950058937,
+        0.0038771657273173332
+      ],
+      "uv_max": [
+        0.9961227178573608,
+        0.9957563877105713
+      ],
+      "uv_utilization": 0.022,
+      "bbox_min": [
+        -0.6021,
+        -0.1907,
+        0.0023
+      ],
+      "bbox_max": [
+        0.5915,
+        0.2809,
+        2.0231
+      ]
+    },
+    {
+      "name": "SK_Enemy_Grunt_LOD2",
+      "tris": 122886,
+      "verts": 37582,
+      "uv_min": [
+        0.003877216950058937,
+        0.0038771657273173332
+      ],
+      "uv_max": [
+        0.9961227178573608,
+        0.9957563877105713
+      ],
+      "uv_utilization": 0.022,
+      "bbox_min": [
+        -0.6021,
+        -0.1907,
+        0.0023
+      ],
+      "bbox_max": [
+        0.5915,
+        0.2809,
+        2.0231
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Enemy_Grunt\\04_export\\SK_Enemy_Grunt_v001.glb",
+    "bytes": 6052396
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Enemy_Grunt\\03_work\\SK_Enemy_Grunt_v001.blend",
+  "total_seconds": 59.1,
+  "_seconds": 62.3
+}

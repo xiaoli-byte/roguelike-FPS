@@ -1,0 +1,136 @@
+{
+  "steps": {
+    "导入清理": 1.3,
+    "对齐": 0.9,
+    "低模与 UV": 3.9,
+    "投影着色": 6.1,
+    "烘焙": 5.7,
+    "LOD": 0.0,
+    "导出": 1.7
+  },
+  "highpoly": {
+    "faces_raw": 102782,
+    "faces": 55526,
+    "verts": 55516,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.799,
+    "iou_per_view": {
+      "front": 0.815,
+      "left": 0.788,
+      "back": 0.806,
+      "right": 0.778
+    },
+    "height_m": 0.1925,
+    "blockout_height_m": 1.505
+  },
+  "uv": {
+    "smart_islands": 153,
+    "charts": 47,
+    "fallback_charts": 3,
+    "flipped_faces": 4,
+    "flipped_ratio": 0.0013,
+    "method": "merged",
+    "density_smart": 0.7107,
+    "density_merged": 0.7696
+  },
+  "projection": {
+    "uncovered_ratio": 0.1735
+  },
+  "bake_device": "OPTIX",
+  "material_id": {
+    "metal_texel_ratio": 0.1991
+  },
+  "textures": {
+    "T_EnemyWeapon_Musket_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_EnemyWeapon_Musket_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_EnemyWeapon_Musket_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "presentation": [
+    [
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ]
+  ],
+  "lods": [
+    {
+      "name": "SM_EnemyWeapon_Musket_LOD0",
+      "tris": 3000,
+      "verts": 1490,
+      "uv_min": [
+        0.0016087712720036507,
+        0.0016087639378383756
+      ],
+      "uv_max": [
+        0.998390793800354,
+        0.9983911514282227
+      ],
+      "uv_utilization": 0.352,
+      "bbox_min": [
+        -0.0556,
+        -1.293,
+        -0.1173
+      ],
+      "bbox_max": [
+        0.0556,
+        0.1925,
+        0.1545
+      ]
+    },
+    {
+      "name": "SM_EnemyWeapon_Musket_LOD1",
+      "tris": 1000,
+      "verts": 490,
+      "uv_min": [
+        0.0020823332015424967,
+        0.0024365889839828014
+      ],
+      "uv_max": [
+        0.9970262050628662,
+        0.9966243505477905
+      ],
+      "uv_utilization": 0.329,
+      "bbox_min": [
+        -0.0559,
+        -1.2925,
+        -0.1188
+      ],
+      "bbox_max": [
+        0.0552,
+        0.192,
+        0.1525
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\attachments\\SM_EnemyWeapon_Musket\\04_export\\SM_EnemyWeapon_Musket_v004.glb",
+    "bytes": 159828
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\attachments\\SM_EnemyWeapon_Musket\\03_work\\SM_EnemyWeapon_Musket_v004.blend",
+  "total_seconds": 19.7,
+  "_seconds": 24.8
+}

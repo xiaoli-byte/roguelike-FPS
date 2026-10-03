@@ -1,0 +1,179 @@
+{
+  "steps": {
+    "导入清理": 1.1,
+    "对齐": 0.6,
+    "低模与 UV": 4.7,
+    "投影着色": 7.2,
+    "烘焙": 9.7,
+    "LOD": 0.0,
+    "部件骨架蒙皮": 1.7,
+    "导出": 1.9
+  },
+  "highpoly": {
+    "faces_raw": 226216,
+    "faces": 123950,
+    "verts": 123948,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.812,
+    "iou_per_view": {
+      "front": 0.803,
+      "left": 0.823,
+      "back": 0.805,
+      "right": 0.823
+    },
+    "height_m": 0.3885,
+    "blockout_height_m": 0.67
+  },
+  "uv": {
+    "smart_islands": 204,
+    "charts": 32,
+    "fallback_charts": 1,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "smart",
+    "density_smart": 1.4816,
+    "density_merged": 1.471
+  },
+  "projection": {
+    "uncovered_ratio": 0.224
+  },
+  "bake_device": "OPTIX",
+  "emissive_id": {
+    "emissive_texel_ratio": 0.0181
+  },
+  "material_id": {
+    "metal_texel_ratio": 0.2166
+  },
+  "textures": {
+    "T_Weapon_Crossbow_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Weapon_Crossbow_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Weapon_Crossbow_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "presentation": [
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      -0.0,
+      -0.0,
+      -1.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ]
+  ],
+  "skin": {
+    "bones": [
+      "j_r",
+      "j_0",
+      "j_10",
+      "j_11"
+    ],
+    "per_lod": {
+      "SK_Weapon_Crossbow_LOD0": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      },
+      "SK_Weapon_Crossbow_LOD1": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      }
+    },
+    "mode": "parts",
+    "sigma_m": 0.01,
+    "rigid": true,
+    "split": {
+      "SK_Weapon_Crossbow_LOD0": {
+        "cut_edges": 104,
+        "cap_tris": 204,
+        "merged_fragment_faces": 0,
+        "tris": 11996
+      },
+      "SK_Weapon_Crossbow_LOD1": {
+        "cut_edges": 51,
+        "cap_tris": 98,
+        "merged_fragment_faces": 0,
+        "tris": 2996
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SK_Weapon_Crossbow_LOD0",
+      "tris": 11996,
+      "verts": 5998,
+      "uv_min": [
+        0.0026534218341112137,
+        0.002653455128893256
+      ],
+      "uv_max": [
+        0.9973465800285339,
+        0.9513238668441772
+      ],
+      "uv_utilization": 0.612,
+      "bbox_min": [
+        -0.1927,
+        -0.2697,
+        -0.1208
+      ],
+      "bbox_max": [
+        0.1926,
+        0.3885,
+        0.1714
+      ]
+    },
+    {
+      "name": "SK_Weapon_Crossbow_LOD1",
+      "tris": 2996,
+      "verts": 1498,
+      "uv_min": [
+        0.002939059864729643,
+        0.00317981350235641
+      ],
+      "uv_max": [
+        0.9973465800285339,
+        0.9509207606315613
+      ],
+      "uv_utilization": 0.592,
+      "bbox_min": [
+        -0.1925,
+        -0.2696,
+        -0.1207
+      ],
+      "bbox_max": [
+        0.1927,
+        0.3883,
+        0.1713
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\weapons\\SK_Weapon_Crossbow\\04_export\\SK_Weapon_Crossbow_v001.glb",
+    "bytes": 542616
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\weapons\\SK_Weapon_Crossbow\\03_work\\SK_Weapon_Crossbow_v001.blend",
+  "total_seconds": 27.0,
+  "_seconds": 30.5
+}

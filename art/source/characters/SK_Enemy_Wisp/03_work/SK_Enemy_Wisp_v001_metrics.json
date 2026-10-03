@@ -1,0 +1,165 @@
+{
+  "steps": {
+    "导入清理": 3.9,
+    "对齐": 2.6,
+    "低模与 UV": 25.3,
+    "投影着色": 57.5,
+    "烘焙": 11.1,
+    "LOD": 0.2,
+    "部件骨架蒙皮": 0.3,
+    "导出": 2.4
+  },
+  "highpoly": {
+    "faces_raw": 692626,
+    "faces": 345844,
+    "verts": 345836,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00492
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.838,
+    "iou_per_view": {
+      "front": 0.868,
+      "left": 0.808,
+      "back": 0.861,
+      "right": 0.8
+    },
+    "height_m": 1.1255,
+    "blockout_height_m": 1.2049
+  },
+  "projection": {
+    "uncovered_ratio": 0.2385
+  },
+  "bake_device": "OPTIX",
+  "material_id": {
+    "metal_texel_ratio": 0.1218
+  },
+  "textures": {
+    "T_Enemy_Wisp_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Enemy_Wisp_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Enemy_Wisp_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "skin": {
+    "bones": [
+      "j_r",
+      "j_0",
+      "j_0_15",
+      "j_0_16",
+      "j_0_17"
+    ],
+    "per_lod": {
+      "SK_Enemy_Wisp_LOD0": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      },
+      "SK_Enemy_Wisp_LOD1": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      },
+      "SK_Enemy_Wisp_LOD2": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      }
+    },
+    "mode": "parts",
+    "sigma_m": 0.0241
+  },
+  "lods": [
+    {
+      "name": "SK_Enemy_Wisp_LOD0",
+      "tris": 8000,
+      "verts": 3992,
+      "uv_min": [
+        0.004229748155921698,
+        0.004229788668453693
+      ],
+      "uv_max": [
+        0.9933114051818848,
+        0.9957702159881592
+      ],
+      "uv_utilization": 0.565,
+      "bbox_min": [
+        -0.3231,
+        -0.3308,
+        -0.1168
+      ],
+      "bbox_max": [
+        0.3238,
+        0.3082,
+        1.1262
+      ]
+    },
+    {
+      "name": "SK_Enemy_Wisp_LOD1",
+      "tris": 3500,
+      "verts": 1742,
+      "uv_min": [
+        0.004229748155921698,
+        0.004320938605815172
+      ],
+      "uv_max": [
+        0.9908528327941895,
+        0.9957700967788696
+      ],
+      "uv_utilization": 0.548,
+      "bbox_min": [
+        -0.3237,
+        -0.3312,
+        -0.1168
+      ],
+      "bbox_max": [
+        0.3236,
+        0.3086,
+        1.1262
+      ]
+    },
+    {
+      "name": "SK_Enemy_Wisp_LOD2",
+      "tris": 1500,
+      "verts": 742,
+      "uv_min": [
+        0.004349317867308855,
+        0.004326614551246166
+      ],
+      "uv_max": [
+        0.9908527731895447,
+        0.9908527731895447
+      ],
+      "uv_utilization": 0.523,
+      "bbox_min": [
+        -0.3239,
+        -0.3319,
+        -0.1182
+      ],
+      "bbox_max": [
+        0.3244,
+        0.309,
+        1.1255
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Enemy_Wisp\\04_export\\SK_Enemy_Wisp_v001.glb",
+    "bytes": 444904
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Enemy_Wisp\\03_work\\SK_Enemy_Wisp_v001.blend",
+  "total_seconds": 103.4,
+  "_seconds": 106.8
+}

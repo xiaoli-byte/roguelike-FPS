@@ -22,6 +22,8 @@ export interface WarlordRig {
   crest: THREE.Mesh;
   coreHalo: THREE.Mesh;
   chest: THREE.Object3D;
+  /** 弱点（角盔）判定锚点 */
+  weak: THREE.Object3D;
   pauldronL: THREE.Object3D; pauldronR: THREE.Object3D;
 }
 
@@ -72,6 +74,7 @@ function buildArm(torso: THREE.Object3D, side: number, m: Mats): { arm: THREE.Gr
 
 function buildSword(hand: THREE.Object3D, m: Mats): { sword: THREE.Group; base: THREE.Object3D; tip: THREE.Object3D } {
   const sword = pivot(hand, 0, -0.72, 0.06);
+  sword.name = 'greatsword'; // 挂点名：美术资产按它绑定（art/pipeline/registry.toml 的 blockout.attachment）
   mesh(sword, geo.cyl(0.045, 0.045, 0.45, 6), m.bone, 0, 0.02, 0);
   mesh(sword, geo.dodeca(0.075), m.gold, 0, 0.28, 0);
   mesh(sword, geo.box(0.62, 0.1, 0.16), m.iron, 0, -0.24, 0);
@@ -126,8 +129,9 @@ export function buildWarlord(): { root: THREE.Group; rig: WarlordRig } {
     glowMesh(torso, geo.box(0.5, 0.035, 0.035), m.ember, 0.84 * s, 0.84, 0.32, 'ember');
     pauldrons.push(anchor(torso, 0.84 * s, 1.02, 0));
   }
-  // 胸部判定锚点压低，保证正面射击时头盔（弱点）不被胸部胶囊遮挡
-  const chest = anchor(torso, 0, 0.6, 0.05);
+  // 胸部判定锚点（配合 Warlord 里半径 0.6、半高 0.15 的胶囊，顶点约在 3.15 米 = 颈根），
+  // 保证平视 / 俯视瞄准角盔都能判为爆头
+  const chest = anchor(torso, 0, 0.5, 0.05);
   // 披风
   const cape = pivot(torso, 0, 1.05, -0.42);
   mesh(cape, geo.box(1.25, 2.0, 0.05), m.cloth, 0, -1.0, -0.02);
@@ -156,6 +160,8 @@ export function buildWarlord(): { root: THREE.Group; rig: WarlordRig } {
     mesh(h2, geo.cone(0.07, 0.45, 5), m.bone, 0, 0.22, 0);
   }
   const crest = glowMesh(head, geo.cone(0.12, 0.55, 5), m.flame, 0, 0.62, -0.05, 'flame');
+  // 弱点判定中心：略高于头盔中心，覆盖面甲与盔顶
+  const weak = anchor(head, 0, 0.1, 0);
 
   return {
     root,
@@ -165,7 +171,7 @@ export function buildWarlord(): { root: THREE.Group; rig: WarlordRig } {
       torso,
       armS: AS.arm, elbowS: AS.elbow, armO: AO.arm, elbowO: AO.elbow,
       sword: S.sword, bladeBase: S.base, bladeTip: S.tip,
-      cape, head, crest, coreHalo, chest,
+      cape, head, crest, coreHalo, chest, weak,
       pauldronL: pauldrons[0], pauldronR: pauldrons[1],
     },
   };

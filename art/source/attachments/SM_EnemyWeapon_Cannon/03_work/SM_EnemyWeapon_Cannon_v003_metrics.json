@@ -1,0 +1,134 @@
+{
+  "steps": {
+    "导入清理": 1.9,
+    "对齐": 0.7,
+    "低模与 UV": 11.6,
+    "投影着色": 17.0,
+    "烘焙": 5.1,
+    "LOD": 0.0,
+    "导出": 0.8
+  },
+  "highpoly": {
+    "faces_raw": 468476,
+    "faces": 256616,
+    "verts": 256618,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.962,
+    "iou_per_view": {
+      "front": 0.968,
+      "left": 0.956,
+      "back": 0.971,
+      "right": 0.953
+    },
+    "height_m": 1.0224,
+    "blockout_height_m": 1.2301
+  },
+  "uv": {
+    "smart_islands": 161,
+    "charts": 38,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "margin_px": 6
+  },
+  "projection": {
+    "uncovered_ratio": 0.1134
+  },
+  "bake_device": "OPTIX",
+  "material_id": {
+    "metal_texel_ratio": 0.7686
+  },
+  "textures": {
+    "T_EnemyWeapon_Cannon_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_EnemyWeapon_Cannon_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_EnemyWeapon_Cannon_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "presentation": [
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "lods": [
+    {
+      "name": "SM_EnemyWeapon_Cannon_LOD0",
+      "tris": 3000,
+      "verts": 1502,
+      "uv_min": [
+        0.005859346594661474,
+        0.005859358236193657
+      ],
+      "uv_max": [
+        0.9869582056999207,
+        0.972486674785614
+      ],
+      "uv_utilization": 0.474,
+      "bbox_min": [
+        -0.2154,
+        -0.2138,
+        -0.1636
+      ],
+      "bbox_max": [
+        0.2151,
+        0.2154,
+        1.022
+      ]
+    },
+    {
+      "name": "SM_EnemyWeapon_Cannon_LOD1",
+      "tris": 1000,
+      "verts": 502,
+      "uv_min": [
+        0.0066252201795578,
+        0.005859358236193657
+      ],
+      "uv_max": [
+        0.9869582056999207,
+        0.972486674785614
+      ],
+      "uv_utilization": 0.45,
+      "bbox_min": [
+        -0.2156,
+        -0.2145,
+        -0.164
+      ],
+      "bbox_max": [
+        0.2155,
+        0.2154,
+        1.0214
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\attachments\\SM_EnemyWeapon_Cannon\\04_export\\SM_EnemyWeapon_Cannon_v003.glb",
+    "bytes": 196204
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\attachments\\SM_EnemyWeapon_Cannon\\03_work\\SM_EnemyWeapon_Cannon_v003.blend",
+  "total_seconds": 37.2,
+  "_seconds": 41.4
+}

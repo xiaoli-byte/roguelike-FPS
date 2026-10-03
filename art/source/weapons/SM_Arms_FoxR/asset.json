@@ -1,0 +1,465 @@
+{
+  "id": "SM_Arms_FoxR",
+  "display": "赤狐·右手",
+  "kind": "static",
+  "class": "fp_arm",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:10:06",
+          "files": {
+            "BO_SM_Arms_FoxR_v001.glb": {
+              "path": "00_blockout/BO_SM_Arms_FoxR_v001.glb",
+              "sha256": "3af0fcbe1cd635263e81a7a9fc0b849cc00dddec872d81e6e66445ee5d77e376"
+            },
+            "BO_SM_Arms_FoxR_v001.json": {
+              "path": "00_blockout/BO_SM_Arms_FoxR_v001.json",
+              "sha256": "878b08d3be0c9dc8c47b47bb7040b9e9ac5dfdb5d3b6b8e50639f0497856f6ec"
+            },
+            "BO_SM_Arms_FoxR_v001_views.json": {
+              "path": "00_blockout/BO_SM_Arms_FoxR_v001_views.json",
+              "sha256": "b340e214457808405c5a35beb0a000ef8c905f7147f104b4c3e2502bdc79596b"
+            },
+            "BO_SM_Arms_FoxR_v001_sheet.png": {
+              "path": "00_blockout/BO_SM_Arms_FoxR_v001_sheet.png",
+              "sha256": "c79f8ce46f8e48cfdeb4fb28c736c0cd78697e7d7a527701720e6c00dedc9b2c"
+            },
+            "BO_SM_Arms_FoxR_v001_front.png": {
+              "path": "00_blockout/BO_SM_Arms_FoxR_v001_front.png",
+              "sha256": "457d7692084a056b9e75729e4b410735599531e9c6e9526de69439078db00932"
+            },
+            "BO_SM_Arms_FoxR_v001_left.png": {
+              "path": "00_blockout/BO_SM_Arms_FoxR_v001_left.png",
+              "sha256": "37f11e4d8e7769b6abc4effa2ecfcde28889a8f22cc644faceba78383a050685"
+            },
+            "BO_SM_Arms_FoxR_v001_back.png": {
+              "path": "00_blockout/BO_SM_Arms_FoxR_v001_back.png",
+              "sha256": "e5d1638ac9a79d8652f2ed5a87643c01ed3ff226031b1f0389b4084fd3271002"
+            },
+            "BO_SM_Arms_FoxR_v001_right.png": {
+              "path": "00_blockout/BO_SM_Arms_FoxR_v001_right.png",
+              "sha256": "128f02a11b5ea22b712b4b1083d496e8696b36633ac6c8ee89c0e131689e1498"
+            }
+          },
+          "source": {
+            "kind": "fp",
+            "id": "fox",
+            "attachment": "arm_r"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.03924723294610005,
+              -0.2927586282636328,
+              -0.01096206555933877
+            ],
+            "max": [
+              0.1705597428470242,
+              0.005619407555073265,
+              0.3593916022347604
+            ]
+          },
+          "blender_seconds": 6.3
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:11:38",
+          "files": {
+            "CN_SM_Arms_FoxR_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Arms_FoxR_v001_sheet.png",
+              "sha256": "4c6341182a9bef2fa3a80712114fc1ea0aa25cebc9ac2c3c087e6a58318859ad"
+            },
+            "CN_SM_Arms_FoxR_v001_front.png": {
+              "path": "01_concept/CN_SM_Arms_FoxR_v001_front.png",
+              "sha256": "1ae90c7a0736fdd53d143ba24df51744afafac007d1af8ccb4f407e6e3be33b9"
+            },
+            "CN_SM_Arms_FoxR_v001_left.png": {
+              "path": "01_concept/CN_SM_Arms_FoxR_v001_left.png",
+              "sha256": "7d7486f1727d89e33a0d10bec3cb6b920be91a51540c4fe539bc0a449ac3422f"
+            },
+            "CN_SM_Arms_FoxR_v001_back.png": {
+              "path": "01_concept/CN_SM_Arms_FoxR_v001_back.png",
+              "sha256": "1ff0f03eddac643fcfd1e92c067c08c16dc6e88f23ca89ff628cf348238b4bd5"
+            },
+            "CN_SM_Arms_FoxR_v001_right.png": {
+              "path": "01_concept/CN_SM_Arms_FoxR_v001_right.png",
+              "sha256": "7b3f5fe5628ac5ccb65b167c3b07650f30d76aa7870c3b410206aee4f303546e"
+            },
+            "CN_SM_Arms_FoxR_v001_compare.png": {
+              "path": "01_concept/CN_SM_Arms_FoxR_v001_compare.png",
+              "sha256": "939476e862117931013b026f7ba34f2a490b66a8dffddf7a7cce055a7bce7b11"
+            },
+            "CN_SM_Arms_FoxR_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Arms_FoxR_v001_prompt.txt",
+              "sha256": "f965b09ffd486c25da23ec7805b672babe4c4cedf9325ded7440a7edf37f6321"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1956,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 498
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3136
+          },
+          "request_id": "req_b6b27708af2242489c9d04edec35f211",
+          "seconds": 32.1,
+          "registration": {
+            "front": {
+              "scale": 0.8628,
+              "offset": [
+                48,
+                229
+              ],
+              "iou": 0.716,
+              "iou_unregistered_scale": 0.8628
+            },
+            "left": {
+              "scale": 0.8977,
+              "offset": [
+                103,
+                219
+              ],
+              "iou": 0.753,
+              "iou_unregistered_scale": 0.8591
+            },
+            "back": {
+              "scale": 0.8591,
+              "offset": [
+                48,
+                237
+              ],
+              "iou": 0.665,
+              "iou_unregistered_scale": 0.8591
+            },
+            "right": {
+              "scale": 0.8932,
+              "offset": [
+                96,
+                220
+              ],
+              "iou": 0.771,
+              "iou_unregistered_scale": 0.8672
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.719,
+            "left": 0.754,
+            "back": 0.667,
+            "right": 0.773
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "露指皮手套握拳、黄铜扣皮护腕、狐尾毛、火焰纹橙红袖；手部为握拳（白模方掌），袖子吻合",
+            "time": "2026-10-03 22:12:03"
+          }
+        }
+      ]
+    },
+    "matid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:15:39",
+          "files": {
+            "MID_SM_Arms_FoxR_v001_sheet.png": {
+              "path": "01_concept/MID_SM_Arms_FoxR_v001_sheet.png",
+              "sha256": "3a7d5c54f9563b3021f69b146e6e93172191bd425ad78c459df7638bb3c06fce"
+            },
+            "MID_SM_Arms_FoxR_v001_front.png": {
+              "path": "01_concept/MID_SM_Arms_FoxR_v001_front.png",
+              "sha256": "1529f4cfe3541c43d9269a7e94c105802dae3f9f1178778cb6053a037cbed525"
+            },
+            "MID_SM_Arms_FoxR_v001_left.png": {
+              "path": "01_concept/MID_SM_Arms_FoxR_v001_left.png",
+              "sha256": "6ddf312806d38f6f903cdf0acfff38de5f850dbeeabaedfeab8bc9a4a954a28f"
+            },
+            "MID_SM_Arms_FoxR_v001_back.png": {
+              "path": "01_concept/MID_SM_Arms_FoxR_v001_back.png",
+              "sha256": "3bdd58bb736755d8d183721ec522af827a43a98770c37de5203e115fcb6fefbb"
+            },
+            "MID_SM_Arms_FoxR_v001_right.png": {
+              "path": "01_concept/MID_SM_Arms_FoxR_v001_right.png",
+              "sha256": "592bee97f93c0d64bc4c0485f187efbfb0c0e2bb9c77153b3582414ca04a9beb"
+            },
+            "MID_SM_Arms_FoxR_v001_compare.png": {
+              "path": "01_concept/MID_SM_Arms_FoxR_v001_compare.png",
+              "sha256": "f805522db51d76c8dc86719fd4a78e9872aceac4be604da2f2552a302071741f"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1699,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 241
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2879
+          },
+          "request_id": "req_bbacceabe5e7419794cd3f5b8cb49963",
+          "seconds": 29.8,
+          "registration": {
+            "front": {
+              "scale": 0.7913,
+              "offset": [
+                66,
+                229
+              ],
+              "iou": 0.826,
+              "iou_unregistered_scale": 0.7796,
+              "purity": 0.992
+            },
+            "left": {
+              "scale": 0.7942,
+              "offset": [
+                102,
+                228
+              ],
+              "iou": 0.902,
+              "iou_unregistered_scale": 0.8188,
+              "purity": 0.992
+            },
+            "back": {
+              "scale": 0.7753,
+              "offset": [
+                56,
+                237
+              ],
+              "iou": 0.905,
+              "iou_unregistered_scale": 0.7753,
+              "purity": 0.994
+            },
+            "right": {
+              "scale": 0.7926,
+              "offset": [
+                110,
+                220
+              ],
+              "iou": 0.909,
+              "iou_unregistered_scale": 0.8047,
+              "purity": 0.993
+            }
+          },
+          "metal_ratio": {
+            "front": 0.129,
+            "left": 0.119,
+            "back": 0.102,
+            "right": 0.108
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:21:14",
+          "files": {
+            "HP_SM_Arms_FoxR_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Arms_FoxR_v001_input_front.png",
+              "sha256": "ec090017a5953f6ff4d9450bc69a0872f0985e7153db7df35683d2ac5931c21b"
+            },
+            "HP_SM_Arms_FoxR_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Arms_FoxR_v001_input_left.png",
+              "sha256": "03d8e19cfc37e49797e56a2d06de265e21a856a56fa2ec6e8258243723f6fd38"
+            },
+            "HP_SM_Arms_FoxR_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Arms_FoxR_v001_input_back.png",
+              "sha256": "e52788a40f9e49db4c0d4ea0cbb0422c5c1f1a4ddf09b7e1b015a3b4e7bccc01"
+            },
+            "HP_SM_Arms_FoxR_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Arms_FoxR_v001_input_right.png",
+              "sha256": "1246eca556c29e2befbe14c6e4cb3961d2d3a77fdb306eee89e79cc477bc4d35"
+            },
+            "HP_SM_Arms_FoxR_v001.glb": {
+              "path": "02_highpoly/HP_SM_Arms_FoxR_v001.glb",
+              "sha256": "a80f83dc9f9365543a1431eb5858b1b560a212814ac4f92fc948c098dcdd6018"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -92,
+              167,
+              604,
+              863
+            ],
+            "scale": 1.471264367816092
+          },
+          "seconds": 174.1,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 9.3
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:21:59",
+          "files": {
+            "SM_Arms_FoxR_v001.blend": {
+              "path": "03_work/SM_Arms_FoxR_v001.blend",
+              "sha256": "a8c629a4bed68f2f0e6e5c2a042e5ada470c34497488fa21717bb97888c0f816"
+            },
+            "SM_Arms_FoxR_v001.glb": {
+              "path": "04_export/SM_Arms_FoxR_v001.glb",
+              "sha256": "d2ec4a241480908046605e814cde2bc7770e895a317d31777886c84bf11a1c40"
+            },
+            "SM_Arms_FoxR_v001_metrics.json": {
+              "path": "03_work/SM_Arms_FoxR_v001_metrics.json",
+              "sha256": "38827858b13680cd57c17adf781c20538e81beb4468b7a2a2278378a061a680d"
+            },
+            "T_Arms_FoxR_BC.png": {
+              "path": "03_work/textures_v001/T_Arms_FoxR_BC.png",
+              "sha256": "ded1af1b32e579b4347a276261bb1abaec666393fe916f4d2515d1db03f7eaee"
+            },
+            "T_Arms_FoxR_MetalMask.png": {
+              "path": "03_work/textures_v001/T_Arms_FoxR_MetalMask.png",
+              "sha256": "68a40cd9034ace1fe5ad5abd8625d58dfa181ac9bc37f31896a634f6969dec43"
+            },
+            "T_Arms_FoxR_N.png": {
+              "path": "03_work/textures_v001/T_Arms_FoxR_N.png",
+              "sha256": "a191acc83df877fc1496883e8d7909ea904f6a391a43d105235f5788691c96be"
+            },
+            "T_Arms_FoxR_ORM.png": {
+              "path": "03_work/textures_v001/T_Arms_FoxR_ORM.png",
+              "sha256": "858ac08d5e46f436194d12bef30253b4306715619dcaadb10599156a243ab1c6"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1,
+            "emid": null
+          },
+          "align_iou": 0.756,
+          "uncovered_ratio": 0.1413,
+          "lods": [
+            {
+              "tris": 8000,
+              "verts": 3998
+            },
+            {
+              "tris": 2000,
+              "verts": 998
+            }
+          ],
+          "export_kb": 449.4,
+          "seconds": 45.3,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:21:59",
+          "files": {
+            "SM_Arms_FoxR_v001_validation.json": {
+              "path": "05_review/SM_Arms_FoxR_v001_validation.json",
+              "sha256": "b6a2cb67846706d7cb4fec38995e70e5122d95cb4260533ef45391430254e951"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:22:08",
+          "files": {
+            "SM_Arms_FoxR_v001_review.png": {
+              "path": "05_review/SM_Arms_FoxR_v001_review.png",
+              "sha256": "90cffecb7fabe6dcd1689d530d525dbab75a79e492045861a8d25aae71f0fdac"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "英雄专属第一人称手臂；深度轴偏小待游戏内确认袖口不露出",
+            "time": "2026-10-03 22:41:48"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:41:49",
+          "files": {
+            "SM_Arms_FoxR.glb": {
+              "path": "@root/public/assets/weapons/SM_Arms_FoxR.glb",
+              "sha256": "d2ec4a241480908046605e814cde2bc7770e895a317d31777886c84bf11a1c40"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/weapons/SM_Arms_FoxR.glb"
+        }
+      ]
+    }
+  }
+}

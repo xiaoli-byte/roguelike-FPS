@@ -1,0 +1,134 @@
+{
+  "steps": {
+    "导入清理": 0.6,
+    "对齐": 0.4,
+    "低模与 UV": 1.7,
+    "投影着色": 2.5,
+    "烘焙": 6.2,
+    "LOD": 0.0,
+    "导出": 1.3
+  },
+  "highpoly": {
+    "faces_raw": 101886,
+    "faces": 54870,
+    "verts": 54872,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00492
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.843,
+    "iou_per_view": {
+      "front": 0.886,
+      "left": 0.781,
+      "back": 0.92,
+      "right": 0.763
+    },
+    "height_m": 0.3552,
+    "blockout_height_m": 3.2951
+  },
+  "uv": {
+    "smart_islands": 89,
+    "charts": 18,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "margin_px": 6
+  },
+  "projection": {
+    "uncovered_ratio": 0.0574
+  },
+  "bake_device": "OPTIX",
+  "material_id": {
+    "metal_texel_ratio": 0.4926
+  },
+  "textures": {
+    "T_BossWeapon_Greatsword_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_BossWeapon_Greatsword_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_BossWeapon_Greatsword_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "presentation": [
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "lods": [
+    {
+      "name": "SM_BossWeapon_Greatsword_LOD0",
+      "tris": 6000,
+      "verts": 3002,
+      "uv_min": [
+        0.0029297699220478535,
+        0.0029297086875885725
+      ],
+      "uv_max": [
+        0.9850560426712036,
+        0.994713306427002
+      ],
+      "uv_utilization": 0.429,
+      "bbox_min": [
+        -0.5409,
+        -0.1084,
+        -2.8271
+      ],
+      "bbox_max": [
+        0.5656,
+        0.1085,
+        0.3551
+      ]
+    },
+    {
+      "name": "SM_BossWeapon_Greatsword_LOD1",
+      "tris": 2000,
+      "verts": 1002,
+      "uv_min": [
+        0.0029297699220478535,
+        0.0029297086875885725
+      ],
+      "uv_max": [
+        0.9850560426712036,
+        0.9945650100708008
+      ],
+      "uv_utilization": 0.424,
+      "bbox_min": [
+        -0.5401,
+        -0.1092,
+        -2.8273
+      ],
+      "bbox_max": [
+        0.5657,
+        0.1094,
+        0.3551
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\attachments\\SM_BossWeapon_Greatsword\\04_export\\SM_BossWeapon_Greatsword_v001.glb",
+    "bytes": 336460
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\attachments\\SM_BossWeapon_Greatsword\\03_work\\SM_BossWeapon_Greatsword_v001.blend",
+  "total_seconds": 12.7,
+  "_seconds": 15.5
+}

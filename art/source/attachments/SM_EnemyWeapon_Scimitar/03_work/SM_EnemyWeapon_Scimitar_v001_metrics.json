@@ -1,0 +1,123 @@
+{
+  "steps": {
+    "导入清理": 0.6,
+    "对齐": 0.4,
+    "低模与 UV": 0.6,
+    "投影着色": 1.4,
+    "烘焙": 2.6,
+    "LOD": 0.0,
+    "导出": 0.6
+  },
+  "highpoly": {
+    "faces_raw": 81647,
+    "faces": 44672,
+    "verts": 44674,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.853,
+    "iou_per_view": {
+      "front": 0.873,
+      "left": 0.813,
+      "back": 0.9,
+      "right": 0.813
+    },
+    "height_m": 0.1018,
+    "blockout_height_m": 0.93
+  },
+  "projection": {
+    "uncovered_ratio": 0.0456
+  },
+  "bake_device": "OPTIX",
+  "textures": {
+    "T_EnemyWeapon_Scimitar_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_EnemyWeapon_Scimitar_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_EnemyWeapon_Scimitar_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "presentation": [
+    [
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ]
+  ],
+  "lods": [
+    {
+      "name": "SM_EnemyWeapon_Scimitar_LOD0",
+      "tris": 3000,
+      "verts": 1502,
+      "uv_min": [
+        0.0011035415809601545,
+        0.0011036951327696443
+      ],
+      "uv_max": [
+        0.9988963603973389,
+        0.6599959135055542
+      ],
+      "uv_utilization": 0.363,
+      "bbox_min": [
+        -0.0274,
+        -0.7825,
+        -0.0476
+      ],
+      "bbox_max": [
+        0.0274,
+        0.102,
+        0.1358
+      ]
+    },
+    {
+      "name": "SM_EnemyWeapon_Scimitar_LOD1",
+      "tris": 1000,
+      "verts": 502,
+      "uv_min": [
+        0.0011035415809601545,
+        0.0011036951327696443
+      ],
+      "uv_max": [
+        0.9988963603973389,
+        0.6599178314208984
+      ],
+      "uv_utilization": 0.355,
+      "bbox_min": [
+        -0.0275,
+        -0.782,
+        -0.0476
+      ],
+      "bbox_max": [
+        0.0275,
+        0.1019,
+        0.136
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\attachments\\SM_EnemyWeapon_Scimitar\\04_export\\SM_EnemyWeapon_Scimitar_v001.glb",
+    "bytes": 117344
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\attachments\\SM_EnemyWeapon_Scimitar\\03_work\\SM_EnemyWeapon_Scimitar_v001.blend",
+  "total_seconds": 6.2,
+  "_seconds": 9.8
+}

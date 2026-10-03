@@ -1,0 +1,791 @@
+{
+  "id": "SK_Weapon_Sniper",
+  "display": "鹰隼狙击",
+  "kind": "skeletal",
+  "class": "weapon_fp",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:07:30",
+          "files": {
+            "BO_SK_Weapon_Sniper_v001.glb": {
+              "path": "00_blockout/BO_SK_Weapon_Sniper_v001.glb",
+              "sha256": "6e5a88e16866d7b672c6ffaeb3879ce4b596ea2e94c1d73643272d68fe99bde1"
+            },
+            "BO_SK_Weapon_Sniper_v001.json": {
+              "path": "00_blockout/BO_SK_Weapon_Sniper_v001.json",
+              "sha256": "dccd9f4c2b919dc2a9330e2a702738f2f1c1dc419bb7f4a9a8e3ad94c37de5c4"
+            },
+            "BO_SK_Weapon_Sniper_v001_views.json": {
+              "path": "00_blockout/BO_SK_Weapon_Sniper_v001_views.json",
+              "sha256": "875150d43ef1e8df863d06a1c0b185930fb0f09f6fa8fbd9e95efb1f0687585f"
+            },
+            "BO_SK_Weapon_Sniper_v001_sheet.png": {
+              "path": "00_blockout/BO_SK_Weapon_Sniper_v001_sheet.png",
+              "sha256": "348b10c35d2fc20778545ed44ae4d3b942b4d32ffd706a417d4002e3e10420c3"
+            },
+            "BO_SK_Weapon_Sniper_v001_front.png": {
+              "path": "00_blockout/BO_SK_Weapon_Sniper_v001_front.png",
+              "sha256": "873d32eb74c3ea1a787c4a10f9726ff77a47e5546dfeffd5be19289c3d3063e9"
+            },
+            "BO_SK_Weapon_Sniper_v001_left.png": {
+              "path": "00_blockout/BO_SK_Weapon_Sniper_v001_left.png",
+              "sha256": "67d5911bbaa65a3f414d877da07b2b3ca22e108a0fa21a0d9c72a5e3a7bc75bd"
+            },
+            "BO_SK_Weapon_Sniper_v001_back.png": {
+              "path": "00_blockout/BO_SK_Weapon_Sniper_v001_back.png",
+              "sha256": "bbf47fde030ced5e8cd09fa0dd5b1b8a3320b38388c363497c8bc49caa863afd"
+            },
+            "BO_SK_Weapon_Sniper_v001_right.png": {
+              "path": "00_blockout/BO_SK_Weapon_Sniper_v001_right.png",
+              "sha256": "8bbcd027e98a04033e92ba92498b13be7b84b176a50f3567db8c4b26adc594eb"
+            }
+          },
+          "source": {
+            "kind": "weapon",
+            "id": "sniper"
+          },
+          "joints": 3,
+          "bounds": {
+            "min": [
+              -0.030433809384703636,
+              -0.1155808421044374,
+              -0.7950000001490116
+            ],
+            "max": [
+              0.0809999996125698,
+              0.16499999966472387,
+              0.3799999997764826
+            ]
+          },
+          "blender_seconds": 7.7
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:11:31",
+          "files": {
+            "CN_SK_Weapon_Sniper_v001_sheet.png": {
+              "path": "01_concept/CN_SK_Weapon_Sniper_v001_sheet.png",
+              "sha256": "e4aaa6898ae02a25e83e812d697c215cb68325e333dcc90afe3ad8d8614ac9ec"
+            },
+            "CN_SK_Weapon_Sniper_v001_front.png": {
+              "path": "01_concept/CN_SK_Weapon_Sniper_v001_front.png",
+              "sha256": "0aa9168ea0ff41bbb22e83624da2ceefdf0d33bf5fb4db5cfc9af8ac06dbd9a5"
+            },
+            "CN_SK_Weapon_Sniper_v001_left.png": {
+              "path": "01_concept/CN_SK_Weapon_Sniper_v001_left.png",
+              "sha256": "d85e62d593ee5218c95b1eaf8a4b0216c8ad9e0d0b32fdc54986e13a7ae8a6e0"
+            },
+            "CN_SK_Weapon_Sniper_v001_back.png": {
+              "path": "01_concept/CN_SK_Weapon_Sniper_v001_back.png",
+              "sha256": "ac783851a11788f5fc7da1e8dd6bd6f2a4b91419ac3c207ed7a4a39d975d6b72"
+            },
+            "CN_SK_Weapon_Sniper_v001_right.png": {
+              "path": "01_concept/CN_SK_Weapon_Sniper_v001_right.png",
+              "sha256": "4582ee5a4409160352857f3ff8d03aa16e548d035cbd3767a0c89f35a41ec794"
+            },
+            "CN_SK_Weapon_Sniper_v001_compare.png": {
+              "path": "01_concept/CN_SK_Weapon_Sniper_v001_compare.png",
+              "sha256": "480c0b41bed1c45314a095e9f50de69412c0ee77aadf61c476a1351c23157d92"
+            },
+            "CN_SK_Weapon_Sniper_v001_prompt.txt": {
+              "path": "01_concept/CN_SK_Weapon_Sniper_v001_prompt.txt",
+              "sha256": "3c6a8b89600b6da96857929382940726d6fad2b5991aab83caf849c1cef53136"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1943,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 485
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3123
+          },
+          "request_id": "req_bc104a956b96480eb90d6b3c174452b8",
+          "seconds": 29.2,
+          "registration": {
+            "front": {
+              "scale": 0.9101,
+              "offset": [
+                144,
+                110
+              ],
+              "iou": 0.832,
+              "iou_unregistered_scale": 0.9682
+            },
+            "left": {
+              "scale": 0.9082,
+              "offset": [
+                206,
+                110
+              ],
+              "iou": 0.79,
+              "iou_unregistered_scale": 0.9662
+            },
+            "back": {
+              "scale": 0.9082,
+              "offset": [
+                144,
+                110
+              ],
+              "iou": 0.81,
+              "iou_unregistered_scale": 0.9662
+            },
+            "right": {
+              "scale": 0.9082,
+              "offset": [
+                207,
+                110
+              ],
+              "iou": 0.791,
+              "iou_unregistered_scale": 0.9662
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.832,
+            "left": 0.803,
+            "back": 0.813,
+            "right": 0.806
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "东方奇幻配色与纹饰统一；剪影与白模吻合（IoU ≥ 0.79）",
+            "time": "2026-10-03 21:15:09"
+          }
+        }
+      ]
+    },
+    "matid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:18:03",
+          "files": {
+            "MID_SK_Weapon_Sniper_v001_sheet.png": {
+              "path": "01_concept/MID_SK_Weapon_Sniper_v001_sheet.png",
+              "sha256": "5e07a316b74eec7c6b960e22ab4cb5dd9292262a5b4e38323a8ebd5e3fec6700"
+            },
+            "MID_SK_Weapon_Sniper_v001_front.png": {
+              "path": "01_concept/MID_SK_Weapon_Sniper_v001_front.png",
+              "sha256": "5502b76a7d33a2b9eef82a66a32ceb1ca356f142b1eeea920d9f7e31e508303a"
+            },
+            "MID_SK_Weapon_Sniper_v001_left.png": {
+              "path": "01_concept/MID_SK_Weapon_Sniper_v001_left.png",
+              "sha256": "0bd9e66d0768573dab9d60b58e5272aecca1bc1c3026fb0bcc4a9286b79c12de"
+            },
+            "MID_SK_Weapon_Sniper_v001_back.png": {
+              "path": "01_concept/MID_SK_Weapon_Sniper_v001_back.png",
+              "sha256": "95124b39e82b96de7f6be7ab1b83147858e43abd489b8602697db175f6e7ce35"
+            },
+            "MID_SK_Weapon_Sniper_v001_right.png": {
+              "path": "01_concept/MID_SK_Weapon_Sniper_v001_right.png",
+              "sha256": "bcbd460dd7d5dbd3785031ef7c5bb0e85f2a3ee0430436ce3d6871c113bb26fb"
+            },
+            "MID_SK_Weapon_Sniper_v001_compare.png": {
+              "path": "01_concept/MID_SK_Weapon_Sniper_v001_compare.png",
+              "sha256": "270e9fbbf46a0f66831856b2b84dcda94d7929b57d99719001d3d566e75e9614"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1699,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 241
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2879
+          },
+          "request_id": "req_ff6dc0f409d142f096c61a24482aafb2",
+          "seconds": 32.4,
+          "registration": {
+            "front": {
+              "scale": 0.9052,
+              "offset": [
+                142,
+                110
+              ],
+              "iou": 0.95,
+              "iou_unregistered_scale": 0.9052,
+              "purity": 0.988
+            },
+            "left": {
+              "scale": 0.9042,
+              "offset": [
+                206,
+                110
+              ],
+              "iou": 0.956,
+              "iou_unregistered_scale": 0.9042,
+              "purity": 0.977
+            },
+            "back": {
+              "scale": 0.9052,
+              "offset": [
+                142,
+                110
+              ],
+              "iou": 0.95,
+              "iou_unregistered_scale": 0.9052,
+              "purity": 0.987
+            },
+            "right": {
+              "scale": 0.9042,
+              "offset": [
+                206,
+                110
+              ],
+              "iou": 0.966,
+              "iou_unregistered_scale": 0.9042,
+              "purity": 0.975
+            }
+          },
+          "metal_ratio": {
+            "front": 0.346,
+            "left": 0.574,
+            "back": 0.361,
+            "right": 0.438
+          }
+        }
+      ]
+    },
+    "emid": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:23:15",
+          "files": {
+            "EID_SK_Weapon_Sniper_v001_sheet.png": {
+              "path": "01_concept/EID_SK_Weapon_Sniper_v001_sheet.png",
+              "sha256": "1215b6a18ce34846b4afcdf08cd24ec23c4aa3624026b38cd70ee39566356c60"
+            },
+            "EID_SK_Weapon_Sniper_v001_front.png": {
+              "path": "01_concept/EID_SK_Weapon_Sniper_v001_front.png",
+              "sha256": "7ecf59a45f6c11bea55f77b259fc78c64db8eb3c2d7bf3ff5eda83b4efd48e00"
+            },
+            "EID_SK_Weapon_Sniper_v001_left.png": {
+              "path": "01_concept/EID_SK_Weapon_Sniper_v001_left.png",
+              "sha256": "0659e11d9b03a1b6451f72b0323a71a47fb7e2e05273afef5d4340a6d5465592"
+            },
+            "EID_SK_Weapon_Sniper_v001_back.png": {
+              "path": "01_concept/EID_SK_Weapon_Sniper_v001_back.png",
+              "sha256": "b41ecc5002a2260777677d3295d2072e1c5063054b5c3d3b1e1cf354b536b8b3"
+            },
+            "EID_SK_Weapon_Sniper_v001_right.png": {
+              "path": "01_concept/EID_SK_Weapon_Sniper_v001_right.png",
+              "sha256": "a5cd87927264c4a82bc355161a11db1f0a5e13cf35a290ac52da1bef6dd02455"
+            },
+            "EID_SK_Weapon_Sniper_v001_compare.png": {
+              "path": "01_concept/EID_SK_Weapon_Sniper_v001_compare.png",
+              "sha256": "fa4d5c98d81cdf00d80b0647d089f2ac1d2bb64da670d2f90ef84c0c0cae184d"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1711,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 253
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2891
+          },
+          "request_id": "req_289943edfff04e519361155971279452",
+          "seconds": 28.1,
+          "registration": {
+            "front": {
+              "scale": 0.9052,
+              "offset": [
+                138,
+                110
+              ],
+              "iou": 0.907,
+              "iou_unregistered_scale": 0.9052,
+              "purity": 0.965
+            },
+            "left": {
+              "scale": 0.9042,
+              "offset": [
+                201,
+                110
+              ],
+              "iou": 0.883,
+              "iou_unregistered_scale": 0.9042,
+              "purity": 0.991
+            },
+            "back": {
+              "scale": 0.8644,
+              "offset": [
+                142,
+                136
+              ],
+              "iou": 0.89,
+              "iou_unregistered_scale": 0.9052,
+              "purity": 0.966
+            },
+            "right": {
+              "scale": 0.8644,
+              "offset": [
+                206,
+                136
+              ],
+              "iou": 0.897,
+              "iou_unregistered_scale": 0.9052,
+              "purity": 0.987
+            }
+          },
+          "emissive_ratio": {
+            "front": 0.205,
+            "left": 0.089,
+            "back": 0.198,
+            "right": 0.104
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 21:58:22",
+          "files": {
+            "EID_SK_Weapon_Sniper_v002_sheet.png": {
+              "path": "01_concept/EID_SK_Weapon_Sniper_v002_sheet.png",
+              "sha256": "abf32c7daa87d7ac3f19b7d5f2290001e8eac21ed62a068d9b372628755e7c31"
+            },
+            "EID_SK_Weapon_Sniper_v002_front.png": {
+              "path": "01_concept/EID_SK_Weapon_Sniper_v002_front.png",
+              "sha256": "44002af9d210346bb8f3a5b1b54957af71deea22d762fd597e4b22ae04b90b5f"
+            },
+            "EID_SK_Weapon_Sniper_v002_left.png": {
+              "path": "01_concept/EID_SK_Weapon_Sniper_v002_left.png",
+              "sha256": "466042d78dc401c2e3fb848b3d8ae4b586838d7815ca1bbc12e079e9560eb154"
+            },
+            "EID_SK_Weapon_Sniper_v002_back.png": {
+              "path": "01_concept/EID_SK_Weapon_Sniper_v002_back.png",
+              "sha256": "d6cf441101de19ad4dcc7f9a33d0a146c976ee63d89b930b0355f825e8a39385"
+            },
+            "EID_SK_Weapon_Sniper_v002_right.png": {
+              "path": "01_concept/EID_SK_Weapon_Sniper_v002_right.png",
+              "sha256": "37510926c4ddccbf9058b705a657d1ec336441195d3703f5e088540b69cfbf0e"
+            },
+            "EID_SK_Weapon_Sniper_v002_compare.png": {
+              "path": "01_concept/EID_SK_Weapon_Sniper_v002_compare.png",
+              "sha256": "44f20bc28ac778ccf07af691ebbe6ff08ebaa3e1cb7b23d1d39a9b93e96bcac0"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1741,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 283
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2921
+          },
+          "request_id": "req_375a1686cc8747c280a4afa95ead15bf",
+          "seconds": 31.9,
+          "registration": {
+            "front": {
+              "scale": 0.8995,
+              "offset": [
+                138,
+                110
+              ],
+              "iou": 0.909,
+              "iou_unregistered_scale": 0.8995,
+              "purity": 0.959
+            },
+            "left": {
+              "scale": 0.8995,
+              "offset": [
+                200,
+                110
+              ],
+              "iou": 0.854,
+              "iou_unregistered_scale": 0.8995,
+              "purity": 0.989
+            },
+            "back": {
+              "scale": 0.859,
+              "offset": [
+                143,
+                136
+              ],
+              "iou": 0.903,
+              "iou_unregistered_scale": 0.8995,
+              "purity": 0.958
+            },
+            "right": {
+              "scale": 0.8725,
+              "offset": [
+                200,
+                123
+              ],
+              "iou": 0.86,
+              "iou_unregistered_scale": 0.8995,
+              "purity": 0.982
+            }
+          },
+          "emissive_ratio": {
+            "front": 0.068,
+            "left": 0.011,
+            "back": 0.078,
+            "right": 0.017
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:39:54",
+          "files": {
+            "HP_SK_Weapon_Sniper_v001_input_front.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Sniper_v001_input_front.png",
+              "sha256": "b22b57f91ad5380e986ebdac0c6d275b2f9bdc2ad07d0d1c2d97f946ff1f7346"
+            },
+            "HP_SK_Weapon_Sniper_v001_input_left.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Sniper_v001_input_left.png",
+              "sha256": "2803afde2a29a92f5fb2c60f39eb678f6ad426c97a18e4e6ce023b6bf8e6faac"
+            },
+            "HP_SK_Weapon_Sniper_v001_input_back.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Sniper_v001_input_back.png",
+              "sha256": "118b32a7cf91368eb1c861dea960c7ad942c0786f3fbe840756bb7acc19dde3a"
+            },
+            "HP_SK_Weapon_Sniper_v001_input_right.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Sniper_v001_input_right.png",
+              "sha256": "0fdf29bb18bff873a7ae6cd8fe294f955c0c723c902f0befee5871198dfd4c63"
+            },
+            "HP_SK_Weapon_Sniper_v001.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Sniper_v001.glb",
+              "sha256": "850f94a11acd98baa57979db7357b60d174738dcbb49dbf6f4f2a723f53ac42a"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -249,
+              34,
+              761,
+              1045
+            ],
+            "scale": 1.0138613861386139
+          },
+          "seconds": 132.4,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 2.1
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:40:17",
+          "files": {
+            "SK_Weapon_Sniper_v001.blend": {
+              "path": "03_work/SK_Weapon_Sniper_v001.blend",
+              "sha256": "b65d94188dab6c2a2add1d760f1850b9dcd4f8cf57da1bbac39056f236e96cdc"
+            },
+            "SK_Weapon_Sniper_v001.glb": {
+              "path": "04_export/SK_Weapon_Sniper_v001.glb",
+              "sha256": "8d06e81155c28cbbbdc722bd0fc27a2d1434f7b67501e76f1db2e9781f34e4a0"
+            },
+            "SK_Weapon_Sniper_v001_metrics.json": {
+              "path": "03_work/SK_Weapon_Sniper_v001_metrics.json",
+              "sha256": "adfe746bea8714cea43235f14b59d1b5db2bff6c03e6d3ce161f13263d1dc0e3"
+            },
+            "T_Weapon_Sniper_BC.png": {
+              "path": "03_work/textures_v001/T_Weapon_Sniper_BC.png",
+              "sha256": "7fec06dacc8766cbbc5a0e76a32942299680fcefa606885e1f046931c3478ce1"
+            },
+            "T_Weapon_Sniper_E.png": {
+              "path": "03_work/textures_v001/T_Weapon_Sniper_E.png",
+              "sha256": "8239b1afbb38e9e841fb7f5dd558a666198b43ee1f9adf502aba92b39f425799"
+            },
+            "T_Weapon_Sniper_MetalMask.png": {
+              "path": "03_work/textures_v001/T_Weapon_Sniper_MetalMask.png",
+              "sha256": "623d65cea062e95af18605d815cad8ba636b7a2d21e61183a653e88b45a3b020"
+            },
+            "T_Weapon_Sniper_N.png": {
+              "path": "03_work/textures_v001/T_Weapon_Sniper_N.png",
+              "sha256": "0bfb07b7ccc83113320a40e073d621b80e574908a2af42270f0c72bc5d617c6f"
+            },
+            "T_Weapon_Sniper_ORM.png": {
+              "path": "03_work/textures_v001/T_Weapon_Sniper_ORM.png",
+              "sha256": "522c5e37fa6363d2896eef87de0b3b2d50363a192e81d4dcf2d831273dd1d7c1"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1,
+            "emid": 1
+          },
+          "align_iou": 0.798,
+          "uncovered_ratio": 0.1662,
+          "lods": [
+            {
+              "tris": 11996,
+              "verts": 5990
+            },
+            {
+              "tris": 2996,
+              "verts": 1490
+            }
+          ],
+          "export_kb": 433.7,
+          "seconds": 22.7,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 21:58:46",
+          "files": {
+            "SK_Weapon_Sniper_v002.blend": {
+              "path": "03_work/SK_Weapon_Sniper_v002.blend",
+              "sha256": "f8a39a097d275cc3566f9af6ac4480f6456030f598896eec2dd031018491b471"
+            },
+            "SK_Weapon_Sniper_v002.glb": {
+              "path": "04_export/SK_Weapon_Sniper_v002.glb",
+              "sha256": "758f1f83fc595f8a70e242e2fcb6f56199736aaf66b09cbd8c801f82aa33628f"
+            },
+            "SK_Weapon_Sniper_v002_metrics.json": {
+              "path": "03_work/SK_Weapon_Sniper_v002_metrics.json",
+              "sha256": "f7bae807d28932224ad1654184784065fb14d659b6a2daecc68aeb6080454e30"
+            },
+            "T_Weapon_Sniper_BC.png": {
+              "path": "03_work/textures_v002/T_Weapon_Sniper_BC.png",
+              "sha256": "7fec06dacc8766cbbc5a0e76a32942299680fcefa606885e1f046931c3478ce1"
+            },
+            "T_Weapon_Sniper_E.png": {
+              "path": "03_work/textures_v002/T_Weapon_Sniper_E.png",
+              "sha256": "84b3b3e799e8b618a53bad7f393a8666898ffe2edc45d21cce51421bee311814"
+            },
+            "T_Weapon_Sniper_MetalMask.png": {
+              "path": "03_work/textures_v002/T_Weapon_Sniper_MetalMask.png",
+              "sha256": "623d65cea062e95af18605d815cad8ba636b7a2d21e61183a653e88b45a3b020"
+            },
+            "T_Weapon_Sniper_N.png": {
+              "path": "03_work/textures_v002/T_Weapon_Sniper_N.png",
+              "sha256": "0bfb07b7ccc83113320a40e073d621b80e574908a2af42270f0c72bc5d617c6f"
+            },
+            "T_Weapon_Sniper_ORM.png": {
+              "path": "03_work/textures_v002/T_Weapon_Sniper_ORM.png",
+              "sha256": "522c5e37fa6363d2896eef87de0b3b2d50363a192e81d4dcf2d831273dd1d7c1"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1,
+            "emid": 2
+          },
+          "align_iou": 0.798,
+          "uncovered_ratio": 0.1662,
+          "lods": [
+            {
+              "tris": 11996,
+              "verts": 5990
+            },
+            {
+              "tris": 2996,
+              "verts": 1490
+            }
+          ],
+          "export_kb": 427.3,
+          "seconds": 23.4,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:40:17",
+          "files": {
+            "SK_Weapon_Sniper_v001_validation.json": {
+              "path": "05_review/SK_Weapon_Sniper_v001_validation.json",
+              "sha256": "e5bc9c5b227b57cb4aca9e9fa7ee81ffcfe48d4553cba861d2427069e59e04a3"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 21:58:46",
+          "files": {
+            "SK_Weapon_Sniper_v002_validation.json": {
+              "path": "05_review/SK_Weapon_Sniper_v002_validation.json",
+              "sha256": "3cee8174680088b30ab6471f28120cd4220c166f97e4d1ca7c4f73126a57ffba"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:40:27",
+          "files": {
+            "SK_Weapon_Sniper_v001_review.png": {
+              "path": "05_review/SK_Weapon_Sniper_v001_review.png",
+              "sha256": "52b529593d922334056bc4e7e71fe973aeecc6fa5eb5f0ad6604e12a0622e67c"
+            }
+          },
+          "from_build": 1,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 21:58:56",
+          "files": {
+            "SK_Weapon_Sniper_v002_review.png": {
+              "path": "05_review/SK_Weapon_Sniper_v002_review.png",
+              "sha256": "d90762cd76308adde4b85c041b6d3c051cd1b70f97c0452b7245ddc3666062ec"
+            }
+          },
+          "from_build": 2,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "发光分区 v002：只保留鹰羽细刻线，缠带不发光；瞄准镜为美术（开镜时第一人称模型隐藏）",
+            "time": "2026-10-03 21:59:33"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:59:34",
+          "files": {
+            "SK_Weapon_Sniper.glb": {
+              "path": "@root/public/assets/weapons/SK_Weapon_Sniper.glb",
+              "sha256": "758f1f83fc595f8a70e242e2fcb6f56199736aaf66b09cbd8c801f82aa33628f"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/weapons/SK_Weapon_Sniper.glb"
+        }
+      ]
+    }
+  }
+}

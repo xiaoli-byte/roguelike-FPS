@@ -24,8 +24,9 @@ export const MORTAR_DEF: EnemyDef = {
   damage: 20,
   coins: [3, 5],
   essence: 1,
-  headY: 1.7,
-  headRadius: 0.45,
+  // 头部 = 蒙面的脸 + 斗笠顶（脸 1.60 → 1.92，宽 0.34；宽帽檐外缘不算）；判定球随头骨移动
+  headY: 1.8,
+  headRadius: 0.3,
   knockbackResist: 0.5,
   color: 0xffa040,
 };
@@ -39,6 +40,8 @@ const SHELLS = 3;
 const SHELL_GAP = 0.35;
 const SHELL_GRAVITY = 20;
 const SHELL_RADIUS = 3;
+/** 炮弹在离落点超过此距离（米）的地方就炸了，视为被拦截：撤掉落点预警 */
+const SHELL_OFF_TARGET = 1.5;
 const SMASH_RANGE = 2.3;
 const SMASH_WINDUP = 0.55;
 const SMASH_DAMAGE_MULT = 0.7;
@@ -113,9 +116,12 @@ export class Mortar extends StandardEnemy {
     this.glowPart(h, Geo.box(0.075, 0.035, 0.02), C.eye, C.eyeHot, -0.075, 0.22, 0.165);
     part(h, Geo.cone(0.64, 0.26, 8, 'bottom'), flat(C.straw, { rough: 1 }), 0, 0.31, 0);
     part(h, Geo.cyl(0.2, 0.2, 0.05, 8), flat(C.strawDark), 0, 0.34, 0);
+    // 头心：0.9 + 0.7 + 0.2 = 1.8（与 MORTAR_DEF.headY 一致）
+    this.setHeadAnchor(h, 0, 0.2, 0);
 
     // 肩扛铜炮：挂点在右肩，按 rotation.x 前后倾
     const tube = joint(t, TUBE_X, TUBE_Y, TUBE_Z);
+    tube.name = 'cannon'; // 挂点名：美术资产按它绑定（art/pipeline/registry.toml 的 blockout.attachment）
     this.tube = tube;
     const brass = flat(C.brass, { metal: 0.55, rough: 0.4 });
     part(tube, Geo.cyl(0.16, 0.19, TUBE_LEN, 8, 'bottom'), brass, 0, 0, 0);
@@ -146,6 +152,7 @@ export class Mortar extends StandardEnemy {
         if (d <= SMASH_RANGE && this.smashCd <= 0 && this.verticalReach(1.5) && this.requestAttack('melee', 1.3)) {
           this.windTime = this.windup(SMASH_WINDUP, 0.4);
           this.setState('smashWindup');
+          this.ctx.audio.play('enemy_alert', { position: this.position, volume: 0.45, pitch: 0.9 });
           break;
         }
         const canLob = this.sees || d <= BLIND_FIRE_RANGE;
@@ -245,6 +252,10 @@ export class Mortar extends StandardEnemy {
     _target.y = Number.isFinite(gy) ? gy : pl.position.y;
     const h = Math.hypot(_target.x - _muzzle.x, _target.z - _muzzle.z);
     ballisticVelocity(_muzzle, _target, Math.max(1, h / T), SHELL_GRAVITY, _vel);
+    // 炮弹出膛后，落点预警不随炮兵死亡 / 眩晕撤销（炮弹照样落地）。
+    // 只有炮弹半路就炸了（撞上高台边沿、掩体顶，或在空中撞上玩家）时撤掉落点预警，免得预警圈填满却没有爆炸。
+    const landing = _target.clone();
+    const cancelWarning = ctx.fx.groundWarning(landing, SHELL_RADIUS, T, 0xff7a2a);
     ctx.projectiles.spawn({
       owner: 'enemy',
       position: _muzzle.clone(),
@@ -260,8 +271,10 @@ export class Mortar extends StandardEnemy {
       visual: 'grenade',
       scale: 1.4,
       sourceEnemy: this,
+      onImpact: (point) => {
+        if (point.distanceToSquared(landing) > SHELL_OFF_TARGET * SHELL_OFF_TARGET) cancelWarning();
+      },
     });
-    ctx.fx.groundWarning(_target.clone(), SHELL_RADIUS, T, 0xff7a2a);
     ctx.fx.burst(_muzzle, 0xffc070, 10, 4, 0.35, 0.1, 2);
     ctx.fx.burst(_muzzle, 0x6a5a4a, 8, 1.5, 0.9, 0.16, -1);
     ctx.audio.play('shot_launcher', { position: _muzzle, volume: 0.9, pitch: 0.7 });
@@ -269,6 +282,7 @@ export class Mortar extends StandardEnemy {
   }
 
   protected override cancelAttack(): void {
+    // 架炮阶段还没有地面预警；已经出膛的炮弹照样落地，它们的预警也不撤（见 fireShell）
     this.glowTarget[0] = 0;
     if (this.state === 'brace' || this.state === 'fire' || this.state === 'smashWindup' || this.state === 'recover') {
       this.setState('move');

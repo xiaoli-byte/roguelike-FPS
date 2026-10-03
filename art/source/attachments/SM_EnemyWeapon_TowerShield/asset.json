@@ -1,0 +1,718 @@
+{
+  "id": "SM_EnemyWeapon_TowerShield",
+  "display": "铁甲塔盾",
+  "kind": "static",
+  "class": "enemy_attachment",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:27:44",
+          "files": {
+            "BO_SM_EnemyWeapon_TowerShield_v001.glb": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_TowerShield_v001.glb",
+              "sha256": "5a0f1ca011e853763cc03b4b9a78d4f44e43016592ac58b8646ebf7459bc3433"
+            },
+            "BO_SM_EnemyWeapon_TowerShield_v001.json": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_TowerShield_v001.json",
+              "sha256": "dcfa81f1133167d442e155fe5be97f4f9e0a37dcd3ab8350bb9c237819033c04"
+            },
+            "BO_SM_EnemyWeapon_TowerShield_v001_views.json": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_TowerShield_v001_views.json",
+              "sha256": "3969cd04f5a151a5990250515e4aa6e855cb0bcf3247ee0689b6d2b72c169809"
+            },
+            "BO_SM_EnemyWeapon_TowerShield_v001_sheet.png": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_TowerShield_v001_sheet.png",
+              "sha256": "c7b217b6999ed26c77df564261fce2ef1aade1634f9587aad079bc27cfb3f0bb"
+            },
+            "BO_SM_EnemyWeapon_TowerShield_v001_front.png": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_TowerShield_v001_front.png",
+              "sha256": "220587b60478edadc3294eaf0cf08af92b625b64953e0aecc68cba7b4a4c5f19"
+            },
+            "BO_SM_EnemyWeapon_TowerShield_v001_left.png": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_TowerShield_v001_left.png",
+              "sha256": "2058ab0b6957e376c42a179b2855f1e3370f3d4d812a86a71826aec0a6e62b60"
+            },
+            "BO_SM_EnemyWeapon_TowerShield_v001_back.png": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_TowerShield_v001_back.png",
+              "sha256": "03744f774a76057ee8a64f1c8bacc7327de377a8d86b489b9ebe67301da765ec"
+            },
+            "BO_SM_EnemyWeapon_TowerShield_v001_right.png": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_TowerShield_v001_right.png",
+              "sha256": "1e55298224289af37c58fa5ca6c238761b94a556af5512dc89bf2644be906441"
+            }
+          },
+          "source": {
+            "kind": "enemy",
+            "id": "brute",
+            "attachment": "shield"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.4650000035762787,
+              -0.6600000262260437,
+              -0.059999999329447745
+            ],
+            "max": [
+              0.4650000035762787,
+              0.6600000262260437,
+              0.25000000149011614
+            ]
+          },
+          "blender_seconds": 6.2
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:30:41",
+          "files": {
+            "CN_SM_EnemyWeapon_TowerShield_v001_sheet.png": {
+              "path": "01_concept/CN_SM_EnemyWeapon_TowerShield_v001_sheet.png",
+              "sha256": "9980a520939a96071a6f24565c41d3cc7fe59d8bbcce1f5e81056ebdf131dfd8"
+            },
+            "CN_SM_EnemyWeapon_TowerShield_v001_front.png": {
+              "path": "01_concept/CN_SM_EnemyWeapon_TowerShield_v001_front.png",
+              "sha256": "32387db8f62edb71e3e18f3e17197ddd5cf8fc1ca3becd395a0ef49372a11605"
+            },
+            "CN_SM_EnemyWeapon_TowerShield_v001_left.png": {
+              "path": "01_concept/CN_SM_EnemyWeapon_TowerShield_v001_left.png",
+              "sha256": "ef230cd454bfd1cd3e708ec2292d5c59669f2de1dd4bcee7b11411dfb12e0623"
+            },
+            "CN_SM_EnemyWeapon_TowerShield_v001_back.png": {
+              "path": "01_concept/CN_SM_EnemyWeapon_TowerShield_v001_back.png",
+              "sha256": "3407cd441479de0f7add26782d324e7dd732c70d55f663436c72dace526e366e"
+            },
+            "CN_SM_EnemyWeapon_TowerShield_v001_right.png": {
+              "path": "01_concept/CN_SM_EnemyWeapon_TowerShield_v001_right.png",
+              "sha256": "1750bbd6d5969c1e4bb9730396af38123ffb76f51e200ba5187f8b95d509efe3"
+            },
+            "CN_SM_EnemyWeapon_TowerShield_v001_compare.png": {
+              "path": "01_concept/CN_SM_EnemyWeapon_TowerShield_v001_compare.png",
+              "sha256": "25face1915d97abacdc8b8808f49a4535177d675b39e48e57638c2f6b0f35819"
+            },
+            "CN_SM_EnemyWeapon_TowerShield_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_EnemyWeapon_TowerShield_v001_prompt.txt",
+              "sha256": "448206618e5da9e1212347045fa1d0153da32b73d7d2938859b5e0cb784d3502"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1895,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 437
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3075
+          },
+          "request_id": "req_acbb330388da412998f639a423a53964",
+          "seconds": 30.4,
+          "registration": {
+            "front": {
+              "scale": 0.876,
+              "offset": [
+                33,
+                169
+              ],
+              "iou": 0.896,
+              "iou_unregistered_scale": 0.8383
+            },
+            "left": {
+              "scale": 0.7769,
+              "offset": [
+                173,
+                217
+              ],
+              "iou": 0.84,
+              "iou_unregistered_scale": 0.8265
+            },
+            "back": {
+              "scale": 0.8634,
+              "offset": [
+                33,
+                179
+              ],
+              "iou": 0.904,
+              "iou_unregistered_scale": 0.8383
+            },
+            "right": {
+              "scale": 0.7769,
+              "offset": [
+                172,
+                217
+              ],
+              "iou": 0.849,
+              "iou_unregistered_scale": 0.8265
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.895,
+            "left": 0.842,
+            "back": 0.902,
+            "right": 0.85
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "剪影与白模一致，设计贴合",
+            "time": "2026-10-03 17:32:48"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:43:58",
+          "files": {
+            "HP_SM_EnemyWeapon_TowerShield_v001_input.png": {
+              "path": "02_highpoly/HP_SM_EnemyWeapon_TowerShield_v001_input.png",
+              "sha256": "dc989dadc573773b78423c08be133054ee902047a6e2bc7b49a562de506ed217"
+            },
+            "HP_SM_EnemyWeapon_TowerShield_v001.glb": {
+              "path": "02_highpoly/HP_SM_EnemyWeapon_TowerShield_v001.glb",
+              "sha256": "f88c0808e5e4c983df15f87be9eaf037dc09a3db93cb497ce1b7ec4dc1bfc7f6"
+            }
+          },
+          "from_concept": 1,
+          "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+          "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "checkpoint": "hunyuan_3d_v2.1.safetensors",
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "crop": [
+              34,
+              170,
+              460,
+              846
+            ],
+            "scale": 1.2875739644970414,
+            "offset": [
+              237,
+              77
+            ]
+          },
+          "seconds": 208.3,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 10.2
+        }
+      ]
+    },
+    "build": {
+      "current": 4,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:45:10",
+          "files": {
+            "SM_EnemyWeapon_TowerShield_v001.blend": {
+              "path": "03_work/SM_EnemyWeapon_TowerShield_v001.blend",
+              "sha256": "cc8e5ecc97f1a4e11b8b1a7a8ecba13a3c96e39994463357c484664623cf362c"
+            },
+            "SM_EnemyWeapon_TowerShield_v001.glb": {
+              "path": "04_export/SM_EnemyWeapon_TowerShield_v001.glb",
+              "sha256": "c9118a7fd8cb191bb685cf18171fb70e1d298d3643480fd34dfa81836d8a8c47"
+            },
+            "SM_EnemyWeapon_TowerShield_v001_metrics.json": {
+              "path": "03_work/SM_EnemyWeapon_TowerShield_v001_metrics.json",
+              "sha256": "2fe567b8518696eee2cdf9325b664899b1a2e00ae5e2eb596dfc7b670da4a837"
+            },
+            "T_EnemyWeapon_TowerShield_BC.png": {
+              "path": "03_work/textures_v001/T_EnemyWeapon_TowerShield_BC.png",
+              "sha256": "b6f7adc2d9ea44d91f531fc23a54a25ecd6392d2a927cbe3f991c2f07cc27787"
+            },
+            "T_EnemyWeapon_TowerShield_N.png": {
+              "path": "03_work/textures_v001/T_EnemyWeapon_TowerShield_N.png",
+              "sha256": "8e9e242a75f2561cdd4ad1d3a8a8f298800a75c7b145a3ca574395d0af492237"
+            },
+            "T_EnemyWeapon_TowerShield_ORM.png": {
+              "path": "03_work/textures_v001/T_EnemyWeapon_TowerShield_ORM.png",
+              "sha256": "3d4d3a0875a37a964b128a873a54abaac62dd1c78ae8a827544cc3f715369f16"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null
+          },
+          "align_iou": 0.864,
+          "uncovered_ratio": 0.1631,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1498
+            },
+            {
+              "tris": 1000,
+              "verts": 498
+            }
+          ],
+          "export_kb": 188.9,
+          "seconds": 71.8,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 18:03:14",
+          "files": {
+            "SM_EnemyWeapon_TowerShield_v002.blend": {
+              "path": "03_work/SM_EnemyWeapon_TowerShield_v002.blend",
+              "sha256": "35ce3da65c15f50896b66f120f40593749e29e1cd07bf253f9d83f0a570429ff"
+            },
+            "SM_EnemyWeapon_TowerShield_v002.glb": {
+              "path": "04_export/SM_EnemyWeapon_TowerShield_v002.glb",
+              "sha256": "12b79450493d4510afd4e4826010c4028ba5e6c626222762f79c51940e77b173"
+            },
+            "SM_EnemyWeapon_TowerShield_v002_metrics.json": {
+              "path": "03_work/SM_EnemyWeapon_TowerShield_v002_metrics.json",
+              "sha256": "7ff7f73131ddbd4b54bc9ea20a9a55c544d0f3b7c16a3c0e633d9a2bc0a0cc17"
+            },
+            "T_EnemyWeapon_TowerShield_BC.png": {
+              "path": "03_work/textures_v002/T_EnemyWeapon_TowerShield_BC.png",
+              "sha256": "b6f7adc2d9ea44d91f531fc23a54a25ecd6392d2a927cbe3f991c2f07cc27787"
+            },
+            "T_EnemyWeapon_TowerShield_MetalMask.png": {
+              "path": "03_work/textures_v002/T_EnemyWeapon_TowerShield_MetalMask.png",
+              "sha256": "f80b4a89e9ca78a45a138774a34f47b2955f66d1825796ee7a7a3a8069d8e162"
+            },
+            "T_EnemyWeapon_TowerShield_N.png": {
+              "path": "03_work/textures_v002/T_EnemyWeapon_TowerShield_N.png",
+              "sha256": "8e9e242a75f2561cdd4ad1d3a8a8f298800a75c7b145a3ca574395d0af492237"
+            },
+            "T_EnemyWeapon_TowerShield_ORM.png": {
+              "path": "03_work/textures_v002/T_EnemyWeapon_TowerShield_ORM.png",
+              "sha256": "d9f89730a92ecfc3b4f8a384208043c0defe83b9baf0694c8c8320b3af84facd"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1
+          },
+          "align_iou": 0.864,
+          "uncovered_ratio": 0.1631,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1498
+            },
+            {
+              "tris": 1000,
+              "verts": 498
+            }
+          ],
+          "export_kb": 199.2,
+          "seconds": 39.7,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 19:57:08",
+          "files": {
+            "SM_EnemyWeapon_TowerShield_v003.blend": {
+              "path": "03_work/SM_EnemyWeapon_TowerShield_v003.blend",
+              "sha256": "7b5a764e6173b015d0efc9575c718ed494e229561e62c0f8968298edfc2c92a7"
+            },
+            "SM_EnemyWeapon_TowerShield_v003.glb": {
+              "path": "04_export/SM_EnemyWeapon_TowerShield_v003.glb",
+              "sha256": "a09289aa006ba490279b7308e878b08c0bfd4a1dcd5a53cfe30c9961a02b9612"
+            },
+            "SM_EnemyWeapon_TowerShield_v003_metrics.json": {
+              "path": "03_work/SM_EnemyWeapon_TowerShield_v003_metrics.json",
+              "sha256": "343dbb304268bae7a439522b68911ac5d368be2c348706e3603f3c6498270bf1"
+            },
+            "T_EnemyWeapon_TowerShield_BC.png": {
+              "path": "03_work/textures_v003/T_EnemyWeapon_TowerShield_BC.png",
+              "sha256": "2261745f90bd4d0ca37eec0f190e277351da6f164c087fff4835c436bd8cd1cc"
+            },
+            "T_EnemyWeapon_TowerShield_MetalMask.png": {
+              "path": "03_work/textures_v003/T_EnemyWeapon_TowerShield_MetalMask.png",
+              "sha256": "1bf474432f0f44ead9e702d5f078c467bd20c0de684b656285a8d74b436f9db5"
+            },
+            "T_EnemyWeapon_TowerShield_N.png": {
+              "path": "03_work/textures_v003/T_EnemyWeapon_TowerShield_N.png",
+              "sha256": "310538fefacb7d93de0b2aae574e61f2438f213cc222b8d7c698c8db461cb37c"
+            },
+            "T_EnemyWeapon_TowerShield_ORM.png": {
+              "path": "03_work/textures_v003/T_EnemyWeapon_TowerShield_ORM.png",
+              "sha256": "44b4b6496d96eb1346f397dd9d9959155fd60f45ec23772e14f2aba90f112bb0"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1
+          },
+          "align_iou": 0.864,
+          "uncovered_ratio": 0.1631,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1498
+            },
+            {
+              "tris": 1000,
+              "verts": 498
+            }
+          ],
+          "export_kb": 200.4,
+          "seconds": 45.3,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 20:22:20",
+          "files": {
+            "SM_EnemyWeapon_TowerShield_v004.blend": {
+              "path": "03_work/SM_EnemyWeapon_TowerShield_v004.blend",
+              "sha256": "9cc07f458fff9c33e21034412f4fec592b758cb54211fc13f7c668caf1c551bd"
+            },
+            "SM_EnemyWeapon_TowerShield_v004.glb": {
+              "path": "04_export/SM_EnemyWeapon_TowerShield_v004.glb",
+              "sha256": "12b79450493d4510afd4e4826010c4028ba5e6c626222762f79c51940e77b173"
+            },
+            "SM_EnemyWeapon_TowerShield_v004_metrics.json": {
+              "path": "03_work/SM_EnemyWeapon_TowerShield_v004_metrics.json",
+              "sha256": "e254923fb34f843b2e2339e6b603a581a78e182cc50e5c463ab9dc18392fff2e"
+            },
+            "T_EnemyWeapon_TowerShield_BC.png": {
+              "path": "03_work/textures_v004/T_EnemyWeapon_TowerShield_BC.png",
+              "sha256": "b6f7adc2d9ea44d91f531fc23a54a25ecd6392d2a927cbe3f991c2f07cc27787"
+            },
+            "T_EnemyWeapon_TowerShield_MetalMask.png": {
+              "path": "03_work/textures_v004/T_EnemyWeapon_TowerShield_MetalMask.png",
+              "sha256": "f80b4a89e9ca78a45a138774a34f47b2955f66d1825796ee7a7a3a8069d8e162"
+            },
+            "T_EnemyWeapon_TowerShield_N.png": {
+              "path": "03_work/textures_v004/T_EnemyWeapon_TowerShield_N.png",
+              "sha256": "8e9e242a75f2561cdd4ad1d3a8a8f298800a75c7b145a3ca574395d0af492237"
+            },
+            "T_EnemyWeapon_TowerShield_ORM.png": {
+              "path": "03_work/textures_v004/T_EnemyWeapon_TowerShield_ORM.png",
+              "sha256": "d9f89730a92ecfc3b4f8a384208043c0defe83b9baf0694c8c8320b3af84facd"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1
+          },
+          "align_iou": 0.864,
+          "uncovered_ratio": 0.1631,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1498
+            },
+            {
+              "tris": 1000,
+              "verts": 498
+            }
+          ],
+          "export_kb": 199.2,
+          "seconds": 78.3,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 4,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:45:10",
+          "files": {
+            "SM_EnemyWeapon_TowerShield_v001_validation.json": {
+              "path": "05_review/SM_EnemyWeapon_TowerShield_v001_validation.json",
+              "sha256": "e2119a84b70be74fc48935b1fcfd7c5b81486ac6b86c3f71198b573ea2048540"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 18:03:14",
+          "files": {
+            "SM_EnemyWeapon_TowerShield_v002_validation.json": {
+              "path": "05_review/SM_EnemyWeapon_TowerShield_v002_validation.json",
+              "sha256": "e39d66c1d5a175608c81878ecfb2f59344ca49dc6e6f8287643c7bd4e45c2bd5"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 19:57:08",
+          "files": {
+            "SM_EnemyWeapon_TowerShield_v003_validation.json": {
+              "path": "05_review/SM_EnemyWeapon_TowerShield_v003_validation.json",
+              "sha256": "d441f6e8d49e2a4d4693120d58d6f37de3cd4d2316b1961573f988c92d75e085"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 2,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 20:22:21",
+          "files": {
+            "SM_EnemyWeapon_TowerShield_v004_validation.json": {
+              "path": "05_review/SM_EnemyWeapon_TowerShield_v004_validation.json",
+              "sha256": "e39d66c1d5a175608c81878ecfb2f59344ca49dc6e6f8287643c7bd4e45c2bd5"
+            }
+          },
+          "from_build": 4,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 4,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:45:24",
+          "files": {
+            "SM_EnemyWeapon_TowerShield_v001_review.png": {
+              "path": "05_review/SM_EnemyWeapon_TowerShield_v001_review.png",
+              "sha256": "036f6cbb66061addf7103b4e6857ea21a8a7319e3edbd15579d2df9f56d218c8"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 18:03:22",
+          "files": {
+            "SM_EnemyWeapon_TowerShield_v002_review.png": {
+              "path": "05_review/SM_EnemyWeapon_TowerShield_v002_review.png",
+              "sha256": "36b64a4d7beca2b384fa029ff652fb69661f88ebaeb450d0a449b0e665e40cdd"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "成品还原概念；材质分区正确；深度轴偏差为单视图重建固有误差，已人工确认",
+            "time": "2026-10-03 18:06:03"
+          }
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 19:57:15",
+          "files": {
+            "SM_EnemyWeapon_TowerShield_v003_review.png": {
+              "path": "05_review/SM_EnemyWeapon_TowerShield_v003_review.png",
+              "sha256": "e4e5efe9f92cc4ee705a200d32c46a7ee866fd23c24fb89900dd015e439aa067"
+            }
+          },
+          "from_build": 3,
+          "deformation": {},
+          "auto_flags": []
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 20:22:34",
+          "files": {
+            "SM_EnemyWeapon_TowerShield_v004_review.png": {
+              "path": "05_review/SM_EnemyWeapon_TowerShield_v004_review.png",
+              "sha256": "6898217d186dae7d81f5e5337eef9b1f808df0c502c1bf17e38e41aa9069af88"
+            }
+          },
+          "from_build": 4,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "UV 两方案择优重建（纹素密度不低于上一发布版）；几何、蒙皮与上一已审版本一致",
+            "time": "2026-10-03 20:37:40"
+          }
+        }
+      ]
+    },
+    "matid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:53:41",
+          "files": {
+            "MID_SM_EnemyWeapon_TowerShield_v001_sheet.png": {
+              "path": "01_concept/MID_SM_EnemyWeapon_TowerShield_v001_sheet.png",
+              "sha256": "4f90ca830c404916dd7a1307e1ca7ac5efe4c8bf2a6db600d31b8c7c55bbd78e"
+            },
+            "MID_SM_EnemyWeapon_TowerShield_v001_front.png": {
+              "path": "01_concept/MID_SM_EnemyWeapon_TowerShield_v001_front.png",
+              "sha256": "f2c4e8736e0a46c27e1c8ab5344c737d57cfddb2d4a6907a5a2dfcaa009bf55b"
+            },
+            "MID_SM_EnemyWeapon_TowerShield_v001_left.png": {
+              "path": "01_concept/MID_SM_EnemyWeapon_TowerShield_v001_left.png",
+              "sha256": "49b1f175373ad544b3396d8d4ea27e49fc040acfcae1be074b6202f03810e963"
+            },
+            "MID_SM_EnemyWeapon_TowerShield_v001_back.png": {
+              "path": "01_concept/MID_SM_EnemyWeapon_TowerShield_v001_back.png",
+              "sha256": "7c7e83813e1ec16c3f5a5975faf3574a2176278e7c2bc1df70662fbaf97ef8cb"
+            },
+            "MID_SM_EnemyWeapon_TowerShield_v001_right.png": {
+              "path": "01_concept/MID_SM_EnemyWeapon_TowerShield_v001_right.png",
+              "sha256": "2fe78ebb7e3570a3819fa0ef129cfc7c39aee58e16c3e802593843f2e4b0311d"
+            },
+            "MID_SM_EnemyWeapon_TowerShield_v001_compare.png": {
+              "path": "01_concept/MID_SM_EnemyWeapon_TowerShield_v001_compare.png",
+              "sha256": "a2cf79dc9c28f8a4428b603ae3e05cc92f25d021021c5a127619b1db9ad14807"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1699,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 241
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2879
+          },
+          "request_id": "req_c552bf3a91be43d4a213cde2b5357046",
+          "seconds": 29.7,
+          "registration": {
+            "front": {
+              "scale": 0.8791,
+              "offset": [
+                31,
+                170
+              ],
+              "iou": 0.986,
+              "iou_unregistered_scale": 0.8791,
+              "purity": 0.995
+            },
+            "left": {
+              "scale": 0.7689,
+              "offset": [
+                166,
+                217
+              ],
+              "iou": 0.906,
+              "iou_unregistered_scale": 0.7689,
+              "purity": 0.986
+            },
+            "back": {
+              "scale": 0.8543,
+              "offset": [
+                34,
+                179
+              ],
+              "iou": 0.983,
+              "iou_unregistered_scale": 0.8674,
+              "purity": 0.993
+            },
+            "right": {
+              "scale": 0.7449,
+              "offset": [
+                168,
+                226
+              ],
+              "iou": 0.901,
+              "iou_unregistered_scale": 0.768,
+              "purity": 0.995
+            }
+          },
+          "metal_ratio": {
+            "front": 0.458,
+            "left": 0.605,
+            "back": 0.388,
+            "right": 0.609
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 18:06:07",
+          "files": {
+            "SM_EnemyWeapon_TowerShield.glb": {
+              "path": "@root/public/assets/attachments/SM_EnemyWeapon_TowerShield.glb",
+              "sha256": "12b79450493d4510afd4e4826010c4028ba5e6c626222762f79c51940e77b173"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/attachments/SM_EnemyWeapon_TowerShield.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 20:37:41",
+          "files": {
+            "SM_EnemyWeapon_TowerShield.glb": {
+              "path": "@root/public/assets/attachments/SM_EnemyWeapon_TowerShield.glb",
+              "sha256": "12b79450493d4510afd4e4826010c4028ba5e6c626222762f79c51940e77b173"
+            }
+          },
+          "from_build": 4,
+          "url": "assets/attachments/SM_EnemyWeapon_TowerShield.glb"
+        }
+      ]
+    }
+  }
+}

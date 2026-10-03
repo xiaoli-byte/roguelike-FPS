@@ -1,0 +1,711 @@
+{
+  "id": "SM_EnemyWeapon_Musket",
+  "display": "狙击火枪",
+  "kind": "static",
+  "class": "enemy_attachment",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:27:51",
+          "files": {
+            "BO_SM_EnemyWeapon_Musket_v001.glb": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_Musket_v001.glb",
+              "sha256": "3335a28003cc4d9d7b216d5a99a5c5d5e5a5de628cf8e8abfade7a99c7f8d9bc"
+            },
+            "BO_SM_EnemyWeapon_Musket_v001.json": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_Musket_v001.json",
+              "sha256": "5b795152d7b6711cdb2f8465b20b97adb5591a4400afb18000373971b11bcac5"
+            },
+            "BO_SM_EnemyWeapon_Musket_v001_views.json": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_Musket_v001_views.json",
+              "sha256": "f56dda924d0691d2956c135a1a1b636fcd9f005b79961214a83fc138a42a5e07"
+            },
+            "BO_SM_EnemyWeapon_Musket_v001_sheet.png": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_Musket_v001_sheet.png",
+              "sha256": "00ed116c470c6ed55a3c5e169cb1caa016d4b97cb5154292562d8666c80b95ec"
+            },
+            "BO_SM_EnemyWeapon_Musket_v001_front.png": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_Musket_v001_front.png",
+              "sha256": "71efc0030566688d72edf3d9261b47f6f7cbe60c3b7c19c7d65edb8982e7466b"
+            },
+            "BO_SM_EnemyWeapon_Musket_v001_left.png": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_Musket_v001_left.png",
+              "sha256": "ba0953dd08eb9f3c873b09b822b5fd4d7f25aa208de12843a34be6e1ab459418"
+            },
+            "BO_SM_EnemyWeapon_Musket_v001_back.png": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_Musket_v001_back.png",
+              "sha256": "75dfc56f10355c572ecfe0e6507cf062fc6ef7c393d07f1ee79482b4a7e31bd1"
+            },
+            "BO_SM_EnemyWeapon_Musket_v001_right.png": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_Musket_v001_right.png",
+              "sha256": "b47a4d5ad5db1bd46885462d55ad0c43fe9f353fc3787e4ebe993a6df7d260ea"
+            }
+          },
+          "source": {
+            "kind": "enemy",
+            "id": "marksman",
+            "attachment": "musket"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.03999999910593033,
+              -0.08499999761581421,
+              -0.20000000715255736
+            ],
+            "max": [
+              0.03999999910593033,
+              0.13999999910593033,
+              1.3049999761581421
+            ]
+          },
+          "blender_seconds": 6.1
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:31:13",
+          "files": {
+            "CN_SM_EnemyWeapon_Musket_v001_sheet.png": {
+              "path": "01_concept/CN_SM_EnemyWeapon_Musket_v001_sheet.png",
+              "sha256": "a6c266188373439c4ba3439bccbd44123e2a6fc84be211f25da29e139d5512d3"
+            },
+            "CN_SM_EnemyWeapon_Musket_v001_front.png": {
+              "path": "01_concept/CN_SM_EnemyWeapon_Musket_v001_front.png",
+              "sha256": "494fc23230479820016c7811461fe2461e4f2c43ddef7385db3c0b5675814e75"
+            },
+            "CN_SM_EnemyWeapon_Musket_v001_left.png": {
+              "path": "01_concept/CN_SM_EnemyWeapon_Musket_v001_left.png",
+              "sha256": "3d09fb476e4fdb328843550dbe26208431b53ad55002a622c322d9f41ca3afe1"
+            },
+            "CN_SM_EnemyWeapon_Musket_v001_back.png": {
+              "path": "01_concept/CN_SM_EnemyWeapon_Musket_v001_back.png",
+              "sha256": "513680f05cd2616affb16e36b0f3ae1b7633c9599f12e2febb30370b713cfb72"
+            },
+            "CN_SM_EnemyWeapon_Musket_v001_right.png": {
+              "path": "01_concept/CN_SM_EnemyWeapon_Musket_v001_right.png",
+              "sha256": "9806ed74bee15a082aa5c19329383fb3ef7326baf2ffec705b3197ec21b191df"
+            },
+            "CN_SM_EnemyWeapon_Musket_v001_compare.png": {
+              "path": "01_concept/CN_SM_EnemyWeapon_Musket_v001_compare.png",
+              "sha256": "9856e2ac20544fcd764de28cbb00be732ec89bde02af09f19708e45498dafe34"
+            },
+            "CN_SM_EnemyWeapon_Musket_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_EnemyWeapon_Musket_v001_prompt.txt",
+              "sha256": "88c5fd5b1e4dcc9100eeb02ecbd96751824f36487c1f314a1e4aacb01e10de49"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1892,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 434
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3072
+          },
+          "request_id": "req_1f1c5f9fc4264e7e9f3490e7c4db920e",
+          "seconds": 29.5,
+          "registration": {
+            "front": {
+              "scale": 0.9652,
+              "offset": [
+                177,
+                55
+              ],
+              "iou": 0.795,
+              "iou_unregistered_scale": 0.9652
+            },
+            "left": {
+              "scale": 0.9621,
+              "offset": [
+                227,
+                55
+              ],
+              "iou": 0.852,
+              "iou_unregistered_scale": 0.9621
+            },
+            "back": {
+              "scale": 0.9641,
+              "offset": [
+                178,
+                55
+              ],
+              "iou": 0.799,
+              "iou_unregistered_scale": 0.9641
+            },
+            "right": {
+              "scale": 0.9662,
+              "offset": [
+                228,
+                55
+              ],
+              "iou": 0.848,
+              "iou_unregistered_scale": 0.9662
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.79,
+            "left": 0.851,
+            "back": 0.795,
+            "right": 0.85
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "剪影与白模一致，设计贴合",
+            "time": "2026-10-03 17:32:48"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:47:15",
+          "files": {
+            "HP_SM_EnemyWeapon_Musket_v001_input.png": {
+              "path": "02_highpoly/HP_SM_EnemyWeapon_Musket_v001_input.png",
+              "sha256": "9135068e6d0eb6744b2f047980d9a0919a57870d7dd7d58acaee660292272b08"
+            },
+            "HP_SM_EnemyWeapon_Musket_v001.glb": {
+              "path": "02_highpoly/HP_SM_EnemyWeapon_Musket_v001.glb",
+              "sha256": "be56648ba5c67c1d991235206c0379817f79ea99d18352b337f61901fd042a55"
+            }
+          },
+          "from_concept": 1,
+          "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+          "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "checkpoint": "hunyuan_3d_v2.1.safetensors",
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "crop": [
+              177,
+              55,
+              335,
+              969
+            ],
+            "scale": 0.9522975929978118,
+            "offset": [
+              437,
+              77
+            ]
+          },
+          "seconds": 110.5,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 1.8
+        }
+      ]
+    },
+    "build": {
+      "current": 4,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:47:26",
+          "files": {
+            "SM_EnemyWeapon_Musket_v001.blend": {
+              "path": "03_work/SM_EnemyWeapon_Musket_v001.blend",
+              "sha256": "d6713814b3a84d37517167018043b2cd903dab7a13ef56a89e6ccde07b55b918"
+            },
+            "SM_EnemyWeapon_Musket_v001.glb": {
+              "path": "04_export/SM_EnemyWeapon_Musket_v001.glb",
+              "sha256": "cf79f9464f0809f82ec00120b658dc6e6cd5e3ef66f68060285f40f6471585ad"
+            },
+            "SM_EnemyWeapon_Musket_v001_metrics.json": {
+              "path": "03_work/SM_EnemyWeapon_Musket_v001_metrics.json",
+              "sha256": "7492469917b1fe56240554ca9e3d8265af773048895bf4bc6b3535d5a1971c77"
+            },
+            "T_EnemyWeapon_Musket_BC.png": {
+              "path": "03_work/textures_v001/T_EnemyWeapon_Musket_BC.png",
+              "sha256": "b5021b6cd04ba73903055fa783ae8d12c3cda9301dafdb7756f9477c7aff68ab"
+            },
+            "T_EnemyWeapon_Musket_N.png": {
+              "path": "03_work/textures_v001/T_EnemyWeapon_Musket_N.png",
+              "sha256": "c80d8b9941801f366a4d74c9a293d7672fad914b1864eb466a54729dbc62466a"
+            },
+            "T_EnemyWeapon_Musket_ORM.png": {
+              "path": "03_work/textures_v001/T_EnemyWeapon_Musket_ORM.png",
+              "sha256": "efc11dde0c0b4a04c925fd26e3ba7a6067f888e8b5835885d1399d3ff364f453"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null
+          },
+          "align_iou": 0.799,
+          "uncovered_ratio": 0.1735,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1490
+            },
+            {
+              "tris": 1000,
+              "verts": 490
+            }
+          ],
+          "export_kb": 144.0,
+          "seconds": 10.7,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 18:03:35",
+          "files": {
+            "SM_EnemyWeapon_Musket_v002.blend": {
+              "path": "03_work/SM_EnemyWeapon_Musket_v002.blend",
+              "sha256": "81cf23cb72390c82451cece398ea7525537c8e76daa6d5838871662c8f50f27e"
+            },
+            "SM_EnemyWeapon_Musket_v002.glb": {
+              "path": "04_export/SM_EnemyWeapon_Musket_v002.glb",
+              "sha256": "da9e5a5f6611a1ad2f47dfbd46e3c2154c0c530f758abd5fdb6c84cd6593cb3b"
+            },
+            "SM_EnemyWeapon_Musket_v002_metrics.json": {
+              "path": "03_work/SM_EnemyWeapon_Musket_v002_metrics.json",
+              "sha256": "7af24d4fd97cb372a97b38b4d9256892ec57d3feb3cd22788e4f5a4f27de755f"
+            },
+            "T_EnemyWeapon_Musket_BC.png": {
+              "path": "03_work/textures_v002/T_EnemyWeapon_Musket_BC.png",
+              "sha256": "b5021b6cd04ba73903055fa783ae8d12c3cda9301dafdb7756f9477c7aff68ab"
+            },
+            "T_EnemyWeapon_Musket_MetalMask.png": {
+              "path": "03_work/textures_v002/T_EnemyWeapon_Musket_MetalMask.png",
+              "sha256": "26813f03ae289113001f353c0159e6856be0e2136caaaf593fa8cf07771020d8"
+            },
+            "T_EnemyWeapon_Musket_N.png": {
+              "path": "03_work/textures_v002/T_EnemyWeapon_Musket_N.png",
+              "sha256": "c80d8b9941801f366a4d74c9a293d7672fad914b1864eb466a54729dbc62466a"
+            },
+            "T_EnemyWeapon_Musket_ORM.png": {
+              "path": "03_work/textures_v002/T_EnemyWeapon_Musket_ORM.png",
+              "sha256": "1f2b9a724d9e82be907c203975f1eec8cc71f887c143896b8f2ca8cfaed34df2"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1
+          },
+          "align_iou": 0.799,
+          "uncovered_ratio": 0.1735,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1490
+            },
+            {
+              "tris": 1000,
+              "verts": 490
+            }
+          ],
+          "export_kb": 153.9,
+          "seconds": 12.4,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 19:57:30",
+          "files": {
+            "SM_EnemyWeapon_Musket_v003.blend": {
+              "path": "03_work/SM_EnemyWeapon_Musket_v003.blend",
+              "sha256": "b80d214e5f9b847b8f149f9237260677d883ef8b62e12738ae761bff3b29d0cc"
+            },
+            "SM_EnemyWeapon_Musket_v003.glb": {
+              "path": "04_export/SM_EnemyWeapon_Musket_v003.glb",
+              "sha256": "c73489580869761bed8093c0f8c6027d40cbe50ffa0fe0bf1f30a51bc2310bf5"
+            },
+            "SM_EnemyWeapon_Musket_v003_metrics.json": {
+              "path": "03_work/SM_EnemyWeapon_Musket_v003_metrics.json",
+              "sha256": "4e95141954d1914853fd1be774b4a01045c69a3a2dbc1104c4aac208edf3735e"
+            },
+            "T_EnemyWeapon_Musket_BC.png": {
+              "path": "03_work/textures_v003/T_EnemyWeapon_Musket_BC.png",
+              "sha256": "d4b2b59fa2d3abf86651c3f0621155085886393d46ca969e4adc0729cd6bf92d"
+            },
+            "T_EnemyWeapon_Musket_MetalMask.png": {
+              "path": "03_work/textures_v003/T_EnemyWeapon_Musket_MetalMask.png",
+              "sha256": "6c54ade71fab5059f34bbfc0d791234cee46dda25882f7430d65c42bd4d9725a"
+            },
+            "T_EnemyWeapon_Musket_N.png": {
+              "path": "03_work/textures_v003/T_EnemyWeapon_Musket_N.png",
+              "sha256": "9fbf2358f3629bd8d65acd9b8de0805251229373a89eacc5717ace913c5be0dd"
+            },
+            "T_EnemyWeapon_Musket_ORM.png": {
+              "path": "03_work/textures_v003/T_EnemyWeapon_Musket_ORM.png",
+              "sha256": "89c9f47e2521db3b72991e5c298e4d43fc378cfe49140451dfd550b1fb1829ac"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1
+          },
+          "align_iou": 0.799,
+          "uncovered_ratio": 0.1735,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1490
+            },
+            {
+              "tris": 1000,
+              "verts": 490
+            }
+          ],
+          "export_kb": 164.1,
+          "seconds": 14.4,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 20:22:59",
+          "files": {
+            "SM_EnemyWeapon_Musket_v004.blend": {
+              "path": "03_work/SM_EnemyWeapon_Musket_v004.blend",
+              "sha256": "e6175f63f4e1a0f7a9356b709c5fb0bf3d54350b6256662685bc52c9f67e0c0f"
+            },
+            "SM_EnemyWeapon_Musket_v004.glb": {
+              "path": "04_export/SM_EnemyWeapon_Musket_v004.glb",
+              "sha256": "8f09dc8e931fcf7e79d5fc4a49672eb757f4f6431146a7156dbb955f0f8994d1"
+            },
+            "SM_EnemyWeapon_Musket_v004_metrics.json": {
+              "path": "03_work/SM_EnemyWeapon_Musket_v004_metrics.json",
+              "sha256": "a3bb47637f1f9ea3514e28c9fb3818478061ec22cd41c68872b1314b47484a0e"
+            },
+            "T_EnemyWeapon_Musket_BC.png": {
+              "path": "03_work/textures_v004/T_EnemyWeapon_Musket_BC.png",
+              "sha256": "0423b33a40e238bff264f717819af13c9058dd4207e4cea8314225102f8448e3"
+            },
+            "T_EnemyWeapon_Musket_MetalMask.png": {
+              "path": "03_work/textures_v004/T_EnemyWeapon_Musket_MetalMask.png",
+              "sha256": "d29bdaec3e0cc8ccf41708ebddc796e60de624decfdd51ed63f3bff706d371d5"
+            },
+            "T_EnemyWeapon_Musket_N.png": {
+              "path": "03_work/textures_v004/T_EnemyWeapon_Musket_N.png",
+              "sha256": "12f4096391e6ae09459e95a023d37ea93cba4293e4c7b5c693155618456608a1"
+            },
+            "T_EnemyWeapon_Musket_ORM.png": {
+              "path": "03_work/textures_v004/T_EnemyWeapon_Musket_ORM.png",
+              "sha256": "feab3080fcd9177bb3f955240365bf540ed638c08f671e048565e655d2a2a2d4"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1
+          },
+          "align_iou": 0.799,
+          "uncovered_ratio": 0.1735,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1490
+            },
+            {
+              "tris": 1000,
+              "verts": 490
+            }
+          ],
+          "export_kb": 156.1,
+          "seconds": 24.8,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 4,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:47:26",
+          "files": {
+            "SM_EnemyWeapon_Musket_v001_validation.json": {
+              "path": "05_review/SM_EnemyWeapon_Musket_v001_validation.json",
+              "sha256": "1f44dfe3b2d4c1639baa386695f966c57a9fa1f6eaa7e277ad829f59d4b90792"
+            }
+          },
+          "from_build": 1,
+          "errors": 1,
+          "warnings": 1,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 18:03:35",
+          "files": {
+            "SM_EnemyWeapon_Musket_v002_validation.json": {
+              "path": "05_review/SM_EnemyWeapon_Musket_v002_validation.json",
+              "sha256": "87bd503259eb329d243d2da6290ea3f5a1a662d1dd2cfe5b64f8666daea8912e"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [
+            "尺寸 Y 轴"
+          ],
+          "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 19:57:30",
+          "files": {
+            "SM_EnemyWeapon_Musket_v003_validation.json": {
+              "path": "05_review/SM_EnemyWeapon_Musket_v003_validation.json",
+              "sha256": "773e931d85852c87986f243e0f8ba887f855f2b314f811c083213c03ab74b145"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [
+            "尺寸 Y 轴"
+          ],
+          "passed": true
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 20:22:59",
+          "files": {
+            "SM_EnemyWeapon_Musket_v004_validation.json": {
+              "path": "05_review/SM_EnemyWeapon_Musket_v004_validation.json",
+              "sha256": "5ab463053ef67d33f2a2d9b97a7c5ca5f1b245ccdc6c84cc07ae819935d3aaf2"
+            }
+          },
+          "from_build": 4,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [
+            "尺寸 Y 轴"
+          ],
+          "passed": true
+        }
+      ]
+    },
+    "matid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:54:12",
+          "files": {
+            "MID_SM_EnemyWeapon_Musket_v001_sheet.png": {
+              "path": "01_concept/MID_SM_EnemyWeapon_Musket_v001_sheet.png",
+              "sha256": "0c74dcbeb6ae692443ff89ee5f8e27175bbc439ab129246c71f7a43ac1904d72"
+            },
+            "MID_SM_EnemyWeapon_Musket_v001_front.png": {
+              "path": "01_concept/MID_SM_EnemyWeapon_Musket_v001_front.png",
+              "sha256": "5ddb2e082dfcc1fedbf69b17f246210fbf41c52a2e409b1b3d795e7051521f97"
+            },
+            "MID_SM_EnemyWeapon_Musket_v001_left.png": {
+              "path": "01_concept/MID_SM_EnemyWeapon_Musket_v001_left.png",
+              "sha256": "db39e6f153f088a4fdec6dd7d5b0bb4b8c089be9cc9f22c71ba0bc0b5cc67ea9"
+            },
+            "MID_SM_EnemyWeapon_Musket_v001_back.png": {
+              "path": "01_concept/MID_SM_EnemyWeapon_Musket_v001_back.png",
+              "sha256": "24f8577dd70b451be3a54a015a1609bd36aedd506e8d5708cfe1e567a0ae498a"
+            },
+            "MID_SM_EnemyWeapon_Musket_v001_right.png": {
+              "path": "01_concept/MID_SM_EnemyWeapon_Musket_v001_right.png",
+              "sha256": "460fd0ef8df45b430a6457e8bf0c75365c032ec44fbfc7aeac02b3bf2c3be9e0"
+            },
+            "MID_SM_EnemyWeapon_Musket_v001_compare.png": {
+              "path": "01_concept/MID_SM_EnemyWeapon_Musket_v001_compare.png",
+              "sha256": "a024614801c3befadabf1bb85edd479c473208771cc947a7e98bac7ccddbb260"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1699,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 241
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2879
+          },
+          "request_id": "req_9efb7be0d79843ed9cfd8d57c6e98425",
+          "seconds": 28.3,
+          "registration": {
+            "front": {
+              "scale": 0.9581,
+              "offset": [
+                176,
+                55
+              ],
+              "iou": 0.952,
+              "iou_unregistered_scale": 0.9581,
+              "purity": 0.983
+            },
+            "left": {
+              "scale": 0.956,
+              "offset": [
+                226,
+                55
+              ],
+              "iou": 0.939,
+              "iou_unregistered_scale": 0.956,
+              "purity": 0.986
+            },
+            "back": {
+              "scale": 0.958,
+              "offset": [
+                176,
+                55
+              ],
+              "iou": 0.954,
+              "iou_unregistered_scale": 0.958,
+              "purity": 0.989
+            },
+            "right": {
+              "scale": 0.9561,
+              "offset": [
+                226,
+                55
+              ],
+              "iou": 0.93,
+              "iou_unregistered_scale": 0.9561,
+              "purity": 0.986
+            }
+          },
+          "metal_ratio": {
+            "front": 0.353,
+            "left": 0.351,
+            "back": 0.311,
+            "right": 0.125
+          }
+        }
+      ]
+    },
+    "review": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 18:03:43",
+          "files": {
+            "SM_EnemyWeapon_Musket_v002_review.png": {
+              "path": "05_review/SM_EnemyWeapon_Musket_v002_review.png",
+              "sha256": "e788eac5bfd3111d406f8ea6ccf6f9ac37c6c7032dcd7504aeaa21a0d8ac4023"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "成品还原概念；材质分区正确；深度轴偏差为单视图重建固有误差，已人工确认",
+            "time": "2026-10-03 18:06:04"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 19:57:38",
+          "files": {
+            "SM_EnemyWeapon_Musket_v003_review.png": {
+              "path": "05_review/SM_EnemyWeapon_Musket_v003_review.png",
+              "sha256": "9cdf26bec3708193ac2dce82da6b961ee181620359ac0ff3f7c02e87c18346e1"
+            }
+          },
+          "from_build": 3,
+          "deformation": {},
+          "auto_flags": []
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 20:23:11",
+          "files": {
+            "SM_EnemyWeapon_Musket_v004_review.png": {
+              "path": "05_review/SM_EnemyWeapon_Musket_v004_review.png",
+              "sha256": "d843245a14548db5a514d6ea1942b1c016773db06d2e1f6e57c87113299ba736"
+            }
+          },
+          "from_build": 4,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "UV 两方案择优重建（纹素密度不低于上一发布版）；几何、蒙皮与上一已审版本一致",
+            "time": "2026-10-03 20:37:41"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 18:06:07",
+          "files": {
+            "SM_EnemyWeapon_Musket.glb": {
+              "path": "@root/public/assets/attachments/SM_EnemyWeapon_Musket.glb",
+              "sha256": "da9e5a5f6611a1ad2f47dfbd46e3c2154c0c530f758abd5fdb6c84cd6593cb3b"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/attachments/SM_EnemyWeapon_Musket.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 20:37:42",
+          "files": {
+            "SM_EnemyWeapon_Musket.glb": {
+              "path": "@root/public/assets/attachments/SM_EnemyWeapon_Musket.glb",
+              "sha256": "8f09dc8e931fcf7e79d5fc4a49672eb757f4f6431146a7156dbb955f0f8994d1"
+            }
+          },
+          "from_build": 4,
+          "url": "assets/attachments/SM_EnemyWeapon_Musket.glb"
+        }
+      ]
+    }
+  }
+}

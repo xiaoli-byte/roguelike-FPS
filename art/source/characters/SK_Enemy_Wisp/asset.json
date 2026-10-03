@@ -1,0 +1,797 @@
+{
+  "id": "SK_Enemy_Wisp",
+  "display": "幽灵飞灯",
+  "kind": "skeletal",
+  "class": "enemy_standard",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 18:27:24",
+          "files": {
+            "BO_SK_Enemy_Wisp_v001.glb": {
+              "path": "00_blockout/BO_SK_Enemy_Wisp_v001.glb",
+              "sha256": "663d384c58aca63526e72a81532b26439de284e7645d91c177eac76fd3797fc3"
+            },
+            "BO_SK_Enemy_Wisp_v001.json": {
+              "path": "00_blockout/BO_SK_Enemy_Wisp_v001.json",
+              "sha256": "0fb353c1dc43ea32be94f3baa876662993bb269a5827b568cd06f04479d25daa"
+            },
+            "BO_SK_Enemy_Wisp_v001_views.json": {
+              "path": "00_blockout/BO_SK_Enemy_Wisp_v001_views.json",
+              "sha256": "936b1b3dc3573d94f5f248eec9c5377ba84e23d9b4255a1a446fb0a02588228d"
+            },
+            "BO_SK_Enemy_Wisp_v001_sheet.png": {
+              "path": "00_blockout/BO_SK_Enemy_Wisp_v001_sheet.png",
+              "sha256": "e1fde12d7b232e0b243c98d690114bfd64e4d9bb6e4839d7c8f2403f90b7cf1e"
+            },
+            "BO_SK_Enemy_Wisp_v001_front.png": {
+              "path": "00_blockout/BO_SK_Enemy_Wisp_v001_front.png",
+              "sha256": "e4ab0852d3c52f8a61228d4b0c72b1ee5fefa551fa60df2758d4069f3b0251a6"
+            },
+            "BO_SK_Enemy_Wisp_v001_left.png": {
+              "path": "00_blockout/BO_SK_Enemy_Wisp_v001_left.png",
+              "sha256": "14984fdd6930ef3451b0abe95987dd92238202ed005aaf5744ea42c2d1b7c5a6"
+            },
+            "BO_SK_Enemy_Wisp_v001_back.png": {
+              "path": "00_blockout/BO_SK_Enemy_Wisp_v001_back.png",
+              "sha256": "2207c83868e2d3fda16d1b65cd342384bc30ceda4a6ef7dcfccf15e0ffe07bf4"
+            },
+            "BO_SK_Enemy_Wisp_v001_right.png": {
+              "path": "00_blockout/BO_SK_Enemy_Wisp_v001_right.png",
+              "sha256": "ba00545e0eb59eacc91b0d0aa85b45afd9e2495b685564034cf6b7959b916d0c"
+            }
+          },
+          "source": {
+            "kind": "enemy",
+            "id": "wisp"
+          },
+          "joints": 5,
+          "bounds": {
+            "min": [
+              -0.3400000035762787,
+              -0.0940260341763497,
+              -0.3400000035762787
+            ],
+            "max": [
+              0.3400000035762787,
+              1.1108398053050041,
+              0.3400000035762787
+            ]
+          },
+          "blender_seconds": 6.9
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 18:39:35",
+          "files": {
+            "CN_SK_Enemy_Wisp_v001_sheet.png": {
+              "path": "01_concept/CN_SK_Enemy_Wisp_v001_sheet.png",
+              "sha256": "69b45f9091090e886d53442190af97910f3291eb7cf76e365a5fbdea4632c042"
+            },
+            "CN_SK_Enemy_Wisp_v001_front.png": {
+              "path": "01_concept/CN_SK_Enemy_Wisp_v001_front.png",
+              "sha256": "b2ce1d1c8ec568a7e05c3aaa65e3d1d75d028c5aaa71fc456008b5f79959ae35"
+            },
+            "CN_SK_Enemy_Wisp_v001_left.png": {
+              "path": "01_concept/CN_SK_Enemy_Wisp_v001_left.png",
+              "sha256": "87611f7076a286d1b2d135b6f6d89cc4b450ad1fce4bf71e2ce24dfea5fa5ad3"
+            },
+            "CN_SK_Enemy_Wisp_v001_back.png": {
+              "path": "01_concept/CN_SK_Enemy_Wisp_v001_back.png",
+              "sha256": "d2e3325fa0d96e6f03234556c6a04d28d92c8e0c0d23810aab816a5177f4b644"
+            },
+            "CN_SK_Enemy_Wisp_v001_right.png": {
+              "path": "01_concept/CN_SK_Enemy_Wisp_v001_right.png",
+              "sha256": "199be73ffad933cfcb2d115649b26ef480ae46cacef0308233bdbab9a750dbd0"
+            },
+            "CN_SK_Enemy_Wisp_v001_compare.png": {
+              "path": "01_concept/CN_SK_Enemy_Wisp_v001_compare.png",
+              "sha256": "1f15e2e6e1c1fd524942c990393aa1bf6115145f609d748eec18ab68a0ad1c8b"
+            },
+            "CN_SK_Enemy_Wisp_v001_prompt.txt": {
+              "path": "01_concept/CN_SK_Enemy_Wisp_v001_prompt.txt",
+              "sha256": "0a61a97bd246800f3b161e18281989a0fbfad156fc04fbf5137556031dfc418d"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1915,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 457
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3095
+          },
+          "request_id": "req_99e0644ccf524c4f918f14d1212b8174",
+          "seconds": 30.5,
+          "registration": {
+            "front": {
+              "scale": 0.9718,
+              "offset": [
+                33,
+                95
+              ],
+              "iou": 0.885,
+              "iou_unregistered_scale": 0.93
+            },
+            "left": {
+              "scale": 0.9888,
+              "offset": [
+                30,
+                95
+              ],
+              "iou": 0.903,
+              "iou_unregistered_scale": 0.9463
+            },
+            "back": {
+              "scale": 0.9696,
+              "offset": [
+                35,
+                95
+              ],
+              "iou": 0.885,
+              "iou_unregistered_scale": 0.9278
+            },
+            "right": {
+              "scale": 0.99,
+              "offset": [
+                30,
+                95
+              ],
+              "iou": 0.903,
+              "iou_unregistered_scale": 0.9474
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.884,
+            "left": 0.903,
+            "back": 0.884,
+            "right": 0.905
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "姿势与部件位置贴合白模，发光部位正确",
+            "time": "2026-10-03 18:42:01"
+          }
+        }
+      ]
+    },
+    "matid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 18:45:23",
+          "files": {
+            "MID_SK_Enemy_Wisp_v001_sheet.png": {
+              "path": "01_concept/MID_SK_Enemy_Wisp_v001_sheet.png",
+              "sha256": "74c96f165b348e65a14f8f42860cac1006e74ad3293db5569e0099785bc8b6ca"
+            },
+            "MID_SK_Enemy_Wisp_v001_front.png": {
+              "path": "01_concept/MID_SK_Enemy_Wisp_v001_front.png",
+              "sha256": "45b45213854e4cf20784cee5e8ea791cddf18bed3ed82904a6d6f4058187c067"
+            },
+            "MID_SK_Enemy_Wisp_v001_left.png": {
+              "path": "01_concept/MID_SK_Enemy_Wisp_v001_left.png",
+              "sha256": "b77408facddc375176296434904716f03c85f8fc1964c79a5bff4100b85eb253"
+            },
+            "MID_SK_Enemy_Wisp_v001_back.png": {
+              "path": "01_concept/MID_SK_Enemy_Wisp_v001_back.png",
+              "sha256": "66ccdb4163b6339207741aeb53b74be783fa4cc973c6fc0715770a801e9af1ed"
+            },
+            "MID_SK_Enemy_Wisp_v001_right.png": {
+              "path": "01_concept/MID_SK_Enemy_Wisp_v001_right.png",
+              "sha256": "43fa0eccf5d557b90ee17307f5d09af2a04edf14ab7d58bb66892949cb4353f6"
+            },
+            "MID_SK_Enemy_Wisp_v001_compare.png": {
+              "path": "01_concept/MID_SK_Enemy_Wisp_v001_compare.png",
+              "sha256": "9938cf6a67eadc9e51c237c7879396fb999e1019aca408bd86c72e916331a843"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1699,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 241
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2879
+          },
+          "request_id": "req_3d212cae4fbe40319bc689600d8141bd",
+          "seconds": 30.9,
+          "registration": {
+            "front": {
+              "scale": 0.9635,
+              "offset": [
+                32,
+                96
+              ],
+              "iou": 0.961,
+              "iou_unregistered_scale": 0.9635,
+              "purity": 0.992
+            },
+            "left": {
+              "scale": 0.9895,
+              "offset": [
+                28,
+                95
+              ],
+              "iou": 0.952,
+              "iou_unregistered_scale": 0.9895,
+              "purity": 0.993
+            },
+            "back": {
+              "scale": 0.968,
+              "offset": [
+                34,
+                95
+              ],
+              "iou": 0.953,
+              "iou_unregistered_scale": 0.968,
+              "purity": 0.994
+            },
+            "right": {
+              "scale": 0.9883,
+              "offset": [
+                29,
+                95
+              ],
+              "iou": 0.961,
+              "iou_unregistered_scale": 0.9883,
+              "purity": 0.99
+            }
+          },
+          "metal_ratio": {
+            "front": 0.159,
+            "left": 0.148,
+            "back": 0.163,
+            "right": 0.148
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 18:50:13",
+          "files": {
+            "HP_SK_Enemy_Wisp_v001_input.png": {
+              "path": "02_highpoly/HP_SK_Enemy_Wisp_v001_input.png",
+              "sha256": "f738b445b1a5cdcf06451f68358e211e977b879397360ba250e2ca6d101ab337"
+            },
+            "HP_SK_Enemy_Wisp_v001.glb": {
+              "path": "02_highpoly/HP_SK_Enemy_Wisp_v001.glb",
+              "sha256": "d8feee5b03b935574a970acb5f2e7a7bc2bc60015af2c436885a4f0d502d742a"
+            }
+          },
+          "from_concept": 1,
+          "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+          "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "checkpoint": "hunyuan_3d_v2.1.safetensors",
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "crop": [
+              33,
+              96,
+              478,
+              941
+            ],
+            "scale": 1.030059171597633,
+            "offset": [
+              283,
+              77
+            ]
+          },
+          "seconds": 125.4,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 12.1
+        }
+      ]
+    },
+    "build": {
+      "current": 4,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 18:52:00",
+          "files": {
+            "SK_Enemy_Wisp_v001.blend": {
+              "path": "03_work/SK_Enemy_Wisp_v001.blend",
+              "sha256": "5aa8857e735649f636c30531d9dd177e88e9000e7dc5d78701e858ae20f8fb42"
+            },
+            "SK_Enemy_Wisp_v001.glb": {
+              "path": "04_export/SK_Enemy_Wisp_v001.glb",
+              "sha256": "8715f0162e0b4a1b8065192b642e8d19022a04dbb9a383eebc0c22740aaa1de4"
+            },
+            "SK_Enemy_Wisp_v001_metrics.json": {
+              "path": "03_work/SK_Enemy_Wisp_v001_metrics.json",
+              "sha256": "d6ca8d5a88a1cf0e84c66fc11b229a0cfff0f34c3cc5a2ff56ba1c8c3e280e7d"
+            },
+            "T_Enemy_Wisp_BC.png": {
+              "path": "03_work/textures_v001/T_Enemy_Wisp_BC.png",
+              "sha256": "853a4cabfe95bdb2e50bb7792c3061498b58bc3ec536eabf536fe1902d45f2c3"
+            },
+            "T_Enemy_Wisp_MetalMask.png": {
+              "path": "03_work/textures_v001/T_Enemy_Wisp_MetalMask.png",
+              "sha256": "d3ed853a326aca84a62a4bb8808c81491f09fa89706fdd7fe023b06a2d004353"
+            },
+            "T_Enemy_Wisp_N.png": {
+              "path": "03_work/textures_v001/T_Enemy_Wisp_N.png",
+              "sha256": "031fc1ebb3d1cc57f2dea28e0b8372cf0bfc28a0d680366baa54e6ba03831731"
+            },
+            "T_Enemy_Wisp_ORM.png": {
+              "path": "03_work/textures_v001/T_Enemy_Wisp_ORM.png",
+              "sha256": "7a907d4636d4b725e878efe2d1be7798bb93db9fd144cfe3b2b30ead591897ad"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1
+          },
+          "align_iou": 0.838,
+          "uncovered_ratio": 0.2385,
+          "lods": [
+            {
+              "tris": 8000,
+              "verts": 3992
+            },
+            {
+              "tris": 3500,
+              "verts": 1742
+            },
+            {
+              "tris": 1500,
+              "verts": 742
+            }
+          ],
+          "export_kb": 434.5,
+          "seconds": 106.8,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 19:21:55",
+          "files": {
+            "SK_Enemy_Wisp_v002.blend": {
+              "path": "03_work/SK_Enemy_Wisp_v002.blend",
+              "sha256": "fe3043330e7486dbbab6ad98e5bdf2fb1a1757db47b69826ba7d05f7afbc9f10"
+            },
+            "SK_Enemy_Wisp_v002.glb": {
+              "path": "04_export/SK_Enemy_Wisp_v002.glb",
+              "sha256": "9fc3b0c35501730518481829f63cd96fb6cd11b30fdf9f6f92f2c00c9e44547a"
+            },
+            "SK_Enemy_Wisp_v002_metrics.json": {
+              "path": "03_work/SK_Enemy_Wisp_v002_metrics.json",
+              "sha256": "c45cfa42ea636e076c744f10763461b961ecd6f1c9b35c9bd5d2440ffa42f3b6"
+            },
+            "T_Enemy_Wisp_BC.png": {
+              "path": "03_work/textures_v002/T_Enemy_Wisp_BC.png",
+              "sha256": "853a4cabfe95bdb2e50bb7792c3061498b58bc3ec536eabf536fe1902d45f2c3"
+            },
+            "T_Enemy_Wisp_MetalMask.png": {
+              "path": "03_work/textures_v002/T_Enemy_Wisp_MetalMask.png",
+              "sha256": "d3ed853a326aca84a62a4bb8808c81491f09fa89706fdd7fe023b06a2d004353"
+            },
+            "T_Enemy_Wisp_N.png": {
+              "path": "03_work/textures_v002/T_Enemy_Wisp_N.png",
+              "sha256": "031fc1ebb3d1cc57f2dea28e0b8372cf0bfc28a0d680366baa54e6ba03831731"
+            },
+            "T_Enemy_Wisp_ORM.png": {
+              "path": "03_work/textures_v002/T_Enemy_Wisp_ORM.png",
+              "sha256": "7a907d4636d4b725e878efe2d1be7798bb93db9fd144cfe3b2b30ead591897ad"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1
+          },
+          "align_iou": 0.838,
+          "uncovered_ratio": 0.2385,
+          "lods": [
+            {
+              "tris": 7996,
+              "verts": 4000
+            },
+            {
+              "tris": 3496,
+              "verts": 1763
+            },
+            {
+              "tris": 1496,
+              "verts": 750
+            }
+          ],
+          "export_kb": 418.0,
+          "seconds": 49.0,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 20:01:31",
+          "files": {
+            "SK_Enemy_Wisp_v003.blend": {
+              "path": "03_work/SK_Enemy_Wisp_v003.blend",
+              "sha256": "dc907997c8cc030914bc34b5893f9bfd1968c7095ea7303c417217536b9e9231"
+            },
+            "SK_Enemy_Wisp_v003.glb": {
+              "path": "04_export/SK_Enemy_Wisp_v003.glb",
+              "sha256": "799cc4eec56eee3c944715427df55dc98362ee1c55d7f4b98e5192bce5c47a1f"
+            },
+            "SK_Enemy_Wisp_v003_metrics.json": {
+              "path": "03_work/SK_Enemy_Wisp_v003_metrics.json",
+              "sha256": "87bc177c8c2c76c8fb6eb6dee57792c130c0386a0464d0bb80fd43acd9c66cd5"
+            },
+            "T_Enemy_Wisp_BC.png": {
+              "path": "03_work/textures_v003/T_Enemy_Wisp_BC.png",
+              "sha256": "9f1f1f49db02743e14ee2914221adab8c5a3183778a6d4eeb94bd601ba203452"
+            },
+            "T_Enemy_Wisp_MetalMask.png": {
+              "path": "03_work/textures_v003/T_Enemy_Wisp_MetalMask.png",
+              "sha256": "ca0b4c6822c10d24554f2b06878a752d1fbf364b9bc25d855a3b7e669d27f2e3"
+            },
+            "T_Enemy_Wisp_N.png": {
+              "path": "03_work/textures_v003/T_Enemy_Wisp_N.png",
+              "sha256": "5aecbf9370eef64ef9e30ae3fbda9678dd6eeb3aec4325bb264a4c523564ca33"
+            },
+            "T_Enemy_Wisp_ORM.png": {
+              "path": "03_work/textures_v003/T_Enemy_Wisp_ORM.png",
+              "sha256": "e96eb04ac2a7b4e5c4752c1172173bcfececdff3b2aef11fc44c4c4bb19d7c1f"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1
+          },
+          "align_iou": 0.838,
+          "uncovered_ratio": 0.2385,
+          "lods": [
+            {
+              "tris": 7996,
+              "verts": 4000
+            },
+            {
+              "tris": 3496,
+              "verts": 1763
+            },
+            {
+              "tris": 1496,
+              "verts": 750
+            }
+          ],
+          "export_kb": 333.3,
+          "seconds": 91.4,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 20:29:08",
+          "files": {
+            "SK_Enemy_Wisp_v004.blend": {
+              "path": "03_work/SK_Enemy_Wisp_v004.blend",
+              "sha256": "a68681e98119dd8fa2097c8bf3cf04b9a0233c91f6455de7445ad7bbeeda9d2c"
+            },
+            "SK_Enemy_Wisp_v004.glb": {
+              "path": "04_export/SK_Enemy_Wisp_v004.glb",
+              "sha256": "4ef5673f479a147e37707bfe8a93bfb688a3546a9c0e75a62a92bb5d2ecd254e"
+            },
+            "SK_Enemy_Wisp_v004_metrics.json": {
+              "path": "03_work/SK_Enemy_Wisp_v004_metrics.json",
+              "sha256": "5475e516b00a3d33fae0290e3fe8cd9340336e3ffeb26b6e1021ed80f319252a"
+            },
+            "T_Enemy_Wisp_BC.png": {
+              "path": "03_work/textures_v004/T_Enemy_Wisp_BC.png",
+              "sha256": "a6bb2294310278c4459feb689460ac2aae2f1773ceadae6739a42a2ac057f662"
+            },
+            "T_Enemy_Wisp_MetalMask.png": {
+              "path": "03_work/textures_v004/T_Enemy_Wisp_MetalMask.png",
+              "sha256": "cfe5698c89e1bce10d33ec6c619205693ea94185fe65c58563a322e81a541085"
+            },
+            "T_Enemy_Wisp_N.png": {
+              "path": "03_work/textures_v004/T_Enemy_Wisp_N.png",
+              "sha256": "4616b94adcc50590ee95918d99e451d98e2e574c25bea4ac9757a4e1a8547410"
+            },
+            "T_Enemy_Wisp_ORM.png": {
+              "path": "03_work/textures_v004/T_Enemy_Wisp_ORM.png",
+              "sha256": "db4a44bdeb3ba24b2eddc50f8df9f5703cf06331fa06a43c4958b56b3bcf6e28"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1
+          },
+          "align_iou": 0.838,
+          "uncovered_ratio": 0.2385,
+          "lods": [
+            {
+              "tris": 7996,
+              "verts": 4000
+            },
+            {
+              "tris": 3496,
+              "verts": 1763
+            },
+            {
+              "tris": 1496,
+              "verts": 750
+            }
+          ],
+          "export_kb": 325.5,
+          "seconds": 103.1,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 4,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 18:52:00",
+          "files": {
+            "SK_Enemy_Wisp_v001_validation.json": {
+              "path": "05_review/SK_Enemy_Wisp_v001_validation.json",
+              "sha256": "79132351da772a0a0d5b9ad2556aebb7b99d9586a5a39839d39611f35d25c405"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 19:21:55",
+          "files": {
+            "SK_Enemy_Wisp_v002_validation.json": {
+              "path": "05_review/SK_Enemy_Wisp_v002_validation.json",
+              "sha256": "bcff8697e0935342d353da86d753804647297846bdfbf72a5ef3f8ce5b4cc1d8"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 20:01:31",
+          "files": {
+            "SK_Enemy_Wisp_v003_validation.json": {
+              "path": "05_review/SK_Enemy_Wisp_v003_validation.json",
+              "sha256": "dbfe44493b9ef75a7c7c0b52d14d88f21ff4fb1bd7ce123c1139644778f2934a"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 20:29:08",
+          "files": {
+            "SK_Enemy_Wisp_v004_validation.json": {
+              "path": "05_review/SK_Enemy_Wisp_v004_validation.json",
+              "sha256": "e8556a4e6f141090aa92f0880f749fd73c79ed1182a0da3fbe13d344c055df74"
+            }
+          },
+          "from_build": 4,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 4,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 18:52:16",
+          "files": {
+            "SK_Enemy_Wisp_v001_review.png": {
+              "path": "05_review/SK_Enemy_Wisp_v001_review.png",
+              "sha256": "46f916eb5411a598a755c8e3dc3ea2a24fb9ac7e203991021b9cb2a69821a7ce"
+            }
+          },
+          "from_build": 1,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0047,
+              "stretch_ratio": 0.0047,
+              "p99_stretch": 1.621,
+              "p1_compress": 0.968
+            },
+            "b": {
+              "bad_edge_ratio": 0.0193,
+              "stretch_ratio": 0.0166,
+              "p99_stretch": 2.216,
+              "p1_compress": 0.662
+            }
+          },
+          "auto_flags": [
+            "b 拉伸 p99 2.216、过度拉伸边 1.7%"
+          ]
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 19:22:05",
+          "files": {
+            "SK_Enemy_Wisp_v002_review.png": {
+              "path": "05_review/SK_Enemy_Wisp_v002_review.png",
+              "sha256": "14d9e3d48f1dc6b22930e3dd871f6a52f76553b76dd848667491385cfc9a3ffc"
+            }
+          },
+          "from_build": 2,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "刚体分段；姿势 b（±0.6 rad，超出游戏 ±0.23）下火焰团与流苏间露出少量封口，游戏幅度内可接受",
+            "time": "2026-10-03 19:22:45"
+          }
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 20:01:40",
+          "files": {
+            "SK_Enemy_Wisp_v003_review.png": {
+              "path": "05_review/SK_Enemy_Wisp_v003_review.png",
+              "sha256": "f4e2178049d94b0bbbeb99dee3f84d39bc723692181fd97d5fbe5527992834b4"
+            }
+          },
+          "from_build": 3,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": []
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 20:29:24",
+          "files": {
+            "SK_Enemy_Wisp_v004_review.png": {
+              "path": "05_review/SK_Enemy_Wisp_v004_review.png",
+              "sha256": "ecad3c2e92204e7c20da571a46b8033afaf63a3bba24e5720d02463b046d8a9a"
+            }
+          },
+          "from_build": 4,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "UV 两方案择优重建（纹素密度不低于上一发布版）；几何、蒙皮与上一已审版本一致",
+            "time": "2026-10-03 20:37:45"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 19:22:46",
+          "files": {
+            "SK_Enemy_Wisp.glb": {
+              "path": "@root/public/assets/characters/SK_Enemy_Wisp.glb",
+              "sha256": "9fc3b0c35501730518481829f63cd96fb6cd11b30fdf9f6f92f2c00c9e44547a"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/characters/SK_Enemy_Wisp.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 20:37:46",
+          "files": {
+            "SK_Enemy_Wisp.glb": {
+              "path": "@root/public/assets/characters/SK_Enemy_Wisp.glb",
+              "sha256": "4ef5673f479a147e37707bfe8a93bfb688a3546a9c0e75a62a92bb5d2ecd254e"
+            }
+          },
+          "from_build": 4,
+          "url": "assets/characters/SK_Enemy_Wisp.glb"
+        }
+      ]
+    }
+  }
+}

@@ -3,7 +3,8 @@
  *
  * 动画：呼吸摆动、移动晃动、鼠标惯性、横移倾斜、跳跃 / 落地、冲刺姿态、开火后坐、
  * 换弹（按 ReloadStyle）、切枪收放、机炮转管、霰弹泵动、左轮转轮、弩弦上弦。
- * 枪口火焰为加法混合精灵；主场景与武器场景各一个复用的 PointLight 做闪光。
+ * 枪口火焰为加法混合精灵；武器场景里一个复用的 PointLight 照亮枪身。
+ * 主场景不再放枪口点光源（主场景点光源数量会让所有受光材质的片元开销上升，集成阶段要求压缩）。
  */
 import * as THREE from 'three';
 import type { GameContext, WeaponInstance } from '../core/types';
@@ -11,6 +12,9 @@ import { ELEMENT_COLORS } from '../core/types';
 import { clamp, clamp01, damp, DEG, lerp, TAU } from '../core/math';
 import { getWeaponDef, type WeaponDef } from './WeaponDefs';
 import { boxGeo, buildGunModel, getFlashTexture, setCrossbowString, solidMat, type GunModel } from './WeaponModels';
+import { AssetLibrary } from '../assets/AssetLibrary';
+import { applyArtEnvironment } from '../assets/ArtEnvironment';
+import { attachStaticPart } from '../assets/StaticAttachment';
 
 export interface ViewmodelState {
   aimT: number;
@@ -39,6 +43,8 @@ interface VmEntry {
   gun: GunModel;
   /** 本模型独享的能量槽材质（脉动） */
   energyMat: THREE.MeshBasicMaterial;
+  /** 美术手臂的实例材质 */
+  armMats: THREE.MeshStandardMaterial[];
   baseColor: THREE.Color;
   magBase: THREE.Vector3;
   magRotX: number;
@@ -47,6 +53,25 @@ interface VmEntry {
 
 const _v = new THREE.Vector3();
 const _c = new THREE.Color();
+const _tint = new THREE.Color();
+const _axis = new THREE.Vector3();
+const _euler = new THREE.Euler();
+
+/**
+ * 第一人称枪模相对建模尺寸的整体缩放。
+ * 开镜位置同步乘以该系数（相机原点处的等比缩放不改变投影），所以开镜画面与缩放前完全一致；
+ * 腰射时枪模以握把为锚点缩小，并整体再往右下挪一点。
+ * 实测（1280×720，viewCamera FOV 60，腰射静止）：冲锋枪屏幕覆盖 6.6% → 4.1%（线性约缩小 21%），
+ * 外接框左上角 (767,452) → (815,504)；各武器枪管延长线都穿过准星（偏差 ≤ 2 像素）。
+ */
+const VM_SCALE = 0.76;
+/** 腰射锚点的额外右下偏移（相机空间，米） */
+const HIP_SHIFT_X = 0.024;
+const HIP_SHIFT_Y = -0.02;
+
+/** 袖子底色：深色布料，只混入少量英雄主题色 */
+const SLEEVE_BASE = 0x2b2a2f;
+const SLEEVE_TINT = 0.3;
 
 const smooth = (t: number): number => {
   const x = clamp01(t);
@@ -67,33 +92,77 @@ function magCurve(p: number): number {
   return 0;
 }
 
-/** 给第一人称模型装上手套与袖子（袖子取英雄主题色） */
-function addArms(gun: GunModel, sleeveColor: number): void {
+/**
+ * 给第一人称模型装上手套与袖子。
+ * 袖子是偏暗的布料色，只带一点英雄主题色倾向；主题色本身只用在袖口的一圈细滚边上，
+ * 避免整条手臂变成一大块高饱和色块（例如赤狐的橙色）。
+ */
+/**
+ * 程序化第一人称手臂（一侧）。分组名 arm_r / arm_l 也是美术资产（SM_Arms_<英雄><R|L>）的挂点名：
+ * 右手在握把处，坐标就是枪模坐标（分组放在枪模原点）；左手以左手握点为原点（分组放到 gun.leftHand）。
+ */
+export function buildArm(side: 'r' | 'l', heroColor: number): THREE.Group {
   const glove = solidMat(0x2e241e, 0.05, 0.9);
   const cuff = solidMat(0x1b1714, 0.1, 0.8);
-  _c.setHex(sleeveColor).multiplyScalar(0.72);
-  const sleeve = solidMat(_c.getHex(), 0.05, 0.85);
-  const mk = (parent: THREE.Object3D, mat: THREE.Material, w: number, h: number, d: number, x: number, y: number, z: number, rx: number, ry: number, rz = 0): void => {
+  _c.setHex(SLEEVE_BASE).lerp(_tint.setHex(heroColor), SLEEVE_TINT).multiplyScalar(0.85);
+  const sleeve = solidMat(_c.getHex(), 0.02, 0.92);
+  _c.setHex(heroColor).multiplyScalar(0.62);
+  const trim = solidMat(_c.getHex(), 0.1, 0.7);
+  const g = new THREE.Group();
+  g.name = side === 'r' ? 'arm_r' : 'arm_l';
+  const mk = (mat: THREE.Material, w: number, h: number, d: number, x: number, y: number, z: number, rx: number, ry: number, rz = 0): void => {
     const m = new THREE.Mesh(boxGeo(w, h, d), mat);
+    m.name = 'arm';
     m.position.set(x, y, z);
     m.rotation.set(rx, ry, rz);
-    parent.add(m);
+    g.add(m);
   };
-  const r = gun.root;
-  // 右手：握把
-  mk(r, glove, 0.052, 0.078, 0.07, 0.003, -0.05, 0.034, -0.3, 0);
-  mk(r, glove, 0.018, 0.018, 0.045, -0.024, -0.008, 0.018, -0.2, 0.3);
-  mk(r, cuff, 0.074, 0.074, 0.045, 0.024, -0.098, 0.1, 0.62, 0.38);
-  mk(r, sleeve, 0.07, 0.07, 0.34, 0.075, -0.165, 0.2, 0.62, 0.38);
-  // 左手：护木 / 前握把
-  if (gun.leftHand) {
-    const p = gun.leftParent ?? r;
-    const L = gun.leftHand;
-    mk(p, glove, 0.054, 0.046, 0.085, L.x - 0.006, L.y - 0.022, L.z, 0, 0);
-    mk(p, glove, 0.012, 0.03, 0.07, L.x + 0.03, L.y - 0.006, L.z, 0, 0);
-    mk(p, cuff, 0.072, 0.072, 0.045, L.x - 0.034, L.y - 0.068, L.z + 0.058, 0.6, -0.5);
-    mk(p, sleeve, 0.068, 0.068, 0.4, L.x - 0.094, L.y - 0.15, L.z + 0.162, 0.6, -0.5);
+  /** 袖口滚边：紧贴护腕、沿前臂方向后移一点的一圈细带 */
+  const band = (size: number, x: number, y: number, z: number, rx: number, ry: number): void => {
+    _axis.set(0, 0, 1).applyEuler(_euler.set(rx, ry, 0));
+    mk(trim, size, size, 0.016, x + _axis.x * 0.03, y + _axis.y * 0.03, z + _axis.z * 0.03, rx, ry);
+  };
+  if (side === 'r') {
+    // 右手：握把
+    mk(glove, 0.052, 0.078, 0.07, 0.003, -0.05, 0.034, -0.3, 0);
+    mk(glove, 0.018, 0.018, 0.045, -0.024, -0.008, 0.018, -0.2, 0.3);
+    mk(cuff, 0.074, 0.074, 0.045, 0.024, -0.098, 0.1, 0.62, 0.38);
+    band(0.078, 0.024, -0.098, 0.1, 0.62, 0.38);
+    mk(sleeve, 0.07, 0.07, 0.34, 0.075, -0.165, 0.2, 0.62, 0.38);
+  } else {
+    // 左手：护木 / 前握把（以握点为原点）
+    mk(glove, 0.054, 0.046, 0.085, -0.006, -0.022, 0, 0, 0);
+    mk(glove, 0.012, 0.03, 0.07, 0.03, -0.006, 0, 0, 0);
+    mk(cuff, 0.072, 0.072, 0.045, -0.034, -0.068, 0.058, 0.6, -0.5);
+    band(0.076, -0.034, -0.068, 0.058, 0.6, -0.5);
+    mk(sleeve, 0.068, 0.068, 0.4, -0.094, -0.15, 0.162, 0.6, -0.5);
   }
+  return g;
+}
+
+/**
+ * 给枪模装上第一人称手臂；该英雄有美术手臂资产（bind = fp / 英雄 id / arm_r|arm_l）时换上美术网格。
+ * @returns 美术手臂的实例材质（换枪时释放）
+ */
+function addArms(gun: GunModel, heroColor: number, heroId: string | undefined, renderer: THREE.WebGLRenderer): THREE.MeshStandardMaterial[] {
+  gun.root.add(buildArm('r', heroColor));
+  if (gun.leftHand) {
+    const left = buildArm('l', heroColor);
+    left.position.copy(gun.leftHand);
+    (gun.leftParent ?? gun.root).add(left);
+  }
+  const mats: THREE.MeshStandardMaterial[] = [];
+  if (!heroId) return mats;
+  for (const asset of AssetLibrary.findAttachments('fp', heroId)) {
+    const part = attachStaticPart(gun.root, asset);
+    if (!part) continue;
+    for (const m of part.materials) {
+      applyArtEnvironment(m, renderer);
+      mats.push(m);
+    }
+    part.lod.traverse((o) => { (o as THREE.Mesh).castShadow = false; });
+  }
+  return mats;
 }
 
 export class Viewmodel {
@@ -106,8 +175,6 @@ export class Viewmodel {
 
   private readonly flash: THREE.Sprite;
   private readonly flashMat: THREE.SpriteMaterial;
-  /** 主场景枪口闪光（照亮环境） */
-  private readonly light: THREE.PointLight;
   /** 武器场景枪口闪光（照亮枪身） */
   private readonly vmLight: THREE.PointLight;
 
@@ -136,7 +203,6 @@ export class Viewmodel {
   private flashT = 0;
   private flashDur = 0.05;
   private lightI = 0;
-  private lightPeak = 12;
 
   constructor(private readonly ctx: GameContext) {
     this.root.name = 'viewmodel';
@@ -155,20 +221,21 @@ export class Viewmodel {
     this.flash.position.set(0, 0, -0.04);
     this.flash.visible = false;
     this.flash.renderOrder = 10;
-    this.light = new THREE.PointLight(0xffc080, 0, 8, 2);
-    this.light.castShadow = false;
     this.vmLight = new THREE.PointLight(0xffc080, 0, 1.4, 2);
     this.root.add(this.vmLight);
   }
 
   init(): void {
     this.ctx.viewCamera.add(this.root);
-    this.ctx.scene.add(this.light);
     this.ctx.events.on('player:landed', ({ fallSpeed }) => {
       this.land += Math.min(0.05, Math.max(0, fallSpeed) * 0.0035);
     });
     this.ctx.events.on('player:jumped', () => {
       this.land -= 0.012;
+    });
+    // 暂停 / 模态框期间武器场景仍在渲染但不再更新：别让一帧枪口火焰定格在菜单底下
+    this.ctx.events.on('game:stateChanged', ({ to }) => {
+      if (to !== 'playing') this.killFlash();
     });
   }
 
@@ -239,7 +306,6 @@ export class Viewmodel {
     this.flashT = 0;
     this.lightI = 0;
     this.flash.visible = false;
-    this.light.intensity = 0;
     this.vmLight.intensity = 0;
   }
 
@@ -247,6 +313,8 @@ export class Viewmodel {
     e.gun.root.removeFromParent();
     if (this.flash.parent && this.flash.parent === e.gun.muzzle) e.gun.muzzle.remove(this.flash);
     e.energyMat.dispose();
+    e.gun.artGlow?.dispose(); // 美术枪模、美术手臂的实例材质（贴图共享，不在这里释放）
+    for (const m of e.armMats) m.dispose();
   }
 
   private build(inst: WeaponInstance): VmEntry {
@@ -255,7 +323,8 @@ export class Viewmodel {
     const base = new THREE.Color(ELEMENT_COLORS[inst.element]);
     const energyMat = new THREE.MeshBasicMaterial({ color: base.clone(), toneMapped: false });
     for (const m of gun.energy) m.material = energyMat;
-    addArms(gun, this.ctx.player.hero?.color ?? 0x5a6a7a);
+    const armMats = addArms(gun, this.ctx.player.hero?.color ?? 0x5a6a7a, this.ctx.player.hero?.id, this.ctx.renderer);
+    gun.root.scale.setScalar(VM_SCALE);
     gun.root.traverse((o) => {
       const mesh = o as THREE.Mesh;
       if (mesh.isMesh) {
@@ -268,6 +337,7 @@ export class Viewmodel {
       def,
       gun,
       energyMat,
+      armMats,
       baseColor: base,
       magBase: gun.mag ? gun.mag.position.clone() : new THREE.Vector3(),
       magRotX: gun.mag ? gun.mag.rotation.x : 0,
@@ -291,10 +361,8 @@ export class Viewmodel {
       this.flash.scale.setScalar(def.flash * (0.8 + Math.random() * 0.45));
       this.flashMat.rotation = Math.random() * TAU;
       this.flashMat.color.setHex(color);
-      this.light.color.setHex(color);
       this.vmLight.color.setHex(color);
       this.lightI = 1;
-      this.lightPeak = 6 + def.flash * 60;
     }
   }
 
@@ -379,10 +447,11 @@ export class Viewmodel {
     const hip = def.viewOffset, aim = def.aimOffset;
     const lowE = smooth(s.lowerT);
     const swayK = 1 - 0.6 * s.aimT;
-    let x = lerp(hip[0], aim[0], s.aimT) + bobX + this.swayX * 0.5 * swayK + this.dashT * 0.015;
-    let y = lerp(hip[1], aim[1], s.aimT) + bobY + breath + this.swayY * 0.5 * swayK + this.vyLag - this.land
-      - lowE * 0.3 + this.kickZ * 0.15 - this.dashT * 0.02 + this.airT * 0.008;
-    let z = lerp(hip[2], aim[2], s.aimT) + this.kickZ + this.fwdLag + lowE * 0.05;
+    const kz = this.kickZ * VM_SCALE;
+    let x = lerp(hip[0] + HIP_SHIFT_X, aim[0] * VM_SCALE, s.aimT) + bobX + this.swayX * 0.5 * swayK + this.dashT * 0.015;
+    let y = lerp(hip[1] + HIP_SHIFT_Y, aim[1] * VM_SCALE, s.aimT) + bobY + breath + this.swayY * 0.5 * swayK + this.vyLag - this.land
+      - lowE * 0.3 + kz * 0.15 - this.dashT * 0.02 + this.airT * 0.008;
+    let z = lerp(hip[2], aim[2] * VM_SCALE, s.aimT) + kz + this.fwdLag + lowE * 0.05;
     let rx = this.kickRot + breath * 1.2 + this.swayY * 1.0 * swayK - lowE * 0.9 - this.dashT * 0.12 + this.airT * 0.05;
     let ry = -this.swayX * 1.3 * swayK;
     let rz = this.roll * swayK + bobRoll + this.kickRoll - this.dashT * 0.3;
@@ -473,6 +542,7 @@ export class Viewmodel {
     // 能量槽脉动
     const pulse = s.firing ? 1.3 + Math.sin(time * 40) * 0.25 : 0.82 + Math.sin(time * 3) * 0.14;
     e.energyMat.color.copy(e.baseColor).multiplyScalar(pulse);
+    if (g.artGlow) g.artGlow.emissive.copy(g.artGlow.userData.glowBase as THREE.Color).multiplyScalar(pulse);
   }
 
   private updateFlash(dt: number, e: VmEntry, s: ViewmodelState): void {
@@ -496,12 +566,9 @@ export class Viewmodel {
     let i = this.lightI;
     if (s.firing && this.cur && this.cur.def.mode === 'beam') i = Math.max(i, 0.35 + Math.random() * 0.15);
     if (i <= 0.001 || !this.visible) {
-      this.light.intensity = 0;
       this.vmLight.intensity = 0;
       return;
     }
-    this.getMuzzleWorld(this.light.position);
-    this.light.intensity = i * this.lightPeak;
     if (this.cur) {
       this.cur.gun.muzzle.updateWorldMatrix(true, false);
       _v.setFromMatrixPosition(this.cur.gun.muzzle.matrixWorld);

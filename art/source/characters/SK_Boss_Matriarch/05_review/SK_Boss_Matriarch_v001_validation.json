@@ -1,0 +1,212 @@
+[
+  {
+    "level": "pass",
+    "check": "文件大小",
+    "detail": "1976 KB / 上限 6000 KB"
+  },
+  {
+    "level": "pass",
+    "check": "扩展可用",
+    "detail": "必需扩展 ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+  },
+  {
+    "level": "pass",
+    "check": "LOD 数量",
+    "detail": "['SK_Boss_Matriarch_LOD0', 'SK_Boss_Matriarch_LOD1', 'SK_Boss_Matriarch_LOD2']，规格 3 级"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 面数",
+    "detail": "29999 / 预算 30000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 切换距离",
+    "detail": "extras.lod_distance=0"
+  },
+  {
+    "level": "pass",
+    "check": "高度",
+    "detail": "3.560 m（白模 3.740 m）"
+  },
+  {
+    "level": "error",
+    "check": "最低点与白模一致",
+    "detail": "最低点 y=0.184（白模 0.000）"
+  },
+  {
+    "level": "warn",
+    "check": "水平居中",
+    "detail": "包围盒中心 x=-0.000 z=0.214"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 面数",
+    "detail": "11999 / 预算 12000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 递减",
+    "detail": "29999 → 11999"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 切换距离",
+    "detail": "extras.lod_distance=25"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 面数",
+    "detail": "5000 / 预算 5000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 递减",
+    "detail": "11999 → 5000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 切换距离",
+    "detail": "extras.lod_distance=60"
+  },
+  {
+    "level": "pass",
+    "check": "材质数量",
+    "detail": "['M_Boss_Matriarch']（一个资产一个材质，便于合批）"
+  },
+  {
+    "level": "pass",
+    "check": "材质命名",
+    "detail": "['M_Boss_Matriarch']"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Boss_Matriarch_N",
+    "detail": "2048×2048 webp（规格 2048²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Boss_Matriarch_N",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Boss_Matriarch_ORM",
+    "detail": "2048×2048 webp（规格 2048²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Boss_Matriarch_ORM",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Boss_Matriarch_BC",
+    "detail": "2048×2048 webp（规格 2048²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Boss_Matriarch_BC",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "BaseColor 贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "法线贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "ORM 贴图",
+    "detail": "AO / 粗糙度 / 金属度"
+  },
+  {
+    "level": "pass",
+    "check": "蒙皮",
+    "detail": "1 个 skin"
+  },
+  {
+    "level": "pass",
+    "check": "骨骼与游戏关节一致",
+    "detail": "缺 [] 多 []"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Boss_Matriarch_LOD0 影响骨骼数",
+    "detail": "最多 4"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Boss_Matriarch_LOD0 无权重顶点",
+    "detail": "0"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Boss_Matriarch_LOD0 bone heat 覆盖",
+    "detail": "0 个顶点改用平滑邻近权重"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Boss_Matriarch_LOD1 影响骨骼数",
+    "detail": "最多 4"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Boss_Matriarch_LOD1 无权重顶点",
+    "detail": "0"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Boss_Matriarch_LOD1 bone heat 覆盖",
+    "detail": "0 个顶点改用平滑邻近权重"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Boss_Matriarch_LOD2 影响骨骼数",
+    "detail": "最多 4"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Boss_Matriarch_LOD2 无权重顶点",
+    "detail": "0"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Boss_Matriarch_LOD2 bone heat 覆盖",
+    "detail": "0 个顶点改用平滑邻近权重"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Boss_Matriarch_LOD0 UV 范围",
+    "detail": "[0.004901309963315725, 0.004901304375380278]..[0.9950986504554749, 0.9856468439102173]"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Boss_Matriarch_LOD1 UV 范围",
+    "detail": "[0.004901309963315725, 0.0049013057723641396]..[0.9950605034828186, 0.9856468439102173]"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Boss_Matriarch_LOD2 UV 范围",
+    "detail": "[0.005110776051878929, 0.0049013057723641396]..[0.9949342608451843, 0.985441267490387]"
+  },
+  {
+    "level": "warn",
+    "check": "UV 利用率",
+    "detail": "27%"
+  },
+  {
+    "level": "warn",
+    "check": "高模对齐",
+    "detail": "剪影 IoU 0.719（{'front': 0.876, 'left': 0.533, 'back': 0.867, 'right': 0.524}）"
+  },
+  {
+    "level": "pass",
+    "check": "投影覆盖",
+    "detail": "未覆盖顶点 39%（扩散补色）"
+  }
+]

@@ -3,3 +3,21 @@ dist/
 *.log
 .DS_Store
 *.dlp-backup-*
+
+# 美术管线：密钥、可再生的中间产物、Blender 备份
+art/pipeline/.env
+art/source/**/02_highpoly/
+art/source/**/_tmp/
+*.blend1
+__pycache__/
+
+# 美术管线：大体积、可重新生成的中间产物留在本机，不入库。
+# 仓库保证拉取即可构建部署：游戏只用 public/assets 下的发布产物；
+# art/source 入库的是溯源档案（asset.json）、白模（*.json / *.glb）、度量与校验报告（*.json）。
+art/source/**/00_blockout/*.png
+art/source/**/01_concept/
+art/source/**/03_work/*.blend
+art/source/**/03_work/textures_v*/
+art/source/**/04_export/
+art/source/**/05_review/*.png
+art/source/**/_lineup*.png

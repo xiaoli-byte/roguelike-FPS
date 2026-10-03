@@ -1,0 +1,465 @@
+{
+  "id": "SM_Arms_FalconR",
+  "display": "雷隼·右手",
+  "kind": "static",
+  "class": "fp_arm",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:10:42",
+          "files": {
+            "BO_SM_Arms_FalconR_v001.glb": {
+              "path": "00_blockout/BO_SM_Arms_FalconR_v001.glb",
+              "sha256": "1a6972573bba89e1d96bb90043e41860cc15f9e69b6dcb9edcdd88dec52e3423"
+            },
+            "BO_SM_Arms_FalconR_v001.json": {
+              "path": "00_blockout/BO_SM_Arms_FalconR_v001.json",
+              "sha256": "e3c1e1f8ef4575b89e026b650edc4daf5dc99d8b3215a0c8483a85a292e3365f"
+            },
+            "BO_SM_Arms_FalconR_v001_views.json": {
+              "path": "00_blockout/BO_SM_Arms_FalconR_v001_views.json",
+              "sha256": "b340e214457808405c5a35beb0a000ef8c905f7147f104b4c3e2502bdc79596b"
+            },
+            "BO_SM_Arms_FalconR_v001_sheet.png": {
+              "path": "00_blockout/BO_SM_Arms_FalconR_v001_sheet.png",
+              "sha256": "8ce495c774b2e78dedccfb23be01308da995fe0e3106716fdf8089cb2c0007a2"
+            },
+            "BO_SM_Arms_FalconR_v001_front.png": {
+              "path": "00_blockout/BO_SM_Arms_FalconR_v001_front.png",
+              "sha256": "d1edc9905e2cfeb7a44eb791453d9642b1db9eebe038d06096a4fb6215fa8d86"
+            },
+            "BO_SM_Arms_FalconR_v001_left.png": {
+              "path": "00_blockout/BO_SM_Arms_FalconR_v001_left.png",
+              "sha256": "b0c1121857cdf4afa30ae621d7845ff26ef1f802f8b1304c8966bca6dd9499bb"
+            },
+            "BO_SM_Arms_FalconR_v001_back.png": {
+              "path": "00_blockout/BO_SM_Arms_FalconR_v001_back.png",
+              "sha256": "1cb0fd0c6a0cb7c91613deea5492b7ddd6c0ace144ef76f9c4443de036886297"
+            },
+            "BO_SM_Arms_FalconR_v001_right.png": {
+              "path": "00_blockout/BO_SM_Arms_FalconR_v001_right.png",
+              "sha256": "d09b2b4fd42abb1f8b917b50af99ea2893ac7aa31741889d741114ec0e0cb154"
+            }
+          },
+          "source": {
+            "kind": "fp",
+            "id": "falcon",
+            "attachment": "arm_r"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.03924723294610005,
+              -0.2927586282636328,
+              -0.01096206555933877
+            ],
+            "max": [
+              0.1705597428470242,
+              0.005619407555073265,
+              0.3593916022347604
+            ]
+          },
+          "blender_seconds": 6.6
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:14:04",
+          "files": {
+            "CN_SM_Arms_FalconR_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Arms_FalconR_v001_sheet.png",
+              "sha256": "6a2c09f9120b16aa98e88f30cd5994e501c63152d73ed89a6fdb37b15fc769e5"
+            },
+            "CN_SM_Arms_FalconR_v001_front.png": {
+              "path": "01_concept/CN_SM_Arms_FalconR_v001_front.png",
+              "sha256": "10815a243896a0181d95f3621a7ac9e61573accda0cf4c60d9c2f44372a226d6"
+            },
+            "CN_SM_Arms_FalconR_v001_left.png": {
+              "path": "01_concept/CN_SM_Arms_FalconR_v001_left.png",
+              "sha256": "feacab8aace33886c0ed35ce322c198c933ef95b355a2d43ec0ea474ababca7e"
+            },
+            "CN_SM_Arms_FalconR_v001_back.png": {
+              "path": "01_concept/CN_SM_Arms_FalconR_v001_back.png",
+              "sha256": "4c81819e4c1106ab7317b7b363cab0aded41e40ec626fdc03358618dc54b4453"
+            },
+            "CN_SM_Arms_FalconR_v001_right.png": {
+              "path": "01_concept/CN_SM_Arms_FalconR_v001_right.png",
+              "sha256": "dfbf74fb9595b8e9c80e57ddc7a91b030a6fc5e630752bdb730072a0368712e2"
+            },
+            "CN_SM_Arms_FalconR_v001_compare.png": {
+              "path": "01_concept/CN_SM_Arms_FalconR_v001_compare.png",
+              "sha256": "b033a137494211da41585ff4bba8a9f6a92df4cf1ff6f25029b4b7d59c390a33"
+            },
+            "CN_SM_Arms_FalconR_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Arms_FalconR_v001_prompt.txt",
+              "sha256": "b2d2f5a5bb40d51f61d58c271c0d6f19629b1d227c6300f3efb738dbc3493259"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1947,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 489
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3127
+          },
+          "request_id": "req_0f98c5517fb040cca9a0c4f9f0ae4d27",
+          "seconds": 29.5,
+          "registration": {
+            "front": {
+              "scale": 0.8794,
+              "offset": [
+                34,
+                237
+              ],
+              "iou": 0.774,
+              "iou_unregistered_scale": 0.8927
+            },
+            "left": {
+              "scale": 0.8873,
+              "offset": [
+                96,
+                228
+              ],
+              "iou": 0.865,
+              "iou_unregistered_scale": 0.8873
+            },
+            "back": {
+              "scale": 0.8689,
+              "offset": [
+                39,
+                236
+              ],
+              "iou": 0.768,
+              "iou_unregistered_scale": 0.8957
+            },
+            "right": {
+              "scale": 0.8959,
+              "offset": [
+                89,
+                228
+              ],
+              "iou": 0.813,
+              "iou_unregistered_scale": 0.8959
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.776,
+            "left": 0.865,
+            "back": 0.77,
+            "right": 0.814
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "与英雄设定一致；手部握拳（白模方掌），袖子吻合",
+            "time": "2026-10-03 22:15:06"
+          }
+        }
+      ]
+    },
+    "matid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:17:46",
+          "files": {
+            "MID_SM_Arms_FalconR_v001_sheet.png": {
+              "path": "01_concept/MID_SM_Arms_FalconR_v001_sheet.png",
+              "sha256": "2a614921b7aad432f6b3bec68683b9ad2ec047aa77f46dbca885a1e974aff3e2"
+            },
+            "MID_SM_Arms_FalconR_v001_front.png": {
+              "path": "01_concept/MID_SM_Arms_FalconR_v001_front.png",
+              "sha256": "52f07b19d51e5d3b38824cf66a036056b3a61a438135b21227dc787a72ee3c09"
+            },
+            "MID_SM_Arms_FalconR_v001_left.png": {
+              "path": "01_concept/MID_SM_Arms_FalconR_v001_left.png",
+              "sha256": "dd9095a59a3ed2b83699e0ce26796e3abbabcb9111f467023501af45952b0b02"
+            },
+            "MID_SM_Arms_FalconR_v001_back.png": {
+              "path": "01_concept/MID_SM_Arms_FalconR_v001_back.png",
+              "sha256": "4fdf2edc7c5162ef0fb561c04262c04c64774b539f3636441c6e287e2d15872e"
+            },
+            "MID_SM_Arms_FalconR_v001_right.png": {
+              "path": "01_concept/MID_SM_Arms_FalconR_v001_right.png",
+              "sha256": "22b03507714f3cc283e27c57276b0b5f47b8fb1f7af86211d59d95bd665222ed"
+            },
+            "MID_SM_Arms_FalconR_v001_compare.png": {
+              "path": "01_concept/MID_SM_Arms_FalconR_v001_compare.png",
+              "sha256": "a5dddbe430e298269db6bdc1164bebf9042cb4223380625eebcd8777f66db16f"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1699,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 241
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2879
+          },
+          "request_id": "req_043d5bec13294aac8b4b4d26f8701e63",
+          "seconds": 28.9,
+          "registration": {
+            "front": {
+              "scale": 0.8391,
+              "offset": [
+                42,
+                237
+              ],
+              "iou": 0.894,
+              "iou_unregistered_scale": 0.8391,
+              "purity": 0.993
+            },
+            "left": {
+              "scale": 0.8346,
+              "offset": [
+                85,
+                228
+              ],
+              "iou": 0.905,
+              "iou_unregistered_scale": 0.8473,
+              "purity": 0.992
+            },
+            "back": {
+              "scale": 0.8293,
+              "offset": [
+                42,
+                236
+              ],
+              "iou": 0.901,
+              "iou_unregistered_scale": 0.8293,
+              "purity": 0.992
+            },
+            "right": {
+              "scale": 0.8643,
+              "offset": [
+                88,
+                219
+              ],
+              "iou": 0.902,
+              "iou_unregistered_scale": 0.8516,
+              "purity": 0.99
+            }
+          },
+          "metal_ratio": {
+            "front": 0.185,
+            "left": 0.179,
+            "back": 0.178,
+            "right": 0.189
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:36:42",
+          "files": {
+            "HP_SM_Arms_FalconR_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Arms_FalconR_v001_input_front.png",
+              "sha256": "0013b8ccbaf382c35b07bba78b0689feb0c7266eb14f5831afa855d645c5470a"
+            },
+            "HP_SM_Arms_FalconR_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Arms_FalconR_v001_input_left.png",
+              "sha256": "a27a40d4d1f690936a522d7a485c494b43e29a146e76b49d67520780dc6820f9"
+            },
+            "HP_SM_Arms_FalconR_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Arms_FalconR_v001_input_back.png",
+              "sha256": "7f49a78fd9464b6339385e4216d93fa852ceefd0961fc4be16497ad797fb1c2c"
+            },
+            "HP_SM_Arms_FalconR_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Arms_FalconR_v001_input_right.png",
+              "sha256": "bc263d3f2bbe4190b192646369fa82af5dc66acb8ae4a749e796de10d5421595"
+            },
+            "HP_SM_Arms_FalconR_v001.glb": {
+              "path": "02_highpoly/HP_SM_Arms_FalconR_v001.glb",
+              "sha256": "e335f2a816cf96ff9a426be95837389e8cca863e26374b6a7d23d8ae08234556"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -78,
+              178,
+              590,
+              846
+            ],
+            "scale": 1.532934131736527
+          },
+          "seconds": 181.0,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 9.3
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:37:27",
+          "files": {
+            "SM_Arms_FalconR_v001.blend": {
+              "path": "03_work/SM_Arms_FalconR_v001.blend",
+              "sha256": "e66d81e6d0217fbd5625be7145e14870313abb30c2acf2757c5bdbdafa4903c4"
+            },
+            "SM_Arms_FalconR_v001.glb": {
+              "path": "04_export/SM_Arms_FalconR_v001.glb",
+              "sha256": "f2e87e6880bcbb6e2a70115093a757b0f844ad162f277bf87189cd875a38a68d"
+            },
+            "SM_Arms_FalconR_v001_metrics.json": {
+              "path": "03_work/SM_Arms_FalconR_v001_metrics.json",
+              "sha256": "b06650d52d5d37388c3623f672618fea01454db8213807defedb091dd63d3476"
+            },
+            "T_Arms_FalconR_BC.png": {
+              "path": "03_work/textures_v001/T_Arms_FalconR_BC.png",
+              "sha256": "6a8629f654868306257d64faac0557ec06f389cf47f7245dd7e43bb1e8164c77"
+            },
+            "T_Arms_FalconR_MetalMask.png": {
+              "path": "03_work/textures_v001/T_Arms_FalconR_MetalMask.png",
+              "sha256": "5af623f5c3c8704d0ed2a870087c923e22ef1f40b60871ab77f46e539142248b"
+            },
+            "T_Arms_FalconR_N.png": {
+              "path": "03_work/textures_v001/T_Arms_FalconR_N.png",
+              "sha256": "cb82fc85c84dae93fcdc32d2d8cbf97df65ed64642ef6aedff3c7d9ead4e5fa0"
+            },
+            "T_Arms_FalconR_ORM.png": {
+              "path": "03_work/textures_v001/T_Arms_FalconR_ORM.png",
+              "sha256": "00fd30ebd8f618fd0afe0dbccbdebe47b524bbc57ec0baf3a9ea60668032d51f"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1,
+            "emid": null
+          },
+          "align_iou": 0.722,
+          "uncovered_ratio": 0.2245,
+          "lods": [
+            {
+              "tris": 8000,
+              "verts": 4000
+            },
+            {
+              "tris": 2000,
+              "verts": 1000
+            }
+          ],
+          "export_kb": 549.8,
+          "seconds": 45.4,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:37:27",
+          "files": {
+            "SM_Arms_FalconR_v001_validation.json": {
+              "path": "05_review/SM_Arms_FalconR_v001_validation.json",
+              "sha256": "18a3e457574ef866c16193109f260022b52daa4c7500198aabe06ada178c192e"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 2,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:37:35",
+          "files": {
+            "SM_Arms_FalconR_v001_review.png": {
+              "path": "05_review/SM_Arms_FalconR_v001_review.png",
+              "sha256": "3b12c5ca8f8db48dc8d9c2b244686e24e6b87d4a75ee5cbef1a32a391612f54e"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "英雄专属第一人称手臂；深度轴偏小待游戏内确认袖口不露出",
+            "time": "2026-10-03 22:41:52"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:41:53",
+          "files": {
+            "SM_Arms_FalconR.glb": {
+              "path": "@root/public/assets/weapons/SM_Arms_FalconR.glb",
+              "sha256": "f2e87e6880bcbb6e2a70115093a757b0f844ad162f277bf87189cd875a38a68d"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/weapons/SM_Arms_FalconR.glb"
+        }
+      ]
+    }
+  }
+}

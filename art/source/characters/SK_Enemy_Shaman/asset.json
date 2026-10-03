@@ -1,0 +1,1211 @@
+{
+  "id": "SK_Enemy_Shaman",
+  "display": "巫祝",
+  "kind": "skeletal",
+  "class": "enemy_standard",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 16:40:40",
+          "files": {
+            "BO_SK_Enemy_Shaman_v001.glb": {
+              "path": "00_blockout/BO_SK_Enemy_Shaman_v001.glb",
+              "sha256": "2185f81e9c2045ae2e02dfabebec9dc3287f07f6dcf4e6704cca082da5a0bad3"
+            },
+            "BO_SK_Enemy_Shaman_v001.json": {
+              "path": "00_blockout/BO_SK_Enemy_Shaman_v001.json",
+              "sha256": "a303fb879baf51f15ebc068be65ac8c28c40903c7061d67d830c6abc280d8c11"
+            },
+            "BO_SK_Enemy_Shaman_v001_views.json": {
+              "path": "00_blockout/BO_SK_Enemy_Shaman_v001_views.json",
+              "sha256": "7e9cc6bba341082310a58288202ca1226b75118e2962945fb6653f191b74e170"
+            },
+            "BO_SK_Enemy_Shaman_v001_sheet.png": {
+              "path": "00_blockout/BO_SK_Enemy_Shaman_v001_sheet.png",
+              "sha256": "1e9d41a8916bf62309b3e30ff2562e7da01089a5a142564effcd3b7fbc10ab2b"
+            },
+            "BO_SK_Enemy_Shaman_v001_front.png": {
+              "path": "00_blockout/BO_SK_Enemy_Shaman_v001_front.png",
+              "sha256": "6406b8a3e90efce72271a87ce488a8e5f7c4d392c553061018099a26b7cb3f8b"
+            },
+            "BO_SK_Enemy_Shaman_v001_left.png": {
+              "path": "00_blockout/BO_SK_Enemy_Shaman_v001_left.png",
+              "sha256": "337ba06fb2849ed3eb754d30200987901953c4d04ddf967661158f90e3d9945e"
+            },
+            "BO_SK_Enemy_Shaman_v001_back.png": {
+              "path": "00_blockout/BO_SK_Enemy_Shaman_v001_back.png",
+              "sha256": "da9b4be9b734bd211ffa5c70cc15b50d301a2fccc0e48c702bcb2277ff0251a1"
+            },
+            "BO_SK_Enemy_Shaman_v001_right.png": {
+              "path": "00_blockout/BO_SK_Enemy_Shaman_v001_right.png",
+              "sha256": "952f64ee5ed3304fd3194ced17a23071177867071b17e13e4d74f0de1b468f27"
+            }
+          },
+          "source": {
+            "kind": "enemy",
+            "id": "shaman"
+          },
+          "joints": 13,
+          "bounds": {
+            "min": [
+              -1.100000023841858,
+              -1.6689300497141346e-09,
+              -1.100000023841858
+            ],
+            "max": [
+              1.100000023841858,
+              2.4136146431052317,
+              1.100000023841858
+            ]
+          },
+          "blender_seconds": 5.6
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 16:44:04",
+          "files": {
+            "CN_SK_Enemy_Shaman_v001_sheet.png": {
+              "path": "01_concept/CN_SK_Enemy_Shaman_v001_sheet.png",
+              "sha256": "4a8bf33eab977ccdd3aae26dd6e56ac321bc95aeffef3d15ef11f252b883f971"
+            },
+            "CN_SK_Enemy_Shaman_v001_front.png": {
+              "path": "01_concept/CN_SK_Enemy_Shaman_v001_front.png",
+              "sha256": "916fb5a401ea0cd423925f2bf18b86df20c2b5aceee91f027b23f5002ccfbacd"
+            },
+            "CN_SK_Enemy_Shaman_v001_left.png": {
+              "path": "01_concept/CN_SK_Enemy_Shaman_v001_left.png",
+              "sha256": "e05e4accbfc5398a20a3f44f7db69b33de2c457b8786e6f59278704219770641"
+            },
+            "CN_SK_Enemy_Shaman_v001_back.png": {
+              "path": "01_concept/CN_SK_Enemy_Shaman_v001_back.png",
+              "sha256": "b1f33970d62abd656ed9b5d0546f0253ea676c3bf295e86743999c3cee9800e3"
+            },
+            "CN_SK_Enemy_Shaman_v001_right.png": {
+              "path": "01_concept/CN_SK_Enemy_Shaman_v001_right.png",
+              "sha256": "887dc08a9d7b019cbe0aca01985868c5b32273a64503868f38e796f3bf93d4d5"
+            },
+            "CN_SK_Enemy_Shaman_v001_compare.png": {
+              "path": "01_concept/CN_SK_Enemy_Shaman_v001_compare.png",
+              "sha256": "3ef92f3bba7b6742868c26ef5baaf4f97be7e12453da475acb76f3427a7c8098"
+            },
+            "CN_SK_Enemy_Shaman_v001_prompt.txt": {
+              "path": "01_concept/CN_SK_Enemy_Shaman_v001_prompt.txt",
+              "sha256": "0d399ac7bf267830d0e38d9a86e90a9f85e5bd5cc2671932cd398648e464c02e"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1894,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 436
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3074
+          },
+          "request_id": "req_e02aed7d57a5433a81cb16c7cceef509",
+          "seconds": 40.8,
+          "registration": {
+            "front": {
+              "scale": 0.9527,
+              "offset": [
+                30,
+                63
+              ],
+              "iou": 0.794,
+              "iou_unregistered_scale": 0.9386
+            },
+            "left": {
+              "scale": 0.9773,
+              "offset": [
+                122,
+                63
+              ],
+              "iou": 0.821,
+              "iou_unregistered_scale": 0.9489
+            },
+            "back": {
+              "scale": 0.9497,
+              "offset": [
+                30,
+                63
+              ],
+              "iou": 0.787,
+              "iou_unregistered_scale": 0.9356
+            },
+            "right": {
+              "scale": 0.9631,
+              "offset": [
+                83,
+                63
+              ],
+              "iou": 0.822,
+              "iou_unregistered_scale": 0.9489
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.797,
+            "left": 0.821,
+            "back": 0.788,
+            "right": 0.822
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "傩面、高冠、金边紫袍贴合设定；长袍随腿形变需在审核图确认",
+            "time": "2026-10-03 16:47:48"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:03:10",
+          "files": {
+            "HP_SK_Enemy_Shaman_v001_input.png": {
+              "path": "02_highpoly/HP_SK_Enemy_Shaman_v001_input.png",
+              "sha256": "198a98853b260e217d8be25e083b11d6abde4384e4b0e4559357d8e8b5dc62a7"
+            },
+            "HP_SK_Enemy_Shaman_v001.glb": {
+              "path": "02_highpoly/HP_SK_Enemy_Shaman_v001.glb",
+              "sha256": "9c378ffeace9cff0d16293152ba036281e5ae7d537247980fb1bdb5a8784a255"
+            }
+          },
+          "from_concept": 1,
+          "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+          "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "checkpoint": "hunyuan_3d_v2.1.safetensors",
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "crop": [
+              30,
+              63,
+              482,
+              947
+            ],
+            "scale": 0.9846153846153846,
+            "offset": [
+              289,
+              77
+            ]
+          },
+          "seconds": 151.3,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 7.9
+        }
+      ]
+    },
+    "build": {
+      "current": 8,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:03:38",
+          "files": {
+            "SK_Enemy_Shaman_v001.blend": {
+              "path": "03_work/SK_Enemy_Shaman_v001.blend",
+              "sha256": "de79832c13ad97d69e87b6276cb2893dcad71474e1cddc2fee598b7b804bb43a"
+            },
+            "SK_Enemy_Shaman_v001.glb": {
+              "path": "04_export/SK_Enemy_Shaman_v001.glb",
+              "sha256": "d421472e95d2bcd75063b403a73e92b4e338a6fb457ae5aa2a7bde4d7624cd83"
+            },
+            "SK_Enemy_Shaman_v001_metrics.json": {
+              "path": "03_work/SK_Enemy_Shaman_v001_metrics.json",
+              "sha256": "a711fef8ec1f13cb607eaa0a3542ce03eb9044bc93c21103331614d2c92e2867"
+            },
+            "T_Enemy_Shaman_BC.png": {
+              "path": "03_work/textures_v001/T_Enemy_Shaman_BC.png",
+              "sha256": "dde76b158a378abd355dc64e282beda6bdd25317040db6e8d588663be396bca0"
+            },
+            "T_Enemy_Shaman_N.png": {
+              "path": "03_work/textures_v001/T_Enemy_Shaman_N.png",
+              "sha256": "8f20773d9208a705fcdd2f316825e4d45e51a5dddc69754cd3d06d90583d0e90"
+            },
+            "T_Enemy_Shaman_ORM.png": {
+              "path": "03_work/textures_v001/T_Enemy_Shaman_ORM.png",
+              "sha256": "1eebf0f05e02abedea699801b46be87e4daab0dea4f094e1c2c386a8df769914"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1
+          },
+          "align_iou": 0.88,
+          "uncovered_ratio": 0.3426,
+          "lods": [
+            {
+              "tris": 7999,
+              "verts": 4002
+            },
+            {
+              "tris": 3500,
+              "verts": 1750
+            },
+            {
+              "tris": 1500,
+              "verts": 750
+            }
+          ],
+          "export_kb": 453.2,
+          "seconds": 27.7,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 17:05:27",
+          "files": {
+            "SK_Enemy_Shaman_v002.blend": {
+              "path": "03_work/SK_Enemy_Shaman_v002.blend",
+              "sha256": "4fefe121f15666bef9597e23137e6e6023a8097d47f812405cbc95ba438c9828"
+            },
+            "SK_Enemy_Shaman_v002.glb": {
+              "path": "04_export/SK_Enemy_Shaman_v002.glb",
+              "sha256": "424bb7ce826eb11b3bc43ae7439c4d36757b8aa71d66a289bcf055da2bf86c83"
+            },
+            "SK_Enemy_Shaman_v002_metrics.json": {
+              "path": "03_work/SK_Enemy_Shaman_v002_metrics.json",
+              "sha256": "38380052b295131e42b06ea5ebe83cbacdf8f4ca7d862c60d83be901910f49ac"
+            },
+            "T_Enemy_Shaman_BC.png": {
+              "path": "03_work/textures_v002/T_Enemy_Shaman_BC.png",
+              "sha256": "dde76b158a378abd355dc64e282beda6bdd25317040db6e8d588663be396bca0"
+            },
+            "T_Enemy_Shaman_N.png": {
+              "path": "03_work/textures_v002/T_Enemy_Shaman_N.png",
+              "sha256": "8f20773d9208a705fcdd2f316825e4d45e51a5dddc69754cd3d06d90583d0e90"
+            },
+            "T_Enemy_Shaman_ORM.png": {
+              "path": "03_work/textures_v002/T_Enemy_Shaman_ORM.png",
+              "sha256": "1eebf0f05e02abedea699801b46be87e4daab0dea4f094e1c2c386a8df769914"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1
+          },
+          "align_iou": 0.88,
+          "uncovered_ratio": 0.3426,
+          "lods": [
+            {
+              "tris": 7999,
+              "verts": 4002
+            },
+            {
+              "tris": 3500,
+              "verts": 1750
+            },
+            {
+              "tris": 1500,
+              "verts": 750
+            }
+          ],
+          "export_kb": 453.6,
+          "seconds": 28.9,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 17:07:20",
+          "files": {
+            "SK_Enemy_Shaman_v003.blend": {
+              "path": "03_work/SK_Enemy_Shaman_v003.blend",
+              "sha256": "311378de19578f5a0bd08f298abddad13b1e3ac49835e0150d6a4459ec307a22"
+            },
+            "SK_Enemy_Shaman_v003.glb": {
+              "path": "04_export/SK_Enemy_Shaman_v003.glb",
+              "sha256": "e5ef97c89f36c5da68680959cf0a57fa9d0cdd5cd4184a9597cc36ed8f1b4a80"
+            },
+            "SK_Enemy_Shaman_v003_metrics.json": {
+              "path": "03_work/SK_Enemy_Shaman_v003_metrics.json",
+              "sha256": "46f2215691dbec1723827cdd52038fa4612f10aec4384031120c3dae460492be"
+            },
+            "T_Enemy_Shaman_BC.png": {
+              "path": "03_work/textures_v003/T_Enemy_Shaman_BC.png",
+              "sha256": "dde76b158a378abd355dc64e282beda6bdd25317040db6e8d588663be396bca0"
+            },
+            "T_Enemy_Shaman_N.png": {
+              "path": "03_work/textures_v003/T_Enemy_Shaman_N.png",
+              "sha256": "8f20773d9208a705fcdd2f316825e4d45e51a5dddc69754cd3d06d90583d0e90"
+            },
+            "T_Enemy_Shaman_ORM.png": {
+              "path": "03_work/textures_v003/T_Enemy_Shaman_ORM.png",
+              "sha256": "1eebf0f05e02abedea699801b46be87e4daab0dea4f094e1c2c386a8df769914"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1
+          },
+          "align_iou": 0.88,
+          "uncovered_ratio": 0.3426,
+          "lods": [
+            {
+              "tris": 7999,
+              "verts": 4002
+            },
+            {
+              "tris": 3500,
+              "verts": 1750
+            },
+            {
+              "tris": 1500,
+              "verts": 750
+            }
+          ],
+          "export_kb": 452.2,
+          "seconds": 28.5,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 17:08:32",
+          "files": {
+            "SK_Enemy_Shaman_v004.blend": {
+              "path": "03_work/SK_Enemy_Shaman_v004.blend",
+              "sha256": "6ecc80617c124618694744868dd14fbdad2b691d5ff8434ad6d5ac7e280768b4"
+            },
+            "SK_Enemy_Shaman_v004.glb": {
+              "path": "04_export/SK_Enemy_Shaman_v004.glb",
+              "sha256": "450869c117bc3fcd47e9922e8bffbb4af92eb925604b15f6ef26f9c2b1714e76"
+            },
+            "SK_Enemy_Shaman_v004_metrics.json": {
+              "path": "03_work/SK_Enemy_Shaman_v004_metrics.json",
+              "sha256": "8b847e7c0ebf50e52f62fed61ff483648af15fca7226db52291c318e5add6d91"
+            },
+            "T_Enemy_Shaman_BC.png": {
+              "path": "03_work/textures_v004/T_Enemy_Shaman_BC.png",
+              "sha256": "dde76b158a378abd355dc64e282beda6bdd25317040db6e8d588663be396bca0"
+            },
+            "T_Enemy_Shaman_N.png": {
+              "path": "03_work/textures_v004/T_Enemy_Shaman_N.png",
+              "sha256": "8f20773d9208a705fcdd2f316825e4d45e51a5dddc69754cd3d06d90583d0e90"
+            },
+            "T_Enemy_Shaman_ORM.png": {
+              "path": "03_work/textures_v004/T_Enemy_Shaman_ORM.png",
+              "sha256": "1eebf0f05e02abedea699801b46be87e4daab0dea4f094e1c2c386a8df769914"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1
+          },
+          "align_iou": 0.88,
+          "uncovered_ratio": 0.3426,
+          "lods": [
+            {
+              "tris": 7999,
+              "verts": 4002
+            },
+            {
+              "tris": 3500,
+              "verts": 1750
+            },
+            {
+              "tris": 1500,
+              "verts": 750
+            }
+          ],
+          "export_kb": 451.3,
+          "seconds": 28.8,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 5,
+          "created": "2026-10-03 18:01:07",
+          "files": {
+            "SK_Enemy_Shaman_v005.blend": {
+              "path": "03_work/SK_Enemy_Shaman_v005.blend",
+              "sha256": "b3d90521c3f4a7b5ac1abfb4db204b0a34d9daa0bb6929e74f4e8351045f2ac1"
+            },
+            "SK_Enemy_Shaman_v005.glb": {
+              "path": "04_export/SK_Enemy_Shaman_v005.glb",
+              "sha256": "7659e726a3d6c2a8e1a89f2d5a4d1c4c9be4102bc7d1662bfd30eebf9ba9b08c"
+            },
+            "SK_Enemy_Shaman_v005_metrics.json": {
+              "path": "03_work/SK_Enemy_Shaman_v005_metrics.json",
+              "sha256": "64442115e83320b87bb346b7311449f3e7c040825dd9a3b17ab06260d5cd2552"
+            },
+            "T_Enemy_Shaman_BC.png": {
+              "path": "03_work/textures_v005/T_Enemy_Shaman_BC.png",
+              "sha256": "dde76b158a378abd355dc64e282beda6bdd25317040db6e8d588663be396bca0"
+            },
+            "T_Enemy_Shaman_MetalMask.png": {
+              "path": "03_work/textures_v005/T_Enemy_Shaman_MetalMask.png",
+              "sha256": "552c3af5fb3e19fb3e986085b87b6ae3d5ddc6ba5ef8327e6276752fe789c9c7"
+            },
+            "T_Enemy_Shaman_N.png": {
+              "path": "03_work/textures_v005/T_Enemy_Shaman_N.png",
+              "sha256": "8f20773d9208a705fcdd2f316825e4d45e51a5dddc69754cd3d06d90583d0e90"
+            },
+            "T_Enemy_Shaman_ORM.png": {
+              "path": "03_work/textures_v005/T_Enemy_Shaman_ORM.png",
+              "sha256": "2ef2d98135cb35d545de8ae3a23f7590975990d988bc7e814c91c1023cc0ad14"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1
+          },
+          "align_iou": 0.88,
+          "uncovered_ratio": 0.3426,
+          "lods": [
+            {
+              "tris": 7999,
+              "verts": 4002
+            },
+            {
+              "tris": 3500,
+              "verts": 1750
+            },
+            {
+              "tris": 1500,
+              "verts": 750
+            }
+          ],
+          "export_kb": 501.2,
+          "seconds": 33.3,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 6,
+          "created": "2026-10-03 18:41:44",
+          "files": {
+            "SK_Enemy_Shaman_v006.blend": {
+              "path": "03_work/SK_Enemy_Shaman_v006.blend",
+              "sha256": "c1fad43877b60dbae07eb332288c9911489f0762efbbed8d876badc51440325c"
+            },
+            "SK_Enemy_Shaman_v006.glb": {
+              "path": "04_export/SK_Enemy_Shaman_v006.glb",
+              "sha256": "b145482f491af3ec99dc9934d84207ed44740471b895dc755492708ea273f30e"
+            },
+            "SK_Enemy_Shaman_v006_metrics.json": {
+              "path": "03_work/SK_Enemy_Shaman_v006_metrics.json",
+              "sha256": "a017969c51a43a3179517ecd8822a45115ce913cac0cdcd75e16beb84f9d6c79"
+            },
+            "T_Enemy_Shaman_BC.png": {
+              "path": "03_work/textures_v006/T_Enemy_Shaman_BC.png",
+              "sha256": "dde76b158a378abd355dc64e282beda6bdd25317040db6e8d588663be396bca0"
+            },
+            "T_Enemy_Shaman_MetalMask.png": {
+              "path": "03_work/textures_v006/T_Enemy_Shaman_MetalMask.png",
+              "sha256": "552c3af5fb3e19fb3e986085b87b6ae3d5ddc6ba5ef8327e6276752fe789c9c7"
+            },
+            "T_Enemy_Shaman_N.png": {
+              "path": "03_work/textures_v006/T_Enemy_Shaman_N.png",
+              "sha256": "8f20773d9208a705fcdd2f316825e4d45e51a5dddc69754cd3d06d90583d0e90"
+            },
+            "T_Enemy_Shaman_ORM.png": {
+              "path": "03_work/textures_v006/T_Enemy_Shaman_ORM.png",
+              "sha256": "2ef2d98135cb35d545de8ae3a23f7590975990d988bc7e814c91c1023cc0ad14"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1
+          },
+          "align_iou": 0.88,
+          "uncovered_ratio": 0.3426,
+          "lods": [
+            {
+              "tris": 7999,
+              "verts": 4002
+            },
+            {
+              "tris": 3500,
+              "verts": 1750
+            },
+            {
+              "tris": 1500,
+              "verts": 750
+            }
+          ],
+          "export_kb": 499.2,
+          "seconds": 35.0,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 7,
+          "created": "2026-10-03 19:54:42",
+          "files": {
+            "SK_Enemy_Shaman_v007.blend": {
+              "path": "03_work/SK_Enemy_Shaman_v007.blend",
+              "sha256": "803c4144510df8ee9e0d9d579fe5cf42ae1683fd614e97d424110215fa3d5df5"
+            },
+            "SK_Enemy_Shaman_v007.glb": {
+              "path": "04_export/SK_Enemy_Shaman_v007.glb",
+              "sha256": "307a2eca7421899524ac1ade0ca075a310cb6e5faac0ab1e8123576e42e5f3ec"
+            },
+            "SK_Enemy_Shaman_v007_metrics.json": {
+              "path": "03_work/SK_Enemy_Shaman_v007_metrics.json",
+              "sha256": "4f56bfdee5162119fb63652b4d83d2b2b4467ba97e95ecf88a0f9e899f5ea839"
+            },
+            "T_Enemy_Shaman_BC.png": {
+              "path": "03_work/textures_v007/T_Enemy_Shaman_BC.png",
+              "sha256": "353918f0009a828c6719dbf068a1779fb447dcb60419479f66c903dad6ca970a"
+            },
+            "T_Enemy_Shaman_MetalMask.png": {
+              "path": "03_work/textures_v007/T_Enemy_Shaman_MetalMask.png",
+              "sha256": "40f5adbe8a70b4a3e9d9fa63fc56fab45c16c86df29bc173b2f9152d30e87d74"
+            },
+            "T_Enemy_Shaman_N.png": {
+              "path": "03_work/textures_v007/T_Enemy_Shaman_N.png",
+              "sha256": "ef23fddb7f546a28491017638bcb95edabf796cbadf8db3beb874410bd4d3636"
+            },
+            "T_Enemy_Shaman_ORM.png": {
+              "path": "03_work/textures_v007/T_Enemy_Shaman_ORM.png",
+              "sha256": "64c9cc753bd56a5569a98a419b372b30cf9ac05aa5135fed5fcf8afb3eb12866"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1
+          },
+          "align_iou": 0.88,
+          "uncovered_ratio": 0.3426,
+          "lods": [
+            {
+              "tris": 7999,
+              "verts": 4002
+            },
+            {
+              "tris": 3500,
+              "verts": 1750
+            },
+            {
+              "tris": 1500,
+              "verts": 750
+            }
+          ],
+          "export_kb": 386.1,
+          "seconds": 40.1,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 8,
+          "created": "2026-10-03 20:18:16",
+          "files": {
+            "SK_Enemy_Shaman_v008.blend": {
+              "path": "03_work/SK_Enemy_Shaman_v008.blend",
+              "sha256": "504e8035f9bc0ac3920fb8d0db353a3952f31e9c1d24fc9e381c0511e602c179"
+            },
+            "SK_Enemy_Shaman_v008.glb": {
+              "path": "04_export/SK_Enemy_Shaman_v008.glb",
+              "sha256": "2d860919d5caa2ae1ef58768926a6dd252acc4b0abe3354adfc208661b8c1590"
+            },
+            "SK_Enemy_Shaman_v008_metrics.json": {
+              "path": "03_work/SK_Enemy_Shaman_v008_metrics.json",
+              "sha256": "ef623985e0dda49c090f4ff0293b39c01d78e0a6c717fce61c4193fa73e907f9"
+            },
+            "T_Enemy_Shaman_BC.png": {
+              "path": "03_work/textures_v008/T_Enemy_Shaman_BC.png",
+              "sha256": "74661c61c2ed4751f8b021eebcffca594b85f6cd449c9256c934cf6b5b75c51a"
+            },
+            "T_Enemy_Shaman_MetalMask.png": {
+              "path": "03_work/textures_v008/T_Enemy_Shaman_MetalMask.png",
+              "sha256": "dad8d60f2875d17e1e203274c9e889b9bb9369e7b0d1b22971c177a9edfe8128"
+            },
+            "T_Enemy_Shaman_N.png": {
+              "path": "03_work/textures_v008/T_Enemy_Shaman_N.png",
+              "sha256": "308814ce6bd475bc50dcf2f7930aa2880e94aaf64fcc601eaa5e937288e08a91"
+            },
+            "T_Enemy_Shaman_ORM.png": {
+              "path": "03_work/textures_v008/T_Enemy_Shaman_ORM.png",
+              "sha256": "d4367664c032d782419fc9a19168d31e169b2615d0af7a13923b5d456af3da6f"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1
+          },
+          "align_iou": 0.88,
+          "uncovered_ratio": 0.3426,
+          "lods": [
+            {
+              "tris": 7999,
+              "verts": 4002
+            },
+            {
+              "tris": 3500,
+              "verts": 1750
+            },
+            {
+              "tris": 1500,
+              "verts": 750
+            }
+          ],
+          "export_kb": 376.8,
+          "seconds": 79.1,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 8,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:03:38",
+          "files": {
+            "SK_Enemy_Shaman_v001_validation.json": {
+              "path": "05_review/SK_Enemy_Shaman_v001_validation.json",
+              "sha256": "d898100c7bf4a1944275f7446e71cd286e9f62aa724b6cb16c206144f567d0de"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 17:05:27",
+          "files": {
+            "SK_Enemy_Shaman_v002_validation.json": {
+              "path": "05_review/SK_Enemy_Shaman_v002_validation.json",
+              "sha256": "19028be87a74cb77dce860877ad87102173d386833936c1d39871349ab0ebf8b"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 17:07:20",
+          "files": {
+            "SK_Enemy_Shaman_v003_validation.json": {
+              "path": "05_review/SK_Enemy_Shaman_v003_validation.json",
+              "sha256": "36a3bf211ccc3f8688175eea6480e70dcc8ddd04a17c434dfd4002fb375620af"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 0,
+          "passed": true
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 17:08:32",
+          "files": {
+            "SK_Enemy_Shaman_v004_validation.json": {
+              "path": "05_review/SK_Enemy_Shaman_v004_validation.json",
+              "sha256": "631b64b1c9dea8b7a11994454dc5949ab865ee0fb083f8d4a14135a56876e726"
+            }
+          },
+          "from_build": 4,
+          "errors": 0,
+          "warnings": 0,
+          "passed": true
+        },
+        {
+          "version": 5,
+          "created": "2026-10-03 18:01:07",
+          "files": {
+            "SK_Enemy_Shaman_v005_validation.json": {
+              "path": "05_review/SK_Enemy_Shaman_v005_validation.json",
+              "sha256": "eb46d5173ba85394feded925f0fdfc8cda9af5c5d184cd5626e80e62cc5383ae"
+            }
+          },
+          "from_build": 5,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 6,
+          "created": "2026-10-03 18:41:44",
+          "files": {
+            "SK_Enemy_Shaman_v006_validation.json": {
+              "path": "05_review/SK_Enemy_Shaman_v006_validation.json",
+              "sha256": "2820697c54864de1885dc8cf79acffdf63f2712e90c4920f166d46d7fe430c62"
+            }
+          },
+          "from_build": 6,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 7,
+          "created": "2026-10-03 19:54:42",
+          "files": {
+            "SK_Enemy_Shaman_v007_validation.json": {
+              "path": "05_review/SK_Enemy_Shaman_v007_validation.json",
+              "sha256": "53fb48547b1377a9932bc5c62aa4a313679169787bca71da970ccc41ef592d45"
+            }
+          },
+          "from_build": 7,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 8,
+          "created": "2026-10-03 20:18:16",
+          "files": {
+            "SK_Enemy_Shaman_v008_validation.json": {
+              "path": "05_review/SK_Enemy_Shaman_v008_validation.json",
+              "sha256": "0aacfd06f006b65af703a6efeb724e1e2aa10c554ae037857ffe5dc8e5b2d0fc"
+            }
+          },
+          "from_build": 8,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 8,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:03:47",
+          "files": {
+            "SK_Enemy_Shaman_v001_review.png": {
+              "path": "05_review/SK_Enemy_Shaman_v001_review.png",
+              "sha256": "adc319c6fc93712e4b07eccface30e558a5bb95d25823d08f3b302486ef64119"
+            }
+          },
+          "from_build": 1
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 17:05:35",
+          "files": {
+            "SK_Enemy_Shaman_v002_review.png": {
+              "path": "05_review/SK_Enemy_Shaman_v002_review.png",
+              "sha256": "4bf6d1da9e335ade9d1f579062f672dddeb78ce56628dc351e2484a13a4e68e1"
+            }
+          },
+          "from_build": 2
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 17:07:28",
+          "files": {
+            "SK_Enemy_Shaman_v003_review.png": {
+              "path": "05_review/SK_Enemy_Shaman_v003_review.png",
+              "sha256": "ad6c7ab3ddef6ea7f57916d7976eb4739f52736fa28a7bbf6a823a22f8baf749"
+            }
+          },
+          "from_build": 3
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 17:08:41",
+          "files": {
+            "SK_Enemy_Shaman_v004_review.png": {
+              "path": "05_review/SK_Enemy_Shaman_v004_review.png",
+              "sha256": "068b68169c61e33f490e804e186e2db6e820c0367913ffde45c9e3ad65c04083"
+            }
+          },
+          "from_build": 4,
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "long_robe 绑定规格：袍子整体摆动、脚轻微迈步；刚性头部",
+            "time": "2026-10-03 17:09:00"
+          }
+        },
+        {
+          "version": 5,
+          "created": "2026-10-03 18:01:15",
+          "files": {
+            "SK_Enemy_Shaman_v005_review.png": {
+              "path": "05_review/SK_Enemy_Shaman_v005_review.png",
+              "sha256": "1e37b4524f7542c46363a6fc6990f8b2c277784132df12f338cd6060a68c8488"
+            }
+          },
+          "from_build": 5,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0001,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.069,
+              "p1_compress": 0.862
+            },
+            "walk": {
+              "bad_edge_ratio": 0.0079,
+              "stretch_ratio": 0.0026,
+              "p99_stretch": 1.313,
+              "p1_compress": 0.643
+            },
+            "attack": {
+              "bad_edge_ratio": 0.0164,
+              "stretch_ratio": 0.0037,
+              "p99_stretch": 1.487,
+              "p1_compress": 0.504
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "材质分区（红蓝编码遮罩）重建：金属/非金属分区正确；姿势形变正常（Brute 形变提示位于腰甲与腿交界，可接受）",
+            "time": "2026-10-03 18:02:21"
+          }
+        },
+        {
+          "version": 6,
+          "created": "2026-10-03 18:41:58",
+          "files": {
+            "SK_Enemy_Shaman_v006_review.png": {
+              "path": "05_review/SK_Enemy_Shaman_v006_review.png",
+              "sha256": "30352f86c76d5e179805f3178590ec060d7964f778e916dbfb25902156c802a1"
+            }
+          },
+          "from_build": 6,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0017,
+              "stretch_ratio": 0.0014,
+              "p99_stretch": 1.091,
+              "p1_compress": 0.906
+            },
+            "walk": {
+              "bad_edge_ratio": 0.0097,
+              "stretch_ratio": 0.0049,
+              "p99_stretch": 1.428,
+              "p1_compress": 0.678
+            },
+            "attack": {
+              "bad_edge_ratio": 0.013,
+              "stretch_ratio": 0.0106,
+              "p99_stretch": 1.816,
+              "p1_compress": 0.721
+            }
+          },
+          "auto_flags": [
+            "attack 拉伸 p99 1.816、过度拉伸边 1.1%"
+          ],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "手臂影响范围约束后重建：抬手不再带动躯干/衣甲；极端举臂姿势腋下拉伸可接受",
+            "time": "2026-10-03 18:43:37"
+          }
+        },
+        {
+          "version": 7,
+          "created": "2026-10-03 19:54:54",
+          "files": {
+            "SK_Enemy_Shaman_v007_review.png": {
+              "path": "05_review/SK_Enemy_Shaman_v007_review.png",
+              "sha256": "88f3faab777eccc9e2e8f1d9eb08620e18d86e59bddde24ee30274d693062a7e"
+            }
+          },
+          "from_build": 7,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0017,
+              "stretch_ratio": 0.0014,
+              "p99_stretch": 1.093,
+              "p1_compress": 0.895,
+              "stretch_pairs": {
+                "handL ↔ handL": 9,
+                "handR ↔ handR": 9
+              }
+            },
+            "walk": {
+              "bad_edge_ratio": 0.0092,
+              "stretch_ratio": 0.0046,
+              "p99_stretch": 1.407,
+              "p1_compress": 0.678,
+              "stretch_pairs": {
+                "handR ↔ handR": 24,
+                "hips ↔ legL": 22,
+                "hips ↔ legR": 4,
+                "handL ↔ handL": 4,
+                "armR ↔ torso": 4,
+                "hips ↔ torso": 2
+              }
+            },
+            "attack": {
+              "bad_edge_ratio": 0.0131,
+              "stretch_ratio": 0.0106,
+              "p99_stretch": 1.822,
+              "p1_compress": 0.725,
+              "stretch_pairs": {
+                "armR ↔ torso": 40,
+                "handR ↔ handR": 34,
+                "torso ↔ torso": 23,
+                "armR ↔ armR": 23,
+                "hips ↔ legL": 14,
+                "armR ↔ elbowR": 5
+              }
+            }
+          },
+          "auto_flags": [
+            "attack 拉伸 p99 1.822、过度拉伸边 1.1%"
+          ]
+        },
+        {
+          "version": 8,
+          "created": "2026-10-03 20:18:32",
+          "files": {
+            "SK_Enemy_Shaman_v008_review.png": {
+              "path": "05_review/SK_Enemy_Shaman_v008_review.png",
+              "sha256": "4e90d0ef0a735afc1250137a00b12e941de629f161b99a3bbd1b99bbf433e0c0"
+            }
+          },
+          "from_build": 8,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0017,
+              "stretch_ratio": 0.0014,
+              "p99_stretch": 1.094,
+              "p1_compress": 0.894,
+              "stretch_pairs": {
+                "handL ↔ handL": 9,
+                "handR ↔ handR": 9
+              }
+            },
+            "walk": {
+              "bad_edge_ratio": 0.0093,
+              "stretch_ratio": 0.0046,
+              "p99_stretch": 1.423,
+              "p1_compress": 0.676,
+              "stretch_pairs": {
+                "handR ↔ handR": 24,
+                "hips ↔ legL": 22,
+                "hips ↔ legR": 4,
+                "handL ↔ handL": 4,
+                "armR ↔ torso": 4,
+                "hips ↔ torso": 2
+              }
+            },
+            "attack": {
+              "bad_edge_ratio": 0.0132,
+              "stretch_ratio": 0.0107,
+              "p99_stretch": 1.83,
+              "p1_compress": 0.724,
+              "stretch_pairs": {
+                "armR ↔ torso": 40,
+                "handR ↔ handR": 34,
+                "torso ↔ torso": 23,
+                "armR ↔ armR": 23,
+                "hips ↔ legL": 14,
+                "armR ↔ elbowR": 5
+              }
+            }
+          },
+          "auto_flags": [
+            "attack 拉伸 p99 1.83、过度拉伸边 1.1%"
+          ],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "UV 两方案择优重建（纹素密度不低于上一发布版）；几何、蒙皮与上一已审版本一致",
+            "time": "2026-10-03 20:37:36"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 4,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:09:01",
+          "files": {
+            "SK_Enemy_Shaman.glb": {
+              "path": "@root/public/assets/characters/SK_Enemy_Shaman.glb",
+              "sha256": "450869c117bc3fcd47e9922e8bffbb4af92eb925604b15f6ef26f9c2b1714e76"
+            }
+          },
+          "from_build": 4,
+          "url": "assets/characters/SK_Enemy_Shaman.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 18:02:22",
+          "files": {
+            "SK_Enemy_Shaman.glb": {
+              "path": "@root/public/assets/characters/SK_Enemy_Shaman.glb",
+              "sha256": "7659e726a3d6c2a8e1a89f2d5a4d1c4c9be4102bc7d1662bfd30eebf9ba9b08c"
+            }
+          },
+          "from_build": 5,
+          "url": "assets/characters/SK_Enemy_Shaman.glb"
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 18:43:38",
+          "files": {
+            "SK_Enemy_Shaman.glb": {
+              "path": "@root/public/assets/characters/SK_Enemy_Shaman.glb",
+              "sha256": "b145482f491af3ec99dc9934d84207ed44740471b895dc755492708ea273f30e"
+            }
+          },
+          "from_build": 6,
+          "url": "assets/characters/SK_Enemy_Shaman.glb"
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 20:37:37",
+          "files": {
+            "SK_Enemy_Shaman.glb": {
+              "path": "@root/public/assets/characters/SK_Enemy_Shaman.glb",
+              "sha256": "2d860919d5caa2ae1ef58768926a6dd252acc4b0abe3354adfc208661b8c1590"
+            }
+          },
+          "from_build": 8,
+          "url": "assets/characters/SK_Enemy_Shaman.glb"
+        }
+      ]
+    },
+    "matid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:51:38",
+          "files": {
+            "MID_SK_Enemy_Shaman_v001_sheet.png": {
+              "path": "01_concept/MID_SK_Enemy_Shaman_v001_sheet.png",
+              "sha256": "0da2b4a2645ebf7f92c76e4658f30a2b0ae515f67240af1a588dd36c254e2512"
+            },
+            "MID_SK_Enemy_Shaman_v001_front.png": {
+              "path": "01_concept/MID_SK_Enemy_Shaman_v001_front.png",
+              "sha256": "591b201e3fe7022cad65b845cef01e3fb8a88facfdfd32202e7f873c2986f3d1"
+            },
+            "MID_SK_Enemy_Shaman_v001_left.png": {
+              "path": "01_concept/MID_SK_Enemy_Shaman_v001_left.png",
+              "sha256": "ece5f16e48eb252b547f482f457c7ef2625e6d9475b7aedbf41b4126bc419515"
+            },
+            "MID_SK_Enemy_Shaman_v001_back.png": {
+              "path": "01_concept/MID_SK_Enemy_Shaman_v001_back.png",
+              "sha256": "6c87c08d059c601667c2f6e9883cec3b639d624f2b6f4def7ad4901c9dc1a53b"
+            },
+            "MID_SK_Enemy_Shaman_v001_right.png": {
+              "path": "01_concept/MID_SK_Enemy_Shaman_v001_right.png",
+              "sha256": "64a0d66fa0f1ce1fbf66833babd3cd19f8dede0bf5ef5de408f6657c90928902"
+            },
+            "MID_SK_Enemy_Shaman_v001_compare.png": {
+              "path": "01_concept/MID_SK_Enemy_Shaman_v001_compare.png",
+              "sha256": "b123feea8c5bb270b2155218c860e0c7e43a0108e00708bd28f383584dfd1d0d"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1699,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 241
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2879
+          },
+          "request_id": "req_7beae61f883d420db1a7975cb4b7c4f0",
+          "seconds": 31.3,
+          "registration": {
+            "front": {
+              "scale": 0.9444,
+              "offset": [
+                32,
+                63
+              ],
+              "iou": 0.956,
+              "iou_unregistered_scale": 0.9444,
+              "purity": 0.965
+            },
+            "left": {
+              "scale": 0.9686,
+              "offset": [
+                118,
+                64
+              ],
+              "iou": 0.948,
+              "iou_unregistered_scale": 0.9686,
+              "purity": 0.969
+            },
+            "back": {
+              "scale": 0.9424,
+              "offset": [
+                27,
+                64
+              ],
+              "iou": 0.953,
+              "iou_unregistered_scale": 0.9424,
+              "purity": 0.982
+            },
+            "right": {
+              "scale": 0.9567,
+              "offset": [
+                77,
+                63
+              ],
+              "iou": 0.939,
+              "iou_unregistered_scale": 0.9567,
+              "purity": 0.971
+            }
+          },
+          "metal_ratio": {
+            "front": 0.477,
+            "left": 0.428,
+            "back": 0.384,
+            "right": 0.425
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "steps": {
+    "导入清理": 1.7,
+    "对齐": 0.7,
+    "低模与 UV": 6.6,
+    "投影着色": 15.7,
+    "烘焙": 8.9,
+    "LOD": 0.0,
+    "导出": 1.7
+  },
+  "highpoly": {
+    "faces_raw": 437846,
+    "faces": 240998,
+    "verts": 240998,
+    "loose_parts": 2,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00492
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.772,
+    "iou_per_view": {
+      "front": 0.876,
+      "left": 0.65,
+      "back": 0.876,
+      "right": 0.637
+    },
+    "height_m": 0.0328,
+    "blockout_height_m": 0.382
+  },
+  "uv": {
+    "smart_islands": 183,
+    "charts": 20,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "smart",
+    "density_smart": 2.2415,
+    "density_merged": 2.0827
+  },
+  "projection": {
+    "uncovered_ratio": 0.0865
+  },
+  "bake_device": "OPTIX",
+  "material_id": {
+    "metal_texel_ratio": 0.1672
+  },
+  "textures": {
+    "T_Arms_FalconL_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Arms_FalconL_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Arms_FalconL_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "presentation": [
+    [
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ]
+  ],
+  "lods": [
+    {
+      "name": "SM_Arms_FalconL_LOD0",
+      "tris": 7998,
+      "verts": 3999,
+      "uv_min": [
+        0.0024520044680684805,
+        0.0024537008721381426
+      ],
+      "uv_max": [
+        0.9975537657737732,
+        0.9975537657737732
+      ],
+      "uv_utilization": 0.658,
+      "bbox_min": [
+        -0.1835,
+        -0.3295,
+        -0.2747
+      ],
+      "bbox_max": [
+        -0.0066,
+        0.0329,
+        0.0062
+      ]
+    },
+    {
+      "name": "SM_Arms_FalconL_LOD1",
+      "tris": 2000,
+      "verts": 1000,
+      "uv_min": [
+        0.0024520044680684805,
+        0.0024537008721381426
+      ],
+      "uv_max": [
+        0.9969104528427124,
+        0.9975537657737732
+      ],
+      "uv_utilization": 0.625,
+      "bbox_min": [
+        -0.1835,
+        -0.3295,
+        -0.2749
+      ],
+      "bbox_max": [
+        -0.0067,
+        0.0326,
+        0.006
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\weapons\\SM_Arms_FalconL\\04_export\\SM_Arms_FalconL_v001.glb",
+    "bytes": 450404
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\weapons\\SM_Arms_FalconL\\03_work\\SM_Arms_FalconL_v001.blend",
+  "total_seconds": 35.4,
+  "_seconds": 38.5
+}

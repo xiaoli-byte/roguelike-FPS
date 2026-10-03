@@ -129,6 +129,25 @@ export function newAdditive(color: number, opacity = 1): THREE.MeshBasicMaterial
   return additiveMat(color, opacity).clone();
 }
 
+/**
+ * 发光部件（StandardEnemy.glowPart）的模板材质：按「底色 + 热色 + 通道 + 混合方式」缓存。
+ * EnemyBase.init 会为每个实例克隆模型里的全部材质（同一模板在一个实例里只克隆一份），
+ * 所以只有参数完全相同的发光部件才会共用实例材质——它们每帧写入的颜色也完全相同，不会互相覆盖。
+ */
+export function glowPartMat(base: number, hot: number, channel: number, additive: boolean): THREE.MeshBasicMaterial {
+  const key = `gp:${base}:${hot}:${channel}:${additive ? 1 : 0}`;
+  let m = matCache.get(key) as THREE.MeshBasicMaterial | undefined;
+  if (!m) {
+    m = additive
+      ? new THREE.MeshBasicMaterial({
+        color: base, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false, side: THREE.DoubleSide,
+      })
+      : new THREE.MeshBasicMaterial({ color: base, toneMapped: false });
+    matCache.set(key, m);
+  }
+  return m;
+}
+
 // ───────────────────────────── 拼装辅助 ─────────────────────────────
 
 /** 创建网格并挂到 parent 上 */
@@ -275,4 +294,31 @@ export function blendRot(o: THREE.Object3D, x: number, y: number, z: number, t: 
   o.rotation.x += (x - o.rotation.x) * t;
   o.rotation.y += (y - o.rotation.y) * t;
   o.rotation.z += (z - o.rotation.z) * t;
+}
+
+const _reach = new THREE.Vector3();
+
+/**
+ * 两骨骼手臂 IK：让手腕关节（hand）落到 target（躯干局部坐标），肩 rotation = (x, 0, z)、肘只在 x 上前屈，
+ * 与 applyWalk 等程序动画的关节约定一致。够不着时手臂伸直指向目标。持械动作用它把双手「握」在武器的握点上。
+ * @param side 1 = 左臂（+X），-1 = 右臂
+ */
+export function reachArm(r: HumanoidRig, side: number, target: THREE.Vector3): void {
+  const arm = side > 0 ? r.armL : r.armR;
+  const elbow = side > 0 ? r.elbowL : r.elbowR;
+  const hand = side > 0 ? r.handL : r.handR;
+  const l1 = elbow.position.length();
+  const l2 = hand.position.length();
+  _reach.subVectors(target, arm.position);
+  const d = Math.min(Math.max(_reach.length(), Math.abs(l1 - l2) + 1e-3), l1 + l2 - 1e-3);
+  _reach.setLength(d);
+  // 肘关节弯曲角（0 = 伸直），余弦定理
+  const bend = Math.PI - Math.acos(Math.min(1, Math.max(-1, (l1 * l1 + l2 * l2 - d * d) / (2 * l1 * l2))));
+  elbow.rotation.set(-bend, 0, 0);
+  // 未转肩时手腕在上臂空间的位置 h = (0, hy, hz)；求 R = Rx(a)·Rz(c) 使 R·h 指向目标
+  const hy = -l1 - l2 * Math.cos(bend);
+  const hz = l2 * Math.sin(bend);
+  const c = Math.asin(Math.min(1, Math.max(-1, -_reach.x / hy)));
+  const a = Math.atan2(_reach.z, _reach.y) - Math.atan2(hz, hy * Math.cos(c));
+  arm.rotation.set(a, 0, c);
 }

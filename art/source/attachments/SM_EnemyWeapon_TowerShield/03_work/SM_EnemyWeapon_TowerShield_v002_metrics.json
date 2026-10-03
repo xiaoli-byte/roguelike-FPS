@@ -1,0 +1,126 @@
+{
+  "steps": {
+    "导入清理": 2.0,
+    "对齐": 0.8,
+    "低模与 UV": 6.4,
+    "投影着色": 20.5,
+    "烘焙": 5.5,
+    "LOD": 0.0,
+    "导出": 0.7
+  },
+  "highpoly": {
+    "faces_raw": 570316,
+    "faces": 306618,
+    "verts": 306616,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.864,
+    "iou_per_view": {
+      "front": 0.964,
+      "left": 0.781,
+      "back": 0.89,
+      "right": 0.77
+    },
+    "height_m": 0.6538,
+    "blockout_height_m": 1.32
+  },
+  "projection": {
+    "uncovered_ratio": 0.1631
+  },
+  "bake_device": "OPTIX",
+  "material_id": {
+    "metal_texel_ratio": 0.4029
+  },
+  "textures": {
+    "T_EnemyWeapon_TowerShield_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_EnemyWeapon_TowerShield_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_EnemyWeapon_TowerShield_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "presentation": [
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "lods": [
+    {
+      "name": "SM_EnemyWeapon_TowerShield_LOD0",
+      "tris": 3000,
+      "verts": 1498,
+      "uv_min": [
+        0.003536985954269767,
+        0.002593096112832427
+      ],
+      "uv_max": [
+        0.9974633455276489,
+        0.9792909622192383
+      ],
+      "uv_utilization": 0.669,
+      "bbox_min": [
+        -0.4415,
+        -0.1424,
+        -0.6535
+      ],
+      "bbox_max": [
+        0.4009,
+        0.0808,
+        0.6538
+      ]
+    },
+    {
+      "name": "SM_EnemyWeapon_TowerShield_LOD1",
+      "tris": 1000,
+      "verts": 498,
+      "uv_min": [
+        0.0035396653693169355,
+        0.0028632907196879387
+      ],
+      "uv_max": [
+        0.9974633455276489,
+        0.9792909622192383
+      ],
+      "uv_utilization": 0.65,
+      "bbox_min": [
+        -0.441,
+        -0.1434,
+        -0.653
+      ],
+      "bbox_max": [
+        0.4003,
+        0.0807,
+        0.6533
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\attachments\\SM_EnemyWeapon_TowerShield\\04_export\\SM_EnemyWeapon_TowerShield_v002.glb",
+    "bytes": 204012
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\attachments\\SM_EnemyWeapon_TowerShield\\03_work\\SM_EnemyWeapon_TowerShield_v002.blend",
+  "total_seconds": 35.8,
+  "_seconds": 39.7
+}

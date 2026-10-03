@@ -1,0 +1,465 @@
+{
+  "id": "SM_Arms_BearR",
+  "display": "岩熊·右手",
+  "kind": "static",
+  "class": "fp_arm",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:10:20",
+          "files": {
+            "BO_SM_Arms_BearR_v001.glb": {
+              "path": "00_blockout/BO_SM_Arms_BearR_v001.glb",
+              "sha256": "97f20206197a95dd1038cfc40d3793feb98a32c153a7ee753111287621cb3c07"
+            },
+            "BO_SM_Arms_BearR_v001.json": {
+              "path": "00_blockout/BO_SM_Arms_BearR_v001.json",
+              "sha256": "f911e111fddc60006f70eccc97575bc96ad2c4fe7456d2f3cac82dd947caa881"
+            },
+            "BO_SM_Arms_BearR_v001_views.json": {
+              "path": "00_blockout/BO_SM_Arms_BearR_v001_views.json",
+              "sha256": "b340e214457808405c5a35beb0a000ef8c905f7147f104b4c3e2502bdc79596b"
+            },
+            "BO_SM_Arms_BearR_v001_sheet.png": {
+              "path": "00_blockout/BO_SM_Arms_BearR_v001_sheet.png",
+              "sha256": "ad0705698e98065030563a93c0fa6354b97617caf965a102d009a465e296376e"
+            },
+            "BO_SM_Arms_BearR_v001_front.png": {
+              "path": "00_blockout/BO_SM_Arms_BearR_v001_front.png",
+              "sha256": "135181c873cf7bb8ac237a24b4fdb75ad79bb47df3dd0b1268de511a07e0309b"
+            },
+            "BO_SM_Arms_BearR_v001_left.png": {
+              "path": "00_blockout/BO_SM_Arms_BearR_v001_left.png",
+              "sha256": "4a6de005f9bc7d93dff160809633b9c037dd4f27c54f22b05450cbd6e23c2218"
+            },
+            "BO_SM_Arms_BearR_v001_back.png": {
+              "path": "00_blockout/BO_SM_Arms_BearR_v001_back.png",
+              "sha256": "c4a7f72cc4ac9699277918af806b29e9ea635a236619f423d65e31055ddcdc0a"
+            },
+            "BO_SM_Arms_BearR_v001_right.png": {
+              "path": "00_blockout/BO_SM_Arms_BearR_v001_right.png",
+              "sha256": "ed5dc8bf127fc7e6cc699486370074f88a231d56dd064d91e27ed463c059f3ca"
+            }
+          },
+          "source": {
+            "kind": "fp",
+            "id": "bear",
+            "attachment": "arm_r"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.03924723294610005,
+              -0.2927586282636328,
+              -0.01096206555933877
+            ],
+            "max": [
+              0.1705597428470242,
+              0.005619407555073265,
+              0.3593916022347604
+            ]
+          },
+          "blender_seconds": 6.5
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:13:04",
+          "files": {
+            "CN_SM_Arms_BearR_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Arms_BearR_v001_sheet.png",
+              "sha256": "5687db64ac169121d97fbb2498c0cac2fcef597a63ab0d0ae7c240b4235f088e"
+            },
+            "CN_SM_Arms_BearR_v001_front.png": {
+              "path": "01_concept/CN_SM_Arms_BearR_v001_front.png",
+              "sha256": "b9f3179d228a9988f0ef0e2e711043335429507905549fcc8e6e00cfc5416895"
+            },
+            "CN_SM_Arms_BearR_v001_left.png": {
+              "path": "01_concept/CN_SM_Arms_BearR_v001_left.png",
+              "sha256": "2641aeb8f9064346ba92d0faa2e7116f9eda5fbbace7377b38450e40a2b19fd2"
+            },
+            "CN_SM_Arms_BearR_v001_back.png": {
+              "path": "01_concept/CN_SM_Arms_BearR_v001_back.png",
+              "sha256": "ac6b833a59d5f9ce74cfae8652c7fb8423cf41dc13edcec6b02cdbd81f64f906"
+            },
+            "CN_SM_Arms_BearR_v001_right.png": {
+              "path": "01_concept/CN_SM_Arms_BearR_v001_right.png",
+              "sha256": "0ec4d11ff2d4992993b827393c408cef0c0e9d19ee6fe4dd454aa07fa73a0066"
+            },
+            "CN_SM_Arms_BearR_v001_compare.png": {
+              "path": "01_concept/CN_SM_Arms_BearR_v001_compare.png",
+              "sha256": "f417163b330ae2e0b68f77f2799876d36b76ea8b0f65f3ae3d0ed5e0bafc2572"
+            },
+            "CN_SM_Arms_BearR_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Arms_BearR_v001_prompt.txt",
+              "sha256": "8dcdeb644d4397ac6d048aa19974bdbbdfdb82414898d03abd25e406f4713aed"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1961,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 503
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3141
+          },
+          "request_id": "req_faadcee260fd48008c1658ffc8724165",
+          "seconds": 27.5,
+          "registration": {
+            "front": {
+              "scale": 0.8698,
+              "offset": [
+                29,
+                229
+              ],
+              "iou": 0.721,
+              "iou_unregistered_scale": 0.883
+            },
+            "left": {
+              "scale": 0.8501,
+              "offset": [
+                90,
+                245
+              ],
+              "iou": 0.761,
+              "iou_unregistered_scale": 0.8764
+            },
+            "back": {
+              "scale": 0.8501,
+              "offset": [
+                26,
+                228
+              ],
+              "iou": 0.704,
+              "iou_unregistered_scale": 0.8764
+            },
+            "right": {
+              "scale": 0.8529,
+              "offset": [
+                96,
+                228
+              ],
+              "iou": 0.761,
+              "iou_unregistered_scale": 0.8659
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.723,
+            "left": 0.762,
+            "back": 0.706,
+            "right": 0.762
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "与英雄设定一致；手部握拳（白模方掌），袖子吻合",
+            "time": "2026-10-03 22:15:05"
+          }
+        }
+      ]
+    },
+    "matid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:16:42",
+          "files": {
+            "MID_SM_Arms_BearR_v001_sheet.png": {
+              "path": "01_concept/MID_SM_Arms_BearR_v001_sheet.png",
+              "sha256": "c016251d258121f5770b9723cabd9ec121415784ce70d1a47f38e7b702e5bbfc"
+            },
+            "MID_SM_Arms_BearR_v001_front.png": {
+              "path": "01_concept/MID_SM_Arms_BearR_v001_front.png",
+              "sha256": "2c0576d025cbe5ae3eb972aaa397bc02f20bee19c188f0745c73d177feca1fa2"
+            },
+            "MID_SM_Arms_BearR_v001_left.png": {
+              "path": "01_concept/MID_SM_Arms_BearR_v001_left.png",
+              "sha256": "e8eefcf779406e3fdefa7e8d40973306c5e4be12a1272d0bcfd40bf0dc647403"
+            },
+            "MID_SM_Arms_BearR_v001_back.png": {
+              "path": "01_concept/MID_SM_Arms_BearR_v001_back.png",
+              "sha256": "9e8f2cd0706b7357eaad71bfd26dad46087a659771f2806b9f7ec24c1ec208c6"
+            },
+            "MID_SM_Arms_BearR_v001_right.png": {
+              "path": "01_concept/MID_SM_Arms_BearR_v001_right.png",
+              "sha256": "b61eaf30723a80de6933895b5bf8ff84200ea1445bda3b06f61d92c02e3f1048"
+            },
+            "MID_SM_Arms_BearR_v001_compare.png": {
+              "path": "01_concept/MID_SM_Arms_BearR_v001_compare.png",
+              "sha256": "bd11637603f04bc715aa282efabab1882d5a719f8ed0387e131a2bab7251ec54"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1699,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 241
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2879
+          },
+          "request_id": "req_165cfa7ad84b43eebc8556d20ecff0c6",
+          "seconds": 29.7,
+          "registration": {
+            "front": {
+              "scale": 0.8678,
+              "offset": [
+                29,
+                229
+              ],
+              "iou": 0.975,
+              "iou_unregistered_scale": 0.8678,
+              "purity": 0.996
+            },
+            "left": {
+              "scale": 0.8384,
+              "offset": [
+                89,
+                245
+              ],
+              "iou": 0.956,
+              "iou_unregistered_scale": 0.8384,
+              "purity": 0.996
+            },
+            "back": {
+              "scale": 0.8446,
+              "offset": [
+                24,
+                229
+              ],
+              "iou": 0.966,
+              "iou_unregistered_scale": 0.8446,
+              "purity": 0.997
+            },
+            "right": {
+              "scale": 0.847,
+              "offset": [
+                94,
+                228
+              ],
+              "iou": 0.969,
+              "iou_unregistered_scale": 0.847,
+              "purity": 0.997
+            }
+          },
+          "metal_ratio": {
+            "front": 0.188,
+            "left": 0.162,
+            "back": 0.167,
+            "right": 0.168
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:28:49",
+          "files": {
+            "HP_SM_Arms_BearR_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Arms_BearR_v001_input_front.png",
+              "sha256": "e5ae1d4eae1b200b0bf32e024ab89dae9ec7d6322d5e63e21d1d0c34c885d13a"
+            },
+            "HP_SM_Arms_BearR_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Arms_BearR_v001_input_left.png",
+              "sha256": "f233593da0c28fed237dd3b74f0ab9e564549cca5b11f0ca1826d390bfaa0697"
+            },
+            "HP_SM_Arms_BearR_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Arms_BearR_v001_input_back.png",
+              "sha256": "650978384a11ce0fcdc94a21791ad6f55191ff201d1ef2d03bf7cb31ead15b02"
+            },
+            "HP_SM_Arms_BearR_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Arms_BearR_v001_input_right.png",
+              "sha256": "7414c6822543aa3f4d9d20cab2789dbdcea3c24bf52154763ca4a0c55ad9e48d"
+            },
+            "HP_SM_Arms_BearR_v001.glb": {
+              "path": "02_highpoly/HP_SM_Arms_BearR_v001.glb",
+              "sha256": "0e79b3c6123d9b9d5cf2a80e581c07fe8198c84528360448dc6f81c1db2201ef"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -78,
+              178,
+              590,
+              845
+            ],
+            "scale": 1.532934131736527
+          },
+          "seconds": 170.7,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 9.6
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:29:33",
+          "files": {
+            "SM_Arms_BearR_v001.blend": {
+              "path": "03_work/SM_Arms_BearR_v001.blend",
+              "sha256": "106347b208d19fe8aad5ea712686fe5b573da3041179e05daeb4b1351b558eab"
+            },
+            "SM_Arms_BearR_v001.glb": {
+              "path": "04_export/SM_Arms_BearR_v001.glb",
+              "sha256": "2087c70578ce1f118d9466fed786964363e25d2e8df8e3413ef966a5eeb38c24"
+            },
+            "SM_Arms_BearR_v001_metrics.json": {
+              "path": "03_work/SM_Arms_BearR_v001_metrics.json",
+              "sha256": "3ca38fb4053e9a1b65393542edf5e8f8c87e8af85efd1bb113c3ac92948ed8dd"
+            },
+            "T_Arms_BearR_BC.png": {
+              "path": "03_work/textures_v001/T_Arms_BearR_BC.png",
+              "sha256": "1c6a6371ea825ad90edca5798709d4f66ff680a059a54d7fc3995cbcb6d54c91"
+            },
+            "T_Arms_BearR_MetalMask.png": {
+              "path": "03_work/textures_v001/T_Arms_BearR_MetalMask.png",
+              "sha256": "fe5808be87f21c5441d20ee3514bd4865f7b8f29f318348a365f6e62fa0c81d4"
+            },
+            "T_Arms_BearR_N.png": {
+              "path": "03_work/textures_v001/T_Arms_BearR_N.png",
+              "sha256": "f8a0846730c0f44f51c9d1f8c2a72d1623bdc750d65683461d3268202eb9f9bd"
+            },
+            "T_Arms_BearR_ORM.png": {
+              "path": "03_work/textures_v001/T_Arms_BearR_ORM.png",
+              "sha256": "e508d17c10332409a589da51b0c7e9edbe13c3f280cd4f348bb70e1cdb2537c6"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1,
+            "emid": null
+          },
+          "align_iou": 0.882,
+          "uncovered_ratio": 0.0826,
+          "lods": [
+            {
+              "tris": 8000,
+              "verts": 3994
+            },
+            {
+              "tris": 2000,
+              "verts": 994
+            }
+          ],
+          "export_kb": 550.4,
+          "seconds": 43.7,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:29:33",
+          "files": {
+            "SM_Arms_BearR_v001_validation.json": {
+              "path": "05_review/SM_Arms_BearR_v001_validation.json",
+              "sha256": "5e50496b299a33987ce47cf48a7da39d138b316ecb000ff17be37eaa31151891"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:29:41",
+          "files": {
+            "SM_Arms_BearR_v001_review.png": {
+              "path": "05_review/SM_Arms_BearR_v001_review.png",
+              "sha256": "5320796d5354fcd76d7651a8b8e3eb18dbaf1577e9b671282d7957a32c5632fd"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "英雄专属第一人称手臂；深度轴偏小待游戏内确认袖口不露出",
+            "time": "2026-10-03 22:41:50"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:41:51",
+          "files": {
+            "SM_Arms_BearR.glb": {
+              "path": "@root/public/assets/weapons/SM_Arms_BearR.glb",
+              "sha256": "2087c70578ce1f118d9466fed786964363e25d2e8df8e3413ef966a5eeb38c24"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/weapons/SM_Arms_BearR.glb"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,179 @@
+{
+  "steps": {
+    "导入清理": 0.6,
+    "对齐": 0.4,
+    "低模与 UV": 2.5,
+    "投影着色": 4.0,
+    "烘焙": 9.1,
+    "LOD": 0.0,
+    "部件骨架蒙皮": 1.8,
+    "导出": 1.6
+  },
+  "highpoly": {
+    "faces_raw": 124492,
+    "faces": 67334,
+    "verts": 67320,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.84,
+    "iou_per_view": {
+      "front": 0.845,
+      "left": 0.836,
+      "back": 0.834,
+      "right": 0.842
+    },
+    "height_m": 0.6159,
+    "blockout_height_m": 0.977
+  },
+  "uv": {
+    "smart_islands": 218,
+    "charts": 30,
+    "fallback_charts": 2,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 1.1236,
+    "density_merged": 1.48
+  },
+  "projection": {
+    "uncovered_ratio": 0.1545
+  },
+  "bake_device": "OPTIX",
+  "emissive_id": {
+    "emissive_texel_ratio": 0.0317
+  },
+  "material_id": {
+    "metal_texel_ratio": 0.4095
+  },
+  "textures": {
+    "T_Weapon_Rifle_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Weapon_Rifle_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Weapon_Rifle_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "presentation": [
+    [
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ]
+  ],
+  "skin": {
+    "bones": [
+      "j_r",
+      "j_0",
+      "j_10",
+      "j_13"
+    ],
+    "per_lod": {
+      "SK_Weapon_Rifle_LOD0": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      },
+      "SK_Weapon_Rifle_LOD1": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      }
+    },
+    "mode": "parts",
+    "sigma_m": 0.0147,
+    "rigid": true,
+    "split": {
+      "SK_Weapon_Rifle_LOD0": {
+        "cut_edges": 37,
+        "cap_tris": 70,
+        "merged_fragment_faces": 0,
+        "tris": 11996
+      },
+      "SK_Weapon_Rifle_LOD1": {
+        "cut_edges": 16,
+        "cap_tris": 28,
+        "merged_fragment_faces": 0,
+        "tris": 2996
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SK_Weapon_Rifle_LOD0",
+      "tris": 11996,
+      "verts": 5986,
+      "uv_min": [
+        0.0017849698197096586,
+        0.001785052241757512
+      ],
+      "uv_max": [
+        0.9982150793075562,
+        0.9976856708526611
+      ],
+      "uv_utilization": 0.693,
+      "bbox_min": [
+        -0.039,
+        -0.3317,
+        -0.1669
+      ],
+      "bbox_max": [
+        0.0502,
+        0.616,
+        0.1017
+      ]
+    },
+    {
+      "name": "SK_Weapon_Rifle_LOD1",
+      "tris": 2996,
+      "verts": 1486,
+      "uv_min": [
+        0.002575780963525176,
+        0.002122604288160801
+      ],
+      "uv_max": [
+        0.9946840405464172,
+        0.9976856112480164
+      ],
+      "uv_utilization": 0.703,
+      "bbox_min": [
+        -0.0389,
+        -0.3315,
+        -0.1673
+      ],
+      "bbox_max": [
+        0.0506,
+        0.6159,
+        0.1016
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\weapons\\SK_Weapon_Rifle\\04_export\\SK_Weapon_Rifle_v001.glb",
+    "bytes": 478984
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\weapons\\SK_Weapon_Rifle\\03_work\\SK_Weapon_Rifle_v001.blend",
+  "total_seconds": 20.0,
+  "_seconds": 23.3
+}

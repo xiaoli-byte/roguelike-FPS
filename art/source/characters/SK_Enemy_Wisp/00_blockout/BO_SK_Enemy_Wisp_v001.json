@@ -1,0 +1,173 @@
+{
+  "schema": 1,
+  "assetId": "SK_Enemy_Wisp",
+  "source": {
+    "kind": "enemy",
+    "id": "wisp"
+  },
+  "rig": "parts",
+  "space": {
+    "up": "+Y",
+    "forward": "+Z",
+    "unit": "m",
+    "origin": "model"
+  },
+  "bounds": {
+    "min": [
+      -0.3400000035762787,
+      -0.0940260341763497,
+      -0.3400000035762787
+    ],
+    "max": [
+      0.3400000035762787,
+      1.1108398053050041,
+      0.3400000035762787
+    ]
+  },
+  "joints": [
+    {
+      "name": "j_r",
+      "parent": null,
+      "bindPosition": [
+        0,
+        0,
+        0
+      ],
+      "restLocal": [
+        0,
+        0,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0",
+      "parent": "j_r",
+      "bindPosition": [
+        0,
+        0.62,
+        0
+      ],
+      "restLocal": [
+        0,
+        0.62,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_15",
+      "parent": "j_0",
+      "bindPosition": [
+        0,
+        0.28,
+        0.22
+      ],
+      "restLocal": [
+        0,
+        -0.34,
+        0.22
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_16",
+      "parent": "j_0",
+      "bindPosition": [
+        0.19053,
+        0.28,
+        -0.11
+      ],
+      "restLocal": [
+        0.19053,
+        -0.34,
+        -0.11
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_17",
+      "parent": "j_0",
+      "bindPosition": [
+        -0.19053,
+        0.28,
+        -0.11
+      ],
+      "restLocal": [
+        -0.19053,
+        -0.34,
+        -0.11
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    }
+  ],
+  "parts": {
+    "body_000": "body",
+    "body_001": "body",
+    "body_002": "body",
+    "body_003": "body",
+    "body_004": "body",
+    "body_005": "body",
+    "body_006": "body",
+    "body_007": "body",
+    "body_008": "body",
+    "body_009": "body",
+    "glow_010": "glow",
+    "glow_011": "glow",
+    "glow_012": "glow",
+    "glow_013": "glow",
+    "glowfx_014": "glowfx",
+    "body_015": "body",
+    "body_016": "body",
+    "body_017": "body",
+    "body_018": "body",
+    "body_019": "body",
+    "body_020": "body"
+  },
+  "exportedAt": "2026-10-03T10:27:17.666Z"
+}

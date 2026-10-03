@@ -1,0 +1,147 @@
+[
+  {
+    "level": "pass",
+    "check": "文件大小",
+    "detail": "329 KB / 上限 1500 KB"
+  },
+  {
+    "level": "pass",
+    "check": "扩展可用",
+    "detail": "必需扩展 ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+  },
+  {
+    "level": "pass",
+    "check": "LOD 数量",
+    "detail": "['SM_BossWeapon_Greatsword_LOD0', 'SM_BossWeapon_Greatsword_LOD1']，规格 2 级"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 面数",
+    "detail": "6000 / 预算 6000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 切换距离",
+    "detail": "extras.lod_distance=0"
+  },
+  {
+    "level": "pass",
+    "check": "尺寸 X 轴",
+    "detail": "1.106 m（白模 0.970 m）"
+  },
+  {
+    "level": "pass",
+    "check": "尺寸 Y 轴",
+    "detail": "3.182 m（白模 3.295 m）"
+  },
+  {
+    "level": "pass",
+    "check": "尺寸 Z 轴（深度轴）",
+    "detail": "0.217 m（白模 0.200 m）"
+  },
+  {
+    "level": "pass",
+    "check": "相对挂点位置",
+    "detail": "中心偏移 0.061 m（上限 0.198）"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 面数",
+    "detail": "2000 / 预算 2000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 递减",
+    "detail": "6000 → 2000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 切换距离",
+    "detail": "extras.lod_distance=25"
+  },
+  {
+    "level": "pass",
+    "check": "材质数量",
+    "detail": "['M_BossWeapon_Greatsword']（一个资产一个材质，便于合批）"
+  },
+  {
+    "level": "pass",
+    "check": "材质命名",
+    "detail": "['M_BossWeapon_Greatsword']"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_BossWeapon_Greatsword_N",
+    "detail": "2048×2048 webp（规格 2048²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_BossWeapon_Greatsword_N",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_BossWeapon_Greatsword_ORM",
+    "detail": "2048×2048 webp（规格 2048²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_BossWeapon_Greatsword_ORM",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_BossWeapon_Greatsword_BC",
+    "detail": "2048×2048 webp（规格 2048²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_BossWeapon_Greatsword_BC",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "BaseColor 贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "法线贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "ORM 贴图",
+    "detail": "AO / 粗糙度 / 金属度"
+  },
+  {
+    "level": "pass",
+    "check": "SM_BossWeapon_Greatsword_LOD0 UV 范围",
+    "detail": "[0.0029297699220478535, 0.0029297086875885725]..[0.9850560426712036, 0.994713306427002]"
+  },
+  {
+    "level": "pass",
+    "check": "SM_BossWeapon_Greatsword_LOD1 UV 范围",
+    "detail": "[0.0029297699220478535, 0.0029297086875885725]..[0.9850560426712036, 0.9945650100708008]"
+  },
+  {
+    "level": "warn",
+    "check": "UV 利用率",
+    "detail": "43%"
+  },
+  {
+    "level": "pass",
+    "check": "UV 翻折",
+    "detail": "0 个面（0.00%），图块 18 个"
+  },
+  {
+    "level": "pass",
+    "check": "高模对齐",
+    "detail": "剪影 IoU 0.843（{'front': 0.886, 'left': 0.781, 'back': 0.92, 'right': 0.763}）"
+  },
+  {
+    "level": "pass",
+    "check": "投影覆盖",
+    "detail": "未覆盖顶点 6%（扩散补色）"
+  }
+]

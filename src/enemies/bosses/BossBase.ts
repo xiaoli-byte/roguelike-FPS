@@ -2,19 +2,29 @@
  * 三个 Boss 的公共基类（继承冻结的 EnemyBase）。
  *
  * 负责：
- *  - 登场：spawnDuration 期间不可被射中，由子类 entrance(t) 演出（从地下升起 / 从天而降）。
+ *  - 登场：spawnDuration 期间由子类 entrance(t) 演出（从地下升起 / 从天而降）。
+ *  - 不可选中（契约 IEnemy.untargetable）：登场未完成、阶段转换演出期间为 true。EnemyManager 的 raycast /
+ *    queryRadius / nearest 跳过本 Boss，Combat.damageEnemy / applyStatus 直接返回；raycastHit 同时返回 false 作为双保险。
  *  - 招式调度：招式 = 一段时间轴（tick(t) 返回 true 结束），带内置冷却与出招权重；招式之间有喘息期（idle 移动）。
  *    at(x) 在时间轴越过 x 秒的那一帧返回 true，便于编排「预警 → 出手 → 收招」。
- *  - 阶段：血量（护盾 + 护甲 + 生命 的总比例）跌破 thresholds[i] 时打断当前招式，播放吼叫 / 屏震 / 变色演出。
- *  - 霸体：眩晕最多 0.35 秒，之后 6 秒免疫；击退抗性 1（EnemyBase 已处理）。
+ *    招式结束或被打断时撤回它画出、尚未填满的预警（HazardSet.cancelMoveWarnings，'move' 归属）。
+ *  - 阶段：生命（hp / maxHp，与 Boss 血条刻度一致）跌破 thresholds[i] 时，等当前招式收尾（最多 2 秒，之后强制打断
+ *    并撤回未兑现的预警），再播放吼叫 / 屏震 / 变色演出（演出期间不可选中）。
+ *  - 霸体（契约 IEnemy.stunImmune）：只有招式间隙（走位 / 喘息）能被眩晕，最多 0.35 秒，之后 6 秒免疫；出招中、
+ *    登场、阶段转换期间 stunImmune 为 true，Combat 直接忽略眩晕（不播特效、不派发事件），时间轴不会被暂停，
+ *    已经画出的预警始终和实际出手对得上。击退抗性 1（EnemyBase 已处理）。
  *  - 大体型受击：hitShapes（球 / 竖直胶囊，挂在骨骼锚点上随动画移动），weak=true 的形状算爆头。
- *  - 清理：死亡或释放时取消所有任务、移除所有危险物（HazardSet.clear），召唤物随之崩解。
+ *  - 清理：死亡或释放时取消所有任务、移除所有危险物、撤回所有预警（HazardSet.clear），召唤物随之崩解
+ *    （静默移除：不经伤害管线、不派发 enemy:killed、不掉落，与 'purge' 静默处决约定一致）。
  */
 import * as THREE from 'three';
 import type { DamageResult, EnemyDef, Element, GameContext, IEnemy, ProjectileSpec, SpawnOptions } from '../../core/types';
 import { EnemyBase } from '../EnemyBase';
+import { attackDirector } from '../AttackTokens';
 import { clamp, raySphere, rayVerticalCapsule, TAU } from '../../core/math';
 import { HazardSet } from './Hazards';
+import { attachEnemyArt } from '../../assets/EnemyArt';
+import type { SkinnedBody } from '../../assets/SkinnedBody';
 
 const _v = new THREE.Vector3();
 const _hc = new THREE.Vector3();
@@ -46,11 +56,15 @@ export interface BossMove {
 
 interface Slot {
   move: BossMove;
+  /** 登场结束后多久才可用 */
+  firstDelay: number;
   readyAt: number;
 }
 
 const _cands: Slot[] = [];
 const _weights: number[] = [];
+/** 血量越过阶段阈值时，当前招式最多还能继续多久（之后强制打断进入阶段转换） */
+const PHASE_WAIT = 2;
 
 export interface FireOpts {
   radius?: number;
@@ -77,11 +91,15 @@ export abstract class BossBase extends EnemyBase {
   private slots: Slot[] = [];
   private lastMoveId = '';
   private queued: string | null = null;
+  /** 越过阶段阈值后已等待当前招式收尾的秒数 */
+  private phaseWait = 0;
   protected transitionLeft = 0;
   protected transitionDuration = 2.4;
   protected entranceDone = false;
   protected hitShapes: HitShape[] = [];
   protected weakAnchor: THREE.Object3D | null = null;
+  /** 美术资产身体（清单里有绑定本 Boss 的骨骼网格时） */
+  private artBody: SkinnedBody | null = null;
   protected muzzleAnchor: THREE.Object3D | null = null;
   /** 按 userData.role 收集的实例材质（init 之后可用） */
   protected readonly roleMats = new Map<string, THREE.Material[]>();
@@ -90,9 +108,15 @@ export abstract class BossBase extends EnemyBase {
   protected animT = 0;
   /** 死亡爆炸 / 特效主色 */
   protected themeColor: number;
+  /** 眩晕免疫期截止时间（ctx.time.now）：每次被眩晕后 6 秒内 stunImmune 为 true */
   private stunImmuneUntil = 0;
+  /** 上一次 update 结束时剩余的眩晕（用来识别新施加的眩晕） */
+  private stunLeft = 0;
   private deathFxAcc = 0;
   private finalBlast = false;
+  /** hitShapes 世界坐标缓存（每次 update 后失效，避免每条射线都重算骨骼矩阵） */
+  private shapeCache: THREE.Vector3[] = [];
+  private shapeCacheValid = false;
 
   constructor(ctx: GameContext, def: EnemyDef, opts: SpawnOptions) {
     super(ctx, def, opts);
@@ -132,6 +156,18 @@ export abstract class BossBase extends EnemyBase {
     this.keepInsideArena();
     super.init();
     this.model.scale.setScalar(1);
+    // 美术资产（清单里绑定到本 Boss 的骨骼网格，走通用部件骨架）；缺失时保持程序化模型。受击判定是 hitShapes，与网格无关
+    this.artBody = attachEnemyArt({
+      host: this.model.children[0],
+      defId: this.def.id,
+      rig: undefined,
+      renderer: this.ctx.renderer,
+      lowQuality: this.ctx.settings.quality === 'low',
+      own: (m) => {
+        this.clonedMats.push(m);
+        this.flashMats.push({ mat: m, baseEmissive: m.emissive.clone(), baseIntensity: m.emissiveIntensity });
+      },
+    }).body;
     this.model.traverse((o) => {
       const mesh = o as THREE.Mesh;
       if (!mesh.isMesh) return;
@@ -151,17 +187,30 @@ export abstract class BossBase extends EnemyBase {
     this.entrance(0, 0);
   }
 
+  /**
+   * 契约 IEnemy.untargetable：登场未完成或阶段转换演出期间不可选中
+   * （射线 / 范围查询跳过，Combat 的伤害与状态直接忽略）。
+   */
+  get untargetable(): boolean {
+    return !this.entranceDone || this.transitionLeft > 0;
+  }
+
+  /**
+   * 契约 IEnemy.stunImmune：出招中、登场、阶段转换期间，以及上次被眩晕后的 6 秒内免疫眩晕
+   * （Combat 直接忽略，不播特效、不派发事件）。只有招式间隙能被眩晕。
+   */
+  get stunImmune(): boolean {
+    return !this.entranceDone || this.transitionLeft > 0 || this.current !== null || this.ctx.time.now < this.stunImmuneUntil;
+  }
+
   override update(dt: number): void {
-    if (this.alive && this.stunTime > 0) {
-      const now = this.ctx.time.now;
-      if (!this.entranceDone || this.transitionLeft > 0 || now < this.stunImmuneUntil) {
-        this.stunTime = 0;
-      } else {
-        this.stunTime = Math.min(this.stunTime, 0.35);
-        this.stunImmuneUntil = now + 6;
-      }
+    // 识别「上一帧之后新施加的」眩晕（Combat 只会在 stunImmune 为 false 时施加）：截断到 0.35 秒并开始 6 秒免疫期
+    if (this.alive && this.stunTime > this.stunLeft + 1e-4) {
+      this.stunTime = Math.min(this.stunTime, 0.35);
+      this.stunImmuneUntil = this.ctx.time.now + 6;
     }
     super.update(dt);
+    this.stunLeft = this.stunTime;
     if (!this.alive) {
       this.updateDeathFx(dt);
     } else {
@@ -174,11 +223,15 @@ export abstract class BossBase extends EnemyBase {
       }
     }
     this.hazards.update(dt);
+    this.shapeCacheValid = false;
   }
 
   protected override think(dt: number): void {
     if (!this.entranceDone) {
       this.entranceDone = true;
+      // 招式的首次可用时间从登场结束算起
+      const now = this.ctx.time.now;
+      for (const s of this.slots) s.readyAt = s.firstDelay > 0 ? now + s.firstDelay : -Infinity;
       this.entrance(1, 0);
       this.onEntranceEnd();
     }
@@ -192,9 +245,15 @@ export abstract class BossBase extends EnemyBase {
       }
       return;
     }
-    if (this.phase < this.thresholds.length && this.healthFraction() <= this.thresholds[this.phase]) {
-      this.beginTransition(this.phase + 1);
-      return;
+    if (this.phase < this.thresholds.length && this.phaseFraction() <= this.thresholds[this.phase]) {
+      // 正在出招时最多再等 PHASE_WAIT 秒让这一招打完（已经画出的预警照常兑现，观感比打断好）；
+      // 超时则强制打断，abortMove 会撤回尚未填满的预警，不会出现「预警填满却什么也没发生」
+      if (!this.current || this.phaseWait >= PHASE_WAIT) {
+        this.phaseWait = 0;
+        this.beginTransition(this.phase + 1);
+        return;
+      }
+      this.phaseWait += dt;
     }
     const m = this.current;
     if (m) {
@@ -211,9 +270,9 @@ export abstract class BossBase extends EnemyBase {
 
   // ───────────── 招式调度 ─────────────
 
-  /** 注册招式；firstDelay 为开场后多久才可用 */
+  /** 注册招式；firstDelay 为登场结束后多久才可用 */
   protected addMove(move: BossMove, firstDelay = 0): void {
-    this.slots.push({ move, readyAt: firstDelay > 0 ? this.ctx.time.now + firstDelay : -Infinity });
+    this.slots.push({ move, firstDelay, readyAt: firstDelay > 0 ? this.ctx.time.now + firstDelay : -Infinity });
   }
 
   /** 下一次出招强制使用该招（忽略冷却与权重） */
@@ -289,15 +348,18 @@ export abstract class BossBase extends EnemyBase {
     this.current = null;
     if (!m) return;
     m.end?.();
+    // 正常收招时本招的预警都已兑现；万一有提前结束的分支，也不留下填不满的预警
+    this.hazards.cancelMoveWarnings();
     this.restLeft = m.recovery * this.restFactor();
     this.setAnim('idle');
   }
 
-  /** 打断当前招式（阶段转换 / 死亡 / 释放） */
+  /** 打断当前招式（阶段转换 / 死亡 / 释放），并撤回本招尚未兑现的预警 */
   protected abortMove(): void {
     const m = this.current;
     this.current = null;
     m?.end?.();
+    this.hazards.cancelMoveWarnings();
   }
 
   private beginTransition(next: number): void {
@@ -316,6 +378,14 @@ export abstract class BossBase extends EnemyBase {
   healthFraction(): number {
     const max = this.maxHp + this.maxArmor + this.maxShield;
     return max > 0 ? (this.hp + this.armor + this.shield) / max : 0;
+  }
+
+  /**
+   * 阶段判定用的比例：只看生命层（hp / maxHp）。
+   * Boss 血条的 50% / 25% 刻度画在生命条上，按生命判定阶段，玩家看到刻度被越过时恰好进入新阶段。
+   */
+  phaseFraction(): number {
+    return this.maxHp > 0 ? Math.max(0, this.hp) / this.maxHp : 0;
   }
 
   protected floorY(): number {
@@ -430,12 +500,31 @@ export abstract class BossBase extends EnemyBase {
     this.minions.length = n;
   }
 
-  /** Boss 陨落时召唤物随之崩解（不经伤害管线，不掉落） */
+  /**
+   * Boss 陨落时召唤物随之崩解：静默移除，与 'purge' 静默处决约定一致——直接进入死亡流程，不经伤害管线，
+   * 不派发 enemy:killed，因此不掉落、不触发「击杀时」效果。请求同样带 'purge' 标签，
+   * 召唤物自己的死亡回调若要区分清场与正常击杀，按标签判断即可；期间同样置 attackDirector.purging，
+   * 爆裂词缀、爆骸虫的死亡爆炸不会发动（与 EnemyManager.killAll / forceKill 的行为一致）。
+   * （StageDirector 在 Boss 死亡后调用的 EnemyManager.killAll 同样带 'purge'，两条清场路径都不给奖励。）
+   */
   protected killMinions(): void {
-    for (const m of this.minions) {
-      if (!m.alive) continue;
+    const wasPurging = attackDirector.purging;
+    attackDirector.purging = true;
+    try {
+      for (const m of this.minions) {
+        if (!m.alive) continue;
+        this.purgeMinion(m);
+      }
+    } finally {
+      attackDirector.purging = wasPurging;
+    }
+    this.minions.length = 0;
+  }
+
+  private purgeMinion(m: IEnemy): void {
+    try {
       m.onKilled({
-        request: { base: 0, element: 'none', source: 'status', canCrit: false, procDepth: 2 },
+        request: { base: 0, element: 'none', source: 'status', canCrit: false, procDepth: 2, tags: ['purge'] },
         dealt: 0,
         isCrit: false,
         killed: true,
@@ -445,30 +534,50 @@ export abstract class BossBase extends EnemyBase {
         element: 'none',
         statusApplied: null,
       });
+    } catch (err) {
+      // 单个召唤物的死亡回调出错不能中断 Boss 的死亡流程（其余召唤物照常崩解）
+      console.error('[BossBase] 召唤物崩解出错', err);
     }
-    this.minions.length = 0;
   }
 
   // ───────────── 受击判定 ─────────────
 
+  /**
+   * 多段命中体射线测试。不可选中（登场 / 阶段转换）时返回 false：EnemyManager.raycast 本就按契约跳过
+   * untargetable 的敌人，这里是双保险（例如直接调用 raycastHit 的投射物精测）。
+   */
   override raycastHit(origin: THREE.Vector3, dir: THREE.Vector3, maxDist: number, out: { distance: number; headshot: boolean }): boolean {
-    if (!this.alive || !this.entranceDone) return false;
-    if (this.hitShapes.length === 0) return super.raycastHit(origin, dir, maxDist, out);
+    if (!this.alive || this.untargetable) return false;
+    const shapes = this.hitShapes;
+    if (shapes.length === 0) return super.raycastHit(origin, dir, maxDist, out);
+    if (!this.shapeCacheValid) {
+      this.shapeCacheValid = true;
+      const cache = this.shapeCache;
+      while (cache.length < shapes.length) cache.push(new THREE.Vector3());
+      this.root.updateMatrixWorld(true);
+      for (let i = 0; i < shapes.length; i++) cache[i].setFromMatrixPosition(shapes[i].anchor.matrixWorld);
+    }
     let body = -1;
     let weak = -1;
-    for (const s of this.hitShapes) {
-      s.anchor.getWorldPosition(_hc);
+    let weakR = 0;
+    for (let i = 0; i < shapes.length; i++) {
+      const s = shapes[i];
+      _hc.copy(this.shapeCache[i]);
       const t = s.halfHeight > 0
         ? rayVerticalCapsule(origin, dir, _hc.x, _hc.z, _hc.y - s.halfHeight, _hc.y + s.halfHeight, s.radius)
         : raySphere(origin, dir, _hc, s.radius);
       if (t < 0 || t > maxDist) continue;
       if (s.weak) {
-        if (weak < 0 || t < weak) weak = t;
+        if (weak < 0 || t < weak) {
+          weak = t;
+          weakR = s.radius;
+        }
       } else if (body < 0 || t < body) {
         body = t;
       }
     }
-    if (weak >= 0 && (body < 0 || weak <= body + 0.2)) {
+    // 弱点优先（与 EnemyBase 的爆头规则一致）：只有身体明显更近（超过半个弱点半径，例如从下方斜射先打到胸口）才算身体命中
+    if (weak >= 0 && (body < 0 || weak <= body + weakR * 0.5)) {
       out.distance = weak;
       out.headshot = true;
       return true;
@@ -535,5 +644,8 @@ export abstract class BossBase extends EnemyBase {
     this.abortMove();
     this.hazards.clear();
     this.onBossDispose();
+    this.minions.length = 0;
+    this.artBody?.dispose();
+    this.artBody = null;
   }
 }

@@ -1,0 +1,134 @@
+{
+  "schema": 1,
+  "assetId": "SK_Weapon_Swarm",
+  "source": {
+    "kind": "weapon",
+    "id": "swarm"
+  },
+  "rig": "parts",
+  "space": {
+    "up": "+Y",
+    "forward": "+Z",
+    "unit": "m",
+    "origin": "model"
+  },
+  "bounds": {
+    "min": [
+      -0.07000000029802322,
+      -0.11022703214892009,
+      -0.2819999997764826
+    ],
+    "max": [
+      0.07000000029802322,
+      0.18999999955296518,
+      0.1399999986588955
+    ]
+  },
+  "joints": [
+    {
+      "name": "j_r",
+      "parent": null,
+      "bindPosition": [
+        0,
+        0,
+        0
+      ],
+      "restLocal": [
+        0,
+        0,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0",
+      "parent": "j_r",
+      "bindPosition": [
+        0,
+        0.09,
+        -0.29
+      ],
+      "restLocal": [
+        0,
+        0.09,
+        -0.29
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_4",
+      "parent": "j_r",
+      "bindPosition": [
+        0,
+        0.09,
+        -0.27
+      ],
+      "restLocal": [
+        0,
+        0.09,
+        -0.27
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    }
+  ],
+  "keep": [],
+  "fields": {
+    "muzzle": "j_0",
+    "mag": "j_4"
+  },
+  "parts": {
+    "body_000": "body",
+    "body_001": "body",
+    "body_002": "body",
+    "glowfx_003": "glowfx",
+    "glowfx_004": "glowfx",
+    "glowfx_005": "glowfx",
+    "glowfx_006": "glowfx",
+    "glowfx_007": "glowfx",
+    "body_008": "body",
+    "body_009": "body",
+    "body_010": "body",
+    "body_011": "body",
+    "body_012": "body",
+    "body_013": "body",
+    "body_014": "body",
+    "body_015": "body",
+    "body_016": "body",
+    "body_017": "body",
+    "body_018": "body",
+    "body_019": "body",
+    "body_020": "body",
+    "glowfx_021": "glowfx",
+    "glowfx_022": "glowfx",
+    "glowfx_023": "glowfx",
+    "body_024": "body"
+  },
+  "exportedAt": "2026-10-03T13:08:08.622Z"
+}

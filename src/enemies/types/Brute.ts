@@ -23,8 +23,9 @@ export const BRUTE_DEF: EnemyDef = {
   damage: 25,
   coins: [3, 5],
   essence: 1,
-  headY: 2.08,
-  headRadius: 0.52,
+  // 头部 = 方盔（1.78 → 2.23，宽 0.47，角不算）；判定球随头骨移动，冲锋前倾时跟着压低
+  headY: 2.0,
+  headRadius: 0.28,
   knockbackResist: 0.6,
   color: 0xd04030,
 };
@@ -109,9 +110,12 @@ export class Brute extends StandardEnemy {
     for (const s of [1, -1]) {
       part(h, Geo.cone(0.075, 0.38, 5), flat(C.horn), s * 0.27, 0.46, 0, 0, 0, -s * 0.65);
     }
+    // 头心：0.98 + 0.82 + 0.2 = 2.0（与 BRUTE_DEF.headY 一致）
+    this.setHeadAnchor(h, 0, 0.2, 0.02);
 
     // 锤：握把朝下时锤头指向前方
     const mace = joint(r.handR, 0, -0.08, 0);
+    mace.name = 'mace'; // 挂点名：美术资产按它绑定（art/pipeline/registry.toml 的 blockout.attachment）
     mace.rotation.x = -0.3;
     part(mace, Geo.box(0.06, 0.06, 0.66), flat(C.leather), 0, 0, 0.22);
     part(mace, Geo.dodeca(0.17), flat(C.ironDark, { metal: 0.5 }), 0, 0, 0.58);
@@ -120,6 +124,7 @@ export class Brute extends StandardEnemy {
 
     // 塔盾（挂在躯干前方）
     const sh = joint(t, 0.3, 0.3, 0.44);
+    sh.name = 'shield'; // 挂点名：美术资产按它绑定（art/pipeline/registry.toml 的 blockout.attachment）
     this.shieldObj = sh;
     part(sh, Geo.box(0.93, 1.32, 0.06), goldMat, 0, 0, -0.03);
     part(sh, Geo.box(0.85, 1.24, 0.1), flat(C.bronze, { metal: 0.35, rough: 0.6 }), 0, 0, 0.02);
@@ -154,18 +159,23 @@ export class Brute extends StandardEnemy {
         if (d <= BASH_RANGE && this.bashCd <= 0 && reach && this.sees && this.requestAttack('melee', 1.4)) {
           this.windTime = this.windup(BASH_WINDUP, 0.35);
           this.setState('bashWindup');
+          this.ctx.audio.play('enemy_alert', { position: this.position, volume: 0.5, pitch: 0.75 });
           break;
         }
-        if (this.chargeCd <= 0 && d >= 3.5 && d <= CHARGE_RANGE && reach && this.sees && this.directPathClear(pl.position)) {
-          if (this.requestAttack('melee', CHARGE_WINDUP + CHARGE_TIME + 1.8)) {
+        if (this.chargeCd <= 0 && d >= 3.5 && d <= CHARGE_RANGE && reach && this.sees) {
+          // 冲锋路线被挡时稍后再试（directPathClear 每次 4 条射线，不必逐帧查）
+          if (!this.directPathClear(pl.position)) {
+            this.chargeCd = 0.3;
+          } else if (this.requestAttack('melee', CHARGE_WINDUP + CHARGE_TIME + 1.8)) {
             this.windTime = this.windup(CHARGE_WINDUP, 0.6);
             this.setState('chargeWindup');
             this.ctx.audio.play('enemy_charge', { position: this.position, volume: 1 });
             break;
+          } else {
+            this.chargeCd = 0.6;
           }
-          this.chargeCd = 0.6;
         }
-        this.navigate(pl.position, this.speed, 1.8);
+        this.approachPlayer(this.speed, 1.8);
         if (d < 6) this.facePlayer(3, dt);
         else this.faceMovement(3.5, dt);
         break;

@@ -1,0 +1,162 @@
+{
+  "schema": 1,
+  "assetId": "SK_Weapon_Crossbow",
+  "source": {
+    "kind": "weapon",
+    "id": "crossbow"
+  },
+  "rig": "parts",
+  "space": {
+    "up": "+Y",
+    "forward": "+Z",
+    "unit": "m",
+    "origin": "model"
+  },
+  "bounds": {
+    "min": [
+      -0.19273784213706632,
+      -0.11022703214892009,
+      -0.39
+    ],
+    "max": [
+      0.19273784213706632,
+      0.15999999977648258,
+      0.2799999997764826
+    ]
+  },
+  "joints": [
+    {
+      "name": "j_r",
+      "parent": null,
+      "bindPosition": [
+        0,
+        0,
+        0
+      ],
+      "restLocal": [
+        0,
+        0,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0",
+      "parent": "j_r",
+      "bindPosition": [
+        0,
+        0.074,
+        -0.4
+      ],
+      "restLocal": [
+        0,
+        0.074,
+        -0.4
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_10",
+      "parent": "j_r",
+      "bindPosition": [
+        0,
+        0.074,
+        -0.24
+      ],
+      "restLocal": [
+        0,
+        0.074,
+        -0.24
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_11",
+      "parent": "j_r",
+      "bindPosition": [
+        0,
+        0.11,
+        -0.12
+      ],
+      "restLocal": [
+        0,
+        0.11,
+        -0.12
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    }
+  ],
+  "keep": [
+    "j_10",
+    "string_l",
+    "string_r"
+  ],
+  "fields": {
+    "muzzle": "j_0",
+    "mag": "j_11",
+    "bolt": "j_10"
+  },
+  "parts": {
+    "body_000": "body",
+    "body_001": "body",
+    "body_002": "body",
+    "body_003": "body",
+    "body_004": "body",
+    "glowfx_005": "glowfx",
+    "glowfx_006": "glowfx",
+    "attachment_007": "attachment",
+    "attachment_008": "attachment",
+    "attachment_009": "attachment",
+    "attachment_010": "attachment",
+    "attachment_011": "attachment",
+    "body_012": "body",
+    "body_013": "body",
+    "body_014": "body",
+    "body_015": "body",
+    "body_016": "body",
+    "body_017": "body",
+    "body_018": "body",
+    "body_019": "body",
+    "body_020": "body",
+    "body_021": "body",
+    "glowfx_022": "glowfx",
+    "glowfx_023": "glowfx"
+  },
+  "exportedAt": "2026-10-03T13:07:51.981Z"
+}

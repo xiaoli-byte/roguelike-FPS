@@ -1,0 +1,1531 @@
+{
+  "id": "SK_Enemy_Archer",
+  "display": "骨弩手",
+  "kind": "skeletal",
+  "class": "enemy_standard",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 16:40:17",
+          "files": {
+            "BO_SK_Enemy_Archer_v001.glb": {
+              "path": "00_blockout/BO_SK_Enemy_Archer_v001.glb",
+              "sha256": "f3f848878777e6d7b9db2415dd6fa55bfe25075b32e00d94fc129c0903ef0479"
+            },
+            "BO_SK_Enemy_Archer_v001.json": {
+              "path": "00_blockout/BO_SK_Enemy_Archer_v001.json",
+              "sha256": "0b1507e1ab2dd774d665662e963f1096ea8d01994786745d0cbe14c3e6a3405c"
+            },
+            "BO_SK_Enemy_Archer_v001_views.json": {
+              "path": "00_blockout/BO_SK_Enemy_Archer_v001_views.json",
+              "sha256": "b6116740a5f10bc818976291e8917766655d6ef02cc2bc9e65fd720557519c82"
+            },
+            "BO_SK_Enemy_Archer_v001_sheet.png": {
+              "path": "00_blockout/BO_SK_Enemy_Archer_v001_sheet.png",
+              "sha256": "3f2a8fead8a31d7a5e05179624f985a2ab94668b1710164958ba484022e3c267"
+            },
+            "BO_SK_Enemy_Archer_v001_front.png": {
+              "path": "00_blockout/BO_SK_Enemy_Archer_v001_front.png",
+              "sha256": "d3759e6a742ce44f4cb8d71f458a413242a48defaebe16745eb460d8ce010d8d"
+            },
+            "BO_SK_Enemy_Archer_v001_left.png": {
+              "path": "00_blockout/BO_SK_Enemy_Archer_v001_left.png",
+              "sha256": "68feb6bb74cac6d827bf1f344c5b1bddd479fb696863fe3b635799860d283d2b"
+            },
+            "BO_SK_Enemy_Archer_v001_back.png": {
+              "path": "00_blockout/BO_SK_Enemy_Archer_v001_back.png",
+              "sha256": "a6bcc044e4e92e59a4784b37330f71dfeae705a37eddb1350379ddcd8bcdf373"
+            },
+            "BO_SK_Enemy_Archer_v001_right.png": {
+              "path": "00_blockout/BO_SK_Enemy_Archer_v001_right.png",
+              "sha256": "32dadee1ff6ade181bf725ce3901dc5ef48a9cbf0b4238a5f53c2ea53b2705c7"
+            }
+          },
+          "source": {
+            "kind": "enemy",
+            "id": "archer"
+          },
+          "joints": 13,
+          "bounds": {
+            "min": [
+              -0.5395078208481247,
+              -8.046627253399663e-10,
+              -0.3053259716131719
+            ],
+            "max": [
+              0.5395078208481247,
+              1.900000001490116,
+              0.7599999991059303
+            ]
+          },
+          "blender_seconds": 5.3
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 16:41:37",
+          "files": {
+            "CN_SK_Enemy_Archer_v001_sheet.png": {
+              "path": "01_concept/CN_SK_Enemy_Archer_v001_sheet.png",
+              "sha256": "a7cf31506df096bccb1950f03725df6a8aa7c1917ffe6d63f03826117e223d7a"
+            },
+            "CN_SK_Enemy_Archer_v001_front.png": {
+              "path": "01_concept/CN_SK_Enemy_Archer_v001_front.png",
+              "sha256": "a52403abbafe0116c04761cfa394ec918a6afe7b109cc838a3dbc728eeed914f"
+            },
+            "CN_SK_Enemy_Archer_v001_left.png": {
+              "path": "01_concept/CN_SK_Enemy_Archer_v001_left.png",
+              "sha256": "4d81b74bd8f4032e919d08d74c6e1960fc7848092de5ae0c070d00cf936d7caf"
+            },
+            "CN_SK_Enemy_Archer_v001_back.png": {
+              "path": "01_concept/CN_SK_Enemy_Archer_v001_back.png",
+              "sha256": "cf6db0eb3c42ea46b3f53a72093b4c4c4e617283e5dc5f7f968a3f0f4b4733b1"
+            },
+            "CN_SK_Enemy_Archer_v001_right.png": {
+              "path": "01_concept/CN_SK_Enemy_Archer_v001_right.png",
+              "sha256": "f4f05974e8e5b0e008007a8227e8d01fd7e279e9c7c07ecde14dcb367ac4bdc3"
+            },
+            "CN_SK_Enemy_Archer_v001_compare.png": {
+              "path": "01_concept/CN_SK_Enemy_Archer_v001_compare.png",
+              "sha256": "036961e7a2a85e4b32d37a9d3320c23dc10513125f97a6a96192725cfb4794c5"
+            },
+            "CN_SK_Enemy_Archer_v001_prompt.txt": {
+              "path": "01_concept/CN_SK_Enemy_Archer_v001_prompt.txt",
+              "sha256": "048720bfe95e53df9a3bd886930cd69fd3288c8627062a8cf04095f042208dc0"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1910,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 452
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3090
+          },
+          "request_id": "req_d4e4f0e6a5f249d595f4cff65508ffed",
+          "seconds": 32.5,
+          "registration": {
+            "front": {
+              "scale": 0.936,
+              "offset": [
+                26,
+                110
+              ],
+              "iou": 0.814,
+              "iou_unregistered_scale": 0.936
+            },
+            "left": {
+              "scale": 0.947,
+              "offset": [
+                144,
+                110
+              ],
+              "iou": 0.624,
+              "iou_unregistered_scale": 0.947
+            },
+            "back": {
+              "scale": 0.9241,
+              "offset": [
+                28,
+                122
+              ],
+              "iou": 0.806,
+              "iou_unregistered_scale": 0.9382
+            },
+            "right": {
+              "scale": 0.947,
+              "offset": [
+                145,
+                110
+              ],
+              "iou": 0.624,
+              "iou_unregistered_scale": 0.947
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.815,
+            "left": 0.625,
+            "back": 0.807,
+            "right": 0.625
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "设计贴合；侧视图IoU 0.62因细骨架与箭袋条，正面0.81可用",
+            "time": "2026-10-03 16:42:44"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 16:46:16",
+          "files": {
+            "HP_SK_Enemy_Archer_v001_input.png": {
+              "path": "02_highpoly/HP_SK_Enemy_Archer_v001_input.png",
+              "sha256": "611f39ef815e9dd1f20e2ab535c75a61d78f66c524d592d5e3774993b81a6fdf"
+            },
+            "HP_SK_Enemy_Archer_v001.glb": {
+              "path": "02_highpoly/HP_SK_Enemy_Archer_v001.glb",
+              "sha256": "5add4c3f4ce54b983da90889eedacac80b86e88f483b5fa67dcf97f68aed3b2c"
+            }
+          },
+          "from_concept": 1,
+          "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+          "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "checkpoint": "hunyuan_3d_v2.1.safetensors",
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "crop": [
+              26,
+              110,
+              487,
+              914
+            ],
+            "scale": 1.082587064676617,
+            "offset": [
+              262,
+              77
+            ]
+          },
+          "seconds": 208.7,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 8.7
+        }
+      ]
+    },
+    "build": {
+      "current": 9,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 16:46:54",
+          "files": {
+            "SK_Enemy_Archer_v001.blend": {
+              "path": "03_work/SK_Enemy_Archer_v001.blend",
+              "sha256": "6dd6ee288d32ae6512f788768f2dbea21a2086438ebf4e840f7e6cb250c54dad"
+            },
+            "SK_Enemy_Archer_v001.glb": {
+              "path": "04_export/SK_Enemy_Archer_v001.glb",
+              "sha256": "316655bf5c6c8f8bc5b908902118d8c35423bc1221a08f669665960f7c8b917f"
+            },
+            "SK_Enemy_Archer_v001_metrics.json": {
+              "path": "03_work/SK_Enemy_Archer_v001_metrics.json",
+              "sha256": "960ca004e4cb3d23aefe1e5e654fc598c2ec4834b5525df8874170f00605ed07"
+            },
+            "T_Enemy_Archer_BC.png": {
+              "path": "03_work/textures_v001/T_Enemy_Archer_BC.png",
+              "sha256": "c8aaf6a2be1e7b354af789298ebacc25431f0d6d7229abfb8e4c8e489d650719"
+            },
+            "T_Enemy_Archer_N.png": {
+              "path": "03_work/textures_v001/T_Enemy_Archer_N.png",
+              "sha256": "37bf45bb87c2f946e9ceae2e40939658edb8f86550ce64c0d81199d128a46a47"
+            },
+            "T_Enemy_Archer_ORM.png": {
+              "path": "03_work/textures_v001/T_Enemy_Archer_ORM.png",
+              "sha256": "12274c434dc4fb76370b1a5986bcffa14e20ac31e45baccb21833a4512b6ab92"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1
+          },
+          "align_iou": 0.809,
+          "uncovered_ratio": 0.4665,
+          "lods": [
+            {
+              "tris": 8000,
+              "verts": 3950
+            },
+            {
+              "tris": 3500,
+              "verts": 1700
+            },
+            {
+              "tris": 1500,
+              "verts": 700
+            }
+          ],
+          "export_kb": 555.4,
+          "seconds": 38.6,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 17:10:18",
+          "files": {
+            "SK_Enemy_Archer_v002.blend": {
+              "path": "03_work/SK_Enemy_Archer_v002.blend",
+              "sha256": "aca3fa3b415ac02c1eeacc604a3d42f8b37035eda483bbdc3badfb13d939770c"
+            },
+            "SK_Enemy_Archer_v002.glb": {
+              "path": "04_export/SK_Enemy_Archer_v002.glb",
+              "sha256": "05dff631cee1c293145ed13ddf84856628adcc284d84d028b49b0d7f35373540"
+            },
+            "SK_Enemy_Archer_v002_metrics.json": {
+              "path": "03_work/SK_Enemy_Archer_v002_metrics.json",
+              "sha256": "ce88d53f82162238607b80773966db4d267da430b82e043e5249bc426b2c611a"
+            },
+            "T_Enemy_Archer_BC.png": {
+              "path": "03_work/textures_v002/T_Enemy_Archer_BC.png",
+              "sha256": "c8aaf6a2be1e7b354af789298ebacc25431f0d6d7229abfb8e4c8e489d650719"
+            },
+            "T_Enemy_Archer_N.png": {
+              "path": "03_work/textures_v002/T_Enemy_Archer_N.png",
+              "sha256": "37bf45bb87c2f946e9ceae2e40939658edb8f86550ce64c0d81199d128a46a47"
+            },
+            "T_Enemy_Archer_ORM.png": {
+              "path": "03_work/textures_v002/T_Enemy_Archer_ORM.png",
+              "sha256": "12274c434dc4fb76370b1a5986bcffa14e20ac31e45baccb21833a4512b6ab92"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1
+          },
+          "align_iou": 0.809,
+          "uncovered_ratio": 0.4665,
+          "lods": [
+            {
+              "tris": 8000,
+              "verts": 3950
+            },
+            {
+              "tris": 3500,
+              "verts": 1700
+            },
+            {
+              "tris": 1500,
+              "verts": 700
+            }
+          ],
+          "export_kb": 552.7,
+          "seconds": 29.7,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 17:14:11",
+          "files": {
+            "SK_Enemy_Archer_v003.blend": {
+              "path": "03_work/SK_Enemy_Archer_v003.blend",
+              "sha256": "96b213acade223b46028664880df4eb10a6fe3d7825471c945853ef92a995485"
+            },
+            "SK_Enemy_Archer_v003.glb": {
+              "path": "04_export/SK_Enemy_Archer_v003.glb",
+              "sha256": "01ce917ba55ab013d3f6dc031f28a0ec7885f956a4f27765f6f511ba98b7973c"
+            },
+            "SK_Enemy_Archer_v003_metrics.json": {
+              "path": "03_work/SK_Enemy_Archer_v003_metrics.json",
+              "sha256": "216dcdc299394ee06a25d9b648e422c4ec3a76b818310d8b0ee6fc23865c21f9"
+            },
+            "T_Enemy_Archer_BC.png": {
+              "path": "03_work/textures_v003/T_Enemy_Archer_BC.png",
+              "sha256": "c8aaf6a2be1e7b354af789298ebacc25431f0d6d7229abfb8e4c8e489d650719"
+            },
+            "T_Enemy_Archer_N.png": {
+              "path": "03_work/textures_v003/T_Enemy_Archer_N.png",
+              "sha256": "37bf45bb87c2f946e9ceae2e40939658edb8f86550ce64c0d81199d128a46a47"
+            },
+            "T_Enemy_Archer_ORM.png": {
+              "path": "03_work/textures_v003/T_Enemy_Archer_ORM.png",
+              "sha256": "12274c434dc4fb76370b1a5986bcffa14e20ac31e45baccb21833a4512b6ab92"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1
+          },
+          "align_iou": 0.809,
+          "uncovered_ratio": 0.4665,
+          "lods": [
+            {
+              "tris": 8000,
+              "verts": 3950
+            },
+            {
+              "tris": 3500,
+              "verts": 1700
+            },
+            {
+              "tris": 1500,
+              "verts": 700
+            }
+          ],
+          "export_kb": 552.4,
+          "seconds": 30.0,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 17:57:16",
+          "files": {
+            "SK_Enemy_Archer_v004.blend": {
+              "path": "03_work/SK_Enemy_Archer_v004.blend",
+              "sha256": "f0a1ebf87a844af680b7162aea21722d1802818e24b52b0df6ee4f2c6905a745"
+            },
+            "SK_Enemy_Archer_v004.glb": {
+              "path": "04_export/SK_Enemy_Archer_v004.glb",
+              "sha256": "ba41db45d4ea506232be51b6d1f78676dad0e72f8d25f733a417e53dfd6e6560"
+            },
+            "SK_Enemy_Archer_v004_metrics.json": {
+              "path": "03_work/SK_Enemy_Archer_v004_metrics.json",
+              "sha256": "fbfaa6bd6930c7990652acca922eeb040f74ff4be419a9f6aaf9770604be8220"
+            },
+            "T_Enemy_Archer_BC.png": {
+              "path": "03_work/textures_v004/T_Enemy_Archer_BC.png",
+              "sha256": "c8aaf6a2be1e7b354af789298ebacc25431f0d6d7229abfb8e4c8e489d650719"
+            },
+            "T_Enemy_Archer_MetalMask.png": {
+              "path": "03_work/textures_v004/T_Enemy_Archer_MetalMask.png",
+              "sha256": "3edbd88a550914ef1cf6d3bd2e59811a8d75889f41cd230cb242e02aabceb330"
+            },
+            "T_Enemy_Archer_N.png": {
+              "path": "03_work/textures_v004/T_Enemy_Archer_N.png",
+              "sha256": "37bf45bb87c2f946e9ceae2e40939658edb8f86550ce64c0d81199d128a46a47"
+            },
+            "T_Enemy_Archer_ORM.png": {
+              "path": "03_work/textures_v004/T_Enemy_Archer_ORM.png",
+              "sha256": "6b261e038548cdc3fe415b4b4d3c8e5aaca0f94d7bbfcde1fee97e22b60488ea"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 3
+          },
+          "align_iou": 0.809,
+          "uncovered_ratio": 0.4665,
+          "lods": [
+            {
+              "tris": 8000,
+              "verts": 3950
+            },
+            {
+              "tris": 3500,
+              "verts": 1700
+            },
+            {
+              "tris": 1500,
+              "verts": 700
+            }
+          ],
+          "export_kb": 554.1,
+          "seconds": 36.2,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 5,
+          "created": "2026-10-03 18:33:02",
+          "files": {
+            "SK_Enemy_Archer_v005.blend": {
+              "path": "03_work/SK_Enemy_Archer_v005.blend",
+              "sha256": "9f9ed3ffc5afc161d13067014032cbbaccc1252fa7eef3eced5c7e231aa81214"
+            },
+            "SK_Enemy_Archer_v005.glb": {
+              "path": "04_export/SK_Enemy_Archer_v005.glb",
+              "sha256": "3c9f5dd5f0c0a00a0581249265c8078094e0fcd01ea4e43dd217c3b0e247e037"
+            },
+            "SK_Enemy_Archer_v005_metrics.json": {
+              "path": "03_work/SK_Enemy_Archer_v005_metrics.json",
+              "sha256": "a163f4c8a55c11536befc1b4e15a9ec956be2d71b33175697de5687c06964279"
+            },
+            "T_Enemy_Archer_BC.png": {
+              "path": "03_work/textures_v005/T_Enemy_Archer_BC.png",
+              "sha256": "c8aaf6a2be1e7b354af789298ebacc25431f0d6d7229abfb8e4c8e489d650719"
+            },
+            "T_Enemy_Archer_MetalMask.png": {
+              "path": "03_work/textures_v005/T_Enemy_Archer_MetalMask.png",
+              "sha256": "3edbd88a550914ef1cf6d3bd2e59811a8d75889f41cd230cb242e02aabceb330"
+            },
+            "T_Enemy_Archer_N.png": {
+              "path": "03_work/textures_v005/T_Enemy_Archer_N.png",
+              "sha256": "37bf45bb87c2f946e9ceae2e40939658edb8f86550ce64c0d81199d128a46a47"
+            },
+            "T_Enemy_Archer_ORM.png": {
+              "path": "03_work/textures_v005/T_Enemy_Archer_ORM.png",
+              "sha256": "6b261e038548cdc3fe415b4b4d3c8e5aaca0f94d7bbfcde1fee97e22b60488ea"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 3
+          },
+          "align_iou": 0.809,
+          "uncovered_ratio": 0.4665,
+          "lods": [
+            {
+              "tris": 8000,
+              "verts": 3950
+            },
+            {
+              "tris": 3500,
+              "verts": 1700
+            },
+            {
+              "tris": 1500,
+              "verts": 700
+            }
+          ],
+          "export_kb": 545.5,
+          "seconds": 34.9,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 6,
+          "created": "2026-10-03 19:45:56",
+          "files": {
+            "SK_Enemy_Archer_v006.blend": {
+              "path": "03_work/SK_Enemy_Archer_v006.blend",
+              "sha256": "ad50eaa538336175da95b830de7cd082079279f3137386edbf131dec762a9218"
+            },
+            "SK_Enemy_Archer_v006.glb": {
+              "path": "04_export/SK_Enemy_Archer_v006.glb",
+              "sha256": "c4839b7cf98a4f29c0326c06dbbe9a6a3c402a3c6f4cb5e095289110b4f8de20"
+            },
+            "SK_Enemy_Archer_v006_metrics.json": {
+              "path": "03_work/SK_Enemy_Archer_v006_metrics.json",
+              "sha256": "49536d4dc8709984443a64dfa5482c328862a461bfcb05970c531a23dd2e8bf4"
+            },
+            "T_Enemy_Archer_BC.png": {
+              "path": "03_work/textures_v006/T_Enemy_Archer_BC.png",
+              "sha256": "64d96dba264aa945196f4b5a72154f6458ad5598069db0cd356a2161aea21918"
+            },
+            "T_Enemy_Archer_MetalMask.png": {
+              "path": "03_work/textures_v006/T_Enemy_Archer_MetalMask.png",
+              "sha256": "55d68662ee7260b17c977cc32c0236cd0808386ae73a8877b082b6d75044864a"
+            },
+            "T_Enemy_Archer_N.png": {
+              "path": "03_work/textures_v006/T_Enemy_Archer_N.png",
+              "sha256": "aeca1d8d7d86872a29ac69acd7a811cf906dec896c03d6e8d6a3eb30680374f7"
+            },
+            "T_Enemy_Archer_ORM.png": {
+              "path": "03_work/textures_v006/T_Enemy_Archer_ORM.png",
+              "sha256": "645be64b431599162238a521d5385019e64ece125f63b12b7a3c789fa7a01250"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 3
+          },
+          "align_iou": 0.809,
+          "uncovered_ratio": 0.4665,
+          "lods": [
+            {
+              "tris": 8000,
+              "verts": 3950
+            },
+            {
+              "tris": 3500,
+              "verts": 1700
+            },
+            {
+              "tris": 1500,
+              "verts": 700
+            }
+          ],
+          "export_kb": 418.3,
+          "seconds": 39.4,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 7,
+          "created": "2026-10-03 19:48:03",
+          "files": {
+            "SK_Enemy_Archer_v007.blend": {
+              "path": "03_work/SK_Enemy_Archer_v007.blend",
+              "sha256": "84f2ad6db218cebb8774da8e09cc6c31cd278fc0094e7a286dfff0db6b8e5623"
+            },
+            "SK_Enemy_Archer_v007.glb": {
+              "path": "04_export/SK_Enemy_Archer_v007.glb",
+              "sha256": "e08d551cbff99ef8d72d2e256b3a6e7b7bd7bd475704791a0edfdbe97f59c47e"
+            },
+            "SK_Enemy_Archer_v007_metrics.json": {
+              "path": "03_work/SK_Enemy_Archer_v007_metrics.json",
+              "sha256": "8a2cb8f61e4545e4a0c80f90a2ec14ad5a6d263648ba04b3810b63ee36035aff"
+            },
+            "T_Enemy_Archer_BC.png": {
+              "path": "03_work/textures_v007/T_Enemy_Archer_BC.png",
+              "sha256": "fa748382dbec7be0b1954284f9e053e2e3ede5aeb863a0c56fc12d0d773e9995"
+            },
+            "T_Enemy_Archer_MetalMask.png": {
+              "path": "03_work/textures_v007/T_Enemy_Archer_MetalMask.png",
+              "sha256": "20fe9a0c30230bcdcc7d4daea39c538ed10f243ed792977d9c1e1bfb65f234aa"
+            },
+            "T_Enemy_Archer_N.png": {
+              "path": "03_work/textures_v007/T_Enemy_Archer_N.png",
+              "sha256": "832b3e1607af10c61fd1322e58292508c41e1c4aa59e3f76c4978b87cda92d79"
+            },
+            "T_Enemy_Archer_ORM.png": {
+              "path": "03_work/textures_v007/T_Enemy_Archer_ORM.png",
+              "sha256": "9bd696bbb93327a9ab2f915f5b3635ad7ca61e3b05d0fd24b263f739e296445a"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 3
+          },
+          "align_iou": 0.809,
+          "uncovered_ratio": 0.4665,
+          "lods": [
+            {
+              "tris": 8000,
+              "verts": 3950
+            },
+            {
+              "tris": 3500,
+              "verts": 1700
+            },
+            {
+              "tris": 1500,
+              "verts": 700
+            }
+          ],
+          "export_kb": 394.8,
+          "seconds": 44.8,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 8,
+          "created": "2026-10-03 19:50:11",
+          "files": {
+            "SK_Enemy_Archer_v008.blend": {
+              "path": "03_work/SK_Enemy_Archer_v008.blend",
+              "sha256": "f862c4fe70325722079321b06e9c972ed4dfd7c8af1b6abc50cbdcc46e16106e"
+            },
+            "SK_Enemy_Archer_v008.glb": {
+              "path": "04_export/SK_Enemy_Archer_v008.glb",
+              "sha256": "e08d551cbff99ef8d72d2e256b3a6e7b7bd7bd475704791a0edfdbe97f59c47e"
+            },
+            "SK_Enemy_Archer_v008_metrics.json": {
+              "path": "03_work/SK_Enemy_Archer_v008_metrics.json",
+              "sha256": "7c3e01c3a16246874f0d77858f92147022d6f33e609fc1998a559d9d3d57c6d2"
+            },
+            "T_Enemy_Archer_BC.png": {
+              "path": "03_work/textures_v008/T_Enemy_Archer_BC.png",
+              "sha256": "fa748382dbec7be0b1954284f9e053e2e3ede5aeb863a0c56fc12d0d773e9995"
+            },
+            "T_Enemy_Archer_MetalMask.png": {
+              "path": "03_work/textures_v008/T_Enemy_Archer_MetalMask.png",
+              "sha256": "20fe9a0c30230bcdcc7d4daea39c538ed10f243ed792977d9c1e1bfb65f234aa"
+            },
+            "T_Enemy_Archer_N.png": {
+              "path": "03_work/textures_v008/T_Enemy_Archer_N.png",
+              "sha256": "832b3e1607af10c61fd1322e58292508c41e1c4aa59e3f76c4978b87cda92d79"
+            },
+            "T_Enemy_Archer_ORM.png": {
+              "path": "03_work/textures_v008/T_Enemy_Archer_ORM.png",
+              "sha256": "9bd696bbb93327a9ab2f915f5b3635ad7ca61e3b05d0fd24b263f739e296445a"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 3
+          },
+          "align_iou": 0.809,
+          "uncovered_ratio": 0.4665,
+          "lods": [
+            {
+              "tris": 8000,
+              "verts": 3950
+            },
+            {
+              "tris": 3500,
+              "verts": 1700
+            },
+            {
+              "tris": 1500,
+              "verts": 700
+            }
+          ],
+          "export_kb": 394.8,
+          "seconds": 46.5,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 9,
+          "created": "2026-10-03 20:13:04",
+          "files": {
+            "SK_Enemy_Archer_v009.blend": {
+              "path": "03_work/SK_Enemy_Archer_v009.blend",
+              "sha256": "981014b6ed8c348196e9f9e78964d6cc66f688d83f13a35d7657ac087dc2c0e0"
+            },
+            "SK_Enemy_Archer_v009.glb": {
+              "path": "04_export/SK_Enemy_Archer_v009.glb",
+              "sha256": "e0df5f5c044ac828611c82d2e6630ac025839e78a4498a9a9fd5b8611f03f162"
+            },
+            "SK_Enemy_Archer_v009_metrics.json": {
+              "path": "03_work/SK_Enemy_Archer_v009_metrics.json",
+              "sha256": "cc13d892f0cd9a02dc000c589813c64dc5b3736234bc9d3b6ff62690ca1e4aca"
+            },
+            "T_Enemy_Archer_BC.png": {
+              "path": "03_work/textures_v009/T_Enemy_Archer_BC.png",
+              "sha256": "cce2f27eb02249e660ca0f18069e2e9d67c0603e00109337767c639dcec750ae"
+            },
+            "T_Enemy_Archer_MetalMask.png": {
+              "path": "03_work/textures_v009/T_Enemy_Archer_MetalMask.png",
+              "sha256": "41b25060d934f7516a4cf2791030c18b43dbb6745bb2caad8eab99de1b3d6985"
+            },
+            "T_Enemy_Archer_N.png": {
+              "path": "03_work/textures_v009/T_Enemy_Archer_N.png",
+              "sha256": "1afe9bcb3592b7fcfc1a393b13780cbecdca1290c9dd8ff8579179425c6397c4"
+            },
+            "T_Enemy_Archer_ORM.png": {
+              "path": "03_work/textures_v009/T_Enemy_Archer_ORM.png",
+              "sha256": "80f3951d8f987e548d72c8cfd516098664350d66470c9b5aaa04933c84f7c085"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 3
+          },
+          "align_iou": 0.809,
+          "uncovered_ratio": 0.4665,
+          "lods": [
+            {
+              "tris": 8000,
+              "verts": 3950
+            },
+            {
+              "tris": 3500,
+              "verts": 1700
+            },
+            {
+              "tris": 1500,
+              "verts": 700
+            }
+          ],
+          "export_kb": 388.2,
+          "seconds": 36.3,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 8,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 16:46:54",
+          "files": {
+            "SK_Enemy_Archer_v001_validation.json": {
+              "path": "05_review/SK_Enemy_Archer_v001_validation.json",
+              "sha256": "459a185096430b744777c0878b594d1771c9c2f978ae16d736a694ae86ab3772"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 2,
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 17:10:18",
+          "files": {
+            "SK_Enemy_Archer_v002_validation.json": {
+              "path": "05_review/SK_Enemy_Archer_v002_validation.json",
+              "sha256": "a28139ea9a1ecadd6a920aeb011b0f4cea40f3fc53ed68d94632675ee0ba7e0d"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 2,
+          "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 17:14:11",
+          "files": {
+            "SK_Enemy_Archer_v003_validation.json": {
+              "path": "05_review/SK_Enemy_Archer_v003_validation.json",
+              "sha256": "00ad3f4aa57cb78cad066e603187138b5e434add3bb6f309fd564ebbebf941de"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 2,
+          "passed": true
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 17:57:16",
+          "files": {
+            "SK_Enemy_Archer_v004_validation.json": {
+              "path": "05_review/SK_Enemy_Archer_v004_validation.json",
+              "sha256": "a78ab0d202cfd2e5b6aaa03017ce5cb7da5e2ae040422f2b60c48668d462692f"
+            }
+          },
+          "from_build": 4,
+          "errors": 0,
+          "warnings": 2,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 5,
+          "created": "2026-10-03 18:33:02",
+          "files": {
+            "SK_Enemy_Archer_v005_validation.json": {
+              "path": "05_review/SK_Enemy_Archer_v005_validation.json",
+              "sha256": "d17913178ff796ebe80ee0d83f37659087c49aa8b4d36138a7a63f6b412dc7c0"
+            }
+          },
+          "from_build": 5,
+          "errors": 0,
+          "warnings": 2,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 6,
+          "created": "2026-10-03 19:45:56",
+          "files": {
+            "SK_Enemy_Archer_v006_validation.json": {
+              "path": "05_review/SK_Enemy_Archer_v006_validation.json",
+              "sha256": "d6877d08aaa912683f291e73d4c24e5b91ae5bc592f40f5e992b01222789c9f7"
+            }
+          },
+          "from_build": 6,
+          "errors": 0,
+          "warnings": 2,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 7,
+          "created": "2026-10-03 19:50:11",
+          "files": {
+            "SK_Enemy_Archer_v008_validation.json": {
+              "path": "05_review/SK_Enemy_Archer_v008_validation.json",
+              "sha256": "181b90ccb10e5cfc62b7e797efd10969902b3cae6c6f9b8423f5fbf18c93f159"
+            }
+          },
+          "from_build": 8,
+          "errors": 0,
+          "warnings": 2,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 8,
+          "created": "2026-10-03 20:13:04",
+          "files": {
+            "SK_Enemy_Archer_v009_validation.json": {
+              "path": "05_review/SK_Enemy_Archer_v009_validation.json",
+              "sha256": "48211d2abc5fcfece1cabfcbe1df249f3632e25fbf81f1cbcac86bf8952557bc"
+            }
+          },
+          "from_build": 9,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 8,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 16:47:03",
+          "files": {
+            "SK_Enemy_Archer_v001_review.png": {
+              "path": "05_review/SK_Enemy_Archer_v001_review.png",
+              "sha256": "ea1a38f05e072ed809aac47c7249f61a0602be5ff20af637a2acb656a4101890"
+            }
+          },
+          "from_build": 1,
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "骷髅/兜帽/斗篷还原度高；UV利用率34%偏低（细骨头小岛多），后续可优化打包",
+            "time": "2026-10-03 16:49:40"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 17:10:27",
+          "files": {
+            "SK_Enemy_Archer_v002_review.png": {
+              "path": "05_review/SK_Enemy_Archer_v002_review.png",
+              "sha256": "7c506b5fe71dbdecbf13e57bd28200416a926657f0bb2aec7aecf832dad9989f"
+            }
+          },
+          "from_build": 2
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 17:14:20",
+          "files": {
+            "SK_Enemy_Archer_v003_review.png": {
+              "path": "05_review/SK_Enemy_Archer_v003_review.png",
+              "sha256": "17cada48edb56764abbf4c78900205c07636001a05fa4fd15f7ae7a54b4f1742"
+            }
+          },
+          "from_build": 3,
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "终版管线重建（刚性头部+衣摆平均+代理权重传递）；四个姿势形变正常",
+            "time": "2026-10-03 17:16:31"
+          }
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 17:57:25",
+          "files": {
+            "SK_Enemy_Archer_v004_review.png": {
+              "path": "05_review/SK_Enemy_Archer_v004_review.png",
+              "sha256": "f7fd53ca71c288ba2d1b67ca5b96555ea2a9435d38bea25c7423b92865737d69"
+            }
+          },
+          "from_build": 4,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0005,
+              "stretch_ratio": 0.0004,
+              "p99_stretch": 1.14,
+              "p1_compress": 0.825
+            },
+            "walk": {
+              "bad_edge_ratio": 0.0019,
+              "stretch_ratio": 0.0016,
+              "p99_stretch": 1.237,
+              "p1_compress": 0.754
+            },
+            "attack": {
+              "bad_edge_ratio": 0.0488,
+              "stretch_ratio": 0.0033,
+              "p99_stretch": 1.327,
+              "p1_compress": 0.341
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "材质分区（红蓝编码遮罩）重建：金属/非金属分区正确；姿势形变正常（Brute 形变提示位于腰甲与腿交界，可接受）",
+            "time": "2026-10-03 18:02:20"
+          }
+        },
+        {
+          "version": 5,
+          "created": "2026-10-03 18:33:40",
+          "files": {
+            "SK_Enemy_Archer_v005_review.png": {
+              "path": "05_review/SK_Enemy_Archer_v005_review.png",
+              "sha256": "70de7bb181b564f44144fc48b2e33cf4d09d0dbfd1943a30b51bb38a2fb625e6"
+            }
+          },
+          "from_build": 5,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0015,
+              "stretch_ratio": 0.0012,
+              "p99_stretch": 1.13,
+              "p1_compress": 0.914
+            },
+            "walk": {
+              "bad_edge_ratio": 0.0044,
+              "stretch_ratio": 0.004,
+              "p99_stretch": 1.337,
+              "p1_compress": 0.803
+            },
+            "attack": {
+              "bad_edge_ratio": 0.0119,
+              "stretch_ratio": 0.0092,
+              "p99_stretch": 1.731,
+              "p1_compress": 0.762
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "修复手臂影响范围（arm_radius 0.09）：右上臂不再带动半边肋骨与斗篷；骨弩瞄准姿势改为手部 IK 握持",
+            "time": "2026-10-03 18:34:07"
+          }
+        },
+        {
+          "version": 6,
+          "created": "2026-10-03 19:46:04",
+          "files": {
+            "SK_Enemy_Archer_v006_review.png": {
+              "path": "05_review/SK_Enemy_Archer_v006_review.png",
+              "sha256": "ab225c68eb26fbb6c6e3eb00cbcc8065f87d5b45eccdf661369c5ecab5920be4"
+            }
+          },
+          "from_build": 6,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0015,
+              "stretch_ratio": 0.0012,
+              "p99_stretch": 1.128,
+              "p1_compress": 0.922,
+              "stretch_pairs": {
+                "elbowR ↔ elbowR": 11,
+                "hips ↔ hips": 4,
+                "elbowR ↔ hips": 1,
+                "armL ↔ armL": 1
+              }
+            },
+            "walk": {
+              "bad_edge_ratio": 0.0038,
+              "stretch_ratio": 0.0035,
+              "p99_stretch": 1.312,
+              "p1_compress": 0.804,
+              "stretch_pairs": {
+                "elbowR ↔ elbowR": 23,
+                "elbowR ↔ hips": 8,
+                "hips ↔ hips": 7,
+                "torso ↔ torso": 6,
+                "armL ↔ armL": 3,
+                "armL ↔ torso": 1
+              }
+            },
+            "attack": {
+              "bad_edge_ratio": 0.0114,
+              "stretch_ratio": 0.0088,
+              "p99_stretch": 1.717,
+              "p1_compress": 0.766,
+              "stretch_pairs": {
+                "elbowR ↔ elbowR": 41,
+                "armR ↔ torso": 24,
+                "torso ↔ torso": 19,
+                "hips ↔ hips": 13,
+                "elbowR ↔ hips": 11,
+                "armR ↔ armR": 9
+              }
+            }
+          },
+          "auto_flags": []
+        },
+        {
+          "version": 7,
+          "created": "2026-10-03 19:50:20",
+          "files": {
+            "SK_Enemy_Archer_v008_review.png": {
+              "path": "05_review/SK_Enemy_Archer_v008_review.png",
+              "sha256": "421183ce657fba6ba5a78c8dd31a6c53919518cafd5972627694914a0e374d49"
+            }
+          },
+          "from_build": 8,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0015,
+              "stretch_ratio": 0.0012,
+              "p99_stretch": 1.125,
+              "p1_compress": 0.925,
+              "stretch_pairs": {
+                "elbowR ↔ elbowR": 11,
+                "hips ↔ hips": 3,
+                "elbowR ↔ hips": 1,
+                "armL ↔ armL": 1
+              }
+            },
+            "walk": {
+              "bad_edge_ratio": 0.0038,
+              "stretch_ratio": 0.0035,
+              "p99_stretch": 1.305,
+              "p1_compress": 0.802,
+              "stretch_pairs": {
+                "elbowR ↔ elbowR": 23,
+                "elbowR ↔ hips": 8,
+                "hips ↔ hips": 6,
+                "torso ↔ torso": 5,
+                "armL ↔ armL": 3,
+                "armL ↔ torso": 1
+              }
+            },
+            "attack": {
+              "bad_edge_ratio": 0.0113,
+              "stretch_ratio": 0.0086,
+              "p99_stretch": 1.691,
+              "p1_compress": 0.766,
+              "stretch_pairs": {
+                "elbowR ↔ elbowR": 38,
+                "armR ↔ torso": 24,
+                "torso ↔ torso": 18,
+                "hips ↔ hips": 12,
+                "elbowR ↔ hips": 10,
+                "armR ↔ armR": 8
+              }
+            }
+          },
+          "auto_flags": []
+        },
+        {
+          "version": 8,
+          "created": "2026-10-03 20:13:13",
+          "files": {
+            "SK_Enemy_Archer_v009_review.png": {
+              "path": "05_review/SK_Enemy_Archer_v009_review.png",
+              "sha256": "4b1911194ee640bfe962d783efee3ef2979281139a6729b5a3759b747dd3f2fd"
+            }
+          },
+          "from_build": 9,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0015,
+              "stretch_ratio": 0.0012,
+              "p99_stretch": 1.125,
+              "p1_compress": 0.926,
+              "stretch_pairs": {
+                "elbowR ↔ elbowR": 11,
+                "hips ↔ hips": 3,
+                "elbowR ↔ hips": 1,
+                "armL ↔ armL": 1
+              }
+            },
+            "walk": {
+              "bad_edge_ratio": 0.0038,
+              "stretch_ratio": 0.0035,
+              "p99_stretch": 1.305,
+              "p1_compress": 0.803,
+              "stretch_pairs": {
+                "elbowR ↔ elbowR": 23,
+                "elbowR ↔ hips": 8,
+                "hips ↔ hips": 6,
+                "torso ↔ torso": 5,
+                "armL ↔ armL": 3,
+                "armL ↔ torso": 1
+              }
+            },
+            "attack": {
+              "bad_edge_ratio": 0.0112,
+              "stretch_ratio": 0.0086,
+              "p99_stretch": 1.692,
+              "p1_compress": 0.767,
+              "stretch_pairs": {
+                "elbowR ↔ elbowR": 38,
+                "armR ↔ torso": 24,
+                "torso ↔ torso": 18,
+                "hips ↔ hips": 12,
+                "elbowR ↔ hips": 10,
+                "armR ↔ armR": 8
+              }
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "UV 两方案择优重建（纹素密度不低于上一发布版）；几何、蒙皮与上一已审版本一致",
+            "time": "2026-10-03 20:37:32"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 5,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 16:49:40",
+          "files": {
+            "SK_Enemy_Archer.glb": {
+              "path": "@root/public/assets/characters/SK_Enemy_Archer.glb",
+              "sha256": "316655bf5c6c8f8bc5b908902118d8c35423bc1221a08f669665960f7c8b917f"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/characters/SK_Enemy_Archer.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 17:16:32",
+          "files": {
+            "SK_Enemy_Archer.glb": {
+              "path": "@root/public/assets/characters/SK_Enemy_Archer.glb",
+              "sha256": "01ce917ba55ab013d3f6dc031f28a0ec7885f956a4f27765f6f511ba98b7973c"
+            }
+          },
+          "from_build": 3,
+          "url": "assets/characters/SK_Enemy_Archer.glb"
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 18:02:22",
+          "files": {
+            "SK_Enemy_Archer.glb": {
+              "path": "@root/public/assets/characters/SK_Enemy_Archer.glb",
+              "sha256": "ba41db45d4ea506232be51b6d1f78676dad0e72f8d25f733a417e53dfd6e6560"
+            }
+          },
+          "from_build": 4,
+          "url": "assets/characters/SK_Enemy_Archer.glb"
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 18:34:08",
+          "files": {
+            "SK_Enemy_Archer.glb": {
+              "path": "@root/public/assets/characters/SK_Enemy_Archer.glb",
+              "sha256": "3c9f5dd5f0c0a00a0581249265c8078094e0fcd01ea4e43dd217c3b0e247e037"
+            }
+          },
+          "from_build": 5,
+          "url": "assets/characters/SK_Enemy_Archer.glb"
+        },
+        {
+          "version": 5,
+          "created": "2026-10-03 20:37:33",
+          "files": {
+            "SK_Enemy_Archer.glb": {
+              "path": "@root/public/assets/characters/SK_Enemy_Archer.glb",
+              "sha256": "e0df5f5c044ac828611c82d2e6630ac025839e78a4498a9a9fd5b8611f03f162"
+            }
+          },
+          "from_build": 9,
+          "url": "assets/characters/SK_Enemy_Archer.glb"
+        }
+      ]
+    },
+    "matid": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:46:13",
+          "files": {
+            "MID_SK_Enemy_Archer_v001_sheet.png": {
+              "path": "01_concept/MID_SK_Enemy_Archer_v001_sheet.png",
+              "sha256": "039753607568fa4f04cd53e6db45d5fd66c9056395034a13a63f09d611106286"
+            },
+            "MID_SK_Enemy_Archer_v001_front.png": {
+              "path": "01_concept/MID_SK_Enemy_Archer_v001_front.png",
+              "sha256": "c8f5a4f564b4e1dcd6d6a8732498031632dfade95f7c5e8d1a5ca4b764eda23e"
+            },
+            "MID_SK_Enemy_Archer_v001_left.png": {
+              "path": "01_concept/MID_SK_Enemy_Archer_v001_left.png",
+              "sha256": "60e075c6fea3ae02f848f30975d12683003fbf0b77b5ca8cd64c3418cfaf03fe"
+            },
+            "MID_SK_Enemy_Archer_v001_back.png": {
+              "path": "01_concept/MID_SK_Enemy_Archer_v001_back.png",
+              "sha256": "9b9a9d606bd5f01d965de5693006439315c68d9c9cef029f37f58ff72175e445"
+            },
+            "MID_SK_Enemy_Archer_v001_right.png": {
+              "path": "01_concept/MID_SK_Enemy_Archer_v001_right.png",
+              "sha256": "8c751d0ac365ff434625d98e744f759be1bc6f3440e2bcc81a419478c4ef063d"
+            },
+            "MID_SK_Enemy_Archer_v001_compare.png": {
+              "path": "01_concept/MID_SK_Enemy_Archer_v001_compare.png",
+              "sha256": "7ffd6edebd721952fb38f0b3d9d0dd2ed14524924581699c8b1c1451c33c48b4"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1622,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 164
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2802
+          },
+          "request_id": "req_ab69ec9b96934e1c93e928cdbcd4b052",
+          "seconds": 27.5,
+          "registration": {
+            "front": {
+              "scale": 0.9306,
+              "offset": [
+                26,
+                110
+              ],
+              "iou": 0.963,
+              "iou_unregistered_scale": 0.9306
+            },
+            "left": {
+              "scale": 0.9403,
+              "offset": [
+                142,
+                110
+              ],
+              "iou": 0.939,
+              "iou_unregistered_scale": 0.9403
+            },
+            "back": {
+              "scale": 0.9176,
+              "offset": [
+                27,
+                122
+              ],
+              "iou": 0.954,
+              "iou_unregistered_scale": 0.9176
+            },
+            "right": {
+              "scale": 0.9404,
+              "offset": [
+                142,
+                110
+              ],
+              "iou": 0.942,
+              "iou_unregistered_scale": 0.9404
+            }
+          },
+          "metal_ratio": {
+            "front": 0.169,
+            "left": 0.116,
+            "back": 0.036,
+            "right": 0.11
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 17:47:59",
+          "files": {
+            "MID_SK_Enemy_Archer_v002_sheet.png": {
+              "path": "01_concept/MID_SK_Enemy_Archer_v002_sheet.png",
+              "sha256": "d2242d184cf00a27e8ec74281f7500e44a6a3aa46704fb6271d2f8ed78a2ced6"
+            },
+            "MID_SK_Enemy_Archer_v002_front.png": {
+              "path": "01_concept/MID_SK_Enemy_Archer_v002_front.png",
+              "sha256": "d4409949eb400a739f38530e7e7e17cf0216dbd11703dee002642a747ccd7ecb"
+            },
+            "MID_SK_Enemy_Archer_v002_left.png": {
+              "path": "01_concept/MID_SK_Enemy_Archer_v002_left.png",
+              "sha256": "d37e5b4285092f153ee78b01d4d4f052fac130ed81e9d1f636e0dda29c90535d"
+            },
+            "MID_SK_Enemy_Archer_v002_back.png": {
+              "path": "01_concept/MID_SK_Enemy_Archer_v002_back.png",
+              "sha256": "6c2852ee4efd52e6bbde04050ca6633a606bb9d2c15c76b4e0e63774e9bc97c9"
+            },
+            "MID_SK_Enemy_Archer_v002_right.png": {
+              "path": "01_concept/MID_SK_Enemy_Archer_v002_right.png",
+              "sha256": "ef5d994f6ce555d230c750424be74528d19ae89ba80adb1dc0f8c14512804fce"
+            },
+            "MID_SK_Enemy_Archer_v002_compare.png": {
+              "path": "01_concept/MID_SK_Enemy_Archer_v002_compare.png",
+              "sha256": "96ec2622626868eb89cf0a90d7a7e6533c881cc4ce35fe143668186628a5a6c3"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1653,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 195
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2833
+          },
+          "request_id": "req_021188a4867c41809b09c4a6e02bb6b8",
+          "seconds": 30.7,
+          "registration": {
+            "front": {
+              "scale": 0.9306,
+              "offset": [
+                24,
+                110
+              ],
+              "iou": 0.953,
+              "iou_unregistered_scale": 0.9306,
+              "purity": 0.941
+            },
+            "left": {
+              "scale": 0.937,
+              "offset": [
+                142,
+                110
+              ],
+              "iou": 0.951,
+              "iou_unregistered_scale": 0.937,
+              "purity": 0.942
+            },
+            "back": {
+              "scale": 0.9145,
+              "offset": [
+                26,
+                122
+              ],
+              "iou": 0.931,
+              "iou_unregistered_scale": 0.9145,
+              "purity": 0.993
+            },
+            "right": {
+              "scale": 0.9382,
+              "offset": [
+                142,
+                110
+              ],
+              "iou": 0.943,
+              "iou_unregistered_scale": 0.9382,
+              "purity": 0.932
+            }
+          },
+          "metal_ratio": {
+            "front": 0.031,
+            "left": 0.058,
+            "back": 0.047,
+            "right": 0.057
+          }
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 17:49:28",
+          "files": {
+            "MID_SK_Enemy_Archer_v003_sheet.png": {
+              "path": "01_concept/MID_SK_Enemy_Archer_v003_sheet.png",
+              "sha256": "f00b96fa748e5f007f46355f4b8ca8d3b957416415e8bfb31566902375cf1f5c"
+            },
+            "MID_SK_Enemy_Archer_v003_front.png": {
+              "path": "01_concept/MID_SK_Enemy_Archer_v003_front.png",
+              "sha256": "a9b6c5e07eb6c509e0d0f6a225ad5745ec57cae1b6bc2b6a09ddb4abfc3be6ea"
+            },
+            "MID_SK_Enemy_Archer_v003_left.png": {
+              "path": "01_concept/MID_SK_Enemy_Archer_v003_left.png",
+              "sha256": "614f7d1c9ea2b9d379a2daca2f23bc6bde863717bb685d8b56262eabe5ee49e1"
+            },
+            "MID_SK_Enemy_Archer_v003_back.png": {
+              "path": "01_concept/MID_SK_Enemy_Archer_v003_back.png",
+              "sha256": "6f324983916729546ed4f0d75a2099bd125f095f7ad6221f86e9476bd3a2905d"
+            },
+            "MID_SK_Enemy_Archer_v003_right.png": {
+              "path": "01_concept/MID_SK_Enemy_Archer_v003_right.png",
+              "sha256": "eb55c5523e2f6e1721af557bfedb340ca4c2671ea4b23bc9ae3bda37533a1add"
+            },
+            "MID_SK_Enemy_Archer_v003_compare.png": {
+              "path": "01_concept/MID_SK_Enemy_Archer_v003_compare.png",
+              "sha256": "68a3462276bab8bb46acbd8f14e4b6b5da84a553004d06ea809589e82c2738df"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1699,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 241
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2879
+          },
+          "request_id": "req_9e2255432c4842779f31988bef7224c7",
+          "seconds": 27.7,
+          "registration": {
+            "front": {
+              "scale": 0.9338,
+              "offset": [
+                24,
+                110
+              ],
+              "iou": 0.963,
+              "iou_unregistered_scale": 0.9338,
+              "purity": 0.974
+            },
+            "left": {
+              "scale": 0.9414,
+              "offset": [
+                140,
+                110
+              ],
+              "iou": 0.937,
+              "iou_unregistered_scale": 0.9414,
+              "purity": 0.985
+            },
+            "back": {
+              "scale": 0.9187,
+              "offset": [
+                26,
+                122
+              ],
+              "iou": 0.959,
+              "iou_unregistered_scale": 0.9187,
+              "purity": 0.997
+            },
+            "right": {
+              "scale": 0.9426,
+              "offset": [
+                141,
+                110
+              ],
+              "iou": 0.924,
+              "iou_unregistered_scale": 0.9426,
+              "purity": 0.983
+            }
+          },
+          "metal_ratio": {
+            "front": 0.021,
+            "left": 0.014,
+            "back": 0.007,
+            "right": 0.014
+          }
+        }
+      ]
+    }
+  }
+}

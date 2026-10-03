@@ -1,0 +1,222 @@
+[
+  {
+    "level": "pass",
+    "check": "文件大小",
+    "detail": "1083 KB / 上限 3000 KB"
+  },
+  {
+    "level": "pass",
+    "check": "扩展可用",
+    "detail": "必需扩展 ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+  },
+  {
+    "level": "pass",
+    "check": "LOD 数量",
+    "detail": "['SK_Enemy_Brute_LOD0', 'SK_Enemy_Brute_LOD1', 'SK_Enemy_Brute_LOD2']，规格 3 级"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 面数",
+    "detail": "11999 / 预算 12000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 切换距离",
+    "detail": "extras.lod_distance=0"
+  },
+  {
+    "level": "pass",
+    "check": "高度",
+    "detail": "2.356 m（白模 2.454 m）"
+  },
+  {
+    "level": "pass",
+    "check": "轴心在脚底",
+    "detail": "最低点 y=0.0001"
+  },
+  {
+    "level": "pass",
+    "check": "水平居中",
+    "detail": "包围盒中心 x=-0.001 z=0.032"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 面数",
+    "detail": "4999 / 预算 5000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 递减",
+    "detail": "11999 → 4999"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 切换距离",
+    "detail": "extras.lod_distance=18"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 面数",
+    "detail": "2000 / 预算 2000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 递减",
+    "detail": "4999 → 2000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 切换距离",
+    "detail": "extras.lod_distance=40"
+  },
+  {
+    "level": "pass",
+    "check": "材质数量",
+    "detail": "['M_Enemy_Brute']（一个资产一个材质，便于合批）"
+  },
+  {
+    "level": "pass",
+    "check": "材质命名",
+    "detail": "['M_Enemy_Brute']"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Enemy_Brute_N",
+    "detail": "2048×2048 webp（规格 2048²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Enemy_Brute_N",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Enemy_Brute_ORM",
+    "detail": "2048×2048 webp（规格 2048²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Enemy_Brute_ORM",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Enemy_Brute_BC",
+    "detail": "2048×2048 webp（规格 2048²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Enemy_Brute_BC",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "BaseColor 贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "法线贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "ORM 贴图",
+    "detail": "AO / 粗糙度 / 金属度"
+  },
+  {
+    "level": "pass",
+    "check": "蒙皮",
+    "detail": "1 个 skin"
+  },
+  {
+    "level": "pass",
+    "check": "骨骼与游戏关节一致",
+    "detail": "缺 [] 多 []"
+  },
+  {
+    "level": "pass",
+    "check": "骨骼适配幅度",
+    "detail": "上臂绑定角 L 0.374 / R 0.376（白模 0.45）"
+  },
+  {
+    "level": "pass",
+    "check": "左右对称",
+    "detail": "左右适配差 0.002 rad"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Brute_LOD0 影响骨骼数",
+    "detail": "最多 4"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Brute_LOD0 无权重顶点",
+    "detail": "0"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Brute_LOD0 bone heat 覆盖",
+    "detail": "0 个顶点改用平滑邻近权重"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Brute_LOD1 影响骨骼数",
+    "detail": "最多 4"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Brute_LOD1 无权重顶点",
+    "detail": "0"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Brute_LOD1 bone heat 覆盖",
+    "detail": "0 个顶点改用平滑邻近权重"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Brute_LOD2 影响骨骼数",
+    "detail": "最多 4"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Brute_LOD2 无权重顶点",
+    "detail": "0"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Brute_LOD2 bone heat 覆盖",
+    "detail": "0 个顶点改用平滑邻近权重"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Brute_LOD0 UV 范围",
+    "detail": "[0.005175911355763674, 0.005199780222028494]..[0.9935777187347412, 0.9948680400848389]"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Brute_LOD1 UV 范围",
+    "detail": "[0.005199973937124014, 0.005199780222028494]..[0.9922873377799988, 0.9948679208755493]"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Brute_LOD2 UV 范围",
+    "detail": "[0.005544094834476709, 0.005487542599439621]..[0.9806740880012512, 0.9884161353111267]"
+  },
+  {
+    "level": "warn",
+    "check": "UV 利用率",
+    "detail": "40%"
+  },
+  {
+    "level": "pass",
+    "check": "高模对齐",
+    "detail": "剪影 IoU 0.893（{'front': 0.889, 'left': 0.89, 'back': 0.911, 'right': 0.884}）"
+  },
+  {
+    "level": "pass",
+    "check": "投影覆盖",
+    "detail": "未覆盖顶点 40%（扩散补色）"
+  }
+]

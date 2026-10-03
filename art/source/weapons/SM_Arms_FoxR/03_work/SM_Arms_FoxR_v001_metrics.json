@@ -1,0 +1,136 @@
+{
+  "steps": {
+    "导入清理": 2.2,
+    "对齐": 0.8,
+    "低模与 UV": 8.5,
+    "投影着色": 18.2,
+    "烘焙": 9.4,
+    "LOD": 0.0,
+    "导出": 1.7
+  },
+  "highpoly": {
+    "faces_raw": 519076,
+    "faces": 283800,
+    "verts": 283798,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.756,
+    "iou_per_view": {
+      "front": 0.894,
+      "left": 0.637,
+      "back": 0.792,
+      "right": 0.632
+    },
+    "height_m": 0.0017,
+    "blockout_height_m": 0.3704
+  },
+  "uv": {
+    "smart_islands": 271,
+    "charts": 38,
+    "fallback_charts": 1,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 1.9851,
+    "density_merged": 2.0328
+  },
+  "projection": {
+    "uncovered_ratio": 0.1413
+  },
+  "bake_device": "OPTIX",
+  "material_id": {
+    "metal_texel_ratio": 0.0854
+  },
+  "textures": {
+    "T_Arms_FoxR_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Arms_FoxR_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Arms_FoxR_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "presentation": [
+    [
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ]
+  ],
+  "lods": [
+    {
+      "name": "SM_Arms_FoxR_LOD0",
+      "tris": 8000,
+      "verts": 3998,
+      "uv_min": [
+        0.0026377253234386444,
+        0.0026136860251426697
+      ],
+      "uv_max": [
+        0.9977374076843262,
+        0.9675790667533875
+      ],
+      "uv_utilization": 0.616,
+      "bbox_min": [
+        -0.0089,
+        -0.3543,
+        -0.2775
+      ],
+      "bbox_max": [
+        0.1505,
+        0.0018,
+        0.0009
+      ]
+    },
+    {
+      "name": "SM_Arms_FoxR_LOD1",
+      "tris": 2000,
+      "verts": 998,
+      "uv_min": [
+        0.003233625553548336,
+        0.002998959505930543
+      ],
+      "uv_max": [
+        0.9975807070732117,
+        0.9675790667533875
+      ],
+      "uv_utilization": 0.581,
+      "bbox_min": [
+        -0.0086,
+        -0.3544,
+        -0.278
+      ],
+      "bbox_max": [
+        0.1505,
+        0.0015,
+        0.0011
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\weapons\\SM_Arms_FoxR\\04_export\\SM_Arms_FoxR_v001.glb",
+    "bytes": 460212
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\weapons\\SM_Arms_FoxR\\03_work\\SM_Arms_FoxR_v001.blend",
+  "total_seconds": 40.8,
+  "_seconds": 45.3
+}

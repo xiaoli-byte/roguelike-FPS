@@ -1,0 +1,142 @@
+[
+  {
+    "level": "pass",
+    "check": "文件大小",
+    "detail": "440 KB / 上限 1500 KB"
+  },
+  {
+    "level": "pass",
+    "check": "扩展可用",
+    "detail": "必需扩展 ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+  },
+  {
+    "level": "pass",
+    "check": "LOD 数量",
+    "detail": "['SM_Arms_FalconL_LOD0', 'SM_Arms_FalconL_LOD1']，规格 2 级"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 面数",
+    "detail": "7998 / 预算 8000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 切换距离",
+    "detail": "extras.lod_distance=0"
+  },
+  {
+    "level": "warn",
+    "check": "尺寸 X 轴（深度轴）",
+    "detail": "0.177 m（白模 0.256 m）"
+  },
+  {
+    "level": "pass",
+    "check": "尺寸 Y 轴",
+    "detail": "0.281 m（白模 0.295 m）"
+  },
+  {
+    "level": "pass",
+    "check": "尺寸 Z 轴",
+    "detail": "0.362 m（白模 0.382 m）"
+  },
+  {
+    "level": "pass",
+    "check": "相对挂点位置",
+    "detail": "中心偏移 0.004 m（上限 0.023）"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 面数",
+    "detail": "2000 / 预算 2000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 递减",
+    "detail": "7998 → 2000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 切换距离",
+    "detail": "extras.lod_distance=6"
+  },
+  {
+    "level": "pass",
+    "check": "材质数量",
+    "detail": "['M_Arms_FalconL']（一个资产一个材质，便于合批）"
+  },
+  {
+    "level": "pass",
+    "check": "材质命名",
+    "detail": "['M_Arms_FalconL']"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Arms_FalconL_N",
+    "detail": "2048×2048 webp（规格 2048²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Arms_FalconL_N",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Arms_FalconL_ORM",
+    "detail": "2048×2048 webp（规格 2048²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Arms_FalconL_ORM",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Arms_FalconL_BC",
+    "detail": "2048×2048 webp（规格 2048²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Arms_FalconL_BC",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "BaseColor 贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "法线贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "ORM 贴图",
+    "detail": "AO / 粗糙度 / 金属度"
+  },
+  {
+    "level": "pass",
+    "check": "SM_Arms_FalconL_LOD0 UV 范围",
+    "detail": "[0.0024520044680684805, 0.0024537008721381426]..[0.9975537657737732, 0.9975537657737732]"
+  },
+  {
+    "level": "pass",
+    "check": "SM_Arms_FalconL_LOD1 UV 范围",
+    "detail": "[0.0024520044680684805, 0.0024537008721381426]..[0.9969104528427124, 0.9975537657737732]"
+  },
+  {
+    "level": "pass",
+    "check": "UV 利用率",
+    "detail": "66%"
+  },
+  {
+    "level": "pass",
+    "check": "高模对齐",
+    "detail": "剪影 IoU 0.772（{'front': 0.876, 'left': 0.65, 'back': 0.876, 'right': 0.637}）"
+  },
+  {
+    "level": "pass",
+    "check": "投影覆盖",
+    "detail": "未覆盖顶点 9%（扩散补色）"
+  }
+]

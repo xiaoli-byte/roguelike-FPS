@@ -1,0 +1,189 @@
+{
+  "steps": {
+    "导入清理": 2.0,
+    "对齐": 0.7,
+    "低模与 UV": 6.1,
+    "投影着色": 16.0,
+    "烘焙": 5.1,
+    "LOD": 0.0,
+    "骨骼蒙皮": 0.2,
+    "导出": 0.9
+  },
+  "highpoly": {
+    "faces_raw": 479920,
+    "faces": 234598,
+    "verts": 234594,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.86,
+    "iou_per_view": {
+      "front": 0.895,
+      "left": 0.83,
+      "back": 0.865,
+      "right": 0.83
+    },
+    "height_m": 1.9972,
+    "blockout_height_m": 1.9838
+  },
+  "projection": {
+    "uncovered_ratio": 0.3586
+  },
+  "bake_device": "OPTIX",
+  "material_id": {
+    "metal_texel_ratio": 0.0032
+  },
+  "textures": {
+    "T_Enemy_Grunt_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Enemy_Grunt_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Enemy_Grunt_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "bind_pose": {
+    "armSpreadL": 0.3789,
+    "armSpreadR": 0.3697,
+    "base": 0.45
+  },
+  "robe_verts": {
+    "SK_Enemy_Grunt_LOD0": 0,
+    "SK_Enemy_Grunt_LOD1": 0,
+    "SK_Enemy_Grunt_LOD2": 1
+  },
+  "rigid_head_verts": {
+    "SK_Enemy_Grunt_LOD0": 763,
+    "SK_Enemy_Grunt_LOD1": 340,
+    "SK_Enemy_Grunt_LOD2": 147
+  },
+  "skin": {
+    "bones": [
+      "hips",
+      "torso",
+      "head",
+      "armL",
+      "elbowL",
+      "handL",
+      "armR",
+      "elbowR",
+      "handR",
+      "legL",
+      "kneeL",
+      "legR",
+      "kneeR"
+    ],
+    "per_lod": {
+      "SK_Enemy_Grunt_LOD0": {
+        "heat_failed_verts": 3,
+        "max_influences": 4,
+        "heat_failed_initial": 3,
+        "weights_from": "bone_heat",
+        "unweighted_verts": 0
+      },
+      "SK_Enemy_Grunt_LOD1": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "heat_failed_initial": 0,
+        "weights_from": "bone_heat",
+        "unweighted_verts": 0
+      },
+      "SK_Enemy_Grunt_LOD2": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "heat_failed_initial": 0,
+        "weights_from": "bone_heat",
+        "unweighted_verts": 0
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SK_Enemy_Grunt_LOD0",
+      "tris": 7996,
+      "verts": 3995,
+      "uv_min": [
+        0.004811554215848446,
+        0.0044075255282223225
+      ],
+      "uv_max": [
+        0.993263304233551,
+        0.9956059455871582
+      ],
+      "uv_utilization": 0.529,
+      "bbox_min": [
+        -0.5881,
+        -0.2583,
+        0.0001
+      ],
+      "bbox_max": [
+        0.5886,
+        0.211,
+        1.9972
+      ]
+    },
+    {
+      "name": "SK_Enemy_Grunt_LOD1",
+      "tris": 3499,
+      "verts": 1744,
+      "uv_min": [
+        0.004811554215848446,
+        0.0044075255282223225
+      ],
+      "uv_max": [
+        0.993263304233551,
+        0.9956058859825134
+      ],
+      "uv_utilization": 0.504,
+      "bbox_min": [
+        -0.5865,
+        -0.2569,
+        0.0006
+      ],
+      "bbox_max": [
+        0.5882,
+        0.2109,
+        1.9964
+      ]
+    },
+    {
+      "name": "SK_Enemy_Grunt_LOD2",
+      "tris": 1500,
+      "verts": 742,
+      "uv_min": [
+        0.004811554215848446,
+        0.0044075255282223225
+      ],
+      "uv_max": [
+        0.993263304233551,
+        0.9956058859825134
+      ],
+      "uv_utilization": 0.463,
+      "bbox_min": [
+        -0.5888,
+        -0.2605,
+        0.0033
+      ],
+      "bbox_max": [
+        0.5887,
+        0.2091,
+        1.9995
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Enemy_Grunt\\04_export\\SK_Enemy_Grunt_v007.glb",
+    "bytes": 462792
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Enemy_Grunt\\03_work\\SK_Enemy_Grunt_v007.blend",
+  "total_seconds": 31.0,
+  "_seconds": 34.6
+}

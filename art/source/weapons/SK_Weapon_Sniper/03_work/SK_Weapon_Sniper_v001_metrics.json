@@ -1,0 +1,178 @@
+{
+  "steps": {
+    "导入清理": 0.6,
+    "对齐": 0.4,
+    "低模与 UV": 2.4,
+    "投影着色": 3.6,
+    "烘焙": 8.4,
+    "LOD": 0.0,
+    "部件骨架蒙皮": 1.8,
+    "导出": 1.8
+  },
+  "highpoly": {
+    "faces_raw": 118426,
+    "faces": 64634,
+    "verts": 64624,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.798,
+    "iou_per_view": {
+      "front": 0.814,
+      "left": 0.779,
+      "back": 0.81,
+      "right": 0.781
+    },
+    "height_m": 0.6906,
+    "blockout_height_m": 1.175
+  },
+  "uv": {
+    "smart_islands": 204,
+    "charts": 25,
+    "fallback_charts": 1,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 1.0033,
+    "density_merged": 1.0437
+  },
+  "projection": {
+    "uncovered_ratio": 0.1662
+  },
+  "bake_device": "OPTIX",
+  "emissive_id": {
+    "emissive_texel_ratio": 0.0627
+  },
+  "material_id": {
+    "metal_texel_ratio": 0.2197
+  },
+  "textures": {
+    "T_Weapon_Sniper_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Weapon_Sniper_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Weapon_Sniper_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "presentation": [
+    [
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ]
+  ],
+  "skin": {
+    "bones": [
+      "j_r",
+      "j_0",
+      "j_17"
+    ],
+    "per_lod": {
+      "SK_Weapon_Sniper_LOD0": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      },
+      "SK_Weapon_Sniper_LOD1": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      }
+    },
+    "mode": "parts",
+    "sigma_m": 0.0176,
+    "rigid": true,
+    "split": {
+      "SK_Weapon_Sniper_LOD0": {
+        "cut_edges": 38,
+        "cap_tris": 72,
+        "merged_fragment_faces": 0,
+        "tris": 11996
+      },
+      "SK_Weapon_Sniper_LOD1": {
+        "cut_edges": 18,
+        "cap_tris": 32,
+        "merged_fragment_faces": 0,
+        "tris": 2996
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SK_Weapon_Sniper_LOD0",
+      "tris": 11996,
+      "verts": 5990,
+      "uv_min": [
+        0.0015383507125079632,
+        0.0015382942510768771
+      ],
+      "uv_max": [
+        0.9984617233276367,
+        0.997654914855957
+      ],
+      "uv_utilization": 0.375,
+      "bbox_min": [
+        -0.0396,
+        -0.3588,
+        -0.117
+      ],
+      "bbox_max": [
+        0.0876,
+        0.6906,
+        0.1685
+      ]
+    },
+    {
+      "name": "SK_Weapon_Sniper_LOD1",
+      "tris": 2996,
+      "verts": 1490,
+      "uv_min": [
+        0.0015383507125079632,
+        0.0027395999059081078
+      ],
+      "uv_max": [
+        0.9963793754577637,
+        0.997654914855957
+      ],
+      "uv_utilization": 0.359,
+      "bbox_min": [
+        -0.0389,
+        -0.3583,
+        -0.1172
+      ],
+      "bbox_max": [
+        0.087,
+        0.6906,
+        0.1683
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\weapons\\SK_Weapon_Sniper\\04_export\\SK_Weapon_Sniper_v001.glb",
+    "bytes": 444152
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\weapons\\SK_Weapon_Sniper\\03_work\\SK_Weapon_Sniper_v001.blend",
+  "total_seconds": 18.9,
+  "_seconds": 22.7
+}

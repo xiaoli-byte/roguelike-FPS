@@ -1,0 +1,588 @@
+{
+  "id": "SK_Weapon_Shotgun",
+  "display": "碎岩霰弹",
+  "kind": "skeletal",
+  "class": "weapon_fp",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:07:19",
+          "files": {
+            "BO_SK_Weapon_Shotgun_v001.glb": {
+              "path": "00_blockout/BO_SK_Weapon_Shotgun_v001.glb",
+              "sha256": "1ddd8e0991e87ed5248d8a946273a6a5f76fa136aac2cdc0a761c29017ea881b"
+            },
+            "BO_SK_Weapon_Shotgun_v001.json": {
+              "path": "00_blockout/BO_SK_Weapon_Shotgun_v001.json",
+              "sha256": "42c5443bba827294b581846e6324a0344b2f4bb1aedf0048afbe9088be71e5a6"
+            },
+            "BO_SK_Weapon_Shotgun_v001_views.json": {
+              "path": "00_blockout/BO_SK_Weapon_Shotgun_v001_views.json",
+              "sha256": "d385045e8ea511e5bd1ca1a93a58dc7068694cbfde0f524eb4ebeb7fbc5e889c"
+            },
+            "BO_SK_Weapon_Shotgun_v001_sheet.png": {
+              "path": "00_blockout/BO_SK_Weapon_Shotgun_v001_sheet.png",
+              "sha256": "461c55f365a6a5d9497b6dbab6cfdc80fbdbf1088e97ae3b462cf53619be5bfc"
+            },
+            "BO_SK_Weapon_Shotgun_v001_front.png": {
+              "path": "00_blockout/BO_SK_Weapon_Shotgun_v001_front.png",
+              "sha256": "7e37c88be472563675d606f417b61ed9dacccc6b911f17723f0d7eb9f0bc62eb"
+            },
+            "BO_SK_Weapon_Shotgun_v001_left.png": {
+              "path": "00_blockout/BO_SK_Weapon_Shotgun_v001_left.png",
+              "sha256": "2f164cdb679316b2f330ae14cfcba67516e7f9d4df6c4013142244dc84e5678c"
+            },
+            "BO_SK_Weapon_Shotgun_v001_back.png": {
+              "path": "00_blockout/BO_SK_Weapon_Shotgun_v001_back.png",
+              "sha256": "6bfcdec5c238d9b5a296c0e904f9f2e785b0bc76cb6a81b23e71e88cddbbe7bc"
+            },
+            "BO_SK_Weapon_Shotgun_v001_right.png": {
+              "path": "00_blockout/BO_SK_Weapon_Shotgun_v001_right.png",
+              "sha256": "a6e601c4d895f9e6758cb643dfddc4b0c36915d6055fc0677a3e365ea3928c85"
+            }
+          },
+          "source": {
+            "kind": "weapon",
+            "id": "shotgun"
+          },
+          "joints": 3,
+          "bounds": {
+            "min": [
+              -0.05316446075881563,
+              -0.1063314599087449,
+              -0.5520000001043082
+            ],
+            "max": [
+              0.05267272242097073,
+              0.0960000003799796,
+              0.3249417123371026
+            ]
+          },
+          "blender_seconds": 6.6
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:11:00",
+          "files": {
+            "CN_SK_Weapon_Shotgun_v001_sheet.png": {
+              "path": "01_concept/CN_SK_Weapon_Shotgun_v001_sheet.png",
+              "sha256": "5150cc30d1ee57de0747a3b176b890e4bb8b4677e76219353847d874011904d5"
+            },
+            "CN_SK_Weapon_Shotgun_v001_front.png": {
+              "path": "01_concept/CN_SK_Weapon_Shotgun_v001_front.png",
+              "sha256": "757fb15ec9cf2c1827aa62346b4adb648fd75ebbc2a4c291f2ba5c05be25cd04"
+            },
+            "CN_SK_Weapon_Shotgun_v001_left.png": {
+              "path": "01_concept/CN_SK_Weapon_Shotgun_v001_left.png",
+              "sha256": "0e7db957a2c245c90b3769c02d039e8f170d99ea06cdf3dc231cfbeb383fd7fc"
+            },
+            "CN_SK_Weapon_Shotgun_v001_back.png": {
+              "path": "01_concept/CN_SK_Weapon_Shotgun_v001_back.png",
+              "sha256": "7a90e13c953ee118d15e2f73737d01d1643f355f092784740a3f2acc88474344"
+            },
+            "CN_SK_Weapon_Shotgun_v001_right.png": {
+              "path": "01_concept/CN_SK_Weapon_Shotgun_v001_right.png",
+              "sha256": "a38d52489bce2ecc2d44f87dab423692460918ba1bc161b38eeabe5fa30d1859"
+            },
+            "CN_SK_Weapon_Shotgun_v001_compare.png": {
+              "path": "01_concept/CN_SK_Weapon_Shotgun_v001_compare.png",
+              "sha256": "f30f7230e0b1136756fa3eef6d211d1cebbcf81dcef8eed8c04e8e2f60072463"
+            },
+            "CN_SK_Weapon_Shotgun_v001_prompt.txt": {
+              "path": "01_concept/CN_SK_Weapon_Shotgun_v001_prompt.txt",
+              "sha256": "ceccb4194929a6145e74ea63158e9635ea626a5e97a98b0184512f11693cd648"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1934,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 476
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3114
+          },
+          "request_id": "req_99af807060444fb98dfc980c92cdb965",
+          "seconds": 31.9,
+          "registration": {
+            "front": {
+              "scale": 0.9839,
+              "offset": [
+                146,
+                55
+              ],
+              "iou": 0.826,
+              "iou_unregistered_scale": 0.9839
+            },
+            "left": {
+              "scale": 0.9849,
+              "offset": [
+                196,
+                55
+              ],
+              "iou": 0.861,
+              "iou_unregistered_scale": 0.9849
+            },
+            "back": {
+              "scale": 0.9839,
+              "offset": [
+                145,
+                55
+              ],
+              "iou": 0.817,
+              "iou_unregistered_scale": 0.9839
+            },
+            "right": {
+              "scale": 0.9554,
+              "offset": [
+                198,
+                68
+              ],
+              "iou": 0.864,
+              "iou_unregistered_scale": 0.9849
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.831,
+            "left": 0.869,
+            "back": 0.821,
+            "right": 0.869
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "东方奇幻配色与纹饰统一；剪影与白模吻合（IoU ≥ 0.79）",
+            "time": "2026-10-03 21:15:08"
+          }
+        }
+      ]
+    },
+    "matid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:17:29",
+          "files": {
+            "MID_SK_Weapon_Shotgun_v001_sheet.png": {
+              "path": "01_concept/MID_SK_Weapon_Shotgun_v001_sheet.png",
+              "sha256": "2a6bbdba91133a1454c4a6a02ae32f77281088e0d00dec00e784715d08723339"
+            },
+            "MID_SK_Weapon_Shotgun_v001_front.png": {
+              "path": "01_concept/MID_SK_Weapon_Shotgun_v001_front.png",
+              "sha256": "a8ad7c1eac3faa79b0ab8d77caf63400a5bbe436a1552f1c63c28d37f3689004"
+            },
+            "MID_SK_Weapon_Shotgun_v001_left.png": {
+              "path": "01_concept/MID_SK_Weapon_Shotgun_v001_left.png",
+              "sha256": "116317eb5d14e9b3a888ddaec1d2c4bc55969d9b23210f2338854b2534856b6f"
+            },
+            "MID_SK_Weapon_Shotgun_v001_back.png": {
+              "path": "01_concept/MID_SK_Weapon_Shotgun_v001_back.png",
+              "sha256": "00cc7ab6beb4bc10d86acda40a85459288029103b78bcf24ddd16960d2eda930"
+            },
+            "MID_SK_Weapon_Shotgun_v001_right.png": {
+              "path": "01_concept/MID_SK_Weapon_Shotgun_v001_right.png",
+              "sha256": "bf9bc86c8b1b52132e10a15956a18a8329632ccd0ba90193ead22325598ed8b0"
+            },
+            "MID_SK_Weapon_Shotgun_v001_compare.png": {
+              "path": "01_concept/MID_SK_Weapon_Shotgun_v001_compare.png",
+              "sha256": "ce967c4816c095d327cef0f1a27700c33547b406e1c9b6389f0d817756bfee31"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1699,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 241
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2879
+          },
+          "request_id": "req_2b105216a6af42e39c1d36ac5b479ba2",
+          "seconds": 30.5,
+          "registration": {
+            "front": {
+              "scale": 0.9303,
+              "offset": [
+                140,
+                68
+              ],
+              "iou": 0.851,
+              "iou_unregistered_scale": 0.959,
+              "purity": 0.985
+            },
+            "left": {
+              "scale": 0.9561,
+              "offset": [
+                187,
+                55
+              ],
+              "iou": 0.881,
+              "iou_unregistered_scale": 0.9561,
+              "purity": 0.985
+            },
+            "back": {
+              "scale": 0.9714,
+              "offset": [
+                149,
+                55
+              ],
+              "iou": 0.845,
+              "iou_unregistered_scale": 0.957,
+              "purity": 0.985
+            },
+            "right": {
+              "scale": 0.9288,
+              "offset": [
+                189,
+                68
+              ],
+              "iou": 0.887,
+              "iou_unregistered_scale": 0.9288,
+              "purity": 0.98
+            }
+          },
+          "metal_ratio": {
+            "front": 0.64,
+            "left": 0.623,
+            "back": 0.638,
+            "right": 0.591
+          }
+        }
+      ]
+    },
+    "emid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:22:46",
+          "files": {
+            "EID_SK_Weapon_Shotgun_v001_sheet.png": {
+              "path": "01_concept/EID_SK_Weapon_Shotgun_v001_sheet.png",
+              "sha256": "a0431ce87ce89ad496442625837fdd61642086603ac849c57d3fb84f66d9bcb9"
+            },
+            "EID_SK_Weapon_Shotgun_v001_front.png": {
+              "path": "01_concept/EID_SK_Weapon_Shotgun_v001_front.png",
+              "sha256": "e3e60d663ac876a65f77efaf74bd0803d50e8e1f983d7478210114a9973bc07d"
+            },
+            "EID_SK_Weapon_Shotgun_v001_left.png": {
+              "path": "01_concept/EID_SK_Weapon_Shotgun_v001_left.png",
+              "sha256": "307e19b2e91d5b800e5cb6434e421718bf01df87a20786267bf18c563899d243"
+            },
+            "EID_SK_Weapon_Shotgun_v001_back.png": {
+              "path": "01_concept/EID_SK_Weapon_Shotgun_v001_back.png",
+              "sha256": "01e0a375d2dc13d4be9a3240edfd4679b3ae4e2fc7375b974fbe74da11120e32"
+            },
+            "EID_SK_Weapon_Shotgun_v001_right.png": {
+              "path": "01_concept/EID_SK_Weapon_Shotgun_v001_right.png",
+              "sha256": "fd50c069b0e619adef1dce524d37630e31268a3bd4cddceb2e0c5d3678798017"
+            },
+            "EID_SK_Weapon_Shotgun_v001_compare.png": {
+              "path": "01_concept/EID_SK_Weapon_Shotgun_v001_compare.png",
+              "sha256": "5d4332771ed2e3284fde1236531ef7bd2b78fbd2d541db55d83818e27ccb6571"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1716,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 258
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2896
+          },
+          "request_id": "req_3435bdbba1a0437091cb5fc68d8e0161",
+          "seconds": 27.6,
+          "registration": {
+            "front": {
+              "scale": 0.9828,
+              "offset": [
+                121,
+                55
+              ],
+              "iou": 0.864,
+              "iou_unregistered_scale": 0.9828,
+              "purity": 0.994
+            },
+            "left": {
+              "scale": 0.9828,
+              "offset": [
+                190,
+                55
+              ],
+              "iou": 0.9,
+              "iou_unregistered_scale": 0.9828,
+              "purity": 0.991
+            },
+            "back": {
+              "scale": 0.9523,
+              "offset": [
+                140,
+                68
+              ],
+              "iou": 0.848,
+              "iou_unregistered_scale": 0.9817,
+              "purity": 0.993
+            },
+            "right": {
+              "scale": 0.9538,
+              "offset": [
+                192,
+                68
+              ],
+              "iou": 0.902,
+              "iou_unregistered_scale": 0.9538,
+              "purity": 0.996
+            }
+          },
+          "emissive_ratio": {
+            "front": 0.011,
+            "left": 0.018,
+            "back": 0.012,
+            "right": 0.007
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:37:07",
+          "files": {
+            "HP_SK_Weapon_Shotgun_v001_input_front.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Shotgun_v001_input_front.png",
+              "sha256": "39478eb798302539184ef9e788b49814a98c6f0626c67b1a41074b68416070bc"
+            },
+            "HP_SK_Weapon_Shotgun_v001_input_left.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Shotgun_v001_input_left.png",
+              "sha256": "c1401355144f89d30aab3168f5fb777214ae7da7424a3caac8a6d9ab8981bb48"
+            },
+            "HP_SK_Weapon_Shotgun_v001_input_back.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Shotgun_v001_input_back.png",
+              "sha256": "e28542bc35b77ed1e8b2c75591c00b34c6da08cf47f57921516dbf4b80ab57f3"
+            },
+            "HP_SK_Weapon_Shotgun_v001_input_right.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Shotgun_v001_input_right.png",
+              "sha256": "be541a4591ff64d8d9644bff6af31ff2764efaa2fac251b285fbae4debf1ef0b"
+            },
+            "HP_SK_Weapon_Shotgun_v001.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Shotgun_v001.glb",
+              "sha256": "6271470ed9e7bd2646e6a1b24f5685d0195e2e927430aa760c29d9b016d56d4b"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -282,
+              -26,
+              794,
+              1050
+            ],
+            "scale": 0.9516728624535316
+          },
+          "seconds": 136.4,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 2.4
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:37:32",
+          "files": {
+            "SK_Weapon_Shotgun_v001.blend": {
+              "path": "03_work/SK_Weapon_Shotgun_v001.blend",
+              "sha256": "74715521777834fead9c5a06f743221c63b701dd0047dfffc870b722d16b1f8a"
+            },
+            "SK_Weapon_Shotgun_v001.glb": {
+              "path": "04_export/SK_Weapon_Shotgun_v001.glb",
+              "sha256": "5c381b89c6f2b8dabc6bd0bec972a7a0ba6bd24cd8a5647e355d134cd45af1eb"
+            },
+            "SK_Weapon_Shotgun_v001_metrics.json": {
+              "path": "03_work/SK_Weapon_Shotgun_v001_metrics.json",
+              "sha256": "d059c3d3c522350c536f3963653401049a1a8229838dbf7928ce63cd2f8acd3a"
+            },
+            "T_Weapon_Shotgun_BC.png": {
+              "path": "03_work/textures_v001/T_Weapon_Shotgun_BC.png",
+              "sha256": "4bda414b8eb738b2cf309fd4c9a13953fa51aff8facfdde665e5056693bf0581"
+            },
+            "T_Weapon_Shotgun_E.png": {
+              "path": "03_work/textures_v001/T_Weapon_Shotgun_E.png",
+              "sha256": "2ce6834757b6a958c035765d7c76dba2434ca7197c8b45a5841d17458f4a1842"
+            },
+            "T_Weapon_Shotgun_MetalMask.png": {
+              "path": "03_work/textures_v001/T_Weapon_Shotgun_MetalMask.png",
+              "sha256": "18d832b3a28edb5e920ef84e2bdc75cd9812817249605f02dbd755bf09842fb5"
+            },
+            "T_Weapon_Shotgun_N.png": {
+              "path": "03_work/textures_v001/T_Weapon_Shotgun_N.png",
+              "sha256": "af74d2e76657ee0a0a3ae6a3972e17a11f96c174b9c589ac49f82269345d1356"
+            },
+            "T_Weapon_Shotgun_ORM.png": {
+              "path": "03_work/textures_v001/T_Weapon_Shotgun_ORM.png",
+              "sha256": "2722ac42db7c5d2177d576ef0da9efe5c5d323dc1a1b927e9accf1916d297b09"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1,
+            "emid": 1
+          },
+          "align_iou": 0.87,
+          "uncovered_ratio": 0.0715,
+          "lods": [
+            {
+              "tris": 11996,
+              "verts": 5998
+            },
+            {
+              "tris": 2996,
+              "verts": 1498
+            }
+          ],
+          "export_kb": 457.2,
+          "seconds": 25.6,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:37:32",
+          "files": {
+            "SK_Weapon_Shotgun_v001_validation.json": {
+              "path": "05_review/SK_Weapon_Shotgun_v001_validation.json",
+              "sha256": "49311765bc8019db67f7d74b49e907c398d2043098b0b84aeae4e29e718863db"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:37:42",
+          "files": {
+            "SK_Weapon_Shotgun_v001_review.png": {
+              "path": "05_review/SK_Weapon_Shotgun_v001_review.png",
+              "sha256": "5eb1f56bb0b316dd6b7591f9d67869852452bc6629b846afbcd88e55105c6ded"
+            }
+          },
+          "from_build": 1,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "刚体部件 + 发光分区；三轴尺寸与白模吻合（步枪宽度 +50% 为概念机匣偏厚，外观无异常）",
+            "time": "2026-10-03 21:58:33"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:58:33",
+          "files": {
+            "SK_Weapon_Shotgun.glb": {
+              "path": "@root/public/assets/weapons/SK_Weapon_Shotgun.glb",
+              "sha256": "5c381b89c6f2b8dabc6bd0bec972a7a0ba6bd24cd8a5647e355d134cd45af1eb"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/weapons/SK_Weapon_Shotgun.glb"
+        }
+      ]
+    }
+  }
+}

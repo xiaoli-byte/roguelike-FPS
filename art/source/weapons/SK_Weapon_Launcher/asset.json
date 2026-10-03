@@ -1,0 +1,595 @@
+{
+  "id": "SK_Weapon_Launcher",
+  "display": "焚城榴弹",
+  "kind": "skeletal",
+  "class": "weapon_fp",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:07:38",
+          "files": {
+            "BO_SK_Weapon_Launcher_v001.glb": {
+              "path": "00_blockout/BO_SK_Weapon_Launcher_v001.glb",
+              "sha256": "3060449d1e2604d5e39d502494ae2b709151273ca1a128c0b03c26ba0e5255f4"
+            },
+            "BO_SK_Weapon_Launcher_v001.json": {
+              "path": "00_blockout/BO_SK_Weapon_Launcher_v001.json",
+              "sha256": "9ef0520a0eaacda911f0dc2d60607d6edfb349d71d96bd2ddaad82301333bc86"
+            },
+            "BO_SK_Weapon_Launcher_v001_views.json": {
+              "path": "00_blockout/BO_SK_Weapon_Launcher_v001_views.json",
+              "sha256": "d4a80dc3a58f2ed55608cab033f353d4158be52bab07dea24e7c0b477b464882"
+            },
+            "BO_SK_Weapon_Launcher_v001_sheet.png": {
+              "path": "00_blockout/BO_SK_Weapon_Launcher_v001_sheet.png",
+              "sha256": "20476e35aa04a64b9324b684361a823db87efd2b17cc2be6672c37205f260a02"
+            },
+            "BO_SK_Weapon_Launcher_v001_front.png": {
+              "path": "00_blockout/BO_SK_Weapon_Launcher_v001_front.png",
+              "sha256": "312c4f37f38ff9a366472fe922efc459666bb0f38a79df8820a523df4d9a6f22"
+            },
+            "BO_SK_Weapon_Launcher_v001_left.png": {
+              "path": "00_blockout/BO_SK_Weapon_Launcher_v001_left.png",
+              "sha256": "2c52c010fb400c5e1f0ee0aefa1deedc40fece18e5101a5036ca99909802d716"
+            },
+            "BO_SK_Weapon_Launcher_v001_back.png": {
+              "path": "00_blockout/BO_SK_Weapon_Launcher_v001_back.png",
+              "sha256": "af7c390bfa511ebc99cf6ced4eda5279546b49fdf2e5ec45e58cc6abe454a989"
+            },
+            "BO_SK_Weapon_Launcher_v001_right.png": {
+              "path": "00_blockout/BO_SK_Weapon_Launcher_v001_right.png",
+              "sha256": "a64a2d684639f044c45e421dbb9af5d8f905beb848d9b8eca082ab95c5692916"
+            }
+          },
+          "source": {
+            "kind": "weapon",
+            "id": "launcher"
+          },
+          "joints": 3,
+          "bounds": {
+            "min": [
+              -0.06800000369548798,
+              -0.12022703214892008,
+              -0.43999999955296515
+            ],
+            "max": [
+              0.08599999955296517,
+              0.17500000037252902,
+              0.2399999997764826
+            ]
+          },
+          "blender_seconds": 6.0,
+          "amendments": [
+            {
+              "time": "2026-10-03 21:07:51",
+              "reason": "几何不变，更新白模说明"
+            }
+          ],
+          "modified": "2026-10-03 21:07:51"
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:12:04",
+          "files": {
+            "CN_SK_Weapon_Launcher_v001_sheet.png": {
+              "path": "01_concept/CN_SK_Weapon_Launcher_v001_sheet.png",
+              "sha256": "f1554107f2db0159321d1295ef3718301c3b8063f431402e777f13827cc8e0ca"
+            },
+            "CN_SK_Weapon_Launcher_v001_front.png": {
+              "path": "01_concept/CN_SK_Weapon_Launcher_v001_front.png",
+              "sha256": "3d6862b436e0b4051d376bd3083cf5307234787ddc605f3ed21a0ca2a62629b5"
+            },
+            "CN_SK_Weapon_Launcher_v001_left.png": {
+              "path": "01_concept/CN_SK_Weapon_Launcher_v001_left.png",
+              "sha256": "6389dffb1d1def40dfe85e5666df2264429252790a21b013cb4cd074e19c271d"
+            },
+            "CN_SK_Weapon_Launcher_v001_back.png": {
+              "path": "01_concept/CN_SK_Weapon_Launcher_v001_back.png",
+              "sha256": "647f9aff256326036e33e4d01edea2b0669993cc4669702f53cfed5a9bfa77ea"
+            },
+            "CN_SK_Weapon_Launcher_v001_right.png": {
+              "path": "01_concept/CN_SK_Weapon_Launcher_v001_right.png",
+              "sha256": "0eaf32b727e6204b664801571fdab226a88ed69903c2f78250eecde5a110bcce"
+            },
+            "CN_SK_Weapon_Launcher_v001_compare.png": {
+              "path": "01_concept/CN_SK_Weapon_Launcher_v001_compare.png",
+              "sha256": "a68e6c26ec4783716608c9f75a8a4ae4556f41076237ccdc8199bb6b2e2a7212"
+            },
+            "CN_SK_Weapon_Launcher_v001_prompt.txt": {
+              "path": "01_concept/CN_SK_Weapon_Launcher_v001_prompt.txt",
+              "sha256": "724c3e2ca09f5c70fd6af2341f20f0353bd4de8a98bfb483c6204cb0098ff68c"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1936,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 478
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3116
+          },
+          "request_id": "req_00116f25b86d48d4a07815361becf249",
+          "seconds": 30.4,
+          "registration": {
+            "front": {
+              "scale": 0.987,
+              "offset": [
+                54,
+                55
+              ],
+              "iou": 0.884,
+              "iou_unregistered_scale": 0.987
+            },
+            "left": {
+              "scale": 0.987,
+              "offset": [
+                146,
+                55
+              ],
+              "iou": 0.914,
+              "iou_unregistered_scale": 0.987
+            },
+            "back": {
+              "scale": 0.987,
+              "offset": [
+                54,
+                55
+              ],
+              "iou": 0.896,
+              "iou_unregistered_scale": 0.987
+            },
+            "right": {
+              "scale": 0.987,
+              "offset": [
+                144,
+                55
+              ],
+              "iou": 0.919,
+              "iou_unregistered_scale": 0.987
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.887,
+            "left": 0.919,
+            "back": 0.901,
+            "right": 0.921
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "东方奇幻配色与纹饰统一；剪影与白模吻合（IoU ≥ 0.79）",
+            "time": "2026-10-03 21:15:09"
+          }
+        }
+      ]
+    },
+    "matid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:18:34",
+          "files": {
+            "MID_SK_Weapon_Launcher_v001_sheet.png": {
+              "path": "01_concept/MID_SK_Weapon_Launcher_v001_sheet.png",
+              "sha256": "11006834565bbdf71e7a0bd9f4707f8a0ddc38036905a5eb83643c1360d8601f"
+            },
+            "MID_SK_Weapon_Launcher_v001_front.png": {
+              "path": "01_concept/MID_SK_Weapon_Launcher_v001_front.png",
+              "sha256": "a352d452207a48d011bbe4f6f759712d68a7cbc957524b1d34bea3e347c3190f"
+            },
+            "MID_SK_Weapon_Launcher_v001_left.png": {
+              "path": "01_concept/MID_SK_Weapon_Launcher_v001_left.png",
+              "sha256": "f34fb1830bd74e283aead993dfdd41c5248b727cf6491099a93b8207420596c2"
+            },
+            "MID_SK_Weapon_Launcher_v001_back.png": {
+              "path": "01_concept/MID_SK_Weapon_Launcher_v001_back.png",
+              "sha256": "8853adb36a5331d360005956d9547f526a48d95faf90bb8df7f907171bc3319d"
+            },
+            "MID_SK_Weapon_Launcher_v001_right.png": {
+              "path": "01_concept/MID_SK_Weapon_Launcher_v001_right.png",
+              "sha256": "8d74532d8a4af3d031fddc57fdea0ef375dc9561232a01112d17d69d3c9d640c"
+            },
+            "MID_SK_Weapon_Launcher_v001_compare.png": {
+              "path": "01_concept/MID_SK_Weapon_Launcher_v001_compare.png",
+              "sha256": "1699fa1f724d66c8292a62b2e93d8115b7212b4abdf047f4a308e7a96420e027"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1699,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 241
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2879
+          },
+          "request_id": "req_b9974961a41043a39dcd0840d3b7f335",
+          "seconds": 29.5,
+          "registration": {
+            "front": {
+              "scale": 0.9828,
+              "offset": [
+                50,
+                55
+              ],
+              "iou": 0.973,
+              "iou_unregistered_scale": 0.9828,
+              "purity": 0.995
+            },
+            "left": {
+              "scale": 0.9828,
+              "offset": [
+                144,
+                55
+              ],
+              "iou": 0.958,
+              "iou_unregistered_scale": 0.9828,
+              "purity": 0.993
+            },
+            "back": {
+              "scale": 0.9828,
+              "offset": [
+                50,
+                55
+              ],
+              "iou": 0.962,
+              "iou_unregistered_scale": 0.9828,
+              "purity": 0.994
+            },
+            "right": {
+              "scale": 0.9828,
+              "offset": [
+                145,
+                55
+              ],
+              "iou": 0.966,
+              "iou_unregistered_scale": 0.9828,
+              "purity": 0.993
+            }
+          },
+          "metal_ratio": {
+            "front": 0.519,
+            "left": 0.47,
+            "back": 0.536,
+            "right": 0.508
+          }
+        }
+      ]
+    },
+    "emid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:23:47",
+          "files": {
+            "EID_SK_Weapon_Launcher_v001_sheet.png": {
+              "path": "01_concept/EID_SK_Weapon_Launcher_v001_sheet.png",
+              "sha256": "9ea638b4c465017f093c1bafa0350b9b16c42b3ea365b85f4d3eb0901f1a47c2"
+            },
+            "EID_SK_Weapon_Launcher_v001_front.png": {
+              "path": "01_concept/EID_SK_Weapon_Launcher_v001_front.png",
+              "sha256": "c3340a1b4b47793d8854bb7a2f86ff004c6bbb17794bfda28a240ccc9bd9cca9"
+            },
+            "EID_SK_Weapon_Launcher_v001_left.png": {
+              "path": "01_concept/EID_SK_Weapon_Launcher_v001_left.png",
+              "sha256": "e0b1f93620934bffba4ff0b1929414fb8f65d11179fc64ca8dfbc77ee872ee3c"
+            },
+            "EID_SK_Weapon_Launcher_v001_back.png": {
+              "path": "01_concept/EID_SK_Weapon_Launcher_v001_back.png",
+              "sha256": "c58c844b3d2c5668765181e0373838cafc4881348ead6ff5dcad3b0cfec7f702"
+            },
+            "EID_SK_Weapon_Launcher_v001_right.png": {
+              "path": "01_concept/EID_SK_Weapon_Launcher_v001_right.png",
+              "sha256": "abfcd9fff6d9d6e7d3cfbbe7c2fa2df60a8b19367d736e077f6a4684b1a01fb8"
+            },
+            "EID_SK_Weapon_Launcher_v001_compare.png": {
+              "path": "01_concept/EID_SK_Weapon_Launcher_v001_compare.png",
+              "sha256": "e4c4ac19345acb40accacfc082945f9acfe8a162e768260e1cad165f426874ae"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1713,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 255
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2893
+          },
+          "request_id": "req_865622b8c42f42e287484c4cc9f9308d",
+          "seconds": 29.6,
+          "registration": {
+            "front": {
+              "scale": 0.9807,
+              "offset": [
+                45,
+                55
+              ],
+              "iou": 0.915,
+              "iou_unregistered_scale": 0.9807,
+              "purity": 0.992
+            },
+            "left": {
+              "scale": 0.9807,
+              "offset": [
+                138,
+                55
+              ],
+              "iou": 0.911,
+              "iou_unregistered_scale": 0.9807,
+              "purity": 0.994
+            },
+            "back": {
+              "scale": 0.9807,
+              "offset": [
+                45,
+                55
+              ],
+              "iou": 0.917,
+              "iou_unregistered_scale": 0.9807,
+              "purity": 0.992
+            },
+            "right": {
+              "scale": 0.9807,
+              "offset": [
+                134,
+                55
+              ],
+              "iou": 0.904,
+              "iou_unregistered_scale": 0.9807,
+              "purity": 0.993
+            }
+          },
+          "emissive_ratio": {
+            "front": 0.096,
+            "left": 0.099,
+            "back": 0.09,
+            "right": 0.081
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:42:56",
+          "files": {
+            "HP_SK_Weapon_Launcher_v001_input_front.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Launcher_v001_input_front.png",
+              "sha256": "06266cb3369e3809af0d93450b6465a17a409b6ab26e27f4776dd6c365fe41fc"
+            },
+            "HP_SK_Weapon_Launcher_v001_input_left.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Launcher_v001_input_left.png",
+              "sha256": "2fcfd33c0d318eaa1ed7bdeec5969dd9c80d3034de083cac105dfbd8193d17b3"
+            },
+            "HP_SK_Weapon_Launcher_v001_input_back.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Launcher_v001_input_back.png",
+              "sha256": "eb7285173943ec52cc6fd44576121aa9f1b0edcb6dc57df6446153bacfe90333"
+            },
+            "HP_SK_Weapon_Launcher_v001_input_right.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Launcher_v001_input_right.png",
+              "sha256": "96c3e58c520c0b8cf67dda16c860bef43ff5b152bffa32dc3e32a1986f6a634c"
+            },
+            "HP_SK_Weapon_Launcher_v001.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Launcher_v001.glb",
+              "sha256": "ae68ffab46a21dfef66bd71780df76ce6647478df9d9cd134f966629906d9141"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -282,
+              -26,
+              794,
+              1050
+            ],
+            "scale": 0.9516728624535316
+          },
+          "seconds": 149.2,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 5.1
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:43:33",
+          "files": {
+            "SK_Weapon_Launcher_v001.blend": {
+              "path": "03_work/SK_Weapon_Launcher_v001.blend",
+              "sha256": "fcb340427e7af472d6f586fd23640231c3f5cfbe9a9a2450d555dadba28b62b8"
+            },
+            "SK_Weapon_Launcher_v001.glb": {
+              "path": "04_export/SK_Weapon_Launcher_v001.glb",
+              "sha256": "edcc977853f59c72a8e6e37378b99a73d2b753145763e80e7005edfe33dba0da"
+            },
+            "SK_Weapon_Launcher_v001_metrics.json": {
+              "path": "03_work/SK_Weapon_Launcher_v001_metrics.json",
+              "sha256": "b28432358c590513edd7b33ceadd828a3a87833bceaf2f18f5b6ba21618fc011"
+            },
+            "T_Weapon_Launcher_BC.png": {
+              "path": "03_work/textures_v001/T_Weapon_Launcher_BC.png",
+              "sha256": "7ec12bfd30726fed7eff0e8510ac6c079bc37cad738a1a76381cc1ea470ff312"
+            },
+            "T_Weapon_Launcher_E.png": {
+              "path": "03_work/textures_v001/T_Weapon_Launcher_E.png",
+              "sha256": "6edddae1fd49abb1433ea306b0cf3f4bfcfd25f1b285ffee6203065bc800d554"
+            },
+            "T_Weapon_Launcher_MetalMask.png": {
+              "path": "03_work/textures_v001/T_Weapon_Launcher_MetalMask.png",
+              "sha256": "d39744fff10290fe08a5c05992c6076e1d9962b118a592c78989850b08ec93e1"
+            },
+            "T_Weapon_Launcher_N.png": {
+              "path": "03_work/textures_v001/T_Weapon_Launcher_N.png",
+              "sha256": "7db49d4bd692d57c9397b54261cdfd6bef9f6e7157f203b01b2fd0993ad77e23"
+            },
+            "T_Weapon_Launcher_ORM.png": {
+              "path": "03_work/textures_v001/T_Weapon_Launcher_ORM.png",
+              "sha256": "0b819fe7d9e42a43b58e73bc6e944048fddad91bdb19f945c3e546adeb07600a"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1,
+            "emid": 1
+          },
+          "align_iou": 0.896,
+          "uncovered_ratio": 0.186,
+          "lods": [
+            {
+              "tris": 11996,
+              "verts": 6000
+            },
+            {
+              "tris": 2996,
+              "verts": 1500
+            }
+          ],
+          "export_kb": 590.9,
+          "seconds": 36.2,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:43:33",
+          "files": {
+            "SK_Weapon_Launcher_v001_validation.json": {
+              "path": "05_review/SK_Weapon_Launcher_v001_validation.json",
+              "sha256": "af2c7c3c453497504e74c1be41b6b81f980d80ff8cdfacfec56ed76851fb38a1"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:43:41",
+          "files": {
+            "SK_Weapon_Launcher_v001_review.png": {
+              "path": "05_review/SK_Weapon_Launcher_v001_review.png",
+              "sha256": "ce40d96eecac5d49f94318596f6a6ed75afa74155b4bbdcf0a5bd412233c038e"
+            }
+          },
+          "from_build": 1,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "刚体部件 + 发光分区；三轴尺寸与白模吻合（步枪宽度 +50% 为概念机匣偏厚，外观无异常）",
+            "time": "2026-10-03 21:58:34"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:58:34",
+          "files": {
+            "SK_Weapon_Launcher.glb": {
+              "path": "@root/public/assets/weapons/SK_Weapon_Launcher.glb",
+              "sha256": "edcc977853f59c72a8e6e37378b99a73d2b753145763e80e7005edfe33dba0da"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/weapons/SK_Weapon_Launcher.glb"
+        }
+      ]
+    }
+  }
+}

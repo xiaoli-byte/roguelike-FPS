@@ -1,0 +1,202 @@
+{
+  "steps": {
+    "导入清理": 2.2,
+    "对齐": 0.6,
+    "低模与 UV": 6.1,
+    "投影着色": 16.6,
+    "烘焙": 8.9,
+    "LOD": 0.4,
+    "部件骨架蒙皮": 0.7,
+    "导出": 2.3
+  },
+  "highpoly": {
+    "faces_raw": 564001,
+    "faces": 249528,
+    "verts": 249470,
+    "loose_parts": 3,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00491
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.719,
+    "iou_per_view": {
+      "front": 0.876,
+      "left": 0.533,
+      "back": 0.867,
+      "right": 0.524
+    },
+    "height_m": 3.7438,
+    "blockout_height_m": 3.74
+  },
+  "projection": {
+    "uncovered_ratio": 0.3865
+  },
+  "bake_device": "OPTIX",
+  "material_id": {
+    "metal_texel_ratio": 0.1856
+  },
+  "textures": {
+    "T_Boss_Matriarch_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Boss_Matriarch_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Boss_Matriarch_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "skin": {
+    "bones": [
+      "j_r",
+      "j_0",
+      "j_0_3",
+      "j_0_4",
+      "j_0_5",
+      "j_0_6",
+      "j_0_7",
+      "j_0_8",
+      "j_0_9",
+      "j_0_10",
+      "j_0_11",
+      "j_0_12",
+      "j_0_13",
+      "j_0_13_12",
+      "j_0_13_13",
+      "j_0_13_13_1",
+      "j_0_13_13_1_6",
+      "j_0_13_14",
+      "j_0_13_14_1",
+      "j_0_13_14_1_6",
+      "j_0_13_16",
+      "j_0_13_16_4",
+      "j_0_13_16_4_0",
+      "j_0_13_16_4_1",
+      "j_0_13_16_4_2",
+      "j_0_13_16_4_3",
+      "j_0_13_16_4_4",
+      "j_0_13_16_8",
+      "j_0_13_17",
+      "j_0_13_17_0",
+      "j_0_13_17_0_0",
+      "j_0_13_17_0_1",
+      "j_0_13_17_0_2",
+      "j_0_13_17_0_3",
+      "j_0_13_17_0_4",
+      "j_0_13_17_1",
+      "j_0_13_17_1_0",
+      "j_0_13_17_1_1",
+      "j_0_13_17_1_2",
+      "j_0_13_17_1_3",
+      "j_0_13_17_1_4",
+      "j_0_14"
+    ],
+    "per_lod": {
+      "SK_Boss_Matriarch_LOD0": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      },
+      "SK_Boss_Matriarch_LOD1": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      },
+      "SK_Boss_Matriarch_LOD2": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      }
+    },
+    "mode": "parts",
+    "sigma_m": 0.0748
+  },
+  "lods": [
+    {
+      "name": "SK_Boss_Matriarch_LOD0",
+      "tris": 29999,
+      "verts": 14942,
+      "uv_min": [
+        0.004901309963315725,
+        0.004901304375380278
+      ],
+      "uv_max": [
+        0.9950986504554749,
+        0.9856468439102173
+      ],
+      "uv_utilization": 0.27,
+      "bbox_min": [
+        -0.8909,
+        -0.8898,
+        0.184
+      ],
+      "bbox_max": [
+        0.8905,
+        0.4613,
+        3.744
+      ]
+    },
+    {
+      "name": "SK_Boss_Matriarch_LOD1",
+      "tris": 11999,
+      "verts": 5942,
+      "uv_min": [
+        0.004901309963315725,
+        0.0049013057723641396
+      ],
+      "uv_max": [
+        0.9950605034828186,
+        0.9856468439102173
+      ],
+      "uv_utilization": 0.258,
+      "bbox_min": [
+        -0.8917,
+        -0.8898,
+        0.184
+      ],
+      "bbox_max": [
+        0.8903,
+        0.461,
+        3.7373
+      ]
+    },
+    {
+      "name": "SK_Boss_Matriarch_LOD2",
+      "tris": 5000,
+      "verts": 2440,
+      "uv_min": [
+        0.005110776051878929,
+        0.0049013057723641396
+      ],
+      "uv_max": [
+        0.9949342608451843,
+        0.985441267490387
+      ],
+      "uv_utilization": 0.244,
+      "bbox_min": [
+        -0.8932,
+        -0.8891,
+        0.183
+      ],
+      "bbox_max": [
+        0.894,
+        0.465,
+        3.7464
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Boss_Matriarch\\04_export\\SK_Boss_Matriarch_v001.glb",
+    "bytes": 2023164
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Boss_Matriarch\\03_work\\SK_Boss_Matriarch_v001.blend",
+  "total_seconds": 38.0,
+  "_seconds": 41.4
+}

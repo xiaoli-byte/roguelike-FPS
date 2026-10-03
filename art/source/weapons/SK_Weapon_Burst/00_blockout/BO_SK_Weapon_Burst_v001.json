@@ -1,0 +1,159 @@
+{
+  "schema": 1,
+  "assetId": "SK_Weapon_Burst",
+  "source": {
+    "kind": "weapon",
+    "id": "burst"
+  },
+  "rig": "parts",
+  "space": {
+    "up": "+Y",
+    "forward": "+Z",
+    "unit": "m",
+    "origin": "model"
+  },
+  "bounds": {
+    "min": [
+      -0.03500000014901161,
+      -0.11522703214892008,
+      -0.43499999977648257
+    ],
+    "max": [
+      0.03500000014901161,
+      0.11499999966472388,
+      0.17999999966472388
+    ]
+  },
+  "joints": [
+    {
+      "name": "j_r",
+      "parent": null,
+      "bindPosition": [
+        0,
+        0,
+        0
+      ],
+      "restLocal": [
+        0,
+        0,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0",
+      "parent": "j_r",
+      "bindPosition": [
+        0,
+        0.045,
+        -0.44
+      ],
+      "restLocal": [
+        0,
+        0.045,
+        -0.44
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_3",
+      "parent": "j_r",
+      "bindPosition": [
+        0,
+        0,
+        0
+      ],
+      "restLocal": [
+        0,
+        0,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_12",
+      "parent": "j_r",
+      "bindPosition": [
+        0,
+        -0.005,
+        0.1
+      ],
+      "restLocal": [
+        0,
+        -0.005,
+        0.1
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    }
+  ],
+  "keep": [
+    "j_3"
+  ],
+  "fields": {
+    "muzzle": "j_0",
+    "mag": "j_12"
+  },
+  "parts": {
+    "body_000": "body",
+    "body_001": "body",
+    "attachment_002": "attachment",
+    "attachment_003": "attachment",
+    "attachment_004": "attachment",
+    "attachment_005": "attachment",
+    "attachment_006": "attachment",
+    "body_007": "body",
+    "body_008": "body",
+    "body_009": "body",
+    "body_010": "body",
+    "body_011": "body",
+    "body_012": "body",
+    "body_013": "body",
+    "body_014": "body",
+    "body_015": "body",
+    "body_016": "body",
+    "glowfx_017": "glowfx",
+    "glowfx_018": "glowfx",
+    "glowfx_019": "glowfx",
+    "glowfx_020": "glowfx",
+    "glowfx_021": "glowfx",
+    "glowfx_022": "glowfx",
+    "glowfx_023": "glowfx"
+  },
+  "exportedAt": "2026-10-03T13:07:03.307Z"
+}

@@ -1,0 +1,178 @@
+{
+  "steps": {
+    "导入清理": 2.0,
+    "对齐": 0.9,
+    "低模与 UV": 8.7,
+    "投影着色": 22.5,
+    "烘焙": 11.7,
+    "LOD": 0.0,
+    "部件骨架蒙皮": 0.4,
+    "导出": 2.4
+  },
+  "highpoly": {
+    "faces_raw": 499600,
+    "faces": 273890,
+    "verts": 273872,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.922,
+    "iou_per_view": {
+      "front": 0.918,
+      "left": 0.926,
+      "back": 0.918,
+      "right": 0.93
+    },
+    "height_m": 0.2972,
+    "blockout_height_m": 0.422
+  },
+  "uv": {
+    "smart_islands": 421,
+    "charts": 41,
+    "fallback_charts": 1,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 1.4919,
+    "density_merged": 1.5319
+  },
+  "projection": {
+    "uncovered_ratio": 0.2394
+  },
+  "bake_device": "OPTIX",
+  "emissive_id": {
+    "emissive_texel_ratio": 0.0055
+  },
+  "material_id": {
+    "metal_texel_ratio": 0.334
+  },
+  "textures": {
+    "T_Weapon_Swarm_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Weapon_Swarm_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Weapon_Swarm_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "presentation": [
+    [
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ]
+  ],
+  "skin": {
+    "bones": [
+      "j_r",
+      "j_0",
+      "j_4"
+    ],
+    "per_lod": {
+      "SK_Weapon_Swarm_LOD0": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      },
+      "SK_Weapon_Swarm_LOD1": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      }
+    },
+    "mode": "parts",
+    "sigma_m": 0.0063,
+    "rigid": true,
+    "split": {
+      "SK_Weapon_Swarm_LOD0": {
+        "cut_edges": 0,
+        "cap_tris": 0,
+        "merged_fragment_faces": 0,
+        "tris": 12000
+      },
+      "SK_Weapon_Swarm_LOD1": {
+        "cut_edges": 0,
+        "cap_tris": 0,
+        "merged_fragment_faces": 0,
+        "tris": 3000
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SK_Weapon_Swarm_LOD0",
+      "tris": 12000,
+      "verts": 5982,
+      "uv_min": [
+        0.002261426765471697,
+        0.0022615292109549046
+      ],
+      "uv_max": [
+        0.9977383613586426,
+        0.9977384209632874
+      ],
+      "uv_utilization": 0.605,
+      "bbox_min": [
+        -0.0741,
+        -0.1341,
+        -0.091
+      ],
+      "bbox_max": [
+        0.0741,
+        0.2972,
+        0.1857
+      ]
+    },
+    {
+      "name": "SK_Weapon_Swarm_LOD1",
+      "tris": 3000,
+      "verts": 1482,
+      "uv_min": [
+        0.0023725717328488827,
+        0.002499279798939824
+      ],
+      "uv_max": [
+        0.9976843595504761,
+        0.9964324235916138
+      ],
+      "uv_utilization": 0.583,
+      "bbox_min": [
+        -0.0741,
+        -0.1339,
+        -0.0906
+      ],
+      "bbox_max": [
+        0.0742,
+        0.2972,
+        0.1856
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\weapons\\SK_Weapon_Swarm\\04_export\\SK_Weapon_Swarm_v001.glb",
+    "bytes": 550340
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\weapons\\SK_Weapon_Swarm\\03_work\\SK_Weapon_Swarm_v001.blend",
+  "total_seconds": 48.6,
+  "_seconds": 53.6
+}

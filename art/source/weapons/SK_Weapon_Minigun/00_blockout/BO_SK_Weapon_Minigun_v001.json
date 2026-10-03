@@ -1,0 +1,164 @@
+{
+  "schema": 1,
+  "assetId": "SK_Weapon_Minigun",
+  "source": {
+    "kind": "weapon",
+    "id": "minigun"
+  },
+  "rig": "parts",
+  "space": {
+    "up": "+Y",
+    "forward": "+Z",
+    "unit": "m",
+    "origin": "model"
+  },
+  "bounds": {
+    "min": [
+      -0.14100000113248826,
+      -0.11416873232951472,
+      -0.5899999934434891
+    ],
+    "max": [
+      0.054999999701976776,
+      0.16200000010430812,
+      0.16500000037252904
+    ]
+  },
+  "joints": [
+    {
+      "name": "j_r",
+      "parent": null,
+      "bindPosition": [
+        0,
+        0,
+        0
+      ],
+      "restLocal": [
+        0,
+        0,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0",
+      "parent": "j_r",
+      "bindPosition": [
+        0,
+        0.045,
+        -0.58
+      ],
+      "restLocal": [
+        0,
+        0.045,
+        -0.58
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_4",
+      "parent": "j_r",
+      "bindPosition": [
+        0,
+        0.045,
+        -0.17
+      ],
+      "restLocal": [
+        0,
+        0.045,
+        -0.17
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_8",
+      "parent": "j_r",
+      "bindPosition": [
+        -0.1,
+        0,
+        -0.04
+      ],
+      "restLocal": [
+        -0.1,
+        0,
+        -0.04
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    }
+  ],
+  "keep": [],
+  "fields": {
+    "muzzle": "j_0",
+    "mag": "j_8",
+    "spinner": "j_4"
+  },
+  "parts": {
+    "body_000": "body",
+    "body_001": "body",
+    "body_002": "body",
+    "body_003": "body",
+    "body_004": "body",
+    "body_005": "body",
+    "body_006": "body",
+    "body_007": "body",
+    "body_008": "body",
+    "body_009": "body",
+    "body_010": "body",
+    "body_011": "body",
+    "body_012": "body",
+    "body_013": "body",
+    "body_014": "body",
+    "body_015": "body",
+    "body_016": "body",
+    "body_017": "body",
+    "body_018": "body",
+    "body_019": "body",
+    "body_020": "body",
+    "body_021": "body",
+    "body_022": "body",
+    "body_023": "body",
+    "body_024": "body",
+    "glowfx_025": "glowfx",
+    "glowfx_026": "glowfx",
+    "glowfx_027": "glowfx",
+    "glowfx_028": "glowfx",
+    "glowfx_029": "glowfx"
+  },
+  "exportedAt": "2026-10-03T13:08:01.168Z"
+}

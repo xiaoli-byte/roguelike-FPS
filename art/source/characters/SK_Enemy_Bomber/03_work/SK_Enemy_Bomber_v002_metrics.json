@@ -1,0 +1,191 @@
+{
+  "steps": {
+    "导入清理": 2.3,
+    "对齐": 0.7,
+    "低模与 UV": 9.5,
+    "投影着色": 26.7,
+    "烘焙": 5.9,
+    "LOD": 0.0,
+    "部件骨架蒙皮": 1.1,
+    "导出": 0.7
+  },
+  "highpoly": {
+    "faces_raw": 650566,
+    "faces": 356824,
+    "verts": 356828,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00491
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.854,
+    "iou_per_view": {
+      "front": 0.904,
+      "left": 0.787,
+      "back": 0.909,
+      "right": 0.789
+    },
+    "height_m": 0.9275,
+    "blockout_height_m": 0.9012
+  },
+  "projection": {
+    "uncovered_ratio": 0.2513
+  },
+  "bake_device": "OPTIX",
+  "material_id": {
+    "metal_texel_ratio": 0.0
+  },
+  "textures": {
+    "T_Enemy_Bomber_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Enemy_Bomber_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Enemy_Bomber_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "skin": {
+    "bones": [
+      "j_r",
+      "j_0",
+      "j_0_6",
+      "j_0_7",
+      "j_0_8",
+      "j_0_9",
+      "j_0_10",
+      "j_0_11",
+      "j_0_12"
+    ],
+    "per_lod": {
+      "SK_Enemy_Bomber_LOD0": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      },
+      "SK_Enemy_Bomber_LOD1": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      },
+      "SK_Enemy_Bomber_LOD2": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      }
+    },
+    "mode": "parts",
+    "sigma_m": 0.0176,
+    "blend_hops": 2,
+    "rigid": true,
+    "split": {
+      "SK_Enemy_Bomber_LOD0": {
+        "cut_edges": 113,
+        "cap_tris": 202,
+        "merged_fragment_faces": 0,
+        "tris": 7995
+      },
+      "SK_Enemy_Bomber_LOD1": {
+        "cut_edges": 75,
+        "cap_tris": 126,
+        "merged_fragment_faces": 0,
+        "tris": 3495
+      },
+      "SK_Enemy_Bomber_LOD2": {
+        "cut_edges": 46,
+        "cap_tris": 72,
+        "merged_fragment_faces": 17,
+        "tris": 1496
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SK_Enemy_Bomber_LOD0",
+      "tris": 7995,
+      "verts": 4016,
+      "uv_min": [
+        0.004121669102460146,
+        0.004084833897650242
+      ],
+      "uv_max": [
+        0.9959588050842285,
+        0.989090085029602
+      ],
+      "uv_utilization": 0.55,
+      "bbox_min": [
+        -0.6324,
+        -0.8033,
+        0.0702
+      ],
+      "bbox_max": [
+        0.6325,
+        0.4473,
+        0.9282
+      ]
+    },
+    {
+      "name": "SK_Enemy_Bomber_LOD1",
+      "tris": 3495,
+      "verts": 1766,
+      "uv_min": [
+        0.004121669102460146,
+        0.004030169453471899
+      ],
+      "uv_max": [
+        0.9959588050842285,
+        0.9878932237625122
+      ],
+      "uv_utilization": 0.526,
+      "bbox_min": [
+        -0.6333,
+        -0.8041,
+        0.0699
+      ],
+      "bbox_max": [
+        0.6325,
+        0.4477,
+        0.9282
+      ]
+    },
+    {
+      "name": "SK_Enemy_Bomber_LOD2",
+      "tris": 1496,
+      "verts": 760,
+      "uv_min": [
+        0.004134446382522583,
+        0.004030169453471899
+      ],
+      "uv_max": [
+        0.9959588050842285,
+        0.9878932237625122
+      ],
+      "uv_utilization": 0.485,
+      "bbox_min": [
+        -0.6337,
+        -0.8052,
+        0.0687
+      ],
+      "bbox_max": [
+        0.6335,
+        0.4477,
+        0.9297
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Enemy_Bomber\\04_export\\SK_Enemy_Bomber_v002.glb",
+    "bytes": 357260
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Enemy_Bomber\\03_work\\SK_Enemy_Bomber_v002.blend",
+  "total_seconds": 47.0,
+  "_seconds": 50.9
+}

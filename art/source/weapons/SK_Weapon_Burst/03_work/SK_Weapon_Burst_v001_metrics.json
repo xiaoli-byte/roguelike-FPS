@@ -1,0 +1,179 @@
+{
+  "steps": {
+    "导入清理": 0.9,
+    "对齐": 0.6,
+    "低模与 UV": 4.2,
+    "投影着色": 7.9,
+    "烘焙": 11.1,
+    "LOD": 0.0,
+    "部件骨架蒙皮": 1.9,
+    "导出": 2.0
+  },
+  "highpoly": {
+    "faces_raw": 230105,
+    "faces": 124998,
+    "verts": 124992,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.917,
+    "iou_per_view": {
+      "front": 0.914,
+      "left": 0.91,
+      "back": 0.914,
+      "right": 0.929
+    },
+    "height_m": 0.4133,
+    "blockout_height_m": 0.615
+  },
+  "uv": {
+    "smart_islands": 175,
+    "charts": 26,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "smart",
+    "density_smart": 1.7157,
+    "density_merged": 1.6439
+  },
+  "projection": {
+    "uncovered_ratio": 0.1308
+  },
+  "bake_device": "OPTIX",
+  "emissive_id": {
+    "emissive_texel_ratio": 0.0454
+  },
+  "material_id": {
+    "metal_texel_ratio": 0.6147
+  },
+  "textures": {
+    "T_Weapon_Burst_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Weapon_Burst_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Weapon_Burst_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "presentation": [
+    [
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ]
+  ],
+  "skin": {
+    "bones": [
+      "j_r",
+      "j_0",
+      "j_3",
+      "j_12"
+    ],
+    "per_lod": {
+      "SK_Weapon_Burst_LOD0": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      },
+      "SK_Weapon_Burst_LOD1": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      }
+    },
+    "mode": "parts",
+    "sigma_m": 0.0092,
+    "rigid": true,
+    "split": {
+      "SK_Weapon_Burst_LOD0": {
+        "cut_edges": 62,
+        "cap_tris": 116,
+        "merged_fragment_faces": 0,
+        "tris": 11996
+      },
+      "SK_Weapon_Burst_LOD1": {
+        "cut_edges": 29,
+        "cap_tris": 50,
+        "merged_fragment_faces": 0,
+        "tris": 2996
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SK_Weapon_Burst_LOD0",
+      "tris": 11996,
+      "verts": 5996,
+      "uv_min": [
+        0.0021658071782439947,
+        0.0022333215456455946
+      ],
+      "uv_max": [
+        0.947242259979248,
+        0.9978708028793335
+      ],
+      "uv_utilization": 0.676,
+      "bbox_min": [
+        -0.0349,
+        -0.1717,
+        -0.112
+      ],
+      "bbox_max": [
+        0.0348,
+        0.4133,
+        0.1132
+      ]
+    },
+    {
+      "name": "SK_Weapon_Burst_LOD1",
+      "tris": 2996,
+      "verts": 1496,
+      "uv_min": [
+        0.0021658071782439947,
+        0.002298375591635704
+      ],
+      "uv_max": [
+        0.9467523097991943,
+        0.996070146560669
+      ],
+      "uv_utilization": 0.662,
+      "bbox_min": [
+        -0.0349,
+        -0.1717,
+        -0.1118
+      ],
+      "bbox_max": [
+        0.0349,
+        0.4133,
+        0.113
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\weapons\\SK_Weapon_Burst\\04_export\\SK_Weapon_Burst_v001.glb",
+    "bytes": 458128
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\weapons\\SK_Weapon_Burst\\03_work\\SK_Weapon_Burst_v001.blend",
+  "total_seconds": 28.7,
+  "_seconds": 32.3
+}

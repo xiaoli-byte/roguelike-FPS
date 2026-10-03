@@ -1,0 +1,231 @@
+{
+  "steps": {
+    "导入清理": 2.6,
+    "对齐": 0.9,
+    "低模与 UV": 26.0,
+    "投影着色": 20.6,
+    "烘焙": 10.2,
+    "LOD": 0.2,
+    "部件骨架蒙皮": 4.2,
+    "导出": 1.9
+  },
+  "highpoly": {
+    "faces_raw": 551272,
+    "faces": 291436,
+    "verts": 291424,
+    "loose_parts": 4,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00491
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.879,
+    "iou_per_view": {
+      "front": 0.906,
+      "left": 0.853,
+      "back": 0.899,
+      "right": 0.843
+    },
+    "height_m": 3.657,
+    "blockout_height_m": 3.74
+  },
+  "uv": {
+    "smart_islands": 1054,
+    "charts": 95,
+    "fallback_charts": 1,
+    "flipped_faces": 2,
+    "flipped_ratio": 0.0001,
+    "margin_px": 6
+  },
+  "projection": {
+    "uncovered_ratio": 0.3779
+  },
+  "bake_device": "OPTIX",
+  "material_id": {
+    "metal_texel_ratio": 0.1744
+  },
+  "textures": {
+    "T_Boss_Matriarch_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Boss_Matriarch_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Boss_Matriarch_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "skin": {
+    "bones": [
+      "j_r",
+      "j_0",
+      "j_0_3",
+      "j_0_4",
+      "j_0_5",
+      "j_0_6",
+      "j_0_7",
+      "j_0_8",
+      "j_0_9",
+      "j_0_10",
+      "j_0_11",
+      "j_0_12",
+      "j_0_13",
+      "j_0_13_12",
+      "j_0_13_13",
+      "j_0_13_13_1",
+      "j_0_13_13_1_6",
+      "j_0_13_14",
+      "j_0_13_14_1",
+      "j_0_13_14_1_6",
+      "j_0_13_16",
+      "j_0_13_16_4",
+      "j_0_13_16_4_0",
+      "j_0_13_16_4_1",
+      "j_0_13_16_4_2",
+      "j_0_13_16_4_3",
+      "j_0_13_16_4_4",
+      "j_0_13_16_8",
+      "j_0_13_17",
+      "j_0_13_17_0",
+      "j_0_13_17_0_0",
+      "j_0_13_17_0_1",
+      "j_0_13_17_0_2",
+      "j_0_13_17_0_3",
+      "j_0_13_17_0_4",
+      "j_0_13_17_1",
+      "j_0_13_17_1_0",
+      "j_0_13_17_1_1",
+      "j_0_13_17_1_2",
+      "j_0_13_17_1_3",
+      "j_0_13_17_1_4",
+      "j_0_14"
+    ],
+    "per_lod": {
+      "SK_Boss_Matriarch_LOD0": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      },
+      "SK_Boss_Matriarch_LOD1": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      },
+      "SK_Boss_Matriarch_LOD2": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      }
+    },
+    "mode": "parts",
+    "sigma_m": 0.0748,
+    "rigid": false,
+    "split": {
+      "SK_Boss_Matriarch_LOD0": {
+        "cut_edges": 107,
+        "cap_tris": 192,
+        "merged_fragment_faces": 835,
+        "tris": 29996
+      },
+      "SK_Boss_Matriarch_LOD1": {
+        "cut_edges": 76,
+        "cap_tris": 130,
+        "merged_fragment_faces": 311,
+        "tris": 11996
+      },
+      "SK_Boss_Matriarch_LOD2": {
+        "cut_edges": 53,
+        "cap_tris": 82,
+        "merged_fragment_faces": 123,
+        "tris": 4996
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SK_Boss_Matriarch_LOD0",
+      "tris": 29996,
+      "verts": 14996,
+      "uv_min": [
+        0.002929711015895009,
+        0.0029440606012940407
+      ],
+      "uv_max": [
+        0.9969914555549622,
+        0.991437554359436
+      ],
+      "uv_utilization": 0.467,
+      "bbox_min": [
+        -0.865,
+        -0.8519,
+        0.1269
+      ],
+      "bbox_max": [
+        0.8677,
+        0.8574,
+        3.6552
+      ]
+    },
+    {
+      "name": "SK_Boss_Matriarch_LOD1",
+      "tris": 11996,
+      "verts": 5996,
+      "uv_min": [
+        0.002929711015895009,
+        0.0029892895836383104
+      ],
+      "uv_max": [
+        0.9969913959503174,
+        0.991437554359436
+      ],
+      "uv_utilization": 0.457,
+      "bbox_min": [
+        -0.8646,
+        -0.8519,
+        0.1276
+      ],
+      "bbox_max": [
+        0.8683,
+        0.8576,
+        3.655
+      ]
+    },
+    {
+      "name": "SK_Boss_Matriarch_LOD2",
+      "tris": 4996,
+      "verts": 2496,
+      "uv_min": [
+        0.002969165798276663,
+        0.0033540253061801195
+      ],
+      "uv_max": [
+        0.9964163899421692,
+        0.989854097366333
+      ],
+      "uv_utilization": 0.442,
+      "bbox_min": [
+        -0.8691,
+        -0.853,
+        0.1254
+      ],
+      "bbox_max": [
+        0.8707,
+        0.8581,
+        3.6553
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Boss_Matriarch\\04_export\\SK_Boss_Matriarch_v004.glb",
+    "bytes": 1138348
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Boss_Matriarch\\03_work\\SK_Boss_Matriarch_v004.blend",
+  "total_seconds": 66.6,
+  "_seconds": 70.8
+}

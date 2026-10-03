@@ -1,0 +1,211 @@
+{
+  "steps": {
+    "导入清理": 5.9,
+    "对齐": 2.1,
+    "低模与 UV": 44.3,
+    "投影着色": 72.9,
+    "烘焙": 18.0,
+    "LOD": 0.3,
+    "部件骨架蒙皮": 4.3,
+    "导出": 1.7
+  },
+  "highpoly": {
+    "faces_raw": 801326,
+    "faces": 483012,
+    "verts": 482994,
+    "loose_parts": 4,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00462
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.834,
+    "iou_per_view": {
+      "front": 0.905,
+      "left": 0.741,
+      "back": 0.912,
+      "right": 0.742
+    },
+    "height_m": 5.6619,
+    "blockout_height_m": 6.0
+  },
+  "uv": {
+    "smart_islands": 1057,
+    "charts": 165,
+    "fallback_charts": 3,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.0701,
+    "density_merged": 0.0807
+  },
+  "projection": {
+    "uncovered_ratio": 0.3024
+  },
+  "bake_device": "OPTIX",
+  "material_id": {
+    "metal_texel_ratio": 0.1198
+  },
+  "textures": {
+    "T_Boss_Colossus_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Boss_Colossus_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Boss_Colossus_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "skin": {
+    "bones": [
+      "j_r",
+      "j_0",
+      "j_0_0",
+      "j_0_0_5",
+      "j_0_0_5_2",
+      "j_0_0_6",
+      "j_0_0_6_2",
+      "j_0_0_7",
+      "j_0_1",
+      "j_0_1_15",
+      "j_0_1_16",
+      "j_0_1_16_5",
+      "j_0_1_16_6",
+      "j_0_1_17",
+      "j_0_1_17_5",
+      "j_0_1_17_6",
+      "j_0_1_18",
+      "j_0_1_18_1",
+      "j_0_1_18_1_10",
+      "j_0_2"
+    ],
+    "per_lod": {
+      "SK_Boss_Colossus_LOD0": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      },
+      "SK_Boss_Colossus_LOD1": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      },
+      "SK_Boss_Colossus_LOD2": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      }
+    },
+    "mode": "parts",
+    "sigma_m": 0.072,
+    "rigid": true,
+    "split": {
+      "SK_Boss_Colossus_LOD0": {
+        "cut_edges": 854,
+        "cap_tris": 1632,
+        "merged_fragment_faces": 234,
+        "tris": 29996
+      },
+      "SK_Boss_Colossus_LOD1": {
+        "cut_edges": 543,
+        "cap_tris": 1032,
+        "merged_fragment_faces": 92,
+        "tris": 11996
+      },
+      "SK_Boss_Colossus_LOD2": {
+        "cut_edges": 321,
+        "cap_tris": 543,
+        "merged_fragment_faces": 31,
+        "tris": 4995
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SK_Boss_Colossus_LOD0",
+      "tris": 29996,
+      "verts": 15024,
+      "uv_min": [
+        0.0033366233110427856,
+        0.003331504063680768
+      ],
+      "uv_max": [
+        0.9966846704483032,
+        0.9872819781303406
+      ],
+      "uv_utilization": 0.493,
+      "bbox_min": [
+        -2.4858,
+        -1.1245,
+        0.0033
+      ],
+      "bbox_max": [
+        2.4867,
+        0.7953,
+        5.6619
+      ]
+    },
+    {
+      "name": "SK_Boss_Colossus_LOD1",
+      "tris": 11996,
+      "verts": 6014,
+      "uv_min": [
+        0.0033366233110427856,
+        0.003331504063680768
+      ],
+      "uv_max": [
+        0.9964030981063843,
+        0.9872819781303406
+      ],
+      "uv_utilization": 0.489,
+      "bbox_min": [
+        -2.4862,
+        -1.125,
+        0.0024
+      ],
+      "bbox_max": [
+        2.4865,
+        0.7961,
+        5.6646
+      ]
+    },
+    {
+      "name": "SK_Boss_Colossus_LOD2",
+      "tris": 4995,
+      "verts": 2537,
+      "uv_min": [
+        0.003349173814058304,
+        0.0034536453895270824
+      ],
+      "uv_max": [
+        0.9964019656181335,
+        0.9841759204864502
+      ],
+      "uv_utilization": 0.48,
+      "bbox_min": [
+        -2.491,
+        -1.1235,
+        -0.0011
+      ],
+      "bbox_max": [
+        2.4932,
+        0.7956,
+        5.6624
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Boss_Colossus\\04_export\\SK_Boss_Colossus_v006.glb",
+    "bytes": 1014428
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Boss_Colossus\\03_work\\SK_Boss_Colossus_v006.blend",
+  "total_seconds": 149.6,
+  "_seconds": 153.5
+}

@@ -1,0 +1,165 @@
+{
+  "schema": 1,
+  "assetId": "SK_Weapon_Rifle",
+  "source": {
+    "kind": "weapon",
+    "id": "rifle"
+  },
+  "rig": "parts",
+  "space": {
+    "up": "+Y",
+    "forward": "+Z",
+    "unit": "m",
+    "origin": "model"
+  },
+  "bounds": {
+    "min": [
+      -0.028999999165534973,
+      -0.1651614375266959,
+      -0.640000000372529
+    ],
+    "max": [
+      0.028999999165534973,
+      0.0940000002682209,
+      0.3369999998882413
+    ]
+  },
+  "joints": [
+    {
+      "name": "j_r",
+      "parent": null,
+      "bindPosition": [
+        0,
+        0,
+        0
+      ],
+      "restLocal": [
+        0,
+        0,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0",
+      "parent": "j_r",
+      "bindPosition": [
+        0,
+        0.042,
+        -0.645
+      ],
+      "restLocal": [
+        0,
+        0.042,
+        -0.645
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_10",
+      "parent": "j_r",
+      "bindPosition": [
+        0,
+        0,
+        0
+      ],
+      "restLocal": [
+        0,
+        0,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_13",
+      "parent": "j_r",
+      "bindPosition": [
+        0,
+        0,
+        -0.13
+      ],
+      "restLocal": [
+        0,
+        0,
+        -0.13
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    }
+  ],
+  "keep": [
+    "j_10"
+  ],
+  "fields": {
+    "muzzle": "j_0",
+    "mag": "j_13"
+  },
+  "parts": {
+    "body_000": "body",
+    "body_001": "body",
+    "body_002": "body",
+    "body_003": "body",
+    "body_004": "body",
+    "body_005": "body",
+    "body_006": "body",
+    "body_007": "body",
+    "body_008": "body",
+    "attachment_009": "attachment",
+    "attachment_010": "attachment",
+    "attachment_011": "attachment",
+    "attachment_012": "attachment",
+    "attachment_013": "attachment",
+    "attachment_014": "attachment",
+    "glowfx_015": "glowfx",
+    "body_016": "body",
+    "body_017": "body",
+    "body_018": "body",
+    "body_019": "body",
+    "body_020": "body",
+    "body_021": "body",
+    "body_022": "body",
+    "body_023": "body",
+    "body_024": "body",
+    "body_025": "body",
+    "glowfx_026": "glowfx",
+    "glowfx_027": "glowfx",
+    "glowfx_028": "glowfx",
+    "glowfx_029": "glowfx"
+  },
+  "exportedAt": "2026-10-03T13:06:53.973Z"
+}

@@ -1,0 +1,895 @@
+{
+  "id": "SK_Enemy_Bomber",
+  "display": "爆骸虫",
+  "kind": "skeletal",
+  "class": "enemy_standard",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 18:20:26",
+          "files": {
+            "BO_SK_Enemy_Bomber_v001.glb": {
+              "path": "00_blockout/BO_SK_Enemy_Bomber_v001.glb",
+              "sha256": "153e2d6a842ba0f6df2dcd7710d2995d0bdd6cbd51acec5480b8d65312fb16d1"
+            },
+            "BO_SK_Enemy_Bomber_v001.json": {
+              "path": "00_blockout/BO_SK_Enemy_Bomber_v001.json",
+              "sha256": "840f80c7f5f3483c5e9b08ee3da0029afbb5c74a380251d0641d873b8d7619bd"
+            },
+            "BO_SK_Enemy_Bomber_v001_views.json": {
+              "path": "00_blockout/BO_SK_Enemy_Bomber_v001_views.json",
+              "sha256": "7fe3b9b58788175104f0c4c3c9dc94f7bc00a388414545851352a646cb990792"
+            },
+            "BO_SK_Enemy_Bomber_v001_sheet.png": {
+              "path": "00_blockout/BO_SK_Enemy_Bomber_v001_sheet.png",
+              "sha256": "3490db02cb5b6fc12cbd66790f662ec000dd01865a9dcf1e960f9304f7c1af86"
+            },
+            "BO_SK_Enemy_Bomber_v001_front.png": {
+              "path": "00_blockout/BO_SK_Enemy_Bomber_v001_front.png",
+              "sha256": "cee8bd79131da23e50d735323d3aaa3c95e58de5b643ba62eba6833d6d12b50f"
+            },
+            "BO_SK_Enemy_Bomber_v001_left.png": {
+              "path": "00_blockout/BO_SK_Enemy_Bomber_v001_left.png",
+              "sha256": "552e2a5c213eca7ddc9330b39fb3b4c43e12c91927c73d4ecc312d29a2c86881"
+            },
+            "BO_SK_Enemy_Bomber_v001_back.png": {
+              "path": "00_blockout/BO_SK_Enemy_Bomber_v001_back.png",
+              "sha256": "30f27cb370547452ea9ca1eed275d8ad4947f622556c338fcf573b34b255eca7"
+            },
+            "BO_SK_Enemy_Bomber_v001_right.png": {
+              "path": "00_blockout/BO_SK_Enemy_Bomber_v001_right.png",
+              "sha256": "b911e6c20e969bf03831ca0ea5f9b6125ab1ac90e16884e8ae45e1ded60bb26b"
+            }
+          },
+          "source": {
+            "kind": "enemy",
+            "id": "bomber"
+          },
+          "joints": 9,
+          "bounds": {
+            "min": [
+              -0.73424305025193,
+              0.06881207213226032,
+              -0.4202215075492859
+            ],
+            "max": [
+              0.73424305025193,
+              0.97,
+              0.8134540613534494
+            ]
+          },
+          "blender_seconds": 10.4
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 18:39:02",
+          "files": {
+            "CN_SK_Enemy_Bomber_v001_sheet.png": {
+              "path": "01_concept/CN_SK_Enemy_Bomber_v001_sheet.png",
+              "sha256": "1f8af4ea3704c65e192902e0e2fefee717b8a799ba31e3f929efd65afd10f302"
+            },
+            "CN_SK_Enemy_Bomber_v001_front.png": {
+              "path": "01_concept/CN_SK_Enemy_Bomber_v001_front.png",
+              "sha256": "c3a824198fa0c83b6768f83040b2693c7ab0c5ef80f8e0fd43dbbd9a6275323e"
+            },
+            "CN_SK_Enemy_Bomber_v001_left.png": {
+              "path": "01_concept/CN_SK_Enemy_Bomber_v001_left.png",
+              "sha256": "c5d0b6308cb016f052c00cb4c9c2e0e809fd0b239a96d99adacea7bcceec3db8"
+            },
+            "CN_SK_Enemy_Bomber_v001_back.png": {
+              "path": "01_concept/CN_SK_Enemy_Bomber_v001_back.png",
+              "sha256": "f9b34ff3a1e4586b1c829288f470d136dff80b9d51008bfe000930a6899c35eb"
+            },
+            "CN_SK_Enemy_Bomber_v001_right.png": {
+              "path": "01_concept/CN_SK_Enemy_Bomber_v001_right.png",
+              "sha256": "37b7c1131ee29bb2585be309bac3692e65a1dd93263c2f44331bbda3db54e55d"
+            },
+            "CN_SK_Enemy_Bomber_v001_compare.png": {
+              "path": "01_concept/CN_SK_Enemy_Bomber_v001_compare.png",
+              "sha256": "7b6f4e5988ed1ca604c44dff12b2216c983b180862fb1dc000989856a2042409"
+            },
+            "CN_SK_Enemy_Bomber_v001_prompt.txt": {
+              "path": "01_concept/CN_SK_Enemy_Bomber_v001_prompt.txt",
+              "sha256": "85c6d39f17b2d59845b6b9a3afd0b388c4c02c65b60a837cc613336b000c9b79"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1916,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 458
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3096
+          },
+          "request_id": "req_1394bd717a73416ab0e5216a12025fa5",
+          "seconds": 25.7,
+          "registration": {
+            "front": {
+              "scale": 0.8965,
+              "offset": [
+                48,
+                376
+              ],
+              "iou": 0.897,
+              "iou_unregistered_scale": 0.8833
+            },
+            "left": {
+              "scale": 0.9051,
+              "offset": [
+                85,
+                376
+              ],
+              "iou": 0.878,
+              "iou_unregistered_scale": 0.8917
+            },
+            "back": {
+              "scale": 0.8994,
+              "offset": [
+                48,
+                376
+              ],
+              "iou": 0.894,
+              "iou_unregistered_scale": 0.8861
+            },
+            "right": {
+              "scale": 0.9051,
+              "offset": [
+                71,
+                376
+              ],
+              "iou": 0.881,
+              "iou_unregistered_scale": 0.8917
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.897,
+            "left": 0.877,
+            "back": 0.893,
+            "right": 0.879
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "姿势与部件位置贴合白模，发光部位正确",
+            "time": "2026-10-03 18:42:00"
+          }
+        }
+      ]
+    },
+    "matid": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 18:44:44",
+          "files": {
+            "MID_SK_Enemy_Bomber_v001_sheet.png": {
+              "path": "01_concept/MID_SK_Enemy_Bomber_v001_sheet.png",
+              "sha256": "44a29ad4c474be89089f5a7a0c6eea731f045f3c7a7098e013a70d6b7633fdd1"
+            },
+            "MID_SK_Enemy_Bomber_v001_front.png": {
+              "path": "01_concept/MID_SK_Enemy_Bomber_v001_front.png",
+              "sha256": "ac9cf3547248cadeb1424fffe3b09f2286e1f0de8c7e85335b56be447c8b8177"
+            },
+            "MID_SK_Enemy_Bomber_v001_left.png": {
+              "path": "01_concept/MID_SK_Enemy_Bomber_v001_left.png",
+              "sha256": "ab12fe22adb48b307545fa5803820e4c905d7c047cea2067ddea665f8ea3e67b"
+            },
+            "MID_SK_Enemy_Bomber_v001_back.png": {
+              "path": "01_concept/MID_SK_Enemy_Bomber_v001_back.png",
+              "sha256": "258b586cca8a16be5914a9a53ffa6dc9bb539ef2d6d4cd1a0c546edf485c245a"
+            },
+            "MID_SK_Enemy_Bomber_v001_right.png": {
+              "path": "01_concept/MID_SK_Enemy_Bomber_v001_right.png",
+              "sha256": "22c129ae2d2c08d7a60ee2434d94f75abdb1816ad42231fe04caef1c1939f05c"
+            },
+            "MID_SK_Enemy_Bomber_v001_compare.png": {
+              "path": "01_concept/MID_SK_Enemy_Bomber_v001_compare.png",
+              "sha256": "1272dea38e11125bff03987ae323580827d1da4a17f597487d9222e344e22cbb"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1699,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 241
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2879
+          },
+          "request_id": "req_17342e5251964cb189de3cb9ffe88ece",
+          "seconds": 26.6,
+          "registration": {
+            "front": {
+              "scale": 0.8017,
+              "offset": [
+                74,
+                384
+              ],
+              "iou": 0.875,
+              "iou_unregistered_scale": 0.8529,
+              "purity": 0.985
+            },
+            "left": {
+              "scale": 0.8268,
+              "offset": [
+                84,
+                380
+              ],
+              "iou": 0.916,
+              "iou_unregistered_scale": 0.8524,
+              "purity": 0.981
+            },
+            "back": {
+              "scale": 0.8136,
+              "offset": [
+                71,
+                381
+              ],
+              "iou": 0.886,
+              "iou_unregistered_scale": 0.8388,
+              "purity": 0.986
+            },
+            "right": {
+              "scale": 0.8244,
+              "offset": [
+                72,
+                380
+              ],
+              "iou": 0.912,
+              "iou_unregistered_scale": 0.8498,
+              "purity": 0.981
+            }
+          },
+          "metal_ratio": {
+            "front": 0.561,
+            "left": 0.546,
+            "back": 0.556,
+            "right": 0.547
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 18:48:44",
+          "files": {
+            "MID_SK_Enemy_Bomber_v002_sheet.png": {
+              "path": "01_concept/MID_SK_Enemy_Bomber_v002_sheet.png",
+              "sha256": "8680523dc8de7aecbc1d0e6448856b161c7e07d6c6295fb2cf8a022aeb6dd587"
+            },
+            "MID_SK_Enemy_Bomber_v002_front.png": {
+              "path": "01_concept/MID_SK_Enemy_Bomber_v002_front.png",
+              "sha256": "492e7e85eb9c7f3c6ba2f1e9f1d3e6293ebb91a4e452da88297c13d3fc77eef8"
+            },
+            "MID_SK_Enemy_Bomber_v002_left.png": {
+              "path": "01_concept/MID_SK_Enemy_Bomber_v002_left.png",
+              "sha256": "92c101d804f748ae685121fe9aa2ac92dcda0eb23f599c12b5b014863cfa6875"
+            },
+            "MID_SK_Enemy_Bomber_v002_back.png": {
+              "path": "01_concept/MID_SK_Enemy_Bomber_v002_back.png",
+              "sha256": "23b95ea3b0ab2b9de5af7ef85367082dbb8084bfb50420a404994bb22296d282"
+            },
+            "MID_SK_Enemy_Bomber_v002_right.png": {
+              "path": "01_concept/MID_SK_Enemy_Bomber_v002_right.png",
+              "sha256": "3acb6ea0a6ce98e6dbd2934f2663cab1d2fb7bcc01906e0a3be58106c86a4531"
+            },
+            "MID_SK_Enemy_Bomber_v002_compare.png": {
+              "path": "01_concept/MID_SK_Enemy_Bomber_v002_compare.png",
+              "sha256": "36eeb5dbe55c627fedbdd999b186fd8785b95344f0234dc8da8a250ff1d95e8a"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1749,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 291
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2929
+          },
+          "request_id": "req_77411000afbd4552aa87da064ab224fa",
+          "seconds": 24.4,
+          "registration": {
+            "front": {
+              "scale": 0.9073,
+              "offset": [
+                46,
+                376
+              ],
+              "iou": 0.927,
+              "iou_unregistered_scale": 0.9073,
+              "purity": 0.992
+            },
+            "left": {
+              "scale": 0.91,
+              "offset": [
+                82,
+                376
+              ],
+              "iou": 0.966,
+              "iou_unregistered_scale": 0.91,
+              "purity": 0.982
+            },
+            "back": {
+              "scale": 0.8978,
+              "offset": [
+                48,
+                377
+              ],
+              "iou": 0.973,
+              "iou_unregistered_scale": 0.8978,
+              "purity": 0.987
+            },
+            "right": {
+              "scale": 0.8963,
+              "offset": [
+                72,
+                376
+              ],
+              "iou": 0.967,
+              "iou_unregistered_scale": 0.91,
+              "purity": 0.984
+            }
+          },
+          "metal_ratio": {
+            "front": 0.0,
+            "left": 0.0,
+            "back": 0.0,
+            "right": 0.0
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 18:46:07",
+          "files": {
+            "HP_SK_Enemy_Bomber_v001_input.png": {
+              "path": "02_highpoly/HP_SK_Enemy_Bomber_v001_input.png",
+              "sha256": "b01a8e35e9cbf7ba1a2bea6b69f8000e884d6be80efd649dbb3e26d4c363292d"
+            },
+            "HP_SK_Enemy_Bomber_v001.glb": {
+              "path": "02_highpoly/HP_SK_Enemy_Bomber_v001.glb",
+              "sha256": "e92dd3c76ec07ab72418ca3fca8086305005c311cb6bdadb37be6740642c8bbf"
+            }
+          },
+          "from_concept": 1,
+          "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+          "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "checkpoint": "hunyuan_3d_v2.1.safetensors",
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "crop": [
+              48,
+              376,
+              463,
+              660
+            ],
+            "scale": 2.0973493975903614,
+            "offset": [
+              77,
+              214
+            ]
+          },
+          "seconds": 126.7,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 11.7
+        }
+      ]
+    },
+    "build": {
+      "current": 4,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 18:47:51",
+          "files": {
+            "SK_Enemy_Bomber_v001.blend": {
+              "path": "03_work/SK_Enemy_Bomber_v001.blend",
+              "sha256": "a82bdd78860b38a6fdc15b5f2f50022d5c3b5de67ecd0cfa0a909e189ae2b7df"
+            },
+            "SK_Enemy_Bomber_v001.glb": {
+              "path": "04_export/SK_Enemy_Bomber_v001.glb",
+              "sha256": "04efe04aebd9019465d0ff56cc6b404e9c895fd5e8a147723724809ccb0d9f32"
+            },
+            "SK_Enemy_Bomber_v001_metrics.json": {
+              "path": "03_work/SK_Enemy_Bomber_v001_metrics.json",
+              "sha256": "b908f6a9ff70e171c0265f7d0c1f18999ef11abffa6888c1fe8e52a7c0f91177"
+            },
+            "T_Enemy_Bomber_BC.png": {
+              "path": "03_work/textures_v001/T_Enemy_Bomber_BC.png",
+              "sha256": "773a56248bf14aaf93692f2aa1f0b665c2e9d966406dab4f738d698b4a1b9626"
+            },
+            "T_Enemy_Bomber_MetalMask.png": {
+              "path": "03_work/textures_v001/T_Enemy_Bomber_MetalMask.png",
+              "sha256": "452c751bdb5057d400cb7e6e31b436cfae5beecac20313550e85b11a43653af4"
+            },
+            "T_Enemy_Bomber_N.png": {
+              "path": "03_work/textures_v001/T_Enemy_Bomber_N.png",
+              "sha256": "3562da9c05bffd711637e4192cd152775f5b75b9f5bd74530959a70604505d2a"
+            },
+            "T_Enemy_Bomber_ORM.png": {
+              "path": "03_work/textures_v001/T_Enemy_Bomber_ORM.png",
+              "sha256": "cec42740cb867c0ac6888f5aafe55ee77c0a0687cb43ffdcff230967fdb1c32e"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1
+          },
+          "align_iou": 0.854,
+          "uncovered_ratio": 0.2513,
+          "lods": [
+            {
+              "tris": 7999,
+              "verts": 4004
+            },
+            {
+              "tris": 3499,
+              "verts": 1754
+            },
+            {
+              "tris": 1500,
+              "verts": 752
+            }
+          ],
+          "export_kb": 402.1,
+          "seconds": 104.6,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 19:20:55",
+          "files": {
+            "SK_Enemy_Bomber_v002.blend": {
+              "path": "03_work/SK_Enemy_Bomber_v002.blend",
+              "sha256": "e538c72696ed222c06e06361262d43e453fa9b9f3e75ca3269f0012d75f95986"
+            },
+            "SK_Enemy_Bomber_v002.glb": {
+              "path": "04_export/SK_Enemy_Bomber_v002.glb",
+              "sha256": "9a3daf2e0f3cd744863328ee22801d8823ec104d33f9fcf3c93282f620e54615"
+            },
+            "SK_Enemy_Bomber_v002_metrics.json": {
+              "path": "03_work/SK_Enemy_Bomber_v002_metrics.json",
+              "sha256": "f0c2d559323f135350b14c865631dac20c7b1ba435c5b472eca1a4c61151ad09"
+            },
+            "T_Enemy_Bomber_BC.png": {
+              "path": "03_work/textures_v002/T_Enemy_Bomber_BC.png",
+              "sha256": "773a56248bf14aaf93692f2aa1f0b665c2e9d966406dab4f738d698b4a1b9626"
+            },
+            "T_Enemy_Bomber_MetalMask.png": {
+              "path": "03_work/textures_v002/T_Enemy_Bomber_MetalMask.png",
+              "sha256": "1a5e57350822bcd0cdb03f4dc88a26b4a281ba170756106cf0e2df2b298a2cd2"
+            },
+            "T_Enemy_Bomber_N.png": {
+              "path": "03_work/textures_v002/T_Enemy_Bomber_N.png",
+              "sha256": "3562da9c05bffd711637e4192cd152775f5b75b9f5bd74530959a70604505d2a"
+            },
+            "T_Enemy_Bomber_ORM.png": {
+              "path": "03_work/textures_v002/T_Enemy_Bomber_ORM.png",
+              "sha256": "ea87d6560497e27a9c99488dafa64c72887b26f3023648d4cc4b1349b2157287"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 2
+          },
+          "align_iou": 0.854,
+          "uncovered_ratio": 0.2513,
+          "lods": [
+            {
+              "tris": 7995,
+              "verts": 4016
+            },
+            {
+              "tris": 3495,
+              "verts": 1766
+            },
+            {
+              "tris": 1496,
+              "verts": 760
+            }
+          ],
+          "export_kb": 348.9,
+          "seconds": 50.9,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 19:59:51",
+          "files": {
+            "SK_Enemy_Bomber_v003.blend": {
+              "path": "03_work/SK_Enemy_Bomber_v003.blend",
+              "sha256": "4e1777475edaf77f08d908763b19c41a2e3265bafafca3b8ecf41695ed768c09"
+            },
+            "SK_Enemy_Bomber_v003.glb": {
+              "path": "04_export/SK_Enemy_Bomber_v003.glb",
+              "sha256": "c9ff75f1caa2f75466d076653044e01986fd6f124ba50475259f62e647ffe2b6"
+            },
+            "SK_Enemy_Bomber_v003_metrics.json": {
+              "path": "03_work/SK_Enemy_Bomber_v003_metrics.json",
+              "sha256": "ac0d27a0ce3cf19f4dc5f4b1501e05f9c0be0bfada95063196a300508f6ea5d6"
+            },
+            "T_Enemy_Bomber_BC.png": {
+              "path": "03_work/textures_v003/T_Enemy_Bomber_BC.png",
+              "sha256": "a9b2bbb4f53058b42a38770a4781056a26875465a2517f60467cb5a121a506fc"
+            },
+            "T_Enemy_Bomber_MetalMask.png": {
+              "path": "03_work/textures_v003/T_Enemy_Bomber_MetalMask.png",
+              "sha256": "1a5e57350822bcd0cdb03f4dc88a26b4a281ba170756106cf0e2df2b298a2cd2"
+            },
+            "T_Enemy_Bomber_N.png": {
+              "path": "03_work/textures_v003/T_Enemy_Bomber_N.png",
+              "sha256": "d0dd78a21289e1761e62648c0141d4389166d205ab39f58e4a119f1e03640d3a"
+            },
+            "T_Enemy_Bomber_ORM.png": {
+              "path": "03_work/textures_v003/T_Enemy_Bomber_ORM.png",
+              "sha256": "97d3163baafb9ae7907c680ddb5fd9cd342ed7bebd4f00c494a8533c11e7cddb"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 2
+          },
+          "align_iou": 0.854,
+          "uncovered_ratio": 0.2513,
+          "lods": [
+            {
+              "tris": 7995,
+              "verts": 4016
+            },
+            {
+              "tris": 3495,
+              "verts": 1766
+            },
+            {
+              "tris": 1496,
+              "verts": 760
+            }
+          ],
+          "export_kb": 289.7,
+          "seconds": 58.0,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 20:27:11",
+          "files": {
+            "SK_Enemy_Bomber_v004.blend": {
+              "path": "03_work/SK_Enemy_Bomber_v004.blend",
+              "sha256": "27beba05d12a50180d8d9aee162666f759679a717aa1dc6bf96440bbf174c5e0"
+            },
+            "SK_Enemy_Bomber_v004.glb": {
+              "path": "04_export/SK_Enemy_Bomber_v004.glb",
+              "sha256": "454556539ff7e651386ee8c835061dbd9265754fbfa0b5b7966a710c7b52262a"
+            },
+            "SK_Enemy_Bomber_v004_metrics.json": {
+              "path": "03_work/SK_Enemy_Bomber_v004_metrics.json",
+              "sha256": "a039775754a8a067dadf688f1b648313104ed36bb1a5aee7b548832050d5ed98"
+            },
+            "T_Enemy_Bomber_BC.png": {
+              "path": "03_work/textures_v004/T_Enemy_Bomber_BC.png",
+              "sha256": "44af041430ff02af818235c91993e28d009c60e85b92d54bf148100dc9d3cb65"
+            },
+            "T_Enemy_Bomber_MetalMask.png": {
+              "path": "03_work/textures_v004/T_Enemy_Bomber_MetalMask.png",
+              "sha256": "1a5e57350822bcd0cdb03f4dc88a26b4a281ba170756106cf0e2df2b298a2cd2"
+            },
+            "T_Enemy_Bomber_N.png": {
+              "path": "03_work/textures_v004/T_Enemy_Bomber_N.png",
+              "sha256": "cb95170754a6df078e650e71bd690f6cf40b2fa316657674322ed9bdc34be79f"
+            },
+            "T_Enemy_Bomber_ORM.png": {
+              "path": "03_work/textures_v004/T_Enemy_Bomber_ORM.png",
+              "sha256": "5dde0105a76298470f7439229b45af8856722ecc3ab96e9da00151ed3350474c"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 2
+          },
+          "align_iou": 0.854,
+          "uncovered_ratio": 0.2513,
+          "lods": [
+            {
+              "tris": 7995,
+              "verts": 4016
+            },
+            {
+              "tris": 3495,
+              "verts": 1766
+            },
+            {
+              "tris": 1496,
+              "verts": 760
+            }
+          ],
+          "export_kb": 280.5,
+          "seconds": 106.5,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 4,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 18:47:51",
+          "files": {
+            "SK_Enemy_Bomber_v001_validation.json": {
+              "path": "05_review/SK_Enemy_Bomber_v001_validation.json",
+              "sha256": "5ad43322a62c107f83f19eb9ed5815583848f28ff48b53b9959b6ecd16cdc9c5"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 19:20:55",
+          "files": {
+            "SK_Enemy_Bomber_v002_validation.json": {
+              "path": "05_review/SK_Enemy_Bomber_v002_validation.json",
+              "sha256": "7570e9dac6f680a27c504b679aff5e7fbef5c3f7899404d939e9e78c4a2034f5"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 19:59:51",
+          "files": {
+            "SK_Enemy_Bomber_v003_validation.json": {
+              "path": "05_review/SK_Enemy_Bomber_v003_validation.json",
+              "sha256": "115f9316b65445283d736ed63798bfa7f85472a64783a0eb10135f41938bc9c6"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 20:27:11",
+          "files": {
+            "SK_Enemy_Bomber_v004_validation.json": {
+              "path": "05_review/SK_Enemy_Bomber_v004_validation.json",
+              "sha256": "ef103a417679fb0468c90fb56af69b9ef7e821429326bc6366525f259513d9a9"
+            }
+          },
+          "from_build": 4,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 4,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 18:48:07",
+          "files": {
+            "SK_Enemy_Bomber_v001_review.png": {
+              "path": "05_review/SK_Enemy_Bomber_v001_review.png",
+              "sha256": "daffd5e10837923b8eb2310f7e95b871fde1889ad5936537ec4d106456d2dc34"
+            }
+          },
+          "from_build": 1,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0002,
+              "stretch_ratio": 0.0002,
+              "p99_stretch": 1.193,
+              "p1_compress": 0.876
+            },
+            "b": {
+              "bad_edge_ratio": 0.002,
+              "stretch_ratio": 0.0004,
+              "p99_stretch": 1.422,
+              "p1_compress": 0.804
+            }
+          },
+          "auto_flags": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 19:21:06",
+          "files": {
+            "SK_Enemy_Bomber_v002_review.png": {
+              "path": "05_review/SK_Enemy_Bomber_v002_review.png",
+              "sha256": "beb7fba6ce265dd8dee274b3c96ddf017e0f802e9946c683242da8ea0cf6d95a"
+            }
+          },
+          "from_build": 2,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "材质分区 v002（甲壳非金属）；刚体分段；腹部为扩散补色，游戏视角不可见",
+            "time": "2026-10-03 19:22:44"
+          }
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 20:00:00",
+          "files": {
+            "SK_Enemy_Bomber_v003_review.png": {
+              "path": "05_review/SK_Enemy_Bomber_v003_review.png",
+              "sha256": "2006515943bddbed773092989ace7bb1e73d77253dff550315e97a4e7aa55b94"
+            }
+          },
+          "from_build": 3,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": []
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 20:27:25",
+          "files": {
+            "SK_Enemy_Bomber_v004_review.png": {
+              "path": "05_review/SK_Enemy_Bomber_v004_review.png",
+              "sha256": "fa88f0dec23f510529a3430237f6d81276c12bfa9357f54962bdfee4d2d3413a"
+            }
+          },
+          "from_build": 4,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "UV 两方案择优重建（纹素密度不低于上一发布版）；几何、蒙皮与上一已审版本一致",
+            "time": "2026-10-03 20:37:44"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 19:22:46",
+          "files": {
+            "SK_Enemy_Bomber.glb": {
+              "path": "@root/public/assets/characters/SK_Enemy_Bomber.glb",
+              "sha256": "9a3daf2e0f3cd744863328ee22801d8823ec104d33f9fcf3c93282f620e54615"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/characters/SK_Enemy_Bomber.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 20:37:45",
+          "files": {
+            "SK_Enemy_Bomber.glb": {
+              "path": "@root/public/assets/characters/SK_Enemy_Bomber.glb",
+              "sha256": "454556539ff7e651386ee8c835061dbd9265754fbfa0b5b7966a710c7b52262a"
+            }
+          },
+          "from_build": 4,
+          "url": "assets/characters/SK_Enemy_Bomber.glb"
+        }
+      ]
+    }
+  }
+}

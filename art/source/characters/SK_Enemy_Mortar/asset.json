@@ -1,0 +1,1041 @@
+{
+  "id": "SK_Enemy_Mortar",
+  "display": "重炮兵",
+  "kind": "skeletal",
+  "class": "enemy_standard",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 16:40:34",
+          "files": {
+            "BO_SK_Enemy_Mortar_v001.glb": {
+              "path": "00_blockout/BO_SK_Enemy_Mortar_v001.glb",
+              "sha256": "ac970b74d4edccb59d34267d2277a7875f621ca6ccc2cf6ee0639d2526636f12"
+            },
+            "BO_SK_Enemy_Mortar_v001.json": {
+              "path": "00_blockout/BO_SK_Enemy_Mortar_v001.json",
+              "sha256": "45795b5753bac42bf684a42e1fc79d403b693b69b3e0b9431231d821f63a49ef"
+            },
+            "BO_SK_Enemy_Mortar_v001_views.json": {
+              "path": "00_blockout/BO_SK_Enemy_Mortar_v001_views.json",
+              "sha256": "925e3952cd0743120f408fe27a0578fc062463bf771f9967dc6873d34cdaebd6"
+            },
+            "BO_SK_Enemy_Mortar_v001_sheet.png": {
+              "path": "00_blockout/BO_SK_Enemy_Mortar_v001_sheet.png",
+              "sha256": "2376a8ecc9dbd961c067213b2e49c5e773a178a7ba3cf83be43c6bfe0778ef65"
+            },
+            "BO_SK_Enemy_Mortar_v001_front.png": {
+              "path": "00_blockout/BO_SK_Enemy_Mortar_v001_front.png",
+              "sha256": "0788eca962373621bee66789e10e4e60cc2eb9b0d324cda9d5fdda333740284d"
+            },
+            "BO_SK_Enemy_Mortar_v001_left.png": {
+              "path": "00_blockout/BO_SK_Enemy_Mortar_v001_left.png",
+              "sha256": "1c04eba327b937e752e3820a3415800c7b647898ed53f81e31c7f8edf46b49ae"
+            },
+            "BO_SK_Enemy_Mortar_v001_back.png": {
+              "path": "00_blockout/BO_SK_Enemy_Mortar_v001_back.png",
+              "sha256": "7c5b3dae1c31da5de488547d6dd6679b69ea3d5eb255302f462b9c752db0f467"
+            },
+            "BO_SK_Enemy_Mortar_v001_right.png": {
+              "path": "00_blockout/BO_SK_Enemy_Mortar_v001_right.png",
+              "sha256": "985210f6a363e6f2fc2ddc757864565e21ef333da421cc3bfccd56f716ce7cc1"
+            }
+          },
+          "source": {
+            "kind": "enemy",
+            "id": "mortar"
+          },
+          "joints": 13,
+          "bounds": {
+            "min": [
+              -0.8334912275441899,
+              3.278255444882916e-10,
+              -0.6399999856948853
+            ],
+            "max": [
+              0.8334912275441899,
+              2.5599999991059303,
+              0.6399999856948853
+            ]
+          },
+          "blender_seconds": 5.9
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 16:43:20",
+          "files": {
+            "CN_SK_Enemy_Mortar_v001_sheet.png": {
+              "path": "01_concept/CN_SK_Enemy_Mortar_v001_sheet.png",
+              "sha256": "81df5d821fdbb378eeed6d91c31261f5cd5021004a7b53a1c699c8ed5443b375"
+            },
+            "CN_SK_Enemy_Mortar_v001_front.png": {
+              "path": "01_concept/CN_SK_Enemy_Mortar_v001_front.png",
+              "sha256": "a5527f7352163d7d4b9c6342f010b7d33e704341928e8302da47a28319f80a85"
+            },
+            "CN_SK_Enemy_Mortar_v001_left.png": {
+              "path": "01_concept/CN_SK_Enemy_Mortar_v001_left.png",
+              "sha256": "951da1a85b6e44159c51c6d7c55bea44b05087976cb195003606b59ebbd0b8cd"
+            },
+            "CN_SK_Enemy_Mortar_v001_back.png": {
+              "path": "01_concept/CN_SK_Enemy_Mortar_v001_back.png",
+              "sha256": "101d7557affa741ba04aea6543fdffa7bb9d8263524dd5611799abc9c04b83e1"
+            },
+            "CN_SK_Enemy_Mortar_v001_right.png": {
+              "path": "01_concept/CN_SK_Enemy_Mortar_v001_right.png",
+              "sha256": "8ab9a7f747ef625524b82f609827dff5e86eb164c7f885f8e973e10a5a997031"
+            },
+            "CN_SK_Enemy_Mortar_v001_compare.png": {
+              "path": "01_concept/CN_SK_Enemy_Mortar_v001_compare.png",
+              "sha256": "391b591f5ef0a2a376bfc30706f332a44d58095fb72084a673efcdbeefc61572"
+            },
+            "CN_SK_Enemy_Mortar_v001_prompt.txt": {
+              "path": "01_concept/CN_SK_Enemy_Mortar_v001_prompt.txt",
+              "sha256": "c79b4ea1c341eec0c010131f7a36d7e0d2580008ff9e1a5aee6953e25ce99d4d"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1895,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 437
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3075
+          },
+          "request_id": "req_c42452df3e6b435bbcf8e12bc17c3798",
+          "seconds": 32.8,
+          "registration": {
+            "front": {
+              "scale": 0.8338,
+              "offset": [
+                46,
+                197
+              ],
+              "iou": 0.787,
+              "iou_unregistered_scale": 0.8095
+            },
+            "left": {
+              "scale": 0.8217,
+              "offset": [
+                85,
+                206
+              ],
+              "iou": 0.797,
+              "iou_unregistered_scale": 0.8095
+            },
+            "back": {
+              "scale": 0.8327,
+              "offset": [
+                46,
+                197
+              ],
+              "iou": 0.791,
+              "iou_unregistered_scale": 0.8084
+            },
+            "right": {
+              "scale": 0.8217,
+              "offset": [
+                101,
+                206
+              ],
+              "iou": 0.798,
+              "iou_unregistered_scale": 0.8095
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.789,
+            "left": 0.8,
+            "back": 0.793,
+            "right": 0.801
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "设计贴合；手臂外展角小于白模，由游戏化阶段的骨骼适配处理",
+            "time": "2026-10-03 16:44:56"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 16:59:43",
+          "files": {
+            "HP_SK_Enemy_Mortar_v001_input.png": {
+              "path": "02_highpoly/HP_SK_Enemy_Mortar_v001_input.png",
+              "sha256": "82277917425303c66bb19ce6c826391f2bb99a3cc521a32b74cc922adfc98245"
+            },
+            "HP_SK_Enemy_Mortar_v001.glb": {
+              "path": "02_highpoly/HP_SK_Enemy_Mortar_v001.glb",
+              "sha256": "cd3b1a458f62a4eba8e7aba4568cf4344538453d174982d0c74d72bc3b8f2531"
+            }
+          },
+          "from_concept": 1,
+          "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+          "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "checkpoint": "hunyuan_3d_v2.1.safetensors",
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "crop": [
+              46,
+              197,
+              465,
+              810
+            ],
+            "scale": 1.4199021207177813,
+            "offset": [
+              214,
+              77
+            ]
+          },
+          "seconds": 191.5,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 12.7
+        }
+      ]
+    },
+    "build": {
+      "current": 6,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:00:27",
+          "files": {
+            "SK_Enemy_Mortar_v001.blend": {
+              "path": "03_work/SK_Enemy_Mortar_v001.blend",
+              "sha256": "a084e82c2fbd3bb7000a7b2ce989aa1bc5b7c6dbb2b9971f39cb7122a6101f41"
+            },
+            "SK_Enemy_Mortar_v001.glb": {
+              "path": "04_export/SK_Enemy_Mortar_v001.glb",
+              "sha256": "0e6cd94df8f45e25641ef41a3533380f212b6832fb6942e7321d4dd7a977c1ce"
+            },
+            "SK_Enemy_Mortar_v001_metrics.json": {
+              "path": "03_work/SK_Enemy_Mortar_v001_metrics.json",
+              "sha256": "679d6f2bc7538010710797445e95421bb4dd614bdca055f4b85f319b8b8a296d"
+            },
+            "T_Enemy_Mortar_BC.png": {
+              "path": "03_work/textures_v001/T_Enemy_Mortar_BC.png",
+              "sha256": "ecd7b10f7fce03151c843fc5e8f8b8dec352b65f03bd5dfb96859d01da8845c9"
+            },
+            "T_Enemy_Mortar_N.png": {
+              "path": "03_work/textures_v001/T_Enemy_Mortar_N.png",
+              "sha256": "8bbda2af449c8aa49a0e8ddc8735cb1dfc5d53ae866c4ec3bc32c8b69e8f6cf7"
+            },
+            "T_Enemy_Mortar_ORM.png": {
+              "path": "03_work/textures_v001/T_Enemy_Mortar_ORM.png",
+              "sha256": "ee17051bdcce1ea7adbab0984ae1fbd80b5ece9082a322013bf581dc6bfd0183"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1
+          },
+          "align_iou": 0.866,
+          "uncovered_ratio": 0.3674,
+          "lods": [
+            {
+              "tris": 7999,
+              "verts": 4004
+            },
+            {
+              "tris": 3500,
+              "verts": 1752
+            },
+            {
+              "tris": 1500,
+              "verts": 752
+            }
+          ],
+          "export_kb": 411.8,
+          "seconds": 44.4,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 17:03:22",
+          "files": {
+            "SK_Enemy_Mortar_v002.blend": {
+              "path": "03_work/SK_Enemy_Mortar_v002.blend",
+              "sha256": "db7cda3bddddcb30784e7f26627d30a5d248d2e90e733b7b03aca55c0de2011a"
+            },
+            "SK_Enemy_Mortar_v002.glb": {
+              "path": "04_export/SK_Enemy_Mortar_v002.glb",
+              "sha256": "ac6e403ab95871642074136214ebe222b2eaf2841f39a5b859820d6658a6312f"
+            },
+            "SK_Enemy_Mortar_v002_metrics.json": {
+              "path": "03_work/SK_Enemy_Mortar_v002_metrics.json",
+              "sha256": "c951c19cdd7f681704ebb73e20cf0f3b53ac9c969caeefe3c4a786da26e46a37"
+            },
+            "T_Enemy_Mortar_BC.png": {
+              "path": "03_work/textures_v002/T_Enemy_Mortar_BC.png",
+              "sha256": "ecd7b10f7fce03151c843fc5e8f8b8dec352b65f03bd5dfb96859d01da8845c9"
+            },
+            "T_Enemy_Mortar_N.png": {
+              "path": "03_work/textures_v002/T_Enemy_Mortar_N.png",
+              "sha256": "8bbda2af449c8aa49a0e8ddc8735cb1dfc5d53ae866c4ec3bc32c8b69e8f6cf7"
+            },
+            "T_Enemy_Mortar_ORM.png": {
+              "path": "03_work/textures_v002/T_Enemy_Mortar_ORM.png",
+              "sha256": "ee17051bdcce1ea7adbab0984ae1fbd80b5ece9082a322013bf581dc6bfd0183"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1
+          },
+          "align_iou": 0.866,
+          "uncovered_ratio": 0.3674,
+          "lods": [
+            {
+              "tris": 7999,
+              "verts": 4004
+            },
+            {
+              "tris": 3500,
+              "verts": 1752
+            },
+            {
+              "tris": 1500,
+              "verts": 752
+            }
+          ],
+          "export_kb": 409.2,
+          "seconds": 41.9,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 18:00:24",
+          "files": {
+            "SK_Enemy_Mortar_v003.blend": {
+              "path": "03_work/SK_Enemy_Mortar_v003.blend",
+              "sha256": "271728f4028fab90869295a02f93533fe9147f6171b788f492fa6de920531b9a"
+            },
+            "SK_Enemy_Mortar_v003.glb": {
+              "path": "04_export/SK_Enemy_Mortar_v003.glb",
+              "sha256": "5923743d95d11cb85187a47ca822a47092c4263eac9f9361741b14b5933e7eca"
+            },
+            "SK_Enemy_Mortar_v003_metrics.json": {
+              "path": "03_work/SK_Enemy_Mortar_v003_metrics.json",
+              "sha256": "edf8cd7df9c86b75561ff48fe7a86fdd359ac62783b67ef81bed82fad8a53fbd"
+            },
+            "T_Enemy_Mortar_BC.png": {
+              "path": "03_work/textures_v003/T_Enemy_Mortar_BC.png",
+              "sha256": "ecd7b10f7fce03151c843fc5e8f8b8dec352b65f03bd5dfb96859d01da8845c9"
+            },
+            "T_Enemy_Mortar_MetalMask.png": {
+              "path": "03_work/textures_v003/T_Enemy_Mortar_MetalMask.png",
+              "sha256": "60067c5b664ec239815b3a1304816b95705be6fd40102db3ec46c0f5d976890b"
+            },
+            "T_Enemy_Mortar_N.png": {
+              "path": "03_work/textures_v003/T_Enemy_Mortar_N.png",
+              "sha256": "8bbda2af449c8aa49a0e8ddc8735cb1dfc5d53ae866c4ec3bc32c8b69e8f6cf7"
+            },
+            "T_Enemy_Mortar_ORM.png": {
+              "path": "03_work/textures_v003/T_Enemy_Mortar_ORM.png",
+              "sha256": "559ad3e8308c8cb9ca48755e6354b60ed78b5418398f714b2ef87f9faeffcfbc"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1
+          },
+          "align_iou": 0.866,
+          "uncovered_ratio": 0.3674,
+          "lods": [
+            {
+              "tris": 7999,
+              "verts": 4004
+            },
+            {
+              "tris": 3500,
+              "verts": 1752
+            },
+            {
+              "tris": 1500,
+              "verts": 752
+            }
+          ],
+          "export_kb": 429.7,
+          "seconds": 54.4,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 18:41:00",
+          "files": {
+            "SK_Enemy_Mortar_v004.blend": {
+              "path": "03_work/SK_Enemy_Mortar_v004.blend",
+              "sha256": "e7fe8cb76dbd28ba6abf7a53db7e386ab09c1252e8c7d9fbd6d5a7326bc4e17a"
+            },
+            "SK_Enemy_Mortar_v004.glb": {
+              "path": "04_export/SK_Enemy_Mortar_v004.glb",
+              "sha256": "f1a4b7f714bdf7dadcb7606396451932f43fa407d81c59f83ff9db31936fc316"
+            },
+            "SK_Enemy_Mortar_v004_metrics.json": {
+              "path": "03_work/SK_Enemy_Mortar_v004_metrics.json",
+              "sha256": "afed86c765f27aa2e300a60d0174ec151696a74bd7d29c940dbccb1a71ce3b74"
+            },
+            "T_Enemy_Mortar_BC.png": {
+              "path": "03_work/textures_v004/T_Enemy_Mortar_BC.png",
+              "sha256": "ecd7b10f7fce03151c843fc5e8f8b8dec352b65f03bd5dfb96859d01da8845c9"
+            },
+            "T_Enemy_Mortar_MetalMask.png": {
+              "path": "03_work/textures_v004/T_Enemy_Mortar_MetalMask.png",
+              "sha256": "60067c5b664ec239815b3a1304816b95705be6fd40102db3ec46c0f5d976890b"
+            },
+            "T_Enemy_Mortar_N.png": {
+              "path": "03_work/textures_v004/T_Enemy_Mortar_N.png",
+              "sha256": "8bbda2af449c8aa49a0e8ddc8735cb1dfc5d53ae866c4ec3bc32c8b69e8f6cf7"
+            },
+            "T_Enemy_Mortar_ORM.png": {
+              "path": "03_work/textures_v004/T_Enemy_Mortar_ORM.png",
+              "sha256": "559ad3e8308c8cb9ca48755e6354b60ed78b5418398f714b2ef87f9faeffcfbc"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1
+          },
+          "align_iou": 0.866,
+          "uncovered_ratio": 0.3674,
+          "lods": [
+            {
+              "tris": 7999,
+              "verts": 4004
+            },
+            {
+              "tris": 3500,
+              "verts": 1752
+            },
+            {
+              "tris": 1500,
+              "verts": 752
+            }
+          ],
+          "export_kb": 426.9,
+          "seconds": 54.4,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 5,
+          "created": "2026-10-03 19:53:51",
+          "files": {
+            "SK_Enemy_Mortar_v005.blend": {
+              "path": "03_work/SK_Enemy_Mortar_v005.blend",
+              "sha256": "75c02df9cc83726cea199546d663570c592b01120158839042e6ae3ab8afa751"
+            },
+            "SK_Enemy_Mortar_v005.glb": {
+              "path": "04_export/SK_Enemy_Mortar_v005.glb",
+              "sha256": "bcaaf1020831eec51b2b65cf2b88ecdeb01b9bf7aa4cffdd378d24d4b3c31ed8"
+            },
+            "SK_Enemy_Mortar_v005_metrics.json": {
+              "path": "03_work/SK_Enemy_Mortar_v005_metrics.json",
+              "sha256": "4409dc57ee19b481039fc81699ee4c5df59d3795972bfe74d3fcddba7a0e16cd"
+            },
+            "T_Enemy_Mortar_BC.png": {
+              "path": "03_work/textures_v005/T_Enemy_Mortar_BC.png",
+              "sha256": "5852e92887d66f41bd5482b983c6853b64013b978bdf31ebbe1e528f29421090"
+            },
+            "T_Enemy_Mortar_MetalMask.png": {
+              "path": "03_work/textures_v005/T_Enemy_Mortar_MetalMask.png",
+              "sha256": "38bd80b4a18441e30272d485e70bcd651f2194e0c1d8f6f303567057f3dd9d21"
+            },
+            "T_Enemy_Mortar_N.png": {
+              "path": "03_work/textures_v005/T_Enemy_Mortar_N.png",
+              "sha256": "f00e266cc4ed59037e26080edb935ecadb4f1c2c63f635aea208d99cdb5017df"
+            },
+            "T_Enemy_Mortar_ORM.png": {
+              "path": "03_work/textures_v005/T_Enemy_Mortar_ORM.png",
+              "sha256": "67c8d947f3851be58110605177980230bff28b8568f8e39e29b09b04153f4119"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1
+          },
+          "align_iou": 0.866,
+          "uncovered_ratio": 0.3674,
+          "lods": [
+            {
+              "tris": 7999,
+              "verts": 4004
+            },
+            {
+              "tris": 3500,
+              "verts": 1752
+            },
+            {
+              "tris": 1500,
+              "verts": 752
+            }
+          ],
+          "export_kb": 340.2,
+          "seconds": 64.6,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 6,
+          "created": "2026-10-03 20:16:39",
+          "files": {
+            "SK_Enemy_Mortar_v006.blend": {
+              "path": "03_work/SK_Enemy_Mortar_v006.blend",
+              "sha256": "7fe3daa3b37b16ec8df0abcff7df98d6e7649511f08a2b7af7f841b7dd060623"
+            },
+            "SK_Enemy_Mortar_v006.glb": {
+              "path": "04_export/SK_Enemy_Mortar_v006.glb",
+              "sha256": "7885de89df04575686ceb59e50d1b8dd43c4538beb731b7a67f7ed6e92de0f12"
+            },
+            "SK_Enemy_Mortar_v006_metrics.json": {
+              "path": "03_work/SK_Enemy_Mortar_v006_metrics.json",
+              "sha256": "d0fa9018fc4d7045189388a99f9042f0c267897af11f4e0fd46330c4d08afe8f"
+            },
+            "T_Enemy_Mortar_BC.png": {
+              "path": "03_work/textures_v006/T_Enemy_Mortar_BC.png",
+              "sha256": "cc0d60ec11223a7fe6d25f4cd750ac6ae9c572e1832e5fe5f3e981eb3cd9719d"
+            },
+            "T_Enemy_Mortar_MetalMask.png": {
+              "path": "03_work/textures_v006/T_Enemy_Mortar_MetalMask.png",
+              "sha256": "302a15ed23992cd91f9e49dfa9e3da5845571d748502f186b04bc52fe73a07fa"
+            },
+            "T_Enemy_Mortar_N.png": {
+              "path": "03_work/textures_v006/T_Enemy_Mortar_N.png",
+              "sha256": "3a23860ab881f7fbe2be503cacf882dfdc726ec3a4260ccdc73c440e51760de5"
+            },
+            "T_Enemy_Mortar_ORM.png": {
+              "path": "03_work/textures_v006/T_Enemy_Mortar_ORM.png",
+              "sha256": "78f6ce6e4a57eaa01714a8937af1f0db3b4b66ac11ac472731f702eed0528c1d"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1
+          },
+          "align_iou": 0.866,
+          "uncovered_ratio": 0.3674,
+          "lods": [
+            {
+              "tris": 7999,
+              "verts": 4004
+            },
+            {
+              "tris": 3500,
+              "verts": 1752
+            },
+            {
+              "tris": 1500,
+              "verts": 752
+            }
+          ],
+          "export_kb": 338.2,
+          "seconds": 80.9,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 6,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:00:27",
+          "files": {
+            "SK_Enemy_Mortar_v001_validation.json": {
+              "path": "05_review/SK_Enemy_Mortar_v001_validation.json",
+              "sha256": "0d9367a223c9864e3dfe05075419fa1d4b67825a977142108d3c991ff0b35a7d"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 17:03:32",
+          "files": {
+            "SK_Enemy_Mortar_v002_validation.json": {
+              "path": "05_review/SK_Enemy_Mortar_v002_validation.json",
+              "sha256": "09778a25ce440d218e5ff1d2e25ccdf64a0028276d8026b8857cd376dc8972ce"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 18:00:24",
+          "files": {
+            "SK_Enemy_Mortar_v003_validation.json": {
+              "path": "05_review/SK_Enemy_Mortar_v003_validation.json",
+              "sha256": "8233279de3874d12a96d8c4950d6218c5becac74ac5c69dc96f8134feaf0802e"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 18:41:00",
+          "files": {
+            "SK_Enemy_Mortar_v004_validation.json": {
+              "path": "05_review/SK_Enemy_Mortar_v004_validation.json",
+              "sha256": "c3a91e659cb7cee8d2a151443342e4e5f6277e91bc2d6eb1ab2e5e282b5db322"
+            }
+          },
+          "from_build": 4,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 5,
+          "created": "2026-10-03 19:53:51",
+          "files": {
+            "SK_Enemy_Mortar_v005_validation.json": {
+              "path": "05_review/SK_Enemy_Mortar_v005_validation.json",
+              "sha256": "ab12b55f30218c177095a5e6554794a94e376cb1f7c2e9c739e5a8e5d1ca2272"
+            }
+          },
+          "from_build": 5,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 6,
+          "created": "2026-10-03 20:16:39",
+          "files": {
+            "SK_Enemy_Mortar_v006_validation.json": {
+              "path": "05_review/SK_Enemy_Mortar_v006_validation.json",
+              "sha256": "e2117fbe3d62d08e47651995a34bc26c82dcf902cc3c25fb253c56b074276e4a"
+            }
+          },
+          "from_build": 6,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 6,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:00:38",
+          "files": {
+            "SK_Enemy_Mortar_v001_review.png": {
+              "path": "05_review/SK_Enemy_Mortar_v001_review.png",
+              "sha256": "6e2eac2aa36983b1fc71a4ca5b513a689bd65086043798b7dd0bfeebf34f3655"
+            }
+          },
+          "from_build": 1
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 17:03:40",
+          "files": {
+            "SK_Enemy_Mortar_v002_review.png": {
+              "path": "05_review/SK_Enemy_Mortar_v002_review.png",
+              "sha256": "412a84093806a9dc65dc98b3efd2254f205c9b56bc07c2134afd573a290118f7"
+            }
+          },
+          "from_build": 2,
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "刚性头部后斗笠不再被手臂拉变形",
+            "time": "2026-10-03 17:09:01"
+          }
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 18:00:32",
+          "files": {
+            "SK_Enemy_Mortar_v003_review.png": {
+              "path": "05_review/SK_Enemy_Mortar_v003_review.png",
+              "sha256": "3cb3c2f96ffcd0965c2f3b0ab5fe57cd75f3eb6b25f8aa89a5c94e9c97a8ecf9"
+            }
+          },
+          "from_build": 3,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0002,
+              "stretch_ratio": 0.0001,
+              "p99_stretch": 1.076,
+              "p1_compress": 0.922
+            },
+            "walk": {
+              "bad_edge_ratio": 0.0066,
+              "stretch_ratio": 0.004,
+              "p99_stretch": 1.478,
+              "p1_compress": 0.685
+            },
+            "attack": {
+              "bad_edge_ratio": 0.0176,
+              "stretch_ratio": 0.0059,
+              "p99_stretch": 1.566,
+              "p1_compress": 0.527
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "材质分区（红蓝编码遮罩）重建：金属/非金属分区正确；姿势形变正常（Brute 形变提示位于腰甲与腿交界，可接受）",
+            "time": "2026-10-03 18:02:21"
+          }
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 18:41:09",
+          "files": {
+            "SK_Enemy_Mortar_v004_review.png": {
+              "path": "05_review/SK_Enemy_Mortar_v004_review.png",
+              "sha256": "e7010b997051dbde0d26ca061f6d3cd65d69b5a762ec17c6721e477b9be7ec5b"
+            }
+          },
+          "from_build": 4,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0008,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.043,
+              "p1_compress": 0.893
+            },
+            "walk": {
+              "bad_edge_ratio": 0.0072,
+              "stretch_ratio": 0.0036,
+              "p99_stretch": 1.476,
+              "p1_compress": 0.663
+            },
+            "attack": {
+              "bad_edge_ratio": 0.0105,
+              "stretch_ratio": 0.0083,
+              "p99_stretch": 1.646,
+              "p1_compress": 0.753
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "手臂影响范围约束后重建：抬手不再带动躯干/衣甲；极端举臂姿势腋下拉伸可接受",
+            "time": "2026-10-03 18:43:37"
+          }
+        },
+        {
+          "version": 5,
+          "created": "2026-10-03 19:54:02",
+          "files": {
+            "SK_Enemy_Mortar_v005_review.png": {
+              "path": "05_review/SK_Enemy_Mortar_v005_review.png",
+              "sha256": "a26203445279f82d25190e1f8c460beb9b2be4bdc7b3eaff1c824269f848cdf9"
+            }
+          },
+          "from_build": 5,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0008,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.045,
+              "p1_compress": 0.884,
+              "stretch_pairs": {}
+            },
+            "walk": {
+              "bad_edge_ratio": 0.0065,
+              "stretch_ratio": 0.003,
+              "p99_stretch": 1.455,
+              "p1_compress": 0.666,
+              "stretch_pairs": {
+                "hips ↔ legL": 7,
+                "armL ↔ torso": 6,
+                "legR ↔ legR": 6,
+                "hips ↔ legR": 6,
+                "legL ↔ legL": 5,
+                "armL ↔ armL": 4
+              }
+            },
+            "attack": {
+              "bad_edge_ratio": 0.011,
+              "stretch_ratio": 0.0086,
+              "p99_stretch": 1.671,
+              "p1_compress": 0.751,
+              "stretch_pairs": {
+                "armR ↔ torso": 43,
+                "armR ↔ armR": 30,
+                "torso ↔ torso": 24,
+                "armR ↔ elbowR": 7,
+                "hips ↔ legL": 5,
+                "head ↔ torso": 1
+              }
+            }
+          },
+          "auto_flags": []
+        },
+        {
+          "version": 6,
+          "created": "2026-10-03 20:16:57",
+          "files": {
+            "SK_Enemy_Mortar_v006_review.png": {
+              "path": "05_review/SK_Enemy_Mortar_v006_review.png",
+              "sha256": "cd73f64db5eee907aaa58fafeb4757b9839e4c211fafc621f5747cfb7f8405a1"
+            }
+          },
+          "from_build": 6,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0008,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.045,
+              "p1_compress": 0.884,
+              "stretch_pairs": {}
+            },
+            "walk": {
+              "bad_edge_ratio": 0.0065,
+              "stretch_ratio": 0.003,
+              "p99_stretch": 1.455,
+              "p1_compress": 0.666,
+              "stretch_pairs": {
+                "hips ↔ legL": 7,
+                "armL ↔ torso": 6,
+                "hips ↔ legR": 6,
+                "legR ↔ legR": 6,
+                "legL ↔ legL": 5,
+                "armL ↔ armL": 4
+              }
+            },
+            "attack": {
+              "bad_edge_ratio": 0.011,
+              "stretch_ratio": 0.0086,
+              "p99_stretch": 1.671,
+              "p1_compress": 0.751,
+              "stretch_pairs": {
+                "armR ↔ torso": 43,
+                "armR ↔ armR": 30,
+                "torso ↔ torso": 24,
+                "armR ↔ elbowR": 7,
+                "hips ↔ legL": 5,
+                "head ↔ torso": 1
+              }
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "UV 两方案择优重建（纹素密度不低于上一发布版）；几何、蒙皮与上一已审版本一致",
+            "time": "2026-10-03 20:37:35"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 4,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:09:02",
+          "files": {
+            "SK_Enemy_Mortar.glb": {
+              "path": "@root/public/assets/characters/SK_Enemy_Mortar.glb",
+              "sha256": "ac6e403ab95871642074136214ebe222b2eaf2841f39a5b859820d6658a6312f"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/characters/SK_Enemy_Mortar.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 18:02:22",
+          "files": {
+            "SK_Enemy_Mortar.glb": {
+              "path": "@root/public/assets/characters/SK_Enemy_Mortar.glb",
+              "sha256": "5923743d95d11cb85187a47ca822a47092c4263eac9f9361741b14b5933e7eca"
+            }
+          },
+          "from_build": 3,
+          "url": "assets/characters/SK_Enemy_Mortar.glb"
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 18:43:38",
+          "files": {
+            "SK_Enemy_Mortar.glb": {
+              "path": "@root/public/assets/characters/SK_Enemy_Mortar.glb",
+              "sha256": "f1a4b7f714bdf7dadcb7606396451932f43fa407d81c59f83ff9db31936fc316"
+            }
+          },
+          "from_build": 4,
+          "url": "assets/characters/SK_Enemy_Mortar.glb"
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 20:37:36",
+          "files": {
+            "SK_Enemy_Mortar.glb": {
+              "path": "@root/public/assets/characters/SK_Enemy_Mortar.glb",
+              "sha256": "7885de89df04575686ceb59e50d1b8dd43c4538beb731b7a67f7ed6e92de0f12"
+            }
+          },
+          "from_build": 6,
+          "url": "assets/characters/SK_Enemy_Mortar.glb"
+        }
+      ]
+    },
+    "matid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:51:04",
+          "files": {
+            "MID_SK_Enemy_Mortar_v001_sheet.png": {
+              "path": "01_concept/MID_SK_Enemy_Mortar_v001_sheet.png",
+              "sha256": "9de1777edaa55b249cb9917ce78a04b2d0bb5265e019316ead52743664c22efd"
+            },
+            "MID_SK_Enemy_Mortar_v001_front.png": {
+              "path": "01_concept/MID_SK_Enemy_Mortar_v001_front.png",
+              "sha256": "86a20fadf5886afd6abd62eb3289186f9fcb7908feb70924a8a1eed66fdb317e"
+            },
+            "MID_SK_Enemy_Mortar_v001_left.png": {
+              "path": "01_concept/MID_SK_Enemy_Mortar_v001_left.png",
+              "sha256": "da0f67b954f4d3ffb41498843c76f1d75ebd3b34539318a90654c9e4f1030157"
+            },
+            "MID_SK_Enemy_Mortar_v001_back.png": {
+              "path": "01_concept/MID_SK_Enemy_Mortar_v001_back.png",
+              "sha256": "dd1cd62f92faff928d48248763bd1dbdd0cbcb89fc1d1383c1258160656cf1ca"
+            },
+            "MID_SK_Enemy_Mortar_v001_right.png": {
+              "path": "01_concept/MID_SK_Enemy_Mortar_v001_right.png",
+              "sha256": "ea9e267b9c5560be824a55ab7064c3fe442b3b2df13333d338bf4b4a81efc9df"
+            },
+            "MID_SK_Enemy_Mortar_v001_compare.png": {
+              "path": "01_concept/MID_SK_Enemy_Mortar_v001_compare.png",
+              "sha256": "fe92c2c7948b295a893710d230bc80a05e3af07db12c3e87e193562372d283e6"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1699,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 241
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2879
+          },
+          "request_id": "req_cb1bdf86fa84472180e842aadbce3c2b",
+          "seconds": 29.2,
+          "registration": {
+            "front": {
+              "scale": 0.7977,
+              "offset": [
+                52,
+                188
+              ],
+              "iou": 0.912,
+              "iou_unregistered_scale": 0.7859,
+              "purity": 0.987
+            },
+            "left": {
+              "scale": 0.7684,
+              "offset": [
+                77,
+                206
+              ],
+              "iou": 0.908,
+              "iou_unregistered_scale": 0.7684,
+              "purity": 0.99
+            },
+            "back": {
+              "scale": 0.7943,
+              "offset": [
+                50,
+                189
+              ],
+              "iou": 0.919,
+              "iou_unregistered_scale": 0.7826,
+              "purity": 0.99
+            },
+            "right": {
+              "scale": 0.7684,
+              "offset": [
+                94,
+                206
+              ],
+              "iou": 0.905,
+              "iou_unregistered_scale": 0.7684,
+              "purity": 0.991
+            }
+          },
+          "metal_ratio": {
+            "front": 0.226,
+            "left": 0.132,
+            "back": 0.12,
+            "right": 0.133
+          }
+        }
+      ]
+    }
+  }
+}

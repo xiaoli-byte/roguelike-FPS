@@ -1,0 +1,179 @@
+{
+  "steps": {
+    "导入清理": 1.4,
+    "对齐": 0.6,
+    "低模与 UV": 5.7,
+    "投影着色": 10.2,
+    "烘焙": 10.1,
+    "LOD": 0.0,
+    "部件骨架蒙皮": 1.7,
+    "导出": 1.6
+  },
+  "highpoly": {
+    "faces_raw": 306768,
+    "faces": 153296,
+    "verts": 153294,
+    "loose_parts": 5,
+    "kept_parts": 5,
+    "remesh_voxel_m": 0.00493
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.858,
+    "iou_per_view": {
+      "front": 0.859,
+      "left": 0.863,
+      "back": 0.859,
+      "right": 0.849
+    },
+    "height_m": 0.5479,
+    "blockout_height_m": 0.755
+  },
+  "uv": {
+    "smart_islands": 396,
+    "charts": 64,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 1.2335,
+    "density_merged": 1.2683
+  },
+  "projection": {
+    "uncovered_ratio": 0.1988
+  },
+  "bake_device": "OPTIX",
+  "emissive_id": {
+    "emissive_texel_ratio": 0.0304
+  },
+  "material_id": {
+    "metal_texel_ratio": 0.6057
+  },
+  "textures": {
+    "T_Weapon_Minigun_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Weapon_Minigun_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Weapon_Minigun_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "presentation": [
+    [
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ]
+  ],
+  "skin": {
+    "bones": [
+      "j_r",
+      "j_0",
+      "j_4",
+      "j_8"
+    ],
+    "per_lod": {
+      "SK_Weapon_Minigun_LOD0": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      },
+      "SK_Weapon_Minigun_LOD1": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      }
+    },
+    "mode": "parts",
+    "sigma_m": 0.0113,
+    "rigid": true,
+    "split": {
+      "SK_Weapon_Minigun_LOD0": {
+        "cut_edges": 95,
+        "cap_tris": 182,
+        "merged_fragment_faces": 20,
+        "tris": 11996
+      },
+      "SK_Weapon_Minigun_LOD1": {
+        "cut_edges": 40,
+        "cap_tris": 72,
+        "merged_fragment_faces": 0,
+        "tris": 2996
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SK_Weapon_Minigun_LOD0",
+      "tris": 11996,
+      "verts": 6000,
+      "uv_min": [
+        0.0027001050766557455,
+        0.0027000471018254757
+      ],
+      "uv_max": [
+        0.9906511902809143,
+        0.9972999691963196
+      ],
+      "uv_utilization": 0.577,
+      "bbox_min": [
+        -0.1627,
+        -0.1404,
+        -0.1212
+      ],
+      "bbox_max": [
+        0.0582,
+        0.5479,
+        0.1702
+      ]
+    },
+    {
+      "name": "SK_Weapon_Minigun_LOD1",
+      "tris": 2996,
+      "verts": 1500,
+      "uv_min": [
+        0.0027001050766557455,
+        0.0033712596632540226
+      ],
+      "uv_max": [
+        0.9906119108200073,
+        0.9942471385002136
+      ],
+      "uv_utilization": 0.544,
+      "bbox_min": [
+        -0.1623,
+        -0.1405,
+        -0.1209
+      ],
+      "bbox_max": [
+        0.0579,
+        0.5475,
+        0.1702
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\weapons\\SK_Weapon_Minigun\\04_export\\SK_Weapon_Minigun_v001.glb",
+    "bytes": 546884
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\weapons\\SK_Weapon_Minigun\\03_work\\SK_Weapon_Minigun_v001.blend",
+  "total_seconds": 31.4,
+  "_seconds": 35.3
+}

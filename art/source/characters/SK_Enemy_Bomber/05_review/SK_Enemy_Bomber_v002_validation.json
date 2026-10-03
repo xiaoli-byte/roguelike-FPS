@@ -1,0 +1,212 @@
+[
+  {
+    "level": "pass",
+    "check": "文件大小",
+    "detail": "349 KB / 上限 1600 KB"
+  },
+  {
+    "level": "pass",
+    "check": "扩展可用",
+    "detail": "必需扩展 ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+  },
+  {
+    "level": "pass",
+    "check": "LOD 数量",
+    "detail": "['SK_Enemy_Bomber_LOD0', 'SK_Enemy_Bomber_LOD1', 'SK_Enemy_Bomber_LOD2']，规格 3 级"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 面数",
+    "detail": "7993 / 预算 8000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 切换距离",
+    "detail": "extras.lod_distance=0"
+  },
+  {
+    "level": "pass",
+    "check": "高度",
+    "detail": "0.858 m（白模 0.901 m）"
+  },
+  {
+    "level": "pass",
+    "check": "最低点与白模一致",
+    "detail": "最低点 y=0.070（白模 0.069）"
+  },
+  {
+    "level": "warn",
+    "check": "水平居中",
+    "detail": "包围盒中心 x=0.000 z=0.178"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 面数",
+    "detail": "3493 / 预算 3500"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 递减",
+    "detail": "7993 → 3493"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 切换距离",
+    "detail": "extras.lod_distance=14"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 面数",
+    "detail": "1496 / 预算 1500"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 递减",
+    "detail": "3493 → 1496"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 切换距离",
+    "detail": "extras.lod_distance=30"
+  },
+  {
+    "level": "pass",
+    "check": "材质数量",
+    "detail": "['M_Enemy_Bomber']（一个资产一个材质，便于合批）"
+  },
+  {
+    "level": "pass",
+    "check": "材质命名",
+    "detail": "['M_Enemy_Bomber']"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Enemy_Bomber_N",
+    "detail": "1024×1024 webp（规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Enemy_Bomber_N",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Enemy_Bomber_ORM",
+    "detail": "1024×1024 webp（规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Enemy_Bomber_ORM",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Enemy_Bomber_BC",
+    "detail": "1024×1024 webp（规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Enemy_Bomber_BC",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "BaseColor 贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "法线贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "ORM 贴图",
+    "detail": "AO / 粗糙度 / 金属度"
+  },
+  {
+    "level": "pass",
+    "check": "蒙皮",
+    "detail": "1 个 skin"
+  },
+  {
+    "level": "pass",
+    "check": "骨骼与游戏关节一致",
+    "detail": "缺 [] 多 []"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Bomber_LOD0 影响骨骼数",
+    "detail": "最多 1"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Bomber_LOD0 无权重顶点",
+    "detail": "0"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Bomber_LOD0 bone heat 覆盖",
+    "detail": "0 个顶点改用平滑邻近权重"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Bomber_LOD1 影响骨骼数",
+    "detail": "最多 1"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Bomber_LOD1 无权重顶点",
+    "detail": "0"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Bomber_LOD1 bone heat 覆盖",
+    "detail": "0 个顶点改用平滑邻近权重"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Bomber_LOD2 影响骨骼数",
+    "detail": "最多 1"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Bomber_LOD2 无权重顶点",
+    "detail": "0"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Bomber_LOD2 bone heat 覆盖",
+    "detail": "0 个顶点改用平滑邻近权重"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Bomber_LOD0 UV 范围",
+    "detail": "[0.004121669102460146, 0.004084833897650242]..[0.9959588050842285, 0.989090085029602]"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Bomber_LOD1 UV 范围",
+    "detail": "[0.004121669102460146, 0.004030169453471899]..[0.9959588050842285, 0.9878932237625122]"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Bomber_LOD2 UV 范围",
+    "detail": "[0.004134446382522583, 0.004030169453471899]..[0.9959588050842285, 0.9878932237625122]"
+  },
+  {
+    "level": "pass",
+    "check": "UV 利用率",
+    "detail": "55%"
+  },
+  {
+    "level": "pass",
+    "check": "高模对齐",
+    "detail": "剪影 IoU 0.854（{'front': 0.904, 'left': 0.787, 'back': 0.909, 'right': 0.789}）"
+  },
+  {
+    "level": "pass",
+    "check": "投影覆盖",
+    "detail": "未覆盖顶点 25%（扩散补色）"
+  }
+]

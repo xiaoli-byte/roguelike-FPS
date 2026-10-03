@@ -7,7 +7,9 @@
 import * as THREE from 'three';
 import type { EnemyDef, GameContext, SpawnOptions } from '../../core/types';
 import { StandardEnemy } from '../StandardEnemy';
-import { Geo, applyWalk, buildHumanoid, flat, joint, part, type HumanoidRig } from '../Models';
+import { Geo, applyWalk, buildHumanoid, flat, joint, part, reachArm, type HumanoidRig } from '../Models';
+
+const _grip = new THREE.Vector3();
 
 export const ARCHER_DEF: EnemyDef = {
   id: 'archer',
@@ -19,8 +21,9 @@ export const ARCHER_DEF: EnemyDef = {
   damage: 8,
   coins: [2, 4],
   essence: 1,
-  headY: 1.58,
-  headRadius: 0.33,
+  // 头部 = 骷髅 + 兜帽（颌 1.44 → 帽顶 1.90，宽 0.37）；判定球随头骨移动
+  headY: 1.67,
+  headRadius: 0.22,
   knockbackResist: 0,
   color: 0x9dff7a,
 };
@@ -34,6 +37,17 @@ const BOLT_SPEED = 16;
 /** 弩在躯干上的挂点（相对髋）与弩长 */
 const BOW_Y = 0.44;
 const BOW_Z = 0.22;
+/**
+ * 瞄准时弩的位置（躯干局部）：抬到右肩、肩高，弩线在右颊下方。
+ * 前后位置要让右手握点落在披肩前面（美术模型的斗篷从肩部向前垂约 12 厘米，太靠后右手会被包在斗篷里），
+ * 同时左手还够得着前托（上臂 + 前臂 = 0.56 米）。
+ */
+const AIM_X = -0.12;
+const AIM_Y = 0.58;
+const AIM_Z = 0.2;
+/** 双手握点（弩局部）：右手扣扳机握把，左手托前托 */
+const GRIP_R = new THREE.Vector3(0, -0.07, 0.03);
+const GRIP_L = new THREE.Vector3(0, -0.06, 0.2);
 const BOW_LEN = 0.56;
 
 const C = {
@@ -93,9 +107,12 @@ export class Archer extends StandardEnemy {
     this.glowPart(h, Geo.box(0.085, 0.065, 0.02), C.eye, C.eyeHot, -0.075, 0.22, 0.17);
     part(h, Geo.box(0.37, 0.2, 0.37), flat(C.cloak), 0, 0.36, -0.03);
     part(h, Geo.box(0.37, 0.32, 0.08), flat(C.cloak), 0, 0.22, -0.18);
+    // 头心：0.84 + 0.6 + 0.23 = 1.67（与 ARCHER_DEF.headY 一致）
+    this.setHeadAnchor(h, 0, 0.23, 0.01);
 
     // 弩（挂在躯干上，按俯仰瞄准）
     const bow = joint(t, 0.02, BOW_Y, BOW_Z);
+    bow.name = 'crossbow'; // 挂点名：美术资产按它绑定（art/pipeline/registry.toml 的 blockout.attachment）
     this.bow = bow;
     part(bow, Geo.box(0.07, 0.08, 0.62), flat(C.wood), 0, 0, 0.14);
     part(bow, Geo.box(0.24, 0.045, 0.05), flat(C.bone), 0.11, 0.02, 0.42, 0, 0.32, 0);
@@ -108,7 +125,7 @@ export class Archer extends StandardEnemy {
 
   override getMuzzle(out: THREE.Vector3): THREE.Vector3 {
     const L = BOW_LEN;
-    return this.localPoint(0.02, 0.84 + BOW_Y + Math.sin(this.pitch) * L, BOW_Z + Math.cos(this.pitch) * L, out);
+    return this.localPoint(AIM_X, 0.84 + AIM_Y + Math.sin(this.pitch) * L, AIM_Z + Math.cos(this.pitch) * L, out);
   }
 
   protected override ai(dt: number): void {
@@ -205,18 +222,21 @@ export class Archer extends StandardEnemy {
     const k = 1 - Math.exp(-12 * dt);
     this.pAim = mix(this.pAim, aiming ? 1 : 0.35, k);
     this.recoil = Math.max(0, this.recoil - dt * 7);
-    // 双手托弩：右手扣扳机、左手托前端
-    const a = this.pAim;
-    r.armR.rotation.set(-0.7 - a * 0.55, 0, -0.15);
-    r.elbowR.rotation.x = -1.0 + a * 0.25;
-    r.armL.rotation.set(-0.9 - a * 0.55, 0, 0.35);
-    r.elbowL.rotation.x = -0.7;
+    // 瞄准时把弩抬到右肩（弩托抵肩、沿弩线瞄准），平时斜端在腰前；双手用 IK 握在弩的两个握点上，俯仰 / 后坐时手跟着走
+    const aim = Math.min(1, Math.max(0, (this.pAim - 0.35) / 0.65));
     const pitch = aiming ? this.pitch : this.pitch * 0.3 - 0.35;
     this.bow.rotation.x = mix(this.bow.rotation.x, -pitch, k);
-    this.bow.position.z = BOW_Z - this.recoil * 0.07;
-    this.bow.position.y = BOW_Y + (aiming ? 0 : -0.12);
+    this.bow.position.set(
+      mix(0.02, AIM_X, aim),
+      mix(BOW_Y - 0.12, AIM_Y, aim),
+      mix(BOW_Z, AIM_Z, aim) - this.recoil * 0.07,
+    );
+    this.bow.updateMatrix();
+    reachArm(r, -1, _grip.copy(GRIP_R).applyMatrix4(this.bow.matrix));
+    reachArm(r, 1, _grip.copy(GRIP_L).applyMatrix4(this.bow.matrix));
     r.torso.rotation.x -= this.recoil * 0.08;
-    r.head.rotation.x = -pitch * 0.4;
+    // 瞄准时头微微右倾、贴向弩线
+    r.head.rotation.set(-pitch * 0.4, 0, -0.12 * aim);
     this.applyHurtAndStun(r);
   }
 }

@@ -9,6 +9,8 @@ import * as THREE from 'three';
 import type { Element, Rarity } from '../core/types';
 import { ELEMENT_COLORS, RARITY_COLORS } from '../core/types';
 import { getWeaponDef } from './WeaponDefs';
+import { AssetLibrary } from '../assets/AssetLibrary';
+import { attachRigidParts } from '../assets/RigidParts';
 
 export interface GunModel {
   root: THREE.Group;
@@ -34,7 +36,15 @@ export interface GunModel {
   /** 左手握点与所在父节点（霰弹枪挂在护木上随泵动） */
   leftHand: THREE.Vector3 | null;
   leftParent: THREE.Object3D | null;
+  /** 美术枪模的实例材质（带自发光遮罩时）：自发光颜色 = 元素色（无元素时稀有度色）；userData.glowBase 是基准色，第一人称在其上做脉动 */
+  artGlow: THREE.MeshStandardMaterial | null;
 }
+
+/**
+ * 美术资产接管枪身后仍保留程序化的部件（按节点名）：开镜视线要穿过的中空瞄具、按上弦状态显隐的弩箭、
+ * 按上弦程度拉伸的弓弦。美术管线导出白模时把它们排除在外，运行时也不隐藏它们。
+ */
+export const PROCEDURAL_PARTS = ['sight', 'bolt', 'string_l', 'string_r'];
 
 interface Palette {
   body: number;
@@ -301,7 +311,7 @@ function blankModel(b: Builder): GunModel {
   b.root.add(muzzle);
   return {
     root: b.root, muzzle, mag: null, cylinder: null, cylinderSteps: 6, spinner: null, pump: null,
-    bolt: null, stringHalves: null, stringTip: null, energy: b.energy, leftHand: null, leftParent: null,
+    bolt: null, stringHalves: null, stringTip: null, energy: b.energy, leftHand: null, leftParent: null, artGlow: null,
   };
 }
 
@@ -372,8 +382,10 @@ function buildRifle(b: Builder, m: GunModel): void {
   b.cyl(r, b.dark, 0.011, 0.12, 0, 0.042, -0.54, 'z', 6);
   b.box(r, b.dark, 0.028, 0.028, 0.05, 0, 0.042, -0.615);
   b.box(r, b.accent, 0.03, 0.006, 0.03, 0, 0.042, -0.615);
-  // 红点瞄具（中空，开镜时准心点在屏幕中央）
-  b.redDot(r, 0.1, -0.03, b.dark, 0.08);
+  // 红点瞄具（中空，开镜时准心点在屏幕中央）；分组在原点，只用来按名字保留程序化（见 PROCEDURAL_PARTS）
+  const sight = b.group(r, 0, 0, 0);
+  sight.name = 'sight';
+  b.redDot(sight, 0.1, -0.03, b.dark, 0.08);
   b.box(r, b.rarity, 0.004, 0.004, 0.05, 0.0165, 0.114, -0.03);
   b.box(r, b.dark, 0.008, 0.026, 0.01, 0, 0.081, -0.46);
   const mag = b.group(r, 0, 0.0, -0.13);
@@ -397,11 +409,14 @@ function buildBurst(b: Builder, m: GunModel): void {
   const r = b.root;
   b.box(r, b.body, 0.066, 0.1, 0.46, 0, 0.045, -0.08);
   b.box(r, b.dark, 0.07, 0.03, 0.2, 0, 0.1, -0.1);
-  b.tube(r, PALETTES.burst.dark, 0.02, 0.14, 0, 0.132, -0.06, 8);
-  b.tube(r, PALETTES.burst.dark, 0.024, 0.02, 0, 0.132, -0.13, 8);
-  b.ring(r, RARITY_COLORS[b.rarityLevel], 0.0215, 0.006, 0, 0.132, -0.141, 8);
-  b.box(r, b.dark, 0.012, 0.018, 0.03, 0, 0.113, -0.06);
-  b.box(r, glowMat(RETICLE_COLOR), 0.003, 0.003, 0.002, 0, 0.132, -0.128);
+  // 筒式瞄具（中空，开镜视线从中间穿过）；分组在原点，只用来按名字保留程序化（见 PROCEDURAL_PARTS）
+  const sight = b.group(r, 0, 0, 0);
+  sight.name = 'sight';
+  b.tube(sight, PALETTES.burst.dark, 0.02, 0.14, 0, 0.132, -0.06, 8);
+  b.tube(sight, PALETTES.burst.dark, 0.024, 0.02, 0, 0.132, -0.13, 8);
+  b.ring(sight, RARITY_COLORS[b.rarityLevel], 0.0215, 0.006, 0, 0.132, -0.141, 8);
+  b.box(sight, b.dark, 0.012, 0.018, 0.03, 0, 0.113, -0.06);
+  b.box(sight, glowMat(RETICLE_COLOR), 0.003, 0.003, 0.002, 0, 0.132, -0.128);
   for (let i = 0; i < 3; i++) b.cyl(r, b.accent, 0.009, 0.13, 0, 0.018 + i * 0.027, -0.37, 'z', 6);
   b.box(r, b.dark, 0.03, 0.09, 0.02, 0, 0.045, -0.425);
   b.pistolGrip(r, b.grip);
@@ -525,11 +540,14 @@ function buildCrossbow(b: Builder, m: GunModel): void {
   const strMat = solidMat(0xe8e0d0, 0, 0.9);
   const sl = new THREE.Mesh(boxGeo(1, 0.004, 0.004), strMat);
   const sr = new THREE.Mesh(boxGeo(1, 0.004, 0.004), strMat);
+  sl.name = 'string_l';
+  sr.name = 'string_r';
   r.add(sl, sr);
   m.stringHalves = [sl, sr];
   m.stringTip = { x: 0.188, y: 0.05, z: -0.292 };
   // 弩箭
   const bolt = b.group(r, 0, 0.074, -0.24);
+  bolt.name = 'bolt';
   b.box(bolt, b.dark, 0.008, 0.008, 0.26, 0, 0, 0);
   b.box(bolt, b.energyMat, 0.014, 0.014, 0.03, 0, 0, -0.14);
   b.box(bolt, b.rarity, 0.022, 0.003, 0.03, 0, 0, 0.115);
@@ -671,14 +689,28 @@ export function setCrossbowString(m: GunModel, t: number): void {
   sl.scale.set(len, 1, 1);
 }
 
+/** 美术枪模雕刻纹路的自发光强度（按稀有度） */
+const ART_GLOW: Record<Rarity, number> = { 0: 0.5, 1: 0.8, 2: 1.1, 3: 1.5, 4: 2.0 };
+
 /** 构建一把枪（第一人称与掉落共用） */
-export function buildGunModel(defId: string, rarity: Rarity, element: Element): GunModel {
+export function buildGunModel(defId: string, rarity: Rarity, element: Element, opts: { art?: boolean } = {}): GunModel {
   const def = getWeaponDef(defId);
   const pal = PALETTES[def.id] ?? PALETTES.rifle;
   const b = new Builder(pal, rarity, element);
   const m = blankModel(b);
   (BUILDERS[def.id] ?? buildRifle)(b, m);
   b.root.name = `gun:${def.id}`;
+  // 美术资产（art/pipeline 发布的刚体部件资产）：按部件挂到程序化节点上，活动部件照旧由程序动画驱动；
+  // 资产缺失 / 未加载完 / ?classic 时保留程序化枪模
+  const asset = opts.art === false ? null : AssetLibrary.findBound('weapon', def.id);
+  const art = asset ? attachRigidParts(b.root, asset, PROCEDURAL_PARTS) : null;
+  if (art?.emissive) {
+    // 雕刻纹路发光：元素色；无元素时用稀有度色。亮度随稀有度提高
+    const base = new THREE.Color(element !== 'none' ? ELEMENT_COLORS[element] : RARITY_COLORS[rarity]).multiplyScalar(ART_GLOW[rarity]);
+    art.material.emissive.copy(base);
+    art.material.userData.glowBase = base;
+    m.artGlow = art.material;
+  }
   return m;
 }
 

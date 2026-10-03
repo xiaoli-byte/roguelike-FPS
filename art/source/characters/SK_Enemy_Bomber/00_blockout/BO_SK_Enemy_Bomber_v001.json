@@ -1,0 +1,265 @@
+{
+  "schema": 1,
+  "assetId": "SK_Enemy_Bomber",
+  "source": {
+    "kind": "enemy",
+    "id": "bomber"
+  },
+  "rig": "parts",
+  "space": {
+    "up": "+Y",
+    "forward": "+Z",
+    "unit": "m",
+    "origin": "model"
+  },
+  "bounds": {
+    "min": [
+      -0.73424305025193,
+      0.06881207213226032,
+      -0.4202215075492859
+    ],
+    "max": [
+      0.73424305025193,
+      0.97,
+      0.8134540613534494
+    ]
+  },
+  "joints": [
+    {
+      "name": "j_r",
+      "parent": null,
+      "bindPosition": [
+        0,
+        0,
+        0
+      ],
+      "restLocal": [
+        0,
+        0,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0",
+      "parent": "j_r",
+      "bindPosition": [
+        0,
+        0.42,
+        0
+      ],
+      "restLocal": [
+        0,
+        0.42,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_6",
+      "parent": "j_0",
+      "bindPosition": [
+        0,
+        0.4,
+        0.5
+      ],
+      "restLocal": [
+        0,
+        -0.02,
+        0.5
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_7",
+      "parent": "j_0",
+      "bindPosition": [
+        0.3,
+        0.36,
+        0.25
+      ],
+      "restLocal": [
+        0.3,
+        -0.06,
+        0.25
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_8",
+      "parent": "j_0",
+      "bindPosition": [
+        -0.3,
+        0.36,
+        0.25
+      ],
+      "restLocal": [
+        -0.3,
+        -0.06,
+        0.25
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_9",
+      "parent": "j_0",
+      "bindPosition": [
+        0.3,
+        0.36,
+        0
+      ],
+      "restLocal": [
+        0.3,
+        -0.06,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_10",
+      "parent": "j_0",
+      "bindPosition": [
+        -0.3,
+        0.36,
+        0
+      ],
+      "restLocal": [
+        -0.3,
+        -0.06,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_11",
+      "parent": "j_0",
+      "bindPosition": [
+        0.3,
+        0.36,
+        -0.25
+      ],
+      "restLocal": [
+        0.3,
+        -0.06,
+        -0.25
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_12",
+      "parent": "j_0",
+      "bindPosition": [
+        -0.3,
+        0.36,
+        -0.25
+      ],
+      "restLocal": [
+        -0.3,
+        -0.06,
+        -0.25
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    }
+  ],
+  "parts": {
+    "body_000": "body",
+    "body_001": "body",
+    "body_002": "body",
+    "body_003": "body",
+    "body_004": "body",
+    "glow_005": "glow",
+    "body_006": "body",
+    "glow_007": "glow",
+    "glow_008": "glow",
+    "body_009": "body",
+    "body_010": "body",
+    "body_011": "body",
+    "body_012": "body",
+    "body_013": "body",
+    "body_014": "body",
+    "body_015": "body",
+    "body_016": "body"
+  },
+  "exportedAt": "2026-10-03T10:20:15.426Z"
+}

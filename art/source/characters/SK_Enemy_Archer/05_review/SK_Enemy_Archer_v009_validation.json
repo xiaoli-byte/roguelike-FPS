@@ -1,0 +1,257 @@
+[
+  {
+    "level": "pass",
+    "check": "文件大小",
+    "detail": "388 KB / 上限 1600 KB"
+  },
+  {
+    "level": "pass",
+    "check": "扩展可用",
+    "detail": "必需扩展 ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+  },
+  {
+    "level": "pass",
+    "check": "LOD 数量",
+    "detail": "['SK_Enemy_Archer_LOD0', 'SK_Enemy_Archer_LOD1', 'SK_Enemy_Archer_LOD2']，规格 3 级"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 面数",
+    "detail": "8000 / 预算 8000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 切换距离",
+    "detail": "extras.lod_distance=0"
+  },
+  {
+    "level": "pass",
+    "check": "高度",
+    "detail": "1.892 m（白模 1.900 m）"
+  },
+  {
+    "level": "pass",
+    "check": "轴心在脚底",
+    "detail": "最低点 y=0.0003"
+  },
+  {
+    "level": "pass",
+    "check": "水平居中",
+    "detail": "包围盒中心 x=0.001 z=-0.034"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 面数",
+    "detail": "3500 / 预算 3500"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 递减",
+    "detail": "8000 → 3500"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 切换距离",
+    "detail": "extras.lod_distance=14"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 面数",
+    "detail": "1500 / 预算 1500"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 递减",
+    "detail": "3500 → 1500"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 切换距离",
+    "detail": "extras.lod_distance=30"
+  },
+  {
+    "level": "pass",
+    "check": "材质数量",
+    "detail": "['M_Enemy_Archer']（一个资产一个材质，便于合批）"
+  },
+  {
+    "level": "pass",
+    "check": "材质命名",
+    "detail": "['M_Enemy_Archer']"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Enemy_Archer_N",
+    "detail": "1024×1024 webp（规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Enemy_Archer_N",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Enemy_Archer_ORM",
+    "detail": "1024×1024 webp（规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Enemy_Archer_ORM",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Enemy_Archer_BC",
+    "detail": "1024×1024 webp（规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Enemy_Archer_BC",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "BaseColor 贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "法线贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "ORM 贴图",
+    "detail": "AO / 粗糙度 / 金属度"
+  },
+  {
+    "level": "pass",
+    "check": "蒙皮",
+    "detail": "1 个 skin"
+  },
+  {
+    "level": "pass",
+    "check": "骨骼与游戏关节一致",
+    "detail": "缺 [] 多 []"
+  },
+  {
+    "level": "pass",
+    "check": "骨骼适配幅度",
+    "detail": "上臂绑定角 L 0.450 / R 0.450（白模 0.45）"
+  },
+  {
+    "level": "pass",
+    "check": "左右对称",
+    "detail": "左右适配差 0.000 rad"
+  },
+  {
+    "level": "pass",
+    "check": "armL 影响范围",
+    "detail": "主导 169 个顶点，离骨段 p90 0.098 m（上限 0.14）"
+  },
+  {
+    "level": "pass",
+    "check": "elbowL 影响范围",
+    "detail": "主导 72 个顶点，离骨段 p90 0.081 m（上限 0.14）"
+  },
+  {
+    "level": "pass",
+    "check": "handL 影响范围",
+    "detail": "主导 25 个顶点，离骨段 p90 0.085 m（上限 0.14）"
+  },
+  {
+    "level": "pass",
+    "check": "armR 影响范围",
+    "detail": "主导 124 个顶点，离骨段 p90 0.089 m（上限 0.14）"
+  },
+  {
+    "level": "pass",
+    "check": "elbowR 影响范围",
+    "detail": "主导 103 个顶点，离骨段 p90 0.1 m（上限 0.14）"
+  },
+  {
+    "level": "pass",
+    "check": "handR 影响范围",
+    "detail": "主导 15 个顶点，离骨段 p90 0.077 m（上限 0.14）"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Archer_LOD0 影响骨骼数",
+    "detail": "最多 4"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Archer_LOD0 无权重顶点",
+    "detail": "0"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Archer_LOD0 bone heat 覆盖",
+    "detail": "0 个顶点改用平滑邻近权重"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Archer_LOD1 影响骨骼数",
+    "detail": "最多 4"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Archer_LOD1 无权重顶点",
+    "detail": "0"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Archer_LOD1 bone heat 覆盖",
+    "detail": "0 个顶点改用平滑邻近权重"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Archer_LOD2 影响骨骼数",
+    "detail": "最多 4"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Archer_LOD2 无权重顶点",
+    "detail": "0"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Archer_LOD2 bone heat 覆盖",
+    "detail": "0 个顶点改用平滑邻近权重"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Archer_LOD0 UV 范围",
+    "detail": "[0.00305217900313437, 0.0029371946584433317]..[0.9885672330856323, 0.9971935153007507]"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Archer_LOD1 UV 范围",
+    "detail": "[0.00305217900313437, 0.003195999888703227]..[0.9868420362472534, 0.9937430620193481]"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Archer_LOD2 UV 范围",
+    "detail": "[0.00305217900313437, 0.003195999888703227]..[0.9868420362472534, 0.9935165643692017]"
+  },
+  {
+    "level": "pass",
+    "check": "UV 利用率",
+    "detail": "54%"
+  },
+  {
+    "level": "pass",
+    "check": "UV 翻折",
+    "detail": "0 个面（0.00%），图块 62 个"
+  },
+  {
+    "level": "pass",
+    "check": "高模对齐",
+    "detail": "剪影 IoU 0.809（{'front': 0.909, 'left': 0.701, 'back': 0.879, 'right': 0.699}）"
+  },
+  {
+    "level": "warn",
+    "check": "投影覆盖",
+    "detail": "未覆盖顶点 47%（扩散补色）"
+  }
+]

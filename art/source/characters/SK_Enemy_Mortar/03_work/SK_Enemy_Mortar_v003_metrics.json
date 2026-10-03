@@ -1,0 +1,189 @@
+{
+  "steps": {
+    "导入清理": 2.8,
+    "对齐": 0.9,
+    "低模与 UV": 10.0,
+    "投影着色": 30.1,
+    "烘焙": 6.2,
+    "LOD": 0.0,
+    "骨骼蒙皮": 0.2,
+    "导出": 0.8
+  },
+  "highpoly": {
+    "faces_raw": 705830,
+    "faces": 381956,
+    "verts": 381960,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.866,
+    "iou_per_view": {
+      "front": 0.917,
+      "left": 0.804,
+      "back": 0.919,
+      "right": 0.799
+    },
+    "height_m": 2.2129,
+    "blockout_height_m": 2.17
+  },
+  "projection": {
+    "uncovered_ratio": 0.3674
+  },
+  "bake_device": "OPTIX",
+  "material_id": {
+    "metal_texel_ratio": 0.1268
+  },
+  "textures": {
+    "T_Enemy_Mortar_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Enemy_Mortar_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Enemy_Mortar_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "bind_pose": {
+    "armSpreadL": 0.3376,
+    "armSpreadR": 0.3403,
+    "base": 0.45
+  },
+  "robe_verts": {
+    "SK_Enemy_Mortar_LOD0": 174,
+    "SK_Enemy_Mortar_LOD1": 78,
+    "SK_Enemy_Mortar_LOD2": 34
+  },
+  "rigid_head_verts": {
+    "SK_Enemy_Mortar_LOD0": 1127,
+    "SK_Enemy_Mortar_LOD1": 406,
+    "SK_Enemy_Mortar_LOD2": 178
+  },
+  "skin": {
+    "bones": [
+      "hips",
+      "torso",
+      "head",
+      "armL",
+      "elbowL",
+      "handL",
+      "armR",
+      "elbowR",
+      "handR",
+      "legL",
+      "kneeL",
+      "legR",
+      "kneeR"
+    ],
+    "per_lod": {
+      "SK_Enemy_Mortar_LOD0": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "heat_failed_initial": 0,
+        "weights_from": "bone_heat",
+        "unweighted_verts": 0
+      },
+      "SK_Enemy_Mortar_LOD1": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "heat_failed_initial": 0,
+        "weights_from": "bone_heat",
+        "unweighted_verts": 0
+      },
+      "SK_Enemy_Mortar_LOD2": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "heat_failed_initial": 0,
+        "weights_from": "bone_heat",
+        "unweighted_verts": 0
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SK_Enemy_Mortar_LOD0",
+      "tris": 7999,
+      "verts": 4004,
+      "uv_min": [
+        0.004279311280697584,
+        0.0042794207111001015
+      ],
+      "uv_max": [
+        0.9910677671432495,
+        0.9957206845283508
+      ],
+      "uv_utilization": 0.534,
+      "bbox_min": [
+        -0.751,
+        -0.6149,
+        -0.0
+      ],
+      "bbox_max": [
+        0.7517,
+        0.5973,
+        2.2145
+      ]
+    },
+    {
+      "name": "SK_Enemy_Mortar_LOD1",
+      "tris": 3500,
+      "verts": 1752,
+      "uv_min": [
+        0.00441029854118824,
+        0.004360548220574856
+      ],
+      "uv_max": [
+        0.991580069065094,
+        0.9957206845283508
+      ],
+      "uv_utilization": 0.511,
+      "bbox_min": [
+        -0.7508,
+        -0.6144,
+        0.0009
+      ],
+      "bbox_max": [
+        0.7518,
+        0.5973,
+        2.2155
+      ]
+    },
+    {
+      "name": "SK_Enemy_Mortar_LOD2",
+      "tris": 1500,
+      "verts": 752,
+      "uv_min": [
+        0.005060698837041855,
+        0.004472485277801752
+      ],
+      "uv_max": [
+        0.991580069065094,
+        0.9950515627861023
+      ],
+      "uv_utilization": 0.469,
+      "bbox_min": [
+        -0.75,
+        -0.6125,
+        0.0006
+      ],
+      "bbox_max": [
+        0.7519,
+        0.5997,
+        2.2192
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Enemy_Mortar\\04_export\\SK_Enemy_Mortar_v003.glb",
+    "bytes": 440036
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Enemy_Mortar\\03_work\\SK_Enemy_Mortar_v003.blend",
+  "total_seconds": 51.1,
+  "_seconds": 54.4
+}

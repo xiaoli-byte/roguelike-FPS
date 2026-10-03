@@ -1,0 +1,634 @@
+# 资产登记表（Asset Registry）
+#
+# 每个资产一节，键名就是资产 ID，必须符合命名规范：
+#   SK_<类>_<名>  骨骼网格（会被游戏骨骼驱动）   SM_<类>_<名>  静态网格
+# 字段：
+#   display   中文名
+#   kind      skeletal | static
+#   class     规格档，见 pipeline.toml [classes.*]
+#   blockout  白模来源：{ source = "enemy", id = <EnemyDef.id> }
+#   material  材质参数。有材质分区（assetctl.py matid）时：roughness = 非金属区粗糙度，
+#             metal_roughness / metal_value = 金属区粗糙度 / 金属度（默认 0.4 / 0.75，手绘固有色里已经画了明暗，不宜过高）；
+#             没有材质分区时退回 roughness / metallic 两个全局常量
+#   brief     设定描述（英文，给概念阶段；风格统一写在 pipeline.toml [concept].style）
+#   keep_glow 运行时保留白模上哪些发光部件（"all" | "attachments" | "none"），默认 attachments。
+#             敌人一律用 all：眼睛 / 面甲缝是攻击前摇的发光提示（设计支柱「可读的敌人」），不能丢
+#   qa_waivers QA 豁免（可选）：{ "<检查项名>" = "<理由>" }，有意的设计偏差不阻塞流程，校验报告里记为「已豁免」
+#   rig       绑定方式（可选）："parts" = 通用部件骨架（非人形敌人 / Boss）：骨骼是程序化模型的每个节点，
+#             权重按离哪个白模部件最近生成；rig_sigma = 部件交界处的过渡带宽度（相对资产尺寸，默认 0.015，越小越刚性）
+#   rig_rigid  部件骨架的刚体分段（石像、甲壳、板甲、灯笼等硬表面角色）：每个部件 100% 跟随自己的骨骼，所有部件交界切开并封口，
+#             关节转动时露出部件之间的缝而不是拉伸；默认 false = 父子部件（及纯枢轴下的兄弟部件，如腰）之间平滑过渡、其余部件交界切开
+#   rig_rigid_joints  过渡模式里单独设为刚性的关节（rig 字段名列表）：与父、兄弟关节的交界切开，和子关节照常过渡
+#   emissive_hint  发光分区（emid）的资产说明：哪些细节会发光（雕刻纹路、符文、散热缝）；运行时按实例着色
+#   highpoly_mode  "single"（默认，Hunyuan3D 2.1 正面单图）| "multiview"（Hunyuan3D 2mv 四视图，深度由侧视图约束）
+#   rom        ROM（活动范围）测试姿势表 [assets.<ID>.rom]：{姿势名 = {rig 字段 = [x, y, z]}}，取自招式代码的极限角度，审核阶段按它做形变检测
+#   arm_radius 人形手臂链的影响半径（米，默认 0.14）：超出的顶点与肩关节内侧的顶点归躯干，防止抬手时把身体 / 斗篷带起来；
+#             宽袖、大肩甲角色要调大
+#   matid_hint 材质分区的补充说明（可选，英文），追加到遮罩提示词：模型容易把浅黄的骨壳 / 砂岩当成铜
+#   garment   绑定规格（可选）："long_robe" 长袍盖住双腿：脚踝到髋部按「髋骨 + 左右平均」绑定，防止袍内的腿戳出、袍摆撕开
+
+[assets.SK_Enemy_Grunt]
+arm_radius = 0.13
+display = "沙匪刀客"
+kind = "skeletal"
+class = "enemy_standard"
+blockout = { source = "enemy", id = "grunt" }
+material = { roughness = 0.82, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+A desert bandit swordsman, lean and wiry humanoid. Head fully wrapped in a cream cloth turban with
+a short tail hanging at the back, dark brown face veil covering nose and mouth, two small glowing
+orange eyes visible in a narrow slit. Sand-colored robe with a dark brown leather vest over the
+chest, crimson waist sash with a hanging strip, robe skirt to mid-thigh, dark brown baggy trousers,
+cloth-wrapped shins, dark leather boots, bare tan forearms, dark cloth hand wraps. Hands empty
+(the sword is a separate asset).
+"""
+
+[assets.SK_Enemy_Archer]
+arm_radius = 0.09
+display = "骨弩手"
+kind = "skeletal"
+class = "enemy_standard"
+blockout = { source = "enemy", id = "archer" }
+material = { roughness = 0.85, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+An undead skeleton crossbowman: lanky bone-white skeleton with a visible ribcage, spine and pelvis,
+a skull under a ragged dark green hooded cloak with a short shoulder mantle, the tattered cloak
+hanging to the knees at the back, two glowing green ghost-fire eyes in the skull sockets, bony arms
+and legs with a few dark leather wraps and a belt. Hands empty (the crossbow is a separate asset).
+"""
+
+[assets.SK_Enemy_Brute]
+arm_radius = 0.24
+display = "铁甲盾卫"
+kind = "skeletal"
+class = "enemy_large"
+blockout = { source = "enemy", id = "brute" }
+material = { roughness = 0.8, metallic = 0.55 }
+keep_glow = "all"
+brief = """
+A huge armored shield guard: massive dark blue-grey iron plate armor with broad pauldrons and short
+spikes, a layered plate skirt, heavy iron greaves and sabatons, a closed great-helm with one narrow
+horizontal glowing red visor slit and two short horns, riveted plates with worn bright edges and a
+few dark leather straps. Hands empty (the mace and the tower shield are separate assets).
+"""
+
+[assets.SK_Enemy_Marksman]
+arm_radius = 0.14
+display = "狙击手"
+kind = "skeletal"
+class = "enemy_standard"
+blockout = { source = "enemy", id = "marksman" }
+material = { roughness = 0.8, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+A hooded sniper assassin: long dark navy coat with a cloak reaching the knees, a deep hood with the
+face hidden in shadow, a glowing red monocle lens over one eye, crimson scarf wrapped around the
+neck, leather belts and small pouches, dark trousers, tall black boots and black gloves.
+Hands empty (the long musket is a separate asset).
+"""
+
+[assets.SK_Enemy_Mortar]
+arm_radius = 0.16
+display = "重炮兵"
+kind = "skeletal"
+class = "enemy_standard"
+blockout = { source = "enemy", id = "mortar" }
+material = { roughness = 0.8, metallic = 0.15 }
+keep_glow = "all"
+brief = """
+A stocky heavy artillery soldier: wide conical woven bamboo hat, face covered by a dark cloth mask
+with two small glowing orange eyes, brown leather armor with a riveted bronze chest plate and an
+ammunition bandolier, a wooden ammo crate backpack strapped to the back, padded trousers and heavy
+boots. Hands empty (the bronze shoulder cannon is a separate asset).
+"""
+
+[assets.SK_Enemy_Shaman]
+arm_radius = 0.2
+display = "巫祝"
+kind = "skeletal"
+class = "enemy_standard"
+blockout = { source = "enemy", id = "shaman" }
+material = { roughness = 0.8, metallic = 0.0 }
+garment = "long_robe"
+keep_glow = "all"
+brief = """
+A ritual shaman sorcerer: a tall ornate headdress crown with feathers, a carved wooden Nuo ritual
+opera mask with two glowing eyes, a long deep purple robe with gold trim reaching the shins, a teal
+sash, yellow paper talismans hanging from the belt, wide sleeves, pale hands.
+Hands empty (the staff is a separate asset).
+"""
+
+# ───────────── 敌人挂件（静态网格，原点 = 挂点；挂点名见各敌人 buildModel 里的 xxx.name = '...'）─────────────
+
+[assets.SM_EnemyWeapon_Scimitar]
+display = "沙匪弯刀"
+kind = "static"
+class = "enemy_attachment"
+blockout = { source = "enemy", id = "grunt", attachment = "scimitar" }
+material = { roughness = 0.75, metallic = 0.6 }
+qa_waivers = { "尺寸 Y 轴" = "设计变更（概念 v003）：白模的直刀身+斜刀尖改为一整片连续弯刀，刀身比白模宽；不影响判定" }
+brief = """
+A desert bandit's curved scimitar: dark leather-wrapped grip with a small round pommel, a short gold
+cross-guard, a broad single-edged steel blade that bends upward near the tip, worn engraved fuller,
+a faint orange glow along the cutting edge.
+"""
+
+[assets.SM_EnemyWeapon_Crossbow]
+display = "骨弩"
+kind = "static"
+class = "enemy_attachment"
+blockout = { source = "enemy", id = "archer", attachment = "crossbow" }
+material = { roughness = 0.8, metallic = 0.0 }
+brief = """
+An undead skeleton's bone crossbow seen from above: a weathered dark wooden stock, two curved bone limbs
+forming the bow arms, a taut pale string, a bone-tipped bolt loaded on the rail with a sickly green glow,
+leather bindings and a small skull ornament at the front.
+"""
+
+[assets.SM_EnemyWeapon_Mace]
+display = "铁甲重锤"
+kind = "static"
+class = "enemy_attachment"
+blockout = { source = "enemy", id = "brute", attachment = "mace" }
+material = { roughness = 0.75, metallic = 0.6 }
+brief = """
+A heavy flanged war mace: a long leather-wrapped haft with iron end caps, a massive dark iron head made
+of thick flanges, two short horn-like spikes on opposite sides of the head, riveted bands, worn bright
+edges on the iron.
+"""
+
+[assets.SM_EnemyWeapon_TowerShield]
+display = "铁甲塔盾"
+kind = "static"
+class = "enemy_attachment"
+blockout = { source = "enemy", id = "brute", attachment = "shield" }
+material = { roughness = 0.7, metallic = 0.5 }
+brief = """
+A huge rectangular tower shield: a bronze face plate inside a thick gold rim, a gold emblem plate in the
+upper middle with two small glowing red eye slits, a pointed dark iron boss spike in the lower centre,
+rivets around the border, battle scratches and dents.
+"""
+
+[assets.SM_EnemyWeapon_Musket]
+display = "狙击火枪"
+kind = "static"
+class = "enemy_attachment"
+blockout = { source = "enemy", id = "marksman", attachment = "musket" }
+material = { roughness = 0.7, metallic = 0.3 }
+qa_waivers = { "尺寸 Y 轴" = "美术细化：概念把枪托与瞄准镜画得比白模高约 20%；枪长与枪口位置与白模一致，射击判定用程序化枪口" }
+brief = """
+A long sniper musket seen from the side: a dark polished wooden stock and fore-end, a long dark iron barrel
+with two gold barrel bands, a brass telescopic scope mounted on top with a glowing red lens at its front,
+small gold trigger guard.
+"""
+
+[assets.SM_EnemyWeapon_Cannon]
+display = "肩扛铜炮"
+kind = "static"
+class = "enemy_attachment"
+blockout = { source = "enemy", id = "mortar", attachment = "cannon" }
+material = { roughness = 0.75, metallic = 0.7 }
+brief = """
+A bronze shoulder hand-cannon tube: a thick slightly flared brass barrel with two dark iron reinforcement
+rings and a heavy lip at the muzzle, a rounded dark iron breech ball at the base, engraved cloud motifs,
+the inside of the muzzle glowing orange-hot.
+"""
+
+[assets.SM_EnemyWeapon_Staff]
+display = "巫祝法杖"
+kind = "static"
+class = "enemy_attachment"
+blockout = { source = "enemy", id = "shaman", attachment = "staff" }
+material = { roughness = 0.6, metallic = 0.2 }
+qa_waivers = { "尺寸 X 轴" = "美术细化：金环两侧挂的符纸与流苏向外展开，比白模宽；杖长、杖身与法珠位置与白模一致" }
+brief = """
+A ritual shaman staff: a long slender dark lacquered wooden shaft, near the top a gold ring circling a
+floating glowing purple spirit orb, a gold spearhead-like finial above the ring, small yellow paper
+talismans and red tassels tied below the ring.
+"""
+
+# ───────────── 非人形敌人（通用部件骨架）─────────────
+
+[assets.SK_Enemy_Bomber]
+matid_hint = "This creature is entirely organic: the shell, armour plates, legs, mandibles and the glowing sac are bone, chitin and flesh, all NON-METAL (blue). Nothing on it is metal."
+display = "爆骸虫"
+kind = "skeletal"
+class = "enemy_standard"
+rig = "parts"
+rig_rigid = true
+rig_sigma = 0.012
+blockout = { source = "enemy", id = "bomber" }
+material = { roughness = 0.8, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+A bomb beetle bug: a bulbous bone-white carapace shell with three ridged armour plates across its back,
+a dark brown soft belly, a big swollen glowing orange-red explosive sac on top of its back (its weak spot,
+veined and pulsing), a small armoured head with two glowing red eyes and a pair of pale curved mandibles,
+six thin dark jointed legs splayed out to the sides.
+"""
+
+[assets.SK_Enemy_Wisp]
+display = "幽灵飞灯"
+kind = "skeletal"
+class = "enemy_standard"
+rig = "parts"
+rig_rigid = true
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "wisp" }
+material = { roughness = 0.9, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+A haunted floating paper lantern ghost: a cylindrical red paper lantern lit warmly from inside, dark wooden
+frame rings at top and bottom and four thin vertical wooden ribs, a small gold ring hook on top, a spooky
+glowing cyan ghost face (two eyes and a wide grin) on the front of the paper, a glowing blue spirit-fire
+core under the lantern, three red silk tassels with gold beads hanging below.
+"""
+
+# ───────────── Boss（通用部件骨架）─────────────
+
+[assets.SK_Boss_Colossus]
+matid_hint = "The golem body, limbs, fists, head and floating rocks are carved SANDSTONE and stone: NON-METAL (blue). Only the gold bands, gold trims, the gold crown and the gold ring around the chest core are METAL (red). The cloth is non-metal."
+# blockout_exclude：不进身体资产、运行时保持原样的 rig 字段（环绕浮石独立运动，保留程序化）
+blockout_exclude = ["orbit"]
+display = "沙暴巨像"
+kind = "skeletal"
+class = "boss"
+rig = "parts"
+rig_rigid = true
+rig_sigma = 0.012
+blockout = { source = "enemy", id = "boss_colossus" }
+material = { roughness = 0.9, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+A colossal ancient sandstone golem boss: a massive blocky body of carved sand-coloured stone with darker
+weathered stone at the joints, gold bands and gold trim on shoulders, hips and crown, a crimson cloth
+loincloth, huge stone fists, thick pillar legs with stone toe spikes, a small head with a glowing amber eye
+slit, a glowing golden core set in the chest, glowing amber runes carved into the stone, floating rock
+fragments and a floating gold crown ring around it.
+"""
+
+# ROM（活动范围）测试姿势：取自 src/enemies/bosses/Colossus.ts 各招式的姿势表（rig 字段的局部旋转 [x, y, z]，弧度，XYZ 欧拉），
+# 未列出的关节保持构建姿势。审核阶段按它摆姿势、做形变检测；招式代码改了幅度要同步这里
+[assets.SK_Boss_Colossus.rom]
+slam_raise = { shoulderL = [-2.7, 0, -0.12], shoulderR = [-2.7, 0, 0.12], elbowL = [-0.4, 0, 0], elbowR = [-0.4, 0, 0], torso = [-0.2, 0, 0], head = [-0.15, 0, 0] }
+slam_hit = { shoulderL = [-0.95, 0, -0.12], shoulderR = [-0.95, 0, 0.12], elbowL = [0, 0, 0], elbowR = [0, 0, 0], torso = [0.5, 0, 0], head = [-0.25, 0, 0], legL = [-0.35, 0, 0], legR = [-0.35, 0, 0], kneeL = [0.55, 0, 0], kneeR = [0.55, 0, 0] }
+stomp = { legR = [-0.95, 0, 0], kneeR = [1.15, 0, 0], torso = [-0.12, 0, 0.12], shoulderL = [0, 0, -0.55], shoulderR = [0, 0, 0.55] }
+crouch = { shoulderL = [-0.35, 0, -0.12], shoulderR = [-0.35, 0, 0.12], torso = [0.75, 0, 0], legL = [-0.4, 0, 0], legR = [-0.4, 0, 0], kneeL = [0.7, 0, 0], kneeR = [0.7, 0, 0] }
+roar = { shoulderL = [-0.55, 0, -1.05], shoulderR = [-0.55, 0, 1.05], elbowL = [-0.6, 0, 0], elbowR = [-0.6, 0, 0], head = [-0.5, 0, 0] }
+punch = { shoulderR = [-1.85, 0, 0.12], shoulderL = [-0.95, 0, -0.12], elbowL = [-0.2, 0, 0], elbowR = [-0.2, 0, 0], head = [-0.2, 0, 0] }
+
+[assets.SK_Boss_Matriarch]
+# blockout_exclude：不进身体资产、运行时保持原样的 rig 字段（冰翼是半透明发光冰晶、细长难以单视图重建，与环绕冰片一起保留程序化）
+blockout_exclude = ["wings", "orbit"]
+display = "霜翼妖后"
+kind = "skeletal"
+class = "boss"
+rig = "parts"
+# 多视图高模：单视图把宽裙摆做薄（侧视 IoU 0.53），2mv 用侧视图约束深度后 0.85
+highpoly_mode = "multiview"
+# 肩部刚性：举臂约 160°，线性混合蒙皮在肩部必然拉长；切口藏在圆形护肩下面，肘以下照常过渡
+rig_rigid_joints = ["armL", "armR"]
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "boss_matriarch" }
+material = { roughness = 0.6, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+A floating frost queen boss: a ghostly tail of jagged pale-blue ice crystals instead of legs, a long deep
+blue royal robe with dark navy layers, ornate silver armour plates on the chest and shoulders, pale ice-blue
+skin, slender arms with silver bracers and icy claws, two large wings each made of four long translucent
+ice-crystal feathers, an ice crystal crown with glowing gems, glowing cyan eyes, a glowing frost core on the
+chest, floating ice shards around her.
+"""
+
+# ROM 测试姿势：取自 src/enemies/bosses/Matriarch.ts 的姿势表（冰翼、环绕冰片保留程序化，不在这里）
+[assets.SK_Boss_Matriarch.rom]
+cast = { armR = [-1.7, 0, 0.2], foreR = [0, 0, 0], armL = [-2.4, 0, -0.4], foreL = [-0.2, 0, 0] }
+dive = { body = [1.05, 0, 0], head = [-0.6, 0, 0], armL = [0.9, 0, -0.15], armR = [0.9, 0, 0.15] }
+gather = { armL = [-1.3, 0, 0.55], armR = [-1.3, 0, -0.55], foreL = [-0.6, 0, 0], foreR = [-0.6, 0, 0], head = [0.3, 0, 0] }
+spread = { armL = [-0.6, 0, -1.5], armR = [-0.6, 0, 1.5], foreL = [0, 0, 0], foreR = [0, 0, 0], head = [-0.4, 0, 0] }
+raise = { armL = [-2.8, 0, -0.35], armR = [-2.8, 0, 0.35], foreL = [-0.2, 0, 0], foreR = [-0.2, 0, 0], head = [-0.35, 0, 0] }
+
+[assets.SK_Boss_Warlord]
+# blockout_exclude：不进身体资产、运行时保持原样的 rig 字段（大剑垂到脚下以下且带熔火发光角色，保留程序化（后续可单做静态资产））
+blockout_exclude = ["sword"]
+display = "熔心魔将"
+kind = "skeletal"
+class = "boss"
+rig = "parts"
+rig_rigid = true
+rig_sigma = 0.012
+blockout = { source = "enemy", id = "boss_warlord" }
+material = { roughness = 0.8, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+A molten-hearted demon warlord boss: heavy black iron plate armour with dark bronze-gold trim, glowing
+orange lava cracks running through the armour, a glowing molten core in the chest, a horned great-helm
+with glowing orange eyes, dark bone spikes on the shoulders, a long tattered crimson cape. Both hands are
+EMPTY armoured gauntlets (his greatsword is a separate asset - do not paint any sword or weapon).
+"""
+
+# ROM 测试姿势：取自 src/enemies/bosses/Warlord.ts 的姿势表（armS / elbowS = 持剑手，armO / elbowO = 空手；大剑保留程序化）
+[assets.SK_Boss_Warlord.rom]
+overhead = { armS = [-3.0, 0, -0.15], elbowS = [0, 0, 0], armO = [-0.4, 0, 0.9], head = [-0.4, 0, 0], torso = [-0.15, 0, 0] }
+leap = { legL = [-0.9, 0, 0], legR = [-0.9, 0, 0], kneeL = [1.3, 0, 0], kneeR = [1.3, 0, 0], armS = [-2.8, 0, 0], elbowS = [-0.2, 0, 0], torso = [-0.25, 0, 0], cape = [0.6, 0, 0] }
+sweep_r = { torso = [0, 1.0, 0], armS = [-0.6, 0, -1.3], elbowS = [-0.1, 0, 0], kneeL = [0.3, 0, 0], kneeR = [0.3, 0, 0] }
+sweep_l = { torso = [0, -0.9, 0], armS = [-0.7, 0, -1.2], elbowS = [-0.2, 0, 0], kneeL = [0.3, 0, 0], kneeR = [0.3, 0, 0] }
+land = { legL = [-0.5, 0, 0], legR = [-0.5, 0, 0], kneeL = [1.0, 0, 0], kneeR = [1.0, 0, 0], torso = [0.6, 0, 0], armS = [-1.2, 0, 0], elbowS = [0, 0, 0], armO = [-0.4, 0, 0.6] }
+lunge = { legL = [-0.45, 0, 0], legR = [0.35, 0, 0], kneeL = [0.55, 0, 0], kneeR = [0.55, 0, 0], torso = [0.5, 0, 0], armS = [0.9, 0, 0], elbowS = [-0.2, 0, 0], armO = [-0.8, 0, 0.4], cape = [0.9, 0, 0] }
+
+[assets.SM_BossWeapon_Greatsword]
+display = "熔心大剑"
+kind = "static"
+class = "boss_attachment"
+blockout = { source = "enemy", id = "boss_warlord", attachment = "greatsword" }
+# 多视图高模：剑身扁平，单视图只能猜厚度；侧视图约束剑身和护手的厚度
+highpoly_mode = "multiview"
+material = { roughness = 0.7, metallic = 0.0, metal_roughness = 0.35, metal_value = 0.8 }
+keep_glow = "all"
+brief = """
+A huge two-handed demonic greatsword for a molten-hearted warlord boss: a long straight broad blade of
+blackened, hammered iron with glowing orange-hot molten cracks running down its centre and glowing molten
+edges, a heavy dark iron crossguard with sharp gold spiked tips, a grip wrapped in pale bone and dark leather,
+a faceted gold pommel. Brutal, heavy, readable silhouette.
+"""
+
+# ───────────── 第一人称武器（通用部件骨架 · 刚体；同一资产也用于掉落模型）─────────────
+# 活动部件（弹匣 / 转轮 / 枪管组 / 泵动护木）是骨骼；中空瞄具、弩箭、弓弦、稀有度条与能量槽保留程序化（见 WeaponModels.PROCEDURAL_PARTS）。
+# presentation：按展示姿态（枪管竖直、侧面朝相机）出概念和高模，构建时转回枪的局部空间。
+
+[assets.SK_Weapon_Revolver]
+display = "赤铜左轮"
+kind = "skeletal"
+class = "weapon_fp"
+rig = "parts"
+rig_rigid = true
+presentation = true
+highpoly_mode = "multiview"
+blockout = { source = "weapon", id = "revolver" }
+material = { roughness = 0.6, metallic = 0.0, metal_roughness = 0.35, metal_value = 0.8 }
+keep_glow = "all"
+emissive_hint = "Only the engraved cloud scrollwork glows: the scroll engraving along the barrel rib and the engraved swirls on the copper frame below the cylinder. The cylinder, barrel surface, grip wood, gold parts and screws do not glow."
+brief = """
+An ornate eight-chamber revolver of red copper and dark blued steel: a heavy copper frame engraved with cloud scrollwork, a dark steel eight-shot cylinder, a long round barrel with a top rib and a small gold front sight, a cocked hammer, a curved grip of dark polished wood with gold rivets and a gold butt cap.
+Moving part: the eight-chamber cylinder. No hands, no characters. Do NOT paint any glowing lights, glowing strips, glowing gems or glowing energy (rarity and element glows are added by the game on top). Moving parts stay in place as clearly separate pieces.
+"""
+
+[assets.SK_Weapon_Smg]
+display = "蜂鸣冲锋枪"
+kind = "skeletal"
+class = "weapon_fp"
+rig = "parts"
+rig_rigid = true
+presentation = true
+highpoly_mode = "multiview"
+blockout = { source = "weapon", id = "smg" }
+material = { roughness = 0.6, metallic = 0.0, metal_roughness = 0.35, metal_value = 0.8 }
+keep_glow = "all"
+emissive_hint = "The gold cloud emblem on the receiver side and the thin gold accent stripe glow. Plain gunmetal, grip wraps, magazine and barrel do not glow."
+brief = """
+A compact buzzing submachine gun: dark gunmetal receiver with hexagonal honeycomb vents, amber-yellow hazard accents, a short shrouded barrel with a perforated heat shield, a straight box magazine below, a pistol grip and a short stock.
+Moving part: the box magazine. No hands, no characters. Do NOT paint any glowing lights, glowing strips, glowing gems or glowing energy (rarity and element glows are added by the game on top). Moving parts stay in place as clearly separate pieces.
+"""
+
+[assets.SK_Weapon_Rifle]
+display = "裂风步枪"
+kind = "skeletal"
+class = "weapon_fp"
+rig = "parts"
+rig_rigid = true
+presentation = true
+highpoly_mode = "multiview"
+blockout = { source = "weapon", id = "rifle" }
+material = { roughness = 0.6, metallic = 0.0, metal_roughness = 0.35, metal_value = 0.8 }
+keep_glow = "all"
+emissive_hint = "Only the thin engraved lines on the receiver and handguard glow (the wind-crack engravings). Paint, magazine, grip, stock and barrel do not glow."
+brief = """
+A reliable military assault rifle: olive-green painted steel receiver with wind-crack engravings, a dark gunmetal handguard with vent slots, a curved box magazine, a steel barrel with a muzzle brake, a pistol grip and a solid stock with a rubber butt pad. Leave the top of the receiver plain (the optic is mounted separately).
+Moving part: the curved magazine. No hands, no characters. Do NOT paint any glowing lights, glowing strips, glowing gems or glowing energy (rarity and element glows are added by the game on top). Moving parts stay in place as clearly separate pieces.
+"""
+
+[assets.SK_Weapon_Burst]
+display = "三叠点射枪"
+kind = "skeletal"
+class = "weapon_fp"
+rig = "parts"
+rig_rigid = true
+presentation = true
+highpoly_mode = "multiview"
+blockout = { source = "weapon", id = "burst" }
+material = { roughness = 0.6, metallic = 0.0, metal_roughness = 0.35, metal_value = 0.8 }
+keep_glow = "all"
+emissive_hint = "The silver cloud-swirl inlays on the navy receiver glow. The barrels, trim, grip wraps and magazine do not glow."
+brief = """
+A three-barrel burst rifle in bullpup layout: deep navy-blue armoured receiver, three stacked steel barrels at the front, a flat top rail (the sight is mounted separately), a short magazine behind the grip, pale steel-blue trim.
+Moving part: the rear magazine. No hands, no characters. Do NOT paint any glowing lights, glowing strips, glowing gems or glowing energy (rarity and element glows are added by the game on top). Moving parts stay in place as clearly separate pieces.
+"""
+
+[assets.SK_Weapon_Shotgun]
+display = "碎岩霰弹"
+kind = "skeletal"
+class = "weapon_fp"
+rig = "parts"
+rig_rigid = true
+presentation = true
+highpoly_mode = "multiview"
+blockout = { source = "weapon", id = "shotgun" }
+material = { roughness = 0.6, metallic = 0.0, metal_roughness = 0.35, metal_value = 0.8 }
+keep_glow = "all"
+emissive_hint = "Only the thin cracks and seams in and around the rock inlays on the receiver glow. Steel, wood, wraps and brass do not glow."
+brief = """
+A heavy pump-action shotgun with stone inlays: dark grey steel receiver and barrel, rough chunks of rock set into the receiver sides, a wooden pump fore-end, a wooden stock with brass fittings.
+Moving part: the sliding pump fore-end. No hands, no characters. Do NOT paint any glowing lights, glowing strips, glowing gems or glowing energy (rarity and element glows are added by the game on top). Moving parts stay in place as clearly separate pieces.
+"""
+
+[assets.SK_Weapon_Sniper]
+display = "鹰隼狙击"
+kind = "skeletal"
+class = "weapon_fp"
+rig = "parts"
+rig_rigid = true
+presentation = true
+highpoly_mode = "multiview"
+blockout = { source = "weapon", id = "sniper" }
+material = { roughness = 0.6, metallic = 0.0, metal_roughness = 0.35, metal_value = 0.8 }
+keep_glow = "all"
+emissive_hint = "Only the thin carved outline lines of the hawk and its feathers on the wooden stock glow (narrow grooves, not the whole carving). The cloth and leather wraps around the stock, the plain wood, receiver, barrel, scope, bolt and magazine do not glow."
+brief = """
+A long bolt-action sniper rifle with a hawk motif: olive-grey steel receiver with a bolt handle, a long fluted barrel with a muzzle brake, a large dark scope on top, a wooden stock carved with hawk feathers, a box magazine.
+Moving part: the box magazine. No hands, no characters. Do NOT paint any glowing lights, glowing strips, glowing gems or glowing energy (rarity and element glows are added by the game on top). Moving parts stay in place as clearly separate pieces.
+"""
+
+[assets.SK_Weapon_Launcher]
+display = "焚城榴弹"
+kind = "skeletal"
+class = "weapon_fp"
+rig = "parts"
+rig_rigid = true
+presentation = true
+highpoly_mode = "multiview"
+blockout = { source = "weapon", id = "launcher" }
+material = { roughness = 0.6, metallic = 0.0, metal_roughness = 0.35, metal_value = 0.8 }
+keep_glow = "all"
+emissive_hint = "The flame motif painted on the crimson barrel glows. The drum, frame, brass fittings, grip and stock do not glow."
+brief = """
+A rotary grenade launcher: a big dark-iron revolving drum, a short wide barrel, a crimson-lacquered steel frame with brass fittings and flame engravings, a pistol grip and a stubby stock.
+Moving part: the revolving grenade drum. No hands, no characters. Do NOT paint any glowing lights, glowing strips, glowing gems or glowing energy (rarity and element glows are added by the game on top). Moving parts stay in place as clearly separate pieces.
+"""
+
+[assets.SK_Weapon_Crossbow]
+display = "追魂连弩"
+kind = "skeletal"
+class = "weapon_fp"
+rig = "parts"
+rig_rigid = true
+presentation = true
+highpoly_mode = "multiview"
+blockout = { source = "weapon", id = "crossbow" }
+material = { roughness = 0.6, metallic = 0.0, metal_roughness = 0.35, metal_value = 0.8 }
+keep_glow = "all"
+emissive_hint = "The engraved patterns along the steel bow limbs and the small emblem on the tiller glow. Wood, wraps, brass and the bolt magazine do not glow."
+brief = """
+A mechanical repeating crossbow: a dark wooden stock and tiller, a swept-back steel bow with engraved limbs, a box bolt magazine on top, brass mechanism. Do NOT draw a bowstring or a loaded bolt (they are animated separately).
+Moving part: the bolt magazine on top. No hands, no characters. Do NOT paint any glowing lights, glowing strips, glowing gems or glowing energy (rarity and element glows are added by the game on top). Moving parts stay in place as clearly separate pieces.
+"""
+
+[assets.SK_Weapon_Beam]
+display = "雷弧发射器"
+kind = "skeletal"
+class = "weapon_fp"
+rig = "parts"
+rig_rigid = true
+presentation = true
+highpoly_mode = "multiview"
+blockout = { source = "weapon", id = "beam" }
+material = { roughness = 0.6, metallic = 0.0, metal_roughness = 0.35, metal_value = 0.8 }
+keep_glow = "all"
+emissive_hint = "The copper coil windings on the emitter and the gold cloud swirl on the body glow. The body panels, canister, grip and wraps do not glow."
+brief = """
+An arcane lightning-arc projector: a dark navy steel body, copper coils wrapped around a forked emitter at the front, an insulated energy canister on top, an insulated grip.
+Moving part: the energy canister on top. No hands, no characters. Do NOT paint any glowing lights, glowing strips, glowing gems or glowing energy (rarity and element glows are added by the game on top). Moving parts stay in place as clearly separate pieces.
+"""
+
+[assets.SK_Weapon_Minigun]
+display = "旋风机炮"
+kind = "skeletal"
+class = "weapon_fp"
+rig = "parts"
+rig_rigid = true
+presentation = true
+highpoly_mode = "multiview"
+blockout = { source = "weapon", id = "minigun" }
+material = { roughness = 0.6, metallic = 0.0, metal_roughness = 0.35, metal_value = 0.8 }
+keep_glow = "all"
+emissive_hint = "The engraved gold scroll pattern on the barrel clamp ring and the thin inlay lines on the housing glow. Barrels, housing panels, ammo box and handles do not glow."
+brief = """
+A six-barrel rotary minigun: a cluster of six steel barrels held by clamp rings, a heavy dark-steel housing, a side ammo box, a carrying handle, gold accents.
+Moving part: the rotating barrel cluster and the side ammo box. No hands, no characters. Do NOT paint any glowing lights, glowing strips, glowing gems or glowing energy (rarity and element glows are added by the game on top). Moving parts stay in place as clearly separate pieces.
+"""
+
+[assets.SK_Weapon_Swarm]
+display = "蜂群飞弹"
+kind = "skeletal"
+class = "weapon_fp"
+rig = "parts"
+rig_rigid = true
+presentation = true
+highpoly_mode = "multiview"
+blockout = { source = "weapon", id = "swarm" }
+material = { roughness = 0.6, metallic = 0.0, metal_roughness = 0.35, metal_value = 0.8 }
+keep_glow = "all"
+emissive_hint = "The gold dragon motif on the launch tube glows. The tube, pod, rocket tips, grip and stripes do not glow."
+brief = """
+A honeycomb micro-missile launcher: an olive-green launch tube body, a hexagonal honeycomb pod at the front holding five small rocket tips, yellow hazard stripes, a pistol grip and a shoulder rest.
+Moving part: the honeycomb missile pod. No hands, no characters. Do NOT paint any glowing lights, glowing strips, glowing gems or glowing energy (rarity and element glows are added by the game on top). Moving parts stay in place as clearly separate pieces.
+"""
+
+# ───────────── 第一人称手臂（每位英雄一套左右手；静态网格挂在 Viewmodel.buildArm 的 arm_r / arm_l 挂点）─────────────
+# concept_layout = "fp_arm"：手臂专用版式（道具版式会要求「不画手」）
+
+[assets.SM_Arms_FoxR]
+display = "赤狐·右手"
+kind = "static"
+class = "fp_arm"
+concept_layout = "fp_arm"
+highpoly_mode = "multiview"
+blockout = { source = "fp", id = "fox", attachment = "arm_r" }
+material = { roughness = 0.75, metallic = 0.0, metal_roughness = 0.35, metal_value = 0.8 }
+keep_glow = "none"
+brief = """
+First-person RIGHT arm, the hand gripping a pistol grip, of a young female flame-tail ranger: a fitted dark brown leather glove with the fingertips cut off, a brown leather bracer with brass buckles and a small fox-tail fur tuft, an orange-red and crimson layered cloth sleeve with an orange flame-pattern trim band at the cuff.
+Only the arm: a hand whose fingers are closed around an invisible grip, the wrist cuff and the forearm sleeve; no weapon, no body. The sleeve is cut off where the blockout ends.
+"""
+
+[assets.SM_Arms_FoxL]
+display = "赤狐·左手"
+kind = "static"
+class = "fp_arm"
+concept_layout = "fp_arm"
+highpoly_mode = "multiview"
+blockout = { source = "fp", id = "fox", attachment = "arm_l" }
+material = { roughness = 0.75, metallic = 0.0, metal_roughness = 0.35, metal_value = 0.8 }
+keep_glow = "none"
+brief = """
+First-person LEFT arm, the hand supporting a fore-end from below, of a young female flame-tail ranger: a fitted dark brown leather glove with the fingertips cut off, a brown leather bracer with brass buckles and a small fox-tail fur tuft, an orange-red and crimson layered cloth sleeve with an orange flame-pattern trim band at the cuff.
+Only the arm: a hand whose fingers are closed around an invisible grip, the wrist cuff and the forearm sleeve; no weapon, no body. The sleeve is cut off where the blockout ends.
+"""
+
+[assets.SM_Arms_BearR]
+display = "岩熊·右手"
+kind = "static"
+class = "fp_arm"
+concept_layout = "fp_arm"
+highpoly_mode = "multiview"
+blockout = { source = "fp", id = "bear", attachment = "arm_r" }
+material = { roughness = 0.75, metallic = 0.0, metal_roughness = 0.35, metal_value = 0.8 }
+keep_glow = "none"
+brief = """
+First-person RIGHT arm, the hand gripping a pistol grip, of a huge bear-folk warrior monk: a big furry brown bear-paw hand with short dark claws, a heavy stone-grey bracer carved with a mountain emblem and a ring of dark wooden prayer beads at the wrist, a thick ochre-tan monk robe sleeve with a dark brown trim band.
+Only the arm: a hand whose fingers are closed around an invisible grip, the wrist cuff and the forearm sleeve; no weapon, no body. The sleeve is cut off where the blockout ends.
+"""
+
+[assets.SM_Arms_BearL]
+display = "岩熊·左手"
+kind = "static"
+class = "fp_arm"
+concept_layout = "fp_arm"
+highpoly_mode = "multiview"
+blockout = { source = "fp", id = "bear", attachment = "arm_l" }
+material = { roughness = 0.75, metallic = 0.0, metal_roughness = 0.35, metal_value = 0.8 }
+keep_glow = "none"
+brief = """
+First-person LEFT arm, the hand supporting a fore-end from below, of a huge bear-folk warrior monk: a big furry brown bear-paw hand with short dark claws, a heavy stone-grey bracer carved with a mountain emblem and a ring of dark wooden prayer beads at the wrist, a thick ochre-tan monk robe sleeve with a dark brown trim band.
+Only the arm: a hand whose fingers are closed around an invisible grip, the wrist cuff and the forearm sleeve; no weapon, no body. The sleeve is cut off where the blockout ends.
+"""
+
+[assets.SM_Arms_FalconR]
+display = "雷隼·右手"
+kind = "static"
+class = "fp_arm"
+concept_layout = "fp_arm"
+highpoly_mode = "multiview"
+blockout = { source = "fp", id = "falcon", attachment = "arm_r" }
+material = { roughness = 0.75, metallic = 0.0, metal_roughness = 0.35, metal_value = 0.8 }
+keep_glow = "none"
+brief = """
+First-person RIGHT arm, the hand gripping a pistol grip, of a young female sky hunter: a slim pale-blue leather glove, a light silver bracer with small feather engravings and a white feather tuft, a sky-blue and white layered sleeve with a lightning-pattern trim band at the cuff.
+Only the arm: a hand whose fingers are closed around an invisible grip, the wrist cuff and the forearm sleeve; no weapon, no body. The sleeve is cut off where the blockout ends.
+"""
+
+[assets.SM_Arms_FalconL]
+display = "雷隼·左手"
+kind = "static"
+class = "fp_arm"
+concept_layout = "fp_arm"
+highpoly_mode = "multiview"
+blockout = { source = "fp", id = "falcon", attachment = "arm_l" }
+material = { roughness = 0.75, metallic = 0.0, metal_roughness = 0.35, metal_value = 0.8 }
+keep_glow = "none"
+brief = """
+First-person LEFT arm, the hand supporting a fore-end from below, of a young female sky hunter: a slim pale-blue leather glove, a light silver bracer with small feather engravings and a white feather tuft, a sky-blue and white layered sleeve with a lightning-pattern trim band at the cuff.
+Only the arm: a hand whose fingers are closed around an invisible grip, the wrist cuff and the forearm sleeve; no weapon, no body. The sleeve is cut off where the blockout ends.
+"""
+

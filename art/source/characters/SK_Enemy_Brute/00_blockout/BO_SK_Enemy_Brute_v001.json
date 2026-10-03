@@ -1,0 +1,391 @@
+{
+  "schema": 1,
+  "assetId": "SK_Enemy_Brute",
+  "source": {
+    "kind": "enemy",
+    "id": "brute"
+  },
+  "space": {
+    "up": "+Y",
+    "forward": "+Z",
+    "unit": "m",
+    "origin": "feet"
+  },
+  "bindPose": {
+    "armSpread": 0.45
+  },
+  "bounds": {
+    "min": [
+      -1.0915221700794284,
+      -2.98023217215615e-10,
+      -0.28999999165534973
+    ],
+    "max": [
+      1.077645451249947,
+      2.454423403803552,
+      0.7527428452514264
+    ]
+  },
+  "joints": [
+    {
+      "name": "hips",
+      "parent": null,
+      "bindPosition": [
+        0,
+        0.98,
+        0
+      ],
+      "restLocal": [
+        0,
+        0.98,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "partCenter": [
+        0,
+        0.81,
+        0
+      ]
+    },
+    {
+      "name": "torso",
+      "parent": "hips",
+      "bindPosition": [
+        0,
+        0.98,
+        0
+      ],
+      "restLocal": [
+        0,
+        0,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "partCenter": [
+        0,
+        1.485,
+        0.0175
+      ]
+    },
+    {
+      "name": "head",
+      "parent": "torso",
+      "bindPosition": [
+        0,
+        1.8,
+        0
+      ],
+      "restLocal": [
+        0,
+        0.82,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "partCenter": [
+        0,
+        2.11471,
+        0.0175
+      ]
+    },
+    {
+      "name": "armL",
+      "parent": "torso",
+      "bindPosition": [
+        0.58,
+        1.62,
+        0
+      ],
+      "restLocal": [
+        0.58,
+        0.64,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0.45
+      ],
+      "partCenter": [
+        0.66264,
+        1.44892,
+        0
+      ]
+    },
+    {
+      "name": "elbowL",
+      "parent": "armL",
+      "bindPosition": [
+        0.74529,
+        1.27783,
+        0
+      ],
+      "restLocal": [
+        0,
+        -0.38,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "partCenter": [
+        0.82358,
+        1.11575,
+        0
+      ]
+    },
+    {
+      "name": "handL",
+      "parent": "elbowL",
+      "bindPosition": [
+        0.90187,
+        0.95367,
+        0
+      ],
+      "restLocal": [
+        0,
+        -0.36,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "partCenter": [
+        0.93058,
+        0.89424,
+        0
+      ]
+    },
+    {
+      "name": "armR",
+      "parent": "torso",
+      "bindPosition": [
+        -0.58,
+        1.62,
+        0
+      ],
+      "restLocal": [
+        -0.58,
+        0.64,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        -0.45
+      ],
+      "partCenter": [
+        -0.66264,
+        1.44892,
+        0
+      ]
+    },
+    {
+      "name": "elbowR",
+      "parent": "armR",
+      "bindPosition": [
+        -0.74529,
+        1.27783,
+        0
+      ],
+      "restLocal": [
+        0,
+        -0.38,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "partCenter": [
+        -0.82358,
+        1.11575,
+        0
+      ]
+    },
+    {
+      "name": "handR",
+      "parent": "elbowR",
+      "bindPosition": [
+        -0.90187,
+        0.95367,
+        0
+      ],
+      "restLocal": [
+        0,
+        -0.36,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "partCenter": [
+        -0.93058,
+        0.89424,
+        0
+      ]
+    },
+    {
+      "name": "legL",
+      "parent": "hips",
+      "bindPosition": [
+        0.21,
+        0.98,
+        0
+      ],
+      "restLocal": [
+        0.21,
+        0,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "partCenter": [
+        0.21,
+        0.73,
+        0
+      ]
+    },
+    {
+      "name": "kneeL",
+      "parent": "legL",
+      "bindPosition": [
+        0.21,
+        0.48,
+        0
+      ],
+      "restLocal": [
+        0,
+        -0.5,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "partCenter": [
+        0.21,
+        0.24,
+        0.0945
+      ]
+    },
+    {
+      "name": "legR",
+      "parent": "hips",
+      "bindPosition": [
+        -0.21,
+        0.98,
+        0
+      ],
+      "restLocal": [
+        -0.21,
+        0,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "partCenter": [
+        -0.21,
+        0.73,
+        0
+      ]
+    },
+    {
+      "name": "kneeR",
+      "parent": "legR",
+      "bindPosition": [
+        -0.21,
+        0.48,
+        0
+      ],
+      "restLocal": [
+        0,
+        -0.5,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "partCenter": [
+        -0.21,
+        0.24,
+        0.0945
+      ]
+    }
+  ],
+  "headAnchor": {
+    "joint": "head",
+    "local": [
+      0,
+      0.2,
+      0.02
+    ]
+  },
+  "parts": {
+    "body_000": "body",
+    "body_001": "body",
+    "body_002": "body",
+    "body_003": "body",
+    "body_004": "body",
+    "body_005": "body",
+    "body_006": "body",
+    "body_007": "body",
+    "body_008": "body",
+    "glow_009": "glow",
+    "body_010": "body",
+    "body_011": "body",
+    "body_012": "body",
+    "body_013": "body",
+    "body_014": "body",
+    "body_015": "body",
+    "body_016": "body",
+    "body_017": "body",
+    "attachment_018": "attachment",
+    "attachment_019": "attachment",
+    "attachment_020": "attachment",
+    "attachment_021": "attachment",
+    "body_022": "body",
+    "body_023": "body",
+    "body_024": "body",
+    "body_025": "body",
+    "body_026": "body",
+    "body_027": "body",
+    "body_028": "body",
+    "body_029": "body",
+    "attachment_030": "attachment",
+    "attachment_031": "attachment",
+    "attachment_032": "attachment",
+    "attachment_033": "attachment",
+    "attachment_034": "attachment",
+    "attachment_035": "attachment",
+    "body_036": "body"
+  },
+  "exportedAt": "2026-10-03T08:40:17.621Z"
+}

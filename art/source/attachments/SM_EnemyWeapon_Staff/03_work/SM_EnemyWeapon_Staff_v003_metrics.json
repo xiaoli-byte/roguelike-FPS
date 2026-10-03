@@ -1,0 +1,134 @@
+{
+  "steps": {
+    "导入清理": 0.7,
+    "对齐": 0.3,
+    "低模与 UV": 8.2,
+    "投影着色": 2.0,
+    "烘焙": 3.2,
+    "LOD": 0.0,
+    "导出": 0.7
+  },
+  "highpoly": {
+    "faces_raw": 93514,
+    "faces": 47288,
+    "verts": 47272,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00492
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.75,
+    "iou_per_view": {
+      "front": 0.774,
+      "left": 0.698,
+      "back": 0.769,
+      "right": 0.747
+    },
+    "height_m": 1.3513,
+    "blockout_height_m": 2.045
+  },
+  "uv": {
+    "smart_islands": 248,
+    "charts": 38,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "margin_px": 6
+  },
+  "projection": {
+    "uncovered_ratio": 0.1891
+  },
+  "bake_device": "OPTIX",
+  "material_id": {
+    "metal_texel_ratio": 0.3039
+  },
+  "textures": {
+    "T_EnemyWeapon_Staff_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_EnemyWeapon_Staff_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_EnemyWeapon_Staff_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "presentation": [
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "lods": [
+    {
+      "name": "SM_EnemyWeapon_Staff_LOD0",
+      "tris": 3000,
+      "verts": 1484,
+      "uv_min": [
+        0.00585939921438694,
+        0.005859331227838993
+      ],
+      "uv_max": [
+        0.983953058719635,
+        0.9839531183242798
+      ],
+      "uv_utilization": 0.503,
+      "bbox_min": [
+        -0.1875,
+        -0.097,
+        -0.6823
+      ],
+      "bbox_max": [
+        0.1879,
+        0.0971,
+        1.3512
+      ]
+    },
+    {
+      "name": "SM_EnemyWeapon_Staff_LOD1",
+      "tris": 1000,
+      "verts": 484,
+      "uv_min": [
+        0.00585939921438694,
+        0.005993240047246218
+      ],
+      "uv_max": [
+        0.9760713577270508,
+        0.9839531183242798
+      ],
+      "uv_utilization": 0.466,
+      "bbox_min": [
+        -0.188,
+        -0.0977,
+        -0.6823
+      ],
+      "bbox_max": [
+        0.1891,
+        0.0977,
+        1.3532
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\attachments\\SM_EnemyWeapon_Staff\\04_export\\SM_EnemyWeapon_Staff_v003.glb",
+    "bytes": 237936
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\attachments\\SM_EnemyWeapon_Staff\\03_work\\SM_EnemyWeapon_Staff_v003.blend",
+  "total_seconds": 15.0,
+  "_seconds": 18.7
+}

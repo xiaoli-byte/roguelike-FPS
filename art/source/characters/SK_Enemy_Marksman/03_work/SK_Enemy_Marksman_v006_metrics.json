@@ -1,0 +1,256 @@
+{
+  "steps": {
+    "导入清理": 2.2,
+    "对齐": 0.9,
+    "低模与 UV": 17.6,
+    "投影着色": 20.2,
+    "烘焙": 5.1,
+    "LOD": 0.0,
+    "骨骼蒙皮": 0.4,
+    "导出": 1.2
+  },
+  "highpoly": {
+    "faces_raw": 524693,
+    "faces": 281044,
+    "verts": 281040,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.863,
+    "iou_per_view": {
+      "front": 0.922,
+      "left": 0.809,
+      "back": 0.885,
+      "right": 0.808
+    },
+    "height_m": 1.8939,
+    "blockout_height_m": 1.9837
+  },
+  "uv": {
+    "smart_islands": 467,
+    "charts": 104,
+    "fallback_charts": 1,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "margin_px": 6
+  },
+  "projection": {
+    "uncovered_ratio": 0.3794
+  },
+  "bake_device": "OPTIX",
+  "material_id": {
+    "metal_texel_ratio": 0.0148
+  },
+  "textures": {
+    "T_Enemy_Marksman_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Enemy_Marksman_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Enemy_Marksman_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "bind_pose": {
+    "armSpreadL": 0.3859,
+    "armSpreadR": 0.361,
+    "base": 0.45
+  },
+  "robe_verts": {
+    "SK_Enemy_Marksman_LOD0": 381,
+    "SK_Enemy_Marksman_LOD1": 170,
+    "SK_Enemy_Marksman_LOD2": 80
+  },
+  "arm_capsule_verts": {
+    "SK_Enemy_Marksman_LOD0": 1452,
+    "SK_Enemy_Marksman_LOD1": 640,
+    "SK_Enemy_Marksman_LOD2": 269
+  },
+  "rigid_head_verts": {
+    "SK_Enemy_Marksman_LOD0": 657,
+    "SK_Enemy_Marksman_LOD1": 272,
+    "SK_Enemy_Marksman_LOD2": 117
+  },
+  "skin": {
+    "bones": [
+      "hips",
+      "torso",
+      "head",
+      "armL",
+      "elbowL",
+      "handL",
+      "armR",
+      "elbowR",
+      "handR",
+      "legL",
+      "kneeL",
+      "legR",
+      "kneeR"
+    ],
+    "per_lod": {
+      "SK_Enemy_Marksman_LOD0": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "heat_failed_initial": 0,
+        "weights_from": "bone_heat",
+        "unweighted_verts": 0
+      },
+      "SK_Enemy_Marksman_LOD1": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "heat_failed_initial": 0,
+        "weights_from": "bone_heat",
+        "unweighted_verts": 0
+      },
+      "SK_Enemy_Marksman_LOD2": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "heat_failed_initial": 0,
+        "weights_from": "bone_heat",
+        "unweighted_verts": 0
+      }
+    },
+    "spread": {
+      "hips": {
+        "verts": 145,
+        "p90_m": 0.322
+      },
+      "torso": {
+        "verts": 799,
+        "p90_m": 0.382
+      },
+      "head": {
+        "verts": 891,
+        "p90_m": 0.246
+      },
+      "armL": {
+        "verts": 167,
+        "p90_m": 0.147
+      },
+      "elbowL": {
+        "verts": 134,
+        "p90_m": 0.116
+      },
+      "handL": {
+        "verts": 92,
+        "p90_m": 0.104
+      },
+      "armR": {
+        "verts": 144,
+        "p90_m": 0.146
+      },
+      "elbowR": {
+        "verts": 126,
+        "p90_m": 0.116
+      },
+      "handR": {
+        "verts": 95,
+        "p90_m": 0.105
+      },
+      "legL": {
+        "verts": 605,
+        "p90_m": 0.198
+      },
+      "kneeL": {
+        "verts": 246,
+        "p90_m": 0.189
+      },
+      "legR": {
+        "verts": 296,
+        "p90_m": 0.152
+      },
+      "kneeR": {
+        "verts": 256,
+        "p90_m": 0.186
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SK_Enemy_Marksman_LOD0",
+      "tris": 8000,
+      "verts": 3996,
+      "uv_min": [
+        0.006059147417545319,
+        0.005859365686774254
+      ],
+      "uv_max": [
+        0.9868080615997314,
+        0.9780760407447815
+      ],
+      "uv_utilization": 0.464,
+      "bbox_min": [
+        -0.57,
+        -0.2263,
+        -0.0001
+      ],
+      "bbox_max": [
+        0.5803,
+        0.2882,
+        1.8954
+      ]
+    },
+    {
+      "name": "SK_Enemy_Marksman_LOD1",
+      "tris": 3500,
+      "verts": 1746,
+      "uv_min": [
+        0.006246821489185095,
+        0.006159001030027866
+      ],
+      "uv_max": [
+        0.9861129522323608,
+        0.9783082008361816
+      ],
+      "uv_utilization": 0.449,
+      "bbox_min": [
+        -0.5703,
+        -0.2265,
+        0.0003
+      ],
+      "bbox_max": [
+        0.5798,
+        0.2881,
+        1.8961
+      ]
+    },
+    {
+      "name": "SK_Enemy_Marksman_LOD2",
+      "tris": 1500,
+      "verts": 746,
+      "uv_min": [
+        0.006246821489185095,
+        0.005448479671031237
+      ],
+      "uv_max": [
+        0.9844703078269958,
+        0.9765584468841553
+      ],
+      "uv_utilization": 0.427,
+      "bbox_min": [
+        -0.5703,
+        -0.2266,
+        0.0017
+      ],
+      "bbox_max": [
+        0.5809,
+        0.2856,
+        1.8964
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Enemy_Marksman\\04_export\\SK_Enemy_Marksman_v006.glb",
+    "bytes": 343816
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Enemy_Marksman\\03_work\\SK_Enemy_Marksman_v006.blend",
+  "total_seconds": 47.6,
+  "_seconds": 51.5
+}

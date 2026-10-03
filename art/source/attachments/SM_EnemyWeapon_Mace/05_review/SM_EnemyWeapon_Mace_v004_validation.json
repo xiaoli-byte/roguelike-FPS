@@ -1,0 +1,147 @@
+[
+  {
+    "level": "pass",
+    "check": "文件大小",
+    "detail": "193 KB / 上限 700 KB"
+  },
+  {
+    "level": "pass",
+    "check": "扩展可用",
+    "detail": "必需扩展 ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+  },
+  {
+    "level": "pass",
+    "check": "LOD 数量",
+    "detail": "['SM_EnemyWeapon_Mace_LOD0', 'SM_EnemyWeapon_Mace_LOD1']，规格 2 级"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 面数",
+    "detail": "3000 / 预算 3000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 切换距离",
+    "detail": "extras.lod_distance=0"
+  },
+  {
+    "level": "warn",
+    "check": "尺寸 X 轴（深度轴）",
+    "detail": "0.419 m（白模 0.318 m）"
+  },
+  {
+    "level": "pass",
+    "check": "尺寸 Y 轴",
+    "detail": "0.435 m（白模 0.460 m）"
+  },
+  {
+    "level": "pass",
+    "check": "尺寸 Z 轴",
+    "detail": "0.819 m（白模 0.849 m）"
+  },
+  {
+    "level": "pass",
+    "check": "相对挂点位置",
+    "detail": "中心偏移 0.006 m（上限 0.051）"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 面数",
+    "detail": "1000 / 预算 1000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 递减",
+    "detail": "3000 → 1000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 切换距离",
+    "detail": "extras.lod_distance=14"
+  },
+  {
+    "level": "pass",
+    "check": "材质数量",
+    "detail": "['M_EnemyWeapon_Mace']（一个资产一个材质，便于合批）"
+  },
+  {
+    "level": "pass",
+    "check": "材质命名",
+    "detail": "['M_EnemyWeapon_Mace']"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_EnemyWeapon_Mace_N",
+    "detail": "1024×1024 webp（规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_EnemyWeapon_Mace_N",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_EnemyWeapon_Mace_ORM",
+    "detail": "1024×1024 webp（规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_EnemyWeapon_Mace_ORM",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_EnemyWeapon_Mace_BC",
+    "detail": "1024×1024 webp（规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_EnemyWeapon_Mace_BC",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "BaseColor 贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "法线贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "ORM 贴图",
+    "detail": "AO / 粗糙度 / 金属度"
+  },
+  {
+    "level": "pass",
+    "check": "SM_EnemyWeapon_Mace_LOD0 UV 范围",
+    "detail": "[0.00201526191085577, 0.002015296835452318]..[0.9979846477508545, 0.9979846477508545]"
+  },
+  {
+    "level": "pass",
+    "check": "SM_EnemyWeapon_Mace_LOD1 UV 范围",
+    "detail": "[0.0034721512347459793, 0.002015296835452318]..[0.9930964112281799, 0.9965400695800781]"
+  },
+  {
+    "level": "pass",
+    "check": "UV 利用率",
+    "detail": "62%"
+  },
+  {
+    "level": "pass",
+    "check": "UV 翻折",
+    "detail": "0 个面（0.00%），图块 31 个"
+  },
+  {
+    "level": "pass",
+    "check": "高模对齐",
+    "detail": "剪影 IoU 0.872（{'front': 0.917, 'left': 0.815, 'back': 0.915, 'right': 0.816}）"
+  },
+  {
+    "level": "pass",
+    "check": "投影覆盖",
+    "detail": "未覆盖顶点 7%（扩散补色）"
+  }
+]

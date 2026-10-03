@@ -5,8 +5,8 @@
  *  - EnemyBase.think → 本类 think：公共计时 / 视线 / 横移换向，再调用子类 ai(dt)
  *  - EnemyBase.animate → 本类 animate：步态相位、受击后仰衰减、发光插值、词缀更新，再调用子类 pose(dt)
  *
- * 另外提供：攻击令牌、带卡死绕行的 navigate、远程寻找视线站位、发光部件通道、
- * 词缀接入（精英名称 / 视觉 / 数值）以及若干几何小工具。
+ * 另外提供：攻击令牌、带卡死绕行的 navigate、能上下高台的 approachPlayer、远程寻找视线站位、
+ * 发光部件通道、随动画移动的头部判定锚点、词缀接入（精英名称 / 视觉 / 数值）以及若干几何小工具。
  */
 import * as THREE from 'three';
 import type { DamageResult, EnemyDef, GameContext, SpawnOptions } from '../core/types';
@@ -14,7 +14,10 @@ import { clamp01, damp } from '../core/math';
 import { EnemyBase } from './EnemyBase';
 import { attackDirector, type TokenKind } from './AttackTokens';
 import { AFFIX_NAMES, createAffix, isAffixId, type AffixController } from './Affixes';
-import { part, type HumanoidRig } from './Models';
+import { levelAt, playerLevel, type LevelSpot } from './Levels';
+import { glowPartMat, part, type HumanoidRig } from './Models';
+import { attachEnemyArt } from '../assets/EnemyArt';
+import type { SkinnedBody } from '../assets/SkinnedBody';
 
 const _a = new THREE.Vector3();
 const _b = new THREE.Vector3();
@@ -62,9 +65,13 @@ export abstract class StandardEnemy extends EnemyBase {
   private readonly glowSlots: GlowSlot[] = [];
   private baseTint = 0x000000;
   private baseTintIntensity = 1;
+  /** 与 flashMats 一一对应：该材质原本就有自发光 */
+  private intrinsicGlow: boolean[] = [];
   private strafeTimer: number;
   private wasStunned = false;
   private tokenKind: TokenKind | null = null;
+  /** 美术资产身体（清单里有绑定本敌人的骨骼网格时） */
+  private artBody: SkinnedBody | null = null;
 
   // 视线站位
   protected readonly vantage = new THREE.Vector3();
@@ -76,6 +83,15 @@ export abstract class StandardEnemy extends EnemyBase {
   private readonly stuckRef = new THREE.Vector3();
   private detourTime = 0;
   private readonly detour = new THREE.Vector3();
+
+  // 高台上下
+  private readonly spot: LevelSpot = { route: null, onTop: false };
+  private dropTimer = 0;
+  private dropClear = false;
+
+  // 头部判定锚点（骨骼 + 局部偏移）：爆头判定、伤害数字、头顶血条都跟着动画走
+  private headAnchor: THREE.Object3D | null = null;
+  private readonly headLocal = new THREE.Vector3();
 
   constructor(ctx: GameContext, def: EnemyDef, opts: SpawnOptions) {
     super(ctx, def, opts);
@@ -101,6 +117,9 @@ export abstract class StandardEnemy extends EnemyBase {
 
   override init(): void {
     super.init();
+    this.attachArtBody();
+    // 自带自发光的材质（飞灯的纸灯身、巫祝的符纸）不参与词缀 / 招式着色，保住它们的辨识度
+    this.intrinsicGlow = this.flashMats.map((f) => f.baseEmissive.getHex() !== 0);
     for (const g of this.glowSlots) {
       g.mat = g.mesh.material as THREE.MeshBasicMaterial;
       g.mat.color.copy(g.base);
@@ -183,6 +202,63 @@ export abstract class StandardEnemy extends EnemyBase {
     this.cancelAttack();
     this.affixCtl?.dispose();
     this.affixCtl = null;
+    this.artBody?.dispose();
+    this.artBody = null;
+  }
+
+  // ───────────── 美术资产 ─────────────
+
+  /**
+   * 资产清单里有绑定到本敌人的骨骼网格（bind = { source: 'enemy', id: def.id }）时，蒙皮到程序化人形骨骼上，
+   * 取代脚本拼装的身体部件（约定：人形敌人把 HumanoidRig 存在 this.rig）。资产未就绪则保持程序化模型。
+   */
+  private attachArtBody(): void {
+    const art = attachEnemyArt({
+      host: this.model.children[0],
+      defId: this.def.id,
+      rig: (this as unknown as { rig?: unknown }).rig,
+      renderer: this.ctx.renderer,
+      lowQuality: this.ctx.settings.quality === 'low',
+      own: (m) => {
+        this.ownMaterial(m);
+        this.flashMats.push({ mat: m, baseEmissive: m.emissive.clone(), baseIntensity: m.emissiveIntensity });
+      },
+    });
+    this.artBody = art.body;
+    // 武器上的发光件按白模的方块摆放，平时显示底色会和美术模型错位（比如弧形刀刃旁的一根直条）；
+    // 美术贴图里已经画了发光元素，所以改成加法混合、底色为黑：平时不可见，前摇时叠加发光，提示功能不变
+    const weaponGlows = new Set(art.parts.flatMap((p) => p.glows));
+    for (const g of this.glowSlots) {
+      if (!weaponGlows.has(g.mesh)) continue;
+      const m = g.mesh.material as THREE.MeshBasicMaterial;
+      m.blending = THREE.AdditiveBlending;
+      m.transparent = true;
+      m.depthWrite = false;
+      m.needsUpdate = true;
+      g.base.setHex(0x000000);
+    }
+  }
+
+  // ───────────── 头部判定 ─────────────
+
+  /**
+   * 在 buildModel 里指定头部判定球的锚点：obj 的局部坐标 (x, y, z) 处为头心。
+   * EnemyBase.raycastHit 通过 getHeadCenter 取头心，所以前倾 / 下蹲 / 冲锋时头部判定与画面一致。
+   * def.headY 仍需填静止姿态下的头心高度（身体胶囊的上沿按它计算）。
+   */
+  protected setHeadAnchor(obj: THREE.Object3D, x: number, y: number, z: number): void {
+    this.headAnchor = obj;
+    this.headLocal.set(x, y, z);
+  }
+
+  override getHeadCenter(out: THREE.Vector3): THREE.Vector3 {
+    const a = this.headAnchor;
+    // 出生 / 死亡动画期间模型在缩放、倒地，用静止数值即可
+    if (!a || !this.alive || this.age < this.spawnDuration) return super.getHeadCenter(out);
+    a.updateWorldMatrix(true, false);
+    out.copy(this.headLocal).applyMatrix4(a.matrixWorld);
+    if (!Number.isFinite(out.x + out.y + out.z)) return super.getHeadCenter(out);
+    return out;
   }
 
   // ───────────── 词缀 / 材质接口（Affixes 使用） ─────────────
@@ -196,9 +272,11 @@ export abstract class StandardEnemy extends EnemyBase {
       this.baseTint = color;
       this.baseTintIntensity = intensity;
     }
-    for (const f of this.flashMats) {
-      f.baseEmissive.setHex(color);
-      f.baseIntensity = intensity;
+    const fm = this.flashMats;
+    for (let i = 0; i < fm.length; i++) {
+      if (this.intrinsicGlow[i]) continue;
+      fm[i].baseEmissive.setHex(color);
+      fm[i].baseIntensity = intensity;
     }
   }
 
@@ -223,17 +301,11 @@ export abstract class StandardEnemy extends EnemyBase {
     parent: THREE.Object3D, geo: THREE.BufferGeometry, base: number, hot: number,
     x = 0, y = 0, z = 0, channel = 0, additive = false,
   ): THREE.Mesh {
-    const mat = additive
-      ? new THREE.MeshBasicMaterial({ color: base, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false, side: THREE.DoubleSide })
-      : new THREE.MeshBasicMaterial({ color: base, toneMapped: false });
-    const mesh = part(parent, geo, mat, x, y, z);
-    this.glowSlots.push({ mesh, base: new THREE.Color(base), hot: new THREE.Color(hot), channel: Math.min(GLOW_CHANNELS - 1, channel), mat: null });
+    const ch = Math.max(0, Math.min(GLOW_CHANNELS - 1, channel));
+    // 模板材质按参数缓存；EnemyBase.init 会把它克隆成实例材质（init 之后 g.mat 指向克隆）
+    const mesh = part(parent, geo, glowPartMat(base, hot, ch, additive), x, y, z);
+    this.glowSlots.push({ mesh, base: new THREE.Color(base), hot: new THREE.Color(hot), channel: ch, mat: null });
     return mesh;
-  }
-
-  /** 修改某个发光部件的热色（例如同一法阵在不同招式下换色） */
-  protected setGlowHot(mesh: THREE.Mesh, hot: number): void {
-    for (const g of this.glowSlots) if (g.mesh === mesh) g.hot.setHex(hot);
   }
 
   // ───────────── AI 辅助 ─────────────
@@ -304,7 +376,8 @@ export abstract class StandardEnemy extends EnemyBase {
   }
 
   /**
-   * 走到目标（地面走导航网格），带卡死检测：1.1 秒几乎没挪动就随机绕行一小段。
+   * 走到目标（地面走导航网格），带卡死检测：1.1 秒几乎没挪动（顶在障碍物端面、被人群堵住）
+   * 就向侧面绕行一小段（优先垂直于目标方向、直线可达的点，找不到再随机），然后重新寻路。
    * 到达 arrive 内返回 true。
    */
   protected navigate(target: THREE.Vector3, speed: number, arrive = 0.6): boolean {
@@ -315,7 +388,7 @@ export abstract class StandardEnemy extends EnemyBase {
       return false;
     }
     const arrived = this.moveTo(target, speed, arrive);
-    if (arrived || this.flying || this.controlLoss > 0) {
+    if (arrived || this.flying || this.controlLoss > 0 || this.stunTime > 0) {
       this.stuckTimer = 0;
       this.stuckRef.copy(this.position);
       return arrived;
@@ -327,11 +400,101 @@ export abstract class StandardEnemy extends EnemyBase {
       this.stuckTimer = 0;
       this.stuckRef.copy(this.position);
       if (expected > 1 && moved < expected * 0.2) {
-        if (this.ctx.nav.randomWalkable(this.position, 1.5, 4.5, this.detour)) this.detourTime = 0.9;
         this.strafeSign = -this.strafeSign;
+        if (this.pickDetour(target)) this.detourTime = 0.9;
       }
     }
     return false;
+  }
+
+  /** 绕行点：先试目标方向左右两侧 2–3.5 米（略向后退），要求可走且直线可达；都不行再在附近随机取点 */
+  private pickDetour(target: THREE.Vector3): boolean {
+    const ctx = this.ctx;
+    const px = this.position.x;
+    const pz = this.position.z;
+    const dx = target.x - px;
+    const dz = target.z - pz;
+    const len = Math.hypot(dx, dz);
+    if (len > 1e-3) {
+      const ux = dx / len;
+      const uz = dz / len;
+      for (let k = 0; k < 4; k++) {
+        const side = (k % 2 === 0 ? 1 : -1) * this.strafeSign;
+        const lat = k < 2 ? 2.2 : 3.4;
+        const back = k < 2 ? 0.4 : 1.2;
+        const x = px - uz * side * lat - ux * back;
+        const z = pz + ux * side * lat - uz * back;
+        if (!ctx.nav.isWalkable(x, z)) continue;
+        _a.set(px, this.position.y + 0.6, pz);
+        _b.set(x, this.position.y + 0.6, z);
+        if (ctx.world.segmentBlocked(_a, _b)) continue;
+        this.detour.set(x, this.position.y, z);
+        return true;
+      }
+    }
+    return ctx.nav.randomWalkable(this.position, 1.5, 4.5, this.detour);
+  }
+
+  /**
+   * 地面近战追击玩家：同在地面时等同 navigate；玩家站在高台（或其台阶）上时，
+   * 先导航到台阶口再沿台阶直线走上去；自己在高台上而玩家不在时，台边无遮挡就直接走下去，否则沿台阶下来。
+   * 到达 arrive 内（且与玩家同层）返回 true。
+   */
+  protected approachPlayer(speed: number, arrive: number): boolean {
+    const ctx = this.ctx;
+    const pl = ctx.player.position;
+    if (this.flying) return this.navigate(pl, speed, arrive);
+    const floorY = ctx.stage.arena?.floorY ?? 0;
+    const them = playerLevel(ctx, floorY);
+    const me = this.spot;
+    levelAt(ctx.world, this.position, floorY, me);
+    const mr = me.route;
+    const pr = them.route;
+    if (!mr && !pr) return this.navigate(pl, speed, arrive);
+
+    const dx = pl.x - this.position.x;
+    const dz = pl.z - this.position.z;
+    const d = Math.hypot(dx, dz);
+    if (mr && mr === pr) {
+      // 同一座高台：台面上直接追（台面不在导航网格里）；还在台阶上时先走完台阶
+      if (d <= arrive) {
+        this.stopMoving();
+        return true;
+      }
+      if (!me.onTop && them.onTop) this.steerTo(mr.top, speed);
+      else if (me.onTop && !them.onTop && this.distXZ(mr.top) > 1.2) this.steerTo(mr.top, speed);
+      else this.setMove(dx, dz, speed);
+      return false;
+    }
+    if (mr) {
+      // 自己在高台上、玩家不在：台边没有护栏挡着就直接走下去，否则沿台阶下来
+      this.dropTimer -= ctx.time.dt;
+      if (this.dropTimer <= 0) {
+        this.dropTimer = 0.3;
+        this.dropClear = this.directPathClear(pl);
+      }
+      if (this.dropClear) this.setMove(dx, dz, speed);
+      else if (me.onTop && this.distXZ(mr.top) > 0.8) this.steerTo(mr.top, speed);
+      else this.steerTo(mr.foot, speed);
+      return false;
+    }
+    // 自己在地面、玩家在高台（或其台阶）上：走到台阶口，再沿台阶上去
+    const route = pr!;
+    if (this.distXZ(route.foot) <= 1.0) {
+      if (them.onTop) this.steerTo(route.top, speed);
+      else this.setMove(dx, dz, speed);
+      return false;
+    }
+    this.navigate(route.foot, speed, 0.5);
+    return false;
+  }
+
+  private steerTo(p: THREE.Vector3, speed: number): void {
+    this.setMove(p.x - this.position.x, p.z - this.position.z, speed);
+  }
+
+  private distXZ(p: THREE.Vector3): number {
+    return Math.hypot(p.x - this.position.x, p.z - this.position.z);
   }
 
   /**

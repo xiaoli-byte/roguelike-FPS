@@ -1,0 +1,618 @@
+{
+  "schema": 1,
+  "assetId": "SK_Boss_Colossus",
+  "source": {
+    "kind": "enemy",
+    "id": "boss_colossus"
+  },
+  "rig": "parts",
+  "space": {
+    "up": "+Y",
+    "forward": "+Z",
+    "unit": "m",
+    "origin": "model"
+  },
+  "bounds": {
+    "min": [
+      -2.5134946966171268,
+      -0.029999995231628357,
+      -1.3563020420074463
+    ],
+    "max": [
+      2.5134946966171268,
+      5.969999995231628,
+      1.399999976158142
+    ]
+  },
+  "joints": [
+    {
+      "name": "j_r",
+      "parent": null,
+      "bindPosition": [
+        0,
+        0,
+        0
+      ],
+      "restLocal": [
+        0,
+        0,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0",
+      "parent": "j_r",
+      "bindPosition": [
+        0,
+        0,
+        0
+      ],
+      "restLocal": [
+        0,
+        0,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_0",
+      "parent": "j_0",
+      "bindPosition": [
+        0,
+        2.35,
+        0
+      ],
+      "restLocal": [
+        0,
+        2.35,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_0_5",
+      "parent": "j_0_0",
+      "bindPosition": [
+        -0.75,
+        2.3,
+        0
+      ],
+      "restLocal": [
+        -0.75,
+        -0.05,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_0_5_2",
+      "parent": "j_0_0_5",
+      "bindPosition": [
+        -0.75,
+        1.2,
+        0
+      ],
+      "restLocal": [
+        0,
+        -1.1,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_0_6",
+      "parent": "j_0_0",
+      "bindPosition": [
+        0.75,
+        2.3,
+        0
+      ],
+      "restLocal": [
+        0.75,
+        -0.05,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_0_6_2",
+      "parent": "j_0_0_6",
+      "bindPosition": [
+        0.75,
+        1.2,
+        0
+      ],
+      "restLocal": [
+        0,
+        -1.1,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_0_7",
+      "parent": "j_0_0",
+      "bindPosition": [
+        0,
+        2.4,
+        0
+      ],
+      "restLocal": [
+        0,
+        0.05,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1",
+      "parent": "j_0",
+      "bindPosition": [
+        0,
+        2.75,
+        0
+      ],
+      "restLocal": [
+        0,
+        2.75,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1_15",
+      "parent": "j_0_1",
+      "bindPosition": [
+        0,
+        3.5,
+        0.15
+      ],
+      "restLocal": [
+        0,
+        0.75,
+        0.15
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1_16",
+      "parent": "j_0_1",
+      "bindPosition": [
+        -1.62,
+        4.2,
+        0
+      ],
+      "restLocal": [
+        -1.62,
+        1.45,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1_16_5",
+      "parent": "j_0_1_16",
+      "bindPosition": [
+        -1.62,
+        3.58,
+        0
+      ],
+      "restLocal": [
+        0,
+        -0.62,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1_16_6",
+      "parent": "j_0_1_16",
+      "bindPosition": [
+        -1.62,
+        2.98,
+        0
+      ],
+      "restLocal": [
+        0,
+        -1.22,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1_17",
+      "parent": "j_0_1",
+      "bindPosition": [
+        1.62,
+        4.2,
+        0
+      ],
+      "restLocal": [
+        1.62,
+        1.45,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1_17_5",
+      "parent": "j_0_1_17",
+      "bindPosition": [
+        1.62,
+        3.58,
+        0
+      ],
+      "restLocal": [
+        0,
+        -0.62,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1_17_6",
+      "parent": "j_0_1_17",
+      "bindPosition": [
+        1.62,
+        2.98,
+        0
+      ],
+      "restLocal": [
+        0,
+        -1.22,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1_18",
+      "parent": "j_0_1",
+      "bindPosition": [
+        0,
+        4.47,
+        0.1
+      ],
+      "restLocal": [
+        0,
+        1.72,
+        0.1
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1_18_1",
+      "parent": "j_0_1_18",
+      "bindPosition": [
+        0,
+        4.89,
+        0.15
+      ],
+      "restLocal": [
+        0,
+        0.42,
+        0.05
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1_18_1_10",
+      "parent": "j_0_1_18_1",
+      "bindPosition": [
+        0,
+        5.84,
+        0.15
+      ],
+      "restLocal": [
+        0,
+        0.95,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_2",
+      "parent": "j_0",
+      "bindPosition": [
+        0,
+        3.3,
+        0
+      ],
+      "restLocal": [
+        0,
+        3.3,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    }
+  ],
+  "keep": [
+    "j_0_2"
+  ],
+  "fields": {
+    "body": "j_0",
+    "hips": "j_0_0",
+    "legL": "j_0_0_5",
+    "legR": "j_0_0_6",
+    "kneeL": "j_0_0_5_2",
+    "kneeR": "j_0_0_6_2",
+    "torso": "j_0_1",
+    "shoulderL": "j_0_1_16",
+    "shoulderR": "j_0_1_17",
+    "elbowL": "j_0_1_16_6",
+    "elbowR": "j_0_1_17_6",
+    "neck": "j_0_1_18",
+    "head": "j_0_1_18_1",
+    "crown": "j_0_1_18_1_10",
+    "orbit": "j_0_2",
+    "chest": "j_0_1_15",
+    "belly": "j_0_0_7",
+    "upperArmL": "j_0_1_16_5",
+    "upperArmR": "j_0_1_17_5"
+  },
+  "parts": {
+    "body_000": "body",
+    "body_001": "body",
+    "body_002": "body",
+    "body_003": "body",
+    "glow_004": "glow",
+    "body_005": "body",
+    "body_006": "body",
+    "body_007": "body",
+    "body_008": "body",
+    "body_009": "body",
+    "body_010": "body",
+    "body_011": "body",
+    "body_012": "body",
+    "body_013": "body",
+    "body_014": "body",
+    "body_015": "body",
+    "body_016": "body",
+    "body_017": "body",
+    "body_018": "body",
+    "body_019": "body",
+    "body_020": "body",
+    "body_021": "body",
+    "body_022": "body",
+    "body_023": "body",
+    "body_024": "body",
+    "body_025": "body",
+    "body_026": "body",
+    "glow_027": "glow",
+    "body_028": "body",
+    "glowfx_029": "glowfx",
+    "glow_030": "glow",
+    "glow_031": "glow",
+    "glow_032": "glow",
+    "body_033": "body",
+    "glow_034": "glow",
+    "body_035": "body",
+    "body_036": "body",
+    "body_037": "body",
+    "body_038": "body",
+    "body_039": "body",
+    "body_040": "body",
+    "body_041": "body",
+    "glow_042": "glow",
+    "body_043": "body",
+    "body_044": "body",
+    "body_045": "body",
+    "body_046": "body",
+    "body_047": "body",
+    "body_048": "body",
+    "body_049": "body",
+    "body_050": "body",
+    "body_051": "body",
+    "glow_052": "glow",
+    "body_053": "body",
+    "body_054": "body",
+    "body_055": "body",
+    "body_056": "body",
+    "body_057": "body",
+    "body_058": "body",
+    "body_059": "body",
+    "body_060": "body",
+    "body_061": "body",
+    "body_062": "body",
+    "body_063": "body",
+    "glow_064": "glow",
+    "glow_065": "glow",
+    "glowfx_066": "glowfx",
+    "body_067": "body",
+    "body_068": "body",
+    "glow_069": "glow",
+    "glow_070": "glow",
+    "glow_071": "glow",
+    "attachment_072": "attachment",
+    "attachment_073": "attachment",
+    "attachment_074": "attachment",
+    "attachment_075": "attachment",
+    "attachment_076": "attachment",
+    "attachment_077": "attachment",
+    "attachment_078": "attachment",
+    "attachment_079": "attachment",
+    "attachment_080": "attachment",
+    "attachment_081": "attachment"
+  },
+  "exportedAt": "2026-10-03T11:00:21.453Z"
+}

@@ -1,0 +1,136 @@
+{
+  "steps": {
+    "导入清理": 2.1,
+    "对齐": 0.6,
+    "低模与 UV": 8.3,
+    "投影着色": 18.4,
+    "烘焙": 9.2,
+    "LOD": 0.0,
+    "导出": 1.5
+  },
+  "highpoly": {
+    "faces_raw": 536758,
+    "faces": 293890,
+    "verts": 293884,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.882,
+    "iou_per_view": {
+      "front": 0.915,
+      "left": 0.836,
+      "back": 0.92,
+      "right": 0.841
+    },
+    "height_m": 0.0022,
+    "blockout_height_m": 0.3704
+  },
+  "uv": {
+    "smart_islands": 308,
+    "charts": 29,
+    "fallback_charts": 2,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "smart",
+    "density_smart": 2.1365,
+    "density_merged": 2.0249
+  },
+  "projection": {
+    "uncovered_ratio": 0.0826
+  },
+  "bake_device": "OPTIX",
+  "material_id": {
+    "metal_texel_ratio": 0.2391
+  },
+  "textures": {
+    "T_Arms_BearR_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Arms_BearR_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Arms_BearR_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "presentation": [
+    [
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ]
+  ],
+  "lods": [
+    {
+      "name": "SM_Arms_BearR_LOD0",
+      "tris": 8000,
+      "verts": 3994,
+      "uv_min": [
+        0.003463899018242955,
+        0.003404863877221942
+      ],
+      "uv_max": [
+        0.9965982437133789,
+        0.9965982437133789
+      ],
+      "uv_utilization": 0.675,
+      "bbox_min": [
+        -0.0172,
+        -0.3455,
+        -0.286
+      ],
+      "bbox_max": [
+        0.1584,
+        0.0022,
+        0.0029
+      ]
+    },
+    {
+      "name": "SM_Arms_BearR_LOD1",
+      "tris": 2000,
+      "verts": 994,
+      "uv_min": [
+        0.0035595267545431852,
+        0.003443249501287937
+      ],
+      "uv_max": [
+        0.9951223134994507,
+        0.9916180372238159
+      ],
+      "uv_utilization": 0.623,
+      "bbox_min": [
+        -0.0171,
+        -0.3461,
+        -0.2865
+      ],
+      "bbox_max": [
+        0.1585,
+        0.0021,
+        0.003
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\weapons\\SM_Arms_BearR\\04_export\\SM_Arms_BearR_v001.glb",
+    "bytes": 563576
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\weapons\\SM_Arms_BearR\\03_work\\SM_Arms_BearR_v001.blend",
+  "total_seconds": 40.1,
+  "_seconds": 43.7
+}

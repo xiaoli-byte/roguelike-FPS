@@ -1,0 +1,706 @@
+{
+  "schema": 1,
+  "assetId": "SK_Boss_Warlord",
+  "source": {
+    "kind": "enemy",
+    "id": "boss_warlord"
+  },
+  "rig": "parts",
+  "space": {
+    "up": "+Y",
+    "forward": "+Z",
+    "unit": "m",
+    "origin": "model"
+  },
+  "bounds": {
+    "min": [
+      -1.345,
+      -1.5849999970197677,
+      -0.75
+    ],
+    "max": [
+      1.3304405027627944,
+      4.140197369141446,
+      0.7600000029802323
+    ]
+  },
+  "joints": [
+    {
+      "name": "j_r",
+      "parent": null,
+      "bindPosition": [
+        0,
+        0,
+        0
+      ],
+      "restLocal": [
+        0,
+        0,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0",
+      "parent": "j_r",
+      "bindPosition": [
+        0,
+        0,
+        0
+      ],
+      "restLocal": [
+        0,
+        0,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_0",
+      "parent": "j_0",
+      "bindPosition": [
+        0,
+        1.62,
+        0
+      ],
+      "restLocal": [
+        0,
+        1.62,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_0_11",
+      "parent": "j_0_0",
+      "bindPosition": [
+        -0.3,
+        1.52,
+        0
+      ],
+      "restLocal": [
+        -0.3,
+        -0.1,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_0_11_1",
+      "parent": "j_0_0_11",
+      "bindPosition": [
+        -0.3,
+        0.78,
+        0
+      ],
+      "restLocal": [
+        0,
+        -0.74,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_0_12",
+      "parent": "j_0_0",
+      "bindPosition": [
+        0.3,
+        1.52,
+        0
+      ],
+      "restLocal": [
+        0.3,
+        -0.1,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_0_12_1",
+      "parent": "j_0_0_12",
+      "bindPosition": [
+        0.3,
+        0.78,
+        0
+      ],
+      "restLocal": [
+        0,
+        -0.74,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1",
+      "parent": "j_0",
+      "bindPosition": [
+        0,
+        1.9,
+        0
+      ],
+      "restLocal": [
+        0,
+        1.9,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1_13",
+      "parent": "j_0_1",
+      "bindPosition": [
+        -0.84,
+        2.92,
+        0
+      ],
+      "restLocal": [
+        -0.84,
+        1.02,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1_18",
+      "parent": "j_0_1",
+      "bindPosition": [
+        0.84,
+        2.92,
+        0
+      ],
+      "restLocal": [
+        0.84,
+        1.02,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1_19",
+      "parent": "j_0_1",
+      "bindPosition": [
+        0,
+        2.4,
+        0.05
+      ],
+      "restLocal": [
+        0,
+        0.5,
+        0.05
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1_20",
+      "parent": "j_0_1",
+      "bindPosition": [
+        0,
+        2.95,
+        -0.42
+      ],
+      "restLocal": [
+        0,
+        1.05,
+        -0.42
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1_21",
+      "parent": "j_0_1",
+      "bindPosition": [
+        -0.86,
+        2.78,
+        0
+      ],
+      "restLocal": [
+        -0.86,
+        0.88,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1_21_1",
+      "parent": "j_0_1_21",
+      "bindPosition": [
+        -0.86,
+        2.08,
+        0
+      ],
+      "restLocal": [
+        0,
+        -0.7,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1_21_1_5",
+      "parent": "j_0_1_21_1",
+      "bindPosition": [
+        -0.86,
+        1.36,
+        0.06
+      ],
+      "restLocal": [
+        0,
+        -0.72,
+        0.06
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1_21_1_5_10",
+      "parent": "j_0_1_21_1_5",
+      "bindPosition": [
+        -0.86,
+        1.01,
+        0.06
+      ],
+      "restLocal": [
+        0,
+        -0.35,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1_21_1_5_11",
+      "parent": "j_0_1_21_1_5",
+      "bindPosition": [
+        -0.86,
+        -1.34,
+        0.06
+      ],
+      "restLocal": [
+        0,
+        -2.7,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1_22",
+      "parent": "j_0_1",
+      "bindPosition": [
+        0.86,
+        2.78,
+        0
+      ],
+      "restLocal": [
+        0.86,
+        0.88,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1_22_1",
+      "parent": "j_0_1_22",
+      "bindPosition": [
+        0.86,
+        2.08,
+        0
+      ],
+      "restLocal": [
+        0,
+        -0.7,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1_24",
+      "parent": "j_0_1",
+      "bindPosition": [
+        0,
+        3.18,
+        0.03
+      ],
+      "restLocal": [
+        0,
+        1.28,
+        0.03
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1_24_5",
+      "parent": "j_0_1_24",
+      "bindPosition": [
+        -0.26,
+        3.4,
+        0.01
+      ],
+      "restLocal": [
+        -0.26,
+        0.22,
+        -0.02
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0.95
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1_24_5_1",
+      "parent": "j_0_1_24_5",
+      "bindPosition": [
+        -0.66671,
+        3.69084,
+        0.01
+      ],
+      "restLocal": [
+        0,
+        0.5,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        -0.75
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1_24_6",
+      "parent": "j_0_1_24",
+      "bindPosition": [
+        0.26,
+        3.4,
+        0.01
+      ],
+      "restLocal": [
+        0.26,
+        0.22,
+        -0.02
+      ],
+      "bindRotation": [
+        0,
+        0,
+        -0.95
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1_24_6_1",
+      "parent": "j_0_1_24_6",
+      "bindPosition": [
+        0.66671,
+        3.69084,
+        0.01
+      ],
+      "restLocal": [
+        0,
+        0.5,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0.75
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1_24_8",
+      "parent": "j_0_1_24",
+      "bindPosition": [
+        0,
+        3.28,
+        0.03
+      ],
+      "restLocal": [
+        0,
+        0.1,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ]
+    }
+  ],
+  "parts": {
+    "body_000": "body",
+    "body_001": "body",
+    "glow_002": "glow",
+    "body_003": "body",
+    "body_004": "body",
+    "body_005": "body",
+    "glow_006": "glow",
+    "body_007": "body",
+    "body_008": "body",
+    "body_009": "body",
+    "glow_010": "glow",
+    "body_011": "body",
+    "body_012": "body",
+    "body_013": "body",
+    "glow_014": "glow",
+    "body_015": "body",
+    "body_016": "body",
+    "body_017": "body",
+    "body_018": "body",
+    "glow_019": "glow",
+    "body_020": "body",
+    "body_021": "body",
+    "body_022": "body",
+    "body_023": "body",
+    "glow_024": "glow",
+    "glowfx_025": "glowfx",
+    "glow_026": "glow",
+    "glow_027": "glow",
+    "glow_028": "glow",
+    "glow_029": "glow",
+    "body_030": "body",
+    "body_031": "body",
+    "body_032": "body",
+    "glow_033": "glow",
+    "body_034": "body",
+    "body_035": "body",
+    "body_036": "body",
+    "glow_037": "glow",
+    "body_038": "body",
+    "body_039": "body",
+    "body_040": "body",
+    "body_041": "body",
+    "body_042": "body",
+    "body_043": "body",
+    "body_044": "body",
+    "body_045": "body",
+    "glow_046": "glow",
+    "body_047": "body",
+    "body_048": "body",
+    "body_049": "body",
+    "body_050": "body",
+    "body_051": "body",
+    "body_052": "body",
+    "glow_053": "glow",
+    "glow_054": "glow",
+    "body_055": "body",
+    "glowfx_056": "glowfx",
+    "body_057": "body",
+    "body_058": "body",
+    "body_059": "body",
+    "body_060": "body",
+    "body_061": "body",
+    "glow_062": "glow",
+    "body_063": "body",
+    "body_064": "body",
+    "body_065": "body",
+    "body_066": "body",
+    "glow_067": "glow",
+    "glowfx_068": "glowfx",
+    "body_069": "body",
+    "body_070": "body",
+    "body_071": "body",
+    "body_072": "body",
+    "glowfx_073": "glowfx"
+  },
+  "exportedAt": "2026-10-03T10:27:42.993Z"
+}

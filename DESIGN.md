@@ -1,6 +1,7 @@
 # 灵火破晓（Spiritfire Dawn）— 设计与架构文档
 
-> 一款受《枪火重生》启发的浏览器第一人称射击肉鸽。原创世界观、角色与美术（低多边形程序化几何），不使用任何外部素材。
+> 一款受《枪火重生》启发的浏览器第一人称射击肉鸽。原创世界观、角色与美术，不使用任何外部素材：程序化几何是每个模型的白模与兜底，
+> 正式美术资产由本地管线（`art/`：白模 → GPT Image 2.5 概念重绘 → Hunyuan3D 2.1 高模 → Blender 游戏化）基于白模生成，规范见 `art/README.md`。
 > 技术栈：Three.js 0.186 + TypeScript 7（原生 tsc）+ Vite 8。只依赖 `three`（可用 `three/examples/jsm/*` 附加模块）。
 > 所有面向玩家的文字使用**简体中文**。
 
@@ -46,8 +47,8 @@
   - 每章第 0 关固定 `combat` + `scroll`。
   - 第 1–3 关的选项从 combat / elite / treasure / shop 中抽取，每章至少提供一次 shop 选项（通常在第 2 或第 3 关）；treasure 每章最多一次。
   - 第 3 关清关后只有一个门：通往 Boss。
-  - Boss 清关：奖励宝箱（`weapon`，高稀有度）+ 回满生命，出口通往下一章第 0 关；最终 Boss 清关后 4 秒判定胜利（`ctx.game.endRun(true)`）。
-- 难度倍率 `difficultyFor(node) = 1 + chapter × 0.9 + index × 0.12`（第一章 1.00–1.48，第二章 1.90–2.38，第三章 2.80–3.28）。
+  - Boss 清关：奖励宝箱（`weapon`，第一章 Boss 保底史诗、第二章 Boss 保底传说）+ 回满生命，出口通往下一章第 0 关；最终 Boss 清关后 4 秒判定胜利（`ctx.game.endRun(true)`）。
+- 难度倍率 `difficultyFor(node) = 1 + chapter × 0.8 + index × 0.12`（第一章 1.00–1.36，第二章 1.80–2.16，第三章 2.60–2.96）。
   敌人生命 × 难度；敌人伤害 × `1 + (难度 − 1) × 0.55`（EnemyBase 已实现）。
 
 ## 4. 数值基准（所有模块共同遵守）
@@ -56,7 +57,7 @@
 - 第一章敌人单次伤害 8–15（近战重击 / 冲锋 20–30），难度 1。玩家满状态约能承受第一章 12–15 次普通命中。
 - 武器（普通稀有度、无加成）身体 DPS 约 60–90；稀有度伤害倍率 `[1, 1.15, 1.35, 1.6, 1.9]`；强化每级 +12%（最多 5 级）。
 - 第一章普通敌人 1–3 秒击杀；Boss 战 60–120 秒。
-- 金币：普通敌人 2–5，精英 ×3，Boss 60–100；每关约 40–70 金币（第一章），章节越后越多（× (1 + 0.35 × chapter)）。
+- 金币：普通敌人 2–5，精英 ×3，Boss 60–100；每关约 40–70 金币（第一章）。击杀金币 × (1 + 0.15 × chapter)（敌人数量本身已随章节增长），宝箱金币 × (1 + 0.35 × chapter)。
 - 魂晶（局外货币）：普通敌人 1、精英 5、Boss 60；每清一关 +10；胜利额外 +200。
 
 ## 5. 元素与状态
@@ -70,7 +71,7 @@
 | 雷殛 shock | ×1.6 | ×0.8 | ×1.0 | shock |
 | 蚀化 corrode | ×1.0 | ×1.6 | ×1.0 | corrode |
 
-- **burn 灼烧**：持续 4 秒，每 0.5 秒造成 `power × 0.22` 火焰伤害；最多 3 层（每层独立计入 DOT），重复附着刷新时间。
+- **burn 灼烧**：每层独立持续 4 秒，每 0.5 秒造成 `Σ各层 power × 0.16` 火焰伤害；最多 3 层，满层时新附着替换最旧的一层（不会无限续命）。
 - **shock 雷殛**：附着瞬间向 8 米内最多 3 个其他敌人弹射闪电，造成 `power × 0.5` 雷电伤害（procDepth+1，不再弹射）；标记 3 秒内受到雷电伤害 +15%；叠满 3 层时眩晕 0.8 秒并清空层数。
 - **corrode 蚀化**：持续 5 秒，受到所有伤害 +20%（写入 `damageTakenMult`）、移速 −20%（写入 `slowMult`），每 0.5 秒 `power × 0.08` 伤害。
 - **stun 眩晕**：写 `enemy.stunTime`。**slow 减速**：`slowMult` 取所有减速中最强的。
@@ -138,7 +139,7 @@
   - 第一章：grunt、archer、bomber，第 2 关起加入 brute。
   - 第二章：grunt、archer、wisp、shaman、marksman、bomber。
   - 第三章：全部，含 mortar、brute，精英更多。
-- 波次：combat 3 波（第一章）～4 波（第三章），每关 12–26 只；后一波在上一波剩余 ≤ 2–3 只时进场。elite 关 2 波 + 2–3 个精英。
+- 波次：combat 3 波（第一章）～4 波（第三章），每关总数约 `12 + 章 × 3 + 关 × 1.5`；后一波在上一波剩余 ≤ 2–3 只时进场（第三章 ≤ 2）。elite 关 2 波 + 2–3 个精英。
 
 ## 9. Boss（`enemies/bosses/`，id 固定）
 
@@ -167,7 +168,7 @@
 - 掩体 12–22 个（箱子、矮墙、柱子，高 1.2–3 米）、2–4 个高台（1.5–3 米）配台阶（每阶 ≤ 0.45 米，走过去自动抬升），Boss 场中央保持开阔。
 - 刷怪点 10–16 个，距玩家出生点 ≥ 14 米；奖励点在中心附近；传送门点在远端。
 - 主题：desert（沙地、砂岩、暖阳、橙雾）、frost（雪、冰蓝、冷光、青雾）、inferno（玄武岩、发光熔岩裂缝、红雾、偏暗）。
-- 同材质的静态几何合并（`BufferGeometryUtils.mergeGeometries`）以减少 draw call；太阳光开阴影（阴影相机覆盖竞技场）；可加少量点光源（≤ 4）。
+- 同材质的静态几何合并（`BufferGeometryUtils.mergeGeometries`）以减少 draw call；太阳光开阴影（阴影相机覆盖竞技场）；关卡固定 2 个点光源（武器枪口 1 个、特效 3 个常驻，总数固定以免着色器重编译）。
 - 天空：大球体渐变 shader（`skyTop` / `skyBottom`），配合雾。
 
 ## 13. UI / HUD（`ui/`）
@@ -197,6 +198,9 @@
 | `src/progression/**` | 成长 | Meta、RunPlan、Scrolls、Loot、Interaction |
 | `src/fx/**`、`src/audio/**` | 表现 | 粒子 / 伤害数字 / 各种特效、程序化音效与音乐 |
 | `src/ui/**` | UI | 所有 DOM 界面与样式 |
+| `src/assets/**` | 美术接入 | AssetLibrary（读 `public/assets/manifest.json`、预加载 GLB）、SkinnedBody（人形骨骼蒙皮）、PartsRig（部件骨架）、RigidParts（刚体部件：枪）、StaticAttachment（挂点武器）、EnemyArt、HumanoidBind（绑定姿势约定） |
+| `src/dev/**` | 开发工具 | 不进正式流程：白模导出（`artExport.ts`） |
+| `art/**`、`public/assets/**` | 美术管线 | 资产登记、管线脚本、源资产；发布产物与清单只由 `assetctl.py publish` 写入 |
 
 每个负责人**只修改自己目录下的文件**，可以在自己目录里新建文件。必须保留占位文件里的导出名与构造签名（`new X(ctx)`）。
 
@@ -223,6 +227,13 @@
 - 关卡临时物体（技能召唤物、Boss 危险区、信标等）挂到 `ctx.stageGroup`，换关时自动移除；配合 `ctx.tasks`（非常驻任务换关时自动清除）驱动。注意任务被清除时不会回调，所以不要依赖任务结束来移除物体。
 - 临时开关放在 `ctx.run.flags`（例如 `infiniteAmmo`：雷隼 Q 期间 >0，武器射击不耗弹；换关时 Game 会归零）。
 - 调试：URL 加 `?debug` 开启（`window.__game` / `window.__ctx`，F1 无敌、F2 清怪、F3 秘卷、F4 掉武器、F6 +1000 金币，未锁定鼠标也能转视角）。
+- 美术资产：清单里绑定到某敌人的骨骼网格会在 `StandardEnemy.init` 自动替换脚本身体部件（武器挂件与发光提示件保留，判定仍是胶囊）；
+  资产缺失或加载失败时自动退回程序化模型。URL 加 `?classic` 强制使用程序化模型（A/B 对比、排查问题）。
+  人形敌人约定把 `HumanoidRig` 存在 `this.rig`，绑定姿势统一由 `assets/HumanoidBind.ts` 定义。
+  非人形敌人、Boss 用通用部件骨架（`assets/PartsRig.ts`，骨骼 = 模型的非网格节点路径）；武器挂件按挂点名（`xxx.name = '...'`）绑定。
+  枪（第一人称与掉落共用 `buildGunModel`）用刚体部件（`assets/RigidParts.ts`）：活动部件必须是分组节点（弹匣、转轮等），
+  中空瞄具、弩箭、弓弦按名字保留程序化（`WeaponModels.PROCEDURAL_PARTS`）；改动这些节点的层级或位置会让骨架指纹对不上，美术资产随之退回程序化模型，需要重新导出白模。
+  第一人称手臂由 `Viewmodel.buildArm` 生成，分组名 `arm_r` / `arm_l` 是美术手臂（每位英雄一套）的挂点名。
 
 ### 14.4 契约变更
 

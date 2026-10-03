@@ -1,0 +1,214 @@
+{
+  "steps": {
+    "导入清理": 2.6,
+    "对齐": 0.8,
+    "低模与 UV": 33.6,
+    "投影着色": 25.9,
+    "烘焙": 10.1,
+    "LOD": 0.2,
+    "部件骨架蒙皮": 3.8,
+    "导出": 2.0
+  },
+  "highpoly": {
+    "faces_raw": 692978,
+    "faces": 353124,
+    "verts": 353104,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00491
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.888,
+    "iou_per_view": {
+      "front": 0.938,
+      "left": 0.835,
+      "back": 0.923,
+      "right": 0.831
+    },
+    "height_m": 4.0866,
+    "blockout_height_m": 4.1402
+  },
+  "uv": {
+    "smart_islands": 1183,
+    "charts": 385,
+    "fallback_charts": 2,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "margin_px": 6
+  },
+  "projection": {
+    "uncovered_ratio": 0.3894
+  },
+  "bake_device": "OPTIX",
+  "material_id": {
+    "metal_texel_ratio": 0.5239
+  },
+  "textures": {
+    "T_Boss_Warlord_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Boss_Warlord_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Boss_Warlord_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "skin": {
+    "bones": [
+      "j_r",
+      "j_0",
+      "j_0_0",
+      "j_0_0_11",
+      "j_0_0_11_1",
+      "j_0_0_12",
+      "j_0_0_12_1",
+      "j_0_1",
+      "j_0_1_13",
+      "j_0_1_18",
+      "j_0_1_19",
+      "j_0_1_20",
+      "j_0_1_21",
+      "j_0_1_21_1",
+      "j_0_1_21_1_5",
+      "j_0_1_21_1_5_10",
+      "j_0_1_21_1_5_11",
+      "j_0_1_22",
+      "j_0_1_22_1",
+      "j_0_1_24",
+      "j_0_1_24_5",
+      "j_0_1_24_5_1",
+      "j_0_1_24_6",
+      "j_0_1_24_6_1",
+      "j_0_1_24_8"
+    ],
+    "per_lod": {
+      "SK_Boss_Warlord_LOD0": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      },
+      "SK_Boss_Warlord_LOD1": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      },
+      "SK_Boss_Warlord_LOD2": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      }
+    },
+    "mode": "parts",
+    "sigma_m": 0.0497,
+    "rigid": true,
+    "split": {
+      "SK_Boss_Warlord_LOD0": {
+        "cut_edges": 667,
+        "cap_tris": 1280,
+        "merged_fragment_faces": 344,
+        "tris": 29996
+      },
+      "SK_Boss_Warlord_LOD1": {
+        "cut_edges": 393,
+        "cap_tris": 732,
+        "merged_fragment_faces": 145,
+        "tris": 11996
+      },
+      "SK_Boss_Warlord_LOD2": {
+        "cut_edges": 228,
+        "cap_tris": 400,
+        "merged_fragment_faces": 30,
+        "tris": 4996
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SK_Boss_Warlord_LOD0",
+      "tris": 29996,
+      "verts": 15008,
+      "uv_min": [
+        0.0029296372085809708,
+        0.0029296891298145056
+      ],
+      "uv_max": [
+        0.9771764874458313,
+        0.9806338548660278
+      ],
+      "uv_utilization": 0.494,
+      "bbox_min": [
+        -1.2745,
+        -0.5952,
+        0.0273
+      ],
+      "bbox_max": [
+        1.2718,
+        0.5373,
+        4.0876
+      ]
+    },
+    {
+      "name": "SK_Boss_Warlord_LOD1",
+      "tris": 11996,
+      "verts": 6008,
+      "uv_min": [
+        0.0029296372085809708,
+        0.0029296891298145056
+      ],
+      "uv_max": [
+        0.9755886197090149,
+        0.9806338548660278
+      ],
+      "uv_utilization": 0.486,
+      "bbox_min": [
+        -1.2749,
+        -0.595,
+        0.0278
+      ],
+      "bbox_max": [
+        1.2721,
+        0.5374,
+        4.088
+      ]
+    },
+    {
+      "name": "SK_Boss_Warlord_LOD2",
+      "tris": 4996,
+      "verts": 2508,
+      "uv_min": [
+        0.0029382717330008745,
+        0.0029296891298145056
+      ],
+      "uv_max": [
+        0.9755886197090149,
+        0.980532705783844
+      ],
+      "uv_utilization": 0.475,
+      "bbox_min": [
+        -1.2747,
+        -0.6012,
+        0.0289
+      ],
+      "bbox_max": [
+        1.2696,
+        0.5374,
+        4.0804
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Boss_Warlord\\04_export\\SK_Boss_Warlord_v003.glb",
+    "bytes": 1030696
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Boss_Warlord\\03_work\\SK_Boss_Warlord_v003.blend",
+  "total_seconds": 78.9,
+  "_seconds": 83.2
+}

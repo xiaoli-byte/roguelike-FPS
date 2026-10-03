@@ -1,0 +1,1509 @@
+{
+  "id": "SK_Enemy_Brute",
+  "display": "铁甲盾卫",
+  "kind": "skeletal",
+  "class": "enemy_large",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 16:40:23",
+          "files": {
+            "BO_SK_Enemy_Brute_v001.glb": {
+              "path": "00_blockout/BO_SK_Enemy_Brute_v001.glb",
+              "sha256": "d7b2f5d91234b29e0e75bf3a856b9e3999b9d12146458819df4a3c99f08c3818"
+            },
+            "BO_SK_Enemy_Brute_v001.json": {
+              "path": "00_blockout/BO_SK_Enemy_Brute_v001.json",
+              "sha256": "3135b03eb7295a95edd1e199be1f31dd75ed02b8e9e614c6bb1d7a57bca1391f"
+            },
+            "BO_SK_Enemy_Brute_v001_views.json": {
+              "path": "00_blockout/BO_SK_Enemy_Brute_v001_views.json",
+              "sha256": "804d50884142446b9642660376ed7b12d3718a9ee200cb09954c194318007a33"
+            },
+            "BO_SK_Enemy_Brute_v001_sheet.png": {
+              "path": "00_blockout/BO_SK_Enemy_Brute_v001_sheet.png",
+              "sha256": "27df71361f960e775ec0c9d7818136a7f2571574b3e7cb9836ea8dccb7d62cc5"
+            },
+            "BO_SK_Enemy_Brute_v001_front.png": {
+              "path": "00_blockout/BO_SK_Enemy_Brute_v001_front.png",
+              "sha256": "acf37422069ea59128dcf00db58dbc6350562c870cdcfbcacb8515bc4e46b332"
+            },
+            "BO_SK_Enemy_Brute_v001_left.png": {
+              "path": "00_blockout/BO_SK_Enemy_Brute_v001_left.png",
+              "sha256": "5f5905e317e6af18684bbf129a466671d5f9e33412d630433778451b2701e974"
+            },
+            "BO_SK_Enemy_Brute_v001_back.png": {
+              "path": "00_blockout/BO_SK_Enemy_Brute_v001_back.png",
+              "sha256": "0e2edd52a8a622b6b25e599f5101b8ee3c5db4ba30432df3ab33a8200b1802fa"
+            },
+            "BO_SK_Enemy_Brute_v001_right.png": {
+              "path": "00_blockout/BO_SK_Enemy_Brute_v001_right.png",
+              "sha256": "489d91e2343ad1cfe7af43a3c010cc2d82fe84f8683a270b113f7aa35eeb9ba6"
+            }
+          },
+          "source": {
+            "kind": "enemy",
+            "id": "brute"
+          },
+          "joints": 13,
+          "bounds": {
+            "min": [
+              -1.0915221700794284,
+              -2.98023217215615e-10,
+              -0.28999999165534973
+            ],
+            "max": [
+              1.077645451249947,
+              2.454423403803552,
+              0.7527428452514264
+            ]
+          },
+          "blender_seconds": 5.5
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 16:42:11",
+          "files": {
+            "CN_SK_Enemy_Brute_v001_sheet.png": {
+              "path": "01_concept/CN_SK_Enemy_Brute_v001_sheet.png",
+              "sha256": "8b3526008adfffcb3faeedd94f9727cb4eecb3fd8367ada1cdbfccd97245eea9"
+            },
+            "CN_SK_Enemy_Brute_v001_front.png": {
+              "path": "01_concept/CN_SK_Enemy_Brute_v001_front.png",
+              "sha256": "0f3aaa71c76197b90a5a3c21b7cee3981e4c9a20df91d1d3f93f57e2e3cdf4a0"
+            },
+            "CN_SK_Enemy_Brute_v001_left.png": {
+              "path": "01_concept/CN_SK_Enemy_Brute_v001_left.png",
+              "sha256": "477bb9f72a5b9806e88987a2ceb54fe63ee580e4bb21ab81e85270b02888487e"
+            },
+            "CN_SK_Enemy_Brute_v001_back.png": {
+              "path": "01_concept/CN_SK_Enemy_Brute_v001_back.png",
+              "sha256": "1f781ab2b28dd6f56c4bb31051ed5f9bde021d7ffb351f68a652891001f39047"
+            },
+            "CN_SK_Enemy_Brute_v001_right.png": {
+              "path": "01_concept/CN_SK_Enemy_Brute_v001_right.png",
+              "sha256": "228086638ae227d98d205a7bcd8a67dafc589a3b41f11618b6f94f3371c249a9"
+            },
+            "CN_SK_Enemy_Brute_v001_compare.png": {
+              "path": "01_concept/CN_SK_Enemy_Brute_v001_compare.png",
+              "sha256": "bca656a94217c61f3ec26dfb6e4c21d74ee257ebdf157693b3176fc0d14294c3"
+            },
+            "CN_SK_Enemy_Brute_v001_prompt.txt": {
+              "path": "01_concept/CN_SK_Enemy_Brute_v001_prompt.txt",
+              "sha256": "7fe2ceec212e2ea07789aef6e0feb8e84c34ad3f2b1c0eaac01e1e2cb7e5bdea"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1903,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 445
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3083
+          },
+          "request_id": "req_a43214ffd18e4c60a058936dc4608144",
+          "seconds": 31.0,
+          "registration": {
+            "front": {
+              "scale": 0.7441,
+              "offset": [
+                38,
+                262
+              ],
+              "iou": 0.742,
+              "iou_unregistered_scale": 0.7224
+            },
+            "left": {
+              "scale": 0.7055,
+              "offset": [
+                178,
+                270
+              ],
+              "iou": 0.865,
+              "iou_unregistered_scale": 0.7163
+            },
+            "back": {
+              "scale": 0.7085,
+              "offset": [
+                45,
+                270
+              ],
+              "iou": 0.758,
+              "iou_unregistered_scale": 0.7193
+            },
+            "right": {
+              "scale": 0.7032,
+              "offset": [
+                180,
+                271
+              ],
+              "iou": 0.872,
+              "iou_unregistered_scale": 0.7139
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.742,
+            "left": 0.865,
+            "back": 0.757,
+            "right": 0.872
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "四视图一致，面甲发光位置正确",
+            "time": "2026-10-03 16:42:44"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 16:51:30",
+          "files": {
+            "HP_SK_Enemy_Brute_v001_input.png": {
+              "path": "02_highpoly/HP_SK_Enemy_Brute_v001_input.png",
+              "sha256": "94a98b58393c462556a689c18a849acca5e86cfbee5e2498f735f7a535aea78e"
+            },
+            "HP_SK_Enemy_Brute_v001.glb": {
+              "path": "02_highpoly/HP_SK_Enemy_Brute_v001.glb",
+              "sha256": "1b68857ed4110c56484b5085e56c41ee28d8c3415cbd426da39524cba3c6ada4"
+            }
+          },
+          "from_concept": 1,
+          "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+          "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "checkpoint": "hunyuan_3d_v2.1.safetensors",
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "crop": [
+              38,
+              262,
+              474,
+              787
+            ],
+            "scale": 1.6579047619047618,
+            "offset": [
+              150,
+              77
+            ]
+          },
+          "seconds": 265.6,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 13.8
+        }
+      ]
+    },
+    "build": {
+      "current": 10,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 16:53:23",
+          "files": {
+            "SK_Enemy_Brute_v001.blend": {
+              "path": "03_work/SK_Enemy_Brute_v001.blend",
+              "sha256": "520c5d9234eb2751229d8a8a78cadacb8597c80daf6e94cd2cae82ec25f2f1c1"
+            },
+            "SK_Enemy_Brute_v001.glb": {
+              "path": "04_export/SK_Enemy_Brute_v001.glb",
+              "sha256": "e4e31d0a036bb740ee041d9351aa6e009e4fbe020c4db70cbe929a09619fd1bd"
+            },
+            "SK_Enemy_Brute_v001_metrics.json": {
+              "path": "03_work/SK_Enemy_Brute_v001_metrics.json",
+              "sha256": "529c15ea00a385416203be325a8ae8fd998767ab2963ffb826b35ec434d3c5c0"
+            },
+            "T_Enemy_Brute_BC.png": {
+              "path": "03_work/textures_v001/T_Enemy_Brute_BC.png",
+              "sha256": "c6b37cc6cd5f467596e48b518e56282467ee48abd8f88e9562ecd6f338a3d10d"
+            },
+            "T_Enemy_Brute_N.png": {
+              "path": "03_work/textures_v001/T_Enemy_Brute_N.png",
+              "sha256": "fee0e6374deb0ede8d3a51669d024bae58facb3807d9b742de6c6dcfcd431035"
+            },
+            "T_Enemy_Brute_ORM.png": {
+              "path": "03_work/textures_v001/T_Enemy_Brute_ORM.png",
+              "sha256": "d6adb4c163e77f70d1be3a9c45a6aaf2c8ee88ae63c19a20395af5a8435109cb"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1
+          },
+          "align_iou": 0.893,
+          "uncovered_ratio": 0.4022,
+          "lods": [
+            {
+              "tris": 12000,
+              "verts": 5976
+            },
+            {
+              "tris": 5000,
+              "verts": 2476
+            },
+            {
+              "tris": 2000,
+              "verts": 976
+            }
+          ],
+          "export_kb": 996.9,
+          "seconds": 113.1,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 16:56:24",
+          "files": {
+            "SK_Enemy_Brute_v002.blend": {
+              "path": "03_work/SK_Enemy_Brute_v002.blend",
+              "sha256": "3bcdc1eafbbe4c0f2c84136b555b3744c5d35126c09f809684b7fcf88137df05"
+            },
+            "SK_Enemy_Brute_v002.glb": {
+              "path": "04_export/SK_Enemy_Brute_v002.glb",
+              "sha256": "b564648c0dd551e40abcc9f72447cec2905286bdbd9a89c86fac09cf23739033"
+            },
+            "SK_Enemy_Brute_v002_metrics.json": {
+              "path": "03_work/SK_Enemy_Brute_v002_metrics.json",
+              "sha256": "687e5e72875a6ed5530b997403585dc489bc5f2a306c8ae5b52ec53bf65c47e3"
+            },
+            "T_Enemy_Brute_BC.png": {
+              "path": "03_work/textures_v002/T_Enemy_Brute_BC.png",
+              "sha256": "79b153f2c3997973485cdaf0825780b985420488430f145b33a8e217fb9cbfb9"
+            },
+            "T_Enemy_Brute_N.png": {
+              "path": "03_work/textures_v002/T_Enemy_Brute_N.png",
+              "sha256": "7ef653f011f6a648cde4d8d2a6d18f35e4d78751404bcb077944b1411427670b"
+            },
+            "T_Enemy_Brute_ORM.png": {
+              "path": "03_work/textures_v002/T_Enemy_Brute_ORM.png",
+              "sha256": "fdf15a57d69864998239d91c0a90bca3235db64d8416bb567088f1700a32b2ca"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1
+          },
+          "align_iou": 0.893,
+          "uncovered_ratio": 0.4022,
+          "lods": [
+            {
+              "tris": 11999,
+              "verts": 5976
+            },
+            {
+              "tris": 4999,
+              "verts": 2476
+            },
+            {
+              "tris": 2000,
+              "verts": 974
+            }
+          ],
+          "export_kb": 1082.3,
+          "seconds": 108.2,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 16:58:28",
+          "files": {
+            "SK_Enemy_Brute_v003.blend": {
+              "path": "03_work/SK_Enemy_Brute_v003.blend",
+              "sha256": "3939c2283baa52aa7ad2d754d95bd7581a6b04805b6e600dad3ec1b10fbcd581"
+            },
+            "SK_Enemy_Brute_v003.glb": {
+              "path": "04_export/SK_Enemy_Brute_v003.glb",
+              "sha256": "41411286152d1177d54cf60ef609e3be62d316c74cc912591212fd0545556ee6"
+            },
+            "SK_Enemy_Brute_v003_metrics.json": {
+              "path": "03_work/SK_Enemy_Brute_v003_metrics.json",
+              "sha256": "3b78b2f57245aea8fb41176352e32499b43ce9a342409f0ea29182ff1fe115b8"
+            },
+            "T_Enemy_Brute_BC.png": {
+              "path": "03_work/textures_v003/T_Enemy_Brute_BC.png",
+              "sha256": "79b153f2c3997973485cdaf0825780b985420488430f145b33a8e217fb9cbfb9"
+            },
+            "T_Enemy_Brute_N.png": {
+              "path": "03_work/textures_v003/T_Enemy_Brute_N.png",
+              "sha256": "8c3e1f0bd275db54c067ff6b787ef4c729f5a175a5efd43df0e6d9127d78a401"
+            },
+            "T_Enemy_Brute_ORM.png": {
+              "path": "03_work/textures_v003/T_Enemy_Brute_ORM.png",
+              "sha256": "fdf15a57d69864998239d91c0a90bca3235db64d8416bb567088f1700a32b2ca"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1
+          },
+          "align_iou": 0.893,
+          "uncovered_ratio": 0.4022,
+          "lods": [
+            {
+              "tris": 11999,
+              "verts": 5976
+            },
+            {
+              "tris": 4999,
+              "verts": 2476
+            },
+            {
+              "tris": 2000,
+              "verts": 974
+            }
+          ],
+          "export_kb": 1081.9,
+          "seconds": 54.4,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 17:11:21",
+          "files": {
+            "SK_Enemy_Brute_v004.blend": {
+              "path": "03_work/SK_Enemy_Brute_v004.blend",
+              "sha256": "1f6d4f71ade8344bafdbbe38c58e2b5b0ba4f0202293120b3e5aac9e9ee09141"
+            },
+            "SK_Enemy_Brute_v004.glb": {
+              "path": "04_export/SK_Enemy_Brute_v004.glb",
+              "sha256": "9d8a6b0888e7cdd2fcfe2b3c4b8b594cb8343b772a8fdf9e1e483c740df4aa59"
+            },
+            "SK_Enemy_Brute_v004_metrics.json": {
+              "path": "03_work/SK_Enemy_Brute_v004_metrics.json",
+              "sha256": "4d8c092e97ab2be7e43cef3e541a2b52ea3e6287cc6b77cd6d431f479976ac4b"
+            },
+            "T_Enemy_Brute_BC.png": {
+              "path": "03_work/textures_v004/T_Enemy_Brute_BC.png",
+              "sha256": "79b153f2c3997973485cdaf0825780b985420488430f145b33a8e217fb9cbfb9"
+            },
+            "T_Enemy_Brute_N.png": {
+              "path": "03_work/textures_v004/T_Enemy_Brute_N.png",
+              "sha256": "74d6148de4ff6e4b73352334c8055647a583b833fd3629ef6bc9a07899e04e10"
+            },
+            "T_Enemy_Brute_ORM.png": {
+              "path": "03_work/textures_v004/T_Enemy_Brute_ORM.png",
+              "sha256": "fdf15a57d69864998239d91c0a90bca3235db64d8416bb567088f1700a32b2ca"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1
+          },
+          "align_iou": 0.893,
+          "uncovered_ratio": 0.4022,
+          "lods": [
+            {
+              "tris": 11999,
+              "verts": 5976
+            },
+            {
+              "tris": 4999,
+              "verts": 2476
+            },
+            {
+              "tris": 2000,
+              "verts": 974
+            }
+          ],
+          "export_kb": 1084.0,
+          "seconds": 53.2,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 5,
+          "created": "2026-10-03 17:15:15",
+          "files": {
+            "SK_Enemy_Brute_v005.blend": {
+              "path": "03_work/SK_Enemy_Brute_v005.blend",
+              "sha256": "88e316337462f9cddb0cedfae9f41174c2ccc582dec88942947bed5f4a20249a"
+            },
+            "SK_Enemy_Brute_v005.glb": {
+              "path": "04_export/SK_Enemy_Brute_v005.glb",
+              "sha256": "44e7cb535d137295747ca932963536aaabd1e3211466b798c4f2559276f2df00"
+            },
+            "SK_Enemy_Brute_v005_metrics.json": {
+              "path": "03_work/SK_Enemy_Brute_v005_metrics.json",
+              "sha256": "b283edebcef69f9354cad7fb03b465fe84dc0850d906b45afcd5bf50f9265fcc"
+            },
+            "T_Enemy_Brute_BC.png": {
+              "path": "03_work/textures_v005/T_Enemy_Brute_BC.png",
+              "sha256": "79b153f2c3997973485cdaf0825780b985420488430f145b33a8e217fb9cbfb9"
+            },
+            "T_Enemy_Brute_N.png": {
+              "path": "03_work/textures_v005/T_Enemy_Brute_N.png",
+              "sha256": "8db19030ae9d2aa4641b62c3f491cc0493714af44b216eb2ba9b0815481bfea2"
+            },
+            "T_Enemy_Brute_ORM.png": {
+              "path": "03_work/textures_v005/T_Enemy_Brute_ORM.png",
+              "sha256": "fdf15a57d69864998239d91c0a90bca3235db64d8416bb567088f1700a32b2ca"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1
+          },
+          "align_iou": 0.893,
+          "uncovered_ratio": 0.4022,
+          "lods": [
+            {
+              "tris": 11999,
+              "verts": 5976
+            },
+            {
+              "tris": 4999,
+              "verts": 2476
+            },
+            {
+              "tris": 2000,
+              "verts": 974
+            }
+          ],
+          "export_kb": 1083.0,
+          "seconds": 53.5,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 6,
+          "created": "2026-10-03 17:42:43",
+          "files": {
+            "SK_Enemy_Brute_v006.blend": {
+              "path": "03_work/SK_Enemy_Brute_v006.blend",
+              "sha256": "eba4937c57d584881337a8bb866f275f1e679f96b3c9a43fe94942a5ee923f63"
+            },
+            "SK_Enemy_Brute_v006.glb": {
+              "path": "04_export/SK_Enemy_Brute_v006.glb",
+              "sha256": "ee9dfbd530ab7d5549f01bd6719e354f7c655da29a4d020e8f979c098f33209f"
+            },
+            "SK_Enemy_Brute_v006_metrics.json": {
+              "path": "03_work/SK_Enemy_Brute_v006_metrics.json",
+              "sha256": "10dbdc60c755ceee77e8592f3de1d307414742d8bf6644714cece9cf06dcd63e"
+            },
+            "T_Enemy_Brute_BC.png": {
+              "path": "03_work/textures_v006/T_Enemy_Brute_BC.png",
+              "sha256": "79b153f2c3997973485cdaf0825780b985420488430f145b33a8e217fb9cbfb9"
+            },
+            "T_Enemy_Brute_MetalMask.png": {
+              "path": "03_work/textures_v006/T_Enemy_Brute_MetalMask.png",
+              "sha256": "d48b96e0db009ee56718ed606c8f4e55e77ddacbe04753b7f3188d953d931a94"
+            },
+            "T_Enemy_Brute_N.png": {
+              "path": "03_work/textures_v006/T_Enemy_Brute_N.png",
+              "sha256": "5529ae79ca116ebbb7b3d48029c29f48e917581c83a73ddf9df91c9229f7f158"
+            },
+            "T_Enemy_Brute_ORM.png": {
+              "path": "03_work/textures_v006/T_Enemy_Brute_ORM.png",
+              "sha256": "b2aea64974d41e8eb810e807774e3a1fb6f024cd63943e37153a7b1146c2dad1"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1
+          },
+          "align_iou": 0.893,
+          "uncovered_ratio": 0.4022,
+          "lods": [
+            {
+              "tris": 11999,
+              "verts": 5976
+            },
+            {
+              "tris": 4999,
+              "verts": 2476
+            },
+            {
+              "tris": 2000,
+              "verts": 974
+            }
+          ],
+          "export_kb": 1168.8,
+          "seconds": 120.1,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 7,
+          "created": "2026-10-03 17:58:29",
+          "files": {
+            "SK_Enemy_Brute_v007.blend": {
+              "path": "03_work/SK_Enemy_Brute_v007.blend",
+              "sha256": "645245b8cad3262c683fb73dfad6d08f12f5828b472c85906d1ba5fa2e6481c2"
+            },
+            "SK_Enemy_Brute_v007.glb": {
+              "path": "04_export/SK_Enemy_Brute_v007.glb",
+              "sha256": "51609c55869145a320447923408f49b8386c3f07859478ceb937a4c79d97fe31"
+            },
+            "SK_Enemy_Brute_v007_metrics.json": {
+              "path": "03_work/SK_Enemy_Brute_v007_metrics.json",
+              "sha256": "817f204b398c7cfaec117832dd0e3b4a7f064d3e215de3d21641f396390bdb64"
+            },
+            "T_Enemy_Brute_BC.png": {
+              "path": "03_work/textures_v007/T_Enemy_Brute_BC.png",
+              "sha256": "79b153f2c3997973485cdaf0825780b985420488430f145b33a8e217fb9cbfb9"
+            },
+            "T_Enemy_Brute_MetalMask.png": {
+              "path": "03_work/textures_v007/T_Enemy_Brute_MetalMask.png",
+              "sha256": "8f36f3b3f53c019bc5f05b4ba3351020a0228d77a72b09ad917f98c3c57fbe50"
+            },
+            "T_Enemy_Brute_N.png": {
+              "path": "03_work/textures_v007/T_Enemy_Brute_N.png",
+              "sha256": "790248d70f0ed440e14a3056f67cdc0e5dc259c958a141101a9a2ebeb4e3fd73"
+            },
+            "T_Enemy_Brute_ORM.png": {
+              "path": "03_work/textures_v007/T_Enemy_Brute_ORM.png",
+              "sha256": "706353d8ecba244c32a35128a375779c4a30d62b9f45cae6195086f187d2df3d"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 2
+          },
+          "align_iou": 0.893,
+          "uncovered_ratio": 0.4022,
+          "lods": [
+            {
+              "tris": 11999,
+              "verts": 5976
+            },
+            {
+              "tris": 4999,
+              "verts": 2476
+            },
+            {
+              "tris": 2000,
+              "verts": 974
+            }
+          ],
+          "export_kb": 1152.2,
+          "seconds": 62.4,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 8,
+          "created": "2026-10-03 18:39:07",
+          "files": {
+            "SK_Enemy_Brute_v008.blend": {
+              "path": "03_work/SK_Enemy_Brute_v008.blend",
+              "sha256": "1dc2b8fd8393a59d37ffb5bde590976f200f77fdb871db2a9e32e7f2177b42d3"
+            },
+            "SK_Enemy_Brute_v008.glb": {
+              "path": "04_export/SK_Enemy_Brute_v008.glb",
+              "sha256": "e7fc419ab999e5de9711d1194e9d33bb63a7009988de09ea0d8f1ebb3a533bb7"
+            },
+            "SK_Enemy_Brute_v008_metrics.json": {
+              "path": "03_work/SK_Enemy_Brute_v008_metrics.json",
+              "sha256": "c9c3a87e6ddcb6c3fbee174eb0dea4beecbeed4025f58a75aefc835c1c092d88"
+            },
+            "T_Enemy_Brute_BC.png": {
+              "path": "03_work/textures_v008/T_Enemy_Brute_BC.png",
+              "sha256": "79b153f2c3997973485cdaf0825780b985420488430f145b33a8e217fb9cbfb9"
+            },
+            "T_Enemy_Brute_MetalMask.png": {
+              "path": "03_work/textures_v008/T_Enemy_Brute_MetalMask.png",
+              "sha256": "8f36f3b3f53c019bc5f05b4ba3351020a0228d77a72b09ad917f98c3c57fbe50"
+            },
+            "T_Enemy_Brute_N.png": {
+              "path": "03_work/textures_v008/T_Enemy_Brute_N.png",
+              "sha256": "9dbde09ef52d966526d1b8995f25949cbe82b9fec28b09a2456ea658891b79d2"
+            },
+            "T_Enemy_Brute_ORM.png": {
+              "path": "03_work/textures_v008/T_Enemy_Brute_ORM.png",
+              "sha256": "706353d8ecba244c32a35128a375779c4a30d62b9f45cae6195086f187d2df3d"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 2
+          },
+          "align_iou": 0.893,
+          "uncovered_ratio": 0.4022,
+          "lods": [
+            {
+              "tris": 11999,
+              "verts": 5976
+            },
+            {
+              "tris": 4999,
+              "verts": 2476
+            },
+            {
+              "tris": 2000,
+              "verts": 974
+            }
+          ],
+          "export_kb": 1150.7,
+          "seconds": 60.0,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 9,
+          "created": "2026-10-03 19:51:36",
+          "files": {
+            "SK_Enemy_Brute_v009.blend": {
+              "path": "03_work/SK_Enemy_Brute_v009.blend",
+              "sha256": "a21837eeb221f0498817033eefacd7775c0870014ef7bb95b8593495d75f6b40"
+            },
+            "SK_Enemy_Brute_v009.glb": {
+              "path": "04_export/SK_Enemy_Brute_v009.glb",
+              "sha256": "24af9356614779d84c0f16bec54944ef09ad806b62281ad43893c1a46a0f5bb7"
+            },
+            "SK_Enemy_Brute_v009_metrics.json": {
+              "path": "03_work/SK_Enemy_Brute_v009_metrics.json",
+              "sha256": "2a393b022e02611d917d887e59e6882f20a4ab9abdd7f4ea4e1079736d8e29de"
+            },
+            "T_Enemy_Brute_BC.png": {
+              "path": "03_work/textures_v009/T_Enemy_Brute_BC.png",
+              "sha256": "b94516d91a7625ee8538c138a2d77ed172393eb84344d7f7b263ca981e024fbd"
+            },
+            "T_Enemy_Brute_MetalMask.png": {
+              "path": "03_work/textures_v009/T_Enemy_Brute_MetalMask.png",
+              "sha256": "472fcd9c2446acc523392241991941705dfd4544f2d7f6154efe51d520f88b26"
+            },
+            "T_Enemy_Brute_N.png": {
+              "path": "03_work/textures_v009/T_Enemy_Brute_N.png",
+              "sha256": "23bc16c8657da6c60d895140257006fed561eec1f905878f2792d82aa6a47d0a"
+            },
+            "T_Enemy_Brute_ORM.png": {
+              "path": "03_work/textures_v009/T_Enemy_Brute_ORM.png",
+              "sha256": "db024fd3dd9646b8d76cb629969aebd738f4b5218d62df6913ca10803793dc73"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 2
+          },
+          "align_iou": 0.893,
+          "uncovered_ratio": 0.4022,
+          "lods": [
+            {
+              "tris": 11999,
+              "verts": 5976
+            },
+            {
+              "tris": 4999,
+              "verts": 2476
+            },
+            {
+              "tris": 2000,
+              "verts": 974
+            }
+          ],
+          "export_kb": 779.6,
+          "seconds": 75.8,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 10,
+          "created": "2026-10-03 20:14:18",
+          "files": {
+            "SK_Enemy_Brute_v010.blend": {
+              "path": "03_work/SK_Enemy_Brute_v010.blend",
+              "sha256": "e2e644d3489185bc709b77e424163e034e4d832645bb4f467d5743cc728e4ed9"
+            },
+            "SK_Enemy_Brute_v010.glb": {
+              "path": "04_export/SK_Enemy_Brute_v010.glb",
+              "sha256": "ea691a21216035209fc9004c80d2c02875ebb168b8f8da490cd1bca630ee00da"
+            },
+            "SK_Enemy_Brute_v010_metrics.json": {
+              "path": "03_work/SK_Enemy_Brute_v010_metrics.json",
+              "sha256": "8fb1e556455a4cb352f8bbff918d60e4758bdf571d3613bcd2c33dec1d747a31"
+            },
+            "T_Enemy_Brute_BC.png": {
+              "path": "03_work/textures_v010/T_Enemy_Brute_BC.png",
+              "sha256": "10be25c86e00e400bf0d539ea03c993b98c99758d7d5ad32da9deaf6d59d636f"
+            },
+            "T_Enemy_Brute_MetalMask.png": {
+              "path": "03_work/textures_v010/T_Enemy_Brute_MetalMask.png",
+              "sha256": "5a0c8c90dce050a52fa339059e6a286ba1aaacdeaa5e22e57528285300e838c6"
+            },
+            "T_Enemy_Brute_N.png": {
+              "path": "03_work/textures_v010/T_Enemy_Brute_N.png",
+              "sha256": "11a1918389553c2734f85799d5b4b429b969413b0c561822edb5ccfcbd221124"
+            },
+            "T_Enemy_Brute_ORM.png": {
+              "path": "03_work/textures_v010/T_Enemy_Brute_ORM.png",
+              "sha256": "5a3599a0f12aeb02b331be4c68155d9cfe5d744fcb97920093ce74a272954cc7"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 2
+          },
+          "align_iou": 0.893,
+          "uncovered_ratio": 0.4022,
+          "lods": [
+            {
+              "tris": 11999,
+              "verts": 5976
+            },
+            {
+              "tris": 4999,
+              "verts": 2476
+            },
+            {
+              "tris": 2000,
+              "verts": 974
+            }
+          ],
+          "export_kb": 773.9,
+          "seconds": 64.5,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 10,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 16:53:24",
+          "files": {
+            "SK_Enemy_Brute_v001_validation.json": {
+              "path": "05_review/SK_Enemy_Brute_v001_validation.json",
+              "sha256": "03ca0249c026306167d1608f88fe398ee2a9c07c0165e64fe38015916fe6586a"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 4,
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 16:56:24",
+          "files": {
+            "SK_Enemy_Brute_v002_validation.json": {
+              "path": "05_review/SK_Enemy_Brute_v002_validation.json",
+              "sha256": "b2c969ff763d32cfaf451c8788a57053a19bc91ef72f4b43f3a1f6a1cb93413f"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 3,
+          "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 16:58:28",
+          "files": {
+            "SK_Enemy_Brute_v003_validation.json": {
+              "path": "05_review/SK_Enemy_Brute_v003_validation.json",
+              "sha256": "f4240c785a7c6c718a5afeb164c3fa0c017d9d0362980c4ee4be67fcf25511d4"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 1,
+          "passed": true
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 17:11:21",
+          "files": {
+            "SK_Enemy_Brute_v004_validation.json": {
+              "path": "05_review/SK_Enemy_Brute_v004_validation.json",
+              "sha256": "28bea8df1c50b3817a38e5d26d904419f55fd20467209f7580bc92dabc7f67ee"
+            }
+          },
+          "from_build": 4,
+          "errors": 0,
+          "warnings": 1,
+          "passed": true
+        },
+        {
+          "version": 5,
+          "created": "2026-10-03 17:15:15",
+          "files": {
+            "SK_Enemy_Brute_v005_validation.json": {
+              "path": "05_review/SK_Enemy_Brute_v005_validation.json",
+              "sha256": "29ad06892f0a3e48e81f6d292472fca2b657ed7d16d7ec7c85afed5fed0145e4"
+            }
+          },
+          "from_build": 5,
+          "errors": 0,
+          "warnings": 1,
+          "passed": true
+        },
+        {
+          "version": 6,
+          "created": "2026-10-03 17:42:43",
+          "files": {
+            "SK_Enemy_Brute_v006_validation.json": {
+              "path": "05_review/SK_Enemy_Brute_v006_validation.json",
+              "sha256": "1578d8df68d931190b6eb30665b416a06d2d633b08baf55f1326469adeddca9d"
+            }
+          },
+          "from_build": 6,
+          "errors": 0,
+          "warnings": 1,
+          "passed": true
+        },
+        {
+          "version": 7,
+          "created": "2026-10-03 17:58:29",
+          "files": {
+            "SK_Enemy_Brute_v007_validation.json": {
+              "path": "05_review/SK_Enemy_Brute_v007_validation.json",
+              "sha256": "5b8c0b138c2df7e2a1e43311cb839050a28be92c850c49076d8b96bb0989b275"
+            }
+          },
+          "from_build": 7,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 8,
+          "created": "2026-10-03 18:39:07",
+          "files": {
+            "SK_Enemy_Brute_v008_validation.json": {
+              "path": "05_review/SK_Enemy_Brute_v008_validation.json",
+              "sha256": "5ee34dd96d17cb59550819f013e8e46a1c2a1d556fbd9b71d824bd5f275714f1"
+            }
+          },
+          "from_build": 8,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 9,
+          "created": "2026-10-03 19:51:36",
+          "files": {
+            "SK_Enemy_Brute_v009_validation.json": {
+              "path": "05_review/SK_Enemy_Brute_v009_validation.json",
+              "sha256": "45da07a465764bcd068a193878399b8291bc42840c4700eb5449fdf3bd95c29e"
+            }
+          },
+          "from_build": 9,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 10,
+          "created": "2026-10-03 20:14:18",
+          "files": {
+            "SK_Enemy_Brute_v010_validation.json": {
+              "path": "05_review/SK_Enemy_Brute_v010_validation.json",
+              "sha256": "24e968b5773dde121eda1d364c3721d96be4e3c691a62ae08badecfdaf7f7e26"
+            }
+          },
+          "from_build": 10,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 10,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 16:54:19",
+          "files": {
+            "SK_Enemy_Brute_v001_review.png": {
+              "path": "05_review/SK_Enemy_Brute_v001_review.png",
+              "sha256": "02ec01e4037918c23b813265576d5fe04b794e0de95e0ee2def70dbef5a96cdf"
+            }
+          },
+          "from_build": 1
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 16:56:37",
+          "files": {
+            "SK_Enemy_Brute_v002_review.png": {
+              "path": "05_review/SK_Enemy_Brute_v002_review.png",
+              "sha256": "a02f412c65649c197c7b98a5d8e385225a01f1bddbbd71636ea3e188fb123f4f"
+            }
+          },
+          "from_build": 2
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 16:58:44",
+          "files": {
+            "SK_Enemy_Brute_v003_review.png": {
+              "path": "05_review/SK_Enemy_Brute_v003_review.png",
+              "sha256": "c2c8eb4aaa9355ad0977d3997c5f2347202dc1c2bd78ee0fa811fa5b0574b9fe"
+            }
+          },
+          "from_build": 3,
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "LOD0/1 bone heat失败，已从LOD2代理传递权重；姿势测试正常",
+            "time": "2026-10-03 16:59:06"
+          }
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 17:11:30",
+          "files": {
+            "SK_Enemy_Brute_v004_review.png": {
+              "path": "05_review/SK_Enemy_Brute_v004_review.png",
+              "sha256": "bc8ade449138d4d8106fda12b348690e5fe903e1446d70fe4b3bf23a94131773"
+            }
+          },
+          "from_build": 4
+        },
+        {
+          "version": 5,
+          "created": "2026-10-03 17:15:24",
+          "files": {
+            "SK_Enemy_Brute_v005_review.png": {
+              "path": "05_review/SK_Enemy_Brute_v005_review.png",
+              "sha256": "a0715c53cb5cafc019fc8bbd6837c304563794c1bc59b3732cfcd676ad4b2841"
+            }
+          },
+          "from_build": 5,
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "终版管线重建（刚性头部+衣摆平均+代理权重传递）；四个姿势形变正常",
+            "time": "2026-10-03 17:16:32"
+          }
+        },
+        {
+          "version": 6,
+          "created": "2026-10-03 17:43:00",
+          "files": {
+            "SK_Enemy_Brute_v006_review.png": {
+              "path": "05_review/SK_Enemy_Brute_v006_review.png",
+              "sha256": "47e539ebf24a9109076538679e2f655c4a8493f9ce9f24b8c2760196e9c02ce2"
+            }
+          },
+          "from_build": 6,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0037,
+              "stretch_ratio": 0.0037,
+              "p99_stretch": 1.321,
+              "p1_compress": 0.922
+            },
+            "walk": {
+              "bad_edge_ratio": 0.0199,
+              "stretch_ratio": 0.0155,
+              "p99_stretch": 2.149,
+              "p1_compress": 0.652
+            },
+            "attack": {
+              "bad_edge_ratio": 0.0355,
+              "stretch_ratio": 0.0113,
+              "p99_stretch": 2.058,
+              "p1_compress": 0.412
+            }
+          },
+          "auto_flags": [
+            "walk 拉伸 p99 2.149、过度拉伸边 1.6%",
+            "attack 拉伸 p99 2.058、过度拉伸边 1.1%"
+          ]
+        },
+        {
+          "version": 7,
+          "created": "2026-10-03 17:58:39",
+          "files": {
+            "SK_Enemy_Brute_v007_review.png": {
+              "path": "05_review/SK_Enemy_Brute_v007_review.png",
+              "sha256": "01c42d6f44330e58397dd308790b11876493104166591535731244718856c318"
+            }
+          },
+          "from_build": 7,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0037,
+              "stretch_ratio": 0.0037,
+              "p99_stretch": 1.321,
+              "p1_compress": 0.922
+            },
+            "walk": {
+              "bad_edge_ratio": 0.0199,
+              "stretch_ratio": 0.0155,
+              "p99_stretch": 2.149,
+              "p1_compress": 0.652
+            },
+            "attack": {
+              "bad_edge_ratio": 0.0355,
+              "stretch_ratio": 0.0113,
+              "p99_stretch": 2.058,
+              "p1_compress": 0.412
+            }
+          },
+          "auto_flags": [
+            "walk 拉伸 p99 2.149、过度拉伸边 1.6%",
+            "attack 拉伸 p99 2.058、过度拉伸边 1.1%"
+          ],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "材质分区（红蓝编码遮罩）重建：金属/非金属分区正确；姿势形变正常（Brute 形变提示位于腰甲与腿交界，可接受）",
+            "time": "2026-10-03 18:02:20"
+          }
+        },
+        {
+          "version": 8,
+          "created": "2026-10-03 18:39:16",
+          "files": {
+            "SK_Enemy_Brute_v008_review.png": {
+              "path": "05_review/SK_Enemy_Brute_v008_review.png",
+              "sha256": "47f80f1b3ffe654f3dd66ef51d165f07df5b59eec5eb142746f74be6c3fe957e"
+            }
+          },
+          "from_build": 8,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0007,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.195,
+              "p1_compress": 0.909
+            },
+            "walk": {
+              "bad_edge_ratio": 0.0141,
+              "stretch_ratio": 0.008,
+              "p99_stretch": 1.71,
+              "p1_compress": 0.617
+            },
+            "attack": {
+              "bad_edge_ratio": 0.0271,
+              "stretch_ratio": 0.0202,
+              "p99_stretch": 2.608,
+              "p1_compress": 0.594
+            }
+          },
+          "auto_flags": [
+            "attack 拉伸 p99 2.608、过度拉伸边 2.0%"
+          ],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "手臂影响范围约束后重建：抬手不再带动躯干/衣甲；极端举臂姿势腋下拉伸可接受",
+            "time": "2026-10-03 18:43:36"
+          }
+        },
+        {
+          "version": 9,
+          "created": "2026-10-03 19:51:46",
+          "files": {
+            "SK_Enemy_Brute_v009_review.png": {
+              "path": "05_review/SK_Enemy_Brute_v009_review.png",
+              "sha256": "ba53ae56348e7bc0429f7d5c88a0022a51a8666c3ace822a2c478715d6bec66d"
+            }
+          },
+          "from_build": 9,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0008,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.194,
+              "p1_compress": 0.904,
+              "stretch_pairs": {}
+            },
+            "walk": {
+              "bad_edge_ratio": 0.0143,
+              "stretch_ratio": 0.0083,
+              "p99_stretch": 1.73,
+              "p1_compress": 0.62,
+              "stretch_pairs": {
+                "legR ↔ legR": 65,
+                "legL ↔ legL": 37,
+                "torso ↔ torso": 15,
+                "armL ↔ torso": 12,
+                "armL ↔ armL": 10,
+                "armR ↔ torso": 9
+              }
+            },
+            "attack": {
+              "bad_edge_ratio": 0.0272,
+              "stretch_ratio": 0.0199,
+              "p99_stretch": 2.602,
+              "p1_compress": 0.591,
+              "stretch_pairs": {
+                "armR ↔ torso": 148,
+                "torso ↔ torso": 130,
+                "armR ↔ armR": 94,
+                "legR ↔ legR": 11,
+                "head ↔ torso": 5,
+                "armR ↔ head": 2
+              }
+            }
+          },
+          "auto_flags": [
+            "attack 拉伸 p99 2.602、过度拉伸边 2.0%"
+          ]
+        },
+        {
+          "version": 10,
+          "created": "2026-10-03 20:14:27",
+          "files": {
+            "SK_Enemy_Brute_v010_review.png": {
+              "path": "05_review/SK_Enemy_Brute_v010_review.png",
+              "sha256": "4d363b65192852f87c97c793c432f00c36f1400401900f41f33beacf65606233"
+            }
+          },
+          "from_build": 10,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0008,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.194,
+              "p1_compress": 0.904,
+              "stretch_pairs": {}
+            },
+            "walk": {
+              "bad_edge_ratio": 0.0143,
+              "stretch_ratio": 0.0083,
+              "p99_stretch": 1.729,
+              "p1_compress": 0.619,
+              "stretch_pairs": {
+                "legR ↔ legR": 65,
+                "legL ↔ legL": 37,
+                "torso ↔ torso": 15,
+                "armL ↔ torso": 12,
+                "armL ↔ armL": 10,
+                "armR ↔ torso": 9
+              }
+            },
+            "attack": {
+              "bad_edge_ratio": 0.0273,
+              "stretch_ratio": 0.02,
+              "p99_stretch": 2.605,
+              "p1_compress": 0.589,
+              "stretch_pairs": {
+                "armR ↔ torso": 148,
+                "torso ↔ torso": 130,
+                "armR ↔ armR": 94,
+                "legR ↔ legR": 11,
+                "head ↔ torso": 5,
+                "armR ↔ head": 2
+              }
+            }
+          },
+          "auto_flags": [
+            "attack 拉伸 p99 2.605、过度拉伸边 2.0%"
+          ],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "UV 两方案择优重建（纹素密度不低于上一发布版）；几何、蒙皮与上一已审版本一致",
+            "time": "2026-10-03 20:37:33"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 5,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 16:59:06",
+          "files": {
+            "SK_Enemy_Brute.glb": {
+              "path": "@root/public/assets/characters/SK_Enemy_Brute.glb",
+              "sha256": "41411286152d1177d54cf60ef609e3be62d316c74cc912591212fd0545556ee6"
+            }
+          },
+          "from_build": 3,
+          "url": "assets/characters/SK_Enemy_Brute.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 17:16:33",
+          "files": {
+            "SK_Enemy_Brute.glb": {
+              "path": "@root/public/assets/characters/SK_Enemy_Brute.glb",
+              "sha256": "44e7cb535d137295747ca932963536aaabd1e3211466b798c4f2559276f2df00"
+            }
+          },
+          "from_build": 5,
+          "url": "assets/characters/SK_Enemy_Brute.glb"
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 18:02:22",
+          "files": {
+            "SK_Enemy_Brute.glb": {
+              "path": "@root/public/assets/characters/SK_Enemy_Brute.glb",
+              "sha256": "51609c55869145a320447923408f49b8386c3f07859478ceb937a4c79d97fe31"
+            }
+          },
+          "from_build": 7,
+          "url": "assets/characters/SK_Enemy_Brute.glb"
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 18:43:38",
+          "files": {
+            "SK_Enemy_Brute.glb": {
+              "path": "@root/public/assets/characters/SK_Enemy_Brute.glb",
+              "sha256": "e7fc419ab999e5de9711d1194e9d33bb63a7009988de09ea0d8f1ebb3a533bb7"
+            }
+          },
+          "from_build": 8,
+          "url": "assets/characters/SK_Enemy_Brute.glb"
+        },
+        {
+          "version": 5,
+          "created": "2026-10-03 20:37:34",
+          "files": {
+            "SK_Enemy_Brute.glb": {
+              "path": "@root/public/assets/characters/SK_Enemy_Brute.glb",
+              "sha256": "ea691a21216035209fc9004c80d2c02875ebb168b8f8da490cd1bca630ee00da"
+            }
+          },
+          "from_build": 10,
+          "url": "assets/characters/SK_Enemy_Brute.glb"
+        }
+      ]
+    },
+    "matid": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:39:09",
+          "files": {
+            "MID_SK_Enemy_Brute_v001_sheet.png": {
+              "path": "01_concept/MID_SK_Enemy_Brute_v001_sheet.png",
+              "sha256": "576744fe78cfa29a8d05977f5bde50ec777aa22bae67c3e0043ca032691553a4"
+            },
+            "MID_SK_Enemy_Brute_v001_front.png": {
+              "path": "01_concept/MID_SK_Enemy_Brute_v001_front.png",
+              "sha256": "b942e57c6903922771dd70d61a5c64dc1b3dc30be834c619ad38860dea878681"
+            },
+            "MID_SK_Enemy_Brute_v001_left.png": {
+              "path": "01_concept/MID_SK_Enemy_Brute_v001_left.png",
+              "sha256": "0c442d0abd36af1faea640fe7fac7286e14d04aa935bd53e22e407f0f1e9b15a"
+            },
+            "MID_SK_Enemy_Brute_v001_back.png": {
+              "path": "01_concept/MID_SK_Enemy_Brute_v001_back.png",
+              "sha256": "daa5109275b70ea503a0abf981b7b29a8c3036b909a1ccdbbfc66110d78b1506"
+            },
+            "MID_SK_Enemy_Brute_v001_right.png": {
+              "path": "01_concept/MID_SK_Enemy_Brute_v001_right.png",
+              "sha256": "c1b1acab4c8d8ef7bb6a3186e96118cad3abf08f16ee3423df0b06b14d2c9ed0"
+            },
+            "MID_SK_Enemy_Brute_v001_compare.png": {
+              "path": "01_concept/MID_SK_Enemy_Brute_v001_compare.png",
+              "sha256": "ea3d820d0f9c52aeb53a352e90309bd9bd41a4165db630c488b90abb13ba857c"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1622,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 164
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2802
+          },
+          "request_id": "req_9368bddf545e41d88abd230f827424d4",
+          "seconds": 31.5,
+          "registration": {
+            "front": {
+              "scale": 0.7343,
+              "offset": [
+                44,
+                262
+              ],
+              "iou": 0.94,
+              "iou_unregistered_scale": 0.7343
+            },
+            "left": {
+              "scale": 0.6964,
+              "offset": [
+                176,
+                271
+              ],
+              "iou": 0.943,
+              "iou_unregistered_scale": 0.6964
+            },
+            "back": {
+              "scale": 0.7021,
+              "offset": [
+                50,
+                270
+              ],
+              "iou": 0.955,
+              "iou_unregistered_scale": 0.7021
+            },
+            "right": {
+              "scale": 0.6846,
+              "offset": [
+                179,
+                279
+              ],
+              "iou": 0.956,
+              "iou_unregistered_scale": 0.695
+            }
+          },
+          "metal_ratio": {
+            "front": 0.674,
+            "left": 0.695,
+            "back": 0.666,
+            "right": 0.694
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 17:49:59",
+          "files": {
+            "MID_SK_Enemy_Brute_v002_sheet.png": {
+              "path": "01_concept/MID_SK_Enemy_Brute_v002_sheet.png",
+              "sha256": "644c3c24635d396b0d97c5dc46d5bdc95e3ca991137c1d1780c60a0114dbf5c2"
+            },
+            "MID_SK_Enemy_Brute_v002_front.png": {
+              "path": "01_concept/MID_SK_Enemy_Brute_v002_front.png",
+              "sha256": "e73c1517580ae4e80962104d5d2cfd835f2bc78f300f3725f393aa7c772729de"
+            },
+            "MID_SK_Enemy_Brute_v002_left.png": {
+              "path": "01_concept/MID_SK_Enemy_Brute_v002_left.png",
+              "sha256": "e2f7f6e3a1765cb733dc85b48665d94b20962e63e6dee45d522e3cb9bc6970b0"
+            },
+            "MID_SK_Enemy_Brute_v002_back.png": {
+              "path": "01_concept/MID_SK_Enemy_Brute_v002_back.png",
+              "sha256": "c8a67411b18e80f2432743d383ec801f2f7120034a3ce0783d5b09977cc3563e"
+            },
+            "MID_SK_Enemy_Brute_v002_right.png": {
+              "path": "01_concept/MID_SK_Enemy_Brute_v002_right.png",
+              "sha256": "baf9df5e290875b523d7ed499e0fbbb58837c0b71844cc738e020ac1fcc94bab"
+            },
+            "MID_SK_Enemy_Brute_v002_compare.png": {
+              "path": "01_concept/MID_SK_Enemy_Brute_v002_compare.png",
+              "sha256": "6e78466e2a58e2d202c7ea892f8ca506e5034ad5422ef62b2c92fd52d574a719"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1699,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 241
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2879
+          },
+          "request_id": "req_b235030639ac4181b24b022ee42c8538",
+          "seconds": 29.1,
+          "registration": {
+            "front": {
+              "scale": 0.7019,
+              "offset": [
+                46,
+                262
+              ],
+              "iou": 0.936,
+              "iou_unregistered_scale": 0.7019,
+              "purity": 0.955
+            },
+            "left": {
+              "scale": 0.6506,
+              "offset": [
+                177,
+                278
+              ],
+              "iou": 0.941,
+              "iou_unregistered_scale": 0.6605,
+              "purity": 0.957
+            },
+            "back": {
+              "scale": 0.6803,
+              "offset": [
+                50,
+                270
+              ],
+              "iou": 0.935,
+              "iou_unregistered_scale": 0.6702,
+              "purity": 0.959
+            },
+            "right": {
+              "scale": 0.6476,
+              "offset": [
+                178,
+                279
+              ],
+              "iou": 0.937,
+              "iou_unregistered_scale": 0.6574,
+              "purity": 0.957
+            }
+          },
+          "metal_ratio": {
+            "front": 0.765,
+            "left": 0.783,
+            "back": 0.762,
+            "right": 0.779
+          }
+        }
+      ]
+    }
+  }
+}

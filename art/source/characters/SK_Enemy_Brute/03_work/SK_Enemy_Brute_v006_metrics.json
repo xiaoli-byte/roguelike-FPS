@@ -1,0 +1,189 @@
+{
+  "steps": {
+    "导入清理": 5.7,
+    "对齐": 2.4,
+    "低模与 UV": 27.0,
+    "投影着色": 55.7,
+    "烘焙": 19.3,
+    "LOD": 0.3,
+    "骨骼蒙皮": 0.6,
+    "导出": 5.5
+  },
+  "highpoly": {
+    "faces_raw": 769287,
+    "faces": 411236,
+    "verts": 411212,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00492
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.893,
+    "iou_per_view": {
+      "front": 0.889,
+      "left": 0.89,
+      "back": 0.911,
+      "right": 0.884
+    },
+    "height_m": 2.3539,
+    "blockout_height_m": 2.4544
+  },
+  "projection": {
+    "uncovered_ratio": 0.4022
+  },
+  "bake_device": "OPTIX",
+  "material_id": {
+    "metal_texel_ratio": 0.5644
+  },
+  "textures": {
+    "T_Enemy_Brute_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Enemy_Brute_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Enemy_Brute_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "bind_pose": {
+    "armSpreadL": 0.3744,
+    "armSpreadR": 0.3764,
+    "base": 0.45
+  },
+  "robe_verts": {
+    "SK_Enemy_Brute_LOD0": 487,
+    "SK_Enemy_Brute_LOD1": 192,
+    "SK_Enemy_Brute_LOD2": 75
+  },
+  "rigid_head_verts": {
+    "SK_Enemy_Brute_LOD0": 630,
+    "SK_Enemy_Brute_LOD1": 246,
+    "SK_Enemy_Brute_LOD2": 99
+  },
+  "skin": {
+    "bones": [
+      "hips",
+      "torso",
+      "head",
+      "armL",
+      "elbowL",
+      "handL",
+      "armR",
+      "elbowR",
+      "handR",
+      "legL",
+      "kneeL",
+      "legR",
+      "kneeR"
+    ],
+    "per_lod": {
+      "SK_Enemy_Brute_LOD0": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "heat_failed_initial": 5976,
+        "weights_from": "SK_Enemy_Brute_LOD2",
+        "unweighted_verts": 0
+      },
+      "SK_Enemy_Brute_LOD1": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "heat_failed_initial": 2476,
+        "weights_from": "SK_Enemy_Brute_LOD2",
+        "unweighted_verts": 0
+      },
+      "SK_Enemy_Brute_LOD2": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "heat_failed_initial": 0,
+        "weights_from": "bone_heat",
+        "unweighted_verts": 0
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SK_Enemy_Brute_LOD0",
+      "tris": 11999,
+      "verts": 5976,
+      "uv_min": [
+        0.005175911355763674,
+        0.005199780222028494
+      ],
+      "uv_max": [
+        0.9935777187347412,
+        0.9948680400848389
+      ],
+      "uv_utilization": 0.402,
+      "bbox_min": [
+        -0.9866,
+        -0.3898,
+        0.0001
+      ],
+      "bbox_max": [
+        0.9842,
+        0.3266,
+        2.3563
+      ]
+    },
+    {
+      "name": "SK_Enemy_Brute_LOD1",
+      "tris": 4999,
+      "verts": 2476,
+      "uv_min": [
+        0.005199973937124014,
+        0.005199780222028494
+      ],
+      "uv_max": [
+        0.9922873377799988,
+        0.9948679208755493
+      ],
+      "uv_utilization": 0.38,
+      "bbox_min": [
+        -0.9846,
+        -0.3875,
+        0.001
+      ],
+      "bbox_max": [
+        0.9827,
+        0.3259,
+        2.3551
+      ]
+    },
+    {
+      "name": "SK_Enemy_Brute_LOD2",
+      "tris": 2000,
+      "verts": 974,
+      "uv_min": [
+        0.005544094834476709,
+        0.005487542599439621
+      ],
+      "uv_max": [
+        0.9806740880012512,
+        0.9884161353111267
+      ],
+      "uv_utilization": 0.343,
+      "bbox_min": [
+        -0.9869,
+        -0.3917,
+        0.002
+      ],
+      "bbox_max": [
+        0.9808,
+        0.3252,
+        2.3642
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Enemy_Brute\\04_export\\SK_Enemy_Brute_v006.glb",
+    "bytes": 1196828
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Enemy_Brute\\03_work\\SK_Enemy_Brute_v006.blend",
+  "total_seconds": 116.5,
+  "_seconds": 120.1
+}

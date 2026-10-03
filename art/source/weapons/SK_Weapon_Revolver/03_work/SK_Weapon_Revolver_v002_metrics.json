@@ -1,0 +1,178 @@
+{
+  "steps": {
+    "导入清理": 1.4,
+    "对齐": 0.7,
+    "低模与 UV": 4.7,
+    "投影着色": 10.8,
+    "烘焙": 9.6,
+    "LOD": 0.0,
+    "部件骨架蒙皮": 1.7,
+    "导出": 1.6
+  },
+  "highpoly": {
+    "faces_raw": 287227,
+    "faces": 157768,
+    "verts": 157768,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.904,
+    "iou_per_view": {
+      "front": 0.908,
+      "left": 0.905,
+      "back": 0.894,
+      "right": 0.906
+    },
+    "height_m": 0.2378,
+    "blockout_height_m": 0.3333
+  },
+  "uv": {
+    "smart_islands": 162,
+    "charts": 27,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "smart",
+    "density_smart": 2.6194,
+    "density_merged": 2.5027
+  },
+  "projection": {
+    "uncovered_ratio": 0.1346
+  },
+  "bake_device": "OPTIX",
+  "emissive_id": {
+    "emissive_texel_ratio": 0.0275
+  },
+  "material_id": {
+    "metal_texel_ratio": 0.5421
+  },
+  "textures": {
+    "T_Weapon_Revolver_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Weapon_Revolver_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Weapon_Revolver_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "presentation": [
+    [
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ]
+  ],
+  "skin": {
+    "bones": [
+      "j_r",
+      "j_0",
+      "j_8"
+    ],
+    "per_lod": {
+      "SK_Weapon_Revolver_LOD0": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      },
+      "SK_Weapon_Revolver_LOD1": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      }
+    },
+    "mode": "parts",
+    "sigma_m": 0.005,
+    "rigid": true,
+    "split": {
+      "SK_Weapon_Revolver_LOD0": {
+        "cut_edges": 126,
+        "cap_tris": 248,
+        "merged_fragment_faces": 0,
+        "tris": 11996
+      },
+      "SK_Weapon_Revolver_LOD1": {
+        "cut_edges": 60,
+        "cap_tris": 116,
+        "merged_fragment_faces": 0,
+        "tris": 2996
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SK_Weapon_Revolver_LOD0",
+      "tris": 11996,
+      "verts": 6000,
+      "uv_min": [
+        0.002346588997170329,
+        0.002346575492992997
+      ],
+      "uv_max": [
+        0.9188553094863892,
+        0.9976533651351929
+      ],
+      "uv_utilization": 0.52,
+      "bbox_min": [
+        -0.0289,
+        -0.0791,
+        -0.1276
+      ],
+      "bbox_max": [
+        0.0309,
+        0.2378,
+        0.0919
+      ]
+    },
+    {
+      "name": "SK_Weapon_Revolver_LOD1",
+      "tris": 2996,
+      "verts": 1500,
+      "uv_min": [
+        0.002526412019506097,
+        0.002346575492992997
+      ],
+      "uv_max": [
+        0.9154585599899292,
+        0.9975460171699524
+      ],
+      "uv_utilization": 0.498,
+      "bbox_min": [
+        -0.029,
+        -0.079,
+        -0.1276
+      ],
+      "bbox_max": [
+        0.031,
+        0.2378,
+        0.0916
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\weapons\\SK_Weapon_Revolver\\04_export\\SK_Weapon_Revolver_v002.glb",
+    "bytes": 464372
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\weapons\\SK_Weapon_Revolver\\03_work\\SK_Weapon_Revolver_v002.blend",
+  "total_seconds": 30.6,
+  "_seconds": 34.6
+}

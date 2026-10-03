@@ -1,0 +1,178 @@
+{
+  "steps": {
+    "导入清理": 0.8,
+    "对齐": 0.3,
+    "低模与 UV": 3.4,
+    "投影着色": 3.9,
+    "烘焙": 8.6,
+    "LOD": 0.0,
+    "部件骨架蒙皮": 2.3,
+    "导出": 2.6
+  },
+  "highpoly": {
+    "faces_raw": 132789,
+    "faces": 72540,
+    "verts": 72538,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.87,
+    "iou_per_view": {
+      "front": 0.879,
+      "left": 0.852,
+      "back": 0.89,
+      "right": 0.851
+    },
+    "height_m": 0.5402,
+    "blockout_height_m": 0.8769
+  },
+  "uv": {
+    "smart_islands": 174,
+    "charts": 23,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "smart",
+    "density_smart": 1.5543,
+    "density_merged": 1.5418
+  },
+  "projection": {
+    "uncovered_ratio": 0.0715
+  },
+  "bake_device": "OPTIX",
+  "emissive_id": {
+    "emissive_texel_ratio": 0.009
+  },
+  "material_id": {
+    "metal_texel_ratio": 0.5176
+  },
+  "textures": {
+    "T_Weapon_Shotgun_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Weapon_Shotgun_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Weapon_Shotgun_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "presentation": [
+    [
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ]
+  ],
+  "skin": {
+    "bones": [
+      "j_r",
+      "j_0",
+      "j_7"
+    ],
+    "per_lod": {
+      "SK_Weapon_Shotgun_LOD0": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      },
+      "SK_Weapon_Shotgun_LOD1": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      }
+    },
+    "mode": "parts",
+    "sigma_m": 0.0132,
+    "rigid": true,
+    "split": {
+      "SK_Weapon_Shotgun_LOD0": {
+        "cut_edges": 89,
+        "cap_tris": 174,
+        "merged_fragment_faces": 0,
+        "tris": 11996
+      },
+      "SK_Weapon_Shotgun_LOD1": {
+        "cut_edges": 44,
+        "cap_tris": 84,
+        "merged_fragment_faces": 0,
+        "tris": 2996
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SK_Weapon_Shotgun_LOD0",
+      "tris": 11996,
+      "verts": 5998,
+      "uv_min": [
+        0.002431663451716304,
+        0.0024317470379173756
+      ],
+      "uv_max": [
+        0.9975683093070984,
+        0.983821451663971
+      ],
+      "uv_utilization": 0.621,
+      "bbox_min": [
+        -0.0446,
+        -0.3112,
+        -0.1089
+      ],
+      "bbox_max": [
+        0.0546,
+        0.5401,
+        0.1002
+      ]
+    },
+    {
+      "name": "SK_Weapon_Shotgun_LOD1",
+      "tris": 2996,
+      "verts": 1498,
+      "uv_min": [
+        0.002431663451716304,
+        0.002556961728259921
+      ],
+      "uv_max": [
+        0.9975683093070984,
+        0.983821451663971
+      ],
+      "uv_utilization": 0.593,
+      "bbox_min": [
+        -0.0447,
+        -0.3112,
+        -0.1087
+      ],
+      "bbox_max": [
+        0.0546,
+        0.5403,
+        0.1
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\weapons\\SK_Weapon_Shotgun\\04_export\\SK_Weapon_Shotgun_v001.glb",
+    "bytes": 468220
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\weapons\\SK_Weapon_Shotgun\\03_work\\SK_Weapon_Shotgun_v001.blend",
+  "total_seconds": 21.9,
+  "_seconds": 25.6
+}

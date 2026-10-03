@@ -1,0 +1,588 @@
+{
+  "id": "SK_Weapon_Rifle",
+  "display": "裂风步枪",
+  "kind": "skeletal",
+  "class": "weapon_fp",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:07:00",
+          "files": {
+            "BO_SK_Weapon_Rifle_v001.glb": {
+              "path": "00_blockout/BO_SK_Weapon_Rifle_v001.glb",
+              "sha256": "89411acab14ee422452cde1f97502df2addbc90b744e2809c6fd543e7df426ed"
+            },
+            "BO_SK_Weapon_Rifle_v001.json": {
+              "path": "00_blockout/BO_SK_Weapon_Rifle_v001.json",
+              "sha256": "6d038f069d8660a3caaec0991bae2f62ef3bf68aa915f6abd647b2faf3fdef94"
+            },
+            "BO_SK_Weapon_Rifle_v001_views.json": {
+              "path": "00_blockout/BO_SK_Weapon_Rifle_v001_views.json",
+              "sha256": "da407b3eade499943ab8990c2d618a6f0c839fa819817e2d4ce88e691c90eabe"
+            },
+            "BO_SK_Weapon_Rifle_v001_sheet.png": {
+              "path": "00_blockout/BO_SK_Weapon_Rifle_v001_sheet.png",
+              "sha256": "6a56fa04a1420283053615f491a48d0cfbcf74a120921701b2cd9177a42dde2f"
+            },
+            "BO_SK_Weapon_Rifle_v001_front.png": {
+              "path": "00_blockout/BO_SK_Weapon_Rifle_v001_front.png",
+              "sha256": "defb532a45a3869fc6239cbcf1a4c0b1ba4a056f06bdbcfd5c795708515867bc"
+            },
+            "BO_SK_Weapon_Rifle_v001_left.png": {
+              "path": "00_blockout/BO_SK_Weapon_Rifle_v001_left.png",
+              "sha256": "21a17d4ddb6dd66643b137bb163379b172ec8580c68ec4a11a53aaa492fed0d1"
+            },
+            "BO_SK_Weapon_Rifle_v001_back.png": {
+              "path": "00_blockout/BO_SK_Weapon_Rifle_v001_back.png",
+              "sha256": "c44a01670f05876fc20668b1225a3d3ed6f39b6b2cb48ea5d4da4726de130584"
+            },
+            "BO_SK_Weapon_Rifle_v001_right.png": {
+              "path": "00_blockout/BO_SK_Weapon_Rifle_v001_right.png",
+              "sha256": "790f7458103d124895b3779d795e7b5b5544b1d57eb16606b103825e2e4a8179"
+            }
+          },
+          "source": {
+            "kind": "weapon",
+            "id": "rifle"
+          },
+          "joints": 4,
+          "bounds": {
+            "min": [
+              -0.028999999165534973,
+              -0.1651614375266959,
+              -0.640000000372529
+            ],
+            "max": [
+              0.028999999165534973,
+              0.0940000002682209,
+              0.3369999998882413
+            ]
+          },
+          "blender_seconds": 6.5
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:09:54",
+          "files": {
+            "CN_SK_Weapon_Rifle_v001_sheet.png": {
+              "path": "01_concept/CN_SK_Weapon_Rifle_v001_sheet.png",
+              "sha256": "47292368f92eb0411542d225f590813104ac126145eaf512fe21f69eae0d70a2"
+            },
+            "CN_SK_Weapon_Rifle_v001_front.png": {
+              "path": "01_concept/CN_SK_Weapon_Rifle_v001_front.png",
+              "sha256": "39f0224aec158b6e60dba9068fe90db648765e5f809c4f85a462afe0504e3e25"
+            },
+            "CN_SK_Weapon_Rifle_v001_left.png": {
+              "path": "01_concept/CN_SK_Weapon_Rifle_v001_left.png",
+              "sha256": "4b65b9674c555aef0f26f8bdc5f6f9e21be97222451d06f9c9dbd80065417c52"
+            },
+            "CN_SK_Weapon_Rifle_v001_back.png": {
+              "path": "01_concept/CN_SK_Weapon_Rifle_v001_back.png",
+              "sha256": "a4ab100262115c25ad76a0d009654e2513ab1775439d48cda0f0e0f759b7488c"
+            },
+            "CN_SK_Weapon_Rifle_v001_right.png": {
+              "path": "01_concept/CN_SK_Weapon_Rifle_v001_right.png",
+              "sha256": "19c995f48ac5e36b151c09574d894b7f27d12468a3d319ad426d6d2ac991264b"
+            },
+            "CN_SK_Weapon_Rifle_v001_compare.png": {
+              "path": "01_concept/CN_SK_Weapon_Rifle_v001_compare.png",
+              "sha256": "4a61fb2ee0d5049de28bf888dd79f204be95ff2edb8d15e6988ad162833b4057"
+            },
+            "CN_SK_Weapon_Rifle_v001_prompt.txt": {
+              "path": "01_concept/CN_SK_Weapon_Rifle_v001_prompt.txt",
+              "sha256": "278f0b139bbcb89508f846dffeaadc03e31b27740a0ee67dbfc73fa852fc8194"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1960,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 502
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3140
+          },
+          "request_id": "req_548c73edcb654c73942cff0d5695116e",
+          "seconds": 31.7,
+          "registration": {
+            "front": {
+              "scale": 0.9639,
+              "offset": [
+                128,
+                69
+              ],
+              "iou": 0.783,
+              "iou_unregistered_scale": 0.9786
+            },
+            "left": {
+              "scale": 0.9786,
+              "offset": [
+                217,
+                55
+              ],
+              "iou": 0.86,
+              "iou_unregistered_scale": 0.9786
+            },
+            "back": {
+              "scale": 0.9786,
+              "offset": [
+                126,
+                55
+              ],
+              "iou": 0.785,
+              "iou_unregistered_scale": 0.9786
+            },
+            "right": {
+              "scale": 0.9639,
+              "offset": [
+                218,
+                69
+              ],
+              "iou": 0.847,
+              "iou_unregistered_scale": 0.9786
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.788,
+            "left": 0.863,
+            "back": 0.789,
+            "right": 0.849
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "东方奇幻配色与纹饰统一；剪影与白模吻合（IoU ≥ 0.79）",
+            "time": "2026-10-03 21:15:07"
+          }
+        }
+      ]
+    },
+    "matid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:16:28",
+          "files": {
+            "MID_SK_Weapon_Rifle_v001_sheet.png": {
+              "path": "01_concept/MID_SK_Weapon_Rifle_v001_sheet.png",
+              "sha256": "57a66b0fa74839e7bd8dcc818884ed043b74a0b62c4293c76807941942383ca3"
+            },
+            "MID_SK_Weapon_Rifle_v001_front.png": {
+              "path": "01_concept/MID_SK_Weapon_Rifle_v001_front.png",
+              "sha256": "7f79d06515480762b35a7917d0ac8d4775773313f297142ae5467274f5a5357f"
+            },
+            "MID_SK_Weapon_Rifle_v001_left.png": {
+              "path": "01_concept/MID_SK_Weapon_Rifle_v001_left.png",
+              "sha256": "6b8178aa7295056ba84fa09b9532f8add0b572f96055d9582a2f17cb2f8c60ae"
+            },
+            "MID_SK_Weapon_Rifle_v001_back.png": {
+              "path": "01_concept/MID_SK_Weapon_Rifle_v001_back.png",
+              "sha256": "aa567d595b838c681214183e7a4bc3151800dcf6906d49e70734af6bfa517bca"
+            },
+            "MID_SK_Weapon_Rifle_v001_right.png": {
+              "path": "01_concept/MID_SK_Weapon_Rifle_v001_right.png",
+              "sha256": "10ec964c6196e944ed1947fead4d6fed517813c2083f01ac4e9396f703e88df4"
+            },
+            "MID_SK_Weapon_Rifle_v001_compare.png": {
+              "path": "01_concept/MID_SK_Weapon_Rifle_v001_compare.png",
+              "sha256": "de951b9e424e5a812dc75ece751896aa495167d70ea2a324164dc79bdfed1f4b"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1699,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 241
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2879
+          },
+          "request_id": "req_ceee8cb4d1114a6cb0cb743d81703958",
+          "seconds": 30.0,
+          "registration": {
+            "front": {
+              "scale": 0.9605,
+              "offset": [
+                124,
+                69
+              ],
+              "iou": 0.926,
+              "iou_unregistered_scale": 0.9605,
+              "purity": 0.976
+            },
+            "left": {
+              "scale": 0.9744,
+              "offset": [
+                214,
+                55
+              ],
+              "iou": 0.917,
+              "iou_unregistered_scale": 0.9744,
+              "purity": 0.982
+            },
+            "back": {
+              "scale": 0.9755,
+              "offset": [
+                122,
+                55
+              ],
+              "iou": 0.929,
+              "iou_unregistered_scale": 0.9755,
+              "purity": 0.978
+            },
+            "right": {
+              "scale": 0.9595,
+              "offset": [
+                216,
+                69
+              ],
+              "iou": 0.918,
+              "iou_unregistered_scale": 0.9595,
+              "purity": 0.975
+            }
+          },
+          "metal_ratio": {
+            "front": 0.49,
+            "left": 0.477,
+            "back": 0.494,
+            "right": 0.597
+          }
+        }
+      ]
+    },
+    "emid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:21:46",
+          "files": {
+            "EID_SK_Weapon_Rifle_v001_sheet.png": {
+              "path": "01_concept/EID_SK_Weapon_Rifle_v001_sheet.png",
+              "sha256": "8e55659301d1ae3df0ed5e47732269f6a40dd2bacde7f1baf1920d169ec9756d"
+            },
+            "EID_SK_Weapon_Rifle_v001_front.png": {
+              "path": "01_concept/EID_SK_Weapon_Rifle_v001_front.png",
+              "sha256": "fc6191adead62cfc6f7177097937fd3abe73f60eaf230cccb7520c70a23ce791"
+            },
+            "EID_SK_Weapon_Rifle_v001_left.png": {
+              "path": "01_concept/EID_SK_Weapon_Rifle_v001_left.png",
+              "sha256": "18bfcff5884707618eb809e1de5a7e2b43b101d25b49f036f97fc33ef82a6503"
+            },
+            "EID_SK_Weapon_Rifle_v001_back.png": {
+              "path": "01_concept/EID_SK_Weapon_Rifle_v001_back.png",
+              "sha256": "c16539545e6d498156c72031b8985376a5a7a9382d71ef1cd2dfe00a0341fa14"
+            },
+            "EID_SK_Weapon_Rifle_v001_right.png": {
+              "path": "01_concept/EID_SK_Weapon_Rifle_v001_right.png",
+              "sha256": "9312792ea76c3a28252219393e331b159ad690adf1134f0c854a99bd78e61570"
+            },
+            "EID_SK_Weapon_Rifle_v001_compare.png": {
+              "path": "01_concept/EID_SK_Weapon_Rifle_v001_compare.png",
+              "sha256": "f470d9604291ef3696b0d1e69088c1fe47c89737cc55237cabc0b16ea4a88809"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1720,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 262
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2900
+          },
+          "request_id": "req_0fa62d55d55b429da3543fc7be20d6a7",
+          "seconds": 27.9,
+          "registration": {
+            "front": {
+              "scale": 0.9615,
+              "offset": [
+                126,
+                69
+              ],
+              "iou": 0.953,
+              "iou_unregistered_scale": 0.9615,
+              "purity": 0.99
+            },
+            "left": {
+              "scale": 0.9765,
+              "offset": [
+                218,
+                55
+              ],
+              "iou": 0.904,
+              "iou_unregistered_scale": 0.9765,
+              "purity": 0.986
+            },
+            "back": {
+              "scale": 0.9765,
+              "offset": [
+                124,
+                55
+              ],
+              "iou": 0.951,
+              "iou_unregistered_scale": 0.9765,
+              "purity": 0.991
+            },
+            "right": {
+              "scale": 0.9615,
+              "offset": [
+                220,
+                69
+              ],
+              "iou": 0.919,
+              "iou_unregistered_scale": 0.9615,
+              "purity": 0.996
+            }
+          },
+          "emissive_ratio": {
+            "front": 0.046,
+            "left": 0.044,
+            "back": 0.046,
+            "right": 0.014
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:31:12",
+          "files": {
+            "HP_SK_Weapon_Rifle_v001_input_front.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Rifle_v001_input_front.png",
+              "sha256": "46f2219f9b49f4aee8f04a16690163cb631aa587d51a2d8d2782baba43ed921c"
+            },
+            "HP_SK_Weapon_Rifle_v001_input_left.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Rifle_v001_input_left.png",
+              "sha256": "8900fee45fe686e388a667cd6f3e9d9e24a1222ee41dfc9cb3f43f28d12241fd"
+            },
+            "HP_SK_Weapon_Rifle_v001_input_back.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Rifle_v001_input_back.png",
+              "sha256": "26ab5bae2c47458b6457e4b2ae10a0a212efb0a8465ab11f8b7ef3c9d91ea26e"
+            },
+            "HP_SK_Weapon_Rifle_v001_input_right.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Rifle_v001_input_right.png",
+              "sha256": "7941a215f7a7cf687cca319d2d38021473cc9de3fd8427c46a775ee619fd3a60"
+            },
+            "HP_SK_Weapon_Rifle_v001.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Rifle_v001.glb",
+              "sha256": "e777d9c51caabbfabd75e749b1b53240aebe29188ee68479ac2f37a34b8e7ae9"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -282,
+              -26,
+              794,
+              1050
+            ],
+            "scale": 0.9516728624535316
+          },
+          "seconds": 134.7,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 2.2
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:31:35",
+          "files": {
+            "SK_Weapon_Rifle_v001.blend": {
+              "path": "03_work/SK_Weapon_Rifle_v001.blend",
+              "sha256": "adb6e399b6618010a3972d72fca8ff73159bde0bcafda5f2d5de3e7010c24eac"
+            },
+            "SK_Weapon_Rifle_v001.glb": {
+              "path": "04_export/SK_Weapon_Rifle_v001.glb",
+              "sha256": "f264fc6db9881e8c25dbcf4dc8bd14ede9c96345ef0e0dc53a85ce12c22105dd"
+            },
+            "SK_Weapon_Rifle_v001_metrics.json": {
+              "path": "03_work/SK_Weapon_Rifle_v001_metrics.json",
+              "sha256": "3a69302d9a2157b41610de0b928e8185431a2da2a6c5e9401ef200f8f4d4be78"
+            },
+            "T_Weapon_Rifle_BC.png": {
+              "path": "03_work/textures_v001/T_Weapon_Rifle_BC.png",
+              "sha256": "5c9517181659dff0e3ea12fd2d8bf6392df7a8886fc1bdd90aed4dfd4a4d13a3"
+            },
+            "T_Weapon_Rifle_E.png": {
+              "path": "03_work/textures_v001/T_Weapon_Rifle_E.png",
+              "sha256": "a649ccfb1cb0ad20b73b618a7ee3990bad6795298fc3a30d200ed8d8e32af851"
+            },
+            "T_Weapon_Rifle_MetalMask.png": {
+              "path": "03_work/textures_v001/T_Weapon_Rifle_MetalMask.png",
+              "sha256": "b9028c1be47f0bdc0aebc8b81b775f60d638acf1662fd742156a954f8f3ba895"
+            },
+            "T_Weapon_Rifle_N.png": {
+              "path": "03_work/textures_v001/T_Weapon_Rifle_N.png",
+              "sha256": "d1edb24ac3799d6b0fb10785db728a999cfd0a6a07020a19a6d78727ad0c2c37"
+            },
+            "T_Weapon_Rifle_ORM.png": {
+              "path": "03_work/textures_v001/T_Weapon_Rifle_ORM.png",
+              "sha256": "dc7e1d7a8677c899b233cbb6408ed5013d52e1661701bf75cd698b7281e21f2e"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1,
+            "emid": 1
+          },
+          "align_iou": 0.84,
+          "uncovered_ratio": 0.1545,
+          "lods": [
+            {
+              "tris": 11996,
+              "verts": 5986
+            },
+            {
+              "tris": 2996,
+              "verts": 1486
+            }
+          ],
+          "export_kb": 467.8,
+          "seconds": 23.3,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:31:36",
+          "files": {
+            "SK_Weapon_Rifle_v001_validation.json": {
+              "path": "05_review/SK_Weapon_Rifle_v001_validation.json",
+              "sha256": "6cdf15011b4caf868531938aeb8402774da0d6d648f3440febccd0f6308c2ca8"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:31:44",
+          "files": {
+            "SK_Weapon_Rifle_v001_review.png": {
+              "path": "05_review/SK_Weapon_Rifle_v001_review.png",
+              "sha256": "37046470a5f0d54f88ab633d1ea453b967130368ae24f4ba597d5ad546a9aeca"
+            }
+          },
+          "from_build": 1,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "刚体部件 + 发光分区；三轴尺寸与白模吻合（步枪宽度 +50% 为概念机匣偏厚，外观无异常）",
+            "time": "2026-10-03 21:58:31"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:58:31",
+          "files": {
+            "SK_Weapon_Rifle.glb": {
+              "path": "@root/public/assets/weapons/SK_Weapon_Rifle.glb",
+              "sha256": "f264fc6db9881e8c25dbcf4dc8bd14ede9c96345ef0e0dc53a85ce12c22105dd"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/weapons/SK_Weapon_Rifle.glb"
+        }
+      ]
+    }
+  }
+}

@@ -1,6 +1,7 @@
 /**
  * 巫祝（shaman）：戴傩面、执法杖的施法者。保持 13–21 米横移；
  *  - 法阵：举杖 0.45 秒后在玩家脚下落下 3.5 米法阵（1.2 秒地面预警），到时结算伤害。
+ *    结算前巫祝被击杀 / 眩晕（或被清理）则法阵被驱散：预警圈撤掉，不结算伤害。
  *  - 护佑：每 8–11 秒引导 0.7 秒，为 10 米内友军加护盾（光束 + 扩散环）；
  *    身边没有需要护佑的友军时，会走向最近的需要者（通常是前线的近战）再施法。
  *
@@ -25,8 +26,9 @@ export const SHAMAN_DEF: EnemyDef = {
   damage: 22,
   coins: [3, 5],
   essence: 1,
-  headY: 1.7,
-  headRadius: 0.35,
+  // 头部 = 傩面 + 高冠（面具 1.50 → 1.87，宽 0.33；冠 1.83 → 2.19；细羽饰不算）；判定球随头骨移动
+  headY: 1.78,
+  headRadius: 0.27,
   knockbackResist: 0,
   color: 0xb070ff,
 };
@@ -59,6 +61,14 @@ const _chest = new THREE.Vector3();
 
 const mix = (a: number, b: number, k: number): number => a + (b - a) * k;
 
+/** 已落下、尚未结算的法阵：各项取消函数（预警圈、杖头连线、延时结算） */
+interface PendingCircle {
+  center: THREE.Vector3;
+  warning: () => void;
+  link: () => void;
+  resolve: () => void;
+}
+
 export class Shaman extends StandardEnemy {
   private rig!: HumanoidRig;
   private staff!: THREE.Group;
@@ -70,6 +80,7 @@ export class Shaman extends StandardEnemy {
   private windTime = CAST_WINDUP;
   private recoverTime = 0.6;
   private placed = false;
+  private pendingCircle: PendingCircle | null = null;
   private pLift = 0;
   private pTilt = 0;
 
@@ -113,9 +124,12 @@ export class Shaman extends StandardEnemy {
     for (let i = 0; i < 3; i++) {
       part(h, Geo.box(0.04, 0.42, 0.02, 'bottom'), flat(i === 1 ? C.trim : C.mask), 0, 0.5, -0.12, -0.2, 0, (i - 1) * 0.35);
     }
+    // 头心：0.86 + 0.64 + 0.28 = 1.78（与 SHAMAN_DEF.headY 一致），兼顾面具与高冠
+    this.setHeadAnchor(h, 0, 0.28, 0.02);
 
     // 法杖（挂在躯干右侧，抬举时整体上移前倾）
     const st = joint(t, -0.36, 0.05, 0.14);
+    st.name = 'staff'; // 挂点名：美术资产按它绑定（art/pipeline/registry.toml 的 blockout.attachment）
     this.staff = st;
     part(st, Geo.box(0.045, 1.75, 0.045), flat(C.staff), 0, 0.12, 0);
     part(st, Geo.torus(0.12, 0.02, 4, 12), flat(C.trim, { metal: 0.6 }), 0, 1.05, 0);
@@ -243,18 +257,20 @@ export class Shaman extends StandardEnemy {
     }
   }
 
-  /** 在玩家当前位置（落到地面）放下法阵，1.2 秒后结算 */
+  /** 在玩家当前位置（落到地面）放下法阵，1.2 秒后结算；结算前巫祝被打断则驱散（见 dispelCircle） */
   private placeCircle(): void {
     const ctx = this.ctx;
     const pl = ctx.player.position;
     const gy = ctx.world.groundHeight(pl.x, pl.z, pl.y + 0.1);
     const center = new THREE.Vector3(pl.x, Number.isFinite(gy) ? gy : pl.y, pl.z);
     const damage = this.def.damage * this.damageMult;
-    ctx.fx.groundWarning(center, CIRCLE_RADIUS, CIRCLE_DELAY, C.circle);
+    const warning = ctx.fx.groundWarning(center, CIRCLE_RADIUS, CIRCLE_DELAY, C.circle);
     ctx.audio.play('telegraph', { position: center, volume: 0.8 });
     this.staffTip(_tip);
-    ctx.fx.beam(_tip.clone(), center, C.circle, 0.05, 0.25);
-    ctx.tasks.delay(CIRCLE_DELAY, () => {
+    const link = ctx.fx.beam(_tip.clone(), center, C.circle, 0.05, 0.25);
+    let pending: PendingCircle | null = null;
+    const resolve = ctx.tasks.delay(CIRCLE_DELAY, () => {
+      if (this.pendingCircle === pending) this.pendingCircle = null;
       ctx.fx.ring(center, CIRCLE_RADIUS, C.circle, 0.45);
       _chest.set(center.x, center.y + 0.3, center.z);
       ctx.fx.burst(_chest, C.circle, 28, 6, 0.7, 0.14, -3);
@@ -262,6 +278,23 @@ export class Shaman extends StandardEnemy {
       ctx.audio.play('explosion', { position: center, volume: 0.55, pitch: 1.4 });
       zonePlayer(ctx, center, CIRCLE_RADIUS, damage, 'corrode', this);
     });
+    // 冷却（3 秒以上）远长于结算时间，同一时刻最多一个未结算的法阵
+    pending = { center, warning, link, resolve };
+    this.pendingCircle = pending;
+  }
+
+  /** 驱散未结算的法阵：撤掉预警圈与杖头连线、取消结算；fizzle 时在法阵中心冒一小团碎光 */
+  private dispelCircle(fizzle: boolean): void {
+    const c = this.pendingCircle;
+    if (!c) return;
+    this.pendingCircle = null;
+    c.resolve();
+    c.warning();
+    c.link();
+    if (fizzle) {
+      _chest.set(c.center.x, c.center.y + 0.3, c.center.z);
+      this.ctx.fx.burst(_chest, C.circle, 10, 2.2, 0.4, 0.08, -1);
+    }
   }
 
   private beginWard(): void {
@@ -299,8 +332,15 @@ export class Shaman extends StandardEnemy {
 
   private alliesNeedWard(): boolean {
     const list = this.ctx.enemies.queryRadius(this.position, WARD_RANGE, _scratch);
-    for (const e of list) if (this.needsWard(e)) return true;
-    return false;
+    let need = false;
+    for (const e of list) {
+      if (this.needsWard(e)) {
+        need = true;
+        break;
+      }
+    }
+    _scratch.length = 0;
+    return need;
   }
 
   private castWard(): void {
@@ -321,12 +361,16 @@ export class Shaman extends StandardEnemy {
       e.maxShield = Math.max(e.maxShield, base + amount);
       e.shield = Math.min(e.maxShield, e.shield + amount);
       e.getBodyCenter(_chest);
-      ctx.fx.beam(_tip.clone(), _chest.clone(), C.ward, 0.06, 0.4);
+      ctx.fx.beam(_tip, _chest, C.ward, 0.06, 0.4);
       ctx.fx.burst(_chest, C.ward, 12, 2.5, 0.5, 0.09, -1);
     }
+    // 不留着已释放敌人的引用
+    _scratch.length = 0;
   }
 
   protected override cancelAttack(): void {
+    // 被击杀 / 眩晕 / 玩家死亡：已落下但未结算的法阵一并驱散
+    this.dispelCircle(true);
     this.glowTarget[0] = 0;
     this.glowTarget[1] = 0;
     this.wardTarget = null;
@@ -334,6 +378,12 @@ export class Shaman extends StandardEnemy {
       this.setState('move');
       this.rollCooldown(1, 1.8);
     }
+  }
+
+  protected override onDispose(): void {
+    // 换关清理：静默撤掉（场景马上清空，不再冒驱散碎光）
+    this.dispelCircle(false);
+    super.onDispose();
   }
 
   protected override pose(dt: number): void {

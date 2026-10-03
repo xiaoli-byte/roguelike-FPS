@@ -1,0 +1,1242 @@
+{
+  "id": "SK_Enemy_Marksman",
+  "display": "狙击手",
+  "kind": "skeletal",
+  "class": "enemy_standard",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 16:40:28",
+          "files": {
+            "BO_SK_Enemy_Marksman_v001.glb": {
+              "path": "00_blockout/BO_SK_Enemy_Marksman_v001.glb",
+              "sha256": "03400eee63c88a2673a2aef3ca24c620b5fe35f9ca82040dcd0e0f4985a2a787"
+            },
+            "BO_SK_Enemy_Marksman_v001.json": {
+              "path": "00_blockout/BO_SK_Enemy_Marksman_v001.json",
+              "sha256": "021d7c48899ff075baae27b1986376d7831ab8fb802ddc698e505158a4e504b1"
+            },
+            "BO_SK_Enemy_Marksman_v001_views.json": {
+              "path": "00_blockout/BO_SK_Enemy_Marksman_v001_views.json",
+              "sha256": "cba6d5a3b9a343875780b913bfb5b40e46716346a45bab9f952afde3d3cd3b28"
+            },
+            "BO_SK_Enemy_Marksman_v001_sheet.png": {
+              "path": "00_blockout/BO_SK_Enemy_Marksman_v001_sheet.png",
+              "sha256": "cdd798e97fbe54dd4426a1cb9834dc8898277f8092285ac890533954befe476c"
+            },
+            "BO_SK_Enemy_Marksman_v001_front.png": {
+              "path": "00_blockout/BO_SK_Enemy_Marksman_v001_front.png",
+              "sha256": "147aa6c74133073128bfe3bf5fddeb9d78dfed0904e1463901c0f2ce09ad3d37"
+            },
+            "BO_SK_Enemy_Marksman_v001_left.png": {
+              "path": "00_blockout/BO_SK_Enemy_Marksman_v001_left.png",
+              "sha256": "5517426cb42b47fd696a511c8f0e50b36867bf2a8b1ab7e1324cbfb21dbf62e9"
+            },
+            "BO_SK_Enemy_Marksman_v001_back.png": {
+              "path": "00_blockout/BO_SK_Enemy_Marksman_v001_back.png",
+              "sha256": "e29e52648b39694bd7b112cd525f97347b491c6af40b9f41fe30d6420f7913d7"
+            },
+            "BO_SK_Enemy_Marksman_v001_right.png": {
+              "path": "00_blockout/BO_SK_Enemy_Marksman_v001_right.png",
+              "sha256": "7f1f119377c28b0d35130b58cb1ac41add84982575f28285ef4043c979f73f2e"
+            }
+          },
+          "source": {
+            "kind": "enemy",
+            "id": "marksman"
+          },
+          "joints": 13,
+          "bounds": {
+            "min": [
+              -0.6101654877883318,
+              -7.152557379708213e-09,
+              -0.379360409828324
+            ],
+            "max": [
+              0.6101654877883318,
+              1.9837365245622123,
+              1.484999976158142
+            ]
+          },
+          "blender_seconds": 5.4
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 16:42:45",
+          "files": {
+            "CN_SK_Enemy_Marksman_v001_sheet.png": {
+              "path": "01_concept/CN_SK_Enemy_Marksman_v001_sheet.png",
+              "sha256": "7e23c8aa2e8ab8543a17b5afd06eb4073e16ce3b533348b5c332153623b0e760"
+            },
+            "CN_SK_Enemy_Marksman_v001_front.png": {
+              "path": "01_concept/CN_SK_Enemy_Marksman_v001_front.png",
+              "sha256": "5e64f7cdbf126835405698e44682786b5d99ac87f045f97225f6b1225040420f"
+            },
+            "CN_SK_Enemy_Marksman_v001_left.png": {
+              "path": "01_concept/CN_SK_Enemy_Marksman_v001_left.png",
+              "sha256": "c40872384db647770c2eb1453ecddd18ea43d278d54ae30606c6f755897e9a24"
+            },
+            "CN_SK_Enemy_Marksman_v001_back.png": {
+              "path": "01_concept/CN_SK_Enemy_Marksman_v001_back.png",
+              "sha256": "29eda598d6f685579757e52c2b718e509dde7502fef695eaae1ea636f7809278"
+            },
+            "CN_SK_Enemy_Marksman_v001_right.png": {
+              "path": "01_concept/CN_SK_Enemy_Marksman_v001_right.png",
+              "sha256": "b672af1bd3e0c0fa1617339c39c1e774d4cee853b454ddb3442b3569bd17a351"
+            },
+            "CN_SK_Enemy_Marksman_v001_compare.png": {
+              "path": "01_concept/CN_SK_Enemy_Marksman_v001_compare.png",
+              "sha256": "086883ea99d2224bfa270a04d1f9f063b066adc1a0f1cfa0438fc5eccb3f581f"
+            },
+            "CN_SK_Enemy_Marksman_v001_prompt.txt": {
+              "path": "01_concept/CN_SK_Enemy_Marksman_v001_prompt.txt",
+              "sha256": "514d41788df86b5fc3375d2b017cb15149a71471bdae2682588de4b2cf25e797"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1893,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 435
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3073
+          },
+          "request_id": "req_c3cbffa6b0bf4907abe8e8e56188356a",
+          "seconds": 30.9,
+          "registration": {
+            "front": {
+              "scale": 0.9362,
+              "offset": [
+                36,
+                164
+              ],
+              "iou": 0.847,
+              "iou_unregistered_scale": 0.909
+            },
+            "left": {
+              "scale": 0.9238,
+              "offset": [
+                146,
+                175
+              ],
+              "iou": 0.77,
+              "iou_unregistered_scale": 0.9102
+            },
+            "back": {
+              "scale": 0.9362,
+              "offset": [
+                36,
+                164
+              ],
+              "iou": 0.817,
+              "iou_unregistered_scale": 0.909
+            },
+            "right": {
+              "scale": 0.9102,
+              "offset": [
+                152,
+                185
+              ],
+              "iou": 0.762,
+              "iou_unregistered_scale": 0.9102
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.848,
+            "left": 0.774,
+            "back": 0.818,
+            "right": 0.765
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "单片镜位置正确；注意围巾尾与程序化随动围巾可能重复，成品阶段复查",
+            "time": "2026-10-03 16:43:03"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 16:55:07",
+          "files": {
+            "HP_SK_Enemy_Marksman_v001_input.png": {
+              "path": "02_highpoly/HP_SK_Enemy_Marksman_v001_input.png",
+              "sha256": "1fd10e5213a2a1d2c917ddea9cbfc0304167333159e8b50e99537abd4d705ca1"
+            },
+            "HP_SK_Enemy_Marksman_v001.glb": {
+              "path": "02_highpoly/HP_SK_Enemy_Marksman_v001.glb",
+              "sha256": "6298b19d62eebc5222173269a00a02d20d05f1fd47c37e0a3bd8af228c0961ca"
+            }
+          },
+          "from_concept": 1,
+          "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+          "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "checkpoint": "hunyuan_3d_v2.1.safetensors",
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "crop": [
+              36,
+              164,
+              477,
+              883
+            ],
+            "scale": 1.2105702364394992,
+            "offset": [
+              245,
+              77
+            ]
+          },
+          "seconds": 436.7,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 9.4
+        }
+      ]
+    },
+    "build": {
+      "current": 7,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 16:56:17",
+          "files": {
+            "SK_Enemy_Marksman_v001.blend": {
+              "path": "03_work/SK_Enemy_Marksman_v001.blend",
+              "sha256": "e11918576f2e28c92e63569fb2550220611b8b89fdd5ccd7d91f21463a9ed470"
+            },
+            "SK_Enemy_Marksman_v001.glb": {
+              "path": "04_export/SK_Enemy_Marksman_v001.glb",
+              "sha256": "da3d79a63198656e5dcfbb80fe3cb439698930c74a6ff47d7639947e8b5370ed"
+            },
+            "SK_Enemy_Marksman_v001_metrics.json": {
+              "path": "03_work/SK_Enemy_Marksman_v001_metrics.json",
+              "sha256": "f869b43db059284c996ddce08ec3aea2bdc1677351a8c287e8b267be733dc5d1"
+            },
+            "T_Enemy_Marksman_BC.png": {
+              "path": "03_work/textures_v001/T_Enemy_Marksman_BC.png",
+              "sha256": "1e34d49ad6dc94a49e590665ab97bc09b13e293411e52c5c9c7699ee8eb84570"
+            },
+            "T_Enemy_Marksman_N.png": {
+              "path": "03_work/textures_v001/T_Enemy_Marksman_N.png",
+              "sha256": "ee172748bea673e232d6317b4b80ff8ed3890082e1bce74b09848183abd15601"
+            },
+            "T_Enemy_Marksman_ORM.png": {
+              "path": "03_work/textures_v001/T_Enemy_Marksman_ORM.png",
+              "sha256": "6c5253fea0994832108eb3fac47f9850a25a84f0c74307cb91f33ea62df8421c"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1
+          },
+          "align_iou": 0.863,
+          "uncovered_ratio": 0.3794,
+          "lods": [
+            {
+              "tris": 8000,
+              "verts": 3996
+            },
+            {
+              "tris": 3500,
+              "verts": 1746
+            },
+            {
+              "tris": 1500,
+              "verts": 746
+            }
+          ],
+          "export_kb": 413.3,
+          "seconds": 70.1,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 17:12:04",
+          "files": {
+            "SK_Enemy_Marksman_v002.blend": {
+              "path": "03_work/SK_Enemy_Marksman_v002.blend",
+              "sha256": "bdd6c85b0b55dfaeb0716ce760589130296e14ed38c01761bb4b4b387c0accc9"
+            },
+            "SK_Enemy_Marksman_v002.glb": {
+              "path": "04_export/SK_Enemy_Marksman_v002.glb",
+              "sha256": "e808bbf0ede3bc5caacc672e20d33df97fedd88f44d55d5eba7cbc082e6b4646"
+            },
+            "SK_Enemy_Marksman_v002_metrics.json": {
+              "path": "03_work/SK_Enemy_Marksman_v002_metrics.json",
+              "sha256": "956b0def6818552b2e4d06a9e4c05cfba53a0815fcbccffd2ca295285a5bf5e6"
+            },
+            "T_Enemy_Marksman_BC.png": {
+              "path": "03_work/textures_v002/T_Enemy_Marksman_BC.png",
+              "sha256": "1e34d49ad6dc94a49e590665ab97bc09b13e293411e52c5c9c7699ee8eb84570"
+            },
+            "T_Enemy_Marksman_N.png": {
+              "path": "03_work/textures_v002/T_Enemy_Marksman_N.png",
+              "sha256": "ee172748bea673e232d6317b4b80ff8ed3890082e1bce74b09848183abd15601"
+            },
+            "T_Enemy_Marksman_ORM.png": {
+              "path": "03_work/textures_v002/T_Enemy_Marksman_ORM.png",
+              "sha256": "6c5253fea0994832108eb3fac47f9850a25a84f0c74307cb91f33ea62df8421c"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1
+          },
+          "align_iou": 0.863,
+          "uncovered_ratio": 0.3794,
+          "lods": [
+            {
+              "tris": 8000,
+              "verts": 3996
+            },
+            {
+              "tris": 3500,
+              "verts": 1746
+            },
+            {
+              "tris": 1500,
+              "verts": 746
+            }
+          ],
+          "export_kb": 411.4,
+          "seconds": 33.0,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 17:15:58",
+          "files": {
+            "SK_Enemy_Marksman_v003.blend": {
+              "path": "03_work/SK_Enemy_Marksman_v003.blend",
+              "sha256": "5883715916d103730d6faad41a66983f39d561865617b6b71b60e9f23ae89944"
+            },
+            "SK_Enemy_Marksman_v003.glb": {
+              "path": "04_export/SK_Enemy_Marksman_v003.glb",
+              "sha256": "f3e4ed9e47964fd184c3c7878cd0fb7a87a60cf373d4b487bcccea68d7cf620f"
+            },
+            "SK_Enemy_Marksman_v003_metrics.json": {
+              "path": "03_work/SK_Enemy_Marksman_v003_metrics.json",
+              "sha256": "0f9a23a399ce59a6b8a9876a234acda7c6a277783a0a711c1421c73240ea95e8"
+            },
+            "T_Enemy_Marksman_BC.png": {
+              "path": "03_work/textures_v003/T_Enemy_Marksman_BC.png",
+              "sha256": "1e34d49ad6dc94a49e590665ab97bc09b13e293411e52c5c9c7699ee8eb84570"
+            },
+            "T_Enemy_Marksman_N.png": {
+              "path": "03_work/textures_v003/T_Enemy_Marksman_N.png",
+              "sha256": "ee172748bea673e232d6317b4b80ff8ed3890082e1bce74b09848183abd15601"
+            },
+            "T_Enemy_Marksman_ORM.png": {
+              "path": "03_work/textures_v003/T_Enemy_Marksman_ORM.png",
+              "sha256": "6c5253fea0994832108eb3fac47f9850a25a84f0c74307cb91f33ea62df8421c"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1
+          },
+          "align_iou": 0.863,
+          "uncovered_ratio": 0.3794,
+          "lods": [
+            {
+              "tris": 8000,
+              "verts": 3996
+            },
+            {
+              "tris": 3500,
+              "verts": 1746
+            },
+            {
+              "tris": 1500,
+              "verts": 746
+            }
+          ],
+          "export_kb": 411.0,
+          "seconds": 33.1,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 17:59:19",
+          "files": {
+            "SK_Enemy_Marksman_v004.blend": {
+              "path": "03_work/SK_Enemy_Marksman_v004.blend",
+              "sha256": "0467852407a79411498f806aaf43f6567f674ce9d91b8cc91364bc5842b08926"
+            },
+            "SK_Enemy_Marksman_v004.glb": {
+              "path": "04_export/SK_Enemy_Marksman_v004.glb",
+              "sha256": "daf2e8b04cf823b30304645b5e41d29b14e2239b41b18df2af0d2b050d0b8fb4"
+            },
+            "SK_Enemy_Marksman_v004_metrics.json": {
+              "path": "03_work/SK_Enemy_Marksman_v004_metrics.json",
+              "sha256": "86fe79da8015dd280e8363af4bebfe0798886175d3f81fc96df09670084d5952"
+            },
+            "T_Enemy_Marksman_BC.png": {
+              "path": "03_work/textures_v004/T_Enemy_Marksman_BC.png",
+              "sha256": "1e34d49ad6dc94a49e590665ab97bc09b13e293411e52c5c9c7699ee8eb84570"
+            },
+            "T_Enemy_Marksman_MetalMask.png": {
+              "path": "03_work/textures_v004/T_Enemy_Marksman_MetalMask.png",
+              "sha256": "0f4d44b2d184e03735cd9fe14cab458efa3806b2576742efe95ad89668452160"
+            },
+            "T_Enemy_Marksman_N.png": {
+              "path": "03_work/textures_v004/T_Enemy_Marksman_N.png",
+              "sha256": "ee172748bea673e232d6317b4b80ff8ed3890082e1bce74b09848183abd15601"
+            },
+            "T_Enemy_Marksman_ORM.png": {
+              "path": "03_work/textures_v004/T_Enemy_Marksman_ORM.png",
+              "sha256": "a3d24fc3de32490dadb4c51110a517e6f4adee0d0befcd3f025bde37081b5797"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 2
+          },
+          "align_iou": 0.863,
+          "uncovered_ratio": 0.3794,
+          "lods": [
+            {
+              "tris": 8000,
+              "verts": 3996
+            },
+            {
+              "tris": 3500,
+              "verts": 1746
+            },
+            {
+              "tris": 1500,
+              "verts": 746
+            }
+          ],
+          "export_kb": 419.9,
+          "seconds": 39.6,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 5,
+          "created": "2026-10-03 18:39:56",
+          "files": {
+            "SK_Enemy_Marksman_v005.blend": {
+              "path": "03_work/SK_Enemy_Marksman_v005.blend",
+              "sha256": "f2f11c10a830515a7dd5a7e230da58ef01749eea080412d536f6b24c42351c33"
+            },
+            "SK_Enemy_Marksman_v005.glb": {
+              "path": "04_export/SK_Enemy_Marksman_v005.glb",
+              "sha256": "cdb42227834abc6bf3b3d5997c2273b6a3573b2c1a1bfb1917c82f02bdec9cf6"
+            },
+            "SK_Enemy_Marksman_v005_metrics.json": {
+              "path": "03_work/SK_Enemy_Marksman_v005_metrics.json",
+              "sha256": "25ae26c6be7e20339abb0a03d2b87891d528248428686f32814d563ac3405ec6"
+            },
+            "T_Enemy_Marksman_BC.png": {
+              "path": "03_work/textures_v005/T_Enemy_Marksman_BC.png",
+              "sha256": "1e34d49ad6dc94a49e590665ab97bc09b13e293411e52c5c9c7699ee8eb84570"
+            },
+            "T_Enemy_Marksman_MetalMask.png": {
+              "path": "03_work/textures_v005/T_Enemy_Marksman_MetalMask.png",
+              "sha256": "0f4d44b2d184e03735cd9fe14cab458efa3806b2576742efe95ad89668452160"
+            },
+            "T_Enemy_Marksman_N.png": {
+              "path": "03_work/textures_v005/T_Enemy_Marksman_N.png",
+              "sha256": "ee172748bea673e232d6317b4b80ff8ed3890082e1bce74b09848183abd15601"
+            },
+            "T_Enemy_Marksman_ORM.png": {
+              "path": "03_work/textures_v005/T_Enemy_Marksman_ORM.png",
+              "sha256": "a3d24fc3de32490dadb4c51110a517e6f4adee0d0befcd3f025bde37081b5797"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 2
+          },
+          "align_iou": 0.863,
+          "uncovered_ratio": 0.3794,
+          "lods": [
+            {
+              "tris": 8000,
+              "verts": 3996
+            },
+            {
+              "tris": 3500,
+              "verts": 1746
+            },
+            {
+              "tris": 1500,
+              "verts": 746
+            }
+          ],
+          "export_kb": 419.5,
+          "seconds": 39.6,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 6,
+          "created": "2026-10-03 19:52:38",
+          "files": {
+            "SK_Enemy_Marksman_v006.blend": {
+              "path": "03_work/SK_Enemy_Marksman_v006.blend",
+              "sha256": "5b98c2ad806a4ebbc6f7b6afd51df1f76acff39e7acf91a1f40286832b2ef019"
+            },
+            "SK_Enemy_Marksman_v006.glb": {
+              "path": "04_export/SK_Enemy_Marksman_v006.glb",
+              "sha256": "3cee20d3a28134e2860623ca0ca9f7fcd368e7c37cbca2465761d7a0b15dc4bb"
+            },
+            "SK_Enemy_Marksman_v006_metrics.json": {
+              "path": "03_work/SK_Enemy_Marksman_v006_metrics.json",
+              "sha256": "b7319c10ed2f793d01479c7056b0d18ac3d4b0880504e3612836c21b22728adc"
+            },
+            "T_Enemy_Marksman_BC.png": {
+              "path": "03_work/textures_v006/T_Enemy_Marksman_BC.png",
+              "sha256": "d41e2c8ed79c16df2b2b530c8c5eec2fce2c9f91f888c697ecbc7f3c5c17444c"
+            },
+            "T_Enemy_Marksman_MetalMask.png": {
+              "path": "03_work/textures_v006/T_Enemy_Marksman_MetalMask.png",
+              "sha256": "dd0b6e2383dc9d9f17d212cc60a4d356019ff5695b161e2ffbcf975a919ec73e"
+            },
+            "T_Enemy_Marksman_N.png": {
+              "path": "03_work/textures_v006/T_Enemy_Marksman_N.png",
+              "sha256": "b7c9f45f6c0e63b408e0ef4df12584432f49c3e3e5d21a9c51faa2ce81fdb605"
+            },
+            "T_Enemy_Marksman_ORM.png": {
+              "path": "03_work/textures_v006/T_Enemy_Marksman_ORM.png",
+              "sha256": "60868290d08a2481239ee67888dd5f76a57229b592aee0853173a5dff3f57316"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 2
+          },
+          "align_iou": 0.863,
+          "uncovered_ratio": 0.3794,
+          "lods": [
+            {
+              "tris": 8000,
+              "verts": 3996
+            },
+            {
+              "tris": 3500,
+              "verts": 1746
+            },
+            {
+              "tris": 1500,
+              "verts": 746
+            }
+          ],
+          "export_kb": 335.8,
+          "seconds": 51.5,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 7,
+          "created": "2026-10-03 20:15:09",
+          "files": {
+            "SK_Enemy_Marksman_v007.blend": {
+              "path": "03_work/SK_Enemy_Marksman_v007.blend",
+              "sha256": "7e8b72b46fbee5e93b94bce604c5af6e03b8284f1aba7da6a9e129062ad826d0"
+            },
+            "SK_Enemy_Marksman_v007.glb": {
+              "path": "04_export/SK_Enemy_Marksman_v007.glb",
+              "sha256": "34fe6fb39514dfaee1bf393c4010ccaf9917e6aa113d99049537ae83f53c4cd7"
+            },
+            "SK_Enemy_Marksman_v007_metrics.json": {
+              "path": "03_work/SK_Enemy_Marksman_v007_metrics.json",
+              "sha256": "956b5db640a58901c70b5405f4db0218e04266a24155322eec1c12a39d86f952"
+            },
+            "T_Enemy_Marksman_BC.png": {
+              "path": "03_work/textures_v007/T_Enemy_Marksman_BC.png",
+              "sha256": "6164756017ab0a77b09fd0b579382deb449c4333f8820345dc532ddeeeb8ae16"
+            },
+            "T_Enemy_Marksman_MetalMask.png": {
+              "path": "03_work/textures_v007/T_Enemy_Marksman_MetalMask.png",
+              "sha256": "58fd8558c2e6b483e33a8fd38c6de04ed24b4ab2dd812199a770ba465025b729"
+            },
+            "T_Enemy_Marksman_N.png": {
+              "path": "03_work/textures_v007/T_Enemy_Marksman_N.png",
+              "sha256": "e591e6f27f0ec6105cb599ffa4c8e2404be95d37e7a985cdf83f9d458d86cd11"
+            },
+            "T_Enemy_Marksman_ORM.png": {
+              "path": "03_work/textures_v007/T_Enemy_Marksman_ORM.png",
+              "sha256": "bf9f7b2ebbd30aa3fefe648f61c368225dbc5c2504ca836e95cf2d1f82ed8a23"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 2
+          },
+          "align_iou": 0.863,
+          "uncovered_ratio": 0.3794,
+          "lods": [
+            {
+              "tris": 8000,
+              "verts": 3996
+            },
+            {
+              "tris": 3500,
+              "verts": 1746
+            },
+            {
+              "tris": 1500,
+              "verts": 746
+            }
+          ],
+          "export_kb": 327.0,
+          "seconds": 42.1,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 7,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 16:56:17",
+          "files": {
+            "SK_Enemy_Marksman_v001_validation.json": {
+              "path": "05_review/SK_Enemy_Marksman_v001_validation.json",
+              "sha256": "834bf4fce6b2f973c9225e72a9207399baab2334e792c43f9d5282ad7149dd10"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 17:12:04",
+          "files": {
+            "SK_Enemy_Marksman_v002_validation.json": {
+              "path": "05_review/SK_Enemy_Marksman_v002_validation.json",
+              "sha256": "6a727245a8af494ff4c38806710f6ba137a0f554e51946bc68a5820725673cd4"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 17:15:58",
+          "files": {
+            "SK_Enemy_Marksman_v003_validation.json": {
+              "path": "05_review/SK_Enemy_Marksman_v003_validation.json",
+              "sha256": "6a727245a8af494ff4c38806710f6ba137a0f554e51946bc68a5820725673cd4"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 0,
+          "passed": true
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 17:59:19",
+          "files": {
+            "SK_Enemy_Marksman_v004_validation.json": {
+              "path": "05_review/SK_Enemy_Marksman_v004_validation.json",
+              "sha256": "11bbe4ff9ef6808a699c9875f67376b0c71e34394c92100afc5aea9c345d98a5"
+            }
+          },
+          "from_build": 4,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 5,
+          "created": "2026-10-03 18:39:56",
+          "files": {
+            "SK_Enemy_Marksman_v005_validation.json": {
+              "path": "05_review/SK_Enemy_Marksman_v005_validation.json",
+              "sha256": "71edf0c40c5bee856f66e43cd3610e7864a8766998e946898aded5969618c484"
+            }
+          },
+          "from_build": 5,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 6,
+          "created": "2026-10-03 19:52:38",
+          "files": {
+            "SK_Enemy_Marksman_v006_validation.json": {
+              "path": "05_review/SK_Enemy_Marksman_v006_validation.json",
+              "sha256": "af390df141ee2212135674de09f338961d83422a0d324a29a95dd757077d2803"
+            }
+          },
+          "from_build": 6,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 7,
+          "created": "2026-10-03 20:15:09",
+          "files": {
+            "SK_Enemy_Marksman_v007_validation.json": {
+              "path": "05_review/SK_Enemy_Marksman_v007_validation.json",
+              "sha256": "88d7c19a346d80c25e69ad90d8eab2d4f2aaa2b49abe163264300d7af1201322"
+            }
+          },
+          "from_build": 7,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 7,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 16:56:30",
+          "files": {
+            "SK_Enemy_Marksman_v001_review.png": {
+              "path": "05_review/SK_Enemy_Marksman_v001_review.png",
+              "sha256": "fe8b5c6617f8b57b2fd6f51e831448cd362afced371bce5c559988fa242f1bc0"
+            }
+          },
+          "from_build": 1,
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "还原度高；长风衣随腿拉伸属正常范围",
+            "time": "2026-10-03 16:59:19"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 17:12:13",
+          "files": {
+            "SK_Enemy_Marksman_v002_review.png": {
+              "path": "05_review/SK_Enemy_Marksman_v002_review.png",
+              "sha256": "9aab76e9a2e21cd826b162a992284cd15d88ea3ced30a2ada249a20df7c58b89"
+            }
+          },
+          "from_build": 2
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 17:16:07",
+          "files": {
+            "SK_Enemy_Marksman_v003_review.png": {
+              "path": "05_review/SK_Enemy_Marksman_v003_review.png",
+              "sha256": "6d46db068fc921d8ff509c5ad1adfa9ce7651778d6c633c771552f9b8ad665b5"
+            }
+          },
+          "from_build": 3,
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "终版管线重建（刚性头部+衣摆平均+代理权重传递）；四个姿势形变正常",
+            "time": "2026-10-03 17:16:33"
+          }
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 17:59:28",
+          "files": {
+            "SK_Enemy_Marksman_v004_review.png": {
+              "path": "05_review/SK_Enemy_Marksman_v004_review.png",
+              "sha256": "efbd28e34359c6f314a0f72caa2365428b2f4ca09f4de00c4a197508dae1c53e"
+            }
+          },
+          "from_build": 4,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0001,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.083,
+              "p1_compress": 0.918
+            },
+            "walk": {
+              "bad_edge_ratio": 0.0099,
+              "stretch_ratio": 0.0074,
+              "p99_stretch": 1.666,
+              "p1_compress": 0.687
+            },
+            "attack": {
+              "bad_edge_ratio": 0.0145,
+              "stretch_ratio": 0.0049,
+              "p99_stretch": 1.594,
+              "p1_compress": 0.556
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "材质分区（红蓝编码遮罩）重建：金属/非金属分区正确；姿势形变正常（Brute 形变提示位于腰甲与腿交界，可接受）",
+            "time": "2026-10-03 18:02:20"
+          }
+        },
+        {
+          "version": 5,
+          "created": "2026-10-03 18:40:05",
+          "files": {
+            "SK_Enemy_Marksman_v005_review.png": {
+              "path": "05_review/SK_Enemy_Marksman_v005_review.png",
+              "sha256": "99634a37d7481131f96cdb2a64b2dc29eea5d9d1e9c3c09320343e6187b95a75"
+            }
+          },
+          "from_build": 5,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0003,
+              "stretch_ratio": 0.0001,
+              "p99_stretch": 1.08,
+              "p1_compress": 0.883
+            },
+            "walk": {
+              "bad_edge_ratio": 0.01,
+              "stretch_ratio": 0.007,
+              "p99_stretch": 1.642,
+              "p1_compress": 0.654
+            },
+            "attack": {
+              "bad_edge_ratio": 0.0153,
+              "stretch_ratio": 0.0122,
+              "p99_stretch": 2.005,
+              "p1_compress": 0.701
+            }
+          },
+          "auto_flags": [
+            "attack 拉伸 p99 2.005、过度拉伸边 1.2%"
+          ],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "手臂影响范围约束后重建：抬手不再带动躯干/衣甲；极端举臂姿势腋下拉伸可接受",
+            "time": "2026-10-03 18:43:36"
+          }
+        },
+        {
+          "version": 6,
+          "created": "2026-10-03 19:52:47",
+          "files": {
+            "SK_Enemy_Marksman_v006_review.png": {
+              "path": "05_review/SK_Enemy_Marksman_v006_review.png",
+              "sha256": "1202cc4e7e7391fe221c922c298eb10c3f41b2dfb0fb1e3051de917335c0baaa"
+            }
+          },
+          "from_build": 6,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0003,
+              "stretch_ratio": 0.0001,
+              "p99_stretch": 1.079,
+              "p1_compress": 0.884,
+              "stretch_pairs": {
+                "armL ↔ torso": 1
+              }
+            },
+            "walk": {
+              "bad_edge_ratio": 0.0101,
+              "stretch_ratio": 0.0072,
+              "p99_stretch": 1.664,
+              "p1_compress": 0.657,
+              "stretch_pairs": {
+                "legL ↔ legL": 55,
+                "kneeL ↔ legL": 11,
+                "hips ↔ legL": 10,
+                "kneeR ↔ legR": 8,
+                "legR ↔ legR": 6,
+                "armR ↔ armR": 3
+              }
+            },
+            "attack": {
+              "bad_edge_ratio": 0.0151,
+              "stretch_ratio": 0.012,
+              "p99_stretch": 1.978,
+              "p1_compress": 0.705,
+              "stretch_pairs": {
+                "armR ↔ armR": 70,
+                "armR ↔ torso": 42,
+                "torso ↔ torso": 36,
+                "legL ↔ legL": 9,
+                "hips ↔ legL": 1
+              }
+            }
+          },
+          "auto_flags": [
+            "attack 拉伸 p99 1.978、过度拉伸边 1.2%"
+          ]
+        },
+        {
+          "version": 7,
+          "created": "2026-10-03 20:15:18",
+          "files": {
+            "SK_Enemy_Marksman_v007_review.png": {
+              "path": "05_review/SK_Enemy_Marksman_v007_review.png",
+              "sha256": "37f202650be7c632e34da1540d022d3f0a2fe74c98220da7f1a6202dfad95276"
+            }
+          },
+          "from_build": 7,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0003,
+              "stretch_ratio": 0.0001,
+              "p99_stretch": 1.079,
+              "p1_compress": 0.884,
+              "stretch_pairs": {
+                "armL ↔ torso": 1
+              }
+            },
+            "walk": {
+              "bad_edge_ratio": 0.0101,
+              "stretch_ratio": 0.0072,
+              "p99_stretch": 1.664,
+              "p1_compress": 0.657,
+              "stretch_pairs": {
+                "legL ↔ legL": 54,
+                "kneeL ↔ legL": 11,
+                "hips ↔ legL": 10,
+                "kneeR ↔ legR": 8,
+                "legR ↔ legR": 6,
+                "armR ↔ armR": 3
+              }
+            },
+            "attack": {
+              "bad_edge_ratio": 0.0151,
+              "stretch_ratio": 0.012,
+              "p99_stretch": 1.997,
+              "p1_compress": 0.705,
+              "stretch_pairs": {
+                "armR ↔ armR": 70,
+                "armR ↔ torso": 42,
+                "torso ↔ torso": 36,
+                "legL ↔ legL": 9,
+                "hips ↔ legL": 1
+              }
+            }
+          },
+          "auto_flags": [
+            "attack 拉伸 p99 1.997、过度拉伸边 1.2%"
+          ],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "UV 两方案择优重建（纹素密度不低于上一发布版）；几何、蒙皮与上一已审版本一致",
+            "time": "2026-10-03 20:37:34"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 5,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 16:59:20",
+          "files": {
+            "SK_Enemy_Marksman.glb": {
+              "path": "@root/public/assets/characters/SK_Enemy_Marksman.glb",
+              "sha256": "da3d79a63198656e5dcfbb80fe3cb439698930c74a6ff47d7639947e8b5370ed"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/characters/SK_Enemy_Marksman.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 17:16:34",
+          "files": {
+            "SK_Enemy_Marksman.glb": {
+              "path": "@root/public/assets/characters/SK_Enemy_Marksman.glb",
+              "sha256": "f3e4ed9e47964fd184c3c7878cd0fb7a87a60cf373d4b487bcccea68d7cf620f"
+            }
+          },
+          "from_build": 3,
+          "url": "assets/characters/SK_Enemy_Marksman.glb"
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 18:02:22",
+          "files": {
+            "SK_Enemy_Marksman.glb": {
+              "path": "@root/public/assets/characters/SK_Enemy_Marksman.glb",
+              "sha256": "daf2e8b04cf823b30304645b5e41d29b14e2239b41b18df2af0d2b050d0b8fb4"
+            }
+          },
+          "from_build": 4,
+          "url": "assets/characters/SK_Enemy_Marksman.glb"
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 18:43:38",
+          "files": {
+            "SK_Enemy_Marksman.glb": {
+              "path": "@root/public/assets/characters/SK_Enemy_Marksman.glb",
+              "sha256": "cdb42227834abc6bf3b3d5997c2273b6a3573b2c1a1bfb1917c82f02bdec9cf6"
+            }
+          },
+          "from_build": 5,
+          "url": "assets/characters/SK_Enemy_Marksman.glb"
+        },
+        {
+          "version": 5,
+          "created": "2026-10-03 20:37:35",
+          "files": {
+            "SK_Enemy_Marksman.glb": {
+              "path": "@root/public/assets/characters/SK_Enemy_Marksman.glb",
+              "sha256": "34fe6fb39514dfaee1bf393c4010ccaf9917e6aa113d99049537ae83f53c4cd7"
+            }
+          },
+          "from_build": 7,
+          "url": "assets/characters/SK_Enemy_Marksman.glb"
+        }
+      ]
+    },
+    "matid": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:46:50",
+          "files": {
+            "MID_SK_Enemy_Marksman_v001_sheet.png": {
+              "path": "01_concept/MID_SK_Enemy_Marksman_v001_sheet.png",
+              "sha256": "02b3392e60a7a67b12b9ad3fa392d643ac5e6e8513034f6ac7d70190eebf7387"
+            },
+            "MID_SK_Enemy_Marksman_v001_front.png": {
+              "path": "01_concept/MID_SK_Enemy_Marksman_v001_front.png",
+              "sha256": "52cb4cae7266ea5871f5a077eb4876229614734a44f9f9f68c0c5fd7f52cbec3"
+            },
+            "MID_SK_Enemy_Marksman_v001_left.png": {
+              "path": "01_concept/MID_SK_Enemy_Marksman_v001_left.png",
+              "sha256": "5f7db67ebdd6ae006bd960748b5f7227a65d7214fc81b6b2eab4a6f74ef94497"
+            },
+            "MID_SK_Enemy_Marksman_v001_back.png": {
+              "path": "01_concept/MID_SK_Enemy_Marksman_v001_back.png",
+              "sha256": "654041cada51b0a757a801ea70b78cc31161ea873302e4524edb14e01c99cdc5"
+            },
+            "MID_SK_Enemy_Marksman_v001_right.png": {
+              "path": "01_concept/MID_SK_Enemy_Marksman_v001_right.png",
+              "sha256": "e9cbcee1e225d0e698b4e36d0ffe581dfba1735cc6f8a72092cfa61794d8ed37"
+            },
+            "MID_SK_Enemy_Marksman_v001_compare.png": {
+              "path": "01_concept/MID_SK_Enemy_Marksman_v001_compare.png",
+              "sha256": "ab3b6a1b489969886d0f04aacf807daa3b03ac621aabd91c0798e02aee17a87a"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1622,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 164
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2802
+          },
+          "request_id": "req_711930d6706e4eaa85b523b9dae2fc4e",
+          "seconds": 29.4,
+          "registration": {
+            "front": {
+              "scale": 0.9338,
+              "offset": [
+                32,
+                164
+              ],
+              "iou": 0.969,
+              "iou_unregistered_scale": 0.9338
+            },
+            "left": {
+              "scale": 0.9171,
+              "offset": [
+                144,
+                175
+              ],
+              "iou": 0.956,
+              "iou_unregistered_scale": 0.9171
+            },
+            "back": {
+              "scale": 0.9326,
+              "offset": [
+                32,
+                164
+              ],
+              "iou": 0.971,
+              "iou_unregistered_scale": 0.9326
+            },
+            "right": {
+              "scale": 0.9054,
+              "offset": [
+                149,
+                185
+              ],
+              "iou": 0.96,
+              "iou_unregistered_scale": 0.9054
+            }
+          },
+          "metal_ratio": {
+            "front": 0.175,
+            "left": 0.116,
+            "back": 0.106,
+            "right": 0.116
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 17:50:32",
+          "files": {
+            "MID_SK_Enemy_Marksman_v002_sheet.png": {
+              "path": "01_concept/MID_SK_Enemy_Marksman_v002_sheet.png",
+              "sha256": "3d45cc04120b1141991b24a93a8a91064428b5e15e5762f1b993e08f08dfc55d"
+            },
+            "MID_SK_Enemy_Marksman_v002_front.png": {
+              "path": "01_concept/MID_SK_Enemy_Marksman_v002_front.png",
+              "sha256": "24fb91e992c9bb22a5225c68aa87ebfa688550e7de5629855519d334ed7c9914"
+            },
+            "MID_SK_Enemy_Marksman_v002_left.png": {
+              "path": "01_concept/MID_SK_Enemy_Marksman_v002_left.png",
+              "sha256": "8592244ff0b3bd00960f70aefa511a660aa2299b9f93648552f4057765c03dde"
+            },
+            "MID_SK_Enemy_Marksman_v002_back.png": {
+              "path": "01_concept/MID_SK_Enemy_Marksman_v002_back.png",
+              "sha256": "af1c85e98133775edbc882a4e14d0c4e71470cbac2b1623d8c66045318f66f66"
+            },
+            "MID_SK_Enemy_Marksman_v002_right.png": {
+              "path": "01_concept/MID_SK_Enemy_Marksman_v002_right.png",
+              "sha256": "0e9f52f5d7e628e6d0b9c21588ebd8869e8fa8e598c3003a9b0b6d412b6eb1e0"
+            },
+            "MID_SK_Enemy_Marksman_v002_compare.png": {
+              "path": "01_concept/MID_SK_Enemy_Marksman_v002_compare.png",
+              "sha256": "6ab7aed05806100ee4dee9df2f3ae68f43a50323a03efcb1577d2eb38ca5ffb9"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1699,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 241
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2879
+          },
+          "request_id": "req_7d6574457eca4f32b616d54b81c59a73",
+          "seconds": 29.8,
+          "registration": {
+            "front": {
+              "scale": 0.9301,
+              "offset": [
+                32,
+                164
+              ],
+              "iou": 0.953,
+              "iou_unregistered_scale": 0.9301,
+              "purity": 0.994
+            },
+            "left": {
+              "scale": 0.9159,
+              "offset": [
+                141,
+                175
+              ],
+              "iou": 0.924,
+              "iou_unregistered_scale": 0.9159,
+              "purity": 0.997
+            },
+            "back": {
+              "scale": 0.9289,
+              "offset": [
+                28,
+                164
+              ],
+              "iou": 0.951,
+              "iou_unregistered_scale": 0.9289,
+              "purity": 0.997
+            },
+            "right": {
+              "scale": 0.9043,
+              "offset": [
+                146,
+                185
+              ],
+              "iou": 0.925,
+              "iou_unregistered_scale": 0.9043,
+              "purity": 0.997
+            }
+          },
+          "metal_ratio": {
+            "front": 0.04,
+            "left": 0.024,
+            "back": 0.018,
+            "right": 0.025
+          }
+        }
+      ]
+    }
+  }
+}

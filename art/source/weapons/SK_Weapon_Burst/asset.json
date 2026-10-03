@@ -1,0 +1,588 @@
+{
+  "id": "SK_Weapon_Burst",
+  "display": "三叠点射枪",
+  "kind": "skeletal",
+  "class": "weapon_fp",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:07:10",
+          "files": {
+            "BO_SK_Weapon_Burst_v001.glb": {
+              "path": "00_blockout/BO_SK_Weapon_Burst_v001.glb",
+              "sha256": "5622b417b3345cb1eaef0a6710430e6d804be6060371aca154aff8d2c06783b6"
+            },
+            "BO_SK_Weapon_Burst_v001.json": {
+              "path": "00_blockout/BO_SK_Weapon_Burst_v001.json",
+              "sha256": "dd3b97a8d121ab103205f38c7f23597f2f5a7c9f5fb09a3e7c4a9a5429ae35a3"
+            },
+            "BO_SK_Weapon_Burst_v001_views.json": {
+              "path": "00_blockout/BO_SK_Weapon_Burst_v001_views.json",
+              "sha256": "e2f64320c5cc574077df7e1bfe8077507f973e16150b5d9304c503792266885e"
+            },
+            "BO_SK_Weapon_Burst_v001_sheet.png": {
+              "path": "00_blockout/BO_SK_Weapon_Burst_v001_sheet.png",
+              "sha256": "974681b2ea71858ce4790e13734906e09b953a4d24726054b61ea0a8d970f7ab"
+            },
+            "BO_SK_Weapon_Burst_v001_front.png": {
+              "path": "00_blockout/BO_SK_Weapon_Burst_v001_front.png",
+              "sha256": "ca63da8c1a0ea07b452f408a703b821b3fe0588de8e9efac51dda139c51fe28b"
+            },
+            "BO_SK_Weapon_Burst_v001_left.png": {
+              "path": "00_blockout/BO_SK_Weapon_Burst_v001_left.png",
+              "sha256": "400a1bfc31fdbca11d303ad3f89fdeaab5c978d428d04b8b00a8ddf99ed7e7c0"
+            },
+            "BO_SK_Weapon_Burst_v001_back.png": {
+              "path": "00_blockout/BO_SK_Weapon_Burst_v001_back.png",
+              "sha256": "ee6544bd8a76ff2115bf79ebc769793ca75302219345fccb433fb8ed90751688"
+            },
+            "BO_SK_Weapon_Burst_v001_right.png": {
+              "path": "00_blockout/BO_SK_Weapon_Burst_v001_right.png",
+              "sha256": "154c78b14fbb5acbdd6fce4a0b57c417db7ea98ba089e921d2d9a2889e940be0"
+            }
+          },
+          "source": {
+            "kind": "weapon",
+            "id": "burst"
+          },
+          "joints": 4,
+          "bounds": {
+            "min": [
+              -0.03500000014901161,
+              -0.11522703214892008,
+              -0.43499999977648257
+            ],
+            "max": [
+              0.03500000014901161,
+              0.11499999966472388,
+              0.17999999966472388
+            ]
+          },
+          "blender_seconds": 6.7
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:10:27",
+          "files": {
+            "CN_SK_Weapon_Burst_v001_sheet.png": {
+              "path": "01_concept/CN_SK_Weapon_Burst_v001_sheet.png",
+              "sha256": "dc1a03fcfb1b0950931e0eb60f59e31e6c9108a264cd8091a0e3a69cf2fd0861"
+            },
+            "CN_SK_Weapon_Burst_v001_front.png": {
+              "path": "01_concept/CN_SK_Weapon_Burst_v001_front.png",
+              "sha256": "7cc9d6cfd4c4637b07d78b04b38226beeab247ce73591f3d86206a536bcecc3e"
+            },
+            "CN_SK_Weapon_Burst_v001_left.png": {
+              "path": "01_concept/CN_SK_Weapon_Burst_v001_left.png",
+              "sha256": "09b9fb84f138f01b5b454d821d42e936c4ccc3ad97694e4c1f0322e3e015dfba"
+            },
+            "CN_SK_Weapon_Burst_v001_back.png": {
+              "path": "01_concept/CN_SK_Weapon_Burst_v001_back.png",
+              "sha256": "97e2bdac81844e2362640ed9fa1541c3a8d620920873d73bc126e00fbd99b150"
+            },
+            "CN_SK_Weapon_Burst_v001_right.png": {
+              "path": "01_concept/CN_SK_Weapon_Burst_v001_right.png",
+              "sha256": "17151585b9d3da06d1d25890b6d1a8dd9866ffa7ec6be941d877f5e64a6d487c"
+            },
+            "CN_SK_Weapon_Burst_v001_compare.png": {
+              "path": "01_concept/CN_SK_Weapon_Burst_v001_compare.png",
+              "sha256": "fcc89bd094ca4ccdd8c10ef89d8f1d080a051aea6fdc1ad7852781a3acd9c88f"
+            },
+            "CN_SK_Weapon_Burst_v001_prompt.txt": {
+              "path": "01_concept/CN_SK_Weapon_Burst_v001_prompt.txt",
+              "sha256": "7c0ab206489c4a318d123859248a9b1167cc192f00522cd8e233200ea6c088e0"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1942,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 484
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3122
+          },
+          "request_id": "req_4d3b2d78b1be4bc5b5706d633e97e130",
+          "seconds": 30.5,
+          "registration": {
+            "front": {
+              "scale": 0.9647,
+              "offset": [
+                85,
+                82
+              ],
+              "iou": 0.9,
+              "iou_unregistered_scale": 0.9946
+            },
+            "left": {
+              "scale": 0.9946,
+              "offset": [
+                201,
+                55
+              ],
+              "iou": 0.934,
+              "iou_unregistered_scale": 0.9946
+            },
+            "back": {
+              "scale": 0.9647,
+              "offset": [
+                85,
+                82
+              ],
+              "iou": 0.899,
+              "iou_unregistered_scale": 0.9946
+            },
+            "right": {
+              "scale": 0.9807,
+              "offset": [
+                200,
+                69
+              ],
+              "iou": 0.929,
+              "iou_unregistered_scale": 0.9956
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.901,
+            "left": 0.936,
+            "back": 0.903,
+            "right": 0.932
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "东方奇幻配色与纹饰统一；剪影与白模吻合（IoU ≥ 0.79）",
+            "time": "2026-10-03 21:15:08"
+          }
+        }
+      ]
+    },
+    "matid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:16:56",
+          "files": {
+            "MID_SK_Weapon_Burst_v001_sheet.png": {
+              "path": "01_concept/MID_SK_Weapon_Burst_v001_sheet.png",
+              "sha256": "866a19fbf79e7f6e892c3a9e9c9e9a5dbe47881d36f0dcc338c644901de0f2f6"
+            },
+            "MID_SK_Weapon_Burst_v001_front.png": {
+              "path": "01_concept/MID_SK_Weapon_Burst_v001_front.png",
+              "sha256": "9b2091070da52681010f0d90768d018fe127affc01d27445a3b2f8247c90cec4"
+            },
+            "MID_SK_Weapon_Burst_v001_left.png": {
+              "path": "01_concept/MID_SK_Weapon_Burst_v001_left.png",
+              "sha256": "b898758bf4c44c704ad48e0ff36951f95d00baacc05b347f509f56649e3a3f9c"
+            },
+            "MID_SK_Weapon_Burst_v001_back.png": {
+              "path": "01_concept/MID_SK_Weapon_Burst_v001_back.png",
+              "sha256": "616f2369fe8bcb932739f4bc6f82a5e9d3c3c0a1ed3011ac4f26eb8654a9b083"
+            },
+            "MID_SK_Weapon_Burst_v001_right.png": {
+              "path": "01_concept/MID_SK_Weapon_Burst_v001_right.png",
+              "sha256": "56a212ee5ff12ffdfd3eaa4f9c041ed062e156821ec410f0be119ea65d2b6600"
+            },
+            "MID_SK_Weapon_Burst_v001_compare.png": {
+              "path": "01_concept/MID_SK_Weapon_Burst_v001_compare.png",
+              "sha256": "0f6e261efd95c43812af32a0c44066d1578aae9629c3977804539e0fd522de6d"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1699,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 241
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2879
+          },
+          "request_id": "req_0091bb72ded040898e1f73b352587c22",
+          "seconds": 26.9,
+          "registration": {
+            "front": {
+              "scale": 0.963,
+              "offset": [
+                82,
+                83
+              ],
+              "iou": 0.974,
+              "iou_unregistered_scale": 0.963,
+              "purity": 0.95
+            },
+            "left": {
+              "scale": 0.9924,
+              "offset": [
+                198,
+                56
+              ],
+              "iou": 0.965,
+              "iou_unregistered_scale": 0.9924,
+              "purity": 0.94
+            },
+            "back": {
+              "scale": 0.963,
+              "offset": [
+                82,
+                83
+              ],
+              "iou": 0.968,
+              "iou_unregistered_scale": 0.963,
+              "purity": 0.948
+            },
+            "right": {
+              "scale": 0.9783,
+              "offset": [
+                199,
+                69
+              ],
+              "iou": 0.973,
+              "iou_unregistered_scale": 0.9783,
+              "purity": 0.927
+            }
+          },
+          "metal_ratio": {
+            "front": 0.753,
+            "left": 0.686,
+            "back": 0.755,
+            "right": 0.866
+          }
+        }
+      ]
+    },
+    "emid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:22:16",
+          "files": {
+            "EID_SK_Weapon_Burst_v001_sheet.png": {
+              "path": "01_concept/EID_SK_Weapon_Burst_v001_sheet.png",
+              "sha256": "314ba69615f652fdd31559c739eeb2949434dd4ac73a7bbaf490530c8cc6bb6a"
+            },
+            "EID_SK_Weapon_Burst_v001_front.png": {
+              "path": "01_concept/EID_SK_Weapon_Burst_v001_front.png",
+              "sha256": "c799fa92e6d281411a346f71b7a8ca36683e1a21d4d06bc122d2b548d43d41dd"
+            },
+            "EID_SK_Weapon_Burst_v001_left.png": {
+              "path": "01_concept/EID_SK_Weapon_Burst_v001_left.png",
+              "sha256": "401f9bf56a973612a82ae4dda6c28478820cac45d58c0274ab373bba622ebd82"
+            },
+            "EID_SK_Weapon_Burst_v001_back.png": {
+              "path": "01_concept/EID_SK_Weapon_Burst_v001_back.png",
+              "sha256": "25cf01e7dfd88c63ca46f750e0283556b0c8110ee2609ffa941c10d11732d6a6"
+            },
+            "EID_SK_Weapon_Burst_v001_right.png": {
+              "path": "01_concept/EID_SK_Weapon_Burst_v001_right.png",
+              "sha256": "285e35d1cae1880973e8425b56a8bc6aeee20bd0cb92cd8637b912fcd1875ff6"
+            },
+            "EID_SK_Weapon_Burst_v001_compare.png": {
+              "path": "01_concept/EID_SK_Weapon_Burst_v001_compare.png",
+              "sha256": "dc62a4c02023889025ad20175035aeb83faa45293ecbaa7a390aaa85976f2d6f"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1713,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 255
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2893
+          },
+          "request_id": "req_bb44c52a37a84d1c999b264e46f722b4",
+          "seconds": 28.3,
+          "registration": {
+            "front": {
+              "scale": 0.9641,
+              "offset": [
+                80,
+                83
+              ],
+              "iou": 0.964,
+              "iou_unregistered_scale": 0.9641,
+              "purity": 0.994
+            },
+            "left": {
+              "scale": 0.9935,
+              "offset": [
+                199,
+                56
+              ],
+              "iou": 0.969,
+              "iou_unregistered_scale": 0.9935,
+              "purity": 1.0
+            },
+            "back": {
+              "scale": 0.963,
+              "offset": [
+                80,
+                83
+              ],
+              "iou": 0.959,
+              "iou_unregistered_scale": 0.963,
+              "purity": 0.994
+            },
+            "right": {
+              "scale": 0.9793,
+              "offset": [
+                198,
+                69
+              ],
+              "iou": 0.958,
+              "iou_unregistered_scale": 0.9793,
+              "purity": 1.0
+            }
+          },
+          "emissive_ratio": {
+            "front": 0.095,
+            "left": 0.0,
+            "back": 0.094,
+            "right": 0.0
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:34:08",
+          "files": {
+            "HP_SK_Weapon_Burst_v001_input_front.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Burst_v001_input_front.png",
+              "sha256": "15c0c3203eadbf1fce142b37f170f588be7f4e6a00abfdf651735eb940acd972"
+            },
+            "HP_SK_Weapon_Burst_v001_input_left.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Burst_v001_input_left.png",
+              "sha256": "ed1746c00cc9c45afb21aa3d6fe4ea9eb59036d1b8deeebb3c9547fbad90242b"
+            },
+            "HP_SK_Weapon_Burst_v001_input_back.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Burst_v001_input_back.png",
+              "sha256": "b5379b281b0ebd3c52249c50f5b6be19340e37f7ab9093a3f814b3f6883fcde2"
+            },
+            "HP_SK_Weapon_Burst_v001_input_right.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Burst_v001_input_right.png",
+              "sha256": "a5a3f3c2b97e46b9cac26c30da3217bf9b7c7bd0c82a3a3707c1051b5196d446"
+            },
+            "HP_SK_Weapon_Burst_v001.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Burst_v001.glb",
+              "sha256": "7f91697e0de827a78c2039c12c8a2cbd3a0b150572b061c78afe3bdb33e96c69"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -281,
+              -25,
+              793,
+              1050
+            ],
+            "scale": 0.9534450651769087
+          },
+          "seconds": 142.9,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 4.1
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:34:40",
+          "files": {
+            "SK_Weapon_Burst_v001.blend": {
+              "path": "03_work/SK_Weapon_Burst_v001.blend",
+              "sha256": "6e6a3ab12a23c30e864310185ad66136ef432d7af3783394401d4646411217aa"
+            },
+            "SK_Weapon_Burst_v001.glb": {
+              "path": "04_export/SK_Weapon_Burst_v001.glb",
+              "sha256": "ac9f53ad697dc52ebcd39fecb76bdedab51177ab3bbd94d1e9ee7bce95500ea3"
+            },
+            "SK_Weapon_Burst_v001_metrics.json": {
+              "path": "03_work/SK_Weapon_Burst_v001_metrics.json",
+              "sha256": "24c5bd0182b42f5d21581c3d4ba708cfc0a793ebd83aff0f025515fd08af0fbe"
+            },
+            "T_Weapon_Burst_BC.png": {
+              "path": "03_work/textures_v001/T_Weapon_Burst_BC.png",
+              "sha256": "dd799ee84c25ed5336fe2f61496c2d78462c680d73510445cee1362ef0ebcc84"
+            },
+            "T_Weapon_Burst_E.png": {
+              "path": "03_work/textures_v001/T_Weapon_Burst_E.png",
+              "sha256": "01b699314fd867c1a65277b32704428ff89759b798ac62696902c27c97189645"
+            },
+            "T_Weapon_Burst_MetalMask.png": {
+              "path": "03_work/textures_v001/T_Weapon_Burst_MetalMask.png",
+              "sha256": "bb2d8c049bf980a51f06c2993672d8a27804e252f266ad6e8cc8d5ddc188969e"
+            },
+            "T_Weapon_Burst_N.png": {
+              "path": "03_work/textures_v001/T_Weapon_Burst_N.png",
+              "sha256": "597477ccaf932bdba3729e32fac2102877e769b1dd3b9cad8f7d74c770a12089"
+            },
+            "T_Weapon_Burst_ORM.png": {
+              "path": "03_work/textures_v001/T_Weapon_Burst_ORM.png",
+              "sha256": "823fd989cb13d7f36a2601333d5aebc6480142977bb9f57507499cff61adf4ea"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1,
+            "emid": 1
+          },
+          "align_iou": 0.917,
+          "uncovered_ratio": 0.1308,
+          "lods": [
+            {
+              "tris": 11996,
+              "verts": 5996
+            },
+            {
+              "tris": 2996,
+              "verts": 1496
+            }
+          ],
+          "export_kb": 447.4,
+          "seconds": 32.3,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:34:40",
+          "files": {
+            "SK_Weapon_Burst_v001_validation.json": {
+              "path": "05_review/SK_Weapon_Burst_v001_validation.json",
+              "sha256": "fa0083a9bd1147d387946d0156123712b0ba1f7909f9b30375bb8a35559435ed"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:34:50",
+          "files": {
+            "SK_Weapon_Burst_v001_review.png": {
+              "path": "05_review/SK_Weapon_Burst_v001_review.png",
+              "sha256": "cb9e459eb2c9ce00d1ddeba7440f462bf3c532a42d73fb5fcd9389de006597f7"
+            }
+          },
+          "from_build": 1,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "刚体部件 + 发光分区；三轴尺寸与白模吻合（步枪宽度 +50% 为概念机匣偏厚，外观无异常）",
+            "time": "2026-10-03 21:58:32"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:58:32",
+          "files": {
+            "SK_Weapon_Burst.glb": {
+              "path": "@root/public/assets/weapons/SK_Weapon_Burst.glb",
+              "sha256": "ac9f53ad697dc52ebcd39fecb76bdedab51177ab3bbd94d1e9ee7bce95500ea3"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/weapons/SK_Weapon_Burst.glb"
+        }
+      ]
+    }
+  }
+}

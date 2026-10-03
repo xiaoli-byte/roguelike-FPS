@@ -1,0 +1,136 @@
+{
+  "steps": {
+    "导入清理": 2.3,
+    "对齐": 1.8,
+    "低模与 UV": 13.2,
+    "投影着色": 17.9,
+    "烘焙": 7.7,
+    "LOD": 0.0,
+    "导出": 2.0
+  },
+  "highpoly": {
+    "faces_raw": 266404,
+    "faces": 144778,
+    "verts": 144780,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.872,
+    "iou_per_view": {
+      "front": 0.917,
+      "left": 0.815,
+      "back": 0.915,
+      "right": 0.816
+    },
+    "height_m": 0.0893,
+    "blockout_height_m": 0.8488
+  },
+  "uv": {
+    "smart_islands": 177,
+    "charts": 31,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 1.2019,
+    "density_merged": 1.244
+  },
+  "projection": {
+    "uncovered_ratio": 0.0732
+  },
+  "bake_device": "OPTIX",
+  "material_id": {
+    "metal_texel_ratio": 0.7327
+  },
+  "textures": {
+    "T_EnemyWeapon_Mace_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_EnemyWeapon_Mace_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_EnemyWeapon_Mace_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "presentation": [
+    [
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ]
+  ],
+  "lods": [
+    {
+      "name": "SM_EnemyWeapon_Mace_LOD0",
+      "tris": 3000,
+      "verts": 1502,
+      "uv_min": [
+        0.00201526191085577,
+        0.002015296835452318
+      ],
+      "uv_max": [
+        0.9979846477508545,
+        0.9979846477508545
+      ],
+      "uv_utilization": 0.621,
+      "bbox_min": [
+        -0.2091,
+        -0.7298,
+        -0.217
+      ],
+      "bbox_max": [
+        0.2102,
+        0.0893,
+        0.2175
+      ]
+    },
+    {
+      "name": "SM_EnemyWeapon_Mace_LOD1",
+      "tris": 1000,
+      "verts": 502,
+      "uv_min": [
+        0.0034721512347459793,
+        0.002015296835452318
+      ],
+      "uv_max": [
+        0.9930964112281799,
+        0.9965400695800781
+      ],
+      "uv_utilization": 0.576,
+      "bbox_min": [
+        -0.2091,
+        -0.7286,
+        -0.2174
+      ],
+      "bbox_max": [
+        0.2114,
+        0.0911,
+        0.2175
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\attachments\\SM_EnemyWeapon_Mace\\04_export\\SM_EnemyWeapon_Mace_v004.glb",
+    "bytes": 197628
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\attachments\\SM_EnemyWeapon_Mace\\03_work\\SM_EnemyWeapon_Mace_v004.blend",
+  "total_seconds": 44.9,
+  "_seconds": 49.8
+}

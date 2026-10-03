@@ -1,0 +1,588 @@
+{
+  "id": "SK_Weapon_Swarm",
+  "display": "蜂群飞弹",
+  "kind": "skeletal",
+  "class": "weapon_fp",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:08:15",
+          "files": {
+            "BO_SK_Weapon_Swarm_v001.glb": {
+              "path": "00_blockout/BO_SK_Weapon_Swarm_v001.glb",
+              "sha256": "5b17626a64df30c3241219cfcaa83b5f2ab5ad38372c1c1cd0daf3b58f126e1e"
+            },
+            "BO_SK_Weapon_Swarm_v001.json": {
+              "path": "00_blockout/BO_SK_Weapon_Swarm_v001.json",
+              "sha256": "a190c97ef359bbc9445778d9dfff7fb9a9c1990f7c7e170bd2eb04410379ec12"
+            },
+            "BO_SK_Weapon_Swarm_v001_views.json": {
+              "path": "00_blockout/BO_SK_Weapon_Swarm_v001_views.json",
+              "sha256": "b58a77e4e98ebe2974a8fd8d7a385dc3809af25af81e12624e582c4256b33184"
+            },
+            "BO_SK_Weapon_Swarm_v001_sheet.png": {
+              "path": "00_blockout/BO_SK_Weapon_Swarm_v001_sheet.png",
+              "sha256": "ae0aa42b859ce93982dac6f5a417403231a1669128d01d5db70cb5a923f326c5"
+            },
+            "BO_SK_Weapon_Swarm_v001_front.png": {
+              "path": "00_blockout/BO_SK_Weapon_Swarm_v001_front.png",
+              "sha256": "c3bd7664378ad998cd21f20efaa5f6b53389f211d87cb960ae1b4e52c9f9c11c"
+            },
+            "BO_SK_Weapon_Swarm_v001_left.png": {
+              "path": "00_blockout/BO_SK_Weapon_Swarm_v001_left.png",
+              "sha256": "d1d211b9715b8eda8585f9c4e5b68c45392f5de27179f5b887542db7cb658e58"
+            },
+            "BO_SK_Weapon_Swarm_v001_back.png": {
+              "path": "00_blockout/BO_SK_Weapon_Swarm_v001_back.png",
+              "sha256": "b7a15d07f49f1a21aafae57d27701ac28a5f5131f309dc93d156a56df96e1400"
+            },
+            "BO_SK_Weapon_Swarm_v001_right.png": {
+              "path": "00_blockout/BO_SK_Weapon_Swarm_v001_right.png",
+              "sha256": "52d84c2adf6b2566dcadeb5807b0515a7a256d02426e5659f605ccc7915e4459"
+            }
+          },
+          "source": {
+            "kind": "weapon",
+            "id": "swarm"
+          },
+          "joints": 3,
+          "bounds": {
+            "min": [
+              -0.07000000029802322,
+              -0.11022703214892009,
+              -0.2819999997764826
+            ],
+            "max": [
+              0.07000000029802322,
+              0.18999999955296518,
+              0.1399999986588955
+            ]
+          },
+          "blender_seconds": 6.9
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:14:15",
+          "files": {
+            "CN_SK_Weapon_Swarm_v001_sheet.png": {
+              "path": "01_concept/CN_SK_Weapon_Swarm_v001_sheet.png",
+              "sha256": "cd29c95785719631cdcb13ac50201e3275c119e2f079114ff81e85392d1b17c9"
+            },
+            "CN_SK_Weapon_Swarm_v001_front.png": {
+              "path": "01_concept/CN_SK_Weapon_Swarm_v001_front.png",
+              "sha256": "306a66db39b3003ae4cdd0b53aa69b25c4ae487fc150d89b0838f72020080be2"
+            },
+            "CN_SK_Weapon_Swarm_v001_left.png": {
+              "path": "01_concept/CN_SK_Weapon_Swarm_v001_left.png",
+              "sha256": "82a36cfd5f10ab38ed9d55dd1445ef0619499fbb27988d4824959aaf02979bd8"
+            },
+            "CN_SK_Weapon_Swarm_v001_back.png": {
+              "path": "01_concept/CN_SK_Weapon_Swarm_v001_back.png",
+              "sha256": "7d8d43f58ab85761cc535f94def61625f4fab43f9d8c816747e1e8c46ec3fcf0"
+            },
+            "CN_SK_Weapon_Swarm_v001_right.png": {
+              "path": "01_concept/CN_SK_Weapon_Swarm_v001_right.png",
+              "sha256": "4f93b8e496481d916379c00b75333b67f2ebc5cfee74cb0c524acea78171eb8a"
+            },
+            "CN_SK_Weapon_Swarm_v001_compare.png": {
+              "path": "01_concept/CN_SK_Weapon_Swarm_v001_compare.png",
+              "sha256": "8d0d9a746eac9def1b74504a54c646b5b679900c599a3ba611bcffaccadc0a5a"
+            },
+            "CN_SK_Weapon_Swarm_v001_prompt.txt": {
+              "path": "01_concept/CN_SK_Weapon_Swarm_v001_prompt.txt",
+              "sha256": "76cc63c658c15d1b53348e04dbb07e62ff9e2cfd659203edf45650fad62aa512"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1937,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 479
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3117
+          },
+          "request_id": "req_cb1634ac690744cca2d0fc4f0212a21c",
+          "seconds": 31.6,
+          "registration": {
+            "front": {
+              "scale": 0.813,
+              "offset": [
+                54,
+                152
+              ],
+              "iou": 0.798,
+              "iou_unregistered_scale": 0.767
+            },
+            "left": {
+              "scale": 0.7949,
+              "offset": [
+                146,
+                172
+              ],
+              "iou": 0.932,
+              "iou_unregistered_scale": 0.7607
+            },
+            "back": {
+              "scale": 0.813,
+              "offset": [
+                34,
+                152
+              ],
+              "iou": 0.799,
+              "iou_unregistered_scale": 0.767
+            },
+            "right": {
+              "scale": 0.7949,
+              "offset": [
+                146,
+                172
+              ],
+              "iou": 0.925,
+              "iou_unregistered_scale": 0.7607
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.798,
+            "left": 0.929,
+            "back": 0.799,
+            "right": 0.926
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "东方奇幻配色与纹饰统一；剪影与白模吻合（IoU ≥ 0.79）",
+            "time": "2026-10-03 21:15:11"
+          }
+        }
+      ]
+    },
+    "matid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:20:44",
+          "files": {
+            "MID_SK_Weapon_Swarm_v001_sheet.png": {
+              "path": "01_concept/MID_SK_Weapon_Swarm_v001_sheet.png",
+              "sha256": "765070857d62fae4e564c2ba4d9a28cd5927d92e19cf2db1c6feab02c1456269"
+            },
+            "MID_SK_Weapon_Swarm_v001_front.png": {
+              "path": "01_concept/MID_SK_Weapon_Swarm_v001_front.png",
+              "sha256": "d866dec2230e4c57691dae7bdb54f96bc62bfb0308653163dbe954d723aac522"
+            },
+            "MID_SK_Weapon_Swarm_v001_left.png": {
+              "path": "01_concept/MID_SK_Weapon_Swarm_v001_left.png",
+              "sha256": "76bea4c5e1b35ea37843ad5a537ccec3b4fd87e06d773eea2d62c7989ce8f303"
+            },
+            "MID_SK_Weapon_Swarm_v001_back.png": {
+              "path": "01_concept/MID_SK_Weapon_Swarm_v001_back.png",
+              "sha256": "fc1091677652b76534ce10c73776716ec1af2f6f4fb121f1920cd7ff7f650e97"
+            },
+            "MID_SK_Weapon_Swarm_v001_right.png": {
+              "path": "01_concept/MID_SK_Weapon_Swarm_v001_right.png",
+              "sha256": "69bcd3282c816199e1959470220166be358eb95371ec7190945d46120c485911"
+            },
+            "MID_SK_Weapon_Swarm_v001_compare.png": {
+              "path": "01_concept/MID_SK_Weapon_Swarm_v001_compare.png",
+              "sha256": "49d3b070ad1bb8b6b5d05f28ea4b8d231e823dc0b0286dd3fe44470062bcb853"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1699,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 241
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2879
+          },
+          "request_id": "req_bdd81119029c48ebb65acb436c181f0e",
+          "seconds": 31.0,
+          "registration": {
+            "front": {
+              "scale": 0.8098,
+              "offset": [
+                54,
+                152
+              ],
+              "iou": 0.987,
+              "iou_unregistered_scale": 0.8098,
+              "purity": 0.934
+            },
+            "left": {
+              "scale": 0.7931,
+              "offset": [
+                146,
+                172
+              ],
+              "iou": 0.996,
+              "iou_unregistered_scale": 0.7931,
+              "purity": 0.957
+            },
+            "back": {
+              "scale": 0.8107,
+              "offset": [
+                33,
+                152
+              ],
+              "iou": 0.985,
+              "iou_unregistered_scale": 0.8107,
+              "purity": 0.937
+            },
+            "right": {
+              "scale": 0.7922,
+              "offset": [
+                145,
+                172
+              ],
+              "iou": 0.986,
+              "iou_unregistered_scale": 0.7922,
+              "purity": 0.947
+            }
+          },
+          "metal_ratio": {
+            "front": 0.491,
+            "left": 0.377,
+            "back": 0.455,
+            "right": 0.4
+          }
+        }
+      ]
+    },
+    "emid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:25:49",
+          "files": {
+            "EID_SK_Weapon_Swarm_v001_sheet.png": {
+              "path": "01_concept/EID_SK_Weapon_Swarm_v001_sheet.png",
+              "sha256": "2dd3b9a598e444559c91cd0e3bbd4993bc50bf85075bd62f5328cf585b24bf20"
+            },
+            "EID_SK_Weapon_Swarm_v001_front.png": {
+              "path": "01_concept/EID_SK_Weapon_Swarm_v001_front.png",
+              "sha256": "d709e136da0da0a98e66ba544512fee0c39641a3cbc2047f2815d2daff56529c"
+            },
+            "EID_SK_Weapon_Swarm_v001_left.png": {
+              "path": "01_concept/EID_SK_Weapon_Swarm_v001_left.png",
+              "sha256": "b5b41d046be7a99e9888a1a8c2793c56e8da42899548af19cbd47ecd44d444b7"
+            },
+            "EID_SK_Weapon_Swarm_v001_back.png": {
+              "path": "01_concept/EID_SK_Weapon_Swarm_v001_back.png",
+              "sha256": "7b8134189da581c4a1f52e287c2bdfd6b7c01210c8bfe7d94ee8fd1e893f05e5"
+            },
+            "EID_SK_Weapon_Swarm_v001_right.png": {
+              "path": "01_concept/EID_SK_Weapon_Swarm_v001_right.png",
+              "sha256": "fa85c7b980e9640c41b11beac6e0b4d422ff84f0a8d7997e89d6a657e089bcd4"
+            },
+            "EID_SK_Weapon_Swarm_v001_compare.png": {
+              "path": "01_concept/EID_SK_Weapon_Swarm_v001_compare.png",
+              "sha256": "284649b2740f1ce55c813a85133ae92b3a4930a5f925ffd3cc212c3930725467"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1713,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 255
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2893
+          },
+          "request_id": "req_ac44493a399f4c4b82a0cfc523a0ac2d",
+          "seconds": 27.4,
+          "registration": {
+            "front": {
+              "scale": 0.8078,
+              "offset": [
+                54,
+                152
+              ],
+              "iou": 0.966,
+              "iou_unregistered_scale": 0.8078,
+              "purity": 0.996
+            },
+            "left": {
+              "scale": 0.7922,
+              "offset": [
+                146,
+                172
+              ],
+              "iou": 0.984,
+              "iou_unregistered_scale": 0.7922,
+              "purity": 1.0
+            },
+            "back": {
+              "scale": 0.8078,
+              "offset": [
+                32,
+                152
+              ],
+              "iou": 0.959,
+              "iou_unregistered_scale": 0.8078,
+              "purity": 1.0
+            },
+            "right": {
+              "scale": 0.7922,
+              "offset": [
+                146,
+                172
+              ],
+              "iou": 0.989,
+              "iou_unregistered_scale": 0.7922,
+              "purity": 1.0
+            }
+          },
+          "emissive_ratio": {
+            "front": 0.04,
+            "left": 0.0,
+            "back": 0.0,
+            "right": 0.0
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:56:19",
+          "files": {
+            "HP_SK_Weapon_Swarm_v001_input_front.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Swarm_v001_input_front.png",
+              "sha256": "f5f0e0cc5b74cb72c146d6b464c27144b5a9125b3f8b6da5e8499d98978407d4"
+            },
+            "HP_SK_Weapon_Swarm_v001_input_left.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Swarm_v001_input_left.png",
+              "sha256": "edd728a9a3ee80d6da661021acc012acd3adc20a6ceb32cb3edd7611dd608326"
+            },
+            "HP_SK_Weapon_Swarm_v001_input_back.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Swarm_v001_input_back.png",
+              "sha256": "d66709ea739d30cb15f567a867e9c0fbd0ea9b48e271add542d44c844974d779"
+            },
+            "HP_SK_Weapon_Swarm_v001_input_right.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Swarm_v001_input_right.png",
+              "sha256": "9de374a2584736439bee7ae9d56d330b6a08e90ba8509514fe97450063b40abe"
+            },
+            "HP_SK_Weapon_Swarm_v001.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Swarm_v001.glb",
+              "sha256": "4e567a6b5e52f6e34403bb0b8ee05eb6587061baaba0d9017b2d17843dd9b74d"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -150,
+              91,
+              662,
+              904
+            ],
+            "scale": 1.2610837438423645
+          },
+          "seconds": 172.4,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 9.0
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:57:12",
+          "files": {
+            "SK_Weapon_Swarm_v001.blend": {
+              "path": "03_work/SK_Weapon_Swarm_v001.blend",
+              "sha256": "4c0f66fa558dbb6519a1e9acbe71418c246b46e8491180dcd91dd04487106242"
+            },
+            "SK_Weapon_Swarm_v001.glb": {
+              "path": "04_export/SK_Weapon_Swarm_v001.glb",
+              "sha256": "9ba38f0210c968143f676d6b72561c6bc17824e9cc54e70c2bac0e5de43ff585"
+            },
+            "SK_Weapon_Swarm_v001_metrics.json": {
+              "path": "03_work/SK_Weapon_Swarm_v001_metrics.json",
+              "sha256": "733f0ef93652c8ba661081531b8643efcf09bc1bde6cd6e58e30baaa29c9861b"
+            },
+            "T_Weapon_Swarm_BC.png": {
+              "path": "03_work/textures_v001/T_Weapon_Swarm_BC.png",
+              "sha256": "db780cdddabbf4482da4eae5fd4b43e09feafdb1e50ef10df1ad920295f8f4d2"
+            },
+            "T_Weapon_Swarm_E.png": {
+              "path": "03_work/textures_v001/T_Weapon_Swarm_E.png",
+              "sha256": "2404450d660ef0dc75ec1c3c476d51e8f94033a49cc5dd5a54b541681c4112d2"
+            },
+            "T_Weapon_Swarm_MetalMask.png": {
+              "path": "03_work/textures_v001/T_Weapon_Swarm_MetalMask.png",
+              "sha256": "62402b41ed1f0791d001aba89a9565f16fb94ba8a1d5f4bd00758b6e9a76a311"
+            },
+            "T_Weapon_Swarm_N.png": {
+              "path": "03_work/textures_v001/T_Weapon_Swarm_N.png",
+              "sha256": "2b61172501bfc5a01d10733382e23274ccb33e814763b960c3848567d9458934"
+            },
+            "T_Weapon_Swarm_ORM.png": {
+              "path": "03_work/textures_v001/T_Weapon_Swarm_ORM.png",
+              "sha256": "6eb1bf65248a14f18a81ea9583bdcbbcc7d85cb16ab605c7d2e893ad7e3eb950"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1,
+            "emid": 1
+          },
+          "align_iou": 0.922,
+          "uncovered_ratio": 0.2394,
+          "lods": [
+            {
+              "tris": 12000,
+              "verts": 5982
+            },
+            {
+              "tris": 3000,
+              "verts": 1482
+            }
+          ],
+          "export_kb": 537.4,
+          "seconds": 53.6,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:57:12",
+          "files": {
+            "SK_Weapon_Swarm_v001_validation.json": {
+              "path": "05_review/SK_Weapon_Swarm_v001_validation.json",
+              "sha256": "31b5ff758183d845e87c9fe22a220b0a0bd544c342c1ec909947ef4ebb6f45ae"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:57:22",
+          "files": {
+            "SK_Weapon_Swarm_v001_review.png": {
+              "path": "05_review/SK_Weapon_Swarm_v001_review.png",
+              "sha256": "46d7736bdae27a289536fb1a284753c9b209b2ef3aa330a85f751db5803b558a"
+            }
+          },
+          "from_build": 1,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "刚体部件 + 发光分区；三轴尺寸与白模吻合（步枪宽度 +50% 为概念机匣偏厚，外观无异常）",
+            "time": "2026-10-03 21:58:37"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 21:58:38",
+          "files": {
+            "SK_Weapon_Swarm.glb": {
+              "path": "@root/public/assets/weapons/SK_Weapon_Swarm.glb",
+              "sha256": "9ba38f0210c968143f676d6b72561c6bc17824e9cc54e70c2bac0e5de43ff585"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/weapons/SK_Weapon_Swarm.glb"
+        }
+      ]
+    }
+  }
+}

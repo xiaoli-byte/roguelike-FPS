@@ -1,0 +1,189 @@
+{
+  "steps": {
+    "导入清理": 1.6,
+    "对齐": 0.6,
+    "低模与 UV": 6.1,
+    "投影着色": 15.6,
+    "烘焙": 4.7,
+    "LOD": 0.1,
+    "骨骼蒙皮": 0.2,
+    "导出": 0.8
+  },
+  "highpoly": {
+    "faces_raw": 442210,
+    "faces": 234888,
+    "verts": 234890,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.88,
+    "iou_per_view": {
+      "front": 0.92,
+      "left": 0.83,
+      "back": 0.917,
+      "right": 0.832
+    },
+    "height_m": 2.4227,
+    "blockout_height_m": 2.4136
+  },
+  "projection": {
+    "uncovered_ratio": 0.3426
+  },
+  "bake_device": "OPTIX",
+  "material_id": {
+    "metal_texel_ratio": 0.3529
+  },
+  "textures": {
+    "T_Enemy_Shaman_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Enemy_Shaman_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Enemy_Shaman_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "bind_pose": {
+    "armSpreadL": 0.35,
+    "armSpreadR": 0.3524,
+    "base": 0.45
+  },
+  "robe_verts": {
+    "SK_Enemy_Shaman_LOD0": 1308,
+    "SK_Enemy_Shaman_LOD1": 523,
+    "SK_Enemy_Shaman_LOD2": 220
+  },
+  "rigid_head_verts": {
+    "SK_Enemy_Shaman_LOD0": 928,
+    "SK_Enemy_Shaman_LOD1": 429,
+    "SK_Enemy_Shaman_LOD2": 186
+  },
+  "skin": {
+    "bones": [
+      "hips",
+      "torso",
+      "head",
+      "armL",
+      "elbowL",
+      "handL",
+      "armR",
+      "elbowR",
+      "handR",
+      "legL",
+      "kneeL",
+      "legR",
+      "kneeR"
+    ],
+    "per_lod": {
+      "SK_Enemy_Shaman_LOD0": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "heat_failed_initial": 0,
+        "weights_from": "bone_heat",
+        "unweighted_verts": 0
+      },
+      "SK_Enemy_Shaman_LOD1": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "heat_failed_initial": 0,
+        "weights_from": "bone_heat",
+        "unweighted_verts": 0
+      },
+      "SK_Enemy_Shaman_LOD2": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "heat_failed_initial": 0,
+        "weights_from": "bone_heat",
+        "unweighted_verts": 0
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SK_Enemy_Shaman_LOD0",
+      "tris": 7999,
+      "verts": 4002,
+      "uv_min": [
+        0.004312939941883087,
+        0.0043129026889801025
+      ],
+      "uv_max": [
+        0.9908301830291748,
+        0.9956871271133423
+      ],
+      "uv_utilization": 0.535,
+      "bbox_min": [
+        -0.6118,
+        -0.2941,
+        -0.0002
+      ],
+      "bbox_max": [
+        0.6112,
+        0.3607,
+        2.4227
+      ]
+    },
+    {
+      "name": "SK_Enemy_Shaman_LOD1",
+      "tris": 3500,
+      "verts": 1750,
+      "uv_min": [
+        0.0043620578944683075,
+        0.004412420094013214
+      ],
+      "uv_max": [
+        0.9908301830291748,
+        0.9956871271133423
+      ],
+      "uv_utilization": 0.513,
+      "bbox_min": [
+        -0.6124,
+        -0.2956,
+        0.0006
+      ],
+      "bbox_max": [
+        0.6124,
+        0.3614,
+        2.4219
+      ]
+    },
+    {
+      "name": "SK_Enemy_Shaman_LOD2",
+      "tris": 1500,
+      "verts": 750,
+      "uv_min": [
+        0.00439769122749567,
+        0.004681925289332867
+      ],
+      "uv_max": [
+        0.9899685382843018,
+        0.9952845573425293
+      ],
+      "uv_utilization": 0.478,
+      "bbox_min": [
+        -0.6117,
+        -0.2952,
+        0.0035
+      ],
+      "bbox_max": [
+        0.6102,
+        0.3617,
+        2.4229
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Enemy_Shaman\\04_export\\SK_Enemy_Shaman_v005.glb",
+    "bytes": 513180
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Enemy_Shaman\\03_work\\SK_Enemy_Shaman_v005.blend",
+  "total_seconds": 29.8,
+  "_seconds": 33.3
+}

@@ -1,0 +1,170 @@
+{
+  "steps": {
+    "导入清理": 3.4,
+    "对齐": 1.8,
+    "低模与 UV": 9.6,
+    "投影着色": 13.8,
+    "烘焙": 5.1,
+    "LOD": 0.0,
+    "骨骼蒙皮": 0.1,
+    "导出": 0.9
+  },
+  "highpoly": {
+    "faces_raw": 492428,
+    "faces": 248850,
+    "verts": 248800,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.809,
+    "iou_per_view": {
+      "front": 0.909,
+      "left": 0.701,
+      "back": 0.879,
+      "right": 0.699
+    },
+    "height_m": 1.8902,
+    "blockout_height_m": 1.9
+  },
+  "projection": {
+    "uncovered_ratio": 0.4665
+  },
+  "bake_device": "OPTIX",
+  "textures": {
+    "T_Enemy_Archer_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Enemy_Archer_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Enemy_Archer_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "bind_pose": {
+    "armSpreadL": 0.45,
+    "armSpreadR": 0.45,
+    "base": 0.45
+  },
+  "skin": {
+    "bones": [
+      "hips",
+      "torso",
+      "head",
+      "armL",
+      "elbowL",
+      "handL",
+      "armR",
+      "elbowR",
+      "handR",
+      "legL",
+      "kneeL",
+      "legR",
+      "kneeR"
+    ],
+    "per_lod": {
+      "SK_Enemy_Archer_LOD0": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "unweighted_verts": 0
+      },
+      "SK_Enemy_Archer_LOD1": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "unweighted_verts": 0
+      },
+      "SK_Enemy_Archer_LOD2": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "unweighted_verts": 0
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SK_Enemy_Archer_LOD0",
+      "tris": 8000,
+      "verts": 3950,
+      "uv_min": [
+        0.005254589021205902,
+        0.005384474527090788
+      ],
+      "uv_max": [
+        0.9921696186065674,
+        0.9947498440742493
+      ],
+      "uv_utilization": 0.337,
+      "bbox_min": [
+        -0.5373,
+        -0.178,
+        0.0003
+      ],
+      "bbox_max": [
+        0.5384,
+        0.2464,
+        1.8918
+      ]
+    },
+    {
+      "name": "SK_Enemy_Archer_LOD1",
+      "tris": 3500,
+      "verts": 1700,
+      "uv_min": [
+        0.005272877402603626,
+        0.005508790723979473
+      ],
+      "uv_max": [
+        0.9921696186065674,
+        0.9921695590019226
+      ],
+      "uv_utilization": 0.312,
+      "bbox_min": [
+        -0.5396,
+        -0.1767,
+        0.0005
+      ],
+      "bbox_max": [
+        0.5372,
+        0.2464,
+        1.8921
+      ]
+    },
+    {
+      "name": "SK_Enemy_Archer_LOD2",
+      "tris": 1500,
+      "verts": 700,
+      "uv_min": [
+        0.005272877402603626,
+        0.006231008097529411
+      ],
+      "uv_max": [
+        0.9818480014801025,
+        0.9882989525794983
+      ],
+      "uv_utilization": 0.276,
+      "bbox_min": [
+        -0.544,
+        -0.1769,
+        0.0024
+      ],
+      "bbox_max": [
+        0.5377,
+        0.2464,
+        1.8956
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Enemy_Archer\\04_export\\SK_Enemy_Archer_v001.glb",
+    "bytes": 568740
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Enemy_Archer\\03_work\\SK_Enemy_Archer_v001.blend",
+  "total_seconds": 34.8,
+  "_seconds": 38.6
+}

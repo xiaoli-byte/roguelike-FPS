@@ -1,0 +1,465 @@
+{
+  "id": "SM_Arms_FoxL",
+  "display": "赤狐·左手",
+  "kind": "static",
+  "class": "fp_arm",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:10:13",
+          "files": {
+            "BO_SM_Arms_FoxL_v001.glb": {
+              "path": "00_blockout/BO_SM_Arms_FoxL_v001.glb",
+              "sha256": "056d47f7e2014d6040d58dd47abda36c213fe935bdb7a26bfcb01553b1ded8fa"
+            },
+            "BO_SM_Arms_FoxL_v001.json": {
+              "path": "00_blockout/BO_SM_Arms_FoxL_v001.json",
+              "sha256": "5249afbb037dea33a7a84f2a96a0033e1522bbde4c4f234683d29fd983566b0d"
+            },
+            "BO_SM_Arms_FoxL_v001_views.json": {
+              "path": "00_blockout/BO_SM_Arms_FoxL_v001_views.json",
+              "sha256": "d35c554b81932bbf854d4d0890a643492eda08cf32014889efa836da57633841"
+            },
+            "BO_SM_Arms_FoxL_v001_sheet.png": {
+              "path": "00_blockout/BO_SM_Arms_FoxL_v001_sheet.png",
+              "sha256": "6394c6deaaf73579234a687e36ab4132993498c89eb6cdaa5d7d853d5b297766"
+            },
+            "BO_SM_Arms_FoxL_v001_front.png": {
+              "path": "00_blockout/BO_SM_Arms_FoxL_v001_front.png",
+              "sha256": "12f6a1c7219331576ae62647d00e51bbe08886ebe05a1a3147343e8f29b31c8a"
+            },
+            "BO_SM_Arms_FoxL_v001_left.png": {
+              "path": "00_blockout/BO_SM_Arms_FoxL_v001_left.png",
+              "sha256": "851773e619fa05f39062ba5a248a1c1ee6298d825feafd472b26c8fcc63c563b"
+            },
+            "BO_SM_Arms_FoxL_v001_back.png": {
+              "path": "00_blockout/BO_SM_Arms_FoxL_v001_back.png",
+              "sha256": "98c7666e3b8ffd43a9da5ace20420d92e5d2abfc4c00e047eb5ba4c56fefc8fe"
+            },
+            "BO_SM_Arms_FoxL_v001_right.png": {
+              "path": "00_blockout/BO_SM_Arms_FoxL_v001_right.png",
+              "sha256": "697508eb3ab0e70f73d0dd5e26422a6c3db6b72b4f59d1a7cf3643e3ea17ec56"
+            }
+          },
+          "source": {
+            "kind": "fp",
+            "id": "fox",
+            "attachment": "arm_l"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.2197229178754606,
+              -0.2863694288252135,
+              -0.042500000447034836
+            ],
+            "max": [
+              0.03600000005215406,
+              0.008999999664723873,
+              0.3395112337368654
+            ]
+          },
+          "blender_seconds": 6.4
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:12:34",
+          "files": {
+            "CN_SM_Arms_FoxL_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Arms_FoxL_v001_sheet.png",
+              "sha256": "3052d6350a884fd43494585c3a2ad8ef4abf04de4c89dab7b32f966e531f85c8"
+            },
+            "CN_SM_Arms_FoxL_v001_front.png": {
+              "path": "01_concept/CN_SM_Arms_FoxL_v001_front.png",
+              "sha256": "47937dc0f49d46884f82957068d5c256578ce382782c078b5ad49aebb7fa46e4"
+            },
+            "CN_SM_Arms_FoxL_v001_left.png": {
+              "path": "01_concept/CN_SM_Arms_FoxL_v001_left.png",
+              "sha256": "af2aef2a512f3f7771ab95a00211ab2a2e7e9a9c16980829fd2054916be841d3"
+            },
+            "CN_SM_Arms_FoxL_v001_back.png": {
+              "path": "01_concept/CN_SM_Arms_FoxL_v001_back.png",
+              "sha256": "419439a1b16359088c8ba0310a67d74d342728c0b7de8c31ca0d5ea65ab07746"
+            },
+            "CN_SM_Arms_FoxL_v001_right.png": {
+              "path": "01_concept/CN_SM_Arms_FoxL_v001_right.png",
+              "sha256": "4e24a190d95c91ff1575e0b131002f30ca27c69222f8a878c145b10978b1b787"
+            },
+            "CN_SM_Arms_FoxL_v001_compare.png": {
+              "path": "01_concept/CN_SM_Arms_FoxL_v001_compare.png",
+              "sha256": "c2cb19a074b4c411c147f7b08c4a7e3c6300b1b82dc207e310363ab46e757930"
+            },
+            "CN_SM_Arms_FoxL_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Arms_FoxL_v001_prompt.txt",
+              "sha256": "5e6abf36e493857fbc3840a5f0323ca2cbef959b524e4dd4a62d3ce69aa4f97f"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1958,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 500
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3138
+          },
+          "request_id": "req_69f75f5ada254b15a7198cd33cae308f",
+          "seconds": 28.8,
+          "registration": {
+            "front": {
+              "scale": 0.9148,
+              "offset": [
+                41,
+                234
+              ],
+              "iou": 0.693,
+              "iou_unregistered_scale": 0.9579
+            },
+            "left": {
+              "scale": 0.9548,
+              "offset": [
+                48,
+                225
+              ],
+              "iou": 0.812,
+              "iou_unregistered_scale": 0.9548
+            },
+            "back": {
+              "scale": 0.9548,
+              "offset": [
+                34,
+                216
+              ],
+              "iou": 0.636,
+              "iou_unregistered_scale": 0.9548
+            },
+            "right": {
+              "scale": 0.9594,
+              "offset": [
+                53,
+                216
+              ],
+              "iou": 0.835,
+              "iou_unregistered_scale": 0.9594
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.695,
+            "left": 0.814,
+            "back": 0.637,
+            "right": 0.837
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "与英雄设定一致；手部握拳（白模方掌），袖子吻合",
+            "time": "2026-10-03 22:15:05"
+          }
+        }
+      ]
+    },
+    "matid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:16:11",
+          "files": {
+            "MID_SM_Arms_FoxL_v001_sheet.png": {
+              "path": "01_concept/MID_SM_Arms_FoxL_v001_sheet.png",
+              "sha256": "35fd9efa25a83c646dd442f8c9ed6df5d4d79bd7f728497ceeab6e4c0689345b"
+            },
+            "MID_SM_Arms_FoxL_v001_front.png": {
+              "path": "01_concept/MID_SM_Arms_FoxL_v001_front.png",
+              "sha256": "134ecbf1d2ef81eae712c48a34d55134e4a0cea2c222787001999d3d195c3a3d"
+            },
+            "MID_SM_Arms_FoxL_v001_left.png": {
+              "path": "01_concept/MID_SM_Arms_FoxL_v001_left.png",
+              "sha256": "d12219e4363aa384bd4bb8bdb466c55721ee988a28f7219b127c65480f67625f"
+            },
+            "MID_SM_Arms_FoxL_v001_back.png": {
+              "path": "01_concept/MID_SM_Arms_FoxL_v001_back.png",
+              "sha256": "ac8bd53bd6eec8e37428d1d467cb8685bc19473350bb5c9f9067707d23db2bfb"
+            },
+            "MID_SM_Arms_FoxL_v001_right.png": {
+              "path": "01_concept/MID_SM_Arms_FoxL_v001_right.png",
+              "sha256": "2b4a41403c3677243d55e2d9673849c149f6b4f7768302baf5e60b2559dedd45"
+            },
+            "MID_SM_Arms_FoxL_v001_compare.png": {
+              "path": "01_concept/MID_SM_Arms_FoxL_v001_compare.png",
+              "sha256": "7ac64c134644683375bc659e3f5bd4ece354fa53f38fd66cc95b1936472a79d4"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1699,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 241
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2879
+          },
+          "request_id": "req_3235301cd2e74e1ca9a25decdfe59e3f",
+          "seconds": 29.9,
+          "registration": {
+            "front": {
+              "scale": 0.8557,
+              "offset": [
+                46,
+                226
+              ],
+              "iou": 0.907,
+              "iou_unregistered_scale": 0.843,
+              "purity": 0.995
+            },
+            "left": {
+              "scale": 0.8808,
+              "offset": [
+                50,
+                225
+              ],
+              "iou": 0.922,
+              "iou_unregistered_scale": 0.8808,
+              "purity": 0.995
+            },
+            "back": {
+              "scale": 0.8821,
+              "offset": [
+                36,
+                216
+              ],
+              "iou": 0.939,
+              "iou_unregistered_scale": 0.8821,
+              "purity": 0.995
+            },
+            "right": {
+              "scale": 0.8699,
+              "offset": [
+                73,
+                234
+              ],
+              "iou": 0.854,
+              "iou_unregistered_scale": 0.8968,
+              "purity": 0.997
+            }
+          },
+          "metal_ratio": {
+            "front": 0.052,
+            "left": 0.053,
+            "back": 0.019,
+            "right": 0.01
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:25:06",
+          "files": {
+            "HP_SM_Arms_FoxL_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Arms_FoxL_v001_input_front.png",
+              "sha256": "1c5cf8b9a65b3c0b5b5fbd11fcdea6a9710cd770b32f1970e9ab6a3e8c69fac0"
+            },
+            "HP_SM_Arms_FoxL_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Arms_FoxL_v001_input_left.png",
+              "sha256": "5be6e6b56d5c74d670e47c499eb9c0c9e4836f414dd3bba34cf225e7cb32be11"
+            },
+            "HP_SM_Arms_FoxL_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Arms_FoxL_v001_input_back.png",
+              "sha256": "88e1b055f7e7d42d84af868ee98c50ec969460555f9261aa08d430686363ecb4"
+            },
+            "HP_SM_Arms_FoxL_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Arms_FoxL_v001_input_right.png",
+              "sha256": "598b814bf9e4d454f750f1f0c5115878141a4157ad7b8c5b9f1b981aae0093af"
+            },
+            "HP_SM_Arms_FoxL_v001.glb": {
+              "path": "02_highpoly/HP_SM_Arms_FoxL_v001.glb",
+              "sha256": "e16a774beb95485a229b87e12c67cd89ca5155782b5f2d264a1d3ecdcd6aa99a"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -97,
+              163,
+              609,
+              869
+            ],
+            "scale": 1.4504249291784703
+          },
+          "seconds": 177.8,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 10.2
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:25:51",
+          "files": {
+            "SM_Arms_FoxL_v001.blend": {
+              "path": "03_work/SM_Arms_FoxL_v001.blend",
+              "sha256": "42a743c346efbaffb73b4f0ccedf49afc70a89b231ccc3853d034a470375f2ff"
+            },
+            "SM_Arms_FoxL_v001.glb": {
+              "path": "04_export/SM_Arms_FoxL_v001.glb",
+              "sha256": "4ade50ea8e473e2532cbe12ced92890f06dd9ebe41789d0236f98941644d76b1"
+            },
+            "SM_Arms_FoxL_v001_metrics.json": {
+              "path": "03_work/SM_Arms_FoxL_v001_metrics.json",
+              "sha256": "cef465b94fe1e29b89d0c5b2908c3d9bc043404b6b41ed95f6d3bc84966484d0"
+            },
+            "T_Arms_FoxL_BC.png": {
+              "path": "03_work/textures_v001/T_Arms_FoxL_BC.png",
+              "sha256": "c22a4b147627c96c4758fc496fb855974b4d6c17807cb5fc3a571519d9f38436"
+            },
+            "T_Arms_FoxL_MetalMask.png": {
+              "path": "03_work/textures_v001/T_Arms_FoxL_MetalMask.png",
+              "sha256": "bbd6160ccbe14a966f431d4ce1d4acfe15c90e7fa77d99ad2cbfff3bc260dc26"
+            },
+            "T_Arms_FoxL_N.png": {
+              "path": "03_work/textures_v001/T_Arms_FoxL_N.png",
+              "sha256": "d44e6fd23b8f07e2772e6d0835bd020275721edd7a40a5f4f55cd34809b9db1b"
+            },
+            "T_Arms_FoxL_ORM.png": {
+              "path": "03_work/textures_v001/T_Arms_FoxL_ORM.png",
+              "sha256": "9e7d569c87cebf37c4409eccbd461267d89883ee1467fe7e7d2f560bc8551630"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1,
+            "emid": null
+          },
+          "align_iou": 0.797,
+          "uncovered_ratio": 0.129,
+          "lods": [
+            {
+              "tris": 7999,
+              "verts": 3994
+            },
+            {
+              "tris": 2000,
+              "verts": 992
+            }
+          ],
+          "export_kb": 589.8,
+          "seconds": 45.6,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:25:52",
+          "files": {
+            "SM_Arms_FoxL_v001_validation.json": {
+              "path": "05_review/SM_Arms_FoxL_v001_validation.json",
+              "sha256": "50048bc1ef774cf2a930d32641015dfd385ee45a6928adfdd43d06ea0bb2e097"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:25:58",
+          "files": {
+            "SM_Arms_FoxL_v001_review.png": {
+              "path": "05_review/SM_Arms_FoxL_v001_review.png",
+              "sha256": "70330cd7fa3dc04005862ada20f1451c4ec21de50f12e40a53df31875af80408"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "英雄专属第一人称手臂；深度轴偏小待游戏内确认袖口不露出",
+            "time": "2026-10-03 22:41:49"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 22:41:50",
+          "files": {
+            "SM_Arms_FoxL.glb": {
+              "path": "@root/public/assets/weapons/SM_Arms_FoxL.glb",
+              "sha256": "4ade50ea8e473e2532cbe12ced92890f06dd9ebe41789d0236f98941644d76b1"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/weapons/SM_Arms_FoxL.glb"
+        }
+      ]
+    }
+  }
+}

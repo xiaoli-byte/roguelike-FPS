@@ -1,0 +1,222 @@
+[
+  {
+    "level": "pass",
+    "check": "文件大小",
+    "detail": "409 KB / 上限 1600 KB"
+  },
+  {
+    "level": "pass",
+    "check": "扩展可用",
+    "detail": "必需扩展 ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+  },
+  {
+    "level": "pass",
+    "check": "LOD 数量",
+    "detail": "['SK_Enemy_Mortar_LOD0', 'SK_Enemy_Mortar_LOD1', 'SK_Enemy_Mortar_LOD2']，规格 3 级"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 面数",
+    "detail": "7999 / 预算 8000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 切换距离",
+    "detail": "extras.lod_distance=0"
+  },
+  {
+    "level": "pass",
+    "check": "高度",
+    "detail": "2.214 m（白模 2.170 m）"
+  },
+  {
+    "level": "pass",
+    "check": "轴心在脚底",
+    "detail": "最低点 y=-0.0000"
+  },
+  {
+    "level": "pass",
+    "check": "水平居中",
+    "detail": "包围盒中心 x=0.000 z=0.009"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 面数",
+    "detail": "3500 / 预算 3500"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 递减",
+    "detail": "7999 → 3500"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 切换距离",
+    "detail": "extras.lod_distance=14"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 面数",
+    "detail": "1500 / 预算 1500"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 递减",
+    "detail": "3500 → 1500"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 切换距离",
+    "detail": "extras.lod_distance=30"
+  },
+  {
+    "level": "pass",
+    "check": "材质数量",
+    "detail": "['M_Enemy_Mortar']（一个资产一个材质，便于合批）"
+  },
+  {
+    "level": "pass",
+    "check": "材质命名",
+    "detail": "['M_Enemy_Mortar']"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Enemy_Mortar_N",
+    "detail": "1024×1024 webp（规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Enemy_Mortar_N",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Enemy_Mortar_ORM",
+    "detail": "1024×1024 webp（规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Enemy_Mortar_ORM",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Enemy_Mortar_BC",
+    "detail": "1024×1024 webp（规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Enemy_Mortar_BC",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "BaseColor 贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "法线贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "ORM 贴图",
+    "detail": "AO / 粗糙度 / 金属度"
+  },
+  {
+    "level": "pass",
+    "check": "蒙皮",
+    "detail": "1 个 skin"
+  },
+  {
+    "level": "pass",
+    "check": "骨骼与游戏关节一致",
+    "detail": "缺 [] 多 []"
+  },
+  {
+    "level": "pass",
+    "check": "骨骼适配幅度",
+    "detail": "上臂绑定角 L 0.338 / R 0.340（白模 0.45）"
+  },
+  {
+    "level": "pass",
+    "check": "左右对称",
+    "detail": "左右适配差 0.003 rad"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Mortar_LOD0 影响骨骼数",
+    "detail": "最多 4"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Mortar_LOD0 无权重顶点",
+    "detail": "0"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Mortar_LOD0 bone heat 覆盖",
+    "detail": "0 个顶点改用平滑邻近权重"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Mortar_LOD1 影响骨骼数",
+    "detail": "最多 4"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Mortar_LOD1 无权重顶点",
+    "detail": "0"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Mortar_LOD1 bone heat 覆盖",
+    "detail": "0 个顶点改用平滑邻近权重"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Mortar_LOD2 影响骨骼数",
+    "detail": "最多 4"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Mortar_LOD2 无权重顶点",
+    "detail": "0"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Mortar_LOD2 bone heat 覆盖",
+    "detail": "0 个顶点改用平滑邻近权重"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Mortar_LOD0 UV 范围",
+    "detail": "[0.004279311280697584, 0.0042794207111001015]..[0.9910677671432495, 0.9957206845283508]"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Mortar_LOD1 UV 范围",
+    "detail": "[0.00441029854118824, 0.004360548220574856]..[0.991580069065094, 0.9957206845283508]"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Enemy_Mortar_LOD2 UV 范围",
+    "detail": "[0.005060698837041855, 0.004472485277801752]..[0.991580069065094, 0.9950515627861023]"
+  },
+  {
+    "level": "pass",
+    "check": "UV 利用率",
+    "detail": "53%"
+  },
+  {
+    "level": "pass",
+    "check": "高模对齐",
+    "detail": "剪影 IoU 0.866（{'front': 0.917, 'left': 0.804, 'back': 0.919, 'right': 0.799}）"
+  },
+  {
+    "level": "pass",
+    "check": "投影覆盖",
+    "detail": "未覆盖顶点 37%（扩散补色）"
+  }
+]

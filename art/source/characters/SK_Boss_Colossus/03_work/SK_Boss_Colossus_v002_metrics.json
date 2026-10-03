@@ -1,0 +1,201 @@
+{
+  "steps": {
+    "导入清理": 3.0,
+    "对齐": 0.9,
+    "低模与 UV": 12.0,
+    "投影着色": 35.3,
+    "烘焙": 11.3,
+    "LOD": 0.3,
+    "部件骨架蒙皮": 1.7,
+    "导出": 2.0
+  },
+  "highpoly": {
+    "faces_raw": 801326,
+    "faces": 483012,
+    "verts": 482994,
+    "loose_parts": 4,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00462
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.834,
+    "iou_per_view": {
+      "front": 0.905,
+      "left": 0.741,
+      "back": 0.912,
+      "right": 0.742
+    },
+    "height_m": 5.6619,
+    "blockout_height_m": 6.0
+  },
+  "projection": {
+    "uncovered_ratio": 0.3024
+  },
+  "bake_device": "OPTIX",
+  "material_id": {
+    "metal_texel_ratio": 0.1684
+  },
+  "textures": {
+    "T_Boss_Colossus_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Boss_Colossus_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Boss_Colossus_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "skin": {
+    "bones": [
+      "j_r",
+      "j_0",
+      "j_0_0",
+      "j_0_0_5",
+      "j_0_0_5_2",
+      "j_0_0_6",
+      "j_0_0_6_2",
+      "j_0_0_7",
+      "j_0_1",
+      "j_0_1_15",
+      "j_0_1_16",
+      "j_0_1_16_5",
+      "j_0_1_16_6",
+      "j_0_1_17",
+      "j_0_1_17_5",
+      "j_0_1_17_6",
+      "j_0_1_18",
+      "j_0_1_18_1",
+      "j_0_1_18_1_10",
+      "j_0_2"
+    ],
+    "per_lod": {
+      "SK_Boss_Colossus_LOD0": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      },
+      "SK_Boss_Colossus_LOD1": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      },
+      "SK_Boss_Colossus_LOD2": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      }
+    },
+    "mode": "parts",
+    "sigma_m": 0.072,
+    "blend_hops": 2,
+    "split": {
+      "SK_Boss_Colossus_LOD0": {
+        "cut_edges": 282,
+        "cap_tris": 307,
+        "pieces_faces_added": 307,
+        "tris": 29995
+      },
+      "SK_Boss_Colossus_LOD1": {
+        "cut_edges": 163,
+        "cap_tris": 208,
+        "pieces_faces_added": 208,
+        "tris": 11996
+      },
+      "SK_Boss_Colossus_LOD2": {
+        "cut_edges": 105,
+        "cap_tris": 100,
+        "pieces_faces_added": 100,
+        "tris": 4995
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SK_Boss_Colossus_LOD0",
+      "tris": 29995,
+      "verts": 15110,
+      "uv_min": [
+        0.005010734312236309,
+        0.0049623530358076096
+      ],
+      "uv_max": [
+        0.9950377941131592,
+        0.9849480986595154
+      ],
+      "uv_utilization": 3.521,
+      "bbox_min": [
+        -2.4858,
+        -1.1245,
+        0.0033
+      ],
+      "bbox_max": [
+        2.4867,
+        0.7953,
+        5.6619
+      ]
+    },
+    {
+      "name": "SK_Boss_Colossus_LOD1",
+      "tris": 11996,
+      "verts": 6038,
+      "uv_min": [
+        0.005010734312236309,
+        0.004760190844535828
+      ],
+      "uv_max": [
+        0.9950377941131592,
+        0.9849480390548706
+      ],
+      "uv_utilization": 5.339,
+      "bbox_min": [
+        -2.4862,
+        -1.125,
+        0.0024
+      ],
+      "bbox_max": [
+        2.4865,
+        0.7961,
+        5.6646
+      ]
+    },
+    {
+      "name": "SK_Boss_Colossus_LOD2",
+      "tris": 4995,
+      "verts": 2533,
+      "uv_min": [
+        0.00510089285671711,
+        0.005067227408289909
+      ],
+      "uv_max": [
+        0.9949724078178406,
+        0.9847670197486877
+      ],
+      "uv_utilization": 1.826,
+      "bbox_min": [
+        -2.4882,
+        -1.124,
+        -0.0011
+      ],
+      "bbox_max": [
+        2.4931,
+        0.7956,
+        5.6646
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Boss_Colossus\\04_export\\SK_Boss_Colossus_v002.glb",
+    "bytes": 1507496
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Boss_Colossus\\03_work\\SK_Boss_Colossus_v002.blend",
+  "total_seconds": 66.5,
+  "_seconds": 69.8
+}

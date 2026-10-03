@@ -1,0 +1,717 @@
+{
+  "id": "SM_EnemyWeapon_Mace",
+  "display": "铁甲重锤",
+  "kind": "static",
+  "class": "enemy_attachment",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:27:37",
+          "files": {
+            "BO_SM_EnemyWeapon_Mace_v001.glb": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_Mace_v001.glb",
+              "sha256": "ac95318e1c089ea842a78895bff2d4cae3d7052057b22c7ddc318e97f978413b"
+            },
+            "BO_SM_EnemyWeapon_Mace_v001.json": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_Mace_v001.json",
+              "sha256": "65634443e7c664b149bf7d03908551b0220255e6c2ba721caea44a5e2dbfe194"
+            },
+            "BO_SM_EnemyWeapon_Mace_v001_views.json": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_Mace_v001_views.json",
+              "sha256": "fcb10c932ff61300f1d5cd92b8e64a50269df5038e3472d6948b36ee91cc07ec"
+            },
+            "BO_SM_EnemyWeapon_Mace_v001_sheet.png": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_Mace_v001_sheet.png",
+              "sha256": "11467369261132ef4d2121308cde5e64caa9447a9c213a743b32d4b263a52ce9"
+            },
+            "BO_SM_EnemyWeapon_Mace_v001_front.png": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_Mace_v001_front.png",
+              "sha256": "a48b1c5a977ce0e9b9d8d022e42edf7414364eb8337b096f537ffa5118dbad6f"
+            },
+            "BO_SM_EnemyWeapon_Mace_v001_left.png": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_Mace_v001_left.png",
+              "sha256": "b16a542a1a39346e88837f8c7c9ee0f054c3be6ab7027ef8e62f215891a81213"
+            },
+            "BO_SM_EnemyWeapon_Mace_v001_back.png": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_Mace_v001_back.png",
+              "sha256": "29e8b97770433f974d51284acc29031e5ad53f6e9531fc7fada40ba0ff8c1e65"
+            },
+            "BO_SM_EnemyWeapon_Mace_v001_right.png": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_Mace_v001_right.png",
+              "sha256": "3dc6d64ec6c931a2f504ea9b5d3582b2de85d45e446671bab9490068c21fa511"
+            }
+          },
+          "source": {
+            "kind": "enemy",
+            "id": "brute",
+            "attachment": "mace"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.15880930423736572,
+              -0.23000000029802323,
+              -0.11000001311302185
+            ],
+            "max": [
+              0.15880930423736572,
+              0.23000000029802323,
+              0.7388093042373657
+            ]
+          },
+          "blender_seconds": 6.6
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:30:08",
+          "files": {
+            "CN_SM_EnemyWeapon_Mace_v001_sheet.png": {
+              "path": "01_concept/CN_SM_EnemyWeapon_Mace_v001_sheet.png",
+              "sha256": "b3bffa7f4b4bf0cd7a5d3dff851b0e47218656e5f9c69712fc3f32f66b14adf9"
+            },
+            "CN_SM_EnemyWeapon_Mace_v001_front.png": {
+              "path": "01_concept/CN_SM_EnemyWeapon_Mace_v001_front.png",
+              "sha256": "9790653616c2a2621ec644cf602730340a80d5ede7daf89bc9ca1d6522cd87bd"
+            },
+            "CN_SM_EnemyWeapon_Mace_v001_left.png": {
+              "path": "01_concept/CN_SM_EnemyWeapon_Mace_v001_left.png",
+              "sha256": "bbf634e355afde2fcf3a4100829e30952fd471872a079a8c3c421d2bd2cca56d"
+            },
+            "CN_SM_EnemyWeapon_Mace_v001_back.png": {
+              "path": "01_concept/CN_SM_EnemyWeapon_Mace_v001_back.png",
+              "sha256": "96b98a436b8b812854be2a9040da6b526cd14a132d0da7852b70479b113e0495"
+            },
+            "CN_SM_EnemyWeapon_Mace_v001_right.png": {
+              "path": "01_concept/CN_SM_EnemyWeapon_Mace_v001_right.png",
+              "sha256": "87de484148dd42083a23fd9148c4bacef2176468bc92a6ff23dfd3c043dabbd5"
+            },
+            "CN_SM_EnemyWeapon_Mace_v001_compare.png": {
+              "path": "01_concept/CN_SM_EnemyWeapon_Mace_v001_compare.png",
+              "sha256": "52e3e60195a0d0eca9e1e0b51001b7822a0bdcae0992a8c98f27df4ed0ac30eb"
+            },
+            "CN_SM_EnemyWeapon_Mace_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_EnemyWeapon_Mace_v001_prompt.txt",
+              "sha256": "2b92e3ab3689db8d9b935d7069f51c3aaea0fbe8ed1f8456374d2aabb393a888"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1893,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 435
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3073
+          },
+          "request_id": "req_53a0445d9a0e4db892de98f722225e10",
+          "seconds": 28.0,
+          "registration": {
+            "front": {
+              "scale": 0.9036,
+              "offset": [
+                37,
+                90
+              ],
+              "iou": 0.912,
+              "iou_unregistered_scale": 0.9036
+            },
+            "left": {
+              "scale": 0.9161,
+              "offset": [
+                117,
+                77
+              ],
+              "iou": 0.857,
+              "iou_unregistered_scale": 0.9026
+            },
+            "back": {
+              "scale": 0.9036,
+              "offset": [
+                37,
+                90
+              ],
+              "iou": 0.912,
+              "iou_unregistered_scale": 0.9036
+            },
+            "right": {
+              "scale": 0.9161,
+              "offset": [
+                117,
+                77
+              ],
+              "iou": 0.857,
+              "iou_unregistered_scale": 0.9026
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.913,
+            "left": 0.86,
+            "back": 0.913,
+            "right": 0.86
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "剪影与白模一致，设计贴合",
+            "time": "2026-10-03 17:32:47"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:39:39",
+          "files": {
+            "HP_SM_EnemyWeapon_Mace_v001_input.png": {
+              "path": "02_highpoly/HP_SM_EnemyWeapon_Mace_v001_input.png",
+              "sha256": "e9c4b0f205c6671927a570b23080eb2e253f69a0fb4d120218ee60ba30eecbd9"
+            },
+            "HP_SM_EnemyWeapon_Mace_v001.glb": {
+              "path": "02_highpoly/HP_SM_EnemyWeapon_Mace_v001.glb",
+              "sha256": "68bff02bd9912c1a4ee7be560641f5c6c78f98e6c4683fb82aa39cd303ffcd91"
+            }
+          },
+          "from_concept": 1,
+          "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+          "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "checkpoint": "hunyuan_3d_v2.1.safetensors",
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "crop": [
+              37,
+              90,
+              475,
+              934
+            ],
+            "scale": 1.0312796208530806,
+            "offset": [
+              286,
+              77
+            ]
+          },
+          "seconds": 118.4,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 4.8
+        }
+      ]
+    },
+    "build": {
+      "current": 4,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:40:16",
+          "files": {
+            "SM_EnemyWeapon_Mace_v001.blend": {
+              "path": "03_work/SM_EnemyWeapon_Mace_v001.blend",
+              "sha256": "bc62a888858097719964b2368691b53e54de785e407462c5560243fd8cb1cfc8"
+            },
+            "SM_EnemyWeapon_Mace_v001.glb": {
+              "path": "04_export/SM_EnemyWeapon_Mace_v001.glb",
+              "sha256": "3400e30057acb14e2cc9c9f7401b7433c19a8b3ec7e6415b596aead97b0c10d3"
+            },
+            "SM_EnemyWeapon_Mace_v001_metrics.json": {
+              "path": "03_work/SM_EnemyWeapon_Mace_v001_metrics.json",
+              "sha256": "2fadc39b23a77eea94319e1a6b17ad17872bb3d6378c2c656174c035504ee6e3"
+            },
+            "T_EnemyWeapon_Mace_BC.png": {
+              "path": "03_work/textures_v001/T_EnemyWeapon_Mace_BC.png",
+              "sha256": "fd569049b8dccda523d20a040f8fda30c42e86dd7bf5b9ed726a924b92110ca9"
+            },
+            "T_EnemyWeapon_Mace_N.png": {
+              "path": "03_work/textures_v001/T_EnemyWeapon_Mace_N.png",
+              "sha256": "0df48f475d367ad4e2649583b2c8236e52be0545cede04ebb673dabf462cc5f5"
+            },
+            "T_EnemyWeapon_Mace_ORM.png": {
+              "path": "03_work/textures_v001/T_EnemyWeapon_Mace_ORM.png",
+              "sha256": "1090d785f06da3889bd0d5681162badf05255c549f1838bd8304aceb2d21af59"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null
+          },
+          "align_iou": 0.872,
+          "uncovered_ratio": 0.0732,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1502
+            },
+            {
+              "tris": 1000,
+              "verts": 502
+            }
+          ],
+          "export_kb": 205.5,
+          "seconds": 36.7,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 18:02:26",
+          "files": {
+            "SM_EnemyWeapon_Mace_v002.blend": {
+              "path": "03_work/SM_EnemyWeapon_Mace_v002.blend",
+              "sha256": "f1278c512c7fe3923dd592a99ab4774d21593501a7242df87de782cf2a6407c0"
+            },
+            "SM_EnemyWeapon_Mace_v002.glb": {
+              "path": "04_export/SM_EnemyWeapon_Mace_v002.glb",
+              "sha256": "6d79113562ad605d27324922bed564373e24efaed1c4f68cc1bfa9a06042c903"
+            },
+            "SM_EnemyWeapon_Mace_v002_metrics.json": {
+              "path": "03_work/SM_EnemyWeapon_Mace_v002_metrics.json",
+              "sha256": "a6d7c4d59888e8e529c508495b1c025c7e4ebf92f5e08a602e8a3ed1296bba0e"
+            },
+            "T_EnemyWeapon_Mace_BC.png": {
+              "path": "03_work/textures_v002/T_EnemyWeapon_Mace_BC.png",
+              "sha256": "fd569049b8dccda523d20a040f8fda30c42e86dd7bf5b9ed726a924b92110ca9"
+            },
+            "T_EnemyWeapon_Mace_MetalMask.png": {
+              "path": "03_work/textures_v002/T_EnemyWeapon_Mace_MetalMask.png",
+              "sha256": "dbdf29ae5909377ac81780bade1d8744316375cdbdd7d1e5c3442f1641fba5ae"
+            },
+            "T_EnemyWeapon_Mace_N.png": {
+              "path": "03_work/textures_v002/T_EnemyWeapon_Mace_N.png",
+              "sha256": "0df48f475d367ad4e2649583b2c8236e52be0545cede04ebb673dabf462cc5f5"
+            },
+            "T_EnemyWeapon_Mace_ORM.png": {
+              "path": "03_work/textures_v002/T_EnemyWeapon_Mace_ORM.png",
+              "sha256": "43a45850954c2fd6f23f5755c5de3fdb8c9fbcfbfca0e42f957728a58b37e701"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1
+          },
+          "align_iou": 0.872,
+          "uncovered_ratio": 0.0732,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1502
+            },
+            {
+              "tris": 1000,
+              "verts": 502
+            }
+          ],
+          "export_kb": 212.5,
+          "seconds": 21.9,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 19:56:14",
+          "files": {
+            "SM_EnemyWeapon_Mace_v003.blend": {
+              "path": "03_work/SM_EnemyWeapon_Mace_v003.blend",
+              "sha256": "94de135dece4fcf5f5e8a27c31e4e9a2a36c188031fe7a55087c53fa3a7537e6"
+            },
+            "SM_EnemyWeapon_Mace_v003.glb": {
+              "path": "04_export/SM_EnemyWeapon_Mace_v003.glb",
+              "sha256": "4be5ac59d0119eee4059297f65d10101c75a85cc8f9fb673fcee790d79833be5"
+            },
+            "SM_EnemyWeapon_Mace_v003_metrics.json": {
+              "path": "03_work/SM_EnemyWeapon_Mace_v003_metrics.json",
+              "sha256": "95caed1663727943083d0a8da8857ee4c2eefa7dd063ad1e65083c69d175a04f"
+            },
+            "T_EnemyWeapon_Mace_BC.png": {
+              "path": "03_work/textures_v003/T_EnemyWeapon_Mace_BC.png",
+              "sha256": "93871df272fa71457fc52125c4b56ac553d5ad80288441d896d1f89e0341b6ca"
+            },
+            "T_EnemyWeapon_Mace_MetalMask.png": {
+              "path": "03_work/textures_v003/T_EnemyWeapon_Mace_MetalMask.png",
+              "sha256": "93fbf51891b628324c566ec6f9f6ea4fb1e1c92fea14711402500a284b12c528"
+            },
+            "T_EnemyWeapon_Mace_N.png": {
+              "path": "03_work/textures_v003/T_EnemyWeapon_Mace_N.png",
+              "sha256": "325de3e457acb943d179024c9636d100ec42e1c5a6e5591d74b3f98e926ca0d3"
+            },
+            "T_EnemyWeapon_Mace_ORM.png": {
+              "path": "03_work/textures_v003/T_EnemyWeapon_Mace_ORM.png",
+              "sha256": "6be172cce562fafecdf389623d8db2a15570c7a00028fef2ef596fcb45c071d6"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1
+          },
+          "align_iou": 0.872,
+          "uncovered_ratio": 0.0732,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1502
+            },
+            {
+              "tris": 1000,
+              "verts": 502
+            }
+          ],
+          "export_kb": 201.1,
+          "seconds": 28.7,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 20:20:49",
+          "files": {
+            "SM_EnemyWeapon_Mace_v004.blend": {
+              "path": "03_work/SM_EnemyWeapon_Mace_v004.blend",
+              "sha256": "98b324316054d5c2c92a9ba92dd5552b52c08ace4708760e63ab0ca4e0fe5e29"
+            },
+            "SM_EnemyWeapon_Mace_v004.glb": {
+              "path": "04_export/SM_EnemyWeapon_Mace_v004.glb",
+              "sha256": "1e0dfe8fd874250fd3036efc13d52e9b27bf58eef35f876c0a3a6fa9f47fde1a"
+            },
+            "SM_EnemyWeapon_Mace_v004_metrics.json": {
+              "path": "03_work/SM_EnemyWeapon_Mace_v004_metrics.json",
+              "sha256": "554ffdc126922bef1be2e3d78f9e799f11ef8c0254cf5ab63f151880a70acd7f"
+            },
+            "T_EnemyWeapon_Mace_BC.png": {
+              "path": "03_work/textures_v004/T_EnemyWeapon_Mace_BC.png",
+              "sha256": "b8c30f91d6945f5cea7a68c9eb417dd9bc2ccf944f63382af99be74f655da60d"
+            },
+            "T_EnemyWeapon_Mace_MetalMask.png": {
+              "path": "03_work/textures_v004/T_EnemyWeapon_Mace_MetalMask.png",
+              "sha256": "d8d361b4e4923179aeddbc69d95ff85bb34c3aec83d4a2c8126610e274f4f371"
+            },
+            "T_EnemyWeapon_Mace_N.png": {
+              "path": "03_work/textures_v004/T_EnemyWeapon_Mace_N.png",
+              "sha256": "498668d5d9c92fd38e02a0afabe806eec435762b478a3f3b6c7237cdc95156c1"
+            },
+            "T_EnemyWeapon_Mace_ORM.png": {
+              "path": "03_work/textures_v004/T_EnemyWeapon_Mace_ORM.png",
+              "sha256": "997a26fa5fc8dfa7876f1f0491520aea388c77f4a137740cf2ae744734a517f8"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1
+          },
+          "align_iou": 0.872,
+          "uncovered_ratio": 0.0732,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1502
+            },
+            {
+              "tris": 1000,
+              "verts": 502
+            }
+          ],
+          "export_kb": 193.0,
+          "seconds": 49.8,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 4,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:40:16",
+          "files": {
+            "SM_EnemyWeapon_Mace_v001_validation.json": {
+              "path": "05_review/SM_EnemyWeapon_Mace_v001_validation.json",
+              "sha256": "01e8ba424ab944f15f602b8376571ad05e38c6faf5453df4ae322f4f6d5f8482"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 18:02:26",
+          "files": {
+            "SM_EnemyWeapon_Mace_v002_validation.json": {
+              "path": "05_review/SM_EnemyWeapon_Mace_v002_validation.json",
+              "sha256": "74a0217e435e972b267eaa7d43e4f47f15531d865089409d521d17ce6af4612f"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 19:56:14",
+          "files": {
+            "SM_EnemyWeapon_Mace_v003_validation.json": {
+              "path": "05_review/SM_EnemyWeapon_Mace_v003_validation.json",
+              "sha256": "00013717885a1afec610f0e78a07919ed0df18a7fce79ff35a098aafd4faa372"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 20:20:49",
+          "files": {
+            "SM_EnemyWeapon_Mace_v004_validation.json": {
+              "path": "05_review/SM_EnemyWeapon_Mace_v004_validation.json",
+              "sha256": "2d5568a9bf6fa421fa2b83d3b015c69a9ffbd5075880463be22cdf95735c4124"
+            }
+          },
+          "from_build": 4,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 4,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:40:28",
+          "files": {
+            "SM_EnemyWeapon_Mace_v001_review.png": {
+              "path": "05_review/SM_EnemyWeapon_Mace_v001_review.png",
+              "sha256": "efec0c2e9c40a261fee28c0b2095425404714ad3cb11e77f81a535cab88ff228"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 18:02:33",
+          "files": {
+            "SM_EnemyWeapon_Mace_v002_review.png": {
+              "path": "05_review/SM_EnemyWeapon_Mace_v002_review.png",
+              "sha256": "a1fa7aab4a155fa56a8fb5cfc393df515127accf839b6c65dc4fb191eca1cf00"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "成品还原概念；材质分区正确；深度轴偏差为单视图重建固有误差，已人工确认",
+            "time": "2026-10-03 18:06:03"
+          }
+        },
+        {
+          "version": 3,
+          "created": "2026-10-03 19:56:22",
+          "files": {
+            "SM_EnemyWeapon_Mace_v003_review.png": {
+              "path": "05_review/SM_EnemyWeapon_Mace_v003_review.png",
+              "sha256": "bb1c606669195b3466f9571a6dc706e96389091f71a76136d45a36baeb657c1d"
+            }
+          },
+          "from_build": 3,
+          "deformation": {},
+          "auto_flags": []
+        },
+        {
+          "version": 4,
+          "created": "2026-10-03 20:21:02",
+          "files": {
+            "SM_EnemyWeapon_Mace_v004_review.png": {
+              "path": "05_review/SM_EnemyWeapon_Mace_v004_review.png",
+              "sha256": "57d907b0da97e9a8f582d1ea65caef4b14e4b6f723172b8e23812caf233f9849"
+            }
+          },
+          "from_build": 4,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "UV 两方案择优重建（纹素密度不低于上一发布版）；几何、蒙皮与上一已审版本一致",
+            "time": "2026-10-03 20:37:39"
+          }
+        }
+      ]
+    },
+    "matid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 17:53:08",
+          "files": {
+            "MID_SM_EnemyWeapon_Mace_v001_sheet.png": {
+              "path": "01_concept/MID_SM_EnemyWeapon_Mace_v001_sheet.png",
+              "sha256": "817646a8047f905e5ec0ea1bce7bcfc094a0cb147e4591400bd6f89a151ce409"
+            },
+            "MID_SM_EnemyWeapon_Mace_v001_front.png": {
+              "path": "01_concept/MID_SM_EnemyWeapon_Mace_v001_front.png",
+              "sha256": "a82ba7b26f66bb8a5f2d751ceccec6a484154626346b4a200852cbecc4bb16cb"
+            },
+            "MID_SM_EnemyWeapon_Mace_v001_left.png": {
+              "path": "01_concept/MID_SM_EnemyWeapon_Mace_v001_left.png",
+              "sha256": "b40060e32ce910ee4f5814351d2627911acc3bdd4a6ab82db75757211e89a57b"
+            },
+            "MID_SM_EnemyWeapon_Mace_v001_back.png": {
+              "path": "01_concept/MID_SM_EnemyWeapon_Mace_v001_back.png",
+              "sha256": "9ebf51feb462fe798cd8544569859afc9b500148fc1b2a15cfd3112e04327998"
+            },
+            "MID_SM_EnemyWeapon_Mace_v001_right.png": {
+              "path": "01_concept/MID_SM_EnemyWeapon_Mace_v001_right.png",
+              "sha256": "39d90ee2a6fb85ac72699b5a5fc216bd63cc912aa95bfbe9325beaae34fedcf9"
+            },
+            "MID_SM_EnemyWeapon_Mace_v001_compare.png": {
+              "path": "01_concept/MID_SM_EnemyWeapon_Mace_v001_compare.png",
+              "sha256": "815b24ae5157e324505889e0f696a862954c728582599b9f03a3ec9659ed5118"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1699,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 241
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2879
+          },
+          "request_id": "req_20735e90bfcb4ef69d2bde310826d600",
+          "seconds": 25.4,
+          "registration": {
+            "front": {
+              "scale": 0.8979,
+              "offset": [
+                36,
+                90
+              ],
+              "iou": 0.98,
+              "iou_unregistered_scale": 0.8979,
+              "purity": 0.987
+            },
+            "left": {
+              "scale": 0.9106,
+              "offset": [
+                118,
+                77
+              ],
+              "iou": 0.979,
+              "iou_unregistered_scale": 0.9106,
+              "purity": 0.989
+            },
+            "back": {
+              "scale": 0.8979,
+              "offset": [
+                36,
+                90
+              ],
+              "iou": 0.976,
+              "iou_unregistered_scale": 0.8979,
+              "purity": 0.988
+            },
+            "right": {
+              "scale": 0.9096,
+              "offset": [
+                118,
+                77
+              ],
+              "iou": 0.979,
+              "iou_unregistered_scale": 0.9096,
+              "purity": 0.99
+            }
+          },
+          "metal_ratio": {
+            "front": 0.806,
+            "left": 0.783,
+            "back": 0.806,
+            "right": 0.783
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-03 18:06:07",
+          "files": {
+            "SM_EnemyWeapon_Mace.glb": {
+              "path": "@root/public/assets/attachments/SM_EnemyWeapon_Mace.glb",
+              "sha256": "6d79113562ad605d27324922bed564373e24efaed1c4f68cc1bfa9a06042c903"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/attachments/SM_EnemyWeapon_Mace.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-03 20:37:40",
+          "files": {
+            "SM_EnemyWeapon_Mace.glb": {
+              "path": "@root/public/assets/attachments/SM_EnemyWeapon_Mace.glb",
+              "sha256": "1e0dfe8fd874250fd3036efc13d52e9b27bf58eef35f876c0a3a6fa9f47fde1a"
+            }
+          },
+          "from_build": 4,
+          "url": "assets/attachments/SM_EnemyWeapon_Mace.glb"
+        }
+      ]
+    }
+  }
+}
