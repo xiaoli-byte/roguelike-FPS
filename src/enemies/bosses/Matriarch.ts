@@ -42,6 +42,12 @@ const SHARD = 0x9fe8ff;
 const LOCK = 0xff5a7a;
 const MAX_LANCES = 7;
 const MAX_CRYSTALS = 4;
+/**
+ * 冰晶供能：每个冰晶每秒回复最大护盾的 CRYSTAL_RATE，单个冰晶累计最多输送 CRYSTAL_CHARGE（之后熄灭）。
+ * 有上限是为了避免「冰晶回盾 > 玩家输出」时战斗无限拖长（实测稀有步枪无秘卷 400 秒打不完）。
+ */
+const CRYSTAL_RATE = 0.012;
+const CRYSTAL_CHARGE = 0.1;
 
 const _v = new THREE.Vector3();
 const _m = new THREE.Vector3();
@@ -599,6 +605,7 @@ export class Matriarch extends BossBase {
       const e = this.ctx.enemies.spawn('boss_ice_crystal', { position: this.crystalPts[i].clone(), level: this.level });
       if (e instanceof IceCrystal) {
         e.owner = this;
+        e.charge = this.maxShield * CRYSTAL_CHARGE;
         this.crystals.push(e);
         this.minions.push(e);
         n++;
@@ -665,9 +672,17 @@ export class Matriarch extends BossBase {
     // 冰晶供能 / 二阶段自愈护盾
     const n = this.aliveCrystals();
     if (this.shield < this.maxShield) {
-      let rate = n * 0.012;
-      if (this.phase >= 1 && this.ctx.time.now - this.lastHurtTime > 4) rate += 0.03;
-      if (rate > 0) this.shield = Math.min(this.maxShield, this.shield + this.maxShield * rate * dt);
+      let gain = 0;
+      const per = this.maxShield * CRYSTAL_RATE * dt;
+      for (let i = 0; i < n; i++) {
+        const c = this.crystals[i];
+        if (c.charge <= 0) continue;
+        const g = Math.min(per, c.charge);
+        c.charge -= g;
+        gain += g;
+      }
+      if (this.phase >= 1 && this.ctx.time.now - this.lastHurtTime > 4) gain += this.maxShield * 0.03 * dt;
+      if (gain > 0) this.shield = Math.min(this.maxShield, this.shield + gain);
     }
 
     const target = this.phase >= 1 ? 1 : 0;

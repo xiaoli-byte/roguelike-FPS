@@ -80,8 +80,16 @@ const CSS = `
 .fx-dn.fx-dn-player { font-size: 24px; }
 .fx-dn.fx-dn-heal { font-size: 22px; }
 .fx-dn.fx-dn-immune { font-size: 17px; font-weight: 800; letter-spacing: 2px; }
-.fx-dn.fx-dn-reaction { font-size: 18px; font-weight: 800; letter-spacing: 2px; }
-.fx-dn.fx-dn-reaction-big { font-size: 22px; }
+.fx-dn.fx-dn-reaction {
+  font-size: 20px; font-weight: 900; letter-spacing: 3px;
+  padding: 3px 6px 3px 9px; border-radius: 3px;
+  background: rgba(10, 6, 12, 0.72);
+  box-shadow: inset 0 0 0 1px currentColor, 0 2px 8px rgba(0, 0, 0, 0.6);
+  text-shadow:
+    2px 0 0 #000, -2px 0 0 #000, 0 2px 0 #000, 0 -2px 0 #000,
+    1.5px 1.5px 0 #000, -1.5px 1.5px 0 #000, 1.5px -1.5px 0 #000, -1.5px -1.5px 0 #000;
+}
+.fx-dn.fx-dn-reaction-big { font-size: 25px; padding: 4px 8px 4px 11px; }
 `;
 
 interface DN {

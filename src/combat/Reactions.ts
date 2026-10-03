@@ -39,7 +39,7 @@ const DETONATE_MERGE_DELAY = 1e-4;
 export const REACTION_TUNING: Record<ReactionId, { k: number; floor: number; cap: number; icd: number }> = {
   thunderfire: { k: 1.0, floor: 14, cap: 80, icd: 1.0 },
   meltdown:    { k: 1.0, floor: 14, cap: 100, icd: 1.2 },
-  veinseal:    { k: 1.0, floor: 14, cap: 90, icd: 1.5 },
+  veinseal:    { k: 1.0, floor: 14, cap: 90, icd: 1.2 },
   abyss:       { k: 1.5, floor: 40, cap: 320, icd: 6.0 },
 };
 
@@ -919,8 +919,9 @@ export class ReactionSystem {
   }
 
   private label(enemy: IEnemy, text: string, color: number, big: boolean): void {
+    // 抬到血条（头顶 +0.6 附近）之上，避开自身爆炸最亮的核心
     enemy.getHeadCenter(_lbl);
-    _lbl.y += 0.6;
+    _lbl.y += 1.05;
     this.feedback.reactionLabel(enemy, _lbl, text, color, big);
   }
 

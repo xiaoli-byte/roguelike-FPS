@@ -121,8 +121,8 @@ const _c = new THREE.Color();
 /** 姿态：相对 viewOffset 的 pivot 偏移与旋转 [Δx, Δy, Δz, rx, ry, rz]（弧度） */
 type Pose = readonly [number, number, number, number, number, number];
 
-/** 斩·待机：刀斜举在视野右侧（刀尖不挡准星） */
-const P_MELEE_IDLE: Pose = [0, 0, 0, 0.45, -0.12, -0.5];
+/** 斩·待机：刀斜搭向右肩、刀尖指向右上（不越过画面中线，近距离不挡目标） */
+const P_MELEE_IDLE: Pose = [0.03, -0.02, 0, 0.6, -0.55, -0.5];
 /** 千刃·待机：刀身消失，手持刀柄略收，刃片悬浮于手背上方 */
 const P_RANGED_IDLE: Pose = [-0.02, 0.02, 0.04, 0.15, 0.12, 0.1];
 /** 技能·突进：刀收到身侧、刀尖平指右后方（手与柄尾留在视野右下） */

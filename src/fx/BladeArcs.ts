@@ -18,11 +18,11 @@ const ARCS = 8;
 const SEG = 24;
 /** 扫开 / 淡出时长与加法热边的最大不透明度（防眩光） */
 const REVEAL = 0.08;
-const FADE = 0.15;
-const MAX_ALPHA = 0.35;
-/** 普通混合深色底层：峰值不透明度与颜色（弧光色 × BASE_DARK：朱红 0xff3a24 → 约 0xb3291a） */
-const BASE_ALPHA = 0.4;
-const BASE_DARK = 0.7;
+const FADE = 0.2;
+const MAX_ALPHA = 0.42;
+/** 普通混合深色底层：峰值不透明度与颜色（弧光色 × BASE_DARK：朱红 0xff3a24 → 约 0x801d12）。亮色关卡靠它保住主题色 */
+const BASE_ALPHA = 0.72;
+const BASE_DARK = 0.5;
 /**
  * 生成时已扫开的比例：弧光在判定帧生成，此时第一人称的刀已经从蓄势侧挥到中线（出刀姿态），
  * 弧光从 0 开始扫会落后刀身约半个弧；从这里起扫，刃头与刀尖大致同步。
@@ -47,9 +47,18 @@ const DIP_H = 0.06;
 const TILT_V = (26 * Math.PI) / 180;
 const SHIFT_V = 0.4;
 const DIP_V = 0.13;
+/**
+ * 碗面：内缘沿弧面法线（背离眼睛）再压 BOWL_IN、外缘反向抬 BOWL_OUT（中段最大、两端为 0.3 倍）。
+ * 平面弧从眼睛看内外缘只差约 4°（一条线）；碗面让新月面朝向镜头，视宽约 3–4 倍。
+ * 横斩内缘最低约离地 0.6 米，不会插进地面。
+ */
+const BOWL_IN_H = 0.45;
+const BOWL_OUT_H = 0.1;
+const BOWL_IN_V = 0.3;
+const BOWL_OUT_V = 0.08;
 /** 外缘刃光带：分段数、半宽、拖在刃头后的长度（u） */
 const EDGE_QUADS = 14;
-const EDGE_W = 0.035;
+const EDGE_W = 0.05;
 const EDGE_TAIL = 0.75;
 
 const VERT = /* glsl */ `
@@ -229,7 +238,7 @@ export class BladeArcs {
     _r.set(Math.cos(yaw), 0, -Math.sin(yaw));
     _up.crossVectors(_r, _f).normalize();
     let from: number, to: number;
-    let dip: number;
+    let dip: number, bowlIn: number, bowlOut: number;
     if (segment === 2) {
       // 下劈：偏右、顶端向右倾的竖直面，自上而下；中段沿弧面法线（背离眼睛：右下）鼓出
       _side.copy(_up).multiplyScalar(Math.cos(TILT_V)).addScaledVector(_r, Math.sin(TILT_V));
@@ -238,6 +247,8 @@ export class BladeArcs {
       from = halfAngle;
       to = -halfAngle;
       dip = DIP_V;
+      bowlIn = BOWL_IN_V;
+      bowlOut = BOWL_OUT_V;
     } else {
       // 横斩平面右高左低（向左下倾），回斩左高右低（向右下倾）；眼睛略高于弧面，中段向下压（浅碗）
       const tilt = segment === 0 ? TILT_H : -TILT_H;
@@ -247,6 +258,8 @@ export class BladeArcs {
       from = segment === 0 ? halfAngle : -halfAngle;
       to = -from;
       dip = DIP_H;
+      bowlIn = BOWL_IN_H;
+      bowlOut = BOWL_OUT_H;
     }
     const rOut = Math.max(0.5, range) * R_OUT;
     const rIn0 = Math.max(0.5, range) * R_IN;
@@ -263,14 +276,17 @@ export class BladeArcs {
       dx /= dl;
       dy /= dl;
       dz /= dl;
-      // 新月：中段最宽，两端收窄
-      const rIn = rOut - (rOut - rIn0) * (0.3 + 0.7 * Math.sin(Math.PI * u));
-      P[i * 6] = _o.x + dx * rIn;
-      P[i * 6 + 1] = _o.y + dy * rIn;
-      P[i * 6 + 2] = _o.z + dz * rIn;
-      P[i * 6 + 3] = O[i * 3] = _o.x + dx * rOut;
-      P[i * 6 + 4] = O[i * 3 + 1] = _o.y + dy * rOut;
-      P[i * 6 + 5] = O[i * 3 + 2] = _o.z + dz * rOut;
+      // 新月：中段最宽，两端收窄；碗面同样中段最深
+      const mid = 0.3 + 0.7 * Math.sin(Math.PI * u);
+      const rIn = rOut - (rOut - rIn0) * mid;
+      const bi = bowlIn * mid;
+      const bo = bowlOut * mid;
+      P[i * 6] = _o.x + dx * rIn + _n.x * bi;
+      P[i * 6 + 1] = _o.y + dy * rIn + _n.y * bi;
+      P[i * 6 + 2] = _o.z + dz * rIn + _n.z * bi;
+      P[i * 6 + 3] = O[i * 3] = _o.x + dx * rOut - _n.x * bo;
+      P[i * 6 + 4] = O[i * 3 + 1] = _o.y + dy * rOut - _n.y * bo;
+      P[i * 6 + 5] = O[i * 3 + 2] = _o.z + dz * rOut - _n.z * bo;
     }
     a.pos.needsUpdate = true;
     hexToColor(color, a.u.uColor.value);
