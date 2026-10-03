@@ -128,7 +128,7 @@ class Gen {
       type, theme: stage.theme, half: H,
       minX: -H, minZ: -H, maxX: H, maxZ: H, floorY: 0,
       wallThickness: WALL_T, wallHeight: st.wallHeight,
-      boxes: [], decos: [], lights: [], runes: [],
+      boxes: [], decos: [], lights: [], runes: [], ramps: [],
       playerSpawn: zero(), playerYaw: 0, spawnPoints: [],
       rewardPoint: zero(), portalPoints: [], shopPoint: zero(), bossPoint: zero(), center: zero(),
       checks: [],
@@ -315,7 +315,7 @@ class Gen {
     if (type === 'boss') res.push({ x: L.bossPoint.x, z: L.bossPoint.z, r: 4.5 });
   }
 
-  /** 4 个带点光源的火盆 / 灯笼 */
+  /** 4 处灯火（火盆 / 石灯 / 灯笼柱）；按生成顺序前 LIGHT_COUNT 处挂真正的点光源，见 finalizeLights */
   private lights(): void {
     const H = this.H;
     const L = this.L;
@@ -438,6 +438,16 @@ class Gen {
     this.occupy(U, g);
     this.reserved.push(landC);
     this.L.checks.push({ x: land.x, z: land.z, g });
+    // 导航：台阶顶端进入台面的点（离台沿 0.9 米，正对台阶中线）
+    const head: P2 = side === 0 ? { x: P.x1 - 0.9, z: cz + off }
+      : side === 1 ? { x: P.x0 + 0.9, z: cz + off }
+      : side === 2 ? { x: cx + off, z: P.z1 - 0.9 }
+      : { x: cx + off, z: P.z0 + 0.9 };
+    this.L.ramps.push({
+      x0: P.x0, z0: P.z0, x1: P.x1, z1: P.z1, top: h,
+      sx0: S.x0, sz0: S.z0, sx1: S.x1, sz1: S.z1,
+      foot: { x: land.x, z: land.z }, head, group: g,
+    });
 
     if (allowPavilion && !this.hasPavilion && w >= 5 && d >= 4.6 && rng.chance(0.5)) {
       // 亭子：四根朱漆柱 + 屋顶（屋顶底面在台面上方 2.9 米）

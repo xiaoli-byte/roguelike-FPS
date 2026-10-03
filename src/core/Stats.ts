@@ -108,7 +108,7 @@ export function formatStat(key: StatKey, value: number): string {
     case 'int':
       return `${sign}${Math.round(value)}`;
     default:
-      return `${sign}${Math.round(value * 10) / 10}`;
+      return `${sign}${Math.round(value * 100) / 100}`;
   }
 }
 

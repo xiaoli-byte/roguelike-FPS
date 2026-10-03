@@ -9,6 +9,7 @@ import { Rng } from '../core/Rng';
 import { buildWaves } from '../enemies/Waves';
 import { ArenaView, addCollision } from './ArenaBuilder';
 import { generateLevel, type LevelLayout } from './LevelGen';
+import { NavGrid, type NavRamp } from './NavGrid';
 import { Portal } from './Portal';
 import { themeDef } from './Themes';
 import { BOSS_LEAD, WaveRunner, isBossId } from './WaveRunner';
@@ -20,19 +21,16 @@ const BOSS_SPAWN_AT = 2.5;
 const PORTAL_DELAY_CLEAR = 1.4;
 const PORTAL_DELAY_FREE = 0.8;
 const VICTORY_DELAY = 4;
+/** 首领倒下后：1.2 秒时残余爪牙溃散，2.6 秒（死亡演出的最终爆炸前后）才结算清关 */
+const BOSS_CLEANUP_DELAY = 1.2;
+const BOSS_CLEAR_HOLD = 2.6;
 const STUCK_CHECK = 0.5;
-const STRAGGLER_TIME = 45;
-/** 「顶墙」判定：速度 > 1.5 m/s 但 0.5 秒内位移 < 0.15 米，持续 1.5 秒即侧移 0.9 米 */
-const WEDGE_SPEED = 1.5;
-const WEDGE_MOVE = 0.15;
-const WEDGE_TIME = 1.5;
-const WEDGE_NUDGE = 0.9;
+/** 最后 <= 2 只敌人这么久没有任何进展（击杀 / 刷怪）就把它们传送到玩家附近 */
+const STRAGGLER_TIME = 30;
 const CLEAR_ESSENCE = 10;
 const BOSS_IDS = ['boss_colossus', 'boss_matriarch', 'boss_warlord'];
 
 const _v = new THREE.Vector3();
-
-interface WedgeInfo { x: number; z: number; stuck: number }
 
 function toArena(L: LevelLayout, theme: ThemeDef): ArenaInfo {
   const v = (p: { x: number; z: number }): THREE.Vector3 => new THREE.Vector3(p.x, L.floorY, p.z);
@@ -48,6 +46,16 @@ function toArena(L: LevelLayout, theme: ThemeDef): ArenaInfo {
     center: v(L.center),
     theme,
   };
+}
+
+function toNavRamps(L: LevelLayout): NavRamp[] {
+  return L.ramps.map((r) => ({
+    x0: r.x0, z0: r.z0, x1: r.x1, z1: r.z1,
+    topY: L.floorY + r.top,
+    sx0: r.sx0, sz0: r.sz0, sx1: r.sx1, sz1: r.sz1,
+    foot: new THREE.Vector3(r.foot.x, L.floorY, r.foot.z),
+    head: new THREE.Vector3(r.head.x, L.floorY + r.top, r.head.z),
+  }));
 }
 
 /** 敌人模块没有给出波次时的兜底计划（按设计文档的章节敌人池） */
@@ -83,6 +91,7 @@ export class StageDirector implements IStageDirector {
   arena: ArenaInfo | null = null;
   cleared = false;
   waveIndex = 0;
+  /** HUD 用的波次数；只有 Boss 的关卡为 0（不显示「第 1 / 1 波」） */
   waveCount = 0;
 
   private layout: LevelLayout | null = null;
@@ -97,9 +106,12 @@ export class StageDirector implements IStageDirector {
   private victoryAt = -1;
   private victoryDone = false;
   private cleanupAt = -1;
+  /** 首领倒下后的清关结算最早时间 */
+  private clearHoldUntil = -1;
+  /** 宝藏 / 商店关：载入后第一帧再结算（保证 'stage:loaded' 先于 'stage:cleared'） */
+  private freePending = false;
   private stuckTimer = 0;
   private lastProgress = 0;
-  private readonly wedge = new Map<IEnemy, WedgeInfo>();
 
   constructor(readonly ctx: GameContext) {}
 
@@ -135,6 +147,7 @@ export class StageDirector implements IStageDirector {
       this.view = null;
     }
     ctx.nav.build(arena);
+    if (ctx.nav instanceof NavGrid) ctx.nav.setRamps(toNavRamps(L));
     ctx.player.teleport(arena.playerSpawn.clone(), arena.playerYaw);
 
     switch (stage.type) {
@@ -167,6 +180,7 @@ export class StageDirector implements IStageDirector {
       this.view = null;
     }
     ctx.world.clear();
+    if (ctx.nav instanceof NavGrid) ctx.nav.setRamps([]);
     ctx.scene.fog = null;
     if (this.bosses.length > 0) ctx.ui.setBoss(null);
     this.stage = null;
@@ -183,9 +197,10 @@ export class StageDirector implements IStageDirector {
     this.victoryAt = -1;
     this.victoryDone = false;
     this.cleanupAt = -1;
+    this.clearHoldUntil = -1;
+    this.freePending = false;
     this.stuckTimer = 0;
     this.lastProgress = 0;
-    this.wedge.clear();
   }
 
   private setupWaves(stage: StageNode, arena: ArenaInfo): void {
@@ -202,7 +217,8 @@ export class StageDirector implements IStageDirector {
     } else if (plans.length === 0) {
       plans = fallbackWaves(ctx, stage);
     }
-    this.waveCount = plans.length;
+    const bossOnly = plans.length > 0 && plans.every((w) => w.entries.length > 0 && w.entries.every((e) => isBossId(e.enemyId)));
+    this.waveCount = bossOnly ? 0 : plans.length;
     this.waveIndex = 0;
     const firstHasBoss = plans.length > 0 && plans[0].entries.some((e) => isBossId(e.enemyId));
     const firstAt = firstHasBoss ? BOSS_SPAWN_AT - BOSS_LEAD : FIRST_WAVE_AT;
@@ -210,11 +226,10 @@ export class StageDirector implements IStageDirector {
     this.lastProgress = 0;
   }
 
-  /** 宝藏 / 商店：无敌人，直接视为已通过 */
+  /** 宝藏 / 商店：无敌人，视为已通过（清关结算推迟到第一帧） */
   private markFreeStage(): void {
     this.cleared = true;
-    this.ctx.run.stagesCleared++;
-    this.portalAt = PORTAL_DELAY_FREE;
+    this.freePending = true;
   }
 
   // ───────────── 每帧 ─────────────
@@ -227,10 +242,15 @@ export class StageDirector implements IStageDirector {
     this.view?.update(dt, t);
     for (const p of this.portals) p.update(dt, t);
 
+    if (this.freePending) {
+      this.freePending = false;
+      this.settleClear(this.stage);
+      this.portalAt = t + PORTAL_DELAY_FREE;
+    }
     if (this.waves && !this.cleared) {
       this.waves.update(t);
       if (this.waves.current >= 0) this.waveIndex = this.waves.current;
-      if (this.waves.done && t - this.waves.lastActivity > 0.4 && ctx.enemies.aliveCount() === 0) this.onCleared();
+      if (this.waves.done && t - this.waves.lastActivity > 0.4 && t >= this.clearHoldUntil && ctx.enemies.aliveCount() === 0) this.onCleared();
     }
     if (this.cleanupAt >= 0 && t >= this.cleanupAt) {
       this.cleanupAt = -1;
@@ -260,7 +280,7 @@ export class StageDirector implements IStageDirector {
     this.lastProgress = this.t;
     ctx.events.emit('wave:started', { index, total });
     ctx.audio.play('wave_start');
-    if (!hasBoss) ctx.ui.toast(`第 ${index + 1} / ${total} 波`);
+    if (!hasBoss) ctx.ui.toast(total > 1 && index === total - 1 ? `第 ${index + 1} / ${total} 波 · 最后一波` : `第 ${index + 1} / ${total} 波`);
   }
 
   private onEnemySpawned(e: IEnemy): void {
@@ -269,11 +289,10 @@ export class StageDirector implements IStageDirector {
     if (!e.isBoss) return;
     if (this.bosses.includes(e)) return;
     this.bosses.push(e);
+    // 名号横幅与血条由关卡导演负责（Boss 登场结束时只补一条弱点提示）；吼叫与震屏由 Boss 自己的登场演出负责
     const ctx = this.ctx;
-    ctx.ui.banner(e.displayName, '首领', 3);
-    ctx.audio.play('boss_roar');
+    ctx.ui.banner(e.displayName, this.arena ? `首领 · ${this.arena.theme.name}` : '首领', 3);
     ctx.ui.setBoss(e);
-    ctx.fx.shake(0.5, 0.9);
   }
 
   private onEnemyKilled(e: IEnemy): void {
@@ -286,15 +305,26 @@ export class StageDirector implements IStageDirector {
       ctx.ui.setBoss(this.bosses[0]);
       return;
     }
-    ctx.ui.setBoss(null);
+    // 不调用 setBoss(null)：血条自己显示「已击破」并在 1.8 秒后收起
     if (this.stage.type === 'boss' && !this.cleared) {
-      // 首领倒下：取消剩余波次，残余爪牙随之溃散
+      // 首领倒下：取消剩余波次，残余爪牙随之溃散，等死亡演出接近尾声再结算
       this.waves?.cancel();
-      this.cleanupAt = this.t + 1.2;
+      this.cleanupAt = this.t + BOSS_CLEANUP_DELAY;
+      this.clearHoldUntil = this.t + BOSS_CLEAR_HOLD;
+      // 最终首领：胜利已定，不再因残留的弹幕 / 危险区判负
+      if (ctx.runPlan.isFinalStage(this.stage)) this.protectPlayer(BOSS_CLEAR_HOLD + VICTORY_DELAY + 1);
     }
   }
 
   // ───────────── 清关 / 出口 ─────────────
+
+  /** 清关结算：计数、魂晶、事件（战斗关清场时与宝藏 / 商店关载入后各一次） */
+  private settleClear(stage: StageNode): void {
+    const ctx = this.ctx;
+    ctx.run.stagesCleared++;
+    ctx.run.essence += CLEAR_ESSENCE;
+    ctx.events.emit('stage:cleared', { stage });
+  }
 
   private onCleared(): void {
     const stage = this.stage;
@@ -303,13 +333,8 @@ export class StageDirector implements IStageDirector {
     const ctx = this.ctx;
     this.cleared = true;
     this.waves?.cancel();
-    if (this.bosses.length > 0) {
-      this.bosses = [];
-      ctx.ui.setBoss(null);
-    }
-    ctx.run.stagesCleared++;
-    ctx.run.essence += CLEAR_ESSENCE;
-    ctx.events.emit('stage:cleared', { stage });
+    this.bosses = [];
+    this.settleClear(stage);
     ctx.audio.play('stage_clear');
 
     const next = ctx.runPlan.nextOptions(ctx.run);
@@ -329,8 +354,15 @@ export class StageDirector implements IStageDirector {
 
   private scheduleVictory(): void {
     if (this.victoryAt >= 0 || this.victoryDone) return;
-    this.ctx.ui.banner('轮回终焉', '胜利', 4);
+    this.ctx.ui.banner('灵火破晓', '深渊已平 · 凯旋而归', VICTORY_DELAY);
+    this.protectPlayer(VICTORY_DELAY + 1);
     this.victoryAt = this.t + VICTORY_DELAY;
+  }
+
+  /** 胜负已定后的无敌（不覆盖更长的无敌，例如调试无敌） */
+  private protectPlayer(seconds: number): void {
+    const p = this.ctx.player;
+    if (p.alive) p.invulnerableTime = Math.max(p.invulnerableTime, seconds);
   }
 
   /** 在远端生成 1–3 个出口传送门 */
@@ -361,6 +393,11 @@ export class StageDirector implements IStageDirector {
 
   // ───────────── 防卡关 ─────────────
 
+  /**
+   * 每 0.5 秒：出界 / 数值异常的敌人拉回场内；最后的残敌长时间没有进展时传送到玩家附近；玩家掉出世界兜底。
+   * 寻常的「顶墙」由敌人自己的卡死绕行（StandardEnemy.navigate）与 EnemyBase 的侧向直线检测处理，
+   * 这里不再做瞬移式推挤（人群互相推挤时会被误判，表现为敌人原地闪现）。
+   */
   private antiStuck(): void {
     const ctx = this.ctx;
     const a = this.arena;
@@ -373,10 +410,7 @@ export class StageDirector implements IStageDirector {
       const bad = !Number.isFinite(p.x + p.y + p.z)
         || p.x < a.minX - 0.5 || p.x > a.maxX + 0.5 || p.z < a.minZ - 0.5 || p.z > a.maxZ + 0.5
         || p.y < a.floorY - 3 || p.y > a.floorY + 40;
-      if (!bad) {
-        this.checkWedged(e);
-        continue;
-      }
+      if (!bad) continue;
       _v.set(
         Number.isFinite(p.x) ? Math.min(a.maxX - 1, Math.max(a.minX + 1, p.x)) : a.center.x,
         a.floorY,
@@ -386,11 +420,9 @@ export class StageDirector implements IStageDirector {
       this.placeEnemy(e, _v, false);
     }
 
-    for (const e of this.wedge.keys()) if (!e.alive) this.wedge.delete(e);
-
-    // 最后 <= 2 只敌人 45 秒没有进展：传送到玩家附近
+    // 最后 <= 2 只敌人长时间没有进展：传送到玩家附近（首领战中不算——玩家正在打首领）
     const w = this.waves;
-    if (w && w.done && !this.cleared && alive > 0 && alive <= 2) {
+    if (w && w.done && !this.cleared && alive > 0 && alive <= 2 && this.bosses.length === 0) {
       const since = this.t - Math.max(this.lastProgress, w.lastActivity);
       if (since >= STRAGGLER_TIME) {
         this.lastProgress = this.t;
@@ -410,54 +442,6 @@ export class StageDirector implements IStageDirector {
     if (ctx.player.alive && (!Number.isFinite(pp.x + pp.y + pp.z) || pp.y < a.floorY - 15
       || pp.x < a.minX - 3 || pp.x > a.maxX + 3 || pp.z < a.minZ - 3 || pp.z > a.maxZ + 3)) {
       ctx.player.teleport(a.playerSpawn.clone(), a.playerYaw);
-    }
-  }
-
-  /**
-   * 顶墙检测：敌人想走（速度不小）却几乎没挪动，多半是沿直线顶在障碍物端面上。
-   * 持续 1.5 秒后把它沿垂直于速度的方向侧移 0.9 米（目标点可走且不与静态几何重叠）。
-   * 原地站桩的敌人速度接近 0，不会被误判。
-   */
-  private checkWedged(e: IEnemy): void {
-    if (e.flying || e.isBoss) return;
-    const w = this.wedge.get(e);
-    if (!w) {
-      this.wedge.set(e, { x: e.position.x, z: e.position.z, stuck: 0 });
-      return;
-    }
-    const p = e.position;
-    const moved = Math.hypot(p.x - w.x, p.z - w.z);
-    const sp = Math.hypot(e.velocity.x, e.velocity.z);
-    w.x = p.x;
-    w.z = p.z;
-    if (e.stunTime > 0 || sp < WEDGE_SPEED || moved > WEDGE_MOVE) {
-      w.stuck = 0;
-      return;
-    }
-    w.stuck += STUCK_CHECK;
-    if (w.stuck < WEDGE_TIME) return;
-    w.stuck = 0;
-    const ux = e.velocity.x / sp;
-    const uz = e.velocity.z / sp;
-    const ctx = this.ctx;
-    const first = ctx.rng.chance(0.5) ? 1 : -1;
-    for (let k = 0; k < 4; k++) {
-      const side = k % 2 === 0 ? first : -first;
-      const back = k < 2 ? 0 : 0.5;
-      let ox = -uz * side - ux * back;
-      let oz = ux * side - uz * back;
-      const l = Math.hypot(ox, oz);
-      ox /= l;
-      oz /= l;
-      const nx = p.x + ox * WEDGE_NUDGE;
-      const nz = p.z + oz * WEDGE_NUDGE;
-      if (!ctx.nav.isWalkable(nx, nz)) continue;
-      if (ctx.world.overlapsBody(nx, p.y + 0.02, nz, e.radius * 0.85, e.height)) continue;
-      p.x = nx;
-      p.z = nz;
-      w.x = nx;
-      w.z = nz;
-      return;
     }
   }
 

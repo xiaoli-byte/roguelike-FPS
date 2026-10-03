@@ -4,7 +4,7 @@
  */
 import type { GameContext, StatKey } from '../core/types';
 import { formatTime } from '../core/math';
-import { h, icon, button, Presence, formatNum } from './dom';
+import { h, icon, button, Presence, formatNum, fitPanel } from './dom';
 import { ICON_COIN, ICON_ESSENCE, ICON_HOURGLASS, ICON_SKULL } from './icons';
 import { heroColor, heroGlyph } from './labels';
 import { SettingsPanel } from './SettingsPanel';
@@ -106,11 +106,18 @@ export class PauseMenu {
     this.settingsPresence.hide(true);
     this.mainPresence.show();
     this.presence.show();
+    fitPanel(this.mainEl);
   }
 
   hide(): void {
     this.disarm();
     this.presence.hide();
+  }
+
+  /** 视口变化时重新缩放 */
+  refit(): void {
+    if (!this.presence.visible) return;
+    fitPanel(this.inSettings ? this.settingsWrap : this.mainEl);
   }
 
   /** Esc 在设置子页时返回暂停主页（返回 true 表示已处理，阻止 Game 直接恢复游戏） */
@@ -167,12 +174,14 @@ export class PauseMenu {
     this.settings.refresh();
     this.mainPresence.hide();
     this.settingsPresence.show();
+    fitPanel(this.settingsWrap);
   }
 
   private closeSettings(): void {
     this.inSettings = false;
     this.settingsPresence.hide();
     this.mainPresence.show();
+    fitPanel(this.mainEl);
   }
 
   /** 二次确认：第一次点击进入待确认状态并返回 false，确认期内再点返回 true */

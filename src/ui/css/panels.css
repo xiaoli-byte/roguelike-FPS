@@ -6,10 +6,21 @@
   --hero: var(--gold);
 }
 
+.gf-heroes .gf-panel__head {
+  margin-bottom: 16px;
+}
+
+.gf-heroes .gf-panel__foot {
+  margin-top: 18px;
+  padding-top: 14px;
+}
+
 .gf-heroes__grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
+  /* 给选中卡片的上浮与阴影留出空间，避免被面板的滚动区域裁掉 */
+  padding-top: 6px;
 }
 
 .gf-hero {
@@ -17,7 +28,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: 24px 22px 18px;
+  padding: 20px 22px 16px;
   text-align: left;
   background:
     radial-gradient(90% 50% at 20% 0%, color-mix(in srgb, var(--hero) 18%, transparent), transparent 70%),
@@ -84,8 +95,8 @@
 
 .gf-hero__medal {
   flex: none;
-  width: 68px;
-  height: 68px;
+  width: 62px;
+  height: 62px;
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -121,9 +132,9 @@
 }
 
 .gf-hero__desc {
-  margin: 14px 0 12px;
-  font-size: 13px;
-  line-height: 1.65;
+  margin: 12px 0 10px;
+  font-size: 13.5px;
+  line-height: 1.6;
   color: var(--paper-2);
 }
 
@@ -138,7 +149,7 @@
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  padding: 6px 4px;
+  padding: 5px 4px;
   border: 1px solid var(--line-soft);
   background: rgba(7, 6, 10, 0.45);
 }
@@ -172,8 +183,8 @@
 .gf-hero__skills {
   display: flex;
   flex-direction: column;
-  gap: 11px;
-  margin-top: 16px;
+  gap: 9px;
+  margin-top: 12px;
 }
 
 .gf-hero__skill {
@@ -224,9 +235,9 @@
 }
 
 .gf-hero__sdesc {
-  margin-top: 2px;
-  font-size: 12.5px;
-  line-height: 1.55;
+  margin-top: 1px;
+  font-size: 13px;
+  line-height: 1.5;
   color: var(--paper-2);
 }
 
@@ -235,12 +246,12 @@
   align-items: baseline;
   gap: 8px;
   margin-top: auto;
-  padding-top: 14px;
+  padding-top: 10px;
   border-top: 1px dashed var(--line-soft);
 }
 
 .gf-hero__skills + .gf-hero__weapon {
-  margin-top: 16px;
+  margin-top: 12px;
 }
 
 .gf-hero__wlabel,
@@ -283,10 +294,19 @@
 
 /* ═════════════════════════ 天赋 ═════════════════════════ */
 
+.gf-talents .gf-panel__head {
+  margin-bottom: 16px;
+}
+
+.gf-talents .gf-panel__foot {
+  margin-top: 18px;
+  padding-top: 14px;
+}
+
 .gf-talents__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  gap: 10px 12px;
 }
 
 .gf-talent {
@@ -294,7 +314,7 @@
   grid-template-columns: 1fr auto;
   align-items: center;
   gap: 14px;
-  padding: 14px 16px;
+  padding: 11px 16px 10px;
   border: 1px solid var(--line-soft);
   background: rgba(7, 6, 10, 0.45);
   animation: gf-card-in 0.45s var(--ease-out) backwards;
@@ -308,7 +328,8 @@
 
 .gf-talent__name {
   font-family: var(--font-display);
-  font-size: 21px;
+  font-size: 20px;
+  line-height: 1.3;
   letter-spacing: 0.14em;
   color: var(--paper);
 }
@@ -321,15 +342,16 @@
 }
 
 .gf-talent__desc {
-  margin-top: 2px;
-  font-size: 12.5px;
+  margin-top: 1px;
+  font-size: 13px;
   color: var(--paper-2);
 }
 
 .gf-talent__pips {
-  display: flex;
+  display: inline-flex;
+  align-items: center;
   gap: 7px;
-  margin: 9px 0 6px 2px;
+  margin: 0 4px 0 2px;
 }
 
 .gf-talent__pip {
@@ -347,8 +369,11 @@
 
 .gf-talent__effect {
   display: flex;
-  gap: 14px;
-  font-size: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-top: 6px;
+  font-size: 12.5px;
   color: var(--paper-3);
 }
 
@@ -427,7 +452,8 @@
 
 /* ───────── 窄屏 ───────── */
 
-@media (max-width: 900px), (max-height: 560px) {
+/* 只在极窄时折叠成单列：其余情况由 fitPanel 把多列布局等比缩小，折成单列只会更高 */
+@media (max-width: 640px) {
   .gf-heroes__grid,
   .gf-talents__grid,
   .gf-controls__list {

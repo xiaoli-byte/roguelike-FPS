@@ -4,7 +4,7 @@
  */
 import * as THREE from 'three';
 import type { DamageRequest, Element, GameContext, IEnemy, SkillDef } from '../../core/types';
-import { clamp01 } from '../../core/math';
+import { clamp, clamp01 } from '../../core/math';
 
 /**
  * 本模块内部使用的技能定义扩展：reset 用于开新局 / 换英雄时立即终止持续效果并撤销全部修饰。
@@ -30,12 +30,32 @@ const _up = new THREE.Vector3(0, 1, 0);
 const _aim = new THREE.Vector3();
 const _right = new THREE.Vector3();
 const _body = new THREE.Vector3();
+const _ep = new THREE.Vector3();
+const _wave = new THREE.Vector3();
 const _imp = new THREE.Vector3();
 const _queryOut: IEnemy[] = [];
 
 /** 技能伤害请求（source = skill，Combat 会乘 skillDamagePct） */
 export function skillHit(base: number, element: Element, elementChance = 0): DamageRequest {
   return { base, element, source: 'skill', elementChance, procDepth: 0 };
+}
+
+/** PlayerController 在 IPlayer 之外提供的技能用接口（按可选调用，保持对契约的松耦合） */
+interface PlayerSkillHooks {
+  cancelDash(): void;
+}
+
+/** 结束玩家当前的冲刺（冲刺会每帧覆盖速度，位移类技能需要先打断它） */
+export function cancelDash(ctx: GameContext): void {
+  (ctx.player as unknown as Partial<PlayerSkillHooks>).cancelDash?.();
+}
+
+/** 爆心 center 能否波及敌人：身体中心或头部任一点与 center 之间无静态遮挡（与 Combat.explode 的判定一致） */
+export function exposedTo(ctx: GameContext, e: IEnemy, center: THREE.Vector3): boolean {
+  e.getBodyCenter(_ep);
+  if (!ctx.world.segmentBlocked(center, _ep)) return true;
+  e.getHeadCenter(_ep);
+  return !ctx.world.segmentBlocked(center, _ep);
 }
 
 /** 范围类技能的半径倍率（爆炸范围属性） */
@@ -67,11 +87,16 @@ export function throwVelocity(ctx: GameContext, speed: number, lift: number, out
   return out;
 }
 
-/** 眩晕：交给 Combat 施加；非首领额外保证 stunTime 至少为 seconds（首领是否免疫由 Combat 决定） */
+/**
+ * 眩晕：本模块不直接写 enemy.stunTime，统一交给 Combat.applyStatus 施加。
+ * 时长缩放全部由 Combat 的状态系统决定，与 BossBase 的规则一致：精英缩短；首领取 min(0.35 秒, ×0.35) 并进入免疫期；
+ * 敌人此刻 stunImmune（Boss 出招 / 登场 / 阶段转换等）或 untargetable 时 Combat 直接忽略。
+ * 这里先按契约自查一次 stunImmune / untargetable，免得白调一次（也不依赖 Combat 的实现细节）。
+ */
 export function stunEnemy(ctx: GameContext, e: IEnemy, seconds: number): void {
-  if (!e.alive || seconds <= 0) return;
+  if (!e.alive || !(seconds > 0)) return;
+  if (e.stunImmune === true || e.untargetable === true) return;
   ctx.combat.applyStatus(e, 'stun', 0, seconds);
-  if (!e.isBoss && e.alive) e.stunTime = Math.max(e.stunTime, seconds);
 }
 
 /** 找到地面：point 正下方最高的地面高度（找不到时退回竞技场地面） */
@@ -103,47 +128,80 @@ export interface ShockwaveOptions {
 }
 
 /**
- * 以脚底点 center 为圆心释放冲击波：范围伤害（explode）+ 向外击退 + 可选眩晕 + 地面冲击环特效。
- * 返回被伤害命中的敌人数量。
+ * 以脚底点 center 为圆心释放冲击波：范围伤害 + 向外击退 + 可选眩晕 + 地面冲击环特效。
+ *
+ * 不走 combat.explode：冲击波是「砸地」而不是爆炸——explode 会给每一击加 'explosion' 标签（吃爆炸伤害加成），
+ * 击退规则也由它决定。这里逐个敌人调用 combat.damageEnemy（source 'skill'、knockback 0），
+ * 距离衰减与遮挡判定与 explode 相同（爆心到敌人竖直胶囊表面；身体中心与头部都被墙挡住则完全不受影响），
+ * 击退 / 上抛 / 眩晕只施加一次。返回被伤害命中的敌人数量。
  */
 export function shockwave(ctx: GameContext, center: THREE.Vector3, o: ShockwaveOptions): number {
-  _body.set(center.x, center.y + 0.9, center.z);
-  let hits = 0;
-  if (o.base > 0) {
-    hits = ctx.combat.explode(_body, o.radius, skillHit(o.base, o.element ?? 'none', o.elementChance ?? 0), {
-      noFx: true,
-      color: o.color,
-      falloff: o.falloff ?? 0.45,
-    });
-  }
+  if (!(o.radius > 0) || !Number.isFinite(o.radius)) return 0;
+  // 先拷出圆心：伤害结算会同步派发事件，调用方传进来的临时向量可能在监听者里被改写
+  const ox = center.x, oy = center.y, oz = center.z;
+  if (!Number.isFinite(ox + oy + oz)) return 0;
+  const R = o.radius;
+  const falloff = clamp01(o.falloff ?? 0.45);
+  const element = o.element ?? 'none';
+  const cy = oy + 0.9;
+  _wave.set(ox, cy, oz);
   _queryOut.length = 0;
-  const list = ctx.enemies.queryRadius(_body, o.radius, _queryOut);
-  for (let i = 0; i < list.length; i++) {
-    const e = list[i];
-    if (!e.alive) continue;
-    let dx = e.position.x - center.x;
-    let dz = e.position.z - center.z;
-    let d = Math.hypot(dx, dz);
-    if (d < 1e-3) {
-      dx = 1;
-      dz = 0;
-      d = 1;
+  // 拷贝一份：伤害事件的监听者可能嵌套查询敌人
+  const targets = ctx.enemies.queryRadius(_wave, R, _queryOut).slice();
+  _queryOut.length = 0;
+
+  let hits = 0;
+  for (let i = 0; i < targets.length; i++) {
+    const e = targets[i];
+    _wave.set(ox, cy, oz);
+    // 不可选中的敌人（queryRadius 按契约已跳过，这里兜底）：伤害 Combat 会忽略，但击退 / 眩晕是直接写敌人的，同样跳过
+    if (!e.alive || e.untargetable === true || !exposedTo(ctx, e, _wave)) continue;
+    let dx = e.position.x - ox;
+    let dz = e.position.z - oz;
+    let h = Math.hypot(dx, dz);
+    if (h < 1e-3) {
+      const a = Math.random() * Math.PI * 2;
+      dx = Math.cos(a);
+      dz = Math.sin(a);
+    } else {
+      dx /= h;
+      dz /= h;
     }
-    const k = 1 - 0.5 * clamp01(d / o.radius);
-    _imp.set((dx / d) * o.knockback * k, o.lift * k, (dz / d) * o.knockback * k);
+    // 爆心到敌人竖直胶囊（轴线）的最近距离，减去半径 = 到体表的距离（高大的敌人在脚边挨砸也吃满）
+    const py = e.position.y;
+    const lo = py + Math.min(e.radius, e.height * 0.5);
+    const hi = Math.max(lo, py + e.height - e.radius);
+    const dy = clamp(cy, lo, hi) - cy;
+    const surf = Math.max(0, Math.sqrt(h * h + dy * dy) - e.radius);
+    const t = clamp01(surf / R);
+
+    if (o.base > 0) {
+      const req = skillHit(o.base * (1 - (1 - falloff) * t), element, o.elementChance ?? 0);
+      req.knockback = 0;
+      req.point = e.getHeadCenter(new THREE.Vector3());
+      req.point.y += 0.2;
+      req.direction = new THREE.Vector3(dx, 0.35, dz).normalize();
+      if (ctx.combat.damageEnemy(e, req)) hits++;
+    }
+    if (!e.alive) continue;
+    const k = 1 - 0.5 * t;
+    _imp.set(dx * o.knockback * k, o.lift * k, dz * o.knockback * k);
     e.knockback(_imp);
     if (o.stun) stunEnemy(ctx, e, o.stun);
   }
-  _queryOut.length = 0;
 
   // 特效
-  _body.set(center.x, center.y + 0.08, center.z);
-  ctx.fx.ring(_body, o.radius, o.color, 0.45);
-  ctx.fx.ring(_body, o.radius * 0.55, o.secondaryColor ?? o.color, 0.3);
-  _body.y = center.y + 0.3;
-  ctx.fx.burst(_body, SKILL_COLORS.dust, 28, o.radius * 1.1, 0.7, 0.14, 14);
-  ctx.fx.burst(_body, o.secondaryColor ?? o.color, 14, o.radius * 1.4, 0.4, 0.06, 6);
-  if (o.crack) spawnGroundCrack(ctx, center, o.radius * 0.8, o.secondaryColor ?? o.color, 1.6);
+  const secondary = o.secondaryColor ?? o.color;
+  _wave.set(ox, oy + 0.08, oz);
+  ctx.fx.ring(_wave, R, o.color, 0.45);
+  ctx.fx.ring(_wave, R * 0.55, secondary, 0.3);
+  _wave.y = oy + 0.3;
+  ctx.fx.burst(_wave, SKILL_COLORS.dust, 28, R * 1.1, 0.7, 0.14, 14);
+  ctx.fx.burst(_wave, secondary, 14, R * 1.4, 0.4, 0.06, 6);
+  if (o.crack) {
+    _wave.set(ox, oy, oz);
+    spawnGroundCrack(ctx, _wave, R * 0.8, secondary, 1.6);
+  }
   return hits;
 }
 

@@ -16,6 +16,8 @@ export type PickupKind = 'coin' | 'ammo' | 'health';
 const MAX_PICKUPS = 240;
 const COLLECT_DIST = 0.55;
 const REST_HEIGHT: Record<PickupKind, number> = { coin: 0.22, ammo: 0.16, health: 0.3 };
+/** 清关之后才掉出的金币：落地展示一下再自动吸取 */
+const VACUUM_LATE_DELAY = 1.1;
 const SPIN: Record<PickupKind, number> = { coin: 2.6, ammo: 1.2, health: 1.6 };
 
 interface Pickup extends TossState {
@@ -51,6 +53,8 @@ export class PickupManager {
   /** 生成一个拾取物；数量达到上限返回 false */
   spawn(kind: PickupKind, pos: THREE.Vector3, value: number, burst = 1): boolean {
     if (this.list.length >= MAX_PICKUPS) return false;
+    if (!Number.isFinite(pos.x + pos.y + pos.z)) return false;
+    if (!Number.isFinite(value)) value = 0;
     const p = this.pool[kind].pop() ?? this.create(kind);
     // 面额越大的铜钱越大，静止高度随之抬高，避免竖立时插进地面
     const scale = kind === 'coin' ? 0.85 + Math.min(0.9, (value - 1) * 0.07) : 1;
@@ -70,7 +74,8 @@ export class PickupManager {
     p.magnetSpeed = 0;
     p.phase = Math.random() * TAU;
     p.spinDir = Math.random() < 0.5 ? -1 : 1;
-    p.vacuumAt = Infinity;
+    // 已清关（清关后的宝箱金币、宝藏 / 商店关）掉出的金币落地后自动吸取，免得漏捡
+    p.vacuumAt = kind === 'coin' && this.ctx.stage.cleared ? this.ctx.time.now + VACUUM_LATE_DELAY + Math.random() * 0.4 : Infinity;
 
     p.obj.position.copy(p.pos);
     p.obj.rotation.set(0, Math.random() * TAU, 0);
@@ -82,7 +87,7 @@ export class PickupManager {
 
   /** 金币拆成多枚抛出；超过数量上限的部分直接入账 */
   dropCoins(pos: THREE.Vector3, amount: number, burst = 1): void {
-    const total = Math.max(0, Math.round(amount));
+    const total = Number.isFinite(amount) ? Math.max(0, Math.round(amount)) : 0;
     if (total <= 0) return;
     const maxPieces = total >= 60 ? 22 : 14;
     const pieces = Math.max(1, Math.min(maxPieces, Math.ceil(total / 3)));

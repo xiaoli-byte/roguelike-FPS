@@ -24,6 +24,11 @@ const HOLSTER_FRAC = 0.4;
 const FIRE_BUFFER = 0.14;
 /** 打空后自动换弹的延迟 */
 const AUTO_RELOAD_DELAY = 0.25;
+/**
+ * 逐发装填结束（装满或被开火打断）后的上膛时间，期间不能开火。
+ * 没有它的话「装一发打一发」几乎不花额外时间（装一发 ≈ 射击间隔），霰弹枪等于无限弹匣，持续秒伤从约 85 涨到 140。
+ */
+const SHELL_RACK_TIME = 0.3;
 const SLOW_SOURCE = 'weapon:minigun';
 const HELD_SOURCE = 'weapon:held';
 const RANDOM_ELEMENTS: readonly Element[] = ['fire', 'shock', 'corrode'];
@@ -39,6 +44,11 @@ const CHAPTER_RARITY: readonly (readonly number[])[] = [
 
 let nextUid = 1;
 
+/** 把外部传入的稀有度规整到 0..4 的整数（容错：越界 / NaN） */
+function toRarity(r: number): Rarity {
+  return (Number.isFinite(r) ? clamp(Math.round(r), 0, 4) : 0) as Rarity;
+}
+
 export class WeaponSystem implements IWeaponSystem {
   slots: (WeaponInstance | null)[] = [null, null];
   activeSlot = 0;
@@ -47,6 +57,8 @@ export class WeaponSystem implements IWeaponSystem {
   private readonly ballistics: Ballistics;
   private readonly effects: AffixEffects;
   private readonly runtimes = new WeakMap<WeaponInstance, WeaponRuntime>();
+  /** describe() 结果缓存：交互提示每帧都会拉取，避免每帧重建字符串与数组 */
+  private readonly descCache = new WeakMap<WeaponInstance, { R: ResolvedWeapon; version: number; level: number; rarity: number; affixes: number; element: Element; desc: WeaponDescription }>();
   private readonly beamHit = makeBeamHit();
   private readonly vmState: ViewmodelState = {
     aimT: 0, lowerT: 0, reloading: false, reloadP: 0, shellMode: false, firing: false, spin: 0, scoped: false, sinceShot: 99, cock: 1,
@@ -146,25 +158,37 @@ export class WeaponSystem implements IWeaponSystem {
 
   init(): void {
     this.vm.init();
+    // 「猎首」修饰器在这里注册一次：Combat.clear()（换关）不会移除修饰器（types.ts 已写明）
     this.effects.init();
-    const ev = this.ctx.events;
-    ev.on('stage:loaded', () => {
-      this.clear();
-      this.effects.installModifier();
-    });
-    ev.on('player:died', () => {
+    this.ctx.events.on('player:died', () => {
       this.stopActions();
       this.aimT = 0;
       this.ctx.cameraFx.fovKick = 0;
     });
   }
 
-  /** 换关 / 开局：停止一切进行中的动作，清掉开镜与机炮减速 */
+  /**
+   * 换关 / 开局 / 回菜单（Game.clearStage 调用）：停止一切进行中的动作，清掉开镜、机炮减速与待执行的触发效果。
+   * 进行中的换弹直接完成（换关有淡入淡出，玩家不必在新关卡开头重按 R），不发事件。
+   */
   clear(): void {
+    if (this.reloading) {
+      const inst = this.active;
+      if (inst) {
+        const cap = this.magCapacity(inst);
+        const take = Math.min(Math.max(0, cap - inst.mag), Math.max(0, inst.reserve));
+        inst.mag += take;
+        inst.reserve -= take;
+      }
+      this.reloading = false;
+      this.shellMode = false;
+    }
     this.stopActions();
     this.aimT = 0;
     this.bloom = 0;
     this.cooldown = 0;
+    this.starvedTime = 0;
+    this.dryTimer = 0;
     this.ctx.cameraFx.fovKick = 0;
     this.effects.clear();
     this.vm.clearTransient();
@@ -223,8 +247,9 @@ export class WeaponSystem implements IWeaponSystem {
     const rng = this.ctx.rng;
     const defId = opts?.defId && hasWeaponDef(opts.defId) ? opts.defId : rng.pick(WEAPON_IDS);
     const def = getWeaponDef(defId);
-    const minR = opts?.minRarity ?? 0;
-    let rarity: Rarity = opts?.rarity ?? this.rollRarity(opts?.chapter ?? this.ctx.run.chapter, minR);
+    const minR = toRarity(opts?.minRarity ?? 0);
+    const chapter = opts?.chapter ?? this.ctx.run.chapter;
+    let rarity: Rarity = opts?.rarity !== undefined ? toRarity(opts.rarity) : this.rollRarity(Number.isFinite(chapter) ? chapter : 0, minR);
     if (rarity < minR) rarity = minR;
     let element: Element = def.element;
     if (element === 'none' && rarity >= 1 && rng.chance(RANDOM_ELEMENT_CHANCE)) element = rng.pick(RANDOM_ELEMENTS);
@@ -238,8 +263,17 @@ export class WeaponSystem implements IWeaponSystem {
     return inst;
   }
 
+  /** 返回的对象会被缓存复用（武器或玩家属性变化时重建），调用方只读不改 */
   describe(inst: WeaponInstance): WeaponDescription {
-    return describeWeapon(inst, this.resolve(inst));
+    const R = this.resolve(inst);
+    const c = this.descCache.get(inst);
+    if (c && c.R === R && c.version === R.kVersion && c.level === inst.level && c.rarity === inst.rarity
+      && c.affixes === inst.affixes.length && c.element === inst.element) {
+      return c.desc;
+    }
+    const desc = describeWeapon(inst, R);
+    this.descCache.set(inst, { R, version: R.kVersion, level: inst.level, rarity: inst.rarity, affixes: inst.affixes.length, element: inst.element, desc });
+    return desc;
   }
 
   createWorldModel(inst: WeaponInstance): THREE.Object3D {
@@ -298,11 +332,20 @@ export class WeaponSystem implements IWeaponSystem {
     if (Math.abs(fov) < 0.02) fov = 0;
     ctx.cameraFx.fovKick = fov;
 
-    // 换弹
-    if (inputOk && ctx.input.pressed('reload')) this.startReload(inst, R);
+    // 换弹。无限弹药期间（猎隼 Q 等）弹匣不消耗：进行中的换弹直接中断（不上膛），忽略 R 键与自动换弹，保证马上能开火
+    if (infinite) {
+      if (this.reloading) this.cancelReload(false);
+    } else if (inputOk && ctx.input.pressed('reload')) {
+      this.startReload(inst, R);
+    }
     if (this.reloading) {
-      if (this.shellMode && this.fireBuffer > 0 && inst.mag > 0) this.cancelReload();
-      else this.updateReload(dt, inst, R);
+      if (this.shellMode && this.fireBuffer > 0 && inst.mag > 0) {
+        this.cancelReload();
+        // 上膛后再打出这一枪：输入缓冲至少保留到上膛结束
+        this.fireBuffer = Math.max(this.fireBuffer, this.cooldown + 0.05);
+      } else {
+        this.updateReload(dt, inst, R);
+      }
     }
 
     // 开火
@@ -385,7 +428,7 @@ export class WeaponSystem implements IWeaponSystem {
     if (this.reloading) this.cancelReload();
     this.burstLeft = 0;
     this.volleyLeft = 0;
-    this.beamOn = false;
+    this.endBeam();
     this.spin = 0;
     this.spinning = false;
     this.minigunFiring = false;
@@ -450,7 +493,7 @@ export class WeaponSystem implements IWeaponSystem {
   /** 光束：按住持续放电，每跳伤害一次并消耗 1 点能量 */
   private updateBeam(dt: number, active: boolean, inst: WeaponInstance, R: ResolvedWeapon, infinite: boolean, rate: number): void {
     if (!active) {
-      this.beamOn = false;
+      this.endBeam();
       return;
     }
     const interval = 1 / Math.max(0.1, rate);
@@ -473,6 +516,12 @@ export class WeaponSystem implements IWeaponSystem {
       this.beamSfx = 0.16;
       this.ctx.audio.play(R.def.sfx, { volume: R.def.sfxVolume, pitch: 0.95 + Math.random() * 0.1 });
     }
+  }
+
+  /** 停止光束：清掉放电状态并提前收掉正在绘制的光束（停火 / 换弹 / 切枪 / 死亡 / 换关） */
+  private endBeam(): void {
+    this.beamOn = false;
+    this.ballistics.stopBeam();
   }
 
   /** 蜂群：一轮齐射的弹体按间隔依次发射 */
@@ -557,7 +606,8 @@ export class WeaponSystem implements IWeaponSystem {
     const def = R.def;
     const rc = def.recoil;
     const climb = 1 + Math.min(this.consecutive, 12) * rc.climb;
-    const k = R.recoilMult * (1 - 0.3 * this.aimT) * strength;
+    // 开镜大幅稳定（参考枪火重生：开镜后坐约为腰射的一半）
+    const k = R.recoilMult * (1 - 0.5 * this.aimT) * strength;
     const pitch = rc.pitch * climb * k * (0.85 + Math.random() * 0.3);
     const yaw = (rc.bias + (Math.random() * 2 - 1) * rc.yaw) * k;
     if (pitch !== 0 || yaw !== 0) ctx.player.addRecoil(pitch, yaw);
@@ -608,7 +658,13 @@ export class WeaponSystem implements IWeaponSystem {
       this.starvedTime = 0;
       return;
     }
-    const allEmpty = this.slots.every((w) => !w || (w.mag <= 0 && w.reserve <= 0));
+    let allEmpty = true;
+    for (const w of this.slots) {
+      if (w && (w.mag > 0 || w.reserve > 0)) {
+        allEmpty = false;
+        break;
+      }
+    }
     if (!allEmpty || ctx.enemies.aliveCount() === 0) {
       this.starvedTime = 0;
       return;
@@ -623,9 +679,11 @@ export class WeaponSystem implements IWeaponSystem {
 
   private startReload(inst: WeaponInstance, R: ResolvedWeapon): boolean {
     if (this.reloading || this.switchTimer > 0 || this.volleyLeft > 0) return false;
+    // 无限弹药期间不换弹（R 键 / 空仓自动换弹都走这里，统一兜底）
+    if ((this.ctx.run.flags.infiniteAmmo ?? 0) > 0) return false;
     if (inst.mag >= R.magCap || inst.reserve <= 0) return false;
     this.burstLeft = 0;
-    this.beamOn = false;
+    this.endBeam();
     this.autoReload = 0;
     this.reloading = true;
     if (R.def.shellTime > 0) {
@@ -673,22 +731,31 @@ export class WeaponSystem implements IWeaponSystem {
   private finishReload(inst: WeaponInstance, rack: boolean): void {
     this.reloading = false;
     this.shellMode = false;
-    if (rack) this.vm.rack();
+    if (rack) this.rackAfterShells();
     this.ctx.audio.play('reload_end', { volume: 0.85 });
     this.ctx.events.emit('weapon:reloaded', { weapon: inst });
   }
 
-  /** 中断换弹；逐发装填已压入的弹保留，并视为一次（部分）换弹完成 */
-  private cancelReload(): void {
+  /**
+   * 中断换弹；逐发装填已压入的弹保留，并视为一次（部分）换弹完成。
+   * rack = false 时跳过上膛动作与上膛冷却（无限弹药开始时用：弹匣不消耗，没有「装一发打一发」可以钻）。
+   */
+  private cancelReload(rack = true): void {
     if (!this.reloading) return;
     const inst = this.active;
     const partial = this.shellMode && this.shellsInserted > 0;
     this.reloading = false;
     this.shellMode = false;
     if (partial && inst) {
-      this.vm.rack();
+      if (rack) this.rackAfterShells();
       this.ctx.events.emit('weapon:reloaded', { weapon: inst });
     }
+  }
+
+  /** 逐发装填后的上膛：泵动动画 + 短暂不能开火 */
+  private rackAfterShells(): void {
+    this.vm.rack();
+    this.cooldown = Math.max(this.cooldown, SHELL_RACK_TIME);
   }
 
   private refill(inst: WeaponInstance, rounds: number): void {

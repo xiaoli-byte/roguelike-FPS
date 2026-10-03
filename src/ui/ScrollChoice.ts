@@ -4,12 +4,14 @@
  */
 import type { GameContext, ScrollDef } from '../core/types';
 import { RARITY_CSS, RARITY_NAMES } from '../core/types';
-import { h, bindButton, sfx, Presence, clearChildren, fillStacks, unlockAudio } from './dom';
+import { h, bindButton, sfx, Presence, clearChildren, fillStacks, unlockAudio, fitPanel } from './dom';
 import { tagName } from './labels';
 
 export class ScrollChoice {
   readonly root: HTMLDivElement;
   private presence: Presence;
+  private inner: HTMLDivElement;
+  private subEl: HTMLParagraphElement;
   private cardsEl: HTMLDivElement;
   private options: ScrollDef[] = [];
   private cards: HTMLElement[] = [];
@@ -21,10 +23,17 @@ export class ScrollChoice {
     this.root = h('div', 'gf-choice gf-screen', parent);
     this.presence = new Presence(this.root, 420);
     h('div', 'gf-choice__backdrop', this.root);
-    const head = h('div', 'gf-choice__head', this.root);
+    // 标题与卡片放进同一个容器，整体等比缩放以适配视口
+    this.inner = h('div', 'gf-choice__inner', this.root);
+    const head = h('div', 'gf-choice__head', this.inner);
     h('h2', 'gf-choice__title', head, '择一秘卷');
-    h('p', 'gf-choice__sub', head, '点击卡片，或按 1 / 2 / 3 选择');
-    this.cardsEl = h('div', 'gf-choice__cards', this.root);
+    this.subEl = h('p', 'gf-choice__sub', head, '点击卡片，或按 1 / 2 / 3 选择');
+    this.cardsEl = h('div', 'gf-choice__cards', this.inner);
+  }
+
+  /** 视口变化时重新缩放（测量时让挂轴直接处于展开终态） */
+  refit(): void {
+    if (this.presence.visible) fitPanel(this.inner, 0.6, 'is-measuring');
   }
 
   get visible(): boolean {
@@ -42,9 +51,12 @@ export class ScrollChoice {
     this.picked = false;
     this.openedAt = performance.now();
     this.root.classList.remove('is-picked');
+    const n = this.options.length;
+    this.subEl.textContent = n > 1 ? `点击卡片，或按 ${Array.from({ length: n }, (_, i) => i + 1).join(' / ')} 选择` : '点击卡片，或按 1 选择';
     clearChildren(this.cardsEl);
     this.cards = this.options.map((s, i) => this.buildCard(s, i));
     this.presence.show();
+    this.refit();
   }
 
   hide(immediate = false): void {

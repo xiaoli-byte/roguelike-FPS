@@ -3,6 +3,7 @@
  *
  * - 同一帧内打在同一个敌人、同一层、同一元素上的伤害合并成一个数字（霰弹 9 颗弹丸显示一个总数），
  *   在 Combat.update 中统一刷出（技能任务在 combat 之后执行，最多晚一帧，肉眼不可见）。
+ *   DOT 跳伤单独合并、带 dot 标记（Fx 画得更小更暗、不弹跳），不和同元素的直接命中混在一起。
  * - 命中类音效每帧最多 2 次（其中暴击最多 1 次），同一音效之间至少间隔 30ms；击杀音效每帧 1 次。
  */
 import * as THREE from 'three';
@@ -17,12 +18,15 @@ interface PendingNumber {
   crit: boolean;
   element: Element;
   kind: NumberKind;
+  dot: boolean;
 }
 
 const MAX_PENDING = 48;
 const MAX_HIT_SOUNDS_PER_FRAME = 2;
 const MAX_SPARKS_PER_FRAME = 10;
 const SAME_SOUND_GAP = 0.03;
+/** 单个伤害数字的显示上限（过量击杀时的「溢出伤害」也只显示到这里） */
+const MAX_SHOWN = 999999;
 
 const _pos = new THREE.Vector3();
 
@@ -51,13 +55,16 @@ export class HitFeedback {
 
   // ───────────── 伤害数字 ─────────────
 
-  /** 排队一个伤害数字（同帧同敌人同层同元素会合并） */
-  number(enemy: IEnemy, pos: THREE.Vector3, amount: number, crit: boolean, element: Element, kind: NumberKind): void {
+  /** 排队一个伤害数字（同帧同敌人同层同元素、且同为 / 同不为 DOT 的会合并） */
+  number(enemy: IEnemy, pos: THREE.Vector3, amount: number, crit: boolean, element: Element, kind: NumberKind, dot = false): void {
     if (!this.ctx.settings.damageNumbers) return;
+    if (!Number.isFinite(amount) || amount < 0) return;
+    if (!Number.isFinite(pos.x + pos.y + pos.z)) return;
+    amount = Math.min(amount, MAX_SHOWN);
     for (let i = 0; i < this.count; i++) {
       const p = this.pending[i];
-      if (p.enemy === enemy && p.kind === kind && p.element === element) {
-        p.amount += amount;
+      if (p.enemy === enemy && p.kind === kind && p.element === element && p.dot === dot) {
+        p.amount = Math.min(MAX_SHOWN, p.amount + amount);
         p.crit = p.crit || crit;
         return;
       }
@@ -65,7 +72,7 @@ export class HitFeedback {
     if (this.count >= MAX_PENDING) this.flush();
     let p = this.pending[this.count];
     if (!p) {
-      p = { enemy: null, pos: new THREE.Vector3(), amount: 0, crit: false, element: 'none', kind: 'health' };
+      p = { enemy: null, pos: new THREE.Vector3(), amount: 0, crit: false, element: 'none', kind: 'health', dot: false };
       this.pending.push(p);
     }
     this.count++;
@@ -75,6 +82,7 @@ export class HitFeedback {
     p.crit = crit;
     p.element = element;
     p.kind = kind;
+    p.dot = dot;
   }
 
   /** 免疫提示（同一敌人 0.4 秒内只提示一次） */
@@ -96,7 +104,7 @@ export class HitFeedback {
     for (let i = 0; i < this.count; i++) {
       const p = this.pending[i];
       try {
-        fx.damageNumber(p.pos, p.amount, { crit: p.crit, element: p.element, kind: p.kind });
+        fx.damageNumber(p.pos, p.amount, { crit: p.crit, element: p.element, kind: p.kind, dot: p.dot });
       } catch (err) {
         console.error('[Combat] damageNumber threw', err);
       }

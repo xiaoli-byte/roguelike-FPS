@@ -1,7 +1,8 @@
 /**
  * 波次调度：按 WavePlan 依次开波；每只怪刷新前在刷怪点显示 0.8 秒地面预警，同波内错开 0.1–0.3 秒刷出。
  * 后一波在「上一波全部刷完且存活数 <= triggerRemaining」后再等 delay 秒开始。
- * 刷怪点选择：离玩家 >= 10 米、彼此分散，避免全部集中在玩家正前方视野中心或全部在背后。
+ * 刷怪点选择：离玩家 >= 10 米、彼此分散，避免全部集中在玩家正前方视野中心或全部在背后；
+ * 开始预警时玩家若已跑到点附近（< 6 米）则改选别的点，不会贴脸刷怪。
  */
 import * as THREE from 'three';
 import type { ArenaInfo, GameContext, WavePlan } from '../core/types';
@@ -12,6 +13,8 @@ const WARN_LEAD = 0.8;
 /** Boss 登场预警提前量 */
 export const BOSS_LEAD = 1.0;
 const MIN_SPAWN_DIST = 10;
+/** 开始预警时玩家已经走到这么近，就换一个刷怪点（同一波的预警最多错开约 2 秒，玩家可能已跑到点上） */
+const RESPAWN_PICK_DIST = 6;
 const WARN_COLOR = 0xff4a3a;
 const ELITE_COLOR = 0xffc233;
 const BOSS_COLOR = 0xc0182e;
@@ -89,6 +92,13 @@ export class WaveRunner {
       const p = this.pending[i];
       if (!p.warned && t >= p.warnAt) {
         p.warned = true;
+        if (!p.boss) {
+          const pl = ctx.player.position;
+          if (Math.hypot(p.pos.x - pl.x, p.pos.z - pl.z) < RESPAWN_PICK_DIST) {
+            const alt = this.pickPoints(1, t)[0];
+            if (alt) p.pos = alt;
+          }
+        }
         const color = p.boss ? BOSS_COLOR : p.elite ? ELITE_COLOR : WARN_COLOR;
         ctx.fx.groundWarning(p.pos, p.boss ? 3.4 : 1.2, Math.max(0.1, p.at - t), color);
         if (p.boss) {

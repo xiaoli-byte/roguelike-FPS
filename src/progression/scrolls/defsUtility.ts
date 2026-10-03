@@ -36,7 +36,7 @@ export const UTILITY_SCROLLS: ScrollDef[] = [
     id: 'soul_reap', name: '夺魂', rarity: 2, maxStacks: 3, tags: ['技能', '击杀'],
     description: '击杀敌人时，所有技能冷却每层减少 0.3 秒（精英与首领为 4 倍）。',
     setup: (s, n, ctx) => {
-      s.on('enemy:killed', ({ enemy }) => {
+      s.onKill(({ enemy }) => {
         ctx.player.reduceCooldowns(0.3 * n * (enemy.isElite || enemy.isBoss ? 4 : 1), 'both');
       });
     },
@@ -69,8 +69,8 @@ export const UTILITY_SCROLLS: ScrollDef[] = [
   }),
   scroll({
     id: 'blood_drinker', name: '噬血', rarity: 2, maxStacks: 3, tags: ['生存', '吸血'],
-    description: '吸血每层 +2%。',
-    setup: (s, n) => s.stat('lifesteal', 0.02 * n),
+    description: '吸血每层 +1.5%。',
+    setup: (s, n) => s.stat('lifesteal', 0.015 * n),
   }),
   scroll({
     id: 'harvest', name: '收割', rarity: 1, maxStacks: 4, tags: ['生存', '击杀'],
@@ -90,12 +90,8 @@ export const UTILITY_SCROLLS: ScrollDef[] = [
   scroll({
     id: 'regen', name: '生生不息', rarity: 1, maxStacks: 3, tags: ['生存'],
     description: '每秒每层回复 1.5 生命。',
-    setup: (s, n, ctx) => {
-      s.every(1, () => {
-        const p = ctx.player;
-        if (p.alive && p.hp < p.maxHp()) p.heal(1.5 * n);
-      });
-    },
+    // 玩家控制器按 hpRegen 逐帧回血（Tab 面板也会显示「每秒生命恢复」）
+    setup: (s, n) => s.stat('hpRegen', 1.5 * n),
   }),
   scroll({
     id: 'last_stand', name: '背水一战', rarity: 2, maxStacks: 2, tags: ['生存'],
@@ -108,13 +104,14 @@ export const UTILITY_SCROLLS: ScrollDef[] = [
     setup: (s, n, ctx) => {
       s.on('player:shieldBroken', () => {
         if (!ctx.player.alive || !s.ready('nova', 5)) return;
-        _p.copy(ctx.player.position);
-        _p.y += 0.9;
-        ctx.combat.explode(_p, 6, {
+        // 爆心用独立向量：explode 结算期间嵌套的击杀事件（悬赏令……）会改写模块级临时向量
+        const c = new THREE.Vector3().copy(ctx.player.position);
+        c.y += 0.9;
+        ctx.combat.explode(c, 6, {
           base: 70 * n * procScale(ctx), element: 'none', source: 'scroll', procDepth: 1, canCrit: false, knockback: 14,
         }, { color: 0x7fd8ff, noFx: true });
-        _p.y = ctx.player.position.y + 0.1;
-        ctx.fx.ring(_p, 6, 0x7fd8ff, 0.45);
+        c.y = ctx.player.position.y + 0.1;
+        ctx.fx.ring(c, 6, 0x7fd8ff, 0.45);
         ctx.fx.shake(0.25, 0.2);
         ctx.audio.play('skill_earth', { volume: 0.7 });
       });
@@ -125,7 +122,8 @@ export const UTILITY_SCROLLS: ScrollDef[] = [
     description: '受到敌人伤害时，对其造成每层 25 点伤害（随关卡强度成长），每 0.4 秒最多一次。',
     setup: (s, n, ctx) => {
       s.on('player:damaged', ({ source }) => {
-        if (!source || !source.alive || !s.ready('thorns', 0.4)) return;
+        // 登场 / 转阶段中不可选中的首领：Combat 会直接忽略伤害，这里也不画反击光束
+        if (!source || !source.alive || source.untargetable || !s.ready('thorns', 0.4)) return;
         const to = bodyCenter(source, _q);
         _p.copy(ctx.player.position);
         _p.y += 1.1;
@@ -151,15 +149,8 @@ export const UTILITY_SCROLLS: ScrollDef[] = [
     description: '每关一次：受到致命伤害时免除该次伤害，回复 35% 生命并获得 2 秒无敌。',
     setup: (s, _n, ctx) => {
       let used = false;
-      s.on('stage:loaded', () => {
-        used = false;
-      });
-      s.incoming((amount) => {
+      const trigger = (): void => {
         const p = ctx.player;
-        if (used || !p.alive || p.invulnerableTime > 0) return 1;
-        // 粗略估计最终伤害（其它会放大伤害的秘卷也计入）
-        const amp = ctx.scrolls.stacks('glass_cannon') > 0 ? 1.35 : 1;
-        if (amount * amp < p.hp + p.shield) return 1;
         used = true;
         p.heal(p.maxHp() * 0.35);
         p.invulnerableTime = Math.max(p.invulnerableTime, 2);
@@ -168,7 +159,28 @@ export const UTILITY_SCROLLS: ScrollDef[] = [
         _p.copy(p.position);
         _p.y += 1;
         ctx.fx.burst(_p, 0xffe28a, 30, 6, 0.7, 0.14, -3);
+      };
+      s.on('stage:loaded', () => {
+        used = false;
+      });
+      // 主路径：Combat 先算减伤与「不读伤害量」的修饰器（玉碎、背水一战……），
+      // 读取 amount 的修饰器排在最后，这里拿到的就是最终伤害，可以精确判断是否致命。
+      // 注意参数必须声明 amount（函数 length = 1），Combat 靠它排序。
+      s.incoming((amount) => {
+        const p = ctx.player;
+        if (used || !p.alive || p.invulnerableTime > 0) return 1;
+        if (!(amount >= p.hp + p.shield - 1e-3)) return 1;
+        trigger();
         return 0;
+      });
+      // 兜底：之后注册的修饰器仍把这一击放大到致命，或有人绕过 Combat 直接 takeDamage。
+      // 玩家控制器先广播 player:damaged 再判定死亡，此时把这一击扣掉的护盾与生命还回去即可免死。
+      s.on('player:damaged', ({ toShield, toHp }) => {
+        const p = ctx.player;
+        if (used || !p.alive || p.hp > 1e-3) return;
+        p.shield += Math.max(0, toShield);
+        p.hp += Math.max(0, toHp);
+        trigger();
       });
     },
   }),
@@ -177,7 +189,7 @@ export const UTILITY_SCROLLS: ScrollDef[] = [
     description: '击杀精英或首领时立即回满护盾，并在 6 秒内伤害减免每层 +10%。',
     setup: (s, n, ctx) => {
       const buff = s.buff([['damageReduction', 0.1 * n]]);
-      s.on('enemy:killed', ({ enemy }) => {
+      s.onKill(({ enemy }) => {
         if (!enemy.isElite && !enemy.isBoss) return;
         ctx.player.addShield(ctx.player.maxShield());
         buff.trigger(6);
@@ -245,7 +257,7 @@ export const UTILITY_SCROLLS: ScrollDef[] = [
     id: 'bounty', name: '悬赏令', rarity: 1, maxStacks: 3, tags: ['经济', '击杀'],
     description: '击杀精英时每层额外掉落 12 金币，击杀首领时每层额外掉落 60 金币。',
     setup: (s, n, ctx) => {
-      s.on('enemy:killed', ({ enemy }) => {
+      s.onKill(({ enemy }) => {
         const amount = enemy.isBoss ? 60 * n : enemy.isElite ? 12 * n : 0;
         if (amount > 0) ctx.loot.dropCoins(bodyCenter(enemy, _p), amount);
       });

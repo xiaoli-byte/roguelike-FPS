@@ -94,7 +94,7 @@ export const LEGENDARIES: readonly LegendaryDef[] = [
     text: (d, v) => `每第 ${Math.round(v)} ${shotUnit(d)}必定暴击`,
   },
   {
-    id: 'lg_nova', name: '连环爆',
+    id: 'lg_nova', name: '殉爆',
     allow: any,
     value: () => 4,
     text: (_d, v) => `击杀敌人时引发同元素爆炸（${v} 米），可连锁`,

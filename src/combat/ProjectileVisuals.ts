@@ -133,6 +133,8 @@ export class ProjectileView {
   private readonly halo: THREE.Sprite;
   private glow: THREE.Mesh | null = null;
   private accent: THREE.Mesh | null = null;
+  /** 箭杆（敌方骨白 / 玩家木色） */
+  private shaft: THREE.Mesh | null = null;
 
   /** 内核向白色混合的比例 */
   private coreWhiten = 0.45;
@@ -211,7 +213,7 @@ export class ProjectileView {
         const shaft = this.mesh(G.cylZThin(), M.wood());
         shaft.scale.set(0.022, 0.022, 0.72);
         shaft.position.z = -0.1;
-        shaft.name = 'shaft';
+        this.shaft = shaft;
         const head = this.mesh(G.coneZ(), this.coreMat);
         head.scale.set(0.05, 0.05, 0.16);
         head.position.z = 0.33;
@@ -290,10 +292,7 @@ export class ProjectileView {
     this.accentMat.opacity = 0.9;
     this.halo.scale.setScalar(this.haloScale * (hostile ? 1.35 : 1));
     // 敌方弩矢用骨白箭杆，更容易与玩家的区分
-    if (this.kind === 'arrow') {
-      const shaft = this.spin.getObjectByName('shaft') as THREE.Mesh | undefined;
-      if (shaft) shaft.material = hostile ? M.bone() : M.wood();
-    }
+    if (this.shaft) this.shaft.material = hostile ? M.bone() : M.wood();
     this.spin.rotation.set(0, 0, 0);
     this.root.quaternion.identity();
     this.root.scale.setScalar(size);

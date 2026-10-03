@@ -1,10 +1,13 @@
 /**
  * 敌人状态系统：灼烧 / 雷殛 / 蚀化 / 眩晕 / 减速（DESIGN.md 第 5 节）。
  *
- * - 状态实例存放在 enemy.statuses（UI 读取图标与层数），额外的内部数据（每层灼烧强度、减速列表、
+ * - 状态实例存放在 enemy.statuses（UI 读取图标与层数），额外的内部数据（每层灼烧的强度与剩余时间、减速列表、
  *   链式冷却、首领眩晕抗性、粒子计时）放在 WeakMap 里，敌人被回收后自动释放。
+ * - 灼烧每层独立计时：新附着只新增一层（满层时替换最旧的一层），不会把已有的层续满，
+ *   所以每次附着的总灼烧伤害固定为 power × BURN_RATIO × (BURN_DURATION / BURN_TICK)。
  * - 每帧先把 slowMult / damageTakenMult 重置为 1 再按状态写入，保证不会累积。
  * - 持续伤害走 Combat.damageEnemy（source 'status'、不暴击、procDepth 1）。
+ * - 不可选中（enemy.untargetable）的敌人不会被施加任何状态；免疫眩晕（enemy.stunImmune）时眩晕直接忽略。
  */
 import * as THREE from 'three';
 import type { DamageRequest, DamageResult, Element, GameContext, IEnemy, StatusId, StatusInstance } from '../core/types';
@@ -16,7 +19,8 @@ import { lineClear } from './Blast';
 
 export const BURN_DURATION = 4;
 export const BURN_TICK = 0.5;
-export const BURN_RATIO = 0.22;
+/** 每一跳 = Σ存活层 power × BURN_RATIO；一层完整烧完 8 跳 = power × 1.28 */
+export const BURN_RATIO = 0.16;
 export const BURN_MAX_STACKS = 3;
 
 export const SHOCK_MARK_DURATION = 3;
@@ -42,9 +46,16 @@ const STUN_DEFAULT_DURATION = 1;
 /** power 上限 = 敌人最大生命 × 0.5 */
 export const STATUS_POWER_CAP = 0.5;
 
-/** 首领：眩晕时长 × 0.35，眩晕结束后 3 秒内免疫，避免被控死 */
+/**
+ * 首领：眩晕时长 × 0.35 且不超过 0.35 秒，之后 6 秒内免疫，避免被控死。
+ * 与 BossBase.update 自己的钳制规则一致（它同样把眩晕压到 0.35 秒并免疫 6 秒），
+ * 这样战斗侧不会在首领实际免疫时还播「眩晕」反馈。免疫多留 0.1 秒余量（BossBase 晚一帧才记时）。
+ */
 const BOSS_STUN_SCALE = 0.35;
-const BOSS_STUN_IMMUNITY = 3;
+const BOSS_STUN_MAX = 0.35;
+const BOSS_STUN_IMMUNITY = 6.1;
+/** 计时比较的容差：同步递减的两个计时器因浮点误差差一点点时，仍判定为同一时刻 */
+const TICK_EPS = 1e-4;
 /** 精英：眩晕时长 × 0.75 */
 const ELITE_STUN_SCALE = 0.75;
 
@@ -60,9 +71,15 @@ interface SlowEntry {
   remaining: number;
 }
 
+interface BurnStack {
+  power: number;
+  /** 这一层自己的剩余秒数（到期即移除） */
+  remaining: number;
+}
+
 interface StatusData {
-  /** 每层灼烧各自的强度（每层独立计入 DOT） */
-  burnPowers: number[];
+  /** 灼烧各层：强度与剩余时间各自独立，每一跳按存活层的强度之和结算 */
+  burnStacks: BurnStack[];
   slows: SlowEntry[];
   chainReadyAt: number;
   stunImmuneUntil: number;
@@ -83,6 +100,20 @@ function makeInstance(id: StatusId, remaining: number, tickTimer: number): Statu
   return { id, stacks: 0, remaining, tickTimer, power: 0 };
 }
 
+/** 把各层灼烧汇总到给 UI / 监听者看的状态实例：层数、最长剩余时间、强度之和 */
+function syncBurn(inst: StatusInstance, stacks: readonly BurnStack[]): void {
+  let longest = 0;
+  let total = 0;
+  for (let i = 0; i < stacks.length; i++) {
+    const s = stacks[i];
+    if (s.remaining > longest) longest = s.remaining;
+    total += s.power;
+  }
+  inst.stacks = stacks.length;
+  inst.remaining = longest;
+  inst.power = total;
+}
+
 export class StatusSystem {
   private data = new WeakMap<IEnemy, StatusData>();
   private readonly queryBuf: IEnemy[] = [];
@@ -95,36 +126,39 @@ export class StatusSystem {
 
   /**
    * 施加状态。depth 为触发这一击的 procDepth（只有 0 才会触发雷殛弹射）。
-   * burn / shock / corrode 的 power 会被钳制到敌人最大生命 × 0.5；
+   * burn / shock / corrode 的 power 不含元素 / 精英 / 首领伤害属性（每一跳以 source 'status' 结算时才乘一次），
+   * 会被钳制到敌人最大生命 × 0.5；
    * slow 的 power 为减速比例（0.3 = 减速 30%，>1 时按百分数解释）；stun 只看 duration。
    * 返回是否成功施加。
    */
   apply(enemy: IEnemy, id: StatusId, power: number, duration: number | undefined, depth: number): boolean {
-    if (!enemy.alive || enemy.hp <= 0) return false;
+    // 不可选中（首领登场 / 转阶段等）：任何状态都不施加
+    if (!enemy.alive || enemy.hp <= 0 || enemy.untargetable) return false;
     const d = this.ensure(enemy);
     const st = enemy.statuses;
     const p = clamp(Number.isFinite(power) ? power : 0, 0, enemy.maxHp * STATUS_POWER_CAP);
 
     switch (id) {
       case 'burn': {
-        const dur = duration ?? BURN_DURATION;
+        const dur = duration !== undefined && Number.isFinite(duration) ? duration : BURN_DURATION;
+        if (!(dur > 0)) return false;
         let inst = st.get('burn');
         if (!inst) {
           inst = makeInstance('burn', 0, BURN_TICK);
           st.set('burn', inst);
-          d.burnPowers.length = 0;
+          d.burnStacks.length = 0;
         }
-        if (d.burnPowers.length < BURN_MAX_STACKS) {
-          d.burnPowers.push(p);
+        const stacks = d.burnStacks;
+        if (stacks.length < BURN_MAX_STACKS) {
+          stacks.push({ power: p, remaining: dur });
         } else {
-          // 满层：用更强的一击替换最弱的一层
-          let wi = 0;
-          for (let i = 1; i < d.burnPowers.length; i++) if (d.burnPowers[i] < d.burnPowers[wi]) wi = i;
-          if (p > d.burnPowers[wi]) d.burnPowers[wi] = p;
+          // 满层：替换剩余时间最短（最旧）的一层。每层都有自己的到期时间，持续命中也不会让灼烧永不衰减
+          let oi = 0;
+          for (let i = 1; i < stacks.length; i++) if (stacks[i].remaining < stacks[oi].remaining) oi = i;
+          stacks[oi].power = p;
+          stacks[oi].remaining = dur;
         }
-        inst.stacks = d.burnPowers.length;
-        inst.remaining = Math.max(inst.remaining, dur);
-        inst.power = sum(d.burnPowers);
+        syncBurn(inst, stacks);
         this.emitApplied(enemy, 'burn', inst.stacks);
         return true;
       }
@@ -219,7 +253,7 @@ export class StatusSystem {
     const dists: number[] = [];
     for (let i = 0; i < found.length; i++) {
       const e = found[i];
-      if (e === source || !e.alive) continue;
+      if (e === source || !e.alive || e.untargetable) continue;
       const dsq = e.position.distanceToSquared(source.position);
       let j: number;
       if (picked.length < keep) {
@@ -277,16 +311,18 @@ export class StatusSystem {
   }
 
   private stun(enemy: IEnemy, d: StatusData, seconds: number): boolean {
+    // 此刻免疫眩晕（首领出招中等）：什么都不做——不写状态、不播特效、不派发事件，也不记战斗侧的免疫计时
+    if (enemy.stunImmune) return false;
     let dur = seconds;
     const now = this.ctx.time.now;
     if (enemy.isBoss) {
       if (now < d.stunImmuneUntil) return false;
-      dur *= BOSS_STUN_SCALE;
-      d.stunImmuneUntil = now + dur + BOSS_STUN_IMMUNITY;
+      dur = Math.min(BOSS_STUN_MAX, dur * BOSS_STUN_SCALE);
     } else if (enemy.isElite) {
       dur *= ELITE_STUN_SCALE;
     }
     if (!(dur > 0)) return false;
+    if (enemy.isBoss) d.stunImmuneUntil = now + BOSS_STUN_IMMUNITY;
     enemy.stunTime = Math.max(enemy.stunTime, dur);
     let inst = enemy.statuses.get('stun');
     if (!inst) {
@@ -372,18 +408,32 @@ export class StatusSystem {
       }
 
       // 4) 灼烧
+      // 跳伤计时与各层剩余时间同步递减：每层 4 秒正好吃到 8 跳、5 秒蚀化正好 10 跳
+      // （最后一跳与到期同帧，用容差防浮点误差丢跳）。
+      // 各层独立到期；一跳只计入「这一跳发生时」仍存活的层——同一帧里先到期、后跳伤的层不算。
       const burn = st.get('burn');
       if (burn) {
-        burn.remaining -= dt;
+        const stacks = d.burnStacks;
+        for (let k = 0; k < stacks.length; k++) stacks[k].remaining -= dt;
         burn.tickTimer -= dt;
-        if (burn.tickTimer <= 0) {
-          burn.tickTimer += BURN_TICK;
-          this.dot(e, 'fire', sum(d.burnPowers) * BURN_RATIO);
+        if (burn.tickTimer <= TICK_EPS) {
+          // tickTimer ≤ 0 时，这一跳发生在 -tickTimer 秒之前；层的到期时刻同理为 remaining
+          const at = burn.tickTimer;
+          burn.tickTimer = Math.max(burn.tickTimer + BURN_TICK, TICK_EPS * 2);
+          let total = 0;
+          for (let k = 0; k < stacks.length; k++) if (stacks[k].remaining >= at - TICK_EPS) total += stacks[k].power;
+          this.dot(e, 'fire', total * BURN_RATIO);
           if (!e.alive) continue;
         }
-        if (burn.remaining <= 0) {
-          st.delete('burn');
-          d.burnPowers.length = 0;
+        // 跳伤期间的监听者可能清掉 / 重建了状态，只处理仍是这一份的灼烧
+        if (st.get('burn') === burn) {
+          let w = 0;
+          for (let k = 0; k < stacks.length; k++) {
+            if (stacks[k].remaining > TICK_EPS) stacks[w++] = stacks[k];
+          }
+          stacks.length = w;
+          if (w === 0) st.delete('burn');
+          else syncBurn(burn, stacks);
         }
       }
 
@@ -391,12 +441,12 @@ export class StatusSystem {
       if (cor && st.get('corrode') === cor) {
         cor.remaining -= dt;
         cor.tickTimer -= dt;
-        if (cor.tickTimer <= 0) {
-          cor.tickTimer += CORRODE_TICK;
+        if (cor.tickTimer <= TICK_EPS) {
+          cor.tickTimer = Math.max(cor.tickTimer + CORRODE_TICK, TICK_EPS * 2);
           this.dot(e, 'corrode', cor.power * CORRODE_RATIO);
           if (!e.alive) continue;
         }
-        if (cor.remaining <= 0) st.delete('corrode');
+        if (cor.remaining <= TICK_EPS && st.get('corrode') === cor) st.delete('corrode');
       }
 
       // 6) 稀疏的状态粒子
@@ -405,7 +455,8 @@ export class StatusSystem {
   }
 
   private dot(e: IEnemy, element: Element, amount: number): void {
-    if (!(amount > 0.01)) return;
+    // 不可选中期间照常计时，只是这一跳打不到（Combat 也会拒绝），也不播跳伤音效
+    if (!(amount > 0.01) || e.untargetable) return;
     e.getHeadCenter(_p);
     _p.x += (Math.random() - 0.5) * e.radius;
     _p.z += (Math.random() - 0.5) * e.radius;
@@ -474,15 +525,9 @@ export class StatusSystem {
   private ensure(enemy: IEnemy): StatusData {
     let d = this.data.get(enemy);
     if (!d) {
-      d = { burnPowers: [], slows: [], chainReadyAt: 0, stunImmuneUntil: -1, fxTimer: Math.random() * 0.1 };
+      d = { burnStacks: [], slows: [], chainReadyAt: 0, stunImmuneUntil: -1, fxTimer: Math.random() * 0.1 };
       this.data.set(enemy, d);
     }
     return d;
   }
-}
-
-function sum(arr: readonly number[]): number {
-  let s = 0;
-  for (let i = 0; i < arr.length; i++) s += arr[i];
-  return s;
 }

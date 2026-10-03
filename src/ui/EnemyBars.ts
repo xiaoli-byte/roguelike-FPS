@@ -5,8 +5,8 @@
 import * as THREE from 'three';
 import type { GameContext, IEnemy } from '../core/types';
 import { clamp, clamp01 } from '../core/math';
-import { h } from './dom';
-import { STATUS_BADGES } from './labels';
+import { h, uiScale } from './dom';
+import { AFFIX_LABELS, STATUS_BADGES } from './labels';
 
 const MAX_DIST = 45;
 const MAX_BARS = 28;
@@ -20,6 +20,8 @@ const _rel = new THREE.Vector3();
 interface BarSlot {
   el: HTMLDivElement;
   nameEl: HTMLDivElement;
+  nameText: HTMLSpanElement;
+  affixEl: HTMLSpanElement;
   shieldRow: HTMLDivElement;
   shieldFill: HTMLDivElement;
   armorRow: HTMLDivElement;
@@ -42,6 +44,7 @@ interface BarSlot {
   hasShield: boolean;
   hasArmor: boolean;
   name: string;
+  affix: string;
   statusMask: number;
   stacks: number[];
   occluded: boolean;
@@ -78,6 +81,7 @@ export class EnemyBars {
     this.lastNow = now;
     const w = window.innerWidth;
     const hh = window.innerHeight;
+    const hudS = uiScale.hud;
     const stamp = ++this.stamp;
     let shown = 0;
 
@@ -107,7 +111,7 @@ export class EnemyBars {
 
       const sx = (_pos.x * 0.5 + 0.5) * w;
       const sy = (0.5 - _pos.y * 0.5) * hh;
-      const scale = clamp(13 / Math.max(1, dist), 0.62, 1.12) * (e.isElite ? 1.12 : 1);
+      const scale = clamp(13 / Math.max(1, dist), 0.62, 1.12) * (e.isElite ? 1.12 : 1) * hudS;
       if (Math.abs(sx - slot.x) > 0.4 || Math.abs(sy - slot.y) > 0.4 || Math.abs(scale - slot.scale) > 0.01) {
         slot.x = sx;
         slot.y = sy;
@@ -225,10 +229,24 @@ export class EnemyBars {
     s.hasArmor = !(e.maxArmor > 0);
     s.occluded = false;
     s.occlNext = now;
-    const name = e.isElite ? e.displayName : '';
+    // 精英词缀：用词缀色单独标出（爆裂等词缀直接影响玩家怎么打）
+    const affixId = e.isElite ? e.affix ?? '' : '';
+    const info = affixId ? AFFIX_LABELS[affixId] : undefined;
+    if (affixId !== s.affix) {
+      s.affix = affixId;
+      s.affixEl.hidden = !info;
+      if (info) {
+        s.affixEl.textContent = info.name;
+        s.affixEl.title = info.hint;
+        s.affixEl.style.setProperty('--affix', info.color);
+      }
+    }
+    let name = e.isElite ? e.displayName || e.def.name : '';
+    // displayName 可能已含词缀（「精英·爆裂 沙匪刀客」），有词缀标签时去掉重复的词
+    if (info && name.includes(info.name)) name = name.replace(info.name, '').replace(/·\s+/, '·').replace(/\s{2,}/g, ' ').trim();
     if (name !== s.name) {
       s.name = name;
-      s.nameEl.textContent = name;
+      s.nameText.textContent = name;
     }
     s.nameEl.hidden = !name;
     s.el.classList.toggle('is-elite', e.isElite);
@@ -245,6 +263,9 @@ export class EnemyBars {
   private create(): BarSlot {
     const el = h('div', 'gf-ebar', this.root);
     const nameEl = h('div', 'gf-ebar__name', el);
+    const affixEl = h('span', 'gf-ebar__affix', nameEl);
+    affixEl.hidden = true;
+    const nameText = h('span', null, nameEl);
     const status = h('div', 'gf-ebar__status', el);
     const badges: HTMLSpanElement[] = [];
     for (const b of STATUS_BADGES) {
@@ -263,9 +284,9 @@ export class EnemyBars {
     const hpFill = h('div', 'gf-ebar__fill', hpRow);
     el.hidden = true;
     return {
-      el, nameEl, shieldRow, shieldFill, armorRow, armorFill, hpFill, hpTrail, badges,
+      el, nameEl, nameText, affixEl, shieldRow, shieldFill, armorRow, armorFill, hpFill, hpTrail, badges,
       enemy: null, stamp: 0, x: -1, y: -1, scale: -1, opacity: -1, shield: -1, armor: -1, hp: -1, trail: 1,
-      trailHoldUntil: 0, hasShield: true, hasArmor: true, name: '\u0000', statusMask: 0, stacks: [0, 0, 0, 0],
+      trailHoldUntil: 0, hasShield: true, hasArmor: true, name: '\u0000', affix: '\u0000', statusMask: 0, stacks: [0, 0, 0, 0],
       occluded: false, occlNext: 0,
     };
   }

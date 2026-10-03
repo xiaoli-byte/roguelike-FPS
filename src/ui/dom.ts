@@ -133,6 +133,60 @@ export class Presence {
   }
 }
 
+// ───────────────────────────── 自适应缩放 ─────────────────────────────
+
+/**
+ * 当前界面缩放（UIManager 在构造与 resize 时更新）。
+ *  - s：居中面板 / 横幅 / toast 的基准缩放（1920×1080 = 1）
+ *  - hud：HUD 四角、Boss 条、交互提示、Tab 面板的缩放
+ * 注意：敌人头顶血条与伤害数字依赖屏幕坐标，绝不能对 #ui-root 整体缩放。
+ */
+export const uiScale = { s: 1, hud: 1 };
+
+/** 由视口尺寸计算缩放：大屏按比例放大，小屏只做温和压缩（避免文字过小） */
+export function computeUiScale(w: number, h: number): { s: number; hud: number } {
+  const raw = Math.min(w / 1920, h / 1080);
+  let s = raw >= 1 ? raw : 1 - (1 - raw) * 0.45;
+  if (!Number.isFinite(s)) s = 1;
+  s = Math.min(1.75, Math.max(0.7, s));
+  const hud = Math.min(1.75, Math.max(0.78, s));
+  return { s, hud };
+}
+
+/**
+ * 把居中面板等比缩放到父容器可用区域内：先用 uiScale.s，若内容仍放不下则继续缩小（不低于 min）。
+ * 要求：el 是父容器（自身不缩放、可带 padding）的直接子元素；el 的 CSS 用 max-height: 100% + overflow: auto 兜底。
+ * offset/scroll 尺寸是元素自身（未缩放）的设计像素，与当前 zoom 无关，所以可以直接比较。
+ * measureCls：测量期间临时加到 el 上的类（例如让展开动画立即到终态）。
+ */
+export function fitPanel(el: HTMLElement, min = 0.6, measureCls?: string): void {
+  const parent = el.parentElement;
+  if (!parent || el.hidden || !el.isConnected) return;
+  const base = uiScale.s;
+  const ps = getComputedStyle(parent);
+  const availW = parent.clientWidth - (parseFloat(ps.paddingLeft) || 0) - (parseFloat(ps.paddingRight) || 0);
+  const availH = parent.clientHeight - (parseFloat(ps.paddingTop) || 0) - (parseFloat(ps.paddingBottom) || 0);
+  if (!(availW > 0 && availH > 0)) return;
+  if (measureCls) el.classList.add(measureCls);
+  let z = base;
+  el.style.zoom = z.toFixed(4);
+  // 宽度受 100% 限制时，zoom 变小会让设计宽度变大、内容变矮，所以迭代几次收敛
+  for (let i = 0; i < 5; i++) {
+    const needH = el.scrollHeight;
+    const needW = el.scrollWidth;
+    if (!(needH > 0 && needW > 0)) break;
+    // 向下取整，避免舍入误差导致出现 1px 滚动条
+    let next = Math.floor(Math.min(base, availH / needH, availW / needW) * 1000) / 1000;
+    // 只允许单调变小，避免在两个值之间来回跳
+    if (i > 0) next = Math.min(next, z);
+    next = Math.max(min, next);
+    if (Math.abs(next - z) < 0.002) break;
+    z = next;
+    el.style.zoom = z.toFixed(4);
+  }
+  if (measureCls) el.classList.remove(measureCls);
+}
+
 /** 整数千分位；超过十万用「万」 */
 export function formatNum(n: number): string {
   const v = Math.round(n);

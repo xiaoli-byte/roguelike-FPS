@@ -60,7 +60,7 @@ export const LEGEND_SCROLLS: ScrollDef[] = [
   }),
   scroll({
     id: 'midas_heart', name: '贪婪之心', rarity: 4, maxStacks: 1, tags: ['传说', '经济', '风险'],
-    description: '金币获取 +50%；每持有 100 金币，武器伤害 +4%（最多 +40%）；但受到伤害时损失 3 金币。',
+    description: '金币获取 +50%；每持有 100 金币，武器伤害 +4%（最多 +40%）；但受到伤害时损失 3 金币（每 0.5 秒最多一次）。',
     setup: (s, _n, ctx) => {
       s.stat('coinGainPct', 0.5);
       s.outgoing((_e, req) => (req.source === 'weapon' ? 1 + Math.min(0.4, Math.floor(ctx.run.coins / 100) * 0.04) : 1));
@@ -112,7 +112,7 @@ export const LEGEND_SCROLLS: ScrollDef[] = [
   }),
   scroll({
     id: 'bear_mountain', name: '不动如山', rarity: 2, maxStacks: 3, heroOnly: 'bear', tags: ['英雄', '护盾', '生存'],
-    description: '护盾上限每层 +15；护盾未被击破时，受到的伤害每层 −6%。',
+    description: '护盾上限每层 +15（获得时同时补充 15 护盾）；护盾未被击破时，受到的伤害每层 −6%。',
     setup: (s, n, ctx) => {
       s.stat('maxShield', 15 * n);
       ctx.player.addShield(15);

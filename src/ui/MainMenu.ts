@@ -3,7 +3,7 @@
  * 局外统计与魂晶。背景用 CSS 做动态氛围：朱日、流云、远山、飘散的火星、纸纹。
  */
 import type { GameContext, MetaSave } from '../core/types';
-import { h, icon, button, Presence, formatNum, clearChildren } from './dom';
+import { h, icon, button, Presence, formatNum, clearChildren, fitPanel } from './dom';
 import { ICON_CLOUD, ICON_ESSENCE } from './icons';
 import { CONTROLS, cnNum } from './labels';
 import { HeroSelect } from './HeroSelect';
@@ -84,6 +84,8 @@ export class MainMenu {
       controls: mk(controls, () => undefined),
     };
     this.subs.heroes.el.classList.add('gf-menu__panel--wide');
+    this.subs.talents.el.classList.add('gf-menu__panel--talents');
+    this.subs.settings.el.classList.add('gf-menu__panel--settings');
 
     // 鼠标视差（只在移动时写一次 CSS 变量）
     this.root.addEventListener('pointermove', (e) => {
@@ -113,6 +115,12 @@ export class MainMenu {
     this.presence.hide();
   }
 
+  /** 视口变化时重新缩放当前子页面 */
+  refit(): void {
+    if (!this.presence.visible || this.view === 'home') return;
+    fitPanel(this.subs[this.view].el);
+  }
+
   /** 返回 true 表示已处理 */
   handleKey(e: KeyboardEvent): boolean {
     if (!this.presence.visible) return false;
@@ -140,6 +148,7 @@ export class MainMenu {
       if (key === view) {
         s.refresh();
         s.presence.show();
+        fitPanel(s.el);
         s.el.scrollTop = 0;
       } else s.presence.hide(instant || prev !== key);
     }

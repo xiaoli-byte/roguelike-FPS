@@ -2,6 +2,10 @@
  * 11 把武器的静态定义与稀有度常量。
  *
  * 数值基准（DESIGN 第 4、7 节）：普通稀有度、无加成时身体持续 DPS 约 60–90（含换弹）。
+ * 无头实测（120 秒、8 米大木桩、完美压枪、备弹充足；括号内为不含 5% 基础暴击）：
+ * 左轮 88（82）、冲锋枪 95（91）、步枪 95（90）、点射 93（86）、霰弹 95（90，含边装边打）、弩 88（82）、
+ * 光束 77（74，单跳伤害 7→8 后；旁边有第二名敌人吃电弧时约 105）、机炮 94（90）、蜂群 89（82）、榴弹 111（火焰对生命 ×1.25，另有灼烧 DOT）；
+ * 狙击 120（107），作为必须开镜、射速最慢的精准武器有意略高。
  * 所有角度为弧度「半角」；射速为「每秒发数」（burst 为每秒轮数，beam 为每秒跳数）。
  */
 import type { Element, ProjectileVisual, SfxId } from '../core/types';
@@ -99,8 +103,6 @@ export interface WeaponDef {
   spinup: number;
   /** 开火时移速惩罚 */
   moveSlow: number;
-  /** 光束：每跳间隔 */
-  beamTick: number;
   /** 光束：电弧弹射伤害比例与距离 */
   chainFraction: number;
   chainRange: number;
@@ -112,7 +114,10 @@ export interface WeaponDef {
   shake: number;
   /** 枪口火焰尺寸 */
   flash: number;
-  /** 第一人称腰射 / 开镜位置（相机空间） */
+  /**
+   * 第一人称腰射 / 开镜位置（相机空间，按建模尺寸给出）。
+   * Viewmodel 会把枪模整体缩放 VM_SCALE、开镜位置同乘该系数（画面不变），腰射位置再整体右下偏移。
+   */
   viewOffset: [number, number, number];
   aimOffset: [number, number, number];
   /** 掉落模型缩放 */
@@ -128,8 +133,8 @@ export const RARITY_DAMAGE: readonly number[] = [1, 1.15, 1.35, 1.6, 1.9];
 export const MAX_LEVEL = 5;
 export const LEVEL_DAMAGE = 0.12;
 
-type DefInput = Omit<WeaponDef, 'burstCount' | 'burstInterval' | 'shellTime' | 'reloadStart' | 'pelletCone' | 'falloff' | 'projectile' | 'pierce' | 'spinup' | 'moveSlow' | 'beamTick' | 'chainFraction' | 'chainRange' | 'sfxVolume' | 'aimSpeed' | 'pellets' | 'element' | 'worldScale'>
-  & Partial<Pick<WeaponDef, 'burstCount' | 'burstInterval' | 'shellTime' | 'reloadStart' | 'pelletCone' | 'falloff' | 'pierce' | 'spinup' | 'moveSlow' | 'beamTick' | 'chainFraction' | 'chainRange' | 'sfxVolume' | 'aimSpeed' | 'pellets' | 'element' | 'worldScale'>>
+type DefInput = Omit<WeaponDef, 'burstCount' | 'burstInterval' | 'shellTime' | 'reloadStart' | 'pelletCone' | 'falloff' | 'projectile' | 'pierce' | 'spinup' | 'moveSlow' | 'chainFraction' | 'chainRange' | 'sfxVolume' | 'aimSpeed' | 'pellets' | 'element' | 'worldScale'>
+  & Partial<Pick<WeaponDef, 'burstCount' | 'burstInterval' | 'shellTime' | 'reloadStart' | 'pelletCone' | 'falloff' | 'pierce' | 'spinup' | 'moveSlow' | 'chainFraction' | 'chainRange' | 'sfxVolume' | 'aimSpeed' | 'pellets' | 'element' | 'worldScale'>>
   & { projectile?: Partial<ProjectileParams> & Pick<ProjectileParams, 'speed' | 'visual'> };
 
 function def(d: DefInput): WeaponDef {
@@ -144,7 +149,6 @@ function def(d: DefInput): WeaponDef {
     pierce: 0,
     spinup: 0,
     moveSlow: 0,
-    beamTick: 0.1,
     chainFraction: 0,
     chainRange: 0,
     sfxVolume: 0.8,
@@ -177,7 +181,7 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
     id: 'revolver', name: '赤铜左轮', category: '手枪', kind: 'pistol', mode: 'semi',
     damage: 38, fireRate: 3.5, mag: 8, reserve: 64, reloadTime: 1.6, reloadStyle: 'cylinder',
     spreadHip: 0.004, spreadAim: 0.0012, spreadPerShot: 0.014, spreadMax: 0.04, spreadRecovery: 0.16,
-    recoil: { pitch: 0.034, yaw: 0.008, bias: 0, climb: 0 },
+    recoil: { pitch: 0.022, yaw: 0.004, bias: 0, climb: 0 },
     critMult: 2.5, range: 80, falloff: [35, 80, 0.7],
     elementChance: 0.3, aimFov: -12, sfx: 'shot_pistol', knockback: 1.5,
     tracerWidth: 0.03, impactSize: 0.9, kick: { back: 0.06, rot: 0.22 }, shake: 0.09, flash: 0.12,
@@ -189,7 +193,7 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
     id: 'smg', name: '蜂鸣冲锋枪', category: '冲锋枪', kind: 'smg', mode: 'auto',
     damage: 11, fireRate: 13, mag: 36, reserve: 252, reloadTime: 1.7, reloadStyle: 'mag',
     spreadHip: 0.03, spreadAim: 0.016, spreadPerShot: 0.0035, spreadMax: 0.07, spreadRecovery: 0.2,
-    recoil: { pitch: 0.0055, yaw: 0.005, bias: 0.0006, climb: 0.03 },
+    recoil: { pitch: 0.0045, yaw: 0.0026, bias: 0.0002, climb: 0.015 },
     critMult: 2, range: 45, falloff: [16, 40, 0.55],
     elementChance: 0.08, aimFov: -10, sfx: 'shot_smg', sfxVolume: 0.6, knockback: 0.25,
     tracerWidth: 0.02, impactSize: 0.6, kick: { back: 0.012, rot: 0.03 }, shake: 0.035, flash: 0.12,
@@ -199,9 +203,9 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
   }),
   def({
     id: 'rifle', name: '裂风步枪', category: '步枪', kind: 'rifle', mode: 'auto',
-    damage: 18, fireRate: 8, mag: 30, reserve: 210, reloadTime: 2.0, reloadStyle: 'mag',
+    damage: 18, fireRate: 8, mag: 30, reserve: 210, reloadTime: 2.4, reloadStyle: 'mag',
     spreadHip: 0.016, spreadAim: 0.004, spreadPerShot: 0.003, spreadMax: 0.045, spreadRecovery: 0.14,
-    recoil: { pitch: 0.0075, yaw: 0.0035, bias: 0.0009, climb: 0.05 },
+    recoil: { pitch: 0.0062, yaw: 0.0018, bias: 0.0003, climb: 0.02 },
     critMult: 2, range: 90, falloff: [40, 90, 0.75],
     elementChance: 0.12, aimFov: -16, sfx: 'shot_rifle', sfxVolume: 0.7, knockback: 0.4,
     tracerWidth: 0.024, impactSize: 0.75, kick: { back: 0.018, rot: 0.045 }, shake: 0.05, flash: 0.14,
@@ -211,9 +215,9 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
   }),
   def({
     id: 'burst', name: '三叠点射枪', category: '步枪', kind: 'rifle', mode: 'burst',
-    damage: 24, fireRate: 1.7, burstCount: 3, burstInterval: 0.065, mag: 24, reserve: 168, reloadTime: 2.1, reloadStyle: 'mag',
+    damage: 24, fireRate: 1.6, burstCount: 3, burstInterval: 0.065, mag: 24, reserve: 168, reloadTime: 2.1, reloadStyle: 'mag',
     spreadHip: 0.012, spreadAim: 0.003, spreadPerShot: 0.004, spreadMax: 0.035, spreadRecovery: 0.14,
-    recoil: { pitch: 0.009, yaw: 0.0025, bias: 0.0004, climb: 0.02 },
+    recoil: { pitch: 0.007, yaw: 0.0014, bias: 0.0002, climb: 0.01 },
     critMult: 2.2, range: 90, falloff: [45, 90, 0.75],
     elementChance: 0.14, aimFov: -16, sfx: 'shot_rifle', sfxVolume: 0.7, knockback: 0.5,
     tracerWidth: 0.026, impactSize: 0.8, kick: { back: 0.02, rot: 0.05 }, shake: 0.06, flash: 0.14,
@@ -223,9 +227,9 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
   }),
   def({
     id: 'shotgun', name: '碎岩霰弹', category: '霰弹枪', kind: 'shotgun', mode: 'semi',
-    damage: 12, pellets: 9, fireRate: 1.4, mag: 6, reserve: 42, reloadTime: 3.2, shellTime: 0.48, reloadStart: 0.26, reloadStyle: 'shell',
+    damage: 12, pellets: 9, fireRate: 1.4, mag: 6, reserve: 42, reloadTime: 3.6, shellTime: 0.48, reloadStart: 0.4, reloadStyle: 'shell',
     spreadHip: 0.008, spreadAim: 0.004, spreadPerShot: 0.012, spreadMax: 0.03, spreadRecovery: 0.1, pelletCone: 0.075,
-    recoil: { pitch: 0.055, yaw: 0.012, bias: 0, climb: 0 },
+    recoil: { pitch: 0.035, yaw: 0.006, bias: 0, climb: 0 },
     critMult: 2, range: 32, falloff: [9, 30, 0.35],
     elementChance: 0.06, aimFov: -10, sfx: 'shot_shotgun', sfxVolume: 0.9, knockback: 0.9,
     tracerWidth: 0.014, impactSize: 0.5, kick: { back: 0.085, rot: 0.22 }, shake: 0.22, flash: 0.24,
@@ -235,9 +239,9 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
   }),
   def({
     id: 'sniper', name: '鹰隼狙击', category: '狙击枪', kind: 'sniper', mode: 'semi',
-    damage: 160, fireRate: 0.9, mag: 5, reserve: 30, reloadTime: 2.8, reloadStyle: 'mag',
+    damage: 160, fireRate: 0.9, mag: 5, reserve: 30, reloadTime: 3.2, reloadStyle: 'mag',
     spreadHip: 0.028, spreadAim: 0, spreadPerShot: 0.03, spreadMax: 0.07, spreadRecovery: 0.12,
-    recoil: { pitch: 0.065, yaw: 0.01, bias: 0, climb: 0 },
+    recoil: { pitch: 0.042, yaw: 0.005, bias: 0, climb: 0 },
     critMult: 3, range: 220, pierce: 2,
     elementChance: 0.7, aimFov: -45, aimSpeed: 11, sfx: 'shot_sniper', sfxVolume: 1, knockback: 5,
     tracerWidth: 0.06, impactSize: 1.4, kick: { back: 0.09, rot: 0.2 }, shake: 0.2, flash: 0.26,
@@ -249,7 +253,7 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
     id: 'launcher', name: '焚城榴弹', category: '发射器', kind: 'launcher', mode: 'semi',
     damage: 110, fireRate: 1.1, mag: 4, reserve: 20, reloadTime: 2.4, reloadStyle: 'tube',
     spreadHip: 0.012, spreadAim: 0.005, spreadPerShot: 0.012, spreadMax: 0.03, spreadRecovery: 0.1,
-    recoil: { pitch: 0.045, yaw: 0.008, bias: 0, climb: 0 },
+    recoil: { pitch: 0.03, yaw: 0.004, bias: 0, climb: 0 },
     critMult: 1.8, range: 120, element: 'fire',
     projectile: { speed: 34, gravity: 9, radius: 0.14, explosionRadius: 4, lifetime: 3.2, visual: 'grenade', scale: 1.1, explodeOnExpire: true, color: 0xff8a3a },
     elementChance: 0.6, aimFov: -10, sfx: 'shot_launcher', sfxVolume: 0.9, knockback: 7,
@@ -262,7 +266,7 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
     id: 'crossbow', name: '追魂连弩', category: '弩', kind: 'crossbow', mode: 'semi',
     damage: 55, fireRate: 2, mag: 10, reserve: 60, reloadTime: 2.1, reloadStyle: 'mag',
     spreadHip: 0.008, spreadAim: 0.0015, spreadPerShot: 0.008, spreadMax: 0.03, spreadRecovery: 0.12,
-    recoil: { pitch: 0.018, yaw: 0.004, bias: 0, climb: 0 },
+    recoil: { pitch: 0.012, yaw: 0.002, bias: 0, climb: 0 },
     critMult: 2.2, range: 150, pierce: 3,
     projectile: { speed: 95, gravity: 3, radius: 0.09, lifetime: 1.6, visual: 'arrow', color: 0xd8e6ff },
     elementChance: 0.3, aimFov: -18, sfx: 'shot_bow', sfxVolume: 0.8, knockback: 2,
@@ -273,21 +277,21 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
   }),
   def({
     id: 'beam', name: '雷弧发射器', category: '光束', kind: 'beam', mode: 'beam',
-    damage: 7, fireRate: 10, beamTick: 0.1, mag: 100, reserve: 400, reloadTime: 2.2, reloadStyle: 'cell',
+    damage: 8, fireRate: 10, mag: 100, reserve: 400, reloadTime: 2.2, reloadStyle: 'cell',
     spreadHip: 0.012, spreadAim: 0.006, spreadPerShot: 0, spreadMax: 0, spreadRecovery: 1,
-    recoil: { pitch: 0.0006, yaw: 0.0009, bias: 0, climb: 0 },
+    recoil: { pitch: 0.0004, yaw: 0.0006, bias: 0, climb: 0 },
     critMult: 1.8, range: 25, element: 'shock', chainFraction: 0.4, chainRange: 7,
     elementChance: 0.1, aimFov: -10, sfx: 'shot_beam', sfxVolume: 0.35, knockback: 0,
     tracerWidth: 0.07, impactSize: 0.45, kick: { back: 0.003, rot: 0.004 }, shake: 0.012, flash: 0.14,
     viewOffset: [0.22, -0.22, -0.48], aimOffset: [0.05, -0.14, -0.4],
     description: '释放持续雷弧的能量武器，电流会在敌群间跳跃。',
-    notes: ['按住持续放电，射程 25 米', '命中时电弧弹射至附近 1 名敌人'],
+    notes: ['按住持续放电，射程 25 米', '命中时电弧弹射至附近 1 名敌人（40% 伤害）'],
   }),
   def({
     id: 'minigun', name: '旋风机炮', category: '重武器', kind: 'heavy', mode: 'spinup',
-    damage: 8, fireRate: 20, mag: 120, reserve: 480, reloadTime: 3.2, reloadStyle: 'box', spinup: 0.6, moveSlow: 2,
+    damage: 7.5, fireRate: 20, mag: 120, reserve: 480, reloadTime: 3.4, reloadStyle: 'box', spinup: 0.6, moveSlow: 2,
     spreadHip: 0.04, spreadAim: 0.028, spreadPerShot: 0.0012, spreadMax: 0.065, spreadRecovery: 0.2,
-    recoil: { pitch: 0.0032, yaw: 0.0035, bias: 0, climb: 0.01 },
+    recoil: { pitch: 0.003, yaw: 0.0022, bias: 0, climb: 0.005 },
     critMult: 1.8, range: 60, falloff: [25, 60, 0.6],
     elementChance: 0.06, aimFov: -10, sfx: 'shot_heavy', sfxVolume: 0.55, knockback: 0.3,
     tracerWidth: 0.022, impactSize: 0.6, kick: { back: 0.01, rot: 0.012 }, shake: 0.05, flash: 0.16,
@@ -299,7 +303,7 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
     id: 'swarm', name: '蜂群飞弹', category: '发射器', kind: 'launcher', mode: 'semi',
     damage: 30, fireRate: 0.75, mag: 4, reserve: 20, reloadTime: 2.8, reloadStyle: 'tube',
     spreadHip: 0.02, spreadAim: 0.01, spreadPerShot: 0.01, spreadMax: 0.03, spreadRecovery: 0.1,
-    recoil: { pitch: 0.012, yaw: 0.004, bias: 0, climb: 0 },
+    recoil: { pitch: 0.009, yaw: 0.003, bias: 0, climb: 0 },
     critMult: 1.8, range: 150,
     projectile: { speed: 24, radius: 0.12, explosionRadius: 1.8, lifetime: 3.5, visual: 'rocket', scale: 0.6, homing: 4.5, count: 5, stagger: 0.06, fan: 0.16, explodeOnExpire: true, color: 0xffc860 },
     elementChance: 0.25, aimFov: -12, sfx: 'shot_launcher', sfxVolume: 0.5, knockback: 3,

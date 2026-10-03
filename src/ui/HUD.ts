@@ -18,6 +18,10 @@ import { InventoryPanel } from './InventoryPanel';
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const TRAIL_HOLD = 420;
 
+function finite(v: number, fallback: number): number {
+  return Number.isFinite(v) ? v : fallback;
+}
+
 // ───────────────────────────── 生命 / 护盾 ─────────────────────────────
 
 class Vitals {
@@ -95,10 +99,11 @@ class Vitals {
       this.root.style.setProperty('--hero', heroColor(hero));
     }
 
-    const maxHp = Math.max(1, p.maxHp());
-    const hp = clamp(p.hp, 0, maxHp);
-    const maxSh = Math.max(0, p.maxShield());
-    const sh = clamp(p.shield, 0, Math.max(maxSh, 0));
+    // 防御性：任何一方写出 NaN 时 HUD 不显示「NaN」
+    const maxHp = Math.max(1, finite(p.maxHp(), 1));
+    const hp = clamp(finite(p.hp, 0), 0, maxHp);
+    const maxSh = Math.max(0, finite(p.maxShield(), 0));
+    const sh = clamp(finite(p.shield, 0), 0, maxSh);
 
     const hpInt = Math.ceil(hp);
     if (hpInt !== this.hpInt) {
@@ -487,7 +492,8 @@ class DashPips {
       });
     }
     const charges = clamp(Math.floor(p.dashCharges), 0, max);
-    const total = Math.max(0.05, p.stats.get('dashCooldown'));
+    // 与 PlayerController 一致：实际冷却下限 0.2 秒
+    const total = Math.max(0.2, p.stats.get('dashCooldown') || 0);
     const partial = clamp01(1 - p.dashCooldownRemaining / total);
     for (let i = 0; i < max; i++) {
       const pip = this.pips[i];
@@ -596,7 +602,8 @@ class InfoPanel {
     }
 
     const st = ctx.stage;
-    const count = Math.max(0, st.waveCount | 0);
+    // 契约：纯 Boss 关 waveCount 为 0，此时不显示波次；首领关额外按节点类型兜底（显示「第 1 / 1 波」没有意义）
+    const count = node.type === 'boss' ? 0 : Math.max(0, st.waveCount | 0);
     const idx = clamp((st.waveIndex | 0) + 1, 1, Math.max(1, count));
     const waveKey = count === 0 ? -1 : idx * 100 + count;
     if (waveKey !== this.waveKey) {
@@ -688,13 +695,15 @@ export class HUD {
       this.tab.setOpen(false, performance.now());
       this.bars.reset();
       this.crosshair.reset();
+      this.boss.hideNow();
     }
   }
 
-  /** 新开一局 / 换关：清掉瞬态（血条池、指示器、缓存） */
+  /** 新开一局 / 换关：清掉瞬态（血条池、指示器、Boss 条、缓存） */
   reset(): void {
     this.bars.reset();
     this.crosshair.reset();
+    this.boss.hideNow();
     this.vitals.reset();
     this.weapon.reset();
     this.skillQ.reset();
@@ -749,7 +758,7 @@ export class HUD {
       this.dash.update();
     } catch (e) { this.fail('skills', e); }
     try { this.info.update(); } catch (e) { this.fail('info', e); }
-    try { this.crosshair.update(dt, now); } catch (e) { this.fail('crosshair', e); }
+    try { this.crosshair.update(dt, now, state === 'playing'); } catch (e) { this.fail('crosshair', e); }
     try { this.bars.update(now); } catch (e) { this.fail('enemyBars', e); }
     try { this.boss.update(now); } catch (e) { this.fail('boss', e); }
     try {

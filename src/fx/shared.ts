@@ -54,6 +54,35 @@ export function randomDir(out: THREE.Vector3): THREE.Vector3 {
   return out.set(s * Math.cos(th), u, s * Math.sin(th));
 }
 
+/** 向量三个分量都是有限数（NaN / Infinity 的输入一律丢弃，避免把非法值写进光源或贴花） */
+export function finite3(v: THREE.Vector3 | null | undefined): v is THREE.Vector3 {
+  return !!v && Number.isFinite(v.x) && Number.isFinite(v.y) && Number.isFinite(v.z);
+}
+
+/** 有限正数，否则返回 fallback */
+export function posOr(v: number | undefined, fallback: number): number {
+  return v !== undefined && Number.isFinite(v) && v > 0 ? v : fallback;
+}
+
+/**
+ * 「尘土 / 烟」色判定：不太亮、低彩度、偏暖（沙、土、灰烟）。
+ * burst 用它把尘土类颜色改走普通混合的烟尘粒子——加法混合的灰褐色看起来像发光雾而不是尘土。
+ * 冷灰白（普通稀有度 0xcfd3da）、高亮奶白（冰晶、雷光核心）仍按发光处理。
+ */
+let dustHex = -1;
+let dustRes = false;
+export function isDustColor(hex: number): boolean {
+  if (hex === dustHex) return dustRes;
+  const r = ((hex >> 16) & 255) / 255;
+  const g = ((hex >> 8) & 255) / 255;
+  const b = (hex & 255) / 255;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  dustHex = hex;
+  dustRes = max < 0.9 && max - min < 0.4 && r >= b - 0.02;
+  return dustRes;
+}
+
 /** 共享的纯白 / 暖白常量颜色（线性空间） */
 export const WHITE = new THREE.Color(1, 1, 1);
 export const WARM_WHITE = new THREE.Color().setHex(0xfff1d6);

@@ -31,6 +31,7 @@ export class SparkStreaks {
   }
 
   spawn(x: number, y: number, z: number, vx: number, vy: number, vz: number, color: THREE.Color, life: number, width = 0.022, gravity = 16): void {
+    if (!(life > 0) || !Number.isFinite(x + y + z + vx + vy + vz + life + width + gravity)) return;
     const i = this.cursor;
     this.cursor = i + 1 >= this.capacity ? 0 : i + 1;
     if (this.life[i] <= 0) this.alive++;

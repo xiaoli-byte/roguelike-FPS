@@ -4,9 +4,9 @@
  */
 import type { GameContext, StatKey, WeaponDescription, WeaponInstance } from '../core/types';
 import { RARITY_CSS, RARITY_NAMES, ELEMENT_NAMES } from '../core/types';
-import { STAT_INFO, formatStat } from '../core/Stats';
+import { STAT_INFO } from '../core/Stats';
 import { h, clearChildren, fillStacks } from './dom';
-import { ELEMENT_GLYPH, elementCss, weaponName } from './labels';
+import { ELEMENT_GLYPH, elementCss, fmtStat, weaponName } from './labels';
 
 /** 常驻显示的关键属性（其余属性只有偏离基础值时才显示） */
 export const KEY_STATS: StatKey[] = [
@@ -22,8 +22,9 @@ const ALL_STATS = Object.keys(STAT_INFO) as StatKey[];
 
 /** 属性的「绝对值」显示：Pct 类显示为带符号加成，其余显示当前值 */
 export function formatStatValue(key: StatKey, v: number): string {
-  if (key.endsWith('Pct') || key === 'skillHaste') return formatStat(key, v);
-  switch (STAT_INFO[key].format) {
+  if (!Number.isFinite(v)) v = 0;
+  if (key.endsWith('Pct') || key === 'skillHaste') return fmtStat(key, v);
+  switch (STAT_INFO[key]?.format) {
     case 'pct':
       return `${Math.round(v * 100)}%`;
     case 'sec':
@@ -31,7 +32,7 @@ export function formatStatValue(key: StatKey, v: number): string {
     case 'int':
       return String(Math.round(v));
     default:
-      return String(Math.round(v * 10) / 10);
+      return String(Math.round(v * 100) / 100);
   }
 }
 
@@ -59,7 +60,7 @@ export function renderStatGrid(ctx: GameContext, parent: HTMLElement, keys: read
     if (Math.abs(delta) > 1e-6) {
       const better = LOWER_IS_BETTER.has(k) ? delta < 0 : delta > 0;
       val.classList.add(better ? 'is-buff' : 'is-debuff');
-      if (!(k.endsWith('Pct') || k === 'skillHaste')) h('span', 'gf-stat__delta', row, formatStat(k, delta));
+      if (!(k.endsWith('Pct') || k === 'skillHaste')) h('span', 'gf-stat__delta', row, fmtStat(k, delta));
     }
   }
 }

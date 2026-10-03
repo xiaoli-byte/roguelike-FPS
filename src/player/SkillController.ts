@@ -42,7 +42,7 @@ export class SkillController {
     }
   }
 
-  /** 每帧：恢复充能、处理按键、驱动持续型技能 */
+  /** 每帧（玩家运动之前）：恢复充能、处理按键 */
   update(dt: number, acceptInput: boolean): void {
     const input = this.ctx.input;
     for (const slot of SLOTS) {
@@ -51,6 +51,13 @@ export class SkillController {
       this.recharge(s, slot, dt);
       if (acceptInput && input.pressed(slot === 'primary' ? 'skillPrimary' : 'skillSecondary')) this.tryUse(s, slot);
     }
+  }
+
+  /**
+   * 每帧（玩家运动与 eye 更新之后）：驱动持续型技能。
+   * 放在运动之后，环绕 / 脚下的技能特效与本帧相机位置一致，落地判定（裂地重击）也不会晚一帧。
+   */
+  tick(dt: number): void {
     for (const slot of SLOTS) {
       const s = this.states[slot];
       if (!s || !s.def.update) continue;

@@ -339,16 +339,33 @@
   width: 96px;
 }
 
+/* flex 居中：名字比血条宽时向两侧溢出，仍然居中于敌人头顶 */
 .gf-ebar__name {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
   margin-bottom: 1px;
   font-family: var(--font-display);
   font-size: 13px;
   line-height: 1.1;
   letter-spacing: 0.06em;
-  text-align: center;
   white-space: nowrap;
   color: var(--gold-hi);
   text-shadow: 0 1px 2px #000, 0 0 6px rgba(0, 0, 0, 0.9);
+}
+
+.gf-ebar__affix {
+  --affix: var(--gold-hi);
+  flex: none;
+  padding: 1px 4px;
+  font: 600 11px/1.1 var(--font-body);
+  letter-spacing: 0.08em;
+  color: #0b090d;
+  text-shadow: none;
+  background: var(--affix);
+  border-radius: 2px;
+  box-shadow: 0 0 6px color-mix(in srgb, var(--affix) 70%, transparent);
 }
 
 .gf-ebar__status {
@@ -429,7 +446,9 @@
   left: 50%;
   top: 18px;
   z-index: 5;
-  width: min(720px, 62vw);
+  zoom: var(--hud-s, 1);
+  /* zoom 内 vw 会被一起缩放，除回去：视觉宽度不超过 56vw，给右上角关卡信息留位置 */
+  width: min(720px, calc(56vw / var(--hud-s, 1)));
   text-align: center;
   opacity: 0;
   transform: translate(-50%, -14px);
@@ -477,6 +496,13 @@
   border: 1px solid var(--line);
   background: rgba(7, 6, 10, 0.72);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  transition: filter 0.3s ease, border-color 0.3s ease;
+}
+
+/* 不可选中（登场 / 阶段转换）：血条褪色，底部显示锁与「无敌」 */
+.gf-boss.is-invuln .gf-boss__bars {
+  filter: grayscale(0.85) brightness(0.72);
+  border-color: rgba(200, 185, 153, 0.28);
 }
 
 .gf-boss__row {
@@ -549,6 +575,23 @@
   text-shadow: 0 1px 2px #000;
 }
 
+.gf-boss__state {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.gf-boss__state .gf-boss__lock {
+  display: none;
+  width: 12px;
+  height: 12px;
+  color: var(--paper-2);
+}
+
+.gf-boss.is-invuln .gf-boss__state .gf-boss__lock {
+  display: inline-flex;
+}
+
 .gf-boss__layer {
   letter-spacing: 0.3em;
 }
@@ -557,6 +600,7 @@
 .gf-boss__layer[data-layer="armor"] { color: #ffe08a; }
 .gf-boss__layer[data-layer="hp"] { color: var(--hp-hi); }
 .gf-boss__layer[data-layer="dead"] { color: var(--gold-hi); }
+.gf-boss__layer[data-layer="invuln"] { color: var(--paper-2); }
 
 .gf-boss__num {
   font: 600 13px/1.2 var(--font-num);
@@ -574,8 +618,10 @@
   left: 50%;
   top: 50%;
   z-index: 8;
-  width: min(1180px, 94vw);
-  max-height: 78vh;
+  zoom: var(--hud-s, 1);
+  /* zoom 内 vw/vh 会被一起缩放，除回去以保持视觉上限 */
+  width: min(1180px, calc(94vw / var(--hud-s, 1)));
+  max-height: calc(84vh / var(--hud-s, 1));
   display: grid;
   grid-template-columns: 1.15fr 1fr 1fr;
   gap: 20px;
@@ -599,7 +645,7 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
-  max-height: calc(78vh - 48px);
+  max-height: calc(84vh / var(--hud-s, 1) - 48px);
 }
 
 .gf-tab__head {
@@ -797,7 +843,7 @@
   color: var(--gold);
 }
 
-@media (max-width: 900px) {
+@media (max-width: 640px) {
   .gf-tab {
     grid-template-columns: minmax(0, 1fr);
     overflow: auto;

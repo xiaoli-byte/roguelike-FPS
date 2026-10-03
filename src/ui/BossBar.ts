@@ -1,12 +1,21 @@
 /**
- * Boss 血条：顶部居中。名称、护盾（蓝）/ 护甲（金）细条、生命主条（带延迟掉血与 50% / 25% 刻度）。
+ * Boss 血条：顶部居中。名称、护盾（蓝）/ 护甲（金）细条、生命主条（带延迟掉血与阶段刻度）。
+ * 刻度按首领 id 取（与各 Boss 的阶段阈值一致）；首领不可选中（登场 / 阶段转换）时血条变灰并显示「无敌」锁。
  */
 import type { IEnemy } from '../core/types';
 import { clamp01 } from '../core/math';
 import { h, icon, formatNum } from './dom';
-import { ICON_CLOUD } from './icons';
+import { ICON_CLOUD, ICON_LOCK } from './icons';
 
-const TICKS = [0.5, 0.25];
+/** 各首领的阶段阈值（生命比例），血条上画对应刻度 */
+const BOSS_TICKS: Readonly<Record<string, readonly number[]>> = {
+  boss_colossus: [0.5, 0.25],
+  boss_matriarch: [0.5],
+  boss_warlord: [0.5, 0.2],
+};
+const DEFAULT_TICKS: readonly number[] = [0.5, 0.25];
+/** 首领被击杀后血条保留「已击破」的时长（毫秒） */
+const DEAD_LINGER_MS = 1600;
 
 export class BossBar {
   readonly root: HTMLDivElement;
@@ -15,11 +24,15 @@ export class BossBar {
   private shieldFill: HTMLDivElement;
   private armorRow: HTMLDivElement;
   private armorFill: HTMLDivElement;
+  private hpRow: HTMLDivElement;
   private hpFill: HTMLDivElement;
   private hpTrail: HTMLDivElement;
   private numEl: HTMLSpanElement;
   private layerEl: HTMLSpanElement;
+  private ticks: readonly number[] = [];
   private tickEls: HTMLElement[] = [];
+  /** 当前是否处于「无敌」（不可选中）显示状态 */
+  private invuln = false;
 
   private enemy: IEnemy | null = null;
   private visible = false;
@@ -35,7 +48,7 @@ export class BossBar {
   private numCur = -1;
   private numMax = -1;
   private layerText = '';
-  private passed: boolean[] = [false, false];
+  private passed: boolean[] = [];
 
   constructor(parent: HTMLElement) {
     this.root = h('div', 'gf-boss', parent);
@@ -50,29 +63,52 @@ export class BossBar {
     this.shieldFill = h('div', 'gf-boss__fill', this.shieldRow);
     this.armorRow = h('div', 'gf-boss__row gf-boss__row--armor', bars);
     this.armorFill = h('div', 'gf-boss__fill', this.armorRow);
-    const hpRow = h('div', 'gf-boss__row gf-boss__row--hp', bars);
-    this.hpTrail = h('div', 'gf-boss__trail', hpRow);
-    this.hpFill = h('div', 'gf-boss__fill', hpRow);
-    for (const t of TICKS) {
-      const tick = h('i', 'gf-boss__tick', hpRow);
-      tick.style.left = `${t * 100}%`;
-      this.tickEls.push(tick);
-    }
+    this.hpRow = h('div', 'gf-boss__row gf-boss__row--hp', bars);
+    this.hpTrail = h('div', 'gf-boss__trail', this.hpRow);
+    this.hpFill = h('div', 'gf-boss__fill', this.hpRow);
+    this.buildTicks(DEFAULT_TICKS);
     const foot = h('div', 'gf-boss__foot', this.root);
-    this.layerEl = h('span', 'gf-boss__layer', foot);
+    const state = h('span', 'gf-boss__state', foot);
+    icon(ICON_LOCK, 'gf-icon gf-boss__lock', state);
+    this.layerEl = h('span', 'gf-boss__layer', state);
     this.numEl = h('span', 'gf-boss__num', foot);
+  }
+
+  /** 按阈值重建生命条刻度（阈值相同则保留现有元素） */
+  private buildTicks(ticks: readonly number[]): void {
+    const same = ticks.length === this.ticks.length && ticks.every((t, i) => t === this.ticks[i]);
+    if (!same) {
+      for (const el of this.tickEls) el.remove();
+      this.tickEls = [];
+      for (const t of ticks) {
+        const tick = h('i', 'gf-boss__tick', this.hpRow);
+        tick.style.left = `${t * 100}%`;
+        this.tickEls.push(tick);
+      }
+      this.ticks = ticks;
+    }
+    this.passed = ticks.map(() => false);
+  }
+
+  private setInvuln(on: boolean): void {
+    if (on === this.invuln) return;
+    this.invuln = on;
+    this.root.classList.toggle('is-invuln', on);
   }
 
   set(enemy: IEnemy | null): void {
     window.clearTimeout(this.hideTimer);
     if (!enemy) {
-      this.enemy = null;
-      if (!this.visible) return;
-      this.visible = false;
-      this.root.classList.remove('is-open');
-      this.hideTimer = window.setTimeout(() => {
-        if (!this.visible) this.root.hidden = true;
-      }, 500);
+      // 首领刚被击杀（StageDirector 会立刻 setBoss(null)）：先显示「已击破」再收起，由 update 计时
+      const cur = this.enemy;
+      if (this.visible && cur && !cur.alive && (!this.deadAt || performance.now() - this.deadAt < DEAD_LINGER_MS)) {
+        if (!this.deadAt) {
+          this.deadAt = performance.now();
+          this.root.classList.add('is-dead');
+        }
+        return;
+      }
+      this.hideNow(false);
       return;
     }
     this.enemy = enemy;
@@ -83,15 +119,35 @@ export class BossBar {
     this.layerText = '';
     this.trail = clamp01(enemy.hp / Math.max(1, enemy.maxHp));
     this.hpTrail.style.transform = `scaleX(${this.trail.toFixed(4)})`;
-    this.passed = TICKS.map((t) => this.trail <= t);
+    this.buildTicks(BOSS_TICKS[enemy.def.id] ?? DEFAULT_TICKS);
+    this.passed = this.ticks.map((t) => this.trail <= t);
     this.tickEls.forEach((el, i) => el.classList.toggle('is-passed', this.passed[i]));
     this.shieldRow.hidden = !(enemy.maxShield > 0);
     this.armorRow.hidden = !(enemy.maxArmor > 0);
+    this.setInvuln(enemy.alive && enemy.untargetable === true);
     this.root.classList.remove('is-dead');
     this.visible = true;
     this.root.hidden = false;
     void this.root.offsetWidth;
     this.root.classList.add('is-open');
+  }
+
+  /** 收起（换关 / 新开一局 / 隐藏 HUD 时立即收起，不保留「已击破」） */
+  hideNow(immediate = true): void {
+    window.clearTimeout(this.hideTimer);
+    this.enemy = null;
+    this.deadAt = 0;
+    this.setInvuln(false);
+    if (!this.visible && (this.root.hidden || !immediate)) return;
+    this.visible = false;
+    this.root.classList.remove('is-open');
+    if (immediate) {
+      this.root.hidden = true;
+      return;
+    }
+    this.hideTimer = window.setTimeout(() => {
+      if (!this.visible) this.root.hidden = true;
+    }, 500);
   }
 
   update(now: number): void {
@@ -121,8 +177,8 @@ export class BossBar {
       if (hp < this.hp) this.trailHoldUntil = now + 450;
       this.hp = hp;
       this.hpFill.style.transform = `scaleX(${hp.toFixed(4)})`;
-      for (let i = 0; i < TICKS.length; i++) {
-        const passed = hp <= TICKS[i];
+      for (let i = 0; i < this.ticks.length; i++) {
+        const passed = hp <= this.ticks[i];
         if (passed !== this.passed[i]) {
           this.passed[i] = passed;
           this.tickEls[i].classList.toggle('is-passed', passed);
@@ -138,12 +194,16 @@ export class BossBar {
       this.hpTrail.style.transform = `scaleX(${trail.toFixed(4)})`;
     }
 
+    // 不可选中（登场 / 阶段转换）：血条变灰 + 锁，结束后恢复
+    const invuln = e.alive && e.untargetable === true;
+    this.setInvuln(invuln);
+
     // 当前受击层 + 数值
-    const layer = !e.alive ? '已击破' : e.shield > 0 ? '护盾' : e.armor > 0 ? '护甲' : '生命';
+    const layer = !e.alive ? '已击破' : invuln ? '无敌' : e.shield > 0 ? '护盾' : e.armor > 0 ? '护甲' : '生命';
     if (layer !== this.layerText) {
       this.layerText = layer;
       this.layerEl.textContent = layer;
-      this.layerEl.dataset.layer = !e.alive ? 'dead' : e.shield > 0 ? 'shield' : e.armor > 0 ? 'armor' : 'hp';
+      this.layerEl.dataset.layer = !e.alive ? 'dead' : invuln ? 'invuln' : e.shield > 0 ? 'shield' : e.armor > 0 ? 'armor' : 'hp';
     }
     const cur = e.alive ? (e.shield > 0 ? e.shield : e.armor > 0 ? e.armor : e.hp) : 0;
     const max = e.alive ? (e.shield > 0 ? e.maxShield : e.armor > 0 ? e.maxArmor : e.maxHp) : e.maxHp;
@@ -154,12 +214,12 @@ export class BossBar {
       this.numEl.textContent = `${formatNum(curInt)} / ${formatNum(max)}`;
     }
 
-    // Boss 死亡：显示击破后自动收起（即使 StageDirector 没有调用 setBoss(null)）
+    // Boss 死亡：显示击破后自动收起（无论 StageDirector 是否调用 setBoss(null)）
     if (!e.alive) {
       if (!this.deadAt) {
         this.deadAt = now;
         this.root.classList.add('is-dead');
-      } else if (now - this.deadAt > 1800) this.set(null);
+      } else if (now - this.deadAt > DEAD_LINGER_MS) this.hideNow(false);
     }
   }
 }

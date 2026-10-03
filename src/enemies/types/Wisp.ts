@@ -23,8 +23,9 @@ export const WISP_DEF: EnemyDef = {
   damage: 10,
   coins: [2, 4],
   essence: 1,
-  headY: 0.74,
-  headRadius: 0.3,
+  // 弱点 = 灯身上半（鬼脸所在，0.45 → 0.98）：灯笼半径 0.3，判定球取 0.28 贴合灯身轮廓，下半与火焰算身体
+  headY: 0.72,
+  headRadius: 0.28,
   knockbackResist: 0.2,
   color: 0x8fe8ff,
 };
@@ -52,6 +53,8 @@ export class Wisp extends StandardEnemy {
   private readonly baseHover: number;
   private bobPhase: number;
   private spin = 0;
+  /** 撞墙后的临时爬升剩余秒数 */
+  private climb = 0;
 
   constructor(ctx: GameContext, opts: SpawnOptions) {
     super(ctx, WISP_DEF, opts);
@@ -65,6 +68,8 @@ export class Wisp extends StandardEnemy {
     const root = new THREE.Group();
     const L = joint(root, 0, 0.62, 0);
     this.lantern = L;
+    // 头心：灯笼关节上方 0.1（0.62 + 0.1 = 0.72，与 WISP_DEF.headY 一致），随灯身摇摆
+    this.setHeadAnchor(L, 0, 0.1, 0.02);
     // 纸灯身（自发光的红纸）+ 木框
     part(L, Geo.cyl(0.3, 0.3, 0.5, 8), flat(C.paper, { emissive: C.paperGlow, ei: 1.2, rough: 0.95 }), 0, 0, 0);
     for (const y of [-0.26, 0.26]) this.rings.push(part(L, Geo.torus(0.31, 0.03, 4, 8), flat(C.wood), 0, y, 0, Math.PI / 2, 0, 0));
@@ -148,12 +153,18 @@ export class Wisp extends StandardEnemy {
     }
   }
 
-  /** 悬停高度：随玩家所在高度抬升，看不到玩家时再升高一些，并带缓慢起伏 */
+  /**
+   * 悬停高度：随玩家所在高度抬升，看不到玩家时再升高一些，并带缓慢起伏。
+   * 飞行单位直线移动（不走导航网格），撞到柱子 / 亭顶等障碍时临时爬升越过去。
+   */
   private updateHover(): void {
     const floor = this.ctx.stage.arena?.floorY ?? 0;
     const pl = this.ctx.player.position;
+    if (this.moveResult.hitWall) this.climb = 1.2;
+    else this.climb = Math.max(0, this.climb - this.ctx.time.dt);
     let y = Math.max(floor + this.baseHover, pl.y + this.baseHover * 0.8);
     if (this.blindTime > 0.6) y += 1.5;
+    if (this.climb > 0) y += 2.2;
     this.flyTargetY = y + Math.sin(this.age * 1.6 + this.bobPhase) * 0.35;
   }
 

@@ -40,8 +40,19 @@ const WARN = 0xff7a2a;
 const SAND = 0xd9b27a;
 const BEAM = 0xffa040;
 const WAVE = 0xffb060;
+/** 扫射光束：离地高度、判定半径、起点（身前距离）与射程 */
+const BEAM_Y = 0.55;
+const BEAM_RADIUS = 0.22;
+const BEAM_START = 3;
+const BEAM_RANGE = 36;
+/** 裂地岩刺：单根半径、扇形间隔、首根破土前的预警时长、沿线逐根间隔 */
+const SPIKE_RADIUS = 1.15;
+const FISSURE_SPREAD = 0.42;
+const FISSURE_WARN = 0.85;
+const FISSURE_STEP = 0.075;
 
 const _v = new THREE.Vector3();
+const _w = new THREE.Vector3();
 const _a = new THREE.Vector3();
 const _b = new THREE.Vector3();
 const _eye = new THREE.Vector3();
@@ -84,6 +95,8 @@ export class Colossus extends BossBase {
   private throwCount = 5;
   private beamCharge = 1;
   private beamAngle = 0;
+  /** 上一帧的光束角度（扫掠判定用，避免低帧率时光束一帧扫过玩家却没判到） */
+  private beamPrevAngle = 0;
   private beamSign: 1 | -1 = 1;
   private beamSpeed = 1.35;
   private beamSweep = TAU;
@@ -114,7 +127,7 @@ export class Colossus extends BossBase {
     this.muzzleAnchor = rig.eyeHalo;
     this.hitShapes = [
       { anchor: rig.head, radius: 0.72, halfHeight: 0, weak: true },
-      { anchor: rig.chest, radius: 1.15, halfHeight: 0.3, weak: false },
+      { anchor: rig.chest, radius: 1.05, halfHeight: 0.2, weak: false },
       { anchor: rig.shoulderL, radius: 0.72, halfHeight: 0, weak: false },
       { anchor: rig.shoulderR, radius: 0.72, halfHeight: 0, weak: false },
       { anchor: rig.belly, radius: 1.05, halfHeight: 0.35, weak: false },
@@ -193,6 +206,7 @@ export class Colossus extends BossBase {
           return false;
         }
         if (this.at(this.beamCharge)) this.fireBeam();
+        this.beamPrevAngle = this.beamAngle;
         this.beamAngle += this.beamSign * this.beamSpeed * dt;
         this.facing = this.beamAngle;
         this.eyeBoost = 1;
@@ -237,10 +251,12 @@ export class Colossus extends BossBase {
   private slamImpact(first: boolean): void {
     const p = this.slamPoint;
     const fx = this.ctx.fx;
+    let crushed = false;
     if (first) {
       this.setAnim('slamDown', true);
-      this.hazards.blast(p.x, p.y, p.z, 3.6, 30, { maxHeight: 2.2, knockback: 9, knockUp: 5 });
-      fx.explosion(new THREE.Vector3(p.x, p.y + 0.3, p.z), 3.2, SAND);
+      crushed = this.hazards.blast(p.x, p.y, p.z, 3.6, 30, { maxHeight: 2.2, knockback: 9, knockUp: 5 });
+      _v.set(p.x, p.y + 0.3, p.z);
+      fx.explosion(_v, 3.2, SAND);
       fx.shake(0.7, 0.5);
       this.ctx.audio.play('boss_slam', { position: this.position, volume: 1 });
     } else {
@@ -253,6 +269,8 @@ export class Colossus extends BossBase {
       x: p.x, y: p.y, z: p.z,
       speed: this.phase >= 1 ? 13 : 11.5, maxRadius: 34, startRadius: 1.5,
       damage: 20, color: WAVE, width: 0.9, height: 0.85, knockback: 5, dust: SAND,
+      // 被落点重击砸飞的玩家落地前跳不起来，紧随其后的第一道波不再追加伤害
+      spare: crushed,
     });
   }
 
@@ -289,10 +307,10 @@ export class Colossus extends BossBase {
     const sx = Math.sin(a);
     const cz = Math.cos(a);
     this.rig.eyeHalo.getWorldPosition(_eye);
-    _a.set(this.position.x + sx * 3, floor + 0.55, this.position.z + cz * 3);
+    _a.set(this.position.x + sx * BEAM_START, floor + BEAM_Y, this.position.z + cz * BEAM_START);
     _dir.set(sx, 0, cz);
-    const hit = this.ctx.world.raycast(_a, _dir, 34, _hit);
-    _b.copy(_a).addScaledVector(_dir, hit ? hit.distance : 34);
+    const hit = this.ctx.world.raycast(_a, _dir, BEAM_RANGE, _hit);
+    _b.copy(_a).addScaledVector(_dir, hit ? hit.distance : BEAM_RANGE);
     const r = 0.025 + 0.035 * u;
     const flick = 0.55 + 0.45 * Math.sin(this.animT * (18 + 20 * u));
     if (this.aimA) {
@@ -312,6 +330,7 @@ export class Colossus extends BossBase {
     this.hazards.releaseBeam(this.aimB);
     this.aimA = null;
     this.aimB = null;
+    this.beamPrevAngle = this.beamAngle;
     this.beamMain = this.hazards.beam(BEAM, 0xfff0d0);
     this.beamSlant = this.hazards.beam(BEAM, 0xfff0d0);
     this.ctx.audio.play('shot_beam', { position: this.position, pitch: 0.5, volume: 0.9 });
@@ -324,10 +343,10 @@ export class Colossus extends BossBase {
     const sx = Math.sin(a);
     const cz = Math.cos(a);
     this.rig.eyeHalo.getWorldPosition(_eye);
-    _a.set(this.position.x + sx * 3, floor + 0.55, this.position.z + cz * 3);
+    _a.set(this.position.x + sx * BEAM_START, floor + BEAM_Y, this.position.z + cz * BEAM_START);
     _dir.set(sx, 0, cz);
-    const hit = this.ctx.world.raycast(_a, _dir, 36, _hit);
-    _b.copy(_a).addScaledVector(_dir, hit ? hit.distance : 36);
+    const hit = this.ctx.world.raycast(_a, _dir, BEAM_RANGE, _hit);
+    _b.copy(_a).addScaledVector(_dir, hit ? hit.distance : BEAM_RANGE);
     const flick = 0.85 + 0.15 * Math.sin(this.animT * 47);
     if (this.beamMain) {
       this.beamMain.set(_a, _b, 0.26);
@@ -338,7 +357,7 @@ export class Colossus extends BossBase {
       this.beamSlant.flicker(flick);
     }
     const now = this.ctx.time.now;
-    if (now >= this.beamNextHit && (this.hazards.segmentHitsPlayer(_a, _b, 0.22) || this.hazards.segmentHitsPlayer(_eye, _a, 0.24))) {
+    if (now >= this.beamNextHit && (this.hazards.segmentHitsPlayer(_eye, _a, 0.24) || this.beamSweepHits(this.beamPrevAngle, a, floor))) {
       this.hazards.hurt(16, 'fire', _eye);
       this.beamNextHit = now + 0.5;
     }
@@ -355,6 +374,36 @@ export class Colossus extends BossBase {
     }
   }
 
+  /**
+   * 膝盖高度光束的扫掠判定：本帧光束从 prevA 转到 curA 扫过的扇区是否覆盖玩家。
+   * 与逐帧线段判定一致，但不会因为低帧率（一帧转过一两米）而让光束「跳过」玩家。
+   * 高度：光束中心离地 0.55 米、半径 0.22 米，玩家脚底离地约 0.77 米以上即可跳过；掩体挡光。
+   */
+  private beamSweepHits(prevA: number, curA: number, floor: number): boolean {
+    const pl = this.ctx.player;
+    if (!pl.alive) return false;
+    const dx = pl.position.x - this.position.x;
+    const dz = pl.position.z - this.position.z;
+    const d = Math.hypot(dx, dz);
+    if (d < 1e-3) return false;
+    const reach = BEAM_RADIUS + pl.radius;
+    const h = pl.position.y - floor;
+    const lo = h + pl.radius;
+    const hi = h + Math.max(pl.radius, pl.height - pl.radius);
+    const gap = Math.max(0, lo - BEAM_Y, BEAM_Y - hi);
+    if (gap >= reach) return false;
+    const lateral = Math.sqrt(reach * reach - gap * gap);
+    if (d < BEAM_START - lateral || d > BEAM_START + BEAM_RANGE + lateral) return false;
+    const tol = Math.asin(Math.min(1, lateral / d));
+    const sweep = curA - prevA;
+    const delta = angleDiff(prevA, Math.atan2(dx, dz));
+    if (delta < Math.min(0, sweep) - tol || delta > Math.max(0, sweep) + tol) return false;
+    const k = Math.min(1, BEAM_START / d);
+    _v.set(this.position.x + dx * k, floor + BEAM_Y, this.position.z + dz * k);
+    _w.set(pl.position.x, floor + BEAM_Y, pl.position.z);
+    return !this.ctx.world.segmentBlocked(_v, _w);
+  }
+
   private releaseBeams(): void {
     this.hazards.releaseBeam(this.aimA);
     this.hazards.releaseBeam(this.aimB);
@@ -369,29 +418,35 @@ export class Colossus extends BossBase {
     const floor = this.floorY();
     const x = this.position.x;
     const z = this.position.z;
-    this.hazards.blast(x, floor, z, 6.2, 24, { maxHeight: 1.1, knockback: 13, knockUp: 6 });
-    this.ctx.fx.ring(new THREE.Vector3(x, floor + 0.1, z), 6.5, SAND, 0.5);
+    const crushed = this.hazards.blast(x, floor, z, 6.2, 24, { maxHeight: 1.1, knockback: 13, knockUp: 6 });
+    _v.set(x, floor + 0.1, z);
+    this.ctx.fx.ring(_v, 6.5, SAND, 0.5);
     _v.set(x, floor + 0.3, z);
     this.ctx.fx.burst(_v, SAND, 26, 9, 0.9, 0.4, 14);
     this.ctx.fx.shake(0.6, 0.45);
     this.ctx.audio.play('boss_slam', { position: this.position });
     if (this.phase >= 1) {
-      this.hazards.wave({ x, y: floor, z, speed: 12, maxRadius: 16, startRadius: 6.2, damage: 16, color: WAVE, width: 0.8, height: 0.8, dust: SAND });
+      this.hazards.wave({ x, y: floor, z, speed: 12, maxRadius: 16, startRadius: 6.2, damage: 16, color: WAVE, width: 0.8, height: 0.8, dust: SAND, spare: crushed });
     }
     this.closeTime = 0;
   }
 
+  /**
+   * 3（三阶段 5）道岩刺沿扇形由近到远依次破土。每道用一条长条预警（填满后保持到最后一根破土），
+   * 不再给每根刺单独画圆形预警（5 × 12 个会挤爆特效模块的预警池）。同一次施放最多命中玩家一次。
+   */
   private castFissure(): void {
     this.setAnim('punchDown', true);
     const floor = this.floorY();
     const lines = this.phase >= 2 ? 5 : 3;
-    const spread = 0.36;
     const mid = (lines - 1) / 2;
+    const volley = { hit: false };
     for (let l = 0; l < lines; l++) {
-      const yaw = this.facing + (l - mid) * spread;
+      const yaw = this.facing + (l - mid) * FISSURE_SPREAD;
       const dx = Math.sin(yaw);
       const dz = Math.cos(yaw);
       const maxD = this.distToArenaEdge(this.position.x, this.position.z, dx, dz, 1.5);
+      let n = 0;
       for (let j = 0; j < 12; j++) {
         const d = 3.2 + j * 2.1;
         if (d > maxD) break;
@@ -400,9 +455,19 @@ export class Colossus extends BossBase {
         const gy = this.ctx.world.groundHeight(x, z, floor + 4);
         this.hazards.erupt({
           x, y: Number.isFinite(gy) ? gy : floor, z,
-          radius: 1.35, delay: 0.75 + j * 0.075, damage: 20, color: WARN, kind: 'rock',
-          sound: l === Math.floor(mid) && j % 3 === 0,
+          radius: SPIKE_RADIUS, delay: FISSURE_WARN + j * FISSURE_STEP, damage: 20, color: WARN, kind: 'rock',
+          sound: l === Math.floor(mid) && j % 3 === 0, warn: false, volley,
         });
+        n++;
+      }
+      if (n > 0) {
+        const start = 3.2 - SPIKE_RADIUS;
+        const len = 2.1 * (n - 1) + SPIKE_RADIUS * 2;
+        // 地刺已排好破土任务，招式被打断后照常破土：预警随危险物兑现（'hazard'），只在 Boss 死亡时撤回
+        this.hazards.lineWarning(
+          this.position.x + dx * start, floor, this.position.z + dz * start, yaw, len, SPIKE_RADIUS,
+          FISSURE_WARN, WARN, (n - 1) * FISSURE_STEP + 0.1, 'hazard',
+        );
       }
     }
     this.rig.fistL.getWorldPosition(_a);
@@ -418,8 +483,8 @@ export class Colossus extends BossBase {
 
   protected override onPhase(phase: number): void {
     const ui = this.ctx.ui;
-    if (phase === 1) ui.toast('沙暴巨像的核心开始过载！', '#ff8a3d');
-    else ui.toast('沙暴巨像召来了更多沙匪！', '#ff6a2a');
+    if (phase === 1) ui.toast('沙暴巨像的核心开始过载，召来了沙匪！', '#ff8a3d');
+    else ui.toast('沙暴巨像濒临崩毁，召来了更多沙匪！', '#ff6a2a');
     this.hazards.later(1.0, () => {
       if (!this.alive) return;
       const n = this.summon('grunt', phase === 1 ? 3 : 4, 5, 9, 6);
@@ -516,7 +581,8 @@ export class Colossus extends BossBase {
   protected override onEntranceEnd(): void {
     this.setAnim('idle');
     this.restLeft = 1.2;
-    this.ctx.ui.banner(this.displayName, '荒漠遗迹的守护者', 2.4);
+    // 名称横幅已由关卡导演在刷出时显示，这里只补一条弱点提示
+    this.ctx.ui.toast('荒漠遗迹的守护者——头部独眼是弱点', '#ffb347');
   }
 
   protected override animate(dt: number): void {

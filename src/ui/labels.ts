@@ -1,9 +1,37 @@
 /**
  * UI 使用的中文文案映射（写死，避免依赖其他模块的具体实现）。
  */
-import type { Element, HeroDef, StatusId } from '../core/types';
+import type { Element, HeroDef, StatKey, StatusId } from '../core/types';
 import { ELEMENT_COLORS } from '../core/types';
+import { STAT_INFO } from '../core/Stats';
 import { cssHex } from './dom';
+
+/**
+ * 属性增量的显示（与 core/Stats.formatStat 相同，但 flat 类保留两位小数：
+ * 例如移速 +0.15 不会被显示成 +0.2）。
+ */
+export function fmtStat(key: StatKey, value: number): string {
+  const v = Number.isFinite(value) ? value : 0;
+  const sign = v > 0 ? '+' : '';
+  switch (STAT_INFO[key]?.format) {
+    case 'pct':
+      return `${sign}${Math.round(v * 100)}%`;
+    case 'sec':
+      return `${sign}${v.toFixed(1)}秒`;
+    case 'int':
+      return `${sign}${Math.round(v)}`;
+    default:
+      return `${sign}${Math.round(v * 100) / 100}`;
+  }
+}
+
+/** 精英词缀（与 enemies/Affixes.ts 的 id 一致；UI 不 import 敌人模块的实现） */
+export const AFFIX_LABELS: Record<string, { name: string; color: string; hint: string }> = {
+  swift: { name: '迅捷', color: '#49d8ff', hint: '移速与攻速提高' },
+  shielded: { name: '坚盾', color: '#6f9dff', hint: '额外护盾，脱战回盾' },
+  volatile: { name: '爆裂', color: '#ff7a3a', hint: '死亡时爆炸，别贴身击杀' },
+  frenzied: { name: '狂暴', color: '#ff4a32', hint: '低血量时狂暴' },
+};
 
 /** 武器 id → 中文名 / 类别（DESIGN.md 第 7 节） */
 export const WEAPON_NAMES: Record<string, { name: string; category: string }> = {

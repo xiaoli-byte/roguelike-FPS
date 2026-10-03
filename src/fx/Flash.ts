@@ -1,14 +1,16 @@
 /**
  * 爆炸闪光球（放大淡出的菲涅尔发光球）与复用点光源池。
  *
- * 点光源常驻场景、强度为 0 时视为空闲：增删光源会改变光照数量、触发全场材质重编译，所以绝不增删。
+ * 点光源常驻场景、强度为 0 时视为空闲：增删光源会改变光照数量、触发全场材质重编译，所以玩法中绝不增删。
+ * 强度为 0 的点光源仍然参与每个受光片元的计算，所以池子只留 2 个；低画质时在换关（黑幕中、
+ * 世界模块的灯光数量本来就会变、材质本来就要重编译）把它们整体隐藏掉。
  */
 import * as THREE from 'three';
 import { ORDER_FLASH, hexToColor } from './shared';
 
 const SPHERES = 16;
-/** 点光源池大小（契约要求 ≤ 4） */
-const LIGHTS = 3;
+/** 点光源池大小（世界 ≤ 4 + 武器 1 + 特效 2） */
+const LIGHTS = 2;
 
 const VERT = /* glsl */ `
 varying vec3 vN;
@@ -70,6 +72,7 @@ export class FlashEffects {
   private readonly spheres: FlashSphere[] = [];
   private readonly lights: PooledLight[] = [];
   private stamp = 0;
+  private lightsOn = true;
 
   constructor() {
     this.group.name = 'fx.flashes';
@@ -86,6 +89,8 @@ export class FlashEffects {
       const mesh = new THREE.Mesh(sphereGeo, mat);
       mesh.visible = false;
       mesh.frustumCulled = false;
+      // 只有活跃的闪光球才需要更新矩阵（在 sphere / update 里手动 updateMatrix）
+      mesh.matrixAutoUpdate = false;
       mesh.renderOrder = ORDER_FLASH;
       this.group.add(mesh);
       this.spheres.push({ mesh, u: mat.uniforms as SphereUniforms, active: false, age: 0, life: 0.3, r0: 0.1, r1: 1, stamp: 0 });
@@ -101,6 +106,24 @@ export class FlashEffects {
   /** 把光源挂到场景（只调用一次；光源不放进 group，以免被预编译时重复计数） */
   attachLights(scene: THREE.Scene): void {
     for (const l of this.lights) scene.add(l.light);
+  }
+
+  /** 光源当前是否在场景中生效 */
+  get lightsEnabled(): boolean {
+    return this.lightsOn;
+  }
+
+  /**
+   * 开 / 关点光源（改变场景光源数量 → 受光材质重编译）。只应在换关的黑幕中调用。
+   */
+  setLightsEnabled(on: boolean): void {
+    if (on === this.lightsOn) return;
+    this.lightsOn = on;
+    for (const l of this.lights) {
+      l.light.visible = on;
+      l.active = false;
+      l.light.intensity = 0;
+    }
   }
 
   private take<T extends { active: boolean; stamp: number }>(pool: T[]): T {
@@ -126,11 +149,13 @@ export class FlashEffects {
     s.u.uHot.value = 1;
     s.mesh.position.copy(center);
     s.mesh.scale.setScalar(r0);
+    s.mesh.updateMatrix();
     s.mesh.visible = true;
   }
 
   /** 点光源闪一下：peak 为峰值强度（坎德拉），distance 为照明范围 */
   light(pos: THREE.Vector3, color: number, peak: number, distance: number, life: number): void {
+    if (!this.lightsOn) return;
     const l = this.take(this.lights);
     l.active = true;
     l.age = 0;
@@ -155,6 +180,7 @@ export class FlashEffects {
       }
       const e = 1 - (1 - t) * (1 - t) * (1 - t);
       s.mesh.scale.setScalar(s.r0 + (s.r1 - s.r0) * e);
+      s.mesh.updateMatrix();
       s.u.uOpacity.value = (1 - t) * (1 - t);
       s.u.uHot.value = 1 - t;
     }

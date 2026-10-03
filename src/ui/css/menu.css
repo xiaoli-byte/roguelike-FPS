@@ -188,7 +188,7 @@
   background: radial-gradient(ellipse at 50% 45%, transparent 48%, rgba(0, 0, 0, 0.78) 100%);
 }
 
-/* 顶栏 */
+/* 顶栏（子页面打开时隐藏，把整块高度让给面板；天赋页自带魂晶显示） */
 .gf-menu__top {
   position: absolute;
   top: 26px;
@@ -198,6 +198,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  zoom: var(--ui-s, 1);
+  transition: opacity 0.25s ease;
+}
+
+.gf-menu:not([data-view="home"]) .gf-menu__top {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .gf-menu__latin {
@@ -229,6 +236,8 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 4px;
+  /* 首页字号本身随 vh 变化；只在大屏上额外放大 */
+  zoom: var(--ui-up, 1);
 }
 
 .gf-nav {
@@ -330,18 +339,22 @@
   margin-bottom: 10px;
 }
 
-/* 竖排标题 */
+/* 标题（横排）：大字居中压在朱日上，朱印盖在右上角，副标题横排于下方 */
 .gf-menu__brand {
   position: absolute;
-  right: 11vw;
+  right: 9vw;
   top: 50%;
-  transform: translateY(-54%);
+  transform: translateY(-62%);
   display: flex;
-  align-items: flex-start;
-  gap: 18px;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  zoom: var(--ui-up, 1);
 }
 
 .gf-menu__title {
+  position: relative;
+  order: 0;
   writing-mode: horizontal-tb;
   display: flex;
   flex-direction: row;
@@ -390,14 +403,15 @@
 }
 
 .gf-menu__sub {
-  writing-mode: vertical-rl;
-  margin-top: 2.2em;
+  order: 1;
+  writing-mode: horizontal-tb;
+  padding: 10px 0 0 0.5em;
   font-size: clamp(14px, 1.9vh, 19px);
   letter-spacing: 0.5em;
+  white-space: nowrap;
   color: var(--paper-2);
   text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9);
-  border-right: 1px solid var(--line-soft);
-  padding-right: 10px;
+  border-top: 1px solid var(--line);
   opacity: 0;
 }
 
@@ -406,9 +420,10 @@
 }
 
 .gf-menu__seal {
-  align-self: flex-end;
-  order: -1;
-  margin-bottom: 8px;
+  position: absolute;
+  right: -0.6em;
+  top: -1.4em;
+  order: 2;
   font-size: clamp(16px, 2.2vh, 22px);
   opacity: 0;
 }
@@ -435,6 +450,7 @@
   white-space: nowrap;
   font-size: 13px;
   color: var(--paper-3);
+  zoom: var(--ui-up, 1);
 }
 
 .gf-menu__stat {
@@ -469,22 +485,27 @@
   z-index: 3;
   display: grid;
   place-items: center;
-  padding: 72px 16px 24px;
+  padding: 16px;
   pointer-events: none;
   background: rgba(5, 4, 7, 0);
   transition: background 0.35s ease;
 }
 
 .gf-menu:not([data-view="home"]) .gf-menu__subs {
-  background: rgba(5, 4, 7, 0.55);
+  background: rgba(5, 4, 7, 0.62);
 }
 
+/*
+ * 子页面面板：zoom 由 JS（fitPanel）按视口写入，CSS 变量只是初值。
+ * 在 zoom 元素内 vw/vh 会被一起缩放，所以这里的尺寸上限一律用百分比（相对未缩放的父容器）。
+ */
 .gf-menu__panel {
   grid-area: 1 / 1;
-  width: min(780px, 94vw);
-  max-height: calc(100vh - 100px);
+  zoom: var(--ui-s, 1);
+  width: min(860px, 100%);
+  max-height: 100%;
   overflow: auto;
-  padding: 34px 40px 26px;
+  padding: 28px 36px 22px;
   pointer-events: auto;
   opacity: 0;
   transform: translateY(18px) scale(0.985);
@@ -501,7 +522,15 @@
 }
 
 .gf-menu__panel--wide {
-  width: min(1240px, 96vw);
+  width: min(1400px, 100%);
+}
+
+.gf-menu__panel--talents {
+  width: min(1040px, 100%);
+}
+
+.gf-menu__panel--settings {
+  width: min(980px, 100%);
 }
 
 /* ───────── 窄屏 ───────── */
@@ -521,6 +550,6 @@
   }
 
   .gf-menu__panel {
-    padding: 24px 20px 20px;
+    padding: 22px 20px 18px;
   }
 }

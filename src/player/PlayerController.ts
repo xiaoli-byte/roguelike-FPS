@@ -40,8 +40,10 @@ const AIR_JUMP_MULT = 0.94;
 /** 空中跳跃时水平速度向输入方向重定向的比例 */
 const AIR_JUMP_REDIRECT = 0.65;
 
+/** 滑翔时的下落速度上限（m/s）、滑翔时的重力倍率、从高速下落刹到滑翔速度的阻尼 */
 const GLIDE_FALL_SPEED = 2.4;
 const GLIDE_GRAVITY_MULT = 0.3;
+const GLIDE_BRAKE = 9;
 const GLIDE_AIR_ACCEL = 26;
 
 const DASH_SPEED = 22;
@@ -53,10 +55,14 @@ const DASH_LOCKOUT = 0.06;
 
 const LOOK_SENS = 0.0022;
 const PITCH_LIMIT = 89 * DEG;
-/** 后坐力中会被自动回正的比例、开始回正前的延迟、回正速率 */
-const RECOIL_RECOVER_FRACTION = 0.6;
-const RECOIL_RECOVER_DELAY = 0.07;
-const RECOIL_RECOVER_RATE = 9;
+/**
+ * 后坐力回正（参考枪火重生的手感：准星上跳后迅速回到原位，连射只有轻微爬升）：
+ * 被自动回正的比例、开始回正前的延迟、回正速率（指数趋近，越大越快）。
+ * 延迟要短于高射速武器的射击间隔，否则连射期间完全不回正、准星会一路上爬。
+ */
+const RECOIL_RECOVER_FRACTION = 0.92;
+const RECOIL_RECOVER_DELAY = 0.03;
+const RECOIL_RECOVER_RATE = 11;
 
 const LAND_EVENT_SPEED = 1.5;
 const HURT_SOUND_INTERVAL = 0.22;
@@ -89,6 +95,7 @@ export class PlayerController implements IPlayer {
 
   // 运动状态
   private readonly moveResult: MoveResult = { onGround: false, hitWall: false, hitCeiling: false, stepped: false, groundY: 0, wallNormal: new THREE.Vector3() };
+  private readonly pushResult: MoveResult = { onGround: false, hitWall: false, hitCeiling: false, stepped: false, groundY: 0, wallNormal: new THREE.Vector3() };
   private coyote = 0;
   private jumpBuffer = 0;
   private airJumpsLeft = 0;
@@ -226,10 +233,14 @@ export class PlayerController implements IPlayer {
 
     if (acceptInput) this.updateLook();
     this.updateRecoil(dt);
+    // 充能与按键在运动前处理（裂地重击等位移技能本帧即可生效）
     this.skillCtl.update(dt, acceptInput);
     this.updateMovement(dt, acceptInput);
-    this.updateVitals(dt);
     this.checkOutOfWorld();
+    this.updateEye();
+    this.updateVitals(dt);
+    // 持续型技能在运动之后推进：跟随玩家的特效与本帧相机同步，落地判定不晚一帧
+    this.skillCtl.tick(dt);
     this.updateCamera(dt);
   }
 
@@ -238,7 +249,15 @@ export class PlayerController implements IPlayer {
   private updateLook(): void {
     const input = this.ctx.input;
     const s = this.ctx.settings;
-    const k = LOOK_SENS * (s.sensitivity > 0 ? s.sensitivity : 1);
+    // 开镜时按视野缩放灵敏度（屏幕上的转动手感与腰射一致），否则狙击镜里稍动鼠标就甩出去
+    let zoom = 1;
+    const kick = this.ctx.cameraFx.fovKick;
+    if (kick < 0 && Number.isFinite(kick)) {
+      const base = clamp(Number.isFinite(s.fov) ? s.fov : 80, 30, 130);
+      const aim = clamp(base + kick, 10, base);
+      zoom = clamp(Math.tan(aim * DEG * 0.5) / Math.tan(base * DEG * 0.5), 0.2, 1);
+    }
+    const k = LOOK_SENS * (s.sensitivity > 0 ? s.sensitivity : 1) * zoom;
     const dYaw = -input.mouseDX * k;
     const dPitch = -input.mouseDY * k * (s.invertY ? -1 : 1);
     if (dYaw === 0 && dPitch === 0) return;
@@ -253,7 +272,7 @@ export class PlayerController implements IPlayer {
   }
 
   addRecoil(pitch: number, yaw: number): void {
-    if (!this._alive) return;
+    if (!this._alive || !Number.isFinite(pitch) || !Number.isFinite(yaw)) return;
     const before = this.pitch;
     this.pitch = clamp(this.pitch + pitch, -PITCH_LIMIT, PITCH_LIMIT);
     this.yaw = wrapAngle(this.yaw + yaw);
@@ -357,9 +376,15 @@ export class PlayerController implements IPlayer {
     // 重力 / 滑翔
     const gliding = !this._isDashing && !this._onGround && !jumped && v.y < 0 &&
       (ctx.run.flags.glide ?? 0) > 0 && acceptInput && input.down('jump');
+    const vy0 = v.y;
     if (!this._isDashing) {
-      v.y -= GRAVITY * (gliding ? GLIDE_GRAVITY_MULT : 1) * dt;
-      if (gliding && v.y < -GLIDE_FALL_SPEED) v.y = damp(v.y, -GLIDE_FALL_SPEED, 9, dt);
+      if (gliding) {
+        // 滑翔：弱重力加速到滑翔下落速度为止；下落得更快时（高处才开伞）平滑刹到滑翔速度，不再叠加重力
+        if (v.y > -GLIDE_FALL_SPEED) v.y = Math.max(-GLIDE_FALL_SPEED, v.y - GRAVITY * GLIDE_GRAVITY_MULT * dt);
+        else v.y = damp(v.y, -GLIDE_FALL_SPEED, GLIDE_BRAKE, dt);
+      } else {
+        v.y -= GRAVITY * dt;
+      }
       if (v.y < -MAX_FALL_SPEED) v.y = -MAX_FALL_SPEED;
     }
     if (gliding && hasInput) {
@@ -370,7 +395,8 @@ export class PlayerController implements IPlayer {
     // 碰撞求解
     const prevVy = v.y;
     const wasGrounded = this._onGround && !this.forceAirborne && !jumped && v.y <= 0;
-    _delta.copy(v).multiplyScalar(dt);
+    // 竖直位移取本帧初末速度的平均（梯形积分）：跳跃高度（约 1.42 米）与滞空时间不随帧率变化
+    _delta.set(v.x * dt, (vy0 + v.y) * 0.5 * dt, v.z * dt);
     const r = ctx.world.moveBody(this.position, RADIUS, HEIGHT, _delta, wasGrounded, STEP_HEIGHT, this.moveResult);
     const wasOnGround = this._onGround;
     this._onGround = r.onGround;
@@ -386,11 +412,52 @@ export class PlayerController implements IPlayer {
         v.z -= n.z * vn;
       }
     }
+    this.resolveBossOverlap();
 
     if (this._onGround) {
       this.coyote = COYOTE_TIME;
       this.airJumpsLeft = this.maxAirJumps();
       if (!wasOnGround) this.onLand(Math.max(0, -prevVy));
+    }
+  }
+
+  /**
+   * 首领是实心的：玩家与首领身体（竖直胶囊，水平半径同敌人管理器的推挤判定）重叠时，把玩家沿水平方向推出去
+   * （经碰撞世界移动，不会被推进墙里），并去掉朝向首领的速度分量。
+   * 普通敌人仍由敌人管理器把它们从玩家身边挤开；首领如果也被挤开，玩家走过去就能推着首领走。
+   */
+  private resolveBossOverlap(): void {
+    const list = this.ctx.enemies.list;
+    const p = this.position;
+    const v = this.velocity;
+    for (let i = 0; i < list.length; i++) {
+      const e = list[i];
+      if (!e.alive || !e.isBoss) continue;
+      const ep = e.position;
+      if (ep.y > p.y + HEIGHT || p.y > ep.y + e.height) continue;
+      const minD = e.radius * 0.9 + RADIUS;
+      let dx = p.x - ep.x;
+      let dz = p.z - ep.z;
+      const d2 = dx * dx + dz * dz;
+      if (d2 >= minD * minD || !Number.isFinite(d2)) continue;
+      const d = Math.sqrt(d2);
+      if (d > 1e-4) {
+        dx /= d;
+        dz /= d;
+      } else {
+        // 完全重合：往视线反方向退
+        dx = Math.sin(this.yaw);
+        dz = Math.cos(this.yaw);
+      }
+      const push = minD - d;
+      _delta.set(dx * push, 0, dz * push);
+      this.ctx.world.moveBody(p, RADIUS, HEIGHT, _delta, this._onGround, STEP_HEIGHT, this.pushResult);
+      if (this.pushResult.onGround) this._onGround = true;
+      const vn = v.x * dx + v.z * dz;
+      if (vn < 0) {
+        v.x -= dx * vn;
+        v.z -= dz * vn;
+      }
     }
   }
 
@@ -511,7 +578,12 @@ export class PlayerController implements IPlayer {
     this.velocity.z = this.dashDirZ * keep;
   }
 
+  /**
+   * 叠加速度冲量（击退 / 抛起 / 技能位移）。冲刺中冲刺会每帧覆盖速度，所以冲刺期间的冲量基本被「闪开」；
+   * 需要在冲刺中生效的自身位移（例如裂地重击起跳）请先调用 cancelDash()。
+   */
   applyImpulse(v: THREE.Vector3): void {
+    if (!Number.isFinite(v.x) || !Number.isFinite(v.y) || !Number.isFinite(v.z)) return;
     this.velocity.add(v);
     if (v.y > 0.5) {
       this._onGround = false;
@@ -519,6 +591,11 @@ export class PlayerController implements IPlayer {
       this.coyote = 0;
     }
     if (v.x * v.x + v.z * v.z > 9) this.knockbackTimer = KNOCKBACK_TIME;
+  }
+
+  /** 立即结束冲刺（保留冲刺出口速度）。技能位移在冲刺中释放时使用；不在冲刺中则无事发生 */
+  cancelDash(): void {
+    this.endDash();
   }
 
   teleport(pos: THREE.Vector3, yaw?: number): void {
@@ -543,13 +620,18 @@ export class PlayerController implements IPlayer {
     if (this._onGround) this.position.y = Math.max(this.position.y, gy + 1e-4);
     this.coyote = this._onGround ? COYOTE_TIME : 0;
     this.updateEye();
+    this.rig.calm();
     this.rig.snap(this.ctx.camera, this.eye, this.yaw, this.pitch);
   }
 
+  /** 掉出世界或坐标 / 速度变成 NaN 时拉回出生点 */
   private checkOutOfWorld(): void {
+    const p = this.position;
+    const v = this.velocity;
+    if (!Number.isFinite(v.x + v.y + v.z)) v.set(0, 0, 0);
     const arena = this.ctx.stage.arena;
     const floorY = arena?.floorY ?? 0;
-    if (this.position.y > floorY - 25) return;
+    if (Number.isFinite(p.x + p.y + p.z) && p.y > floorY - 25) return;
     if (arena) this.teleport(arena.playerSpawn, arena.playerYaw);
     else this.teleport(_tmp.set(0, floorY + 1, 0));
   }
@@ -570,6 +652,14 @@ export class PlayerController implements IPlayer {
     this.capShield = ms;
   }
 
+  /**
+   * 扣除护盾与生命并广播 'player:damaged'，最后才判定死亡。
+   *
+   * 顺序是契约的一部分，重构时不要调换：**先 emit 'player:damaged'，再检查 hp 并 die()**。
+   * 'player:damaged' 的监听者可以在此回调中恢复生命（例如把这一击扣掉的 toShield / toHp 还回去）以阻止死亡，
+   * 秘卷「绝处逢生」的兜底路径依赖此行为（主路径在 Combat 的受伤修饰器里，这里兜住绕过 Combat 直接调用 takeDamage
+   * 或被后注册修饰器放大成致命伤的情况）。回调期间 alive 仍为 true，hp 可能已 ≤ 0。
+   */
   takeDamage(amount: number, element: Element, source: IEnemy | null, from?: THREE.Vector3 | null): number {
     if (!this._alive || !(amount > 0) || !Number.isFinite(amount)) return 0;
     if (this.invulnerableTime > 0) return 0;
@@ -589,6 +679,7 @@ export class PlayerController implements IPlayer {
 
     const src = from ?? source?.position ?? null;
     const fromPos = src ? new THREE.Vector3().copy(src) : null;
+    // 必须在死亡判定之前广播：监听者可以在这里恢复生命以阻止死亡（绝处逢生），见方法注释
     ctx.events.emit('player:damaged', { amount: dealt, toShield, toHp, element, source, from: fromPos });
 
     if (now - this.lastHurtSound >= HURT_SOUND_INTERVAL) {
@@ -604,6 +695,7 @@ export class PlayerController implements IPlayer {
       ctx.audio.play('shield_break', { volume: 0.9 });
       ctx.fx.shake(0.25, 0.2);
     }
+    // 读的是监听者处理之后的生命：被 'player:damaged' 监听者救回来的不会死
     if (this.hp <= 1e-3) this.die();
     return dealt;
   }
@@ -638,7 +730,7 @@ export class PlayerController implements IPlayer {
     const actual = Math.min(this.maxShield() - this.shield, amount);
     if (actual <= 0) return 0;
     this.shield += actual;
-    this.ctx.events.emit('player:healed', { amount: actual });
+    // 注意：'player:healed' 只表示生命回复，护盾恢复不广播
     return actual;
   }
 

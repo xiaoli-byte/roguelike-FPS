@@ -2,9 +2,9 @@
  * 局外天赋：用魂晶购买，每项多级。数据来自 ctx.meta（talents / talentLevel / buyTalent）。
  */
 import type { GameContext, TalentDef } from '../core/types';
-import { formatStat } from '../core/Stats';
 import { h, icon, button, sfx, clearChildren, formatNum } from './dom';
 import { ICON_ESSENCE } from './icons';
+import { fmtStat } from './labels';
 
 export class TalentPanel {
   readonly root: HTMLDivElement;
@@ -72,11 +72,12 @@ export class TalentPanel {
     const name = h('div', 'gf-talent__name', info, t.name);
     h('span', 'gf-talent__lvl', name, `${lvl} / ${t.maxLevel}`);
     h('div', 'gf-talent__desc', info, t.description);
-    const pips = h('div', 'gf-talent__pips', info);
-    for (let k = 0; k < t.maxLevel; k++) h('i', k < lvl ? 'gf-talent__pip is-on' : 'gf-talent__pip', pips);
+    // 等级菱形与「当前 / 下一级」放在同一行，节省纵向空间
     const eff = h('div', 'gf-talent__effect', info);
-    h('span', null, eff, `当前 ${lvl > 0 ? formatStat(t.stat, t.perLevel * lvl) : '—'}`);
-    if (!maxed) h('span', 'gf-talent__next', eff, `下一级 ${formatStat(t.stat, t.perLevel * (lvl + 1))}`);
+    const pips = h('span', 'gf-talent__pips', eff);
+    for (let k = 0; k < t.maxLevel; k++) h('i', k < lvl ? 'gf-talent__pip is-on' : 'gf-talent__pip', pips);
+    h('span', null, eff, `当前 ${lvl > 0 ? fmtStat(t.stat, t.perLevel * lvl) : '—'}`);
+    if (!maxed) h('span', 'gf-talent__next', eff, `下一级 ${fmtStat(t.stat, t.perLevel * (lvl + 1))}`);
 
     const buy = button(ctx, 'gf-btn gf-btn--buy', row, '', () => this.buy(t, row));
     if (maxed) {

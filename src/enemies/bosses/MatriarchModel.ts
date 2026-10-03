@@ -22,6 +22,8 @@ export interface MatriarchRig {
   core: THREE.Object3D;
   coreHalo: THREE.Mesh;
   crownHalo: THREE.Mesh;
+  /** 弱点（头部 + 冰冠）判定锚点 */
+  weak: THREE.Object3D;
 }
 
 export const FROST = 0x7fe8ff;
@@ -106,7 +108,8 @@ export function buildMatriarch(): { root: THREE.Group; rig: MatriarchRig } {
     mesh(torso, geo.cone(0.05, 0.4, 4), m.ice, 0.16 * s, 1.15, -0.12, 0, 0, -0.15 * s);
     mesh(torso, geo.sphere(0.17, 8, 6), m.silver, 0.48 * s, 0.9, 0);
   }
-  const chest = anchor(torso, 0, 0.55, 0);
+  // 胸部判定锚点（配合 Matriarch 里半径 0.45、半高 0.15 的胶囊，顶点约在躯干 1.05 处 = 衣领）
+  const chest = anchor(torso, 0, 0.45, 0);
   const AL = buildArm(torso, -1, m);
   const AR = buildArm(torso, 1, m);
 
@@ -128,6 +131,8 @@ export function buildMatriarch(): { root: THREE.Group; rig: MatriarchRig } {
   glowMesh(head, geo.octa(0.08), m.gem, 0, 0.3, 0.18, 'gem');
   const crownHalo = glowMesh(head, geo.sphere(0.34, 10, 8), m.crownHalo, 0, 0.2, 0.05, 'crownHalo');
   mesh(head, geo.cone(0.3, 1.2, 6), m.robeDark, 0, -0.35, -0.2, -0.3);
+  // 弱点判定中心：头部与冰冠之间（玩家总在下方仰射，球心略上移让冰冠也算弱点）
+  const weak = anchor(head, 0, 0.15, 0);
 
   // ── 冰翼 ──
   const wings = pivot(torso, 0, 0.78, -0.3);
@@ -148,7 +153,7 @@ export function buildMatriarch(): { root: THREE.Group; rig: MatriarchRig } {
       body, torso, head,
       armL: AL.arm, armR: AR.arm, foreL: AL.fore, foreR: AR.fore, handL: AL.hand, handR: AR.hand,
       wings, wingL: WL.wing, wingR: WR.wing, wingAnchorL: WL.tip, wingAnchorR: WR.tip,
-      orbit, chest, skirt, tail, core, coreHalo, crownHalo,
+      orbit, chest, skirt, tail, core, coreHalo, crownHalo, weak,
     },
   };
 }

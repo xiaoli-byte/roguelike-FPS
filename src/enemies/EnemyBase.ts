@@ -109,6 +109,7 @@ export abstract class EnemyBase implements IEnemy {
   protected pathIndex = 0;
   protected repathTimer = 0;
   protected readonly pathTarget = new THREE.Vector3(Infinity, 0, 0);
+  private readonly singlePoint = new THREE.Vector3();
 
   // 视线缓存
   private losTimer = 0;
@@ -528,13 +529,11 @@ export abstract class EnemyBase implements IEnemy {
     if (this.repathTimer <= 0 || targetMoved || this.pathIndex >= this.path.length) {
       this.repathTimer = 0.45 + Math.random() * 0.35;
       this.pathTarget.copy(target);
-      if (this.directPathClear(target)) {
+      if (this.directPathClear(target) || !this.ctx.nav.findPath(this.position, target, this.path)) {
+        // 直线可达或寻路失败：单路点直走（复用自有向量，避免每次重算路径都分配）
+        this.singlePoint.copy(target);
         this.path.length = 0;
-        this.path.push(_v3.copy(target).clone());
-        this.pathIndex = 0;
-      } else if (!this.ctx.nav.findPath(this.position, target, this.path)) {
-        this.path.length = 0;
-        this.path.push(target.clone());
+        this.path.push(this.singlePoint);
       }
       this.pathIndex = 0;
     }
@@ -548,7 +547,19 @@ export abstract class EnemyBase implements IEnemy {
       this.setMove(dx, dz, speed);
       return false;
     }
-    this.setMove(wp.x - this.position.x, wp.z - this.position.z, speed);
+    const wx = wp.x - this.position.x;
+    const wz = wp.z - this.position.z;
+    if (this.pathIndex === this.path.length - 1) {
+      // 最后一个路点（目标不可达时它是最近可达格）：贴近时减速并停下，避免来回冲过头
+      const wd = Math.hypot(wx, wz);
+      if (wd < 0.35) {
+        this.stopMoving();
+        return false;
+      }
+      this.setMove(wx, wz, speed * clamp(wd / 0.8, 0.35, 1));
+      return false;
+    }
+    this.setMove(wx, wz, speed);
     return false;
   }
 

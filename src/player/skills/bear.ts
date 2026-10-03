@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 import type { GameContext, HeroDef } from '../../core/types';
-import { EffectSession, type HeroSkillDef, SKILL_COLORS, radiusScale, shockwave } from './common';
+import { EffectSession, type HeroSkillDef, SKILL_COLORS, cancelDash, radiusScale, shockwave } from './common';
 
 // ───────────────────────────── 数值 ─────────────────────────────
 
@@ -39,6 +39,8 @@ const _c = new THREE.Vector3();
 
 let leaping = false;
 let leapT = 0;
+/** 在空中释放：一落地立即砸（地面起跳则要求离地一小段时间，防止起跳当帧误判落地） */
+let slamFromAir = false;
 
 const slamSession = new EffectSession(() => {
   leaping = false;
@@ -73,9 +75,12 @@ const earthSplitter: HeroSkillDef = {
   activate(ctx) {
     const p = ctx.player;
     if (leaping || !p.alive) return false;
+    // 冲刺会每帧覆盖速度，不先打断的话起跳 / 下砸会被吞掉（原地 0.12 秒后直接砸地）
+    cancelDash(ctx);
     slamSession.begin(ctx);
     leaping = true;
     leapT = 0;
+    slamFromAir = !p.onGround;
     if (p.onGround) {
       p.getForward(_f);
       p.velocity.x = _f.x * LEAP_FORWARD;
@@ -101,7 +106,8 @@ const earthSplitter: HeroSkillDef = {
     }
     leapT += dt;
     if (p.velocity.y < 0) p.velocity.y -= SLAM_EXTRA_GRAVITY * dt;
-    if ((leapT > 0.12 && p.onGround) || leapT > 1.8) {
+    const minAir = slamFromAir ? 0 : 0.12;
+    if ((leapT > minAir && p.onGround) || leapT > 1.8) {
       slam(ctx);
       slamSession.end();
     }

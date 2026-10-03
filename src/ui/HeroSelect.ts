@@ -3,10 +3,10 @@
  * 点击选中，「出征」或双击卡片开始；键盘 1/2/3 选择、Enter 确认。
  */
 import type { GameContext, HeroDef, SkillDef, StatKey } from '../core/types';
-import { BASE_STATS, STAT_INFO, formatStat } from '../core/Stats';
+import { BASE_STATS, STAT_INFO } from '../core/Stats';
 import { h, icon, button, bindButton, sfx, clearChildren, formatNum } from './dom';
 import { ICON_ESSENCE, ICON_LOCK } from './icons';
-import { WEAPON_NAMES, heroColor, heroGlyph } from './labels';
+import { WEAPON_NAMES, fmtStat, heroColor, heroGlyph } from './labels';
 
 /** 未解锁英雄的解锁价格（魂晶）。目前设计中三名英雄默认解锁，这里只是兜底。 */
 const HERO_UNLOCK_COST = 300;
@@ -168,7 +168,7 @@ export class HeroSelect {
       const v = hero.base[key];
       if (v === undefined || v === BASE_STATS[key]) continue;
       const delta = v - BASE_STATS[key];
-      h('span', 'gf-hero__extra', extras, `${STAT_INFO[key].name} ${formatStat(key, delta)}`);
+      h('span', 'gf-hero__extra', extras, `${STAT_INFO[key]?.name ?? key} ${fmtStat(key, delta)}`);
     }
     if (!extras.childElementCount) extras.remove();
 

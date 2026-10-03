@@ -226,6 +226,8 @@ export class ParticlePool {
     life: number,
     gravity: number = style.gravity,
   ): void {
+    // 寿命 <= 0 的粒子不会被 update 推进也不会被清零，会冻结在原地常亮——直接丢弃非法输入
+    if (!(life > 0) || !(size > 0) || !Number.isFinite(x + y + z + vx + vy + vz + gravity + life + size)) return;
     const i = this.cursor;
     this.cursor = i + 1 >= this.capacity ? 0 : i + 1;
     if (this.life[i] <= 0) this.alive++;

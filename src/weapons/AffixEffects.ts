@@ -1,13 +1,16 @@
 /**
  * 触发类词条与传说特性：监听 Combat 的伤害 / 击杀事件，按 weaponUid 找到对应武器实例。
  *
- * - 只有直接命中（procDepth 0、source 'weapon'）会触发命中类效果；「连环爆」按 procDepth < 2 允许有限连锁。
- * - 会再次造成伤害的效果（爆头爆炸、弹射、连环爆、万象附着）放进队列，在下一次武器更新时执行，
+ * - 武器伤害 = 带 weaponUid 且 source 'weapon'。武器投射物（榴弹 / 蜂群）的爆炸同样是 source 'weapon'，
+ *   由 combat.explode 补上 'explosion' 标签，所以爆炸武器的词条与传说特性照常生效。
+ *   weaponUidOf 另外兼容旧约定 source 'explosion' + 'weapon' 标签，目前没有调用方再这样发，留作兜底。
+ * - 只有直接命中（procDepth 0）会触发命中类效果；「殉爆」按 procDepth < 2 允许有限连锁。
+ * - 会再次造成伤害的效果（爆头爆炸、弹射、殉爆、万象附着）放进队列，在下一次武器更新时执行，
  *   避免在 Combat 的结算 / 事件派发过程中重入。
  * - 「猎首」通过 outgoing modifier 生效（投射物 / 爆炸在发射时不知道目标）。
  */
 import * as THREE from 'three';
-import type { DamageRequest, DamageResult, Element, GameContext, IEnemy, OutgoingDamageModifier, StatusId, WeaponInstance } from '../core/types';
+import type { DamageRequest, DamageResult, Element, GameContext, IEnemy, OutgoingDamageModifier, StatKey, StatusId, WeaponInstance } from '../core/types';
 import { ELEMENT_COLORS } from '../core/types';
 import { hitsPerShot } from './WeaponDefs';
 import { novaDamage, type ResolvedWeapon } from './WeaponStats';
@@ -58,6 +61,38 @@ const FRENZY_MAX = 10;
 const _c = new THREE.Vector3();
 const _d = new THREE.Vector3();
 
+/**
+ * 伤害来自哪把武器；不是武器伤害返回 undefined。
+ * 直接命中与武器投射物的爆炸都是 source 'weapon'（爆炸额外带 'explosion' 标签），走第一个分支；
+ * 第二个分支兼容旧约定（source 'explosion' + 'weapon' 标签），现在已没有调用方这样发。
+ */
+export function weaponUidOf(req: DamageRequest): number | undefined {
+  const uid = req.weaponUid;
+  if (uid === undefined) return undefined;
+  if (req.source === 'weapon') return uid;
+  if (req.source === 'explosion' && req.tags !== undefined && req.tags.includes('weapon')) return uid;
+  return undefined;
+}
+
+const ELEMENT_STAT: Record<Exclude<Element, 'none'>, StatKey> = {
+  fire: 'fireDamagePct', shock: 'shockDamagePct', corrode: 'corrodeDamagePct',
+};
+
+/**
+ * 由一次命中推出状态强度，与 Combat 自己附着元素、以及秘卷的 statusPowerFrom 同口径：
+ * 取这一击的实际伤害（上限最大生命 × 0.5），再除掉每一跳结算时会重新乘上的
+ * 命中元素 / 精英 / 首领属性倍率，避免同一份加成算两次。
+ */
+function statusPowerOf(ctx: GameContext, enemy: IEnemy, result: DamageResult): number {
+  const stats = ctx.player.stats;
+  let m = 1;
+  if (result.element !== 'none') m *= stats.mult('elementDamagePct') * stats.mult(ELEMENT_STAT[result.element]);
+  if (enemy.isElite) m *= stats.mult('eliteDamagePct');
+  if (enemy.isBoss) m *= stats.mult('bossDamagePct');
+  const p = Math.min(result.dealt, enemy.maxHp * 0.5) / (m > 0 && Number.isFinite(m) ? m : 1);
+  return Number.isFinite(p) ? Math.max(0, p) : 0;
+}
+
 function blastColor(e: Element): number {
   return e === 'none' ? 0xffa040 : ELEMENT_COLORS[e];
 }
@@ -82,8 +117,8 @@ export class AffixEffects {
   }
 
   /**
-   * 注册（或重新注册）「猎首」伤害修饰器。换关时调用一次：
-   * 先移除旧的再添加，因此无论 Combat.clear() 是否清空修饰器都只会存在一份。
+   * 注册「猎首」伤害修饰器（init 时一次；修饰器跨换关保留）。
+   * 重复调用会先移除旧的，保证始终只有一份。
    */
   installModifier(): void {
     if (this.modOff) this.modOff();
@@ -91,9 +126,10 @@ export class AffixEffects {
   }
 
   private readonly hunterModifier: OutgoingDamageModifier = (enemy, req) => {
-    if (req.weaponUid === undefined || req.source !== 'weapon') return 1;
     if (!enemy.isBoss && !enemy.isElite) return 1;
-    const inst = this.host.find(req.weaponUid);
+    const uid = weaponUidOf(req);
+    if (uid === undefined) return 1;
+    const inst = this.host.find(uid);
     if (!inst) return 1;
     const R = this.host.resolve(inst);
     return R.hunter > 0 ? 1 + R.hunter : 1;
@@ -130,9 +166,9 @@ export class AffixEffects {
 
   private onDamaged(enemy: IEnemy, result: DamageResult): void {
     const req = result.request;
-    if (req.weaponUid === undefined || req.source !== 'weapon') return;
-    if ((req.procDepth ?? 0) > 0) return;
-    const inst = this.host.find(req.weaponUid);
+    const uid = weaponUidOf(req);
+    if (uid === undefined || (req.procDepth ?? 0) > 0) return;
+    const inst = this.host.find(uid);
     if (!inst) return;
     const R = this.host.resolve(inst);
     const ctx = this.ctx;
@@ -172,14 +208,16 @@ export class AffixEffects {
       p.depth = 1;
     }
 
-    // 万象：各元素独立判定
+    // 万象：各元素独立判定。强度在命中时按 statusPowerOf 折算（applyStatus 的 power 不含元素 / 精英 / 首领 Pct）
     if (R.legendary === 'lg_prism' && enemy.alive) {
+      let power = -1;
       for (const s of PRISM_STATUSES) {
         if (this.ctx.rng.next() >= R.legendaryValue) continue;
+        if (power < 0) power = statusPowerOf(ctx, enemy, result);
         const p = this.alloc('status', inst, R);
         p.enemy = enemy;
         p.status = s;
-        p.base = Math.max(1, result.dealt);
+        p.base = power;
         p.depth = 1;
       }
     }
@@ -187,8 +225,9 @@ export class AffixEffects {
 
   private onKilled(enemy: IEnemy, result: DamageResult): void {
     const req = result.request;
-    if (req.weaponUid === undefined || req.source !== 'weapon') return;
-    const inst = this.host.find(req.weaponUid);
+    const uid = weaponUidOf(req);
+    if (uid === undefined) return;
+    const inst = this.host.find(uid);
     if (!inst) return;
     const R = this.host.resolve(inst);
     const depth = req.procDepth ?? 0;
@@ -241,9 +280,9 @@ export class AffixEffects {
           knockback: p.kind === 'nova' ? 6 : 4,
         };
         const color = blastColor(p.element);
+        // explode 自带爆炸特效与音效（noFx 未设），这里不再重复播放
         ctx.combat.explode(p.point, p.radius, req, { color });
         if (p.kind === 'nova') ctx.fx.ring(p.point, p.radius, color, 0.45);
-        ctx.audio.play('explosion', { position: p.point, volume: p.kind === 'nova' ? 0.6 : 0.45 });
         break;
       }
       case 'ricochet': {

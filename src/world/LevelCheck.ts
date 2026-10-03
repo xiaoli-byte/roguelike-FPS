@@ -4,8 +4,13 @@
 import type { DecoKind, LevelLayout, P2 } from './LevelTypes';
 import { NAV_FOOT, labelComponents, rasterizeBlocked } from './NavGrid';
 
-/** 点光源数量恒定，避免换关时灯光数量变化导致着色器重编译 */
-const LIGHT_COUNT = 4;
+/**
+ * 点光源数量恒定，避免换关时灯光数量变化导致着色器重编译。
+ * 主场景还常驻武器枪口闪光 1 盏 + 特效 3 盏，每盏点光源都会加重所有受光材质的片元计算，
+ * 所以关卡只点亮 2 盏（取最先生成的两处灯火：战斗关为远端大门两侧，Boss / 宝藏 / 商店关为远端一侧），
+ * 其余火盆只保留自发光火焰。
+ */
+export const LIGHT_COUNT = 2;
 const LIGHT_Y: Partial<Record<DecoKind, number>> = { brazier: 1.6, stoneLantern: 1.55, lanternPost: 2.5 };
 
 function pointRectDist(x: number, z: number, x0: number, z0: number, x1: number, z1: number): number {
@@ -48,6 +53,22 @@ export function rotateLayout(L: LevelLayout, k: number): void {
     d.yaw += dyaw;
   }
   for (const r of L.runes) rp(r);
+  for (const r of L.ramps) {
+    const [ax, az] = rotXZ(k, r.x0, r.z0);
+    const [bx, bz] = rotXZ(k, r.x1, r.z1);
+    r.x0 = Math.min(ax, bx);
+    r.x1 = Math.max(ax, bx);
+    r.z0 = Math.min(az, bz);
+    r.z1 = Math.max(az, bz);
+    const [cx, cz] = rotXZ(k, r.sx0, r.sz0);
+    const [dx, dz] = rotXZ(k, r.sx1, r.sz1);
+    r.sx0 = Math.min(cx, dx);
+    r.sx1 = Math.max(cx, dx);
+    r.sz0 = Math.min(cz, dz);
+    r.sz1 = Math.max(cz, dz);
+    rp(r.foot);
+    rp(r.head);
+  }
   for (const p of L.spawnPoints) rp(p);
   for (const p of L.portalPoints) rp(p);
   for (const c of L.checks) rp(c);
@@ -62,6 +83,7 @@ export function removeGroup(L: LevelLayout, g: number): void {
   L.boxes = L.boxes.filter((b) => b.group !== g);
   L.decos = L.decos.filter((d) => d.group !== g);
   L.checks = L.checks.filter((c) => c.g !== g);
+  L.ramps = L.ramps.filter((r) => r.group !== g);
 }
 
 /**
@@ -119,7 +141,7 @@ export function validateAndRepair(L: LevelLayout): boolean {
   return false;
 }
 
-/** 由带灯装饰得出恒为 4 个的点光源位置 */
+/** 由带灯装饰得出恒为 LIGHT_COUNT 个的点光源位置（不足时用场内高处的补光点补齐） */
 export function finalizeLights(L: LevelLayout): void {
   const lights: LevelLayout['lights'] = [];
   for (const d of L.decos) {

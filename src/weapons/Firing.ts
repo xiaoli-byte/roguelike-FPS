@@ -19,6 +19,13 @@ const PIERCE_KEEP = 0.85;
 const MAX_HITS = 8;
 /** 投射物瞄准点的最远距离 */
 const AIM_MAX = 160;
+/**
+ * 准星落点近于此距离时改从眼前发射：枪口挂点约在相机前 0.9 米，
+ * 贴脸的敌人可能夹在眼睛与枪口之间，从枪口发射会直接越过它。
+ */
+const POINT_BLANK = 1.3;
+/** 抛物线补偿的最长飞行时间（秒） */
+const GRAVITY_COMP_MAX = 2.4;
 
 const _aim = new THREE.Vector3();
 const _center = new THREE.Vector3();
@@ -65,6 +72,9 @@ export function falloffMult(def: WeaponDef, dist: number): number {
 }
 
 export class Ballistics {
+  /** 当前光束的取消函数（fx.beam 的返回值）；停火时调用，让光束立即收掉而不是拖完剩余寿命 */
+  private beamCancel: (() => void) | null = null;
+
   constructor(
     private readonly ctx: GameContext,
     private readonly vm: Viewmodel,
@@ -171,8 +181,8 @@ export class Ballistics {
     _target.copy(eye).addScaledVector(_dir, dist);
 
     this.vm.getMuzzleWorld(_muzzle);
-    // 枪口被墙挡住（贴墙）时从眼前发射，避免穿墙
-    if (ctx.world.segmentBlocked(eye, _muzzle)) _spawn.copy(eye).addScaledVector(_aim, 0.15);
+    // 枪口被墙挡住（贴墙）或目标贴脸时从眼前发射，避免穿墙 / 越过目标
+    if (dist < POINT_BLANK || ctx.world.segmentBlocked(eye, _muzzle)) _spawn.copy(eye).addScaledVector(_dir, 0.15);
     else _spawn.copy(_muzzle);
 
     _vel.subVectors(_target, _spawn);
@@ -188,10 +198,11 @@ export class Ballistics {
     const speed = p.speed * R.projSpeedMult;
     _vel.multiplyScalar(speed);
     if (p.gravity > 0 && fan === 0) {
-      // 抛物线补偿：让弹道大致落在准星处（最多补偿 1.2 秒飞行时间）
+      // 抛物线补偿：让弹道落在准星处。最多补偿 2.4 秒（且不超过寿命的 85%）飞行时间，
+      // 榴弹约 80 米内都能打中准星（竞技场对角线约 79 米）；更远时会落短，保留抛物线手感。
       const h = Math.hypot(_target.x - _spawn.x, _target.z - _spawn.z);
       const hSpeed = Math.max(1, Math.hypot(_vel.x, _vel.z));
-      const t = Math.min(1.2, h / hSpeed);
+      const t = Math.min(GRAVITY_COMP_MAX, p.lifetime * 0.85, h / hSpeed);
       _vel.y += 0.5 * p.gravity * t;
     }
 
@@ -228,7 +239,11 @@ export class Ballistics {
 
   // ───────────── 光束 ─────────────
 
-  /** 每帧：沿准星求光束落点并绘制 */
+  /**
+   * 每帧：沿准星求光束落点并绘制。
+   * fx 会把同一发射点、连续每帧刷新的光束合并成一条，寿命只续到 0.05 秒；
+   * 停火 / 换弹 / 切枪时 WeaponSystem 再调用 stopBeam() 提前结束它。
+   */
   beamTrace(inst: WeaponInstance, R: ResolvedWeapon, out: BeamHit): void {
     const ctx = this.ctx;
     const eye = ctx.player.eye;
@@ -255,7 +270,20 @@ export class Ballistics {
       }
     }
     this.vm.getMuzzleWorld(out.muzzle);
-    ctx.fx.beam(out.muzzle, out.point, beamColor(inst), R.def.tracerWidth, 0.05);
+    const cancel = ctx.fx.beam(out.muzzle, out.point, beamColor(inst), R.def.tracerWidth, 0.05);
+    this.beamCancel = typeof cancel === 'function' ? cancel : null;
+  }
+
+  /** 停止绘制光束：调用最近一次 fx.beam 返回的取消函数（没有在画则什么都不做） */
+  stopBeam(): void {
+    const cancel = this.beamCancel;
+    if (!cancel) return;
+    this.beamCancel = null;
+    try {
+      cancel();
+    } catch (err) {
+      console.error('[Weapons] beam cancel failed', err);
+    }
   }
 
   /** 光束一跳：伤害当前目标并向附近 1 名敌人弹射电弧 */

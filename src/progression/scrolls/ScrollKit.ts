@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import type {
-  DamageRequest, DamageResult, GameContext, GameEvents, IEnemy, IncomingDamageModifier, OutgoingDamageModifier,
+  DamageRequest, DamageResult, Element, GameContext, GameEvents, IEnemy, IncomingDamageModifier, OutgoingDamageModifier,
   Rarity, ScrollDef, StatKey,
 } from '../../core/types';
 
@@ -98,10 +98,25 @@ export class ScrollScope {
     this.disposers.push(this.ctx.events.on(type, fn));
   }
 
+  /**
+   * 「击杀时」效果统一走这里：跳过静默处决（tags 含 'purge'，EnemyManager.killAll 清场），
+   * 首领倒下时被一并清掉的爪牙不触发任何击杀效果。
+   */
+  onKill(fn: Handler<'enemy:killed'>): void {
+    this.on('enemy:killed', (payload) => {
+      if (isPurgeKill(payload.result)) return;
+      fn(payload);
+    });
+  }
+
   outgoing(fn: OutgoingDamageModifier): void {
     this.disposers.push(this.ctx.combat.addOutgoingModifier(fn));
   }
 
+  /**
+   * 受伤修饰器。Combat 按函数参数个数排序：不读 amount 的（零参数，如固定倍率）在前，
+   * 读 amount 的（声明了参数）在后并能看到接近最终值的伤害——所以不需要 amount 时不要声明参数。
+   */
   incoming(fn: IncomingDamageModifier): void {
     this.disposers.push(this.ctx.combat.addIncomingModifier(fn));
   }
@@ -217,6 +232,16 @@ export function depthOf(req: DamageRequest): number {
   return req.procDepth ?? 0;
 }
 
+/** 契约约定的静默处决标签：掉落与「击杀时」效果都应忽略这类击杀 */
+export const PURGE_TAG = 'purge';
+
+/** 静默处决（EnemyManager.killAll 清场等）：不掉落、不触发击杀效果 */
+export function isPurgeKill(result: DamageResult): boolean {
+  // 契约上 request 必有；防御一下手工派发的残缺事件
+  const tags = result.request?.tags;
+  return Array.isArray(tags) && tags.includes(PURGE_TAG);
+}
+
 /** 玩家武器的直接命中（非衍生） */
 export function isDirectWeaponHit(result: DamageResult): boolean {
   return result.request.source === 'weapon' && depthOf(result.request) === 0;
@@ -224,7 +249,34 @@ export function isDirectWeaponHit(result: DamageResult): boolean {
 
 /** 固定数值类秘卷伤害随关卡强度成长的系数 */
 export function procScale(ctx: GameContext): number {
-  return 1 + Math.max(0, ctx.run.difficulty - 1) * 0.85;
+  const d = ctx.run.difficulty;
+  return 1 + (Number.isFinite(d) ? Math.max(0, d - 1) : 0) * 0.85;
+}
+
+/** 秘卷爆炸的半径同样吃「爆炸范围」加成（武器与技能的爆炸由各自系统计入） */
+export function blastRadius(ctx: GameContext, base: number): number {
+  return base * ctx.player.stats.mult('explosionRadiusPct');
+}
+
+const ELEMENT_STAT: Record<Exclude<Element, 'none'>, StatKey> = {
+  fire: 'fireDamagePct', shock: 'shockDamagePct', corrode: 'corrodeDamagePct',
+};
+
+/**
+ * 由一次命中推出状态强度，与 Combat 自己附着元素时的口径一致（Combat.afterHit 的
+ * min(effective, maxHp × STATUS_POWER_CAP) ÷ dotStatMultiplier）：取这一击的实际伤害（上限最大生命 × 0.5），
+ * 再除掉每一跳结算时会重新乘上的元素 / 精英 / 首领属性倍率，避免同一份加成算两次。
+ * 调用方只在未击杀的命中上使用，此时 dealt 与 Combat 用的 effective 相等（没有溢出）。
+ * 灼烧改为每层独立计时后，power 仍是「单层」强度，每 0.5 秒按 Σ各层 power × BURN_RATIO 结算，口径不变。
+ */
+export function statusPowerFrom(ctx: GameContext, enemy: IEnemy, result: DamageResult): number {
+  const stats = ctx.player.stats;
+  let m = 1;
+  if (result.element !== 'none') m *= stats.mult('elementDamagePct') * stats.mult(ELEMENT_STAT[result.element]);
+  if (enemy.isElite) m *= stats.mult('eliteDamagePct');
+  if (enemy.isBoss) m *= stats.mult('bossDamagePct');
+  const p = Math.min(result.dealt, enemy.maxHp * 0.5) / (m > 0 && Number.isFinite(m) ? m : 1);
+  return Number.isFinite(p) ? Math.max(0, p) : 0;
 }
 
 /** 敌人当前总耐久比例（生命 + 护盾 + 护甲） */

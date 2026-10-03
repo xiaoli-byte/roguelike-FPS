@@ -269,6 +269,7 @@ export class Portal {
   private ready = false;
   private lastUse = -10;
   private disposed = false;
+  private readonly yaw: number;
 
   /**
    * @param yaw 门朝向（模型 +Z 指向玩家一侧），建议为 90° 的整数倍以便碰撞盒精确
@@ -353,9 +354,10 @@ export class Portal {
     parent.add(this.root);
 
     // 交互（升起完成后启用）
+    // 与宝箱 / 武器等交互提示一致：副标题以动作开头
     const prompt: InteractPrompt = {
       title: ctx.runPlan.stageLabel(node),
-      subtitle: node.reward !== 'none' ? `奖励：${ctx.runPlan.rewardLabel(node.reward)}` : TYPE_NO_REWARD[node.type],
+      subtitle: `进入 · ${node.reward !== 'none' ? `奖励：${ctx.runPlan.rewardLabel(node.reward)}` : TYPE_NO_REWARD[node.type]}`,
       lines: [TYPE_HINTS[node.type]],
       color: cssHex(color),
       key: 'F',
@@ -368,13 +370,13 @@ export class Portal {
       onInteract: () => this.enter(),
     };
     this.removeInteract = ctx.interact.add(this.item);
-
-    // 石框两侧的碰撞（玩家站得太近时不加，避免把人卡进去）
-    const player = ctx.player.position;
-    if (Math.hypot(player.x - pos.x, player.z - pos.z) > 3.2) this.addColliders(pos, yaw);
+    this.yaw = yaw;
   }
 
-  /** 基座、月洞门石框（两侧 / 洞下 / 洞上）的 AABB（yaw 为 90° 整数倍时精确）；旋涡本身可穿过 */
+  /**
+   * 基座、月洞门石框（两侧 / 洞下 / 洞上）的 AABB（yaw 为 90° 整数倍时精确）；旋涡本身可穿过。
+   * 任何一块与玩家当前身体（略放大）重叠时整组不加。
+   */
   private addColliders(pos: THREE.Vector3, yaw: number): void {
     const top = BASE_H + 5.0;
     const sill = BASE_H + HOLE_Y - HOLE_R + 0.05;
@@ -389,6 +391,7 @@ export class Portal {
     ];
     const c = Math.cos(yaw);
     const sn = Math.sin(yaw);
+    const boxes: [number, number, number, number, number, number][] = [];
     for (const [x0, x1, y0, y1, z0, z1] of parts) {
       let minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity;
       for (const lx of [x0, x1]) {
@@ -401,8 +404,15 @@ export class Portal {
           maxZ = Math.max(maxZ, wz);
         }
       }
-      this.ctx.world.addBox(minX, pos.y + y0, minZ, maxX, pos.y + y1, maxZ, 'portal');
+      boxes.push([minX, pos.y + y0, minZ, maxX, pos.y + y1, maxZ]);
     }
+    const pl = this.ctx.player;
+    const r = pl.radius + 0.15;
+    const p = pl.position;
+    for (const b of boxes) {
+      if (p.x - r < b[3] && p.x + r > b[0] && p.z - r < b[5] && p.z + r > b[2] && p.y < b[4] && p.y + pl.height > b[1]) return;
+    }
+    for (const b of boxes) this.ctx.world.addBox(b[0], b[1], b[2], b[3], b[4], b[5], 'portal');
   }
 
   private enter(): void {
@@ -420,6 +430,8 @@ export class Portal {
     if (!this.started) {
       this.started = true;
       this.root.visible = true;
+      // 开始升起时才加碰撞（之前门还没出现，不能有看不见的墙）；此刻玩家正站在门的位置上就不加，避免卡人
+      this.addColliders(this.position, this.yaw);
       this.ctx.audio.play('portal', { position: this.position, volume: 0.8 });
       _v.copy(this.position);
       this.ctx.fx.burst(_v, this.color, 26, 5, 0.9, 0.16, 6);

@@ -45,6 +45,13 @@ export function hasTag(req: DamageRequest, tag: string): boolean {
   return false;
 }
 
+/** 返回带有 tag 的标签数组（已有则原样返回，否则新建，不修改原数组） */
+export function withTag(tags: readonly string[] | undefined, tag: string): string[] {
+  if (!tags || tags.length === 0) return [tag];
+  for (let i = 0; i < tags.length; i++) if (tags[i] === tag) return tags as string[];
+  return [...tags, tag];
+}
+
 /**
  * 持续伤害（灼烧 / 蚀化跳伤）。雷殛弹射同样是 source 'status'（不暴击、只吃元素加成），
  * 但带 'chain' 标签，按直接命中处理（有命中火花与音效）。
@@ -75,6 +82,20 @@ export function statMultiplier(stats: Stats, enemy: IEnemy, req: DamageRequest):
   if (enemy.isElite) m *= stats.mult('eliteDamagePct');
   if (enemy.isBoss) m *= stats.mult('bossDamagePct');
   return m;
+}
+
+/**
+ * 状态伤害（DOT / 雷殛弹射，source 'status'）每一跳会吃到的属性倍率：元素类 Pct × 精英 / 首领 Pct。
+ *
+ * 状态的 power 取自触发那一击的最终伤害，其中已经含有这些倍率；施加状态时先把它们除掉，
+ * 结算每一跳时再乘回来，保证同一份属性加成只计算一次（DESIGN 第 5 节：元素伤害类属性作用于 DOT）。
+ */
+export function dotStatMultiplier(stats: Stats, enemy: IEnemy, element: Element): number {
+  let m = 1;
+  if (element !== 'none') m *= stats.mult('elementDamagePct') * stats.mult(ELEMENT_DAMAGE_STAT[element]);
+  if (enemy.isElite) m *= stats.mult('eliteDamagePct');
+  if (enemy.isBoss) m *= stats.mult('bossDamagePct');
+  return m > 0 && Number.isFinite(m) ? m : 1;
 }
 
 /** 某元素打在某层上的最终倍率（含 shieldDamagePct / armorDamagePct） */

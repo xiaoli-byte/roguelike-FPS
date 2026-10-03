@@ -13,6 +13,7 @@ import { SummaryScreen } from './SummaryScreen';
 import { ScrollChoice } from './ScrollChoice';
 import { Banner, PromptCard, Toasts } from './Notify';
 import { Fade } from './Fade';
+import { computeUiScale, uiScale } from './dom';
 
 export class UIManager implements IUI {
   private hud: HUD;
@@ -25,11 +26,13 @@ export class UIManager implements IUI {
   private toasts: Toasts;
   private fader: Fade;
   private offs: (() => void)[] = [];
+  private resizeTimer = 0;
 
   constructor(readonly ctx: GameContext) {
     // 构造阶段只创建 DOM，不访问其他系统
     const root = ctx.dom.ui;
     root.classList.add('gf-ui');
+    this.applyScale();
     this.hud = new HUD(root, ctx);
     this.prompt = new PromptCard(this.hud.root);
     this.bannerView = new Banner(root);
@@ -60,6 +63,7 @@ export class UIManager implements IUI {
     );
     // 捕获阶段处理 UI 快捷键：命中时阻止冒泡，避免 Input 把数字键 / Esc 当成游戏操作
     window.addEventListener('keydown', this.onKey, true);
+    window.addEventListener('resize', this.onResize);
   }
 
   clear(): void {
@@ -138,6 +142,37 @@ export class UIManager implements IUI {
 
   // ───────────── 内部 ─────────────
 
+  /** 按视口写入缩放变量（CSS 用 --ui-s / --ui-up / --hud-s；JS 读 uiScale） */
+  private applyScale(): void {
+    const { s, hud } = computeUiScale(window.innerWidth, window.innerHeight);
+    uiScale.s = s;
+    uiScale.hud = hud;
+    const st = this.ctx.dom.ui.style;
+    st.setProperty('--ui-s', s.toFixed(4));
+    st.setProperty('--ui-up', Math.max(1, s).toFixed(4));
+    st.setProperty('--hud-s', hud.toFixed(4));
+  }
+
+  /**
+   * resize 去抖后再重排（拖动窗口时不反复强制布局）。
+   * 用 setTimeout 而不是 rAF：标签页在后台时 rAF 不触发，回到前台会带着旧缩放。
+   */
+  private onResize = (): void => {
+    if (this.resizeTimer) return;
+    this.resizeTimer = window.setTimeout(() => {
+      this.resizeTimer = 0;
+      try {
+        this.applyScale();
+        this.menu.refit();
+        this.pause.refit();
+        this.summary.refit();
+        this.choice.refit();
+      } catch (err) {
+        console.error('[UI] 自适应缩放失败', err);
+      }
+    }, 60);
+  };
+
   private onState(_from: GameState, to: GameState): void {
     this.hud.root.classList.toggle('is-idle', to !== 'playing');
     switch (to) {
@@ -160,6 +195,9 @@ export class UIManager implements IUI {
         this.pause.hide();
         this.summary.hide();
         this.choice.hide(true);
+        // 上一局残留的 toast / 横幅不应带进主菜单
+        this.toasts.clear();
+        this.bannerView.hide(true);
         break;
       case 'summary':
         this.pause.hide();

@@ -6,6 +6,7 @@ import { Rng } from '../core/Rng';
  * 一局的关卡规划（DESIGN.md 第 3 节）：
  *  - 每章第 0 关固定「战斗 · 秘卷」；第 1–3 关为 2–3 个分支出口；第 3 关后只有通往 Boss 的门。
  *  - 每章必有一次商店选项（第 2 或第 3 关），宝藏每章最多出现一次。
+ *  - 两个及以上的战斗类出口同时包含普通战斗与精英战（稳妥 / 高风险高回报），奖励尽量互不相同。
  *  - Boss 关奖励武器（高稀有度），清关后通往下一章第 0 关；最终 Boss 之后没有出口。
  *
  * 所有随机都由 (种子, 章节, 关卡) 派生，同一关多次调用 nextOptions 结果一致。
@@ -13,6 +14,10 @@ import { Rng } from '../core/Rng';
 
 const THEMES: readonly ThemeId[] = ['desert', 'frost', 'inferno'];
 const BOSS_INDEX = STAGES_PER_CHAPTER - 1;
+/** 难度倍率的章节斜率（0.9 → 0.8：缓和第二、三章交界的难度断崖） */
+const CHAPTER_DIFFICULTY_SLOPE = 0.8;
+/** 难度倍率的关卡斜率 */
+const STAGE_DIFFICULTY_SLOPE = 0.12;
 
 const STAGE_TYPE_NAMES: Record<StageType, string> = {
   combat: '战斗',
@@ -94,8 +99,12 @@ export class RunPlanner implements IRunPlan {
     return node.chapter >= CHAPTER_COUNT - 1 && node.index >= BOSS_INDEX;
   }
 
+  /**
+   * DESIGN 第 3 节：1 + 章节 × 0.8 + 关卡 × 0.12。
+   * 第 0–3 关：第一章 1.00–1.36，第二章 1.80–2.16，第三章 2.60–2.96；首领关（第 4 关）再 +0.12（1.48 / 2.28 / 3.08）。
+   */
   difficultyFor(node: StageNode): number {
-    return 1 + node.chapter * 0.9 + node.index * 0.12;
+    return 1 + node.chapter * CHAPTER_DIFFICULTY_SLOPE + node.index * STAGE_DIFFICULTY_SLOPE;
   }
 
   themeFor(chapter: number): ThemeId {
@@ -143,7 +152,24 @@ export class RunPlanner implements IRunPlan {
       if (attempt < 16 && out.some((o) => o.reward === reward)) continue;
       out.push(this.node(chapter, next, type, reward));
     }
+    this.mixFightTypes(out);
     return r.shuffle(out);
+  }
+
+  /**
+   * 两个及以上的战斗类出口若全是同一种（全普通 / 全精英），把其中一个换成另一种，
+   * 保证总有「稳妥」与「高风险高回报」两条路可选。精英关没有「金币」奖励，换成精英时跳过金币门。
+   */
+  private mixFightTypes(out: StageNode[]): void {
+    const fights = out.filter((o) => o.type === 'combat' || o.type === 'elite');
+    if (fights.length < 2 || fights.some((o) => o.type !== fights[0].type)) return;
+    const to: StageType = fights[0].type === 'elite' ? 'combat' : 'elite';
+    for (let i = fights.length - 1; i >= 0; i--) {
+      const f = fights[i];
+      if (to === 'elite' && !REWARD_WEIGHTS.elite.some(([rw]) => rw === f.reward)) continue;
+      f.type = to;
+      return;
+    }
   }
 
   private pickReward(r: Rng, type: 'combat' | 'elite' | 'treasure'): RewardType {

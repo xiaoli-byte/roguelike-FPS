@@ -89,14 +89,17 @@ export interface DamageRequest {
   weaponUid?: number;
   point?: THREE.Vector3;
   direction?: THREE.Vector3;
-  /** 击退冲量（米/秒），沿 direction */
+  /** 击退冲量（米/秒），沿 direction；explode 中只有显式设置才生效（无默认击退） */
   knockback?: number;
   /**
    * 链式触发层数。直接伤害为 0；由 on-hit 效果（秘卷、元素连锁等）衍生出的伤害 >= 1。
    * 所有「命中时触发」的效果必须检查 procDepth < 2 以防无限递归。
    */
   procDepth?: number;
-  /** 伤害是否计入技能加成（source=skill 自动计入） */
+  /**
+   * 标签。已约定：'explosion'（由 explode 结算）、'chain'（雷殛弹射）、
+   * 'purge'（静默处决：EnemyManager.killAll 等清场用，掉落与「击杀时」效果应忽略它）
+   */
   tags?: string[];
 }
 
@@ -474,6 +477,13 @@ export interface IEnemy {
   /** 受到伤害倍率（蚀化等写入），1 = 正常 */
   damageTakenMult: number;
   knockbackResist: number;
+  /**
+   * 不可选中（例如 Boss 登场、阶段转换）：EnemyManager 的 raycast/queryRadius/nearest 跳过它，
+   * Combat.damageEnemy / applyStatus 对它直接返回。缺省 false。
+   */
+  readonly untargetable?: boolean;
+  /** 此刻免疫眩晕（Boss 出招中等）：Combat 施加 stun 时直接忽略（不播特效、不派发事件）。缺省 false */
+  readonly stunImmune?: boolean;
   getHeadCenter(out: THREE.Vector3): THREE.Vector3;
   getBodyCenter(out: THREE.Vector3): THREE.Vector3;
   /** 射线命中测试（头部球 + 身体胶囊） */
@@ -520,6 +530,10 @@ export interface WavePlan {
 /** 返回伤害倍率（1 = 不变） */
 export type OutgoingDamageModifier = (enemy: IEnemy, req: DamageRequest, isCrit: boolean) => number;
 /** 返回伤害倍率（1 = 不变） */
+/**
+ * 返回伤害倍率（1 = 不变）。Combat 按函数形参个数排序：不读取 amount 的修饰器请声明为零参数函数，
+ * 读取 amount 的修饰器（例如致命伤判定）排在最后，看到的是减伤与其他修饰器之后的数值。
+ */
 export type IncomingDamageModifier = (amount: number, element: Element, source: IEnemy | null) => number;
 
 export interface ExplosionOptions {
@@ -541,6 +555,7 @@ export interface ICombat extends System {
   /** 范围伤害（玩家方）；返回命中敌人数量 */
   explode(center: THREE.Vector3, radius: number, req: DamageRequest, opts?: ExplosionOptions): number;
   /** 直接施加状态 */
+  /** power 为「不含元素/精英/首领 Pct」的强度（每一跳结算时再乘），会钳制到最大生命 × 0.5 */
   applyStatus(enemy: IEnemy, id: StatusId, power: number, duration?: number): void;
   /** 修饰器在 clear()（换关）后依然保留，只能由返回的移除函数移除 */
   addOutgoingModifier(fn: OutgoingDamageModifier): () => void;
@@ -584,6 +599,7 @@ export interface ProjectileSpec {
   /** 发射者（敌方投射物不会打到自己） */
   sourceEnemy?: IEnemy | null;
   /** 命中回调（命中敌人、玩家或墙体时），hitEnemy 为 null 表示打中墙或玩家 */
+  /** 命中敌人、玩家或墙体时回调；没有伤害与爆炸的载体投射物（手雷、信标）到期时也会在原地回调一次 (point, null) */
   onImpact?: (point: THREE.Vector3, hitEnemy: IEnemy | null) => void;
 }
 
@@ -628,7 +644,10 @@ export interface ArenaInfo {
 export interface INavGrid {
   /** 基于 ctx.world 的当前静态几何体构建导航网格 */
   build(arena: ArenaInfo, cellSize?: number): void;
-  /** 地面寻路，out 被清空后填入路径点（不含起点，y 为地面高度）；失败返回 false */
+  /**
+   * 寻路，out 被清空后填入路径点（不含起点）。地面路点 y 为地面高度，高台/台阶上的路点 y 为其顶面高度
+   * （EnemyBase 只使用 x/z）。目标不可达时路径终点为最近可达格。失败返回 false。
+   */
   findPath(from: THREE.Vector3, to: THREE.Vector3, out: THREE.Vector3[]): boolean;
   isWalkable(x: number, z: number): boolean;
   nearestWalkable(p: THREE.Vector3, out: THREE.Vector3): boolean;
@@ -641,6 +660,7 @@ export interface IStageDirector extends System {
   readonly cleared: boolean;
   /** 0-based，当前进行到第几波 */
   readonly waveIndex: number;
+  /** 波次总数；只有 Boss 一波的关卡为 0（HUD 不显示波次） */
   readonly waveCount: number;
   /** 生成并搭建关卡（几何、碰撞、导航、灯光、传送门、商店/宝箱、刷怪计划），并把玩家放到出生点 */
   load(stage: StageNode): void;
@@ -773,6 +793,8 @@ export interface DamageNumberOpts {
   crit?: boolean;
   element?: Element;
   kind?: DamageLayer | 'heal' | 'player' | 'immune';
+  /** 持续伤害（DOT）的一跳：显示得更小、更暗、不弹跳 */
+  dot?: boolean;
 }
 
 /** 所有方法都会按值复制传入的向量，调用方可以传复用的临时向量。 */
@@ -780,14 +802,18 @@ export interface IFx extends System {
   impact(point: THREE.Vector3, normal: THREE.Vector3 | null, color?: number, size?: number): void;
   enemyHit(point: THREE.Vector3, color?: number, crit?: boolean): void;
   tracer(from: THREE.Vector3, to: THREE.Vector3, color?: number, width?: number): void;
+  /** 含按与相机距离计算的屏震；调用方只在需要额外强调时再调用 shake */
   explosion(center: THREE.Vector3, radius: number, color?: number): void;
   damageNumber(pos: THREE.Vector3, amount: number, opts?: DamageNumberOpts): void;
   burst(pos: THREE.Vector3, color: number, count?: number, speed?: number, life?: number, size?: number, gravity?: number): void;
   /** 地面扩散冲击波环 */
+  /** 纯装饰（缓出曲线），不要用它来同步伤害判定；有伤害的冲击波请自行绘制 */
   ring(center: THREE.Vector3, radius: number, color?: number, duration?: number): void;
   /** 地面预警圈，duration 秒后填满 */
-  groundWarning(center: THREE.Vector3, radius: number, duration: number, color?: number): void;
-  beam(from: THREE.Vector3, to: THREE.Vector3, color?: number, width?: number, duration?: number): void;
+  /** 返回取消函数：攻击被打断（施法者死亡、眩晕）时调用，预警圈在约 0.1 秒内淡出 */
+  groundWarning(center: THREE.Vector3, radius: number, duration: number, color?: number): () => void;
+  /** 返回取消函数（提前结束光束） */
+  beam(from: THREE.Vector3, to: THREE.Vector3, color?: number, width?: number, duration?: number): () => void;
   lightning(from: THREE.Vector3, to: THREE.Vector3, color?: number): void;
   /** 相机震动（会乘以设置里的 screenShake） */
   shake(intensity: number, duration?: number): void;

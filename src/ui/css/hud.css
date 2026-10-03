@@ -13,9 +13,11 @@
   opacity: 1;
 }
 
+/* 四角整体随 --hud-s 缩放（偏移量也一起缩放）；准星 / 敌人血条依赖屏幕坐标，不在这里缩放 */
 .gf-hud__corner {
   position: absolute;
   z-index: 5;
+  zoom: var(--hud-s, 1);
   transition: opacity 0.25s ease;
 }
 
@@ -95,7 +97,7 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  width: clamp(250px, 22vw, 340px);
+  width: 320px;
   padding-bottom: 4px;
 }
 
@@ -528,11 +530,15 @@
 }
 
 .gf-skill__name {
-  font-size: 12px;
+  padding: 1px 7px;
+  font-size: 12.5px;
   letter-spacing: 0.1em;
   white-space: nowrap;
-  color: var(--paper-2);
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
+  color: var(--paper);
+  /* 亮色场景（沙漠 / 雪地）下也要看得清 */
+  background: rgba(7, 6, 10, 0.55);
+  border-radius: 2px;
+  text-shadow: 0 1px 2px #000;
 }
 
 .gf-skill.is-cooling .gf-skill__glyph {
@@ -591,8 +597,11 @@
   flex-direction: column;
   align-items: flex-end;
   gap: 6px;
+  padding: 8px 0 8px 40px;
   text-align: right;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+  text-shadow: 0 1px 2px #000, 0 0 6px rgba(0, 0, 0, 0.85);
+  /* 淡淡的墨色衬底：亮色天空下文字仍可读 */
+  background: linear-gradient(270deg, rgba(7, 6, 10, 0.6), rgba(7, 6, 10, 0.35) 60%, transparent);
 }
 
 .gf-info__fps {
@@ -624,8 +633,8 @@
   align-items: center;
   gap: 14px;
   padding-right: 16px;
-  font-size: 13.5px;
-  color: var(--paper-2);
+  font-size: 14px;
+  color: var(--paper);
 }
 
 .gf-info__wave {
@@ -692,13 +701,15 @@
   --prompt-color: var(--gold-hi);
   position: absolute;
   left: 50%;
-  bottom: 158px;
+  /* 在底部技能栏之上（偏移量随 zoom 一起缩放） */
+  bottom: 168px;
   z-index: 6;
+  zoom: var(--hud-s, 1);
   display: flex;
   align-items: flex-start;
   gap: 14px;
   min-width: 260px;
-  max-width: min(460px, 86vw);
+  max-width: 460px;
   padding: 12px 20px 12px 12px;
   background: linear-gradient(90deg, rgba(7, 6, 10, 0.92), rgba(7, 6, 10, 0.78));
   border: 1px solid var(--line-soft);
@@ -712,6 +723,30 @@
 .gf-prompt.is-open {
   opacity: 1;
   transform: translate(-50%, 0);
+}
+
+/*
+ * 详细提示（武器对比，行数多）：放在准星右侧、竖直居中，不遮挡准星和底部 HUD。
+ * zoom 内 vw/vh 会被一起缩放，所以上限除以 --hud-s 换回视觉尺寸。
+ */
+.gf-prompt.is-detail {
+  left: calc(50% + 72px);
+  top: 50%;
+  bottom: auto;
+  max-width: min(460px, calc((50vw - 100px) / var(--hud-s, 1)));
+  max-height: calc(78vh / var(--hud-s, 1));
+  overflow: hidden;
+  transform: translate(10px, -50%);
+}
+
+.gf-prompt.is-detail.is-open {
+  transform: translate(0, -50%);
+}
+
+.gf-prompt.is-detail .gf-prompt__lines {
+  gap: 1px;
+  font-size: 12.5px;
+  line-height: 1.4;
 }
 
 .gf-prompt__key {

@@ -303,7 +303,8 @@
 
 .gf-panel__title {
   font-family: var(--font-display);
-  font-size: clamp(28px, 3.4vh, 38px);
+  /* 面板整体已按视口 zoom，这里用固定设计尺寸（zoom 内 vh 会被二次缩放） */
+  font-size: 34px;
   letter-spacing: 0.32em;
   color: var(--paper);
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
@@ -470,11 +471,16 @@
 
 /* ───────────────────────── Toast ───────────────────────── */
 
+/*
+ * 层级：HUD 10 < 横幅 20 < 主菜单 30 < toast 31 < 暂停 32 < 结算 34 < 秘卷选择 36 < 黑幕 50。
+ * toast 压在主菜单之上（解锁提示等），但不盖住暂停 / 结算 / 秘卷选择的按钮。
+ */
 .gf-toasts {
   position: absolute;
   left: 28px;
   top: 38%;
-  z-index: 40;
+  z-index: 31;
+  zoom: var(--ui-s, 1);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -487,7 +493,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  max-width: min(420px, 60vw);
+  max-width: 420px;
   padding: 8px 16px 8px 12px;
   font-size: 14.5px;
   letter-spacing: 0.03em;
@@ -537,8 +543,10 @@
 .gf-banner {
   position: absolute;
   left: 50%;
-  top: 17vh;
+  /* zoom 内 vh 会被一起缩放，除回去保持视觉位置在 17vh */
+  top: calc(17vh / var(--ui-s, 1));
   z-index: 20;
+  zoom: var(--ui-s, 1);
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
@@ -546,6 +554,16 @@
   pointer-events: none;
   text-align: center;
   white-space: nowrap;
+}
+
+/* 淡墨衬底：沙漠 / 雪地等亮色天空下标题与副标题依然清楚 */
+.gf-banner::before {
+  content: "";
+  position: absolute;
+  inset: -26px -90px -22px;
+  z-index: -1;
+  background: radial-gradient(closest-side, rgba(7, 6, 10, 0.62), rgba(7, 6, 10, 0.38) 60%, transparent);
+  pointer-events: none;
 }
 
 .gf-banner__row {
@@ -556,7 +574,7 @@
 
 .gf-banner__title {
   font-family: var(--font-display);
-  font-size: clamp(40px, 6.4vh, 70px);
+  font-size: 66px;
   letter-spacing: 0.3em;
   padding-left: 0.3em;
   line-height: 1.1;
@@ -568,7 +586,7 @@
 }
 
 .gf-banner__cloud {
-  width: clamp(54px, 7vh, 84px);
+  width: 76px;
   height: auto;
   color: var(--gold);
   opacity: 0.8;
@@ -579,18 +597,18 @@
 }
 
 .gf-banner__rule {
-  width: min(560px, 70vw);
+  width: 560px;
   height: 1px;
   margin: 8px 0 10px;
   background: linear-gradient(90deg, transparent, var(--gold), transparent);
 }
 
 .gf-banner__sub {
-  font-size: 16px;
+  font-size: 17px;
   letter-spacing: 0.5em;
   padding-left: 0.5em;
-  color: var(--paper-2);
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9);
+  color: var(--paper);
+  text-shadow: 0 1px 2px #000, 0 0 8px rgba(0, 0, 0, 0.9);
 }
 
 .gf-banner.is-in .gf-banner__title {

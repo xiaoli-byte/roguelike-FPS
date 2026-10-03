@@ -169,7 +169,11 @@ class VolatileAffix implements AffixController {
   onDeath(): void {
     const e = this.e;
     const ctx = e.ctx;
-    const c = new THREE.Vector3(e.position.x, e.position.y + 0.05, e.position.z);
+    // 预警圈画在死亡位置正下方的地面 / 台面上（飞行单位死在半空时也一样）
+    const gy = ctx.world.groundHeight(e.position.x, e.position.z, e.position.y + 0.1);
+    const floor = ctx.stage.arena?.floorY ?? 0;
+    const y = Number.isFinite(gy) ? gy : Math.min(e.position.y, floor);
+    const c = new THREE.Vector3(e.position.x, y + 0.05, e.position.z);
     const damage = VOLATILE_DAMAGE * e.damageMult;
     ctx.fx.groundWarning(c, VOLATILE_RADIUS, VOLATILE_FUSE, AFFIX_COLORS.volatile);
     ctx.audio.play('telegraph', { position: c, volume: 0.8 });

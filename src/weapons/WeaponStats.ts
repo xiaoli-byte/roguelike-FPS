@@ -143,7 +143,7 @@ export function resolveWeapon(inst: WeaponInstance, stats: Stats): ResolvedWeapo
   return r;
 }
 
-/** 「连环爆」爆炸基础伤害：随武器秒伤与单发伤害增长，钳制在 [35, 220]（再乘稀有度等已含在 damage 中） */
+/** 「殉爆」爆炸基础伤害：随武器秒伤与单发伤害增长，钳制在 [35, 220]（再乘稀有度等已含在 damage 中） */
 export function novaDamage(r: ResolvedWeapon): number {
   return Math.min(220, Math.max(35, 0.35 * r.dps + 0.5 * r.perShot));
 }

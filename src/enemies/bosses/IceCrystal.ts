@@ -11,15 +11,17 @@ import { geo, glow, glowMesh, mesh, pivot, std } from './parts';
 export const CRYSTAL_DEF: EnemyDef = {
   id: 'boss_ice_crystal',
   name: '寒霜冰晶',
-  hp: 180,
+  // 第二章难度约 2.4 时 ≈ 290 生命：常规武器 1.5 秒左右击碎一个
+  hp: 120,
   speed: 0,
   radius: 0.7,
   height: 2.6,
   damage: 0,
   coins: [1, 3],
   essence: 0,
-  headY: 2.25,
-  headRadius: 0.4,
+  // 暴击点 = 顶端冰锥（1.8–2.5 米），与模型一致
+  headY: 2.2,
+  headRadius: 0.32,
   knockbackResist: 1,
   color: 0x9fe8ff,
 };

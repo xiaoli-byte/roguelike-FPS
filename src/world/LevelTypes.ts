@@ -50,6 +50,23 @@ export interface Deco {
 
 export interface RuneMark { x: number; z: number; r: number; gold: boolean }
 
+/**
+ * 高台与它的台阶（导航用）：地面网格只覆盖地面，敌人上下高台必须经过 foot ↔ head。
+ * 矩形均为地面投影（旋转后仍轴对齐）。
+ */
+export interface RampInfo {
+  /** 台面矩形与顶面高度（相对 floorY） */
+  x0: number; z0: number; x1: number; z1: number;
+  top: number;
+  /** 台阶矩形 */
+  sx0: number; sz0: number; sx1: number; sz1: number;
+  /** 台阶脚下的落脚点（地面，生成期已校验可达） */
+  foot: P2;
+  /** 台阶顶端进入台面的点 */
+  head: P2;
+  group: number;
+}
+
 export interface LevelLayout {
   type: StageType;
   theme: ThemeId;
@@ -60,9 +77,11 @@ export interface LevelLayout {
   wallHeight: number;
   boxes: LayoutBox[];
   decos: Deco[];
-  /** 点光源位置（恒为 4 个，避免换关时灯光数量变化导致着色器重编译） */
+  /** 点光源位置（数量恒定为 LIGHT_COUNT，避免换关时灯光数量变化导致着色器重编译） */
   lights: { x: number; y: number; z: number }[];
   runes: RuneMark[];
+  /** 高台台阶（敌人上下高台的通道） */
+  ramps: RampInfo[];
   playerSpawn: P2;
   playerYaw: number;
   spawnPoints: P2[];

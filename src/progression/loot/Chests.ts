@@ -4,6 +4,7 @@ import { clamp01 } from '../../core/math';
 import { cssColor, makeBeam, makeChest, REWARD_COLORS } from './assets';
 import type { ChestModel } from './assets';
 import { facingTarget, facingToward, groundAt } from './physics';
+import { weaponRewardHint } from './rewardRules';
 
 /**
  * 奖励宝箱：从空中落下 → 待机（宝石脉动、盖子偶尔轻颤）→ 按 F 开启（开盖动画 + 音效）→ 发放奖励。
@@ -196,7 +197,7 @@ export class ChestManager {
       case 'scroll':
         return type === 'elite' || type === 'boss' ? '从三个精良及以上的秘卷中选择一个' : '从三个秘卷中选择一个';
       case 'weapon':
-        return type === 'boss' ? '一把史诗及以上品质的武器' : type === 'elite' ? '一把精良及以上品质的武器' : '一把随机武器';
+        return weaponRewardHint(type, Math.max(0, this.ctx.run.chapter));
       case 'coins':
         return '一大堆金币';
       case 'heal':

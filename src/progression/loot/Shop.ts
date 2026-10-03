@@ -64,6 +64,7 @@ export class ShopManager {
   private stalls: Stall[] = [];
   private signs: PriceTag[] = [];
   private refreshTimer = 0;
+  private upgradePreview: { key: string; lines: string[] } | null = null;
 
   constructor(
     private readonly ctx: GameContext,
@@ -152,6 +153,7 @@ export class ShopManager {
     this.stalls.length = 0;
     for (const sign of this.signs) sign.dispose();
     this.signs.length = 0;
+    this.upgradePreview = null;
   }
 
   // ───────────── 构建 ─────────────
@@ -405,12 +407,33 @@ export class ShopManager {
         return {
           title: '强化台',
           subtitle: `强化 · ${d.name} +${a.level} → +${a.level + 1}`,
-          lines: ['每级武器伤害 +12%', `当前强化等级 ${a.level}`],
+          lines: this.upgradeLines(a),
           color: '#6fb8ff',
           cost,
         };
       }
     }
+  }
+
+  /** 强化预览：伤害与秒伤的变化（按武器 / 等级 / 属性版本缓存，提示每 0.2 秒刷新一次） */
+  private upgradeLines(a: WeaponInstance): string[] {
+    const w = this.ctx.weapons;
+    const key = `${a.uid}|${a.level}|${a.rarity}|${a.element}|${a.affixes.length}|${this.ctx.player.stats.version}`;
+    if (this.upgradePreview && this.upgradePreview.key === key) return this.upgradePreview.lines;
+    const lines = ['每级武器伤害 +12%'];
+    try {
+      const now = w.describe(a);
+      const next = w.describe({ ...a, level: a.level + 1 });
+      for (const label of ['伤害', '秒伤']) {
+        const x = now.stats.find((s) => s.label === label)?.value;
+        const y = next.stats.find((s) => s.label === label)?.value;
+        if (x && y && x !== y) lines.push(`${label}  ${x} → ${y} ▲`);
+      }
+    } catch (err) {
+      console.error('[Shop] upgrade preview threw', err);
+    }
+    this.upgradePreview = { key, lines };
+    return lines;
   }
 
   private refreshTag(s: Stall): void {

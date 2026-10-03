@@ -1,7 +1,7 @@
 /**
  * 把 LevelLayout 搭成场景：
  *  - 结构与装饰按材质合批（每种材质一个网格），地面为顶点色 + 程序化贴图的大平面；
- *  - 半球光 + 平行光（阴影相机按竞技场包围盒精确拟合）+ 恒定 4 盏闪烁点光源；
+ *  - 半球光 + 平行光（阴影相机按竞技场包围盒精确拟合）+ 数量恒定（LIGHT_COUNT）的闪烁点光源；
  *  - 雾、天空穹顶、远山、环境粒子、地面法阵、火盆火焰（实例化网格动画）。
  * 所有本关创建的几何体 / 材质 / 纹理都登记在 disposables，dispose() 时统一释放。
  * 另提供 addCollision：把布局盒子写入碰撞世界（地面一整块大盒子，顶面 y = floorY）。
@@ -317,7 +317,7 @@ export class ArenaView {
       cam.updateProjectionMatrix();
     }
 
-    // 恒定 4 盏点光源（数量不变，换关不触发着色器重编译）
+    // 点光源数量恒定为 LIGHT_COUNT（换关不触发着色器重编译）
     const flickerAmt = L.theme === 'frost' ? 0.35 : 1;
     for (let i = 0; i < L.lights.length; i++) {
       const s = L.lights[i];

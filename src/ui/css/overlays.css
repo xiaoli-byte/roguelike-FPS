@@ -14,11 +14,13 @@
   backdrop-filter: blur(3px) saturate(0.7);
 }
 
+/* zoom 由 fitPanel 写入；尺寸上限用百分比（zoom 元素内的 vw/vh 会被一起缩放） */
 .gf-pause__main,
 .gf-pause__settings {
   grid-area: 1 / 1;
-  width: min(940px, 94vw);
-  max-height: calc(100vh - 40px);
+  zoom: var(--ui-s, 1);
+  width: min(960px, 100%);
+  max-height: 100%;
   overflow: auto;
   padding: 30px 36px 28px;
   opacity: 0;
@@ -27,7 +29,7 @@
 }
 
 .gf-pause__settings {
-  width: min(780px, 94vw);
+  width: min(980px, 100%);
 }
 
 .gf-pause__main.is-open,
@@ -195,11 +197,14 @@
 
 .gf-summary__panel {
   position: relative;
-  width: min(940px, 96vw);
+  zoom: var(--ui-s, 1);
+  width: min(980px, 100%);
+  max-height: 100%;
+  overflow: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 28px 20px 30px;
+  padding: 24px 20px 26px;
   text-align: center;
 }
 
@@ -207,7 +212,8 @@
   display: flex;
   gap: 0.25em;
   font-family: var(--font-display);
-  font-size: clamp(80px, 16vh, 150px);
+  /* zoom 内 vh 会被二次缩放，用固定设计尺寸 */
+  font-size: 140px;
   line-height: 1;
 }
 
@@ -340,12 +346,26 @@
 .gf-choice {
   z-index: 36;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 40px;
   padding: 16px;
   overflow: auto;
+}
+
+/* 标题 + 卡片整体等比缩放（zoom 由 fitPanel 写入）；margin:auto 居中且放不下时不会被裁到视口外 */
+.gf-choice__inner {
+  position: relative;
+  margin: auto;
+  zoom: var(--ui-s, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  /* 挂绳（卡片上方 26px）、轴头（两侧各约 19px）、按键提示（卡片下方 36px）都在卡片盒外，留出空间 */
+  padding: 8px 24px 0;
+}
+
+/* 测量自然尺寸时让挂轴直接处于展开终态（!important 压过动画值，但不打断动画） */
+.gf-choice__inner.is-measuring .gf-scroll__roll {
+  grid-template-rows: 1fr !important;
 }
 
 .gf-choice.is-picked {
@@ -367,7 +387,7 @@
 .gf-choice__title {
   padding-left: 0.5em;
   font-family: var(--font-display);
-  font-size: clamp(34px, 5vh, 52px);
+  font-size: 50px;
   line-height: 1.1;
   letter-spacing: 0.5em;
   color: transparent;
@@ -389,8 +409,9 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  gap: clamp(18px, 2.6vw, 40px);
-  padding-bottom: 36px;
+  /* 卷轴两端的轴头各伸出约 19px，间距要大于 38px 才不会连在一起 */
+  gap: 56px;
+  padding-bottom: 40px;
 }
 
 .gf-scroll {
@@ -399,7 +420,8 @@
   --silk-dark: color-mix(in srgb, var(--rarity) 30%, #0c0907);
   --ink-rarity: color-mix(in srgb, var(--rarity) 60%, #3b220f);
   position: relative;
-  width: clamp(230px, 22vw, 292px);
+  /* 设计宽度固定，整体大小交给外层 zoom（zoom 内 vw 会被二次缩放，不再用 vw） */
+  width: 292px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -688,11 +710,19 @@
 
 .gf-settings__body {
   display: grid;
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  align-items: start;
+  gap: 14px 16px;
+}
+
+.gf-settings__col {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
 }
 
 .gf-settings__group {
-  padding: 12px 18px 6px;
+  padding: 10px 18px 4px;
   border: 1px solid var(--line-soft);
   background: rgba(7, 6, 10, 0.35);
 }
@@ -707,10 +737,11 @@
 
 .gf-setting {
   display: grid;
-  grid-template-columns: 140px minmax(0, 1fr);
+  grid-template-columns: 104px minmax(0, 1fr);
   align-items: center;
-  gap: 16px;
-  padding: 8px 0;
+  gap: 12px;
+  min-height: 40px;
+  padding: 6px 0;
   border-bottom: 1px dashed rgba(212, 169, 85, 0.1);
 }
 
@@ -732,7 +763,8 @@
 }
 
 .gf-setting__val {
-  min-width: 58px;
+  flex: none;
+  min-width: 50px;
   text-align: right;
   font: 600 14px/1 var(--font-num);
   color: var(--gold-hi);
@@ -741,6 +773,7 @@
 .gf-range {
   --fill: 50%;
   flex: 1;
+  min-width: 0;
   max-width: 360px;
   height: 20px;
   margin: 0;
@@ -860,9 +893,9 @@
   background: var(--cinnabar);
 }
 
-/* ───────── 窄屏 ───────── */
+/* ───────── 窄屏（其余尺寸由 zoom 等比缩放） ───────── */
 
-@media (max-width: 900px) {
+@media (max-width: 640px) {
   .gf-pause__cols {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -877,12 +910,6 @@
 
   .gf-summary__lists {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .gf-choice__cards {
-    flex-direction: column;
-    align-items: center;
-    gap: 52px;
   }
 
   .gf-setting {

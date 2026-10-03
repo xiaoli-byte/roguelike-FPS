@@ -15,6 +15,10 @@ const GRENADE_DAMAGE = 120;
 const GRENADE_SPEED = 21;
 const GRENADE_LIFT = 3.2;
 const GRENADE_GRAVITY = 20;
+/** 正常 2.5 秒内必然落地；到期仍未触地（例如被抛出场外）则在空中自爆 */
+const GRENADE_LIFETIME = 4;
+/** 爆心处的击退速度（m/s，随距离衰减；explode 未指定击退时不推人） */
+const GRENADE_KNOCKBACK = 7;
 
 const FOXFIRE_COUNT = 9;
 const FOXFIRE_DURATION = 3;
@@ -36,10 +40,15 @@ const _cands: IEnemy[] = [];
 
 // ───────────────────────────── E：燃爆雷 ─────────────────────────────
 
-function detonateGrenade(ctx: GameContext, point: THREE.Vector3): void {
+/**
+ * 手雷本身是带 damage 与 explosionRadius 的玩家投射物：触地 / 命中敌人 / 到期都由投射物系统调用 combat.explode
+ * 结算伤害，并播放默认爆炸特效、音效与震屏。每个敌人收到的请求是 source 'skill' + tag 'explosion'
+ * （explode 只追加标签、不改 source），同时吃技能伤害与爆炸伤害加成；击退只来自这里显式给的 knockback。
+ * 这里只在触碰时（onImpact）补充火焰专属的表现：火星、地面裂纹、冲击环与余火。
+ * 到期自爆不回调 onImpact（带伤害的投射物不是「载体」），所以空中自爆只有默认爆炸特效。
+ */
+function grenadeImpactFx(ctx: GameContext, point: THREE.Vector3, r: number): void {
   _c.copy(point);
-  const r = GRENADE_RADIUS * radiusScale(ctx);
-  ctx.combat.explode(_c, r, skillHit(GRENADE_DAMAGE, 'fire', 1), { color: SKILL_COLORS.fire });
   ctx.fx.burst(_c, SKILL_COLORS.ember, 34, 9, 0.9, 0.09, 9);
   ctx.fx.burst(_c, SKILL_COLORS.fireCore, 14, 5, 0.45, 0.14, 0);
   const gy = groundYBelow(ctx, _c);
@@ -50,8 +59,6 @@ function detonateGrenade(ctx: GameContext, point: THREE.Vector3): void {
   }
   ctx.fx.ring(_c, r, SKILL_COLORS.fire, 0.4);
   ctx.audio.play('skill_fire', { position: point, volume: 0.9 });
-  const d = ctx.player.eye.distanceTo(point);
-  if (d < r * 2.5) ctx.fx.shake(0.35 * (1 - d / (r * 2.5)), 0.25);
 
   // 余火：落点附近短暂飘散火星
   const ex = point.x, ey = point.y, ez = point.z;
@@ -73,18 +80,25 @@ const blazeGrenade: HeroSkillDef = {
     if (!ctx.player.alive) return false;
     handOrigin(ctx, _pos);
     throwVelocity(ctx, GRENADE_SPEED, GRENADE_LIFT, _vel);
+    const r = GRENADE_RADIUS * radiusScale(ctx);
+    const damage = skillHit(GRENADE_DAMAGE, 'fire', 1);
+    damage.knockback = GRENADE_KNOCKBACK;
     ctx.projectiles.spawn({
       owner: 'player',
       position: _pos.clone(),
       velocity: _vel.clone(),
       gravity: GRENADE_GRAVITY,
       radius: 0.2,
-      lifetime: 4,
+      lifetime: GRENADE_LIFETIME,
+      damage,
       element: 'fire',
+      explosionRadius: r,
+      explodeOnExpire: true,
+      selfDamage: 0,
       color: SKILL_COLORS.fire,
       visual: 'grenade',
       scale: 1.1,
-      onImpact: (point) => detonateGrenade(ctx, point),
+      onImpact: (point) => grenadeImpactFx(ctx, point, r),
     });
     ctx.audio.play('skill_throw', { volume: 0.9 });
     return true;

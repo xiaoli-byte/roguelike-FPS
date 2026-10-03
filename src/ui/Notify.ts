@@ -96,6 +96,17 @@ export class Banner {
     if (!title && !subtitle) return;
     window.clearTimeout(this.timer);
     window.clearTimeout(this.hideTimer);
+    const ms = Math.max(0.6, Number.isFinite(duration) ? duration : 2.4) * 1000;
+    // 同一标题仍在显示（例如关卡导演与 Boss 先后为同一个首领发横幅）：只换副标题并延长，不重播动画
+    const showing = !this.root.hidden && this.root.classList.contains('is-in');
+    if (showing && title && title === this.titleEl.textContent) {
+      if (subtitle) {
+        this.subEl.textContent = subtitle;
+        this.subEl.hidden = false;
+      }
+      this.timer = window.setTimeout(() => this.hide(), ms);
+      return;
+    }
     this.titleEl.textContent = title;
     this.subEl.textContent = subtitle ?? '';
     this.subEl.hidden = !subtitle;
@@ -105,14 +116,19 @@ export class Banner {
     this.root.classList.remove('is-in');
     void this.root.offsetWidth;
     this.root.classList.add('is-in');
-    const ms = Math.max(0.6, Number.isFinite(duration) ? duration : 2.4) * 1000;
     this.timer = window.setTimeout(() => this.hide(), ms);
   }
 
-  hide(): void {
+  hide(immediate = false): void {
     window.clearTimeout(this.timer);
+    window.clearTimeout(this.hideTimer);
     if (this.root.hidden) return;
     this.root.classList.remove('is-in');
+    if (immediate) {
+      this.root.classList.remove('is-out');
+      this.root.hidden = true;
+      return;
+    }
     this.root.classList.add('is-out');
     this.hideTimer = window.setTimeout(() => {
       this.root.hidden = true;
@@ -122,6 +138,9 @@ export class Banner {
 }
 
 // ───────────────────────────── 交互提示 ─────────────────────────────
+
+/** 超过这么多行的提示（武器对比）放到准星右侧 */
+const DETAIL_LINES = 3;
 
 /**
  * 交互提示卡片。setInteractPrompt 可能每帧被调用（prompt() 每帧拉取），
@@ -233,6 +252,8 @@ export class PromptCard {
         else if (/[↓▼]/.test(line)) row.classList.add('is-down');
       }
       this.linesEl.hidden = this.lastLines.length === 0;
+      // 行数多（武器对比）时改到准星右侧竖直居中，避免从底部长高后挡住准星
+      this.root.classList.toggle('is-detail', this.lastLines.length > DETAIL_LINES);
     }
   }
 }

@@ -25,6 +25,26 @@ const WALL_COST_2 = 0.35;
 const PINCH_COST = 6;
 /** 世界盒子变化后自动重建的最小间隔（秒，游戏时间） */
 const REBUILD_INTERVAL = 0.5;
+/** 判定「站在台面上」时允许的水平外伸（脚底 AABB 可以悬出台沿）：寻路起点（敌人）/ 终点（玩家） */
+const RAMP_EDGE_FROM = 0.7;
+const RAMP_EDGE_TO = 0.45;
+
+/**
+ * 高台通道：地面网格只覆盖地面层，上下高台必须经过 台阶脚下 foot ↔ 台阶顶端 head。
+ * 由 StageDirector 按关卡布局传入（setRamps），换关时替换。
+ */
+export interface NavRamp {
+  /** 台面矩形（地面投影） */
+  x0: number; z0: number; x1: number; z1: number;
+  /** 台面世界高度 */
+  topY: number;
+  /** 台阶矩形（地面投影） */
+  sx0: number; sz0: number; sx1: number; sz1: number;
+  /** 台阶脚下的地面落脚点（在主连通区内） */
+  foot: THREE.Vector3;
+  /** 台阶顶端进入台面的点（y = topY） */
+  head: THREE.Vector3;
+}
 
 /**
  * 把盒子光栅化到地面网格：格中心 (ox + (i+0.5)·cell, oz + (j+0.5)·cell) 的方形列（半宽 foot）
@@ -90,6 +110,8 @@ export function labelComponents(blocked: Uint8Array, cols: number, rows: number,
 /**
  * 地面导航网格：1 米（可配）格子，8 邻接 A*（禁止切角、二叉堆、贴墙加代价），
  * 基于格子视线的路径拉直，BFS 最近可走点。所有工作数组复用，寻路过程不分配内存。
+ * 高台：起点 / 终点在台面或台阶上时，路径经由该高台的台阶（head ↔ foot）接入地面网格（Boss 与比台阶还宽的单位除外）。
+ * 路点 y：地面路点为 floorY，台面 / 台阶上的路点为该处高度（EnemyBase 只用 x / z）。
  */
 export class NavGrid implements INavGrid {
   cellSize = 1;
@@ -131,8 +153,40 @@ export class NavGrid implements INavGrid {
   private cellPath = new Int32Array(0);
   /** 由本网格创建、可以在后续寻路中原地复用的路点向量 */
   private owned = new WeakSet<THREE.Vector3>();
+  /** 当前关卡的高台通道 */
+  private ramps: NavRamp[] = [];
+  /** 各通道台阶的净宽（米） */
+  private rampWidth: number[] = [];
+  /** 最近一次 groundPath 的终点是否就是传入的目标点（否则是同一连通区里离目标最近的格子） */
+  private goalExact = false;
 
   constructor(readonly ctx: GameContext) {}
+
+  /** 设置当前关卡的高台通道（StageDirector 在 build 之后调用；卸载关卡时传空数组） */
+  setRamps(ramps: readonly NavRamp[]): void {
+    this.ramps = ramps.slice();
+    this.rampWidth = this.ramps.map((r) => {
+      const alongX = Math.abs(r.head.x - r.foot.x) >= Math.abs(r.head.z - r.foot.z);
+      return alongX ? r.sz1 - r.sz0 : r.sx1 - r.sx0;
+    });
+  }
+
+  /**
+   * 寻路者的碰撞半宽，用于判断能否沿台阶上台；返回 -1 表示不上台。契约里 findPath 不带体型参数，
+   * 但 EnemyBase.moveTo 传入的 from 就是敌人自己的 position 向量，据此认出寻路者：
+   * Boss 不上台（它们的地面预警画在竞技场地面高度，上了高台预警会被台子挡住），认不出时按普通体型处理。
+   */
+  private rampAgent(from: THREE.Vector3): number {
+    const list = this.ctx.enemies?.list;
+    if (list) {
+      for (let i = 0; i < list.length; i++) {
+        const e = list[i];
+        if (e.position !== from) continue;
+        return e.isBoss ? -1 : e.radius * 0.85;
+      }
+    }
+    return 0.4;
+  }
 
   // ───────────── 构建 ─────────────
 
@@ -254,19 +308,20 @@ export class NavGrid implements INavGrid {
     return this.oz + (Math.floor(i / this.cols) + 0.5) * this.cellSize;
   }
 
-  /** 世界坐标 → 格子索引；越界返回 -1 */
+  /** 世界坐标 → 格子索引；越界或坐标非有限值返回 -1 */
   private cellAt(x: number, z: number): number {
     const ix = Math.floor((x - this.ox) / this.cellSize);
     const iz = Math.floor((z - this.oz) / this.cellSize);
-    if (ix < 0 || iz < 0 || ix >= this.cols || iz >= this.rows) return -1;
+    // 写成「不满足在界内」的形式，NaN 也会落到 -1
+    if (!(ix >= 0 && iz >= 0 && ix < this.cols && iz < this.rows)) return -1;
     return iz * this.cols + ix;
   }
 
   private cellAtClamped(x: number, z: number): number {
     let ix = Math.floor((x - this.ox) / this.cellSize);
     let iz = Math.floor((z - this.oz) / this.cellSize);
-    ix = ix < 0 ? 0 : ix >= this.cols ? this.cols - 1 : ix;
-    iz = iz < 0 ? 0 : iz >= this.rows ? this.rows - 1 : iz;
+    ix = !(ix >= 0) ? 0 : ix >= this.cols ? this.cols - 1 : ix;
+    iz = !(iz >= 0) ? 0 : iz >= this.rows ? this.rows - 1 : iz;
     return iz * this.cols + ix;
   }
 
@@ -371,13 +426,88 @@ export class NavGrid implements INavGrid {
     this.ensureFresh();
     if (!this.built) return this.fail(out);
 
+    // 下台、同台追击对谁都开放（例如 Boss 跃击落到台上）；从别处上台只给非 Boss、且台阶够宽的单位
+    const a = this.ramps.length > 0 ? this.rampSpot(from, RAMP_EDGE_FROM) : -1;
+    let b = this.ramps.length > 0 ? this.rampSpot(to, RAMP_EDGE_TO) : -1;
+    if (b >= 0 && !(a >= 0 && a >> 1 === b >> 1)) {
+      const halfW = this.rampAgent(from);
+      if (halfW < 0 || this.rampWidth[b >> 1] < halfW * 2 + 0.2) b = -1;
+    }
+    if (a < 0 && b < 0) {
+      const n = this.groundPath(from, to, out, 0);
+      if (n <= 0) return this.fail(out);
+      out.length = n;
+      return true;
+    }
+
+    const ra = a >> 1;
+    const rb = b >> 1;
+    let count = 0;
+    if (a >= 0 && b >= 0 && ra === rb) {
+      // 同一座高台：台面 ↔ 台阶之间经过台阶顶端
+      if ((a & 1) !== (b & 1)) count = this.writeVec(out, count, this.ramps[ra].head);
+      count = this.writePoint(out, count, to.x, to.z, to.y);
+      out.length = count;
+      return true;
+    }
+
+    // 下台：台面上先走到台阶顶端，再沿台阶走到台阶脚下
+    let start = from;
+    if (a >= 0) {
+      const r = this.ramps[ra];
+      if ((a & 1) === 0) count = this.writeVec(out, count, r.head);
+      count = this.writeVec(out, count, r.foot);
+      start = r.foot;
+    }
+    // 地面段
+    const goal = b >= 0 ? this.ramps[rb].foot : to;
+    const n = this.groundPath(start, goal, out, count);
+    if (n < 0) {
+      // 地面不连通：至少先下到地面
+      if (count === 0) return this.fail(out);
+      out.length = count;
+      return true;
+    }
+    count = n;
+    // 上台：到达台阶脚下（同一连通区内确实能到）后沿台阶走上台面
+    if (b >= 0 && this.goalExact) {
+      const r = this.ramps[rb];
+      if ((b & 1) === 0) count = this.writeVec(out, count, r.head);
+      count = this.writePoint(out, count, to.x, to.z, to.y);
+    }
+    out.length = count;
+    return count > 0;
+  }
+
+  /**
+   * p 所在的高台：返回 索引·2 + (0 = 台面 / 1 = 台阶)，在地面上返回 -1。
+   * edge 为台面矩形的水平外扩（脚底 AABB 可以悬出台沿）。
+   */
+  private rampSpot(p: THREE.Vector3, edge: number): number {
+    if (p.y < this.floorY + 0.15) return -1;
+    for (let i = 0; i < this.ramps.length; i++) {
+      const r = this.ramps[i];
+      if (p.y >= r.topY - 0.35 && p.y <= r.topY + 3
+        && p.x >= r.x0 - edge && p.x <= r.x1 + edge && p.z >= r.z0 - edge && p.z <= r.z1 + edge) return i * 2;
+      if (p.y <= r.topY + 0.5
+        && p.x >= r.sx0 - 0.2 && p.x <= r.sx1 + 0.2 && p.z >= r.sz0 - 0.2 && p.z <= r.sz1 + 0.2) return i * 2 + 1;
+    }
+    return -1;
+  }
+
+  /**
+   * 地面寻路段：从 out[start] 开始写入路点（不含起点），返回写入后的路点总数；失败返回 -1。
+   * 终点不可走或与起点不连通时，改为同一连通区里离目标最近的格子（this.goalExact = false）。
+   */
+  private groundPath(from: THREE.Vector3, to: THREE.Vector3, out: THREE.Vector3[], start: number): number {
+    this.goalExact = false;
     // 起点：不可走（贴着障碍 / 站在高台上）时取最近可走格
     let s = this.cellAt(from.x, from.z);
     let startRemapped = false;
     if (s < 0 || this.blocked[s]) {
       s = this.nearestCell(from.x, from.z, this.mainComp);
       if (s < 0) s = this.nearestCell(from.x, from.z, -1);
-      if (s < 0) return this.fail(out);
+      if (s < 0) return -1;
       startRemapped = true;
     }
     let sc = this.comp[s];
@@ -396,22 +526,25 @@ export class NavGrid implements INavGrid {
 
     // 终点：不可走或与起点不连通时，取与起点同一分量里离目标最近的格子
     let t = tRaw;
-    let goalExact = t >= 0 && this.blocked[t] === 0 && this.comp[t] === sc;
+    const goalExact = t >= 0 && this.blocked[t] === 0 && this.comp[t] === sc;
     if (!goalExact) {
       t = this.nearestCell(to.x, to.z, sc);
-      if (t < 0) return this.fail(out);
+      if (t < 0) return -1;
     }
+    this.goalExact = goalExact;
 
-    let count = 0;
+    let count = start;
     if (s === t) {
       if (goalExact) count = this.writePoint(out, count, to.x, to.z);
       else count = this.writePoint(out, count, this.centerX(t), this.centerZ(t));
-      out.length = count;
-      return true;
+      return count;
     }
 
     const len = this.astar(s, t);
-    if (len <= 0) return this.fail(out);
+    if (len <= 0) {
+      this.goalExact = false;
+      return -1;
+    }
     const path = this.cellPath;
 
     // 路径拉直：从锚点出发，沿格子路径向前推进，直到视线被挡
@@ -438,11 +571,10 @@ export class NavGrid implements INavGrid {
     }
     // 终点可走时以精确目标收尾：前一锚点到目标视线畅通则替换终点格中心，否则追加（与终点格同格，必然可达）
     if (goalExact) {
-      if (count > 0 && this.lineClear(px, pz, to.x, to.z)) this.writePoint(out, count - 1, to.x, to.z);
+      if (count > start && this.lineClear(px, pz, to.x, to.z)) this.writePoint(out, count - 1, to.x, to.z);
       else count = this.writePoint(out, count, to.x, to.z);
     }
-    out.length = count;
-    return count > 0;
+    return count;
   }
 
   // ───────────── A* ─────────────
@@ -722,15 +854,19 @@ export class NavGrid implements INavGrid {
     return this.writePoint(out, idx, x, z);
   }
 
-  /** 写入第 idx 个路点：复用本网格之前创建的向量，避免每次寻路分配 */
-  private writePoint(out: THREE.Vector3[], idx: number, x: number, z: number): number {
+  /** 写入第 idx 个路点：复用本网格之前创建的向量，避免每次寻路分配。地面路点 y = floorY，高台路点 y = 台面高度 */
+  private writePoint(out: THREE.Vector3[], idx: number, x: number, z: number, y = this.floorY): number {
     let v = idx < out.length ? out[idx] : undefined;
     if (!v || !this.owned.has(v)) {
       v = new THREE.Vector3();
       this.owned.add(v);
       out[idx] = v;
     }
-    v.set(x, this.floorY, z);
+    v.set(x, y, z);
     return idx + 1;
+  }
+
+  private writeVec(out: THREE.Vector3[], idx: number, p: THREE.Vector3): number {
+    return this.writePoint(out, idx, p.x, p.z, p.y);
   }
 }

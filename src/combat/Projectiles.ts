@@ -6,14 +6,17 @@
  *    会反弹的投射物低速落地时改为贴地滚动（不消耗反弹次数），否则命中结算。
  *  - 玩家投射物 vs 敌人：精确射线（ctx.enemies.raycast）+ 按投射物半径膨胀的胶囊 / 头部球补测。
  *  - 敌方投射物 vs 玩家：线段到玩家胶囊（脚底到头顶）的距离 ≤ 玩家半径 + 投射物半径。冲刺无敌时穿过。
- *  - 有爆炸半径的投射物命中时只结算爆炸伤害（不再额外结算直击伤害）。
+ *  - 有爆炸半径的投射物命中时只结算爆炸伤害（不再额外结算直击伤害；爆心放在被命中敌人的表面，直击目标吃满伤害）。
+ *
+ * onImpact(point 副本, hitEnemy) 在碰到敌人（穿透时每个敌人一次）、玩家、墙体 / 地面时触发；
+ * 没有伤害也没有爆炸的「载体」投射物（手雷、信标）到期时也会在原地触发一次（hitEnemy = null）。
  */
 import * as THREE from 'three';
 import type { DamageRequest, Element, GameContext, IEnemy, IProjectileSystem, ProjectileSpec, ProjectileVisual } from '../core/types';
 import type { StaticBox, WorldRayHit } from '../world/Collision';
 import { clamp, clamp01, distSqPointSegment, raySphere, rayVerticalCapsule } from '../core/math';
 import { ProjectileView, tailOffset, Trail, viewSize } from './ProjectileVisuals';
-import { blastPlayer, explosionShake, lineClear } from './Blast';
+import { blastPlayer, lineClear } from './Blast';
 
 // ───────────── 参数 ─────────────
 
@@ -111,6 +114,11 @@ function createProjectile(): Projectile {
   };
 }
 
+/** 有限数值，否则取缺省值（防止上游传入 NaN / Infinity 污染运动积分） */
+function num(v: number | undefined, fallback: number): number {
+  return v !== undefined && Number.isFinite(v) ? v : fallback;
+}
+
 /**
  * 线段 p1→q1 与竖直线段 (x, y0..y1, z) 的最近距离平方；线段 1 上最近点的参数写入 segS。
  * （Ericson《Real-Time Collision Detection》5.1.9，特化为第二条线段竖直）
@@ -186,28 +194,28 @@ export class ProjectileSystem implements IProjectileSystem {
     if (!Number.isFinite(sp.x + sp.y + sp.z) || !Number.isFinite(sv.x + sv.y + sv.z)) return;
     const p = this.free.pop() ?? createProjectile();
     p.active = true;
-    p.owner = spec.owner;
+    p.owner = spec.owner === 'enemy' ? 'enemy' : 'player';
     p.pos.copy(sp);
     p.vel.copy(sv);
     const speed = p.vel.length();
     if (speed > 1e-4) p.heading.copy(p.vel).multiplyScalar(1 / speed);
     else p.heading.set(0, 0, 1);
-    p.gravity = spec.gravity ?? 0;
-    p.radius = Math.max(0.01, spec.radius);
-    p.lifetime = spec.lifetime > 0 ? spec.lifetime : 5;
+    p.gravity = num(spec.gravity, 0);
+    p.radius = Math.max(0.01, num(spec.radius, 0.1));
+    p.lifetime = num(spec.lifetime, 0) > 0 ? spec.lifetime : 5;
     p.age = 0;
     p.damage = spec.damage ? { ...spec.damage } : null;
-    p.enemyDamage = spec.enemyDamage ?? 0;
+    p.enemyDamage = Math.max(0, num(spec.enemyDamage, 0));
     p.element = spec.element ?? spec.damage?.element ?? 'none';
-    p.explosionRadius = Math.max(0, spec.explosionRadius ?? 0);
-    p.selfDamage = spec.selfDamage ?? 0;
-    p.pierce = Math.max(0, Math.floor(spec.pierce ?? 0));
-    p.bounces = Math.max(0, Math.floor(spec.bounces ?? 0));
+    p.explosionRadius = Math.max(0, num(spec.explosionRadius, 0));
+    p.selfDamage = Math.max(0, num(spec.selfDamage, 0));
+    p.pierce = Math.max(0, Math.floor(num(spec.pierce, 0)));
+    p.bounces = Math.max(0, Math.floor(num(spec.bounces, 0)));
     p.canRoll = p.bounces > 0;
-    p.homing = Math.max(0, spec.homing ?? 0);
-    p.color = spec.color;
+    p.homing = Math.max(0, num(spec.homing, 0));
+    p.color = num(spec.color, 0xffffff);
     p.visual = spec.visual ?? 'orb';
-    p.size = viewSize(p.visual, p.radius, spec.scale ?? 1);
+    p.size = viewSize(p.visual, p.radius, Math.max(0.05, num(spec.scale, 1)));
     p.explodeOnExpire = spec.explodeOnExpire ?? p.explosionRadius > 0;
     p.sourceEnemy = spec.sourceEnemy ?? null;
     p.onImpact = spec.onImpact ?? null;
@@ -223,7 +231,9 @@ export class ProjectileSystem implements IProjectileSystem {
     p.view = view;
 
     p.trail = null;
-    if (p.visual === 'rocket' || p.visual === 'grenade' || (p.homing > 0 && p.visual !== 'arrow')) {
+    // 敌方弩矢也带一条细拖尾：飞行方向一眼可读，方便侧移躲避
+    const hostileArrow = p.owner === 'enemy' && (p.visual === 'arrow' || p.visual === 'bolt');
+    if (p.visual === 'rocket' || p.visual === 'grenade' || hostileArrow || (p.homing > 0 && p.visual !== 'arrow')) {
       const trail = this.acquireTrail();
       let width: number;
       let spacing: number;
@@ -235,6 +245,9 @@ export class ProjectileSystem implements IProjectileSystem {
       } else if (p.visual === 'grenade') {
         width = 0.06 * p.size;
         spacing = 0.18;
+      } else if (hostileArrow) {
+        width = p.visual === 'arrow' ? 0.05 * p.size : 0.7 * p.size;
+        spacing = 0.15;
       } else {
         width = p.size * (p.owner === 'enemy' ? 0.85 : 0.7);
         spacing = 0.2;
@@ -456,9 +469,18 @@ export class ProjectileSystem implements IProjectileSystem {
     } else {
       if (p.age < PLAYER_HOMING_DELAY) return;
       p.retargetTimer -= dt;
-      if (!p.homingTarget || !p.homingTarget.alive || p.retargetTimer <= 0) {
+      const cur = p.homingTarget;
+      if (!cur || !cur.alive || cur.untargetable) {
         p.homingTarget = this.pickTarget(p);
         p.retargetTimer = HOMING_RETARGET;
+      } else if (p.retargetTimer <= 0) {
+        // 粘住当前目标（齐射的狐火 / 飞弹按发射方向分到不同目标后不会再挤到同一个身上），
+        // 只有目标跑出范围或躲到掩体后才换
+        p.retargetTimer = HOMING_RETARGET;
+        cur.getBodyCenter(_tmp);
+        if (_tmp.distanceToSquared(p.pos) > PLAYER_HOMING_RANGE * PLAYER_HOMING_RANGE || !lineClear(this.ctx.world, _tmp, p.pos, 0.1)) {
+          p.homingTarget = this.pickTarget(p);
+        }
       }
       if (!p.homingTarget) return;
       p.homingTarget.getBodyCenter(_want).sub(p.pos);
@@ -482,7 +504,10 @@ export class ProjectileSystem implements IProjectileSystem {
     p.vel.copy(_dir).multiplyScalar(speed);
   }
 
-  /** 玩家追踪弹选目标：偏好前方、近距离、有视线的敌人 */
+  /**
+   * 玩家追踪弹选目标：以「偏离当前飞行方向的角度」为主、距离为辅，需要视线。
+   * 这样飞弹会去准星附近的敌人，而不是被侧面更近的敌人拐走。
+   */
   private pickTarget(p: Projectile): IEnemy | null {
     const list = this.ctx.enemies.list;
     const speed = p.vel.length();
@@ -492,14 +517,15 @@ export class ProjectileSystem implements IProjectileSystem {
     let bestScore = Infinity;
     for (let i = 0; i < list.length; i++) {
       const e = list[i];
-      if (!e.alive || p.hitSet.has(e)) continue;
+      if (!e.alive || e.untargetable || p.hitSet.has(e)) continue;
       e.getBodyCenter(_tmp);
       const dx = _tmp.x - p.pos.x, dy = _tmp.y - p.pos.y, dz = _tmp.z - p.pos.z;
       const d = Math.sqrt(dx * dx + dy * dy + dz * dz);
       if (d > PLAYER_HOMING_RANGE || d < 1e-3) continue;
       const cos = (dx * hx + dy * hy + dz * hz) / d;
       if (cos < -0.1) continue;
-      const score = d * (1.8 - cos);
+      // 偏 10° ≈ 0.45 分、45° ≈ 8.8 分；每米 0.15 分
+      const score = (1 - cos) * 30 + d * 0.15;
       if (score >= bestScore) continue;
       if (!lineClear(this.ctx.world, _tmp, p.pos, 0.1)) continue;
       best = e;
@@ -516,7 +542,7 @@ export class ProjectileSystem implements IProjectileSystem {
     const exclude = p.hitSet.size > 0 ? p.hitSet : undefined;
     let found = false;
     const h = this.ctx.enemies.raycast(origin, dir, maxDist, exclude);
-    if (h && h.enemy.alive && h.distance <= maxDist) {
+    if (h && h.enemy.alive && !h.enemy.untargetable && h.distance <= maxDist) {
       _sweep.enemy = h.enemy;
       _sweep.distance = h.distance;
       _sweep.point.copy(h.point);
@@ -524,7 +550,9 @@ export class ProjectileSystem implements IProjectileSystem {
       found = true;
     }
 
-    // 膨胀补测：投射物有体积，擦边也算命中
+    // 膨胀补测：投射物有体积，擦边也算命中。
+    // 几何与 EnemyBase.raycastHit 一致（身体胶囊顶压在头心下 0.3 个头半径、头部优先），只是各自膨胀了投射物半径。
+    // 首领覆盖了 raycastHit（多段命中体 + 登场期间不可命中），通用胶囊对不上，只用上面的精确射线。
     const r = p.radius;
     if (r >= INFLATE_MIN_RADIUS) {
       const list = this.ctx.enemies.list;
@@ -535,7 +563,7 @@ export class ProjectileSystem implements IProjectileSystem {
       let bestHead = false;
       for (let i = 0; i < list.length; i++) {
         const e = list[i];
-        if (!e.alive || (exclude && exclude.has(e)) || (found && e === _sweep.enemy)) continue;
+        if (!e.alive || e.isBoss || e.untargetable || (exclude && exclude.has(e)) || (found && e === _sweep.enemy)) continue;
         e.getBodyCenter(_tmp);
         const reach = e.height * 0.5 + e.radius + r + 0.3;
         if (distSqPointSegment(_tmp, origin, _end) > reach * reach) continue;
@@ -543,16 +571,16 @@ export class ProjectileSystem implements IProjectileSystem {
         const defR = e.def.radius > 0 ? e.def.radius : e.radius;
         const headR = (e.def.headRadius ?? e.def.radius * 0.55) * (e.radius / defR);
         const yMin = e.position.y + Math.min(e.radius, e.height * 0.3);
-        const yMax = Math.max(yMin, _head.y - headR * 0.6);
+        const yMax = Math.max(yMin, _head.y - headR * 0.3 - e.radius);
         const tb = rayVerticalCapsule(origin, dir, e.position.x, e.position.z, yMin, yMax, e.radius + r);
-        const th = raySphere(origin, dir, _head, headR + r * 0.5);
+        const th = raySphere(origin, dir, _head, headR + r);
         let t = -1;
         let head = false;
         if (th >= 0 && th <= maxDist) {
           t = th;
           head = true;
         }
-        if (tb >= 0 && tb <= maxDist && (t < 0 || tb < t - 0.05)) {
+        if (tb >= 0 && tb <= maxDist && (t < 0 || tb < t - headR * 0.5)) {
           t = tb;
           head = false;
         }
@@ -599,7 +627,9 @@ export class ProjectileSystem implements IProjectileSystem {
     const enemy = hit.enemy!;
     _pt.copy(hit.point);
     if (p.explosionRadius > 0) {
-      _pt.addScaledVector(_dir, -0.1);
+      // hit.point 是投射物中心（膨胀补测时离敌人表面还有一个投射物半径）；
+      // 爆心放到敌人真实表面上，直接命中的目标吃满爆炸伤害，而不是按距离衰减掉几个百分点
+      _pt.addScaledVector(_dir, Math.min(p.radius, WALL_PAD_MAX));
       this.detonate(p, _pt);
       this.impactCallback(p, _pt, enemy);
       this.kill(p);
@@ -655,30 +685,36 @@ export class ProjectileSystem implements IProjectileSystem {
       _pt.copy(p.pos);
       if (p.owner === 'player') this.detonate(p, _pt);
       else this.enemyBlast(p, _pt);
+    } else if (p.onImpact && !p.damage && p.explosionRadius <= 0) {
+      // 「载体」投射物（手雷、信标：没有伤害，效果全在 onImpact 里）一直没碰到东西就到期时，
+      // 在原地触发一次（hitEnemy = null），免得技能充能白白浪费
+      _pt.copy(p.pos);
+      this.impactCallback(p, _pt, null);
     }
     this.kill(p);
   }
 
-  /** 玩家方爆炸：交给 Combat.explode，原 source 放进 tags 以继承武器 / 技能加成 */
+  /**
+   * 玩家方爆炸：交给 Combat.explode。source / weaponUid / procDepth 保持原样（武器的爆炸仍算武器命中，
+   * 吃武器伤害、吸血与武器词条），由 explode 统一加上 'explosion' 标签以计入爆炸伤害加成。
+   */
   private detonate(p: Projectile, center: THREE.Vector3): void {
     const base = p.damage;
     let req: DamageRequest;
     if (base) {
-      const tags = base.source === 'explosion' ? base.tags : [base.source, ...(base.tags ?? [])];
-      req = { ...base, source: 'explosion', tags, headshot: false, point: undefined, direction: undefined };
+      req = { ...base, headshot: false, point: undefined, direction: undefined };
     } else {
       req = { base: 0, element: p.element, source: 'explosion' };
     }
-    this.ctx.combat.explode(center.clone(), p.explosionRadius, req, { playerDamage: p.selfDamage, color: p.color });
+    this.ctx.combat.explode(center, p.explosionRadius, req, { playerDamage: p.selfDamage, color: p.color });
   }
 
-  /** 敌方爆炸弹：只伤玩家（按距离衰减、墙体遮挡） */
+  /** 敌方爆炸弹：只伤玩家（按距离衰减、墙体遮挡）。震屏由 fx.explosion 按距离处理 */
   private enemyBlast(p: Projectile, center: THREE.Vector3): void {
     const ctx = this.ctx;
     const r = p.explosionRadius;
     ctx.fx.explosion(center, r, p.color);
     ctx.audio.play('explosion', { position: center, volume: clamp(0.45 + r * 0.08, 0.45, 0.95), pitch: clamp(1.2 - r * 0.05, 0.8, 1.15) });
-    explosionShake(ctx, center, r, 0.85);
     blastPlayer(ctx, center, r, p.enemyDamage, 0.5, p.element, p.sourceEnemy);
   }
 

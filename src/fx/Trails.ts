@@ -50,8 +50,17 @@ interface Beam {
   sparkAcc: number;
   /** 最近一次被刷新（合并）的帧号 */
   touchedFrame: number;
+  /** 世代号：槽位每次被新光束占用时换新，取消函数据此判断槽位是否还是自己的 */
   stamp: number;
+  /** 已被提前结束（正在淡出）：不再接受合并、不再溅火花 */
+  cancelled: boolean;
+  /** 这一世代的取消函数（合并进来的连续调用返回同一个，热路径不分配） */
+  cancel: () => void;
 }
+
+/** 光束被提前结束后的淡出时长（秒） */
+const BEAM_CANCEL_FADE = 0.1;
+const NOOP = (): void => {};
 
 interface Bolt {
   active: boolean;
@@ -85,6 +94,7 @@ export class TrailEffects {
       this.beams.push({
         active: false, a: new THREE.Vector3(), b: new THREE.Vector3(), color: 0, r: 1, g: 1, b2: 1,
         width: 0.2, age: 0, duration: 0.1, fadeWin: 0.05, seed: 0, sparkAcc: 0, touchedFrame: -1, stamp: 0,
+        cancelled: false, cancel: NOOP,
       });
     }
     for (let i = 0; i < BOLT_POOL; i++) {
@@ -102,7 +112,8 @@ export class TrailEffects {
   tracer(from: THREE.Vector3, to: THREE.Vector3, color: number, width: number): void {
     const dx = to.x - from.x, dy = to.y - from.y, dz = to.z - from.z;
     const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-    if (dist < 0.05) return;
+    // NaN 距离会让寿命也变成 NaN，槽位永远不回收
+    if (!(dist >= 0.05) || !Number.isFinite(dist + from.x + from.y + from.z)) return;
     const t = this.take(this.tracers);
     t.active = true;
     t.ax = from.x; t.ay = from.y; t.az = from.z;
@@ -117,10 +128,17 @@ export class TrailEffects {
     t.stamp = ++this.stamp;
   }
 
-  beam(from: THREE.Vector3, to: THREE.Vector3, color: number, width: number, duration: number, frame: number): void {
-    // 连续每帧调用的光束（同一发射点、同色）合并为一条，只刷新端点与寿命，避免叠亮闪烁
+  /**
+   * 返回取消函数：调用后光束约 0.1 秒内淡出并回收。合并进同一条光束的连续调用拿到的是同一个取消函数；
+   * 槽位被新光束复用后（世代号变了）旧的取消函数什么都不做，重复调用也安全。
+   */
+  beam(from: THREE.Vector3, to: THREE.Vector3, color: number, width: number, duration: number, frame: number): () => void {
+    // 连续每帧调用的光束（同一发射点、同色、上一两帧刚刷新过）合并为一条，只刷新端点与寿命，避免叠亮闪烁。
+    // 一次性的光束（狙击手、巫祝、秘卷）隔很多帧才会再来一条，不会被并进旧光束。
+    // 已被取消的光束不再接受合并：取消后再来的调用是一条新光束。
     for (const bm of this.beams) {
-      if (!bm.active || bm.color !== color || bm.touchedFrame === frame || bm.age <= 0) continue;
+      if (!bm.active || bm.cancelled || bm.color !== color || bm.touchedFrame === frame || bm.age <= 0) continue;
+      if (frame - bm.touchedFrame > 3) continue;
       if (bm.a.distanceToSquared(from) > 0.35 * 0.35) continue;
       bm.a.copy(from);
       bm.b.copy(to);
@@ -129,9 +147,9 @@ export class TrailEffects {
       // 至少再亮 duration 秒；已经在淡出的光束拉回常亮段
       bm.duration = bm.age + Math.max(bm.duration - bm.age, duration);
       bm.fadeWin = Math.min(0.12, Math.max(0.02, duration * 0.5));
-      return;
+      return bm.cancel;
     }
-    const bm = this.take(this.beams);
+    const bm = this.takeBeam();
     bm.active = true;
     bm.a.copy(from);
     bm.b.copy(to);
@@ -146,6 +164,38 @@ export class TrailEffects {
     bm.sparkAcc = 0;
     bm.touchedFrame = frame;
     bm.stamp = ++this.stamp;
+    bm.cancelled = false;
+    const stamp = bm.stamp;
+    bm.cancel = () => this.cancelBeam(bm, stamp);
+    return bm.cancel;
+  }
+
+  /** 光束槽位：空闲的优先，其次是已取消（正在淡出）的，最后才挤掉最旧的 */
+  private takeBeam(): Beam {
+    let oldest = this.beams[0];
+    let fading: Beam | null = null;
+    for (const bm of this.beams) {
+      if (!bm.active) return bm;
+      if (bm.cancelled && (!fading || bm.stamp < fading.stamp)) fading = bm;
+      if (bm.stamp < oldest.stamp) oldest = bm;
+    }
+    return fading ?? oldest;
+  }
+
+  /**
+   * 提前结束光束：从当前亮度起线性淡出（不会先变亮再暗），剩余时间本来就不到淡出时长的保持原样。
+   * 槽位已回收、已被复用（世代号不符）或已取消过时什么都不做。
+   */
+  private cancelBeam(bm: Beam, stamp: number): void {
+    if (!bm.active || bm.stamp !== stamp || bm.cancelled) return;
+    bm.cancelled = true;
+    const remain = Math.max(0, bm.duration - bm.age);
+    const fout = Math.min(1, remain / bm.fadeWin);
+    const target = BEAM_CANCEL_FADE * fout;
+    if (remain > target) {
+      bm.duration = bm.age + target;
+      bm.fadeWin = BEAM_CANCEL_FADE;
+    }
   }
 
   lightning(from: THREE.Vector3, to: THREE.Vector3, color: number): void {
@@ -302,8 +352,8 @@ export class TrailEffects {
       // 白热核心
       batch.quad(a.x, a.y, a.z, b.x, b.y, b.z, w * 0.3, w * 0.3, 0.8 + bm.r * 0.4, 0.8 + bm.g * 0.4, 0.8 + bm.b2 * 0.4, alpha, alpha, RIBBON_SOFT);
 
-      if (dt > 0) {
-        // 末端溅射火花与光团
+      if (dt > 0 && !bm.cancelled) {
+        // 末端溅射火花与光团（被提前结束的光束只淡出，不再溅射）
         bm.sparkAcc += dt * 45;
         _c.setRGB(bm.r, bm.g, bm.b2);
         while (bm.sparkAcc >= 1) {

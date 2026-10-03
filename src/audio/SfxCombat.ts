@@ -278,3 +278,65 @@ export const COMBAT_SFX: Record<CombatSfxId, Recipe> = {
     noise(v, { dur: 0.08, gain: 0.06, filter: 'lowpass', f: 600 });
   },
 };
+
+/**
+ * 「带位置播放」时换用的敌方音色。
+ *
+ * 其他模块用玩家的音效 id 表示敌方事件（契约里没有敌方专用 id）：狙击手开枪用 shot_sniper、
+ * 冰晶 / 妖后护盾碎裂用 shield_break、巫祝护佑用 skill_buff、Combat 用 hit_shield / hit_armor 表示
+ * 敌人护盾 / 护甲被打穿。玩家自己的这些声音一律不带 position，所以「带 position」就等于「敌方」：
+ * 换一个能区分的音色，免得玩家听到自己护盾碎了、自己开了一枪。节流与混音参数沿用原 id。
+ */
+export const ENEMY_VARIANT_SFX: Partial<Record<SfxId, Recipe>> = {
+  /** 敌方狙击：短促爆裂 + 激光式下滑电鸣，没有远山回声 */
+  shot_sniper(v) {
+    const d = drive(v, 3, v.out, 0.75);
+    noise(v, { dur: 0.05, gain: 0.9, filter: 'highpass', f: 2400, dest: d });
+    tone(v, { f: 150, f2: 45, sweep: 0.2, dur: 0.28, gain: 0.7, dest: d });
+    const lp = filt(v, 'lowpass', 5200, 2, undefined, 900, 0.3);
+    const o = tone(v, { type: 'sawtooth', f: 2400, f2: 380, sweep: 0.3, dur: 0.34, gain: 0.16, dest: lp });
+    fm(v, o, 55, 90, 'sine', 0, 0.34);
+    noise(v, { at: 0.02, dur: 0.45, gain: 0.14, filter: 'lowpass', f: 1600, f2: 300, attack: 0.02 });
+  },
+
+  /** 敌方护盾被打穿：带电的玻璃爆裂 + 下坠电鸣 */
+  hit_shield(v) {
+    for (let i = 0; i < 6; i++) tone(v, { f: rnd(2200, 4800), at: rnd(0, 0.08), dur: rnd(0.05, 0.14), gain: rnd(0.05, 0.09) });
+    const o = tone(v, { type: 'square', f: 1400, f2: 260, sweep: 0.22, dur: 0.26, gain: 0.07 });
+    fm(v, o, 70, 120, 'sine', 0, 0.26);
+    noise(v, { dur: 0.22, gain: 0.3, filter: 'highpass', f: 3800 });
+    tone(v, { f: 300, f2: 120, dur: 0.12, gain: 0.25 });
+  },
+
+  /** 敌方护甲被打穿：沉重的金属崩裂 + 碎片 */
+  hit_armor(v) {
+    const d = drive(v, 3, v.out, 0.8);
+    const f = rnd(300, 360);
+    tone(v, { type: 'triangle', f, dur: 0.32, gain: 0.26, dest: d });
+    tone(v, { type: 'triangle', f: f * 1.47, dur: 0.24, gain: 0.16 });
+    tone(v, { f: f * 2.76, dur: 0.16, gain: 0.08 });
+    noise(v, { dur: 0.06, gain: 0.4, filter: 'bandpass', f: 2200, q: 1.5, dest: d });
+    tone(v, { f: 120, f2: 55, dur: 0.18, gain: 0.4 });
+    const rubble = tremolo(v, 19, 0.85, v.out, 0.05, 0.3);
+    noise(v, { at: 0.05, dur: 0.3, gain: 0.14, filter: 'bandpass', f: 1500, q: 1.5, dest: rubble });
+  },
+
+  /** 敌方护盾 / 冰晶碎裂：清脆的冰裂与余振，没有玩家护盾破碎那声下坠的低鸣 */
+  shield_break(v) {
+    for (let i = 0; i < 9; i++) tone(v, { f: rnd(3000, 7000), at: rnd(0, 0.18), dur: rnd(0.06, 0.22), gain: rnd(0.05, 0.1) });
+    tone(v, { type: 'triangle', f: 1320, dur: 0.5, gain: 0.08 });
+    tone(v, { type: 'triangle', f: 1980, dur: 0.4, gain: 0.05 });
+    noise(v, { dur: 0.3, gain: 0.35, filter: 'highpass', f: 4200 });
+    noise(v, { dur: 0.08, gain: 0.25, filter: 'bandpass', f: 1600, q: 0.9 });
+  },
+
+  /** 敌方护佑（巫祝）：阴沉的减和弦微光，与玩家增益的明亮大三和弦区分 */
+  skill_buff(v) {
+    const lp = filt(v, 'lowpass', 1800, 1.5);
+    const notes = [330, 392, 466];
+    const oscs = notes.map((f, i) => tone(v, { type: 'triangle', f, at: i * 0.05, dur: 0.85, gain: 0.1, attack: 0.12, dest: lp }));
+    vibrato(v, oscs, 6, 25, 0, 0.1, 0.9);
+    tone(v, { f: 110, f2: 90, dur: 0.8, gain: 0.14, attack: 0.1 });
+    noise(v, { dur: 0.7, gain: 0.06, filter: 'bandpass', f: 900, f2: 2400, q: 2, attack: 0.2 });
+  },
+};

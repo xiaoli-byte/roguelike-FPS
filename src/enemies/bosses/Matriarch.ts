@@ -6,8 +6,8 @@
  *  - 冰枪齐射：身后浮现 5（二阶段 7）支冰枪，各自的瞄准线追踪玩家，发射前 0.3 秒逐支锁定（持续移动即可闪避）。
  *  - 俯冲：高空盘旋并画出直线预警 → 沿线低空俯冲撞击（侧移 / 冲刺躲开；撞上掩体会眩晕）。二阶段连续两次并散射冰棱。
  *  - 寒霜新星：降到低空蓄力（地面预警圈）→ 近身爆发；之后在低空停留片刻（输出窗口）。
- *  - 召唤冰晶：在场地各处召唤可击毁的冰晶，存活时持续为妖后回复护盾。
- * 阶段：50% 展开极寒之翼（变紫、回复部分护盾、召唤冰晶）；此后弹幕更密，且 4 秒未受伤会自行再生护盾。
+ *  - 召唤冰晶：在场地各处召唤 2（二阶段 3）个可击毁的冰晶（同时最多 4 个），存活时持续为妖后回复护盾。
+ * 阶段：50% 展开极寒之翼（变紫、回复部分护盾、召唤冰晶）；此后弹幕更密，且 5 秒内妖后与冰晶都没挨打时护盾会自行再生。
  */
 import * as THREE from 'three';
 import type { EnemyDef, GameContext, SpawnOptions } from '../../core/types';
@@ -31,8 +31,8 @@ export const MATRIARCH_DEF: EnemyDef = {
   coins: [60, 100],
   essence: 60,
   isBoss: true,
-  headY: 2.94,
-  headRadius: 0.45,
+  headY: 3.09,
+  headRadius: 0.42,
   knockbackResist: 1,
   color: 0x8fe3ff,
 };
@@ -42,6 +42,8 @@ const SHARD = 0x9fe8ff;
 const LOCK = 0xff5a7a;
 const MAX_LANCES = 7;
 const MAX_CRYSTALS = 4;
+/** 每个冰晶每秒为妖后回复的护盾（占护盾上限的比例） */
+const CRYSTAL_REGEN = 0.008;
 
 const _v = new THREE.Vector3();
 const _m = new THREE.Vector3();
@@ -120,6 +122,8 @@ export class Matriarch extends BossBase {
   private readonly crystalPts: THREE.Vector3[] = [];
   private crystalAnnounced = false;
   private crystalWant = 0;
+  /** 妖后或冰晶最近一次挨打的时间（二阶段护盾自愈的判定依据） */
+  private pressedAt = -999;
 
   constructor(ctx: GameContext, opts: SpawnOptions) {
     super(ctx, MATRIARCH_DEF, opts);
@@ -143,11 +147,11 @@ export class Matriarch extends BossBase {
   protected override buildModel(): THREE.Object3D {
     const { root, rig } = buildMatriarch();
     this.rig = rig;
-    this.weakAnchor = rig.head;
+    this.weakAnchor = rig.weak;
     this.muzzleAnchor = rig.core;
     this.hitShapes = [
-      { anchor: rig.head, radius: 0.45, halfHeight: 0, weak: true },
-      { anchor: rig.chest, radius: 0.55, halfHeight: 0.25, weak: false },
+      { anchor: rig.weak, radius: 0.42, halfHeight: 0, weak: true },
+      { anchor: rig.chest, radius: 0.45, halfHeight: 0.15, weak: false },
       { anchor: rig.skirt, radius: 0.75, halfHeight: 0, weak: false },
       { anchor: rig.tail, radius: 0.42, halfHeight: 0, weak: false },
       { anchor: rig.wingAnchorL, radius: 0.85, halfHeight: 0, weak: false },
@@ -176,7 +180,8 @@ export class Matriarch extends BossBase {
       start: () => {
         this.setAnim('spin', true);
         this.hoverTarget = 4.6;
-        this.spinAngle = this.facing;
+        // 随机相位：否则正前方站桩的玩家恰好落在固定的弹幕缝隙里（或者每次都被同一串冰棱打中）
+        this.spinAngle = this.facing + this.ctx.rng.range(-0.12, 0.12);
         this.spinVisual = 0;
         this.spinDir = this.ctx.rng.sign();
         this.fireAcc = 0;
@@ -304,7 +309,7 @@ export class Matriarch extends BossBase {
 
     // 召唤冰晶
     this.addMove({
-      id: 'crystals', cooldown: 18, recovery: 1.0,
+      id: 'crystals', cooldown: 20, recovery: 1.0,
       weight: () => (this.aliveCrystals() < 2 ? 3 : 0),
       start: () => {
         this.setAnim('summon', true);
@@ -570,7 +575,7 @@ export class Matriarch extends BossBase {
 
   private pickCrystalPoints(): void {
     const alive = this.aliveCrystals();
-    this.crystalWant = Math.max(0, Math.min(MAX_CRYSTALS - alive, this.phase >= 1 ? 4 : 3));
+    this.crystalWant = Math.max(0, Math.min(MAX_CRYSTALS - alive, this.phase >= 1 ? 3 : 2));
     const center = this.arenaCenter(_v);
     const cx = center.x;
     const cz = center.z;
@@ -616,7 +621,7 @@ export class Matriarch extends BossBase {
   // ───────────── 阶段 ─────────────
 
   protected override onPhase(_phase: number): void {
-    this.ctx.ui.toast('霜翼妖后展开了极寒之翼！', '#b9a4ff');
+    this.ctx.ui.toast('霜翼妖后展开了极寒之翼——停止攻击时她的护盾会自行再生！', '#b9a4ff');
     this.shield = Math.min(this.maxShield, this.shield + this.maxShield * 0.3);
     this.hoverTarget = 5;
     this.getBodyCenter(_v);
@@ -662,11 +667,18 @@ export class Matriarch extends BossBase {
     const bob = this.anim === 'dive' ? 0 : Math.sin(this.age * 1.1) * 0.35;
     this.flyTargetY = this.floorY() + this.hoverTarget + bob;
 
-    // 冰晶供能 / 二阶段自愈护盾
-    const n = this.aliveCrystals();
+    // 冰晶供能（每个已成形的冰晶每秒回复 0.8% 护盾上限）/ 二阶段 5 秒未受压制时自愈（每秒 2%）。
+    // 「受压制」= 妖后或她的冰晶最近挨过打：玩家专心击碎冰晶时不会被额外惩罚
+    this.aliveCrystals();
+    let linked = 0;
+    if (this.lastHurtTime > this.pressedAt) this.pressedAt = this.lastHurtTime;
+    for (const c of this.crystals) {
+      if (c.age >= c.spawnDuration) linked++;
+      if (c.lastHurtTime > this.pressedAt) this.pressedAt = c.lastHurtTime;
+    }
     if (this.shield < this.maxShield) {
-      let rate = n * 0.012;
-      if (this.phase >= 1 && this.ctx.time.now - this.lastHurtTime > 4) rate += 0.03;
+      let rate = linked * CRYSTAL_REGEN;
+      if (this.phase >= 1 && this.ctx.time.now - this.pressedAt > 5) rate += 0.02;
       if (rate > 0) this.shield = Math.min(this.maxShield, this.shield + this.maxShield * rate * dt);
     }
 
@@ -719,7 +731,8 @@ export class Matriarch extends BossBase {
   protected override onEntranceEnd(): void {
     this.setAnim('idle');
     this.restLeft = 1.0;
-    this.ctx.ui.banner(this.displayName, '霜雪古寺之主', 2.4);
+    // 名称横幅已由关卡导演在刷出时显示，这里只补一条弱点提示
+    this.ctx.ui.toast('霜雪古寺之主——头顶冰冠是弱点', '#8fe3ff');
   }
 
   protected override animate(dt: number): void {

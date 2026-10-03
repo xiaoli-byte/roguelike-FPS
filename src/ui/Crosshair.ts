@@ -189,9 +189,9 @@ export class Crosshair {
     this.flashEl.style.opacity = '0';
   }
 
-  update(dt: number, now: number): void {
+  update(dt: number, now: number, playing = true): void {
     this.frame++;
-    this.updateReticle(dt);
+    this.updateReticle(dt, playing);
     this.updateHitMarker(now);
     this.updateDirs(now);
     this.updateFlash(now);
@@ -200,9 +200,9 @@ export class Crosshair {
 
   // ───────────── 准星 ─────────────
 
-  private updateReticle(dt: number): void {
+  private updateReticle(dt: number, playing: boolean): void {
     const ctx = this.ctx;
-    const scoped = ctx.cameraFx.fovKick < SCOPE_KICK;
+    const scoped = playing && ctx.cameraFx.fovKick < SCOPE_KICK;
     if (scoped !== this.scoped) {
       this.scoped = scoped;
       this.scopeEl.classList.toggle('is-on', scoped);
@@ -220,11 +220,11 @@ export class Crosshair {
       this.reticle.style.setProperty('--gap', `${this.gap.toFixed(1)}px`);
     }
 
-    // 准星压到敌人身上时变红（每 3 帧检测一次，且被墙挡住不算）
+    // 准星压到敌人身上时变红（每 3 帧检测一次，且被墙挡住不算；暂停 / 模态时不检测）
     if (this.frame % 3 === 0) {
       let on = false;
       const p = ctx.player;
-      if (p.alive) {
+      if (playing && p.alive) {
         p.getAimDirection(_dir);
         const hit = ctx.enemies.raycast(p.eye, _dir, 150);
         if (hit && hit.enemy.alive) on = !ctx.world.segmentBlocked(p.eye, hit.point);

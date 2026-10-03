@@ -31,7 +31,21 @@ const SPRING_C = 17;
 
 const DASH_FOV = 6;
 const SPEED_FOV_MAX = 6;
+/** 冲刺 + 高速带来的 FOV 增量合计上限（度） */
+const EXTRA_FOV_MAX = 8;
+/** 开镜放大到这么多度（fovKick ≤ −此值）时完全取消冲刺 / 高速 FOV */
+const AIM_SUPPRESS_KICK = 8;
 const FOV_LAMBDA = 16;
+
+/**
+ * 屏幕震动：cameraFx.shakeIntensity 为 0..1 的相对强度（1 = 很强；fx.shake 单次写入上限 1.5，这里同样钳在 1.5）。
+ * 强度为 1 时：位移约 ±5 厘米、俯仰约 ±1°、偏航约 ±0.8°、横滚约 ±1.1°。
+ * 只作用于渲染相机，不影响 eye 与瞄准方向，所以旋转分量保持克制，避免准星与弹道明显错位。
+ */
+const SHAKE_MAX = 1.5;
+/** 强度每秒按 e^(−rate·t) 衰减；shakeTime 的最后 SHAKE_FADE 秒线性淡出 */
+const SHAKE_DECAY = 2.5;
+const SHAKE_FADE = 0.12;
 
 const DEATH_TIME = 0.7;
 
@@ -64,6 +78,15 @@ export class CameraRig {
     this.speedFov = 0;
     this.fov = NaN;
     this.deathT = 0;
+  }
+
+  /** 传送 / 换关：清掉残留的弹簧位移与冲刺 FOV（不影响死亡倒地与晃动相位） */
+  calm(): void {
+    this.dip = this.dipVel = 0;
+    this.punchPitch = this.punchPitchVel = 0;
+    this.punchRoll = this.punchRollVel = 0;
+    this.dashFov = 0;
+    this.speedFov = 0;
   }
 
   /** 落地：按下落速度下沉 */
@@ -125,10 +148,10 @@ export class CameraRig {
     // ── 屏幕震动（fx 写入强度与时长，这里读取并衰减） ──
     const fx = ctx.cameraFx;
     let amp = 0;
-    if (fx.shakeTime > 0 && fx.shakeIntensity > 0) {
+    if (fx.shakeTime > 0 && fx.shakeIntensity > 0 && Number.isFinite(fx.shakeIntensity) && Number.isFinite(fx.shakeTime)) {
       fx.shakeTime = Math.max(0, fx.shakeTime - dt);
-      fx.shakeIntensity *= Math.exp(-2.5 * dt);
-      amp = Math.min(2, fx.shakeIntensity) * Math.min(1, fx.shakeTime / 0.12);
+      fx.shakeIntensity *= Math.exp(-SHAKE_DECAY * dt);
+      amp = Math.min(SHAKE_MAX, fx.shakeIntensity) * Math.min(1, fx.shakeTime / SHAKE_FADE);
       if (fx.shakeTime <= 0) fx.shakeIntensity = 0;
     } else {
       fx.shakeTime = 0;
@@ -166,9 +189,15 @@ export class CameraRig {
 
     // ── FOV ──
     this.dashFov = damp(this.dashFov, 0, 5, dt);
-    const speedTarget = s.alive ? clamp((s.speedH - s.maxSpeed * 1.08) * 0.55, 0, SPEED_FOV_MAX) : 0;
+    // 冲刺本身已有 dashFov 冲击，冲刺中不再叠加高速 FOV
+    const speedTarget = s.alive && !s.dashing ? clamp((s.speedH - s.maxSpeed * 1.08) * 0.55, 0, SPEED_FOV_MAX) : 0;
     this.speedFov = damp(this.speedFov, speedTarget, 6, dt);
-    const target = clamp(ctx.settings.fov + fx.fovKick + this.dashFov + this.speedFov, 20, 130);
+    const kick = Number.isFinite(fx.fovKick) ? fx.fovKick : 0;
+    // 开镜（fovKick < 0）时压掉冲刺 / 高速带来的视野变宽，避免狙击镜里画面「呼吸」
+    const aimK = kick < 0 ? clamp01(1 + kick / AIM_SUPPRESS_KICK) : 1;
+    const extra = Math.min(EXTRA_FOV_MAX, this.dashFov + this.speedFov) * aimK;
+    const baseFov = Number.isFinite(ctx.settings.fov) ? ctx.settings.fov : 80;
+    const target = clamp(baseFov + kick + extra, 20, 130);
     this.fov = Number.isNaN(this.fov) ? target : damp(this.fov, target, FOV_LAMBDA, dt);
     if (Math.abs(camera.fov - this.fov) > 0.005) {
       camera.fov = this.fov;

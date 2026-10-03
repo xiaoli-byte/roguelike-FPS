@@ -27,13 +27,12 @@ export class SettingsPanel {
     h('h2', 'gf-panel__title', head, '设置');
     h('p', 'gf-panel__sub', head, '改动即时生效，并自动保存');
 
+    // 两列：左「画面」，右「操作 + 声音」（高度大致相当）；窄时自动折成一列
     const body = h('div', 'gf-settings__body', this.root);
+    const colA = h('div', 'gf-settings__col', body);
+    const colB = h('div', 'gf-settings__col', body);
 
-    const g1 = this.group(body, '操作');
-    this.slider(g1, '鼠标灵敏度', 'sensitivity', 0.1, 3, 0.05, (v) => `${v.toFixed(2)}×`);
-    this.toggle(g1, '反转 Y 轴', 'invertY');
-
-    const g2 = this.group(body, '画面');
+    const g2 = this.group(colA, '画面');
     this.slider(g2, '视野（FOV）', 'fov', 60, 110, 1, (v) => `${Math.round(v)}°`);
     this.segmented(g2, '画质', [
       { value: 'low', label: '低' },
@@ -43,7 +42,11 @@ export class SettingsPanel {
     this.toggle(g2, '伤害数字', 'damageNumbers');
     this.slider(g2, '屏幕震动', 'screenShake', 0, 1, 0.05, pct);
 
-    const g3 = this.group(body, '声音');
+    const g1 = this.group(colB, '操作');
+    this.slider(g1, '鼠标灵敏度', 'sensitivity', 0.1, 3, 0.05, (v) => `${v.toFixed(2)}×`);
+    this.toggle(g1, '反转 Y 轴', 'invertY');
+
+    const g3 = this.group(colB, '声音');
     this.slider(g3, '主音量', 'masterVolume', 0, 1, 0.01, pct, true);
     this.slider(g3, '音效', 'sfxVolume', 0, 1, 0.01, pct, true);
     this.slider(g3, '音乐', 'musicVolume', 0, 1, 0.01, pct);

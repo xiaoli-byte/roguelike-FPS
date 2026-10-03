@@ -16,10 +16,14 @@ function num(v: number): string {
   return `${Math.round(v * 10) / 10}`;
 }
 
-/** 武器显示名：传说前缀 + 名称 + 强化等级 */
-export function weaponDisplayName(inst: WeaponInstance, R: ResolvedWeapon): string {
+/**
+ * 武器显示名：传说前缀 + 名称。
+ * 不含强化等级——HUD、Tab 面板、强化台、拾取提示、强化奖励提示都会自己在名字后面拼 `+等级`，
+ * 这里再带上就会显示成「裂风步枪 +2 +2」。强化等级另见 stats 里的「强化」一行。
+ */
+export function weaponDisplayName(R: ResolvedWeapon): string {
   const lg = R.legendary ? legendaryName(R.legendary) : null;
-  return `${lg ? `${lg}·` : ''}${R.def.name}${inst.level > 0 ? ` +${inst.level}` : ''}`;
+  return `${lg ? `${lg}·` : ''}${R.def.name}`;
 }
 
 export function describeWeapon(inst: WeaponInstance, R: ResolvedWeapon): WeaponDescription {
@@ -70,7 +74,7 @@ export function describeWeapon(inst: WeaponInstance, R: ResolvedWeapon): WeaponD
   traits.push(...legendary);
 
   return {
-    name: weaponDisplayName(inst, R),
+    name: weaponDisplayName(R),
     category: def.category,
     rarity: inst.rarity,
     rarityName: RARITY_NAMES[inst.rarity] ?? RARITY_NAMES[0],

@@ -7,16 +7,19 @@ import type { Element, GameContext, IEnemy } from '../core/types';
 import { clamp01 } from '../core/math';
 
 const _chest = new THREE.Vector3();
+const _imp = new THREE.Vector3();
 
 /**
- * 以 center 为中心的球形爆炸对玩家结算（按距离线性衰减到边缘的 1 - falloff）。
+ * 以 center 为中心的球形爆炸对玩家结算（伤害按距离线性衰减到边缘的 1 - falloff），
+ * 命中时附带向外的冲击（knock 为爆心处的水平速度，m/s；与敌方爆炸弹的手感一致）。
  * @returns 是否命中玩家
  */
 export function blastPlayer(
   ctx: GameContext, center: THREE.Vector3, radius: number, damage: number,
-  element: Element, source: IEnemy | null, falloff = 0.5, shake = 0.6,
+  element: Element, source: IEnemy | null, falloff = 0.5, shake = 0.6, knock = 5.5,
 ): boolean {
   const p = ctx.player;
+  if (!(radius > 0) || !Number.isFinite(center.x + center.y + center.z)) return false;
   _chest.set(p.position.x, p.position.y + Math.min(1.1, p.height * 0.6), p.position.z);
   const d = center.distanceTo(_chest);
   // 远处也给一点震动，增强临场感
@@ -24,7 +27,17 @@ export function blastPlayer(
   if (!p.alive || d > radius + p.radius) return false;
   if (ctx.world.segmentBlocked(center, _chest)) return false;
   const k = 1 - falloff * clamp01(d / radius);
-  ctx.combat.damagePlayer(damage * k, element, source, center);
+  const dealt = ctx.combat.damagePlayer(damage * k, element, source, center);
+  // 冲刺无敌帧闪过时不吃冲击
+  if (knock > 0 && p.alive && (dealt > 0 || p.invulnerableTime <= 0)) {
+    _imp.set(_chest.x - center.x, 0, _chest.z - center.z);
+    const h = _imp.length();
+    if (h > 1e-3) _imp.multiplyScalar(1 / h);
+    else _imp.set(0, 0, 0);
+    _imp.multiplyScalar(knock * k);
+    _imp.y = knock * 0.45 * k;
+    p.applyImpulse(_imp);
+  }
   return true;
 }
 

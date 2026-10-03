@@ -4,8 +4,8 @@
  * 设计要点（DESIGN.md 第 8 节）：
  *  - 章节敌人池：第一章 grunt / archer / bomber（第 2 关起加入 brute）；
  *    第二章 grunt / archer / wisp / shaman / marksman / bomber；第三章全部。
- *  - combat：第一章 3 波、第三章 4 波，每关 12–26 只，随关卡序号递增；
- *    后一波在上一波剩余 ≤ 2（第一章）/ 3 只时进场。
+ *  - combat：第一章 3 波、第三章 4 波，每关 12 + 章×3 + 关×1.5（+0–2 随机）只，限制在 12–26；
+ *    后一波在上一波剩余 ≤ 2（第一、三章）/ 3（第二章）只时进场——第三章敌人伤害高，同时存活数要压住。
  *  - elite：2 波，普通怪更少，外加 2–3 个精英。
  *  - boss：只有 Boss 的一波。
  *  - 每一波按「战术模板」配比近战 / 远程 / 虫群 / 辅助，保证近战压迫 + 远程火力的搭配。
@@ -44,7 +44,7 @@ const TEMPLATES: Record<TemplateId, Template> = {
   /** 虫潮：爆骸虫蜂拥，刀客夹杂 */
   swarm: { mix: { melee: 0.35, ranged: 0.2, swarm: 0.45, support: 0 }, favor: { wisp: 1.4 } },
   /** 盾阵：重装压阵，巫祝护佑，远程点射 */
-  phalanx: { mix: { melee: 0.5, ranged: 0.3, swarm: 0.05, support: 0.15 }, favor: { brute: 2.5, shaman: 1.5 } },
+  phalanx: { mix: { melee: 0.5, ranged: 0.3, swarm: 0.05, support: 0.15 }, favor: { brute: 1.8, shaman: 1.5 } },
 };
 
 function chapterPool(chapter: number, index: number): PoolEntry[] {
@@ -69,7 +69,7 @@ function chapterPool(chapter: number, index: number): PoolEntry[] {
   }
   return [
     { id: 'grunt', role: 'melee', weight: 3.5, cap: 5, eliteWeight: 2 },
-    { id: 'brute', role: 'melee', weight: 1.8, cap: 2, eliteWeight: 2.4 },
+    { id: 'brute', role: 'melee', weight: 1.4, cap: 2, eliteWeight: 2.4 },
     { id: 'archer', role: 'ranged', weight: 2.4, cap: 3, eliteWeight: 1.5 },
     { id: 'wisp', role: 'ranged', weight: 2.2, cap: 3, eliteWeight: 1.8 },
     { id: 'marksman', role: 'ranged', weight: 1.2, cap: 2, eliteWeight: 1.5 },
@@ -104,7 +104,7 @@ export function buildWaves(ctx: GameContext, stage: StageNode): WavePlan[] {
 // ───────────── combat ─────────────
 
 function combatTotal(rng: Rng, ch: number, idx: number): number {
-  return Math.max(12, Math.min(26, Math.round(12 + ch * 4 + idx * 1.5 + rng.range(0, 2))));
+  return Math.max(12, Math.min(26, Math.round(12 + ch * 3 + idx * 1.5 + rng.range(0, 2))));
 }
 
 function combatWaves(rng: Rng, ch: number, idx: number): WavePlan[] {
@@ -114,6 +114,9 @@ function combatWaves(rng: Rng, ch: number, idx: number): WavePlan[] {
   const sizes = splitSizes(total, waveCount === 3 ? [0.27, 0.33, 0.4] : [0.2, 0.24, 0.27, 0.29]);
   const templates = pickTemplates(rng, waveCount, ch, idx);
 
+  // 战斗关的精英总数上限：不超过同章精英关（第二章 2–3 个、第三章 3 个），精英关才是「精英多」的关
+  const eliteCap = ch === 0 ? 1 : ch === 1 ? 2 : 3;
+  let eliteTotal = 0;
   const plans: WavePlan[] = [];
   for (let w = 0; w < waveCount; w++) {
     const comp: WaveComp = { counts: fillWave(rng, pool, sizes[w], TEMPLATES[templates[w]]), elites: [] };
@@ -123,14 +126,19 @@ function combatWaves(rng: Rng, ch: number, idx: number): WavePlan[] {
       if (last && rng.chance([0, 0.25, 0.45, 0.6][Math.min(3, idx)])) elites = 1;
     } else if (ch === 1) {
       if (last) elites = 1;
-      else if (w > 0 && rng.chance(0.35 + 0.1 * idx)) elites = 1;
+      else if (w > 0 && rng.chance(0.25 + 0.08 * idx)) elites = 1;
     } else {
-      // 第三章：每波都可能有精英，压轴波必有（期望约 2.5–3 个，仍少于同章精英关的强度）
-      if (last) elites = 1 + (rng.chance(0.1 + 0.1 * idx) ? 1 : 0);
-      else elites = rng.chance(w === 0 ? 0.3 + 0.1 * idx : 0.6) ? 1 : 0;
+      // 第三章：中段波次常有精英，压轴波必有（期望约 2.1–2.4 个：多于第二章的 1.2–1.7，少于同章精英关的 3 个）
+      if (last) elites = 1 + (rng.chance(0.15 + 0.05 * idx) ? 1 : 0);
+      else elites = rng.chance(w === 0 ? 0.2 + 0.1 * idx : 0.4) ? 1 : 0;
     }
+    // 压轴波的精英优先保留：前面的波次不能把名额用光
+    const reserve = last ? 0 : 1;
+    elites = Math.max(0, Math.min(elites, eliteCap - reserve - eliteTotal));
+    eliteTotal += elites;
     for (let i = 0; i < elites; i++) promoteElite(rng, pool, comp);
-    plans.push(toPlan(comp, w === 0 ? 0 : ch === 0 ? 2 : 3, w === 0 ? 1.0 : 1.2 + rng.range(0, 0.8)));
+    // 后续波进场阈值：第二章剩 ≤3，第一、三章剩 ≤2（第三章敌人伤害倍率高，压低同时存活数）
+    plans.push(toPlan(comp, w === 0 ? 0 : ch === 1 ? 3 : 2, w === 0 ? 1.0 : 1.2 + rng.range(0, 0.8)));
   }
   return plans;
 }

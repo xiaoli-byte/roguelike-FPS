@@ -5,10 +5,13 @@
 import type { SfxId } from '../core/types';
 import type { Recipe } from './Synth';
 import { WEAPON_SFX } from './SfxWeapons';
-import { COMBAT_SFX } from './SfxCombat';
+import { COMBAT_SFX, ENEMY_VARIANT_SFX } from './SfxCombat';
 import { UI_SFX } from './SfxUi';
 
 export const SFX: Record<SfxId, Recipe> = { ...WEAPON_SFX, ...COMBAT_SFX, ...UI_SFX };
+
+/** 带 position 播放时优先使用的配方（敌方事件借用了玩家音效 id，见 SfxCombat.ENEMY_VARIANT_SFX） */
+export const SFX_POSITIONAL: Partial<Record<SfxId, Recipe>> = ENEMY_VARIANT_SFX;
 
 export interface SfxMeta {
   /** 基础音量 */

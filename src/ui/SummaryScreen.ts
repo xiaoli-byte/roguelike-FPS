@@ -5,7 +5,7 @@
 import type { GameContext, RunSummary } from '../core/types';
 import { RARITY_CSS, STAGES_PER_CHAPTER } from '../core/types';
 import { formatTime } from '../core/math';
-import { h, icon, button, Presence, formatNum, countUp, clearChildren } from './dom';
+import { h, icon, button, Presence, formatNum, countUp, clearChildren, fitPanel } from './dom';
 import { ICON_COIN, ICON_ESSENCE, ICON_GATE, ICON_HOURGLASS, ICON_SKULL, ICON_SPARK } from './icons';
 import { cnNum, heroColor, heroGlyph } from './labels';
 
@@ -21,6 +21,7 @@ export class SummaryScreen {
   private scrollsEl: HTMLDivElement;
   private weaponsEl: HTMLDivElement;
   private retryBtn: HTMLButtonElement;
+  private panel: HTMLDivElement;
   private summary: RunSummary | null = null;
 
   constructor(parent: HTMLElement, private readonly ctx: GameContext) {
@@ -28,6 +29,7 @@ export class SummaryScreen {
     this.presence = new Presence(this.root, 360);
     h('div', 'gf-summary__bg', this.root);
     const panel = h('div', 'gf-summary__panel', this.root);
+    this.panel = panel;
 
     this.titleEl = h('h1', 'gf-summary__title', panel);
     this.epitaphEl = h('div', 'gf-summary__epitaph', panel);
@@ -111,9 +113,16 @@ export class SummaryScreen {
     for (const w of s.weapons) h('span', 'gf-chip gf-chip--weapon', this.weaponsEl, w);
 
     this.presence.show();
+    this.root.scrollTop = 0;
+    fitPanel(this.panel);
   }
 
   hide(): void {
     this.presence.hide();
+  }
+
+  /** 视口变化时重新缩放 */
+  refit(): void {
+    if (this.presence.visible) fitPanel(this.panel);
   }
 }

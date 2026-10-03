@@ -2,7 +2,7 @@
  * 雷隼 · 天穹猎手：雷暴信标（E）、鹰眼·裁决（Q）、凌空（被动：二段跳 / 空中增伤 / 滑翔）。
  */
 import * as THREE from 'three';
-import type { DamageResult, GameContext, HeroDef, IEnemy } from '../../core/types';
+import type { DamageRequest, DamageResult, GameContext, HeroDef, IEnemy } from '../../core/types';
 import {
   EffectSession, type HeroSkillDef, SKILL_COLORS, groundYBelow, handOrigin, nearestEnemies, radiusScale, skillHit, throwVelocity,
 } from './common';
@@ -15,6 +15,13 @@ const BEACON_INTERVAL = 0.5;
 const BEACON_TARGETS = 4;
 const BEACON_DAMAGE = 45;
 const BEACON_TOP = 1.05;
+/**
+ * 投掷物存活时间。正常抛物线 2.5 秒内必然落地（投射物系统有竞技场 floorY 的地面兜底）。
+ * 信标投掷物是「载体」投射物（不带 damage、没有 explosionRadius，效果全在 onImpact 里）：
+ * 万一到期仍未碰到东西，投射物系统会在它到期的位置回调一次 onImpact(point, null)，
+ * deployBeacon 再把信标落到该点正下方的地面展开，不会空耗充能。
+ */
+const BEACON_THROW_LIFETIME = 6;
 
 const HAWK_DURATION = 8;
 const HAWK_FIRE_RATE = 0.4;
@@ -127,6 +134,9 @@ function beaconZap(ctx: GameContext, top: THREE.Vector3, radius: number): number
     e.getBodyCenter(_b);
     ctx.fx.lightning(top, _b, SKILL_COLORS.shock);
     const req = skillHit(BEACON_DAMAGE, 'shock', 1);
+    // 平衡：信标每跳按「连锁伤害」结算（procDepth 1），附着的雷殛不再向周围弹射；
+    // 雷殛叠层、叠满 3 层眩晕与 +15% 雷伤标记照常。否则 4 个目标 × 每跳弹射 3 次，输出约为设计值的 2.5 倍。
+    req.procDepth = 1;
     req.point = _b.clone();
     req.direction = _a.subVectors(_b, top).normalize().clone();
     ctx.combat.damageEnemy(e, req);
@@ -193,7 +203,7 @@ function deployBeacon(ctx: GameContext, point: THREE.Vector3): void {
 const stormBeacon: HeroSkillDef = {
   id: 'falcon_storm_beacon',
   name: '雷暴信标',
-  description: `投出雷暴信标，落地后持续 ${BEACON_DURATION} 秒，每 ${BEACON_INTERVAL} 秒电击 ${BEACON_RADIUS} 米内最多 ${BEACON_TARGETS} 个敌人，造成 ${BEACON_DAMAGE} 点雷电伤害并必定附加雷殛。2 次充能，每次充能 10 秒。`,
+  description: `投出雷暴信标，落地后持续 ${BEACON_DURATION} 秒，每 ${BEACON_INTERVAL} 秒电击 ${BEACON_RADIUS} 米内最多 ${BEACON_TARGETS} 个敌人，造成 ${BEACON_DAMAGE} 点雷电伤害并必定附加雷殛（可叠层眩晕，但不会触发雷殛弹射）。2 次充能，每次充能 10 秒。`,
   cooldown: 10,
   charges: 2,
   activate(ctx) {
@@ -206,7 +216,7 @@ const stormBeacon: HeroSkillDef = {
       velocity: _vel.clone(),
       gravity: 22,
       radius: 0.2,
-      lifetime: 4,
+      lifetime: BEACON_THROW_LIFETIME,
       element: 'shock',
       color: SKILL_COLORS.shock,
       visual: 'grenade',
@@ -228,10 +238,20 @@ const hawkSession = new EffectSession(() => {
   hawkLeft = 0;
 });
 
+/**
+ * 武器造成的伤害：source 'weapon'。武器投射物的爆炸由 Combat.explode 结算，请求保持 source 'weapon'，
+ * 只多一个 'explosion' 标签（tags 含 'explosion'），所以第一条判断已经覆盖它。
+ * 第二条只是兼容旧约定「source 'explosion' + tag 'weapon'」，现行战斗模块不会再发出这种请求。
+ */
+function isWeaponHit(req: DamageRequest): boolean {
+  if (req.source === 'weapon') return true;
+  return req.source === 'explosion' && !!req.tags && req.tags.indexOf('weapon') >= 0;
+}
+
 function onHawkHit(ctx: GameContext, enemy: IEnemy, result: DamageResult): void {
   if (!hawkSession.active) return;
   const req = result.request;
-  if (req.source !== 'weapon' || (req.procDepth ?? 0) > 0 || !(result.dealt > 0)) return;
+  if (!isWeaponHit(req) || (req.procDepth ?? 0) > 0 || !(result.dealt > 0)) return;
   if (req.point) _a.copy(req.point);
   else enemy.getBodyCenter(_a);
   _exclude.clear();

@@ -1,6 +1,7 @@
 /**
  * 爆骸虫（bomber）：迂回冲向玩家；2.5 米内点燃引信（0.6 秒：停步、膨胀闪烁、地面预警），
  * 随后自爆（4 米，按距离衰减）并死亡。被玩家提前击杀时爆炸只伤害其他敌人。
+ * 引信期间被击杀 / 眩晕时，地面预警圈立即撤掉（这次对玩家的自爆不会再发生）。
  * 背上发光的囊是弱点（头部判定）。
  *
  * 状态机：chase → fuse → （自爆）
@@ -23,8 +24,9 @@ export const BOMBER_DEF: EnemyDef = {
   damage: 30,
   coins: [2, 3],
   essence: 1,
+  // 弱点 = 背上的发光爆囊（球心离地 0.72，半径 0.25）；判定球跟着爆囊移动，引信膨胀时一起变高
   headY: 0.72,
-  headRadius: 0.38,
+  headRadius: 0.26,
   knockbackResist: 0,
   color: 0xff7a2a,
 };
@@ -53,8 +55,12 @@ export class Bomber extends StandardEnemy {
   private sac!: THREE.Mesh;
   private legs: Leg[] = [];
   private fuseTime = FUSE_TIME;
+  /** 引信地面预警的取消函数（引信被打断时撤掉预警圈） */
+  private fuseWarning: (() => void) | null = null;
   private detonated = false;
   private weave = Math.random() * 10;
+  private clearTimer = 0;
+  private pathClear = false;
 
   constructor(ctx: GameContext, opts: SpawnOptions) {
     super(ctx, BOMBER_DEF, opts);
@@ -75,6 +81,7 @@ export class Bomber extends StandardEnemy {
     }
     // 背上的爆囊（弱点）
     this.sac = this.glowPart(body, Geo.ico(0.25, 1), C.sac, C.sacHot, 0, 0.3, -0.08);
+    this.setHeadAnchor(this.sac, 0, 0, 0);
     // 头部与颚
     const head = joint(body, 0, -0.02, 0.5);
     part(head, Geo.box(0.3, 0.22, 0.26), flat(C.plate), 0, 0, 0);
@@ -103,21 +110,27 @@ export class Bomber extends StandardEnemy {
         if (d <= TRIGGER_RANGE && this.verticalReach(2) && this.sees) {
           this.fuseTime = this.windup(FUSE_TIME, 0.45);
           this.setState('fuse');
-          this.ctx.fx.groundWarning(this.position.clone(), BLAST_RADIUS, this.fuseTime, 0xff4a1a);
+          this.fuseWarning = this.ctx.fx.groundWarning(this.position.clone(), BLAST_RADIUS, this.fuseTime, 0xff4a1a);
           this.ctx.audio.play('telegraph', { position: this.position, volume: 0.9, pitch: 1.3 });
           this.stopMoving();
           break;
         }
-        if (d > 5 && this.sees) {
-          // 远处蛇形迂回，近处直扑
+        // 直线是否畅通：每 0.2 秒查一次（directPathClear 是 4 条射线）
+        this.clearTimer -= dt;
+        if (this.clearTimer <= 0) {
+          this.clearTimer = 0.2;
+          this.pathClear = this.sees && d > 5 && this.verticalReach(0.6) && this.directPathClear(pl.position);
+        }
+        if (d > 5 && this.sees && this.pathClear) {
+          // 远处同层且直线畅通：蛇形迂回逼近
           this.weave += dt * 5;
           const dx = pl.position.x - this.position.x;
           const dz = pl.position.z - this.position.z;
           const w = Math.sin(this.weave) * 0.55;
-          if (this.directPathClear(pl.position)) this.setMove(dx - dz * w, dz + dx * w, this.speed);
-          else this.navigate(pl.position, this.speed, 0.5);
+          this.setMove(dx - dz * w, dz + dx * w, this.speed);
         } else {
-          this.navigate(pl.position, this.speed, 0.5);
+          // 近处直扑；玩家在高台上时会绕到台阶爬上去
+          this.approachPlayer(this.speed, 0.5);
         }
         this.faceMovement(12, dt);
         break;
@@ -143,6 +156,8 @@ export class Bomber extends StandardEnemy {
   private detonate(): void {
     if (this.detonated || !this.alive) return;
     this.detonated = true;
+    // 预警如期兑现：让它自然收尾，下面 onKilled → cancelAttack 不再撤销它
+    this.fuseWarning = null;
     this.getBodyCenter(_c);
     this.ctx.fx.explosion(_c.clone(), BLAST_RADIUS, 0xff6a1f);
     this.ctx.audio.play('explosion', { position: _c });
@@ -168,8 +183,9 @@ export class Bomber extends StandardEnemy {
     const center = this.getBodyCenter(new THREE.Vector3());
     const base = DEATH_BLAST_BASE * this.level * (this.isElite ? 1.5 : 1);
     ctx.tasks.delay(0.08, () => {
+      // 击退要显式给（combat.explode 不再默认击退）
       ctx.combat.explode(center, BLAST_RADIUS, {
-        base, element: 'fire', source: 'explosion', procDepth: 1, elementChance: 0.5, canCrit: false,
+        base, element: 'fire', source: 'explosion', procDepth: 1, elementChance: 0.5, canCrit: false, knockback: 7,
       }, { playerDamage: 0, color: 0xff6a1f, falloff: 0.5 });
     });
   }
@@ -181,7 +197,11 @@ export class Bomber extends StandardEnemy {
   }
 
   protected override cancelAttack(): void {
-    // 被眩晕时引信熄灭（地面预警已经播完，不能再无预警爆炸），醒来后重新点燃
+    // 引信被打断（眩晕 / 被击杀 / 清理 / 玩家死亡）：撤掉还在填充的预警圈。
+    // 眩晕醒来后重新点燃（并重新预警）；被击杀时的死亡爆炸只伤害其他敌人，这次对玩家的自爆都不会兑现
+    const warn = this.fuseWarning;
+    this.fuseWarning = null;
+    warn?.();
     if (this.state === 'fuse') {
       this.setState('chase');
       this.restoreTint();

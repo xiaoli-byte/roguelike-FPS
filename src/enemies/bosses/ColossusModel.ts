@@ -112,8 +112,9 @@ export function buildColossus(): { root: THREE.Group; rig: ColossusRig } {
   mesh(torso, geo.dodeca(0.36), m.stone, 0, 2.05, -1.02);
   mesh(torso, geo.dodeca(0.3), m.stone, 0.55, 1.9, -1.0);
   mesh(torso, geo.dodeca(0.3), m.stone, -0.55, 1.9, -1.0);
-  // 胸部判定锚点压低，保证正面射击时头部（弱点）不被胸部胶囊遮挡
-  const chest = anchor(torso, 0, 0.95, 0.1);
+  // 胸部判定锚点（配合 Colossus 里半径 1.05、半高 0.2 的胶囊，顶点约在 4.75 米）：
+  // 低于头部（弱点，中心约 4.9 米）的中下部，平视或俯视瞄准独眼都能判为爆头；瞄准颈部以下判为身体
+  const chest = anchor(torso, 0, 0.75, 0.15);
 
   // ── 双臂 ──
   const AL = buildArm(torso, -1, m);

@@ -191,10 +191,9 @@ function coinGeometry(): THREE.BufferGeometry {
   });
 }
 
+/** 铜钱数量多（一次大额掉落可达 22 枚），不投影：省掉阴影通道的 draw call，小物件上几乎看不出差别 */
 export function makeCoinModel(): THREE.Object3D {
-  const m = mesh(coinGeometry(), std(PALETTE.coin, { metal: 0.75, rough: 0.32, emissive: 0x6a4300, emissiveIntensity: 0.9 }));
-  m.castShadow = true;
-  return m;
+  return mesh(coinGeometry(), std(PALETTE.coin, { metal: 0.75, rough: 0.32, emissive: 0x6a4300, emissiveIntensity: 0.9 }));
 }
 
 function shellGeo(): THREE.BufferGeometry {

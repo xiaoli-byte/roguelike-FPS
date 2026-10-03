@@ -2,12 +2,15 @@ import * as THREE from 'three';
 import type { ScrollDef } from '../../core/types';
 import { ELEMENT_COLORS } from '../../core/types';
 import {
-  bodyCenter, depthOf, enemyDistance, enemyHealthFrac, isDirectWeaponHit, procScale, scroll,
+  blastRadius, depthOf, enemyDistance, enemyHealthFrac, isDirectWeaponHit, procScale, scroll,
 } from './ScrollKit';
 
-/** 秘卷：通用伤害、暴击 / 爆头、射速 / 换弹 / 弹匣、爆炸 */
+/**
+ * 秘卷：通用伤害、暴击 / 爆头、射速 / 换弹 / 弹匣、爆炸。
+ * 注意：传给 combat.explode 的爆心一律新建向量——explode 在逐个结算敌人期间会同步派发击杀事件，
+ * 其它秘卷的监听者可能改写共享的临时向量，而 explode 整个循环都在读 center。
+ */
 
-const _p = new THREE.Vector3();
 const _sky = new THREE.Vector3();
 
 export const OFFENSE_SCROLLS: ScrollDef[] = [
@@ -72,7 +75,7 @@ export const OFFENSE_SCROLLS: ScrollDef[] = [
     description: '爆头伤害每层 +15%；爆头击杀时每层回复 4 护盾。',
     setup: (s, n, ctx) => {
       s.outgoing((_e, req) => (req.headshot ? 1 + 0.15 * n : 1));
-      s.on('enemy:killed', ({ result }) => {
+      s.onKill(({ result }) => {
         if (result.request.headshot && result.request.source === 'weapon') ctx.player.addShield(4 * n);
       });
     },
@@ -148,13 +151,14 @@ export const OFFENSE_SCROLLS: ScrollDef[] = [
     setup: (s, n, ctx) => {
       s.on('weapon:reloadStart', () => {
         if (!ctx.player.alive || !s.ready('nova', 2)) return;
-        _p.copy(ctx.player.position);
-        _p.y += 0.9;
-        ctx.combat.explode(_p, 5, {
+        // 爆心用独立向量：explode 结算期间嵌套的击杀事件（连环爆、悬赏令……）会改写模块级临时向量
+        const c = new THREE.Vector3().copy(ctx.player.position);
+        c.y += 0.9;
+        ctx.combat.explode(c, 5, {
           base: 35 * n * procScale(ctx), element: 'none', source: 'scroll', procDepth: 1, canCrit: false, knockback: 9,
         }, { color: 0xbfe6ff, noFx: true });
-        _p.y = ctx.player.position.y + 0.1;
-        ctx.fx.ring(_p, 5, 0xbfe6ff, 0.35);
+        c.y = ctx.player.position.y + 0.1;
+        ctx.fx.ring(c, 5, 0xbfe6ff, 0.35);
         ctx.audio.play('skill_earth', { volume: 0.5 });
       });
     },
@@ -173,11 +177,11 @@ export const OFFENSE_SCROLLS: ScrollDef[] = [
     id: 'chain_blast', name: '连环爆', rarity: 2, maxStacks: 3, tags: ['爆炸', '击杀'],
     description: '击杀敌人时每层 10% 概率引爆尸体，对 3.5 米内造成其最大生命 30% 的伤害。',
     setup: (s, n, ctx) => {
-      s.on('enemy:killed', ({ enemy, result }) => {
+      s.onKill(({ enemy, result }) => {
         const depth = depthOf(result.request);
         if (depth >= 2 || enemy.isBoss || !ctx.rng.chance(0.1 * n)) return;
-        const c = bodyCenter(enemy, _p);
-        ctx.combat.explode(c, 3.5, {
+        const c = enemy.getBodyCenter(new THREE.Vector3());
+        ctx.combat.explode(c, blastRadius(ctx, 3.5), {
           base: enemy.maxHp * 0.3, element: 'none', source: 'explosion', procDepth: depth + 1, canCrit: false, knockback: 6,
         }, { color: 0xffa040 });
       });
@@ -190,8 +194,9 @@ export const OFFENSE_SCROLLS: ScrollDef[] = [
       s.on('enemy:damaged', ({ enemy, result }) => {
         if (!result.isCrit || !isDirectWeaponHit(result) || result.dealt <= 0) return;
         if (!s.ready('boom', 0.12)) return;
-        const c = result.request.point ? _p.copy(result.request.point) : bodyCenter(enemy, _p);
-        ctx.combat.explode(c, 2.2, {
+        const pt = result.request.point;
+        const c = pt ? pt.clone() : enemy.getBodyCenter(new THREE.Vector3());
+        ctx.combat.explode(c, blastRadius(ctx, 2.2), {
           base: result.dealt * 0.3 * n, element: result.element, source: 'explosion', procDepth: 1, canCrit: false,
         }, { color: 0xffb347 });
       });
@@ -199,14 +204,19 @@ export const OFFENSE_SCROLLS: ScrollDef[] = [
   }),
   scroll({
     id: 'thunder_judgment', name: '天雷引', rarity: 3, maxStacks: 3, tags: ['雷殛', '命中'],
-    description: '武器每命中 15 次，下一次命中召唤天雷，对目标周围 3 米造成每层 45 点雷电伤害（随关卡强度成长），必定附着雷殛。',
+    description: '武器累计命中 15 次后，下一次命中召唤天雷，对目标周围 3 米造成每层 45 点雷电伤害（随关卡强度成长），必定附着雷殛。霰弹的一轮弹丸只计一次命中。',
     setup: (s, n, ctx) => {
       let hits = 0;
+      let lastFrame = -1;
       s.on('enemy:damaged', ({ enemy, result }) => {
         if (!isDirectWeaponHit(result)) return;
+        // 同一帧的多次命中（霰弹弹丸、穿透）只计一次，避免霰弹枪几发就攒满
+        const frame = ctx.time.frame;
+        if (frame === lastFrame) return;
+        lastFrame = frame;
         if (++hits <= 15) return;
         hits = 0;
-        const c = bodyCenter(enemy, _p);
+        const c = enemy.getBodyCenter(new THREE.Vector3());
         _sky.set(c.x + (Math.random() - 0.5) * 2, c.y + 14, c.z + (Math.random() - 0.5) * 2);
         ctx.fx.lightning(_sky, c, ELEMENT_COLORS.shock);
         ctx.combat.explode(c, 3, {

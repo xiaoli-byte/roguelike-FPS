@@ -4,13 +4,16 @@
  * - 每首曲目一个 Player：独立的音量节点（→ 干声总线）与混响发送（→ 湿声总线）。
  * - 切换曲目时旧曲目淡出、新曲目淡入（交叉淡化），淡出结束后断开节点。
  * - 标签页隐藏时定时器会被浏览器降频，调度窗口相应拉长；卡顿追不上时跳过错过的步。
+ * - 调度窗口 0.3 秒：换关时 Game 在一帧里同步搭建关卡（几何合并、导航网格、着色器编译），主线程会卡上
+ *   几百毫秒，定时器在此期间不会触发；提前排好的音符能盖住这段空白。旧曲目已排的音符随它的音量一起淡出，
+ *   所以窗口长一点不影响切歌。
  */
 import type { MusicId } from '../core/types';
 import type { SynthKit, Voice } from './Synth';
 import { BossTrack, CalmTrack, CombatTrack, MenuTrack, type Track } from './MusicTracks';
 
 const TICK_MS = 25;
-const LOOKAHEAD = 0.14;
+const LOOKAHEAD = 0.3;
 const LOOKAHEAD_HIDDEN = 1.4;
 const FADE_OUT = 1.6;
 const FADE_IN = 1.3;

@@ -61,15 +61,24 @@ export function blastPlayer(
   if (!lineClear(ctx.world, _b, center) && !lineClear(ctx.world, p.eye, center)) return 0;
 
   const k = 1 - (1 - clamp01(falloff)) * clamp01(surf / radius);
+  // 无敌（冲刺无敌帧等）时整个爆炸都不影响玩家：既不掉血也不被掀飞，冲刺穿过爆炸是合法的闪避
+  if (p.invulnerableTime > 0) return 0;
+
+  // 冲击方向先算好存进局部量：damagePlayer 会同步派发受伤事件，监听者可能重入本函数改写模块级临时向量
+  let ix = _a.x - center.x;
+  let iz = _a.z - center.z;
+  const h = Math.hypot(ix, iz);
+  if (h > 1e-3) {
+    ix /= h;
+    iz /= h;
+  } else {
+    ix = 0;
+    iz = 0;
+  }
   // from 交给玩家 / UI（受击方向指示可能会保留引用），传副本
   const dealt = ctx.combat.damagePlayer(damage * k, element, source, center.clone());
 
-  // 冲击：水平向外 + 少量上抛（火箭跳也靠它）
-  _imp.set(_a.x - center.x, 0, _a.z - center.z);
-  const h = _imp.length();
-  if (h > 1e-3) _imp.multiplyScalar(1 / h);
-  _imp.multiplyScalar(6.5 * k);
-  _imp.y = 3.2 * k;
-  p.applyImpulse(_imp);
+  // 冲击：水平向外 + 少量上抛
+  if (p.alive) p.applyImpulse(_imp.set(ix * 6.5 * k, 3.2 * k, iz * 6.5 * k));
   return dealt;
 }
