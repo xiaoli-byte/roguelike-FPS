@@ -52,6 +52,9 @@ def run(spec: AssetSpec, a) -> None:
         graph = comfy.hunyuan3d_graph(comfy.upload_image(inp_path), f"spiritfire/{stem}", p, seed)
         tool, ckpt = "Hunyuan3D 2.1（ComfyUI 原生节点）", p["checkpoint"]
         license_ = "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    # Preserve the exact local graph even when inference fails; track its hash with successful output.
+    graph_path = out / f"{stem}_graph.json"
+    graph_path.write_text(json.dumps(graph, indent=2), encoding="utf-8")
     print(f"→ {tool.split('（')[0]}（{p['steps']} 步，体素 {p['octree_resolution']}，种子 {seed}）…", flush=True)
     t0 = time.time()
     outputs = comfy.run(graph)
@@ -68,6 +71,5 @@ def run(spec: AssetSpec, a) -> None:
         "seed": seed, **params, "input_transform": xform, "seconds": round(dt, 1),
         "comfyui": stats["system"].get("comfyui_version"), "gpu": stats["devices"][0]["name"],
         "size_mb": round(glb.stat().st_size / 1e6, 1),
-    }, [*inputs, glb])
+    }, [*inputs, glb, graph_path])
     print(f"✔ 高模 v{ver:03d}：{glb.relative_to(ROOT)}（{dt:.0f} 秒，{glb.stat().st_size / 1e6:.1f} MB）")
-    (out / f"{stem}_graph.json").write_text(json.dumps(graph, indent=2), encoding="utf-8")

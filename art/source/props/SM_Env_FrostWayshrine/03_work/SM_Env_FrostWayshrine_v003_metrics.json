@@ -1,0 +1,140 @@
+{
+  "steps": {
+    "导入清理": 6.5,
+    "对齐": 1.0,
+    "低模与 UV": 36.6,
+    "投影着色": 123.9,
+    "烘焙": 11.5,
+    "LOD": 0.0,
+    "导出": 0.8
+  },
+  "highpoly": {
+    "faces_raw": 1505691,
+    "faces": 1598010,
+    "verts": 1598012,
+    "loose_parts": 9,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00355
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.893,
+    "iou_per_view": {
+      "front": 0.962,
+      "left": 0.806,
+      "back": 0.964,
+      "right": 0.807
+    },
+    "height_m": 4.8435,
+    "blockout_height_m": 5.0
+  },
+  "uv": {
+    "smart_islands": 277,
+    "charts": 48,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.0764,
+    "density_merged": 0.0781
+  },
+  "projection": {
+    "uncovered_ratio": 0.4044
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Env_FrostWayshrine_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Env_FrostWayshrine_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Env_FrostWayshrine_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Env_FrostWayshrine_LOD0",
+      "tris": 5000,
+      "verts": 2502,
+      "uv_min": [
+        0.0023799650371074677,
+        0.002379993675276637
+      ],
+      "uv_max": [
+        0.9976199865341187,
+        0.9689344167709351
+      ],
+      "uv_utilization": 0.589,
+      "bbox_min": [
+        -2.0932,
+        -1.6946,
+        0.0002
+      ],
+      "bbox_max": [
+        2.0969,
+        1.6062,
+        4.8419
+      ]
+    },
+    {
+      "name": "SM_Env_FrostWayshrine_LOD1",
+      "tris": 1600,
+      "verts": 802,
+      "uv_min": [
+        0.0024625002406537533,
+        0.002432847861200571
+      ],
+      "uv_max": [
+        0.9969420433044434,
+        0.9689344167709351
+      ],
+      "uv_utilization": 0.573,
+      "bbox_min": [
+        -2.1009,
+        -1.6948,
+        0.0023
+      ],
+      "bbox_max": [
+        2.1031,
+        1.6111,
+        4.8581
+      ]
+    },
+    {
+      "name": "SM_Env_FrostWayshrine_LOD2",
+      "tris": 500,
+      "verts": 252,
+      "uv_min": [
+        0.002957666525617242,
+        0.0033935336396098137
+      ],
+      "uv_max": [
+        0.9941763877868652,
+        0.9680733680725098
+      ],
+      "uv_utilization": 0.54,
+      "bbox_min": [
+        -2.081,
+        -1.6722,
+        0.0014
+      ],
+      "bbox_max": [
+        2.0995,
+        1.6146,
+        4.8813
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_FrostWayshrine\\04_export\\SM_Env_FrostWayshrine_v003.glb",
+    "bytes": 240892
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_FrostWayshrine\\03_work\\SM_Env_FrostWayshrine_v003.blend",
+  "total_seconds": 180.3,
+  "_seconds": 183.8
+}

@@ -1,6 +1,6 @@
 /**
  * 游戏内 HUD：生命 / 护盾、武器与弹药（含双形态武器的形态徽记）、武器技能图标、Q/E 技能与冲刺、
- * 右上角关卡信息与金币，并组合准星反馈、敌人血条、Boss 血条、Tab 面板。
+ * 右上角关卡信息与金币，并组合探索行旅图、准星反馈、敌人血条、Boss 血条、Tab 面板。
  * 每帧只写变化了的文本 / 样式（缓存上次值），不重建 DOM。
  */
 import type {
@@ -16,6 +16,7 @@ import { Crosshair } from './Crosshair';
 import { EnemyBars } from './EnemyBars';
 import { BossBar } from './BossBar';
 import { InventoryPanel } from './InventoryPanel';
+import { AdventureHUD } from './AdventureHUD';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const TRAIL_HOLD = 420;
@@ -885,6 +886,7 @@ export class HUD {
   private skillE: SkillIcon;
   private dash: DashPips;
   private info: InfoPanel;
+  private adventure: AdventureHUD;
   private crosshair: Crosshair;
   private bars: EnemyBars;
   readonly boss: BossBar;
@@ -911,6 +913,7 @@ export class HUD {
     this.dash = new DashPips(bc, ctx);
     const tr = h('div', 'gf-hud__corner gf-hud__corner--tr', this.root);
     this.info = new InfoPanel(tr, ctx);
+    this.adventure = new AdventureHUD(this.root, ctx);
 
     this.boss = new BossBar(this.root);
     this.tab = new InventoryPanel(this.root, ctx);
@@ -935,6 +938,7 @@ export class HUD {
       this.bars.reset();
       this.crosshair.reset();
       this.boss.hideNow();
+      this.adventure.reset();
     }
   }
 
@@ -950,6 +954,7 @@ export class HUD {
     this.skillE.reset();
     this.dash.reset();
     this.info.reset();
+    this.adventure.reset();
   }
 
   // ───────────── 事件入口 ─────────────
@@ -1015,6 +1020,7 @@ export class HUD {
       this.dash.update();
     } catch (e) { this.fail('skills', e); }
     try { this.info.update(); } catch (e) { this.fail('info', e); }
+    try { this.adventure.update(now); } catch (e) { this.fail('adventure', e); }
     try { this.crosshair.update(dt, now, state === 'playing'); } catch (e) { this.fail('crosshair', e); }
     try { this.bars.update(now); } catch (e) { this.fail('enemyBars', e); }
     try { this.boss.update(now); } catch (e) { this.fail('boss', e); }

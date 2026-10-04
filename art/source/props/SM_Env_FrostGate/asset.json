@@ -1,0 +1,490 @@
+{
+  "id": "SM_Env_FrostGate",
+  "display": "霜山覆雪宽山门",
+  "kind": "static",
+  "class": "nature_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 18:54:08",
+          "files": {
+            "BO_SM_Env_FrostGate_v001.json": {
+              "path": "00_blockout/BO_SM_Env_FrostGate_v001.json",
+              "sha256": "95a609e09536a183e84199662be58ca369cd0924e1658f2bbc7a1444a079e5eb"
+            },
+            "BO_SM_Env_FrostGate_v001_views.json": {
+              "path": "00_blockout/BO_SM_Env_FrostGate_v001_views.json",
+              "sha256": "d6e55a1ce416f5413dafa5c9fd3ff9196b1e8a91ff39955df4a31e4ad9b49774"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost.gate"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -5.25,
+              0,
+              -0.85
+            ],
+            "max": [
+              5.25,
+              6.8,
+              0.85
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 18:54:11",
+          "files": {
+            "CN_SM_Env_FrostGate_v001_source.png": {
+              "path": "01_concept/CN_SM_Env_FrostGate_v001_source.png",
+              "sha256": "f73399855a248f785227ec7fc15421a60ebf38f555b2694f54cb89177703bae5"
+            },
+            "CN_SM_Env_FrostGate_v001_reference_01.png": {
+              "path": "01_concept/CN_SM_Env_FrostGate_v001_reference_01.png",
+              "sha256": "ce69485d5a4277398dc9ee2b2ad447ae318e9d8223de16a112c1b54599aecd9d"
+            },
+            "CN_SM_Env_FrostGate_v001_front.png": {
+              "path": "01_concept/CN_SM_Env_FrostGate_v001_front.png",
+              "sha256": "8661d847a356222e52c49bd3c555de7706001ea0ef0c5e8461d9c85176eb4501"
+            },
+            "CN_SM_Env_FrostGate_v001_left.png": {
+              "path": "01_concept/CN_SM_Env_FrostGate_v001_left.png",
+              "sha256": "fce484ddba6eac0bd6b5414d498f35ef1cf72ec210299b3308b38ca32b2ab145"
+            },
+            "CN_SM_Env_FrostGate_v001_back.png": {
+              "path": "01_concept/CN_SM_Env_FrostGate_v001_back.png",
+              "sha256": "303af09acf881334953938988181cb4b253e1b9881ca2bc818148dec64ee604a"
+            },
+            "CN_SM_Env_FrostGate_v001_right.png": {
+              "path": "01_concept/CN_SM_Env_FrostGate_v001_right.png",
+              "sha256": "40ecfdfd2bd1ab612205f978954ac181a032b169176508b58a5476e791252b84"
+            },
+            "CN_SM_Env_FrostGate_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Env_FrostGate_v001_sheet.png",
+              "sha256": "f66e8ebdb8cad60c31d1351f0805c78fc96aee502d0639474675e85e68d274f9"
+            },
+            "CN_SM_Env_FrostGate_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_FrostGate_v001_prompt.txt",
+              "sha256": "aed9b3f822cf686b2a8094acf0cf13984a19ef3859bf38eaaf435f833c6cb290"
+            },
+            "CN_SM_Env_FrostGate_v001_registration.json": {
+              "path": "01_concept/CN_SM_Env_FrostGate_v001_registration.json",
+              "sha256": "958ff8253f30c75a61bb0052d05e1cbaa6f75e44f5d3a0e091e83eaff638c4a0"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Codex built-in image_gen",
+          "registration_version": 1,
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-9b9a506d-333f-4a49-9a81-e380b162e9ed.png",
+          "source_sha256": "f73399855a248f785227ec7fc15421a60ebf38f555b2694f54cb89177703bae5",
+          "prompt": "Use case: precise-object-edit. Asset type: four-view Hunyuan3D reconstruction concept sheet. Input image: edit target, the existing snowy red temple gate concept. Keep the same snow, dark navy simplified roof, red timber, stone bases, matte hand-painted Gunfire Reborn quality, no text, clean white background, and FRONT / LEFT / BACK / RIGHT view order. Change ONLY the structure's proportions to make the walkthrough passage substantially wider. In FRONT and BACK, extend the middle roof and lintel horizontally and move the two posts farther apart; total gate width must be 1.54 times total height, with the narrowest gap BETWEEN the two ground-level bases at least 65% of total width. Each post base is at most 17% of total width. Preserve full height and a completely empty floor-level passage. In LEFT and RIGHT, reduce structural depth to 25% of gate height and keep the post height unchanged. All four views must depict the same 10.5m width ×6.8m height ×1.7m depth structure at identical physical scale and baseline. Do not add a floor, door, backing, ropes, floating pieces or more ornamental details. Regenerate the complete four-view horizontal sheet with ample white separation and margins; do not crop any part.",
+          "reference_mode": "bounds_only",
+          "reference_images": [
+            {
+              "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-fc8db45d-fc49-4d7b-97fe-a66474606198.png",
+              "source_sha256": "ce69485d5a4277398dc9ee2b2ad447ae318e9d8223de16a112c1b54599aecd9d",
+              "registered_file": "CN_SM_Env_FrostGate_v001_reference_01.png"
+            }
+          ],
+          "highpoly_mode": "multiview",
+          "architecture_requirements": {
+            "role": "gate",
+            "dimensions_m": [
+              10.5,
+              6.8,
+              1.7
+            ],
+            "passage_min_width_m": 6.4,
+            "lintel_bottom_target_m": 3.8,
+            "ground_passage_open": true
+          },
+          "registration": {
+            "front": {
+              "scale": 0.6949634313819423,
+              "offset": [
+                8,
+                364
+              ],
+              "size": [
+                496,
+                296
+              ],
+              "physical_height_m": 6.8,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6933358823623125,
+              "offset": [
+                215,
+                364
+              ],
+              "size": [
+                82,
+                296
+              ],
+              "physical_height_m": 6.8,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6949634313819423,
+              "offset": [
+                19,
+                364
+              ],
+              "size": [
+                474,
+                296
+              ],
+              "physical_height_m": 6.8,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.6933358823623125,
+              "offset": [
+                214,
+                364
+              ],
+              "size": [
+                83,
+                296
+              ],
+              "physical_height_m": 6.8,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "quality_status": "failed",
+          "quality_errors": [
+            "Registration review-sheet assembly accidentally included the preserved edit input; conditioning panels unchanged. Superseded without overwriting by corrected concept v002."
+          ]
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 18:54:35",
+          "files": {
+            "CN_SM_Env_FrostGate_v002_source.png": {
+              "path": "01_concept/CN_SM_Env_FrostGate_v002_source.png",
+              "sha256": "f73399855a248f785227ec7fc15421a60ebf38f555b2694f54cb89177703bae5"
+            },
+            "CN_SM_Env_FrostGate_v002_reference_01.png": {
+              "path": "01_concept/CN_SM_Env_FrostGate_v002_reference_01.png",
+              "sha256": "ce69485d5a4277398dc9ee2b2ad447ae318e9d8223de16a112c1b54599aecd9d"
+            },
+            "CN_SM_Env_FrostGate_v002_front.png": {
+              "path": "01_concept/CN_SM_Env_FrostGate_v002_front.png",
+              "sha256": "8661d847a356222e52c49bd3c555de7706001ea0ef0c5e8461d9c85176eb4501"
+            },
+            "CN_SM_Env_FrostGate_v002_left.png": {
+              "path": "01_concept/CN_SM_Env_FrostGate_v002_left.png",
+              "sha256": "fce484ddba6eac0bd6b5414d498f35ef1cf72ec210299b3308b38ca32b2ab145"
+            },
+            "CN_SM_Env_FrostGate_v002_back.png": {
+              "path": "01_concept/CN_SM_Env_FrostGate_v002_back.png",
+              "sha256": "303af09acf881334953938988181cb4b253e1b9881ca2bc818148dec64ee604a"
+            },
+            "CN_SM_Env_FrostGate_v002_right.png": {
+              "path": "01_concept/CN_SM_Env_FrostGate_v002_right.png",
+              "sha256": "40ecfdfd2bd1ab612205f978954ac181a032b169176508b58a5476e791252b84"
+            },
+            "CN_SM_Env_FrostGate_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Env_FrostGate_v002_sheet.png",
+              "sha256": "8b22ac19e3ab84339e443dd9ff8f4144057250b1ebeca8effbebc770eff0812c"
+            },
+            "CN_SM_Env_FrostGate_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_FrostGate_v002_prompt.txt",
+              "sha256": "aed9b3f822cf686b2a8094acf0cf13984a19ef3859bf38eaaf435f833c6cb290"
+            },
+            "CN_SM_Env_FrostGate_v002_registration.json": {
+              "path": "01_concept/CN_SM_Env_FrostGate_v002_registration.json",
+              "sha256": "958ff8253f30c75a61bb0052d05e1cbaa6f75e44f5d3a0e091e83eaff638c4a0"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Codex built-in image_gen",
+          "registration_version": 1,
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-9b9a506d-333f-4a49-9a81-e380b162e9ed.png",
+          "source_sha256": "f73399855a248f785227ec7fc15421a60ebf38f555b2694f54cb89177703bae5",
+          "prompt": "Use case: precise-object-edit. Asset type: four-view Hunyuan3D reconstruction concept sheet. Input image: edit target, the existing snowy red temple gate concept. Keep the same snow, dark navy simplified roof, red timber, stone bases, matte hand-painted Gunfire Reborn quality, no text, clean white background, and FRONT / LEFT / BACK / RIGHT view order. Change ONLY the structure's proportions to make the walkthrough passage substantially wider. In FRONT and BACK, extend the middle roof and lintel horizontally and move the two posts farther apart; total gate width must be 1.54 times total height, with the narrowest gap BETWEEN the two ground-level bases at least 65% of total width. Each post base is at most 17% of total width. Preserve full height and a completely empty floor-level passage. In LEFT and RIGHT, reduce structural depth to 25% of gate height and keep the post height unchanged. All four views must depict the same 10.5m width ×6.8m height ×1.7m depth structure at identical physical scale and baseline. Do not add a floor, door, backing, ropes, floating pieces or more ornamental details. Regenerate the complete four-view horizontal sheet with ample white separation and margins; do not crop any part.",
+          "reference_mode": "bounds_only",
+          "reference_images": [
+            {
+              "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-fc8db45d-fc49-4d7b-97fe-a66474606198.png",
+              "source_sha256": "ce69485d5a4277398dc9ee2b2ad447ae318e9d8223de16a112c1b54599aecd9d",
+              "registered_file": "CN_SM_Env_FrostGate_v002_reference_01.png"
+            }
+          ],
+          "reference_provenance_version": 1,
+          "highpoly_mode": "multiview",
+          "architecture_requirements": {
+            "role": "gate",
+            "dimensions_m": [
+              10.5,
+              6.8,
+              1.7
+            ],
+            "passage_min_width_m": 6.4,
+            "lintel_bottom_target_m": 3.8,
+            "ground_passage_open": true
+          },
+          "registration": {
+            "front": {
+              "scale": 0.6949634313819423,
+              "offset": [
+                8,
+                364
+              ],
+              "size": [
+                496,
+                296
+              ],
+              "physical_height_m": 6.8,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6933358823623125,
+              "offset": [
+                215,
+                364
+              ],
+              "size": [
+                82,
+                296
+              ],
+              "physical_height_m": 6.8,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6949634313819423,
+              "offset": [
+                19,
+                364
+              ],
+              "size": [
+                474,
+                296
+              ],
+              "physical_height_m": 6.8,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.6933358823623125,
+              "offset": [
+                214,
+                364
+              ],
+              "size": [
+                83,
+                296
+              ],
+              "physical_height_m": 6.8,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Actually reviewed the original and registered four-view sheet. Broad matte chapter color blocks, fused chunky structural volumes, coherent narrow sides and complete uncropped silhouettes. Gates show an empty inverted-U passage from ground in both front/back; final three-LOD geometric clearance requires inspection before publish.",
+            "time": "2026-10-04 18:55:37"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:01:19",
+          "files": {
+            "HP_SM_Env_FrostGate_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostGate_v001_input_front.png",
+              "sha256": "ec062105f7e9540a85af90cf23ec6b5f8f9e1534e13d992f090d72057f19d61e"
+            },
+            "HP_SM_Env_FrostGate_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostGate_v001_input_left.png",
+              "sha256": "b80defc87e654d9d90138c6406c02271955058c2746790e409de0320ed6887b1"
+            },
+            "HP_SM_Env_FrostGate_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostGate_v001_input_back.png",
+              "sha256": "404d1c55c38d6e1cc4259d864115fdaa69dbcc4e1643b5cb14132dce62911c1b"
+            },
+            "HP_SM_Env_FrostGate_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostGate_v001_input_right.png",
+              "sha256": "1c3673ae47340c91dd72a9986417a35e27ecfc7d5885c9e198d9534020d90ed7"
+            },
+            "HP_SM_Env_FrostGate_v001.glb": {
+              "path": "02_highpoly/HP_SM_Env_FrostGate_v001.glb",
+              "sha256": "7b635779122978901d331ab87abc010033d57e188945e966ab47791dea2f8846"
+            },
+            "HP_SM_Env_FrostGate_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Env_FrostGate_v001_graph.json",
+              "sha256": "da0ddaad2ee8fd020b6979359a331b9acaac50a6e31b9e45fe983797f647fd35"
+            }
+          },
+          "from_concept": 2,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 202610074,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -35,
+              221,
+              547,
+              803
+            ],
+            "scale": 1.7594501718213058
+          },
+          "seconds": 126.6,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 7.6
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:02:13",
+          "files": {
+            "SM_Env_FrostGate_v001.blend": {
+              "path": "03_work/SM_Env_FrostGate_v001.blend",
+              "sha256": "04e51faf2037ec0ba4ef73ef5ba0a88819757f039450145a8edf1e5e42faadb7"
+            },
+            "SM_Env_FrostGate_v001.glb": {
+              "path": "04_export/SM_Env_FrostGate_v001.glb",
+              "sha256": "9aa58972578757cc9173ea77ad8162ddc08534991a4fb42ab683d9fc6b3e6495"
+            },
+            "SM_Env_FrostGate_v001_metrics.json": {
+              "path": "03_work/SM_Env_FrostGate_v001_metrics.json",
+              "sha256": "b2b0830e006464c7c178772d80091f774f2af3745fb770ff870511e74f093bb1"
+            },
+            "T_Env_FrostGate_BC.png": {
+              "path": "03_work/textures_v001/T_Env_FrostGate_BC.png",
+              "sha256": "9cdec88e75878c935bfbcd9e6b3aef27abbf0b06ab2fcf7a4c900050114a3f61"
+            },
+            "T_Env_FrostGate_N.png": {
+              "path": "03_work/textures_v001/T_Env_FrostGate_N.png",
+              "sha256": "711789e6cedf53e967b6bb1ede3fa4eef0a8657a5c8d7618ab21cd36f125a433"
+            },
+            "T_Env_FrostGate_ORM.png": {
+              "path": "03_work/textures_v001/T_Env_FrostGate_ORM.png",
+              "sha256": "6a8887757d58551bbf93ab8cfcfa589476f70f5e2d93416b35d41a39f587feb4"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.87,
+          "uncovered_ratio": 0.3155,
+          "lods": [
+            {
+              "tris": 5000,
+              "verts": 2498
+            },
+            {
+              "tris": 1600,
+              "verts": 798
+            },
+            {
+              "tris": 500,
+              "verts": 248
+            }
+          ],
+          "export_kb": 255.5,
+          "seconds": 42.6,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:02:13",
+          "files": {
+            "SM_Env_FrostGate_v001_validation_v001.json": {
+              "path": "05_review/SM_Env_FrostGate_v001_validation_v001.json",
+              "sha256": "136daed31cd3ab3fde254b256e1f0c2320d2b418dc1142af0237d589c7115f8e"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 2,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:04:51",
+          "files": {
+            "SM_Env_FrostGate_v001_review_v001.png": {
+              "path": "05_review/SM_Env_FrostGate_v001_review_v001.png",
+              "sha256": "4bcd6fe79628a09dc8f38ada566e1ded29b67f8721cafe8447e320c2ce2b4626"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Reviewed five-view final and v002 triangle aperture report. Roof and pillars remain coherent; corrected uniform runtime fit preserves source form. All three actual LODs clear source6.4x3.8 and world7.68x4.56 with zero triangles inside; v001 failed-fit report retained.",
+            "time": "2026-10-04 19:10:04"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:10:04",
+          "files": {
+            "SM_Env_FrostGate.glb": {
+              "path": "@root/public/assets/props/SM_Env_FrostGate.glb",
+              "sha256": "9aa58972578757cc9173ea77ad8162ddc08534991a4fb42ab683d9fc6b3e6495"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Env_FrostGate.glb"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,1575 @@
+{
+  "schema": 1,
+  "created_at": "2026-10-04T18:13:32.094870+08:00",
+  "scope": "Six locally Hunyuan-generated stylized scene assets; generated versions and root AI visual reviews preserve history. No procedural artistic meshes, no changed geometry/texture budget, no budget waiver.",
+  "budget": {
+    "class": "nature_prop",
+    "lod_tris": [
+      5000,
+      1600,
+      500
+    ],
+    "texture_size": 1024,
+    "pbr_maps": [
+      "BC",
+      "N",
+      "ORM"
+    ],
+    "max_file_kb": 900,
+    "materials_per_asset": 1
+  },
+  "totals": {
+    "assets": 6,
+    "bytes": 1576124,
+    "original_published_bytes": 1984980,
+    "package_size_reduction_percent": 20.6,
+    "qa_warnings": 4,
+    "qa_errors": 0,
+    "qa_waivers": 0,
+    "budget_waivers": 0
+  },
+  "resources": {
+    "checked_at": "2026-10-04T18:13:32.069525+08:00",
+    "comfyui_url": "http://127.0.0.1:8188",
+    "queue_running": 0,
+    "queue_pending": 0,
+    "blender_process_count": 0,
+    "external_pid_55284_exists": false,
+    "gpu_utilization_percent": 0,
+    "gpu_memory_used_mib": 7631,
+    "gpu_memory_total_mib": 24463,
+    "shared_service_unload_called": false
+  },
+  "assets": [
+    {
+      "id": "SM_Env_DesertRuin",
+      "versions": {
+        "blockout": 1,
+        "concept": 2,
+        "highpoly": 2,
+        "build": 2,
+        "validate": 2,
+        "review": 2,
+        "publish": 2
+      },
+      "seed": 202610050,
+      "generator": {
+        "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+        "mode": "single",
+        "checkpoint": "hunyuan_3d_v2.1.safetensors",
+        "steps": 50,
+        "cfg": 5.0,
+        "shift": 1.0,
+        "octree_resolution": 384,
+        "num_chunks": 32000,
+        "threshold": 0.6,
+        "comfyui": "0.30.0",
+        "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+        "seconds": 280.2,
+        "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+      },
+      "concept_review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Root inspected the native revised four-view sheet: broad painted color blocks, simplified wear, matched facade and rear, coherent thick side volume and solid connected structure. Approved for local Hunyuan reconstruction, not a human review.",
+        "time": "2026-10-04 17:35:32"
+      },
+      "final_review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Inspected the actual five-view review, texture sheets and all LODs. Warm painted stone, broad teal relief, closed rear and adequate side thickness meet the requested moderate-detail direction. Retain the three validation warnings for center offset, UV utilization and projected coverage; no threshold waiver.",
+        "time": "2026-10-04 17:48:16"
+      },
+      "source_sha256": "cf6fa90630dd1b90f2155f35da94416aafca78df9776423f0ada60dac58ba634",
+      "highpoly_files": {
+        "HP_SM_Env_DesertRuin_v002_input.png": {
+          "path": "02_highpoly/HP_SM_Env_DesertRuin_v002_input.png",
+          "sha256": "8b7cf765a4c3149a5b10dffa2a747bce7e2f11bcab47330265fd061c2ff3dda1"
+        },
+        "HP_SM_Env_DesertRuin_v002.glb": {
+          "path": "02_highpoly/HP_SM_Env_DesertRuin_v002.glb",
+          "sha256": "ec58daab13f867d2f0b883f2326d3033b2e34769a86e7b1af24f139e42ff95a9"
+        },
+        "HP_SM_Env_DesertRuin_v002_graph.json": {
+          "path": "02_highpoly/HP_SM_Env_DesertRuin_v002_graph.json",
+          "sha256": "d8d1b857e103f2989dc4f2147a47173b1c8fca7e2a40a0f889a22eb8dcddae1d"
+        }
+      },
+      "build_files": {
+        "SM_Env_DesertRuin_v002.blend": {
+          "path": "03_work/SM_Env_DesertRuin_v002.blend",
+          "sha256": "5c9950a5ad27101c35d99ae4912ecf389c96018c7859dc97c3c87a2ac2dfd153"
+        },
+        "SM_Env_DesertRuin_v002.glb": {
+          "path": "04_export/SM_Env_DesertRuin_v002.glb",
+          "sha256": "4b6b534ce41c3ec4fc56e46eb72e1bba2f7ecb2a106b94f6c5e6314f3cbf82f1"
+        },
+        "SM_Env_DesertRuin_v002_metrics.json": {
+          "path": "03_work/SM_Env_DesertRuin_v002_metrics.json",
+          "sha256": "3179feffb81889e1d0314840aa9bb5955d1724f2889ac36176197f9b8091acb8"
+        },
+        "T_Env_DesertRuin_BC.png": {
+          "path": "03_work/textures_v002/T_Env_DesertRuin_BC.png",
+          "sha256": "0fae163215cfdb83f5f3fc950eaab28fe2cc7c129cf7705190d40d58488b6470"
+        },
+        "T_Env_DesertRuin_N.png": {
+          "path": "03_work/textures_v002/T_Env_DesertRuin_N.png",
+          "sha256": "268ef11caa81c44a805299b68b691a25a9b1738873261097bc7bd09eb6c11648"
+        },
+        "T_Env_DesertRuin_ORM.png": {
+          "path": "03_work/textures_v002/T_Env_DesertRuin_ORM.png",
+          "sha256": "270e735c584264af7cc2d18f8c3234908b4ab30146147b0e12d09b15a6fb8382"
+        }
+      },
+      "review_image": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_DesertRuin\\05_review\\SM_Env_DesertRuin_v002_review_v002.png",
+      "validation_report": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_DesertRuin\\05_review\\SM_Env_DesertRuin_v002_validation_v002.json",
+      "runtime_url": "assets/props/SM_Env_DesertRuin.glb",
+      "runtime_sha256": "4b6b534ce41c3ec4fc56e46eb72e1bba2f7ecb2a106b94f6c5e6314f3cbf82f1",
+      "bytes": 298396,
+      "original_published_bytes": 315964,
+      "lods": [
+        {
+          "name": "SM_Env_DesertRuin_LOD0",
+          "tris": 5000,
+          "verts": 2448,
+          "uv_min": [
+            0.0029374926816672087,
+            0.0029375578742474318
+          ],
+          "uv_max": [
+            0.982046365737915,
+            0.9970624446868896
+          ],
+          "uv_utilization": 0.498,
+          "bbox_min": [
+            -2.3456,
+            -1.0423,
+            0.0021
+          ],
+          "bbox_max": [
+            2.4702,
+            0.5904,
+            4.3142
+          ]
+        },
+        {
+          "name": "SM_Env_DesertRuin_LOD1",
+          "tris": 1600,
+          "verts": 748,
+          "uv_min": [
+            0.003803384257480502,
+            0.0029375578742474318
+          ],
+          "uv_max": [
+            0.9791063666343689,
+            0.9970624446868896
+          ],
+          "uv_utilization": 0.483,
+          "bbox_min": [
+            -2.3344,
+            -1.0312,
+            0.0059
+          ],
+          "bbox_max": [
+            2.4558,
+            0.5788,
+            4.3081
+          ]
+        },
+        {
+          "name": "SM_Env_DesertRuin_LOD2",
+          "tris": 500,
+          "verts": 198,
+          "uv_min": [
+            0.003803384257480502,
+            0.003327754558995366
+          ],
+          "uv_max": [
+            0.9791063666343689,
+            0.9970624446868896
+          ],
+          "uv_utilization": 0.41,
+          "bbox_min": [
+            -2.3416,
+            -1.0005,
+            0.0029
+          ],
+          "bbox_max": [
+            2.4558,
+            0.5751,
+            4.3474
+          ]
+        }
+      ],
+      "texture_metrics": {
+        "T_Env_DesertRuin_BC": {
+          "size": 1024,
+          "colorspace": "sRGB"
+        },
+        "T_Env_DesertRuin_N": {
+          "size": 1024,
+          "colorspace": "Non-Color"
+        },
+        "T_Env_DesertRuin_ORM": {
+          "size": 1024,
+          "colorspace": "Non-Color"
+        }
+      },
+      "align": {
+        "yaw_deg": 0,
+        "iou": 0.845,
+        "iou_per_view": {
+          "front": 0.952,
+          "left": 0.725,
+          "back": 0.931,
+          "right": 0.717
+        },
+        "height_m": 4.3143,
+        "blockout_height_m": 4.4
+      },
+      "projection": {
+        "uncovered_ratio": 0.6323
+      },
+      "uv": {
+        "smart_islands": 575,
+        "charts": 63,
+        "fallback_charts": 3,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "merged",
+        "density_smart": 0.0669,
+        "density_merged": 0.0725
+      },
+      "cpu_build_seconds": 161.0,
+      "bake_device": "CPU",
+      "bounds": {
+        "min": [
+          -2.3455631732940674,
+          0.002090859692543745,
+          -0.5904370546340942
+        ],
+        "max": [
+          2.4701967239379883,
+          4.3142499923706055,
+          1.0422661304473877
+        ]
+      },
+      "lod_distance": [
+        0,
+        18,
+        42
+      ],
+      "qa": {
+        "passes": 35,
+        "warnings": [
+          {
+            "level": "warn",
+            "check": "场景轴心居中",
+            "detail": "中心 x=0.062 z=0.226"
+          },
+          {
+            "level": "warn",
+            "check": "UV 利用率",
+            "detail": "50%"
+          },
+          {
+            "level": "warn",
+            "check": "投影覆盖",
+            "detail": "未覆盖顶点 63%（扩散补色）"
+          }
+        ],
+        "errors": [],
+        "waivers": [],
+        "budget_waivers": 0
+      },
+      "failed_build_history": []
+    },
+    {
+      "id": "SM_Env_FrostWayshrine",
+      "versions": {
+        "blockout": 1,
+        "concept": 3,
+        "highpoly": 3,
+        "build": 3,
+        "validate": 2,
+        "review": 2,
+        "publish": 2
+      },
+      "seed": 202610056,
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+        "steps": 50,
+        "cfg": 5.0,
+        "shift": 1.0,
+        "octree_resolution": 384,
+        "num_chunks": 32000,
+        "threshold": 0.6,
+        "comfyui": "0.30.0",
+        "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+        "seconds": 156.2,
+        "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+      },
+      "concept_review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Inspected the new native four-view sheet. Closed side walls, integrated broad posts, a single roof and connected base replace open small supports; the same snow-covered shrine is consistent in front/left/back/right. Moderate-detail painted finish retained. Approved for local Hunyuan MV reconstruction; not a human review.",
+        "time": "2026-10-04 17:54:18"
+      },
+      "final_review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Root inspected five actual textured views, three LOD meshes and texture sheets. The simpler snow-covered curved roof, integrated broad posts, closed side/rear walls and connected stone plinth retain clear shrine volume and readable painted colors. Far LOD meets the unchanged 500-triangle budget; zero validation warnings/errors and no waiver. Failed build v002 remains preserved.",
+        "time": "2026-10-04 18:05:01"
+      },
+      "source_sha256": "9670d607a5834f7b20fb81997fb291012385b8ec93a5f26b4757c298d43d1c9d",
+      "highpoly_files": {
+        "HP_SM_Env_FrostWayshrine_v003_input_front.png": {
+          "path": "02_highpoly/HP_SM_Env_FrostWayshrine_v003_input_front.png",
+          "sha256": "6239f225bbacbeda3fbebbf4d6a2cac7afdee2ca87134ad8c64f24f12a5dabc6"
+        },
+        "HP_SM_Env_FrostWayshrine_v003_input_left.png": {
+          "path": "02_highpoly/HP_SM_Env_FrostWayshrine_v003_input_left.png",
+          "sha256": "10f37bf5ca9c2f4a3fb3054cf52810340622fe1e6cc6147ad3d183569cc5fb90"
+        },
+        "HP_SM_Env_FrostWayshrine_v003_input_back.png": {
+          "path": "02_highpoly/HP_SM_Env_FrostWayshrine_v003_input_back.png",
+          "sha256": "dfe4175a6a5a0584e6f7db7055a20da11fe0afb6b15b7197bf1f0770fa13f730"
+        },
+        "HP_SM_Env_FrostWayshrine_v003_input_right.png": {
+          "path": "02_highpoly/HP_SM_Env_FrostWayshrine_v003_input_right.png",
+          "sha256": "15e10b4f37f5e7ac9f3835a9c9b76b25918e7d171ff79e9b91a43149d4c43146"
+        },
+        "HP_SM_Env_FrostWayshrine_v003.glb": {
+          "path": "02_highpoly/HP_SM_Env_FrostWayshrine_v003.glb",
+          "sha256": "80ef8c765d34f769ea60a658fba831cbf6e403467c6c32bfab8cf1dd57f9ce31"
+        },
+        "HP_SM_Env_FrostWayshrine_v003_graph.json": {
+          "path": "02_highpoly/HP_SM_Env_FrostWayshrine_v003_graph.json",
+          "sha256": "bd935278fd03987324431f19afad161b491c2831604a2519bba6e07d79db9e04"
+        }
+      },
+      "build_files": {
+        "SM_Env_FrostWayshrine_v003.blend": {
+          "path": "03_work/SM_Env_FrostWayshrine_v003.blend",
+          "sha256": "f44bc58227907c743cc9830556a466c9e8e96e2020f2299697bcdf8c60193106"
+        },
+        "SM_Env_FrostWayshrine_v003.glb": {
+          "path": "04_export/SM_Env_FrostWayshrine_v003.glb",
+          "sha256": "09dff3832ad658ee1d685baefe67b5b0c08c6e785603af14258ead091736f9fd"
+        },
+        "SM_Env_FrostWayshrine_v003_metrics.json": {
+          "path": "03_work/SM_Env_FrostWayshrine_v003_metrics.json",
+          "sha256": "19dac6523e2bc465638d807e6f7e9a97922f9fcd0b1202b942a8d31c2adf2481"
+        },
+        "T_Env_FrostWayshrine_BC.png": {
+          "path": "03_work/textures_v003/T_Env_FrostWayshrine_BC.png",
+          "sha256": "5779c6af4827d9ae1682bf852a3de4153613f4d139194ce5faa8aa4cd698305c"
+        },
+        "T_Env_FrostWayshrine_N.png": {
+          "path": "03_work/textures_v003/T_Env_FrostWayshrine_N.png",
+          "sha256": "c0497b950d7a4cdf635b9512f026fd8e7340b5549b4236e5a1b2a05afff86f1a"
+        },
+        "T_Env_FrostWayshrine_ORM.png": {
+          "path": "03_work/textures_v003/T_Env_FrostWayshrine_ORM.png",
+          "sha256": "6898a84e131c473500f266469a1bda23129c5e2f0bfc9ceafc890e05dfaa7c55"
+        }
+      },
+      "review_image": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_FrostWayshrine\\05_review\\SM_Env_FrostWayshrine_v003_review_v002.png",
+      "validation_report": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_FrostWayshrine\\05_review\\SM_Env_FrostWayshrine_v003_validation_v002.json",
+      "runtime_url": "assets/props/SM_Env_FrostWayshrine.glb",
+      "runtime_sha256": "09dff3832ad658ee1d685baefe67b5b0c08c6e785603af14258ead091736f9fd",
+      "bytes": 240892,
+      "original_published_bytes": 389316,
+      "lods": [
+        {
+          "name": "SM_Env_FrostWayshrine_LOD0",
+          "tris": 5000,
+          "verts": 2502,
+          "uv_min": [
+            0.0023799650371074677,
+            0.002379993675276637
+          ],
+          "uv_max": [
+            0.9976199865341187,
+            0.9689344167709351
+          ],
+          "uv_utilization": 0.589,
+          "bbox_min": [
+            -2.0932,
+            -1.6946,
+            0.0002
+          ],
+          "bbox_max": [
+            2.0969,
+            1.6062,
+            4.8419
+          ]
+        },
+        {
+          "name": "SM_Env_FrostWayshrine_LOD1",
+          "tris": 1600,
+          "verts": 802,
+          "uv_min": [
+            0.0024625002406537533,
+            0.002432847861200571
+          ],
+          "uv_max": [
+            0.9969420433044434,
+            0.9689344167709351
+          ],
+          "uv_utilization": 0.573,
+          "bbox_min": [
+            -2.1009,
+            -1.6948,
+            0.0023
+          ],
+          "bbox_max": [
+            2.1031,
+            1.6111,
+            4.8581
+          ]
+        },
+        {
+          "name": "SM_Env_FrostWayshrine_LOD2",
+          "tris": 500,
+          "verts": 252,
+          "uv_min": [
+            0.002957666525617242,
+            0.0033935336396098137
+          ],
+          "uv_max": [
+            0.9941763877868652,
+            0.9680733680725098
+          ],
+          "uv_utilization": 0.54,
+          "bbox_min": [
+            -2.081,
+            -1.6722,
+            0.0014
+          ],
+          "bbox_max": [
+            2.0995,
+            1.6146,
+            4.8813
+          ]
+        }
+      ],
+      "texture_metrics": {
+        "T_Env_FrostWayshrine_BC": {
+          "size": 1024,
+          "colorspace": "sRGB"
+        },
+        "T_Env_FrostWayshrine_N": {
+          "size": 1024,
+          "colorspace": "Non-Color"
+        },
+        "T_Env_FrostWayshrine_ORM": {
+          "size": 1024,
+          "colorspace": "Non-Color"
+        }
+      },
+      "align": {
+        "yaw_deg": 0,
+        "iou": 0.893,
+        "iou_per_view": {
+          "front": 0.962,
+          "left": 0.806,
+          "back": 0.964,
+          "right": 0.807
+        },
+        "height_m": 4.8435,
+        "blockout_height_m": 5.0
+      },
+      "projection": {
+        "uncovered_ratio": 0.4044
+      },
+      "uv": {
+        "smart_islands": 277,
+        "charts": 48,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "merged",
+        "density_smart": 0.0764,
+        "density_merged": 0.0781
+      },
+      "cpu_build_seconds": 183.8,
+      "bake_device": "CPU",
+      "bounds": {
+        "min": [
+          -2.0932230949401855,
+          0.00017306247900705785,
+          -1.6061992645263672
+        ],
+        "max": [
+          2.0968778133392334,
+          4.841922283172607,
+          1.6945749521255493
+        ]
+      },
+      "lod_distance": [
+        0,
+        18,
+        42
+      ],
+      "qa": {
+        "passes": 38,
+        "warnings": [],
+        "errors": [],
+        "waivers": [],
+        "budget_waivers": 0
+      },
+      "failed_build_history": [
+        {
+          "version": 2,
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "failure_reason": "LOD2 bounded cleanup still exceeds budget 500",
+          "quality_errors": [
+            "LOD2 triangle budget: 1448 > 500 after bounded cleanup"
+          ],
+          "files": {
+            "SM_Env_FrostWayshrine_v002_failure.json": {
+              "path": "03_work/SM_Env_FrostWayshrine_v002_failure.json",
+              "sha256": "b00a94aa7ad88bee26c298823cde8f412de6e0ebb058bc0fe7482e5c32aa5a64"
+            },
+            "build.blender.log": {
+              "path": "_tmp/build_v002/build.blender.log",
+              "sha256": "b39622b23929d87f082447b07585fd03f1b4116f167c0368b762ff3e77af5916"
+            },
+            "build.args.json": {
+              "path": "_tmp/build_v002/build.args.json",
+              "sha256": "220bd9fa35939683353b649cc9be1512830d7a92ba732af90c4914107d9cbf16"
+            },
+            "T_Env_FrostWayshrine_BC.png": {
+              "path": "03_work/textures_v002/T_Env_FrostWayshrine_BC.png",
+              "sha256": "f92dd9cd64eeca4b7553bc74e90b7236e65db077bbfe53df8d8885c30ad68c9d"
+            },
+            "T_Env_FrostWayshrine_N.png": {
+              "path": "03_work/textures_v002/T_Env_FrostWayshrine_N.png",
+              "sha256": "8ba0b3182b7b4ea807ca5421b008d4bfeceed0fd3734084989eb591ade9b7825"
+            },
+            "T_Env_FrostWayshrine_ORM.png": {
+              "path": "03_work/textures_v002/T_Env_FrostWayshrine_ORM.png",
+              "sha256": "669b35ae7155d5d7dfb71a60438f04b446d4777dd657a4400a55cf8bb6a3b7ae"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "SM_Env_InfernoFoundry",
+      "versions": {
+        "blockout": 1,
+        "concept": 2,
+        "highpoly": 3,
+        "build": 2,
+        "validate": 2,
+        "review": 2,
+        "publish": 2
+      },
+      "seed": 202610052,
+      "generator": {
+        "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+        "mode": "single",
+        "checkpoint": "hunyuan_3d_v2.1.safetensors",
+        "steps": 50,
+        "cfg": 5.0,
+        "shift": 1.0,
+        "octree_resolution": 384,
+        "num_chunks": 32000,
+        "threshold": 0.6,
+        "comfyui": "0.30.0",
+        "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+        "seconds": 143.9,
+        "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+      },
+      "concept_review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Root inspected the native revised four-view sheet: broad painted color blocks, simplified wear, matched facade and rear, coherent thick side volume and solid connected structure. Approved for local Hunyuan reconstruction, not a human review.",
+        "time": "2026-10-04 17:35:34"
+      },
+      "final_review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Root inspected five actual textured views, LOD meshes and texture sheets. Broad charcoal stone and restrained bronze bands read clearly; the furnace niche, coal bed, complete back and deep side buttresses retain solid connected volume. All LOD budgets passed, with zero validation warnings or errors and no waiver.",
+        "time": "2026-10-04 17:58:43"
+      },
+      "source_sha256": "1c0c2e528a59e250f214d4528e1804fbe52cc04617adbb066b1c19766628420b",
+      "highpoly_files": {
+        "HP_SM_Env_InfernoFoundry_v003_input.png": {
+          "path": "02_highpoly/HP_SM_Env_InfernoFoundry_v003_input.png",
+          "sha256": "967e7b248f5d4df79e8321964d50ba8279ef93cea9e5244bfce3bde01a3e3813"
+        },
+        "HP_SM_Env_InfernoFoundry_v003.glb": {
+          "path": "02_highpoly/HP_SM_Env_InfernoFoundry_v003.glb",
+          "sha256": "08509ea2d2708fff645fccd5505b76f759ea214c2d2adb0600dfa5e67abdf035"
+        },
+        "HP_SM_Env_InfernoFoundry_v003_graph.json": {
+          "path": "02_highpoly/HP_SM_Env_InfernoFoundry_v003_graph.json",
+          "sha256": "b64e04a9fba6cbd41a1c0c2c78b9953131e99959934d2d72856366a1b9f7f01a"
+        }
+      },
+      "build_files": {
+        "SM_Env_InfernoFoundry_v002.blend": {
+          "path": "03_work/SM_Env_InfernoFoundry_v002.blend",
+          "sha256": "185da4e0cc397672fdbbef382c0b95c3ce382c6904f24f1fcdbaf42397f9d819"
+        },
+        "SM_Env_InfernoFoundry_v002.glb": {
+          "path": "04_export/SM_Env_InfernoFoundry_v002.glb",
+          "sha256": "75e492529dee5c9681bcf55b626af3fccc6b0f6e95d3ffce8792cca27e157d67"
+        },
+        "SM_Env_InfernoFoundry_v002_metrics.json": {
+          "path": "03_work/SM_Env_InfernoFoundry_v002_metrics.json",
+          "sha256": "41c8b45f75ec1cf4a755fe5b69f6e8af913c40a7422e09a96a9943d2cb572454"
+        },
+        "T_Env_InfernoFoundry_BC.png": {
+          "path": "03_work/textures_v002/T_Env_InfernoFoundry_BC.png",
+          "sha256": "f2f102ab156e03c90c7975c58b24e079f25388392ece8ceccf5d77f7f37448c1"
+        },
+        "T_Env_InfernoFoundry_N.png": {
+          "path": "03_work/textures_v002/T_Env_InfernoFoundry_N.png",
+          "sha256": "66935ed30c41869f7d07170e3d57099655cc499a46b0a9bdcf409dfe0523cb20"
+        },
+        "T_Env_InfernoFoundry_ORM.png": {
+          "path": "03_work/textures_v002/T_Env_InfernoFoundry_ORM.png",
+          "sha256": "e17fc9159642764edd4f6e169ae4f352ec303db8d52b92598f77503f18a82fa0"
+        }
+      },
+      "review_image": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_InfernoFoundry\\05_review\\SM_Env_InfernoFoundry_v002_review_v002.png",
+      "validation_report": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_InfernoFoundry\\05_review\\SM_Env_InfernoFoundry_v002_validation_v002.json",
+      "runtime_url": "assets/props/SM_Env_InfernoFoundry.glb",
+      "runtime_sha256": "75e492529dee5c9681bcf55b626af3fccc6b0f6e95d3ffce8792cca27e157d67",
+      "bytes": 314412,
+      "original_published_bytes": 313256,
+      "lods": [
+        {
+          "name": "SM_Env_InfernoFoundry_LOD0",
+          "tris": 5000,
+          "verts": 2478,
+          "uv_min": [
+            0.00350265484303236,
+            0.0032249698415398598
+          ],
+          "uv_max": [
+            0.9967933893203735,
+            0.9835907816886902
+          ],
+          "uv_utilization": 0.539,
+          "bbox_min": [
+            -1.9391,
+            -1.5951,
+            -0.0027
+          ],
+          "bbox_max": [
+            1.8856,
+            1.6407,
+            4.5309
+          ]
+        },
+        {
+          "name": "SM_Env_InfernoFoundry_LOD1",
+          "tris": 1600,
+          "verts": 778,
+          "uv_min": [
+            0.0036382211837917566,
+            0.0032653724774718285
+          ],
+          "uv_max": [
+            0.9942572116851807,
+            0.9835907816886902
+          ],
+          "uv_utilization": 0.511,
+          "bbox_min": [
+            -1.9313,
+            -1.5902,
+            -0.0017
+          ],
+          "bbox_max": [
+            1.8666,
+            1.6544,
+            4.5282
+          ]
+        },
+        {
+          "name": "SM_Env_InfernoFoundry_LOD2",
+          "tris": 500,
+          "verts": 228,
+          "uv_min": [
+            0.0036382211837917566,
+            0.0032653724774718285
+          ],
+          "uv_max": [
+            0.9934925436973572,
+            0.9835907816886902
+          ],
+          "uv_utilization": 0.428,
+          "bbox_min": [
+            -1.8996,
+            -1.5971,
+            -0.0071
+          ],
+          "bbox_max": [
+            1.8404,
+            1.649,
+            4.4959
+          ]
+        }
+      ],
+      "texture_metrics": {
+        "T_Env_InfernoFoundry_BC": {
+          "size": 1024,
+          "colorspace": "sRGB"
+        },
+        "T_Env_InfernoFoundry_N": {
+          "size": 1024,
+          "colorspace": "Non-Color"
+        },
+        "T_Env_InfernoFoundry_ORM": {
+          "size": 1024,
+          "colorspace": "Non-Color"
+        }
+      },
+      "align": {
+        "yaw_deg": 0,
+        "iou": 0.904,
+        "iou_per_view": {
+          "front": 0.957,
+          "left": 0.832,
+          "back": 0.954,
+          "right": 0.846
+        },
+        "height_m": 4.536,
+        "blockout_height_m": 4.8
+      },
+      "projection": {
+        "uncovered_ratio": 0.2988
+      },
+      "uv": {
+        "smart_islands": 837,
+        "charts": 139,
+        "fallback_charts": 9,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "merged",
+        "density_smart": 0.074,
+        "density_merged": 0.0921
+      },
+      "cpu_build_seconds": 148.8,
+      "bake_device": "CPU",
+      "bounds": {
+        "min": [
+          -1.9390830993652344,
+          -0.0027246384415775537,
+          -1.6407444477081299
+        ],
+        "max": [
+          1.8856210708618164,
+          4.530893325805664,
+          1.5950939655303955
+        ]
+      },
+      "lod_distance": [
+        0,
+        18,
+        42
+      ],
+      "qa": {
+        "passes": 38,
+        "warnings": [],
+        "errors": [],
+        "waivers": [],
+        "budget_waivers": 0
+      },
+      "failed_build_history": []
+    },
+    {
+      "id": "SM_Env_DesertSandstone",
+      "versions": {
+        "blockout": 1,
+        "concept": 2,
+        "highpoly": 2,
+        "build": 2,
+        "validate": 3,
+        "review": 3,
+        "publish": 3
+      },
+      "seed": 202610053,
+      "generator": {
+        "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+        "mode": "single",
+        "checkpoint": "hunyuan_3d_v2.1.safetensors",
+        "steps": 50,
+        "cfg": 5.0,
+        "shift": 1.0,
+        "octree_resolution": 384,
+        "num_chunks": 32000,
+        "threshold": 0.6,
+        "comfyui": "0.30.0",
+        "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+        "seconds": 235.9,
+        "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+      },
+      "concept_review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Root inspected the revised native four-view sheet: broad hand-painted planes, reduced micro-detail, coherent side/back volume and connected silhouette. Pine uses solid foliage and snow masses with a visible trunk. Approved for local Hunyuan reconstruction, not a human review.",
+        "time": "2026-10-04 17:39:05"
+      },
+      "final_review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Root inspected the actual five views, all LODs and texture sheets. Warm ochre painted planes and broad erosion bands retain a thick coherent rock cluster and stable far silhouette; no visible texture holes or disconnected parts. Retain the natural center-offset warning, with zero errors and no waiver.",
+        "time": "2026-10-04 18:02:04"
+      },
+      "source_sha256": "3e78ba3e245dac9608bd6b5989a60af4e92d31b5b5cd842ddd1fa7cb9dc189d2",
+      "highpoly_files": {
+        "HP_SM_Env_DesertSandstone_v002_input.png": {
+          "path": "02_highpoly/HP_SM_Env_DesertSandstone_v002_input.png",
+          "sha256": "68d01970be51184f0cb1fb997c9656968cd157f73d287a16d8b11aea3da8084d"
+        },
+        "HP_SM_Env_DesertSandstone_v002.glb": {
+          "path": "02_highpoly/HP_SM_Env_DesertSandstone_v002.glb",
+          "sha256": "dc12f63f2d42cd42a4f003bda73554e7a6127a84f357538aaf150ddb0f9fd466"
+        },
+        "HP_SM_Env_DesertSandstone_v002_graph.json": {
+          "path": "02_highpoly/HP_SM_Env_DesertSandstone_v002_graph.json",
+          "sha256": "72d144cff45d5d75f1cb72f439366704f8d6e0f159cf4d4d04b2e8f544184843"
+        }
+      },
+      "build_files": {
+        "SM_Env_DesertSandstone_v002.blend": {
+          "path": "03_work/SM_Env_DesertSandstone_v002.blend",
+          "sha256": "989978d8caadf945d5bc455dbb06ef8949f4a72f54a4f36dc813f07ae93f0f6e"
+        },
+        "SM_Env_DesertSandstone_v002.glb": {
+          "path": "04_export/SM_Env_DesertSandstone_v002.glb",
+          "sha256": "a3c6ee73e246d78e406a0cbe68cb13380f8180399f5756772ae6bda7dea5c902"
+        },
+        "SM_Env_DesertSandstone_v002_metrics.json": {
+          "path": "03_work/SM_Env_DesertSandstone_v002_metrics.json",
+          "sha256": "cc2f55f97c3782223077d79a3b6e095f8ceab1c5b9eace4d0a9584b5830682f4"
+        },
+        "T_Env_DesertSandstone_BC.png": {
+          "path": "03_work/textures_v002/T_Env_DesertSandstone_BC.png",
+          "sha256": "80cba1be728040b400e1c66bac2d8c71873f17504447c9ff883e5c6d7bbe8cac"
+        },
+        "T_Env_DesertSandstone_N.png": {
+          "path": "03_work/textures_v002/T_Env_DesertSandstone_N.png",
+          "sha256": "8903deebbf0e065e40db4b2c6a4208a8d73fd40222866580c761c73c4888217d"
+        },
+        "T_Env_DesertSandstone_ORM.png": {
+          "path": "03_work/textures_v002/T_Env_DesertSandstone_ORM.png",
+          "sha256": "4692bd376c878e2162ad7c6eaad9120a84d65716183095133546e56ab8623a81"
+        }
+      },
+      "review_image": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_DesertSandstone\\05_review\\SM_Env_DesertSandstone_v002_review_v003.png",
+      "validation_report": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_DesertSandstone\\05_review\\SM_Env_DesertSandstone_v002_validation_v003.json",
+      "runtime_url": "assets/props/SM_Env_DesertSandstone.glb",
+      "runtime_sha256": "a3c6ee73e246d78e406a0cbe68cb13380f8180399f5756772ae6bda7dea5c902",
+      "bytes": 214184,
+      "original_published_bytes": 233364,
+      "lods": [
+        {
+          "name": "SM_Env_DesertSandstone_LOD0",
+          "tris": 5000,
+          "verts": 2502,
+          "uv_min": [
+            0.00217781332321465,
+            0.002437629969790578
+          ],
+          "uv_max": [
+            0.9918059706687927,
+            0.9978720545768738
+          ],
+          "uv_utilization": 0.675,
+          "bbox_min": [
+            -1.7097,
+            -1.4078,
+            0.0006
+          ],
+          "bbox_max": [
+            1.6672,
+            1.1366,
+            2.8829
+          ]
+        },
+        {
+          "name": "SM_Env_DesertSandstone_LOD1",
+          "tris": 1600,
+          "verts": 802,
+          "uv_min": [
+            0.0036586299538612366,
+            0.0027671512216329575
+          ],
+          "uv_max": [
+            0.9918059706687927,
+            0.9978720545768738
+          ],
+          "uv_utilization": 0.644,
+          "bbox_min": [
+            -1.7142,
+            -1.4058,
+            -0.0016
+          ],
+          "bbox_max": [
+            1.6578,
+            1.1281,
+            2.8797
+          ]
+        },
+        {
+          "name": "SM_Env_DesertSandstone_LOD2",
+          "tris": 500,
+          "verts": 252,
+          "uv_min": [
+            0.004764791578054428,
+            0.0033289892598986626
+          ],
+          "uv_max": [
+            0.9857168197631836,
+            0.9923079609870911
+          ],
+          "uv_utilization": 0.591,
+          "bbox_min": [
+            -1.729,
+            -1.3843,
+            0.0021
+          ],
+          "bbox_max": [
+            1.6363,
+            1.1577,
+            2.8974
+          ]
+        }
+      ],
+      "texture_metrics": {
+        "T_Env_DesertSandstone_BC": {
+          "size": 1024,
+          "colorspace": "sRGB"
+        },
+        "T_Env_DesertSandstone_N": {
+          "size": 1024,
+          "colorspace": "Non-Color"
+        },
+        "T_Env_DesertSandstone_ORM": {
+          "size": 1024,
+          "colorspace": "Non-Color"
+        }
+      },
+      "align": {
+        "yaw_deg": 0,
+        "iou": 0.873,
+        "iou_per_view": {
+          "front": 0.963,
+          "left": 0.742,
+          "back": 0.954,
+          "right": 0.789
+        },
+        "height_m": 2.8815,
+        "blockout_height_m": 3.0
+      },
+      "projection": {
+        "uncovered_ratio": 0.3287
+      },
+      "uv": {
+        "smart_islands": 256,
+        "charts": 36,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "merged",
+        "density_smart": 0.1512,
+        "density_merged": 0.1582
+      },
+      "cpu_build_seconds": 104.7,
+      "bake_device": "CPU",
+      "bounds": {
+        "min": [
+          -1.7097365856170654,
+          0.0005523354047909379,
+          -1.1365830898284912
+        ],
+        "max": [
+          1.6671547889709473,
+          2.882888078689575,
+          1.407835602760315
+        ]
+      },
+      "lod_distance": [
+        0,
+        18,
+        42
+      ],
+      "qa": {
+        "passes": 37,
+        "warnings": [
+          {
+            "level": "warn",
+            "check": "场景轴心居中",
+            "detail": "中心 x=-0.021 z=0.136"
+          }
+        ],
+        "errors": [],
+        "waivers": [],
+        "budget_waivers": 0
+      },
+      "failed_build_history": []
+    },
+    {
+      "id": "SM_Env_FrostPine",
+      "versions": {
+        "blockout": 1,
+        "concept": 2,
+        "highpoly": 3,
+        "build": 4,
+        "validate": 5,
+        "review": 3,
+        "publish": 2
+      },
+      "seed": 202610054,
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+        "steps": 50,
+        "cfg": 5.0,
+        "shift": 1.0,
+        "octree_resolution": 384,
+        "num_chunks": 32000,
+        "threshold": 0.6,
+        "comfyui": "0.30.0",
+        "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+        "seconds": 135.2,
+        "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+      },
+      "concept_review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Root inspected the revised native four-view sheet: broad hand-painted planes, reduced micro-detail, coherent side/back volume and connected silhouette. Pine uses solid foliage and snow masses with a visible trunk. Approved for local Hunyuan reconstruction, not a human review.",
+        "time": "2026-10-04 17:39:06"
+      },
+      "final_review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Root inspected five actual textured views, all LODs and texture sheets. Broad blue-green foliage masses, painted snow caps and a readable brown trunk form a fully three-dimensional tree, with coherent left/back/right views and grounded base. All three LOD budgets passed with zero validation warnings/errors and no waiver; earlier thin-mesh and failed-budget evidence remains preserved.",
+        "time": "2026-10-04 18:08:10"
+      },
+      "source_sha256": "727618a913d1199b0d79c61b87439d61eb5a77e9744aa4535dcce8f3d4f117e1",
+      "highpoly_files": {
+        "HP_SM_Env_FrostPine_v003_input_front.png": {
+          "path": "02_highpoly/HP_SM_Env_FrostPine_v003_input_front.png",
+          "sha256": "fd6caf14b74003e8f8cf4ec4c67623497323068344c8a45e63f52178592b3ce9"
+        },
+        "HP_SM_Env_FrostPine_v003_input_left.png": {
+          "path": "02_highpoly/HP_SM_Env_FrostPine_v003_input_left.png",
+          "sha256": "a6c853583a8d24896584badb1ebdd89ba3ab35256395e0dd7bcd10544ed3ca23"
+        },
+        "HP_SM_Env_FrostPine_v003_input_back.png": {
+          "path": "02_highpoly/HP_SM_Env_FrostPine_v003_input_back.png",
+          "sha256": "5559d9fb9f684861fa3c19d9d0fc27c612e2f754a97197aa78a8b070db730985"
+        },
+        "HP_SM_Env_FrostPine_v003_input_right.png": {
+          "path": "02_highpoly/HP_SM_Env_FrostPine_v003_input_right.png",
+          "sha256": "5dce85032958939276e03473605559b4f85acafd02e013512b31413435d348b6"
+        },
+        "HP_SM_Env_FrostPine_v003.glb": {
+          "path": "02_highpoly/HP_SM_Env_FrostPine_v003.glb",
+          "sha256": "170b2c844566e6c0e83304c56f9751d239e0aa46414b5471b8af2438809bd6eb"
+        },
+        "HP_SM_Env_FrostPine_v003_graph.json": {
+          "path": "02_highpoly/HP_SM_Env_FrostPine_v003_graph.json",
+          "sha256": "09c9024c91b7d14140da5daf2f9c06bf60b0624cec8fe3e9573f65ed880361ff"
+        }
+      },
+      "build_files": {
+        "SM_Env_FrostPine_v004.blend": {
+          "path": "03_work/SM_Env_FrostPine_v004.blend",
+          "sha256": "0258cb6beabcb70b8b84337e07a261eff49c195fdb816ed02755fc440305a752"
+        },
+        "SM_Env_FrostPine_v004.glb": {
+          "path": "04_export/SM_Env_FrostPine_v004.glb",
+          "sha256": "10c367e9df614f38a75714be0acc2695e5a2db65882e0e664d17ea210077a987"
+        },
+        "SM_Env_FrostPine_v004_metrics.json": {
+          "path": "03_work/SM_Env_FrostPine_v004_metrics.json",
+          "sha256": "5a7bbbae3da456deffaaa05bb177b7967c2092628b33a126e8f1432ef2aa7f7f"
+        },
+        "T_Env_FrostPine_BC.png": {
+          "path": "03_work/textures_v004/T_Env_FrostPine_BC.png",
+          "sha256": "e38da5c2e602d13786ae7630d114aaedf6312fac0988bb4072ac3c74b3c3c570"
+        },
+        "T_Env_FrostPine_N.png": {
+          "path": "03_work/textures_v004/T_Env_FrostPine_N.png",
+          "sha256": "ce2c6b4af87c3985d3c1ba72db3f8150e751b5acbdbccc6a31615c5e0c8b5f8e"
+        },
+        "T_Env_FrostPine_ORM.png": {
+          "path": "03_work/textures_v004/T_Env_FrostPine_ORM.png",
+          "sha256": "274d4fb9af606c5a19964aa42ab01968d3c8ec3154f50d24ae406226f2425cb0"
+        }
+      },
+      "review_image": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_FrostPine\\05_review\\SM_Env_FrostPine_v004_review_v003.png",
+      "validation_report": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_FrostPine\\05_review\\SM_Env_FrostPine_v004_validation_v005.json",
+      "runtime_url": "assets/props/SM_Env_FrostPine.glb",
+      "runtime_sha256": "10c367e9df614f38a75714be0acc2695e5a2db65882e0e664d17ea210077a987",
+      "bytes": 299844,
+      "original_published_bytes": 478220,
+      "lods": [
+        {
+          "name": "SM_Env_FrostPine_LOD0",
+          "tris": 5000,
+          "verts": 2470,
+          "uv_min": [
+            0.0031305623706430197,
+            0.003124323906376958
+          ],
+          "uv_max": [
+            0.9889171123504639,
+            0.9970452189445496
+          ],
+          "uv_utilization": 0.54,
+          "bbox_min": [
+            -1.2779,
+            -1.0064,
+            -0.0008
+          ],
+          "bbox_max": [
+            1.3442,
+            1.1774,
+            4.5284
+          ]
+        },
+        {
+          "name": "SM_Env_FrostPine_LOD1",
+          "tris": 1600,
+          "verts": 770,
+          "uv_min": [
+            0.0033633315470069647,
+            0.003757744561880827
+          ],
+          "uv_max": [
+            0.9881629943847656,
+            0.9970452189445496
+          ],
+          "uv_utilization": 0.478,
+          "bbox_min": [
+            -1.2766,
+            -1.0153,
+            0.0
+          ],
+          "bbox_max": [
+            1.3536,
+            1.1621,
+            4.5466
+          ]
+        },
+        {
+          "name": "SM_Env_FrostPine_LOD2",
+          "tris": 500,
+          "verts": 220,
+          "uv_min": [
+            0.0033633315470069647,
+            0.003757744561880827
+          ],
+          "uv_max": [
+            0.9827814102172852,
+            0.9953000545501709
+          ],
+          "uv_utilization": 0.364,
+          "bbox_min": [
+            -1.3391,
+            -0.989,
+            0.0
+          ],
+          "bbox_max": [
+            1.3457,
+            1.1469,
+            4.5358
+          ]
+        }
+      ],
+      "texture_metrics": {
+        "T_Env_FrostPine_BC": {
+          "size": 1024,
+          "colorspace": "sRGB"
+        },
+        "T_Env_FrostPine_N": {
+          "size": 1024,
+          "colorspace": "Non-Color"
+        },
+        "T_Env_FrostPine_ORM": {
+          "size": 1024,
+          "colorspace": "Non-Color"
+        }
+      },
+      "align": {
+        "yaw_deg": 0,
+        "iou": 0.812,
+        "iou_per_view": {
+          "front": 0.873,
+          "left": 0.767,
+          "back": 0.862,
+          "right": 0.718
+        },
+        "height_m": 4.5309,
+        "blockout_height_m": 4.6
+      },
+      "projection": {
+        "uncovered_ratio": 0.4262
+      },
+      "uv": {
+        "smart_islands": 568,
+        "charts": 76,
+        "fallback_charts": 5,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "merged",
+        "density_smart": 0.0933,
+        "density_merged": 0.1153
+      },
+      "cpu_build_seconds": 97.9,
+      "bake_device": "CPU",
+      "bounds": {
+        "min": [
+          -1.2779006958007812,
+          -0.000759706599637866,
+          -1.1773571968078613
+        ],
+        "max": [
+          1.344180941581726,
+          4.528393745422363,
+          1.0064398050308228
+        ]
+      },
+      "lod_distance": [
+        0,
+        18,
+        42
+      ],
+      "qa": {
+        "passes": 38,
+        "warnings": [],
+        "errors": [],
+        "waivers": [],
+        "budget_waivers": 0
+      },
+      "failed_build_history": [
+        {
+          "version": 1,
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "failure_reason": null,
+          "quality_errors": [
+            "自然三维体量 Z 轴"
+          ],
+          "files": {
+            "SM_Env_FrostPine_v001.blend": {
+              "path": "03_work/SM_Env_FrostPine_v001.blend",
+              "sha256": "18bc304488d50f61592e54c1e17e858d5f47a2ad3daf76af76e2651ccaa84c0a"
+            },
+            "SM_Env_FrostPine_v001.glb": {
+              "path": "04_export/SM_Env_FrostPine_v001.glb",
+              "sha256": "bb608ab7c7c9109cbc74d2be802c7d3c651e28c65cede2d6dd0ea0a2edd63621"
+            },
+            "SM_Env_FrostPine_v001_metrics.json": {
+              "path": "03_work/SM_Env_FrostPine_v001_metrics.json",
+              "sha256": "306ac1790aac4a19ac94abb5fecd7e22cec4ff0a8ad3424499822a9892745b84"
+            },
+            "T_Env_FrostPine_BC.png": {
+              "path": "03_work/textures_v001/T_Env_FrostPine_BC.png",
+              "sha256": "058cb5f43bc0a9010c58ab1f507f3b36ad89ef968e0a6ae6a8d086ceb2c31e3e"
+            },
+            "T_Env_FrostPine_N.png": {
+              "path": "03_work/textures_v001/T_Env_FrostPine_N.png",
+              "sha256": "53577820fe8b5d940fc3d68a2e8a241bde233acfc7a6e0d6d0108024a2973daf"
+            },
+            "T_Env_FrostPine_ORM.png": {
+              "path": "03_work/textures_v001/T_Env_FrostPine_ORM.png",
+              "sha256": "86081c4b0c752b47c8fc35c1dab6c70c38bc35d8e2e43ce3d63a3cb73776cc23"
+            }
+          }
+        },
+        {
+          "version": 2,
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "failure_reason": null,
+          "quality_errors": [
+            "LOD2 面数"
+          ],
+          "files": {
+            "SM_Env_FrostPine_v002.blend": {
+              "path": "03_work/SM_Env_FrostPine_v002.blend",
+              "sha256": "874a48fd3d6a9f4bf64dcbd4ccc7fecdcbadb5424c4bfb8b6d97c5445a4721d7"
+            },
+            "SM_Env_FrostPine_v002.glb": {
+              "path": "04_export/SM_Env_FrostPine_v002.glb",
+              "sha256": "c2c9dbf9439372e636f0a98c07a491cba5d22671780853f520dc391030b32575"
+            },
+            "SM_Env_FrostPine_v002_metrics.json": {
+              "path": "03_work/SM_Env_FrostPine_v002_metrics.json",
+              "sha256": "b9173b09675d6b1a0459fa90faca751c073400bb42013c774ef19cb1ce873729"
+            },
+            "T_Env_FrostPine_BC.png": {
+              "path": "03_work/textures_v002/T_Env_FrostPine_BC.png",
+              "sha256": "e95a4a363b23178c867ad440ad99f2344a2cff3ddd2d210f4f3d32149c17f94f"
+            },
+            "T_Env_FrostPine_N.png": {
+              "path": "03_work/textures_v002/T_Env_FrostPine_N.png",
+              "sha256": "e765fb63cfd509d20a810ab3ad8bce9f4d31c0f5ef6a1689408923cefb53a681"
+            },
+            "T_Env_FrostPine_ORM.png": {
+              "path": "03_work/textures_v002/T_Env_FrostPine_ORM.png",
+              "sha256": "936ebf165e3e75790d4e6b27e1b7b8eba24a0d70902e6ea0ef43e4f5b1d23f8a"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "SM_Env_InfernoBasalt",
+      "versions": {
+        "blockout": 1,
+        "concept": 2,
+        "highpoly": 2,
+        "build": 2,
+        "validate": 2,
+        "review": 2,
+        "publish": 2
+      },
+      "seed": 202610055,
+      "generator": {
+        "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+        "mode": "single",
+        "checkpoint": "hunyuan_3d_v2.1.safetensors",
+        "steps": 50,
+        "cfg": 5.0,
+        "shift": 1.0,
+        "octree_resolution": 384,
+        "num_chunks": 32000,
+        "threshold": 0.6,
+        "comfyui": "0.30.0",
+        "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+        "seconds": 144.2,
+        "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+      },
+      "concept_review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Root inspected the revised native four-view sheet: broad hand-painted planes, reduced micro-detail, coherent side/back volume and connected silhouette. Pine uses solid foliage and snow masses with a visible trunk. Approved for local Hunyuan reconstruction, not a human review.",
+        "time": "2026-10-04 17:39:07"
+      },
+      "final_review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Root inspected five actual textured views, all LOD meshes and texture sheets. Broad cool charcoal planes, restrained warm fracture accents and a connected rocky base retain real side/rear volume and a readable distant silhouette. All budgets passed with zero validation warnings/errors and no waiver.",
+        "time": "2026-10-04 18:11:09"
+      },
+      "source_sha256": "b8ad6d037a79cbaf4bf901c8f62fd55c0ae6c200b273d78d4d1ea7be7fd30b06",
+      "highpoly_files": {
+        "HP_SM_Env_InfernoBasalt_v002_input.png": {
+          "path": "02_highpoly/HP_SM_Env_InfernoBasalt_v002_input.png",
+          "sha256": "f844bde11167bdf7a903c8ea2dd89db0f16a86457ab72f9993262ac5405bb6fe"
+        },
+        "HP_SM_Env_InfernoBasalt_v002.glb": {
+          "path": "02_highpoly/HP_SM_Env_InfernoBasalt_v002.glb",
+          "sha256": "718e86547eaecd037355f8de3a7e993f00b6f51f1e19af19c42c7f099d785a1d"
+        },
+        "HP_SM_Env_InfernoBasalt_v002_graph.json": {
+          "path": "02_highpoly/HP_SM_Env_InfernoBasalt_v002_graph.json",
+          "sha256": "fc2b524a7aa0451c58bf5abbae922ef79152861a7976cb78b71fe0a0111e9637"
+        }
+      },
+      "build_files": {
+        "SM_Env_InfernoBasalt_v002.blend": {
+          "path": "03_work/SM_Env_InfernoBasalt_v002.blend",
+          "sha256": "23a1870f117c6f617d06baded51124a735b5c0f0f6449f0daf8738233bc5da3b"
+        },
+        "SM_Env_InfernoBasalt_v002.glb": {
+          "path": "04_export/SM_Env_InfernoBasalt_v002.glb",
+          "sha256": "1a622c0e52280756062c910a7cf383ebba0b9b078fae76700780e0295b4deece"
+        },
+        "SM_Env_InfernoBasalt_v002_metrics.json": {
+          "path": "03_work/SM_Env_InfernoBasalt_v002_metrics.json",
+          "sha256": "15d346ccab2de9a69a9dc2d6585276b8690b2423d5fb1924de7f5102e7a8fd41"
+        },
+        "T_Env_InfernoBasalt_BC.png": {
+          "path": "03_work/textures_v002/T_Env_InfernoBasalt_BC.png",
+          "sha256": "71d315bd52eb12392ef7b45fea875d7f31c37fb9f1c55280b89b15020eb83ec1"
+        },
+        "T_Env_InfernoBasalt_N.png": {
+          "path": "03_work/textures_v002/T_Env_InfernoBasalt_N.png",
+          "sha256": "b233cd364e125de935f0852df844ffdd2e122e106faf70f07bf1918a461199e4"
+        },
+        "T_Env_InfernoBasalt_ORM.png": {
+          "path": "03_work/textures_v002/T_Env_InfernoBasalt_ORM.png",
+          "sha256": "045d6f0ccfe09884a9d506671e5d06a8cf1aeb8c65dc0373111b719a80459d1a"
+        }
+      },
+      "review_image": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_InfernoBasalt\\05_review\\SM_Env_InfernoBasalt_v002_review_v002.png",
+      "validation_report": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_InfernoBasalt\\05_review\\SM_Env_InfernoBasalt_v002_validation_v002.json",
+      "runtime_url": "assets/props/SM_Env_InfernoBasalt.glb",
+      "runtime_sha256": "1a622c0e52280756062c910a7cf383ebba0b9b078fae76700780e0295b4deece",
+      "bytes": 208396,
+      "original_published_bytes": 254860,
+      "lods": [
+        {
+          "name": "SM_Env_InfernoBasalt_LOD0",
+          "tris": 5000,
+          "verts": 2502,
+          "uv_min": [
+            0.002641649916768074,
+            0.002477433532476425
+          ],
+          "uv_max": [
+            0.9914004802703857,
+            0.9976553916931152
+          ],
+          "uv_utilization": 0.646,
+          "bbox_min": [
+            -1.2714,
+            -1.2378,
+            0.0002
+          ],
+          "bbox_max": [
+            1.3031,
+            1.149,
+            2.8542
+          ]
+        },
+        {
+          "name": "SM_Env_InfernoBasalt_LOD1",
+          "tris": 1600,
+          "verts": 802,
+          "uv_min": [
+            0.003153245896100998,
+            0.002477433532476425
+          ],
+          "uv_max": [
+            0.9914004802703857,
+            0.9968726634979248
+          ],
+          "uv_utilization": 0.627,
+          "bbox_min": [
+            -1.2726,
+            -1.2381,
+            0.0009
+          ],
+          "bbox_max": [
+            1.3034,
+            1.1447,
+            2.8576
+          ]
+        },
+        {
+          "name": "SM_Env_InfernoBasalt_LOD2",
+          "tris": 500,
+          "verts": 252,
+          "uv_min": [
+            0.003153245896100998,
+            0.00367658119648695
+          ],
+          "uv_max": [
+            0.991051435470581,
+            0.9943469762802124
+          ],
+          "uv_utilization": 0.588,
+          "bbox_min": [
+            -1.2697,
+            -1.2521,
+            -0.0003
+          ],
+          "bbox_max": [
+            1.31,
+            1.126,
+            2.8536
+          ]
+        }
+      ],
+      "texture_metrics": {
+        "T_Env_InfernoBasalt_BC": {
+          "size": 1024,
+          "colorspace": "sRGB"
+        },
+        "T_Env_InfernoBasalt_N": {
+          "size": 1024,
+          "colorspace": "Non-Color"
+        },
+        "T_Env_InfernoBasalt_ORM": {
+          "size": 1024,
+          "colorspace": "Non-Color"
+        }
+      },
+      "align": {
+        "yaw_deg": 0,
+        "iou": 0.854,
+        "iou_per_view": {
+          "front": 0.947,
+          "left": 0.725,
+          "back": 0.897,
+          "right": 0.8
+        },
+        "height_m": 2.8528,
+        "blockout_height_m": 3.0
+      },
+      "projection": {
+        "uncovered_ratio": 0.2784
+      },
+      "uv": {
+        "smart_islands": 226,
+        "charts": 42,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "merged",
+        "density_smart": 0.1675,
+        "density_merged": 0.172
+      },
+      "cpu_build_seconds": 144.0,
+      "bake_device": "CPU",
+      "bounds": {
+        "min": [
+          -1.2714039087295532,
+          0.00018573629495222121,
+          -1.1489542722702026
+        ],
+        "max": [
+          1.3031460046768188,
+          2.8542466163635254,
+          1.2378196716308594
+        ]
+      },
+      "lod_distance": [
+        0,
+        18,
+        42
+      ],
+      "qa": {
+        "passes": 38,
+        "warnings": [],
+        "errors": [],
+        "waivers": [],
+        "budget_waivers": 0
+      },
+      "failed_build_history": []
+    }
+  ]
+}

@@ -1,0 +1,140 @@
+{
+  "steps": {
+    "导入清理": 1.4,
+    "对齐": 0.7,
+    "低模与 UV": 11.2,
+    "投影着色": 23.4,
+    "烘焙": 4.9,
+    "LOD": 0.1,
+    "导出": 0.6
+  },
+  "highpoly": {
+    "faces_raw": 418052,
+    "faces": 444698,
+    "verts": 444700,
+    "loose_parts": 5,
+    "kept_parts": 2,
+    "remesh_voxel_m": 0.00355
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.925,
+    "iou_per_view": {
+      "front": 0.941,
+      "left": 0.914,
+      "back": 0.939,
+      "right": 0.897
+    },
+    "height_m": 6.5694,
+    "blockout_height_m": 6.8
+  },
+  "uv": {
+    "smart_islands": 308,
+    "charts": 49,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "smart",
+    "density_smart": 0.0694,
+    "density_merged": 0.0686
+  },
+  "projection": {
+    "uncovered_ratio": 0.3351
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Env_DesertGate_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Env_DesertGate_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Env_DesertGate_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Env_DesertGate_LOD0",
+      "tris": 5000,
+      "verts": 2502,
+      "uv_min": [
+        0.003889236133545637,
+        0.0038663516752421856
+      ],
+      "uv_max": [
+        0.9739165902137756,
+        0.9961521029472351
+      ],
+      "uv_utilization": 0.558,
+      "bbox_min": [
+        -4.8399,
+        -0.933,
+        0.0007
+      ],
+      "bbox_max": [
+        4.8385,
+        0.8425,
+        6.5696
+      ]
+    },
+    {
+      "name": "SM_Env_DesertGate_LOD1",
+      "tris": 1600,
+      "verts": 802,
+      "uv_min": [
+        0.00405728118494153,
+        0.004167591687291861
+      ],
+      "uv_max": [
+        0.9732244610786438,
+        0.9961003065109253
+      ],
+      "uv_utilization": 0.534,
+      "bbox_min": [
+        -4.8262,
+        -0.9199,
+        0.0045
+      ],
+      "bbox_max": [
+        4.8244,
+        0.8414,
+        6.5635
+      ]
+    },
+    {
+      "name": "SM_Env_DesertGate_LOD2",
+      "tris": 500,
+      "verts": 252,
+      "uv_min": [
+        0.007683443371206522,
+        0.004617153201252222
+      ],
+      "uv_max": [
+        0.9726912379264832,
+        0.9926402568817139
+      ],
+      "uv_utilization": 0.48,
+      "bbox_min": [
+        -4.8234,
+        -0.9114,
+        0.0074
+      ],
+      "bbox_max": [
+        4.8244,
+        0.8225,
+        6.5746
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_DesertGate\\04_export\\SM_Env_DesertGate_v001.glb",
+    "bytes": 242520
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_DesertGate\\03_work\\SM_Env_DesertGate_v001.blend",
+  "total_seconds": 42.3,
+  "_seconds": 45.2
+}

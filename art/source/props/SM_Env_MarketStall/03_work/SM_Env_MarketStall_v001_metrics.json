@@ -1,0 +1,140 @@
+{
+  "steps": {
+    "导入清理": 6.9,
+    "对齐": 1.3,
+    "低模与 UV": 50.2,
+    "投影着色": 170.9,
+    "烘焙": 13.4,
+    "LOD": 0.1,
+    "导出": 0.9
+  },
+  "highpoly": {
+    "faces_raw": 1763437,
+    "faces": 1878552,
+    "verts": 1878534,
+    "loose_parts": 19,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00355
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.841,
+    "iou_per_view": {
+      "front": 0.894,
+      "left": 0.768,
+      "back": 0.916,
+      "right": 0.758
+    },
+    "height_m": 3.0917,
+    "blockout_height_m": 3.2
+  },
+  "uv": {
+    "smart_islands": 392,
+    "charts": 44,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.0933,
+    "density_merged": 0.0974
+  },
+  "projection": {
+    "uncovered_ratio": 0.5446
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Env_MarketStall_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Env_MarketStall_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Env_MarketStall_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Env_MarketStall_LOD0",
+      "tris": 5000,
+      "verts": 2482,
+      "uv_min": [
+        0.002475304063409567,
+        0.0024441557470709085
+      ],
+      "uv_max": [
+        0.9976643323898315,
+        0.971496045589447
+      ],
+      "uv_utilization": 0.594,
+      "bbox_min": [
+        -1.7253,
+        -1.3988,
+        0.001
+      ],
+      "bbox_max": [
+        1.7655,
+        1.2028,
+        3.0894
+      ]
+    },
+    {
+      "name": "SM_Env_MarketStall_LOD1",
+      "tris": 1600,
+      "verts": 782,
+      "uv_min": [
+        0.002475304063409567,
+        0.002683017635717988
+      ],
+      "uv_max": [
+        0.9948244094848633,
+        0.9710341691970825
+      ],
+      "uv_utilization": 0.586,
+      "bbox_min": [
+        -1.7174,
+        -1.3889,
+        0.0062
+      ],
+      "bbox_max": [
+        1.7553,
+        1.1986,
+        3.0883
+      ]
+    },
+    {
+      "name": "SM_Env_MarketStall_LOD2",
+      "tris": 500,
+      "verts": 232,
+      "uv_min": [
+        0.0032031016889959574,
+        0.004612599033862352
+      ],
+      "uv_max": [
+        0.9939015507698059,
+        0.9667903780937195
+      ],
+      "uv_utilization": 0.543,
+      "bbox_min": [
+        -1.733,
+        -1.3261,
+        0.0089
+      ],
+      "bbox_max": [
+        1.7741,
+        1.1737,
+        3.0804
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_MarketStall\\04_export\\SM_Env_MarketStall_v001.glb",
+    "bytes": 237968
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_MarketStall\\03_work\\SM_Env_MarketStall_v001.blend",
+  "total_seconds": 243.6,
+  "_seconds": 248.1
+}

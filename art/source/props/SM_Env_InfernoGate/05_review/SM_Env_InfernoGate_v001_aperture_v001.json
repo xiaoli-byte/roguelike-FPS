@@ -1,0 +1,354 @@
+{
+  "schema": 2,
+  "asset_id": "SM_Env_InfernoGate",
+  "build_version": 1,
+  "created": "2026-10-04 19:12:49",
+  "geometry_source": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_InfernoGate\\04_export\\SM_Env_InfernoGate_v001.glb",
+    "sha256": "4433acd5270b6432d86396b95a16732560c206a9c16185cc5b6d18cfdeade8da"
+  },
+  "measurement_source": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_InfernoGate\\_tmp\\gate_aperture_build_v001_aperture_v001\\measure_gate.py",
+    "sha256": "1f4f28fbd7494d251aa6669d7b5174bd867cfe155e51f85263e78ee40a3c881d"
+  },
+  "measurement_arguments": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_InfernoGate\\_tmp\\gate_aperture_build_v001_aperture_v001\\measure.args.json",
+    "sha256": "33f75fef9b4cfb3fa4ee99e552dd6804f30bbe7288972fb46bb699af8552ec9a"
+  },
+  "runtime_transform_source": {
+    "path": "D:\\personal-projects\\枪火重生\\src\\world\\SceneArchitecture.ts",
+    "sha256": "2df20dc7b992e2c6d894b1ec13e9346052a7c5e40329cd57e0d31591eceef11b"
+  },
+  "method": "World-transform decoded GLB triangles to game XYZ, clip each triangle against all six opening-box planes over full actual depth. Count positive-area intersections. Raw source plus exact architectureMatrix uniform fit using the union of all LOD bounds, X/Z centering and foot grounding. No geometry edits or render.",
+  "boundary_tolerance_m": 1e-05,
+  "input_coordinates": "game XYZ; X horizontal, Y height, Z depth",
+  "qa_waivers": 0,
+  "budget_waivers": 0,
+  "source_required_aperture": {
+    "width_m": 6.4,
+    "height_m": 3.8
+  },
+  "all_lods_source_required_box_empty": true,
+  "source_lods": [
+    {
+      "name": "SM_Env_InfernoGate_LOD0",
+      "lod": 0,
+      "triangles": 5000,
+      "bounds_game_xyz_m": {
+        "min": [
+          -5.442373752593994,
+          0.00048552502994425595,
+          -0.6354848742485046
+        ],
+        "max": [
+          5.5244669914245605,
+          6.798279762268066,
+          0.645753800868988
+        ]
+      },
+      "required_aperture": {
+        "width_m": 6.4,
+        "height_m": 3.8,
+        "origin_centered_x_m": 0,
+        "ground_y_m": 0,
+        "through_depth_m": [
+          -0.6364848742485046,
+          0.646753800868988
+        ]
+      },
+      "tested_box": {
+        "min": [
+          -3.19999,
+          1e-05,
+          -0.6364848742485046
+        ],
+        "max": [
+          3.19999,
+          3.7999899999999998,
+          0.646753800868988
+        ]
+      },
+      "intersecting_triangle_count": 0,
+      "clipped_surface_area_m2": 0,
+      "intersection_bounds": null,
+      "intersection_details": [],
+      "maximum_centered_clear_width_at_target_height_m": 7.663111,
+      "maximum_centered_clear_width_at_2m_height_m": 7.663111,
+      "maximum_centered_clear_height_at_target_width_m": 4.916117,
+      "required_box_empty": true
+    },
+    {
+      "name": "SM_Env_InfernoGate_LOD1",
+      "lod": 1,
+      "triangles": 1600,
+      "bounds_game_xyz_m": {
+        "min": [
+          -5.432393550872803,
+          0.008098514750599861,
+          -0.6270776987075806
+        ],
+        "max": [
+          5.5137410163879395,
+          6.786377429962158,
+          0.6470649242401123
+        ]
+      },
+      "required_aperture": {
+        "width_m": 6.4,
+        "height_m": 3.8,
+        "origin_centered_x_m": 0,
+        "ground_y_m": 0,
+        "through_depth_m": [
+          -0.6280776987075806,
+          0.6480649242401123
+        ]
+      },
+      "tested_box": {
+        "min": [
+          -3.19999,
+          1e-05,
+          -0.6280776987075806
+        ],
+        "max": [
+          3.19999,
+          3.7999899999999998,
+          0.6480649242401123
+        ]
+      },
+      "intersecting_triangle_count": 0,
+      "clipped_surface_area_m2": 0,
+      "intersection_bounds": null,
+      "intersection_details": [],
+      "maximum_centered_clear_width_at_target_height_m": 7.690813,
+      "maximum_centered_clear_width_at_2m_height_m": 7.690813,
+      "maximum_centered_clear_height_at_target_width_m": 4.918577,
+      "required_box_empty": true
+    },
+    {
+      "name": "SM_Env_InfernoGate_LOD2",
+      "lod": 2,
+      "triangles": 500,
+      "bounds_game_xyz_m": {
+        "min": [
+          -5.432393550872803,
+          0.008098514750599861,
+          -0.6591047048568726
+        ],
+        "max": [
+          5.5137410163879395,
+          6.786377429962158,
+          0.6905378103256226
+        ]
+      },
+      "required_aperture": {
+        "width_m": 6.4,
+        "height_m": 3.8,
+        "origin_centered_x_m": 0,
+        "ground_y_m": 0,
+        "through_depth_m": [
+          -0.6601047048568726,
+          0.6915378103256226
+        ]
+      },
+      "tested_box": {
+        "min": [
+          -3.19999,
+          1e-05,
+          -0.6601047048568726
+        ],
+        "max": [
+          3.19999,
+          3.7999899999999998,
+          0.6915378103256226
+        ]
+      },
+      "intersecting_triangle_count": 0,
+      "clipped_surface_area_m2": 0,
+      "intersection_bounds": null,
+      "intersection_details": [],
+      "maximum_centered_clear_width_at_target_height_m": 7.651055,
+      "maximum_centered_clear_width_at_2m_height_m": 7.651055,
+      "maximum_centered_clear_height_at_target_width_m": 4.916388,
+      "required_box_empty": true
+    }
+  ],
+  "runtime": {
+    "envelope_xyz_m": [
+      10.5,
+      6.8,
+      1.7
+    ],
+    "placement_scale": 1.2,
+    "all_lod_source_bounds": {
+      "min": [
+        -5.442373752593994,
+        0.00048552502994425595,
+        -0.6591047048568726
+      ],
+      "max": [
+        5.5244669914245605,
+        6.798279762268066,
+        0.6905378103256226
+      ]
+    },
+    "uniform_fit_scale": 0.9574316108973157,
+    "actual_total_uniform_scale": 1.1489179330767787,
+    "source_offset": [
+      -0.0410466194152832,
+      -0.00048552502994425595,
+      -0.015716552734375
+    ],
+    "required_aperture": {
+      "width_m": 7.68,
+      "height_m": 4.56
+    },
+    "all_lods_required_box_empty": true,
+    "lods": [
+      {
+        "name": "SM_Env_InfernoGate_LOD0",
+        "lod": 0,
+        "triangles": 5000,
+        "bounds_game_xyz_m": {
+          "min": [
+            -6.3,
+            0.0,
+            -0.7481769975058189
+          ],
+          "max": [
+            6.3,
+            7.8101077045288605,
+            0.7238610928882011
+          ]
+        },
+        "required_aperture": {
+          "width_m": 7.68,
+          "height_m": 4.56,
+          "origin_centered_x_m": 0,
+          "ground_y_m": 0,
+          "through_depth_m": [
+            -0.7491769975058189,
+            0.7248610928882011
+          ]
+        },
+        "tested_box": {
+          "min": [
+            -3.83999,
+            1e-05,
+            -0.7491769975058189
+          ],
+          "max": [
+            3.83999,
+            4.55999,
+            0.7248610928882011
+          ]
+        },
+        "intersecting_triangle_count": 0,
+        "clipped_surface_area_m2": 0,
+        "intersection_bounds": null,
+        "intersection_details": [],
+        "maximum_centered_clear_width_at_target_height_m": 8.709964,
+        "maximum_centered_clear_width_at_2m_height_m": 8.709964,
+        "maximum_centered_clear_height_at_target_width_m": 5.647587,
+        "required_box_empty": true
+      },
+      {
+        "name": "SM_Env_InfernoGate_LOD1",
+        "lod": 1,
+        "triangles": 1600,
+        "bounds_game_xyz_m": {
+          "min": [
+            -6.288533567266799,
+            0.0087467004143904,
+            -0.7385178427603267
+          ],
+          "max": [
+            6.287676734930692,
+            7.796432901497163,
+            0.7253674660417619
+          ]
+        },
+        "required_aperture": {
+          "width_m": 7.68,
+          "height_m": 4.56,
+          "origin_centered_x_m": 0,
+          "ground_y_m": 0,
+          "through_depth_m": [
+            -0.7395178427603267,
+            0.7263674660417619
+          ]
+        },
+        "tested_box": {
+          "min": [
+            -3.83999,
+            1e-05,
+            -0.7395178427603267
+          ],
+          "max": [
+            3.83999,
+            4.55999,
+            0.7263674660417619
+          ]
+        },
+        "intersecting_triangle_count": 0,
+        "clipped_surface_area_m2": 0,
+        "intersection_bounds": null,
+        "intersection_details": [],
+        "maximum_centered_clear_width_at_target_height_m": 8.741792,
+        "maximum_centered_clear_width_at_2m_height_m": 8.741792,
+        "maximum_centered_clear_height_at_target_width_m": 5.650422,
+        "required_box_empty": true
+      },
+      {
+        "name": "SM_Env_InfernoGate_LOD2",
+        "lod": 2,
+        "triangles": 500,
+        "bounds_game_xyz_m": {
+          "min": [
+            -6.288533567266799,
+            0.0087467004143904,
+            -0.7753142444680086
+          ],
+          "max": [
+            6.287676734930692,
+            7.796432901497163,
+            0.7753142444680086
+          ]
+        },
+        "required_aperture": {
+          "width_m": 7.68,
+          "height_m": 4.56,
+          "origin_centered_x_m": 0,
+          "ground_y_m": 0,
+          "through_depth_m": [
+            -0.7763142444680086,
+            0.7763142444680086
+          ]
+        },
+        "tested_box": {
+          "min": [
+            -3.83999,
+            1e-05,
+            -0.7763142444680086
+          ],
+          "max": [
+            3.83999,
+            4.55999,
+            0.7763142444680086
+          ]
+        },
+        "intersecting_triangle_count": 0,
+        "clipped_surface_area_m2": 0,
+        "intersection_bounds": null,
+        "intersection_details": [],
+        "maximum_centered_clear_width_at_target_height_m": 8.741792,
+        "maximum_centered_clear_width_at_2m_height_m": 8.741792,
+        "maximum_centered_clear_height_at_target_width_m": 5.64771,
+        "required_box_empty": true
+      }
+    ]
+  },
+  "runtime_placement_source": {
+    "path": "D:\\personal-projects\\枪火重生\\src\\world\\AdventureGen.ts",
+    "sha256": "60755b42f3d2cdbdc52de1983553a26474c6f9e6811121cc9a1dff5c49c113f6"
+  }
+}

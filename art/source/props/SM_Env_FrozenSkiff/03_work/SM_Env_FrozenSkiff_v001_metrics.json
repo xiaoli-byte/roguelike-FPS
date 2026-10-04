@@ -1,0 +1,140 @@
+{
+  "steps": {
+    "导入清理": 3.5,
+    "对齐": 1.0,
+    "低模与 UV": 20.2,
+    "投影着色": 60.5,
+    "烘焙": 6.6,
+    "LOD": 0.0,
+    "导出": 0.7
+  },
+  "highpoly": {
+    "faces_raw": 754624,
+    "faces": 806460,
+    "verts": 806458,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00355
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.919,
+    "iou_per_view": {
+      "front": 0.956,
+      "left": 0.942,
+      "back": 0.829,
+      "right": 0.929
+    },
+    "height_m": 1.5381,
+    "blockout_height_m": 1.7
+  },
+  "uv": {
+    "smart_islands": 190,
+    "charts": 19,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.1203,
+    "density_merged": 0.1213
+  },
+  "projection": {
+    "uncovered_ratio": 0.5769
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Env_FrozenSkiff_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Env_FrozenSkiff_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Env_FrozenSkiff_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Env_FrozenSkiff_LOD0",
+      "tris": 5000,
+      "verts": 2498,
+      "uv_min": [
+        0.0014966587768867612,
+        0.0014966236194595695
+      ],
+      "uv_max": [
+        0.9314985275268555,
+        0.9985033869743347
+      ],
+      "uv_utilization": 0.429,
+      "bbox_min": [
+        -1.0073,
+        -1.9274,
+        0.0003
+      ],
+      "bbox_max": [
+        1.0208,
+        1.9251,
+        1.5402
+      ]
+    },
+    {
+      "name": "SM_Env_FrozenSkiff_LOD1",
+      "tris": 1600,
+      "verts": 798,
+      "uv_min": [
+        0.0014966587768867612,
+        0.0017697414150461555
+      ],
+      "uv_max": [
+        0.930473804473877,
+        0.9975560903549194
+      ],
+      "uv_utilization": 0.418,
+      "bbox_min": [
+        -1.0133,
+        -1.9287,
+        0.0006
+      ],
+      "bbox_max": [
+        1.0169,
+        1.9206,
+        1.5416
+      ]
+    },
+    {
+      "name": "SM_Env_FrozenSkiff_LOD2",
+      "tris": 500,
+      "verts": 248,
+      "uv_min": [
+        0.0018126890063285828,
+        0.002578801941126585
+      ],
+      "uv_max": [
+        0.930473804473877,
+        0.9931183457374573
+      ],
+      "uv_utilization": 0.388,
+      "bbox_min": [
+        -1.002,
+        -1.9151,
+        0.002
+      ],
+      "bbox_max": [
+        1.0182,
+        1.9205,
+        1.5431
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_FrozenSkiff\\04_export\\SM_Env_FrozenSkiff_v001.glb",
+    "bytes": 176432
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_FrozenSkiff\\03_work\\SM_Env_FrozenSkiff_v001.blend",
+  "total_seconds": 92.5,
+  "_seconds": 96.5
+}

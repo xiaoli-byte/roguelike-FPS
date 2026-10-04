@@ -78,7 +78,8 @@ class AssetSpec:
 
 class Config:
     def __init__(self) -> None:
-        _load_env()
+        if os.environ.get("ART_PIPELINE_SKIP_ENV") != "1":
+            _load_env()
         self.data = tomllib.loads((PIPELINE_DIR / "pipeline.toml").read_text(encoding="utf-8"))
         self.registry = tomllib.loads((PIPELINE_DIR / "registry.toml").read_text(encoding="utf-8")).get("assets", {})
         self.paths = self.data["paths"]

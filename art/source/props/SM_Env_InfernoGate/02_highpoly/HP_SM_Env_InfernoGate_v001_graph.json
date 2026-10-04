@@ -1,0 +1,189 @@
+{
+  "1": {
+    "class_type": "ImageOnlyCheckpointLoader",
+    "inputs": {
+      "ckpt_name": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+    }
+  },
+  "4": {
+    "class_type": "Hunyuan3Dv2ConditioningMultiView",
+    "inputs": {
+      "front": [
+        "30",
+        0
+      ],
+      "left": [
+        "31",
+        0
+      ],
+      "back": [
+        "32",
+        0
+      ],
+      "right": [
+        "33",
+        0
+      ]
+    }
+  },
+  "5": {
+    "class_type": "EmptyLatentHunyuan3Dv2",
+    "inputs": {
+      "resolution": 3072,
+      "batch_size": 1
+    }
+  },
+  "6": {
+    "class_type": "ModelSamplingAuraFlow",
+    "inputs": {
+      "model": [
+        "1",
+        0
+      ],
+      "shift": 1.0
+    }
+  },
+  "7": {
+    "class_type": "KSampler",
+    "inputs": {
+      "model": [
+        "6",
+        0
+      ],
+      "seed": 202610078,
+      "steps": 50,
+      "cfg": 5.0,
+      "sampler_name": "euler",
+      "scheduler": "normal",
+      "positive": [
+        "4",
+        0
+      ],
+      "negative": [
+        "4",
+        1
+      ],
+      "latent_image": [
+        "5",
+        0
+      ],
+      "denoise": 1.0
+    }
+  },
+  "8": {
+    "class_type": "VAEDecodeHunyuan3D",
+    "inputs": {
+      "samples": [
+        "7",
+        0
+      ],
+      "vae": [
+        "1",
+        2
+      ],
+      "num_chunks": 32000,
+      "octree_resolution": 384
+    }
+  },
+  "9": {
+    "class_type": "VoxelToMesh",
+    "inputs": {
+      "voxel": [
+        "8",
+        0
+      ],
+      "algorithm": "surface net",
+      "threshold": 0.6
+    }
+  },
+  "10": {
+    "class_type": "SaveGLB",
+    "inputs": {
+      "mesh": [
+        "9",
+        0
+      ],
+      "filename_prefix": "spiritfire/HP_SM_Env_InfernoGate_v001"
+    }
+  },
+  "20": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "spiritfire/HP_SM_Env_InfernoGate_v001_input_front.png"
+    }
+  },
+  "30": {
+    "class_type": "CLIPVisionEncode",
+    "inputs": {
+      "clip_vision": [
+        "1",
+        1
+      ],
+      "image": [
+        "20",
+        0
+      ],
+      "crop": "none"
+    }
+  },
+  "21": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "spiritfire/HP_SM_Env_InfernoGate_v001_input_left.png"
+    }
+  },
+  "31": {
+    "class_type": "CLIPVisionEncode",
+    "inputs": {
+      "clip_vision": [
+        "1",
+        1
+      ],
+      "image": [
+        "21",
+        0
+      ],
+      "crop": "none"
+    }
+  },
+  "22": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "spiritfire/HP_SM_Env_InfernoGate_v001_input_back.png"
+    }
+  },
+  "32": {
+    "class_type": "CLIPVisionEncode",
+    "inputs": {
+      "clip_vision": [
+        "1",
+        1
+      ],
+      "image": [
+        "22",
+        0
+      ],
+      "crop": "none"
+    }
+  },
+  "23": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "spiritfire/HP_SM_Env_InfernoGate_v001_input_right.png"
+    }
+  },
+  "33": {
+    "class_type": "CLIPVisionEncode",
+    "inputs": {
+      "clip_vision": [
+        "1",
+        1
+      ],
+      "image": [
+        "23",
+        0
+      ],
+      "crop": "none"
+    }
+  }
+}

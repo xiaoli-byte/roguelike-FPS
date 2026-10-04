@@ -26,6 +26,8 @@ export interface AssetEntry {
   rig?: { mode: 'parts'; joints: [string, number[]][]; keep?: string[] };
   bounds: { min: number[]; max: number[] };
   sha256: string;
+  /** Local shape generator used for this published build; older entries may omit it. */
+  generator?: { tool: string; mode: string; checkpoint: string };
 }
 
 export interface LoadedAsset {

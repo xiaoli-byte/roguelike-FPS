@@ -1,83 +1,74 @@
 /**
- * 波次调度：按 WavePlan 依次开波；每只怪刷新前在刷怪点显示 0.8 秒地面预警，同波内错开 0.1–0.3 秒刷出。
- * 后一波在「上一波全部刷完且存活数 <= triggerRemaining」后再等 delay 秒开始。
- * 刷怪点选择：离玩家 >= 10 米、彼此分散，避免全部集中在玩家正前方视野中心或全部在背后；
- * 开始预警时玩家若已跑到点附近（< 6 米）则改选别的点，不会贴脸刷怪。
+ * Role-aware arrivals with a complete ground warning at the final safe station.
+ * Failed selections wait; they never become a centre/nearest-point spawn.
  */
 import * as THREE from 'three';
-import type { ArenaInfo, GameContext, WavePlan } from '../core/types';
+import type { ArenaInfo, EnemyPlacement, GameContext, WavePlan } from '../core/types';
 import { getEnemyDef } from '../enemies/Registry';
 
-/** 预警提前量（秒） */
-const WARN_LEAD = 0.8;
-/** Boss 登场预警提前量 */
-export const BOSS_LEAD = 1.0;
+const WARN_LEAD = .8;
+export const BOSS_LEAD = 1;
 const MIN_SPAWN_DIST = 10;
-/** 开始预警时玩家已经走到这么近，就换一个刷怪点（同一波的预警最多错开约 2 秒，玩家可能已跑到点上） */
-const RESPAWN_PICK_DIST = 6;
-const WARN_COLOR = 0xff4a3a;
-const ELITE_COLOR = 0xffc233;
-const BOSS_COLOR = 0xc0182e;
-
+const MAX_ALIVE = 10;
+const WARN_COLOR = 0xff4a3a, ELITE_COLOR = 0xffc233, BOSS_COLOR = 0xc0182e;
+const PROFILE: Record<EnemyPlacement, { min: number; max: number; angle: number }> = {
+  assault: { min: 10, max: 16, angle: 0 }, flank: { min: 10, max: 19, angle: Math.PI / 2 },
+  ranged: { min: 12, max: 21, angle: .45 }, precision: { min: 18, max: 30, angle: .55 },
+  artillery: { min: 18, max: 27, angle: .2 }, support: { min: 13, max: 21, angle: .15 },
+};
+function defaultPlacement(id: string): EnemyPlacement {
+  if (id === 'bomber') return 'flank';
+  if (id === 'marksman') return 'precision';
+  if (id === 'mortar') return 'artillery';
+  if (id === 'shaman') return 'support';
+  return id === 'archer' || id === 'wisp' ? 'ranged' : 'assault';
+}
 export function isBossId(id: string): boolean {
   const def = getEnemyDef(id);
-  if (def) return def.isBoss === true;
-  return id.startsWith('boss_');
+  return def ? def.isBoss === true : id.startsWith('boss_');
 }
-
 interface PendingSpawn {
-  warnAt: number;
-  at: number;
-  warned: boolean;
-  id: string;
-  elite: boolean;
-  affix: string | undefined;
-  boss: boolean;
-  pos: THREE.Vector3;
+  warnAt: number; at: number; warned: boolean; id: string; elite: boolean;
+  affix: string | undefined; boss: boolean; pos: THREE.Vector3 | null;
+  placement: EnemyPlacement; lane: number; arrivalDelay: number; spaceBlocked: boolean; cancelWarning?: () => void;
 }
-
+interface Selected { pos: THREE.Vector3; placement: EnemyPlacement }
+type SpawnBody = Pick<PendingSpawn, 'id' | 'elite'>;
 export type WaveStartHandler = (index: number, total: number, hasBoss: boolean) => void;
-
+export interface SpawnRegion {
+  center: THREE.Vector3; minRadius: number; maxRadius: number; minPlayerDistance: number;
+  /** A route encounter may supply its own stations instead of the altar's. */
+  anchors?: ArenaInfo['spawnAnchors'];
+  /** Authored rooms may be concave; a radius alone can cross a separating wall. */
+  contains?: (point: THREE.Vector3, halfWidth: number) => boolean;
+}
 export class WaveRunner {
   readonly waves: readonly WavePlan[];
-  /** 最近开始的波次（-1 = 尚未开始） */
   current = -1;
-  /** 最近一次开波 / 刷怪的时间 */
   lastActivity = 0;
   private next = 0;
   private nextAt: number;
   private pending: PendingSpawn[] = [];
-  /** 每个刷怪点最近一次被使用的时间 */
-  private used: Float64Array;
+  private used = new Map<string, number>();
+  private readonly path: THREE.Vector3[] = [];
+  private readonly eye = new THREE.Vector3();
+  private readonly target = new THREE.Vector3();
 
   constructor(
-    private readonly ctx: GameContext,
-    private readonly arena: ArenaInfo,
-    waves: WavePlan[],
-    firstAt: number,
-    private readonly bossPoint: THREE.Vector3,
-    private readonly onWaveStart: WaveStartHandler,
-  ) {
-    this.waves = waves;
-    this.nextAt = firstAt;
-    this.used = new Float64Array(Math.max(1, arena.spawnPoints.length)).fill(-999);
-  }
+    private readonly ctx: GameContext, private readonly arena: ArenaInfo, waves: WavePlan[],
+    firstAt: number, private readonly bossPoint: THREE.Vector3, private readonly onWaveStart: WaveStartHandler,
+    private readonly spawnRegion?: SpawnRegion,
+  ) { this.waves = waves; this.nextAt = firstAt; }
 
-  get allStarted(): boolean {
-    return this.next >= this.waves.length;
-  }
-
-  /** 所有波次都已开始且没有待刷出的怪 */
-  get done(): boolean {
-    return this.allStarted && this.pending.length === 0;
-  }
-
-  /** 取消剩余波次与待刷出的怪（Boss 倒下时） */
+  get allStarted(): boolean { return this.next >= this.waves.length; }
+  get done(): boolean { return this.allStarted && this.pending.length === 0; }
+  /** Only failed station selection counts; scheduled arrivals and active warnings do not. */
+  get waitingForSpace(): boolean { return this.pending.some(p => p.spaceBlocked); }
   cancel(): void {
     this.next = this.waves.length;
+    for (const p of this.pending) p.cancelWarning?.();
     this.pending.length = 0;
   }
-
   update(t: number): void {
     const ctx = this.ctx;
     if (this.next < this.waves.length) {
@@ -87,158 +78,152 @@ export class WaveRunner {
       }
       if (t >= this.nextAt) this.startWave(t);
     }
-
     for (let i = this.pending.length - 1; i >= 0; i--) {
       const p = this.pending[i];
-      if (!p.warned && t >= p.warnAt) {
+      if (t < p.warnAt) continue;
+      if (!p.boss && ctx.enemies.aliveCount() >= MAX_ALIVE) { p.spaceBlocked = false; this.defer(p, t); continue; }
+      if (!p.warned) {
+        if ((!p.boss || this.spawnRegion?.contains) && (!p.pos || !this.pointSafe(p.pos, p))) p.pos = this.pickPoint(p.placement, p.lane, t, p);
+        if (!p.pos) { p.spaceBlocked = true; this.defer(p, t); continue; }
+        p.spaceBlocked = false;
         p.warned = true;
-        if (!p.boss) {
-          const pl = ctx.player.position;
-          if (Math.hypot(p.pos.x - pl.x, p.pos.z - pl.z) < RESPAWN_PICK_DIST) {
-            const alt = this.pickPoints(1, t)[0];
-            if (alt) p.pos = alt;
-          }
-        }
-        const color = p.boss ? BOSS_COLOR : p.elite ? ELITE_COLOR : WARN_COLOR;
-        ctx.fx.groundWarning(p.pos, p.boss ? 3.4 : 1.2, Math.max(0.1, p.at - t), color);
-        if (p.boss) {
-          ctx.audio.play('telegraph', { position: p.pos });
-          ctx.fx.shake(0.25, 1.0);
-        }
+        // A slow frame may cross warnAt and at. Actual on-screen lead remains full.
+        p.at = Math.max(p.at, t + (p.boss ? BOSS_LEAD : WARN_LEAD));
+        const cancel = ctx.fx.groundWarning(p.pos, p.boss ? 3.4 : 1.2, p.at - t, p.boss ? BOSS_COLOR : p.elite ? ELITE_COLOR : WARN_COLOR);
+        if (typeof cancel === 'function') p.cancelWarning = cancel;
+        if (p.boss) { ctx.audio.play('telegraph', { position: p.pos }); ctx.fx.shake(.25, 1); }
       }
-      if (t >= p.at) {
-        // 交换删除（倒序遍历，被换过来的元素本帧已处理过）
-        const last = this.pending.pop();
-        if (last && last !== p) this.pending[i] = last;
-        this.spawn(p, t);
+      if (t < p.at) continue;
+      if ((!p.boss || this.spawnRegion?.contains) && (!p.pos || !this.pointSafe(p.pos, p))) {
+        p.cancelWarning?.(); p.cancelWarning = undefined; p.warned = false;
+        p.pos = this.pickPoint(p.placement, p.lane, t, p);
+        p.spaceBlocked = !p.pos;
+        p.warnAt = t + (p.pos ? 0 : .25); p.at = p.warnAt + (p.boss ? BOSS_LEAD : WARN_LEAD);
+        continue;
       }
+      const last = this.pending.pop();
+      if (last && last !== p) this.pending[i] = last;
+      p.cancelWarning?.();
+      if (p.pos) this.spawn(p, t);
     }
   }
-
+  private defer(p: PendingSpawn, t: number): void {
+    p.cancelWarning?.(); p.cancelWarning = undefined; p.warned = false;
+    p.warnAt = t + .25; p.at = p.warnAt + (p.boss ? BOSS_LEAD : WARN_LEAD);
+  }
   private spawn(p: PendingSpawn, t: number): void {
     this.lastActivity = t;
-    try {
-      this.ctx.enemies.spawn(p.id, {
-        position: p.pos,
-        elite: p.elite || undefined,
-        affix: p.affix,
-        level: this.ctx.run.difficulty,
-      });
-    } catch (err) {
-      console.error(`[WaveRunner] spawn "${p.id}" failed`, err);
-    }
+    try { this.ctx.enemies.spawn(p.id, { position: p.pos!, elite: p.elite || undefined, affix: p.affix, level: this.ctx.run.difficulty }); }
+    catch (err) { console.error('[WaveRunner] spawn failed', p.id, err); }
   }
-
   private startWave(t: number): void {
-    const ctx = this.ctx;
-    const rng = ctx.rng;
-    const index = this.next++;
-    this.current = index;
-    this.nextAt = NaN;
-    this.lastActivity = t;
-    const w = this.waves[index];
-
-    const bosses: { id: string; elite: boolean; affix: string | undefined }[] = [];
-    const mobs: { id: string; elite: boolean; affix: string | undefined }[] = [];
+    const index = this.next++, w = this.waves[index], rng = this.ctx.rng;
+    this.current = index; this.nextAt = NaN; this.lastActivity = t;
+    const mobs: { id: string; elite: boolean; affix: string | undefined; placement: EnemyPlacement; arrivalDelay: number; boss: boolean }[] = [];
     for (const e of w.entries) {
-      const n = Math.max(0, Math.floor(e.count));
-      for (let k = 0; k < n; k++) {
-        const item = { id: e.enemyId, elite: !!e.elite, affix: e.affix };
-        if (isBossId(e.enemyId)) bosses.push(item);
-        else mobs.push(item);
-      }
+      const count = Number.isFinite(e.count) ? Math.max(0, Math.floor(e.count)) : 0;
+      for (let k = 0; k < count; k++) mobs.push({
+        id: e.enemyId, elite: !!e.elite, affix: e.affix, placement: e.placement ?? defaultPlacement(e.enemyId),
+        arrivalDelay: Number.isFinite(e.arrivalDelay) ? Math.max(0, e.arrivalDelay ?? 0) : 0, boss: isBossId(e.enemyId),
+      });
     }
-    rng.shuffle(mobs);
-
-    let off = 0;
-    for (let k = 0; k < bosses.length; k++) {
-      const b = bosses[k];
-      const pos = this.bossPoint.clone();
-      if (k > 0) {
-        const a = (k / bosses.length) * Math.PI * 2;
-        pos.x += Math.sin(a) * 5;
-        pos.z += Math.cos(a) * 5;
-        ctx.nav.nearestWalkable(pos, pos);
-      }
-      this.pending.push({ warnAt: t, at: t + BOSS_LEAD, warned: false, id: b.id, elite: b.elite, affix: b.affix, boss: true, pos });
-      off = BOSS_LEAD * 0.6;
+    // Shuffle ties only; tactical stations and intentional arrival delays survive.
+    rng.shuffle(mobs); mobs.sort((a, b) => Number(b.boss) - Number(a.boss) || a.arrivalDelay - b.arrivalDelay);
+    const anchors = this.spawnRegion?.anchors ?? this.arena.spawnAnchors ?? [];
+    const lanes = [...new Set(anchors.map(a => a.lane))].sort((a, b) => a - b);
+    const base = index % Math.max(1, lanes.length), selected: Selected[] = [];
+    let off = 0, bosses = 0, flank = 0;
+    for (const m of mobs) {
+      const lane = m.placement === 'flank' ? (lanes[(base + 1 + flank++ % 2) % Math.max(1, lanes.length)] ?? 1) : (lanes[base] ?? 0);
+      const pos = m.boss ? this.bossPoint.clone() : this.pickPoint(m.placement, lane, t, m, selected);
+      if (m.boss && bosses++ > 0) { pos!.x += Math.sin(bosses * 2.4) * 5; pos!.z += Math.cos(bosses * 2.4) * 5; this.ctx.nav.nearestWalkable(pos!, pos!); }
+      if (pos && !m.boss) selected.push({ pos, placement: m.placement });
+      const lead = m.boss ? BOSS_LEAD : WARN_LEAD;
+      const warnAt = t + off + m.arrivalDelay;
+      this.pending.push({ ...m, lane, warnAt, at: warnAt + lead, warned: false, pos, spaceBlocked: false });
+      off += m.boss ? BOSS_LEAD * .6 : rng.range(.1, .3);
     }
-    const pts = this.pickPoints(mobs.length, t);
-    for (let k = 0; k < mobs.length; k++) {
-      const m = mobs[k];
-      this.pending.push({ warnAt: t + off, at: t + off + WARN_LEAD, warned: false, id: m.id, elite: m.elite, affix: m.affix, boss: false, pos: pts[k] });
-      off += rng.range(0.1, 0.3);
-    }
-    this.onWaveStart(index, this.waves.length, bosses.length > 0);
+    this.onWaveStart(index, this.waves.length, bosses > 0);
   }
 
-  /**
-   * 为 n 只怪挑选刷怪位置：打分 = 距离偏好 + 视角惩罚（正前方视野中心 / 背后都会随数量递增扣分）
-   * + 分散惩罚（与本波已选点太近）+ 最近使用惩罚 + 随机扰动；最后在点附近 0.3–1.8 米随机偏移。
-   */
-  private pickPoints(n: number, t: number): THREE.Vector3[] {
-    const ctx = this.ctx;
-    const rng = ctx.rng;
-    const pts = this.arena.spawnPoints;
-    const out: THREE.Vector3[] = [];
-    if (n <= 0) return out;
-    if (pts.length === 0) {
-      for (let i = 0; i < n; i++) {
-        const v = new THREE.Vector3();
-        ctx.nav.randomWalkable(ctx.player.position, 12, 24, v);
-        out.push(v);
-      }
-      return out;
+  /** Same full safety test for initial selection, warning and actual arrival. */
+  private pointSafe(point: THREE.Vector3, enemy: SpawnBody): boolean {
+    if (!Number.isFinite(point.x + point.y + point.z) || Math.abs(point.y - this.arena.floorY) > .1) return false;
+    const def = getEnemyDef(enemy.id), scale = enemy.elite ? 1.25 : 1;
+    // NavGrid's player-sized foot is narrower than shields and elite bodies.
+    // Reserve the full enemy radius plus clearance, rather than its .85 movement collider.
+    const halfW = (def?.radius ?? .9) * scale + .15, height = (def?.height ?? 2.5) * scale + .1;
+    const P = this.ctx.player.position, region = this.spawnRegion;
+    if (Math.hypot(point.x - P.x, point.z - P.z) < Math.max(MIN_SPAWN_DIST, region?.minPlayerDistance ?? 0)) return false;
+    const edge = Math.max(.8, halfW);
+    if (point.x < this.arena.minX + edge || point.x > this.arena.maxX - edge || point.z < this.arena.minZ + edge || point.z > this.arena.maxZ - edge) return false;
+    if (region) {
+      const d = Math.hypot(point.x - region.center.x, point.z - region.center.z);
+      if (d < region.minRadius || d > region.maxRadius) return false;
+      if (region.contains && !region.contains(point, halfW)) return false;
     }
-    const P = ctx.player.position;
-    const yaw = ctx.player.yaw;
-    const fx = -Math.sin(yaw);
-    const fz = -Math.cos(yaw);
-    const waveUse = new Array<number>(pts.length).fill(0);
-    let front = 0;
-    let behind = 0;
-    for (let k = 0; k < n; k++) {
-      let best = 0;
-      let bestS = -Infinity;
-      let bestCls = 0;
-      for (let i = 0; i < pts.length; i++) {
-        const q = pts[i];
-        const dx = q.x - P.x;
-        const dz = q.z - P.z;
-        const d = Math.hypot(dx, dz);
-        let s = rng.next() * 0.8;
-        if (d < MIN_SPAWN_DIST) s -= 60 - d; // 太近：除非别无选择
-        else if (d <= 30) s += 0.6;
-        else s += 0.2;
-        const cos = d > 1e-3 ? (dx * fx + dz * fz) / d : 0;
-        let cls = 0;
-        if (cos > 0.93) {
-          cls = 1;
-          s -= 0.8 + front * 0.35;
-        } else if (cos < -0.6) {
-          cls = -1;
-          s -= 0.45 + behind * 0.45;
-        }
-        s -= waveUse[i] * 1.4;
-        if (t - this.used[i] < 2.5) s -= 0.6;
-        for (const c of out) {
-          const dd = Math.hypot(q.x - c.x, q.z - c.z);
-          if (dd < 7) s -= (7 - dd) * 0.16;
-        }
-        if (s > bestS) {
-          bestS = s;
-          best = i;
-          bestCls = cls;
-        }
-      }
-      waveUse[best]++;
-      this.used[best] = t;
-      if (bestCls > 0) front++;
-      else if (bestCls < 0) behind++;
-      const v = new THREE.Vector3();
-      if (!ctx.nav.randomWalkable(pts[best], 0.3, 1.8, v)) v.copy(pts[best]);
-      out.push(v);
+    if (!this.ctx.nav.isWalkable(point.x, point.z)) return false;
+    if (typeof this.ctx.world.overlapsBody === 'function' && this.ctx.world.overlapsBody(point.x, point.y, point.z, halfW, height)) return false;
+    // The real NavGrid can return a path ending in the nearest reachable cell.
+    // Merely returning true must not permit a spawn in an isolated component.
+    if (typeof this.ctx.nav.findPath === 'function') {
+      this.path.length = 0;
+      if (!this.ctx.nav.findPath(P, point, this.path)) return false;
+      const end = this.path[this.path.length - 1] ?? P;
+      if (Math.hypot(end.x - point.x, end.z - point.z) > .15) return false;
     }
-    return out;
+    return true;
+  }
+  private pointKey(p: THREE.Vector3): string { return p.x.toFixed(2) + '/' + p.z.toFixed(2); }
+  private stationScore(point: THREE.Vector3, role: EnemyPlacement, lane: number, t: number, selected: readonly Selected[]): number {
+    const P = this.ctx.player.position, center = this.spawnRegion?.center ?? this.arena.center, profile = PROFILE[role];
+    const d = Math.hypot(point.x - P.x, point.z - P.z);
+    let score = -Math.abs(d - (profile.min + profile.max) / 2) * .13;
+    const dx = center.x - P.x, dz = center.z - P.z;
+    const axis = Math.hypot(dx, dz) > 1 ? Math.atan2(dx, dz) : Math.atan2(-Math.sin(this.ctx.player.yaw), -Math.cos(this.ctx.player.yaw));
+    const desired = axis + profile.angle * (lane % 2 ? -1 : 1), angle = Math.atan2(point.x - center.x, point.z - center.z);
+    score += Math.cos(angle - desired) * 1.2;
+    if (t - (this.used.get(this.pointKey(point)) ?? -999) < 2.5) score -= 1.5;
+    let friend = Infinity;
+    for (const other of selected) {
+      const distance = Math.hypot(point.x - other.pos.x, point.z - other.pos.z);
+      if (distance < 4) score -= (4 - distance) * 1.4;
+      if (other.placement === 'assault' || other.placement === 'flank') friend = Math.min(friend, distance);
+    }
+    if (role === 'support' && Number.isFinite(friend)) score -= Math.max(0, friend - 8) * .3;
+    if ((role === 'ranged' || role === 'precision') && typeof this.ctx.world.segmentBlocked === 'function') {
+      this.eye.set(point.x, point.y + 1.7, point.z); this.target.set(P.x, P.y + 1.5, P.z);
+      if (this.ctx.world.segmentBlocked(this.eye, this.target)) score -= 2;
+    }
+    return score;
+  }
+  private pickPoint(role: EnemyPlacement, lane: number, t: number, enemy: SpawnBody, selected: readonly Selected[] = []): THREE.Vector3 | null {
+    const anchors = this.spawnRegion?.anchors ?? this.arena.spawnAnchors ?? [];
+    const candidates: { point: THREE.Vector3; score: number }[] = [];
+    for (const a of anchors) candidates.push({ point: a.position, score: this.stationScore(a.position, role, lane, t, selected) + (a.role === role ? 8 : -3) + (a.lane === lane ? 2 : 0) });
+    for (const point of this.arena.spawnPoints) candidates.push({ point, score: this.stationScore(point, role, lane, t, selected) });
+    // Ground stations win first, while legacy rings still have role/direction scores.
+    candidates.sort((a, b) => b.score - a.score);
+    for (const c of candidates) {
+      if (!this.pointSafe(c.point, enemy)) continue;
+      this.used.set(this.pointKey(c.point), t);
+      return c.point.clone();
+    }
+    // No legal station: seek the SAME role and angle within this local encounter.
+    const region = this.spawnRegion, center = region?.center ?? this.arena.center, profile = PROFILE[role], P = this.ctx.player.position;
+    const dx = center.x - P.x, dz = center.z - P.z;
+    const axis = Math.hypot(dx, dz) > 1 ? Math.atan2(dx, dz) : Math.atan2(-Math.sin(this.ctx.player.yaw), -Math.cos(this.ctx.player.yaw));
+    const min = Math.max(region?.minRadius ?? 10, Math.min(profile.min, region?.maxRadius ?? profile.min));
+    const max = Math.max(min, Math.min(region?.maxRadius ?? profile.max, profile.max));
+    const target = new THREE.Vector3(), candidate = new THREE.Vector3();
+    for (let i = 0; i < 24; i++) {
+      const angle = axis + profile.angle * (lane % 2 ? -1 : 1) + this.ctx.rng.range(-.65, .65);
+      const radius = this.ctx.rng.range(min, max);
+      target.set(center.x + Math.sin(angle) * radius, this.arena.floorY, center.z + Math.cos(angle) * radius);
+      if (!this.ctx.nav.randomWalkable(target, 0, .9, candidate) || !this.pointSafe(candidate, enemy)) continue;
+      this.used.set(this.pointKey(candidate), t);
+      return candidate.clone();
+    }
+    return null;
   }
 }

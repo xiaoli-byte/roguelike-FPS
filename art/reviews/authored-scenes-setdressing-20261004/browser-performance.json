@@ -1,0 +1,233 @@
+[
+  {
+    "label": "inferno-3-entry-exploration",
+    "report": {
+      "sampledAt": "2026-10-04T15:50:54.952Z",
+      "warmupFrames": 30,
+      "frames": 240,
+      "fps": 59.51790496974471,
+      "rafMs": {
+        "median": 16.699999999953434,
+        "p95": 16.800000000046566,
+        "mean": 16.801666666666765
+      },
+      "updateMs": {
+        "median": 0.29999999701976776,
+        "p95": 0.5999999940395355,
+        "mean": 0.34791666629413764
+      },
+      "renderSubmitMs": {
+        "median": 2.6000000089406967,
+        "p95": 3.7000000029802322,
+        "mean": 2.6491666672130427
+      },
+      "gpu": {
+        "status": "available",
+        "samples": 35,
+        "ms": {
+          "median": 5.989895,
+          "p95": 7.653541,
+          "mean": 6.082274628571428
+        },
+        "disjointEvents": 0
+      },
+      "render": {
+        "calls": 161.8875,
+        "triangles": 439579.9,
+        "points": 650,
+        "lines": 0,
+        "geometries": 95,
+        "textures": 116,
+        "programs": 91
+      },
+      "resolution": {
+        "width": 1920,
+        "height": 1080,
+        "cssWidth": 1280,
+        "cssHeight": 720,
+        "pixelRatio": 1.5
+      },
+      "metadata": {
+        "quality": "high",
+        "theme": "inferno",
+        "gameState": "playing",
+        "chapter": 2,
+        "stageIndex": 2,
+        "stageType": "combat",
+        "phase": "explore",
+        "encounter": "",
+        "enemies": 0
+      },
+      "hiddenFrames": 0
+    },
+    "status": {
+      "activeEncounter": "",
+      "alive": "0",
+      "auditPlan": "inferno-3",
+      "encounters": "[{\"id\":\"A\",\"label\":\"检修场守卫\",\"phase\":\"undiscovered\"},{\"id\":\"B\",\"label\":\"接料坪阻击\",\"phase\":\"undiscovered\"},{\"id\":\"C\",\"label\":\"出渣闸护卫\",\"phase\":\"undiscovered\"}]",
+      "ground": "true",
+      "look": "art",
+      "mode": "inspect",
+      "phase": "explore",
+      "plan": "inferno-3",
+      "position": "{\"x\":-53,\"y\":0.0001,\"z\":16}",
+      "rayWindows": "0",
+      "spawnBlocked": "false",
+      "view": "{\"yaw\":-1.1902899496825317,\"pitch\":0}"
+    }
+  },
+  {
+    "label": "inferno-3-B-four-enemies",
+    "report": {
+      "sampledAt": "2026-10-04T15:52:18.110Z",
+      "warmupFrames": 30,
+      "frames": 240,
+      "fps": 59.70297768601175,
+      "rafMs": {
+        "median": 16.699999999953434,
+        "p95": 16.79999999998836,
+        "mean": 16.74958333333343
+      },
+      "updateMs": {
+        "median": 0.7000000029802322,
+        "p95": 1.4000000059604645,
+        "mean": 0.757499999118348
+      },
+      "renderSubmitMs": {
+        "median": 2.9000000059604645,
+        "p95": 4.9000000059604645,
+        "mean": 3.150416667200625
+      },
+      "gpu": {
+        "status": "available",
+        "samples": 35,
+        "ms": {
+          "median": 6.940416,
+          "p95": 8.501354,
+          "mean": 7.130941142857142
+        },
+        "disjointEvents": 0
+      },
+      "render": {
+        "calls": 188.7375,
+        "triangles": 544680.6583333333,
+        "points": 841.2958333333333,
+        "lines": 0,
+        "geometries": 107,
+        "textures": 133,
+        "programs": 96
+      },
+      "resolution": {
+        "width": 1920,
+        "height": 1080,
+        "cssWidth": 1280,
+        "cssHeight": 720,
+        "pixelRatio": 1.5
+      },
+      "metadata": {
+        "quality": "high",
+        "theme": "inferno",
+        "gameState": "playing",
+        "chapter": 2,
+        "stageIndex": 2,
+        "stageType": "combat",
+        "phase": "encounter",
+        "encounter": "B",
+        "enemies": 4
+      },
+      "hiddenFrames": 0
+    },
+    "status": {
+      "activeEncounter": "B",
+      "alive": "4",
+      "auditPlan": "inferno-3",
+      "encounters": "[{\"id\":\"A\",\"label\":\"检修场守卫\",\"phase\":\"undiscovered\"},{\"id\":\"B\",\"label\":\"接料坪阻击\",\"phase\":\"active\"},{\"id\":\"C\",\"label\":\"出渣闸护卫\",\"phase\":\"undiscovered\"}]",
+      "ground": "true",
+      "look": "art",
+      "mode": "inspect",
+      "phase": "encounter",
+      "plan": "inferno-3",
+      "position": "{\"x\":48,\"y\":0.0001,\"z\":1}",
+      "rayWindows": "0",
+      "spawnBlocked": "false",
+      "view": "{\"yaw\":1.3397056595989996,\"pitch\":0}"
+    }
+  },
+  {
+    "label": "frost-3-skiff-eye",
+    "report": {
+      "sampledAt": "2026-10-04T15:54:18.833Z",
+      "warmupFrames": 30,
+      "frames": 240,
+      "fps": 59.519380998437796,
+      "rafMs": {
+        "median": 16.70000000001164,
+        "p95": 16.800000000046566,
+        "mean": 16.80124999999995
+      },
+      "updateMs": {
+        "median": 0.29999999701976776,
+        "p95": 0.5,
+        "mean": 0.3158333332588275
+      },
+      "renderSubmitMs": {
+        "median": 2.5,
+        "p95": 3.7000000029802322,
+        "mean": 2.653333333445092
+      },
+      "gpu": {
+        "status": "available",
+        "samples": 35,
+        "ms": {
+          "median": 10.578593,
+          "p95": 11.394479,
+          "mean": 10.451422
+        },
+        "disjointEvents": 0
+      },
+      "render": {
+        "calls": 164.43333333333334,
+        "triangles": 491010.35833333334,
+        "points": 1100,
+        "lines": 0,
+        "geometries": 124,
+        "textures": 128,
+        "programs": 121
+      },
+      "resolution": {
+        "width": 1920,
+        "height": 1080,
+        "cssWidth": 1280,
+        "cssHeight": 720,
+        "pixelRatio": 1.5
+      },
+      "metadata": {
+        "quality": "high",
+        "theme": "frost",
+        "gameState": "playing",
+        "chapter": 1,
+        "stageIndex": 2,
+        "stageType": "combat",
+        "phase": "explore",
+        "encounter": "",
+        "enemies": 0
+      },
+      "hiddenFrames": 0
+    },
+    "status": {
+      "activeEncounter": "",
+      "alive": "0",
+      "auditPlan": "frost-3",
+      "encounters": "[{\"id\":\"A\",\"label\":\"岸路游击组\",\"phase\":\"undiscovered\"},{\"id\":\"B\",\"label\":\"南栈守炮组\",\"phase\":\"undiscovered\"},{\"id\":\"C\",\"label\":\"检修站守卫\",\"phase\":\"undiscovered\"}]",
+      "ground": "true",
+      "look": "art",
+      "mode": "inspect",
+      "phase": "explore",
+      "plan": "frost-3",
+      "position": "{\"x\":33,\"y\":0.0001,\"z\":5}",
+      "rayWindows": "1",
+      "spawnBlocked": "false",
+      "view": "{\"yaw\":1.7007782715993074,\"pitch\":-0.05593580488895269}"
+    }
+  }
+]

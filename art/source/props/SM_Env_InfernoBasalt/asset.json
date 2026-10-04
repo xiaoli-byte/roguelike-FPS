@@ -1,0 +1,587 @@
+{
+  "id": "SM_Env_InfernoBasalt",
+  "display": "熔火断裂玄武岩簇",
+  "kind": "static",
+  "class": "nature_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 14:37:59",
+          "files": {
+            "BO_SM_Env_InfernoBasalt_v001.json": {
+              "path": "00_blockout/BO_SM_Env_InfernoBasalt_v001.json",
+              "sha256": "ac10b30b397a0a5b4f375f5766fe0c2f05546da09da917e1d5447f08e8e37d19"
+            },
+            "BO_SM_Env_InfernoBasalt_v001_views.json": {
+              "path": "00_blockout/BO_SM_Env_InfernoBasalt_v001_views.json",
+              "sha256": "c2e86856881e547c2cfb691a8c2c60461bfb75d31883f5645be8ef828e612da8"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.rock"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -1.55,
+              0,
+              -1.1
+            ],
+            "max": [
+              1.55,
+              3.0,
+              1.1
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 14:38:15",
+          "files": {
+            "CN_SM_Env_InfernoBasalt_v001_source.png": {
+              "path": "01_concept/CN_SM_Env_InfernoBasalt_v001_source.png",
+              "sha256": "08f226a05ec0ddfd6d9d28b4bd7860b7f03eace9e4e01abafbccc076ca49b2e3"
+            },
+            "CN_SM_Env_InfernoBasalt_v001_front.png": {
+              "path": "01_concept/CN_SM_Env_InfernoBasalt_v001_front.png",
+              "sha256": "130357d7bcd449831b68d794189291553a00aee2755599be7056192dc5a13065"
+            },
+            "CN_SM_Env_InfernoBasalt_v001_left.png": {
+              "path": "01_concept/CN_SM_Env_InfernoBasalt_v001_left.png",
+              "sha256": "54d2eabed5b5b49a47d04b3c84fd959c8e1352f6f79a9e81a55bddce75dc28cf"
+            },
+            "CN_SM_Env_InfernoBasalt_v001_back.png": {
+              "path": "01_concept/CN_SM_Env_InfernoBasalt_v001_back.png",
+              "sha256": "f4a1b64680803cf5e19f32add1f4585e83af719396de31467c80edf0f7570286"
+            },
+            "CN_SM_Env_InfernoBasalt_v001_right.png": {
+              "path": "01_concept/CN_SM_Env_InfernoBasalt_v001_right.png",
+              "sha256": "c7a7cef165b5eff2b9141a84856760835b8918df38cfecb5ce2a98b1dcbffdf5"
+            },
+            "CN_SM_Env_InfernoBasalt_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Env_InfernoBasalt_v001_sheet.png",
+              "sha256": "8ccf5acb0cf786f33232a6938f58c9c756b06e0909aa501649ac4df5de3c6dcf"
+            },
+            "CN_SM_Env_InfernoBasalt_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_InfernoBasalt_v001_prompt.txt",
+              "sha256": "dd8963973f88e9d68fbe47b77f28744578f4bc80d70fc021831cb5b23b121bef"
+            },
+            "CN_SM_Env_InfernoBasalt_v001_registration.json": {
+              "path": "01_concept/CN_SM_Env_InfernoBasalt_v001_registration.json",
+              "sha256": "d4341a297cf451d0c7f5af52835521c0014124ffbe5b498784f6e974a13a1a3e"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Codex built-in image_gen",
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-fe96376f-c587-47d8-8eb0-bf31d55106c2.png",
+          "source_sha256": "08f226a05ec0ddfd6d9d28b4bd7860b7f03eace9e4e01abafbccc076ca49b2e3",
+          "prompt": "Use case: stylized-concept. Asset type: four-view orthographic game asset concept sheet, for LOCAL Hunyuan3D mesh generation and four-view texture projection. Create ONE wide landscape image with FOUR equal panels in a single horizontal row, in the exact order FRONT, LEFT, BACK, RIGHT. Each panel shows the SAME single complete asset, at identical scale and vertically aligned grounded feet/base. True orthographic views at 90 degree rotations, no perspective and no three-quarter view. Entire object fully inside each panel with a generous transparent margin, never cropped. The asset occupies about 80 percent of panel height. Transparent empty background for clean silhouettes, NO panel border, NO labels, NO text, NO cast shadow, NO ground plane. High quality sculpted 3D game art with subtle hand-painted PBR color detail, realistic stylized volume, readable large forms, not low-poly primitives, not photoreal scan. Soft even neutral diffuse lighting across all views; no specular hotspots or dramatic baked shadows. All four views must describe the same form, height, colors and materials coherently. Primary subject: One interconnected natural cluster of broken volcanic basalt crags for a Chinese fantasy infernal temple. Width3.1m,height3m,depth2.2m. Three uneven short interlocked crags emerging from a broad grounded rubble base. Left high split rock with a slanted broken peak, medium right jagged ledge, low front rubble. Natural irregular fractured charcoal basalt with layered coarse chips, broad planar fracture surfaces varied in angle, soot-dark crevices, restrained weathered cool grey rim highlights and sparse rusty mineral stains. No geometric hexagonal columns, no giant perfect cone, no needle spire, no architecture, metal chain, runes, snow, plants, bright neon lava, fire, smoke, glowing cracks, ornamental pedestal, or equipment.",
+          "reference_mode": "bounds_only",
+          "registration": {
+            "front": {
+              "scale": 0.770725284606368,
+              "offset": [
+                40,
+                291
+              ],
+              "size": [
+                431,
+                442
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7588272956501805,
+              "offset": [
+                91,
+                291
+              ],
+              "size": [
+                329,
+                442
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7667180474247057,
+              "offset": [
+                39,
+                291
+              ],
+              "size": [
+                434,
+                442
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.764069625844655,
+              "offset": [
+                91,
+                291
+              ],
+              "size": [
+                329,
+                442
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Root visually inspected the built-in ImageGen four-view source. Numeric bounds reference only; uniform-height registration preserves each silhouette. Approved for local Hunyuan3D generation; this is AI review, not user approval.",
+            "time": "2026-10-04 14:38:57"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 17:38:54",
+          "files": {
+            "CN_SM_Env_InfernoBasalt_v002_source.png": {
+              "path": "01_concept/CN_SM_Env_InfernoBasalt_v002_source.png",
+              "sha256": "b8ad6d037a79cbaf4bf901c8f62fd55c0ae6c200b273d78d4d1ea7be7fd30b06"
+            },
+            "CN_SM_Env_InfernoBasalt_v002_front.png": {
+              "path": "01_concept/CN_SM_Env_InfernoBasalt_v002_front.png",
+              "sha256": "46fdce80f6722a8f344934238dd02ec27113fec386f0a5edfd982d22e48dd631"
+            },
+            "CN_SM_Env_InfernoBasalt_v002_left.png": {
+              "path": "01_concept/CN_SM_Env_InfernoBasalt_v002_left.png",
+              "sha256": "826ba51ac7b89601640fcf644f7af23f0e958e6dc8a286a85fc31bb3c5038cf0"
+            },
+            "CN_SM_Env_InfernoBasalt_v002_back.png": {
+              "path": "01_concept/CN_SM_Env_InfernoBasalt_v002_back.png",
+              "sha256": "2889c2fee1a646cddef767b0a34bcab0301a076be8dfcf5c966a2a37eae2a1fe"
+            },
+            "CN_SM_Env_InfernoBasalt_v002_right.png": {
+              "path": "01_concept/CN_SM_Env_InfernoBasalt_v002_right.png",
+              "sha256": "2576e9f88211b4f9f8b4a3960f968cf944db7046257407b8384b1553b5a3d5b3"
+            },
+            "CN_SM_Env_InfernoBasalt_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Env_InfernoBasalt_v002_sheet.png",
+              "sha256": "bbcb92c4fab96e0bf4e43560c136afa623ab6e48c72aa2dd657af9bf9c51184a"
+            },
+            "CN_SM_Env_InfernoBasalt_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_InfernoBasalt_v002_prompt.txt",
+              "sha256": "9e6e8012903e4627d1f3e51910181bd2547835089aed6141183a920d8dd69ea5"
+            },
+            "CN_SM_Env_InfernoBasalt_v002_registration.json": {
+              "path": "01_concept/CN_SM_Env_InfernoBasalt_v002_registration.json",
+              "sha256": "c11f862ac27459cdf4bb8c020a6686c3c89ec0213b1f625a46b1b76178af70bc"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Codex built-in image_gen",
+          "registration_version": 1,
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-5f191bfc-fa4d-43e8-9902-8bb969f937ef.png",
+          "source_sha256": "b8ad6d037a79cbaf4bf901c8f62fd55c0ae6c200b273d78d4d1ea7be7fd30b06",
+          "prompt": "Use case: style-transfer. Edit the supplied reconstruction reference into stylized hand-painted 3D game art at the moderate-detail visual level of Gunfire Reborn. Keep the subject identity, overall dimensions, and four-view FRONT, LEFT, BACK, RIGHT turnaround of ONE identical solid object. Replace photographic erosion, tiny cracks, dense grain and miniature ornament with broad clean faceted planes, bold chunky silhouette, two or three dominant color blocks, soft painted gradients and a few medium-scale edge accents. Matte materials, clear solid volume, no glossy plastic, no photorealistic surface noise. All views must agree on construction and colors; side views show true depth and back is complete. Level strictly orthographic cameras, same scale and baseline, every silhouette fully inside its own panel with white gutters. Fully transparent background with transparent gutters, neutral soft even lighting, no cast shadows. No ground plane, text, labels, landscape, people, detached objects or effects.\n\nSubject changes: Preserve the solid connected volcanic column cluster with one tall leaning column and a few shorter blocky columns,3.1m wide,3m tall,2.2m deep. Simplify to broad angular facets, a few big chipped breaks and one or two deep fissures. Dark muted violet and slate blue with sparse warm mineral accents, readable midtone planes. Avoid photographic roughness, tiny pits, dense crack networks and loose little rubble. Deep substantial side and back volume, no lava or flames.",
+          "reference_mode": "bounds_only",
+          "registration": {
+            "front": {
+              "scale": 0.674384624030572,
+              "offset": [
+                65,
+                291
+              ],
+              "size": [
+                382,
+                442
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6702974444909928,
+              "offset": [
+                121,
+                291
+              ],
+              "size": [
+                269,
+                442
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.677482868857665,
+              "offset": [
+                55,
+                291
+              ],
+              "size": [
+                402,
+                442
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.6672644243801737,
+              "offset": [
+                94,
+                291
+              ],
+              "size": [
+                324,
+                442
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Root inspected the revised native four-view sheet: broad hand-painted planes, reduced micro-detail, coherent side/back volume and connected silhouette. Pine uses solid foliage and snow masses with a visible trunk. Approved for local Hunyuan reconstruction, not a human review.",
+            "time": "2026-10-04 17:39:07"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 14:47:15",
+          "files": {
+            "HP_SM_Env_InfernoBasalt_v001_input.png": {
+              "path": "02_highpoly/HP_SM_Env_InfernoBasalt_v001_input.png",
+              "sha256": "11c95d79c0d4d72e6afe40f1cd0699033e83def0e9046c974d359308f2b0abaf"
+            },
+            "HP_SM_Env_InfernoBasalt_v001.glb": {
+              "path": "02_highpoly/HP_SM_Env_InfernoBasalt_v001.glb",
+              "sha256": "aa9fd98bc9d0a0931d82add4900c87dffa1ecd359199dd5a992f5b80ffde6adb"
+            },
+            "HP_SM_Env_InfernoBasalt_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Env_InfernoBasalt_v001_graph.json",
+              "sha256": "e32906ccfc6e52e1cf325f625ae2a07f57c7a20407937301e48037db6d4bd9f3"
+            }
+          },
+          "from_concept": 1,
+          "mode": "single",
+          "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+          "checkpoint": "hunyuan_3d_v2.1.safetensors",
+          "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261006,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "crop": [
+              40,
+              291,
+              471,
+              733
+            ],
+            "scale": 1.9692307692307691,
+            "offset": [
+              87,
+              77
+            ]
+          },
+          "seconds": 144.9,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 20.1
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 18:07:06",
+          "files": {
+            "HP_SM_Env_InfernoBasalt_v002_input.png": {
+              "path": "02_highpoly/HP_SM_Env_InfernoBasalt_v002_input.png",
+              "sha256": "f844bde11167bdf7a903c8ea2dd89db0f16a86457ab72f9993262ac5405bb6fe"
+            },
+            "HP_SM_Env_InfernoBasalt_v002.glb": {
+              "path": "02_highpoly/HP_SM_Env_InfernoBasalt_v002.glb",
+              "sha256": "718e86547eaecd037355f8de3a7e993f00b6f51f1e19af19c42c7f099d785a1d"
+            },
+            "HP_SM_Env_InfernoBasalt_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Env_InfernoBasalt_v002_graph.json",
+              "sha256": "fc2b524a7aa0451c58bf5abbae922ef79152861a7976cb78b71fe0a0111e9637"
+            }
+          },
+          "from_concept": 2,
+          "mode": "single",
+          "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+          "checkpoint": "hunyuan_3d_v2.1.safetensors",
+          "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 202610055,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "crop": [
+              65,
+              291,
+              447,
+              733
+            ],
+            "scale": 1.9692307692307691,
+            "offset": [
+              136,
+              77
+            ]
+          },
+          "seconds": 144.2,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 18.8
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 14:50:43",
+          "files": {
+            "SM_Env_InfernoBasalt_v001.blend": {
+              "path": "03_work/SM_Env_InfernoBasalt_v001.blend",
+              "sha256": "16f4edfdb83ac7765d337b860df8f7ced2f4d64376e5b10a3a6a965ca2dd1ca1"
+            },
+            "SM_Env_InfernoBasalt_v001.glb": {
+              "path": "04_export/SM_Env_InfernoBasalt_v001.glb",
+              "sha256": "c14355f3ac0ebaa2d5e13c874fa3cf35751edc7d722c146fba2b15320e987686"
+            },
+            "SM_Env_InfernoBasalt_v001_metrics.json": {
+              "path": "03_work/SM_Env_InfernoBasalt_v001_metrics.json",
+              "sha256": "bdff6cfde2fee7b5b507dbc30a51d87d93c314b848fbd0b8410eb0688753d187"
+            },
+            "T_Env_InfernoBasalt_BC.png": {
+              "path": "03_work/textures_v001/T_Env_InfernoBasalt_BC.png",
+              "sha256": "48f061e966ee45b2257677cefdff9e0538c3cb9c8b2d0955a4086ccf3b54ed1a"
+            },
+            "T_Env_InfernoBasalt_N.png": {
+              "path": "03_work/textures_v001/T_Env_InfernoBasalt_N.png",
+              "sha256": "b2eb623c76e23d264f54ca894776a7946acb953cd09fb05573a492e05cc916ff"
+            },
+            "T_Env_InfernoBasalt_ORM.png": {
+              "path": "03_work/textures_v001/T_Env_InfernoBasalt_ORM.png",
+              "sha256": "14c02401e73e6c167a158b1e2db8caf05e4e0ca6970891e05f1b09194e0ba0d1"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.858,
+          "uncovered_ratio": 0.2993,
+          "lods": [
+            {
+              "tris": 5000,
+              "verts": 2502
+            },
+            {
+              "tris": 1600,
+              "verts": 802
+            },
+            {
+              "tris": 500,
+              "verts": 252
+            }
+          ],
+          "export_kb": 248.9,
+          "seconds": 155.7,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 18:09:46",
+          "files": {
+            "SM_Env_InfernoBasalt_v002.blend": {
+              "path": "03_work/SM_Env_InfernoBasalt_v002.blend",
+              "sha256": "23a1870f117c6f617d06baded51124a735b5c0f0f6449f0daf8738233bc5da3b"
+            },
+            "SM_Env_InfernoBasalt_v002.glb": {
+              "path": "04_export/SM_Env_InfernoBasalt_v002.glb",
+              "sha256": "1a622c0e52280756062c910a7cf383ebba0b9b078fae76700780e0295b4deece"
+            },
+            "SM_Env_InfernoBasalt_v002_metrics.json": {
+              "path": "03_work/SM_Env_InfernoBasalt_v002_metrics.json",
+              "sha256": "15d346ccab2de9a69a9dc2d6585276b8690b2423d5fb1924de7f5102e7a8fd41"
+            },
+            "T_Env_InfernoBasalt_BC.png": {
+              "path": "03_work/textures_v002/T_Env_InfernoBasalt_BC.png",
+              "sha256": "71d315bd52eb12392ef7b45fea875d7f31c37fb9f1c55280b89b15020eb83ec1"
+            },
+            "T_Env_InfernoBasalt_N.png": {
+              "path": "03_work/textures_v002/T_Env_InfernoBasalt_N.png",
+              "sha256": "b233cd364e125de935f0852df844ffdd2e122e106faf70f07bf1918a461199e4"
+            },
+            "T_Env_InfernoBasalt_ORM.png": {
+              "path": "03_work/textures_v002/T_Env_InfernoBasalt_ORM.png",
+              "sha256": "045d6f0ccfe09884a9d506671e5d06a8cf1aeb8c65dc0373111b719a80459d1a"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.854,
+          "uncovered_ratio": 0.2784,
+          "lods": [
+            {
+              "tris": 5000,
+              "verts": 2502
+            },
+            {
+              "tris": 1600,
+              "verts": 802
+            },
+            {
+              "tris": 500,
+              "verts": 252
+            }
+          ],
+          "export_kb": 203.5,
+          "seconds": 144.0,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 14:50:43",
+          "files": {
+            "SM_Env_InfernoBasalt_v001_validation_v001.json": {
+              "path": "05_review/SM_Env_InfernoBasalt_v001_validation_v001.json",
+              "sha256": "a8b8d23d4d01a771ef2246e1d6e810e56fb26e98431419073e94f052ed61be25"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 18:10:06",
+          "files": {
+            "SM_Env_InfernoBasalt_v002_validation_v002.json": {
+              "path": "05_review/SM_Env_InfernoBasalt_v002_validation_v002.json",
+              "sha256": "820798da3d100ce8d1d0c6e3bd936eb28d50ffbd5a2284e293c077d14d75260d"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 14:50:54",
+          "files": {
+            "SM_Env_InfernoBasalt_v001_review.png": {
+              "path": "05_review/SM_Env_InfernoBasalt_v001_review.png",
+              "sha256": "2fd8ef069d5fde1e3c38cf561c5c64ddbf607e67aa29abfe3e49eb59918df007"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "已查看成品五向视图、三个LOD布线及PBR贴图；裂面、岩柱和底部碎岩有完整三维体量，无明显漏面、悬浮碎块或投影破损。天然不对称轴心警告保留，所有LOD实测包络由运行时适配。",
+            "time": "2026-10-04 14:52:01"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 18:10:14",
+          "files": {
+            "SM_Env_InfernoBasalt_v002_review_v002.png": {
+              "path": "05_review/SM_Env_InfernoBasalt_v002_review_v002.png",
+              "sha256": "f99e706c212be90f8020f7fe293ee0074b55a3ffa1abe5550a53f738abd2495c"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Root inspected five actual textured views, all LOD meshes and texture sheets. Broad cool charcoal planes, restrained warm fracture accents and a connected rocky base retain real side/rear volume and a readable distant silhouette. All budgets passed with zero validation warnings/errors and no waiver.",
+            "time": "2026-10-04 18:11:09"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 14:52:01",
+          "files": {
+            "SM_Env_InfernoBasalt.glb": {
+              "path": "@root/public/assets/props/SM_Env_InfernoBasalt.glb",
+              "sha256": "c14355f3ac0ebaa2d5e13c874fa3cf35751edc7d722c146fba2b15320e987686"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Env_InfernoBasalt.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 18:11:10",
+          "files": {
+            "SM_Env_InfernoBasalt.glb": {
+              "path": "@root/public/assets/props/SM_Env_InfernoBasalt.glb",
+              "sha256": "1a622c0e52280756062c910a7cf383ebba0b9b078fae76700780e0295b4deece"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Env_InfernoBasalt.glb"
+        }
+      ]
+    }
+  }
+}

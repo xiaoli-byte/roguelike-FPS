@@ -34,6 +34,21 @@ export interface WorldRayHit {
   box: StaticBox;
 }
 
+export interface RayWindowBounds {
+  minX: number; minY: number; minZ: number;
+  maxX: number; maxY: number; maxZ: number;
+}
+
+/** Local visual geometry may replace a box's ray interval, never its movement volume. */
+export interface WorldRayWindow {
+  readonly bounds: RayWindowBounds;
+  readonly replaceTag: string;
+  readonly ready: boolean;
+  raycast(origin: THREE.Vector3, direction: THREE.Vector3, near: number, far: number, out: WorldRayHit): boolean;
+}
+
+interface RayWindowInterval { window: WorldRayWindow; enter: number; exit: number; exitAxis: number; exitSign: number }
+
 const EPS = 1e-4;
 const CELL = 4;
 
@@ -49,6 +64,16 @@ export class CollisionWorld {
   private grid = new Map<number, StaticBox[]>();
   private stamp = 1;
   private scratch: StaticBox[] = [];
+  private readonly rayWindows = new Set<RayWindowInterval>();
+  private readonly activeRayWindows: RayWindowInterval[] = [];
+  private readonly windowNormal = new THREE.Vector3();
+  private readonly windowHit: WorldRayHit = { distance: 0, point: new THREE.Vector3(), normal: new THREE.Vector3(), box: null as unknown as StaticBox };
+
+  get activeRayWindowCount(): number {
+    let count = 0;
+    for (const entry of this.rayWindows) if (entry.window.ready) count++;
+    return count;
+  }
 
   // ───────────── 构建 ─────────────
 
@@ -85,7 +110,42 @@ export class CollisionWorld {
   clear(): void {
     this.boxes.length = 0;
     this.grid.clear();
+    this.rayWindows.clear(); this.activeRayWindows.length = 0;
     this.version++;
+  }
+
+  /** Registration does not change boxes or the navigation version. Cleanup is identity-based. */
+  addRayWindow(window: WorldRayWindow): () => void {
+    const b = window.bounds;
+    if (![b.minX, b.minY, b.minZ, b.maxX, b.maxY, b.maxZ].every(Number.isFinite)
+      || b.minX >= b.maxX || b.minY >= b.maxY || b.minZ >= b.maxZ) throw new Error('Invalid ray window bounds');
+    const entry = { window, enter: 0, exit: 0, exitAxis: -1, exitSign: 0 };
+    this.rayWindows.add(entry);
+    return () => { this.rayWindows.delete(entry); };
+  }
+
+  private collectRayWindows(origin: THREE.Vector3, dir: THREE.Vector3, maxDist: number): void {
+    const active = this.activeRayWindows; active.length = 0;
+    for (const entry of this.rayWindows) {
+      if (!entry.window.ready) continue;
+      const b = entry.window.bounds;
+      let enter = 0, exit = maxDist, exitAxis = -1, exitSign = 0, miss = false;
+      for (let axis = 0; axis < 3; axis++) {
+        const o = origin.getComponent(axis), d = dir.getComponent(axis);
+        const min = axis === 0 ? b.minX : axis === 1 ? b.minY : b.minZ;
+        const max = axis === 0 ? b.maxX : axis === 1 ? b.maxY : b.maxZ;
+        if (Math.abs(d) < 1e-9) { if (o < min || o > max) { miss = true; break; } continue; }
+        let a = (min - o) / d, z = (max - o) / d;
+        if (a > z) { const swap = a; a = z; z = swap; }
+        enter = Math.max(enter, a);
+        if (z < exit) { exit = z; exitAxis = axis; exitSign = d > 0 ? 1 : -1; }
+        if (enter > exit) { miss = true; break; }
+      }
+      if (miss || exit - enter < 1e-7) continue;
+      entry.enter = enter; entry.exit = exit; entry.exitAxis = exitAxis; entry.exitSign = exitSign;
+      active.push(entry);
+    }
+    active.sort((a, b) => a.enter - b.enter);
   }
 
   private insert(b: StaticBox): void {
@@ -281,6 +341,7 @@ export class CollisionWorld {
     const ex = origin.x + dir.x * maxDist;
     const ez = origin.z + dir.z * maxDist;
     const list = this.query(Math.min(origin.x, ex), Math.min(origin.z, ez), Math.max(origin.x, ex), Math.max(origin.z, ez), this.scratch);
+    this.collectRayWindows(origin, dir, maxDist);
 
     let bestT = maxDist;
     let bestBox: StaticBox | null = null;
@@ -312,6 +373,14 @@ export class CollisionWorld {
         if (tmin > tmax) { miss = true; break; }
       }
       if (miss) continue;
+      // Subtract only overlapping ray intervals. A merged box remains solid again
+      // as soon as the ray leaves the local window, including origins inside it.
+      for (const cut of this.activeRayWindows) {
+        if (cut.window.replaceTag !== b.tag || cut.exit < tmin - EPS || cut.enter > tmin + EPS) continue;
+        tmin = Math.max(tmin, cut.exit); axis = cut.exitAxis; sign = -cut.exitSign;
+        if (tmin >= tmax - EPS) { miss = true; break; }
+      }
+      if (miss) continue;
       if (tmin < bestT || (bestBox === null && tmin <= bestT)) {
         bestT = tmin;
         bestBox = b;
@@ -320,12 +389,23 @@ export class CollisionWorld {
       }
     }
 
+    for (const cut of this.activeRayWindows) {
+      if (cut.enter > bestT) continue;
+      const far = Math.min(cut.exit, bestT);
+      if (!cut.window.raycast(origin, dir, cut.enter, far, this.windowHit)) continue;
+      const distance = this.windowHit.distance;
+      if (!Number.isFinite(distance) || distance < cut.enter - EPS || distance > far + EPS) continue;
+      bestT = distance; bestBox = this.windowHit.box; bestAxis = -2;
+      this.windowNormal.copy(this.windowHit.normal);
+    }
+
     if (!bestBox) return null;
     const hit: WorldRayHit = out ?? { distance: 0, point: new THREE.Vector3(), normal: new THREE.Vector3(), box: bestBox };
     hit.distance = bestT;
     hit.box = bestBox;
     hit.point.copy(origin).addScaledVector(dir, bestT);
-    if (bestAxis < 0) hit.normal.copy(dir).multiplyScalar(-1); // 起点在盒内
+    if (bestAxis === -2) hit.normal.copy(this.windowNormal);
+    else if (bestAxis < 0) hit.normal.copy(dir).multiplyScalar(-1); // 起点在盒内
     else hit.normal.set(bestAxis === 0 ? bestSign : 0, bestAxis === 1 ? bestSign : 0, bestAxis === 2 ? bestSign : 0);
     return hit;
   }

@@ -1,0 +1,54 @@
+{
+  "recorded": "2026-10-04T17:53:11.889970+08:00",
+  "status": "failed",
+  "failure_stage": "far_lod",
+  "from": {
+    "blockout": 1,
+    "concept": 2,
+    "highpoly": 2,
+    "matid": null,
+    "emid": null
+  },
+  "seed": 202610051,
+  "error": "LOD2 bounded cleanup still exceeds budget 500",
+  "budget": 500,
+  "attempts": [
+    {
+      "weld_m": 0.0,
+      "tris": 1742
+    },
+    {
+      "weld_m": 0.02019,
+      "tris": 1720
+    },
+    {
+      "weld_m": 0.03029,
+      "tris": 1694
+    },
+    {
+      "weld_m": 0.04038,
+      "tris": 1628
+    },
+    {
+      "weld_m": 0.05048,
+      "tris": 1530
+    },
+    {
+      "weld_m": 0.06058,
+      "tris": 1448
+    }
+  ],
+  "maximum_weld_height_fraction": 0.015,
+  "partial_observed_metrics": {
+    "align_iou": 0.863,
+    "uncovered_ratio": 0.496,
+    "uv_charts": 278,
+    "uv_flipped_faces": 0,
+    "bake_device": "CPU",
+    "seconds_rounded": 196
+  },
+  "metrics_json_available": false,
+  "blend_available": false,
+  "export_available": false,
+  "note": "Blender exits at LOD generation before exporting GLB, saving blend or writing metrics. No budget or cleanup threshold changed."
+}

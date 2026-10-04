@@ -29,6 +29,7 @@ def run(spec: AssetSpec, a) -> None:
     g = Glb(dst)
     lo, hi = g.mesh_bounds(next(n["mesh"] for n in g.json["nodes"] if n.get("name") == f"{spec.id}_LOD0"))
     metrics = json.loads(st.file(bd, f"{tag}_metrics.json").read_text(encoding="utf-8"))
+    highpoly = next(v for v in st.data["stages"]["highpoly"]["versions"] if v["version"] == bd["from"]["highpoly"])
     bind_pose = metrics.get("bind_pose")
     rig = None
     if spec.raw.get("rig") == "parts":
@@ -52,7 +53,8 @@ def run(spec: AssetSpec, a) -> None:
         "sha256": sha256(dst),
         "bytes": dst.stat().st_size,
         "published": now(),
-        "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发",
+        "generator": {k: highpoly.get(k, "single" if k == "mode" else "") for k in ("tool", "mode", "checkpoint")},
+        "license": highpoly["license"],
     }
     manifest["assets"][spec.id] = entry
     manifest["updated"] = now()

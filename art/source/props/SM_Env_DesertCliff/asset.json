@@ -1,0 +1,373 @@
+{
+  "id": "SM_Env_DesertCliff",
+  "display": "沙寺层叠砂岩巨崖",
+  "kind": "static",
+  "class": "nature_prop",
+  "stages": {
+    "blockout": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:10:53",
+          "files": {
+            "BO_SM_Env_DesertCliff_v001.json": {
+              "path": "00_blockout/BO_SM_Env_DesertCliff_v001.json",
+              "sha256": "302009368b429a5a29fd6e880e98860063067742b30c17548c49db4b6196781f"
+            },
+            "BO_SM_Env_DesertCliff_v001_views.json": {
+              "path": "00_blockout/BO_SM_Env_DesertCliff_v001_views.json",
+              "sha256": "3dc6d411fb82840d613cbf9578b56d3a159bddfba56ed17127426dfc843a2ff1"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.cliff"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -6.0,
+              0,
+              -3.5
+            ],
+            "max": [
+              6.0,
+              9.0,
+              3.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 19:12:00",
+          "files": {
+            "BO_SM_Env_DesertCliff_v002.json": {
+              "path": "00_blockout/BO_SM_Env_DesertCliff_v002.json",
+              "sha256": "6083c00df3eed557040428aef9546e6626fe41cfc7f83b3e9c0184efc9e7e887"
+            },
+            "BO_SM_Env_DesertCliff_v002_views.json": {
+              "path": "00_blockout/BO_SM_Env_DesertCliff_v002_views.json",
+              "sha256": "09471ac6b06d68297993568fb3c3f1fb576542c061472d575d941050a2094253"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.cliff"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -7.5,
+              0,
+              -3.5
+            ],
+            "max": [
+              7.5,
+              9.0,
+              3.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:12:00",
+          "files": {
+            "CN_SM_Env_DesertCliff_v001_source.png": {
+              "path": "01_concept/CN_SM_Env_DesertCliff_v001_source.png",
+              "sha256": "018d58ded8c424b41d658b2f2f14368734c12db24efc699e9ca12d2b652ba79f"
+            },
+            "CN_SM_Env_DesertCliff_v001_front.png": {
+              "path": "01_concept/CN_SM_Env_DesertCliff_v001_front.png",
+              "sha256": "b61d5d58ac1f1544d15fba846afac8a2a385d269f03c807c93c54b23ff72b960"
+            },
+            "CN_SM_Env_DesertCliff_v001_left.png": {
+              "path": "01_concept/CN_SM_Env_DesertCliff_v001_left.png",
+              "sha256": "3669d1fdffbb0c06321a114b7b5ac8a0414aad40c5866580967a173924cdd955"
+            },
+            "CN_SM_Env_DesertCliff_v001_back.png": {
+              "path": "01_concept/CN_SM_Env_DesertCliff_v001_back.png",
+              "sha256": "39ff37041478203b2d54dada91776568c565effc57094414250eb7796e76ce48"
+            },
+            "CN_SM_Env_DesertCliff_v001_right.png": {
+              "path": "01_concept/CN_SM_Env_DesertCliff_v001_right.png",
+              "sha256": "83c0bdc8dc656447d118a39131eb18397b1eade3f23865d26e2b89d3afba0845"
+            },
+            "CN_SM_Env_DesertCliff_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Env_DesertCliff_v001_sheet.png",
+              "sha256": "5fdecde5e250add8f21804e1092db58046cec8e34248d6c4211fef952b33f1ce"
+            },
+            "CN_SM_Env_DesertCliff_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_DesertCliff_v001_prompt.txt",
+              "sha256": "bbdf0eed71424255e61d0b3ab21625a2d0fb7e6639c86b980ed7bcf2fe8239fe"
+            },
+            "CN_SM_Env_DesertCliff_v001_registration.json": {
+              "path": "01_concept/CN_SM_Env_DesertCliff_v001_registration.json",
+              "sha256": "2b52d3a5566d68e2b3087c20215b163ad20b21da8d44563fe30acb80b5166f04"
+            }
+          },
+          "from_blockout": 2,
+          "generator": "Codex built-in image_gen",
+          "registration_version": 1,
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-e54aee36-46dd-43e7-af8a-4ba0660b08f5.png",
+          "source_sha256": "018d58ded8c424b41d658b2f2f14368734c12db24efc699e9ca12d2b652ba79f",
+          "prompt": "Use case: stylized-concept.\nAsset type: one broad solid cliff mass for local Hunyuan3D reconstruction, moderate-detail first-person Gunfire Reborn-like game art.\nSubject: ONE contiguous blocky cliff-wall boulder, NOT a pile of stacked small stones and NOT a narrow tall pillar. Total proportions 12m wide,9m high,7m deep. Wide irregular silhouette, broad solid flat base, two or three large stepped upper plateaus at different heights. Mostly large clean sloping rock planes, coarse beveled corners and only two or three widely spaced structural seams. At least 85 percent of silhouette belongs to one big connected rock volume. Front is wider than it is tall, side is clearly deep and solid. A few broad simple bands can clarify planes, but no thin horizontal stone pancakes, no tiny chips, no caves, no loose rubble or floating parts, no vegetation or architecture.\nComposition/framing: four isolated orthographic views of EXACT SAME physical mass, FRONT / LEFT / BACK / RIGHT across ONE horizontal pure white sheet. All views identical physical height and scale and common ground baseline, correct wider frontal width and thick side depth, full silhouettes generously framed. No perspective, labels, text, shadow or scene.\nStyle/medium: hand-painted stylized 3D game environment, broad clean faceted planes, bold readable silhouette, two or three coherent color blocks, smooth painted gradients, matte rock; similar moderate fidelity to Gunfire Reborn. Simplify surfaces aggressively so the cliff reads well 10–60m away. Even neutral soft studio lighting for reconstruction, restrained form shading, no glossy glints, no baked cast shadows.\nAvoid: photorealism, granular texture, hundreds of fissures, crumbling filigree, microdetail, stacked round stones, layered small rock towers, symmetrical duplicate silhouette.\nChapter material: warm ochre/sandstone huge angular planes with muted terracotta shaded faces and pale warm sand-colored top shelves. Sparse broad stratification marks only. One higher block at left, one lower wide plateau to right. No decorative motifs.",
+          "reference_mode": "bounds_only",
+          "registration": {
+            "front": {
+              "scale": 0.6840042750267189,
+              "offset": [
+                33,
+                375
+              ],
+              "size": [
+                445,
+                274
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7142857142857143,
+              "offset": [
+                154,
+                375
+              ],
+              "size": [
+                204,
+                274
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6908960057574667,
+              "offset": [
+                27,
+                375
+              ],
+              "size": [
+                457,
+                274
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7142857142857143,
+              "offset": [
+                146,
+                375
+              ],
+              "size": [
+                219,
+                274
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Inspected original and registered four-view sheet. Broad solid sandstone volume, warm large planes, front/back width and deep sides preserved with numeric reference width adjustment only; no stacked pebble tower.",
+            "time": "2026-10-04 19:13:40"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:16:06",
+          "files": {
+            "HP_SM_Env_DesertCliff_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Env_DesertCliff_v001_input_front.png",
+              "sha256": "3b53484f897a8265d3d0f3ea4e68d374efa7253c8bbe255e515cabc494c86578"
+            },
+            "HP_SM_Env_DesertCliff_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Env_DesertCliff_v001_input_left.png",
+              "sha256": "d6219c50dfc1d93bbafc22d44638df27024f587509f12bc4d00e97e52f8fdc56"
+            },
+            "HP_SM_Env_DesertCliff_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Env_DesertCliff_v001_input_back.png",
+              "sha256": "28ce2fb3191ed78dfefbba1a46def90fcb0fb7113be5c1d5cf3408dfb838aaac"
+            },
+            "HP_SM_Env_DesertCliff_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Env_DesertCliff_v001_input_right.png",
+              "sha256": "2648d0d191f24f65ba4c258621aca3639f3aac66016b6c3a80078e088c8dd133"
+            },
+            "HP_SM_Env_DesertCliff_v001.glb": {
+              "path": "02_highpoly/HP_SM_Env_DesertCliff_v001.glb",
+              "sha256": "3bbdd22579b878ade4466abbe9a3318554ca85254b464cfb7966df42775b2437"
+            },
+            "HP_SM_Env_DesertCliff_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Env_DesertCliff_v001_graph.json",
+              "sha256": "ffee51df7415f1b6f42412e0a12aa31feb845dc433316fc1bb23e5e40fdfec75"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 202610079,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -13,
+              243,
+              525,
+              781
+            ],
+            "scale": 1.903345724907063
+          },
+          "seconds": 127.0,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 10.6
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:23:37",
+          "files": {
+            "SM_Env_DesertCliff_v001.blend": {
+              "path": "03_work/SM_Env_DesertCliff_v001.blend",
+              "sha256": "ed8f52c09e24bad8d3e9d9a800c077ac8ed15cdc73b507764df21bb58f5a30ea"
+            },
+            "SM_Env_DesertCliff_v001.glb": {
+              "path": "04_export/SM_Env_DesertCliff_v001.glb",
+              "sha256": "754f3b25f54bf87e5e94b3b1acaa33e826026f45f237200d1e34564e7abc38d9"
+            },
+            "SM_Env_DesertCliff_v001_metrics.json": {
+              "path": "03_work/SM_Env_DesertCliff_v001_metrics.json",
+              "sha256": "89ada3ddb0f8ec283609cd91910d3b73808be24786300dfcc03d0b5a8a948e80"
+            },
+            "T_Env_DesertCliff_BC.png": {
+              "path": "03_work/textures_v001/T_Env_DesertCliff_BC.png",
+              "sha256": "210ecaaa36c2dcf02a526354ed1931690aec7514b4ab6ace6d65de0d80c4076e"
+            },
+            "T_Env_DesertCliff_N.png": {
+              "path": "03_work/textures_v001/T_Env_DesertCliff_N.png",
+              "sha256": "31cfeae586f55426edfedabfa2b83c0bc7ccd3f99c8fe818450335ed3b4ecb29"
+            },
+            "T_Env_DesertCliff_ORM.png": {
+              "path": "03_work/textures_v001/T_Env_DesertCliff_ORM.png",
+              "sha256": "12ead361a28d8a9e0ecdc0f6500efd57e72ded428a7f416ed091bd83f155dc7c"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.901,
+          "uncovered_ratio": 0.2853,
+          "lods": [
+            {
+              "tris": 5000,
+              "verts": 2502
+            },
+            {
+              "tris": 1600,
+              "verts": 802
+            },
+            {
+              "tris": 500,
+              "verts": 252
+            }
+          ],
+          "export_kb": 181.2,
+          "seconds": 104.6,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:23:37",
+          "files": {
+            "SM_Env_DesertCliff_v001_validation_v001.json": {
+              "path": "05_review/SM_Env_DesertCliff_v001_validation_v001.json",
+              "sha256": "6816b0daba5eea232de8d52a2af0a45ec6c222b575ad87da4d8dd9051a94dc6d"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:24:41",
+          "files": {
+            "SM_Env_DesertCliff_v001_review_v001.png": {
+              "path": "05_review/SM_Env_DesertCliff_v001_review_v001.png",
+              "sha256": "f14c4fc2617ffe4d78b05fbfdb457bc12fc93b047fe51d236be650945e8ed50f"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Reviewed actual five views, all LOD wireframes and PBR. Solid broad sandstone mass with warm large rock planes and deep side volume; far silhouette remains coherent. 5000/1600/500, one natural pivot warning retained and runtime grounds by actual vertex bounds; no QA waiver.",
+            "time": "2026-10-04 19:25:20"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:25:20",
+          "files": {
+            "SM_Env_DesertCliff.glb": {
+              "path": "@root/public/assets/props/SM_Env_DesertCliff.glb",
+              "sha256": "754f3b25f54bf87e5e94b3b1acaa33e826026f45f237200d1e34564e7abc38d9"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Env_DesertCliff.glb"
+        }
+      ]
+    }
+  }
+}

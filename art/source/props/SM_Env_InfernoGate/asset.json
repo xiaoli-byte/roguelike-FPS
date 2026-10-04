@@ -1,0 +1,482 @@
+{
+  "id": "SM_Env_InfernoGate",
+  "display": "熔火黑石宽炉门",
+  "kind": "static",
+  "class": "nature_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 18:54:08",
+          "files": {
+            "BO_SM_Env_InfernoGate_v001.json": {
+              "path": "00_blockout/BO_SM_Env_InfernoGate_v001.json",
+              "sha256": "5d0da4a7fed1c218a24c3b0cdb746915015e6b694a95fae703564f3b8e29fa86"
+            },
+            "BO_SM_Env_InfernoGate_v001_views.json": {
+              "path": "00_blockout/BO_SM_Env_InfernoGate_v001_views.json",
+              "sha256": "d6e55a1ce416f5413dafa5c9fd3ff9196b1e8a91ff39955df4a31e4ad9b49774"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.gate"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -5.25,
+              0,
+              -0.85
+            ],
+            "max": [
+              5.25,
+              6.8,
+              0.85
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 18:54:12",
+          "files": {
+            "CN_SM_Env_InfernoGate_v001_source.png": {
+              "path": "01_concept/CN_SM_Env_InfernoGate_v001_source.png",
+              "sha256": "a869fe11040fc789dc4131cd8cba0cf5eeaca8874943b039b5fcadb03c6aec57"
+            },
+            "CN_SM_Env_InfernoGate_v001_front.png": {
+              "path": "01_concept/CN_SM_Env_InfernoGate_v001_front.png",
+              "sha256": "4ca387e4684c814e3a675ec53b6cc60137139e4ea571f710af83c7c18ad290be"
+            },
+            "CN_SM_Env_InfernoGate_v001_left.png": {
+              "path": "01_concept/CN_SM_Env_InfernoGate_v001_left.png",
+              "sha256": "7b5187e8f087a9003a09485034c6acab7ee6bb334b8189c48ff2dad988edc7c1"
+            },
+            "CN_SM_Env_InfernoGate_v001_back.png": {
+              "path": "01_concept/CN_SM_Env_InfernoGate_v001_back.png",
+              "sha256": "0ce0fd7cef82b9b48569914491ae32b7ba734e66ed163ae0eba19c4de488bdf7"
+            },
+            "CN_SM_Env_InfernoGate_v001_right.png": {
+              "path": "01_concept/CN_SM_Env_InfernoGate_v001_right.png",
+              "sha256": "6886d1dde747223e6a93794b04b716a65dec4e58c72084604119b0ed20b37034"
+            },
+            "CN_SM_Env_InfernoGate_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Env_InfernoGate_v001_sheet.png",
+              "sha256": "22e66e3cfa594203529569a0c647089390078aa46b7a5e33942a288bbfbce3bc"
+            },
+            "CN_SM_Env_InfernoGate_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_InfernoGate_v001_prompt.txt",
+              "sha256": "7cd590a43ab0c657f26898c25ace185fa2c1f242084e38495a4d8a81f56d73c0"
+            },
+            "CN_SM_Env_InfernoGate_v001_registration.json": {
+              "path": "01_concept/CN_SM_Env_InfernoGate_v001_registration.json",
+              "sha256": "8dbc06916afcfe91af40a3705df0ff8e10342f26f97f1503c5121ca65598ef0b"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Codex built-in image_gen",
+          "registration_version": 1,
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-7e12ded6-5d6b-4a4a-9b85-860645162e0c.png",
+          "source_sha256": "a869fe11040fc789dc4131cd8cba0cf5eeaca8874943b039b5fcadb03c6aec57",
+          "prompt": "Use case: stylized-concept.\nAsset type: exact four-view concept sheet to reconstruct ONE OPEN walk-through monumental gateway using local Hunyuan3D.\nPrimary request: monumental architecture for a first-person roguelite scene with the bold readable hand-painted visual quality of Gunfire Reborn, moderate detail, clear shape and broad matte color blocks.\nComposition/framing: ONE horizontal sheet on uniform pure white background, FOUR equal-width isolated panels, orthographic FRONT / LEFT / BACK / RIGHT in that order. Repeat the EXACT same structure at identical physical scale and ground baseline. Full silhouette with large margins. No perspective, labels, text, scene or contact shadow.\nSubject geometry, crucial: ONE complete inverted U-shaped freestanding gate, 10.5m total width, 6.8m total height, 1.7m depth. Two broad solid upright posts at the left and right ends support one chunky horizontal lintel. The ground-level passage is EMPTY WHITE BACKGROUND: at least 6.6m clear width and 4m clear height, full uninterrupted opening from the ground to the lintel. Front and back both reveal the same completely open passage. There is absolutely NO door, no wall, no niche backing, no fill, no panel, no floor/sill connecting the bottom of the posts. The two posts connect ONLY across their top by the lintel. Posts have broad stable bases and fused broad capitals. The lintel is thick enough to reconstruct and has a simple stepped cap with at most one subtle central architectural crest. Every ornament is broad and fused to the structure; no hanging ropes, chains, tiny detached pieces. Narrow LEFT/RIGHT side views show the real 1.7m structural depth and same material construction.\nStyle/medium: stylized hand-painted 3D concept, simple broad faceted planes, robust proportions, simplified East-Asian fantasy architecture. Medium-scale structural ornaments only, smooth painted color gradients, restrained wear. Even neutral studio lighting, gentle shading, no glossy highlights or baked cast shadows.\nAvoid: filled/closed passage, door leaf, solid backdrop, photorealism, micrograin, tiny cracks, ornate miniature carvings, delicate rafters, separate props, text, logo, watermark.\nChapter palette and construction: ancient East-Asian volcanic fortress, deep aubergine and charcoal-blue basalt masonry, rust-red painted recesses, dull warm bronze broad trim and one or two flat orange inlaid accents. Angular slab construction, dark sturdy structural silhouette, no neon lava rivers, no emissive lighting, no chains or spikes.\nOpening proportion check: in FRONT and BACK, the narrowest clear gap BETWEEN the bottom bases is 65 percent of total gate width, the same central gap remains fully open up to 60 percent of total gate height. Make posts slim enough, with each bottom base no wider than 17 percent of overall width. The empty passage is the dominant shape.",
+          "reference_mode": "bounds_only",
+          "reference_images": [],
+          "highpoly_mode": "multiview",
+          "architecture_requirements": {
+            "role": "gate",
+            "dimensions_m": [
+              10.5,
+              6.8,
+              1.7
+            ],
+            "passage_min_width_m": 6.4,
+            "lintel_bottom_target_m": 3.8,
+            "ground_passage_open": true
+          },
+          "registration": {
+            "front": {
+              "scale": 0.5944867907002157,
+              "offset": [
+                43,
+                364
+              ],
+              "size": [
+                426,
+                296
+              ],
+              "physical_height_m": 6.8,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5932954344062272,
+              "offset": [
+                208,
+                364
+              ],
+              "size": [
+                95,
+                296
+              ],
+              "physical_height_m": 6.8,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5921088435374148,
+              "offset": [
+                41,
+                364
+              ],
+              "size": [
+                430,
+                296
+              ],
+              "physical_height_m": 6.8,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5932954344062272,
+              "offset": [
+                208,
+                364
+              ],
+              "size": [
+                96,
+                296
+              ],
+              "physical_height_m": 6.8,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Actually reviewed the original and registered four-view sheet. Broad matte chapter color blocks, fused chunky structural volumes, coherent narrow sides and complete uncropped silhouettes. Gates show an empty inverted-U passage from ground in both front/back; final three-LOD geometric clearance requires inspection before publish.",
+            "time": "2026-10-04 18:55:37"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 19:01:10",
+          "files": {
+            "CN_SM_Env_InfernoGate_v002_source.png": {
+              "path": "01_concept/CN_SM_Env_InfernoGate_v002_source.png",
+              "sha256": "5fdd8f933ef9e2abe4af2d2990bcbe15eddbc8713c099a9fd459a78ba652d9f1"
+            },
+            "CN_SM_Env_InfernoGate_v002_reference_01.png": {
+              "path": "01_concept/CN_SM_Env_InfernoGate_v002_reference_01.png",
+              "sha256": "a869fe11040fc789dc4131cd8cba0cf5eeaca8874943b039b5fcadb03c6aec57"
+            },
+            "CN_SM_Env_InfernoGate_v002_front.png": {
+              "path": "01_concept/CN_SM_Env_InfernoGate_v002_front.png",
+              "sha256": "714fd1a07de4cece934bfa0fc9ab790f28467f092694b283425b9e5310021ef1"
+            },
+            "CN_SM_Env_InfernoGate_v002_left.png": {
+              "path": "01_concept/CN_SM_Env_InfernoGate_v002_left.png",
+              "sha256": "6eacbb71ae7b6f49d3b3dfb6c86bbcf468b91c368125049fc28c1c4905f3cdd0"
+            },
+            "CN_SM_Env_InfernoGate_v002_back.png": {
+              "path": "01_concept/CN_SM_Env_InfernoGate_v002_back.png",
+              "sha256": "e52f618cd58a34a4a4aa99b1cce96e1b26cf683166ee7206e1a1d6129ec9be1f"
+            },
+            "CN_SM_Env_InfernoGate_v002_right.png": {
+              "path": "01_concept/CN_SM_Env_InfernoGate_v002_right.png",
+              "sha256": "3a7ef2a34d7214b1780aa1cb6d33b399c2cfa45ee494ba5fd0ff5af6a2294ff9"
+            },
+            "CN_SM_Env_InfernoGate_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Env_InfernoGate_v002_sheet.png",
+              "sha256": "c02ac8d1b4fd861a86535d53ac0480ed381c240f7b65b18e3ade49faf77089c1"
+            },
+            "CN_SM_Env_InfernoGate_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_InfernoGate_v002_prompt.txt",
+              "sha256": "6815bfec58488357358054c87842c93e9c6120625f471c24cf2665b5fca1e7b3"
+            },
+            "CN_SM_Env_InfernoGate_v002_registration.json": {
+              "path": "01_concept/CN_SM_Env_InfernoGate_v002_registration.json",
+              "sha256": "814672034544ccb52225c1d3fd22ee7b95c6377573f3d7e585a4096f90e7c227"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Codex built-in image_gen",
+          "registration_version": 1,
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-817204ce-4a85-4190-a84a-49a57d0c74d1.png",
+          "source_sha256": "5fdd8f933ef9e2abe4af2d2990bcbe15eddbc8713c099a9fd459a78ba652d9f1",
+          "prompt": "Use case: precise-object-edit. Asset type: four-view Hunyuan3D reconstruction concept sheet. Input image: existing volcanic fortress gate, edit target. Keep dark matte aubergine/blue basalt, rust-red flat insets, broad dull bronze trim and orange center medallion on FRONT only, the painted Gunfire Reborn quality, white backdrop and FRONT / LEFT / BACK / RIGHT view order. Correct ONLY structural proportions to guarantee a very wide empty passage: narrow both posts AND their bottom bases substantially, move them outward and extend the central lintel. In FRONT and BACK, total width is 1.54 times height; the narrowest gap between all post parts INCLUDING their bases occupies AT LEAST 75 percent of total width. Each base is at most12 percent of total width. Preserve a thick horizontal top lintel above an unobstructed rectangular opening up to at least62 percent of full height. There must be no inward projecting ornaments inside this clear rectangle. No floor, sill, door, backing wall or bottom connection. LEFT and RIGHT show the true narrow depth, exactly25 percent of overall height, maintaining same full post height. Four orthographic views depict ONE same 10.5m-wide×6.8m-high×1.7m-deep robust inverted-U gate at identical physical scale and baseline. Regenerate the entire horizontal sheet, ample margins and white separation; no text or labels, no scene, no added decoration, no glossy highlights, no baked cast shadows.",
+          "reference_mode": "bounds_only",
+          "reference_images": [
+            {
+              "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-7e12ded6-5d6b-4a4a-9b85-860645162e0c.png",
+              "source_sha256": "a869fe11040fc789dc4131cd8cba0cf5eeaca8874943b039b5fcadb03c6aec57",
+              "registered_file": "CN_SM_Env_InfernoGate_v002_reference_01.png"
+            }
+          ],
+          "reference_provenance_version": 1,
+          "highpoly_mode": "multiview",
+          "architecture_requirements": {
+            "role": "gate",
+            "dimensions_m": [
+              10.5,
+              6.8,
+              1.7
+            ],
+            "passage_min_width_m": 6.4,
+            "lintel_bottom_target_m": 3.8,
+            "ground_passage_open": true
+          },
+          "registration": {
+            "front": {
+              "scale": 0.647821491835246,
+              "offset": [
+                18,
+                364
+              ],
+              "size": [
+                476,
+                296
+              ],
+              "physical_height_m": 6.8,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.647821491835246,
+              "offset": [
+                223,
+                364
+              ],
+              "size": [
+                65,
+                296
+              ],
+              "physical_height_m": 6.8,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.647821491835246,
+              "offset": [
+                12,
+                364
+              ],
+              "size": [
+                487,
+                296
+              ],
+              "physical_height_m": 6.8,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.647821491835246,
+              "offset": [
+                222,
+                364
+              ],
+              "size": [
+                67,
+                296
+              ],
+              "physical_height_m": 6.8,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Actually inspected the newly edited native source and registered four views. Posts and bases are narrower, the fully open ground passage is substantially wider, and lintel/post depth stays coherent. Chapter colors and broad painted motifs preserved; require all final LOD geometry and runtime clearance to pass before publish.",
+            "time": "2026-10-04 19:01:30"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:09:28",
+          "files": {
+            "HP_SM_Env_InfernoGate_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Env_InfernoGate_v001_input_front.png",
+              "sha256": "a93d2fec9b258c5088f35517cac6538aad0fd4beb57b4492f287e80a5c94ab82"
+            },
+            "HP_SM_Env_InfernoGate_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Env_InfernoGate_v001_input_left.png",
+              "sha256": "1ec85d701c631a8580ecf88ca7d8623c2c09b86013634389916d50f6067c9287"
+            },
+            "HP_SM_Env_InfernoGate_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Env_InfernoGate_v001_input_back.png",
+              "sha256": "30f4dc41010bf41f8df9709c20971bde90c56187c0359cb9adc395ce2d6d9969"
+            },
+            "HP_SM_Env_InfernoGate_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Env_InfernoGate_v001_input_right.png",
+              "sha256": "3c8160b91dbecb8dd85148f0fb26ebab1d4199f5625b22b256aefb676079a73b"
+            },
+            "HP_SM_Env_InfernoGate_v001.glb": {
+              "path": "02_highpoly/HP_SM_Env_InfernoGate_v001.glb",
+              "sha256": "32607636559e90f778cf6fd2e2f918ddc394d51e3f9880047573203934bbce77"
+            },
+            "HP_SM_Env_InfernoGate_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Env_InfernoGate_v001_graph.json",
+              "sha256": "d53dacc357c19164413ef9aab771dcda02e65dd551bdb49f90f0094add3d482e"
+            }
+          },
+          "from_concept": 2,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 202610078,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -30,
+              226,
+              542,
+              798
+            ],
+            "scale": 1.7902097902097902
+          },
+          "seconds": 120.6,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 4.8
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:11:11",
+          "files": {
+            "SM_Env_InfernoGate_v001.blend": {
+              "path": "03_work/SM_Env_InfernoGate_v001.blend",
+              "sha256": "80adfaaa738a15964bd7ff1500abe8d727a6dd44b462b23b9ac482113a374e30"
+            },
+            "SM_Env_InfernoGate_v001.glb": {
+              "path": "04_export/SM_Env_InfernoGate_v001.glb",
+              "sha256": "4433acd5270b6432d86396b95a16732560c206a9c16185cc5b6d18cfdeade8da"
+            },
+            "SM_Env_InfernoGate_v001_metrics.json": {
+              "path": "03_work/SM_Env_InfernoGate_v001_metrics.json",
+              "sha256": "a553432de9d171087777a334844f1a8c2d22f90f7e1a0c8a86bfd0d94f2c1e47"
+            },
+            "T_Env_InfernoGate_BC.png": {
+              "path": "03_work/textures_v001/T_Env_InfernoGate_BC.png",
+              "sha256": "9835e078512bb7587f8ecb9aa01631feb5656ea892d1d0c2398e4f4fb2bfc27f"
+            },
+            "T_Env_InfernoGate_N.png": {
+              "path": "03_work/textures_v001/T_Env_InfernoGate_N.png",
+              "sha256": "16f23199faa912f1facd12d7e9915ea72bfbf75e0cd0551b7e20cffdc1fd331d"
+            },
+            "T_Env_InfernoGate_ORM.png": {
+              "path": "03_work/textures_v001/T_Env_InfernoGate_ORM.png",
+              "sha256": "f0d1ecdd17615f28d74009e82123d33cbd9629fc336a6f517cbbc94981d87558"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.858,
+          "uncovered_ratio": 0.3269,
+          "lods": [
+            {
+              "tris": 5000,
+              "verts": 2502
+            },
+            {
+              "tris": 1600,
+              "verts": 802
+            },
+            {
+              "tris": 500,
+              "verts": 252
+            }
+          ],
+          "export_kb": 228.9,
+          "seconds": 28.8,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:11:11",
+          "files": {
+            "SM_Env_InfernoGate_v001_validation_v001.json": {
+              "path": "05_review/SM_Env_InfernoGate_v001_validation_v001.json",
+              "sha256": "946fa948bb3c007e8b8e690efe49cae1a283de3dcee797b4b7ebf60f0b9284c2"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:12:58",
+          "files": {
+            "SM_Env_InfernoGate_v001_review_v001.png": {
+              "path": "05_review/SM_Env_InfernoGate_v001_review_v001.png",
+              "sha256": "c01fb81b02786d957fc54fde07e830596dd3d131459cef7a4764b21816eaee15"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Reviewed actual final five views: open full-height basalt gate, consistent back/side volume, restrained copper ornament and broad lintel. Triangle aperture report proves every LOD clear source6.4x3.8 and runtime7.68x4.56; 37 auto checks, zero warning/error/waiver.",
+            "time": "2026-10-04 19:14:55"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:14:55",
+          "files": {
+            "SM_Env_InfernoGate.glb": {
+              "path": "@root/public/assets/props/SM_Env_InfernoGate.glb",
+              "sha256": "4433acd5270b6432d86396b95a16732560c206a9c16185cc5b6d18cfdeade8da"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Env_InfernoGate.glb"
+        }
+      ]
+    }
+  }
+}

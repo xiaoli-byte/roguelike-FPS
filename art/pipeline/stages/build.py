@@ -15,6 +15,7 @@ def run(spec: AssetSpec, a) -> None:
     cn = st.require("concept")
     hp = st.require("highpoly")
     b = CFG.section("build")
+    cls = CFG.section("classes")[spec.cls]
     ex = CFG.section("export")
 
     # 可选的材质分区：必须出自同一个概念版本才用
@@ -38,7 +39,8 @@ def run(spec: AssetSpec, a) -> None:
         "highpoly_glb": str(st.file(hp, f"HP_{spec.id}_v{hp['version']:03d}.glb")),
         "views_json": str(st.file(bo, f"BO_{spec.id}_v{bo['version']:03d}_views.json")),
         "blockout_json": str(st.file(bo, f"BO_{spec.id}_v{bo['version']:03d}.json")),
-        "blockout_glb": str(st.file(bo, f"BO_{spec.id}_v{bo['version']:03d}.glb")),
+        "blockout_glb": (None if bo.get("reference_mode") == "bounds_only" and spec.kind == "static"
+                         else str(st.file(bo, f"BO_{spec.id}_v{bo['version']:03d}.glb"))),
         "concept_views": {v: str(st.file(cn, f"CN_{spec.id}_v{cn['version']:03d}_{v}.png")) for v in imaging.VIEW_ORDER},
         "lod_tris": spec.lod_tris, "lod_distance": spec.lod_distance, "texture": spec.texture,
         "roughness": spec.material["roughness"], "metallic": spec.material["metallic"],
@@ -49,7 +51,11 @@ def run(spec: AssetSpec, a) -> None:
                        if eid else None),
         "texture_dir": str(tex_dir), "texture_basename": f"T_{name}",
         "export_glb": str(export_dir / f"{tag}.glb"), "blend_path": str(work / f"{tag}.blend"),
-        "bake_device": b["bake_device"], "ao_samples": b["ao_samples"], "bake_margin_px": b["bake_margin_px"],
+        "bake_device": spec.raw.get("bake_device", cls.get("bake_device", b["bake_device"])),
+        "min_component_fraction": spec.raw.get("min_component_fraction", cls.get("min_component_fraction", 0.01)),
+        "remesh_voxel": spec.raw.get("remesh_voxel", cls.get("remesh_voxel", 0.0025)),
+        "far_lod_budget_weld_max_fraction": cls.get("far_lod_budget_weld_max_fraction", 0),
+        "ao_samples": b["ao_samples"], "bake_margin_px": b["bake_margin_px"],
         "cage_extrusion": b["cage_extrusion"], "projection_sharpness": b["projection_sharpness"],
         "max_bone_influences": b["max_bone_influences"],
         "draco": ex["draco"], "image_format": ex["image_format"], "tangents": ex["tangents"],

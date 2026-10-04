@@ -1,0 +1,149 @@
+{
+  "id": "SM_Env_TravelDeck",
+  "entry": {
+    "url": "assets/props/SM_Env_TravelDeck.glb",
+    "kind": "static",
+    "class": "nature_prop",
+    "bind": {
+      "source": "scene",
+      "id": "shared.travelDeck"
+    },
+    "keepGlow": "none",
+    "lodDistance": [
+      0,
+      18,
+      42
+    ],
+    "bounds": {
+      "min": [
+        -2.7580103874206543,
+        0,
+        -1.9409464597702026
+      ],
+      "max": [
+        2.7580103874206543,
+        0.7314305305480957,
+        1.9407386779785156
+      ]
+    },
+    "version": {
+      "blockout": 2,
+      "concept": 2,
+      "highpoly": 1,
+      "build": 2
+    },
+    "sha256": "4c6ceba7e29ec3ebca9063fa2a971a41ea2581da7f308051dc61aa6ff674f61a",
+    "bytes": 141304,
+    "published": "2026-10-04 21:59:33",
+    "generator": {
+      "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+      "mode": "multiview",
+      "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+    },
+    "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+  },
+  "lods": [
+    {
+      "lod": 0,
+      "triangles": 5000,
+      "min": [
+        -2.7580103874206543,
+        0,
+        -1.9409464597702026
+      ],
+      "max": [
+        2.7580103874206543,
+        0.7312944531440735,
+        1.9407726526260376
+      ],
+      "size": [
+        5.516020774841309,
+        0.7312944531440735,
+        3.8817191123962402
+      ],
+      "top": {
+        "samples": 81,
+        "min": 0.6091008449121222,
+        "max": 0.6109725610377756,
+        "median": 0.6102275361461038,
+        "variation": 0.0018717161256533998
+      }
+    },
+    {
+      "lod": 1,
+      "triangles": 1600,
+      "min": [
+        -2.755922794342041,
+        0,
+        -1.9375239610671997
+      ],
+      "max": [
+        2.757805347442627,
+        0.7333464026451111,
+        1.9402259588241577
+      ],
+      "size": [
+        5.513728141784668,
+        0.7333464026451111,
+        3.8777499198913574
+      ],
+      "top": {
+        "samples": 81,
+        "min": 0.6094778430848202,
+        "max": 0.6112084903921928,
+        "median": 0.609902616356639,
+        "variation": 0.0017306473073726014
+      }
+    },
+    {
+      "lod": 2,
+      "triangles": 500,
+      "min": [
+        -2.7529897689819336,
+        0.002577141858637333,
+        -1.9368394613265991
+      ],
+      "max": [
+        2.7570090293884277,
+        0.7347548007965088,
+        1.9409781694412231
+      ],
+      "size": [
+        5.509998798370361,
+        0.7321776589378715,
+        3.8778176307678223
+      ],
+      "top": {
+        "samples": 81,
+        "min": 0.6093490944888644,
+        "max": 0.6109205475456612,
+        "median": 0.6097918902165689,
+        "variation": 0.0015714530567967344
+      }
+    }
+  ],
+  "allLodBounds": {
+    "min": [
+      -2.7580103874206543,
+      0,
+      -1.9409464597702026
+    ],
+    "max": [
+      2.7580103874206543,
+      0.7347548007965088,
+      1.9409781694412231
+    ],
+    "size": [
+      5.516020774841309,
+      0.7347548007965088,
+      3.881924629211426
+    ]
+  },
+  "review": {
+    "by": "Codex AI visual review",
+    "sheet": "art/source/props/SM_Env_TravelDeck/05_review/SM_Env_TravelDeck_v002_review_v001.png",
+    "actualInspected": true
+  },
+  "tests": "node --test tests/travel-deck.test.mjs: 2/2 pass",
+  "runtimeAdvice": "Do not set an opaque ordinary floor at y=0 over this art. Raise the visible flat area about 1cm over collision floor and lower/mask the underlay beneath it; art only, retain existing y=0 collision."
+}

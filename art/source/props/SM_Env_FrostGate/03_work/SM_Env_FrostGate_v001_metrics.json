@@ -1,0 +1,140 @@
+{
+  "steps": {
+    "导入清理": 1.9,
+    "对齐": 0.7,
+    "低模与 UV": 10.8,
+    "投影着色": 21.0,
+    "烘焙": 4.8,
+    "LOD": 0.0,
+    "导出": 0.6
+  },
+  "highpoly": {
+    "faces_raw": 427933,
+    "faces": 426598,
+    "verts": 426596,
+    "loose_parts": 8,
+    "kept_parts": 3,
+    "remesh_voxel_m": 0.00355
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.87,
+    "iou_per_view": {
+      "front": 0.935,
+      "left": 0.812,
+      "back": 0.874,
+      "right": 0.827
+    },
+    "height_m": 6.5924,
+    "blockout_height_m": 6.8
+  },
+  "uv": {
+    "smart_islands": 418,
+    "charts": 49,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.0589,
+    "density_merged": 0.0617
+  },
+  "projection": {
+    "uncovered_ratio": 0.3155
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Env_FrostGate_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Env_FrostGate_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Env_FrostGate_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Env_FrostGate_LOD0",
+      "tris": 5000,
+      "verts": 2498,
+      "uv_min": [
+        0.0025506638921797276,
+        0.002550595672801137
+      ],
+      "uv_max": [
+        0.9904250502586365,
+        0.9974493384361267
+      ],
+      "uv_utilization": 0.488,
+      "bbox_min": [
+        -5.4581,
+        -1.0784,
+        0.0045
+      ],
+      "bbox_max": [
+        5.4586,
+        1.2027,
+        6.5954
+      ]
+    },
+    {
+      "name": "SM_Env_FrostGate_LOD1",
+      "tris": 1600,
+      "verts": 798,
+      "uv_min": [
+        0.0031817269045859575,
+        0.002550595672801137
+      ],
+      "uv_max": [
+        0.9904250502586365,
+        0.9943925142288208
+      ],
+      "uv_utilization": 0.461,
+      "bbox_min": [
+        -5.458,
+        -1.0712,
+        0.009
+      ],
+      "bbox_max": [
+        5.4717,
+        1.2002,
+        6.6094
+      ]
+    },
+    {
+      "name": "SM_Env_FrostGate_LOD2",
+      "tris": 500,
+      "verts": 248,
+      "uv_min": [
+        0.00426608556881547,
+        0.0034747947938740253
+      ],
+      "uv_max": [
+        0.9904250502586365,
+        0.9943925142288208
+      ],
+      "uv_utilization": 0.412,
+      "bbox_min": [
+        -5.4355,
+        -1.1121,
+        0.009
+      ],
+      "bbox_max": [
+        5.4626,
+        1.2046,
+        6.6394
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_FrostGate\\04_export\\SM_Env_FrostGate_v001.glb",
+    "bytes": 261588
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_FrostGate\\03_work\\SM_Env_FrostGate_v001.blend",
+  "total_seconds": 39.9,
+  "_seconds": 42.6
+}

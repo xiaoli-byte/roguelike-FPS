@@ -1,0 +1,810 @@
+{
+  "id": "SM_Env_FrostWayshrine",
+  "display": "霜山覆雪山道祭亭",
+  "kind": "static",
+  "class": "nature_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 16:36:38",
+          "files": {
+            "BO_SM_Env_FrostWayshrine_v001.json": {
+              "path": "00_blockout/BO_SM_Env_FrostWayshrine_v001.json",
+              "sha256": "15afe0bdf29944d2eec3fd74410464a64a31fa06ce9c216d5fd857ac2557cddf"
+            },
+            "BO_SM_Env_FrostWayshrine_v001_views.json": {
+              "path": "00_blockout/BO_SM_Env_FrostWayshrine_v001_views.json",
+              "sha256": "3485bd7e74d5cd3d5307131babc7c6be543e96bbab5b7ea6e549c7c871e15394"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost.landmark"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.1,
+              0,
+              -1.6
+            ],
+            "max": [
+              2.1,
+              5.0,
+              1.6
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 16:36:40",
+          "files": {
+            "CN_SM_Env_FrostWayshrine_v001_source.png": {
+              "path": "01_concept/CN_SM_Env_FrostWayshrine_v001_source.png",
+              "sha256": "55c70685de9ed0e2cf87071b37cfd3cf175296dbb4275482a4ea25451773a884"
+            },
+            "CN_SM_Env_FrostWayshrine_v001_front.png": {
+              "path": "01_concept/CN_SM_Env_FrostWayshrine_v001_front.png",
+              "sha256": "ec85b01b105dc60cfd69245ea3d51d1e3821153ea1545b217e48116346e09e20"
+            },
+            "CN_SM_Env_FrostWayshrine_v001_left.png": {
+              "path": "01_concept/CN_SM_Env_FrostWayshrine_v001_left.png",
+              "sha256": "7f7a2c0194d2609cdcddaf034a6ad1000a2c10ef4549c285b241bf58f71738d6"
+            },
+            "CN_SM_Env_FrostWayshrine_v001_back.png": {
+              "path": "01_concept/CN_SM_Env_FrostWayshrine_v001_back.png",
+              "sha256": "10d6657d60d5b006dc8df1a6b4e7e6939985a1e8800f0b9f6f3f2d93d57d0247"
+            },
+            "CN_SM_Env_FrostWayshrine_v001_right.png": {
+              "path": "01_concept/CN_SM_Env_FrostWayshrine_v001_right.png",
+              "sha256": "4d512da50dba2993769730c777e8baf369008c69885be5aeaf911a3d0fd90d14"
+            },
+            "CN_SM_Env_FrostWayshrine_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Env_FrostWayshrine_v001_sheet.png",
+              "sha256": "cb3d4f89b3b06a9a0b801d5dace30f9fde7559b317ed29275a024d62497818e4"
+            },
+            "CN_SM_Env_FrostWayshrine_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_FrostWayshrine_v001_prompt.txt",
+              "sha256": "7e4c959bdee46f4506cb509e0510f259ab4cdaa7cc8d31c93a4222947ccf3773"
+            },
+            "CN_SM_Env_FrostWayshrine_v001_registration.json": {
+              "path": "01_concept/CN_SM_Env_FrostWayshrine_v001_registration.json",
+              "sha256": "8d92401a10d015087d309ec2bf9e768d7274636fd350f3620d465a5cad8f8a0b"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Codex built-in image_gen",
+          "registration_version": 1,
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-7334f5d5-9966-4d61-b6f4-51b8402470f6.png",
+          "source_sha256": "55c70685de9ed0e2cf87071b37cfd3cf175296dbb4275482a4ea25451773a884",
+          "prompt": "Use case: stylized-concept. Asset type: production orthographic four-view reference for a local Hunyuan3D environment model. Create ONE compact Chinese-inspired wayside shrine for a snowy mountain roguelike FPS. A tall single gabled curved dark-slate roof with broad thick snow resting on it, a heavy weathered timber frame on a rough grey stone plinth, four stout carved wooden supports and a solid closed timber rear wall. Front has a shallow recessed altar alcove with one modest engraved bronze plaque and a faded crimson braided cord; no long thin floating ribbons. Under the roof warm tan wood remains exposed, blue-grey stone base and restrained faded red accents. Broad volumetric object approximately 4.2m wide,5.0m high,3.2m deep, robust structural members, an asymmetrically damaged roof corner, thick sculpted snow clumps integrated with roof and plinth. Connected grounded silhouette, shallow alcove not a walkable house interior. Stylized PBR game art with crafted bold forms, carved medium detail and realistic wear; no highly glossy plastic. ONE identical asset shown in four orthographic views in a horizontal row ordered FRONT, LEFT, BACK, RIGHT, same physical scale and floor baseline; separated by generous white gutters. Strictly level orthographic cameras, no perspective or three-quarter views. Left/right must show full roof depth, distinct front and rear support posts, closed back. Each silhouette fully visible with white margins. Plain pure white background, neutral soft studio light and minimal shadows. No landscape, ground plane, separate lanterns, trees, people, text, view labels or visual effects. Preserve the same roof damage, carved frame, snow shapes and plaque consistently across all four views.",
+          "reference_mode": "bounds_only",
+          "registration": {
+            "front": {
+              "scale": 0.838548054044422,
+              "offset": [
+                13,
+                240
+              ],
+              "size": [
+                485,
+                544
+              ],
+              "physical_height_m": 5.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.838548054044422,
+              "offset": [
+                76,
+                240
+              ],
+              "size": [
+                360,
+                544
+              ],
+              "physical_height_m": 5.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.8359718695465896,
+              "offset": [
+                21,
+                240
+              ],
+              "size": [
+                470,
+                544
+              ],
+              "physical_height_m": 5.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.838548054044422,
+              "offset": [
+                77,
+                240
+              ],
+              "size": [
+                357,
+                544
+              ],
+              "physical_height_m": 5.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "已查看配准后的四视图；前龛、封闭木背板、厚梁柱、瓦顶深度与覆雪形态连贯，支承和底座连为整体。仅尺寸元数据参考，形状由本机Hunyuan四视图生成。",
+            "time": "2026-10-04 16:36:58"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 17:35:20",
+          "files": {
+            "CN_SM_Env_FrostWayshrine_v002_source.png": {
+              "path": "01_concept/CN_SM_Env_FrostWayshrine_v002_source.png",
+              "sha256": "4d09e8ca14b90f92c9f32ac4defc454abf004179a1149f20831f8c6ec760235a"
+            },
+            "CN_SM_Env_FrostWayshrine_v002_front.png": {
+              "path": "01_concept/CN_SM_Env_FrostWayshrine_v002_front.png",
+              "sha256": "6560b4b47f9821e50ddc2989ae7500f58850486c783c5ca652b08ad537a6f308"
+            },
+            "CN_SM_Env_FrostWayshrine_v002_left.png": {
+              "path": "01_concept/CN_SM_Env_FrostWayshrine_v002_left.png",
+              "sha256": "b4ee83a477613eec7ac4f5b49578b407e1f40e1040c89fc35bb26ba61f6c44d4"
+            },
+            "CN_SM_Env_FrostWayshrine_v002_back.png": {
+              "path": "01_concept/CN_SM_Env_FrostWayshrine_v002_back.png",
+              "sha256": "a0ff369e14dcadc8beee47948be13d0822c162f972787aa6e64f5a87354275c1"
+            },
+            "CN_SM_Env_FrostWayshrine_v002_right.png": {
+              "path": "01_concept/CN_SM_Env_FrostWayshrine_v002_right.png",
+              "sha256": "71759cb1b177e8411fb16a03fe7df8c95bb403f948603e84d255059d5a5f7652"
+            },
+            "CN_SM_Env_FrostWayshrine_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Env_FrostWayshrine_v002_sheet.png",
+              "sha256": "7886c914181bbe8b4c05399ed288cedf2b6e91eb3ea84a95a46399b6fea3800d"
+            },
+            "CN_SM_Env_FrostWayshrine_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_FrostWayshrine_v002_prompt.txt",
+              "sha256": "f531f9ff039eb79cd5e9f2389cee030d2c29f916eb20873f1bf66a6f49e6b2a0"
+            },
+            "CN_SM_Env_FrostWayshrine_v002_registration.json": {
+              "path": "01_concept/CN_SM_Env_FrostWayshrine_v002_registration.json",
+              "sha256": "53af7d6f42c9e57a0c9b4d9702ee3cf6eff87af6229cb1e9e05136dadc0ec70c"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Codex built-in image_gen",
+          "registration_version": 1,
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-63c7a49c-6291-4385-8bf5-f80cb491334f.png",
+          "source_sha256": "4d09e8ca14b90f92c9f32ac4defc454abf004179a1149f20831f8c6ec760235a",
+          "prompt": "Use case: style-transfer. Edit the supplied reconstruction reference into stylized hand-painted 3D game art at the moderate-detail visual level of Gunfire Reborn. Keep the subject identity, overall dimensions, and four-view FRONT, LEFT, BACK, RIGHT turnaround of ONE identical solid object. Replace photographic erosion, tiny cracks, dense grain and miniature ornament with broad clean faceted planes, bold chunky silhouette, two or three dominant color blocks, soft painted gradients and a few medium-scale edge accents. Matte materials, clear solid volume, no glossy plastic, no photorealistic surface noise. All views must agree on construction and colors; side views show true depth and back is complete. Level strictly orthographic cameras, same scale and baseline, every silhouette fully inside its own panel with white gutters. Pure white featureless background, neutral soft even lighting, minimal shadows. No ground plane, text, labels, landscape, people, detached objects or effects.\n\nSubject changes: Keep the compact curved gabled roof, four stout timber posts, closed wooden rear wall, shallow altar niche, stone plinth and thick snow cover. Size 4.2m wide,5m high,3.2m deep. Simplify the roof into a few broad tile rows and smooth chunky snow masses, timber into large reddish brown planes, base into blue-grey stone blocks. One simple bronze plaque and restrained crimson accent. Sparse carved marks, no tiny hanging tassels or dense wood grain.",
+          "reference_mode": "bounds_only",
+          "registration": {
+            "front": {
+              "scale": 0.8296001327360212,
+              "offset": [
+                18,
+                240
+              ],
+              "size": [
+                476,
+                544
+              ],
+              "physical_height_m": 5.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.8346897041024999,
+              "offset": [
+                83,
+                240
+              ],
+              "size": [
+                346,
+                544
+              ],
+              "physical_height_m": 5.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.8334114656582388,
+              "offset": [
+                22,
+                240
+              ],
+              "size": [
+                468,
+                544
+              ],
+              "physical_height_m": 5.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.8346897041024999,
+              "offset": [
+                83,
+                240
+              ],
+              "size": [
+                345,
+                544
+              ],
+              "physical_height_m": 5.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Root inspected the native revised four-view sheet: broad painted color blocks, simplified wear, matched facade and rear, coherent thick side volume and solid connected structure. Approved for local Hunyuan reconstruction, not a human review.",
+            "time": "2026-10-04 17:35:33"
+          }
+        },
+        {
+          "version": 3,
+          "created": "2026-10-04 17:54:17",
+          "files": {
+            "CN_SM_Env_FrostWayshrine_v003_source.png": {
+              "path": "01_concept/CN_SM_Env_FrostWayshrine_v003_source.png",
+              "sha256": "9670d607a5834f7b20fb81997fb291012385b8ec93a5f26b4757c298d43d1c9d"
+            },
+            "CN_SM_Env_FrostWayshrine_v003_front.png": {
+              "path": "01_concept/CN_SM_Env_FrostWayshrine_v003_front.png",
+              "sha256": "7c27e139fcb4c34c8a1b13c6b86d059a189f0b183fc32658b9a47a62cec0dce7"
+            },
+            "CN_SM_Env_FrostWayshrine_v003_left.png": {
+              "path": "01_concept/CN_SM_Env_FrostWayshrine_v003_left.png",
+              "sha256": "1b9b9e00e476c82a7bc5abfed1e31e6ff4c32637e0946696242ed2e3cc30d36f"
+            },
+            "CN_SM_Env_FrostWayshrine_v003_back.png": {
+              "path": "01_concept/CN_SM_Env_FrostWayshrine_v003_back.png",
+              "sha256": "019e31ada9875a3fd7bc4eafbe8ec2743b79069408ccaa5ba769a3b78daa8209"
+            },
+            "CN_SM_Env_FrostWayshrine_v003_right.png": {
+              "path": "01_concept/CN_SM_Env_FrostWayshrine_v003_right.png",
+              "sha256": "37215655449f0b8fac2887708fb7af9360d1873580b41cf8e36aa59135b2d88d"
+            },
+            "CN_SM_Env_FrostWayshrine_v003_sheet.png": {
+              "path": "01_concept/CN_SM_Env_FrostWayshrine_v003_sheet.png",
+              "sha256": "2ea69f8fbf1a580f82bbf9a42a174a370568ed2c113b2d4d15e43114cd6ee40a"
+            },
+            "CN_SM_Env_FrostWayshrine_v003_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_FrostWayshrine_v003_prompt.txt",
+              "sha256": "4a85bd1a938f195d6b2bcec9e4d219de3581c552699410d69aa7d165ecb472c2"
+            },
+            "CN_SM_Env_FrostWayshrine_v003_registration.json": {
+              "path": "01_concept/CN_SM_Env_FrostWayshrine_v003_registration.json",
+              "sha256": "65a815d28f80c91d5e596b560755df4a65744a279038524b3b2188f1cad877a8"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Codex built-in image_gen",
+          "registration_version": 1,
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-9b6c7261-758a-4358-be46-8eee38b1717e.png",
+          "source_sha256": "9670d607a5834f7b20fb81997fb291012385b8ec93a5f26b4757c298d43d1c9d",
+          "prompt": "Use case: stylized-concept. Edit this four-view game asset reference into a simpler, solid connected Chinese mountain wayshrine for local Hunyuan3D reconstruction. Preserve the identity: compact curved gabled roof with thick snow, reddish brown timber, a blue-grey stone plinth and front shrine niche. Aim for the bold hand-painted, moderate-detail visual level of Gunfire Reborn. Make the shrine one robust connected sculptural volume, 4.2m wide, 5m high, 3.2m deep. Replace the open pavilion construction with fully closed thick side walls and a closed rear wall; carve just a broad shallow front recess. Two very broad front timber corner posts are fused into the walls, roof and stone plinth, and the rear corner posts are similarly integrated. Roof is one thick broad curved mass with only two large tile bands and one continuous chunky snow cap. Remove the tiny protruding rafters, layered wooden brackets, rope, tassels, small finials, tiny roof tiles and freestanding altar bench. Put one simple bronze relief plaque flush against the back of the shallow niche. Base is a connected mass of a few large stone faces and two broad steps; all snow touches roof or base, no loose snowy rocks. Strong medium-scale bevels and clean planes, soft painted gradients, only a few broad timber seams and one restrained crimson painted band. No photorealistic grain, small cracks, intricate carvings or shiny plastic. Keep true depth and the same complete solid shrine in all four panels ordered FRONT, LEFT, BACK, RIGHT. Strict orthographic cameras at equal scale, same ground baseline, fully visible silhouettes and generous white gutters. Neutral soft studio light, featureless white background. No labels, text, ground plane, landscapes, people, detached objects or effects.",
+          "reference_mode": "bounds_only",
+          "registration": {
+            "front": {
+              "scale": 0.8556881872245753,
+              "offset": [
+                22,
+                240
+              ],
+              "size": [
+                468,
+                544
+              ],
+              "physical_height_m": 5.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.8543448776684928,
+              "offset": [
+                79,
+                240
+              ],
+              "size": [
+                354,
+                544
+              ],
+              "physical_height_m": 5.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.8570357276768975,
+              "offset": [
+                23,
+                240
+              ],
+              "size": [
+                466,
+                544
+              ],
+              "physical_height_m": 5.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.8543448776684928,
+              "offset": [
+                79,
+                240
+              ],
+              "size": [
+                353,
+                544
+              ],
+              "physical_height_m": 5.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Inspected the new native four-view sheet. Closed side walls, integrated broad posts, a single roof and connected base replace open small supports; the same snow-covered shrine is consistent in front/left/back/right. Moderate-detail painted finish retained. Approved for local Hunyuan MV reconstruction; not a human review.",
+            "time": "2026-10-04 17:54:18"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 16:43:06",
+          "files": {
+            "HP_SM_Env_FrostWayshrine_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostWayshrine_v001_input_front.png",
+              "sha256": "d1455c990cf06b84b8795fda6261d32db290fe49f34e0d60a744ea3e6bd41409"
+            },
+            "HP_SM_Env_FrostWayshrine_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostWayshrine_v001_input_left.png",
+              "sha256": "82e17432e64312a037fbc19287e35c72cd792daa659654f15f9d57647b3dc0b0"
+            },
+            "HP_SM_Env_FrostWayshrine_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostWayshrine_v001_input_back.png",
+              "sha256": "3c62116f1c9c26bad957c670da7a3e2496dde9d4826aa0c253ec340cbb318e44"
+            },
+            "HP_SM_Env_FrostWayshrine_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostWayshrine_v001_input_right.png",
+              "sha256": "befdeecefa163abb0ac77ff370d7f2339582b5a26dc8ab134a198e0fee6d3026"
+            },
+            "HP_SM_Env_FrostWayshrine_v001.glb": {
+              "path": "02_highpoly/HP_SM_Env_FrostWayshrine_v001.glb",
+              "sha256": "49008bf510c15d2503ca72a7d0381c766d9437d3c9c45f97d34f380cc66ad53e"
+            },
+            "HP_SM_Env_FrostWayshrine_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Env_FrostWayshrine_v001_graph.json",
+              "sha256": "0f4b4c8405e2574275c7364818ae949b3848da1694121ae6b887dbf5eb21625a"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 202610042,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -64,
+              192,
+              576,
+              832
+            ],
+            "scale": 1.6
+          },
+          "seconds": 177.1,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 27.8
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 17:47:45",
+          "files": {
+            "HP_SM_Env_FrostWayshrine_v002_input_front.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostWayshrine_v002_input_front.png",
+              "sha256": "ff8a5daf9055da0ac99038c5e1273c65c92dcefe47b0d260398f8d73541f2daa"
+            },
+            "HP_SM_Env_FrostWayshrine_v002_input_left.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostWayshrine_v002_input_left.png",
+              "sha256": "f6059f8ac62e53ebb36a6752fd4179d6d15858dec37d30cc4198cecf6e62e928"
+            },
+            "HP_SM_Env_FrostWayshrine_v002_input_back.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostWayshrine_v002_input_back.png",
+              "sha256": "764be58df935c69ace29f06abe4440fc9b7f81d5d5421f8d093ee13f37808bc6"
+            },
+            "HP_SM_Env_FrostWayshrine_v002_input_right.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostWayshrine_v002_input_right.png",
+              "sha256": "68636cd518fa3fa2f5460bf051a1aa079c01c773a1d9d468cf6269cdabcd96d7"
+            },
+            "HP_SM_Env_FrostWayshrine_v002.glb": {
+              "path": "02_highpoly/HP_SM_Env_FrostWayshrine_v002.glb",
+              "sha256": "ce84017db4a03e66474f084dccacfa52a85a515b10d64977c7aa372991955c00"
+            },
+            "HP_SM_Env_FrostWayshrine_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Env_FrostWayshrine_v002_graph.json",
+              "sha256": "daff7ed94a83deec4e4ad72f89e65127415d7f444d661d2d748376efd1cf2fe1"
+            }
+          },
+          "from_concept": 2,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 202610051,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -64,
+              192,
+              576,
+              832
+            ],
+            "scale": 1.6
+          },
+          "seconds": 364.6,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 31.4
+        },
+        {
+          "version": 3,
+          "created": "2026-10-04 18:00:35",
+          "files": {
+            "HP_SM_Env_FrostWayshrine_v003_input_front.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostWayshrine_v003_input_front.png",
+              "sha256": "6239f225bbacbeda3fbebbf4d6a2cac7afdee2ca87134ad8c64f24f12a5dabc6"
+            },
+            "HP_SM_Env_FrostWayshrine_v003_input_left.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostWayshrine_v003_input_left.png",
+              "sha256": "10f37bf5ca9c2f4a3fb3054cf52810340622fe1e6cc6147ad3d183569cc5fb90"
+            },
+            "HP_SM_Env_FrostWayshrine_v003_input_back.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostWayshrine_v003_input_back.png",
+              "sha256": "dfe4175a6a5a0584e6f7db7055a20da11fe0afb6b15b7197bf1f0770fa13f730"
+            },
+            "HP_SM_Env_FrostWayshrine_v003_input_right.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostWayshrine_v003_input_right.png",
+              "sha256": "15e10b4f37f5e7ac9f3835a9c9b76b25918e7d171ff79e9b91a43149d4c43146"
+            },
+            "HP_SM_Env_FrostWayshrine_v003.glb": {
+              "path": "02_highpoly/HP_SM_Env_FrostWayshrine_v003.glb",
+              "sha256": "80ef8c765d34f769ea60a658fba831cbf6e403467c6c32bfab8cf1dd57f9ce31"
+            },
+            "HP_SM_Env_FrostWayshrine_v003_graph.json": {
+              "path": "02_highpoly/HP_SM_Env_FrostWayshrine_v003_graph.json",
+              "sha256": "bd935278fd03987324431f19afad161b491c2831604a2519bba6e07d79db9e04"
+            }
+          },
+          "from_concept": 3,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 202610056,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -64,
+              192,
+              576,
+              832
+            ],
+            "scale": 1.6
+          },
+          "seconds": 156.2,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 27.1
+        }
+      ]
+    },
+    "build": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 16:47:25",
+          "files": {
+            "SM_Env_FrostWayshrine_v001.blend": {
+              "path": "03_work/SM_Env_FrostWayshrine_v001.blend",
+              "sha256": "ff0c3c065bdb16a8033b02e28b00b275767c8124b8cf66128bcb0dcb48697be0"
+            },
+            "SM_Env_FrostWayshrine_v001.glb": {
+              "path": "04_export/SM_Env_FrostWayshrine_v001.glb",
+              "sha256": "89695c3994b222206db54acad78f2dbb56ed7046fd2c2cc39d1657ba3783be90"
+            },
+            "SM_Env_FrostWayshrine_v001_metrics.json": {
+              "path": "03_work/SM_Env_FrostWayshrine_v001_metrics.json",
+              "sha256": "cb5649e0da40bb2732814ef8548f4e18f5f1f97db0cd57db501f4c2311a24021"
+            },
+            "T_Env_FrostWayshrine_BC.png": {
+              "path": "03_work/textures_v001/T_Env_FrostWayshrine_BC.png",
+              "sha256": "e25bf299b1ee77407e827fdba4a6fe7362a0bceb50f08ed19365d7ea062d1638"
+            },
+            "T_Env_FrostWayshrine_N.png": {
+              "path": "03_work/textures_v001/T_Env_FrostWayshrine_N.png",
+              "sha256": "67cec28012f0baf65da6474f671ca9b92ebca9086ab4d99a54af20107b621290"
+            },
+            "T_Env_FrostWayshrine_ORM.png": {
+              "path": "03_work/textures_v001/T_Env_FrostWayshrine_ORM.png",
+              "sha256": "5845aaec7eeef83278e4152d29570d86446a0fed42d9fa0938e3897b104b46ca"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.869,
+          "uncovered_ratio": 0.5024,
+          "lods": [
+            {
+              "tris": 5000,
+              "verts": 2466
+            },
+            {
+              "tris": 1600,
+              "verts": 766
+            },
+            {
+              "tris": 499,
+              "verts": 216
+            }
+          ],
+          "export_kb": 380.2,
+          "seconds": 237.2,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 17:53:11",
+          "files": {
+            "SM_Env_FrostWayshrine_v002_failure.json": {
+              "path": "03_work/SM_Env_FrostWayshrine_v002_failure.json",
+              "sha256": "b00a94aa7ad88bee26c298823cde8f412de6e0ebb058bc0fe7482e5c32aa5a64"
+            },
+            "build.blender.log": {
+              "path": "_tmp/build_v002/build.blender.log",
+              "sha256": "b39622b23929d87f082447b07585fd03f1b4116f167c0368b762ff3e77af5916"
+            },
+            "build.args.json": {
+              "path": "_tmp/build_v002/build.args.json",
+              "sha256": "220bd9fa35939683353b649cc9be1512830d7a92ba732af90c4914107d9cbf16"
+            },
+            "T_Env_FrostWayshrine_BC.png": {
+              "path": "03_work/textures_v002/T_Env_FrostWayshrine_BC.png",
+              "sha256": "f92dd9cd64eeca4b7553bc74e90b7236e65db077bbfe53df8d8885c30ad68c9d"
+            },
+            "T_Env_FrostWayshrine_N.png": {
+              "path": "03_work/textures_v002/T_Env_FrostWayshrine_N.png",
+              "sha256": "8ba0b3182b7b4ea807ca5421b008d4bfeceed0fd3734084989eb591ade9b7825"
+            },
+            "T_Env_FrostWayshrine_ORM.png": {
+              "path": "03_work/textures_v002/T_Env_FrostWayshrine_ORM.png",
+              "sha256": "669b35ae7155d5d7dfb71a60438f04b446d4777dd657a4400a55cf8bb6a3b7ae"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "quality_status": "failed",
+          "quality_errors": [
+            "LOD2 triangle budget: 1448 > 500 after bounded cleanup"
+          ],
+          "failure_reason": "LOD2 bounded cleanup still exceeds budget 500",
+          "align_iou": 0.863,
+          "uncovered_ratio": 0.496,
+          "bake_device": "CPU",
+          "seconds": 196
+        },
+        {
+          "version": 3,
+          "created": "2026-10-04 18:03:52",
+          "files": {
+            "SM_Env_FrostWayshrine_v003.blend": {
+              "path": "03_work/SM_Env_FrostWayshrine_v003.blend",
+              "sha256": "f44bc58227907c743cc9830556a466c9e8e96e2020f2299697bcdf8c60193106"
+            },
+            "SM_Env_FrostWayshrine_v003.glb": {
+              "path": "04_export/SM_Env_FrostWayshrine_v003.glb",
+              "sha256": "09dff3832ad658ee1d685baefe67b5b0c08c6e785603af14258ead091736f9fd"
+            },
+            "SM_Env_FrostWayshrine_v003_metrics.json": {
+              "path": "03_work/SM_Env_FrostWayshrine_v003_metrics.json",
+              "sha256": "19dac6523e2bc465638d807e6f7e9a97922f9fcd0b1202b942a8d31c2adf2481"
+            },
+            "T_Env_FrostWayshrine_BC.png": {
+              "path": "03_work/textures_v003/T_Env_FrostWayshrine_BC.png",
+              "sha256": "5779c6af4827d9ae1682bf852a3de4153613f4d139194ce5faa8aa4cd698305c"
+            },
+            "T_Env_FrostWayshrine_N.png": {
+              "path": "03_work/textures_v003/T_Env_FrostWayshrine_N.png",
+              "sha256": "c0497b950d7a4cdf635b9512f026fd8e7340b5549b4236e5a1b2a05afff86f1a"
+            },
+            "T_Env_FrostWayshrine_ORM.png": {
+              "path": "03_work/textures_v003/T_Env_FrostWayshrine_ORM.png",
+              "sha256": "6898a84e131c473500f266469a1bda23129c5e2f0bfc9ceafc890e05dfaa7c55"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 3,
+            "highpoly": 3,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.893,
+          "uncovered_ratio": 0.4044,
+          "lods": [
+            {
+              "tris": 5000,
+              "verts": 2502
+            },
+            {
+              "tris": 1600,
+              "verts": 802
+            },
+            {
+              "tris": 500,
+              "verts": 252
+            }
+          ],
+          "export_kb": 235.2,
+          "seconds": 183.8,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 16:48:15",
+          "files": {
+            "SM_Env_FrostWayshrine_v001_validation_v001.json": {
+              "path": "05_review/SM_Env_FrostWayshrine_v001_validation_v001.json",
+              "sha256": "b116ce4d514af2bb95cf0db80b68beb2d4edd8a16ca572436abcb2cbba60df01"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 18:04:13",
+          "files": {
+            "SM_Env_FrostWayshrine_v003_validation_v002.json": {
+              "path": "05_review/SM_Env_FrostWayshrine_v003_validation_v002.json",
+              "sha256": "1d59dcf8d61b87ee25a749595480cbe4baf7dee85e1ae7bd161ed81e6537353b"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 16:48:48",
+          "files": {
+            "SM_Env_FrostWayshrine_v001_review_v001.png": {
+              "path": "05_review/SM_Env_FrostWayshrine_v001_review_v001.png",
+              "sha256": "2958fb8277e4a8d6f624a6d6ee7ac054faed4a32a6a63ee59a9e8610d955c9dc"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Reviewed five textured views, roof depth, closed back, coherent timber supports, snow-covered base and three LOD silhouettes. Front, roof and back remain readable. Retained the 50.2% occluded projection warning and existing diffusion fill; zero validation errors and no QA waiver.",
+            "time": "2026-10-04 16:49:46"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 18:04:21",
+          "files": {
+            "SM_Env_FrostWayshrine_v003_review_v002.png": {
+              "path": "05_review/SM_Env_FrostWayshrine_v003_review_v002.png",
+              "sha256": "5b5ec3d624445aeb60d607d32545be948cd3a1b7f414b86ee2b4425c46581c1a"
+            }
+          },
+          "from_build": 3,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Root inspected five actual textured views, three LOD meshes and texture sheets. The simpler snow-covered curved roof, integrated broad posts, closed side/rear walls and connected stone plinth retain clear shrine volume and readable painted colors. Far LOD meets the unchanged 500-triangle budget; zero validation warnings/errors and no waiver. Failed build v002 remains preserved.",
+            "time": "2026-10-04 18:05:01"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 16:49:47",
+          "files": {
+            "SM_Env_FrostWayshrine.glb": {
+              "path": "@root/public/assets/props/SM_Env_FrostWayshrine.glb",
+              "sha256": "89695c3994b222206db54acad78f2dbb56ed7046fd2c2cc39d1657ba3783be90"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Env_FrostWayshrine.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 18:05:03",
+          "files": {
+            "SM_Env_FrostWayshrine.glb": {
+              "path": "@root/public/assets/props/SM_Env_FrostWayshrine.glb",
+              "sha256": "09dff3832ad658ee1d685baefe67b5b0c08c6e785603af14258ead091736f9fd"
+            }
+          },
+          "from_build": 3,
+          "url": "assets/props/SM_Env_FrostWayshrine.glb"
+        }
+      ]
+    }
+  }
+}

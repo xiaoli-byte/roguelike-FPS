@@ -7,12 +7,13 @@ import type { Deco, LevelLayout } from './LevelTypes';
 import type { ThemeStyle } from './Themes';
 import type { FlameSpot } from './Props';
 import { PROP_COLLIDER } from './LevelGen';
-import { fitScenePropScale } from './ScenePropFit';
+import { fitLandmarkTransform, fitNaturalPropScale, fitScenePropScale } from './ScenePropFit';
+import { applyHandPaintedEnvironment } from './SceneSurfaceMaterial';
 
 export const SCENE_PROP_IDS: Readonly<Record<ThemeId, Partial<Record<Deco['kind'], string>>>> = {
-  desert: { statue: 'SM_Prop_DesertReliquary', pots: 'SM_Prop_DesertUrns' },
-  frost: { stoneLantern: 'SM_Prop_FrostShrine', crystal: 'SM_Prop_FrostPrayerCairn' },
-  inferno: { brazier: 'SM_Prop_InfernoCrucible', crystal: 'SM_Prop_InfernoChainObelisk', spike: 'SM_Prop_InfernoChainObelisk' },
+  desert: { statue: 'SM_Prop_DesertReliquary', pots: 'SM_Prop_DesertUrns', rock: 'SM_Env_DesertSandstone', landmark: 'SM_Env_DesertRuin' },
+  frost: { stoneLantern: 'SM_Prop_FrostShrine', crystal: 'SM_Prop_FrostPrayerCairn', pine: 'SM_Env_FrostPine', landmark: 'SM_Env_FrostWayshrine' },
+  inferno: { brazier: 'SM_Prop_InfernoCrucible', crystal: 'SM_Prop_InfernoChainObelisk', spike: 'SM_Prop_InfernoChainObelisk', rock: 'SM_Env_InfernoBasalt', landmark: 'SM_Env_InfernoFoundry' },
 };
 
 interface Haze { mesh: THREE.Mesh; x: number; z: number; phase: number }
@@ -24,14 +25,24 @@ export class SceneDressing {
   private readonly owned: { dispose(): void }[] = [];
   private readonly haze: Haze[] = [];
   private readonly materialCopies = new Map<THREE.Material, THREE.Material>();
+  private readonly landmarkBounds = new Map<string, { min: number[]; max: number[] }>();
   private radialMap: THREE.CanvasTexture | null = null;
+  private disposed = false;
 
   constructor(ctx: GameContext, L: LevelLayout, st: ThemeStyle, rand: () => number, flames: FlameSpot[]) {
     this.group.name = `scene.details.${L.theme}`;
     const contacts: Contact[] = [];
     const shrines: { x: number; y: number; z: number; scale: number }[] = [];
+    const naturalBounds = new Map<string, { min: number[]; max: number[]; radius: number }>();
+    const pendingLandmarks: Deco[] = [];
     // 模型只实例化已发布的 Hunyuan 资产，陈设与碰撞已在布局生成阶段校验。
     for (const d of L.decos) {
+      if (d.kind === 'landmark') {
+        const contact = this.attachLandmark(ctx, L, d);
+        if (contact) contacts.push(contact);
+        else pendingLandmarks.push(d);
+        continue;
+      }
       const id = SCENE_PROP_IDS[L.theme][d.kind];
       const asset = id ? AssetLibrary.get(id) : null;
       if (!asset) continue;
@@ -39,7 +50,25 @@ export class SceneDressing {
       lod.name = `${asset.id}.${d.sceneRole ?? 'cover'}`;
       lod.position.set(d.x, d.y, d.z);
       lod.rotation.y = d.yaw;
-      const scale = fitScenePropScale(asset.entry.bounds, d.yaw, d.s, PROP_COLLIDER[d.kind]);
+      const natural = asset.entry.class === 'nature_prop' && (d.kind === 'pine' || d.kind === 'rock');
+      if (natural && !naturalBounds.has(asset.id)) {
+        // A measured radius keeps sparse crowns tall; using the AABB diagonal would shrink them.
+        const vertex = new THREE.Vector3(), bounds = new THREE.Box3(); let radius = 0;
+        for (const source of asset.lods) {
+          const positions = source.geometry.getAttribute('position');
+          for (let i = 0; i < positions.count; i++) {
+            vertex.fromBufferAttribute(positions, i).applyMatrix4(source.matrixWorld);
+            bounds.expandByPoint(vertex);
+            radius = Math.max(radius, Math.hypot(vertex.x, vertex.z));
+          }
+        }
+        // Decimation can slightly expand a distant LOD; include every level in the visual envelope.
+        naturalBounds.set(asset.id, { min: bounds.min.toArray(), max: bounds.max.toArray(), radius });
+      }
+      const measured = naturalBounds.get(asset.id);
+      const scale = natural
+        ? fitNaturalPropScale(measured ?? asset.entry.bounds, d.s, d.kind as 'pine' | 'rock', measured?.radius)
+        : fitScenePropScale(asset.entry.bounds, d.yaw, d.s, PROP_COLLIDER[d.kind]);
       lod.scale.setScalar(scale);
       const low = ctx.settings.quality === 'low';
       asset.lods.forEach((src, i) => {
@@ -52,6 +81,7 @@ export class SceneDressing {
             applyArtEnvironment(material, ctx.renderer);
             material.envMapIntensity = L.theme === 'inferno' ? 0.72 : L.theme === 'frost' ? 0.62 : 0.52;
             material.roughness = Math.max(0.48, Math.min(1, material.roughness));
+            applyHandPaintedEnvironment(material, asset.id);
           }
           this.materialCopies.set(source, material); this.owned.push(material);
           return material;
@@ -62,8 +92,12 @@ export class SceneDressing {
         mesh.castShadow = !low && d.sceneLayer !== 'accent';
         mesh.receiveShadow = true;
         mesh.applyMatrix4(src.matrixWorld);
-        lod.addLevel(mesh, low ? 0 : (asset.entry.lodDistance[i] ?? i * 20));
+        mesh.matrixAutoUpdate = false;
+        let distance = low && i === 1 ? 0 : asset.entry.lodDistance[i] ?? i * 20;
+        if (natural && d.kind === 'rock') distance *= Math.max(.15, scale);
+        lod.addLevel(mesh, distance);
       });
+      lod.updateMatrix(); lod.matrixAutoUpdate = false;
       this.group.add(lod);
       this.replaced.add(d);
       const bounds = asset.entry.bounds;
@@ -76,6 +110,65 @@ export class SceneDressing {
     this.surfacePatina(L, st, contacts, rand);
     if (shrines.length) this.shrineGlow(shrines, st);
     if (ctx.settings.quality !== 'low') this.atmosphere(L, st, rand);
+    // A fast start can precede the background GLB load. Only these new landmarks
+    // retry after preload; no placeholder art is generated while they are absent.
+    if (pendingLandmarks.length) void AssetLibrary.preload().then(() => {
+      if (this.disposed) return;
+      const lateContacts = pendingLandmarks.map(d => this.attachLandmark(ctx, L, d)).filter((p): p is Contact => !!p);
+      if (lateContacts.length) {
+        this.contactShadows(lateContacts);
+        this.surfacePatina(L, st, lateContacts, rand, false);
+      }
+    });
+  }
+
+  private attachLandmark(ctx: GameContext, L: LevelLayout, d: Deco): Contact | null {
+    if (!d.footprint || this.replaced.has(d)) return null;
+    const id = SCENE_PROP_IDS[L.theme].landmark, asset = id ? AssetLibrary.get(id) : null;
+    if (!asset) return null;
+    let bounds = this.landmarkBounds.get(asset.id);
+    if (!bounds) {
+      const measured = new THREE.Box3(), point = new THREE.Vector3();
+      for (const source of asset.lods) {
+        const positions = source.geometry.getAttribute('position');
+        for (let i = 0; i < positions.count; i++) measured.expandByPoint(point.fromBufferAttribute(positions, i).applyMatrix4(source.matrixWorld));
+      }
+      if (measured.isEmpty()) return null;
+      bounds = { min: measured.min.toArray(), max: measured.max.toArray() };
+      this.landmarkBounds.set(asset.id, bounds);
+    }
+    const fit = fitLandmarkTransform(bounds, d.footprint), scale = fit.scale * d.s;
+    const offset = new THREE.Matrix4().makeTranslation(...fit.offset);
+    const lod = new THREE.LOD();
+    lod.name = `${asset.id}.${d.sceneRole ?? 'alcove'}`;
+    lod.position.set(d.x, d.y, d.z); lod.rotation.y = d.yaw; lod.scale.setScalar(scale);
+    const low = ctx.settings.quality === 'low';
+    const copyMaterial = (source: THREE.Material): THREE.Material => {
+      const cached = this.materialCopies.get(source);
+      if (cached) return cached;
+      const material = source.clone();
+      if (material instanceof THREE.MeshStandardMaterial) {
+        applyArtEnvironment(material, ctx.renderer);
+        material.envMapIntensity = L.theme === 'inferno' ? .72 : L.theme === 'frost' ? .62 : .52;
+        material.roughness = Math.max(.48, Math.min(1, material.roughness));
+        applyHandPaintedEnvironment(material, asset.id);
+      }
+      this.materialCopies.set(source, material); this.owned.push(material);
+      return material;
+    };
+    asset.lods.forEach((source, index) => {
+      if (low && index === 0 && asset.lods.length > 1) return;
+      const material = Array.isArray(source.material) ? source.material.map(copyMaterial) : copyMaterial(source.material);
+      const mesh = new THREE.Mesh(source.geometry, material);
+      mesh.name = source.name; mesh.castShadow = !low; mesh.receiveShadow = true;
+      mesh.applyMatrix4(offset.clone().multiply(source.matrixWorld)); mesh.matrixAutoUpdate = false;
+      const distance = low && index === 1 ? 0 : index === 0 ? 0 : index === 1 ? 20 : low ? 30 : 42;
+      lod.addLevel(mesh, distance, .1);
+    });
+    lod.updateMatrix(); lod.matrixAutoUpdate = false;
+    this.group.add(lod); this.replaced.add(d);
+    return { x: d.x, y: d.y, z: d.z, yaw: d.yaw,
+      w: (bounds.max[0] - bounds.min[0]) * scale, d: (bounds.max[2] - bounds.min[2]) * scale };
   }
 
   private radialTexture(): THREE.CanvasTexture {
@@ -94,12 +187,12 @@ export class SceneDressing {
   }
 
   /** Flat material overlays tie the existing art into its terrain; these are not art meshes. */
-  private surfacePatina(L: LevelLayout, st: ThemeStyle, contacts: Contact[], rand: () => number): void {
+  private surfacePatina(L: LevelLayout, st: ThemeStyle, contacts: Contact[], rand: () => number, includeWalls = true): void {
     const spots = contacts.filter(p => Math.abs(p.y - L.floorY) < 0.1).map(p => ({
       x: p.x, z: p.z, yaw: p.yaw + rand() * 0.6,
       w: Math.max(1.4, p.w * 2.1), d: Math.max(1.2, p.d * 1.7),
     }));
-    for (const wall of L.boxes.filter(b => b.look === 'wall')) {
+    for (const wall of includeWalls ? L.boxes.filter(b => b.look === 'wall') : []) {
       const alongX = wall.maxX - wall.minX > wall.maxZ - wall.minZ;
       const length = alongX ? wall.maxX - wall.minX : wall.maxZ - wall.minZ;
       const n = Math.max(1, Math.floor(length / 6.5));
@@ -208,10 +301,12 @@ export class SceneDressing {
   }
 
   dispose(): void {
+    if (this.disposed) return;
+    this.disposed = true;
     this.group.removeFromParent();
     this.group.clear();
     for (const resource of this.owned) resource.dispose();
     this.owned.length = 0;
-    this.materialCopies.clear(); this.radialMap = null;
+    this.materialCopies.clear(); this.landmarkBounds.clear(); this.radialMap = null;
   }
 }

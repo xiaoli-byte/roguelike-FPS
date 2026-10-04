@@ -1,0 +1,140 @@
+{
+  "steps": {
+    "导入清理": 5.8,
+    "对齐": 0.9,
+    "低模与 UV": 33.5,
+    "投影着色": 101.4,
+    "烘焙": 10.4,
+    "LOD": 0.0,
+    "导出": 0.8
+  },
+  "highpoly": {
+    "faces_raw": 1116636,
+    "faces": 1194300,
+    "verts": 1194302,
+    "loose_parts": 51,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00353
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.858,
+    "iou_per_view": {
+      "front": 0.94,
+      "left": 0.757,
+      "back": 0.917,
+      "right": 0.777
+    },
+    "height_m": 2.871,
+    "blockout_height_m": 3.0
+  },
+  "uv": {
+    "smart_islands": 355,
+    "charts": 39,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.1537,
+    "density_merged": 0.162
+  },
+  "projection": {
+    "uncovered_ratio": 0.2993
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Env_InfernoBasalt_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Env_InfernoBasalt_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Env_InfernoBasalt_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Env_InfernoBasalt_LOD0",
+      "tris": 5000,
+      "verts": 2502,
+      "uv_min": [
+        0.002308070659637451,
+        0.0023081768304109573
+      ],
+      "uv_max": [
+        0.9790433645248413,
+        0.997691810131073
+      ],
+      "uv_utilization": 0.625,
+      "bbox_min": [
+        -1.4424,
+        -1.3738,
+        -0.0006
+      ],
+      "bbox_max": [
+        1.4374,
+        1.1035,
+        2.8757
+      ]
+    },
+    {
+      "name": "SM_Env_InfernoBasalt_LOD1",
+      "tris": 1600,
+      "verts": 802,
+      "uv_min": [
+        0.002308070659637451,
+        0.0023081768304109573
+      ],
+      "uv_max": [
+        0.9790433645248413,
+        0.997691810131073
+      ],
+      "uv_utilization": 0.599,
+      "bbox_min": [
+        -1.4393,
+        -1.374,
+        -0.0006
+      ],
+      "bbox_max": [
+        1.4359,
+        1.1068,
+        2.8746
+      ]
+    },
+    {
+      "name": "SM_Env_InfernoBasalt_LOD2",
+      "tris": 500,
+      "verts": 252,
+      "uv_min": [
+        0.004200085997581482,
+        0.003437312785536051
+      ],
+      "uv_max": [
+        0.9779725074768066,
+        0.9883013367652893
+      ],
+      "uv_utilization": 0.548,
+      "bbox_min": [
+        -1.4558,
+        -1.3816,
+        0.0095
+      ],
+      "bbox_max": [
+        1.4337,
+        1.1133,
+        2.8633
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_InfernoBasalt\\04_export\\SM_Env_InfernoBasalt_v001.glb",
+    "bytes": 254860
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_InfernoBasalt\\03_work\\SM_Env_InfernoBasalt_v001.blend",
+  "total_seconds": 152.9,
+  "_seconds": 155.7
+}

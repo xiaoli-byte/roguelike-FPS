@@ -25,6 +25,7 @@ import { StageDirector } from '../world/StageDirector';
 import { FxSystem } from '../fx/Fx';
 import { AudioSystem } from '../audio/AudioSystem';
 import { UIManager } from '../ui/UI';
+import { PerformanceMeter } from '../dev/PerformanceMeter';
 
 function placeholderRun(): RunState {
   const stage: StageNode = { chapter: 0, index: 0, type: 'combat', reward: 'none', theme: 'desert' };
@@ -40,6 +41,8 @@ function placeholderRun(): RunState {
 export class Game implements IGame {
   readonly ctx: GameContext;
   readonly debug: boolean;
+  /** Created only with ?perf=1. The normal game has no profiling allocation or UI. */
+  readonly performanceMeter: PerformanceMeter | null;
   private _state: GameState = 'boot';
   private lastFrame = 0;
   private updateOrder: System[] = [];
@@ -49,6 +52,10 @@ export class Game implements IGame {
   private fpsAcc = 0;
   private fpsFrames = 0;
   fps = 0;
+  private inspectionView: (() => THREE.Camera | null) | null = null;
+
+  /** Separate inspection camera; the real player's camera and controls stay intact. */
+  setInspectionView(view: (() => THREE.Camera | null) | null): void { this.inspectionView = view; }
 
   constructor() {
     const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
@@ -103,6 +110,14 @@ export class Game implements IGame {
       heroes: HEROES as readonly HeroDef[],
     } as unknown as Record<string, unknown>;
     this.ctx = ctx as unknown as GameContext;
+    this.performanceMeter = new URLSearchParams(location.search).get('perf') === '1'
+      ? new PerformanceMeter(renderer, () => ({
+        quality: this.ctx.settings.quality, theme: this.ctx.run.stage.theme, gameState: this.state,
+        chapter: this.ctx.run.stage.chapter, stageIndex: this.ctx.run.stage.index, stageType: this.ctx.run.stage.type,
+        phase: this.ctx.stage.exploration?.encounters?.some(e => e.phase === 'active') ? 'encounter' : this.ctx.stage.exploration?.phase ?? this.ctx.run.stage.type,
+        encounter: this.ctx.stage.exploration?.encounters?.find(e => e.phase === 'active')?.id ?? '',
+        enemies: this.ctx.enemies.aliveCount(),
+      })) : null;
     const c = this.ctx as unknown as Record<string, unknown>;
 
     c.meta = new MetaProgress(this.ctx);
@@ -175,6 +190,7 @@ export class Game implements IGame {
   }
 
   private frame(t: number): void {
+    this.performanceMeter?.beginFrame(t);
     const rawDt = Math.min(0.05, Math.max(0, (t - this.lastFrame) / 1000));
     this.lastFrame = t;
     const ctx = this.ctx;
@@ -216,14 +232,18 @@ export class Game implements IGame {
     }
 
     ctx.input.endFrame();
+    this.performanceMeter?.endUpdate();
+    this.performanceMeter?.beginRender();
     this.render();
+    this.performanceMeter?.endRender();
   }
 
   private render(): void {
     const { renderer, scene, camera, viewScene, viewCamera } = this.ctx;
+    const inspectionCamera = this.inspectionView?.() ?? null;
     renderer.clear();
-    renderer.render(scene, camera);
-    if (this._state === 'playing' || this._state === 'paused' || this._state === 'modal' || this._state === 'transition') {
+    renderer.render(scene, inspectionCamera ?? camera);
+    if (!inspectionCamera && (this._state === 'playing' || this._state === 'paused' || this._state === 'modal' || this._state === 'transition')) {
       renderer.clearDepth();
       renderer.render(viewScene, viewCamera);
     }

@@ -81,7 +81,10 @@ def run(spec: AssetSpec, a) -> None:
     if not va or va.get("from_build") != bd["version"] or not va.get("passed"):
         raise PipelineError(f"{spec.id}: build v{bd['version']:03d} 还没有通过 validate，先运行 validate")
     tag = f"{spec.id}_v{bd['version']:03d}"
-    work = spec.dir / "_tmp" / f"review_v{bd['version']:03d}"
+    review_version = st.next_version("review")
+    bounds_reference = spec.raw.get("reference_mode") == "bounds_only"
+    work_name = f"review_build_v{bd['version']:03d}_review_v{review_version:03d}" if bounds_reference else f"review_v{bd['version']:03d}"
+    work = spec.dir / "_tmp" / work_name
     bo = st.require("blockout")
     metrics = json.loads(st.file(bd, f"{tag}_metrics.json").read_text(encoding="utf-8"))
     rom = spec.raw.get("rom") if spec.raw.get("rig") == "parts" else None
@@ -142,9 +145,10 @@ def run(spec: AssetSpec, a) -> None:
         d.text((900, 42), "形变检测：" + ("；".join(flags) + "  ⚠ 请重点检查" if flags else "通过（拉伸 p99 " +
                " / ".join(f"{k} {v['p99_stretch']}" for k, v in deform.items()) + "）"),
                fill=(255, 120, 90) if flags else (150, 200, 150), font=font(16))
-    out = spec.stage_dir("review") / f"{tag}_review.png"
+    suffix = f"_review_v{review_version:03d}.png" if bounds_reference else "_review.png"
+    out = spec.stage_dir("review") / f"{tag}{suffix}"
     sheet.save(out)
-    st.add_version("review", {"version": st.next_version("review"), "from_build": bd["version"],
+    st.add_version("review", {"version": review_version, "from_build": bd["version"],
                               "deformation": deform, "auto_flags": flags}, [out])
     for f_ in flags:
         print(f"  ⚠ 形变检测：{f_}（上限 p99 {STRETCH_P99_LIMIT} / {STRETCH_RATIO_LIMIT:.0%}），审核时重点看这个姿势")

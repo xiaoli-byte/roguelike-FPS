@@ -1,18 +1,24 @@
 /**
- * 关卡导演：生成 → 搭建 → 导航 → 放置玩家 → 按关卡类型布置（波次 / Boss / 宝箱 / 商店），
+ * 关卡导演：生成 → 搭建 → 导航 → 放置玩家 → 按关卡类型布置（探索祭坛 / 波次 / Boss / 宝箱 / 商店），
  * 清关结算与出口传送门，最终胜利判定，以及防卡关（出界敌人拉回、残敌传送到玩家附近）。
  * 跨系统只通过 ctx 接口交互。
  */
 import * as THREE from 'three';
-import type { ArenaInfo, GameContext, IEnemy, IStageDirector, StageNode, ThemeDef, WavePlan } from '../core/types';
+import type { AdventureInfo, ArenaInfo, GameContext, IEnemy, IStageDirector, StageNode, ThemeDef, WavePlan } from '../core/types';
 import { Rng } from '../core/Rng';
-import { buildWaves } from '../enemies/Waves';
+import { AssetLibrary } from '../assets/AssetLibrary';
+import { buildEncounterWaves, buildWaves } from '../enemies/Waves';
 import { ArenaView, addCollision } from './ArenaBuilder';
 import { generateLevel, type LevelLayout } from './LevelGen';
 import { NavGrid, type NavRamp } from './NavGrid';
 import { Portal } from './Portal';
 import { themeDef } from './Themes';
 import { BOSS_LEAD, WaveRunner, isBossId } from './WaveRunner';
+import { AdventureBeacon } from './AdventureBeacon';
+import { usesAuthoredLayout } from './WhiteboxMode';
+import { generateWhitebox } from './WhiteboxGen';
+import { buildWhiteboxAdventure, buildWhiteboxFights, whiteboxPlansForApproach, whiteboxSpawnRegion, type WhiteboxFight } from './WhiteboxEncounters';
+import type { WhiteboxMetadata } from './WhiteboxTypes';
 
 /** 进场后第一波开始的时间（秒） */
 const FIRST_WAVE_AT = 2;
@@ -29,6 +35,7 @@ const STUCK_CHECK = 0.5;
 const STRAGGLER_TIME = 30;
 const CLEAR_ESSENCE = 10;
 const BOSS_IDS = ['boss_colossus', 'boss_matriarch', 'boss_warlord'];
+const DISCOVERY_RADIUS = 5.5;
 
 const _v = new THREE.Vector3();
 
@@ -40,6 +47,7 @@ function toArena(L: LevelLayout, theme: ThemeDef): ArenaInfo {
     playerSpawn: v(L.playerSpawn),
     playerYaw: L.playerYaw,
     spawnPoints: L.spawnPoints.map(v),
+    spawnAnchors: L.adventure?.spawnAnchors?.map(p => ({ position: v(p), role: p.role, lane: p.lane })),
     rewardPoint: v(L.rewardPoint),
     portalPoints: L.portalPoints.map(v),
     shopPoint: v(L.shopPoint),
@@ -91,12 +99,27 @@ export class StageDirector implements IStageDirector {
   arena: ArenaInfo | null = null;
   cleared = false;
   waveIndex = 0;
-  /** HUD 用的波次数；只有 Boss 的关卡为 0（不显示「第 1 / 1 波」） */
+  /** HUD 用的波次数；探索尚未启动、纯 Boss 关为 0。 */
   waveCount = 0;
+  private adventureState: AdventureInfo | null = null;
+  private beacon: AdventureBeacon | null = null;
+  /** 探索状态只暴露给 HUD；支路奖励记录随关卡卸载，不会因来回走动重刷。 */
+  get exploration(): AdventureInfo | null { return this.adventureState; }
+  get whitebox(): WhiteboxMetadata | null { return this.layout?.whitebox ?? null; }
+  /** Dev workbench viewpoints; these never change gameplay navigation or checkpoints. */
+  get artInspectionViews() { return this.view?.artInspectionViews ?? []; }
+  get artBrief() { return this.view?.artBrief ?? null; }
 
   private layout: LevelLayout | null = null;
   private view: ArenaView | null = null;
   private waves: WaveRunner | null = null;
+  private encounterWaves: WaveRunner | null = null;
+  private activeEncounterId: string | null = null;
+  private nextEncounterAt = 0;
+  private whiteboxFights: WhiteboxFight[] = [];
+  private activeWhiteboxFight: WhiteboxFight | null = null;
+  private readonly encounterEye = new THREE.Vector3();
+  private readonly encounterTarget = new THREE.Vector3();
   private portals: Portal[] = [];
   private exits: StageNode[] | null = null;
   private bosses: IEnemy[] = [];
@@ -129,7 +152,13 @@ export class StageDirector implements IStageDirector {
     this.stage = stage;
 
     const rng = new Rng(ctx.run.seed ^ (stage.chapter * 7919 + stage.index * 104729 + 17));
-    const L = generateLevel(rng, stage);
+    // Classic inspection disables generated art, so retain the existing visible
+    // courtyard instead of loading a region made of invisible rock colliders.
+    const L = usesAuthoredLayout() ? generateWhitebox(stage) : generateLevel(rng, stage, { adventure: AssetLibrary.enabled });
+    if (L.whitebox) {
+      this.whiteboxFights = buildWhiteboxFights(L, stage);
+      L.adventure = buildWhiteboxAdventure(L, this.whiteboxFights);
+    }
     this.layout = L;
     const theme = themeDef(stage.theme);
     const arena = toArena(L, theme);
@@ -153,14 +182,20 @@ export class StageDirector implements IStageDirector {
     switch (stage.type) {
       case 'combat':
       case 'elite':
+        if (L.adventure) this.setupAdventure(L, arena);
+        else this.setupWaves(stage, arena);
+        break;
       case 'boss':
-        this.setupWaves(stage, arena);
+        if (L.whitebox) this.setupAdventure(L, arena);
+        else this.setupWaves(stage, arena);
         break;
       case 'treasure':
+        if (L.whitebox) this.setupAdventure(L, arena);
         ctx.loot.spawnChest(arena.rewardPoint.clone(), stage.reward === 'none' ? 'coins' : stage.reward);
         this.markFreeStage();
         break;
       case 'shop': {
+        if (L.whitebox) this.setupAdventure(L, arena);
         const sp = arena.shopPoint;
         const yaw = Math.atan2(arena.playerSpawn.x - sp.x, arena.playerSpawn.z - sp.z);
         ctx.loot.spawnShop(sp.clone(), yaw);
@@ -173,6 +208,12 @@ export class StageDirector implements IStageDirector {
 
   unload(): void {
     const ctx = this.ctx;
+    this.waves?.cancel();
+    this.encounterWaves?.cancel(); this.encounterWaves = null;
+    this.activeEncounterId = null; this.nextEncounterAt = 0;
+    this.whiteboxFights = [];
+    this.activeWhiteboxFight = null;
+    this.beacon?.dispose(); this.beacon = null; this.adventureState = null;
     for (const p of this.portals) p.dispose();
     this.portals.length = 0;
     if (this.view) {
@@ -203,7 +244,162 @@ export class StageDirector implements IStageDirector {
     this.lastProgress = 0;
   }
 
-  private setupWaves(stage: StageNode, arena: ArenaInfo): void {
+  private setupAdventure(L: LevelLayout, arena: ArenaInfo): void {
+    const adventure = L.adventure;
+    if (!adventure) return;
+    const v = (p: { x: number; z: number }): THREE.Vector3 => new THREE.Vector3(p.x, L.floorY, p.z);
+    this.adventureState = {
+      phase: 'explore', objective: v(adventure.objective),
+      ...(L.whitebox ? { automaticEncounters: true, objectiveLabel: this.whiteboxFights.find(f => f.final)?.label ?? '终点',
+        floorRects: L.whitebox.floorRects } : {}),
+      title: adventure.title, routeHint: adventure.routeHint,
+      encounters: (adventure.encounters ?? []).map(e => ({
+        id: e.id, label: e.label, kind: e.kind, position: v(e), radius: e.arenaRadius, triggerRadius: e.triggerRadius,
+        phase: 'undiscovered', siteId: e.siteId,
+      })),
+      sites: adventure.sites.map(s => ({ id: s.id, label: s.label, position: v(s), visited: false })),
+      zones: adventure.zones.map(z => ({ id: z.id, label: z.label, position: v(z), radius: z.radius })),
+      paths: adventure.paths.map(p => ({ width: p.width, points: p.points.map(v) })),
+    };
+    const parent = this.view?.group ?? this.ctx.stageGroup;
+    if (!L.whitebox) this.beacon = new AdventureBeacon(this.ctx, this.adventureState.objective, parent, () => this.activateAdventure(arena));
+    this.ctx.ui.toast(adventure.routeHint ?? '探索支路寻找物资，准备好后在灵火祭坛启动试炼', '#ffda82');
+  }
+
+  private activateAdventure(arena: ArenaInfo): boolean {
+    const state = this.adventureState;
+    if (!state || state.phase !== 'explore' || !this.stage || this.ctx.game.state !== 'playing' || !this.ctx.player.alive) return false;
+    if (this.encounterWaves || this.ctx.enemies.aliveCount() > 0) {
+      this.ctx.ui.toast('先解决正在交战的守卫，再启动祭坛试炼', '#ffb57c');
+      return false;
+    }
+    state.phase = 'battle';
+    const local = { ...arena, center: state.objective.clone(), spawnPoints: arena.spawnPoints.filter(p => {
+      const d = Math.hypot(p.x - state.objective.x, p.z - state.objective.z);
+      return d >= 12 && d <= 23;
+    }) };
+    this.setupWaves(this.stage, local, this.t, true);
+    this.ctx.audio.play('telegraph', { position: state.objective, volume: .8, pitch: .8 });
+    this.ctx.fx.ring(state.objective, 8, 0xffda82, 1.4);
+    this.ctx.ui.banner('灵火试炼', '守卫正在集结 · 清场后开启出口', 2.6);
+    return true;
+  }
+
+  /** Trigger a single local encounter; unopened side routes never add enemies to another fight. */
+  private updateEncounters(): void {
+    if (this.layout?.whitebox) { this.updateWhiteboxEncounters(); return; }
+    const state = this.adventureState, source = this.layout?.adventure, arena = this.arena, stage = this.stage;
+    const ctx = this.ctx;
+    if (!state || !source || !arena || !stage || !ctx.player.alive || ctx.game.state !== 'playing') return;
+    if (this.encounterWaves) {
+      this.encounterWaves.update(this.t);
+      if (this.encounterWaves.current >= 0) this.waveIndex = this.encounterWaves.current;
+      if (this.encounterWaves.done && this.t - this.encounterWaves.lastActivity > .4 && ctx.enemies.aliveCount() === 0) {
+        const encounter = state.encounters?.find(e => e.id === this.activeEncounterId);
+        if (encounter) {
+          encounter.phase = 'cleared';
+          ctx.ui.toast(`${encounter.label} · 守卫已清除${encounter.siteId ? '，可收取物资' : '，继续探索'}`, '#a9dec7');
+        }
+        this.encounterWaves = null; this.activeEncounterId = null;
+        this.activeWhiteboxFight = null;
+        this.waveIndex = 0; this.waveCount = 0;
+        this.nextEncounterAt = this.t + 1.5;
+      }
+      return;
+    }
+    if (state.phase !== 'explore' || this.t < this.nextEncounterAt || ctx.enemies.aliveCount() > 0) return;
+    const player = ctx.player.position;
+    if (Math.abs(player.y - arena.floorY) > 3) return;
+    const candidates = (source.encounters ?? []).map((e, ordinal) => ({ e, ordinal,
+      distance: Math.hypot(player.x - e.x, player.z - e.z),
+      info: state.encounters?.find(info => info.id === e.id),
+    })).filter(c => c.info?.phase === 'undiscovered' && c.distance <= c.e.triggerRadius)
+      .sort((a, b) => a.distance - b.distance);
+    this.encounterEye.copy(player); this.encounterEye.y += 1.2;
+    const candidate = candidates.find(c => {
+      this.encounterTarget.set(c.e.x, arena.floorY + 1.2, c.e.z);
+      return !ctx.world.segmentBlocked(this.encounterEye, this.encounterTarget);
+    });
+    if (!candidate?.info || candidate.e.anchors.length === 0) return;
+    const { e, ordinal, info } = candidate;
+    const plans = buildEncounterWaves(ctx, stage, e.kind, ordinal);
+    if (!plans.length) return;
+    const anchors = e.anchors.map(a => ({ position: new THREE.Vector3(a.x, arena.floorY, a.z), role: a.role, lane: a.lane }));
+    const local = { ...arena, center: info.position.clone(), spawnPoints: anchors.map(a => a.position), spawnAnchors: anchors };
+    info.phase = 'active'; this.activeEncounterId = e.id;
+    this.waveIndex = 0; this.waveCount = plans.length; this.lastProgress = this.t;
+    this.encounterWaves = new WaveRunner(ctx, local, plans, this.t + .4, this.bossPoint,
+      (i, n, boss) => this.onWaveStart(i, n, boss),
+      { center: local.center, minRadius: 0, maxRadius: e.arenaRadius, minPlayerDistance: 10 });
+    ctx.ui.banner(e.label, plans[0].hint ?? (e.kind === 'cache' ? '击败守卫后收取支路物资' : '留意两侧通道，可利用掩体周旋'), 2.5);
+  }
+
+  /** The reviewed plans end in their authored final room, with no extra altar wave. */
+  private updateWhiteboxEncounters(): void {
+    const state = this.adventureState, arena = this.arena, ctx = this.ctx;
+    if (!state || !arena || !ctx.player.alive || ctx.game.state !== 'playing') return;
+    if (this.encounterWaves) {
+      this.encounterWaves.update(this.t);
+      if (this.encounterWaves.current >= 0) this.waveIndex = this.encounterWaves.current;
+      if (this.encounterWaves.done && this.t - this.encounterWaves.lastActivity > .4 && ctx.enemies.aliveCount() === 0) {
+        const info = state.encounters?.find(e => e.id === this.activeEncounterId);
+        if (info) { info.phase = 'cleared'; ctx.ui.toast(`${info.label} · 守卫已清除`, '#a9dec7'); }
+        this.encounterWaves = null; this.activeEncounterId = null; this.activeWhiteboxFight = null;
+        this.waveIndex = 0; this.waveCount = 0; this.nextEncounterAt = this.t + 1.5;
+      }
+      return;
+    }
+    if (state.phase !== 'explore' || this.t < this.nextEncounterAt || ctx.enemies.aliveCount() > 0) return;
+    const player = ctx.player.position;
+    if (Math.abs(player.y - arena.floorY) > 3) return;
+    const candidate = this.whiteboxFights.find(fight => {
+      if (state.encounters?.find(e => e.id === fight.id)?.phase !== 'undiscovered') return false;
+      if (fight.requires.some(id => state.encounters?.find(e => e.id === id)?.phase !== 'cleared')) return false;
+      // Enter the actual room or its visible approach, never the same-radius room behind a wall.
+      const atApproach = Math.hypot(player.x - fight.facing.x, player.z - fight.facing.z) <= 3;
+      if (!fight.contains(player) && !atApproach) return false;
+      this.encounterEye.copy(player); this.encounterEye.y += 1.2;
+      this.encounterTarget.set(fight.facing.x, arena.floorY + 1.2, fight.facing.z);
+      return !ctx.world.segmentBlocked(this.encounterEye, this.encounterTarget);
+    });
+    if (!candidate) return;
+    const info = state.encounters!.find(e => e.id === candidate.id)!;
+    // A shared encounter may be approached through a different room (the inn's north warehouse).
+    info.position.set(candidate.position.x, arena.floorY, candidate.position.z);
+    const anchors = candidate.anchors.map(p => ({ position: new THREE.Vector3(p.x, arena.floorY, p.z), role: p.role, lane: p.lane }));
+    const local: ArenaInfo = { ...arena, center: info.position.clone(), spawnAnchors: anchors,
+      spawnPoints: candidate.points.map(p => new THREE.Vector3(p.x, arena.floorY, p.z)) };
+    info.phase = 'active'; this.activeEncounterId = candidate.id; this.activeWhiteboxFight = candidate; this.lastProgress = this.t;
+    const plans = whiteboxPlansForApproach(candidate, this.layout!, player);
+    const boss = plans.some(w => w.entries.some(e => isBossId(e.enemyId)));
+    this.waveIndex = 0; this.waveCount = boss ? 0 : plans.length;
+    const runner = new WaveRunner(ctx, local, plans, this.t + .4,
+      new THREE.Vector3(candidate.position.x, arena.floorY, candidate.position.z),
+      (i, n, hasBoss) => this.onWaveStart(i, n, hasBoss), whiteboxSpawnRegion(candidate, arena.floorY));
+    if (candidate.final) { state.phase = 'battle'; this.waves = runner; }
+    else this.encounterWaves = runner;
+    ctx.ui.banner(candidate.label, candidate.final ? '清除终点守卫后开启出口' : '当前房间遭遇 · 清场后可继续选路', 2.5);
+  }
+
+  private discoverSites(): void {
+    const state = this.adventureState, adventure = this.layout?.adventure, player = this.ctx.player;
+    if (!state || !adventure || !player.alive || this.ctx.game.state !== 'playing') return;
+    for (const site of state.sites) {
+      if (site.visited || Math.abs(player.position.y - site.position.y) > 3
+        || Math.hypot(player.position.x - site.position.x, player.position.z - site.position.z) > DISCOVERY_RADIUS) continue;
+      const rewardRoom = this.layout?.whitebox?.plan.rewards[Number(site.id.replace('whitebox-cache-', ''))]?.room;
+      const guard = rewardRoom ? state.encounters?.find(e => this.whiteboxFights.some(f => f.id === e.id && f.room === rewardRoom))
+        : state.encounters?.find(e => e.siteId === site.id);
+      if (guard && guard.phase !== 'cleared') continue;
+      // 先登记再产生掉落，交互/奖励回调即使在同帧再次更新，也不能重复发现。
+      site.visited = true;
+      const source = adventure.sites.find(s => s.id === site.id);
+      if (source && source.reward !== 'none') this.ctx.loot.spawnChest(site.position.clone(), source.reward);
+      this.ctx.ui.toast(`发现 ${site.label} · 支路物资已出现`, '#ffda82');
+    }
+  }
+
+  private setupWaves(stage: StageNode, arena: ArenaInfo, startAt = 0, local = false): void {
     const ctx = this.ctx;
     let plans: WavePlan[] = [];
     try {
@@ -221,15 +417,17 @@ export class StageDirector implements IStageDirector {
     this.waveCount = bossOnly ? 0 : plans.length;
     this.waveIndex = 0;
     const firstHasBoss = plans.length > 0 && plans[0].entries.some((e) => isBossId(e.enemyId));
-    const firstAt = firstHasBoss ? BOSS_SPAWN_AT - BOSS_LEAD : FIRST_WAVE_AT;
-    this.waves = new WaveRunner(ctx, arena, plans, firstAt, this.bossPoint, (i, n, boss) => this.onWaveStart(i, n, boss));
-    this.lastProgress = 0;
+    const firstAt = startAt + (firstHasBoss ? BOSS_SPAWN_AT - BOSS_LEAD : FIRST_WAVE_AT);
+    this.waves = new WaveRunner(ctx, arena, plans, firstAt, this.bossPoint, (i, n, boss) => this.onWaveStart(i, n, boss),
+      local ? { center: arena.center, minRadius: 12, maxRadius: 23, minPlayerDistance: 12 } : undefined);
+    this.lastProgress = startAt;
   }
 
   /** 宝藏 / 商店：无敌人，视为已通过（清关结算推迟到第一帧） */
   private markFreeStage(): void {
     this.cleared = true;
     this.freePending = true;
+    if (this.layout?.whitebox && this.adventureState) this.adventureState.phase = 'cleared';
   }
 
   // ───────────── 每帧 ─────────────
@@ -240,6 +438,9 @@ export class StageDirector implements IStageDirector {
     this.t += dt;
     const t = this.t;
     this.view?.update(dt, t);
+    this.beacon?.update(dt, t);
+    this.updateEncounters();
+    this.discoverSites();
     for (const p of this.portals) p.update(dt, t);
 
     if (this.freePending) {
@@ -251,6 +452,9 @@ export class StageDirector implements IStageDirector {
       this.waves.update(t);
       if (this.waves.current >= 0) this.waveIndex = this.waves.current;
       if (this.waves.done && t - this.waves.lastActivity > 0.4 && t >= this.clearHoldUntil && ctx.enemies.aliveCount() === 0) this.onCleared();
+    }
+    if (this.layout?.whitebox && this.adventureState) {
+      this.adventureState.spawnBlocked = (this.encounterWaves ?? this.waves)?.waitingForSpace ?? false;
     }
     if (this.cleanupAt >= 0 && t >= this.cleanupAt) {
       this.cleanupAt = -1;
@@ -280,7 +484,11 @@ export class StageDirector implements IStageDirector {
     this.lastProgress = this.t;
     ctx.events.emit('wave:started', { index, total });
     ctx.audio.play('wave_start');
-    if (!hasBoss) ctx.ui.toast(total > 1 && index === total - 1 ? `第 ${index + 1} / ${total} 波 · 最后一波` : `第 ${index + 1} / ${total} 波`);
+    if (!hasBoss) {
+      const plan = (this.encounterWaves ?? this.waves)?.waves[index];
+      ctx.ui.toast(plan?.label ? `${plan.label} · 第 ${index + 1} / ${total} 波`
+        : total > 1 && index === total - 1 ? `第 ${index + 1} / ${total} 波 · 最后一波` : `第 ${index + 1} / ${total} 波`);
+    }
   }
 
   private onEnemySpawned(e: IEnemy): void {
@@ -332,7 +540,15 @@ export class StageDirector implements IStageDirector {
     if (this.cleared || !stage || !arena) return;
     const ctx = this.ctx;
     this.cleared = true;
+    if (this.adventureState) {
+      this.adventureState.phase = 'cleared';
+      // Completing the trial disperses unopened patrols and releases their supplies.
+      for (const encounter of this.adventureState.encounters ?? []) encounter.phase = 'cleared';
+    }
+    this.beacon?.setPhase('cleared');
     this.waves?.cancel();
+    this.encounterWaves?.cancel(); this.encounterWaves = null; this.activeEncounterId = null;
+    this.activeWhiteboxFight = null;
     this.bosses = [];
     this.settleClear(stage);
     ctx.audio.play('stage_clear');
@@ -387,6 +603,7 @@ export class StageDirector implements IStageDirector {
       const raw = Math.atan2(c.x - p.x, c.z - p.z);
       const yaw = Math.round(raw / (Math.PI / 2)) * (Math.PI / 2);
       this.portals.push(new Portal(ctx, opts[i], p, yaw, parent, i * 0.3));
+      if (i === 0 && this.adventureState) this.adventureState.exit = p.clone();
     }
     ctx.ui.toast(n > 1 ? '出口已开启，选择你的道路' : '出口已开启');
   }
@@ -417,11 +634,12 @@ export class StageDirector implements IStageDirector {
         Number.isFinite(p.z) ? Math.min(a.maxZ - 1, Math.max(a.minZ + 1, p.z)) : a.center.z,
       );
       ctx.nav.nearestWalkable(_v, _v);
+      if (!this.whiteboxRecoveryPoint(e, _v)) continue;
       this.placeEnemy(e, _v, false);
     }
 
     // 最后 <= 2 只敌人长时间没有进展：传送到玩家附近（首领战中不算——玩家正在打首领）
-    const w = this.waves;
+    const w = this.encounterWaves ?? this.waves;
     if (w && w.done && !this.cleared && alive > 0 && alive <= 2 && this.bosses.length === 0) {
       const since = this.t - Math.max(this.lastProgress, w.lastActivity);
       if (since >= STRAGGLER_TIME) {
@@ -430,6 +648,7 @@ export class StageDirector implements IStageDirector {
         for (const e of ctx.enemies.list) {
           if (!e.alive || e.isBoss) continue;
           if (!ctx.nav.randomWalkable(ctx.player.position, 6, 11, _v)) continue;
+          if (!this.whiteboxRecoveryPoint(e, _v)) continue;
           this.placeEnemy(e, _v, true);
           moved++;
         }
@@ -443,6 +662,22 @@ export class StageDirector implements IStageDirector {
       || pp.x < a.minX - 3 || pp.x > a.maxX + 3 || pp.z < a.minZ - 3 || pp.z > a.maxZ + 3)) {
       ctx.player.teleport(a.playerSpawn.clone(), a.playerYaw);
     }
+  }
+
+  /** Recovery teleports obey the same room boundary as arrivals in the blockout. */
+  private whiteboxRecoveryPoint(enemy: IEnemy, preferred: THREE.Vector3): boolean {
+    const fight = this.activeWhiteboxFight;
+    if (!this.layout?.whitebox || !fight) return true;
+    const width = enemy.radius + .15, height = enemy.def.height * (enemy.isElite ? 1.25 : 1) + .1;
+    const player = this.ctx.player.position;
+    const legal = (p: { x: number; z: number }) => Math.hypot(p.x - player.x, p.z - player.z) >= 10
+      && fight.contains(p, width) && this.ctx.nav.isWalkable(p.x, p.z)
+      && !this.ctx.world.overlapsBody(p.x, this.arena!.floorY, p.z, width, height);
+    if (legal(preferred)) return true;
+    const best = fight.points.filter(legal).sort((a, b) => Math.hypot(a.x - preferred.x, a.z - preferred.z)
+      - Math.hypot(b.x - preferred.x, b.z - preferred.z))[0];
+    if (!best) return false;
+    preferred.set(best.x, this.arena!.floorY, best.z); return true;
   }
 
   private placeEnemy(e: IEnemy, to: THREE.Vector3, fx: boolean): void {

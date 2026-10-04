@@ -1,0 +1,267 @@
+[
+  {
+    "scene": "inferno-3",
+    "mode": "entry-exploration",
+    "report": {
+      "sampledAt": "2026-10-04T14:16:57.446Z",
+      "warmupFrames": 30,
+      "frames": 240,
+      "fps": 60.01500375093773,
+      "rafMs": {
+        "median": 16.69999999999709,
+        "p95": 16.80000000000291,
+        "mean": 16.6625
+      },
+      "updateMs": {
+        "median": 0.20000000298023224,
+        "p95": 0.4000000059604645,
+        "mean": 0.24666666686534883
+      },
+      "renderSubmitMs": {
+        "median": 1.2999999970197678,
+        "p95": 2,
+        "mean": 1.3870833330477277
+      },
+      "gpu": {
+        "status": "available",
+        "samples": 35,
+        "ms": {
+          "median": 4.920988,
+          "p95": 5.511717,
+          "mean": 5.000705342857142
+        },
+        "disjointEvents": 0
+      },
+      "render": {
+        "calls": 155.5,
+        "triangles": 444200,
+        "points": 650,
+        "lines": 0,
+        "geometries": 65,
+        "textures": 68,
+        "programs": 60
+      },
+      "resolution": {
+        "width": 1920,
+        "height": 1080,
+        "cssWidth": 1280,
+        "cssHeight": 720,
+        "pixelRatio": 1.5
+      },
+      "metadata": {
+        "quality": "high",
+        "theme": "inferno",
+        "gameState": "playing",
+        "chapter": 2,
+        "stageIndex": 2,
+        "stageType": "combat",
+        "phase": "explore",
+        "encounter": "",
+        "enemies": 0
+      },
+      "hiddenFrames": 0
+    }
+  },
+  {
+    "scene": "inferno-3",
+    "mode": "active-encounter-after-traverse",
+    "report": {
+      "sampledAt": "2026-10-04T14:17:45.274Z",
+      "warmupFrames": 30,
+      "frames": 240,
+      "fps": 60.0135030381835,
+      "rafMs": {
+        "median": 16.699999999982538,
+        "p95": 16.79999999998836,
+        "mean": 16.662916666666693
+      },
+      "updateMs": {
+        "median": 0.4000000059604645,
+        "p95": 0.7999999970197678,
+        "mean": 0.47124999985098837
+      },
+      "renderSubmitMs": {
+        "median": 1.5999999940395355,
+        "p95": 2.3999999910593033,
+        "mean": 1.5658333338176211
+      },
+      "gpu": {
+        "status": "available",
+        "samples": 35,
+        "ms": {
+          "median": 6.140676,
+          "p95": 7.816145,
+          "mean": 6.222559914285715
+        },
+        "disjointEvents": 0
+      },
+      "render": {
+        "calls": 87.70833333333333,
+        "triangles": 263231.4583333333,
+        "points": 650,
+        "lines": 0,
+        "geometries": 83,
+        "textures": 86,
+        "programs": 66
+      },
+      "resolution": {
+        "width": 1920,
+        "height": 1080,
+        "cssWidth": 1280,
+        "cssHeight": 720,
+        "pixelRatio": 1.5
+      },
+      "metadata": {
+        "quality": "high",
+        "theme": "inferno",
+        "gameState": "playing",
+        "chapter": 2,
+        "stageIndex": 2,
+        "stageType": "combat",
+        "phase": "explore",
+        "encounter": "B",
+        "enemies": 4
+      },
+      "hiddenFrames": 0
+    }
+  },
+  {
+    "scene": "inferno-3",
+    "mode": "close-combat-at-B",
+    "report": {
+      "sampledAt": "2026-10-04T14:18:41.603Z",
+      "warmupFrames": 30,
+      "frames": 240,
+      "fps": 59.76690905468707,
+      "rafMs": {
+        "median": 16.699999999982538,
+        "p95": 16.70000000001164,
+        "mean": 16.73166666666657
+      },
+      "updateMs": {
+        "median": 0.3999999910593033,
+        "p95": 0.7000000029802322,
+        "mean": 0.3887500002980232
+      },
+      "renderSubmitMs": {
+        "median": 1.5999999940395355,
+        "p95": 2.2999999970197678,
+        "mean": 1.6258333332215746
+      },
+      "gpu": {
+        "status": "available",
+        "samples": 35,
+        "ms": {
+          "median": 6.250208,
+          "p95": 7.57401,
+          "mean": 6.433890628571429
+        },
+        "disjointEvents": 0
+      },
+      "render": {
+        "calls": 158.68333333333334,
+        "triangles": 534845.1583333333,
+        "points": 793.8375,
+        "lines": 0,
+        "geometries": 85,
+        "textures": 89,
+        "programs": 66
+      },
+      "resolution": {
+        "width": 1920,
+        "height": 1080,
+        "cssWidth": 1280,
+        "cssHeight": 720,
+        "pixelRatio": 1.5
+      },
+      "metadata": {
+        "quality": "high",
+        "theme": "inferno",
+        "gameState": "playing",
+        "chapter": 2,
+        "stageIndex": 2,
+        "stageType": "combat",
+        "phase": "explore",
+        "encounter": "B",
+        "enemies": 4
+      },
+      "hiddenFrames": 0
+    },
+    "status": {
+      "activeEncounter": "B",
+      "alive": "4",
+      "auditPlan": "inferno-3",
+      "encounters": "[{\"id\":\"A\",\"label\":\"检修场守卫\",\"phase\":\"undiscovered\"},{\"id\":\"B\",\"label\":\"接料坪阻击\",\"phase\":\"active\"},{\"id\":\"C\",\"label\":\"出渣闸护卫\",\"phase\":\"undiscovered\"}]",
+      "ground": "true",
+      "look": "art",
+      "mode": "inspect",
+      "phase": "encounter",
+      "plan": "inferno-3",
+      "position": "{\"x\":48,\"y\":0.0001,\"z\":1}",
+      "spawnBlocked": "false"
+    }
+  },
+  {
+    "scene": "frost-3",
+    "mode": "entry-exploration",
+    "report": {
+      "sampledAt": "2026-10-04T14:19:07.426Z",
+      "warmupFrames": 30,
+      "frames": 240,
+      "fps": 60.01500375093773,
+      "rafMs": {
+        "median": 16.699999999982538,
+        "p95": 16.70000000001164,
+        "mean": 16.6625
+      },
+      "updateMs": {
+        "median": 0.20000000298023224,
+        "p95": 0.4000000059604645,
+        "mean": 0.2416666663562258
+      },
+      "renderSubmitMs": {
+        "median": 1.2999999970197678,
+        "p95": 1.9000000059604645,
+        "mean": 1.3395833333333333
+      },
+      "gpu": {
+        "status": "available",
+        "samples": 35,
+        "ms": {
+          "median": 5.379738,
+          "p95": 6.518281,
+          "mean": 5.4916134
+        },
+        "disjointEvents": 0
+      },
+      "render": {
+        "calls": 154.5,
+        "triangles": 438998,
+        "points": 1100,
+        "lines": 0,
+        "geometries": 91,
+        "textures": 85,
+        "programs": 62
+      },
+      "resolution": {
+        "width": 1920,
+        "height": 1080,
+        "cssWidth": 1280,
+        "cssHeight": 720,
+        "pixelRatio": 1.5
+      },
+      "metadata": {
+        "quality": "high",
+        "theme": "frost",
+        "gameState": "playing",
+        "chapter": 1,
+        "stageIndex": 2,
+        "stageType": "combat",
+        "phase": "explore",
+        "encounter": "",
+        "enemies": 0
+      },
+      "hiddenFrames": 0
+    }
+  }
+]

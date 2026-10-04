@@ -7,6 +7,11 @@ dist/
 # 美术管线：密钥、可再生的中间产物、Blender 备份
 art/pipeline/.env
 art/source/**/02_highpoly/
+# Keep the small, exact Hunyuan workflow graphs for nature assets reproducible in a fresh checkout.
+!art/source/props/SM_Env_*/02_highpoly/
+art/source/props/SM_Env_*/02_highpoly/*
+!art/source/props/SM_Env_*/02_highpoly/*_graph.json
+!art/source/props/SM_Env_*/02_highpoly/*_failure.json
 art/source/**/_tmp/
 *.blend1
 __pycache__/

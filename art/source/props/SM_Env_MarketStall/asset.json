@@ -1,0 +1,378 @@
+{
+  "id": "SM_Env_MarketStall",
+  "display": "沙寺粗木摊棚",
+  "kind": "static",
+  "class": "nature_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 23:12:58",
+          "files": {
+            "BO_SM_Env_MarketStall_v001.json": {
+              "path": "00_blockout/BO_SM_Env_MarketStall_v001.json",
+              "sha256": "f60d24d3ac476af7193bfe24583246a6d774f92af0eeeba5d0697d81aec2682c"
+            },
+            "BO_SM_Env_MarketStall_v001_views.json": {
+              "path": "00_blockout/BO_SM_Env_MarketStall_v001_views.json",
+              "sha256": "9dcf48b22f82cf68aa639ac3926cb26c087cff2cd2645030c0f9e3fb81f3b7fe"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.marketStall"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.0,
+              0,
+              -1.5
+            ],
+            "max": [
+              2.0,
+              3.2,
+              1.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 23:12:58",
+          "files": {
+            "CN_SM_Env_MarketStall_v001_source.png": {
+              "path": "01_concept/CN_SM_Env_MarketStall_v001_source.png",
+              "sha256": "cfea4180fa46dd682e322857bdd1bfa8fa4ba7df16248820db9286fb964d8162"
+            },
+            "CN_SM_Env_MarketStall_v001_front.png": {
+              "path": "01_concept/CN_SM_Env_MarketStall_v001_front.png",
+              "sha256": "26f1cd924afb5430bf70becb821a5097cf95d79b8dc0e922d9d2da30da14c9a5"
+            },
+            "CN_SM_Env_MarketStall_v001_left.png": {
+              "path": "01_concept/CN_SM_Env_MarketStall_v001_left.png",
+              "sha256": "a472aadd6cda304a1ace759ce6986127ce4e1e195a2196be430db53a8a49f118"
+            },
+            "CN_SM_Env_MarketStall_v001_back.png": {
+              "path": "01_concept/CN_SM_Env_MarketStall_v001_back.png",
+              "sha256": "a6a44fe2d297b734fa9057817161bc44ff4876e0174b5daa61fb52652400f1d5"
+            },
+            "CN_SM_Env_MarketStall_v001_right.png": {
+              "path": "01_concept/CN_SM_Env_MarketStall_v001_right.png",
+              "sha256": "001124c05689820a102909db7809f6aab400331a7c1571feea744decd78ae1f6"
+            },
+            "CN_SM_Env_MarketStall_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Env_MarketStall_v001_sheet.png",
+              "sha256": "8ebdfff714f42d4ca08ebfa96502dd346577cea6099a268cdabc1b8964c59d14"
+            },
+            "CN_SM_Env_MarketStall_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_MarketStall_v001_prompt.txt",
+              "sha256": "c66965dce5e167ab6097a3c5fb8722a3a1cafca980c923f0fa6f0d894b37c1ab"
+            },
+            "CN_SM_Env_MarketStall_v001_registration.json": {
+              "path": "01_concept/CN_SM_Env_MarketStall_v001_registration.json",
+              "sha256": "14bbe4a8bacd9a00e0db5c63aa5336dfe3f8c2b68e515f2686c32ba4e9c86e2e"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Codex built-in image_gen",
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a1072d-363b-7bd3-bcf6-3cc6a159ec4f\\exec-416b6b23-ac8a-49fe-9062-2d29d1db76ae.png",
+          "source_sha256": "cfea4180fa46dd682e322857bdd1bfa8fa4ba7df16248820db9286fb964d8162",
+          "prompt": "Use case: stylized-concept. Asset type: one four-view orthographic turnaround sheet for reconstruction with local Hunyuan3D multi-view. Create a wide 2048x1024 image with exactly FOUR isolated views of the SAME complete prop, left to right FRONT / LEFT / BACK / RIGHT, with NO written labels. Pure white background, no ground and no cast shadow. Four evenly spaced columns; each whole object including protrusions must fit inside its own column with white margins, never overlap neighboring views. Align baselines and use exactly the same physical scale and height in all views. True orthographic views, no perspective and no three-quarter view.\nStyle: readable moderate-detail hand-painted fantasy FPS environment at Gunfire Reborn game fidelity. Bold chunky solid silhouette, clean gently chamfered faceted planes, two or three large coherent matte color blocks, soft painted gradients and a few restrained edge-wear accents. Neutral even lighting; no photorealism, dense wood grain, tiny cracks or elaborate miniature carving. No text, icon labels, loose floating parts or thin strings. All parts form one coherent assembled prop. Subject: one low compact desert market stall, approximately 4 metres wide, 3 metres deep and 3.2 metres high. Four very thick dark timber posts anchored to a continuous heavy rectangular timber plinth, broad cross braces, and a low broad cloth canopy with a shallow pitched roof. The canopy is thick, opaque, dusky burnt-orange and ochre canvas folded tightly over broad timber roof bars; chunky rolled edges, no dangling fringe. Beneath it is a wide solid merchant counter attached to the front posts with a thick tabletop and large simple paneled face. Rear and sides show the joined stall frame and thick counter depth. Leave recognizable open serving space between counter and low roof. Dark warm timber with a few charcoal iron brackets and muted terracotta canvas. No separate merchandise, baskets, people, paper signs, hanging lamps, ropes, fine poles, thin cloth strips or extra platform outside its foundation. Avoid a tall ornate gazebo: this is a squat practical trading stall.",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "multiview",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "source_bbox": [
+                14,
+                243,
+                500,
+                651
+              ],
+              "source_component_area": 141415,
+              "source_foreground_coverage": 0.9999978323824718,
+              "native_alpha_preserved": false,
+              "scale": 0.896358543417367,
+              "offset": [
+                38,
+                329
+              ],
+              "size": [
+                436,
+                366
+              ],
+              "physical_height_m": 3.2,
+              "method": "contrasting plain-background key; four connected components; uniform height and centre"
+            },
+            "left": {
+              "source_bbox": [
+                530,
+                239,
+                856,
+                652
+              ],
+              "source_component_area": 87009,
+              "source_foreground_coverage": 0.9999978323824718,
+              "native_alpha_preserved": false,
+              "scale": 0.8855067450709098,
+              "offset": [
+                111,
+                329
+              ],
+              "size": [
+                289,
+                366
+              ],
+              "physical_height_m": 3.2,
+              "method": "contrasting plain-background key; four connected components; uniform height and centre"
+            },
+            "back": {
+              "source_bbox": [
+                899,
+                238,
+                1381,
+                655
+              ],
+              "source_component_area": 143742,
+              "source_foreground_coverage": 0.9999978323824718,
+              "native_alpha_preserved": false,
+              "scale": 0.8770126755738267,
+              "offset": [
+                44,
+                329
+              ],
+              "size": [
+                423,
+                366
+              ],
+              "physical_height_m": 3.2,
+              "method": "contrasting plain-background key; four connected components; uniform height and centre"
+            },
+            "right": {
+              "source_bbox": [
+                1424,
+                238,
+                1755,
+                654
+              ],
+              "source_component_area": 89169,
+              "source_foreground_coverage": 0.9999978323824718,
+              "native_alpha_preserved": false,
+              "scale": 0.8791208791208791,
+              "offset": [
+                110,
+                329
+              ],
+              "size": [
+                291,
+                366
+              ],
+              "physical_height_m": 3.2,
+              "method": "contrasting plain-background key; four connected components; uniform height and centre"
+            }
+          },
+          "source_history": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Inspected native and registered four views. Complete chunky posts, low opaque canopy, thick counter and continuous plinth; matched colour blocks and no clipped parts. Numeric reference only, no art mesh.",
+            "time": "2026-10-04 23:13:24"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 23:16:15",
+          "files": {
+            "HP_SM_Env_MarketStall_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Env_MarketStall_v001_input_front.png",
+              "sha256": "da326406cc588d24630f2b77187f49007d98f0853b21ff15a3e35943cbc653a3"
+            },
+            "HP_SM_Env_MarketStall_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Env_MarketStall_v001_input_left.png",
+              "sha256": "1b611c7187fc9115f4e43d46634a725890daff6c29a3388c9e9dae99fcd63e81"
+            },
+            "HP_SM_Env_MarketStall_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Env_MarketStall_v001_input_back.png",
+              "sha256": "249dfcf802f7b22e8fc61396f02a30e471711a91f8b07dc81cbc3e264b8354c5"
+            },
+            "HP_SM_Env_MarketStall_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Env_MarketStall_v001_input_right.png",
+              "sha256": "f836c7d6016f295b9842f24a2680c9c907697e7d92e0611fe8312ec8f7d2fbd3"
+            },
+            "HP_SM_Env_MarketStall_v001.glb": {
+              "path": "02_highpoly/HP_SM_Env_MarketStall_v001.glb",
+              "sha256": "deee05eeddde48ddf6f93ceacbc17f538e5fcbfa0669365abcb8016e8b7d2031"
+            },
+            "HP_SM_Env_MarketStall_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Env_MarketStall_v001_graph.json",
+              "sha256": "58a5e4c8afa03e76467a47f4d302f8fe80e4afe3876d520c9a29f152c5946026"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 202610141,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              0,
+              256,
+              512,
+              768
+            ],
+            "scale": 2.0
+          },
+          "seconds": 168.8,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 31.8
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 23:20:24",
+          "files": {
+            "SM_Env_MarketStall_v001.blend": {
+              "path": "03_work/SM_Env_MarketStall_v001.blend",
+              "sha256": "7f0a0ab5b86ec28541db1c5ddee2525ed7d206d04a0891a0632190315f212c8d"
+            },
+            "SM_Env_MarketStall_v001.glb": {
+              "path": "04_export/SM_Env_MarketStall_v001.glb",
+              "sha256": "da4b1e4d929551d77af18a2ddd6bb5a0d19daa21b8c291357003802489106bab"
+            },
+            "SM_Env_MarketStall_v001_metrics.json": {
+              "path": "03_work/SM_Env_MarketStall_v001_metrics.json",
+              "sha256": "a7d7f01f02f68c499cc944f8e9ee1450ffc6ef7aa27901317793e9714dd33bc0"
+            },
+            "T_Env_MarketStall_BC.png": {
+              "path": "03_work/textures_v001/T_Env_MarketStall_BC.png",
+              "sha256": "1152ad4c011296aa8b9cbb31530cd90b02034daeb41cd8d79c8bb0d0be4cf74c"
+            },
+            "T_Env_MarketStall_N.png": {
+              "path": "03_work/textures_v001/T_Env_MarketStall_N.png",
+              "sha256": "8410640d6627edfac19da536a938df63b97c7916bda61852a42e135622fa1790"
+            },
+            "T_Env_MarketStall_ORM.png": {
+              "path": "03_work/textures_v001/T_Env_MarketStall_ORM.png",
+              "sha256": "89e8a8f261b956b71abe355951a17c7350ae93a9dbabcbd65a40dd11215f7b02"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.841,
+          "uncovered_ratio": 0.5446,
+          "lods": [
+            {
+              "tris": 5000,
+              "verts": 2482
+            },
+            {
+              "tris": 1600,
+              "verts": 782
+            },
+            {
+              "tris": 500,
+              "verts": 232
+            }
+          ],
+          "export_kb": 232.4,
+          "seconds": 248.1,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 23:20:24",
+          "files": {
+            "SM_Env_MarketStall_v001_validation_v001.json": {
+              "path": "05_review/SM_Env_MarketStall_v001_validation_v001.json",
+              "sha256": "f59d4055c9757d7faa3e1070fbb0093cd3b584f1421fa7c26c8cf28417da30c6"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 23:20:31",
+          "files": {
+            "SM_Env_MarketStall_v001_review_v001.png": {
+              "path": "05_review/SM_Env_MarketStall_v001_review_v001.png",
+              "sha256": "c9e18e143c0910bfce6b2e142e434f3e731377e0dbbc804c3614a0b8a53c8dce"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Inspected finished five views, LOD topology and textures; actual Draco audit confirms one connected structure at every LOD, canopy thickness 0.197-0.269m and clear central serving opening at 48%/56% height in all three LODs. Posts and side braces support the thick low roof; no broad plane plugs the serving window. Moderate detail and stable silhouette accepted. QA:37 pass,0 error,1 nonblocking direct-projection warning (45.5% covered; undersides/interiors use existing colour diffusion),0 waiver. Source Hunyuan geometry preserved without procedural art patches.",
+            "time": "2026-10-04 23:21:49"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 23:21:50",
+          "files": {
+            "SM_Env_MarketStall.glb": {
+              "path": "@root/public/assets/props/SM_Env_MarketStall.glb",
+              "sha256": "da4b1e4d929551d77af18a2ddd6bb5a0d19daa21b8c291357003802489106bab"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Env_MarketStall.glb"
+        }
+      ]
+    }
+  }
+}

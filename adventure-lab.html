@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>半开放区域检视</title>
+<style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#090d14}#game-canvas{width:100%;height:100%;display:block}
+#tour-controls{position:fixed;right:20px;top:145px;z-index:120;background:#101d28eb;border:1px solid #61716f;border-radius:4px;padding:14px;color:#eadfca;font:13px "Microsoft YaHei",sans-serif;max-width:270px;max-height:calc(100vh - 195px);overflow-y:auto}
+#tour-controls button,#tour-controls select{font:inherit;background:#273b46;color:#f5eedc;border:1px solid #627b83;border-radius:3px;padding:6px 9px;margin:4px 2px;cursor:pointer}
+#tour-controls p{line-height:1.6;margin:8px 0;color:#b9cad0}#tour-controls output{display:block;white-space:pre-line;font-size:12px;line-height:1.7;color:#b5c9d1}
+#tour-controls.collapsed .tour-body{display:none}#tour-controls strong{font-size:13px;margin-right:8px}
+</style></head>
+<body><div id="app"><canvas id="game-canvas" tabindex="0"></canvas><div id="world-layer"></div><div id="ui-root"></div></div>
+<aside id="tour-controls"><strong>半开放区域检视</strong><button id="tour-toggle">收起</button><div class="tour-body">
+<label>区域 <select id="tour-theme"><option value="desert">沙寺</option><option value="frost">霜山</option><option value="inferno">熔火</option></select></label>
+<label>关卡 <select id="tour-stage"></select></label><label>类型 <select id="tour-type"><option value="auto">默认</option><option value="combat">战斗</option><option value="elite">精英战</option><option value="shop">商店</option><option value="treasure">宝藏</option><option value="boss">首领战</option></select></label>
+<div><button id="tour-entry">入口</button><button id="tour-altar" hidden>祭坛</button></div><div id="tour-sites"></div><div id="tour-encounters"></div>
+<p id="tour-hint">WASD 移动，F 交互。检视中开启无敌。</p>
+<div><button id="tour-clear">清理当前敌人</button><button id="tour-reset">重新探索</button></div>
+<output id="tour-status">正在加载区域…</output>
+<div id="performance-controls" hidden><button id="performance-sample">重新采样性能</button><output id="performance-readout" data-state="idle">等待采样：30 帧预热 + 240 帧记录</output></div>
+</div></aside><script type="module" src="/src/dev/adventureLab.ts"></script></body></html>

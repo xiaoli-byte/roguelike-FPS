@@ -1,0 +1,192 @@
+[
+  {
+    "level": "pass",
+    "check": "文件大小",
+    "detail": "463 KB / 上限 900 KB"
+  },
+  {
+    "level": "pass",
+    "check": "扩展可用",
+    "detail": "必需扩展 ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+  },
+  {
+    "level": "pass",
+    "check": "LOD 数量",
+    "detail": "['SM_Env_FrostPine_LOD0', 'SM_Env_FrostPine_LOD1', 'SM_Env_FrostPine_LOD2']，规格 3 级"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 面数",
+    "detail": "4993 / 预算 5000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 切换距离",
+    "detail": "extras.lod_distance=0"
+  },
+  {
+    "level": "pass",
+    "check": "场景参考占地 X 轴",
+    "detail": "2.782 m / 参考 3.335 m；超出时引擎按碰撞体等比适配"
+  },
+  {
+    "level": "pass",
+    "check": "场景有效尺寸 X 轴",
+    "detail": "2.782 m / 极限 8.700 m"
+  },
+  {
+    "level": "pass",
+    "check": "自然三维体量 X 轴",
+    "detail": "2.782 m / 最低 0.725 m；薄片须由 Hunyuan 重生成，不能拉伸修补"
+  },
+  {
+    "level": "pass",
+    "check": "场景参考占地 Z 轴",
+    "detail": "1.775 m / 参考 3.335 m；超出时引擎按碰撞体等比适配"
+  },
+  {
+    "level": "pass",
+    "check": "场景有效尺寸 Z 轴",
+    "detail": "1.775 m / 极限 8.700 m"
+  },
+  {
+    "level": "pass",
+    "check": "自然三维体量 Z 轴",
+    "detail": "1.775 m / 最低 0.725 m；薄片须由 Hunyuan 重生成，不能拉伸修补"
+  },
+  {
+    "level": "pass",
+    "check": "场景高度",
+    "detail": "4.498 m / 参考 4.600 m"
+  },
+  {
+    "level": "pass",
+    "check": "场景脚底落地",
+    "detail": "最低点 y=-0.0013"
+  },
+  {
+    "level": "pass",
+    "check": "场景轴心居中",
+    "detail": "中心 x=0.000 z=-0.075"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 面数",
+    "detail": "1600 / 预算 1600"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 递减",
+    "detail": "4993 → 1600"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 切换距离",
+    "detail": "extras.lod_distance=18"
+  },
+  {
+    "level": "error",
+    "check": "LOD2 面数",
+    "detail": "540 / 预算 500"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 递减",
+    "detail": "1600 → 540"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 切换距离",
+    "detail": "extras.lod_distance=42"
+  },
+  {
+    "level": "pass",
+    "check": "材质数量",
+    "detail": "['M_Env_FrostPine']（一个资产一个材质，便于合批）"
+  },
+  {
+    "level": "pass",
+    "check": "材质命名",
+    "detail": "['M_Env_FrostPine']"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Env_FrostPine_N",
+    "detail": "1024×1024 webp（规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Env_FrostPine_N",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Env_FrostPine_ORM",
+    "detail": "1024×1024 webp（规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Env_FrostPine_ORM",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Env_FrostPine_BC",
+    "detail": "1024×1024 webp（规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Env_FrostPine_BC",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "BaseColor 贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "法线贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "ORM 贴图",
+    "detail": "AO / 粗糙度 / 金属度"
+  },
+  {
+    "level": "pass",
+    "check": "SM_Env_FrostPine_LOD0 UV 范围",
+    "detail": "[0.004458059556782246, 0.004213388077914715]..[0.9892135262489319, 0.995797336101532]"
+  },
+  {
+    "level": "pass",
+    "check": "SM_Env_FrostPine_LOD1 UV 范围",
+    "detail": "[0.004627667833119631, 0.004213388077914715]..[0.9892135262489319, 0.9944058656692505]"
+  },
+  {
+    "level": "pass",
+    "check": "SM_Env_FrostPine_LOD2 UV 范围",
+    "detail": "[0.00466962018981576, 0.004213388077914715]..[0.9892134666442871, 0.9944058656692505]"
+  },
+  {
+    "level": "pass",
+    "check": "UV 利用率",
+    "detail": "52%"
+  },
+  {
+    "level": "pass",
+    "check": "UV 翻折",
+    "detail": "0 个面（0.00%），图块 165 个"
+  },
+  {
+    "level": "warn",
+    "check": "高模对齐",
+    "detail": "剪影 IoU 0.745（{'front': 0.841, 'left': 0.647, 'back': 0.83, 'right': 0.613}）"
+  },
+  {
+    "level": "warn",
+    "check": "投影覆盖",
+    "detail": "未覆盖顶点 52%（扩散补色）"
+  }
+]

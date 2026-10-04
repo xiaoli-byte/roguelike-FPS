@@ -1,0 +1,157 @@
+{
+  "steps": {
+    "导入清理": 2.2,
+    "对齐": 1.1,
+    "低模与 UV": 12.6,
+    "投影着色": 42.7,
+    "烘焙": 9.7,
+    "LOD": 0.1,
+    "导出": 2.3
+  },
+  "highpoly": {
+    "faces_raw": 521378,
+    "faces": 558376,
+    "verts": 558378,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00355
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.936,
+    "iou_per_view": {
+      "front": 0.998,
+      "left": 0.863,
+      "back": 0.988,
+      "right": 0.864
+    },
+    "height_m": 3.8808,
+    "blockout_height_m": 4
+  },
+  "uv": {
+    "smart_islands": 135,
+    "charts": 13,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "smart",
+    "density_smart": 0.1155,
+    "density_merged": 0.1096
+  },
+  "projection": {
+    "uncovered_ratio": 0.0862
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Env_TravelDeck_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Env_TravelDeck_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Env_TravelDeck_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "presentation": [
+    [
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      -1
+    ],
+    [
+      0,
+      1,
+      0
+    ]
+  ],
+  "lods": [
+    {
+      "name": "SM_Env_TravelDeck_LOD0",
+      "tris": 5000,
+      "verts": 2502,
+      "uv_min": [
+        0.0016329459613189101,
+        0.0017941540572792292
+      ],
+      "uv_max": [
+        0.9509974122047424,
+        0.9983838200569153
+      ],
+      "uv_utilization": 0.687,
+      "bbox_min": [
+        -2.7581,
+        0.0002,
+        -0.0154
+      ],
+      "bbox_max": [
+        2.758,
+        3.8819,
+        0.7161
+      ]
+    },
+    {
+      "name": "SM_Env_TravelDeck_LOD1",
+      "tris": 1600,
+      "verts": 802,
+      "uv_min": [
+        0.0016329459613189101,
+        0.0021071869414299726
+      ],
+      "uv_max": [
+        0.9509974122047424,
+        0.9980756640434265
+      ],
+      "uv_utilization": 0.68,
+      "bbox_min": [
+        -2.756,
+        0.0008,
+        -0.0154
+      ],
+      "bbox_max": [
+        2.7578,
+        3.8784,
+        0.7179
+      ]
+    },
+    {
+      "name": "SM_Env_TravelDeck_LOD2",
+      "tris": 500,
+      "verts": 252,
+      "uv_min": [
+        0.0016329459613189101,
+        0.0021071869414299726
+      ],
+      "uv_max": [
+        0.9505672454833984,
+        0.9980756044387817
+      ],
+      "uv_utilization": 0.656,
+      "bbox_min": [
+        -2.753,
+        -0.0,
+        -0.0128
+      ],
+      "bbox_max": [
+        2.757,
+        3.8778,
+        0.7195
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_TravelDeck\\04_export\\SM_Env_TravelDeck_v001.glb",
+    "bytes": 141344
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_TravelDeck\\03_work\\SM_Env_TravelDeck_v001.blend",
+  "total_seconds": 70.7,
+  "_seconds": 76.7
+}

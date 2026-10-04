@@ -1,6 +1,9 @@
 import type { GameContext, IRunPlan, RewardType, RunState, StageNode, StageType, ThemeId } from '../core/types';
 import { CHAPTER_COUNT, STAGES_PER_CHAPTER } from '../core/types';
 import { Rng } from '../core/Rng';
+import { getStageDesign } from '../world/StageDesign';
+import { usesAuthoredLayout } from '../world/WhiteboxMode';
+import { getWhiteboxPlan } from '../world/WhiteboxGen';
 
 /**
  * 一局的关卡规划（DESIGN.md 第 3 节）：
@@ -112,7 +115,7 @@ export class RunPlanner implements IRunPlan {
   }
 
   stageLabel(node: StageNode): string {
-    return `${node.chapter + 1}-${node.index + 1} · ${STAGE_TYPE_NAMES[node.type] ?? node.type}`;
+    return `${node.chapter + 1}-${node.index + 1} · ${usesAuthoredLayout() ? getWhiteboxPlan(node).title : getStageDesign(node).title} · ${STAGE_TYPE_NAMES[node.type] ?? node.type}`;
   }
 
   rewardLabel(reward: RewardType): string {

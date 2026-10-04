@@ -52,6 +52,9 @@ export function rotateLayout(L: LevelLayout, k: number): void {
     d.z = z;
     d.yaw += dyaw;
   }
+  for (const a of L.architecture ?? []) {
+    rp(a); a.yaw += dyaw;
+  }
   for (const r of L.runes) rp(r);
   for (const r of L.ramps) {
     const [ax, az] = rotXZ(k, r.x0, r.z0);
@@ -72,6 +75,21 @@ export function rotateLayout(L: LevelLayout, k: number): void {
   for (const p of L.spawnPoints) rp(p);
   for (const p of L.portalPoints) rp(p);
   for (const c of L.checks) rp(c);
+  if (L.adventure) {
+    rp(L.adventure.objective);
+    for (const p of L.adventure.sites) rp(p);
+    for (const p of L.adventure.zones) rp(p);
+    for (const path of L.adventure.paths) for (const p of path.points) rp(p);
+    for (const encounter of L.adventure.encounters ?? []) {
+      rp(encounter);
+      for (const anchor of encounter.anchors) rp(anchor);
+    }
+    for (const anchor of L.adventure.spawnAnchors ?? []) rp(anchor);
+    for (const rock of L.adventure.rocks) {
+      rp(rock); rock.yaw += dyaw;
+      if (k & 1) [rock.width, rock.depth] = [rock.depth, rock.width];
+    }
+  }
   rp(L.playerSpawn);
   rp(L.rewardPoint);
   rp(L.shopPoint);
@@ -117,6 +135,8 @@ export function validateAndRepair(L: LevelLayout): boolean {
       return c >= 0 && !blocked[c] && comp[c] === home;
     };
     const keys: P2[] = [L.rewardPoint, ...L.portalPoints, L.shopPoint, ...L.checks];
+    if (L.adventure) keys.push(L.adventure.objective, ...L.adventure.sites, ...L.adventure.zones, ...L.adventure.paths.flatMap(path => path.points),
+      ...(L.adventure.encounters ?? []).flatMap(encounter => [encounter, ...encounter.anchors]), ...(L.adventure.spawnAnchors ?? []));
     if (L.type === 'boss') keys.push(L.bossPoint);
     const bad = keys.find((p) => !ok(p));
     if (!bad) {

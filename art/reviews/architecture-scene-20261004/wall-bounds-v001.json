@@ -1,0 +1,293 @@
+{
+  "schema": 1,
+  "created": "2026-10-04 19:08:48",
+  "method": "Decoded actual GLB vertices, full node world transform, converted Blender XYZ to game XYZ, union of every LOD. Fit/center/ground exactly as architectureMatrix before placement.s.",
+  "geometry_edited": false,
+  "placement_scale_basis": 1,
+  "source": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\reviews\\architecture-scene-20261004\\wall-bounds-v001_source.py",
+    "sha256": "f227b5593e6fd5d3774f7de1c83e4172a707a7cb232d36e0e36b06e0e3bc437b"
+  },
+  "arguments": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\reviews\\architecture-scene-20261004\\wall-bounds-v001_args.json",
+    "sha256": "d2799597ea0363a4c367ab6532548bcb195678fcc484088f4664f7037f32e278"
+  },
+  "assets": [
+    {
+      "id": "SM_Env_DesertWall",
+      "build_version": 1,
+      "glb": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_DesertWall\\04_export\\SM_Env_DesertWall_v001.glb",
+      "sha256": "55cb93d052b694b5416452187a4dfb2ee40537e1e069f5586bcda7d2ee6b3b47",
+      "lods": [
+        {
+          "lod": 0,
+          "name": "SM_Env_DesertWall_LOD0",
+          "vertices": 3996,
+          "bounds": {
+            "min": [
+              -3.547262668609619,
+              0.0011297255987301469,
+              -0.6719123721122742
+            ],
+            "max": [
+              3.546395778656006,
+              4.257411479949951,
+              0.7257760167121887
+            ]
+          }
+        },
+        {
+          "lod": 1,
+          "name": "SM_Env_DesertWall_LOD1",
+          "vertices": 1698,
+          "bounds": {
+            "min": [
+              -3.5431718826293945,
+              0.0018683919915929437,
+              -0.6668239235877991
+            ],
+            "max": [
+              3.5473580360412598,
+              4.260168075561523,
+              0.7250545620918274
+            ]
+          }
+        },
+        {
+          "lod": 2,
+          "name": "SM_Env_DesertWall_LOD2",
+          "vertices": 610,
+          "bounds": {
+            "min": [
+              -3.534090995788574,
+              0.012098567560315132,
+              -0.659641683101654
+            ],
+            "max": [
+              3.5397839546203613,
+              4.258237361907959,
+              0.7198999524116516
+            ]
+          }
+        }
+      ],
+      "all_lod_union": {
+        "min": [
+          -3.547262668609619,
+          0.0011297255987301469,
+          -0.6719123721122742
+        ],
+        "max": [
+          3.5473580360412598,
+          4.260168075561523,
+          0.7257760167121887
+        ]
+      },
+      "all_lod_size_xyz_m": [
+        7.094620704650879,
+        4.259038349962793,
+        1.397688388824463
+      ],
+      "runtime_envelope_xyz_m": [
+        6.6,
+        4.4,
+        1.3
+      ],
+      "uniform_fit_scale_per_placement_unit": 0.9301071758157593,
+      "fitted_size_xyz_m_per_placement_unit": [
+        6.598757627086841,
+        3.961362131374905,
+        1.3
+      ],
+      "source_offset_xyz_m": [
+        -4.76837158203125e-05,
+        -0.0011297255987301469,
+        -0.026931822299957275
+      ]
+    },
+    {
+      "id": "SM_Env_FrostWall",
+      "build_version": 1,
+      "glb": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_FrostWall\\04_export\\SM_Env_FrostWall_v001.glb",
+      "sha256": "f194c302a244dd1e0038ba98bb8c1d86ad9696d809c8fd61e9ac39e9b00b146c",
+      "lods": [
+        {
+          "lod": 0,
+          "name": "SM_Env_FrostWall_LOD0",
+          "vertices": 3381,
+          "bounds": {
+            "min": [
+              -3.8120501041412354,
+              -0.0007577562355436385,
+              -0.7862890958786011
+            ],
+            "max": [
+              3.816293954849243,
+              4.288585186004639,
+              0.8340879678726196
+            ]
+          }
+        },
+        {
+          "lod": 1,
+          "name": "SM_Env_FrostWall_LOD1",
+          "vertices": 1433,
+          "bounds": {
+            "min": [
+              -3.8064732551574707,
+              0.0009794821962714195,
+              -0.7830332517623901
+            ],
+            "max": [
+              3.814293384552002,
+              4.288852691650391,
+              0.8338736295700073
+            ]
+          }
+        },
+        {
+          "lod": 2,
+          "name": "SM_Env_FrostWall_LOD2",
+          "vertices": 652,
+          "bounds": {
+            "min": [
+              -3.8062548637390137,
+              0.011887923814356327,
+              -0.7744114995002747
+            ],
+            "max": [
+              3.789557456970215,
+              4.171665191650391,
+              0.8279278874397278
+            ]
+          }
+        }
+      ],
+      "all_lod_union": {
+        "min": [
+          -3.8120501041412354,
+          -0.0007577562355436385,
+          -0.7862890958786011
+        ],
+        "max": [
+          3.816293954849243,
+          4.288852691650391,
+          0.8340879678726196
+        ]
+      },
+      "all_lod_size_xyz_m": [
+        7.6283440589904785,
+        4.289610447885934,
+        1.6203770637512207
+      ],
+      "runtime_envelope_xyz_m": [
+        6.6,
+        4.4,
+        1.3
+      ],
+      "uniform_fit_scale_per_placement_unit": 0.8022824002398934,
+      "fitted_size_xyz_m_per_placement_unit": [
+        6.120086181502612,
+        3.4414789662240515,
+        1.3
+      ],
+      "source_offset_xyz_m": [
+        -0.0021219253540039062,
+        0.0007577562355436385,
+        -0.023899435997009277
+      ]
+    },
+    {
+      "id": "SM_Env_InfernoWall",
+      "build_version": 1,
+      "glb": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_InfernoWall\\04_export\\SM_Env_InfernoWall_v001.glb",
+      "sha256": "1b593713252527ad13d85a377fbbb904ccaa3c4d1fdfe0004d60544d4c973ce5",
+      "lods": [
+        {
+          "lod": 0,
+          "name": "SM_Env_InfernoWall_LOD0",
+          "vertices": 3983,
+          "bounds": {
+            "min": [
+              -4.297089099884033,
+              -0.0002637597208376974,
+              -0.9046638011932373
+            ],
+            "max": [
+              4.246967792510986,
+              4.167200088500977,
+              0.9039664268493652
+            ]
+          }
+        },
+        {
+          "lod": 1,
+          "name": "SM_Env_InfernoWall_LOD1",
+          "vertices": 1670,
+          "bounds": {
+            "min": [
+              -4.293237209320068,
+              0.0015507260104641318,
+              -0.901490330696106
+            ],
+            "max": [
+              4.242126941680908,
+              4.163732528686523,
+              0.9042577743530273
+            ]
+          }
+        },
+        {
+          "lod": 2,
+          "name": "SM_Env_InfernoWall_LOD2",
+          "vertices": 638,
+          "bounds": {
+            "min": [
+              -4.261716365814209,
+              0.005657089874148369,
+              -0.885697066783905
+            ],
+            "max": [
+              4.209692478179932,
+              4.175433158874512,
+              0.8718759417533875
+            ]
+          }
+        }
+      ],
+      "all_lod_union": {
+        "min": [
+          -4.297089099884033,
+          -0.0002637597208376974,
+          -0.9046638011932373
+        ],
+        "max": [
+          4.246967792510986,
+          4.175433158874512,
+          0.9042577743530273
+        ]
+      },
+      "all_lod_size_xyz_m": [
+        8.54405689239502,
+        4.175696918595349,
+        1.8089215755462646
+      ],
+      "runtime_envelope_xyz_m": [
+        6.6,
+        4.4,
+        1.3
+      ],
+      "uniform_fit_scale_per_placement_unit": 0.7186602324688517,
+      "fitted_size_xyz_m_per_placement_unit": [
+        6.140273912515699,
+        3.0009073182372017,
+        1.3
+      ],
+      "source_offset_xyz_m": [
+        0.025060653686523438,
+        0.0002637597208376974,
+        0.00020301342010498047
+      ]
+    }
+  ]
+}

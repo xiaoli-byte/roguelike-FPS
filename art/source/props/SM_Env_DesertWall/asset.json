@@ -1,0 +1,382 @@
+{
+  "id": "SM_Env_DesertWall",
+  "display": "沙寺厚石墙段",
+  "kind": "static",
+  "class": "nature_prop",
+  "stages": {
+    "blockout": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 18:47:19",
+          "files": {
+            "BO_SM_Env_DesertWall_v001.json": {
+              "path": "00_blockout/BO_SM_Env_DesertWall_v001.json",
+              "sha256": "1f76cb47ef8f39523189616625a6794ede1a82f665989248cd8e024fea153c8f"
+            },
+            "BO_SM_Env_DesertWall_v001_views.json": {
+              "path": "00_blockout/BO_SM_Env_DesertWall_v001_views.json",
+              "sha256": "5425163d755a87cfe6a341d236de6edac7282063cccf0e85daadb9c9f36c048b"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.wall"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -3.3,
+              0,
+              -0.65
+            ],
+            "max": [
+              3.3,
+              4.4,
+              0.65
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 18:48:11",
+          "files": {
+            "BO_SM_Env_DesertWall_v002.json": {
+              "path": "00_blockout/BO_SM_Env_DesertWall_v002.json",
+              "sha256": "6757d52216f3df505e7c023e8203af5f30e9539835bcb9868f6d991967ca226a"
+            },
+            "BO_SM_Env_DesertWall_v002_views.json": {
+              "path": "00_blockout/BO_SM_Env_DesertWall_v002_views.json",
+              "sha256": "e3027838f1b8f064fd3aa84f1fe3d1a536980523449860f3db5dc4911b9fa4b7"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.wall"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -3.75,
+              0,
+              -0.75
+            ],
+            "max": [
+              3.75,
+              4.4,
+              0.75
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 18:48:12",
+          "files": {
+            "CN_SM_Env_DesertWall_v001_source.png": {
+              "path": "01_concept/CN_SM_Env_DesertWall_v001_source.png",
+              "sha256": "c430fcc676e2a20d8e9abf4cf78ff9782f692311b9dccf9bac0a3abeb54324d6"
+            },
+            "CN_SM_Env_DesertWall_v001_front.png": {
+              "path": "01_concept/CN_SM_Env_DesertWall_v001_front.png",
+              "sha256": "f9bc8b254530e70a4582f49df18fcdbc0e5fd6f0cc9d1c6b285f52af33858f3e"
+            },
+            "CN_SM_Env_DesertWall_v001_left.png": {
+              "path": "01_concept/CN_SM_Env_DesertWall_v001_left.png",
+              "sha256": "2809069ea87f82137fe3e70a8b1ddfb6dba858914f2c8243f02deabc81ff8ad8"
+            },
+            "CN_SM_Env_DesertWall_v001_back.png": {
+              "path": "01_concept/CN_SM_Env_DesertWall_v001_back.png",
+              "sha256": "6f2cc0c62fd8adf754b7926c2911dee69068f3dc3cc692b6759c372ec7ab089f"
+            },
+            "CN_SM_Env_DesertWall_v001_right.png": {
+              "path": "01_concept/CN_SM_Env_DesertWall_v001_right.png",
+              "sha256": "bc1a74e96d84d3dd49ef4d9685870d3d86a4b401239dd03697128b3e307ee79e"
+            },
+            "CN_SM_Env_DesertWall_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Env_DesertWall_v001_sheet.png",
+              "sha256": "c0772445e5d349290083e680d6da538e89581a98e5b5144b9edaa06cdfe65af7"
+            },
+            "CN_SM_Env_DesertWall_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_DesertWall_v001_prompt.txt",
+              "sha256": "f6267b7019811a0467881bbddcd36648710c19d43e84001f9a95136f369bd418"
+            },
+            "CN_SM_Env_DesertWall_v001_registration.json": {
+              "path": "01_concept/CN_SM_Env_DesertWall_v001_registration.json",
+              "sha256": "c88c2f8d44bd0b2c5f05b123ec288f452aba4ef107e56235a867f65f895b656a"
+            }
+          },
+          "from_blockout": 2,
+          "generator": "Codex built-in image_gen",
+          "registration_version": 1,
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-2896f781-573a-4d58-8abc-06216b44d9cd.png",
+          "source_sha256": "c430fcc676e2a20d8e9abf4cf78ff9782f692311b9dccf9bac0a3abeb54324d6",
+          "prompt": "Use case: stylized-concept.\nAsset type: exact four-view concept sheet to reconstruct ONE modular courtyard wall using local Hunyuan3D.\nPrimary request: architecture suitable for a first-person roguelite scene with the readable, moderate-detail hand-painted visual quality of Gunfire Reborn. Bold structural silhouette, broad clean planar surfaces, matte painted materials, very restrained wear, simple East-Asian fantasy construction, purposeful medium-size decoration.\nComposition/framing: ONE horizontal sheet on uniform pure white background, FOUR equal-width isolated panels, orthographic FRONT / LEFT / BACK / RIGHT in that order. One identical physical wall repeated in all views, same scale, same ground baseline, full silhouette with generous empty margins. No perspective, no scene, no labels, no text, no contact shadow.\nSubject: a sturdy closed solid wall module, total proportions 6.6 meters wide, 4.4 meters tall, 1.3 meters deep. A long broad wall face, one thick structural buttress integrated at each end, an unbroken heavy cap, a broad connected foundation slab. All elements form one fused watertight structure. Front and back have coherent matching construction; the left/right views are truly narrow 1.3m-deep sides, not extra front faces. Wall top has a slightly uneven simple silhouette, no detached debris, no open door, no gaps, no thin spikes, no small floating elements.\nStyle/medium: stylized painted 3D game asset concept, simplified blocky volumes and subtle painted color gradients, similar moderate fidelity and clean material grouping to Gunfire Reborn. Color textures must define large readable blocks, not noisy photographic detail. Even neutral studio lighting, gentle form shading, no baked cast shadows, no glossy glints, no ambient scene.\nAvoid: photorealism, micrograin, hundreds of cracks, tiny carvings, ornate realism, filigree, separate props, lettering, watermarks.\nChapter palette and construction: warm honey/ochre sandstone block masonry, terracotta inset panels, muted turquoise horizontal painted bands on the cap and buttress faces. Use broad stone blocks and two or three restrained carved geometric reliefs, asymmetric mild broken edge at one cap end; no decorative sun medallion.",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "multiview",
+          "architecture_requirements": {
+            "role": "wall",
+            "dimensions_m": [
+              7.5,
+              4.4,
+              1.5
+            ]
+          },
+          "registration": {
+            "front": {
+              "scale": 0.7076265862545547,
+              "offset": [
+                31,
+                378
+              ],
+              "size": [
+                450,
+                268
+              ],
+              "physical_height_m": 4.4,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7057644110275689,
+              "offset": [
+                211,
+                378
+              ],
+              "size": [
+                90,
+                268
+              ],
+              "physical_height_m": 4.4,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7057644110275689,
+              "offset": [
+                27,
+                378
+              ],
+              "size": [
+                458,
+                268
+              ],
+              "physical_height_m": 4.4,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7057644110275689,
+              "offset": [
+                211,
+                378
+              ],
+              "size": [
+                90,
+                268
+              ],
+              "physical_height_m": 4.4,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Reviewed original and registered four views: broad matte sandstone wall, thick fused pillars and cap, coherent narrow sides, clean medium-scale ochre/terracotta/teal blocks; all silhouettes fully framed at physical proportions.",
+            "time": "2026-10-04 18:49:15"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 18:52:01",
+          "files": {
+            "HP_SM_Env_DesertWall_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Env_DesertWall_v001_input_front.png",
+              "sha256": "ec196581c9fcd46320ff44250976cf8926eec6300ee9924c48019f75c1b6564b"
+            },
+            "HP_SM_Env_DesertWall_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Env_DesertWall_v001_input_left.png",
+              "sha256": "c1609c1489f64ad11fee66a39d2eec7449e97636ec709cd170c19a20780beada"
+            },
+            "HP_SM_Env_DesertWall_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Env_DesertWall_v001_input_back.png",
+              "sha256": "f7b79ff47526dcc3e6df37e0a955374ccfa449d850864c3075bd07c8f65a8321"
+            },
+            "HP_SM_Env_DesertWall_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Env_DesertWall_v001_input_right.png",
+              "sha256": "e271f53784c40d066d579eebbe6b85b7133ff90f0fbf5f230c6c2164f22fc67d"
+            },
+            "HP_SM_Env_DesertWall_v001.glb": {
+              "path": "02_highpoly/HP_SM_Env_DesertWall_v001.glb",
+              "sha256": "9e4c972d9d6794e1ffc41c49c0534819adc9d2d8deb9d77825db10df9c05c6e3"
+            },
+            "HP_SM_Env_DesertWall_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Env_DesertWall_v001_graph.json",
+              "sha256": "04058f290ac01b177c34f68bd1ab5f09e324b34956e3fca426d6c65da7174442"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 202610071,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -13,
+              243,
+              525,
+              781
+            ],
+            "scale": 1.903345724907063
+          },
+          "seconds": 131.8,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 9.7
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 18:53:01",
+          "files": {
+            "SM_Env_DesertWall_v001.blend": {
+              "path": "03_work/SM_Env_DesertWall_v001.blend",
+              "sha256": "a905500c9fd3fe8ff7dd16c7b8f3865d5950c5aef7f4598daf3eb7be8ce59e20"
+            },
+            "SM_Env_DesertWall_v001.glb": {
+              "path": "04_export/SM_Env_DesertWall_v001.glb",
+              "sha256": "55cb93d052b694b5416452187a4dfb2ee40537e1e069f5586bcda7d2ee6b3b47"
+            },
+            "SM_Env_DesertWall_v001_metrics.json": {
+              "path": "03_work/SM_Env_DesertWall_v001_metrics.json",
+              "sha256": "30aa84bfe5d6036cdacf448ada7485b500259144fb1f3750f9bae5b4637ccb93"
+            },
+            "T_Env_DesertWall_BC.png": {
+              "path": "03_work/textures_v001/T_Env_DesertWall_BC.png",
+              "sha256": "ad3567e7c4110570a19b8321d84079d9652d355cfd4847f8e59565fe036413a0"
+            },
+            "T_Env_DesertWall_N.png": {
+              "path": "03_work/textures_v001/T_Env_DesertWall_N.png",
+              "sha256": "97692f46aa51edcd794f833db563b3595e5127d9f0bb228f35877efde1f9077c"
+            },
+            "T_Env_DesertWall_ORM.png": {
+              "path": "03_work/textures_v001/T_Env_DesertWall_ORM.png",
+              "sha256": "a74153ff404281b65475f6d77d14d5c49d862b4c9e308229a2b8594ba59b6f61"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.958,
+          "uncovered_ratio": 0.1857,
+          "lods": [
+            {
+              "tris": 5000,
+              "verts": 2502
+            },
+            {
+              "tris": 1600,
+              "verts": 802
+            },
+            {
+              "tris": 500,
+              "verts": 252
+            }
+          ],
+          "export_kb": 192.1,
+          "seconds": 53.2,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 18:53:01",
+          "files": {
+            "SM_Env_DesertWall_v001_validation_v001.json": {
+              "path": "05_review/SM_Env_DesertWall_v001_validation_v001.json",
+              "sha256": "630cba25a859752437a7184ac4518f5623ad881287e6210b3bf89793c8383b2a"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 18:55:07",
+          "files": {
+            "SM_Env_DesertWall_v001_review_v001.png": {
+              "path": "05_review/SM_Env_DesertWall_v001_review_v001.png",
+              "sha256": "2722456ca6fd5b8f4ca0a04d4ad0e9e9c96ab064b44b12ea5f03ba4daf6f2ee8"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Actually inspected five-view finished render and all three topology views: complete solid wall, coherent front/back and thick side volumes, broad ochre/terracotta/turquoise painted blocks without noisy surfaces; 5000/1600/500, 1024 maps, 0 warnings/errors/waivers.",
+            "time": "2026-10-04 18:56:46"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 18:56:46",
+          "files": {
+            "SM_Env_DesertWall.glb": {
+              "path": "@root/public/assets/props/SM_Env_DesertWall.glb",
+              "sha256": "55cb93d052b694b5416452187a4dfb2ee40537e1e069f5586bcda7d2ee6b3b47"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Env_DesertWall.glb"
+        }
+      ]
+    }
+  }
+}

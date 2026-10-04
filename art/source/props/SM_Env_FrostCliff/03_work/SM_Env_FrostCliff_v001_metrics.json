@@ -1,0 +1,140 @@
+{
+  "steps": {
+    "导入清理": 2.1,
+    "对齐": 0.7,
+    "低模与 UV": 13.4,
+    "投影着色": 35.2,
+    "烘焙": 6.2,
+    "LOD": 0.1,
+    "导出": 0.8
+  },
+  "highpoly": {
+    "faces_raw": 572648,
+    "faces": 610370,
+    "verts": 610372,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00355
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.945,
+    "iou_per_view": {
+      "front": 0.981,
+      "left": 0.908,
+      "back": 0.975,
+      "right": 0.898
+    },
+    "height_m": 8.5679,
+    "blockout_height_m": 9.0
+  },
+  "uv": {
+    "smart_islands": 93,
+    "charts": 15,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "smart",
+    "density_smart": 0.0459,
+    "density_merged": 0.0435
+  },
+  "projection": {
+    "uncovered_ratio": 0.215
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Env_FrostCliff_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Env_FrostCliff_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Env_FrostCliff_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Env_FrostCliff_LOD0",
+      "tris": 5000,
+      "verts": 2502,
+      "uv_min": [
+        0.0018772396724671125,
+        0.001877250848338008
+      ],
+      "uv_max": [
+        0.9966549873352051,
+        0.9981227517127991
+      ],
+      "uv_utilization": 0.687,
+      "bbox_min": [
+        -7.2526,
+        -2.8927,
+        0.0008
+      ],
+      "bbox_max": [
+        7.2481,
+        2.5167,
+        8.5726
+      ]
+    },
+    {
+      "name": "SM_Env_FrostCliff_LOD1",
+      "tris": 1600,
+      "verts": 802,
+      "uv_min": [
+        0.001762477564625442,
+        0.00204981560818851
+      ],
+      "uv_max": [
+        0.9952030777931213,
+        0.9981223940849304
+      ],
+      "uv_utilization": 0.67,
+      "bbox_min": [
+        -7.2434,
+        -2.894,
+        0.0031
+      ],
+      "bbox_max": [
+        7.2503,
+        2.5271,
+        8.5819
+      ]
+    },
+    {
+      "name": "SM_Env_FrostCliff_LOD2",
+      "tris": 500,
+      "verts": 252,
+      "uv_min": [
+        0.001762477564625442,
+        0.00204981560818851
+      ],
+      "uv_max": [
+        0.9951832294464111,
+        0.9981223940849304
+      ],
+      "uv_utilization": 0.642,
+      "bbox_min": [
+        -7.2857,
+        -2.898,
+        0.0043
+      ],
+      "bbox_max": [
+        7.2592,
+        2.5159,
+        8.5763
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_FrostCliff\\04_export\\SM_Env_FrostCliff_v001.glb",
+    "bytes": 158796
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_FrostCliff\\03_work\\SM_Env_FrostCliff_v001.blend",
+  "total_seconds": 58.5,
+  "_seconds": 62.2
+}

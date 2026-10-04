@@ -13,7 +13,12 @@ const mathUrl = await tsModule('../src/core/math.ts');
 const navUrl = await tsModule('../src/world/NavGrid.ts', { '../core/math': mathUrl });
 const checkUrl = await tsModule('../src/world/LevelCheck.ts', { './NavGrid': navUrl });
 const themeUrl = await tsModule('../src/world/Themes.ts');
-const { generateLevel, PROP_COLLIDER } = await import(await tsModule('../src/world/LevelGen.ts', { './LevelCheck': checkUrl, './Themes': themeUrl }));
+const stageDesignUrl = await tsModule('../src/world/StageDesign.ts');
+const adventureUrl = await tsModule('../src/world/AdventureGen.ts', { './NavGrid': navUrl, './StageDesign': stageDesignUrl });
+const { generateLevel: generateAnyLevel, PROP_COLLIDER } = await import(await tsModule('../src/world/LevelGen.ts', { './LevelCheck': checkUrl, './Themes': themeUrl, './AdventureGen': adventureUrl, './StageDesign': stageDesignUrl }));
+// Preserve the original courtyard sightline and composition regressions. The
+// default adventure layout has its own navigation and alternate-route tests.
+const generateLevel = (rng, stage) => generateAnyLevel(rng, stage, { adventure: false });
 const { validateAndRepair, LIGHT_COUNT } = await import(checkUrl);
 const { Rng } = await import(await tsModule('../src/core/Rng.ts'));
 const { fitScenePropScale } = await import(await tsModule('../src/world/ScenePropFit.ts'));
@@ -125,6 +130,35 @@ test('entry compositions have chapter-specific silhouettes and unobstructed foca
     }
     const accents = layout.decos.filter(d => d.sceneRole === 'focal' && d.sceneLayer !== 'principal');
     assert.ok(accents.length >= 1, 'foreground should include a lower supporting object');
+  }
+});
+
+test('pine canopies keep foreground focal art visible across previous obstruction seeds', () => {
+  const seeds = [879009, 1346230, 2708298, 3143843, 5733356, 5891736,
+    ...Array.from({ length: 24 }, (_, i) => (i + 1) * 7919)];
+  for (const type of ['combat', 'elite']) for (const seed of seeds) {
+    const layout = generateLevel(new Rng(seed), { theme: 'frost', type });
+    const focal = layout.decos.find(d => d.sceneRole === 'focal' && d.sceneLayer === 'principal');
+    assert.ok(focal, `${type}/${seed}: foreground focal art missing`);
+    const asset = assets[`frost.${focal.kind}`];
+    const scale = fitScenePropScale(asset.bounds, focal.yaw, focal.s, PROP_COLLIDER[focal.kind]);
+    const from = { ...layout.playerSpawn, y: layout.floorY + 1.55 };
+    const to = { x: focal.x, z: focal.z, y: focal.y + asset.bounds.max[1] * scale * 0.70 };
+    const pines = layout.decos.filter(d => d.kind === 'pine');
+    assert.ok(pines.length > 0, `${type}/${seed}: sightline fix removed every tree`);
+    for (const d of pines) {
+      // The legacy tree and the replacement art share a 3.1m canopy envelope,
+      // wider than the 1.7m trunk collision; their upper foliage is above this sightline.
+      const radius = 1.55 * d.s;
+      const visual = { minX: d.x - radius, maxX: d.x + radius, minZ: d.z - radius, maxZ: d.z + radius,
+        minY: d.y, maxY: d.y + 4.8 * d.s };
+      assert.equal(sightBlocked(from, to, visual), false, `${type}/${seed}: pine canopy hides the focal art`);
+      const collider = layout.boxes.find(b => b.group === d.group && b.look === 'collider'
+        && Math.abs((b.minX + b.maxX) / 2 - d.x) < 1e-6 && Math.abs((b.minZ + b.maxZ) / 2 - d.z) < 1e-6);
+      assert.ok(collider, 'tree and collision lost their shared placement');
+      assert.ok(Math.abs(collider.maxX - collider.minX - 1.7 * Math.min(1.25, d.s)) < 1e-6,
+        'canopy clearance must retain the trunk collision width');
+    }
   }
 });
 

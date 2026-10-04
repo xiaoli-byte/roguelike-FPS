@@ -36,8 +36,8 @@ export function surfaceRelief(source: THREE.CanvasTexture, frost = false): { bum
   for (let i = 0; i < pixels.data.length; i += 4) {
     const value = (pixels.data[i] * 0.2126 + pixels.data[i + 1] * 0.7152 + pixels.data[i + 2] * 0.0722) / 255;
     const heightValue = Math.round(90 + value * 150);
-    // Bright frost grains are matte; exposed blue stone has a restrained sheen.
-    const roughValue = Math.round(frost ? 150 + Math.min(1, value * 1.15) * 95 : 212 + (1 - value) * 34);
+    // Keep the painted snow and its exposed stone matte across the whole tile.
+    const roughValue = Math.round(frost ? 224 + value * 22 : 224 + (1 - value) * 22);
     h.data[i] = h.data[i + 1] = h.data[i + 2] = heightValue; h.data[i + 3] = 255;
     r.data[i] = r.data[i + 1] = r.data[i + 2] = roughValue; r.data[i + 3] = 255;
   }
@@ -168,10 +168,10 @@ export function makeStoneTexture(rand: Rand): THREE.CanvasTexture {
       g.fillRect(x + 3, row * rowH + rowH - 6, bw - 6, 3);
     }
   }
-  speckle(g, S, rand, 2600, gray(1, 0.18), gray(0, 0.14));
-  for (let i = 0; i < 7; i++) crack(g, S, rand, rand() * S, rand() * S, 18 + rand() * 30, 1.2, gray(0.35, 0.6));
+  speckle(g, S, rand, 800, gray(1, 0.06), gray(0, 0.045));
+  for (let i = 0; i < 3; i++) crack(g, S, rand, rand() * S, rand() * S, 18 + rand() * 30, 1.7, gray(0.35, 0.25));
   if (stoneSurface) {
-    g.globalCompositeOperation = 'multiply'; g.globalAlpha = 0.26;
+    g.globalCompositeOperation = 'multiply'; g.globalAlpha = 0.18;
     g.drawImage(stoneSurface, 0, 0, S, S);
     g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1;
   }
@@ -232,6 +232,10 @@ export function makeFloorTextures(id: ThemeId, theme: ThemeDef, st: ThemeStyle, 
     g.globalCompositeOperation = 'multiply';
     g.fillStyle = css(id === 'desert' ? 0xdfc79e : id === 'frost' ? 0xb8c9da : 0x817d90);
     g.fillRect(0, 0, S, S); g.globalCompositeOperation = 'source-over';
+    // Retain the generated stone's broad joints under a painted palette wash.
+    // Reuse this 512px tile; routes still use the existing single road-mask sample.
+    g.fillStyle = css(st.paving, 1, 0.4);
+    g.fillRect(0, 0, S, S);
   }
 
   if (id === 'desert') {
@@ -254,7 +258,7 @@ export function makeFloorTextures(id: ThemeId, theme: ThemeDef, st: ThemeStyle, 
       }
     }
     }
-    speckle(g, S, rand, 2000, css(st.paving, 1.1, 0.25), css(st.trim, 1, 0.1));
+    speckle(g, S, rand, 600, css(st.paving, 1.1, 0.08), css(st.trim, 1, 0.035));
     // 风沙半掩
     for (let i = 0; i < 12; i++) blob(g, S, rand() * S, rand() * S, 26 + rand() * 65, css(st.sand, 1, 0.32 + rand() * 0.2), css(st.sand, 1, 0));
     // 风纹
@@ -287,12 +291,12 @@ export function makeFloorTextures(id: ThemeId, theme: ThemeDef, st: ThemeStyle, 
       }
     }
     }
-    speckle(g, S, rand, 1800, css(st.paving, 1.15, 0.25), css(st.trim, 1, 0.08));
+    speckle(g, S, rand, 500, css(st.paving, 1.15, 0.08), css(st.trim, 1, 0.025));
     // 积雪覆盖
     for (let i = 0; i < 16; i++) blob(g, S, rand() * S, rand() * S, 34 + rand() * 65, css(st.snow, 1, 0.5 + rand() * 0.3), css(st.snow, 1, 0));
-    // 冰面反光斑
-    for (let i = 0; i < 5; i++) blob(g, S, rand() * S, rand() * S, 20 + rand() * 30, css(st.ice, 1, 0.25), css(st.ice, 1, 0));
-    speckle(g, S, rand, 2200, 'rgba(255,255,255,0.9)', 'rgba(170,195,220,0.35)', 1);
+    // 宽而淡的蓝白色差，不把雪面画成密集闪光颗粒。
+    for (let i = 0; i < 5; i++) blob(g, S, rand() * S, rand() * S, 45 + rand() * 45, css(st.ice, 1, 0.12), css(st.ice, 1, 0));
+    speckle(g, S, rand, 360, 'rgba(255,255,255,0.22)', 'rgba(145,185,220,0.08)', 1);
   } else {
     if (!stoneSurface) {
     g.fillStyle = css(theme.floor);
@@ -331,7 +335,7 @@ export function makeFloorTextures(id: ThemeId, theme: ThemeDef, st: ThemeStyle, 
       }
     }
     }
-    speckle(g, S, rand, 1800, css(st.paving, 1.3, 0.2), 'rgba(0,0,0,0.15)');
+    speckle(g, S, rand, 500, css(st.paving, 1.15, 0.07), 'rgba(0,0,0,0.045)');
     // 熔岩裂缝：颜色贴图画暗红底，自发光贴图画亮线
     const [ec, eg] = canvas(S, S);
     eg.fillStyle = '#000';

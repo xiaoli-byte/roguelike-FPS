@@ -1,0 +1,140 @@
+{
+  "steps": {
+    "导入清理": 6.4,
+    "对齐": 0.9,
+    "低模与 UV": 32.2,
+    "投影着色": 99.9,
+    "烘焙": 13.6,
+    "LOD": 0.1,
+    "导出": 2.2
+  },
+  "highpoly": {
+    "faces_raw": 1765271,
+    "faces": 1435694,
+    "verts": 1435642,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00354
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.845,
+    "iou_per_view": {
+      "front": 0.952,
+      "left": 0.725,
+      "back": 0.931,
+      "right": 0.717
+    },
+    "height_m": 4.3143,
+    "blockout_height_m": 4.4
+  },
+  "uv": {
+    "smart_islands": 575,
+    "charts": 63,
+    "fallback_charts": 3,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.0669,
+    "density_merged": 0.0725
+  },
+  "projection": {
+    "uncovered_ratio": 0.6323
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Env_DesertRuin_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Env_DesertRuin_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Env_DesertRuin_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Env_DesertRuin_LOD0",
+      "tris": 5000,
+      "verts": 2448,
+      "uv_min": [
+        0.0029374926816672087,
+        0.0029375578742474318
+      ],
+      "uv_max": [
+        0.982046365737915,
+        0.9970624446868896
+      ],
+      "uv_utilization": 0.498,
+      "bbox_min": [
+        -2.3456,
+        -1.0423,
+        0.0021
+      ],
+      "bbox_max": [
+        2.4702,
+        0.5904,
+        4.3142
+      ]
+    },
+    {
+      "name": "SM_Env_DesertRuin_LOD1",
+      "tris": 1600,
+      "verts": 748,
+      "uv_min": [
+        0.003803384257480502,
+        0.0029375578742474318
+      ],
+      "uv_max": [
+        0.9791063666343689,
+        0.9970624446868896
+      ],
+      "uv_utilization": 0.483,
+      "bbox_min": [
+        -2.3344,
+        -1.0312,
+        0.0059
+      ],
+      "bbox_max": [
+        2.4558,
+        0.5788,
+        4.3081
+      ]
+    },
+    {
+      "name": "SM_Env_DesertRuin_LOD2",
+      "tris": 500,
+      "verts": 198,
+      "uv_min": [
+        0.003803384257480502,
+        0.003327754558995366
+      ],
+      "uv_max": [
+        0.9791063666343689,
+        0.9970624446868896
+      ],
+      "uv_utilization": 0.41,
+      "bbox_min": [
+        -2.3416,
+        -1.0005,
+        0.0029
+      ],
+      "bbox_max": [
+        2.4558,
+        0.5751,
+        4.3474
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_DesertRuin\\04_export\\SM_Env_DesertRuin_v002.glb",
+    "bytes": 298396
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_DesertRuin\\03_work\\SM_Env_DesertRuin_v002.blend",
+  "total_seconds": 155.4,
+  "_seconds": 161.0
+}

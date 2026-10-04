@@ -1,0 +1,531 @@
+{
+  "id": "SM_Env_FrozenSkiff",
+  "display": "冻湖搁浅短木船",
+  "kind": "static",
+  "class": "nature_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 23:12:58",
+          "files": {
+            "BO_SM_Env_FrozenSkiff_v001.json": {
+              "path": "00_blockout/BO_SM_Env_FrozenSkiff_v001.json",
+              "sha256": "fd54141f2d416fefb6a64b2106694468251c5049778868b3e33af333845324f0"
+            },
+            "BO_SM_Env_FrozenSkiff_v001_views.json": {
+              "path": "00_blockout/BO_SM_Env_FrozenSkiff_v001_views.json",
+              "sha256": "177020939c20e107f190ee6306ca2ce65e2365be024f9601d76498ea859a7b40"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost.frozenSkiff"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -1.15,
+              0,
+              -2.4
+            ],
+            "max": [
+              1.15,
+              1.7,
+              2.4
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 23:12:59",
+          "files": {
+            "CN_SM_Env_FrozenSkiff_v001_source.png": {
+              "path": "01_concept/CN_SM_Env_FrozenSkiff_v001_source.png",
+              "sha256": "285bd8380b8ebd8f6a8dc127f4d862a0b33d9b32b366a0ebda88a38343ed598e"
+            },
+            "CN_SM_Env_FrozenSkiff_v001_front.png": {
+              "path": "01_concept/CN_SM_Env_FrozenSkiff_v001_front.png",
+              "sha256": "10dd03a370bdeb5db56da1870bc87df3b63d9389b74e3bf8939153334e7104b3"
+            },
+            "CN_SM_Env_FrozenSkiff_v001_left.png": {
+              "path": "01_concept/CN_SM_Env_FrozenSkiff_v001_left.png",
+              "sha256": "d90d40aea9de4a4b764491f06b0fc9d79a660a3b8ec7aa8fe120954ab78f39a0"
+            },
+            "CN_SM_Env_FrozenSkiff_v001_back.png": {
+              "path": "01_concept/CN_SM_Env_FrozenSkiff_v001_back.png",
+              "sha256": "448dbc364d77cd415b4f114f3985a7ba48a4f3d44486588f261e7aad23da7551"
+            },
+            "CN_SM_Env_FrozenSkiff_v001_right.png": {
+              "path": "01_concept/CN_SM_Env_FrozenSkiff_v001_right.png",
+              "sha256": "b357fcf3c8cd6cb08386c587a4c684eb1c60eb133f17da8746d43bcbf6d4eaf7"
+            },
+            "CN_SM_Env_FrozenSkiff_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Env_FrozenSkiff_v001_sheet.png",
+              "sha256": "051e67b4913b04a7e160d8336a485ea756982efcf2ad94a861f4058567026979"
+            },
+            "CN_SM_Env_FrozenSkiff_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_FrozenSkiff_v001_prompt.txt",
+              "sha256": "865bdf31d296b0d40500ddca5027c2b1edf82967e3ee59d724f609af2d60ce34"
+            },
+            "CN_SM_Env_FrozenSkiff_v001_registration.json": {
+              "path": "01_concept/CN_SM_Env_FrozenSkiff_v001_registration.json",
+              "sha256": "82453bcf867ee4e46d261e81bbccd87f1fabf97934dc6410003cf2b94cae8c2c"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Codex built-in image_gen",
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a1072d-363b-7bd3-bcf6-3cc6a159ec4f\\exec-1de49fdb-9867-4cdc-b5cf-c0a6937d9c62.png",
+          "source_sha256": "285bd8380b8ebd8f6a8dc127f4d862a0b33d9b32b366a0ebda88a38343ed598e",
+          "prompt": "Use case: stylized-concept. Asset type: one four-view orthographic turnaround sheet for reconstruction with local Hunyuan3D multi-view. Create a wide 2048x1024 image with exactly FOUR isolated views of the SAME complete prop, left to right FRONT / LEFT / BACK / RIGHT, with NO written labels. Pure white background, no ground and no cast shadow. Four evenly spaced columns; each whole object including protrusions must fit inside its own column with white margins, never overlap neighboring views. Align baselines and use exactly the same physical scale and height in all views. True orthographic views, no perspective and no three-quarter view.\nStyle: readable moderate-detail hand-painted fantasy FPS environment at Gunfire Reborn game fidelity. Bold chunky solid silhouette, clean gently chamfered faceted planes, two or three large coherent matte color blocks, soft painted gradients and a few restrained edge-wear accents. Neutral even lighting; no photorealism, dense wood grain, tiny cracks or elaborate miniature carving. No text, icon labels, loose floating parts or thin strings. All parts form one coherent assembled prop. Subject: one short abandoned wooden cargo skiff sitting flat on its intact heavy keel, approximately 2.3 metres across, 4.8 metres long and 1.7 metres from keel to highest gunwale. Front faces the broad blunt bow, back faces the square low stern, left and right show the full hull length. Thick broad blue-grey weathered timber hull planks, a massive rounded gunwale, and two thick connected cross seats visible slightly above the rim. No mast, sail, rigging, rudder pole or oars. The boat is fully volumetric with a deep belly and substantial underside, not a flat cutout. A small broad chipped section in the stern gunwale and two missing upper board corners suggest abandonment, while the entire lower hull and keel remain intact and connected. A few broad pale blue-grey snow patches (clearly darker than the pure-white backdrop) are firmly attached to the bow rim and benches, less than fifteen percent surface coverage; avoid icicles or snow spray. Restrained cold blue-grey wood, warm exposed board edges, dark iron end straps. One complete boat, no lake, shore, rocks or separate debris.",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "multiview",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "source_bbox": [
+                24,
+                333,
+                326,
+                561
+              ],
+              "source_component_area": 48962,
+              "source_foreground_coverage": 0.9999881761283915,
+              "native_alpha_preserved": false,
+              "scale": 0.7101086048454469,
+              "offset": [
+                149,
+                431
+              ],
+              "size": [
+                214,
+                162
+              ],
+              "physical_height_m": 1.7,
+              "method": "contrasting plain-background key; four connected components; uniform height and centre"
+            },
+            "left": {
+              "source_bbox": [
+                351,
+                350,
+                866,
+                556
+              ],
+              "source_component_area": 77792,
+              "source_foreground_coverage": 0.9999881761283915,
+              "native_alpha_preserved": false,
+              "scale": 0.7859454461396209,
+              "offset": [
+                53,
+                431
+              ],
+              "size": [
+                405,
+                162
+              ],
+              "physical_height_m": 1.7,
+              "method": "contrasting plain-background key; four connected components; uniform height and centre"
+            },
+            "back": {
+              "source_bbox": [
+                893,
+                350,
+                1190,
+                563
+              ],
+              "source_component_area": 47668,
+              "source_foreground_coverage": 0.9999881761283915,
+              "native_alpha_preserved": false,
+              "scale": 0.7601162530739995,
+              "offset": [
+                143,
+                431
+              ],
+              "size": [
+                226,
+                162
+              ],
+              "physical_height_m": 1.7,
+              "method": "contrasting plain-background key; four connected components; uniform height and centre"
+            },
+            "right": {
+              "source_bbox": [
+                1226,
+                348,
+                1745,
+                558
+              ],
+              "source_component_area": 79299,
+              "source_foreground_coverage": 0.9999881761283915,
+              "native_alpha_preserved": false,
+              "scale": 0.7709750566893424,
+              "offset": [
+                56,
+                431
+              ],
+              "size": [
+                400,
+                162
+              ],
+              "physical_height_m": 1.7,
+              "method": "contrasting plain-background key; four connected components; uniform height and centre"
+            }
+          },
+          "source_history": [],
+          "review": {
+            "verdict": "rejected",
+            "by": "Codex AI visual review",
+            "note": "White-background registration may erode bright snow edges. Retain this source and prompt, request native ImageGen alpha before Hunyuan so the snow and hull silhouette are explicitly preserved.",
+            "time": "2026-10-04 23:13:25"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 23:14:29",
+          "files": {
+            "CN_SM_Env_FrozenSkiff_v002_source.png": {
+              "path": "01_concept/CN_SM_Env_FrozenSkiff_v002_source.png",
+              "sha256": "357ba27f70980b8b2a0c5cf377376923bd338738a3431eac562b74f8ed8dc7eb"
+            },
+            "CN_SM_Env_FrozenSkiff_v002_front.png": {
+              "path": "01_concept/CN_SM_Env_FrozenSkiff_v002_front.png",
+              "sha256": "40c3bbba60b6a64756ef7b5096349d1645bc87df255a72fd4dfb9ee9763572a5"
+            },
+            "CN_SM_Env_FrozenSkiff_v002_left.png": {
+              "path": "01_concept/CN_SM_Env_FrozenSkiff_v002_left.png",
+              "sha256": "71e9619b016f637b0d3c2d1c444f9c5ddd5457164a6722e93778702697c1dd2e"
+            },
+            "CN_SM_Env_FrozenSkiff_v002_back.png": {
+              "path": "01_concept/CN_SM_Env_FrozenSkiff_v002_back.png",
+              "sha256": "4f9189e0d4a44ceed501bcee9a82d06429691af500632d641aa8f9f86f1190da"
+            },
+            "CN_SM_Env_FrozenSkiff_v002_right.png": {
+              "path": "01_concept/CN_SM_Env_FrozenSkiff_v002_right.png",
+              "sha256": "348e21ea76743f41ff96fd7f37eac2f401172d777cb28a7b5f5df707d81354f2"
+            },
+            "CN_SM_Env_FrozenSkiff_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Env_FrozenSkiff_v002_sheet.png",
+              "sha256": "8702cb4a587a145836a456cdcfda01af52ae5e6b25dd1eaa0c14bdf5ea0cffd4"
+            },
+            "CN_SM_Env_FrozenSkiff_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_FrozenSkiff_v002_prompt.txt",
+              "sha256": "77261c79b8c40e79c48dbf09b99ebb192c061c7e10870c185575dc8162e751d0"
+            },
+            "CN_SM_Env_FrozenSkiff_v002_registration.json": {
+              "path": "01_concept/CN_SM_Env_FrozenSkiff_v002_registration.json",
+              "sha256": "52ffd869ddea4d13f5a1e46705124ca6091f2b0652705b15d79897eed3e117f0"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Codex built-in image_gen",
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a1072d-363b-7bd3-bcf6-3cc6a159ec4f\\exec-3119a645-26d7-4fae-86ad-8725f8d70363.png",
+          "source_sha256": "357ba27f70980b8b2a0c5cf377376923bd338738a3431eac562b74f8ed8dc7eb",
+          "prompt": "Use case: background-extraction. Edit target: the attached four-view wooden skiff concept sheet.\nRemove only its pure-white background, including white space between the four boats, to make a true transparent alpha background. Preserve every boat pixel, especially the entire pale blue-grey snow caps on the bow rim and cross benches, the thick wooden hull, keel, gunwales, and all four complete silhouettes. Keep the exact FRONT, LEFT, BACK, RIGHT orthographic arrangement, scale, baseline, dimensions, palette, design and composition. Do not redraw or reshape the boat, do not cut away white-looking snow, do not add new parts, text, shadows, or a checkerboard pattern. The hull remains volumetric blue-grey timber, with an open inner recess. Transparent outside the silhouettes only.",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "multiview",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "source_bbox": [
+                19,
+                323,
+                329,
+                566
+              ],
+              "source_component_area": 51926,
+              "source_foreground_coverage": 0.996943801336027,
+              "native_alpha_preserved": true,
+              "scale": 0.6662747403488144,
+              "offset": [
+                152,
+                431
+              ],
+              "size": [
+                207,
+                162
+              ],
+              "physical_height_m": 1.7,
+              "method": "preserved native alpha; four connected components; uniform height and centre"
+            },
+            "left": {
+              "source_bbox": [
+                350,
+                349,
+                869,
+                566
+              ],
+              "source_component_area": 83116,
+              "source_foreground_coverage": 0.996943801336027,
+              "native_alpha_preserved": true,
+              "scale": 0.7461048935703313,
+              "offset": [
+                62,
+                431
+              ],
+              "size": [
+                387,
+                162
+              ],
+              "physical_height_m": 1.7,
+              "method": "preserved native alpha; four connected components; uniform height and centre"
+            },
+            "back": {
+              "source_bbox": [
+                886,
+                345,
+                1192,
+                567
+              ],
+              "source_component_area": 50920,
+              "source_foreground_coverage": 0.996943801336027,
+              "native_alpha_preserved": true,
+              "scale": 0.7293007293007293,
+              "offset": [
+                144,
+                431
+              ],
+              "size": [
+                223,
+                162
+              ],
+              "physical_height_m": 1.7,
+              "method": "preserved native alpha; four connected components; uniform height and centre"
+            },
+            "right": {
+              "source_bbox": [
+                1224,
+                346,
+                1748,
+                569
+              ],
+              "source_component_area": 84461,
+              "source_foreground_coverage": 0.996943801336027,
+              "native_alpha_preserved": true,
+              "scale": 0.7260303224428785,
+              "offset": [
+                66,
+                431
+              ],
+              "size": [
+                380,
+                162
+              ],
+              "physical_height_m": 1.7,
+              "method": "preserved native alpha; four connected components; uniform height and centre"
+            }
+          },
+          "source_history": [
+            {
+              "id": "SM_Env_FrozenSkiff",
+              "prompt": "Use case: stylized-concept. Asset type: one four-view orthographic turnaround sheet for reconstruction with local Hunyuan3D multi-view. Create a wide 2048x1024 image with exactly FOUR isolated views of the SAME complete prop, left to right FRONT / LEFT / BACK / RIGHT, with NO written labels. Pure white background, no ground and no cast shadow. Four evenly spaced columns; each whole object including protrusions must fit inside its own column with white margins, never overlap neighboring views. Align baselines and use exactly the same physical scale and height in all views. True orthographic views, no perspective and no three-quarter view.\nStyle: readable moderate-detail hand-painted fantasy FPS environment at Gunfire Reborn game fidelity. Bold chunky solid silhouette, clean gently chamfered faceted planes, two or three large coherent matte color blocks, soft painted gradients and a few restrained edge-wear accents. Neutral even lighting; no photorealism, dense wood grain, tiny cracks or elaborate miniature carving. No text, icon labels, loose floating parts or thin strings. All parts form one coherent assembled prop. Subject: one short abandoned wooden cargo skiff sitting flat on its intact heavy keel, approximately 2.3 metres across, 4.8 metres long and 1.7 metres from keel to highest gunwale. Front faces the broad blunt bow, back faces the square low stern, left and right show the full hull length. Thick broad blue-grey weathered timber hull planks, a massive rounded gunwale, and two thick connected cross seats visible slightly above the rim. No mast, sail, rigging, rudder pole or oars. The boat is fully volumetric with a deep belly and substantial underside, not a flat cutout. A small broad chipped section in the stern gunwale and two missing upper board corners suggest abandonment, while the entire lower hull and keel remain intact and connected. A few broad pale blue-grey snow patches (clearly darker than the pure-white backdrop) are firmly attached to the bow rim and benches, less than fifteen percent surface coverage; avoid icicles or snow spray. Restrained cold blue-grey wood, warm exposed board edges, dark iron end straps. One complete boat, no lake, shore, rocks or separate debris.",
+              "path": "C:/Users/admin/.codex/generated_images/01a1072d-363b-7bd3-bcf6-3cc6a159ec4f/exec-1de49fdb-9867-4cdc-b5cf-c0a6937d9c62.png",
+              "generator": "Codex built-in image_gen",
+              "workspaceSource": "art/source/props/SM_Env_FrozenSkiff/01_concept/CN_SM_Env_FrozenSkiff_v001_source.png",
+              "role": "edit target / original complete four-view design",
+              "reason": "Preserve bright snow with native alpha instead of white key."
+            }
+          ],
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Inspected the original and final native-alpha image plus registered v002 sheet. Entire broad snow caps, deep connected hull, thick gunwale, keel and bench tops remain present in all four views. Native alpha is preserved, no white-background key is applied. Original white-source registration v001 rejected and retained. Three-LOD hull and inner recess still require finished-mesh checks.",
+            "time": "2026-10-04 23:15:02"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 23:24:07",
+          "files": {
+            "HP_SM_Env_FrozenSkiff_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Env_FrozenSkiff_v001_input_front.png",
+              "sha256": "6a00c81aafdc96841eb60f7cbad282e4398d900d37177c4616f321a567e8f688"
+            },
+            "HP_SM_Env_FrozenSkiff_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Env_FrozenSkiff_v001_input_left.png",
+              "sha256": "faf2e248501eb4ddbed45a85b5161e91f34d1dc66f91e41726b94d0389bacb62"
+            },
+            "HP_SM_Env_FrozenSkiff_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Env_FrozenSkiff_v001_input_back.png",
+              "sha256": "7d61dab56e81aacc36a1d5b364ec5067d33df954dd3737a69c4bfa1296ded4fe"
+            },
+            "HP_SM_Env_FrozenSkiff_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Env_FrozenSkiff_v001_input_right.png",
+              "sha256": "1ec6da9675d3f233343b5e02bfc792a6dffd750f34f028037f8ca1352e33406a"
+            },
+            "HP_SM_Env_FrozenSkiff_v001.glb": {
+              "path": "02_highpoly/HP_SM_Env_FrozenSkiff_v001.glb",
+              "sha256": "1e0e4cc8addec412b5d177548eadccbcc7f3e3a317ee64997388e185e713ba76"
+            },
+            "HP_SM_Env_FrozenSkiff_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Env_FrozenSkiff_v001_graph.json",
+              "sha256": "2a425682d636dfe2d53a6f7eb2830192c6069da6ec2583a41136b8aa552ea92c"
+            }
+          },
+          "from_concept": 2,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 202610142,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              31,
+              286,
+              481,
+              736
+            ],
+            "scale": 2.2755555555555556
+          },
+          "seconds": 134.9,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 13.6
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 23:25:44",
+          "files": {
+            "SM_Env_FrozenSkiff_v001.blend": {
+              "path": "03_work/SM_Env_FrozenSkiff_v001.blend",
+              "sha256": "9b59af8cdb85219d9ca7fdbdaea9af9de1725e38fd3a76eba5e4769f9f2c7259"
+            },
+            "SM_Env_FrozenSkiff_v001.glb": {
+              "path": "04_export/SM_Env_FrozenSkiff_v001.glb",
+              "sha256": "90b2557b0bc2fe6eca99f2245e7ef6cc2a49cd6ac06e18fe7966fc7a5d62e91b"
+            },
+            "SM_Env_FrozenSkiff_v001_metrics.json": {
+              "path": "03_work/SM_Env_FrozenSkiff_v001_metrics.json",
+              "sha256": "54cf031e6a82829aed20a4f11a84ab8dfef9b0f9a35a47848796c61af6be7b2b"
+            },
+            "T_Env_FrozenSkiff_BC.png": {
+              "path": "03_work/textures_v001/T_Env_FrozenSkiff_BC.png",
+              "sha256": "25df697a942bb2c00dd486cc1e10aab1582f61b68f49e69b371a83334219abd5"
+            },
+            "T_Env_FrozenSkiff_N.png": {
+              "path": "03_work/textures_v001/T_Env_FrozenSkiff_N.png",
+              "sha256": "00f7b74373790e7ff2a849b576cddc734a57eb46e193172b860f592a07f5c2ea"
+            },
+            "T_Env_FrozenSkiff_ORM.png": {
+              "path": "03_work/textures_v001/T_Env_FrozenSkiff_ORM.png",
+              "sha256": "87baff73a97f9a223973eb9917cfe1fab203a2f2873f545b6f64d36b187857e4"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.919,
+          "uncovered_ratio": 0.5769,
+          "lods": [
+            {
+              "tris": 5000,
+              "verts": 2498
+            },
+            {
+              "tris": 1600,
+              "verts": 798
+            },
+            {
+              "tris": 500,
+              "verts": 248
+            }
+          ],
+          "export_kb": 172.3,
+          "seconds": 96.5,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 23:25:44",
+          "files": {
+            "SM_Env_FrozenSkiff_v001_validation_v001.json": {
+              "path": "05_review/SM_Env_FrozenSkiff_v001_validation_v001.json",
+              "sha256": "22dd9670d4f27302b786e16ffac8bfd354128b91f8b01c113766520d67ed73f4"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 2,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 23:25:51",
+          "files": {
+            "SM_Env_FrozenSkiff_v001_review_v001.png": {
+              "path": "05_review/SM_Env_FrozenSkiff_v001_review_v001.png",
+              "sha256": "eb4c0231f13ec84908af950f455d73d2ec9c76de9a68529ca7c057d552a50469"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Reviewed native-alpha concept, finished five-view sheet, elevated LOD0 and LOD2 plus underside LOD1 actual GLB renders and all-LOD triangle ray sections. Thick connected hull and keel, open inner well, two supported cross-seats, preserved volume at 500 tris; sampled inner recess about 0.98m and centre floor shell about 0.15-0.18m. Retain warnings: 43% UV occupancy and 42.3% direct four-view colour coverage; inner well colour is diffusion-filled and comparatively plain, not additional painted detail. No procedural art mesh repair. Suitable static stranded repair-bay prop, not final hero close-up or moving boat.",
+            "time": "2026-10-04 23:28:57"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 23:28:57",
+          "files": {
+            "SM_Env_FrozenSkiff.glb": {
+              "path": "@root/public/assets/props/SM_Env_FrozenSkiff.glb",
+              "sha256": "90b2557b0bc2fe6eca99f2245e7ef6cc2a49cd6ac06e18fe7966fc7a5d62e91b"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Env_FrozenSkiff.glb"
+        }
+      ]
+    }
+  }
+}

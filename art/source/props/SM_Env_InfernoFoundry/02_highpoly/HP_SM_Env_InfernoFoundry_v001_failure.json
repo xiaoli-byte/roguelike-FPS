@@ -1,0 +1,29 @@
+{
+  "recorded": "2026-10-04 16:49:53",
+  "status": "failed",
+  "seed": 202610043,
+  "from_concept": 1,
+  "mode": "single",
+  "checkpoint": "hunyuan_3d_v2.1.safetensors",
+  "cli_error": "ComfyUI execution failed: []",
+  "observations": [
+    "Original ComfyUI process PID85776 exited while inference was running.",
+    "History and queue returned HTTP502 after the failed job.",
+    "A replacement server PID44060 started 2026-10-04 16:46:41 +08:00 with --fp32-vae and was executing an unrelated MiniMaxH3 video workflow.",
+    "Exact execution exception could not be recovered from the replaced in-memory history. OOM is not established."
+  ],
+  "replacement_argv": [
+    "main.py",
+    "--listen",
+    "127.0.0.1",
+    "--port",
+    "8188",
+    "--disable-api-nodes",
+    "--disable-auto-launch",
+    "--disable-all-custom-nodes",
+    "--whitelist-custom-nodes",
+    "ComfyUI-GGUF",
+    "--fp32-vae"
+  ],
+  "retry_policy": "Same approved concept, same seed, new highpoly version; queue normally and do not restart or unload the shared server."
+}

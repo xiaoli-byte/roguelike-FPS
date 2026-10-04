@@ -28,6 +28,7 @@ from mathutils import Matrix, Vector  # noqa: E402
 from mathutils.bvhtree import BVHTree  # noqa: E402
 
 from bl_common import VIEW_ORDER, args, clear_scene, finish, import_glb, log  # noqa: E402
+from bl_lod_budget import fit_far_lod_budget  # noqa: E402
 
 P = args()
 T0 = time.time()
@@ -93,7 +94,7 @@ bpy.ops.mesh.separate(type="LOOSE")
 bpy.ops.object.mode_set(mode="OBJECT")
 parts = sorted([o for o in bpy.context.view_layer.objects if o.type == "MESH"], key=lambda o: len(o.data.polygons), reverse=True)
 total = sum(len(o.data.polygons) for o in parts)
-keep = [o for o in parts if len(o.data.polygons) >= 0.01 * total]
+keep = [o for o in parts if len(o.data.polygons) >= P.get("min_component_fraction", 0.01) * total]
 for o in parts:
     if o not in keep:
         bpy.data.objects.remove(o)
@@ -257,6 +258,11 @@ def decimate_copy(src, name: str, tris: int):
     mod = obj.modifiers.new("tri", "TRIANGULATE")
     bpy.ops.object.modifier_apply(modifier=mod.name)
     obj.data.validate(clean_customdata=False)
+    if name.endswith(f"_LOD{len(lod_tris) - 1}") and P.get("far_lod_budget_weld_max_fraction", 0):
+        repair = fit_far_lod_budget(obj, tris, P["far_lod_budget_weld_max_fraction"])
+        if repair:
+            RESULT.setdefault("lod_budget_cleanup", {})[name] = repair
+            log(f"{name} 远 LOD 细节清理：{repair['before_tris']} → {repair['after_tris']} 面，邻点焊接 {repair['weld_m']:.3f} m")
     bpy.ops.object.shade_smooth()
     return obj
 

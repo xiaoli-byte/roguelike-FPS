@@ -1,0 +1,2738 @@
+{
+  "created": "2026-10-04T13:55:20.618Z",
+  "method": "Decoded actual Draco vertex positions of every published scene LOD; inspected current six wall/cliff review sheets; read metadata of all remaining approved assets.",
+  "originalAssetCount": 21,
+  "assets": [
+    {
+      "id": "SM_Prop_DesertReliquary",
+      "display": "沙寺镇灵碑",
+      "binding": "desert.statue",
+      "url": "assets/props/SM_Prop_DesertReliquary.glb",
+      "bytes": 109720,
+      "sha256": "a6f31a096ee690f656fc1c8e7e41767cf47353894803c933e5e84e5597c5c55f",
+      "matchesManifest": true,
+      "allLodBounds": {
+        "min": [
+          -0.7641736268997192,
+          0.0009429696947336197,
+          -0.23870965838432312
+        ],
+        "max": [
+          0.7583606243133545,
+          2.467754602432251,
+          0.3439088761806488
+        ],
+        "size": [
+          1.5225342512130737,
+          2.4668116327375174,
+          0.5826185345649719
+        ]
+      },
+      "lods": [
+        {
+          "name": "SM_Prop_DesertReliquary_LOD0",
+          "triangles": 2500,
+          "vertices": 1833,
+          "min": [
+            -0.7641736268997192,
+            0.0009429696947336197,
+            -0.23870965838432312
+          ],
+          "max": [
+            0.7583606243133545,
+            2.46354341506958,
+            0.3439088761806488
+          ],
+          "size": [
+            1.5225342512130737,
+            2.4626004453748465,
+            0.5826185345649719
+          ]
+        },
+        {
+          "name": "SM_Prop_DesertReliquary_LOD1",
+          "triangles": 900,
+          "vertices": 878,
+          "min": [
+            -0.7594633102416992,
+            0.0035078853834420443,
+            -0.2363922894001007
+          ],
+          "max": [
+            0.7531086206436157,
+            2.467754602432251,
+            0.3413512408733368
+          ],
+          "size": [
+            1.512571930885315,
+            2.464246717048809,
+            0.5777435302734375
+          ]
+        }
+      ],
+      "lodDistance": [
+        0,
+        20
+      ],
+      "materials": 1,
+      "textureImages": [
+        {
+          "name": "T_Prop_DesertReliquary_N",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Prop_DesertReliquary_ORM",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Prop_DesertReliquary_BC",
+          "mimeType": "image/webp"
+        }
+      ],
+      "generator": {
+        "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+        "mode": "single",
+        "seed": 20261003
+      },
+      "build": 1,
+      "qa": {
+        "version": 1,
+        "created": "2026-10-04 11:36:25",
+        "files": {
+          "SM_Prop_DesertReliquary_v001_validation.json": {
+            "path": "05_review/SM_Prop_DesertReliquary_v001_validation.json",
+            "sha256": "d972c124ff8d0525ab6efcea133a78397b71a143c34e6a6d4322e5ceb7f4f6e0"
+          }
+        },
+        "from_build": 1,
+        "errors": 0,
+        "warnings": 1,
+        "waived": [],
+        "passed": true
+      },
+      "review": {
+        "verdict": "approved",
+        "by": "Codex (AI visual review)",
+        "note": "Inspected all views, LOD wireframes and PBR textures. Carved face and back intact, no floating fragments; one nonblocking UV utilization warning. AI review, not human sign-off.",
+        "time": "2026-10-04 11:38:18"
+      }
+    },
+    {
+      "id": "SM_Prop_DesertUrns",
+      "display": "沙寺陶罐组",
+      "binding": "desert.pots",
+      "url": "assets/props/SM_Prop_DesertUrns.glb",
+      "bytes": 121804,
+      "sha256": "e39e9ae8270c72686c8a94f8cd84e785a92f3034f9be1f58d14b916d6eb93c3c",
+      "matchesManifest": true,
+      "allLodBounds": {
+        "min": [
+          -0.4614807069301605,
+          0.00019629346206784248,
+          -0.3916282057762146
+        ],
+        "max": [
+          0.36123165488243103,
+          0.8420780301094055,
+          0.4029391407966614
+        ],
+        "size": [
+          0.8227123618125916,
+          0.8418817366473377,
+          0.794567346572876
+        ]
+      },
+      "lods": [
+        {
+          "name": "SM_Prop_DesertUrns_LOD0",
+          "triangles": 2498,
+          "vertices": 1902,
+          "min": [
+            -0.4614807069301605,
+            0.00019629346206784248,
+            -0.38839882612228394
+          ],
+          "max": [
+            0.3580988347530365,
+            0.8420780301094055,
+            0.4000399112701416
+          ],
+          "size": [
+            0.819579541683197,
+            0.8418817366473377,
+            0.7884387373924255
+          ]
+        },
+        {
+          "name": "SM_Prop_DesertUrns_LOD1",
+          "triangles": 900,
+          "vertices": 929,
+          "min": [
+            -0.4610240161418915,
+            0.0016598221845924854,
+            -0.3916282057762146
+          ],
+          "max": [
+            0.36123165488243103,
+            0.8401394486427307,
+            0.4029391407966614
+          ],
+          "size": [
+            0.8222556710243225,
+            0.8384796264581382,
+            0.794567346572876
+          ]
+        }
+      ],
+      "lodDistance": [
+        0,
+        20
+      ],
+      "materials": 1,
+      "textureImages": [
+        {
+          "name": "T_Prop_DesertUrns_N",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Prop_DesertUrns_ORM",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Prop_DesertUrns_BC",
+          "mimeType": "image/webp"
+        }
+      ],
+      "generator": {
+        "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+        "mode": "single",
+        "seed": 20261003
+      },
+      "build": 1,
+      "qa": {
+        "version": 1,
+        "created": "2026-10-04 11:38:16",
+        "files": {
+          "SM_Prop_DesertUrns_v001_validation.json": {
+            "path": "05_review/SM_Prop_DesertUrns_v001_validation.json",
+            "sha256": "76e4e5c3f5564301d906cc9ec6210dd8ca1a790af5c6bf615accb5d2bef65557"
+          }
+        },
+        "from_build": 1,
+        "errors": 0,
+        "warnings": 0,
+        "waived": [],
+        "passed": true
+      },
+      "review": {
+        "verdict": "approved",
+        "by": "Codex (AI visual review)",
+        "note": "Inspected five views, both LOD wireframes and textures. Three vessels remain cohesive, markings consistent, QA zero errors or warnings. AI review, not human sign-off.",
+        "time": "2026-10-04 11:39:33"
+      }
+    },
+    {
+      "id": "SM_Prop_FrostShrine",
+      "display": "霜山石灯龛",
+      "binding": "frost.stoneLantern",
+      "url": "assets/props/SM_Prop_FrostShrine.glb",
+      "bytes": 120264,
+      "sha256": "208e932356fa1db6474339eb3cb465f6a1a7fbeaf24a88c18e3f2625124b83be",
+      "matchesManifest": true,
+      "allLodBounds": {
+        "min": [
+          -0.4722001850605011,
+          0.00011251537216594443,
+          -0.4726821780204773
+        ],
+        "max": [
+          0.47710689902305603,
+          1.9147330522537231,
+          0.4684543013572693
+        ],
+        "size": [
+          0.9493070840835571,
+          1.9146205368815572,
+          0.9411364793777466
+        ]
+      },
+      "lods": [
+        {
+          "name": "SM_Prop_FrostShrine_LOD0",
+          "triangles": 2500,
+          "vertices": 1826,
+          "min": [
+            -0.47186708450317383,
+            0.00011251537216594443,
+            -0.47055238485336304
+          ],
+          "max": [
+            0.4728606939315796,
+            1.9055014848709106,
+            0.4635918140411377
+          ],
+          "size": [
+            0.9447277784347534,
+            1.9053889694987447,
+            0.9341441988945007
+          ]
+        },
+        {
+          "name": "SM_Prop_FrostShrine_LOD1",
+          "triangles": 900,
+          "vertices": 854,
+          "min": [
+            -0.4722001850605011,
+            0.0024622732307761908,
+            -0.4726821780204773
+          ],
+          "max": [
+            0.47710689902305603,
+            1.9147330522537231,
+            0.4684543013572693
+          ],
+          "size": [
+            0.9493070840835571,
+            1.912270779022947,
+            0.9411364793777466
+          ]
+        }
+      ],
+      "lodDistance": [
+        0,
+        20
+      ],
+      "materials": 1,
+      "textureImages": [
+        {
+          "name": "T_Prop_FrostShrine_N",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Prop_FrostShrine_ORM",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Prop_FrostShrine_BC",
+          "mimeType": "image/webp"
+        }
+      ],
+      "generator": {
+        "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+        "mode": "single",
+        "seed": 20261003
+      },
+      "build": 1,
+      "qa": {
+        "version": 1,
+        "created": "2026-10-04 11:39:09",
+        "files": {
+          "SM_Prop_FrostShrine_v001_validation.json": {
+            "path": "05_review/SM_Prop_FrostShrine_v001_validation.json",
+            "sha256": "1c1f49835b5b0ba5aa96a1768053b55a98e7e2f423d012e9ba6afbe95947306f"
+          }
+        },
+        "from_build": 1,
+        "errors": 0,
+        "warnings": 0,
+        "waived": [],
+        "passed": true
+      },
+      "review": {
+        "verdict": "approved",
+        "by": "Codex (AI visual review)",
+        "note": "All views, snow silhouette, lantern recess and LODs inspected; QA zero errors/warnings. AI review, not human sign-off.",
+        "time": "2026-10-04 11:40:25"
+      }
+    },
+    {
+      "id": "SM_Prop_FrostPrayerCairn",
+      "display": "霜山祈愿石",
+      "binding": "frost.crystal",
+      "url": "assets/props/SM_Prop_FrostPrayerCairn.glb",
+      "bytes": 124632,
+      "sha256": "44f95b232f3d98ee3b288e410ec75ee88c2188d67a64449730f8a20f36a25077",
+      "matchesManifest": true,
+      "allLodBounds": {
+        "min": [
+          -0.5275677442550659,
+          0.0000897369027370587,
+          -0.32057884335517883
+        ],
+        "max": [
+          0.5261340141296387,
+          1.9749119281768799,
+          0.40468111634254456
+        ],
+        "size": [
+          1.0537017583847046,
+          1.9748221912741428,
+          0.7252599596977234
+        ]
+      },
+      "lods": [
+        {
+          "name": "SM_Prop_FrostPrayerCairn_LOD0",
+          "triangles": 2497,
+          "vertices": 1743,
+          "min": [
+            -0.5247979760169983,
+            0.0000897369027370587,
+            -0.32057884335517883
+          ],
+          "max": [
+            0.5243902802467346,
+            1.9749119281768799,
+            0.40001484751701355
+          ],
+          "size": [
+            1.049188256263733,
+            1.9748221912741428,
+            0.7205936908721924
+          ]
+        },
+        {
+          "name": "SM_Prop_FrostPrayerCairn_LOD1",
+          "triangles": 898,
+          "vertices": 864,
+          "min": [
+            -0.5275677442550659,
+            0.0003638062044046819,
+            -0.31747159361839294
+          ],
+          "max": [
+            0.5261340141296387,
+            1.9748344421386719,
+            0.40468111634254456
+          ],
+          "size": [
+            1.0537017583847046,
+            1.9744706359342672,
+            0.7221527099609375
+          ]
+        }
+      ],
+      "lodDistance": [
+        0,
+        20
+      ],
+      "materials": 1,
+      "textureImages": [
+        {
+          "name": "T_Prop_FrostPrayerCairn_N",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Prop_FrostPrayerCairn_ORM",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Prop_FrostPrayerCairn_BC",
+          "mimeType": "image/webp"
+        }
+      ],
+      "generator": {
+        "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+        "mode": "single",
+        "seed": 20261003
+      },
+      "build": 1,
+      "qa": {
+        "version": 1,
+        "created": "2026-10-04 11:39:46",
+        "files": {
+          "SM_Prop_FrostPrayerCairn_v001_validation.json": {
+            "path": "05_review/SM_Prop_FrostPrayerCairn_v001_validation.json",
+            "sha256": "7f0234e327ffb2ce75c3ad10c7d2ac97fa9f3b3528d6d1217afca2b4b5d98b68"
+          }
+        },
+        "from_build": 1,
+        "errors": 0,
+        "warnings": 0,
+        "waived": [],
+        "passed": true
+      },
+      "review": {
+        "verdict": "approved",
+        "by": "Codex (AI visual review)",
+        "note": "Five rendered views, cloth/crystal appearance and both LODs inspected. Cohesive geometry, no floating fragments, QA zero errors/warnings. AI review, not human sign-off.",
+        "time": "2026-10-04 11:41:24"
+      }
+    },
+    {
+      "id": "SM_Prop_InfernoCrucible",
+      "display": "熔火祭炉",
+      "binding": "inferno.brazier",
+      "url": "assets/props/SM_Prop_InfernoCrucible.glb",
+      "bytes": 136576,
+      "sha256": "615f698d2d4076d56da076d7e1140b8e8caf7dae87ba99e36b746fd706efbf98",
+      "matchesManifest": true,
+      "allLodBounds": {
+        "min": [
+          -0.6140713095664978,
+          0.0005676558939740062,
+          -0.5829002857208252
+        ],
+        "max": [
+          0.658252477645874,
+          0.9884424209594727,
+          0.6985815763473511
+        ],
+        "size": [
+          1.2723237872123718,
+          0.9878747650654987,
+          1.2814818620681763
+        ]
+      },
+      "lods": [
+        {
+          "name": "SM_Prop_InfernoCrucible_LOD0",
+          "triangles": 2498,
+          "vertices": 1912,
+          "min": [
+            -0.6140713095664978,
+            0.0005676558939740062,
+            -0.5829002857208252
+          ],
+          "max": [
+            0.6574026942253113,
+            0.9884424209594727,
+            0.6959896087646484
+          ],
+          "size": [
+            1.271474003791809,
+            0.9878747650654987,
+            1.2788898944854736
+          ]
+        },
+        {
+          "name": "SM_Prop_InfernoCrucible_LOD1",
+          "triangles": 900,
+          "vertices": 965,
+          "min": [
+            -0.6086534261703491,
+            0.0007643389399163425,
+            -0.5786935091018677
+          ],
+          "max": [
+            0.658252477645874,
+            0.9868459105491638,
+            0.6985815763473511
+          ],
+          "size": [
+            1.2669059038162231,
+            0.9860815716092475,
+            1.2772750854492188
+          ]
+        }
+      ],
+      "lodDistance": [
+        0,
+        20
+      ],
+      "materials": 1,
+      "textureImages": [
+        {
+          "name": "T_Prop_InfernoCrucible_N",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Prop_InfernoCrucible_ORM",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Prop_InfernoCrucible_BC",
+          "mimeType": "image/webp"
+        }
+      ],
+      "generator": {
+        "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+        "mode": "single",
+        "seed": 20261003
+      },
+      "build": 1,
+      "qa": {
+        "version": 2,
+        "created": "2026-10-04 11:44:11",
+        "files": {
+          "SM_Prop_InfernoCrucible_v001_validation.json": {
+            "path": "05_review/SM_Prop_InfernoCrucible_v001_validation.json",
+            "sha256": "5816eeb2b2df66e2ccc7eccee9df2edba1c8813dab4e2a9cec438df3768dd5c2"
+          }
+        },
+        "from_build": 1,
+        "errors": 0,
+        "warnings": 2,
+        "waived": [],
+        "passed": true
+      },
+      "review": {
+        "verdict": "approved",
+        "by": "Codex (AI visual review)",
+        "note": "Inspected all views, coals, rim and LODs. Two source footprint warnings retained; runtime fitScenePropScale constrains rotated model to the actual existing collision box and places flame at the fitted rim. AI review, not human sign-off.",
+        "time": "2026-10-04 11:44:44"
+      }
+    },
+    {
+      "id": "SM_Prop_InfernoChainObelisk",
+      "display": "熔火锁魂碑",
+      "binding": "inferno.crystal",
+      "url": "assets/props/SM_Prop_InfernoChainObelisk.glb",
+      "bytes": 151364,
+      "sha256": "f890c834794c39f02e0571fee05a51e8d69c057eef2f7af4bc0a3134684a6a6d",
+      "matchesManifest": true,
+      "allLodBounds": {
+        "min": [
+          -0.5410852432250977,
+          -0.00048637340660206974,
+          -0.5260364413261414
+        ],
+        "max": [
+          0.5415340662002563,
+          2.129774570465088,
+          0.5537222027778625
+        ],
+        "size": [
+          1.082619309425354,
+          2.13026094387169,
+          1.079758644104004
+        ]
+      },
+      "lods": [
+        {
+          "name": "SM_Prop_InfernoChainObelisk_LOD0",
+          "triangles": 2500,
+          "vertices": 2172,
+          "min": [
+            -0.5410852432250977,
+            -0.00048637340660206974,
+            -0.5260364413261414
+          ],
+          "max": [
+            0.5415340662002563,
+            2.129774570465088,
+            0.5537222027778625
+          ],
+          "size": [
+            1.082619309425354,
+            2.13026094387169,
+            1.079758644104004
+          ]
+        },
+        {
+          "name": "SM_Prop_InfernoChainObelisk_LOD1",
+          "triangles": 900,
+          "vertices": 1146,
+          "min": [
+            -0.5362539291381836,
+            -0.0002184740296797827,
+            -0.48954036831855774
+          ],
+          "max": [
+            0.5352387428283691,
+            2.1078953742980957,
+            0.5522279739379883
+          ],
+          "size": [
+            1.0714926719665527,
+            2.1081138483277755,
+            1.041768342256546
+          ]
+        }
+      ],
+      "lodDistance": [
+        0,
+        20
+      ],
+      "materials": 1,
+      "textureImages": [
+        {
+          "name": "T_Prop_InfernoChainObelisk_N",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Prop_InfernoChainObelisk_ORM",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Prop_InfernoChainObelisk_BC",
+          "mimeType": "image/webp"
+        }
+      ],
+      "generator": {
+        "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+        "mode": "single",
+        "seed": 20261003
+      },
+      "build": 1,
+      "qa": {
+        "version": 2,
+        "created": "2026-10-04 11:45:02",
+        "files": {
+          "SM_Prop_InfernoChainObelisk_v001_validation.json": {
+            "path": "05_review/SM_Prop_InfernoChainObelisk_v001_validation.json",
+            "sha256": "731fac2712c8f02afd6c8a4e03e7ac5a2b90e7af9a4e7a605de156af44ca1c18"
+          }
+        },
+        "from_build": 1,
+        "errors": 0,
+        "warnings": 2,
+        "waived": [],
+        "passed": true
+      },
+      "review": {
+        "verdict": "approved",
+        "by": "Codex (AI visual review)",
+        "note": "Inspected all views and LOD wireframes. Chains, carved face and silhouette remain legible. Depth warning handled by runtime collision fit; unseen recessed chain surfaces use diffusion color, recorded as projection warning. AI review, not human sign-off.",
+        "time": "2026-10-04 11:46:02"
+      }
+    },
+    {
+      "id": "SM_Env_DesertSandstone",
+      "display": "沙寺侵蚀砂岩簇",
+      "binding": "desert.rock",
+      "url": "assets/props/SM_Env_DesertSandstone.glb",
+      "bytes": 214184,
+      "sha256": "a3c6ee73e246d78e406a0cbe68cb13380f8180399f5756772ae6bda7dea5c902",
+      "matchesManifest": true,
+      "allLodBounds": {
+        "min": [
+          -1.7289751768112183,
+          -0.0015911856899037957,
+          -1.1576809883117676
+        ],
+        "max": [
+          1.6671547889709473,
+          2.897366523742676,
+          1.407783031463623
+        ],
+        "size": [
+          3.3961299657821655,
+          2.8989577094325796,
+          2.5654640197753906
+        ]
+      },
+      "lods": [
+        {
+          "name": "SM_Env_DesertSandstone_LOD0",
+          "triangles": 5000,
+          "vertices": 3154,
+          "min": [
+            -1.7097365856170654,
+            0.0005523354047909379,
+            -1.1365830898284912
+          ],
+          "max": [
+            1.6671547889709473,
+            2.882957935333252,
+            1.407783031463623
+          ],
+          "size": [
+            3.3768913745880127,
+            2.882405599928461,
+            2.5443661212921143
+          ]
+        },
+        {
+          "name": "SM_Env_DesertSandstone_LOD1",
+          "triangles": 1600,
+          "vertices": 1237,
+          "min": [
+            -1.714163064956665,
+            -0.0015911856899037957,
+            -1.1281203031539917
+          ],
+          "max": [
+            1.6577823162078857,
+            2.8796796798706055,
+            1.4057267904281616
+          ],
+          "size": [
+            3.371945381164551,
+            2.8812708655605093,
+            2.5338470935821533
+          ]
+        },
+        {
+          "name": "SM_Env_DesertSandstone_LOD2",
+          "triangles": 500,
+          "vertices": 512,
+          "min": [
+            -1.7289751768112183,
+            0.0020862314850091934,
+            -1.1576809883117676
+          ],
+          "max": [
+            1.6362873315811157,
+            2.897366523742676,
+            1.3842909336090088
+          ],
+          "size": [
+            3.365262508392334,
+            2.8952802922576666,
+            2.5419719219207764
+          ]
+        }
+      ],
+      "lodDistance": [
+        0,
+        18,
+        42
+      ],
+      "materials": 1,
+      "textureImages": [
+        {
+          "name": "T_Env_DesertSandstone_N",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_DesertSandstone_ORM",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_DesertSandstone_BC",
+          "mimeType": "image/webp"
+        }
+      ],
+      "generator": {
+        "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+        "mode": "single",
+        "seed": 202610053
+      },
+      "build": 2,
+      "qa": {
+        "version": 3,
+        "created": "2026-10-04 17:59:40",
+        "files": {
+          "SM_Env_DesertSandstone_v002_validation_v003.json": {
+            "path": "05_review/SM_Env_DesertSandstone_v002_validation_v003.json",
+            "sha256": "5cfe37534a49ec33ef1d0ee3b5252e55e8f12784985150e9c73c888bdfe96624"
+          }
+        },
+        "from_build": 2,
+        "errors": 0,
+        "warnings": 1,
+        "waived": [],
+        "passed": true
+      },
+      "review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Root inspected the actual five views, all LODs and texture sheets. Warm ochre painted planes and broad erosion bands retain a thick coherent rock cluster and stable far silhouette; no visible texture holes or disconnected parts. Retain the natural center-offset warning, with zero errors and no waiver.",
+        "time": "2026-10-04 18:02:04"
+      }
+    },
+    {
+      "id": "SM_Env_InfernoBasalt",
+      "display": "熔火断裂玄武岩簇",
+      "binding": "inferno.rock",
+      "url": "assets/props/SM_Env_InfernoBasalt.glb",
+      "bytes": 208396,
+      "sha256": "1a622c0e52280756062c910a7cf383ebba0b9b078fae76700780e0295b4deece",
+      "matchesManifest": true,
+      "allLodBounds": {
+        "min": [
+          -1.2725809812545776,
+          -0.00028572729206644,
+          -1.1489542722702026
+        ],
+        "max": [
+          1.3100602626800537,
+          2.857624053955078,
+          1.2521750926971436
+        ],
+        "size": [
+          2.5826412439346313,
+          2.8579097812471446,
+          2.401129364967346
+        ]
+      },
+      "lods": [
+        {
+          "name": "SM_Env_InfernoBasalt_LOD0",
+          "triangles": 5000,
+          "vertices": 3239,
+          "min": [
+            -1.2714039087295532,
+            0.00018573629495222121,
+            -1.1489542722702026
+          ],
+          "max": [
+            1.303226351737976,
+            2.8542466163635254,
+            1.2378789186477661
+          ],
+          "size": [
+            2.5746302604675293,
+            2.854060880068573,
+            2.3868331909179688
+          ]
+        },
+        {
+          "name": "SM_Env_InfernoBasalt_LOD1",
+          "triangles": 1600,
+          "vertices": 1305,
+          "min": [
+            -1.2725809812545776,
+            0.0008690810645930469,
+            -1.1446592807769775
+          ],
+          "max": [
+            1.3034332990646362,
+            2.857624053955078,
+            1.2381494045257568
+          ],
+          "size": [
+            2.576014280319214,
+            2.856754972890485,
+            2.3828086853027344
+          ]
+        },
+        {
+          "name": "SM_Env_InfernoBasalt_LOD2",
+          "triangles": 500,
+          "vertices": 537,
+          "min": [
+            -1.2696778774261475,
+            -0.00028572729206644,
+            -1.1260128021240234
+          ],
+          "max": [
+            1.3100602626800537,
+            2.853644371032715,
+            1.2521750926971436
+          ],
+          "size": [
+            2.579738140106201,
+            2.8539300983247813,
+            2.378187894821167
+          ]
+        }
+      ],
+      "lodDistance": [
+        0,
+        18,
+        42
+      ],
+      "materials": 1,
+      "textureImages": [
+        {
+          "name": "T_Env_InfernoBasalt_N",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_InfernoBasalt_ORM",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_InfernoBasalt_BC",
+          "mimeType": "image/webp"
+        }
+      ],
+      "generator": {
+        "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+        "mode": "single",
+        "seed": 202610055
+      },
+      "build": 2,
+      "qa": {
+        "version": 2,
+        "created": "2026-10-04 18:10:06",
+        "files": {
+          "SM_Env_InfernoBasalt_v002_validation_v002.json": {
+            "path": "05_review/SM_Env_InfernoBasalt_v002_validation_v002.json",
+            "sha256": "820798da3d100ce8d1d0c6e3bd936eb28d50ffbd5a2284e293c077d14d75260d"
+          }
+        },
+        "from_build": 2,
+        "errors": 0,
+        "warnings": 0,
+        "waived": [],
+        "passed": true
+      },
+      "review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Root inspected five actual textured views, all LOD meshes and texture sheets. Broad cool charcoal planes, restrained warm fracture accents and a connected rocky base retain real side/rear volume and a readable distant silhouette. All budgets passed with zero validation warnings/errors and no waiver.",
+        "time": "2026-10-04 18:11:09"
+      }
+    },
+    {
+      "id": "SM_Env_FrostPine",
+      "display": "霜山积雪松树",
+      "binding": "frost.pine",
+      "url": "assets/props/SM_Env_FrostPine.glb",
+      "bytes": 299844,
+      "sha256": "10c367e9df614f38a75714be0acc2695e5a2db65882e0e664d17ea210077a987",
+      "matchesManifest": true,
+      "allLodBounds": {
+        "min": [
+          -1.3391227722167969,
+          -0.000759706599637866,
+          -1.1773571968078613
+        ],
+        "max": [
+          1.353485345840454,
+          4.546603202819824,
+          1.0152769088745117
+        ],
+        "size": [
+          2.692608118057251,
+          4.547362909419462,
+          2.192634105682373
+        ]
+      },
+      "lods": [
+        {
+          "name": "SM_Env_FrostPine_LOD0",
+          "triangles": 5000,
+          "vertices": 3491,
+          "min": [
+            -1.2779006958007812,
+            -0.000759706599637866,
+            -1.1773571968078613
+          ],
+          "max": [
+            1.3442699909210205,
+            4.528393745422363,
+            1.0063567161560059
+          ],
+          "size": [
+            2.6221706867218018,
+            4.529153452022001,
+            2.183713912963867
+          ]
+        },
+        {
+          "name": "SM_Env_FrostPine_LOD1",
+          "triangles": 1600,
+          "vertices": 1495,
+          "min": [
+            -1.2765660285949707,
+            0.000002664531393747893,
+            -1.1621403694152832
+          ],
+          "max": [
+            1.353485345840454,
+            4.546603202819824,
+            1.0152769088745117
+          ],
+          "size": [
+            2.630051374435425,
+            4.5466005382884305,
+            2.177417278289795
+          ]
+        },
+        {
+          "name": "SM_Env_FrostPine_LOD2",
+          "triangles": 500,
+          "vertices": 696,
+          "min": [
+            -1.3391227722167969,
+            0.000002664531393747893,
+            -1.1468759775161743
+          ],
+          "max": [
+            1.3456153869628906,
+            4.5358452796936035,
+            0.9891201257705688
+          ],
+          "size": [
+            2.6847381591796875,
+            4.53584261516221,
+            2.135996103286743
+          ]
+        }
+      ],
+      "lodDistance": [
+        0,
+        18,
+        42
+      ],
+      "materials": 1,
+      "textureImages": [
+        {
+          "name": "T_Env_FrostPine_N",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_FrostPine_ORM",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_FrostPine_BC",
+          "mimeType": "image/webp"
+        }
+      ],
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "seed": 202610054
+      },
+      "build": 4,
+      "qa": {
+        "version": 5,
+        "created": "2026-10-04 18:05:59",
+        "files": {
+          "SM_Env_FrostPine_v004_validation_v005.json": {
+            "path": "05_review/SM_Env_FrostPine_v004_validation_v005.json",
+            "sha256": "eb73693a65a931dd29167ae994a44641f52e8ba9ac023e7d73a285c85aec612a"
+          }
+        },
+        "from_build": 4,
+        "errors": 0,
+        "warnings": 0,
+        "waived": [],
+        "passed": true
+      },
+      "review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Root inspected five actual textured views, all LODs and texture sheets. Broad blue-green foliage masses, painted snow caps and a readable brown trunk form a fully three-dimensional tree, with coherent left/back/right views and grounded base. All three LOD budgets passed with zero validation warnings/errors and no waiver; earlier thin-mesh and failed-budget evidence remains preserved.",
+        "time": "2026-10-04 18:08:10"
+      }
+    },
+    {
+      "id": "SM_Env_DesertRuin",
+      "display": "沙寺风蚀残垣壁龛",
+      "binding": "desert.landmark",
+      "url": "assets/props/SM_Env_DesertRuin.glb",
+      "bytes": 298396,
+      "sha256": "4b6b534ce41c3ec4fc56e46eb72e1bba2f7ecb2a106b94f6c5e6314f3cbf82f1",
+      "matchesManifest": true,
+      "allLodBounds": {
+        "min": [
+          -2.3455631732940674,
+          0.002090859692543745,
+          -0.5904370546340942
+        ],
+        "max": [
+          2.470196485519409,
+          4.347255706787109,
+          1.0421533584594727
+        ],
+        "size": [
+          4.815759658813477,
+          4.345164847094566,
+          1.632590413093567
+        ]
+      },
+      "lods": [
+        {
+          "name": "SM_Env_DesertRuin_LOD0",
+          "triangles": 5000,
+          "vertices": 3573,
+          "min": [
+            -2.3455631732940674,
+            0.002090859692543745,
+            -0.5904370546340942
+          ],
+          "max": [
+            2.470196485519409,
+            4.314316272735596,
+            1.0421533584594727
+          ],
+          "size": [
+            4.815759658813477,
+            4.312225413043052,
+            1.632590413093567
+          ]
+        },
+        {
+          "name": "SM_Env_DesertRuin_LOD1",
+          "triangles": 1600,
+          "vertices": 1515,
+          "min": [
+            -2.3344130516052246,
+            0.005920412018895149,
+            -0.5788219571113586
+          ],
+          "max": [
+            2.455796718597412,
+            4.308132648468018,
+            1.0313644409179688
+          ],
+          "size": [
+            4.790209770202637,
+            4.302212236449122,
+            1.6101863980293274
+          ]
+        },
+        {
+          "name": "SM_Env_DesertRuin_LOD2",
+          "triangles": 500,
+          "vertices": 709,
+          "min": [
+            -2.34157657623291,
+            0.0028843064792454243,
+            -0.5751281380653381
+          ],
+          "max": [
+            2.4557971954345703,
+            4.347255706787109,
+            1.000570297241211
+          ],
+          "size": [
+            4.7973737716674805,
+            4.344371400307864,
+            1.575698435306549
+          ]
+        }
+      ],
+      "lodDistance": [
+        0,
+        18,
+        42
+      ],
+      "materials": 1,
+      "textureImages": [
+        {
+          "name": "T_Env_DesertRuin_N",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_DesertRuin_ORM",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_DesertRuin_BC",
+          "mimeType": "image/webp"
+        }
+      ],
+      "generator": {
+        "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+        "mode": "single",
+        "seed": 202610050
+      },
+      "build": 2,
+      "qa": {
+        "version": 2,
+        "created": "2026-10-04 17:44:31",
+        "files": {
+          "SM_Env_DesertRuin_v002_validation_v002.json": {
+            "path": "05_review/SM_Env_DesertRuin_v002_validation_v002.json",
+            "sha256": "95d0840ba5d5a744a4610621ed75eadbb80580928c22aae4052b8939c53f2834"
+          }
+        },
+        "from_build": 2,
+        "errors": 0,
+        "warnings": 3,
+        "waived": [],
+        "passed": true
+      },
+      "review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Inspected the actual five-view review, texture sheets and all LODs. Warm painted stone, broad teal relief, closed rear and adequate side thickness meet the requested moderate-detail direction. Retain the three validation warnings for center offset, UV utilization and projected coverage; no threshold waiver.",
+        "time": "2026-10-04 17:48:16"
+      }
+    },
+    {
+      "id": "SM_Env_FrostWayshrine",
+      "display": "霜山覆雪山道祭亭",
+      "binding": "frost.landmark",
+      "url": "assets/props/SM_Env_FrostWayshrine.glb",
+      "bytes": 240892,
+      "sha256": "09dff3832ad658ee1d685baefe67b5b0c08c6e785603af14258ead091736f9fd",
+      "matchesManifest": true,
+      "allLodBounds": {
+        "min": [
+          -2.1009340286254883,
+          0.00017306247900705785,
+          -1.6145856380462646
+        ],
+        "max": [
+          2.103107452392578,
+          4.881336212158203,
+          1.6949154138565063
+        ],
+        "size": [
+          4.204041481018066,
+          4.881163149679196,
+          3.309501051902771
+        ]
+      },
+      "lods": [
+        {
+          "name": "SM_Env_FrostWayshrine_LOD0",
+          "triangles": 5000,
+          "vertices": 3258,
+          "min": [
+            -2.0932230949401855,
+            0.00017306247900705785,
+            -1.6061992645263672
+          ],
+          "max": [
+            2.0968713760375977,
+            4.841922283172607,
+            1.6946306228637695
+          ],
+          "size": [
+            4.190094470977783,
+            4.8417492206936,
+            3.3008298873901367
+          ]
+        },
+        {
+          "name": "SM_Env_FrostWayshrine_LOD1",
+          "triangles": 1600,
+          "vertices": 1279,
+          "min": [
+            -2.1009340286254883,
+            0.0022749039344489574,
+            -1.61105477809906
+          ],
+          "max": [
+            2.103107452392578,
+            4.8580851554870605,
+            1.6949154138565063
+          ],
+          "size": [
+            4.204041481018066,
+            4.855810251552612,
+            3.3059701919555664
+          ]
+        },
+        {
+          "name": "SM_Env_FrostWayshrine_LOD2",
+          "triangles": 500,
+          "vertices": 555,
+          "min": [
+            -2.080977201461792,
+            0.0013925492530688643,
+            -1.6145856380462646
+          ],
+          "max": [
+            2.099576711654663,
+            4.881336212158203,
+            1.6720714569091797
+          ],
+          "size": [
+            4.180553913116455,
+            4.879943662905134,
+            3.2866570949554443
+          ]
+        }
+      ],
+      "lodDistance": [
+        0,
+        18,
+        42
+      ],
+      "materials": 1,
+      "textureImages": [
+        {
+          "name": "T_Env_FrostWayshrine_N",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_FrostWayshrine_ORM",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_FrostWayshrine_BC",
+          "mimeType": "image/webp"
+        }
+      ],
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "seed": 202610056
+      },
+      "build": 3,
+      "qa": {
+        "version": 2,
+        "created": "2026-10-04 18:04:13",
+        "files": {
+          "SM_Env_FrostWayshrine_v003_validation_v002.json": {
+            "path": "05_review/SM_Env_FrostWayshrine_v003_validation_v002.json",
+            "sha256": "1d59dcf8d61b87ee25a749595480cbe4baf7dee85e1ae7bd161ed81e6537353b"
+          }
+        },
+        "from_build": 3,
+        "errors": 0,
+        "warnings": 0,
+        "waived": [],
+        "passed": true
+      },
+      "review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Root inspected five actual textured views, three LOD meshes and texture sheets. The simpler snow-covered curved roof, integrated broad posts, closed side/rear walls and connected stone plinth retain clear shrine volume and readable painted colors. Far LOD meets the unchanged 500-triangle budget; zero validation warnings/errors and no waiver. Failed build v002 remains preserved.",
+        "time": "2026-10-04 18:05:01"
+      }
+    },
+    {
+      "id": "SM_Env_InfernoFoundry",
+      "display": "熔火黑曜铸造祭炉",
+      "binding": "inferno.landmark",
+      "url": "assets/props/SM_Env_InfernoFoundry.glb",
+      "bytes": 314412,
+      "sha256": "75e492529dee5c9681bcf55b626af3fccc6b0f6e95d3ffce8792cca27e157d67",
+      "matchesManifest": true,
+      "allLodBounds": {
+        "min": [
+          -1.9390830993652344,
+          -0.007121679373085499,
+          -1.6543537378311157
+        ],
+        "max": [
+          1.8855602741241455,
+          4.530893325805664,
+          1.5970793962478638
+        ],
+        "size": [
+          3.82464337348938,
+          4.53801500517875,
+          3.2514331340789795
+        ]
+      },
+      "lods": [
+        {
+          "name": "SM_Env_InfernoFoundry_LOD0",
+          "triangles": 5000,
+          "vertices": 3798,
+          "min": [
+            -1.9390830993652344,
+            -0.0027246384415775537,
+            -1.6407444477081299
+          ],
+          "max": [
+            1.8855602741241455,
+            4.530893325805664,
+            1.5950238704681396
+          ],
+          "size": [
+            3.82464337348938,
+            4.533617964247242,
+            3.2357683181762695
+          ]
+        },
+        {
+          "name": "SM_Env_InfernoFoundry_LOD1",
+          "triangles": 1600,
+          "vertices": 1620,
+          "min": [
+            -1.9313186407089233,
+            -0.0016548323910683393,
+            -1.6543537378311157
+          ],
+          "max": [
+            1.8666797876358032,
+            4.528238296508789,
+            1.5900925397872925
+          ],
+          "size": [
+            3.7979984283447266,
+            4.529893128899857,
+            3.244446277618408
+          ]
+        },
+        {
+          "name": "SM_Env_InfernoFoundry_LOD2",
+          "triangles": 500,
+          "vertices": 747,
+          "min": [
+            -1.8995765447616577,
+            -0.007121679373085499,
+            -1.6490222215652466
+          ],
+          "max": [
+            1.8404492139816284,
+            4.495916843414307,
+            1.5970793962478638
+          ],
+          "size": [
+            3.740025758743286,
+            4.503038522787392,
+            3.2461016178131104
+          ]
+        }
+      ],
+      "lodDistance": [
+        0,
+        18,
+        42
+      ],
+      "materials": 1,
+      "textureImages": [
+        {
+          "name": "T_Env_InfernoFoundry_N",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_InfernoFoundry_ORM",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_InfernoFoundry_BC",
+          "mimeType": "image/webp"
+        }
+      ],
+      "generator": {
+        "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+        "mode": "single",
+        "seed": 202610052
+      },
+      "build": 2,
+      "qa": {
+        "version": 2,
+        "created": "2026-10-04 17:57:40",
+        "files": {
+          "SM_Env_InfernoFoundry_v002_validation_v002.json": {
+            "path": "05_review/SM_Env_InfernoFoundry_v002_validation_v002.json",
+            "sha256": "c16d7e31dd217d42413516c8d184f3379fbb00e854a553dc8398df426e59e210"
+          }
+        },
+        "from_build": 2,
+        "errors": 0,
+        "warnings": 0,
+        "waived": [],
+        "passed": true
+      },
+      "review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Root inspected five actual textured views, LOD meshes and texture sheets. Broad charcoal stone and restrained bronze bands read clearly; the furnace niche, coal bed, complete back and deep side buttresses retain solid connected volume. All LOD budgets passed, with zero validation warnings or errors and no waiver.",
+        "time": "2026-10-04 17:58:43"
+      }
+    },
+    {
+      "id": "SM_Env_DesertWall",
+      "display": "沙寺厚石墙段",
+      "binding": "desert.wall",
+      "url": "assets/props/SM_Env_DesertWall.glb",
+      "bytes": 196708,
+      "sha256": "55cb93d052b694b5416452187a4dfb2ee40537e1e069f5586bcda7d2ee6b3b47",
+      "matchesManifest": true,
+      "allLodBounds": {
+        "min": [
+          -3.547262668609619,
+          0.0011297255987301469,
+          -0.6719123721122742
+        ],
+        "max": [
+          3.5473580360412598,
+          4.260168075561523,
+          0.7257760167121887
+        ],
+        "size": [
+          7.094620704650879,
+          4.259038349962793,
+          1.397688388824463
+        ]
+      },
+      "lods": [
+        {
+          "name": "SM_Env_DesertWall_LOD0",
+          "triangles": 5000,
+          "vertices": 3996,
+          "min": [
+            -3.547262668609619,
+            0.0011297255987301469,
+            -0.6719123721122742
+          ],
+          "max": [
+            3.546395778656006,
+            4.257411479949951,
+            0.7257760167121887
+          ],
+          "size": [
+            7.093658447265625,
+            4.256281754351221,
+            1.397688388824463
+          ]
+        },
+        {
+          "name": "SM_Env_DesertWall_LOD1",
+          "triangles": 1600,
+          "vertices": 1698,
+          "min": [
+            -3.5431718826293945,
+            0.0018683919915929437,
+            -0.6668239235877991
+          ],
+          "max": [
+            3.5473580360412598,
+            4.260168075561523,
+            0.7250545620918274
+          ],
+          "size": [
+            7.090529918670654,
+            4.2582996835699305,
+            1.3918784856796265
+          ]
+        },
+        {
+          "name": "SM_Env_DesertWall_LOD2",
+          "triangles": 500,
+          "vertices": 610,
+          "min": [
+            -3.534090995788574,
+            0.012098567560315132,
+            -0.659641683101654
+          ],
+          "max": [
+            3.5397839546203613,
+            4.258237361907959,
+            0.7198999524116516
+          ],
+          "size": [
+            7.0738749504089355,
+            4.246138794347644,
+            1.3795416355133057
+          ]
+        }
+      ],
+      "lodDistance": [
+        0,
+        18,
+        42
+      ],
+      "materials": 1,
+      "textureImages": [
+        {
+          "name": "T_Env_DesertWall_N",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_DesertWall_ORM",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_DesertWall_BC",
+          "mimeType": "image/webp"
+        }
+      ],
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "seed": 202610071
+      },
+      "build": 1,
+      "qa": {
+        "version": 1,
+        "created": "2026-10-04 18:53:01",
+        "files": {
+          "SM_Env_DesertWall_v001_validation_v001.json": {
+            "path": "05_review/SM_Env_DesertWall_v001_validation_v001.json",
+            "sha256": "630cba25a859752437a7184ac4518f5623ad881287e6210b3bf89793c8383b2a"
+          }
+        },
+        "from_build": 1,
+        "errors": 0,
+        "warnings": 0,
+        "waived": [],
+        "passed": true
+      },
+      "review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Actually inspected five-view finished render and all three topology views: complete solid wall, coherent front/back and thick side volumes, broad ochre/terracotta/turquoise painted blocks without noisy surfaces; 5000/1600/500, 1024 maps, 0 warnings/errors/waivers.",
+        "time": "2026-10-04 18:56:46"
+      }
+    },
+    {
+      "id": "SM_Env_FrostWall",
+      "display": "霜山覆雪厚墙段",
+      "binding": "frost.wall",
+      "url": "assets/props/SM_Env_FrostWall.glb",
+      "bytes": 281208,
+      "sha256": "f194c302a244dd1e0038ba98bb8c1d86ad9696d809c8fd61e9ac39e9b00b146c",
+      "matchesManifest": true,
+      "allLodBounds": {
+        "min": [
+          -3.8120501041412354,
+          -0.0007577562355436385,
+          -0.7862890958786011
+        ],
+        "max": [
+          3.816293954849243,
+          4.288852691650391,
+          0.8340879678726196
+        ],
+        "size": [
+          7.6283440589904785,
+          4.289610447885934,
+          1.6203770637512207
+        ]
+      },
+      "lods": [
+        {
+          "name": "SM_Env_FrostWall_LOD0",
+          "triangles": 4998,
+          "vertices": 3381,
+          "min": [
+            -3.8120501041412354,
+            -0.0007577562355436385,
+            -0.7862890958786011
+          ],
+          "max": [
+            3.816293954849243,
+            4.288585186004639,
+            0.8340879678726196
+          ],
+          "size": [
+            7.6283440589904785,
+            4.289342942240182,
+            1.6203770637512207
+          ]
+        },
+        {
+          "name": "SM_Env_FrostWall_LOD1",
+          "triangles": 1600,
+          "vertices": 1433,
+          "min": [
+            -3.8064732551574707,
+            0.0009794821962714195,
+            -0.7830332517623901
+          ],
+          "max": [
+            3.814293384552002,
+            4.288852691650391,
+            0.8338736295700073
+          ],
+          "size": [
+            7.620766639709473,
+            4.287873209454119,
+            1.6169068813323975
+          ]
+        },
+        {
+          "name": "SM_Env_FrostWall_LOD2",
+          "triangles": 500,
+          "vertices": 652,
+          "min": [
+            -3.8062548637390137,
+            0.011887923814356327,
+            -0.7744114995002747
+          ],
+          "max": [
+            3.789557456970215,
+            4.171665191650391,
+            0.8279278874397278
+          ],
+          "size": [
+            7.5958123207092285,
+            4.159777267836034,
+            1.6023393869400024
+          ]
+        }
+      ],
+      "lodDistance": [
+        0,
+        18,
+        42
+      ],
+      "materials": 1,
+      "textureImages": [
+        {
+          "name": "T_Env_FrostWall_N",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_FrostWall_ORM",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_FrostWall_BC",
+          "mimeType": "image/webp"
+        }
+      ],
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "seed": 202610073
+      },
+      "build": 1,
+      "qa": {
+        "version": 1,
+        "created": "2026-10-04 19:01:10",
+        "files": {
+          "SM_Env_FrostWall_v001_validation_v001.json": {
+            "path": "05_review/SM_Env_FrostWall_v001_validation_v001.json",
+            "sha256": "63d0553c2d87236beb5ce7c7133fd7b18317c6004570f3260fe5354bf406c568"
+          }
+        },
+        "from_build": 1,
+        "errors": 0,
+        "warnings": 1,
+        "waived": [],
+        "passed": true
+      },
+      "review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Reviewed actual five-view final: coherent red posts, broad matte grey wall, snow caps and intact silhouette; uncovered atlas warning does not produce visible missing surfaces. 4998/1600/500 within budget.",
+        "time": "2026-10-04 19:10:03"
+      }
+    },
+    {
+      "id": "SM_Env_FrostGate",
+      "display": "霜山覆雪宽山门",
+      "binding": "frost.gate",
+      "url": "assets/props/SM_Env_FrostGate.glb",
+      "bytes": 261588,
+      "sha256": "9aa58972578757cc9173ea77ad8162ddc08534991a4fb42ab683d9fc6b3e6495",
+      "matchesManifest": true,
+      "allLodBounds": {
+        "min": [
+          -5.458076477050781,
+          0.004481985699385405,
+          -1.2045857906341553
+        ],
+        "max": [
+          5.471693515777588,
+          6.6390814781188965,
+          1.1123225688934326
+        ],
+        "size": [
+          10.92976999282837,
+          6.634599492419511,
+          2.316908359527588
+        ]
+      },
+      "lods": [
+        {
+          "name": "SM_Env_FrostGate_LOD0",
+          "triangles": 5000,
+          "vertices": 3374,
+          "min": [
+            -5.458076477050781,
+            0.004481985699385405,
+            -1.202728033065796
+          ],
+          "max": [
+            5.458583831787109,
+            6.5952582359313965,
+            1.0781564712524414
+          ],
+          "size": [
+            10.91666030883789,
+            6.590776250232011,
+            2.2808845043182373
+          ]
+        },
+        {
+          "name": "SM_Env_FrostGate_LOD1",
+          "triangles": 1600,
+          "vertices": 1373,
+          "min": [
+            -5.457957744598389,
+            0.008984805084764957,
+            -1.2002298831939697
+          ],
+          "max": [
+            5.471693515777588,
+            6.6096062660217285,
+            1.0713603496551514
+          ],
+          "size": [
+            10.929651260375977,
+            6.600621460936964,
+            2.271590232849121
+          ]
+        },
+        {
+          "name": "SM_Env_FrostGate_LOD2",
+          "triangles": 500,
+          "vertices": 590,
+          "min": [
+            -5.435486793518066,
+            0.008984805084764957,
+            -1.2045857906341553
+          ],
+          "max": [
+            5.462563514709473,
+            6.6390814781188965,
+            1.1123225688934326
+          ],
+          "size": [
+            10.898050308227539,
+            6.6300966730341315,
+            2.316908359527588
+          ]
+        }
+      ],
+      "lodDistance": [
+        0,
+        18,
+        42
+      ],
+      "materials": 1,
+      "textureImages": [
+        {
+          "name": "T_Env_FrostGate_N",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_FrostGate_ORM",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_FrostGate_BC",
+          "mimeType": "image/webp"
+        }
+      ],
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "seed": 202610074
+      },
+      "build": 1,
+      "qa": {
+        "version": 1,
+        "created": "2026-10-04 19:02:13",
+        "files": {
+          "SM_Env_FrostGate_v001_validation_v001.json": {
+            "path": "05_review/SM_Env_FrostGate_v001_validation_v001.json",
+            "sha256": "136daed31cd3ab3fde254b256e1f0c2320d2b418dc1142af0237d589c7115f8e"
+          }
+        },
+        "from_build": 1,
+        "errors": 0,
+        "warnings": 2,
+        "waived": [],
+        "passed": true
+      },
+      "review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Reviewed five-view final and v002 triangle aperture report. Roof and pillars remain coherent; corrected uniform runtime fit preserves source form. All three actual LODs clear source6.4x3.8 and world7.68x4.56 with zero triangles inside; v001 failed-fit report retained.",
+        "time": "2026-10-04 19:10:04"
+      }
+    },
+    {
+      "id": "SM_Env_InfernoWall",
+      "display": "熔火黑石厚墙段",
+      "binding": "inferno.wall",
+      "url": "assets/props/SM_Env_InfernoWall.glb",
+      "bytes": 184336,
+      "sha256": "1b593713252527ad13d85a377fbbb904ccaa3c4d1fdfe0004d60544d4c973ce5",
+      "matchesManifest": true,
+      "allLodBounds": {
+        "min": [
+          -4.297089099884033,
+          -0.0002637597208376974,
+          -0.9046638011932373
+        ],
+        "max": [
+          4.246967792510986,
+          4.175433158874512,
+          0.9042577743530273
+        ],
+        "size": [
+          8.54405689239502,
+          4.175696918595349,
+          1.8089215755462646
+        ]
+      },
+      "lods": [
+        {
+          "name": "SM_Env_InfernoWall_LOD0",
+          "triangles": 5000,
+          "vertices": 3983,
+          "min": [
+            -4.297089099884033,
+            -0.0002637597208376974,
+            -0.9046638011932373
+          ],
+          "max": [
+            4.246967792510986,
+            4.167200088500977,
+            0.9039664268493652
+          ],
+          "size": [
+            8.54405689239502,
+            4.167463848221814,
+            1.8086302280426025
+          ]
+        },
+        {
+          "name": "SM_Env_InfernoWall_LOD1",
+          "triangles": 1600,
+          "vertices": 1670,
+          "min": [
+            -4.293237209320068,
+            0.0015507260104641318,
+            -0.901490330696106
+          ],
+          "max": [
+            4.242126941680908,
+            4.163732528686523,
+            0.9042577743530273
+          ],
+          "size": [
+            8.535364151000977,
+            4.162181802676059,
+            1.8057481050491333
+          ]
+        },
+        {
+          "name": "SM_Env_InfernoWall_LOD2",
+          "triangles": 500,
+          "vertices": 638,
+          "min": [
+            -4.261716365814209,
+            0.005657089874148369,
+            -0.885697066783905
+          ],
+          "max": [
+            4.209692478179932,
+            4.175433158874512,
+            0.8718759417533875
+          ],
+          "size": [
+            8.47140884399414,
+            4.169776069000363,
+            1.7575730085372925
+          ]
+        }
+      ],
+      "lodDistance": [
+        0,
+        18,
+        42
+      ],
+      "materials": 1,
+      "textureImages": [
+        {
+          "name": "T_Env_InfernoWall_N",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_InfernoWall_ORM",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_InfernoWall_BC",
+          "mimeType": "image/webp"
+        }
+      ],
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "seed": 202610075
+      },
+      "build": 1,
+      "qa": {
+        "version": 1,
+        "created": "2026-10-04 19:05:19",
+        "files": {
+          "SM_Env_InfernoWall_v001_validation_v001.json": {
+            "path": "05_review/SM_Env_InfernoWall_v001_validation_v001.json",
+            "sha256": "e854cf9448a1886359db7aa5f60a0a9006159d6b42492241803dec3c8eb84ee3"
+          }
+        },
+        "from_build": 1,
+        "errors": 0,
+        "warnings": 0,
+        "waived": [],
+        "passed": true
+      },
+      "review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Reviewed actual five-view final: broad dark stone planes, restrained copper trim, complete base/back/sides. 5000/1600/500, 37 automatic checks pass with no warnings/errors.",
+        "time": "2026-10-04 19:10:05"
+      }
+    },
+    {
+      "id": "SM_Env_DesertGate",
+      "display": "沙寺宽石门楼",
+      "binding": "desert.gate",
+      "url": "assets/props/SM_Env_DesertGate.glb",
+      "bytes": 245308,
+      "sha256": "3f61c8a23acc8fe8349470f91e915770cda543eaad3e7902fda2c92563e87eb9",
+      "matchesManifest": true,
+      "allLodBounds": {
+        "min": [
+          -5.46034574508667,
+          0.0006738716620020568,
+          -0.7055538296699524
+        ],
+        "max": [
+          5.451815128326416,
+          6.7572479248046875,
+          0.7038419842720032
+        ],
+        "size": [
+          10.912160873413086,
+          6.756574053142685,
+          1.4093958139419556
+        ]
+      },
+      "lods": [
+        {
+          "name": "SM_Env_DesertGate_LOD0",
+          "triangles": 5000,
+          "vertices": 4436,
+          "min": [
+            -5.46034574508667,
+            0.0006738716620020568,
+            -0.7055538296699524
+          ],
+          "max": [
+            5.451815128326416,
+            6.7572479248046875,
+            0.7038419842720032
+          ],
+          "size": [
+            10.912160873413086,
+            6.756574053142685,
+            1.4093958139419556
+          ]
+        },
+        {
+          "name": "SM_Env_DesertGate_LOD1",
+          "triangles": 1600,
+          "vertices": 1851,
+          "min": [
+            -5.4544997215271,
+            0.0010299237910658121,
+            -0.7003105878829956
+          ],
+          "max": [
+            5.446028232574463,
+            6.737760066986084,
+            0.6982678174972534
+          ],
+          "size": [
+            10.900527954101562,
+            6.736730143195018,
+            1.398578405380249
+          ]
+        },
+        {
+          "name": "SM_Env_DesertGate_LOD2",
+          "triangles": 500,
+          "vertices": 694,
+          "min": [
+            -5.4390788078308105,
+            0.011281782761216164,
+            -0.6821741461753845
+          ],
+          "max": [
+            5.432276248931885,
+            6.690831661224365,
+            0.683463990688324
+          ],
+          "size": [
+            10.871355056762695,
+            6.679549878463149,
+            1.3656381368637085
+          ]
+        }
+      ],
+      "lodDistance": [
+        0,
+        18,
+        42
+      ],
+      "materials": 1,
+      "textureImages": [
+        {
+          "name": "T_Env_DesertGate_N",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_DesertGate_ORM",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_DesertGate_BC",
+          "mimeType": "image/webp"
+        }
+      ],
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "seed": 202610077
+      },
+      "build": 2,
+      "qa": {
+        "version": 2,
+        "created": "2026-10-04 19:09:25",
+        "files": {
+          "SM_Env_DesertGate_v002_validation_v002.json": {
+            "path": "05_review/SM_Env_DesertGate_v002_validation_v002.json",
+            "sha256": "57ba69e81268d4c893e4aeec7aab9d1bcf57538ce190bf49eb2b6a6bfa9b3a01"
+          }
+        },
+        "from_build": 2,
+        "errors": 0,
+        "warnings": 0,
+        "waived": [],
+        "passed": true
+      },
+      "review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Reviewed build2 final five views: wider separated stone posts, coherent turquoise lintel trim, complete back and sides. All actual LOD source and runtime aperture boxes clear via triangle clipping; previous narrow build1 rejected and preserved. 5000/1600/500 and 37 auto checks without warnings/errors.",
+        "time": "2026-10-04 19:11:55"
+      }
+    },
+    {
+      "id": "SM_Env_InfernoGate",
+      "display": "熔火黑石宽炉门",
+      "binding": "inferno.gate",
+      "url": "assets/props/SM_Env_InfernoGate.glb",
+      "bytes": 234440,
+      "sha256": "4433acd5270b6432d86396b95a16732560c206a9c16185cc5b6d18cfdeade8da",
+      "matchesManifest": true,
+      "allLodBounds": {
+        "min": [
+          -5.442373752593994,
+          0.00048552502994425595,
+          -0.6591047048568726
+        ],
+        "max": [
+          5.5244669914245605,
+          6.798279762268066,
+          0.6905378103256226
+        ],
+        "size": [
+          10.966840744018555,
+          6.797794237238122,
+          1.3496425151824951
+        ]
+      },
+      "lods": [
+        {
+          "name": "SM_Env_InfernoGate_LOD0",
+          "triangles": 5000,
+          "vertices": 4469,
+          "min": [
+            -5.442373752593994,
+            0.00048552502994425595,
+            -0.6354848742485046
+          ],
+          "max": [
+            5.5244669914245605,
+            6.798279762268066,
+            0.645753800868988
+          ],
+          "size": [
+            10.966840744018555,
+            6.797794237238122,
+            1.2812386751174927
+          ]
+        },
+        {
+          "name": "SM_Env_InfernoGate_LOD1",
+          "triangles": 1600,
+          "vertices": 1860,
+          "min": [
+            -5.432393550872803,
+            0.008098514750599861,
+            -0.6270776987075806
+          ],
+          "max": [
+            5.5137410163879395,
+            6.786377429962158,
+            0.6470649242401123
+          ],
+          "size": [
+            10.946134567260742,
+            6.778278915211558,
+            1.2741426229476929
+          ]
+        },
+        {
+          "name": "SM_Env_InfernoGate_LOD2",
+          "triangles": 500,
+          "vertices": 676,
+          "min": [
+            -5.432393550872803,
+            0.008098514750599861,
+            -0.6591047048568726
+          ],
+          "max": [
+            5.5137410163879395,
+            6.786377429962158,
+            0.6905378103256226
+          ],
+          "size": [
+            10.946134567260742,
+            6.778278915211558,
+            1.3496425151824951
+          ]
+        }
+      ],
+      "lodDistance": [
+        0,
+        18,
+        42
+      ],
+      "materials": 1,
+      "textureImages": [
+        {
+          "name": "T_Env_InfernoGate_N",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_InfernoGate_ORM",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_InfernoGate_BC",
+          "mimeType": "image/webp"
+        }
+      ],
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "seed": 202610078
+      },
+      "build": 1,
+      "qa": {
+        "version": 1,
+        "created": "2026-10-04 19:11:11",
+        "files": {
+          "SM_Env_InfernoGate_v001_validation_v001.json": {
+            "path": "05_review/SM_Env_InfernoGate_v001_validation_v001.json",
+            "sha256": "946fa948bb3c007e8b8e690efe49cae1a283de3dcee797b4b7ebf60f0b9284c2"
+          }
+        },
+        "from_build": 1,
+        "errors": 0,
+        "warnings": 0,
+        "waived": [],
+        "passed": true
+      },
+      "review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Reviewed actual final five views: open full-height basalt gate, consistent back/side volume, restrained copper ornament and broad lintel. Triangle aperture report proves every LOD clear source6.4x3.8 and runtime7.68x4.56; 37 auto checks, zero warning/error/waiver.",
+        "time": "2026-10-04 19:14:55"
+      }
+    },
+    {
+      "id": "SM_Env_DesertCliff",
+      "display": "沙寺层叠砂岩巨崖",
+      "binding": "desert.cliff",
+      "url": "assets/props/SM_Env_DesertCliff.glb",
+      "bytes": 185556,
+      "sha256": "754f3b25f54bf87e5e94b3b1acaa33e826026f45f237200d1e34564e7abc38d9",
+      "matchesManifest": true,
+      "allLodBounds": {
+        "min": [
+          -7.3601460456848145,
+          0.0019115107133984566,
+          -2.9792001247406006
+        ],
+        "max": [
+          7.792985439300537,
+          8.627466201782227,
+          3.2674059867858887
+        ],
+        "size": [
+          15.153131484985352,
+          8.625554691068828,
+          6.246606111526489
+        ]
+      },
+      "lods": [
+        {
+          "name": "SM_Env_DesertCliff_LOD0",
+          "triangles": 5000,
+          "vertices": 3796,
+          "min": [
+            -7.351653575897217,
+            0.0019115107133984566,
+            -2.9792001247406006
+          ],
+          "max": [
+            7.758747577667236,
+            8.627466201782227,
+            3.2492401599884033
+          ],
+          "size": [
+            15.110401153564453,
+            8.625554691068828,
+            6.228440284729004
+          ]
+        },
+        {
+          "name": "SM_Env_DesertCliff_LOD1",
+          "triangles": 1600,
+          "vertices": 1530,
+          "min": [
+            -7.3601460456848145,
+            0.003260685596615076,
+            -2.974787712097168
+          ],
+          "max": [
+            7.751210689544678,
+            8.618292808532715,
+            3.2466673851013184
+          ],
+          "size": [
+            15.111356735229492,
+            8.6150321229361,
+            6.221455097198486
+          ]
+        },
+        {
+          "name": "SM_Env_DesertCliff_LOD2",
+          "triangles": 500,
+          "vertices": 605,
+          "min": [
+            -7.353365421295166,
+            0.008575924672186375,
+            -2.967531681060791
+          ],
+          "max": [
+            7.792985439300537,
+            8.613973617553711,
+            3.2674059867858887
+          ],
+          "size": [
+            15.146350860595703,
+            8.605397692881525,
+            6.23493766784668
+          ]
+        }
+      ],
+      "lodDistance": [
+        0,
+        18,
+        42
+      ],
+      "materials": 1,
+      "textureImages": [
+        {
+          "name": "T_Env_DesertCliff_N",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_DesertCliff_ORM",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_DesertCliff_BC",
+          "mimeType": "image/webp"
+        }
+      ],
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "seed": 202610079
+      },
+      "build": 1,
+      "qa": {
+        "version": 1,
+        "created": "2026-10-04 19:23:37",
+        "files": {
+          "SM_Env_DesertCliff_v001_validation_v001.json": {
+            "path": "05_review/SM_Env_DesertCliff_v001_validation_v001.json",
+            "sha256": "6816b0daba5eea232de8d52a2af0a45ec6c222b575ad87da4d8dd9051a94dc6d"
+          }
+        },
+        "from_build": 1,
+        "errors": 0,
+        "warnings": 1,
+        "waived": [],
+        "passed": true
+      },
+      "review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Reviewed actual five views, all LOD wireframes and PBR. Solid broad sandstone mass with warm large rock planes and deep side volume; far silhouette remains coherent. 5000/1600/500, one natural pivot warning retained and runtime grounds by actual vertex bounds; no QA waiver.",
+        "time": "2026-10-04 19:25:20"
+      }
+    },
+    {
+      "id": "SM_Env_InfernoCliff",
+      "display": "熔火黑石断面巨崖",
+      "binding": "inferno.cliff",
+      "url": "assets/props/SM_Env_InfernoCliff.glb",
+      "bytes": 181000,
+      "sha256": "6bf0131a4fad2528345d6313f87e3d2334e6ae7956a21cf56486c26093b1e753",
+      "matchesManifest": true,
+      "allLodBounds": {
+        "min": [
+          -7.452332496643066,
+          0.00036121485754847527,
+          -3.902148723602295
+        ],
+        "max": [
+          7.150996208190918,
+          8.581355094909668,
+          4.279733657836914
+        ],
+        "size": [
+          14.603328704833984,
+          8.58099388005212,
+          8.181882381439209
+        ]
+      },
+      "lods": [
+        {
+          "name": "SM_Env_InfernoCliff_LOD0",
+          "triangles": 5000,
+          "vertices": 3863,
+          "min": [
+            -7.452332496643066,
+            0.00036121485754847527,
+            -3.902148723602295
+          ],
+          "max": [
+            7.149081230163574,
+            8.581355094909668,
+            4.271542072296143
+          ],
+          "size": [
+            14.60141372680664,
+            8.58099388005212,
+            8.173690795898438
+          ]
+        },
+        {
+          "name": "SM_Env_InfernoCliff_LOD1",
+          "triangles": 1600,
+          "vertices": 1569,
+          "min": [
+            -7.434612274169922,
+            0.007924956269562244,
+            -3.8953001499176025
+          ],
+          "max": [
+            7.140594482421875,
+            8.57885456085205,
+            4.279733657836914
+          ],
+          "size": [
+            14.575206756591797,
+            8.570929604582489,
+            8.175033807754517
+          ]
+        },
+        {
+          "name": "SM_Env_InfernoCliff_LOD2",
+          "triangles": 500,
+          "vertices": 631,
+          "min": [
+            -7.434612274169922,
+            0.0025891659315675497,
+            -3.8953001499176025
+          ],
+          "max": [
+            7.150996208190918,
+            8.551146507263184,
+            4.259749412536621
+          ],
+          "size": [
+            14.58560848236084,
+            8.548557341331616,
+            8.155049562454224
+          ]
+        }
+      ],
+      "lodDistance": [
+        0,
+        18,
+        42
+      ],
+      "materials": 1,
+      "textureImages": [
+        {
+          "name": "T_Env_InfernoCliff_N",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_InfernoCliff_ORM",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_InfernoCliff_BC",
+          "mimeType": "image/webp"
+        }
+      ],
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "seed": 202610081
+      },
+      "build": 1,
+      "qa": {
+        "version": 1,
+        "created": "2026-10-04 19:25:33",
+        "files": {
+          "SM_Env_InfernoCliff_v001_validation_v001.json": {
+            "path": "05_review/SM_Env_InfernoCliff_v001_validation_v001.json",
+            "sha256": "acc3979daabd772a1cedbeb6e4733ad95e287271f3bae891938f593736609bde"
+          }
+        },
+        "from_build": 1,
+        "errors": 0,
+        "warnings": 2,
+        "waived": [],
+        "passed": true
+      },
+      "review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Reviewed actual five views, all LODs and PBR: contiguous broad cool basalt planes, intact deep sides and stepped silhouette, restrained rust seams. 5000/1600/500. Natural depth/pivot warnings preserved; runtime uses measured vertex bounds for collision fit and ground without artistic geometry edits or waivers.",
+        "time": "2026-10-04 19:27:59"
+      }
+    },
+    {
+      "id": "SM_Env_FrostCliff",
+      "display": "霜山覆雪石壁巨崖",
+      "binding": "frost.cliff",
+      "url": "assets/props/SM_Env_FrostCliff.glb",
+      "bytes": 158796,
+      "sha256": "71700290ecc98974159c7c1da7335020abf3e82c2ea8f74fd08a088a3af23063",
+      "matchesManifest": true,
+      "allLodBounds": {
+        "min": [
+          -7.28573751449585,
+          0.0008462584228254855,
+          -2.527069091796875
+        ],
+        "max": [
+          7.259155750274658,
+          8.581819534301758,
+          2.8978898525238037
+        ],
+        "size": [
+          14.544893264770508,
+          8.580973275878932,
+          5.424958944320679
+        ]
+      },
+      "lods": [
+        {
+          "name": "SM_Env_FrostCliff_LOD0",
+          "triangles": 5000,
+          "vertices": 3429,
+          "min": [
+            -7.252614974975586,
+            0.0008462584228254855,
+            -2.5166733264923096
+          ],
+          "max": [
+            7.248136520385742,
+            8.572247505187988,
+            2.8922317028045654
+          ],
+          "size": [
+            14.500751495361328,
+            8.571401246765163,
+            5.408905029296875
+          ]
+        },
+        {
+          "name": "SM_Env_FrostCliff_LOD1",
+          "triangles": 1600,
+          "vertices": 1355,
+          "min": [
+            -7.243432521820068,
+            0.003065456636250019,
+            -2.527069091796875
+          ],
+          "max": [
+            7.250300884246826,
+            8.581819534301758,
+            2.8942580223083496
+          ],
+          "size": [
+            14.493733406066895,
+            8.578754077665508,
+            5.421327114105225
+          ]
+        },
+        {
+          "name": "SM_Env_FrostCliff_LOD2",
+          "triangles": 500,
+          "vertices": 541,
+          "min": [
+            -7.28573751449585,
+            0.004321023356169462,
+            -2.5159389972686768
+          ],
+          "max": [
+            7.259155750274658,
+            8.576068878173828,
+            2.8978898525238037
+          ],
+          "size": [
+            14.544893264770508,
+            8.571747854817659,
+            5.4138288497924805
+          ]
+        }
+      ],
+      "lodDistance": [
+        0,
+        18,
+        42
+      ],
+      "materials": 1,
+      "textureImages": [
+        {
+          "name": "T_Env_FrostCliff_N",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_FrostCliff_ORM",
+          "mimeType": "image/webp"
+        },
+        {
+          "name": "T_Env_FrostCliff_BC",
+          "mimeType": "image/webp"
+        }
+      ],
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "seed": 202610080
+      },
+      "build": 1,
+      "qa": {
+        "version": 1,
+        "created": "2026-10-04 19:28:04",
+        "files": {
+          "SM_Env_FrostCliff_v001_validation_v001.json": {
+            "path": "05_review/SM_Env_FrostCliff_v001_validation_v001.json",
+            "sha256": "ea4fddcab13d3d9dd2fafb60573f5c57d5ba78a262798a95ed04faca9035899d"
+          }
+        },
+        "from_build": 1,
+        "errors": 0,
+        "warnings": 1,
+        "waived": [],
+        "passed": true
+      },
+      "review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Reviewed actual final five views, all LOD wireframes and PBR: fused opaque snow caps, coherent large cold-blue planes, thick sides and stable silhouette. Generated from corrected alpha CN2 with original snow retained. 5000/1600/500; one pivot warning retained, actual runtime grounding uses vertex bounds; zero errors/waivers.",
+        "time": "2026-10-04 19:29:31"
+      }
+    }
+  ],
+  "newAssetInProgress": "SM_Env_TravelDeck",
+  "recommendation": {
+    "reuse": "21 existing Hunyuan assets cover boundary walls, rocks, gates, landmarks, shrubs and small dressing. No duplicates needed.",
+    "newMinimum": [
+      "SM_Env_TravelDeck - solid timber deck for frost-3 / inferno-3 bridge language."
+    ],
+    "frostCover": "Use snow cliff uniformly reduced or solid snow wall lower section, constrained to cover footprint. Pine/cairn silhouettes do not fill rectangular bullet cover.",
+    "constraints": [
+      "Preserve all-LOD bounds, ground and center before placement.",
+      "Each gate has actual validated 6.4m by 3.8m source aperture; scale uniformly.",
+      "Do not non-uniformly stretch gate/wall/cliff to fit giant collision cells.",
+      "No authoritative current cargo stack/crate/boat/repair winch asset exists; some floorplan artBrief language about existing bridge/cargo models is aspirational."
+    ]
+  },
+  "localComfy": {
+    "url": "http://127.0.0.1:8188",
+    "version": "0.30.0",
+    "device": "NVIDIA GeForce RTX 5090 Laptop GPU",
+    "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+    "queueEmptyBeforeTask": true
+  },
+  "mutations": "Only this report at inventory time; subsequently one separately authorized deck asset is being generated."
+}

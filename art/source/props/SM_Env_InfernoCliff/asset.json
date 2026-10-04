@@ -1,0 +1,373 @@
+{
+  "id": "SM_Env_InfernoCliff",
+  "display": "熔火黑石断面巨崖",
+  "kind": "static",
+  "class": "nature_prop",
+  "stages": {
+    "blockout": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:10:53",
+          "files": {
+            "BO_SM_Env_InfernoCliff_v001.json": {
+              "path": "00_blockout/BO_SM_Env_InfernoCliff_v001.json",
+              "sha256": "cb979aad26ed07e97498fa5e120648745fbba43b99c0d963afff92cdff766c4a"
+            },
+            "BO_SM_Env_InfernoCliff_v001_views.json": {
+              "path": "00_blockout/BO_SM_Env_InfernoCliff_v001_views.json",
+              "sha256": "3dc6d411fb82840d613cbf9578b56d3a159bddfba56ed17127426dfc843a2ff1"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.cliff"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -6.0,
+              0,
+              -3.5
+            ],
+            "max": [
+              6.0,
+              9.0,
+              3.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 19:12:00",
+          "files": {
+            "BO_SM_Env_InfernoCliff_v002.json": {
+              "path": "00_blockout/BO_SM_Env_InfernoCliff_v002.json",
+              "sha256": "dce198179913ab21d1c8bf4acd28077c803d3137e559c290786e426f059a6b05"
+            },
+            "BO_SM_Env_InfernoCliff_v002_views.json": {
+              "path": "00_blockout/BO_SM_Env_InfernoCliff_v002_views.json",
+              "sha256": "e686a38348d7f23ffd59f242cd828f0d606bc47e791025aa6749eca1388ce94e"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.cliff"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -7.25,
+              0,
+              -3.5
+            ],
+            "max": [
+              7.25,
+              9.0,
+              3.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:12:02",
+          "files": {
+            "CN_SM_Env_InfernoCliff_v001_source.png": {
+              "path": "01_concept/CN_SM_Env_InfernoCliff_v001_source.png",
+              "sha256": "1679e12e7abfa9a192cd2859788fc85401040e9ddafae346986896d6f4b62f12"
+            },
+            "CN_SM_Env_InfernoCliff_v001_front.png": {
+              "path": "01_concept/CN_SM_Env_InfernoCliff_v001_front.png",
+              "sha256": "646e6f773b1d30c29941dcd17c537ae4d93925d08e75fec400cfe1e73f44bdf1"
+            },
+            "CN_SM_Env_InfernoCliff_v001_left.png": {
+              "path": "01_concept/CN_SM_Env_InfernoCliff_v001_left.png",
+              "sha256": "9c8c290a8b5597b930d1b6a3415ebce35c5616695c85499724646c36a5d01e36"
+            },
+            "CN_SM_Env_InfernoCliff_v001_back.png": {
+              "path": "01_concept/CN_SM_Env_InfernoCliff_v001_back.png",
+              "sha256": "ee49ea6a3e6569a0d0791526f800ae2f9b7bdbd450d8d7737949f91e40a74b53"
+            },
+            "CN_SM_Env_InfernoCliff_v001_right.png": {
+              "path": "01_concept/CN_SM_Env_InfernoCliff_v001_right.png",
+              "sha256": "9fed35faf3d3609f835cd2916ad43295e3944ef73541808001661d3afff0b5a9"
+            },
+            "CN_SM_Env_InfernoCliff_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Env_InfernoCliff_v001_sheet.png",
+              "sha256": "a983a9cc84af5204dc84958e398cf17e333ee551affe33a1cbbaea73e9b47dd3"
+            },
+            "CN_SM_Env_InfernoCliff_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_InfernoCliff_v001_prompt.txt",
+              "sha256": "d7fe48ecddf6a8ad535cf6daefeb4e8211175b89a4e991d4a47771cfaee7437d"
+            },
+            "CN_SM_Env_InfernoCliff_v001_registration.json": {
+              "path": "01_concept/CN_SM_Env_InfernoCliff_v001_registration.json",
+              "sha256": "8a1576fc5bc28f2fe1a88c61d17dd08ace1213e9745d2bc8da143632ad191a53"
+            }
+          },
+          "from_blockout": 2,
+          "generator": "Codex built-in image_gen",
+          "registration_version": 1,
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-f1e68665-7e26-4472-86c5-1ae2bec5e981.png",
+          "source_sha256": "1679e12e7abfa9a192cd2859788fc85401040e9ddafae346986896d6f4b62f12",
+          "prompt": "Use case: stylized-concept.\nAsset type: one broad solid cliff mass for local Hunyuan3D reconstruction, moderate-detail first-person Gunfire Reborn-like game art.\nSubject: ONE contiguous blocky cliff-wall boulder, NOT a pile of stacked small stones and NOT a narrow tall pillar. Total proportions 12m wide,9m high,7m deep. Wide irregular silhouette, broad solid flat base, two or three large stepped upper plateaus at different heights. Mostly large clean sloping rock planes, coarse beveled corners and only two or three widely spaced structural seams. At least 85 percent of silhouette belongs to one big connected rock volume. Front is wider than it is tall, side is clearly deep and solid. A few broad simple bands can clarify planes, but no thin horizontal stone pancakes, no tiny chips, no caves, no loose rubble or floating parts, no vegetation or architecture.\nComposition/framing: four isolated orthographic views of EXACT SAME physical mass, FRONT / LEFT / BACK / RIGHT across ONE horizontal pure white sheet. All views identical physical height and scale and common ground baseline, correct wider frontal width and thick side depth, full silhouettes generously framed. No perspective, labels, text, shadow or scene.\nStyle/medium: hand-painted stylized 3D game environment, broad clean faceted planes, bold readable silhouette, two or three coherent color blocks, smooth painted gradients, matte rock; similar moderate fidelity to Gunfire Reborn. Simplify surfaces aggressively so the cliff reads well 10–60m away. Even neutral soft studio lighting for reconstruction, restrained form shading, no glossy glints, no baked cast shadows.\nAvoid: photorealism, granular texture, hundreds of fissures, crumbling filigree, microdetail, stacked round stones, layered small rock towers, symmetrical duplicate silhouette.\nChapter material: broad angular blue-aubergine volcanic basalt planes, dark blue-grey side faces and a few restrained dull rust-colored seams. A stepped dark fortress-like natural silhouette, but no actual buildings. No glowing lava, neon cracks, bronze metal, chains or spikes. One tall shoulder offset to the right and a broad lower shelf to left.",
+          "reference_mode": "bounds_only",
+          "registration": {
+            "front": {
+              "scale": 0.6853715999143285,
+              "offset": [
+                28,
+                370
+              ],
+              "size": [
+                456,
+                284
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7427849276558429,
+              "offset": [
+                132,
+                370
+              ],
+              "size": [
+                247,
+                284
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6853715999143285,
+              "offset": [
+                35,
+                370
+              ],
+              "size": [
+                442,
+                284
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7427849276558429,
+              "offset": [
+                103,
+                370
+              ],
+              "size": [
+                305,
+                284
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Inspected original and registered four-view sheet. Connected broad basalt shoulder, clear stepped silhouette, restrained blue-purple planes/rust seams, intact sides; numeric bounds only, no substitute mesh.",
+            "time": "2026-10-04 19:13:41"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:24:15",
+          "files": {
+            "HP_SM_Env_InfernoCliff_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Env_InfernoCliff_v001_input_front.png",
+              "sha256": "191a5769a233e2377b1e1280e643c954760f50820cc949c97d7d676a7bc670ef"
+            },
+            "HP_SM_Env_InfernoCliff_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Env_InfernoCliff_v001_input_left.png",
+              "sha256": "a453b295c623e85c2f28a44274ae51c53a524d20ca345cefdb83223824e5968d"
+            },
+            "HP_SM_Env_InfernoCliff_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Env_InfernoCliff_v001_input_back.png",
+              "sha256": "5e9308951c6a87ade2ddd9955332d42ca99c1f9945d440ab647c0e6501deea52"
+            },
+            "HP_SM_Env_InfernoCliff_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Env_InfernoCliff_v001_input_right.png",
+              "sha256": "8d46f067539eb57460628363106b33a95169f3c713deab9df210febd3f854b61"
+            },
+            "HP_SM_Env_InfernoCliff_v001.glb": {
+              "path": "02_highpoly/HP_SM_Env_InfernoCliff_v001.glb",
+              "sha256": "d101b9913a4518e4c663ef86e8e1a14283d507a07d46e35c7e4cf549107b6dc4"
+            },
+            "HP_SM_Env_InfernoCliff_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Env_InfernoCliff_v001_graph.json",
+              "sha256": "b556177abd4ecc63c726068a08935beeb7a1919ca61bdd71b9e448b7ac46d2ec"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 202610081,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -12,
+              244,
+              524,
+              780
+            ],
+            "scale": 1.9104477611940298
+          },
+          "seconds": 131.6,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 12.6
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:25:33",
+          "files": {
+            "SM_Env_InfernoCliff_v001.blend": {
+              "path": "03_work/SM_Env_InfernoCliff_v001.blend",
+              "sha256": "0430aec76c9f4e03253220959bb3fc46cd820e6ff5bd93b3fda63ac6a518a856"
+            },
+            "SM_Env_InfernoCliff_v001.glb": {
+              "path": "04_export/SM_Env_InfernoCliff_v001.glb",
+              "sha256": "6bf0131a4fad2528345d6313f87e3d2334e6ae7956a21cf56486c26093b1e753"
+            },
+            "SM_Env_InfernoCliff_v001_metrics.json": {
+              "path": "03_work/SM_Env_InfernoCliff_v001_metrics.json",
+              "sha256": "d66f459a17c3a58e827d0bbe5c98207c99fb12a48791f3f8e8f0d984ef68fa1b"
+            },
+            "T_Env_InfernoCliff_BC.png": {
+              "path": "03_work/textures_v001/T_Env_InfernoCliff_BC.png",
+              "sha256": "86bbd6bfb28732bb3a331cca398e646a0ac111f2120042580cfd81e09b53d598"
+            },
+            "T_Env_InfernoCliff_N.png": {
+              "path": "03_work/textures_v001/T_Env_InfernoCliff_N.png",
+              "sha256": "4eb41cc5a077825e9b9b4b3bc8d681375b0b81a6b0aa3c5463801268def89cc2"
+            },
+            "T_Env_InfernoCliff_ORM.png": {
+              "path": "03_work/textures_v001/T_Env_InfernoCliff_ORM.png",
+              "sha256": "c43ad9b2e62d9416d665b7ba917e387040bf850f8781d65c9d297d155075722b"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.887,
+          "uncovered_ratio": 0.3348,
+          "lods": [
+            {
+              "tris": 5000,
+              "verts": 2502
+            },
+            {
+              "tris": 1600,
+              "verts": 802
+            },
+            {
+              "tris": 500,
+              "verts": 252
+            }
+          ],
+          "export_kb": 176.8,
+          "seconds": 70.5,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:25:33",
+          "files": {
+            "SM_Env_InfernoCliff_v001_validation_v001.json": {
+              "path": "05_review/SM_Env_InfernoCliff_v001_validation_v001.json",
+              "sha256": "acc3979daabd772a1cedbeb6e4733ad95e287271f3bae891938f593736609bde"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 2,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:27:19",
+          "files": {
+            "SM_Env_InfernoCliff_v001_review_v001.png": {
+              "path": "05_review/SM_Env_InfernoCliff_v001_review_v001.png",
+              "sha256": "310ff7173626251d8782912122676670ab70d1cfc54e0ddf451466393e6ea111"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Reviewed actual five views, all LODs and PBR: contiguous broad cool basalt planes, intact deep sides and stepped silhouette, restrained rust seams. 5000/1600/500. Natural depth/pivot warnings preserved; runtime uses measured vertex bounds for collision fit and ground without artistic geometry edits or waivers.",
+            "time": "2026-10-04 19:27:59"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:28:00",
+          "files": {
+            "SM_Env_InfernoCliff.glb": {
+              "path": "@root/public/assets/props/SM_Env_InfernoCliff.glb",
+              "sha256": "6bf0131a4fad2528345d6313f87e3d2334e6ae7956a21cf56486c26093b1e753"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Env_InfernoCliff.glb"
+        }
+      ]
+    }
+  }
+}

@@ -686,3 +686,263 @@ blockout = { source = "scene", id = "inferno.crystal" }
 keep_glow = "none"
 material = { roughness = 0.8, metallic = 0.0 }
 brief = """A 2.13m tall broken obsidian obelisk on a heavy chipped basalt pedestal, thick bronze bands and heavy close-fitting chain wound round the waist, carved orange ember channels, cracked volcanic rock, chunky stylized silhouette. Width 1.18m and depth 0.91m."""
+
+[assets.SM_Env_DesertSandstone]
+display = "沙寺侵蚀砂岩簇"
+kind = "static"
+class = "nature_prop"
+highpoly_mode = "single"
+blockout = { source = "scene", id = "desert.rock" }
+reference_mode = "bounds_only"
+reference_dimensions = [3.5, 3.0, 2.3] # X 宽 / Y 高 / Z 深（米）
+keep_glow = "none"
+material = { roughness = 0.92, metallic = 0.0 }
+brief = """A coherent asymmetric cluster of wind-eroded sandstone, 3.0m tall, 3.5m wide and 2.3m deep. Rounded weathered strata, a few deeply eroded hollows, broad stable sandy foot, ochre and muted grey-green mineral seams. Chunky sculpted wuxia fantasy environment art, thick readable forms, no temple ornaments, no detached pebbles, no thin floating details."""
+
+[assets.SM_Env_FrostPine]
+display = "霜山积雪松树"
+kind = "static"
+class = "nature_prop"
+highpoly_mode = "multiview"
+blockout = { source = "scene", id = "frost.pine" }
+reference_mode = "bounds_only"
+reference_dimensions = [2.9, 4.6, 2.9]
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """One old upright mountain pine, 4.6m tall with a 2.9m wide and deep crown. A visible stout curved bark trunk, three irregular tiers of chunky clustered needles, heavy rounded snow resting on thick branches, blue-green foliage and cool soft white snow. Stable rocky root foot, coherent volumetric canopy rather than flat cutout needles. Stylized hand-painted wuxia fantasy, no lights, no ornaments, no thin disconnected twigs or floating snow."""
+
+[assets.SM_Env_InfernoBasalt]
+display = "熔火断裂玄武岩簇"
+kind = "static"
+class = "nature_prop"
+highpoly_mode = "single"
+blockout = { source = "scene", id = "inferno.rock" }
+reference_mode = "bounds_only"
+reference_dimensions = [3.1, 3.0, 2.2]
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """A coherent asymmetric cluster of fractured volcanic basalt, 3.0m tall, 3.1m wide and 2.2m deep. Uneven leaning column fragments, large angular chips, deep cooled fissures, dark violet-grey rock with a few restrained warm mineral stains. Broad stable broken-rock foot, sculpted bulky silhouette, stylized hand-painted wuxia fantasy. No lava pool, flame, chains, temple ornaments, disconnected rubble or razor-thin shards."""
+
+# Regional landmarks use the existing three-LOD environment budget. Bounds are
+# numeric size/pivot references; local Hunyuan3D provides every artistic mesh.
+[assets.SM_Env_DesertRuin]
+display = "沙寺风蚀残垣壁龛"
+kind = "static"
+class = "nature_prop"
+highpoly_mode = "single"
+blockout = { source = "scene", id = "desert.landmark" }
+reference_mode = "bounds_only"
+reference_dimensions = [4.8, 4.4, 2.6]
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """An asymmetric 4.8m wide, 4.4m tall and 2.6m deep fragment of an abandoned sandstone sanctuary in a Chinese fantasy desert. One thick eroded wall mass with a deep carved devotional niche, a broken stepped crest, broad layered sandstone foot, worn cloud-scroll reliefs and restrained faded red plaster. The niche has a solid back and the lower wall stays connected: no complete gateway or traversable arch, no flat cutout facade. Readable sculpted thickness and warm ochre stone, stylized hand-painted PBR. No detached rubble, floating ornament, text, ground plane, vegetation or lights."""
+
+[assets.SM_Env_FrostWayshrine]
+display = "霜山覆雪山道祭亭"
+kind = "static"
+class = "nature_prop"
+highpoly_mode = "multiview"
+blockout = { source = "scene", id = "frost.landmark" }
+reference_mode = "bounds_only"
+reference_dimensions = [4.2, 5.0, 3.2]
+keep_glow = "none"
+material = { roughness = 0.84, metallic = 0.0 }
+brief = """A compact 4.2m wide, 5.0m tall and 3.2m deep mountain-road wayshrine from a Chinese fantasy winter pilgrimage. Heavy blue-grey stone plinth and an enclosed altar body support chunky dark weathered timber posts and a deeply overhanging curved tiled roof. Rounded snow rests on the roof and ledges; a tightly fastened faded crimson prayer cloth adds one restrained warm accent. Solid connected sculpted construction with an inset front altar, thick roof volume and robust supports, not an empty shelter or doorway. Stylized hand-painted PBR, readable large forms. No alpha foliage, thin disconnected poles, floating snow, long hanging fabric, visible light source, text or ground plane."""
+
+[assets.SM_Env_InfernoFoundry]
+display = "熔火黑曜铸造祭炉"
+kind = "static"
+class = "nature_prop"
+highpoly_mode = "single"
+blockout = { source = "scene", id = "inferno.landmark" }
+reference_mode = "bounds_only"
+reference_dimensions = [4.6, 4.8, 3.4]
+keep_glow = "none"
+material = { roughness = 0.86, metallic = 0.0 }
+brief = """An ancient 4.6m wide, 4.8m tall and 3.4m deep ceremonial foundry furnace from a Chinese fantasy volcanic forge. A broad grounded mass of chipped obsidian brick and cooled basalt supports a squat tapering chimney, a recessed dark fire-mouth with a solid interior, thick fitted weathered bronze hoops and two integrated stone side buttresses. Soot, bronze patina and restrained orange mineral deposits tell of an abandoned ritual workshop. Bulky sculpted three-dimensional construction, stylized hand-painted PBR and readable massive forms. No actual flame, lava pool, smoke, freestanding chains, floating rubble, traversable opening, thin pipes, text or ground plane."""
+
+# Architectural walls and traversable gates: numeric references only. The full
+# artistic construction is generated by local Hunyuan3D multi-view, with the
+# existing environment budget and no QA waivers. Gate clearance must be checked
+# on the actual finished geometry, independently of the outer bounding box.
+[assets.SM_Env_DesertWall]
+display = "沙寺厚石墙段"
+kind = "static"
+class = "nature_prop"
+highpoly_mode = "multiview"
+blockout = { source = "scene", id = "desert.wall" }
+reference_mode = "bounds_only"
+reference_dimensions = [7.5, 4.4, 1.5]
+architecture_role = "wall"
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """A closed, solid 6.6m wide, 4.4m high, 1.3m deep sandstone sanctuary wall section for a Chinese fantasy desert. Chunky connected masonry mass, integrated broad buttresses and a simple thick stepped cap; warm ochre stone, one broad faded terracotta plaster area and a restrained muted teal accent. Readable broad faceted planes and sparse painted edge wear at Gunfire Reborn level. Front, back and side views show the same thick connected wall. No passage, perforation, detached stones, thin ornament, dense carving, ground plane or baked cast shadow."""
+
+[assets.SM_Env_DesertGate]
+display = "沙寺宽石门楼"
+kind = "static"
+class = "nature_prop"
+highpoly_mode = "multiview"
+blockout = { source = "scene", id = "desert.gate" }
+reference_mode = "bounds_only"
+reference_dimensions = [10.5, 6.8, 1.7]
+architecture_role = "gate"
+passage_min_width_m = 6.4
+lintel_bottom_target_m = 3.8
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """A freestanding sandstone sanctuary gateway 10.5m wide, 6.8m tall and 1.7m deep, with two chunky grounded post volumes joined by one thick lintel and simple stepped crest. The actual open central ground passage is at least 6.4m wide; the lintel underside is 3.8m above ground. The passage extends fully through the depth and stays empty down to ground, with no threshold or rear wall. Warm ochre and faded terracotta with one muted teal accent, broad hand-painted planes and sparse simplified cloud motifs at Gunfire Reborn level. All four views describe the same volumetric posts and lintel. No doors, portcullis, central pillar, detached ornament, thin roof trim, ground plane or baked cast shadow."""
+
+[assets.SM_Env_FrostWall]
+display = "霜山覆雪厚墙段"
+kind = "static"
+class = "nature_prop"
+highpoly_mode = "multiview"
+blockout = { source = "scene", id = "frost.wall" }
+reference_mode = "bounds_only"
+reference_dimensions = [7.9, 4.4, 1.7]
+architecture_role = "wall"
+keep_glow = "none"
+material = { roughness = 0.88, metallic = 0.0 }
+brief = """A closed, solid 6.6m wide, 4.4m high, 1.3m deep mountain monastery wall section. One chunky connected blue-grey stone mass with integrated broad buttresses, stout dark timber cap bands and large soft white snow shapes attached firmly to the cap. A restrained faded crimson area, broad clean hand-painted planes and sparse painted wear at Gunfire Reborn level. Consistent solid volume in front, back and side views. No opening, lattice, detached snow, icicle fringe, thin poles, dense stone cracks, ground plane or baked cast shadow."""
+
+[assets.SM_Env_FrostGate]
+display = "霜山覆雪宽山门"
+kind = "static"
+class = "nature_prop"
+highpoly_mode = "multiview"
+blockout = { source = "scene", id = "frost.gate" }
+reference_mode = "bounds_only"
+reference_dimensions = [10.5, 6.8, 1.7]
+architecture_role = "gate"
+passage_min_width_m = 6.4
+lintel_bottom_target_m = 3.8
+keep_glow = "none"
+material = { roughness = 0.88, metallic = 0.0 }
+brief = """A mountain monastery gateway 10.5m wide, 6.8m tall and 1.7m deep. Two thick blue-grey stone and timber posts connect firmly to a massive lintel and simple solid roof cap carrying broad attached snow masses. The actual open central ground passage is at least 6.4m wide with a lintel underside 3.8m above ground, empty through the full depth and down to ground. Cool blue-grey, dark timber, soft white snow and one restrained faded crimson accent. Broad hand-painted planes and robust simplified East-Asian shapes at Gunfire Reborn level, consistent in all four views. No doors, rear panel, central post, threshold, lattice, thin brackets, hanging ropes, floating snow, ground plane or baked cast shadow."""
+
+[assets.SM_Env_InfernoWall]
+display = "熔火黑石厚墙段"
+kind = "static"
+class = "nature_prop"
+highpoly_mode = "multiview"
+blockout = { source = "scene", id = "inferno.wall" }
+reference_mode = "bounds_only"
+reference_dimensions = [9.0, 4.4, 2.1]
+architecture_role = "wall"
+keep_glow = "none"
+material = { roughness = 0.86, metallic = 0.0 }
+brief = """A closed, solid 6.6m wide, 4.4m high, 1.3m deep volcanic forge wall section. Chunky connected dark violet-grey basalt masonry, broad integrated buttresses, thick fitted muted bronze cap bands and a few large restrained burnt-orange painted motifs. Bold faceted planes and sparse painted edge accents at Gunfire Reborn level. Front, back and side views maintain the same sculpted thickness. No passage, perforation, chains, thin spikes, glowing cracks, fire, lava, smoke, dense surface noise, ground plane or baked cast shadow."""
+
+[assets.SM_Env_InfernoGate]
+display = "熔火黑石宽炉门"
+kind = "static"
+class = "nature_prop"
+highpoly_mode = "multiview"
+blockout = { source = "scene", id = "inferno.gate" }
+reference_mode = "bounds_only"
+reference_dimensions = [10.5, 6.8, 1.7]
+architecture_role = "gate"
+passage_min_width_m = 6.4
+lintel_bottom_target_m = 3.8
+keep_glow = "none"
+material = { roughness = 0.86, metallic = 0.0 }
+brief = """A volcanic forge gateway 10.5m wide, 6.8m tall and 1.7m deep. Two broad grounded basalt posts and a massive connected lintel with an integrated stepped cap and thick muted bronze bands. The actual open central ground passage is at least 6.4m wide; the lintel underside is 3.8m above ground. The opening is empty all the way through and down to ground. Dark violet-grey, muted bronze and restrained burnt-orange blocks, broad hand-painted faceted planes and a few robust simplified forge motifs at Gunfire Reborn level, consistent in all four views. No door, central post, rear wall, threshold, chain curtain, thin spikes, flame, smoke, lava, ground plane or baked cast shadow."""
+
+# Broad, closed cliff masses supply the scene boundary and larger ridges. Shape
+# comes only from local Hunyuan3D; numeric references create no artistic mesh.
+[assets.SM_Env_DesertCliff]
+display = "沙寺层叠砂岩巨崖"
+kind = "static"
+class = "nature_prop"
+highpoly_mode = "multiview"
+blockout = { source = "scene", id = "desert.cliff" }
+reference_mode = "bounds_only"
+reference_dimensions = [15.0, 9.0, 7.0]
+keep_glow = "none"
+material = { roughness = 0.92, metallic = 0.0 }
+brief = """One broad fused sandstone cliff mass, 12m wide, 9m high and 7m deep, with a closed full-bodied volume and a broad grounded foot. A few large stepped ochre and honey-coloured rock planes, two or three substantial terraces and sparse muted terracotta strata. Bold blocky silhouette, broad matte hand-painted gradients and restrained edge accents at Gunfire Reborn fidelity. All four views show one coherent heavy mass. No ring of slender pillars, thin stacked pancakes, detached rubble, narrow spikes, deep perforation, miniature cracks, architecture, vegetation, ground plane or baked cast shadow."""
+
+[assets.SM_Env_FrostCliff]
+display = "霜山覆雪石壁巨崖"
+kind = "static"
+class = "nature_prop"
+highpoly_mode = "multiview"
+blockout = { source = "scene", id = "frost.cliff" }
+reference_mode = "bounds_only"
+reference_dimensions = [15.6, 9.0, 7.0]
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """One broad fused mountain cliff mass, 12m wide, 9m high and 7m deep, with closed solid volume, a few substantial blue-grey angular rock planes and broad soft ivory snow caps firmly joined to the terraces. Stable heavy base, thick readable stepped profile, two or three dominant matte colour blocks, hand-painted gradients and sparse edge accents at Gunfire Reborn fidelity. Coherent volumetric construction in all four views. No slender pillar ring, thin layered discs, detached snow, icicle fringe, tiny fissures, trees, buildings, open cave, ground plane or baked cast shadow."""
+
+[assets.SM_Env_InfernoCliff]
+display = "熔火黑石断面巨崖"
+kind = "static"
+class = "nature_prop"
+highpoly_mode = "multiview"
+blockout = { source = "scene", id = "inferno.cliff" }
+reference_mode = "bounds_only"
+reference_dimensions = [14.5, 9.0, 7.0]
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """One broad fused volcanic cliff mass, 12m wide, 9m high and 7m deep, closed and fully volumetric, with a grounded massive foot and a few large broken angular basalt slab planes. Deep aubergine, charcoal-blue and restrained rust-orange painted strata; broad matte hand-painted gradients and sparse large edge accents at Gunfire Reborn fidelity. One coherent chunky silhouette across all four views. No tall needle cluster, slender pillar ring, thin stacked layers, detached shards, perforation, tiny glowing cracks, lava river, fire, smoke, chains, building, ground plane or baked cast shadow."""
+
+[assets.SM_Env_TravelDeck]
+display = "通用厚木栈桥铺板"
+kind = "static"
+class = "nature_prop"
+highpoly_mode = "multiview"
+blockout = { source = "scene", id = "shared.travelDeck" }
+reference_mode = "bounds_only"
+reference_dimensions = [6.0, 0.7, 4.0]
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """One solid repeatable 6m wide, 4m long and 0.6m thick timber bridge deck. Broad dark honey-brown flush planks, shallow seams and two simple dark iron end straps. Continuous flat walkable top, solid connected underside, no railing, pillar, post, leg, rope, hinge, holes or raised obstacles. Stylized hand-painted broad colour blocks and moderate game detail. Concept capture stands the deck upright so all four views describe its top, bottom and thickness. The registered presentation matrix rotates the generated Hunyuan mesh back to a horizontal deck during the standard Blender build. Runtime bounds fitting centers it and places its highest vertex at the existing walkable floor."""
+
+[assets.SM_Env_CargoHoist]
+display = "粗木货运绞盘架"
+kind = "static"
+class = "nature_prop"
+highpoly_mode = "multiview"
+blockout = { source = "scene", id = "shared.cargoHoist" }
+reference_mode = "bounds_only"
+reference_dimensions = [3.9, 3.5, 2.6]
+keep_glow = "none"
+material = { roughness = 0.88, metallic = 0.0 }
+brief = """One short stout cargo winch hoist on a continuous thick timber foundation. Two massive timber side supports with broad triangular braces and a connected crossbeam frame a large horizontal wooden cable drum; a thick solid crank wheel on the right axle has three shallow recessed wedge motifs, an iron rim and a short chunky crank handle. Warm dark honey wood and restrained charcoal iron, broad matte hand-painted planes, simple readable silhouette and coherent four-view volume at Gunfire Reborn game fidelity. The numeric reference includes the protruding crank; it is not an artistic mesh. No dangling rope, chains, cables, suspended cargo, hook, fine spokes, floating pieces, tiny detail, ground or baked shadows."""
+
+[assets.SM_Env_MarketStall]
+display = "沙寺粗木摊棚"
+kind = "static"
+class = "nature_prop"
+highpoly_mode = "multiview"
+blockout = { source = "scene", id = "desert.marketStall" }
+reference_mode = "bounds_only"
+reference_dimensions = [4.0, 3.2, 3.0]
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """A squat practical desert market stall: thick timber posts, broad connected cross braces and a continuous foundation support a low wide muted terracotta canvas canopy and a solid front merchant counter. Broad faceted planes, heavy rolled canopy edges and large warm/dark color blocks at Gunfire Reborn fidelity. No fine ropes, thin poles, hanging fringe, independent merchandise, people or ground plane. One coherent volumetric structure generated by local Hunyuan, not a procedural prop."""
+
+[assets.SM_Env_FrozenSkiff]
+display = "冻湖搁浅短木船"
+kind = "static"
+class = "nature_prop"
+highpoly_mode = "multiview"
+blockout = { source = "scene", id = "frost.frozenSkiff" }
+reference_mode = "bounds_only"
+reference_dimensions = [2.3, 1.7, 4.8]
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """One short deep-bellied cargo skiff: thick blue-grey weathered timber hull, massive gunwale, intact heavy keel and two broad connected cross seats. A few chipped upper board corners and sparse attached pale blue-grey snow indicate abandonment, while the lower hull remains connected and volumetric. Blunt bow at the front, square stern at the rear, long axis along depth. No mast, sail, rigging, oars, separate debris, lake or shore. Hunyuan must reconstruct thick gunwales, coherent side/underside and an interior recess rather than a flat or shattered shell."""
+
+[assets.SM_Env_SlagCart]
+display = "熔火短底盘渣车"
+kind = "static"
+class = "nature_prop"
+highpoly_mode = "multiview"
+blockout = { source = "scene", id = "inferno.slagCart" }
+reference_mode = "bounds_only"
+reference_dimensions = [2.8, 2.2, 2.8]
+keep_glow = "none"
+material = { roughness = 0.88, metallic = 0.0 }
+brief = """One compact grounded foundry slag cart with a thick flared iron tub, broad folded lip, heavy short timber-and-iron chassis, two thick solid side wheels and a stout rear support shoe. Sparse dark angular slag is joined inside the tub. Chunky matte charcoal-aubergine metal, dull bronze bands and muted rust accents. Clear filled volume and robust support structure at moderate game detail. No long handles, thin spokes, tow poles, chains, molten effects, railway or loose parts."""

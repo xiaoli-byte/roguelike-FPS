@@ -1,0 +1,140 @@
+{
+  "steps": {
+    "导入清理": 5.1,
+    "对齐": 1.0,
+    "低模与 UV": 25.6,
+    "投影着色": 91.4,
+    "烘焙": 10.3,
+    "LOD": 0.1,
+    "导出": 0.7
+  },
+  "highpoly": {
+    "faces_raw": 1437513,
+    "faces": 1100784,
+    "verts": 1100720,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00355
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.923,
+    "iou_per_view": {
+      "front": 0.983,
+      "left": 0.846,
+      "back": 0.982,
+      "right": 0.853
+    },
+    "height_m": 4.2746,
+    "blockout_height_m": 4.4
+  },
+  "uv": {
+    "smart_islands": 707,
+    "charts": 51,
+    "fallback_charts": 1,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.0463,
+    "density_merged": 0.0565
+  },
+  "projection": {
+    "uncovered_ratio": 0.5915
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Env_FrostWall_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Env_FrostWall_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Env_FrostWall_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Env_FrostWall_LOD0",
+      "tris": 4998,
+      "verts": 2436,
+      "uv_min": [
+        0.0026109369937330484,
+        0.002738230861723423
+      ],
+      "uv_max": [
+        0.9974281787872314,
+        0.9916957020759583
+      ],
+      "uv_utilization": 0.552,
+      "bbox_min": [
+        -3.8121,
+        -0.834,
+        -0.0008
+      ],
+      "bbox_max": [
+        3.8163,
+        0.7863,
+        4.2887
+      ]
+    },
+    {
+      "name": "SM_Env_FrostWall_LOD1",
+      "tris": 1600,
+      "verts": 732,
+      "uv_min": [
+        0.002541192341595888,
+        0.002799545181915164
+      ],
+      "uv_max": [
+        0.9974281787872314,
+        0.9908043742179871
+      ],
+      "uv_utilization": 0.551,
+      "bbox_min": [
+        -3.8065,
+        -0.8339,
+        0.001
+      ],
+      "bbox_max": [
+        3.8143,
+        0.783,
+        4.289
+      ]
+    },
+    {
+      "name": "SM_Env_FrostWall_LOD2",
+      "tris": 500,
+      "verts": 182,
+      "uv_min": [
+        0.002840022323653102,
+        0.003231966868042946
+      ],
+      "uv_max": [
+        0.9843484163284302,
+        0.9831874370574951
+      ],
+      "uv_utilization": 0.426,
+      "bbox_min": [
+        -3.8063,
+        -0.8279,
+        0.0119
+      ],
+      "bbox_max": [
+        3.7896,
+        0.7744,
+        4.1716
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_FrostWall\\04_export\\SM_Env_FrostWall_v001.glb",
+    "bytes": 281208
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_FrostWall\\03_work\\SM_Env_FrostWall_v001.blend",
+  "total_seconds": 134.1,
+  "_seconds": 137.2
+}

@@ -1,0 +1,639 @@
+{
+  "id": "SM_Env_DesertSandstone",
+  "display": "沙寺侵蚀砂岩簇",
+  "kind": "static",
+  "class": "nature_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 14:37:59",
+          "files": {
+            "BO_SM_Env_DesertSandstone_v001.json": {
+              "path": "00_blockout/BO_SM_Env_DesertSandstone_v001.json",
+              "sha256": "cde2c96e0724b5c9ed28f58ecb14e280a8f6fe1a5cc1938ead598cbf759fa3d9"
+            },
+            "BO_SM_Env_DesertSandstone_v001_views.json": {
+              "path": "00_blockout/BO_SM_Env_DesertSandstone_v001_views.json",
+              "sha256": "8976842aafa1c7a932d9d9f3cd2531ca9cfc6f3b5d24a41e9dde54521ad860d2"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.rock"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -1.75,
+              0,
+              -1.15
+            ],
+            "max": [
+              1.75,
+              3.0,
+              1.15
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 14:38:14",
+          "files": {
+            "CN_SM_Env_DesertSandstone_v001_source.png": {
+              "path": "01_concept/CN_SM_Env_DesertSandstone_v001_source.png",
+              "sha256": "4ba6ca242b9b31a0c3cfb2db08de62bce53d628d4dc691cade6532ed1e4cf94a"
+            },
+            "CN_SM_Env_DesertSandstone_v001_front.png": {
+              "path": "01_concept/CN_SM_Env_DesertSandstone_v001_front.png",
+              "sha256": "b954ec83538217852bcf0625e27f60cc5c7ff65feb751abed0705aae5bd691c7"
+            },
+            "CN_SM_Env_DesertSandstone_v001_left.png": {
+              "path": "01_concept/CN_SM_Env_DesertSandstone_v001_left.png",
+              "sha256": "ed124467de85e3ad8481b5a9b687e89d5871843b2cd27182931ed35691ec5101"
+            },
+            "CN_SM_Env_DesertSandstone_v001_back.png": {
+              "path": "01_concept/CN_SM_Env_DesertSandstone_v001_back.png",
+              "sha256": "7e35df88e6f1e3d6d0dd3f6e4b43870839822170e3b4e418f609352de9ef24f3"
+            },
+            "CN_SM_Env_DesertSandstone_v001_right.png": {
+              "path": "01_concept/CN_SM_Env_DesertSandstone_v001_right.png",
+              "sha256": "be21a8dcf251fb1028981d508e9fe19b886633ddf7fb3ed9a146041327b8704f"
+            },
+            "CN_SM_Env_DesertSandstone_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Env_DesertSandstone_v001_sheet.png",
+              "sha256": "8043c9099051f49009004a240bbc0b8d3781c2599ee9726326a8faf955dc4271"
+            },
+            "CN_SM_Env_DesertSandstone_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_DesertSandstone_v001_prompt.txt",
+              "sha256": "35ade053c518557c97c03fabfc4195062eef57143379c94a72d5ae90af8a657f"
+            },
+            "CN_SM_Env_DesertSandstone_v001_registration.json": {
+              "path": "01_concept/CN_SM_Env_DesertSandstone_v001_registration.json",
+              "sha256": "8f178f60095d692cb2befd234ec6bab803441f41514c45f006b00f7b098a7ae2"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Codex built-in image_gen",
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-d1156d24-c49d-4024-833d-e60c9a0b50b2.png",
+          "source_sha256": "4ba6ca242b9b31a0c3cfb2db08de62bce53d628d4dc691cade6532ed1e4cf94a",
+          "prompt": "Use case: stylized-concept. Asset type: four-view orthographic game asset concept sheet, for LOCAL Hunyuan3D mesh generation and four-view texture projection. Create ONE wide landscape image with FOUR equal panels in a single horizontal row, in the exact order FRONT, LEFT, BACK, RIGHT. Each panel shows the SAME single complete asset, at identical scale and vertically aligned grounded feet/base. True orthographic views at 90 degree rotations, no perspective and no three-quarter view. Entire object fully inside each panel with a generous transparent margin, never cropped. The asset occupies about 80 percent of panel height. Transparent empty background for clean silhouettes, NO panel border, NO labels, NO text, NO cast shadow, NO ground plane. High quality sculpted 3D game art with subtle hand-painted PBR color detail, realistic stylized volume, readable large forms, not low-poly primitives, not photoreal scan. Soft even neutral diffuse lighting across all views; no specular hotspots or dramatic baked shadows. All four views must describe the same form, height, colors and materials coherently. Primary subject: An eroded Chinese fantasy desert sandstone rock formation: one interconnected natural cluster of three uneven rock towers and a broad grounded talus base. Dominant left tower with rounded broken top, lower leaning middle ledge, small right outcrop. Broad horizontal sediment layers, undercut shelves, chipped rounded edges, worn shallow grooves, ochre sandstone with pale beige ridge highlights and restrained cool brown crevices. Irregular organic silhouette; readable large masses and smaller erosion details. Overall width 3.5m, height 3m, depth 2.3m. No columns, rectangular blocks, flat geometric cylinders, architecture, rune, vegetation, snow, lava, or decorative base.",
+          "reference_mode": "bounds_only",
+          "registration": {
+            "front": {
+              "scale": 0.7393145937620331,
+              "offset": [
+                22,
+                316
+              ],
+              "size": [
+                467,
+                392
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7365352155899954,
+              "offset": [
+                143,
+                316
+              ],
+              "size": [
+                225,
+                392
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7393145937620331,
+              "offset": [
+                22,
+                316
+              ],
+              "size": [
+                467,
+                392
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7407121638825662,
+              "offset": [
+                122,
+                316
+              ],
+              "size": [
+                268,
+                392
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Root visually inspected the built-in ImageGen four-view source. Numeric bounds reference only; uniform-height registration preserves each silhouette. Approved for local Hunyuan3D generation; this is AI review, not user approval.",
+            "time": "2026-10-04 14:38:57"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 17:38:54",
+          "files": {
+            "CN_SM_Env_DesertSandstone_v002_source.png": {
+              "path": "01_concept/CN_SM_Env_DesertSandstone_v002_source.png",
+              "sha256": "3e78ba3e245dac9608bd6b5989a60af4e92d31b5b5cd842ddd1fa7cb9dc189d2"
+            },
+            "CN_SM_Env_DesertSandstone_v002_front.png": {
+              "path": "01_concept/CN_SM_Env_DesertSandstone_v002_front.png",
+              "sha256": "2844f9c44c6e96d41980c7b2b887781554b5f90eaac897304caa1dfef606c636"
+            },
+            "CN_SM_Env_DesertSandstone_v002_left.png": {
+              "path": "01_concept/CN_SM_Env_DesertSandstone_v002_left.png",
+              "sha256": "adcff6f0580764d4dfb03317dbce11d690653559427f4234a76f534e8f645198"
+            },
+            "CN_SM_Env_DesertSandstone_v002_back.png": {
+              "path": "01_concept/CN_SM_Env_DesertSandstone_v002_back.png",
+              "sha256": "5fcd7da076d5a6fe441304201192b1d5bf2e963638fd50c0eb2fee7466d0f28a"
+            },
+            "CN_SM_Env_DesertSandstone_v002_right.png": {
+              "path": "01_concept/CN_SM_Env_DesertSandstone_v002_right.png",
+              "sha256": "610124dccbf1f078ef68a6910ff5b8c0d43cf85227df6667ca530cf5e44cb543"
+            },
+            "CN_SM_Env_DesertSandstone_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Env_DesertSandstone_v002_sheet.png",
+              "sha256": "eabdbb11e37f18996837bd5fc5e030240282db478d734861a85322fab1216e2a"
+            },
+            "CN_SM_Env_DesertSandstone_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_DesertSandstone_v002_prompt.txt",
+              "sha256": "e739244f25ff106421a12d6a18efe31fd8dcf01adb4c592abe83bf0aa4d09100"
+            },
+            "CN_SM_Env_DesertSandstone_v002_registration.json": {
+              "path": "01_concept/CN_SM_Env_DesertSandstone_v002_registration.json",
+              "sha256": "a4b35da68baa55e2d33baf3eae8236b861c313f653c35c414fbe5378506428b5"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Codex built-in image_gen",
+          "registration_version": 1,
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-e27301ea-5ed1-4857-838d-600964f3a171.png",
+          "source_sha256": "3e78ba3e245dac9608bd6b5989a60af4e92d31b5b5cd842ddd1fa7cb9dc189d2",
+          "prompt": "Use case: style-transfer. Edit the supplied reconstruction reference into stylized hand-painted 3D game art at the moderate-detail visual level of Gunfire Reborn. Keep the subject identity, overall dimensions, and four-view FRONT, LEFT, BACK, RIGHT turnaround of ONE identical solid object. Replace photographic erosion, tiny cracks, dense grain and miniature ornament with broad clean faceted planes, bold chunky silhouette, two or three dominant color blocks, soft painted gradients and a few medium-scale edge accents. Matte materials, clear solid volume, no glossy plastic, no photorealistic surface noise. All views must agree on construction and colors; side views show true depth and back is complete. Level strictly orthographic cameras, same scale and baseline, every silhouette fully inside its own panel with white gutters. Fully transparent background with transparent gutters, neutral soft even lighting, no cast shadows. No ground plane, text, labels, landscape, people, detached objects or effects.\n\nSubject changes: Preserve the asymmetric broad connected sandstone cluster and its high-left/low-right strata, 3.5m wide,3m tall,2.3m deep. Consolidate its dense erosion layers into a few large rounded terraces and broad sloped planes. Warm golden ochre with soft terracotta shadows and a very small muted teal-grey accent. Paint broad gradients and one or two deep erosion cuts, no granular stone noise or many little pebbles. Solid substantial 3D side depth.",
+          "reference_mode": "bounds_only",
+          "registration": {
+            "front": {
+              "scale": 0.7034770820356868,
+              "offset": [
+                28,
+                316
+              ],
+              "size": [
+                456,
+                392
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6972183891350134,
+              "offset": [
+                150,
+                316
+              ],
+              "size": [
+                211,
+                392
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7009601693987075,
+              "offset": [
+                29,
+                316
+              ],
+              "size": [
+                453,
+                392
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7060121345835632,
+              "offset": [
+                128,
+                316
+              ],
+              "size": [
+                256,
+                392
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Root inspected the revised native four-view sheet: broad hand-painted planes, reduced micro-detail, coherent side/back volume and connected silhouette. Pine uses solid foliage and snow masses with a visible trunk. Approved for local Hunyuan reconstruction, not a human review.",
+            "time": "2026-10-04 17:39:05"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 14:41:11",
+          "files": {
+            "HP_SM_Env_DesertSandstone_v001_input.png": {
+              "path": "02_highpoly/HP_SM_Env_DesertSandstone_v001_input.png",
+              "sha256": "11d927b3085e5ae7757600081ed05821c8375d84b79ec1e997a9fdfe2e67c7d9"
+            },
+            "HP_SM_Env_DesertSandstone_v001.glb": {
+              "path": "02_highpoly/HP_SM_Env_DesertSandstone_v001.glb",
+              "sha256": "da977f9fbac75b517feafc912c7ca25c2e90e6525b78a7141a21e00161b164aa"
+            },
+            "HP_SM_Env_DesertSandstone_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Env_DesertSandstone_v001_graph.json",
+              "sha256": "28a36d2fb31d0dda54764fb26b8cd1c84d85fd999885489f714200ad83c61e6f"
+            }
+          },
+          "from_concept": 1,
+          "mode": "single",
+          "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+          "checkpoint": "hunyuan_3d_v2.1.safetensors",
+          "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261004,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "crop": [
+              22,
+              316,
+              489,
+              708
+            ],
+            "scale": 1.8638115631691647,
+            "offset": [
+              77,
+              146
+            ]
+          },
+          "seconds": 132.9,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 15.4,
+          "provenance_amendments": [
+            {
+              "time": "2026-10-04 14:44:20",
+              "reason": "Register exact existing ComfyUI workflow checksum; generated mesh and inputs unchanged."
+            }
+          ]
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 17:57:13",
+          "files": {
+            "HP_SM_Env_DesertSandstone_v002_input.png": {
+              "path": "02_highpoly/HP_SM_Env_DesertSandstone_v002_input.png",
+              "sha256": "68d01970be51184f0cb1fb997c9656968cd157f73d287a16d8b11aea3da8084d"
+            },
+            "HP_SM_Env_DesertSandstone_v002.glb": {
+              "path": "02_highpoly/HP_SM_Env_DesertSandstone_v002.glb",
+              "sha256": "dc12f63f2d42cd42a4f003bda73554e7a6127a84f357538aaf150ddb0f9fd466"
+            },
+            "HP_SM_Env_DesertSandstone_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Env_DesertSandstone_v002_graph.json",
+              "sha256": "72d144cff45d5d75f1cb72f439366704f8d6e0f159cf4d4d04b2e8f544184843"
+            }
+          },
+          "from_concept": 2,
+          "mode": "single",
+          "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+          "checkpoint": "hunyuan_3d_v2.1.safetensors",
+          "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 202610053,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "crop": [
+              28,
+              316,
+              484,
+              708
+            ],
+            "scale": 1.9087719298245613,
+            "offset": [
+              77,
+              138
+            ]
+          },
+          "seconds": 235.9,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 16.3
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 14:43:35",
+          "files": {
+            "SM_Env_DesertSandstone_v001.blend": {
+              "path": "03_work/SM_Env_DesertSandstone_v001.blend",
+              "sha256": "1035104712eab49756caedbdfb8106e717344fdc5b2b8b7c068ac0d3d0be7972"
+            },
+            "SM_Env_DesertSandstone_v001.glb": {
+              "path": "04_export/SM_Env_DesertSandstone_v001.glb",
+              "sha256": "9b82c92ccb0dd62a411c2ef57e15696c555d980864848093e4ea373e73598a9f"
+            },
+            "SM_Env_DesertSandstone_v001_metrics.json": {
+              "path": "03_work/SM_Env_DesertSandstone_v001_metrics.json",
+              "sha256": "b36f4331e567bf0f174186ddc76d3cfe96a1f2e1bf0fb74a7c0e928ad4b2a0b0"
+            },
+            "T_Env_DesertSandstone_BC.png": {
+              "path": "03_work/textures_v001/T_Env_DesertSandstone_BC.png",
+              "sha256": "f9d73a4316685a979281caa06f012ff4b82f80535bce0bb9082caabad2baebb0"
+            },
+            "T_Env_DesertSandstone_N.png": {
+              "path": "03_work/textures_v001/T_Env_DesertSandstone_N.png",
+              "sha256": "a10645de6814d7c7a36ea910f583d84e7142b6fe311e4dc97eea79f3e8a75e1c"
+            },
+            "T_Env_DesertSandstone_ORM.png": {
+              "path": "03_work/textures_v001/T_Env_DesertSandstone_ORM.png",
+              "sha256": "151b76aed2a924591fe2d332f355fed2cad6c637a36d8d54db37b8ffab20144b"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.883,
+          "uncovered_ratio": 0.3093,
+          "lods": [
+            {
+              "tris": 5000,
+              "verts": 2502
+            },
+            {
+              "tris": 1600,
+              "verts": 802
+            },
+            {
+              "tris": 500,
+              "verts": 252
+            }
+          ],
+          "export_kb": 227.9,
+          "seconds": 114.9,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 17:59:15",
+          "files": {
+            "SM_Env_DesertSandstone_v002.blend": {
+              "path": "03_work/SM_Env_DesertSandstone_v002.blend",
+              "sha256": "989978d8caadf945d5bc455dbb06ef8949f4a72f54a4f36dc813f07ae93f0f6e"
+            },
+            "SM_Env_DesertSandstone_v002.glb": {
+              "path": "04_export/SM_Env_DesertSandstone_v002.glb",
+              "sha256": "a3c6ee73e246d78e406a0cbe68cb13380f8180399f5756772ae6bda7dea5c902"
+            },
+            "SM_Env_DesertSandstone_v002_metrics.json": {
+              "path": "03_work/SM_Env_DesertSandstone_v002_metrics.json",
+              "sha256": "cc2f55f97c3782223077d79a3b6e095f8ceab1c5b9eace4d0a9584b5830682f4"
+            },
+            "T_Env_DesertSandstone_BC.png": {
+              "path": "03_work/textures_v002/T_Env_DesertSandstone_BC.png",
+              "sha256": "80cba1be728040b400e1c66bac2d8c71873f17504447c9ff883e5c6d7bbe8cac"
+            },
+            "T_Env_DesertSandstone_N.png": {
+              "path": "03_work/textures_v002/T_Env_DesertSandstone_N.png",
+              "sha256": "8903deebbf0e065e40db4b2c6a4208a8d73fd40222866580c761c73c4888217d"
+            },
+            "T_Env_DesertSandstone_ORM.png": {
+              "path": "03_work/textures_v002/T_Env_DesertSandstone_ORM.png",
+              "sha256": "4692bd376c878e2162ad7c6eaad9120a84d65716183095133546e56ab8623a81"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.873,
+          "uncovered_ratio": 0.3287,
+          "lods": [
+            {
+              "tris": 5000,
+              "verts": 2502
+            },
+            {
+              "tris": 1600,
+              "verts": 802
+            },
+            {
+              "tris": 500,
+              "verts": 252
+            }
+          ],
+          "export_kb": 209.2,
+          "seconds": 104.7,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 14:43:35",
+          "files": {
+            "SM_Env_DesertSandstone_v001_validation.json": {
+              "path": "05_review/SM_Env_DesertSandstone_v001_validation.json",
+              "sha256": "7db679fb2051baf7f97900a2ec4eea93a394e51866297d93cd5eb660ec246b41"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 14:51:19",
+          "files": {
+            "SM_Env_DesertSandstone_v001_validation_v002.json": {
+              "path": "05_review/SM_Env_DesertSandstone_v001_validation_v002.json",
+              "sha256": "e726a9396db121f5652ff81b8a659bd6d7e7a05bfd5424a11c794a2625faeb1a"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-10-04 17:59:40",
+          "files": {
+            "SM_Env_DesertSandstone_v002_validation_v003.json": {
+              "path": "05_review/SM_Env_DesertSandstone_v002_validation_v003.json",
+              "sha256": "5cfe37534a49ec33ef1d0ee3b5252e55e8f12784985150e9c73c888bdfe96624"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 14:43:43",
+          "files": {
+            "SM_Env_DesertSandstone_v001_review.png": {
+              "path": "05_review/SM_Env_DesertSandstone_v001_review.png",
+              "sha256": "929cd7aa9bfaeb34288a80243fcb34ae1e1bdc651ddde075c36356f5599d728f"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "已查看成品五向视图、三个LOD布线及PBR贴图；侵蚀岩层、断面和整体轮廓可读，无明显漏面或贴图破损。天然不对称导致的轴心警告保留，运行时按所有LOD实测包络适配。",
+            "time": "2026-10-04 14:44:58"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 14:51:26",
+          "files": {
+            "SM_Env_DesertSandstone_v001_review_v002.png": {
+              "path": "05_review/SM_Env_DesertSandstone_v001_review_v002.png",
+              "sha256": "929cd7aa9bfaeb34288a80243fcb34ae1e1bdc651ddde075c36356f5599d728f"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "新体量QA已通过；重看同一生成网格的五向视图、三个LOD和贴图，层理轮廓清楚。保留天然不对称轴心警告。",
+            "time": "2026-10-04 14:52:00"
+          }
+        },
+        {
+          "version": 3,
+          "created": "2026-10-04 18:01:05",
+          "files": {
+            "SM_Env_DesertSandstone_v002_review_v003.png": {
+              "path": "05_review/SM_Env_DesertSandstone_v002_review_v003.png",
+              "sha256": "84c783a53b1e9b38de2e1d3d7d2287e8d598e891817f53dd9e88dc64ee4340c3"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Root inspected the actual five views, all LODs and texture sheets. Warm ochre painted planes and broad erosion bands retain a thick coherent rock cluster and stable far silhouette; no visible texture holes or disconnected parts. Retain the natural center-offset warning, with zero errors and no waiver.",
+            "time": "2026-10-04 18:02:04"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 14:44:59",
+          "files": {
+            "SM_Env_DesertSandstone.glb": {
+              "path": "@root/public/assets/props/SM_Env_DesertSandstone.glb",
+              "sha256": "9b82c92ccb0dd62a411c2ef57e15696c555d980864848093e4ea373e73598a9f"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Env_DesertSandstone.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 14:52:00",
+          "files": {
+            "SM_Env_DesertSandstone.glb": {
+              "path": "@root/public/assets/props/SM_Env_DesertSandstone.glb",
+              "sha256": "9b82c92ccb0dd62a411c2ef57e15696c555d980864848093e4ea373e73598a9f"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Env_DesertSandstone.glb"
+        },
+        {
+          "version": 3,
+          "created": "2026-10-04 18:02:05",
+          "files": {
+            "SM_Env_DesertSandstone.glb": {
+              "path": "@root/public/assets/props/SM_Env_DesertSandstone.glb",
+              "sha256": "a3c6ee73e246d78e406a0cbe68cb13380f8180399f5756772ae6bda7dea5c902"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Env_DesertSandstone.glb"
+        }
+      ]
+    }
+  }
+}

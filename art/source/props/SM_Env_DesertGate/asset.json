@@ -1,0 +1,622 @@
+{
+  "id": "SM_Env_DesertGate",
+  "display": "沙寺宽石门楼",
+  "kind": "static",
+  "class": "nature_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 18:47:20",
+          "files": {
+            "BO_SM_Env_DesertGate_v001.json": {
+              "path": "00_blockout/BO_SM_Env_DesertGate_v001.json",
+              "sha256": "00b6fc014c16179d4fccfd80d994e1ac7130e2ea1cb0f53e1c3b195905837504"
+            },
+            "BO_SM_Env_DesertGate_v001_views.json": {
+              "path": "00_blockout/BO_SM_Env_DesertGate_v001_views.json",
+              "sha256": "d6e55a1ce416f5413dafa5c9fd3ff9196b1e8a91ff39955df4a31e4ad9b49774"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.gate"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -5.25,
+              0,
+              -0.85
+            ],
+            "max": [
+              5.25,
+              6.8,
+              0.85
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 18:48:13",
+          "files": {
+            "CN_SM_Env_DesertGate_v001_source.png": {
+              "path": "01_concept/CN_SM_Env_DesertGate_v001_source.png",
+              "sha256": "641102b2560c47efb7a012df4734f02014aa302563624ac51f44199f8b2d1c78"
+            },
+            "CN_SM_Env_DesertGate_v001_front.png": {
+              "path": "01_concept/CN_SM_Env_DesertGate_v001_front.png",
+              "sha256": "019cd69ba577c2fe5da4efc2861a3a1e0cf3cb959372a3f5fc004aee56b61493"
+            },
+            "CN_SM_Env_DesertGate_v001_left.png": {
+              "path": "01_concept/CN_SM_Env_DesertGate_v001_left.png",
+              "sha256": "ffe3e6b80f02ff2cd82621cc2e9c2a5ddf553ff3af182f82a30d7addd5a67bad"
+            },
+            "CN_SM_Env_DesertGate_v001_back.png": {
+              "path": "01_concept/CN_SM_Env_DesertGate_v001_back.png",
+              "sha256": "f24bca6de590a68f6ac886d6ffba60d0ee1ade98e0e948d39b70581e4864d165"
+            },
+            "CN_SM_Env_DesertGate_v001_right.png": {
+              "path": "01_concept/CN_SM_Env_DesertGate_v001_right.png",
+              "sha256": "b30b84aeb4e3b9b5cc672064062779dd775b96a7b69de3cea1e412bda645086a"
+            },
+            "CN_SM_Env_DesertGate_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Env_DesertGate_v001_sheet.png",
+              "sha256": "3e4322c882516c0bc1eb365edc9a20ff4eb5f6d5f09910d905bcb0f5da913953"
+            },
+            "CN_SM_Env_DesertGate_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_DesertGate_v001_prompt.txt",
+              "sha256": "6ee45b6c1e5e704d1aeb6b33d73f64e5be1dc15481cb2ceab5d0be990e62e8b3"
+            },
+            "CN_SM_Env_DesertGate_v001_registration.json": {
+              "path": "01_concept/CN_SM_Env_DesertGate_v001_registration.json",
+              "sha256": "26af139436c9f00a99b110474d79c1d6a28f88d8f7c3079617256702834efae4"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Codex built-in image_gen",
+          "registration_version": 1,
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-82d94fb5-5c95-4c49-a03d-e4d3b529bdaf.png",
+          "source_sha256": "641102b2560c47efb7a012df4734f02014aa302563624ac51f44199f8b2d1c78",
+          "prompt": "Use case: stylized-concept.\nAsset type: exact four-view concept sheet to reconstruct ONE OPEN walk-through monumental gateway using local Hunyuan3D.\nPrimary request: monumental architecture for a first-person roguelite scene with the bold readable hand-painted visual quality of Gunfire Reborn, moderate detail, clear shape and broad matte color blocks.\nComposition/framing: ONE horizontal sheet on uniform pure white background, FOUR equal-width isolated panels, orthographic FRONT / LEFT / BACK / RIGHT in that order. Repeat the EXACT same structure at identical physical scale and ground baseline. Full silhouette with large margins. No perspective, labels, text, scene or contact shadow.\nSubject geometry, crucial: ONE complete inverted U-shaped freestanding gate, 10.5m total width, 6.8m total height, 1.7m depth. Two broad solid upright posts at the left and right ends support one chunky horizontal lintel. The ground-level passage is EMPTY WHITE BACKGROUND: at least 6.6m clear width and 4m clear height, full uninterrupted opening from the ground to the lintel. Front and back both reveal the same completely open passage. There is absolutely NO door, no wall, no niche backing, no fill, no panel, no floor/sill connecting the bottom of the posts. The two posts connect ONLY across their top by the lintel. Posts have broad stable bases and fused broad capitals. The lintel is thick enough to reconstruct and has a simple stepped cap with at most one subtle central architectural crest. Every ornament is broad and fused to the structure; no hanging ropes, chains, tiny detached pieces. Narrow LEFT/RIGHT side views show the real 1.7m structural depth and same material construction.\nStyle/medium: stylized hand-painted 3D concept, simple broad faceted planes, robust proportions, simplified East-Asian fantasy architecture. Medium-scale structural ornaments only, smooth painted color gradients, restrained wear. Even neutral studio lighting, gentle shading, no glossy highlights or baked cast shadows.\nAvoid: filled/closed passage, door leaf, solid backdrop, photorealism, micrograin, tiny cracks, ornate miniature carvings, delicate rafters, separate props, text, logo, watermark.\nChapter palette and construction: warm honey/ochre sandstone block masonry, terracotta inset panels, muted turquoise horizontal painted bands on the cap and buttress faces. Use broad stone blocks and two or three restrained carved geometric reliefs, asymmetric mild broken edge at one cap end; no decorative sun medallion.",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "multiview",
+          "architecture_requirements": {
+            "role": "gate",
+            "dimensions_m": [
+              10.5,
+              6.8,
+              1.7
+            ],
+            "passage_min_width_m": 6.4,
+            "lintel_bottom_target_m": 3.8,
+            "ground_passage_open": true
+          },
+          "registration": {
+            "front": {
+              "scale": 0.5850877900567341,
+              "offset": [
+                31,
+                364
+              ],
+              "size": [
+                450,
+                296
+              ],
+              "physical_height_m": 6.8,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5827842948202901,
+              "offset": [
+                211,
+                364
+              ],
+              "size": [
+                89,
+                296
+              ],
+              "physical_height_m": 6.8,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5862463797400147,
+              "offset": [
+                31,
+                364
+              ],
+              "size": [
+                450,
+                296
+              ],
+              "physical_height_m": 6.8,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5839337707469574,
+              "offset": [
+                211,
+                364
+              ],
+              "size": [
+                89,
+                296
+              ],
+              "physical_height_m": 6.8,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Reviewed original and registered four views: inverted-U structure with empty ground-level passage visible on front and back, two thick posts connected only by chunky top lintel; narrow side views coherent. Actual generated passage will be checked before publish.",
+            "time": "2026-10-04 18:49:15"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 19:01:09",
+          "files": {
+            "CN_SM_Env_DesertGate_v002_source.png": {
+              "path": "01_concept/CN_SM_Env_DesertGate_v002_source.png",
+              "sha256": "0c2881c1abb1c73e7c117c858126a7bc62a4e07924867667bec050ff5c02e772"
+            },
+            "CN_SM_Env_DesertGate_v002_reference_01.png": {
+              "path": "01_concept/CN_SM_Env_DesertGate_v002_reference_01.png",
+              "sha256": "641102b2560c47efb7a012df4734f02014aa302563624ac51f44199f8b2d1c78"
+            },
+            "CN_SM_Env_DesertGate_v002_front.png": {
+              "path": "01_concept/CN_SM_Env_DesertGate_v002_front.png",
+              "sha256": "5d6eb7181d29c50843fdf7e0f0a1c1ca8b266b567b319fb39614dbbedcaf55c7"
+            },
+            "CN_SM_Env_DesertGate_v002_left.png": {
+              "path": "01_concept/CN_SM_Env_DesertGate_v002_left.png",
+              "sha256": "691c8bc3871da569ca16cd6f51877be824225037993856365714dfd14b3e3196"
+            },
+            "CN_SM_Env_DesertGate_v002_back.png": {
+              "path": "01_concept/CN_SM_Env_DesertGate_v002_back.png",
+              "sha256": "d058c84d5d65dd23e18bc688562f135357b0bb9240e04c1846cbd11b53278ca1"
+            },
+            "CN_SM_Env_DesertGate_v002_right.png": {
+              "path": "01_concept/CN_SM_Env_DesertGate_v002_right.png",
+              "sha256": "24bfbcf749b48394068faa9cb57d960f1e523e31e537aaeb4c943a02b481f36a"
+            },
+            "CN_SM_Env_DesertGate_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Env_DesertGate_v002_sheet.png",
+              "sha256": "2a65e0e19b7881930c20e953dd1b68d572b7745a815bfd82c0b0447f840a1698"
+            },
+            "CN_SM_Env_DesertGate_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_DesertGate_v002_prompt.txt",
+              "sha256": "7ddb41147b509109efb1f6d148717e44eb708bafb775b4862d7d318dd3c79243"
+            },
+            "CN_SM_Env_DesertGate_v002_registration.json": {
+              "path": "01_concept/CN_SM_Env_DesertGate_v002_registration.json",
+              "sha256": "7928c90e69ce97ca0f6f04e0fe8f00f3982daa20a698cc190eac18a5b9b255d3"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Codex built-in image_gen",
+          "registration_version": 1,
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-c7d75444-fe8f-47f6-bd55-927c5b46356b.png",
+          "source_sha256": "0c2881c1abb1c73e7c117c858126a7bc62a4e07924867667bec050ff5c02e772",
+          "prompt": "Use case: precise-object-edit. Asset type: four-view Hunyuan3D reconstruction concept. Input image: existing sand temple gate, edit target. Keep the same warm ochre sandstone, terracotta insets, broad muted turquoise lintel band, matte painted Gunfire Reborn style, shallow medium-size geometric reliefs, pure white backdrop and exact FRONT / LEFT / BACK / RIGHT order. Correct ONLY its proportions and opening: make the two posts and especially their bases substantially narrower and farther apart. FRONT and BACK total width is 1.54 times height; the narrowest EMPTY gap between every part of the posts, INCLUDING their bottom bases, must be at least 75 percent of full gate width. Each base takes at most 12 percent of total width. Keep an empty passage with no sill, floor, door or backing, continuously open from ground to at least 62 percent of full height. Remove any inward projections into this rectangular passage. Keep a thick continuous lintel overhead with the existing broad colors and central relief fused to it. LEFT and RIGHT true depth is 25 percent of overall height, with posts the same full height as front/back. All four orthographic views show exactly the same 10.5m-wide,6.8m-high,1.7m-deep structure at identical physical scale and baseline. Regenerate the full horizontal sheet, ample clean white separation and uncropped margins, even studio lighting, no labels/text/shadow or new details.",
+          "reference_mode": "bounds_only",
+          "reference_images": [
+            {
+              "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-82d94fb5-5c95-4c49-a03d-e4d3b529bdaf.png",
+              "source_sha256": "641102b2560c47efb7a012df4734f02014aa302563624ac51f44199f8b2d1c78",
+              "registered_file": "CN_SM_Env_DesertGate_v002_reference_01.png"
+            }
+          ],
+          "reference_provenance_version": 1,
+          "highpoly_mode": "multiview",
+          "architecture_requirements": {
+            "role": "gate",
+            "dimensions_m": [
+              10.5,
+              6.8,
+              1.7
+            ],
+            "passage_min_width_m": 6.4,
+            "lintel_bottom_target_m": 3.8,
+            "ground_passage_open": true
+          },
+          "registration": {
+            "front": {
+              "scale": 0.6667892382178094,
+              "offset": [
+                11,
+                364
+              ],
+              "size": [
+                489,
+                296
+              ],
+              "physical_height_m": 6.8,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6652908354352975,
+              "offset": [
+                220,
+                364
+              ],
+              "size": [
+                72,
+                296
+              ],
+              "physical_height_m": 6.8,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6667892382178094,
+              "offset": [
+                6,
+                364
+              ],
+              "size": [
+                500,
+                296
+              ],
+              "physical_height_m": 6.8,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.6652908354352975,
+              "offset": [
+                220,
+                364
+              ],
+              "size": [
+                71,
+                296
+              ],
+              "physical_height_m": 6.8,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Actually inspected the newly edited native source and registered four views. Posts and bases are narrower, the fully open ground passage is substantially wider, and lintel/post depth stays coherent. Chapter colors and broad painted motifs preserved; require all final LOD geometry and runtime clearance to pass before publish.",
+            "time": "2026-10-04 19:01:30"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 18:54:22",
+          "files": {
+            "HP_SM_Env_DesertGate_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Env_DesertGate_v001_input_front.png",
+              "sha256": "790f323afacb7a3fa24262360aeda1fef473823a5b9b421875753370c935c9d2"
+            },
+            "HP_SM_Env_DesertGate_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Env_DesertGate_v001_input_left.png",
+              "sha256": "df9c24d5904e0f9657299fe89e63ce5e06225962f06c85141b4e0315256b129c"
+            },
+            "HP_SM_Env_DesertGate_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Env_DesertGate_v001_input_back.png",
+              "sha256": "55b170ce108ac27a033ab5d6054db66d7a8c3e040ed6979968b38fa3c086b901"
+            },
+            "HP_SM_Env_DesertGate_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Env_DesertGate_v001_input_right.png",
+              "sha256": "946e92a4eb76203f1b221ff3030499a4575efd1e293cb82d95df4531e70e2c42"
+            },
+            "HP_SM_Env_DesertGate_v001.glb": {
+              "path": "02_highpoly/HP_SM_Env_DesertGate_v001.glb",
+              "sha256": "9ee5732e18e096cd437b3d8cc19240af46b99bb786b8824a693850d85493ca82"
+            },
+            "HP_SM_Env_DesertGate_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Env_DesertGate_v001_graph.json",
+              "sha256": "7400876cf6e62a112208daf988e708ad105fa882d88a9b06ab11cd19c593cd8c"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 202610072,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -8,
+              248,
+              520,
+              776
+            ],
+            "scale": 1.9393939393939394
+          },
+          "seconds": 122.8,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 7.5
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 19:06:54",
+          "files": {
+            "HP_SM_Env_DesertGate_v002_input_front.png": {
+              "path": "02_highpoly/HP_SM_Env_DesertGate_v002_input_front.png",
+              "sha256": "ce8069fa24b93ec96633528f7a7287ed67715c3436e6dfda690f96eda0b4f967"
+            },
+            "HP_SM_Env_DesertGate_v002_input_left.png": {
+              "path": "02_highpoly/HP_SM_Env_DesertGate_v002_input_left.png",
+              "sha256": "c58db2397ba7a3b7e11dcd88bb68f25c56a618993c14d843f9b381b03c2f434f"
+            },
+            "HP_SM_Env_DesertGate_v002_input_back.png": {
+              "path": "02_highpoly/HP_SM_Env_DesertGate_v002_input_back.png",
+              "sha256": "85f7989fcf92ddcdbf12ea928425a1892cdd5752d320d7c4bd05edc3e02799c8"
+            },
+            "HP_SM_Env_DesertGate_v002_input_right.png": {
+              "path": "02_highpoly/HP_SM_Env_DesertGate_v002_input_right.png",
+              "sha256": "38bd3e19c441031646c48b88dece44ea48f879d33717c1b17f227f732dca3a2e"
+            },
+            "HP_SM_Env_DesertGate_v002.glb": {
+              "path": "02_highpoly/HP_SM_Env_DesertGate_v002.glb",
+              "sha256": "a1cd9b6a34da3cc172793def768c8872de227133512d4e5169815087f432f6af"
+            },
+            "HP_SM_Env_DesertGate_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Env_DesertGate_v002_graph.json",
+              "sha256": "a89f82d48fa52749d83fc37885f03446c73377e8f4a8b78dd8ce7e94e0b3ef4c"
+            }
+          },
+          "from_concept": 2,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 202610077,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -38,
+              218,
+              550,
+              806
+            ],
+            "scale": 1.7414965986394557
+          },
+          "seconds": 120.9,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 5.4
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 18:55:53",
+          "files": {
+            "SM_Env_DesertGate_v001.blend": {
+              "path": "03_work/SM_Env_DesertGate_v001.blend",
+              "sha256": "961c723d278d49c9f0c089039fb199668d79ce5efc5922c9822051b60a7cdcda"
+            },
+            "SM_Env_DesertGate_v001.glb": {
+              "path": "04_export/SM_Env_DesertGate_v001.glb",
+              "sha256": "d507b802c148d6f08114803cfee37510ad264ebe8784cd8b9990a0beebcb4b85"
+            },
+            "SM_Env_DesertGate_v001_metrics.json": {
+              "path": "03_work/SM_Env_DesertGate_v001_metrics.json",
+              "sha256": "e3592a4d6d038f8d4e89c103f816b15425790e23b389785a4424f385425a50c8"
+            },
+            "T_Env_DesertGate_BC.png": {
+              "path": "03_work/textures_v001/T_Env_DesertGate_BC.png",
+              "sha256": "e16820fb5476994c98b470eefe7789f16eeb688842598434ca72abc2c3e326e3"
+            },
+            "T_Env_DesertGate_N.png": {
+              "path": "03_work/textures_v001/T_Env_DesertGate_N.png",
+              "sha256": "0e93ae32a91f5baa15a0d2af0f76a1400cfb4c9efc5f10cf083a886ab955d548"
+            },
+            "T_Env_DesertGate_ORM.png": {
+              "path": "03_work/textures_v001/T_Env_DesertGate_ORM.png",
+              "sha256": "249216d1ed99af06c4ffa364b34f3dbf9b9ac9b1635689f04f005141c52b94ed"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.925,
+          "uncovered_ratio": 0.3351,
+          "lods": [
+            {
+              "tris": 5000,
+              "verts": 2502
+            },
+            {
+              "tris": 1600,
+              "verts": 802
+            },
+            {
+              "tris": 500,
+              "verts": 252
+            }
+          ],
+          "export_kb": 236.8,
+          "seconds": 45.2,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 19:09:25",
+          "files": {
+            "SM_Env_DesertGate_v002.blend": {
+              "path": "03_work/SM_Env_DesertGate_v002.blend",
+              "sha256": "d6740deb9eaf009bc0c53a24416404cf859a93e50acae5d32c50b2d52454a971"
+            },
+            "SM_Env_DesertGate_v002.glb": {
+              "path": "04_export/SM_Env_DesertGate_v002.glb",
+              "sha256": "3f61c8a23acc8fe8349470f91e915770cda543eaad3e7902fda2c92563e87eb9"
+            },
+            "SM_Env_DesertGate_v002_metrics.json": {
+              "path": "03_work/SM_Env_DesertGate_v002_metrics.json",
+              "sha256": "610ec4988330065556b5b75ec46da360982edc3c224f49a557cedcbec47ffb5d"
+            },
+            "T_Env_DesertGate_BC.png": {
+              "path": "03_work/textures_v002/T_Env_DesertGate_BC.png",
+              "sha256": "baee348fcf67b18d7e480c49bd95cca02c93cbc17cd6cb6906e7a4ea27d8b23b"
+            },
+            "T_Env_DesertGate_N.png": {
+              "path": "03_work/textures_v002/T_Env_DesertGate_N.png",
+              "sha256": "3f4ef902caaf573342a0c2c59ae11cfd78bf34554b1f63189a6bc1b35a6aed28"
+            },
+            "T_Env_DesertGate_ORM.png": {
+              "path": "03_work/textures_v002/T_Env_DesertGate_ORM.png",
+              "sha256": "a25e523c7186ed63013ec3f3a072492611279b7788cbd925bb1a40da8395d962"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.918,
+          "uncovered_ratio": 0.2985,
+          "lods": [
+            {
+              "tris": 5000,
+              "verts": 2502
+            },
+            {
+              "tris": 1600,
+              "verts": 802
+            },
+            {
+              "tris": 500,
+              "verts": 252
+            }
+          ],
+          "export_kb": 239.6,
+          "seconds": 35.2,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 18:55:53",
+          "files": {
+            "SM_Env_DesertGate_v001_validation_v001.json": {
+              "path": "05_review/SM_Env_DesertGate_v001_validation_v001.json",
+              "sha256": "1fcced069dbd1cb20a4d9f475c2c4e112ea4adc0a280b39b2ec08148712456cf"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 19:09:25",
+          "files": {
+            "SM_Env_DesertGate_v002_validation_v002.json": {
+              "path": "05_review/SM_Env_DesertGate_v002_validation_v002.json",
+              "sha256": "57ba69e81268d4c893e4aeec7aab9d1bcf57538ce190bf49eb2b6a6bfa9b3a01"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 18:59:11",
+          "files": {
+            "SM_Env_DesertGate_v001_review_v001.png": {
+              "path": "05_review/SM_Env_DesertGate_v001_review_v001.png",
+              "sha256": "1dc419026a9bc4ce0db05eb4d1fa7b502c910c834a7bea19dec785216bdeb9d3"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 19:10:41",
+          "files": {
+            "SM_Env_DesertGate_v002_review_v002.png": {
+              "path": "05_review/SM_Env_DesertGate_v002_review_v002.png",
+              "sha256": "a48cd7315fb02e6c7ab41cadb66b195a9f4a0d5b656dbf2279a92e405ef95799"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Reviewed build2 final five views: wider separated stone posts, coherent turquoise lintel trim, complete back and sides. All actual LOD source and runtime aperture boxes clear via triangle clipping; previous narrow build1 rejected and preserved. 5000/1600/500 and 37 auto checks without warnings/errors.",
+            "time": "2026-10-04 19:11:55"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:11:56",
+          "files": {
+            "SM_Env_DesertGate.glb": {
+              "path": "@root/public/assets/props/SM_Env_DesertGate.glb",
+              "sha256": "3f61c8a23acc8fe8349470f91e915770cda543eaad3e7902fda2c92563e87eb9"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Env_DesertGate.glb"
+        }
+      ]
+    }
+  }
+}

@@ -18,12 +18,20 @@ provider = "openai"
 model = "gpt-image-2.5-sunburst"   # 精修档：编辑时最贴合参考图；快速试稿可改 gpt-image-2.5-flare
 quality = "high"
 sheet_size = [2048, 1024]          # 四视图一行：正 / 左 / 背 / 右，每格 512×1024
-# 全项目统一的美术风格（每个资产的提示词都以它开头，保证风格一致）
+# 全项目统一美术方向：以《枪火重生》级别的风格化游戏效果为目标。
+# concept 命令自动前置；本机环境批次的 ImageGen 调用需显式前置这一段，
+# 登记脚本只保存实际提示词，不替换历史原图或提示词。
 style = """
-Stylized hand-painted 3D game character art for a fast first-person shooter: chunky readable shapes,
-slightly exaggerated proportions, clean large color blocks with soft painterly gradients, subtle
-edge wear, warm desert-and-crimson palette with East-Asian wuxia fantasy motifs. Matte materials,
-no photorealism, no harsh specular highlights, no baked cast shadows, evenly lit.
+Stylized hand-painted 3D game character art for a fast first-person roguelite shooter, targeting
+the readable, moderate-detail visual direction of Gunfire Reborn. Bold chunky silhouettes,
+slightly exaggerated proportions, broad clean faceted planes, two or three dominant color blocks,
+soft painted gradients and a few restrained edge accents. Simplify East-Asian fantasy motifs
+into recognizable medium-scale shapes. Use the chapter or character palette in the asset brief.
+Favor clear solid volume and consistent materials at normal gameplay distance. Matte stone,
+wood and cloth, restrained highlights on metal, sparse painted wear. No photorealism,
+micro-grain, dense tiny cracks, elaborate miniature carvings, harsh specular highlights or
+baked cast shadows. Even neutral lighting for reconstruction; prioritize silhouette and color
+coherence over surface detail.
 """
 
 # ───────────── 高模（Hunyuan3D 2.1，本地 ComfyUI）─────────────
@@ -121,3 +129,17 @@ lod_distance = [0, 20]
 texture = 512
 texel_density = 256
 max_file_kb = 600
+
+# Hunyuan 自然环境件：bounds-only 尺寸参考，不创建白模网格。
+[classes.nature_prop]
+category = "props"
+lod_tris = [5000, 1600, 500]
+lod_distance = [0, 18, 42]
+texture = 1024
+texel_density = 256
+max_file_kb = 900
+bake_device = "CPU"                # 不与 Hunyuan 推理抢显存
+min_component_fraction = 0.002     # 保留生成的较小枝叶和积雪块
+remesh_voxel = 0.0018              # 只修整 Hunyuan 网格，避免吞掉细枝
+min_reference_span_fraction = 0.25 # 拒绝只有正面轮廓、几乎无三维厚度的失败生成
+far_lod_budget_weld_max_fraction = 0.015 # 仅最远 LOD 小拓扑环阻塞减面时，最多焊接高度的 1.5%

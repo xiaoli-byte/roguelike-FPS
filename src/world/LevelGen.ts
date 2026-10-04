@@ -10,8 +10,10 @@ import type { StageNode, ThemeId } from '../core/types';
 import { finalizeLights, removeGroup, rotateLayout, validateAndRepair } from './LevelCheck';
 import type { BoxLook, Deco, DecoKind, LevelLayout, P2 } from './LevelTypes';
 import { themeStyle } from './Themes';
+import { generateAdventure } from './AdventureGen';
+import { getStageDesign } from './StageDesign';
 
-export type { BoxLook, Deco, DecoKind, LayoutBox, LevelLayout, P2, RuneMark } from './LevelTypes';
+export type { AdventureLayout, AdventurePath, AdventureRock, AdventureSite, AdventureZone, BoxLook, Deco, DecoKind, LayoutBox, LevelLayout, P2, RuneMark } from './LevelTypes';
 
 interface Rect { x0: number; z0: number; x1: number; z1: number }
 interface Circle { x: number; z: number; r: number }
@@ -242,11 +244,12 @@ class Gen {
     const size = propSize(kind, s);
     const r = rectC(x, z, size, size);
     if (!this.fits(r, gap, inner, structGap)) return false;
-    // 旧松树的树冠和仙人掌枝臂超出碰撞盒，入场视廊按实际外延留白。
+    // 松树树冠和仙人掌枝臂超出碰撞盒，主景与中央/远门视廊按实际外延留白。
     // 判断在创建模型与碰撞之前执行，两者都会转到新的可用位置，不留下隐形障碍。
     const visualWidth = kind === 'pine' ? 3.1 * s : kind === 'cactus' ? 1.6 * s : size;
     if (visualWidth > size) {
       const visual = rectC(x, z, visualWidth, visualWidth);
+      if (this.sceneSight.some(view => crossesRect(view.a, view.b, visual, 0.45))) return false;
       if (this.entranceSight.some(view => crossesRect(view.a, view.b, visual, view.pad))) return false;
     }
     const g = o.group ?? this.group();
@@ -320,6 +323,8 @@ class Gen {
     const type = this.stage.type;
     const small = type === 'treasure' || type === 'shop';
     L.playerSpawn = { x: snap(rng.range(-3, 3)), z: snap(H - (small ? 3.5 : 4.5)) };
+    const design = getStageDesign(this.stage);
+    if (small) L.playerSpawn.x = snap(design.entrance.x * .18);
     L.playerYaw = 0;
     const spacing = type === 'boss' ? 12 : small ? 7 : 11;
     const pz = -H + (small ? 4 : 4.5);
@@ -330,11 +335,11 @@ class Gen {
         L.bossPoint = { x: 0, z: -9 };
         break;
       case 'treasure':
-        L.rewardPoint = { x: 0, z: -1.5 };
+        L.rewardPoint = { x: snap(design.objective.x * .18), z: snap(design.objective.z * .12) };
         break;
       case 'shop':
-        L.rewardPoint = { x: 0, z: 7.5 };
-        L.shopPoint = { x: 0, z: -2.5 };
+        L.rewardPoint = { x: snap(design.entrance.x * .12), z: 7.5 };
+        L.shopPoint = { x: snap(design.sites[(Number.isFinite(this.stage.index) ? this.stage.index : 0) % 3].x * .13), z: -2.5 };
         break;
       default:
         L.rewardPoint = { x: rng.range(-2.5, 2.5), z: rng.range(-3, 1.5) };
@@ -795,39 +800,45 @@ class Gen {
   // ───────────── Boss 关 ─────────────
 
   private boss(): void {
-    const rng = this.rng;
-    const H = this.H;
     this.reserved.push({ x: 0, z: 0, r: 17 });
-    // 环形石柱
-    const n = 10;
-    const a0 = rng.next() * TAU;
-    for (let i = 0; i < n; i++) {
-      const a = a0 + (i * TAU) / n;
-      const R = rng.range(23, 25.5);
-      const x = Math.sin(a) * R;
-      const z = Math.cos(a) * R;
-      const r = rectC(x, z, 1.7, 1.7);
-      if (!this.fits(r, COVER_GAP, 2.5)) continue;
-      const g = this.group();
-      const broken = rng.chance(0.3);
-      this.box(broken ? 'ruin' : 'pillar', 'pillar', g, r.x0, 0, r.z0, r.x1, broken ? rng.range(2.8, 3.8) : rng.range(6.5, 8), r.z1);
-      this.occupy(r, g);
-      if (broken) this.deco('rock', x + rng.range(-1.6, 1.6), z + rng.range(-1.6, 1.6), { group: g, s: rng.range(0.3, 0.55) });
-    }
-    // 四角：两个高台 + 两段 L 形残垣
-    const corners: P2[] = rng.shuffle([{ x: -1, z: -1 }, { x: 1, z: -1 }, { x: -1, z: 1 }, { x: 1, z: 1 }]);
-    for (let i = 0; i < 4; i++) {
-      const c = corners[i];
-      const cx = c.x * (H - 7);
-      const cz = c.z * (H - 7);
-      if (i < 2) {
-        const side = rng.chance(0.5) ? (c.x > 0 ? 1 : 0) : (c.z > 0 ? 3 : 2);
-        this.platform(cx, cz, 6, 5.6, 2.0, side, 2.4, false);
-      } else {
-        this.cover('lowWall', cx, cz) || this.cover('ruin', cx, cz);
+    const kind = getStageDesign(this.stage).bossKind;
+    const step = (this.stage.theme === 'desert' ? 6.598757627086841 : this.stage.theme === 'frost' ? 6.120086181502612 : 6.140273912515699) + .12;
+    if (kind === 'open-crescent') {
+      for (const i of [-2, -1, 0, 1, 2]) this.publishedWall(i * step, -22.5, 0);
+      for (let i = 0; i < 4; i++) this.publishedWall(-23.5, -12.5 + i * step, Math.PI / 2);
+      this.platform(-24, 21, 6, 5.6, 1.2, 1, 2.4, false);
+    } else if (kind === 'split-wings') {
+      for (const sign of [-1, 1]) {
+        for (let i = 0; i < 3; i++) this.publishedWall(sign * 22, -12.5 + i * step, Math.PI / 2);
+        for (const x of [sign * 9.6, sign * (9.6 + step)]) this.publishedWall(x, -22.5, 0);
+        this.platform(sign * 24, 20, 6, 5.6, 1.2, sign > 0 ? 0 : 1, 2.4, false);
       }
+    } else {
+      // Two long dividers produce central and outside lanes with open ends.
+      // Their inner faces remain beyond the 17m clear central boss arena.
+      for (const sign of [-1, 1]) for (let i = 0; i < 4; i++)
+        this.publishedWall(sign * 18, -13 + i * step, Math.PI / 2);
+      for (const x of [-23.5, 23.5]) this.publishedWall(x, 16, 0);
     }
     this.L.runes.push({ x: 0, z: 0, r: 13, gold: false });
+  }
+
+  /** Numeric physics matches the published wall's reviewed all-LOD envelope. */
+  private publishedWall(x: number, z: number, yaw: number): boolean {
+    const theme = this.stage.theme;
+    const prefix = theme === 'desert' ? 'Desert' : theme === 'frost' ? 'Frost' : 'Inferno';
+    const envelope = theme === 'desert' ? { width: 6.598757627086841, height: 3.961362131374905, depth: 1.3 }
+      : theme === 'frost' ? { width: 6.120086181502612, height: 3.4414789662240515, depth: 1.3 }
+        : { width: 6.140273912515699, height: 3.0009073182372017, depth: 1.3 };
+    const c = Math.abs(Math.cos(yaw)), s = Math.abs(Math.sin(yaw));
+    const r = rectC(x, z, envelope.width * c + envelope.depth * s, envelope.depth * c + envelope.width * s);
+    if (!this.fits(r, .1, 1.4)) return false;
+    this.L.architecture ??= [];
+    this.L.architecture.push({ assetId: `SM_Env_${prefix}Wall`, type: 'wall', court: 'shrine',
+      x, y: 0, z, yaw, s: 1, envelope });
+    this.box('collider', 'architecture-wall', 0, r.x0, 0, r.z0, r.x1, envelope.height, r.z1);
+    this.occupy(r, 0);
+    return true;
   }
 
   // ───────────── 宝藏关 ─────────────
@@ -1018,7 +1029,18 @@ class Gen {
 /**
  * 生成关卡布局。rng 由调用方按 (run.seed, chapter, index) 创建；同种子结果可复现。
  */
-export function generateLevel(rng: Rng, stage: StageNode): LevelLayout {
+export function generateLevel(rng: Rng, stage: StageNode, options: { adventure?: boolean } = {}): LevelLayout {
+  if (options.adventure !== false && (stage.type === 'combat' || stage.type === 'elite')) {
+    for (let attempt = 0; attempt < 6; attempt++) {
+      const L = generateAdventure(rng, stage);
+      rotateLayout(L, rng.int(0, 3));
+      if (!validateAndRepair(L)) continue;
+      finalizeLights(L);
+      return L;
+    }
+    // An unexpected future composition failure must not strand a run on load.
+    return generateLevel(rng, stage, { adventure: false });
+  }
   for (let attempt = 0; attempt < 6; attempt++) {
     const L = new Gen(rng, stage).run();
     rotateLayout(L, rng.int(0, 3));

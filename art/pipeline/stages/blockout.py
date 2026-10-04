@@ -26,6 +26,9 @@ def incoming_dir(asset_id: str) -> Path:
 def ingest(asset_id: str) -> dict:
     """把 _tmp/incoming 里的白模登记为新版本并渲染四视图。"""
     spec = CFG.asset(asset_id)
+    if spec.raw.get("reference_mode") == "bounds_only":
+        from prepare_nature_batch import prepare_reference
+        return prepare_reference(asset_id)
     st = AssetState(spec)
     inc = incoming_dir(asset_id)
     glb, meta = inc / "blockout.glb", inc / "blockout.json"

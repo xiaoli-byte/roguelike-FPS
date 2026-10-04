@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>关卡场景 · 灵火破晓</title>
+</head>
+<body class="wb-overview">
+  <div id="app"><canvas id="game-canvas" tabindex="0" aria-label="关卡游戏视口"></canvas><div id="world-layer"></div><div id="ui-root"></div></div>
+  <header class="wb-header">
+    <div><span class="wb-eyebrow">灵火破晓 / 关卡设计</span><h1 id="wb-title">关卡场景</h1></div>
+    <div class="wb-header-actions"><span id="wb-view-label">俯视 · 时间暂停</span><button id="wb-overview" aria-pressed="true">俯视</button><button id="wb-first-person" aria-pressed="false">第一人称观察</button><button id="wb-clean-view">净视预览</button><button id="wb-play" class="wb-primary">进入试玩</button></div>
+  </header>
+  <button id="wb-return-tools" class="wb-return-tools">返回工具 · Esc</button>
+  <aside class="wb-panel" id="wb-panel">
+    <section class="wb-section">
+      <p class="wb-kicker">当前关卡</p>
+      <div class="wb-select-row"><label>章节<select id="wb-theme"><option value="desert">沙寺</option><option value="frost">霜山</option><option value="inferno">熔火</option></select></label><label>分支<select id="wb-type"><option value="auto">默认战斗</option><option value="elite">精英</option><option value="shop">商店</option><option value="treasure">宝藏</option></select></label></div>
+      <label class="wb-stage-label">地图<select id="wb-stage"></select></label>
+      <label class="wb-stage-label">呈现<select id="wb-look"><option value="art">场景美术</option><option value="whitebox">技术白盒</option></select></label>
+      <p id="wb-art-brief" class="wb-copy"></p>
+      <p id="wb-subtitle" class="wb-subtitle"></p>
+      <p id="wb-intent" class="wb-copy"></p>
+      <a id="wb-atlas" href="/level-design/index.html#gallery" target="_blank" rel="noopener">对照本关平面图 ↗</a>
+    </section>
+    <section class="wb-section">
+      <div class="wb-section-head"><h2>空间检查</h2><button id="wb-reset" class="wb-quiet">重置本关</button></div>
+      <label>快速定位（传送）<select id="wb-checkpoint"></select></label>
+      <div class="wb-button-row"><button id="wb-locate">定位到选点</button><button id="wb-entry">回到入口</button></div>
+      <label>自动步行路线<select id="wb-route"><option value="target">当前位置 → 所选检查点</option></select></label>
+      <div class="wb-button-row"><button id="wb-walk">实际步行到选点</button><button id="wb-stop-walk" hidden>停止步行</button></div>
+      <output id="wb-walk-status">选一个位置，可沿真实导航路线自动步行；途中仍会触发遭遇。</output>
+      <button id="wb-audit" class="wb-wide">检查全部通道碰撞</button>
+      <output id="wb-audit-status" data-state="idle">按图纸中心线运行独立碰撞探针，检查通道及关键点导航，不计为人工试玩通过。</output>
+    </section>
+    <section class="wb-section">
+      <h2>战斗试玩</h2>
+      <label class="wb-checkbox"><input id="wb-invulnerable" type="checkbox" checked> 无敌检视</label>
+      <button id="wb-clear">清理当前敌人</button>
+      <output id="wb-status" data-phase="loading">正在加载真实角色与武器…</output>
+      <details><summary>本关需要验证</summary><ul id="wb-checks"></ul></details>
+    </section>
+    <section class="wb-section wb-performance">
+      <div class="wb-section-head"><h2>性能记录</h2><button id="wb-sample" class="wb-quiet">采样</button></div>
+      <output id="wb-performance" data-state="idle">等待采样：30 帧预热 + 240 帧记录</output>
+    </section>
+  </aside>
+  <div id="wb-map-info" class="wb-map-info"><span><i class="wb-key floor"></i>可走地面</span><span><i class="wb-key cover"></i>遮挡占位</span><span><i class="wb-key player"></i>玩家</span><strong id="wb-scale"></strong></div>
+  <div id="wb-walk-marker" class="wb-player-marker" hidden aria-hidden="true">▲</div>
+  <footer class="wb-footer"><span id="wb-help">WASD 移动 · 空格跳跃 · Shift 冲刺 · F 交互 · Q/E 技能 · Esc 释放鼠标</span><span id="wb-revision">场景美术 · 基于已验证平面图</span></footer>
+  <script type="module" src="/src/dev/whiteboxLab.ts"></script>
+</body>
+</html>

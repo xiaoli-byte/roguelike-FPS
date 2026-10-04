@@ -1,0 +1,268 @@
+{
+  "completedAt": "2026-10-05T00:01:20.5654614+08:00",
+  "pass": "ART-03 regional set dressing",
+  "newAssets": [
+    "SM_Env_MarketStall",
+    "SM_Env_FrozenSkiff",
+    "SM_Env_SlagCart"
+  ],
+  "source": "Built-in ImageGen concepts, local Hunyuan3D 2mv meshes, existing Blender technical processing",
+  "environmentInventory": {
+    "publishedBytes": 5370136,
+    "addedBytes": 704876,
+    "assets": 26
+  },
+  "targetedAreas": 6,
+  "approvedPlansChanged": false,
+  "maximumSceneInstances": 412,
+  "checks": {
+    "documentationLocalLinks": {
+      "checked": 152,
+      "missing": 0
+    },
+    "localSourceTests": {
+      "passed": 8,
+      "failed": 0,
+      "log": "local-source-test.log"
+    },
+    "productionBuild": {
+      "log": "build.log",
+      "passed": true
+    },
+    "diffCheck": {
+      "log": "diff-check.log",
+      "passed": true
+    },
+    "fullTests": {
+      "passed": 197,
+      "failed": 0,
+      "log": "npm-test.log"
+    },
+    "planSync": {
+      "log": "plan-sync.log",
+      "passed": true
+    }
+  },
+  "browserPlans": [
+    {
+      "passed": true,
+      "plan": "desert-1",
+      "rayWindows": 0
+    },
+    {
+      "passed": true,
+      "plan": "desert-2",
+      "rayWindows": 0
+    },
+    {
+      "passed": true,
+      "plan": "desert-3",
+      "rayWindows": 0
+    },
+    {
+      "passed": true,
+      "plan": "desert-4",
+      "rayWindows": 0
+    },
+    {
+      "passed": true,
+      "plan": "desert-5",
+      "rayWindows": 0
+    },
+    {
+      "passed": true,
+      "plan": "frost-1",
+      "rayWindows": 0
+    },
+    {
+      "passed": true,
+      "plan": "frost-2",
+      "rayWindows": 0
+    },
+    {
+      "passed": true,
+      "plan": "frost-3",
+      "rayWindows": 1
+    },
+    {
+      "passed": true,
+      "plan": "frost-4",
+      "rayWindows": 0
+    },
+    {
+      "passed": true,
+      "plan": "frost-5",
+      "rayWindows": 0
+    },
+    {
+      "passed": true,
+      "plan": "inferno-1",
+      "rayWindows": 0
+    },
+    {
+      "passed": true,
+      "plan": "inferno-2",
+      "rayWindows": 0
+    },
+    {
+      "passed": true,
+      "plan": "inferno-3",
+      "rayWindows": 0
+    },
+    {
+      "passed": true,
+      "plan": "inferno-4",
+      "rayWindows": 0
+    },
+    {
+      "passed": true,
+      "plan": "inferno-5",
+      "rayWindows": 0
+    }
+  ],
+  "rayWindowLifecycle": [
+    {
+      "rayWindows": 1,
+      "label": "art-loaded"
+    },
+    {
+      "rayWindows": 0,
+      "label": "whitebox-restored"
+    },
+    {
+      "rayWindows": 1,
+      "label": "art-reloaded"
+    }
+  ],
+  "performance": [
+    {
+      "state": {
+        "quality": "high",
+        "theme": "inferno",
+        "gameState": "playing",
+        "chapter": 2,
+        "stageIndex": 2,
+        "stageType": "combat",
+        "phase": "explore",
+        "encounter": "",
+        "enemies": 0
+      },
+      "resolution": {
+        "width": 1920,
+        "height": 1080,
+        "cssWidth": 1280,
+        "cssHeight": 720,
+        "pixelRatio": 1.5
+      },
+      "label": "inferno-3-entry-exploration",
+      "sampledAt": "2026-10-04T15:50:54.952Z",
+      "fps": 59.51790496974471,
+      "gpuP95Ms": 7.653541,
+      "updateP95Ms": 0.5999999940395355
+    },
+    {
+      "state": {
+        "quality": "high",
+        "theme": "inferno",
+        "gameState": "playing",
+        "chapter": 2,
+        "stageIndex": 2,
+        "stageType": "combat",
+        "phase": "encounter",
+        "encounter": "B",
+        "enemies": 4
+      },
+      "resolution": {
+        "width": 1920,
+        "height": 1080,
+        "cssWidth": 1280,
+        "cssHeight": 720,
+        "pixelRatio": 1.5
+      },
+      "label": "inferno-3-B-four-enemies",
+      "sampledAt": "2026-10-04T15:52:18.11Z",
+      "fps": 59.70297768601175,
+      "gpuP95Ms": 8.501354,
+      "updateP95Ms": 1.4000000059604645
+    },
+    {
+      "state": {
+        "quality": "high",
+        "theme": "frost",
+        "gameState": "playing",
+        "chapter": 1,
+        "stageIndex": 2,
+        "stageType": "combat",
+        "phase": "explore",
+        "encounter": "",
+        "enemies": 0
+      },
+      "resolution": {
+        "width": 1920,
+        "height": 1080,
+        "cssWidth": 1280,
+        "cssHeight": 720,
+        "pixelRatio": 1.5
+      },
+      "label": "frost-3-skiff-eye",
+      "sampledAt": "2026-10-04T15:54:18.833Z",
+      "fps": 59.519380998437796,
+      "gpuP95Ms": 11.394479,
+      "updateP95Ms": 0.5
+    }
+  ],
+  "performanceScope": "Three stable local 1080p high samples, 30 warmup and 240 recorded frames each; not a guarantee for every camera or encounter.",
+  "walks": [
+    {
+      "label": "frost-3-middle-pier-to-upper-pier",
+      "report": {
+        "state": "passed",
+        "targetId": "f3-f",
+        "targetLabel": "支路 · 中栈修船台 → 北栈检修站",
+        "elapsed": 7.564499999999946,
+        "distance": 57.64209869692206,
+        "remaining": 0.2948353538622648,
+        "message": "已用真实移动抵达；战斗与人工空间判断仍需试玩。"
+      },
+      "status": {
+        "activeEncounter": "C",
+        "alive": "4",
+        "auditPlan": "frost-3",
+        "encounters": "[{\"id\":\"A\",\"label\":\"岸路游击组\",\"phase\":\"undiscovered\"},{\"id\":\"B\",\"label\":\"南栈守炮组\",\"phase\":\"undiscovered\"},{\"id\":\"C\",\"label\":\"检修站守卫\",\"phase\":\"active\"}]",
+        "ground": "true",
+        "look": "art",
+        "mode": "inspect",
+        "phase": "encounter",
+        "plan": "frost-3",
+        "position": "{\"x\":26.861911387560575,\"y\":0.0001,\"z\":-29.054652970008927}",
+        "rayWindows": "1",
+        "spawnBlocked": "false",
+        "view": "{\"yaw\":1.1939315446733048,\"pitch\":0}"
+      }
+    }
+  ],
+  "walkScope": "Real controller, normal moving enemies, invulnerability enabled; passage validation rather than battle victory.",
+  "finalConsole": {
+    "record": "browser-console.json",
+    "retainedEarlier": 1,
+    "entries": 0,
+    "cutoff": "2026-10-04T15:50:54.952Z"
+  },
+  "screenshots": [
+    "desert-2-stall-final.png",
+    "desert-3-stall-final.png",
+    "frost-3-skiff-final.png",
+    "inferno-1-cart-final.png",
+    "inferno-3-cart-final.png",
+    "inferno-4-cart-final.png"
+  ],
+  "evidence": [
+    "setdressing-summary.json",
+    "browser-all-plans.json",
+    "browser-ray-window-lifecycle.json",
+    "browser-performance.json",
+    "browser-art-walks.json",
+    "browser-deliverable-status.json",
+    "final-local-queue.json"
+  ]
+}

@@ -8,7 +8,7 @@ from __future__ import annotations
 import json
 import re
 
-from lib.config import ROOT, AssetSpec, PipelineError
+from lib.config import CFG, ROOT, AssetSpec, PipelineError
 from lib.glb import Glb
 from lib.state import AssetState
 
@@ -65,6 +65,11 @@ def run(spec: AssetSpec, a) -> None:
                 limit = bhi[ax] - blo[ax]
                 ok(f"场景参考占地 {'XYZ'[ax]} 轴", size <= limit * 1.15, f'{size:.3f} m / 参考 {limit * 1.15:.3f} m；超出时引擎按碰撞体等比适配', 'warn')
                 ok(f"场景有效尺寸 {'XYZ'[ax]} 轴", 0 < size <= limit * 3, f'{size:.3f} m / 极限 {limit * 3:.3f} m')
+                minimum_fraction = CFG.section('classes')[spec.cls].get('min_reference_span_fraction', 0)
+                if minimum_fraction:
+                    minimum = limit * minimum_fraction
+                    ok(f"自然三维体量 {'XYZ'[ax]} 轴", size >= minimum,
+                       f'{size:.3f} m / 最低 {minimum:.3f} m；薄片须由 Hunyuan 重生成，不能拉伸修补')
             h_bo = bhi[1] - blo[1]
             ok('场景高度', abs((hi[1] - lo[1]) - h_bo) <= h_bo * 0.15, f'{hi[1]-lo[1]:.3f} m / 参考 {h_bo:.3f} m')
             ok('场景脚底落地', abs(lo[1]) <= 0.015, f'最低点 y={lo[1]:.4f}')
@@ -158,11 +163,19 @@ def run(spec: AssetSpec, a) -> None:
     icon = {"pass": "✔", "warn": "⚠", "error": "✘", "waived": "◇"}
     for lvl, name, detail in checks:
         print(f"  {icon[lvl]} {name:22} {detail}")
-    report = spec.stage_dir("review") / f"{tag}_validation.json"
+    # Bounds-only generation retries keep every QA verdict and its original file hash.
+    validation_version = st.next_version("validate")
+    suffix = f"_validation_v{validation_version:03d}.json" if spec.raw.get('reference_mode') == 'bounds_only' else '_validation.json'
+    report = spec.stage_dir("review") / f"{tag}{suffix}"
     report.write_text(json.dumps([{"level": l, "check": n, "detail": d} for l, n, d in checks], ensure_ascii=False, indent=2), encoding="utf-8")
-    st.add_version("validate", {"version": st.next_version("validate"), "from_build": bd["version"],
+    st.add_version("validate", {"version": validation_version, "from_build": bd["version"],
                                 "errors": len(errors), "warnings": len(warns), "waived": [c[1] for c in waived],
                                 "passed": not errors}, [report])
+    if spec.raw.get('reference_mode') == 'bounds_only':
+        with st._locked():
+            validated_build = st._find('build', bd['version'])
+            validated_build['quality_status'] = 'failed' if errors else 'passed'
+            validated_build['quality_errors'] = [c[1] for c in errors]
     print(f"{'✘' if errors else '✔'} 校验 {tag}：{len(checks) - len(errors) - len(warns) - len(waived)} 通过，"
           f"{len(warns)} 警告，{len(waived)} 豁免，{len(errors)} 错误"
           f"  → {report.relative_to(ROOT)}")

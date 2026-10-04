@@ -1,0 +1,588 @@
+{
+  "id": "SM_Env_DesertRuin",
+  "display": "沙寺风蚀残垣壁龛",
+  "kind": "static",
+  "class": "nature_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 16:36:38",
+          "files": {
+            "BO_SM_Env_DesertRuin_v001.json": {
+              "path": "00_blockout/BO_SM_Env_DesertRuin_v001.json",
+              "sha256": "fe49bc40c803a8d8e22b73d71a9aec1603da8ba4d8632e8df5cd0c59110ec32e"
+            },
+            "BO_SM_Env_DesertRuin_v001_views.json": {
+              "path": "00_blockout/BO_SM_Env_DesertRuin_v001_views.json",
+              "sha256": "8d65741514488c857b5e01ce14071f1268bf11c3f6d70f051bbe5e504a05be98"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.landmark"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.4,
+              0,
+              -1.3
+            ],
+            "max": [
+              2.4,
+              4.4,
+              1.3
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 16:36:39",
+          "files": {
+            "CN_SM_Env_DesertRuin_v001_source.png": {
+              "path": "01_concept/CN_SM_Env_DesertRuin_v001_source.png",
+              "sha256": "671aac78f127f495455abda8032c770209e50a6faa1a5bfc74ba188ed2055dea"
+            },
+            "CN_SM_Env_DesertRuin_v001_front.png": {
+              "path": "01_concept/CN_SM_Env_DesertRuin_v001_front.png",
+              "sha256": "9bef8b602f897590e6ddb817560d3ad1a44ca561f545ce9f970f12976e6b5955"
+            },
+            "CN_SM_Env_DesertRuin_v001_left.png": {
+              "path": "01_concept/CN_SM_Env_DesertRuin_v001_left.png",
+              "sha256": "268672e30e9eaec0a02d8dc1658cbcea8d218b2557496c5777ad9cc90c118f18"
+            },
+            "CN_SM_Env_DesertRuin_v001_back.png": {
+              "path": "01_concept/CN_SM_Env_DesertRuin_v001_back.png",
+              "sha256": "4a4f4b6c3a618cc4cc4357bd6e11ccc0bd764d404ad86c4db44c5a16d551a49d"
+            },
+            "CN_SM_Env_DesertRuin_v001_right.png": {
+              "path": "01_concept/CN_SM_Env_DesertRuin_v001_right.png",
+              "sha256": "ee58bf63c64e0d542d952c2ed2160d45f4b9fa32903ddd40209f68ea79f800d2"
+            },
+            "CN_SM_Env_DesertRuin_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Env_DesertRuin_v001_sheet.png",
+              "sha256": "f0e6ea1300f5450e78c96c4edda2ef91476475dcadc0d6b0f77ae124602b222b"
+            },
+            "CN_SM_Env_DesertRuin_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_DesertRuin_v001_prompt.txt",
+              "sha256": "87a0041359c0f56083146d73bf2f64eca6d656050f37f7c543f82fed72b52754"
+            },
+            "CN_SM_Env_DesertRuin_v001_registration.json": {
+              "path": "01_concept/CN_SM_Env_DesertRuin_v001_registration.json",
+              "sha256": "c4a67af7f8e890c0aebcf9391d035ce5507c380832f3fa9208dd386088a1e6f6"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Codex built-in image_gen",
+          "registration_version": 1,
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-56c7d8b8-c447-4ff4-83a3-b9161564cd09.png",
+          "source_sha256": "671aac78f127f495455abda8032c770209e50a6faa1a5bfc74ba188ed2055dea",
+          "prompt": "Use case: stylized-concept. Asset type: production orthographic four-view reference for a locally generated Hunyuan3D game environment mesh. Create ONE consistent solid ruined sandstone shrine-wall module for a Chinese-inspired desert roguelike FPS. Architecture: substantial thick ochre sandstone masonry, an asymmetric broken stepped top, a broad central shallow arched NICHE carved into a solid wall (no full-through doorway), weathered carved sun-disk relief inside the niche, two low projecting buttresses, a short surviving wing wall returning backward at one side. Compact massive connected silhouette, roughly 4.8 m wide, 4.4 m tall, 2.6 m deep. A few attached rubble chunks at the foot, realistic erosion and worn bevels, faded indigo and terracotta in the carving. Thick sculptural depth visible from left and right. No trees, cloth, characters, props detached from the main module, ground plane, landscape, magical effects, text or view labels. Style: high quality stylized game-ready PBR sculpture, crafted large-scale shapes, sculpted medium details, readable without tiny grain, dry matte stone. Composition: a wide white-background reference sheet with four isolated orthographic renders of THE SAME module in a single row ordered FRONT, LEFT, BACK, RIGHT. Equal physical scale and same ground baseline, all silhouettes fully visible with generous white gutters; sides must clearly show the 2.6m thickness and returning wall. Cameras level, strictly orthographic, no three-quarter views or perspective distortion. Neutral soft studio lighting with minimal shadows, white featureless background. Preserve all architectural details consistently between views. The whole image should be a clean 3D reconstruction input, not an illustrated scene.",
+          "reference_mode": "bounds_only",
+          "registration": {
+            "front": {
+              "scale": 0.7351712614870509,
+              "offset": [
+                7,
+                302
+              ],
+              "size": [
+                498,
+                419
+              ],
+              "physical_height_m": 4.4,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.736463302368399,
+              "offset": [
+                144,
+                302
+              ],
+              "size": [
+                223,
+                419
+              ],
+              "physical_height_m": 4.4,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7351712614870509,
+              "offset": [
+                20,
+                302
+              ],
+              "size": [
+                472,
+                419
+              ],
+              "physical_height_m": 4.4,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7351712614870509,
+              "offset": [
+                138,
+                302
+              ],
+              "size": [
+                235,
+                419
+              ],
+              "physical_height_m": 4.4,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "已查看配准后的正/左/背/右四视图；残垣台阶轮廓、雕刻浅壁龛、实体背板和回折厚墙连贯，侧面体量可读。仅尺寸元数据参考，形状由本机Hunyuan生成。",
+            "time": "2026-10-04 16:36:58"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 17:35:20",
+          "files": {
+            "CN_SM_Env_DesertRuin_v002_source.png": {
+              "path": "01_concept/CN_SM_Env_DesertRuin_v002_source.png",
+              "sha256": "cf6fa90630dd1b90f2155f35da94416aafca78df9776423f0ada60dac58ba634"
+            },
+            "CN_SM_Env_DesertRuin_v002_front.png": {
+              "path": "01_concept/CN_SM_Env_DesertRuin_v002_front.png",
+              "sha256": "b3dccfcee64192c33bece30e505b7ff74f703c837ad62d93b43a4def7e536687"
+            },
+            "CN_SM_Env_DesertRuin_v002_left.png": {
+              "path": "01_concept/CN_SM_Env_DesertRuin_v002_left.png",
+              "sha256": "fe4b6bc312400f84af48cdba5631350815fe08059d36a490ad244b6150769384"
+            },
+            "CN_SM_Env_DesertRuin_v002_back.png": {
+              "path": "01_concept/CN_SM_Env_DesertRuin_v002_back.png",
+              "sha256": "fe01ddda6376e09f206605dabd8daf29b11e02f05876206310ee7acf767c6d7f"
+            },
+            "CN_SM_Env_DesertRuin_v002_right.png": {
+              "path": "01_concept/CN_SM_Env_DesertRuin_v002_right.png",
+              "sha256": "783be3b8d24c870e3164da28cc13baec05781c7e278d793809bfdf6d16762f1a"
+            },
+            "CN_SM_Env_DesertRuin_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Env_DesertRuin_v002_sheet.png",
+              "sha256": "fb16c708f813b52a7444f7b10974ed4f217a99f2aa8bee1102522f909bdd2098"
+            },
+            "CN_SM_Env_DesertRuin_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_DesertRuin_v002_prompt.txt",
+              "sha256": "ea7b9a98b78c2747681b5e77f548ecf898b5ce988d4f11671718918a67cae17e"
+            },
+            "CN_SM_Env_DesertRuin_v002_registration.json": {
+              "path": "01_concept/CN_SM_Env_DesertRuin_v002_registration.json",
+              "sha256": "134e96900cd451dfa0288b439224548d2a442d60720bca050b125309218024c8"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Codex built-in image_gen",
+          "registration_version": 1,
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-4198bdac-3ac3-47ac-bfba-ad47582fd224.png",
+          "source_sha256": "cf6fa90630dd1b90f2155f35da94416aafca78df9776423f0ada60dac58ba634",
+          "prompt": "Use case: style-transfer. Edit the supplied reconstruction reference into stylized hand-painted 3D game art at the moderate-detail visual level of Gunfire Reborn. Keep the subject identity, overall dimensions, and four-view FRONT, LEFT, BACK, RIGHT turnaround of ONE identical solid object. Replace photographic erosion, tiny cracks, dense grain and miniature ornament with broad clean faceted planes, bold chunky silhouette, two or three dominant color blocks, soft painted gradients and a few medium-scale edge accents. Matte materials, clear solid volume, no glossy plastic, no photorealistic surface noise. All views must agree on construction and colors; side views show true depth and back is complete. Level strictly orthographic cameras, same scale and baseline, every silhouette fully inside its own panel with white gutters. Pure white featureless background, neutral soft even lighting, minimal shadows. No ground plane, text, labels, landscape, people, detached objects or effects.\n\nSubject changes: Keep the asymmetric broken stepped sandstone wall, thick side return, shallow arched niche with a solid back, buttresses and connected wide foot. Size 4.8m wide,4.4m high,2.6m deep. Use warm ochre and terracotta sandstone with a restrained muted teal sun disk. Reduce the relief to one simple sun medallion and a few bold border marks. Use large coherent masonry blocks and broad beveled edges; avoid many little rubble chips.",
+          "reference_mode": "bounds_only",
+          "registration": {
+            "front": {
+              "scale": 0.7126660187884678,
+              "offset": [
+                18,
+                302
+              ],
+              "size": [
+                475,
+                419
+              ],
+              "physical_height_m": 4.4,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.713880100592196,
+              "offset": [
+                151,
+                302
+              ],
+              "size": [
+                209,
+                419
+              ],
+              "physical_height_m": 4.4,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7114560595035977,
+              "offset": [
+                32,
+                302
+              ],
+              "size": [
+                447,
+                419
+              ],
+              "physical_height_m": 4.4,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7114560595035977,
+              "offset": [
+                146,
+                302
+              ],
+              "size": [
+                219,
+                419
+              ],
+              "physical_height_m": 4.4,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Root inspected the native revised four-view sheet: broad painted color blocks, simplified wear, matched facade and rear, coherent thick side volume and solid connected structure. Approved for local Hunyuan reconstruction, not a human review.",
+            "time": "2026-10-04 17:35:32"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 16:39:26",
+          "files": {
+            "HP_SM_Env_DesertRuin_v001_input.png": {
+              "path": "02_highpoly/HP_SM_Env_DesertRuin_v001_input.png",
+              "sha256": "a44fc38694c08422eb066b4749e6a0a67958687b9429fab46c2dc29e31d3f387"
+            },
+            "HP_SM_Env_DesertRuin_v001.glb": {
+              "path": "02_highpoly/HP_SM_Env_DesertRuin_v001.glb",
+              "sha256": "b7819402760224104fdd3d8463ed56b1f123452e0a0197d3bef09f9ac5b5067c"
+            },
+            "HP_SM_Env_DesertRuin_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Env_DesertRuin_v001_graph.json",
+              "sha256": "1d9f6b63cd5c1c66c223924c5180fccfa775d91ce398d81724a0375d829b4d69"
+            }
+          },
+          "from_concept": 1,
+          "mode": "single",
+          "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+          "checkpoint": "hunyuan_3d_v2.1.safetensors",
+          "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 202610041,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "crop": [
+              7,
+              302,
+              505,
+              721
+            ],
+            "scale": 1.7477911646586346,
+            "offset": [
+              77,
+              146
+            ]
+          },
+          "seconds": 144.9,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 17.8
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 17:41:15",
+          "files": {
+            "HP_SM_Env_DesertRuin_v002_input.png": {
+              "path": "02_highpoly/HP_SM_Env_DesertRuin_v002_input.png",
+              "sha256": "8b7cf765a4c3149a5b10dffa2a747bce7e2f11bcab47330265fd061c2ff3dda1"
+            },
+            "HP_SM_Env_DesertRuin_v002.glb": {
+              "path": "02_highpoly/HP_SM_Env_DesertRuin_v002.glb",
+              "sha256": "ec58daab13f867d2f0b883f2326d3033b2e34769a86e7b1af24f139e42ff95a9"
+            },
+            "HP_SM_Env_DesertRuin_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Env_DesertRuin_v002_graph.json",
+              "sha256": "d8d1b857e103f2989dc4f2147a47173b1c8fca7e2a40a0f889a22eb8dcddae1d"
+            }
+          },
+          "from_concept": 2,
+          "mode": "single",
+          "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+          "checkpoint": "hunyuan_3d_v2.1.safetensors",
+          "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 202610050,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "crop": [
+              18,
+              302,
+              493,
+              721
+            ],
+            "scale": 1.832421052631579,
+            "offset": [
+              77,
+              128
+            ]
+          },
+          "seconds": 280.2,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 29.3
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 16:42:28",
+          "files": {
+            "SM_Env_DesertRuin_v001.blend": {
+              "path": "03_work/SM_Env_DesertRuin_v001.blend",
+              "sha256": "a7a5d1751f4a534a695f5977ea580f45a1dd68ac78eef2bfaf8e8a4bf4c5d906"
+            },
+            "SM_Env_DesertRuin_v001.glb": {
+              "path": "04_export/SM_Env_DesertRuin_v001.glb",
+              "sha256": "0dd97fa7babe02fb9d0f517abe08a5188c5961f3226d51f5baec48c6c30c6938"
+            },
+            "SM_Env_DesertRuin_v001_metrics.json": {
+              "path": "03_work/SM_Env_DesertRuin_v001_metrics.json",
+              "sha256": "f717997bec7bf44b5c6ef31103d32da5bd0a06bb8874bf7864268fac52fdb9f2"
+            },
+            "T_Env_DesertRuin_BC.png": {
+              "path": "03_work/textures_v001/T_Env_DesertRuin_BC.png",
+              "sha256": "39715dd5ad02481360af8fb65f003711dd2f79fb01de23cad5b105a38ccf0c6b"
+            },
+            "T_Env_DesertRuin_N.png": {
+              "path": "03_work/textures_v001/T_Env_DesertRuin_N.png",
+              "sha256": "001fb7c8042aa88f626f8bde4af78545b940c4496652088098be9579d71a5491"
+            },
+            "T_Env_DesertRuin_ORM.png": {
+              "path": "03_work/textures_v001/T_Env_DesertRuin_ORM.png",
+              "sha256": "2494d1d752277750b923bbe7a16e68ae0e0cbf44292489a63496beecd7b5857d"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.828,
+          "uncovered_ratio": 0.4457,
+          "lods": [
+            {
+              "tris": 5000,
+              "verts": 2496
+            },
+            {
+              "tris": 1600,
+              "verts": 796
+            },
+            {
+              "tris": 500,
+              "verts": 246
+            }
+          ],
+          "export_kb": 308.6,
+          "seconds": 151.6,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 17:44:09",
+          "files": {
+            "SM_Env_DesertRuin_v002.blend": {
+              "path": "03_work/SM_Env_DesertRuin_v002.blend",
+              "sha256": "5c9950a5ad27101c35d99ae4912ecf389c96018c7859dc97c3c87a2ac2dfd153"
+            },
+            "SM_Env_DesertRuin_v002.glb": {
+              "path": "04_export/SM_Env_DesertRuin_v002.glb",
+              "sha256": "4b6b534ce41c3ec4fc56e46eb72e1bba2f7ecb2a106b94f6c5e6314f3cbf82f1"
+            },
+            "SM_Env_DesertRuin_v002_metrics.json": {
+              "path": "03_work/SM_Env_DesertRuin_v002_metrics.json",
+              "sha256": "3179feffb81889e1d0314840aa9bb5955d1724f2889ac36176197f9b8091acb8"
+            },
+            "T_Env_DesertRuin_BC.png": {
+              "path": "03_work/textures_v002/T_Env_DesertRuin_BC.png",
+              "sha256": "0fae163215cfdb83f5f3fc950eaab28fe2cc7c129cf7705190d40d58488b6470"
+            },
+            "T_Env_DesertRuin_N.png": {
+              "path": "03_work/textures_v002/T_Env_DesertRuin_N.png",
+              "sha256": "268ef11caa81c44a805299b68b691a25a9b1738873261097bc7bd09eb6c11648"
+            },
+            "T_Env_DesertRuin_ORM.png": {
+              "path": "03_work/textures_v002/T_Env_DesertRuin_ORM.png",
+              "sha256": "270e735c584264af7cc2d18f8c3234908b4ab30146147b0e12d09b15a6fb8382"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.845,
+          "uncovered_ratio": 0.6323,
+          "lods": [
+            {
+              "tris": 5000,
+              "verts": 2448
+            },
+            {
+              "tris": 1600,
+              "verts": 748
+            },
+            {
+              "tris": 500,
+              "verts": 198
+            }
+          ],
+          "export_kb": 291.4,
+          "seconds": 161.0,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 16:42:36",
+          "files": {
+            "SM_Env_DesertRuin_v001_validation_v001.json": {
+              "path": "05_review/SM_Env_DesertRuin_v001_validation_v001.json",
+              "sha256": "ccdeaf9ef3b31208e4ac0f4f658a57df87fb59f06901924e07f0641701b913b2"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 17:44:31",
+          "files": {
+            "SM_Env_DesertRuin_v002_validation_v002.json": {
+              "path": "05_review/SM_Env_DesertRuin_v002_validation_v002.json",
+              "sha256": "95d0840ba5d5a744a4610621ed75eadbb80580928c22aae4052b8939c53f2834"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 3,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 16:42:46",
+          "files": {
+            "SM_Env_DesertRuin_v001_review_v001.png": {
+              "path": "05_review/SM_Env_DesertRuin_v001_review_v001.png",
+              "sha256": "816626d73b437b3d04aaa9541bdb940833035fc67aaff646f14f468cb3ce076e"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Reviewed five textured views, all three LOD wireframes and PBR sheets. Connected thick wall, shallow solid-backed niche, readable sun relief and stable grounded silhouette. Validation has zero warnings/errors; no QA waiver.",
+            "time": "2026-10-04 16:43:17"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 17:45:19",
+          "files": {
+            "SM_Env_DesertRuin_v002_review_v002.png": {
+              "path": "05_review/SM_Env_DesertRuin_v002_review_v002.png",
+              "sha256": "519da699b91e88d73bed12547cdd727088caad5b85733a340ec74a31a8a6c713"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Inspected the actual five-view review, texture sheets and all LODs. Warm painted stone, broad teal relief, closed rear and adequate side thickness meet the requested moderate-detail direction. Retain the three validation warnings for center offset, UV utilization and projected coverage; no threshold waiver.",
+            "time": "2026-10-04 17:48:16"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 16:43:18",
+          "files": {
+            "SM_Env_DesertRuin.glb": {
+              "path": "@root/public/assets/props/SM_Env_DesertRuin.glb",
+              "sha256": "0dd97fa7babe02fb9d0f517abe08a5188c5961f3226d51f5baec48c6c30c6938"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Env_DesertRuin.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 17:48:17",
+          "files": {
+            "SM_Env_DesertRuin.glb": {
+              "path": "@root/public/assets/props/SM_Env_DesertRuin.glb",
+              "sha256": "4b6b534ce41c3ec4fc56e46eb72e1bba2f7ecb2a106b94f6c5e6314f3cbf82f1"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Env_DesertRuin.glb"
+        }
+      ]
+    }
+  }
+}

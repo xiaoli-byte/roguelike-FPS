@@ -1,0 +1,277 @@
+{
+  "id": "SM_Env_TravelDeck",
+  "display": "通用厚木栈桥铺板",
+  "sourceOnlyLocalHunyuan": true,
+  "artisticMeshCreatedProcedurally": false,
+  "generatedImageTool": "Codex built-in image_gen",
+  "conceptSource": "art/source/props/SM_Env_TravelDeck/01_concept/CN_SM_Env_TravelDeck_v002_source.png",
+  "exactPrompt": "art/source/props/SM_Env_TravelDeck/01_concept/CN_SM_Env_TravelDeck_v002_prompt.txt",
+  "conceptSheet": "art/source/props/SM_Env_TravelDeck/01_concept/CN_SM_Env_TravelDeck_v002_sheet.png",
+  "conceptRegistration": "art/source/props/SM_Env_TravelDeck/01_concept/CN_SM_Env_TravelDeck_v002_registration.json",
+  "workflow": "art/source/props/SM_Env_TravelDeck/02_highpoly/HP_SM_Env_TravelDeck_v001_graph.json",
+  "originalPromptRegistry": "art/pipeline/travel_deck_concept_v001.json",
+  "publishedGLB": "public/assets/props/SM_Env_TravelDeck.glb",
+  "manifestEntry": {
+    "url": "assets/props/SM_Env_TravelDeck.glb",
+    "kind": "static",
+    "class": "nature_prop",
+    "bind": {
+      "source": "scene",
+      "id": "shared.travelDeck"
+    },
+    "keepGlow": "none",
+    "lodDistance": [
+      0,
+      18,
+      42
+    ],
+    "bounds": {
+      "min": [
+        -2.7580103874206543,
+        0,
+        -1.9409464597702026
+      ],
+      "max": [
+        2.7580103874206543,
+        0.7314305305480957,
+        1.9407386779785156
+      ]
+    },
+    "version": {
+      "blockout": 2,
+      "concept": 2,
+      "highpoly": 1,
+      "build": 2
+    },
+    "sha256": "4c6ceba7e29ec3ebca9063fa2a971a41ea2581da7f308051dc61aa6ff674f61a",
+    "bytes": 141304,
+    "published": "2026-10-04 21:59:33",
+    "generator": {
+      "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+      "mode": "multiview",
+      "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+    },
+    "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+  },
+  "hunyuan": {
+    "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+    "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+    "mode": "multiview",
+    "seed": 202610090,
+    "steps": 50,
+    "cfg": 5,
+    "octree_resolution": 384,
+    "num_chunks": 32000,
+    "seconds": 139.7,
+    "size_mb": 9.4,
+    "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+    "comfyui": "0.30.0"
+  },
+  "localHighpolyProvenance": [
+    {
+      "path": "art/source/props/SM_Env_TravelDeck/02_highpoly/HP_SM_Env_TravelDeck_v001_input_front.png",
+      "sha256": "fa20cfce8df51f730077648462ef84931da91478d414c63f0bd0a8104dbd49df",
+      "verified": true
+    },
+    {
+      "path": "art/source/props/SM_Env_TravelDeck/02_highpoly/HP_SM_Env_TravelDeck_v001_input_left.png",
+      "sha256": "04209bf5f9ac6f1757d18e98f67429cfc4d7c52bec92e5385afc0e20a308e7db",
+      "verified": true
+    },
+    {
+      "path": "art/source/props/SM_Env_TravelDeck/02_highpoly/HP_SM_Env_TravelDeck_v001_input_back.png",
+      "sha256": "bca50b07c0c1635e1a43dfc50c17d5279ed47f2ad30037e2e881a968b661c97b",
+      "verified": true
+    },
+    {
+      "path": "art/source/props/SM_Env_TravelDeck/02_highpoly/HP_SM_Env_TravelDeck_v001_input_right.png",
+      "sha256": "45efa707a705fe2669e580b8f01ce0cee1bede9f7adb1ecb99b5930799c24698",
+      "verified": true
+    },
+    {
+      "path": "art/source/props/SM_Env_TravelDeck/02_highpoly/HP_SM_Env_TravelDeck_v001.glb",
+      "sha256": "b25326f9a5a8852e65fa2d69949067e9856c8df39d236b2fc200895a42f98560",
+      "verified": true
+    },
+    {
+      "path": "art/source/props/SM_Env_TravelDeck/02_highpoly/HP_SM_Env_TravelDeck_v001_graph.json",
+      "sha256": "22d230f1690d699a9db427f05489dbcc0e2557b826004221f6c0dd3d79b9ca02",
+      "verified": true
+    }
+  ],
+  "build": {
+    "version": 2,
+    "created": "2026-10-04 21:59:09",
+    "files": {
+      "SM_Env_TravelDeck_v002.blend": {
+        "path": "03_work/SM_Env_TravelDeck_v002.blend",
+        "sha256": "d7648e5e8f43e2ccd4eabaa07b24691c787f574825eee1946d0d3f460a4d717b"
+      },
+      "SM_Env_TravelDeck_v002.glb": {
+        "path": "04_export/SM_Env_TravelDeck_v002.glb",
+        "sha256": "4c6ceba7e29ec3ebca9063fa2a971a41ea2581da7f308051dc61aa6ff674f61a"
+      },
+      "SM_Env_TravelDeck_v002_metrics.json": {
+        "path": "03_work/SM_Env_TravelDeck_v002_metrics.json",
+        "sha256": "76fbcbf9ba83aefd738d54c1006145866c064e0e2e93f981da7c96fc9156649d"
+      },
+      "T_Env_TravelDeck_BC.png": {
+        "path": "03_work/textures_v002/T_Env_TravelDeck_BC.png",
+        "sha256": "6a9c2cd2db166eb5937787590b5e86b62571e9c391d65f4088e6aaee3acc0697"
+      },
+      "T_Env_TravelDeck_N.png": {
+        "path": "03_work/textures_v002/T_Env_TravelDeck_N.png",
+        "sha256": "02bc736f4b95b74314fa6a35fc9fdb61e5f60b533ae55c0d28294df7dec90ab6"
+      },
+      "T_Env_TravelDeck_ORM.png": {
+        "path": "03_work/textures_v002/T_Env_TravelDeck_ORM.png",
+        "sha256": "ec0cc88ed84ff9819cc59704eb11ffc1b78d9eb15dc1aa2e833a3437a4d22b22"
+      }
+    },
+    "from": {
+      "blockout": 2,
+      "concept": 2,
+      "highpoly": 1,
+      "matid": null,
+      "emid": null
+    },
+    "technical_parent_build": 1,
+    "pivot_normalization": {
+      "source_build": 1,
+      "translation_blender_xyz": [
+        0.000040411949157714844,
+        -1.9409226179122925,
+        0.015361322090029716
+      ],
+      "operation": "identical rigid translation for all LOD vertices",
+      "topology_unchanged": true,
+      "uv_unchanged": true,
+      "shape_source_unchanged": true
+    },
+    "align_iou": 0.936,
+    "uncovered_ratio": 0.0862,
+    "lods": [
+      {
+        "tris": 5000,
+        "verts": 2502
+      },
+      {
+        "tris": 1600,
+        "verts": 802
+      },
+      {
+        "tris": 500,
+        "verts": 252
+      }
+    ],
+    "export_kb": 138,
+    "seconds": 3.6,
+    "bake_device": "CPU",
+    "quality_status": "passed",
+    "quality_errors": []
+  },
+  "automaticQA": {
+    "version": 2,
+    "created": "2026-10-04 21:59:13",
+    "files": {
+      "SM_Env_TravelDeck_v002_validation_v002.json": {
+        "path": "05_review/SM_Env_TravelDeck_v002_validation_v002.json",
+        "sha256": "86560b0eaff5e1379c78f0c5dfc8287753373b3bfa324fada4672676b8d794e6"
+      }
+    },
+    "from_build": 2,
+    "errors": 0,
+    "warnings": 0,
+    "waived": [],
+    "passed": true
+  },
+  "review": {
+    "version": 1,
+    "created": "2026-10-04 21:59:21",
+    "files": {
+      "SM_Env_TravelDeck_v002_review_v001.png": {
+        "path": "05_review/SM_Env_TravelDeck_v002_review_v001.png",
+        "sha256": "e2ca0319f6bdeba7a6452422de19cdcda30adb9ed7b26c2c1ad483a542c7c3d2"
+      }
+    },
+    "from_build": 2,
+    "deformation": {},
+    "auto_flags": [],
+    "review": {
+      "verdict": "approved",
+      "by": "Codex AI visual review",
+      "note": "Inspected actual finished build v002 five views, all LOD topology views and PBR sheets: coherent connected solid timber deck, continuous flat top, matching thick end profile and distinct underside cross-battens, restrained iron strips. 5000/1600/500 triangles,1024 maps,138KiB;37 automatic checks passed without warnings,errors,waivers. Build v001 grounding failure retained. Build v002 applies only the same rigid translation to every LOD vertex, preserving Hunyuan shape, topology and UV, to ground and center the pivot after presentation rotation.",
+      "time": "2026-10-04 21:59:33"
+    }
+  },
+  "retainedInitialFailure": {
+    "version": 1,
+    "created": "2026-10-04 21:58:20",
+    "files": {
+      "SM_Env_TravelDeck_v001_validation_v001.json": {
+        "path": "05_review/SM_Env_TravelDeck_v001_validation_v001.json",
+        "sha256": "d322a27fa349705ee81cf76b94dadc82a6835aa7c01d82eb95c39457d0bfe569"
+      }
+    },
+    "from_build": 1,
+    "errors": 1,
+    "warnings": 1,
+    "waived": [],
+    "passed": false
+  },
+  "measuredGeometry": {
+    "min": [
+      -2.7580103874206543,
+      0,
+      -1.9409464597702026
+    ],
+    "max": [
+      2.7580103874206543,
+      0.7347548007965088,
+      1.9409781694412231
+    ],
+    "size": [
+      5.516020774841309,
+      0.7347548007965088,
+      3.881924629211426
+    ]
+  },
+  "topSurface": [
+    {
+      "lod": 0,
+      "samples": 81,
+      "min": 0.6091008449121222,
+      "max": 0.6109725610377756,
+      "median": 0.6102275361461038,
+      "variation": 0.0018717161256533998
+    },
+    {
+      "lod": 1,
+      "samples": 81,
+      "min": 0.6094778430848202,
+      "max": 0.6112084903921928,
+      "median": 0.609902616356639,
+      "variation": 0.0017306473073726014
+    },
+    {
+      "lod": 2,
+      "samples": 81,
+      "min": 0.6093490944888644,
+      "max": 0.6109205475456612,
+      "median": 0.6097918902165689,
+      "variation": 0.0015714530567967344
+    }
+  ],
+  "renderingContract": {
+    "uniformScaleOnly": true,
+    "sourceWoodTopY": 0.61,
+    "basePlacement": "floorY + 0.01 - 0.610 * uniformScale",
+    "groundCollisionUnchanged": true,
+    "hardwareMaxAboveWood": 0.124755,
+    "proceduralReplacementAllowed": false
+  },
+  "tests": {
+    "command": "node --test tests/travel-deck.test.mjs",
+    "passed": 2
+  }
+}

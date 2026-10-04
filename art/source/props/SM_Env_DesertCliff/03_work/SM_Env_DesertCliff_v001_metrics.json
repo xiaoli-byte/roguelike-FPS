@@ -1,0 +1,140 @@
+{
+  "steps": {
+    "导入清理": 2.4,
+    "对齐": 0.8,
+    "低模与 UV": 25.8,
+    "投影着色": 64.7,
+    "烘焙": 6.5,
+    "LOD": 0.0,
+    "导出": 0.8
+  },
+  "highpoly": {
+    "faces_raw": 590708,
+    "faces": 627652,
+    "verts": 627654,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00355
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.901,
+    "iou_per_view": {
+      "front": 0.942,
+      "left": 0.86,
+      "back": 0.949,
+      "right": 0.832
+    },
+    "height_m": 8.6273,
+    "blockout_height_m": 9.0
+  },
+  "uv": {
+    "smart_islands": 155,
+    "charts": 28,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "smart",
+    "density_smart": 0.0428,
+    "density_merged": 0.0424
+  },
+  "projection": {
+    "uncovered_ratio": 0.2853
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Env_DesertCliff_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Env_DesertCliff_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Env_DesertCliff_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Env_DesertCliff_LOD0",
+      "tris": 5000,
+      "verts": 2502,
+      "uv_min": [
+        0.002846983028575778,
+        0.002670744899660349
+      ],
+      "uv_max": [
+        0.9973505139350891,
+        0.9938632249832153
+      ],
+      "uv_utilization": 0.684,
+      "bbox_min": [
+        -7.3517,
+        -3.2494,
+        0.0019
+      ],
+      "bbox_max": [
+        7.7587,
+        2.9792,
+        8.6272
+      ]
+    },
+    {
+      "name": "SM_Env_DesertCliff_LOD1",
+      "tris": 1600,
+      "verts": 802,
+      "uv_min": [
+        0.002910804934799671,
+        0.0028130917344242334
+      ],
+      "uv_max": [
+        0.9970000982284546,
+        0.9935170412063599
+      ],
+      "uv_utilization": 0.661,
+      "bbox_min": [
+        -7.3601,
+        -3.2466,
+        0.0033
+      ],
+      "bbox_max": [
+        7.7512,
+        2.9748,
+        8.6182
+      ]
+    },
+    {
+      "name": "SM_Env_DesertCliff_LOD2",
+      "tris": 500,
+      "verts": 252,
+      "uv_min": [
+        0.002910804934799671,
+        0.0028130917344242334
+      ],
+      "uv_max": [
+        0.9938665628433228,
+        0.9886231422424316
+      ],
+      "uv_utilization": 0.625,
+      "bbox_min": [
+        -7.3534,
+        -3.2671,
+        0.0086
+      ],
+      "bbox_max": [
+        7.793,
+        2.9675,
+        8.6139
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_DesertCliff\\04_export\\SM_Env_DesertCliff_v001.glb",
+    "bytes": 185556
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_DesertCliff\\03_work\\SM_Env_DesertCliff_v001.blend",
+  "total_seconds": 101.1,
+  "_seconds": 104.6
+}

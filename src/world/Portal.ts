@@ -5,6 +5,9 @@
  */
 import * as THREE from 'three';
 import type { GameContext, Interactable, InteractPrompt, StageNode, StageType } from '../core/types';
+import { getStageDesign } from './StageDesign';
+import { usesAuthoredLayout } from './WhiteboxMode';
+import { getWhiteboxPlan } from './WhiteboxGen';
 
 export const STAGE_TYPE_COLORS: Record<StageType, number> = {
   combat: 0xe8452c,   // 朱红
@@ -233,7 +236,7 @@ function makeLabel(title: string, sub: string, stage: string, color: number): TH
   g.textBaseline = 'middle';
   g.font = `28px ${font}`;
   g.fillStyle = 'rgba(243, 227, 192, 0.7)';
-  g.fillText(stage, W / 2, 50);
+  g.fillText(stage, W / 2, 50, W - 64);
   g.font = `bold 78px ${font}`;
   g.shadowColor = col;
   g.shadowBlur = 20;
@@ -358,7 +361,9 @@ export class Portal {
     const prompt: InteractPrompt = {
       title: ctx.runPlan.stageLabel(node),
       subtitle: `进入 · ${node.reward !== 'none' ? `奖励：${ctx.runPlan.rewardLabel(node.reward)}` : TYPE_NO_REWARD[node.type]}`,
-      lines: [TYPE_HINTS[node.type]],
+      lines: node.type === 'shop' || node.type === 'treasure' ? [TYPE_HINTS[node.type]]
+        : usesAuthoredLayout() ? [getWhiteboxPlan(node).routeChoice, '接近战区自动触发守卫，击败终点守军开启出口']
+          : [getStageDesign(node).routeHint, getStageDesign(node).combatHint, TYPE_HINTS[node.type]],
       color: cssHex(color),
       key: 'F',
     };

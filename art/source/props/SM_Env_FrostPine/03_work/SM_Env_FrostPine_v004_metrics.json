@@ -1,0 +1,140 @@
+{
+  "steps": {
+    "导入清理": 3.6,
+    "对齐": 1.1,
+    "低模与 UV": 22.2,
+    "投影着色": 58.1,
+    "烘焙": 8.0,
+    "LOD": 0.0,
+    "导出": 0.9
+  },
+  "highpoly": {
+    "faces_raw": 869458,
+    "faces": 909016,
+    "verts": 908986,
+    "loose_parts": 3,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00355
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.812,
+    "iou_per_view": {
+      "front": 0.873,
+      "left": 0.767,
+      "back": 0.862,
+      "right": 0.718
+    },
+    "height_m": 4.5309,
+    "blockout_height_m": 4.6
+  },
+  "uv": {
+    "smart_islands": 568,
+    "charts": 76,
+    "fallback_charts": 5,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.0933,
+    "density_merged": 0.1153
+  },
+  "projection": {
+    "uncovered_ratio": 0.4262
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Env_FrostPine_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Env_FrostPine_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Env_FrostPine_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Env_FrostPine_LOD0",
+      "tris": 5000,
+      "verts": 2470,
+      "uv_min": [
+        0.0031305623706430197,
+        0.003124323906376958
+      ],
+      "uv_max": [
+        0.9889171123504639,
+        0.9970452189445496
+      ],
+      "uv_utilization": 0.54,
+      "bbox_min": [
+        -1.2779,
+        -1.0064,
+        -0.0008
+      ],
+      "bbox_max": [
+        1.3442,
+        1.1774,
+        4.5284
+      ]
+    },
+    {
+      "name": "SM_Env_FrostPine_LOD1",
+      "tris": 1600,
+      "verts": 770,
+      "uv_min": [
+        0.0033633315470069647,
+        0.003757744561880827
+      ],
+      "uv_max": [
+        0.9881629943847656,
+        0.9970452189445496
+      ],
+      "uv_utilization": 0.478,
+      "bbox_min": [
+        -1.2766,
+        -1.0153,
+        0.0
+      ],
+      "bbox_max": [
+        1.3536,
+        1.1621,
+        4.5466
+      ]
+    },
+    {
+      "name": "SM_Env_FrostPine_LOD2",
+      "tris": 500,
+      "verts": 220,
+      "uv_min": [
+        0.0033633315470069647,
+        0.003757744561880827
+      ],
+      "uv_max": [
+        0.9827814102172852,
+        0.9953000545501709
+      ],
+      "uv_utilization": 0.364,
+      "bbox_min": [
+        -1.3391,
+        -0.989,
+        0.0
+      ],
+      "bbox_max": [
+        1.3457,
+        1.1469,
+        4.5358
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_FrostPine\\04_export\\SM_Env_FrostPine_v004.glb",
+    "bytes": 299844
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_FrostPine\\03_work\\SM_Env_FrostPine_v004.blend",
+  "total_seconds": 93.9,
+  "_seconds": 97.9
+}

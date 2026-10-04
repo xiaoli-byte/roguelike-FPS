@@ -1,9 +1,39 @@
 /**
  * 关卡布局的数据类型（LevelGen 产出，ArenaBuilder / StageDirector 消费）。
  */
-import type { StageType, ThemeId } from '../core/types';
+import type { EnemyPlacement, RewardType, StageType, ThemeId } from '../core/types';
+import type { WhiteboxMetadata } from './WhiteboxTypes';
 
 export interface P2 { x: number; z: number }
+
+/** Optional discoveries are independent of the chapter's clear reward. */
+export interface AdventureSite extends P2 { id: string; label: string; reward: RewardType }
+export interface AdventureZone extends P2 { id: string; label: string; radius: number }
+export interface AdventurePath { points: P2[]; width: number }
+/** Width/depth are world-axis footprints; yaw is a quarter turn. */
+export interface AdventureRock extends P2 { width: number; depth: number; height: number; yaw: number; ridge?: string }
+export interface AdventureSpawnAnchor extends P2 { role: EnemyPlacement; lane: number }
+export interface AdventureEncounter extends P2 {
+  id: string;
+  label: string;
+  kind: 'approach' | 'cache';
+  triggerRadius: number;
+  arenaRadius: number;
+  siteId?: string;
+  anchors: AdventureSpawnAnchor[];
+}
+export interface AdventureLayout {
+  designId?: string;
+  title?: string;
+  routeHint?: string;
+  encounters?: AdventureEncounter[];
+  spawnAnchors?: AdventureSpawnAnchor[];
+  objective: P2;
+  sites: AdventureSite[];
+  zones: AdventureZone[];
+  paths: AdventurePath[];
+  rocks: AdventureRock[];
+}
 
 /** 盒子外观：ArenaBuilder 据此选择绘制方式（collider / invisible 不绘制） */
 export type BoxLook =
@@ -31,7 +61,23 @@ export type DecoKind =
   | 'brazier' | 'stoneLantern' | 'lanternPost' | 'lanternString' | 'stall'
   | 'cactus' | 'statue' | 'dune'
   | 'pine' | 'crystal' | 'snowdrift'
-  | 'spike' | 'rock' | 'pots';
+  | 'spike' | 'rock' | 'pots' | 'landmark';
+
+/** A generated, solid landmark's local-space envelope before its scale/yaw. */
+export interface DecoFootprint { width: number; depth: number; height: number }
+
+/** Published Hunyuan building modules; local envelopes are never stretched per axis. */
+export interface SceneArchitecturePlacement extends P2 {
+  assetId: string;
+  type: 'wall' | 'gate';
+  y: number;
+  yaw: number;
+  s: number;
+  envelope: DecoFootprint;
+  /** True ground-level opening in the generated gate, before the uniform scale. */
+  passage?: { width: number; height: number };
+  court: 'arrival' | 'west' | 'east' | 'north' | 'shrine';
+}
 
 export interface Deco {
   kind: DecoKind;
@@ -50,6 +96,8 @@ export interface Deco {
   sceneRole?: 'focal' | 'gateway' | 'alcove' | 'corner' | 'platform';
   /** 同组物件的构图层次：主景高件、陪衬矮件、零散点景。 */
   sceneLayer?: 'principal' | 'support' | 'accent';
+  /** Full rectangular collision volume for architectural art, never a walkable interior. */
+  footprint?: DecoFootprint;
 }
 
 export interface RuneMark { x: number; z: number; r: number; gold: boolean }
@@ -97,4 +145,9 @@ export interface LevelLayout {
   center: P2;
   /** 生成期可达性校验点（台阶口等） */
   checks: (P2 & { g: number })[];
+  /** Semi-open exploration region used by combat and elite stages. */
+  adventure?: AdventureLayout;
+  architecture?: SceneArchitecturePlacement[];
+  /** Authored technical blockout, drawn and collided from the same metre-scale data. */
+  whitebox?: WhiteboxMetadata;
 }

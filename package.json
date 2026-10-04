@@ -8,8 +8,10 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "typecheck": "tsc --noEmit",
-    "test": "node --test tests/mouse-look.test.mjs tests/handling.test.mjs tests/scene-layout.test.mjs tests/enemy-attacks.test.mjs tests/articulation.test.mjs",
-    "preview": "vite preview"
+    "test": "node --test tests/mouse-look.test.mjs tests/handling.test.mjs tests/scene-layout.test.mjs tests/enemy-attacks.test.mjs tests/articulation.test.mjs tests/nature-scene.test.mjs tests/adventure-layout.test.mjs tests/adventure-flow.test.mjs tests/adventure-ui.test.mjs tests/stage-design.test.mjs tests/encounters.test.mjs tests/road-mask.test.mjs tests/shadow-cadence.test.mjs tests/performance-meter.test.mjs tests/landmark-scene.test.mjs tests/architecture-scene.test.mjs tests/gunfire-assets.test.mjs tests/whitebox-layout.test.mjs tests/whitebox-flow.test.mjs tests/whitebox-save.test.mjs tests/authored-scene-layout.test.mjs tests/authored-scene-view.test.mjs tests/travel-deck.test.mjs tests/cargo-hoist.test.mjs tests/authored-art-occlusion.test.mjs tests/setdressing-assets.test.mjs",
+    "preview": "vite preview",
+    "whitebox:sync": "node scripts/level-plans/sync-runtime.mjs",
+    "whitebox:check": "node scripts/level-plans/sync-runtime.mjs --check && node --test tests/whitebox-layout.test.mjs tests/whitebox-flow.test.mjs tests/whitebox-save.test.mjs"
   },
   "dependencies": {
     "three": "^0.186.1"

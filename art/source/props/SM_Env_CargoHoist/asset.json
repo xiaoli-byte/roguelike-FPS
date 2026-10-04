@@ -1,0 +1,578 @@
+{
+  "id": "SM_Env_CargoHoist",
+  "display": "粗木货运绞盘架",
+  "kind": "static",
+  "class": "nature_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 22:34:15",
+          "files": {
+            "BO_SM_Env_CargoHoist_v001.json": {
+              "path": "00_blockout/BO_SM_Env_CargoHoist_v001.json",
+              "sha256": "8149a8c2a32f112c23d91888df4b98c644509151cab1aec150df8843b286b5d0"
+            },
+            "BO_SM_Env_CargoHoist_v001_views.json": {
+              "path": "00_blockout/BO_SM_Env_CargoHoist_v001_views.json",
+              "sha256": "37c13193ff5391171cf0647bd39eeec48568e0c576818f70c65f4ba1f854d664"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "shared.cargoHoist"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -1.95,
+              0,
+              -1.3
+            ],
+            "max": [
+              1.95,
+              3.5,
+              1.3
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 22:34:16",
+          "files": {
+            "CN_SM_Env_CargoHoist_v001_source.png": {
+              "path": "01_concept/CN_SM_Env_CargoHoist_v001_source.png",
+              "sha256": "af09be6f12d64039640cb41addb4146b848cb37c7359b09fd6bc3e0978b4626e"
+            },
+            "CN_SM_Env_CargoHoist_v001_front.png": {
+              "path": "01_concept/CN_SM_Env_CargoHoist_v001_front.png",
+              "sha256": "c0f0a8ab52ad3c32db20f33057ad55b6fa36f137b2ef16c6ddf972252eb49ff6"
+            },
+            "CN_SM_Env_CargoHoist_v001_left.png": {
+              "path": "01_concept/CN_SM_Env_CargoHoist_v001_left.png",
+              "sha256": "95d6fc771a8b18766ca07b848615e9e9f5a1c86dd7671bf5572e202ca4bb15ef"
+            },
+            "CN_SM_Env_CargoHoist_v001_back.png": {
+              "path": "01_concept/CN_SM_Env_CargoHoist_v001_back.png",
+              "sha256": "95475a629d1364f11eba0002120ce973c03041dc19b97a92d0979ba6f05ee4dc"
+            },
+            "CN_SM_Env_CargoHoist_v001_right.png": {
+              "path": "01_concept/CN_SM_Env_CargoHoist_v001_right.png",
+              "sha256": "6cedcaf57dc9feb0ab062163bf3e4675ed4ae495cfe1dfbf4f915d7c1deff461"
+            },
+            "CN_SM_Env_CargoHoist_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Env_CargoHoist_v001_sheet.png",
+              "sha256": "04d330a85da5967e287ce5b951197015ae90f386034bf0a7caf7dbae22a12102"
+            },
+            "CN_SM_Env_CargoHoist_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_CargoHoist_v001_prompt.txt",
+              "sha256": "5caa45ac1b02b5828f1645ce0a5d17e13bda05e6c80e095a7ed16add5c8f93c3"
+            },
+            "CN_SM_Env_CargoHoist_v001_registration.json": {
+              "path": "01_concept/CN_SM_Env_CargoHoist_v001_registration.json",
+              "sha256": "56da8a112f3cdf83abdeb8720e52218ee8372cf5ce627b31117836ffd4c22443"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Codex built-in image_gen",
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a1072d-363b-7bd3-bcf6-3cc6a159ec4f\\exec-1522eb6f-a711-4bb8-8e63-0f35a980743f.png",
+          "source_sha256": "af09be6f12d64039640cb41addb4146b848cb37c7359b09fd6bc3e0978b4626e",
+          "prompt": "Use case: stylized-concept.\nAsset type: orthographic four-view concept turnaround for reconstructing ONE game environment cargo winch hoist with local Hunyuan3D multi-view.\nCreate a wide 2048x1024 image with exactly four isolated views of the same object in one horizontal row: FRONT, LEFT, BACK, RIGHT, with NO written labels. Plain pure white background, no ground, no cast shadow. Each view has the same scale, full 3.5 metre vertical height and aligned baseline. Leave clean white margins and space between the views. Orthographic projection only, no perspective or three-quarter views.\nSubject: one compact, short, stout wooden cargo winch/hoist, approximately 3 metres wide, 2.5 metres deep, 3.5 metres high. A thick continuous rectangular timber foundation, two massive timber side supports with broad diagonal braces, a chunky connected upper crossbeam, and a very broad horizontal wooden cable drum between the supports. The drum has a few thick simplified dark rope windings carved as broad bands, fully joined into the reel volume. A large readable solid hand-crank wheel is fixed to the RIGHT end of the axle: a thick wooden disk with three shallow broad recessed wedge motifs, dark iron rim and one thick short crank handle, NOT a thin spoked wheel. Front shows the drum and frame. Rear has a broad lower cross brace. Both side views clearly show depth of the foundation, triangular frame support, axle and the appropriate side of the wheel. All four views must depict mechanically consistent parts and the wheel on the same physical side.\nStyle: stylized hand-painted fantasy FPS environment at Gunfire Reborn level of readable moderate game detail. Bold chunky silhouette, clean faceted timber, gently chamfered solid edges, warm dark honey-brown wood, charcoal iron fasteners and muted ochre painted wear. Two or three coherent large color blocks, broad soft painted gradients and sparse restrained edge accents. Matte finish and even neutral studio light.\nConstraints: one connected complete solid prop with sturdy full volume. The reel, wheel and supports must be at least thick enough to survive a low-poly game mesh. No hanging thin ropes, chains, pulley cables, suspended cargo, hook, fine lattice, tiny bolts, loose objects, floating pieces, dramatic snow, fire, glowing runes, weather effects, text, symbols, ground plane or baked cast shadow. The bottom is flat, continuous and weight-bearing. Avoid intricate ornament, wood micro-grain, photorealism and surface noise. Do not draw four different designs.",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "multiview",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.8441489922971404,
+              "offset": [
+                81,
+                307
+              ],
+              "size": [
+                350,
+                410
+              ],
+              "physical_height_m": 3.5,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.84588950568332,
+              "offset": [
+                74,
+                307
+              ],
+              "size": [
+                363,
+                410
+              ],
+              "physical_height_m": 3.5,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.8441489922971404,
+              "offset": [
+                80,
+                307
+              ],
+              "size": [
+                352,
+                410
+              ],
+              "physical_height_m": 3.5,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.84588950568332,
+              "offset": [
+                81,
+                307
+              ],
+              "size": [
+                349,
+                410
+              ],
+              "physical_height_m": 3.5,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "rejected",
+            "by": "Codex AI visual review",
+            "note": "Default column splitting clips the first crank and mixes neighboring views because their X ranges overlap. Preserve native source; re-register four connected components without altering art.",
+            "time": "2026-10-04 22:35:29"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 22:35:35",
+          "files": {
+            "CN_SM_Env_CargoHoist_v002_source.png": {
+              "path": "01_concept/CN_SM_Env_CargoHoist_v002_source.png",
+              "sha256": "af09be6f12d64039640cb41addb4146b848cb37c7359b09fd6bc3e0978b4626e"
+            },
+            "CN_SM_Env_CargoHoist_v002_front.png": {
+              "path": "01_concept/CN_SM_Env_CargoHoist_v002_front.png",
+              "sha256": "211dfeeb1ff69abd7091374f67390d2ec1e866f178aa7f5f97cdd04ba645b818"
+            },
+            "CN_SM_Env_CargoHoist_v002_left.png": {
+              "path": "01_concept/CN_SM_Env_CargoHoist_v002_left.png",
+              "sha256": "746686d69a0797be662133de05ecc69c1c547cbe8b169c4bd02508ecf02cf5d3"
+            },
+            "CN_SM_Env_CargoHoist_v002_back.png": {
+              "path": "01_concept/CN_SM_Env_CargoHoist_v002_back.png",
+              "sha256": "6da3e0ca5984cac3b2388ec1306484dbf927faf943c1f649043638c1480c229e"
+            },
+            "CN_SM_Env_CargoHoist_v002_right.png": {
+              "path": "01_concept/CN_SM_Env_CargoHoist_v002_right.png",
+              "sha256": "bf29786a5f5075dfe5297178e6830dfa5f58b38d3d94075bf30e8623f8c03acc"
+            },
+            "CN_SM_Env_CargoHoist_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Env_CargoHoist_v002_sheet.png",
+              "sha256": "08dbcbd32edf27527e5b75a10ce9506cc3b1f691625e91ba857a63d54d156762"
+            },
+            "CN_SM_Env_CargoHoist_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_CargoHoist_v002_prompt.txt",
+              "sha256": "5caa45ac1b02b5828f1645ce0a5d17e13bda05e6c80e095a7ed16add5c8f93c3"
+            },
+            "CN_SM_Env_CargoHoist_v002_registration.json": {
+              "path": "01_concept/CN_SM_Env_CargoHoist_v002_registration.json",
+              "sha256": "02539d242214f20673fca73f9388cfb185780cc84692cd147c3b9416b81a8667"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Codex built-in image_gen",
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a1072d-363b-7bd3-bcf6-3cc6a159ec4f\\exec-1522eb6f-a711-4bb8-8e63-0f35a980743f.png",
+          "source_sha256": "af09be6f12d64039640cb41addb4146b848cb37c7359b09fd6bc3e0978b4626e",
+          "prompt": "Use case: stylized-concept.\nAsset type: orthographic four-view concept turnaround for reconstructing ONE game environment cargo winch hoist with local Hunyuan3D multi-view.\nCreate a wide 2048x1024 image with exactly four isolated views of the same object in one horizontal row: FRONT, LEFT, BACK, RIGHT, with NO written labels. Plain pure white background, no ground, no cast shadow. Each view has the same scale, full 3.5 metre vertical height and aligned baseline. Leave clean white margins and space between the views. Orthographic projection only, no perspective or three-quarter views.\nSubject: one compact, short, stout wooden cargo winch/hoist, approximately 3 metres wide, 2.5 metres deep, 3.5 metres high. A thick continuous rectangular timber foundation, two massive timber side supports with broad diagonal braces, a chunky connected upper crossbeam, and a very broad horizontal wooden cable drum between the supports. The drum has a few thick simplified dark rope windings carved as broad bands, fully joined into the reel volume. A large readable solid hand-crank wheel is fixed to the RIGHT end of the axle: a thick wooden disk with three shallow broad recessed wedge motifs, dark iron rim and one thick short crank handle, NOT a thin spoked wheel. Front shows the drum and frame. Rear has a broad lower cross brace. Both side views clearly show depth of the foundation, triangular frame support, axle and the appropriate side of the wheel. All four views must depict mechanically consistent parts and the wheel on the same physical side.\nStyle: stylized hand-painted fantasy FPS environment at Gunfire Reborn level of readable moderate game detail. Bold chunky silhouette, clean faceted timber, gently chamfered solid edges, warm dark honey-brown wood, charcoal iron fasteners and muted ochre painted wear. Two or three coherent large color blocks, broad soft painted gradients and sparse restrained edge accents. Matte finish and even neutral studio light.\nConstraints: one connected complete solid prop with sturdy full volume. The reel, wheel and supports must be at least thick enough to survive a low-poly game mesh. No hanging thin ropes, chains, pulley cables, suspended cargo, hook, fine lattice, tiny bolts, loose objects, floating pieces, dramatic snow, fire, glowing runes, weather effects, text, symbols, ground plane or baked cast shadow. The bottom is flat, continuous and weight-bearing. Avoid intricate ornament, wood micro-grain, photorealism and surface noise. Do not draw four different designs.",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "multiview",
+          "registration_version": 2,
+          "registration": {
+            "front": {
+              "source_bbox": [
+                28,
+                184,
+                554,
+                670
+              ],
+              "source_component_area": 162235,
+              "source_foreground_coverage": 1.0,
+              "scale": 0.8441489922971404,
+              "offset": [
+                34,
+                307
+              ],
+              "size": [
+                444,
+                410
+              ],
+              "physical_height_m": 3.5,
+              "method": "white-background key, four connected components, uniform height and center"
+            },
+            "left": {
+              "source_bbox": [
+                531,
+                185,
+                872,
+                670
+              ],
+              "source_component_area": 85998,
+              "source_foreground_coverage": 1.0,
+              "scale": 0.84588950568332,
+              "offset": [
+                112,
+                307
+              ],
+              "size": [
+                288,
+                410
+              ],
+              "physical_height_m": 3.5,
+              "method": "white-background key, four connected components, uniform height and center"
+            },
+            "back": {
+              "source_bbox": [
+                912,
+                184,
+                1363,
+                670
+              ],
+              "source_component_area": 169054,
+              "source_foreground_coverage": 1.0,
+              "scale": 0.8441489922971404,
+              "offset": [
+                65,
+                307
+              ],
+              "size": [
+                381,
+                410
+              ],
+              "physical_height_m": 3.5,
+              "method": "white-background key, four connected components, uniform height and center"
+            },
+            "right": {
+              "source_bbox": [
+                1392,
+                185,
+                1741,
+                670
+              ],
+              "source_component_area": 95027,
+              "source_foreground_coverage": 1.0,
+              "scale": 0.84588950568332,
+              "offset": [
+                108,
+                307
+              ],
+              "size": [
+                295,
+                410
+              ],
+              "physical_height_m": 3.5,
+              "method": "white-background key, four connected components, uniform height and center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Inspected native source and registered v002 four views: connected stout timber frame, wide reel, complete thick crank disk on consistent axle side, grounded base and legible braces. Registration uses four 2D source components to preserve the complete crank rather than clipping equal columns; unchanged source RGB, uniform scale, no artistic redraw. Numeric bounds include crank protrusion.",
+            "time": "2026-10-04 22:35:47"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 22:38:47",
+          "files": {
+            "HP_SM_Env_CargoHoist_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Env_CargoHoist_v001_input_front.png",
+              "sha256": "480ed312f90322cdb4442cc578cb0e9de28d281e363178a4500c53ee5c73daee"
+            },
+            "HP_SM_Env_CargoHoist_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Env_CargoHoist_v001_input_left.png",
+              "sha256": "84b90e82c9ffd71b06762dbd7c26b695d345d43744a27ac26b2ae63f8f283cdc"
+            },
+            "HP_SM_Env_CargoHoist_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Env_CargoHoist_v001_input_back.png",
+              "sha256": "a86079375fda68750ca9ce9b23404254c03afb759676e22e888f1bd4baa8e6c0"
+            },
+            "HP_SM_Env_CargoHoist_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Env_CargoHoist_v001_input_right.png",
+              "sha256": "d0c8ccc5c4c4ed730c6fe663547e446a3775205fc30acce26f2e83c7edefde4d"
+            },
+            "HP_SM_Env_CargoHoist_v001.glb": {
+              "path": "02_highpoly/HP_SM_Env_CargoHoist_v001.glb",
+              "sha256": "7f0ed1e4ffd8cf793ca52c2b183c0f75fc99abb120e562fa8de258c48b08c415"
+            },
+            "HP_SM_Env_CargoHoist_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Env_CargoHoist_v001_graph.json",
+              "sha256": "2b4ae047e416329b4e838b78d33d43aeee3eca57b28331a075cbc046c1c625b1"
+            }
+          },
+          "from_concept": 2,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 202610104,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -5,
+              251,
+              517,
+              773
+            ],
+            "scale": 1.9616858237547892
+          },
+          "seconds": 179.0,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 24.6
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 22:42:27",
+          "files": {
+            "SM_Env_CargoHoist_v001.blend": {
+              "path": "03_work/SM_Env_CargoHoist_v001.blend",
+              "sha256": "3c7f675fdccf19052c700427c755fcd90629911ab4d1494424302d94f2d4d944"
+            },
+            "SM_Env_CargoHoist_v001.glb": {
+              "path": "04_export/SM_Env_CargoHoist_v001.glb",
+              "sha256": "5b38aee8929f5b93b6f9e1baf74c7cf7236d6a37975803d9558f7e270d14914b"
+            },
+            "SM_Env_CargoHoist_v001_metrics.json": {
+              "path": "03_work/SM_Env_CargoHoist_v001_metrics.json",
+              "sha256": "de8d19909ef15516b3e7bf126d99fd538f29fcbb580149cc4de291c49431e3de"
+            },
+            "T_Env_CargoHoist_BC.png": {
+              "path": "03_work/textures_v001/T_Env_CargoHoist_BC.png",
+              "sha256": "f0c0870bd0c46e43235e8b5faff5ce3d358d1e53e14f38c1b09f7ac560d5a45f"
+            },
+            "T_Env_CargoHoist_N.png": {
+              "path": "03_work/textures_v001/T_Env_CargoHoist_N.png",
+              "sha256": "33954403739d5f147bf242b18aa2b89657ea203ae8d2a2e425348201d2ed2f2e"
+            },
+            "T_Env_CargoHoist_ORM.png": {
+              "path": "03_work/textures_v001/T_Env_CargoHoist_ORM.png",
+              "sha256": "de3a99b823638f09e2bc97d07fb13c96a840a96ec0e27963db114706bc7689eb"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.81,
+          "uncovered_ratio": 0.5151,
+          "lods": [
+            {
+              "tris": 5000,
+              "verts": 2488
+            },
+            {
+              "tris": 1600,
+              "verts": 788
+            },
+            {
+              "tris": 500,
+              "verts": 238
+            }
+          ],
+          "export_kb": 248.6,
+          "seconds": 220.2,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 22:43:34",
+          "files": {
+            "SM_Env_CargoHoist_v002.blend": {
+              "path": "03_work/SM_Env_CargoHoist_v002.blend",
+              "sha256": "5785b10fe3773b579f58b48cd143eba9322f59bb9d7a4dca594e9d52283c5a16"
+            },
+            "SM_Env_CargoHoist_v002.glb": {
+              "path": "04_export/SM_Env_CargoHoist_v002.glb",
+              "sha256": "5da09bcfda9847d4ec5d2ff16960bb7a886d7ce167fb1c88d79346702bae3326"
+            },
+            "SM_Env_CargoHoist_v002_metrics.json": {
+              "path": "03_work/SM_Env_CargoHoist_v002_metrics.json",
+              "sha256": "d4897738a8e5a47683353169bdd07cc05418650e0dea380abd0fcfeac95963a2"
+            },
+            "T_Env_CargoHoist_BC.png": {
+              "path": "03_work/textures_v002/T_Env_CargoHoist_BC.png",
+              "sha256": "f0c0870bd0c46e43235e8b5faff5ce3d358d1e53e14f38c1b09f7ac560d5a45f"
+            },
+            "T_Env_CargoHoist_N.png": {
+              "path": "03_work/textures_v002/T_Env_CargoHoist_N.png",
+              "sha256": "33954403739d5f147bf242b18aa2b89657ea203ae8d2a2e425348201d2ed2f2e"
+            },
+            "T_Env_CargoHoist_ORM.png": {
+              "path": "03_work/textures_v002/T_Env_CargoHoist_ORM.png",
+              "sha256": "de3a99b823638f09e2bc97d07fb13c96a840a96ec0e27963db114706bc7689eb"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "technical_parent_build": 1,
+          "pivot_normalization": {
+            "source_build": 1,
+            "translation_blender_xyz": [
+              -0.11165422201156616,
+              0.04960620403289795,
+              -6.826220214861678e-06
+            ],
+            "operation": "identical rigid translation for all LOD vertices",
+            "topology_unchanged": true,
+            "uv_unchanged": true,
+            "shape_source_unchanged": true
+          },
+          "align_iou": 0.81,
+          "uncovered_ratio": 0.5151,
+          "lods": [
+            {
+              "tris": 5000,
+              "verts": 2488
+            },
+            {
+              "tris": 1600,
+              "verts": 788
+            },
+            {
+              "tris": 500,
+              "verts": 238
+            }
+          ],
+          "export_kb": 248.6,
+          "seconds": 4.4,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 22:42:27",
+          "files": {
+            "SM_Env_CargoHoist_v001_validation_v001.json": {
+              "path": "05_review/SM_Env_CargoHoist_v001_validation_v001.json",
+              "sha256": "b5e6fa4c3eac9bd8b44f8c986bc6b84d4feaf5495413a92fdd9a80afba71803f"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 2,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 22:43:35",
+          "files": {
+            "SM_Env_CargoHoist_v002_validation_v002.json": {
+              "path": "05_review/SM_Env_CargoHoist_v002_validation_v002.json",
+              "sha256": "60b1b5a53f76811d51bec91ac8f9a79cde7d16cadc00de9fe22f984eefafebad"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 22:42:35",
+          "files": {
+            "SM_Env_CargoHoist_v001_review_v001.png": {
+              "path": "05_review/SM_Env_CargoHoist_v001_review_v001.png",
+              "sha256": "318ac0abc4b90e1c4d0a119838b3c07b628295972fb1a4e99a071efd164eaa76"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 22:43:44",
+          "files": {
+            "SM_Env_CargoHoist_v002_review_v002.png": {
+              "path": "05_review/SM_Env_CargoHoist_v002_review_v002.png",
+              "sha256": "6aa7f092d741a32fa1e4f4e9a3fda9cf5b108d19954a792b642f50f9b21bc1d0"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Inspected final build v002 five views, all LOD topology views and PBR sheets. Connected stout timber frame, thick reel, crank wheel/handle and braced base remain readable; no floating fragments or collapsed thin facade. Build v002 only rigidly recenters and grounds every LOD. 37 automatic checks pass, zero errors or waivers. One nonblocking projection warning is retained: direct four-view coverage 48.5%, remaining inner/underside surfaces use existing mesh colour diffusion and have simpler detail. Visual colour continuity is acceptable for static environment dressing at gameplay distance; this is AI asset review, not user acceptance.",
+            "time": "2026-10-04 22:44:10"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 22:44:10",
+          "files": {
+            "SM_Env_CargoHoist.glb": {
+              "path": "@root/public/assets/props/SM_Env_CargoHoist.glb",
+              "sha256": "5da09bcfda9847d4ec5d2ff16960bb7a886d7ce167fb1c88d79346702bae3326"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Env_CargoHoist.glb"
+        }
+      ]
+    }
+  }
+}

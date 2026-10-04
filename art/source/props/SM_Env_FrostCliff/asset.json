@@ -1,0 +1,492 @@
+{
+  "id": "SM_Env_FrostCliff",
+  "display": "霜山覆雪石壁巨崖",
+  "kind": "static",
+  "class": "nature_prop",
+  "stages": {
+    "blockout": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:10:53",
+          "files": {
+            "BO_SM_Env_FrostCliff_v001.json": {
+              "path": "00_blockout/BO_SM_Env_FrostCliff_v001.json",
+              "sha256": "a69f3e290fb9e0134bfeadcb30415414d4018336a68cdab0a32569e3003c8aa7"
+            },
+            "BO_SM_Env_FrostCliff_v001_views.json": {
+              "path": "00_blockout/BO_SM_Env_FrostCliff_v001_views.json",
+              "sha256": "3dc6d411fb82840d613cbf9578b56d3a159bddfba56ed17127426dfc843a2ff1"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost.cliff"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -6.0,
+              0,
+              -3.5
+            ],
+            "max": [
+              6.0,
+              9.0,
+              3.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 19:12:00",
+          "files": {
+            "BO_SM_Env_FrostCliff_v002.json": {
+              "path": "00_blockout/BO_SM_Env_FrostCliff_v002.json",
+              "sha256": "f6f3098791dd4aa90654c403a4575a03e5f896afde519afd075675784d2dfd46"
+            },
+            "BO_SM_Env_FrostCliff_v002_views.json": {
+              "path": "00_blockout/BO_SM_Env_FrostCliff_v002_views.json",
+              "sha256": "1390c543875c3f44bb61704d63d2588d004c7b10161fd065fad6bd7e29aa190f"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost.cliff"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -7.8,
+              0,
+              -3.5
+            ],
+            "max": [
+              7.8,
+              9.0,
+              3.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:12:01",
+          "files": {
+            "CN_SM_Env_FrostCliff_v001_source.png": {
+              "path": "01_concept/CN_SM_Env_FrostCliff_v001_source.png",
+              "sha256": "8caccb0e02723d7fd4e9c98477892408c0bd52d5815cd5975648aaac763ebb8d"
+            },
+            "CN_SM_Env_FrostCliff_v001_front.png": {
+              "path": "01_concept/CN_SM_Env_FrostCliff_v001_front.png",
+              "sha256": "51687b3a3900b4b85b10ada8707b3a9ba34c340e5683bf0c04f08a617a4188b9"
+            },
+            "CN_SM_Env_FrostCliff_v001_left.png": {
+              "path": "01_concept/CN_SM_Env_FrostCliff_v001_left.png",
+              "sha256": "cebdaee1cca28f4a55bbf035793a7a7f7c1b17e6c031f0b53b47bb3d610a646f"
+            },
+            "CN_SM_Env_FrostCliff_v001_back.png": {
+              "path": "01_concept/CN_SM_Env_FrostCliff_v001_back.png",
+              "sha256": "9cb26dff4bd81ac643ed5f601d973b2829c021f27435e08abaac3b36af4862b5"
+            },
+            "CN_SM_Env_FrostCliff_v001_right.png": {
+              "path": "01_concept/CN_SM_Env_FrostCliff_v001_right.png",
+              "sha256": "b173a7c0071550b5037b26634d70d74be3d937d93d2b4b68c851000c4a677715"
+            },
+            "CN_SM_Env_FrostCliff_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Env_FrostCliff_v001_sheet.png",
+              "sha256": "c65299e4a0ca89ce6a8f9d932b464201562860da72c9d3e75d6d9f872e4ec619"
+            },
+            "CN_SM_Env_FrostCliff_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_FrostCliff_v001_prompt.txt",
+              "sha256": "0c3e770160954621ccb1614e6e9f9d34bd58f3ab89fdba7c9963286aefcea474"
+            },
+            "CN_SM_Env_FrostCliff_v001_registration.json": {
+              "path": "01_concept/CN_SM_Env_FrostCliff_v001_registration.json",
+              "sha256": "85c3f0c1510abbeb3adffca7148395abeaa9fc5116bc67ba4193f29d5bf49392"
+            }
+          },
+          "from_blockout": 2,
+          "generator": "Codex built-in image_gen",
+          "registration_version": 1,
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-72c038eb-ec7a-4bad-9e14-6ea3f8d1d6fb.png",
+          "source_sha256": "8caccb0e02723d7fd4e9c98477892408c0bd52d5815cd5975648aaac763ebb8d",
+          "prompt": "Use case: stylized-concept.\nAsset type: one broad solid cliff mass for local Hunyuan3D reconstruction, moderate-detail first-person Gunfire Reborn-like game art.\nSubject: ONE contiguous blocky cliff-wall boulder, NOT a pile of stacked small stones and NOT a narrow tall pillar. Total proportions 12m wide,9m high,7m deep. Wide irregular silhouette, broad solid flat base, two or three large stepped upper plateaus at different heights. Mostly large clean sloping rock planes, coarse beveled corners and only two or three widely spaced structural seams. At least 85 percent of silhouette belongs to one big connected rock volume. Front is wider than it is tall, side is clearly deep and solid. A few broad simple bands can clarify planes, but no thin horizontal stone pancakes, no tiny chips, no caves, no loose rubble or floating parts, no vegetation or architecture.\nComposition/framing: four isolated orthographic views of EXACT SAME physical mass, FRONT / LEFT / BACK / RIGHT across ONE horizontal pure white sheet. All views identical physical height and scale and common ground baseline, correct wider frontal width and thick side depth, full silhouettes generously framed. No perspective, labels, text, shadow or scene.\nStyle/medium: hand-painted stylized 3D game environment, broad clean faceted planes, bold readable silhouette, two or three coherent color blocks, smooth painted gradients, matte rock; similar moderate fidelity to Gunfire Reborn. Simplify surfaces aggressively so the cliff reads well 10–60m away. Even neutral soft studio lighting for reconstruction, restrained form shading, no glossy glints, no baked cast shadows.\nAvoid: photorealism, granular texture, hundreds of fissures, crumbling filigree, microdetail, stacked round stones, layered small rock towers, symmetrical duplicate silhouette.\nChapter material: broad cool blue-grey mountain rock planes capped with substantial fused smooth ivory-white snow sheets, white top planes and muted indigo rock sides. Snow occupies the upper quarter as 2–3 large connected forms, no small snow pebbles. One higher central shoulder and a broad lower side plateau. No icicles, trees or decorative motifs.",
+          "reference_mode": "bounds_only",
+          "registration": {
+            "front": {
+              "scale": 0.7408322015063588,
+              "offset": [
+                32,
+                380
+              ],
+              "size": [
+                447,
+                264
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.751385366769982,
+              "offset": [
+                175,
+                380
+              ],
+              "size": [
+                162,
+                264
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.751385366769982,
+              "offset": [
+                27,
+                380
+              ],
+              "size": [
+                457,
+                264
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7471282258817669,
+              "offset": [
+                158,
+                380
+              ],
+              "size": [
+                195,
+                264
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 19:18:31",
+          "files": {
+            "CN_SM_Env_FrostCliff_v002_source.png": {
+              "path": "01_concept/CN_SM_Env_FrostCliff_v002_source.png",
+              "sha256": "9c162496c66c93b1133b10ed649cecd3e8f7532a6a588995b9a5f6f8fad856c9"
+            },
+            "CN_SM_Env_FrostCliff_v002_front.png": {
+              "path": "01_concept/CN_SM_Env_FrostCliff_v002_front.png",
+              "sha256": "bb8e0bb39ffc604189b43e726a77b0da2f8285547c54045b2713272aca974e7d"
+            },
+            "CN_SM_Env_FrostCliff_v002_left.png": {
+              "path": "01_concept/CN_SM_Env_FrostCliff_v002_left.png",
+              "sha256": "f1e23fc9c777dfb65961dd0ff4f6048cdffc79c39142debf44b07f205babe158"
+            },
+            "CN_SM_Env_FrostCliff_v002_back.png": {
+              "path": "01_concept/CN_SM_Env_FrostCliff_v002_back.png",
+              "sha256": "53f4af4176450f5a4ce0f74e07542cf694a19fa9318759d2c5dd62d9481071d2"
+            },
+            "CN_SM_Env_FrostCliff_v002_right.png": {
+              "path": "01_concept/CN_SM_Env_FrostCliff_v002_right.png",
+              "sha256": "9545d146fede90d07429f55cefc3e58d8b83ee41727a8eb934455f8ca02e7052"
+            },
+            "CN_SM_Env_FrostCliff_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Env_FrostCliff_v002_sheet.png",
+              "sha256": "b78464e4c634b82d3d53f3386a680bbcf9ebd1bef0fc047b76f92f2c378cd37e"
+            },
+            "CN_SM_Env_FrostCliff_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_FrostCliff_v002_prompt.txt",
+              "sha256": "b98c1fa5a6775a4f8fcccd1ef224cbe648ec0a87fe2d37e6b94b43afcd688185"
+            },
+            "CN_SM_Env_FrostCliff_v002_registration.json": {
+              "path": "01_concept/CN_SM_Env_FrostCliff_v002_registration.json",
+              "sha256": "e2a50547c07372c8830a0ef40b62f09a3918dc3c7dfdecba585f682b1daa3c2f"
+            },
+            "CN_SM_Env_FrostCliff_v002_reference_01.png": {
+              "path": "01_concept/CN_SM_Env_FrostCliff_v002_reference_01.png",
+              "sha256": "8caccb0e02723d7fd4e9c98477892408c0bd52d5815cd5975648aaac763ebb8d"
+            },
+            "CN_SM_Env_FrostCliff_v002_original_design_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_FrostCliff_v002_original_design_prompt.txt",
+              "sha256": "0c3e770160954621ccb1614e6e9f9d34bd58f3ab89fdba7c9963286aefcea474"
+            }
+          },
+          "from_blockout": 2,
+          "generator": "Codex built-in image_gen",
+          "registration_version": 1,
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-472163ae-bef0-4df4-92f3-b5db9164e3d7.png",
+          "source_sha256": "9c162496c66c93b1133b10ed649cecd3e8f7532a6a588995b9a5f6f8fad856c9",
+          "prompt": "Use case: reference-aligned asset editing. This is the final four-view concept reference of one stylized snow-covered cliff. Remove ONLY the pure white background around all four isolated views and return true transparent alpha, preserving every snow cap and pale near-white snowy top contour as opaque object. Preserve the exact four-view arrangement FRONT / LEFT / BACK / RIGHT, all original shapes, proportions, painted blue-grey rock colors, light ivory snow colors and all view sizes/ground baselines. Do not change or redesign the cliff. The white snow on the top is part of the object and must NOT be removed, made transparent or hollow. Preserve the full snowy silhouette without missing white patches. No checkerboard painted into the image, no added shadows or text; actual transparent background PNG.",
+          "reference_mode": "bounds_only",
+          "registration": {
+            "front": {
+              "scale": 0.7326007326007326,
+              "offset": [
+                35,
+                380
+              ],
+              "size": [
+                442,
+                264
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7429190527782076,
+              "offset": [
+                176,
+                380
+              ],
+              "size": [
+                160,
+                264
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7429190527782076,
+              "offset": [
+                30,
+                380
+              ],
+              "size": [
+                452,
+                264
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7387570412780496,
+              "offset": [
+                159,
+                380
+              ],
+              "size": [
+                194,
+                264
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "reference_images": [
+            {
+              "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-72c038eb-ec7a-4bad-9e14-6ea3f8d1d6fb.png",
+              "source_sha256": "8caccb0e02723d7fd4e9c98477892408c0bd52d5815cd5975648aaac763ebb8d",
+              "registered_file": "CN_SM_Env_FrostCliff_v002_reference_01.png"
+            }
+          ],
+          "original_design_prompt": "Use case: stylized-concept.\nAsset type: one broad solid cliff mass for local Hunyuan3D reconstruction, moderate-detail first-person Gunfire Reborn-like game art.\nSubject: ONE contiguous blocky cliff-wall boulder, NOT a pile of stacked small stones and NOT a narrow tall pillar. Total proportions 12m wide,9m high,7m deep. Wide irregular silhouette, broad solid flat base, two or three large stepped upper plateaus at different heights. Mostly large clean sloping rock planes, coarse beveled corners and only two or three widely spaced structural seams. At least 85 percent of silhouette belongs to one big connected rock volume. Front is wider than it is tall, side is clearly deep and solid. A few broad simple bands can clarify planes, but no thin horizontal stone pancakes, no tiny chips, no caves, no loose rubble or floating parts, no vegetation or architecture.\nComposition/framing: four isolated orthographic views of EXACT SAME physical mass, FRONT / LEFT / BACK / RIGHT across ONE horizontal pure white sheet. All views identical physical height and scale and common ground baseline, correct wider frontal width and thick side depth, full silhouettes generously framed. No perspective, labels, text, shadow or scene.\nStyle/medium: hand-painted stylized 3D game environment, broad clean faceted planes, bold readable silhouette, two or three coherent color blocks, smooth painted gradients, matte rock; similar moderate fidelity to Gunfire Reborn. Simplify surfaces aggressively so the cliff reads well 10–60m away. Even neutral soft studio lighting for reconstruction, restrained form shading, no glossy glints, no baked cast shadows.\nAvoid: photorealism, granular texture, hundreds of fissures, crumbling filigree, microdetail, stacked round stones, layered small rock towers, symmetrical duplicate silhouette.\nChapter material: broad cool blue-grey mountain rock planes capped with substantial fused smooth ivory-white snow sheets, white top planes and muted indigo rock sides. Snow occupies the upper quarter as 2–3 large connected forms, no small snow pebbles. One higher central shoulder and a broad lower side plateau. No icicles, trees or decorative motifs.",
+          "native_alpha": {
+            "transparent_fraction": 0.7231563521186015,
+            "existing_alpha_preserved": true
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Inspected corrected native true-alpha original and registered four-view sheet. Snow-cap silhouettes are fully opaque/complete with no cut white patches; coherent blue-grey broad cliff planes and deep sides. Earlier white-key CN1 retained; original design and alpha edit prompt/input hashes preserved.",
+            "time": "2026-10-04 19:19:08"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:26:55",
+          "files": {
+            "HP_SM_Env_FrostCliff_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostCliff_v001_input_front.png",
+              "sha256": "6934089dbbbbca59fa2f45e78564da559393e99d55657555767b2475281aaa4b"
+            },
+            "HP_SM_Env_FrostCliff_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostCliff_v001_input_left.png",
+              "sha256": "e6245b05c3038cf1ef4a29634d45e7f7ea5950ad2bb20b544011b3ff1f9d3f7b"
+            },
+            "HP_SM_Env_FrostCliff_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostCliff_v001_input_back.png",
+              "sha256": "dd4d0c62a6c1151e57bf2b379caf8ef9fcc4d7a47481afcac1ec317ed927d295"
+            },
+            "HP_SM_Env_FrostCliff_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostCliff_v001_input_right.png",
+              "sha256": "5a3de0b26902bb88113a53afb5d6f3732bb052a3df8a1ba35357cb53ece8ab14"
+            },
+            "HP_SM_Env_FrostCliff_v001.glb": {
+              "path": "02_highpoly/HP_SM_Env_FrostCliff_v001.glb",
+              "sha256": "0d06e3784e8c646c40a6ebc347888728ae8ef8e55aef9be8ae8900847fa1dfaf"
+            },
+            "HP_SM_Env_FrostCliff_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Env_FrostCliff_v001_graph.json",
+              "sha256": "d533261634c488830e6125d1638e07c24acb305e3bff161e7ced4add8185f2f8"
+            }
+          },
+          "from_concept": 2,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 202610080,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -9,
+              247,
+              521,
+              777
+            ],
+            "scale": 1.9320754716981132
+          },
+          "seconds": 127.6,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 10.3
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:28:04",
+          "files": {
+            "SM_Env_FrostCliff_v001.blend": {
+              "path": "03_work/SM_Env_FrostCliff_v001.blend",
+              "sha256": "c922127e26808cee2de179486f8a96a4ff0c848cd9d3165c985ad2ba5242ae6e"
+            },
+            "SM_Env_FrostCliff_v001.glb": {
+              "path": "04_export/SM_Env_FrostCliff_v001.glb",
+              "sha256": "71700290ecc98974159c7c1da7335020abf3e82c2ea8f74fd08a088a3af23063"
+            },
+            "SM_Env_FrostCliff_v001_metrics.json": {
+              "path": "03_work/SM_Env_FrostCliff_v001_metrics.json",
+              "sha256": "1a6edd5e981767bcf8f83f7454a9ce02251359fa1cd8bc8c558c6ae40deecd10"
+            },
+            "T_Env_FrostCliff_BC.png": {
+              "path": "03_work/textures_v001/T_Env_FrostCliff_BC.png",
+              "sha256": "b629cda7ee49cd4f3499a8897164c9af9e8e492209f4573d28ebfae1fdf96b39"
+            },
+            "T_Env_FrostCliff_N.png": {
+              "path": "03_work/textures_v001/T_Env_FrostCliff_N.png",
+              "sha256": "46d1b8099d3335c0062da3d08b96c54798ed7eaa20fa0ecad2812764e40f5571"
+            },
+            "T_Env_FrostCliff_ORM.png": {
+              "path": "03_work/textures_v001/T_Env_FrostCliff_ORM.png",
+              "sha256": "8791b1b37f4850e6387edd364f661a6380663146f4091d43e3cdae191916cb1b"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.945,
+          "uncovered_ratio": 0.215,
+          "lods": [
+            {
+              "tris": 5000,
+              "verts": 2502
+            },
+            {
+              "tris": 1600,
+              "verts": 802
+            },
+            {
+              "tris": 500,
+              "verts": 252
+            }
+          ],
+          "export_kb": 155.1,
+          "seconds": 62.2,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:28:04",
+          "files": {
+            "SM_Env_FrostCliff_v001_validation_v001.json": {
+              "path": "05_review/SM_Env_FrostCliff_v001_validation_v001.json",
+              "sha256": "ea4fddcab13d3d9dd2fafb60573f5c57d5ba78a262798a95ed04faca9035899d"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:28:15",
+          "files": {
+            "SM_Env_FrostCliff_v001_review_v001.png": {
+              "path": "05_review/SM_Env_FrostCliff_v001_review_v001.png",
+              "sha256": "f5395835bb349df28c7a9cd44b2e04da4c5f97d6c0e7a62b72fab596b1d0f0c3"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Reviewed actual final five views, all LOD wireframes and PBR: fused opaque snow caps, coherent large cold-blue planes, thick sides and stable silhouette. Generated from corrected alpha CN2 with original snow retained. 5000/1600/500; one pivot warning retained, actual runtime grounding uses vertex bounds; zero errors/waivers.",
+            "time": "2026-10-04 19:29:31"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:29:32",
+          "files": {
+            "SM_Env_FrostCliff.glb": {
+              "path": "@root/public/assets/props/SM_Env_FrostCliff.glb",
+              "sha256": "71700290ecc98974159c7c1da7335020abf3e82c2ea8f74fd08a088a3af23063"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Env_FrostCliff.glb"
+        }
+      ]
+    }
+  }
+}

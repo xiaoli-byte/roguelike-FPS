@@ -1,0 +1,613 @@
+{
+  "id": "SM_Env_InfernoFoundry",
+  "display": "熔火黑曜铸造祭炉",
+  "kind": "static",
+  "class": "nature_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 16:36:38",
+          "files": {
+            "BO_SM_Env_InfernoFoundry_v001.json": {
+              "path": "00_blockout/BO_SM_Env_InfernoFoundry_v001.json",
+              "sha256": "9234f05d068f744c401e9b3fe97bdd7e5e319ed64cefd116c59fae29324103c8"
+            },
+            "BO_SM_Env_InfernoFoundry_v001_views.json": {
+              "path": "00_blockout/BO_SM_Env_InfernoFoundry_v001_views.json",
+              "sha256": "0a17258145d405df9927a3fc185c07a57d36700744266eb8ef64a54baf3e470f"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.landmark"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.3,
+              0,
+              -1.7
+            ],
+            "max": [
+              2.3,
+              4.8,
+              1.7
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 16:36:41",
+          "files": {
+            "CN_SM_Env_InfernoFoundry_v001_source.png": {
+              "path": "01_concept/CN_SM_Env_InfernoFoundry_v001_source.png",
+              "sha256": "407742ccd6eb356675d6ebabc87932993079f3342415352b3caa08c0beea9d1e"
+            },
+            "CN_SM_Env_InfernoFoundry_v001_front.png": {
+              "path": "01_concept/CN_SM_Env_InfernoFoundry_v001_front.png",
+              "sha256": "b4cfced33734ac1fca508471ca9477505cc16b6e43ead7ba69aa5c9b97d6af0c"
+            },
+            "CN_SM_Env_InfernoFoundry_v001_left.png": {
+              "path": "01_concept/CN_SM_Env_InfernoFoundry_v001_left.png",
+              "sha256": "25f4d3f97e10b4264ab35cf6014b47e313563c4da3f495fac890b37685f764fe"
+            },
+            "CN_SM_Env_InfernoFoundry_v001_back.png": {
+              "path": "01_concept/CN_SM_Env_InfernoFoundry_v001_back.png",
+              "sha256": "df2aedeb864d0016bf0399153ee0c1e90c9f0aabbaa5c72e655f53bf8482b8d7"
+            },
+            "CN_SM_Env_InfernoFoundry_v001_right.png": {
+              "path": "01_concept/CN_SM_Env_InfernoFoundry_v001_right.png",
+              "sha256": "42528566150306d6f1fc62ca616550a1a0744602fa0981bfe68bba68391c504e"
+            },
+            "CN_SM_Env_InfernoFoundry_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Env_InfernoFoundry_v001_sheet.png",
+              "sha256": "135e950af10f6df45daf8b414de1d74f4c51726e918a7c9c61fd3610ce59453f"
+            },
+            "CN_SM_Env_InfernoFoundry_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_InfernoFoundry_v001_prompt.txt",
+              "sha256": "ab84a31f7c28012c19e838734152f1b14b0c68b9398269ff516b9017f989b07c"
+            },
+            "CN_SM_Env_InfernoFoundry_v001_registration.json": {
+              "path": "01_concept/CN_SM_Env_InfernoFoundry_v001_registration.json",
+              "sha256": "7ce96167f4553c63661e235f7531dba5c535106892372b83bdd9d18888164830"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Codex built-in image_gen",
+          "registration_version": 1,
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-a9239085-dbbe-4634-9075-5129a75989aa.png",
+          "source_sha256": "407742ccd6eb356675d6ebabc87932993079f3342415352b3caa08c0beea9d1e",
+          "prompt": "Use case: stylized-concept. Asset type: exact four-view reconstruction reference for a local Hunyuan3D environmental mesh. Design ONE massive ruined foundry shrine for a dark volcanic Chinese-fantasy roguelike FPS. A squat tall charcoal basalt brick furnace set into a rugged connected plinth, broad tapering upper exhaust stack with a jagged broken rim, front shallow vaulted ash-filled firebox recess (dark interior without actual fire or emission), thick weathered bronze structural bands and large rivet heads wrapping the furnace, one attached broad side buttress and a few attached clinker chunks at its foot. Strong three-dimensional rounded-square volume, approximately 4.6 m wide,4.8 m tall,3.4 m deep. Old warm copper contrasts with cool matte black-purple stone and rusty red staining, carefully sculpted chipped edges, restrained ancient carved motifs, dark ash around front recess. No skinny hanging chains, disconnected tools, separate objects, huge spikes, active flames, smoke, lava, ground plane or landscape. High-quality stylized game PBR asset with bold readable masses and medium sculpted detail, material surfaces not noisy or plastic. Compose a wide reference sheet with four isolated renders of THE SAME foundry in one row ordered FRONT,LEFT,BACK,RIGHT. Strict orthographic level views, no three-quarter camera and no perspective. Equal physical scale and identical ground baseline with ample white gutters; all silhouettes fully visible. Side views explicitly show the furnace depth and wrapping copper bands; back is closed masonry with the same upper stack shape. Neutral soft diffuse studio lighting, minimal shadows on plain pure white background. No text, view labels, humans or magical VFX. Every view must agree on all geometry and band placement.",
+          "reference_mode": "bounds_only",
+          "registration": {
+            "front": {
+              "scale": 0.716244194505064,
+              "offset": [
+                62,
+                273
+              ],
+              "size": [
+                388,
+                477
+              ],
+              "physical_height_m": 4.8,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7249523306084691,
+              "offset": [
+                98,
+                273
+              ],
+              "size": [
+                316,
+                477
+              ],
+              "physical_height_m": 4.8,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.716244194505064,
+              "offset": [
+                65,
+                273
+              ],
+              "size": [
+                382,
+                477
+              ],
+              "physical_height_m": 4.8,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7260557588133526,
+              "offset": [
+                83,
+                273
+              ],
+              "size": [
+                346,
+                477
+              ],
+              "physical_height_m": 4.8,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "已查看配准后的四视图；封闭实体铸炉、正面暗火膛、铜箍侧厚与缺口烟囱连贯，无活动火焰或悬浮细件。仅尺寸元数据参考，形状由本机Hunyuan生成。",
+            "time": "2026-10-04 16:36:59"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 17:35:21",
+          "files": {
+            "CN_SM_Env_InfernoFoundry_v002_source.png": {
+              "path": "01_concept/CN_SM_Env_InfernoFoundry_v002_source.png",
+              "sha256": "1c0c2e528a59e250f214d4528e1804fbe52cc04617adbb066b1c19766628420b"
+            },
+            "CN_SM_Env_InfernoFoundry_v002_front.png": {
+              "path": "01_concept/CN_SM_Env_InfernoFoundry_v002_front.png",
+              "sha256": "9e2d44574012657d51d0511e9df61406975d2b4ba2624bf8d1c83af344b84f40"
+            },
+            "CN_SM_Env_InfernoFoundry_v002_left.png": {
+              "path": "01_concept/CN_SM_Env_InfernoFoundry_v002_left.png",
+              "sha256": "a2f80a5b383beed8bc28bad731d2a7ca45d7e0ddb97983e367bd826fe5867d24"
+            },
+            "CN_SM_Env_InfernoFoundry_v002_back.png": {
+              "path": "01_concept/CN_SM_Env_InfernoFoundry_v002_back.png",
+              "sha256": "49196cd4af0569bfa0bc40bebcb741f2fdc6b9b2fb6b93d242eaffbea042d961"
+            },
+            "CN_SM_Env_InfernoFoundry_v002_right.png": {
+              "path": "01_concept/CN_SM_Env_InfernoFoundry_v002_right.png",
+              "sha256": "2faf455c5030e5420bc103c41dea70d12e8869a305b159677611809c6b5dbfc9"
+            },
+            "CN_SM_Env_InfernoFoundry_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Env_InfernoFoundry_v002_sheet.png",
+              "sha256": "0e0d4421ca074903929d34e1b5af9b2103631074b686cccc622fcbb9809528d8"
+            },
+            "CN_SM_Env_InfernoFoundry_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_InfernoFoundry_v002_prompt.txt",
+              "sha256": "866c24138a6baf957d60778ac65c8fe49ec6a3bc12906ea779dbc566f48e0716"
+            },
+            "CN_SM_Env_InfernoFoundry_v002_registration.json": {
+              "path": "01_concept/CN_SM_Env_InfernoFoundry_v002_registration.json",
+              "sha256": "0b9cf08e432e3edb1ae4d3322dae1b73a80677660871af24c32c283856183517"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Codex built-in image_gen",
+          "registration_version": 1,
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-e57e4095-9601-495b-924d-40a9fba2bb81.png",
+          "source_sha256": "1c0c2e528a59e250f214d4528e1804fbe52cc04617adbb066b1c19766628420b",
+          "prompt": "Use case: style-transfer. Edit the supplied reconstruction reference into stylized hand-painted 3D game art at the moderate-detail visual level of Gunfire Reborn. Keep the subject identity, overall dimensions, and four-view FRONT, LEFT, BACK, RIGHT turnaround of ONE identical solid object. Replace photographic erosion, tiny cracks, dense grain and miniature ornament with broad clean faceted planes, bold chunky silhouette, two or three dominant color blocks, soft painted gradients and a few medium-scale edge accents. Matte materials, clear solid volume, no glossy plastic, no photorealistic surface noise. All views must agree on construction and colors; side views show true depth and back is complete. Level strictly orthographic cameras, same scale and baseline, every silhouette fully inside its own panel with white gutters. Pure white featureless background, neutral soft even lighting, minimal shadows. No ground plane, text, labels, landscape, people, detached objects or effects.\n\nSubject changes: Keep the broad tapering furnace, broken chimney rim, recessed arched fire-mouth with a solid ash-filled back, two large wrapping copper bands and integrated buttresses. Size 4.6m wide,4.8m high,3.4m deep. Use broad dark muted violet basalt blocks, soft painted copper-orange bands and a few large rivets. Simplify the small brick joints, soot noise and little stone fragments. One bold front symbol. No active fire, smoke or lava.",
+          "reference_mode": "bounds_only",
+          "registration": {
+            "front": {
+              "scale": 0.7140997508089411,
+              "offset": [
+                62,
+                273
+              ],
+              "size": [
+                388,
+                477
+              ],
+              "physical_height_m": 4.8,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7238522511993515,
+              "offset": [
+                99,
+                273
+              ],
+              "size": [
+                314,
+                477
+              ],
+              "physical_height_m": 4.8,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7130323371306019,
+              "offset": [
+                66,
+                273
+              ],
+              "size": [
+                379,
+                477
+              ],
+              "physical_height_m": 4.8,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7238522511993515,
+              "offset": [
+                84,
+                273
+              ],
+              "size": [
+                343,
+                477
+              ],
+              "physical_height_m": 4.8,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Root inspected the native revised four-view sheet: broad painted color blocks, simplified wear, matched facade and rear, coherent thick side volume and solid connected structure. Approved for local Hunyuan reconstruction, not a human review.",
+            "time": "2026-10-04 17:35:34"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 16:49:53",
+          "files": {
+            "HP_SM_Env_InfernoFoundry_v001_input.png": {
+              "path": "02_highpoly/HP_SM_Env_InfernoFoundry_v001_input.png",
+              "sha256": "708b5180ce9afc0f18dff4a950e77f572920e15d5fba3610e8f57ad0a4f402da"
+            },
+            "HP_SM_Env_InfernoFoundry_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Env_InfernoFoundry_v001_graph.json",
+              "sha256": "f02a2df6ffc0c4b651b251ae41c8ca856b4fc5714183834e40e2dbb924f67456"
+            },
+            "HP_SM_Env_InfernoFoundry_v001_failure.json": {
+              "path": "02_highpoly/HP_SM_Env_InfernoFoundry_v001_failure.json",
+              "sha256": "b946064a24eb6c39674be0b88f3d6f33288e139c13edc0f01f5e8a7b9d375ead"
+            }
+          },
+          "from_concept": 1,
+          "mode": "single",
+          "tool": "Hunyuan3D 2.1 (local ComfyUI native nodes)",
+          "checkpoint": "hunyuan_3d_v2.1.safetensors",
+          "seed": 202610043,
+          "quality_status": "failed",
+          "failure_reason": "inference interrupted during shared server replacement; original exception unavailable"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 16:55:20",
+          "files": {
+            "HP_SM_Env_InfernoFoundry_v002_input.png": {
+              "path": "02_highpoly/HP_SM_Env_InfernoFoundry_v002_input.png",
+              "sha256": "708b5180ce9afc0f18dff4a950e77f572920e15d5fba3610e8f57ad0a4f402da"
+            },
+            "HP_SM_Env_InfernoFoundry_v002.glb": {
+              "path": "02_highpoly/HP_SM_Env_InfernoFoundry_v002.glb",
+              "sha256": "56cfdbb669071b40396976ed59a445305e3c685449b88a5be04925bf3dc3a50e"
+            },
+            "HP_SM_Env_InfernoFoundry_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Env_InfernoFoundry_v002_graph.json",
+              "sha256": "01a91290f4121a258538dc1fabbf788d2056cc4ef09009c06ea213e15bfb2012"
+            }
+          },
+          "from_concept": 1,
+          "mode": "single",
+          "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+          "checkpoint": "hunyuan_3d_v2.1.safetensors",
+          "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 202610043,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "crop": [
+              62,
+              273,
+              450,
+              750
+            ],
+            "scale": 1.8247379454926624,
+            "offset": [
+              158,
+              77
+            ]
+          },
+          "seconds": 325.8,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 23.7
+        },
+        {
+          "version": 3,
+          "created": "2026-10-04 17:50:45",
+          "files": {
+            "HP_SM_Env_InfernoFoundry_v003_input.png": {
+              "path": "02_highpoly/HP_SM_Env_InfernoFoundry_v003_input.png",
+              "sha256": "967e7b248f5d4df79e8321964d50ba8279ef93cea9e5244bfce3bde01a3e3813"
+            },
+            "HP_SM_Env_InfernoFoundry_v003.glb": {
+              "path": "02_highpoly/HP_SM_Env_InfernoFoundry_v003.glb",
+              "sha256": "08509ea2d2708fff645fccd5505b76f759ea214c2d2adb0600dfa5e67abdf035"
+            },
+            "HP_SM_Env_InfernoFoundry_v003_graph.json": {
+              "path": "02_highpoly/HP_SM_Env_InfernoFoundry_v003_graph.json",
+              "sha256": "b64e04a9fba6cbd41a1c0c2c78b9953131e99959934d2d72856366a1b9f7f01a"
+            }
+          },
+          "from_concept": 2,
+          "mode": "single",
+          "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+          "checkpoint": "hunyuan_3d_v2.1.safetensors",
+          "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 202610052,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "crop": [
+              62,
+              273,
+              450,
+              750
+            ],
+            "scale": 1.8247379454926624,
+            "offset": [
+              158,
+              77
+            ]
+          },
+          "seconds": 143.9,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 21.6
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 16:58:35",
+          "files": {
+            "SM_Env_InfernoFoundry_v001.blend": {
+              "path": "03_work/SM_Env_InfernoFoundry_v001.blend",
+              "sha256": "ec6544bb247cc97794b79085b04bf0c2fbd703014307b360eac4cc5c81c29119"
+            },
+            "SM_Env_InfernoFoundry_v001.glb": {
+              "path": "04_export/SM_Env_InfernoFoundry_v001.glb",
+              "sha256": "d307d4fefcdbf01ed4a545d6ce13e6c25a33df06f127bad8adc999e089bf0a7c"
+            },
+            "SM_Env_InfernoFoundry_v001_metrics.json": {
+              "path": "03_work/SM_Env_InfernoFoundry_v001_metrics.json",
+              "sha256": "c4442275b6581e57633b8c6b302348fb8b3031b17acdc35055fe4c63b5aea2b0"
+            },
+            "T_Env_InfernoFoundry_BC.png": {
+              "path": "03_work/textures_v001/T_Env_InfernoFoundry_BC.png",
+              "sha256": "6bd54dfd78eff2007b3b96589cf2e7f5cb5a80117b9c3c93025dddf0cf73b391"
+            },
+            "T_Env_InfernoFoundry_N.png": {
+              "path": "03_work/textures_v001/T_Env_InfernoFoundry_N.png",
+              "sha256": "42f07ea28e255b9c6d3de5f0351819a932374fde9910f0525a816e2450b9a6c4"
+            },
+            "T_Env_InfernoFoundry_ORM.png": {
+              "path": "03_work/textures_v001/T_Env_InfernoFoundry_ORM.png",
+              "sha256": "99119b1ea200a9d93df6e0f26ecc800ac2193f99a675b1653ffd4812a0cd2eec"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.899,
+          "uncovered_ratio": 0.3585,
+          "lods": [
+            {
+              "tris": 5000,
+              "verts": 2502
+            },
+            {
+              "tris": 1600,
+              "verts": 802
+            },
+            {
+              "tris": 500,
+              "verts": 252
+            }
+          ],
+          "export_kb": 305.9,
+          "seconds": 179.7,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 17:57:21",
+          "files": {
+            "SM_Env_InfernoFoundry_v002.blend": {
+              "path": "03_work/SM_Env_InfernoFoundry_v002.blend",
+              "sha256": "185da4e0cc397672fdbbef382c0b95c3ce382c6904f24f1fcdbaf42397f9d819"
+            },
+            "SM_Env_InfernoFoundry_v002.glb": {
+              "path": "04_export/SM_Env_InfernoFoundry_v002.glb",
+              "sha256": "75e492529dee5c9681bcf55b626af3fccc6b0f6e95d3ffce8792cca27e157d67"
+            },
+            "SM_Env_InfernoFoundry_v002_metrics.json": {
+              "path": "03_work/SM_Env_InfernoFoundry_v002_metrics.json",
+              "sha256": "41c8b45f75ec1cf4a755fe5b69f6e8af913c40a7422e09a96a9943d2cb572454"
+            },
+            "T_Env_InfernoFoundry_BC.png": {
+              "path": "03_work/textures_v002/T_Env_InfernoFoundry_BC.png",
+              "sha256": "f2f102ab156e03c90c7975c58b24e079f25388392ece8ceccf5d77f7f37448c1"
+            },
+            "T_Env_InfernoFoundry_N.png": {
+              "path": "03_work/textures_v002/T_Env_InfernoFoundry_N.png",
+              "sha256": "66935ed30c41869f7d07170e3d57099655cc499a46b0a9bdcf409dfe0523cb20"
+            },
+            "T_Env_InfernoFoundry_ORM.png": {
+              "path": "03_work/textures_v002/T_Env_InfernoFoundry_ORM.png",
+              "sha256": "e17fc9159642764edd4f6e169ae4f352ec303db8d52b92598f77503f18a82fa0"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 3,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.904,
+          "uncovered_ratio": 0.2988,
+          "lods": [
+            {
+              "tris": 5000,
+              "verts": 2478
+            },
+            {
+              "tris": 1600,
+              "verts": 778
+            },
+            {
+              "tris": 500,
+              "verts": 228
+            }
+          ],
+          "export_kb": 307.0,
+          "seconds": 148.8,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 16:58:51",
+          "files": {
+            "SM_Env_InfernoFoundry_v001_validation_v001.json": {
+              "path": "05_review/SM_Env_InfernoFoundry_v001_validation_v001.json",
+              "sha256": "ab0e96c346a21cd594dfff436f5e16d7677661559c3eabb5b977a13127648cda"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 17:57:40",
+          "files": {
+            "SM_Env_InfernoFoundry_v002_validation_v002.json": {
+              "path": "05_review/SM_Env_InfernoFoundry_v002_validation_v002.json",
+              "sha256": "c16d7e31dd217d42413516c8d184f3379fbb00e854a553dc8398df426e59e210"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 16:58:58",
+          "files": {
+            "SM_Env_InfernoFoundry_v001_review_v001.png": {
+              "path": "05_review/SM_Env_InfernoFoundry_v001_review_v001.png",
+              "sha256": "78e5bc15e4b00318025b333197a328f592e48381e04af53a10ce737449377665"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Reviewed all five textured views, copper bands, connected basalt furnace, closed ash niche and damaged chimney. All three LODs preserve the massive silhouette; PBR sheets and validation have no errors/warnings or QA waiver. Build v001 uses the successful Hunyuan highpoly v002; interrupted v001 evidence stays archived.",
+            "time": "2026-10-04 16:59:23"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 17:57:48",
+          "files": {
+            "SM_Env_InfernoFoundry_v002_review_v002.png": {
+              "path": "05_review/SM_Env_InfernoFoundry_v002_review_v002.png",
+              "sha256": "6003294791c5604863670e63874a9cd780636d485dcaa377c8b367b8212cbaf5"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Root inspected five actual textured views, LOD meshes and texture sheets. Broad charcoal stone and restrained bronze bands read clearly; the furnace niche, coal bed, complete back and deep side buttresses retain solid connected volume. All LOD budgets passed, with zero validation warnings or errors and no waiver.",
+            "time": "2026-10-04 17:58:43"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 16:59:24",
+          "files": {
+            "SM_Env_InfernoFoundry.glb": {
+              "path": "@root/public/assets/props/SM_Env_InfernoFoundry.glb",
+              "sha256": "d307d4fefcdbf01ed4a545d6ce13e6c25a33df06f127bad8adc999e089bf0a7c"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Env_InfernoFoundry.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 17:58:44",
+          "files": {
+            "SM_Env_InfernoFoundry.glb": {
+              "path": "@root/public/assets/props/SM_Env_InfernoFoundry.glb",
+              "sha256": "75e492529dee5c9681bcf55b626af3fccc6b0f6e95d3ffce8792cca27e157d67"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Env_InfernoFoundry.glb"
+        }
+      ]
+    }
+  }
+}

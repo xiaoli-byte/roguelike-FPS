@@ -1,0 +1,354 @@
+{
+  "schema": 2,
+  "asset_id": "SM_Env_FrostGate",
+  "build_version": 1,
+  "created": "2026-10-04 19:08:08",
+  "geometry_source": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_FrostGate\\04_export\\SM_Env_FrostGate_v001.glb",
+    "sha256": "9aa58972578757cc9173ea77ad8162ddc08534991a4fb42ab683d9fc6b3e6495"
+  },
+  "measurement_source": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_FrostGate\\_tmp\\gate_aperture_build_v001_aperture_v002\\measure_gate.py",
+    "sha256": "1f4f28fbd7494d251aa6669d7b5174bd867cfe155e51f85263e78ee40a3c881d"
+  },
+  "measurement_arguments": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_FrostGate\\_tmp\\gate_aperture_build_v001_aperture_v002\\measure.args.json",
+    "sha256": "db040dd92208f2deb03918e79c6004e240bafc650f4737cb8c1711cf683eb2f2"
+  },
+  "runtime_transform_source": {
+    "path": "D:\\personal-projects\\枪火重生\\src\\world\\SceneArchitecture.ts",
+    "sha256": "2df20dc7b992e2c6d894b1ec13e9346052a7c5e40329cd57e0d31591eceef11b"
+  },
+  "method": "World-transform decoded GLB triangles to game XYZ, clip each triangle against all six opening-box planes over full actual depth. Count positive-area intersections. Raw source plus exact architectureMatrix uniform fit using the union of all LOD bounds, X/Z centering and foot grounding. No geometry edits or render.",
+  "boundary_tolerance_m": 1e-05,
+  "input_coordinates": "game XYZ; X horizontal, Y height, Z depth",
+  "qa_waivers": 0,
+  "budget_waivers": 0,
+  "source_required_aperture": {
+    "width_m": 6.4,
+    "height_m": 3.8
+  },
+  "all_lods_source_required_box_empty": true,
+  "source_lods": [
+    {
+      "name": "SM_Env_FrostGate_LOD0",
+      "lod": 0,
+      "triangles": 5000,
+      "bounds_game_xyz_m": {
+        "min": [
+          -5.458076477050781,
+          0.004481985699385405,
+          -1.202728033065796
+        ],
+        "max": [
+          5.458583831787109,
+          6.5952582359313965,
+          1.0781564712524414
+        ]
+      },
+      "required_aperture": {
+        "width_m": 6.4,
+        "height_m": 3.8,
+        "origin_centered_x_m": 0,
+        "ground_y_m": 0,
+        "through_depth_m": [
+          -1.2037280330657958,
+          1.0791564712524413
+        ]
+      },
+      "tested_box": {
+        "min": [
+          -3.19999,
+          1e-05,
+          -1.2037280330657958
+        ],
+        "max": [
+          3.19999,
+          3.7999899999999998,
+          1.0791564712524413
+        ]
+      },
+      "intersecting_triangle_count": 0,
+      "clipped_surface_area_m2": 0,
+      "intersection_bounds": null,
+      "intersection_details": [],
+      "maximum_centered_clear_width_at_target_height_m": 7.415554,
+      "maximum_centered_clear_width_at_2m_height_m": 7.461545,
+      "maximum_centered_clear_height_at_target_width_m": 4.398897,
+      "required_box_empty": true
+    },
+    {
+      "name": "SM_Env_FrostGate_LOD1",
+      "lod": 1,
+      "triangles": 1600,
+      "bounds_game_xyz_m": {
+        "min": [
+          -5.457957744598389,
+          0.008984805084764957,
+          -1.2002298831939697
+        ],
+        "max": [
+          5.471693515777588,
+          6.6096062660217285,
+          1.0713603496551514
+        ]
+      },
+      "required_aperture": {
+        "width_m": 6.4,
+        "height_m": 3.8,
+        "origin_centered_x_m": 0,
+        "ground_y_m": 0,
+        "through_depth_m": [
+          -1.2012298831939696,
+          1.0723603496551513
+        ]
+      },
+      "tested_box": {
+        "min": [
+          -3.19999,
+          1e-05,
+          -1.2012298831939696
+        ],
+        "max": [
+          3.19999,
+          3.7999899999999998,
+          1.0723603496551513
+        ]
+      },
+      "intersecting_triangle_count": 0,
+      "clipped_surface_area_m2": 0,
+      "intersection_bounds": null,
+      "intersection_details": [],
+      "maximum_centered_clear_width_at_target_height_m": 7.364284,
+      "maximum_centered_clear_width_at_2m_height_m": 7.521011,
+      "maximum_centered_clear_height_at_target_width_m": 4.390397,
+      "required_box_empty": true
+    },
+    {
+      "name": "SM_Env_FrostGate_LOD2",
+      "lod": 2,
+      "triangles": 500,
+      "bounds_game_xyz_m": {
+        "min": [
+          -5.435486793518066,
+          0.008984805084764957,
+          -1.2045857906341553
+        ],
+        "max": [
+          5.462563514709473,
+          6.6390814781188965,
+          1.1123225688934326
+        ]
+      },
+      "required_aperture": {
+        "width_m": 6.4,
+        "height_m": 3.8,
+        "origin_centered_x_m": 0,
+        "ground_y_m": 0,
+        "through_depth_m": [
+          -1.2055857906341552,
+          1.1133225688934325
+        ]
+      },
+      "tested_box": {
+        "min": [
+          -3.19999,
+          1e-05,
+          -1.2055857906341552
+        ],
+        "max": [
+          3.19999,
+          3.7999899999999998,
+          1.1133225688934325
+        ]
+      },
+      "intersecting_triangle_count": 0,
+      "clipped_surface_area_m2": 0,
+      "intersection_bounds": null,
+      "intersection_details": [],
+      "maximum_centered_clear_width_at_target_height_m": 7.391709,
+      "maximum_centered_clear_width_at_2m_height_m": 7.52196,
+      "maximum_centered_clear_height_at_target_width_m": 4.315576,
+      "required_box_empty": true
+    }
+  ],
+  "runtime": {
+    "envelope_xyz_m": [
+      10.5,
+      6.37372009755155,
+      2.22580509887954
+    ],
+    "placement_scale": 1.2,
+    "all_lod_source_bounds": {
+      "min": [
+        -5.458076477050781,
+        0.004481985699385405,
+        -1.2045857906341553
+      ],
+      "max": [
+        5.471693515777588,
+        6.6390814781188965,
+        1.1123225688934326
+      ]
+    },
+    "uniform_fit_scale": 0.9606789535425561,
+    "actual_total_uniform_scale": 1.1528147442510672,
+    "source_offset": [
+      -0.00680851936340332,
+      -0.004481985699385405,
+      0.04613161087036133
+    ],
+    "required_aperture": {
+      "width_m": 7.68,
+      "height_m": 4.56
+    },
+    "all_lods_required_box_empty": true,
+    "lods": [
+      {
+        "name": "SM_Env_FrostGate_LOD0",
+        "lod": 0,
+        "triangles": 5000,
+        "bounds_game_xyz_m": {
+          "min": [
+            -6.299999999502712,
+            0.0,
+            -1.3333414086549293
+          ],
+          "max": [
+            6.284886962506016,
+            7.597944037327224,
+            1.2960958778569216
+          ]
+        },
+        "required_aperture": {
+          "width_m": 7.68,
+          "height_m": 4.56,
+          "origin_centered_x_m": 0,
+          "ground_y_m": 0,
+          "through_depth_m": [
+            -1.3343414086549292,
+            1.2970958778569215
+          ]
+        },
+        "tested_box": {
+          "min": [
+            -3.83999,
+            1e-05,
+            -1.3343414086549292
+          ],
+          "max": [
+            3.83999,
+            4.55999,
+            1.2970958778569215
+          ]
+        },
+        "intersecting_triangle_count": 0,
+        "clipped_surface_area_m2": 0,
+        "intersection_bounds": null,
+        "intersection_details": [],
+        "maximum_centered_clear_width_at_target_height_m": 8.27789,
+        "maximum_centered_clear_width_at_2m_height_m": 8.586078,
+        "maximum_centered_clear_height_at_target_width_m": 4.845151,
+        "required_box_empty": true
+      },
+      {
+        "name": "SM_Env_FrostGate_LOD1",
+        "lod": 1,
+        "triangles": 1600,
+        "bounds_game_xyz_m": {
+          "min": [
+            -6.299863122980973,
+            0.005190916578165077,
+            -1.330461504649339
+          ],
+          "max": [
+            6.299999999502712,
+            7.614484657966316,
+            1.2882612086758427
+          ]
+        },
+        "required_aperture": {
+          "width_m": 7.68,
+          "height_m": 4.56,
+          "origin_centered_x_m": 0,
+          "ground_y_m": 0,
+          "through_depth_m": [
+            -1.331461504649339,
+            1.2892612086758426
+          ]
+        },
+        "tested_box": {
+          "min": [
+            -3.83999,
+            1e-05,
+            -1.331461504649339
+          ],
+          "max": [
+            3.83999,
+            4.55999,
+            1.2892612086758426
+          ]
+        },
+        "intersecting_triangle_count": 0,
+        "clipped_surface_area_m2": 0,
+        "intersection_bounds": null,
+        "intersection_details": [],
+        "maximum_centered_clear_width_at_target_height_m": 8.252931,
+        "maximum_centered_clear_width_at_2m_height_m": 8.654632,
+        "maximum_centered_clear_height_at_target_width_m": 4.916241,
+        "required_box_empty": true
+      },
+      {
+        "name": "SM_Env_FrostGate_LOD2",
+        "lod": 2,
+        "triangles": 500,
+        "bounds_game_xyz_m": {
+          "min": [
+            -6.273958279258234,
+            0.005190916578165077,
+            -1.335483058970978
+          ],
+          "max": [
+            6.289474799656362,
+            7.6484641170618595,
+            1.335483058970978
+          ]
+        },
+        "required_aperture": {
+          "width_m": 7.68,
+          "height_m": 4.56,
+          "origin_centered_x_m": 0,
+          "ground_y_m": 0,
+          "through_depth_m": [
+            -1.336483058970978,
+            1.336483058970978
+          ]
+        },
+        "tested_box": {
+          "min": [
+            -3.83999,
+            1e-05,
+            -1.336483058970978
+          ],
+          "max": [
+            3.83999,
+            4.55999,
+            1.336483058970978
+          ]
+        },
+        "intersecting_triangle_count": 0,
+        "clipped_surface_area_m2": 0,
+        "intersection_bounds": null,
+        "intersection_details": [],
+        "maximum_centered_clear_width_at_target_height_m": 8.261798,
+        "maximum_centered_clear_width_at_2m_height_m": 8.655726,
+        "maximum_centered_clear_height_at_target_width_m": 4.96583,
+        "required_box_empty": true
+      }
+    ]
+  },
+  "runtime_placement_source": {
+    "path": "D:\\personal-projects\\枪火重生\\src\\world\\AdventureGen.ts",
+    "sha256": "f4f8c36ec5beb876a8f4e752e6c4c57a0b00f0b30067b7f5da6cee51d5abfa88"
+  }
+}

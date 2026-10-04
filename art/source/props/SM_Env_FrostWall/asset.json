@@ -1,0 +1,350 @@
+{
+  "id": "SM_Env_FrostWall",
+  "display": "霜山覆雪厚墙段",
+  "kind": "static",
+  "class": "nature_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 18:54:08",
+          "files": {
+            "BO_SM_Env_FrostWall_v001.json": {
+              "path": "00_blockout/BO_SM_Env_FrostWall_v001.json",
+              "sha256": "3f12bc72c03a0be80fa3117fdb582563a87680666a8a48df1d361b4bc27e836f"
+            },
+            "BO_SM_Env_FrostWall_v001_views.json": {
+              "path": "00_blockout/BO_SM_Env_FrostWall_v001_views.json",
+              "sha256": "8abcade94c4107277725db5bf7f98c41fe8209665195afda46aa6695d20dd1d8"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost.wall"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -3.95,
+              0,
+              -0.85
+            ],
+            "max": [
+              3.95,
+              4.4,
+              0.85
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 18:54:09",
+          "files": {
+            "CN_SM_Env_FrostWall_v001_source.png": {
+              "path": "01_concept/CN_SM_Env_FrostWall_v001_source.png",
+              "sha256": "4d68d48555479842c120400985c59c34c171d604c64c305b08ce78a219d557bb"
+            },
+            "CN_SM_Env_FrostWall_v001_front.png": {
+              "path": "01_concept/CN_SM_Env_FrostWall_v001_front.png",
+              "sha256": "1fa585f5fd97d5a2ae9c457878f13bc43d31c3fdf08ca2b36018ac3cb534c9d8"
+            },
+            "CN_SM_Env_FrostWall_v001_left.png": {
+              "path": "01_concept/CN_SM_Env_FrostWall_v001_left.png",
+              "sha256": "93ee759b6d777e207f58ae05b6fb7e6417355bee44ebc7dcb0a909a3269c9caa"
+            },
+            "CN_SM_Env_FrostWall_v001_back.png": {
+              "path": "01_concept/CN_SM_Env_FrostWall_v001_back.png",
+              "sha256": "9e622d3ff37ccfc6e03182b3a9d2a87d7633a24c425256e611ed486a7f720f02"
+            },
+            "CN_SM_Env_FrostWall_v001_right.png": {
+              "path": "01_concept/CN_SM_Env_FrostWall_v001_right.png",
+              "sha256": "4c1a52eb2e4f474a946c0f1ec9dcb58506937b6720502410d2868765202c060b"
+            },
+            "CN_SM_Env_FrostWall_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Env_FrostWall_v001_sheet.png",
+              "sha256": "dfc439abcfe378cd4248f01678ed966cd2b8578c834639a657b08960f0588fe9"
+            },
+            "CN_SM_Env_FrostWall_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_FrostWall_v001_prompt.txt",
+              "sha256": "aa55a409377ccce0771084097174899e0ced1b555ec044443048e6b31c693bc6"
+            },
+            "CN_SM_Env_FrostWall_v001_registration.json": {
+              "path": "01_concept/CN_SM_Env_FrostWall_v001_registration.json",
+              "sha256": "241c20ea7cda2cbd0c05e9212a06c5f1866063a62d745d309e88a51186e792d8"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Codex built-in image_gen",
+          "registration_version": 1,
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-f549b1ec-1922-427a-a2ee-fe9acb1b48fb.png",
+          "source_sha256": "4d68d48555479842c120400985c59c34c171d604c64c305b08ce78a219d557bb",
+          "prompt": "Use case: stylized-concept.\nAsset type: exact four-view concept sheet to reconstruct ONE modular courtyard wall using local Hunyuan3D.\nPrimary request: architecture suitable for a first-person roguelite scene with the readable, moderate-detail hand-painted visual quality of Gunfire Reborn. Bold structural silhouette, broad clean planar surfaces, matte painted materials, very restrained wear, simple East-Asian fantasy construction, purposeful medium-size decoration.\nComposition/framing: ONE horizontal sheet on uniform pure white background, FOUR equal-width isolated panels, orthographic FRONT / LEFT / BACK / RIGHT in that order. One identical physical wall repeated in all views, same scale, same ground baseline, full silhouette with generous empty margins. No perspective, no scene, no labels, no text, no contact shadow.\nSubject: a sturdy closed solid wall module, total proportions 6.6 meters wide, 4.4 meters tall, 1.3 meters deep. A long broad wall face, one thick structural buttress integrated at each end, an unbroken heavy cap, a broad connected foundation slab. All elements form one fused watertight structure. Front and back have coherent matching construction; the left/right views are truly narrow 1.3m-deep sides, not extra front faces. Wall top has a slightly uneven simple silhouette, no detached debris, no open door, no gaps, no thin spikes, no small floating elements.\nStyle/medium: stylized painted 3D game asset concept, simplified blocky volumes and subtle painted color gradients, similar moderate fidelity and clean material grouping to Gunfire Reborn. Color textures must define large readable blocks, not noisy photographic detail. Even neutral studio lighting, gentle form shading, no baked cast shadows, no glossy glints, no ambient scene.\nAvoid: photorealism, micrograin, hundreds of cracks, tiny carvings, ornate realism, filigree, separate props, lettering, watermarks.\nChapter palette and construction: snow-covered East-Asian mountain temple architecture, sturdy crimson-red painted timber structural framing fused to cool blue-grey masonry, broad ivory snow clumps fused on top of a simple dark navy tiled cap. Wide rectangular beams, simple roof profile, no thin rafters or dangling ornaments. Back same structural logic, sparse broad snow shapes only.",
+          "reference_mode": "bounds_only",
+          "reference_images": [],
+          "highpoly_mode": "multiview",
+          "architecture_requirements": {
+            "role": "wall",
+            "dimensions_m": [
+              7.9,
+              4.4,
+              1.7
+            ]
+          },
+          "registration": {
+            "front": {
+              "scale": 0.5747431412488417,
+              "offset": [
+                28,
+                384
+              ],
+              "size": [
+                455,
+                255
+              ],
+              "physical_height_m": 4.4,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5826343514261714,
+              "offset": [
+                209,
+                384
+              ],
+              "size": [
+                93,
+                255
+              ],
+              "physical_height_m": 4.4,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5734486747144975,
+              "offset": [
+                29,
+                384
+              ],
+              "size": [
+                454,
+                255
+              ],
+              "physical_height_m": 4.4,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5826343514261714,
+              "offset": [
+                209,
+                384
+              ],
+              "size": [
+                93,
+                255
+              ],
+              "physical_height_m": 4.4,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Actually reviewed the original and registered four-view sheet. Broad matte chapter color blocks, fused chunky structural volumes, coherent narrow sides and complete uncropped silhouettes. Gates show an empty inverted-U passage from ground in both front/back; final three-LOD geometric clearance requires inspection before publish.",
+            "time": "2026-10-04 18:55:36"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 18:58:41",
+          "files": {
+            "HP_SM_Env_FrostWall_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostWall_v001_input_front.png",
+              "sha256": "6a803da84496652330cc2cfa7ae10da149a3c7cd888cbda280d00b5b4deb73cd"
+            },
+            "HP_SM_Env_FrostWall_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostWall_v001_input_left.png",
+              "sha256": "1abb0ea872091695b7ea4ad26963d969e24040533eb9c6237d24254acb9a7bed"
+            },
+            "HP_SM_Env_FrostWall_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostWall_v001_input_back.png",
+              "sha256": "189f56e131e23ea2be3bb112f9b75fda4e11e54424d1c407a21d2446833e1c9e"
+            },
+            "HP_SM_Env_FrostWall_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostWall_v001_input_right.png",
+              "sha256": "090989c65e76561039a2eebc0f3254ac96c7986f064ac44e2f1e47789b9bf591"
+            },
+            "HP_SM_Env_FrostWall_v001.glb": {
+              "path": "02_highpoly/HP_SM_Env_FrostWall_v001.glb",
+              "sha256": "532b97dd218267429f7c36225f914d9f8b2e9c72b18b259c8cdf30e9edb1b61c"
+            },
+            "HP_SM_Env_FrostWall_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Env_FrostWall_v001_graph.json",
+              "sha256": "d1fe1e9f6f6c84e702f11fb9a6bc08db47c8dc713d86ddf6476558b732c046cf"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 202610073,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -12,
+              244,
+              524,
+              779
+            ],
+            "scale": 1.9104477611940298
+          },
+          "seconds": 143.6,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 23.5
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:01:10",
+          "files": {
+            "SM_Env_FrostWall_v001.blend": {
+              "path": "03_work/SM_Env_FrostWall_v001.blend",
+              "sha256": "36be4a5cac0aafb6c4ada7dffd29afef3f9a37ea04b51d0df383b377598d3eb3"
+            },
+            "SM_Env_FrostWall_v001.glb": {
+              "path": "04_export/SM_Env_FrostWall_v001.glb",
+              "sha256": "f194c302a244dd1e0038ba98bb8c1d86ad9696d809c8fd61e9ac39e9b00b146c"
+            },
+            "SM_Env_FrostWall_v001_metrics.json": {
+              "path": "03_work/SM_Env_FrostWall_v001_metrics.json",
+              "sha256": "60852eabbb46ddfbf9df42a44a8418b490bbb9177a16557be4f5e7fbeaae557f"
+            },
+            "T_Env_FrostWall_BC.png": {
+              "path": "03_work/textures_v001/T_Env_FrostWall_BC.png",
+              "sha256": "4b50a986db72d7e1895cafd19f7421cc67b83bf6351f10c35d8427c3ee1a3380"
+            },
+            "T_Env_FrostWall_N.png": {
+              "path": "03_work/textures_v001/T_Env_FrostWall_N.png",
+              "sha256": "6d71d5c0b5ee1a1ce96977ca65dc103e2d240e4aac8a13a6966c07c145ff2143"
+            },
+            "T_Env_FrostWall_ORM.png": {
+              "path": "03_work/textures_v001/T_Env_FrostWall_ORM.png",
+              "sha256": "03367c6386f3be4c265e676169a7a1b2acbbd9fc663feacaede291929065c10d"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.923,
+          "uncovered_ratio": 0.5915,
+          "lods": [
+            {
+              "tris": 4998,
+              "verts": 2436
+            },
+            {
+              "tris": 1600,
+              "verts": 732
+            },
+            {
+              "tris": 500,
+              "verts": 182
+            }
+          ],
+          "export_kb": 274.6,
+          "seconds": 137.2,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:01:10",
+          "files": {
+            "SM_Env_FrostWall_v001_validation_v001.json": {
+              "path": "05_review/SM_Env_FrostWall_v001_validation_v001.json",
+              "sha256": "63d0553c2d87236beb5ce7c7133fd7b18317c6004570f3260fe5354bf406c568"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:01:48",
+          "files": {
+            "SM_Env_FrostWall_v001_review_v001.png": {
+              "path": "05_review/SM_Env_FrostWall_v001_review_v001.png",
+              "sha256": "9a3951bf940bb775aeda0ebdb0463201e127b3240feeadabc79ed9efcfe153e5"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Reviewed actual five-view final: coherent red posts, broad matte grey wall, snow caps and intact silhouette; uncovered atlas warning does not produce visible missing surfaces. 4998/1600/500 within budget.",
+            "time": "2026-10-04 19:10:03"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 19:10:03",
+          "files": {
+            "SM_Env_FrostWall.glb": {
+              "path": "@root/public/assets/props/SM_Env_FrostWall.glb",
+              "sha256": "f194c302a244dd1e0038ba98bb8c1d86ad9696d809c8fd61e9ac39e9b00b146c"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Env_FrostWall.glb"
+        }
+      ]
+    }
+  }
+}

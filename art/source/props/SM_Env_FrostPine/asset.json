@@ -1,0 +1,840 @@
+{
+  "id": "SM_Env_FrostPine",
+  "display": "霜山积雪松树",
+  "kind": "static",
+  "class": "nature_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 14:37:59",
+          "files": {
+            "BO_SM_Env_FrostPine_v001.json": {
+              "path": "00_blockout/BO_SM_Env_FrostPine_v001.json",
+              "sha256": "1a3f9ef2ed962e7e390bd4303e607abcce03ef8948ac95c1a0e1103cbe047235"
+            },
+            "BO_SM_Env_FrostPine_v001_views.json": {
+              "path": "00_blockout/BO_SM_Env_FrostPine_v001_views.json",
+              "sha256": "7f143da2a833d00bd8faf0a2d68b4951fb84d7c0a29216b19dfb3f35b13cc4e3"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost.pine"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -1.45,
+              0,
+              -1.45
+            ],
+            "max": [
+              1.45,
+              4.6,
+              1.45
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 14:38:15",
+          "files": {
+            "CN_SM_Env_FrostPine_v001_source.png": {
+              "path": "01_concept/CN_SM_Env_FrostPine_v001_source.png",
+              "sha256": "2f474bf45417d271c99161a30546f09d74b1e4ee3e8d71d89dbaf094145dd1e7"
+            },
+            "CN_SM_Env_FrostPine_v001_front.png": {
+              "path": "01_concept/CN_SM_Env_FrostPine_v001_front.png",
+              "sha256": "efcde8625cab9372209646e3a4a6a9614593a1ceb7a7048d4236b5eb7331398b"
+            },
+            "CN_SM_Env_FrostPine_v001_left.png": {
+              "path": "01_concept/CN_SM_Env_FrostPine_v001_left.png",
+              "sha256": "7faf0b100108975e9e977def4aa47406d52b889359eaa62b0c2eb3f01d94cf1d"
+            },
+            "CN_SM_Env_FrostPine_v001_back.png": {
+              "path": "01_concept/CN_SM_Env_FrostPine_v001_back.png",
+              "sha256": "3f06b28a964d2b650e436508b41c3a7263629728bce86fa5f0cb0413950ed370"
+            },
+            "CN_SM_Env_FrostPine_v001_right.png": {
+              "path": "01_concept/CN_SM_Env_FrostPine_v001_right.png",
+              "sha256": "dfcbaca4e0f7de1244af51aeb8f4b8f68350f9f9466b4dde59753bdaafa7bbf9"
+            },
+            "CN_SM_Env_FrostPine_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Env_FrostPine_v001_sheet.png",
+              "sha256": "a25c0cb5acf92e51b2f8a1055b58688b228027333876d9f138ed5b7ec104ffaf"
+            },
+            "CN_SM_Env_FrostPine_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_FrostPine_v001_prompt.txt",
+              "sha256": "88f4add4bd1eed714d49a186af31dcb7a75a985713e368091e2934dd3cd7ef93"
+            },
+            "CN_SM_Env_FrostPine_v001_registration.json": {
+              "path": "01_concept/CN_SM_Env_FrostPine_v001_registration.json",
+              "sha256": "d2ab99c4ae2f196e8e2516c27821f0cb9fce23a20d570e6550c762ec2dd36e50"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Codex built-in image_gen",
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-713a6a06-b775-475d-88ce-ce23b00d36ad.png",
+          "source_sha256": "2f474bf45417d271c99161a30546f09d74b1e4ee3e8d71d89dbaf094145dd1e7",
+          "prompt": "Use case: stylized-concept. Asset type: four-view orthographic game asset concept sheet, for LOCAL Hunyuan3D mesh generation and four-view texture projection. Create ONE wide landscape image with FOUR equal panels in a single horizontal row, in the exact order FRONT, LEFT, BACK, RIGHT. Each panel shows the SAME single complete asset, at identical scale and vertically aligned grounded feet/base. True orthographic views at 90 degree rotations, no perspective and no three-quarter view. Entire object fully inside each panel with a generous transparent margin, never cropped. The asset occupies about 80 percent of panel height. Transparent empty background for clean silhouettes, NO panel border, NO labels, NO text, NO cast shadow, NO ground plane. High quality sculpted 3D game art with subtle hand-painted PBR color detail, realistic stylized volume, readable large forms, not low-poly primitives, not photoreal scan. Soft even neutral diffuse lighting across all views; no specular hotspots or dramatic baked shadows. All four views must describe the same form, height, colors and materials coherently. Primary subject: One mature natural mountain pine covered with patchy heavy snow, in a Chinese fantasy winter temple environment. Overall 4.6m tall, canopy width 2.9m, depth 2.9m. Exposed textured crooked dark brown trunk below, organic staggered branches, asymmetric tapering canopy of many chunky dense dark blue-green needle clusters. Each branch tier has several irregular lobed clusters with visible gaps and individual small branch tips; soft snow pillows sit on upper surfaces only, hanging tiny icicles under two branches. Silhouette must look like a real pine with living uneven branches, never a stack of simple perfect cones or triangles. Needles formed into solid readable sculpted foliage masses for 3D mesh generation, no alpha cards. Upper trunk leans subtly to the right. Roots compact, planted at ground level; no pot, terrain diorama, ground plane, circular pedestal, ornaments, architecture, ribbon, lights, or characters.",
+          "reference_mode": "bounds_only",
+          "registration": {
+            "front": {
+              "scale": 1.021300215083605,
+              "offset": [
+                37,
+                149
+              ],
+              "size": [
+                438,
+                725
+              ],
+              "physical_height_m": 4.6,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 1.0256338793626019,
+              "offset": [
+                76,
+                149
+              ],
+              "size": [
+                360,
+                725
+              ],
+              "physical_height_m": 4.6,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 1.022740694935627,
+              "offset": [
+                43,
+                149
+              ],
+              "size": [
+                426,
+                725
+              ],
+              "physical_height_m": 4.6,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 1.0256338793626019,
+              "offset": [
+                82,
+                149
+              ],
+              "size": [
+                348,
+                725
+              ],
+              "physical_height_m": 4.6,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Root visually inspected the built-in ImageGen four-view source. Numeric bounds reference only; uniform-height registration preserves each silhouette. Approved for local Hunyuan3D generation; this is AI review, not user approval.",
+            "time": "2026-10-04 14:38:57"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 17:38:54",
+          "files": {
+            "CN_SM_Env_FrostPine_v002_source.png": {
+              "path": "01_concept/CN_SM_Env_FrostPine_v002_source.png",
+              "sha256": "727618a913d1199b0d79c61b87439d61eb5a77e9744aa4535dcce8f3d4f117e1"
+            },
+            "CN_SM_Env_FrostPine_v002_front.png": {
+              "path": "01_concept/CN_SM_Env_FrostPine_v002_front.png",
+              "sha256": "9b1b79602eb17e662f997aabcad799c694c74b17e66529aba5328b706b29f3d2"
+            },
+            "CN_SM_Env_FrostPine_v002_left.png": {
+              "path": "01_concept/CN_SM_Env_FrostPine_v002_left.png",
+              "sha256": "5d36ff6fcbce939a60899b09eea1bd0e39b2103becceb973f1c89a7d968c4561"
+            },
+            "CN_SM_Env_FrostPine_v002_back.png": {
+              "path": "01_concept/CN_SM_Env_FrostPine_v002_back.png",
+              "sha256": "2af432a1be5e900b42b2e4a5bcf01f72f5fbbbfaacb04dab310755629ab1407c"
+            },
+            "CN_SM_Env_FrostPine_v002_right.png": {
+              "path": "01_concept/CN_SM_Env_FrostPine_v002_right.png",
+              "sha256": "6f5acaa4ca4edbb33584ca42aff03b6dd8018edac114100a1e581c996ee47291"
+            },
+            "CN_SM_Env_FrostPine_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Env_FrostPine_v002_sheet.png",
+              "sha256": "44d55ebb31c95a831474c5ff2dfebff0d3ba2d2080b09e6e3690f1e762f1e996"
+            },
+            "CN_SM_Env_FrostPine_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_FrostPine_v002_prompt.txt",
+              "sha256": "7f9d80832be9bf4fa4773105b31d0cec74693a36cbaa709e25bbc61c0ef65fa5"
+            },
+            "CN_SM_Env_FrostPine_v002_registration.json": {
+              "path": "01_concept/CN_SM_Env_FrostPine_v002_registration.json",
+              "sha256": "7855e6e9bf6d30c1fb4e1b899c3690526576e157eff60038e2e3577030f09c0e"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Codex built-in image_gen",
+          "registration_version": 1,
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a104dc-7e04-7ea1-8c22-9815a188991a\\exec-011b1c15-6cd6-453c-813f-ea3f658b529a.png",
+          "source_sha256": "727618a913d1199b0d79c61b87439d61eb5a77e9744aa4535dcce8f3d4f117e1",
+          "prompt": "Use case: style-transfer. Edit the supplied reconstruction reference into stylized hand-painted 3D game art at the moderate-detail visual level of Gunfire Reborn. Keep the subject identity, overall dimensions, and four-view FRONT, LEFT, BACK, RIGHT turnaround of ONE identical solid object. Replace photographic erosion, tiny cracks, dense grain and miniature ornament with broad clean faceted planes, bold chunky silhouette, two or three dominant color blocks, soft painted gradients and a few medium-scale edge accents. Matte materials, clear solid volume, no glossy plastic, no photorealistic surface noise. All views must agree on construction and colors; side views show true depth and back is complete. Level strictly orthographic cameras, same scale and baseline, every silhouette fully inside its own panel with white gutters. Fully transparent background with transparent gutters, neutral soft even lighting, no cast shadows. No ground plane, text, labels, landscape, people, detached objects or effects.\n\nSubject changes: Preserve ONE upright curved mountain pine, visible sturdy trunk, connected branches, volumetric asymmetrical crown,4.6m tall,2.9m wide/deep. Consolidate its dense needles into four to five large chunky blue-green foliage tiers with smooth angular planes; thick soft white-blue snow caps on the upper surfaces of each tier. A few bold bark stripes on reddish-brown trunk, robust branch connections. No individual needle geometry, tiny icicles, thin twigs, loose snow particles or alpha leaf cards. The front,back and both sides must describe the same genuinely round/deep crown, not a flat tree silhouette.",
+          "reference_mode": "bounds_only",
+          "registration": {
+            "front": {
+              "scale": 0.9478734022344568,
+              "offset": [
+                33,
+                149
+              ],
+              "size": [
+                446,
+                725
+              ],
+              "physical_height_m": 4.6,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.9528556540201832,
+              "offset": [
+                78,
+                149
+              ],
+              "size": [
+                355,
+                725
+              ],
+              "physical_height_m": 4.6,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.9528556540201832,
+              "offset": [
+                34,
+                149
+              ],
+              "size": [
+                443,
+                725
+              ],
+              "physical_height_m": 4.6,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.9528556540201832,
+              "offset": [
+                81,
+                149
+              ],
+              "size": [
+                349,
+                725
+              ],
+              "physical_height_m": 4.6,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Root inspected the revised native four-view sheet: broad hand-painted planes, reduced micro-detail, coherent side/back volume and connected silhouette. Pine uses solid foliage and snow masses with a visible trunk. Approved for local Hunyuan reconstruction, not a human review.",
+            "time": "2026-10-04 17:39:06"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 14:43:48",
+          "files": {
+            "HP_SM_Env_FrostPine_v001_input.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostPine_v001_input.png",
+              "sha256": "bdc490809307f6e97656f03f332c767dd57000418652c1e54d3f8d4b918ec5cd"
+            },
+            "HP_SM_Env_FrostPine_v001.glb": {
+              "path": "02_highpoly/HP_SM_Env_FrostPine_v001.glb",
+              "sha256": "cc81ac01cd0058a3ce9c1e2c3c4cf03a0e619e0a2cbc09d2481fb3d4bb2c24e3"
+            },
+            "HP_SM_Env_FrostPine_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Env_FrostPine_v001_graph.json",
+              "sha256": "87ca1b6ad911e79093ed18bb2a626389ff957da05d0e669395ca51156b0eb197"
+            }
+          },
+          "from_concept": 1,
+          "mode": "single",
+          "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+          "checkpoint": "hunyuan_3d_v2.1.safetensors",
+          "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261005,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "crop": [
+              37,
+              149,
+              475,
+              874
+            ],
+            "scale": 1.200551724137931,
+            "offset": [
+              249,
+              77
+            ]
+          },
+          "seconds": 127.8,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 9.4,
+          "provenance_amendments": [
+            {
+              "time": "2026-10-04 14:44:20",
+              "reason": "Register exact existing ComfyUI workflow checksum; generated mesh and inputs unchanged."
+            }
+          ]
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 14:51:23",
+          "files": {
+            "HP_SM_Env_FrostPine_v002_input_front.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostPine_v002_input_front.png",
+              "sha256": "75ab0efb20c809ca9cd4570b6e1e7450c283aea56aea45b05ac26273e5ea78f8"
+            },
+            "HP_SM_Env_FrostPine_v002_input_left.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostPine_v002_input_left.png",
+              "sha256": "750b2f885969ff4463cd05652c84efaeb5c2dcd9fa4c2135591dadc300e86417"
+            },
+            "HP_SM_Env_FrostPine_v002_input_back.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostPine_v002_input_back.png",
+              "sha256": "f9ac64eb324f37a5013c99572e2f1948cbe43a982c31f4da7949906d99abc74f"
+            },
+            "HP_SM_Env_FrostPine_v002_input_right.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostPine_v002_input_right.png",
+              "sha256": "75ee56ae0462934ddfcb15ceed89ecb205385dec14a0ab6d2f485da58d46ac93"
+            },
+            "HP_SM_Env_FrostPine_v002.glb": {
+              "path": "02_highpoly/HP_SM_Env_FrostPine_v002.glb",
+              "sha256": "6494332e427a9710b96ac36ff379e2beedacc2910030724520a965672d0df350"
+            },
+            "HP_SM_Env_FrostPine_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Env_FrostPine_v002_graph.json",
+              "sha256": "b2d26d69805d8d4386bf3dc7f156100e726984d8b406b94552e2a598ac0ba170"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261005,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -170,
+              85,
+              682,
+              938
+            ],
+            "scale": 1.2018779342723005
+          },
+          "seconds": 194.7,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 16.2
+        },
+        {
+          "version": 3,
+          "created": "2026-10-04 18:03:31",
+          "files": {
+            "HP_SM_Env_FrostPine_v003_input_front.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostPine_v003_input_front.png",
+              "sha256": "fd6caf14b74003e8f8cf4ec4c67623497323068344c8a45e63f52178592b3ce9"
+            },
+            "HP_SM_Env_FrostPine_v003_input_left.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostPine_v003_input_left.png",
+              "sha256": "a6c853583a8d24896584badb1ebdd89ba3ab35256395e0dd7bcd10544ed3ca23"
+            },
+            "HP_SM_Env_FrostPine_v003_input_back.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostPine_v003_input_back.png",
+              "sha256": "5559d9fb9f684861fa3c19d9d0fc27c612e2f754a97197aa78a8b070db730985"
+            },
+            "HP_SM_Env_FrostPine_v003_input_right.png": {
+              "path": "02_highpoly/HP_SM_Env_FrostPine_v003_input_right.png",
+              "sha256": "5dce85032958939276e03473605559b4f85acafd02e013512b31413435d348b6"
+            },
+            "HP_SM_Env_FrostPine_v003.glb": {
+              "path": "02_highpoly/HP_SM_Env_FrostPine_v003.glb",
+              "sha256": "170b2c844566e6c0e83304c56f9751d239e0aa46414b5471b8af2438809bd6eb"
+            },
+            "HP_SM_Env_FrostPine_v003_graph.json": {
+              "path": "02_highpoly/HP_SM_Env_FrostPine_v003_graph.json",
+              "sha256": "09c9024c91b7d14140da5daf2f9c06bf60b0624cec8fe3e9573f65ed880361ff"
+            }
+          },
+          "from_concept": 2,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 202610054,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -170,
+              85,
+              682,
+              938
+            ],
+            "scale": 1.2018779342723005
+          },
+          "seconds": 135.2,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 15.6
+        }
+      ]
+    },
+    "build": {
+      "current": 4,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 14:45:22",
+          "files": {
+            "SM_Env_FrostPine_v001.blend": {
+              "path": "03_work/SM_Env_FrostPine_v001.blend",
+              "sha256": "18bc304488d50f61592e54c1e17e858d5f47a2ad3daf76af76e2651ccaa84c0a"
+            },
+            "SM_Env_FrostPine_v001.glb": {
+              "path": "04_export/SM_Env_FrostPine_v001.glb",
+              "sha256": "bb608ab7c7c9109cbc74d2be802c7d3c651e28c65cede2d6dd0ea0a2edd63621"
+            },
+            "SM_Env_FrostPine_v001_metrics.json": {
+              "path": "03_work/SM_Env_FrostPine_v001_metrics.json",
+              "sha256": "306ac1790aac4a19ac94abb5fecd7e22cec4ff0a8ad3424499822a9892745b84"
+            },
+            "T_Env_FrostPine_BC.png": {
+              "path": "03_work/textures_v001/T_Env_FrostPine_BC.png",
+              "sha256": "058cb5f43bc0a9010c58ab1f507f3b36ad89ef968e0a6ae6a8d086ceb2c31e3e"
+            },
+            "T_Env_FrostPine_N.png": {
+              "path": "03_work/textures_v001/T_Env_FrostPine_N.png",
+              "sha256": "53577820fe8b5d940fc3d68a2e8a241bde233acfc7a6e0d6d0108024a2973daf"
+            },
+            "T_Env_FrostPine_ORM.png": {
+              "path": "03_work/textures_v001/T_Env_FrostPine_ORM.png",
+              "sha256": "86081c4b0c752b47c8fc35c1dab6c70c38bc35d8e2e43ce3d63a3cb73776cc23"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.341,
+          "uncovered_ratio": 0.5008,
+          "lods": [
+            {
+              "tris": 5000,
+              "verts": 2502
+            },
+            {
+              "tris": 1600,
+              "verts": 802
+            },
+            {
+              "tris": 500,
+              "verts": 252
+            }
+          ],
+          "export_kb": 142.1,
+          "seconds": 32.5,
+          "bake_device": "CPU",
+          "quality_status": "failed",
+          "quality_errors": [
+            "自然三维体量 Z 轴"
+          ]
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 14:56:13",
+          "files": {
+            "SM_Env_FrostPine_v002.blend": {
+              "path": "03_work/SM_Env_FrostPine_v002.blend",
+              "sha256": "874a48fd3d6a9f4bf64dcbd4ccc7fecdcbadb5424c4bfb8b6d97c5445a4721d7"
+            },
+            "SM_Env_FrostPine_v002.glb": {
+              "path": "04_export/SM_Env_FrostPine_v002.glb",
+              "sha256": "c2c9dbf9439372e636f0a98c07a491cba5d22671780853f520dc391030b32575"
+            },
+            "SM_Env_FrostPine_v002_metrics.json": {
+              "path": "03_work/SM_Env_FrostPine_v002_metrics.json",
+              "sha256": "b9173b09675d6b1a0459fa90faca751c073400bb42013c774ef19cb1ce873729"
+            },
+            "T_Env_FrostPine_BC.png": {
+              "path": "03_work/textures_v002/T_Env_FrostPine_BC.png",
+              "sha256": "e95a4a363b23178c867ad440ad99f2344a2cff3ddd2d210f4f3d32149c17f94f"
+            },
+            "T_Env_FrostPine_N.png": {
+              "path": "03_work/textures_v002/T_Env_FrostPine_N.png",
+              "sha256": "e765fb63cfd509d20a810ab3ad8bce9f4d31c0f5ef6a1689408923cefb53a681"
+            },
+            "T_Env_FrostPine_ORM.png": {
+              "path": "03_work/textures_v002/T_Env_FrostPine_ORM.png",
+              "sha256": "936ebf165e3e75790d4e6b27e1b7b8eba24a0d70902e6ea0ef43e4f5b1d23f8a"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.745,
+          "uncovered_ratio": 0.5206,
+          "lods": [
+            {
+              "tris": 4993,
+              "verts": 2422
+            },
+            {
+              "tris": 1600,
+              "verts": 708
+            },
+            {
+              "tris": 540,
+              "verts": 178
+            }
+          ],
+          "export_kb": 462.5,
+          "seconds": 115.4,
+          "bake_device": "CPU",
+          "quality_status": "failed",
+          "quality_errors": [
+            "LOD2 面数"
+          ]
+        },
+        {
+          "version": 3,
+          "created": "2026-10-04 15:01:28",
+          "files": {
+            "SM_Env_FrostPine_v003.blend": {
+              "path": "03_work/SM_Env_FrostPine_v003.blend",
+              "sha256": "fd2b81dc029927ed887d944046ec94c6b4cfd2d56c13b5a5800297b09aab3add"
+            },
+            "SM_Env_FrostPine_v003.glb": {
+              "path": "04_export/SM_Env_FrostPine_v003.glb",
+              "sha256": "cba1ef0297d230556536a35355693a648fd1d79dc8b3adddf8a83749f55b1e39"
+            },
+            "SM_Env_FrostPine_v003_metrics.json": {
+              "path": "03_work/SM_Env_FrostPine_v003_metrics.json",
+              "sha256": "637d1aee30bc177f29529a83f91a8f0f80b32a7639920cc60cc20f647cf46340"
+            },
+            "T_Env_FrostPine_BC.png": {
+              "path": "03_work/textures_v003/T_Env_FrostPine_BC.png",
+              "sha256": "a990534e5b99ab8dcee8ce8427f1a7d525019d1212e08c8dcf6c2abb5dd431bd"
+            },
+            "T_Env_FrostPine_N.png": {
+              "path": "03_work/textures_v003/T_Env_FrostPine_N.png",
+              "sha256": "ed8a3f825ca38eef83467a0a390d58f4c56e47929669601c75010f3507c73666"
+            },
+            "T_Env_FrostPine_ORM.png": {
+              "path": "03_work/textures_v003/T_Env_FrostPine_ORM.png",
+              "sha256": "abc69839a589279f74930ce563bab7fb1e251aff6ceb5abbcf542f0008b7f9f1"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.745,
+          "uncovered_ratio": 0.5206,
+          "lods": [
+            {
+              "tris": 4993,
+              "verts": 2422
+            },
+            {
+              "tris": 1600,
+              "verts": 708
+            },
+            {
+              "tris": 496,
+              "verts": 161
+            }
+          ],
+          "export_kb": 467.0,
+          "seconds": 121.5,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 4,
+          "created": "2026-10-04 18:05:41",
+          "files": {
+            "SM_Env_FrostPine_v004.blend": {
+              "path": "03_work/SM_Env_FrostPine_v004.blend",
+              "sha256": "0258cb6beabcb70b8b84337e07a261eff49c195fdb816ed02755fc440305a752"
+            },
+            "SM_Env_FrostPine_v004.glb": {
+              "path": "04_export/SM_Env_FrostPine_v004.glb",
+              "sha256": "10c367e9df614f38a75714be0acc2695e5a2db65882e0e664d17ea210077a987"
+            },
+            "SM_Env_FrostPine_v004_metrics.json": {
+              "path": "03_work/SM_Env_FrostPine_v004_metrics.json",
+              "sha256": "5a7bbbae3da456deffaaa05bb177b7967c2092628b33a126e8f1432ef2aa7f7f"
+            },
+            "T_Env_FrostPine_BC.png": {
+              "path": "03_work/textures_v004/T_Env_FrostPine_BC.png",
+              "sha256": "e38da5c2e602d13786ae7630d114aaedf6312fac0988bb4072ac3c74b3c3c570"
+            },
+            "T_Env_FrostPine_N.png": {
+              "path": "03_work/textures_v004/T_Env_FrostPine_N.png",
+              "sha256": "ce2c6b4af87c3985d3c1ba72db3f8150e751b5acbdbccc6a31615c5e0c8b5f8e"
+            },
+            "T_Env_FrostPine_ORM.png": {
+              "path": "03_work/textures_v004/T_Env_FrostPine_ORM.png",
+              "sha256": "274d4fb9af606c5a19964aa42ab01968d3c8ec3154f50d24ae406226f2425cb0"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 3,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.812,
+          "uncovered_ratio": 0.4262,
+          "lods": [
+            {
+              "tris": 5000,
+              "verts": 2470
+            },
+            {
+              "tris": 1600,
+              "verts": 770
+            },
+            {
+              "tris": 500,
+              "verts": 220
+            }
+          ],
+          "export_kb": 292.8,
+          "seconds": 97.9,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 5,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 14:45:22",
+          "files": {
+            "SM_Env_FrostPine_v001_validation.json": {
+              "path": "05_review/SM_Env_FrostPine_v001_validation.json",
+              "sha256": "64242b100f13d784dde41cec8f0f08575cff43edf698abd846039897837368b3"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 4,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 14:48:07",
+          "files": {
+            "SM_Env_FrostPine_v001_validation_v002.json": {
+              "path": "05_review/SM_Env_FrostPine_v001_validation_v002.json",
+              "sha256": "88e4b9ea0ff90cd4b8d590de2a7cf9aa7869315746fb56bc934fdd3377093350"
+            }
+          },
+          "from_build": 1,
+          "errors": 1,
+          "warnings": 4,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 3,
+          "created": "2026-10-04 14:56:13",
+          "files": {
+            "SM_Env_FrostPine_v002_validation_v003.json": {
+              "path": "05_review/SM_Env_FrostPine_v002_validation_v003.json",
+              "sha256": "af6a2c11396f76cc3aa65bd3c45187f7b9389a6bb4479333984a630c2b564bd7"
+            }
+          },
+          "from_build": 2,
+          "errors": 1,
+          "warnings": 2,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 4,
+          "created": "2026-10-04 15:01:28",
+          "files": {
+            "SM_Env_FrostPine_v003_validation_v004.json": {
+              "path": "05_review/SM_Env_FrostPine_v003_validation_v004.json",
+              "sha256": "fdf08c17f0c0c47d167b17dcbe2d35a4a07b814c8730c3f2280ad7d9b78cb7d2"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 2,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 5,
+          "created": "2026-10-04 18:05:59",
+          "files": {
+            "SM_Env_FrostPine_v004_validation_v005.json": {
+              "path": "05_review/SM_Env_FrostPine_v004_validation_v005.json",
+              "sha256": "eb73693a65a931dd29167ae994a44641f52e8ba9ac023e7d73a285c85aec612a"
+            }
+          },
+          "from_build": 4,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 14:45:30",
+          "files": {
+            "SM_Env_FrostPine_v001_review.png": {
+              "path": "05_review/SM_Env_FrostPine_v001_review.png",
+              "sha256": "f99f74b658f65c6cf45541262a21dfc34d4e72a15c45b80fc93ab00e8b139bcc"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "rejected",
+            "by": "Codex AI visual review",
+            "note": "Failed local single-view Hunyuan shape: actual crown depth only 0.022m, frontal X4.279/H4.338. Preserve v001 as failed evidence; regenerate with Hunyuan 2mv, without artistic geometry stretching.",
+            "time": "2026-10-04 14:48:07"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 15:01:36",
+          "files": {
+            "SM_Env_FrostPine_v003_review_v002.png": {
+              "path": "05_review/SM_Env_FrostPine_v003_review_v002.png",
+              "sha256": "5b171df00cf7a11c2cf7e146690a0bde67ec0294f4b9aa1263832a59635430ad"
+            }
+          },
+          "from_build": 3,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "已亲自查看五向成品、三个LOD与PBR贴图。四视图版本的树干、枝冠有真实体量，近中LOD保留不规则分枝与积雪，未发现薄片或明显漏面；最远LOD仅在42米后使用，实际496面。IoU和隐藏区域扩散补色两项警告保留，继续浏览器检查场景衔接。",
+            "time": "2026-10-04 15:02:48"
+          }
+        },
+        {
+          "version": 3,
+          "created": "2026-10-04 18:07:40",
+          "files": {
+            "SM_Env_FrostPine_v004_review_v003.png": {
+              "path": "05_review/SM_Env_FrostPine_v004_review_v003.png",
+              "sha256": "0cc840ed5893acd672e752e71b6f5d9daa3376791d232812d44aa855d69e4869"
+            }
+          },
+          "from_build": 4,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Root inspected five actual textured views, all LODs and texture sheets. Broad blue-green foliage masses, painted snow caps and a readable brown trunk form a fully three-dimensional tree, with coherent left/back/right views and grounded base. All three LOD budgets passed with zero validation warnings/errors and no waiver; earlier thin-mesh and failed-budget evidence remains preserved.",
+            "time": "2026-10-04 18:08:10"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 15:02:48",
+          "files": {
+            "SM_Env_FrostPine.glb": {
+              "path": "@root/public/assets/props/SM_Env_FrostPine.glb",
+              "sha256": "cba1ef0297d230556536a35355693a648fd1d79dc8b3adddf8a83749f55b1e39"
+            }
+          },
+          "from_build": 3,
+          "url": "assets/props/SM_Env_FrostPine.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 18:08:12",
+          "files": {
+            "SM_Env_FrostPine.glb": {
+              "path": "@root/public/assets/props/SM_Env_FrostPine.glb",
+              "sha256": "10c367e9df614f38a75714be0acc2695e5a2db65882e0e664d17ea210077a987"
+            }
+          },
+          "from_build": 4,
+          "url": "assets/props/SM_Env_FrostPine.glb"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,564 @@
+{
+  "id": "SM_Env_TravelDeck",
+  "display": "通用厚木栈桥铺板",
+  "kind": "static",
+  "class": "nature_prop",
+  "stages": {
+    "blockout": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 21:54:19",
+          "files": {
+            "BO_SM_Env_TravelDeck_v001.json": {
+              "path": "00_blockout/BO_SM_Env_TravelDeck_v001.json",
+              "sha256": "2a00bbd1c4cba157b33cb908bfc4f37a9f9e2d7b050c6e19d698cdbb82a4e262"
+            },
+            "BO_SM_Env_TravelDeck_v001_views.json": {
+              "path": "00_blockout/BO_SM_Env_TravelDeck_v001_views.json",
+              "sha256": "cb5d559e334353e19c3f8480f8777d96377034f6ec1bd462b54e5602b71b9793"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "shared.travelDeck"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -3,
+              0,
+              -4
+            ],
+            "max": [
+              3,
+              0.6,
+              0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false,
+          "capture_presentation": "upright deck, front is walkable top; standard Blender rotation only"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 21:54:40",
+          "files": {
+            "BO_SM_Env_TravelDeck_v002.json": {
+              "path": "00_blockout/BO_SM_Env_TravelDeck_v002.json",
+              "sha256": "847fd309019594760be7903df6c9c59db79220ae4a2368b0bd500b75e2a3267b"
+            },
+            "BO_SM_Env_TravelDeck_v002_views.json": {
+              "path": "00_blockout/BO_SM_Env_TravelDeck_v002_views.json",
+              "sha256": "e6321484e8006c552f35c857101bc70b6f61ab481a55965bede06394f95e1139"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "shared.travelDeck"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -3,
+              0,
+              -4
+            ],
+            "max": [
+              3,
+              0.7,
+              0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false,
+          "capture_presentation": "upright deck, front is walkable top; standard Blender rotation only"
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 21:54:20",
+          "files": {
+            "CN_SM_Env_TravelDeck_v001_source.png": {
+              "path": "01_concept/CN_SM_Env_TravelDeck_v001_source.png",
+              "sha256": "a895d4378dbe557228fb8b7d2b1e7dcf9e68982b1d0912f23f12838ff3041c76"
+            },
+            "CN_SM_Env_TravelDeck_v001_front.png": {
+              "path": "01_concept/CN_SM_Env_TravelDeck_v001_front.png",
+              "sha256": "177f1fefa053e375cec2fbd217fe8c3d4c8b026e84e1ad51d16397d595dbb8df"
+            },
+            "CN_SM_Env_TravelDeck_v001_left.png": {
+              "path": "01_concept/CN_SM_Env_TravelDeck_v001_left.png",
+              "sha256": "f9fb883f943d32fd0882ca7513e9d7e18ea762a7415825705f20647758e76a67"
+            },
+            "CN_SM_Env_TravelDeck_v001_back.png": {
+              "path": "01_concept/CN_SM_Env_TravelDeck_v001_back.png",
+              "sha256": "6da43a79c044d2f291392ec1f49b43d8f09d4fbddb587477748842c0fe90a3bb"
+            },
+            "CN_SM_Env_TravelDeck_v001_right.png": {
+              "path": "01_concept/CN_SM_Env_TravelDeck_v001_right.png",
+              "sha256": "f08839df92d82972725be03dd5dbb6c62f052b19eeca47c12e80fc373cc71470"
+            },
+            "CN_SM_Env_TravelDeck_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Env_TravelDeck_v001_sheet.png",
+              "sha256": "1f650a2842cef72408de60848bef251e9ff257db605d923ae243d8631ae5cd84"
+            },
+            "CN_SM_Env_TravelDeck_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_TravelDeck_v001_prompt.txt",
+              "sha256": "d0f53d1218624112dc6e96f9a74bf410f40d3b1933a5f61ff7d77866ca4ce9c9"
+            },
+            "CN_SM_Env_TravelDeck_v001_registration.json": {
+              "path": "01_concept/CN_SM_Env_TravelDeck_v001_registration.json",
+              "sha256": "306ac49669bcfd6ec052a03a1c44157251bebaaa0ae5a00383edba5e08a7829c"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Codex built-in image_gen",
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a1072d-363b-7bd3-bcf6-3cc6a159ec4f\\exec-a8bfdc86-b779-462d-89e9-027e812511b4.png",
+          "source_sha256": "a895d4378dbe557228fb8b7d2b1e7dcf9e68982b1d0912f23f12838ff3041c76",
+          "prompt": "Use case: stylized-concept. Asset type: orthographic four-view turnaround sheet for reconstructing one game-ready timber deck with Hunyuan3D multi-view.\nCreate a wide 2048x1024 image containing exactly four isolated views in one horizontal row, in order FRONT, LEFT, BACK, RIGHT, without any written labels. Plain pure white background, no ground, no cast shadow.\nThe SAME solid rectangular platform is temporarily stood upright for asset capture. It is a 6 metre wide by 4 metre tall wooden panel, with a substantial 0.6 metre thickness, not a door. It will later be laid horizontally as a bridge deck. Front is the continuous walkable top: seven or eight very broad dark honey-brown timber planks joined flush with shallow dark seams and slightly chamfered outside corners. Two very simple dark iron end straps sit flush near the left and right edges, with a few large restrained rivets. Back is the solid connected underside with two flush broad cross-battens and matching end caps. Left and right are true narrow EDGE profiles showing the full 0.6 metre thickness. Every view uses exactly the same 4 metre vertical extent and baseline; the front and back are six metres wide, and the edge profiles are 0.6 metres wide. Keep the major silhouette almost rectangular and all pieces connected. No rails, pillars, posts, legs, holes, ropes, handles, hinge hardware, spikes, curved arches, raised obstacles, text, symbols or decorations.\nStyle: stylized hand-painted fantasy FPS environment, moderately detailed readable game asset, broad clean faceted planes, chunky proportions, two or three coherent large colour blocks, soft painted gradients, restrained edge wear. Dark warm timber with simple charcoal iron straps, matte finish, no photorealism, no dense wood grain, no noisy cracks. Neutral even studio illumination. The front/top must be flat and unobstructed enough to walk on. Show complete object inside each column with generous clean white spacing; no perspective, no top-down view, no three-quarter view. Use consistent front and back wood layout and consistent edge thickness. This is one repeatable solid bridge floor module, presented vertically solely for shape capture.",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "multiview",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.6144393241167435,
+              "offset": [
+                40,
+                359
+              ],
+              "size": [
+                432,
+                305
+              ],
+              "physical_height_m": 4.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6156806156806157,
+              "offset": [
+                229,
+                359
+              ],
+              "size": [
+                53,
+                305
+              ],
+              "physical_height_m": 4.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6132030276899492,
+              "offset": [
+                40,
+                359
+              ],
+              "size": [
+                432,
+                305
+              ],
+              "physical_height_m": 4.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.6156806156806157,
+              "offset": [
+                230,
+                359
+              ],
+              "size": [
+                52,
+                305
+              ],
+              "physical_height_m": 4.0,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 21:54:41",
+          "files": {
+            "CN_SM_Env_TravelDeck_v002_source.png": {
+              "path": "01_concept/CN_SM_Env_TravelDeck_v002_source.png",
+              "sha256": "a895d4378dbe557228fb8b7d2b1e7dcf9e68982b1d0912f23f12838ff3041c76"
+            },
+            "CN_SM_Env_TravelDeck_v002_front.png": {
+              "path": "01_concept/CN_SM_Env_TravelDeck_v002_front.png",
+              "sha256": "177f1fefa053e375cec2fbd217fe8c3d4c8b026e84e1ad51d16397d595dbb8df"
+            },
+            "CN_SM_Env_TravelDeck_v002_left.png": {
+              "path": "01_concept/CN_SM_Env_TravelDeck_v002_left.png",
+              "sha256": "f9fb883f943d32fd0882ca7513e9d7e18ea762a7415825705f20647758e76a67"
+            },
+            "CN_SM_Env_TravelDeck_v002_back.png": {
+              "path": "01_concept/CN_SM_Env_TravelDeck_v002_back.png",
+              "sha256": "6da43a79c044d2f291392ec1f49b43d8f09d4fbddb587477748842c0fe90a3bb"
+            },
+            "CN_SM_Env_TravelDeck_v002_right.png": {
+              "path": "01_concept/CN_SM_Env_TravelDeck_v002_right.png",
+              "sha256": "f08839df92d82972725be03dd5dbb6c62f052b19eeca47c12e80fc373cc71470"
+            },
+            "CN_SM_Env_TravelDeck_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Env_TravelDeck_v002_sheet.png",
+              "sha256": "1f650a2842cef72408de60848bef251e9ff257db605d923ae243d8631ae5cd84"
+            },
+            "CN_SM_Env_TravelDeck_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_TravelDeck_v002_prompt.txt",
+              "sha256": "d0f53d1218624112dc6e96f9a74bf410f40d3b1933a5f61ff7d77866ca4ce9c9"
+            },
+            "CN_SM_Env_TravelDeck_v002_registration.json": {
+              "path": "01_concept/CN_SM_Env_TravelDeck_v002_registration.json",
+              "sha256": "306ac49669bcfd6ec052a03a1c44157251bebaaa0ae5a00383edba5e08a7829c"
+            }
+          },
+          "from_blockout": 2,
+          "generator": "Codex built-in image_gen",
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a1072d-363b-7bd3-bcf6-3cc6a159ec4f\\exec-a8bfdc86-b779-462d-89e9-027e812511b4.png",
+          "source_sha256": "a895d4378dbe557228fb8b7d2b1e7dcf9e68982b1d0912f23f12838ff3041c76",
+          "prompt": "Use case: stylized-concept. Asset type: orthographic four-view turnaround sheet for reconstructing one game-ready timber deck with Hunyuan3D multi-view.\nCreate a wide 2048x1024 image containing exactly four isolated views in one horizontal row, in order FRONT, LEFT, BACK, RIGHT, without any written labels. Plain pure white background, no ground, no cast shadow.\nThe SAME solid rectangular platform is temporarily stood upright for asset capture. It is a 6 metre wide by 4 metre tall wooden panel, with a substantial 0.6 metre thickness, not a door. It will later be laid horizontally as a bridge deck. Front is the continuous walkable top: seven or eight very broad dark honey-brown timber planks joined flush with shallow dark seams and slightly chamfered outside corners. Two very simple dark iron end straps sit flush near the left and right edges, with a few large restrained rivets. Back is the solid connected underside with two flush broad cross-battens and matching end caps. Left and right are true narrow EDGE profiles showing the full 0.6 metre thickness. Every view uses exactly the same 4 metre vertical extent and baseline; the front and back are six metres wide, and the edge profiles are 0.6 metres wide. Keep the major silhouette almost rectangular and all pieces connected. No rails, pillars, posts, legs, holes, ropes, handles, hinge hardware, spikes, curved arches, raised obstacles, text, symbols or decorations.\nStyle: stylized hand-painted fantasy FPS environment, moderately detailed readable game asset, broad clean faceted planes, chunky proportions, two or three coherent large colour blocks, soft painted gradients, restrained edge wear. Dark warm timber with simple charcoal iron straps, matte finish, no photorealism, no dense wood grain, no noisy cracks. Neutral even studio illumination. The front/top must be flat and unobstructed enough to walk on. Show complete object inside each column with generous clean white spacing; no perspective, no top-down view, no three-quarter view. Use consistent front and back wood layout and consistent edge thickness. This is one repeatable solid bridge floor module, presented vertically solely for shape capture.",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "multiview",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.6144393241167435,
+              "offset": [
+                40,
+                359
+              ],
+              "size": [
+                432,
+                305
+              ],
+              "physical_height_m": 4.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6156806156806157,
+              "offset": [
+                229,
+                359
+              ],
+              "size": [
+                53,
+                305
+              ],
+              "physical_height_m": 4.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6132030276899492,
+              "offset": [
+                40,
+                359
+              ],
+              "size": [
+                432,
+                305
+              ],
+              "physical_height_m": 4.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.6156806156806157,
+              "offset": [
+                230,
+                359
+              ],
+              "size": [
+                52,
+                305
+              ],
+              "physical_height_m": 4.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Inspected original native ImageGen and registered front/left/back/right sheet: same connected deck, continuous timber top, flush straps and shallow seams, readable thick side edges, no holes/railings. Capture is upright for top/underside projection; standard presentation matrix lays Hunyuan geometry horizontal. Numerical depth reference follows actual side aspect at 0.7m rather than squeezing the concept. No artistic geometry generated in registration.",
+            "time": "2026-10-04 21:54:43"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 21:57:04",
+          "files": {
+            "HP_SM_Env_TravelDeck_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Env_TravelDeck_v001_input_front.png",
+              "sha256": "fa20cfce8df51f730077648462ef84931da91478d414c63f0bd0a8104dbd49df"
+            },
+            "HP_SM_Env_TravelDeck_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Env_TravelDeck_v001_input_left.png",
+              "sha256": "04209bf5f9ac6f1757d18e98f67429cfc4d7c52bec92e5385afc0e20a308e7db"
+            },
+            "HP_SM_Env_TravelDeck_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Env_TravelDeck_v001_input_back.png",
+              "sha256": "bca50b07c0c1635e1a43dfc50c17d5279ed47f2ad30037e2e881a968b661c97b"
+            },
+            "HP_SM_Env_TravelDeck_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Env_TravelDeck_v001_input_right.png",
+              "sha256": "45efa707a705fe2669e580b8f01ce0cee1bede9f7adb1ecb99b5930799c24698"
+            },
+            "HP_SM_Env_TravelDeck_v001.glb": {
+              "path": "02_highpoly/HP_SM_Env_TravelDeck_v001.glb",
+              "sha256": "b25326f9a5a8852e65fa2d69949067e9856c8df39d236b2fc200895a42f98560"
+            },
+            "HP_SM_Env_TravelDeck_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Env_TravelDeck_v001_graph.json",
+              "sha256": "22d230f1690d699a9db427f05489dbcc0e2557b826004221f6c0dd3d79b9ca02"
+            }
+          },
+          "from_concept": 2,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 202610090,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              2,
+              258,
+              510,
+              765
+            ],
+            "scale": 2.015748031496063
+          },
+          "seconds": 139.7,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 9.4
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 21:58:20",
+          "files": {
+            "SM_Env_TravelDeck_v001.blend": {
+              "path": "03_work/SM_Env_TravelDeck_v001.blend",
+              "sha256": "ce4f5e2696ed32de0d73ce0a66a18a51233c495025922fd0dd95fcda1e5c33ad"
+            },
+            "SM_Env_TravelDeck_v001.glb": {
+              "path": "04_export/SM_Env_TravelDeck_v001.glb",
+              "sha256": "6aaac50174b72f7d142ff83d8d953b346c9eedbb11aff890fbd54b8a1b21bff2"
+            },
+            "SM_Env_TravelDeck_v001_metrics.json": {
+              "path": "03_work/SM_Env_TravelDeck_v001_metrics.json",
+              "sha256": "66e737c04fbb0f2a51e0ba30798edd62d14a40779063b44d904f1dace69c2235"
+            },
+            "T_Env_TravelDeck_BC.png": {
+              "path": "03_work/textures_v001/T_Env_TravelDeck_BC.png",
+              "sha256": "6a9c2cd2db166eb5937787590b5e86b62571e9c391d65f4088e6aaee3acc0697"
+            },
+            "T_Env_TravelDeck_N.png": {
+              "path": "03_work/textures_v001/T_Env_TravelDeck_N.png",
+              "sha256": "02bc736f4b95b74314fa6a35fc9fdb61e5f60b533ae55c0d28294df7dec90ab6"
+            },
+            "T_Env_TravelDeck_ORM.png": {
+              "path": "03_work/textures_v001/T_Env_TravelDeck_ORM.png",
+              "sha256": "ec0cc88ed84ff9819cc59704eb11ffc1b78d9eb15dc1aa2e833a3437a4d22b22"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.936,
+          "uncovered_ratio": 0.0862,
+          "lods": [
+            {
+              "tris": 5000,
+              "verts": 2502
+            },
+            {
+              "tris": 1600,
+              "verts": 802
+            },
+            {
+              "tris": 500,
+              "verts": 252
+            }
+          ],
+          "export_kb": 138.0,
+          "seconds": 76.7,
+          "bake_device": "CPU",
+          "quality_status": "failed",
+          "quality_errors": [
+            "场景脚底落地"
+          ]
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 21:59:09",
+          "files": {
+            "SM_Env_TravelDeck_v002.blend": {
+              "path": "03_work/SM_Env_TravelDeck_v002.blend",
+              "sha256": "d7648e5e8f43e2ccd4eabaa07b24691c787f574825eee1946d0d3f460a4d717b"
+            },
+            "SM_Env_TravelDeck_v002.glb": {
+              "path": "04_export/SM_Env_TravelDeck_v002.glb",
+              "sha256": "4c6ceba7e29ec3ebca9063fa2a971a41ea2581da7f308051dc61aa6ff674f61a"
+            },
+            "SM_Env_TravelDeck_v002_metrics.json": {
+              "path": "03_work/SM_Env_TravelDeck_v002_metrics.json",
+              "sha256": "76fbcbf9ba83aefd738d54c1006145866c064e0e2e93f981da7c96fc9156649d"
+            },
+            "T_Env_TravelDeck_BC.png": {
+              "path": "03_work/textures_v002/T_Env_TravelDeck_BC.png",
+              "sha256": "6a9c2cd2db166eb5937787590b5e86b62571e9c391d65f4088e6aaee3acc0697"
+            },
+            "T_Env_TravelDeck_N.png": {
+              "path": "03_work/textures_v002/T_Env_TravelDeck_N.png",
+              "sha256": "02bc736f4b95b74314fa6a35fc9fdb61e5f60b533ae55c0d28294df7dec90ab6"
+            },
+            "T_Env_TravelDeck_ORM.png": {
+              "path": "03_work/textures_v002/T_Env_TravelDeck_ORM.png",
+              "sha256": "ec0cc88ed84ff9819cc59704eb11ffc1b78d9eb15dc1aa2e833a3437a4d22b22"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "technical_parent_build": 1,
+          "pivot_normalization": {
+            "source_build": 1,
+            "translation_blender_xyz": [
+              4.0411949157714844e-05,
+              -1.9409226179122925,
+              0.015361322090029716
+            ],
+            "operation": "identical rigid translation for all LOD vertices",
+            "topology_unchanged": true,
+            "uv_unchanged": true,
+            "shape_source_unchanged": true
+          },
+          "align_iou": 0.936,
+          "uncovered_ratio": 0.0862,
+          "lods": [
+            {
+              "tris": 5000,
+              "verts": 2502
+            },
+            {
+              "tris": 1600,
+              "verts": 802
+            },
+            {
+              "tris": 500,
+              "verts": 252
+            }
+          ],
+          "export_kb": 138.0,
+          "seconds": 3.6,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 21:58:20",
+          "files": {
+            "SM_Env_TravelDeck_v001_validation_v001.json": {
+              "path": "05_review/SM_Env_TravelDeck_v001_validation_v001.json",
+              "sha256": "d322a27fa349705ee81cf76b94dadc82a6835aa7c01d82eb95c39457d0bfe569"
+            }
+          },
+          "from_build": 1,
+          "errors": 1,
+          "warnings": 1,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 2,
+          "created": "2026-10-04 21:59:13",
+          "files": {
+            "SM_Env_TravelDeck_v002_validation_v002.json": {
+              "path": "05_review/SM_Env_TravelDeck_v002_validation_v002.json",
+              "sha256": "86560b0eaff5e1379c78f0c5dfc8287753373b3bfa324fada4672676b8d794e6"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 21:59:21",
+          "files": {
+            "SM_Env_TravelDeck_v002_review_v001.png": {
+              "path": "05_review/SM_Env_TravelDeck_v002_review_v001.png",
+              "sha256": "e2ca0319f6bdeba7a6452422de19cdcda30adb9ed7b26c2c1ad483a542c7c3d2"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Inspected actual finished build v002 five views, all LOD topology views and PBR sheets: coherent connected solid timber deck, continuous flat top, matching thick end profile and distinct underside cross-battens, restrained iron strips. 5000/1600/500 triangles,1024 maps,138KiB;37 automatic checks passed without warnings,errors,waivers. Build v001 grounding failure retained. Build v002 applies only the same rigid translation to every LOD vertex, preserving Hunyuan shape, topology and UV, to ground and center the pivot after presentation rotation.",
+            "time": "2026-10-04 21:59:33"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-04 21:59:33",
+          "files": {
+            "SM_Env_TravelDeck.glb": {
+              "path": "@root/public/assets/props/SM_Env_TravelDeck.glb",
+              "sha256": "4c6ceba7e29ec3ebca9063fa2a971a41ea2581da7f308051dc61aa6ff674f61a"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Env_TravelDeck.glb"
+        }
+      ]
+    }
+  }
+}

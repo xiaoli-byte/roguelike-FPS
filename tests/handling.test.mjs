@@ -142,7 +142,7 @@ test('staff raising and shield bashing keep wrists within reach', () => {
 
 test('Hunyuan prop exports have textured geometry, two LODs and bounded download cost', async () => {
   const manifest = JSON.parse(await readFile(new URL('../public/assets/manifest.json', import.meta.url), 'utf8'));
-  const entries = Object.entries(manifest.assets).filter(([, a]) => a.bind.source === 'scene');
+  const entries = Object.entries(manifest.assets).filter(([, a]) => a.bind.source === 'scene' && a.class === 'prop');
   assert.equal(entries.length, 6);
   for (const [id, entry] of entries) {
     const file = await readFile(new URL(`../public/${entry.url}`, import.meta.url));

@@ -1,0 +1,140 @@
+{
+  "steps": {
+    "导入清理": 1.0,
+    "对齐": 0.5,
+    "低模与 UV": 6.7,
+    "投影着色": 13.1,
+    "烘焙": 3.9,
+    "LOD": 0.0,
+    "导出": 0.8
+  },
+  "highpoly": {
+    "faces_raw": 268836,
+    "faces": 285654,
+    "verts": 285656,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00355
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.858,
+    "iou_per_view": {
+      "front": 0.845,
+      "left": 0.866,
+      "back": 0.848,
+      "right": 0.88
+    },
+    "height_m": 6.7988,
+    "blockout_height_m": 6.8
+  },
+  "uv": {
+    "smart_islands": 302,
+    "charts": 25,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "smart",
+    "density_smart": 0.0775,
+    "density_merged": 0.0673
+  },
+  "projection": {
+    "uncovered_ratio": 0.3269
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Env_InfernoGate_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Env_InfernoGate_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Env_InfernoGate_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Env_InfernoGate_LOD0",
+      "tris": 5000,
+      "verts": 2502,
+      "uv_min": [
+        0.00335754849947989,
+        0.0033575657289475203
+      ],
+      "uv_max": [
+        0.9966423511505127,
+        0.9869663119316101
+      ],
+      "uv_utilization": 0.57,
+      "bbox_min": [
+        -5.4424,
+        -0.6459,
+        0.0005
+      ],
+      "bbox_max": [
+        5.5245,
+        0.6355,
+        6.7983
+      ]
+    },
+    {
+      "name": "SM_Env_InfernoGate_LOD1",
+      "tris": 1600,
+      "verts": 802,
+      "uv_min": [
+        0.00335754849947989,
+        0.003688178490847349
+      ],
+      "uv_max": [
+        0.996367335319519,
+        0.9869364500045776
+      ],
+      "uv_utilization": 0.541,
+      "bbox_min": [
+        -5.4324,
+        -0.6468,
+        0.0081
+      ],
+      "bbox_max": [
+        5.5137,
+        0.6271,
+        6.7861
+      ]
+    },
+    {
+      "name": "SM_Env_InfernoGate_LOD2",
+      "tris": 500,
+      "verts": 252,
+      "uv_min": [
+        0.004023635294288397,
+        0.004625783301889896
+      ],
+      "uv_max": [
+        0.996367335319519,
+        0.9869364500045776
+      ],
+      "uv_utilization": 0.494,
+      "bbox_min": [
+        -5.4324,
+        -0.6906,
+        0.0081
+      ],
+      "bbox_max": [
+        5.5137,
+        0.6591,
+        6.7861
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_InfernoGate\\04_export\\SM_Env_InfernoGate_v001.glb",
+    "bytes": 234440
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_InfernoGate\\03_work\\SM_Env_InfernoGate_v001.blend",
+  "total_seconds": 26.1,
+  "_seconds": 28.8
+}

@@ -1,0 +1,866 @@
+{
+  "created": "2026-10-04T15:42:47.928Z",
+  "generation": "Codex built-in image_gen concepts → local ComfyUI Hunyuan3D 2mv → Blender technical reduction/UV/projection/CPU bake/LOD",
+  "artisticMeshCreatedProcedurally": false,
+  "newAssets": [
+    {
+      "id": "SM_Env_MarketStall",
+      "glb": "public/assets/props/SM_Env_MarketStall.glb",
+      "bytes": 237968,
+      "sha256": "da4b1e4d929551d77af18a2ddd6bb5a0d19daa21b8c291357003802489106bab",
+      "exactPrompt": "art/source/props/SM_Env_MarketStall/01_concept/CN_SM_Env_MarketStall_v001_prompt.txt",
+      "originalConcept": "art/source/props/SM_Env_MarketStall/01_concept/CN_SM_Env_MarketStall_v001_source.png",
+      "registeredSheet": "art/source/props/SM_Env_MarketStall/01_concept/CN_SM_Env_MarketStall_v001_sheet.png",
+      "nativeImage": "C:\\Users\\admin\\.codex\\generated_images\\01a1072d-363b-7bd3-bcf6-3cc6a159ec4f\\exec-416b6b23-ac8a-49fe-9062-2d29d1db76ae.png",
+      "sourceHistory": [],
+      "reviewSheet": "art/source/props/SM_Env_MarketStall/05_review/SM_Env_MarketStall_v001_review_v001.png",
+      "structureReview": {
+        "asset": "SM_Env_MarketStall",
+        "sourceGLB": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_MarketStall\\04_export\\SM_Env_MarketStall_v001.glb",
+        "buildVersion": 1,
+        "files": [
+          "D:\\personal-projects\\枪火重生\\art\\reviews\\authored-scenes-setdressing-20261004\\SM_Env_MarketStall-structure-v001\\lod0-elevated.png",
+          "D:\\personal-projects\\枪火重生\\art\\reviews\\authored-scenes-setdressing-20261004\\SM_Env_MarketStall-structure-v001\\lod0-underside.png",
+          "D:\\personal-projects\\枪火重生\\art\\reviews\\authored-scenes-setdressing-20261004\\SM_Env_MarketStall-structure-v001\\lod1-elevated.png",
+          "D:\\personal-projects\\枪火重生\\art\\reviews\\authored-scenes-setdressing-20261004\\SM_Env_MarketStall-structure-v001\\lod1-underside.png",
+          "D:\\personal-projects\\枪火重生\\art\\reviews\\authored-scenes-setdressing-20261004\\SM_Env_MarketStall-structure-v001\\lod2-elevated.png",
+          "D:\\personal-projects\\枪火重生\\art\\reviews\\authored-scenes-setdressing-20261004\\SM_Env_MarketStall-structure-v001\\lod2-underside.png"
+        ],
+        "readOnlyGeometry": true,
+        "images": [
+          {
+            "path": "art/reviews/authored-scenes-setdressing-20261004/SM_Env_MarketStall-structure-v001/lod0-elevated.png",
+            "sha256": "c5d138c935c8d4dea3cd96e6ec609dc0bc37019568124e7928ae7f5562d0f9fd"
+          },
+          {
+            "path": "art/reviews/authored-scenes-setdressing-20261004/SM_Env_MarketStall-structure-v001/lod0-underside.png",
+            "sha256": "23e11ffeeec2ed036a6126c1136408ffbe6affb235c386c777c18c955904cfaf"
+          },
+          {
+            "path": "art/reviews/authored-scenes-setdressing-20261004/SM_Env_MarketStall-structure-v001/lod1-elevated.png",
+            "sha256": "7ec12146e6efcb3102e6ec1622dddc647d0c019711ff8950c2f7476875a095e7"
+          },
+          {
+            "path": "art/reviews/authored-scenes-setdressing-20261004/SM_Env_MarketStall-structure-v001/lod1-underside.png",
+            "sha256": "4c5d1f1d5c8017ab1b38c0c0293886e7c6e3b21a8f9d99d3ca9b5546a09c2f5a"
+          },
+          {
+            "path": "art/reviews/authored-scenes-setdressing-20261004/SM_Env_MarketStall-structure-v001/lod2-elevated.png",
+            "sha256": "3637fd5150b50d081a2a3fd7add2f9f3b86c718512167ed110201faaad998fd4"
+          },
+          {
+            "path": "art/reviews/authored-scenes-setdressing-20261004/SM_Env_MarketStall-structure-v001/lod2-underside.png",
+            "sha256": "766c88b5aef2dffc0e696f5716dc5710c9c9e5e6e9dbef6b9b05261c9991625a"
+          }
+        ]
+      },
+      "workflow": "art/source/props/SM_Env_MarketStall/02_highpoly/HP_SM_Env_MarketStall_v001_graph.json",
+      "highpolyParameters": {
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+        "seed": 202610141,
+        "steps": 50,
+        "cfg": 5,
+        "shift": 1,
+        "octree_resolution": 384,
+        "num_chunks": 32000,
+        "threshold": 0.6,
+        "seconds": 168.8,
+        "comfyui": "0.30.0",
+        "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync"
+      },
+      "build": {
+        "version": 1,
+        "seconds": 248.1,
+        "bakeDevice": "CPU",
+        "alignmentIoU": 0.841,
+        "directProjectionCoverage": 0.4554
+      },
+      "lods": [
+        {
+          "lod": 0,
+          "triangles": 5000,
+          "bounds": {
+            "min": [
+              -1.7253363132476807,
+              0.0009936863789334893,
+              -1.2027766704559326
+            ],
+            "max": [
+              1.7655045986175537,
+              3.089332103729248,
+              1.3988938331604004
+            ],
+            "size": [
+              3.4908409118652344,
+              3.0883384173503146,
+              2.601670503616333
+            ]
+          },
+          "largestComponentTriangleFraction": 1
+        },
+        {
+          "lod": 1,
+          "triangles": 1600,
+          "bounds": {
+            "min": [
+              -1.7174158096313477,
+              0.006246487610042095,
+              -1.198631763458252
+            ],
+            "max": [
+              1.7552552223205566,
+              3.0882606506347656,
+              1.3888611793518066
+            ],
+            "size": [
+              3.4726710319519043,
+              3.0820141630247235,
+              2.5874929428100586
+            ]
+          },
+          "largestComponentTriangleFraction": 1
+        },
+        {
+          "lod": 2,
+          "triangles": 500,
+          "bounds": {
+            "min": [
+              -1.7330286502838135,
+              0.008903237991034985,
+              -1.17373788356781
+            ],
+            "max": [
+              1.7740809917449951,
+              3.080380439758301,
+              1.3261722326278687
+            ],
+            "size": [
+              3.5071096420288086,
+              3.071477201767266,
+              2.4999101161956787
+            ]
+          },
+          "largestComponentTriangleFraction": 1
+        }
+      ],
+      "allLodBounds": {
+        "min": [
+          -1.7330286502838135,
+          0.0009936863789334893,
+          -1.2027766704559326
+        ],
+        "max": [
+          1.7740809917449951,
+          3.089332103729248,
+          1.3988938331604004
+        ],
+        "size": [
+          3.5071096420288086,
+          3.0883384173503146,
+          2.601670503616333
+        ]
+      },
+      "sourceFrontDirection": [
+        0,
+        0,
+        1
+      ],
+      "qa": {
+        "passes": 37,
+        "warnings": [
+          {
+            "level": "warn",
+            "check": "投影覆盖",
+            "detail": "未覆盖顶点 54%（扩散补色）"
+          }
+        ],
+        "errors": [],
+        "waived": []
+      },
+      "review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Inspected finished five views, LOD topology and textures; actual Draco audit confirms one connected structure at every LOD, canopy thickness 0.197-0.269m and clear central serving opening at 48%/56% height in all three LODs. Posts and side braces support the thick low roof; no broad plane plugs the serving window. Moderate detail and stable silhouette accepted. QA:37 pass,0 error,1 nonblocking direct-projection warning (45.5% covered; undersides/interiors use existing colour diffusion),0 waiver. Source Hunyuan geometry preserved without procedural art patches.",
+        "time": "2026-10-04 23:21:49"
+      },
+      "manifestEntry": {
+        "url": "assets/props/SM_Env_MarketStall.glb",
+        "kind": "static",
+        "class": "nature_prop",
+        "bind": {
+          "source": "scene",
+          "id": "desert.marketStall"
+        },
+        "keepGlow": "none",
+        "lodDistance": [
+          0,
+          18,
+          42
+        ],
+        "bounds": {
+          "min": [
+            -1.7253363132476807,
+            0.0009936863789334893,
+            -1.2027766704559326
+          ],
+          "max": [
+            1.7655044794082642,
+            3.089397668838501,
+            1.3988101482391357
+          ]
+        },
+        "version": {
+          "blockout": 1,
+          "concept": 1,
+          "highpoly": 1,
+          "build": 1
+        },
+        "sha256": "da4b1e4d929551d77af18a2ddd6bb5a0d19daa21b8c291357003802489106bab",
+        "bytes": 237968,
+        "published": "2026-10-04 23:21:50",
+        "generator": {
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "mode": "multiview",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+        },
+        "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+      },
+      "verifiedLocalFileCount": 24,
+      "rejectedHistory": {},
+      "fullAudit": "art/reviews/authored-scenes-setdressing-20261004/SM_Env_MarketStall-published-audit.json"
+    },
+    {
+      "id": "SM_Env_FrozenSkiff",
+      "glb": "public/assets/props/SM_Env_FrozenSkiff.glb",
+      "bytes": 176432,
+      "sha256": "90b2557b0bc2fe6eca99f2245e7ef6cc2a49cd6ac06e18fe7966fc7a5d62e91b",
+      "exactPrompt": "art/source/props/SM_Env_FrozenSkiff/01_concept/CN_SM_Env_FrozenSkiff_v002_prompt.txt",
+      "originalConcept": "art/source/props/SM_Env_FrozenSkiff/01_concept/CN_SM_Env_FrozenSkiff_v002_source.png",
+      "registeredSheet": "art/source/props/SM_Env_FrozenSkiff/01_concept/CN_SM_Env_FrozenSkiff_v002_sheet.png",
+      "nativeImage": "C:\\Users\\admin\\.codex\\generated_images\\01a1072d-363b-7bd3-bcf6-3cc6a159ec4f\\exec-3119a645-26d7-4fae-86ad-8725f8d70363.png",
+      "sourceHistory": [
+        {
+          "id": "SM_Env_FrozenSkiff",
+          "prompt": "Use case: stylized-concept. Asset type: one four-view orthographic turnaround sheet for reconstruction with local Hunyuan3D multi-view. Create a wide 2048x1024 image with exactly FOUR isolated views of the SAME complete prop, left to right FRONT / LEFT / BACK / RIGHT, with NO written labels. Pure white background, no ground and no cast shadow. Four evenly spaced columns; each whole object including protrusions must fit inside its own column with white margins, never overlap neighboring views. Align baselines and use exactly the same physical scale and height in all views. True orthographic views, no perspective and no three-quarter view.\nStyle: readable moderate-detail hand-painted fantasy FPS environment at Gunfire Reborn game fidelity. Bold chunky solid silhouette, clean gently chamfered faceted planes, two or three large coherent matte color blocks, soft painted gradients and a few restrained edge-wear accents. Neutral even lighting; no photorealism, dense wood grain, tiny cracks or elaborate miniature carving. No text, icon labels, loose floating parts or thin strings. All parts form one coherent assembled prop. Subject: one short abandoned wooden cargo skiff sitting flat on its intact heavy keel, approximately 2.3 metres across, 4.8 metres long and 1.7 metres from keel to highest gunwale. Front faces the broad blunt bow, back faces the square low stern, left and right show the full hull length. Thick broad blue-grey weathered timber hull planks, a massive rounded gunwale, and two thick connected cross seats visible slightly above the rim. No mast, sail, rigging, rudder pole or oars. The boat is fully volumetric with a deep belly and substantial underside, not a flat cutout. A small broad chipped section in the stern gunwale and two missing upper board corners suggest abandonment, while the entire lower hull and keel remain intact and connected. A few broad pale blue-grey snow patches (clearly darker than the pure-white backdrop) are firmly attached to the bow rim and benches, less than fifteen percent surface coverage; avoid icicles or snow spray. Restrained cold blue-grey wood, warm exposed board edges, dark iron end straps. One complete boat, no lake, shore, rocks or separate debris.",
+          "path": "C:/Users/admin/.codex/generated_images/01a1072d-363b-7bd3-bcf6-3cc6a159ec4f/exec-1de49fdb-9867-4cdc-b5cf-c0a6937d9c62.png",
+          "generator": "Codex built-in image_gen",
+          "workspaceSource": "art/source/props/SM_Env_FrozenSkiff/01_concept/CN_SM_Env_FrozenSkiff_v001_source.png",
+          "role": "edit target / original complete four-view design",
+          "reason": "Preserve bright snow with native alpha instead of white key."
+        }
+      ],
+      "reviewSheet": "art/source/props/SM_Env_FrozenSkiff/05_review/SM_Env_FrozenSkiff_v001_review_v001.png",
+      "structureReview": {
+        "asset": "SM_Env_FrozenSkiff",
+        "sourceGLB": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_FrozenSkiff\\04_export\\SM_Env_FrozenSkiff_v001.glb",
+        "buildVersion": 1,
+        "files": [
+          "D:\\personal-projects\\枪火重生\\art\\reviews\\authored-scenes-setdressing-20261004\\SM_Env_FrozenSkiff-structure-v001\\lod0-elevated.png",
+          "D:\\personal-projects\\枪火重生\\art\\reviews\\authored-scenes-setdressing-20261004\\SM_Env_FrozenSkiff-structure-v001\\lod0-underside.png",
+          "D:\\personal-projects\\枪火重生\\art\\reviews\\authored-scenes-setdressing-20261004\\SM_Env_FrozenSkiff-structure-v001\\lod1-elevated.png",
+          "D:\\personal-projects\\枪火重生\\art\\reviews\\authored-scenes-setdressing-20261004\\SM_Env_FrozenSkiff-structure-v001\\lod1-underside.png",
+          "D:\\personal-projects\\枪火重生\\art\\reviews\\authored-scenes-setdressing-20261004\\SM_Env_FrozenSkiff-structure-v001\\lod2-elevated.png",
+          "D:\\personal-projects\\枪火重生\\art\\reviews\\authored-scenes-setdressing-20261004\\SM_Env_FrozenSkiff-structure-v001\\lod2-underside.png"
+        ],
+        "readOnlyGeometry": true,
+        "images": [
+          {
+            "path": "art/reviews/authored-scenes-setdressing-20261004/SM_Env_FrozenSkiff-structure-v001/lod0-elevated.png",
+            "sha256": "4fb77c71f6c9570185784e61c161bd3310b4d922fe7be5ab6887984f36b40695"
+          },
+          {
+            "path": "art/reviews/authored-scenes-setdressing-20261004/SM_Env_FrozenSkiff-structure-v001/lod0-underside.png",
+            "sha256": "4df3def6fe922e0475d5fd63ab4a2cfd7f1101eeed942bdcb2de5a28a91e3906"
+          },
+          {
+            "path": "art/reviews/authored-scenes-setdressing-20261004/SM_Env_FrozenSkiff-structure-v001/lod1-elevated.png",
+            "sha256": "7feb1c28efaa33ba7bfabd7f20eaa425c41b5869cd3b889a23c765cadf8a0e10"
+          },
+          {
+            "path": "art/reviews/authored-scenes-setdressing-20261004/SM_Env_FrozenSkiff-structure-v001/lod1-underside.png",
+            "sha256": "31fda817cbeeca13f00d03d359b465cd5230c006824b18d91c66d0cdb2482fc6"
+          },
+          {
+            "path": "art/reviews/authored-scenes-setdressing-20261004/SM_Env_FrozenSkiff-structure-v001/lod2-elevated.png",
+            "sha256": "dcf14d045bfd5925bcf2c439ac8d392f83cb1141ddf3b074fbe416d082425818"
+          },
+          {
+            "path": "art/reviews/authored-scenes-setdressing-20261004/SM_Env_FrozenSkiff-structure-v001/lod2-underside.png",
+            "sha256": "6b649a91a689a60e59b4f63dc73f5bdd018bee773d5bd513a9a06c97d2c261f9"
+          }
+        ]
+      },
+      "workflow": "art/source/props/SM_Env_FrozenSkiff/02_highpoly/HP_SM_Env_FrozenSkiff_v001_graph.json",
+      "highpolyParameters": {
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+        "seed": 202610142,
+        "steps": 50,
+        "cfg": 5,
+        "shift": 1,
+        "octree_resolution": 384,
+        "num_chunks": 32000,
+        "threshold": 0.6,
+        "seconds": 134.9,
+        "comfyui": "0.30.0",
+        "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync"
+      },
+      "build": {
+        "version": 1,
+        "seconds": 96.5,
+        "bakeDevice": "CPU",
+        "alignmentIoU": 0.919,
+        "directProjectionCoverage": 0.42310000000000003
+      },
+      "lods": [
+        {
+          "lod": 0,
+          "triangles": 5000,
+          "bounds": {
+            "min": [
+              -1.0072766542434692,
+              0.00033356546191498637,
+              -1.9251104593276978
+            ],
+            "max": [
+              1.0206905603408813,
+              1.5401211977005005,
+              1.9274157285690308
+            ],
+            "size": [
+              2.0279672145843506,
+              1.5397876322385855,
+              3.8525261878967285
+            ]
+          },
+          "largestComponentTriangleFraction": 1
+        },
+        {
+          "lod": 1,
+          "triangles": 1600,
+          "bounds": {
+            "min": [
+              -1.0133256912231445,
+              0.0005937738460488617,
+              -1.9205766916275024
+            ],
+            "max": [
+              1.0169177055358887,
+              1.5416615009307861,
+              1.9286860227584839
+            ],
+            "size": [
+              2.030243396759033,
+              1.5410677270847373,
+              3.8492627143859863
+            ]
+          },
+          "largestComponentTriangleFraction": 1
+        },
+        {
+          "lod": 2,
+          "triangles": 500,
+          "bounds": {
+            "min": [
+              -1.0020427703857422,
+              0.001955344108864665,
+              -1.920497179031372
+            ],
+            "max": [
+              1.018162488937378,
+              1.5431549549102783,
+              1.9150598049163818
+            ],
+            "size": [
+              2.02020525932312,
+              1.5411996108014137,
+              3.835556983947754
+            ]
+          },
+          "largestComponentTriangleFraction": 1
+        }
+      ],
+      "allLodBounds": {
+        "min": [
+          -1.0133256912231445,
+          0.00033356546191498637,
+          -1.9251104593276978
+        ],
+        "max": [
+          1.0206905603408813,
+          1.5431549549102783,
+          1.9286860227584839
+        ],
+        "size": [
+          2.034016251564026,
+          1.5428213894483633,
+          3.8537964820861816
+        ]
+      },
+      "sourceFrontDirection": [
+        0,
+        0,
+        1
+      ],
+      "qa": {
+        "passes": 36,
+        "warnings": [
+          {
+            "level": "warn",
+            "check": "UV 利用率",
+            "detail": "43%"
+          },
+          {
+            "level": "warn",
+            "check": "投影覆盖",
+            "detail": "未覆盖顶点 58%（扩散补色）"
+          }
+        ],
+        "errors": [],
+        "waived": []
+      },
+      "review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Reviewed native-alpha concept, finished five-view sheet, elevated LOD0 and LOD2 plus underside LOD1 actual GLB renders and all-LOD triangle ray sections. Thick connected hull and keel, open inner well, two supported cross-seats, preserved volume at 500 tris; sampled inner recess about 0.98m and centre floor shell about 0.15-0.18m. Retain warnings: 43% UV occupancy and 42.3% direct four-view colour coverage; inner well colour is diffusion-filled and comparatively plain, not additional painted detail. No procedural art mesh repair. Suitable static stranded repair-bay prop, not final hero close-up or moving boat.",
+        "time": "2026-10-04 23:28:57"
+      },
+      "manifestEntry": {
+        "url": "assets/props/SM_Env_FrozenSkiff.glb",
+        "kind": "static",
+        "class": "nature_prop",
+        "bind": {
+          "source": "scene",
+          "id": "frost.frozenSkiff"
+        },
+        "keepGlow": "none",
+        "lodDistance": [
+          0,
+          18,
+          42
+        ],
+        "bounds": {
+          "min": [
+            -1.0072766542434692,
+            0.00033356546191498637,
+            -1.9251104593276978
+          ],
+          "max": [
+            1.020757794380188,
+            1.5401766300201416,
+            1.9274158477783203
+          ]
+        },
+        "version": {
+          "blockout": 1,
+          "concept": 2,
+          "highpoly": 1,
+          "build": 1
+        },
+        "sha256": "90b2557b0bc2fe6eca99f2245e7ef6cc2a49cd6ac06e18fe7966fc7a5d62e91b",
+        "bytes": 176432,
+        "published": "2026-10-04 23:28:57",
+        "generator": {
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "mode": "multiview",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+        },
+        "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+      },
+      "verifiedLocalFileCount": 24,
+      "rejectedHistory": {
+        "concept": [
+          {
+            "version": 1,
+            "created": "2026-10-04 23:12:59",
+            "files": {
+              "CN_SM_Env_FrozenSkiff_v001_source.png": {
+                "path": "01_concept/CN_SM_Env_FrozenSkiff_v001_source.png",
+                "sha256": "285bd8380b8ebd8f6a8dc127f4d862a0b33d9b32b366a0ebda88a38343ed598e"
+              },
+              "CN_SM_Env_FrozenSkiff_v001_front.png": {
+                "path": "01_concept/CN_SM_Env_FrozenSkiff_v001_front.png",
+                "sha256": "10dd03a370bdeb5db56da1870bc87df3b63d9389b74e3bf8939153334e7104b3"
+              },
+              "CN_SM_Env_FrozenSkiff_v001_left.png": {
+                "path": "01_concept/CN_SM_Env_FrozenSkiff_v001_left.png",
+                "sha256": "d90d40aea9de4a4b764491f06b0fc9d79a660a3b8ec7aa8fe120954ab78f39a0"
+              },
+              "CN_SM_Env_FrozenSkiff_v001_back.png": {
+                "path": "01_concept/CN_SM_Env_FrozenSkiff_v001_back.png",
+                "sha256": "448dbc364d77cd415b4f114f3985a7ba48a4f3d44486588f261e7aad23da7551"
+              },
+              "CN_SM_Env_FrozenSkiff_v001_right.png": {
+                "path": "01_concept/CN_SM_Env_FrozenSkiff_v001_right.png",
+                "sha256": "b357fcf3c8cd6cb08386c587a4c684eb1c60eb133f17da8746d43bcbf6d4eaf7"
+              },
+              "CN_SM_Env_FrozenSkiff_v001_sheet.png": {
+                "path": "01_concept/CN_SM_Env_FrozenSkiff_v001_sheet.png",
+                "sha256": "051e67b4913b04a7e160d8336a485ea756982efcf2ad94a861f4058567026979"
+              },
+              "CN_SM_Env_FrozenSkiff_v001_prompt.txt": {
+                "path": "01_concept/CN_SM_Env_FrozenSkiff_v001_prompt.txt",
+                "sha256": "865bdf31d296b0d40500ddca5027c2b1edf82967e3ee59d724f609af2d60ce34"
+              },
+              "CN_SM_Env_FrozenSkiff_v001_registration.json": {
+                "path": "01_concept/CN_SM_Env_FrozenSkiff_v001_registration.json",
+                "sha256": "82453bcf867ee4e46d261e81bbccd87f1fabf97934dc6410003cf2b94cae8c2c"
+              }
+            },
+            "from_blockout": 1,
+            "generator": "Codex built-in image_gen",
+            "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a1072d-363b-7bd3-bcf6-3cc6a159ec4f\\exec-1de49fdb-9867-4cdc-b5cf-c0a6937d9c62.png",
+            "source_sha256": "285bd8380b8ebd8f6a8dc127f4d862a0b33d9b32b366a0ebda88a38343ed598e",
+            "prompt": "Use case: stylized-concept. Asset type: one four-view orthographic turnaround sheet for reconstruction with local Hunyuan3D multi-view. Create a wide 2048x1024 image with exactly FOUR isolated views of the SAME complete prop, left to right FRONT / LEFT / BACK / RIGHT, with NO written labels. Pure white background, no ground and no cast shadow. Four evenly spaced columns; each whole object including protrusions must fit inside its own column with white margins, never overlap neighboring views. Align baselines and use exactly the same physical scale and height in all views. True orthographic views, no perspective and no three-quarter view.\nStyle: readable moderate-detail hand-painted fantasy FPS environment at Gunfire Reborn game fidelity. Bold chunky solid silhouette, clean gently chamfered faceted planes, two or three large coherent matte color blocks, soft painted gradients and a few restrained edge-wear accents. Neutral even lighting; no photorealism, dense wood grain, tiny cracks or elaborate miniature carving. No text, icon labels, loose floating parts or thin strings. All parts form one coherent assembled prop. Subject: one short abandoned wooden cargo skiff sitting flat on its intact heavy keel, approximately 2.3 metres across, 4.8 metres long and 1.7 metres from keel to highest gunwale. Front faces the broad blunt bow, back faces the square low stern, left and right show the full hull length. Thick broad blue-grey weathered timber hull planks, a massive rounded gunwale, and two thick connected cross seats visible slightly above the rim. No mast, sail, rigging, rudder pole or oars. The boat is fully volumetric with a deep belly and substantial underside, not a flat cutout. A small broad chipped section in the stern gunwale and two missing upper board corners suggest abandonment, while the entire lower hull and keel remain intact and connected. A few broad pale blue-grey snow patches (clearly darker than the pure-white backdrop) are firmly attached to the bow rim and benches, less than fifteen percent surface coverage; avoid icicles or snow spray. Restrained cold blue-grey wood, warm exposed board edges, dark iron end straps. One complete boat, no lake, shore, rocks or separate debris.",
+            "reference_mode": "bounds_only",
+            "highpoly_mode": "multiview",
+            "registration_version": 1,
+            "registration": {
+              "front": {
+                "source_bbox": [
+                  24,
+                  333,
+                  326,
+                  561
+                ],
+                "source_component_area": 48962,
+                "source_foreground_coverage": 0.9999881761283915,
+                "native_alpha_preserved": false,
+                "scale": 0.7101086048454469,
+                "offset": [
+                  149,
+                  431
+                ],
+                "size": [
+                  214,
+                  162
+                ],
+                "physical_height_m": 1.7,
+                "method": "contrasting plain-background key; four connected components; uniform height and centre"
+              },
+              "left": {
+                "source_bbox": [
+                  351,
+                  350,
+                  866,
+                  556
+                ],
+                "source_component_area": 77792,
+                "source_foreground_coverage": 0.9999881761283915,
+                "native_alpha_preserved": false,
+                "scale": 0.7859454461396209,
+                "offset": [
+                  53,
+                  431
+                ],
+                "size": [
+                  405,
+                  162
+                ],
+                "physical_height_m": 1.7,
+                "method": "contrasting plain-background key; four connected components; uniform height and centre"
+              },
+              "back": {
+                "source_bbox": [
+                  893,
+                  350,
+                  1190,
+                  563
+                ],
+                "source_component_area": 47668,
+                "source_foreground_coverage": 0.9999881761283915,
+                "native_alpha_preserved": false,
+                "scale": 0.7601162530739995,
+                "offset": [
+                  143,
+                  431
+                ],
+                "size": [
+                  226,
+                  162
+                ],
+                "physical_height_m": 1.7,
+                "method": "contrasting plain-background key; four connected components; uniform height and centre"
+              },
+              "right": {
+                "source_bbox": [
+                  1226,
+                  348,
+                  1745,
+                  558
+                ],
+                "source_component_area": 79299,
+                "source_foreground_coverage": 0.9999881761283915,
+                "native_alpha_preserved": false,
+                "scale": 0.7709750566893424,
+                "offset": [
+                  56,
+                  431
+                ],
+                "size": [
+                  400,
+                  162
+                ],
+                "physical_height_m": 1.7,
+                "method": "contrasting plain-background key; four connected components; uniform height and centre"
+              }
+            },
+            "source_history": [],
+            "review": {
+              "verdict": "rejected",
+              "by": "Codex AI visual review",
+              "note": "White-background registration may erode bright snow edges. Retain this source and prompt, request native ImageGen alpha before Hunyuan so the snow and hull silhouette are explicitly preserved.",
+              "time": "2026-10-04 23:13:25"
+            }
+          }
+        ]
+      },
+      "fullAudit": "art/reviews/authored-scenes-setdressing-20261004/SM_Env_FrozenSkiff-published-audit.json"
+    },
+    {
+      "id": "SM_Env_SlagCart",
+      "glb": "public/assets/props/SM_Env_SlagCart.glb",
+      "bytes": 290476,
+      "sha256": "72ee5f23fdc085fac363e84012dc533b5aa16adbc95cd8d63133e18b0e670df4",
+      "exactPrompt": "art/source/props/SM_Env_SlagCart/01_concept/CN_SM_Env_SlagCart_v001_prompt.txt",
+      "originalConcept": "art/source/props/SM_Env_SlagCart/01_concept/CN_SM_Env_SlagCart_v001_source.png",
+      "registeredSheet": "art/source/props/SM_Env_SlagCart/01_concept/CN_SM_Env_SlagCart_v001_sheet.png",
+      "nativeImage": "C:\\Users\\admin\\.codex\\generated_images\\01a1072d-363b-7bd3-bcf6-3cc6a159ec4f\\exec-3f31b31e-0d96-4188-a397-f559b6a8e48b.png",
+      "sourceHistory": [],
+      "reviewSheet": "art/source/props/SM_Env_SlagCart/05_review/SM_Env_SlagCart_v001_review_v001.png",
+      "structureReview": {
+        "asset": "SM_Env_SlagCart",
+        "sourceGLB": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_SlagCart\\04_export\\SM_Env_SlagCart_v001.glb",
+        "buildVersion": 1,
+        "files": [
+          "D:\\personal-projects\\枪火重生\\art\\reviews\\authored-scenes-setdressing-20261004\\SM_Env_SlagCart-structure-v001\\lod0-elevated.png",
+          "D:\\personal-projects\\枪火重生\\art\\reviews\\authored-scenes-setdressing-20261004\\SM_Env_SlagCart-structure-v001\\lod0-underside.png",
+          "D:\\personal-projects\\枪火重生\\art\\reviews\\authored-scenes-setdressing-20261004\\SM_Env_SlagCart-structure-v001\\lod1-elevated.png",
+          "D:\\personal-projects\\枪火重生\\art\\reviews\\authored-scenes-setdressing-20261004\\SM_Env_SlagCart-structure-v001\\lod1-underside.png",
+          "D:\\personal-projects\\枪火重生\\art\\reviews\\authored-scenes-setdressing-20261004\\SM_Env_SlagCart-structure-v001\\lod2-elevated.png",
+          "D:\\personal-projects\\枪火重生\\art\\reviews\\authored-scenes-setdressing-20261004\\SM_Env_SlagCart-structure-v001\\lod2-underside.png"
+        ],
+        "readOnlyGeometry": true,
+        "images": [
+          {
+            "path": "art/reviews/authored-scenes-setdressing-20261004/SM_Env_SlagCart-structure-v001/lod0-elevated.png",
+            "sha256": "1f6ecf9c111cc5afabaf45fd9ac3cf37374c3e4b5887355a5b0c712ef069b472"
+          },
+          {
+            "path": "art/reviews/authored-scenes-setdressing-20261004/SM_Env_SlagCart-structure-v001/lod0-underside.png",
+            "sha256": "833753d7375a97329c6b139b60eebd4f15e6de0f3cb84f1bd8324b6ae39dd8d1"
+          },
+          {
+            "path": "art/reviews/authored-scenes-setdressing-20261004/SM_Env_SlagCart-structure-v001/lod1-elevated.png",
+            "sha256": "4c9f2a66de9293112797e75c9128bcd89bd777a893f7143451e96509850fb794"
+          },
+          {
+            "path": "art/reviews/authored-scenes-setdressing-20261004/SM_Env_SlagCart-structure-v001/lod1-underside.png",
+            "sha256": "e7d0cd6cacb1d45617f044305e2a613f1b6d67229562e1f2b49f3491728e590b"
+          },
+          {
+            "path": "art/reviews/authored-scenes-setdressing-20261004/SM_Env_SlagCart-structure-v001/lod2-elevated.png",
+            "sha256": "8d37df08cbaec4b6c5c287979b800cb39234fce1d74ccaa9613e70fb07010df5"
+          },
+          {
+            "path": "art/reviews/authored-scenes-setdressing-20261004/SM_Env_SlagCart-structure-v001/lod2-underside.png",
+            "sha256": "7c405195a3b7536bbcf7bfcba22a38a5125c82b105d90bc67f256898ac038879"
+          }
+        ]
+      },
+      "workflow": "art/source/props/SM_Env_SlagCart/02_highpoly/HP_SM_Env_SlagCart_v001_graph.json",
+      "highpolyParameters": {
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+        "seed": 202610143,
+        "steps": 50,
+        "cfg": 5,
+        "shift": 1,
+        "octree_resolution": 384,
+        "num_chunks": 32000,
+        "threshold": 0.6,
+        "seconds": 273.7,
+        "comfyui": "0.30.0",
+        "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync"
+      },
+      "build": {
+        "version": 1,
+        "seconds": 354.5,
+        "bakeDevice": "CPU",
+        "alignmentIoU": 0.904,
+        "directProjectionCoverage": 0.5630999999999999
+      },
+      "lods": [
+        {
+          "lod": 0,
+          "triangles": 5000,
+          "bounds": {
+            "min": [
+              -1.2723710536956787,
+              -0.0018820406403392553,
+              -1.244205117225647
+            ],
+            "max": [
+              1.2462093830108643,
+              2.168118715286255,
+              1.2782243490219116
+            ],
+            "size": [
+              2.518580436706543,
+              2.170000755926594,
+              2.5224294662475586
+            ]
+          },
+          "largestComponentTriangleFraction": 1
+        },
+        {
+          "lod": 1,
+          "triangles": 1600,
+          "bounds": {
+            "min": [
+              -1.275732159614563,
+              0.0030138478614389896,
+              -1.2390117645263672
+            ],
+            "max": [
+              1.2324298620224,
+              2.17222261428833,
+              1.257361888885498
+            ],
+            "size": [
+              2.508162021636963,
+              2.169208766426891,
+              2.4963736534118652
+            ]
+          },
+          "largestComponentTriangleFraction": 1
+        },
+        {
+          "lod": 2,
+          "triangles": 500,
+          "bounds": {
+            "min": [
+              -1.219613790512085,
+              -0.03469235077500343,
+              -1.2254467010498047
+            ],
+            "max": [
+              1.1711399555206299,
+              2.1801414489746094,
+              1.25697922706604
+            ],
+            "size": [
+              2.390753746032715,
+              2.214833799749613,
+              2.4824259281158447
+            ]
+          },
+          "largestComponentTriangleFraction": 1
+        }
+      ],
+      "allLodBounds": {
+        "min": [
+          -1.275732159614563,
+          -0.03469235077500343,
+          -1.244205117225647
+        ],
+        "max": [
+          1.2462093830108643,
+          2.1801414489746094,
+          1.2782243490219116
+        ],
+        "size": [
+          2.5219415426254272,
+          2.214833799749613,
+          2.5224294662475586
+        ]
+      },
+      "sourceFrontDirection": [
+        0,
+        0,
+        1
+      ],
+      "qa": {
+        "passes": 38,
+        "warnings": [],
+        "errors": [],
+        "waived": []
+      },
+      "review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Reviewed actual finished five-view sheet, elevated LOD0 and underside LOD0/2 GLB renders, and actual all-LOD wheel/tub ray sections. Thick tub, two solid side wheels, attached axle/chassis and rear support remain coherent; all three LODs are one connected component and retain wheel depth over 1.17m. LOD2 wheels deliberately coarse at 500 triangles; source all-LOD minimum Y -0.0347m must be used for runtime fitting. Automatic QA 38 pass, zero warnings/errors/waivers; unobserved underside uses existing colour diffusion (43.7% vertices), plain but continuous. Static mid-distance prop, not articulated or a final close-up hero asset; no procedural mesh repair.",
+        "time": "2026-10-04 23:41:30"
+      },
+      "manifestEntry": {
+        "url": "assets/props/SM_Env_SlagCart.glb",
+        "kind": "static",
+        "class": "nature_prop",
+        "bind": {
+          "source": "scene",
+          "id": "inferno.slagCart"
+        },
+        "keepGlow": "none",
+        "lodDistance": [
+          0,
+          18,
+          42
+        ],
+        "bounds": {
+          "min": [
+            -1.2723710536956787,
+            -0.0018820406403392553,
+            -1.244205117225647
+          ],
+          "max": [
+            1.2462295293807983,
+            2.168137788772583,
+            1.2782243490219116
+          ]
+        },
+        "version": {
+          "blockout": 1,
+          "concept": 1,
+          "highpoly": 1,
+          "build": 1
+        },
+        "sha256": "72ee5f23fdc085fac363e84012dc533b5aa16adbc95cd8d63133e18b0e670df4",
+        "bytes": 290476,
+        "published": "2026-10-04 23:41:31",
+        "generator": {
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "mode": "multiview",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+        },
+        "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+      },
+      "verifiedLocalFileCount": 24,
+      "rejectedHistory": {},
+      "fullAudit": "art/reviews/authored-scenes-setdressing-20261004/SM_Env_SlagCart-published-audit.json"
+    }
+  ],
+  "addedBytes": 704876,
+  "environmentInventory": {
+    "count": 26,
+    "bytes": 5370136
+  },
+  "changedExistingAssets": [],
+  "queue": {
+    "CheckedAt": "2026-10-04T23:41:58.3802538+08:00",
+    "Running": 0,
+    "Pending": 0,
+    "BlenderProcesses": 0
+  },
+  "verification": {
+    "command": "ART_LOCAL_SOURCE_AUDIT=1 node --test tests/setdressing-assets.test.mjs",
+    "passed": 6,
+    "failed": 0
+  },
+  "limitations": [
+    "Static mid-distance environment props; no moving-part rigs or independent collision changes in these assets.",
+    "AI visual approval, not final user acceptance.",
+    "Plain diffusion-filled inside/underside colours remain in areas not visible in four concept views; UV/projection warnings are preserved.",
+    "No scene FPS or whole-map completeness claim."
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "cutoff": "2026-10-04T15:50:54.952Z",
+  "basis": "First final stable performance sample after source freeze and all-plan verification",
+  "retainedEarlier": [
+    {
+      "level": "error",
+      "message": "[StageDirector] arena build failed Error: desert-2/well: no safe story alcove\n    at assembleStory (http://localhost:5259/src/world/AuthoredSceneLayout.ts?t=1791127531552:1556:23)\n    at buildAuthoredSceneLayout (http://localhost:5259/src/world/AuthoredSceneLayout.ts?t=1791127531552:1414:3)\n    at new AuthoredSceneView (http://localhost:5259/src/world/AuthoredSceneView.ts?t=1791127531552:251:14)\n    at new ArenaView (http://localhost:5259/src/world/ArenaBuilder.ts?t=1791127531552:87:26)\n    at StageDirector.load (http://localhost:5259/src/world/StageDirector.ts?t=1791127531552:217:16)\n    at Game.loadStage (http://localhost:5259/src/core/Game.ts?t=1791127531552:370:13)\n    at http://localhost:5259/src/core/Game.ts?t=1791127531552:354:9",
+      "timestamp": "2026-10-04T15:25:35.841Z",
+      "url": "http://localhost:5259/@vite/client"
+    }
+  ],
+  "final": [],
+  "note": "Earlier retained arena error was emitted during in-progress desert-2 placement; all fifteen finalized art layouts subsequently passed."
+}

@@ -21,6 +21,14 @@ import type { ThemeStyle } from './Themes';
 import { themeStyle } from './Themes';
 import { SceneDressing } from './SceneDressing';
 import { sceneFlameMaterial } from './SceneFlame';
+import { SceneBackdrop } from './SceneBackdrop';
+import { AdventureTerrain } from './AdventureTerrain';
+import { bakeAdventureRoadMask } from './AdventureRoadMask';
+import { ShadowCadence } from './ShadowCadence';
+import { SceneArchitecture } from './SceneArchitecture';
+import { WhiteboxView } from './WhiteboxView';
+import { AuthoredSceneView } from './AuthoredSceneView';
+import { showsAuthoredArt } from './WhiteboxMode';
 
 type Rand = () => number;
 
@@ -69,16 +77,33 @@ export class ArenaView {
   private readonly flameSpots: FlameSpot[] = [];
   private flameOuter: THREE.InstancedMesh | null = null;
   private floorMat: THREE.MeshStandardMaterial | null = null;
-  private readonly sky: SkyDome;
-  private readonly particles: Particles;
+  private sunShadow: THREE.DirectionalLightShadow | null = null;
+  private readonly shadowCadence = new ShadowCadence();
+  private readonly sky: SkyDome | null = null;
+  private readonly particles: Particles | null = null;
   private readonly st: ThemeStyle;
-  private readonly dressing: SceneDressing;
+  private readonly dressing: SceneDressing | null = null;
+  private readonly architecture: SceneArchitecture | null = null;
+  private readonly authoredScene: AuthoredSceneView | null = null;
   private disposed = false;
+
+  get artInspectionViews() { return this.authoredScene?.art.inspectionViews ?? []; }
+  get artBrief() { return this.authoredScene?.art.identity ?? null; }
 
   constructor(private readonly ctx: GameContext, private readonly L: LevelLayout, private readonly theme: ThemeDef, rand: Rand) {
     this.group.name = 'arena';
     const st = themeStyle(L.theme);
     this.st = st;
+    if (L.whitebox) {
+      if (showsAuthoredArt()) {
+        this.authoredScene = new AuthoredSceneView(ctx, L, theme, rand);
+        this.group.add(this.authoredScene.group); this.disposables.push(this.authoredScene);
+      } else {
+        const whitebox = new WhiteboxView(ctx, L);
+        this.group.add(whitebox.group); this.disposables.push(whitebox);
+      }
+      return;
+    }
     const center = new THREE.Vector3(L.center.x, L.floorY, L.center.z);
 
     // ── 合批几何 ──
@@ -88,8 +113,16 @@ export class ArenaView {
     this.dressing = new SceneDressing(ctx, L, st, rand, this.flameSpots);
     this.group.add(this.dressing.group);
     this.disposables.push(this.dressing);
+    this.architecture = new SceneArchitecture(ctx, L);
+    this.group.add(this.architecture.group); this.disposables.push(this.architecture);
+    if (L.adventure) {
+      const terrain = new AdventureTerrain(ctx, L);
+      this.group.add(terrain.group); this.disposables.push(terrain);
+    }
     drawProps(batch, L, st, rand, this.flameSpots, this.dressing.replaced);
-    drawFarRing(batch, L, theme, st, rand);
+    const backdrop = new SceneBackdrop(ctx, L, rand);
+    this.group.add(backdrop.group); this.disposables.push(backdrop);
+    if (!backdrop.ready) drawFarRing(batch, L, theme, st, rand);
     for (const mesh of batch.build(mats)) {
       this.group.add(mesh);
       this.disposables.push(mesh.geometry);
@@ -133,8 +166,8 @@ export class ArenaView {
       far.customProgramCacheKey = () => 'desert-backdrop-fog-v1';
     }
     const mats: Record<MatKey, THREE.Material> = {
-      stone: std({ map: stoneTex, bumpMap: stoneRelief.bump, bumpScale: 0.055, roughnessMap: stoneRelief.roughness, roughness: 0.96 }),
-      rough: std({ roughness: 0.95 }),
+      stone: std({ map: stoneTex, bumpMap: stoneRelief.bump, bumpScale: 0.012, roughnessMap: stoneRelief.roughness, roughness: 0.96 }),
+      rough: std({ roughness: 0.95, map: this.L.adventure ? stoneTex : null }),
       wood: std({ map: woodTex, roughness: 0.85 }),
       lacquer: std({ roughness: 0.42, metalness: 0.05 }),
       metal: std({ roughness: 0.38, metalness: 0.45 }),
@@ -143,6 +176,27 @@ export class ArenaView {
       glow: new THREE.MeshBasicMaterial({ vertexColors: true, toneMapped: false }),
       far,
     };
+    if (this.L.adventure) {
+      // The existing lookout's snow cap used an untextured white face. Reuse
+      // the authored surface with one world-space sample and restrained grain;
+      // no additional geometry, texture allocation or draw call is introduced.
+      mats.rough.onBeforeCompile = shader => {
+        shader.vertexShader = `varying vec2 vArchitectureSurfaceUv;\n${shader.vertexShader}`
+          .replace('#include <begin_vertex>', `#include <begin_vertex>
+            vec3 surfaceWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;
+            vec3 surfaceAxis = abs(mat3(modelMatrix) * normal);
+            vArchitectureSurfaceUv = (surfaceAxis.y >= max(surfaceAxis.x, surfaceAxis.z)
+              ? surfaceWorld.xz : surfaceAxis.x > surfaceAxis.z ? surfaceWorld.zy : surfaceWorld.xy) / 2.0;`);
+        shader.fragmentShader = `varying vec2 vArchitectureSurfaceUv;\n${shader.fragmentShader}`
+          .replace('#include <map_fragment>', `
+            #ifdef USE_MAP
+              vec3 surfacePaint = texture2D(map, vArchitectureSurfaceUv).rgb;
+              float surfaceGrain = dot(surfacePaint, vec3(.2126, .7152, .0722));
+              diffuseColor.rgb *= .88 + surfaceGrain * .18;
+            #endif`);
+      };
+      mats.rough.customProgramCacheKey = () => 'adventure-lookout-paint-v1';
+    }
     for (const k of Object.keys(mats) as MatKey[]) this.disposables.push(mats[k]);
     return mats;
   }
@@ -193,7 +247,7 @@ export class ArenaView {
     const mat = new THREE.MeshStandardMaterial({
       map: tex.map,
       bumpMap: tex.bump,
-      bumpScale: L.theme === 'frost' ? 0.022 : 0.045,
+      bumpScale: L.theme === 'frost' ? 0.005 : 0.010,
       roughnessMap: tex.roughness,
       vertexColors: true,
       roughness: 0.95,
@@ -210,6 +264,24 @@ export class ArenaView {
     const heatUniform = Array.from({ length: 8 }, (_, i) => heatSpots[i]
       ? new THREE.Vector3(heatSpots[i].x, heatSpots[i].z, 4.2 + heatSpots[i].s * 1.4)
       : new THREE.Vector3(1e5, 1e5, 1));
+    // Paving is static for the entire stage. Bake the former exact distance
+    // falloff once rather than evaluating every segment for every floor pixel.
+    let roadMask: THREE.DataTexture | null = null;
+    if (L.adventure) {
+      const baked = bakeAdventureRoadMask(L.adventure.paths, L.center, ext);
+      roadMask = new THREE.DataTexture(baked.data, baked.resolution, baked.resolution, THREE.RedFormat);
+      roadMask.name = 'adventure.roadMask';
+      roadMask.colorSpace = THREE.NoColorSpace;
+      roadMask.minFilter = roadMask.magFilter = THREE.LinearFilter;
+      roadMask.generateMipmaps = false;
+      roadMask.needsUpdate = true;
+      this.disposables.push(roadMask);
+    }
+    // THREE.Color(hex) converts sRGB theme colours to linear working space, just
+    // like the existing colour-map sample. Snow stays restrained under the moon.
+    const terrainTint = new THREE.Color(L.theme === 'frost' ? st.snow : st.sand);
+    terrainTint.multiplyScalar(L.theme === 'frost' ? .67 : L.theme === 'desert' ? .86 : 1);
+    const pavingTint = new THREE.Color(st.paving);
     mat.onBeforeCompile = shader => {
       shader.uniforms.surfaceCenter = { value: new THREE.Vector2(L.center.x, L.center.z) };
       shader.uniforms.surfaceHalf = { value: L.half };
@@ -229,8 +301,44 @@ export class ArenaView {
             float vein = 0.72 + 0.28 * sin(surfaceP.x * 0.21 + sin(surfaceP.y * 0.18) * 2.0);
             totalEmissiveRadiance *= clamp(0.10 + rim * 0.32 + heat * 0.82, 0.10, 1.0) * vein;
           #endif`);
+      if (roadMask) {
+        shader.uniforms.adventureRoadMask = { value: roadMask };
+        shader.uniforms.adventureRoadExtent = { value: ext };
+        shader.uniforms.adventureGround = { value: terrainTint };
+        shader.uniforms.adventurePaintedPaving = { value: pavingTint };
+        shader.uniforms.adventureCoverRelief = { value: L.theme === 'frost' ? .08 : L.theme === 'desert' ? .12 : .18 };
+        shader.fragmentShader = `uniform sampler2D adventureRoadMask;\nuniform float adventureRoadExtent;\nuniform vec3 adventureGround;\nuniform vec3 adventurePaintedPaving;\nuniform float adventureCoverRelief;\n${shader.fragmentShader}`
+          .replace('#include <map_fragment>', `#include <map_fragment>
+            vec2 roadUV = (vSurfaceWorld - surfaceCenter) / (2.0 * adventureRoadExtent) + .5;
+            float roadWeight = texture2D(adventureRoadMask, roadUV).r;
+            float adventurePaving = smoothstep(.08, .88, roadWeight);
+            // Keep authored stone visible on worn routes; sand, snow and ash
+            // cover its joints elsewhere instead of merely tinting every slab.
+            float adventureGrain = dot(sampledDiffuseColor.rgb, vec3(.2126, .7152, .0722));
+            vec3 adventureCover = adventureGround * (.91 + adventureGrain * .16);`)
+          .replace('#include <color_fragment>', `#include <color_fragment>
+            // The existing stone sample already has vertex colour. Apply that
+            // broad shading once to the painted colour and ground cover too.
+            vec3 adventurePaint = adventurePaintedPaving;
+            #if defined( USE_COLOR ) || defined( USE_COLOR_ALPHA )
+              adventureCover *= vColor.rgb;
+              adventurePaint *= vColor.rgb;
+            #endif
+            vec3 adventureStone = mix(adventurePaint, diffuseColor.rgb, .4);
+            diffuseColor.rgb = mix(adventureCover, adventureStone, adventurePaving);`)
+          .replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>
+            roughnessFactor = mix(.98, roughnessFactor, adventurePaving);`)
+          .replace('#include <normal_fragment_maps>', `
+            vec3 adventureBaseNormal = normal;
+            #include <normal_fragment_maps>
+            normal = normalize(mix(adventureBaseNormal, normal, mix(adventureCoverRelief, 1.0, adventurePaving)));`)
+          .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
+            #ifdef USE_EMISSIVEMAP
+              totalEmissiveRadiance *= mix(.16, 1.0, adventurePaving);
+            #endif`);
+      }
     };
-    mat.customProgramCacheKey = () => 'scene-paving-v1';
+    mat.customProgramCacheKey = () => L.adventure ? 'adventure-ground-mask-v5' : 'scene-paving-v1';
     this.disposables.push(mat);
     const mesh = new THREE.Mesh(geo, mat);
     mesh.name = 'floor';
@@ -340,6 +448,10 @@ export class ArenaView {
     const quality = ctx.settings.quality;
     if (quality !== 'low') {
       sun.castShadow = true;
+      // The sun and scenery are stationary. Reuse the map between updates;
+      // animated enemies and loot still refresh at 30 Hz at full resolution.
+      sun.shadow.autoUpdate = false; sun.shadow.needsUpdate = true;
+      this.sunShadow = sun.shadow;
       const size = quality === 'high' ? 2048 : 1024;
       sun.shadow.mapSize.set(size, size);
       sun.shadow.bias = -0.0004;
@@ -396,7 +508,10 @@ export class ArenaView {
 
   update(_dt: number, t: number): void {
     if (this.disposed) return;
-    this.dressing.update(t);
+    this.authoredScene?.update(_dt, t);
+    if (this.sunShadow && this.shadowCadence.advance(_dt, this.ctx.world.version)) this.sunShadow.needsUpdate = true;
+    this.dressing?.update(t);
+    this.architecture?.update(this.ctx.camera);
     for (const l of this.lamps) {
       const f = 0.1 * Math.sin(t * 9.3 + l.phase) + 0.06 * Math.sin(t * 23.1 + l.phase * 2.3) + 0.04 * Math.sin(t * 3.7 + l.phase);
       l.light.intensity = l.base * (1 + f * l.flicker);
@@ -409,9 +524,9 @@ export class ArenaView {
     if (this.floorMat && this.st.floorGlow > 0) {
       this.floorMat.emissiveIntensity = this.st.floorGlow * (0.92 + 0.07 * Math.sin(t * 1.1) + 0.03 * Math.sin(t * 3.1));
     }
-    this.sky.update(t);
+    this.sky?.update(t);
     const canvas = this.ctx.renderer.domElement;
-    this.particles.update(t, this.ctx.camera, canvas.height || 1080);
+    this.particles?.update(t, this.ctx.camera, canvas.height || 1080);
   }
 
   dispose(): void {

@@ -1,0 +1,140 @@
+{
+  "steps": {
+    "导入清理": 3.4,
+    "对齐": 0.8,
+    "低模与 UV": 22.7,
+    "投影着色": 64.5,
+    "烘焙": 8.6,
+    "LOD": 0.0,
+    "导出": 0.9
+  },
+  "highpoly": {
+    "faces_raw": 905964,
+    "faces": 966884,
+    "verts": 966886,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00355
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.873,
+    "iou_per_view": {
+      "front": 0.963,
+      "left": 0.742,
+      "back": 0.954,
+      "right": 0.789
+    },
+    "height_m": 2.8815,
+    "blockout_height_m": 3.0
+  },
+  "uv": {
+    "smart_islands": 256,
+    "charts": 36,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.1512,
+    "density_merged": 0.1582
+  },
+  "projection": {
+    "uncovered_ratio": 0.3287
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Env_DesertSandstone_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Env_DesertSandstone_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Env_DesertSandstone_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Env_DesertSandstone_LOD0",
+      "tris": 5000,
+      "verts": 2502,
+      "uv_min": [
+        0.00217781332321465,
+        0.002437629969790578
+      ],
+      "uv_max": [
+        0.9918059706687927,
+        0.9978720545768738
+      ],
+      "uv_utilization": 0.675,
+      "bbox_min": [
+        -1.7097,
+        -1.4078,
+        0.0006
+      ],
+      "bbox_max": [
+        1.6672,
+        1.1366,
+        2.8829
+      ]
+    },
+    {
+      "name": "SM_Env_DesertSandstone_LOD1",
+      "tris": 1600,
+      "verts": 802,
+      "uv_min": [
+        0.0036586299538612366,
+        0.0027671512216329575
+      ],
+      "uv_max": [
+        0.9918059706687927,
+        0.9978720545768738
+      ],
+      "uv_utilization": 0.644,
+      "bbox_min": [
+        -1.7142,
+        -1.4058,
+        -0.0016
+      ],
+      "bbox_max": [
+        1.6578,
+        1.1281,
+        2.8797
+      ]
+    },
+    {
+      "name": "SM_Env_DesertSandstone_LOD2",
+      "tris": 500,
+      "verts": 252,
+      "uv_min": [
+        0.004764791578054428,
+        0.0033289892598986626
+      ],
+      "uv_max": [
+        0.9857168197631836,
+        0.9923079609870911
+      ],
+      "uv_utilization": 0.591,
+      "bbox_min": [
+        -1.729,
+        -1.3843,
+        0.0021
+      ],
+      "bbox_max": [
+        1.6363,
+        1.1577,
+        2.8974
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_DesertSandstone\\04_export\\SM_Env_DesertSandstone_v002.glb",
+    "bytes": 214184
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Env_DesertSandstone\\03_work\\SM_Env_DesertSandstone_v002.blend",
+  "total_seconds": 100.9,
+  "_seconds": 104.7
+}

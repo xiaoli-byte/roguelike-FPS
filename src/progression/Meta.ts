@@ -1,12 +1,14 @@
 import type { GameContext, IMeta, MetaSave, RunSummary, StatKey, TalentDef } from '../core/types';
 import type { Stats } from '../core/Stats';
+import { isWhiteboxMode } from '../world/WhiteboxMode';
 
 /**
  * 局外成长：魂晶、天赋、英雄解锁与生涯统计，存 localStorage。
  * 读写全部 try/catch；存档损坏或版本不符时回退为默认存档。
  */
 
-const STORAGE_KEY = 'gunflame.meta.v1';
+// Whitebox debug controls and boss testing must never award progress to a real save.
+const STORAGE_KEY = isWhiteboxMode() ? 'gunflame.whitebox.meta.v1' : 'gunflame.meta.v1';
 /** 默认解锁的英雄 */
 const DEFAULT_HEROES: readonly string[] = ['fox', 'falcon', 'bear'];
 /** 每级价格（魂晶），下标 = 当前等级 */

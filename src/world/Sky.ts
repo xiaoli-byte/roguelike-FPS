@@ -203,6 +203,7 @@ uniform float uSpeed;
 uniform float uHeight;
 uniform float uBox;
 uniform float uDrift;
+uniform float uWind;
 uniform float uFlicker;
 uniform float uMaxPointSize;
 uniform vec3 uCenter;
@@ -213,8 +214,8 @@ void main() {
   vec3 p = position;
   float sp = uSpeed * (0.6 + aSeed * 0.8);
   p.y = mod(p.y + uTime * sp, uHeight);
-  p.x += sin(uTime * 0.6 + aSeed * 40.0) * uDrift;
-  p.z += cos(uTime * 0.5 + aSeed * 23.0) * uDrift;
+  p.x += uTime * uWind + sin(uTime * 0.6 + aSeed * 40.0) * uDrift;
+  p.z += uTime * uWind * 0.35 + cos(uTime * 0.5 + aSeed * 23.0) * uDrift;
   // 以相机为中心、水平环绕的粒子盒
   vec2 rel = mod(p.xz - uCenter.xz + uBox * 0.5, uBox) - uBox * 0.5;
   vec3 wp = vec3(uCenter.x + rel.x, p.y, uCenter.z + rel.y);
@@ -275,8 +276,10 @@ export class Particles {
         uHeight: { value: height },
         uBox: { value: box },
         uDrift: { value: p.kind === 'snow' ? 0.9 : p.kind === 'ember' ? 0.6 : 1.4 },
+        // Dust crosses the view quietly; it should not look like stationary stars.
+        uWind: { value: p.kind === 'dust' ? 0.32 : 0 },
         uFlicker: { value: p.kind === 'ember' ? 1 : 0 },
-        uMaxPointSize: { value: p.kind === 'snow' ? 12 : 9 },
+        uMaxPointSize: { value: p.kind === 'snow' ? 12 : p.kind === 'dust' ? 3 : 6 },
         uCenter: { value: new THREE.Vector3() },
         uColor: { value: new THREE.Color(p.color) },
         uOpacity: { value: p.opacity },

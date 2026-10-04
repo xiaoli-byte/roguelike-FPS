@@ -1,0 +1,512 @@
+{
+  "created": "2026-10-04T14:44:11.354Z",
+  "id": "SM_Env_CargoHoist",
+  "sourceOnlyLocalHunyuan": true,
+  "artisticMeshCreatedProcedurally": false,
+  "publishedGLB": "public/assets/props/SM_Env_CargoHoist.glb",
+  "manifestEntry": {
+    "url": "assets/props/SM_Env_CargoHoist.glb",
+    "kind": "static",
+    "class": "nature_prop",
+    "bind": {
+      "source": "scene",
+      "id": "shared.cargoHoist"
+    },
+    "keepGlow": "none",
+    "lodDistance": [
+      0,
+      18,
+      42
+    ],
+    "bounds": {
+      "min": [
+        -1.8054168224334717,
+        0,
+        -1.2667417526245117
+      ],
+      "max": [
+        1.8063292503356934,
+        3.405109405517578,
+        1.2618552446365356
+      ]
+    },
+    "version": {
+      "blockout": 1,
+      "concept": 2,
+      "highpoly": 1,
+      "build": 2
+    },
+    "sha256": "5da09bcfda9847d4ec5d2ff16960bb7a886d7ce167fb1c88d79346702bae3326",
+    "bytes": 254532,
+    "published": "2026-10-04 22:44:10",
+    "generator": {
+      "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+      "mode": "multiview",
+      "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+    },
+    "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+  },
+  "publishedHashVerified": true,
+  "sourcePixelPolicy": "Native built-in ImageGen output copied unchanged; registration v002 keys only the white background and separates four connected silhouettes, preserving source RGB and using uniform scaling. Failed equal-column v001 kept.",
+  "conceptSource": "art/source/props/SM_Env_CargoHoist/01_concept/CN_SM_Env_CargoHoist_v002_source.png",
+  "exactPrompt": "art/source/props/SM_Env_CargoHoist/01_concept/CN_SM_Env_CargoHoist_v002_prompt.txt",
+  "conceptSheet": "art/source/props/SM_Env_CargoHoist/01_concept/CN_SM_Env_CargoHoist_v002_sheet.png",
+  "originalPromptRegistry": "art/pipeline/cargo_hoist_concept_v001.json",
+  "workflow": "art/source/props/SM_Env_CargoHoist/02_highpoly/HP_SM_Env_CargoHoist_v001_graph.json",
+  "hunyuan": {
+    "version": 1,
+    "created": "2026-10-04 22:38:47",
+    "files": {
+      "HP_SM_Env_CargoHoist_v001_input_front.png": {
+        "path": "02_highpoly/HP_SM_Env_CargoHoist_v001_input_front.png",
+        "sha256": "480ed312f90322cdb4442cc578cb0e9de28d281e363178a4500c53ee5c73daee"
+      },
+      "HP_SM_Env_CargoHoist_v001_input_left.png": {
+        "path": "02_highpoly/HP_SM_Env_CargoHoist_v001_input_left.png",
+        "sha256": "84b90e82c9ffd71b06762dbd7c26b695d345d43744a27ac26b2ae63f8f283cdc"
+      },
+      "HP_SM_Env_CargoHoist_v001_input_back.png": {
+        "path": "02_highpoly/HP_SM_Env_CargoHoist_v001_input_back.png",
+        "sha256": "a86079375fda68750ca9ce9b23404254c03afb759676e22e888f1bd4baa8e6c0"
+      },
+      "HP_SM_Env_CargoHoist_v001_input_right.png": {
+        "path": "02_highpoly/HP_SM_Env_CargoHoist_v001_input_right.png",
+        "sha256": "d0c8ccc5c4c4ed730c6fe663547e446a3775205fc30acce26f2e83c7edefde4d"
+      },
+      "HP_SM_Env_CargoHoist_v001.glb": {
+        "path": "02_highpoly/HP_SM_Env_CargoHoist_v001.glb",
+        "sha256": "7f0ed1e4ffd8cf793ca52c2b183c0f75fc99abb120e562fa8de258c48b08c415"
+      },
+      "HP_SM_Env_CargoHoist_v001_graph.json": {
+        "path": "02_highpoly/HP_SM_Env_CargoHoist_v001_graph.json",
+        "sha256": "2b4ae047e416329b4e838b78d33d43aeee3eca57b28331a075cbc046c1c625b1"
+      }
+    },
+    "from_concept": 2,
+    "mode": "multiview",
+    "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+    "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+    "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+    "seed": 202610104,
+    "steps": 50,
+    "cfg": 5,
+    "shift": 1,
+    "octree_resolution": 384,
+    "num_chunks": 32000,
+    "threshold": 0.6,
+    "input_transform": {
+      "box": [
+        -5,
+        251,
+        517,
+        773
+      ],
+      "scale": 1.9616858237547892
+    },
+    "seconds": 179,
+    "comfyui": "0.30.0",
+    "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+    "size_mb": 24.6
+  },
+  "build": {
+    "version": 2,
+    "created": "2026-10-04 22:43:34",
+    "files": {
+      "SM_Env_CargoHoist_v002.blend": {
+        "path": "03_work/SM_Env_CargoHoist_v002.blend",
+        "sha256": "5785b10fe3773b579f58b48cd143eba9322f59bb9d7a4dca594e9d52283c5a16"
+      },
+      "SM_Env_CargoHoist_v002.glb": {
+        "path": "04_export/SM_Env_CargoHoist_v002.glb",
+        "sha256": "5da09bcfda9847d4ec5d2ff16960bb7a886d7ce167fb1c88d79346702bae3326"
+      },
+      "SM_Env_CargoHoist_v002_metrics.json": {
+        "path": "03_work/SM_Env_CargoHoist_v002_metrics.json",
+        "sha256": "d4897738a8e5a47683353169bdd07cc05418650e0dea380abd0fcfeac95963a2"
+      },
+      "T_Env_CargoHoist_BC.png": {
+        "path": "03_work/textures_v002/T_Env_CargoHoist_BC.png",
+        "sha256": "f0c0870bd0c46e43235e8b5faff5ce3d358d1e53e14f38c1b09f7ac560d5a45f"
+      },
+      "T_Env_CargoHoist_N.png": {
+        "path": "03_work/textures_v002/T_Env_CargoHoist_N.png",
+        "sha256": "33954403739d5f147bf242b18aa2b89657ea203ae8d2a2e425348201d2ed2f2e"
+      },
+      "T_Env_CargoHoist_ORM.png": {
+        "path": "03_work/textures_v002/T_Env_CargoHoist_ORM.png",
+        "sha256": "de3a99b823638f09e2bc97d07fb13c96a840a96ec0e27963db114706bc7689eb"
+      }
+    },
+    "from": {
+      "blockout": 1,
+      "concept": 2,
+      "highpoly": 1,
+      "matid": null,
+      "emid": null
+    },
+    "technical_parent_build": 1,
+    "pivot_normalization": {
+      "source_build": 1,
+      "translation_blender_xyz": [
+        -0.11165422201156616,
+        0.04960620403289795,
+        -0.000006826220214861678
+      ],
+      "operation": "identical rigid translation for all LOD vertices",
+      "topology_unchanged": true,
+      "uv_unchanged": true,
+      "shape_source_unchanged": true
+    },
+    "align_iou": 0.81,
+    "uncovered_ratio": 0.5151,
+    "lods": [
+      {
+        "tris": 5000,
+        "verts": 2488
+      },
+      {
+        "tris": 1600,
+        "verts": 788
+      },
+      {
+        "tris": 500,
+        "verts": 238
+      }
+    ],
+    "export_kb": 248.6,
+    "seconds": 4.4,
+    "bake_device": "CPU",
+    "quality_status": "passed",
+    "quality_errors": []
+  },
+  "automaticQA": {
+    "version": 2,
+    "created": "2026-10-04 22:43:35",
+    "files": {
+      "SM_Env_CargoHoist_v002_validation_v002.json": {
+        "path": "05_review/SM_Env_CargoHoist_v002_validation_v002.json",
+        "sha256": "60b1b5a53f76811d51bec91ac8f9a79cde7d16cadc00de9fe22f984eefafebad"
+      }
+    },
+    "from_build": 2,
+    "errors": 0,
+    "warnings": 1,
+    "waived": [],
+    "passed": true
+  },
+  "review": {
+    "version": 2,
+    "created": "2026-10-04 22:43:44",
+    "files": {
+      "SM_Env_CargoHoist_v002_review_v002.png": {
+        "path": "05_review/SM_Env_CargoHoist_v002_review_v002.png",
+        "sha256": "6aa7f092d741a32fa1e4f4e9a3fda9cf5b108d19954a792b642f50f9b21bc1d0"
+      }
+    },
+    "from_build": 2,
+    "deformation": {},
+    "auto_flags": [],
+    "review": {
+      "verdict": "approved",
+      "by": "Codex AI visual review",
+      "note": "Inspected final build v002 five views, all LOD topology views and PBR sheets. Connected stout timber frame, thick reel, crank wheel/handle and braced base remain readable; no floating fragments or collapsed thin facade. Build v002 only rigidly recenters and grounds every LOD. 37 automatic checks pass, zero errors or waivers. One nonblocking projection warning is retained: direct four-view coverage 48.5%, remaining inner/underside surfaces use existing mesh colour diffusion and have simpler detail. Visual colour continuity is acceptable for static environment dressing at gameplay distance; this is AI asset review, not user acceptance.",
+      "time": "2026-10-04 22:44:10"
+    }
+  },
+  "allLodBounds": {
+    "min": [
+      -1.8089494705200195,
+      0,
+      -1.2709277868270874
+    ],
+    "max": [
+      1.8089494705200195,
+      3.4051780700683594,
+      1.2709490060806274
+    ],
+    "size": [
+      3.617898941040039,
+      3.4051780700683594,
+      2.541876792907715
+    ]
+  },
+  "lods": [
+    {
+      "lod": 0,
+      "triangles": 5000,
+      "vertices": 3302,
+      "min": [
+        -1.8054168224334717,
+        0,
+        -1.2667417526245117
+      ],
+      "max": [
+        1.8063292503356934,
+        3.4051780700683594,
+        1.261899471282959
+      ],
+      "size": [
+        3.611746072769165,
+        3.4051780700683594,
+        2.5286412239074707
+      ],
+      "reelDepthSamples": [
+        {
+          "fraction": 0.44,
+          "y": 1.498278350830078,
+          "hitCount": 2,
+          "thickness": 1.1568003044741961
+        },
+        {
+          "fraction": 0.5,
+          "y": 1.7025890350341797,
+          "hitCount": 2,
+          "thickness": 1.2088025918687393
+        },
+        {
+          "fraction": 0.56,
+          "y": 1.9068997192382815,
+          "hitCount": 2,
+          "thickness": 1.1314172261387445
+        }
+      ]
+    },
+    {
+      "lod": 1,
+      "triangles": 1600,
+      "vertices": 1317,
+      "min": [
+        -1.8089494705200195,
+        0.0047591435723006725,
+        -1.2709277868270874
+      ],
+      "max": [
+        1.8078272342681885,
+        3.3963565826416016,
+        1.2709490060806274
+      ],
+      "size": [
+        3.616776704788208,
+        3.391597439069301,
+        2.541876792907715
+      ],
+      "reelDepthSamples": [
+        {
+          "fraction": 0.44,
+          "y": 1.497062016762793,
+          "hitCount": 2,
+          "thickness": 1.1390879945055516
+        },
+        {
+          "fraction": 0.5,
+          "y": 1.7005578631069511,
+          "hitCount": 2,
+          "thickness": 1.2054390889305457
+        },
+        {
+          "fraction": 0.56,
+          "y": 1.9040537094511094,
+          "hitCount": 2,
+          "thickness": 1.1087378048901444
+        }
+      ]
+    },
+    {
+      "lod": 2,
+      "triangles": 500,
+      "vertices": 589,
+      "min": [
+        -1.7582416534423828,
+        0.01631367951631546,
+        -1.245008111000061
+      ],
+      "max": [
+        1.8089494705200195,
+        3.3964684009552,
+        1.25570547580719
+      ],
+      "size": [
+        3.5671911239624023,
+        3.3801547214388847,
+        2.500713586807251
+      ],
+      "reelDepthSamples": [
+        {
+          "fraction": 0.44,
+          "y": 1.5035817569494248,
+          "hitCount": 2,
+          "thickness": 1.1118430491184979
+        },
+        {
+          "fraction": 0.5,
+          "y": 1.7063910402357578,
+          "hitCount": 2,
+          "thickness": 1.1493083771764816
+        },
+        {
+          "fraction": 0.56,
+          "y": 1.9092003235220911,
+          "hitCount": 2,
+          "thickness": 1.0416406554922792
+        }
+      ]
+    }
+  ],
+  "checkedLocalFiles": [
+    {
+      "stage": "blockout",
+      "path": "art/source/props/SM_Env_CargoHoist/00_blockout/BO_SM_Env_CargoHoist_v001.json",
+      "sha256": "8149a8c2a32f112c23d91888df4b98c644509151cab1aec150df8843b286b5d0",
+      "verified": true
+    },
+    {
+      "stage": "blockout",
+      "path": "art/source/props/SM_Env_CargoHoist/00_blockout/BO_SM_Env_CargoHoist_v001_views.json",
+      "sha256": "37c13193ff5391171cf0647bd39eeec48568e0c576818f70c65f4ba1f854d664",
+      "verified": true
+    },
+    {
+      "stage": "concept",
+      "path": "art/source/props/SM_Env_CargoHoist/01_concept/CN_SM_Env_CargoHoist_v002_source.png",
+      "sha256": "af09be6f12d64039640cb41addb4146b848cb37c7359b09fd6bc3e0978b4626e",
+      "verified": true
+    },
+    {
+      "stage": "concept",
+      "path": "art/source/props/SM_Env_CargoHoist/01_concept/CN_SM_Env_CargoHoist_v002_front.png",
+      "sha256": "211dfeeb1ff69abd7091374f67390d2ec1e866f178aa7f5f97cdd04ba645b818",
+      "verified": true
+    },
+    {
+      "stage": "concept",
+      "path": "art/source/props/SM_Env_CargoHoist/01_concept/CN_SM_Env_CargoHoist_v002_left.png",
+      "sha256": "746686d69a0797be662133de05ecc69c1c547cbe8b169c4bd02508ecf02cf5d3",
+      "verified": true
+    },
+    {
+      "stage": "concept",
+      "path": "art/source/props/SM_Env_CargoHoist/01_concept/CN_SM_Env_CargoHoist_v002_back.png",
+      "sha256": "6da3e0ca5984cac3b2388ec1306484dbf927faf943c1f649043638c1480c229e",
+      "verified": true
+    },
+    {
+      "stage": "concept",
+      "path": "art/source/props/SM_Env_CargoHoist/01_concept/CN_SM_Env_CargoHoist_v002_right.png",
+      "sha256": "bf29786a5f5075dfe5297178e6830dfa5f58b38d3d94075bf30e8623f8c03acc",
+      "verified": true
+    },
+    {
+      "stage": "concept",
+      "path": "art/source/props/SM_Env_CargoHoist/01_concept/CN_SM_Env_CargoHoist_v002_sheet.png",
+      "sha256": "08dbcbd32edf27527e5b75a10ce9506cc3b1f691625e91ba857a63d54d156762",
+      "verified": true
+    },
+    {
+      "stage": "concept",
+      "path": "art/source/props/SM_Env_CargoHoist/01_concept/CN_SM_Env_CargoHoist_v002_prompt.txt",
+      "sha256": "5caa45ac1b02b5828f1645ce0a5d17e13bda05e6c80e095a7ed16add5c8f93c3",
+      "verified": true
+    },
+    {
+      "stage": "concept",
+      "path": "art/source/props/SM_Env_CargoHoist/01_concept/CN_SM_Env_CargoHoist_v002_registration.json",
+      "sha256": "02539d242214f20673fca73f9388cfb185780cc84692cd147c3b9416b81a8667",
+      "verified": true
+    },
+    {
+      "stage": "highpoly",
+      "path": "art/source/props/SM_Env_CargoHoist/02_highpoly/HP_SM_Env_CargoHoist_v001_input_front.png",
+      "sha256": "480ed312f90322cdb4442cc578cb0e9de28d281e363178a4500c53ee5c73daee",
+      "verified": true
+    },
+    {
+      "stage": "highpoly",
+      "path": "art/source/props/SM_Env_CargoHoist/02_highpoly/HP_SM_Env_CargoHoist_v001_input_left.png",
+      "sha256": "84b90e82c9ffd71b06762dbd7c26b695d345d43744a27ac26b2ae63f8f283cdc",
+      "verified": true
+    },
+    {
+      "stage": "highpoly",
+      "path": "art/source/props/SM_Env_CargoHoist/02_highpoly/HP_SM_Env_CargoHoist_v001_input_back.png",
+      "sha256": "a86079375fda68750ca9ce9b23404254c03afb759676e22e888f1bd4baa8e6c0",
+      "verified": true
+    },
+    {
+      "stage": "highpoly",
+      "path": "art/source/props/SM_Env_CargoHoist/02_highpoly/HP_SM_Env_CargoHoist_v001_input_right.png",
+      "sha256": "d0c8ccc5c4c4ed730c6fe663547e446a3775205fc30acce26f2e83c7edefde4d",
+      "verified": true
+    },
+    {
+      "stage": "highpoly",
+      "path": "art/source/props/SM_Env_CargoHoist/02_highpoly/HP_SM_Env_CargoHoist_v001.glb",
+      "sha256": "7f0ed1e4ffd8cf793ca52c2b183c0f75fc99abb120e562fa8de258c48b08c415",
+      "verified": true
+    },
+    {
+      "stage": "highpoly",
+      "path": "art/source/props/SM_Env_CargoHoist/02_highpoly/HP_SM_Env_CargoHoist_v001_graph.json",
+      "sha256": "2b4ae047e416329b4e838b78d33d43aeee3eca57b28331a075cbc046c1c625b1",
+      "verified": true
+    },
+    {
+      "stage": "build",
+      "path": "art/source/props/SM_Env_CargoHoist/03_work/SM_Env_CargoHoist_v002.blend",
+      "sha256": "5785b10fe3773b579f58b48cd143eba9322f59bb9d7a4dca594e9d52283c5a16",
+      "verified": true
+    },
+    {
+      "stage": "build",
+      "path": "art/source/props/SM_Env_CargoHoist/04_export/SM_Env_CargoHoist_v002.glb",
+      "sha256": "5da09bcfda9847d4ec5d2ff16960bb7a886d7ce167fb1c88d79346702bae3326",
+      "verified": true
+    },
+    {
+      "stage": "build",
+      "path": "art/source/props/SM_Env_CargoHoist/03_work/SM_Env_CargoHoist_v002_metrics.json",
+      "sha256": "d4897738a8e5a47683353169bdd07cc05418650e0dea380abd0fcfeac95963a2",
+      "verified": true
+    },
+    {
+      "stage": "build",
+      "path": "art/source/props/SM_Env_CargoHoist/03_work/textures_v002/T_Env_CargoHoist_BC.png",
+      "sha256": "f0c0870bd0c46e43235e8b5faff5ce3d358d1e53e14f38c1b09f7ac560d5a45f",
+      "verified": true
+    },
+    {
+      "stage": "build",
+      "path": "art/source/props/SM_Env_CargoHoist/03_work/textures_v002/T_Env_CargoHoist_N.png",
+      "sha256": "33954403739d5f147bf242b18aa2b89657ea203ae8d2a2e425348201d2ed2f2e",
+      "verified": true
+    },
+    {
+      "stage": "build",
+      "path": "art/source/props/SM_Env_CargoHoist/03_work/textures_v002/T_Env_CargoHoist_ORM.png",
+      "sha256": "de3a99b823638f09e2bc97d07fb13c96a840a96ec0e27963db114706bc7689eb",
+      "verified": true
+    },
+    {
+      "stage": "validate",
+      "path": "art/source/props/SM_Env_CargoHoist/05_review/SM_Env_CargoHoist_v002_validation_v002.json",
+      "sha256": "60b1b5a53f76811d51bec91ac8f9a79cde7d16cadc00de9fe22f984eefafebad",
+      "verified": true
+    },
+    {
+      "stage": "review",
+      "path": "art/source/props/SM_Env_CargoHoist/05_review/SM_Env_CargoHoist_v002_review_v002.png",
+      "sha256": "6aa7f092d741a32fa1e4f4e9a3fda9cf5b108d19954a792b642f50f9b21bc1d0",
+      "verified": true
+    }
+  ],
+  "changedExistingAssets": [],
+  "renderingContract": {
+    "uniformScaleOnly": true,
+    "groundDatum": "Use actual all-LOD minimum Y and center X/Z through architectureMatrix.",
+    "purpose": "Static set dressing beside approved routes; no collision or navigation authored in the mesh.",
+    "movingParts": false
+  },
+  "limitations": [
+    "Automatic and Codex AI asset review are not user acceptance.",
+    "No scene FPS inference is made from asset complexity or generation timings."
+  ]
+}

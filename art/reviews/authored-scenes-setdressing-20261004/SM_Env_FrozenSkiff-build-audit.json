@@ -1,0 +1,1147 @@
+{
+  "created": "2026-10-04T15:27:17.774Z",
+  "id": "SM_Env_FrozenSkiff",
+  "published": false,
+  "geometryFile": "art/source/props/SM_Env_FrozenSkiff/04_export/SM_Env_FrozenSkiff_v001.glb",
+  "sourceOnlyLocalHunyuan": true,
+  "artisticMeshCreatedProcedurally": false,
+  "sourceStages": {
+    "blockout": {
+      "version": 1,
+      "created": "2026-10-04 23:12:58",
+      "files": {
+        "BO_SM_Env_FrozenSkiff_v001.json": {
+          "path": "00_blockout/BO_SM_Env_FrozenSkiff_v001.json",
+          "sha256": "fd54141f2d416fefb6a64b2106694468251c5049778868b3e33af333845324f0"
+        },
+        "BO_SM_Env_FrozenSkiff_v001_views.json": {
+          "path": "00_blockout/BO_SM_Env_FrozenSkiff_v001_views.json",
+          "sha256": "177020939c20e107f190ee6306ca2ce65e2365be024f9601d76498ea859a7b40"
+        }
+      },
+      "source": {
+        "kind": "scene",
+        "id": "frost.frozenSkiff"
+      },
+      "joints": 0,
+      "bounds": {
+        "min": [
+          -1.15,
+          0,
+          -2.4
+        ],
+        "max": [
+          1.15,
+          1.7,
+          2.4
+        ]
+      },
+      "reference_mode": "bounds_only",
+      "geometry_created": false
+    },
+    "concept": {
+      "version": 2,
+      "created": "2026-10-04 23:14:29",
+      "files": {
+        "CN_SM_Env_FrozenSkiff_v002_source.png": {
+          "path": "01_concept/CN_SM_Env_FrozenSkiff_v002_source.png",
+          "sha256": "357ba27f70980b8b2a0c5cf377376923bd338738a3431eac562b74f8ed8dc7eb"
+        },
+        "CN_SM_Env_FrozenSkiff_v002_front.png": {
+          "path": "01_concept/CN_SM_Env_FrozenSkiff_v002_front.png",
+          "sha256": "40c3bbba60b6a64756ef7b5096349d1645bc87df255a72fd4dfb9ee9763572a5"
+        },
+        "CN_SM_Env_FrozenSkiff_v002_left.png": {
+          "path": "01_concept/CN_SM_Env_FrozenSkiff_v002_left.png",
+          "sha256": "71e9619b016f637b0d3c2d1c444f9c5ddd5457164a6722e93778702697c1dd2e"
+        },
+        "CN_SM_Env_FrozenSkiff_v002_back.png": {
+          "path": "01_concept/CN_SM_Env_FrozenSkiff_v002_back.png",
+          "sha256": "4f9189e0d4a44ceed501bcee9a82d06429691af500632d641aa8f9f86f1190da"
+        },
+        "CN_SM_Env_FrozenSkiff_v002_right.png": {
+          "path": "01_concept/CN_SM_Env_FrozenSkiff_v002_right.png",
+          "sha256": "348e21ea76743f41ff96fd7f37eac2f401172d777cb28a7b5f5df707d81354f2"
+        },
+        "CN_SM_Env_FrozenSkiff_v002_sheet.png": {
+          "path": "01_concept/CN_SM_Env_FrozenSkiff_v002_sheet.png",
+          "sha256": "8702cb4a587a145836a456cdcfda01af52ae5e6b25dd1eaa0c14bdf5ea0cffd4"
+        },
+        "CN_SM_Env_FrozenSkiff_v002_prompt.txt": {
+          "path": "01_concept/CN_SM_Env_FrozenSkiff_v002_prompt.txt",
+          "sha256": "77261c79b8c40e79c48dbf09b99ebb192c061c7e10870c185575dc8162e751d0"
+        },
+        "CN_SM_Env_FrozenSkiff_v002_registration.json": {
+          "path": "01_concept/CN_SM_Env_FrozenSkiff_v002_registration.json",
+          "sha256": "52ffd869ddea4d13f5a1e46705124ca6091f2b0652705b15d79897eed3e117f0"
+        }
+      },
+      "from_blockout": 1,
+      "generator": "Codex built-in image_gen",
+      "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a1072d-363b-7bd3-bcf6-3cc6a159ec4f\\exec-3119a645-26d7-4fae-86ad-8725f8d70363.png",
+      "source_sha256": "357ba27f70980b8b2a0c5cf377376923bd338738a3431eac562b74f8ed8dc7eb",
+      "prompt": "Use case: background-extraction. Edit target: the attached four-view wooden skiff concept sheet.\nRemove only its pure-white background, including white space between the four boats, to make a true transparent alpha background. Preserve every boat pixel, especially the entire pale blue-grey snow caps on the bow rim and cross benches, the thick wooden hull, keel, gunwales, and all four complete silhouettes. Keep the exact FRONT, LEFT, BACK, RIGHT orthographic arrangement, scale, baseline, dimensions, palette, design and composition. Do not redraw or reshape the boat, do not cut away white-looking snow, do not add new parts, text, shadows, or a checkerboard pattern. The hull remains volumetric blue-grey timber, with an open inner recess. Transparent outside the silhouettes only.",
+      "reference_mode": "bounds_only",
+      "highpoly_mode": "multiview",
+      "registration_version": 1,
+      "registration": {
+        "front": {
+          "source_bbox": [
+            19,
+            323,
+            329,
+            566
+          ],
+          "source_component_area": 51926,
+          "source_foreground_coverage": 0.996943801336027,
+          "native_alpha_preserved": true,
+          "scale": 0.6662747403488144,
+          "offset": [
+            152,
+            431
+          ],
+          "size": [
+            207,
+            162
+          ],
+          "physical_height_m": 1.7,
+          "method": "preserved native alpha; four connected components; uniform height and centre"
+        },
+        "left": {
+          "source_bbox": [
+            350,
+            349,
+            869,
+            566
+          ],
+          "source_component_area": 83116,
+          "source_foreground_coverage": 0.996943801336027,
+          "native_alpha_preserved": true,
+          "scale": 0.7461048935703313,
+          "offset": [
+            62,
+            431
+          ],
+          "size": [
+            387,
+            162
+          ],
+          "physical_height_m": 1.7,
+          "method": "preserved native alpha; four connected components; uniform height and centre"
+        },
+        "back": {
+          "source_bbox": [
+            886,
+            345,
+            1192,
+            567
+          ],
+          "source_component_area": 50920,
+          "source_foreground_coverage": 0.996943801336027,
+          "native_alpha_preserved": true,
+          "scale": 0.7293007293007293,
+          "offset": [
+            144,
+            431
+          ],
+          "size": [
+            223,
+            162
+          ],
+          "physical_height_m": 1.7,
+          "method": "preserved native alpha; four connected components; uniform height and centre"
+        },
+        "right": {
+          "source_bbox": [
+            1224,
+            346,
+            1748,
+            569
+          ],
+          "source_component_area": 84461,
+          "source_foreground_coverage": 0.996943801336027,
+          "native_alpha_preserved": true,
+          "scale": 0.7260303224428785,
+          "offset": [
+            66,
+            431
+          ],
+          "size": [
+            380,
+            162
+          ],
+          "physical_height_m": 1.7,
+          "method": "preserved native alpha; four connected components; uniform height and centre"
+        }
+      },
+      "source_history": [
+        {
+          "id": "SM_Env_FrozenSkiff",
+          "prompt": "Use case: stylized-concept. Asset type: one four-view orthographic turnaround sheet for reconstruction with local Hunyuan3D multi-view. Create a wide 2048x1024 image with exactly FOUR isolated views of the SAME complete prop, left to right FRONT / LEFT / BACK / RIGHT, with NO written labels. Pure white background, no ground and no cast shadow. Four evenly spaced columns; each whole object including protrusions must fit inside its own column with white margins, never overlap neighboring views. Align baselines and use exactly the same physical scale and height in all views. True orthographic views, no perspective and no three-quarter view.\nStyle: readable moderate-detail hand-painted fantasy FPS environment at Gunfire Reborn game fidelity. Bold chunky solid silhouette, clean gently chamfered faceted planes, two or three large coherent matte color blocks, soft painted gradients and a few restrained edge-wear accents. Neutral even lighting; no photorealism, dense wood grain, tiny cracks or elaborate miniature carving. No text, icon labels, loose floating parts or thin strings. All parts form one coherent assembled prop. Subject: one short abandoned wooden cargo skiff sitting flat on its intact heavy keel, approximately 2.3 metres across, 4.8 metres long and 1.7 metres from keel to highest gunwale. Front faces the broad blunt bow, back faces the square low stern, left and right show the full hull length. Thick broad blue-grey weathered timber hull planks, a massive rounded gunwale, and two thick connected cross seats visible slightly above the rim. No mast, sail, rigging, rudder pole or oars. The boat is fully volumetric with a deep belly and substantial underside, not a flat cutout. A small broad chipped section in the stern gunwale and two missing upper board corners suggest abandonment, while the entire lower hull and keel remain intact and connected. A few broad pale blue-grey snow patches (clearly darker than the pure-white backdrop) are firmly attached to the bow rim and benches, less than fifteen percent surface coverage; avoid icicles or snow spray. Restrained cold blue-grey wood, warm exposed board edges, dark iron end straps. One complete boat, no lake, shore, rocks or separate debris.",
+          "path": "C:/Users/admin/.codex/generated_images/01a1072d-363b-7bd3-bcf6-3cc6a159ec4f/exec-1de49fdb-9867-4cdc-b5cf-c0a6937d9c62.png",
+          "generator": "Codex built-in image_gen",
+          "workspaceSource": "art/source/props/SM_Env_FrozenSkiff/01_concept/CN_SM_Env_FrozenSkiff_v001_source.png",
+          "role": "edit target / original complete four-view design",
+          "reason": "Preserve bright snow with native alpha instead of white key."
+        }
+      ],
+      "review": {
+        "verdict": "approved",
+        "by": "Codex AI visual review",
+        "note": "Inspected the original and final native-alpha image plus registered v002 sheet. Entire broad snow caps, deep connected hull, thick gunwale, keel and bench tops remain present in all four views. Native alpha is preserved, no white-background key is applied. Original white-source registration v001 rejected and retained. Three-LOD hull and inner recess still require finished-mesh checks.",
+        "time": "2026-10-04 23:15:02"
+      }
+    },
+    "highpoly": {
+      "version": 1,
+      "created": "2026-10-04 23:24:07",
+      "files": {
+        "HP_SM_Env_FrozenSkiff_v001_input_front.png": {
+          "path": "02_highpoly/HP_SM_Env_FrozenSkiff_v001_input_front.png",
+          "sha256": "6a00c81aafdc96841eb60f7cbad282e4398d900d37177c4616f321a567e8f688"
+        },
+        "HP_SM_Env_FrozenSkiff_v001_input_left.png": {
+          "path": "02_highpoly/HP_SM_Env_FrozenSkiff_v001_input_left.png",
+          "sha256": "faf2e248501eb4ddbed45a85b5161e91f34d1dc66f91e41726b94d0389bacb62"
+        },
+        "HP_SM_Env_FrozenSkiff_v001_input_back.png": {
+          "path": "02_highpoly/HP_SM_Env_FrozenSkiff_v001_input_back.png",
+          "sha256": "7d61dab56e81aacc36a1d5b364ec5067d33df954dd3737a69c4bfa1296ded4fe"
+        },
+        "HP_SM_Env_FrozenSkiff_v001_input_right.png": {
+          "path": "02_highpoly/HP_SM_Env_FrozenSkiff_v001_input_right.png",
+          "sha256": "1ec6da9675d3f233343b5e02bfc792a6dffd750f34f028037f8ca1352e33406a"
+        },
+        "HP_SM_Env_FrozenSkiff_v001.glb": {
+          "path": "02_highpoly/HP_SM_Env_FrozenSkiff_v001.glb",
+          "sha256": "1e0e4cc8addec412b5d177548eadccbcc7f3e3a317ee64997388e185e713ba76"
+        },
+        "HP_SM_Env_FrozenSkiff_v001_graph.json": {
+          "path": "02_highpoly/HP_SM_Env_FrozenSkiff_v001_graph.json",
+          "sha256": "2a425682d636dfe2d53a6f7eb2830192c6069da6ec2583a41136b8aa552ea92c"
+        }
+      },
+      "from_concept": 2,
+      "mode": "multiview",
+      "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+      "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+      "seed": 202610142,
+      "steps": 50,
+      "cfg": 5,
+      "shift": 1,
+      "octree_resolution": 384,
+      "num_chunks": 32000,
+      "threshold": 0.6,
+      "input_transform": {
+        "box": [
+          31,
+          286,
+          481,
+          736
+        ],
+        "scale": 2.2755555555555556
+      },
+      "seconds": 134.9,
+      "comfyui": "0.30.0",
+      "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+      "size_mb": 13.6
+    },
+    "build": {
+      "version": 1,
+      "created": "2026-10-04 23:25:44",
+      "files": {
+        "SM_Env_FrozenSkiff_v001.blend": {
+          "path": "03_work/SM_Env_FrozenSkiff_v001.blend",
+          "sha256": "9b59af8cdb85219d9ca7fdbdaea9af9de1725e38fd3a76eba5e4769f9f2c7259"
+        },
+        "SM_Env_FrozenSkiff_v001.glb": {
+          "path": "04_export/SM_Env_FrozenSkiff_v001.glb",
+          "sha256": "90b2557b0bc2fe6eca99f2245e7ef6cc2a49cd6ac06e18fe7966fc7a5d62e91b"
+        },
+        "SM_Env_FrozenSkiff_v001_metrics.json": {
+          "path": "03_work/SM_Env_FrozenSkiff_v001_metrics.json",
+          "sha256": "54cf031e6a82829aed20a4f11a84ab8dfef9b0f9a35a47848796c61af6be7b2b"
+        },
+        "T_Env_FrozenSkiff_BC.png": {
+          "path": "03_work/textures_v001/T_Env_FrozenSkiff_BC.png",
+          "sha256": "25df697a942bb2c00dd486cc1e10aab1582f61b68f49e69b371a83334219abd5"
+        },
+        "T_Env_FrozenSkiff_N.png": {
+          "path": "03_work/textures_v001/T_Env_FrozenSkiff_N.png",
+          "sha256": "00f7b74373790e7ff2a849b576cddc734a57eb46e193172b860f592a07f5c2ea"
+        },
+        "T_Env_FrozenSkiff_ORM.png": {
+          "path": "03_work/textures_v001/T_Env_FrozenSkiff_ORM.png",
+          "sha256": "87baff73a97f9a223973eb9917cfe1fab203a2f2873f545b6f64d36b187857e4"
+        }
+      },
+      "from": {
+        "blockout": 1,
+        "concept": 2,
+        "highpoly": 1,
+        "matid": null,
+        "emid": null
+      },
+      "align_iou": 0.919,
+      "uncovered_ratio": 0.5769,
+      "lods": [
+        {
+          "tris": 5000,
+          "verts": 2498
+        },
+        {
+          "tris": 1600,
+          "verts": 798
+        },
+        {
+          "tris": 500,
+          "verts": 248
+        }
+      ],
+      "export_kb": 172.3,
+      "seconds": 96.5,
+      "bake_device": "CPU",
+      "quality_status": "passed",
+      "quality_errors": []
+    },
+    "validate": {
+      "version": 1,
+      "created": "2026-10-04 23:25:44",
+      "files": {
+        "SM_Env_FrozenSkiff_v001_validation_v001.json": {
+          "path": "05_review/SM_Env_FrozenSkiff_v001_validation_v001.json",
+          "sha256": "22dd9670d4f27302b786e16ffac8bfd354128b91f8b01c113766520d67ed73f4"
+        }
+      },
+      "from_build": 1,
+      "errors": 0,
+      "warnings": 2,
+      "waived": [],
+      "passed": true
+    },
+    "review": {
+      "version": 1,
+      "created": "2026-10-04 23:25:51",
+      "files": {
+        "SM_Env_FrozenSkiff_v001_review_v001.png": {
+          "path": "05_review/SM_Env_FrozenSkiff_v001_review_v001.png",
+          "sha256": "eb4c0231f13ec84908af950f455d73d2ec9c76de9a68529ca7c057d552a50469"
+        }
+      },
+      "from_build": 1,
+      "deformation": {},
+      "auto_flags": []
+    }
+  },
+  "exactPrompt": "art/source/props/SM_Env_FrozenSkiff/01_concept/CN_SM_Env_FrozenSkiff_v002_prompt.txt",
+  "conceptSource": "art/source/props/SM_Env_FrozenSkiff/01_concept/CN_SM_Env_FrozenSkiff_v002_source.png",
+  "conceptSheet": "art/source/props/SM_Env_FrozenSkiff/01_concept/CN_SM_Env_FrozenSkiff_v002_sheet.png",
+  "workflow": "art/source/props/SM_Env_FrozenSkiff/02_highpoly/HP_SM_Env_FrozenSkiff_v001_graph.json",
+  "reviewSheet": "art/source/props/SM_Env_FrozenSkiff/05_review/SM_Env_FrozenSkiff_v001_review_v001.png",
+  "measured": {
+    "allLodBounds": {
+      "min": [
+        -1.0133256912231445,
+        0.00033356546191498637,
+        -1.9251104593276978
+      ],
+      "max": [
+        1.0206905603408813,
+        1.5431549549102783,
+        1.9286860227584839
+      ],
+      "size": [
+        2.034016251564026,
+        1.5428213894483633,
+        3.8537964820861816
+      ]
+    },
+    "lods": [
+      {
+        "lod": 0,
+        "triangles": 5000,
+        "vertices": 3117,
+        "min": [
+          -1.0072766542434692,
+          0.00033356546191498637,
+          -1.9251104593276978
+        ],
+        "max": [
+          1.0206905603408813,
+          1.5401211977005005,
+          1.9274157285690308
+        ],
+        "size": [
+          2.0279672145843506,
+          1.5397876322385855,
+          3.8525261878967285
+        ],
+        "absoluteSignedVolume": 1.8263535131922588,
+        "weldedComponents": 1,
+        "largestComponentTriangleFraction": 1,
+        "componentTriangles": [
+          5000
+        ],
+        "hullSections": [
+          {
+            "zFraction": -0.3,
+            "line": [
+              {
+                "xFraction": -0.4,
+                "top": 1.168411605058112,
+                "crossings": 2,
+                "shellThickness": 0.6262570692691809
+              },
+              {
+                "xFraction": -0.25,
+                "top": 0.3394621911158082,
+                "crossings": 2,
+                "shellThickness": 0.1139155906952527
+              },
+              {
+                "xFraction": 0,
+                "top": 0.21133859042369663,
+                "crossings": 2,
+                "shellThickness": 0.17843954561947895
+              },
+              {
+                "xFraction": 0.25,
+                "top": 0.3390057911025628,
+                "crossings": 2,
+                "shellThickness": 0.11281115395815355
+              },
+              {
+                "xFraction": 0.4,
+                "top": 1.1696075975302875,
+                "crossings": 2,
+                "shellThickness": 0.6209316237795455
+              }
+            ],
+            "centreRecess": 0.9582690071065909
+          },
+          {
+            "zFraction": -0.15,
+            "line": [
+              {
+                "xFraction": -0.4,
+                "top": 1.154559839606833,
+                "crossings": 2,
+                "shellThickness": 0.7056688500570523
+              },
+              {
+                "xFraction": -0.25,
+                "top": 1.2122698597773602,
+                "crossings": 4,
+                "shellThickness": 0.10735501974684691
+              },
+              {
+                "xFraction": 0,
+                "top": 1.2873027158863628,
+                "crossings": 4,
+                "shellThickness": 0.11912232804250666
+              },
+              {
+                "xFraction": 0.25,
+                "top": 1.2158372914180835,
+                "crossings": 4,
+                "shellThickness": 0.1113611476786267
+              },
+              {
+                "xFraction": 0.4,
+                "top": 1.1584075947178962,
+                "crossings": 2,
+                "shellThickness": 0.7093277653551291
+              }
+            ],
+            "centreRecess": -0.12889512116846658
+          },
+          {
+            "zFraction": 0,
+            "line": [
+              {
+                "xFraction": -0.4,
+                "top": 1.1353368104593011,
+                "crossings": 2,
+                "shellThickness": 0.7112600348495
+              },
+              {
+                "xFraction": -0.25,
+                "top": 0.2981787411936949,
+                "crossings": 2,
+                "shellThickness": 0.14342329814509824
+              },
+              {
+                "xFraction": 0,
+                "top": 0.15748611312988103,
+                "crossings": 2,
+                "shellThickness": 0.15638612743870528
+              },
+              {
+                "xFraction": 0.25,
+                "top": 0.3006357203752006,
+                "crossings": 2,
+                "shellThickness": 0.14300342033179403
+              },
+              {
+                "xFraction": 0.4,
+                "top": 1.1434678043000768,
+                "crossings": 2,
+                "shellThickness": 0.7181760000793054
+              }
+            ],
+            "centreRecess": 0.9859816911701957
+          },
+          {
+            "zFraction": 0.15,
+            "line": [
+              {
+                "xFraction": -0.4,
+                "top": 1.1819051896859094,
+                "crossings": 2,
+                "shellThickness": 0.7114780788701294
+              },
+              {
+                "xFraction": -0.25,
+                "top": 1.218058541985484,
+                "crossings": 4,
+                "shellThickness": 0.10778373684329012
+              },
+              {
+                "xFraction": 0,
+                "top": 1.2955684642880285,
+                "crossings": 4,
+                "shellThickness": 0.12936689224902254
+              },
+              {
+                "xFraction": 0.25,
+                "top": 1.2434728469036425,
+                "crossings": 4,
+                "shellThickness": 0.14612645091711252
+              },
+              {
+                "xFraction": 0.4,
+                "top": 1.1877490750988982,
+                "crossings": 2,
+                "shellThickness": 0.7186373596981037
+              }
+            ],
+            "centreRecess": -0.10781938918913037
+          },
+          {
+            "zFraction": 0.3,
+            "line": [
+              {
+                "xFraction": -0.4,
+                "top": 1.1878304404445987,
+                "crossings": 2,
+                "shellThickness": 0.21764511708443623
+              },
+              {
+                "xFraction": -0.25,
+                "top": 0.7041256362318147,
+                "crossings": 2,
+                "shellThickness": 0.33588995298142565
+              },
+              {
+                "xFraction": 0,
+                "top": 0.378892020484896,
+                "crossings": 2,
+                "shellThickness": 0.3050092857570168
+              },
+              {
+                "xFraction": 0.25,
+                "top": 0.7149575940458492,
+                "crossings": 2,
+                "shellThickness": 0.3423142128344272
+              },
+              {
+                "xFraction": 0.4,
+                "top": 1.1896561181175336,
+                "crossings": 2,
+                "shellThickness": 0.21762923892128994
+              }
+            ],
+            "centreRecess": 0.8107640976326376
+          }
+        ]
+      },
+      {
+        "lod": 1,
+        "triangles": 1600,
+        "vertices": 1216,
+        "min": [
+          -1.0133256912231445,
+          0.0005937738460488617,
+          -1.9205766916275024
+        ],
+        "max": [
+          1.0169177055358887,
+          1.5416615009307861,
+          1.9286860227584839
+        ],
+        "size": [
+          2.030243396759033,
+          1.5410677270847373,
+          3.8492627143859863
+        ],
+        "absoluteSignedVolume": 1.823495932805256,
+        "weldedComponents": 1,
+        "largestComponentTriangleFraction": 1,
+        "componentTriangles": [
+          1600
+        ],
+        "hullSections": [
+          {
+            "zFraction": -0.3,
+            "line": [
+              {
+                "xFraction": -0.4,
+                "top": 1.1610849210984229,
+                "crossings": 2,
+                "shellThickness": 0.6107346194478933
+              },
+              {
+                "xFraction": -0.25,
+                "top": 0.3418833534164576,
+                "crossings": 2,
+                "shellThickness": 0.12015280856361699
+              },
+              {
+                "xFraction": 0,
+                "top": 0.21106194975681225,
+                "crossings": 2,
+                "shellThickness": 0.17813447810517946
+              },
+              {
+                "xFraction": 0.25,
+                "top": 0.33703968960071773,
+                "crossings": 2,
+                "shellThickness": 0.11653044318624817
+              },
+              {
+                "xFraction": 0.4,
+                "top": 1.168034055644399,
+                "crossings": 2,
+                "shellThickness": 0.6287644289407355
+              }
+            ],
+            "centreRecess": 0.9569721058875869
+          },
+          {
+            "zFraction": -0.15,
+            "line": [
+              {
+                "xFraction": -0.4,
+                "top": 1.1508494952472517,
+                "crossings": 2,
+                "shellThickness": 0.6964578033239119
+              },
+              {
+                "xFraction": -0.25,
+                "top": 1.2111558651327645,
+                "crossings": 4,
+                "shellThickness": 0.10635888114106051
+              },
+              {
+                "xFraction": 0,
+                "top": 1.287963383638084,
+                "crossings": 4,
+                "shellThickness": 0.11587146930423708
+              },
+              {
+                "xFraction": 0.25,
+                "top": 1.213800587332153,
+                "crossings": 4,
+                "shellThickness": 0.10070380914262178
+              },
+              {
+                "xFraction": 0.4,
+                "top": 1.1557143780437242,
+                "crossings": 2,
+                "shellThickness": 0.7116089103179404
+              }
+            ],
+            "centreRecess": -0.1322490055943597
+          },
+          {
+            "zFraction": 0,
+            "line": [
+              {
+                "xFraction": -0.4,
+                "top": 1.149146553672844,
+                "crossings": 2,
+                "shellThickness": 0.7214632111264692
+              },
+              {
+                "xFraction": -0.25,
+                "top": 0.30126052156741645,
+                "crossings": 2,
+                "shellThickness": 0.14175846949371085
+              },
+              {
+                "xFraction": 0,
+                "top": 0.15946349724345366,
+                "crossings": 2,
+                "shellThickness": 0.15608187504028326
+              },
+              {
+                "xFraction": 0.25,
+                "top": 0.3046989593909717,
+                "crossings": 2,
+                "shellThickness": 0.14685621653096748
+              },
+              {
+                "xFraction": 0.4,
+                "top": 1.1383702470009995,
+                "crossings": 2,
+                "shellThickness": 0.7243339580528063
+              }
+            ],
+            "centreRecess": 0.9896830564293904
+          },
+          {
+            "zFraction": 0.15,
+            "line": [
+              {
+                "xFraction": -0.4,
+                "top": 1.1779032335963702,
+                "crossings": 2,
+                "shellThickness": 0.7086989857835275
+              },
+              {
+                "xFraction": -0.25,
+                "top": 1.2142447074371248,
+                "crossings": 4,
+                "shellThickness": 0.10140356679285256
+              },
+              {
+                "xFraction": 0,
+                "top": 1.2993657404070142,
+                "crossings": 4,
+                "shellThickness": 0.13274535548742628
+              },
+              {
+                "xFraction": 0.25,
+                "top": 1.2465699275988014,
+                "crossings": 4,
+                "shellThickness": 0.15069441066105727
+              },
+              {
+                "xFraction": 0.4,
+                "top": 1.1832887008672508,
+                "crossings": 2,
+                "shellThickness": 0.7258648224485642
+              }
+            ],
+            "centreRecess": -0.11607703953976345
+          },
+          {
+            "zFraction": 0.3,
+            "line": [
+              {
+                "xFraction": -0.4,
+                "top": 1.1872874847055024,
+                "crossings": 2,
+                "shellThickness": 0.21608832789745835
+              },
+              {
+                "xFraction": -0.25,
+                "top": 0.7009796144074429,
+                "crossings": 2,
+                "shellThickness": 0.32724675363924804
+              },
+              {
+                "xFraction": 0,
+                "top": 0.38241472028461976,
+                "crossings": 2,
+                "shellThickness": 0.3068123539105865
+              },
+              {
+                "xFraction": 0.25,
+                "top": 0.7021324921570806,
+                "crossings": 2,
+                "shellThickness": 0.3309453921053618
+              },
+              {
+                "xFraction": 0.4,
+                "top": 1.1871351895968323,
+                "crossings": 2,
+                "shellThickness": 0.21781999045399303
+              }
+            ],
+            "centreRecess": 0.8048727644208826
+          }
+        ]
+      },
+      {
+        "lod": 2,
+        "triangles": 500,
+        "vertices": 487,
+        "min": [
+          -1.0020427703857422,
+          0.001955344108864665,
+          -1.920497179031372
+        ],
+        "max": [
+          1.018162488937378,
+          1.5431549549102783,
+          1.9150598049163818
+        ],
+        "size": [
+          2.02020525932312,
+          1.5411996108014137,
+          3.835556983947754
+        ],
+        "absoluteSignedVolume": 1.8087428941862078,
+        "weldedComponents": 1,
+        "largestComponentTriangleFraction": 1,
+        "componentTriangles": [
+          500
+        ],
+        "hullSections": [
+          {
+            "zFraction": -0.3,
+            "line": [
+              {
+                "xFraction": -0.4,
+                "top": 1.1683310459268905,
+                "crossings": 2,
+                "shellThickness": 0.6533663362461501
+              },
+              {
+                "xFraction": -0.25,
+                "top": 0.3368047741656528,
+                "crossings": 2,
+                "shellThickness": 0.11607774877157784
+              },
+              {
+                "xFraction": 0,
+                "top": 0.21662251408562572,
+                "crossings": 2,
+                "shellThickness": 0.17414949602758378
+              },
+              {
+                "xFraction": 0.25,
+                "top": 0.33665224320969234,
+                "crossings": 2,
+                "shellThickness": 0.10972931285278253
+              },
+              {
+                "xFraction": 0.4,
+                "top": 1.166804058465907,
+                "crossings": 2,
+                "shellThickness": 0.6407033120941239
+              }
+            ],
+            "centreRecess": 0.9517085318412648
+          },
+          {
+            "zFraction": -0.15,
+            "line": [
+              {
+                "xFraction": -0.4,
+                "top": 1.1529329205084962,
+                "crossings": 2,
+                "shellThickness": 0.6838436918511486
+              },
+              {
+                "xFraction": -0.25,
+                "top": 1.2172528301982346,
+                "crossings": 4,
+                "shellThickness": 0.10390014500376288
+              },
+              {
+                "xFraction": 0,
+                "top": 1.28242921035285,
+                "crossings": 4,
+                "shellThickness": 0.12060204704556154
+              },
+              {
+                "xFraction": 0.25,
+                "top": 1.2252465081021822,
+                "crossings": 4,
+                "shellThickness": 0.11329318489492857
+              },
+              {
+                "xFraction": 0.4,
+                "top": 1.1531702935643797,
+                "crossings": 2,
+                "shellThickness": 0.6600526827176174
+              }
+            ],
+            "centreRecess": -0.12925891678847035
+          },
+          {
+            "zFraction": 0,
+            "line": [
+              {
+                "xFraction": -0.4,
+                "top": 1.117258848636837,
+                "crossings": 2,
+                "shellThickness": 0.6781343895270766
+              },
+              {
+                "xFraction": -0.25,
+                "top": 0.29817222082745687,
+                "crossings": 2,
+                "shellThickness": 0.14212850514375086
+              },
+              {
+                "xFraction": 0,
+                "top": 0.16749289429800696,
+                "crossings": 2,
+                "shellThickness": 0.14854611202274315
+              },
+              {
+                "xFraction": 0.25,
+                "top": 0.3127892032245754,
+                "crossings": 2,
+                "shellThickness": 0.146953003782182
+              },
+              {
+                "xFraction": 0.4,
+                "top": 1.1499956601089563,
+                "crossings": 2,
+                "shellThickness": 0.6758479651413791
+              }
+            ],
+            "centreRecess": 0.9825027658109493
+          },
+          {
+            "zFraction": 0.15,
+            "line": [
+              {
+                "xFraction": -0.4,
+                "top": 1.1689654544727752,
+                "crossings": 2,
+                "shellThickness": 0.7259482704347764
+              },
+              {
+                "xFraction": -0.25,
+                "top": 1.2291949511865923,
+                "crossings": 4,
+                "shellThickness": 0.11721727616210309
+              },
+              {
+                "xFraction": 0,
+                "top": 1.2839308107153957,
+                "crossings": 4,
+                "shellThickness": 0.11785825008887918
+              },
+              {
+                "xFraction": 0.25,
+                "top": 1.2507877356603987,
+                "crossings": 4,
+                "shellThickness": 0.14371401809086004
+              },
+              {
+                "xFraction": 0.4,
+                "top": 1.1756369540344713,
+                "crossings": 2,
+                "shellThickness": 0.7253964194881357
+              }
+            ],
+            "centreRecess": -0.1082938566809244
+          },
+          {
+            "zFraction": 0.3,
+            "line": [
+              {
+                "xFraction": -0.4,
+                "top": 1.1803285597520974,
+                "crossings": 2,
+                "shellThickness": 0.22261980542782633
+              },
+              {
+                "xFraction": -0.25,
+                "top": 0.6902310189604601,
+                "crossings": 2,
+                "shellThickness": 0.31610887287124
+              },
+              {
+                "xFraction": 0,
+                "top": 0.3686167248297729,
+                "crossings": 2,
+                "shellThickness": 0.29146005443319556
+              },
+              {
+                "xFraction": 0.25,
+                "top": 0.6977496124498106,
+                "crossings": 2,
+                "shellThickness": 0.3428333220781481
+              },
+              {
+                "xFraction": 0.4,
+                "top": 1.178883862064262,
+                "crossings": 2,
+                "shellThickness": 0.2666423074372941
+              }
+            ],
+            "centreRecess": 0.8117118349223245
+          }
+        ]
+      }
+    ]
+  },
+  "checkedLocalFiles": [
+    {
+      "stage": "blockout",
+      "path": "art/source/props/SM_Env_FrozenSkiff/00_blockout/BO_SM_Env_FrozenSkiff_v001.json",
+      "sha256": "fd54141f2d416fefb6a64b2106694468251c5049778868b3e33af333845324f0",
+      "verified": true
+    },
+    {
+      "stage": "blockout",
+      "path": "art/source/props/SM_Env_FrozenSkiff/00_blockout/BO_SM_Env_FrozenSkiff_v001_views.json",
+      "sha256": "177020939c20e107f190ee6306ca2ce65e2365be024f9601d76498ea859a7b40",
+      "verified": true
+    },
+    {
+      "stage": "concept",
+      "path": "art/source/props/SM_Env_FrozenSkiff/01_concept/CN_SM_Env_FrozenSkiff_v002_source.png",
+      "sha256": "357ba27f70980b8b2a0c5cf377376923bd338738a3431eac562b74f8ed8dc7eb",
+      "verified": true
+    },
+    {
+      "stage": "concept",
+      "path": "art/source/props/SM_Env_FrozenSkiff/01_concept/CN_SM_Env_FrozenSkiff_v002_front.png",
+      "sha256": "40c3bbba60b6a64756ef7b5096349d1645bc87df255a72fd4dfb9ee9763572a5",
+      "verified": true
+    },
+    {
+      "stage": "concept",
+      "path": "art/source/props/SM_Env_FrozenSkiff/01_concept/CN_SM_Env_FrozenSkiff_v002_left.png",
+      "sha256": "71e9619b016f637b0d3c2d1c444f9c5ddd5457164a6722e93778702697c1dd2e",
+      "verified": true
+    },
+    {
+      "stage": "concept",
+      "path": "art/source/props/SM_Env_FrozenSkiff/01_concept/CN_SM_Env_FrozenSkiff_v002_back.png",
+      "sha256": "4f9189e0d4a44ceed501bcee9a82d06429691af500632d641aa8f9f86f1190da",
+      "verified": true
+    },
+    {
+      "stage": "concept",
+      "path": "art/source/props/SM_Env_FrozenSkiff/01_concept/CN_SM_Env_FrozenSkiff_v002_right.png",
+      "sha256": "348e21ea76743f41ff96fd7f37eac2f401172d777cb28a7b5f5df707d81354f2",
+      "verified": true
+    },
+    {
+      "stage": "concept",
+      "path": "art/source/props/SM_Env_FrozenSkiff/01_concept/CN_SM_Env_FrozenSkiff_v002_sheet.png",
+      "sha256": "8702cb4a587a145836a456cdcfda01af52ae5e6b25dd1eaa0c14bdf5ea0cffd4",
+      "verified": true
+    },
+    {
+      "stage": "concept",
+      "path": "art/source/props/SM_Env_FrozenSkiff/01_concept/CN_SM_Env_FrozenSkiff_v002_prompt.txt",
+      "sha256": "77261c79b8c40e79c48dbf09b99ebb192c061c7e10870c185575dc8162e751d0",
+      "verified": true
+    },
+    {
+      "stage": "concept",
+      "path": "art/source/props/SM_Env_FrozenSkiff/01_concept/CN_SM_Env_FrozenSkiff_v002_registration.json",
+      "sha256": "52ffd869ddea4d13f5a1e46705124ca6091f2b0652705b15d79897eed3e117f0",
+      "verified": true
+    },
+    {
+      "stage": "highpoly",
+      "path": "art/source/props/SM_Env_FrozenSkiff/02_highpoly/HP_SM_Env_FrozenSkiff_v001_input_front.png",
+      "sha256": "6a00c81aafdc96841eb60f7cbad282e4398d900d37177c4616f321a567e8f688",
+      "verified": true
+    },
+    {
+      "stage": "highpoly",
+      "path": "art/source/props/SM_Env_FrozenSkiff/02_highpoly/HP_SM_Env_FrozenSkiff_v001_input_left.png",
+      "sha256": "faf2e248501eb4ddbed45a85b5161e91f34d1dc66f91e41726b94d0389bacb62",
+      "verified": true
+    },
+    {
+      "stage": "highpoly",
+      "path": "art/source/props/SM_Env_FrozenSkiff/02_highpoly/HP_SM_Env_FrozenSkiff_v001_input_back.png",
+      "sha256": "7d61dab56e81aacc36a1d5b364ec5067d33df954dd3737a69c4bfa1296ded4fe",
+      "verified": true
+    },
+    {
+      "stage": "highpoly",
+      "path": "art/source/props/SM_Env_FrozenSkiff/02_highpoly/HP_SM_Env_FrozenSkiff_v001_input_right.png",
+      "sha256": "1ec6da9675d3f233343b5e02bfc792a6dffd750f34f028037f8ca1352e33406a",
+      "verified": true
+    },
+    {
+      "stage": "highpoly",
+      "path": "art/source/props/SM_Env_FrozenSkiff/02_highpoly/HP_SM_Env_FrozenSkiff_v001.glb",
+      "sha256": "1e0e4cc8addec412b5d177548eadccbcc7f3e3a317ee64997388e185e713ba76",
+      "verified": true
+    },
+    {
+      "stage": "highpoly",
+      "path": "art/source/props/SM_Env_FrozenSkiff/02_highpoly/HP_SM_Env_FrozenSkiff_v001_graph.json",
+      "sha256": "2a425682d636dfe2d53a6f7eb2830192c6069da6ec2583a41136b8aa552ea92c",
+      "verified": true
+    },
+    {
+      "stage": "build",
+      "path": "art/source/props/SM_Env_FrozenSkiff/03_work/SM_Env_FrozenSkiff_v001.blend",
+      "sha256": "9b59af8cdb85219d9ca7fdbdaea9af9de1725e38fd3a76eba5e4769f9f2c7259",
+      "verified": true
+    },
+    {
+      "stage": "build",
+      "path": "art/source/props/SM_Env_FrozenSkiff/04_export/SM_Env_FrozenSkiff_v001.glb",
+      "sha256": "90b2557b0bc2fe6eca99f2245e7ef6cc2a49cd6ac06e18fe7966fc7a5d62e91b",
+      "verified": true
+    },
+    {
+      "stage": "build",
+      "path": "art/source/props/SM_Env_FrozenSkiff/03_work/SM_Env_FrozenSkiff_v001_metrics.json",
+      "sha256": "54cf031e6a82829aed20a4f11a84ab8dfef9b0f9a35a47848796c61af6be7b2b",
+      "verified": true
+    },
+    {
+      "stage": "build",
+      "path": "art/source/props/SM_Env_FrozenSkiff/03_work/textures_v001/T_Env_FrozenSkiff_BC.png",
+      "sha256": "25df697a942bb2c00dd486cc1e10aab1582f61b68f49e69b371a83334219abd5",
+      "verified": true
+    },
+    {
+      "stage": "build",
+      "path": "art/source/props/SM_Env_FrozenSkiff/03_work/textures_v001/T_Env_FrozenSkiff_N.png",
+      "sha256": "00f7b74373790e7ff2a849b576cddc734a57eb46e193172b860f592a07f5c2ea",
+      "verified": true
+    },
+    {
+      "stage": "build",
+      "path": "art/source/props/SM_Env_FrozenSkiff/03_work/textures_v001/T_Env_FrozenSkiff_ORM.png",
+      "sha256": "87baff73a97f9a223973eb9917cfe1fab203a2f2873f545b6f64d36b187857e4",
+      "verified": true
+    },
+    {
+      "stage": "validate",
+      "path": "art/source/props/SM_Env_FrozenSkiff/05_review/SM_Env_FrozenSkiff_v001_validation_v001.json",
+      "sha256": "22dd9670d4f27302b786e16ffac8bfd354128b91f8b01c113766520d67ed73f4",
+      "verified": true
+    },
+    {
+      "stage": "review",
+      "path": "art/source/props/SM_Env_FrozenSkiff/05_review/SM_Env_FrozenSkiff_v001_review_v001.png",
+      "sha256": "eb4c0231f13ec84908af950f455d73d2ec9c76de9a68529ca7c057d552a50469",
+      "verified": true
+    }
+  ],
+  "changedExistingAssets": [],
+  "manifestEntry": null,
+  "publishedHashVerified": null,
+  "sourceFrontDirection": [
+    0,
+    0,
+    1
+  ],
+  "runtimeFit": "Use production architectureMatrix: all-LOD bounds, uniform scale, center X/Z, minimum Y at placement base.",
+  "limitations": [
+    "Single static prop, no moving-part rig or new collision in this asset.",
+    "Ray sections sample actual surfaces but do not alone prove all surfaces or every support are intact; use the finished review sheet too.",
+    "AI visual acceptance and automatic QA do not constitute user acceptance or a scene FPS benchmark."
+  ]
+}

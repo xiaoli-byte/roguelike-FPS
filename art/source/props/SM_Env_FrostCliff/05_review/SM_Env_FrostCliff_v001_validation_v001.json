@@ -1,0 +1,187 @@
+[
+  {
+    "level": "pass",
+    "check": "文件大小",
+    "detail": "155 KB / 上限 900 KB"
+  },
+  {
+    "level": "pass",
+    "check": "扩展可用",
+    "detail": "必需扩展 ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+  },
+  {
+    "level": "pass",
+    "check": "LOD 数量",
+    "detail": "['SM_Env_FrostCliff_LOD0', 'SM_Env_FrostCliff_LOD1', 'SM_Env_FrostCliff_LOD2']，规格 3 级"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 面数",
+    "detail": "5000 / 预算 5000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 切换距离",
+    "detail": "extras.lod_distance=0"
+  },
+  {
+    "level": "pass",
+    "check": "场景参考占地 X 轴",
+    "detail": "14.501 m / 参考 17.940 m；超出时引擎按碰撞体等比适配"
+  },
+  {
+    "level": "pass",
+    "check": "场景有效尺寸 X 轴",
+    "detail": "14.501 m / 极限 46.800 m"
+  },
+  {
+    "level": "pass",
+    "check": "自然三维体量 X 轴",
+    "detail": "14.501 m / 最低 3.900 m；薄片须由 Hunyuan 重生成，不能拉伸修补"
+  },
+  {
+    "level": "pass",
+    "check": "场景参考占地 Z 轴",
+    "detail": "5.409 m / 参考 8.050 m；超出时引擎按碰撞体等比适配"
+  },
+  {
+    "level": "pass",
+    "check": "场景有效尺寸 Z 轴",
+    "detail": "5.409 m / 极限 21.000 m"
+  },
+  {
+    "level": "pass",
+    "check": "自然三维体量 Z 轴",
+    "detail": "5.409 m / 最低 1.750 m；薄片须由 Hunyuan 重生成，不能拉伸修补"
+  },
+  {
+    "level": "pass",
+    "check": "场景高度",
+    "detail": "8.572 m / 参考 9.000 m"
+  },
+  {
+    "level": "pass",
+    "check": "场景脚底落地",
+    "detail": "最低点 y=0.0008"
+  },
+  {
+    "level": "warn",
+    "check": "场景轴心居中",
+    "detail": "中心 x=-0.002 z=0.188"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 面数",
+    "detail": "1600 / 预算 1600"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 递减",
+    "detail": "5000 → 1600"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 切换距离",
+    "detail": "extras.lod_distance=18"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 面数",
+    "detail": "500 / 预算 500"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 递减",
+    "detail": "1600 → 500"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 切换距离",
+    "detail": "extras.lod_distance=42"
+  },
+  {
+    "level": "pass",
+    "check": "材质数量",
+    "detail": "['M_Env_FrostCliff']（一个资产一个材质，便于合批）"
+  },
+  {
+    "level": "pass",
+    "check": "材质命名",
+    "detail": "['M_Env_FrostCliff']"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Env_FrostCliff_N",
+    "detail": "1024×1024 webp（规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Env_FrostCliff_N",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Env_FrostCliff_ORM",
+    "detail": "1024×1024 webp（规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Env_FrostCliff_ORM",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Env_FrostCliff_BC",
+    "detail": "1024×1024 webp（规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Env_FrostCliff_BC",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "BaseColor 贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "法线贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "ORM 贴图",
+    "detail": "AO / 粗糙度 / 金属度"
+  },
+  {
+    "level": "pass",
+    "check": "SM_Env_FrostCliff_LOD0 UV 范围",
+    "detail": "[0.0018772396724671125, 0.001877250848338008]..[0.9966549873352051, 0.9981227517127991]"
+  },
+  {
+    "level": "pass",
+    "check": "SM_Env_FrostCliff_LOD1 UV 范围",
+    "detail": "[0.001762477564625442, 0.00204981560818851]..[0.9952030777931213, 0.9981223940849304]"
+  },
+  {
+    "level": "pass",
+    "check": "SM_Env_FrostCliff_LOD2 UV 范围",
+    "detail": "[0.001762477564625442, 0.00204981560818851]..[0.9951832294464111, 0.9981223940849304]"
+  },
+  {
+    "level": "pass",
+    "check": "UV 利用率",
+    "detail": "69%"
+  },
+  {
+    "level": "pass",
+    "check": "高模对齐",
+    "detail": "剪影 IoU 0.945（{'front': 0.981, 'left': 0.908, 'back': 0.975, 'right': 0.898}）"
+  },
+  {
+    "level": "pass",
+    "check": "投影覆盖",
+    "detail": "未覆盖顶点 22%（扩散补色）"
+  }
+]

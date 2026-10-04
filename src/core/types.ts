@@ -616,15 +616,23 @@ export interface IEnemyManager extends System {
   killAll(): void;
 }
 
+/** Authored tactical station used by encounter plans and level spawn anchors. */
+export type EnemyPlacement = 'assault' | 'flank' | 'ranged' | 'precision' | 'artillery' | 'support';
+
 export interface WaveEntry {
   enemyId: string;
   count: number;
   elite?: boolean;
   affix?: string;
+  placement?: EnemyPlacement;
+  /** Additional arrival delay within a wave, after its ground warning. */
+  arrivalDelay?: number;
 }
 
 export interface WavePlan {
   entries: WaveEntry[];
+  label?: string;
+  hint?: string;
   /** 当上一波剩余存活数 <= 此值时开始本波（缺省 0 = 清完才开始） */
   triggerRemaining?: number;
   /** 满足触发条件后再延迟多少秒（缺省 1.2） */
@@ -741,6 +749,7 @@ export interface ArenaInfo {
   playerYaw: number;
   /** 敌人刷新点（地面） */
   spawnPoints: THREE.Vector3[];
+  spawnAnchors?: { position: THREE.Vector3; role: EnemyPlacement; lane: number }[];
   /** 清关奖励宝箱位置 */
   rewardPoint: THREE.Vector3;
   /** 出口传送门位置（最多 3 个） */
@@ -765,10 +774,36 @@ export interface INavGrid {
   randomWalkable(center: THREE.Vector3, minR: number, maxR: number, out: THREE.Vector3): boolean;
 }
 
+/** 当前半开放区域的导航与一次性探索状态；常规首领 / 商店关不提供此状态。 */
+export interface AdventureInfo {
+  phase: 'explore' | 'battle' | 'cleared';
+  title?: string;
+  routeHint?: string;
+  /** Whitebox room-entry fights do not require activating an altar. */
+  automaticEncounters?: boolean;
+  /** An arrival is waiting for an unoccupied safe station, excluding normal telegraphs. */
+  spawnBlocked?: boolean;
+  objectiveLabel?: string;
+  floorRects?: { minX: number; minZ: number; maxX: number; maxZ: number }[];
+  encounters?: {
+    id: string; label: string; kind: 'approach' | 'cache';
+    position: THREE.Vector3; radius: number; triggerRadius?: number;
+    phase: 'undiscovered' | 'active' | 'cleared';
+    siteId?: string;
+  }[];
+  objective: THREE.Vector3;
+  /** 清场后实际开启的一个出口，用于方向导航。 */
+  exit?: THREE.Vector3;
+  sites: { id: string; label: string; position: THREE.Vector3; visited: boolean }[];
+  zones: { id: string; label: string; position: THREE.Vector3; radius: number }[];
+  paths: { points: THREE.Vector3[]; width: number }[];
+}
+
 export interface IStageDirector extends System {
   readonly stage: StageNode | null;
   readonly arena: ArenaInfo | null;
   readonly cleared: boolean;
+  readonly exploration?: AdventureInfo | null;
   /** 0-based，当前进行到第几波 */
   readonly waveIndex: number;
   /** 波次总数；只有 Boss 一波的关卡为 0（HUD 不显示波次） */
