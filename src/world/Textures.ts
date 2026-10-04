@@ -1,6 +1,6 @@
 /**
- * 程序化 CanvasTexture（不使用外部图片）：砖石、木板、三种主题地面（含熔岩裂缝自发光贴图）、地面法阵。
- * 所有贴图都可无缝平铺。纹理由调用者负责 dispose。
+ * 已生成的石质地表 + 主题覆盖层、砖石、木板、地面法阵。
+ * 原始美术图片共享；运行时主题贴图由调用者负责 dispose。
  */
 import * as THREE from 'three';
 import type { ThemeDef, ThemeId } from '../core/types';
@@ -8,6 +8,42 @@ import type { ThemeStyle } from './Themes';
 
 type Rand = () => number;
 type Ctx2D = CanvasRenderingContext2D;
+
+let stoneSurface: HTMLImageElement | null = null;
+let surfaceReady: Promise<boolean> | null = null;
+
+/** Load the authored bitmap once. An arena created during download upgrades in place. */
+export function preloadSceneSurface(): Promise<boolean> {
+  if (surfaceReady) return surfaceReady;
+  if (typeof document === 'undefined') return Promise.resolve(false);
+  surfaceReady = new Promise(resolve => {
+    new THREE.ImageLoader().load(`${import.meta.env.BASE_URL}assets/environment/weathered-stone-v1.png`, image => {
+      stoneSurface = image; resolve(true);
+    }, undefined, () => resolve(false));
+  });
+  return surfaceReady;
+}
+
+void preloadSceneSurface();
+
+/** Small relief and variable roughness follow the same source pixels as the surface. */
+export function surfaceRelief(source: THREE.CanvasTexture, frost = false): { bump: THREE.CanvasTexture; roughness: THREE.CanvasTexture } {
+  const image = source.image as HTMLCanvasElement;
+  const [height, hg] = canvas(image.width, image.height);
+  const [rough, rg] = canvas(image.width, image.height);
+  const pixels = image.getContext('2d')!.getImageData(0, 0, image.width, image.height);
+  const h = hg.createImageData(image.width, image.height), r = rg.createImageData(image.width, image.height);
+  for (let i = 0; i < pixels.data.length; i += 4) {
+    const value = (pixels.data[i] * 0.2126 + pixels.data[i + 1] * 0.7152 + pixels.data[i + 2] * 0.0722) / 255;
+    const heightValue = Math.round(90 + value * 150);
+    // Bright frost grains are matte; exposed blue stone has a restrained sheen.
+    const roughValue = Math.round(frost ? 150 + Math.min(1, value * 1.15) * 95 : 212 + (1 - value) * 34);
+    h.data[i] = h.data[i + 1] = h.data[i + 2] = heightValue; h.data[i + 3] = 255;
+    r.data[i] = r.data[i + 1] = r.data[i + 2] = roughValue; r.data[i + 3] = 255;
+  }
+  hg.putImageData(h, 0, 0); rg.putImageData(r, 0, 0);
+  return { bump: toTexture(height, false, true), roughness: toTexture(rough, false, true) };
+}
 
 function canvas(w: number, h: number): [HTMLCanvasElement, Ctx2D] {
   const c = document.createElement('canvas');
@@ -134,6 +170,11 @@ export function makeStoneTexture(rand: Rand): THREE.CanvasTexture {
   }
   speckle(g, S, rand, 2600, gray(1, 0.18), gray(0, 0.14));
   for (let i = 0; i < 7; i++) crack(g, S, rand, rand() * S, rand() * S, 18 + rand() * 30, 1.2, gray(0.35, 0.6));
+  if (stoneSurface) {
+    g.globalCompositeOperation = 'multiply'; g.globalAlpha = 0.26;
+    g.drawImage(stoneSurface, 0, 0, S, S);
+    g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1;
+  }
   return toTexture(c, true, true);
 }
 
@@ -172,6 +213,9 @@ export function makeWoodTexture(rand: Rand): THREE.CanvasTexture {
 export interface FloorTextures {
   map: THREE.CanvasTexture;
   emissive: THREE.CanvasTexture | null;
+  bump: THREE.CanvasTexture;
+  roughness: THREE.CanvasTexture;
+  authored: boolean;
   /** 一张纹理对应的米数 */
   tile: number;
 }
@@ -183,8 +227,15 @@ export function makeFloorTextures(id: ThemeId, theme: ThemeDef, st: ThemeStyle, 
   const tileM = 8;
   const px = S / tileM; // 每米像素
   let emissive: THREE.CanvasTexture | null = null;
+  if (stoneSurface) {
+    g.drawImage(stoneSurface, 0, 0, S, S);
+    g.globalCompositeOperation = 'multiply';
+    g.fillStyle = css(id === 'desert' ? 0xdfc79e : id === 'frost' ? 0xb8c9da : 0x817d90);
+    g.fillRect(0, 0, S, S); g.globalCompositeOperation = 'source-over';
+  }
 
   if (id === 'desert') {
+    if (!stoneSurface) {
     g.fillStyle = css(theme.floor);
     g.fillRect(0, 0, S, S);
     speckle(g, S, rand, 9000, css(theme.floor, 1.12), css(theme.floor, 0.86));
@@ -202,9 +253,10 @@ export function makeFloorTextures(id: ThemeId, theme: ThemeDef, st: ThemeStyle, 
         if (rand() < 0.5) crack(g, S, rand, i * t + rand() * t, j * t + rand() * t, t * 0.5, 1.5, css(st.trim, 1, 0.5));
       }
     }
-    speckle(g, S, rand, 3000, css(st.paving, 1.1, 0.5), css(st.trim, 1, 0.25));
+    }
+    speckle(g, S, rand, 2000, css(st.paving, 1.1, 0.25), css(st.trim, 1, 0.1));
     // 风沙半掩
-    for (let i = 0; i < 16; i++) blob(g, S, rand() * S, rand() * S, 30 + rand() * 70, css(st.sand, 1, 0.55 + rand() * 0.35), css(st.sand, 1, 0));
+    for (let i = 0; i < 12; i++) blob(g, S, rand() * S, rand() * S, 26 + rand() * 65, css(st.sand, 1, 0.32 + rand() * 0.2), css(st.sand, 1, 0));
     // 风纹
     g.strokeStyle = css(st.sand, 1.1, 0.35);
     g.lineWidth = 1.5;
@@ -219,6 +271,7 @@ export function makeFloorTextures(id: ThemeId, theme: ThemeDef, st: ThemeStyle, 
       });
     }
   } else if (id === 'frost') {
+    if (!stoneSurface) {
     g.fillStyle = css(theme.floor);
     g.fillRect(0, 0, S, S);
     // 青灰石板
@@ -233,13 +286,15 @@ export function makeFloorTextures(id: ThemeId, theme: ThemeDef, st: ThemeStyle, 
         g.strokeRect(i * t + 2, j * t + 2, t - 4, t - 4);
       }
     }
-    speckle(g, S, rand, 5000, css(st.paving, 1.15, 0.6), css(st.trim, 1, 0.25));
+    }
+    speckle(g, S, rand, 1800, css(st.paving, 1.15, 0.25), css(st.trim, 1, 0.08));
     // 积雪覆盖
-    for (let i = 0; i < 22; i++) blob(g, S, rand() * S, rand() * S, 34 + rand() * 80, css(st.snow, 1, 0.7 + rand() * 0.3), css(st.snow, 1, 0));
+    for (let i = 0; i < 16; i++) blob(g, S, rand() * S, rand() * S, 34 + rand() * 65, css(st.snow, 1, 0.5 + rand() * 0.3), css(st.snow, 1, 0));
     // 冰面反光斑
     for (let i = 0; i < 5; i++) blob(g, S, rand() * S, rand() * S, 20 + rand() * 30, css(st.ice, 1, 0.25), css(st.ice, 1, 0));
     speckle(g, S, rand, 2200, 'rgba(255,255,255,0.9)', 'rgba(170,195,220,0.35)', 1);
   } else {
+    if (!stoneSurface) {
     g.fillStyle = css(theme.floor);
     g.fillRect(0, 0, S, S);
     speckle(g, S, rand, 9000, css(theme.floor, 1.25), css(theme.floor, 0.7));
@@ -275,13 +330,14 @@ export function makeFloorTextures(id: ThemeId, theme: ThemeDef, st: ThemeStyle, 
         });
       }
     }
-    speckle(g, S, rand, 3000, css(st.paving, 1.3, 0.5), 'rgba(0,0,0,0.3)');
+    }
+    speckle(g, S, rand, 1800, css(st.paving, 1.3, 0.2), 'rgba(0,0,0,0.15)');
     // 熔岩裂缝：颜色贴图画暗红底，自发光贴图画亮线
     const [ec, eg] = canvas(S, S);
     eg.fillStyle = '#000';
     eg.fillRect(0, 0, S, S);
     const cracks: { x: number; y: number; len: number; seed: number }[] = [];
-    for (let i = 0; i < 14; i++) cracks.push({ x: rand() * S, y: rand() * S, len: 50 + rand() * 110, seed: rand() });
+    for (let i = 0; i < 5; i++) cracks.push({ x: rand() * S, y: rand() * S, len: 40 + rand() * 85, seed: rand() });
     for (const k of cracks) {
       // 同一条裂缝在颜色贴图与自发光贴图上必须走同一条折线：用相同种子的小随机数
       const seq = (): Rand => {
@@ -292,14 +348,15 @@ export function makeFloorTextures(id: ThemeId, theme: ThemeDef, st: ThemeStyle, 
         };
       };
       crack(g, S, seq(), k.x, k.y, k.len, 5, 'rgb(70,18,8)');
-      crack(eg, S, seq(), k.x, k.y, k.len, 2.6, css(st.glow), 8);
-      crack(eg, S, seq(), k.x, k.y, k.len, 1, css(st.glowHot));
+      crack(eg, S, seq(), k.x, k.y, k.len, 1.8, css(st.glow), 4);
+      crack(eg, S, seq(), k.x, k.y, k.len, 0.6, css(st.glowHot));
     }
-    for (let i = 0; i < 10; i++) blob(eg, S, rand() * S, rand() * S, 6 + rand() * 10, css(st.glow, 1, 0.8), css(st.glow, 1, 0));
+    for (let i = 0; i < 4; i++) blob(eg, S, rand() * S, rand() * S, 5 + rand() * 7, css(st.glow, 1, 0.45), css(st.glow, 1, 0));
     emissive = toTexture(ec, true, true);
   }
 
-  return { map: toTexture(c, true, true), emissive, tile: tileM };
+  const map = toTexture(c, true, true);
+  return { map, emissive, ...surfaceRelief(map, id === 'frost'), authored: !!stoneSurface, tile: tileM };
 }
 
 // ───────────────────────────── 法阵 ─────────────────────────────

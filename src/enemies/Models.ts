@@ -297,13 +297,96 @@ export function blendRot(o: THREE.Object3D, x: number, y: number, z: number, t: 
 }
 
 const _reach = new THREE.Vector3();
+const _reachDirection = new THREE.Vector3();
+const _reachRest = new THREE.Vector3();
+const _reachPole = new THREE.Vector3();
+const _reachCurrentPole = new THREE.Vector3();
+const _reachCross = new THREE.Vector3();
+const _reachTwist = new THREE.Quaternion();
+const _weaponGrip = new THREE.Vector3();
+const _gripParentQ = new THREE.Quaternion();
+const _gripWeaponQ = new THREE.Quaternion();
+const _palmTarget = new THREE.Vector3();
+const _palmActual = new THREE.Vector3();
+const _palmSegment = new THREE.Vector3();
+const _forearmRollAxis = new THREE.Vector3(0, 1, 0);
+
+/** 握点在武器局部坐标；武器抬举、后坐、盾击时手腕和手掌都保持贴合。 */
+export function reachWeaponGrip(r: HumanoidRig, side: number, weapon: THREE.Object3D, x: number, y: number, z: number, elbowPole?: THREE.Vector3): void {
+  weapon.updateWorldMatrix(true, false);
+  _weaponGrip.set(x, y, z).applyMatrix4(weapon.matrixWorld);
+  r.torso.worldToLocal(_weaponGrip);
+  reachArm(r, side, _weaponGrip, elbowPole);
+  const hand = side > 0 ? r.handL : r.handR;
+  hand.parent!.updateWorldMatrix(true, false);
+  hand.parent!.getWorldQuaternion(_gripParentQ).invert();
+  weapon.getWorldQuaternion(_gripWeaponQ);
+  hand.quaternion.copy(_gripParentQ).multiply(_gripWeaponQ);
+}
 
 /**
- * 两骨骼手臂 IK：让手腕关节（hand）落到 target（躯干局部坐标），肩 rotation = (x, 0, z)、肘只在 x 上前屈，
- * 与 applyWalk 等程序动画的关节约定一致。够不着时手臂伸直指向目标。持械动作用它把双手「握」在武器的握点上。
- * @param side 1 = 左臂（+X），-1 = 右臂
+ * 自然握持：grip 是带掌厚补偿的手掌参考点，palmLocalOffset 是实际美术掌心相对 wrist 的位置。
+ * 保持 wrist 局部中立，只通过肩/肘求掌心贴合；避免复制武器世界朝向造成手腕反折与袖口扭塌。
+ * forearmRoll 是前臂绕自身长轴的旋前/旋后，独立于手腕局部转动。
+ * 返回最终掌心误差（未缩放模型米），不可达的武器姿势仍需由动作设计调整。
  */
-export function reachArm(r: HumanoidRig, side: number, target: THREE.Vector3): void {
+export function reachPalmGrip(
+  r: HumanoidRig, side: number, weapon: THREE.Object3D,
+  x: number, y: number, z: number, palmLocalOffset: THREE.Vector3, elbowPole?: THREE.Vector3, forearmRoll = 0,
+): number {
+  const arm = side > 0 ? r.armL : r.armR;
+  const elbow = side > 0 ? r.elbowL : r.elbowR;
+  const hand = side > 0 ? r.handL : r.handR;
+  hand.quaternion.identity();
+  weapon.updateWorldMatrix(true, false);
+  _palmTarget.set(x, y, z).applyMatrix4(weapon.matrixWorld);
+  r.torso.worldToLocal(_palmTarget);
+  // wrist中立时，hand.position+palmOffset就是前臂的虚拟末端。直接解它的长度/相位，
+  // 避免极屈肘时「先求腕再减掌偏移」的固定点迭代来回振荡；不更改任何骨骼rest位置。
+  const l1 = elbow.position.length();
+  _palmSegment.copy(hand.position).add(palmLocalOffset);
+  // hand.position沿前臂-Y，绕Y旋前不会移动腕；掌面偏移必须先随前臂旋转再求末端。
+  if (forearmRoll !== 0) _palmSegment.applyAxisAngle(_forearmRollAxis, forearmRoll);
+  const planeLength = Math.hypot(_palmSegment.y, _palmSegment.z);
+  const distalLengthSq = _palmSegment.lengthSq();
+  _reach.subVectors(_palmTarget, arm.position);
+  const minimum = Math.hypot(_palmSegment.x, planeLength - l1) + 1e-3;
+  const maximum = Math.hypot(_palmSegment.x, planeLength + l1) - 1e-3;
+  const d = Math.min(Math.max(_reach.length(), minimum), maximum);
+  _reach.setLength(d);
+  const phase = Math.atan2(_palmSegment.z, -_palmSegment.y);
+  const cosine = (d * d - l1 * l1 - distalLengthSq) / Math.max(1e-8, 2 * l1 * planeLength);
+  const bend = Math.max(0, Math.min(Math.PI - 1e-3, Math.acos(Math.min(1, Math.max(-1, cosine))) - phase));
+  // XYZ 的 Rx*Ry：先弯肘，再在前臂自身Y轴旋前/旋后；手腕局部始终保持中立。
+  elbow.rotation.set(-bend, forearmRoll, 0);
+  _reachRest.set(_palmSegment.x,
+    -l1 + _palmSegment.y * Math.cos(bend) + _palmSegment.z * Math.sin(bend),
+    -_palmSegment.y * Math.sin(bend) + _palmSegment.z * Math.cos(bend)).normalize();
+  _reachDirection.copy(_reach).normalize();
+  arm.quaternion.setFromUnitVectors(_reachRest, _reachDirection);
+  _reachCurrentPole.set(0, -1, 0).applyQuaternion(arm.quaternion);
+  _reachCurrentPole.addScaledVector(_reachDirection, -_reachCurrentPole.dot(_reachDirection));
+  if (elbowPole) _reachPole.copy(elbowPole);
+  else _reachPole.set(side, -0.35, -0.45);
+  _reachPole.addScaledVector(_reachDirection, -_reachPole.dot(_reachDirection));
+  if (_reachCurrentPole.lengthSq() > 1e-8 && _reachPole.lengthSq() > 1e-8) {
+    _reachCurrentPole.normalize(); _reachPole.normalize();
+    const angle = Math.atan2(_reachDirection.dot(_reachCross.crossVectors(_reachCurrentPole, _reachPole)), _reachCurrentPole.dot(_reachPole));
+    arm.quaternion.premultiply(_reachTwist.setFromAxisAngle(_reachDirection, angle));
+  }
+  hand.localToWorld(_palmActual.copy(palmLocalOffset));
+  r.torso.worldToLocal(_palmActual);
+  return _palmActual.distanceTo(_palmTarget);
+}
+
+/**
+ * 两骨骼手臂 IK：手腕落到 target（躯干局部坐标），肘只在 x 上前屈。
+ * 肩用四元数对齐，绕肩到手腕的轴选择朝外、朝下的肘平面；很弯曲的手臂也能准确到达侧向握点。
+ * 够不着时手臂伸直指向目标。持械动作用它把双手「握」在武器的握点上。
+ * @param side 1 = 左臂（+X），-1 = 右臂
+ * @param elbowPole 可选躯干局部肘平面方向；持炮/施法可把肘略朝前外，默认保持现有持械动作。
+ */
+export function reachArm(r: HumanoidRig, side: number, target: THREE.Vector3, elbowPole?: THREE.Vector3): void {
   const arm = side > 0 ? r.armL : r.armR;
   const elbow = side > 0 ? r.elbowL : r.elbowR;
   const hand = side > 0 ? r.handL : r.handR;
@@ -315,10 +398,21 @@ export function reachArm(r: HumanoidRig, side: number, target: THREE.Vector3): v
   // 肘关节弯曲角（0 = 伸直），余弦定理
   const bend = Math.PI - Math.acos(Math.min(1, Math.max(-1, (l1 * l1 + l2 * l2 - d * d) / (2 * l1 * l2))));
   elbow.rotation.set(-bend, 0, 0);
-  // 未转肩时手腕在上臂空间的位置 h = (0, hy, hz)；求 R = Rx(a)·Rz(c) 使 R·h 指向目标
+  // 未转肩时手腕位置 h = (0, hy, hz)。仅求 x/z 欧拉角会在 |目标 x| > |hy| 时失去解。
   const hy = -l1 - l2 * Math.cos(bend);
   const hz = l2 * Math.sin(bend);
-  const c = Math.asin(Math.min(1, Math.max(-1, -_reach.x / hy)));
-  const a = Math.atan2(_reach.z, _reach.y) - Math.atan2(hz, hy * Math.cos(c));
-  arm.rotation.set(a, 0, c);
+  _reachRest.set(0, hy, hz).normalize();
+  _reachDirection.copy(_reach).normalize();
+  arm.quaternion.setFromUnitVectors(_reachRest, _reachDirection);
+  _reachCurrentPole.set(0, -1, 0).applyQuaternion(arm.quaternion);
+  _reachCurrentPole.addScaledVector(_reachDirection, -_reachCurrentPole.dot(_reachDirection));
+  if (elbowPole) _reachPole.copy(elbowPole);
+  else _reachPole.set(side, -0.35, -0.45);
+  _reachPole.addScaledVector(_reachDirection, -_reachPole.dot(_reachDirection));
+  if (_reachCurrentPole.lengthSq() > 1e-8 && _reachPole.lengthSq() > 1e-8) {
+    _reachCurrentPole.normalize();
+    _reachPole.normalize();
+    const angle = Math.atan2(_reachDirection.dot(_reachCross.crossVectors(_reachCurrentPole, _reachPole)), _reachCurrentPole.dot(_reachPole));
+    arm.quaternion.premultiply(_reachTwist.setFromAxisAngle(_reachDirection, angle));
+  }
 }

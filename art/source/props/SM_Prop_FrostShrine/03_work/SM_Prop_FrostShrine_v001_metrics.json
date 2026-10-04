@@ -1,0 +1,116 @@
+{
+  "steps": {
+    "导入清理": 2.6,
+    "对齐": 0.9,
+    "低模与 UV": 12.8,
+    "投影着色": 21.9,
+    "烘焙": 3.0,
+    "LOD": 0.0,
+    "导出": 0.4
+  },
+  "highpoly": {
+    "faces_raw": 683562,
+    "faces": 377138,
+    "verts": 377140,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00492
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.844,
+    "iou_per_view": {
+      "front": 0.888,
+      "left": 0.788,
+      "back": 0.889,
+      "right": 0.791
+    },
+    "height_m": 1.9072,
+    "blockout_height_m": 2.0459
+  },
+  "uv": {
+    "smart_islands": 312,
+    "charts": 48,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.2717,
+    "density_merged": 0.2925
+  },
+  "projection": {
+    "uncovered_ratio": 0.3153
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Prop_FrostShrine_BC": {
+      "size": 512,
+      "colorspace": "sRGB"
+    },
+    "T_Prop_FrostShrine_N": {
+      "size": 512,
+      "colorspace": "Non-Color"
+    },
+    "T_Prop_FrostShrine_ORM": {
+      "size": 512,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Prop_FrostShrine_LOD0",
+      "tris": 2500,
+      "verts": 1252,
+      "uv_min": [
+        0.002616808284074068,
+        0.002559213200584054
+      ],
+      "uv_max": [
+        0.9974930882453918,
+        0.9974930286407471
+      ],
+      "uv_utilization": 0.572,
+      "bbox_min": [
+        -0.4719,
+        -0.4636,
+        0.0001
+      ],
+      "bbox_max": [
+        0.4729,
+        0.4706,
+        1.9055
+      ]
+    },
+    {
+      "name": "SM_Prop_FrostShrine_LOD1",
+      "tris": 900,
+      "verts": 452,
+      "uv_min": [
+        0.002616808284074068,
+        0.002559213200584054
+      ],
+      "uv_max": [
+        0.9974930882453918,
+        0.9974930286407471
+      ],
+      "uv_utilization": 0.517,
+      "bbox_min": [
+        -0.4722,
+        -0.4684,
+        0.0025
+      ],
+      "bbox_max": [
+        0.4772,
+        0.4727,
+        1.9147
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Prop_FrostShrine\\04_export\\SM_Prop_FrostShrine_v001.glb",
+    "bytes": 120264
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Prop_FrostShrine\\03_work\\SM_Prop_FrostShrine_v001.blend",
+  "total_seconds": 41.6,
+  "_seconds": 44.9
+}

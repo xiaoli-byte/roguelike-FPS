@@ -55,7 +55,21 @@ def run(spec: AssetSpec, a) -> None:
             ok(f"LOD{i} 递减", tris < prev, f"{prev} → {tris}", "warn")
         ok(f"LOD{i} 切换距离", n.get("extras", {}).get("lod_distance") == spec.lod_distance[i],
            f"extras.lod_distance={n.get('extras', {}).get('lod_distance')}", "warn")
-        if i == 0 and (spec.kind == "static" or spec.raw.get("presentation")):
+        if i == 0 and spec.blockout.get('source') == 'scene':
+            # 白模提供目标尺度。引擎 fitScenePropScale 按真实碰撞体和朝向等比收纳；
+            # 原始美术尺寸超出参考时警告，极端尺寸仍拒绝，避免以参考轮廓约束生成造型。
+            lo, hi = g.mesh_bounds(n['mesh'])
+            blo, bhi = blockout['bounds']['min'], blockout['bounds']['max']
+            for ax in (0, 2):
+                size = hi[ax] - lo[ax]
+                limit = bhi[ax] - blo[ax]
+                ok(f"场景参考占地 {'XYZ'[ax]} 轴", size <= limit * 1.15, f'{size:.3f} m / 参考 {limit * 1.15:.3f} m；超出时引擎按碰撞体等比适配', 'warn')
+                ok(f"场景有效尺寸 {'XYZ'[ax]} 轴", 0 < size <= limit * 3, f'{size:.3f} m / 极限 {limit * 3:.3f} m')
+            h_bo = bhi[1] - blo[1]
+            ok('场景高度', abs((hi[1] - lo[1]) - h_bo) <= h_bo * 0.15, f'{hi[1]-lo[1]:.3f} m / 参考 {h_bo:.3f} m')
+            ok('场景脚底落地', abs(lo[1]) <= 0.015, f'最低点 y={lo[1]:.4f}')
+            ok('场景轴心居中', abs((lo[0]+hi[0])/2) <= 0.10 and abs((lo[2]+hi[2])/2) <= 0.10, f'中心 x={(lo[0]+hi[0])/2:.3f} z={(lo[2]+hi[2])/2:.3f}', 'warn')
+        elif i == 0 and (spec.kind == "static" or spec.raw.get("presentation")):
             # 挂件 / 按展示姿态重建的部件资产（枪）：原点是挂点，对比挂点局部空间里的三轴尺寸与中心（白模说明里的 bounds 就在这个空间）
             lo, hi = g.mesh_bounds(n["mesh"])
             blo, bhi = blockout["bounds"]["min"], blockout["bounds"]["max"]

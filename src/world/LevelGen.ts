@@ -28,6 +28,12 @@ function rectC(cx: number, cz: number, sx: number, sz: number): Rect {
   return { x0: cx - sx / 2, z0: cz - sz / 2, x1: cx + sx / 2, z1: cz + sz / 2 };
 }
 
+/** 陶罐组仅留美术占地；旋转后仍用保守的世界轴对齐矩形，避免掩体压到罐体。 */
+function scenePotsRect(x: number, z: number, yaw: number, s: number): Rect {
+  const c = Math.abs(Math.cos(yaw)), sn = Math.abs(Math.sin(yaw));
+  return rectC(x, z, (1.45 * c + 1.15 * sn) * s, (1.45 * sn + 1.15 * c) * s);
+}
+
 function union(a: Rect, b: Rect): Rect {
   return { x0: Math.min(a.x0, b.x0), z0: Math.min(a.z0, b.z0), x1: Math.max(a.x1, b.x1), z1: Math.max(a.z1, b.z1) };
 }
@@ -42,6 +48,18 @@ function pointRectDist(x: number, z: number, r: Rect): number {
   const dx = Math.max(r.x0 - x, 0, x - r.x1);
   const dz = Math.max(r.z0 - z, 0, z - r.z1);
   return Math.hypot(dx, dz);
+}
+
+/** 只用于留出入场主景视线：线段是否穿过膨胀后的地面投影。 */
+function crossesRect(a: P2, b: P2, r: Rect, pad: number): boolean {
+  let enter = 0, exit = 1;
+  for (const [start, delta, low, high] of [[a.x, b.x - a.x, r.x0 - pad, r.x1 + pad], [a.z, b.z - a.z, r.z0 - pad, r.z1 + pad]]) {
+    if (Math.abs(delta) < 1e-8) { if (start < low || start > high) return false; continue; }
+    const t0 = (low - start) / delta, t1 = (high - start) / delta;
+    enter = Math.max(enter, Math.min(t0, t1)); exit = Math.min(exit, Math.max(t0, t1));
+    if (enter > exit) return false;
+  }
+  return true;
 }
 
 function dist(a: P2, b: P2): number {
@@ -85,7 +103,7 @@ const WALL_PROPS: Record<ThemeId, [WallPropKind, number][]> = {
 };
 
 /** 带碰撞的装饰：足迹边长与高度 */
-const PROP_COLLIDER: Partial<Record<DecoKind, [number, number]>> = {
+export const PROP_COLLIDER: Partial<Record<DecoKind, [number, number]>> = {
   cactus: [0.8, 3.0],
   statue: [1.9, 2.9],
   pine: [1.7, 4.6],
@@ -112,6 +130,8 @@ class Gen {
   readonly H: number;
   private occ: { r: Rect; g: number }[] = [];
   private reserved: Circle[] = [];
+  private sceneSight: { a: P2; b: P2 }[] = [];
+  private entranceSight: { a: P2; b: P2; pad: number }[] = [];
   private nextGroup = 1;
   private pilasters: number[][] = [[], [], [], []];
   private gateHalf: number;
@@ -138,7 +158,10 @@ class Gen {
   run(): LevelLayout {
     this.perimeter();
     this.keyPoints();
+    this.reserveEntranceSight();
     this.lights();
+    // 先留出主题陈设，随机掩体在其余区域生成；中轴与关键互动点仍走原有净空校验。
+    this.sceneComposition();
     switch (this.stage.type) {
       case 'combat':
       case 'elite':
@@ -178,9 +201,11 @@ class Gen {
   private deco(kind: DecoKind, x: number, z: number, o: Partial<Deco> = {}): Deco {
     const d: Deco = {
       kind, x, z, y: o.y ?? 0, yaw: o.yaw ?? 0, s: o.s ?? 1, w: o.w ?? 1, h: o.h ?? 1,
-      v: this.rng.next(), group: o.group ?? 0, lit: o.lit ?? false,
+      v: this.rng.next(), group: o.group ?? 0, lit: o.lit ?? false, sceneRole: o.sceneRole, sceneLayer: o.sceneLayer,
     };
     this.L.decos.push(d);
+    // 非碰撞陶罐也占用美术留白，防止后续随机掩体压到新陈设上。
+    if (kind === 'pots' && d.sceneRole && d.y <= this.L.floorY + 0.03) this.occupy(scenePotsRect(x, z, d.yaw, d.s), d.group);
     return d;
   }
 
@@ -193,6 +218,8 @@ class Gen {
     if (r.x0 < -H + inner || r.x1 > H - inner || r.z0 < -H + inner || r.z1 > H - inner) return false;
     for (const o of this.occ) if (rectDist(r, o.r) < (o.g === 0 ? structGap : gap)) return false;
     for (const c of this.reserved) if (pointRectDist(c.x, c.z, r) < c.r) return false;
+    for (const view of this.sceneSight) if (crossesRect(view.a, view.b, r, 0.45)) return false;
+    for (const view of this.entranceSight) if (crossesRect(view.a, view.b, r, view.pad)) return false;
     return true;
   }
 
@@ -215,6 +242,13 @@ class Gen {
     const size = propSize(kind, s);
     const r = rectC(x, z, size, size);
     if (!this.fits(r, gap, inner, structGap)) return false;
+    // 旧松树的树冠和仙人掌枝臂超出碰撞盒，入场视廊按实际外延留白。
+    // 判断在创建模型与碰撞之前执行，两者都会转到新的可用位置，不留下隐形障碍。
+    const visualWidth = kind === 'pine' ? 3.1 * s : kind === 'cactus' ? 1.6 * s : size;
+    if (visualWidth > size) {
+      const visual = rectC(x, z, visualWidth, visualWidth);
+      if (this.entranceSight.some(view => crossesRect(view.a, view.b, visual, view.pad))) return false;
+    }
     const g = o.group ?? this.group();
     this.box('collider', 'prop', g, r.x0, 0, r.z0, r.x1, c[1] * s, r.z1);
     this.occupy(r, g);
@@ -315,6 +349,13 @@ class Gen {
     if (type === 'boss') res.push({ x: L.bossPoint.x, z: L.bossPoint.z, r: 4.5 });
   }
 
+  /** 入场能读清庭院纵深和远门；远处掩体仍可布在窄视线的两侧。 */
+  private reserveEntranceSight(): void {
+    const a = { ...this.L.playerSpawn };
+    this.entranceSight.push({ a, b: { ...this.L.center }, pad: 1.2 });
+    this.entranceSight.push({ a, b: { ...this.L.portalPoints[1] }, pad: 0.65 });
+  }
+
   /** 4 处灯火（火盆 / 石灯 / 灯笼柱）；按生成顺序前 LIGHT_COUNT 处挂真正的点光源，见 finalizeLights */
   private lights(): void {
     const H = this.H;
@@ -345,6 +386,84 @@ class Gen {
         const nz = p.z * (1 - k * 0.06);
         if (this.propWithCollider(kind, nx, nz, PROP_GAP, 0.05, { yaw, lit: true }, 0.04)) break;
       }
+    }
+  }
+
+  /**
+   * 用已经发布的 Hunyuan 资产搭陈设：远门两侧形成焦点，侧墙两组重复节奏。
+   * 不创建新模型；实体陈设先写入占地，随后统一进行导航连通性验证。
+   */
+  private sceneComposition(): void {
+    const theme = this.stage.theme;
+    const primary: DecoKind = theme === 'desert' ? 'statue' : 'crystal';
+    const companion: DecoKind = theme === 'desert' ? 'pots' : theme === 'frost' ? 'stoneLantern' : 'brazier';
+    const place = (kind: DecoKind, x: number, z: number, o: Partial<Deco>): Deco | null => {
+      if (kind === 'pots') {
+        if (!this.fits(scenePotsRect(x, z, o.yaw ?? 0, o.s ?? 1), 0.35, 0.05, 0.04)) return null;
+        return this.deco(kind, x, z, { ...o, group: o.group ?? this.group() });
+      }
+      if (!this.propWithCollider(kind, x, z, PROP_GAP, 0.05, o, 0.04)) return null;
+      return this.L.decos[this.L.decos.length - 1];
+    };
+    const bays = (side: number): number[] => {
+      const ts = this.pilasters[side];
+      return ts.slice(1).flatMap((t, i) => t - ts[i] <= 9 ? [(t + ts[i]) / 2] : []);
+    };
+    const nearest = (side: number, target: number): number => {
+      const candidates = bays(side);
+      return candidates.length ? candidates.reduce((a, b) => Math.abs(b - target) < Math.abs(a - target) ? b : a) : target;
+    };
+    const cluster = (side: number, t: number, role: 'gateway' | 'alcove', scale: number, lead: DecoKind, sign: number, two = false): boolean => {
+      const half = lead === 'pots' ? 0.8 * scale : propSize(lead, scale) / 2;
+      const p = wallPoint(this.H, side, t, WALL_SLOT + half);
+      const yaw = WALL_YAW[side];
+      const leadDeco = place(lead, p.x, p.z, { yaw, s: scale, sceneRole: role, sceneLayer: lead === primary ? 'principal' : 'support' });
+      if (!leadDeco) return false;
+      // 同一组有高低/前后关系，不把每种资产排成等距展品。实体之间保持宽通路。
+      const partner = lead === companion && theme !== 'desert' ? primary : companion;
+      const signs = two ? [sign, -sign] : [sign];
+      for (let i = 0; i < signs.length; i++) {
+        const direction = signs[i];
+        const size = partner === 'pots' ? (i === 0 ? 0.76 : 0.54) : partner === primary ? 0.82 : 0.9;
+        const off = partner === 'pots' ? (lead === 'pots' ? 1.85 : 2.2) : 3.6;
+        const q = wallPoint(this.H, side, t + direction * off, WALL_SLOT + (partner === 'pots' ? 0.8 * size : propSize(partner, size) / 2) + (i ? 0.14 : 0.03));
+        place(partner, q.x, q.z, { yaw: yaw + direction * (partner === 'pots' ? 0.22 : 0.08), s: size, group: leadDeco.group, sceneRole: role, sceneLayer: partner === primary ? 'principal' : i ? 'accent' : 'support' });
+      }
+      return true;
+    };
+    // 远门是仪式焦点。小房间先试壁柱间，若靠近门户保留区，则向外侧移至角前。
+    for (const sign of [-1, 1]) {
+      const t = nearest(0, sign * this.H * 0.64);
+      if (!cluster(0, t, 'gateway', 1.42, primary, -sign)) cluster(0, sign * (this.H - 4.2), 'gateway', 1.35, primary, -sign);
+    }
+    // 三章有不同的墙段聚散：供器院、祈愿灯路、祭炉作坊。
+    const sites: [number, number, number, DecoKind, number, boolean][] = theme === 'desert'
+      ? [[2, -0.49, 1.12, primary, 1, true], [3, 0.39, 0.91, primary, -1, false], [2, 0.47, 0.94, companion, -1, true], [3, -0.43, 0.80, companion, 1, false]]
+      : theme === 'frost'
+        ? [[2, -0.39, 1.10, primary, 1, false], [3, 0.50, 1.08, companion, -1, false], [2, 0.49, 0.91, companion, -1, false], [3, -0.51, 0.84, primary, 1, false]]
+        : [[2, -0.52, 1.14, primary, 1, false], [3, 0.29, 1.20, companion, -1, false], [2, 0.40, 0.96, companion, 1, false], [3, -0.47, 0.88, primary, -1, false]];
+    for (let i = 0; i < sites.length; i++) {
+      if (this.stage.type === 'shop' && i > 1) continue; // 商店把两段侧墙留给原有摊棚。
+      const [side, t, scale, lead, sign, two] = sites[i];
+      cluster(side, nearest(side, t * this.H), 'alcove', scale, lead, sign, two);
+    }
+    // 入场视线的主景更高，矮陪衬偏前/偏外。霜山主景在右侧，其余两章在左侧。
+    if (this.stage.type !== 'boss' && this.stage.type !== 'shop') {
+      const sign = theme === 'frost' ? 1 : -1;
+      const x = sign * this.H * 0.23, z = this.H * (theme === 'inferno' ? 0.32 : 0.35);
+      const focal = place(primary, x, z, { s: 1.45, yaw: -sign * 0.10, sceneRole: 'focal', sceneLayer: 'principal' });
+      if (focal) {
+        // 随机高台/石柱不能再插入入场镜头与主景之间；这只是美术留白，不增加碰撞。
+        this.sceneSight.push({ a: { ...this.L.playerSpawn }, b: { x, z } });
+        if (theme === 'desert') {
+          place(companion, x - 2.25, z - 0.3, { s: 0.90, yaw: -0.22, group: focal.group, sceneRole: 'focal', sceneLayer: 'support' });
+          place(companion, x - 0.5, z + 2.3, { s: 0.62, yaw: 0.33, group: focal.group, sceneRole: 'focal', sceneLayer: 'accent' });
+        } else {
+          place(companion, x + sign * 3.7, z + 1.5, { s: 1.04, group: focal.group, yaw: -sign * 0.17, sceneRole: 'focal', sceneLayer: 'support' });
+        }
+      }
+      const qx = -sign * this.H * (theme === 'frost' ? 0.20 : 0.29), qz = this.H * 0.47;
+      place(companion, qx, qz, { s: theme === 'inferno' ? 1.15 : 0.82, yaw: sign * 0.25, sceneRole: 'focal', sceneLayer: 'accent' });
     }
   }
 
@@ -487,7 +606,30 @@ class Gen {
         }
       }
     }
+    this.dressPlatform(P, h, side, head, g);
     return true;
+  }
+
+  /** 台阶对侧的灯龛 / 祭炉 / 陶罐，避开台阶中线、亭柱和护栏。 */
+  private dressPlatform(P: Rect, y: number, side: number, head: P2, group: number): void {
+    const kind: DecoKind = this.stage.theme === 'desert' ? 'pots' : this.stage.theme === 'frost' ? 'stoneLantern' : 'brazier';
+    const c = PROP_COLLIDER[kind];
+    const sizes = this.stage.theme === 'desert' ? [0.92, 0.62] : this.stage.theme === 'frost' ? [0.98, 0.74] : [1.14, 0.80];
+    // 台后两角一大一小，第二件略向内退；不以相同尺度压住台阶视线。
+    const xs = side === 0 ? [P.x0 + 1.3] : side === 1 ? [P.x1 - 1.3] : [P.x0 + 1.18, P.x1 - 1.47];
+    const zs = side === 2 ? [P.z0 + 1.3] : side === 3 ? [P.z1 - 1.3] : [P.z0 + 1.18, P.z1 - 1.47];
+    let i = 0;
+    for (const x of xs) for (const z of zs) {
+      const s = sizes[i++];
+      if (Math.hypot(x - head.x, z - head.z) < 2.15) continue;
+      const yaw = Math.atan2(head.x - x, head.z - z);
+      const width = c ? propSize(kind, s) : 0;
+      const r = c ? rectC(x, z, width, width) : scenePotsRect(x, z, yaw, s);
+      if (this.L.boxes.some(b => b.maxY > y + 0.03 && b.minY < y + 2.2 && rectDist(r, { x0: b.minX, z0: b.minZ, x1: b.maxX, z1: b.maxZ }) < 0.18)) continue;
+      if (this.L.decos.some(d => d.group === group && Math.hypot(d.x - x, d.z - z) < 1.15)) continue;
+      if (c) this.box('collider', 'prop', group, r.x0, y, r.z0, r.x1, y + c[1] * s, r.z1);
+      this.deco(kind, x, z, { y, yaw, s, group, sceneRole: 'platform', sceneLayer: i === 1 ? 'support' : 'accent' });
+    }
   }
 
   /** 中央牌坊：两根柱子有碰撞，横梁在头顶（不影响地面导航） */
@@ -767,20 +909,26 @@ class Gen {
   private cornerClusters(): void {
     const H = this.H;
     const rng = this.rng;
-    const main: Record<ThemeId, DecoKind> = { desert: 'cactus', frost: 'pine', inferno: 'spike' };
+    const main: Record<ThemeId, DecoKind> = { desert: 'statue', frost: 'crystal', inferno: 'crystal' };
+    const lower: Record<ThemeId, DecoKind> = { desert: 'pots', frost: 'stoneLantern', inferno: 'brazier' };
     const soft: Record<ThemeId, WallPropKind[]> = { desert: ['dune', 'pots'], frost: ['snowdrift', 'snowdrift'], inferno: ['rock', 'rock'] };
     const theme = this.stage.theme;
     for (const sx of [-1, 1]) {
       for (const sz of [-1, 1]) {
-        const s = rng.range(1.0, 1.3);
-        const half = propSize(main[theme], s) / 2;
+        // 远角高件收住天际轮廓，近角矮件留出入场视线，不在四角重复同一座高碑。
+        const kind = sz < 0 ? main[theme] : lower[theme];
+        const s = sz < 0 ? rng.range(1.02, 1.18) : rng.range(0.76, 0.96);
+        const half = kind === 'pots' ? 0.8 * s : propSize(kind, s) / 2;
         // 沿其中一面墙紧贴角楼
         const alongX = rng.chance(0.5);
         const a = H - 1.2 - 0.05 - half;
         const b = H - WALL_SLOT - half;
         const x = sx * (alongX ? a : b);
         const z = sz * (alongX ? b : a);
-        this.propWithCollider(main[theme], x, z, PROP_GAP, 0.05, { yaw: rng.range(0, TAU), s }, 0.04);
+        const yaw = Math.atan2(-x, -z);
+        if (kind === 'pots') {
+          if (this.fits(scenePotsRect(x, z, yaw, s), 0.35, 0.05, 0.04)) this.deco(kind, x, z, { yaw, s, sceneRole: 'corner', sceneLayer: 'accent', group: this.group() });
+        } else this.propWithCollider(kind, x, z, PROP_GAP, 0.05, { yaw, s, sceneRole: 'corner', sceneLayer: sz < 0 ? 'principal' : 'accent' }, 0.04);
         for (const kind of soft[theme]) {
           const px = sx * (H - rng.range(1.0, 3.5));
           const pz = sz * (H - rng.range(1.0, 3.5));

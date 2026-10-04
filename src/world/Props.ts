@@ -21,9 +21,10 @@ interface Ctx {
 /** 火焰位置（世界坐标，火焰底部） */
 export interface FlameSpot { x: number; y: number; z: number; s: number }
 
-export function drawProps(b: GeoBatch, L: LevelLayout, st: ThemeStyle, rand: Rand, flames: FlameSpot[]): void {
+export function drawProps(b: GeoBatch, L: LevelLayout, st: ThemeStyle, rand: Rand, flames: FlameSpot[], replaced?: ReadonlySet<Deco>): void {
   const c: Ctx = { b, st, rand, frost: L.theme === 'frost', hot: L.theme === 'inferno', desert: L.theme === 'desert' };
   for (const d of L.decos) {
+    if (replaced?.has(d)) continue;
     b.setFrame(d.x, d.y, d.z, d.yaw, d.s);
     // 悬挂在高处的装饰不做贴地 AO
     if (d.kind === 'wallBanner' || d.kind === 'lanternString') b.aoBase = -100;

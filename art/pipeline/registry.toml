@@ -632,3 +632,57 @@ First-person LEFT arm, the hand supporting a fore-end from below, of a young fem
 Only the arm: a hand whose fingers are closed around an invisible grip, the wrist cuff and the forearm sleeve; no weapon, no body. The sleeve is cut off where the blockout ends.
 """
 
+
+[assets.SM_Prop_DesertReliquary]
+display = "沙寺镇灵碑"
+kind = "static"
+class = "prop"
+blockout = { source = "scene", id = "desert.statue" }
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.0 }
+brief = """A squat sandstone shrine stele, 2.56m tall, carved sun medallion, tiered worn base, ochre stone, turquoise enamel inset, weathered carved cloud borders, thick broken edges. Width 1.5m, depth 0.8m."""
+
+[assets.SM_Prop_DesertUrns]
+display = "沙寺陶罐组"
+kind = "static"
+class = "prop"
+blockout = { source = "scene", id = "desert.pots" }
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.0 }
+brief = """Three old terracotta temple urns clustered on a shared compact sandy base, 0.83m tall and 1.25m wide, one large tied-neck urn, two smaller vessels, teal glaze on necks, ochre clay and carved simple cloud motifs. Ground clutter prop, no plants."""
+
+[assets.SM_Prop_FrostShrine]
+display = "霜山石灯龛"
+kind = "static"
+class = "prop"
+blockout = { source = "scene", id = "frost.stoneLantern" }
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.0 }
+brief = """A 2.06m tall squat carved blue-grey stone temple lantern with a thick pagoda roof under heavy snow, four stout pillars framing a warm amber light recess, tiered square base, frost and small icicles. Width and depth 0.95m."""
+
+[assets.SM_Prop_FrostPrayerCairn]
+display = "霜山祈愿石"
+kind = "static"
+class = "prop"
+blockout = { source = "scene", id = "frost.crystal" }
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.0 }
+brief = """A 2.13m tall slender asymmetrical prayer cairn made of chunky blue-grey rocks, frost and snow patches, an icy turquoise crystal embedded in the upper stone, faded crimson prayer cloth wrapped tightly around the neck, broad stable rocky base. Width 1.03m, depth 0.88m."""
+
+[assets.SM_Prop_InfernoCrucible]
+display = "熔火祭炉"
+kind = "static"
+class = "prop"
+blockout = { source = "scene", id = "inferno.brazier" }
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.0 }
+brief = """An ancient squat basalt and dark bronze ceremonial brazier, 0.97m tall and 0.9m wide, wide thick bowl holding black coals and orange embers, three chunky low feet, two small close-fitting handles, soot and weathered reliefs. No flame or smoke; embers painted into the coals."""
+
+[assets.SM_Prop_InfernoChainObelisk]
+display = "熔火锁魂碑"
+kind = "static"
+class = "prop"
+blockout = { source = "scene", id = "inferno.crystal" }
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.0 }
+brief = """A 2.13m tall broken obsidian obelisk on a heavy chipped basalt pedestal, thick bronze bands and heavy close-fitting chain wound round the waist, carved orange ember channels, cracked volcanic rock, chunky stylized silhouette. Width 1.18m and depth 0.91m."""

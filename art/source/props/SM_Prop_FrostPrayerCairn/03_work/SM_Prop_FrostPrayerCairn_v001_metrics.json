@@ -1,0 +1,116 @@
+{
+  "steps": {
+    "导入清理": 1.7,
+    "对齐": 0.8,
+    "低模与 UV": 6.8,
+    "投影着色": 12.2,
+    "烘焙": 2.5,
+    "LOD": 0.0,
+    "导出": 0.5
+  },
+  "highpoly": {
+    "faces_raw": 445514,
+    "faces": 241358,
+    "verts": 241350,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.848,
+    "iou_per_view": {
+      "front": 0.926,
+      "left": 0.766,
+      "back": 0.895,
+      "right": 0.765
+    },
+    "height_m": 1.9706,
+    "blockout_height_m": 2.13
+  },
+  "uv": {
+    "smart_islands": 268,
+    "charts": 42,
+    "fallback_charts": 1,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.3704,
+    "density_merged": 0.3897
+  },
+  "projection": {
+    "uncovered_ratio": 0.1735
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Prop_FrostPrayerCairn_BC": {
+      "size": 512,
+      "colorspace": "sRGB"
+    },
+    "T_Prop_FrostPrayerCairn_N": {
+      "size": 512,
+      "colorspace": "Non-Color"
+    },
+    "T_Prop_FrostPrayerCairn_ORM": {
+      "size": 512,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Prop_FrostPrayerCairn_LOD0",
+      "tris": 2497,
+      "verts": 1242,
+      "uv_min": [
+        0.0021217672619968653,
+        0.0021218089386820793
+      ],
+      "uv_max": [
+        0.9978781938552856,
+        0.9837837815284729
+      ],
+      "uv_utilization": 0.683,
+      "bbox_min": [
+        -0.5248,
+        -0.4,
+        0.0001
+      ],
+      "bbox_max": [
+        0.5244,
+        0.3206,
+        1.9749
+      ]
+    },
+    {
+      "name": "SM_Prop_FrostPrayerCairn_LOD1",
+      "tris": 898,
+      "verts": 435,
+      "uv_min": [
+        0.0024465620517730713,
+        0.0023246866185218096
+      ],
+      "uv_max": [
+        0.9978781938552856,
+        0.9809649586677551
+      ],
+      "uv_utilization": 0.644,
+      "bbox_min": [
+        -0.5276,
+        -0.4047,
+        0.0004
+      ],
+      "bbox_max": [
+        0.5262,
+        0.3175,
+        1.9748
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Prop_FrostPrayerCairn\\04_export\\SM_Prop_FrostPrayerCairn_v001.glb",
+    "bytes": 124632
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Prop_FrostPrayerCairn\\03_work\\SM_Prop_FrostPrayerCairn_v001.blend",
+  "total_seconds": 24.7,
+  "_seconds": 27.7
+}

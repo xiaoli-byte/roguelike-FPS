@@ -12,6 +12,7 @@ import * as THREE from 'three';
 import type { HumanoidRig } from '../enemies/Models';
 import type { LoadedAsset } from './AssetLibrary';
 import { applyBindPose, HUMANOID_JOINTS } from './HumanoidBind';
+import { articulationGeometry } from './ArticulationWeights';
 
 export interface SkinnedBody {
   lod: THREE.LOD;
@@ -115,10 +116,12 @@ export function attachSkinnedBody(host: THREE.Object3D, rig: HumanoidRig, asset:
   lod.name = `${asset.id}_lod`;
   const skeletons: THREE.Skeleton[] = [];
   asset.lods.forEach((src, i) => {
-    const mesh = new THREE.SkinnedMesh(src.geometry, material);
-    mesh.name = src.name;
     const bones = order[i];
-    const skeleton = new THREE.Skeleton(bones as unknown as THREE.Bone[], bones.map((j) => inverseOf.get(j)!.clone()));
+    const inverses = bones.map((j) => inverseOf.get(j)!.clone());
+    const geometry = articulationGeometry(asset.id, src.geometry, bones.map(b => HUMANOID_JOINTS.find(k => rig[k] === b)!), inverses);
+    const mesh = new THREE.SkinnedMesh(geometry, material);
+    mesh.name = src.name;
+    const skeleton = new THREE.Skeleton(bones as unknown as THREE.Bone[], inverses);
     skeletons.push(skeleton);
     mesh.bind(skeleton, new THREE.Matrix4());
     // 程序动画会把手臂举过头顶：用静态的宽松包围球做视锥剔除，避免逐帧按骨骼重算

@@ -46,6 +46,10 @@ export interface Deco {
   group: number;
   /** 带点光源 */
   lit: boolean;
+  /** Hunyuan 场景资产的陈设用途，便于检视与生成期验证。 */
+  sceneRole?: 'focal' | 'gateway' | 'alcove' | 'corner' | 'platform';
+  /** 同组物件的构图层次：主景高件、陪衬矮件、零散点景。 */
+  sceneLayer?: 'principal' | 'support' | 'accent';
 }
 
 export interface RuneMark { x: number; z: number; r: number; gold: boolean }

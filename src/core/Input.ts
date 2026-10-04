@@ -2,6 +2,8 @@
  * 键鼠输入。按「动作」查询（down/pressed/released），按帧结算。
  * 鼠标位移仅在指针锁定（或 freeLook 调试模式）时累积。
  */
+import { MouseLookFilter } from './MouseLookFilter';
+
 export type Action =
   | 'forward' | 'back' | 'left' | 'right'
   | 'jump' | 'dash' | 'reload' | 'interact'
@@ -65,6 +67,10 @@ export class Input {
   private buttonsPressed = new Set<number>();
   private buttonsReleased = new Set<number>();
   private locked = false;
+  private focused = true;
+  private ignoreMouseUntil = 0;
+  private readonly lookFilter = new MouseLookFilter();
+  private lockRequestPending = false;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -80,7 +86,17 @@ export class Input {
       this.keys.delete(e.code);
       this.keysReleased.add(e.code);
     });
-    window.addEventListener('blur', () => this.releaseAll());
+    window.addEventListener('blur', () => {
+      this.focused = false;
+      this.releaseAll();
+    });
+    window.addEventListener('focus', () => {
+      this.focused = true;
+      this.flushMouse();
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) this.releaseAll();
+    });
 
     window.addEventListener('mousedown', (e) => {
       if (!this.locked && !this.freeLook && e.target !== canvas) return;
@@ -93,12 +109,12 @@ export class Input {
       this.buttonsReleased.add(e.button);
     });
     window.addEventListener('mousemove', (e) => {
-      if (!this.locked && !this.freeLook) return;
-      // 过滤部分浏览器在指针锁定下偶发的巨大跳变
-      const dx = Math.abs(e.movementX) > 400 ? 0 : e.movementX;
-      const dy = Math.abs(e.movementY) > 400 ? 0 : e.movementY;
-      this.mouseDX += dx;
-      this.mouseDY += dy;
+      if (!this.enabled || !this.focused || document.hidden) return;
+      if (!this.freeLook && (!this.locked || document.pointerLockElement !== canvas)) return;
+      if (performance.now() < this.ignoreMouseUntil) return;
+      const delta = this.lookFilter.sample(e.movementX, e.movementY, e.timeStamp);
+      this.mouseDX += delta.x;
+      this.mouseDY += delta.y;
     });
     window.addEventListener(
       'wheel',
@@ -119,12 +135,17 @@ export class Input {
 
     document.addEventListener('pointerlockchange', () => {
       const now = document.pointerLockElement === canvas;
+      this.lockRequestPending = false;
       if (now === this.locked) return;
       this.locked = now;
+      this.flushMouse();
+      // 锁定时浏览器会重定位光标，短暂忽略这段过渡事件。
+      this.ignoreMouseUntil = now ? performance.now() + 50 : 0;
       if (!now) this.releaseAll();
       this.onLockChange?.(now);
     });
     document.addEventListener('pointerlockerror', () => {
+      this.lockRequestPending = false;
       console.warn('[Input] pointer lock request failed');
     });
   }
@@ -135,12 +156,25 @@ export class Input {
 
   /** 需要在用户手势中调用 */
   requestLock(): void {
-    if (this.locked) return;
+    if (this.locked || this.lockRequestPending) return;
+    this.lockRequestPending = true;
+    void this.acquireLock();
+  }
+
+  private async acquireLock(): Promise<void> {
     try {
-      const p = this.canvas.requestPointerLock({ unadjustedMovement: false } as any) as unknown;
-      if (p && typeof (p as Promise<void>).catch === 'function') (p as Promise<void>).catch(() => undefined);
-    } catch {
-      /* 某些环境不支持 */
+      // 优先原始输入，避免操作系统鼠标加速放大异常位移。
+      await this.canvas.requestPointerLock({ unadjustedMovement: true });
+    } catch (error) {
+      if (error instanceof Error && error.name === 'NotSupportedError') {
+        try {
+          await this.canvas.requestPointerLock();
+        } catch {
+          /* 失败由 pointerlockerror 通知；保持未锁定状态 */
+        }
+      }
+    } finally {
+      this.lockRequestPending = false;
     }
   }
 
@@ -199,6 +233,7 @@ export class Input {
   flushMouse(): void {
     this.mouseDX = 0;
     this.mouseDY = 0;
+    this.lookFilter.reset();
   }
 
   releaseAll(): void {
@@ -206,6 +241,10 @@ export class Input {
     for (const b of this.buttons) this.buttonsReleased.add(b);
     this.keys.clear();
     this.buttons.clear();
+    this.keysPressed.clear();
+    this.buttonsPressed.clear();
+    this.flushMouse();
+    this.wheel = 0;
   }
 
   /** 测试/自动化：模拟按键 */

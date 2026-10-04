@@ -39,7 +39,9 @@ def ingest(asset_id: str) -> dict:
     cur = st.current("blockout")
     if cur:
         cur_glb = st.file(cur, f"BO_{asset_id}_v{cur['version']:03d}.glb")
-        if cur_glb.exists() and sha256(cur_glb) == sha256(glb):
+        cur_views = st.file(cur, f"BO_{asset_id}_v{cur['version']:03d}_views.json")
+        scene_needs_upright = spec.blockout.get('source') == 'scene' and cur_views.exists() and json.loads(cur_views.read_text(encoding='utf-8')).get('presentation') is not None
+        if cur_glb.exists() and sha256(cur_glb) == sha256(glb) and not scene_needs_upright:
             cur_meta = st.file(cur, f"BO_{asset_id}_v{cur['version']:03d}.json")
             shutil.copyfile(meta, cur_meta)
             cur.setdefault("amendments", []).append({"time": now(), "reason": "几何不变，更新白模说明"})
@@ -57,7 +59,7 @@ def ingest(asset_id: str) -> dict:
     render_dir = spec.dir / "_tmp" / stem
     # 静态网格（挂件）按「最长轴竖直、最薄方向朝正面相机」摆展示姿态，正面图就是信息量最大的侧影
     res = blender.run("bl_blockout.py", {"blockout_glb": str(dst_glb), "out_dir": str(render_dir), "panel": list(PANEL),
-                                         "presentation": spec.kind == "static" or bool(spec.raw.get("presentation"))},
+                                         "presentation": (spec.kind == "static" and spec.blockout.get('source') != 'scene') or bool(spec.raw.get("presentation"))},
                       render_dir, "blockout")
     views_json = out / f"{stem}_views.json"
     views_json.write_text(json.dumps({"panel": list(PANEL), "views": res["views"], "bbox_min": res["bbox_min"],

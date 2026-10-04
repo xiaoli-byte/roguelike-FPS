@@ -1,0 +1,116 @@
+{
+  "steps": {
+    "导入清理": 5.0,
+    "对齐": 0.8,
+    "低模与 UV": 19.5,
+    "投影着色": 71.3,
+    "烘焙": 6.9,
+    "LOD": 0.0,
+    "导出": 1.8
+  },
+  "highpoly": {
+    "faces_raw": 1448514,
+    "faces": 812014,
+    "verts": 812000,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00485
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.805,
+    "iou_per_view": {
+      "front": 0.868,
+      "left": 0.8,
+      "back": 0.791,
+      "right": 0.728
+    },
+    "height_m": 0.9863,
+    "blockout_height_m": 0.9713
+  },
+  "uv": {
+    "smart_islands": 470,
+    "charts": 76,
+    "fallback_charts": 8,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.281,
+    "density_merged": 0.3293
+  },
+  "projection": {
+    "uncovered_ratio": 0.385
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Prop_InfernoCrucible_BC": {
+      "size": 512,
+      "colorspace": "sRGB"
+    },
+    "T_Prop_InfernoCrucible_N": {
+      "size": 512,
+      "colorspace": "Non-Color"
+    },
+    "T_Prop_InfernoCrucible_ORM": {
+      "size": 512,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Prop_InfernoCrucible_LOD0",
+      "tris": 2498,
+      "verts": 1236,
+      "uv_min": [
+        0.0027838798705488443,
+        0.002783883595839143
+      ],
+      "uv_max": [
+        0.993173360824585,
+        0.9972161054611206
+      ],
+      "uv_utilization": 0.648,
+      "bbox_min": [
+        -0.6141,
+        -0.696,
+        0.0006
+      ],
+      "bbox_max": [
+        0.6574,
+        0.5829,
+        0.9884
+      ]
+    },
+    {
+      "name": "SM_Prop_InfernoCrucible_LOD1",
+      "tris": 900,
+      "verts": 432,
+      "uv_min": [
+        0.002789048943668604,
+        0.0035797597374767065
+      ],
+      "uv_max": [
+        0.9911525249481201,
+        0.9915833473205566
+      ],
+      "uv_utilization": 0.588,
+      "bbox_min": [
+        -0.6087,
+        -0.6986,
+        0.0008
+      ],
+      "bbox_max": [
+        0.6583,
+        0.5787,
+        0.9868
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Prop_InfernoCrucible\\04_export\\SM_Prop_InfernoCrucible_v001.glb",
+    "bytes": 136576
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Prop_InfernoCrucible\\03_work\\SM_Prop_InfernoCrucible_v001.blend",
+  "total_seconds": 105.3,
+  "_seconds": 109.5
+}

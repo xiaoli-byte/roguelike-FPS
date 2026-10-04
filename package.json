@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "typecheck": "tsc --noEmit",
+    "test": "node --test tests/mouse-look.test.mjs tests/handling.test.mjs tests/scene-layout.test.mjs tests/enemy-attacks.test.mjs tests/articulation.test.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

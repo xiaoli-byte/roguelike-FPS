@@ -11,6 +11,7 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 
 export interface AssetEntry {
   url: string;
+  bytes?: number;
   kind: 'skeletal' | 'static';
   class: string;
   /** 绑定目标；attachment 为挂点名时表示挂在该挂点上的静态网格（武器 / 盾 / 法器） */

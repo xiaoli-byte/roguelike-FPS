@@ -35,6 +35,11 @@ uniform float uTime;
 uniform float uCloudAmt;
 uniform float uCloudSpeed;
 uniform float uSunGlow;
+uniform float uDiskRadius;
+uniform float uHorizonFalloff;
+uniform float uCloudStretch;
+uniform float uMoon;
+uniform float uStars;
 varying vec3 vWorld;
 
 float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
@@ -47,7 +52,7 @@ float noise(vec2 p) {
 float fbm(vec2 p) {
   float v = 0.0;
   float a = 0.5;
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < 4; i++) {
     v += a * noise(p);
     p = p * 2.03 + vec2(1.7, 9.2);
     a *= 0.5;
@@ -60,17 +65,33 @@ void main() {
   float h = d.y;
   vec3 col = mix(uBottom, uTop, pow(clamp(h, 0.0, 1.0), 0.55));
   // 地平线：恰好等于雾色，与远处被雾吞没的几何无缝衔接
-  col = mix(col, uHorizon, exp(-max(h, 0.0) * 11.0));
-  // 云层（平面投影的 fbm）
+  col = mix(col, uHorizon, exp(-max(h, 0.0) * uHorizonFalloff));
+  float cloudAlpha = 0.0;
+  // 拉长的云带留出透天空隙；朝向光源的边缘稍暖，背光不漂成一片白雾。
   if (h > 0.0) {
-    vec2 uv = d.xz / (h + 0.2) * 1.4 + vec2(uTime * uCloudSpeed, uTime * uCloudSpeed * 0.37);
+    vec2 uv = d.xz / (h + 0.28) * vec2(1.4, uCloudStretch) + vec2(uTime * uCloudSpeed, uTime * uCloudSpeed * 0.27);
     float n = fbm(uv);
-    float cl = smoothstep(0.62 - uCloudAmt * 0.3, 0.95, n) * smoothstep(0.02, 0.3, h);
-    col = mix(col, uCloud, cl * uCloudAmt);
+    cloudAlpha = smoothstep(0.51 - uCloudAmt * 0.14, 0.76, n) * smoothstep(0.04, 0.26, h) * uCloudAmt;
+    float edgeLight = pow(max(dot(d, uSunDir), 0.0), 12.0);
+    vec3 cloudColor = mix(uCloud * 0.62, uCloud, smoothstep(0.38, 0.72, n));
+    cloudColor = mix(cloudColor, uSunColor, edgeLight * 0.12 * uSunGlow);
+    col = mix(col, cloudColor, cloudAlpha);
   }
-  // 太阳与光晕
+  // 星光只出现在月夜的高空，云带与地平线自然遮住它，亮度低于月盘。
+  if (uStars > 0.0 && h > 0.08) {
+    vec2 uv = vec2(atan(d.z, d.x) * 0.15915494 + 0.5, asin(clamp(h, 0.0, 1.0)) * 0.63661977) * vec2(350.0, 160.0);
+    float seed = hash(floor(uv));
+    float star = (1.0 - smoothstep(0.03, 0.18, length(fract(uv) - 0.5))) * step(0.9975, seed);
+    col += vec3(0.55, 0.72, 1.0) * star * uStars * smoothstep(0.08, 0.35, h) * (1.0 - cloudAlpha);
+  }
+  // 有明确边缘的日月盘和受控光晕；用混色避免未色调映射天空的白色夹断。
   float s = max(dot(d, uSunDir), 0.0);
-  col += uSunColor * (pow(s, 900.0) * 3.0 * uSunGlow + pow(s, 24.0) * 0.25 * uSunGlow + pow(s, 4.0) * 0.1 * uSunGlow);
+  float halo = (pow(s, 24.0) * 0.18 + pow(s, 4.0) * 0.035) * uSunGlow;
+  col = mix(col, uSunColor, halo * (1.0 - cloudAlpha * 0.6));
+  float disk = smoothstep(cos(uDiskRadius), cos(uDiskRadius * 0.87), s);
+  vec3 tangent = normalize(cross(uSunDir, vec3(0.0, 1.0, 0.0)));
+  float lunarShade = mix(0.78, 1.0, smoothstep(-uDiskRadius * 0.7, uDiskRadius * 0.7, dot(d, tangent)));
+  col = mix(col, uSunColor * mix(1.0, lunarShade, uMoon), disk * 0.94 * (1.0 - cloudAlpha * 0.75));
   if (h < 0.0) col = uHorizon;
   gl_FragColor = vec4(col, 1.0);
   #include <colorspace_fragment>
@@ -96,6 +117,11 @@ export class SkyDome {
         uCloudAmt: { value: st.cloud.amount },
         uCloudSpeed: { value: st.cloud.speed },
         uSunGlow: { value: st.sunGlow },
+        uDiskRadius: { value: st.sky.diskRadius },
+        uHorizonFalloff: { value: st.sky.horizonFalloff },
+        uCloudStretch: { value: st.sky.cloudStretch },
+        uMoon: { value: st.sky.celestial === 'moon' ? 1 : 0 },
+        uStars: { value: st.sky.stars },
       },
       vertexShader: SKY_VERT,
       fragmentShader: SKY_FRAG,
@@ -178,9 +204,11 @@ uniform float uHeight;
 uniform float uBox;
 uniform float uDrift;
 uniform float uFlicker;
+uniform float uMaxPointSize;
 uniform vec3 uCenter;
 attribute float aSeed;
 varying float vAlpha;
+varying float vTint;
 void main() {
   vec3 p = position;
   float sp = uSpeed * (0.6 + aSeed * 0.8);
@@ -192,10 +220,13 @@ void main() {
   vec3 wp = vec3(uCenter.x + rel.x, p.y, uCenter.z + rel.y);
   vec4 mv = viewMatrix * vec4(wp, 1.0);
   gl_Position = projectionMatrix * mv;
-  gl_PointSize = clamp(uSize * (0.6 + aSeed * 0.8) * uScale / max(0.2, -mv.z), 1.0, 26.0);
+  gl_PointSize = clamp(uSize * (0.6 + aSeed * 0.8) * uScale / max(0.2, -mv.z), 1.0, uMaxPointSize);
   float edge = 1.0 - smoothstep(uBox * 0.32, uBox * 0.5, length(rel));
   vAlpha = smoothstep(0.0, 1.0, p.y) * (1.0 - smoothstep(uHeight - 3.0, uHeight, p.y)) * edge;
-  vAlpha *= mix(1.0, 0.55 + 0.45 * sin(uTime * (2.0 + aSeed * 5.0) + aSeed * 30.0), uFlicker);
+  // 两米内淡出，防止雪片/余烬挡在准星与枪前；远处粒子随距离柔和隐去。
+  vAlpha *= smoothstep(1.0, 2.8, length(wp - uCenter)) * (1.0 - smoothstep(18.0, 31.0, -mv.z));
+  vAlpha *= mix(1.0, 0.72 + 0.28 * sin(uTime * (1.1 + aSeed * 2.0) + aSeed * 30.0), uFlicker);
+  vTint = 0.78 + aSeed * 0.22;
 }
 `;
 
@@ -203,11 +234,12 @@ const PARTICLE_FRAG = /* glsl */ `
 uniform vec3 uColor;
 uniform float uOpacity;
 varying float vAlpha;
+varying float vTint;
 void main() {
   vec2 c = gl_PointCoord - 0.5;
-  float a = smoothstep(0.5, 0.0, length(c)) * vAlpha * uOpacity;
+  float a = (1.0 - smoothstep(0.08, 0.5, length(c))) * vAlpha * uOpacity;
   if (a < 0.01) discard;
-  gl_FragColor = vec4(uColor, a);
+  gl_FragColor = vec4(uColor * vTint, a);
   #include <colorspace_fragment>
 }
 `;
@@ -244,6 +276,7 @@ export class Particles {
         uBox: { value: box },
         uDrift: { value: p.kind === 'snow' ? 0.9 : p.kind === 'ember' ? 0.6 : 1.4 },
         uFlicker: { value: p.kind === 'ember' ? 1 : 0 },
+        uMaxPointSize: { value: p.kind === 'snow' ? 12 : 9 },
         uCenter: { value: new THREE.Vector3() },
         uColor: { value: new THREE.Color(p.color) },
         uOpacity: { value: p.opacity },

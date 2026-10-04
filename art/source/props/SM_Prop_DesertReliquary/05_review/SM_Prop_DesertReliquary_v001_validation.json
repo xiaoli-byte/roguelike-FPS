@@ -1,0 +1,152 @@
+[
+  {
+    "level": "pass",
+    "check": "文件大小",
+    "detail": "107 KB / 上限 600 KB"
+  },
+  {
+    "level": "pass",
+    "check": "扩展可用",
+    "detail": "必需扩展 ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+  },
+  {
+    "level": "pass",
+    "check": "LOD 数量",
+    "detail": "['SM_Prop_DesertReliquary_LOD0', 'SM_Prop_DesertReliquary_LOD1']，规格 2 级"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 面数",
+    "detail": "2500 / 预算 2500"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 切换距离",
+    "detail": "extras.lod_distance=0"
+  },
+  {
+    "level": "pass",
+    "check": "场景占地 X 轴",
+    "detail": "1.523 m / 参考上限 1.766 m"
+  },
+  {
+    "level": "pass",
+    "check": "场景占地 Z 轴",
+    "detail": "0.583 m / 参考上限 1.138 m"
+  },
+  {
+    "level": "pass",
+    "check": "场景高度",
+    "detail": "2.463 m / 参考 2.565 m"
+  },
+  {
+    "level": "pass",
+    "check": "场景脚底落地",
+    "detail": "最低点 y=0.0009"
+  },
+  {
+    "level": "pass",
+    "check": "场景轴心居中",
+    "detail": "中心 x=-0.003 z=0.053"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 面数",
+    "detail": "900 / 预算 900"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 递减",
+    "detail": "2500 → 900"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 切换距离",
+    "detail": "extras.lod_distance=20"
+  },
+  {
+    "level": "pass",
+    "check": "材质数量",
+    "detail": "['M_Prop_DesertReliquary']（一个资产一个材质，便于合批）"
+  },
+  {
+    "level": "pass",
+    "check": "材质命名",
+    "detail": "['M_Prop_DesertReliquary']"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Prop_DesertReliquary_N",
+    "detail": "512×512 webp（规格 512²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Prop_DesertReliquary_N",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Prop_DesertReliquary_ORM",
+    "detail": "512×512 webp（规格 512²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Prop_DesertReliquary_ORM",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Prop_DesertReliquary_BC",
+    "detail": "512×512 webp（规格 512²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Prop_DesertReliquary_BC",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "BaseColor 贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "法线贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "ORM 贴图",
+    "detail": "AO / 粗糙度 / 金属度"
+  },
+  {
+    "level": "pass",
+    "check": "SM_Prop_DesertReliquary_LOD0 UV 范围",
+    "detail": "[0.0025763718876987696, 0.002538845641538501]..[0.9974945187568665, 0.877561092376709]"
+  },
+  {
+    "level": "pass",
+    "check": "SM_Prop_DesertReliquary_LOD1 UV 范围",
+    "detail": "[0.0025763718876987696, 0.0025556546170264482]..[0.9974945187568665, 0.877561092376709]"
+  },
+  {
+    "level": "warn",
+    "check": "UV 利用率",
+    "detail": "45%"
+  },
+  {
+    "level": "pass",
+    "check": "UV 翻折",
+    "detail": "0 个面（0.00%），图块 55 个"
+  },
+  {
+    "level": "pass",
+    "check": "高模对齐",
+    "detail": "剪影 IoU 0.796（{'front': 0.967, 'left': 0.586, 'back': 0.957, 'right': 0.59}）"
+  },
+  {
+    "level": "pass",
+    "check": "投影覆盖",
+    "detail": "未覆盖顶点 39%（扩散补色）"
+  }
+]

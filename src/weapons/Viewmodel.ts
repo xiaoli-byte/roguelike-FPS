@@ -20,13 +20,15 @@ import {
 import { AssetLibrary } from '../assets/AssetLibrary';
 import { applyArtEnvironment } from '../assets/ArtEnvironment';
 import { attachStaticPart } from '../assets/StaticAttachment';
+import { WEAPON_HANDLING, sampleLoadingHand, type HandPose } from './WeaponHandling';
+import { addReloadBreech } from './ReloadBreech';
 
 export interface ViewmodelState {
   aimT: number;
   /** 切枪：0 = 正常持枪，1 = 完全收下 */
   lowerT: number;
   reloading: boolean;
-  /** 整匣换弹进度 0..1 */
+  /** 换弹进度 0..1；逐发装填时为当前一发的进度 */
   reloadP: number;
   /** 逐发装填中 */
   shellMode: boolean;
@@ -82,6 +84,13 @@ interface VmEntry {
   energyMat: THREE.MeshBasicMaterial;
   /** 美术手臂的实例材质 */
   armMats: THREE.MeshStandardMaterial[];
+  leftArm: THREE.Object3D | null;
+  support: THREE.Vector3;
+  loadOffset: THREE.Vector3;
+  /** 逐发装填时手里实际可见的弹壳 / 双管弹药。 */
+  rounds: THREE.Group | null;
+  breech: THREE.Group | null;
+  ownedGeometry: THREE.BufferGeometry[];
   baseColor: THREE.Color;
   magBase: THREE.Vector3;
   magRotX: number;
@@ -124,6 +133,9 @@ const _c = new THREE.Color();
 const _tint = new THREE.Color();
 const _axis = new THREE.Vector3();
 const _euler = new THREE.Euler();
+const _handPose: HandPose = { x: 0, y: 0, z: 0, roll: 0, pitch: 0 };
+const _supportPoint: [number, number, number] = [0, 0, 0];
+const _loadPoint: [number, number, number] = [0, 0, 0];
 
 /**
  * 第一人称枪模相对建模尺寸的整体缩放。
@@ -564,7 +576,7 @@ export function buildArm(side: 'r' | 'l', heroColor: number): THREE.Group {
  * - 其他武器：左右手（buildArm）；该英雄有美术手臂资产（bind = fp / 英雄 id / arm_r|arm_l）时换上美术网格，
  *   返回它们的实例材质（换枪时释放）。
  */
-function addArms(gun: GunModel, heroColor: number, heroId: string | undefined, renderer: THREE.WebGLRenderer): { forearm: THREE.Object3D | null; mats: THREE.MeshStandardMaterial[] } {
+function addArms(gun: GunModel, heroColor: number, heroId: string | undefined, renderer: THREE.WebGLRenderer, defId: string): { forearm: THREE.Object3D | null; mats: THREE.MeshStandardMaterial[] } {
   const r = gun.root;
   if (gun.blade) {
     const { glove, cuff, sleeve } = armMaterials(heroColor, 0.7);
@@ -581,11 +593,25 @@ function addArms(gun: GunModel, heroColor: number, heroId: string | undefined, r
     armBox(forearm, sleeve, 0.068, 0.068, 0.2, 0.028, -0.03, 0.056, 0.62, 0.38);
     return { forearm, mats: [] };
   }
-  r.add(buildArm('r', heroColor));
-  if (gun.leftHand) {
+  const handling = WEAPON_HANDLING[defId];
+  const right = buildArm('r', heroColor);
+  if (handling) {
+    right.position.fromArray(handling.right);
+    right.rotation.x = handling.rightPitch;
+  }
+  r.add(right);
+  if (gun.leftHand || handling?.support) {
     const left = buildArm('l', heroColor);
-    left.position.copy(gun.leftHand);
-    (gun.leftParent ?? r).add(left);
+    if (gun.leftHand) {
+      left.position.copy(gun.leftHand);
+      if (gun.leftParent) {
+        gun.leftParent.updateMatrix();
+        left.position.applyMatrix4(gun.leftParent.matrix);
+      }
+    } else left.position.fromArray(handling.support!);
+    left.rotation.z = handling?.leftRoll ?? 0;
+    // 握点跟随泵动，但手不直接挂在泵上：换弹时可以独立离开护木。
+    r.add(left);
   }
   const mats: THREE.MeshStandardMaterial[] = [];
   if (!heroId) return { forearm: null, mats };
@@ -795,6 +821,7 @@ export class Viewmodel {
     e.energyMat.dispose();
     e.gun.artGlow?.dispose(); // 美术枪模、美术手臂的实例材质（贴图共享，不在这里释放）
     for (const m of e.armMats) m.dispose();
+    for (const g of e.ownedGeometry) g.dispose();
     if (e.blade) {
       e.blade.runeMat.dispose();
       for (const m of e.blade.shardMats) m.dispose();
@@ -846,9 +873,34 @@ export class Viewmodel {
         snap: true,
       };
     }
-    const arms = addArms(gun, this.ctx.player.hero?.color ?? 0x5a6a7a, this.ctx.player.hero?.id, this.ctx.renderer);
+    const arms = addArms(gun, this.ctx.player.hero?.color ?? 0x5a6a7a, this.ctx.player.hero?.id, this.ctx.renderer, def.id);
     const armMats = arms.mats;
     if (blade) blade.forearm = arms.forearm;
+    const leftArm = gun.root.getObjectByName('arm_l') ?? null;
+    const support = leftArm?.position.clone() ?? new THREE.Vector3();
+    const loadOffset = new THREE.Vector3().fromArray(WEAPON_HANDLING[def.id]?.load ?? [0, 0, 0]);
+    if (gun.mag) {
+      gun.root.updateMatrixWorld(true);
+      gun.mag.getWorldPosition(_v);
+      gun.root.worldToLocal(_v);
+      loadOffset.sub(_v);
+    }
+    let rounds: THREE.Group | null = null;
+    let breech: THREE.Group | null = null;
+    const ownedGeometry: THREE.BufferGeometry[] = [];
+    if (leftArm && def.reloadStyle === 'shell') {
+      rounds = new THREE.Group();
+      rounds.name = 'reload.rounds';
+      for (let i = 0; i < (def.id === 'magmashot' ? 2 : 1); i++) {
+        const shell = new THREE.Mesh(boxGeo(0.013, 0.013, 0.052), solidMat(0xb86b32, 0.4, 0.5));
+        shell.position.set(i * 0.018, 0.014, -0.025);
+        rounds.add(shell);
+      }
+      rounds.visible = false;
+      leftArm.add(rounds);
+    }
+    // 双管折开式枪：在已完成美术绑定后增设运行时铰链，白模骨架指纹保持原样。
+    if (def.id === 'magmashot') breech = addReloadBreech(gun.root, ownedGeometry);
     gun.root.scale.setScalar(VM_SCALE);
     gun.root.traverse((o) => {
       const mesh = o as THREE.Mesh;
@@ -863,6 +915,7 @@ export class Viewmodel {
       gun,
       energyMat,
       armMats,
+      leftArm, support, loadOffset, rounds, breech, ownedGeometry,
       baseColor: base,
       magBase: gun.mag ? gun.mag.position.clone() : new THREE.Vector3(),
       magRotX: gun.mag ? gun.mag.rotation.x : 0,
@@ -1052,6 +1105,7 @@ export class Viewmodel {
     }
 
     this.animateParts(dt, e, s, time);
+    this.animateHands(dt, e, s);
     this.updateFlash(dt, e, s);
     this.updateLights(dt, s);
   }
@@ -1392,6 +1446,38 @@ export class Viewmodel {
       links[i].quaternion.setFromUnitVectors(DOWN, _v3);
       _q.multiply(links[i].quaternion);
     }
+  }
+
+  private animateHands(dt: number, e: VmEntry, s: ViewmodelState): void {
+    const left = e.leftArm;
+    const profile = WEAPON_HANDLING[e.def.id];
+    if (!left || !profile || e.blade) return;
+    const g = e.gun;
+    _v.copy(e.support);
+    if (g.leftParent && g.leftHand) {
+      g.leftParent.updateMatrix();
+      _v.copy(g.leftHand).applyMatrix4(g.leftParent.matrix);
+    }
+    _supportPoint[0] = _v.x; _supportPoint[1] = _v.y; _supportPoint[2] = _v.z;
+    if (e.breech) e.breech.rotation.x = -0.48 * this.shellT;
+    if (s.reloading) {
+      _v2.fromArray(profile.load);
+      if (g.mag && !s.shellMode) {
+        g.root.updateMatrixWorld(true);
+        g.mag.getWorldPosition(_v2);
+        g.root.worldToLocal(_v2).add(e.loadOffset);
+      }
+      _loadPoint[0] = _v2.x; _loadPoint[1] = _v2.y; _loadPoint[2] = _v2.z;
+      sampleLoadingHand(profile, s.reloadP, _supportPoint, _loadPoint, _handPose);
+      left.position.set(_handPose.x, _handPose.y, _handPose.z);
+      left.rotation.set(_handPose.pitch, 0, _handPose.roll);
+    } else {
+      const k = 1 - Math.exp(-20 * dt);
+      left.position.lerp(_v, k);
+      left.rotation.x = lerp(left.rotation.x, 0, k);
+      left.rotation.z = lerp(left.rotation.z, profile.leftRoll, k);
+    }
+    if (e.rounds) e.rounds.visible = s.shellMode && s.reloadP > 0.22 && s.reloadP < 0.98;
   }
 
   private animateParts(dt: number, e: VmEntry, s: ViewmodelState, time: number): void {

@@ -1,0 +1,116 @@
+{
+  "steps": {
+    "导入清理": 3.9,
+    "对齐": 0.8,
+    "低模与 UV": 12.1,
+    "投影着色": 27.9,
+    "烘焙": 3.2,
+    "LOD": 0.0,
+    "导出": 0.5
+  },
+  "highpoly": {
+    "faces_raw": 985521,
+    "faces": 402406,
+    "verts": 402330,
+    "loose_parts": 2,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00492
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.906,
+    "iou_per_view": {
+      "front": 0.932,
+      "left": 0.872,
+      "back": 0.936,
+      "right": 0.873
+    },
+    "height_m": 2.1182,
+    "blockout_height_m": 2.135
+  },
+  "uv": {
+    "smart_islands": 551,
+    "charts": 82,
+    "fallback_charts": 14,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.2171,
+    "density_merged": 0.2538
+  },
+  "projection": {
+    "uncovered_ratio": 0.5113
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Prop_InfernoChainObelisk_BC": {
+      "size": 512,
+      "colorspace": "sRGB"
+    },
+    "T_Prop_InfernoChainObelisk_N": {
+      "size": 512,
+      "colorspace": "Non-Color"
+    },
+    "T_Prop_InfernoChainObelisk_ORM": {
+      "size": 512,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Prop_InfernoChainObelisk_LOD0",
+      "tris": 2500,
+      "verts": 1174,
+      "uv_min": [
+        0.0033099211286753416,
+        0.0033876143861562014
+      ],
+      "uv_max": [
+        0.9967159628868103,
+        0.9937229156494141
+      ],
+      "uv_utilization": 0.546,
+      "bbox_min": [
+        -0.5411,
+        -0.5537,
+        -0.0005
+      ],
+      "bbox_max": [
+        0.5416,
+        0.526,
+        2.1298
+      ]
+    },
+    {
+      "name": "SM_Prop_InfernoChainObelisk_LOD1",
+      "tris": 900,
+      "verts": 374,
+      "uv_min": [
+        0.0034725689329206944,
+        0.003471079748123884
+      ],
+      "uv_max": [
+        0.9969030022621155,
+        0.9877047538757324
+      ],
+      "uv_utilization": 0.481,
+      "bbox_min": [
+        -0.5363,
+        -0.5522,
+        -0.0002
+      ],
+      "bbox_max": [
+        0.5352,
+        0.4895,
+        2.1079
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Prop_InfernoChainObelisk\\04_export\\SM_Prop_InfernoChainObelisk_v001.glb",
+    "bytes": 151364
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\props\\SM_Prop_InfernoChainObelisk\\03_work\\SM_Prop_InfernoChainObelisk_v001.blend",
+  "total_seconds": 48.3,
+  "_seconds": 52.1
+}

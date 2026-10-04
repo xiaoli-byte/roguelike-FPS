@@ -11,7 +11,7 @@ import type { EnemyDef, GameContext, SpawnOptions } from '../../core/types';
 import type { StaticBox, WorldRayHit } from '../../world/Collision';
 import { clamp01, rayVerticalCapsule } from '../../core/math';
 import { StandardEnemy } from '../StandardEnemy';
-import { Geo, applyWalk, buildHumanoid, flat, joint, newAdditive, part, type HumanoidRig } from '../Models';
+import { Geo, applyWalk, buildHumanoid, flat, joint, newAdditive, part, reachWeaponGrip, type HumanoidRig } from '../Models';
 
 export const MARKSMAN_DEF: EnemyDef = {
   id: 'marksman',
@@ -374,13 +374,11 @@ export class Marksman extends StandardEnemy {
     // 平时斜持枪（枪口朝上），瞄准时抵肩平举
     this.gun.rotation.set(mix(-1.1, -this.pitch, a) - this.recoil * 0.35, mix(0.5, 0, a), mix(0.5, 0, a));
     this.gun.position.set(mix(GUN_X + 0.06, GUN_X, a), mix(GUN_Y - 0.12, GUN_Y, a), GUN_Z - this.recoil * 0.1);
-    r.armR.rotation.set(mix(-0.5, -1.0, a), 0, mix(-0.1, -0.35, a));
-    r.elbowR.rotation.x = mix(-1.2, -1.3, a);
-    r.armL.rotation.set(mix(-0.8, -1.35, a), 0, mix(0.2, 0.55, a));
-    r.elbowL.rotation.x = mix(-1.0, -0.35, a);
     r.head.rotation.x = -this.pitch * 0.5;
     r.torso.rotation.x -= this.recoil * 0.12;
     this.scarfTail.rotation.x = 0.3 + Math.sin(this.age * 3) * 0.12 + Math.hypot(this.velocity.x, this.velocity.z) * 0.08;
     this.applyHurtAndStun(r);
+    reachWeaponGrip(r, -1, this.gun, 0, -0.085, 0.025);
+    reachWeaponGrip(r, 1, this.gun, 0, -0.055, 0.22);
   }
 }

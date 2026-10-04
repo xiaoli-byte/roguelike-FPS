@@ -1,0 +1,162 @@
+[
+  {
+    "level": "pass",
+    "check": "文件大小",
+    "detail": "133 KB / 上限 600 KB"
+  },
+  {
+    "level": "pass",
+    "check": "扩展可用",
+    "detail": "必需扩展 ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+  },
+  {
+    "level": "pass",
+    "check": "LOD 数量",
+    "detail": "['SM_Prop_InfernoCrucible_LOD0', 'SM_Prop_InfernoCrucible_LOD1']，规格 2 级"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 面数",
+    "detail": "2498 / 预算 2500"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 切换距离",
+    "detail": "extras.lod_distance=0"
+  },
+  {
+    "level": "warn",
+    "check": "场景参考占地 X 轴",
+    "detail": "1.272 m / 参考 1.247 m；超出时引擎按碰撞体等比适配"
+  },
+  {
+    "level": "pass",
+    "check": "场景有效尺寸 X 轴",
+    "detail": "1.272 m / 极限 3.252 m"
+  },
+  {
+    "level": "warn",
+    "check": "场景参考占地 Z 轴",
+    "detail": "1.279 m / 参考 1.047 m；超出时引擎按碰撞体等比适配"
+  },
+  {
+    "level": "pass",
+    "check": "场景有效尺寸 Z 轴",
+    "detail": "1.279 m / 极限 2.730 m"
+  },
+  {
+    "level": "pass",
+    "check": "场景高度",
+    "detail": "0.988 m / 参考 0.970 m"
+  },
+  {
+    "level": "pass",
+    "check": "场景脚底落地",
+    "detail": "最低点 y=0.0006"
+  },
+  {
+    "level": "pass",
+    "check": "场景轴心居中",
+    "detail": "中心 x=0.022 z=0.057"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 面数",
+    "detail": "900 / 预算 900"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 递减",
+    "detail": "2498 → 900"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 切换距离",
+    "detail": "extras.lod_distance=20"
+  },
+  {
+    "level": "pass",
+    "check": "材质数量",
+    "detail": "['M_Prop_InfernoCrucible']（一个资产一个材质，便于合批）"
+  },
+  {
+    "level": "pass",
+    "check": "材质命名",
+    "detail": "['M_Prop_InfernoCrucible']"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Prop_InfernoCrucible_N",
+    "detail": "512×512 webp（规格 512²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Prop_InfernoCrucible_N",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Prop_InfernoCrucible_ORM",
+    "detail": "512×512 webp（规格 512²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Prop_InfernoCrucible_ORM",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Prop_InfernoCrucible_BC",
+    "detail": "512×512 webp（规格 512²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Prop_InfernoCrucible_BC",
+    "detail": "T_<类>_<名>_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "BaseColor 贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "法线贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "ORM 贴图",
+    "detail": "AO / 粗糙度 / 金属度"
+  },
+  {
+    "level": "pass",
+    "check": "SM_Prop_InfernoCrucible_LOD0 UV 范围",
+    "detail": "[0.0027838798705488443, 0.002783883595839143]..[0.993173360824585, 0.9972161054611206]"
+  },
+  {
+    "level": "pass",
+    "check": "SM_Prop_InfernoCrucible_LOD1 UV 范围",
+    "detail": "[0.002789048943668604, 0.0035797597374767065]..[0.9911525249481201, 0.9915833473205566]"
+  },
+  {
+    "level": "pass",
+    "check": "UV 利用率",
+    "detail": "65%"
+  },
+  {
+    "level": "pass",
+    "check": "UV 翻折",
+    "detail": "0 个面（0.00%），图块 76 个"
+  },
+  {
+    "level": "pass",
+    "check": "高模对齐",
+    "detail": "剪影 IoU 0.805（{'front': 0.868, 'left': 0.8, 'back': 0.791, 'right': 0.728}）"
+  },
+  {
+    "level": "pass",
+    "check": "投影覆盖",
+    "detail": "未覆盖顶点 38%（扩散补色）"
+  }
+]

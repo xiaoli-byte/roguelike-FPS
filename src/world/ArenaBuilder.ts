@@ -1,12 +1,13 @@
 /**
  * 把 LevelLayout 搭成场景：
- *  - 结构与装饰按材质合批（每种材质一个网格），地面为顶点色 + 程序化贴图的大平面；
+ *  - 结构与装饰按材质合批，地面使用生成的石板材质、主题覆盖层与顶点色；
  *  - 半球光 + 平行光（阴影相机按竞技场包围盒精确拟合）+ 数量恒定（LIGHT_COUNT）的闪烁点光源；
  *  - 雾、天空穹顶、远山、环境粒子、地面法阵、火盆火焰（实例化网格动画）。
  * 所有本关创建的几何体 / 材质 / 纹理都登记在 disposables，dispose() 时统一释放。
  * 另提供 addCollision：把布局盒子写入碰撞世界（地面一整块大盒子，顶面 y = floorY）。
  */
 import * as THREE from 'three';
+import { Rng } from '../core/Rng';
 import type { GameContext, ThemeDef } from '../core/types';
 import type { CollisionWorld } from './Collision';
 import type { MatKey } from './Batch';
@@ -15,9 +16,11 @@ import type { LevelLayout } from './LevelGen';
 import { drawProps, type FlameSpot } from './Props';
 import { Particles, SkyDome, drawFarRing } from './Sky';
 import { drawStructures } from './Structures';
-import { makeFloorTextures, makeRuneTexture, makeStoneTexture, makeWoodTexture } from './Textures';
+import { makeFloorTextures, makeRuneTexture, makeStoneTexture, makeWoodTexture, preloadSceneSurface, surfaceRelief, type FloorTextures } from './Textures';
 import type { ThemeStyle } from './Themes';
 import { themeStyle } from './Themes';
+import { SceneDressing } from './SceneDressing';
+import { sceneFlameMaterial } from './SceneFlame';
 
 type Rand = () => number;
 
@@ -31,7 +34,7 @@ export function addCollision(world: CollisionWorld, L: LevelLayout): void {
 }
 
 // 火焰几何（模块级缓存，永不释放）
-let flameGeo: THREE.ConeGeometry | null = null;
+let flameGeo: THREE.PlaneGeometry | null = null;
 let runeGeo: THREE.CircleGeometry | null = null;
 const _obj = new THREE.Object3D();
 
@@ -65,11 +68,11 @@ export class ArenaView {
   private readonly runes: Rune[] = [];
   private readonly flameSpots: FlameSpot[] = [];
   private flameOuter: THREE.InstancedMesh | null = null;
-  private flameInner: THREE.InstancedMesh | null = null;
   private floorMat: THREE.MeshStandardMaterial | null = null;
   private readonly sky: SkyDome;
   private readonly particles: Particles;
   private readonly st: ThemeStyle;
+  private readonly dressing: SceneDressing;
   private disposed = false;
 
   constructor(private readonly ctx: GameContext, private readonly L: LevelLayout, private readonly theme: ThemeDef, rand: Rand) {
@@ -82,7 +85,10 @@ export class ArenaView {
     const mats = this.makeMaterials(rand);
     const batch = new GeoBatch(rand);
     drawStructures(batch, L, st, rand);
-    drawProps(batch, L, st, rand, this.flameSpots);
+    this.dressing = new SceneDressing(ctx, L, st, rand, this.flameSpots);
+    this.group.add(this.dressing.group);
+    this.disposables.push(this.dressing);
+    drawProps(batch, L, st, rand, this.flameSpots, this.dressing.replaced);
     drawFarRing(batch, L, theme, st, rand);
     for (const mesh of batch.build(mats)) {
       this.group.add(mesh);
@@ -107,12 +113,27 @@ export class ArenaView {
 
   private makeMaterials(rand: Rand): Record<MatKey, THREE.Material> {
     const stoneTex = makeStoneTexture(rand);
+    const stoneRelief = surfaceRelief(stoneTex);
     const woodTex = makeWoodTexture(rand);
-    this.disposables.push(stoneTex, woodTex);
+    this.disposables.push(stoneTex, stoneRelief.bump, stoneRelief.roughness, woodTex);
     const std = (p: THREE.MeshStandardMaterialParameters): THREE.MeshStandardMaterial =>
       new THREE.MeshStandardMaterial({ vertexColors: true, flatShading: true, metalness: 0, ...p });
+    const far = this.L.theme === 'desert'
+      ? new THREE.MeshBasicMaterial({ vertexColors: true, fog: true })
+      : std({ roughness: 1 });
+    if (this.L.theme === 'desert') {
+      // Only the distant backdrop fades early; combat surfaces retain the scene fog.
+      far.onBeforeCompile = shader => {
+        shader.fragmentShader = shader.fragmentShader.replace('#include <fog_fragment>', `
+          #ifdef USE_FOG
+            float backdropFog = smoothstep(24.0, 125.0, vFogDepth);
+            gl_FragColor.rgb = mix(gl_FragColor.rgb, fogColor, backdropFog);
+          #endif`);
+      };
+      far.customProgramCacheKey = () => 'desert-backdrop-fog-v1';
+    }
     const mats: Record<MatKey, THREE.Material> = {
-      stone: std({ map: stoneTex, roughness: 0.92 }),
+      stone: std({ map: stoneTex, bumpMap: stoneRelief.bump, bumpScale: 0.055, roughnessMap: stoneRelief.roughness, roughness: 0.96 }),
       rough: std({ roughness: 0.95 }),
       wood: std({ map: woodTex, roughness: 0.85 }),
       lacquer: std({ roughness: 0.42, metalness: 0.05 }),
@@ -120,7 +141,7 @@ export class ArenaView {
       gloss: std({ roughness: 0.16, metalness: 0.2 }),
       cloth: std({ roughness: 1, side: THREE.DoubleSide }),
       glow: new THREE.MeshBasicMaterial({ vertexColors: true, toneMapped: false }),
-      far: std({ roughness: 1 }),
+      far,
     };
     for (const k of Object.keys(mats) as MatKey[]) this.disposables.push(mats[k]);
     return mats;
@@ -136,9 +157,17 @@ export class ArenaView {
     const segs = 48;
     const geo = new THREE.PlaneGeometry(size, size, segs, segs);
     geo.rotateX(-Math.PI / 2);
-    const tex = makeFloorTextures(L.theme, this.theme, st, rand);
-    this.disposables.push(geo, tex.map);
-    if (tex.emissive) this.disposables.push(tex.emissive);
+    const textureSeed = Math.floor(rand() * 0x100000000);
+    const textures = (): FloorTextures => {
+      const random = new Rng(textureSeed);
+      return makeFloorTextures(L.theme, this.theme, st, () => random.next());
+    };
+    const tex = textures();
+    const ownTextures = (maps: FloorTextures): void => {
+      this.disposables.push(maps.map, maps.bump, maps.roughness);
+      if (maps.emissive) this.disposables.push(maps.emissive);
+    };
+    this.disposables.push(geo); ownTextures(tex);
 
     // 世界坐标 UV + 大尺度明暗噪声 + 墙根暗角
     const pos = geo.getAttribute('position') as THREE.BufferAttribute;
@@ -163,6 +192,9 @@ export class ArenaView {
 
     const mat = new THREE.MeshStandardMaterial({
       map: tex.map,
+      bumpMap: tex.bump,
+      bumpScale: L.theme === 'frost' ? 0.022 : 0.045,
+      roughnessMap: tex.roughness,
       vertexColors: true,
       roughness: 0.95,
       metalness: 0,
@@ -171,6 +203,34 @@ export class ArenaView {
       emissiveIntensity: tex.emissive ? st.floorGlow * 1.2 : 0,
     });
     this.floorMat = mat;
+    // Broad, world-space heat patches keep molten seams near furnace groups and the
+    // arena edge. The authored paving stays quiet through the central combat route.
+    const heatSpots = L.decos.filter(d => d.kind === 'brazier' && Math.abs(d.y - L.floorY) < 0.1)
+      .sort((a, b) => Number(!!b.sceneRole) - Number(!!a.sceneRole)).slice(0, 8);
+    const heatUniform = Array.from({ length: 8 }, (_, i) => heatSpots[i]
+      ? new THREE.Vector3(heatSpots[i].x, heatSpots[i].z, 4.2 + heatSpots[i].s * 1.4)
+      : new THREE.Vector3(1e5, 1e5, 1));
+    mat.onBeforeCompile = shader => {
+      shader.uniforms.surfaceCenter = { value: new THREE.Vector2(L.center.x, L.center.z) };
+      shader.uniforms.surfaceHalf = { value: L.half };
+      shader.uniforms.surfaceHeatSpots = { value: heatUniform };
+      shader.vertexShader = `varying vec2 vSurfaceWorld;\n${shader.vertexShader}`
+        .replace('#include <begin_vertex>', '#include <begin_vertex>\nvSurfaceWorld = (modelMatrix * vec4(transformed, 1.0)).xz;');
+      shader.fragmentShader = `varying vec2 vSurfaceWorld;\nuniform vec2 surfaceCenter;\nuniform float surfaceHalf;\nuniform vec3 surfaceHeatSpots[8];\n${shader.fragmentShader}`
+        .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
+          #ifdef USE_EMISSIVEMAP
+            vec2 surfaceP = vSurfaceWorld - surfaceCenter;
+            float heat = 0.0;
+            for (int i = 0; i < 8; i++) {
+              heat = max(heat, 1.0 - smoothstep(surfaceHeatSpots[i].z * 0.35, surfaceHeatSpots[i].z,
+                distance(vSurfaceWorld, surfaceHeatSpots[i].xy)));
+            }
+            float rim = smoothstep(surfaceHalf * 0.48, surfaceHalf * 0.93, max(abs(surfaceP.x), abs(surfaceP.y)));
+            float vein = 0.72 + 0.28 * sin(surfaceP.x * 0.21 + sin(surfaceP.y * 0.18) * 2.0);
+            totalEmissiveRadiance *= clamp(0.10 + rim * 0.32 + heat * 0.82, 0.10, 1.0) * vein;
+          #endif`);
+    };
+    mat.customProgramCacheKey = () => 'scene-paving-v1';
     this.disposables.push(mat);
     const mesh = new THREE.Mesh(geo, mat);
     mesh.name = 'floor';
@@ -179,6 +239,14 @@ export class ArenaView {
     mesh.matrixAutoUpdate = false;
     mesh.updateMatrix();
     this.group.add(mesh);
+    // A fast first stage may be built before the background image load finishes.
+    // Upgrade its maps once, and never touch an arena that has already been unloaded.
+    if (!tex.authored) void preloadSceneSurface().then(ready => {
+      if (!ready || this.disposed) return;
+      const upgraded = textures(); ownTextures(upgraded);
+      mat.map = upgraded.map; mat.bumpMap = upgraded.bump; mat.roughnessMap = upgraded.roughness;
+      mat.emissiveMap = upgraded.emissive; mat.needsUpdate = true;
+    });
   }
 
   /** 地面法阵（纯装饰，缓慢旋转） */
@@ -219,15 +287,12 @@ export class ArenaView {
     const n = this.flameSpots.length;
     if (n === 0) return;
     if (!flameGeo) {
-      flameGeo = new THREE.ConeGeometry(0.28, 0.9, 6, 1, true);
-      flameGeo.translate(0, 0.45, 0);
+      flameGeo = new THREE.PlaneGeometry(1, 1);
     }
-    const outerMat = new THREE.MeshBasicMaterial({ color: this.st.glow, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false, side: THREE.DoubleSide });
-    const innerMat = new THREE.MeshBasicMaterial({ color: this.st.glowHot, transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false, side: THREE.DoubleSide });
-    this.disposables.push(outerMat, innerMat);
+    const outerMat = sceneFlameMaterial(this.st);
+    this.disposables.push(outerMat);
     this.flameOuter = new THREE.InstancedMesh(flameGeo, outerMat, n);
-    this.flameInner = new THREE.InstancedMesh(flameGeo, innerMat, n);
-    for (const m of [this.flameOuter, this.flameInner]) {
+    for (const m of [this.flameOuter]) {
       m.frustumCulled = false;
       m.renderOrder = 3;
       m.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
@@ -239,24 +304,19 @@ export class ArenaView {
 
   private updateFlames(t: number): void {
     const outer = this.flameOuter;
-    const inner = this.flameInner;
-    if (!outer || !inner) return;
+    if (!outer) return;
+    (outer.material as THREE.ShaderMaterial).uniforms.uTime.value = t;
     for (let i = 0; i < this.flameSpots.length; i++) {
       const f = this.flameSpots[i];
-      const k = 1 + 0.2 * Math.sin(t * 11 + i * 1.7) + 0.09 * Math.sin(t * 27.3 + i * 3.1);
+      const k = 1 + 0.12 * Math.sin(t * 7 + i * 1.7) + 0.06 * Math.sin(t * 15.3 + i * 3.1);
       const w = 1 - 0.07 * Math.sin(t * 13.7 + i);
       _obj.position.set(f.x, f.y, f.z);
-      _obj.rotation.set(0.07 * Math.sin(t * 5.1 + i), t * 0.8 + i, 0.07 * Math.cos(t * 4.3 + i));
-      _obj.scale.set(f.s * w * 1.35, f.s * k * 1.25, f.s * w * 1.35);
+      _obj.rotation.set(0, 0, 0);
+      _obj.scale.set(f.s * w * 0.8, f.s * k * 1.05, 1);
       _obj.updateMatrix();
       outer.setMatrixAt(i, _obj.matrix);
-      _obj.scale.set(f.s * w * 0.7, f.s * k * 0.75, f.s * w * 0.7);
-      _obj.rotation.y = -t * 1.3 + i;
-      _obj.updateMatrix();
-      inner.setMatrixAt(i, _obj.matrix);
     }
     outer.instanceMatrix.needsUpdate = true;
-    inner.instanceMatrix.needsUpdate = true;
   }
 
   // ───────────── 灯光 ─────────────
@@ -336,6 +396,7 @@ export class ArenaView {
 
   update(_dt: number, t: number): void {
     if (this.disposed) return;
+    this.dressing.update(t);
     for (const l of this.lamps) {
       const f = 0.1 * Math.sin(t * 9.3 + l.phase) + 0.06 * Math.sin(t * 23.1 + l.phase * 2.3) + 0.04 * Math.sin(t * 3.7 + l.phase);
       l.light.intensity = l.base * (1 + f * l.flicker);
@@ -346,7 +407,7 @@ export class ArenaView {
       r.mat.opacity = r.base * (0.8 + 0.2 * Math.sin(t * 1.3 + r.speed * 40));
     }
     if (this.floorMat && this.st.floorGlow > 0) {
-      this.floorMat.emissiveIntensity = this.st.floorGlow * (1.15 + 0.35 * Math.sin(t * 1.4) + 0.1 * Math.sin(t * 3.9));
+      this.floorMat.emissiveIntensity = this.st.floorGlow * (0.92 + 0.07 * Math.sin(t * 1.1) + 0.03 * Math.sin(t * 3.1));
     }
     this.sky.update(t);
     const canvas = this.ctx.renderer.domElement;

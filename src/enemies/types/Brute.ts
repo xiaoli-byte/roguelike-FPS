@@ -10,7 +10,7 @@ import type { EnemyDef, GameContext, SpawnOptions } from '../../core/types';
 import type { StaticBox, WorldRayHit } from '../../world/Collision';
 import { clamp01 } from '../../core/math';
 import { StandardEnemy } from '../StandardEnemy';
-import { Geo, applyCrouch, applyWalk, buildHumanoid, flat, joint, newAdditive, part, type HumanoidRig } from '../Models';
+import { Geo, applyCrouch, applyWalk, buildHumanoid, flat, joint, newAdditive, part, reachWeaponGrip, type HumanoidRig } from '../Models';
 
 export const BRUTE_DEF: EnemyDef = {
   id: 'brute',
@@ -231,6 +231,8 @@ export class Brute extends StandardEnemy {
             this.ctx.fx.shake(0.25, 0.2);
           }
           this.setState('bash');
+          this.pShieldX = 0.1;
+          this.pShieldZ = 0.66;
         }
         break;
       }
@@ -352,7 +354,7 @@ export class Brute extends StandardEnemy {
         break;
       case 'bash':
         shieldX = 0.1;
-        shieldZ = 0.85;
+        shieldZ = 0.66;
         lean = 0.3;
         rate = 30;
         break;
@@ -369,13 +371,12 @@ export class Brute extends StandardEnemy {
     this.shieldObj.position.x = this.pShieldX;
     this.shieldObj.position.z = this.pShieldZ;
     // 左臂扶盾
-    r.armL.rotation.set(-0.95, 0, -0.25 + (0.3 - this.pShieldX) * 0.8);
-    r.elbowL.rotation.x = -0.9;
     r.armR.rotation.x = this.pArmR;
     r.armR.rotation.z = -0.15;
     r.elbowR.rotation.x = -0.7;
     r.torso.rotation.x += this.pLean;
     applyCrouch(r, this.pCrouch);
     this.applyHurtAndStun(r);
+    reachWeaponGrip(r, 1, this.shieldObj, 0.04, 0.08, -0.13);
   }
 }

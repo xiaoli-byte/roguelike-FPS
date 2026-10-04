@@ -13,7 +13,8 @@ import type { EnemyDef, GameContext, IEnemy, SpawnOptions } from '../../core/typ
 import { clamp01 } from '../../core/math';
 import { StandardEnemy } from '../StandardEnemy';
 import { zonePlayer } from '../Hazards';
-import { Geo, applyWalk, buildHumanoid, flat, joint, part, type HumanoidRig } from '../Models';
+import { Geo, applyCrouch, applyWalk, buildHumanoid, flat, joint, part, reachArm, reachPalmGrip, type HumanoidRig } from '../Models';
+import { SHAMAN_CARRY, SHAMAN_FOCUS, SHAMAN_STAFF_GRIP, sampleShamanPose, type ShamanAction, type ShamanPose } from '../AttackPoses';
 
 export const SHAMAN_DEF: EnemyDef = {
   id: 'shaman',
@@ -58,8 +59,10 @@ const wardBase = new WeakMap<IEnemy, number>();
 const _scratch: IEnemy[] = [];
 const _tip = new THREE.Vector3();
 const _chest = new THREE.Vector3();
-
-const mix = (a: number, b: number, k: number): number => a + (b - a) * k;
+const _handTarget = new THREE.Vector3();
+const _leftPole = new THREE.Vector3(1, -0.25, 0.25);
+const _rightPole = new THREE.Vector3(-1, -0.45, 0.12);
+const _staffPalm = new THREE.Vector3(0.0197, -0.0815, -0.0079);
 
 /** 已落下、尚未结算的法阵：各项取消函数（预警圈、杖头连线、延时结算） */
 interface PendingCircle {
@@ -81,8 +84,8 @@ export class Shaman extends StandardEnemy {
   private recoverTime = 0.6;
   private placed = false;
   private pendingCircle: PendingCircle | null = null;
-  private pLift = 0;
-  private pTilt = 0;
+  private lastAction: ShamanAction = 'circle';
+  private readonly attackPose: ShamanPose = { ...SHAMAN_CARRY };
 
   constructor(ctx: GameContext, opts: SpawnOptions) {
     super(ctx, SHAMAN_DEF, opts);
@@ -130,6 +133,7 @@ export class Shaman extends StandardEnemy {
     // 法杖（挂在躯干右侧，抬举时整体上移前倾）
     const st = joint(t, -0.36, 0.05, 0.14);
     st.name = 'staff'; // 挂点名：美术资产按它绑定（art/pipeline/registry.toml 的 blockout.attachment）
+    st.rotation.x = SHAMAN_CARRY.pitch;
     this.staff = st;
     part(st, Geo.box(0.045, 1.75, 0.045), flat(C.staff), 0, 0.12, 0);
     part(st, Geo.torus(0.12, 0.02, 4, 12), flat(C.trim, { metal: 0.6 }), 0, 1.05, 0);
@@ -145,15 +149,17 @@ export class Shaman extends StandardEnemy {
 
   /** 杖头世界坐标 */
   private staffTip(out: THREE.Vector3): THREE.Vector3 {
-    const lift = this.pLift;
-    const tilt = this.pTilt;
-    const y = 0.86 + 0.05 + lift + Math.cos(tilt) * 1.05;
-    const z = 0.14 + Math.sin(tilt) * 1.05;
-    return this.localPoint(-0.36, y, z, out);
+    this.root.rotation.y = this.facing;
+    return this.staff.localToWorld(out.set(...SHAMAN_FOCUS));
   }
 
   override getMuzzle(out: THREE.Vector3): THREE.Vector3 {
+    if (!this.staff) return super.getMuzzle(out);
     return this.staffTip(out);
+  }
+
+  protected override afterInit(): void {
+    this.pose(0);
   }
 
   protected override ai(dt: number): void {
@@ -187,6 +193,7 @@ export class Shaman extends StandardEnemy {
         this.facePlayer(5, dt);
         if (this.cooldown <= 0 && this.sees && d <= 30) {
           if (this.requestAttack('heavy', CAST_WINDUP + CIRCLE_DELAY + 0.4)) {
+            this.lastAction = 'circle';
             this.windTime = this.windup(CAST_WINDUP, 0.35);
             this.placed = false;
             this.setState('castCircle');
@@ -266,6 +273,8 @@ export class Shaman extends StandardEnemy {
     const damage = this.def.damage * this.damageMult;
     const warning = ctx.fx.groundWarning(center, CIRCLE_RADIUS, CIRCLE_DELAY, C.circle);
     ctx.audio.play('telegraph', { position: center, volume: 0.8 });
+    // think 先于 animate；释放帧先到达伸掌/送杖姿势，再从真实法珠发出连线。
+    this.pose(0);
     this.staffTip(_tip);
     const link = ctx.fx.beam(_tip.clone(), center, C.circle, 0.05, 0.25);
     let pending: PendingCircle | null = null;
@@ -298,6 +307,7 @@ export class Shaman extends StandardEnemy {
   }
 
   private beginWard(): void {
+    this.lastAction = 'ward';
     this.setState('ward');
     this.ctx.audio.play('telegraph', { position: this.position, volume: 0.6, pitch: 1.5 });
   }
@@ -345,6 +355,7 @@ export class Shaman extends StandardEnemy {
 
   private castWard(): void {
     const ctx = this.ctx;
+    this.pose(0);
     this.staffTip(_tip);
     ctx.fx.ring(this.position.clone(), WARD_RANGE, C.ward, 0.7);
     ctx.fx.burst(_tip, C.ward, 18, 3, 0.6, 0.1, -1);
@@ -388,43 +399,32 @@ export class Shaman extends StandardEnemy {
 
   protected override pose(dt: number): void {
     const r = this.rig;
-    applyWalk(r, this.walkPhase, this.walkAmp, 0.6);
-    let lift = 0;
-    let tilt = 0.08;
-    let armR = -0.35;
-    let armL = r.armL.rotation.x;
-    let elbowL = r.elbowL.rotation.x;
     const casting = this.state === 'castCircle';
     const warding = this.state === 'ward';
-    if (casting) {
-      const t = clamp01(this.stateTime / this.windTime);
-      lift = 0.2 + 0.2 * t;
-      tilt = 0.55 * t;
-      armR = -1.2;
-      armL = -1.6;
-      elbowL = -0.6;
-    } else if (warding) {
-      lift = 0.45;
-      tilt = 0;
-      armR = -2.0;
-      armL = -2.4;
-      elbowL = -0.3;
-    }
-    const k = 1 - Math.exp(-12 * dt);
-    this.pLift = mix(this.pLift, lift, k);
-    this.pTilt = mix(this.pTilt, tilt, k);
-    this.staff.position.y = 0.05 + this.pLift;
-    this.staff.rotation.x = this.pTilt;
-    r.armR.rotation.x = mix(r.armR.rotation.x, armR, 0.8);
-    r.armR.rotation.z = -0.25;
-    r.elbowR.rotation.x = -1.0;
-    r.armL.rotation.x = armL;
-    r.elbowL.rotation.x = elbowL;
-    // 符阵旋转
-    this.runeCircle.rotation.y += dt * 1.5;
-    this.runeWard.rotation.y -= dt * 2.2;
-    const hover = warding ? Math.sin(this.age * 6) * 0.03 : 0;
-    r.hips.position.y += hover;
+    const recovering = this.state === 'recover';
+    const progress = recovering ? this.stateTime / this.recoverTime
+      : this.stateTime / (warding ? WARD_CHANNEL : this.windTime);
+    const p = this.attackPose;
+    sampleShamanPose(this.state, progress, this.lastAction, p);
+    const stride = casting || warding ? 0 : this.walkAmp * (recovering ? 0.55 : 1);
+    applyWalk(r, this.walkPhase, stride, 0);
+    applyCrouch(r, p.crouch);
+    r.torso.rotation.set(p.lean + stride * 0.08, p.twist + Math.sin(this.walkPhase) * stride * 0.12, 0);
+    r.head.rotation.x = p.head;
+    this.staff.position.set(p.x, p.y, p.z);
+    this.staff.rotation.set(p.pitch, p.yaw, p.roll);
+    this.runeCircle.rotation.y = this.age * 1.5;
+    this.runeWard.rotation.y = -this.age * 2.2;
+    if (warding) r.hips.position.y += Math.sin(clamp01(progress) * Math.PI * 2) * 0.012;
     this.applyHurtAndStun(r);
+    reachPalmGrip(r, -1, this.staff, ...SHAMAN_STAFF_GRIP, _staffPalm, _rightPole, p.staffForearmRoll);
+    // 左手先在胸前聚符，再伸掌指向法阵；护佑则抬掌引导向外扩散。
+    reachArm(r, 1, _handTarget.set(p.handX, p.handY, p.handZ), _leftPole);
+    // 手势是前臂局部的小幅腕动作；聚符/展掌的主要路径由肩肘完成，整块宽袖不再绕腕拧转。
+    r.handL.rotation.set(
+      THREE.MathUtils.clamp(p.handPitch, -0.30, 0.30),
+      THREE.MathUtils.clamp(p.handYaw, -0.16, 0.16),
+      THREE.MathUtils.clamp(p.handRoll, -0.10, 0.10),
+    );
   }
 }

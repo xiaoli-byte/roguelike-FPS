@@ -274,6 +274,12 @@ export class Grunt extends StandardEnemy {
         break;
       }
       case 'slash':
+        if (this.stateTime === 0) {
+          // 逻辑在进入 slash 的这一帧命中，刀也必须已扫到身前。
+          this.pArm = -0.75;
+          this.pElbow = -0.15;
+          this.pTwist = 0.25;
+        }
         arm = -0.3;
         elbow = -0.1;
         lean = 0.38;
@@ -314,6 +320,7 @@ export class Grunt extends StandardEnemy {
     r.armR.rotation.x = this.pArm;
     r.armR.rotation.z = -0.12;
     r.elbowR.rotation.x = this.pElbow;
+    r.handR.rotation.set(0.05, this.state === 'slash' ? -0.22 : 0, this.state === 'lunge' ? -0.12 : 0.08);
     r.armL.rotation.x = this.pArmL;
     r.torso.rotation.x += this.pLean;
     r.torso.rotation.y += this.pTwist;

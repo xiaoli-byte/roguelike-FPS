@@ -1435,8 +1435,12 @@ export class WeaponSystem implements IWeaponSystem {
     this.vm.setWeapon(shown);
     s.aimT = this.aimT;
     s.reloading = this.reloading && shown === inst;
-    s.reloadP = this.reloading && !this.shellMode ? clamp01(this.reloadElapsed / this.reloadTotal) : 0;
-    s.shellMode = this.reloading && this.shellMode;
+    if (s.reloading && this.shellMode) {
+      const R = this.resolve(inst);
+      const step = this.shellsInserted === 0 ? R.reloadStart + R.shellTime : R.shellTime;
+      s.reloadP = 1 - clamp01(this.shellTimer / Math.max(0.01, step));
+    } else s.reloadP = s.reloading ? clamp01(this.reloadElapsed / this.reloadTotal) : 0;
+    s.shellMode = s.reloading && this.shellMode;
     s.firing = this.beamOn || this.minigunFiring || this.charging;
     // 机炮转管 / 蓄力武器线圈（updateCharge 中 spin 跟随蓄力进度，松手后转停）
     s.spin = this.spin;

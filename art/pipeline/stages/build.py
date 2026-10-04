@@ -32,7 +32,7 @@ def run(spec: AssetSpec, a) -> None:
     tex_dir = work / f"textures_v{ver:03d}"
     params = {
         "asset_id": spec.id, "kind": spec.kind, "garment": spec.raw.get("garment"),
-        "anchor": "feet" if spec.kind == "skeletal" and spec.raw.get("rig") != "parts" else "origin",
+        "anchor": "feet" if spec.blockout.get('source') == 'scene' or (spec.kind == "skeletal" and spec.raw.get("rig") != "parts") else "origin",
         "rig_mode": spec.raw.get("rig", "humanoid"), "rig_sigma": spec.raw.get("rig_sigma", 0.015),
         "arm_radius": spec.raw.get("arm_radius", 0.14), "rig_rigid": spec.raw.get("rig_rigid", False), "rig_rigid_joints": spec.raw.get("rig_rigid_joints", []),
         "highpoly_glb": str(st.file(hp, f"HP_{spec.id}_v{hp['version']:03d}.glb")),
