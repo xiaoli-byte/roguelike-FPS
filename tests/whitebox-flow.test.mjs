@@ -103,6 +103,21 @@ function verifySpawns(f, fight, initial) {
   }
 }
 
+/** Real dynamic obstacles leave only a 10×10m pocket around the player.
+ * Every point in this pocket is <10m away, so the actual NavGrid, body query
+ * and room-bound spawn scheduler must wait instead of selecting a close station.
+ */
+function closeDistantStations(f, player) {
+  const a = f.director.arena, r = 5, y = a.floorY;
+  const bounds = [
+    [a.minX, a.minZ, player.x - r, a.maxZ], [player.x + r, a.minZ, a.maxX, a.maxZ],
+    [player.x - r, a.minZ, player.x + r, player.z - r], [player.x - r, player.z + r, player.x + r, a.maxZ],
+  ];
+  const blockers = bounds.map(([x0, z0, x1, z1]) => f.ctx.world.addBox(x0, y, z0, x1, y + 4, z1, 'test-temporary-blocker'));
+  f.ctx.nav.build(a);
+  return () => { blockers.forEach(box => f.ctx.world.remove(box)); f.ctx.nav.build(a); };
+}
+
 test('all 15 whitebox maps load real authored encounters and clear exactly once without generic altar waves', t => {
   assert.equal(WHITEBOX_PLANS.length, 15);
   const populations = [];
@@ -172,7 +187,19 @@ test('authored north-warehouse alternative shares one quota and cloister changes
   assert.equal(f.spawns.length, total(north), 'north warehouse and well cannot each spawn the same quota');
   const temple = WHITEBOX_PLANS.find(p => p.id === 'desert-4'), L = generateWhitebox(nodeFor(temple));
   const B = buildWhiteboxFights(L, nodeFor(temple)).find(e => e.id === 'B');
-  const plans = whiteboxPlansForApproach(B, L, whiteboxPoint(temple, [72, 47]));
+  const connection = temple.passages.find(p => [p.from, p.to].includes('cloister') && [p.from, p.to].includes(B.room));
+  assert.ok(connection, 'cloister approach remains authored in the floor plan');
+  const route = connection.from === 'cloister' ? connection.points : [...connection.points].reverse();
+  let threshold = null;
+  for (let i = 1; i < route.length && !threshold; i++) {
+    const a = route[i - 1], b = route[i], steps = Math.max(1, Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) * 2));
+    for (let j = 0; j <= steps; j++) {
+      const p = whiteboxPoint(temple, [a[0] + (b[0] - a[0]) * j / steps, a[1] + (b[1] - a[1]) * j / steps]);
+      if (B.contains(p)) { threshold = p; break; }
+    }
+  }
+  assert.ok(threshold, 'authored connection crosses the actual encounter room');
+  const plans = whiteboxPlansForApproach(B, L, threshold);
   assert.equal(plans[0].entries.find(e => e.enemyId === 'bomber').count, 2);
   assert.equal(B.plans[0].entries.find(e => e.enemyId === 'grunt').count, 2, 'source quota is immutable');
 });
@@ -201,7 +228,7 @@ test('regional spawn safety rejects a neighbouring room inside the same radius a
   assert.equal(Object.keys(WHITEBOX_SQUADS).length, 15);
 });
 
-test('actual whitebox recovery keeps the 10 m gap and defers when the small canyon has no safe station', () => {
+test('actual whitebox recovery keeps the 10 m gap and defers while distant canyon stations are blocked', () => {
   const plan = WHITEBOX_PLANS.find(p => p.id === 'desert-1'), node = nodeFor(plan), f = context(); f.director.load(node);
   const fight = buildWhiteboxFights(generateWhitebox(node), node)[0]; enter(f, fight); f.advance(5);
   const enemy = f.spawns[0]; f.spawns[1].alive = false;
@@ -214,10 +241,13 @@ test('actual whitebox recovery keeps the 10 m gap and defers when the small cany
   // A vertical out-of-world failure directly beneath the player makes the original
   // nearestWalkable proposal unsafe; this exercises antiStuck, not a helper mock.
   enemy.position.copy(f.ctx.player.position); enemy.position.y = -10; f.advance(.6); checkRecovered();
-  // At the canyon's middle all legal recovery stations lie less than 10 m away.
-  f.ctx.player.position.set(-23.25, 0, 8.5); enemy.position.copy(f.ctx.player.position); enemy.position.y = -10;
+  // The expanded canyon normally has distant stations. Dynamically close those
+  // stations, preserving a valid standing pocket and the genuine recovery query.
+  const reopen = closeDistantStations(f, f.ctx.player.position);
+  assert.ok(!f.ctx.world.overlapsBody(f.ctx.player.position.x, 0, f.ctx.player.position.z, .4, 1.8));
+  enemy.position.copy(f.ctx.player.position); enemy.position.y = -10;
   f.advance(.6); assert.equal(enemy.position.y, -10, 'wait instead of using a close station');
-  f.ctx.player.position.set(fight.facing.x, 0, fight.facing.z); f.advance(.6); checkRecovered();
+  reopen(); f.advance(.6); checkRecovered();
   // A surviving nearby enemy also takes the actual 30 s straggler path.
   enemy.position.copy(f.ctx.player.position).add(new THREE.Vector3(1, 0, 0));
   f.advance(32); checkRecovered(); f.director.unload();
@@ -227,9 +257,9 @@ test('whitebox director exposes a blocked station and clears the hint as soon as
   const plan = WHITEBOX_PLANS.find(p => p.id === 'desert-1'), node = nodeFor(plan), f = context(); f.director.load(node);
   const fight = buildWhiteboxFights(generateWhitebox(node), node)[0]; enter(f, fight);
   assert.equal(f.director.exploration.spawnBlocked, false, 'initial gathering delay is ordinary progress');
-  f.ctx.player.position.set(-23.25, 0, 8.5); f.advance(1.3);
+  const reopen = closeDistantStations(f, f.ctx.player.position); f.advance(1.3);
   assert.equal(f.director.exploration.spawnBlocked, true); assert.equal(f.spawns.length, 0);
-  f.ctx.player.position.set(fight.facing.x, 0, fight.facing.z); f.advance(.3);
+  reopen(); f.advance(.3);
   assert.equal(f.director.exploration.spawnBlocked, false); assert.equal(f.spawns.length, 0, 'full warnings remain visible');
   f.advance(2); assert.equal(f.spawns.length, total(fight)); f.director.unload();
 });

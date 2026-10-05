@@ -18,7 +18,7 @@ import { AdventureBeacon } from './AdventureBeacon';
 import { usesAuthoredLayout } from './WhiteboxMode';
 import { generateWhitebox } from './WhiteboxGen';
 import { buildWhiteboxAdventure, buildWhiteboxFights, whiteboxPlansForApproach, whiteboxSpawnRegion, type WhiteboxFight } from './WhiteboxEncounters';
-import type { WhiteboxMetadata } from './WhiteboxTypes';
+import type { WhiteboxMetadata, WhiteboxPlan } from './WhiteboxTypes';
 
 /** 进场后第一波开始的时间（秒） */
 const FIRST_WAVE_AT = 2;
@@ -36,8 +36,26 @@ const STRAGGLER_TIME = 30;
 const CLEAR_ESSENCE = 10;
 const BOSS_IDS = ['boss_colossus', 'boss_matriarch', 'boss_warlord'];
 const DISCOVERY_RADIUS = 5.5;
+/** Reveal an available authored chest while crossing its room, well before interaction range. */
+const AUTHORED_CHEST_VISIBILITY = 18;
 
 const _v = new THREE.Vector3();
+
+function insidePlanRoom(plan: WhiteboxPlan, roomId: string, position: { x: number; z: number }): boolean {
+  const room = plan.rooms.find(r => r.id === roomId);
+  if (!room) return false;
+  const x = position.x + plan.bounds[0] / 2, z = position.z + plan.bounds[1] / 2;
+  let inside = false;
+  for (let i = 0, j = room.polygon.length - 1; i < room.polygon.length; j = i++) {
+    const a = room.polygon[i], b = room.polygon[j];
+    const dx = b[0] - a[0], dz = b[1] - a[1];
+    const cross = (x - a[0]) * dz - (z - a[1]) * dx;
+    if (Math.abs(cross) < 1e-7 && x >= Math.min(a[0], b[0]) && x <= Math.max(a[0], b[0])
+      && z >= Math.min(a[1], b[1]) && z <= Math.max(a[1], b[1])) return true;
+    if ((a[1] > z) !== (b[1] > z) && x < dx * (z - a[1]) / dz + a[0]) inside = !inside;
+  }
+  return inside;
+}
 
 function toArena(L: LevelLayout, theme: ThemeDef): ArenaInfo {
   const v = (p: { x: number; z: number }): THREE.Vector3 => new THREE.Vector3(p.x, L.floorY, p.z);
@@ -121,6 +139,8 @@ export class StageDirector implements IStageDirector {
   private readonly encounterEye = new THREE.Vector3();
   private readonly encounterTarget = new THREE.Vector3();
   private portals: Portal[] = [];
+  /** Loot may already be cleared by Game; each shop disposer is idempotent. */
+  private shopDisposers: (() => void)[] = [];
   private exits: StageNode[] | null = null;
   private bosses: IEnemy[] = [];
   private readonly bossPoint = new THREE.Vector3();
@@ -186,7 +206,10 @@ export class StageDirector implements IStageDirector {
         else this.setupWaves(stage, arena);
         break;
       case 'boss':
-        if (L.whitebox) this.setupAdventure(L, arena);
+        if (L.whitebox) {
+          this.setupAdventure(L, arena);
+          this.setupBossSupply(L, arena);
+        }
         else this.setupWaves(stage, arena);
         break;
       case 'treasure':
@@ -198,7 +221,7 @@ export class StageDirector implements IStageDirector {
         if (L.whitebox) this.setupAdventure(L, arena);
         const sp = arena.shopPoint;
         const yaw = Math.atan2(arena.playerSpawn.x - sp.x, arena.playerSpawn.z - sp.z);
-        ctx.loot.spawnShop(sp.clone(), yaw);
+        this.retainShop(ctx.loot.spawnShop(sp.clone(), yaw));
         if (stage.reward !== 'none') ctx.loot.spawnChest(arena.rewardPoint.clone(), stage.reward);
         this.markFreeStage();
         break;
@@ -214,6 +237,8 @@ export class StageDirector implements IStageDirector {
     this.whiteboxFights = [];
     this.activeWhiteboxFight = null;
     this.beacon?.dispose(); this.beacon = null; this.adventureState = null;
+    this.shopDisposers.forEach(dispose => dispose());
+    this.shopDisposers.length = 0;
     for (const p of this.portals) p.dispose();
     this.portals.length = 0;
     if (this.view) {
@@ -242,6 +267,24 @@ export class StageDirector implements IStageDirector {
     this.freePending = false;
     this.stuckTimer = 0;
     this.lastProgress = 0;
+  }
+
+  private retainShop(dispose: (() => void) | void): void {
+    // Older inspection fixtures implement spawnShop as a void-returning recorder.
+    if (typeof dispose === 'function') this.shopDisposers.push(dispose);
+  }
+
+  private setupBossSupply(L: LevelLayout, arena: ArenaInfo): void {
+    const plan = L.whitebox?.plan, preparation = plan?.preparation;
+    if (!plan || !preparation) return;
+    const center = new THREE.Vector3(preparation.at[0] - plan.bounds[0] / 2, arena.floorY,
+      preparation.at[1] - plan.bounds[1] / 2);
+    const yaw = Math.atan2(preparation.facing[0] - preparation.at[0], preparation.facing[1] - preparation.at[1]);
+    this.retainShop(this.ctx.loot.spawnShop(center, yaw));
+    if (this.adventureState) this.adventureState.preparation = {
+      room: preparation.room, label: preparation.label, position: center.clone(),
+    };
+    this.ctx.ui.toast(`${preparation.label} · 可购买武器、秘卷、强化与战备补给；进入主战区才会迎战首领`, '#a9dec7');
   }
 
   private setupAdventure(L: LevelLayout, arena: ArenaInfo): void {
@@ -349,12 +392,18 @@ export class StageDirector implements IStageDirector {
       }
       return;
     }
-    if (state.phase !== 'explore' || this.t < this.nextEncounterAt || ctx.enemies.aliveCount() > 0) return;
+    if ((state.phase !== 'explore' && state.phase !== 'cleared') || this.t < this.nextEncounterAt || ctx.enemies.aliveCount() > 0) return;
     const player = ctx.player.position;
     if (Math.abs(player.y - arena.floorY) > 3) return;
+    const plan = this.layout?.whitebox?.plan;
+    if (this.stage?.type === 'boss' && plan?.preparation
+      && insidePlanRoom(plan, plan.preparation.room, player)) return;
     const candidate = this.whiteboxFights.find(fight => {
+      if (state.phase === 'cleared' && fight.final) return false;
       if (state.encounters?.find(e => e.id === fight.id)?.phase !== 'undiscovered') return false;
       if (fight.requires.some(id => state.encounters?.find(e => e.id === id)?.phase !== 'cleared')) return false;
+      // A prepared boss starts across the main-room threshold, never from the shopping approach.
+      if (this.stage?.type === 'boss' && plan?.preparation && !fight.contains(player)) return false;
       // Enter the actual room or its visible approach, never the same-radius room behind a wall.
       const atApproach = Math.hypot(player.x - fight.facing.x, player.z - fight.facing.z) <= 3;
       if (!fight.contains(player) && !atApproach) return false;
@@ -384,17 +433,28 @@ export class StageDirector implements IStageDirector {
   private discoverSites(): void {
     const state = this.adventureState, adventure = this.layout?.adventure, player = this.ctx.player;
     if (!state || !adventure || !player.alive || this.ctx.game.state !== 'playing') return;
+    const plan = this.layout?.whitebox?.plan;
     for (const site of state.sites) {
       if (site.visited || Math.abs(player.position.y - site.position.y) > 3
-        || Math.hypot(player.position.x - site.position.x, player.position.z - site.position.z) > DISCOVERY_RADIUS) continue;
-      const rewardRoom = this.layout?.whitebox?.plan.rewards[Number(site.id.replace('whitebox-cache-', ''))]?.room;
-      const guard = rewardRoom ? state.encounters?.find(e => this.whiteboxFights.some(f => f.id === e.id && f.room === rewardRoom))
-        : state.encounters?.find(e => e.siteId === site.id);
-      if (guard && guard.phase !== 'cleared') continue;
+        || Math.hypot(player.position.x - site.position.x, player.position.z - site.position.z)
+          > (plan ? AUTHORED_CHEST_VISIBILITY : DISCOVERY_RADIUS)) continue;
+      const authoredReward = plan?.rewards[Number(site.id.replace('whitebox-cache-', ''))];
+      if (authoredReward && !insidePlanRoom(plan!, authoredReward.room, player.position)) continue;
+      if (authoredReward?.requires !== undefined) {
+        if (authoredReward.requires.some(id => state.encounters?.find(e => e.id === id)?.phase !== 'cleared')) continue;
+      } else {
+        const guard = authoredReward ? state.encounters?.find(e => this.whiteboxFights.some(f => f.id === e.id && f.room === authoredReward.room))
+          : state.encounters?.find(e => e.siteId === site.id);
+        if (guard && guard.phase !== 'cleared') continue;
+      }
+      this.encounterEye.copy(player.position); this.encounterEye.y += 1.2;
+      this.encounterTarget.copy(site.position); this.encounterTarget.y += .6;
+      if (this.ctx.world.segmentBlocked(this.encounterEye, this.encounterTarget)) continue;
       // 先登记再产生掉落，交互/奖励回调即使在同帧再次更新，也不能重复发现。
       site.visited = true;
       const source = adventure.sites.find(s => s.id === site.id);
-      if (source && source.reward !== 'none') this.ctx.loot.spawnChest(site.position.clone(), source.reward);
+      const reward = authoredReward?.reward ?? source?.reward;
+      if (reward && reward !== 'none') this.ctx.loot.spawnChest(site.position.clone(), reward);
       this.ctx.ui.toast(`发现 ${site.label} · 支路物资已出现`, '#ffda82');
     }
   }
@@ -542,8 +602,11 @@ export class StageDirector implements IStageDirector {
     this.cleared = true;
     if (this.adventureState) {
       this.adventureState.phase = 'cleared';
-      // Completing the trial disperses unopened patrols and releases their supplies.
-      for (const encounter of this.adventureState.encounters ?? []) encounter.phase = 'cleared';
+      // Legacy altar completion disperses patrols. Authored guarded loot instead
+      // requires the actual room fight; skipping a branch cannot complete its prerequisite.
+      for (const encounter of this.adventureState.encounters ?? []) {
+        if (!this.layout?.whitebox || encounter.phase === 'active') encounter.phase = 'cleared';
+      }
     }
     this.beacon?.setPhase('cleared');
     this.waves?.cancel();
@@ -640,7 +703,7 @@ export class StageDirector implements IStageDirector {
 
     // 最后 <= 2 只敌人长时间没有进展：传送到玩家附近（首领战中不算——玩家正在打首领）
     const w = this.encounterWaves ?? this.waves;
-    if (w && w.done && !this.cleared && alive > 0 && alive <= 2 && this.bosses.length === 0) {
+    if (w && w.done && (!this.cleared || this.encounterWaves !== null) && alive > 0 && alive <= 2 && this.bosses.length === 0) {
       const since = this.t - Math.max(this.lastProgress, w.lastActivity);
       if (since >= STRAGGLER_TIME) {
         this.lastProgress = this.t;

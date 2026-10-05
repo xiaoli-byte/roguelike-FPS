@@ -1,0 +1,1551 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-10-05T02:56:12.491Z",
+  "timezone": "Asia/Shanghai",
+  "auditor": "independent art_collision_review agent",
+  "scope": "Frozen LD-03 runtime plans, body collision, real 1m NavGrid, authored rewards, full seven-stall shops, encounter LOS and static art budget",
+  "filesystemMutation": "Only this explicitly authorized audit JSON is written. No source, data, asset or test file was changed.",
+  "methods": {
+    "playerHalfWidth": 0.35,
+    "playerHeight": 1.8,
+    "physicalMoveStepMetres": 0.125,
+    "physicalMovementUses": "CollisionWorld.moveBody with ordinary ground/step handling",
+    "navCellMetres": 1,
+    "navEndpointToleranceMetres": 0.01,
+    "authoredRewardHalfWidth": 0.9,
+    "shopTableHalfWidth": 0.62,
+    "shopCustomerHalfWidth": 0.5,
+    "customerFrontMetres": 1.7,
+    "shopCheckStalls": 7,
+    "encounterLosHeight": 1.2,
+    "quietShopFallback": "When a safe physical customer coordinate falls in a blocked 1m nav cell, follow the returned reachable cell path then physically move to the exact customer coordinate."
+  },
+  "totals": {
+    "plans": 15,
+    "rewards": 38,
+    "spawnPoints": 5528,
+    "navTargets": 5804,
+    "checkpointWalks": 201,
+    "passageDirectionWalks": 196,
+    "preparedShops": 3,
+    "preparedStations": 21,
+    "preparedCustomerWalks": 21,
+    "quietShops": 15,
+    "quietCustomerWalks": 105,
+    "quietExactNavCustomerEndpoints": 101,
+    "quietCustomerEndpointsUsingNavCellFallback": 4,
+    "artPlacements": 4527,
+    "deckPlacements": 95
+  },
+  "results": [
+    {
+      "id": "desert-1",
+      "revision": "LD-03",
+      "bounds": [
+        148,
+        112
+      ],
+      "generationMs": 69.96,
+      "navBuildMs": 4.05,
+      "navCells": 17632,
+      "navReusableArraysBytes": 952128,
+      "collisionBoxes": 318,
+      "floorRects": 256,
+      "spawnPoints": 221,
+      "rewards": [
+        {
+          "room": "throat",
+          "at": [
+            49,
+            71
+          ],
+          "reward": "heal",
+          "requires": [
+            "A"
+          ]
+        },
+        {
+          "room": "ridge",
+          "at": [
+            37.5,
+            27
+          ],
+          "reward": "coins",
+          "requires": [
+            "A"
+          ]
+        },
+        {
+          "room": "cache",
+          "at": [
+            117,
+            78
+          ],
+          "reward": "scroll",
+          "requires": [
+            "B"
+          ]
+        }
+      ],
+      "facingLOS": [
+        {
+          "id": "A",
+          "room": "throat",
+          "points": 85,
+          "visible": 85
+        },
+        {
+          "id": "B",
+          "room": "basin",
+          "points": 170,
+          "visible": 169
+        }
+      ],
+      "quietCustomerFallbacks": 0,
+      "artBuildMs": 56.159,
+      "boundaryEdges": 714,
+      "artPlacements": 267,
+      "deckPlacements": 0,
+      "architectureChunks18m": 76,
+      "allSceneNearLodTriangles": 425700,
+      "allSceneLastLodTriangles": 136300,
+      "rayWindows": 0
+    },
+    {
+      "id": "desert-2",
+      "revision": "LD-03",
+      "bounds": [
+        168,
+        128
+      ],
+      "generationMs": 92.282,
+      "navBuildMs": 0.792,
+      "navCells": 22704,
+      "navReusableArraysBytes": 1226016,
+      "collisionBoxes": 215,
+      "floorRects": 162,
+      "spawnPoints": 359,
+      "rewards": [
+        {
+          "room": "well",
+          "at": [
+            81,
+            76
+          ],
+          "reward": "heal",
+          "requires": [
+            "B"
+          ]
+        },
+        {
+          "room": "supply",
+          "at": [
+            98,
+            107
+          ],
+          "reward": "coins",
+          "requires": [
+            "A"
+          ]
+        },
+        {
+          "room": "north",
+          "at": [
+            86.5,
+            25.5
+          ],
+          "reward": "scroll",
+          "requires": [
+            "B"
+          ]
+        }
+      ],
+      "facingLOS": [
+        {
+          "id": "A",
+          "room": "cargo",
+          "points": 178,
+          "visible": 173
+        },
+        {
+          "id": "B",
+          "room": "well",
+          "points": 215,
+          "visible": 195
+        },
+        {
+          "id": "B",
+          "room": "north",
+          "points": 173,
+          "visible": 139
+        },
+        {
+          "id": "C",
+          "room": "gate",
+          "points": 174,
+          "visible": 173
+        }
+      ],
+      "quietCustomerFallbacks": 0,
+      "artBuildMs": 23.946,
+      "boundaryEdges": 438,
+      "artPlacements": 290,
+      "deckPlacements": 0,
+      "architectureChunks18m": 62,
+      "allSceneNearLodTriangles": 461800,
+      "allSceneLastLodTriangles": 148200,
+      "rayWindows": 0
+    },
+    {
+      "id": "desert-3",
+      "revision": "LD-03",
+      "bounds": [
+        138,
+        148
+      ],
+      "generationMs": 105.123,
+      "navBuildMs": 1.092,
+      "navCells": 21584,
+      "navReusableArraysBytes": 1165536,
+      "collisionBoxes": 202,
+      "floorRects": 152,
+      "spawnPoints": 575,
+      "rewards": [
+        {
+          "room": "west",
+          "at": [
+            31,
+            104
+          ],
+          "reward": "heal",
+          "requires": [
+            "A"
+          ]
+        },
+        {
+          "room": "inner",
+          "at": [
+            51,
+            83
+          ],
+          "reward": "weapon",
+          "requires": [
+            "B2"
+          ]
+        },
+        {
+          "room": "north",
+          "at": [
+            54.5,
+            30.5
+          ],
+          "reward": "scroll",
+          "requires": [
+            "B1"
+          ]
+        }
+      ],
+      "facingLOS": [
+        {
+          "id": "A",
+          "room": "west",
+          "points": 184,
+          "visible": 171
+        },
+        {
+          "id": "B1",
+          "room": "north",
+          "points": 211,
+          "visible": 210
+        },
+        {
+          "id": "B2",
+          "room": "inner",
+          "points": 207,
+          "visible": 186
+        },
+        {
+          "id": "C",
+          "room": "court",
+          "points": 294,
+          "visible": 276
+        }
+      ],
+      "quietCustomerFallbacks": 0,
+      "artBuildMs": 18.88,
+      "boundaryEdges": 406,
+      "artPlacements": 335,
+      "deckPlacements": 0,
+      "architectureChunks18m": 72,
+      "allSceneNearLodTriangles": 535200,
+      "allSceneLastLodTriangles": 169900,
+      "rayWindows": 0
+    },
+    {
+      "id": "desert-4",
+      "revision": "LD-03",
+      "bounds": [
+        162,
+        144
+      ],
+      "generationMs": 108.163,
+      "navBuildMs": 1.697,
+      "navCells": 24568,
+      "navReusableArraysBytes": 1326672,
+      "collisionBoxes": 135,
+      "floorRects": 124,
+      "spawnPoints": 520,
+      "rewards": [
+        {
+          "room": "court2",
+          "at": [
+            93.5,
+            115.5
+          ],
+          "reward": "heal",
+          "requires": [
+            "A"
+          ]
+        },
+        {
+          "room": "cloister",
+          "at": [
+            36.5,
+            64
+          ],
+          "reward": "scroll",
+          "requires": [
+            "A"
+          ]
+        },
+        {
+          "room": "court4",
+          "at": [
+            135,
+            52.5
+          ],
+          "reward": "weapon",
+          "requires": [
+            "P"
+          ]
+        }
+      ],
+      "facingLOS": [
+        {
+          "id": "A",
+          "room": "court1",
+          "points": 196,
+          "visible": 188
+        },
+        {
+          "id": "B",
+          "room": "court3",
+          "points": 273,
+          "visible": 253
+        },
+        {
+          "id": "P",
+          "room": "court4",
+          "points": 233,
+          "visible": 221
+        },
+        {
+          "id": "C",
+          "room": "sanctum",
+          "points": 222,
+          "visible": 212
+        }
+      ],
+      "quietCustomerFallbacks": 1,
+      "artBuildMs": 13.472,
+      "boundaryEdges": 270,
+      "artPlacements": 350,
+      "deckPlacements": 0,
+      "architectureChunks18m": 65,
+      "allSceneNearLodTriangles": 561900,
+      "allSceneLastLodTriangles": 177800,
+      "rayWindows": 0
+    },
+    {
+      "id": "desert-5",
+      "revision": "LD-03",
+      "bounds": [
+        140,
+        150
+      ],
+      "generationMs": 47.298,
+      "navBuildMs": 0.862,
+      "navCells": 22176,
+      "navReusableArraysBytes": 1197504,
+      "collisionBoxes": 261,
+      "floorRects": 183,
+      "spawnPoints": 426,
+      "rewards": [
+        {
+          "room": "arena",
+          "at": [
+            74,
+            75
+          ],
+          "reward": "upgrade",
+          "requires": [
+            "BOSS"
+          ]
+        }
+      ],
+      "facingLOS": [
+        {
+          "id": "BOSS",
+          "room": "arena",
+          "points": 877,
+          "visible": 781
+        }
+      ],
+      "quietCustomerFallbacks": 0,
+      "artBuildMs": 23.649,
+      "boundaryEdges": 544,
+      "artPlacements": 161,
+      "deckPlacements": 0,
+      "architectureChunks18m": 55,
+      "allSceneNearLodTriangles": 256100,
+      "allSceneLastLodTriangles": 83300,
+      "rayWindows": 0
+    },
+    {
+      "id": "frost-1",
+      "revision": "LD-03",
+      "bounds": [
+        138,
+        110
+      ],
+      "generationMs": 60.667,
+      "navBuildMs": 0.631,
+      "navCells": 16188,
+      "navReusableArraysBytes": 874152,
+      "collisionBoxes": 367,
+      "floorRects": 304,
+      "spawnPoints": 210,
+      "rewards": [
+        {
+          "room": "patrol",
+          "at": [
+            53.5,
+            75
+          ],
+          "reward": "heal",
+          "requires": [
+            "A"
+          ]
+        },
+        {
+          "room": "pines",
+          "at": [
+            29,
+            30
+          ],
+          "reward": "coins",
+          "requires": [
+            "A"
+          ]
+        },
+        {
+          "room": "vestry",
+          "at": [
+            124,
+            57
+          ],
+          "reward": "weapon",
+          "requires": [
+            "B"
+          ]
+        }
+      ],
+      "facingLOS": [
+        {
+          "id": "A",
+          "room": "patrol",
+          "points": 205,
+          "visible": 191
+        },
+        {
+          "id": "B",
+          "room": "chapel",
+          "points": 87,
+          "visible": 87
+        }
+      ],
+      "quietCustomerFallbacks": 0,
+      "artBuildMs": 56.581,
+      "boundaryEdges": 886,
+      "artPlacements": 269,
+      "deckPlacements": 0,
+      "architectureChunks18m": 78,
+      "allSceneNearLodTriangles": 425494,
+      "allSceneLastLodTriangles": 137294,
+      "rayWindows": 0
+    },
+    {
+      "id": "frost-2",
+      "revision": "LD-03",
+      "bounds": [
+        182,
+        144
+      ],
+      "generationMs": 95.306,
+      "navBuildMs": 0.982,
+      "navCells": 27528,
+      "navReusableArraysBytes": 1486512,
+      "collisionBoxes": 468,
+      "floorRects": 377,
+      "spawnPoints": 299,
+      "rewards": [
+        {
+          "room": "lower",
+          "at": [
+            121.5,
+            123.5
+          ],
+          "reward": "heal",
+          "requires": [
+            "A"
+          ]
+        },
+        {
+          "room": "west",
+          "at": [
+            41.5,
+            71
+          ],
+          "reward": "scroll",
+          "requires": [
+            "C"
+          ]
+        },
+        {
+          "room": "ice-cache",
+          "at": [
+            169,
+            65
+          ],
+          "reward": "weapon",
+          "requires": [
+            "B"
+          ]
+        }
+      ],
+      "facingLOS": [
+        {
+          "id": "A",
+          "room": "lower",
+          "points": 155,
+          "visible": 147
+        },
+        {
+          "id": "B",
+          "room": "east",
+          "points": 143,
+          "visible": 125
+        },
+        {
+          "id": "C",
+          "room": "west",
+          "points": 185,
+          "visible": 179
+        }
+      ],
+      "quietCustomerFallbacks": 0,
+      "artBuildMs": 81.898,
+      "boundaryEdges": 1112,
+      "artPlacements": 411,
+      "deckPlacements": 0,
+      "architectureChunks18m": 104,
+      "allSceneNearLodTriangles": 656094,
+      "allSceneLastLodTriangles": 208294,
+      "rayWindows": 0
+    },
+    {
+      "id": "frost-3",
+      "revision": "LD-03",
+      "bounds": [
+        136,
+        112
+      ],
+      "generationMs": 89.111,
+      "navBuildMs": 2.062,
+      "navCells": 16240,
+      "navReusableArraysBytes": 876960,
+      "collisionBoxes": 189,
+      "floorRects": 154,
+      "spawnPoints": 488,
+      "rewards": [
+        {
+          "room": "supplies",
+          "at": [
+            118,
+            83
+          ],
+          "reward": "weapon",
+          "requires": [
+            "B"
+          ]
+        },
+        {
+          "room": "middle-pier",
+          "at": [
+            101,
+            61
+          ],
+          "reward": "scroll",
+          "requires": [
+            "A"
+          ]
+        },
+        {
+          "room": "middle",
+          "at": [
+            33,
+            63
+          ],
+          "reward": "heal",
+          "requires": [
+            "A"
+          ]
+        }
+      ],
+      "facingLOS": [
+        {
+          "id": "A",
+          "room": "middle",
+          "points": 192,
+          "visible": 163
+        },
+        {
+          "id": "B",
+          "room": "lower-pier",
+          "points": 251,
+          "visible": 234
+        },
+        {
+          "id": "C",
+          "room": "upper-pier",
+          "points": 280,
+          "visible": 264
+        }
+      ],
+      "quietCustomerFallbacks": 0,
+      "artBuildMs": 32.886,
+      "boundaryEdges": 406,
+      "artPlacements": 351,
+      "deckPlacements": 48,
+      "architectureChunks18m": 101,
+      "allSceneNearLodTriangles": 637596,
+      "allSceneLastLodTriangles": 201896,
+      "rayWindows": 1
+    },
+    {
+      "id": "frost-4",
+      "revision": "LD-03",
+      "bounds": [
+        162,
+        158
+      ],
+      "generationMs": 95.355,
+      "navBuildMs": 1.253,
+      "navCells": 26892,
+      "navReusableArraysBytes": 1452168,
+      "collisionBoxes": 352,
+      "floorRects": 275,
+      "spawnPoints": 507,
+      "rewards": [
+        {
+          "room": "south",
+          "at": [
+            79.5,
+            136
+          ],
+          "reward": "heal",
+          "requires": [
+            "B"
+          ]
+        },
+        {
+          "room": "west",
+          "at": [
+            20,
+            93
+          ],
+          "reward": "scroll",
+          "requires": [
+            "B"
+          ]
+        },
+        {
+          "room": "east",
+          "at": [
+            143,
+            94.5
+          ],
+          "reward": "weapon",
+          "requires": [
+            "C"
+          ]
+        }
+      ],
+      "facingLOS": [
+        {
+          "id": "A",
+          "room": "north",
+          "points": 220,
+          "visible": 207
+        },
+        {
+          "id": "B",
+          "room": "west",
+          "points": 244,
+          "visible": 199
+        },
+        {
+          "id": "C",
+          "room": "sanctum",
+          "points": 297,
+          "visible": 254
+        }
+      ],
+      "quietCustomerFallbacks": 0,
+      "artBuildMs": 184.862,
+      "boundaryEdges": 784,
+      "artPlacements": 327,
+      "deckPlacements": 0,
+      "architectureChunks18m": 83,
+      "allSceneNearLodTriangles": 521694,
+      "allSceneLastLodTriangles": 166294,
+      "rayWindows": 0
+    },
+    {
+      "id": "frost-5",
+      "revision": "LD-03",
+      "bounds": [
+        166,
+        100
+      ],
+      "generationMs": 177.691,
+      "navBuildMs": 2.322,
+      "navCells": 17680,
+      "navReusableArraysBytes": 954720,
+      "collisionBoxes": 121,
+      "floorRects": 92,
+      "spawnPoints": 232,
+      "rewards": [],
+      "facingLOS": [
+        {
+          "id": "BOSS",
+          "room": "arena",
+          "points": 424,
+          "visible": 365
+        }
+      ],
+      "quietCustomerFallbacks": 0,
+      "artBuildMs": 25.166,
+      "boundaryEdges": 248,
+      "artPlacements": 162,
+      "deckPlacements": 0,
+      "architectureChunks18m": 50,
+      "allSceneNearLodTriangles": 257694,
+      "allSceneLastLodTriangles": 83794,
+      "rayWindows": 0
+    },
+    {
+      "id": "inferno-1",
+      "revision": "LD-03",
+      "bounds": [
+        146,
+        116
+      ],
+      "generationMs": 123.95,
+      "navBuildMs": 2.268,
+      "navCells": 18000,
+      "navReusableArraysBytes": 972000,
+      "collisionBoxes": 88,
+      "floorRects": 70,
+      "spawnPoints": 338,
+      "rewards": [
+        {
+          "room": "yard",
+          "at": [
+            48.5,
+            97
+          ],
+          "reward": "heal",
+          "requires": [
+            "A"
+          ]
+        },
+        {
+          "room": "store",
+          "at": [
+            48.5,
+            46.5
+          ],
+          "reward": "scroll",
+          "requires": [
+            "A"
+          ]
+        },
+        {
+          "room": "altar",
+          "at": [
+            126,
+            31.5
+          ],
+          "reward": "weapon",
+          "requires": [
+            "C"
+          ]
+        }
+      ],
+      "facingLOS": [
+        {
+          "id": "A",
+          "room": "yard",
+          "points": 252,
+          "visible": 223
+        },
+        {
+          "id": "B",
+          "room": "kiln",
+          "points": 255,
+          "visible": 200
+        },
+        {
+          "id": "C",
+          "room": "altar",
+          "points": 177,
+          "visible": 161
+        }
+      ],
+      "quietCustomerFallbacks": 0,
+      "artBuildMs": 23.996,
+      "boundaryEdges": 184,
+      "artPlacements": 226,
+      "deckPlacements": 0,
+      "architectureChunks18m": 56,
+      "allSceneNearLodTriangles": 360800,
+      "allSceneLastLodTriangles": 115400,
+      "rayWindows": 0
+    },
+    {
+      "id": "inferno-2",
+      "revision": "LD-03",
+      "bounds": [
+        143,
+        151
+      ],
+      "generationMs": 228.113,
+      "navBuildMs": 6.576,
+      "navCells": 22785,
+      "navReusableArraysBytes": 1230390,
+      "collisionBoxes": 251,
+      "floorRects": 200,
+      "spawnPoints": 383,
+      "rewards": [
+        {
+          "room": "ash",
+          "at": [
+            15.5,
+            81.5
+          ],
+          "reward": "heal",
+          "requires": [
+            "A"
+          ]
+        },
+        {
+          "room": "feed",
+          "at": [
+            110,
+            18.5
+          ],
+          "reward": "scroll",
+          "requires": [
+            "B"
+          ]
+        },
+        {
+          "room": "slag",
+          "at": [
+            41,
+            135.5
+          ],
+          "reward": "weapon",
+          "requires": [
+            "C"
+          ]
+        }
+      ],
+      "facingLOS": [
+        {
+          "id": "A",
+          "room": "work",
+          "points": 255,
+          "visible": 171
+        },
+        {
+          "id": "B",
+          "room": "feed",
+          "points": 187,
+          "visible": 149
+        },
+        {
+          "id": "C",
+          "room": "slag",
+          "points": 145,
+          "visible": 124
+        },
+        {
+          "id": "D",
+          "room": "furnace",
+          "points": 262,
+          "visible": 219
+        }
+      ],
+      "quietCustomerFallbacks": 2,
+      "artBuildMs": 109.333,
+      "boundaryEdges": 516,
+      "artPlacements": 315,
+      "deckPlacements": 0,
+      "architectureChunks18m": 69,
+      "allSceneNearLodTriangles": 502500,
+      "allSceneLastLodTriangles": 160300,
+      "rayWindows": 0
+    },
+    {
+      "id": "inferno-3",
+      "revision": "LD-03",
+      "bounds": [
+        164,
+        167
+      ],
+      "generationMs": 320.105,
+      "navBuildMs": 4.382,
+      "navCells": 28728,
+      "navReusableArraysBytes": 1551312,
+      "collisionBoxes": 339,
+      "floorRects": 289,
+      "spawnPoints": 327,
+      "rewards": [
+        {
+          "room": "receiver",
+          "at": [
+            139.5,
+            94.5
+          ],
+          "reward": "heal",
+          "requires": [
+            "B"
+          ]
+        },
+        {
+          "room": "repair",
+          "at": [
+            36.5,
+            42.5
+          ],
+          "reward": "scroll",
+          "requires": [
+            "A"
+          ]
+        },
+        {
+          "room": "north-bank",
+          "at": [
+            130.5,
+            21
+          ],
+          "reward": "weapon",
+          "requires": [
+            "A"
+          ]
+        }
+      ],
+      "facingLOS": [
+        {
+          "id": "A",
+          "room": "repair",
+          "points": 192,
+          "visible": 180
+        },
+        {
+          "id": "B",
+          "room": "receiver",
+          "points": 183,
+          "visible": 162
+        },
+        {
+          "id": "C",
+          "room": "sluice",
+          "points": 141,
+          "visible": 126
+        }
+      ],
+      "quietCustomerFallbacks": 0,
+      "artBuildMs": 172.85,
+      "boundaryEdges": 768,
+      "artPlacements": 440,
+      "deckPlacements": 47,
+      "architectureChunks18m": 116,
+      "allSceneNearLodTriangles": 779100,
+      "allSceneLastLodTriangles": 245500,
+      "rayWindows": 0
+    },
+    {
+      "id": "inferno-4",
+      "revision": "LD-03",
+      "bounds": [
+        161,
+        150
+      ],
+      "generationMs": 202.92,
+      "navBuildMs": 1.234,
+      "navCells": 25410,
+      "navReusableArraysBytes": 1372140,
+      "collisionBoxes": 222,
+      "floorRects": 145,
+      "spawnPoints": 409,
+      "rewards": [
+        {
+          "room": "molds",
+          "at": [
+            136,
+            87
+          ],
+          "reward": "heal",
+          "requires": [
+            "A"
+          ]
+        },
+        {
+          "room": "cooling",
+          "at": [
+            64.5,
+            128
+          ],
+          "reward": "coins",
+          "requires": [
+            "A"
+          ]
+        },
+        {
+          "room": "repair",
+          "at": [
+            32,
+            70.5
+          ],
+          "reward": "scroll",
+          "requires": [
+            "B"
+          ]
+        }
+      ],
+      "facingLOS": [
+        {
+          "id": "A",
+          "room": "molds",
+          "points": 279,
+          "visible": 253
+        },
+        {
+          "id": "B",
+          "room": "control",
+          "points": 264,
+          "visible": 243
+        }
+      ],
+      "quietCustomerFallbacks": 0,
+      "artBuildMs": 62.885,
+      "boundaryEdges": 454,
+      "artPlacements": 337,
+      "deckPlacements": 0,
+      "architectureChunks18m": 77,
+      "allSceneNearLodTriangles": 538400,
+      "allSceneLastLodTriangles": 170900,
+      "rayWindows": 0
+    },
+    {
+      "id": "inferno-5",
+      "revision": "LD-03",
+      "bounds": [
+        128,
+        140
+      ],
+      "generationMs": 166.995,
+      "navBuildMs": 1.353,
+      "navCells": 19008,
+      "navReusableArraysBytes": 1026432,
+      "collisionBoxes": 135,
+      "floorRects": 100,
+      "spawnPoints": 234,
+      "rewards": [
+        {
+          "room": "cooling",
+          "at": [
+            60,
+            74
+          ],
+          "reward": "upgrade",
+          "requires": [
+            "A"
+          ]
+        }
+      ],
+      "facingLOS": [
+        {
+          "id": "A",
+          "room": "hot",
+          "points": 202,
+          "visible": 185
+        }
+      ],
+      "quietCustomerFallbacks": 1,
+      "artBuildMs": 28.097,
+      "boundaryEdges": 270,
+      "artPlacements": 286,
+      "deckPlacements": 0,
+      "architectureChunks18m": 57,
+      "allSceneNearLodTriangles": 456100,
+      "allSceneLastLodTriangles": 145800,
+      "rayWindows": 0
+    }
+  ],
+  "resolvedFindings": [
+    {
+      "plan": "frost-2",
+      "encounter": "B",
+      "problem": "The old LOS target lay on the boundary of a solid 8m wall; every legal east-room station was occluded.",
+      "oldAuthoredFacing": [
+        131.5,
+        81.5
+      ],
+      "oldWorldFacing": {
+        "x": 40.5,
+        "z": 9.5
+      },
+      "oldBlocker": {
+        "minX": -46.5,
+        "maxX": 41,
+        "minZ": 9,
+        "maxZ": 9.5,
+        "minY": 0,
+        "maxY": 8,
+        "tag": "whitebox-wall"
+      },
+      "legalRoomStations": 143,
+      "oldVisibleStationCount": 0,
+      "newAuthoredFacing": [
+        131.5,
+        79
+      ],
+      "newWorldFacing": {
+        "x": 40.5,
+        "z": 7
+      },
+      "newBodyClear": true,
+      "newExactNavEndpoint": true,
+      "newVisibleStationCount": 125,
+      "resolved": true
+    }
+  ],
+  "unresolvedFindings": [],
+  "targetedTestEvidence": {
+    "file": "tests/boss-supply.test.mjs",
+    "executedBeforeFinalAudit": true,
+    "passed": 4,
+    "failed": 0,
+    "durationMs": 1378.7406,
+    "covers": [
+      "Three actual seven-stall shops; no boss while shopping; idempotent cleanup",
+      "Boss-room entry, full spawn warning, one settlement/exit and no repeat",
+      "Explicit reward/prerequisites, room containment and LOS",
+      "Skipped optional guarded reward remains playable after final clear without repeated settlement"
+    ]
+  },
+  "limitations": [
+    "No full npm test or production build was run by this auditor.",
+    "CPU timings are one Node process audit samples and are not browser frame-time measurements.",
+    "Triangle numbers count all placed architecture at the selected near LOD or last LOD; they are not actual visible per-frame submitted triangles. Browser GPU and FPS verification belongs to the root integration pass.",
+    "Saved JSON was generated and parsed successfully in this automation context. This does not establish that another local program can read it or that the machine DLP permits external delivery.",
+    "The focused final refresh rechecks art envelopes, decks, counts and preparation passage movement with dynamic shops. Earlier full runtime/nav evidence and CPU timings retain their original audit time. No performance timing was taken during the root test run."
+  ],
+  "sourceSha256": {
+    "src/world/WhiteboxPlans.ts": "bd5b345986662447c4543c3f2b23dd87fe740920cd510fd9999556a68e8023a1",
+    "src/world/WhiteboxGen.ts": "f885633301fad9872fe434a456fc64d79e6e000f3257c81133431bd8a48c9280",
+    "src/world/WhiteboxEncounters.ts": "1cc50f25d58a59b0570a4d0652870bb8c55c6d2456ac6873ae90cb400462b50b",
+    "src/world/StageDirector.ts": "fc4c15401f19fd34562af26af94f2fb708874499bcfc19f29f0fa0fb90fd7098",
+    "src/progression/loot/shopLayout.ts": "e7438c91b26a0e1e6c5eeb95feca2a81a9025b9cc9ef53a4de5939a50fdbda18",
+    "docs/level-design/plans/desert.json": "19fb015b372785b332bec078f943cacafac8394860c24c3bb610d5053c2968cd",
+    "docs/level-design/plans/frost.json": "7f829203b4ca618b865a14e8c6220d086271fd11ecb2f0697e54c6c14c154f3f",
+    "docs/level-design/plans/inferno.json": "3b3f68d08db5f85cb87907075d8dc448e3607ac3e47f1a80c97262bb468ac0c3",
+    "src/world/AuthoredSceneLayout.ts": "d1a47a653b14b93c3fe00a3cad8edfaa78553f2029fae0c71ea5d61c32caef70",
+    "src/world/SceneArchitecture.ts": "2df20dc7b992e2c6d894b1ec13e9346052a7c5e40329cd57e0d31591eceef11b"
+  },
+  "status": "passed",
+  "refreshedAt": "2026-10-05T03:00:50.933Z",
+  "sourceSha256AtFullAudit": {
+    "src/world/WhiteboxPlans.ts": "bd5b345986662447c4543c3f2b23dd87fe740920cd510fd9999556a68e8023a1",
+    "src/world/WhiteboxGen.ts": "f885633301fad9872fe434a456fc64d79e6e000f3257c81133431bd8a48c9280",
+    "src/world/WhiteboxEncounters.ts": "1cc50f25d58a59b0570a4d0652870bb8c55c6d2456ac6873ae90cb400462b50b",
+    "src/world/StageDirector.ts": "fc4c15401f19fd34562af26af94f2fb708874499bcfc19f29f0fa0fb90fd7098",
+    "src/progression/loot/shopLayout.ts": "e7438c91b26a0e1e6c5eeb95feca2a81a9025b9cc9ef53a4de5939a50fdbda18",
+    "docs/level-design/plans/desert.json": "19fb015b372785b332bec078f943cacafac8394860c24c3bb610d5053c2968cd",
+    "docs/level-design/plans/frost.json": "7f829203b4ca618b865a14e8c6220d086271fd11ecb2f0697e54c6c14c154f3f",
+    "docs/level-design/plans/inferno.json": "3b3f68d08db5f85cb87907075d8dc448e3607ac3e47f1a80c97262bb468ac0c3"
+  },
+  "focusedRefresh": {
+    "at": "2026-10-05T03:00:50.933Z",
+    "scope": "Latest frozen art and all prepared boss passage centrelines after adding seven actual axis-aligned stall colliders. No test suite or performance benchmark executed.",
+    "artResults": [
+      {
+        "id": "desert-1",
+        "placements": 267,
+        "decks": 0,
+        "total": 267,
+        "chunks18m": 76,
+        "allPlacedArchitectureNearLodTriangles": 425700,
+        "allPlacedArchitectureLastLodTriangles": 136300
+      },
+      {
+        "id": "desert-2",
+        "placements": 290,
+        "decks": 0,
+        "total": 290,
+        "chunks18m": 62,
+        "allPlacedArchitectureNearLodTriangles": 461800,
+        "allPlacedArchitectureLastLodTriangles": 148200
+      },
+      {
+        "id": "desert-3",
+        "placements": 335,
+        "decks": 0,
+        "total": 335,
+        "chunks18m": 72,
+        "allPlacedArchitectureNearLodTriangles": 535200,
+        "allPlacedArchitectureLastLodTriangles": 169900
+      },
+      {
+        "id": "desert-4",
+        "placements": 350,
+        "decks": 0,
+        "total": 350,
+        "chunks18m": 65,
+        "allPlacedArchitectureNearLodTriangles": 561900,
+        "allPlacedArchitectureLastLodTriangles": 177800
+      },
+      {
+        "id": "desert-5",
+        "placements": 161,
+        "decks": 0,
+        "total": 161,
+        "chunks18m": 55,
+        "allPlacedArchitectureNearLodTriangles": 256100,
+        "allPlacedArchitectureLastLodTriangles": 83300
+      },
+      {
+        "id": "frost-1",
+        "placements": 269,
+        "decks": 0,
+        "total": 269,
+        "chunks18m": 78,
+        "allPlacedArchitectureNearLodTriangles": 425494,
+        "allPlacedArchitectureLastLodTriangles": 137294
+      },
+      {
+        "id": "frost-2",
+        "placements": 411,
+        "decks": 0,
+        "total": 411,
+        "chunks18m": 104,
+        "allPlacedArchitectureNearLodTriangles": 656094,
+        "allPlacedArchitectureLastLodTriangles": 208294
+      },
+      {
+        "id": "frost-3",
+        "placements": 351,
+        "decks": 48,
+        "total": 399,
+        "chunks18m": 101,
+        "allPlacedArchitectureNearLodTriangles": 637596,
+        "allPlacedArchitectureLastLodTriangles": 201896
+      },
+      {
+        "id": "frost-4",
+        "placements": 327,
+        "decks": 0,
+        "total": 327,
+        "chunks18m": 83,
+        "allPlacedArchitectureNearLodTriangles": 521694,
+        "allPlacedArchitectureLastLodTriangles": 166294
+      },
+      {
+        "id": "frost-5",
+        "placements": 162,
+        "decks": 0,
+        "total": 162,
+        "chunks18m": 50,
+        "allPlacedArchitectureNearLodTriangles": 257694,
+        "allPlacedArchitectureLastLodTriangles": 83794
+      },
+      {
+        "id": "inferno-1",
+        "placements": 226,
+        "decks": 0,
+        "total": 226,
+        "chunks18m": 56,
+        "allPlacedArchitectureNearLodTriangles": 360800,
+        "allPlacedArchitectureLastLodTriangles": 115400
+      },
+      {
+        "id": "inferno-2",
+        "placements": 315,
+        "decks": 0,
+        "total": 315,
+        "chunks18m": 69,
+        "allPlacedArchitectureNearLodTriangles": 502500,
+        "allPlacedArchitectureLastLodTriangles": 160300
+      },
+      {
+        "id": "inferno-3",
+        "placements": 440,
+        "decks": 47,
+        "total": 487,
+        "chunks18m": 116,
+        "allPlacedArchitectureNearLodTriangles": 779100,
+        "allPlacedArchitectureLastLodTriangles": 245500
+      },
+      {
+        "id": "inferno-4",
+        "placements": 337,
+        "decks": 0,
+        "total": 337,
+        "chunks18m": 77,
+        "allPlacedArchitectureNearLodTriangles": 538400,
+        "allPlacedArchitectureLastLodTriangles": 170900
+      },
+      {
+        "id": "inferno-5",
+        "placements": 286,
+        "decks": 0,
+        "total": 286,
+        "chunks18m": 57,
+        "allPlacedArchitectureNearLodTriangles": 456100,
+        "allPlacedArchitectureLastLodTriangles": 145800
+      }
+    ],
+    "checkedNonCoverEnvelopes": 3525,
+    "checkedDecks": 95,
+    "preparedDynamicPassageDirectionChecks": 6,
+    "preparedDynamicPassages": [
+      {
+        "plan": "desert-5",
+        "passage": "d5-preparation",
+        "authoredPoints": [
+          [
+            32,
+            122
+          ],
+          [
+            44,
+            122
+          ],
+          [
+            44,
+            106
+          ],
+          [
+            19,
+            92
+          ]
+        ],
+        "direction": 1,
+        "dynamicStalls": 7,
+        "playerHalfWidth": 0.35,
+        "playerHeight": 1.8,
+        "passed": true,
+        "steps": 454,
+        "end": [
+          -51,
+          0.0001,
+          17
+        ]
+      },
+      {
+        "plan": "desert-5",
+        "passage": "d5-preparation",
+        "authoredPoints": [
+          [
+            32,
+            122
+          ],
+          [
+            44,
+            122
+          ],
+          [
+            44,
+            106
+          ],
+          [
+            19,
+            92
+          ]
+        ],
+        "direction": -1,
+        "dynamicStalls": 7,
+        "playerHalfWidth": 0.35,
+        "playerHeight": 1.8,
+        "passed": true,
+        "steps": 454,
+        "end": [
+          -38,
+          0.0001,
+          47
+        ]
+      },
+      {
+        "plan": "frost-5",
+        "passage": "f5-preparation",
+        "authoredPoints": [
+          [
+            129,
+            41
+          ],
+          [
+            116,
+            57
+          ],
+          [
+            107,
+            57
+          ],
+          [
+            98,
+            43
+          ]
+        ],
+        "direction": 1,
+        "dynamicStalls": 7,
+        "playerHalfWidth": 0.35,
+        "playerHeight": 1.8,
+        "passed": true,
+        "steps": 371,
+        "end": [
+          15,
+          0.0001,
+          -7
+        ]
+      },
+      {
+        "plan": "frost-5",
+        "passage": "f5-preparation",
+        "authoredPoints": [
+          [
+            129,
+            41
+          ],
+          [
+            116,
+            57
+          ],
+          [
+            107,
+            57
+          ],
+          [
+            98,
+            43
+          ]
+        ],
+        "direction": -1,
+        "dynamicStalls": 7,
+        "playerHalfWidth": 0.35,
+        "playerHeight": 1.8,
+        "passed": true,
+        "steps": 371,
+        "end": [
+          46,
+          0.0001,
+          -9
+        ]
+      },
+      {
+        "plan": "inferno-5",
+        "passage": "i5-preparation",
+        "authoredPoints": [
+          [
+            33,
+            110
+          ],
+          [
+            46,
+            110
+          ],
+          [
+            46,
+            91
+          ],
+          [
+            19,
+            70
+          ]
+        ],
+        "direction": 1,
+        "dynamicStalls": 7,
+        "playerHalfWidth": 0.35,
+        "playerHeight": 1.8,
+        "passed": true,
+        "steps": 530,
+        "end": [
+          -45,
+          0.0001,
+          0
+        ]
+      },
+      {
+        "plan": "inferno-5",
+        "passage": "i5-preparation",
+        "authoredPoints": [
+          [
+            33,
+            110
+          ],
+          [
+            46,
+            110
+          ],
+          [
+            46,
+            91
+          ],
+          [
+            19,
+            70
+          ]
+        ],
+        "direction": -1,
+        "dynamicStalls": 7,
+        "playerHalfWidth": 0.35,
+        "playerHeight": 1.8,
+        "passed": true,
+        "steps": 530,
+        "end": [
+          -31,
+          0.0001,
+          40
+        ]
+      }
+    ],
+    "confirmedFrost2BFacing": [
+      131.5,
+      79
+    ],
+    "unresolvedFindings": []
+  }
+}

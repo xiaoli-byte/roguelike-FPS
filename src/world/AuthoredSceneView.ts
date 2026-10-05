@@ -24,17 +24,17 @@ const ROOM_PAVING: Record<string, Record<string, number>> = {
   'desert-2': { well: .78, north: .72, cargo: .5, gate: .64 },
   'desert-3': { north: .85, inner: .48, court: .64 },
   'desert-4': { court1: .68, court2: .45, court3: .82, court4: .72, sanctum: .95, cloister: .42 },
-  'desert-5': { arena: .82, entry: .58 },
+  'desert-5': { arena: .82, entry: .58, preparation: .64 },
   'frost-1': { chapel: .86, patrol: .26 },
   'frost-2': { lower: .65, exit: .85 },
   'frost-3': { entry: .62, middle: .8, north: .76, 'lower-pier': .48, 'middle-pier': .75, 'upper-pier': .85, supplies: .42 },
   'frost-4': { north: .55, west: .72, east: .42, sanctum: .92 },
-  'frost-5': { entry: .72, arena: .8, 'south-bay': .42 },
+  'frost-5': { entry: .72, arena: .8, 'south-bay': .42, preparation: .68 },
   'inferno-1': { yard: .65, store: .5, altar: .88 },
   'inferno-2': { work: .72, feed: .6, furnace: .94, ash: .3, slag: .35 },
   'inferno-3': { transfer: .5, repair: .66, receiver: .82, sluice: .94 },
   'inferno-4': { cooling: .45, molds: .76, control: .95, repair: .56 },
-  'inferno-5': { cold: .45, hot: .88, exit: .8, cooling: .35 },
+  'inferno-5': { cold: .45, hot: .88, exit: .8, cooling: .35, preparation: .6 },
 };
 const smooth = (a: number, b: number, value: number): number => {
   const t = Math.max(0, Math.min(1, (value - a) / (b - a))); return t * t * (3 - 2 * t);

@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import type { GameContext, Interactable, InteractPrompt, Rarity, ScrollDef, WeaponInstance } from '../../core/types';
 import { RARITY_COLORS, RARITY_CSS, RARITY_NAMES } from '../../core/types';
-import { DEG } from '../../core/math';
 import type { StaticBox } from '../../world/Collision';
 import {
   cssColor, makeAmmoCrateModel, makeAnvil, makeBeam, makePotionModel, makeScrollModel, makeStall, PALETTE,
@@ -9,6 +8,7 @@ import {
 import { clampToArena, facingTarget, facingToward, groundAt } from './physics';
 import { PriceTag } from './PriceTag';
 import { weaponPrompt } from './weaponPrompt';
+import { buildShopLayout, SHOP_COUNTER_FRONT_DISTANCE } from './shopLayout';
 
 /**
  * 商店：弧形排列的摊位（武器 ×2、秘卷 ×1–2、生命药剂、弹药箱）+ 居中的强化台。
@@ -20,8 +20,6 @@ const SCROLL_PRICES: readonly number[] = [80, 110, 145, 185, 220];
 const POTION_PRICE = 40;
 const AMMO_PRICE = 20;
 const POTION_HEAL = 0.4;
-const ARC_RADIUS = 6.4;
-const ARC_STEP = 25 * DEG;
 const TAG_REFRESH = 0.25;
 const DENY_COLOR = '#ff5a4f';
 
@@ -49,6 +47,9 @@ interface Stall {
   label: string;
   labelColor: string;
   sold: boolean;
+  disposed: boolean;
+  buying: boolean;
+  lastPurchaseFrame: number | null;
   weapon: WeaponInstance | null;
   scroll: ScrollDef | null;
   rune: THREE.Object3D | null;
@@ -64,6 +65,8 @@ export class ShopManager {
   private stalls: Stall[] = [];
   private signs: PriceTag[] = [];
   private refreshTimer = 0;
+  private transacting = false;
+  private lastTransactionFrame: number | null = null;
   private upgradePreview: { key: string; lines: string[] } | null = null;
 
   constructor(
@@ -72,8 +75,9 @@ export class ShopManager {
     private readonly dropWeapon: (pos: THREE.Vector3, inst: WeaponInstance) => void,
   ) {}
 
-  spawn(center: THREE.Vector3, facingYaw?: number): void {
+  spawn(center: THREE.Vector3, facingYaw?: number): () => void {
     const ctx = this.ctx;
+    const firstStall = this.stalls.length, firstSign = this.signs.length;
     const chapter = Math.max(0, ctx.run.chapter);
     const factor = 1 + 0.25 * chapter;
     const price = (base: number): number => Math.max(5, Math.round((base * factor) / 5) * 5);
@@ -96,15 +100,12 @@ export class ShopManager {
     const specs: StallSpec[] = [...left, { kind: 'upgrade', price: 0 }, ...right];
     const mid = left.length;
 
-    const cy = Math.cos(yaw);
-    const sy = Math.sin(yaw);
+    const stations = buildShopLayout(center, yaw, specs.length, mid);
     let signPos: THREE.Vector3 | null = null;
     for (let i = 0; i < specs.length; i++) {
       // 局部坐标：+Z 指向玩家一侧，摊位围在中心后方的弧上
-      const a = (i - mid) * ARC_STEP;
-      const lx = Math.sin(a) * ARC_RADIUS;
-      const lz = -Math.cos(a) * ARC_RADIUS;
-      _p.set(center.x + lx * cy + lz * sy, center.y, center.z - lx * sy + lz * cy);
+      const station = stations[i];
+      _p.set(station.position.x, center.y, station.position.z);
       clampToArena(ctx, _p, 1.6);
       const gy = groundAt(ctx, _p.x, _p.z, center.y + 2.5);
       const facing = Math.atan2(center.x - _p.x, center.z - _p.z);
@@ -119,6 +120,17 @@ export class ShopManager {
       this.group.add(sign.sprite);
       this.signs.push(sign);
     }
+    const ownedStalls = this.stalls.slice(firstStall), ownedSigns = this.signs.slice(firstSign);
+    let disposed = false;
+    return () => {
+      if (disposed) return;
+      disposed = true;
+      ownedStalls.forEach(s => this.disposeStall(s));
+      ownedSigns.forEach(sign => this.disposeSign(sign));
+      this.stalls = this.stalls.filter(s => !ownedStalls.includes(s));
+      this.signs = this.signs.filter(sign => !ownedSigns.includes(sign));
+      this.upgradePreview = null;
+    };
   }
 
   update(dt: number): void {
@@ -143,17 +155,27 @@ export class ShopManager {
   }
 
   clear(): void {
-    const world = this.ctx.world;
-    for (const s of this.stalls) {
-      s.remove();
-      s.tag.dispose();
-      s.root.removeFromParent();
-      if (s.box) world.remove(s.box);
-    }
+    for (const s of this.stalls) this.disposeStall(s);
     this.stalls.length = 0;
-    for (const sign of this.signs) sign.dispose();
-    this.signs.length = 0;
+    for (const sign of [...this.signs]) this.disposeSign(sign);
     this.upgradePreview = null;
+  }
+
+  private disposeStall(s: Stall): void {
+    if (s.disposed) return;
+    s.disposed = true;
+    s.interactable.enabled = false;
+    s.remove();
+    s.tag.dispose();
+    s.root.removeFromParent();
+    if (s.box) this.ctx.world.remove(s.box);
+  }
+
+  private disposeSign(sign: PriceTag): void {
+    const index = this.signs.indexOf(sign);
+    if (index < 0) return;
+    sign.dispose();
+    this.signs.splice(index, 1);
   }
 
   // ───────────── 构建 ─────────────
@@ -225,11 +247,13 @@ export class ShopManager {
       spin: spec.kind === 'weapon' ? 0.9 : 1.3,
       tag,
       focus: new THREE.Vector3(x, y + (spec.kind === 'upgrade' ? 0.95 : 1.15), z),
-      front: new THREE.Vector3(x + Math.sin(facing) * 1.4, y + 0.8, z + Math.cos(facing) * 1.4),
+      front: new THREE.Vector3(x + Math.sin(facing) * SHOP_COUNTER_FRONT_DISTANCE, y + 0.8,
+        z + Math.cos(facing) * SHOP_COUNTER_FRONT_DISTANCE),
       price: spec.price,
       label: '',
       labelColor: '',
       sold: false,
+      disposed: false, buying: false, lastPurchaseFrame: null,
       weapon: spec.weapon ?? null,
       scroll: spec.scroll ?? null,
       rune,
@@ -256,13 +280,15 @@ export class ShopManager {
 
   private buy(s: Stall): void {
     const ctx = this.ctx;
-    if (s.sold) return;
+    const frame = ctx.time.frame ?? ctx.time.now;
+    if (s.sold || s.disposed || s.buying || this.transacting || s.lastPurchaseFrame === frame || this.lastTransactionFrame === frame
+      || ctx.game.state !== 'playing' || !ctx.player.alive) return;
     const w = ctx.weapons;
     let price = s.price;
 
     switch (s.kind) {
       case 'potion':
-        if (ctx.player.hp >= ctx.player.maxHp() - 0.01) return this.deny('生命已满');
+        if (!this.needsRecovery()) return this.deny('生命与护盾已满');
         break;
       case 'ammo':
         if (!this.needsAmmo()) return this.deny('弹药已满');
@@ -283,55 +309,66 @@ export class ShopManager {
     }
     if (ctx.run.coins < price) return this.deny('金币不足');
 
-    ctx.run.coins -= price;
-    ctx.events.emit('coins:changed', { coins: ctx.run.coins, delta: -price });
-    ctx.audio.play('buy');
-    _p.copy(s.focus);
+    // Lock before emitting events: event callbacks may re-enter interaction in this frame.
+    s.buying = true;
+    s.lastPurchaseFrame = frame;
+    this.transacting = true;
+    this.lastTransactionFrame = frame;
+    try {
+      ctx.run.coins -= price;
+      ctx.events.emit('coins:changed', { coins: ctx.run.coins, delta: -price });
+      ctx.audio.play('buy');
+      _p.copy(s.focus);
 
-    switch (s.kind) {
-      case 'weapon': {
-        const inst = s.weapon!;
-        const desc = w.describe(inst);
-        const old = w.give(inst);
-        ctx.events.emit('pickup', { kind: 'weapon', amount: 1 });
-        ctx.ui.toast(`购得武器：${desc.name}`, desc.color);
-        ctx.fx.burst(_p, RARITY_COLORS[inst.rarity], 18, 3, 0.5, 0.08, 1);
-        if (old) this.dropWeapon(s.front.clone(), old);
-        this.markSold(s);
-        break;
+      switch (s.kind) {
+        case 'weapon': {
+          const inst = s.weapon!;
+          const desc = w.describe(inst);
+          const old = w.give(inst);
+          ctx.events.emit('pickup', { kind: 'weapon', amount: 1 });
+          ctx.ui.toast(`购得武器：${desc.name}`, desc.color);
+          ctx.fx.burst(_p, RARITY_COLORS[inst.rarity], 18, 3, 0.5, 0.08, 1);
+          if (old) this.dropWeapon(s.front.clone(), old);
+          this.markSold(s);
+          break;
+        }
+        case 'scroll':
+          ctx.fx.burst(_p, RARITY_COLORS[s.scroll!.rarity], 18, 3, 0.5, 0.08, 1);
+          ctx.scrolls.add(s.scroll!.id);
+          this.markSold(s);
+          break;
+        case 'potion': {
+          const healed = ctx.player.heal(ctx.player.maxHp() * POTION_HEAL);
+          const shield = ctx.player.addShield(ctx.player.maxShield());
+          ctx.audio.play('pickup_health');
+          ctx.ui.toast(`战备药剂：回复 ${Math.round(healed)} 生命、${Math.round(shield)} 护盾`, '#ff8a96');
+          ctx.fx.burst(_p, 0xff5a6a, 16, 2.5, 0.5, 0.08, -1);
+          this.refreshTag(s);
+          break;
+        }
+        case 'ammo':
+          w.addAmmoFraction(1);
+          ctx.audio.play('pickup_ammo');
+          ctx.ui.toast('弹药箱：备弹已补满', '#ffd54a');
+          ctx.fx.burst(_p, PALETTE.gold, 14, 2.5, 0.45, 0.07, 2);
+          this.refreshTag(s);
+          break;
+        case 'upgrade': {
+          const a = w.active!;
+          w.upgrade(a);
+          const desc = w.describe(a);
+          ctx.ui.toast(`${desc.name} 强化至 +${a.level}`, '#6fb8ff');
+          _p.set(s.focus.x, s.focus.y + 0.5, s.focus.z);
+          ctx.fx.burst(_p, PALETTE.rune, 24, 3.5, 0.6, 0.09, -1);
+          ctx.fx.ring(s.root.position, 1.8, PALETTE.rune, 0.4);
+          ctx.audio.play('skill_buff', { volume: 0.6 });
+          this.refreshTag(s);
+          break;
+        }
       }
-      case 'scroll':
-        ctx.fx.burst(_p, RARITY_COLORS[s.scroll!.rarity], 18, 3, 0.5, 0.08, 1);
-        ctx.scrolls.add(s.scroll!.id);
-        this.markSold(s);
-        break;
-      case 'potion': {
-        const healed = ctx.player.heal(ctx.player.maxHp() * POTION_HEAL);
-        ctx.audio.play('pickup_health');
-        ctx.ui.toast(`生命药剂：回复 ${Math.round(healed)} 生命`, '#ff8a96');
-        ctx.fx.burst(_p, 0xff5a6a, 16, 2.5, 0.5, 0.08, -1);
-        this.markSold(s);
-        break;
-      }
-      case 'ammo':
-        w.addAmmoFraction(1);
-        ctx.audio.play('pickup_ammo');
-        ctx.ui.toast('弹药箱：备弹已补满', '#ffd54a');
-        ctx.fx.burst(_p, PALETTE.gold, 14, 2.5, 0.45, 0.07, 2);
-        this.markSold(s);
-        break;
-      case 'upgrade': {
-        const a = w.active!;
-        w.upgrade(a);
-        const desc = w.describe(a);
-        ctx.ui.toast(`${desc.name} 强化至 +${a.level}`, '#6fb8ff');
-        _p.set(s.focus.x, s.focus.y + 0.5, s.focus.z);
-        ctx.fx.burst(_p, PALETTE.rune, 24, 3.5, 0.6, 0.09, -1);
-        ctx.fx.ring(s.root.position, 1.8, PALETTE.rune, 0.4);
-        ctx.audio.play('skill_buff', { volume: 0.6 });
-        this.refreshTag(s);
-        break;
-      }
+    } finally {
+      s.buying = false;
+      this.transacting = false;
     }
   }
 
@@ -356,6 +393,11 @@ export class ShopManager {
     return false;
   }
 
+  private needsRecovery(): boolean {
+    const p = this.ctx.player;
+    return p.hp < p.maxHp() - .01 || p.shield < p.maxShield() - .01;
+  }
+
   // ───────────── 提示与价格牌 ─────────────
 
   private prompt(s: Stall): InteractPrompt {
@@ -378,11 +420,11 @@ export class ShopManager {
         };
       }
       case 'potion': {
-        const full = ctx.player.hp >= ctx.player.maxHp() - 0.01;
+        const full = !this.needsRecovery();
         return {
-          title: '生命药剂',
-          subtitle: `购买 · 立即回复 ${Math.round(POTION_HEAL * 100)}% 生命`,
-          lines: full ? ['生命已满'] : [],
+          title: '战备药剂',
+          subtitle: `购买 · 回复 ${Math.round(POTION_HEAL * 100)}% 生命并补满护盾`,
+          lines: full ? ['生命与护盾已满'] : ['可重复购买；每次按当前缺失状态恢复'],
           color: '#ff8a96',
           cost: s.price,
         };
@@ -391,7 +433,7 @@ export class ShopManager {
         return {
           title: '弹药箱',
           subtitle: '购买 · 补满所有武器的备弹',
-          lines: this.needsAmmo() ? [] : ['弹药已满'],
+          lines: this.needsAmmo() ? ['可重复购买；补给后可照常换弹'] : ['弹药已满'],
           color: '#ffd54a',
           cost: s.price,
         };
@@ -461,7 +503,7 @@ export class ShopManager {
       case 'scroll':
         return s.scroll!.name;
       case 'potion':
-        return '生命药剂';
+        return '战备药剂';
       case 'ammo':
         return '弹药箱';
       default:

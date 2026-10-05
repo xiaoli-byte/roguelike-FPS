@@ -212,8 +212,10 @@ test('one deterministic packed field distinguishes working floors, natural groun
       assert.equal(fieldAt(field, plan, plan.rooms.find(r => r.id === 'entry').labelAt, 1), 0, 'canyon entry should retain natural sand');
       assert.ok(fieldAt(field, plan, plan.rooms.find(r => r.id === 'exit').labelAt, 1) > 120, 'gate approach should show a working stone floor');
     } else if (theme === 'frost') {
-      assert.ok(fieldAt(field, plan, [27, 21], 1) > 150, 'winch yard centre should expose its paving');
-      assert.ok(fieldAt(field, plan, [15.5, 21], 2) > fieldAt(field, plan, [27, 21], 2) + 60, 'snow should accumulate at the bank, not cover its entire working yard');
+      const yard = plan.rooms.find(room => room.id === 'north');
+      const centre = yard.labelAt, bank = [Math.min(...yard.polygon.map(p => p[0])) + .65, centre[1]];
+      assert.ok(fieldAt(field, plan, centre, 1) > 150, 'winch yard centre should expose its paving');
+      assert.ok(fieldAt(field, plan, bank, 2) > fieldAt(field, plan, centre, 2) + 60, 'snow should accumulate at the actual bank, not cover its entire working yard');
     } else {
       assert.ok(fieldAt(field, plan, [58, 20], 3) > 110, 'a warm pool should remain visible inside the isolation strip');
       assert.ok(fieldAt(field, plan, [58, 38], 3) < 10, 'dark crust must separate the pools');

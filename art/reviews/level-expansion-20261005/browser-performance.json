@@ -1,0 +1,329 @@
+{
+  "scope": "Frozen source; no generation, build, test or audit jobs running. Actual 1080p high game update, invulnerable inspection, first-person camera; 30 warmup + 240 recorded frames per view.",
+  "samples": [
+    {
+      "kind": "inferno-5-active-boss",
+      "state": {
+        "activeEncounter": "A",
+        "alive": "1",
+        "auditPlan": "inferno-5",
+        "coins": "390",
+        "encounters": "[{\"id\":\"A\",\"label\":\"熔心魔将\",\"phase\":\"active\"}]",
+        "ground": "true",
+        "look": "art",
+        "mode": "inspect",
+        "phase": "encounter",
+        "plan": "inferno-5",
+        "position": "{\"x\":40.649899999999995,\"y\":0.0001,\"z\":-4.703527386835207}",
+        "preparation": "{\"room\":\"preparation\",\"label\":\"黑炉双腔前补给\",\"position\":[-41,0,43]}",
+        "rayWindows": "0",
+        "resources": "{\"hp\":50,\"maxHp\":100,\"shield\":60,\"maxShield\":60,\"reserves\":[{\"id\":\"smg\",\"reserve\":252,\"max\":252},null]}",
+        "sites": "[{\"id\":\"whitebox-cache-0\",\"label\":\"黑炉战后奖励\",\"visited\":false}]",
+        "spawnBlocked": "false",
+        "view": "{\"yaw\":-2.2650003914436048,\"pitch\":0}"
+      },
+      "report": {
+        "sampledAt": "2026-10-05T03:03:22.705Z",
+        "warmupFrames": 30,
+        "frames": 240,
+        "fps": 58.79038777159951,
+        "rafMs": {
+          "median": 16.699999999982538,
+          "p95": 16.900000000023283,
+          "mean": 17.009583333333286
+        },
+        "updateMs": {
+          "median": 0.5,
+          "p95": 1,
+          "mean": 0.5154166653752327
+        },
+        "renderSubmitMs": {
+          "median": 2.2999999821186066,
+          "p95": 3.9000000059604645,
+          "mean": 2.2837499996026356
+        },
+        "gpu": {
+          "status": "available",
+          "samples": 35,
+          "ms": {
+            "median": 6.611197,
+            "p95": 9.812968,
+            "mean": 7.429229771428572
+          },
+          "disjointEvents": 0
+        },
+        "render": {
+          "calls": 82.49583333333334,
+          "triangles": 224069.3,
+          "points": 2119.475,
+          "lines": 0,
+          "geometries": 229,
+          "textures": 131,
+          "programs": 133
+        },
+        "resolution": {
+          "width": 1920,
+          "height": 1080,
+          "cssWidth": 1280,
+          "cssHeight": 720,
+          "pixelRatio": 1.5
+        },
+        "metadata": {
+          "quality": "high",
+          "theme": "inferno",
+          "gameState": "playing",
+          "chapter": 2,
+          "stageIndex": 4,
+          "stageType": "boss",
+          "phase": "encounter",
+          "encounter": "A",
+          "enemies": 1
+        },
+        "hiddenFrames": 0
+      }
+    },
+    {
+      "kind": "frost-3-skiff-close",
+      "state": {
+        "activeEncounter": "",
+        "alive": "0",
+        "auditPlan": "frost-3",
+        "coins": "390",
+        "encounters": "[{\"id\":\"A\",\"label\":\"岸路游击组\",\"phase\":\"undiscovered\"},{\"id\":\"B\",\"label\":\"南栈守炮组\",\"phase\":\"undiscovered\"},{\"id\":\"C\",\"label\":\"检修站守卫\",\"phase\":\"undiscovered\"}]",
+        "ground": "true",
+        "look": "art",
+        "mode": "inspect",
+        "phase": "explore",
+        "plan": "frost-3",
+        "position": "{\"x\":33,\"y\":0.0001,\"z\":5}",
+        "preparation": "null",
+        "rayWindows": "1",
+        "resources": "{\"hp\":50,\"maxHp\":100,\"shield\":60,\"maxShield\":60,\"reserves\":[{\"id\":\"smg\",\"reserve\":252,\"max\":252},null]}",
+        "sites": "[{\"id\":\"whitebox-cache-0\",\"label\":\"南栈守炮风险武器箱\",\"visited\":false},{\"id\":\"whitebox-cache-1\",\"label\":\"中栈探索补给箱\",\"visited\":false},{\"id\":\"whitebox-cache-2\",\"label\":\"工坊清场休整箱\",\"visited\":false}]",
+        "spawnBlocked": "false",
+        "view": "{\"yaw\":1.7007782715993074,\"pitch\":-0.05593580488895269}"
+      },
+      "report": {
+        "sampledAt": "2026-10-05T03:05:31.742Z",
+        "warmupFrames": 30,
+        "frames": 240,
+        "fps": 60.01350303818306,
+        "rafMs": {
+          "median": 16.699999999953434,
+          "p95": 16.900000000023283,
+          "mean": 16.662916666666813
+        },
+        "updateMs": {
+          "median": 0.30000001192092896,
+          "p95": 0.6000000238418579,
+          "mean": 0.33916666768491266
+        },
+        "renderSubmitMs": {
+          "median": 2.4000000059604645,
+          "p95": 5.300000011920929,
+          "mean": 2.766250000024835
+        },
+        "gpu": {
+          "status": "available",
+          "samples": 35,
+          "ms": {
+            "median": 8.542343,
+            "p95": 9.679322,
+            "mean": 8.580472342857144
+          },
+          "disjointEvents": 0
+        },
+        "render": {
+          "calls": 154.5,
+          "triangles": 483039,
+          "points": 1100,
+          "lines": 0,
+          "geometries": 259,
+          "textures": 139,
+          "programs": 143
+        },
+        "resolution": {
+          "width": 1920,
+          "height": 1080,
+          "cssWidth": 1280,
+          "cssHeight": 720,
+          "pixelRatio": 1.5
+        },
+        "metadata": {
+          "quality": "high",
+          "theme": "frost",
+          "gameState": "playing",
+          "chapter": 1,
+          "stageIndex": 2,
+          "stageType": "combat",
+          "phase": "explore",
+          "encounter": "",
+          "enemies": 0
+        },
+        "hiddenFrames": 0
+      }
+    },
+    {
+      "kind": "inferno-3-entry-explore",
+      "state": {
+        "activeEncounter": "",
+        "alive": "0",
+        "auditPlan": "inferno-3",
+        "coins": "390",
+        "encounters": "[{\"id\":\"A\",\"label\":\"检修场守卫\",\"phase\":\"undiscovered\"},{\"id\":\"B\",\"label\":\"接料坪阻击\",\"phase\":\"undiscovered\"},{\"id\":\"C\",\"label\":\"出渣闸护卫\",\"phase\":\"undiscovered\"}]",
+        "ground": "true",
+        "look": "art",
+        "mode": "inspect",
+        "phase": "explore",
+        "plan": "inferno-3",
+        "position": "{\"x\":-66,\"y\":0.0001,\"z\":23}",
+        "preparation": "null",
+        "rayWindows": "0",
+        "resources": "{\"hp\":50,\"maxHp\":100,\"shield\":60,\"maxShield\":60,\"reserves\":[{\"id\":\"smg\",\"reserve\":252,\"max\":252},null]}",
+        "sites": "[{\"id\":\"whitebox-cache-0\",\"label\":\"接料坪清场恢复箱\",\"visited\":false},{\"id\":\"whitebox-cache-1\",\"label\":\"北岸检修探索箱\",\"visited\":false},{\"id\":\"whitebox-cache-2\",\"label\":\"远桥风险武器箱\",\"visited\":false}]",
+        "spawnBlocked": "false",
+        "view": "{\"yaw\":-1.1999050379822342,\"pitch\":0}"
+      },
+      "report": {
+        "sampledAt": "2026-10-05T03:06:20.887Z",
+        "warmupFrames": 30,
+        "frames": 240,
+        "fps": 60.01350303818306,
+        "rafMs": {
+          "median": 16.699999999953434,
+          "p95": 16.79999999998836,
+          "mean": 16.662916666666813
+        },
+        "updateMs": {
+          "median": 0.20000001788139343,
+          "p95": 0.4000000059604645,
+          "mean": 0.22499999937911827
+        },
+        "renderSubmitMs": {
+          "median": 1.7999999821186066,
+          "p95": 2.600000023841858,
+          "mean": 1.8470833336313566
+        },
+        "gpu": {
+          "status": "available",
+          "samples": 35,
+          "ms": {
+            "median": 5.126926,
+            "p95": 5.58906,
+            "mean": 5.116998599999999
+          },
+          "disjointEvents": 0
+        },
+        "render": {
+          "calls": 199,
+          "triangles": 490212,
+          "points": 650,
+          "lines": 0,
+          "geometries": 259,
+          "textures": 140,
+          "programs": 143
+        },
+        "resolution": {
+          "width": 1920,
+          "height": 1080,
+          "cssWidth": 1280,
+          "cssHeight": 720,
+          "pixelRatio": 1.5
+        },
+        "metadata": {
+          "quality": "high",
+          "theme": "inferno",
+          "gameState": "playing",
+          "chapter": 2,
+          "stageIndex": 2,
+          "stageType": "combat",
+          "phase": "explore",
+          "encounter": "",
+          "enemies": 0
+        },
+        "hiddenFrames": 0
+      }
+    },
+    {
+      "kind": "inferno-3-receiver-battle",
+      "state": {
+        "activeEncounter": "B",
+        "alive": "4",
+        "auditPlan": "inferno-3",
+        "coins": "390",
+        "encounters": "[{\"id\":\"A\",\"label\":\"检修场守卫\",\"phase\":\"undiscovered\"},{\"id\":\"B\",\"label\":\"接料坪阻击\",\"phase\":\"active\"},{\"id\":\"C\",\"label\":\"出渣闸护卫\",\"phase\":\"undiscovered\"}]",
+        "ground": "true",
+        "look": "art",
+        "mode": "inspect",
+        "phase": "encounter",
+        "plan": "inferno-3",
+        "position": "{\"x\":59,\"y\":0.0001,\"z\":4.5}",
+        "preparation": "null",
+        "rayWindows": "0",
+        "resources": "{\"hp\":50,\"maxHp\":100,\"shield\":60,\"maxShield\":60,\"reserves\":[{\"id\":\"smg\",\"reserve\":252,\"max\":252},null]}",
+        "sites": "[{\"id\":\"whitebox-cache-0\",\"label\":\"接料坪清场恢复箱\",\"visited\":false},{\"id\":\"whitebox-cache-1\",\"label\":\"北岸检修探索箱\",\"visited\":false},{\"id\":\"whitebox-cache-2\",\"label\":\"远桥风险武器箱\",\"visited\":false}]",
+        "spawnBlocked": "false",
+        "view": "{\"yaw\":1.3024301158889897,\"pitch\":0}"
+      },
+      "report": {
+        "sampledAt": "2026-10-05T03:07:22.989Z",
+        "warmupFrames": 30,
+        "frames": 240,
+        "fps": 60.01500375093773,
+        "rafMs": {
+          "median": 16.699999999953434,
+          "p95": 16.79999999998836,
+          "mean": 16.6625
+        },
+        "updateMs": {
+          "median": 0.4000000059604645,
+          "p95": 0.9000000059604645,
+          "mean": 0.4958333329608043
+        },
+        "renderSubmitMs": {
+          "median": 2.5,
+          "p95": 3.5,
+          "mean": 2.570000000546376
+        },
+        "gpu": {
+          "status": "available",
+          "samples": 35,
+          "ms": {
+            "median": 6.273124,
+            "p95": 7.827083,
+            "mean": 6.529497628571428
+          },
+          "disjointEvents": 0
+        },
+        "render": {
+          "calls": 215.29166666666666,
+          "triangles": 606921.8125,
+          "points": 892.9416666666667,
+          "lines": 0,
+          "geometries": 268,
+          "textures": 153,
+          "programs": 148
+        },
+        "resolution": {
+          "width": 1920,
+          "height": 1080,
+          "cssWidth": 1280,
+          "cssHeight": 720,
+          "pixelRatio": 1.5
+        },
+        "metadata": {
+          "quality": "high",
+          "theme": "inferno",
+          "gameState": "playing",
+          "chapter": 2,
+          "stageIndex": 2,
+          "stageType": "combat",
+          "phase": "encounter",
+          "encounter": "B",
+          "enemies": 4
+        },
+        "hiddenFrames": 0
+      }
+    }
+  ]
+}

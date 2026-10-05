@@ -7,6 +7,7 @@ import type { StageNode, StageType, ThemeId } from '../core/types';
 import { AssetLibrary } from '../assets/AssetLibrary';
 import { StageDirector } from '../world/StageDirector';
 import { getWhiteboxPlan, whiteboxPoint } from '../world/WhiteboxGen';
+import { buildShopLayout } from '../progression/loot/shopLayout';
 import type { WhiteboxCheckpoint } from '../world/WhiteboxTypes';
 import { probeWhitebox, WhiteboxWalker } from './WhiteboxTraversal';
 
@@ -129,19 +130,29 @@ ctx.events.on('stage:loaded', ({ stage }) => {
   $('wb-title').textContent = `${stage.chapter + 1}-${stage.index + 1} · ${plan.title}`;
   const art = lookChoice.value === 'art';
   $('wb-art-brief').textContent = art ? director.artBrief ?? plan.artBrief : '技术占位 · 对照通道与碰撞';
-  $('wb-revision').textContent = art ? '场景美术 · 基于已验证平面图' : '技术白盒 · 对照检查';
+  $('wb-revision').textContent = art ? 'LD-03 扩展布局 · 场景装配' : 'LD-03 技术白盒 · 对照检查';
   document.title = `${plan.title} · ${art ? '场景美术' : '技术白盒'}`;
   $('wb-subtitle').textContent = plan.subtitle;
   $('wb-intent').textContent = plan.routeChoice;
   $<HTMLAnchorElement>('wb-atlas').href = `/level-design/index.html#${plan.id}`;
   $('wb-checks').replaceChildren(...plan.whiteboxChecks.map(text => { const li = document.createElement('li'); li.textContent = text; return li; }));
   const spatial = metadata?.checkpoints ?? [], artViews = director.artInspectionViews;
-  inspectionPoints = [...spatial, ...artViews];
+  const merchantCenter = plan.preparation ? whiteboxPoint(plan, plan.preparation.at) : null;
+  const merchantYaw = plan.preparation ? Math.atan2(plan.preparation.facing[0] - plan.preparation.at[0], plan.preparation.facing[1] - plan.preparation.at[1]) : 0;
+  const merchantViews: InspectionPoint[] = merchantCenter ? buildShopLayout(merchantCenter, merchantYaw).map((station, i) => ({
+    id: `merchant-${i + 1}`, label: `商人顾客位 ${i + 1}${i === 2 ? ' · 恢复' : i === 4 ? ' · 弹药' : ''}`,
+    ...station.customer, yaw: Math.atan2(station.customer.x - station.position.x, station.customer.z - station.position.z), pitch: .22,
+  })) : [];
+  if (merchantCenter) merchantViews.unshift({ id: 'merchant-overview', label: '商店全景 · 战前准备',
+    x: merchantCenter.x + Math.sin(merchantYaw) * 6, z: merchantCenter.z + Math.cos(merchantYaw) * 6, yaw: merchantYaw, pitch: .03 });
+  inspectionPoints = [...spatial, ...artViews, ...merchantViews];
   const spatialGroup = document.createElement('optgroup'); spatialGroup.label = '通道与战斗检查点';
   spatialGroup.append(...spatial.map(p => new Option(p.label, p.id)));
   const artGroup = document.createElement('optgroup'); artGroup.label = '美术观察点 · 角色眼高';
   artGroup.append(...artViews.map(p => new Option(p.label, p.id)));
-  checkpoints.replaceChildren(spatialGroup, ...(artViews.length ? [artGroup] : []));
+  const merchantGroup = document.createElement('optgroup'); merchantGroup.label = '首领前补给 · 真实顾客位';
+  merchantGroup.append(...merchantViews.map(p => new Option(p.label, p.id)));
+  checkpoints.replaceChildren(spatialGroup, ...(artViews.length ? [artGroup] : []), ...(merchantViews.length ? [merchantGroup] : []));
   checkpoints.value = 'exit';
   routeChoice.replaceChildren(new Option('当前位置 → 所选检查点', 'target'), new Option('完整主路（按图纸折点）', 'main'),
     ...plan.passages.filter(p => p.kind !== 'main').map(p => new Option(`${p.kind === 'optional' ? '支路' : '回接'} · ${plan.rooms.find(r => r.id === p.from)?.label ?? p.from} → ${plan.rooms.find(r => r.id === p.to)?.label ?? p.to}`, p.id)));
@@ -188,6 +199,15 @@ $('wb-locate').onclick = () => locate(checkpoint());
 $('wb-entry').onclick = () => { checkpoints.value = 'entry'; locate(checkpoint()); };
 $('wb-reset').onclick = () => { if (game.state === 'paused') game.resume(); loadStage(); };
 $('wb-clear').onclick = () => ctx.enemies.killAll();
+$('wb-test-supply').onclick = () => {
+  if (game.state !== 'playing') return;
+  const previous = ctx.run.coins;
+  ctx.run.coins = 500;
+  ctx.player.hp = Math.max(1, ctx.player.maxHp() * .5); ctx.player.shield = 0;
+  for (const weapon of ctx.weapons.slots) if (weapon) weapon.reserve = Math.floor(ctx.weapons.reserveCapacity(weapon) * .1);
+  ctx.events.emit('coins:changed', { coins: 500, delta: 500 - previous });
+  ctx.ui.toast('检视试购：500 金币、半生命与少量备弹', '#ffda82');
+};
 $('wb-audit').onclick = runAudit;
 $('wb-walk').onclick = () => {
   const point = checkpoint();
@@ -266,6 +286,11 @@ function update(now: number): void {
   status.dataset.view = JSON.stringify({ yaw: ctx.player.yaw, pitch: ctx.player.pitch });
   status.dataset.encounters = JSON.stringify(fights.map(e => ({ id: e.id, label: e.label, phase: e.phase })));
   status.dataset.ground = String(ctx.player.onGround); status.dataset.auditPlan = lastAuditPlan;
+  status.dataset.preparation = JSON.stringify(a?.preparation ? { ...a.preparation, position: a.preparation.position.toArray() } : null);
+  status.dataset.sites = JSON.stringify(a?.sites.map(site => ({ id: site.id, label: site.label, visited: site.visited })) ?? []);
+  status.dataset.coins = String(ctx.run.coins);
+  status.dataset.resources = JSON.stringify({ hp: ctx.player.hp, maxHp: ctx.player.maxHp(), shield: ctx.player.shield, maxShield: ctx.player.maxShield(),
+    reserves: ctx.weapons.slots.map(weapon => weapon ? { id: weapon.defId, reserve: weapon.reserve, max: ctx.weapons.reserveCapacity(weapon) } : null) });
   const w = walker.report;
   walkStatus.dataset.state = w.state; walkStatus.dataset.report = JSON.stringify(w);
   if (w.state !== 'idle') walkStatus.textContent = [w.targetLabel, `${w.state === 'walking' ? '步行中' : w.state === 'passed' ? '已抵达' : w.state === 'failed' ? '需检查' : '已停止'} · ${w.elapsed.toFixed(1)} 秒 · 实走 ${w.distance.toFixed(1)} m · 距目标 ${w.remaining.toFixed(1)} m`, w.message].join('\n');

@@ -784,6 +784,8 @@ export interface AdventureInfo {
   /** An arrival is waiting for an unoccupied safe station, excluding normal telegraphs. */
   spawnBlocked?: boolean;
   objectiveLabel?: string;
+  /** Safe shop before an authored boss room. Buying supplies never starts the encounter. */
+  preparation?: { room: string; label: string; position: THREE.Vector3 };
   floorRects?: { minX: number; minZ: number; maxX: number; maxZ: number }[];
   encounters?: {
     id: string; label: string; kind: 'approach' | 'cache';
@@ -881,7 +883,8 @@ export interface ILoot extends System {
   spawnChest(pos: THREE.Vector3, reward: RewardType): void;
   /** 商店（多个摊位 + 强化台） */
   /** facingYaw 为模型朝向约定（商店正面朝 (sin, cos)，即 atan2(dx, dz)）；缺省朝向玩家出生点 */
-  spawnShop(center: THREE.Vector3, facingYaw?: number): void;
+  /** Returns an idempotent disposer for this shop's interactions and prop colliders. */
+  spawnShop(center: THREE.Vector3, facingYaw?: number): () => void;
   /** 立即发放奖励（可能打开秘卷选择界面） */
   grant(reward: RewardType, pos: THREE.Vector3): void;
   /** 打开「三选一」秘卷界面 */

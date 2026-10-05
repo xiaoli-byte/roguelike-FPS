@@ -157,16 +157,14 @@ test('working props identify only the six authored trading, repair and slag-hand
     'frost-3': ['SM_Env_FrozenSkiff', 'middle-pier'],
     'inferno-1': ['SM_Env_SlagCart', 'entry'], 'inferno-3': ['SM_Env_SlagCart', 'transfer'], 'inferno-4': ['SM_Env_SlagCart', 'molds'],
   };
-  const baseline = { 'desert-1': 199, 'desert-2': 206, 'desert-3': 272, 'desert-4': 297, 'desert-5': 130,
-    'frost-1': 209, 'frost-2': 335, 'frost-3': 334, 'frost-4': 276, 'frost-5': 123,
-    'inferno-1': 194, 'inferno-2': 258, 'inferno-3': 362, 'inferno-4': 288, 'inferno-5': 247 };
   const cartHeadings = new Set();
   for (const { plan, level, art } of layouts) {
     const subjects = art.placements.filter(p => ['SM_Env_MarketStall', 'SM_Env_FrozenSkiff', 'SM_Env_SlagCart'].includes(p.assetId));
     assert.equal(subjects.length, expected[plan.id] ? 1 : 0, `${plan.id}: unrelated room gained a repeated work prop`);
-    assert.ok(art.placements.length <= baseline[plan.id] + 4, `${plan.id}: work grouping exceeds its additional instance budget`);
     if (!subjects.length) continue;
     const p = subjects[0];
+    assert.ok(art.placements.filter(member => member.story?.id === p.story.id).length <= 4,
+      `${plan.id}: work grouping exceeds its own prop budget`);
     assert.deepEqual([p.assetId, p.roomId], expected[plan.id]);
     assert.equal(p.y, level.floorY);
     const view = art.inspectionViews.find(view => view.id === `art-${p.story.id}`);
@@ -255,7 +253,10 @@ test('actual published landmark and story meshes remain visible from their room 
 
 test('boundary assembly uses landscape-scale pieces with a bounded instance count', () => {
   for (const { plan, art } of layouts) {
-    assert.ok(art.placements.length >= 20 && art.placements.length < 380, `${plan.id}: oversized art instance budget (${art.placements.length})`);
+    const perimeter = art.boundaries.reduce((sum, edge) => sum + edge.length, 0);
+    const edgePieces = art.placements.filter(p => ['boundary', 'corner'].includes(p.role) || p.label?.startsWith('boundary-'));
+    assert.ok(edgePieces.length <= perimeter / 3 + 12, `${plan.id}: boundary density exceeds one piece per 3m`);
+    assert.ok(art.placements.length >= 20 && art.placements.length < 470, `${plan.id}: oversized art instance budget (${art.placements.length})`);
     assert.ok(art.placements.filter(p => p.role === 'boundary').every(p => p.envelope.height >= 4.4), `${plan.id}: grid-sized repeated modules`);
     const bank = art.placements.filter(p => p.role === 'boundary' && p.assetId.endsWith('Cliff'));
     if (AUTHORED_ART_DIRECTION[plan.id].naturalRooms.length >= 3) assert.ok(bank.some(p => p.envelope.height >= 9.8), `${plan.id}: natural silhouette should use large cliff masses`);
@@ -288,7 +289,8 @@ test('deck placements preserve the selected bridges, full passage widths and eve
   for (const { plan, level, art, before } of layouts) {
     assert.deepEqual([...new Set(art.decks.map(p => p.passageId))].sort(), [...(expected[plan.id] ?? [])].sort());
     assert.equal(art.deckFloorMasks.length, art.decks.length);
-    assert.ok(art.decks.length < 90 && art.decks.length + art.placements.length < 430);
+    assert.ok(art.decks.length < 90 && art.decks.length + art.placements.length < 510,
+      `${plan.id}: expanded bridge map exceeds its combined instance budget`);
     for (const [i, deck] of art.decks.entries()) {
       const passage = plan.passages.find(path => path.id === deck.passageId);
       assert.ok(authoredDeckInsideFloor(level, deck), `${plan.id}/${deck.passageId}: planks extend beyond the approved floor`);

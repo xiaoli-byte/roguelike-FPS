@@ -178,11 +178,11 @@ const KITS = {
 
 const STORY_ROOMS: Record<string, readonly [string, string, string]> = {
   'desert-1': ['entry', 'throat', 'ridge'], 'desert-2': ['entry', 'cargo', 'supply'],
-  'desert-3': ['entry', 'north', 'inner'], 'desert-4': ['entry', 'court3', 'cloister'], 'desert-5': ['entry', 'arena', 'exit'],
+  'desert-3': ['entry', 'north', 'inner'], 'desert-4': ['entry', 'court3', 'cloister'], 'desert-5': ['preparation', 'arena', 'exit'],
   'frost-1': ['entry', 'chapel', 'pines'], 'frost-2': ['entry', 'east', 'west'], 'frost-3': ['entry', 'middle', 'supplies'],
-  'frost-4': ['entry', 'south', 'sanctum'], 'frost-5': ['entry', 'arena', 'south-bay'],
+  'frost-4': ['entry', 'south', 'sanctum'], 'frost-5': ['preparation', 'arena', 'south-bay'],
   'inferno-1': ['entry', 'kiln', 'store'], 'inferno-2': ['handoff', 'work', 'feed'], 'inferno-3': ['transfer', 'repair', 'receiver'],
-  'inferno-4': ['strip', 'molds', 'repair'], 'inferno-5': ['entry', 'hot', 'cooling'],
+  'inferno-4': ['strip', 'molds', 'repair'], 'inferno-5': ['preparation', 'hot', 'cooling'],
 };
 const STORY_LABELS: Record<string, readonly [string, string, string]> = {
   'desert-1': ['沙口路祭', '折返引路碑', '脊后封藏龛'], 'desert-2': ['驿街镇碑', '货场装卸绞盘', '货栈储粮瓮'],
@@ -350,6 +350,9 @@ export function buildAuthoredSceneLayout(L: LevelLayout): AuthoredSceneLayout {
       const x = boundary.a.x + (boundary.b.x - boundary.a.x) * along;
       const z = boundary.a.z + (boundary.b.z - boundary.a.z) * along;
       if (placements.some(p => p.boundaryId === boundary.id && p.assetId.endsWith('Wall') && p.role === 'boundary'
+        // A facade shrunk by the neighbouring passage no longer spans the bank.
+        // Retain the low course at its ends instead of treating its centre as coverage.
+        && (p.envelope.height > 4.5 || p.envelope.width >= boundary.length * .86)
         && Math.hypot(p.x - x - boundary.outward.x * p.envelope.depth / 2, p.z - z - boundary.outward.z * p.envelope.depth / 2) < p.envelope.width * .29)) continue;
       let p: AuthoredScenePlacement | null = null;
       for (const height of [maxHeight, maxHeight * .85, maxHeight * .72]) {
@@ -365,7 +368,7 @@ export function buildAuthoredSceneLayout(L: LevelLayout): AuthoredSceneLayout {
   for (const boundary of boundaries) {
     if (boundary.length >= 3.5) continue;
     const point = mid(boundary);
-    if (rakeAnchors.some(p => Math.hypot(p.x - point.x, p.z - point.z) < 3.3)) continue;
+    if (rakeAnchors.some(p => Math.hypot(p.x - point.x, p.z - point.z) < 3.6)) continue;
     let nx = 0, nz = 0;
     for (const neighbor of boundaries) {
       const p = mid(neighbor), distance = Math.hypot(p.x - point.x, p.z - point.z);
@@ -457,14 +460,31 @@ export function buildAuthoredSceneLayout(L: LevelLayout): AuthoredSceneLayout {
   }
   function reveal(target: AuthoredScenePlacement): void {
     const observer = target.story!.observer, at = { x: target.x, z: target.z, y: target.y + target.story!.focusHeight };
+    // Wide skyline rocks need a visible face, not merely one clear ray to their peak.
+    const aims = [at];
+    if (target.role === 'landmark' && target.assetId.endsWith('Cliff')) {
+      const tangent = { x: Math.cos(target.yaw), z: -Math.sin(target.yaw) };
+      for (const side of [-1, 1]) aims.push({ x: target.x + tangent.x * target.envelope.width * .23 * side,
+        z: target.z + tangent.z * target.envelope.width * .23 * side, y: target.y + target.envelope.height * .53 });
+    }
+    const hidesFace = (p: AuthoredScenePlacement): boolean => aims.some(aim => authoredEnvelopeOccludes(observer, aim, p));
+    const preservesStories = (copy: AuthoredScenePlacement, previous: AuthoredScenePlacement): boolean => placements.every(subject => {
+      if (!subject.story) return true;
+      const footprint = authoredPlacementRect(subject);
+      if (subject.role === 'accent' && authoredPlacementIntersectsRect(copy, footprint)
+        && !authoredPlacementIntersectsRect(previous, footprint)) return false;
+      const aim = { x: subject.x, z: subject.z, y: subject.y + subject.story.focusHeight };
+      return !authoredEnvelopeOccludes(subject.story.observer, aim, copy)
+        || authoredEnvelopeOccludes(subject.story.observer, aim, previous);
+    });
     for (const p of [...placements]) {
-      if (p === target || p.role === 'cover' || p.role === 'landmark' || p.story || !authoredEnvelopeOccludes(observer, at, p)) continue;
+      if (p === target || p.role === 'cover' || p.role === 'landmark' || p.story || !hidesFace(p)) continue;
       const b = boundaries.find(edge => edge.id === p.boundaryId);
       if (!b) continue;
       let shifted = false;
       for (const distance of [.7, 1.2, 1.8, 2.6, 4, 6, 9]) {
         const copy = { ...p, x: p.x + b.outward.x * distance, z: p.z + b.outward.z * distance };
-        if (authoredPlacementOutsideFloor(L, copy) && !authoredEnvelopeOccludes(observer, at, copy)) {
+        if (authoredPlacementOutsideFloor(L, copy) && !hidesFace(copy) && preservesStories(copy, p)) {
           p.x = copy.x; p.z = copy.z; shifted = true; break;
         }
       }
@@ -484,11 +504,14 @@ export function buildAuthoredSceneLayout(L: LevelLayout): AuthoredSceneLayout {
     reveal(p);
   }
   const storyAssets = STORY_ASSETS[L.theme], beats = ['entry', 'junction', 'supply'] as const;
-  for (const [index, roomId] of STORY_ROOMS[plan.id].entries()) {
+  const storyRooms = plan.preparation ? [plan.preparation.room, ...STORY_ROOMS[plan.id].slice(1)] : STORY_ROOMS[plan.id];
+  for (const [index, roomId] of storyRooms.entries()) {
     const room = rooms.find(r => r.id === roomId)!;
     // The western transfer station is entered from its far corner. Its existing
     // room checkpoint shows both the waiting cart and the bridge approach.
-    const observer = index === 0 && plan.id !== 'inferno-3' ? L.playerSpawn : room;
+    const observer = plan.id === 'desert-3' && index === 2
+      ? L.whitebox.checkpoints.find(point => point.id === 'encounter-B2')!
+      : index === 0 && plan.id !== 'inferno-3' ? L.playerSpawn : room;
     const usesHoist = index === 1 && ['desert-2', 'frost-3', 'inferno-3'].includes(plan.id);
     const usesStall = plan.id === 'desert-3' && index === 2;
     const usesCart = index === 0 && ['inferno-1', 'inferno-3'].includes(plan.id) || plan.id === 'inferno-4' && index === 1;
@@ -536,7 +559,17 @@ export function buildAuthoredSceneLayout(L: LevelLayout): AuthoredSceneLayout {
     };
     const groupReadable = (members: AuthoredScenePlacement[]): boolean => members.every(target => members.every(other => other === target ||
       !authoredEnvelopeOccludes(observer, { x: target.x, z: target.z, y: target.y + target.envelope.height * .6 }, other)));
-    const inArea = (b: AuthoredBoundary): boolean => nearestRoom(mid(b)).id === roomId
+    const room = rooms.find(r => r.id === roomId)!;
+    const isWorkingCart = specs.some(spec => spec.asset.id === SLAG_CART.id);
+    const besideWorkingRoom = (b: AuthoredBoundary): boolean => {
+      if (!isWorkingCart) return true;
+      const p = mid(b), x = p.x + plan.bounds[0] / 2, z = p.z + plan.bounds[1] / 2;
+      // The nearest-room Voronoi region also includes long incoming corridors.
+      // A waiting cart belongs to the actual unloading yard, not behind that corridor's wall.
+      return x >= Math.min(...room.polygon.map(p => p[0])) - 2 && x <= Math.max(...room.polygon.map(p => p[0])) + 2
+        && z >= Math.min(...room.polygon.map(p => p[1])) - 2 && z <= Math.max(...room.polygon.map(p => p[1])) + 2;
+    };
+    const inArea = (b: AuthoredBoundary): boolean => nearestRoom(mid(b)).id === roomId && besideWorkingRoom(b)
       && (!preferredSide || b.outward.x === preferredSide.x && b.outward.z === preferredSide.z)
       && Math.hypot(mid(b).x - observer.x, mid(b).z - observer.z) >= minDistance;
     const candidates = boundaries.filter(b => b.length > totalWidth + .2 && inArea(b))
@@ -584,10 +617,8 @@ export function buildAuthoredSceneLayout(L: LevelLayout): AuthoredSceneLayout {
     if (!cluster) throw new Error(`${plan.id}/${roomId}: no safe story alcove`);
     placements.push(...cluster);
     frame(cluster[0], observer, id, label, beat);
-    for (const p of cluster) {
-      p.story ??= { id, beat, observer: { x: observer.x, z: observer.z }, focusHeight: p.envelope.height * .6 };
-      reveal(p);
-    }
+    for (const p of cluster) p.story ??= { id, beat, observer: { x: observer.x, z: observer.z }, focusHeight: p.envelope.height * .6 };
+    for (const p of cluster) reveal(p);
   }
   function assembleRepairDock(skiff: StoryPiece): void {
     // This is the authored U-shaped repair basin, not another wall alcove.
@@ -641,7 +672,7 @@ export function buildAuthoredSceneLayout(L: LevelLayout): AuthoredSceneLayout {
   }
   // A few unequal tree crowns frame the snow chapter's room silhouettes.
   if (L.theme === 'frost') {
-    const chosen = [STORY_ROOMS[plan.id][0], STORY_ROOMS[plan.id][1], STORY_ROOMS[plan.id][2], direction.features[0].room];
+    const chosen = [storyRooms[0], storyRooms[1], storyRooms[2], direction.features[0].room];
     for (const [index, roomId] of chosen.entries()) {
       const room = rooms.find(r => r.id === roomId)!;
       const candidates = boundaries.filter(b => nearestRoom(mid(b)).id === roomId)

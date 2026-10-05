@@ -52,9 +52,8 @@ export function buildWhiteboxFights(L: LevelLayout, stage: StageNode): WhiteboxF
   if (!plan || stage.type === 'shop' || stage.type === 'treasure') return [];
   const squads = WHITEBOX_SQUADS[plan.id];
   if (!squads) throw new Error(`Missing whitebox roster: ${plan.id}`);
-  const sources = plan.encounters.flatMap(encounter => plan.id === 'desert-2' && encounter.id === 'B'
-    ? [encounter, { ...encounter, room: 'north', at: [65, 24] as [number, number], facing: [48, 30] as [number, number] }]
-    : [encounter]);
+  const sources = plan.encounters.flatMap(encounter => [encounter,
+    ...(encounter.approaches ?? []).map(approach => ({ ...encounter, ...approach }))]);
   return sources.map(encounter => {
     const room = plan.rooms.find(r => r.id === encounter.room);
     if (!room || !squads[encounter.id]) throw new Error(`Missing whitebox encounter: ${plan.id}/${encounter.id}`);
@@ -104,7 +103,7 @@ export function buildWhiteboxAdventure(L: LevelLayout, fights: WhiteboxFight[]):
   return { designId: plan.id, title: plan.title, routeHint: plan.routeChoice,
     objective, rocks: [], paths: plan.passages.map(p => ({ width: p.width, points: p.points.map(point => whiteboxPoint(plan, point)) })),
     zones: plan.rooms.map(r => ({ id: r.id, label: r.label, ...whiteboxPoint(plan, r.labelAt), radius: 8 })),
-    sites: plan.rewards.map((r, i) => ({ id: `whitebox-cache-${i}`, label: r.label, ...whiteboxPoint(plan, r.at), reward: i % 2 ? 'scroll' : 'coins' })),
+    sites: plan.rewards.map((r, i) => ({ id: `whitebox-cache-${i}`, label: r.label, ...whiteboxPoint(plan, r.at), reward: r.reward ?? (i % 2 ? 'scroll' : 'coins') })),
     encounters: fights.filter((f, i) => fights.findIndex(other => other.id === f.id) === i).map(f => ({ id: f.id, label: f.label,
       kind: plan.rewards.some(r => r.room === f.room) && !f.final ? 'cache' : 'approach',
       ...f.position, triggerRadius: f.radius, arenaRadius: f.radius, anchors: f.anchors,
@@ -115,8 +114,20 @@ export function buildWhiteboxAdventure(L: LevelLayout, fights: WhiteboxFight[]):
 
 /** The cloister enters the flag court from the west; it swaps the same two slots. */
 export function whiteboxPlansForApproach(fight: WhiteboxFight, L: LevelLayout, player: P2): WavePlan[] {
-  if (L.whitebox?.planId !== 'desert-4' || fight.id !== 'B'
-    || player.x + L.whitebox.plan.bounds[0] / 2 >= 76 || player.z + L.whitebox.plan.bounds[1] / 2 >= 52) return fight.plans;
+  const plan = L.whitebox?.plan;
+  if (plan?.id !== 'desert-4' || fight.id !== 'B') return fight.plans;
+  const connection = plan.passages.find(path => [path.from, path.to].includes('cloister') && [path.from, path.to].includes(fight.room));
+  if (!connection) return fight.plans;
+  const points = connection.from === 'cloister' ? connection.points : [...connection.points].reverse();
+  let threshold: P2 | null = null;
+  for (let i = 1; i < points.length && !threshold; i++) {
+    const a = points[i - 1], b = points[i], steps = Math.max(1, Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) * 2));
+    for (let j = 0; j <= steps; j++) {
+      const p = whiteboxPoint(plan, [a[0] + (b[0] - a[0]) * j / steps, a[1] + (b[1] - a[1]) * j / steps]);
+      if (fight.contains(p)) { threshold = p; break; }
+    }
+  }
+  if (!threshold || Math.hypot(player.x - threshold.x, player.z - threshold.z) > 8) return fight.plans;
   return fight.plans.map(wave => ({ ...wave, hint: '僧廊侧门 · 炮手与两名爆骸', entries: wave.entries.map(entry =>
     entry.enemyId === 'grunt' ? { ...entry, enemyId: 'bomber', placement: 'flank' } : { ...entry }) }));
 }

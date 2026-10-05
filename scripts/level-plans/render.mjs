@@ -11,8 +11,9 @@ export const polygonArea = poly => Math.abs(poly.reduce((sum, p, i) => {
 
 export function planSvg(plan, { compact = false, fixedScale = false, suffix = '', document = false } = {}) {
   const uid = `${plan.id}${suffix}`, [w, h] = plan.bounds;
-  const vw = fixedScale ? 150 : w + 8, vh = fixedScale ? 150 : h + 8;
-  const offX = fixedScale ? (150 - w) / 2 : 4, offY = fixedScale ? (150 - h) / 2 : 4;
+  const frame = typeof fixedScale === 'number' ? fixedScale : 200;
+  const vw = fixedScale ? frame : w + 8, vh = fixedScale ? frame : h + 8;
+  const offX = fixedScale ? (frame - w) / 2 : 4, offY = fixedScale ? (frame - h) / 2 : 4;
   const edge = '#587180', floor = '#f7faf8', field = '#dce6ec';
   const roomPolys = (fill, stroke, sw = 0) => plan.rooms.map(r => `<polygon points="${points(r.polygon)}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/>`).join('');
   const passagePolys = (fill, more) => plan.passages.map(p => `<polyline points="${points(p.points)}" fill="none" stroke="${fill}" stroke-width="${p.width + more}" stroke-linecap="round" stroke-linejoin="round"/>`).join('');
@@ -36,7 +37,9 @@ export function planSvg(plan, { compact = false, fixedScale = false, suffix = ''
     return `<g><title>${esc(`${e.id} ${e.label}：${e.roster}；${e.timing}`)}</title><line x1="${e.at[0]}" y1="${e.at[1]}" x2="${tip[0]}" y2="${tip[1]}" stroke="#b54a48" stroke-width=".55" marker-end="url(#${uid}-threat)"/><circle cx="${e.at[0]}" cy="${e.at[1]}" r="2.15" fill="#b54a48" stroke="#fff" stroke-width=".5"/>${text([e.at[0], e.at[1] + .75], e.id.length > 2 ? '首' : e.id, 'portal', 2.1)}</g>`;
   }).join('');
   const sightlines = plan.sightlines.map(l => `<g><line x1="${l.from[0]}" y1="${l.from[1]}" x2="${l.to[0]}" y2="${l.to[1]}" stroke="#b54a48" stroke-width=".38" stroke-dasharray="1.1 1.1"/><title>${esc(l.label)} · ${distance(l.from, l.to).toFixed(1)}m</title></g>`).join('');
-  const rewards = plan.rewards.map(r => `<g><title>${esc(r.label)}</title><path d="M${r.at[0]} ${r.at[1] - 1.8}l1.8 1.8-1.8 1.8-1.8-1.8z" fill="#b58a26" stroke="#fff" stroke-width=".45"/></g>`).join('');
+  const rewardNames = { coins: '金币', scroll: '秘卷', weapon: '武器', heal: '恢复', upgrade: '首领奖励' };
+  const rewards = plan.rewards.map(r => `<g><title>${esc(`${r.label} · ${rewardNames[r.reward] ?? '物资'} · 解锁 ${r.requires?.join(' / ') ?? '探索'}`)}</title><path d="M${r.at[0]} ${r.at[1] - 1.8}l1.8 1.8-1.8 1.8-1.8-1.8z" fill="#b58a26" stroke="#fff" stroke-width=".45"/>${compact ? '' : text([r.at[0], r.at[1] + 3.8], `${rewardNames[r.reward] ?? '物资'} · ${r.requires?.join('/') ?? ''}`, 'note', 1.5)}</g>`).join('');
+  const merchant = plan.preparation ? `<g><title>${esc(plan.preparation.label)} · 武器、秘卷、强化、恢复、弹药</title><rect x="${plan.preparation.at[0] - 3}" y="${plan.preparation.at[1] - 3}" width="6" height="6" rx=".8" fill="#277b74" stroke="#fff" stroke-width=".5"/>${text([plan.preparation.at[0], plan.preparation.at[1] + 1], '商', 'portal', 2.6)}</g>` : '';
   return `${document ? '<?xml version="1.0" encoding="UTF-8"?>' : ''}<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${vw} ${vh}" role="img" aria-label="${esc(plan.title)}平面设计图" class="floor-plan">
   <title>${esc(plan.title)} — ${esc(plan.subtitle)}</title><desc>${esc(plan.identity)}。单位为米。对应技术白盒已接入独立试玩入口，完整可玩性与平衡仍在验证。</desc>
   <defs><pattern id="${uid}-grid" width="5" height="5" patternUnits="userSpaceOnUse"><path d="M5 0H0V5" fill="none" stroke="#a5bbc8" stroke-width=".13"/></pattern>
@@ -49,7 +52,7 @@ export function planSvg(plan, { compact = false, fixedScale = false, suffix = ''
   ${plan.covers.map(c => `<polygon points="${points(c.polygon)}" fill="url(#${uid}-hatch)" stroke="#435867" stroke-width=".4"><title>实体遮挡，高 ${c.height}m</title></polygon>`).join('')}
   <g data-layer="sightlines">${compact ? '' : sightlines}</g><g data-layer="routes">${routes}</g>
   ${compact ? '' : `<g data-layer="dimensions">${widths}</g><g data-layer="labels">${plan.rooms.map(r => text(r.labelAt, r.label, 'room-label', 2.2)).join('')}</g>`}
-  <g data-layer="encounters">${compact ? '' : encounters}${rewards}</g>${portal(plan.entry, 'S', '#277b74')}${portal(plan.exit, 'X', '#455a9e')}
+  <g data-layer="encounters">${compact ? '' : encounters}${rewards}${merchant}</g>${portal(plan.entry, 'S', '#277b74')}${portal(plan.exit, 'X', '#455a9e')}
   <g transform="translate(2 ${h - 1})"><path d="M0-1V0H10V-1M5 0V-1" stroke="#294455" stroke-width=".3" fill="none"/>${text([5,-1.8], '10m', '', 1.7)}</g>
   ${text([w - 4, 3], 'N ↑', '', 2)}
   </g></svg>`.replace(/[ \t]+$/gm, '');

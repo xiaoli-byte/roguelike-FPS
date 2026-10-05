@@ -36,7 +36,24 @@ for (const p of plans) {
   let current=p.entry.room;
   for(const id of p.mainRoute){const e=p.passages.find(e=>e.id===id);if(!e){err(`unknown main route ${id}`);continue;}if(e.from===current)current=e.to;else if(e.to===current)current=e.from;else err(`main route discontinuity at ${id}`);}
   if(current!==p.exit.room)err('main route does not lead to exit');
-  const anchors=[['entry',p.entry],['exit',p.exit],...p.encounters.map(e=>[`encounter ${e.id}`,e]),...p.rewards.map((r,i)=>[`reward ${i+1}`,r])];
+  const anchors=[['entry',p.entry],['exit',p.exit],...p.encounters.flatMap(e=>[[`encounter ${e.id}`,e],...(e.approaches??[]).map(a=>[`approach ${e.id}/${a.room}`,a])]),...p.rewards.map((r,i)=>[`reward ${i+1}`,r]),...(p.preparation?[['preparation',p.preparation]]:[])];
+  for(const e of p.encounters) pointsInBounds([e.at,e.facing,...(e.approaches??[]).flatMap(a=>[a.at,a.facing])]);
+  for(const r of p.rewards){
+    if(!['heal','coins','weapon','scroll','upgrade'].includes(r.reward))err(`invalid reward ${r.label}`);
+    if(!r.requires?.length||r.requires.some(id=>!p.encounters.some(e=>e.id===id)))err(`invalid reward guard ${r.label}`);
+  }
+  if(p.index!==5 && (p.rewards.length!==3 || new Set(p.rewards.map(r=>r.room)).size!==3))err('ordinary level needs three chests in distinct rooms');
+  if(p.index===5 && !p.preparation)err('boss level missing preparation room');
+  if(p.preparation){
+    pointsInBounds([p.preparation.at,p.preparation.facing]);
+    if(p.entry.room!==p.preparation.room)err('boss arrival outside preparation room');
+    const room=rooms.get(p.preparation.room);
+    for(let dx=-8;dx<=8;dx+=.5)for(let dy=-8;dy<=8;dy+=.5){
+      const q=[p.preparation.at[0]+dx,p.preparation.at[1]+dy];
+      if(!room||!inside(q,room.polygon)||!walkable(p,q,0)){err('complete shop clearance obstructed');dx=9;break;}
+    }
+    if(p.encounters.some(e=>e.room===p.preparation.room)||p.rewards.some(r=>r.room===p.preparation.room))err('preparation contains combat or free chest');
+  }
   const grid = raster(p,.35,.5), large = raster(p,1.25,.5);
   for(const [label,a] of anchors){
     if(!rooms.has(a.room)||!inside(a.at,rooms.get(a.room).polygon))err(`${label} outside named room`);

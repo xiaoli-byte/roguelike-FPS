@@ -114,8 +114,8 @@ export class LootSystem implements ILoot {
     this.chests.spawn(pos, reward);
   }
 
-  spawnShop(center: THREE.Vector3, facingYaw?: number): void {
-    this.shop.spawn(center, facingYaw);
+  spawnShop(center: THREE.Vector3, facingYaw?: number): () => void {
+    return this.shop.spawn(center, facingYaw);
   }
 
   grant(reward: RewardType, pos: THREE.Vector3): void {

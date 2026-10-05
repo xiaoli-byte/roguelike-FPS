@@ -98,6 +98,29 @@ test('whitebox HUD renders floor rectangles and directs the player to the automa
   assert.equal(field(hud.root, 'gf-adventure__instruction').textContent, '窑口守卫 · 击退拦路守卫');
 });
 
+test('boss arrival guides the player to supplies before directing them into the arena', () => {
+  globalThis.document = { createElement: fakeElement };
+  globalThis.window = { devicePixelRatio: 1 };
+  globalThis.Path2D = class {};
+  const boss = { id: 'BOSS', label: '首领战', position: new THREE.Vector3(80, 0, 0), phase: 'undiscovered' };
+  const info = { title: '首领准备区', phase: 'explore', automaticEncounters: true, objectiveLabel: boss.label,
+    objective: boss.position, encounters: [boss], sites: [], paths: [], zones: [],
+    preparation: { room: 'preparation', label: '战前商人', position: new THREE.Vector3(10, 0, 0) } };
+  const ctx = { stage: { stage: {}, exploration: info, arena: { minX: -30, maxX: 100, minZ: -30, maxZ: 30 }, waveIndex: 0, waveCount: 0 },
+    run: { stage: {} }, player: { position: new THREE.Vector3(4, 0, 0), yaw: 0 } };
+  const hud = new AdventureHUD(fakeElement('div'), ctx);
+  hud.update(0);
+  assert.equal(field(hud.root, 'gf-adventure__label').textContent, '战前商人');
+  assert.equal(field(hud.root, 'gf-adventure__distance').textContent, '6 米');
+  assert.match(field(hud.root, 'gf-adventure__instruction').textContent, /弹药、生命、护盾/);
+  ctx.player.position.x = 35; hud.update(100);
+  assert.equal(field(hud.root, 'gf-adventure__label').textContent, '首领战');
+  assert.equal(field(hud.root, 'gf-adventure__distance').textContent, '45 米');
+  info.phase = 'battle'; boss.phase = 'active'; hud.update(200);
+  assert.equal(field(hud.root, 'gf-adventure__label').textContent, '首领战');
+  assert.equal(hud.root.dataset.encounter, 'active');
+});
+
 test('both inspection selectors address all 15 chapter positions and default the last to boss', async () => {
   globalThis.__inspectionControls = { theme: { value: 'desert' }, index: { value: '0' }, type: { value: 'auto' } };
   const common = 'const themes=["desert","frost","inferno"],c=globalThis.__inspectionControls;';

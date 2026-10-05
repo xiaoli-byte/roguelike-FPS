@@ -101,9 +101,31 @@ export function generateWhitebox(stage: StageNode): LevelLayout {
     }
     throw new Error(`${plan.id}: no safe exit interaction placement`);
   };
-  for (let i = 0; i < 3; i++) portalPoints.push(safeNearExit(1.5, portalPoints, 4));
-  const rewardPoint = safeNearExit(.9, portalPoints, 3.2);
-  const shopPoint = safeNearExit(.9, [...portalPoints, rewardPoint], 3.2);
+  const authoredRewards = plan.rewards.map(reward => whiteboxPoint(plan, reward.at));
+  for (let i = 0; i < 3; i++) portalPoints.push(safeNearExit(1.5, [...portalPoints, ...authoredRewards], 4));
+  const rewardPoint = safeNearExit(.9, [...portalPoints, ...authoredRewards], 3.2);
+  let shopPoint = safeNearExit(.9, [...portalPoints, rewardPoint], 3.2);
+  // The shop is a 6.4m arc, rather than a single interaction point. Reserve
+  // its tables, customer positions and approach before dynamic stalls load.
+  const shopFits = (p: P2): boolean => !overlaps(p, 8)
+    && Math.hypot(p.x - playerSpawn.x, p.z - playerSpawn.z) >= 2
+    && [...portalPoints, rewardPoint, ...authoredRewards].every(q => Math.hypot(q.x - p.x, q.z - p.z) >= 10);
+  if (stage.type === 'boss' && plan.preparation) {
+    shopPoint = whiteboxPoint(plan, plan.preparation.at);
+    if (!shopFits(shopPoint)) throw new Error(`${plan.id}: pre-boss merchant lacks complete shop clearance`);
+  } else if (stage.type === 'shop') {
+    const candidates: P2[] = [];
+    for (const room of plan.rooms) {
+      candidates.push(whiteboxPoint(plan, room.labelAt));
+      const xs = room.polygon.map(p => p[0]), zs = room.polygon.map(p => p[1]);
+      for (let z = Math.min(...zs) + 8; z <= Math.max(...zs) - 8; z += 2)
+        for (let x = Math.min(...xs) + 8; x <= Math.max(...xs) - 8; x += 2) candidates.push(whiteboxPoint(plan, [x, z]));
+    }
+    const safe = candidates.filter(shopFits).sort((a, b) => Math.hypot(a.x - playerSpawn.x, a.z - playerSpawn.z)
+      - Math.hypot(b.x - playerSpawn.x, b.z - playerSpawn.z))[0];
+    if (!safe) throw new Error(`${plan.id}: no room fits the complete merchant arc`);
+    shopPoint = safe;
+  }
   const center = whiteboxPoint(plan, plan.encounters.at(-1)?.at ?? plan.exit.at);
   const bossPoint = whiteboxPoint(plan, plan.encounters[0]?.at ?? plan.exit.at);
   const checkpoints: WhiteboxCheckpoint[] = [
@@ -111,16 +133,27 @@ export function generateWhitebox(stage: StageNode): LevelLayout {
     { id: 'exit', label: '出口', ...exit, yaw: heading(exit, center) },
     ...plan.encounters.map(encounter => ({ id: `encounter-${encounter.id}`, label: `${encounter.id} · ${encounter.label}`, ...whiteboxPoint(plan, encounter.at), yaw: heading(whiteboxPoint(plan, encounter.at), whiteboxPoint(plan, encounter.facing)) })),
     ...plan.rewards.map((reward, i) => ({ id: `reward-${i + 1}`, label: reward.label, ...whiteboxPoint(plan, reward.at), yaw: heading(whiteboxPoint(plan, reward.at), center) })),
+    ...(plan.preparation ? [{ id: 'preparation', label: plan.preparation.label, ...shopPoint,
+      yaw: heading(shopPoint, whiteboxPoint(plan, plan.preparation.facing)) }] : []),
     ...plan.rooms.map(room => ({ id: `room-${room.id}`, label: room.label, ...whiteboxPoint(plan, room.labelAt), yaw: heading(whiteboxPoint(plan, room.labelAt), center) })),
   ];
   const spawnPoints: P2[] = [];
+  const spawnCells = new Set<number>(), spawnCols = Math.ceil(width / 3);
   for (const room of plan.rooms) {
-    for (let z = 2; z < depth; z += 3) for (let x = 2; x < width; x += 3) {
+    if (room.id === plan.preparation?.room) continue;
+    const xs = room.polygon.map(p => p[0]), zs = room.polygon.map(p => p[1]);
+    const x0 = Math.max(2, Math.ceil((Math.min(...xs) - 2) / 3) * 3 + 2);
+    const z0 = Math.max(2, Math.ceil((Math.min(...zs) - 2) / 3) * 3 + 2);
+    for (let z = z0; z < Math.min(depth, Math.max(...zs)); z += 3) for (let x = x0; x < Math.min(width, Math.max(...xs)); x += 3) {
+      const cell = (z - 2) / 3 * spawnCols + (x - 2) / 3;
+      if (spawnCells.has(cell)) continue;
       if (!whiteboxInsidePolygon([x, z], room.polygon)) continue;
       const p = whiteboxPoint(plan, [x, z]);
       if (Math.hypot(p.x - playerSpawn.x, p.z - playerSpawn.z) < 10 || overlaps(p, 1.3)) continue;
       if ([...portalPoints, rewardPoint, shopPoint].some(q => Math.hypot(q.x - p.x, q.z - p.z) < 3)) continue;
-      if (spawnPoints.every(q => Math.hypot(q.x - p.x, q.z - p.z) >= 2.9)) spawnPoints.push(p);
+      // Candidates share the same 3m lattice: only duplicate cells can violate
+      // the old 2.9m separation. Avoid an O(n²) scan as maps gain more rooms.
+      spawnCells.add(cell); spawnPoints.push(p);
     }
   }
   return {

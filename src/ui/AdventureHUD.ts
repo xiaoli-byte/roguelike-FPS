@@ -99,19 +99,23 @@ export class AdventureHUD {
       this.prepareMap(info, arena);
     }
     this.root.hidden = false;
-    const active = info.phase !== 'cleared' ? info.encounters?.find(e => e.phase === 'active') : undefined;
+    const p = this.ctx.player.position;
+    const active = info.encounters?.find(e => e.phase === 'active');
+    const preparation = info.preparation;
+    const inPreparation = info.phase === 'explore' && !active && preparation
+      && Math.hypot(preparation.position.x - p.x, preparation.position.z - p.z) <= 18;
     const phaseKey = info.phase === 'cleared' && !info.exit ? 'reward' : info.phase;
-    const stateKey = `${phaseKey}/${active?.id ?? ''}/${this.ctx.stage.waveIndex}/${this.ctx.stage.waveCount}/${!!info.spawnBlocked}`;
+    const stateKey = `${phaseKey}/${active?.id ?? ''}/${this.ctx.stage.waveIndex}/${this.ctx.stage.waveCount}/${!!info.spawnBlocked}/${!!inPreparation}`;
     if (this.phase !== stateKey) {
       this.phase = stateKey;
       this.root.dataset.phase = info.phase;
       this.root.dataset.encounter = active ? 'active' : '';
-      this.instruction.textContent = active && info.spawnBlocked ? '守卫等待入场 · 退回通道拉开距离' : active ? `${active.label} · 击退拦路守卫`
+      this.instruction.textContent = inPreparation ? '战前补给 · 弹药、生命、护盾与装备'
+        : active && info.spawnBlocked ? '守卫等待入场 · 退回通道拉开距离' : active ? `${active.label} · 击退拦路守卫`
         : phaseKey === 'reward' ? '清场奖励 · 出口即将开启'
           : info.automaticEncounters && info.phase === 'explore' ? '沿路探索 · 接近战区自动触发' : PHASE_TEXT[info.phase];
-      this.targetLabel.textContent = active?.label ?? (info.phase === 'cleared' && info.exit ? '前往出口' : info.objectiveLabel ?? '灵火祭坛');
+      this.targetLabel.textContent = inPreparation ? preparation.label : active?.label ?? (info.phase === 'cleared' && info.exit ? '前往出口' : info.objectiveLabel ?? '灵火祭坛');
     }
-    const p = this.ctx.player.position;
     let currentZone = '探索区域';
     let nearestZoneDistance = Infinity;
     for (const zone of info.zones) {
@@ -125,7 +129,7 @@ export class AdventureHUD {
       this.shownZone = currentZone;
       this.zoneLabel.textContent = currentZone;
     }
-    const target = active?.position ?? (info.phase === 'cleared' ? info.exit ?? info.objective : info.objective);
+    const target = inPreparation ? preparation.position : active?.position ?? (info.phase === 'cleared' ? info.exit ?? info.objective : info.objective);
     const dx = target.x - p.x;
     const dz = target.z - p.z;
     const distance = Math.round(Math.hypot(dx, dz));
@@ -194,6 +198,12 @@ export class AdventureHUD {
     c.clearRect(0, 0, MAP_W, MAP_H);
     c.drawImage(this.terrain, 0, 0, MAP_W, MAP_H);
     const p = this.ctx.player.position;
+    if (info.preparation) {
+      c.save(); c.translate(this.x(info.preparation.position.x), this.z(info.preparation.position.z));
+      c.fillStyle = '#f4d893'; c.strokeStyle = '#f4d893'; c.lineWidth = 1.5;
+      c.strokeRect(-6, -6, 12, 12); c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = '10px sans-serif';
+      c.fillText('商', 0, 0); c.restore();
+    }
     for (const encounter of info.encounters ?? []) {
       if (encounter.phase === 'undiscovered'
         && Math.hypot(encounter.position.x - p.x, encounter.position.z - p.z) > 18) continue;
@@ -217,7 +227,7 @@ export class AdventureHUD {
       }
       c.restore();
     }
-    const active = info.phase !== 'cleared' ? info.encounters?.find(e => e.phase === 'active') : undefined;
+    const active = info.encounters?.find(e => e.phase === 'active');
     const target = active?.position ?? (info.phase === 'cleared' ? info.exit ?? info.objective : info.objective);
     c.save(); c.translate(this.x(target.x), this.z(target.z));
     c.fillStyle = active ? '#ff9476' : info.phase === 'cleared' ? '#b8eaff' : '#f4d893';
