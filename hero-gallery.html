@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>玩家英雄 · 重建模型</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #191b23; color: #ede2c9; font-family: "Microsoft YaHei", sans-serif; }
+    header { height: 96px; padding: 25px 40px; border-bottom: 1px solid #39383d; }
+    h1 { margin: 0; font-size: 23px; letter-spacing: 3px; }
+    header p { color: #969599; margin: 8px 0; font-size: 12px; }
+    header nav { position: absolute; right: 40px; top: 32px; display: flex; gap: 12px; }
+    header a, header button { color: #ede2c9; background: transparent; padding: 8px 14px; border: 1px solid #696970; border-radius: 4px; text-decoration: none; font: inherit; font-size: 13px; cursor: pointer; }
+    canvas { display: block; width: 100vw; height: calc(100vh - 176px); }
+    footer { height: 80px; display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; }
+    footer b { font-size: 21px; letter-spacing: 4px; }
+    footer p { color: #969599; margin: 8px; font-size: 12px; }
+    footer a { color: #c0bebd; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <header><h1>玩家英雄 · 重建模型</h1><p>Tripo 原生骨骼 · 白模持枪检视</p><nav><button id="review-view" type="button">转到右侧</button><button id="review-pose" type="button" aria-pressed="false">查看抬枪</button><a id="review-mode" href="?legacy=1">旧版对比</a></nav></header>
+  <canvas id="gallery"></canvas>
+  <footer>
+    <div><b>赤狐</b><p>焰尾游侠 · <a href="/hero-gallery.html?hero=fox&grip=1">持枪近看</a></p></div>
+    <div><b>岩熊</b><p>镇山守卫 · <a href="/hero-gallery.html?hero=bear&grip=1">持枪近看</a></p></div>
+    <div><b>雷隼</b><p>天穹猎手 · <a href="/hero-gallery.html?hero=falcon&grip=1">持枪近看</a></p></div>
+  </footer>
+  <script type="module" src="/src/dev/heroGallery.ts"></script>
+</body>
+</html>

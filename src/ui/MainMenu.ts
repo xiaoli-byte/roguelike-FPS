@@ -226,7 +226,7 @@ export class MainMenu {
     }
     const tips = h('div', 'gf-controls__tips', root);
     h('p', null, tips, '爆头即暴击。敌人的强力攻击都有前摇与地面预警，留意并闪避。');
-    h('p', null, tips, '清关后会出现多个传送门，门上标明下一关的类型与奖励。');
+    h('p', null, tips, '清关后开启一个主线出口。途中留意隐秘入口，按 F 调查可选支路，完成后返回主路。');
     const foot = h('div', 'gf-panel__foot', root);
     button(this.ctx, 'gf-btn gf-btn--primary', foot, '返回', () => onBack());
     return root;

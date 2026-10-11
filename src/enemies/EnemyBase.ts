@@ -6,6 +6,9 @@ import { ELEMENT_COLORS } from '../core/types';
 import { clamp, clamp01, rotateTowards, raySphere, rayVerticalCapsule } from '../core/math';
 import type { MoveResult } from '../world/Collision';
 
+/** 敌人定义的可选扩展：scale = 基础缩放（模型、命中盒、头部判定一起乘；精英再乘 1.25） */
+export type ScaledEnemyDef = EnemyDef & { scale?: number };
+
 const GRAVITY = 26;
 const _v1 = new THREE.Vector3();
 const _v2 = new THREE.Vector3();
@@ -79,6 +82,11 @@ export abstract class EnemyBase implements IEnemy {
   /** 当前朝向（root.rotation.y），模型 +Z 指向此方向 */
   facing = 0;
   onGround = false;
+  /**
+   * 身体在逻辑位置之上的视觉抬升（米）：程序动画把身体抬离地面但逻辑位置不动时（双足跳的腾空段），
+   * 地面阴影据此变小、并沿太阳方向偏开。默认 0。
+   */
+  visualLift = 0;
   /** 自出生起经过的秒数 */
   age = 0;
   /** 出生动画时长，期间不行动、不可被选中为「已激活」 */
@@ -134,7 +142,8 @@ export abstract class EnemyBase implements IEnemy {
     this.maxArmor = this.armor = Math.round((def.armor ?? 0) * hpScale);
     this.damageMult = (1 + (this.level - 1) * 0.55) * (this.isElite ? 1.25 : 1);
 
-    this.sizeScale = this.isElite ? 1.25 : 1;
+    // 基础缩放（ScaledEnemyDef.scale，美术与命中盒一起放大）× 精英缩放
+    this.sizeScale = ((def as ScaledEnemyDef).scale ?? 1) * (this.isElite ? 1.25 : 1);
     this.radius = def.radius * this.sizeScale;
     this.height = def.height * this.sizeScale;
     this.headY = (def.headY ?? def.height * 0.85) * this.sizeScale;

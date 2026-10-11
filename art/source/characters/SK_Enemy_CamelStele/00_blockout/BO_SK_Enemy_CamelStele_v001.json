@@ -1,0 +1,720 @@
+{
+  "schema": 1,
+  "assetId": "SK_Enemy_CamelStele",
+  "source": {
+    "kind": "enemy",
+    "id": "camel_stele"
+  },
+  "rig": "parts",
+  "space": {
+    "up": "+Y",
+    "forward": "+Z",
+    "unit": "m",
+    "origin": "model"
+  },
+  "bounds": {
+    "min": [
+      -0.7817499929666519,
+      -2.9802316170446375e-10,
+      -0.539999994635582
+    ],
+    "max": [
+      0.7817499929666519,
+      2.8031398518488135,
+      0.7519999969005585
+    ]
+  },
+  "joints": [
+    {
+      "name": "j_r",
+      "parent": null,
+      "bindPosition": [
+        0,
+        0,
+        0
+      ],
+      "restLocal": [
+        0,
+        0,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "j_0",
+      "parent": "j_r",
+      "bindPosition": [
+        0,
+        1.12,
+        0
+      ],
+      "restLocal": [
+        0,
+        1.12,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1.12,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "j_0_0",
+      "parent": "j_0",
+      "bindPosition": [
+        0.26,
+        1.12,
+        0
+      ],
+      "restLocal": [
+        0.26,
+        0,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0.26,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "j_0_0_1",
+      "parent": "j_0_0",
+      "bindPosition": [
+        0.26,
+        0.58,
+        0
+      ],
+      "restLocal": [
+        0,
+        -0.54,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        -0.54,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1",
+      "parent": "j_0",
+      "bindPosition": [
+        -0.26,
+        1.12,
+        0
+      ],
+      "restLocal": [
+        -0.26,
+        0,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        -0.26,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "j_0_1_1",
+      "parent": "j_0_1",
+      "bindPosition": [
+        -0.26,
+        0.58,
+        0
+      ],
+      "restLocal": [
+        0,
+        -0.54,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        -0.54,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "j_0_2",
+      "parent": "j_0",
+      "bindPosition": [
+        0,
+        1.12,
+        0
+      ],
+      "restLocal": [
+        0,
+        0,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "j_0_2_1",
+      "parent": "j_0_2",
+      "bindPosition": [
+        0,
+        1.98,
+        0
+      ],
+      "restLocal": [
+        0,
+        0.86,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0.86,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "j_0_2_2",
+      "parent": "j_0_2",
+      "bindPosition": [
+        0.64,
+        1.82,
+        0
+      ],
+      "restLocal": [
+        0.64,
+        0.7,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0.64,
+        0.7,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "j_0_2_2_1",
+      "parent": "j_0_2_2",
+      "bindPosition": [
+        0.64,
+        1.36,
+        0
+      ],
+      "restLocal": [
+        0,
+        -0.46,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        -0.46,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "j_0_2_2_1_1",
+      "parent": "j_0_2_2_1",
+      "bindPosition": [
+        0.64,
+        0.94,
+        0
+      ],
+      "restLocal": [
+        0,
+        -0.42,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        -0.42,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "j_0_2_3",
+      "parent": "j_0_2",
+      "bindPosition": [
+        -0.64,
+        1.82,
+        0
+      ],
+      "restLocal": [
+        -0.64,
+        0.7,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        -0.64,
+        0.7,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "j_0_2_3_1",
+      "parent": "j_0_2_3",
+      "bindPosition": [
+        -0.64,
+        1.36,
+        0
+      ],
+      "restLocal": [
+        0,
+        -0.46,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        -0.46,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "j_0_2_3_1_1",
+      "parent": "j_0_2_3_1",
+      "bindPosition": [
+        -0.64,
+        0.94,
+        0
+      ],
+      "restLocal": [
+        0,
+        -0.42,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        -0.42,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "j_0_2_18",
+      "parent": "j_0_2",
+      "bindPosition": [
+        0,
+        1.27,
+        0.75
+      ],
+      "restLocal": [
+        0,
+        0.15,
+        0.75
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0.15,
+        0.75,
+        1
+      ]
+    }
+  ],
+  "keep": [
+    "j_0_2_18"
+  ],
+  "fields": {
+    "hips": "j_0",
+    "torso": "j_0_2",
+    "head": "j_0_2_1",
+    "armL": "j_0_2_2",
+    "armR": "j_0_2_3",
+    "elbowL": "j_0_2_2_1",
+    "elbowR": "j_0_2_3_1",
+    "handL": "j_0_2_2_1_1",
+    "handR": "j_0_2_3_1_1",
+    "legL": "j_0_0",
+    "legR": "j_0_1",
+    "kneeL": "j_0_0_1",
+    "kneeR": "j_0_1_1"
+  },
+  "parts": {
+    "body_000": "body",
+    "body_001": "body",
+    "body_002": "body",
+    "body_003": "body",
+    "body_004": "body",
+    "body_005": "body",
+    "body_006": "body",
+    "body_007": "body",
+    "body_008": "body",
+    "body_009": "body",
+    "body_010": "body",
+    "body_011": "body",
+    "body_012": "body",
+    "body_013": "body",
+    "body_014": "body",
+    "body_015": "body",
+    "body_016": "body",
+    "body_017": "body",
+    "body_018": "body",
+    "body_019": "body",
+    "body_020": "body",
+    "body_021": "body",
+    "body_022": "body",
+    "body_023": "body",
+    "body_024": "body",
+    "body_025": "body",
+    "body_026": "body",
+    "glow_027": "glow",
+    "body_028": "body",
+    "body_029": "body",
+    "body_030": "body",
+    "body_031": "body",
+    "body_032": "body",
+    "attachment_033": "attachment",
+    "attachment_034": "attachment",
+    "attachment_035": "attachment",
+    "attachment_036": "attachment",
+    "attachment_037": "attachment",
+    "body_038": "body",
+    "body_039": "body"
+  },
+  "exportedAt": "2026-10-06T14:20:09.384Z"
+}

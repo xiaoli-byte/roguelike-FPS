@@ -16,31 +16,36 @@
         30
       ],
       "bindPose": {
-        "armSpreadL": 0.3789,
-        "armSpreadR": 0.3697
+        "armSpreadL": 0.3672,
+        "armSpreadR": 0.3619
       },
       "bounds": {
         "min": [
-          -0.5880552530288696,
-          8.913669444154948e-05,
-          -0.21102240681648254
+          -0.582908570766449,
+          0,
+          -0.28446444869041443
         ],
         "max": [
-          0.5886048078536987,
-          1.9972254037857056,
-          0.25833308696746826
+          0.5830768346786499,
+          1.9774413108825684,
+          0.2555404007434845
         ]
       },
       "version": {
         "blockout": 3,
         "concept": 1,
-        "highpoly": 1,
-        "build": 10
+        "highpoly": 2,
+        "build": 13
       },
-      "sha256": "5dd4837a29c058237c975166e144353d220f92b733f21c09c0863e421d941096",
-      "bytes": 365528,
-      "published": "2026-10-03 20:37:32",
-      "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
+      "sha256": "f9c89257e00992346f71d6994b25d60ec57364df7d83c1d388627c5dea8ddaa0",
+      "bytes": 382664,
+      "published": "2026-10-06 11:18:05",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
     },
     "SK_Enemy_Archer": {
       "url": "assets/characters/SK_Enemy_Archer.glb",
@@ -2339,228 +2344,6 @@
       "published": "2026-10-03 21:59:34",
       "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
     },
-    "SM_Arms_FoxR": {
-      "url": "assets/weapons/SM_Arms_FoxR.glb",
-      "kind": "static",
-      "class": "fp_arm",
-      "bind": {
-        "source": "fp",
-        "id": "fox",
-        "attachment": "arm_r"
-      },
-      "keepGlow": "none",
-      "lodDistance": [
-        0,
-        6
-      ],
-      "bounds": {
-        "min": [
-          -0.008949467912316322,
-          -0.2774772346019745,
-          -0.0018243741942569613
-        ],
-        "max": [
-          0.15052035450935364,
-          0.0009178908658213913,
-          0.35429686307907104
-        ]
-      },
-      "version": {
-        "blockout": 1,
-        "concept": 1,
-        "highpoly": 1,
-        "build": 1
-      },
-      "sha256": "d2ec4a241480908046605e814cde2bc7770e895a317d31777886c84bf11a1c40",
-      "bytes": 460212,
-      "published": "2026-10-03 22:41:49",
-      "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
-    },
-    "SM_Arms_FoxL": {
-      "url": "assets/weapons/SM_Arms_FoxL.glb",
-      "kind": "static",
-      "class": "fp_arm",
-      "bind": {
-        "source": "fp",
-        "id": "fox",
-        "attachment": "arm_l"
-      },
-      "keepGlow": "none",
-      "lodDistance": [
-        0,
-        6
-      ],
-      "bounds": {
-        "min": [
-          -0.189714252948761,
-          -0.27833008766174316,
-          -0.02622612565755844
-        ],
-        "max": [
-          0.01993337832391262,
-          0.014594980515539646,
-          0.3282199800014496
-        ]
-      },
-      "version": {
-        "blockout": 1,
-        "concept": 1,
-        "highpoly": 1,
-        "build": 1
-      },
-      "sha256": "4ade50ea8e473e2532cbe12ced92890f06dd9ebe41789d0236f98941644d76b1",
-      "bytes": 603964,
-      "published": "2026-10-03 22:41:50",
-      "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
-    },
-    "SM_Arms_BearR": {
-      "url": "assets/weapons/SM_Arms_BearR.glb",
-      "kind": "static",
-      "class": "fp_arm",
-      "bind": {
-        "source": "fp",
-        "id": "bear",
-        "attachment": "arm_r"
-      },
-      "keepGlow": "none",
-      "lodDistance": [
-        0,
-        6
-      ],
-      "bounds": {
-        "min": [
-          -0.017168598249554634,
-          -0.2860414683818817,
-          -0.002166148740798235
-        ],
-        "max": [
-          0.15841031074523926,
-          0.002926474204286933,
-          0.3455321788787842
-        ]
-      },
-      "version": {
-        "blockout": 1,
-        "concept": 1,
-        "highpoly": 1,
-        "build": 1
-      },
-      "sha256": "2087c70578ce1f118d9466fed786964363e25d2e8df8e3413ef966a5eeb38c24",
-      "bytes": 563576,
-      "published": "2026-10-03 22:41:51",
-      "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
-    },
-    "SM_Arms_BearL": {
-      "url": "assets/weapons/SM_Arms_BearL.glb",
-      "kind": "static",
-      "class": "fp_arm",
-      "bind": {
-        "source": "fp",
-        "id": "bear",
-        "attachment": "arm_l"
-      },
-      "keepGlow": "none",
-      "lodDistance": [
-        0,
-        6
-      ],
-      "bounds": {
-        "min": [
-          -0.20419704914093018,
-          -0.26902803778648376,
-          -0.025643646717071533
-        ],
-        "max": [
-          0.007828926667571068,
-          0.004399978090077639,
-          0.3184872269630432
-        ]
-      },
-      "version": {
-        "blockout": 1,
-        "concept": 1,
-        "highpoly": 1,
-        "build": 1
-      },
-      "sha256": "76df0073b3d6fec770662ffb0815d069d577cde42dadae8f708bf84c9b4ed522",
-      "bytes": 409620,
-      "published": "2026-10-03 22:41:52",
-      "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
-    },
-    "SM_Arms_FalconR": {
-      "url": "assets/weapons/SM_Arms_FalconR.glb",
-      "kind": "static",
-      "class": "fp_arm",
-      "bind": {
-        "source": "fp",
-        "id": "falcon",
-        "attachment": "arm_r"
-      },
-      "keepGlow": "none",
-      "lodDistance": [
-        0,
-        6
-      ],
-      "bounds": {
-        "min": [
-          -0.01458746287971735,
-          -0.28946763277053833,
-          -0.0020653847604990005
-        ],
-        "max": [
-          0.11690954864025116,
-          0.0014797255862504244,
-          0.3488899767398834
-        ]
-      },
-      "version": {
-        "blockout": 1,
-        "concept": 1,
-        "highpoly": 1,
-        "build": 1
-      },
-      "sha256": "f2e87e6880bcbb6e2a70115093a757b0f844ad162f277bf87189cd875a38a68d",
-      "bytes": 562972,
-      "published": "2026-10-03 22:41:53",
-      "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
-    },
-    "SM_Arms_FalconL": {
-      "url": "assets/weapons/SM_Arms_FalconL.glb",
-      "kind": "static",
-      "class": "fp_arm",
-      "bind": {
-        "source": "fp",
-        "id": "falcon",
-        "attachment": "arm_l"
-      },
-      "keepGlow": "none",
-      "lodDistance": [
-        0,
-        6
-      ],
-      "bounds": {
-        "min": [
-          -0.18346183001995087,
-          -0.27474454045295715,
-          -0.032860130071640015
-        ],
-        "max": [
-          -0.0066057234071195126,
-          0.006226630881428719,
-          0.32952651381492615
-        ]
-      },
-      "version": {
-        "blockout": 1,
-        "concept": 1,
-        "highpoly": 1,
-        "build": 1
-      },
-      "sha256": "9e5fc680f41ae5a6c8df8e0a4ff8be7b5ac241e0712a9b1de96274f9e3a31520",
-      "bytes": 450404,
-      "published": "2026-10-03 22:41:54",
-      "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
-    },
     "SM_Prop_DesertReliquary": {
       "url": "assets/props/SM_Prop_DesertReliquary.glb",
       "kind": "static",
@@ -3616,7 +3399,4459 @@
         "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
       },
       "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_DesertColumn": {
+      "url": "assets/props/SM_Tripo_DesertColumn.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "desert.v2.column"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -0.9416221380233765,
+          0,
+          -0.9440647959709167
+        ],
+        "max": [
+          0.9416221380233765,
+          5,
+          0.9440647959709167
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 5
+      },
+      "sha256": "dc6f206f889686f2506e0260effea861fe59d34d9b6b4d37b8459b0048eff4e8",
+      "bytes": 187484,
+      "published": "2026-10-06 21:24:05",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Tripo_DesertRampart": {
+      "url": "assets/props/SM_Tripo_DesertRampart.glb",
+      "kind": "static",
+      "class": "tripo_architecture",
+      "bind": {
+        "source": "scene",
+        "id": "desert.v2.rampart"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          -3.9855895042419434,
+          0,
+          -1.426722526550293
+        ],
+        "max": [
+          3.9855895042419434,
+          9,
+          1.426722526550293
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 2
+      },
+      "sha256": "cff20bc8a228fb97d16aad664b4dd5b4aba8e71385d2f889f5b08ef63be57ee0",
+      "bytes": 741572,
+      "published": "2026-10-06 21:29:05",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Tripo_DesertGateway": {
+      "url": "assets/props/SM_Tripo_DesertGateway.glb",
+      "kind": "static",
+      "class": "tripo_architecture",
+      "bind": {
+        "source": "scene",
+        "id": "desert.v2.gateway"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          -6.761862754821777,
+          0,
+          -2.005105495452881
+        ],
+        "max": [
+          6.761862754821777,
+          11,
+          2.005105495452881
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 2
+      },
+      "sha256": "237f6b83e0734d4bea18ceed3a8e6152c5958af81e5e00515fb9087a25011f52",
+      "bytes": 1018692,
+      "published": "2026-10-06 21:24:05",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Tripo_DesertCoverWall": {
+      "url": "assets/props/SM_Tripo_DesertCoverWall.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "desert.v2.coverwall"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -2.4571564197540283,
+          0,
+          -0.4933518171310425
+        ],
+        "max": [
+          2.4571564197540283,
+          2.5999999046325684,
+          0.4933518171310425
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 2
+      },
+      "sha256": "140c593d2be34f151c478219a421ec62a1f7d40a2417c2cac12adccfce04e8f1",
+      "bytes": 193180,
+      "published": "2026-10-06 21:24:07",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Tripo_DesertBarricade": {
+      "url": "assets/props/SM_Tripo_DesertBarricade.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "desert.v2.barricade"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -2.384854793548584,
+          0,
+          -0.5883498191833496
+        ],
+        "max": [
+          2.384854793548584,
+          1.2000000476837158,
+          0.5883498191833496
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 2
+      },
+      "sha256": "d44668512b63ccd3f1a7badc25a21d673fe2a94623dc3c70fcaca354821781ca",
+      "bytes": 262476,
+      "published": "2026-10-06 21:24:06",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Tripo_DesertPlatformBlock": {
+      "url": "assets/props/SM_Tripo_DesertPlatformBlock.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "desert.v2.platformblock"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -2.240000009536743,
+          0,
+          -1.9839377403259277
+        ],
+        "max": [
+          2.240000009536743,
+          2.8648359775543213,
+          1.9839377403259277
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 2
+      },
+      "sha256": "4c89cc33bbe2b5595e169c29d1aaeda1d7945c774f788d72f0056f82f2e08aa8",
+      "bytes": 241268,
+      "published": "2026-10-06 21:24:05",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Tripo_DesertColossus": {
+      "url": "assets/props/SM_Tripo_DesertColossus.glb",
+      "kind": "static",
+      "class": "tripo_architecture",
+      "bind": {
+        "source": "scene",
+        "id": "desert.v2.colossus"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          -4.381046295166016,
+          0,
+          -4.764045715332031
+        ],
+        "max": [
+          4.381046295166016,
+          16.000194549560547,
+          4.764045715332031
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 2
+      },
+      "sha256": "2bb21e16d1a3efc12129f3861bad136b5d3ee2c63b5016ffa80c244cee1dc9d8",
+      "bytes": 1132176,
+      "published": "2026-10-06 21:24:08",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Tripo_DesertStairs": {
+      "url": "assets/props/SM_Tripo_DesertStairs.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "desert.v2.stairs"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -1.8072397708892822,
+          0,
+          -1.5847558975219727
+        ],
+        "max": [
+          1.8072397708892822,
+          3,
+          1.5845414400100708
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 2,
+        "highpoly": 1,
+        "build": 2
+      },
+      "sha256": "d854ead8ede0edb5b7309a89e141cf711406013d4536bc7779408ffbd750c4a4",
+      "bytes": 181600,
+      "published": "2026-10-06 21:24:07",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SK_Enemy_MirageToad": {
+      "url": "assets/characters/SK_Enemy_MirageToad.glb",
+      "kind": "skeletal",
+      "class": "enemy_large",
+      "bind": {
+        "source": "enemy",
+        "id": "mirage_toad"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        18,
+        40
+      ],
+      "skeleton": {
+        "mode": "native",
+        "convention": "creature",
+        "joints": 25
+      },
+      "bounds": {
+        "min": [
+          -1.182303547859192,
+          0,
+          -1.1808135509490967
+        ],
+        "max": [
+          1.182303547859192,
+          3.0500001907348633,
+          1.1808135509490967
+        ]
+      },
+      "version": {
+        "native_build": 16
+      },
+      "sha256": "8ce13c211bf88af1968bbafb771e66f72f38d22dde315fb211afe78a4a152ff6",
+      "bytes": 1619732,
+      "published": "2026-10-06 22:46:04",
+      "generator": {
+        "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+        "mode": "tripo_native",
+        "checkpoint": "P2.0"
+      },
+      "source_task": "https://studio.tripo3d.ai/zh/workspace/generate/d3df6cae-85c9-41d5-99ba-50e7d9fdee17"
+    },
+    "SK_Enemy_JerboaBlade": {
+      "url": "assets/characters/SK_Enemy_JerboaBlade.glb",
+      "kind": "skeletal",
+      "class": "enemy_swarm",
+      "bind": {
+        "source": "enemy",
+        "id": "jerboa_blade"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        12,
+        26
+      ],
+      "skeleton": {
+        "mode": "native",
+        "convention": "creature",
+        "joints": 29
+      },
+      "bounds": {
+        "min": [
+          -0.30227166414260864,
+          0,
+          -0.31785544753074646
+        ],
+        "max": [
+          0.3024478256702423,
+          1.100000023841858,
+          0.3178747296333313
+        ]
+      },
+      "version": {
+        "native_build": 13
+      },
+      "sha256": "2a28728cd55efd9ed6c70fae5ef3e393d9fd41c650995b7f53d7d0859926cf24",
+      "bytes": 634024,
+      "published": "2026-10-06 22:40:18",
+      "generator": {
+        "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+        "mode": "tripo_native",
+        "checkpoint": "P2.0"
+      },
+      "source_task": "https://studio.tripo3d.ai/zh/workspace/generate/eda7a59a-91d9-4b9c-b2c2-2417692950da",
+      "hiUrl": "assets/characters/SK_Enemy_JerboaBlade@hi.glb",
+      "hiBytes": 1454980
+    },
+    "SM_Tripo_DesertMarketStall": {
+      "url": "assets/props/SM_Tripo_DesertMarketStall.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "desert.v2.stall"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -1.8506280183792114,
+          0,
+          -1.1002514362335205
+        ],
+        "max": [
+          1.8506280183792114,
+          3.5999999046325684,
+          1.1002514362335205
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 2
+      },
+      "sha256": "7186f115300c1d9423811bf74dd0a52bf37134209ae869bd839961fb8e53dc2d",
+      "bytes": 229848,
+      "published": "2026-10-06 21:24:08",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Tripo_DesertGoodsPile": {
+      "url": "assets/props/SM_Tripo_DesertGoodsPile.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "desert.v2.goods"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -0.8419538140296936,
+          0,
+          -0.6404114365577698
+        ],
+        "max": [
+          0.8419538140296936,
+          1.600000023841858,
+          0.6404114365577698
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 2
+      },
+      "sha256": "21c184cb660631cb5bdc4c965c982d3268f524017594e045a5bd99ad232f4fbc",
+      "bytes": 298800,
+      "published": "2026-10-06 21:24:09",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Tripo_DesertTreasureHoard": {
+      "url": "assets/props/SM_Tripo_DesertTreasureHoard.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "desert.v2.hoard"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -1.2983088493347168,
+          0,
+          -0.9646936058998108
+        ],
+        "max": [
+          1.2983088493347168,
+          1.7999999523162842,
+          0.9646936058998108
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 2
+      },
+      "sha256": "6b12ed2b1b58d656ac01067dd0e40ddf4241399a474370002e58c289fa9a2b06",
+      "bytes": 346908,
+      "published": "2026-10-06 21:24:09",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Tripo_DesertCornerTower": {
+      "url": "assets/props/SM_Tripo_DesertCornerTower.glb",
+      "kind": "static",
+      "class": "tripo_architecture",
+      "bind": {
+        "source": "scene",
+        "id": "desert.v2.tower"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          -3.6929657459259033,
+          0,
+          -2.6260385513305664
+        ],
+        "max": [
+          3.6929657459259033,
+          13,
+          2.6260385513305664
+        ]
+      },
+      "version": {
+        "blockout": 2,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 3
+      },
+      "sha256": "2a7d73185ace8f21818e6773ecd3138fb7c2b3f28ab7f6b843e7aa1a287ac787",
+      "bytes": 711716,
+      "published": "2026-10-06 21:18:53",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SK_Enemy_ScorpionArcher": {
+      "url": "assets/characters/SK_Enemy_ScorpionArcher.glb",
+      "kind": "skeletal",
+      "class": "enemy_large",
+      "bind": {
+        "source": "enemy",
+        "id": "scorpion_archer"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        18,
+        40
+      ],
+      "skeleton": {
+        "mode": "native",
+        "convention": "creature",
+        "joints": 55
+      },
+      "bounds": {
+        "min": [
+          -0.7039570808410645,
+          0,
+          -0.8446508049964905
+        ],
+        "max": [
+          0.7039570808410645,
+          2,
+          0.8446508049964905
+        ]
+      },
+      "version": {
+        "native_build": 11
+      },
+      "sha256": "b31a1439cbbb54419d0a762c47a6143394707ff1fa5e3c3a659e813d2fa522c5",
+      "bytes": 1464288,
+      "published": "2026-10-06 21:24:05",
+      "generator": {
+        "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+        "mode": "tripo_native",
+        "checkpoint": "P2.0"
+      },
+      "source_task": "https://studio.tripo3d.ai/zh/workspace/generate/2811ca3d-b184-411d-9aef-b48d17776fa8"
+    },
+    "SK_Weapon_Flamer": {
+      "url": "assets/weapons/SK_Weapon_Flamer.glb",
+      "kind": "skeletal",
+      "class": "weapon_fp",
+      "bind": {
+        "source": "weapon",
+        "id": "flamer"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        6
+      ],
+      "rig": {
+        "mode": "parts",
+        "joints": [
+          [
+            "j_r",
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          [
+            "j_0",
+            [
+              0,
+              0.03,
+              -0.45
+            ]
+          ],
+          [
+            "j_25",
+            [
+              0,
+              -0.07,
+              -0.088
+            ]
+          ]
+        ],
+        "keep": []
+      },
+      "bounds": {
+        "min": [
+          -0.047530438750982285,
+          -0.12406989187002182,
+          -0.4374338984489441
+        ],
+        "max": [
+          0.03964352607727051,
+          0.10721985995769501,
+          0.08674578368663788
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "e09219d26d8b3b80505b387f18e52ac6b089d0a924e90281956bd22478b9f4df",
+      "bytes": 509384,
+      "published": "2026-10-06 18:04:58",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SK_Weapon_Stormpod": {
+      "url": "assets/weapons/SK_Weapon_Stormpod.glb",
+      "kind": "skeletal",
+      "class": "weapon_fp",
+      "bind": {
+        "source": "weapon",
+        "id": "stormpod"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        6
+      ],
+      "rig": {
+        "mode": "parts",
+        "joints": [
+          [
+            "j_r",
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          [
+            "j_0",
+            [
+              0,
+              0.04,
+              -0.31
+            ]
+          ],
+          [
+            "j_7",
+            [
+              0,
+              0.03,
+              -0.03
+            ]
+          ]
+        ],
+        "keep": []
+      },
+      "bounds": {
+        "min": [
+          -0.05203234776854515,
+          -0.12716016173362732,
+          -0.2902560234069824
+        ],
+        "max": [
+          0.061108484864234924,
+          0.11207972466945648,
+          0.18019747734069824
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "91995faf97d7eafaa962da198cfddc041029648cc99967ff8c2f59623265a299",
+      "bytes": 625188,
+      "published": "2026-10-06 18:05:00",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SK_Weapon_Magmashot": {
+      "url": "assets/weapons/SK_Weapon_Magmashot.glb",
+      "kind": "skeletal",
+      "class": "weapon_fp",
+      "bind": {
+        "source": "weapon",
+        "id": "magmashot"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        6
+      ],
+      "rig": {
+        "mode": "parts",
+        "joints": [
+          [
+            "j_r",
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          [
+            "j_0",
+            [
+              0,
+              0.04,
+              -0.39
+            ]
+          ]
+        ],
+        "keep": []
+      },
+      "bounds": {
+        "min": [
+          -0.03757286071777344,
+          -0.0945999026298523,
+          -0.3788951337337494
+        ],
+        "max": [
+          0.040403228253126144,
+          0.08385764807462692,
+          0.24409696459770203
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "a51a49ef7f300253e9a38266cff97d43c4d54706812487728a1e470610ac9962",
+      "bytes": 495956,
+      "published": "2026-10-06 18:05:00",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SK_Weapon_Trinity": {
+      "url": "assets/weapons/SK_Weapon_Trinity.glb",
+      "kind": "skeletal",
+      "class": "weapon_fp",
+      "bind": {
+        "source": "weapon",
+        "id": "trinity"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        6
+      ],
+      "rig": {
+        "mode": "parts",
+        "joints": [
+          [
+            "j_r",
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          [
+            "j_0",
+            [
+              0,
+              0.058,
+              -0.285
+            ]
+          ],
+          [
+            "j_8",
+            [
+              0,
+              0.04,
+              -0.05
+            ]
+          ]
+        ],
+        "keep": []
+      },
+      "bounds": {
+        "min": [
+          -0.034391626715660095,
+          -0.11554186791181564,
+          -0.27719175815582275
+        ],
+        "max": [
+          0.03440260514616966,
+          0.08965494483709335,
+          0.08186829835176468
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 2
+      },
+      "sha256": "28d19a132144ecb78b8138c4f59814c70e71dbe6547eab38fc23686cfc6c57f1",
+      "bytes": 511256,
+      "published": "2026-10-06 20:04:45",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SK_Weapon_Railgun": {
+      "url": "assets/weapons/SK_Weapon_Railgun.glb",
+      "kind": "skeletal",
+      "class": "weapon_fp",
+      "bind": {
+        "source": "weapon",
+        "id": "railgun"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        6
+      ],
+      "rig": {
+        "mode": "parts",
+        "joints": [
+          [
+            "j_r",
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          [
+            "j_0",
+            [
+              0,
+              0.035,
+              -0.72
+            ]
+          ],
+          [
+            "j_15",
+            [
+              0,
+              0.035,
+              -0.42
+            ]
+          ],
+          [
+            "j_16",
+            [
+              0,
+              0.085,
+              0.02
+            ]
+          ]
+        ],
+        "keep": []
+      },
+      "bounds": {
+        "min": [
+          -0.05077208951115608,
+          -0.12380321323871613,
+          -0.6323532462120056
+        ],
+        "max": [
+          0.0509650893509388,
+          0.14628636837005615,
+          0.27185410261154175
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "b7403d9b44143f43f70644049b6dfb662128ed5fe8346faa0bcd991d65c17f6e",
+      "bytes": 564548,
+      "published": "2026-10-06 18:05:02",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SK_Weapon_Lantern": {
+      "url": "assets/weapons/SK_Weapon_Lantern.glb",
+      "kind": "skeletal",
+      "class": "weapon_fp",
+      "bind": {
+        "source": "weapon",
+        "id": "lantern"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        6
+      ],
+      "rig": {
+        "mode": "parts",
+        "joints": [
+          [
+            "j_r",
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          [
+            "j_0",
+            [
+              0,
+              -0.03,
+              -0.33
+            ]
+          ],
+          [
+            "j_12",
+            [
+              0,
+              -0.03,
+              -0.26
+            ]
+          ],
+          [
+            "j_12_12",
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        ],
+        "keep": []
+      },
+      "bounds": {
+        "min": [
+          -0.056289903819561005,
+          -0.14561887085437775,
+          -0.3189830482006073
+        ],
+        "max": [
+          0.05636250227689743,
+          0.07145752757787704,
+          0.07725808769464493
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "300c92fd6d16e4662cf385e2120cb7e3692e9ce9dc53cfc3c0a78692c84693b5",
+      "bytes": 531116,
+      "published": "2026-10-06 18:05:03",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_DesertColumnRuin": {
+      "url": "assets/props/SM_Tripo_DesertColumnRuin.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "desert.v2.columnruin"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -2.1215052604675293,
+          0,
+          -1.6799999475479126
+        ],
+        "max": [
+          2.1215052604675293,
+          1.5649597644805908,
+          1.6799999475479126
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 2
+      },
+      "sha256": "108a4026c069323121ecf218334bea523be1ca374ba14154463f4fe7ac992d83",
+      "bytes": 257272,
+      "published": "2026-10-06 21:24:10",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Tripo_DesertBrazier": {
+      "url": "assets/props/SM_Tripo_DesertBrazier.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "desert.v2.brazier"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -0.6606742143630981,
+          0,
+          -0.6020519137382507
+        ],
+        "max": [
+          0.6606742143630981,
+          2.4000000953674316,
+          0.6020519137382507
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 2
+      },
+      "sha256": "6f7c1610236f2ad7e558d87a5f2abf7335b40003692e6ed5d7badfbd62e51704",
+      "bytes": 254900,
+      "published": "2026-10-06 21:24:11",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Tripo_DesertRampartPlain": {
+      "url": "assets/props/SM_Tripo_DesertRampartPlain.glb",
+      "kind": "static",
+      "class": "tripo_architecture",
+      "bind": {
+        "source": "scene",
+        "id": "desert.v2.rampartplain"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          -4.236200332641602,
+          0,
+          -0.9167075157165527
+        ],
+        "max": [
+          4.236200332641602,
+          9,
+          0.9167075157165527
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 2
+      },
+      "sha256": "cd27a83c90e47d11a8950b928d82a6ef9cc251ae91845c524a3edc6c39736bd4",
+      "bytes": 745928,
+      "published": "2026-10-06 21:29:05",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Tripo_DesertRampartPanel": {
+      "url": "assets/props/SM_Tripo_DesertRampartPanel.glb",
+      "kind": "static",
+      "class": "tripo_architecture_kit",
+      "bind": {
+        "source": "scene",
+        "id": "desert.v2.rampart.panel"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          -2.25,
+          0.008789598941802979,
+          -1.426722526550293
+        ],
+        "max": [
+          2.25,
+          8.942867279052734,
+          1.4266009330749512
+        ]
+      },
+      "sha256": "32ad672cb449ab13b44c806ef450bfce6737452600c23296be25226c2a987ccb",
+      "bytes": 662404,
+      "published": "2026-10-06 21:29:09",
+      "generator": {
+        "tool": "derived",
+        "mode": "wall_kit",
+        "checkpoint": "SM_Tripo_DesertRampart"
+      },
+      "derivedFrom": {
+        "id": "SM_Tripo_DesertRampart",
+        "sha256": "cff20bc8a228fb97d16aad664b4dd5b4aba8e71385d2f889f5b08ef63be57ee0",
+        "cut": [
+          -2.25,
+          2.25
+        ]
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Tripo_DesertRampartEndL": {
+      "url": "assets/props/SM_Tripo_DesertRampartEndL.glb",
+      "kind": "static",
+      "class": "tripo_architecture_kit",
+      "bind": {
+        "source": "scene",
+        "id": "desert.v2.rampart.endL"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          -3.9855895042419434,
+          0.008789598941802979,
+          -1.426722526550293
+        ],
+        "max": [
+          -2.25,
+          9,
+          1.4266009330749512
+        ]
+      },
+      "sha256": "9b3bf8abfc1aac43b36d46a47068078eaa819a34592cfa5a2c0cc1cc1541a49b",
+      "bytes": 586784,
+      "published": "2026-10-06 21:29:09",
+      "generator": {
+        "tool": "derived",
+        "mode": "wall_kit",
+        "checkpoint": "SM_Tripo_DesertRampart"
+      },
+      "derivedFrom": {
+        "id": "SM_Tripo_DesertRampart",
+        "sha256": "cff20bc8a228fb97d16aad664b4dd5b4aba8e71385d2f889f5b08ef63be57ee0",
+        "cut": [
+          null,
+          -2.25
+        ]
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Tripo_DesertRampartEndR": {
+      "url": "assets/props/SM_Tripo_DesertRampartEndR.glb",
+      "kind": "static",
+      "class": "tripo_architecture_kit",
+      "bind": {
+        "source": "scene",
+        "id": "desert.v2.rampart.endR"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          2.25,
+          0,
+          -1.2729045152664185
+        ],
+        "max": [
+          3.985477924346924,
+          9,
+          1.4266009330749512
+        ]
+      },
+      "sha256": "392842da5966e08314aaa8299a57ea028b269e7a191a8685597ac4035339a930",
+      "bytes": 578696,
+      "published": "2026-10-06 21:29:09",
+      "generator": {
+        "tool": "derived",
+        "mode": "wall_kit",
+        "checkpoint": "SM_Tripo_DesertRampart"
+      },
+      "derivedFrom": {
+        "id": "SM_Tripo_DesertRampart",
+        "sha256": "cff20bc8a228fb97d16aad664b4dd5b4aba8e71385d2f889f5b08ef63be57ee0",
+        "cut": [
+          2.25,
+          null
+        ]
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Tripo_DesertRampartPlainPanel": {
+      "url": "assets/props/SM_Tripo_DesertRampartPlainPanel.glb",
+      "kind": "static",
+      "class": "tripo_architecture_kit",
+      "bind": {
+        "source": "scene",
+        "id": "desert.v2.rampartPlain.panel"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          -3.25,
+          0,
+          -0.9143792390823364
+        ],
+        "max": [
+          3.25,
+          9,
+          0.9164732694625854
+        ]
+      },
+      "sha256": "1241306b289a1ed80c726dd9d4f191c75820b24b1e4bb5553383c388578c0a35",
+      "bytes": 721212,
+      "published": "2026-10-06 21:29:12",
+      "generator": {
+        "tool": "derived",
+        "mode": "wall_kit",
+        "checkpoint": "SM_Tripo_DesertRampartPlain"
+      },
+      "derivedFrom": {
+        "id": "SM_Tripo_DesertRampartPlain",
+        "sha256": "cd27a83c90e47d11a8950b928d82a6ef9cc251ae91845c524a3edc6c39736bd4",
+        "cut": [
+          -3.25,
+          3.25
+        ]
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SK_Enemy_FireRat": {
+      "url": "assets/characters/SK_Enemy_FireRat.glb",
+      "kind": "skeletal",
+      "class": "enemy_swarm",
+      "bind": {
+        "source": "enemy",
+        "id": "fire_rat"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        12,
+        26
+      ],
+      "skeleton": {
+        "mode": "native",
+        "convention": "creature",
+        "joints": 23
+      },
+      "bounds": {
+        "min": [
+          -0.20515573024749756,
+          0,
+          -0.40341389179229736
+        ],
+        "max": [
+          0.20515573024749756,
+          0.6200000643730164,
+          0.40341389179229736
+        ]
+      },
+      "version": {
+        "native_build": 3
+      },
+      "sha256": "5d2c4fc4eb2abe6b82dcd054f6b036621b79908e31d9df6dc0d9d49f5ab78bfb",
+      "bytes": 510824,
+      "published": "2026-10-06 21:27:33",
+      "generator": {
+        "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+        "mode": "tripo_native",
+        "checkpoint": "P2.0"
+      },
+      "source_task": "https://studio.tripo3d.ai/zh/workspace/rigging/2c3cbe11-ee90-4d36-b786-1ccd06df3f50",
+      "hiUrl": "assets/characters/SK_Enemy_FireRat@hi.glb",
+      "hiBytes": 956580
+    },
+    "SM_EnemyPart_FireRatBall": {
+      "url": "assets/attachments/SM_EnemyPart_FireRatBall.glb",
+      "kind": "static",
+      "class": "enemy_attachment",
+      "bind": {
+        "source": "enemy",
+        "id": "fire_rat",
+        "attachment": "fire_ball"
+      },
+      "keepGlow": "attachments",
+      "lodDistance": [
+        0,
+        14
+      ],
+      "bounds": {
+        "min": [
+          -0.2525375187397003,
+          -0.2742973864078522,
+          -0.2654781639575958
+        ],
+        "max": [
+          0.2528054714202881,
+          0.27518147230148315,
+          0.26503464579582214
+        ]
+      },
+      "version": {
+        "blockout": 2,
+        "concept": 3,
+        "highpoly": 3,
+        "build": 4
+      },
+      "sha256": "88894899d1823a83ef864a2cb4c9677e53adbf10ef19ecae0d4eb3b6f969347a",
+      "bytes": 299396,
+      "published": "2026-10-06 21:39:56",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Tripo_DesertPortalShrine": {
+      "url": "assets/props/SM_Tripo_DesertPortalShrine.glb",
+      "kind": "static",
+      "class": "tripo_architecture",
+      "bind": {
+        "source": "scene",
+        "id": "desert.v2.portalShrine"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          -4.839033603668213,
+          0,
+          -1.652418851852417
+        ],
+        "max": [
+          4.839033603668213,
+          11,
+          1.652418851852417
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "2c4d396ae54841800973608f867ba00b76ecf2fb738cd6be82d7c6c197af97bf",
+      "bytes": 927600,
+      "published": "2026-10-06 21:54:34",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_EnemyWeapon_CamelStele": {
+      "url": "assets/attachments/SM_EnemyWeapon_CamelStele.glb",
+      "kind": "static",
+      "class": "enemy_attachment",
+      "bind": {
+        "source": "enemy",
+        "id": "camel_stele",
+        "attachment": "stele"
+      },
+      "keepGlow": "attachments",
+      "lodDistance": [
+        0,
+        14
+      ],
+      "bounds": {
+        "min": [
+          -0.43130195140838623,
+          -0.875,
+          -0.17740881443023682
+        ],
+        "max": [
+          0.43130195140838623,
+          0.875,
+          0.12339159846305847
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "181ad66bae9dd889e599027b7c6df63504d30194b8b2567f06087d49b955f209",
+      "bytes": 406896,
+      "published": "2026-10-06 22:21:40",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SK_Enemy_CamelStele": {
+      "url": "assets/characters/SK_Enemy_CamelStele.glb",
+      "kind": "skeletal",
+      "class": "enemy_large",
+      "bind": {
+        "source": "enemy",
+        "id": "camel_stele"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        18,
+        40
+      ],
+      "skeleton": {
+        "mode": "native",
+        "convention": "creature",
+        "joints": 23
+      },
+      "bounds": {
+        "min": [
+          -0.8843181133270264,
+          -0.00011843036918435246,
+          -0.7393256425857544
+        ],
+        "max": [
+          0.8843181133270264,
+          2.799999952316284,
+          0.7393256425857544
+        ]
+      },
+      "version": {
+        "native_build": 3
+      },
+      "sha256": "3d31da915550453003a848481a2ea3fa959c4d2c4380a812b369acf3c3ff2460",
+      "bytes": 1889096,
+      "published": "2026-10-06 22:24:34",
+      "generator": {
+        "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+        "mode": "tripo_native",
+        "checkpoint": "P2.0"
+      },
+      "source_task": "https://studio.tripo3d.ai/zh/workspace/rigging/ebc9602c-ee6c-423f-8dc4-0caa6db741be"
+    },
+    "SK_Enemy_TombBeast": {
+      "url": "assets/characters/SK_Enemy_TombBeast.glb",
+      "kind": "skeletal",
+      "class": "enemy_large",
+      "bind": {
+        "source": "enemy",
+        "id": "tomb_beast"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        18,
+        40
+      ],
+      "skeleton": {
+        "mode": "native",
+        "convention": "creature",
+        "joints": 24
+      },
+      "bounds": {
+        "min": [
+          -0.7684492468833923,
+          0,
+          -1.3049317598342896
+        ],
+        "max": [
+          0.7684770822525024,
+          2.1996307373046875,
+          1.3038218021392822
+        ]
+      },
+      "version": {
+        "native_build": 2
+      },
+      "sha256": "168716001c665b00af11590da724bd112a56efe84fe0e22af221e72533ac7aaf",
+      "bytes": 935668,
+      "published": "2026-10-07 11:16:37",
+      "generator": {
+        "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+        "mode": "tripo_native",
+        "checkpoint": "P2.0"
+      },
+      "source_task": "https://studio.tripo3d.ai/zh/workspace/generate/24295509-a298-4a2f-b92a-c558c895e986"
+    },
+    "SK_Enemy_Apsara": {
+      "url": "assets/characters/SK_Enemy_Apsara.glb",
+      "kind": "skeletal",
+      "class": "enemy_large",
+      "bind": {
+        "source": "enemy",
+        "id": "apsara"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        18,
+        40
+      ],
+      "skeleton": {
+        "mode": "native",
+        "convention": "creature",
+        "joints": 56
+      },
+      "bounds": {
+        "min": [
+          -0.5796532034873962,
+          0,
+          -0.24086470901966095
+        ],
+        "max": [
+          0.5796532034873962,
+          1.899999976158142,
+          0.24086470901966095
+        ]
+      },
+      "version": {
+        "native_build": 2
+      },
+      "sha256": "66a1709b976a0daad7457d3b2673b17e60ce381c7059a815c337f4f72f5673fc",
+      "bytes": 1426676,
+      "published": "2026-10-07 13:42:37",
+      "generator": {
+        "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+        "mode": "tripo_native",
+        "checkpoint": "P2.0"
+      },
+      "source_task": "https://studio.tripo3d.ai/zh/workspace/generate/95421558-34b2-43ee-9dcf-f6a025a1af67"
+    },
+    "SM_EnemyPart_ApsaraPipa": {
+      "url": "assets/attachments/SM_EnemyPart_ApsaraPipa.glb",
+      "kind": "static",
+      "class": "enemy_attachment",
+      "bind": {
+        "source": "enemy",
+        "id": "apsara",
+        "attachment": "pipa"
+      },
+      "keepGlow": "attachments",
+      "lodDistance": [
+        0,
+        14
+      ],
+      "bounds": {
+        "min": [
+          -0.146598219871521,
+          -0.4899999797344208,
+          -0.0899064689874649
+        ],
+        "max": [
+          0.146598219871521,
+          0.42910119891166687,
+          0.06320225447416306
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "bc5f3adf19c09ba937f440b73ea809ac206fb5219d45a71d227e03af8e3affc4",
+      "bytes": 369056,
+      "published": "2026-10-07 13:46:53",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SK_Hero_RedPanda": {
+      "url": "assets/characters/SK_Hero_RedPanda.glb",
+      "kind": "skeletal",
+      "class": "hero_display",
+      "bind": {
+        "source": "hero",
+        "id": "fox"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        10,
+        24
+      ],
+      "skeleton": {
+        "mode": "native",
+        "convention": "mixamo",
+        "joints": 73
+      },
+      "bounds": {
+        "min": [
+          -0.5220932364463806,
+          0,
+          -0.5395090579986572
+        ],
+        "max": [
+          0.5220932364463806,
+          1.5500000715255737,
+          0.5395089983940125
+        ]
+      },
+      "version": {
+        "native_build": 8
+      },
+      "sha256": "65a9072ecbcfc428940c37f2920e488e6bf3aae5aa6d437df4fab02ffdf0351a",
+      "bytes": 1959252,
+      "published": "2026-10-11 15:24:29",
+      "generator": {
+        "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+        "mode": "tripo_native",
+        "checkpoint": "P2.0"
+      },
+      "source_task": "https://studio.tripo3d.ai/zh/workspace/generate/50fee02c-8a8e-4d21-8f1f-8f914e43e65b"
+    },
+    "SK_Hero_Pangolin": {
+      "url": "assets/characters/SK_Hero_Pangolin.glb",
+      "kind": "skeletal",
+      "class": "hero_display",
+      "bind": {
+        "source": "hero",
+        "id": "bear"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        10,
+        24
+      ],
+      "skeleton": {
+        "mode": "native",
+        "convention": "mixamo",
+        "joints": 71
+      },
+      "bounds": {
+        "min": [
+          -0.6188254356384277,
+          0,
+          -0.7320834994316101
+        ],
+        "max": [
+          0.6187490820884705,
+          1.9500000476837158,
+          0.7320834994316101
+        ]
+      },
+      "version": {
+        "native_build": 3
+      },
+      "sha256": "492d74ed80c05feb7cf4e7d897e2de0785b9884b4f5a1483eecf543ae04f173f",
+      "bytes": 1944592,
+      "published": "2026-10-10 23:34:51",
+      "generator": {
+        "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+        "mode": "tripo_native",
+        "checkpoint": "P2.0"
+      },
+      "source_task": "https://studio.tripo3d.ai/zh/workspace/generate/800a72a0-5b44-4d69-8610-83ef92acc02e"
+    },
+    "SK_Hero_FlyingSquirrel": {
+      "url": "assets/characters/SK_Hero_FlyingSquirrel.glb",
+      "kind": "skeletal",
+      "class": "hero_display",
+      "bind": {
+        "source": "hero",
+        "id": "falcon"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        10,
+        24
+      ],
+      "skeleton": {
+        "mode": "native",
+        "convention": "mixamo",
+        "joints": 73
+      },
+      "bounds": {
+        "min": [
+          -0.5936353802680969,
+          0,
+          -0.5381537675857544
+        ],
+        "max": [
+          0.5936927199363708,
+          1.600000023841858,
+          0.5381538271903992
+        ]
+      },
+      "version": {
+        "native_build": 5
+      },
+      "sha256": "c38943d29ea52a042bed6beddd6656aa517be029a6dfee5864d6562aee25b775",
+      "bytes": 2039828,
+      "published": "2026-10-10 23:34:51",
+      "generator": {
+        "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+        "mode": "tripo_native",
+        "checkpoint": "P2.0"
+      },
+      "source_task": "https://studio.tripo3d.ai/zh/workspace/generate/8603ffad-f91d-4b81-92c2-b158e6949d2d"
+    },
+    "SM_HeroPart_PangolinBall": {
+      "url": "assets/attachments/SM_HeroPart_PangolinBall.glb",
+      "kind": "static",
+      "class": "hero_attachment",
+      "bind": {
+        "source": "hero",
+        "id": "bear",
+        "attachment": "ball"
+      },
+      "keepGlow": "attachments",
+      "lodDistance": [
+        0,
+        14
+      ],
+      "bounds": {
+        "min": [
+          -0.5820072889328003,
+          -0.6112840175628662,
+          -0.6034441590309143
+        ],
+        "max": [
+          0.5813923478126526,
+          0.6100000143051147,
+          0.6034441590309143
+        ]
+      },
+      "version": {
+        "build": 1
+      },
+      "sha256": "d26edf783548570674cd9f4babf9fe6fbc3475f81a60ec0c44db8aecb4375147",
+      "bytes": 173464,
+      "published": "2026-10-10 23:59:22",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "source_task": "https://studio.tripo3d.ai/zh/workspace/generate/1b2b20df-e7ff-4162-83de-72561bf2929f",
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SK_Enemy_Fuzhu": {
+      "url": "assets/characters/SK_Enemy_Fuzhu.glb",
+      "kind": "skeletal",
+      "class": "enemy_standard",
+      "bind": {
+        "source": "enemy",
+        "id": "fuzhu"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        14,
+        30
+      ],
+      "skeleton": {
+        "mode": "native",
+        "convention": "creature",
+        "joints": 25
+      },
+      "bounds": {
+        "min": [
+          -0.2844895124435425,
+          0,
+          -0.6130679249763489
+        ],
+        "max": [
+          0.2844895124435425,
+          1.9003196954727173,
+          0.6130679249763489
+        ]
+      },
+      "version": {
+        "native_build": 2
+      },
+      "sha256": "ad35bedb1b29b1db34bec64b83070d114a8c0cd45b7a0bae2703d5e43a34617f",
+      "bytes": 329188,
+      "published": "2026-10-11 00:13:15",
+      "generator": {
+        "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+        "mode": "tripo_native",
+        "checkpoint": "P2.0"
+      },
+      "source_task": "https://studio.tripo3d.ai/workspace/generate/cb48daf7-c941-4d18-8ff2-7e2735abd725",
+      "hiUrl": "assets/characters/SK_Enemy_Fuzhu@hi.glb",
+      "hiBytes": 669716
+    },
+    "SM_Tripo_FrostRampart": {
+      "url": "assets/props/SM_Tripo_FrostRampart.glb",
+      "kind": "static",
+      "class": "tripo_architecture",
+      "bind": {
+        "source": "scene",
+        "id": "frost.v2.rampart"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          -3.945856809616089,
+          -0.00021780120732728392,
+          -1.2913423776626587
+        ],
+        "max": [
+          3.877303123474121,
+          8.81725788116455,
+          1.2864899635314941
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 2,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "0b384480d56e4f88385b8e08ad82bbd81e54f321e535775cb2a56c24b967322f",
+      "bytes": 597204,
+      "published": "2026-10-11 00:15:35",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostRampartPlain": {
+      "url": "assets/props/SM_Tripo_FrostRampartPlain.glb",
+      "kind": "static",
+      "class": "tripo_architecture",
+      "bind": {
+        "source": "scene",
+        "id": "frost.v2.rampartPlain"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          -4.323678970336914,
+          0.0013833354460075498,
+          -1.3536567687988281
+        ],
+        "max": [
+          4.324970245361328,
+          8.653997421264648,
+          1.1872642040252686
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 2,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "25fd236d8379014effbabcc506d0c9bb7f4f163e07757e9f56aba6ae96f78232",
+      "bytes": 405376,
+      "published": "2026-10-11 00:15:36",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SK_Enemy_Haozhi": {
+      "url": "assets/characters/SK_Enemy_Haozhi.glb",
+      "kind": "skeletal",
+      "class": "enemy_swarm",
+      "bind": {
+        "source": "enemy",
+        "id": "haozhi"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        12,
+        26
+      ],
+      "skeleton": {
+        "mode": "native",
+        "convention": "creature",
+        "joints": 24
+      },
+      "bounds": {
+        "min": [
+          -0.3035227060317993,
+          0.0007634231587871909,
+          -0.5030858516693115
+        ],
+        "max": [
+          0.3035227060317993,
+          0.9000000357627869,
+          0.5030858516693115
+        ]
+      },
+      "version": {
+        "native_build": 3
+      },
+      "sha256": "cc738c9399435aad821b056e2ecddca59d1767646578e6e9b5424680b1be257f",
+      "bytes": 614444,
+      "published": "2026-10-11 00:16:11",
+      "generator": {
+        "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+        "mode": "tripo_native",
+        "checkpoint": "P2.0"
+      },
+      "source_task": "https://studio.tripo3d.ai/workspace/generate/a263fd37-c051-40b9-9e81-bade15b4a60a",
+      "hiUrl": "assets/characters/SK_Enemy_Haozhi@hi.glb",
+      "hiBytes": 1189492
+    },
+    "SM_Tripo_FrostRampartPanel": {
+      "url": "assets/props/SM_Tripo_FrostRampartPanel.glb",
+      "kind": "static",
+      "class": "tripo_architecture_kit",
+      "bind": {
+        "source": "scene",
+        "id": "frost.v2.rampart.panel"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          -2.8499999046325684,
+          0.0013968253042548895,
+          -1.2881131172180176
+        ],
+        "max": [
+          2.8499999046325684,
+          8.81725788116455,
+          1.2866777181625366
+        ]
+      },
+      "sha256": "b0226a1cf13bc01008ac5d1c4ece9cd14a9c8624d532ed1b3f77ee5965add93e",
+      "bytes": 572280,
+      "published": "2026-10-11 00:16:27",
+      "generator": {
+        "tool": "derived",
+        "mode": "wall_kit",
+        "checkpoint": "SM_Tripo_FrostRampart"
+      },
+      "derivedFrom": {
+        "id": "SM_Tripo_FrostRampart",
+        "sha256": "0b384480d56e4f88385b8e08ad82bbd81e54f321e535775cb2a56c24b967322f",
+        "cut": [
+          -2.85,
+          2.85
+        ]
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostRampartEndL": {
+      "url": "assets/props/SM_Tripo_FrostRampartEndL.glb",
+      "kind": "static",
+      "class": "tripo_architecture_kit",
+      "bind": {
+        "source": "scene",
+        "id": "frost.v2.rampart.endL"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          -3.945856809616089,
+          -0.00021780120732728392,
+          -1.278963565826416
+        ],
+        "max": [
+          -2.8499996662139893,
+          8.78757095336914,
+          1.2813290357589722
+        ]
+      },
+      "sha256": "d38bc850d70982d8275148bf4510d5504562bad9ce2b0fed943dfc1013434bf4",
+      "bytes": 482528,
+      "published": "2026-10-11 00:16:27",
+      "generator": {
+        "tool": "derived",
+        "mode": "wall_kit",
+        "checkpoint": "SM_Tripo_FrostRampart"
+      },
+      "derivedFrom": {
+        "id": "SM_Tripo_FrostRampart",
+        "sha256": "0b384480d56e4f88385b8e08ad82bbd81e54f321e535775cb2a56c24b967322f",
+        "cut": [
+          null,
+          -2.85
+        ]
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostRampartEndR": {
+      "url": "assets/props/SM_Tripo_FrostRampartEndR.glb",
+      "kind": "static",
+      "class": "tripo_architecture_kit",
+      "bind": {
+        "source": "scene",
+        "id": "frost.v2.rampart.endR"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          2.8499999046325684,
+          0.008534721098840237,
+          -1.2913423776626587
+        ],
+        "max": [
+          3.877546548843384,
+          8.764432907104492,
+          1.2522324323654175
+        ]
+      },
+      "sha256": "f1bd2f4f50179c972e7ba256409cdfdbab8a0e612a20a88ffdc29042ee8c334c",
+      "bytes": 479328,
+      "published": "2026-10-11 00:16:27",
+      "generator": {
+        "tool": "derived",
+        "mode": "wall_kit",
+        "checkpoint": "SM_Tripo_FrostRampart"
+      },
+      "derivedFrom": {
+        "id": "SM_Tripo_FrostRampart",
+        "sha256": "0b384480d56e4f88385b8e08ad82bbd81e54f321e535775cb2a56c24b967322f",
+        "cut": [
+          2.85,
+          null
+        ]
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostRampartPlainPanel": {
+      "url": "assets/props/SM_Tripo_FrostRampartPlainPanel.glb",
+      "kind": "static",
+      "class": "tripo_architecture_kit",
+      "bind": {
+        "source": "scene",
+        "id": "frost.v2.rampartPlain.panel"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          -2.450000047683716,
+          0.0013833354460075498,
+          -1.3536567687988281
+        ],
+        "max": [
+          2.450000047683716,
+          8.651885032653809,
+          1.1872529983520508
+        ]
+      },
+      "sha256": "afb7285ac5071153c72be4cb0c5daef98e9543802971487793e104199f61452e",
+      "bytes": 368100,
+      "published": "2026-10-11 00:16:40",
+      "generator": {
+        "tool": "derived",
+        "mode": "wall_kit",
+        "checkpoint": "SM_Tripo_FrostRampartPlain"
+      },
+      "derivedFrom": {
+        "id": "SM_Tripo_FrostRampartPlain",
+        "sha256": "25fd236d8379014effbabcc506d0c9bb7f4f163e07757e9f56aba6ae96f78232",
+        "cut": [
+          -2.45,
+          2.45
+        ]
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SK_Enemy_IceWhale": {
+      "url": "assets/characters/SK_Enemy_IceWhale.glb",
+      "kind": "skeletal",
+      "class": "enemy_large",
+      "bind": {
+        "source": "enemy",
+        "id": "ice_whale"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        18,
+        40
+      ],
+      "skeleton": {
+        "mode": "native",
+        "convention": "creature",
+        "joints": 14
+      },
+      "bounds": {
+        "min": [
+          -1.8473988771438599,
+          0,
+          -2.378105640411377
+        ],
+        "max": [
+          1.8465970754623413,
+          2.5999999046325684,
+          2.378213405609131
+        ]
+      },
+      "version": {
+        "native_build": 2
+      },
+      "sha256": "45fb78de94147546aaedce91d67a20447d791779256cef05d71d09f453f36ac8",
+      "bytes": 1324392,
+      "published": "2026-10-11 00:17:06",
+      "generator": {
+        "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+        "mode": "tripo_native",
+        "checkpoint": "P2.0"
+      },
+      "source_task": "https://studio.tripo3d.ai/workspace/generate/1ac41b9f-12ca-48fa-8dea-6a662f127934"
+    },
+    "SK_Enemy_IcePuffer": {
+      "url": "assets/characters/SK_Enemy_IcePuffer.glb",
+      "kind": "skeletal",
+      "class": "enemy_swarm",
+      "bind": {
+        "source": "enemy",
+        "id": "ice_puffer"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        12,
+        26
+      ],
+      "skeleton": {
+        "mode": "native",
+        "convention": "creature",
+        "joints": 7
+      },
+      "bounds": {
+        "min": [
+          -0.3798241913318634,
+          0,
+          -0.45505625009536743
+        ],
+        "max": [
+          0.3798241913318634,
+          1,
+          0.45505625009536743
+        ]
+      },
+      "version": {
+        "native_build": 2
+      },
+      "sha256": "67222344524449251cd1c7f0b237584ec605414e0d5173950084cf272f51de87",
+      "bytes": 269876,
+      "published": "2026-10-11 00:17:21",
+      "generator": {
+        "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+        "mode": "tripo_native",
+        "checkpoint": "P2.0"
+      },
+      "source_task": "https://studio.tripo3d.ai/workspace/generate/5d343f22-9348-4325-a152-64416accb1c7",
+      "hiUrl": "assets/characters/SK_Enemy_IcePuffer@hi.glb",
+      "hiBytes": 612024
+    },
+    "SK_Enemy_Qingniao": {
+      "url": "assets/characters/SK_Enemy_Qingniao.glb",
+      "kind": "skeletal",
+      "class": "enemy_standard",
+      "bind": {
+        "source": "enemy",
+        "id": "qingniao"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        14,
+        30
+      ],
+      "skeleton": {
+        "mode": "native",
+        "convention": "creature",
+        "joints": 27
+      },
+      "bounds": {
+        "min": [
+          -1.433010458946228,
+          0,
+          -0.5523425936698914
+        ],
+        "max": [
+          1.433010458946228,
+          2.6000001430511475,
+          0.5523425936698914
+        ]
+      },
+      "version": {
+        "native_build": 2
+      },
+      "sha256": "311c933246d68a9103568ce2709af2d476da28fd7b160a1c09dc4d499b185b81",
+      "bytes": 662532,
+      "published": "2026-10-11 00:18:28",
+      "generator": {
+        "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+        "mode": "tripo_native",
+        "checkpoint": "P2.0"
+      },
+      "source_task": "https://studio.tripo3d.ai/workspace/generate/e5d6f85f-5287-4533-b55b-e66091a67b38",
+      "hiUrl": "assets/characters/SK_Enemy_Qingniao@hi.glb",
+      "hiBytes": 1232584
+    },
+    "SK_Enemy_FrostCrab": {
+      "url": "assets/characters/SK_Enemy_FrostCrab.glb",
+      "kind": "skeletal",
+      "class": "enemy_large",
+      "bind": {
+        "source": "enemy",
+        "id": "frost_crab"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        18,
+        40
+      ],
+      "skeleton": {
+        "mode": "native",
+        "convention": "creature",
+        "joints": 32
+      },
+      "bounds": {
+        "min": [
+          -1.0070751905441284,
+          0,
+          -1.1888595819473267
+        ],
+        "max": [
+          1.0070751905441284,
+          2.200000047683716,
+          1.1888595819473267
+        ]
+      },
+      "version": {
+        "native_build": 4
+      },
+      "sha256": "ce5d20b82603c77650f6de2a60372a5203cac0b5009a2cccbbf17fe1b8d970d6",
+      "bytes": 1519620,
+      "published": "2026-10-11 00:20:11",
+      "generator": {
+        "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+        "mode": "tripo_native",
+        "checkpoint": "P2.0"
+      },
+      "source_task": "https://studio.tripo3d.ai/workspace/generate/79d6a91c-788d-4e8a-9927-60f3016dbc8b"
+    },
+    "SK_Enemy_XuanGui": {
+      "url": "assets/characters/SK_Enemy_XuanGui.glb",
+      "kind": "skeletal",
+      "class": "enemy_large",
+      "bind": {
+        "source": "enemy",
+        "id": "xuangui"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        18,
+        40
+      ],
+      "skeleton": {
+        "mode": "native",
+        "convention": "creature",
+        "joints": 21
+      },
+      "bounds": {
+        "min": [
+          -1.0624314546585083,
+          -3.654148895293474e-05,
+          -1.7522157430648804
+        ],
+        "max": [
+          1.0623923540115356,
+          1.7000000476837158,
+          1.7522157430648804
+        ]
+      },
+      "version": {
+        "native_build": 2
+      },
+      "sha256": "c7795a6cb13e49bfee7cadc55aa60831cc7d1d437d019f291559c36ccce4ab39",
+      "bytes": 1516364,
+      "published": "2026-10-11 00:20:13",
+      "generator": {
+        "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+        "mode": "tripo_native",
+        "checkpoint": "P2.0"
+      },
+      "source_task": "https://studio.tripo3d.ai/workspace/generate/15eca790-4f17-4c20-80e4-a33220058cce"
+    },
+    "SM_Arms_RedPandaR": {
+      "url": "assets/weapons/SM_Arms_RedPandaR.glb",
+      "kind": "static",
+      "class": "fp_arm",
+      "bind": {
+        "source": "fp",
+        "id": "fox",
+        "attachment": "arm_r"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        6
+      ],
+      "bounds": {
+        "min": [
+          -0.03463481739163399,
+          -0.4343540072441101,
+          -0.0497845895588398
+        ],
+        "max": [
+          0.32632285356521606,
+          0.031131908297538757,
+          0.5352392792701721
+        ]
+      },
+      "version": {
+        "build": 13
+      },
+      "sha256": "f54bbf94e4fd1b86aae5daf7f525fdf0fba6befcaa67ec5d2514a680ae2d2ee1",
+      "bytes": 745424,
+      "published": "2026-10-11 15:24:35",
+      "generator": {
+        "tool": "cut from the published hero SK_Hero_RedPanda",
+        "mode": "derived"
+      }
+    },
+    "SM_Arms_RedPandaL": {
+      "url": "assets/weapons/SM_Arms_RedPandaL.glb",
+      "kind": "static",
+      "class": "fp_arm",
+      "bind": {
+        "source": "fp",
+        "id": "fox",
+        "attachment": "arm_l"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        6
+      ],
+      "bounds": {
+        "min": [
+          -0.2838304936885834,
+          -0.3810422420501709,
+          -0.05926307663321495
+        ],
+        "max": [
+          0.10177475214004517,
+          0.03867654502391815,
+          0.5279945135116577
+        ]
+      },
+      "version": {
+        "build": 13
+      },
+      "sha256": "fa1722f73c4cfdc42e08bcc4cb94ee2ed1f5b1c804d40cc61eb4cec66186cb3f",
+      "bytes": 744732,
+      "published": "2026-10-11 15:24:41",
+      "generator": {
+        "tool": "cut from the published hero SK_Hero_RedPanda",
+        "mode": "derived"
+      }
+    },
+    "SM_Tripo_FrostGateway": {
+      "url": "assets/props/SM_Tripo_FrostGateway.glb",
+      "kind": "static",
+      "class": "tripo_architecture",
+      "bind": {
+        "source": "scene",
+        "id": "frost.v2.gateway"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          -6.000056266784668,
+          0.0007875984301790595,
+          -1.8548747301101685
+        ],
+        "max": [
+          6.003758430480957,
+          11.147306442260742,
+          2.0447874069213867
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 2,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "0863ab4de75e254f471373dcb8900a51a65f9d158bd56e600d974e5e00b513c1",
+      "bytes": 779664,
+      "published": "2026-10-11 00:21:09",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_EnemyPart_XuanGuiShell": {
+      "url": "assets/attachments/SM_EnemyPart_XuanGuiShell.glb",
+      "kind": "static",
+      "class": "enemy_attachment",
+      "bind": {
+        "source": "enemy",
+        "id": "xuangui",
+        "attachment": "shell"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        14
+      ],
+      "bounds": {
+        "min": [
+          -1.2603847980499268,
+          -0.0001372136321151629,
+          -1.2866469621658325
+        ],
+        "max": [
+          1.2612557411193848,
+          1.399999976158142,
+          1.2887599468231201
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "23c4efec5f5556d6b4cd40826bfaa0135c629e30b8e0546af333128851d45d59",
+      "bytes": 331000,
+      "published": "2026-10-11 00:22:06",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SK_Boss_Kun": {
+      "url": "assets/characters/SK_Boss_Kun.glb",
+      "kind": "skeletal",
+      "class": "boss",
+      "bind": {
+        "source": "enemy",
+        "id": "boss_kunpeng_kun"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        25,
+        60
+      ],
+      "skeleton": {
+        "mode": "native",
+        "convention": "creature",
+        "joints": 14
+      },
+      "bounds": {
+        "min": [
+          -3.1248717308044434,
+          0,
+          -3.5114808082580566
+        ],
+        "max": [
+          3.124537467956543,
+          8.000411033630371,
+          3.5114808082580566
+        ]
+      },
+      "version": {
+        "native_build": 3
+      },
+      "sha256": "535036cd6ae6a3b8a678ef9a2c7c0058fa7d3c738923de7341533272c53b7258",
+      "bytes": 1796736,
+      "published": "2026-10-11 00:23:50",
+      "generator": {
+        "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+        "mode": "tripo_native",
+        "checkpoint": "P2.0"
+      },
+      "source_task": "https://studio.tripo3d.ai/workspace/generate/a6320cc4-94a3-4382-a97b-036bcba54a8f"
+    },
+    "SK_Boss_Peng": {
+      "url": "assets/characters/SK_Boss_Peng.glb",
+      "kind": "skeletal",
+      "class": "boss",
+      "bind": {
+        "source": "enemy",
+        "id": "boss_kunpeng_peng"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        25,
+        60
+      ],
+      "skeleton": {
+        "mode": "native",
+        "convention": "creature",
+        "joints": 27
+      },
+      "bounds": {
+        "min": [
+          -3.1597464084625244,
+          0,
+          -4.000000476837158
+        ],
+        "max": [
+          3.1597464084625244,
+          8,
+          4.000000476837158
+        ]
+      },
+      "version": {
+        "native_build": 6
+      },
+      "sha256": "f53bbec5ecc54cd597f59514dd732380919d67c5b332221466c750a2a61733bf",
+      "bytes": 2301652,
+      "published": "2026-10-11 00:24:18",
+      "generator": {
+        "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+        "mode": "tripo_native",
+        "checkpoint": "P2.0"
+      },
+      "source_task": "https://studio.tripo3d.ai/workspace/generate/adeec5fb-beca-47eb-a246-cda39d5de7e6"
+    },
+    "SM_Arms_PangolinR": {
+      "url": "assets/weapons/SM_Arms_PangolinR.glb",
+      "kind": "static",
+      "class": "fp_arm",
+      "bind": {
+        "source": "fp",
+        "id": "bear",
+        "attachment": "arm_r"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        6
+      ],
+      "bounds": {
+        "min": [
+          -0.054865311831235886,
+          -0.27955910563468933,
+          -0.05262282118201256
+        ],
+        "max": [
+          0.22883836925029755,
+          0.01640205830335617,
+          0.3431708514690399
+        ]
+      },
+      "version": {
+        "build": 8
+      },
+      "sha256": "afb985354874f876d0b6c35a4ea9a087426df89eca63bc7e9b611caf90a78e80",
+      "bytes": 703108,
+      "published": "2026-10-11 14:22:42",
+      "generator": {
+        "tool": "cut from the published hero SK_Hero_Pangolin",
+        "mode": "derived"
+      }
+    },
+    "SM_Arms_PangolinL": {
+      "url": "assets/weapons/SM_Arms_PangolinL.glb",
+      "kind": "static",
+      "class": "fp_arm",
+      "bind": {
+        "source": "fp",
+        "id": "bear",
+        "attachment": "arm_l"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        6
+      ],
+      "bounds": {
+        "min": [
+          -0.18757076561450958,
+          -0.26220542192459106,
+          -0.07944613695144653
+        ],
+        "max": [
+          0.10330894589424133,
+          0.011885605752468109,
+          0.3484332859516144
+        ]
+      },
+      "version": {
+        "build": 8
+      },
+      "sha256": "22d234313a987ffb1e1e9d675396cf935d134c56727c6ce09dddfd1e1175ae95",
+      "bytes": 701964,
+      "published": "2026-10-11 14:22:48",
+      "generator": {
+        "tool": "cut from the published hero SK_Hero_Pangolin",
+        "mode": "derived"
+      }
+    },
+    "SM_Arms_FlyingSquirrelR": {
+      "url": "assets/weapons/SM_Arms_FlyingSquirrelR.glb",
+      "kind": "static",
+      "class": "fp_arm",
+      "bind": {
+        "source": "fp",
+        "id": "falcon",
+        "attachment": "arm_r"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        6
+      ],
+      "bounds": {
+        "min": [
+          -0.0277719683945179,
+          -0.34914177656173706,
+          -0.04331895336508751
+        ],
+        "max": [
+          0.28498929738998413,
+          0.022547870874404907,
+          0.4472128748893738
+        ]
+      },
+      "version": {
+        "build": 6
+      },
+      "sha256": "2da2db07262d8bf4fd44564ee7bd781b48e88049f253922ed6dc263f5afc3425",
+      "bytes": 704500,
+      "published": "2026-10-11 14:10:05",
+      "generator": {
+        "tool": "cut from the published hero SK_Hero_FlyingSquirrel",
+        "mode": "derived"
+      }
+    },
+    "SM_Arms_FlyingSquirrelL": {
+      "url": "assets/weapons/SM_Arms_FlyingSquirrelL.glb",
+      "kind": "static",
+      "class": "fp_arm",
+      "bind": {
+        "source": "fp",
+        "id": "falcon",
+        "attachment": "arm_l"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        6
+      ],
+      "bounds": {
+        "min": [
+          -0.26658201217651367,
+          -0.3470441699028015,
+          -0.033961791545152664
+        ],
+        "max": [
+          0.08962766826152802,
+          0.010375849902629852,
+          0.43510565161705017
+        ]
+      },
+      "version": {
+        "build": 6
+      },
+      "sha256": "eeca816964ced50f77ef0a149c33ae3426d5b9b2c85e01ae03d152bb7ff860fb",
+      "bytes": 705448,
+      "published": "2026-10-11 14:10:10",
+      "generator": {
+        "tool": "cut from the published hero SK_Hero_FlyingSquirrel",
+        "mode": "derived"
+      }
+    },
+    "SM_Tripo_FrostStairs": {
+      "url": "assets/props/SM_Tripo_FrostStairs.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "frost.v2.stairs"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -1.8124377727508545,
+          0.003242425387725234,
+          -1.8145699501037598
+        ],
+        "max": [
+          1.8154042959213257,
+          2.8867311477661133,
+          1.8084807395935059
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 2,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "ad1ff4690cff9d48f595f5895857b88f1638bf1d1e4ed9046ead2965c7b4166b",
+      "bytes": 246556,
+      "published": "2026-10-11 00:30:51",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostColumn": {
+      "url": "assets/props/SM_Tripo_FrostColumn.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "frost.v2.column"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -0.8842558860778809,
+          -0.002129381289705634,
+          -0.7909793257713318
+        ],
+        "max": [
+          0.8874354958534241,
+          4.908684253692627,
+          0.8511232733726501
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 2,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "5d7eb3022b99133466a874f3547ff56fba0754d65d01da4d74960c1d83d46d44",
+      "bytes": 241468,
+      "published": "2026-10-11 00:30:52",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostBarricade": {
+      "url": "assets/props/SM_Tripo_FrostBarricade.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "frost.v2.barricade"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -2.1834616661071777,
+          0.00027817400405183434,
+          -0.23073427379131317
+        ],
+        "max": [
+          2.2577028274536133,
+          1.1831650733947754,
+          0.1823994219303131
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 2,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "a4437c34344ed1ffc6029d4a0b43e3518a2cec09a79b1491405e5278aa6ed5d7",
+      "bytes": 195272,
+      "published": "2026-10-11 00:34:08",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostCoverWall": {
+      "url": "assets/props/SM_Tripo_FrostCoverWall.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "frost.v2.coverwall"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -2.7427444458007812,
+          0.0003160211199428886,
+          -0.8342562317848206
+        ],
+        "max": [
+          2.822923421859741,
+          2.4724929332733154,
+          0.6534971594810486
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 2,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "758de30d3d6da0e3ddd3a7df1a2c9f0a88cec83b4404bacda6eec3a674fbf26f",
+      "bytes": 232324,
+      "published": "2026-10-11 00:34:09",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SK_Enemy_Jiaoren": {
+      "url": "assets/characters/SK_Enemy_Jiaoren.glb",
+      "kind": "skeletal",
+      "class": "enemy_swarm",
+      "bind": {
+        "source": "enemy",
+        "id": "jiaoren"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        12,
+        26
+      ],
+      "skeleton": {
+        "mode": "native",
+        "convention": "creature",
+        "joints": 28
+      },
+      "bounds": {
+        "min": [
+          -0.32657551765441895,
+          0,
+          -0.28690770268440247
+        ],
+        "max": [
+          0.32657551765441895,
+          1.399999976158142,
+          0.28690770268440247
+        ]
+      },
+      "version": {
+        "native_build": 3
+      },
+      "sha256": "8a9f741fd2114199ae901da67d39643e3f969b1604658772b5e667be461ca937",
+      "bytes": 576136,
+      "published": "2026-10-11 00:34:52",
+      "generator": {
+        "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+        "mode": "tripo_native",
+        "checkpoint": "P2.0"
+      },
+      "source_task": "https://studio.tripo3d.ai/workspace/generate/f021bd14-ce89-4e20-ab23-e88f4f6119fa",
+      "hiUrl": "assets/characters/SK_Enemy_Jiaoren@hi.glb",
+      "hiBytes": 1129268
+    },
+    "SM_EnemyPart_FoxWitchMirror": {
+      "url": "assets/attachments/SM_EnemyPart_FoxWitchMirror.glb",
+      "kind": "static",
+      "class": "enemy_attachment",
+      "bind": {
+        "source": "enemy",
+        "id": "fox_witch",
+        "attachment": "mirror"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        14
+      ],
+      "bounds": {
+        "min": [
+          -0.3110000193119049,
+          -0.3109999895095825,
+          -0.1197936087846756
+        ],
+        "max": [
+          0.3110000193119049,
+          0.3109999895095825,
+          0.028793640434741974
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "d59a6217b071897304dbc34cec170ad1f3e56ab84c73275c88544051a2a1927a",
+      "bytes": 263612,
+      "published": "2026-10-11 00:35:18",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SK_Enemy_SnowXingxing": {
+      "url": "assets/characters/SK_Enemy_SnowXingxing.glb",
+      "kind": "skeletal",
+      "class": "enemy_swarm",
+      "bind": {
+        "source": "enemy",
+        "id": "xingxing"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        12,
+        26
+      ],
+      "skeleton": {
+        "mode": "native",
+        "convention": "creature",
+        "joints": 28
+      },
+      "bounds": {
+        "min": [
+          -0.48615050315856934,
+          -0.0005152919911779463,
+          -0.28737181425094604
+        ],
+        "max": [
+          0.48615050315856934,
+          1.3000000715255737,
+          0.28737181425094604
+        ]
+      },
+      "version": {
+        "native_build": 5
+      },
+      "sha256": "7e3110e374d80bc82ca8ca24f0e5cf04c6dd2ff3cb61eda2c143665631b7edd1",
+      "bytes": 620588,
+      "published": "2026-10-11 00:36:05",
+      "generator": {
+        "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+        "mode": "tripo_native",
+        "checkpoint": "P2.0"
+      },
+      "source_task": "https://studio.tripo3d.ai/workspace/generate/e81c9893-2579-4b03-8cc7-adf5c455b7c7",
+      "hiUrl": "assets/characters/SK_Enemy_SnowXingxing@hi.glb",
+      "hiBytes": 1199060
+    },
+    "SK_Enemy_FoxWitch": {
+      "url": "assets/characters/SK_Enemy_FoxWitch.glb",
+      "kind": "skeletal",
+      "class": "enemy_standard",
+      "bind": {
+        "source": "enemy",
+        "id": "fox_witch"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        14,
+        30
+      ],
+      "skeleton": {
+        "mode": "native",
+        "convention": "creature",
+        "joints": 82
+      },
+      "bounds": {
+        "min": [
+          -0.6757695078849792,
+          0,
+          -0.38822677731513977
+        ],
+        "max": [
+          0.6757695078849792,
+          1.8000000715255737,
+          0.38822677731513977
+        ]
+      },
+      "version": {
+        "native_build": 14
+      },
+      "sha256": "8391c91da58cddcee157028967bbfc34822fd86ea6fd75e485a295c4d44d11a6",
+      "bytes": 678376,
+      "published": "2026-10-11 15:17:46",
+      "generator": {
+        "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+        "mode": "tripo_native",
+        "checkpoint": "P2.0"
+      },
+      "source_task": "https://studio.tripo3d.ai/workspace/generate/df672c2c-2842-4342-849f-22627b37b63b",
+      "hiUrl": "assets/characters/SK_Enemy_FoxWitch@hi.glb",
+      "hiBytes": 1264820
+    },
+    "SK_Enemy_LanternJelly": {
+      "url": "assets/characters/SK_Enemy_LanternJelly.glb",
+      "kind": "skeletal",
+      "class": "enemy_standard",
+      "bind": {
+        "source": "enemy",
+        "id": "lantern_jelly"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        14,
+        30
+      ],
+      "skeleton": {
+        "mode": "native",
+        "convention": "creature",
+        "joints": 51
+      },
+      "bounds": {
+        "min": [
+          -0.47967764735221863,
+          0,
+          -0.37239870429039
+        ],
+        "max": [
+          0.47967764735221863,
+          1.8000000715255737,
+          0.37239870429039
+        ]
+      },
+      "version": {
+        "native_build": 2
+      },
+      "sha256": "4dd60c4c879b8367a68ff813d2acfaa468553782f4b1a48d1e7ca923185f61a0",
+      "bytes": 666860,
+      "published": "2026-10-11 00:38:12",
+      "generator": {
+        "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+        "mode": "tripo_native",
+        "checkpoint": "P2.0"
+      },
+      "source_task": "https://studio.tripo3d.ai/workspace/generate/ba0ae906-61b8-49bc-bd3a-fd8a499fe853",
+      "hiUrl": "assets/characters/SK_Enemy_LanternJelly@hi.glb",
+      "hiBytes": 1280752
+    },
+    "SM_Tripo_FrostCornerTower": {
+      "url": "assets/props/SM_Tripo_FrostCornerTower.glb",
+      "kind": "static",
+      "class": "tripo_architecture",
+      "bind": {
+        "source": "scene",
+        "id": "frost.v2.cornerTower"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          -3.3546152114868164,
+          -0.00414184620603919,
+          -2.785855531692505
+        ],
+        "max": [
+          3.344289779663086,
+          13.146788597106934,
+          2.7952520847320557
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 2,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "51f980525588a095314616d4c721156249698feb9f7259ad53c787927501b547",
+      "bytes": 729620,
+      "published": "2026-10-11 00:42:33",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostKaiming": {
+      "url": "assets/props/SM_Tripo_FrostKaiming.glb",
+      "kind": "static",
+      "class": "tripo_architecture",
+      "bind": {
+        "source": "scene",
+        "id": "frost.v2.kaiming"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          -4.064840793609619,
+          0.00252808490768075,
+          -4.17952299118042
+        ],
+        "max": [
+          4.0618414878845215,
+          15.5425443649292,
+          3.6972527503967285
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 2,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "08dc35956201b4871467881d681ccaf25277e2ab8c9ec5ed7d0e2054c931393b",
+      "bytes": 801524,
+      "published": "2026-10-11 00:55:42",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostPlatformBlock": {
+      "url": "assets/props/SM_Tripo_FrostPlatformBlock.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "frost.v2.platformblock"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -2.6539993286132812,
+          0.0018686533439904451,
+          -2.300783157348633
+        ],
+        "max": [
+          2.2861456871032715,
+          2.930401086807251,
+          2.6676886081695557
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 2,
+        "highpoly": 3,
+        "build": 3
+      },
+      "sha256": "5b952c8fad901cde8162dabd0ffafd1beac3f211d0b619e1c14f7ffdb028efa1",
+      "bytes": 212048,
+      "published": "2026-10-11 00:55:43",
+      "generator": {
+        "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+        "mode": "single",
+        "checkpoint": "hunyuan_3d_v2.1.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostPortalShrine": {
+      "url": "assets/props/SM_Tripo_FrostPortalShrine.glb",
+      "kind": "static",
+      "class": "tripo_architecture",
+      "bind": {
+        "source": "scene",
+        "id": "frost.v2.portalShrine"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          -5.226183891296387,
+          -0.010606539435684681,
+          -1.1877896785736084
+        ],
+        "max": [
+          5.23191499710083,
+          10.920303344726562,
+          1.7489418983459473
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 2,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "e90fa04817510a1b1cf002848d1288c994a3ea61c2ecaa13aadbadb180ecf9c3",
+      "bytes": 1338804,
+      "published": "2026-10-11 00:55:44",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostOfferings": {
+      "url": "assets/props/SM_Tripo_FrostOfferings.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "frost.v2.offerings"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -0.853725016117096,
+          0.0007640612893737853,
+          -0.5615729689598083
+        ],
+        "max": [
+          0.8856868147850037,
+          1.545417070388794,
+          0.7373531460762024
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 2,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "b8fc34f6c6c047dc088260eee9c723052d14e90150005d63833c6bd66a80981b",
+      "bytes": 357220,
+      "published": "2026-10-11 00:59:48",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostJadeHoard": {
+      "url": "assets/props/SM_Tripo_FrostJadeHoard.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "frost.v2.jadeHoard"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -1.3799315690994263,
+          0.0026800332125276327,
+          -0.7219951748847961
+        ],
+        "max": [
+          1.4357730150222778,
+          1.7188153266906738,
+          0.9515528678894043
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 2,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "e9b60a10bb9ba242c7a0345b30ec6061353a3999e6391354317151153be4e968",
+      "bytes": 331508,
+      "published": "2026-10-11 01:01:57",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostColumnRuin": {
+      "url": "assets/props/SM_Tripo_FrostColumnRuin.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "frost.v2.columnRuin"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -1.9902148246765137,
+          0.0007014676230028272,
+          -1.0346752405166626
+        ],
+        "max": [
+          2.0891470909118652,
+          1.5788228511810303,
+          1.0703034400939941
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 2,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "e11706a12d6eedf485d8989a64af7217badd89a2ca0781ac3f68e5f4bfe702e2",
+      "bytes": 231712,
+      "published": "2026-10-11 01:07:18",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostIceLantern": {
+      "url": "assets/props/SM_Tripo_FrostIceLantern.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "frost.v2.iceLantern"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -0.4343516528606415,
+          0.0008010803139768541,
+          -0.4072079360485077
+        ],
+        "max": [
+          0.4644368588924408,
+          2.362391471862793,
+          0.47852036356925964
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 2,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "397a7f1eb5242325575b31c88c5de4f84e3cd350ae67a39d0bdafc5f8cbc7b44",
+      "bytes": 260900,
+      "published": "2026-10-11 01:10:59",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostPrayerTent": {
+      "url": "assets/props/SM_Tripo_FrostPrayerTent.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "frost.v2.prayerTent"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -1.9987715482711792,
+          0.004372571129351854,
+          -1.7327699661254883
+        ],
+        "max": [
+          2.0065553188323975,
+          3.5354976654052734,
+          2.130808115005493
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 2,
+        "highpoly": 2,
+        "build": 2
+      },
+      "sha256": "4fa5f4fdc2c3a9ec7dd15ff71e2f3ec7c019caa0e757fa782411f2893cb21d8e",
+      "bytes": 453716,
+      "published": "2026-10-11 01:14:39",
+      "generator": {
+        "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+        "mode": "single",
+        "checkpoint": "hunyuan_3d_v2.1.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostSeaRampart": {
+      "url": "assets/props/SM_Tripo_FrostSeaRampart.glb",
+      "kind": "static",
+      "class": "tripo_architecture",
+      "bind": {
+        "source": "scene",
+        "id": "frost_c.v2.rampart"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          -2.8756461143493652,
+          2.97851820505457e-05,
+          -1.1871795654296875
+        ],
+        "max": [
+          2.87561297416687,
+          8.79797649383545,
+          1.1904816627502441
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "b65f3fdf432c09dc85884a76db5801f1ee00f8412f9f782c5fa63bb563598680",
+      "bytes": 679512,
+      "published": "2026-10-11 01:16:29",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostSeaRampartPlain": {
+      "url": "assets/props/SM_Tripo_FrostSeaRampartPlain.glb",
+      "kind": "static",
+      "class": "tripo_architecture",
+      "bind": {
+        "source": "scene",
+        "id": "frost_c.v2.rampartPlain"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          -2.997250556945801,
+          0.0015461331931874156,
+          -1.3278323411941528
+        ],
+        "max": [
+          2.9902842044830322,
+          8.670306205749512,
+          1.4369604587554932
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "007c0c5019c8036e384a84959a3761a14bbfa13a799631935f1f31a1cd698f75",
+      "bytes": 391756,
+      "published": "2026-10-11 01:17:12",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostSeaRampartPanel": {
+      "url": "assets/props/SM_Tripo_FrostSeaRampartPanel.glb",
+      "kind": "static",
+      "class": "tripo_architecture_kit",
+      "bind": {
+        "source": "scene",
+        "id": "frost_sea.v2.rampart.panel"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          -2,
+          0.0011038188822567463,
+          -1.1871795654296875
+        ],
+        "max": [
+          2,
+          8.780006408691406,
+          1.1907310485839844
+        ]
+      },
+      "sha256": "78158c677ba33efa06f641f134431692d4636c8fc932c9d7cdd09b34342d9cfc",
+      "bytes": 650240,
+      "published": "2026-10-11 01:17:29",
+      "generator": {
+        "tool": "derived",
+        "mode": "wall_kit",
+        "checkpoint": "SM_Tripo_FrostSeaRampart"
+      },
+      "derivedFrom": {
+        "id": "SM_Tripo_FrostSeaRampart",
+        "sha256": "b65f3fdf432c09dc85884a76db5801f1ee00f8412f9f782c5fa63bb563598680",
+        "cut": [
+          -2.0,
+          2.0
+        ]
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostSeaRampartEndL": {
+      "url": "assets/props/SM_Tripo_FrostSeaRampartEndL.glb",
+      "kind": "static",
+      "class": "tripo_architecture_kit",
+      "bind": {
+        "source": "scene",
+        "id": "frost_sea.v2.rampart.endL"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          -2.8756461143493652,
+          2.97851820505457e-05,
+          -0.8288566470146179
+        ],
+        "max": [
+          -2,
+          8.79797649383545,
+          1.0498183965682983
+        ]
+      },
+      "sha256": "577dcd8fa31d15f2a1a6fe7c89fc083bfbfe2835b97eab0d7f45af8de88718af",
+      "bytes": 569064,
+      "published": "2026-10-11 01:17:29",
+      "generator": {
+        "tool": "derived",
+        "mode": "wall_kit",
+        "checkpoint": "SM_Tripo_FrostSeaRampart"
+      },
+      "derivedFrom": {
+        "id": "SM_Tripo_FrostSeaRampart",
+        "sha256": "b65f3fdf432c09dc85884a76db5801f1ee00f8412f9f782c5fa63bb563598680",
+        "cut": [
+          null,
+          -2.0
+        ]
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostSeaRampartEndR": {
+      "url": "assets/props/SM_Tripo_FrostSeaRampartEndR.glb",
+      "kind": "static",
+      "class": "tripo_architecture_kit",
+      "bind": {
+        "source": "scene",
+        "id": "frost_sea.v2.rampart.endR"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          2,
+          0.0011152990628033876,
+          -1.079701542854309
+        ],
+        "max": [
+          2.8758044242858887,
+          8.784550666809082,
+          1.0794764757156372
+        ]
+      },
+      "sha256": "7f8ba332d1bbac5f2333581cf5e43ddf2519399ab4df5688aec55825da4c84a6",
+      "bytes": 567000,
+      "published": "2026-10-11 01:17:29",
+      "generator": {
+        "tool": "derived",
+        "mode": "wall_kit",
+        "checkpoint": "SM_Tripo_FrostSeaRampart"
+      },
+      "derivedFrom": {
+        "id": "SM_Tripo_FrostSeaRampart",
+        "sha256": "b65f3fdf432c09dc85884a76db5801f1ee00f8412f9f782c5fa63bb563598680",
+        "cut": [
+          2.0,
+          null
+        ]
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostSeaRampartPlainPanel": {
+      "url": "assets/props/SM_Tripo_FrostSeaRampartPlainPanel.glb",
+      "kind": "static",
+      "class": "tripo_architecture_kit",
+      "bind": {
+        "source": "scene",
+        "id": "frost_sea.v2.rampartPlain.panel"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          -2.200000047683716,
+          0.001628260244615376,
+          -1.3278323411941528
+        ],
+        "max": [
+          2.200000047683716,
+          8.670306205749512,
+          1.4368795156478882
+        ]
+      },
+      "sha256": "0c0fb25e5d61387ab36bc6ead439c9cc71c854e13eef90cc490111ba7a2ab132",
+      "bytes": 390356,
+      "published": "2026-10-11 01:17:33",
+      "generator": {
+        "tool": "derived",
+        "mode": "wall_kit",
+        "checkpoint": "SM_Tripo_FrostSeaRampartPlain"
+      },
+      "derivedFrom": {
+        "id": "SM_Tripo_FrostSeaRampartPlain",
+        "sha256": "007c0c5019c8036e384a84959a3761a14bbfa13a799631935f1f31a1cd698f75",
+        "cut": [
+          -2.2,
+          2.2
+        ]
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostSeaGateway": {
+      "url": "assets/props/SM_Tripo_FrostSeaGateway.glb",
+      "kind": "static",
+      "class": "tripo_architecture",
+      "bind": {
+        "source": "scene",
+        "id": "frost_c.v2.gateway"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          -5.386699199676514,
+          0.005605469923466444,
+          -1.3779867887496948
+        ],
+        "max": [
+          5.3923659324646,
+          10.763141632080078,
+          1.5755994319915771
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "9206185ca1f00db88ed94d12698d15c6c635815e70fbe283407d59f371574917",
+      "bytes": 816344,
+      "published": "2026-10-11 01:20:03",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostSeaColumn": {
+      "url": "assets/props/SM_Tripo_FrostSeaColumn.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "frost_c.v2.column"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -1.1520395278930664,
+          -0.00036924792220816016,
+          -1.159512996673584
+        ],
+        "max": [
+          1.0560522079467773,
+          4.957554817199707,
+          1.1693402528762817
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "9d72681100b62c2e04f1ff3c2cfcb38d17e64061a53ce8c82bdd12b93b57542f",
+      "bytes": 330912,
+      "published": "2026-10-11 01:24:35",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostSeaBarricade": {
+      "url": "assets/props/SM_Tripo_FrostSeaBarricade.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "frost_c.v2.barricade"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -1.3375301361083984,
+          0.0005238674348220229,
+          -0.3499566912651062
+        ],
+        "max": [
+          1.3453409671783447,
+          1.185389757156372,
+          0.4578627943992615
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "79ede7c0fd8c6546fd1f8cc715d93b79aa8b0a049b5db4a53ccae364a25abfe8",
+      "bytes": 257168,
+      "published": "2026-10-11 01:24:36",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostSeaCoverWall": {
+      "url": "assets/props/SM_Tripo_FrostSeaCoverWall.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "frost_c.v2.coverWall"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -1.5715755224227905,
+          0.0007542591192759573,
+          -0.3176347315311432
+        ],
+        "max": [
+          1.5442869663238525,
+          2.4724416732788086,
+          0.4151773750782013
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "f5fe5e214de4b9cef7b01d33aae7c3e57d5969ca6f999ffa545f6db9eee7445a",
+      "bytes": 235584,
+      "published": "2026-10-11 01:30:36",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostSeaStairs": {
+      "url": "assets/props/SM_Tripo_FrostSeaStairs.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "frost_c.v2.stairs"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -1.1031171083450317,
+          -0.00010720657155616209,
+          -1.0237202644348145
+        ],
+        "max": [
+          1.1413089036941528,
+          2.876883029937744,
+          1.3399882316589355
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 2,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "39d74b9c8dffcb3352b862ef3ccc0e224075c4220ca941547a69ef5dab06a639",
+      "bytes": 251192,
+      "published": "2026-10-11 01:33:14",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostSeaLighthouse": {
+      "url": "assets/props/SM_Tripo_FrostSeaLighthouse.glb",
+      "kind": "static",
+      "class": "tripo_architecture",
+      "bind": {
+        "source": "scene",
+        "id": "frost_c.v2.lighthouse"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          -3.1261308193206787,
+          -0.0010127621935680509,
+          -2.779675245285034
+        ],
+        "max": [
+          3.057697057723999,
+          12.7758207321167,
+          3.030338764190674
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "3f667e8cd3be9f10b64ab8fefec8e961e352591454d3839bdbdeb66e0702de5f",
+      "bytes": 1271464,
+      "published": "2026-10-11 01:45:58",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostSeaJunk": {
+      "url": "assets/props/SM_Tripo_FrostSeaJunk.glb",
+      "kind": "static",
+      "class": "tripo_architecture",
+      "bind": {
+        "source": "scene",
+        "id": "frost_c.v2.junk"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          -2.814234495162964,
+          0.003900326555594802,
+          -4.534308910369873
+        ],
+        "max": [
+          3.004761219024658,
+          15.335883140563965,
+          5.205459117889404
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "43fb2a6d18168e9d97c9f1d4ad91749552e7d44a210f965d813502e69c62b69e",
+      "bytes": 985760,
+      "published": "2026-10-11 01:46:10",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostSeaFishRack": {
+      "url": "assets/props/SM_Tripo_FrostSeaFishRack.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "frost_c.v2.fishRack"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -0.7144982814788818,
+          -0.003401031717658043,
+          -0.45577389001846313
+        ],
+        "max": [
+          0.6977651715278625,
+          1.5362118482589722,
+          0.27419987320899963
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "6bb3baaa7ba4193b2e67baadda09414eed21bd7bffda0b26d6c73bf44183c069",
+      "bytes": 382444,
+      "published": "2026-10-11 01:49:00",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostSeaPearlHoard": {
+      "url": "assets/props/SM_Tripo_FrostSeaPearlHoard.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "frost_c.v2.pearlHoard"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -0.9170259237289429,
+          0.000523976341355592,
+          -0.5637595057487488
+        ],
+        "max": [
+          0.9142370223999023,
+          1.7207533121109009,
+          0.7222191691398621
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "ad15722df22c1f90916bad22fe65d90a05a428c8d7ef941afa393ffd835e4bb5",
+      "bytes": 340824,
+      "published": "2026-10-11 01:55:50",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostSeaMastRuin": {
+      "url": "assets/props/SM_Tripo_FrostSeaMastRuin.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "frost_c.v2.mastRuin"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -1.010520339012146,
+          0.001419337117113173,
+          -0.5565214157104492
+        ],
+        "max": [
+          1.146491527557373,
+          1.579771637916565,
+          0.6294330954551697
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "d62f13c4d9698702142537113cc49e09ea9d86ef1f27c21f9179c6d52901ec00",
+      "bytes": 318072,
+      "published": "2026-10-11 02:00:39",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostSeaBoneLantern": {
+      "url": "assets/props/SM_Tripo_FrostSeaBoneLantern.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "frost_c.v2.boneLantern"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -0.5021117925643921,
+          0.0006924931658431888,
+          -0.3698245584964752
+        ],
+        "max": [
+          0.5018222332000732,
+          2.3580358028411865,
+          0.3499910533428192
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "b0fe49bf7179a781ae8849187304dfb332e84cfdb776b8bf205c8e505c8b1b37",
+      "bytes": 299812,
+      "published": "2026-10-11 02:02:52",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostSeaPlatformBlock": {
+      "url": "assets/props/SM_Tripo_FrostSeaPlatformBlock.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "frost_c.v2.platformBlock"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -1.9987088441848755,
+          0.029002806171774864,
+          -1.740295171737671
+        ],
+        "max": [
+          1.6108261346817017,
+          2.837294578552246,
+          2.0710337162017822
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 3,
+        "build": 3
+      },
+      "sha256": "2f4b28c65a240a0c58e81d04e5e196efede3a78039977254fd354bc4358da4dc",
+      "bytes": 421676,
+      "published": "2026-10-11 02:08:25",
+      "generator": {
+        "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+        "mode": "single",
+        "checkpoint": "hunyuan_3d_v2.1.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostSeaPortalShrine": {
+      "url": "assets/props/SM_Tripo_FrostSeaPortalShrine.glb",
+      "kind": "static",
+      "class": "tripo_architecture",
+      "bind": {
+        "source": "scene",
+        "id": "frost_c.v2.portalShrine"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          -3.7921249866485596,
+          0.006132755894213915,
+          -1.7651734352111816
+        ],
+        "max": [
+          3.8309290409088135,
+          10.450484275817871,
+          1.947984218597412
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "5a0ffe712180f89bd425550373823808a72fafde5f002dc092f27a2ecb47da6a",
+      "bytes": 1540204,
+      "published": "2026-10-11 02:08:26",
+      "generator": {
+        "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+        "mode": "multiview",
+        "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+    },
+    "SM_Tripo_FrostSeaYurt": {
+      "url": "assets/props/SM_Tripo_FrostSeaYurt.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "frost_c.v2.yurt"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -1.5743579864501953,
+          0.00022974055900704116,
+          -1.5723910331726074
+        ],
+        "max": [
+          1.585933804512024,
+          3.4182240962982178,
+          1.5143646001815796
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 2,
+        "build": 2
+      },
+      "sha256": "43e29912d02d269325efc067ea31cb33bb1250f3168ac2922afef70f134c9d6d",
+      "bytes": 300012,
+      "published": "2026-10-11 02:08:26",
+      "generator": {
+        "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+        "mode": "single",
+        "checkpoint": "hunyuan_3d_v2.1.safetensors"
+      },
+      "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
     }
   },
-  "updated": "2026-10-04 23:41:31"
+  "updated": "2026-10-11 15:24:41"
 }

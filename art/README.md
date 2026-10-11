@@ -188,7 +188,7 @@ src/assets/                引擎侧：AssetLibrary（加载清单）、SkinnedB
 - **白模**：`exportWeaponParts('<武器 id>', '<资产ID>')`。用基础稀有度、无元素导出；稀有度条、元素能量槽按实例变色，记为特效件（不进四视图、不烘进贴图）。
 - **展示姿态**：`presentation = true`，枪管竖直、侧面朝相机出概念和高模（道具版式提示词），构建时在绑骨之前转回枪的局部空间；校验走分轴尺寸检查。
   高模用多视图（`highpoly_mode = "multiview"`），枪身宽度由侧视图约束。
-- **发光**：程序化枪上的发光平板贴到美术枪上像贴纸（放不平、盖住纹饰），所以每把枪都做发光分区（`emid`）。运行时实例材质的自发光 =
+- **发光**：程序化枪上的发光平板贴到美术枪上像贴纸（放不平、盖住纹饰），所以每把枪都做发光分区（`emid`）。有元素轮转提示（`elementHint`）的枪（三才转轮）雕纹自发光跟着下一发的元素色走，所以同样做 `emid`；试过保留程序化灵纹条，贴在美术枪旁像两块浮空色板。运行时实例材质的自发光 =
   元素色（无元素时稀有度色）× 稀有度强度（0.5–2.0），第一人称按原能量槽的节奏脉动；程序化发光平板隐藏。没有发光遮罩的资产退回「把发光平板沿板面法线贴到美术表面」。
 - **运行时**（`src/assets/RigidParts.ts`）：刚体资产不需要蒙皮——按骨骼把网格拆成几块普通网格，挂到程序化节点下；拆分按资产缓存、实例共享几何体。
   没有骨骼贴图，换枪 / 丢枪不用逐实例释放（只有带发光的实例材质由 Viewmodel 换枪时释放）。骨架指纹不符就保留程序化枪模。
@@ -241,11 +241,18 @@ src/assets/                引擎侧：AssetLibrary（加载清单）、SkinnedB
 4. `assetctl.py run <ID> --from highpoly --to review` → 看 `05_review/*_review.png` → `approve <ID> review`。
 5. `assetctl.py publish <ID>`，刷新游戏验证（对比可加 `?classic`）。
 
+### 9.1 人形资产的手指 / 脚趾（英雄、敌人、首领）
+
+- **参考图阶段**：四视图必须清楚画出双手（拇指 + 四指分开，放松张开，不藏进袖口、不画成连指手套）与双脚（赤足 / 爪子要画出脚趾；穿鞋则鞋型完整清晰）。现有概念图看不清时，先用 GPT Image 重出概念（`assetctl.py concept` 或 `tripo_assets.py concept`），再送 Tripo / Hunyuan，不要拿含糊的图去花生成额度。
+- **审核阶段**：构建后运行 `blender -b --python art/tools/review_extremities.py -- <build.glb> <out.png>`，按关节自动取景，渲染双手双脚的正 / 背 / 侧 / 顶特写，逐一数清手指与脚趾。缺指、多指、指头粘连、手腕折叠都按审核不通过处理，回到概念阶段修正，不加豁免。
+
 ## 10. 版本与入库
 
 - `asset.json` 记录全部版本的参数、上游版本、文件校验和、审核人与结论，是资产的溯源档案。
-- 入库：`registry.toml`、`pipeline.toml`、脚本、`asset.json`、白模、概念图、审核图、`.blend`、贴图、导出 GLB、`public/assets`。
-  不入库：`.env`、`02_highpoly/`（大且可复现）、`_tmp/`。二进制较多，团队协作建议启用 Git LFS（`*.blend *.glb *.png *.webp`）。
+- 入库：`registry.toml`、`pipeline.toml`、脚本、`asset.json`、白模（`*.json` / `*.glb`）、度量与校验报告（`*.json`）、Hunyuan 工作流图（`*_graph.json`）、`public/assets` 发布产物。
+  不入库（留在本机，见根目录 `.gitignore`）：`.env`、`01_concept/`（概念原图与配准图）、`02_highpoly/` 网格与输入图、`03_work/*.blend` 与贴图、`04_export/`、`05_review/*.png`、`_tmp/`。
+  仓库因此保证拉取即可构建部署，并能审计每个版本的参数、上游版本和校验和；但在另一台机器上重跑 concept / highpoly 需要作者机器上的原图，相关脚本会报出缺失的文件而不是静默失败。
+  记录里的路径一律写成仓库相对路径，作者主目录下的外部来源（如 Codex image_gen 输出）写成 `~/...`，不写本机盘符与用户名。
 
 ## 11. 许可与合规
 

@@ -1,0 +1,320 @@
+{
+  "id": "SM_EnemyPart_ApsaraPipa",
+  "display": "邪飞天·琵琶",
+  "kind": "static",
+  "class": "enemy_attachment",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 13:45:10",
+          "files": {
+            "BO_SM_EnemyPart_ApsaraPipa_v001.glb": {
+              "path": "00_blockout/BO_SM_EnemyPart_ApsaraPipa_v001.glb",
+              "sha256": "8427890a6f0ae715c57624398de7bbf0e23f8e7621e5c1fff1b66db70bdc4f6c"
+            },
+            "BO_SM_EnemyPart_ApsaraPipa_v001.json": {
+              "path": "00_blockout/BO_SM_EnemyPart_ApsaraPipa_v001.json",
+              "sha256": "5da186d5bf164cdb2a156fc9db2c3ff161edc732d37cd076c48b1bff6385cf00"
+            },
+            "BO_SM_EnemyPart_ApsaraPipa_v001_views.json": {
+              "path": "00_blockout/BO_SM_EnemyPart_ApsaraPipa_v001_views.json",
+              "sha256": "9a31e345527635538563ff86989b3e2b09ac3480b9cb9224b81e82873cf2f5ad"
+            },
+            "BO_SM_EnemyPart_ApsaraPipa_v001_sheet.png": {
+              "path": "00_blockout/BO_SM_EnemyPart_ApsaraPipa_v001_sheet.png",
+              "sha256": "3bfe4939f81a48daa5bd26f1dc8d684cb3f07d5f9a29965c3c5055dfda023cd8"
+            },
+            "BO_SM_EnemyPart_ApsaraPipa_v001_front.png": {
+              "path": "00_blockout/BO_SM_EnemyPart_ApsaraPipa_v001_front.png",
+              "sha256": "12326529335becd07a74d403a74b8342190e87f9b0fdbb1ed4f1611d629ac37a"
+            },
+            "BO_SM_EnemyPart_ApsaraPipa_v001_left.png": {
+              "path": "00_blockout/BO_SM_EnemyPart_ApsaraPipa_v001_left.png",
+              "sha256": "113f83beeb1c6cb453f674729bf54e06cd0fb2fd3d8be1606dfe33a75ecd809b"
+            },
+            "BO_SM_EnemyPart_ApsaraPipa_v001_back.png": {
+              "path": "00_blockout/BO_SM_EnemyPart_ApsaraPipa_v001_back.png",
+              "sha256": "c10c30ea8e00c7bbb7e9e90b34b03ea291e4c652be9acbefefbebb1832410f58"
+            },
+            "BO_SM_EnemyPart_ApsaraPipa_v001_right.png": {
+              "path": "00_blockout/BO_SM_EnemyPart_ApsaraPipa_v001_right.png",
+              "sha256": "1de74ee38e132ac9adaf339585a993ac0f67046b877382c8d86465e5fed21797"
+            }
+          },
+          "source": {
+            "kind": "enemy",
+            "id": "apsara",
+            "attachment": "pipa"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.14691480994224548,
+              -0.4900000002980232,
+              -0.0817042201757431
+            ],
+            "max": [
+              0.14691480994224548,
+              0.44500000178813937,
+              0.05499999977648258
+            ]
+          },
+          "blender_seconds": 6.8,
+          "amendments": [
+            {
+              "time": "2026-10-07 13:45:25",
+              "reason": "几何不变，更新白模说明"
+            }
+          ],
+          "modified": "2026-10-07 13:45:25"
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 13:45:30",
+          "files": {
+            "CN_SM_EnemyPart_ApsaraPipa_v001_front.png": {
+              "path": "01_concept/CN_SM_EnemyPart_ApsaraPipa_v001_front.png",
+              "sha256": "f546a068871c5c08996283aa409360b4dfdf93700d91dc56ec145a93d15900bd"
+            },
+            "CN_SM_EnemyPart_ApsaraPipa_v001_left.png": {
+              "path": "01_concept/CN_SM_EnemyPart_ApsaraPipa_v001_left.png",
+              "sha256": "3596529e05cab05db50653246e5231bb23823024369a12a6c95eeb2b5a293adf"
+            },
+            "CN_SM_EnemyPart_ApsaraPipa_v001_back.png": {
+              "path": "01_concept/CN_SM_EnemyPart_ApsaraPipa_v001_back.png",
+              "sha256": "31fdaf29ba994a5dbd62b410af004d6038e2d9b2f3de5623d8cd6a9f4751ebd7"
+            },
+            "CN_SM_EnemyPart_ApsaraPipa_v001_right.png": {
+              "path": "01_concept/CN_SM_EnemyPart_ApsaraPipa_v001_right.png",
+              "sha256": "5afc07e4d1a4fa29f0ce126a5f783f8783b302455b88718b1447eb692acd9e4d"
+            },
+            "CN_SM_EnemyPart_ApsaraPipa_v001_sheet.png": {
+              "path": "01_concept/CN_SM_EnemyPart_ApsaraPipa_v001_sheet.png",
+              "sha256": "f679f4844bfdef4cc7fe844aca1db079345719f158f552055afb0001600517c6"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "design turnaround",
+          "design_key": "desert_apsara_pipa",
+          "design_turnaround": "art/source/characters/_design/desert/desert_apsara_pipa/TV_desert_apsara_pipa_v001.png",
+          "source_sha256": "875f5ae26597b62417a8a36130a405a9f8c803e7c3db522ef33cbbcd4fc3f03f",
+          "reference_mode": "design_turnaround",
+          "highpoly_mode": "tripo",
+          "registration": {
+            "front": {
+              "scale": 0.9563658404056362,
+              "offset": [
+                111,
+                55
+              ],
+              "size": [
+                289,
+                914
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.9573672706050139,
+              "offset": [
+                175,
+                55
+              ],
+              "size": [
+                161,
+                914
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.9553665030593399,
+              "offset": [
+                111,
+                55
+              ],
+              "size": [
+                289,
+                914
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.9593764359158323,
+              "offset": [
+                176,
+                55
+              ],
+              "size": [
+                159,
+                914
+              ],
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "用户（对话中确认琵琶四视图，2026-10-07）",
+            "note": "",
+            "time": "2026-10-07 13:45:45"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 13:45:50",
+          "files": {
+            "HP_SM_EnemyPart_ApsaraPipa_v001_source.fbx": {
+              "path": "02_highpoly/HP_SM_EnemyPart_ApsaraPipa_v001_source.fbx",
+              "sha256": "1396089b4b0802b3e2dec6beeecc0b01f84d9e1ba1e5c902b8c6acaac7006eb2"
+            },
+            "HP_SM_EnemyPart_ApsaraPipa_v001.glb": {
+              "path": "02_highpoly/HP_SM_EnemyPart_ApsaraPipa_v001.glb",
+              "sha256": "105a47e63bfeae97220cfb95e2919c33aa1265263000ac6f652759193aabb321"
+            },
+            "HP_SM_EnemyPart_ApsaraPipa_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_EnemyPart_ApsaraPipa_v001_graph.json",
+              "sha256": "e7f4102b92d6eb5b0595e26ddbf0125bf7e5b31313e592df77751b91b662964c"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/008e1d51-6b6b-4da3-9adc-4ec98b0e8154",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 3118,
+          "source_sha256": "1396089b4b0802b3e2dec6beeecc0b01f84d9e1ba1e5c902b8c6acaac7006eb2"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 13:46:02",
+          "files": {
+            "SM_EnemyPart_ApsaraPipa_v001.blend": {
+              "path": "03_work/SM_EnemyPart_ApsaraPipa_v001.blend",
+              "sha256": "b4d8c5fa95bac8b00c26c0971328d1b83e98a39e58d3368c80a0a9e3fcbb2830"
+            },
+            "SM_EnemyPart_ApsaraPipa_v001.glb": {
+              "path": "04_export/SM_EnemyPart_ApsaraPipa_v001.glb",
+              "sha256": "bc5f3adf19c09ba937f440b73ea809ac206fb5219d45a71d227e03af8e3affc4"
+            },
+            "SM_EnemyPart_ApsaraPipa_v001_metrics.json": {
+              "path": "03_work/SM_EnemyPart_ApsaraPipa_v001_metrics.json",
+              "sha256": "3d9e8f2efd0e2566cb592cffd75a24cf36eb0dad4c18460ec5c9336a8e8123ee"
+            },
+            "T_EnemyPart_ApsaraPipa_BC.png": {
+              "path": "03_work/textures_v001/T_EnemyPart_ApsaraPipa_BC.png",
+              "sha256": "b3ab182a9009667fc30c15e949a09df297328aab357561b49ed960621de11937"
+            },
+            "T_EnemyPart_ApsaraPipa_N.png": {
+              "path": "03_work/textures_v001/T_EnemyPart_ApsaraPipa_N.png",
+              "sha256": "598c65bac2afa3ebfe5d68fe32925988c80b50fa34572ba2506d09edb646c77c"
+            },
+            "T_EnemyPart_ApsaraPipa_ORM.png": {
+              "path": "03_work/textures_v001/T_EnemyPart_ApsaraPipa_ORM.png",
+              "sha256": "02e296be67400c56ce5a1ffe424f98564b4a59fee8ddf6d9456ca714023c4492"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.816,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2984,
+              "verts": 1646
+            },
+            {
+              "tris": 988,
+              "verts": 618
+            }
+          ],
+          "export_kb": 360.4,
+          "seconds": 9.9,
+          "bake_device": "none (provider textures)"
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 13:46:08",
+          "files": {
+            "SM_EnemyPart_ApsaraPipa_v001_validation.json": {
+              "path": "05_review/SM_EnemyPart_ApsaraPipa_v001_validation.json",
+              "sha256": "0aca7d61039a242f36ba78153c587133440ec251311d97efaccd58092008c1be"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 13:46:18",
+          "files": {
+            "SM_EnemyPart_ApsaraPipa_v001_review.png": {
+              "path": "05_review/SM_EnemyPart_ApsaraPipa_v001_review.png",
+              "sha256": "bd832a63981e749ebaceec17c8520ce8362d3326af5eb3e3bdd5ee66f0941f7c"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude（技术审核，待用户游戏内确认）",
+            "note": "",
+            "time": "2026-10-07 13:46:52"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 13:46:53",
+          "files": {
+            "SM_EnemyPart_ApsaraPipa.glb": {
+              "path": "@root/public/assets/attachments/SM_EnemyPart_ApsaraPipa.glb",
+              "sha256": "bc5f3adf19c09ba937f440b73ea809ac206fb5219d45a71d227e03af8e3affc4"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/attachments/SM_EnemyPart_ApsaraPipa.glb"
+        }
+      ]
+    }
+  }
+}

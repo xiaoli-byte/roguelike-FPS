@@ -1,0 +1,127 @@
+{
+  "source": {
+    "tris": 7615,
+    "verts": 5535
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 13.00635,
+    "iou": 0.935,
+    "iou_per_view": {
+      "front": 0.965,
+      "left": 0.899,
+      "back": 0.965,
+      "right": 0.894
+    },
+    "size_m": [
+      7.386,
+      5.252,
+      13.0
+    ],
+    "reference_m": [
+      7.2,
+      7.2,
+      13.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.587,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "medieval_tower_3d_model_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      2048,
+      2048
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertCornerTower_LOD0",
+      "tris": 7615,
+      "verts": 5535,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.494,
+      "bbox_min": [
+        -3.693,
+        -2.626,
+        0.0
+      ],
+      "bbox_max": [
+        3.693,
+        2.626,
+        13.0
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertCornerTower_LOD1",
+      "tris": 2486,
+      "verts": 2540,
+      "uv_min": [
+        0.0,
+        3.6745143006555736e-05
+      ],
+      "uv_max": [
+        1.0,
+        0.9999942779541016
+      ],
+      "uv_utilization": 0.506,
+      "bbox_min": [
+        -3.6902,
+        -2.6241,
+        0.0004
+      ],
+      "bbox_max": [
+        3.6869,
+        2.6301,
+        13.0005
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertCornerTower_LOD2",
+      "tris": 796,
+      "verts": 1240,
+      "uv_min": [
+        1.59326009452343e-05,
+        0.0005800398648716509
+      ],
+      "uv_max": [
+        1.0,
+        0.999755859375
+      ],
+      "uv_utilization": 0.476,
+      "bbox_min": [
+        -3.6902,
+        -2.5936,
+        -0.0037
+      ],
+      "bbox_max": [
+        3.6666,
+        2.6136,
+        13.0317
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertCornerTower/04_export/SM_Tripo_DesertCornerTower_v002.glb",
+    "bytes": 716700
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 15.0,
+  "_seconds": 17.9
+}

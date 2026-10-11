@@ -1,0 +1,438 @@
+{
+  "id": "SM_Tripo_DesertGateway",
+  "display": "沙寺门楼（V2）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:14:22",
+          "files": {
+            "BO_SM_Tripo_DesertGateway_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertGateway_v001.json",
+              "sha256": "3a61080342d1de3ab7a070643be8cef5fc0e7da55d27dcf72be083fe3282a042"
+            },
+            "BO_SM_Tripo_DesertGateway_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertGateway_v001_views.json",
+              "sha256": "27b1855c6f81c787ed7912239890106dfcc8523ce33bbc95fca60f86ec8622c1"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.v2.gateway"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -8.0,
+              0,
+              -2.0
+            ],
+            "max": [
+              8.0,
+              11.0,
+              2.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:14:50",
+          "files": {
+            "CN_SM_Tripo_DesertGateway_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertGateway_v001_source.png",
+              "sha256": "01213478cf5b515462bbcaaea956bc358088dcc7a75b618082d29e3f7409f870"
+            },
+            "CN_SM_Tripo_DesertGateway_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertGateway_v001_front.png",
+              "sha256": "c834b8f16882f3dc91f8c42c074cef196fdfa43addfed860b883011608a040e3"
+            },
+            "CN_SM_Tripo_DesertGateway_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertGateway_v001_left.png",
+              "sha256": "e63ca4ad36496245630b2113413aeb58c5f71a40620ed68d34494d9bd4f09847"
+            },
+            "CN_SM_Tripo_DesertGateway_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertGateway_v001_back.png",
+              "sha256": "52110daed1795af221ee88c73702b75abfdee8e4a8ecb167d3bc96d5635b2d0d"
+            },
+            "CN_SM_Tripo_DesertGateway_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertGateway_v001_right.png",
+              "sha256": "219e7765e949f03402574420e1eff1aa04dfdec7acb5812bab78a30ce05de4be"
+            },
+            "CN_SM_Tripo_DesertGateway_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertGateway_v001_sheet.png",
+              "sha256": "baead2ed74e53948c5cd78ae4d4733e112624026fb264c8b66690100211c56cb"
+            },
+            "CN_SM_Tripo_DesertGateway_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertGateway_v001_prompt.txt",
+              "sha256": "6fd97acef7fd04bf702d0e68ed17a2a3c3e9d671a0f9ce88c05748e290d4e5ff"
+            },
+            "CN_SM_Tripo_DesertGateway_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertGateway_v001_registration.json",
+              "sha256": "44bd8d61e7c69e3f712dfccf1a783cf9a7dfa2711c4ab95d57319381016b2e6d"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 352,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 352
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1532
+            },
+            "request_id": "req_790687ca01f944ee9f6433348660f7b7",
+            "seconds": 25.6
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian desert temple fantasy. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (16m wide x 11m tall x 4m deep): A monumental open desert temple gateway 16m wide, 11m tall, 4m deep: two massive sandstone towers joined by a thick stepped lintel with a carved sun disc emblem. The open passage between the towers is 12m wide and 8m high and goes fully through the depth, empty down to the ground. Warm ochre sandstone, terracotta plaster panels, muted teal and faded gold trim, tattered vermilion cloth banners hanging flat against the towers. No doors, no gate leaves.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right: FRONT view, LEFT side view, BACK view, RIGHT side view. Same scale and same\nground line in all four, each centred in its quarter with generous empty margin, never touching or overlapping.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "01213478cf5b515462bbcaaea956bc358088dcc7a75b618082d29e3f7409f870",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.5069124423963134,
+              "offset": [
+                67,
+                355
+              ],
+              "size": [
+                378,
+                314
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.4972875226039783,
+              "offset": [
+                207,
+                355
+              ],
+              "size": [
+                98,
+                314
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5069124423963134,
+              "offset": [
+                75,
+                355
+              ],
+              "size": [
+                361,
+                314
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.4972875226039783,
+              "offset": [
+                206,
+                355
+              ],
+              "size": [
+                99,
+                314
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI初审)",
+            "note": "四视图同一物体、地线一致，砂岩/赤陶/青绿配色与 V2 沙寺统一",
+            "time": "2026-10-06 10:16:54"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:33:33",
+          "files": {
+            "HP_SM_Tripo_DesertGateway_v001_source.fbx": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertGateway_v001_source.fbx",
+              "sha256": "19e9b50b615b0753649d9f33ae00f327c29d1202df7d28da3cf281d827191d49"
+            },
+            "HP_SM_Tripo_DesertGateway_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertGateway_v001.glb",
+              "sha256": "83b9ffeff136877cad2f4e8eda524b1d61246ca32f96d77cd96817824b649943"
+            },
+            "HP_SM_Tripo_DesertGateway_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertGateway_v001_graph.json",
+              "sha256": "47b5e9e4e525bd288f51c98e5f219bedb5cd58cdf9ef5cf58158631b47f829a0"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/stone-arch-gate-with-decorative-banners-sandstone-texture-sun-emblem-8a1656da-f4ec-4944-bbda-c1e848137141",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 6668,
+          "source_sha256": "19e9b50b615b0753649d9f33ae00f327c29d1202df7d28da3cf281d827191d49"
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:34:01",
+          "files": {
+            "SM_Tripo_DesertGateway_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertGateway_v001.blend",
+              "sha256": "1da642590414d01d8414cf6d7dcfb28f4fe3526bd663b1da513b901bbb019cfb"
+            },
+            "SM_Tripo_DesertGateway_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertGateway_v001.glb",
+              "sha256": "3cb7d9d51376b36751b6053cefdd4ccab0ad75e75bedcea64ba9640aa229f394"
+            },
+            "SM_Tripo_DesertGateway_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertGateway_v001_metrics.json",
+              "sha256": "e4dd4f08ce741b001438673663605e96fe8cba1997e0200d9640a2578700eb7c"
+            },
+            "T_Tripo_DesertGateway_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertGateway_BC.png",
+              "sha256": "08097c629bb593958b8810753f3c4d5a6a25d20081bde39cbd5ebef2fada2a34"
+            },
+            "T_Tripo_DesertGateway_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertGateway_N.png",
+              "sha256": "d10c9aa057adc4a5ca9e2d693246bbf1680bb47c404b88bf5e016f0ea61a2a8f"
+            },
+            "T_Tripo_DesertGateway_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertGateway_ORM.png",
+              "sha256": "4d174befe067d64faf8278cf5a10685ebfba9584f5a1e3d5b807868bf31b2e88"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.769,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 6668,
+              "verts": 10004
+            },
+            {
+              "tris": 2487,
+              "verts": 6196
+            },
+            {
+              "tris": 796,
+              "verts": 4598
+            }
+          ],
+          "export_kb": 990.6,
+          "seconds": 26.9,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:19:20",
+          "files": {
+            "SM_Tripo_DesertGateway_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertGateway_v002.blend",
+              "sha256": "d6ecac8750dff66f2e40a4f141c99990ed28a217f01f14ae4396fef54e457285"
+            },
+            "SM_Tripo_DesertGateway_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertGateway_v002.glb",
+              "sha256": "237f6b83e0734d4bea18ceed3a8e6152c5958af81e5e00515fb9087a25011f52"
+            },
+            "SM_Tripo_DesertGateway_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertGateway_v002_metrics.json",
+              "sha256": "b9f23d50ab97a633f661e187bfbb37fa1fd5eee2dc31b9eae8525c2a24bcd928"
+            },
+            "T_Tripo_DesertGateway_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertGateway_BC.png",
+              "sha256": "08097c629bb593958b8810753f3c4d5a6a25d20081bde39cbd5ebef2fada2a34"
+            },
+            "T_Tripo_DesertGateway_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertGateway_N.png",
+              "sha256": "d10c9aa057adc4a5ca9e2d693246bbf1680bb47c404b88bf5e016f0ea61a2a8f"
+            },
+            "T_Tripo_DesertGateway_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertGateway_ORM.png",
+              "sha256": "81d5af95ac40f445d2ef0e2dbe98f8f8a27fe4830a4f04ddd3822060036ba1ab"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.769,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 6668,
+              "verts": 4327
+            },
+            {
+              "tris": 2486,
+              "verts": 1959
+            },
+            {
+              "tris": 795,
+              "verts": 888
+            }
+          ],
+          "export_kb": 994.8,
+          "seconds": 24.2,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:34:02",
+          "files": {
+            "SM_Tripo_DesertGateway_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertGateway_v001_validation_v001.json",
+              "sha256": "fd810efbce29b1f7b5c3023f2a3661fa01191e861259cb0e4e91b35fac3ae43d"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:19:21",
+          "files": {
+            "SM_Tripo_DesertGateway_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertGateway_v002_validation_v002.json",
+              "sha256": "d9b058e4c251dadd5041a33f2b8c22bb0360edf0a996dd6e4869a1e660fc3113"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:34:13",
+          "files": {
+            "SM_Tripo_DesertGateway_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertGateway_v001_review_v001.png",
+              "sha256": "2b0b6b12f3e5506d7ac6a9daeedbbb15d8ecf8272238fa1243516409ad3556ca"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI初审)",
+            "note": "造型与概念一致；Tripo 成品比参考窄（13.5 m 宽、门洞 5.4 m），运行时按门洞等比放大框住 12 m 通道",
+            "time": "2026-10-06 10:34:59"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:19:28",
+          "files": {
+            "SM_Tripo_DesertGateway_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_DesertGateway_v002_review_v002.png",
+              "sha256": "99bef85131bc2b616ef0f77b6f99305265bfd77597963da378487e42e5bd4dc8"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI审核)",
+            "note": "LOD 裂缝修复重建：Tripo 源网格先焊接（1e-4）再减面并保留 UV 边界（bl_build_tripo.py）。五向审核图与上一版一致，贴图完整；焊接后 LOD1/LOD2 开放边长度回到 LOD0 水平。",
+            "time": "2026-10-06 21:24:04"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:34:59",
+          "files": {
+            "SM_Tripo_DesertGateway.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertGateway.glb",
+              "sha256": "3cb7d9d51376b36751b6053cefdd4ccab0ad75e75bedcea64ba9640aa229f394"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertGateway.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:24:05",
+          "files": {
+            "SM_Tripo_DesertGateway.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertGateway.glb",
+              "sha256": "237f6b83e0734d4bea18ceed3a8e6152c5958af81e5e00515fb9087a25011f52"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_DesertGateway.glb"
+        }
+      ]
+    }
+  }
+}

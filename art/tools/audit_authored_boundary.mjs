@@ -114,4 +114,18 @@ const report = { created: new Date().toISOString(), method: {
 }, maps };
 const output = path.resolve(repository, options.out); fs.mkdirSync(path.dirname(output), { recursive: true });
 fs.writeFileSync(output, JSON.stringify(report, null, 2) + '\n');
+// The full per-sample report is regenerable and gitignored (10 MB per 15-map run); the summary next
+// to it keeps the method, source SHAs, per-map totals and every risk group as the committed record.
+fs.writeFileSync(summaryPathFor(output), JSON.stringify(summarizeBoundaryReport(report), null, 1) + '\n');
+
 console.log(JSON.stringify({ output, heightM: height, maps: maps.map(m => ({ planId: m.planId, placements: m.placements, samples: m.samples, counts: m.counts, lengthWeightedNoHitWithin8: m.lengthWeighted.noHitWithin8Fraction })) }, null, 2));
+
+// ── summary record ──
+function summaryPathFor(file) { return file.replace(/\.json$/, '.summary.json'); }
+function summarizeBoundaryReport(full) {
+  const pick = (o, keys) => Object.fromEntries(keys.filter(k => k in o).map(k => [k, o[k]]));
+  return { created: full.created, method: full.method, maps: full.maps.map(m => ({
+    ...pick(m, ['planId', 'title', 'placements', 'boundaries', 'samples', 'counts', 'noHitWithin8Fraction', 'triangleCandidateCount', 'lengthWeighted']),
+    risks: m.risks.map(g => pick(g, ['boundaryId', 'length', 'samples', 'noHitWithin8', 'setback', 'near', 'worstDistance', 'nearestRoom'])),
+  })) };
+}

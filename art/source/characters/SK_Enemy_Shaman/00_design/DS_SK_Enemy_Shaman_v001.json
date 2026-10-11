@@ -1,0 +1,36 @@
+{
+  "design": {
+    "id": "SK_Enemy_Shaman",
+    "chapter": "desert",
+    "role": "shaman",
+    "name": "沙祀",
+    "body": "humanoid",
+    "height_m": 1.95,
+    "brief": "The bandit faction's fire-cult priest: a tall gaunt figure with a large bronze sun-disc halo mounted behind the head with flame-shaped rays, a carved red-lacquered three-eyed Nuo ritual mask with glowing ember-orange eyes and a gold brow band, long layered robes of sand white and deep crimson with gold spiral embroidery, the faction's crimson sash, strings of bone beads and hanging yellow paper talismans with red script, wide sleeves pushed up to the elbows, bare dark-tan forearms with glowing ember-orange tattoo lines. Long thin hands with a clearly separate thumb and four long separate fingers. Strapped leather sandals with five visible toes on each foot.",
+    "weapon": "a tall bronze staff topped with a caged ember-orange flame and dangling bronze rings"
+  },
+  "generation": {
+    "provider": "openai",
+    "endpoint": "images/edits",
+    "model": "gpt-image-2.5-sunburst",
+    "size": "2048x1024",
+    "quality": "high",
+    "background": "opaque",
+    "usage": {
+      "input_tokens": 1948,
+      "input_tokens_details": {
+        "image_tokens": 1458,
+        "text_tokens": 490
+      },
+      "output_tokens": 1180,
+      "output_tokens_details": {
+        "image_tokens": 1180,
+        "text_tokens": 0
+      },
+      "total_tokens": 3128
+    },
+    "request_id": "req_bd2bf9c7ebeb4ead854b5196acf4df11",
+    "seconds": 32.8
+  },
+  "style_reference": "CN_SK_Enemy_Grunt_v001_sheet.png"
+}

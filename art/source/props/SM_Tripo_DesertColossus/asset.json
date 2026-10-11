@@ -1,0 +1,438 @@
+{
+  "id": "SM_Tripo_DesertColossus",
+  "display": "沙王巨像（V2 地标）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:16:32",
+          "files": {
+            "BO_SM_Tripo_DesertColossus_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertColossus_v001.json",
+              "sha256": "b4f5c5c5a7733090a05bbab16ee0898e1e3f0088fef92cd2fab6e4631f58ab89"
+            },
+            "BO_SM_Tripo_DesertColossus_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertColossus_v001_views.json",
+              "sha256": "d74c97729f3dfef0cc9814a298a39bafcd418ee9a1202a05ca824d0dfcba6ff0"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.v2.colossus"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -6.0,
+              0,
+              -5.0
+            ],
+            "max": [
+              6.0,
+              16.0,
+              5.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:17:02",
+          "files": {
+            "CN_SM_Tripo_DesertColossus_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertColossus_v001_source.png",
+              "sha256": "e5c1f94183c838245453a16eee043821dc4e257b058906ddae49bf3020e8e754"
+            },
+            "CN_SM_Tripo_DesertColossus_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertColossus_v001_front.png",
+              "sha256": "27753074ab6f6ba7080089d1a10e12469a330ec1fbb47f748c0f99fa99c389f0"
+            },
+            "CN_SM_Tripo_DesertColossus_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertColossus_v001_left.png",
+              "sha256": "0aabf50f35196e49b7aed70918d784aa5e3108be9af99aa97d883b1a12169fb3"
+            },
+            "CN_SM_Tripo_DesertColossus_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertColossus_v001_back.png",
+              "sha256": "2c02ea6b3ed97867205202ecc1b2d77b9a085e64d0b0568acacd5f40d571591a"
+            },
+            "CN_SM_Tripo_DesertColossus_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertColossus_v001_right.png",
+              "sha256": "ae3024b70be12dc5e819cb96a3ca232dd6778d74e818550031077f024f44fd38"
+            },
+            "CN_SM_Tripo_DesertColossus_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertColossus_v001_sheet.png",
+              "sha256": "06f0aa2c659117bf866bdaa340b94ee41e18c5c908dcf721eb06c44b6a1c064b"
+            },
+            "CN_SM_Tripo_DesertColossus_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertColossus_v001_prompt.txt",
+              "sha256": "a511131c9841dfccef7cd3ddb0dadc93046ad69fc5205a6bfbfeff310b1bebae"
+            },
+            "CN_SM_Tripo_DesertColossus_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertColossus_v001_registration.json",
+              "sha256": "9dcf7258397525aaedf1c573329b5740d1c31aa3e8e7aec3a743530f8c5d5b13"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 315,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 315
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1495
+            },
+            "request_id": "req_45c112b31f2542f7b4190ad14a751bca",
+            "seconds": 28.2
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian desert temple fantasy. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (12m wide x 16m tall x 10m deep): A colossal seated stone statue of an ancient desert sand king 16m tall: crowned head with a broad jackal-eared headdress, hands resting on knees, seated on a massive stepped throne block. Weathered sandstone with faded gold and teal painted regalia, chunky stylized forms readable from 150m away. One solid statue.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right: FRONT view, LEFT side view, BACK view, RIGHT side view. Same scale and same\nground line in all four, each centred in its quarter with generous empty margin, never touching or overlapping.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "e5c1f94183c838245453a16eee043821dc4e257b058906ddae49bf3020e8e754",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.6997977147230878,
+              "offset": [
+                84,
+                207
+              ],
+              "size": [
+                343,
+                610
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7006020799124247,
+              "offset": [
+                102,
+                207
+              ],
+              "size": [
+                308,
+                610
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6997977147230878,
+              "offset": [
+                87,
+                207
+              ],
+              "size": [
+                338,
+                610
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7006020799124247,
+              "offset": [
+                101,
+                207
+              ],
+              "size": [
+                310,
+                610
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI初审)",
+            "note": "坐像四视图一致，远距离剪影清晰",
+            "time": "2026-10-06 10:17:34"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:56:03",
+          "files": {
+            "HP_SM_Tripo_DesertColossus_v001_source.fbx": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertColossus_v001_source.fbx",
+              "sha256": "0263052bab5958a94b370105f35437d10c4e3df599878cf970010b8b21725e4d"
+            },
+            "HP_SM_Tripo_DesertColossus_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertColossus_v001.glb",
+              "sha256": "f5813ce5b58b7230f42ec500e26ba3a9f675d6c57d5c0a9751d0f0794fbcbbf7"
+            },
+            "HP_SM_Tripo_DesertColossus_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertColossus_v001_graph.json",
+              "sha256": "29d62e13c896510e504761096b86ec31380846ba6860d43364d2294b33bb984d"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/stone-statue-of-an-ancient-egyptian-deity-seated-on-throne-with-turquo-d1e8a7b1-36c1-4c3e-9931-92edddd9c72d",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 8296,
+          "source_sha256": "0263052bab5958a94b370105f35437d10c4e3df599878cf970010b8b21725e4d"
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:56:24",
+          "files": {
+            "SM_Tripo_DesertColossus_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertColossus_v001.blend",
+              "sha256": "6ad7a80a10ea6d1ab6e31f2c432eafc6a1be83dba3fccb1dcc866affaec4bbb1"
+            },
+            "SM_Tripo_DesertColossus_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertColossus_v001.glb",
+              "sha256": "dac8cb94eda4333aa6e7f183a45c191477eb6d5a8ef5ef409b4b72338db391d0"
+            },
+            "SM_Tripo_DesertColossus_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertColossus_v001_metrics.json",
+              "sha256": "89ea9e874d9a194c84af24295c3132985ac92cab4307d4973417c4c692859a95"
+            },
+            "T_Tripo_DesertColossus_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertColossus_BC.png",
+              "sha256": "3d23c59afd07e55c12abeca7b3527f124c5821a91cfb957686893c70ebeae279"
+            },
+            "T_Tripo_DesertColossus_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertColossus_N.png",
+              "sha256": "b29c7a69323ceabc643bfc72ce90ac91fc07e86d444be4f72a9980b254c2a567"
+            },
+            "T_Tripo_DesertColossus_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertColossus_ORM.png",
+              "sha256": "9a19e43bb3a38559f1e17ab145e759753497c8aba1737b2ac10364d3012d8aa0"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.881,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7959,
+              "verts": 11324
+            },
+            {
+              "tris": 2487,
+              "verts": 6211
+            },
+            {
+              "tris": 796,
+              "verts": 4562
+            }
+          ],
+          "export_kb": 1104.8,
+          "seconds": 19.7,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:21:31",
+          "files": {
+            "SM_Tripo_DesertColossus_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertColossus_v002.blend",
+              "sha256": "679d957212b8a962f243f9a652f6b6508a1f9052ce4436f9c159ac09172e2d31"
+            },
+            "SM_Tripo_DesertColossus_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertColossus_v002.glb",
+              "sha256": "2bb21e16d1a3efc12129f3861bad136b5d3ee2c63b5016ffa80c244cee1dc9d8"
+            },
+            "SM_Tripo_DesertColossus_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertColossus_v002_metrics.json",
+              "sha256": "47a5594c481b35b96efa13331f2a3ba918b21d881e7a5c7d22c42199af1a694a"
+            },
+            "T_Tripo_DesertColossus_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertColossus_BC.png",
+              "sha256": "3d23c59afd07e55c12abeca7b3527f124c5821a91cfb957686893c70ebeae279"
+            },
+            "T_Tripo_DesertColossus_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertColossus_N.png",
+              "sha256": "b29c7a69323ceabc643bfc72ce90ac91fc07e86d444be4f72a9980b254c2a567"
+            },
+            "T_Tripo_DesertColossus_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertColossus_ORM.png",
+              "sha256": "b42895150a3a8200a6de75ad2b62151a45a922af467bb99322691cc89eff8caa"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.881,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7960,
+              "verts": 4182
+            },
+            {
+              "tris": 2487,
+              "verts": 1393
+            },
+            {
+              "tris": 795,
+              "verts": 491
+            }
+          ],
+          "export_kb": 1105.6,
+          "seconds": 20.9,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:56:25",
+          "files": {
+            "SM_Tripo_DesertColossus_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertColossus_v001_validation_v001.json",
+              "sha256": "91f65e24d7bb20ce89170a31b633df5541c98ccd5f35e6b42824ae79b636e3c7"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:21:32",
+          "files": {
+            "SM_Tripo_DesertColossus_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertColossus_v002_validation_v002.json",
+              "sha256": "8b632d4fa9f49f7e2056502799c643fb81d700ebc76c71e02aa6ead3266ec16c"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:56:33",
+          "files": {
+            "SM_Tripo_DesertColossus_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertColossus_v001_review_v001.png",
+              "sha256": "1abbfdf512dedaccf36a7fe301c9eda22f3135b5e5864d205a91cf69a1b405b5"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI初审)",
+            "note": "IoU 0.88，四视图与概念一致，远景剪影清晰",
+            "time": "2026-10-06 10:57:18"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:21:39",
+          "files": {
+            "SM_Tripo_DesertColossus_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_DesertColossus_v002_review_v002.png",
+              "sha256": "8d3f109cc8396e5db0905ce194225b042cf406efbd2a66ec371fc37da824cfac"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI审核)",
+            "note": "LOD 裂缝修复重建：Tripo 源网格先焊接（1e-4）再减面并保留 UV 边界（bl_build_tripo.py）。五向审核图与上一版一致，贴图完整；焊接后 LOD1/LOD2 开放边长度回到 LOD0 水平。",
+            "time": "2026-10-06 21:24:07"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:57:18",
+          "files": {
+            "SM_Tripo_DesertColossus.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertColossus.glb",
+              "sha256": "dac8cb94eda4333aa6e7f183a45c191477eb6d5a8ef5ef409b4b72338db391d0"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertColossus.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:24:08",
+          "files": {
+            "SM_Tripo_DesertColossus.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertColossus.glb",
+              "sha256": "2bb21e16d1a3efc12129f3861bad136b5d3ee2c63b5016ffa80c244cee1dc9d8"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_DesertColossus.glb"
+        }
+      ]
+    }
+  }
+}

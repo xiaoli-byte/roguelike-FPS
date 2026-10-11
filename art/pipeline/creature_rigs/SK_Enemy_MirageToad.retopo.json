@@ -1,0 +1,86 @@
+{
+  "doc": "Tripo auto-rig (100 unnamed bones) → semantic creature rig for 蜃楼蟾. Coordinates are the Tripo FBX in Blender (front = -Y, up = +Z, ~1 unit tall); side suffixes are the creature's own left / right (its left is +X).",
+  "source": "art/source/_tripo_inbox/20261006T043320_SK_Enemy_MirageToad_rig.fbx",
+  "task": "https://studio.tripo3d.ai/zh/workspace/generate/giant-frog-creature-with-glowing-internal-orb-ornate-temple-structure-3fb891da-baa4-41b4-ad7c-025cfb57ed54",
+  "height_m": 3.05,
+  "keep": {
+    "bone_0": "root",
+    "bone_1": "hips",
+    "bone_2": "spine",
+    "bone_34": "chest",
+    "bone_18": "thigh_L",
+    "bone_19": "shin_L",
+    "bone_20": "foot_L",
+    "bone_3": "thigh_R",
+    "bone_4": "shin_R",
+    "bone_5": "foot_R",
+    "bone_60": "arm_L",
+    "bone_61": "forearm_L",
+    "bone_62": "hand_L",
+    "bone_43": "arm_R",
+    "bone_44": "forearm_R",
+    "bone_45": "hand_R",
+    "bone_97": "pagoda",
+    "bone_79": "banner_L1",
+    "bone_80": "banner_L2",
+    "bone_81": "banner_L3",
+    "bone_76": "banner_R1",
+    "bone_77": "banner_R2",
+    "bone_78": "banner_R3"
+  },
+  "merge": {
+    "foot_R": "6-17",
+    "foot_L": "21-32",
+    "hand_R": "46-58",
+    "hand_L": "63-75",
+    "spine": "33,98,99",
+    "chest": "41,82,83,84,85,95,96",
+    "arm_R": "42",
+    "arm_L": "59",
+    "pagoda": "35-40,90-94",
+    "head": "86-89"
+  },
+  "add": {
+    "head": {
+      "parent": "chest",
+      "head": "auto:head",
+      "tail_offset": [
+        0,
+        -0.16,
+        0.02
+      ]
+    },
+    "sac": {
+      "parent": "head",
+      "head": "auto:sac",
+      "tail_offset": [
+        0,
+        -0.12,
+        0
+      ]
+    }
+  },
+  "parent_fix": {
+    "pagoda": "chest",
+    "banner_L1": "pagoda",
+    "banner_R1": "pagoda",
+    "arm_L": "chest",
+    "arm_R": "chest"
+  },
+  "regions": {
+    "sac": "front-most bulge below the mouth: vertices with y < min_y + 0.16 and 0.10 < z < 0.50; sphere fit; full weight inside 0.8 r, blend to head/chest by 1.1 r",
+    "head": "front-top: y < -0.06 and z > 0.42 outside the pagoda and sac; blends into chest between y -0.02 and -0.12",
+    "feet": "z < 0.09 → the foot / hand of the vertex's quadrant (x sign, y sign); blends with the existing weights up to z 0.14"
+  },
+  "glow_shell": "sac",
+  "provider_pbr": true,
+  "bake_normal": true,
+  "paint_shading": {
+    "cavity_distance": 0.018,
+    "cavity": 0.38,
+    "ao": 0.18,
+    "saturation": 1.1,
+    "contrast": 1.06,
+    "keep_brightness": true
+  }
+}

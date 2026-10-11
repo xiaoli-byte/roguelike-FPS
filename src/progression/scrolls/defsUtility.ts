@@ -265,15 +265,18 @@ export const UTILITY_SCROLLS: ScrollDef[] = [
   }),
   scroll({
     id: 'treasure_bowl', name: '聚宝盆', rarity: 2, maxStacks: 2, tags: ['经济'],
-    description: '每进入新关卡，获得当前金币 10% 的利息（每层上限 40，随章节提高）。',
+    description: '每进入新关卡，获得每层 12 金币本金，另获得持有金币每层 5% 的利息（利息每层上限 30）。本金与利息上限随章节提高；每层都增加本金和利率。',
     setup: (s, n, ctx) => {
       s.on('stage:loaded', ({ stage }) => {
-        const cap = Math.round(40 * n * (1 + 0.35 * stage.chapter));
-        const gain = Math.min(cap, Math.floor(ctx.run.coins * 0.1));
-        if (gain <= 0) return;
+        if (!ctx.player.alive) return;
+        const chapterScale = 1 + 0.35 * stage.chapter;
+        const principal = Math.round(12 * n * chapterScale);
+        const cap = Math.round(30 * n * chapterScale);
+        const interest = Math.min(cap, Math.floor(Math.max(0, ctx.run.coins) * 0.05 * n));
+        const gain = principal + interest;
         ctx.run.coins += gain;
         ctx.events.emit('coins:changed', { coins: ctx.run.coins, delta: gain });
-        ctx.ui.toast(`聚宝盆：利息 +${gain} 金币`, '#ffd54a');
+        ctx.ui.toast(`聚宝盆：本金 ${principal} + 利息 ${interest} = ${gain} 金币`, '#ffd54a');
       });
     },
   }),

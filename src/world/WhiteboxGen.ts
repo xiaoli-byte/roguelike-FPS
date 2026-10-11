@@ -1,7 +1,7 @@
 import type { StageNode } from '../core/types';
-import type { LayoutBox, LevelLayout, P2 } from './LevelTypes';
-import { WHITEBOX_PLANS } from './WhiteboxPlans';
-import type { WhiteboxCheckpoint, WhiteboxPlan, WhiteboxPoint, WhiteboxRect } from './WhiteboxTypes';
+import type { LayoutBox, LevelLayout, P2, RampInfo } from './LevelTypes';
+import { WHITEBOX_PLANS, WHITEBOX_REDESIGN_PLANS } from './WhiteboxPlans';
+import type { WhiteboxCheckpoint, WhiteboxPlan, WhiteboxPlatform, WhiteboxPoint, WhiteboxRect } from './WhiteboxTypes';
 
 /** Fixed 0.5 m cells: centre sampling shifts edges by up to ~0.36 m diagonally. */
 export const WHITEBOX_GRID_SIZE = 0.5;
@@ -9,10 +9,17 @@ const OUTER_PAD = 2;
 // A visible technical boundary tall enough for the existing double-jump + cover stack.
 const WALL_HEIGHT = 8;
 const COVER_HEIGHT = 2.6;
+/** Void fences (WhiteboxPlan.voids) top out above a double jump's reach (apex ≈ 2.7 m) so nobody stands on them. */
+const VOID_FENCE_HEIGHT = 3.5;
+/** Stair treads match the legacy courtyard platforms, so the player controller and nav ramps agree. */
+const STEP_RISE = 0.4;
+const STEP_DEPTH = 0.65;
 
-export function getWhiteboxPlan(stage: StageNode): WhiteboxPlan {
+/** With `redesign`, a V2 slice for this chapter slot replaces the shipped plan; other slots keep theirs. */
+export function getWhiteboxPlan(stage: StageNode, redesign = false): WhiteboxPlan {
   const index = stage.type === 'boss' ? 5 : Math.min(5, Math.max(1, Math.floor(stage.index) + 1));
-  const plan = WHITEBOX_PLANS.find(p => p.chapter === stage.theme && p.index === index);
+  const plan = (redesign ? WHITEBOX_REDESIGN_PLANS.find(p => p.chapter === stage.theme && p.index === index) : undefined)
+    ?? WHITEBOX_PLANS.find(p => p.chapter === stage.theme && p.index === index);
   if (!plan) throw new Error(`Missing authored floor plan: ${stage.theme}/${index}`);
   return plan;
 }
@@ -38,7 +45,7 @@ export function whiteboxInsidePolygon(p: readonly number[], polygon: readonly Wh
 }
 
 /** Equal horizontal runs merge vertically; no giant enclosing box obscures holes. */
-function mergeCells(cells: Uint8Array, cols: number, rows: number, accepts: (value: number) => boolean, minX: number, minZ: number): WhiteboxRect[] {
+function mergeCells(cells: Uint8Array | Uint16Array, cols: number, rows: number, accepts: (value: number) => boolean, minX: number, minZ: number): WhiteboxRect[] {
   const output: WhiteboxRect[] = [];
   let previous = new Map<string, WhiteboxRect>();
   for (let z = 0; z < rows; z++) {
@@ -63,25 +70,80 @@ function mergeCells(cells: Uint8Array, cols: number, rows: number, accepts: (val
 
 function heading(a: P2, b: P2): number { return Math.atan2(a.x - b.x, a.z - b.z); }
 
+/** Platform deck plus stepped stairs and their nav ramps, in world coordinates (same model as LevelGen). */
+function buildPlatform(plan: WhiteboxPlan, deck: WhiteboxPlatform, boxes: LayoutBox[], ramps: RampInfo[]): void {
+  const [ax, az, bx, bz] = deck.rect, h = deck.height;
+  const P = { x0: Math.min(ax, bx) - plan.bounds[0] / 2, x1: Math.max(ax, bx) - plan.bounds[0] / 2,
+    z0: Math.min(az, bz) - plan.bounds[1] / 2, z1: Math.max(az, bz) - plan.bounds[1] / 2 };
+  const cx = (P.x0 + P.x1) / 2, cz = (P.z0 + P.z1) / 2;
+  boxes.push({ minX: P.x0, maxX: P.x1, minY: 0, maxY: h, minZ: P.z0, maxZ: P.z1, look: 'platform', tag: 'whitebox-platform', group: 0, noRaycast: false, v: 0 });
+  const n = Math.max(2, Math.round(h / STEP_RISE)), rise = h / n, run = (n - 1) * STEP_DEPTH;
+  for (const stair of deck.stairs) {
+    const off = stair.offset ?? 0, sw = stair.width;
+    let S: WhiteboxRect, foot: P2, head: P2;
+    switch (stair.side) {
+      case 'east': S = { minX: P.x1, maxX: P.x1 + run, minZ: cz + off - sw / 2, maxZ: cz + off + sw / 2 }; foot = { x: S.maxX + 1.4, z: cz + off }; head = { x: P.x1 - .9, z: cz + off }; break;
+      case 'west': S = { minX: P.x0 - run, maxX: P.x0, minZ: cz + off - sw / 2, maxZ: cz + off + sw / 2 }; foot = { x: S.minX - 1.4, z: cz + off }; head = { x: P.x0 + .9, z: cz + off }; break;
+      case 'south': S = { minX: cx + off - sw / 2, maxX: cx + off + sw / 2, minZ: P.z1, maxZ: P.z1 + run }; foot = { x: cx + off, z: S.maxZ + 1.4 }; head = { x: cx + off, z: P.z1 - .9 }; break;
+      default: S = { minX: cx + off - sw / 2, maxX: cx + off + sw / 2, minZ: P.z0 - run, maxZ: P.z0 }; foot = { x: cx + off, z: S.minZ - 1.4 }; head = { x: cx + off, z: P.z0 + .9 }; break;
+    }
+    for (let k = 1; k < n; k++) {
+      const top = k * rise, outer = (n - k) * STEP_DEPTH, inner = (n - 1 - k) * STEP_DEPTH;
+      const step = stair.side === 'east' ? { minX: P.x1 + inner, maxX: P.x1 + outer, minZ: S.minZ, maxZ: S.maxZ }
+        : stair.side === 'west' ? { minX: P.x0 - outer, maxX: P.x0 - inner, minZ: S.minZ, maxZ: S.maxZ }
+          : stair.side === 'south' ? { minX: S.minX, maxX: S.maxX, minZ: P.z1 + inner, maxZ: P.z1 + outer }
+            : { minX: S.minX, maxX: S.maxX, minZ: P.z0 - outer, maxZ: P.z0 - inner };
+      boxes.push({ ...step, minY: 0, maxY: top, look: 'stair', tag: 'whitebox-stair', group: 0, noRaycast: false, v: 0 });
+    }
+    ramps.push({ x0: P.x0, z0: P.z0, x1: P.x1, z1: P.z1, top: h, sx0: S.minX, sz0: S.minZ, sx1: S.maxX, sz1: S.maxZ, foot, head, group: 0 });
+  }
+}
+
 /** Generate technical collision geometry directly from the approved 2D design. */
-export function generateWhitebox(stage: StageNode): LevelLayout {
-  const plan = getWhiteboxPlan(stage), [width, depth] = plan.bounds;
+export function generateWhitebox(stage: StageNode, opts: { redesign?: boolean } = {}): LevelLayout {
+  const plan = getWhiteboxPlan(stage, opts.redesign), [width, depth] = plan.bounds;
   const minX = -width / 2 - OUTER_PAD, minZ = -depth / 2 - OUTER_PAD;
   const cols = Math.ceil((width + OUTER_PAD * 2) / WHITEBOX_GRID_SIZE), rows = Math.ceil((depth + OUTER_PAD * 2) / WHITEBOX_GRID_SIZE);
-  // 0 = traversable floor, 1 = outside mass, 2 = authored cover.
+  // 0 = traversable floor, 1 = outside mass, 2 = authored cover, 3 = inner void (see WhiteboxPlan.voids).
   const cells = new Uint8Array(cols * rows);
+  // A cell belongs to a void when its centre lies within the void's radius plus half a cell (the ring's faceted inner
+  // edge stays floor; anything else non-floor near the hole is fence, not wall).
+  const inVoid = (p: WhiteboxPoint): boolean => (plan.voids ?? []).some(v =>
+    Math.hypot(p[0] - v.center[0], p[1] - v.center[1]) <= v.radius + WHITEBOX_GRID_SIZE / 2);
   for (let z = 0; z < rows; z++) for (let x = 0; x < cols; x++) {
     const p: WhiteboxPoint = [(x + .5) * WHITEBOX_GRID_SIZE - OUTER_PAD, (z + .5) * WHITEBOX_GRID_SIZE - OUTER_PAD];
     const floor = plan.rooms.some(room => whiteboxInsidePolygon(p, room.polygon)) || plan.passages.some(path =>
       path.points.some((b, i) => i > 0 && segmentDistance(p, path.points[i - 1], b) <= path.width / 2));
-    cells[z * cols + x] = !floor ? 1 : plan.covers.some(cover => whiteboxInsidePolygon(p, cover.polygon)) ? 2 : 0;
+    cells[z * cols + x] = !floor ? (inVoid(p) ? 3 : 1) : plan.covers.some(cover => whiteboxInsidePolygon(p, cover.polygon)) ? 2 : 0;
   }
   const boxes: LayoutBox[] = [];
-  for (const [value, height, tag] of [[1, WALL_HEIGHT, 'whitebox-wall'], [2, COVER_HEIGHT, 'whitebox-cover']] as const) {
-    for (const rect of mergeCells(cells, cols, rows, cell => cell === value, minX, minZ)) boxes.push({
-      ...rect, minY: 0, maxY: height, look: value === 1 ? 'wall' : 'lowWall', tag, group: 0, noRaycast: false, v: 0,
+  // Outer masses must out-reach a double jump from the tallest standable top (pillar or deck):
+  // jump apex ≈ 2.7 m plus body clearance. Shipped plans (2.6 m cover) keep the reviewed 8 m.
+  const tallest = Math.max(COVER_HEIGHT, ...plan.covers.map(c => c.height || COVER_HEIGHT), ...(plan.platforms ?? []).map(p => p.height));
+  const wallHeight = Math.max(WALL_HEIGHT, Math.ceil(tallest + 3.4));
+  for (const rect of mergeCells(cells, cols, rows, cell => cell === 1, minX, minZ)) boxes.push({
+    ...rect, minY: 0, maxY: wallHeight, look: 'wall', tag: 'whitebox-wall', group: 0, noRaycast: false, v: 0,
+  });
+  // Voids: a fence the player cannot clear with a double jump, invisible and transparent to shots and sight.
+  for (const rect of mergeCells(cells, cols, rows, cell => cell === 3, minX, minZ)) boxes.push({
+    ...rect, minY: 0, maxY: VOID_FENCE_HEIGHT, look: 'lowWall', tag: 'whitebox-void', group: 0, noRaycast: true, v: 0,
+  });
+  // Each cover keeps its authored height (V2 mixes 1.2 m vault cover, 2.6 m cover and taller pillars).
+  // All shipped LD-03 covers are 2.6 m, so their collision is unchanged.
+  const coverCells = new Uint16Array(cols * rows);
+  for (let i = 0; i < cells.length; i++) if (cells[i] === 2) {
+    const p: WhiteboxPoint = [(i % cols + .5) * WHITEBOX_GRID_SIZE - OUTER_PAD, (Math.floor(i / cols) + .5) * WHITEBOX_GRID_SIZE - OUTER_PAD];
+    coverCells[i] = plan.covers.findIndex(cover => whiteboxInsidePolygon(p, cover.polygon)) + 1;
+  }
+  const heights = [...new Set(plan.covers.map(cover => cover.height || COVER_HEIGHT))];
+  for (const height of heights) {
+    const accepts = (cell: number) => cell > 0 && (plan.covers[cell - 1].height || COVER_HEIGHT) === height;
+    for (const rect of mergeCells(coverCells, cols, rows, accepts, minX, minZ)) boxes.push({
+      ...rect, minY: 0, maxY: height, look: 'lowWall', tag: 'whitebox-cover', group: 0, noRaycast: false, v: 0,
     });
   }
+  const ramps: RampInfo[] = [];
+  for (const deck of plan.platforms ?? []) buildPlatform(plan, deck, boxes, ramps);
   const floorRects = mergeCells(cells, cols, rows, value => value !== 1, minX, minZ);
   const playerSpawn = whiteboxPoint(plan, plan.entry.at), exit = whiteboxPoint(plan, plan.exit.at);
   const firstPath = plan.passages.find(path => path.id === plan.mainRoute[0]);
@@ -103,6 +165,19 @@ export function generateWhitebox(stage: StageNode): LevelLayout {
   };
   const authoredRewards = plan.rewards.map(reward => whiteboxPoint(plan, reward.at));
   for (let i = 0; i < 3; i++) portalPoints.push(safeNearExit(1.5, [...portalPoints, ...authoredRewards], 4));
+  // A portal shrine at the exit: the portal (the director opens portalPoints[1]) stands in its arch, 1.5 m in
+  // front of the shrine's back wall, whichever way the shrine faces.
+  const shrinePylons = plan.covers.filter(cover => cover.art === 'shrine');
+  if (shrinePylons.length >= 2) {
+    const box = (c: typeof shrinePylons[number]) => ({ x0: Math.min(...c.polygon.map(q => q[0])), x1: Math.max(...c.polygon.map(q => q[0])),
+      z0: Math.min(...c.polygon.map(q => q[1])), z1: Math.max(...c.polygon.map(q => q[1])) });
+    const [a, b] = shrinePylons.map(box), face = shrinePylons[0].face ?? 'west';
+    const arch: [number, number] = face === 'west' ? [Math.max(a.x1, b.x1) - 1.5, (Math.min(a.z1, b.z1) + Math.max(a.z0, b.z0)) / 2]
+      : face === 'east' ? [Math.min(a.x0, b.x0) + 1.5, (Math.min(a.z1, b.z1) + Math.max(a.z0, b.z0)) / 2]
+      : face === 'south' ? [(Math.min(a.x1, b.x1) + Math.max(a.x0, b.x0)) / 2, Math.min(a.z0, b.z0) + 1.5]
+      : [(Math.min(a.x1, b.x1) + Math.max(a.x0, b.x0)) / 2, Math.max(a.z1, b.z1) - 1.5];
+    portalPoints[1] = whiteboxPoint(plan, arch);
+  }
   const rewardPoint = safeNearExit(.9, [...portalPoints, ...authoredRewards], 3.2);
   let shopPoint = safeNearExit(.9, [...portalPoints, rewardPoint], 3.2);
   // The shop is a 6.4m arc, rather than a single interaction point. Reserve
@@ -156,11 +231,28 @@ export function generateWhitebox(stage: StageNode): LevelLayout {
       spawnCells.add(cell); spawnPoints.push(p);
     }
   }
+  // A portal shrine's arch is closed by an invisible slab across its mouth, so the player stops in front of
+  // the portal (still within its reach) instead of walking into the arch. Added after the portal, reward and
+  // shop points are placed, so it never pushes the portal out of the arch; it does not stop shots.
+  const pylons = plan.covers.filter(cover => cover.art === 'shrine').map(cover => {
+    const xs = cover.polygon.map(q => q[0]), zs = cover.polygon.map(q => q[1]);
+    return { x0: Math.min(...xs), x1: Math.max(...xs), z0: Math.min(...zs), z1: Math.max(...zs), face: cover.face ?? 'west' };
+  });
+  for (let i = 0; i + 1 < pylons.length; i += 2) {
+    const [a, b] = [pylons[i], pylons[i + 1]], alongZ = a.face === 'east' || a.face === 'west';
+    // Between the pylons along the across axis, a 0.2 m slab on their front edge.
+    const lo = alongZ ? Math.min(a.z1, b.z1) : Math.min(a.x1, b.x1), hi = alongZ ? Math.max(a.z0, b.z0) : Math.max(a.x0, b.x0);
+    const front = { west: Math.min(a.x0, b.x0), east: Math.max(a.x1, b.x1), north: Math.min(a.z0, b.z0), south: Math.max(a.z1, b.z1) }[a.face] ?? a.x0;
+    const inward = a.face === 'west' || a.face === 'north' ? .2 : -.2;
+    const [p0, p1] = alongZ ? [whiteboxPoint(plan, [front, lo]), whiteboxPoint(plan, [front + inward, hi])] : [whiteboxPoint(plan, [lo, front]), whiteboxPoint(plan, [hi, front + inward])];
+    boxes.push({ minX: Math.min(p0.x, p1.x), maxX: Math.max(p0.x, p1.x), minZ: Math.min(p0.z, p1.z), maxZ: Math.max(p0.z, p1.z), minY: 0, maxY: 6,
+      look: 'lowWall', tag: 'whitebox-blocker', group: 0, noRaycast: true, v: 0 });
+  }
   return {
     type: stage.type, theme: stage.theme, half: Math.max(width, depth) / 2 + OUTER_PAD,
     minX, minZ, maxX: minX + cols * WHITEBOX_GRID_SIZE, maxZ: minZ + rows * WHITEBOX_GRID_SIZE,
-    floorY: 0, wallThickness: WHITEBOX_GRID_SIZE, wallHeight: WALL_HEIGHT,
-    boxes, decos: [], lights: [{ x: playerSpawn.x, y: 3, z: playerSpawn.z }, { x: center.x, y: 3, z: center.z }], runes: [], ramps: [],
+    floorY: 0, wallThickness: WHITEBOX_GRID_SIZE, wallHeight,
+    boxes, decos: [], lights: [{ x: playerSpawn.x, y: 3, z: playerSpawn.z }, { x: center.x, y: 3, z: center.z }], runes: [], ramps,
     playerSpawn, playerYaw, spawnPoints, rewardPoint, portalPoints, shopPoint, bossPoint, center,
     checks: checkpoints.map(({ x, z }) => ({ x, z, g: 0 })),
     whitebox: { planId: plan.id, title: plan.title, plan, floorRects, checkpoints, gridSize: WHITEBOX_GRID_SIZE },

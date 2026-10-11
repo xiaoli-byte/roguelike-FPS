@@ -1,0 +1,572 @@
+{
+  "schema": 1,
+  "assetId": "SK_Enemy_MirageToad",
+  "source": {
+    "kind": "enemy",
+    "id": "mirage_toad"
+  },
+  "rig": "parts",
+  "space": {
+    "up": "+Y",
+    "forward": "+Z",
+    "unit": "m",
+    "origin": "model"
+  },
+  "bounds": {
+    "min": [
+      -1.15,
+      -0.052888219604108055,
+      -1.1485281711413358
+    ],
+    "max": [
+      1.15,
+      3.0799999952316286,
+      1.3379999977350234
+    ]
+  },
+  "joints": [
+    {
+      "name": "j_r",
+      "parent": null,
+      "bindPosition": [
+        0,
+        0,
+        0
+      ],
+      "restLocal": [
+        0,
+        0,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "j_0",
+      "parent": "j_r",
+      "bindPosition": [
+        0,
+        0.78,
+        0
+      ],
+      "restLocal": [
+        0,
+        0.78,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0.78,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "j_0_7",
+      "parent": "j_0",
+      "bindPosition": [
+        0,
+        0.96,
+        0.78
+      ],
+      "restLocal": [
+        0,
+        0.18,
+        0.78
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0.18,
+        0.78,
+        1
+      ]
+    },
+    {
+      "name": "j_0_7_5",
+      "parent": "j_0_7",
+      "bindPosition": [
+        0,
+        0.88,
+        0.8
+      ],
+      "restLocal": [
+        0,
+        -0.08,
+        0.02
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        -0.08,
+        0.02,
+        1
+      ]
+    },
+    {
+      "name": "j_0_7_5_1",
+      "parent": "j_0_7_5",
+      "bindPosition": [
+        0,
+        0.62,
+        0.92
+      ],
+      "restLocal": [
+        0,
+        -0.26,
+        0.12
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        -0.26,
+        0.12,
+        1
+      ]
+    },
+    {
+      "name": "j_0_8",
+      "parent": "j_0",
+      "bindPosition": [
+        0.62,
+        0.58,
+        0.55
+      ],
+      "restLocal": [
+        0.62,
+        -0.2,
+        0.55
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0.62,
+        -0.2,
+        0.55,
+        1
+      ]
+    },
+    {
+      "name": "j_0_9",
+      "parent": "j_0",
+      "bindPosition": [
+        0.7,
+        0.73,
+        -0.45
+      ],
+      "restLocal": [
+        0.7,
+        -0.05,
+        -0.45
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0.7,
+        -0.05,
+        -0.45,
+        1
+      ]
+    },
+    {
+      "name": "j_0_9_1",
+      "parent": "j_0_9",
+      "bindPosition": [
+        0.9,
+        0.11,
+        -0.15
+      ],
+      "restLocal": [
+        0.2,
+        -0.62,
+        0.3
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0.2,
+        -0.62,
+        0.3,
+        1
+      ]
+    },
+    {
+      "name": "j_0_10",
+      "parent": "j_0",
+      "bindPosition": [
+        -0.62,
+        0.58,
+        0.55
+      ],
+      "restLocal": [
+        -0.62,
+        -0.2,
+        0.55
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        -0.62,
+        -0.2,
+        0.55,
+        1
+      ]
+    },
+    {
+      "name": "j_0_11",
+      "parent": "j_0",
+      "bindPosition": [
+        -0.7,
+        0.73,
+        -0.45
+      ],
+      "restLocal": [
+        -0.7,
+        -0.05,
+        -0.45
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        -0.7,
+        -0.05,
+        -0.45,
+        1
+      ]
+    },
+    {
+      "name": "j_0_11_1",
+      "parent": "j_0_11",
+      "bindPosition": [
+        -0.9,
+        0.11,
+        -0.15
+      ],
+      "restLocal": [
+        -0.2,
+        -0.62,
+        0.3
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        -0.2,
+        -0.62,
+        0.3,
+        1
+      ]
+    },
+    {
+      "name": "j_0_12",
+      "parent": "j_0",
+      "bindPosition": [
+        0,
+        1.4,
+        -0.3
+      ],
+      "restLocal": [
+        0,
+        0.62,
+        -0.3
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0.62,
+        -0.3,
+        1
+      ]
+    }
+  ],
+  "keep": [],
+  "fields": {},
+  "parts": {
+    "body_000": "body",
+    "body_001": "body",
+    "body_002": "body",
+    "body_003": "body",
+    "body_004": "body",
+    "body_005": "body",
+    "body_006": "body",
+    "body_007": "body",
+    "body_008": "body",
+    "glow_009": "glow",
+    "body_010": "body",
+    "glow_011": "glow",
+    "body_012": "body",
+    "glow_013": "glow",
+    "body_014": "body",
+    "body_015": "body",
+    "body_016": "body",
+    "body_017": "body",
+    "body_018": "body",
+    "body_019": "body",
+    "body_020": "body",
+    "body_021": "body",
+    "body_022": "body",
+    "body_023": "body",
+    "body_024": "body",
+    "body_025": "body",
+    "body_026": "body",
+    "body_027": "body",
+    "body_028": "body",
+    "body_029": "body",
+    "body_030": "body",
+    "body_031": "body",
+    "body_032": "body",
+    "body_033": "body"
+  },
+  "exportedAt": "2026-10-06T04:02:21.936Z"
+}

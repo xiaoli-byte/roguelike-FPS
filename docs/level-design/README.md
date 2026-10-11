@@ -10,8 +10,8 @@
 
 ## 看图与修改
 
-- 本地预览：`http://localhost:5259/level-design/index.html#gallery`。
-- 场景试玩：`http://localhost:5259/whitebox-lab.html?theme=desert&stage=0&look=art`。图册每张图提供对应关卡的入口；`theme` 选择章节，`stage=0..4` 对应图纸第 1–5 关；`look=whitebox` 对照技术白盒。
+- 本地预览：`http://localhost:5199/level-design/index.html#gallery`。
+- 场景试玩：`http://localhost:5199/whitebox-lab.html?theme=desert&stage=0&look=art`。图册每张图提供对应关卡的入口；`theme` 选择章节，`stage=0..4` 对应图纸第 1–5 关；`look=whitebox` 对照技术白盒。
 - 可离线打开的图册：`public/level-design/index.html`，CSS、交互与图纸均内嵌；下载链接依赖同目录 `sheets/`。
 - 独立矢量图：`public/level-design/sheets/`，每关一份 SVG。
 - 手工设计数据：`plans/desert.json`、`plans/frost.json`、`plans/inferno.json`。
@@ -48,7 +48,7 @@
 | 熔火 4 | 三角铸炉围场 | 三角炉体外缘与斜穿检修短廊 | 外圈准备 / 内切快速收束 |
 | 熔火 5 | 黑炉双腔 | 两个横向战斗腔，宽喉道及上下回绕 | 跨腔转场，避免单环追逐 |
 
-以上是每章五个阶段槽位的底图。白盒已接入普通、精英、首领、商店和宝藏流程：普通与精英沿用各自底图并调整编队；商店与宝藏保留空间骨架、移除战斗并安排商人或奖励。分支调度的自动化检查已完成，实际游玩节奏与难度仍在验证。
+以上是每章五个阶段槽位的底图。正常游戏沿四个普通关与一个首领关顺序推进，每次清关只开启一个主线出口。可选内容使用当前图纸的侧路房间：走近可见的隐秘入口后按 F 调查，支路守卫不会仅因路过而启动，物资仍需满足原图纸的遭遇解锁条件；完成后沿原路回主路，终战后也可继续探索。首领前安全区保留商店。精英、商店、宝藏整关类型仅保留检视与旧流程兼容，实际游玩节奏与难度仍在验证。
 
 ## 使用当前代码中的尺度
 

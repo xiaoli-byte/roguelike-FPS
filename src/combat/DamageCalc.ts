@@ -155,18 +155,19 @@ export function newLayerOutcome(): LayerOutcome {
 /**
  * 把「层前伤害」raw 依次打在 护盾 → 护甲 → 生命 上（原地修改 enemy）。
  * 每层按「元素 × 层」倍率换算；打穿后剩余的层前伤害按下一层倍率重新换算。
+ * skipShield：无视护盾层（魔刀千刃的刃群穿过护盾），从护甲 / 生命开始结算。
  */
-export function applyLayers(stats: Stats, enemy: IEnemy, raw: number, element: Element, out: LayerOutcome): LayerOutcome {
+export function applyLayers(stats: Stats, enemy: IEnemy, raw: number, element: Element, out: LayerOutcome, skipShield = false): LayerOutcome {
   out.dealt = 0;
   out.effective = 0;
   out.shieldBroken = false;
   out.armorBroken = false;
-  out.firstLayer = topLayer(enemy);
+  out.firstLayer = skipShield ? (enemy.armor > 0 ? 'armor' : 'health') : topLayer(enemy);
   out.mainLayer = out.firstLayer;
   let best = 0;
   let remaining = raw;
 
-  if (remaining > 0 && enemy.shield > 0) {
+  if (remaining > 0 && enemy.shield > 0 && !skipShield) {
     const m = layerMultiplier(stats, element, 'shield');
     const eff = remaining * m;
     let took: number;

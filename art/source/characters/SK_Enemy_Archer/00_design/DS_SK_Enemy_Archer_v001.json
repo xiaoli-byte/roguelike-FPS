@@ -1,0 +1,36 @@
+{
+  "design": {
+    "id": "SK_Enemy_Archer",
+    "chapter": "desert",
+    "role": "archer",
+    "name": "沙葬弩尸",
+    "body": "humanoid",
+    "height_m": 1.75,
+    "brief": "A desert-buried undead crossbowman of the bandit faction: a lanky, slightly hunched sun-bleached skeleton partly wrapped in tattered sand-coloured grave bandages, a torn crimson bandit waist sash with the faction's gold spiral emblem on its hanging strip, a broken wide-brimmed woven desert hat with a ragged hanging cloth veil at the back, teal-green ghost-fire glowing in both eye sockets and a small teal-green ghost flame burning inside its visible ribcage, a bone quiver full of bone bolts strapped diagonally across its back, worn bronze bracers on the forearms, one leather shoulder guard. Bony hands with a clearly separate bony thumb and four long separate bony finger bones each. Bony feet with five separate toe bones, partly wrapped in cloth.",
+    "weapon": "a heavy bronze-and-bone repeating crossbow with a skull-shaped stock"
+  },
+  "generation": {
+    "provider": "openai",
+    "endpoint": "images/edits",
+    "model": "gpt-image-2.5-sunburst",
+    "size": "2048x1024",
+    "quality": "high",
+    "background": "opaque",
+    "usage": {
+      "input_tokens": 1978,
+      "input_tokens_details": {
+        "image_tokens": 1458,
+        "text_tokens": 520
+      },
+      "output_tokens": 1180,
+      "output_tokens_details": {
+        "image_tokens": 1180,
+        "text_tokens": 0
+      },
+      "total_tokens": 3158
+    },
+    "request_id": "req_98776659ec6240699242ed68a1e05b2b",
+    "seconds": 32.5
+  },
+  "style_reference": "CN_SK_Enemy_Grunt_v001_sheet.png"
+}

@@ -25,7 +25,49 @@ GATES = {"concept", "review"}
 SIDE_STAGES = {"matid": ["build", "validate", "review", "publish"], "emid": ["build", "validate", "review", "publish"]}
 
 
+def portable_path(p: str | Path) -> str:
+    """Records travel with the repo: repo files become repo-relative POSIX paths, files under the
+    author's home (e.g. Codex image_gen output) become ``~/...``. Other strings are unchanged."""
+    s = str(p)
+    if not (len(s) > 2 and s[1] == ":" and s[2] in "\\/") and not s.startswith(("/", "\\\\")):
+        return s
+    try:
+        path = Path(s).resolve()
+    except OSError:
+        return s
+    for base, prefix in ((ROOT.resolve(), ""), (Path.home().resolve(), "~/")):
+        try:
+            return prefix + path.relative_to(base).as_posix()
+        except ValueError:
+            continue
+    return s
+
+
+def portable_record(obj):
+    """Apply ``portable_path`` to every string in a JSON-like record."""
+    if isinstance(obj, dict):
+        return {k: portable_record(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [portable_record(v) for v in obj]
+    return portable_path(obj) if isinstance(obj, str) else obj
+
+
+def resolve_path(s: str | Path) -> Path:
+    """Inverse of ``portable_path`` for reading a recorded path on this machine."""
+    s = str(s)
+    if s.startswith("~/"):
+        return Path.home() / s[2:]
+    p = Path(s)
+    return p if p.is_absolute() else ROOT / p
+
+
 def sha256(p: Path) -> str:
+    p = resolve_path(p)
+    if not p.exists():
+        # Concept sources (Codex image_gen output, 01_concept/ sheets) are local-only by repo policy:
+        # only source records and published assets are committed. Fail with the reason, not an OSError.
+        raise PipelineError(f"{portable_path(p)} 不在本机：概念原图与 01_concept/ 只保存在生成它的机器上"
+                            "（仓库只入库源记录与发布产物）。请在原机器上重跑，或先放回该文件。")
     h = hashlib.sha256()
     with open(p, "rb") as f:
         for chunk in iter(lambda: f.read(1 << 20), b""):
@@ -49,7 +91,7 @@ class AssetState:
     def save(self) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         tmp = self.path.with_suffix(".json.tmp")
-        tmp.write_text(json.dumps(self.data, ensure_ascii=False, indent=2), encoding="utf-8")
+        tmp.write_text(json.dumps(portable_record(self.data), ensure_ascii=False, indent=2), encoding="utf-8")
         # Windows 上目标文件被其他进程短暂占用（杀毒 / DLP 扫描刚写入的文件）时 os.replace 会拒绝访问：重试几次
         for attempt in range(20):
             try:

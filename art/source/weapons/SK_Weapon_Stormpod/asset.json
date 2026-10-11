@@ -1,0 +1,592 @@
+{
+  "id": "SK_Weapon_Stormpod",
+  "display": "青冥雷蛊",
+  "kind": "skeletal",
+  "class": "weapon_fp",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:34:57",
+          "files": {
+            "BO_SK_Weapon_Stormpod_v001.glb": {
+              "path": "00_blockout/BO_SK_Weapon_Stormpod_v001.glb",
+              "sha256": "c5932eb307dc23576519500d80cbe3c8bea4ec533e616536be1fc96a089ad52f"
+            },
+            "BO_SK_Weapon_Stormpod_v001.json": {
+              "path": "00_blockout/BO_SK_Weapon_Stormpod_v001.json",
+              "sha256": "924ae67304062c9790d7080aa22122d55eff2dd8f0a4e3c41c09c7764a5d120d"
+            },
+            "BO_SK_Weapon_Stormpod_v001_views.json": {
+              "path": "00_blockout/BO_SK_Weapon_Stormpod_v001_views.json",
+              "sha256": "8517d2e3b09849df6ecd822e5f9be7d4659ac29ba410d7108ea742459b841b42"
+            },
+            "BO_SK_Weapon_Stormpod_v001_sheet.png": {
+              "path": "00_blockout/BO_SK_Weapon_Stormpod_v001_sheet.png",
+              "sha256": "f883596457aa8007b9ab7ca1d707e3d41d80b60f40572302f2954dea94a850e8"
+            },
+            "BO_SK_Weapon_Stormpod_v001_front.png": {
+              "path": "00_blockout/BO_SK_Weapon_Stormpod_v001_front.png",
+              "sha256": "5d56a0a938b7531f48579a9d8a26b859395761b734f48b8e9799f8a73108b981"
+            },
+            "BO_SK_Weapon_Stormpod_v001_left.png": {
+              "path": "00_blockout/BO_SK_Weapon_Stormpod_v001_left.png",
+              "sha256": "9f96e2e9a4fa2e1822543ab3524bc0f9580baeb1d4b5124158303069037541c9"
+            },
+            "BO_SK_Weapon_Stormpod_v001_back.png": {
+              "path": "00_blockout/BO_SK_Weapon_Stormpod_v001_back.png",
+              "sha256": "647a8c76d8ddff4a51d220eda6aed4293f3a81bac68ce9a4c2efc46bb7a93224"
+            },
+            "BO_SK_Weapon_Stormpod_v001_right.png": {
+              "path": "00_blockout/BO_SK_Weapon_Stormpod_v001_right.png",
+              "sha256": "1739a69b7bec4edf6f2cdfb98e3c754e5ff5ead9362888be460024c24b45208c"
+            }
+          },
+          "source": {
+            "kind": "weapon",
+            "id": "stormpod"
+          },
+          "joints": 3,
+          "bounds": {
+            "min": [
+              -0.04755282402038574,
+              -0.12022703214892008,
+              -0.30199999977648256
+            ],
+            "max": [
+              0.07109559202588352,
+              0.10400000005215407,
+              0.1840000003799796
+            ]
+          },
+          "blender_seconds": 5.9
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:36:56",
+          "files": {
+            "CN_SK_Weapon_Stormpod_v001_sheet.png": {
+              "path": "01_concept/CN_SK_Weapon_Stormpod_v001_sheet.png",
+              "sha256": "e74cc872ad49453eeac0c670b3989df4dd8d1c8d899a84ea9d1c222bc3266352"
+            },
+            "CN_SK_Weapon_Stormpod_v001_front.png": {
+              "path": "01_concept/CN_SK_Weapon_Stormpod_v001_front.png",
+              "sha256": "88a80f8d0c6bd7429c36e1d09193f51f8e3e5e5096a18f6b341c55e82c60fbad"
+            },
+            "CN_SK_Weapon_Stormpod_v001_left.png": {
+              "path": "01_concept/CN_SK_Weapon_Stormpod_v001_left.png",
+              "sha256": "d4d1eb090c248593cccd28f44ce4c623272756b948efe2ebc02c83552713e819"
+            },
+            "CN_SK_Weapon_Stormpod_v001_back.png": {
+              "path": "01_concept/CN_SK_Weapon_Stormpod_v001_back.png",
+              "sha256": "4c37f2d50d83f2d6e99d33477b290a72c378764ef2065a56cc3bee995dbe75ad"
+            },
+            "CN_SK_Weapon_Stormpod_v001_right.png": {
+              "path": "01_concept/CN_SK_Weapon_Stormpod_v001_right.png",
+              "sha256": "4b514dda09d215df7e32feacca92f9c30159cd1d1496f51274b811f6ead8f87e"
+            },
+            "CN_SK_Weapon_Stormpod_v001_compare.png": {
+              "path": "01_concept/CN_SK_Weapon_Stormpod_v001_compare.png",
+              "sha256": "e73399c84f3eef4fc72d02a48db594f325370a2a2a0c4160de8e8f9542b9220a"
+            },
+            "CN_SK_Weapon_Stormpod_v001_prompt.txt": {
+              "path": "01_concept/CN_SK_Weapon_Stormpod_v001_prompt.txt",
+              "sha256": "1b0a501ff32973ec5038b724089568e698e7a8f863f9af48d334cbd7c7226088"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 2069,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 611
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3249
+          },
+          "request_id": "req_806e0afd85e340bdb5b7503809083aa9",
+          "seconds": 31.9,
+          "registration": {
+            "front": {
+              "scale": 0.9701,
+              "offset": [
+                34,
+                69
+              ],
+              "iou": 0.851,
+              "iou_unregistered_scale": 0.9849
+            },
+            "left": {
+              "scale": 0.986,
+              "offset": [
+                132,
+                55
+              ],
+              "iou": 0.877,
+              "iou_unregistered_scale": 0.986
+            },
+            "back": {
+              "scale": 0.9712,
+              "offset": [
+                34,
+                69
+              ],
+              "iou": 0.859,
+              "iou_unregistered_scale": 0.986
+            },
+            "right": {
+              "scale": 0.9881,
+              "offset": [
+                130,
+                55
+              ],
+              "iou": 0.865,
+              "iou_unregistered_scale": 0.9881
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.853,
+            "left": 0.879,
+            "back": 0.859,
+            "right": 0.866
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "东方奇幻配色与纹饰统一，剪影贴合白模；灯纱 / 加速环为白模未含的发光件，偏差在预期内",
+            "time": "2026-10-06 17:39:56"
+          }
+        }
+      ]
+    },
+    "matid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:41:05",
+          "files": {
+            "MID_SK_Weapon_Stormpod_v001_sheet.png": {
+              "path": "01_concept/MID_SK_Weapon_Stormpod_v001_sheet.png",
+              "sha256": "1fcc07f4302d255e39736130d094a4d3d24942f0cfc34fc66e65b537d4e416fc"
+            },
+            "MID_SK_Weapon_Stormpod_v001_front.png": {
+              "path": "01_concept/MID_SK_Weapon_Stormpod_v001_front.png",
+              "sha256": "b3ec3fb816d8a951201d16079fe78b5055cd0fe7969e964280f47300685399de"
+            },
+            "MID_SK_Weapon_Stormpod_v001_left.png": {
+              "path": "01_concept/MID_SK_Weapon_Stormpod_v001_left.png",
+              "sha256": "ae56487f34d31872e7a669c4fdff0641271eda2e5319a613e6b5678b560f8480"
+            },
+            "MID_SK_Weapon_Stormpod_v001_back.png": {
+              "path": "01_concept/MID_SK_Weapon_Stormpod_v001_back.png",
+              "sha256": "05cceffa90ae8ed88eed71dd090189abbeed8937ce19e26990c1bc86eeee2275"
+            },
+            "MID_SK_Weapon_Stormpod_v001_right.png": {
+              "path": "01_concept/MID_SK_Weapon_Stormpod_v001_right.png",
+              "sha256": "6fa1dda1b046fb07ec6fa5fd02f1a9c7bc16d3857b801f3fde15e8bb93b5f65c"
+            },
+            "MID_SK_Weapon_Stormpod_v001_compare.png": {
+              "path": "01_concept/MID_SK_Weapon_Stormpod_v001_compare.png",
+              "sha256": "8ad51d81e1687221ea59aa97562f93e4b4ae7c21f8ef85297ac1b4632182e808"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1699,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 241
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2879
+          },
+          "request_id": "req_0135d6a014cc461ebae2dd34bd4f47d7",
+          "seconds": 32.7,
+          "registration": {
+            "front": {
+              "scale": 0.9688,
+              "offset": [
+                32,
+                69
+              ],
+              "iou": 0.961,
+              "iou_unregistered_scale": 0.9688,
+              "purity": 0.99
+            },
+            "left": {
+              "scale": 0.9838,
+              "offset": [
+                130,
+                56
+              ],
+              "iou": 0.971,
+              "iou_unregistered_scale": 0.9838,
+              "purity": 0.983
+            },
+            "back": {
+              "scale": 0.9688,
+              "offset": [
+                32,
+                70
+              ],
+              "iou": 0.963,
+              "iou_unregistered_scale": 0.9688,
+              "purity": 0.991
+            },
+            "right": {
+              "scale": 0.9849,
+              "offset": [
+                128,
+                56
+              ],
+              "iou": 0.97,
+              "iou_unregistered_scale": 0.9849,
+              "purity": 0.988
+            }
+          },
+          "metal_ratio": {
+            "front": 0.434,
+            "left": 0.43,
+            "back": 0.435,
+            "right": 0.542
+          }
+        }
+      ]
+    },
+    "emid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:44:16",
+          "files": {
+            "EID_SK_Weapon_Stormpod_v001_sheet.png": {
+              "path": "01_concept/EID_SK_Weapon_Stormpod_v001_sheet.png",
+              "sha256": "3797e889e790f2952ce62e7490c06ba8dd4d18d03e91c7001a4b4577a221fb0a"
+            },
+            "EID_SK_Weapon_Stormpod_v001_front.png": {
+              "path": "01_concept/EID_SK_Weapon_Stormpod_v001_front.png",
+              "sha256": "4133dce1f1b5d2c394ca6e23dfd1d15d37f06478f83c5aa5e8f64a8eed56cfef"
+            },
+            "EID_SK_Weapon_Stormpod_v001_left.png": {
+              "path": "01_concept/EID_SK_Weapon_Stormpod_v001_left.png",
+              "sha256": "17b9496fca6d32f16f48746d1b11c69b7e799f7582d3d2b4d017711119e378f8"
+            },
+            "EID_SK_Weapon_Stormpod_v001_back.png": {
+              "path": "01_concept/EID_SK_Weapon_Stormpod_v001_back.png",
+              "sha256": "bca0d64ee90c589399a916e0996bc4153962b9e14c2e1494eda96ef47bd66a9a"
+            },
+            "EID_SK_Weapon_Stormpod_v001_right.png": {
+              "path": "01_concept/EID_SK_Weapon_Stormpod_v001_right.png",
+              "sha256": "219070378c973f4a677fc5c1ae2854836935642928bb451fdbd8f87f8dd0a62e"
+            },
+            "EID_SK_Weapon_Stormpod_v001_compare.png": {
+              "path": "01_concept/EID_SK_Weapon_Stormpod_v001_compare.png",
+              "sha256": "aa8f394d2566d1b0ae914584a5ade5b7f70aedf013bb63ebe120c2374035715b"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1720,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 262
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2900
+          },
+          "request_id": "req_4a108962fe374e0985ef4681fc8a9c14",
+          "seconds": 30.0,
+          "registration": {
+            "front": {
+              "scale": 0.9646,
+              "offset": [
+                34,
+                69
+              ],
+              "iou": 0.955,
+              "iou_unregistered_scale": 0.9646,
+              "purity": 0.992
+            },
+            "left": {
+              "scale": 0.9786,
+              "offset": [
+                131,
+                56
+              ],
+              "iou": 0.956,
+              "iou_unregistered_scale": 0.9786,
+              "purity": 0.997
+            },
+            "back": {
+              "scale": 0.9636,
+              "offset": [
+                34,
+                70
+              ],
+              "iou": 0.956,
+              "iou_unregistered_scale": 0.9636,
+              "purity": 0.993
+            },
+            "right": {
+              "scale": 0.9786,
+              "offset": [
+                130,
+                56
+              ],
+              "iou": 0.968,
+              "iou_unregistered_scale": 0.9786,
+              "purity": 0.995
+            }
+          },
+          "emissive_ratio": {
+            "front": 0.036,
+            "left": 0.015,
+            "back": 0.029,
+            "right": 0.024
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:51:29",
+          "files": {
+            "HP_SK_Weapon_Stormpod_v001_input_front.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Stormpod_v001_input_front.png",
+              "sha256": "5515a18354fc8338d54ab04ba09d2a98efead2bafacaef3e82926d14386db9f8"
+            },
+            "HP_SK_Weapon_Stormpod_v001_input_left.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Stormpod_v001_input_left.png",
+              "sha256": "9e24196aa7613cedfaeb194f7d8f3abf7887c8d53cd279888047bcd0a06ff9b7"
+            },
+            "HP_SK_Weapon_Stormpod_v001_input_back.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Stormpod_v001_input_back.png",
+              "sha256": "8c010909c3a5beefd576ad51003029f93eaaf26f288f9117511195c21b58a20a"
+            },
+            "HP_SK_Weapon_Stormpod_v001_input_right.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Stormpod_v001_input_right.png",
+              "sha256": "377a0de624b62bb8ec6bd70e2a1a34c6496a272484ac5ecd010ead0466a52281"
+            },
+            "HP_SK_Weapon_Stormpod_v001.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Stormpod_v001.glb",
+              "sha256": "9144c6d5b55fc08f5304653945e5816e972abceb74f25dcdd0b387f6d17c458a"
+            },
+            "HP_SK_Weapon_Stormpod_v001_graph.json": {
+              "path": "02_highpoly/HP_SK_Weapon_Stormpod_v001_graph.json",
+              "sha256": "a4d03f858b578395f0ca05c53fb6dc26d3a936ce824a7544a20ef61379399b87"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -281,
+              -25,
+              793,
+              1050
+            ],
+            "scale": 0.9534450651769087
+          },
+          "seconds": 142.6,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 5.9
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:52:10",
+          "files": {
+            "SK_Weapon_Stormpod_v001.blend": {
+              "path": "03_work/SK_Weapon_Stormpod_v001.blend",
+              "sha256": "0a2b25badddb4e91559d1706802dc2d860e4e3e57e88ea9f5af0ea4119a0c9d1"
+            },
+            "SK_Weapon_Stormpod_v001.glb": {
+              "path": "04_export/SK_Weapon_Stormpod_v001.glb",
+              "sha256": "91995faf97d7eafaa962da198cfddc041029648cc99967ff8c2f59623265a299"
+            },
+            "SK_Weapon_Stormpod_v001_metrics.json": {
+              "path": "03_work/SK_Weapon_Stormpod_v001_metrics.json",
+              "sha256": "316b48b06c552aec1ed10a223462b091e44c1647177da21035f056e59810ab6e"
+            },
+            "T_Weapon_Stormpod_BC.png": {
+              "path": "03_work/textures_v001/T_Weapon_Stormpod_BC.png",
+              "sha256": "1fd880ca5980160b61414cf24e3ab3e9a42c8111161fccc47aeca548e23e0583"
+            },
+            "T_Weapon_Stormpod_E.png": {
+              "path": "03_work/textures_v001/T_Weapon_Stormpod_E.png",
+              "sha256": "e586fa2e67ff402cf4574ba0141a1355031e98e20b75d4900a7788f04a7f882b"
+            },
+            "T_Weapon_Stormpod_MetalMask.png": {
+              "path": "03_work/textures_v001/T_Weapon_Stormpod_MetalMask.png",
+              "sha256": "b5c0556c306cf529d8b5803db12edf4e2307214b2797bd382be987240d8558d5"
+            },
+            "T_Weapon_Stormpod_N.png": {
+              "path": "03_work/textures_v001/T_Weapon_Stormpod_N.png",
+              "sha256": "292d899d7883c7f387385e06b2a36a96c268ad47e26105c56c0cb0c733ceae3d"
+            },
+            "T_Weapon_Stormpod_ORM.png": {
+              "path": "03_work/textures_v001/T_Weapon_Stormpod_ORM.png",
+              "sha256": "1ad7037954ea0cc51bdc1af980924b0e38b85cb53b34a9debc822c18f1711b95"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1,
+            "emid": 1
+          },
+          "align_iou": 0.893,
+          "uncovered_ratio": 0.2239,
+          "lods": [
+            {
+              "tris": 11996,
+              "verts": 5996
+            },
+            {
+              "tris": 2996,
+              "verts": 1496
+            }
+          ],
+          "export_kb": 610.5,
+          "seconds": 41.3,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:52:10",
+          "files": {
+            "SK_Weapon_Stormpod_v001_validation.json": {
+              "path": "05_review/SK_Weapon_Stormpod_v001_validation.json",
+              "sha256": "5f1dad91f40bc2ff13c997da8a23a79b7f92d20df38c11f4c06c368f003ade92"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:52:18",
+          "files": {
+            "SK_Weapon_Stormpod_v001_review.png": {
+              "path": "05_review/SK_Weapon_Stormpod_v001_review.png",
+              "sha256": "7685912be28c68554b0f381e330eb69187905647a59db4283645dac8a137c106"
+            }
+          },
+          "from_build": 1,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "刚体部件 + 多视图高模；三轴尺寸与白模吻合，发光分区落在纹饰上（三才转轮保留程序化发光件）",
+            "time": "2026-10-06 18:04:59"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 18:05:00",
+          "files": {
+            "SK_Weapon_Stormpod.glb": {
+              "path": "@root/public/assets/weapons/SK_Weapon_Stormpod.glb",
+              "sha256": "91995faf97d7eafaa962da198cfddc041029648cc99967ff8c2f59623265a299"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/weapons/SK_Weapon_Stormpod.glb"
+        }
+      ]
+    }
+  }
+}

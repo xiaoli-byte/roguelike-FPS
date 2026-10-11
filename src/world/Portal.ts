@@ -5,9 +5,6 @@
  */
 import * as THREE from 'three';
 import type { GameContext, Interactable, InteractPrompt, StageNode, StageType } from '../core/types';
-import { getStageDesign } from './StageDesign';
-import { usesAuthoredLayout } from './WhiteboxMode';
-import { getWhiteboxPlan } from './WhiteboxGen';
 
 export const STAGE_TYPE_COLORS: Record<StageType, number> = {
   combat: 0xe8452c,   // 朱红
@@ -26,19 +23,11 @@ export const STAGE_TYPE_NAMES: Record<StageType, string> = {
 };
 
 const TYPE_HINTS: Record<StageType, string> = {
-  combat: '击退数波敌人，清场后开启宝箱',
-  elite: '强敌环伺，奖励更加丰厚',
-  treasure: '没有敌人，宝箱唾手可得',
+  combat: '前路有守军驻扎，保持警惕',
+  elite: '强敌环伺，做好迎战准备',
+  treasure: '静谧之地，等待探索',
   shop: '购买武器、秘卷与补给，强化武器',
   boss: '本章首领在此等候',
-};
-
-const TYPE_NO_REWARD: Record<StageType, string> = {
-  combat: '清场奖励',
-  elite: '清场奖励',
-  treasure: '宝箱',
-  shop: '补给与强化',
-  boss: '首领战利品',
 };
 
 const RISE_TIME = 1.5;
@@ -46,6 +35,8 @@ const RISE_DEPTH = 6.6;
 const HOLE_Y = 2.2;
 const HOLE_R = 1.7;
 const BASE_H = 0.3;
+/** 神龛模式：旋涡放大倍数与中心高度（拱洞约 4.9 m 宽、6.6 m 高） */
+const SHRINE_SWIRL_SCALE = 1.3, SHRINE_SWIRL_Y = 3.1;
 
 function cssHex(hex: number): string {
   return `#${hex.toString(16).padStart(6, '0')}`;
@@ -102,6 +93,32 @@ function getShared(): Shared {
     rims: new Map(),
   };
   return shared;
+}
+
+/** 石框配色按关卡主题：沙寺用砂岩 + 陶红屋顶，与场景建筑同色；其余主题沿用灰石。 */
+interface FramePalette { stone: number; stoneDark: number; roof: number; gold: number }
+const DEFAULT_FRAME: FramePalette = { stone: 0x9c948b, stoneDark: 0x6b645e, roof: 0x2f3542, gold: 0xd9a948 };
+const THEME_FRAMES: Partial<Record<string, FramePalette>> = {
+  desert: { stone: 0xd6a66c, stoneDark: 0xa8774c, roof: 0xa9452b, gold: 0xe2b453 },
+};
+interface FrameMaterials { stone: THREE.MeshStandardMaterial; stoneDark: THREE.MeshStandardMaterial; roof: THREE.MeshStandardMaterial; gold: THREE.MeshStandardMaterial }
+const frameMaterials = new Map<string, FrameMaterials>();
+
+function frameFor(theme: string | undefined): FrameMaterials {
+  const key = theme && THEME_FRAMES[theme] ? theme : 'default';
+  let m = frameMaterials.get(key);
+  if (!m) {
+    const s = getShared();
+    const c = THEME_FRAMES[key] ?? DEFAULT_FRAME;
+    m = key === 'default' ? { stone: s.stone, stoneDark: s.stoneDark, roof: s.roof, gold: s.gold } : {
+      stone: new THREE.MeshStandardMaterial({ color: c.stone, roughness: 0.9, flatShading: true }),
+      stoneDark: new THREE.MeshStandardMaterial({ color: c.stoneDark, roughness: 0.95, flatShading: true }),
+      roof: new THREE.MeshStandardMaterial({ color: c.roof, roughness: 0.8, flatShading: true }),
+      gold: new THREE.MeshStandardMaterial({ color: c.gold, roughness: 0.4, metalness: 0.45, flatShading: true }),
+    };
+    frameMaterials.set(key, m);
+  }
+  return m;
 }
 
 function rimMaterial(color: number): THREE.MeshBasicMaterial {
@@ -273,12 +290,15 @@ export class Portal {
   private lastUse = -10;
   private disposed = false;
   private readonly yaw: number;
+  /** Standing in a level's portal shrine: the shrine is the frame, so no stone gate, roof, base or colliders. */
+  private readonly inShrine: boolean;
 
   /**
    * @param yaw 门朝向（模型 +Z 指向玩家一侧），建议为 90° 的整数倍以便碰撞盒精确
    * @param delay 延迟多少秒后开始升起
+   * @param shrine 立在关卡的传送门神龛拱洞里：神龛就是门框，不建石框 / 屋顶 / 底座，旋涡放大填满拱洞
    */
-  constructor(private readonly ctx: GameContext, readonly node: StageNode, pos: THREE.Vector3, yaw: number, parent: THREE.Object3D, delay = 0) {
+  constructor(private readonly ctx: GameContext, readonly node: StageNode, pos: THREE.Vector3, yaw: number, parent: THREE.Object3D, delay = 0, shrine = false) {
     const s = getShared();
     this.position = pos.clone();
     this.age = -Math.max(0, delay);
@@ -291,51 +311,60 @@ export class Portal {
     this.root.add(this.lift);
     this.lift.position.y = -RISE_DEPTH;
     this.root.visible = false;
+    this.inShrine = shrine;
+    // 神龛拱洞约 4.9 m 宽、6.6 m 高：旋涡放大到半径约 2.2 m，中心抬到拱洞中部
+    const swirlScale = shrine ? SHRINE_SWIRL_SCALE : 1, swirlY = shrine ? SHRINE_SWIRL_Y : BASE_H + HOLE_Y;
 
     // 基座 + 台阶
-    const base = new THREE.Mesh(s.box, s.stoneDark);
+    const frame = frameFor(ctx.run?.stage?.theme);
+    const base = new THREE.Mesh(s.box, frame.stoneDark);
     base.scale.set(5.6, BASE_H, 2.2);
     base.position.y = BASE_H / 2;
-    const step = new THREE.Mesh(s.box, s.stoneDark);
+    const step = new THREE.Mesh(s.box, frame.stoneDark);
     step.scale.set(3.6, 0.15, 0.8);
     step.position.set(0, 0.075, 1.45);
     // 月洞门石框
-    const gate = new THREE.Mesh(s.gate, s.stone);
+    const gate = new THREE.Mesh(s.gate, frame.stone);
     gate.position.y = BASE_H;
     // 屋顶
-    const roof = new THREE.Mesh(s.box, s.roof);
+    const roof = new THREE.Mesh(s.box, frame.roof);
     roof.scale.set(5.4, 0.24, 1.4);
     roof.position.y = BASE_H + 5.12;
-    const ridge = new THREE.Mesh(s.box, s.gold);
+    const ridge = new THREE.Mesh(s.box, frame.gold);
     ridge.scale.set(5.7, 0.26, 0.3);
     ridge.position.y = BASE_H + 5.37;
-    this.lift.add(base, step, gate, roof, ridge);
-    for (const sx of [-1, 1]) {
-      const tip = new THREE.Mesh(s.cone, s.roof);
-      tip.scale.set(0.16, 0.8, 0.16);
-      tip.position.set(sx * 2.95, BASE_H + 5.3, 0);
-      tip.rotation.z = -sx * 0.9;
-      this.lift.add(tip);
+    if (!shrine) {
+      this.lift.add(base, step, gate, roof, ridge);
+      for (const sx of [-1, 1]) {
+        const tip = new THREE.Mesh(s.cone, frame.roof);
+        tip.scale.set(0.16, 0.8, 0.16);
+        tip.position.set(sx * 2.95, BASE_H + 5.3, 0);
+        tip.rotation.z = -sx * 0.9;
+        this.lift.add(tip);
+      }
+      const orb = new THREE.Mesh(s.cone, rimMaterial(color));
+      orb.scale.set(0.22, 0.55, 0.22);
+      orb.position.set(0, BASE_H + 5.5, 0);
+      this.lift.add(orb);
     }
-    const orb = new THREE.Mesh(s.cone, rimMaterial(color));
-    orb.scale.set(0.22, 0.55, 0.22);
-    orb.position.set(0, BASE_H + 5.5, 0);
-    this.lift.add(orb);
     // 光环（前后两圈）与旋涡
     for (const z of [-0.31, 0.31]) {
       const rim = new THREE.Mesh(s.rim, rimMaterial(color));
-      rim.position.set(0, BASE_H + HOLE_Y, z);
+      rim.position.set(0, swirlY, z * swirlScale);
+      rim.scale.setScalar(swirlScale);
       this.lift.add(rim);
     }
     this.swirlMat = fxMaterial(SWIRL_FRAG, color);
     const swirl = new THREE.Mesh(s.disc, this.swirlMat);
-    swirl.position.set(0, BASE_H + HOLE_Y, 0);
+    swirl.position.set(0, swirlY, 0);
+    swirl.scale.setScalar(swirlScale);
     swirl.renderOrder = 4;
     this.lift.add(swirl);
 
     // 文字牌
-    const title = STAGE_TYPE_NAMES[node.type] ?? '未知';
-    const sub = node.reward !== 'none' ? `奖励：${ctx.runPlan.rewardLabel(node.reward)}` : TYPE_NO_REWARD[node.type];
+    const title = node.type === 'combat' ? '前行' : STAGE_TYPE_NAMES[node.type] ?? '未知';
+    // 门前只透露去向和挑战类型，奖励与支路物资留到进入后探索。
+    const sub = '踏入前路';
     this.labelTex = makeLabel(title, sub, ctx.runPlan.stageLabel(node), color);
     this.labelMat = new THREE.SpriteMaterial({ map: this.labelTex, transparent: true, depthWrite: false, fog: false, opacity: 0, toneMapped: false });
     this.sprite = new THREE.Sprite(this.labelMat);
@@ -360,10 +389,8 @@ export class Portal {
     // 与宝箱 / 武器等交互提示一致：副标题以动作开头
     const prompt: InteractPrompt = {
       title: ctx.runPlan.stageLabel(node),
-      subtitle: `进入 · ${node.reward !== 'none' ? `奖励：${ctx.runPlan.rewardLabel(node.reward)}` : TYPE_NO_REWARD[node.type]}`,
-      lines: node.type === 'shop' || node.type === 'treasure' ? [TYPE_HINTS[node.type]]
-        : usesAuthoredLayout() ? [getWhiteboxPlan(node).routeChoice, '接近战区自动触发守卫，击败终点守军开启出口']
-          : [getStageDesign(node).routeHint, getStageDesign(node).combatHint, TYPE_HINTS[node.type]],
+      subtitle: '进入 · 踏入前路',
+      lines: [TYPE_HINTS[node.type]],
       color: cssHex(color),
       key: 'F',
     };
@@ -436,7 +463,7 @@ export class Portal {
       this.started = true;
       this.root.visible = true;
       // 开始升起时才加碰撞（之前门还没出现，不能有看不见的墙）；此刻玩家正站在门的位置上就不加，避免卡人
-      this.addColliders(this.position, this.yaw);
+      if (!this.inShrine) this.addColliders(this.position, this.yaw);
       this.ctx.audio.play('portal', { position: this.position, volume: 0.8 });
       _v.copy(this.position);
       this.ctx.fx.burst(_v, this.color, 26, 5, 0.9, 0.16, 6);

@@ -12,7 +12,7 @@ from PIL import Image
 import numpy as np
 from scipy import ndimage
 from lib.config import CFG
-from lib.state import AssetState, sha256
+from lib.state import AssetState, resolve_path, sha256
 from lib import imaging
 from prepare_nature_batch import prepare_reference
 
@@ -67,7 +67,7 @@ def register(source_json: Path):
     views = json.loads(state.file(bo, f"BO_{ID}_v{bo['version']:03d}_views.json").read_text(encoding='utf8'))
     item = json.loads(source_json.read_text(encoding='utf8'))
     assert item['id'] == ID and item['prompt'].strip()
-    source = Path(item['path']).resolve()
+    source = resolve_path(item['path']).resolve()
     current = state.current('concept')
     digest = sha256(source)
     if current and current.get('source_sha256') == digest and current.get('from_blockout') == bo['version'] and current.get('registration_version') == REGISTRATION_VERSION:

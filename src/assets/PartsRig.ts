@@ -33,10 +33,12 @@ const FINGERPRINT_TOLERANCE = 2e-3;
  * @param host buildModel 返回的模型根（必须还处在构建姿势：在任何动画运行之前调用）
  * @param keep 不隐藏的子树（例如已经换上美术资产的命名挂点）
  */
-export function attachPartsBody(host: THREE.Object3D, asset: LoadedAsset, lodScale = 1, keep: THREE.Object3D[] = []): SkinnedBody | null {
+export function attachPartsBody(host: THREE.Object3D, asset: LoadedAsset, lodScale = 1, keep: THREE.Object3D[] = [],
+  extraJoints?: ReadonlyMap<string, THREE.Object3D>): SkinnedBody | null {
   const rig = asset.entry.rig;
   if (!rig) return null;
   const paths = jointPaths(host);
+  for (const [name, node] of extraJoints ?? []) paths.set(name, node);
   // 骨架指纹：路径存在、是非网格节点、静止局部位置一致
   for (const [name, pos] of rig.joints) {
     const o = paths.get(name);
@@ -73,7 +75,13 @@ export function attachPartsBody(host: THREE.Object3D, asset: LoadedAsset, lodSca
   host.traverse((o) => {
     const m = o as THREE.Mesh;
     if (!m.isMesh || kept.has(m)) return;
-    if ((m.material as THREE.Material).type !== 'MeshBasicMaterial') m.visible = false;
+    if ((m.material as THREE.Material).type !== 'MeshBasicMaterial') {
+      // Nested bones and flame effects must keep updating under the old tail carrier.
+      if ((m as THREE.SkinnedMesh).isSkinnedMesh && m.children.length) {
+        const materials = Array.isArray(m.material) ? m.material : [m.material];
+        for (const material of materials) material.visible = false;
+      } else m.visible = false;
+    }
     else glows.push(m);
   });
   // 小发光件（眼睛、面甲缝）贴到美术网格表面并缩小，落在贴图画好的眼睛里（同人形敌人）；大的光团、加法光环不动

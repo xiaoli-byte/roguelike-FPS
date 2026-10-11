@@ -34,7 +34,13 @@ export class SettingsPanel {
 
     const g2 = this.group(colA, '画面');
     this.slider(g2, '视野（FOV）', 'fov', 60, 110, 1, (v) => `${Math.round(v)}°`);
-    this.segmented(g2, '画质', [
+    this.segmented(g2, '画质', 'quality', [
+      { value: 'low', label: '低' },
+      { value: 'medium', label: '中' },
+      { value: 'high', label: '高' },
+    ]);
+    // 画质为「低」时不渲染阴影；中、高画质下可单独调阴影贴图精度（1024 / 2048 / 4096）
+    this.segmented(g2, '阴影精度', 'shadowQuality', [
       { value: 'low', label: '低' },
       { value: 'medium', label: '中' },
       { value: 'high', label: '高' },
@@ -141,18 +147,18 @@ export class SettingsPanel {
     this.controls.push({ sync: paint });
   }
 
-  private segmented(parent: HTMLElement, label: string, options: { value: Settings['quality']; label: string }[]): void {
+  private segmented(parent: HTMLElement, label: string, key: 'quality' | 'shadowQuality', options: { value: Settings['quality']; label: string }[]): void {
     const { ctrl } = this.row(parent, label);
     const seg = h('span', 'gf-seg', ctrl);
     const btns = options.map((o) =>
       button(this.ctx, 'gf-seg__opt', seg, o.label, () => {
-        this.ctx.settings.quality = o.value;
+        this.ctx.settings[key] = o.value;
         paint();
         this.apply(true);
       }),
     );
     const paint = () => {
-      options.forEach((o, i) => btns[i].classList.toggle('is-on', this.ctx.settings.quality === o.value));
+      options.forEach((o, i) => btns[i].classList.toggle('is-on', this.ctx.settings[key] === o.value));
     };
     this.controls.push({ sync: paint });
   }

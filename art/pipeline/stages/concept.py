@@ -34,6 +34,10 @@ HARD CONSTRAINTS (do not break any of these):
   colours, materials and details, consistent from every side.
 - Fully transparent background. No ground, no cast shadows, no text, no labels, no frames, no extra props.
 - Keep glowing elements (eyes) where the blockout has orange glowing spots.
+- HANDS AND FEET MUST BE READABLE (they drive 3D reconstruction and skinning): every hand shows one thumb and
+  four individually separated fingers, relaxed and slightly spread, empty and open, never fused into a mitten,
+  never hidden in sleeves or clenched into a fist. Feet are fully shaped: if barefoot, bony or clawed, show each
+  toe or claw separately; if shod, show a complete boot or shoe with a clear sole. Same digit count in all views.
 """
 
 

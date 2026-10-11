@@ -20,6 +20,9 @@ import { jointPaths } from '../assets/PartsRig';
 import { buildGunModel, PROCEDURAL_PARTS } from '../weapons/WeaponModels';
 import { buildArm } from '../weapons/Viewmodel';
 import { HEROES } from '../player/Heroes';
+import { buildFoxModel } from '../ui/heroPreview/heroes/fox';
+import { buildBearModel } from '../ui/heroPreview/heroes/bear';
+import { buildFalconModel } from '../ui/heroPreview/heroes/falcon';
 
 const RECEIVER = 'http://127.0.0.1:8766';
 
@@ -234,12 +237,13 @@ interface PartsJoint {
   restLocal: [number, number, number];
   bindRotation: [number, number, number];
   bindScale: [number, number, number];
+  bindMatrix: number[];
 }
 
 interface PartsMeta {
   schema: 1;
   assetId: string;
-  source: { kind: 'enemy' | 'weapon'; id: string };
+  source: { kind: 'enemy' | 'weapon' | 'hero'; id: string };
   rig: 'parts';
   space: { up: '+Y'; forward: '+Z'; unit: 'm'; origin: 'model' };
   bounds: { min: number[]; max: number[] };
@@ -249,6 +253,9 @@ interface PartsMeta {
   /** rig 字段名 → 关节路径名（管线的 ROM 测试姿势按字段名书写，经它换成关节） */
   fields: Record<string, string>;
   parts: Record<string, 'body' | 'glow' | 'glowfx' | 'attachment'>;
+  /** Actual display-animation rotations, sampled after exporting the rest geometry. */
+  reviewPoses?: Record<string, Record<string, number[]>>;
+  reviewTransforms?: Record<string, Record<string, number[]>>;
   exportedAt: string;
 }
 
@@ -261,7 +268,9 @@ type PartsExport = PartsMeta & { glbSha256?: string };
  */
 async function exportPartsModel(
   root: THREE.Object3D, rigObj: Record<string, unknown> | undefined, assetId: string, source: PartsMeta['source'],
-  opts: { exclude: THREE.Object3D[]; glowAsFx?: boolean; dryRun?: boolean },
+  opts: { exclude: THREE.Object3D[]; glowAsFx?: boolean; dryRun?: boolean;
+    capturePoses?: () => Record<string, Record<string, number[]>>;
+    captureTransforms?: () => Record<string, Record<string, number[]>> },
 ): Promise<PartsExport> {
   root.updateMatrixWorld(true);
   const excluded = new Set<THREE.Object3D>();
@@ -302,6 +311,7 @@ async function exportPartsModel(
     restLocal: v3(o.position),
     bindRotation: [+o.rotation.x.toFixed(6), +o.rotation.y.toFixed(6), +o.rotation.z.toFixed(6)],
     bindScale: v3(o.scale),
+    bindMatrix: o.matrix.toArray(),
   }));
   const meta: PartsMeta = {
     schema: 1, assetId, source, rig: 'parts',
@@ -310,6 +320,8 @@ async function exportPartsModel(
     joints, keep, fields, parts, exportedAt: new Date().toISOString(),
   };
   const glb = (await new GLTFExporter().parseAsync(root, { binary: true, onlyVisible: true })) as ArrayBuffer;
+  if (opts.capturePoses) meta.reviewPoses = opts.capturePoses();
+  if (opts.captureTransforms) meta.reviewTransforms = opts.captureTransforms();
   // dryRun：不发给接收端，只返回 GLB 校验和（补说明字段前先确认几何逐字节不变，接收端才会原地修订而不是开新版本）
   if (opts.dryRun) {
     const hash = new Uint8Array(await crypto.subtle.digest('SHA-256', glb));
@@ -319,6 +331,41 @@ async function exportPartsModel(
   await post(`${RECEIVER}/blockout/${assetId}/blockout.json`, new TextEncoder().encode(JSON.stringify(meta, null, 2)).buffer);
   console.info(`[art] ${assetId} 部件骨架白模已导出：${joints.length} 个节点，${Object.keys(parts).length} 个部件`);
   return meta;
+}
+
+/** Hero display geometry shares its existing animation hierarchy with the new art mesh. */
+export async function exportHeroParts(heroId: string, assetId: string): Promise<PartsExport> {
+  const factories = { fox: buildFoxModel, bear: buildBearModel, falcon: buildFalconModel };
+  const factory = factories[heroId as keyof typeof factories];
+  if (!factory) throw new Error(`Unknown hero: ${heroId}`);
+  const hero = factory();
+  const transforms: Record<string, Record<string, number[]>> = {};
+  try {
+    // Export before the first animation update: this is also the runtime bind pose.
+    const artJoints = Object.fromEntries((hero.artControls?.skinJoints ?? []).map((node, i) => [`art_joint_${i}`, node]));
+    return await exportPartsModel(hero.root, { hand: hero.hand, ...artJoints }, assetId,
+      { kind: 'hero', id: heroId }, { exclude: [], glowAsFx: true,
+        captureTransforms: () => transforms, capturePoses: () => {
+        const result: Record<string, Record<string, number[]>> = {};
+        let t = 0;
+        const advance = (seconds: number): void => {
+          while (t + 1e-6 < seconds) { t += 1 / 60; hero.update(1 / 60, t); }
+        };
+        const sample = (name: string): void => {
+          hero.root.updateWorldMatrix(true, true);
+          result[name] = Object.fromEntries([...jointPaths(hero.root)].map(([path, node]) =>
+            [path, [node.rotation.x, node.rotation.y, node.rotation.z]]));
+          transforms[name] = Object.fromEntries([...jointPaths(hero.root)].map(([path, node]) => [path, node.matrix.toArray()]));
+        };
+        advance(1); sample('idle'); hero.playIntro();
+        for (const [name, time] of [['intro_start', 1.2], ['intro_peak', 1.65], ['intro_end', 2.3]] as const) {
+          advance(time); sample(name);
+        }
+        return result;
+      } });
+  } finally {
+    hero.dispose();
+  }
 }
 
 /**

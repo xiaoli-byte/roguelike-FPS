@@ -1,0 +1,412 @@
+{
+  "asset": "SK_Enemy_ScorpionArcher",
+  "version": 5,
+  "glb": "art/source/characters/SK_Enemy_ScorpionArcher/04_export/SK_Enemy_ScorpionArcher_native_v005.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.5,
+      "UV 重排 18% → 18%，3 张源贴图转移到 4096²": 22.1,
+      "自定义骨架：55 根骨骼（热扩散权重，100 个顶点未覆盖）": 0.3,
+      "贴图（BC + AO/ORM）": 12.2,
+      "LOD 与蒙皮上限 11819 / 4925 / 1969": 0.3,
+      "法线贴图（高模 → LOD0）": 3.4,
+      "发光壳 348 面": 0.0,
+      "导出 2685 KB": 2.9
+    },
+    "source": {
+      "verts": 9920,
+      "tris": 19985,
+      "scale": 2.0455070704029428
+    },
+    "uv_repack": {
+      "area_before": 0.183,
+      "area_after": 0.182,
+      "transferred": [
+        {
+          "image": "fantasy_crab_humanoid_3d_model_basecolor",
+          "size": 4096,
+          "data": false
+        },
+        {
+          "image": "fantasy_crab_humanoid_3d_model_roughness",
+          "size": 4096,
+          "data": true
+        },
+        {
+          "image": "fantasy_crab_humanoid_3d_model_metallic",
+          "size": 4096,
+          "data": true
+        }
+      ]
+    },
+    "regions": {
+      "heat_unweighted_verts": 100,
+      "crossbow_verts": 455,
+      "sac_verts": 263,
+      "fallback_verts": 188,
+      "per_bone": {
+        "hips": 219,
+        "abdomen_1": 126,
+        "abdomen_2": 32,
+        "abdomen_3": 123,
+        "tail_1": 183,
+        "tail_2": 161,
+        "tail_3": 147,
+        "tail_4": 70,
+        "sac": 332,
+        "crossbow": 539,
+        "waist": 1039,
+        "chest": 425,
+        "neck": 28,
+        "head": 484,
+        "shoulder_L": 212,
+        "arm_L": 146,
+        "forearm_L": 235,
+        "hand_L": 82,
+        "claw_L1": 133,
+        "claw_L2": 110,
+        "claw_L": 121,
+        "pinch_L": 90,
+        "leg_L1a": 196,
+        "leg_L1b": 91,
+        "leg_L1c": 100,
+        "leg_L2a": 143,
+        "leg_L2b": 84,
+        "leg_L2c": 98,
+        "leg_L3a": 131,
+        "leg_L3b": 58,
+        "leg_L3c": 96,
+        "leg_L4a": 79,
+        "leg_L4b": 92,
+        "leg_L4c": 80,
+        "shoulder_R": 212,
+        "arm_R": 130,
+        "forearm_R": 236,
+        "hand_R": 82,
+        "claw_R1": 132,
+        "claw_R2": 110,
+        "claw_R": 116,
+        "pinch_R": 224,
+        "leg_R1a": 197,
+        "leg_R1b": 89,
+        "leg_R1c": 99,
+        "leg_R2a": 143,
+        "leg_R2b": 84,
+        "leg_R2c": 98,
+        "leg_R3a": 131,
+        "leg_R3b": 58,
+        "leg_R3c": 95,
+        "leg_R4a": 82,
+        "leg_R4b": 93,
+        "leg_R4c": 78
+      }
+    },
+    "bones": [
+      "abdomen_1",
+      "abdomen_2",
+      "abdomen_3",
+      "arm_L",
+      "arm_R",
+      "chest",
+      "claw_L",
+      "claw_L1",
+      "claw_L2",
+      "claw_R",
+      "claw_R1",
+      "claw_R2",
+      "crossbow",
+      "forearm_L",
+      "forearm_R",
+      "hand_L",
+      "hand_R",
+      "head",
+      "hips",
+      "leg_L1a",
+      "leg_L1b",
+      "leg_L1c",
+      "leg_L2a",
+      "leg_L2b",
+      "leg_L2c",
+      "leg_L3a",
+      "leg_L3b",
+      "leg_L3c",
+      "leg_L4a",
+      "leg_L4b",
+      "leg_L4c",
+      "leg_R1a",
+      "leg_R1b",
+      "leg_R1c",
+      "leg_R2a",
+      "leg_R2b",
+      "leg_R2c",
+      "leg_R3a",
+      "leg_R3b",
+      "leg_R3c",
+      "leg_R4a",
+      "leg_R4b",
+      "leg_R4c",
+      "neck",
+      "pinch_L",
+      "pinch_R",
+      "root",
+      "sac",
+      "shoulder_L",
+      "shoulder_R",
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "tail_4",
+      "waist"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.803,
+      "shade_mean": 0.865
+    },
+    "textures": {
+      "size": 2048,
+      "ao_mean": 0.653,
+      "provider_pbr": [
+        "roughness",
+        "metallic"
+      ],
+      "roughness_mean": 0.507,
+      "metal_frac": 0.298
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Enemy_ScorpionArcher_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_ScorpionArcher_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_ScorpionArcher_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Enemy_ScorpionArcher_LOD0",
+        "tris": 11819,
+        "uv_min": [
+          0.004196315538138151,
+          0.004146285820752382
+        ],
+        "uv_max": [
+          0.9853177666664124,
+          0.9957151412963867
+        ]
+      },
+      {
+        "name": "SK_Enemy_ScorpionArcher_LOD1",
+        "tris": 4925,
+        "uv_min": [
+          0.0041963751427829266,
+          0.0041963448747992516
+        ],
+        "uv_max": [
+          0.9853177666664124,
+          0.9957151412963867
+        ]
+      },
+      {
+        "name": "SK_Enemy_ScorpionArcher_LOD2",
+        "tris": 1969,
+        "uv_min": [
+          0.00419637793675065,
+          0.0041963448747992516
+        ],
+        "uv_max": [
+          0.9853177666664124,
+          0.9957151412963867
+        ]
+      }
+    ],
+    "normal_map": {
+      "size": 2048,
+      "flatness": 0.0908
+    },
+    "glow_shell": {
+      "group": "sac",
+      "tris": 348
+    },
+    "glb_kb": 2685,
+    "_seconds": 44.1
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "2685 KB / 3000 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Enemy_ScorpionArcher_LOD0', 'SK_Enemy_ScorpionArcher_LOD1', 'SK_Enemy_ScorpionArcher_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "11819 / 12000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "4925 / 5000"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "1967 / 2000"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "2.002 m (design 2.0 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=-0.0010"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Enemy_ScorpionArcher_Glow', 'M_Enemy_ScorpionArcher']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "glow shell",
+      "348 tris on 'sac'"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_ScorpionArcher_BC",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_ScorpionArcher_N",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_ScorpionArcher_ORM",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "55 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Enemy_ScorpionArcher_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_ScorpionArcher_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_ScorpionArcher_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_ScorpionArcher_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_ScorpionArcher_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_ScorpionArcher_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_ScorpionArcher_LOD0 UV range",
+      "[0.004, 0.004]..[0.985, 0.996]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_ScorpionArcher_LOD1 UV range",
+      "[0.004, 0.004]..[0.985, 0.996]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_ScorpionArcher_LOD2 UV range",
+      "[0.004, 0.004]..[0.985, 0.996]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "100 verts"
+    ],
+    [
+      "pass",
+      "region crossbow",
+      "455 verts"
+    ],
+    [
+      "pass",
+      "region sac",
+      "263 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "188 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

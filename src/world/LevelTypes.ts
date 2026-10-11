@@ -12,7 +12,11 @@ export interface AdventureZone extends P2 { id: string; label: string; radius: n
 export interface AdventurePath { points: P2[]; width: number }
 /** Width/depth are world-axis footprints; yaw is a quarter turn. */
 export interface AdventureRock extends P2 { width: number; depth: number; height: number; yaw: number; ridge?: string }
-export interface AdventureSpawnAnchor extends P2 { role: EnemyPlacement; lane: number }
+export interface AdventureSpawnAnchor extends P2 {
+  role: EnemyPlacement; lane: number;
+  /** World height of a raised station (a deck top); omitted for arena-floor stations. */
+  y?: number;
+}
 export interface AdventureEncounter extends P2 {
   id: string;
   label: string;

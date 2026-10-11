@@ -148,8 +148,12 @@ export class WaveRunner {
 
   /** Same full safety test for initial selection, warning and actual arrival. */
   private pointSafe(point: THREE.Vector3, enemy: SpawnBody): boolean {
-    if (!Number.isFinite(point.x + point.y + point.z) || Math.abs(point.y - this.arena.floorY) > .1) return false;
-    const def = getEnemyDef(enemy.id), scale = enemy.elite ? 1.25 : 1;
+    if (!Number.isFinite(point.x + point.y + point.z)) return false;
+    // Raised stations stand on a stair-served deck top; everything else is on the arena floor.
+    const raised = Math.abs(point.y - this.arena.floorY) > .1;
+    if (raised && !this.ctx.nav.platformAt?.(point)) return false;
+    // Bodies scaled up with their art (def.scale, e.g. the 1.8x scorpion) reserve their real size, like EnemyBase.
+    const def = getEnemyDef(enemy.id), scale = ((def as { scale?: number } | undefined)?.scale ?? 1) * (enemy.elite ? 1.25 : 1);
     // NavGrid's player-sized foot is narrower than shields and elite bodies.
     // Reserve the full enemy radius plus clearance, rather than its .85 movement collider.
     const halfW = (def?.radius ?? .9) * scale + .15, height = (def?.height ?? 2.5) * scale + .1;
@@ -162,7 +166,8 @@ export class WaveRunner {
       if (d < region.minRadius || d > region.maxRadius) return false;
       if (region.contains && !region.contains(point, halfW)) return false;
     }
-    if (!this.ctx.nav.isWalkable(point.x, point.z)) return false;
+    // The ground grid marks decks blocked; a deck station's walkability is its platform test above.
+    if (!raised && !this.ctx.nav.isWalkable(point.x, point.z)) return false;
     if (typeof this.ctx.world.overlapsBody === 'function' && this.ctx.world.overlapsBody(point.x, point.y, point.z, halfW, height)) return false;
     // The real NavGrid can return a path ending in the nearest reachable cell.
     // Merely returning true must not permit a spawn in an isolated component.

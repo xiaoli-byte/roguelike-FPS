@@ -1,0 +1,709 @@
+{
+  "id": "SK_Weapon_Trinity",
+  "display": "三才转轮",
+  "kind": "skeletal",
+  "class": "weapon_fp",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:35:21",
+          "files": {
+            "BO_SK_Weapon_Trinity_v001.glb": {
+              "path": "00_blockout/BO_SK_Weapon_Trinity_v001.glb",
+              "sha256": "8f3a671f455da0f25ca3b16fb04e28f128b673b3d655bdb2733940ba38c43a4c"
+            },
+            "BO_SK_Weapon_Trinity_v001.json": {
+              "path": "00_blockout/BO_SK_Weapon_Trinity_v001.json",
+              "sha256": "406b820d88ec1c12c182a064468c5de495425a0d24d04d2d88084dc18cc2eebe"
+            },
+            "BO_SK_Weapon_Trinity_v001_views.json": {
+              "path": "00_blockout/BO_SK_Weapon_Trinity_v001_views.json",
+              "sha256": "a999a80a73f035abc012fc36b6cef90119c796bb022b1f6d0b1e9e1ae04edac5"
+            },
+            "BO_SK_Weapon_Trinity_v001_sheet.png": {
+              "path": "00_blockout/BO_SK_Weapon_Trinity_v001_sheet.png",
+              "sha256": "bb98e195f7d090ee5b4153a6e2fead4359470461cb87c0395e2679270d50df8a"
+            },
+            "BO_SK_Weapon_Trinity_v001_front.png": {
+              "path": "00_blockout/BO_SK_Weapon_Trinity_v001_front.png",
+              "sha256": "0fb2a93fda7ae83d2d41a75f201e1dfbd103e0e4432af0cb4cc47803c5c65504"
+            },
+            "BO_SK_Weapon_Trinity_v001_left.png": {
+              "path": "00_blockout/BO_SK_Weapon_Trinity_v001_left.png",
+              "sha256": "c8a527fe1f4cdc95ab9e9e85aba95aaf0c0615259d56059a018df1500148d8e5"
+            },
+            "BO_SK_Weapon_Trinity_v001_back.png": {
+              "path": "00_blockout/BO_SK_Weapon_Trinity_v001_back.png",
+              "sha256": "2c1bd2041d7941f35eb825d4315250701b26be25a2b882ee5286dcf7987dc38b"
+            },
+            "BO_SK_Weapon_Trinity_v001_right.png": {
+              "path": "00_blockout/BO_SK_Weapon_Trinity_v001_right.png",
+              "sha256": "e008a4d2eb5b500094a8ecf4f6d7e3eac24dbe586e56b742aeb1d138f7512403"
+            }
+          },
+          "source": {
+            "kind": "weapon",
+            "id": "trinity"
+          },
+          "joints": 3,
+          "bounds": {
+            "min": [
+              -0.03233592212200165,
+              -0.13398011500252974,
+              -0.2800000014901161
+            ],
+            "max": [
+              0.03233592212200165,
+              0.090000000461936,
+              0.08330816082963374
+            ]
+          },
+          "blender_seconds": 5.7
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:38:07",
+          "files": {
+            "CN_SK_Weapon_Trinity_v001_sheet.png": {
+              "path": "01_concept/CN_SK_Weapon_Trinity_v001_sheet.png",
+              "sha256": "75777d3f52e9c5cfb42a4ae3d607e903cd2633001500c55351f7731d21cfd2aa"
+            },
+            "CN_SK_Weapon_Trinity_v001_front.png": {
+              "path": "01_concept/CN_SK_Weapon_Trinity_v001_front.png",
+              "sha256": "56eb549f0ad884f96e4c36caac8ec77b12b96714d70ce51811daa75879e318f7"
+            },
+            "CN_SK_Weapon_Trinity_v001_left.png": {
+              "path": "01_concept/CN_SK_Weapon_Trinity_v001_left.png",
+              "sha256": "1b89b8e563dc0d48372e7a4084923df2f9de7072d3b4293570cc874d278c64df"
+            },
+            "CN_SK_Weapon_Trinity_v001_back.png": {
+              "path": "01_concept/CN_SK_Weapon_Trinity_v001_back.png",
+              "sha256": "880ec3b84251a3811dedf0d312cbe86ce243500761f0ee5c0a46ab7a062d9f47"
+            },
+            "CN_SK_Weapon_Trinity_v001_right.png": {
+              "path": "01_concept/CN_SK_Weapon_Trinity_v001_right.png",
+              "sha256": "fee925052e96491e4871ba388fffde077f697074a889e0c519a951ccfdcc2beb"
+            },
+            "CN_SK_Weapon_Trinity_v001_compare.png": {
+              "path": "01_concept/CN_SK_Weapon_Trinity_v001_compare.png",
+              "sha256": "d795d60bd7a7e1747074d8bc175b05b2c12c21f843cf264bab9d88dc5a0fdb38"
+            },
+            "CN_SK_Weapon_Trinity_v001_prompt.txt": {
+              "path": "01_concept/CN_SK_Weapon_Trinity_v001_prompt.txt",
+              "sha256": "7868c2e3a4a26896526f9e78d80c6eb9f5f16ea60c60784b12c7189004a26422"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 2060,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 602
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3240
+          },
+          "request_id": "req_0e5132f07ca34193b0e72d979148a8d6",
+          "seconds": 32.1,
+          "registration": {
+            "front": {
+              "scale": 0.8854,
+              "offset": [
+                68,
+                141
+              ],
+              "iou": 0.779,
+              "iou_unregistered_scale": 0.8854
+            },
+            "left": {
+              "scale": 0.894,
+              "offset": [
+                181,
+                141
+              ],
+              "iou": 0.914,
+              "iou_unregistered_scale": 0.894
+            },
+            "back": {
+              "scale": 0.8853,
+              "offset": [
+                22,
+                141
+              ],
+              "iou": 0.779,
+              "iou_unregistered_scale": 0.8853
+            },
+            "right": {
+              "scale": 0.894,
+              "offset": [
+                182,
+                141
+              ],
+              "iou": 0.922,
+              "iou_unregistered_scale": 0.894
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.78,
+            "left": 0.916,
+            "back": 0.781,
+            "right": 0.928
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "东方奇幻配色与纹饰统一，剪影贴合白模；灯纱 / 加速环为白模未含的发光件，偏差在预期内",
+            "time": "2026-10-06 17:39:56"
+          }
+        }
+      ]
+    },
+    "matid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:42:08",
+          "files": {
+            "MID_SK_Weapon_Trinity_v001_sheet.png": {
+              "path": "01_concept/MID_SK_Weapon_Trinity_v001_sheet.png",
+              "sha256": "03a50125ceee8c192a7ac5b27c6ed213e3880eeaa3fe0ea07cc35ec4043d7129"
+            },
+            "MID_SK_Weapon_Trinity_v001_front.png": {
+              "path": "01_concept/MID_SK_Weapon_Trinity_v001_front.png",
+              "sha256": "84a6644f08c3ce7a2249fa50844bd7a92c347be827e21b67d1469f0e16c70202"
+            },
+            "MID_SK_Weapon_Trinity_v001_left.png": {
+              "path": "01_concept/MID_SK_Weapon_Trinity_v001_left.png",
+              "sha256": "6506d6ff688670f631772ddc07a246169ac68ba90ead5ca6d5366fe27451a1f8"
+            },
+            "MID_SK_Weapon_Trinity_v001_back.png": {
+              "path": "01_concept/MID_SK_Weapon_Trinity_v001_back.png",
+              "sha256": "05807b9b82454a5cd9d9eea78d1d660b20616b4303d561896b76f8c3e53ae325"
+            },
+            "MID_SK_Weapon_Trinity_v001_right.png": {
+              "path": "01_concept/MID_SK_Weapon_Trinity_v001_right.png",
+              "sha256": "8cf58b3f91cd9a41d78782c26fb588908b524018b4fec6aa27a0d98172adc028"
+            },
+            "MID_SK_Weapon_Trinity_v001_compare.png": {
+              "path": "01_concept/MID_SK_Weapon_Trinity_v001_compare.png",
+              "sha256": "632959dfb0ae6990fe6d592edee43a2ae09a8c63d0fd553e1c8a4e4252f9944c"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1699,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 241
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2879
+          },
+          "request_id": "req_39ed635421ca4d21991b3cde1584b5ab",
+          "seconds": 29.1,
+          "registration": {
+            "front": {
+              "scale": 0.8852,
+              "offset": [
+                66,
+                142
+              ],
+              "iou": 0.955,
+              "iou_unregistered_scale": 0.8852,
+              "purity": 0.992
+            },
+            "left": {
+              "scale": 0.894,
+              "offset": [
+                180,
+                141
+              ],
+              "iou": 0.977,
+              "iou_unregistered_scale": 0.894,
+              "purity": 0.978
+            },
+            "back": {
+              "scale": 0.8852,
+              "offset": [
+                22,
+                142
+              ],
+              "iou": 0.948,
+              "iou_unregistered_scale": 0.8852,
+              "purity": 0.99
+            },
+            "right": {
+              "scale": 0.8806,
+              "offset": [
+                182,
+                152
+              ],
+              "iou": 0.971,
+              "iou_unregistered_scale": 0.894,
+              "purity": 0.979
+            }
+          },
+          "metal_ratio": {
+            "front": 0.827,
+            "left": 0.997,
+            "back": 0.825,
+            "right": 0.908
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:57:13",
+          "files": {
+            "HP_SK_Weapon_Trinity_v001_input_front.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Trinity_v001_input_front.png",
+              "sha256": "49e1a95285f1cb41597c19bacab58c2bc47178191fec3d018edaea77d3bb1eec"
+            },
+            "HP_SK_Weapon_Trinity_v001_input_left.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Trinity_v001_input_left.png",
+              "sha256": "51df1cb8d262a5677673a887eb2a955eae935a91b53a45f618098facd3a7b1c8"
+            },
+            "HP_SK_Weapon_Trinity_v001_input_back.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Trinity_v001_input_back.png",
+              "sha256": "3237c0066fbe6a483bd563fcf70194b746f9b7b9e680b03c08c44b928e90e39c"
+            },
+            "HP_SK_Weapon_Trinity_v001_input_right.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Trinity_v001_input_right.png",
+              "sha256": "8251af9d71ed091e992e854844cb3004c418e1e0cdae173dd8159a4664fd17de"
+            },
+            "HP_SK_Weapon_Trinity_v001.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Trinity_v001.glb",
+              "sha256": "f7fea1e0103a2f0c73ae4736218d8d60c1605c53ed05e297c108a7c7eefb4166"
+            },
+            "HP_SK_Weapon_Trinity_v001_graph.json": {
+              "path": "02_highpoly/HP_SK_Weapon_Trinity_v001_graph.json",
+              "sha256": "67862c05850f3359033d73b514c6b2debada804c1306fbc76e49031805eb9801"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -180,
+              76,
+              692,
+              948
+            ],
+            "scale": 1.1743119266055047
+          },
+          "seconds": 133.2,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 4.8
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:57:45",
+          "files": {
+            "SK_Weapon_Trinity_v001.blend": {
+              "path": "03_work/SK_Weapon_Trinity_v001.blend",
+              "sha256": "71c33247fb9b29c69540fd505e094a16f78eb09701b655cc902eb84eff979336"
+            },
+            "SK_Weapon_Trinity_v001.glb": {
+              "path": "04_export/SK_Weapon_Trinity_v001.glb",
+              "sha256": "30415baa3b3d880730e779e6b37d8a143126325276731a2447152b7319ae64bd"
+            },
+            "SK_Weapon_Trinity_v001_metrics.json": {
+              "path": "03_work/SK_Weapon_Trinity_v001_metrics.json",
+              "sha256": "8accf658f58bc0fa729ed4823166ad95a3b1b172271e516e2758447bdf1b626a"
+            },
+            "T_Weapon_Trinity_BC.png": {
+              "path": "03_work/textures_v001/T_Weapon_Trinity_BC.png",
+              "sha256": "c9d647c2169b5986f80494d04efb445094692212448ba5cfb0e17f993397a4d8"
+            },
+            "T_Weapon_Trinity_MetalMask.png": {
+              "path": "03_work/textures_v001/T_Weapon_Trinity_MetalMask.png",
+              "sha256": "200566e232fd897236928b7d6f8162728ae50c426c11b59365fc7b755ad0141e"
+            },
+            "T_Weapon_Trinity_N.png": {
+              "path": "03_work/textures_v001/T_Weapon_Trinity_N.png",
+              "sha256": "663fd95983cd693d9c70f4ff76ba370486f4c9d313554efbc1f21061791a16e7"
+            },
+            "T_Weapon_Trinity_ORM.png": {
+              "path": "03_work/textures_v001/T_Weapon_Trinity_ORM.png",
+              "sha256": "7c2271080376df985484f3f825e7f5cc7d662ba4ae31a07bd5338b6a95c7967e"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1,
+            "emid": null
+          },
+          "align_iou": 0.906,
+          "uncovered_ratio": 0.1687,
+          "lods": [
+            {
+              "tris": 11996,
+              "verts": 5998
+            },
+            {
+              "tris": 2996,
+              "verts": 1498
+            }
+          ],
+          "export_kb": 451.1,
+          "seconds": 32.1,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 20:04:27",
+          "files": {
+            "SK_Weapon_Trinity_v002.blend": {
+              "path": "03_work/SK_Weapon_Trinity_v002.blend",
+              "sha256": "9525d26cca0d46e9fdba053e06eeba5fd58ea1f1c65b1865c3f39f0b41df2634"
+            },
+            "SK_Weapon_Trinity_v002.glb": {
+              "path": "04_export/SK_Weapon_Trinity_v002.glb",
+              "sha256": "28d19a132144ecb78b8138c4f59814c70e71dbe6547eab38fc23686cfc6c57f1"
+            },
+            "SK_Weapon_Trinity_v002_metrics.json": {
+              "path": "03_work/SK_Weapon_Trinity_v002_metrics.json",
+              "sha256": "e9b75d4fcefaa1e42d51f57422544b8a3b1dffc3d397d5e14d03b1cd7c06ac41"
+            },
+            "T_Weapon_Trinity_BC.png": {
+              "path": "03_work/textures_v002/T_Weapon_Trinity_BC.png",
+              "sha256": "c9d647c2169b5986f80494d04efb445094692212448ba5cfb0e17f993397a4d8"
+            },
+            "T_Weapon_Trinity_E.png": {
+              "path": "03_work/textures_v002/T_Weapon_Trinity_E.png",
+              "sha256": "d4dba3c97ab3af64be4161821ac1da6b470fedd9274e5a8f96420ad13a0a7d92"
+            },
+            "T_Weapon_Trinity_MetalMask.png": {
+              "path": "03_work/textures_v002/T_Weapon_Trinity_MetalMask.png",
+              "sha256": "200566e232fd897236928b7d6f8162728ae50c426c11b59365fc7b755ad0141e"
+            },
+            "T_Weapon_Trinity_N.png": {
+              "path": "03_work/textures_v002/T_Weapon_Trinity_N.png",
+              "sha256": "663fd95983cd693d9c70f4ff76ba370486f4c9d313554efbc1f21061791a16e7"
+            },
+            "T_Weapon_Trinity_ORM.png": {
+              "path": "03_work/textures_v002/T_Weapon_Trinity_ORM.png",
+              "sha256": "7c2271080376df985484f3f825e7f5cc7d662ba4ae31a07bd5338b6a95c7967e"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1,
+            "emid": 1
+          },
+          "align_iou": 0.906,
+          "uncovered_ratio": 0.1687,
+          "lods": [
+            {
+              "tris": 11996,
+              "verts": 5998
+            },
+            {
+              "tris": 2996,
+              "verts": 1498
+            }
+          ],
+          "export_kb": 499.3,
+          "seconds": 29.4,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:57:45",
+          "files": {
+            "SK_Weapon_Trinity_v001_validation.json": {
+              "path": "05_review/SK_Weapon_Trinity_v001_validation.json",
+              "sha256": "48930392c91552d7062eb81719146ce96d16545ed4005e9eed07f8e9059b46af"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 20:04:27",
+          "files": {
+            "SK_Weapon_Trinity_v002_validation.json": {
+              "path": "05_review/SK_Weapon_Trinity_v002_validation.json",
+              "sha256": "0b42ff3c5263938a3a441afabe4aa754515c8c0b8a28f51f6755f5108ce34657"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:57:53",
+          "files": {
+            "SK_Weapon_Trinity_v001_review.png": {
+              "path": "05_review/SK_Weapon_Trinity_v001_review.png",
+              "sha256": "3c823615e25a978a6ecc0f2594ed67a2e3c97aae13600ea2cf847d8782397c7a"
+            }
+          },
+          "from_build": 1,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "刚体部件 + 多视图高模；三轴尺寸与白模吻合，发光分区落在纹饰上（三才转轮保留程序化发光件）",
+            "time": "2026-10-06 18:05:01"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 20:04:35",
+          "files": {
+            "SK_Weapon_Trinity_v002_review.png": {
+              "path": "05_review/SK_Weapon_Trinity_v002_review.png",
+              "sha256": "6919378da92628332dca786240032fd53c6a1e0164165f3870664d11adc56b9f"
+            }
+          },
+          "from_build": 2,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "改为发光分区：卦象肋与云纹随下一发元素色发光；程序化灵纹条在美术枪旁浮空，已隐藏",
+            "time": "2026-10-06 20:04:45"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 18:05:01",
+          "files": {
+            "SK_Weapon_Trinity.glb": {
+              "path": "@root/public/assets/weapons/SK_Weapon_Trinity.glb",
+              "sha256": "30415baa3b3d880730e779e6b37d8a143126325276731a2447152b7319ae64bd"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/weapons/SK_Weapon_Trinity.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 20:04:45",
+          "files": {
+            "SK_Weapon_Trinity.glb": {
+              "path": "@root/public/assets/weapons/SK_Weapon_Trinity.glb",
+              "sha256": "28d19a132144ecb78b8138c4f59814c70e71dbe6547eab38fc23686cfc6c57f1"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/weapons/SK_Weapon_Trinity.glb"
+        }
+      ]
+    },
+    "emid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 20:03:56",
+          "files": {
+            "EID_SK_Weapon_Trinity_v001_sheet.png": {
+              "path": "01_concept/EID_SK_Weapon_Trinity_v001_sheet.png",
+              "sha256": "6ba90d4773667daa7a3f12a91a66666b108157f96a0f369ac05ee905e347d5c9"
+            },
+            "EID_SK_Weapon_Trinity_v001_front.png": {
+              "path": "01_concept/EID_SK_Weapon_Trinity_v001_front.png",
+              "sha256": "3f716f669fc51013842b97d0a00bc61cad113b5e58c9dc9a0eaae8eb9cbf5f99"
+            },
+            "EID_SK_Weapon_Trinity_v001_left.png": {
+              "path": "01_concept/EID_SK_Weapon_Trinity_v001_left.png",
+              "sha256": "cf406f7075c8cef81cc2d7f1fdca163b84f35a5f3d06b61345bc17188de40047"
+            },
+            "EID_SK_Weapon_Trinity_v001_back.png": {
+              "path": "01_concept/EID_SK_Weapon_Trinity_v001_back.png",
+              "sha256": "f18759d91b47e5b6741c4515c062aa2f437c31c28be876fba5585804526a3128"
+            },
+            "EID_SK_Weapon_Trinity_v001_right.png": {
+              "path": "01_concept/EID_SK_Weapon_Trinity_v001_right.png",
+              "sha256": "f7be7e02045424bd18b4eec7c14ed1bedf26c6371f3dd9efc8f071cbd143c5f0"
+            },
+            "EID_SK_Weapon_Trinity_v001_compare.png": {
+              "path": "01_concept/EID_SK_Weapon_Trinity_v001_compare.png",
+              "sha256": "20d02942390e348a5eb4703960aa5ccd8128f211b4f6cbb5ecda44d3cfc22c6d"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1733,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 275
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2913
+          },
+          "request_id": "req_5ecc636406ab41a283dbd58694c4d9d4",
+          "seconds": 31.7,
+          "registration": {
+            "front": {
+              "scale": 0.881,
+              "offset": [
+                65,
+                142
+              ],
+              "iou": 0.967,
+              "iou_unregistered_scale": 0.881,
+              "purity": 0.988
+            },
+            "left": {
+              "scale": 0.8929,
+              "offset": [
+                179,
+                141
+              ],
+              "iou": 0.958,
+              "iou_unregistered_scale": 0.8929,
+              "purity": 0.99
+            },
+            "back": {
+              "scale": 0.882,
+              "offset": [
+                21,
+                142
+              ],
+              "iou": 0.964,
+              "iou_unregistered_scale": 0.882,
+              "purity": 0.988
+            },
+            "right": {
+              "scale": 0.8929,
+              "offset": [
+                180,
+                141
+              ],
+              "iou": 0.967,
+              "iou_unregistered_scale": 0.8929,
+              "purity": 0.995
+            }
+          },
+          "emissive_ratio": {
+            "front": 0.052,
+            "left": 0.072,
+            "back": 0.043,
+            "right": 0.006
+          }
+        }
+      ]
+    }
+  }
+}

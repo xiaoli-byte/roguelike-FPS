@@ -4,7 +4,9 @@
 
 每轮包含三章、每章五个关卡位置，共十五关。普通战斗关和精英关保留 84×84 米的半开放区域，使用各自的道路、连通口、岩脊和建筑配置；三章首领另有独立场地。第 2–4 个位置仍可选择战斗、精英、商店或宝藏分支。
 
-道路设计延续此前参考《雨中冒险 2》的中央空地、多条避敌路线和分层探索思路：[Seekers of the Storm Dev Diary #2](https://store.steampowered.com/news/posts/?appids=632360&enddate=1716224663&feed=steam_community_announcements)。实际数值蓝图集中在 `src/world/StageDesign.ts`，检视页、传送门和 HUD 读取同一份名称与路线提示。
+道路设计延续此前参考《雨中冒险 2》的中央空地、多条避敌路线和分层探索思路：[Seekers of the Storm Dev Diary #2](https://store.steampowered.com/news/posts/?appids=632360&enddate=1716224663&feed=steam_community_announcements)。实际数值蓝图集中在 `src/world/StageDesign.ts`，检视页和 HUD 读取同一份名称与路线提示；传送门只显示目的地与挑战类型，不提前透露奖励、支路物资或路线攻略。
+
+2026-10-05 流程调整：正常游戏每次清场只开启一个主线出口，四个普通关后进入首领关。可选探索使用现有侧路房间，隐秘入口在 12 米内且没有遮挡时显露，按 F 调查后启用该房间的守卫或物资发现；原图纸的解锁条件继续生效。完成后沿原路回到主路，终战后也可回头探索，支路不会重复结算主线或生成第二个出口。行旅图只显示已发现的内容，入场提示不预告物资分布。`npm test` 237 项通过，`npm run build` 通过；浏览器白盒检视确认调查前不刷支路守卫、按 F 后开启遭遇、清除后回到主线导航，以及终战后出口开启。此检视不等同于完整实战平衡试玩。
 
 ## 每关设计
 

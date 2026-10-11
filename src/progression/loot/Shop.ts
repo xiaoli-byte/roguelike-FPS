@@ -283,6 +283,9 @@ export class ShopManager {
     const frame = ctx.time.frame ?? ctx.time.now;
     if (s.sold || s.disposed || s.buying || this.transacting || s.lastPurchaseFrame === frame || this.lastTransactionFrame === frame
       || ctx.game.state !== 'playing' || !ctx.player.alive) return;
+    // Recovery is a priced repeatable service between fights. The boss preparation shop
+    // stays standing during the fight, so retreating to it must not become a heal loop.
+    if ((ctx.enemies?.aliveCount() ?? 0) > 0) return this.deny('战斗中无法交易');
     const w = ctx.weapons;
     let price = s.price;
 

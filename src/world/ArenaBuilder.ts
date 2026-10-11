@@ -24,10 +24,14 @@ import { sceneFlameMaterial } from './SceneFlame';
 import { SceneBackdrop } from './SceneBackdrop';
 import { AdventureTerrain } from './AdventureTerrain';
 import { bakeAdventureRoadMask } from './AdventureRoadMask';
-import { ShadowCadence } from './ShadowCadence';
+import { ShadowCadence, fitSunShadow, followSun, shadowMapSize, syncShadowMapSize, type ShadowFollow } from './ShadowCadence';
 import { SceneArchitecture } from './SceneArchitecture';
+import { CollisionProxies } from './CollisionProxies';
 import { WhiteboxView } from './WhiteboxView';
 import { AuthoredSceneView } from './AuthoredSceneView';
+import { AUTHORED_ART_DIRECTION } from './AuthoredSceneLayout';
+import { RedesignSceneView } from './RedesignSceneView';
+import { REDESIGN_ART_ASSETS } from './RedesignArtLayout';
 import { showsAuthoredArt } from './WhiteboxMode';
 
 type Rand = () => number;
@@ -78,6 +82,9 @@ export class ArenaView {
   private flameOuter: THREE.InstancedMesh | null = null;
   private floorMat: THREE.MeshStandardMaterial | null = null;
   private sunShadow: THREE.DirectionalLightShadow | null = null;
+  /** The sun and its player-following shadow box, when the arena is wider than the box. */
+  private sun: THREE.DirectionalLight | null = null;
+  private shadowFollow: ShadowFollow | null = null;
   private readonly shadowCadence = new ShadowCadence();
   private readonly sky: SkyDome | null = null;
   private readonly particles: Particles | null = null;
@@ -85,61 +92,76 @@ export class ArenaView {
   private readonly dressing: SceneDressing | null = null;
   private readonly architecture: SceneArchitecture | null = null;
   private readonly authoredScene: AuthoredSceneView | null = null;
+  private readonly redesignScene: RedesignSceneView | null = null;
   private disposed = false;
 
   get artInspectionViews() { return this.authoredScene?.art.inspectionViews ?? []; }
   get artBrief() { return this.authoredScene?.art.identity ?? null; }
 
   constructor(private readonly ctx: GameContext, private readonly L: LevelLayout, private readonly theme: ThemeDef, rand: Rand) {
-    this.group.name = 'arena';
-    const st = themeStyle(L.theme);
-    this.st = st;
-    if (L.whitebox) {
-      if (showsAuthoredArt()) {
-        this.authoredScene = new AuthoredSceneView(ctx, L, theme, rand);
-        this.group.add(this.authoredScene.group); this.disposables.push(this.authoredScene);
-      } else {
-        const whitebox = new WhiteboxView(ctx, L);
-        this.group.add(whitebox.group); this.disposables.push(whitebox);
+    // A throw part-way through must not leak the GPU resources already built; release them and let
+    // the stage director choose its fallback.
+    try {
+      this.group.name = 'arena';
+      const st = themeStyle(L.theme);
+      this.st = st;
+      if (L.whitebox) {
+        // Reviewed LD-03 plans use their art direction; V2 redesign plans use the Tripo kit placed from plan geometry.
+        if (showsAuthoredArt() && AUTHORED_ART_DIRECTION[L.whitebox.plan.id]) {
+          this.authoredScene = new AuthoredSceneView(ctx, L, theme, rand);
+          this.group.add(this.authoredScene.group); this.disposables.push(this.authoredScene);
+        } else if (showsAuthoredArt() && REDESIGN_ART_ASSETS[L.theme]) {
+          this.redesignScene = new RedesignSceneView(ctx, L, theme, rand);
+          this.group.add(this.redesignScene.group); this.disposables.push(this.redesignScene);
+        } else {
+          const whitebox = new WhiteboxView(ctx, L);
+          this.group.add(whitebox.group); this.disposables.push(whitebox);
+        }
+        return;
       }
-      return;
+      const center = new THREE.Vector3(L.center.x, L.floorY, L.center.z);
+
+      // ── 合批几何 ──
+      const mats = this.makeMaterials(rand);
+      const batch = new GeoBatch(rand);
+      drawStructures(batch, L, st, rand);
+      this.dressing = new SceneDressing(ctx, L, st, rand, this.flameSpots);
+      this.group.add(this.dressing.group);
+      this.disposables.push(this.dressing);
+      this.architecture = new SceneArchitecture(ctx, L);
+      this.group.add(this.architecture.group); this.disposables.push(this.architecture);
+      // Walls, gates and landmarks have no procedural art; keep their collision visible without it.
+      const proxies = new CollisionProxies(L, st.stone);
+      this.group.add(proxies.group); this.disposables.push(proxies);
+      if (L.adventure) {
+        const terrain = new AdventureTerrain(ctx, L);
+        this.group.add(terrain.group); this.disposables.push(terrain);
+      }
+      drawProps(batch, L, st, rand, this.flameSpots, this.dressing.replaced);
+      const backdrop = new SceneBackdrop(ctx, L, rand);
+      this.group.add(backdrop.group); this.disposables.push(backdrop);
+      if (!backdrop.ready) drawFarRing(batch, L, theme, st, rand);
+      for (const mesh of batch.build(mats)) {
+        this.group.add(mesh);
+        this.disposables.push(mesh.geometry);
+      }
+
+      this.buildFloor(rand);
+      this.buildRunes(rand);
+      this.buildFlames();
+      this.buildLights(center);
+
+      this.sky = new SkyDome(theme, st, center);
+      this.group.add(this.sky.mesh);
+      this.disposables.push(this.sky);
+
+      this.particles = new Particles(st, ctx.settings.quality, rand);
+      this.group.add(this.particles.points);
+      this.disposables.push(this.particles);
+    } catch (err) {
+      this.dispose();
+      throw err;
     }
-    const center = new THREE.Vector3(L.center.x, L.floorY, L.center.z);
-
-    // ── 合批几何 ──
-    const mats = this.makeMaterials(rand);
-    const batch = new GeoBatch(rand);
-    drawStructures(batch, L, st, rand);
-    this.dressing = new SceneDressing(ctx, L, st, rand, this.flameSpots);
-    this.group.add(this.dressing.group);
-    this.disposables.push(this.dressing);
-    this.architecture = new SceneArchitecture(ctx, L);
-    this.group.add(this.architecture.group); this.disposables.push(this.architecture);
-    if (L.adventure) {
-      const terrain = new AdventureTerrain(ctx, L);
-      this.group.add(terrain.group); this.disposables.push(terrain);
-    }
-    drawProps(batch, L, st, rand, this.flameSpots, this.dressing.replaced);
-    const backdrop = new SceneBackdrop(ctx, L, rand);
-    this.group.add(backdrop.group); this.disposables.push(backdrop);
-    if (!backdrop.ready) drawFarRing(batch, L, theme, st, rand);
-    for (const mesh of batch.build(mats)) {
-      this.group.add(mesh);
-      this.disposables.push(mesh.geometry);
-    }
-
-    this.buildFloor(rand);
-    this.buildRunes(rand);
-    this.buildFlames();
-    this.buildLights(center);
-
-    this.sky = new SkyDome(theme, st, center);
-    this.group.add(this.sky.mesh);
-    this.disposables.push(this.sky);
-
-    this.particles = new Particles(st, ctx.settings.quality, rand);
-    this.group.add(this.particles.points);
-    this.disposables.push(this.particles);
   }
 
   // ───────────── 材质 ─────────────
@@ -452,7 +474,7 @@ export class ArenaView {
       // animated enemies and loot still refresh at 30 Hz at full resolution.
       sun.shadow.autoUpdate = false; sun.shadow.needsUpdate = true;
       this.sunShadow = sun.shadow;
-      const size = quality === 'high' ? 2048 : 1024;
+      const size = shadowMapSize(ctx.settings);
       sun.shadow.mapSize.set(size, size);
       sun.shadow.bias = -0.0004;
       sun.shadow.normalBias = 0.035;
@@ -480,13 +502,10 @@ export class ArenaView {
           }
         }
       }
-      cam.left = minX;
-      cam.right = maxX;
-      cam.bottom = minY;
-      cam.top = maxY;
-      cam.near = Math.max(0.5, -maxZ - 2);
-      cam.far = -minZ + 2;
-      cam.updateProjectionMatrix();
+      // Arenas wider than the follow box get a 128 m map that follows the player; smaller ones stay fitted.
+      this.shadowFollow = fitSunShadow(cam, { min: { x: minX, y: minY, z: minZ }, max: { x: maxX, y: maxY, z: maxZ } }, center,
+        new THREE.Vector3().setFromMatrixColumn(probe.matrixWorld, 0), new THREE.Vector3().setFromMatrixColumn(probe.matrixWorld, 1));
+      this.sun = sun;
     }
 
     // 点光源数量恒定为 LIGHT_COUNT（换关不触发着色器重编译）
@@ -509,6 +528,9 @@ export class ArenaView {
   update(_dt: number, t: number): void {
     if (this.disposed) return;
     this.authoredScene?.update(_dt, t);
+    this.redesignScene?.update(_dt, t);
+    if (this.sunShadow) syncShadowMapSize(this.sunShadow, shadowMapSize(this.ctx.settings));
+    followSun(this.shadowFollow, this.sun, this.ctx.player?.position);
     if (this.sunShadow && this.shadowCadence.advance(_dt, this.ctx.world.version)) this.sunShadow.needsUpdate = true;
     this.dressing?.update(t);
     this.architecture?.update(this.ctx.camera);

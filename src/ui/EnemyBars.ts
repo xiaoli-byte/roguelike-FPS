@@ -97,7 +97,8 @@ export class EnemyBars {
     const list = ctx.enemies.list;
     for (let i = 0; i < list.length && shown < MAX_BARS; i++) {
       const e = list[i];
-      if (!e.alive || e.isBoss || e.removed) continue;
+      // 不可选中（如钻进沙里的蝎尾弩卫）时不显示血条
+      if (!e.alive || e.isBoss || e.removed || e.untargetable === true) continue;
       const damaged = e.hp < e.maxHp || e.shield < e.maxShield || e.armor < e.maxArmor;
       if (!e.isElite && !damaged) continue;
 

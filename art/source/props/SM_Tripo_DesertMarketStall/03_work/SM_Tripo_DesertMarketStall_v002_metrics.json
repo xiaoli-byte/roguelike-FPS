@@ -1,0 +1,103 @@
+{
+  "source": {
+    "tris": 2899,
+    "verts": 1725
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 3.70306,
+    "iou": 0.793,
+    "iou_per_view": {
+      "front": 0.854,
+      "left": 0.737,
+      "back": 0.83,
+      "right": 0.723
+    },
+    "size_m": [
+      3.701,
+      2.201,
+      3.6
+    ],
+    "reference_m": [
+      4.0,
+      3.0,
+      3.6
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.613,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "market_stall_3d_model_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      2048,
+      2048
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertMarketStall_LOD0",
+      "tris": 2899,
+      "verts": 1725,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.562,
+      "bbox_min": [
+        -1.8506,
+        -1.1003,
+        0.0
+      ],
+      "bbox_max": [
+        1.8506,
+        1.1003,
+        3.6
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertMarketStall_LOD1",
+      "tris": 995,
+      "verts": 706,
+      "uv_min": [
+        0.000244140625,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.423,
+      "bbox_min": [
+        -1.8431,
+        -1.0979,
+        -0.0004
+      ],
+      "bbox_max": [
+        1.8442,
+        1.0977,
+        3.5712
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertMarketStall/04_export/SM_Tripo_DesertMarketStall_v002.glb",
+    "bytes": 229848
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 4.7,
+  "_seconds": 7.7
+}

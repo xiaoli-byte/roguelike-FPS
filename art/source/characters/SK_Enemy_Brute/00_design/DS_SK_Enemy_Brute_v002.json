@@ -1,0 +1,36 @@
+{
+  "design": {
+    "id": "SK_Enemy_Brute",
+    "chapter": "desert",
+    "role": "brute",
+    "name": "沙铁卫",
+    "body": "humanoid",
+    "height_m": 2.3,
+    "brief": "The bandit faction's hulking shield enforcer in Tang-dynasty Chinese heavy armour (明光铠): a huge inverted-triangle body with massive shoulders and arms and short legs, two round polished bronze chest mirror plates (护心镜), beast-head shoulder guards with a lion biting the arm (吞肩), layered bronze lamellar skirt over sand-coloured cloth, a small head inside a bronze suanni lion-dog helmet with a fanged mouth grille, glowing ember-orange eyes and a big red horsehair tassel (红缨) on top, the faction's crimson waist sash with the gold cloud-scroll emblem, cloud-pattern (云纹) and meander (回纹) borders on the armour edges, heavy cloth-wrapped shins and upturned Chinese armoured boots. Huge armoured gauntlets with a clearly separate thumb and four thick separate fingers.",
+    "weapon": "a large round bronze shield with a fierce taotie (饕餮) mask in relief and a red-tasselled iron Chinese melon-head mace (骨朵)"
+  },
+  "generation": {
+    "provider": "openai",
+    "endpoint": "images/edits",
+    "model": "gpt-image-2.5-sunburst",
+    "size": "2048x1024",
+    "quality": "high",
+    "background": "opaque",
+    "usage": {
+      "input_tokens": 2108,
+      "input_tokens_details": {
+        "image_tokens": 1458,
+        "text_tokens": 650
+      },
+      "output_tokens": 1180,
+      "output_tokens_details": {
+        "image_tokens": 1180,
+        "text_tokens": 0
+      },
+      "total_tokens": 3288
+    },
+    "request_id": "req_ebc83c2d4a0b4f1cace9de8a1efbed54",
+    "seconds": 34.3
+  },
+  "style_reference": "CN_SK_Enemy_Grunt_v001_sheet.png"
+}

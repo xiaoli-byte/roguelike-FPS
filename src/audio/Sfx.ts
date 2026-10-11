@@ -55,11 +55,13 @@ export const SFX_META: Record<SfxId, SfxMeta> = {
   // 魔刀千刃：挥砍 / 命中节流很短（三段连斩约每 0.3 秒一次），贯穿混响最多（「千刃」的空间感）
   blade_swing: m(0.62, { prio: 3, throttle: 0.03, pitch: 0.05, send: 0.06 }),
   blade_hit: m(0.5, { prio: 3, throttle: 0.04, pitch: 0.05, send: 0.08 }),
-  blade_throw: gun(0.95, 0.08),
+  blade_throw: m(0.75, { prio: 3, throttle: 0.15, pitch: 0.03, send: 0.18 }),
   blade_recall: m(0.62, { prio: 3, throttle: 0.08, send: 0.12 }),
   blade_morph: m(0.42, { prio: 3, throttle: 0.08, send: 0.12 }),
-  blade_dash: m(0.55, { prio: 3, throttle: 0.1, send: 0.12 }),
+  blade_dash: m(0.38, { prio: 3, throttle: 0.1, send: 0.12 }),
   blade_impale: m(0.7, { prio: 3, throttle: 0.1, pitch: 0.02, send: 0.3 }),
+  blade_swarm: m(0.6, { prio: 2, throttle: 0.06, pitch: 0.08, send: 0.1 }),
+  blade_eye: m(0.7, { prio: 3, throttle: 0.15, pitch: 0.03, send: 0.25 }),
 
   hit: m(0.4, { throttle: 0.035, pitch: 0.06, send: 0.02 }),
   hit_crit: m(0.5, { throttle: 0.05, pitch: 0.02, send: 0.08, prio: 3 }),
@@ -100,6 +102,13 @@ export const SFX_META: Record<SfxId, SfxMeta> = {
   skill_shock: m(0.55, { throttle: 0.05, prio: 3, send: 0.2 }),
   skill_earth: m(0.7, { throttle: 0.05, prio: 3, send: 0.28 }),
   skill_buff: m(0.55, { throttle: 0.1, pitch: 0, prio: 3, send: 0.3 }),
+  // 邪飞天的琵琶：轮指是持续的环境声（优先级低、节流）；断弦 / 被打中是给玩家的命中反馈（优先级高）
+  pipa_roll: m(0.32, { throttle: 0.25, pitch: 0, prio: 1, send: 0.3 }),
+  pipa_chord: m(0.6, { throttle: 0.3, pitch: 0, prio: 2, send: 0.35 }),
+  pipa_bloom: m(0.55, { throttle: 0.3, pitch: 0, prio: 2, send: 0.4 }),
+  pipa_bless: m(0.7, { throttle: 0.3, pitch: 0, prio: 2, send: 0.4 }),
+  pipa_snap: m(0.75, { throttle: 0.05, pitch: 0.02, prio: 3, send: 0.2 }),
+  pipa_hit: m(0.5, { throttle: 0.06, pitch: 0.03, prio: 3, send: 0.12 }),
   skill_throw: m(0.5, { throttle: 0.05, prio: 3, send: 0.08 }),
 
   burn_tick: m(0.28, { throttle: 0.07, pitch: 0.12, prio: 0, send: 0.03 }),

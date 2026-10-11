@@ -40,16 +40,40 @@ export function planSvg(plan, { compact = false, fixedScale = false, suffix = ''
   const rewardNames = { coins: '金币', scroll: '秘卷', weapon: '武器', heal: '恢复', upgrade: '首领奖励' };
   const rewards = plan.rewards.map(r => `<g><title>${esc(`${r.label} · ${rewardNames[r.reward] ?? '物资'} · 解锁 ${r.requires?.join(' / ') ?? '探索'}`)}</title><path d="M${r.at[0]} ${r.at[1] - 1.8}l1.8 1.8-1.8 1.8-1.8-1.8z" fill="#b58a26" stroke="#fff" stroke-width=".45"/>${compact ? '' : text([r.at[0], r.at[1] + 3.8], `${rewardNames[r.reward] ?? '物资'} · ${r.requires?.join('/') ?? ''}`, 'note', 1.5)}</g>`).join('');
   const merchant = plan.preparation ? `<g><title>${esc(plan.preparation.label)} · 武器、秘卷、强化、恢复、弹药</title><rect x="${plan.preparation.at[0] - 3}" y="${plan.preparation.at[1] - 3}" width="6" height="6" rx=".8" fill="#277b74" stroke="#fff" stroke-width=".5"/>${text([plan.preparation.at[0], plan.preparation.at[1] + 1], '商', 'portal', 2.6)}</g>` : '';
+  // V2 plans: raised decks with their stepped stairs, and covers drawn by what they are (low wall, model, gate, shrine).
+  const STEP_RISE = .4, STEP_DEPTH = .65, v2 = Boolean(plan.platforms?.length || plan.covers.some(c => c.art || (c.height ?? 2.6) !== 2.6));
+  const platforms = (plan.platforms ?? []).map(d => {
+    const [ax, ay, bx, by] = d.rect, x0 = Math.min(ax, bx), x1 = Math.max(ax, bx), y0 = Math.min(ay, by), y1 = Math.max(ay, by);
+    const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2, run = (Math.max(2, Math.round(d.height / STEP_RISE)) - 1) * STEP_DEPTH;
+    const stairs = d.stairs.map(st => {
+      const o = st.offset ?? 0, half = st.width / 2;
+      const [sx, sy, sw, sh, arrow] = st.side === 'east' ? [x1, cy + o - half, run, st.width, [x1 + run - .4, cy + o, x1 + .6, cy + o]]
+        : st.side === 'west' ? [x0 - run, cy + o - half, run, st.width, [x0 - run + .4, cy + o, x0 - .6, cy + o]]
+          : st.side === 'south' ? [cx + o - half, y1, st.width, run, [cx + o, y1 + run - .4, cx + o, y1 + .6]]
+            : [cx + o - half, y0 - run, st.width, run, [cx + o, y0 - run + .4, cx + o, y0 - .6]];
+      return `<rect x="${sx}" y="${sy}" width="${sw}" height="${sh}" fill="url(#${uid}-steps)" stroke="#8a6d43" stroke-width=".3"/><line x1="${arrow[0]}" y1="${arrow[1]}" x2="${arrow[2]}" y2="${arrow[3]}" stroke="#6b5230" stroke-width=".35" marker-end="url(#${uid}-up)"/>`;
+    }).join('');
+    return `<g><title>${esc(`${d.label} · 高 ${d.height}m · 台阶 ${d.stairs.length} 处`)}</title><rect x="${x0}" y="${y0}" width="${x1 - x0}" height="${y1 - y0}" fill="#e9d6b2" stroke="#8a6d43" stroke-width=".45"/>${stairs}${compact ? '' : text([cx, cy + .6], `${d.height}m`, 'deck', 1.7)}</g>`;
+  }).join('');
+  const artNames = { stall: '摊位', goods: '货堆', hoard: '财宝堆', ruin: '倒塌柱段', brazier: '火盆', gate: '门楼', shrine: '传送门神龛' };
+  const cover = c => {
+    const h = c.height ?? 2.6, kind = c.art === 'gate' || c.art === 'shrine' ? 'structure' : c.art ? 'prop' : h <= 1.5 ? 'low' : 'solid';
+    const fill = { structure: '#3d5160', prop: '#b99a6b', low: `url(#${uid}-low)`, solid: `url(#${uid}-hatch)` }[kind];
+    const label = c.art ? `${artNames[c.art] ?? c.art}，高 ${h}m` : h <= 1.5 ? `低墙，高 ${h}m，可翻越` : `实体遮挡，高 ${h}m`;
+    return `<polygon points="${points(c.polygon)}" fill="${fill}" stroke="#435867" stroke-width=".4"><title>${esc(label)}</title></polygon>`;
+  };
   return `${document ? '<?xml version="1.0" encoding="UTF-8"?>' : ''}<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${vw} ${vh}" role="img" aria-label="${esc(plan.title)}平面设计图" class="floor-plan">
   <title>${esc(plan.title)} — ${esc(plan.subtitle)}</title><desc>${esc(plan.identity)}。单位为米。对应技术白盒已接入独立试玩入口，完整可玩性与平衡仍在验证。</desc>
   <defs><pattern id="${uid}-grid" width="5" height="5" patternUnits="userSpaceOnUse"><path d="M5 0H0V5" fill="none" stroke="#a5bbc8" stroke-width=".13"/></pattern>
   <pattern id="${uid}-hatch" width="1.4" height="1.4" patternUnits="userSpaceOnUse" patternTransform="rotate(40)"><rect width="1.4" height="1.4" fill="#738693"/><path d="M0 0V1.4" stroke="#d1dce1" stroke-width=".35"/></pattern>
-  ${[['main','#087eaa'],['optional','#47836b'],['return','#825d98'],['threat','#b54a48']].map(([kind,c]) => `<marker id="${uid}-${kind}" markerWidth="4" markerHeight="4" refX="3.7" refY="2" orient="auto" markerUnits="strokeWidth"><path d="M0 0L4 2 0 4" fill="${c}"/></marker>`).join('')}</defs>
-  <style>text{font-family:'Microsoft YaHei','PingFang SC',sans-serif;fill:#294455;text-anchor:middle;pointer-events:none}.room-label{paint-order:stroke;stroke:#f7faf8;stroke-width:.9;stroke-linejoin:round}.dim{fill:#526978;paint-order:stroke;stroke:#dce6ec;stroke-width:.8}.portal{fill:white;font-family:Consolas,monospace;font-weight:bold}.note{fill:#465f6c;paint-order:stroke;stroke:#dce6ec;stroke-width:1}</style>
+  ${v2 ? `<pattern id="${uid}-low" width="1.4" height="1.4" patternUnits="userSpaceOnUse" patternTransform="rotate(40)"><rect width="1.4" height="1.4" fill="#a9b8c1"/><path d="M0 0V1.4" stroke="#eef3f5" stroke-width=".35"/></pattern>
+  <pattern id="${uid}-steps" width=".65" height=".65" patternUnits="userSpaceOnUse"><rect width=".65" height=".65" fill="#dcc398"/><path d="M0 0H.65M0 0V.65" stroke="#a8875a" stroke-width=".12"/></pattern>
+  <marker id="${uid}-up" markerWidth="4" markerHeight="4" refX="3.7" refY="2" orient="auto" markerUnits="strokeWidth"><path d="M0 0L4 2 0 4" fill="#6b5230"/></marker>` : ''}${[['main','#087eaa'],['optional','#47836b'],['return','#825d98'],['threat','#b54a48']].map(([kind,c]) => `<marker id="${uid}-${kind}" markerWidth="4" markerHeight="4" refX="3.7" refY="2" orient="auto" markerUnits="strokeWidth"><path d="M0 0L4 2 0 4" fill="${c}"/></marker>`).join('')}</defs>
+  <style>text{font-family:'Microsoft YaHei','PingFang SC',sans-serif;fill:#294455;text-anchor:middle;pointer-events:none}.room-label{paint-order:stroke;stroke:#f7faf8;stroke-width:.9;stroke-linejoin:round}.dim{fill:#526978;paint-order:stroke;stroke:#dce6ec;stroke-width:.8}.portal{fill:white;font-family:Consolas,monospace;font-weight:bold}.note{fill:#465f6c;paint-order:stroke;stroke:#dce6ec;stroke-width:1}${v2 ? '.deck{fill:#6b5230;font-weight:bold;paint-order:stroke;stroke:#e9d6b2;stroke-width:.6}' : ''}</style>
   <rect width="${vw}" height="${vh}" fill="${field}"/><g transform="translate(${offX} ${offY})">
   ${passagePolys(edge, 1.1)}${roomPolys(edge, edge, 1.1)}${passagePolys(floor, 0)}${roomPolys(floor, 'none')}
   <rect width="${w}" height="${h}" fill="url(#${uid}-grid)"/>
-  ${plan.covers.map(c => `<polygon points="${points(c.polygon)}" fill="url(#${uid}-hatch)" stroke="#435867" stroke-width=".4"><title>实体遮挡，高 ${c.height}m</title></polygon>`).join('')}
+  ${platforms}${plan.covers.map(cover).join('')}
   <g data-layer="sightlines">${compact ? '' : sightlines}</g><g data-layer="routes">${routes}</g>
   ${compact ? '' : `<g data-layer="dimensions">${widths}</g><g data-layer="labels">${plan.rooms.map(r => text(r.labelAt, r.label, 'room-label', 2.2)).join('')}</g>`}
   <g data-layer="encounters">${compact ? '' : encounters}${rewards}${merchant}</g>${portal(plan.entry, 'S', '#277b74')}${portal(plan.exit, 'X', '#455a9e')}

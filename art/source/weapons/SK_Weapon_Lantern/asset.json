@@ -1,0 +1,592 @@
+{
+  "id": "SK_Weapon_Lantern",
+  "display": "蚀蛊灯",
+  "kind": "skeletal",
+  "class": "weapon_fp",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:35:33",
+          "files": {
+            "BO_SK_Weapon_Lantern_v001.glb": {
+              "path": "00_blockout/BO_SK_Weapon_Lantern_v001.glb",
+              "sha256": "46b48d3693ced47d8ac8439dade39293b456d57c9032ccd5f20d2bfbf0a9bf3b"
+            },
+            "BO_SK_Weapon_Lantern_v001.json": {
+              "path": "00_blockout/BO_SK_Weapon_Lantern_v001.json",
+              "sha256": "70960091178b68b8cfc3fc382fa7a910327ebf0e91fa3105a817d5ed040bf875"
+            },
+            "BO_SK_Weapon_Lantern_v001_views.json": {
+              "path": "00_blockout/BO_SK_Weapon_Lantern_v001_views.json",
+              "sha256": "ea963173cda20b6c4d44637db6cb29e8b30be9e259dcfe1fbcd3db0a8e2ba478"
+            },
+            "BO_SK_Weapon_Lantern_v001_sheet.png": {
+              "path": "00_blockout/BO_SK_Weapon_Lantern_v001_sheet.png",
+              "sha256": "cd0478e5a84644d85ff0cb3f873e8c8784cf1165a37e6b3f3cecedb72f67022a"
+            },
+            "BO_SK_Weapon_Lantern_v001_front.png": {
+              "path": "00_blockout/BO_SK_Weapon_Lantern_v001_front.png",
+              "sha256": "3576ed2d99fa7be6d33184167bb1f7828f59d516df2a34b8ae780a663db1efcb"
+            },
+            "BO_SK_Weapon_Lantern_v001_left.png": {
+              "path": "00_blockout/BO_SK_Weapon_Lantern_v001_left.png",
+              "sha256": "3f6f13a3a66ca9a29125ad202f3da0d60ea12c67f809232fd7307dccf92266c1"
+            },
+            "BO_SK_Weapon_Lantern_v001_back.png": {
+              "path": "00_blockout/BO_SK_Weapon_Lantern_v001_back.png",
+              "sha256": "89f8fc524f81c9c7e10c29ee06d92111a44df372a069faa688011e3580d82b1f"
+            },
+            "BO_SK_Weapon_Lantern_v001_right.png": {
+              "path": "00_blockout/BO_SK_Weapon_Lantern_v001_right.png",
+              "sha256": "ee1570a89d7ea522f74bc5edf64ff00f24541430e7eb0dbb51466218ebd236d3"
+            }
+          },
+          "source": {
+            "kind": "weapon",
+            "id": "lantern"
+          },
+          "joints": 4,
+          "bounds": {
+            "min": [
+              -0.052000000094994905,
+              -0.14899999966472388,
+              -0.31400000140070916
+            ],
+            "max": [
+              0.052000000094994905,
+              0.0680000001899898,
+              0.07961475978299487
+            ]
+          },
+          "blender_seconds": 6.3
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:39:17",
+          "files": {
+            "CN_SK_Weapon_Lantern_v001_sheet.png": {
+              "path": "01_concept/CN_SK_Weapon_Lantern_v001_sheet.png",
+              "sha256": "eb48f8db7d74dfb26388e73f0a30fc67f608719ae3f3020382860b1a0efc8932"
+            },
+            "CN_SK_Weapon_Lantern_v001_front.png": {
+              "path": "01_concept/CN_SK_Weapon_Lantern_v001_front.png",
+              "sha256": "ede7a597722e27d1d7bf717d35617c6c16f6551f623aad7ffec9fd00a35f46a1"
+            },
+            "CN_SK_Weapon_Lantern_v001_left.png": {
+              "path": "01_concept/CN_SK_Weapon_Lantern_v001_left.png",
+              "sha256": "97d22a285bc6d1e82011a51b3d4de9ce46a446358ddb95d8cca8823fec963206"
+            },
+            "CN_SK_Weapon_Lantern_v001_back.png": {
+              "path": "01_concept/CN_SK_Weapon_Lantern_v001_back.png",
+              "sha256": "197182ec37eb9638bb1aaf2632ca2e9303b8a87c9018bc1c96929b3db28cdf2a"
+            },
+            "CN_SK_Weapon_Lantern_v001_right.png": {
+              "path": "01_concept/CN_SK_Weapon_Lantern_v001_right.png",
+              "sha256": "01fe9ec403a7cbb249e130c5ed945a6729262962af766ba34f7698f73bab11ab"
+            },
+            "CN_SK_Weapon_Lantern_v001_compare.png": {
+              "path": "01_concept/CN_SK_Weapon_Lantern_v001_compare.png",
+              "sha256": "7e46d17d6eec03ee00a8ed3957bfb5a3605ce056d38e250249c6d4b0783d4988"
+            },
+            "CN_SK_Weapon_Lantern_v001_prompt.txt": {
+              "path": "01_concept/CN_SK_Weapon_Lantern_v001_prompt.txt",
+              "sha256": "0974ea117fd952c91bd7ded0d3b954524c88a3a4712ce54b56dcd75a366e3308"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 2076,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 618
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3256
+          },
+          "request_id": "req_ce630c3caa2e443cbf0231f1b0c3f16a",
+          "seconds": 33.3,
+          "registration": {
+            "front": {
+              "scale": 0.9373,
+              "offset": [
+                45,
+                84
+              ],
+              "iou": 0.552,
+              "iou_unregistered_scale": 0.91
+            },
+            "left": {
+              "scale": 0.8904,
+              "offset": [
+                138,
+                73
+              ],
+              "iou": 0.9,
+              "iou_unregistered_scale": 0.8904
+            },
+            "back": {
+              "scale": 0.9373,
+              "offset": [
+                20,
+                84
+              ],
+              "iou": 0.549,
+              "iou_unregistered_scale": 0.91
+            },
+            "right": {
+              "scale": 0.8904,
+              "offset": [
+                137,
+                73
+              ],
+              "iou": 0.893,
+              "iou_unregistered_scale": 0.8904
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.556,
+            "left": 0.905,
+            "back": 0.553,
+            "right": 0.896
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "东方奇幻配色与纹饰统一，剪影贴合白模；灯纱 / 加速环为白模未含的发光件，偏差在预期内",
+            "time": "2026-10-06 17:39:57"
+          }
+        }
+      ]
+    },
+    "matid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:43:09",
+          "files": {
+            "MID_SK_Weapon_Lantern_v001_sheet.png": {
+              "path": "01_concept/MID_SK_Weapon_Lantern_v001_sheet.png",
+              "sha256": "0b6a5f1578d8879be746189954b7e661d5ab1626027ecbc6d85c007686540f76"
+            },
+            "MID_SK_Weapon_Lantern_v001_front.png": {
+              "path": "01_concept/MID_SK_Weapon_Lantern_v001_front.png",
+              "sha256": "9bb6e61fdf8d75e1a078d7f51e6023ab41e61da9577a4d3ccb4092b5b72adc8a"
+            },
+            "MID_SK_Weapon_Lantern_v001_left.png": {
+              "path": "01_concept/MID_SK_Weapon_Lantern_v001_left.png",
+              "sha256": "81ee00a9faadfeb1c93c2f5486ae4f27e2646798b5d28b052362e6ab89d0befe"
+            },
+            "MID_SK_Weapon_Lantern_v001_back.png": {
+              "path": "01_concept/MID_SK_Weapon_Lantern_v001_back.png",
+              "sha256": "ebb0f0939246105007ee2b5f80949b5c0a7b126113b2746eca23cf5aaeae1663"
+            },
+            "MID_SK_Weapon_Lantern_v001_right.png": {
+              "path": "01_concept/MID_SK_Weapon_Lantern_v001_right.png",
+              "sha256": "dbce7eb5837ad7efcfe8732261bd16f23b5163762248aecbeb4b626a58ea5024"
+            },
+            "MID_SK_Weapon_Lantern_v001_compare.png": {
+              "path": "01_concept/MID_SK_Weapon_Lantern_v001_compare.png",
+              "sha256": "347e2fece1601de4f38931e066bb9c0775a698f05559dd11d1e86b621ddafccf"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1699,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 241
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2879
+          },
+          "request_id": "req_4d2fd0a06aca4613b4cdecb6759c31f7",
+          "seconds": 28.8,
+          "registration": {
+            "front": {
+              "scale": 0.9343,
+              "offset": [
+                44,
+                84
+              ],
+              "iou": 0.956,
+              "iou_unregistered_scale": 0.9343,
+              "purity": 0.984
+            },
+            "left": {
+              "scale": 0.8876,
+              "offset": [
+                136,
+                73
+              ],
+              "iou": 0.976,
+              "iou_unregistered_scale": 0.8876,
+              "purity": 0.987
+            },
+            "back": {
+              "scale": 0.9354,
+              "offset": [
+                19,
+                84
+              ],
+              "iou": 0.958,
+              "iou_unregistered_scale": 0.9354,
+              "purity": 0.985
+            },
+            "right": {
+              "scale": 0.8876,
+              "offset": [
+                136,
+                73
+              ],
+              "iou": 0.99,
+              "iou_unregistered_scale": 0.8876,
+              "purity": 0.989
+            }
+          },
+          "metal_ratio": {
+            "front": 0.385,
+            "left": 0.354,
+            "back": 0.388,
+            "right": 0.369
+          }
+        }
+      ]
+    },
+    "emid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:46:01",
+          "files": {
+            "EID_SK_Weapon_Lantern_v001_sheet.png": {
+              "path": "01_concept/EID_SK_Weapon_Lantern_v001_sheet.png",
+              "sha256": "9f8713a9e700dccd7b900e974ceeca410051c4eaa13970906e7c9d491be5f4d1"
+            },
+            "EID_SK_Weapon_Lantern_v001_front.png": {
+              "path": "01_concept/EID_SK_Weapon_Lantern_v001_front.png",
+              "sha256": "e01bc2be4d5663d8fab32c3ffa171c7aa8502f9baeff4cd97f84d7afd1c66308"
+            },
+            "EID_SK_Weapon_Lantern_v001_left.png": {
+              "path": "01_concept/EID_SK_Weapon_Lantern_v001_left.png",
+              "sha256": "0a2f73b47a0155c61d90c30bf292e5e4458f2e2c61776b52cdb0ffc7c40d2b2b"
+            },
+            "EID_SK_Weapon_Lantern_v001_back.png": {
+              "path": "01_concept/EID_SK_Weapon_Lantern_v001_back.png",
+              "sha256": "7e5f3a60f8523e4c3837a38a4f3cfcb834059b71a75d8ddf6fda312a35d8864c"
+            },
+            "EID_SK_Weapon_Lantern_v001_right.png": {
+              "path": "01_concept/EID_SK_Weapon_Lantern_v001_right.png",
+              "sha256": "d0f01420c3e949cc65e136c5e66e69dd9063d6cf7e7e63c0e7f278f3b8fa2dcb"
+            },
+            "EID_SK_Weapon_Lantern_v001_compare.png": {
+              "path": "01_concept/EID_SK_Weapon_Lantern_v001_compare.png",
+              "sha256": "4e28eba78f77600407d4a26bf5e6f451fb2ac1964e5a623cbf4d1c8f82c4693d"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1724,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 266
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2904
+          },
+          "request_id": "req_1b286cd3fd42410ebc98e1464f5ca379",
+          "seconds": 38.2,
+          "registration": {
+            "front": {
+              "scale": 0.9374,
+              "offset": [
+                44,
+                84
+              ],
+              "iou": 0.964,
+              "iou_unregistered_scale": 0.9374,
+              "purity": 0.991
+            },
+            "left": {
+              "scale": 0.8895,
+              "offset": [
+                138,
+                73
+              ],
+              "iou": 0.984,
+              "iou_unregistered_scale": 0.8895,
+              "purity": 0.989
+            },
+            "back": {
+              "scale": 0.9385,
+              "offset": [
+                20,
+                84
+              ],
+              "iou": 0.968,
+              "iou_unregistered_scale": 0.9385,
+              "purity": 0.992
+            },
+            "right": {
+              "scale": 0.8904,
+              "offset": [
+                136,
+                73
+              ],
+              "iou": 0.985,
+              "iou_unregistered_scale": 0.8904,
+              "purity": 0.987
+            }
+          },
+          "emissive_ratio": {
+            "front": 0.039,
+            "left": 0.044,
+            "back": 0.039,
+            "right": 0.044
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 18:03:22",
+          "files": {
+            "HP_SK_Weapon_Lantern_v001_input_front.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Lantern_v001_input_front.png",
+              "sha256": "31ea0f814e4b1a8440a0ad69af93b98c1a76382d325ab6166c628b0f35b6ef97"
+            },
+            "HP_SK_Weapon_Lantern_v001_input_left.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Lantern_v001_input_left.png",
+              "sha256": "00e90da78472c94cb064bc499b7d13698f0ac011507bea1f0fe48ec14f60e75a"
+            },
+            "HP_SK_Weapon_Lantern_v001_input_back.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Lantern_v001_input_back.png",
+              "sha256": "716b7ebef848162d038d6ed201f8bc6b5df9f6e06ad2b3b88aab2ed68d8d6923"
+            },
+            "HP_SK_Weapon_Lantern_v001_input_right.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Lantern_v001_input_right.png",
+              "sha256": "7a74d042af064cbbfdeed690543c29400bb02ae2eda1a4ecfc124c7fa4b2d2f6"
+            },
+            "HP_SK_Weapon_Lantern_v001.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Lantern_v001.glb",
+              "sha256": "c5714840920000755c59a2098567d20bdf7b5dfaf8b5810361a7bbc19c7ef15d"
+            },
+            "HP_SK_Weapon_Lantern_v001_graph.json": {
+              "path": "02_highpoly/HP_SK_Weapon_Lantern_v001_graph.json",
+              "sha256": "d9667cf24a6a785c2708948bf8793ba70cf5ddd1145cdb6929da94ac95ba0c93"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -253,
+              -3,
+              765,
+              1014
+            ],
+            "scale": 1.005893909626719
+          },
+          "seconds": 142.3,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 5.9
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 18:03:58",
+          "files": {
+            "SK_Weapon_Lantern_v001.blend": {
+              "path": "03_work/SK_Weapon_Lantern_v001.blend",
+              "sha256": "cb4a14e8976212d53a762629dfc91ee571b954d79455a548c03fe9cf52a09c08"
+            },
+            "SK_Weapon_Lantern_v001.glb": {
+              "path": "04_export/SK_Weapon_Lantern_v001.glb",
+              "sha256": "300c92fd6d16e4662cf385e2120cb7e3692e9ce9dc53cfc3c0a78692c84693b5"
+            },
+            "SK_Weapon_Lantern_v001_metrics.json": {
+              "path": "03_work/SK_Weapon_Lantern_v001_metrics.json",
+              "sha256": "e266d9cd5b2523ce077de3e638bb9a182df1f8b886c64052a5b098d46a631b82"
+            },
+            "T_Weapon_Lantern_BC.png": {
+              "path": "03_work/textures_v001/T_Weapon_Lantern_BC.png",
+              "sha256": "0c17b2fb5d11ce1a7364a25ebc305665dfb00ddd1416f36129d97e59bf6a9dcb"
+            },
+            "T_Weapon_Lantern_E.png": {
+              "path": "03_work/textures_v001/T_Weapon_Lantern_E.png",
+              "sha256": "eaab997360c426d79a0771e20ab5f49196d5603d0246b951227b375dadc5c9ac"
+            },
+            "T_Weapon_Lantern_MetalMask.png": {
+              "path": "03_work/textures_v001/T_Weapon_Lantern_MetalMask.png",
+              "sha256": "0dd86cb3fb3445027d5733d55431baa921b7e69d09051ab6ea4ecf9430c96314"
+            },
+            "T_Weapon_Lantern_N.png": {
+              "path": "03_work/textures_v001/T_Weapon_Lantern_N.png",
+              "sha256": "be07497de3be0763fe9173e0c2822e54b76ff603214367338c536e359e5e55a8"
+            },
+            "T_Weapon_Lantern_ORM.png": {
+              "path": "03_work/textures_v001/T_Weapon_Lantern_ORM.png",
+              "sha256": "bf71cdc1d1a5ec3d534fa6b61aabe8cd99957499fe22f1ae6c55642e80045fab"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1,
+            "emid": 1
+          },
+          "align_iou": 0.858,
+          "uncovered_ratio": 0.2663,
+          "lods": [
+            {
+              "tris": 11996,
+              "verts": 5988
+            },
+            {
+              "tris": 2996,
+              "verts": 1488
+            }
+          ],
+          "export_kb": 518.7,
+          "seconds": 36.2,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 18:03:58",
+          "files": {
+            "SK_Weapon_Lantern_v001_validation.json": {
+              "path": "05_review/SK_Weapon_Lantern_v001_validation.json",
+              "sha256": "8151c0178cbd986f7f92fee61b738aaabe85bd180720633746594fdfaefa9160"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 18:04:13",
+          "files": {
+            "SK_Weapon_Lantern_v001_review.png": {
+              "path": "05_review/SK_Weapon_Lantern_v001_review.png",
+              "sha256": "81c3799a69c91ab62ffe6796e455f92394350ac3a87508c7dacf512d868a15c0"
+            }
+          },
+          "from_build": 1,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "刚体部件 + 多视图高模；三轴尺寸与白模吻合，发光分区落在纹饰上（三才转轮保留程序化发光件）",
+            "time": "2026-10-06 18:05:03"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 18:05:03",
+          "files": {
+            "SK_Weapon_Lantern.glb": {
+              "path": "@root/public/assets/weapons/SK_Weapon_Lantern.glb",
+              "sha256": "300c92fd6d16e4662cf385e2120cb7e3692e9ce9dc53cfc3c0a78692c84693b5"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/weapons/SK_Weapon_Lantern.glb"
+        }
+      ]
+    }
+  }
+}

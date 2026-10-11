@@ -27,8 +27,86 @@
 #   matid_hint 材质分区的补充说明（可选，英文），追加到遮罩提示词：模型容易把浅黄的骨壳 / 砂岩当成铜
 #   garment   绑定规格（可选）："long_robe" 长袍盖住双腿：脚踝到髋部按「髋骨 + 左右平均」绑定，防止袍内的腿戳出、袍摆撕开
 
+# ───── 玩家英雄 v2（2026-10-10，docs/art/hero-roster-v2.md）─────
+# 全新英雄，替代被否决的赤狐 / 岩熊 / 雷隼。游戏内部 id 沿用 fox / bear / falcon（技能代码、存档不变），只换显示名。
+# 构建：python art/pipeline/build_tripo_creature.py SK_Hero_<Name> [--publish]（creature_rigs/SK_Hero_<Name>.json，保留 Mixamo 65 骨 + 尾巴 / 耳朵）
+[assets.SK_Hero_RedPanda]
+display = "燎·爆竹游侠"
+source_provider = "tripo"
+kind = "skeletal"
+class = "hero_display"
+blockout = { source = "hero", id = "fox" }
+material = { roughness = 0.85, metallic = 0.0 }
+keep_glow = "all"
+brief = "Red panda firecracker gunslinger (design sheet art/source/characters/_design/heroes/hero_redpanda/DS_hero_redpanda_v001.png)."
+
+[assets.SK_Hero_Pangolin]
+display = "磐·工匠武僧"
+source_provider = "tripo"
+kind = "skeletal"
+class = "hero_display"
+blockout = { source = "hero", id = "bear" }
+material = { roughness = 0.85, metallic = 0.0 }
+keep_glow = "all"
+brief = "Pangolin craftsman warrior monk, the tank (design sheet art/source/characters/_design/heroes/hero_pangolin/DS_hero_pangolin_v003.png)."
+
+[assets.SK_Hero_FlyingSquirrel]
+display = "鼯·雷鼓机关师"
+source_provider = "tripo"
+kind = "skeletal"
+class = "hero_display"
+blockout = { source = "hero", id = "falcon" }
+material = { roughness = 0.85, metallic = 0.0 }
+keep_glow = "all"
+brief = "Giant flying squirrel thunder scout (design sheet art/source/characters/_design/heroes/hero_flyingsquirrel/DS_hero_flyingsquirrel_v001.png)."
+
+[assets.SM_HeroPart_PangolinBall]
+# 磐出场的鳞球形态（docs/art/hero-roster-v2.md）：单独建模，落地展开时换成本体。构建：python art/pipeline/build_hero_part.py SM_HeroPart_PangolinBall [--publish]
+display = "磐·鳞球"
+source_provider = "tripo"
+kind = "static"
+class = "hero_attachment"
+blockout = { source = "hero", id = "bear", attachment = "ball" }
+material = { roughness = 0.6, metallic = 0.0 }
+part = { source = "art/source/_tripo_inbox/20261010T150105_SM_HeroPart_PangolinBall.fbx", task = "https://studio.tripo3d.ai/zh/workspace/generate/1b2b20df-e7ff-4162-83de-72561bf2929f", size = 1.22 }
+
+[assets.SK_Hero_Fox]
+display = "赤狐·焰尾游侠"
+kind = "skeletal"
+class = "hero_display"
+blockout = { source = "hero", id = "fox" }
+rig = "parts"
+highpoly_mode = "multiview"
+material = { roughness = 0.88, metallic = 0.0 }
+keep_glow = "all"
+brief = """An anthropomorphic female red fox fire ranger, large expressive fox head, amber eyes, orange fur, cream muzzle and chest, dark ear tips and paws. Short substantial brown leather ranger armour, a broad vermilion scarf, indigo trousers, ochre wraps and chunky boots. Three clearly separated voluminous curved orange tails with cream tips behind the hips. Broad stylized fur clumps, simple warm colour blocks and East Asian fantasy tailoring. Hands empty; weapon and flame effects are separate runtime objects. Preserve the reference stance, hand sockets and three-tail silhouette."""
+
+[assets.SK_Hero_Bear]
+display = "岩熊·镇山守卫"
+kind = "skeletal"
+class = "hero_display"
+blockout = { source = "hero", id = "bear" }
+rig = "parts"
+highpoly_mode = "multiview"
+material = { roughness = 0.88, metallic = 0.0 }
+keep_glow = "all"
+brief = """An anthropomorphic brown bear temple guardian monk, massive broad shoulders and thick limbs, large friendly stern bear head, round ears, cream muzzle, dark broad nose and warm amber eyes. A deep vermilion monk robe crossing one shoulder, indigo monk trousers, ochre wraps and substantial sandals. One massive faceted blue-grey stone shoulder guard on his left, stone bracers and shin guards, a broad rope belt, few large wooden prayer beads and a stout bamboo hat on the back. Matte hand-painted shapes, simple heavy tailoring and robust rounded anatomy. Hands empty; shotgun and stone magic are separate runtime objects. Preserve the reference stance and hand sockets."""
+
+[assets.SK_Hero_Falcon]
+display = "雷隼·天穹猎手"
+kind = "skeletal"
+class = "hero_display"
+blockout = { source = "hero", id = "falcon" }
+rig = "parts"
+rig_major_fields = ["art_joint_0", "art_joint_1", "art_joint_2", "art_joint_3", "art_joint_4", "art_joint_5", "art_joint_6", "art_joint_7", "art_joint_8", "art_joint_9", "art_joint_10", "art_joint_11", "art_joint_12", "art_joint_13", "art_joint_14", "art_joint_15", "art_joint_16", "art_joint_17", "art_joint_18", "art_joint_19", "art_joint_20"]
+highpoly_mode = "multiview"
+material = { roughness = 0.86, metallic = 0.0 }
+keep_glow = "all"
+brief = """An anthropomorphic peregrine falcon lightning hunter, proud oversized avian head, thick angular brow, icy cyan eyes, pale cheek patches, dark navy head cap, golden hooked beak and swept crown feathers. A substantial indigo long hunter coat with broad ivory chest feather shapes, restrained muted gold clasps, dark gloves, sturdy boots and a crimson waist accent. Two broad folded navy wings with layered chunky ivory-grey flight feathers, coherent wing anatomy on his back. Bold clean painted colour blocks and simplified East Asian fantasy tailoring. Hands empty; revolver and lightning effects are separate runtime objects. Preserve reference hand sockets, folded wing pose and confident stance."""
+
 [assets.SK_Enemy_Grunt]
 arm_radius = 0.13
+source_provider = "tripo"  # 2026-10-06：Tripo P2.0 网格 + 本管线骨骼适配 / 蒙皮，贴图取 Tripo 原贴图
 display = "沙匪刀客"
 kind = "skeletal"
 class = "enemy_standard"
@@ -46,6 +124,7 @@ cloth-wrapped shins, dark leather boots, bare tan forearms, dark cloth hand wrap
 
 [assets.SK_Enemy_Archer]
 arm_radius = 0.09
+source_provider = "tripo"
 display = "骨弩手"
 kind = "skeletal"
 class = "enemy_standard"
@@ -57,9 +136,12 @@ An undead skeleton crossbowman: lanky bone-white skeleton with a visible ribcage
 a skull under a ragged dark green hooded cloak with a short shoulder mantle, the tattered cloak
 hanging to the knees at the back, two glowing green ghost-fire eyes in the skull sockets, bony arms
 and legs with a few dark leather wraps and a belt. Hands empty (the crossbow is a separate asset).
+Skeletal hands with a clearly separate bony thumb and four long bony fingers each, slightly spread;
+bare skeletal feet with five separate bony toes each.
 """
 
 [assets.SK_Enemy_Brute]
+source_provider = "tripo"
 arm_radius = 0.24
 display = "铁甲盾卫"
 kind = "skeletal"
@@ -75,6 +157,7 @@ few dark leather straps. Hands empty (the mace and the tower shield are separate
 """
 
 [assets.SK_Enemy_Marksman]
+source_provider = "tripo"
 arm_radius = 0.14
 display = "狙击手"
 kind = "skeletal"
@@ -229,6 +312,196 @@ veined and pulsing), a small armoured head with two glowing red eyes and a pair 
 six thin dark jointed legs splayed out to the sides.
 """
 
+[assets.SK_Enemy_MirageToad]
+# 第一章 · 赤沙古道新阵容（docs/art/enemy-roster-v2.md）。设计稿 / 四视图在 art/source/characters/_design/desert/desert_toad/
+source_provider = "tripo"
+matid_hint = "The toad is organic flesh and the pagoda is brick, stone, glazed tile and cloth: all NON-METAL (blue). Only the bronze bells and the bronze spire on top of the pagoda are METAL (red)."
+display = "蜃楼蟾"
+kind = "skeletal"
+class = "enemy_large"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "mirage_toad" }
+material = { roughness = 0.8, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+A giant desert mirage toad carrying half of a collapsed Buddhist pagoda (tiered green-glazed roofs, bronze bells,
+cracked bricks, a seated Buddha niche, torn red banners) grown into its back. Squat wide warty toad with
+sandstone-coloured skin and Dunhuang turquoise spots, big golden eyes, a huge translucent throat sac glowing
+white-gold (weak spot). Front feet with four stubby webbed toes, hind feet with five webbed toes. Stylized.
+"""
+
+[assets.SK_Enemy_JerboaBlade]
+# 第一章 · 赤沙古道新阵容（docs/art/enemy-roster-v2.md）。设计稿 / 四视图在 art/source/characters/_design/desert/desert_jerboa/
+# 双刀不进身体资产：运行时是程序化部件，挂在美术的手骨上
+source_provider = "tripo"
+matid_hint = "Fur, cloth scarf, cloth skirt and leather wraps are NON-METAL (blue). Only the lamellar chest plate, the shoulder plate, the brass studs, buckles and the bell between the ears are METAL (red)."
+display = "跳鼠刀兵"
+kind = "skeletal"
+class = "enemy_swarm"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "jerboa_blade" }
+material = { roughness = 0.85, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+A small stylized desert jerboa soldier standing upright: huge round pink-lined ears, big black eyes, sandy-orange fur,
+a small glowing bronze bell between the ears (weak spot), a ragged crimson scarf, scraps of old Chinese lamellar armour
+(small chest plate, one shoulder plate), a torn cloth skirt, red leather wraps on wrists and ankles, very long springy
+hind legs with long feet and four clawed toes, a long thin tail ending in a white tuft. Hands empty, thumb plus four fingers.
+"""
+
+[assets.SK_Enemy_FireRat]
+# 第一章 · 赤沙古道新阵容（docs/art/enemy-roster-v2.md）。设计稿 / 四视图在 art/source/characters/_design/desert/desert_firerat/
+# 四足贴地的胖火鼠（用户选定 TV_desert_firerat_v006：短吻、蓬松大火尾）。火焰全是不透明的雕塑火苗毛，火光由运行时特效负责。
+# 滚球形态是单独的模型（四视图 TV_desert_firerat_ball_v001），蜷身到一半时切换
+source_provider = "tripo"
+matid_hint = "The whole creature is fur, flame-shaped fur tufts, skin, teeth and claws: all NON-METAL (blue). Nothing on it is metal."
+display = "火浣鼠"
+kind = "skeletal"
+class = "enemy_swarm"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "fire_rat" }
+material = { roughness = 0.85, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+A stylized chubby mythical fire rat (火浣鼠) standing on all fours: a plump rounded body held low, a short snout with
+two big front teeth, round ears, small fierce glowing amber eyes, red-orange fur made of large sculpted opaque
+flame-shaped tufts with pale gold tips, a big flame crest on the head and a ridge of flame tufts along the spine, cream
+belly, short legs with clawed toes, and a long bushy tail made entirely of sculpted flame tufts, rising up and back.
+"""
+
+[assets.SM_EnemyPart_FireRatBall]
+# 火浣鼠的滚球形态（单独建模，用户 2026-10-06 定）：蜷身过半时身体换成它，挂在白模的 fire_ball 挂点上。
+# 四视图 art/source/characters/_design/desert/desert_firerat_ball/TV_desert_firerat_ball_v001；Tripo 智能网格，不绑骨
+source_provider = "tripo"
+display = "火浣鼠·火球"
+kind = "static"
+class = "enemy_attachment"
+# 三轴等长：不摆展示姿态，四视图直接按挂点空间渲染（正面 = 游戏 +Z，火球的脸朝前）
+presentation = false
+blockout = { source = "enemy", id = "fire_rat", attachment = "fire_ball" }
+material = { roughness = 0.85, metallic = 0.0 }
+matid_hint = "Fur, flame-shaped fur tufts, ears, teeth and claws: all NON-METAL (blue)."
+brief = """
+The fire rat curled up into an almost perfect round ball: head tucked so only the round ears, the angry glowing eyes
+and the two big front teeth peek out at the front, claws visible at the bottom front, the whole surface covered in big
+sculpted opaque flame-shaped fur tufts sweeping backwards in a spiral like a spinning fireball.
+"""
+
+[assets.SK_Enemy_CamelStele]
+# 第一章 · 赤沙古道新阵容（docs/art/enemy-roster-v2.md）。设计稿 / 四视图在 art/source/characters/_design/desert/desert_camel/
+# 手里的石碑塔盾不进身体资产：单独建模（SM_EnemyWeapon_CamelStele），挂在白模的 stele 挂点上
+source_provider = "tripo"
+matid_hint = "Fur, skin, cloth skirt, ropes and cloth wraps are NON-METAL (blue); the stone tablets on the back are NON-METAL stone (blue). Only the bronze bells, nose ring, belt discs and buckles are METAL (red)."
+display = "驼碑力士"
+kind = "skeletal"
+class = "enemy_large"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "camel_stele" }
+material = { roughness = 0.85, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+A hulking anthropomorphic Bactrian camel strongman: huge barrel chest, long neck, grumpy heavy-lidded camel face with a
+bronze nose ring, shaggy brown fur on the shoulders and forearms, a bronze bell necklace on red rope, two weathered stone
+tablets strapped upright over its two humps with the carved inscription between them glowing white-gold (weak spot), a
+faded Dunhuang-patterned saddle-blanket skirt, cloth-wrapped shins, big two-toed hooves. Hands empty: thumb plus four
+thick fingers.
+"""
+
+[assets.SM_EnemyWeapon_CamelStele]
+# 驼碑力士手持的石碑塔盾：挂点 stele（碑心为原点，正面朝 +Z），四视图 _design/desert/desert_camel_stele/
+source_provider = "tripo"
+display = "驼碑力士·石碑盾"
+kind = "static"
+class = "enemy_attachment"
+blockout = { source = "enemy", id = "camel_stele", attachment = "stele" }
+material = { roughness = 0.9, metallic = 0.0 }
+matid_hint = "The slab is weathered stone and the ropes/tassels are cloth: NON-METAL (blue). Only the bronze handles, bronze discs and bells are METAL (red)."
+brief = """
+A massive weathered sandstone stele used as a tower shield: the front carved in relief with a Dunhuang flying apsara among
+clouds in faded gold and turquoise, a red-and-gold braided rope around the top with bronze discs, bells and tassels on the
+sides, two riveted bronze grip handles on the back.
+"""
+
+[assets.SK_Enemy_TombBeast]
+# 第一章 · 赤沙古道新阵容（docs/art/enemy-roster-v2.md）：2026-10-07 替换驼碑力士。设计稿 / 四视图在
+# art/source/characters/_design/desert/desert_tomb_beast/。四足狮形三彩釉陶镇墓兽，格挡靠身体（正面厚釉甲），不持盾
+source_provider = "tripo"
+matid_hint = "The whole beast is glazed ceramic (sancai glaze: amber, green, cream) and the glowing cracks on its back: all NON-METAL (blue). Nothing on it is metal."
+display = "三彩镇墓兽"
+kind = "skeletal"
+class = "enemy_large"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "tomb_beast" }
+material = { roughness = 0.35, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+A stylized Tang-dynasty sancai-glazed ceramic tomb guardian beast (镇墓兽) on all fours: a hulking lion-like body, a
+fierce human-beast face mask with bulging eyes and tusks, a single tall curved horn, flame-shaped ear crests and big
+flame-shaped wing fins on the shoulders, thick legs with three big claws, a flame-shaped tail. Glossy amber, malachite
+green and cream glaze with drips. Its back is cracked open in a network of glowing white-gold cracks (weak spot).
+"""
+
+[assets.SK_Enemy_Apsara]
+# 第一章 · 赤沙古道新阵容（docs/art/enemy-roster-v2.md）：辅助位邪飞天。设计稿 / 四视图在 art/source/characters/_design/desert/desert_apsara/
+# 琵琶悬浮在身前、单独建模（SM_EnemyPart_ApsaraPipa，用户 2026-10-07 选定）：手不碰琵琶，没有 IK 握持；身体用对称悬浮 A 字姿态绑骨
+source_provider = "tripo"
+matid_hint = "Skin, hair, silk top, skirt and ribbons are NON-METAL (blue). Only the golden headdress, armlets, bracelets, anklets, necklace, belt discs and earring fittings are METAL (red)."
+display = "邪飞天"
+kind = "skeletal"
+class = "enemy_large"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "apsara" }
+material = { roughness = 0.7, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+A stylized corrupted Dunhuang apsara floating in the air: big head with a serene cracked porcelain face and glowing
+white-gold eyes, dark hair in a high bun with a tall golden lotus headdress, jade earrings, a green and cinnabar celestial
+top, a layered cinnabar and malachite skirt with gold cloud patterns, short silk ribbons hanging from the forearms, gold
+armlets, bare feet with five toes. Hands empty, thumb plus four slender fingers.
+"""
+
+[assets.SM_EnemyPart_ApsaraPipa]
+# 邪飞天的悬浮琵琶（单独建模，挂在白模的 pipa 挂点上，琴心为原点、琴面朝 +Z、琴头朝 +Y），四视图 _design/desert/desert_apsara_pipa/
+# 四个发光琴轸是弱点
+source_provider = "tripo"
+display = "邪飞天·琵琶"
+kind = "static"
+class = "enemy_attachment"
+blockout = { source = "enemy", id = "apsara", attachment = "pipa" }
+presentation = false
+material = { roughness = 0.6, metallic = 0.0 }
+matid_hint = "The wooden body, soundboard and red tassel are NON-METAL (blue). The golden tuning pegs, frets, head ornament and fittings are METAL (red)."
+brief = """
+A stylized Chinese pipa standing upright: pear-shaped body with a golden soundboard painted with faded Dunhuang clouds,
+a rounded dark wooden back, four strings, a bent-back head with four chunky golden tuning pegs, a golden sun-disc
+ornament with a flame crest on the head, a gold medallion and red tassel hanging below.
+"""
+
+[assets.SK_Enemy_ScorpionArcher]
+# 第一章 · 赤沙古道新阵容（docs/art/enemy-roster-v2.md）。设计稿 / 四视图在 art/source/characters/_design/desert/desert_scorpion/
+source_provider = "tripo"
+matid_hint = "The scorpion shell, legs, pincers and tail segments are chitin; the woman's skin, veil, hood, scarves and skirt are cloth or flesh: all NON-METAL (blue). Only the gold trims, gold coins, bracelets, belt discs and the bronze tail crossbow are METAL (red)."
+display = "蝎尾弩卫"
+kind = "skeletal"
+class = "enemy_large"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "scorpion_archer" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+A stylized scorpion-centaur archer: the upper body of a veiled desert huntress (red hood and gold-coin face veil, glowing
+white-gold eyes, white top, teal and crimson sashes, gold bracelets and belt discs) joined at the waist to a giant dark-red
+desert scorpion with eight legs, two big pincers and gold-trimmed shell plates. Its curled tail ends in a bronze crossbow
+with a glowing white-gold venom sac at the base (weak spot). Hands empty, thumb plus four fingers.
+"""
+
 [assets.SK_Enemy_Wisp]
 display = "幽灵飞灯"
 kind = "skeletal"
@@ -267,6 +540,7 @@ weathered stone at the joints, gold bands and gold trim on shoulders, hips and c
 loincloth, huge stone fists, thick pillar legs with stone toe spikes, a small head with a glowing amber eye
 slit, a glowing golden core set in the chest, glowing amber runes carved into the stone, floating rock
 fragments and a floating gold crown ring around it.
+Its huge stone hands each show a clear thick thumb and four separate blocky stone fingers, slightly spread, not fists; its feet are broad stone feet with four clear blocky toes each.
 """
 
 # ROM（活动范围）测试姿势：取自 src/enemies/bosses/Colossus.ts 各招式的姿势表（rig 字段的局部旋转 [x, y, z]，弧度，XYZ 欧拉），
@@ -300,6 +574,7 @@ blue royal robe with dark navy layers, ornate silver armour plates on the chest 
 skin, slender arms with silver bracers and icy claws, two large wings each made of four long translucent
 ice-crystal feathers, an ice crystal crown with glowing gems, glowing cyan eyes, a glowing frost core on the
 chest, floating ice shards around her.
+Her slender hands each show a clearly separate thumb and four long elegant fingers, relaxed and slightly spread; her feet (if visible below the gown) are clearly shaped with distinct toes or a complete crystal shoe.
 """
 
 # ROM 测试姿势：取自 src/enemies/bosses/Matriarch.ts 的姿势表（冰翼、环绕冰片保留程序化，不在这里）
@@ -327,6 +602,7 @@ A molten-hearted demon warlord boss: heavy black iron plate armour with dark bro
 orange lava cracks running through the armour, a glowing molten core in the chest, a horned great-helm
 with glowing orange eyes, dark bone spikes on the shoulders, a long tattered crimson cape. Both hands are
 EMPTY armoured gauntlets (his greatsword is a separate asset - do not paint any sword or weapon).
+His armored gauntlets each show a separate plated thumb and four articulated plated fingers, open and slightly spread, not clenched fists; his feet are complete armored sabatons with a clear sole.
 """
 
 # ROM 测试姿势：取自 src/enemies/bosses/Warlord.ts 的姿势表（armS / elbowS = 持剑手，armO / elbowO = 空手；大剑保留程序化）
@@ -946,3 +1222,1363 @@ reference_dimensions = [2.8, 2.2, 2.8]
 keep_glow = "none"
 material = { roughness = 0.88, metallic = 0.0 }
 brief = """One compact grounded foundry slag cart with a thick flared iron tub, broad folded lip, heavy short timber-and-iron chassis, two thick solid side wheels and a stout rear support shoe. Sparse dark angular slag is joined inside the tub. Chunky matte charcoal-aubergine metal, dull bronze bands and muted rust accents. Clear filled volume and robust support structure at moderate game detail. No long handles, thin spokes, tow poles, chains, molten effects, railway or loose parts."""
+
+# ───────────── V2 沙寺建筑套件（Tripo Studio P2.0，2026-10-06）─────────────
+# 尺寸对齐 docs/level-design/plans-v2：外墙 9 m、连接门洞 12 m、柱 2.4×5 m、掩体 1.2 / 2.6 m、高台 3 m。
+[assets.SM_Tripo_DesertRampart]
+display = "沙寺城垣墙段（V2）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+blockout = { source = "scene", id = "desert.v2.rampart" }
+reference_mode = "bounds_only"
+reference_dimensions = [8.0, 9.0, 3.0]
+architecture_role = "wall"
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """A massive tileable desert fortress rampart section 8m wide, 9m tall, 3m deep: battered sandstone base, thick upper wall with chunky crenellations along the top, two shallow buttress pilasters and one faded terracotta plaster band with a muted teal painted border. Both side ends are flat cut faces so identical sections join seamlessly in a row. Warm ochre sandstone blocks, broad hand-painted planes, sparse chipped edges. Solid wall with no openings."""
+
+[assets.SM_Tripo_DesertGateway]
+display = "沙寺门楼（V2）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+blockout = { source = "scene", id = "desert.v2.gateway" }
+reference_mode = "bounds_only"
+reference_dimensions = [16.0, 11.0, 4.0]
+architecture_role = "gate"
+passage_min_width_m = 12.0
+lintel_bottom_target_m = 8.0
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """A monumental open desert temple gateway 16m wide, 11m tall, 4m deep: two massive sandstone towers joined by a thick stepped lintel with a carved sun disc emblem. The open passage between the towers is 12m wide and 8m high and goes fully through the depth, empty down to the ground. Warm ochre sandstone, terracotta plaster panels, muted teal and faded gold trim, tattered vermilion cloth banners hanging flat against the towers. No doors, no gate leaves."""
+
+[assets.SM_Tripo_DesertColumn]
+display = "断裂砂岩柱（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+blockout = { source = "scene", id = "desert.v2.column" }
+reference_mode = "bounds_only"
+reference_dimensions = [2.4, 5.0, 2.4]
+architecture_role = "cover"
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """A thick weathered desert temple column 5m tall on a square stepped plinth, 2.4m wide: fluted sandstone shaft with a broken jagged top, one faded teal and gold painted band near the base, a few chunky chipped edges. Solid single piece standing upright."""
+
+[assets.SM_Tripo_DesertBarricade]
+display = "低矮石垛（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+blockout = { source = "scene", id = "desert.v2.barricade" }
+reference_mode = "bounds_only"
+reference_dimensions = [6.0, 1.2, 1.2]
+architecture_role = "cover"
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """A low waist-high desert market barricade 6m long, 1.2m tall, 1.2m deep: a row of stacked sandstone blocks with wooden supply crates and two tied cloth sacks set into it, flat walkable top. Warm ochre stone, honey wood, faded terracotta cloth. Chunky readable shapes, single solid connected piece."""
+
+[assets.SM_Tripo_DesertCoverWall]
+display = "半掩体残墙（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+blockout = { source = "scene", id = "desert.v2.coverwall" }
+reference_mode = "bounds_only"
+reference_dimensions = [6.0, 2.6, 1.2]
+architecture_role = "cover"
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """A ruined desert sandstone wall fragment 6m long, 2.6m tall, 1.2m deep with a stepped broken top edge, a faded terracotta plaster patch and one small muted teal painted motif. Solid connected masonry, chunky chipped corners, no openings."""
+
+[assets.SM_Tripo_DesertPlatformBlock]
+display = "高台石基模块（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+blockout = { source = "scene", id = "desert.v2.platformblock" }
+reference_mode = "bounds_only"
+reference_dimensions = [4.0, 3.0, 4.0]
+architecture_role = "platform"
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """A square raised temple podium module 4m wide, 3m tall, 4m deep for tiling into large terraces: solid sandstone block walls with a carved horizontal frieze band, a projecting cap moulding and a flat paved top. Warm ochre stone, faded teal and gold frieze accents. All four sides finished identically so modules tile edge to edge."""
+
+[assets.SM_Tripo_DesertStairs]
+display = "高台石阶（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+blockout = { source = "scene", id = "desert.v2.stairs" }
+reference_mode = "bounds_only"
+reference_dimensions = [4.0, 3.0, 4.6]
+architecture_role = "stairs"
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """A straight flight of wide sandstone temple steps 4m wide rising 3m over a 4.6m run, with two low chunky side cheek walls capped by small lion-head finials. About eight even steps. Warm ochre stone, broad painted planes, sparse worn edges. The steps rise from FRONT (low) to BACK (high): the FRONT view shows the steps face-on, both side views show the diagonal stair profile, and the BACK view shows only the solid flat vertical back face of the stair block at full 3m height (no steps visible from behind)."""
+
+[assets.SM_Tripo_DesertColossus]
+display = "沙王巨像（V2 地标）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+blockout = { source = "scene", id = "desert.v2.colossus" }
+reference_mode = "bounds_only"
+reference_dimensions = [12.0, 16.0, 10.0]
+architecture_role = "landmark"
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """A colossal seated stone statue of an ancient desert sand king 16m tall: crowned head with a broad jackal-eared headdress, hands resting on knees, seated on a massive stepped throne block. Weathered sandstone with faded gold and teal painted regalia, chunky stylized forms readable from 150m away. One solid statue."""
+
+[assets.SM_Tripo_DesertMarketStall]
+display = "集市布篷摊位（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+blockout = { source = "scene", id = "desert.v2.stall" }
+reference_mode = "bounds_only"
+reference_dimensions = [4.0, 3.6, 3.0]
+architecture_role = "dressing"
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """A desert bazaar market stall 4m wide, 3.6m tall, 3m deep: a waist-high sandstone and honey-wood counter along the FRONT, four stout wooden posts, and a sloping awning of broad terracotta and teal striped cloth with a scalloped front edge. On the counter: clay pots, a stack of rolled carpets, open spice sacks in ochre and red. Solid closed plank back wall. Chunky readable shapes, single solid connected piece standing on a flat base."""
+
+[assets.SM_Tripo_DesertGoodsPile]
+display = "集市货物堆（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+blockout = { source = "scene", id = "desert.v2.goods" }
+reference_mode = "bounds_only"
+reference_dimensions = [3.0, 1.6, 2.0]
+architecture_role = "dressing"
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """A compact pile of desert caravan goods 3m wide, 1.6m tall, 2m deep: two stacked wooden supply crates bound with rope, three large terracotta storage jars, a rolled red-and-teal carpet leaning on them and two tied burlap sacks. Honey wood, terracotta clay, faded cloth. Chunky readable shapes, all touching as one solid connected cluster on a flat base."""
+
+[assets.SM_Tripo_DesertTreasureHoard]
+display = "宝库财宝堆（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+blockout = { source = "scene", id = "desert.v2.hoard" }
+reference_mode = "bounds_only"
+reference_dimensions = [4.0, 1.8, 3.0]
+architecture_role = "dressing"
+keep_glow = "none"
+material = { roughness = 0.75, metallic = 0.2 }
+brief = """A temple treasure hoard 4m wide, 1.8m tall, 3m deep: a low heap of gold coins spilling over a stepped sandstone plinth, with two small iron-banded wooden treasure chests, gilded jars and a bronze sun-disc idol propped at the back. Gold reads as broad warm painted planes, not glittery. Chunky readable shapes, one solid connected piece on a flat base."""
+
+[assets.SM_Tripo_DesertCornerTower]
+display = "城垣转角塔楼（V2）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+blockout = { source = "scene", id = "desert.v2.tower" }
+reference_mode = "bounds_only"
+reference_dimensions = [7.2, 13.0, 7.2]
+architecture_role = "tower"
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """A square desert fortress corner bastion tower 7.2m wide, 13m tall, 7.2m deep matching a sandstone rampart: battered (slightly sloping) sandstone lower walls, a broad terracotta plaster band with muted teal and faded gold trim at two thirds height, a slightly overhanging crenellated top with chunky merlons, two narrow arrow slits, and one tattered vermilion cloth banner hanging flat on the FRONT face only. Warm ochre stone, broad painted planes. One solid closed block, no doors."""
+
+[assets.SM_Tripo_DesertColumnRuin]
+display = "倒塌柱段碎石堆（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+blockout = { source = "scene", id = "desert.v2.columnruin" }
+reference_mode = "bounds_only"
+reference_dimensions = [6.0, 1.6, 3.0]
+architecture_role = "dressing"
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """A toppled desert temple column lying on the ground, 6m long, 1.6m tall, 3m deep: three thick round sandstone column drums fallen in a staggered row along the length, a broken square capital with a carved sun rosette at one end, and a low heap of chunky sandstone rubble and broken blocks wedged around them. Faded terracotta and muted teal paint traces on the drums. Warm ochre sandstone, broad hand-painted planes, chunky readable shapes, everything touching as one solid connected piece on a flat base."""
+
+[assets.SM_Tripo_DesertBrazier]
+display = "祭坛火盆（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+blockout = { source = "scene", id = "desert.v2.brazier" }
+reference_mode = "bounds_only"
+reference_dimensions = [1.4, 2.4, 1.4]
+architecture_role = "dressing"
+keep_glow = "none"
+material = { roughness = 0.6, metallic = 0.3 }
+brief = """A desert temple fire brazier 1.4m wide, 2.4m tall: a square stepped sandstone pedestal with a carved sun disc on every face, topped by a wide shallow bronze fire bowl on three lion-paw feet, the bowl filled with glowing embers and a few chunky stylised flame tongues. Warm ochre stone, aged bronze with teal patina, orange-gold embers. Chunky readable shapes, one solid connected piece on a flat base, identical on all four sides."""
+
+[assets.SM_Tripo_DesertRampartPlain]
+display = "沙寺城垣墙段·素面变体（V2）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+blockout = { source = "scene", id = "desert.v2.rampartplain" }
+reference_mode = "bounds_only"
+reference_dimensions = [8.0, 9.0, 3.0]
+architecture_role = "wall"
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """A massive tileable desert fortress rampart section 8m wide, 9m tall, 3m deep, a weathered variant of the same wall: battered sandstone base, thick upper wall with chunky crenellations along the top but two merlons broken off, two shallow buttress pilasters, NO painted plaster band; instead the plain weathered sandstone face carries one large carved sun-disc relief medallion in the middle at two thirds height and a few cracked, slightly displaced blocks. Both side ends are flat cut faces so it joins seamlessly with identical wall sections in a row. Warm ochre sandstone blocks, broad hand-painted planes, sparse chipped edges. Solid wall with no openings."""
+
+
+# ───────────── Playable heroes · Tripo P2.0 native-rig builds ─────────────
+# Runtime GLBs for SK_Hero_* are produced by art/pipeline/build_tripo_heroes.py from these
+# rigged Tripo models (Mixamo skeleton kept). Do not republish them with `assetctl.py build`.
+[assets.SK_Hero_Fox.tripo]
+task_id = "0582c359-f644-4e0f-804e-88fc0faaf8ce"
+source_blend = "art/source/characters/SK_Hero_Fox/03_model/tripo_p2_rigged_original.blend"
+reference = "art/source/characters/SK_Hero_Fox/02_reference/CN_SK_Hero_Fox_v003_tpose_20261005.png"
+height = 1.9
+
+[assets.SK_Hero_Falcon.tripo]
+task_id = "62187cb1-9791-4097-adfa-a814768a5b80"
+source_blend = "art/source/characters/SK_Hero_Falcon/03_model/tripo_p2_rigged_original.blend"
+reference = "art/source/characters/SK_Hero_Falcon/02_reference/CN_SK_Hero_Falcon_v003_tpose_20261005.png"
+# Back wings are auto-weighted to the arms; fade arm influence 0.09-0.14 x height from the arm line.
+detach_arm_weights = [0.09, 0.14]
+height = 1.85
+
+[assets.SK_Hero_Bear.tripo]
+task_id = "f06c600b-28a0-45b4-b234-19b7e907ae6b"
+source_blend = "art/source/characters/SK_Hero_Bear/03_model/tripo_p2_rigged_original.blend"
+reference = "art/source/characters/SK_Hero_Bear/02_reference/CN_SK_Hero_Bear_v003_tpose_20261005.png"
+height = 2.22
+
+# ───────────── 第一人称武器 · 协作者新增的 6 把（魔刀千刃由专门会话负责，不在这里）─────────────
+
+[assets.SK_Weapon_Flamer]
+display = "朱雀吐息"
+kind = "skeletal"
+class = "weapon_fp"
+rig = "parts"
+rig_rigid = true
+presentation = true
+highpoly_mode = "multiview"
+blockout = { source = "weapon", id = "flamer" }
+material = { roughness = 0.6, metallic = 0.0, metal_roughness = 0.35, metal_value = 0.8 }
+keep_glow = "all"
+emissive_hint = "Only the thin engraved feather lines on the crimson body glow. Brass rings, tank, grip and barrel do not glow."
+brief = """
+A vermilion-bird flamethrower in East-Asian fantasy style: a deep crimson lacquered steel body with gold vermilion-bird feather engravings, a brass heat shroud over the barrel with three brass rings near the muzzle, a bronze fuel tank slung under the receiver with brass bands, a dark leather pistol grip and a foregrip.
+Moving part: the fuel tank slung under the receiver. No hands, no characters. Do NOT paint any glowing lights, glowing strips, glowing gems or glowing energy (rarity and element glows are added by the game on top). Moving parts stay in place as clearly separate pieces.
+"""
+
+[assets.SK_Weapon_Stormpod]
+display = "青冥雷蛊"
+kind = "skeletal"
+class = "weapon_fp"
+rig = "parts"
+rig_rigid = true
+presentation = true
+highpoly_mode = "multiview"
+blockout = { source = "weapon", id = "stormpod" }
+material = { roughness = 0.6, metallic = 0.0, metal_roughness = 0.35, metal_value = 0.8 }
+keep_glow = "all"
+emissive_hint = "Only the red cinnabar glyphs painted on the talismans and the thin engraved lines on the bronze bands glow. Bronze, wood and paper do not glow."
+brief = """
+A bronze gu-jar grenade launcher of a southern witch doctor: a patinated teal-green bronze launch tube with bronze bands at both ends and a small paper talisman pasted on its left side, a revolving drum of five sealed bronze gu jars wrapped with yellow paper talismans and red seal stamps, a top bronze rail with a front sight, a dark wood pistol grip, foregrip and a short stock.
+Moving part: the revolving drum of five sealed bronze gu jars. No hands, no characters. Do NOT paint any glowing lights, glowing strips, glowing gems or glowing energy (rarity and element glows are added by the game on top). Moving parts stay in place as clearly separate pieces.
+"""
+
+[assets.SK_Weapon_Magmashot]
+display = "赤蛟霰铳"
+kind = "skeletal"
+class = "weapon_fp"
+rig = "parts"
+rig_rigid = true
+presentation = true
+highpoly_mode = "multiview"
+blockout = { source = "weapon", id = "magmashot" }
+material = { roughness = 0.6, metallic = 0.0, metal_roughness = 0.35, metal_value = 0.8 }
+keep_glow = "all"
+emissive_hint = "Only the thin seams between the dragon-scale plates and the engraved dragon lines on the receiver glow. Barrels, wood, iron and the scale plates themselves do not glow."
+brief = """
+A side-by-side double-barrel dragon shotgun: two blackened iron barrels under a dark red lacquered rib, six orange dragon-scale ridge plates along the top, a small dragon-head front sight, a dark iron receiver with a hinge pin and twin hammers, a dark wooden fore-end with grip grooves and a dark wooden stock with an iron butt plate.
+Moving part: none (fixed break-action). No hands, no characters. Do NOT paint any glowing lights, glowing strips, glowing gems or glowing energy (rarity and element glows are added by the game on top). Moving parts stay in place as clearly separate pieces.
+"""
+
+[assets.SK_Weapon_Trinity]
+display = "三才转轮"
+kind = "skeletal"
+class = "weapon_fp"
+rig = "parts"
+rig_rigid = true
+presentation = true
+highpoly_mode = "multiview"
+blockout = { source = "weapon", id = "trinity" }
+material = { roughness = 0.6, metallic = 0.0, metal_roughness = 0.35, metal_value = 0.8 }
+keep_glow = "all"
+emissive_hint = "Only the three engraved trigram (bagua) ribs on top of the barrel, the thin engraved lines on the frame and the cloud engraving on the jade grip glow. Steel, cylinder, ivory accents and sights do not glow."
+brief = """
+An ornate six-chamber revolver of heaven, earth and man: a slate-grey steel frame and barrel, three pale-gold trigram (bagua) ribs engraved across the top of the barrel, pale ivory-gold accents and a six-shot cylinder with fluted chambers, a rear notch sight, a cocked hammer, a dark green jade-like grip with a steel butt cap.
+Moving part: the six-chamber cylinder. No hands, no characters. Do NOT paint any glowing lights, glowing strips, glowing gems or glowing energy (rarity and element glows are added by the game on top). Moving parts stay in place as clearly separate pieces.
+"""
+
+[assets.SK_Weapon_Railgun]
+display = "贯虹灵炮"
+kind = "skeletal"
+class = "weapon_fp"
+rig = "parts"
+rig_rigid = true
+presentation = true
+highpoly_mode = "multiview"
+blockout = { source = "weapon", id = "railgun" }
+material = { roughness = 0.6, metallic = 0.0, metal_roughness = 0.35, metal_value = 0.8 }
+keep_glow = "all"
+emissive_hint = "Only the thin rune inlays along the twin rails and the engraved lines on the capacitor capsule glow. Steel body, rings, grip and stock do not glow."
+brief = """
+A long rainbow-piercing spirit cannon: a blue-grey steel body with two parallel spirit-rune rails running the length of the long barrel, pale violet inlays, three bronze accelerator rings near the front of the barrel, a cylindrical capacitor capsule mounted on top of the receiver, a pistol grip, a foregrip and a solid stock.
+Moving part: the ring assembly on the front of the barrel and the capacitor capsule on top. No hands, no characters. Do NOT paint any glowing lights, glowing strips, glowing gems or glowing energy (rarity and element glows are added by the game on top). Moving parts stay in place as clearly separate pieces.
+"""
+
+[assets.SK_Weapon_Lantern]
+display = "蚀蛊灯"
+kind = "skeletal"
+class = "weapon_fp"
+rig = "parts"
+rig_rigid = true
+presentation = true
+highpoly_mode = "multiview"
+blockout = { source = "weapon", id = "lantern" }
+material = { roughness = 0.6, metallic = 0.0, metal_roughness = 0.35, metal_value = 0.8 }
+keep_glow = "all"
+emissive_hint = "Only the faded talisman patterns painted on the green silk gauze and the thin engraved lines on the brass caps glow. Wood, brass ribs, pole and tassel do not glow."
+brief = """
+A southern witch's gu-breeding bronze lantern carried on a short pole: a dark wooden pole grip with brass bands and a pistol grip underneath, a brass crossbeam, post and hanging arm, and a hexagonal lantern hanging from the arm with six dark bronze ribs, brass top and bottom caps, a brass hook, an opaque pale-green silk gauze body painted with faded talisman patterns, and a red tassel with a bronze weight below.
+Moving part: none visible (the wick inside the lantern). No hands, no characters. Do NOT paint any glowing lights, glowing strips, glowing gems or glowing energy (rarity and element glows are added by the game on top). Moving parts stay in place as clearly separate pieces.
+"""
+
+[assets.SM_Tripo_DesertPortalShrine]
+display = "门前祭坛传送门神龛（V2）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+blockout = { source = "scene", id = "desert.v2.portalShrine" }
+reference_mode = "bounds_only"
+reference_dimensions = [10.0, 11.0, 5.0]
+architecture_role = "shrine"
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """A monumental desert sun-temple shrine niche 10m wide, 11m tall, 5m deep that frames a magic portal: a thick sandstone facade with ONE tall open round-topped arch in the middle, 6.5m wide and 8m tall, leading into a shallow open recess 3.5m deep whose floor is flat at ground level (no steps or objects inside the recess). The recess back wall carries a large carved sun disc. The arch is edged with a gold-painted moulding and a terracotta plaster band with muted teal trim. Two stepped battered pylons flank the arch, each with one tattered vermilion cloth banner hanging flat on its FRONT face; a crenellated cornice and a small gold sun finial crown the top centre. Warm ochre sandstone, broad hand-painted planes, sparse chipped edges. The back and sides are plain closed sandstone walls."""
+
+# ── 第二章 · 昆仑雪墟建筑套件（V2，2026-10-07 第一版概念，待用户审稿后再进 Tripo）──
+# 尺寸与沙寺套件一一对应，地图布局与墙体拼接（derive_wall_kit）可直接复用。
+
+[assets.SM_Tripo_FrostRampart]
+display = "昆仑雪城城垣墙段（V2）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "frost.v2.rampart" }
+reference_mode = "bounds_only"
+reference_dimensions = [8.0, 9.0, 3.0]
+architecture_role = "wall"
+style_theme = "kunlun"
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.0 }
+brief = """A massive tileable Kunlun mountain-palace rampart section 8m wide, 9m tall, 3m deep: a battered base of big pale grey-white granite blocks, a thick upper wall of white jade-like stone with a row of chunky square merlons along the top, two shallow buttress pilasters capped with verdigris bronze plates, and one horizontal band of faded vermilion lacquer with a pale jade cloud-scroll border. Thick soft snow caps lie on the merlons, the buttress tops and the base ledge; a few short chunky icicles hang under the band. Both side ends are flat cut faces so identical sections join seamlessly in a row. Solid wall with no openings."""
+
+[assets.SM_Tripo_FrostRampartPlain]
+display = "昆仑雪城素墙段（V2）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "frost.v2.rampartPlain" }
+reference_mode = "bounds_only"
+reference_dimensions = [8.0, 9.0, 3.0]
+architecture_role = "wall"
+style_theme = "kunlun"
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.0 }
+brief = """A plain tileable Kunlun mountain-palace wall section 8m wide, 9m tall, 3m deep, the quieter companion of the decorated rampart: the same battered pale granite base and white jade-like upper wall with a row of chunky square merlons along the top, but NO buttresses, NO painted band and no icicles, just a few large stone blocks and one thin verdigris bronze cap line. Thick soft snow caps on the merlons and the base ledge. Both side ends are flat cut faces so sections join seamlessly in a row. Solid wall with no openings."""
+
+[assets.SM_Tripo_FrostGateway]
+display = "昆仑青铜门阙（V2）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "frost.v2.gateway" }
+reference_mode = "bounds_only"
+reference_dimensions = [16.0, 11.0, 4.0]
+architecture_role = "gate"
+passage_min_width_m = 12.0
+lintel_bottom_target_m = 8.0
+style_theme = "kunlun"
+keep_glow = "none"
+material = { roughness = 0.75, metallic = 0.15 }
+brief = """A monumental open Kunlun palace gateway 16m wide, 11m tall, 4m deep in the style of Han-dynasty que gate towers: two massive white jade-stone towers with stepped bracket eaves of verdigris bronze tiles, joined by a thick lintel carrying a big round bronze bi-disc emblem. The open passage between the towers is 12m wide and 8m high and goes fully through the depth, empty down to the ground. Pale white stone, verdigris bronze, faded vermilion lacquer beams; thick snow on every eave and ledge, a few chunky icicles. No doors, no gate leaves."""
+
+[assets.SM_Tripo_FrostColumn]
+display = "冰封玉柱（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "frost.v2.column" }
+reference_mode = "bounds_only"
+reference_dimensions = [2.4, 5.0, 2.4]
+architecture_role = "cover"
+style_theme = "kunlun"
+keep_glow = "none"
+material = { roughness = 0.6, metallic = 0.0 }
+brief = """A thick square-based column 2.4m wide, 5m tall: a white jade stone pillar on a stepped granite plinth with a verdigris bronze collar band, its upper half encased in a big faceted shell of clear glacier-blue ice that has grown over it, the broken top crusted with snow. Chunky, solid, one connected piece standing on the ground."""
+
+[assets.SM_Tripo_FrostBarricade]
+display = "积雪矮石栏（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "frost.v2.barricade" }
+reference_mode = "bounds_only"
+reference_dimensions = [6.0, 1.2, 1.2]
+architecture_role = "cover"
+style_theme = "kunlun"
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.0 }
+brief = """A low white jade balustrade wall 6m long, 1.2m tall, 1.2m deep, waist-high cover: a solid stone railing with chunky square posts and thick carved cloud-scroll panels between them (panels solid, no holes), the top rail heaped with a thick ridge of soft snow, one end slightly broken. Pale stone with faint jade-green tint. One solid connected piece."""
+
+[assets.SM_Tripo_FrostCoverWall]
+display = "冰裂残墙（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "frost.v2.coverwall" }
+reference_mode = "bounds_only"
+reference_dimensions = [6.0, 2.6, 1.2]
+architecture_role = "cover"
+style_theme = "kunlun"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.0 }
+brief = """A ruined palace wall fragment 6m long, 2.6m tall, 1.2m deep, full-height cover: big pale granite blocks with a jagged broken top, a strip of faded vermilion plaster on one face, a big wedge of clear blue glacier ice frozen into a crack, snow piled along the top and drifted against the base. Solid, no openings, one connected piece."""
+
+[assets.SM_Tripo_FrostPlatformBlock]
+display = "白玉台基模块（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "single"  # 2mv 两次（种子 20261003 / 20261011）都出 2-3 cm 薄壳空心盒，LOD1 减不下去；2.1 单视图为实心
+bake_device = "CPU"
+blockout = { source = "scene", id = "frost.v2.platformblock" }
+reference_mode = "bounds_only"
+reference_dimensions = [4.0, 3.0, 4.0]
+architecture_role = "platform"
+style_theme = "kunlun"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.0 }
+brief = """A square raised white jade terrace module 4m wide, 3m tall, 4m deep for tiling into large terraces (a Chinese xumizuo podium): solid pale stone walls with a carved lotus-petal moulding band and a verdigris bronze corner cap at the top, a flat paved top with a thin even layer of snow. All four sides finished identically so modules tile edge to edge."""
+
+[assets.SM_Tripo_FrostStairs]
+display = "白玉台阶（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "frost.v2.stairs" }
+reference_mode = "bounds_only"
+reference_dimensions = [4.0, 3.0, 4.6]
+architecture_role = "stairs"
+style_theme = "kunlun"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.0 }
+brief = """A straight flight of white jade stone steps 4m wide, rising 3m over a 4.6m run, with low solid stone side cheeks topped by small carved cloud-scroll end posts; the steps are wide and even with a thin layer of snow on each tread and packed snow along the cheeks. Pale stone with a faint jade tint. One solid connected piece, open at the top and bottom."""
+
+[assets.SM_Tripo_FrostKaiming]
+display = "开明兽巨像（V2 地标）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "frost.v2.kaiming" }
+reference_mode = "bounds_only"
+reference_dimensions = [12.0, 16.0, 10.0]
+architecture_role = "landmark"
+style_theme = "kunlun"
+keep_glow = "none"
+material = { roughness = 0.75, metallic = 0.2 }
+brief = """A colossal statue of the Kaiming beast (开明兽), the guardian of Kunlun's nine gates from the Shan Hai Jing, 16m tall: a mighty tiger-bodied beast sitting upright on its haunches on a massive stepped pedestal, its nine human-faced heads fanned out on thick necks around the neck like a crown, all facing east. Carved from white jade stone with verdigris bronze collars and armour plates, faded vermilion accents; thick snow on its back, heads and pedestal, chunky icicles under the jaws. Chunky stylized forms readable from 150m away. One solid statue."""
+
+[assets.SM_Tripo_FrostPrayerTent]
+display = "朝圣者经幡帐（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "single"  # 2mv 版屋顶糊成团、LOD1 卡在 2800 面；2.1 单视图结构清楚
+qa_waivers = { "LOD1 面数" = "单视图高模的薄毡顶与经幡让边折叠减面停在约 1380 面（焊接 1.5% 高度也只到 1170）；20 m 外多约 400 面可接受，第一版先用（2026-10-11）" }
+bake_device = "CPU"
+blockout = { source = "scene", id = "frost.v2.prayerTent" }
+reference_mode = "bounds_only"
+reference_dimensions = [4.0, 3.6, 3.0]
+architecture_role = "dressing"
+style_theme = "kunlun"
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """A frozen pilgrims' shelter 4m wide, 3.6m tall, 3m deep: a sturdy timber frame with a thick sloped felt roof weighed down by heavy snow, strings of faded vermilion and jade prayer flags frozen stiff along the ridge, a low wooden counter in front with bronze bowls and bundled incense, icicles hanging from the roof edge. Chunky readable shapes, one solid connected piece standing on the ground."""
+
+[assets.SM_Tripo_FrostOfferings]
+display = "冻结供品堆（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "frost.v2.offerings" }
+reference_mode = "bounds_only"
+reference_dimensions = [3.0, 1.6, 2.0]
+architecture_role = "dressing"
+style_theme = "kunlun"
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.1 }
+brief = """A pile of frozen pilgrim offerings 3m wide, 1.6m tall, 2m deep: stacked lacquered wooden chests bound with bronze bands, sealed clay jars, a rolled felt bundle and a small bronze ding cauldron, all glued together under a thick cap of snow and a sheet of clear ice. Chunky, one solid connected pile resting on the ground."""
+
+[assets.SM_Tripo_FrostJadeHoard]
+display = "玉器宝藏堆（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "frost.v2.jadeHoard" }
+reference_mode = "bounds_only"
+reference_dimensions = [4.0, 1.8, 3.0]
+architecture_role = "dressing"
+style_theme = "kunlun"
+keep_glow = "none"
+material = { roughness = 0.4, metallic = 0.3 }
+brief = """A treasure hoard of the Queen Mother's palace 4m wide, 1.8m tall, 3m deep: a heap of carved jade bi discs, cong tubes, jade cups and bronze mirrors spilling from two open bronze-bound chests, a few gold ingots, everything dusted with snow and half frozen in clear blue ice. Pale green jade, verdigris bronze, a little gold. One solid connected heap resting on the ground."""
+
+[assets.SM_Tripo_FrostCornerTower]
+display = "雪城角楼（V2）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "frost.v2.cornerTower" }
+reference_mode = "bounds_only"
+reference_dimensions = [7.2, 13.0, 7.2]
+architecture_role = "tower"
+style_theme = "kunlun"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.1 }
+brief = """A square Kunlun palace corner watchtower 7.2m wide, 13m tall: a battered white granite base, a solid upper storey of white jade stone with small dark window slits, crowned by a wide two-tier hip roof of verdigris bronze tiles with upturned eaves, every roof tier under thick snow with chunky icicles. Faded vermilion lacquer beams under the eaves. Finished on all four sides. One solid connected piece."""
+
+[assets.SM_Tripo_FrostColumnRuin]
+display = "倾倒冰柱段（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "frost.v2.columnRuin" }
+reference_mode = "bounds_only"
+reference_dimensions = [6.0, 1.6, 3.0]
+architecture_role = "dressing"
+style_theme = "kunlun"
+keep_glow = "none"
+material = { roughness = 0.7, metallic = 0.0 }
+brief = """A toppled palace column lying on the ground 6m long, 1.6m tall, 3m wide: three thick white jade drum segments of a fallen pillar lying in a broken row with a verdigris bronze collar ring, chunks of the glacier-ice shell that covered it scattered against them, everything half buried in drifted snow. Low, chunky, one solid connected group resting on the ground."""
+
+[assets.SM_Tripo_FrostIceLantern]
+display = "青铜冰灯（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "frost.v2.iceLantern" }
+reference_mode = "bounds_only"
+reference_dimensions = [1.4, 2.4, 1.4]
+architecture_role = "dressing"
+style_theme = "kunlun"
+keep_glow = "none"
+material = { roughness = 0.5, metallic = 0.4 }
+brief = """A palace lantern 1.4m wide, 2.4m tall: a square stepped white jade pedestal topped by a verdigris bronze Han-dynasty lamp in the shape of a kneeling servant figure holding up a round lamp housing, the housing panels made of thick clear blue ice glowing with a cold cyan light inside (painted as an opaque bright pale cyan surface, no flame), a cap of snow on top. Chunky readable shapes, one solid connected piece on the ground."""
+
+[assets.SM_Tripo_FrostPortalShrine]
+display = "瑶台传送门神龛（V2）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "multiview"
+bake_device = "CPU"
+qa_waivers = { "LOD2 面数" = "2mv 网格的龛内薄壁让边折叠减面停在约 2100 面（焊接 1.5% 高度也只到 1700）；远景 60 m 外多 1300 面可接受，第一版先用（2026-10-11）" }
+blockout = { source = "scene", id = "frost.v2.portalShrine" }
+reference_mode = "bounds_only"
+reference_dimensions = [10.0, 11.0, 5.0]
+architecture_role = "shrine"
+style_theme = "kunlun"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.1 }
+brief = """A monumental Kunlun palace shrine niche 10m wide, 11m tall, 5m deep that frames a magic portal: a thick white jade stone facade with ONE tall open round-topped moon-gate arch in the middle, 6.5m wide and 8m tall, leading into a shallow open recess 3.5m deep whose floor is flat at ground level (no steps or objects inside the recess). The recess back wall carries a large carved jade bi disc. The facade is crowned by a verdigris bronze tiled roof with upturned eaves under thick snow; faded vermilion lacquer pillars flank the arch; chunky icicles hang from the eaves. The arch is empty, nothing inside the opening."""
+
+# ── 第二章备选方案 B · 寒山道观建筑套件（2026-10-07，与已通过的昆仑套件对比挑选；尺寸一一对应）──
+
+[assets.SM_Tripo_FrostTaoRampart]
+display = "道观雪崖木墙段（备选 B）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+blockout = { source = "scene", id = "frost_b.v2.rampart" }
+reference_mode = "bounds_only"
+reference_dimensions = [8.0, 9.0, 3.0]
+architecture_role = "wall"
+style_theme = "taoist"
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.0 }
+brief = """A tileable Taoist cliff-abbey outer wall section 8m wide, 9m tall, 3m deep: a battered base of rough grey cliff stone, a timber-framed upper wall of white lime plaster between dark weathered timber posts and beams, a row of dark lattice windows in the plaster (solid, not see-through), and a short slate-grey tiled coping roof with upturned ends along the top; two cinnabar-red lacquered posts. Thick snow on the coping roof and the stone ledge, a few chunky icicles under the eaves, one frayed yellow talisman pasted on the plaster. Both side ends are flat cut faces so identical sections join seamlessly in a row. Solid wall with no openings."""
+
+[assets.SM_Tripo_FrostTaoRampartPlain]
+display = "道观雪崖素墙段（备选 B）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+blockout = { source = "scene", id = "frost_b.v2.rampartPlain" }
+reference_mode = "bounds_only"
+reference_dimensions = [8.0, 9.0, 3.0]
+architecture_role = "wall"
+style_theme = "taoist"
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.0 }
+brief = """A plain tileable Taoist cliff-abbey wall section 8m wide, 9m tall, 3m deep, the quieter companion of the decorated wall: the same rough grey stone base and white plaster upper wall between dark timber posts, with a slate-grey tiled coping roof, but NO lattice windows, NO red posts, NO talismans and no icicles. Thick snow on the coping roof and the stone ledge. Both side ends are flat cut faces so sections join seamlessly in a row. Solid wall with no openings."""
+
+[assets.SM_Tripo_FrostTaoGateway]
+display = "道观山门牌楼（备选 B）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+blockout = { source = "scene", id = "frost_b.v2.gateway" }
+reference_mode = "bounds_only"
+reference_dimensions = [16.0, 11.0, 4.0]
+architecture_role = "gate"
+passage_min_width_m = 12.0
+lintel_bottom_target_m = 8.0
+style_theme = "taoist"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.05 }
+brief = """A monumental Taoist abbey gateway arch (牌楼) 16m wide, 11m tall, 4m deep: four thick cinnabar-red lacquered timber pillars on grey stone drum bases, bracing beams with painted bracket sets, and three slate-grey tiled hip roofs with upturned eaves on top, the middle roof highest, a big dark wooden name plaque with gold characters under the middle roof. The open central passage is 12m wide and 8m high and goes fully through the depth, empty down to the ground. Thick snow on every roof, chunky icicles under the eaves, yellow talismans tied to the pillars. No doors, no gate leaves."""
+
+[assets.SM_Tripo_FrostTaoColumn]
+display = "冻符朱柱（备选 B）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+blockout = { source = "scene", id = "frost_b.v2.column" }
+reference_mode = "bounds_only"
+reference_dimensions = [2.4, 5.0, 2.4]
+architecture_role = "cover"
+style_theme = "taoist"
+keep_glow = "none"
+material = { roughness = 0.7, metallic = 0.05 }
+brief = """A thick cinnabar-red lacquered timber pillar 2.4m wide, 5m tall standing on a big grey stone drum base, a verdigris bronze band near the top, the broken top capped with snow, wrapped in a frozen rope hung with yellow paper talismans, a big faceted shell of pale ice grown over one side. Chunky, solid, one connected piece standing on the ground."""
+
+[assets.SM_Tripo_FrostTaoBarricade]
+display = "积雪木栏（备选 B）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+blockout = { source = "scene", id = "frost_b.v2.barricade" }
+reference_mode = "bounds_only"
+reference_dimensions = [6.0, 1.2, 1.2]
+architecture_role = "cover"
+style_theme = "taoist"
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.0 }
+brief = """A low sturdy timber railing wall 6m long, 1.2m tall, 1.2m deep, waist-high cover: thick dark timber posts and a heavy top rail with solid carved wooden panels between them (panels solid, no holes), a straw rope with talismans along it, a thick ridge of soft snow on the top rail, one end slightly broken. One solid connected piece."""
+
+[assets.SM_Tripo_FrostTaoCoverWall]
+display = "坍塌木壁（备选 B）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+blockout = { source = "scene", id = "frost_b.v2.coverWall" }
+reference_mode = "bounds_only"
+reference_dimensions = [6.0, 2.6, 1.2]
+architecture_role = "cover"
+style_theme = "taoist"
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.0 }
+brief = """A collapsed timber-and-plaster wall fragment 6m long, 2.6m tall, 1.2m deep, full-height cover: broken dark timber frame with patches of white plaster and a fallen strip of grey roof tiles leaning on it, a wedge of ice frozen into the break, snow piled along the top and drifted against the base. Solid, no openings, one connected piece."""
+
+[assets.SM_Tripo_FrostTaoPlatformBlock]
+display = "吊脚栈台模块（备选 B）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+blockout = { source = "scene", id = "frost_b.v2.platformBlock" }
+reference_mode = "bounds_only"
+reference_dimensions = [4.0, 3.0, 4.0]
+architecture_role = "platform"
+style_theme = "taoist"
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.0 }
+brief = """A square raised stilt platform module 4m wide, 3m tall, 4m deep for tiling into large terraces, like the Hanging Temple's walkways: a thick dark timber deck on a grid of sturdy timber stilts and cross braces standing on grey stone footings, the sides closed with heavy vertical planks so it reads solid, a flat plank top with a thin even layer of snow. All four sides finished identically so modules tile edge to edge."""
+
+[assets.SM_Tripo_FrostTaoStairs]
+display = "木阶（备选 B）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+blockout = { source = "scene", id = "frost_b.v2.stairs" }
+reference_mode = "bounds_only"
+reference_dimensions = [4.0, 3.0, 4.6]
+architecture_role = "stairs"
+style_theme = "taoist"
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.0 }
+brief = """A straight flight of heavy timber steps 4m wide, rising 3m over a 4.6m run, with solid plank side stringers and stout red lacquered newel posts at the bottom and top; wide even treads with a thin layer of snow and packed snow along the sides. One solid connected piece, open at the top and bottom."""
+
+[assets.SM_Tripo_FrostTaoFurnace]
+display = "九转丹炉（备选 B 地标）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+blockout = { source = "scene", id = "frost_b.v2.furnace" }
+reference_mode = "bounds_only"
+reference_dimensions = [12.0, 16.0, 10.0]
+architecture_role = "landmark"
+style_theme = "taoist"
+keep_glow = "none"
+material = { roughness = 0.6, metallic = 0.4 }
+brief = """A colossal three-legged bronze alchemy furnace (丹炉) 16m tall, the abbey's landmark: a huge round verdigris bronze cauldron body on three beast-paw legs standing on a stepped grey stone altar, a tall domed lid with a tiered pagoda-like finial, two big ring handles like ears, a cast beast face on the belly, the round furnace door glowing with cold pale jade-green fire painted as an opaque bright surface, frozen chains and giant talismans hanging from it, thick snow on the lid and altar. Chunky stylized forms readable from 150m away. One solid object."""
+
+[assets.SM_Tripo_FrostTaoIncensePavilion]
+display = "香亭（备选 B）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+blockout = { source = "scene", id = "frost_b.v2.incensePavilion" }
+reference_mode = "bounds_only"
+reference_dimensions = [4.0, 3.6, 3.0]
+architecture_role = "dressing"
+style_theme = "taoist"
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.0 }
+brief = """A small Taoist incense pavilion 4m wide, 3.6m tall, 3m deep: four red lacquered posts, a slate-grey tiled hip roof with upturned eaves under thick snow, a big bronze incense burner on a low stone table inside, strings of yellow talismans and frozen prayer ribbons between the posts, icicles from the eaves. Chunky readable shapes, one solid connected piece standing on the ground."""
+
+[assets.SM_Tripo_FrostTaoAlchemyJars]
+display = "冻结丹药坛（备选 B）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+blockout = { source = "scene", id = "frost_b.v2.alchemyJars" }
+reference_mode = "bounds_only"
+reference_dimensions = [3.0, 1.6, 2.0]
+architecture_role = "dressing"
+style_theme = "taoist"
+keep_glow = "none"
+material = { roughness = 0.7, metallic = 0.1 }
+brief = """A pile of frozen alchemy supplies 3m wide, 1.6m tall, 2m deep: big glazed clay jars sealed with red cloth and talisman paper, bundles of dried herbs, a small bronze tripod pot and stacked wooden medicine drawers, all glued together under a cap of snow and a sheet of clear ice. Chunky, one solid connected pile resting on the ground."""
+
+[assets.SM_Tripo_FrostTaoElixirHoard]
+display = "仙丹宝藏（备选 B）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+blockout = { source = "scene", id = "frost_b.v2.elixirHoard" }
+reference_mode = "bounds_only"
+reference_dimensions = [4.0, 1.8, 3.0]
+architecture_role = "dressing"
+style_theme = "taoist"
+keep_glow = "none"
+material = { roughness = 0.45, metallic = 0.3 }
+brief = """A Taoist treasure hoard 4m wide, 1.8m tall, 3m deep: two open red-lacquered chests spilling golden elixir gourds, jade pills, bronze mirrors, bundled talisman scrolls and a few gold ingots, everything dusted with snow and half frozen in pale ice. One solid connected heap resting on the ground."""
+
+[assets.SM_Tripo_FrostTaoBellTower]
+display = "雪崖钟楼（备选 B）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+blockout = { source = "scene", id = "frost_b.v2.bellTower" }
+reference_mode = "bounds_only"
+reference_dimensions = [7.2, 13.0, 7.2]
+architecture_role = "tower"
+style_theme = "taoist"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.05 }
+brief = """A square Taoist bell tower 7.2m wide, 13m tall: a tall battered grey stone base, an upper timber storey with red lacquered posts and a big bronze bell visible behind solid lattice panels, crowned by a two-tier slate-grey tiled hip roof with upturned eaves, every roof tier under thick snow with chunky icicles. Finished on all four sides. One solid connected piece."""
+
+[assets.SM_Tripo_FrostTaoPillarRuin]
+display = "倒塌木柱（备选 B）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+blockout = { source = "scene", id = "frost_b.v2.pillarRuin" }
+reference_mode = "bounds_only"
+reference_dimensions = [6.0, 1.6, 3.0]
+architecture_role = "dressing"
+style_theme = "taoist"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.0 }
+brief = """Two fallen red-lacquered timber pillars lying on the ground 6m long, 1.6m tall, 3m wide, with a broken bracket set and a slab of grey roof tiles crashed on top of them, half buried in drifted snow, a few frozen talismans. Low, chunky, one solid connected group resting on the ground."""
+
+[assets.SM_Tripo_FrostTaoStoneLantern]
+display = "石灯笼（备选 B）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+blockout = { source = "scene", id = "frost_b.v2.stoneLantern" }
+reference_mode = "bounds_only"
+reference_dimensions = [1.4, 2.4, 1.4]
+architecture_role = "dressing"
+style_theme = "taoist"
+keep_glow = "none"
+material = { roughness = 0.75, metallic = 0.0 }
+brief = """A Taoist stone lantern 1.4m wide, 2.4m tall: a square grey stone base, a slender post, a stone light chamber with square windows glowing with a cold pale jade-green ghost light (painted as opaque bright pale green surfaces, no flame), and a wide stone roof cap with upturned corners under a cap of snow. Chunky readable shapes, one solid connected piece on the ground."""
+
+[assets.SM_Tripo_FrostTaoPortalShrine]
+display = "道观传送门龛（备选 B）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+blockout = { source = "scene", id = "frost_b.v2.portalShrine" }
+reference_mode = "bounds_only"
+reference_dimensions = [10.0, 11.0, 5.0]
+architecture_role = "shrine"
+style_theme = "taoist"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.05 }
+brief = """A Taoist abbey shrine niche 10m wide, 11m tall, 5m deep that frames a magic portal: a timber-framed facade of white plaster and red lacquered posts with ONE tall open round moon-gate arch in the middle, 6.5m wide and 8m tall, leading into a shallow open recess 3.5m deep whose floor is flat at ground level (no steps or objects inside the recess); the recess back wall carries a big painted yin-yang bagua disc. A slate-grey tiled roof with upturned eaves under thick snow crowns the facade; giant yellow talismans hang on both sides of the arch. The back of the shrine is plain plaster and timber. The arch is empty."""
+
+# ── 第二章备选方案 C · 北冥冰海建筑套件（2026-10-07，与 A、B 对比挑选；尺寸一一对应）──
+
+[assets.SM_Tripo_FrostSeaRampart]
+display = "冰川崖壁段（备选 C）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "frost_c.v2.rampart" }
+reference_mode = "bounds_only"
+reference_dimensions = [8.0, 9.0, 3.0]
+architecture_role = "wall"
+style_theme = "beiming"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.0 }
+brief = """A tileable glacier cliff wall section 8m wide, 9m tall, 3m deep, the natural wall of a frozen sea cove: a sheer face of big faceted glacier-blue ice blocks with bands of dark ink-blue rock strata, a rounded overhang of packed snow along the top, a few chunky icicles, a frozen rope and an old ship's iron ring hammered into it. Both side ends are flat cut faces so identical sections join seamlessly in a row. Solid wall with no openings."""
+
+[assets.SM_Tripo_FrostSeaRampartPlain]
+display = "冰川素壁段（备选 C）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "frost_c.v2.rampartPlain" }
+reference_mode = "bounds_only"
+reference_dimensions = [8.0, 9.0, 3.0]
+architecture_role = "wall"
+style_theme = "beiming"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.0 }
+brief = """A plain tileable glacier cliff wall section 8m wide, 9m tall, 3m deep, the quieter companion of the decorated cliff: the same faceted glacier ice and dark rock strata with a snow overhang along the top, but no icicles, no rope and no iron ring. Both side ends are flat cut faces so sections join seamlessly in a row. Solid wall with no openings."""
+
+[assets.SM_Tripo_FrostSeaGateway]
+display = "鲸骨拱门（备选 C）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "frost_c.v2.gateway" }
+reference_mode = "bounds_only"
+reference_dimensions = [16.0, 11.0, 4.0]
+architecture_role = "gate"
+passage_min_width_m = 12.0
+lintel_bottom_target_m = 8.0
+style_theme = "beiming"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.0 }
+brief = """A monumental gateway made from the jawbones and ribs of a giant whale, 16m wide, 11m tall, 4m deep: two massive ivory whale jawbones standing on cairns of dark stones, curving up and lashed together at the top with thick frozen ropes, hung with faded teal prayer cloths, small bone charms and a carved wooden fish emblem at the apex. The open passage is 12m wide and 8m high and goes fully through the depth, empty down to the ground. Snow on the cairns and the top of the bones, chunky icicles. No doors."""
+
+[assets.SM_Tripo_FrostSeaColumn]
+display = "冰笋柱（备选 C）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "frost_c.v2.column" }
+reference_mode = "bounds_only"
+reference_dimensions = [2.4, 5.0, 2.4]
+architecture_role = "cover"
+style_theme = "beiming"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.0 }
+brief = """A thick ice stalagmite pillar 2.4m wide, 5m tall rising from a mound of dark rock and snow: a chunky faceted column of glacier-blue ice with a frozen old ship's mast stump trapped inside it, a frayed rope around it, a snow cap on top. Chunky, solid, one connected piece standing on the ground."""
+
+[assets.SM_Tripo_FrostSeaBarricade]
+display = "浮木绳栏（备选 C）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "frost_c.v2.barricade" }
+reference_mode = "bounds_only"
+reference_dimensions = [6.0, 1.2, 1.2]
+architecture_role = "cover"
+style_theme = "beiming"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.0 }
+brief = """A low barricade 6m long, 1.2m tall, 1.2m deep, waist-high cover: a row of thick weathered driftwood logs and broken ship planks lashed together with frozen rope and stacked with snow-capped stones, a few fishing floats tied to it. Solid, no gaps, one connected piece."""
+
+[assets.SM_Tripo_FrostSeaCoverWall]
+display = "破船舷墙（备选 C）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "frost_c.v2.coverWall" }
+reference_mode = "bounds_only"
+reference_dimensions = [6.0, 2.6, 1.2]
+architecture_role = "cover"
+style_theme = "beiming"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.0 }
+brief = """A broken section of an ancient wooden junk's hull 6m long, 2.6m tall, 1.2m deep, standing upright as full-height cover: thick curved dark timber planks with iron bands and rivets, a painted eye of the ship and a faded teal stripe, a jagged broken top, sea ice frozen along the bottom and snow on top. Solid, no holes, one connected piece."""
+
+[assets.SM_Tripo_FrostSeaPlatformBlock]
+display = "冰砖台模块（备选 C）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "single"  # 同昆仑台基：四视图都露顶面的方块在 2mv 下出薄壳空心盒，改 2.1 单视图
+bake_device = "CPU"
+qa_waivers = { "场景脚底落地" = "单视图高模减到 LOD0 后最低点离地 2.9 cm；台基四面落在台面石板下，看不出悬空（2026-10-11）" }
+blockout = { source = "scene", id = "frost_c.v2.platformBlock" }
+reference_mode = "bounds_only"
+reference_dimensions = [4.0, 3.0, 4.0]
+architecture_role = "platform"
+style_theme = "beiming"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.0 }
+brief = """A square raised platform module 4m wide, 3m tall, 4m deep for tiling into large terraces: big cut blocks of glacier-blue ice and dark stone stacked like masonry, the top paved with flat stones under an even layer of snow. All four sides finished identically so modules tile edge to edge."""
+
+[assets.SM_Tripo_FrostSeaStairs]
+display = "冰阶（备选 C）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "frost_c.v2.stairs" }
+reference_mode = "bounds_only"
+reference_dimensions = [4.0, 3.0, 4.6]
+architecture_role = "stairs"
+style_theme = "beiming"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.0 }
+brief = """A straight flight of steps 4m wide, rising 3m over a 4.6m run, cut into a block of packed ice and dark stone, with low stone side walls topped by small bone posts; wide even treads with a thin layer of snow. One solid connected piece, open at the top and bottom."""
+
+[assets.SM_Tripo_FrostSeaJunk]
+display = "冰封古船（备选 C 地标）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "frost_c.v2.junk" }
+reference_mode = "bounds_only"
+reference_dimensions = [12.0, 16.0, 10.0]
+architecture_role = "landmark"
+style_theme = "beiming"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.0 }
+brief = """A colossal ancient Chinese wooden junk 16m tall frozen upright in a mound of sea ice, its bow rising toward the sky: a high carved stern castle, three tall masts with ribbed batten sails frozen stiff and half torn, a painted eye on the bow, dark timber hull with faded teal and red paint, everything crusted with snow and hung with huge icicles, the lower hull locked inside a jagged mound of glacier ice. Chunky stylized forms readable from 150m away. One solid object."""
+
+[assets.SM_Tripo_FrostSeaYurt]
+display = "牧人毡帐（备选 C）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "single"  # 2mv 版毡壁成薄壳、碎玻璃状明暗（v001 驳回）
+bake_device = "CPU"
+blockout = { source = "scene", id = "frost_c.v2.yurt" }
+reference_mode = "bounds_only"
+reference_dimensions = [4.0, 3.6, 3.0]
+architecture_role = "dressing"
+style_theme = "beiming"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.0 }
+brief = """A nomad felt tent 4m wide, 3.6m tall, 3m deep: a round squat yurt of thick off-white felt bound with dark ropes, a small wooden door with teal painted patterns, a smoke ring at the top, heavy snow on the roof and drifted against the walls, a fishing net and a pair of skis leaning on it. Chunky readable shapes, one solid connected piece standing on the ground."""
+
+[assets.SM_Tripo_FrostSeaFishRack]
+display = "冻鱼架（备选 C）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "frost_c.v2.fishRack" }
+reference_mode = "bounds_only"
+reference_dimensions = [3.0, 1.6, 2.0]
+architecture_role = "dressing"
+style_theme = "beiming"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.0 }
+brief = """A frozen fish-drying rack and supplies 3m wide, 1.6m tall, 2m deep: a low driftwood frame hung with frozen dried fish, a coil of rope, a wooden barrel and two clay jars, all glued together under snow and a sheet of ice. Chunky, one solid connected group resting on the ground."""
+
+[assets.SM_Tripo_FrostSeaPearlHoard]
+display = "鲛珠宝藏（备选 C）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "frost_c.v2.pearlHoard" }
+reference_mode = "bounds_only"
+reference_dimensions = [4.0, 1.8, 3.0]
+architecture_role = "dressing"
+style_theme = "beiming"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.0 }
+brief = """A shipwreck treasure hoard 4m wide, 1.8m tall, 3m deep: two broken sea chests spilling glowing pale aqua pearls (鲛珠), coral branches, porcelain bowls and a few gold ingots, a big conch shell, everything dusted with snow and half frozen in clear ice. One solid connected heap resting on the ground."""
+
+[assets.SM_Tripo_FrostSeaLighthouse]
+display = "鲸骨灯塔（备选 C）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "multiview"
+bake_device = "CPU"
+qa_waivers = { "LOD2 面数" = "UV 碎岛多，边折叠减面停在约 2060 面（同昆仑神龛）；60 m 外多约 1300 面可接受，第一版先用（2026-10-11）" }
+blockout = { source = "scene", id = "frost_c.v2.lighthouse" }
+reference_mode = "bounds_only"
+reference_dimensions = [7.2, 13.0, 7.2]
+architecture_role = "tower"
+style_theme = "beiming"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.0 }
+brief = """A square watch tower and lighthouse 7.2m wide, 13m tall: a tapering base of dark stacked stones, an upper frame of lashed whale ribs and driftwood, a lamp room at the top with a glowing pale aqua whale-oil light (painted as an opaque bright surface), a conical felt-and-bone roof, snow on every ledge, chunky icicles. Finished on all four sides. One solid connected piece."""
+
+[assets.SM_Tripo_FrostSeaMastRuin]
+display = "折断桅杆（备选 C）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "frost_c.v2.mastRuin" }
+reference_mode = "bounds_only"
+reference_dimensions = [6.0, 1.6, 3.0]
+architecture_role = "dressing"
+style_theme = "beiming"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.0 }
+brief = """A fallen broken ship's mast lying on the ice 6m long, 1.6m tall, 3m wide, with its torn batten sail draped over a pile of barrels and a cracked yard spar, half buried in drifted snow and sea ice. Low, chunky, one solid connected group resting on the ground."""
+
+[assets.SM_Tripo_FrostSeaBoneLantern]
+display = "鲸油骨灯（备选 C）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "frost_c.v2.boneLantern" }
+reference_mode = "bounds_only"
+reference_dimensions = [1.4, 2.4, 1.4]
+architecture_role = "dressing"
+style_theme = "beiming"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.0 }
+brief = """A shore lantern 1.4m wide, 2.4m tall: a cairn of dark stones holding up a curved whale-bone post from which hangs a round iron cage lantern glowing with a pale aqua whale-oil light (painted as an opaque bright surface, no flame), frayed teal prayer cloths and a snow cap on the cairn. Chunky readable shapes, one solid connected piece on the ground."""
+
+[assets.SM_Tripo_FrostSeaPortalShrine]
+display = "冰窟传送龛（备选 C）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
+highpoly_mode = "multiview"
+bake_device = "CPU"
+qa_waivers = { "LOD1 面数" = "2mv 薄壳拓扑让边折叠减面停在约 3240 面（同昆仑神龛）；第二章计划目前没有 shrine 掩体，第一版先用（2026-10-11）", "LOD2 面数" = "同 LOD1：停在约 3240 面" }
+blockout = { source = "scene", id = "frost_c.v2.portalShrine" }
+reference_mode = "bounds_only"
+reference_dimensions = [10.0, 11.0, 5.0]
+architecture_role = "shrine"
+style_theme = "beiming"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.0 }
+brief = """A frozen sea-shrine niche 10m wide, 11m tall, 5m deep that frames a magic portal: a thick facade of glacier ice and dark stone with ONE tall open round-topped arch in the middle, 6.5m wide and 8m tall, framed by two giant curved whale ribs, leading into a shallow open recess 3.5m deep whose floor is flat at ground level (no steps or objects inside the recess); the recess back wall carries a big carved disc of a fish turning into a bird (鲲化为鹏). Snow along the top, chunky icicles. The back of the shrine is plain ice and stone. The arch is empty."""
+
+# ───────────── 第二章 · 昆仑雪墟定稿阵容（2026-10-10 用户选定 A + C，docs/art/enemy-roster-v2.md 第二章）─────────────
+# Tripo 智能网格 P2.0（三角面、数量 1、贴图 4k），已经 DCC Bridge 存进 art/source/_tripo_inbox（任务号见 art/source/_tripo_tasks_frost.json）。
+# 身体走 build_tripo_creature.py（creature_rigs/<asset>.json 自定义骨架），附件走 bl_build_tripo 静态路线。
+
+[assets.SK_Enemy_SnowXingxing]
+# 雪狌狌（群怪）。设计稿 / 四视图 art/source/characters/_design/frost/frost_xingxing/；Tripo 原件 art/source/_tripo_inbox/20261010T150829_SK_Enemy_SnowXingxing_smartmesh.fbx
+source_provider = "tripo"
+matid_hint = "Fur, skin, face, ears, cloth wraps and claws are NON-METAL (blue). Only small bronze bells or fittings, if any, are METAL (red)."
+display = "雪狌狌"
+kind = "skeletal"
+class = "enemy_swarm"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "xingxing" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+A pack-hunting snow monkey based on the xingxing (狌狌) of the Shan Hai Jing, 'shaped like a macaque with white ears, it crawls and walks like a man', modelled on the Chinese golden snub-nosed monkey of the snowy mountains (NOT a yeti, NOT a gorilla): a stocky, long-armed monkey with a bright sky-blue bare face, a tiny upturned snub nose, big expressive eyes and a wide mischievous grin, white ear tufts, a thick cape of long golden-white fur over the shoulders and back ending in icy blue tips, a short thick tail. A cluster of big faceted blue ice crystals grows out of its shoulders and spine, and one bright glowing cyan ice crystal is set in its forehead (weak spot). Scraps of a frozen pilgrim's vermilion prayer cord with small bronze bells around one wrist. Big hands with a clearly separate thumb and four fingers; hand-like feet with five toes. Cheeky, fast and annoying, dangerous in a pack.
+"""
+
+[assets.SK_Enemy_Jiaoren]
+# 冻鲛人（群怪）。设计稿 / 四视图 art/source/characters/_design/frost_c/frost_c_jiaoren/；Tripo 原件 art/source/_tripo_inbox/20261010T150604_SK_Enemy_Jiaoren_smartmesh.fbx
+source_provider = "tripo"
+matid_hint = "Scales, fins, skin, rope, cloth, bone ornaments and the forehead pearl are NON-METAL (blue). Nothing on it is metal."
+display = "冻鲛人"
+kind = "skeletal"
+class = "enemy_swarm"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "jiaoren" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+A pack-hunting frozen merfolk (鲛人) of the North Sea, the drowned sailors' curse: a small hunched fish-man standing on two short webbed legs, a big round fish head with bulging glassy eyes and a wide grumpy mouth, blue-grey scaly skin crusted with frost, ragged fins on the forearms and back, a short fish tail behind, scraps of an old sailor's rope and a tattered sash, a glowing aqua-cyan pearl (鲛珠) set in its forehead (weak spot). Hands with a clearly separate thumb and four webbed fingers; webbed feet with four toes. Twitchy and greedy, dangerous in a pack.
+"""
+
+[assets.SK_Enemy_Haozhi]
+# 冰棘豪彘（自爆 / 机动）。设计稿 / 四视图 art/source/characters/_design/frost/frost_haozhi/；Tripo 原件 art/source/_tripo_inbox/20261010T151012_SK_Enemy_Haozhi_smartmesh.fbx
+source_provider = "tripo"
+matid_hint = "Fur, ice quills, hide, tusks and hooves are NON-METAL (blue). Nothing on it is metal."
+display = "冰棘豪彘"
+kind = "skeletal"
+class = "enemy_swarm"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "haozhi" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+The haozhi (豪彘) of the Shan Hai Jing, a pig-like beast with white quills like hairpins, frozen into a charging kamikaze: a compact stocky porcupine-boar about 1.4 m long, grey-blue bristly skin, a big crown of long thick white-and-ice-blue quills over the whole back that bristle up when angry, small tusks, a flat snout, tiny glowing cyan eyes, short legs with small cloven hooves. The quill roots on its back glow cyan-violet as it builds up to burst (weak spot: its whole quill crown). Grumpy and explosive.
+"""
+
+[assets.SK_Enemy_IcePuffer]
+# 冰河豚（自爆 / 机动）。设计稿 / 四视图 art/source/characters/_design/frost_c/frost_c_puffer/；Tripo 原件 art/source/_tripo_inbox/20261010T151431_SK_Enemy_IcePuffer_smartmesh.fbx
+source_provider = "tripo"
+matid_hint = "Skin, ice spines, fins, eyes and lips are NON-METAL (blue). Nothing on it is metal."
+display = "冰河豚"
+kind = "skeletal"
+class = "enemy_swarm"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "ice_puffer" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+A floating frozen puffer fish (河豚), the kamikaze: a round grumpy pufferfish drifting in the air like a balloon, its skin covered with short thick ice spines, big angry eyes, a small pouting beak mouth, tiny fins fluttering; when it charges it inflates to twice its size and its spines glow aqua-cyan from the roots (weak spot: the whole body) before bursting into a ring of ice spines. Comic and explosive.
+"""
+
+[assets.SK_Enemy_Fuzhu]
+# 夫诸（远程）。设计稿 / 四视图 art/source/characters/_design/frost_c/frost_c_fuzhu/；Tripo 原件 art/source/_tripo_inbox/20261010T151557_SK_Enemy_Fuzhu_smartmesh.fbx
+source_provider = "tripo"
+matid_hint = "Fur, ice horns, hooves and the chest gem are NON-METAL (blue). Nothing on it is metal."
+display = "夫诸"
+kind = "skeletal"
+class = "enemy_standard"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "fuzhu" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+The Fuzhu (夫诸) of the Shan Hai Jing, 'shaped like a white deer with four horns', whose appearance brings floods, turned into an ice ranged attacker: an elegant white deer with four tall branching horns made of clear glacier ice that glow aqua-cyan at the tips, a frost-white coat with pale teal markings, long slender legs with cloven hooves, a short tail; a glowing aqua-cyan gem on its chest (weak spot). It fires beams of frost from its horns. Graceful and aloof.
+"""
+
+[assets.SK_Enemy_FoxWitch]
+# 九尾狐巫（辅助）。设计稿 / 四视图 art/source/characters/_design/frost/frost_foxwitch/；Tripo 原件 art/source/_tripo_inbox/20261010T151723_SK_Enemy_FoxWitch_smartmesh.fbx
+source_provider = "tripo"
+matid_hint = "Fur, robes, sashes, tassels and tails are NON-METAL (blue). Only the headdress fittings, jade-and-bronze belt plaques and small ornaments are METAL (red)."
+display = "九尾狐巫"
+kind = "skeletal"
+class = "enemy_standard"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "fox_witch" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+The nine-tailed fox (九尾狐) who attends the Queen Mother of the West in Han-dynasty art, frozen into a support caster: an elegant anthropomorphic white fox priestess with sly glowing cyan eyes, nine big fluffy tails fanned behind her like a peacock's tail, ice-blue tail tips, a Han-dynasty layered robe in glacier blue and moon white with a jade pendant belt, a small verdigris bronze headpiece. Hands with a clearly separate thumb and four slender fingers; digitigrade fox legs with four-toed paws. Calm, cunning and regal.
+"""
+
+[assets.SK_Enemy_LanternJelly]
+# 冰灯水母（辅助）。设计稿 / 四视图 art/source/characters/_design/frost_c/frost_c_jellyfish/；Tripo 原件 art/source/_tripo_inbox/20261010T151837_SK_Enemy_LanternJelly_smartmesh.fbx
+source_provider = "tripo"
+matid_hint = "The bell, tentacles, oral arms and the glowing core are NON-METAL (blue). Only the chains and the top cage ornament are METAL (red)."
+display = "冰灯水母"
+kind = "skeletal"
+class = "enemy_standard"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "lantern_jelly" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+A floating deep-sea lantern jellyfish (水母) of the North Sea, the support: a big translucent-looking but solid bell-shaped jellyfish body with a frosted pale teal dome, a glowing aqua-cyan core lantern inside the bell (weak spot), a fringe of short frilled oral arms and a few long trailing tentacles that end in glowing beads; it floats in the air above the ice and links allies with healing tendrils of light. Calm and eerie.
+"""
+
+[assets.SK_Enemy_Qingniao]
+# 三青鸟（远程（飞行））。设计稿 / 四视图 art/source/characters/_design/frost/frost_qingniao/；Tripo 原件 art/source/_tripo_inbox/20261010T152317_SK_Enemy_Qingniao_smartmesh.fbx
+source_provider = "tripo"
+matid_hint = "Feathers, beak, talons, crest and tassels are NON-METAL (blue). Only the small bronze ornaments on the wings are METAL (red)."
+display = "三青鸟"
+kind = "skeletal"
+class = "enemy_standard"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "qingniao" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+One of the three azure birds (三青鸟) of the Queen Mother of the West on Kunlun, frozen into a hovering ranged attacker: a big elegant azure-blue bird with a wingspan of about 3.5 m, a red crest, a sharp white beak, three very long trailing tail plumes, every flight feather edged with a band of pale ice like a blade, and a large glowing cyan frost jewel set in the middle of its chest (weak spot). Thin strong legs with four clawed toes each, tucked when flying. Proud, cold and graceful.
+"""
+
+[assets.SK_Enemy_XuanGui]
+# 冰甲旋龟（坦克）。设计稿 / 四视图 art/source/characters/_design/frost/frost_xuangui/；Tripo 原件 art/source/_tripo_inbox/20261010T151947_SK_Enemy_XuanGui_smartmesh.fbx
+source_provider = "tripo"
+matid_hint = "Shell, ice crystals, scales, beak and claws are NON-METAL (blue). Only the bronze-green armour bands, if any, are METAL (red)."
+display = "冰甲旋龟"
+kind = "skeletal"
+class = "enemy_large"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "xuangui" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+The xuangui (旋龟) of the Shan Hai Jing, a black turtle with a bird's head and a viper's tail, frozen into a tank: a huge low turtle about 3.2 m long with a hooked eagle-like beak head, thick elephant-like legs with three blunt claws each, and a tall domed shell of translucent glacier-blue ice over dark verdigris-bronze scutes, the shell rim ringed with short heavy ice spikes. Its long viper tail ends in a snake head whose eyes and mouth glow cyan-violet (weak spot, behind it). The shell top has a round vent hole that glows when it overheats from spinning. Heavy, stubborn, armoured.
+"""
+
+[assets.SK_Enemy_FrostCrab]
+# 玄冰巨蟹（坦克）。设计稿 / 四视图 art/source/characters/_design/frost_c/frost_c_crab/；Tripo 原件 art/source/_tripo_inbox/20261010T152057_SK_Enemy_FrostCrab_smartmesh.fbx
+source_provider = "tripo"
+matid_hint = "Carapace, ice, barnacles, legs, claws and the glowing vent are NON-METAL (blue). Only the frozen ropes' iron hooks, if any, are METAL (red)."
+display = "玄冰巨蟹"
+kind = "skeletal"
+class = "enemy_large"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "frost_crab" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+A giant armoured ice crab of the frozen sea, the tank: a huge low crab about 4 m wide with a thick dark ink-blue carapace crusted with sea ice and barnacles, one enormous flat crusher claw held in front of its face like a wall of armour and one smaller cutting claw, eight jointed walking legs, small stalked eyes; a glowing aqua-cyan vent gap at the back of its shell where the carapace meets the abdomen (weak spot, behind it). Sideways-walking, stubborn, heavy.
+"""
+
+[assets.SK_Enemy_IceWhale]
+# 冰鲸（炮击）。设计稿 / 四视图 art/source/characters/_design/frost_c/frost_c_whale/；Tripo 原件 art/source/_tripo_inbox/20261010T152209_SK_Enemy_IceWhale_smartmesh.fbx
+source_provider = "tripo"
+matid_hint = "Skin, ice crust, flippers, fluke and blowhole are NON-METAL (blue). Only harpoons or iron hooks stuck in it, if any, are METAL (red)."
+display = "冰鲸"
+kind = "skeletal"
+class = "enemy_large"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "ice_whale" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+A young frozen whale that crawls on the shore ice, the artillery: a chunky round-bodied whale calf about 5 m long with a blunt head, small eyes, thick ice crust and barnacles on its back, two big front flippers it uses to drag itself over the ice and a broad tail fluke; a big blowhole on top of its head that glows aqua-cyan when it charges (weak spot) and spouts geysers of ice shards that rain down. Bulky, slow, mournful.
+"""
+
+[assets.SK_Boss_Kun]
+# 鲲鹏（Boss）。设计稿 / 四视图 art/source/characters/_design/frost_c/frost_c_boss_kunpeng/；Tripo 原件 art/source/_tripo_inbox/20261010T152435_SK_Boss_Kun_smartmesh.fbx
+source_provider = "tripo"
+matid_hint = "Scales, feathers, tusks, barbels, skin and the forehead pearl are NON-METAL (blue). Nothing on it is metal."
+display = "鲲鹏"
+kind = "skeletal"
+class = "boss"
+rig = "parts"
+rig_sigma = 0.02
+# 原生骨架：python art/pipeline/build_tripo_creature.py SK_Boss_Kun（creature_rigs/SK_Boss_Kun.json），不走 assetctl build 的部件骨架。
+# 绑定 id 不等于敌人 id：鲲 / 鹏两个模型都由 boss_kunpeng（src/enemies/bosses/KunPeng.ts）自己挂载、换形时切换。
+blockout = { source = "enemy", id = "boss_kunpeng_kun" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+Chapter boss Kun-Peng (鲲鹏) of the Zhuangzi, the great fish of the northern darkness that changes into a giant bird. This sheet shows its FIRST form, the Kun: a colossal ancient fish bursting up through the sea ice, a huge blunt armoured head with a wide mouth full of ice-tusk teeth and small wise ancient eyes glowing aqua-cyan, ink-blue scales edged with frost, long whisker barbels, and on its back the folded beginnings of enormous feathered wings breaking out of the scales (the Peng it will become); a glowing aqua-cyan pearl in its forehead (weak spot). Majestic and world-ending.
+"""
+
+# 原生骨架的 ROM：{姿势名 = {骨骼名 = [x, y, z]}}，旋转向量（轴 × 弧度），模型空间（X = 生物左侧，Y = 上，Z = 前），
+# 与 KunPeng.ts 里 NativePose.rotate 的参数一致；取自招式的极限姿势（吞吸、砸地蓄力 / 落地、转头、吼叫、须摆）。
+# 审核：blender -b --python art/tools/review_creature_rom.py -- <build.glb> <out_dir> SK_Boss_Kun
+[assets.SK_Boss_Kun.rom]
+inhale = { spine_2 = [-0.1, 0, 0], spine_3 = [-0.12, 0, 0], head = [-0.2, 0, 0], fin_L = [0, 0, -0.3], fin_R = [0, 0, 0.3], barbel_L_1 = [0, 0, -0.25], barbel_R_1 = [0, 0, 0.25] }
+slam_windup = { spine_2 = [-0.15, 0, 0], spine_3 = [-0.15, 0, 0], head = [-0.15, 0, 0], fin_L = [0, 0, -0.35], fin_R = [0, 0, 0.35] }
+slam_impact = { spine_2 = [0.18, 0, 0], spine_3 = [0.2, 0, 0], head = [0.15, 0, 0], barbel_L_2 = [0.3, 0, 0], barbel_R_2 = [0.3, 0, 0] }
+turn = { spine_2 = [0, 0.12, 0.05], spine_3 = [0, 0.15, 0], head = [0, 0.2, 0] }
+roar = { spine_3 = [-0.15, 0, 0], head = [-0.3, 0, 0], fin_L = [0, 0, -0.45], fin_R = [0, 0, 0.45], barbel_L_1 = [0, 0, -0.3], barbel_R_1 = [0, 0, 0.3] }
+barbel_swing = { barbel_L_1 = [0.2, 0, -0.15], barbel_L_2 = [0.25, 0, 0], barbel_L_3 = [0.3, 0, 0], barbel_R_1 = [0.2, 0, 0.15], barbel_R_2 = [0.25, 0, 0], barbel_R_3 = [0.3, 0, 0] }
+
+[assets.SK_Boss_Peng]
+# 鲲鹏·鹏形态（Boss（第二阶段））。设计稿 / 四视图 art/source/characters/_design/frost_c/frost_c_boss_peng/；Tripo 原件 art/source/_tripo_inbox/20261010T152552_SK_Boss_Peng_smartmesh.fbx
+source_provider = "tripo"
+matid_hint = "Feathers, scales, beak, talons, barbels and the forehead pearl are NON-METAL (blue). Nothing on it is metal."
+display = "鲲鹏·鹏形态"
+kind = "skeletal"
+class = "boss"
+rig = "parts"
+rig_sigma = 0.02
+# 原生骨架：python art/pipeline/build_tripo_creature.py SK_Boss_Peng（creature_rigs/SK_Boss_Peng.json）。
+blockout = { source = "enemy", id = "boss_kunpeng_peng" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+Chapter boss Kun-Peng (鲲鹏) of the Zhuangzi, SECOND form: the great fish Kun has changed into the giant bird Peng, 'whose back is thousands of li across and whose wings are like clouds hanging from the sky'. A colossal sea-eagle-like bird that still shows its fish origin: the same blunt armoured head and wise ancient eyes glowing aqua-cyan as the Kun, a hooked beak lined with ice-tusk teeth, long whisker barbels trailing from the beak, ink-blue scales on the neck and chest turning into huge frost-edged feathers, two vast wings, a fan of long tail feathers like fish fins, big talons; the same glowing aqua-cyan pearl in its forehead (weak spot). Majestic and world-ending.
+"""
+
+# 原生骨架的 ROM（格式同 SK_Boss_Kun.rom）：扇翼下压 / 上提、俯冲收翼伸爪、落台歇翼、飞行收腿、转头、尾扇张开。
+[assets.SK_Boss_Peng.rom]
+flap_down = { wing_L_1 = [0, 0, -0.75], wing_L_2 = [0, 0, -0.25], wing_L_3 = [0, 0, -0.15], wing_L_low = [0, 0, 0.3], wing_R_1 = [0, 0, 0.75], wing_R_2 = [0, 0, 0.25], wing_R_3 = [0, 0, 0.15], wing_R_low = [0, 0, -0.3], tail_1 = [-0.2, 0, 0] }
+flap_up = { wing_L_1 = [0, 0, 0.3], wing_L_2 = [0, 0, 0.12], wing_L_low = [0, 0, 0.15], wing_R_1 = [0, 0, -0.3], wing_R_2 = [0, 0, -0.12], wing_R_low = [0, 0, -0.15] }
+dive = { wing_L_1 = [-0.35, 0, 0.25], wing_L_low = [-0.2, 0, 0.15], wing_R_1 = [-0.35, 0, -0.25], wing_R_low = [-0.2, 0, -0.15], neck = [0.15, 0, 0], head = [0.2, 0, 0], thigh_L = [-0.45, 0, 0], thigh_R = [-0.45, 0, 0], talon_L = [-0.3, 0, 0], talon_R = [-0.3, 0, 0] }
+perch = { wing_L_1 = [0, 0, 0.2], wing_L_2 = [0, 0, 0.15], wing_L_low = [0, 0, 0.2], wing_R_1 = [0, 0, -0.2], wing_R_2 = [0, 0, -0.15], wing_R_low = [0, 0, -0.2], neck = [0.12, 0, 0], head = [0.2, 0, 0] }
+legs_trail = { thigh_L = [0.45, 0, 0], shin_L = [0.2, 0, 0], talon_L = [0.35, 0, 0], thigh_R = [0.45, 0, 0], shin_R = [0.2, 0, 0], talon_R = [0.35, 0, 0], tail_1 = [-0.15, 0, 0] }
+look = { neck = [-0.06, 0.1, 0], head = [-0.12, 0.12, 0], barbel_L_1 = [0.2, 0, -0.2], barbel_R_1 = [0.2, 0, 0.2] }
+tail_fan = { tail_1 = [-0.2, 0.08, 0], tail_2 = [-0.15, 0.1, 0], tail_3 = [-0.1, 0.12, 0] }
+
+[assets.SM_EnemyPart_XuanGuiShell]
+# 冰甲旋龟·旋壳（附件）。设计稿 / 四视图 art/source/characters/_design/frost/frost_xuangui_shell/；Tripo 原件 art/source/_tripo_inbox/20261010T152709_SM_EnemyPart_XuanGuiShell.fbx
+source_provider = "tripo"
+matid_hint = "Shell plates, ice crystals and the stone-like scutes are NON-METAL (blue). Only bronze-green bands, if any, are METAL (red)."
+display = "冰甲旋龟·旋壳"
+kind = "static"
+class = "enemy_attachment"
+presentation = false
+blockout = { source = "enemy", id = "xuangui", attachment = "shell" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+The ice turtle's spinning form, modelled separately: head, legs and tail pulled inside the shell.
+"""
+
+[assets.SM_EnemyPart_FoxWitchMirror]
+# 九尾狐巫·铜镜（附件）。设计稿 / 四视图 art/source/characters/_design/frost/frost_foxwitch_mirror/；Tripo 原件 art/source/_tripo_inbox/20261010T152831_SM_EnemyPart_FoxWitchMirror.fbx
+source_provider = "tripo"
+matid_hint = "The mirror face is polished bronze and the frame is bronze: METAL (red). The jade knob and tassel, if any, are NON-METAL (blue)."
+display = "九尾狐巫·铜镜"
+kind = "static"
+class = "enemy_attachment"
+presentation = false
+blockout = { source = "enemy", id = "fox_witch", attachment = "mirror" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+The fox priestess's round bronze mirror, modelled separately: it floats in front of her by magic.
+"""

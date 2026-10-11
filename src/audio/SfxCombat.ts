@@ -3,6 +3,7 @@
  */
 import type { SfxId } from '../core/types';
 import { type Recipe, drive, filt, fm, noise, rnd, tone, tremolo, vibrato } from './Synth';
+import { bell, guzheng } from './Instruments';
 
 export type CombatSfxId = Extract<SfxId,
   | 'hit' | 'hit_crit' | 'hit_shield' | 'hit_armor' | 'kill' | 'explosion'
@@ -11,7 +12,8 @@ export type CombatSfxId = Extract<SfxId,
   | 'enemy_shot' | 'enemy_melee' | 'enemy_alert' | 'enemy_death' | 'enemy_spawn' | 'enemy_charge'
   | 'boss_roar' | 'boss_slam' | 'telegraph'
   | 'skill_fire' | 'skill_shock' | 'skill_earth' | 'skill_buff' | 'skill_throw'
-  | 'burn_tick' | 'shock_zap' | 'corrode_tick'>;
+  | 'burn_tick' | 'shock_zap' | 'corrode_tick'
+  | 'pipa_roll' | 'pipa_chord' | 'pipa_bloom' | 'pipa_bless' | 'pipa_snap' | 'pipa_hit'>;
 
 export const COMBAT_SFX: Record<CombatSfxId, Recipe> = {
   // ───────────── 命中反馈 ─────────────
@@ -249,6 +251,53 @@ export const COMBAT_SFX: Record<CombatSfxId, Recipe> = {
     }
     noise(v, { dur: 0.85, gain: 0.06, filter: 'highpass', f: 7000, attack: 0.3 });
     tone(v, { f: 300, f2: 1200, dur: 0.5, gain: 0.08, attack: 0.05 });
+  },
+
+  // ───────────── 邪飞天的琵琶（拨弦音色借古筝式拨弦，更短更亮） ─────────────
+
+  /** 轮指：同一个音快速连弹四下、由强到弱（基准 D5，用 pitch 按旋律变调） */
+  pipa_roll(v) {
+    for (let i = 0; i < 4; i++) guzheng(v, i * 0.075, 587.33, 0.62 - i * 0.09, 0.32 + i * 0.04);
+  },
+
+  /** 莲花和弦：一记扫弦（低到高四个音几乎同时），尾音带一点泛音微光 */
+  pipa_chord(v) {
+    const notes = [293.66, 440, 587.33, 739.99];
+    for (let i = 0; i < notes.length; i++) guzheng(v, i * 0.022, notes[i], 0.8, 1.5);
+    noise(v, { at: 0.05, dur: 0.9, gain: 0.05, filter: 'highpass', f: 7500, attack: 0.25 });
+    bell(v, 0.12, 1174.66, 0.35, 1.2);
+  },
+
+  /** 天女散花：五声音阶上行琶音，末尾几声铃音像花瓣飘散 */
+  pipa_bloom(v) {
+    const run = [587.33, 659.26, 739.99, 880, 987.77, 1174.66, 1318.51, 1479.98];
+    for (let i = 0; i < run.length; i++) guzheng(v, i * 0.065, run[i], 0.6 - i * 0.03, 0.9);
+    for (let i = 0; i < 3; i++) bell(v, 0.5 + i * 0.12, 1760 * (1 + i * 0.125), 0.25, 1.0);
+  },
+
+  /** 飞天赐福：低沉的扫弦加一声长铃，庄重 */
+  pipa_bless(v) {
+    const notes = [146.83, 220, 293.66, 440];
+    for (let i = 0; i < notes.length; i++) guzheng(v, i * 0.035, notes[i], 0.9, 2.0);
+    bell(v, 0.08, 587.33, 0.6, 2.2);
+    tone(v, { f: 73.4, dur: 1.6, gain: 0.18, attack: 0.08 });
+  },
+
+  /** 断弦：一声走调的高音后急速下滑、伴随崩裂的噪声 */
+  pipa_snap(v) {
+    tone(v, { type: 'triangle', f: 1320, f2: 260, sweep: 0.18, dur: 0.28, gain: 0.32 });
+    tone(v, { type: 'sawtooth', f: 2640, f2: 520, sweep: 0.12, dur: 0.14, gain: 0.1 });
+    noise(v, { dur: 0.035, gain: 0.35, filter: 'highpass', f: 4200 });
+    guzheng(v, 0.02, 554.37, 0.5, 0.5);
+    guzheng(v, 0.03, 587.33 * 1.03, 0.4, 0.45);
+  },
+
+  /** 打中琵琶：木头闷响 + 一声不和谐的弦颤 */
+  pipa_hit(v) {
+    tone(v, { f: 420, f2: 230, dur: 0.07, gain: 0.32 });
+    noise(v, { dur: 0.04, gain: 0.22, filter: 'bandpass', f: 1800, q: 2 });
+    guzheng(v, 0, 622.25, 0.45, 0.35);
+    guzheng(v, 0.005, 587.33 * 0.985, 0.35, 0.35);
   },
 
   /** 投掷：短促的破空 */

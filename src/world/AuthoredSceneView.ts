@@ -13,7 +13,7 @@ import { Particles, SkyDome } from './Sky';
 import { themeStyle } from './Themes';
 import { makeFloorTextures, preloadSceneSurface } from './Textures';
 import type { FloorTextures } from './Textures';
-import { ShadowCadence } from './ShadowCadence';
+import { ShadowCadence, fitSunShadow, followSun, shadowMapSize, syncShadowMapSize, type ShadowFollow } from './ShadowCadence';
 import { bakeAdventureRoadMask } from './AdventureRoadMask';
 
 type Vec = readonly [number, number, number];
@@ -130,6 +130,9 @@ export class AuthoredSceneView {
   private readonly previousBackground: THREE.Scene['background'];
   private readonly previousFog: THREE.Scene['fog'];
   private sunShadow: THREE.DirectionalLightShadow | null = null;
+  /** The sun and its player-following shadow box, when the scene is wider than the box. */
+  private sun: THREE.DirectionalLight | null = null;
+  private shadowFollow: ShadowFollow | null = null;
   private floorMaterial: THREE.MeshStandardMaterial | null = null;
   private focalLight: THREE.PointLight | null = null;
   private readonly focalFixtures: { id: string; position: THREE.Vector3 }[] = [];
@@ -447,7 +450,7 @@ export class AuthoredSceneView {
     this.owned.push(hemi, sun);
     if (this.ctx.settings.quality === 'low') return;
     sun.castShadow = true; sun.shadow.autoUpdate = false; sun.shadow.needsUpdate = true;
-    sun.shadow.mapSize.setScalar(this.ctx.settings.quality === 'high' ? 2048 : 1024);
+    sun.shadow.mapSize.setScalar(shadowMapSize(this.ctx.settings));
     sun.shadow.bias = -.00035; sun.shadow.normalBias = .035;
     const view = new THREE.OrthographicCamera(); view.position.copy(sun.position);
     view.lookAt(center); view.updateMatrixWorld(true);
@@ -457,11 +460,11 @@ export class AuthoredSceneView {
         for (const z of [layout.minZ - 7, layout.maxZ + 7]) bounds.expandByPoint(point.set(x, y, z).applyMatrix4(view.matrixWorldInverse));
       }
     }
-    const camera = sun.shadow.camera;
-    camera.left = bounds.min.x; camera.right = bounds.max.x;
-    camera.bottom = bounds.min.y; camera.top = bounds.max.y;
-    camera.near = Math.max(.5, -bounds.max.z - 3); camera.far = -bounds.min.z + 3;
-    camera.updateProjectionMatrix(); this.sunShadow = sun.shadow;
+    // Scenes wider than the follow box get a 128 m map that follows the player (sharper than one map stretched
+    // over the whole scene); smaller ones keep a map fitted to the scene.
+    this.shadowFollow = fitSunShadow(sun.shadow.camera, bounds, center,
+      new THREE.Vector3().setFromMatrixColumn(view.matrixWorld, 0), new THREE.Vector3().setFromMatrixColumn(view.matrixWorld, 1));
+    this.sunShadow = sun.shadow; this.sun = sun;
   }
 
   private buildFocalLights(): void {
@@ -506,6 +509,8 @@ export class AuthoredSceneView {
     this.architecture.update(this.ctx.camera);
     this.sky.update(time);
     this.particles.update(time, this.ctx.camera, this.ctx.renderer.domElement.height || 1080);
+    if (this.sunShadow) syncShadowMapSize(this.sunShadow, shadowMapSize(this.ctx.settings));
+    followSun(this.shadowFollow, this.sun, this.ctx.player?.position);
     if (this.sunShadow && this.shadowCadence.advance(dt, this.ctx.world.version)) this.sunShadow.needsUpdate = true;
     if (this.floorMaterial && this.layout.theme === 'inferno') this.floorMaterial.emissiveIntensity = .16 + Math.sin(time * .8) * .016;
   }

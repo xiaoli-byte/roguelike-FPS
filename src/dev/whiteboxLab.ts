@@ -7,6 +7,7 @@ import type { StageNode, StageType, ThemeId } from '../core/types';
 import { AssetLibrary } from '../assets/AssetLibrary';
 import { StageDirector } from '../world/StageDirector';
 import { getWhiteboxPlan, whiteboxPoint } from '../world/WhiteboxGen';
+import { LD03_PLAN_PARAM, V2_PREVIEW_PARAM, usesRedesignLayout } from '../world/WhiteboxMode';
 import { buildShopLayout } from '../progression/loot/shopLayout';
 import type { WhiteboxCheckpoint } from '../world/WhiteboxTypes';
 import { probeWhitebox, WhiteboxWalker } from './WhiteboxTraversal';
@@ -22,6 +23,8 @@ const typeChoice = $<HTMLSelectElement>('wb-type'), checkpoints = $<HTMLSelectEl
 const routeChoice = $<HTMLSelectElement>('wb-route');
 const lookChoice = $<HTMLSelectElement>('wb-look');
 lookChoice.value = initial.get('look')!;
+const planChoice = $<HTMLSelectElement>('wb-plan');
+planChoice.value = [V2_PREVIEW_PARAM, LD03_PLAN_PARAM].includes(initial.get('plan') ?? '') ? initial.get('plan')! : 'shipped';
 const status = $<HTMLOutputElement>('wb-status'), walkStatus = $<HTMLOutputElement>('wb-walk-status');
 const auditStatus = $<HTMLOutputElement>('wb-audit-status'), performanceOutput = $<HTMLOutputElement>('wb-performance');
 const invulnerable = $<HTMLInputElement>('wb-invulnerable');
@@ -37,7 +40,7 @@ function selectedStage(): StageNode {
 function refreshChoices(index = stageChoice.value || initial.get('stage') || '0'): void {
   const id = theme.value as ThemeId;
   stageChoice.replaceChildren(...Array.from({ length: 5 }, (_, i) => {
-    const plan = getWhiteboxPlan({ theme: id, chapter: themes.indexOf(id), index: i, type: i === 4 ? 'boss' : 'combat', reward: 'none' });
+    const plan = getWhiteboxPlan({ theme: id, chapter: themes.indexOf(id), index: i, type: i === 4 ? 'boss' : 'combat', reward: 'none' }, usesRedesignLayout(id));
     return new Option(`${i + 1} · ${plan.title}`, String(i));
   }));
   stageChoice.value = Array.from(stageChoice.options).some(o => o.value === index) ? index : '0';
@@ -126,15 +129,18 @@ ctx.events.on('stage:loaded', ({ stage }) => {
   if (target) { requestAnimationFrame(() => loadStage(target)); return; }
   theme.value = stage.theme; refreshChoices(String(stage.index));
   if (stage.type !== (stage.index === 4 ? 'boss' : 'combat') || typeChoice.value !== 'auto') typeChoice.value = stage.type === 'boss' || stage.type === 'combat' ? 'auto' : stage.type;
-  const metadata = director.whitebox, plan = metadata?.plan ?? getWhiteboxPlan(stage);
+  const metadata = director.whitebox, plan = metadata?.plan ?? getWhiteboxPlan(stage, usesRedesignLayout(stage.theme));
   $('wb-title').textContent = `${stage.chapter + 1}-${stage.index + 1} · ${plan.title}`;
   const art = lookChoice.value === 'art';
   $('wb-art-brief').textContent = art ? director.artBrief ?? plan.artBrief : '技术占位 · 对照通道与碰撞';
-  $('wb-revision').textContent = art ? 'LD-03 扩展布局 · 场景装配' : 'LD-03 技术白盒 · 对照检查';
+  // Chapters without a V2 plan keep showing LD-03 even in V2 mode.
+  const redesigned = plan.id.endsWith('-v2');
+  const revision = redesigned ? 'V2 重设计' : 'LD-03 扩展布局';
+  $('wb-revision').textContent = art ? `${revision} · 场景装配` : `${revision} · 技术白盒对照`;
   document.title = `${plan.title} · ${art ? '场景美术' : '技术白盒'}`;
   $('wb-subtitle').textContent = plan.subtitle;
   $('wb-intent').textContent = plan.routeChoice;
-  $<HTMLAnchorElement>('wb-atlas').href = `/level-design/index.html#${plan.id}`;
+  $<HTMLAnchorElement>('wb-atlas').href = `/level-design/${redesigned ? 'v2/' : ''}index.html#${plan.id}`;
   $('wb-checks').replaceChildren(...plan.whiteboxChecks.map(text => { const li = document.createElement('li'); li.textContent = text; return li; }));
   const spatial = metadata?.checkpoints ?? [], artViews = director.artInspectionViews;
   const merchantCenter = plan.preparation ? whiteboxPoint(plan, plan.preparation.at) : null;
@@ -228,6 +234,13 @@ invulnerable.onchange = () => { ctx.player.invulnerableTime = invulnerable.check
 theme.onchange = () => { refreshChoices('0'); loadStage(); };
 stageChoice.onchange = () => { typeChoice.disabled = stageChoice.value === '4'; loadStage(); };
 typeChoice.onchange = () => loadStage();
+planChoice.onchange = () => {
+  const params = new URLSearchParams(location.search);
+  if (planChoice.value === 'shipped') params.delete('plan'); else params.set('plan', planChoice.value);
+  history.replaceState(null, '', `${location.pathname}?${params}`);
+  lastPerformanceReport = null; performancePlan = 'changed';
+  refreshChoices(); loadStage();
+};
 lookChoice.onchange = () => {
   const params = new URLSearchParams(location.search);
   params.set('look', lookChoice.value);

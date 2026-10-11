@@ -11,11 +11,13 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 
 export interface AssetEntry {
   url: string;
+  /** 高清贴图版本（画质「高」时加载，同一套网格与骨骼，贴图 2048）；切换画质后重新进游戏生效 */
+  hiUrl?: string;
   bytes?: number;
   kind: 'skeletal' | 'static';
   class: string;
   /** 绑定目标；attachment 为挂点名时表示挂在该挂点上的静态网格（武器 / 盾 / 法器） */
-  bind: { source: string; id: string; attachment?: string };
+  bind: { source: string; id: string; attachment?: string; variant?: string };
   /** 运行时保留白模上的哪些发光部件：all / attachments（只留武器等挂件上的）/ none */
   keepGlow: 'all' | 'attachments' | 'none';
   /** 各级 LOD 的切换距离（米） */
@@ -24,6 +26,8 @@ export interface AssetEntry {
   bindPose?: { armSpreadL: number; armSpreadR: number };
   /** 通用部件骨架（非人形）：骨架指纹 = [节点路径名, 静止局部位置]，见 PartsRig.ts */
   rig?: { mode: 'parts'; joints: [string, number[]][]; keep?: string[] };
+  /** 资产自带骨骼、运行时直接驱动（Tripo 英雄：Mixamo 命名的 65 骨），不做部件骨架重映射 */
+  skeleton?: { mode: 'native'; convention: 'mixamo' | 'creature'; joints: number };
   bounds: { min: number[]; max: number[] };
   sha256: string;
   /** Local shape generator used for this published build; older entries may omit it. */
@@ -60,23 +64,35 @@ class Library {
     return this.loaded.get(id) ?? null;
   }
 
-  /** 按绑定目标查找身体资产（如 { source: 'enemy', id: 'grunt' }），不含挂件 */
-  findBound(source: string, id: string): LoadedAsset | null {
-    for (const a of this.loaded.values()) {
-      const b = a.entry.bind;
-      if (b?.source === source && b.id === id && !b.attachment) return a;
-    }
-    return null;
+  /** 确定不会再出现的资产：清单已读到但不含它，或加载失败（清单未就绪时为 false，仍可能加载到） */
+  unavailable(id: string): boolean {
+    return this.failed.has(id) || (Object.keys(this.entries).length > 0 && !(id in this.entries));
   }
 
-  /** 绑定到某个目标各挂点上的静态网格 */
-  findAttachments(source: string, id: string): LoadedAsset[] {
-    const out: LoadedAsset[] = [];
+  /**
+   * 按绑定目标查找身体资产（如 { source: 'enemy', id: 'grunt' }），不含挂件。
+   * variant 是章节主题（desert / frost / inferno）：有该主题的变体就用变体，否则回退到不带 variant 的默认资产。
+   */
+  findBound(source: string, id: string, variant?: string): LoadedAsset | null {
+    let fallback: LoadedAsset | null = null;
     for (const a of this.loaded.values()) {
       const b = a.entry.bind;
-      if (b?.source === source && b.id === id && b.attachment) out.push(a);
+      if (b?.source !== source || b.id !== id || b.attachment) continue;
+      if (variant && b.variant === variant) return a;
+      if (!b.variant && !fallback) fallback = a;
     }
-    return out;
+    return fallback;
+  }
+
+  /** 绑定到某个目标各挂点上的静态网格；variant 同 findBound：该主题有挂件变体就整套换用，否则用默认挂件 */
+  findAttachments(source: string, id: string, variant?: string): LoadedAsset[] {
+    const all: LoadedAsset[] = [];
+    for (const a of this.loaded.values()) {
+      const b = a.entry.bind;
+      if (b?.source === source && b.id === id && b.attachment) all.push(a);
+    }
+    const themed = variant ? all.filter((a) => a.entry.bind.variant === variant) : [];
+    return themed.length > 0 ? themed : all.filter((a) => !a.entry.bind.variant);
   }
 
   get enabled(): boolean {
@@ -104,7 +120,7 @@ class Library {
   private async load(id: string): Promise<void> {
     const entry = this.entries[id];
     try {
-      const gltf = await this.loader!.loadAsync(`${BASE}${entry.url}`);
+      const gltf = await this.loader!.loadAsync(`${BASE}${entry.hiUrl && highQuality() ? entry.hiUrl : entry.url}`);
       const lods: THREE.Mesh[] = [];
       gltf.scene.traverse((o) => {
         const m = o as THREE.Mesh;
@@ -118,6 +134,20 @@ class Library {
       this.failed.add(id);
       console.warn(`[assets] ${id} 加载失败，使用程序化模型`, err);
     }
+  }
+}
+
+/**
+ * 画质设置为「高」（读不到设置时按默认的高画质）。直接读存档，不引入 core/settings：
+ * 本模块在测试里会被单独加载（tests/asset-variant.test.mjs），键名与 core/settings.ts 的 SETTINGS_KEY 一致。
+ */
+function highQuality(): boolean {
+  try {
+    const raw = typeof localStorage !== 'undefined' ? localStorage.getItem('gunflame.settings.v1') : null;
+    const quality = raw ? (JSON.parse(raw) as { quality?: string }).quality : undefined;
+    return (quality ?? 'high') === 'high';
+  } catch {
+    return true;
   }
 }
 

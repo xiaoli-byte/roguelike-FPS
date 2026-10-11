@@ -1,0 +1,440 @@
+{
+  "id": "SM_Tripo_DesertRampartPlain",
+  "display": "沙寺城垣墙段·素面变体（V2）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:03:25",
+          "files": {
+            "BO_SM_Tripo_DesertRampartPlain_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertRampartPlain_v001.json",
+              "sha256": "6b96c2741d6e32f4ca8d464bee812ee87f3190fda45e38108b48f9e93db2413a"
+            },
+            "BO_SM_Tripo_DesertRampartPlain_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertRampartPlain_v001_views.json",
+              "sha256": "2f9f4e3f48073e1886c4037f3c5f96d24b07a31515c2eb85afe54c0039cdbca2"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.v2.rampartplain"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -4.0,
+              0,
+              -1.5
+            ],
+            "max": [
+              4.0,
+              9.0,
+              1.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:03:52",
+          "files": {
+            "CN_SM_Tripo_DesertRampartPlain_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertRampartPlain_v001_source.png",
+              "sha256": "8252a7247b2882a9e901ff22fe15614cad37590e516aea15b92c4bea5f0d6499"
+            },
+            "CN_SM_Tripo_DesertRampartPlain_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertRampartPlain_v001_front.png",
+              "sha256": "08acc6ec685c1c5cf3fd5ba060ab882906a3086592aeaeb7ddef9021ec453ad2"
+            },
+            "CN_SM_Tripo_DesertRampartPlain_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertRampartPlain_v001_left.png",
+              "sha256": "0c933a6580ad78063a00e5fa1e106dc55faf11748da2da9ac2a5521ee8677bee"
+            },
+            "CN_SM_Tripo_DesertRampartPlain_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertRampartPlain_v001_back.png",
+              "sha256": "2d2cef35ba39296029dce33f764e0dca112b78f5aaf207970cf3343af5809ea9"
+            },
+            "CN_SM_Tripo_DesertRampartPlain_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertRampartPlain_v001_right.png",
+              "sha256": "b4f15f02a8ed3e0073244e13f50d130e09e40e948fd96cc91b401332a6fbb938"
+            },
+            "CN_SM_Tripo_DesertRampartPlain_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertRampartPlain_v001_sheet.png",
+              "sha256": "99658cacbeb9ea2ab18d96e997f77978750ecfb67baff18ec93a15ec8a3e8872"
+            },
+            "CN_SM_Tripo_DesertRampartPlain_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertRampartPlain_v001_prompt.txt",
+              "sha256": "d3c681691c0a8f83469603983030b7699009b07e70988b2472fc0d8919c6e324"
+            },
+            "CN_SM_Tripo_DesertRampartPlain_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertRampartPlain_v001_registration.json",
+              "sha256": "d08d9addfd82e7e204cb28919f9bb6ca60d95417ac0c0f4894291de37014a3ed"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 468,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 468
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1648
+            },
+            "request_id": "req_197b7874a4e64f0a8a1d60963f9dc161",
+            "seconds": 26.4
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian desert temple fantasy. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (8m wide x 9m tall x 3m deep): A massive tileable desert fortress rampart section 8m wide, 9m tall, 3m deep, a weathered variant of the same wall: battered sandstone base, thick upper wall with chunky crenellations along the top but two merlons broken off, two shallow buttress pilasters, NO painted plaster band; instead the plain weathered sandstone face carries one large carved sun-disc relief medallion in the middle at two thirds height and a few cracked, slightly displaced blocks. Both side ends are flat cut faces so it joins seamlessly with identical wall sections in a row. Warm ochre sandstone blocks, broad hand-painted planes, sparse chipped edges. Solid wall with no openings.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "8252a7247b2882a9e901ff22fe15614cad37590e516aea15b92c4bea5f0d6499",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.7253677211364093,
+              "offset": [
+                15,
+                255
+              ],
+              "size": [
+                481,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7162753680859529,
+              "offset": [
+                202,
+                255
+              ],
+              "size": [
+                107,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7263922518159805,
+              "offset": [
+                13,
+                255
+              ],
+              "size": [
+                486,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7132950267485634,
+              "offset": [
+                203,
+                255
+              ],
+              "size": [
+                106,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "side_views_swapped": "generator drew LEFT/RIGHT mirrored (front pointed right in the LEFT slot); panels exchanged",
+          "modified": "2026-10-06 17:10:43",
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI审核)",
+            "note": "素面城垣变体：正面日纹浮雕、两根壁柱、缺失两个城垛，背面无浮雕。左右侧原图画反（墙脚斜面朝右），已对调。",
+            "time": "2026-10-06 17:10:58"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 20:21:40",
+          "files": {
+            "HP_SM_Tripo_DesertRampartPlain_v001_source.fbx": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertRampartPlain_v001_source.fbx",
+              "sha256": "dc2dd059f8470ef9fabf32b4c86c2a6dfe3b750a9299b4397196c5eb18e5081f"
+            },
+            "HP_SM_Tripo_DesertRampartPlain_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertRampartPlain_v001.glb",
+              "sha256": "2b1dbd03a991efb8c273ef1e5d98eaf944eba3e0042098373b0c1ff71ad0246c"
+            },
+            "HP_SM_Tripo_DesertRampartPlain_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertRampartPlain_v001_graph.json",
+              "sha256": "308d4cbfd7e2ab1a72efa810da83233d0c0b4cb5483c256b04259bbddeaaa24b"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/78887f03-9972-4718-9af2-7863a96cbdca",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 8122,
+          "source_sha256": "dc2dd059f8470ef9fabf32b4c86c2a6dfe3b750a9299b4397196c5eb18e5081f"
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 20:22:04",
+          "files": {
+            "SM_Tripo_DesertRampartPlain_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertRampartPlain_v001.blend",
+              "sha256": "8c6c6b0b561f91ae17bf185abfb85892d77c13bf513642a1b29cb51a3f7300e6"
+            },
+            "SM_Tripo_DesertRampartPlain_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertRampartPlain_v001.glb",
+              "sha256": "b8aba1061091bc82281b1154e5d6234350f903f0889c9fddf46bacf409d77535"
+            },
+            "SM_Tripo_DesertRampartPlain_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertRampartPlain_v001_metrics.json",
+              "sha256": "0b2051ba49efac62d8beffb31070fe8ed4b3ed8883a2cd2623528f58731fcd7a"
+            },
+            "T_Tripo_DesertRampartPlain_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertRampartPlain_BC.png",
+              "sha256": "c34934efba7bc81bd756477f4c515f32277f10df852e156c6e153e96ebd881fa"
+            },
+            "T_Tripo_DesertRampartPlain_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertRampartPlain_N.png",
+              "sha256": "da683892acbcf6e34ad91dd2cc1707a20be6cba01b171736241bfba046a97e97"
+            },
+            "T_Tripo_DesertRampartPlain_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertRampartPlain_ORM.png",
+              "sha256": "bf55ba7305e48e3b82fe66110d6da3a8d4452904fdc7f03d2538d073ae552fc1"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.812,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7959,
+              "verts": 10356
+            },
+            {
+              "tris": 2487,
+              "verts": 5531
+            },
+            {
+              "tris": 796,
+              "verts": 3895
+            }
+          ],
+          "export_kb": 727.3,
+          "seconds": 23.1,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:28:40",
+          "files": {
+            "SM_Tripo_DesertRampartPlain_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertRampartPlain_v002.blend",
+              "sha256": "346becd95e8bb27700e64ec39a6d3ef7c6a247d12633bc8242b2dbfd518d65a5"
+            },
+            "SM_Tripo_DesertRampartPlain_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertRampartPlain_v002.glb",
+              "sha256": "cd27a83c90e47d11a8950b928d82a6ef9cc251ae91845c524a3edc6c39736bd4"
+            },
+            "SM_Tripo_DesertRampartPlain_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertRampartPlain_v002_metrics.json",
+              "sha256": "a18dfd9c5a473aa628fa4ab8675e478e37ac45fbe1fccc8a698d828c1551664c"
+            },
+            "T_Tripo_DesertRampartPlain_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertRampartPlain_BC.png",
+              "sha256": "c34934efba7bc81bd756477f4c515f32277f10df852e156c6e153e96ebd881fa"
+            },
+            "T_Tripo_DesertRampartPlain_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertRampartPlain_N.png",
+              "sha256": "da683892acbcf6e34ad91dd2cc1707a20be6cba01b171736241bfba046a97e97"
+            },
+            "T_Tripo_DesertRampartPlain_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertRampartPlain_ORM.png",
+              "sha256": "85d239a73b1fc21e94134289ae09259ae04f5ca24d0c9d1c4860c9f5952bd81c"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.812,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7959,
+              "verts": 4248
+            },
+            {
+              "tris": 2486,
+              "verts": 1451
+            },
+            {
+              "tris": 796,
+              "verts": 545
+            }
+          ],
+          "export_kb": 728.4,
+          "seconds": 18.8,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 20:22:04",
+          "files": {
+            "SM_Tripo_DesertRampartPlain_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertRampartPlain_v001_validation_v001.json",
+              "sha256": "bc53090f98d8437f5de6dafc2cba1dd72ce2834655c0194e922aafb77eae2eff"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:28:41",
+          "files": {
+            "SM_Tripo_DesertRampartPlain_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertRampartPlain_v002_validation_v002.json",
+              "sha256": "e6784059cf7c47c56fb729b507e29f8e53f4a4c89615cf5f2e45370021c2d183"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 20:22:12",
+          "files": {
+            "SM_Tripo_DesertRampartPlain_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertRampartPlain_v001_review_v001.png",
+              "sha256": "3417a4ac60325e71242e9f9589220a58e5d8d5a97a430cc92b658653c6bcfe7c"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI审核)",
+            "note": "素面城垣：日纹浮雕、两端壁柱、残缺城垛与概念一致，审核图无破面；35 项全过，IoU 0.812（侧视偏薄，正背视 0.95+）。",
+            "time": "2026-10-06 20:28:12"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:28:48",
+          "files": {
+            "SM_Tripo_DesertRampartPlain_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_DesertRampartPlain_v002_review_v002.png",
+              "sha256": "8775d990e0d597d5e2060519f6194c58e01a4e7b75165af1278a9a12f9736b6b"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI审核)",
+            "note": "LOD 裂缝修复重建：Tripo 源网格先焊接（1e-4）再减面并保留 UV 边界（bl_build_tripo.py）。五向审核图与上一版一致，贴图完整；焊接后 LOD1/LOD2 开放边长度回到 LOD0 水平。",
+            "time": "2026-10-06 21:29:05"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 20:28:12",
+          "files": {
+            "SM_Tripo_DesertRampartPlain.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertRampartPlain.glb",
+              "sha256": "b8aba1061091bc82281b1154e5d6234350f903f0889c9fddf46bacf409d77535"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertRampartPlain.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:29:05",
+          "files": {
+            "SM_Tripo_DesertRampartPlain.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertRampartPlain.glb",
+              "sha256": "cd27a83c90e47d11a8950b928d82a6ef9cc251ae91845c524a3edc6c39736bd4"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_DesertRampartPlain.glb"
+        }
+      ]
+    }
+  }
+}

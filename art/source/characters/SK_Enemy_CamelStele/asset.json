@@ -1,0 +1,163 @@
+{
+  "id": "SK_Enemy_CamelStele",
+  "display": "驼碑力士",
+  "kind": "skeletal",
+  "class": "enemy_large",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 22:20:15",
+          "files": {
+            "BO_SK_Enemy_CamelStele_v001.glb": {
+              "path": "00_blockout/BO_SK_Enemy_CamelStele_v001.glb",
+              "sha256": "4eb14822dbffd74e48dcbeed904fdf668c13cbb072a8167942d1e8d41ac40bfb"
+            },
+            "BO_SK_Enemy_CamelStele_v001.json": {
+              "path": "00_blockout/BO_SK_Enemy_CamelStele_v001.json",
+              "sha256": "e72be1b0414d0c05aec1631da229c480a742bbb364f006595110ef79e6431859"
+            },
+            "BO_SK_Enemy_CamelStele_v001_views.json": {
+              "path": "00_blockout/BO_SK_Enemy_CamelStele_v001_views.json",
+              "sha256": "cee987907e2839d25b33975125b909a91095b04c21e73b7e14fbcda6d318924f"
+            },
+            "BO_SK_Enemy_CamelStele_v001_sheet.png": {
+              "path": "00_blockout/BO_SK_Enemy_CamelStele_v001_sheet.png",
+              "sha256": "fc478bf457c7e5eb80f0781f01a4111090fe9cf3ff5d1a2b6b8e68ffce795157"
+            },
+            "BO_SK_Enemy_CamelStele_v001_front.png": {
+              "path": "00_blockout/BO_SK_Enemy_CamelStele_v001_front.png",
+              "sha256": "78ec0619a46f9df652b6273809f6f2dd476593fe64919e02a434c318f8ae4abb"
+            },
+            "BO_SK_Enemy_CamelStele_v001_left.png": {
+              "path": "00_blockout/BO_SK_Enemy_CamelStele_v001_left.png",
+              "sha256": "b5e98b827721ed6d4b7621ea0a5f86fddf91c4567b0594fa0607377db310fd3f"
+            },
+            "BO_SK_Enemy_CamelStele_v001_back.png": {
+              "path": "00_blockout/BO_SK_Enemy_CamelStele_v001_back.png",
+              "sha256": "ea709a67b0aa7793ae38f907a3db77809e24ca3e4db7029498c43e69025b6f78"
+            },
+            "BO_SK_Enemy_CamelStele_v001_right.png": {
+              "path": "00_blockout/BO_SK_Enemy_CamelStele_v001_right.png",
+              "sha256": "66090ed100c4f1a632547f556ba6b0666ae35d9719e3adfe017d1e436611b90c"
+            }
+          },
+          "source": {
+            "kind": "enemy",
+            "id": "camel_stele"
+          },
+          "joints": 15,
+          "bounds": {
+            "min": [
+              -0.7817499929666519,
+              -2.9802316170446375e-10,
+              -0.539999994635582
+            ],
+            "max": [
+              0.7817499929666519,
+              2.8031398518488135,
+              0.7519999969005585
+            ]
+          },
+          "blender_seconds": 5.6
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 22:20:45",
+          "files": {
+            "CN_SK_Enemy_CamelStele_v001_front.png": {
+              "path": "01_concept/CN_SK_Enemy_CamelStele_v001_front.png",
+              "sha256": "19e2f7342a040cb08ad2bf23f6160f024cb10745e4cf99f969b232ec7e4633f3"
+            },
+            "CN_SK_Enemy_CamelStele_v001_left.png": {
+              "path": "01_concept/CN_SK_Enemy_CamelStele_v001_left.png",
+              "sha256": "5b0e71bfafbd49aeeb2edb1fd70a4101bccf1ac85630247d8c263935364f9775"
+            },
+            "CN_SK_Enemy_CamelStele_v001_back.png": {
+              "path": "01_concept/CN_SK_Enemy_CamelStele_v001_back.png",
+              "sha256": "375d6743364c31b433ed4d958faaf833b9d939d778916f12546a833263975844"
+            },
+            "CN_SK_Enemy_CamelStele_v001_right.png": {
+              "path": "01_concept/CN_SK_Enemy_CamelStele_v001_right.png",
+              "sha256": "6a8037c88966778db9b5d6334d4d7dde7d0d36bf5df79a92bc1736c806f013e5"
+            },
+            "CN_SK_Enemy_CamelStele_v001_sheet.png": {
+              "path": "01_concept/CN_SK_Enemy_CamelStele_v001_sheet.png",
+              "sha256": "5c540f3dda7508d5959bee1e1c7459f47c3dfc005a24a88ce00ca4bf624ae732"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "design turnaround",
+          "design_key": "desert_camel",
+          "design_turnaround": "art/source/characters/_design/desert/desert_camel/TV_desert_camel_v002.png",
+          "source_sha256": "96901f4d74726493dfbe7c3ac3cb0f94cf1d75eed3c8776bf1d676ccc9045e7f",
+          "reference_mode": "design_turnaround",
+          "highpoly_mode": "tripo",
+          "registration": {
+            "front": {
+              "scale": 0.9780359812462989,
+              "offset": [
+                3,
+                102
+              ],
+              "size": [
+                505,
+                820
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.9722350560906269,
+              "offset": [
+                46,
+                102
+              ],
+              "size": [
+                420,
+                820
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.9757073241480934,
+              "offset": [
+                2,
+                102
+              ],
+              "size": [
+                507,
+                820
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.9722350560906269,
+              "offset": [
+                52,
+                102
+              ],
+              "size": [
+                408,
+                820
+              ],
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "user",
+            "note": "2026-10-06 用户确认驼碑力士身体与石碑盾四视图；朝向逐张核对，手指与蹄趾清楚",
+            "time": "2026-10-06 22:20:57"
+          }
+        }
+      ]
+    }
+  }
+}

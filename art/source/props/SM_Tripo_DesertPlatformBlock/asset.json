@@ -1,0 +1,430 @@
+{
+  "id": "SM_Tripo_DesertPlatformBlock",
+  "display": "高台石基模块（V2）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:15:43",
+          "files": {
+            "BO_SM_Tripo_DesertPlatformBlock_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertPlatformBlock_v001.json",
+              "sha256": "98adbcfd75c82b520bf06ba096afdc5749f78eb631dd8c46a9fb1f51f1aaec3f"
+            },
+            "BO_SM_Tripo_DesertPlatformBlock_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertPlatformBlock_v001_views.json",
+              "sha256": "b871370502efdd40c84ea83510792b17ca3cc4cc285c593dbf81ef95edb114fa"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.v2.platformblock"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.0,
+              0,
+              -2.0
+            ],
+            "max": [
+              2.0,
+              3.0,
+              2.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:16:06",
+          "files": {
+            "CN_SM_Tripo_DesertPlatformBlock_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertPlatformBlock_v001_source.png",
+              "sha256": "0eea8aa62f79f994fc7bf8630a3bc2d9035d02736dabe49f3f30586681d8549e"
+            },
+            "CN_SM_Tripo_DesertPlatformBlock_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertPlatformBlock_v001_front.png",
+              "sha256": "26f6f88d0a528349fa95ebe0d514a956e0e0499f68f6c651caa9dcd86cd63c99"
+            },
+            "CN_SM_Tripo_DesertPlatformBlock_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertPlatformBlock_v001_left.png",
+              "sha256": "98d5eae197b62cbbfea77df7399f92d4f76c75045d7084a58e464853f90e05b5"
+            },
+            "CN_SM_Tripo_DesertPlatformBlock_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertPlatformBlock_v001_back.png",
+              "sha256": "a1064f071a5efab620611a88ba4586cee23e5c90158bb38c01fe2a75c25f020c"
+            },
+            "CN_SM_Tripo_DesertPlatformBlock_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertPlatformBlock_v001_right.png",
+              "sha256": "1d8d466321f9b95a6e8060b99bac7ad342089bbbcf585645b11d143734be8ea1"
+            },
+            "CN_SM_Tripo_DesertPlatformBlock_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertPlatformBlock_v001_sheet.png",
+              "sha256": "5e3152ad31683e3f54e2d98429ca5a9b37c001caa3aec36ceef55d8a9e22445f"
+            },
+            "CN_SM_Tripo_DesertPlatformBlock_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertPlatformBlock_v001_prompt.txt",
+              "sha256": "c49f76f6e1f81b3acf753f3ddd4c1a35610669fcae5459bf1b042673abe7f659"
+            },
+            "CN_SM_Tripo_DesertPlatformBlock_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertPlatformBlock_v001_registration.json",
+              "sha256": "3d93119208de76d8d650cb228c85a735e1c1c8393f0c934c5dd291a634171dbd"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 325,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 325
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1505
+            },
+            "request_id": "req_df89af67b7e54e3597c78264a9d08721",
+            "seconds": 22.2
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian desert temple fantasy. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (4m wide x 3m tall x 4m deep): A square raised temple podium module 4m wide, 3m tall, 4m deep for tiling into large terraces: solid sandstone block walls with a carved horizontal frieze band, a projecting cap moulding and a flat paved top. Warm ochre stone, faded teal and gold frieze accents. All four sides finished identically so modules tile edge to edge.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right: FRONT view, LEFT side view, BACK view, RIGHT side view. Same scale and same\nground line in all four, each centred in its quarter with generous empty margin, never touching or overlapping.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "0eea8aa62f79f994fc7bf8630a3bc2d9035d02736dabe49f3f30586681d8549e",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.9367681498829039,
+              "offset": [
+                25,
+                340
+              ],
+              "size": [
+                462,
+                343
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.9367681498829039,
+              "offset": [
+                50,
+                340
+              ],
+              "size": [
+                412,
+                343
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.9367681498829039,
+              "offset": [
+                29,
+                340
+              ],
+              "size": [
+                454,
+                343
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.9367681498829039,
+              "offset": [
+                46,
+                340
+              ],
+              "size": [
+                420,
+                343
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI初审)",
+            "note": "四视图同一物体、地线一致，砂岩/赤陶/青绿配色与 V2 沙寺统一",
+            "time": "2026-10-06 10:16:55"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:49:14",
+          "files": {
+            "HP_SM_Tripo_DesertPlatformBlock_v001_source.fbx": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertPlatformBlock_v001_source.fbx",
+              "sha256": "4b826878238651cbc8e250fdf6f85b6b4f1f048dccf32b4eb0fcde055b56b532"
+            },
+            "HP_SM_Tripo_DesertPlatformBlock_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertPlatformBlock_v001.glb",
+              "sha256": "9ec40d86cbf3e8aa720b3dd2346ad85ee6cf9c27da83a09b6eabaec04a4a4268"
+            },
+            "HP_SM_Tripo_DesertPlatformBlock_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertPlatformBlock_v001_graph.json",
+              "sha256": "443a97625a4db2c4a7c9ad872378f18a2f275cb515df1a990048ad17a32d0197"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/treasure-chest-with-teal-band-and-gold-accents-stylized-blocky-stone-6677c32f-81a3-4220-a927-6948aff1f0e7",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 2775,
+          "source_sha256": "4b826878238651cbc8e250fdf6f85b6b4f1f048dccf32b4eb0fcde055b56b532"
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:49:24",
+          "files": {
+            "SM_Tripo_DesertPlatformBlock_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertPlatformBlock_v001.blend",
+              "sha256": "114b147f370e9504e270835f686b48ccf03ed9a8c0d2d08d145db2d0cb061606"
+            },
+            "SM_Tripo_DesertPlatformBlock_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertPlatformBlock_v001.glb",
+              "sha256": "90eee19eea8ef365277e7c5a1d31ab308ce0da341b7da3678bb4aa35c1f222ce"
+            },
+            "SM_Tripo_DesertPlatformBlock_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertPlatformBlock_v001_metrics.json",
+              "sha256": "de472f306c88f358d92718130eca89ba0c1587f256554b05589b696e2a8ad6eb"
+            },
+            "T_Tripo_DesertPlatformBlock_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertPlatformBlock_BC.png",
+              "sha256": "fa5fbee3db6dc30314d6a3b8be38cff8ae1e15fbcc770c7cfeed50d8662e0e46"
+            },
+            "T_Tripo_DesertPlatformBlock_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertPlatformBlock_N.png",
+              "sha256": "af91b0800fef4a63e500fdec8305234e9b654b09515a58b94d7d7d7b2bdca454"
+            },
+            "T_Tripo_DesertPlatformBlock_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertPlatformBlock_ORM.png",
+              "sha256": "0728b340de3612d7adeaadaaef093e0c59bb4238814b881d252a68158ef94e91"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.841,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2775,
+              "verts": 2384
+            },
+            {
+              "tris": 995,
+              "verts": 1209
+            }
+          ],
+          "export_kb": 238.4,
+          "seconds": 9.3,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:19:39",
+          "files": {
+            "SM_Tripo_DesertPlatformBlock_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertPlatformBlock_v002.blend",
+              "sha256": "c8cebcdbf64772eb7f162695b59e2371502b50838f126bcb006eb1b40507b738"
+            },
+            "SM_Tripo_DesertPlatformBlock_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertPlatformBlock_v002.glb",
+              "sha256": "4c89cc33bbe2b5595e169c29d1aaeda1d7945c774f788d72f0056f82f2e08aa8"
+            },
+            "SM_Tripo_DesertPlatformBlock_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertPlatformBlock_v002_metrics.json",
+              "sha256": "4ef25b075b2de8b289a91640c72481da1206f5d11ad57e4f2746dff18b5a28a7"
+            },
+            "T_Tripo_DesertPlatformBlock_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertPlatformBlock_BC.png",
+              "sha256": "fa5fbee3db6dc30314d6a3b8be38cff8ae1e15fbcc770c7cfeed50d8662e0e46"
+            },
+            "T_Tripo_DesertPlatformBlock_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertPlatformBlock_N.png",
+              "sha256": "af91b0800fef4a63e500fdec8305234e9b654b09515a58b94d7d7d7b2bdca454"
+            },
+            "T_Tripo_DesertPlatformBlock_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertPlatformBlock_ORM.png",
+              "sha256": "bff657675e590aeba360a919c3312ebe32929ec13830348f588656ab9c3b046d"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.841,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2775,
+              "verts": 1570
+            },
+            {
+              "tris": 995,
+              "verts": 636
+            }
+          ],
+          "export_kb": 235.6,
+          "seconds": 9.0,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:49:24",
+          "files": {
+            "SM_Tripo_DesertPlatformBlock_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertPlatformBlock_v001_validation_v001.json",
+              "sha256": "4efa990f27f6f12a05cf1a6fea27684d3250af45581920078072bde8d2ee8fbf"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:19:39",
+          "files": {
+            "SM_Tripo_DesertPlatformBlock_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertPlatformBlock_v002_validation_v002.json",
+              "sha256": "4b2425f40e0a278689c96685394506a7410796e0341e34deba0de8e6e33509cd"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:49:31",
+          "files": {
+            "SM_Tripo_DesertPlatformBlock_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertPlatformBlock_v001_review_v001.png",
+              "sha256": "67198385110f6eb1fee3e710307aa9c6aab6c720510e8171786dfabf658a4ea0"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI初审)",
+            "note": "四视图与概念一致，校验全通过",
+            "time": "2026-10-06 10:49:52"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:19:48",
+          "files": {
+            "SM_Tripo_DesertPlatformBlock_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_DesertPlatformBlock_v002_review_v002.png",
+              "sha256": "12bdbb780129a8d85dbc1c452194bc2ce967305034ea726b7e7f5ff75da12675"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI审核)",
+            "note": "LOD 裂缝修复重建：Tripo 源网格先焊接（1e-4）再减面并保留 UV 边界（bl_build_tripo.py）。五向审核图与上一版一致，贴图完整；焊接后 LOD1/LOD2 开放边长度回到 LOD0 水平。",
+            "time": "2026-10-06 21:24:05"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:49:53",
+          "files": {
+            "SM_Tripo_DesertPlatformBlock.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertPlatformBlock.glb",
+              "sha256": "90eee19eea8ef365277e7c5a1d31ab308ce0da341b7da3678bb4aa35c1f222ce"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertPlatformBlock.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:24:05",
+          "files": {
+            "SM_Tripo_DesertPlatformBlock.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertPlatformBlock.glb",
+              "sha256": "4c89cc33bbe2b5595e169c29d1aaeda1d7945c774f788d72f0056f82f2e08aa8"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_DesertPlatformBlock.glb"
+        }
+      ]
+    }
+  }
+}

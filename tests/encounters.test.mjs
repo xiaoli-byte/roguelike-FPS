@@ -15,9 +15,13 @@ const { Rng } = await import(await tsModule('../src/core/Rng.ts'));
 const { buildWaves, buildEncounterWaves, placementForEnemy } = await import(await tsModule('../src/enemies/Waves.ts', {
   './bosses': dataModule("export function bossIdForChapter(ch) { return ['boss_colossus','boss_matriarch','boss_warlord'][ch]; }"),
 }));
-const bodyDefs = Object.fromEntries(await Promise.all(['Grunt', 'Archer', 'Bomber', 'Brute', 'Wisp', 'Shaman', 'Mortar', 'Marksman'].map(async name => {
+const bodyDefs = Object.fromEntries(await Promise.all([
+  ...['Grunt', 'Archer', 'Bomber', 'Brute', 'Wisp', 'Shaman', 'Mortar', 'Marksman'].map(name => [name.toLowerCase(), name]),
+  ['jerboa_blade', 'JerboaBlade'],
+].map(async ([id, name]) => {
   const source = await readFile(new URL('../src/enemies/types/' + name + '.ts', import.meta.url), 'utf8');
-  return [name.toLowerCase(), { radius: Number(source.match(/radius:\s*([\d.]+)/)[1]), height: Number(source.match(/height:\s*([\d.]+)/)[1]) }];
+  const scale = Number(source.match(/^\s*scale:\s*([\d.]+)/m)?.[1] ?? 1);
+  return [id, { radius: Number(source.match(/radius:\s*([\d.]+)/)[1]) * scale, height: Number(source.match(/height:\s*([\d.]+)/)[1]) * scale }];
 })));
 const { CollisionWorld } = await import(await tsModule('../src/world/Collision.ts'));
 const navUrl = await tsModule('../src/world/NavGrid.ts', { '../core/math': await tsModule('../src/core/math.ts') });
@@ -35,7 +39,7 @@ const themes = ['desert', 'frost', 'inferno'];
 const stage = (chapter, index, type = 'combat') => ({ chapter, index, type, theme: themes[chapter], reward: 'coins' });
 const total = plans => plans.reduce((n, w) => n + w.entries.reduce((n, e) => n + e.count, 0), 0);
 const countId = (plans, id) => plans.flatMap(w => w.entries).filter(e => e.enemyId === id).reduce((n, e) => n + e.count, 0);
-const normalIds = new Set(['grunt', 'archer', 'bomber', 'brute', 'wisp', 'shaman', 'mortar', 'marksman']);
+const normalIds = new Set(['grunt', 'archer', 'bomber', 'brute', 'wisp', 'shaman', 'mortar', 'marksman', 'jerboa_blade']);
 const placements = new Set(['assault', 'flank', 'ranged', 'precision', 'artillery', 'support']);
 
 test('12 stage formations vary by chapter/index and stay within the whole-route population budget', () => {
@@ -71,6 +75,7 @@ test('weapon roles are introduced deliberately; elite promotions preserve popula
   assert.deepEqual([...normalIds].map(id => [id, placementForEnemy(id)]), [
     ['grunt', 'assault'], ['archer', 'ranged'], ['bomber', 'flank'], ['brute', 'assault'],
     ['wisp', 'ranged'], ['shaman', 'support'], ['mortar', 'artillery'], ['marksman', 'precision'],
+    ['jerboa_blade', 'flank'],
   ]);
   for (let index = 0; index < 4; index++) {
     const node = stage(0, index), ctx = { rng: new Rng(10) };

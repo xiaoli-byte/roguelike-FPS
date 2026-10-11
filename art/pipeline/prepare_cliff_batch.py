@@ -22,7 +22,7 @@ os.environ["ART_PIPELINE_SKIP_ENV"] = "1"
 import prepare_landmark_batch as landmark_registration
 from PIL import Image
 from lib.config import CFG, PipelineError
-from lib.state import AssetState, sha256
+from lib.state import AssetState, resolve_path, sha256
 from prepare_nature_batch import prepare_reference, reference_data
 
 ASSETS = ("SM_Env_DesertCliff", "SM_Env_FrostCliff", "SM_Env_InfernoCliff")
@@ -89,7 +89,7 @@ def register_concept(item: dict, source_dir: Path) -> dict:
         if not prompt_path.exists():
             prompt_path.write_text(design_prompt, encoding="utf-8")
         files.append(prompt_path)
-    with Image.open(record["source_image"]) as image:
+    with Image.open(resolve_path(record["source_image"])) as image:
         histogram = image.convert("RGBA").getchannel("A").histogram()
         transparent_fraction = sum(histogram[:250]) / sum(histogram)
     state = AssetState(spec)

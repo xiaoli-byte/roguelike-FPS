@@ -1,0 +1,103 @@
+{
+  "source": {
+    "tris": 2775,
+    "verts": 2384
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 4.48219,
+    "iou": 0.841,
+    "iou_per_view": {
+      "front": 0.84,
+      "left": 0.842,
+      "back": 0.824,
+      "right": 0.857
+    },
+    "size_m": [
+      4.48,
+      3.968,
+      2.865
+    ],
+    "reference_m": [
+      4.0,
+      4.0,
+      3.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.766,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Tripo_DesertPlatformBlock_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      8192,
+      8192
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertPlatformBlock_LOD0",
+      "tris": 2775,
+      "verts": 2384,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.549,
+      "bbox_min": [
+        -2.24,
+        -1.9839,
+        0.0
+      ],
+      "bbox_max": [
+        2.24,
+        1.9839,
+        2.8648
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertPlatformBlock_LOD1",
+      "tris": 995,
+      "verts": 1209,
+      "uv_min": [
+        0.00010624171409290284,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.565,
+      "bbox_min": [
+        -2.233,
+        -1.9839,
+        -0.0002
+      ],
+      "bbox_max": [
+        2.2356,
+        1.9862,
+        2.8592
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertPlatformBlock/04_export/SM_Tripo_DesertPlatformBlock_v001.glb",
+    "bytes": 244076
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 6.0,
+  "_seconds": 9.3
+}

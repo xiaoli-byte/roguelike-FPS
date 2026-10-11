@@ -14,7 +14,9 @@ async function ts(path, imports = {}) {
 const typesUrl = await ts('../src/core/types.ts'), rngUrl = await ts('../src/core/Rng.ts');
 const { Rng } = await import(rngUrl);
 const plansUrl = await ts('../src/world/WhiteboxPlans.ts');
-const { WHITEBOX_PLANS } = await import(plansUrl);
+const { WHITEBOX_PLANS, WHITEBOX_REDESIGN_PLANS } = await import(plansUrl);
+// Shipped boss plans, then the V2 redesign boss slices (loaded with the redesign switch on).
+const bossPlans = () => [...WHITEBOX_PLANS.filter(p => p.index === 5).map(p => [p, false]), ...WHITEBOX_REDESIGN_PLANS.filter(p => p.index === 5).map(p => [p, true])];
 const genUrl = await ts('../src/world/WhiteboxGen.ts', { './WhiteboxPlans': plansUrl });
 const { generateWhitebox, whiteboxPoint } = await import(genUrl);
 const fightUrl = await ts('../src/world/WhiteboxEncounters.ts', { './WhiteboxGen': genUrl });
@@ -33,6 +35,7 @@ const navUrl = await ts('../src/world/NavGrid.ts', { '../core/math': await ts('.
 const { NavGrid } = await import(navUrl);
 const waveUrl = await ts('../src/world/WaveRunner.ts', { '../enemies/Registry': data(`export function getEnemyDef(id){const boss=id.startsWith('boss_');return {isBoss:boss,radius:boss?2:.6,height:boss?4:1.8};}`) });
 const { StageDirector } = await import(await ts('../src/world/StageDirector.ts', {
+  './ChallengeEntrance': await ts('../src/world/ChallengeEntrance.ts'),
   '../core/Rng': rngUrl, '../assets/AssetLibrary': data('export const AssetLibrary={enabled:true};'),
   '../enemies/Waves': data('export function buildWaves(){throw new Error("Unexpected generic wave");} export function buildEncounterWaves(){throw new Error("Unexpected generic encounter");}'),
   './ArenaBuilder': data(`import * as THREE from '${threeUrl}'; export function addCollision(world,L){for(const b of L.boxes)world.addBox(b.minX,b.minY,b.minZ,b.maxX,b.maxY,b.maxZ,b.tag,b.noRaycast);} export class ArenaView {group=new THREE.Group();update(){}dispose(){this.group.removeFromParent();}}`),
@@ -40,7 +43,7 @@ const { StageDirector } = await import(await ts('../src/world/StageDirector.ts',
   './NavGrid': navUrl, './Portal': data('export class Portal{constructor(ctx){ctx.portals++;}update(){}dispose(){}}'),
   './Themes': data('export function themeDef(id){return {id,name:id};}'), './WaveRunner': waveUrl,
   './AdventureBeacon': data('export class AdventureBeacon{constructor(){throw new Error("Duplicate altar");}}'),
-  './WhiteboxMode': data('export function usesAuthoredLayout(){return true;}'), './WhiteboxGen': genUrl, './WhiteboxEncounters': fightUrl,
+  './WhiteboxMode': data('export function usesAuthoredLayout(){return true;} export function usesRedesignLayout(){return globalThis.__redesign === true;}'), './WhiteboxGen': genUrl, './WhiteboxEncounters': fightUrl,
 }));
 globalThis.document = { createElement: () => ({ width: 0, height: 0, getContext: () => null }) };
 const nodeFor = plan => ({ chapter: ['desert', 'frost', 'inferno'].indexOf(plan.chapter), index: plan.index - 1,
@@ -79,7 +82,7 @@ function fixture(plan) {
   ctx.loot = { spawnChest(position, reward) { chests.push({ position: position.clone(), reward }); },
     spawnShop(center, yaw) { const dispose = shop.spawn(center, yaw); shops.push({ center, yaw }); return dispose; } };
   const director = new StageDirector(ctx); ctx.stage = director; director.init(); director.load(node);
-  const layout = generateWhitebox(node), fights = buildWhiteboxFights(layout, node);
+  const layout = generateWhitebox(node, { redesign: globalThis.__redesign === true }), fights = buildWhiteboxFights(layout, node);
   function advance(seconds) {
     const n = Math.ceil(seconds / .05);
     for (let i = 0; i < n; i++) { ctx.time.now += seconds / n; ctx.time.frame++; director.update(seconds / n); shop.update(seconds / n); }
@@ -89,7 +92,8 @@ function fixture(plan) {
 
 test('all three authored boss stages provide the real seven-stall shop, safe customer stations and complete cleanup', () => {
   const bosses = WHITEBOX_PLANS.filter(p => p.index === 5); assert.equal(bosses.length, 3);
-  for (const plan of bosses) {
+  try { for (const [plan, redesign] of bossPlans()) {
+    globalThis.__redesign = redesign;
     assert.ok(plan.preparation, `${plan.id} preparation metadata`);
     const f = fixture(plan), preparation = plan.preparation, center = whiteboxPoint(plan, preparation.at);
     assert.equal(f.shops.length, 1); assert.equal(f.items.size, 7);
@@ -116,11 +120,12 @@ test('all three authored boss stages provide the real seven-stall shop, safe cus
     const old = [...f.items], before = f.ctx.run.coins; f.director.unload(); f.director.unload();
     assert.equal(f.items.size, 0); assert.equal(f.ctx.world.boxes.length, 0);
     old.forEach(i => i.onInteract()); assert.equal(f.ctx.run.coins, before, 'old shop callbacks cannot transact');
-  }
+  } } finally { delete globalThis.__redesign; }
 });
 
 test('each boss starts only in its actual fight room, keeps normal warning/settlement and cannot repeat after returning to shop', () => {
-  for (const plan of WHITEBOX_PLANS.filter(p => p.index === 5)) {
+  try { for (const [plan, redesign] of bossPlans()) {
+    globalThis.__redesign = redesign;
     const f = fixture(plan), fight = f.fights.find(e => e.final);
     f.advance(30); assert.equal(f.spawns.length, 0, `${plan.id} arrival may wait indefinitely`);
     assert.ok(fight.contains(fight.facing), `${plan.id} reviewed trigger is inside the main room`);
@@ -131,7 +136,7 @@ test('each boss starts only in its actual fight room, keeps normal warning/settl
     const p = whiteboxPoint(plan, plan.preparation.at); f.ctx.player.position.set(p.x, 0, p.z); f.advance(4);
     f.ctx.player.position.set(fight.facing.x, 0, fight.facing.z); f.advance(6);
     assert.equal(f.spawns.length, 1); assert.equal(f.ctx.run.stagesCleared, 1); assert.equal(f.ctx.portals, 1); f.director.unload();
-  }
+  } } finally { delete globalThis.__redesign; }
 });
 
 test('authored chest uses explicit reward/prerequisites, room containment and line of sight before one-time visible discovery', () => {
@@ -170,6 +175,10 @@ test('finishing the final fight leaves skipped guarded loot locked; a later bran
   f.ctx.player.position.set(final.facing.x, 0, final.facing.z); f.advance(5); f.ctx.enemies.killAll(); f.advance(3);
   assert.equal(f.director.cleared, true); assert.equal(f.director.exploration.encounters.find(e => e.id === 'B').phase, 'undiscovered');
   f.ctx.player.position.copy(site.position); f.director.discoverSites(); assert.equal(site.visited, false);
+  const entrance = f.director.challengeEntrances.find(e => e.room === guard.room);
+  f.ctx.player.position.copy(entrance.group.position); f.advance(.1);
+  const item = [...f.items].find(i => i.position.distanceTo(entrance.group.position) < 1.1);
+  assert.ok(item?.enabled); item.onInteract();
   f.ctx.player.position.set(guard.facing.x, 0, guard.facing.z); f.advance(5);
   assert.equal(f.director.exploration.phase, 'cleared'); assert.ok(f.ctx.enemies.aliveCount() > 0, 'optional fight remains playable after final completion');
   const survivor = f.ctx.enemies.list.find(e => e.alive);

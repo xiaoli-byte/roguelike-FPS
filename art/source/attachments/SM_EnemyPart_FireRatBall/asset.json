@@ -1,0 +1,823 @@
+{
+  "id": "SM_EnemyPart_FireRatBall",
+  "display": "火浣鼠·火球",
+  "kind": "static",
+  "class": "enemy_attachment",
+  "stages": {
+    "blockout": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 21:33:35",
+          "files": {
+            "BO_SM_EnemyPart_FireRatBall_v001.glb": {
+              "path": "00_blockout/BO_SM_EnemyPart_FireRatBall_v001.glb",
+              "sha256": "8609dcd96b56f54501541214d3cb2ca2c78ece2544eb6d83a5651bbd38ad49b4"
+            },
+            "BO_SM_EnemyPart_FireRatBall_v001.json": {
+              "path": "00_blockout/BO_SM_EnemyPart_FireRatBall_v001.json",
+              "sha256": "93bcd79c79ad30f8af553ce8c966f6dfbc369907d1b607846de94a1c581a9ab2"
+            },
+            "BO_SM_EnemyPart_FireRatBall_v001_views.json": {
+              "path": "00_blockout/BO_SM_EnemyPart_FireRatBall_v001_views.json",
+              "sha256": "2f6602dd4c7963d9d146f4c5586f2b9e240ed8d6be5992c085dafd194bdc4f4f"
+            },
+            "BO_SM_EnemyPart_FireRatBall_v001_sheet.png": {
+              "path": "00_blockout/BO_SM_EnemyPart_FireRatBall_v001_sheet.png",
+              "sha256": "ef7a3a218f89ed08f54cf5328d5007ad69ab07722ab348142fb3d052938cf734"
+            },
+            "BO_SM_EnemyPart_FireRatBall_v001_front.png": {
+              "path": "00_blockout/BO_SM_EnemyPart_FireRatBall_v001_front.png",
+              "sha256": "7ea5603bffb051ccf03c2ac34e181e9758374f2508dbc7e74c74deaf0629d391"
+            },
+            "BO_SM_EnemyPart_FireRatBall_v001_left.png": {
+              "path": "00_blockout/BO_SM_EnemyPart_FireRatBall_v001_left.png",
+              "sha256": "dabed0d4ecdb6e9a917e7bbb02f7d9448a44a079cb11991b044b1d9e12341840"
+            },
+            "BO_SM_EnemyPart_FireRatBall_v001_back.png": {
+              "path": "00_blockout/BO_SM_EnemyPart_FireRatBall_v001_back.png",
+              "sha256": "c843959fc880c7cd1367cd28f43cb8b229473233052d510fee66e8b5f2377b15"
+            },
+            "BO_SM_EnemyPart_FireRatBall_v001_right.png": {
+              "path": "00_blockout/BO_SM_EnemyPart_FireRatBall_v001_right.png",
+              "sha256": "7a10f35a6c62f00008b47f87a549c71b9e1e89d04d0df9572d217e06cf044e1f"
+            }
+          },
+          "source": {
+            "kind": "enemy",
+            "id": "fire_rat",
+            "attachment": "fire_ball"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.27424097061157227,
+              -0.27424097061157227,
+              -0.27424097061157227
+            ],
+            "max": [
+              0.27424097061157227,
+              0.27424097061157227,
+              0.27424097061157227
+            ]
+          },
+          "blender_seconds": 5.5,
+          "amendments": [
+            {
+              "time": "2026-10-06 21:36:27",
+              "reason": "几何不变，更新白模说明"
+            }
+          ],
+          "modified": "2026-10-06 21:36:27"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:37:24",
+          "files": {
+            "BO_SM_EnemyPart_FireRatBall_v002.glb": {
+              "path": "00_blockout/BO_SM_EnemyPart_FireRatBall_v002.glb",
+              "sha256": "8609dcd96b56f54501541214d3cb2ca2c78ece2544eb6d83a5651bbd38ad49b4"
+            },
+            "BO_SM_EnemyPart_FireRatBall_v002.json": {
+              "path": "00_blockout/BO_SM_EnemyPart_FireRatBall_v002.json",
+              "sha256": "93bcd79c79ad30f8af553ce8c966f6dfbc369907d1b607846de94a1c581a9ab2"
+            },
+            "BO_SM_EnemyPart_FireRatBall_v002_views.json": {
+              "path": "00_blockout/BO_SM_EnemyPart_FireRatBall_v002_views.json",
+              "sha256": "1878c4fdb5ea85fba3f868e3cea199d22ce9db2906a3698b04705306f5b01645"
+            },
+            "BO_SM_EnemyPart_FireRatBall_v002_sheet.png": {
+              "path": "00_blockout/BO_SM_EnemyPart_FireRatBall_v002_sheet.png",
+              "sha256": "ef7a3a218f89ed08f54cf5328d5007ad69ab07722ab348142fb3d052938cf734"
+            },
+            "BO_SM_EnemyPart_FireRatBall_v002_front.png": {
+              "path": "00_blockout/BO_SM_EnemyPart_FireRatBall_v002_front.png",
+              "sha256": "28974a5be02d4498379578f74ca9bddf312863d2c8931ec21e06b4bb79a94f4b"
+            },
+            "BO_SM_EnemyPart_FireRatBall_v002_left.png": {
+              "path": "00_blockout/BO_SM_EnemyPart_FireRatBall_v002_left.png",
+              "sha256": "58e8c47119d32264dea145ee77bfe90fdb2e04e9882652b3f395fd1de2dcc4fb"
+            },
+            "BO_SM_EnemyPart_FireRatBall_v002_back.png": {
+              "path": "00_blockout/BO_SM_EnemyPart_FireRatBall_v002_back.png",
+              "sha256": "8e66550e16a420bbfd9af5106e312f3023487a645666c26f42b434b8b5d09001"
+            },
+            "BO_SM_EnemyPart_FireRatBall_v002_right.png": {
+              "path": "00_blockout/BO_SM_EnemyPart_FireRatBall_v002_right.png",
+              "sha256": "1b73ca1929004aa64ba0e8808aed44af241aa81df13e9dcdf1eef6ccb0ee57fd"
+            }
+          },
+          "source": {
+            "kind": "enemy",
+            "id": "fire_rat",
+            "attachment": "fire_ball"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.27424097061157227,
+              -0.27424097061157227,
+              -0.27424097061157227
+            ],
+            "max": [
+              0.27424097061157227,
+              0.27424097061157227,
+              0.27424097061157227
+            ]
+          },
+          "blender_seconds": 4.8
+        }
+      ]
+    },
+    "concept": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 21:33:52",
+          "files": {
+            "CN_SM_EnemyPart_FireRatBall_v001_front.png": {
+              "path": "01_concept/CN_SM_EnemyPart_FireRatBall_v001_front.png",
+              "sha256": "4689cfc7bf6c8fc6797742900f2a0ba872ba34c2c10ada79431c591b628a65fd"
+            },
+            "CN_SM_EnemyPart_FireRatBall_v001_left.png": {
+              "path": "01_concept/CN_SM_EnemyPart_FireRatBall_v001_left.png",
+              "sha256": "e75f68c9970be163f0301c4ac99596c8f0e7e24a276d638f07f1bd1ab497d689"
+            },
+            "CN_SM_EnemyPart_FireRatBall_v001_back.png": {
+              "path": "01_concept/CN_SM_EnemyPart_FireRatBall_v001_back.png",
+              "sha256": "575fdc176858029509c93f9242976ee947e822cdd8544fe08041dafb8b1822b8"
+            },
+            "CN_SM_EnemyPart_FireRatBall_v001_right.png": {
+              "path": "01_concept/CN_SM_EnemyPart_FireRatBall_v001_right.png",
+              "sha256": "4b3713a9ff33f167535b2f2da052bff0c6395fb180145101d39bfa6573f7de7d"
+            },
+            "CN_SM_EnemyPart_FireRatBall_v001_sheet.png": {
+              "path": "01_concept/CN_SM_EnemyPart_FireRatBall_v001_sheet.png",
+              "sha256": "2bed997c57d84c5408ee03e9c4cb19b2b258d9a152506f5fd73723025b704761"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "design turnaround",
+          "design_key": "desert_firerat_ball",
+          "design_turnaround": "art/source/characters/_design/desert/desert_firerat_ball/TV_desert_firerat_ball_v001.png",
+          "source_sha256": "68b51747164b1504172e6e48bfd91bc29a81bf7839288b99e0d89ab88fa39c59",
+          "reference_mode": "design_turnaround",
+          "highpoly_mode": "tripo",
+          "registration": {
+            "front": {
+              "scale": 0.921658986175115,
+              "offset": [
+                41,
+                283
+              ],
+              "size": [
+                429,
+                457
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.9124607927003134,
+              "offset": [
+                45,
+                283
+              ],
+              "size": [
+                421,
+                457
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.8963585434173668,
+              "offset": [
+                48,
+                283
+              ],
+              "size": [
+                416,
+                457
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.9124607927003134,
+              "offset": [
+                47,
+                283
+              ],
+              "size": [
+                418,
+                457
+              ],
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "user",
+            "note": "2026-10-06 用户要求滚球单独建模；四视图 TV_desert_firerat_ball_v001 已给用户看过，朝向逐张核对",
+            "time": "2026-10-06 21:34:01"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:36:29",
+          "files": {
+            "CN_SM_EnemyPart_FireRatBall_v002_front.png": {
+              "path": "01_concept/CN_SM_EnemyPart_FireRatBall_v002_front.png",
+              "sha256": "4689cfc7bf6c8fc6797742900f2a0ba872ba34c2c10ada79431c591b628a65fd"
+            },
+            "CN_SM_EnemyPart_FireRatBall_v002_left.png": {
+              "path": "01_concept/CN_SM_EnemyPart_FireRatBall_v002_left.png",
+              "sha256": "e75f68c9970be163f0301c4ac99596c8f0e7e24a276d638f07f1bd1ab497d689"
+            },
+            "CN_SM_EnemyPart_FireRatBall_v002_back.png": {
+              "path": "01_concept/CN_SM_EnemyPart_FireRatBall_v002_back.png",
+              "sha256": "575fdc176858029509c93f9242976ee947e822cdd8544fe08041dafb8b1822b8"
+            },
+            "CN_SM_EnemyPart_FireRatBall_v002_right.png": {
+              "path": "01_concept/CN_SM_EnemyPart_FireRatBall_v002_right.png",
+              "sha256": "4b3713a9ff33f167535b2f2da052bff0c6395fb180145101d39bfa6573f7de7d"
+            },
+            "CN_SM_EnemyPart_FireRatBall_v002_sheet.png": {
+              "path": "01_concept/CN_SM_EnemyPart_FireRatBall_v002_sheet.png",
+              "sha256": "2bed997c57d84c5408ee03e9c4cb19b2b258d9a152506f5fd73723025b704761"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "design turnaround",
+          "design_key": "desert_firerat_ball",
+          "design_turnaround": "art/source/characters/_design/desert/desert_firerat_ball/TV_desert_firerat_ball_v001.png",
+          "source_sha256": "68b51747164b1504172e6e48bfd91bc29a81bf7839288b99e0d89ab88fa39c59",
+          "reference_mode": "design_turnaround",
+          "highpoly_mode": "tripo",
+          "registration": {
+            "front": {
+              "scale": 0.921658986175115,
+              "offset": [
+                41,
+                283
+              ],
+              "size": [
+                429,
+                457
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.9124607927003134,
+              "offset": [
+                45,
+                283
+              ],
+              "size": [
+                421,
+                457
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.8963585434173668,
+              "offset": [
+                48,
+                283
+              ],
+              "size": [
+                416,
+                457
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.9124607927003134,
+              "offset": [
+                47,
+                283
+              ],
+              "size": [
+                418,
+                457
+              ],
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "user",
+            "note": "2026-10-06 用户要求滚球单独建模；四视图已给用户看过；白模改为不摆展示姿态后重新登记",
+            "time": "2026-10-06 21:36:29"
+          }
+        },
+        {
+          "version": 3,
+          "created": "2026-10-06 21:37:25",
+          "files": {
+            "CN_SM_EnemyPart_FireRatBall_v003_front.png": {
+              "path": "01_concept/CN_SM_EnemyPart_FireRatBall_v003_front.png",
+              "sha256": "4689cfc7bf6c8fc6797742900f2a0ba872ba34c2c10ada79431c591b628a65fd"
+            },
+            "CN_SM_EnemyPart_FireRatBall_v003_left.png": {
+              "path": "01_concept/CN_SM_EnemyPart_FireRatBall_v003_left.png",
+              "sha256": "e75f68c9970be163f0301c4ac99596c8f0e7e24a276d638f07f1bd1ab497d689"
+            },
+            "CN_SM_EnemyPart_FireRatBall_v003_back.png": {
+              "path": "01_concept/CN_SM_EnemyPart_FireRatBall_v003_back.png",
+              "sha256": "575fdc176858029509c93f9242976ee947e822cdd8544fe08041dafb8b1822b8"
+            },
+            "CN_SM_EnemyPart_FireRatBall_v003_right.png": {
+              "path": "01_concept/CN_SM_EnemyPart_FireRatBall_v003_right.png",
+              "sha256": "4b3713a9ff33f167535b2f2da052bff0c6395fb180145101d39bfa6573f7de7d"
+            },
+            "CN_SM_EnemyPart_FireRatBall_v003_sheet.png": {
+              "path": "01_concept/CN_SM_EnemyPart_FireRatBall_v003_sheet.png",
+              "sha256": "2bed997c57d84c5408ee03e9c4cb19b2b258d9a152506f5fd73723025b704761"
+            }
+          },
+          "from_blockout": 2,
+          "generator": "design turnaround",
+          "design_key": "desert_firerat_ball",
+          "design_turnaround": "art/source/characters/_design/desert/desert_firerat_ball/TV_desert_firerat_ball_v001.png",
+          "source_sha256": "68b51747164b1504172e6e48bfd91bc29a81bf7839288b99e0d89ab88fa39c59",
+          "reference_mode": "design_turnaround",
+          "highpoly_mode": "tripo",
+          "registration": {
+            "front": {
+              "scale": 0.921658986175115,
+              "offset": [
+                41,
+                283
+              ],
+              "size": [
+                429,
+                457
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.9124607927003134,
+              "offset": [
+                45,
+                283
+              ],
+              "size": [
+                421,
+                457
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.8963585434173668,
+              "offset": [
+                48,
+                283
+              ],
+              "size": [
+                416,
+                457
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.9124607927003134,
+              "offset": [
+                47,
+                283
+              ],
+              "size": [
+                418,
+                457
+              ],
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "user",
+            "note": "2026-10-06 用户要求滚球单独建模；四视图已给用户看过；白模改为不摆展示姿态后重新登记",
+            "time": "2026-10-06 21:37:26"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 21:34:06",
+          "files": {
+            "HP_SM_EnemyPart_FireRatBall_v001_source.fbx": {
+              "path": "02_highpoly/HP_SM_EnemyPart_FireRatBall_v001_source.fbx",
+              "sha256": "494c97559026e86c6b4c4d46f6a176ab3a4e2b9166c848ef6f4a2ddea9afbec8"
+            },
+            "HP_SM_EnemyPart_FireRatBall_v001.glb": {
+              "path": "02_highpoly/HP_SM_EnemyPart_FireRatBall_v001.glb",
+              "sha256": "4f9367abfeff646bc5458f21779a0cf3bf27e52cca2aed340db41961abf6eb46"
+            },
+            "HP_SM_EnemyPart_FireRatBall_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_EnemyPart_FireRatBall_v001_graph.json",
+              "sha256": "508a0c1143fb5009bbf5624e3e4a9ef5840da2403c941af0e420a37e6bf92f4d"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/63221be0-bc80-459e-9dac-39f8dc125c7f",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 4738,
+          "source_sha256": "494c97559026e86c6b4c4d46f6a176ab3a4e2b9166c848ef6f4a2ddea9afbec8"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:36:34",
+          "files": {
+            "HP_SM_EnemyPart_FireRatBall_v002_source.fbx": {
+              "path": "02_highpoly/HP_SM_EnemyPart_FireRatBall_v002_source.fbx",
+              "sha256": "494c97559026e86c6b4c4d46f6a176ab3a4e2b9166c848ef6f4a2ddea9afbec8"
+            },
+            "HP_SM_EnemyPart_FireRatBall_v002.glb": {
+              "path": "02_highpoly/HP_SM_EnemyPart_FireRatBall_v002.glb",
+              "sha256": "4f9367abfeff646bc5458f21779a0cf3bf27e52cca2aed340db41961abf6eb46"
+            },
+            "HP_SM_EnemyPart_FireRatBall_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_EnemyPart_FireRatBall_v002_graph.json",
+              "sha256": "86d80697d86c2e8a5f8eca88e9ea4eeef3ac8f7b2c5de19fce74953c1044bcb3"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/63221be0-bc80-459e-9dac-39f8dc125c7f",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 4738,
+          "source_sha256": "494c97559026e86c6b4c4d46f6a176ab3a4e2b9166c848ef6f4a2ddea9afbec8"
+        },
+        {
+          "version": 3,
+          "created": "2026-10-06 21:37:30",
+          "files": {
+            "HP_SM_EnemyPart_FireRatBall_v003_source.fbx": {
+              "path": "02_highpoly/HP_SM_EnemyPart_FireRatBall_v003_source.fbx",
+              "sha256": "494c97559026e86c6b4c4d46f6a176ab3a4e2b9166c848ef6f4a2ddea9afbec8"
+            },
+            "HP_SM_EnemyPart_FireRatBall_v003.glb": {
+              "path": "02_highpoly/HP_SM_EnemyPart_FireRatBall_v003.glb",
+              "sha256": "4f9367abfeff646bc5458f21779a0cf3bf27e52cca2aed340db41961abf6eb46"
+            },
+            "HP_SM_EnemyPart_FireRatBall_v003_graph.json": {
+              "path": "02_highpoly/HP_SM_EnemyPart_FireRatBall_v003_graph.json",
+              "sha256": "f3f19b35656e7ccc0b669159811e9e0acb5d7e24cc90faa10bf6bbb62ebe8188"
+            }
+          },
+          "from_concept": 3,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/63221be0-bc80-459e-9dac-39f8dc125c7f",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 4738,
+          "source_sha256": "494c97559026e86c6b4c4d46f6a176ab3a4e2b9166c848ef6f4a2ddea9afbec8"
+        }
+      ]
+    },
+    "build": {
+      "current": 4,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 21:34:28",
+          "files": {
+            "SM_EnemyPart_FireRatBall_v001.blend": {
+              "path": "03_work/SM_EnemyPart_FireRatBall_v001.blend",
+              "sha256": "84f8d5e598df48062d8138e14996db8cd7e7277a347ff092711d8ec06535e8fe"
+            },
+            "SM_EnemyPart_FireRatBall_v001.glb": {
+              "path": "04_export/SM_EnemyPart_FireRatBall_v001.glb",
+              "sha256": "18ba612e91dbfc97b46ca3d90fb78e665b75581e283bb89696dbb1cf51fa9153"
+            },
+            "SM_EnemyPart_FireRatBall_v001_metrics.json": {
+              "path": "03_work/SM_EnemyPart_FireRatBall_v001_metrics.json",
+              "sha256": "f6e45b4c7781b9c33a53f921a43e8bc32f1acfe67752b91ad29c28d859c8ebc7"
+            },
+            "T_EnemyPart_FireRatBall_BC.png": {
+              "path": "03_work/textures_v001/T_EnemyPart_FireRatBall_BC.png",
+              "sha256": "9491f9b332780d25e5bc469f4fa791f563cfe47020babcb47fa5dac88ad8b043"
+            },
+            "T_EnemyPart_FireRatBall_N.png": {
+              "path": "03_work/textures_v001/T_EnemyPart_FireRatBall_N.png",
+              "sha256": "570d9eebaa7cd428504a6db1817060ec17dc8faed5472540ae89e6e5c20f624a"
+            },
+            "T_EnemyPart_FireRatBall_ORM.png": {
+              "path": "03_work/textures_v001/T_EnemyPart_FireRatBall_ORM.png",
+              "sha256": "46bbe986a2194e41bbb4dc8ea5bc94e65d3c8ed1f6423d79293de4e0ed9752fb"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.224,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2984,
+              "verts": 2124
+            },
+            {
+              "tris": 995,
+              "verts": 713
+            }
+          ],
+          "export_kb": 292.4,
+          "seconds": 9.5,
+          "bake_device": "none (provider textures)"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:36:46",
+          "files": {
+            "SM_EnemyPart_FireRatBall_v002.blend": {
+              "path": "03_work/SM_EnemyPart_FireRatBall_v002.blend",
+              "sha256": "580738bda92215071c1b672cd8075067cf9246332c848efa18decf265ca652e3"
+            },
+            "SM_EnemyPart_FireRatBall_v002.glb": {
+              "path": "04_export/SM_EnemyPart_FireRatBall_v002.glb",
+              "sha256": "18ba612e91dbfc97b46ca3d90fb78e665b75581e283bb89696dbb1cf51fa9153"
+            },
+            "SM_EnemyPart_FireRatBall_v002_metrics.json": {
+              "path": "03_work/SM_EnemyPart_FireRatBall_v002_metrics.json",
+              "sha256": "9d6555abbecdf803b10f57918f24196ffe3eb183c9a0a4414ee9f100661d6c9d"
+            },
+            "T_EnemyPart_FireRatBall_BC.png": {
+              "path": "03_work/textures_v002/T_EnemyPart_FireRatBall_BC.png",
+              "sha256": "9491f9b332780d25e5bc469f4fa791f563cfe47020babcb47fa5dac88ad8b043"
+            },
+            "T_EnemyPart_FireRatBall_N.png": {
+              "path": "03_work/textures_v002/T_EnemyPart_FireRatBall_N.png",
+              "sha256": "570d9eebaa7cd428504a6db1817060ec17dc8faed5472540ae89e6e5c20f624a"
+            },
+            "T_EnemyPart_FireRatBall_ORM.png": {
+              "path": "03_work/textures_v002/T_EnemyPart_FireRatBall_ORM.png",
+              "sha256": "46bbe986a2194e41bbb4dc8ea5bc94e65d3c8ed1f6423d79293de4e0ed9752fb"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.224,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2984,
+              "verts": 2124
+            },
+            {
+              "tris": 995,
+              "verts": 713
+            }
+          ],
+          "export_kb": 292.4,
+          "seconds": 10.6,
+          "bake_device": "none (provider textures)"
+        },
+        {
+          "version": 3,
+          "created": "2026-10-06 21:37:40",
+          "files": {
+            "SM_EnemyPart_FireRatBall_v003.blend": {
+              "path": "03_work/SM_EnemyPart_FireRatBall_v003.blend",
+              "sha256": "345a102e53d92b47553b5d9f817636ae8bc3cec807159d617754a2f61cccc33b"
+            },
+            "SM_EnemyPart_FireRatBall_v003.glb": {
+              "path": "04_export/SM_EnemyPart_FireRatBall_v003.glb",
+              "sha256": "18ba612e91dbfc97b46ca3d90fb78e665b75581e283bb89696dbb1cf51fa9153"
+            },
+            "SM_EnemyPart_FireRatBall_v003_metrics.json": {
+              "path": "03_work/SM_EnemyPart_FireRatBall_v003_metrics.json",
+              "sha256": "1359ae868115daa0cf2fcd94a429dcac89321454faf34a3371c0d69e75aa7fb0"
+            },
+            "T_EnemyPart_FireRatBall_BC.png": {
+              "path": "03_work/textures_v003/T_EnemyPart_FireRatBall_BC.png",
+              "sha256": "9491f9b332780d25e5bc469f4fa791f563cfe47020babcb47fa5dac88ad8b043"
+            },
+            "T_EnemyPart_FireRatBall_N.png": {
+              "path": "03_work/textures_v003/T_EnemyPart_FireRatBall_N.png",
+              "sha256": "570d9eebaa7cd428504a6db1817060ec17dc8faed5472540ae89e6e5c20f624a"
+            },
+            "T_EnemyPart_FireRatBall_ORM.png": {
+              "path": "03_work/textures_v003/T_EnemyPart_FireRatBall_ORM.png",
+              "sha256": "46bbe986a2194e41bbb4dc8ea5bc94e65d3c8ed1f6423d79293de4e0ed9752fb"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 3,
+            "highpoly": 3,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.224,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2984,
+              "verts": 2124
+            },
+            {
+              "tris": 995,
+              "verts": 713
+            }
+          ],
+          "export_kb": 292.4,
+          "seconds": 8.9,
+          "bake_device": "none (provider textures)"
+        },
+        {
+          "version": 4,
+          "created": "2026-10-06 21:39:19",
+          "files": {
+            "SM_EnemyPart_FireRatBall_v004.blend": {
+              "path": "03_work/SM_EnemyPart_FireRatBall_v004.blend",
+              "sha256": "f2285911694af913a47b46292a10b1eeae9debac6ced75b218b9b20b89875ba3"
+            },
+            "SM_EnemyPart_FireRatBall_v004.glb": {
+              "path": "04_export/SM_EnemyPart_FireRatBall_v004.glb",
+              "sha256": "88894899d1823a83ef864a2cb4c9677e53adbf10ef19ecae0d4eb3b6f969347a"
+            },
+            "SM_EnemyPart_FireRatBall_v004_metrics.json": {
+              "path": "03_work/SM_EnemyPart_FireRatBall_v004_metrics.json",
+              "sha256": "5644ffe848d2ed70220d925ec60ec30b22a42a1b0d072287d3e5502333b075c8"
+            },
+            "T_EnemyPart_FireRatBall_BC.png": {
+              "path": "03_work/textures_v004/T_EnemyPart_FireRatBall_BC.png",
+              "sha256": "9491f9b332780d25e5bc469f4fa791f563cfe47020babcb47fa5dac88ad8b043"
+            },
+            "T_EnemyPart_FireRatBall_N.png": {
+              "path": "03_work/textures_v004/T_EnemyPart_FireRatBall_N.png",
+              "sha256": "570d9eebaa7cd428504a6db1817060ec17dc8faed5472540ae89e6e5c20f624a"
+            },
+            "T_EnemyPart_FireRatBall_ORM.png": {
+              "path": "03_work/textures_v004/T_EnemyPart_FireRatBall_ORM.png",
+              "sha256": "585c406245bc767d0c996fa90bd98113825d010c7ab32557890de9f40f33949b"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 3,
+            "highpoly": 3,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.927,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2984,
+              "verts": 2124
+            },
+            {
+              "tris": 995,
+              "verts": 713
+            }
+          ],
+          "export_kb": 292.4,
+          "seconds": 10.9,
+          "bake_device": "none (provider textures)"
+        }
+      ]
+    },
+    "validate": {
+      "current": 5,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 21:34:37",
+          "files": {
+            "SM_EnemyPart_FireRatBall_v001_validation.json": {
+              "path": "05_review/SM_EnemyPart_FireRatBall_v001_validation.json",
+              "sha256": "fcda58a3f27e18969420dd18cc6ac784bcd3537ddcc5045a0a47b858affc10fe"
+            }
+          },
+          "from_build": 1,
+          "errors": 1,
+          "warnings": 1,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:34:44",
+          "files": {
+            "SM_EnemyPart_FireRatBall_v001_validation.json": {
+              "path": "05_review/SM_EnemyPart_FireRatBall_v001_validation.json",
+              "sha256": "fcda58a3f27e18969420dd18cc6ac784bcd3537ddcc5045a0a47b858affc10fe"
+            }
+          },
+          "from_build": 1,
+          "errors": 1,
+          "warnings": 1,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 3,
+          "created": "2026-10-06 21:36:47",
+          "files": {
+            "SM_EnemyPart_FireRatBall_v002_validation.json": {
+              "path": "05_review/SM_EnemyPart_FireRatBall_v002_validation.json",
+              "sha256": "fcda58a3f27e18969420dd18cc6ac784bcd3537ddcc5045a0a47b858affc10fe"
+            }
+          },
+          "from_build": 2,
+          "errors": 1,
+          "warnings": 1,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 4,
+          "created": "2026-10-06 21:37:40",
+          "files": {
+            "SM_EnemyPart_FireRatBall_v003_validation.json": {
+              "path": "05_review/SM_EnemyPart_FireRatBall_v003_validation.json",
+              "sha256": "fcda58a3f27e18969420dd18cc6ac784bcd3537ddcc5045a0a47b858affc10fe"
+            }
+          },
+          "from_build": 3,
+          "errors": 1,
+          "warnings": 1,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 5,
+          "created": "2026-10-06 21:39:19",
+          "files": {
+            "SM_EnemyPart_FireRatBall_v004_validation.json": {
+              "path": "05_review/SM_EnemyPart_FireRatBall_v004_validation.json",
+              "sha256": "2817770955d9043b5def1920ebbbb6f2bf45af61d087f7099bb4384fcac510dc"
+            }
+          },
+          "from_build": 4,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 21:39:38",
+          "files": {
+            "SM_EnemyPart_FireRatBall_v004_review.png": {
+              "path": "05_review/SM_EnemyPart_FireRatBall_v004_review.png",
+              "sha256": "a6dfd46b9c75d0ac154f1f9dfad1d5d86960be734a9da4007fab150208af81e3"
+            }
+          },
+          "from_build": 4,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "正面怒脸朝前，螺旋火毛完整，LOD 2984/995，校验全过",
+            "time": "2026-10-06 21:39:56"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 21:39:56",
+          "files": {
+            "SM_EnemyPart_FireRatBall.glb": {
+              "path": "@root/public/assets/attachments/SM_EnemyPart_FireRatBall.glb",
+              "sha256": "88894899d1823a83ef864a2cb4c9677e53adbf10ef19ecae0d4eb3b6f969347a"
+            }
+          },
+          "from_build": 4,
+          "url": "assets/attachments/SM_EnemyPart_FireRatBall.glb"
+        }
+      ]
+    }
+  }
+}

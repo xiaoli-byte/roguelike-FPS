@@ -1,0 +1,40 @@
+{
+  "design": {
+    "key": "desert_tomb_beast",
+    "chapter": "desert",
+    "name": "三彩镇墓兽",
+    "layout": "creature",
+    "height_m": 2.2,
+    "brief": "A Tang-dynasty sancai-glazed tomb guardian beast (镇墓兽) from the Silk Road tombs, awakened by the drought goddess: a hulking quadruped lion-like beast built of hollow glazed ceramic, sitting heavy and low. A fierce human-beast face mask with bulging eyes, a single tall curved horn and flame-shaped ear crests; big flame-like sculpted wing fins on the shoulders; thick stubby legs ending in big three-clawed feet. Its body is glazed in the three sancai colours: amber-brown, malachite green and cream, with glaze drips running down. The front (face mask, chest and forelegs) is extra-thick glossy glaze armour. A big jagged crack across its back splits the ceramic open, white-gold sun fire glowing inside the hollow body (weak spot). Tank: lowers its head and horn to guard and charge.",
+    "style_note": "Stylization: cartoon game proportions like the jerboa soldier and fire rat of this roster: chunky simplified masses, oversized head and paws, toy-like readable forms with clean bevelled edges. Its defence is part of its own body: it holds NO shield and NO weapon.",
+    "weapon": "",
+    "replaces": "desert_camel",
+    "turnaround_lead": "Neutral bind pose for rigging:",
+    "turnaround_pose": " standing ON ALL FOURS like a big lion (quadruped), body level, the four thick legs straight under the body and planted, front feet and hind feet clearly separated with a gap of air between the front and hind legs and between left and right legs, belly clear of the ground; the head held level facing straight ahead with the fierce face mask, mouth closed showing the tusks, the single tall curved horn pointing up; the two flame-shaped wing fins on the shoulders swept back and up; the flame-shaped tail extending straight backwards and slightly up (not curled over the back). Same sancai glaze (amber-brown, malachite green, cream with glaze drips) as the design. The crack on its back is a jagged split in the ceramic with the edges still attached, the sun fire inside painted as an OPAQUE bright white-gold glowing surface deep in the crack: no flames sticking out, no halo, no floating shards, no sparks",
+    "turnaround_digits": "each foot with three big separate claws, clearly countable; the horn tip, ear crests, wing fins and the whole tail fully inside the frame; in the side views the long body, head and tail must fit inside the view with margin."
+  },
+  "from_sheet": "DS_desert_tomb_beast_v001.png",
+  "generation": {
+    "provider": "openai",
+    "endpoint": "images/edits",
+    "model": "gpt-image-2.5-sunburst",
+    "size": "2048x1024",
+    "quality": "high",
+    "background": "opaque",
+    "usage": {
+      "input_tokens": 1951,
+      "input_tokens_details": {
+        "image_tokens": 1458,
+        "text_tokens": 493
+      },
+      "output_tokens": 1180,
+      "output_tokens_details": {
+        "image_tokens": 1180,
+        "text_tokens": 0
+      },
+      "total_tokens": 3131
+    },
+    "request_id": "req_222862ca313a4803a48fad423f421ac9",
+    "seconds": 32.9
+  }
+}

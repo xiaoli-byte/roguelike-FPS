@@ -15,7 +15,8 @@ import { Portal } from './Portal';
 import { themeDef } from './Themes';
 import { BOSS_LEAD, WaveRunner, isBossId } from './WaveRunner';
 import { AdventureBeacon } from './AdventureBeacon';
-import { usesAuthoredLayout } from './WhiteboxMode';
+import { ChallengeEntrance } from './ChallengeEntrance';
+import { usesAuthoredLayout, usesRedesignLayout } from './WhiteboxMode';
 import { generateWhitebox } from './WhiteboxGen';
 import { buildWhiteboxAdventure, buildWhiteboxFights, whiteboxPlansForApproach, whiteboxSpawnRegion, type WhiteboxFight } from './WhiteboxEncounters';
 import type { WhiteboxMetadata, WhiteboxPlan } from './WhiteboxTypes';
@@ -56,6 +57,9 @@ function insidePlanRoom(plan: WhiteboxPlan, roomId: string, position: { x: numbe
   }
   return inside;
 }
+
+/** Chapter names shown (stage banner, boss title) on V2 redesign plans, where the chapter got a new identity. */
+const REDESIGN_CHAPTER_NAMES: Readonly<Record<string, string>> = { frost: '昆仑雪墟' };
 
 function toArena(L: LevelLayout, theme: ThemeDef): ArenaInfo {
   const v = (p: { x: number; z: number }): THREE.Vector3 => new THREE.Vector3(p.x, L.floorY, p.z);
@@ -139,6 +143,9 @@ export class StageDirector implements IStageDirector {
   private readonly encounterEye = new THREE.Vector3();
   private readonly encounterTarget = new THREE.Vector3();
   private portals: Portal[] = [];
+  private challengeEntrances: ChallengeEntrance[] = [];
+  private investigatedRooms = new Set<string>();
+  private sideRooms = new Set<string>();
   /** Loot may already be cleared by Game; each shop disposer is idempotent. */
   private shopDisposers: (() => void)[] = [];
   private exits: StageNode[] | null = null;
@@ -167,6 +174,21 @@ export class StageDirector implements IStageDirector {
   // ───────────── 载入 / 卸载 ─────────────
 
   load(stage: StageNode): void {
+    try {
+      this.loadWith(stage, false);
+    } catch (err) {
+      // An authored plan that fails (missing roster, unreachable entrance, bad data) must not leave a
+      // black, input-locked screen: fall back to the procedural map for this stage. Game handles a
+      // second failure by returning to the menu.
+      if (!usesAuthoredLayout()) throw err;
+      console.error('[StageDirector] authored stage failed, using procedural fallback', err);
+      this.unload();
+      this.loadWith(stage, true);
+      this.ctx.ui.toast('本关布局载入失败，已改用备用地图', '#ff8a6a');
+    }
+  }
+
+  private loadWith(stage: StageNode, procedural: boolean): void {
     if (this.stage || this.view) this.unload();
     const ctx = this.ctx;
     this.stage = stage;
@@ -174,13 +196,15 @@ export class StageDirector implements IStageDirector {
     const rng = new Rng(ctx.run.seed ^ (stage.chapter * 7919 + stage.index * 104729 + 17));
     // Classic inspection disables generated art, so retain the existing visible
     // courtyard instead of loading a region made of invisible rock colliders.
-    const L = usesAuthoredLayout() ? generateWhitebox(stage) : generateLevel(rng, stage, { adventure: AssetLibrary.enabled });
+    const L = usesAuthoredLayout() && !procedural ? generateWhitebox(stage, { redesign: usesRedesignLayout(stage.theme) }) : generateLevel(rng, stage, { adventure: AssetLibrary.enabled });
     if (L.whitebox) {
       this.whiteboxFights = buildWhiteboxFights(L, stage);
       L.adventure = buildWhiteboxAdventure(L, this.whiteboxFights);
     }
     this.layout = L;
-    const theme = themeDef(stage.theme);
+    // A V2 redesign plan may rename its chapter (frost V2 is 昆仑雪墟; the LD-03 frost maps keep 霜雪古寺).
+    const base = themeDef(stage.theme), renamed = L.whitebox?.plan.id.endsWith('-v2') ? REDESIGN_CHAPTER_NAMES[stage.theme] : undefined;
+    const theme = renamed ? { ...base, name: renamed } : base;
     const arena = toArena(L, theme);
     this.arena = arena;
     this.bossPoint.set(L.bossPoint.x, L.floorY, L.bossPoint.z);
@@ -191,6 +215,9 @@ export class StageDirector implements IStageDirector {
       this.view = new ArenaView(ctx, L, theme, () => vis.next());
       ctx.scene.add(this.view.group);
     } catch (err) {
+      // An authored scene that cannot be drawn would be an invisible maze; load() retries this stage
+      // on the procedural map instead. That map's own failure keeps collision and play (old behaviour).
+      if (usesAuthoredLayout() && !procedural) throw err;
       // 视觉搭建失败时保留碰撞与玩法，避免整局卡死
       console.error('[StageDirector] arena build failed', err);
       this.view = null;
@@ -237,6 +264,9 @@ export class StageDirector implements IStageDirector {
     this.whiteboxFights = [];
     this.activeWhiteboxFight = null;
     this.beacon?.dispose(); this.beacon = null; this.adventureState = null;
+    this.challengeEntrances.forEach(entrance => entrance.dispose());
+    this.challengeEntrances.length = 0;
+    this.investigatedRooms.clear(); this.sideRooms.clear();
     this.shopDisposers.forEach(dispose => dispose());
     this.shopDisposers.length = 0;
     for (const p of this.portals) p.dispose();
@@ -299,6 +329,7 @@ export class StageDirector implements IStageDirector {
       encounters: (adventure.encounters ?? []).map(e => ({
         id: e.id, label: e.label, kind: e.kind, position: v(e), radius: e.arenaRadius, triggerRadius: e.triggerRadius,
         phase: 'undiscovered', siteId: e.siteId,
+        optional: this.whiteboxFights.find(f => f.id === e.id)?.optional,
       })),
       sites: adventure.sites.map(s => ({ id: s.id, label: s.label, position: v(s), visited: false })),
       zones: adventure.zones.map(z => ({ id: z.id, label: z.label, position: v(z), radius: z.radius })),
@@ -306,7 +337,49 @@ export class StageDirector implements IStageDirector {
     };
     const parent = this.view?.group ?? this.ctx.stageGroup;
     if (!L.whitebox) this.beacon = new AdventureBeacon(this.ctx, this.adventureState.objective, parent, () => this.activateAdventure(arena));
+    else this.setupChallengeEntrances(L, arena, parent);
     this.ctx.ui.toast(adventure.routeHint ?? '探索支路寻找物资，准备好后在灵火祭坛启动试炼', '#ffda82');
+  }
+
+  private setupChallengeEntrances(L: LevelLayout, arena: ArenaInfo, parent: THREE.Object3D): void {
+    const plan = L.whitebox!.plan;
+    if (this.stage?.type !== 'combat' && this.stage?.type !== 'elite') return;
+    const mainRooms = new Set(plan.mainRoute.flatMap(id => {
+      const passage = plan.passages.find(p => p.id === id)!;
+      return [passage.from, passage.to];
+    }));
+    const rooms = new Set([
+      ...this.whiteboxFights.filter(f => f.optional).map(f => f.room),
+      ...plan.rewards.filter(r => !mainRooms.has(r.room)).map(r => r.room),
+    ]);
+    for (const room of rooms) {
+      const fight = this.whiteboxFights.find(f => f.optional && f.room === room);
+      const passage = plan.passages.find(p => (p.from === room && mainRooms.has(p.to)) || (p.to === room && mainRooms.has(p.from)))
+        ?? plan.passages.find(p => p.from === room || p.to === room);
+      const at = passage ? (passage.from === room ? passage.points[0] : passage.points.at(-1)!)
+        : plan.rooms.find(r => r.id === room)!.labelAt;
+      const position = new THREE.Vector3(at[0] - plan.bounds[0] / 2, arena.floorY, at[1] - plan.bounds[1] / 2);
+      const safe = new THREE.Vector3();
+      if (!this.ctx.nav.nearestWalkable(position, safe)) throw new Error(`${plan.id}/${room}: no reachable challenge entrance`);
+      this.sideRooms.add(room);
+      L.whitebox!.checkpoints.push({ id: `challenge-${room}`, label: `隐秘入口 · ${plan.rooms.find(r => r.id === room)!.label}`,
+        x: safe.x, z: safe.z, yaw: Math.atan2(position.x - arena.center.x, position.z - arena.center.z) });
+      this.challengeEntrances.push(new ChallengeEntrance(this.ctx, room, safe, parent,
+        () => !this.encounterWaves && this.adventureState?.phase !== 'battle' && this.ctx.enemies.aliveCount() === 0
+          && this.t >= this.nextEncounterAt && (!fight || fight.requires.every(id =>
+            this.adventureState?.encounters?.find(e => e.id === id)?.phase === 'cleared')),
+        () => {
+          this.investigatedRooms.add(room);
+          const info = this.adventureState?.encounters?.find(e => e.id === fight?.id);
+          if (info) info.discovered = true;
+          this.ctx.ui.toast(fight ? '支路挑战已开启 · 进入房间迎战守卫' : '入口已查明 · 深入房间探索', '#b591f2');
+        },
+        () => {
+          const info = this.adventureState?.encounters?.find(e => e.id === fight?.id);
+          if (info) info.discovered = true;
+          this.ctx.ui.toast('发现隐秘入口 · 按 F 调查，或继续沿主路前进', '#b591f2');
+        }));
+    }
   }
 
   private activateAdventure(arena: ArenaInfo): boolean {
@@ -367,7 +440,7 @@ export class StageDirector implements IStageDirector {
     const { e, ordinal, info } = candidate;
     const plans = buildEncounterWaves(ctx, stage, e.kind, ordinal);
     if (!plans.length) return;
-    const anchors = e.anchors.map(a => ({ position: new THREE.Vector3(a.x, arena.floorY, a.z), role: a.role, lane: a.lane }));
+    const anchors = e.anchors.map(a => ({ position: new THREE.Vector3(a.x, a.y ?? arena.floorY, a.z), role: a.role, lane: a.lane }));
     const local = { ...arena, center: info.position.clone(), spawnPoints: anchors.map(a => a.position), spawnAnchors: anchors };
     info.phase = 'active'; this.activeEncounterId = e.id;
     this.waveIndex = 0; this.waveCount = plans.length; this.lastProgress = this.t;
@@ -399,14 +472,16 @@ export class StageDirector implements IStageDirector {
     if (this.stage?.type === 'boss' && plan?.preparation
       && insidePlanRoom(plan, plan.preparation.room, player)) return;
     const candidate = this.whiteboxFights.find(fight => {
+      if (fight.optional && !this.investigatedRooms.has(fight.room)) return false;
       if (state.phase === 'cleared' && fight.final) return false;
       if (state.encounters?.find(e => e.id === fight.id)?.phase !== 'undiscovered') return false;
       if (fight.requires.some(id => state.encounters?.find(e => e.id === id)?.phase !== 'cleared')) return false;
       // A prepared boss starts across the main-room threshold, never from the shopping approach.
       if (this.stage?.type === 'boss' && plan?.preparation && !fight.contains(player)) return false;
       // Enter the actual room or its visible approach, never the same-radius room behind a wall.
+      // Inside means some metres past the threshold (entryDepth), so the fight opens among the room's cover.
       const atApproach = Math.hypot(player.x - fight.facing.x, player.z - fight.facing.z) <= 3;
-      if (!fight.contains(player) && !atApproach) return false;
+      if (!fight.contains(player, fight.entryDepth) && !atApproach) return false;
       this.encounterEye.copy(player); this.encounterEye.y += 1.2;
       this.encounterTarget.set(fight.facing.x, arena.floorY + 1.2, fight.facing.z);
       return !ctx.world.segmentBlocked(this.encounterEye, this.encounterTarget);
@@ -415,7 +490,7 @@ export class StageDirector implements IStageDirector {
     const info = state.encounters!.find(e => e.id === candidate.id)!;
     // A shared encounter may be approached through a different room (the inn's north warehouse).
     info.position.set(candidate.position.x, arena.floorY, candidate.position.z);
-    const anchors = candidate.anchors.map(p => ({ position: new THREE.Vector3(p.x, arena.floorY, p.z), role: p.role, lane: p.lane }));
+    const anchors = candidate.anchors.map(p => ({ position: new THREE.Vector3(p.x, p.y ?? arena.floorY, p.z), role: p.role, lane: p.lane }));
     const local: ArenaInfo = { ...arena, center: info.position.clone(), spawnAnchors: anchors,
       spawnPoints: candidate.points.map(p => new THREE.Vector3(p.x, arena.floorY, p.z)) };
     info.phase = 'active'; this.activeEncounterId = candidate.id; this.activeWhiteboxFight = candidate; this.lastProgress = this.t;
@@ -439,8 +514,11 @@ export class StageDirector implements IStageDirector {
         || Math.hypot(player.position.x - site.position.x, player.position.z - site.position.z)
           > (plan ? AUTHORED_CHEST_VISIBILITY : DISCOVERY_RADIUS)) continue;
       const authoredReward = plan?.rewards[Number(site.id.replace('whitebox-cache-', ''))];
+      if (authoredReward && this.sideRooms.has(authoredReward.room) && !this.investigatedRooms.has(authoredReward.room)) continue;
       if (authoredReward && !insidePlanRoom(plan!, authoredReward.room, player.position)) continue;
-      if (authoredReward?.requires !== undefined) {
+      // Quiet branches (shop/treasure) reuse a combat floor plan but build no fights;
+      // a guard that never exists must not lock its cache forever.
+      if (authoredReward?.requires !== undefined && this.whiteboxFights.length > 0) {
         if (authoredReward.requires.some(id => state.encounters?.find(e => e.id === id)?.phase !== 'cleared')) continue;
       } else {
         const guard = authoredReward ? state.encounters?.find(e => this.whiteboxFights.some(f => f.id === e.id && f.room === authoredReward.room))
@@ -499,6 +577,7 @@ export class StageDirector implements IStageDirector {
     const t = this.t;
     this.view?.update(dt, t);
     this.beacon?.update(dt, t);
+    for (const entrance of this.challengeEntrances) entrance.update(dt, t);
     this.updateEncounters();
     this.discoverSites();
     for (const p of this.portals) p.update(dt, t);
@@ -644,7 +723,7 @@ export class StageDirector implements IStageDirector {
     if (p.alive) p.invulnerableTime = Math.max(p.invulnerableTime, seconds);
   }
 
-  /** 在远端生成 1–3 个出口传送门 */
+  /** 清关后只开启一个主线出口，可选挑战留在当前关卡。 */
   private openExits(): void {
     const arena = this.arena;
     if (!arena) return;
@@ -656,19 +735,21 @@ export class StageDirector implements IStageDirector {
       return;
     }
     const pts = arena.portalPoints;
-    const n = Math.min(3, opts.length);
-    const slots = n === 1 ? [1] : n === 2 ? [0, 2] : [0, 1, 2];
     const parent = this.view?.group ?? ctx.stageGroup;
     const c = arena.center;
-    for (let i = 0; i < n; i++) {
-      const p = pts.length > 0 ? pts[Math.min(pts.length - 1, slots[i])] : c;
+    {
+      const p = pts.length > 0 ? pts[Math.min(pts.length - 1, 1)] : c;
       // 朝向竞技场中心，吸附到 90° 以便石框碰撞盒与模型一致
       const raw = Math.atan2(c.x - p.x, c.z - p.z);
       const yaw = Math.round(raw / (Math.PI / 2)) * (Math.PI / 2);
-      this.portals.push(new Portal(ctx, opts[i], p, yaw, parent, i * 0.3));
-      if (i === 0 && this.adventureState) this.adventureState.exit = p.clone();
+      // A portal shrine in the plan right at this exit (V2 levels) is the portal's frame.
+      const plan = this.layout?.whitebox?.plan;
+      const shrine = !!plan?.covers.some(c => c.art === 'shrine' && c.polygon.some(([x, z]) =>
+        Math.hypot(x - plan.bounds[0] / 2 - p.x, z - plan.bounds[1] / 2 - p.z) < 6));
+      this.portals.push(new Portal(ctx, opts[0], p, yaw, parent, 0, shrine));
+      if (this.adventureState) this.adventureState.exit = p.clone();
     }
-    ctx.ui.toast(n > 1 ? '出口已开启，选择你的道路' : '出口已开启');
+    ctx.ui.toast('主线出口已开启 · 可先回头探索，再前往下一关');
   }
 
   // ───────────── 防卡关 ─────────────
@@ -697,7 +778,13 @@ export class StageDirector implements IStageDirector {
         Number.isFinite(p.z) ? Math.min(a.maxZ - 1, Math.max(a.minZ + 1, p.z)) : a.center.z,
       );
       ctx.nav.nearestWalkable(_v, _v);
-      if (!this.whiteboxRecoveryPoint(e, _v)) continue;
+      // A non-finite body can never be hit or cleared: relax the keep-away rule, and if the room still
+      // has no legal station, use the clamped walkable point rather than leave it at NaN.
+      const corrupt = !Number.isFinite(p.x + p.y + p.z);
+      if (!this.whiteboxRecoveryPoint(e, _v)) {
+        if (!corrupt) continue;
+        this.whiteboxRecoveryPoint(e, _v, true);
+      }
       this.placeEnemy(e, _v, false);
     }
 
@@ -728,12 +815,13 @@ export class StageDirector implements IStageDirector {
   }
 
   /** Recovery teleports obey the same room boundary as arrivals in the blockout. */
-  private whiteboxRecoveryPoint(enemy: IEnemy, preferred: THREE.Vector3): boolean {
+  private whiteboxRecoveryPoint(enemy: IEnemy, preferred: THREE.Vector3, nearPlayer = false): boolean {
     const fight = this.activeWhiteboxFight;
     if (!this.layout?.whitebox || !fight) return true;
-    const width = enemy.radius + .15, height = enemy.def.height * (enemy.isElite ? 1.25 : 1) + .1;
+    // radius and height already carry the art scale and elite scale.
+    const width = enemy.radius + .15, height = enemy.height + .1;
     const player = this.ctx.player.position;
-    const legal = (p: { x: number; z: number }) => Math.hypot(p.x - player.x, p.z - player.z) >= 10
+    const legal = (p: { x: number; z: number }) => (nearPlayer || Math.hypot(p.x - player.x, p.z - player.z) >= 10)
       && fight.contains(p, width) && this.ctx.nav.isWalkable(p.x, p.z)
       && !this.ctx.world.overlapsBody(p.x, this.arena!.floorY, p.z, width, height);
     if (legal(preferred)) return true;

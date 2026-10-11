@@ -1,0 +1,179 @@
+{
+  "steps": {
+    "导入清理": 1.7,
+    "对齐": 0.7,
+    "低模与 UV": 5.7,
+    "投影着色": 13.6,
+    "烘焙": 10.9,
+    "LOD": 0.1,
+    "部件骨架蒙皮": 2.6,
+    "导出": 2.6
+  },
+  "highpoly": {
+    "faces_raw": 325144,
+    "faces": 179492,
+    "verts": 179486,
+    "loose_parts": 3,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.893,
+    "iou_per_view": {
+      "front": 0.885,
+      "left": 0.909,
+      "back": 0.879,
+      "right": 0.902
+    },
+    "height_m": 0.2903,
+    "blockout_height_m": 0.486
+  },
+  "uv": {
+    "smart_islands": 353,
+    "charts": 41,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "smart",
+    "density_smart": 1.7658,
+    "density_merged": 1.7425
+  },
+  "projection": {
+    "uncovered_ratio": 0.2239
+  },
+  "bake_device": "OPTIX",
+  "emissive_id": {
+    "emissive_texel_ratio": 0.0148
+  },
+  "material_id": {
+    "metal_texel_ratio": 0.5158
+  },
+  "textures": {
+    "T_Weapon_Stormpod_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Weapon_Stormpod_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Weapon_Stormpod_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "presentation": [
+    [
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ]
+  ],
+  "skin": {
+    "bones": [
+      "j_r",
+      "j_0",
+      "j_7"
+    ],
+    "per_lod": {
+      "SK_Weapon_Stormpod_LOD0": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      },
+      "SK_Weapon_Stormpod_LOD1": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      }
+    },
+    "mode": "parts",
+    "sigma_m": 0.0073,
+    "rigid": true,
+    "split": {
+      "SK_Weapon_Stormpod_LOD0": {
+        "cut_edges": 123,
+        "cap_tris": 238,
+        "merged_fragment_faces": 71,
+        "tris": 11996
+      },
+      "SK_Weapon_Stormpod_LOD1": {
+        "cut_edges": 61,
+        "cap_tris": 114,
+        "merged_fragment_faces": 19,
+        "tris": 2996
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SK_Weapon_Stormpod_LOD0",
+      "tris": 11996,
+      "verts": 5996,
+      "uv_min": [
+        0.0038916629273444414,
+        0.0037501007318496704
+      ],
+      "uv_max": [
+        0.9962638020515442,
+        0.996263861656189
+      ],
+      "uv_utilization": 0.611,
+      "bbox_min": [
+        -0.052,
+        -0.1802,
+        -0.1272
+      ],
+      "bbox_max": [
+        0.0611,
+        0.2903,
+        0.1121
+      ]
+    },
+    {
+      "name": "SK_Weapon_Stormpod_LOD1",
+      "tris": 2996,
+      "verts": 1496,
+      "uv_min": [
+        0.0043401410803198814,
+        0.004098513629287481
+      ],
+      "uv_max": [
+        0.9952664375305176,
+        0.9956826567649841
+      ],
+      "uv_utilization": 0.577,
+      "bbox_min": [
+        -0.052,
+        -0.1801,
+        -0.1271
+      ],
+      "bbox_max": [
+        0.0611,
+        0.2903,
+        0.1116
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/weapons/SK_Weapon_Stormpod/04_export/SK_Weapon_Stormpod_v001.glb",
+    "bytes": 625188
+  },
+  "blend": "art/source/weapons/SK_Weapon_Stormpod/03_work/SK_Weapon_Stormpod_v001.blend",
+  "total_seconds": 38.0,
+  "_seconds": 41.3
+}

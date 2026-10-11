@@ -17,7 +17,7 @@ export function preloadSceneSurface(): Promise<boolean> {
   if (surfaceReady) return surfaceReady;
   if (typeof document === 'undefined') return Promise.resolve(false);
   surfaceReady = new Promise(resolve => {
-    new THREE.ImageLoader().load(`${import.meta.env.BASE_URL}assets/environment/weathered-stone-v1.png`, image => {
+    new THREE.ImageLoader().load(`${import.meta.env.BASE_URL}assets/environment/weathered-stone-v1.webp`, image => {
       stoneSurface = image; resolve(true);
     }, undefined, () => resolve(false));
   });

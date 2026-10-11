@@ -9,6 +9,7 @@ export const DEFAULT_SETTINGS: Settings = {
   sfxVolume: 0.9,
   musicVolume: 0.5,
   quality: 'high',
+  shadowQuality: 'medium',
   damageNumbers: true,
   screenShake: 1,
   invertY: false,

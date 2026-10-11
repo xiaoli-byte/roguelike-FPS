@@ -91,6 +91,10 @@ def run(spec: AssetSpec, a) -> None:
         elif i == 0:
             lo, hi = g.mesh_bounds(n["mesh"])
             h_bo = views["bbox_max"][2] - views["bbox_min"][2]
+            if spec.blockout.get("source") == "hero":
+                # Blender's imported tail bound_box includes its unposed vertical
+                # tube. The exporter measures the actual posed hero in game space.
+                h_bo = blockout["bounds"]["max"][1] - blockout["bounds"]["min"][1]
             ok("高度", abs((hi[1] - lo[1]) - h_bo) / h_bo <= 0.06, f"{hi[1] - lo[1]:.3f} m（白模 {h_bo:.3f} m）")
             if spec.raw.get("rig") == "parts":
                 # 部件骨架没有脚底可对：查竖直中心是否与白模一致（上下错位会让网格和关节对不上）。

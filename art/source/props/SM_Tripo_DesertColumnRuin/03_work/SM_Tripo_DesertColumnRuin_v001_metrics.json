@@ -1,0 +1,103 @@
+{
+  "source": {
+    "tris": 2921,
+    "verts": 3777
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 4.24508,
+    "iou": 0.885,
+    "iou_per_view": {
+      "front": 0.916,
+      "left": 0.78,
+      "back": 0.917,
+      "right": 0.911
+    },
+    "size_m": [
+      4.243,
+      3.36,
+      1.565
+    ],
+    "reference_m": [
+      6.0,
+      3.0,
+      1.6
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.766,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "ancient_ruin_prop_3d_model_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      2048,
+      2048
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertColumnRuin_LOD0",
+      "tris": 2921,
+      "verts": 3777,
+      "uv_min": [
+        0.0009765625,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.997802734375,
+        0.9990234375
+      ],
+      "uv_utilization": 0.693,
+      "bbox_min": [
+        -2.1215,
+        -1.68,
+        0.0
+      ],
+      "bbox_max": [
+        2.1215,
+        1.68,
+        1.565
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertColumnRuin_LOD1",
+      "tris": 995,
+      "verts": 2051,
+      "uv_min": [
+        0.00146484375,
+        0.0010242805583402514
+      ],
+      "uv_max": [
+        0.997802734375,
+        0.9990234375
+      ],
+      "uv_utilization": 0.635,
+      "bbox_min": [
+        -2.1049,
+        -1.6662,
+        -0.001
+      ],
+      "bbox_max": [
+        2.118,
+        1.762,
+        1.5629
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertColumnRuin/04_export/SM_Tripo_DesertColumnRuin_v001.glb",
+    "bytes": 257056
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 5.2,
+  "_seconds": 7.7
+}

@@ -1,0 +1,36 @@
+{
+  "design": {
+    "id": "SK_Enemy_Mortar",
+    "chapter": "desert",
+    "role": "mortar",
+    "name": "沙炮手",
+    "body": "humanoid",
+    "height_m": 1.95,
+    "brief": "The bandit faction's squat heavy artillery gunner: a short, stocky, barrel-bodied figure under a very wide conical woven bamboo hat with a sand-coloured cloth curtain hanging around the back, a dark face cloth with two glowing ember-orange eyes and brass flip-up goggles on the hat brim, a quilted sand-and-brown padded coat, a bandolier of brass shell casings across the chest, the faction's crimson waist sash with the gold spiral emblem, a big wooden-and-bronze ammunition rack backpack holding three glowing ember-orange shells upright, thick leather gloves with a separate thumb and four separate fingers, heavy wrapped boots.",
+    "weapon": "a short heavy bronze hand mortar with a roaring dragon-mouth muzzle, carried in both hands"
+  },
+  "generation": {
+    "provider": "openai",
+    "endpoint": "images/edits",
+    "model": "gpt-image-2.5-sunburst",
+    "size": "2048x1024",
+    "quality": "high",
+    "background": "opaque",
+    "usage": {
+      "input_tokens": 1942,
+      "input_tokens_details": {
+        "image_tokens": 1458,
+        "text_tokens": 484
+      },
+      "output_tokens": 1180,
+      "output_tokens_details": {
+        "image_tokens": 1180,
+        "text_tokens": 0
+      },
+      "total_tokens": 3122
+    },
+    "request_id": "req_b6d8d3ba976144daa816beb35fe9e7ee",
+    "seconds": 32.0
+  },
+  "style_reference": "CN_SK_Enemy_Grunt_v001_sheet.png"
+}

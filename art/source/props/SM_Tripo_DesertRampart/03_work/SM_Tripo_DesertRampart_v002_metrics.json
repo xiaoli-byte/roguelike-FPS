@@ -1,0 +1,127 @@
+{
+  "source": {
+    "tris": 8073,
+    "verts": 4066
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 9.0044,
+    "iou": 0.913,
+    "iou_per_view": {
+      "front": 0.95,
+      "left": 0.862,
+      "back": 0.964,
+      "right": 0.86
+    },
+    "size_m": [
+      7.971,
+      2.853,
+      9.0
+    ],
+    "reference_m": [
+      8.0,
+      3.0,
+      9.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.872,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_DesertRampart_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      8192,
+      8192
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertRampart_LOD0",
+      "tris": 7959,
+      "verts": 4009,
+      "uv_min": [
+        0.001220703125,
+        0.001220703125
+      ],
+      "uv_max": [
+        0.998779296875,
+        0.997802734375
+      ],
+      "uv_utilization": 0.63,
+      "bbox_min": [
+        -3.9856,
+        -1.4267,
+        0.0
+      ],
+      "bbox_max": [
+        3.9856,
+        1.4267,
+        9.0
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertRampart_LOD1",
+      "tris": 2487,
+      "verts": 1265,
+      "uv_min": [
+        0.001220703125,
+        0.001220703125
+      ],
+      "uv_max": [
+        0.998779296875,
+        0.997802734375
+      ],
+      "uv_utilization": 0.591,
+      "bbox_min": [
+        -3.975,
+        -1.425,
+        0.0
+      ],
+      "bbox_max": [
+        3.9864,
+        1.4204,
+        8.9869
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertRampart_LOD2",
+      "tris": 795,
+      "verts": 413,
+      "uv_min": [
+        0.002197265625,
+        0.001220703125
+      ],
+      "uv_max": [
+        0.992572546005249,
+        0.997314453125
+      ],
+      "uv_utilization": 0.513,
+      "bbox_min": [
+        -3.9697,
+        -1.4161,
+        -0.0124
+      ],
+      "bbox_max": [
+        3.9683,
+        1.4085,
+        8.9839
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertRampart/04_export/SM_Tripo_DesertRampart_v002.glb",
+    "bytes": 741572
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 17.0,
+  "_seconds": 20.1
+}

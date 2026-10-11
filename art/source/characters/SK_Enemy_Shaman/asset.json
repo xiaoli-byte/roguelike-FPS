@@ -66,7 +66,7 @@
       ]
     },
     "concept": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -174,11 +174,112 @@
             "note": "傩面、高冠、金边紫袍贴合设定；长袍随腿形变需在审核图确认",
             "time": "2026-10-03 16:47:48"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 11:24:54",
+          "files": {
+            "CN_SK_Enemy_Shaman_v002_sheet.png": {
+              "path": "01_concept/CN_SK_Enemy_Shaman_v002_sheet.png",
+              "sha256": "46c8438ea236b43d1bdb4f4a4e9187b36828a46122d4e638bb7ece7dabfef2ea"
+            },
+            "CN_SK_Enemy_Shaman_v002_front.png": {
+              "path": "01_concept/CN_SK_Enemy_Shaman_v002_front.png",
+              "sha256": "40a414400b625f8916619dc15b7987da50048d664a17a5c644c782c08a78769b"
+            },
+            "CN_SK_Enemy_Shaman_v002_left.png": {
+              "path": "01_concept/CN_SK_Enemy_Shaman_v002_left.png",
+              "sha256": "0fd55768abfc1a696623bea417da18265ac4aa056ef7c33906ea5db4a58dca27"
+            },
+            "CN_SK_Enemy_Shaman_v002_back.png": {
+              "path": "01_concept/CN_SK_Enemy_Shaman_v002_back.png",
+              "sha256": "900cf823b25b7ece58f4ce2f58441d533d51b959e6c4f3418d31b4e4264b84ef"
+            },
+            "CN_SK_Enemy_Shaman_v002_right.png": {
+              "path": "01_concept/CN_SK_Enemy_Shaman_v002_right.png",
+              "sha256": "f9a014e5c3ed8775c0c1a81bf6d7f69324e3c1eaebe5d2e2a8467e0249323b3e"
+            },
+            "CN_SK_Enemy_Shaman_v002_compare.png": {
+              "path": "01_concept/CN_SK_Enemy_Shaman_v002_compare.png",
+              "sha256": "179221c6e164675a0b1bca1a214211ff2f94179b15346e70acbe6c23d8da5f0d"
+            },
+            "CN_SK_Enemy_Shaman_v002_prompt.txt": {
+              "path": "01_concept/CN_SK_Enemy_Shaman_v002_prompt.txt",
+              "sha256": "2bb2e388a2c8622d28088903d6fa642d00df769c5d768f2107394bcbd73a1a89"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 2088,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 630
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3268
+          },
+          "request_id": "req_0bdedb332cbf4438a635e46b7e03f287",
+          "seconds": 30.4,
+          "registration": {
+            "front": {
+              "scale": 0.9519,
+              "offset": [
+                27,
+                50
+              ],
+              "iou": 0.741,
+              "iou_unregistered_scale": 0.898
+            },
+            "left": {
+              "scale": 0.9608,
+              "offset": [
+                149,
+                50
+              ],
+              "iou": 0.758,
+              "iou_unregistered_scale": 0.9064
+            },
+            "back": {
+              "scale": 0.9519,
+              "offset": [
+                24,
+                50
+              ],
+              "iou": 0.738,
+              "iou_unregistered_scale": 0.898
+            },
+            "right": {
+              "scale": 0.9608,
+              "offset": [
+                99,
+                50
+              ],
+              "iou": 0.757,
+              "iou_unregistered_scale": 0.9064
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.743,
+            "left": 0.757,
+            "back": 0.739,
+            "right": 0.757
+          }
         }
       ]
     },
     "highpoly": {
-      "current": 1,
+      "current": null,
       "versions": [
         {
           "version": 1,
@@ -225,7 +326,7 @@
       ]
     },
     "build": {
-      "current": 8,
+      "current": null,
       "versions": [
         {
           "version": 1,
@@ -682,7 +783,7 @@
       ]
     },
     "validate": {
-      "current": 8,
+      "current": null,
       "versions": [
         {
           "version": 1,
@@ -803,7 +904,7 @@
       ]
     },
     "review": {
-      "current": 8,
+      "current": null,
       "versions": [
         {
           "version": 1,
@@ -1050,7 +1151,7 @@
       ]
     },
     "publish": {
-      "current": 4,
+      "current": null,
       "versions": [
         {
           "version": 1,

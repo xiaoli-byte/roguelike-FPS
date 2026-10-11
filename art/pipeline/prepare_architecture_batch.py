@@ -32,7 +32,7 @@ from PIL import Image
 
 from lib import imaging
 from lib.config import CFG, ROOT, PipelineError
-from lib.state import AssetState, sha256
+from lib.state import AssetState, resolve_path, sha256, portable_record
 from prepare_nature_batch import REGISTRATION_VERSION, prepare_reference, reference_data, register_panels
 
 ASSETS = tuple(f"SM_Env_{theme}{role}" for theme in ("Desert", "Frost", "Inferno") for role in ("Wall", "Gate"))
@@ -81,7 +81,7 @@ def register_concept(item: dict, source_dir: Path) -> dict:
     bo = state.require("blockout")
     if bo.get("reference_mode") != "bounds_only" or bo.get("geometry_created") is not False:
         raise PipelineError(f"{asset_id}: prepare the numeric reference first")
-    source = Path(item["path"])
+    source = resolve_path(item["path"])
     if not source.is_absolute():
         source = source_dir / source
     source = source.resolve()
@@ -108,7 +108,7 @@ def register_concept(item: dict, source_dir: Path) -> dict:
             and current.get("registration_version", 1) == REGISTRATION_VERSION
             and current.get("architecture_requirements") == checked["requirements"]
             and (not reference_records or current.get("reference_provenance_version") == 1)
-            and [{k: r[k] for k in ("source_image", "source_sha256")} for r in current.get("reference_images", [])] == reference_records):
+            and [{k: r[k] for k in ("source_image", "source_sha256")} for r in current.get("reference_images", [])] == portable_record(reference_records)):
         print(f"CONCEPT_UNCHANGED {asset_id} v{current['version']:03d}", flush=True)
         return current
     views_path = state.file(bo, f"BO_{asset_id}_v{bo['version']:03d}_views.json")

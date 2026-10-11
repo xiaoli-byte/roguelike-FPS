@@ -156,7 +156,8 @@ export class Archer extends StandardEnemy {
       case 'aim': {
         this.glowTarget[0] = Math.min(1, this.stateTime / this.aimTime);
         this.facePlayer(7, dt);
-        this.setMove(-Math.cos(this.facing) * this.strafeSign, Math.sin(this.facing) * this.strafeSign, this.speed * 0.2);
+        this.perchMove(!this.flying && this.ctx.nav.platformAt?.(this.position) === true,
+          -Math.cos(this.facing) * this.strafeSign, Math.sin(this.facing) * this.strafeSign, this.speed * 0.2);
         if (!this.sees && this.blindTime > 0.3) {
           this.abortAim();
           break;

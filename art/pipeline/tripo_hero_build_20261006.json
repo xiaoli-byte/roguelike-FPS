@@ -1,0 +1,118 @@
+{
+  "builder": "art/pipeline/build_tripo_heroes.py",
+  "blender_script": "art/pipeline/blender/bl_build_tripo_hero.py",
+  "heroes": {
+    "fox": {
+      "version": 1,
+      "glb": "art/source/characters/SK_Hero_Fox/04_export/SK_Hero_Fox_tripo_v001.glb",
+      "bytes": 786352,
+      "sha256": "40b59b9ee628c963eabab687b76c785c17a59f1a08587acea2e0fbe8b4744871",
+      "errors": [],
+      "warnings": [],
+      "alignment_iou": 0.9079,
+      "uv_charts": 93,
+      "lod_tris": [
+        10554,
+        5759,
+        2303
+      ],
+      "review": {
+        "turnaround": "art/source/characters/SK_Hero_Fox/05_review/SK_Hero_Fox_tripo_v001_turnaround.png",
+        "extremities": "art/source/characters/SK_Hero_Fox/05_review/SK_Hero_Fox_tripo_v001_extremities.png"
+      },
+      "built": "2026-10-06 11:29:05",
+      "published": {
+        "url": "assets/characters/SK_Hero_Fox.glb",
+        "sha256": "40b59b9ee628c963eabab687b76c785c17a59f1a08587acea2e0fbe8b4744871",
+        "bytes": 786352,
+        "at": "2026-10-06 11:31:41"
+      },
+      "extremity_review": {
+        "hands": "L 5 / R 5 (thumb + 4 fingers, separated, wrists straight)",
+        "feet": "L 4 / R 4 clawed toes through open-toe boots (matches the approved 4-toe design)",
+        "result": "pass",
+        "tool": "art/tools/review_extremities_mixamo.py",
+        "reviewed": "2026-10-06"
+      }
+    },
+    "falcon": {
+      "version": 2,
+      "glb": "art/source/characters/SK_Hero_Falcon/04_export/SK_Hero_Falcon_tripo_v002.glb",
+      "bytes": 686344,
+      "sha256": "32a7e9fbcf2cf914fcac07b27fb9351ec1e5f069247f75eade137410b124ee2e",
+      "errors": [],
+      "warnings": [],
+      "alignment_iou": 0.8353,
+      "uv_charts": 119,
+      "lod_tris": [
+        10265,
+        5644,
+        2258
+      ],
+      "review": {
+        "turnaround": "art/source/characters/SK_Hero_Falcon/05_review/SK_Hero_Falcon_tripo_v002_turnaround.png",
+        "extremities": "art/source/characters/SK_Hero_Falcon/05_review/SK_Hero_Falcon_tripo_v002_extremities.png"
+      },
+      "built": "2026-10-06 11:41:47",
+      "published": {
+        "url": "assets/characters/SK_Hero_Falcon.glb",
+        "sha256": "32a7e9fbcf2cf914fcac07b27fb9351ec1e5f069247f75eade137410b124ee2e",
+        "bytes": 686344,
+        "at": "2026-10-06 11:41:47"
+      },
+      "extremity_review": {
+        "hands": "L 5 / R 5 (thumb + 4 fingers, separated gloves, wrists straight)",
+        "feet": "complete armoured boots L/R",
+        "result": "pass",
+        "tool": "art/tools/review_extremities_mixamo.py",
+        "reviewed": "2026-10-06"
+      }
+    },
+    "bear": {
+      "version": 1,
+      "glb": "art/source/characters/SK_Hero_Bear/04_export/SK_Hero_Bear_tripo_v001.glb",
+      "bytes": 630208,
+      "sha256": "0cc85989226c2333638b1ac61eb38a5753c7dec016b03e57835cc547bc6d6c46",
+      "errors": [],
+      "warnings": [
+        "reference alignment"
+      ],
+      "alignment_iou": 0.7662,
+      "uv_charts": 123,
+      "lod_tris": [
+        9681,
+        5323,
+        2129
+      ],
+      "review": {
+        "turnaround": "art/source/characters/SK_Hero_Bear/05_review/SK_Hero_Bear_tripo_v001_turnaround.png",
+        "extremities": "art/source/characters/SK_Hero_Bear/05_review/SK_Hero_Bear_tripo_v001_extremities.png"
+      },
+      "built": "2026-10-06 11:30:34",
+      "published": {
+        "url": "assets/characters/SK_Hero_Bear.glb",
+        "sha256": "0cc85989226c2333638b1ac61eb38a5753c7dec016b03e57835cc547bc6d6c46",
+        "bytes": 630208,
+        "at": "2026-10-06 11:31:41"
+      },
+      "extremity_review": {
+        "hands": "L 5 / R 5 (thumb + 4 clawed fingers, separated, wrists straight)",
+        "feet": "L 5 / R 5 clawed toes in sandals",
+        "result": "pass",
+        "tool": "art/tools/review_extremities_mixamo.py",
+        "reviewed": "2026-10-06"
+      }
+    }
+  },
+  "texturing": "No textured Tripo export exists locally (rigged GLB/.blend have no UVs or images). Base colour is projected from the approved v003 front T-pose reference that Tripo generated the mesh from; hidden surfaces use same-sheet through-projection (tails, limbs, thin cloth/wings) or geodesic nearest-colour fill (head/torso backs).",
+  "runtime": {
+    "module": "src/ui/heroPreview/heroes/nativeTripo.ts",
+    "selection": "src/ui/heroPreview/heroes/index.ts",
+    "fallback": "procedural fox/falcon/bear models when the asset is missing, fails to load, lacks Mixamo joints or ?classic",
+    "tests": "tests/native-hero-grip.test.mjs (in npm test)"
+  },
+  "browser_evidence": "art/reviews/tripo-heroes-20261006/",
+  "superseded_runtime_files": [
+    "public/assets/characters/tripo/{fox,falcon,bear}.glb (raw untextured copies, no longer loaded)"
+  ]
+}

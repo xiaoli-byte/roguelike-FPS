@@ -292,7 +292,7 @@ export class Game implements IGame {
 
     this.setState('transition');
     ctx.ui.fade(1, 0.01).then(() => {
-      this.loadStage(ctx.runPlan.firstStage(ctx.run));
+      if (!this.loadStage(ctx.runPlan.firstStage(ctx.run))) { this.toMenu(); return; }
       ctx.ui.showHUD(true);
       ctx.weapons.setViewmodelVisible(true);
       this.setState('playing');
@@ -309,7 +309,7 @@ export class Game implements IGame {
     ctx.input.enabled = false;
     ctx.audio.play('portal');
     ctx.ui.fade(1, 0.35).then(() => {
-      this.loadStage(next);
+      if (!this.loadStage(next)) { this.toMenu(); return; }
       this.setState('playing');
       ctx.input.enabled = true;
       ctx.input.flushMouse();
@@ -317,7 +317,8 @@ export class Game implements IGame {
     });
   }
 
-  private loadStage(node: StageNode): void {
+  /** False when the stage could not be built; callers return to the menu instead of a black screen. */
+  private loadStage(node: StageNode): boolean {
     const ctx = this.ctx;
     const run = ctx.run;
     run.chapter = node.chapter;
@@ -326,10 +327,17 @@ export class Game implements IGame {
     run.difficulty = ctx.runPlan.difficultyFor(node);
     this.clearStage(false);
     ctx.stage.unload();
-    ctx.stage.load(node);
+    try {
+      ctx.stage.load(node);
+    } catch (err) {
+      console.error('[Game] stage load failed', err);
+      ctx.ui.toast('关卡载入失败，已返回主菜单', '#ff8a6a');
+      return false;
+    }
     ctx.events.emit('stage:loaded', { stage: node });
     ctx.ui.banner(ctx.stage.arena?.theme.name ?? '', ctx.runPlan.stageLabel(node), 2.6);
     ctx.audio.setMusic(node.type === 'boss' ? 'boss' : node.type === 'shop' || node.type === 'treasure' ? 'calm' : 'combat');
+    return true;
   }
 
   /** 清理关卡内的动态内容。full=true 时连常驻任务也清掉（新开一局 / 回菜单） */
@@ -483,6 +491,21 @@ export class Game implements IGame {
     (window as unknown as Record<string, unknown>).__ctx = ctx;
     let god = false;
     ctx.events.on('game:stateChanged', ({ to }) => console.info('[debug] state →', to));
+    // ?debug&spawn=mirage_toad[,id2…]：每进一关在玩家前方约 15 米处生成这些敌人（试玩新怪用，不进正式波次）
+    const spawnIds = (new URLSearchParams(location.search).get('spawn') ?? '').split(',').filter(Boolean);
+    if (spawnIds.length > 0) {
+      ctx.events.on('stage:loaded', () => {
+        ctx.tasks.delay(1.5, () => {
+          const fwd = ctx.player.getForward(new THREE.Vector3()).setY(0).normalize();
+          spawnIds.forEach((id, i) => {
+            const at = ctx.player.position.clone().addScaledVector(fwd, 15).add(new THREE.Vector3(fwd.z, 0, -fwd.x).multiplyScalar((i - (spawnIds.length - 1) / 2) * 4));
+            const pos = at.clone();
+            if (!ctx.nav.nearestWalkable(at, pos)) pos.copy(at);
+            if (!ctx.enemies.spawn(id, { position: pos, level: 1 })) console.warn(`[debug] 没有敌人类型 ${id}`);
+          });
+        });
+      });
+    }
     window.addEventListener('keydown', (e) => {
       if (this._state !== 'playing') return;
       switch (e.code) {

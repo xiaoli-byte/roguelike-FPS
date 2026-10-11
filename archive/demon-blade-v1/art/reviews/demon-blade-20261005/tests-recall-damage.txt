@@ -1,0 +1,41 @@
+(node:76000) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ fractured blade keeps 128 independent polygon cells, finite closed geometry and a continuous silhouette (55.3256ms)
+✔ real fragments travel tip to hilt, freeze at dt=0, and obey quality limits (4.2624ms)
+✔ empty ranged magazine rebuilds the complete melee blade; ranged/reload counts remain accurate (45.2145ms)
+✔ world-drop energy releases animated instance resources and borrows a static material (1.4305ms)
+✔ 128 real ranged cells occupy distinct animated orbit slots and emit individually in original tip-to-hilt order (47.3328ms)
+✔ cell light rims, comet tails and star motes follow only remaining real cells with bounded quality budgets (4.6607ms)
+✔ closed melee cells receive travelling crack light without changing their physical positions or becoming an orbit (6.7928ms)
+✔ formation stays in front with an open crosshair across viewport shapes, animates deterministically and pauses (3.1661ms)
+✔ ranged launch and recall endpoints use actual moving orbit slots, including invisible consumed cells (8.1511ms)
+✔ continuous ranged feedback has zero camera recoil, shake, hand kick or throwing gesture (0.4499ms)
+✔ production firing consumes one piece and emits from consecutive tip-to-hilt launch points (1.5085ms)
+✔ 24 simultaneous marked targets retain every convergence group inside the dart budget (6.4917ms)
+✔ single-target skill has 40 converging blades and still arrives in the damage window (1.4795ms)
+✔ one shot is one smallest cell; the full blade keeps the same continuous DPS and firing duration (0.1132ms)
+✔ pooled flying cells reuse their exact blade geometry without enlarging or grouping them (1.9056ms)
+✔ recall arcs keep exact real endpoints, distinct upper/lower lanes and finite camera-relative paths (0.6642ms)
+✔ expired real fragments park indefinitely without damage, drift, fade or losing their geometry (2.3841ms)
+✔ wall contact parks a fragment at the real collision point; recall interrupts still flying damage carriers (2.3726ms)
+✔ recall preserves 128 exact cells, tracks a moving hand, freezes on pause and lands each once (19.9249ms)
+✔ cancelled recall parks at current positions; another weapon is untouched and resume cannot duplicate cells (0.7779ms)
+✔ production reload fills only arrived cells and interruption preserves the partial blade and parked remainder (19.1969ms)
+✔ manual recall training keeps an empty blade parked even while fire is held; default gameplay still auto recalls (0.2437ms)
+✔ melee skill charges, cleaves once then echoes once, and respects range and walls (0.7127ms)
+✔ two form cooldowns are independent; ranged fallback consumes 32 consecutive cells, keeps one aim point and recalls once (0.4244ms)
+✔ ranged skill uses parked cells before ammunition; death cancels it and haste rescales both cooldowns (0.0988ms)
+✔ parked-fragment surge transfers all exact view instances in tip-to-hilt order and interruption conserves every cell (16.6391ms)
+✔ surged cells deal one real collision hit each and stop at a nearer wall before an enemy (0.6994ms)
+✔ ranged skill point-blank lock keeps finite forward velocity instead of a zero-length aim vector (0.1523ms)
+✔ each actual recalling cell pierces different enemies once, keeps weapon damage and still arrives exactly once (1.6425ms)
+✔ recall samples its curved arc through a long frame and walls prevent damage beyond the obstruction (1.5542ms)
+✔ paused, waiting and cancelled recalls cause no hits; a new recall resets only its own hit history (0.8015ms)
+ℹ tests 31
+ℹ suites 0
+ℹ pass 31
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 587.4145

@@ -1,0 +1,432 @@
+{
+  "id": "SM_Tripo_DesertTreasureHoard",
+  "display": "宝库财宝堆（V2）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 15:42:29",
+          "files": {
+            "BO_SM_Tripo_DesertTreasureHoard_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertTreasureHoard_v001.json",
+              "sha256": "99fe541b7856f7d388a9590b6120677cf8f84134c3de0ec33bd7d34b988f622e"
+            },
+            "BO_SM_Tripo_DesertTreasureHoard_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertTreasureHoard_v001_views.json",
+              "sha256": "f5fc2bc5a0b5e18832a3ac1ed9813139204ef546a366cbe6a181816254e7f6ca"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.v2.hoard"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.0,
+              0,
+              -1.5
+            ],
+            "max": [
+              2.0,
+              1.8,
+              1.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 15:42:56",
+          "files": {
+            "CN_SM_Tripo_DesertTreasureHoard_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertTreasureHoard_v001_source.png",
+              "sha256": "33f4baa361905f7d3e323626e66c6d3936397fcf28f38eac12a17786a5799286"
+            },
+            "CN_SM_Tripo_DesertTreasureHoard_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertTreasureHoard_v001_front.png",
+              "sha256": "4a7e7d4c2e332ecc2f196999c3035b79f1b5f8d7b89fdf757cc0e0357ea3e73d"
+            },
+            "CN_SM_Tripo_DesertTreasureHoard_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertTreasureHoard_v001_left.png",
+              "sha256": "ca6ebcf96fb8ec295cc89876fbf95b393ea3010bc4d1baff3f9dd36adaeb392a"
+            },
+            "CN_SM_Tripo_DesertTreasureHoard_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertTreasureHoard_v001_back.png",
+              "sha256": "329fc5d52411c75138f6232614627af887c026f7a9f5958c18b709668688be7e"
+            },
+            "CN_SM_Tripo_DesertTreasureHoard_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertTreasureHoard_v001_right.png",
+              "sha256": "a4af9c95f6020526cda2c41a8628815e2ddbab33795782b576b319fc9db9d201"
+            },
+            "CN_SM_Tripo_DesertTreasureHoard_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertTreasureHoard_v001_sheet.png",
+              "sha256": "7240cbe21bf88efdb00693fd1dabab7bcc8df265a29320cb2583c8dcb6057cf6"
+            },
+            "CN_SM_Tripo_DesertTreasureHoard_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertTreasureHoard_v001_prompt.txt",
+              "sha256": "44b112f1ef9aec73dcfc8398d94af0edfefbd158c0536d3cbd95225331ad57a2"
+            },
+            "CN_SM_Tripo_DesertTreasureHoard_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertTreasureHoard_v001_registration.json",
+              "sha256": "8e362fcc0846275c08507301fd4c5253bbdeade17021fb36d7d103605e650b13"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 417,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 417
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1597
+            },
+            "request_id": "req_c30d8324f1a74f22939eb3562bed600f",
+            "seconds": 26.3
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian desert temple fantasy. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (4m wide x 1.8m tall x 3m deep): A temple treasure hoard 4m wide, 1.8m tall, 3m deep: a low heap of gold coins spilling over a stepped sandstone plinth, with two small iron-banded wooden treasure chests, gilded jars and a bronze sun-disc idol propped at the back. Gold reads as broad warm painted planes, not glittery. Chunky readable shapes, one solid connected piece on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "33f4baa361905f7d3e323626e66c6d3936397fcf28f38eac12a17786a5799286",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.5544859453215247,
+              "offset": [
+                106,
+                409
+              ],
+              "size": [
+                299,
+                206
+              ],
+              "physical_height_m": 1.8,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5456612353164076,
+              "offset": [
+                152,
+                409
+              ],
+              "size": [
+                208,
+                206
+              ],
+              "physical_height_m": 1.8,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5544859453215247,
+              "offset": [
+                115,
+                409
+              ],
+              "size": [
+                281,
+                206
+              ],
+              "physical_height_m": 1.8,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5442176870748299,
+              "offset": [
+                143,
+                409
+              ],
+              "size": [
+                225,
+                206
+              ],
+              "physical_height_m": 1.8,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "side_views_swapped": "generator drew LEFT/RIGHT mirrored (front pointed right in the LEFT slot); panels exchanged",
+          "modified": "2026-10-06 15:44:42",
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI审核)",
+            "note": "四视图同一财宝堆：前视金币、宝箱与日轮，后视石台背面；左右侧已对调（高背墙在后）。无裁切。",
+            "time": "2026-10-06 15:51:59"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 16:17:20",
+          "files": {
+            "HP_SM_Tripo_DesertTreasureHoard_v001_source.fbx": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertTreasureHoard_v001_source.fbx",
+              "sha256": "d342524e386dd0bdcb0a2be712028bf742bf8f62bd42bb801fc777ebc9d17ac1"
+            },
+            "HP_SM_Tripo_DesertTreasureHoard_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertTreasureHoard_v001.glb",
+              "sha256": "ba13c7ca2515145cda89805fad707f15010dd369544bf1e2abb0343be4e59903"
+            },
+            "HP_SM_Tripo_DesertTreasureHoard_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertTreasureHoard_v001_graph.json",
+              "sha256": "f79add19cbb94113230eef8611177577cd6f3ea0fe0b5b8b33f4326a7c5dfcaa"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/f17cd6ad-16b8-48a9-a82c-5e9ccf75af73",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 3121,
+          "source_sha256": "d342524e386dd0bdcb0a2be712028bf742bf8f62bd42bb801fc777ebc9d17ac1"
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 16:17:29",
+          "files": {
+            "SM_Tripo_DesertTreasureHoard_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertTreasureHoard_v001.blend",
+              "sha256": "7aec7d3f839364d65a2ef6a24930eb7d07adaf440115aea8929445724c23568d"
+            },
+            "SM_Tripo_DesertTreasureHoard_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertTreasureHoard_v001.glb",
+              "sha256": "291c7032f5d0bef76fd0004051880249408b8207d9b5024e3aa905684cddaa90"
+            },
+            "SM_Tripo_DesertTreasureHoard_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertTreasureHoard_v001_metrics.json",
+              "sha256": "1d1f647fd2a83752d9555b7ad78b74912c2bddaff58719d05d421598f55280ce"
+            },
+            "T_Tripo_DesertTreasureHoard_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertTreasureHoard_BC.png",
+              "sha256": "4d03e0ff830525f8638164c758a7a984002118abaa9a4094eee7da7b185c89a8"
+            },
+            "T_Tripo_DesertTreasureHoard_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertTreasureHoard_N.png",
+              "sha256": "59fda868604c371984626739b71fb01ebe769952a571cff133b340908c7df3f6"
+            },
+            "T_Tripo_DesertTreasureHoard_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertTreasureHoard_ORM.png",
+              "sha256": "6297b6b1752cba58c91e0885d69712bc0014fc3abedb65eefb2ebb846383031d"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.858,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2984,
+              "verts": 4533
+            },
+            {
+              "tris": 995,
+              "verts": 2645
+            }
+          ],
+          "export_kb": 339.4,
+          "seconds": 8.7,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:22:20",
+          "files": {
+            "SM_Tripo_DesertTreasureHoard_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertTreasureHoard_v002.blend",
+              "sha256": "5f40d47f11777c09b9bab9922ced5110ac685fef8b17e018d68d5e8dc64c12b3"
+            },
+            "SM_Tripo_DesertTreasureHoard_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertTreasureHoard_v002.glb",
+              "sha256": "6b12ed2b1b58d656ac01067dd0e40ddf4241399a474370002e58c289fa9a2b06"
+            },
+            "SM_Tripo_DesertTreasureHoard_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertTreasureHoard_v002_metrics.json",
+              "sha256": "6f4fb93a792c303feb74a62e30b2b25f16a677b2a3cc4b2950da2b92fe13c1a3"
+            },
+            "T_Tripo_DesertTreasureHoard_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertTreasureHoard_BC.png",
+              "sha256": "4d03e0ff830525f8638164c758a7a984002118abaa9a4094eee7da7b185c89a8"
+            },
+            "T_Tripo_DesertTreasureHoard_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertTreasureHoard_N.png",
+              "sha256": "59fda868604c371984626739b71fb01ebe769952a571cff133b340908c7df3f6"
+            },
+            "T_Tripo_DesertTreasureHoard_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertTreasureHoard_ORM.png",
+              "sha256": "7e889f8e937a1b37b709fe667edeeb47f917277c11a375603bbb1c7782486d93"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.858,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2984,
+              "verts": 1614
+            },
+            {
+              "tris": 995,
+              "verts": 591
+            }
+          ],
+          "export_kb": 338.8,
+          "seconds": 7.6,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 16:17:30",
+          "files": {
+            "SM_Tripo_DesertTreasureHoard_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertTreasureHoard_v001_validation_v001.json",
+              "sha256": "bc413d401884615538154defe27f11e5be980e429822b0c001c3574cd76e4e4b"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:22:21",
+          "files": {
+            "SM_Tripo_DesertTreasureHoard_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertTreasureHoard_v002_validation_v002.json",
+              "sha256": "2e0c1cd7819aeb07e34a016c9356c6b41672ba47870980ea533adc7ca3fd1a6a"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 16:17:39",
+          "files": {
+            "SM_Tripo_DesertTreasureHoard_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertTreasureHoard_v001_review_v001.png",
+              "sha256": "e076f22a7a32432ee07298c1d8ab72723f55fdae37d609f23a53b329e85a9e1f"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI审核)",
+            "note": "matches concept, IoU 0.858, validation 31/0",
+            "time": "2026-10-06 16:18:23"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:22:28",
+          "files": {
+            "SM_Tripo_DesertTreasureHoard_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_DesertTreasureHoard_v002_review_v002.png",
+              "sha256": "a09d656028a00bac8a3f6cf305004c8c9500a4aec5fd81c3350dc819315358cf"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI审核)",
+            "note": "LOD 裂缝修复重建：Tripo 源网格先焊接（1e-4）再减面并保留 UV 边界（bl_build_tripo.py）。五向审核图与上一版一致，贴图完整；焊接后 LOD1/LOD2 开放边长度回到 LOD0 水平。",
+            "time": "2026-10-06 21:24:09"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 16:18:24",
+          "files": {
+            "SM_Tripo_DesertTreasureHoard.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertTreasureHoard.glb",
+              "sha256": "291c7032f5d0bef76fd0004051880249408b8207d9b5024e3aa905684cddaa90"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertTreasureHoard.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:24:09",
+          "files": {
+            "SM_Tripo_DesertTreasureHoard.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertTreasureHoard.glb",
+              "sha256": "6b12ed2b1b58d656ac01067dd0e40ddf4241399a474370002e58c289fa9a2b06"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_DesertTreasureHoard.glb"
+        }
+      ]
+    }
+  }
+}

@@ -8,7 +8,8 @@ import { isWhiteboxMode } from '../world/WhiteboxMode';
  */
 
 // Whitebox debug controls and boss testing must never award progress to a real save.
-const STORAGE_KEY = isWhiteboxMode() ? 'gunflame.whitebox.meta.v1' : 'gunflame.meta.v1';
+// Resolved per access: module imports run before the lab script tags its URL.
+const storageKey = (): string => isWhiteboxMode() ? 'gunflame.whitebox.meta.v1' : 'gunflame.meta.v1';
 /** 默认解锁的英雄 */
 const DEFAULT_HEROES: readonly string[] = ['fox', 'falcon', 'bear'];
 /** 每级价格（魂晶），下标 = 当前等级 */
@@ -88,7 +89,7 @@ function sanitize(raw: unknown): MetaSave | null {
 
 function loadSave(): MetaSave {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(storageKey());
     if (!raw) return defaultSave();
     const parsed = sanitize(JSON.parse(raw));
     if (parsed) return parsed;
@@ -174,7 +175,7 @@ export class MetaProgress implements IMeta {
 
   persist(): void {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.save));
+      localStorage.setItem(storageKey(), JSON.stringify(this.save));
     } catch (err) {
       console.warn('[Meta] 保存存档失败', err);
     }

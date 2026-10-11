@@ -1,0 +1,36 @@
+{
+  "design": {
+    "id": "SK_Enemy_Archer",
+    "chapter": "desert",
+    "role": "archer",
+    "name": "沙葬弩尸",
+    "body": "humanoid",
+    "height_m": 1.75,
+    "brief": "An undead Tang-dynasty frontier garrison crossbowman (戍卒) risen from the desert sands: a lanky, slightly hunched sun-bleached skeleton wearing the broken remains of Chinese lamellar armour (札甲) — a few rows of rusty bronze lamellae on the chest and one shoulder — over tattered sand-coloured burial cloth, a torn conical bamboo rain hat (斗笠) with a red tassel on top, a yellow Taoist paper talisman (符箓) with red brush strokes stuck on its forehead and fluttering, teal-green ghost-fire glowing in both eye sockets and a small teal-green ghost flame inside the visible ribcage, strings of old square-holed copper coins and white paper burial money tied at the waist, a crimson waist sash with the faction's gold cloud-scroll (祥云) emblem, a cylindrical lacquered quiver (箭箙) of bone bolts on its back. Bony hands with a clearly separate bony thumb and four long separate bony fingers each. Bony feet with five separate toe bones, partly wrapped in cloth.",
+    "weapon": "a heavy Han-style Chinese crossbow with a bronze trigger mechanism (弩机) and a bone-and-wood stock carved with a dragon head"
+  },
+  "generation": {
+    "provider": "openai",
+    "endpoint": "images/edits",
+    "model": "gpt-image-2.5-sunburst",
+    "size": "2048x1024",
+    "quality": "high",
+    "background": "opaque",
+    "usage": {
+      "input_tokens": 2153,
+      "input_tokens_details": {
+        "image_tokens": 1458,
+        "text_tokens": 695
+      },
+      "output_tokens": 1180,
+      "output_tokens_details": {
+        "image_tokens": 1180,
+        "text_tokens": 0
+      },
+      "total_tokens": 3333
+    },
+    "request_id": "req_3dad4e843616426b859eced48ab48498",
+    "seconds": 32.2
+  },
+  "style_reference": "CN_SK_Enemy_Grunt_v001_sheet.png"
+}

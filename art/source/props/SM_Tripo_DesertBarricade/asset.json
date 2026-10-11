@@ -1,0 +1,430 @@
+{
+  "id": "SM_Tripo_DesertBarricade",
+  "display": "低矮石垛（V2）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:14:50",
+          "files": {
+            "BO_SM_Tripo_DesertBarricade_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertBarricade_v001.json",
+              "sha256": "99e31566bd4f4e66ec42a53e6cb7d08cd21a04859b4eec4574e4ea7275147c13"
+            },
+            "BO_SM_Tripo_DesertBarricade_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertBarricade_v001_views.json",
+              "sha256": "0564439d39e24d30950e36a636503c640eb016ffa2dae875c99591743cf120e4"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.v2.barricade"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -3.0,
+              0,
+              -0.6
+            ],
+            "max": [
+              3.0,
+              1.2,
+              0.6
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:15:13",
+          "files": {
+            "CN_SM_Tripo_DesertBarricade_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBarricade_v001_source.png",
+              "sha256": "f2a4e6962125ebe64f40c6a34873eede1c33328d55613b635210d08b9236ea82"
+            },
+            "CN_SM_Tripo_DesertBarricade_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBarricade_v001_front.png",
+              "sha256": "cdac9ae6697207a5f85765750d9e8b3ac94e5882457dd88b83560162f74be1d1"
+            },
+            "CN_SM_Tripo_DesertBarricade_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBarricade_v001_left.png",
+              "sha256": "94e3d975b5db884abe36f4a364c5b68981627f0c70ba36e52dff0920ef2531ed"
+            },
+            "CN_SM_Tripo_DesertBarricade_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBarricade_v001_back.png",
+              "sha256": "3b554bf20a223a89a4c8afd387d5efa210e2229714ea9b19cb83f59c106fdc52"
+            },
+            "CN_SM_Tripo_DesertBarricade_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBarricade_v001_right.png",
+              "sha256": "adc1335de475cd33ad7622454c11c017f0cdab96d4df24231ececa2fbea3a240"
+            },
+            "CN_SM_Tripo_DesertBarricade_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBarricade_v001_sheet.png",
+              "sha256": "7e07f49e6b949f13973ecdc5e904e3d41fe42870bc55ff0e0f86cf19ae6799d4"
+            },
+            "CN_SM_Tripo_DesertBarricade_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertBarricade_v001_prompt.txt",
+              "sha256": "3eaf0f832f8f881182ef4dd0e69d4baee370a41872486a15a89c3d63b397bc5f"
+            },
+            "CN_SM_Tripo_DesertBarricade_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertBarricade_v001_registration.json",
+              "sha256": "c1f5c8bc60bcb80ef662e17adfdff04e465d5977ff028986de39fcbb7293316a"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 325,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 325
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1505
+            },
+            "request_id": "req_1f5362495ebe44ed9e989562e4dc48b8",
+            "seconds": 21.2
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian desert temple fantasy. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (6m wide x 1.2m tall x 1.2m deep): A low waist-high desert market barricade 6m long, 1.2m tall, 1.2m deep: a row of stacked sandstone blocks with wooden supply crates and two tied cloth sacks set into it, flat walkable top. Warm ochre stone, honey wood, faded terracotta cloth. Chunky readable shapes, single solid connected piece.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right: FRONT view, LEFT side view, BACK view, RIGHT side view. Same scale and same\nground line in all four, each centred in its quarter with generous empty margin, never touching or overlapping.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "f2a4e6962125ebe64f40c6a34873eede1c33328d55613b635210d08b9236ea82",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.5107741420590582,
+              "offset": [
+                76,
+                466
+              ],
+              "size": [
+                359,
+                91
+              ],
+              "physical_height_m": 1.2,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.4737231680236861,
+              "offset": [
+                212,
+                466
+              ],
+              "size": [
+                87,
+                91
+              ],
+              "physical_height_m": 1.2,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.49420849420849416,
+              "offset": [
+                86,
+                466
+              ],
+              "size": [
+                340,
+                91
+              ],
+              "physical_height_m": 1.2,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.4737231680236861,
+              "offset": [
+                212,
+                466
+              ],
+              "size": [
+                87,
+                91
+              ],
+              "physical_height_m": 1.2,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI初审)",
+            "note": "四视图同一物体、地线一致，砂岩/赤陶/青绿配色与 V2 沙寺统一",
+            "time": "2026-10-06 10:16:54"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:48:26",
+          "files": {
+            "HP_SM_Tripo_DesertBarricade_v001_source.fbx": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertBarricade_v001_source.fbx",
+              "sha256": "bb11b0682ec6218ee1ccfb437ab370704d6cc99d93388c7e57aa41641566ff86"
+            },
+            "HP_SM_Tripo_DesertBarricade_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertBarricade_v001.glb",
+              "sha256": "bf5c9f972da2bb994c89a63287383e7f39ec9fac87e130c1924d153d93066bcf"
+            },
+            "HP_SM_Tripo_DesertBarricade_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertBarricade_v001_graph.json",
+              "sha256": "cd95731bfc976cbd45734312d78e04ff33b2d3a8c0e89a5c80e7136d32689477"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/wooden-crates-and-sacks-arranged-as-a-rustic-storage-wall-with-woven-t-8fa3413a-759c-4a90-bbba-2055960fdf73",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 2723,
+          "source_sha256": "bb11b0682ec6218ee1ccfb437ab370704d6cc99d93388c7e57aa41641566ff86"
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:48:36",
+          "files": {
+            "SM_Tripo_DesertBarricade_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertBarricade_v001.blend",
+              "sha256": "fbdcf3f51d5704b4f92036ae35c9f04290d60f58543a2644b3d8f1b5d244a164"
+            },
+            "SM_Tripo_DesertBarricade_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertBarricade_v001.glb",
+              "sha256": "16af0541988ee0947660e5a67d8c2a9a92dc2e32e458402556d205a3d158da59"
+            },
+            "SM_Tripo_DesertBarricade_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertBarricade_v001_metrics.json",
+              "sha256": "86fc3dbb5f00dfc67f9e810355a536ab5b6b6563140a77caf5a49e790267f0be"
+            },
+            "T_Tripo_DesertBarricade_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBarricade_BC.png",
+              "sha256": "3f10c7fda633c77d703304ce11f1df9f34d7e5ea025a564afcbb42220c6b65d0"
+            },
+            "T_Tripo_DesertBarricade_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBarricade_N.png",
+              "sha256": "09bab4776ee01dbbaa8bb5465e84e99fa4f9ea669814613984e5199a495cd845"
+            },
+            "T_Tripo_DesertBarricade_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBarricade_ORM.png",
+              "sha256": "de3f02983b49c7fe1404fa3055ce3aa52af1d991cb5b95451184d0a519cd0c31"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.837,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2723,
+              "verts": 4378
+            },
+            {
+              "tris": 995,
+              "verts": 2732
+            }
+          ],
+          "export_kb": 256.3,
+          "seconds": 9.5,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:20:20",
+          "files": {
+            "SM_Tripo_DesertBarricade_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertBarricade_v002.blend",
+              "sha256": "454fe2712399b5d44b697d7273040cf3ebf3de23384e7f24b3cff19b077d2cb1"
+            },
+            "SM_Tripo_DesertBarricade_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertBarricade_v002.glb",
+              "sha256": "d44668512b63ccd3f1a7badc25a21d673fe2a94623dc3c70fcaca354821781ca"
+            },
+            "SM_Tripo_DesertBarricade_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertBarricade_v002_metrics.json",
+              "sha256": "6518513cca12ff5be24c4301933800cd35a351679545ce21334820bb04c641fc"
+            },
+            "T_Tripo_DesertBarricade_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertBarricade_BC.png",
+              "sha256": "3f10c7fda633c77d703304ce11f1df9f34d7e5ea025a564afcbb42220c6b65d0"
+            },
+            "T_Tripo_DesertBarricade_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertBarricade_N.png",
+              "sha256": "09bab4776ee01dbbaa8bb5465e84e99fa4f9ea669814613984e5199a495cd845"
+            },
+            "T_Tripo_DesertBarricade_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertBarricade_ORM.png",
+              "sha256": "aad53590ae6d106b77b77249af7071c61ece912739258575d61468d98e19598e"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.837,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2723,
+              "verts": 1579
+            },
+            {
+              "tris": 994,
+              "verts": 684
+            }
+          ],
+          "export_kb": 256.3,
+          "seconds": 12.0,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:48:36",
+          "files": {
+            "SM_Tripo_DesertBarricade_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertBarricade_v001_validation_v001.json",
+              "sha256": "bd0c90acbcfc580169260e3c8b3bdd0cb647625d69b52f1ff5a8ab786fe3ba52"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:20:21",
+          "files": {
+            "SM_Tripo_DesertBarricade_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertBarricade_v002_validation_v002.json",
+              "sha256": "e63cd839820477c9dd21541e8c81a7b59f50e0836b5cb41f2cd30b80370242f3"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:48:44",
+          "files": {
+            "SM_Tripo_DesertBarricade_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertBarricade_v001_review_v001.png",
+              "sha256": "64174b92dcd637440511e02a2543e8c3e72d91bcecf9b843f32835322474b74a"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI初审)",
+            "note": "四视图与概念一致，校验全通过",
+            "time": "2026-10-06 10:49:51"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:20:29",
+          "files": {
+            "SM_Tripo_DesertBarricade_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_DesertBarricade_v002_review_v002.png",
+              "sha256": "6b712c9535f8561732fdc26bfb4b070b709603ae6d212d3cafaccc6b123279fb"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI审核)",
+            "note": "LOD 裂缝修复重建：Tripo 源网格先焊接（1e-4）再减面并保留 UV 边界（bl_build_tripo.py）。五向审核图与上一版一致，贴图完整；焊接后 LOD1/LOD2 开放边长度回到 LOD0 水平。",
+            "time": "2026-10-06 21:24:06"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:49:52",
+          "files": {
+            "SM_Tripo_DesertBarricade.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertBarricade.glb",
+              "sha256": "16af0541988ee0947660e5a67d8c2a9a92dc2e32e458402556d205a3d158da59"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertBarricade.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:24:06",
+          "files": {
+            "SM_Tripo_DesertBarricade.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertBarricade.glb",
+              "sha256": "d44668512b63ccd3f1a7badc25a21d673fe2a94623dc3c70fcaca354821781ca"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_DesertBarricade.glb"
+        }
+      ]
+    }
+  }
+}

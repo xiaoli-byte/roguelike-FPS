@@ -1,0 +1,180 @@
+{
+  "steps": {
+    "导入清理": 1.8,
+    "对齐": 1.4,
+    "低模与 UV": 12.2,
+    "投影着色": 12.1,
+    "烘焙": 10.3,
+    "LOD": 0.0,
+    "部件骨架蒙皮": 1.7,
+    "导出": 1.7
+  },
+  "highpoly": {
+    "faces_raw": 183417,
+    "faces": 97774,
+    "verts": 97770,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.822,
+    "iou_per_view": {
+      "front": 0.827,
+      "left": 0.816,
+      "back": 0.847,
+      "right": 0.795
+    },
+    "height_m": 0.6323,
+    "blockout_height_m": 0.992
+  },
+  "uv": {
+    "smart_islands": 288,
+    "charts": 44,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "smart",
+    "density_smart": 1.1712,
+    "density_merged": 1.0176
+  },
+  "projection": {
+    "uncovered_ratio": 0.2248
+  },
+  "bake_device": "OPTIX",
+  "emissive_id": {
+    "emissive_texel_ratio": 0.0467
+  },
+  "material_id": {
+    "metal_texel_ratio": 0.6926
+  },
+  "textures": {
+    "T_Weapon_Railgun_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Weapon_Railgun_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Weapon_Railgun_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "presentation": [
+    [
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ]
+  ],
+  "skin": {
+    "bones": [
+      "j_r",
+      "j_0",
+      "j_15",
+      "j_16"
+    ],
+    "per_lod": {
+      "SK_Weapon_Railgun_LOD0": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      },
+      "SK_Weapon_Railgun_LOD1": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      }
+    },
+    "mode": "parts",
+    "sigma_m": 0.0149,
+    "rigid": true,
+    "split": {
+      "SK_Weapon_Railgun_LOD0": {
+        "cut_edges": 147,
+        "cap_tris": 274,
+        "merged_fragment_faces": 84,
+        "tris": 11996
+      },
+      "SK_Weapon_Railgun_LOD1": {
+        "cut_edges": 66,
+        "cap_tris": 116,
+        "merged_fragment_faces": 29,
+        "tris": 2996
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SK_Weapon_Railgun_LOD0",
+      "tris": 11996,
+      "verts": 6004,
+      "uv_min": [
+        0.0032861875370144844,
+        0.0032862327061593533
+      ],
+      "uv_max": [
+        0.9967138767242432,
+        0.9921833276748657
+      ],
+      "uv_utilization": 0.543,
+      "bbox_min": [
+        -0.0508,
+        -0.2719,
+        -0.1238
+      ],
+      "bbox_max": [
+        0.051,
+        0.6324,
+        0.1463
+      ]
+    },
+    {
+      "name": "SK_Weapon_Railgun_LOD1",
+      "tris": 2996,
+      "verts": 1502,
+      "uv_min": [
+        0.003419172717258334,
+        0.003760758088901639
+      ],
+      "uv_max": [
+        0.9967138767242432,
+        0.9919212460517883
+      ],
+      "uv_utilization": 0.511,
+      "bbox_min": [
+        -0.051,
+        -0.2716,
+        -0.1236
+      ],
+      "bbox_max": [
+        0.0513,
+        0.6322,
+        0.1464
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/weapons/SK_Weapon_Railgun/04_export/SK_Weapon_Railgun_v001.glb",
+    "bytes": 564548
+  },
+  "blend": "art/source/weapons/SK_Weapon_Railgun/03_work/SK_Weapon_Railgun_v001.blend",
+  "total_seconds": 41.3,
+  "_seconds": 46.0
+}

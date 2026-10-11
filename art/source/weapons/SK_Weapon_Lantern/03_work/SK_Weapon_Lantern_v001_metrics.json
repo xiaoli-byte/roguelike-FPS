@@ -1,0 +1,180 @@
+{
+  "steps": {
+    "导入清理": 1.2,
+    "对齐": 0.6,
+    "低模与 UV": 5.2,
+    "投影着色": 12.8,
+    "烘焙": 9.5,
+    "LOD": 0.0,
+    "部件骨架蒙皮": 1.8,
+    "导出": 1.7
+  },
+  "highpoly": {
+    "faces_raw": 330342,
+    "faces": 182840,
+    "verts": 182826,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.858,
+    "iou_per_view": {
+      "front": 0.846,
+      "left": 0.87,
+      "back": 0.853,
+      "right": 0.871
+    },
+    "height_m": 0.3189,
+    "blockout_height_m": 0.3936
+  },
+  "uv": {
+    "smart_islands": 302,
+    "charts": 48,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 1.899,
+    "density_merged": 2.0498
+  },
+  "projection": {
+    "uncovered_ratio": 0.2663
+  },
+  "bake_device": "OPTIX",
+  "emissive_id": {
+    "emissive_texel_ratio": 0.025
+  },
+  "material_id": {
+    "metal_texel_ratio": 0.3637
+  },
+  "textures": {
+    "T_Weapon_Lantern_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Weapon_Lantern_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Weapon_Lantern_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "presentation": [
+    [
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ]
+  ],
+  "skin": {
+    "bones": [
+      "j_r",
+      "j_0",
+      "j_12",
+      "j_12_12"
+    ],
+    "per_lod": {
+      "SK_Weapon_Lantern_LOD0": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      },
+      "SK_Weapon_Lantern_LOD1": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      }
+    },
+    "mode": "parts",
+    "sigma_m": 0.0059,
+    "rigid": true,
+    "split": {
+      "SK_Weapon_Lantern_LOD0": {
+        "cut_edges": 51,
+        "cap_tris": 94,
+        "merged_fragment_faces": 0,
+        "tris": 11996
+      },
+      "SK_Weapon_Lantern_LOD1": {
+        "cut_edges": 28,
+        "cap_tris": 48,
+        "merged_fragment_faces": 0,
+        "tris": 2996
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SK_Weapon_Lantern_LOD0",
+      "tris": 11996,
+      "verts": 5988,
+      "uv_min": [
+        0.0024698965717107058,
+        0.0024698362685739994
+      ],
+      "uv_max": [
+        0.994137167930603,
+        0.9975301027297974
+      ],
+      "uv_utilization": 0.578,
+      "bbox_min": [
+        -0.0563,
+        -0.0773,
+        -0.1456
+      ],
+      "bbox_max": [
+        0.0564,
+        0.319,
+        0.0715
+      ]
+    },
+    {
+      "name": "SK_Weapon_Lantern_LOD1",
+      "tris": 2996,
+      "verts": 1488,
+      "uv_min": [
+        0.003504401072859764,
+        0.0033442401327192783
+      ],
+      "uv_max": [
+        0.9937151074409485,
+        0.9970223307609558
+      ],
+      "uv_utilization": 0.555,
+      "bbox_min": [
+        -0.0563,
+        -0.0771,
+        -0.1458
+      ],
+      "bbox_max": [
+        0.0563,
+        0.3191,
+        0.0713
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/weapons/SK_Weapon_Lantern/04_export/SK_Weapon_Lantern_v001.glb",
+    "bytes": 531116
+  },
+  "blend": "art/source/weapons/SK_Weapon_Lantern/03_work/SK_Weapon_Lantern_v001.blend",
+  "total_seconds": 33.0,
+  "_seconds": 36.2
+}

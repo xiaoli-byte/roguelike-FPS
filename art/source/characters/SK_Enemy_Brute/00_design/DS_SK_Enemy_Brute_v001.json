@@ -1,0 +1,36 @@
+{
+  "design": {
+    "id": "SK_Enemy_Brute",
+    "chapter": "desert",
+    "role": "brute",
+    "name": "沙铁卫",
+    "body": "humanoid",
+    "height_m": 2.3,
+    "brief": "The bandit faction's hulking shield enforcer: a huge inverted-triangle body with massive shoulders and arms, a barrel chest and comparatively short legs, a small head inside a bronze suanni lion-dog face helmet with a fanged grille and two glowing ember-orange eyes. Layered iron-and-bronze lamellar armour over sand-coloured cloth, giant riveted bronze pauldrons, the faction's crimson waist sash with the gold spiral emblem, a studded dark leather tasset skirt, thick quilted trousers, heavy iron-capped boots. Huge iron gauntlets with a clearly separate thumb and four thick separate armoured fingers.",
+    "weapon": "a tall round bronze tower shield embossed with a roaring lion face, and a short spiked iron mace"
+  },
+  "generation": {
+    "provider": "openai",
+    "endpoint": "images/edits",
+    "model": "gpt-image-2.5-sunburst",
+    "size": "2048x1024",
+    "quality": "high",
+    "background": "opaque",
+    "usage": {
+      "input_tokens": 1945,
+      "input_tokens_details": {
+        "image_tokens": 1458,
+        "text_tokens": 487
+      },
+      "output_tokens": 1180,
+      "output_tokens_details": {
+        "image_tokens": 1180,
+        "text_tokens": 0
+      },
+      "total_tokens": 3125
+    },
+    "request_id": "req_f5d86b1ab73a49919e1c4f653127b489",
+    "seconds": 32.7
+  },
+  "style_reference": "CN_SK_Enemy_Grunt_v001_sheet.png"
+}

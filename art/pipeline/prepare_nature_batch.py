@@ -27,7 +27,7 @@ from PIL import Image
 
 from lib import imaging
 from lib.config import CFG, ROOT, PipelineError
-from lib.state import AssetState, sha256
+from lib.state import AssetState, resolve_path, sha256
 
 ASSETS = ("SM_Env_DesertSandstone", "SM_Env_FrostPine", "SM_Env_InfernoBasalt")
 PANEL = (512, 1024)
@@ -89,8 +89,8 @@ def prepare_reference(asset_id: str) -> dict:
     return record
 
 
-def register_panels(sheet: Image.Image, views: dict, height: float) -> tuple[list[Image.Image], dict]:
-    figures = imaging.segment_figures(imaging.key_flat_background(sheet), 4)
+def register_panels(sheet: Image.Image, views: dict, height: float, key_tol: float = 28.0) -> tuple[list[Image.Image], dict]:
+    figures = imaging.segment_figures(imaging.key_flat_background(sheet, key_tol), 4)
     panels, registration = [], {}
     for view, figure, camera in zip(imaging.VIEW_ORDER, figures, views["views"]):
         mask = imaging.alpha_mask(figure)
@@ -121,7 +121,7 @@ def register_concept(item: dict, source_dir: Path) -> dict:
     bo = state.require("blockout")
     if bo.get("reference_mode") != "bounds_only":
         raise PipelineError(f"{asset_id}: prepare the numeric reference first")
-    source = Path(item["path"])
+    source = resolve_path(item["path"])
     if not source.is_absolute():
         source = source_dir / source
     source = source.resolve()

@@ -38,13 +38,18 @@ def ingest(asset_id: str) -> dict:
     if m.get("assetId") != asset_id:
         raise PipelineError(f"白模说明里的 assetId={m.get('assetId')} 与 {asset_id} 不符")
 
+    # 静态网格（挂件）默认摆展示姿态；注册表 presentation = false 可关掉
+    # （三轴等长的挂件，如火浣鼠的火球：并列时轴序是随机的，正面会转到侧面去）
+    present = spec.raw["presentation"] if "presentation" in spec.raw else (spec.kind == "static" and spec.blockout.get('source') != 'scene')
     # 几何没变、只是说明文件补了字段：在当前版本内修订，不作废下游（避免为元数据变更重出概念 / 高模）
     cur = st.current("blockout")
     if cur:
         cur_glb = st.file(cur, f"BO_{asset_id}_v{cur['version']:03d}.glb")
         cur_views = st.file(cur, f"BO_{asset_id}_v{cur['version']:03d}_views.json")
         scene_needs_upright = spec.blockout.get('source') == 'scene' and cur_views.exists() and json.loads(cur_views.read_text(encoding='utf-8')).get('presentation') is not None
-        if cur_glb.exists() and sha256(cur_glb) == sha256(glb) and not scene_needs_upright:
+        # 展示姿态的开关改了（注册表 presentation）：四视图要按新的摆法重渲染，不能走原地更新
+        presentation_changed = cur_views.exists() and (json.loads(cur_views.read_text(encoding='utf-8')).get('presentation') is not None) != bool(present)
+        if cur_glb.exists() and sha256(cur_glb) == sha256(glb) and not scene_needs_upright and not presentation_changed:
             cur_meta = st.file(cur, f"BO_{asset_id}_v{cur['version']:03d}.json")
             shutil.copyfile(meta, cur_meta)
             cur.setdefault("amendments", []).append({"time": now(), "reason": "几何不变，更新白模说明"})
@@ -60,9 +65,9 @@ def ingest(asset_id: str) -> dict:
     shutil.copyfile(meta, dst_meta)
 
     render_dir = spec.dir / "_tmp" / stem
-    # 静态网格（挂件）按「最长轴竖直、最薄方向朝正面相机」摆展示姿态，正面图就是信息量最大的侧影
+    # 静态网格（挂件）按「最长轴竖直、最薄方向朝正面相机」摆展示姿态，正面图就是信息量最大的侧影（present 见上）
     res = blender.run("bl_blockout.py", {"blockout_glb": str(dst_glb), "out_dir": str(render_dir), "panel": list(PANEL),
-                                         "presentation": (spec.kind == "static" and spec.blockout.get('source') != 'scene') or bool(spec.raw.get("presentation"))},
+                                         "presentation": bool(present)},
                       render_dir, "blockout")
     views_json = out / f"{stem}_views.json"
     views_json.write_text(json.dumps({"panel": list(PANEL), "views": res["views"], "bbox_min": res["bbox_min"],

@@ -1,0 +1,558 @@
+{
+  "id": "SM_Tripo_DesertStairs",
+  "display": "高台石阶（V2）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:16:06",
+          "files": {
+            "BO_SM_Tripo_DesertStairs_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertStairs_v001.json",
+              "sha256": "cb3d2f6ea1b2b858d3c7591d228a9b6a4f45ea0a12a2f0567cea443b41532ec1"
+            },
+            "BO_SM_Tripo_DesertStairs_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertStairs_v001_views.json",
+              "sha256": "85be5034e4c1bfbd7693564767968e0a0c71f55fbc30fd8c2aa75a88429b43d6"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.v2.stairs"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.0,
+              0,
+              -2.3
+            ],
+            "max": [
+              2.0,
+              3.0,
+              2.3
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:16:32",
+          "files": {
+            "CN_SM_Tripo_DesertStairs_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertStairs_v001_source.png",
+              "sha256": "8a784da5b2854db0e72456a7c8e2fb1bcb4c446e458185c8e74ebe48bfa50b53"
+            },
+            "CN_SM_Tripo_DesertStairs_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertStairs_v001_front.png",
+              "sha256": "0598e8f045c82108655a809e1d84c1cdf95e75db2663e5053d96645d705cdd44"
+            },
+            "CN_SM_Tripo_DesertStairs_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertStairs_v001_left.png",
+              "sha256": "2497b907754001c2b79e5dad56af83950eba01b3bf06db54e2eb5dc93ee0dd20"
+            },
+            "CN_SM_Tripo_DesertStairs_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertStairs_v001_back.png",
+              "sha256": "f6bad6692e00faf5d45e42cf0af6adf3128d2b0c70d876af496c88caf9eacb57"
+            },
+            "CN_SM_Tripo_DesertStairs_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertStairs_v001_right.png",
+              "sha256": "8ef43a773789807fdba7556ddcb8cb8a39da23cc9eb78623c39c46d2db5f8276"
+            },
+            "CN_SM_Tripo_DesertStairs_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertStairs_v001_sheet.png",
+              "sha256": "916dee3e8e191ec76def6d893a50045dad142530d9f431cee0552383cf576e77"
+            },
+            "CN_SM_Tripo_DesertStairs_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertStairs_v001_prompt.txt",
+              "sha256": "ae6fe569c8f7b0cdd7a679506cb2879b208ab2d7261e5bbfef1cc5b6742665e1"
+            },
+            "CN_SM_Tripo_DesertStairs_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertStairs_v001_registration.json",
+              "sha256": "8443318ae2bece361f06b3a117ee0aca4cece71c22a9c9b48b5934c14a7b1006"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 307,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 307
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1487
+            },
+            "request_id": "req_f648a220b5184bc8aadd56445b5c4e6d",
+            "seconds": 23.7
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian desert temple fantasy. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (4m wide x 3m tall x 4.6m deep): A straight flight of wide sandstone temple steps 4m wide rising 3m over a 4.6m run, with two low chunky side cheek walls capped by small lion-head finials. About eight even steps. Warm ochre stone, broad painted planes, sparse worn edges.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right: FRONT view, LEFT side view, BACK view, RIGHT side view. Same scale and same\nground line in all four, each centred in its quarter with generous empty margin, never touching or overlapping.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "8a784da5b2854db0e72456a7c8e2fb1bcb4c446e458185c8e74ebe48bfa50b53",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.7472096390043432,
+              "offset": [
+                81,
+                363
+              ],
+              "size": [
+                350,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7509739193015943,
+              "offset": [
+                90,
+                363
+              ],
+              "size": [
+                332,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7472096390043432,
+              "offset": [
+                86,
+                363
+              ],
+              "size": [
+                340,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7509739193015943,
+              "offset": [
+                89,
+                363
+              ],
+              "size": [
+                333,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "rejected",
+            "by": "Claude (AI初审)",
+            "note": "背视图仍画出台阶，应为台阶块背面的实心立面；多视图不一致会误导 Tripo 重建",
+            "time": "2026-10-06 10:17:34"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 10:18:03",
+          "files": {
+            "CN_SM_Tripo_DesertStairs_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertStairs_v002_source.png",
+              "sha256": "5640c34e17410fc2f85a5193037dd49b0c79e9f86f5659eff980ce560fbad463"
+            },
+            "CN_SM_Tripo_DesertStairs_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertStairs_v002_front.png",
+              "sha256": "e3418db385071fd089a2d0d63f24d13eb08e67c39c0a6b882c93b0ad913b763e"
+            },
+            "CN_SM_Tripo_DesertStairs_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertStairs_v002_left.png",
+              "sha256": "d4fd6725dbc2bd7e81d700c52106e8c153344d5364ad6d1ed756e5435529b854"
+            },
+            "CN_SM_Tripo_DesertStairs_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertStairs_v002_back.png",
+              "sha256": "83655cc6d80076d0218f99374d8053b99a3c0b2dcdd4eb3b753f3e8aacf23397"
+            },
+            "CN_SM_Tripo_DesertStairs_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertStairs_v002_right.png",
+              "sha256": "7edfad12e91bb579b7df1db8b71e2572d6922dce79cf9f7f375d335500e45e10"
+            },
+            "CN_SM_Tripo_DesertStairs_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertStairs_v002_sheet.png",
+              "sha256": "0425ec89d3bfa909d10912dd9c90bff980c0feb5181707390dfa9b28a29e1494"
+            },
+            "CN_SM_Tripo_DesertStairs_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertStairs_v002_prompt.txt",
+              "sha256": "de68c6d18fa07fc7b89de5e43900961cc362389a9897795aff7dcd7045a333f2"
+            },
+            "CN_SM_Tripo_DesertStairs_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertStairs_v002_registration.json",
+              "sha256": "18e154a53715cecc2d046390910c4612ee100041922ee412add1906d5856e5c4"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 367,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 367
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1547
+            },
+            "request_id": "req_46beddfe4e254135a083e1d6dd2cb6e9",
+            "seconds": 23.5
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian desert temple fantasy. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (4m wide x 3m tall x 4.6m deep): A straight flight of wide sandstone temple steps 4m wide rising 3m over a 4.6m run, with two low chunky side cheek walls capped by small lion-head finials. About eight even steps. Warm ochre stone, broad painted planes, sparse worn edges. The steps rise from FRONT (low) to BACK (high): the FRONT view shows the steps face-on, both side views show the diagonal stair profile, and the BACK view shows only the solid flat vertical back face of the stair block at full 3m height (no steps visible from behind).\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right: FRONT view, LEFT side view, BACK view, RIGHT side view. Same scale and same\nground line in all four, each centred in its quarter with generous empty margin, never touching or overlapping.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "5640c34e17410fc2f85a5193037dd49b0c79e9f86f5659eff980ce560fbad463",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.7528703180877094,
+              "offset": [
+                77,
+                363
+              ],
+              "size": [
+                358,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7490870501576204,
+              "offset": [
+                101,
+                363
+              ],
+              "size": [
+                310,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7624978157614652,
+              "offset": [
+                98,
+                363
+              ],
+              "size": [
+                316,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7490870501576204,
+              "offset": [
+                100,
+                363
+              ],
+              "size": [
+                312,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI初审)",
+            "note": "v002：正面台阶、侧面斜剖面、背面实心立面，四视图一致",
+            "time": "2026-10-06 10:19:10"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 11:02:46",
+          "files": {
+            "HP_SM_Tripo_DesertStairs_v001_source.fbx": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertStairs_v001_source.fbx",
+              "sha256": "a0b5232cc288110fb5caf310c1084291008fdd86878c595690cd7f43b459a7df"
+            },
+            "HP_SM_Tripo_DesertStairs_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertStairs_v001.glb",
+              "sha256": "0e11448da49476dc5b60c34883ed628e8a854cb5d53ca173ecf66d1481c7d02a"
+            },
+            "HP_SM_Tripo_DesertStairs_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertStairs_v001_graph.json",
+              "sha256": "b58d19b0fadf463411b3c5233ec2356495afa91637e4cb0cd02711fca7e5f7d4"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/golden-stone-staircase-with-carved-lion-statues-on-the-posts-architec-f79995ea-7584-4b47-a4a3-3ec17630ce06",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 3031,
+          "source_sha256": "a0b5232cc288110fb5caf310c1084291008fdd86878c595690cd7f43b459a7df"
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 11:03:03",
+          "files": {
+            "SM_Tripo_DesertStairs_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertStairs_v001.blend",
+              "sha256": "47b32ea0fdd4af3192de8827399a79ce56d09be0cba4f477b5fcf3e83ff7c894"
+            },
+            "SM_Tripo_DesertStairs_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertStairs_v001.glb",
+              "sha256": "4c2501822b6ea47bc814e20870296ebda8f2423b0dc557ef9babfaa9d84af2e0"
+            },
+            "SM_Tripo_DesertStairs_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertStairs_v001_metrics.json",
+              "sha256": "b59c8c88086f04976bee6846f01e4c3b9a9f205b33a03f9243eb347b7bb38244"
+            },
+            "T_Tripo_DesertStairs_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertStairs_BC.png",
+              "sha256": "8d779d1402ba36ccfcdb2ac609aa0ece442bb5076b5908f10415233af276c85f"
+            },
+            "T_Tripo_DesertStairs_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertStairs_N.png",
+              "sha256": "329d712d0a91964448eae1009f70f2de18447deb93bc401c89c61419706efd31"
+            },
+            "T_Tripo_DesertStairs_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertStairs_ORM.png",
+              "sha256": "775ae3d9728c29a14b60a1fd3f284c28cf917568313a28155e6bb8c76e67884a"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.854,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2985,
+              "verts": 2295
+            },
+            {
+              "tris": 995,
+              "verts": 1111
+            }
+          ],
+          "export_kb": 179.1,
+          "seconds": 15.6,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:21:01",
+          "files": {
+            "SM_Tripo_DesertStairs_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertStairs_v002.blend",
+              "sha256": "76d9ecedf3bc66b022ca62891a8e824da5c2fbed81e436b2ac2c6c994ad2697f"
+            },
+            "SM_Tripo_DesertStairs_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertStairs_v002.glb",
+              "sha256": "d854ead8ede0edb5b7309a89e141cf711406013d4536bc7779408ffbd750c4a4"
+            },
+            "SM_Tripo_DesertStairs_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertStairs_v002_metrics.json",
+              "sha256": "b3eea230623b648da5522418d0f9d1e9cd9e27c83b9b584c7a1631353cf03d84"
+            },
+            "T_Tripo_DesertStairs_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertStairs_BC.png",
+              "sha256": "8d779d1402ba36ccfcdb2ac609aa0ece442bb5076b5908f10415233af276c85f"
+            },
+            "T_Tripo_DesertStairs_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertStairs_N.png",
+              "sha256": "329d712d0a91964448eae1009f70f2de18447deb93bc401c89c61419706efd31"
+            },
+            "T_Tripo_DesertStairs_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertStairs_ORM.png",
+              "sha256": "1dd96de0f0718c48c4fa59365087b33c518f0d8ed5158ffcf12880bf5f6b2c61"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.854,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2985,
+              "verts": 1636
+            },
+            {
+              "tris": 995,
+              "verts": 594
+            }
+          ],
+          "export_kb": 177.3,
+          "seconds": 10.7,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 11:03:04",
+          "files": {
+            "SM_Tripo_DesertStairs_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertStairs_v001_validation_v001.json",
+              "sha256": "20ee22989392368cf7da99eb9e543dd31dc4c5dcf14aaf9d178e873ee21751ca"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:21:01",
+          "files": {
+            "SM_Tripo_DesertStairs_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertStairs_v002_validation_v002.json",
+              "sha256": "df60c63f24043bb38043f1d1b4da7889d79e287c9ab468ffef63f88aec3fd10c"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 11:03:16",
+          "files": {
+            "SM_Tripo_DesertStairs_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertStairs_v001_review_v001.png",
+              "sha256": "a524d1dbaa0d2b001d2eeb6e77ebf1db2a8448f0f99970fbc2c9d850c13906ea"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI初审)",
+            "note": "IoU 0.85；Tripo 台阶跑深较短，运行时沿跑深方向适配坡道",
+            "time": "2026-10-06 11:03:26"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:21:09",
+          "files": {
+            "SM_Tripo_DesertStairs_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_DesertStairs_v002_review_v002.png",
+              "sha256": "939634285d6e6e715a13ef953a303fe351b6724171f9647bef047670cfbde09d"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI审核)",
+            "note": "LOD 裂缝修复重建：Tripo 源网格先焊接（1e-4）再减面并保留 UV 边界（bl_build_tripo.py）。五向审核图与上一版一致，贴图完整；焊接后 LOD1/LOD2 开放边长度回到 LOD0 水平。",
+            "time": "2026-10-06 21:24:07"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 11:03:26",
+          "files": {
+            "SM_Tripo_DesertStairs.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertStairs.glb",
+              "sha256": "4c2501822b6ea47bc814e20870296ebda8f2423b0dc557ef9babfaa9d84af2e0"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertStairs.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:24:07",
+          "files": {
+            "SM_Tripo_DesertStairs.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertStairs.glb",
+              "sha256": "d854ead8ede0edb5b7309a89e141cf711406013d4536bc7779408ffbd750c4a4"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_DesertStairs.glb"
+        }
+      ]
+    }
+  }
+}

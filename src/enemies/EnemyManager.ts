@@ -10,6 +10,7 @@ import type { EnemyBase } from './EnemyBase';
 import { getEnemyEntry } from './Registry';
 import { attackDirector } from './AttackTokens';
 import { isAffixId, rollAffix } from './Affixes';
+import { BlobShadows } from './BlobShadows';
 
 const _c = new THREE.Vector3();
 const _delta = new THREE.Vector3();
@@ -45,8 +46,12 @@ export class EnemyManager implements IEnemyManager {
   /** 分离修正累积（x, z 交错存放），按需扩容 */
   private push = new Float32Array(64);
   private errorsLogged = 0;
+  /** Ground discs stand in for enemy sun shadows (see BlobShadows). */
+  private readonly blobs: BlobShadows;
 
-  constructor(readonly ctx: GameContext) {}
+  constructor(readonly ctx: GameContext) {
+    this.blobs = new BlobShadows(ctx);
+  }
 
   /** 当前所有敌人（含播放死亡动画中的） */
   get list(): readonly IEnemy[] {
@@ -83,6 +88,7 @@ export class EnemyManager implements IEnemyManager {
     try {
       e = entry.factory(this.ctx, o);
       e.init();
+      this.blobs.adopt(e);
     } catch (err) {
       console.error(`[EnemyManager] 生成敌人 "${defId}" 失败`, err);
       return null;
@@ -113,11 +119,13 @@ export class EnemyManager implements IEnemyManager {
       else list[w++] = e;
     }
     list.length = w;
+    this.blobs.update(list);
   }
 
   clear(): void {
     for (const e of this.enemies) this.disposeEnemy(e);
     this.enemies.length = 0;
+    this.blobs.update(this.enemies);
     attackDirector.reset();
   }
 

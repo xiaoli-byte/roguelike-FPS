@@ -139,7 +139,7 @@ export class Combat implements ICombat, ReactionHost {
     if (!Number.isFinite(raw) || raw < 0) raw = 0;
 
     // 3) 分层结算（护盾 → 护甲 → 生命）
-    const lo = applyLayers(stats, enemy, raw, req.element, this.layerOut);
+    const lo = applyLayers(stats, enemy, raw, req.element, this.layerOut, req.bypassShield === true);
     const dealt = lo.dealt;
     const effective = lo.effective;
     const firstLayer = lo.firstLayer;

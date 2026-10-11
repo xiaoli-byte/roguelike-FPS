@@ -70,6 +70,7 @@ export class WhiteboxWalker {
   private previous = new THREE.Vector3();
   private bestDistance = Infinity;
   private stalled = 0;
+  private holding = false;
 
   constructor(private readonly ctx: GameContext) {}
 
@@ -111,11 +112,11 @@ export class WhiteboxWalker {
     if (distance < this.bestDistance - .06) { this.bestDistance = distance; this.stalled = 0; } else this.stalled += dt;
     if (this.stalled > 3) { this.finish('failed', `在 (${p.x.toFixed(1)}, ${p.z.toFixed(1)}) 停滞，检查掩体拐角与敌人阻挡。`); return; }
     ctx.player.yaw = Math.atan2(-dx, -dz); ctx.player.pitch = 0;
-    ctx.input.simulateKey('KeyW', true);
+    ctx.input.simulateKey('KeyW', true); this.holding = true;
   }
 
   stop(): void {
-    this.ctx.input.simulateKey('KeyW', false);
+    this.release();
     if (this.report.state === 'walking') this.finish('stopped', '步行已停止，当前位置保留。');
   }
 
@@ -124,8 +125,14 @@ export class WhiteboxWalker {
     this.report = { state: 'idle', targetId: '', targetLabel: '', elapsed: 0, distance: 0, remaining: 0, message: '' };
   }
 
+  /** Let go of W only if the walker is the one holding it, so a real W press is never cancelled. */
+  private release(): void {
+    if (this.holding) this.ctx.input.simulateKey('KeyW', false);
+    this.holding = false;
+  }
+
   private finish(state: 'passed' | 'failed' | 'stopped', message: string): void {
-    this.ctx.input.simulateKey('KeyW', false);
+    this.release();
     this.report.state = state; this.report.message = message;
   }
 }

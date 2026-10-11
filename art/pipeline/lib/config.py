@@ -88,8 +88,15 @@ class Config:
     def section(self, name: str) -> dict:
         return self.data[name]
 
+    def reload_registry(self) -> None:
+        self.registry = tomllib.loads((PIPELINE_DIR / "registry.toml").read_text(encoding="utf-8")).get("assets", {})
+
     def asset(self, asset_id: str) -> AssetSpec:
         raw = self.registry.get(asset_id)
+        if raw is None:
+            # 常驻进程（白模接收端）启动后登记表可能又加了资产：没找到就重读一次，不用为新资产重启接收端
+            self.reload_registry()
+            raw = self.registry.get(asset_id)
         if raw is None:
             raise PipelineError(f"registry.toml 里没有登记 {asset_id}")
         if not ASSET_ID.match(asset_id):

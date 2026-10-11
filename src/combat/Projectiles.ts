@@ -8,14 +8,26 @@
  *  - 敌方投射物 vs 玩家：线段到玩家胶囊（脚底到头顶）的距离 ≤ 玩家半径 + 投射物半径。冲刺无敌时穿过。
  *  - 有爆炸半径的投射物命中时只结算爆炸伤害（不再额外结算直击伤害；爆心放在被命中敌人的表面，直击目标吃满伤害）。
  *
+ *  - 敌方投射物 vs 挡弹圆盘（setWard，魔刀千刃「碎刃屏障」）：运动线段穿过圆盘即被销毁，先于玩家判定；
+ *    被挡下时不触发 onImpact（避免落地类效果在盾面上生效），而是回调可选的 onBlocked（见 BlockableProjectileSpec），
+ *    让投射物自带的外观（如冻鲛人的飞矛）当场碎掉。
+ *
  * onImpact(point 副本, hitEnemy) 在碰到敌人（穿透时每个敌人一次）、玩家、墙体 / 地面时触发；
  * 没有伤害也没有爆炸的「载体」投射物（手雷、信标）到期时也会在原地触发一次（hitEnemy = null）。
  */
 import * as THREE from 'three';
-import type { DamageRequest, Element, GameContext, IEnemy, IProjectileSystem, ProjectileSpec, ProjectileVisual } from '../core/types';
+import type { DamageRequest, Element, GameContext, IEnemy, IProjectileSystem, ProjectileSpec, ProjectileVisual, ProjectileWard } from '../core/types';
 import type { StaticBox, WorldRayHit } from '../world/Collision';
 import { clamp, clamp01, distSqPointSegment, raySphere, rayVerticalCapsule } from '../core/math';
 import { PROJECTILE_VISUALS, ProjectileView, tailOffset, Trail, viewSize } from './ProjectileVisuals';
+
+/**
+ * ProjectileSpec 的可选扩展（不改 core/types）：敌方投射物被挡弹圆盘销毁时回调一次（point 为穿过盾面的位置副本）。
+ * 用法：const spec: ProjectileSpec & BlockableProjectileSpec = { ..., onBlocked }; ctx.projectiles.spawn(spec);
+ */
+export interface BlockableProjectileSpec {
+  onBlocked?: (point: THREE.Vector3) => void;
+}
 import { blastPlayer, lineClear } from './Blast';
 
 // ───────────── 参数 ─────────────
@@ -92,6 +104,7 @@ interface Projectile {
   explodeOnExpire: boolean;
   sourceEnemy: IEnemy | null;
   onImpact: ((point: THREE.Vector3, hitEnemy: IEnemy | null) => void) | null;
+  onBlocked: ((point: THREE.Vector3) => void) | null;
   readonly hitSet: Set<IEnemy>;
   homingTarget: IEnemy | null;
   retargetTimer: number;
@@ -108,7 +121,7 @@ function createProjectile(): Projectile {
     damage: null, enemyDamage: 0, element: 'none', explosionRadius: 0, selfDamage: 0,
     pierce: 0, bounces: 0, canRoll: false, homing: 0,
     color: 0xffffff, visual: 'orb', size: 1, explodeOnExpire: false,
-    sourceEnemy: null, onImpact: null, hitSet: new Set(),
+    sourceEnemy: null, onImpact: null, onBlocked: null, hitSet: new Set(),
     homingTarget: null, retargetTimer: 0, smokeTimer: 0,
     view: null, trail: null,
   };
@@ -174,9 +187,14 @@ export class ProjectileSystem implements IProjectileSystem {
   private readonly dyingTrails: Trail[] = [];
   private live = 0;
   private floorY = 0;
+  private ward: ProjectileWard | null = null;
 
   constructor(readonly ctx: GameContext) {
     this.group.name = 'projectiles';
+  }
+
+  setWard(ward: ProjectileWard | null): void {
+    this.ward = ward;
   }
 
   get count(): number {
@@ -253,6 +271,7 @@ export class ProjectileSystem implements IProjectileSystem {
     p.explodeOnExpire = spec.explodeOnExpire ?? p.explosionRadius > 0;
     p.sourceEnemy = spec.sourceEnemy ?? null;
     p.onImpact = spec.onImpact ?? null;
+    p.onBlocked = (spec as ProjectileSpec & BlockableProjectileSpec).onBlocked ?? null;
     p.hitSet.clear();
     p.homingTarget = null;
     p.retargetTimer = 0;
@@ -268,7 +287,7 @@ export class ProjectileSystem implements IProjectileSystem {
     // 敌方弩矢也带一条细拖尾：飞行方向一眼可读，方便侧移躲避
     const hostileArrow = p.owner === 'enemy' && (p.visual === 'arrow' || p.visual === 'bolt');
     if (
-      p.visual === 'rocket' || p.visual === 'grenade' || p.visual === 'blade' || hostileArrow
+      p.visual === 'rocket' || p.visual === 'grenade' || hostileArrow
       || (p.homing > 0 && p.visual !== 'arrow')
     ) {
       const trail = this.acquireTrail();
@@ -282,10 +301,6 @@ export class ProjectileSystem implements IProjectileSystem {
       } else if (p.visual === 'grenade') {
         width = 0.06 * p.size;
         spacing = 0.18;
-      } else if (p.visual === 'blade') {
-        // 魔刀千刃飞刃：细拖尾
-        width = 0.35 * p.size;
-        spacing = 0.16;
       } else if (hostileArrow) {
         width = p.visual === 'arrow' ? 0.05 * p.size : 0.7 * p.size;
         spacing = 0.15;
@@ -393,6 +408,9 @@ export class ProjectileSystem implements IProjectileSystem {
             remaining -= adv;
             continue;
           }
+        } else if (this.ward && this.crossesWard(_origin, _dir, segLen)) {
+          this.onWardBlock(p);
+          return;
         } else if (this.touchesPlayer(p, _origin, _dir, segLen)) {
           this.onPlayerContact(p);
           return;
@@ -578,7 +596,7 @@ export class ProjectileSystem implements IProjectileSystem {
   // ───────────── 命中检测 ─────────────
 
   /** 玩家投射物沿 origin + dir × [0, maxDist] 扫掠敌人，返回最近的命中 */
-  private sweepEnemies(p: Projectile, origin: THREE.Vector3, dir: THREE.Vector3, maxDist: number): SweepHit | null {
+  private sweepEnemies(p: Pick<Projectile,'radius'|'hitSet'>, origin: THREE.Vector3, dir: THREE.Vector3, maxDist: number): SweepHit | null {
     if (maxDist <= 1e-6) return null;
     const exclude = p.hitSet.size > 0 ? p.hitSet : undefined;
     let found = false;
@@ -664,6 +682,34 @@ export class ProjectileSystem implements IProjectileSystem {
 
   // ───────────── 命中结算 ─────────────
 
+  /** 这一段（origin + dir × [0, segLen]）是否穿过挡弹圆盘；穿过点写入 _hitPoint */
+  private crossesWard(origin: THREE.Vector3, dir: THREE.Vector3, segLen: number): boolean {
+    const w = this.ward!;
+    const dn = dir.dot(w.normal);
+    if (Math.abs(dn) < 1e-5) return false;
+    const t = _tmp.subVectors(w.center, origin).dot(w.normal) / dn;
+    if (t < 0 || t > segLen) return false;
+    _hitPoint.copy(origin).addScaledVector(dir, t);
+    return _hitPoint.distanceToSquared(w.center) <= w.radius * w.radius;
+  }
+
+  private onWardBlock(p: Projectile): void {
+    const ward = this.ward!;
+    _pt.copy(_hitPoint);
+    // 敌方爆炸弹在盾面引爆（爆炸伤害仍按到玩家的距离结算）
+    if (p.explosionRadius > 0) this.detonate(p, _pt);
+    ward.onBlock(_pt, p.enemyDamage);
+    const cb = p.onBlocked;
+    if (cb) {
+      try {
+        cb(_pt.clone());
+      } catch (err) {
+        console.error('[Projectiles] onBlocked threw', err);
+      }
+    }
+    this.kill(p, _pt);
+  }
+
   private onEnemyContact(p: Projectile, hit: SweepHit): void {
     const enemy = hit.enemy!;
     _pt.copy(hit.point);
@@ -673,7 +719,7 @@ export class ProjectileSystem implements IProjectileSystem {
       _pt.addScaledVector(_dir, Math.min(p.radius, WALL_PAD_MAX));
       this.detonate(p, _pt);
       this.impactCallback(p, _pt, enemy);
-      this.kill(p);
+      this.kill(p, hit.point);
       return;
     }
     if (p.damage) {
@@ -692,7 +738,7 @@ export class ProjectileSystem implements IProjectileSystem {
       if (p.homingTarget === enemy) p.homingTarget = null;
       return;
     }
-    this.kill(p);
+    this.kill(p, hit.point);
   }
 
   private onPlayerContact(p: Projectile): void {
@@ -704,7 +750,7 @@ export class ProjectileSystem implements IProjectileSystem {
       this.ctx.fx.burst(at, p.color, 8, 3, 0.3, 0.08 * clamp(p.radius / 0.2, 0.7, 2), 4);
     }
     this.impactCallback(p, at, null);
-    this.kill(p);
+    this.kill(p, at);
   }
 
   private onWallContact(p: Projectile, point: THREE.Vector3, normal: THREE.Vector3): void {
@@ -718,7 +764,7 @@ export class ProjectileSystem implements IProjectileSystem {
       this.ctx.fx.impact(point, normal, p.color, s * clamp(p.radius / 0.12, 0.6, 2));
     }
     this.impactCallback(p, _pt, null);
-    this.kill(p);
+    this.kill(p, _pt);
   }
 
   private expire(p: Projectile): void {
@@ -771,7 +817,7 @@ export class ProjectileSystem implements IProjectileSystem {
 
   // ───────────── 回收 ─────────────
 
-  private kill(p: Projectile): void {
+  private kill(p: Projectile, _at = p.pos): void {
     if (!p.active) return;
     p.active = false;
     this.live--;
@@ -788,6 +834,7 @@ export class ProjectileSystem implements IProjectileSystem {
     p.damage = null;
     p.sourceEnemy = null;
     p.onImpact = null;
+    p.onBlocked = null;
     p.homingTarget = null;
     p.hitSet.clear();
   }

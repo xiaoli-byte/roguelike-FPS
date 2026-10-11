@@ -37,17 +37,16 @@
 - 3 章：**荒漠遗迹（desert）→ 霜雪古寺（frost）→ 熔火深渊（inferno）**。
 - 每章 5 关：第 0–3 关为普通关，第 4 关是 **Boss**。
 - 关卡类型 `StageType`：
-  - `combat` 战斗：3–4 波敌人，清完出宝箱 + 出口传送门。
-  - `elite` 精英：更少但更强的敌人（含 2–3 个精英），奖励更好。
-  - `treasure` 宝藏：没有敌人，直接给宝箱。
-  - `shop` 商店：没有敌人，有商店摊位与强化台。
+  - `combat` 战斗：沿主路房间推进，清除终点守卫后出现成长宝箱与主线出口。
+  - `elite` / `treasure` / `shop`：保留给检视页与旧流程兼容；正常主线不再抽取整关分支。
   - `boss` 首领。
-- 清关后出现 **1–3 个出口传送门**，每个门显示「下一关类型 + 奖励类型」（类似枪火重生的分支选择）。
+- 清关后只有 **一个主线出口传送门**，按章节顺序进入下一关。门牌和交互提示不预告具体奖励，也不展示下一关的支路物资与攻略。
+- 可选探索留在当前关卡：主路房间自动触发遭遇；已有侧路房间的隐秘入口在 12 米内且可见时才显露，按 F 调查后才启用支路守卫或物资发现。守卫房需清场才解锁奖励；可跳过，也可在主线终战后回头完成，再沿原路返回。不改变章节序号，不重复结算清关。
+- 行旅图不提前标出未发现的支路遭遇、未显露的物资或隐藏内容总数；进场路线提示只说明主路与调查方式，不提前给出奖励攻略。
 - 奖励 `RewardType`：`scroll`（三选一秘卷）、`weapon`（一把武器）、`coins`（一堆金币）、`heal`（回复 50% 生命并 +10 生命上限）、`upgrade`（免费强化当前武器一级）。
 - 规划规则（`RunPlanner`）：
-  - 每章第 0 关固定 `combat` + `scroll`。
-  - 第 1–3 关的选项从 combat / elite / treasure / shop 中抽取，每章至少提供一次 shop 选项（通常在第 2 或第 3 关）；treasure 每章最多一次。
-  - 第 3 关清关后只有一个门：通往 Boss。
+  - 每章第 0–3 关固定 `combat` + `scroll`；第 3 关后进入 Boss。
+  - 武器、秘卷等额外收益通过关内探索发现；已有首领前安全区提供商店、强化和战备补给。
   - Boss 清关：奖励宝箱（`weapon`，第一章 Boss 保底史诗、第二章 Boss 保底传说）+ 回满生命，出口通往下一章第 0 关；最终 Boss 清关后 4 秒判定胜利（`ctx.game.endRun(true)`）。
 - 难度倍率 `difficultyFor(node) = 1 + chapter × 0.8 + index × 0.12`（第一章 1.00–1.36，第二章 1.80–2.16，第三章 2.60–2.96）。
   敌人生命 × 难度；敌人伤害 × `1 + (难度 − 1) × 0.55`（EnemyBase 已实现）。
@@ -151,11 +150,11 @@
 | `trinity` | 三才转轮 | 手枪 | 半自动 + 元素轮转 | 伤害 42、射速 3、弹匣 6、暴击 2.4；弹巢按 灼烧 → 雷殛 → 蚀化 轮转出膛（各 45%），换弹从灼烧重来；归墟引擎 |
 | `railgun` | 贯虹灵炮 | 蓄能炮 | 蓄力 | 按住蓄力 0.9 秒、松开发射，满蓄 155（未满 20%–100%，按进度平方）；满蓄额外穿透 3 并引爆命中目标的元素状态 |
 | `lantern` | 蚀蛊灯 | 蛊灯 | 半自动慢速追踪 | 55 伤害、穿透 6、自动寻敌；蚀化 60% + 固有「蛊种」50%（反应传染给附近敌人） |
-| `demon_blade` | 魔刀千刃 | 刀 | 双形态：近战 / 飞刃 | 右键切换（0.25 秒），切换后 2 秒内第一次攻击 +50%。「斩」：三段连斩 28 / 28 / 54（扇形群伤，一轮 1.06 秒约 104 DPS），每命中 1 敌召回 1 柄飞刃，持斩移速 +0.4；「千刃」：一轮 3 柄 ±5° 飞刃各 16（射速 2、可爆头、穿透 1），弹匣 18 柄、R 召回 1.4 秒不耗备弹。武器技能「千刃·无间」（V / 中键，冷却 16 秒）：突进 8 米斩击路径并打刃印，0.6 秒后千刃贯穿 140 并引爆元素 |
+| `demon_blade` | 魔刀千刃 | 刀 | 近战 + 刃群（无弹药） | 128 片碎刃组成的刀（《刺客伍六七》柒的佩刀）。左键「斩」：30 / 30 / 60，第三段伸刃到 6 米（一轮 1.1 秒约 109 DPS），斩中回刃气；右键按住「千刃出窍」：刃群追着准星绞杀，半径 2.2 米、每 0.1 秒 6 点（约 60 DPS / 目标、最多 8 个），无视护盾；R 按住「碎刃屏障」挡敌方弹道、受伤 −30%。两者共用刃气（100，出窍 −20/秒）。V「杀气爆发」：碎片聚于一点后炸开（6 米、240，冷却 15 秒）；杀意满时变为「人刀合一」（强化爆发 + 8 秒斩波 / 刃群不耗刃气 / 移速 +15%）。被动「噬灵鬼眼」：用魔刀击杀回复 2% / 5% / 12% 最大生命 |
 
-- 共 18 把（原 11 把 + 武器库扩充 6 把 + 魔刀千刃，详见 `docs/arsenal-expansion.md` 第 3 节与 `docs/demon-blade.md`）。新武器裸 DPS 63–86，反应引擎类压在 63–71，用差额换取反应潜力；贯虹灵炮必须蓄满才划算；魔刀「斩」因必须贴身，允许到约 105。
-- **双形态武器**（魔刀千刃，`docs/demon-blade.md` 第 10 节）：根字段描述远程形态「千刃」，`WeaponDef.melee` 描述近战形态「斩」（`FireMode 'melee'` 只由 `formMode()` 返回）；形态按武器实例保存（切走再切回保持），新实例为「斩」。「斩」的伤害 `source: 'weapon'`，正常吃伤害加成、词条、元素附着与命中类效果，每段视为一次开火（`weapon:fired`）；射速加成同时加快斩击。召回式换弹（`WeaponDef.recall`）不需要也不消耗备弹，弹药拾取 / 商店补弹自动跳过它。
-- **武器技能**（`WeaponDef.skill`，V / 鼠标中键）：冷却全局一条（所有武器技能共用，防止两把魔刀互切刷技能），受「技能急速」影响、不受英雄技能冷却缩减影响，换关保留、开新局清零；伤害不吃「技能伤害」。突进由 `IPlayer.lunge()` 驱动：走正常碰撞（被墙挡住提前停下、台阶抬升、不穿地），期间无敌、穿过敌人与敌方投射物。
+- 共 18 把（原 11 把 + 武器库扩充 6 把 + 魔刀千刃，详见 `docs/arsenal-expansion.md` 第 3 节与 `docs/demon-blade-v2.md`）。新武器裸 DPS 63–86，反应引擎类压在 63–71，用差额换取反应潜力；贯虹灵炮必须蓄满才划算；魔刀「斩」因必须贴身，允许到约 110。
+- **魔刀千刃**（`docs/demon-blade-v2.md`）：`WeaponDef.blade` 非空的武器不走开火状态机，整帧交给 `weapons/demonBlade/DemonBlade` 控制器（右键不开镜、R 不换弹）；根字段描述「千刃出窍」的结算（`damage × fireRate` = 刃群单体秒伤），供描述与词条换算。所有伤害 `source: 'weapon'`，正常吃伤害加成、稀有度、词条、元素附着与命中类效果；每段斩击视为一次开火（`weapon:fired`），射速加成同时加快斩击。没有弹药（`mag 1 / reserve 0`），弹药补给、应急补给与弹匣 / 换弹 / 散布 / 后坐 / 穿透 / 爆头类词条自动跳过它。
+- **武器技能**（V / 鼠标中键，目前只有魔刀的杀气爆发 / 人刀合一）：冷却由控制器持有、全局一条（两把魔刀互切不能刷技能），受「技能急速」影响、不受英雄技能冷却缩减影响，换关保留、开新局清零；伤害不吃「技能伤害」。`IPlayer.lunge()`（受控突进）保留在契约里，当前没有武器使用。
 - 新开火机制只有两种：**元素轮转**（`WeaponDef.cycle`，三才转轮；武器灵纹显示下一发元素）与**蓄力**（`mode: 'charge'` + `chargeTime / chargeMinMult / chargeFullPierce / chargeDetonate`，贯虹灵炮；准星显示蓄力环）。投射物新增 `bounces`（撞墙反弹）。
 - 固有词条 `WeaponDef.innate`：生成实例时放在词条最前面，不占名额、不随稀有度放大、不会被重复抽到。
 - 掉落权重 `WeaponDef.dropWeight`（默认 1）：三才转轮、贯虹灵炮、蚀蛊灯为 0.8，魔刀千刃为 0.6。
@@ -198,15 +197,18 @@
 
 ## 10. 秘卷（`progression/Scrolls.ts`）
 
-- 至少 40 个，覆盖稀有度 0–4，主题包括：通用伤害、暴击 / 爆头、射速 / 换弹 / 弹匣、元素（火 / 雷 / 蚀）、技能、生存（护盾 / 吸血 / 减伤）、机动、经济、爆炸、「命中时 / 击杀时 / 换弹时 / 受伤时 / 护盾破碎时」触发类，以及少数高风险高回报的传说秘卷。
+- 当前共 118 个，覆盖稀有度 0–4，主题包括：通用伤害、暴击 / 爆头、射速 / 换弹 / 弹匣、元素（火 / 雷 / 蚀）、技能、生存（护盾 / 吸血 / 减伤）、机动、经济、爆炸、「命中时 / 击杀时 / 换弹时 / 受伤时 / 护盾破碎时」触发类，以及少数高风险高回报的传说秘卷。
 - 大多数可叠层（maxStacks 2–5），层数越多效果越强；描述里用 `{n}` 或直接写明每层数值。
 - 触发类效果监听 `ctx.events`，要检查 `request.procDepth` 防止无限递归；所有属性修饰使用 source `scroll:<id>`，卸载时 `stats.removeSource`。
-- **反应秘卷 24 个**（`progression/scrolls/defsReaction.ts`，导出 `REACTION_SCROLLS`，在 `ScrollDefs.ts` 的 `all` 末尾展开），**共 98 个**（原 74 个）。稀有度：普通 5（催化、灵动、雷火符、熔金符、封脉符）/ 精良 4（引雷、引火、引蚀、化劫）/ 稀有 9（化元、点穴、爆焰、熔铸、锁灵、三才印 + 英雄专属狐火引雷、蚀羽惊雷、熔岩撼地）/ 史诗 4（焚天雷狱、金乌坠、镇岳、归真）/ 传说 2（混元、劫火）。逐条描述与实现见 `docs/arsenal-expansion.md` 第 6 节。
+- **反应秘卷 24 个**（`progression/scrolls/defsReaction.ts`，导出 `REACTION_SCROLLS`，在 `ScrollDefs.ts` 的 `all` 末尾展开），**扩充后当时共 98 个**（原 74 个）。稀有度：普通 5（催化、灵动、雷火符、熔金符、封脉符）/ 精良 4（引雷、引火、引蚀、化劫）/ 稀有 9（化元、点穴、爆焰、熔铸、锁灵、三才印 + 英雄专属狐火引雷、蚀羽惊雷、熔岩撼地）/ 史诗 4（焚天雷狱、金乌坠、镇岳、归真）/ 传说 2（混元、劫火）。逐条描述与实现见 `docs/arsenal-expansion.md` 第 6 节。
   - 新标签（中文原样显示）：`反应`、`焚雷`、`熔金`、`封脉`、`归墟`、`引爆`、`控制`。
   - 反应秘卷监听 `'enemy:reaction'` 时可直接造成伤害；`applyStatus` / `detonate` / `triggerReaction` 可同步调用，显式施加状态一律传 `depth`。
   - **与设计文档 6.3 的差异**：引雷 / 引火 / 引蚀、狐火引雷、蚀羽惊雷、熔岩撼地的附着沿用触发那一击的深度（武器 / 技能直接命中为 0，鹰眼弹射等衍生命中为 1），而不是固定 depth 1——否则它们引发的反应全是 depth 1，爆焰 / 焚天雷狱 / 金乌坠 / 镇岳（只认 depth 0）与熔铸（depth 1 熔金的伤害为 procDepth 2，被拒绝）永远不生效，与 0.3 节流派表把它们列为同一流派核心的意图相悖。它们仍受逐敌 0.3–0.4 秒冷却与概率约束；引雷 / 狐火引雷附加的雷殛与雷属性武器命中一样会弹射一次。
   - 金乌坠的坍缩爆炸另有每帧 3 个完整爆炸特效的预算（同帧被接受的多次熔金 1.5 秒后同帧坍缩），超出的改为 `noFx` + 轻量火星 / 地面光环。
   - 抽取权重（`Scrolls.roll`）：带 `反应` 标签且非英雄专属的秘卷，本局有元素来源（赤狐 / 雷隼、任一武器带元素或副元素 / 轮回 / 万象词条、已有元素秘卷）时 ×1.4，否则 ×0.5；未拥有且属于已投入流派（焚雷 / 熔金 / 封脉 / 归墟）的再 ×1.3。
+
+- **战术秘卷 20 个**（`progression/scrolls/defsTactics.ts`，普通 2 / 精良 6 / 稀有 8 / 史诗 2 / 传说 2），在原 98 个基础上增加切枪、换弹防御、冲刺装填、落地冲击、技能交替、护盾联动与追猎印记。全部注册到宝箱和商店共用抽取池；数值、边界及验证见 `docs/scroll-tactics.md`。临时战斗状态在换关 / 死亡时清空，叠层重新安装，卸载撤销全部监听、任务和修饰器。
+- **六张弱势秘卷重做**：化应为盾改为反应预存两次减伤；双诀相生返还前一个技能冷却；凝神装填强化换弹后的三次直接命中；连击心法累积五层战意；流星命中追加物理星芒；聚宝盆每层增加关卡本金和利率。保留名称、ID、稀有度与最大层数，细则见 `docs/scroll-tactics.md`。
 
 ## 11. 经济与局外成长
 
@@ -228,7 +230,7 @@
 - 秘卷三选一模态框（按稀有度着色的卡片）。
 - HUD：生命 / 护盾条、弹药、两个武器槽（名称 + 稀有度色）、Q/E 技能冷却环与充能、冲刺充能、金币、关卡标签与波次、剩余敌人数、动态准星（随 `weapons.currentSpread` 张开）、命中 / 暴击 / 击杀标记、受击方向指示、低血量暗角、护盾破碎闪光、Boss 血条（护盾 / 护甲 / 生命分层）、敌人头顶血条（受伤或精英时显示，含分层与状态图标）、交互提示（武器对比信息）、提示消息队列、大标题横幅、黑幕淡入淡出、Tab 面板（秘卷与属性）。
 - 元素反应相关：血条状态行身负两种元素时呼吸发光（`is-reactive`）、三种齐聚时紫色急促发光（`is-primed`，「归墟就绪」）；准星蓄力环（读 `weapons.chargeProgress`，满蓄转金）；武器徽记优先显示 `WeaponDescription.elementLabel`（三才转轮为三色「三」徽记，Tab 面板显示「三相 轮转」）；每局每种反应首次出现时 toast 教学（`ReactionTips`，记录在 `run.flags['rx:<id>']`）。
-- 魔刀千刃相关（`docs/demon-blade.md` 10.9）：武器槽标题前的形态徽记（「斩」朱红 /「千刃」暗金，变形时翻入）；「斩」形态弹药显示 ∞ 与「刃 N」（弹匣里的飞刃数 = 回刃进度），「千刃」形态备弹显示 ∞、换弹提示为「召回中」/「按 R 召回」；换形一击窗口内武器槽右边框朱红脉动；武器槽左侧的武器技能图标（冷却环 + 「刃」字 + 按键 V，释放中发光、冷却转好时闪一下，当前武器没有武器技能时隐藏）；「斩」形态准星换成左右两道弧形括号。全部读 `IWeaponSystem` 的可选字段，缺省按普通武器显示。
+- 魔刀千刃相关（`docs/demon-blade-v2.md` 第 9 节）：武器槽标题前的碎刃去向徽记（斩 / 千刃 / 屏障 / 爆发，切换时翻入），弹药位换成刃气数字（低于 25% 变红），徽记下方前几次提示「右键 千刃出窍 · R 屏障」；人刀合一期间武器槽边框与准星紫色脉动；武器槽左侧的武器技能图标（冷却环 + 外圈杀意充能环，满时换成「合」并发光）；刀在手时准星换成左右两道弧形括号，敌人在下一段斩击范围内时收紧。全部读 `IWeaponSystem.bladeHud / weaponSkill`，缺省按普通武器显示。
 - 风格：东方奇幻（墨色、朱红、鎏金），系统字体（"Microsoft YaHei", "PingFang SC", sans-serif），不引用外部字体或图片。
 
 ---
@@ -311,7 +313,20 @@
 - 约定：`run.flags['rx:<reactionId>']` 由 UI 写入，表示本局已提示过该反应（每局新建 RunState 自动重置）。
 - 新文件：`combat/Reactions.ts`（ReactionSystem）、`progression/scrolls/defsReaction.ts`（24 个反应秘卷）、`ui/ReactionTips.ts`（反应首次提示）。
 
-#### 变更记录：魔刀千刃（`docs/demon-blade.md` 第 10 节）
+#### 变更记录：魔刀千刃 v2 重做（2026-10-06，`docs/demon-blade-v2.md`）
+
+用户要求按《刺客伍六七》原作从零重做魔刀千刃，旧的双形态实现整体移除（归档在 `archive/demon-blade-v1/`）。下面的旧记录只作历史保留。
+
+- `core/types.ts`
+  - 删除 `WeaponForm`、`IWeaponSystem.activeForm / formMorphProgress / formStrikeTime / meleeInRange`、`WeaponDescription.formNames`、事件 `'weapon:formChanged' / 'weapon:skillImpale'`、`IBladeFx` 与 `IFx.blade`、`ProjectileVisual 'blade'`、`ProjectileSpec.bladeFragmentIndex / bladeWeaponUid` 及 `IProjectileSystem` 的碎片召回方法。
+  - 新增 `BladeMode`、`BladeHudState`、`IWeaponSystem.bladeHud?`、`WeaponSkillState.charge?`（杀意充能环）、`DamageRequest.bypassShield?`（`Combat → applyLayers` 跳过护盾层）、`ProjectileWard` 与 `IProjectileSystem.setWard()`（敌方投射物穿过挡弹圆盘时销毁并回调）。
+  - `resetForRun(startingWeaponId)` 去掉 `startingForm` 参数。
+- weapons 模块内部：`WeaponDef.melee / skill / rangedSkill / recall / perProjectileAmmo` 合并为 `blade: DemonBladeParams | null`；`FireMode` 去掉 `'melee'`、`ReloadStyle` 去掉 `'recall'`；`isDualForm / formMode / weaponSkillFor` 改为 `isBlade`；`ResolvedWeapon.meleeElementChance` 删除；`WeaponRuntime.form` 删除；`ViewmodelState` 的形态 / 挥砍字段合并为 `blade: BladePoseInput | null`。
+- 新目录 `weapons/demonBlade/`：`BladeShape`（128 片 Voronoi 碎刃，纯函数）、`BladeModel`（碎刃合并几何 + 每片变换纹理、刀根 / 刀柄贴图）、`BladeSwarm`（世界刃群）、`BladeView`（第一人称）、`BladeEffects`（斩波、魂力光点）、`DemonBlade`（玩法控制器）。删除 `DemonBladeModel / BladeSkill / Melee / BladeFlight / BladeFx / BladeArcs` 与检视页 `blade-range`。
+- 贴图：`public/assets/weapons/T_DemonBlade_Hilt_D.webp / _E.webp`，由 `art/pipeline/demon_blade_textures.py` 从用户确认的设计图裁出。
+- `SfxId` 新增 `'blade_swarm'`（千刃出窍期间的绞杀颗粒）与 `'blade_eye'`（噬灵鬼眼睁眼）；`blade_throw / blade_dash` 的配方改为「千刃出窍 / 杀气聚合」。
+
+#### 变更记录：魔刀千刃（`docs/demon-blade.md` 第 10 节，已被 v2 取代）
 
 契约阶段一次性落地（清单见设计稿 10.12），全部为可选字段 / 新键 + 编译桩，向后兼容，现有 17 把武器行为不变；之后逻辑（L）、表现（V）、玩家·HUD·音效·文档（P）三条流并行实现。
 
@@ -329,3 +344,22 @@
 - 编译桩（各流随后替换）：`PlayerController.lunge` 返回 `false`（技能原地结算）、`Fx.blade` 为空实现、`'blade'` 暂用 shard 外观、7 个占位音色。
 - `ui/labels.ts`：`WEAPON_NAMES.demon_blade`；`CONTROLS` 右键说明补「持魔刀千刃时切换形态」，新增 V / 中键「武器技能」。
 - 约定：武器技能冷却全局一条（WeaponSystem 持有，换关保留、开新局清零）；HUD 只读 `IWeaponSystem` 的可选字段，不 import weapons 模块。
+
+#### 变更记录：权威关卡、首领备战商店与审查修复（提交 7351e37–c71dd77 及 2026-10-06 修复）
+
+这三个提交直接改了冻结文件而未走契约变更请求；此处补记，并写明随后修复时对同一批文件的改动。均向后兼容。
+
+- `core/types.ts`
+  - `ILoot.spawnShop(center, facingYaw?)` 由 `void` 改为返回 `() => void`：幂等的清理函数，移除该商店的交互与道具碰撞（StageDirector 换关时调用，Game 清空掉落后再调用也安全）。
+  - 新增 `EnemyPlacement` 战术站位，`WavePlan` 条目加 `placement? / arrivalDelay? / label? / hint? / spawnAnchors?`。
+  - 新增 `AdventureInfo`（探索状态：遭遇、补给点、房区、路径、备战商店 `preparation`），`IStageDirector.exploration?` 只读暴露给 HUD。
+  - 白盒检视页使用的 `whitebox / artInspectionViews / artBrief` 不属于契约：检视页把 `ctx.stage` 断言为具体的 `StageDirector` 读取，正式代码不得依赖。
+- `core/Game.ts`
+  - 静态引入开发用 `PerformanceMeter`，只在 `?perf=1` 时构造；`setInspectionView()` 供检视页替换渲染相机，玩家相机与操作不变。
+  - 修复：`loadStage()` 返回 `boolean`。关卡搭建抛错时提示并回到主菜单，不再停在黑屏且输入锁定。
+- `world/StageDirector.load()` 语义补充：权威平面图搭建失败（缺编组、入口不可达、数据错误）时记录错误、提示，并改用程序化备用地图载入本关；备用地图也失败才向 Game 抛出。
+- `core/Input.ts` / `core/MouseLookFilter.ts`
+  - 指针锁定优先请求原始输入（`unadjustedMovement`），不支持时回退。
+  - 尖峰过滤：大位移暂存，下一事件够快或前后事件同向即确认；`endFrame()` 调用 `flush()` 结算合并成单个事件、随后鼠标静止的甩枪；硬上限按单轴 400。
+- 商店服务：生命 / 护盾与弹药为可重复购买的付费服务；场上仍有敌人时所有摊位拒绝交易（防止首领战中退回备战商店反复回血）。
+- 构建：生产包只含 `index.html`；`npm run build:labs` 才包含 `whitebox-lab.html`。检视页存档键在每次读写时按页面判断，带或不带 `.html` 后缀的路径都写入隔离存档。

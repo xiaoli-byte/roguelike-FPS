@@ -1,0 +1,176 @@
+{
+  "steps": {
+    "导入清理": 1.0,
+    "对齐": 0.8,
+    "低模与 UV": 5.1,
+    "投影着色": 9.7,
+    "烘焙": 8.1,
+    "LOD": 0.1,
+    "部件骨架蒙皮": 2.4,
+    "导出": 1.6
+  },
+  "highpoly": {
+    "faces_raw": 267300,
+    "faces": 145894,
+    "verts": 145892,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.906,
+    "iou_per_view": {
+      "front": 0.892,
+      "left": 0.93,
+      "back": 0.886,
+      "right": 0.921
+    },
+    "height_m": 0.2772,
+    "blockout_height_m": 0.3633
+  },
+  "uv": {
+    "smart_islands": 260,
+    "charts": 35,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "smart",
+    "density_smart": 2.4449,
+    "density_merged": 2.3895
+  },
+  "projection": {
+    "uncovered_ratio": 0.1687
+  },
+  "bake_device": "OPTIX",
+  "material_id": {
+    "metal_texel_ratio": 0.6701
+  },
+  "textures": {
+    "T_Weapon_Trinity_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Weapon_Trinity_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Weapon_Trinity_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "presentation": [
+    [
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ]
+  ],
+  "skin": {
+    "bones": [
+      "j_r",
+      "j_0",
+      "j_8"
+    ],
+    "per_lod": {
+      "SK_Weapon_Trinity_LOD0": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      },
+      "SK_Weapon_Trinity_LOD1": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      }
+    },
+    "mode": "parts",
+    "sigma_m": 0.0054,
+    "rigid": true,
+    "split": {
+      "SK_Weapon_Trinity_LOD0": {
+        "cut_edges": 75,
+        "cap_tris": 146,
+        "merged_fragment_faces": 0,
+        "tris": 11996
+      },
+      "SK_Weapon_Trinity_LOD1": {
+        "cut_edges": 43,
+        "cap_tris": 82,
+        "merged_fragment_faces": 0,
+        "tris": 2996
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SK_Weapon_Trinity_LOD0",
+      "tris": 11996,
+      "verts": 5998,
+      "uv_min": [
+        0.0030106650665402412,
+        0.003096632193773985
+      ],
+      "uv_max": [
+        0.9256045818328857,
+        0.9971104860305786
+      ],
+      "uv_utilization": 0.559,
+      "bbox_min": [
+        -0.0344,
+        -0.0819,
+        -0.1155
+      ],
+      "bbox_max": [
+        0.0344,
+        0.2772,
+        0.0897
+      ]
+    },
+    {
+      "name": "SK_Weapon_Trinity_LOD1",
+      "tris": 2996,
+      "verts": 1498,
+      "uv_min": [
+        0.003139179665595293,
+        0.003131596138700843
+      ],
+      "uv_max": [
+        0.9250123500823975,
+        0.9965426921844482
+      ],
+      "uv_utilization": 0.536,
+      "bbox_min": [
+        -0.0343,
+        -0.0819,
+        -0.1157
+      ],
+      "bbox_max": [
+        0.0343,
+        0.2771,
+        0.0896
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/weapons/SK_Weapon_Trinity/04_export/SK_Weapon_Trinity_v001.glb",
+    "bytes": 461964
+  },
+  "blend": "art/source/weapons/SK_Weapon_Trinity/03_work/SK_Weapon_Trinity_v001.blend",
+  "total_seconds": 28.9,
+  "_seconds": 32.1
+}

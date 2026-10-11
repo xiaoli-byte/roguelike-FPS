@@ -1,0 +1,193 @@
+{
+  "schema": 1,
+  "assetId": "SK_Weapon_Stormpod",
+  "source": {
+    "kind": "weapon",
+    "id": "stormpod"
+  },
+  "rig": "parts",
+  "space": {
+    "up": "+Y",
+    "forward": "+Z",
+    "unit": "m",
+    "origin": "model"
+  },
+  "bounds": {
+    "min": [
+      -0.04755282402038574,
+      -0.12022703214892008,
+      -0.30199999977648256
+    ],
+    "max": [
+      0.07109559202588352,
+      0.10400000005215407,
+      0.1840000003799796
+    ]
+  },
+  "joints": [
+    {
+      "name": "j_r",
+      "parent": null,
+      "bindPosition": [
+        0,
+        0,
+        0
+      ],
+      "restLocal": [
+        0,
+        0,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "j_0",
+      "parent": "j_r",
+      "bindPosition": [
+        0,
+        0.04,
+        -0.31
+      ],
+      "restLocal": [
+        0,
+        0.04,
+        -0.31
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0.04,
+        -0.31,
+        1
+      ]
+    },
+    {
+      "name": "j_7",
+      "parent": "j_r",
+      "bindPosition": [
+        0,
+        0.03,
+        -0.03
+      ],
+      "restLocal": [
+        0,
+        0.03,
+        -0.03
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0.03,
+        -0.03,
+        1
+      ]
+    }
+  ],
+  "keep": [],
+  "fields": {
+    "muzzle": "j_0",
+    "mag": "j_7",
+    "cylinder": "j_7"
+  },
+  "parts": {
+    "body_000": "body",
+    "body_001": "body",
+    "body_002": "body",
+    "glowfx_003": "glowfx",
+    "body_004": "body",
+    "glowfx_005": "glowfx",
+    "body_006": "body",
+    "body_007": "body",
+    "glowfx_008": "glowfx",
+    "glowfx_009": "glowfx",
+    "glowfx_010": "glowfx",
+    "glowfx_011": "glowfx",
+    "glowfx_012": "glowfx",
+    "body_013": "body",
+    "glowfx_014": "glowfx",
+    "body_015": "body",
+    "body_016": "body",
+    "body_017": "body",
+    "body_018": "body",
+    "body_019": "body",
+    "glowfx_020": "glowfx",
+    "glowfx_021": "glowfx",
+    "body_022": "body",
+    "body_023": "body",
+    "body_024": "body",
+    "body_025": "body",
+    "body_026": "body",
+    "body_027": "body",
+    "body_028": "body"
+  },
+  "exportedAt": "2026-10-06T09:34:51.040Z"
+}

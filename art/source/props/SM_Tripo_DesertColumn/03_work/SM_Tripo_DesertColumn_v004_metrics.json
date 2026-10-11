@@ -1,0 +1,103 @@
+{
+  "source": {
+    "tris": 2714,
+    "verts": 2151
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 5.00244,
+    "iou": 0.912,
+    "iou_per_view": {
+      "front": 0.937,
+      "left": 0.888,
+      "back": 0.915,
+      "right": 0.897
+    },
+    "size_m": [
+      1.883,
+      1.888,
+      5.0
+    ],
+    "reference_m": [
+      2.4,
+      2.4,
+      5.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.714,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Tripo_DesertColumn_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      8192,
+      8192
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertColumn_LOD0",
+      "tris": 2714,
+      "verts": 2151,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.552,
+      "bbox_min": [
+        -0.9416,
+        -0.9441,
+        0.0
+      ],
+      "bbox_max": [
+        0.9416,
+        0.9441,
+        5.0
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertColumn_LOD1",
+      "tris": 995,
+      "verts": 1103,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.551,
+      "bbox_min": [
+        -0.9455,
+        -0.9441,
+        -0.0258
+      ],
+      "bbox_max": [
+        0.9463,
+        0.9374,
+        4.9797
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertColumn/04_export/SM_Tripo_DesertColumn_v004.glb",
+    "bytes": 188880
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 5.4,
+  "_seconds": 8.1
+}

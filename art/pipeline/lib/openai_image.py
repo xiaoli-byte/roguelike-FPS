@@ -17,6 +17,13 @@ from pathlib import Path
 from .config import PipelineError
 
 
+def _codex_model() -> str | None:
+    """pipeline.toml [concept] provider = "codex" routes every image call through the local Codex CLI (ChatGPT sign-in)."""
+    from .config import CFG
+    cfg = CFG.section("concept")
+    return cfg.get("codex_model", "gpt-6.1-sol") if cfg.get("provider") == "codex" else None
+
+
 def _multipart(fields: dict[str, str], files: list[tuple[str, Path]]) -> tuple[bytes, str]:
     boundary = uuid.uuid4().hex
     out = bytearray()
@@ -33,6 +40,9 @@ def _multipart(fields: dict[str, str], files: list[tuple[str, Path]]) -> tuple[b
 def edit(prompt: str, images: list[Path], *, model: str, size: str, quality: str,
          background: str = "transparent", retries: int = 2) -> tuple[bytes, dict]:
     """返回 (PNG 字节, 记录信息)。记录里有模型、尺寸、用量、请求号，没有密钥。"""
+    if (codex := _codex_model()):
+        from . import codex_image
+        return codex_image.edit(prompt, images, model=codex, size=size)
     key = os.environ.get("OPENAI_API_KEY")
     if not key:
         raise PipelineError("没有 OPENAI_API_KEY：复制 art/pipeline/.env.example 为 .env 并填写")
@@ -58,6 +68,42 @@ def edit(prompt: str, images: list[Path], *, model: str, size: str, quality: str
             msg = e.read().decode("utf-8", "replace")[:2000]
             last = f"HTTP {e.code}: {msg}"
             if e.code in (400, 401, 403, 404):  # 参数 / 鉴权 / 审核问题，重试没用
+                break
+        except (urllib.error.URLError, TimeoutError) as e:
+            last = f"网络错误：{e}"
+        time.sleep(5 * (attempt + 1))
+    raise PipelineError(f"OpenAI 图像接口调用失败：{last}")
+
+
+def generate(prompt: str, *, model: str, size: str, quality: str,
+             background: str = "opaque", retries: int = 2) -> tuple[bytes, dict]:
+    """Text-to-image (/v1/images/generations) for bounds-only assets that have no rendered blockout to edit.
+    Returns (PNG bytes, record info) exactly like edit(); the key never enters the record."""
+    if (codex := _codex_model()):
+        from . import codex_image
+        return codex_image.generate(prompt, model=codex, size=size)
+    key = os.environ.get("OPENAI_API_KEY")
+    if not key:
+        raise PipelineError("没有 OPENAI_API_KEY：复制 art/pipeline/.env.example 为 .env 并填写")
+    base = os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1").rstrip("/")
+    body = json.dumps({"model": model, "prompt": prompt, "size": size, "quality": quality,
+                       "background": background, "output_format": "png", "n": 1}).encode("utf-8")
+    last = None
+    for attempt in range(retries + 1):
+        req = urllib.request.Request(f"{base}/images/generations", data=body, method="POST",
+                                     headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
+        t0 = time.time()
+        try:
+            with urllib.request.urlopen(req, timeout=600) as r:
+                data = json.loads(r.read())
+                rid = r.headers.get("x-request-id")
+            png = base64.b64decode(data["data"][0]["b64_json"])
+            return png, {"provider": "openai", "endpoint": "images/generations", "model": model, "size": size,
+                         "quality": quality, "background": background, "usage": data.get("usage"),
+                         "request_id": rid, "seconds": round(time.time() - t0, 1)}
+        except urllib.error.HTTPError as e:
+            last = f"HTTP {e.code}: {e.read().decode('utf-8', 'replace')[:2000]}"
+            if e.code in (400, 401, 403, 404):
                 break
         except (urllib.error.URLError, TimeoutError) as e:
             last = f"网络错误：{e}"

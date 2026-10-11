@@ -564,7 +564,7 @@
   font-size: 22px;
   font-weight: 600;
   letter-spacing: 0.06em;
-  color: color-mix(in srgb, #ff6a4a calc(var(--fill) * 100%), #a8968c);
+  color: color-mix(in srgb, #be85ff calc(var(--fill) * 100%), #a39aaa);
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
   transition: color 0.15s ease;
 }
@@ -589,21 +589,21 @@
   opacity: 0;
 }
 
-/* 换形一击窗口：右边框朱红光晕往返脉动 */
+/* 换形一击窗口：右边框紫色光晕往返脉动 */
 .gf-weapon__main.is-strike {
-  border-right-color: #ff4a30;
+  border-right-color: #be85ff;
   animation: gf-weapon-strike 0.3s ease-in-out infinite alternate;
 }
 
 @keyframes gf-weapon-strike {
-  from { box-shadow: 3px 0 8px -3px rgba(255, 74, 48, 0.45), inset -10px 0 14px -10px rgba(255, 74, 48, 0.25); }
-  to { box-shadow: 6px 0 20px -3px rgba(255, 74, 48, 0.95), inset -22px 0 26px -14px rgba(255, 74, 48, 0.55); }
+  from { box-shadow: 3px 0 8px -3px rgba(153, 84, 255, 0.45), inset -10px 0 14px -10px rgba(153, 84, 255, 0.25); }
+  to { box-shadow: 6px 0 20px -3px rgba(153, 84, 255, 0.95), inset -22px 0 26px -14px rgba(153, 84, 255, 0.55); }
 }
 
 /* 减少动态效果时改为常亮光晕（全局规则会把动画压成一帧） */
 @media (prefers-reduced-motion: reduce) {
   .gf-weapon__main.is-strike {
-    box-shadow: 5px 0 16px -3px rgba(255, 74, 48, 0.8);
+    box-shadow: 5px 0 16px -3px rgba(153, 84, 255, 0.8);
   }
 }
 
@@ -790,7 +790,7 @@
   to { box-shadow: 0 0 0 2px var(--gold-hi), 0 0 28px rgba(255, 170, 80, 0.85); }
 }
 
-/* 武器技能（魔刀千刃「千刃·无间」）：SkillIcon 的结构与样式，略小、朱红冷却环，放在武器槽左侧 */
+/* 武器技能（魔刀千刃「杀气爆发 / 人刀合一」）：略小的紫色冷却环，外圈为杀意充能环，放在武器槽左侧。 */
 .gf-wskill {
   position: relative;
   z-index: 1;
@@ -801,18 +801,18 @@
 .gf-wskill .gf-skill__disc {
   width: 52px;
   height: 52px;
-  background: radial-gradient(circle at 50% 35%, #34191a, #0b090d 72%);
-  box-shadow: 0 0 0 1px rgba(255, 90, 60, 0.3), 0 6px 16px rgba(0, 0, 0, 0.55);
+  background: radial-gradient(circle at 50% 35%, #2d1b46, #0b090d 72%);
+  box-shadow: 0 0 0 1px rgba(153, 84, 255, 0.3), 0 6px 16px rgba(0, 0, 0, 0.55);
 }
 
 .gf-wskill .gf-skill__prog {
-  stroke: var(--cinnabar-hi);
+  stroke: #be85ff;
 }
 
 .gf-wskill .gf-skill__glyph {
   font-size: 24px;
-  color: #ffeadf;
-  text-shadow: 0 0 10px rgba(255, 90, 60, 0.6);
+  color: #eee1ff;
+  text-shadow: 0 0 10px rgba(153, 84, 255, 0.6);
 }
 
 .gf-wskill .gf-skill__cd {
@@ -829,12 +829,33 @@
 }
 
 .gf-wskill.is-active .gf-skill__prog {
-  stroke: #ffb39a;
+  stroke: #e8ddff;
 }
 
 @keyframes gf-wskill-active {
-  from { box-shadow: 0 0 0 2px var(--cinnabar-hi), 0 0 10px rgba(255, 74, 48, 0.4); }
-  to { box-shadow: 0 0 0 2px var(--cinnabar-hi), 0 0 24px rgba(255, 74, 48, 0.9); }
+  from { box-shadow: 0 0 0 2px #be85ff, 0 0 10px rgba(153, 84, 255, 0.4); }
+  to { box-shadow: 0 0 0 2px #be85ff, 0 0 24px rgba(153, 84, 255, 0.9); }
+}
+
+/* 杀意充能环：沿外圈顺时针填满；满时图标换成「合」并呼吸发光 */
+.gf-skill__charge {
+  fill: none;
+  stroke: #9a5cff;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 32px 32px;
+  transition: stroke-dashoffset 0.15s linear;
+}
+
+.gf-wskill.is-charged .gf-skill__charge {
+  stroke: #f0e2ff;
+  filter: drop-shadow(0 0 4px rgba(190, 133, 255, 0.95));
+}
+
+.gf-wskill.is-charged .gf-skill__glyph {
+  color: #ffffff;
+  text-shadow: 0 0 12px rgba(190, 133, 255, 1);
 }
 
 .gf-dash {

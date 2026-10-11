@@ -1,0 +1,163 @@
+{
+  "id": "SK_Enemy_JerboaBlade",
+  "display": "跳鼠刀兵",
+  "kind": "skeletal",
+  "class": "enemy_standard",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 15:20:37",
+          "files": {
+            "BO_SK_Enemy_JerboaBlade_v001.glb": {
+              "path": "00_blockout/BO_SK_Enemy_JerboaBlade_v001.glb",
+              "sha256": "c2e31fddb7832292947285f7ef0fc0470b0f458d27d06e03492b4dc3fc5fce06"
+            },
+            "BO_SK_Enemy_JerboaBlade_v001.json": {
+              "path": "00_blockout/BO_SK_Enemy_JerboaBlade_v001.json",
+              "sha256": "3673971f3feaca0cf144a1a45a3216230aa863992ff2a0f20e927c5c9a9a9d8e"
+            },
+            "BO_SK_Enemy_JerboaBlade_v001_views.json": {
+              "path": "00_blockout/BO_SK_Enemy_JerboaBlade_v001_views.json",
+              "sha256": "c71ad2abb23b3a59ddba2d6bd377b60091bcedbd3c4e58a561a6f4bdf10265c2"
+            },
+            "BO_SK_Enemy_JerboaBlade_v001_sheet.png": {
+              "path": "00_blockout/BO_SK_Enemy_JerboaBlade_v001_sheet.png",
+              "sha256": "cc43ef9d522934f865ab8cac8e0236343434a8e1dcac6ed9b30de3e8fe1c8029"
+            },
+            "BO_SK_Enemy_JerboaBlade_v001_front.png": {
+              "path": "00_blockout/BO_SK_Enemy_JerboaBlade_v001_front.png",
+              "sha256": "3455757c6d84d693635188a3539eea176c877e41d8d0ef00eb67d87a13794c2f"
+            },
+            "BO_SK_Enemy_JerboaBlade_v001_left.png": {
+              "path": "00_blockout/BO_SK_Enemy_JerboaBlade_v001_left.png",
+              "sha256": "38174186165c48d9bc54f6347a465d0534166270cffb0c7788071cd97527f753"
+            },
+            "BO_SK_Enemy_JerboaBlade_v001_back.png": {
+              "path": "00_blockout/BO_SK_Enemy_JerboaBlade_v001_back.png",
+              "sha256": "1e5a57cf5f3f2b7f505926c50bdd62667a641b3041b515727f24bca6d3c42c56"
+            },
+            "BO_SK_Enemy_JerboaBlade_v001_right.png": {
+              "path": "00_blockout/BO_SK_Enemy_JerboaBlade_v001_right.png",
+              "sha256": "f0a45aa4e59cd2cb17a989fda05574732d305f4a50ce8098417970e7c8d9da37"
+            }
+          },
+          "source": {
+            "kind": "enemy",
+            "id": "jerboa_blade"
+          },
+          "joints": 23,
+          "bounds": {
+            "min": [
+              -0.25374126021483895,
+              2.2351736607417738e-10,
+              -0.6541842697517658
+            ],
+            "max": [
+              0.25374126021483895,
+              1.2390931997422177,
+              0.17531171426177025
+            ]
+          },
+          "blender_seconds": 6.2
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 15:20:57",
+          "files": {
+            "CN_SK_Enemy_JerboaBlade_v001_front.png": {
+              "path": "01_concept/CN_SK_Enemy_JerboaBlade_v001_front.png",
+              "sha256": "9e70aabef3ee371ada95e8e9cf4456b39a90e24376b655735cd8bb359d7f0b3e"
+            },
+            "CN_SK_Enemy_JerboaBlade_v001_left.png": {
+              "path": "01_concept/CN_SK_Enemy_JerboaBlade_v001_left.png",
+              "sha256": "d86b827116933dc9b10e18c7f088dbb5dc4ea950dadf7e88cdb20e398a952836"
+            },
+            "CN_SK_Enemy_JerboaBlade_v001_back.png": {
+              "path": "01_concept/CN_SK_Enemy_JerboaBlade_v001_back.png",
+              "sha256": "fe91ca4ffede0d12729151670a38685961fadcba28c73af7656c5f7bd6ad9e7a"
+            },
+            "CN_SK_Enemy_JerboaBlade_v001_right.png": {
+              "path": "01_concept/CN_SK_Enemy_JerboaBlade_v001_right.png",
+              "sha256": "3a9eadf0920abfaeac656d084914acccdc0b6a1dffba22ac624b33cf21cb2bdc"
+            },
+            "CN_SK_Enemy_JerboaBlade_v001_sheet.png": {
+              "path": "01_concept/CN_SK_Enemy_JerboaBlade_v001_sheet.png",
+              "sha256": "ba464425ef09e92d522f874668808cb114dffb64be4b597d7f53f910247976d7"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "design turnaround",
+          "design_key": "desert_jerboa",
+          "design_turnaround": "art/source/characters/_design/desert/desert_jerboa/TV_desert_jerboa_v001.png",
+          "source_sha256": "d93f0477a58bbb7feee44c51aeb7e207412f9ba971ccab2ffa1323ecbabce4ff",
+          "reference_mode": "design_turnaround",
+          "highpoly_mode": "tripo",
+          "registration": {
+            "front": {
+              "scale": 0.8451430813146057,
+              "offset": [
+                70,
+                170
+              ],
+              "size": [
+                372,
+                683
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.821751636224069,
+              "offset": [
+                67,
+                170
+              ],
+              "size": [
+                378,
+                683
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.8358330596110176,
+              "offset": [
+                82,
+                170
+              ],
+              "size": [
+                347,
+                683
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.821751636224069,
+              "offset": [
+                72,
+                170
+              ],
+              "size": [
+                367,
+                683
+              ],
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "user",
+            "note": "设计稿 2026-10-06 用户全部通过；四视图朝向已逐张核对（左侧脸朝左、右侧脸朝右）",
+            "time": "2026-10-06 15:21:12"
+          }
+        }
+      ]
+    }
+  }
+}

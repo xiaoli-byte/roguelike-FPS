@@ -7,18 +7,15 @@
  * 光束 77（74，单跳伤害 7→8 后；旁边有第二名敌人吃电弧时约 105）、机炮 94（90）、蜂群 89（82）、榴弹 111（火焰对生命 ×1.25，另有灼烧 DOT）；
  * 狙击 120（107），作为必须开镜、射速最慢的精准武器有意略高。
  * 所有角度为弧度「半角」；射速为「每秒发数」（burst 为每秒轮数，beam 为每秒跳数，charge 为松手后冷却 1 / fireRate）。
- * 双形态武器（魔刀千刃）：根字段描述远程形态「千刃」，近战形态「斩」的参数在 melee，武器技能在 skill。
+ * 魔刀千刃（docs/demon-blade-v2.md）：玩法参数在 blade；根字段描述「千刃出窍」的结算（damage / fireRate），供描述与词条换算。
  */
-import type { Element, ProjectileVisual, SfxId, WeaponForm } from '../core/types';
+import type { Element, ProjectileVisual, SfxId } from '../core/types';
 
-/**
- * 'melee' 只作为双形态武器近战形态的「有效模式」（由 formMode() 返回）：
- * 双形态武器的 WeaponDef.mode 本身描述远程形态，近战形态的参数在 WeaponDef.melee。
- */
-export type FireMode = 'semi' | 'auto' | 'burst' | 'beam' | 'spinup' | 'charge' | 'melee';
+/** 开火模式（魔刀千刃不走开火状态机，由 DemonBlade 控制器处理，mode 只用于描述） */
+export type FireMode = 'semi' | 'auto' | 'burst' | 'beam' | 'spinup' | 'charge';
 export type WeaponKind = 'pistol' | 'smg' | 'rifle' | 'shotgun' | 'sniper' | 'launcher' | 'crossbow' | 'beam' | 'heavy' | 'blade';
-/** 第一人称换弹动画风格（'recall' = 魔刀千刃召回飞刃：刃片从世界中飞回重组） */
-export type ReloadStyle = 'mag' | 'cylinder' | 'shell' | 'tube' | 'cell' | 'box' | 'recall';
+/** 第一人称换弹动画风格（魔刀千刃不换弹） */
+export type ReloadStyle = 'mag' | 'cylinder' | 'shell' | 'tube' | 'cell' | 'box';
 
 export interface ProjectileParams {
   speed: number;
@@ -62,85 +59,47 @@ export interface RecoilParams {
 }
 
 /**
- * 近战连段的一段（docs/demon-blade.md 第 3 节）。时间均为未计攻速的秒数，WeaponSystem 按「射速」倍率缩短。
+ * 魔刀千刃 v2 的一段斩击（docs/demon-blade-v2.md 第 3 节）。时间为未计攻速的秒数，WeaponSystem 按「射速」倍率缩短。
  * 判定只在判定帧（开始挥砍后 windup 秒）结算一次：扇形 + 高度 + 视线，范围内所有敌人各命中一次。
  */
-export interface MeleeSegment {
-  /** 基础伤害（× 本武器伤害倍率 ResolvedWeapon.damageMult；不含玩家 damagePct，Combat 会乘） */
+export interface BladeSlash {
+  /** 基础伤害（× 本武器伤害倍率；不含玩家 damagePct，Combat 会乘） */
   damage: number;
-  /** 前摇：开始挥砍 → 判定帧 */
   windup: number;
-  /** 整段时长（含前摇）；结束后才能接下一段 */
   duration: number;
-  /** 判定扇形：水平距离（米，按敌人胶囊表面计）与水平半角（弧度） */
+  /** 水平距离（米，按敌人胶囊表面计）与水平半角（弧度） */
   range: number;
   halfAngle: number;
-  /** 击退（米/秒，沿玩家 → 敌人的水平方向略上抬） */
+  /** 击退（米/秒） */
   knockback: number;
-  /** 本段玩家前冲距离（米，0 = 不前冲，但连段中可能触发追击；在前摇内经 IPlayer.lunge 软突进完成） */
-  lunge: number;
-  /** 对眩晕中（stunTime > 0）的敌人必定暴击 */
-  stunCrit: boolean;
-  /** 命中时屏震强度（ctx.fx.shake 的 intensity；狙击枪每发约 0.22） */
+  /** 命中屏震强度 */
   shake: number;
+  /** 伸刃：碎片沿刀线展开后的刀身长度倍率（1 = 不伸） */
+  stretch: number;
 }
 
-/**
- * 双形态武器的近战形态参数。WeaponDef.melee 非 null 即为双形态武器：
- * 近战形态 = 本结构，远程形态 = WeaponDef 根字段（mode / damage / projectile / mag / reload …）。
- */
-export interface MeleeParams {
-  /** 连段，按顺序循环（魔刀千刃：横斩 → 回斩 → 下劈） */
-  combo: MeleeSegment[];
-  /** 一段结束后空闲超过此秒数，连段重置到第一段 */
+/** 魔刀千刃 v2 的全部玩法参数（docs/demon-blade-v2.md）。伤害均为基础值，× 本武器伤害倍率 */
+export interface DemonBladeParams {
+  combo: BladeSlash[];
+  /** 一段结束后空闲超过此秒数，连段重置 */
   comboReset: number;
-  /** 判定高度：玩家脚底以下 / 头顶（position.y + height）以上的延伸（米） */
+  /** 判定高度：脚底以下 / 头顶以上的延伸（米） */
   reachBelow: number;
   reachAbove: number;
-  /** 斩击的元素附着基础概率（代替 WeaponDef.elementChance；词条「元素触发率」照常叠加） */
-  elementChance: number;
-  /** 斩击回刃：每段每命中 1 名敌人召回的飞刃数，与每段召回上限 */
-  recallPerHit: number;
-  recallMaxPerSwing: number;
-  /** 持近战形态时的额外移速（与「轻盈」一样只在持握时生效） */
-  moveBonus: number;
-  /** 形态显示名 [近战, 远程] */
-  formNames: [string, string];
-  /** 形态切换（变形）时长，期间不能攻击 */
-  morphTime: number;
-  /** 「换形一击」：变形完成后 window 秒内的第一次攻击伤害 × mult */
-  formStrikeWindow: number;
-  formStrikeMult: number;
-}
-
-/**
- * 武器技能（V / 鼠标中键）。目前只有一种：kind 'dashSlash' = 魔刀千刃「千刃·无间」（突进连斩 + 刃印 + 延迟贯穿引爆）。
- * 伤害均为基础值，× 本武器伤害倍率（ResolvedWeapon.damageMult）。
- */
-export interface WeaponSkillParams {
-  kind: 'dashSlash';
-  id: string;
-  name: string;
-  /** HUD 图标单字 */
-  glyph: string;
-  description: string;
-  /** 基础冷却（秒），实际 = cooldown / (1 + skillHaste)，与英雄技能同一公式 */
-  cooldown: number;
-  /** 突进：水平距离、时长、无敌时长、结束后保留的速度（米/秒） */
-  dashDist: number;
-  dashTime: number;
-  iframes: number;
-  exitSpeed: number;
-  /** 突进路径两侧的斩击半径（米，按敌人胶囊表面计）与伤害 */
-  pathRadius: number;
-  slashDamage: number;
-  /** 突进结束后多久贯穿所有带刃印的敌人，与贯穿伤害 */
-  impaleDelay: number;
-  impaleDamage: number;
-  /** 每命中 1 名敌人召回的飞刃数（最多补满弹匣） */
-  recallPerHit: number;
-  /** 一次释放最多打上刃印的敌人数 */
-  maxMarks: number;
+  /** 刃气（右键与 R 共用）：上限、回复延迟、每秒回复、每次斩击命中回复 */
+  qi: { max: number; regenDelay: number; regen: number; perSlashHit: number };
+  /** 千刃出窍：射程、刃群判定半径、结算间隔、每次结算伤害、目标上限、刃气每秒消耗、刃群中心追随速度、元素附着系数（× 武器元素几率） */
+  swarm: { range: number; radius: number; tick: number; damage: number; maxTargets: number; drain: number; follow: number; elementScale: number };
+  /** 碎刃屏障：盾心距眼睛、半径、刃气每秒消耗、每挡一发额外消耗、受伤减免、移速惩罚 */
+  shield: { distance: number; radius: number; drain: number; perBlock: number; reduction: number; moveSlow: number };
+  /** 杀气爆发：射程、聚合时长、半径、伤害、击退、冷却 */
+  burst: { range: number; gather: number; radius: number; damage: number; knockback: number; cooldown: number };
+  /** 杀意：上限与各项获得量，脱战衰减 */
+  intent: { max: number; slashHit: number; swarmHit: number; kill: number; block: number; decayDelay: number; decay: number };
+  /** 人刀合一：时长、强化爆发倍率与半径、斩波射程 / 伤害比例、刃群半径倍率、移速加成、刀身常态伸长 */
+  union: { duration: number; burstMult: number; burstRadius: number; waveRange: number; waveFrac: number; swarmRadiusMult: number; moveSpeed: number; stretch: number };
+  /** 噬灵鬼眼：击杀回复（最大生命比例：普通 / 精英 / Boss）与睁眼时长 */
+  eye: { heal: number; healElite: number; healBoss: number; open: number };
 }
 
 export interface WeaponDef {
@@ -233,17 +192,8 @@ export interface WeaponDef {
   chargeDetonate: boolean;
   /** roll() 不指定 defId 时的抽取权重 */
   dropWeight: number;
-  /** 双形态武器的近战形态（docs/demon-blade.md）；null = 普通武器 */
-  melee: MeleeParams | null;
-  /** 武器技能（V / 鼠标中键）；null = 没有武器技能 */
-  skill: WeaponSkillParams | null;
-  /** 召回式换弹（魔刀千刃）：换弹不需要也不消耗备弹（reserve 恒为 0，HUD 显示 ∞），不参与弹药补给 / 防卡关判定 */
-  recall: boolean;
-  /**
-   * 按弹体计弹药（魔刀千刃）：一轮齐射的每枚弹体各消耗 1 发弹匣，一轮实际发射 min(projectile.count, 弹匣余量) 枚；
-   * false（缺省）= 每次扣扳机消耗 1 发（蜂群一轮 5 枚只耗 1 发）
-   */
-  perProjectileAmmo: boolean;
+  /** 魔刀千刃 v2（docs/demon-blade-v2.md）；null = 普通武器。有值时根字段描述「千刃出窍」的结算频率（fireRate = 每秒结算次数） */
+  blade: DemonBladeParams | null;
 }
 
 /** 稀有度伤害倍率 */
@@ -253,9 +203,9 @@ export const MAX_LEVEL = 5;
 export const LEVEL_DAMAGE = 0.12;
 
 type DefInput = Omit<WeaponDef, 'burstCount' | 'burstInterval' | 'shellTime' | 'reloadStart' | 'pelletCone' | 'falloff' | 'projectile' | 'pierce' | 'spinup' | 'moveSlow' | 'chainFraction' | 'chainRange' | 'sfxVolume' | 'aimSpeed' | 'pellets' | 'element' | 'worldScale'
-    | 'innate' | 'cycle' | 'chargeTime' | 'chargeMinMult' | 'chargeFullPierce' | 'chargeDetonate' | 'dropWeight' | 'melee' | 'skill' | 'recall' | 'perProjectileAmmo'>
+    | 'innate' | 'cycle' | 'chargeTime' | 'chargeMinMult' | 'chargeFullPierce' | 'chargeDetonate' | 'dropWeight' | 'blade'>
   & Partial<Pick<WeaponDef, 'burstCount' | 'burstInterval' | 'shellTime' | 'reloadStart' | 'pelletCone' | 'falloff' | 'pierce' | 'spinup' | 'moveSlow' | 'chainFraction' | 'chainRange' | 'sfxVolume' | 'aimSpeed' | 'pellets' | 'element' | 'worldScale'
-    | 'innate' | 'cycle' | 'chargeTime' | 'chargeMinMult' | 'chargeFullPierce' | 'chargeDetonate' | 'dropWeight' | 'melee' | 'skill' | 'recall' | 'perProjectileAmmo'>>
+    | 'innate' | 'cycle' | 'chargeTime' | 'chargeMinMult' | 'chargeFullPierce' | 'chargeDetonate' | 'dropWeight' | 'blade'>>
   & { projectile?: Partial<ProjectileParams> & Pick<ProjectileParams, 'speed' | 'visual'> };
 
 function def(d: DefInput): WeaponDef {
@@ -284,10 +234,7 @@ function def(d: DefInput): WeaponDef {
     chargeFullPierce: 0,
     chargeDetonate: false,
     dropWeight: 1,
-    melee: null,
-    skill: null,
-    recall: false,
-    perProjectileAmmo: false,
+    blade: null,
     ...d,
     projectile: p
       ? {
@@ -533,48 +480,43 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
     notes: ['发射缓缓飘行的蛊灯，自动寻敌并穿透多名敌人'],
   }),
 
-  // ───── 魔刀千刃（docs/demon-blade.md；数值见第 10.1 节） ─────
+  // ───── 魔刀千刃 v2（docs/demon-blade-v2.md；数值见第 3–8 节） ─────
 
   def({
     id: 'demon_blade', name: '魔刀千刃', category: '刀', kind: 'blade', mode: 'auto',
-    // ── 千刃（远程形态 = 根字段）：一轮 3 柄固定扇形，每柄耗 1 发；召回式换弹不需要备弹 ──
-    damage: 16, fireRate: 2.0, mag: 18, reserve: 0, reloadTime: 1.4, reloadStyle: 'recall',
-    recall: true, perProjectileAmmo: true,
-    spreadHip: 0.006, spreadAim: 0.006, spreadPerShot: 0.004, spreadMax: 0.02, spreadRecovery: 0.12,
-    recoil: { pitch: 0.006, yaw: 0.003, bias: 0, climb: 0 },
-    critMult: 2.0, range: 24, pierce: 1,
-    projectile: {
-      speed: 45, radius: 0.12, lifetime: 0.54, visual: 'blade', scale: 1,
-      count: 3, stagger: 0, fan: 0.0873 /* 5° */, fanFixed: true, color: 0xff3a24 /* 朱红 */,
-    },
-    element: 'none', elementChance: 0.17,
-    aimFov: 0, sfx: 'blade_throw', sfxVolume: 0.7, knockback: 0.8,
-    tracerWidth: 0, impactSize: 0.6, kick: { back: 0.025, rot: 0.04 }, shake: 0.03, flash: 0,
-    viewOffset: [0.24, -0.24, -0.46], aimOffset: [0.24, -0.24, -0.46], worldScale: 1.4, dropWeight: 0.6,
-    // ── 斩（近战形态）：横斩 → 回斩 → 下劈；手感参数（前摇 / 整段 / 扇形）在这里调 ──
-    melee: {
+    // 根字段 = 千刃出窍的一次结算（每 0.1 秒 6 点，单体 60 DPS）；没有弹药与换弹（mag 1 只为不触发应急补给）
+    damage: 6, fireRate: 10, mag: 1, reserve: 0, reloadTime: 0, reloadStyle: 'box',
+    spreadHip: 0, spreadAim: 0, spreadPerShot: 0, spreadMax: 0, spreadRecovery: 0,
+    recoil: { pitch: 0, yaw: 0, bias: 0, climb: 0 },
+    critMult: 2.0, range: 22, pierce: 0,
+    element: 'none', elementChance: 0.35,
+    aimFov: 0, sfx: 'blade_swing', sfxVolume: 0.7, knockback: 0,
+    tracerWidth: 0, impactSize: 0.6, kick: { back: 0, rot: 0 }, shake: 0, flash: 0,
+    // 第一人称由 demonBlade/BladeView 按相机空间关键帧摆放，枢轴留在相机原点
+    viewOffset: [0, 0, 0], aimOffset: [0, 0, 0], worldScale: 1.3, dropWeight: 0.6,
+    blade: {
       combo: [
-        { damage: 28, windup: 0.08, duration: 0.30, range: 3.2, halfAngle: 0.9599 /* 55° */, knockback: 1.5, lunge: 0, stunCrit: false, shake: 0.22 },
-        { damage: 28, windup: 0.08, duration: 0.30, range: 3.2, halfAngle: 0.9599, knockback: 1.5, lunge: 0, stunCrit: false, shake: 0.22 },
-        { damage: 54, windup: 0.14, duration: 0.46, range: 3.8, halfAngle: 0.6109 /* 35° */, knockback: 6, lunge: 0.6, stunCrit: true, shake: 0.5 },
+        { damage: 30, windup: 0.08, duration: 0.3, range: 3.2, halfAngle: 0.9599 /* 55° */, knockback: 1.5, shake: 0.2, stretch: 1 },
+        { damage: 30, windup: 0.08, duration: 0.3, range: 3.2, halfAngle: 0.9599, knockback: 1.5, shake: 0.2, stretch: 1 },
+        // 伸刃：碎片沿刀线展开到 2.2 倍，横扫 6 米
+        { damage: 60, windup: 0.16, duration: 0.5, range: 6, halfAngle: 0.6981 /* 40° */, knockback: 5, shake: 0.45, stretch: 2.2 },
       ],
-      comboReset: 0.6, reachBelow: 0.3, reachAbove: 0.6, elementChance: 0.35,
-      recallPerHit: 1, recallMaxPerSwing: 3, moveBonus: 0.4, formNames: ['斩', '千刃'],
-      morphTime: 0.25, formStrikeWindow: 2, formStrikeMult: 1.5,
+      comboReset: 0.6, reachBelow: 0.3, reachAbove: 0.6,
+      qi: { max: 100, regenDelay: 0.5, regen: 50, perSlashHit: 8 },
+      swarm: { range: 22, radius: 2.2, tick: 0.1, damage: 6, maxTargets: 8, drain: 20, follow: 18, elementScale: 0.35 },
+      shield: { distance: 1.15, radius: 0.85, drain: 25, perBlock: 6, reduction: 0.3, moveSlow: 0.2 },
+      burst: { range: 25, gather: 0.5, radius: 6, damage: 240, knockback: 8, cooldown: 15 },
+      intent: { max: 100, slashHit: 4, swarmHit: 0.5, kill: 10, block: 5, decayDelay: 5, decay: 5 },
+      union: { duration: 8, burstMult: 1.5, burstRadius: 8, waveRange: 12, waveFrac: 0.5, swarmRadiusMult: 1.5, moveSpeed: 0.15, stretch: 1.3 },
+      eye: { heal: 0.02, healElite: 0.05, healBoss: 0.12, open: 1.2 },
     },
-    // ── 武器技能（V / 鼠标中键） ──
-    skill: {
-      kind: 'dashSlash', id: 'thousand_edge', name: '千刃·无间', glyph: '刃',
-      description: '向准星水平方向瞬身突进 8 米（无敌、穿过敌人，被墙阻挡时提前停下），斩击路径两侧 1.6 米内的敌人并打上刃印；0.6 秒后千刃贯穿所有刃印目标并引爆其身上的元素状态。每命中 1 名敌人召回 2 柄飞刃。',
-      cooldown: 16, dashDist: 8, dashTime: 0.18, iframes: 0.25, exitSpeed: 6,
-      pathRadius: 1.6, slashDamage: 60, impaleDelay: 0.6, impaleDamage: 140, recallPerHit: 2, maxMarks: 24,
-    },
-    description: '妖魔铸就的弧形长刀，刀身可裂解为千柄飞刃。近身连斩召回飞刃，再化作刃雨远程收割。',
+    description: '玄武国首席暗影刺客「柒」的佩刀。刀刃由上千块碎片组成，随心意化作刃雨绞杀敌人，用毕自行归鞘；刀根的千年恶灵会吞噬亡者的魂力。',
     notes: [
-      '右键切换「斩」/「千刃」（0.25 秒），切换后 2 秒内的第一次攻击伤害 +50%',
-      '「斩」：横斩 → 回斩 → 下劈，扇形内所有敌人都会被命中；每命中 1 名敌人召回 1 柄飞刃（每段最多 3 柄）',
-      '「斩」：下劈对眩晕中的敌人必定暴击；持「斩」时移动速度 +0.4',
-      '「千刃」：一次射出 3 柄飞刃（可爆头、穿透 1）；R 或打空后召回飞刃，不消耗备弹',
+      '左键「斩」：三段连斩，第三段伸刃横扫 6 米；斩中回复刃气',
+      '右键按住「千刃出窍」：整把刀化作刃群追着准星绞杀，无视敌人护盾；松开归刀',
+      'R 按住「碎刃屏障」：碎片在身前结成圆盾，挡下敌方弹道',
+      'V「杀气爆发」：碎片聚于一点后炸开；杀意满时变为「人刀合一」',
+      '噬灵鬼眼：用魔刀击杀时刀根睁眼，吸取魂力回复生命',
     ],
   }),
 ];
@@ -587,7 +529,6 @@ const BY_ID = new Map<string, WeaponDef>(WEAPON_DEFS.map((d) => [d.id, d]));
 export function getWeaponDef(id: string): WeaponDef {
   return BY_ID.get(id) ?? (BY_ID.get('rifle') as WeaponDef);
 }
-
 export function hasWeaponDef(id: string): boolean {
   return BY_ID.has(id);
 }
@@ -611,20 +552,15 @@ export function shotsPerSecond(d: WeaponDef, rate = d.fireRate): number {
   return rate * d.burstCount;
 }
 
-/** 双形态武器（WeaponDef.melee 非 null，魔刀千刃） */
-export function isDualForm(d: WeaponDef): boolean {
-  return d.melee !== null;
+/** 魔刀千刃 v2（WeaponDef.blade 非 null） */
+export function isBlade(d: WeaponDef): boolean {
+  return d.blade !== null;
 }
 
-/** 某形态下的有效开火模式：双形态武器的近战形态为 'melee'，其他情况为 d.mode */
-export function formMode(d: WeaponDef, form: WeaponForm): FireMode {
-  return d.melee && form === 'melee' ? 'melee' : d.mode;
-}
-
-/** 近战连段一轮的总时长（秒，未计攻速）；非双形态武器为 0 */
+/** 三段连斩一轮的总时长（秒，未计攻速）；非魔刀为 0 */
 export function comboCycleTime(d: WeaponDef): number {
-  if (!d.melee) return 0;
+  if (!d.blade) return 0;
   let t = 0;
-  for (const s of d.melee.combo) t += s.duration;
+  for (const s of d.blade.combo) t += s.duration;
   return t;
 }

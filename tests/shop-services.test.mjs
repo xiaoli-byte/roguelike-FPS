@@ -87,6 +87,18 @@ test('health/shield recovery and reserve ammunition are priced repeatable servic
   }
 });
 
+test('the boss preparation shop refuses every trade while hostiles are alive, then reopens after the fight', () => {
+  const f = fixture(0, 'boss'), potion = f.item('战备药剂'), ammo = f.item('弹药箱');
+  let alive = 1; f.ctx.enemies = { aliveCount: () => alive };
+  f.ctx.player.hp = 10; f.ctx.player.shield = 0; f.ctx.weapons.active.reserve = 0;
+  potion.onInteract(); f.tick(); ammo.onInteract(); f.tick();
+  for (const i of f.items) { i.onInteract(); f.tick(); }
+  assert.equal(f.ctx.run.coins, 1000, 'no charge mid-fight'); assert.equal(f.ctx.player.hp, 10);
+  assert.ok(f.notices.includes('战斗中无法交易'));
+  alive = 0; potion.onInteract(); assert.equal(f.ctx.player.hp, 50); assert.equal(f.ctx.run.coins, 960);
+  f.dispose();
+});
+
 test('insufficient currency, full states, dead player and modal cannot grant or charge; chapter prices remain unchanged', () => {
   const f = fixture(2), potion = f.item('战备药剂'), ammo = f.item('弹药箱');
   assert.equal(potion.prompt().cost, 60); assert.equal(ammo.prompt().cost, 30);

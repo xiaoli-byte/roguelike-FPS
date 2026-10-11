@@ -1,0 +1,127 @@
+{
+  "source": {
+    "tris": 6668,
+    "verts": 10004
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 13.53033,
+    "iou": 0.769,
+    "iou_per_view": {
+      "front": 0.821,
+      "left": 0.741,
+      "back": 0.749,
+      "right": 0.74
+    },
+    "size_m": [
+      13.524,
+      4.01,
+      11.0
+    ],
+    "reference_m": [
+      16.0,
+      4.0,
+      11.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.553,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_DesertGateway_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      8192,
+      8192
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertGateway_LOD0",
+      "tris": 6668,
+      "verts": 10004,
+      "uv_min": [
+        0.001220703125,
+        0.001220703125
+      ],
+      "uv_max": [
+        0.998779296875,
+        0.99462890625
+      ],
+      "uv_utilization": 0.572,
+      "bbox_min": [
+        -6.7619,
+        -2.0051,
+        0.0
+      ],
+      "bbox_max": [
+        6.7619,
+        2.0051,
+        11.0
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertGateway_LOD1",
+      "tris": 2487,
+      "verts": 6196,
+      "uv_min": [
+        0.001220703125,
+        0.001220703125
+      ],
+      "uv_max": [
+        0.99853515625,
+        0.9943920969963074
+      ],
+      "uv_utilization": 0.534,
+      "bbox_min": [
+        -6.7619,
+        -2.0306,
+        -0.027
+      ],
+      "bbox_max": [
+        6.7679,
+        2.008,
+        11.0
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertGateway_LOD2",
+      "tris": 796,
+      "verts": 4598,
+      "uv_min": [
+        0.001220703125,
+        0.0014395241159945726
+      ],
+      "uv_max": [
+        0.981689453125,
+        0.9801891446113586
+      ],
+      "uv_utilization": 0.416,
+      "bbox_min": [
+        -7.354,
+        -2.0306,
+        -0.027
+      ],
+      "bbox_max": [
+        6.9157,
+        2.008,
+        11.0
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertGateway/04_export/SM_Tripo_DesertGateway_v001.glb",
+    "bytes": 1014372
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 23.0,
+  "_seconds": 26.9
+}

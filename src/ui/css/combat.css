@@ -954,10 +954,10 @@
   border-radius: 0 100% 100% 0 / 0 50% 50% 0;
 }
 
-/* 攻击距离：下一段斩击此刻能砍到敌人（武器系统按扇形判定，is-target）时括号朱红并收紧（--gap 由 Crosshair 减 4px）；
+/* 攻击距离：下一段斩击此刻能砍到敌人时括号紫色并收紧（--gap由Crosshair减4px）；
    距离外括号变淡，远处的敌人不会让括号变红 */
 .gf-xhair.is-melee .gf-xhair__reticle.is-target {
-  --xc: #ff4a30;
+  --xc: #be85ff;
 }
 
 .gf-xhair.is-melee:not(.is-strike) .gf-xhair__reticle:not(.is-target) .gf-xhair__line--l,
@@ -965,39 +965,19 @@
   opacity: 0.55;
 }
 
-/* 换形一击窗口（双形态武器变形后 2 秒内的第一次攻击 +50%）：准星与中心点朱红，0.3 秒往返脉动 */
+/* 换形一击窗口：准星与中心点紫色，0.3秒往返脉动。 */
 .gf-xhair.is-strike .gf-xhair__reticle {
-  --xc: #ff4a30;
+  --xc: #be85ff;
   animation: gf-xhair-strike 0.3s ease-in-out infinite alternate;
 }
 
 @keyframes gf-xhair-strike {
-  from { filter: drop-shadow(0 0 1px rgba(255, 74, 48, 0.35)); }
-  to { filter: drop-shadow(0 0 6px rgba(255, 74, 48, 0.95)); }
+  from { filter: drop-shadow(0 0 1px rgba(153, 84, 255, 0.35)); }
+  to { filter: drop-shadow(0 0 6px rgba(153, 84, 255, 0.95)); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .gf-xhair.is-strike .gf-xhair__reticle {
-    filter: drop-shadow(0 0 4px rgba(255, 74, 48, 0.8));
+    filter: drop-shadow(0 0 4px rgba(153, 84, 255, 0.8));
   }
-}
-
-/* ═════════════════════════ 武器技能贯穿（千刃·无间） ═════════════════════════
-   朱红暗角闪（0.12 秒，Crosshair 写 opacity）与视野外刃印的方向刃光（复用受击方向弧的形状，朱红、更窄更亮） */
-.gf-bladeflash {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  opacity: 0;
-  pointer-events: none;
-  background: radial-gradient(ellipse at center, transparent 50%, rgba(255, 58, 36, 0.32) 80%, rgba(176, 26, 14, 0.75) 100%);
-  will-change: opacity;
-}
-
-.gf-dmgdir__arc.gf-dmgdir__arc--blade {
-  border-width: 4px;
-  border-top-color: rgba(255, 74, 48, 1);
-  -webkit-mask-image: linear-gradient(90deg, transparent 36%, #000 47%, #000 53%, transparent 64%);
-  mask-image: linear-gradient(90deg, transparent 36%, #000 47%, #000 53%, transparent 64%);
-  filter: drop-shadow(0 -2px 8px rgba(255, 74, 48, 0.95)) drop-shadow(0 0 2px rgba(255, 230, 220, 0.6));
 }

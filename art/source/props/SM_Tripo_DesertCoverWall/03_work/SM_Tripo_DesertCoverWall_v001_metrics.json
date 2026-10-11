@@ -1,0 +1,103 @@
+{
+  "source": {
+    "tris": 2640,
+    "verts": 2143
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 4.91671,
+    "iou": 0.858,
+    "iou_per_view": {
+      "front": 0.898,
+      "left": 0.802,
+      "back": 0.904,
+      "right": 0.805
+    },
+    "size_m": [
+      4.914,
+      0.987,
+      2.6
+    ],
+    "reference_m": [
+      6.0,
+      1.2,
+      2.6
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.56,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Tripo_DesertCoverWall_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      8192,
+      8192
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertCoverWall_LOD0",
+      "tris": 2640,
+      "verts": 2143,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.562,
+      "bbox_min": [
+        -2.4572,
+        -0.4934,
+        0.0
+      ],
+      "bbox_max": [
+        2.4572,
+        0.4934,
+        2.6
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertCoverWall_LOD1",
+      "tris": 994,
+      "verts": 1147,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.543,
+      "bbox_min": [
+        -2.4572,
+        -0.4974,
+        -0.0056
+      ],
+      "bbox_max": [
+        2.4385,
+        0.4789,
+        2.6045
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertCoverWall/04_export/SM_Tripo_DesertCoverWall_v001.glb",
+    "bytes": 194440
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 6.2,
+  "_seconds": 9.8
+}

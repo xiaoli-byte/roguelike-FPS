@@ -1,0 +1,226 @@
+{
+  "doc": "Tripo humanoid auto-rig (Mixamo preset, 65 bones) → semantic rig for 跳鼠刀兵. Coordinates are the Tripo FBX in Blender after applying its transforms (front = -Y, up = +Z, ~0.98 unit tall); side suffixes are the creature's own left / right (its left is +X). Mixamo has no ears, tail or bell: they are added here and weighted from geometry (profile biped_tail). Fingers merge into the hand (the daggers are procedural parts held by hand_L / hand_R).",
+  "source": "art/source/_tripo_inbox/20261006T075051_SK_Enemy_JerboaBlade_rig.fbx",
+  "task": "https://studio.tripo3d.ai/zh/workspace/generate/c7dfd2e9-7220-4d3f-abd0-1026a809e6e9",
+  "height_m": 1.1,
+  "profile": "biped_tail",
+  "keep": {
+    "mixamorig:Hips": "hips",
+    "mixamorig:Spine": "spine",
+    "mixamorig:Spine2": "chest",
+    "mixamorig:Neck": "neck",
+    "mixamorig:Head": "head",
+    "mixamorig:LeftShoulder": "shoulder_L",
+    "mixamorig:LeftArm": "arm_L",
+    "mixamorig:LeftForeArm": "forearm_L",
+    "mixamorig:LeftHand": "hand_L",
+    "mixamorig:RightShoulder": "shoulder_R",
+    "mixamorig:RightArm": "arm_R",
+    "mixamorig:RightForeArm": "forearm_R",
+    "mixamorig:RightHand": "hand_R",
+    "mixamorig:LeftUpLeg": "thigh_L",
+    "mixamorig:LeftLeg": "shin_L",
+    "mixamorig:LeftFoot": "foot_L",
+    "mixamorig:LeftToeBase": "toe_L",
+    "mixamorig:RightUpLeg": "thigh_R",
+    "mixamorig:RightLeg": "shin_R",
+    "mixamorig:RightFoot": "foot_R",
+    "mixamorig:RightToeBase": "toe_R"
+  },
+  "merge": {
+    "spine": [
+      "mixamorig:Spine1"
+    ],
+    "head": [
+      "mixamorig:HeadTop_End"
+    ],
+    "toe_L": [
+      "mixamorig:LeftToe_End"
+    ],
+    "toe_R": [
+      "mixamorig:RightToe_End"
+    ],
+    "hand_L": [
+      "mixamorig:LeftHandIndex1",
+      "mixamorig:LeftHandIndex2",
+      "mixamorig:LeftHandIndex3",
+      "mixamorig:LeftHandIndex4",
+      "mixamorig:LeftHandMiddle1",
+      "mixamorig:LeftHandMiddle2",
+      "mixamorig:LeftHandMiddle3",
+      "mixamorig:LeftHandMiddle4",
+      "mixamorig:LeftHandRing1",
+      "mixamorig:LeftHandRing2",
+      "mixamorig:LeftHandRing3",
+      "mixamorig:LeftHandRing4",
+      "mixamorig:LeftHandPinky1",
+      "mixamorig:LeftHandPinky2",
+      "mixamorig:LeftHandPinky3",
+      "mixamorig:LeftHandPinky4",
+      "mixamorig:LeftHandThumb1",
+      "mixamorig:LeftHandThumb2",
+      "mixamorig:LeftHandThumb3",
+      "mixamorig:LeftHandThumb4"
+    ],
+    "hand_R": [
+      "mixamorig:RightHandIndex1",
+      "mixamorig:RightHandIndex2",
+      "mixamorig:RightHandIndex3",
+      "mixamorig:RightHandIndex4",
+      "mixamorig:RightHandMiddle1",
+      "mixamorig:RightHandMiddle2",
+      "mixamorig:RightHandMiddle3",
+      "mixamorig:RightHandMiddle4",
+      "mixamorig:RightHandRing1",
+      "mixamorig:RightHandRing2",
+      "mixamorig:RightHandRing3",
+      "mixamorig:RightHandRing4",
+      "mixamorig:RightHandPinky1",
+      "mixamorig:RightHandPinky2",
+      "mixamorig:RightHandPinky3",
+      "mixamorig:RightHandPinky4",
+      "mixamorig:RightHandThumb1",
+      "mixamorig:RightHandThumb2",
+      "mixamorig:RightHandThumb3",
+      "mixamorig:RightHandThumb4"
+    ]
+  },
+  "add": {
+    "root": {
+      "parent": null,
+      "head": "origin",
+      "tail_offset": [
+        0,
+        -0.1,
+        0
+      ]
+    },
+    "ear_L": {
+      "parent": "head",
+      "head": "ear_base:L",
+      "tail": "ear_tip:L"
+    },
+    "ear_R": {
+      "parent": "head",
+      "head": "ear_base:R",
+      "tail": "ear_tip:R"
+    },
+    "bell": {
+      "parent": "head",
+      "head": "part",
+      "tail_offset": [
+        0,
+        0,
+        0.06
+      ]
+    },
+    "tail_1": {
+      "parent": "hips",
+      "head": "tail:0",
+      "tail": "tail:1"
+    },
+    "tail_2": {
+      "parent": "tail_1",
+      "head": "tail:1",
+      "tail": "tail:2"
+    },
+    "tail_3": {
+      "parent": "tail_2",
+      "head": "tail:2",
+      "tail": "tail:3"
+    },
+    "tail_4": {
+      "parent": "tail_3",
+      "head": "tail:3",
+      "tail": "tail:4"
+    }
+  },
+  "parent_fix": {
+    "hips": "root"
+  },
+  "regions": {
+    "part": {
+      "bone": "bell",
+      "centre": [
+        0,
+        -0.115,
+        0.835
+      ],
+      "radius": 0.046
+    },
+    "ears": {
+      "base": [
+        0.072,
+        -0.06,
+        0.8
+      ],
+      "tip": [
+        0.15,
+        -0.04,
+        0.95
+      ],
+      "blend": 0.03,
+      "min_x": 0.045,
+      "x_blend": 0.025,
+      "below": 0.03
+    },
+    "tail": {
+      "joints": [
+        [
+          0,
+          0.0,
+          0.33
+        ],
+        [
+          0,
+          0.075,
+          0.235
+        ],
+        [
+          0,
+          0.14,
+          0.172
+        ],
+        [
+          0,
+          0.2,
+          0.104
+        ],
+        [
+          0,
+          0.285,
+          0.082
+        ]
+      ],
+      "radius": 0.09,
+      "start_y": 0.0,
+      "blend_y": 0.1
+    }
+  },
+  "glow_shell": "bell",
+  "provider_pbr": true,
+  "bake_normal": true,
+  "paint_shading": {
+    "cavity_distance": 0.018,
+    "cavity": 0.38,
+    "ao": 0.18,
+    "saturation": 1.1,
+    "contrast": 1.06,
+    "keep_brightness": true
+  },
+  "texture_cleanup": [
+    {
+      "name": "耳背的铃铛印花（Tripo 贴图错误）",
+      "min_z": 0.8,
+      "min_abs_x": 0.06,
+      "facing": [
+        0,
+        1,
+        0
+      ],
+      "min_dot": 0.15,
+      "threshold": 0.06,
+      "radius": 24
+    }
+  ]
+}

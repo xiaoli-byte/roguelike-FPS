@@ -171,6 +171,7 @@ export class GroundDecal {
     u.uInner.value = 0;
     u.uArcCenter.value = 0;
     u.uArcHalf.value = 4;
+    d.mat.blending = THREE.AdditiveBlending;
     d.mesh.visible = true;
     parent.add(d.mesh);
     return d;
@@ -225,6 +226,13 @@ export class GroundDecal {
   }
   set soft(v: number) {
     this.u.uSoft.value = v;
+  }
+  /**
+   * true = 普通混合（默认叠加）。浅色冰雪地面上叠加的浅色预警会被地面吃掉、几乎看不见，
+   * 换成饱和色 + 普通混合才读得出来。只改 GL 混合状态，不重新编译着色器；acquire 时恢复叠加。
+   */
+  set solid(v: boolean) {
+    this.mat.blending = v ? THREE.NormalBlending : THREE.AdditiveBlending;
   }
   setColor(hex: number): void {
     this.u.uColor.value.setHex(hex);

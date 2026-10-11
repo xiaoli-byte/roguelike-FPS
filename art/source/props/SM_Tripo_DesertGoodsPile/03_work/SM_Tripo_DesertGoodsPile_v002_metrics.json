@@ -1,0 +1,103 @@
+{
+  "source": {
+    "tris": 2913,
+    "verts": 1565
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 1.68473,
+    "iou": 0.9,
+    "iou_per_view": {
+      "front": 0.932,
+      "left": 0.864,
+      "back": 0.913,
+      "right": 0.875
+    },
+    "size_m": [
+      1.684,
+      1.281,
+      1.6
+    ],
+    "reference_m": [
+      3.0,
+      2.0,
+      1.6
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.799,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "pottery_crate_set_3d_model_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      2048,
+      2048
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertGoodsPile_LOD0",
+      "tris": 2913,
+      "verts": 1565,
+      "uv_min": [
+        0.001220703125,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.995849609375,
+        0.9990234375
+      ],
+      "uv_utilization": 0.653,
+      "bbox_min": [
+        -0.842,
+        -0.6404,
+        0.0
+      ],
+      "bbox_max": [
+        0.842,
+        0.6404,
+        1.6
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertGoodsPile_LOD1",
+      "tris": 995,
+      "verts": 574,
+      "uv_min": [
+        0.0009084436460398138,
+        0.001220703125
+      ],
+      "uv_max": [
+        0.995849609375,
+        0.9990234375
+      ],
+      "uv_utilization": 0.549,
+      "bbox_min": [
+        -0.8461,
+        -0.6519,
+        -0.0033
+      ],
+      "bbox_max": [
+        0.8374,
+        0.6369,
+        1.598
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertGoodsPile/04_export/SM_Tripo_DesertGoodsPile_v002.glb",
+    "bytes": 298800
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 5.3,
+  "_seconds": 8.2
+}

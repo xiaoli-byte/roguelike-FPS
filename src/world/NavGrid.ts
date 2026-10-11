@@ -479,6 +479,12 @@ export class NavGrid implements INavGrid {
     return count > 0;
   }
 
+  /** p 是否站在某座高台的台面上（不含台阶）：高台出生点用 */
+  platformAt(p: THREE.Vector3): boolean {
+    const spot = this.rampSpot(p, 0);
+    return spot >= 0 && (spot & 1) === 0;
+  }
+
   /**
    * p 所在的高台：返回 索引·2 + (0 = 台面 / 1 = 台阶)，在地面上返回 -1。
    * edge 为台面矩形的水平外扩（脚底 AABB 可以悬出台沿）。

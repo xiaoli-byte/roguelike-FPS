@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>魔刀千刃检视</title>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#1a1b24;color:#ebe7f5;font:14px "Microsoft YaHei",sans-serif}
+canvas{display:block;width:100%;height:100%}
+aside{position:fixed;left:16px;top:16px;width:220px;background:#151823ee;border:1px solid #3f4258;padding:14px;border-radius:8px}
+h1{font-size:18px;margin:0 0 6px}p{font-size:12px;line-height:1.6;color:#a9adc4;margin:6px 0}
+label{display:block;margin:10px 0 4px;font-size:12px;color:#c9c4dc}
+select,button{box-sizing:border-box;background:#252b40;color:#f2edff;border:1px solid #515974;border-radius:4px;padding:7px;width:100%;font:inherit}
+input[type=range]{width:100%;accent-color:#ba8aff}
+#readout{white-space:pre-wrap;font-size:11px;line-height:1.6;font-variant-numeric:tabular-nums}
+body.clean aside{display:none}
+</style></head><body><canvas id="c"></canvas>
+<aside><h1>魔刀千刃 v2</h1><p>128 片独立碎刃 · 鬼面刀根</p>
+<label>视角</label><select id="view"><option value="side">正侧面</option><option value="three">斜侧</option><option value="root">刀根特写</option><option value="tip">刀尖特写</option><option value="edge">刃口方向</option><option value="fp">第一人称</option></select>
+<label>状态</label><select id="state"><option value="closed">整刀</option><option value="shatter">碎裂（刀尖 → 刀柄）</option><option value="swarm">刃群旋涡</option><option value="shield">碎刃屏障</option><option value="explode">分解展示</option><option value="slash0">斩·第一段</option><option value="slash1">斩·第二段</option><option value="slash2">斩·伸刃</option><option value="combo">斩·三段循环</option><option value="point">剑指</option><option value="shieldpose">屏障持刀</option><option value="raise">杀气爆发起手</option></select>
+<label>人刀合一 <span id="unionv">0</span></label><input id="union" type="range" min="0" max="1" step="0.01" value="0">
+<label>鬼眼 <span id="eyev">0</span></label><input id="eye" type="range" min="0" max="1" step="0.01" value="0">
+<label>背景</label><select id="bg"><option value="#d6d6d6">设计图灰</option><option value="#1a1b24">暗色</option><option value="#c9a878">沙漠</option></select>
+<p id="readout"></p></aside>
+<script type="module" src="/src/dev/bladeLab.ts"></script></body></html>

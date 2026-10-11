@@ -1,0 +1,430 @@
+{
+  "id": "SM_Tripo_DesertColumnRuin",
+  "display": "倒塌柱段碎石堆（V2）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:02:31",
+          "files": {
+            "BO_SM_Tripo_DesertColumnRuin_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertColumnRuin_v001.json",
+              "sha256": "5bd8da0cb666b8bda3123e2600879c43c3ca2646dd4855976f256baaed1985a5"
+            },
+            "BO_SM_Tripo_DesertColumnRuin_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertColumnRuin_v001_views.json",
+              "sha256": "b5851598dcc061c00e51d97841188841147439dbbd87395d4fcba1b536b601b0"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.v2.columnruin"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -3.0,
+              0,
+              -1.5
+            ],
+            "max": [
+              3.0,
+              1.6,
+              1.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:02:57",
+          "files": {
+            "CN_SM_Tripo_DesertColumnRuin_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertColumnRuin_v001_source.png",
+              "sha256": "517affc26fdd24495aedcd3d8faee201ba20a5bae8c5b09852d8bbb30f1029bc"
+            },
+            "CN_SM_Tripo_DesertColumnRuin_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertColumnRuin_v001_front.png",
+              "sha256": "9f389384c2975b245dd7721339c6aaca4ba60be44494f32d72bd20af5f29a4fb"
+            },
+            "CN_SM_Tripo_DesertColumnRuin_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertColumnRuin_v001_left.png",
+              "sha256": "d6b30a4b7c520863cad17ce8f5e0b7a1d1e7e803f9841e3b63d74b9ab37c35dd"
+            },
+            "CN_SM_Tripo_DesertColumnRuin_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertColumnRuin_v001_back.png",
+              "sha256": "bda4abf9af6de7728872c60f9c07b70fbf4f4d37642c6f6b0f5873eb855c72c8"
+            },
+            "CN_SM_Tripo_DesertColumnRuin_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertColumnRuin_v001_right.png",
+              "sha256": "31262691149f33819197823811874c024e4b4390c137e700c70f000cb5d0f5c7"
+            },
+            "CN_SM_Tripo_DesertColumnRuin_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertColumnRuin_v001_sheet.png",
+              "sha256": "af836df6fc30b30196ee0dcb4d89875d6b3c9e2216b1fb186e64e47e26717add"
+            },
+            "CN_SM_Tripo_DesertColumnRuin_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertColumnRuin_v001_prompt.txt",
+              "sha256": "ac9b676284154f0f50daa8892df6ea90371f4b5200c3d447c0a721c03b0b17d8"
+            },
+            "CN_SM_Tripo_DesertColumnRuin_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertColumnRuin_v001_registration.json",
+              "sha256": "351cd4deb4a58150f2498ac3d456cce19a7b680ff09aec33fd3eb524d548f2a5"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 442,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 442
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1622
+            },
+            "request_id": "req_bb43905c9a184864a576e497affb4c41",
+            "seconds": 24.7
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian desert temple fantasy. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (6m wide x 1.6m tall x 3m deep): A toppled desert temple column lying on the ground, 6m long, 1.6m tall, 3m deep: three thick round sandstone column drums fallen in a staggered row along the length, a broken square capital with a carved sun rosette at one end, and a low heap of chunky sandstone rubble and broken blocks wedged around them. Faded terracotta and muted teal paint traces on the drums. Warm ochre sandstone, broad hand-painted planes, chunky readable shapes, everything touching as one solid connected piece on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "517affc26fdd24495aedcd3d8faee201ba20a5bae8c5b09852d8bbb30f1029bc",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.6005160684963641,
+              "offset": [
+                90,
+                451
+              ],
+              "size": [
+                331,
+                122
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6188058979937152,
+              "offset": [
+                150,
+                451
+              ],
+              "size": [
+                211,
+                122
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6064913527600094,
+              "offset": [
+                96,
+                451
+              ],
+              "size": [
+                320,
+                122
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.6034889203206034,
+              "offset": [
+                128,
+                451
+              ],
+              "size": [
+                255,
+                122
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI审核)",
+            "note": "四视图同一组倒塌柱段：前视左端为日纹柱头、右为柱鼓与碎石；侧视以柱鼓彩带判断正面朝向，已核对左侧=正面朝画面左，无需对调。无裁切。",
+            "time": "2026-10-06 17:10:58"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 20:03:35",
+          "files": {
+            "HP_SM_Tripo_DesertColumnRuin_v001_source.fbx": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertColumnRuin_v001_source.fbx",
+              "sha256": "f10dcaa5a544379ff570f5667f3937788f6627e87cc8b703b128d49811e240ef"
+            },
+            "HP_SM_Tripo_DesertColumnRuin_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertColumnRuin_v001.glb",
+              "sha256": "e8cdf380879d47d67d77473f9f6d0c3da08b3e6b39b8da51de26296d86fe1e82"
+            },
+            "HP_SM_Tripo_DesertColumnRuin_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertColumnRuin_v001_graph.json",
+              "sha256": "9af99f4a59a47bc52455346009513f1fb660fd28b0bc5d6d0f41d097de06979d"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/7ba47873-bd14-4f37-ada1-364373e27c5d",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 2921,
+          "source_sha256": "f10dcaa5a544379ff570f5667f3937788f6627e87cc8b703b128d49811e240ef"
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 20:03:48",
+          "files": {
+            "SM_Tripo_DesertColumnRuin_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertColumnRuin_v001.blend",
+              "sha256": "9b94df926cf3aacb24b4cb1fbcde6c60185f38d1cde19e72b19d2bd2caac69b7"
+            },
+            "SM_Tripo_DesertColumnRuin_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertColumnRuin_v001.glb",
+              "sha256": "c68822dce92c0bff5c8ab1f31773ebbe55d12d8e69bbe9dc3d9951a38a065fe6"
+            },
+            "SM_Tripo_DesertColumnRuin_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertColumnRuin_v001_metrics.json",
+              "sha256": "11a163d8dd2b55e12646c36dfd11d261ed397cf2f752bd126ae08cc74323af7b"
+            },
+            "T_Tripo_DesertColumnRuin_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertColumnRuin_BC.png",
+              "sha256": "ae1f6d052ef2275cbe537b5687f9cce7be6b7c1e2f6878ae0796bbf55c35a7cf"
+            },
+            "T_Tripo_DesertColumnRuin_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertColumnRuin_N.png",
+              "sha256": "36238e4f012d29ffb7338ae241235f7390e4955abb7eab666abde4efcb6f06d4"
+            },
+            "T_Tripo_DesertColumnRuin_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertColumnRuin_ORM.png",
+              "sha256": "dffe5dda5d11690806b0b9497dea0443fde64a35885263fb96c503a385264feb"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.885,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2921,
+              "verts": 3777
+            },
+            {
+              "tris": 995,
+              "verts": 2051
+            }
+          ],
+          "export_kb": 251.0,
+          "seconds": 7.7,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:22:36",
+          "files": {
+            "SM_Tripo_DesertColumnRuin_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertColumnRuin_v002.blend",
+              "sha256": "52cd54107add8a1e0d79fa9b3e052832340e2d71e2e8211d435ce58b3ff08340"
+            },
+            "SM_Tripo_DesertColumnRuin_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertColumnRuin_v002.glb",
+              "sha256": "108a4026c069323121ecf218334bea523be1ca374ba14154463f4fe7ac992d83"
+            },
+            "SM_Tripo_DesertColumnRuin_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertColumnRuin_v002_metrics.json",
+              "sha256": "5564cc7294086c1bee728eef0f25419cc398a3e1ee0a0eabd4cacad94cf2c5a9"
+            },
+            "T_Tripo_DesertColumnRuin_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertColumnRuin_BC.png",
+              "sha256": "ae1f6d052ef2275cbe537b5687f9cce7be6b7c1e2f6878ae0796bbf55c35a7cf"
+            },
+            "T_Tripo_DesertColumnRuin_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertColumnRuin_N.png",
+              "sha256": "36238e4f012d29ffb7338ae241235f7390e4955abb7eab666abde4efcb6f06d4"
+            },
+            "T_Tripo_DesertColumnRuin_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertColumnRuin_ORM.png",
+              "sha256": "b70944f57cb236107e92cc3352b3b7e584c9f48a392684c780e2491dababec18"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.884,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2921,
+              "verts": 1603
+            },
+            {
+              "tris": 994,
+              "verts": 609
+            }
+          ],
+          "export_kb": 251.2,
+          "seconds": 7.9,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 20:03:49",
+          "files": {
+            "SM_Tripo_DesertColumnRuin_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertColumnRuin_v001_validation_v001.json",
+              "sha256": "378ebfd5131811b096ada74d11d1a5941f76ee71bae9d2a02c0151556b62fbc3"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:22:37",
+          "files": {
+            "SM_Tripo_DesertColumnRuin_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertColumnRuin_v002_validation_v002.json",
+              "sha256": "a6a1b8bd318efec6c7cdbd5bb9d5cef70f8d3cedebc03a7fc98140904d34bdf7"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 20:03:56",
+          "files": {
+            "SM_Tripo_DesertColumnRuin_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertColumnRuin_v001_review_v001.png",
+              "sha256": "528e74e5d59249e467cdfee040f9ba56aa8b0663648e03b7b79628ec2e47f7a8"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI审核)",
+            "note": "倒塌柱段：日纹柱头、彩带柱鼓、碎石堆齐全，五向审核图无破面；IoU 0.885，校验 31 项全过，LOD1 995 面。",
+            "time": "2026-10-06 20:04:51"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:22:44",
+          "files": {
+            "SM_Tripo_DesertColumnRuin_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_DesertColumnRuin_v002_review_v002.png",
+              "sha256": "476f995dad8eba2f56ff6ee750e05e2c4fb345d432b8b237132fca49832bd30b"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI审核)",
+            "note": "LOD 裂缝修复重建：Tripo 源网格先焊接（1e-4）再减面并保留 UV 边界（bl_build_tripo.py）。五向审核图与上一版一致，贴图完整；焊接后 LOD1/LOD2 开放边长度回到 LOD0 水平。",
+            "time": "2026-10-06 21:24:10"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 20:04:52",
+          "files": {
+            "SM_Tripo_DesertColumnRuin.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertColumnRuin.glb",
+              "sha256": "c68822dce92c0bff5c8ab1f31773ebbe55d12d8e69bbe9dc3d9951a38a065fe6"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertColumnRuin.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:24:10",
+          "files": {
+            "SM_Tripo_DesertColumnRuin.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertColumnRuin.glb",
+              "sha256": "108a4026c069323121ecf218334bea523be1ca374ba14154463f4fe7ac992d83"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_DesertColumnRuin.glb"
+        }
+      ]
+    }
+  }
+}

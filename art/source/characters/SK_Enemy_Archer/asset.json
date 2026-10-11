@@ -66,7 +66,7 @@
       ]
     },
     "concept": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -174,11 +174,118 @@
             "note": "设计贴合；侧视图IoU 0.62因细骨架与箭袋条，正面0.81可用",
             "time": "2026-10-03 16:42:44"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 11:20:58",
+          "files": {
+            "CN_SK_Enemy_Archer_v002_sheet.png": {
+              "path": "01_concept/CN_SK_Enemy_Archer_v002_sheet.png",
+              "sha256": "a8dc0a596441b0cff53cee7d8495ceb6bd5e66aeca81105088ca0787ffdf4ac0"
+            },
+            "CN_SK_Enemy_Archer_v002_front.png": {
+              "path": "01_concept/CN_SK_Enemy_Archer_v002_front.png",
+              "sha256": "14a55fefcfbf77a457295aacc326411901a3175ccdf5ff0758b9bdcbfb23ec76"
+            },
+            "CN_SK_Enemy_Archer_v002_left.png": {
+              "path": "01_concept/CN_SK_Enemy_Archer_v002_left.png",
+              "sha256": "8245f7b93878f42518651377a28ce7c4770a9e5572385cd348bbc01c111a3a6d"
+            },
+            "CN_SK_Enemy_Archer_v002_back.png": {
+              "path": "01_concept/CN_SK_Enemy_Archer_v002_back.png",
+              "sha256": "76db458546d5f65ad00700d5e7a5b82fa01d924f87edb96339ff6c20ee69fbf6"
+            },
+            "CN_SK_Enemy_Archer_v002_right.png": {
+              "path": "01_concept/CN_SK_Enemy_Archer_v002_right.png",
+              "sha256": "5e6e61a0cc2eda179bc67e19575e81a775d8a8e5a7f95cd416b59b43664b94d8"
+            },
+            "CN_SK_Enemy_Archer_v002_compare.png": {
+              "path": "01_concept/CN_SK_Enemy_Archer_v002_compare.png",
+              "sha256": "a51a85315a99f33a6a99920ea57d7e221463261a83b78b5102ebaf34b0df208b"
+            },
+            "CN_SK_Enemy_Archer_v002_prompt.txt": {
+              "path": "01_concept/CN_SK_Enemy_Archer_v002_prompt.txt",
+              "sha256": "77fe41cd6d0cf538ca711131d7f493872773c7a301e9877d6eb7d2d3966a78b6"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 2136,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 678
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3316
+          },
+          "request_id": "req_cabebee1894649f2bb000b02f79f01cc",
+          "seconds": 31.6,
+          "registration": {
+            "front": {
+              "scale": 0.8684,
+              "offset": [
+                42,
+                110
+              ],
+              "iou": 0.803,
+              "iou_unregistered_scale": 0.8816
+            },
+            "left": {
+              "scale": 0.8589,
+              "offset": [
+                131,
+                110
+              ],
+              "iou": 0.601,
+              "iou_unregistered_scale": 0.8855
+            },
+            "back": {
+              "scale": 0.8693,
+              "offset": [
+                38,
+                110
+              ],
+              "iou": 0.796,
+              "iou_unregistered_scale": 0.8825
+            },
+            "right": {
+              "scale": 0.8589,
+              "offset": [
+                155,
+                110
+              ],
+              "iou": 0.598,
+              "iou_unregistered_scale": 0.8855
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.803,
+            "left": 0.602,
+            "back": 0.797,
+            "right": 0.6
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI初审)",
+            "note": "v002：按新规则重出，骨手拇指 + 4 指分开、赤足趾骨清晰；侧视 IoU 0.60 源于箭袋与前伸脚掌，比例无误",
+            "time": "2026-10-06 11:21:14"
+          }
         }
       ]
     },
     "highpoly": {
-      "current": 1,
+      "current": null,
       "versions": [
         {
           "version": 1,
@@ -225,7 +332,7 @@
       ]
     },
     "build": {
-      "current": 9,
+      "current": null,
       "versions": [
         {
           "version": 1,
@@ -746,7 +853,7 @@
       ]
     },
     "validate": {
-      "current": 8,
+      "current": null,
       "versions": [
         {
           "version": 1,
@@ -868,7 +975,7 @@
       ]
     },
     "review": {
-      "current": 8,
+      "current": null,
       "versions": [
         {
           "version": 1,
@@ -1162,7 +1269,7 @@
       ]
     },
     "publish": {
-      "current": 5,
+      "current": null,
       "versions": [
         {
           "version": 1,

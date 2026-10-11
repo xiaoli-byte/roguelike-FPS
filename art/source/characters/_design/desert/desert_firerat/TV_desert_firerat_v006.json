@@ -1,0 +1,37 @@
+{
+  "design": {
+    "key": "desert_firerat",
+    "chapter": "desert",
+    "name": "火浣鼠",
+    "layout": "creature",
+    "height_m": 0.7,
+    "brief": "A mythical fire rat (火鼠) whose fur is woven into fireproof cloth in Chinese legend: a round, chubby rat with a thick coat of bristling fur that burns at the tips with white-gold flames, small fierce glowing eyes, big front teeth, a long fiery tail, little paws with four toes. Shown both standing and curled into a rolling ball of fire. Cute and explosive.",
+    "weapon": "",
+    "turnaround_pose": " standing ON ALL FOURS like a real rat (quadruped, NOT upright, NOT on its hind legs): real rat anatomy and proportions but slightly chubby and stylized: a long rounded body held low and horizontal, the back gently arched, a pointed snout with the two big front teeth showing, round ears, fierce glowing eyes; all four legs straight under the body and planted on the ground in a neutral stance, front paws and hind feet clearly separated; the long tail extending straight backwards and rising slightly upward behind the body (not curled, not over the back); ALL flames are drawn as OPAQUE solid sculpted flame-shaped fur tufts with crisp edges (stylized carved fur that looks like flames, red-orange with pale gold tips), a flame crest on the head and a ridge of flame tufts along the spine, NOT transparent fire, NO glow halo, NO sparks, NO smoke, NO particles; never a rolled-up ball",
+    "turnaround_digits": "each front paw with four separate clawed toes and each hind foot with five separate clawed toes, clearly countable; the whole tail, both ears, the snout and every flame tuft fully inside the frame; in the side views the long body and tail must fit inside the view with margin."
+  },
+  "from_sheet": "DS_desert_firerat_v001.png",
+  "generation": {
+    "provider": "openai",
+    "endpoint": "images/edits",
+    "model": "gpt-image-2.5-sunburst",
+    "size": "2048x1024",
+    "quality": "high",
+    "background": "opaque",
+    "usage": {
+      "input_tokens": 1954,
+      "input_tokens_details": {
+        "image_tokens": 1458,
+        "text_tokens": 496
+      },
+      "output_tokens": 1180,
+      "output_tokens_details": {
+        "image_tokens": 1180,
+        "text_tokens": 0
+      },
+      "total_tokens": 3134
+    },
+    "request_id": "req_ab863a99b32c4f019cfd79f8b4f88120",
+    "seconds": 32.6
+  }
+}

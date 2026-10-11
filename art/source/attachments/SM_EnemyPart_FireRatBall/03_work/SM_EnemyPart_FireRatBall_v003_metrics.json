@@ -1,0 +1,103 @@
+{
+  "source": {
+    "tris": 4738,
+    "verts": 3223
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 0.54875,
+    "iou": 0.224,
+    "iou_per_view": {
+      "front": 0.225,
+      "left": 0.23,
+      "back": 0.213,
+      "right": 0.227
+    },
+    "size_m": [
+      0.506,
+      0.529,
+      0.548
+    ],
+    "reference_m": [
+      0.548,
+      0.548,
+      0.548
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.755,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "fiery_hamster_3d_model_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      8192,
+      8192
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_EnemyPart_FireRatBall_LOD0",
+      "tris": 2984,
+      "verts": 2124,
+      "uv_min": [
+        0.0009765625,
+        0.0007007205276750028
+      ],
+      "uv_max": [
+        0.99658203125,
+        0.999267578125
+      ],
+      "uv_utilization": 0.754,
+      "bbox_min": [
+        -0.2525,
+        -0.265,
+        -0.0001
+      ],
+      "bbox_max": [
+        0.2528,
+        0.2655,
+        0.5494
+      ]
+    },
+    {
+      "name": "SM_EnemyPart_FireRatBall_LOD1",
+      "tris": 995,
+      "verts": 713,
+      "uv_min": [
+        0.0009765625,
+        0.000732421875
+      ],
+      "uv_max": [
+        0.98974609375,
+        0.9992777705192566
+      ],
+      "uv_utilization": 0.597,
+      "bbox_min": [
+        -0.2525,
+        -0.2664,
+        -0.0008
+      ],
+      "bbox_max": [
+        0.2532,
+        0.2721,
+        0.5361
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/attachments/SM_EnemyPart_FireRatBall/04_export/SM_EnemyPart_FireRatBall_v003.glb",
+    "bytes": 299424
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 6.3,
+  "_seconds": 8.9
+}

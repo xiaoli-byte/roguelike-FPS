@@ -87,7 +87,8 @@ test('whitebox HUD renders floor rectangles and directs the player to the automa
   hud.update(0);
   assert.equal(field(hud.root, 'gf-adventure__label').textContent, '窑口守卫');
   assert.equal(field(hud.root, 'gf-adventure__zone').textContent, '入口坪');
-  assert.match(field(hud.root, 'gf-adventure__instruction').textContent, /自动触发/);
+  assert.match(field(hud.root, 'gf-adventure__instruction').textContent, /主路遭遇自动触发.*按 F 调查/);
+  assert.equal(field(hud.root, 'gf-adventure__discovered').textContent, '发现 0 处物资 · 完成 0 场遭遇');
   info.phase = 'battle'; encounter.phase = 'active'; hud.update(100);
   assert.equal(hud.root.dataset.encounter, 'active');
   assert.equal(field(hud.root, 'gf-adventure__distance').textContent, '20 米');

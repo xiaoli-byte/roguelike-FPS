@@ -4,7 +4,7 @@ import shutil
 import sys
 from pathlib import Path
 from lib.config import CFG
-from lib.state import AssetState
+from lib.state import AssetState, resolve_path
 from lib import imaging
 from stages.concept import register_sheet, compare_sheet
 
@@ -16,7 +16,7 @@ def register(item):
     out = spec.stage_dir('concept')
     stem = f'CN_{spec.id}_v{ver:03d}'
     sheet = out / f'{stem}_sheet.png'
-    shutil.copyfile(item['path'], sheet)
+    shutil.copyfile(resolve_path(item['path']), sheet)
     reference = [st.file(bo, f"BO_{spec.id}_v{bo['version']:03d}_{v}.png") for v in imaging.VIEW_ORDER]
     views = [im for im, _ in register_sheet(sheet, reference)]
     files = [sheet]

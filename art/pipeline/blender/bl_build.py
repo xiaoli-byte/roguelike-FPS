@@ -104,18 +104,25 @@ if len(keep) > 1:
 hp = bpy.context.view_layer.objects.active
 hp.name = "HP"
 raw_faces = len(hp.data.polygons)
-# Surface Net 提面会留下非流形边（边折叠减面会卡在这些边上），也没有平滑法线：
-# 体素重建一次拓扑，得到水密流形网格（体素边长按资产高度取，和 Hunyuan 体素分辨率同量级，不损失细节）
-dims = hp.dimensions
-remesh = hp.modifiers.new("remesh", "REMESH")
-remesh.mode = "VOXEL"
-remesh.voxel_size = max(dims) * P.get("remesh_voxel", 0.0025)
-remesh.adaptivity = 0.0
+# Tripo Studio sources arrive as a clean, UV-mapped, textured game mesh: keep its topology and images and bake
+# the base colour from them (texture_source = "highpoly") instead of projecting the concept views.
+TRIPO = P.get("texture_source") == "highpoly"
+voxel = 0.0
+if not TRIPO:
+    # Surface Net 提面会留下非流形边（边折叠减面会卡在这些边上），也没有平滑法线：
+    # 体素重建一次拓扑，得到水密流形网格（体素边长按资产高度取，和 Hunyuan 体素分辨率同量级，不损失细节）
+    dims = hp.dimensions
+    remesh = hp.modifiers.new("remesh", "REMESH")
+    remesh.mode = "VOXEL"
+    remesh.voxel_size = voxel = max(dims) * P.get("remesh_voxel", 0.0025)
+    remesh.adaptivity = 0.0
+    activate(hp)
+    bpy.ops.object.modifier_apply(modifier=remesh.name)
 activate(hp)
-bpy.ops.object.modifier_apply(modifier=remesh.name)
 bpy.ops.object.shade_smooth()
 RESULT["highpoly"] = {"faces_raw": raw_faces, "faces": len(hp.data.polygons), "verts": len(hp.data.vertices),
-                      "loose_parts": len(parts), "kept_parts": len(keep), "remesh_voxel_m": round(remesh.voxel_size, 5)}
+                      "loose_parts": len(parts), "kept_parts": len(keep), "remesh_voxel_m": round(voxel, 5),
+                      "texture_source": "highpoly (provider)" if TRIPO else "concept projection"}
 step("导入清理", t)
 
 # ───────────────────────────── 2. 对齐 ─────────────────────────────
@@ -157,7 +164,22 @@ def score(pts: np.ndarray, which=VIEW_ORDER) -> tuple[float, dict]:
 
 
 V0 = mesh_verts(hp)
-sample = V0[np.random.default_rng(0).choice(len(V0), min(len(V0), 120000), replace=False)]
+if TRIPO:
+    # A game-weight provider mesh has too few vertices for a filled silhouette: sample its triangle surfaces.
+    hp.data.calc_loop_triangles()
+    _tri = np.empty(len(hp.data.loop_triangles) * 3, np.int64)
+    hp.data.loop_triangles.foreach_get("vertices", _tri)
+    _tri = _tri.reshape(-1, 3)
+    _a, _b, _c = V0[_tri[:, 0]], V0[_tri[:, 1]], V0[_tri[:, 2]]
+    _area = np.linalg.norm(np.cross(_b - _a, _c - _a), axis=1) / 2
+    _rng = np.random.default_rng(0)
+    _pick = _rng.choice(len(_tri), 120000, p=_area / _area.sum())
+    _u, _v = _rng.random(120000), _rng.random(120000)
+    _flip = _u + _v > 1
+    _u[_flip], _v[_flip] = 1 - _u[_flip], 1 - _v[_flip]
+    sample = _a[_pick] + (_b[_pick] - _a[_pick]) * _u[:, None] + (_c[_pick] - _a[_pick]) * _v[:, None]
+else:
+    sample = V0[np.random.default_rng(0).choice(len(V0), min(len(V0), 120000), replace=False)]
 
 
 def fit_box(pts: np.ndarray) -> np.ndarray:
@@ -223,12 +245,25 @@ fitted_lo = fit_box(np.array([lo, hi]))
 s0 = (fitted_lo[1, 2] - fitted_lo[0, 2]) / (hi[2] - lo[2])
 full = (full - (lo + hi) / 2) * s0 + (fitted_lo[0] + fitted_lo[1]) / 2
 full = (full - ctr) * params[0] + ctr + params[1:]
+reference_height = views["bbox_max"][2] - views["bbox_min"][2]
+if P.get("rig_reference_source") == "hero":
+    hero_ref = json.loads(Path(P["blockout_json"]).read_text(encoding="utf-8"))
+    bottom, top = hero_ref["bounds"]["min"][1], hero_ref["bounds"]["max"][1]
+    reference_height = top - bottom
+    measured_height = float(np.ptp(full[:, 2]))
+    if abs(measured_height - reference_height) / reference_height > 0.06:
+        vertical_scale = reference_height / measured_height
+        full[:, 2] = (full[:, 2] - full[:, 2].min()) * vertical_scale + bottom
+        final_score, per = score(full[::max(1, len(full) // len(sample))])
+        RESULT["align"]["hero_vertical_fit"] = {"scale": vertical_scale,
+            "original_height_m": measured_height, "reference_height_m": reference_height}
+        log(f"英雄身高与脚底适配：{measured_height:.3f} → {reference_height:.3f} m，IoU {final_score:.3f}")
 if P.get("anchor", "feet") == "feet":
     full[:, 2] -= full[:, 2].min()  # 脚底落地（角色）；挂件的原点是挂点，保持对齐结果
 set_verts(hp, full)
 RESULT["align"].update({"iou": round(final_score, 3), "iou_per_view": {k: round(v, 3) for k, v in per.items()},
                         "height_m": round(float(full[:, 2].max()), 4),
-                        "blockout_height_m": round(views["bbox_max"][2] - views["bbox_min"][2], 4)})
+                        "blockout_height_m": round(reference_height, 4)})
 step("对齐", t)
 
 # ───────────────────────────── 3. 低模 LOD0 + UV ─────────────────────────────
@@ -473,174 +508,199 @@ lod0.data.uv_layers[0].name = "UVMap"
 step("低模与 UV", t)
 
 # ───────────────────────────── 4. 投影着色（高模顶点上）─────────────────────────────
-t = time.time()
-me = hp.data
-V = mesh_verts(hp)
-N = np.empty(len(V) * 3, np.float32)
-me.vertices.foreach_get("normal", N)
-N = N.reshape(-1, 3).astype(np.float64)
-bvh = BVHTree.FromObject(hp, bpy.context.evaluated_depsgraph_get())
-k_sharp = P["projection_sharpness"]
-trust = {"front": 1.0, "back": 0.9, "left": 0.8, "right": 0.8}
-height = float(V[:, 2].max() - V[:, 2].min())  # 包围盒高度（挂件原点在挂点，z 可能为负）
-eps = height * 2e-3
+if not TRIPO:
+    t = time.time()
+    me = hp.data
+    V = mesh_verts(hp)
+    N = np.empty(len(V) * 3, np.float32)
+    me.vertices.foreach_get("normal", N)
+    N = N.reshape(-1, 3).astype(np.float64)
+    bvh = BVHTree.FromObject(hp, bpy.context.evaluated_depsgraph_get())
+    k_sharp = P["projection_sharpness"]
+    trust = {"front": 1.0, "back": 0.9, "left": 0.8, "right": 0.8}
+    height = float(V[:, 2].max() - V[:, 2].min())  # 包围盒高度（挂件原点在挂点，z 可能为负）
+    eps = height * 2e-3
 
-images = {}
-W = np.zeros((len(V), 4))
-cols = np.zeros((len(V), 3))
-matid = P.get("matid_views")
-mcols = np.zeros(len(V)) if matid else None
-emid = P.get("emid_views")  # 发光分区（自发光遮罩，白 = 会发光的细节）
-ecols = np.zeros(len(V)) if emid else None
-for i, v in enumerate(VIEW_ORDER):
-    vp = VP[v]
-    rgba = load_mask_rgba(P["concept_views"][v])
-    images[v] = rgba
-    mask = load_mask_rgba(matid[v]) if matid else None
-    emask = load_mask_rgba(emid[v]) if emid else None
-    d = np.array(vp["dir"])
-    facing = np.clip(N @ -d, 0, 1) ** k_sharp
-    xy = project(vp, V)
-    xi = np.clip(xy[:, 0].astype(int), 0, vp["px_w"] - 1)
-    yi = np.clip(xy[:, 1].astype(int), 0, vp["px_h"] - 1)
-    alpha = rgba[yi, xi, 3]
-    cand = np.nonzero((facing > 1e-3) & (alpha > 0.5))[0]
-    vis = np.zeros(len(V), bool)
-    toward = Vector(-d)
-    for j in cand:
-        o = Vector(V[j] + N[j] * eps + (-d) * eps)
-        hit = bvh.ray_cast(o, toward)
-        vis[j] = hit[0] is None
-    W[:, i] = vis * facing * alpha * trust[v]
-    srgb = rgba[yi, xi, :3]  # image.pixels 是 sRGB 编码值；着色器里的贴图采样是线性值，补色要在线性空间算
-    lin = np.where(srgb <= 0.04045, srgb / 12.92, ((srgb + 0.055) / 1.055) ** 2.4)
-    cols += W[:, i:i + 1] * lin
-    if mask is not None:  # 金属遮罩（白 = 金属）；遮罩剪影外按非金属
-        mcols += W[:, i] * mask[yi, xi, :3].mean(-1) * (mask[yi, xi, 3] > 0.5)
-    if emask is not None:  # 自发光遮罩（白 = 发光）；剪影外按不发光
-        ecols += W[:, i] * emask[yi, xi, :3].mean(-1) * (emask[yi, xi, 3] > 0.5)
-    log(f"投影 {v}：可见顶点 {vis.sum()}/{len(V)}")
+    images = {}
+    W = np.zeros((len(V), 4))
+    cols = np.zeros((len(V), 3))
+    matid = P.get("matid_views")
+    mcols = np.zeros(len(V)) if matid else None
+    emid = P.get("emid_views")  # 发光分区（自发光遮罩，白 = 会发光的细节）
+    ecols = np.zeros(len(V)) if emid else None
+    for i, v in enumerate(VIEW_ORDER):
+        vp = VP[v]
+        rgba = load_mask_rgba(P["concept_views"][v])
+        images[v] = rgba
+        mask = load_mask_rgba(matid[v]) if matid else None
+        emask = load_mask_rgba(emid[v]) if emid else None
+        d = np.array(vp["dir"])
+        facing = np.clip(N @ -d, 0, 1) ** k_sharp
+        xy = project(vp, V)
+        xi = np.clip(xy[:, 0].astype(int), 0, vp["px_w"] - 1)
+        yi = np.clip(xy[:, 1].astype(int), 0, vp["px_h"] - 1)
+        alpha = rgba[yi, xi, 3]
+        cand = np.nonzero((facing > 1e-3) & (alpha > 0.5))[0]
+        vis = np.zeros(len(V), bool)
+        toward = Vector(-d)
+        for j in cand:
+            o = Vector(V[j] + N[j] * eps + (-d) * eps)
+            hit = bvh.ray_cast(o, toward)
+            vis[j] = hit[0] is None
+        W[:, i] = vis * facing * alpha * trust[v]
+        srgb = rgba[yi, xi, :3]  # image.pixels 是 sRGB 编码值；着色器里的贴图采样是线性值，补色要在线性空间算
+        lin = np.where(srgb <= 0.04045, srgb / 12.92, ((srgb + 0.055) / 1.055) ** 2.4)
+        cols += W[:, i:i + 1] * lin
+        if mask is not None:  # 金属遮罩（白 = 金属）；遮罩剪影外按非金属
+            mcols += W[:, i] * mask[yi, xi, :3].mean(-1) * (mask[yi, xi, 3] > 0.5)
+        if emask is not None:  # 自发光遮罩（白 = 发光）；剪影外按不发光
+            ecols += W[:, i] * emask[yi, xi, :3].mean(-1) * (emask[yi, xi, 3] > 0.5)
+        log(f"投影 {v}：可见顶点 {vis.sum()}/{len(V)}")
 
-wsum = W.sum(1)
-known = wsum > 0.05
-cols[known] /= wsum[known, None]
-# 看不到的顶点：沿网格边扩散补色（已知顶点固定）
-e = np.empty(len(me.edges) * 2, np.int64)
-me.edges.foreach_get("vertices", e)
-e = e.reshape(-1, 2)
-a_, b_ = np.concatenate([e[:, 0], e[:, 1]]), np.concatenate([e[:, 1], e[:, 0]])
-deg = np.bincount(a_, minlength=len(V)).astype(np.float64)
-
-
-def diffuse(values: np.ndarray) -> np.ndarray:
-    out = values.copy()
-    out[~known] = values[known].mean(0)
-    for _ in range(400):
-        acc = np.stack([np.bincount(a_, weights=out[b_, c], minlength=len(V)) for c in range(out.shape[1])], 1)
-        out[~known] = (acc / np.maximum(deg, 1)[:, None])[~known]
-    return out
+    wsum = W.sum(1)
+    known = wsum > 0.05
+    cols[known] /= wsum[known, None]
+    # 看不到的顶点：沿网格边扩散补色（已知顶点固定）
+    e = np.empty(len(me.edges) * 2, np.int64)
+    me.edges.foreach_get("vertices", e)
+    e = e.reshape(-1, 2)
+    a_, b_ = np.concatenate([e[:, 0], e[:, 1]]), np.concatenate([e[:, 1], e[:, 0]])
+    deg = np.bincount(a_, minlength=len(V)).astype(np.float64)
 
 
-fill = diffuse(cols)
-fill_m = None
-if matid:
-    mcols[known] /= wsum[known]
-    fill_m = diffuse(mcols[:, None])[:, 0]
-fill_e = None
-if emid:
-    ecols[known] /= wsum[known]
-    fill_e = diffuse(ecols[:, None])[:, 0]
-RESULT["projection"] = {"uncovered_ratio": round(float((~known).mean()), 4)}
-log(f"投影覆盖率 {known.mean():.1%}（其余 {(~known).sum()} 个顶点扩散补色）")
+    def diffuse(values: np.ndarray) -> np.ndarray:
+        out = values.copy()
+        out[~known] = values[known].mean(0)
+        for _ in range(400):
+            acc = np.stack([np.bincount(a_, weights=out[b_, c], minlength=len(V)) for c in range(out.shape[1])], 1)
+            out[~known] = (acc / np.maximum(deg, 1)[:, None])[~known]
+        return out
 
-# 写入顶点属性 + 投影 UV
-attrs = [("proj_w", W), ("proj_fill", np.concatenate([fill, np.ones((len(V), 1))], 1))]
-if fill_m is not None:
-    attrs.append(("proj_fill_m", np.stack([fill_m, fill_m, fill_m, np.ones_like(fill_m)], 1)))
-if fill_e is not None:
-    attrs.append(("proj_fill_e", np.stack([fill_e, fill_e, fill_e, np.ones_like(fill_e)], 1)))
-for name, data in attrs:
-    attr = me.color_attributes.new(name, "FLOAT_COLOR", "POINT")
-    attr.data.foreach_set("color", data.astype(np.float32).ravel())
-loops = np.empty(len(me.loops), np.int64)
-me.loops.foreach_get("vertex_index", loops)
-for v in VIEW_ORDER:
-    vp = VP[v]
-    xy = project(vp, V[loops])
-    uv = np.stack([xy[:, 0] / vp["px_w"], 1 - xy[:, 1] / vp["px_h"]], 1)
-    layer = me.uv_layers.new(name=f"proj_{v}")
-    layer.data.foreach_set("uv", uv.astype(np.float32).ravel())
 
-# 投影材质（只用于烘焙）
-mat = bpy.data.materials.new("M_ProjectionBake")
-mat.use_nodes = True
-nt = mat.node_tree
-nt.nodes.clear()
-out = nt.nodes.new("ShaderNodeOutputMaterial")
-emit = nt.nodes.new("ShaderNodeEmission")
-nt.links.new(emit.outputs[0], out.inputs["Surface"])
-wattr = nt.nodes.new("ShaderNodeAttribute")
-wattr.attribute_name = "proj_w"
-sep = nt.nodes.new("ShaderNodeSeparateColor")
-nt.links.new(wattr.outputs["Color"], sep.inputs[0])
-w_out = [sep.outputs[0], sep.outputs[1], sep.outputs[2], wattr.outputs["Alpha"]]
-fattr = nt.nodes.new("ShaderNodeAttribute")
-fattr.attribute_name = "proj_fill"
-EPS_FILL = 0.05
-acc_col = None
-acc_w = None
-tex_nodes = {}
-for i, v in enumerate(VIEW_ORDER):
-    img = bpy.data.images.load(P["concept_views"][v], check_existing=False)
-    img.colorspace_settings.name = "sRGB"
-    tex = nt.nodes.new("ShaderNodeTexImage")
-    tex.image = img
-    tex_nodes[v] = tex
-    tex.extension = "CLIP"
-    uvn = nt.nodes.new("ShaderNodeUVMap")
-    uvn.uv_map = f"proj_{v}"
-    nt.links.new(uvn.outputs[0], tex.inputs["Vector"])
-    scl = nt.nodes.new("ShaderNodeVectorMath")
-    scl.operation = "SCALE"
-    nt.links.new(tex.outputs["Color"], scl.inputs[0])
-    nt.links.new(w_out[i], scl.inputs["Scale"])
-    if acc_col is None:
-        acc_col, acc_w = scl.outputs[0], w_out[i]
+    fill = diffuse(cols)
+    fill_m = None
+    if matid:
+        mcols[known] /= wsum[known]
+        fill_m = diffuse(mcols[:, None])[:, 0]
+    fill_e = None
+    if emid:
+        ecols[known] /= wsum[known]
+        fill_e = diffuse(ecols[:, None])[:, 0]
+    RESULT["projection"] = {"uncovered_ratio": round(float((~known).mean()), 4)}
+    log(f"投影覆盖率 {known.mean():.1%}（其余 {(~known).sum()} 个顶点扩散补色）")
+
+    # 写入顶点属性 + 投影 UV
+    attrs = [("proj_w", W), ("proj_fill", np.concatenate([fill, np.ones((len(V), 1))], 1))]
+    if fill_m is not None:
+        attrs.append(("proj_fill_m", np.stack([fill_m, fill_m, fill_m, np.ones_like(fill_m)], 1)))
+    if fill_e is not None:
+        attrs.append(("proj_fill_e", np.stack([fill_e, fill_e, fill_e, np.ones_like(fill_e)], 1)))
+    for name, data in attrs:
+        attr = me.color_attributes.new(name, "FLOAT_COLOR", "POINT")
+        attr.data.foreach_set("color", data.astype(np.float32).ravel())
+    loops = np.empty(len(me.loops), np.int64)
+    me.loops.foreach_get("vertex_index", loops)
+    for v in VIEW_ORDER:
+        vp = VP[v]
+        xy = project(vp, V[loops])
+        uv = np.stack([xy[:, 0] / vp["px_w"], 1 - xy[:, 1] / vp["px_h"]], 1)
+        layer = me.uv_layers.new(name=f"proj_{v}")
+        layer.data.foreach_set("uv", uv.astype(np.float32).ravel())
+
+    # 投影材质（只用于烘焙）
+    mat = bpy.data.materials.new("M_ProjectionBake")
+    mat.use_nodes = True
+    nt = mat.node_tree
+    nt.nodes.clear()
+    out = nt.nodes.new("ShaderNodeOutputMaterial")
+    emit = nt.nodes.new("ShaderNodeEmission")
+    nt.links.new(emit.outputs[0], out.inputs["Surface"])
+    wattr = nt.nodes.new("ShaderNodeAttribute")
+    wattr.attribute_name = "proj_w"
+    sep = nt.nodes.new("ShaderNodeSeparateColor")
+    nt.links.new(wattr.outputs["Color"], sep.inputs[0])
+    w_out = [sep.outputs[0], sep.outputs[1], sep.outputs[2], wattr.outputs["Alpha"]]
+    fattr = nt.nodes.new("ShaderNodeAttribute")
+    fattr.attribute_name = "proj_fill"
+    EPS_FILL = 0.05
+    acc_col = None
+    acc_w = None
+    tex_nodes = {}
+    for i, v in enumerate(VIEW_ORDER):
+        img = bpy.data.images.load(P["concept_views"][v], check_existing=False)
+        img.colorspace_settings.name = "sRGB"
+        tex = nt.nodes.new("ShaderNodeTexImage")
+        tex.image = img
+        tex_nodes[v] = tex
+        tex.extension = "CLIP"
+        uvn = nt.nodes.new("ShaderNodeUVMap")
+        uvn.uv_map = f"proj_{v}"
+        nt.links.new(uvn.outputs[0], tex.inputs["Vector"])
+        scl = nt.nodes.new("ShaderNodeVectorMath")
+        scl.operation = "SCALE"
+        nt.links.new(tex.outputs["Color"], scl.inputs[0])
+        nt.links.new(w_out[i], scl.inputs["Scale"])
+        if acc_col is None:
+            acc_col, acc_w = scl.outputs[0], w_out[i]
+        else:
+            add = nt.nodes.new("ShaderNodeVectorMath")
+            add.operation = "ADD"
+            nt.links.new(acc_col, add.inputs[0])
+            nt.links.new(scl.outputs[0], add.inputs[1])
+            acc_col = add.outputs[0]
+            addw = nt.nodes.new("ShaderNodeMath")
+            addw.operation = "ADD"
+            nt.links.new(acc_w, addw.inputs[0])
+            nt.links.new(w_out[i], addw.inputs[1])
+            acc_w = addw.outputs[0]
+    fs = nt.nodes.new("ShaderNodeVectorMath")
+    fs.operation = "SCALE"
+    fs.inputs["Scale"].default_value = EPS_FILL
+    nt.links.new(fattr.outputs["Color"], fs.inputs[0])
+    add = nt.nodes.new("ShaderNodeVectorMath")
+    add.operation = "ADD"
+    nt.links.new(acc_col, add.inputs[0])
+    nt.links.new(fs.outputs[0], add.inputs[1])
+    den = nt.nodes.new("ShaderNodeMath")
+    den.operation = "ADD"
+    den.inputs[1].default_value = EPS_FILL
+    nt.links.new(acc_w, den.inputs[0])
+    inv = nt.nodes.new("ShaderNodeMath")
+    inv.operation = "DIVIDE"
+    inv.inputs[0].default_value = 1.0
+    nt.links.new(den.outputs[0], inv.inputs[1])
+    norm = nt.nodes.new("ShaderNodeVectorMath")
+    norm.operation = "SCALE"
+    nt.links.new(add.outputs[0], norm.inputs[0])
+    nt.links.new(inv.outputs[0], norm.inputs["Scale"])
+    nt.links.new(norm.outputs[0], emit.inputs["Color"])
+    hp.data.materials.clear()
+    hp.data.materials.append(mat)
+    step("投影着色", t)
+
+else:
+    # Provider base colour → emission on the high-poly, so bake("EMIT") transfers it onto the game UVs.
+    t = time.time()
+    src_mats = [m for m in hp.data.materials if m]
+    if len(src_mats) != 1:
+        raise RuntimeError(f"Tripo source must have one material, got {[m.name for m in src_mats]}")
+    mat = src_mats[0]
+    nt = mat.node_tree
+    bsdf = next(n for n in nt.nodes if n.type == "BSDF_PRINCIPLED")
+    base_link = bsdf.inputs["Base Color"].links[0].from_socket if bsdf.inputs["Base Color"].is_linked else None
+    out = next(n for n in nt.nodes if n.type == "OUTPUT_MATERIAL")
+    emit = nt.nodes.new("ShaderNodeEmission")
+    if base_link is not None:
+        nt.links.new(base_link, emit.inputs["Color"])
     else:
-        add = nt.nodes.new("ShaderNodeVectorMath")
-        add.operation = "ADD"
-        nt.links.new(acc_col, add.inputs[0])
-        nt.links.new(scl.outputs[0], add.inputs[1])
-        acc_col = add.outputs[0]
-        addw = nt.nodes.new("ShaderNodeMath")
-        addw.operation = "ADD"
-        nt.links.new(acc_w, addw.inputs[0])
-        nt.links.new(w_out[i], addw.inputs[1])
-        acc_w = addw.outputs[0]
-fs = nt.nodes.new("ShaderNodeVectorMath")
-fs.operation = "SCALE"
-fs.inputs["Scale"].default_value = EPS_FILL
-nt.links.new(fattr.outputs["Color"], fs.inputs[0])
-add = nt.nodes.new("ShaderNodeVectorMath")
-add.operation = "ADD"
-nt.links.new(acc_col, add.inputs[0])
-nt.links.new(fs.outputs[0], add.inputs[1])
-den = nt.nodes.new("ShaderNodeMath")
-den.operation = "ADD"
-den.inputs[1].default_value = EPS_FILL
-nt.links.new(acc_w, den.inputs[0])
-inv = nt.nodes.new("ShaderNodeMath")
-inv.operation = "DIVIDE"
-inv.inputs[0].default_value = 1.0
-nt.links.new(den.outputs[0], inv.inputs[1])
-norm = nt.nodes.new("ShaderNodeVectorMath")
-norm.operation = "SCALE"
-nt.links.new(add.outputs[0], norm.inputs[0])
-nt.links.new(inv.outputs[0], norm.inputs["Scale"])
-nt.links.new(norm.outputs[0], emit.inputs["Color"])
-hp.data.materials.clear()
-hp.data.materials.append(mat)
-step("投影着色", t)
+        emit.inputs["Color"].default_value = bsdf.inputs["Base Color"].default_value
+    nt.links.new(emit.outputs[0], out.inputs["Surface"])
+    tex_nodes, fattr = {}, None
+    matid = emid = None  # material / emissive partitions come from concept projection only
+    V = mesh_verts(hp)
+    height = float(V[:, 2].max() - V[:, 2].min())
+    RESULT["projection"] = {"uncovered_ratio": 0.0, "method": "provider base colour baked from the Tripo source"}
+    step("供应方贴图", t)
 
 # ───────────────────────────── 5. 烘焙 ─────────────────────────────
 t = time.time()
@@ -839,11 +899,42 @@ if P["kind"] == "skeletal" and P.get("rig_mode") == "parts":
     imported = import_glb(P["blockout_glb"])
     vols = []
     for o in imported:
-        if o.type == "MESH" and o.get("role") == "body" and o.get("joint") in joints:
+        owner = o
+        if (bo.get("source", {}).get("kind") == "hero" and o.type == "MESH"
+                and o.parent and o.parent.type == "ARMATURE"):
+            # glTF imports a skin node's extras onto its armature carrier.
+            owner = o.parent
+        if o.type == "MESH" and owner.get("role") == "body" and owner.get("joint") in joints:
             bb = np.array([list(c) for c in o.bound_box])
-            vols.append((o["joint"], np.array(o.matrix_world), bb.min(0), bb.max(0)))
+            tree = None
+            if bo.get("source", {}).get("kind") == "hero" and any(m.type == "ARMATURE" for m in o.modifiers):
+                # A fox tail's original mesh is a straight tube in skin rest space.
+                # Use its posed surface; its rest box wrongly overlaps head/arms.
+                from mathutils.kdtree import KDTree
+                evaluated = o.evaluated_get(bpy.context.evaluated_depsgraph_get())
+                posed = evaluated.to_mesh()
+                tree = KDTree(len(posed.vertices))
+                for i, vertex in enumerate(posed.vertices):
+                    tree.insert(evaluated.matrix_world @ vertex.co, i)
+                tree.balance()
+                evaluated.to_mesh_clear()
+            vols.append((owner["joint"], np.array(o.matrix_world), bb.min(0), bb.max(0), tree))
     for o in [o for o in bpy.data.objects if o not in before]:
         bpy.data.objects.remove(o)
+    # Continuous authored wings/coats have no equivalent to the prototype's
+    # dozens of independent feather pivots. Coalesce volumes before segmentation.
+    major_fields = P.get("rig_major_fields") or []
+    fields = bo.get("fields") or {}
+    missing_fields = [f for f in major_fields if fields.get(f) not in joints]
+    if missing_fields:
+        raise SystemExit(f"rig_major_fields 缺少白模字段：{missing_fields}，请重新导出英雄骨架说明")
+    major = {fields[f] for f in major_fields}
+    if major:
+        def major_owner(name):
+            while name and name not in major:
+                name = joints[name]["parent"]
+            return name
+        vols = [(major_owner(j) or j, *rest) for j, *rest in vols]
     names = list(joints.keys())
     jidx = {n: i for i, n in enumerate(names)}
     sigma = asset_size * P.get("rig_sigma", 0.015)
@@ -852,11 +943,14 @@ if P["kind"] == "skeletal" and P.get("rig_mode") == "parts":
     def part_distance(pts: np.ndarray) -> np.ndarray:
         """每个点到各关节所属影响体积（白模部件包围盒）的最近距离，(点数, 关节数)。"""
         D = np.full((len(pts), len(names)), np.inf)
-        for joint, M, bmin, bmax in vols:
+        for joint, M, bmin, bmax, tree in vols:
+            k = jidx[joint]
+            if tree is not None:
+                D[:, k] = np.minimum(D[:, k], np.array([tree.find(Vector(p))[2] for p in pts]))
+                continue
             Mi = np.linalg.inv(M)
             local = pts @ Mi[:3, :3].T + Mi[:3, 3]
             world = np.clip(local, bmin, bmax) @ M[:3, :3].T + M[:3, 3]
-            k = jidx[joint]
             D[:, k] = np.minimum(D[:, k], np.linalg.norm(world - pts, axis=1))
         return D
 
@@ -867,6 +961,9 @@ if P["kind"] == "skeletal" and P.get("rig_mode") == "parts":
     near = np.eye(len(names), dtype=bool)
     for a in names:
         pa = joints[a]["parent"]
+        if major and a in major:
+            while pa and pa not in major:
+                pa = joints[pa]["parent"]
         if pa in jidx:
             near[jidx[a], jidx[pa]] = near[jidx[pa], jidx[a]] = True
         for b in names:
@@ -1312,9 +1409,49 @@ elif P["kind"] == "skeletal":
                     changed += 1
         return changed
 
+    def arm_chain_fix(lod) -> int:
+        """Inside the arm chain, give each vertex's chain weight to the nearest segment (upper arm / forearm /
+        hand+digits). Bone heat can hand a whole curled hand to the upper arm; bending the elbow would then
+        leave the fingers behind. Only vertices clearly closer to another segment (> 4 cm) are moved."""
+        co = mesh_verts(lod)
+        gidx = {g.name: g.index for g in lod.vertex_groups}
+        changed = 0
+        for side in ("L", "R"):
+            names = [n + side for n in ("arm", "elbow", "hand")]
+            if not all(n in gidx for n in names):
+                continue
+            S, E, H = (np.array(pos_b[n]) for n in names)
+            Hend = H + (H - E) * 0.6
+            segs = [(S, E), (E, H), (H, Hend)]
+
+            def seg_d(a, b, pts):
+                ab = b - a
+                t = np.clip(((pts - a) @ ab) / max(ab @ ab, 1e-9), 0, 1)
+                return np.linalg.norm(pts - (a + t[:, None] * ab), axis=1)
+
+            D = np.stack([seg_d(a, b, co) for a, b in segs], 1)
+            nearest = D.argmin(1)
+            chain = [gidx[n] for n in names]
+            for v in lod.data.vertices:
+                ws = {g.group: g for g in v.groups if g.group in chain and g.weight > 0}
+                if not ws:
+                    continue
+                target = chain[nearest[v.index]]
+                moved = 0.0
+                for gid, g in ws.items():
+                    k = chain.index(gid)
+                    if gid != target and D[v.index, k] > D[v.index, nearest[v.index]] + 0.04:
+                        moved += g.weight
+                        g.weight = 0.0
+                if moved > 1e-4:
+                    lod.vertex_groups[target].add([v.index], moved, "ADD")
+                    changed += 1
+        return changed
+
     skin_stats = {}
     for lod in lods:
         activate(lod)
+        RESULT.setdefault("arm_chain_verts", {})[lod.name] = arm_chain_fix(lod)
         robe = robe_fix(lod)
         RESULT.setdefault("robe_verts", {})[lod.name] = robe
         RESULT.setdefault("arm_capsule_verts", {})[lod.name] = arm_capsule_fix(lod)

@@ -1,0 +1,36 @@
+{
+  "design": {
+    "id": "SK_Enemy_Mortar",
+    "chapter": "desert",
+    "role": "mortar",
+    "name": "沙炮手",
+    "body": "humanoid",
+    "height_m": 1.95,
+    "brief": "The bandit faction's squat Ming-dynasty firearms-battalion (火器营) gunner: a short, stocky, barrel-bodied figure under a very wide conical woven bamboo hat (斗笠) with a red tassel and a sand-coloured cloth curtain at the back, a dark face cloth with two glowing ember-orange eyes, a quilted padded Chinese military coat (棉甲) with brass studs and cloud-pattern trim, several red-lacquered gunpowder gourds (火药葫芦) and paper cartridge tubes on the belt, the faction's crimson waist sash with the gold cloud-scroll emblem, a wooden back frame holding three glowing ember-orange dragon-headed rockets (火龙出水) wrapped in red paper, thick leather gloves with a separate thumb and four separate fingers, cloth-wrapped shins and heavy boots.",
+    "weapon": "a short squat bronze Ming 'crouching tiger' cannon (虎蹲炮) with a tiger head cast on the muzzle and iron hoop bands, carried in both hands"
+  },
+  "generation": {
+    "provider": "openai",
+    "endpoint": "images/edits",
+    "model": "gpt-image-2.5-sunburst",
+    "size": "2048x1024",
+    "quality": "high",
+    "background": "opaque",
+    "usage": {
+      "input_tokens": 2106,
+      "input_tokens_details": {
+        "image_tokens": 1458,
+        "text_tokens": 648
+      },
+      "output_tokens": 1180,
+      "output_tokens_details": {
+        "image_tokens": 1180,
+        "text_tokens": 0
+      },
+      "total_tokens": 3286
+    },
+    "request_id": "req_ec6ef6c1a5fc47a1bba85aad4f2f438e",
+    "seconds": 32.4
+  },
+  "style_reference": "CN_SK_Enemy_Grunt_v001_sheet.png"
+}

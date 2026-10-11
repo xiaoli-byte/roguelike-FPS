@@ -28,5 +28,13 @@ export function artEnvMap(renderer: THREE.WebGLRenderer): THREE.Texture {
 export function applyArtEnvironment(mat: THREE.MeshStandardMaterial, renderer: THREE.WebGLRenderer): void {
   mat.envMap = artEnvMap(renderer);
   mat.envMapIntensity = ART_ENV_INTENSITY;
+  // 各向异性过滤：GLB 贴图默认 1，斜着看（腿、地面方向的甲片、侧脸）会糊成一片；贴图共享，设一次即可
+  const aniso = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+  for (const t of [mat.map, mat.normalMap, mat.roughnessMap, mat.metalnessMap, mat.aoMap, mat.emissiveMap]) {
+    if (t && t.anisotropy < aniso) {
+      t.anisotropy = aniso;
+      t.needsUpdate = true;
+    }
+  }
   mat.needsUpdate = true;
 }

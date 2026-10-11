@@ -2,18 +2,18 @@
 import type { EnemyPlacement, GameContext, StageNode, WaveEntry, WavePlan } from '../core/types';
 import { bossIdForChapter } from './bosses';
 
-const IDS: Record<string, string> = { g: 'grunt', a: 'archer', b: 'bomber', r: 'brute', w: 'wisp', s: 'shaman', m: 'mortar', p: 'marksman' };
-const PLACEMENT: Record<string, EnemyPlacement> = { grunt: 'assault', brute: 'assault', bomber: 'flank', archer: 'ranged', wisp: 'ranged', marksman: 'precision', mortar: 'artillery', shaman: 'support' };
+const IDS: Record<string, string> = { g: 'grunt', a: 'archer', b: 'bomber', r: 'brute', w: 'wisp', s: 'shaman', m: 'mortar', p: 'marksman', j: 'jerboa_blade' };
+const PLACEMENT: Record<string, EnemyPlacement> = { grunt: 'assault', brute: 'assault', bomber: 'flank', archer: 'ranged', wisp: 'ranged', marksman: 'precision', mortar: 'artillery', shaman: 'support', jerboa_blade: 'flank' };
 const ARRIVAL: Record<EnemyPlacement, number> = { assault: 0, ranged: .2, support: .6, flank: .85, precision: .9, artillery: 1.2 };
 
 /** Legacy WaveEntry records receive the same tactical default as authored entries. */
 export function placementForEnemy(id: string): EnemyPlacement { return PLACEMENT[id] ?? 'assault'; }
 
-// Chapter/index are zero-based. g刀客 a弩手 b爆骸 r盾卫 w飞灯 s巫祝 m炮手 p狙击.
+// Chapter/index are zero-based. g刀客 a弩手 b爆骸 r盾卫 w飞灯 s巫祝 m炮手 p狙击 j跳鼠刀兵（第一章新阵容，成群扑斩）.
 // All approaches and the guarded cache combined with these normal finales total 18–30.
 const FINAL_SQUADS: readonly (readonly (readonly string[])[])[] = [
-  [['g3 a1', 'g2 a1', 'g2 a1 b1'], ['g2 a2', 'g2 a1 b1', 'g2 a2 b1'],
-    ['g2 a1 r1', 'g2 a2 b1', 'g1 r1 a2 b1'], ['g2 a2 r1', 'g2 a1 b2', 'g2 a1 r1 m1']],
+  [['g3 a1', 'g2 a1 j2', 'g2 a1 b1'], ['g2 a2', 'g2 a1 b1 j2', 'g2 a2 b1'],
+    ['g2 a1 r1', 'g2 a2 b1 j2', 'g1 r1 a2 b1'], ['g2 a2 r1', 'g2 a1 b2 j2', 'g2 a1 r1 m1']],
   [['g2 a1 w1', 'g2 a1 s1', 'g2 w1 a1 s1'], ['g2 a1 w1', 'g2 p1 a1', 'g2 a1 s1 w1'],
     ['g2 a1 s1', 'g2 w1 p1', 'g2 a2 s1 b1'], ['g2 a1 s1 w1', 'g2 p1 a1 b1', 'g2 a1 s1 w1 p1']],
   [['g2 r1 a1 m1', 'g2 a1 w1 s1', 'g1 r1 a1 m1 w1'], ['g2 r1 a1 m1', 'g2 a1 p1 w1', 'g1 r1 s1 m1 a1'],
@@ -55,12 +55,13 @@ function formation(squad: string, label: string, flank: boolean): WavePlan {
         : entries.some(e => e.enemyId === 'brute') ? '诱导盾卫冲向石墙，再攻击背身'
           : entries.some(e => e.enemyId === 'bomber') ? '先处理爆骸虫，给冲刺留出空地'
             : entries.some(e => e.enemyId === 'wisp') ? '绕岩角躲开光球，再接近横移远程'
+              : entries.some(e => e.enemyId === 'jerboa_blade') ? '跳鼠铜铃发亮、蹲下蓄力就要扑过来：横移躲开，落地旋斩后的硬直最好打'
               : '刀客在前、弩手在后，利用两侧掩体换位';
   return { entries, label, hint, triggerRemaining: 1, delay: 1.6 };
 }
 /** Promote a real existing unit; elites replace normals rather than adding bodies. */
 function promote(ctx: GameContext, wave: WavePlan, used: Set<string>): void {
-  const priority = ['brute', 'shaman', 'marksman', 'mortar', 'archer', 'grunt', 'wisp'];
+  const priority = ['brute', 'shaman', 'marksman', 'mortar', 'archer', 'grunt', 'jerboa_blade', 'wisp'];
   const candidates = wave.entries.filter(e => !e.elite && e.count > 0 && priority.includes(e.enemyId));
   const fresh = candidates.filter(e => !used.has(e.enemyId)), choices = fresh.length ? fresh : candidates;
   if (!choices.length) return;

@@ -1,0 +1,333 @@
+{
+  "asset": "SK_Enemy_TombBeast",
+  "version": 2,
+  "glb": "art/source/characters/SK_Enemy_TombBeast/04_export/SK_Enemy_TombBeast_native_v002.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.3,
+      "自定义骨架：24 根骨骼（热扩散权重，0 个顶点未覆盖）": 0.2,
+      "贴图（BC + AO/ORM）": 13.3,
+      "LOD 与蒙皮上限 11820 / 4924 / 1969": 0.3,
+      "发光壳 655 面": 0.0,
+      "导出 914 KB": 2.1
+    },
+    "source": {
+      "verts": 6841,
+      "tris": 13636,
+      "scale": 2.6089171974522296
+    },
+    "regions": {
+      "heat_unweighted_verts": 0,
+      "ground_verts": 1020,
+      "head_verts": 1626,
+      "wing_L_verts": 349,
+      "wing_R_verts": 349,
+      "crack_verts": 394,
+      "fallback_verts": 14,
+      "per_bone": {
+        "hips": 446,
+        "spine": 100,
+        "chest": 192,
+        "neck": 28,
+        "head": 1663,
+        "crack": 394,
+        "wing_L": 356,
+        "wing_R": 355,
+        "upperarm_L": 176,
+        "forearm_L": 65,
+        "paw_L": 327,
+        "upperarm_R": 174,
+        "forearm_R": 65,
+        "paw_R": 327,
+        "thigh_L": 76,
+        "shin_L": 197,
+        "foot_L": 294,
+        "thigh_R": 78,
+        "shin_R": 197,
+        "foot_R": 294,
+        "tail_1": 330,
+        "tail_2": 76,
+        "tail_3": 94
+      }
+    },
+    "bones": [
+      "chest",
+      "crack",
+      "foot_L",
+      "foot_R",
+      "forearm_L",
+      "forearm_R",
+      "head",
+      "hips",
+      "neck",
+      "paw_L",
+      "paw_R",
+      "root",
+      "shin_L",
+      "shin_R",
+      "spine",
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "thigh_L",
+      "thigh_R",
+      "upperarm_L",
+      "upperarm_R",
+      "wing_L",
+      "wing_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.833,
+      "shade_mean": 0.9
+    },
+    "textures": {
+      "size": 2048,
+      "ao_mean": 0.744,
+      "provider_pbr": [],
+      "roughness_mean": 0.35,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Enemy_TombBeast_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_TombBeast_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_TombBeast_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Enemy_TombBeast_LOD0",
+        "tris": 11820,
+        "uv_min": [
+          0.0,
+          0.0
+        ],
+        "uv_max": [
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "SK_Enemy_TombBeast_LOD1",
+        "tris": 4924,
+        "uv_min": [
+          0.0,
+          0.0
+        ],
+        "uv_max": [
+          0.999755859375,
+          1.0
+        ]
+      },
+      {
+        "name": "SK_Enemy_TombBeast_LOD2",
+        "tris": 1969,
+        "uv_min": [
+          0.0,
+          0.0
+        ],
+        "uv_max": [
+          0.998046875,
+          0.9990234375
+        ]
+      }
+    ],
+    "glow_shell": {
+      "group": "crack",
+      "tris": 655
+    },
+    "glb_kb": 914,
+    "_seconds": 19.5
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "914 KB / 3000 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Enemy_TombBeast_LOD0', 'SK_Enemy_TombBeast_LOD1', 'SK_Enemy_TombBeast_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "11820 / 12000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "4924 / 5000"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "1969 / 2000"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "2.200 m (design 2.2 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Enemy_TombBeast_Glow', 'M_Enemy_TombBeast']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "glow shell",
+      "655 tris on 'crack'"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_TombBeast_BC",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_TombBeast_ORM",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "24 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Enemy_TombBeast_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_TombBeast_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_TombBeast_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_TombBeast_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_TombBeast_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_TombBeast_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_TombBeast_LOD0 UV range",
+      "[0.0, 0.0]..[1.0, 1.0]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_TombBeast_LOD1 UV range",
+      "[0.0, 0.0]..[1.0, 1.0]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_TombBeast_LOD2 UV range",
+      "[0.0, 0.0]..[0.998, 0.999]"
+    ],
+    [
+      "warn",
+      "region heat_unweighted",
+      "0 verts"
+    ],
+    [
+      "pass",
+      "region ground",
+      "1020 verts"
+    ],
+    [
+      "pass",
+      "region head",
+      "1626 verts"
+    ],
+    [
+      "pass",
+      "region wing_L",
+      "349 verts"
+    ],
+    [
+      "pass",
+      "region wing_R",
+      "349 verts"
+    ],
+    [
+      "pass",
+      "region crack",
+      "394 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "14 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

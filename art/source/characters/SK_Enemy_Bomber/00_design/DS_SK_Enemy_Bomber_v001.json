@@ -1,0 +1,36 @@
+{
+  "design": {
+    "id": "SK_Enemy_Bomber",
+    "chapter": "desert",
+    "role": "bomber",
+    "name": "圣甲爆虫",
+    "body": "creature",
+    "height_m": 0.85,
+    "brief": "A chunky desert scarab beetle turned into a living bomb by the bandits: a round, high-domed sand-gold carapace with bronze-capped ridges and a few painted bandit spiral marks, a crimson cloth harness with leather straps binding a swollen, veined, glowing ember-orange powder sac onto its back (its weak spot) with a short lit fuse cord, a small armoured head with two glowing ember-orange eyes and a pair of curved dark mandibles, six stubby clawed legs with dark joints. Cute but menacing, readable as a beetle from any angle.",
+    "weapon": ""
+  },
+  "generation": {
+    "provider": "openai",
+    "endpoint": "images/edits",
+    "model": "gpt-image-2.5-sunburst",
+    "size": "2048x1024",
+    "quality": "high",
+    "background": "opaque",
+    "usage": {
+      "input_tokens": 1874,
+      "input_tokens_details": {
+        "image_tokens": 1458,
+        "text_tokens": 416
+      },
+      "output_tokens": 1180,
+      "output_tokens_details": {
+        "image_tokens": 1180,
+        "text_tokens": 0
+      },
+      "total_tokens": 3054
+    },
+    "request_id": "req_6e0121ada9fe44ba856e57db466a085a",
+    "seconds": 28.6
+  },
+  "style_reference": "CN_SK_Enemy_Grunt_v001_sheet.png"
+}

@@ -1,0 +1,342 @@
+{
+  "asset": "SK_Enemy_MirageToad",
+  "version": 14,
+  "glb": "art/source/characters/SK_Enemy_MirageToad/04_export/SK_Enemy_MirageToad_native_v014.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.3,
+      "自定义骨架：25 根骨骼（热扩散权重，6700 个顶点未覆盖）": 0.1,
+      "贴图（BC + AO/ORM）": 10.3,
+      "LOD 与蒙皮上限 11820 / 4925 / 1970": 0.2,
+      "发光壳 215 面": 0.0,
+      "导出 1589 KB": 2.4
+    },
+    "source": {
+      "verts": 6700,
+      "tris": 12287,
+      "scale": 3.051489985344406
+    },
+    "regions": {
+      "heat_unweighted_verts": 6700,
+      "weights": "segments (heat failed)",
+      "pagoda_verts": 1926,
+      "sac_verts": 244,
+      "foot_L_verts": 285,
+      "foot_R_verts": 287,
+      "hand_L_verts": 313,
+      "hand_R_verts": 313,
+      "fallback_verts": 0,
+      "per_bone": {
+        "hips": 58,
+        "spine": 232,
+        "thigh_R": 122,
+        "shin_R": 52,
+        "foot_R": 317,
+        "thigh_L": 116,
+        "shin_L": 51,
+        "foot_L": 318,
+        "chest": 30,
+        "arm_R": 77,
+        "forearm_R": 76,
+        "hand_R": 342,
+        "arm_L": 76,
+        "forearm_L": 77,
+        "hand_L": 342,
+        "pagoda": 2236,
+        "banner_R1": 125,
+        "banner_R2": 24,
+        "banner_R3": 55,
+        "banner_L1": 170,
+        "banner_L2": 24,
+        "banner_L3": 45,
+        "head": 414,
+        "sac": 144
+      }
+    },
+    "bones": [
+      "arm_L",
+      "arm_R",
+      "banner_L1",
+      "banner_L2",
+      "banner_L3",
+      "banner_R1",
+      "banner_R2",
+      "banner_R3",
+      "chest",
+      "foot_L",
+      "foot_R",
+      "forearm_L",
+      "forearm_R",
+      "hand_L",
+      "hand_R",
+      "head",
+      "hips",
+      "pagoda",
+      "root",
+      "sac",
+      "shin_L",
+      "shin_R",
+      "spine",
+      "thigh_L",
+      "thigh_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.962,
+      "shade_mean": 0.945
+    },
+    "textures": {
+      "size": 2048,
+      "ao_mean": 0.797,
+      "provider_pbr": [],
+      "roughness_mean": 0.8,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Enemy_MirageToad_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_MirageToad_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_MirageToad_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Enemy_MirageToad_LOD0",
+        "tris": 11820,
+        "uv_min": [
+          0.00146484375,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.997314453125,
+          0.99853515625
+        ]
+      },
+      {
+        "name": "SK_Enemy_MirageToad_LOD1",
+        "tris": 4925,
+        "uv_min": [
+          0.00146484375,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.997314453125,
+          0.99853515625
+        ]
+      },
+      {
+        "name": "SK_Enemy_MirageToad_LOD2",
+        "tris": 1970,
+        "uv_min": [
+          0.00146484375,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.997314453125,
+          0.99853515625
+        ]
+      }
+    ],
+    "glow_shell": {
+      "group": "sac",
+      "tris": 215
+    },
+    "glb_kb": 1589,
+    "_seconds": 15.9
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "1589 KB / 3000 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Enemy_MirageToad_LOD0', 'SK_Enemy_MirageToad_LOD1', 'SK_Enemy_MirageToad_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "11820 / 12000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "4905 / 5000"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "1942 / 2000"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "3.050 m (design 3.05 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Enemy_MirageToad_Glow', 'M_Enemy_MirageToad']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "glow shell",
+      "215 tris on 'sac'"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_MirageToad_BC",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_MirageToad_ORM",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "25 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Enemy_MirageToad_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_MirageToad_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_MirageToad_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_MirageToad_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_MirageToad_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_MirageToad_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_MirageToad_LOD0 UV range",
+      "[0.001, 0.001]..[0.997, 0.999]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_MirageToad_LOD1 UV range",
+      "[0.001, 0.001]..[0.997, 0.999]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_MirageToad_LOD2 UV range",
+      "[0.001, 0.001]..[0.997, 0.999]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "6700 verts"
+    ],
+    [
+      "pass",
+      "region pagoda",
+      "1926 verts"
+    ],
+    [
+      "pass",
+      "region sac",
+      "244 verts"
+    ],
+    [
+      "pass",
+      "region foot_L",
+      "285 verts"
+    ],
+    [
+      "pass",
+      "region foot_R",
+      "287 verts"
+    ],
+    [
+      "pass",
+      "region hand_L",
+      "313 verts"
+    ],
+    [
+      "pass",
+      "region hand_R",
+      "313 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "0 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

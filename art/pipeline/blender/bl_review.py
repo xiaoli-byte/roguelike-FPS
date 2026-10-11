@@ -137,7 +137,9 @@ if arm and poses:
     if P.get("presentation"):  # 展示姿态只是整体摆放：姿势在模型空间里算
         A = Matrix(P["presentation"]).to_4x4().inverted() @ A
     Ai = A.inverted()
-    joints = {j["name"]: j for j in json.loads(Path(P["blockout_json"]).read_text(encoding="utf-8"))["joints"]}
+    blockout_meta = json.loads(Path(P["blockout_json"]).read_text(encoding="utf-8"))
+    joints = {j["name"]: j for j in blockout_meta["joints"]}
+    sampled_transforms = blockout_meta.get("reviewTransforms", {})
     bones = arm.data.bones
     order = []
 
@@ -150,7 +152,7 @@ if arm and poses:
         if b.parent is None:
             visit(b)
 
-    def chain(rot: dict, drop: float = 0.0) -> dict:
+    def chain(rot: dict, drop: float = 0.0, matrices: dict | None = None) -> dict:
         G = {}
         for name in order:
             j = joints[name]
@@ -160,6 +162,11 @@ if arm and poses:
             local = Matrix.Translation(pos) @ Euler(rot.get(name, (0, 0, 0)), "XYZ").to_matrix().to_4x4()
             if "bindScale" in j:
                 local = local @ Matrix.Diagonal((*j["bindScale"], 1.0))
+            if matrices and name in matrices:
+                # Three exports column-major matrices; these preserve actual
+                # quaternion order, breathing translation and mirrored scaling.
+                values = matrices[name]
+                local = Matrix([values[row::4] for row in range(4)])
             G[name] = (G[j["parent"]] @ local) if j["parent"] else local
         return G
 
@@ -168,7 +175,7 @@ if arm and poses:
     if "armSpreadL" in bp:  # 游戏化阶段的骨骼适配改过手臂绑定角
         bind_rot["armL"][2] = bp["armSpreadL"]
         bind_rot["armR"][2] = -bp["armSpreadR"]
-    G_bind = chain(bind_rot)
+    G_bind = chain(bind_rot, matrices={n: j["bindMatrix"] for n, j in joints.items() if "bindMatrix" in j} if sampled_transforms else None)
     # 自动形变检测：姿势下每条边相对静止长度的比值；大面积过度拉伸 / 压缩说明权重有问题（静态校验看不出来）
     import numpy as np
 
@@ -195,7 +202,7 @@ if arm and poses:
     ve = edges[valid]
     deform = {}
     for pname, pose in poses.items():
-        G = chain(pose, pose.get("_hipsDrop", 0.0))
+        G = chain(pose, pose.get("_hipsDrop", 0.0), sampled_transforms.get(pname))
         for name in order:
             S = Ai @ C @ G[name] @ G_bind[name].inverted() @ Ci @ A
             arm.pose.bones[name].matrix = S @ bones[name].matrix_local

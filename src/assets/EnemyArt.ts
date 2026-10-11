@@ -8,6 +8,7 @@ import type * as THREE from 'three';
 import { AssetLibrary } from './AssetLibrary';
 import { applyArtEnvironment } from './ArtEnvironment';
 import { isHumanoidRig } from './HumanoidBind';
+import { attachNativeBody, type NativeBody } from './NativeRig';
 import { attachPartsBody } from './PartsRig';
 import { attachSkinnedBody, type SkinnedBody } from './SkinnedBody';
 import { attachStaticPart, type AttachedPart } from './StaticAttachment';
@@ -17,6 +18,8 @@ export interface EnemyArtOptions {
   host: THREE.Object3D;
   /** EnemyDef.id（清单 bind.id） */
   defId: string;
+  /** 章节主题（清单 bind.variant）：同一兵种在各章节换用不同造型，缺失时回退默认资产 */
+  variant?: string;
   /** 人形敌人的 HumanoidRig（约定存放在 this.rig）；其他敌人传 undefined */
   rig: unknown;
   renderer: THREE.WebGLRenderer;
@@ -27,20 +30,24 @@ export interface EnemyArtOptions {
 
 export interface EnemyArt {
   body: SkinnedBody | null;
+  /** 原生骨架资产（清单 skeleton.mode = 'native'）：敌人按骨骼名直接驱动；其余资产为 null */
+  native: NativeBody | null;
   parts: AttachedPart[];
 }
 
 export function attachEnemyArt(o: EnemyArtOptions): EnemyArt {
   const lodScale = o.lowQuality ? 0.5 : 1;
-  const attachments = AssetLibrary.findAttachments('enemy', o.defId);
+  const attachments = AssetLibrary.findAttachments('enemy', o.defId, o.variant);
   const sockets = attachments
     .map((a) => o.host.getObjectByName(a.entry.bind.attachment ?? ''))
     .filter((s): s is THREE.Object3D => !!s);
 
   let body: SkinnedBody | null = null;
-  const asset = AssetLibrary.findBound('enemy', o.defId);
+  let native: NativeBody | null = null;
+  const asset = AssetLibrary.findBound('enemy', o.defId, o.variant);
   if (asset && asset.entry.kind === 'skeletal') {
-    if (asset.entry.rig) body = attachPartsBody(o.host, asset, lodScale, sockets);
+    if (asset.entry.skeleton?.mode === 'native') body = native = attachNativeBody(o.host, asset, lodScale);
+    else if (asset.entry.rig) body = attachPartsBody(o.host, asset, lodScale, sockets);
     else if (isHumanoidRig(o.rig)) body = attachSkinnedBody(o.host, o.rig, asset, lodScale);
   }
   const own = (mats: THREE.MeshStandardMaterial[]): void => {
@@ -58,5 +65,5 @@ export function attachEnemyArt(o: EnemyArtOptions): EnemyArt {
     own(part.materials);
     parts.push(part);
   }
-  return { body, parts };
+  return { body, native, parts };
 }

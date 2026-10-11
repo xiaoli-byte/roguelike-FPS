@@ -1,5 +1,5 @@
 /**
- * 武器音效配方：各类枪声、换弹、空仓、切枪，以及魔刀千刃（blade_*：挥砍、命中、飞刃、召回、变形、突进、贯穿）。
+ * 武器音效配方：各类枪声、换弹、空仓、切枪，以及魔刀千刃（blade_*：挥砍、命中、千刃出窍、归刀、屏障、杀气聚合 / 爆发、刃群绞杀、鬼眼）。
  * 设计要点：瞬态（噪声爆裂）决定「脆 / 闷」，主体正弦下滑决定「重量」，尾音决定空间感。
  */
 import type { SfxId } from '../core/types';
@@ -8,7 +8,8 @@ import { type Recipe, drive, filt, fm, noise, rnd, tone, tremolo, vibrato } from
 export type WeaponSfxId = Extract<SfxId,
   | 'shot_pistol' | 'shot_smg' | 'shot_rifle' | 'shot_shotgun' | 'shot_sniper' | 'shot_launcher' | 'shot_beam' | 'shot_bow' | 'shot_heavy'
   | 'reload_start' | 'reload_end' | 'dry_fire' | 'weapon_switch'
-  | 'blade_swing' | 'blade_hit' | 'blade_throw' | 'blade_recall' | 'blade_morph' | 'blade_dash' | 'blade_impale'>;
+  | 'blade_swing' | 'blade_hit' | 'blade_throw' | 'blade_recall' | 'blade_morph' | 'blade_dash' | 'blade_impale'
+  | 'blade_swarm' | 'blade_eye'>;
 
 export const WEAPON_SFX: Record<WeaponSfxId, Recipe> = {
   /** 左轮：清脆的高频爆裂 + 金属余振 */
@@ -134,7 +135,7 @@ export const WEAPON_SFX: Record<WeaponSfxId, Recipe> = {
     tone(v, { type: 'triangle', f: rnd(1450, 1550), at: 0.11, dur: 0.06, gain: 0.07 });
   },
 
-  // ───── 魔刀千刃（docs/demon-blade.md 10.10）：挥砍要「破风」、命中要「钝重」 ─────
+  // ───── 魔刀千刃（docs/demon-blade-v2.md）：挥砍要「破风」、命中要「钝重」；投掷 = 千刃出窍、召回 = 归刀、变形 = 屏障、突进 / 贯穿 = 杀气聚合 / 爆发 ─────
 
   /**
    * 挥砍破风「咻——」（三段 pitch 1.06 / 0.96 / 0.82）：带通噪声随刀速 600 → 3800 Hz 上扫、0.05 秒到峰，
@@ -162,19 +163,24 @@ export const WEAPON_SFX: Record<WeaponSfxId, Recipe> = {
     tone(v, { type: 'triangle', f: 2770, at: 0.006, dur: 0.08, gain: 0.022 });
   },
 
-  /** 飞刃齐射：三柄错开 15 毫秒的「嗖」（3200 → 1500 Hz，每柄音高略有不同）+ 出手的细咔嗒与低频一抽 */
+  /**
+   * 千刃出窍：刀身从刀尖起崩开（0.25 秒内 16 声由高到低的碎裂脆响，对应碎片依次离刀），
+   * 同时一股激流呼啸（带通 900 → 3600 Hz 上扫）推出去，底下一声低沉的「嗡」给出整把刀化开的分量。
+   */
   blade_throw(v) {
-    for (let i = 0; i < 3; i++) {
-      const k = rnd(0.94, 1.06);
-      noise(v, { at: i * 0.015, dur: 0.1, gain: 0.32, attack: 0.008, filter: 'bandpass', f: 3200 * k, f2: 1500 * k, sweep: 0.09, q: 2 });
+    for (let i = 0; i < 16; i++) {
+      const k = i / 15;
+      noise(v, { at: k * 0.25 + rnd(0, 0.012), dur: 0.014, gain: rnd(0.12, 0.2), filter: 'bandpass', f: 5200 - 2600 * k + rnd(-300, 300), q: 3 });
     }
-    tone(v, { type: 'square', f: 4000, dur: 0.006, gain: 0.05 });
-    noise(v, { dur: 0.01, gain: 0.16, filter: 'highpass', f: 4200 });
-    noise(v, { color: 'pink', dur: 0.08, gain: 0.16, filter: 'lowpass', f: 700 });
+    noise(v, { dur: 0.42, gain: 0.5, attack: 0.06, filter: 'bandpass', f: 900, f2: 3600, sweep: 0.3, q: 1.1 });
+    noise(v, { color: 'pink', dur: 0.5, gain: 0.22, attack: 0.08, filter: 'lowpass', f: 600, f2: 1500, sweep: 0.4 });
+    tone(v, { f: 95, f2: 60, dur: 0.45, gain: 0.35, attack: 0.03 });
+    tone(v, { type: 'triangle', f: 1400, f2: 2300, sweep: 0.35, at: 0.05, dur: 0.4, gain: 0.03, attack: 0.05 });
   },
 
   /** 召回（换弹开始 / 斩击回刃 pitch 1.5）：刃片成群飞回的扫频呼啸（800 → 3000 Hz，颤音模拟片片掠过）+ 结尾金属合拢 */
   blade_recall(v) {
+    for (let i = 0; i < 6; i++) tone(v, { type: 'sine', f: 1000 + i * 170, f2: 1900 + i * 230, sweep: 0.13, at: i * 0.04, dur: 0.18, gain: 0.012 });
     const flutter = tremolo(v, 26, 0.75, v.out, 0, 0.36, 'triangle');
     noise(v, { dur: 0.34, gain: 0.42, attack: 0.12, filter: 'bandpass', f: 800, f2: 3000, sweep: 0.32, q: 1.6, dest: flutter });
     noise(v, { color: 'pink', dur: 0.3, gain: 0.12, attack: 0.1, filter: 'lowpass', f: 600, f2: 1400, sweep: 0.3 });
@@ -185,6 +191,7 @@ export const WEAPON_SFX: Record<WeaponSfxId, Recipe> = {
 
   /** 变形：两声机括咔嗒（带通 3500）+ 刃鸣上扬（1500 → 2600 Hz，带颤音）+ 一缕出鞘的高频「锵」 */
   blade_morph(v) {
+    for (let i = 0; i < 5; i++) tone(v, { type: 'triangle', f: 1650 + i * 210, f2: 900 + i * 110, sweep: 0.16, at: i * 0.024, dur: 0.17, gain: 0.018 });
     noise(v, { dur: 0.016, gain: 0.4, filter: 'bandpass', f: 3500, q: 2 });
     tone(v, { type: 'triangle', f: 900, at: 0.004, dur: 0.05, gain: 0.08 });
     noise(v, { at: 0.07, dur: 0.018, gain: 0.34, filter: 'bandpass', f: 3500, q: 2 });
@@ -194,13 +201,43 @@ export const WEAPON_SFX: Record<WeaponSfxId, Recipe> = {
     noise(v, { at: 0.02, dur: 0.18, gain: 0.12, attack: 0.04, filter: 'highpass', f: 4500, f2: 7500, sweep: 0.15 });
   },
 
-  /** 突进：起手风切 + 棕噪声呼啸（低通 3000 → 400）与次低频下潜（90 → 40 Hz）过轻度失真 + 粉噪声尾 */
+  /**
+   * 杀气聚合（0.5 秒后接爆发）：碎片向一点收紧的倒吸气（噪声带通 4000 → 700 Hz 下扫、渐强）+ 越转越快的刃鸣颤音
+   * + 60 → 130 Hz 逐渐上升的低频压迫，到爆发前一刻最满。
+   */
   blade_dash(v) {
-    const d = drive(v, 1.6, v.out, 0.85);
-    noise(v, { dur: 0.06, gain: 0.3, filter: 'bandpass', f: 1600, f2: 4200, sweep: 0.05, q: 1.2 });
-    noise(v, { color: 'brown', dur: 0.24, gain: 0.95, attack: 0.012, filter: 'lowpass', f: 3000, f2: 400, sweep: 0.22, dest: d });
-    tone(v, { f: 90, f2: 40, sweep: 0.22, dur: 0.28, gain: 0.6, attack: 0.01, dest: d });
-    noise(v, { color: 'pink', at: 0.12, dur: 0.36, gain: 0.16, attack: 0.04, filter: 'lowpass', f: 1400, f2: 250, sweep: 0.34 });
+    const d = drive(v, 1.4, v.out, 0.85);
+    noise(v, { dur: 0.52, gain: 0.55, attack: 0.42, filter: 'bandpass', f: 4000, f2: 700, sweep: 0.5, q: 1.4 });
+    const flutter = tremolo(v, 14, 0.7, v.out, 0, 0.55, 'triangle');
+    noise(v, { dur: 0.52, gain: 0.3, attack: 0.3, filter: 'bandpass', f: 2200, f2: 3400, sweep: 0.5, q: 3, dest: flutter });
+    tone(v, { f: 60, f2: 130, sweep: 0.5, dur: 0.55, gain: 0.55, attack: 0.4, dest: d });
+    tone(v, { type: 'triangle', f: 880, f2: 1760, sweep: 0.5, dur: 0.52, gain: 0.04, attack: 0.3 });
+  },
+
+  /**
+   * 刃群绞杀（千刃出窍期间每 0.11 秒一颗）：3–5 声随机的高频刃口擦击 + 一小段带颤的旋流风声。
+   * 单颗很短，叠起来就是持续的「嚓嚓嚓」碎刃风暴。
+   */
+  blade_swarm(v) {
+    const n = 3 + Math.floor(rnd(0, 3));
+    for (let i = 0; i < n; i++) {
+      noise(v, { at: rnd(0, 0.09), dur: rnd(0.008, 0.016), gain: rnd(0.25, 0.45), filter: 'bandpass', f: rnd(3000, 6500), q: 2.5 });
+    }
+    noise(v, { dur: 0.13, gain: 0.3, attack: 0.03, filter: 'bandpass', f: rnd(1100, 1600), f2: rnd(1800, 2400), sweep: 0.12, q: 1.4 });
+    tone(v, { type: 'triangle', f: rnd(2400, 3200), at: rnd(0, 0.05), dur: 0.06, gain: 0.025 });
+  },
+
+  /**
+   * 噬灵鬼眼：一口幽深的吸气（噪声低通 400 → 2200 Hz 上扫、渐强后收）+ 两个不协和的低沉人声般正弦（下滑）
+   * + 睁眼那一刻的一声冷亮叮鸣。
+   */
+  blade_eye(v) {
+    noise(v, { dur: 0.38, gain: 0.5, attack: 0.25, filter: 'lowpass', f: 400, f2: 2200, sweep: 0.34 });
+    const g1 = tone(v, { f: 196, f2: 150, sweep: 0.4, dur: 0.45, gain: 0.22, attack: 0.08 });
+    const g2 = tone(v, { f: 207, f2: 158, sweep: 0.4, dur: 0.45, gain: 0.18, attack: 0.08 });
+    vibrato(v, [g1, g2], 6, 8, 0, 0.05, 0.45);
+    tone(v, { type: 'triangle', f: 2640, at: 0.3, dur: 0.35, gain: 0.1 });
+    tone(v, { type: 'sine', f: 3960, at: 0.3, dur: 0.25, gain: 0.05 });
   },
 
   /**

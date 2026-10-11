@@ -1,0 +1,487 @@
+{
+  "id": "SK_Enemy_MirageToad",
+  "display": "蜃楼蟾",
+  "kind": "skeletal",
+  "class": "enemy_large",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 12:02:32",
+          "files": {
+            "BO_SK_Enemy_MirageToad_v001.glb": {
+              "path": "00_blockout/BO_SK_Enemy_MirageToad_v001.glb",
+              "sha256": "9323299f7e79476f1416035b9d1656281512befe2dcc030ad30ea5471fa9ca03"
+            },
+            "BO_SK_Enemy_MirageToad_v001.json": {
+              "path": "00_blockout/BO_SK_Enemy_MirageToad_v001.json",
+              "sha256": "c943169d4cee30e7ee625cca10d03e0b99c7b11dadc19d7b1dcf03b64d48b917"
+            },
+            "BO_SK_Enemy_MirageToad_v001_views.json": {
+              "path": "00_blockout/BO_SK_Enemy_MirageToad_v001_views.json",
+              "sha256": "105f707023997ab1fe15599163cb198c3ad5d8a7c3bc47272b4cd89ece73ca79"
+            },
+            "BO_SK_Enemy_MirageToad_v001_sheet.png": {
+              "path": "00_blockout/BO_SK_Enemy_MirageToad_v001_sheet.png",
+              "sha256": "8e657f38d535bec3d23e7b95e543bc10056174700cf1d8962cc96644378e2426"
+            },
+            "BO_SK_Enemy_MirageToad_v001_front.png": {
+              "path": "00_blockout/BO_SK_Enemy_MirageToad_v001_front.png",
+              "sha256": "4fa693c50ccf1f8b780456e60ae5a5da21e8049a7fafbb62a1a2150a68e09c36"
+            },
+            "BO_SK_Enemy_MirageToad_v001_left.png": {
+              "path": "00_blockout/BO_SK_Enemy_MirageToad_v001_left.png",
+              "sha256": "3e4d963e4883c67331d80f4e268f9d8be3f44cafcfd7948efe51fcad9673c666"
+            },
+            "BO_SK_Enemy_MirageToad_v001_back.png": {
+              "path": "00_blockout/BO_SK_Enemy_MirageToad_v001_back.png",
+              "sha256": "33f066fa3b837609fcd4cc2e883702550befbbf605e4787ee7a8c4e278cbe94d"
+            },
+            "BO_SK_Enemy_MirageToad_v001_right.png": {
+              "path": "00_blockout/BO_SK_Enemy_MirageToad_v001_right.png",
+              "sha256": "f49dc7bc41f765aa2168f56a3788e9ebf05a609142146e8b8cc763a719b51f7e"
+            }
+          },
+          "source": {
+            "kind": "enemy",
+            "id": "mirage_toad"
+          },
+          "joints": 12,
+          "bounds": {
+            "min": [
+              -1.15,
+              -0.052888219604108055,
+              -1.1485281711413358
+            ],
+            "max": [
+              1.15,
+              3.0799999952316286,
+              1.3379999977350234
+            ]
+          },
+          "blender_seconds": 9.7
+        }
+      ]
+    },
+    "concept": {
+      "current": 4,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 12:03:03",
+          "files": {
+            "CN_SK_Enemy_MirageToad_v001_front.png": {
+              "path": "01_concept/CN_SK_Enemy_MirageToad_v001_front.png",
+              "sha256": "2389aa1df98b063c0fc1d908f3c2c093e7554b6587a06c20eddbbd239a2e3b4a"
+            },
+            "CN_SK_Enemy_MirageToad_v001_left.png": {
+              "path": "01_concept/CN_SK_Enemy_MirageToad_v001_left.png",
+              "sha256": "ab484093d8b3f497465f28f33cac4e5b18f1b4c599d775fcfeee19b0af4fdef7"
+            },
+            "CN_SK_Enemy_MirageToad_v001_back.png": {
+              "path": "01_concept/CN_SK_Enemy_MirageToad_v001_back.png",
+              "sha256": "6ceeae344502204316173e4fa02cdb5826ea5d44ec6304406cc4b53c75a15383"
+            },
+            "CN_SK_Enemy_MirageToad_v001_right.png": {
+              "path": "01_concept/CN_SK_Enemy_MirageToad_v001_right.png",
+              "sha256": "fdcb6100a3d3ea5634bc2b5d29b00de5a61bc3296de69dd66781bb58a4de02fc"
+            },
+            "CN_SK_Enemy_MirageToad_v001_sheet.png": {
+              "path": "01_concept/CN_SK_Enemy_MirageToad_v001_sheet.png",
+              "sha256": "9177fc7730a7089d024ea599476a6377bc085b40628fbb90345843aa88c268b7"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "design turnaround",
+          "design_key": "desert_toad",
+          "design_turnaround": "art/source/characters/_design/desert/desert_toad/TV_desert_toad_v001.png",
+          "source_sha256": "784058697437569b3942b516fc968bbb407134790a64a63e2c54679847c7216f",
+          "reference_mode": "design_turnaround",
+          "highpoly_mode": "tripo",
+          "review": {
+            "verdict": "approved",
+            "by": "用户（设计稿全部通过 2026-10-06）",
+            "note": "四视图由已通过的设计稿 DS_desert_toad_v001 生成；前足 4 趾、后足 5 趾清晰",
+            "time": "2026-10-06 12:03:08"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 12:06:46",
+          "files": {
+            "CN_SK_Enemy_MirageToad_v002_front.png": {
+              "path": "01_concept/CN_SK_Enemy_MirageToad_v002_front.png",
+              "sha256": "2389aa1df98b063c0fc1d908f3c2c093e7554b6587a06c20eddbbd239a2e3b4a"
+            },
+            "CN_SK_Enemy_MirageToad_v002_left.png": {
+              "path": "01_concept/CN_SK_Enemy_MirageToad_v002_left.png",
+              "sha256": "fdcb6100a3d3ea5634bc2b5d29b00de5a61bc3296de69dd66781bb58a4de02fc"
+            },
+            "CN_SK_Enemy_MirageToad_v002_back.png": {
+              "path": "01_concept/CN_SK_Enemy_MirageToad_v002_back.png",
+              "sha256": "6ceeae344502204316173e4fa02cdb5826ea5d44ec6304406cc4b53c75a15383"
+            },
+            "CN_SK_Enemy_MirageToad_v002_right.png": {
+              "path": "01_concept/CN_SK_Enemy_MirageToad_v002_right.png",
+              "sha256": "ab484093d8b3f497465f28f33cac4e5b18f1b4c599d775fcfeee19b0af4fdef7"
+            },
+            "CN_SK_Enemy_MirageToad_v002_sheet.png": {
+              "path": "01_concept/CN_SK_Enemy_MirageToad_v002_sheet.png",
+              "sha256": "9eab06742af26d8a3d3df297bf8d7fc1ad6a950caeeb6e3fa67fd603ff370383"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "design turnaround",
+          "design_key": "desert_toad",
+          "design_turnaround": "art/source/characters/_design/desert/desert_toad/TV_desert_toad_v001.png",
+          "source_sha256": "784058697437569b3942b516fc968bbb407134790a64a63e2c54679847c7216f",
+          "reference_mode": "design_turnaround",
+          "highpoly_mode": "tripo",
+          "review": {
+            "verdict": "approved",
+            "by": "用户（设计稿全部通过 2026-10-06）",
+            "note": "v002：修正左右视角（左侧 = 脸朝画面左）。v001 左右放反，Tripo 生成了双面头，作废",
+            "time": "2026-10-06 12:06:47"
+          }
+        },
+        {
+          "version": 3,
+          "created": "2026-10-06 12:07:40",
+          "files": {
+            "CN_SK_Enemy_MirageToad_v003_front.png": {
+              "path": "01_concept/CN_SK_Enemy_MirageToad_v003_front.png",
+              "sha256": "12952a0c713c040cc0613eb0b3c91b3365d425b97df0eaf36c4254f74e3148f0"
+            },
+            "CN_SK_Enemy_MirageToad_v003_left.png": {
+              "path": "01_concept/CN_SK_Enemy_MirageToad_v003_left.png",
+              "sha256": "33bbc2b223947d8b5a3fd0283a7f960a252294cf93c9df43a6523469822f4b33"
+            },
+            "CN_SK_Enemy_MirageToad_v003_back.png": {
+              "path": "01_concept/CN_SK_Enemy_MirageToad_v003_back.png",
+              "sha256": "2030d7c8853d4a253a5495d176d55e10362a20639d63d1abb93e7cc760bdd512"
+            },
+            "CN_SK_Enemy_MirageToad_v003_right.png": {
+              "path": "01_concept/CN_SK_Enemy_MirageToad_v003_right.png",
+              "sha256": "8168e86a90c30e825b079ddfc18931385ed9812e8046a363ec72eb43c9ce4058"
+            },
+            "CN_SK_Enemy_MirageToad_v003_sheet.png": {
+              "path": "01_concept/CN_SK_Enemy_MirageToad_v003_sheet.png",
+              "sha256": "0c24050d64db86d5e630177354e5c0d9697f4f4fc95199e77a37ee852cf71dab"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "design turnaround",
+          "design_key": "desert_toad",
+          "design_turnaround": "art/source/characters/_design/desert/desert_toad/TV_desert_toad_v001.png",
+          "source_sha256": "784058697437569b3942b516fc968bbb407134790a64a63e2c54679847c7216f",
+          "reference_mode": "design_turnaround",
+          "highpoly_mode": "tripo",
+          "review": {
+            "verdict": "approved",
+            "by": "用户（设计稿全部通过 2026-10-06）",
+            "note": "v003：按背景间隙切图（v002 固定四等分切掉了侧视头部），左侧 = 脸朝画面左",
+            "time": "2026-10-06 12:07:40"
+          }
+        },
+        {
+          "version": 4,
+          "created": "2026-10-06 12:17:11",
+          "files": {
+            "CN_SK_Enemy_MirageToad_v004_front.png": {
+              "path": "01_concept/CN_SK_Enemy_MirageToad_v004_front.png",
+              "sha256": "07c7b35399593d4eaa3622dce1fb80f1bac5f48ee4c16d01c869896c020cf1ea"
+            },
+            "CN_SK_Enemy_MirageToad_v004_left.png": {
+              "path": "01_concept/CN_SK_Enemy_MirageToad_v004_left.png",
+              "sha256": "ac78e8c5d13c572d586318e9c80f012187bd6bf2c9fc6bde5fbd68379a0666e2"
+            },
+            "CN_SK_Enemy_MirageToad_v004_back.png": {
+              "path": "01_concept/CN_SK_Enemy_MirageToad_v004_back.png",
+              "sha256": "5f1fd0b05f27d99b9b6ce7cc3085b8ca955b8bc4ca471265b4def145a52b687b"
+            },
+            "CN_SK_Enemy_MirageToad_v004_right.png": {
+              "path": "01_concept/CN_SK_Enemy_MirageToad_v004_right.png",
+              "sha256": "269b6a3a63e13c9d811784d32e4ff9334e93e01db98f75b56bb6c874912c3b33"
+            },
+            "CN_SK_Enemy_MirageToad_v004_sheet.png": {
+              "path": "01_concept/CN_SK_Enemy_MirageToad_v004_sheet.png",
+              "sha256": "344f1f39b15c4cdb7c9f98b9ca723606002351b21a950f59947d7586d35c86fe"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "design turnaround",
+          "design_key": "desert_toad",
+          "design_turnaround": "art/source/characters/_design/desert/desert_toad/TV_desert_toad_v001.png",
+          "source_sha256": "784058697437569b3942b516fc968bbb407134790a64a63e2c54679847c7216f",
+          "reference_mode": "design_turnaround",
+          "highpoly_mode": "tripo",
+          "registration": {
+            "front": {
+              "scale": 0.9473269937893654,
+              "offset": [
+                53,
+                224
+              ],
+              "size": [
+                405,
+                576
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.9473269937893654,
+              "offset": [
+                17,
+                224
+              ],
+              "size": [
+                478,
+                576
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.9488876642898421,
+              "offset": [
+                39,
+                224
+              ],
+              "size": [
+                433,
+                576
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.9473269937893654,
+              "offset": [
+                20,
+                224
+              ],
+              "size": [
+                471,
+                576
+              ],
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "用户（设计稿全部通过 2026-10-06）",
+            "note": "v004：同 v003 的四视图，加白模画框配准（透明底）",
+            "time": "2026-10-06 12:17:11"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 12:16:16",
+          "files": {
+            "HP_SK_Enemy_MirageToad_v001_source.fbx": {
+              "path": "02_highpoly/HP_SK_Enemy_MirageToad_v001_source.fbx",
+              "sha256": "b66b0f34de71e51f04935f32492e2cc6bf2bc12bab4eef2af91e839c37246736"
+            },
+            "HP_SK_Enemy_MirageToad_v001.glb": {
+              "path": "02_highpoly/HP_SK_Enemy_MirageToad_v001.glb",
+              "sha256": "0a3b58709f817555115b62804f61c49a77c3419ee8cce1fd93630eb4bdc4186e"
+            },
+            "HP_SK_Enemy_MirageToad_v001_graph.json": {
+              "path": "02_highpoly/HP_SK_Enemy_MirageToad_v001_graph.json",
+              "sha256": "5d61990cd59afa2d19810f27eb037979eb983d806fcc256401242efa5b607a4d"
+            }
+          },
+          "from_concept": 3,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/golden-stone-staircase-with-carved-lion-statues-on-the-posts-architec-3fb891da-baa4-41b4-ad7c-025cfb57ed54",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 20412,
+          "source_sha256": "b66b0f34de71e51f04935f32492e2cc6bf2bc12bab4eef2af91e839c37246736"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 12:17:27",
+          "files": {
+            "HP_SK_Enemy_MirageToad_v002_source.fbx": {
+              "path": "02_highpoly/HP_SK_Enemy_MirageToad_v002_source.fbx",
+              "sha256": "b66b0f34de71e51f04935f32492e2cc6bf2bc12bab4eef2af91e839c37246736"
+            },
+            "HP_SK_Enemy_MirageToad_v002.glb": {
+              "path": "02_highpoly/HP_SK_Enemy_MirageToad_v002.glb",
+              "sha256": "0a3b58709f817555115b62804f61c49a77c3419ee8cce1fd93630eb4bdc4186e"
+            },
+            "HP_SK_Enemy_MirageToad_v002_graph.json": {
+              "path": "02_highpoly/HP_SK_Enemy_MirageToad_v002_graph.json",
+              "sha256": "227848296961ad3f967e628152703f25ab199fa6d9cffc4720cc50a2088670c2"
+            }
+          },
+          "from_concept": 4,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/golden-stone-staircase-with-carved-lion-statues-on-the-posts-architec-3fb891da-baa4-41b4-ad7c-025cfb57ed54",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 20412,
+          "source_sha256": "b66b0f34de71e51f04935f32492e2cc6bf2bc12bab4eef2af91e839c37246736"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 12:17:50",
+          "files": {
+            "SK_Enemy_MirageToad_v001.blend": {
+              "path": "03_work/SK_Enemy_MirageToad_v001.blend",
+              "sha256": "796b5c0fa3449197c326a8fac6e2095db66cddb4059a3baa651c4199ac262217"
+            },
+            "SK_Enemy_MirageToad_v001.glb": {
+              "path": "04_export/SK_Enemy_MirageToad_v001.glb",
+              "sha256": "b86c3effffd8167a68959fc273d263791dbb824026b2e13747adf9f6dcdb27ce"
+            },
+            "SK_Enemy_MirageToad_v001_metrics.json": {
+              "path": "03_work/SK_Enemy_MirageToad_v001_metrics.json",
+              "sha256": "7c7aa2606c1ddc6ccfda386689da1dd5a570c9c617cb20d8434c501be4497023"
+            },
+            "T_Enemy_MirageToad_BC.png": {
+              "path": "03_work/textures_v001/T_Enemy_MirageToad_BC.png",
+              "sha256": "ed692f19919fd065eaf383ee79cf7e2bb01b7d511767d525d2ba944919913a7e"
+            },
+            "T_Enemy_MirageToad_N.png": {
+              "path": "03_work/textures_v001/T_Enemy_MirageToad_N.png",
+              "sha256": "36f92efa052e7327df1c7a3a174a735d0df1f5d5673929c13e7d8b882713cf32"
+            },
+            "T_Enemy_MirageToad_ORM.png": {
+              "path": "03_work/textures_v001/T_Enemy_MirageToad_ORM.png",
+              "sha256": "a6b284356c176856f5560e992dba94b45a87a1f7d365832e7717b0d3ffc13b97"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 4,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.825,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 11995,
+              "verts": 6376
+            },
+            {
+              "tris": 4995,
+              "verts": 2796
+            },
+            {
+              "tris": 1996,
+              "verts": 1144
+            }
+          ],
+          "export_kb": 930.3,
+          "seconds": 21.6,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 12:17:56",
+          "files": {
+            "SK_Enemy_MirageToad_v001_validation.json": {
+              "path": "05_review/SK_Enemy_MirageToad_v001_validation.json",
+              "sha256": "e363d30b3bad79715d5fe829ed00a92d0b4e0636c96d459f0d20b4687bb38a93"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 12:18:06",
+          "files": {
+            "SK_Enemy_MirageToad_v001_review.png": {
+              "path": "05_review/SK_Enemy_MirageToad_v001_review.png",
+              "sha256": "176deb740b6a5a02dd33b4ccf7e0f07537a29ffaca7cf94cdb0329c92170302f"
+            }
+          },
+          "from_build": 1,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.003,
+              "stretch_ratio": 0.0006,
+              "p99_stretch": 1.234,
+              "p1_compress": 0.71,
+              "stretch_pairs": {
+                "j_0 ↔ j_0_9_1": 4,
+                "j_0 ↔ j_0_11": 3,
+                "j_0 ↔ j_0_11_1": 2,
+                "j_0_11 ↔ j_0_11_1": 1,
+                "j_0 ↔ j_0_9": 1
+              }
+            },
+            "b": {
+              "bad_edge_ratio": 0.0115,
+              "stretch_ratio": 0.0071,
+              "p99_stretch": 1.731,
+              "p1_compress": 0.647,
+              "stretch_pairs": {
+                "j_0 ↔ j_0": 23,
+                "j_0 ↔ j_0_10": 18,
+                "j_0 ↔ j_0_7": 16,
+                "j_0_10 ↔ j_0_10": 14,
+                "j_0 ↔ j_0_9": 11,
+                "j_0 ↔ j_0_9_1": 10
+              }
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude（AI初审）",
+            "note": "四向与设计稿一致；形变通过；待游戏内实测",
+            "time": "2026-10-06 12:18:18"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 12:18:19",
+          "files": {
+            "SK_Enemy_MirageToad.glb": {
+              "path": "@root/public/assets/characters/SK_Enemy_MirageToad.glb",
+              "sha256": "b86c3effffd8167a68959fc273d263791dbb824026b2e13747adf9f6dcdb27ce"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/characters/SK_Enemy_MirageToad.glb"
+        }
+      ]
+    }
+  }
+}

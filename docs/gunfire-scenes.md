@@ -112,7 +112,7 @@
 
 十五关均在浏览器通过实际碰撞/导航探针，并有 6–7 个角色眼高的美术观察点。冻湖主路 **138.1m / 17.8s**、输渣线主路 **166.2m / 21.4s** 由真实控制器完成，无敌开启、敌人正常行动，途中无传送或改速。这是通行证据，不代表正常击败敌人或战斗难度验收。
 
-沙寺旗庭与驿站的实景检查发现技术背板从错位墙端露出，现将支持面收进每块 Hunyuan 墙内部；两个问题视角增加真实三档 Draco 网格射线回归，浏览器最终截图确认穿帮消失。其余主景可见性采用实际网格采样，不能将包络预筛当作可见性证明。部分短边角缝仍在 [全图边界报告](../art/reviews/authored-scenes-detail-20261004/boundary-visibility-eye-all.json) 中保留。
+沙寺旗庭与驿站的实景检查发现技术背板从错位墙端露出，现将支持面收进每块 Hunyuan 墙内部；两个问题视角增加真实三档 Draco 网格射线回归，浏览器最终截图确认穿帮消失。其余主景可见性采用实际网格采样，不能将包络预筛当作可见性证明。部分短边角缝仍在 [全图边界报告](../art/reviews/authored-scenes-detail-20261004/boundary-visibility-eye-all.summary.json) 中保留。
 
 | 最终场景 | 实机截图 |
 | --- | --- |
@@ -133,7 +133,7 @@
 
 用户试玩认可白盒后，十五张独立平面进入第一轮美术装配。通道宽度、分路、掩体碰撞、入口出口和怪物遭遇继续取自 [逐关设计](level-design/README.md)，艺术层沿地面真实轮廓布置本机 Hunyuan 成品，并为各房区指定不同地标、边缘高度与自然/建筑比例。这里记录本次实现和证据，不代表十五关美术已经最终验收。
 
-场景入口为 `http://localhost:5259/whitebox-lab.html?theme=desert&stage=0&look=art`；三章与 `stage=0..4` 对应各章五关。切换 `look=whitebox` 可对照同一布局的技术占位。正常游戏采用这组已批准布局；旧模板记录保留在本文后半部分，不能代替当前场景的验证。
+场景入口为 `http://localhost:5199/whitebox-lab.html?theme=desert&stage=0&look=art`；三章与 `stage=0..4` 对应各章五关。切换 `look=whitebox` 可对照同一布局的技术占位。正常游戏采用这组已批准布局；旧模板记录保留在本文后半部分，不能代替当前场景的验证。
 
 | 章节 | 本轮装配方向 | 用于组织空间的既有成品 |
 | --- | --- | --- |
@@ -164,9 +164,9 @@
 
 ### 当前验证边界
 
-场景边界使用 [实际网格采样工具](../art/tools/audit_authored_boundary.mjs) 复查：在地面外缘内 0.4 米、视高 1.2 米，每段最多间隔 2 米向外发射射线，实际命中 Draco LOD1 三角面；包络只负责预筛。保留 [修复前基线](../art/reviews/authored-scenes-20261004/boundary-visibility.json) 和 [最终十五关结果](../art/reviews/authored-scenes-20261004/boundary-visibility-all.json)，源文件 SHA 可识别所测版本。该结果帮助定位看似可走却有碰撞的低位缺口；不包含技术背板，不是所有高度与角度的遮挡证明。
+场景边界使用 [实际网格采样工具](../art/tools/audit_authored_boundary.mjs) 复查：在地面外缘内 0.4 米、视高 1.2 米，每段最多间隔 2 米向外发射射线，实际命中 Draco LOD1 三角面；包络只负责预筛。保留 [修复前基线](../art/reviews/authored-scenes-20261004/boundary-visibility.summary.json) 和 [最终十五关结果](../art/reviews/authored-scenes-20261004/boundary-visibility-all.summary.json)，源文件 SHA 可识别所测版本。该结果帮助定位看似可走却有碰撞的低位缺口；不包含技术背板，不是所有高度与角度的遮挡证明。
 
-复跑：`node art/tools/audit_authored_boundary.mjs --plans desert-1,frost-3,inferno-3 --height 1.62 --out art/reviews/authored-scenes-20261004/boundary-visibility-eye.json`。全部地图见 [眼高复查](../art/reviews/authored-scenes-20261004/boundary-visibility-eye-all.json)。旋转护岸按真实包络多边形避让已批准可走区；三张重点图的眼高采样未命中长度约为 1.47% / 2.96% / 2.25%，剩余主要是短折缝和模型端角，后续仍可继续修整。比较地图时采用报告中的边界长度加权值。
+复跑：`node art/tools/audit_authored_boundary.mjs --plans desert-1,frost-3,inferno-3 --height 1.62 --out art/reviews/authored-scenes-20261004/boundary-visibility-eye.json`。全部地图见 [眼高复查](../art/reviews/authored-scenes-20261004/boundary-visibility-eye-all.summary.json)。旋转护岸按真实包络多边形避让已批准可走区；三张重点图的眼高采样未命中长度约为 1.47% / 2.96% / 2.25%，剩余主要是短折缝和模型端角，后续仍可继续修整。比较地图时采用报告中的边界长度加权值。
 
 ### 本轮实机与性能记录
 

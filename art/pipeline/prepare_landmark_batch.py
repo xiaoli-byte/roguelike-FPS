@@ -28,7 +28,7 @@ from PIL import Image
 
 from lib import imaging
 from lib.config import CFG, ROOT, PipelineError
-from lib.state import AssetState, sha256
+from lib.state import AssetState, resolve_path, sha256
 from prepare_nature_batch import REGISTRATION_VERSION, prepare_reference, reference_data, register_panels
 
 ASSETS = ("SM_Env_DesertRuin", "SM_Env_FrostWayshrine", "SM_Env_InfernoFoundry")
@@ -43,7 +43,7 @@ def register_concept(item: dict, source_dir: Path) -> dict:
     bo = state.require("blockout")
     if bo.get("reference_mode") != "bounds_only":
         raise PipelineError(f"{asset_id}: prepare the numeric reference first")
-    source = Path(item["path"])
+    source = resolve_path(item["path"])
     if not source.is_absolute():
         source = source_dir / source
     source = source.resolve()

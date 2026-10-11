@@ -4,14 +4,20 @@
   "version": "0.1.0",
   "description": "灵火破晓 — 浏览器 FPS 肉鸽（Three.js + TypeScript + Vite）",
   "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
+    "build:labs": "tsc --noEmit && vite build --mode labs",
     "typecheck": "tsc --noEmit",
-    "test": "node --test tests/mouse-look.test.mjs tests/handling.test.mjs tests/scene-layout.test.mjs tests/enemy-attacks.test.mjs tests/articulation.test.mjs tests/nature-scene.test.mjs tests/adventure-layout.test.mjs tests/adventure-flow.test.mjs tests/adventure-ui.test.mjs tests/stage-design.test.mjs tests/encounters.test.mjs tests/road-mask.test.mjs tests/shadow-cadence.test.mjs tests/performance-meter.test.mjs tests/landmark-scene.test.mjs tests/architecture-scene.test.mjs tests/gunfire-assets.test.mjs tests/whitebox-layout.test.mjs tests/whitebox-flow.test.mjs tests/whitebox-save.test.mjs tests/authored-scene-layout.test.mjs tests/authored-scene-view.test.mjs tests/travel-deck.test.mjs tests/cargo-hoist.test.mjs tests/authored-art-occlusion.test.mjs tests/setdressing-assets.test.mjs tests/boss-supply.test.mjs tests/shop-services.test.mjs tests/level-expansion.test.mjs",
+    "test:scrolls": "node --test tests/scroll-tactics.test.mjs",
+    "test": "node --test tests/mouse-look.test.mjs tests/handling.test.mjs tests/scene-layout.test.mjs tests/enemy-attacks.test.mjs tests/articulation.test.mjs tests/nature-scene.test.mjs tests/adventure-layout.test.mjs tests/adventure-flow.test.mjs tests/adventure-ui.test.mjs tests/stage-design.test.mjs tests/encounters.test.mjs tests/road-mask.test.mjs tests/shadow-cadence.test.mjs tests/performance-meter.test.mjs tests/landmark-scene.test.mjs tests/architecture-scene.test.mjs tests/gunfire-assets.test.mjs tests/whitebox-layout.test.mjs tests/whitebox-flow.test.mjs tests/whitebox-save.test.mjs tests/whitebox-redesign.test.mjs tests/redesign-art-layout.test.mjs tests/asset-variant.test.mjs tests/support-buffs.test.mjs tests/authored-scene-layout.test.mjs tests/authored-scene-view.test.mjs tests/travel-deck.test.mjs tests/cargo-hoist.test.mjs tests/authored-art-occlusion.test.mjs tests/setdressing-assets.test.mjs tests/boss-supply.test.mjs tests/shop-services.test.mjs tests/level-expansion.test.mjs tests/demon-blade.test.mjs tests/scroll-tactics.test.mjs tests/native-hero-grip.test.mjs tests/hero-shows.test.mjs tests/frost-pack.test.mjs tests/frost-tanks.test.mjs tests/frost-skirmishers.test.mjs tests/frost-support.test.mjs tests/frost-ranged.test.mjs tests/frost-boss.test.mjs",
     "preview": "vite preview",
     "whitebox:sync": "node scripts/level-plans/sync-runtime.mjs",
-    "whitebox:check": "node scripts/level-plans/sync-runtime.mjs --check && node --test tests/whitebox-layout.test.mjs tests/whitebox-flow.test.mjs tests/whitebox-save.test.mjs"
+    "level:atlas": "node scripts/level-plans/build.mjs && node scripts/level-plans/build.mjs --v2",
+    "whitebox:check": "node scripts/level-plans/sync-runtime.mjs --check && node --test tests/whitebox-layout.test.mjs tests/whitebox-flow.test.mjs tests/whitebox-save.test.mjs tests/whitebox-redesign.test.mjs"
   },
   "dependencies": {
     "three": "^0.186.1"

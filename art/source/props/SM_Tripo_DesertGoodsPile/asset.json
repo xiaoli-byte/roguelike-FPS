@@ -1,0 +1,432 @@
+{
+  "id": "SM_Tripo_DesertGoodsPile",
+  "display": "集市货物堆（V2）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 15:42:02",
+          "files": {
+            "BO_SM_Tripo_DesertGoodsPile_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertGoodsPile_v001.json",
+              "sha256": "0c80f8fee4fe364459f2ae93a1de91aad02fd25a9e0f64afdc47b8c9c0801737"
+            },
+            "BO_SM_Tripo_DesertGoodsPile_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertGoodsPile_v001_views.json",
+              "sha256": "0e9127b8a50c4e2081b4488542784b0d6669d2d7597dc08da5fde2e1c62859ed"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.v2.goods"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -1.5,
+              0,
+              -1.0
+            ],
+            "max": [
+              1.5,
+              1.6,
+              1.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 15:42:29",
+          "files": {
+            "CN_SM_Tripo_DesertGoodsPile_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertGoodsPile_v001_source.png",
+              "sha256": "bf365277ee8c4c365916a32f7f6154ba1396a7ab648e426748f1c95673f6d4b7"
+            },
+            "CN_SM_Tripo_DesertGoodsPile_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertGoodsPile_v001_front.png",
+              "sha256": "1b0e31fb13ffe71c269a0b1d97158700ef222e151134d31c1b8b0cb6d3f71259"
+            },
+            "CN_SM_Tripo_DesertGoodsPile_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertGoodsPile_v001_left.png",
+              "sha256": "ff69790f91fd06708b61c5909cc667ef431718644f042e7c90b4ee8d1f11454a"
+            },
+            "CN_SM_Tripo_DesertGoodsPile_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertGoodsPile_v001_back.png",
+              "sha256": "96b953233b58ab22919656307541079cbfe7d0d5c3703fbf959585a024de10f3"
+            },
+            "CN_SM_Tripo_DesertGoodsPile_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertGoodsPile_v001_right.png",
+              "sha256": "dd61b9fd8320d1657311186b84a07843b66c9809a9e2e5d47fff5dcafca5b8f0"
+            },
+            "CN_SM_Tripo_DesertGoodsPile_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertGoodsPile_v001_sheet.png",
+              "sha256": "138b583831cf2a09f22e32175f9c616f8be0db74e8dfe5f2deb21a6c2b4385f4"
+            },
+            "CN_SM_Tripo_DesertGoodsPile_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertGoodsPile_v001_prompt.txt",
+              "sha256": "60446acae8cc045029b42fe2a30015499e52edae8fc330a39f0d40e06621a7c3"
+            },
+            "CN_SM_Tripo_DesertGoodsPile_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertGoodsPile_v001_registration.json",
+              "sha256": "68d73fb869569c9bb3015e1fc905d0a4eb8b799cc54b013f9cfb87866597e3e8"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 413,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 413
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1593
+            },
+            "request_id": "req_557b352a75084c6fadd926a2bca22cd6",
+            "seconds": 24.8
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian desert temple fantasy. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (3m wide x 1.6m tall x 2m deep): A compact pile of desert caravan goods 3m wide, 1.6m tall, 2m deep: two stacked wooden supply crates bound with rope, three large terracotta storage jars, a rolled red-and-teal carpet leaning on them and two tied burlap sacks. Honey wood, terracotta clay, faded cloth. Chunky readable shapes, all touching as one solid connected cluster on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "bf365277ee8c4c365916a32f7f6154ba1396a7ab648e426748f1c95673f6d4b7",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.5335000520996145,
+              "offset": [
+                118,
+                390
+              ],
+              "size": [
+                275,
+                244
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5335000520996145,
+              "offset": [
+                153,
+                390
+              ],
+              "size": [
+                205,
+                244
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5405976137683455,
+              "offset": [
+                120,
+                390
+              ],
+              "size": [
+                272,
+                244
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5254515599343186,
+              "offset": [
+                163,
+                390
+              ],
+              "size": [
+                186,
+                244
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "side_views_swapped": "generator drew LEFT/RIGHT mirrored (front pointed right in the LEFT slot); panels exchanged",
+          "modified": "2026-10-06 15:44:42",
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI审核)",
+            "note": "四视图同一货堆（木箱、陶罐、卷毯、麻袋）；左右侧已对调，左侧视图可见右挂卷毯与朝左的陶罐。无裁切。",
+            "time": "2026-10-06 15:51:59"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 16:09:33",
+          "files": {
+            "HP_SM_Tripo_DesertGoodsPile_v001_source.fbx": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertGoodsPile_v001_source.fbx",
+              "sha256": "ade5f8272efccdcd91a72e0117b7460a0c4c12fc492567fd77d981eb93231928"
+            },
+            "HP_SM_Tripo_DesertGoodsPile_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertGoodsPile_v001.glb",
+              "sha256": "094e3240e958ac5ba7c99c009682c549c83f78b16b0814a4a831d5cb05073653"
+            },
+            "HP_SM_Tripo_DesertGoodsPile_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertGoodsPile_v001_graph.json",
+              "sha256": "5e8fadb89dd65633521cc6021fdb748d0381a03cf9d54a32d21f2d5ac6dbc246"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/869f7bd0-a475-4b11-a634-3d92b0d4d2dc",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 2913,
+          "source_sha256": "ade5f8272efccdcd91a72e0117b7460a0c4c12fc492567fd77d981eb93231928"
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 16:09:43",
+          "files": {
+            "SM_Tripo_DesertGoodsPile_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertGoodsPile_v001.blend",
+              "sha256": "1a803d1d490525a1a0157db41b8d2d8fa57c871d3cee3238c67054662ac06c1e"
+            },
+            "SM_Tripo_DesertGoodsPile_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertGoodsPile_v001.glb",
+              "sha256": "816ef5d9e1d129a6bd5fda96a2a9ad96949bbea594ceabba94c45c14de39b419"
+            },
+            "SM_Tripo_DesertGoodsPile_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertGoodsPile_v001_metrics.json",
+              "sha256": "544d4b2ef139fa3d9ee1dc9d9b2019c4a967dd4782b4c88e969b83d2e62fe98b"
+            },
+            "T_Tripo_DesertGoodsPile_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertGoodsPile_BC.png",
+              "sha256": "dd98be2eb7e70f862eb816249685cf99d2c4948ae33906a8336c222189b3db07"
+            },
+            "T_Tripo_DesertGoodsPile_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertGoodsPile_N.png",
+              "sha256": "dd2a79538094f3af99600d1c2541cd8dd41f2a2f3e9fde80a216046e5ee255e5"
+            },
+            "T_Tripo_DesertGoodsPile_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertGoodsPile_ORM.png",
+              "sha256": "499f0768511c42c5d18cb426b8997de916604b6489ff354500193c86823c4e97"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.9,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2913,
+              "verts": 4482
+            },
+            {
+              "tris": 995,
+              "verts": 2662
+            }
+          ],
+          "export_kb": 292.2,
+          "seconds": 8.7,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:22:05",
+          "files": {
+            "SM_Tripo_DesertGoodsPile_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertGoodsPile_v002.blend",
+              "sha256": "7f6e5b64730952a602236c087ff29d24ec1e2c51e12d1e38417eb14494307df8"
+            },
+            "SM_Tripo_DesertGoodsPile_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertGoodsPile_v002.glb",
+              "sha256": "21c184cb660631cb5bdc4c965c982d3268f524017594e045a5bd99ad232f4fbc"
+            },
+            "SM_Tripo_DesertGoodsPile_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertGoodsPile_v002_metrics.json",
+              "sha256": "4b25c5b38ff2405c7c8d161027afec37badc988336901e88a6b1ef4a1c94e475"
+            },
+            "T_Tripo_DesertGoodsPile_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertGoodsPile_BC.png",
+              "sha256": "dd98be2eb7e70f862eb816249685cf99d2c4948ae33906a8336c222189b3db07"
+            },
+            "T_Tripo_DesertGoodsPile_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertGoodsPile_N.png",
+              "sha256": "dd2a79538094f3af99600d1c2541cd8dd41f2a2f3e9fde80a216046e5ee255e5"
+            },
+            "T_Tripo_DesertGoodsPile_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertGoodsPile_ORM.png",
+              "sha256": "c5721ecb8b4ecf16da21f777ab0dd0c5ac0766f69bf86eb238cd7eb4b92f31fd"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.9,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2913,
+              "verts": 1565
+            },
+            {
+              "tris": 995,
+              "verts": 574
+            }
+          ],
+          "export_kb": 291.8,
+          "seconds": 8.2,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 16:09:44",
+          "files": {
+            "SM_Tripo_DesertGoodsPile_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertGoodsPile_v001_validation_v001.json",
+              "sha256": "e32f0982a0210ab1254a2533ac62a96dcd024d14e672ba19d353bd1c2ccf2a1f"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:22:05",
+          "files": {
+            "SM_Tripo_DesertGoodsPile_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertGoodsPile_v002_validation_v002.json",
+              "sha256": "13d24d02f57322de5f50c6409dde71c8ac2c1bb09ff99f69eb97132e5a73d4ad"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 16:09:53",
+          "files": {
+            "SM_Tripo_DesertGoodsPile_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertGoodsPile_v001_review_v001.png",
+              "sha256": "6d68e3ecd2bd4cf50d7845538b03617e2b988025c5f46bc62f8245b05450de7d"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI审核)",
+            "note": "matches concept from all views, IoU 0.90, validation 31/0",
+            "time": "2026-10-06 16:10:27"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:22:12",
+          "files": {
+            "SM_Tripo_DesertGoodsPile_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_DesertGoodsPile_v002_review_v002.png",
+              "sha256": "8c1ca1645783a7cc30ac65483f5689cb2361422ab8787a3466ad8afb48c69720"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI审核)",
+            "note": "LOD 裂缝修复重建：Tripo 源网格先焊接（1e-4）再减面并保留 UV 边界（bl_build_tripo.py）。五向审核图与上一版一致，贴图完整；焊接后 LOD1/LOD2 开放边长度回到 LOD0 水平。",
+            "time": "2026-10-06 21:24:09"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 16:10:28",
+          "files": {
+            "SM_Tripo_DesertGoodsPile.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertGoodsPile.glb",
+              "sha256": "816ef5d9e1d129a6bd5fda96a2a9ad96949bbea594ceabba94c45c14de39b419"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertGoodsPile.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:24:09",
+          "files": {
+            "SM_Tripo_DesertGoodsPile.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertGoodsPile.glb",
+              "sha256": "21c184cb660631cb5bdc4c965c982d3268f524017594e045a5bd99ad232f4fbc"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_DesertGoodsPile.glb"
+        }
+      ]
+    }
+  }
+}

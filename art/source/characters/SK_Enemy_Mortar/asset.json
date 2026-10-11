@@ -66,7 +66,7 @@
       ]
     },
     "concept": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -174,11 +174,112 @@
             "note": "设计贴合；手臂外展角小于白模，由游戏化阶段的骨骼适配处理",
             "time": "2026-10-03 16:44:56"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 11:24:19",
+          "files": {
+            "CN_SK_Enemy_Mortar_v002_sheet.png": {
+              "path": "01_concept/CN_SK_Enemy_Mortar_v002_sheet.png",
+              "sha256": "60fdba3bfde7e410d655ad38e26fa376509847ab63545c6d81fe5d885f1dcd70"
+            },
+            "CN_SK_Enemy_Mortar_v002_front.png": {
+              "path": "01_concept/CN_SK_Enemy_Mortar_v002_front.png",
+              "sha256": "fb2e455b46d0ad127347c75d1af96b530aa5190dc20fbcd51d99c22cd0f39aa4"
+            },
+            "CN_SK_Enemy_Mortar_v002_left.png": {
+              "path": "01_concept/CN_SK_Enemy_Mortar_v002_left.png",
+              "sha256": "380e481e4927989fa03ace8987b56554ecfe4c65ddf48bacfe9ddc2802810819"
+            },
+            "CN_SK_Enemy_Mortar_v002_back.png": {
+              "path": "01_concept/CN_SK_Enemy_Mortar_v002_back.png",
+              "sha256": "b6eae6cf797f65fdc11af82172f174fc5fb7f12eef97048d735cca7f663655df"
+            },
+            "CN_SK_Enemy_Mortar_v002_right.png": {
+              "path": "01_concept/CN_SK_Enemy_Mortar_v002_right.png",
+              "sha256": "18d439937d03c1197f13b84f9dffbec3855063b63ffa66892983ca90b779b871"
+            },
+            "CN_SK_Enemy_Mortar_v002_compare.png": {
+              "path": "01_concept/CN_SK_Enemy_Mortar_v002_compare.png",
+              "sha256": "ea5ab276e0bd58f2f25a4f2f86826fe9e383fcc1b4db6035968748daef8103e9"
+            },
+            "CN_SK_Enemy_Mortar_v002_prompt.txt": {
+              "path": "01_concept/CN_SK_Enemy_Mortar_v002_prompt.txt",
+              "sha256": "9f124d4cbb698eb50f54af5568dbad184049c5d89a96f4a9e9999fb003424386"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 2089,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 631
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3269
+          },
+          "request_id": "req_944cd3104fd949829a1cfb26d5eb19f3",
+          "seconds": 29.4,
+          "registration": {
+            "front": {
+              "scale": 0.8576,
+              "offset": [
+                46,
+                188
+              ],
+              "iou": 0.784,
+              "iou_unregistered_scale": 0.8207
+            },
+            "left": {
+              "scale": 0.8418,
+              "offset": [
+                104,
+                197
+              ],
+              "iou": 0.802,
+              "iou_unregistered_scale": 0.8173
+            },
+            "back": {
+              "scale": 0.8576,
+              "offset": [
+                41,
+                188
+              ],
+              "iou": 0.792,
+              "iou_unregistered_scale": 0.8207
+            },
+            "right": {
+              "scale": 0.8418,
+              "offset": [
+                104,
+                197
+              ],
+              "iou": 0.801,
+              "iou_unregistered_scale": 0.8173
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.784,
+            "left": 0.803,
+            "back": 0.791,
+            "right": 0.803
+          }
         }
       ]
     },
     "highpoly": {
-      "current": 1,
+      "current": null,
       "versions": [
         {
           "version": 1,
@@ -225,7 +326,7 @@
       ]
     },
     "build": {
-      "current": 6,
+      "current": null,
       "versions": [
         {
           "version": 1,
@@ -574,7 +675,7 @@
       ]
     },
     "validate": {
-      "current": 6,
+      "current": null,
       "versions": [
         {
           "version": 1,
@@ -667,7 +768,7 @@
       ]
     },
     "review": {
-      "current": 6,
+      "current": null,
       "versions": [
         {
           "version": 1,
@@ -880,7 +981,7 @@
       ]
     },
     "publish": {
-      "current": 4,
+      "current": null,
       "versions": [
         {
           "version": 1,

@@ -1,0 +1,313 @@
+{
+  "id": "SM_EnemyWeapon_CamelStele",
+  "display": "驼碑力士·石碑盾",
+  "kind": "static",
+  "class": "enemy_attachment",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 22:20:21",
+          "files": {
+            "BO_SM_EnemyWeapon_CamelStele_v001.glb": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_CamelStele_v001.glb",
+              "sha256": "10812cfe1f66060e04a37514dc86c2fea86ebfae9a4392d8863be77cb67f380d"
+            },
+            "BO_SM_EnemyWeapon_CamelStele_v001.json": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_CamelStele_v001.json",
+              "sha256": "97055abdfcd52a5305a48e81464eaa0b9bdaf7410bfac3246a79ff620eb7aeb2"
+            },
+            "BO_SM_EnemyWeapon_CamelStele_v001_views.json": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_CamelStele_v001_views.json",
+              "sha256": "a9fcf0f4aab7475619ef6d349bc9d1c64bc2b7a76bc93c23526ff5b9ec435479"
+            },
+            "BO_SM_EnemyWeapon_CamelStele_v001_sheet.png": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_CamelStele_v001_sheet.png",
+              "sha256": "65c1f216e98019aaf056015456ee0692bac68b259eb3d4c2cccabe9dfda80cb0"
+            },
+            "BO_SM_EnemyWeapon_CamelStele_v001_front.png": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_CamelStele_v001_front.png",
+              "sha256": "9089f456a3f7aec98d62370308d21aa635b1d68daab4becfd79a986d46791147"
+            },
+            "BO_SM_EnemyWeapon_CamelStele_v001_left.png": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_CamelStele_v001_left.png",
+              "sha256": "cb558eb16a325b971827a0b7a6c245f8f70a3c1da1c4903a2dfa3abdc886d631"
+            },
+            "BO_SM_EnemyWeapon_CamelStele_v001_back.png": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_CamelStele_v001_back.png",
+              "sha256": "1c95abef6b9ce2c74dfd2c4bb4cbb4b4f0c01d75f8c718ced90b32b939ced8f7"
+            },
+            "BO_SM_EnemyWeapon_CamelStele_v001_right.png": {
+              "path": "00_blockout/BO_SM_EnemyWeapon_CamelStele_v001_right.png",
+              "sha256": "0f74ba4b285bd7e03337df957018d25abba52c6d5e4929b4a94a6168cf229011"
+            }
+          },
+          "source": {
+            "kind": "enemy",
+            "id": "camel_stele",
+            "attachment": "stele"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.49000000953674316,
+              -0.875,
+              -0.20500000014901162
+            ],
+            "max": [
+              0.49000000953674316,
+              0.875,
+              0.14999999955296517
+            ]
+          },
+          "blender_seconds": 5.5
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 22:20:48",
+          "files": {
+            "CN_SM_EnemyWeapon_CamelStele_v001_front.png": {
+              "path": "01_concept/CN_SM_EnemyWeapon_CamelStele_v001_front.png",
+              "sha256": "0577245defd68d4c13d9e8a57290adf2981ea18e5e65facbd7751ff6d958cc1e"
+            },
+            "CN_SM_EnemyWeapon_CamelStele_v001_left.png": {
+              "path": "01_concept/CN_SM_EnemyWeapon_CamelStele_v001_left.png",
+              "sha256": "7db0621d475d70b95327e6b96c290b12d1f5e597181afca4a752f155ca37d860"
+            },
+            "CN_SM_EnemyWeapon_CamelStele_v001_back.png": {
+              "path": "01_concept/CN_SM_EnemyWeapon_CamelStele_v001_back.png",
+              "sha256": "3947161d1bd7a9af0962823b2b3ef6122961ffa0d2916a4934303f9eda5c05d1"
+            },
+            "CN_SM_EnemyWeapon_CamelStele_v001_right.png": {
+              "path": "01_concept/CN_SM_EnemyWeapon_CamelStele_v001_right.png",
+              "sha256": "d58bce0227c25fe79a7b798c99e2071d4ebfe9d56b41bb325a9b9b9e6c13ec1d"
+            },
+            "CN_SM_EnemyWeapon_CamelStele_v001_sheet.png": {
+              "path": "01_concept/CN_SM_EnemyWeapon_CamelStele_v001_sheet.png",
+              "sha256": "0842b97b88e6ab2e7cc9bbb90b94d02b30b1d6bc370504c7c52839fa33e8ddfc"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "design turnaround",
+          "design_key": "desert_camel_stele",
+          "design_turnaround": "art/source/characters/_design/desert/desert_camel_stele/TV_desert_camel_stele_v001.png",
+          "source_sha256": "ae5a3e23d75b85197efcf0354938b57a65d125af55f428c0e66a53fa64f03c6f",
+          "reference_mode": "design_turnaround",
+          "highpoly_mode": "tripo",
+          "registration": {
+            "front": {
+              "scale": 0.8629244341694432,
+              "offset": [
+                57,
+                104
+              ],
+              "size": [
+                397,
+                816
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.8629244341694432,
+              "offset": [
+                191,
+                104
+              ],
+              "size": [
+                130,
+                816
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.859291068130835,
+              "offset": [
+                56,
+                104
+              ],
+              "size": [
+                400,
+                816
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.8620132151259696,
+              "offset": [
+                189,
+                104
+              ],
+              "size": [
+                134,
+                816
+              ],
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "user",
+            "note": "2026-10-06 用户确认驼碑力士身体与石碑盾四视图；朝向逐张核对，手指与蹄趾清楚",
+            "time": "2026-10-06 22:20:58"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 22:21:02",
+          "files": {
+            "HP_SM_EnemyWeapon_CamelStele_v001_source.fbx": {
+              "path": "02_highpoly/HP_SM_EnemyWeapon_CamelStele_v001_source.fbx",
+              "sha256": "f0bc9b40703211dc772c98ae267f0ebe99139d371a8ef2836c975fa9184df2ca"
+            },
+            "HP_SM_EnemyWeapon_CamelStele_v001.glb": {
+              "path": "02_highpoly/HP_SM_EnemyWeapon_CamelStele_v001.glb",
+              "sha256": "73da993b3fed1d168ccaf41907c75bad8302162bc34d1d501d0c61dfd23299b1"
+            },
+            "HP_SM_EnemyWeapon_CamelStele_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_EnemyWeapon_CamelStele_v001_graph.json",
+              "sha256": "40afe51913425bf73f35f2d335f62253dccad68a7bb7eb0233d385f424fd8656"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/90480c1d-b2c9-427a-902b-6b60e753abe8",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 3184,
+          "source_sha256": "f0bc9b40703211dc772c98ae267f0ebe99139d371a8ef2836c975fa9184df2ca"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 22:21:10",
+          "files": {
+            "SM_EnemyWeapon_CamelStele_v001.blend": {
+              "path": "03_work/SM_EnemyWeapon_CamelStele_v001.blend",
+              "sha256": "5fc9ca72e13a9b530487e41c7d5bf6d509acebfcbad24d263793d508a4124e1e"
+            },
+            "SM_EnemyWeapon_CamelStele_v001.glb": {
+              "path": "04_export/SM_EnemyWeapon_CamelStele_v001.glb",
+              "sha256": "181ad66bae9dd889e599027b7c6df63504d30194b8b2567f06087d49b955f209"
+            },
+            "SM_EnemyWeapon_CamelStele_v001_metrics.json": {
+              "path": "03_work/SM_EnemyWeapon_CamelStele_v001_metrics.json",
+              "sha256": "a7ef5a985899ed456a2e6d602fe75149484ba01d535c8e5338d686d687bcd727"
+            },
+            "T_EnemyWeapon_CamelStele_BC.png": {
+              "path": "03_work/textures_v001/T_EnemyWeapon_CamelStele_BC.png",
+              "sha256": "a4e5a8191fd3f86e3dd344631344175681d6f52ca496ba656b7cfc956aefb0ae"
+            },
+            "T_EnemyWeapon_CamelStele_N.png": {
+              "path": "03_work/textures_v001/T_EnemyWeapon_CamelStele_N.png",
+              "sha256": "503f55955cc1ba4248ecce63b23ca626fde241945362c07ee2870a80af646016"
+            },
+            "T_EnemyWeapon_CamelStele_ORM.png": {
+              "path": "03_work/textures_v001/T_EnemyWeapon_CamelStele_ORM.png",
+              "sha256": "7c3a0ecad50057fd1b4d0c677ef4b32d9de3585a899ba1d3198c5486af0b779b"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.876,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2984,
+              "verts": 1551
+            },
+            {
+              "tris": 995,
+              "verts": 545
+            }
+          ],
+          "export_kb": 397.4,
+          "seconds": 7.7,
+          "bake_device": "none (provider textures)"
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 22:21:11",
+          "files": {
+            "SM_EnemyWeapon_CamelStele_v001_validation.json": {
+              "path": "05_review/SM_EnemyWeapon_CamelStele_v001_validation.json",
+              "sha256": "560a7daf8c3473c913aac84d21c17b5dde502348342c4fcbc069e472269911c8"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 22:21:26",
+          "files": {
+            "SM_EnemyWeapon_CamelStele_v001_review.png": {
+              "path": "05_review/SM_EnemyWeapon_CamelStele_v001_review.png",
+              "sha256": "b76f990ab93eb021e1f33a5bf21efb193bf0874f223da12765c74750dbc08a73"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "浮雕朝前、握把在背面，LOD 2984/995；深度略薄于白模（单视图深度轴，可接受）",
+            "time": "2026-10-06 22:21:40"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 22:21:40",
+          "files": {
+            "SM_EnemyWeapon_CamelStele.glb": {
+              "path": "@root/public/assets/attachments/SM_EnemyWeapon_CamelStele.glb",
+              "sha256": "181ad66bae9dd889e599027b7c6df63504d30194b8b2567f06087d49b955f209"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/attachments/SM_EnemyWeapon_CamelStele.glb"
+        }
+      ]
+    }
+  }
+}

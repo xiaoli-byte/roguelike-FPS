@@ -1,0 +1,103 @@
+{
+  "source": {
+    "tris": 2991,
+    "verts": 2513
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 2.40117,
+    "iou": 0.893,
+    "iou_per_view": {
+      "front": 0.938,
+      "left": 0.834,
+      "back": 0.927,
+      "right": 0.852
+    },
+    "size_m": [
+      1.321,
+      1.204,
+      2.4
+    ],
+    "reference_m": [
+      1.4,
+      1.4,
+      2.4
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.657,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "burning_brazier_3d_model_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      2048,
+      2048
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertBrazier_LOD0",
+      "tris": 2991,
+      "verts": 2513,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.441,
+      "bbox_min": [
+        -0.6607,
+        -0.6021,
+        0.0
+      ],
+      "bbox_max": [
+        0.6607,
+        0.6021,
+        2.4
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertBrazier_LOD1",
+      "tris": 994,
+      "verts": 1248,
+      "uv_min": [
+        0.0,
+        0.000241123212617822
+      ],
+      "uv_max": [
+        0.999755859375,
+        0.999608039855957
+      ],
+      "uv_utilization": 0.428,
+      "bbox_min": [
+        -0.6641,
+        -0.6003,
+        -0.0276
+      ],
+      "bbox_max": [
+        0.661,
+        0.6029,
+        2.4028
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertBrazier/04_export/SM_Tripo_DesertBrazier_v001.glb",
+    "bytes": 256752
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 3.7,
+  "_seconds": 6.1
+}

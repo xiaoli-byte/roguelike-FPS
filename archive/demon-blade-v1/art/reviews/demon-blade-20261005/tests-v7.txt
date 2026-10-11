@@ -1,0 +1,31 @@
+(node:65960) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ fractured blade keeps 128 independent polygon cells, finite closed geometry and a continuous silhouette (370.1578ms)
+✔ real fragments travel tip to hilt, freeze at dt=0, and obey quality limits (7.2024ms)
+✔ empty ranged magazine rebuilds the complete melee blade; ranged/reload counts remain accurate (402.0078ms)
+✔ world-drop energy releases animated instance resources and borrows a static material (3.2528ms)
+✔ 128 real ranged cells occupy distinct animated orbit slots and emit individually in original tip-to-hilt order (229.2409ms)
+✔ cell light rims, comet tails and star motes follow only remaining real cells with bounded quality budgets (8.1364ms)
+✔ formation stays in front with an open crosshair across viewport shapes, animates deterministically and pauses (11.7808ms)
+✔ ranged launch and recall endpoints use actual moving orbit slots, including invisible consumed cells (8.5603ms)
+✔ continuous ranged feedback has zero camera recoil, shake, hand kick or throwing gesture (0.8033ms)
+✔ production firing consumes one piece and emits from consecutive tip-to-hilt launch points (2.9452ms)
+✔ 24 simultaneous marked targets retain every convergence group inside the dart budget (11.1279ms)
+✔ single-target skill has 40 converging blades and still arrives in the damage window (2.495ms)
+✔ one shot is one smallest cell; the full blade keeps the same continuous DPS and firing duration (0.2489ms)
+✔ pooled flying cells reuse their exact blade geometry without enlarging or grouping them (2.6871ms)
+✔ recall arcs keep exact real endpoints, distinct upper/lower lanes and finite camera-relative paths (0.8656ms)
+✔ expired real fragments park indefinitely without damage, drift, fade or losing their geometry (4.1268ms)
+✔ wall contact parks a fragment at the real collision point; recall interrupts still flying damage carriers (5.0918ms)
+✔ recall preserves 128 exact cells, tracks a moving hand, freezes on pause and lands each once (36.8205ms)
+✔ cancelled recall parks at current positions; another weapon is untouched and resume cannot duplicate cells (1.151ms)
+✔ production reload fills only arrived cells and interruption preserves the partial blade and parked remainder (38.6704ms)
+✔ manual recall training keeps an empty blade parked even while fire is held; default gameplay still auto recalls (0.4004ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2137.0575

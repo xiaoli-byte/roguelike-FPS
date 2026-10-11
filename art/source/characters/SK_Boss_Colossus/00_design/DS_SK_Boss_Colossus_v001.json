@@ -1,0 +1,36 @@
+{
+  "design": {
+    "id": "SK_Boss_Colossus",
+    "chapter": "desert",
+    "role": "boss",
+    "name": "沙暴巨像",
+    "body": "humanoid",
+    "height_m": 5.4,
+    "brief": "The desert chapter boss: a colossal ancient sandstone temple guardian awakened by the bandits' stolen fire. A massive blocky carved sandstone body with very broad shoulders and long heavy arms, huge stone fists each with a clearly separate thumb and four thick stone fingers, a serene carved god-face head with a tall gold crown and glowing ember-orange eyes, a cracked chest with a glowing ember-orange fire core caged in a gold ring, worn sun-and-spiral carvings, gold bands on the arms. The bandits have hung crimson war banners with the gold spiral emblem and heavy iron chains on its shoulders and waist, and a torn sand-coloured loincloth. Thick stone legs and broad stone feet with five blocky toes. Sand pours from its cracks.",
+    "weapon": "no weapon; one fist raised for a ground slam"
+  },
+  "generation": {
+    "provider": "openai",
+    "endpoint": "images/edits",
+    "model": "gpt-image-2.5-sunburst",
+    "size": "2048x1024",
+    "quality": "high",
+    "background": "opaque",
+    "usage": {
+      "input_tokens": 1956,
+      "input_tokens_details": {
+        "image_tokens": 1458,
+        "text_tokens": 498
+      },
+      "output_tokens": 1180,
+      "output_tokens_details": {
+        "image_tokens": 1180,
+        "text_tokens": 0
+      },
+      "total_tokens": 3136
+    },
+    "request_id": "req_cf4db7578e114d66b4dd9a438881907a",
+    "seconds": 34.2
+  },
+  "style_reference": "CN_SK_Enemy_Grunt_v001_sheet.png"
+}

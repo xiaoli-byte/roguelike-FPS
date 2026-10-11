@@ -1,0 +1,34 @@
+{
+  "design": {
+    "key": "desert_toad",
+    "chapter": "desert",
+    "name": "蜃楼蟾",
+    "layout": "creature",
+    "height_m": 2.4,
+    "brief": "A giant desert mirage toad, the artillery: a squat, wide warty toad with sandstone-coloured skin and Dunhuang turquoise spots, carrying half of a collapsed Buddhist pagoda (tiered roof, bells, cracked bricks) grown into its back. A huge translucent throat sac glowing white-gold, puffed up and about to spit a fire ball (weak spot). Heat shimmer and faint mirage copies around it. Thick front legs with four stubby fingers and webbing, big hind legs with five webbed toes.",
+    "weapon": ""
+  },
+  "generation": {
+    "provider": "openai",
+    "endpoint": "images/generations",
+    "model": "gpt-image-2.5-sunburst",
+    "size": "2048x1024",
+    "quality": "high",
+    "background": "opaque",
+    "usage": {
+      "input_tokens": 407,
+      "input_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 407
+      },
+      "output_tokens": 1180,
+      "output_tokens_details": {
+        "image_tokens": 1180,
+        "text_tokens": 0
+      },
+      "total_tokens": 1587
+    },
+    "request_id": "req_0e0c6df3ab484306bf28ce805ca4ef1f",
+    "seconds": 27.4
+  }
+}

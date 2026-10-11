@@ -1,0 +1,592 @@
+{
+  "id": "SK_Weapon_Magmashot",
+  "display": "赤蛟霰铳",
+  "kind": "skeletal",
+  "class": "weapon_fp",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:35:03",
+          "files": {
+            "BO_SK_Weapon_Magmashot_v001.glb": {
+              "path": "00_blockout/BO_SK_Weapon_Magmashot_v001.glb",
+              "sha256": "f1be4f42193762cf9f44a459b8be2b02e6c84774f70f2bfb4c6d61032ed47e8f"
+            },
+            "BO_SK_Weapon_Magmashot_v001.json": {
+              "path": "00_blockout/BO_SK_Weapon_Magmashot_v001.json",
+              "sha256": "a9350d116157a80ca3b7d54d96cfde2a1abfe378331b7479f23f943deea631ab"
+            },
+            "BO_SK_Weapon_Magmashot_v001_views.json": {
+              "path": "00_blockout/BO_SK_Weapon_Magmashot_v001_views.json",
+              "sha256": "6331bbb87f7943bfc6a30adf14089b82392cbecce69e3dedd043cae9c3b41c36"
+            },
+            "BO_SK_Weapon_Magmashot_v001_sheet.png": {
+              "path": "00_blockout/BO_SK_Weapon_Magmashot_v001_sheet.png",
+              "sha256": "d2e53886158b13bca220967bb02b391d34984c54fa409d88ab421fd823d31328"
+            },
+            "BO_SK_Weapon_Magmashot_v001_front.png": {
+              "path": "00_blockout/BO_SK_Weapon_Magmashot_v001_front.png",
+              "sha256": "5a9319b81774b41a7993e83d3962471591835acbd390437d740f0be710b3fbbb"
+            },
+            "BO_SK_Weapon_Magmashot_v001_left.png": {
+              "path": "00_blockout/BO_SK_Weapon_Magmashot_v001_left.png",
+              "sha256": "cc3e10a7ed2bef946a2c7addef1bff0250f97e3a5bda6694e6e88ecc3d53bc90"
+            },
+            "BO_SK_Weapon_Magmashot_v001_back.png": {
+              "path": "00_blockout/BO_SK_Weapon_Magmashot_v001_back.png",
+              "sha256": "2c517f0010067d75fe0cc3bb2bbbeafe391d441abe6796ebeb3a81923e616270"
+            },
+            "BO_SK_Weapon_Magmashot_v001_right.png": {
+              "path": "00_blockout/BO_SK_Weapon_Magmashot_v001_right.png",
+              "sha256": "2ad4cd91a7c1807003ee5cdf078e48d44d0799bcef0c2a9f7bbafde7a8ea7869"
+            }
+          },
+          "source": {
+            "kind": "weapon",
+            "id": "magmashot"
+          },
+          "joints": 2,
+          "bounds": {
+            "min": [
+              -0.03516796106100083,
+              -0.10617792749531337,
+              -0.3830000000949949
+            ],
+            "max": [
+              0.03516796106100083,
+              0.0745299613851153,
+              0.25586408486409185
+            ]
+          },
+          "blender_seconds": 6.4
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:37:31",
+          "files": {
+            "CN_SK_Weapon_Magmashot_v001_sheet.png": {
+              "path": "01_concept/CN_SK_Weapon_Magmashot_v001_sheet.png",
+              "sha256": "8fc3fa6be47dda88738224a42ab5752f36227b86fbc2f3cba8a5a7cbb134047f"
+            },
+            "CN_SK_Weapon_Magmashot_v001_front.png": {
+              "path": "01_concept/CN_SK_Weapon_Magmashot_v001_front.png",
+              "sha256": "9da5ead654c5fbe4b2a9315bd52c0d952296c62197f7667706d6a8aa0cc4a663"
+            },
+            "CN_SK_Weapon_Magmashot_v001_left.png": {
+              "path": "01_concept/CN_SK_Weapon_Magmashot_v001_left.png",
+              "sha256": "3f39eec3d79d6e5ff4302cc7a93646ef381d2d4a7dbcbb27be16efc166afa036"
+            },
+            "CN_SK_Weapon_Magmashot_v001_back.png": {
+              "path": "01_concept/CN_SK_Weapon_Magmashot_v001_back.png",
+              "sha256": "db3a93afaf296ef0be2ad2c1fbea1771699ff26d9d175966812b3103de6f7257"
+            },
+            "CN_SK_Weapon_Magmashot_v001_right.png": {
+              "path": "01_concept/CN_SK_Weapon_Magmashot_v001_right.png",
+              "sha256": "c560fcd5c4416b8821a833e673fb2e58fe83465d621e91cc547a7035f0c8789a"
+            },
+            "CN_SK_Weapon_Magmashot_v001_compare.png": {
+              "path": "01_concept/CN_SK_Weapon_Magmashot_v001_compare.png",
+              "sha256": "e3f99fa809a5ad541a93978a75451248f124e446478969658e668d3deae22c98"
+            },
+            "CN_SK_Weapon_Magmashot_v001_prompt.txt": {
+              "path": "01_concept/CN_SK_Weapon_Magmashot_v001_prompt.txt",
+              "sha256": "c0e903397d392ff716b1dd7d3a522ff0b2e35bc26c06ed2f51dcf7bd88a3d877"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 2054,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 596
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3234
+          },
+          "request_id": "req_c3d17ada43294b25aad450c505281533",
+          "seconds": 33.1,
+          "registration": {
+            "front": {
+              "scale": 0.9521,
+              "offset": [
+                140,
+                55
+              ],
+              "iou": 0.775,
+              "iou_unregistered_scale": 0.9521
+            },
+            "left": {
+              "scale": 0.9274,
+              "offset": [
+                196,
+                55
+              ],
+              "iou": 0.861,
+              "iou_unregistered_scale": 0.9561
+            },
+            "back": {
+              "scale": 0.9521,
+              "offset": [
+                112,
+                55
+              ],
+              "iou": 0.774,
+              "iou_unregistered_scale": 0.9521
+            },
+            "right": {
+              "scale": 0.9254,
+              "offset": [
+                196,
+                55
+              ],
+              "iou": 0.875,
+              "iou_unregistered_scale": 0.9541
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.777,
+            "left": 0.862,
+            "back": 0.777,
+            "right": 0.877
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "东方奇幻配色与纹饰统一，剪影贴合白模；灯纱 / 加速环为白模未含的发光件，偏差在预期内",
+            "time": "2026-10-06 17:39:56"
+          }
+        }
+      ]
+    },
+    "matid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:41:37",
+          "files": {
+            "MID_SK_Weapon_Magmashot_v001_sheet.png": {
+              "path": "01_concept/MID_SK_Weapon_Magmashot_v001_sheet.png",
+              "sha256": "cb8bf0ee96ccabd447f9eb6798c34b657de996ee45709aa7a75b59538c0590c9"
+            },
+            "MID_SK_Weapon_Magmashot_v001_front.png": {
+              "path": "01_concept/MID_SK_Weapon_Magmashot_v001_front.png",
+              "sha256": "9ed921099ecab8a4a7f3eb0dd246f08b5829bbed3e818f2560ce4a2328f6929a"
+            },
+            "MID_SK_Weapon_Magmashot_v001_left.png": {
+              "path": "01_concept/MID_SK_Weapon_Magmashot_v001_left.png",
+              "sha256": "f6ce1f3c19de1072ff023425884b8a77ab123aadc481ae578362299056b70e56"
+            },
+            "MID_SK_Weapon_Magmashot_v001_back.png": {
+              "path": "01_concept/MID_SK_Weapon_Magmashot_v001_back.png",
+              "sha256": "bebf48fd1370cff237e721bbd22c13c37ff3ad6d7d7956b390a2f9e89699a28a"
+            },
+            "MID_SK_Weapon_Magmashot_v001_right.png": {
+              "path": "01_concept/MID_SK_Weapon_Magmashot_v001_right.png",
+              "sha256": "497517ac3d5de8c34b37983b004483cfd2ebb8cae0a46e5b5d13b7114b62319f"
+            },
+            "MID_SK_Weapon_Magmashot_v001_compare.png": {
+              "path": "01_concept/MID_SK_Weapon_Magmashot_v001_compare.png",
+              "sha256": "355653444eb6abb73c8a173e2c68b7debfa188c68f65da9f2abcc89772b7350b"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1699,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 241
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2879
+          },
+          "request_id": "req_503b148dda9148a4bc37bda27b4f6c64",
+          "seconds": 30.3,
+          "registration": {
+            "front": {
+              "scale": 0.9511,
+              "offset": [
+                138,
+                55
+              ],
+              "iou": 0.974,
+              "iou_unregistered_scale": 0.9511,
+              "purity": 0.995
+            },
+            "left": {
+              "scale": 0.9259,
+              "offset": [
+                195,
+                55
+              ],
+              "iou": 0.98,
+              "iou_unregistered_scale": 0.9259,
+              "purity": 0.991
+            },
+            "back": {
+              "scale": 0.9511,
+              "offset": [
+                110,
+                55
+              ],
+              "iou": 0.975,
+              "iou_unregistered_scale": 0.9511,
+              "purity": 0.989
+            },
+            "right": {
+              "scale": 0.924,
+              "offset": [
+                194,
+                55
+              ],
+              "iou": 0.937,
+              "iou_unregistered_scale": 0.924,
+              "purity": 0.993
+            }
+          },
+          "metal_ratio": {
+            "front": 0.464,
+            "left": 0.726,
+            "back": 0.462,
+            "right": 0.607
+          }
+        }
+      ]
+    },
+    "emid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:44:50",
+          "files": {
+            "EID_SK_Weapon_Magmashot_v001_sheet.png": {
+              "path": "01_concept/EID_SK_Weapon_Magmashot_v001_sheet.png",
+              "sha256": "94197c944f7d403f77ccc924e56761735f3749318faa5dc64c0eb7c2d01462ae"
+            },
+            "EID_SK_Weapon_Magmashot_v001_front.png": {
+              "path": "01_concept/EID_SK_Weapon_Magmashot_v001_front.png",
+              "sha256": "bf4774b95d77d8071ebb16801678a1b8df2605880dc13c67f406bbb408dd5ee2"
+            },
+            "EID_SK_Weapon_Magmashot_v001_left.png": {
+              "path": "01_concept/EID_SK_Weapon_Magmashot_v001_left.png",
+              "sha256": "d9960014f4f28fedb4d961db5f9b866570bac1a2ae23c2f2e5751e6bc0cf4ab8"
+            },
+            "EID_SK_Weapon_Magmashot_v001_back.png": {
+              "path": "01_concept/EID_SK_Weapon_Magmashot_v001_back.png",
+              "sha256": "33ad1311b47b9a97d8527500f0520c590a2f1df46bbb3fae75e39eaa04ae7ee2"
+            },
+            "EID_SK_Weapon_Magmashot_v001_right.png": {
+              "path": "01_concept/EID_SK_Weapon_Magmashot_v001_right.png",
+              "sha256": "e347cdbac07f74bae4e225d49a442f58536cd9c1e384cbdf015e61d57277e0b3"
+            },
+            "EID_SK_Weapon_Magmashot_v001_compare.png": {
+              "path": "01_concept/EID_SK_Weapon_Magmashot_v001_compare.png",
+              "sha256": "83b5cebcd31c67df72d1758340da65c9cde0ec05e0cef4d77193f91d6419ad38"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1721,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 263
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2901
+          },
+          "request_id": "req_87c191bf0d4148238bf21a88fdfdc86c",
+          "seconds": 32.6,
+          "registration": {
+            "front": {
+              "scale": 0.9472,
+              "offset": [
+                135,
+                55
+              ],
+              "iou": 0.935,
+              "iou_unregistered_scale": 0.9472,
+              "purity": 0.984
+            },
+            "left": {
+              "scale": 0.922,
+              "offset": [
+                190,
+                55
+              ],
+              "iou": 0.914,
+              "iou_unregistered_scale": 0.922,
+              "purity": 0.983
+            },
+            "back": {
+              "scale": 0.9472,
+              "offset": [
+                107,
+                55
+              ],
+              "iou": 0.932,
+              "iou_unregistered_scale": 0.9472,
+              "purity": 0.986
+            },
+            "right": {
+              "scale": 0.9201,
+              "offset": [
+                192,
+                55
+              ],
+              "iou": 0.93,
+              "iou_unregistered_scale": 0.9201,
+              "purity": 0.992
+            }
+          },
+          "emissive_ratio": {
+            "front": 0.053,
+            "left": 0.041,
+            "back": 0.037,
+            "right": 0.0
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:54:25",
+          "files": {
+            "HP_SK_Weapon_Magmashot_v001_input_front.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Magmashot_v001_input_front.png",
+              "sha256": "c319f59532ec393988508ad2b7d17616b460aa95aeb1cc4c06c5de93d3fb83dc"
+            },
+            "HP_SK_Weapon_Magmashot_v001_input_left.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Magmashot_v001_input_left.png",
+              "sha256": "0dfb04cb94d64e637f50c29445ef18aefd0b595ed9f3aa365bc848c6c72c83ae"
+            },
+            "HP_SK_Weapon_Magmashot_v001_input_back.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Magmashot_v001_input_back.png",
+              "sha256": "85945026d5962100e58b5b8ea4b3dce15bd25a913502484edb747fb94264b7d3"
+            },
+            "HP_SK_Weapon_Magmashot_v001_input_right.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Magmashot_v001_input_right.png",
+              "sha256": "e56ba7a30c19d7a8c1834a37aa77489aee58a0bc5633d89e928415b848f147f0"
+            },
+            "HP_SK_Weapon_Magmashot_v001.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Magmashot_v001.glb",
+              "sha256": "2120ff93554758ec2d88bcb24ca71dc9ec24c6b2de3c2002ceee71620c7a3bc7"
+            },
+            "HP_SK_Weapon_Magmashot_v001_graph.json": {
+              "path": "02_highpoly/HP_SK_Weapon_Magmashot_v001_graph.json",
+              "sha256": "a5d132c512c5fbb84ebd6b73518a3e08b46589c9c3d37818b47447e6b4f73a1e"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -282,
+              -26,
+              794,
+              1050
+            ],
+            "scale": 0.9516728624535316
+          },
+          "seconds": 126.4,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 3.0
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:54:51",
+          "files": {
+            "SK_Weapon_Magmashot_v001.blend": {
+              "path": "03_work/SK_Weapon_Magmashot_v001.blend",
+              "sha256": "b6f17ba0eb4a10a466631b9c39e8a70e341aff45177686d404b6bbbc88754ff8"
+            },
+            "SK_Weapon_Magmashot_v001.glb": {
+              "path": "04_export/SK_Weapon_Magmashot_v001.glb",
+              "sha256": "a51a49ef7f300253e9a38266cff97d43c4d54706812487728a1e470610ac9962"
+            },
+            "SK_Weapon_Magmashot_v001_metrics.json": {
+              "path": "03_work/SK_Weapon_Magmashot_v001_metrics.json",
+              "sha256": "96da75566a325d72b33189e9a27d956a13eb6bdefc10f47bc512843bbd6363de"
+            },
+            "T_Weapon_Magmashot_BC.png": {
+              "path": "03_work/textures_v001/T_Weapon_Magmashot_BC.png",
+              "sha256": "2f223183a877d614f428ab1ca0b375f347a6f31c713a6b9c3616a1e53b34aebb"
+            },
+            "T_Weapon_Magmashot_E.png": {
+              "path": "03_work/textures_v001/T_Weapon_Magmashot_E.png",
+              "sha256": "7b95fcf6e1739d5f1534e0f9fdd8202650bc94cfbf343a54143c8a2c85216b11"
+            },
+            "T_Weapon_Magmashot_MetalMask.png": {
+              "path": "03_work/textures_v001/T_Weapon_Magmashot_MetalMask.png",
+              "sha256": "21f6990ecb3a1888590764f2e3b88da8fec8ea122b4b818925f7f6abce27ba2d"
+            },
+            "T_Weapon_Magmashot_N.png": {
+              "path": "03_work/textures_v001/T_Weapon_Magmashot_N.png",
+              "sha256": "efaa769068a451116ea1c7d100ca0306d68383cee7bf9849a43097f96a953062"
+            },
+            "T_Weapon_Magmashot_ORM.png": {
+              "path": "03_work/textures_v001/T_Weapon_Magmashot_ORM.png",
+              "sha256": "ec9656ea32b1572e8708cf5d65f427462ebfc7d04324ec261504cfa5d986a55e"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1,
+            "emid": 1
+          },
+          "align_iou": 0.902,
+          "uncovered_ratio": 0.0975,
+          "lods": [
+            {
+              "tris": 12000,
+              "verts": 5998
+            },
+            {
+              "tris": 3000,
+              "verts": 1498
+            }
+          ],
+          "export_kb": 484.3,
+          "seconds": 26.6,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:54:51",
+          "files": {
+            "SK_Weapon_Magmashot_v001_validation.json": {
+              "path": "05_review/SK_Weapon_Magmashot_v001_validation.json",
+              "sha256": "0c9d7492f5906db2e5e68d9b29a382d795b411940030bd5959f6664ef177c488"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:54:59",
+          "files": {
+            "SK_Weapon_Magmashot_v001_review.png": {
+              "path": "05_review/SK_Weapon_Magmashot_v001_review.png",
+              "sha256": "ee7d37869c412d70e020da23257e6b33d4798171dd20be5d6f40456d3a08ee8e"
+            }
+          },
+          "from_build": 1,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "刚体部件 + 多视图高模；三轴尺寸与白模吻合，发光分区落在纹饰上（三才转轮保留程序化发光件）",
+            "time": "2026-10-06 18:05:00"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 18:05:00",
+          "files": {
+            "SK_Weapon_Magmashot.glb": {
+              "path": "@root/public/assets/weapons/SK_Weapon_Magmashot.glb",
+              "sha256": "a51a49ef7f300253e9a38266cff97d43c4d54706812487728a1e470610ac9962"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/weapons/SK_Weapon_Magmashot.glb"
+        }
+      ]
+    }
+  }
+}

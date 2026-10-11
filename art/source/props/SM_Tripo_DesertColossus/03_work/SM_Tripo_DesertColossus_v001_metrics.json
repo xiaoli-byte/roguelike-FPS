@@ -1,0 +1,127 @@
+{
+  "source": {
+    "tris": 8296,
+    "verts": 11578
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 16.00782,
+    "iou": 0.881,
+    "iou_per_view": {
+      "front": 0.967,
+      "left": 0.768,
+      "back": 0.974,
+      "right": 0.774
+    },
+    "size_m": [
+      8.762,
+      9.528,
+      16.0
+    ],
+    "reference_m": [
+      12.0,
+      10.0,
+      16.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.681,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_DesertColossus_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      8192,
+      8192
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertColossus_LOD0",
+      "tris": 7959,
+      "verts": 11324,
+      "uv_min": [
+        0.00146484375,
+        0.00146484375
+      ],
+      "uv_max": [
+        0.99853515625,
+        0.9970703125
+      ],
+      "uv_utilization": 0.513,
+      "bbox_min": [
+        -4.381,
+        -4.764,
+        -0.0001
+      ],
+      "bbox_max": [
+        4.381,
+        4.764,
+        16.0021
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertColossus_LOD1",
+      "tris": 2487,
+      "verts": 6211,
+      "uv_min": [
+        0.0016749923815950751,
+        0.00146484375
+      ],
+      "uv_max": [
+        0.99853515625,
+        0.99072265625
+      ],
+      "uv_utilization": 0.474,
+      "bbox_min": [
+        -4.4669,
+        -4.764,
+        -0.0973
+      ],
+      "bbox_max": [
+        4.3841,
+        4.764,
+        16.0065
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertColossus_LOD2",
+      "tris": 796,
+      "verts": 4562,
+      "uv_min": [
+        0.0017071627080440521,
+        0.00146484375
+      ],
+      "uv_max": [
+        0.974365234375,
+        0.957275390625
+      ],
+      "uv_utilization": 0.357,
+      "bbox_min": [
+        -4.4669,
+        -4.764,
+        -0.0973
+      ],
+      "bbox_max": [
+        4.3841,
+        4.9446,
+        16.0019
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertColossus/04_export/SM_Tripo_DesertColossus_v001.glb",
+    "bytes": 1131288
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 15.9,
+  "_seconds": 19.7
+}

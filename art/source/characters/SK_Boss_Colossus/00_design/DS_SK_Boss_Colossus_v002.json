@@ -1,0 +1,36 @@
+{
+  "design": {
+    "id": "SK_Boss_Colossus",
+    "chapter": "desert",
+    "role": "boss",
+    "name": "沙暴巨像",
+    "body": "humanoid",
+    "height_m": 5.4,
+    "brief": "The desert chapter boss: a colossal ancient sandstone Heavenly King guardian statue (天王 / 金刚力士) from a buried Dunhuang cave temple (敦煌石窟), awakened by the bandits' stolen fire. A massive carved sandstone body in the shape of a Tang Buddhist guardian: very broad shoulders and long heavy arms, carved stone Tang armour with lion-head shoulder guards and a carved belt buckle, fluttering carved stone silk ribbons (帛带) arcing over the shoulders, a fierce wrathful carved face with bulging eyes glowing ember-orange and a tall gilded crown (宝冠), a cracked chest with a glowing ember-orange fire core set in a gold cloud-scroll ring, faded Dunhuang mural paint (malachite green, cinnabar red, lapis blue) on the stone. The bandits have hung crimson war banners with the gold cloud-scroll emblem and heavy iron chains on it. Huge stone fists each with a clearly separate thumb and four thick stone fingers; broad stone feet with five blocky toes. Sand pours from its cracks.",
+    "weapon": "no weapon; one fist raised for a ground slam"
+  },
+  "generation": {
+    "provider": "openai",
+    "endpoint": "images/edits",
+    "model": "gpt-image-2.5-sunburst",
+    "size": "2048x1024",
+    "quality": "high",
+    "background": "opaque",
+    "usage": {
+      "input_tokens": 2119,
+      "input_tokens_details": {
+        "image_tokens": 1458,
+        "text_tokens": 661
+      },
+      "output_tokens": 1180,
+      "output_tokens_details": {
+        "image_tokens": 1180,
+        "text_tokens": 0
+      },
+      "total_tokens": 3299
+    },
+    "request_id": "req_46f3182e36b441eeb07f5a129941c401",
+    "seconds": 33.7
+  },
+  "style_reference": "CN_SK_Enemy_Grunt_v001_sheet.png"
+}

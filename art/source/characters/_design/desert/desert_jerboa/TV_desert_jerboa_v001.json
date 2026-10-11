@@ -1,0 +1,37 @@
+{
+  "design": {
+    "key": "desert_jerboa",
+    "chapter": "desert",
+    "name": "跳鼠刀兵",
+    "layout": "humanoid",
+    "height_m": 1.1,
+    "brief": "A small, fast desert jerboa soldier that attacks in packs: an upright anthropomorphic jerboa with huge round ears, big dark eyes, a long thin tail ending in a white tuft, very long springy hind legs with big feet (four long toes each, clearly shown), sandy-orange fur. Wears scraps of old Chinese lamellar armour (a small chest plate and one shoulder plate), a ragged crimson neck scarf, and a small bronze bell glowing white-gold fixed between its ears (weak spot). Small hands with a clearly separate thumb and four separate fingers. Mischievous, twitchy, cute but dangerous.",
+    "weapon": "two short curved Chinese daggers, mid-leap",
+    "turnaround_pose": " upright on its long hind legs with the knees slightly bent, arms held a little away from the body in a relaxed A-pose, both hands open and EMPTY (no daggers, no weapons anywhere), ears upright, mouth closed, the bell between the ears glowing, scarf hanging down calmly, the long thin tail extending straight backwards and slightly down behind the body with the white tuft fully shown",
+    "turnaround_digits": "each hand open with a separate thumb and four separate slightly spread fingers, each foot with four long separate clawed toes, clearly countable; the tail and both ears never cut off by the frame."
+  },
+  "from_sheet": "DS_desert_jerboa_v001.png",
+  "generation": {
+    "provider": "openai",
+    "endpoint": "images/edits",
+    "model": "gpt-image-2.5-sunburst",
+    "size": "2048x1024",
+    "quality": "high",
+    "background": "opaque",
+    "usage": {
+      "input_tokens": 1820,
+      "input_tokens_details": {
+        "image_tokens": 1458,
+        "text_tokens": 362
+      },
+      "output_tokens": 1180,
+      "output_tokens_details": {
+        "image_tokens": 1180,
+        "text_tokens": 0
+      },
+      "total_tokens": 3000
+    },
+    "request_id": "req_d324f42d72974fe0b334e4af09942861",
+    "seconds": 30.0
+  }
+}

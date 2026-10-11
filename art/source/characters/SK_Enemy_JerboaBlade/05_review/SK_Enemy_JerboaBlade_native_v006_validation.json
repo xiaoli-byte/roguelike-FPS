@@ -1,0 +1,314 @@
+{
+  "asset": "SK_Enemy_JerboaBlade",
+  "version": 6,
+  "glb": "art/source/characters/SK_Enemy_JerboaBlade/04_export/SK_Enemy_JerboaBlade_native_v006.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.3,
+      "骨架重整：29 根语义骨骼": 0.1,
+      "贴图（BC + AO/ORM）": 3.9,
+      "LOD 与蒙皮上限 5910 / 2461 / 985": 0.3,
+      "法线贴图（高模 → LOD0）": 1.1,
+      "发光壳 100 面": 0.0,
+      "导出 1378 KB": 1.2
+    },
+    "source": {
+      "verts": 9654,
+      "tris": 19316,
+      "scale": 1.1241517892892536
+    },
+    "regions": {
+      "bell_verts": 139,
+      "ear_L_verts": 219,
+      "ear_R_verts": 219,
+      "tail_verts": 724,
+      "fallback_verts": 0
+    },
+    "bones": [
+      "arm_L",
+      "arm_R",
+      "bell",
+      "chest",
+      "ear_L",
+      "ear_R",
+      "foot_L",
+      "foot_R",
+      "forearm_L",
+      "forearm_R",
+      "hand_L",
+      "hand_R",
+      "head",
+      "hips",
+      "neck",
+      "root",
+      "shin_L",
+      "shin_R",
+      "shoulder_L",
+      "shoulder_R",
+      "spine",
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "tail_4",
+      "thigh_L",
+      "thigh_R",
+      "toe_L",
+      "toe_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.899,
+      "shade_mean": 0.877
+    },
+    "textures": {
+      "size": 1024,
+      "ao_mean": 0.793,
+      "provider_pbr": [
+        "roughness",
+        "metallic"
+      ],
+      "roughness_mean": 0.757,
+      "metal_frac": 0.067
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Enemy_JerboaBlade_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_JerboaBlade_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_JerboaBlade_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Enemy_JerboaBlade_LOD0",
+        "tris": 5910,
+        "uv_min": [
+          0.0029296875,
+          0.0029296875
+        ],
+        "uv_max": [
+          0.99658203125,
+          0.9970703125
+        ]
+      },
+      {
+        "name": "SK_Enemy_JerboaBlade_LOD1",
+        "tris": 2461,
+        "uv_min": [
+          0.0029296875,
+          0.0029296875
+        ],
+        "uv_max": [
+          0.988037109375,
+          0.9970703125
+        ]
+      },
+      {
+        "name": "SK_Enemy_JerboaBlade_LOD2",
+        "tris": 985,
+        "uv_min": [
+          0.0029296875,
+          0.0029296875
+        ],
+        "uv_max": [
+          0.9879505634307861,
+          0.9970703125
+        ]
+      }
+    ],
+    "normal_map": {
+      "size": 1024,
+      "flatness": 0.1045
+    },
+    "glow_shell": {
+      "group": "bell",
+      "tris": 100
+    },
+    "glb_kb": 1378,
+    "_seconds": 10.4
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "1378 KB / 1600 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Enemy_JerboaBlade_LOD0', 'SK_Enemy_JerboaBlade_LOD1', 'SK_Enemy_JerboaBlade_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "5909 / 6000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "2454 / 2500"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "974 / 1000"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "1.103 m (design 1.1 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=-0.0014"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Enemy_JerboaBlade_Glow', 'M_Enemy_JerboaBlade']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "glow shell",
+      "100 tris on 'bell'"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_JerboaBlade_BC",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_JerboaBlade_N",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_JerboaBlade_ORM",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "29 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Enemy_JerboaBlade_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_JerboaBlade_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_JerboaBlade_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_JerboaBlade_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_JerboaBlade_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_JerboaBlade_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_JerboaBlade_LOD0 UV range",
+      "[0.003, 0.003]..[0.997, 0.997]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_JerboaBlade_LOD1 UV range",
+      "[0.003, 0.003]..[0.988, 0.997]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_JerboaBlade_LOD2 UV range",
+      "[0.003, 0.003]..[0.988, 0.997]"
+    ],
+    [
+      "pass",
+      "region bell",
+      "139 verts"
+    ],
+    [
+      "pass",
+      "region ear_L",
+      "219 verts"
+    ],
+    [
+      "pass",
+      "region ear_R",
+      "219 verts"
+    ],
+    [
+      "pass",
+      "region tail",
+      "724 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "0 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

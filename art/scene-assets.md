@@ -83,9 +83,9 @@
 
 ### 边界可读性审查
 
-[实际网格审查工具](tools/audit_authored_boundary.mjs) 对 desert-1、frost-3、inferno-3 沿地面外边界最多每 2 米采样一次，在边界内 0.4 米、视高 1.2 米向外检测真实 Draco LOD1。近邻包络只用于预筛，最终结果来自三角面命中。初始 [基线报告](reviews/authored-scenes-20261004/boundary-visibility.json) 与修复后的 [复跑报告](reviews/authored-scenes-20261004/boundary-visibility-after.json) 均保留源文件 SHA，供定位低位长缺口。
+[实际网格审查工具](tools/audit_authored_boundary.mjs) 对 desert-1、frost-3、inferno-3 沿地面外边界最多每 2 米采样一次，在边界内 0.4 米、视高 1.2 米向外检测真实 Draco LOD1。近邻包络只用于预筛，最终结果来自三角面命中。初始 [基线报告](reviews/authored-scenes-20261004/boundary-visibility.summary.json) 与修复后的 [复跑报告](reviews/authored-scenes-20261004/boundary-visibility-after.summary.json) 均保留源文件 SHA，供定位低位长缺口。
 
-复跑命令：`node art/tools/audit_authored_boundary.mjs --plans desert-1,frost-3,inferno-3 --out art/reviews/authored-scenes-20261004/boundary-visibility-after.json`。可加 `--height 1.62` 检查玩家眼高，另存的 [眼高报告](reviews/authored-scenes-20261004/boundary-visibility-eye.json) 记录对应源码版本。比较用 `lengthWeighted`，避免短阶梯边界过度计数。单一高度/角度的缺失命中仅表示边界可读性风险；该审查不包含技术背板，不证明玩家能越界，也不证明所有视角的围合已经完成。此批没有借用旧地图帧率作为十五关的性能结论。
+工具同时写出完整逐样本报告和同名 `.summary.json`。完整报告每次 3–10 MB，可随时复跑生成，已不入库；入库的是摘要，保留方法、源文件 SHA、各图统计与全部风险段。复跑命令：`node art/tools/audit_authored_boundary.mjs --plans desert-1,frost-3,inferno-3 --out art/reviews/authored-scenes-20261004/boundary-visibility-after.json`。可加 `--height 1.62` 检查玩家眼高，另存的 [眼高报告](reviews/authored-scenes-20261004/boundary-visibility-eye.summary.json) 记录对应源码版本。比较用 `lengthWeighted`，避免短阶梯边界过度计数。单一高度/角度的缺失命中仅表示边界可读性风险；该审查不包含技术背板，不证明玩家能越界，也不证明所有视角的围合已经完成。此批没有借用旧地图帧率作为十五关的性能结论。
 
 ## 此前资产与动作批次记录
 
@@ -127,7 +127,7 @@
 
 本轮场景细化（2026-10-04）：继续使用用户已确认的六件本机 Hunyuan 模型，给陈设增加主景、陪衬与点缀层次。沙寺入口左侧以镇灵碑引导视线，霜山右侧使用祈愿石与灯龛，熔火以锁碑和高低祭炉构图；墙边不再等距离重复同尺寸雕像，高台后部陈设也采用不同位置和尺度。入口至庭院中心保留 2.4 米视廊，至远门保留 1.3 米纵深视线；随机柱子、高台及旧松树、仙人掌都在生成模型与碰撞之前避让，树冠和枝臂采用实际外延检查。远处两侧继续保留战斗掩体。
 
-新增的二维石板原图来自 **Codex 内置 image_gen**，已原样保存为 `public/assets/environment/weathered-stone-v1.png`；最终完整提示词、生成器与原始输出路径保存在 `art/source/environment/weathered-stone-v1.json`。原图没有改写，运行时叠加主题色、积沙、积雪或灰烬，并从相同像素计算浅凹凸与粗糙度。道具脚下和墙根增加轻量平面接触层；熔火裂缝亮度集中在祭炉组和周边，中央铺地与闪烁保持克制。旧锥形火焰换为单批、单 pass 的柔和动态 billboard 特效。以上均为材质和特效处理，没有以程序创建新的三维美术模型。
+新增的二维石板原图来自 **Codex 内置 image_gen**，运行时使用其 512² WebP 缩版 `public/assets/environment/weathered-stone-v1.webp`（约 90 KB；游戏只把它绘入 512 / 256 像素画布，原 1254² PNG 3.2 MB 保留在 git 历史中，尺寸与校验和记在源记录里）；最终完整提示词、生成器与原始输出路径保存在 `art/source/environment/weathered-stone-v1.json`。原图没有改写，运行时叠加主题色、积沙、积雪或灰烬，并从相同像素计算浅凹凸与粗糙度。道具脚下和墙根增加轻量平面接触层；熔火裂缝亮度集中在祭炉组和周边，中央铺地与闪烁保持克制。旧锥形火焰换为单批、单 pass 的柔和动态 billboard 特效。以上均为材质和特效处理，没有以程序创建新的三维美术模型。
 
 天空、雾、颗粒和主题补光调整后，近处道具与远处环境有更明确的层次。沙寺旧远山采用较淡的青灰色与单独 24–125 米背景雾，保留场内雾和照明；旧远山几何仍保留。熔火原 spike 装饰点复用已确认的 Hunyuan 锁碑，按原碰撞宽、高适配。关卡仍使用两盏点光源，低画质保留已有低面数 LOD；平面火焰几何跨关共享，逐关材质和实例正确释放，共享 Hunyuan 原资源不随换关释放。
 

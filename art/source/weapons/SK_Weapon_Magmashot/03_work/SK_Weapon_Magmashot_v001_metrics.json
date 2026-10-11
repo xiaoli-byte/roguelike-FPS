@@ -1,0 +1,178 @@
+{
+  "steps": {
+    "导入清理": 0.7,
+    "对齐": 0.7,
+    "低模与 UV": 3.7,
+    "投影着色": 6.3,
+    "烘焙": 9.4,
+    "LOD": 0.1,
+    "部件骨架蒙皮": 0.5,
+    "导出": 2.1
+  },
+  "highpoly": {
+    "faces_raw": 167894,
+    "faces": 91728,
+    "verts": 91726,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00492,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.902,
+    "iou_per_view": {
+      "front": 0.884,
+      "left": 0.928,
+      "back": 0.886,
+      "right": 0.917
+    },
+    "height_m": 0.3788,
+    "blockout_height_m": 0.6389
+  },
+  "uv": {
+    "smart_islands": 241,
+    "charts": 29,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "smart",
+    "density_smart": 1.5958,
+    "density_merged": 1.5455
+  },
+  "projection": {
+    "uncovered_ratio": 0.0975
+  },
+  "bake_device": "OPTIX",
+  "emissive_id": {
+    "emissive_texel_ratio": 0.0244
+  },
+  "material_id": {
+    "metal_texel_ratio": 0.3204
+  },
+  "textures": {
+    "T_Weapon_Magmashot_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Weapon_Magmashot_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Weapon_Magmashot_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "presentation": [
+    [
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ]
+  ],
+  "skin": {
+    "bones": [
+      "j_r",
+      "j_0"
+    ],
+    "per_lod": {
+      "SK_Weapon_Magmashot_LOD0": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      },
+      "SK_Weapon_Magmashot_LOD1": {
+        "heat_failed_verts": 0,
+        "max_influences": 1,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      }
+    },
+    "mode": "parts",
+    "sigma_m": 0.0096,
+    "rigid": true,
+    "split": {
+      "SK_Weapon_Magmashot_LOD0": {
+        "cut_edges": 0,
+        "cap_tris": 0,
+        "merged_fragment_faces": 0,
+        "tris": 12000
+      },
+      "SK_Weapon_Magmashot_LOD1": {
+        "cut_edges": 0,
+        "cap_tris": 0,
+        "merged_fragment_faces": 0,
+        "tris": 3000
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SK_Weapon_Magmashot_LOD0",
+      "tris": 12000,
+      "verts": 5998,
+      "uv_min": [
+        0.0022591687738895416,
+        0.0022592470049858093
+      ],
+      "uv_max": [
+        0.9977368712425232,
+        0.9977407455444336
+      ],
+      "uv_utilization": 0.435,
+      "bbox_min": [
+        -0.0376,
+        -0.2441,
+        -0.0946
+      ],
+      "bbox_max": [
+        0.0404,
+        0.3789,
+        0.0839
+      ]
+    },
+    {
+      "name": "SK_Weapon_Magmashot_LOD1",
+      "tris": 3000,
+      "verts": 1498,
+      "uv_min": [
+        0.0022591687738895416,
+        0.0024398271925747395
+      ],
+      "uv_max": [
+        0.9966005086898804,
+        0.9969574213027954
+      ],
+      "uv_utilization": 0.415,
+      "bbox_min": [
+        -0.0378,
+        -0.2439,
+        -0.0944
+      ],
+      "bbox_max": [
+        0.0404,
+        0.379,
+        0.0838
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/weapons/SK_Weapon_Magmashot/04_export/SK_Weapon_Magmashot_v001.glb",
+    "bytes": 495956
+  },
+  "blend": "art/source/weapons/SK_Weapon_Magmashot/03_work/SK_Weapon_Magmashot_v001.blend",
+  "total_seconds": 23.4,
+  "_seconds": 26.6
+}

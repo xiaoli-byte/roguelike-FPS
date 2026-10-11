@@ -11,7 +11,7 @@ import numpy as np
 from PIL import Image
 from scipy import ndimage
 from lib.config import CFG
-from lib.state import AssetState, sha256
+from lib.state import AssetState, resolve_path, sha256
 from lib import imaging
 from prepare_nature_batch import prepare_reference
 
@@ -66,7 +66,7 @@ def register(item):
     spec = CFG.asset(asset_id); state = AssetState(spec)
     bo = prepare_reference(asset_id)
     views = json.loads(state.file(bo, f"BO_{asset_id}_v{bo['version']:03d}_views.json").read_text(encoding='utf8'))
-    source = Path(item['path']).resolve(); digest = sha256(source)
+    source = resolve_path(item['path']).resolve(); digest = sha256(source)
     current = state.current('concept')
     if current and current.get('source_sha256') == digest and current.get('from_blockout') == bo['version']:
         print('CONCEPT_UNCHANGED', asset_id); return

@@ -1,0 +1,39 @@
+{
+  "design": {
+    "key": "desert_apsara",
+    "chapter": "desert",
+    "name": "邪飞天",
+    "layout": "humanoid",
+    "height_m": 1.9,
+    "brief": "A corrupted Dunhuang apsara (飞天) support caster floating in the air: a slender celestial dancer with a serene but cracked porcelain-like face and glowing white-gold eyes, a tall golden headdress, long flowing silk ribbons (飘带) that burn at their tips with white-gold fire, bare arms with gold armlets, a cinnabar and malachite green flowing skirt in Dunhuang mural colours, bare feet with five visible toes hanging below. Hands with a clearly separate thumb and four slender fingers. Elegant and eerie.",
+    "weapon": "a Chinese pipa (琵琶) held across the body, its tuning pegs glowing white-gold (weak spot)",
+    "style_note": "Stylization: cartoon game proportions like the jerboa soldier and fire rat of this roster — oversized head with big simple eyes, small simplified nose and mouth, compact body, chunky hands; hair as one solid sculpted shape; ribbons and skirt as thick simple bands; a modest long-sleeved celestial top covering the torso. Toy-like readable forms, not a realistic woman.",
+    "turnaround_lead": "SYMMETRIC floating bind pose for rigging (her pipa is a separate model that floats in front of her and is NOT drawn):",
+    "turnaround_pose": " floating upright in the air, BOTH ARMS IN EXACTLY THE SAME MIRRORED POSE in every view: arms held out to the sides in a relaxed A-pose about 35 degrees away from the body, elbows slightly bent, both hands EMPTY and open with the palms facing forward, fingers slightly spread; legs hanging down relaxed and slightly apart with a gap of air between them, bare feet with the toes pointing gently downward; head facing straight ahead with the serene cracked porcelain face and glowing white-gold eyes painted as opaque bright paint (no halo); the tall golden headdress as solid sculpted shapes close to the head (NO thin ring halo behind the head); a modest long-sleeved celestial top, the cinnabar and malachite green skirt as thick simple layered bands ending below the knees; TWO SHORT silk ribbons draped over the forearms, each hanging straight down along the sides of the body to knee height as thick simple bands, no loops above the shoulders, NO flames on the ribbons (plain cloth ends), no fire anywhere, nothing floating around her",
+    "turnaround_digits": "each hand with one clearly separate thumb and four slender separate fingers, countable; each bare foot with five visible toes; the headdress, ribbons, skirt hem and feet fully inside the frame."
+  },
+  "from_sheet": "DS_desert_apsara_v003.png",
+  "generation": {
+    "provider": "openai",
+    "endpoint": "images/edits",
+    "model": "gpt-image-2.5-sunburst",
+    "size": "2048x1024",
+    "quality": "high",
+    "background": "opaque",
+    "usage": {
+      "input_tokens": 1982,
+      "input_tokens_details": {
+        "image_tokens": 1458,
+        "text_tokens": 524
+      },
+      "output_tokens": 1180,
+      "output_tokens_details": {
+        "image_tokens": 1180,
+        "text_tokens": 0
+      },
+      "total_tokens": 3162
+    },
+    "request_id": "req_1b7a4101751841e2abd7e37634d97fd6",
+    "seconds": 34.3
+  }
+}

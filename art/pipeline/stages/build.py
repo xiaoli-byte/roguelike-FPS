@@ -6,7 +6,7 @@ import json
 
 from lib import blender, imaging
 from lib.config import CFG, ROOT, AssetSpec
-from lib.state import AssetState
+from lib.state import AssetState, portable_record
 
 
 def run(spec: AssetSpec, a) -> None:
@@ -35,6 +35,8 @@ def run(spec: AssetSpec, a) -> None:
         "asset_id": spec.id, "kind": spec.kind, "garment": spec.raw.get("garment"),
         "anchor": "feet" if spec.blockout.get('source') == 'scene' or (spec.kind == "skeletal" and spec.raw.get("rig") != "parts") else "origin",
         "rig_mode": spec.raw.get("rig", "humanoid"), "rig_sigma": spec.raw.get("rig_sigma", 0.015),
+        "rig_reference_source": spec.blockout.get("source"),
+        "rig_major_fields": spec.raw.get("rig_major_fields", []),
         "arm_radius": spec.raw.get("arm_radius", 0.14), "rig_rigid": spec.raw.get("rig_rigid", False), "rig_rigid_joints": spec.raw.get("rig_rigid_joints", []),
         "highpoly_glb": str(st.file(hp, f"HP_{spec.id}_v{hp['version']:03d}.glb")),
         "views_json": str(st.file(bo, f"BO_{spec.id}_v{bo['version']:03d}_views.json")),
@@ -54,17 +56,25 @@ def run(spec: AssetSpec, a) -> None:
         "bake_device": spec.raw.get("bake_device", cls.get("bake_device", b["bake_device"])),
         "min_component_fraction": spec.raw.get("min_component_fraction", cls.get("min_component_fraction", 0.01)),
         "remesh_voxel": spec.raw.get("remesh_voxel", cls.get("remesh_voxel", 0.0025)),
-        "far_lod_budget_weld_max_fraction": cls.get("far_lod_budget_weld_max_fraction", 0),
+        "far_lod_budget_weld_max_fraction": spec.raw.get("far_lod_budget_weld_max_fraction", cls.get("far_lod_budget_weld_max_fraction", 0)),
         "ao_samples": b["ao_samples"], "bake_margin_px": b["bake_margin_px"],
         "cage_extrusion": b["cage_extrusion"], "projection_sharpness": b["projection_sharpness"],
         "max_bone_influences": b["max_bone_influences"],
         "draco": ex["draco"], "image_format": ex["image_format"], "tangents": ex["tangents"],
+        "texture_name": name,
     }
-    print(f"→ Blender 游戏化 {tag}（LOD 面数 {spec.lod_tris}，贴图 {spec.texture}²）…", flush=True)
-    res = blender.run("bl_build.py", params, spec.dir / "_tmp" / f"build_v{ver:03d}", "build")
+    # Tripo Studio P2.0 sources already carry a game mesh and PBR images: keep them, don't project the concept.
+    tripo = spec.raw.get("source_provider") == "tripo"
+    if tripo and spec.kind == "skeletal":
+        # Skeletal Tripo meshes keep the full rigging path (fit to blockout joints, bone heat, presentation),
+        # but bake their own textures instead of the concept projection.
+        params["texture_source"] = "highpoly"
+    script = "bl_build_tripo.py" if tripo and spec.kind == "static" else "bl_build.py"
+    print(f"→ Blender 游戏化 {tag}（{script}，LOD 面数 {spec.lod_tris}，贴图 {spec.texture}²）…", flush=True)
+    res = blender.run(script, params, spec.dir / "_tmp" / f"build_v{ver:03d}", "build")
 
     metrics = work / f"{tag}_metrics.json"
-    metrics.write_text(json.dumps(res, ensure_ascii=False, indent=2), encoding="utf-8")
+    metrics.write_text(json.dumps(portable_record(res), ensure_ascii=False, indent=2), encoding="utf-8")
     files = [work / f"{tag}.blend", export_dir / f"{tag}.glb", metrics, *sorted(tex_dir.glob("*.png"))]
     st.add_version("build", {
         "version": ver, "from": {"blockout": bo["version"], "concept": cn["version"], "highpoly": hp["version"],

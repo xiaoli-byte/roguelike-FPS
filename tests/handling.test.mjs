@@ -172,3 +172,20 @@ test('Hunyuan prop exports have textured geometry, two LODs and bounded download
     }
   }
 });
+
+test('consecutive shells continue from the loading port instead of snapping back to the fore-grip', () => {
+  for (const id of ['shotgun', 'magmashot']) {
+    const profile = WEAPON_HANDLING[id], support = [0, 0, -0.25], out = { x: 0, y: 0, z: 0, roll: 0, pitch: 0 };
+    sampleLoadingHand(profile, 1, support, profile.load, out, true);
+    const end = { ...out };
+    sampleLoadingHand(profile, 0, support, profile.load, out, false);
+    assert.ok(Math.hypot(out.x - end.x, out.y - end.y, out.z - end.z) < 1e-9, `${id}: next shell starts where the last one ended`);
+    assert.ok(Math.abs(out.roll - end.roll) < 1e-9 && Math.abs(out.pitch - end.pitch) < 1e-9, `${id}: wrist keeps loading orientation`);
+    let previous = { ...out };
+    for (let i = 1; i <= 100; i++) {
+      sampleLoadingHand(profile, i / 100, support, profile.load, out, false);
+      assert.ok(Math.hypot(out.x - previous.x, out.y - previous.y, out.z - previous.z) < 0.06, `${id}: later shell teleported`);
+      previous = { ...out };
+    }
+  }
+});

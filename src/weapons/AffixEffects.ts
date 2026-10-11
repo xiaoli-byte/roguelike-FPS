@@ -11,13 +11,13 @@
  *   副元素附着与引爆的强度取「上一帧对该敌人的总伤害」（一发霰弹 / 一次爆炸按整发计）。
  * - 「猎首」「乘隙」「化合」「轮回」「鼎沸」通过 outgoing modifier 生效（投射物 / 爆炸在发射时不知道目标）。
  * - 「回元」「疾化」「化盾」「鼎沸」监听 'enemy:reaction'，只认归属于本武器的反应；「蛊种」任何来源的反应都会传染。
- * - 斩击（魔刀千刃，tags 含 'slash'）：副元素 / 万象几率按远程形态的命中频率抽取，斩击命中时乘 R.meleeHitScale 归一化；
+ * - 斩击（魔刀千刃，tags 含 'slash'）：副元素 / 万象几率按千刃出窍的结算频率抽取，斩击命中时乘 R.meleeHitScale 归一化；
  *   弹射几率不再按弹体数折算（一段斩击对每名敌人只结算一次）。
  */
 import * as THREE from 'three';
 import type {
   DamageRequest, DamageResult, DetonateOpts, Element, GameContext, GameEvents, IEnemy, OutgoingDamageModifier,
-  ReactionId, StatKey, StatusApplyOpts, StatusId, TriggerReactionOpts, WeaponForm, WeaponInstance,
+  ReactionId, StatKey, StatusApplyOpts, StatusId, TriggerReactionOpts, WeaponInstance,
 } from '../core/types';
 import { ELEMENT_COLORS, REACTION_TAG } from '../core/types';
 import { hitsPerShot } from './WeaponDefs';
@@ -39,8 +39,6 @@ export interface WeaponRuntime {
   cycleIndex: number;
   /** 「疾化」射速加成截止时间 */
   rxnHasteUntil: number;
-  /** 双形态武器（魔刀千刃）的当前形态，按实例保存（切走再切回保持）；新实例为 'melee'；普通武器忽略 */
-  form: WeaponForm;
 }
 
 export interface EffectHost {

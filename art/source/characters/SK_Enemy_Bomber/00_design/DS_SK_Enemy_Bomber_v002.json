@@ -1,0 +1,36 @@
+{
+  "design": {
+    "id": "SK_Enemy_Bomber",
+    "chapter": "desert",
+    "role": "bomber",
+    "name": "爆竹蛊虫",
+    "body": "creature",
+    "height_m": 0.85,
+    "brief": "A chunky desert beetle turned into a living bomb by the bandits' Gu sorcery (蛊): a round, high-domed sand-gold carapace with bronze-capped ridges and painted gold cloud-scroll patterns, red paper firecracker bundles (爆竹) and a swollen, veined, glowing ember-orange powder sac strapped onto its back with crimson cloth and hemp rope (its weak spot), a short lit fuse, a yellow paper talisman pasted on the sac, a string of square-holed copper coins hanging on its side, a small armoured head with two glowing ember-orange eyes and curved dark mandibles, six stubby clawed legs. Cute but menacing, readable as a beetle from any angle.",
+    "weapon": ""
+  },
+  "generation": {
+    "provider": "openai",
+    "endpoint": "images/edits",
+    "model": "gpt-image-2.5-sunburst",
+    "size": "2048x1024",
+    "quality": "high",
+    "background": "opaque",
+    "usage": {
+      "input_tokens": 2003,
+      "input_tokens_details": {
+        "image_tokens": 1458,
+        "text_tokens": 545
+      },
+      "output_tokens": 1180,
+      "output_tokens_details": {
+        "image_tokens": 1180,
+        "text_tokens": 0
+      },
+      "total_tokens": 3183
+    },
+    "request_id": "req_5ee3fd91e5b54f4db43f81013828af5a",
+    "seconds": 30.1
+  },
+  "style_reference": "CN_SK_Enemy_Grunt_v001_sheet.png"
+}

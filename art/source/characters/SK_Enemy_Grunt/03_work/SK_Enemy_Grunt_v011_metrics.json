@@ -1,0 +1,257 @@
+{
+  "steps": {
+    "导入清理": 0.4,
+    "对齐": 0.1,
+    "低模与 UV": 3.8,
+    "供应方贴图": 0.0,
+    "烘焙": 3.7,
+    "LOD": 0.1,
+    "骨骼蒙皮": 0.4,
+    "导出": 1.7
+  },
+  "highpoly": {
+    "faces_raw": 7919,
+    "faces": 7919,
+    "verts": 4288,
+    "loose_parts": 32,
+    "kept_parts": 28,
+    "remesh_voxel_m": 0.0,
+    "texture_source": "highpoly (provider)"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.603,
+    "iou_per_view": {
+      "front": 0.6,
+      "left": 0.607,
+      "back": 0.607,
+      "right": 0.601
+    },
+    "height_m": 1.9768,
+    "blockout_height_m": 1.9838
+  },
+  "uv": {
+    "smart_islands": 557,
+    "charts": 91,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.2894,
+    "density_merged": 0.3422
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider base colour baked from the Tripo source"
+  },
+  "bake_device": "OPTIX",
+  "textures": {
+    "T_Enemy_Grunt_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Enemy_Grunt_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Enemy_Grunt_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "bind_pose": {
+    "armSpreadL": 0.3612,
+    "armSpreadR": 0.3572,
+    "base": 0.45
+  },
+  "robe_verts": {
+    "SK_Enemy_Grunt_LOD0": 78,
+    "SK_Enemy_Grunt_LOD1": 58,
+    "SK_Enemy_Grunt_LOD2": 35
+  },
+  "arm_capsule_verts": {
+    "SK_Enemy_Grunt_LOD0": 779,
+    "SK_Enemy_Grunt_LOD1": 356,
+    "SK_Enemy_Grunt_LOD2": 182
+  },
+  "rigid_head_verts": {
+    "SK_Enemy_Grunt_LOD0": 698,
+    "SK_Enemy_Grunt_LOD1": 350,
+    "SK_Enemy_Grunt_LOD2": 166
+  },
+  "skin": {
+    "bones": [
+      "hips",
+      "torso",
+      "head",
+      "armL",
+      "elbowL",
+      "handL",
+      "armR",
+      "elbowR",
+      "handR",
+      "legL",
+      "kneeL",
+      "legR",
+      "kneeR"
+    ],
+    "per_lod": {
+      "SK_Enemy_Grunt_LOD0": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "heat_failed_initial": 0,
+        "weights_from": "bone_heat",
+        "unweighted_verts": 0
+      },
+      "SK_Enemy_Grunt_LOD1": {
+        "heat_failed_verts": 14,
+        "max_influences": 4,
+        "heat_failed_initial": 14,
+        "weights_from": "bone_heat",
+        "unweighted_verts": 0
+      },
+      "SK_Enemy_Grunt_LOD2": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "heat_failed_initial": 0,
+        "weights_from": "bone_heat",
+        "unweighted_verts": 0
+      }
+    },
+    "spread": {
+      "hips": {
+        "verts": 49,
+        "p90_m": 0.197
+      },
+      "torso": {
+        "verts": 1170,
+        "p90_m": 0.351
+      },
+      "head": {
+        "verts": 724,
+        "p90_m": 0.216
+      },
+      "armL": {
+        "verts": 153,
+        "p90_m": 0.124
+      },
+      "elbowL": {
+        "verts": 220,
+        "p90_m": 0.096
+      },
+      "handL": {
+        "verts": 236,
+        "p90_m": 0.082
+      },
+      "armR": {
+        "verts": 167,
+        "p90_m": 0.126
+      },
+      "elbowR": {
+        "verts": 200,
+        "p90_m": 0.096
+      },
+      "handR": {
+        "verts": 233,
+        "p90_m": 0.082
+      },
+      "legL": {
+        "verts": 250,
+        "p90_m": 0.235
+      },
+      "kneeL": {
+        "verts": 376,
+        "p90_m": 0.193
+      },
+      "legR": {
+        "verts": 136,
+        "p90_m": 0.135
+      },
+      "kneeR": {
+        "verts": 374,
+        "p90_m": 0.193
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SK_Enemy_Grunt_LOD0",
+      "tris": 7919,
+      "verts": 4288,
+      "uv_min": [
+        0.0033229857217520475,
+        0.003322952426970005
+      ],
+      "uv_max": [
+        0.9966769814491272,
+        0.996677041053772
+      ],
+      "uv_utilization": 0.51,
+      "bbox_min": [
+        -0.5826,
+        -0.2433,
+        0.0
+      ],
+      "bbox_max": [
+        0.583,
+        0.2965,
+        1.9768
+      ]
+    },
+    {
+      "name": "SK_Enemy_Grunt_LOD1",
+      "tris": 3500,
+      "verts": 2031,
+      "uv_min": [
+        0.0034096105955541134,
+        0.003322952426970005
+      ],
+      "uv_max": [
+        0.9966769814491272,
+        0.996677041053772
+      ],
+      "uv_utilization": 0.498,
+      "bbox_min": [
+        -0.5807,
+        -0.2448,
+        0.0004
+      ],
+      "bbox_max": [
+        0.5811,
+        0.2965,
+        1.9768
+      ]
+    },
+    {
+      "name": "SK_Enemy_Grunt_LOD2",
+      "tris": 1499,
+      "verts": 938,
+      "uv_min": [
+        0.0034096105955541134,
+        0.0033413039054721594
+      ],
+      "uv_max": [
+        0.9966769814491272,
+        0.996677041053772
+      ],
+      "uv_utilization": 0.459,
+      "bbox_min": [
+        -0.5883,
+        -0.2461,
+        -0.0004
+      ],
+      "bbox_max": [
+        0.5849,
+        0.2949,
+        1.9768
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/characters/SK_Enemy_Grunt/04_export/SK_Enemy_Grunt_v011.glb",
+    "bytes": 389620
+  },
+  "blend": "art/source/characters/SK_Enemy_Grunt/03_work/SK_Enemy_Grunt_v011.blend",
+  "total_seconds": 10.2,
+  "_seconds": 13.7
+}

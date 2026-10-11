@@ -61,8 +61,6 @@ export class UIManager implements IUI {
       ev.on('skill:used', ({ slot }) => this.hud.onSkillUsed(slot)),
       ev.on('weapon:switched', () => this.hud.onWeaponSwitched()),
       ev.on('weapon:skillUsed', () => this.hud.onWeaponSkillUsed()),
-      ev.on('weapon:formChanged', () => this.hud.onWeaponFormChanged()),
-      ev.on('weapon:skillImpale', ({ points }) => this.hud.onWeaponImpale(points)),
       ev.on('run:started', () => {
         this.hud.reset();
         this.choice.hide(true);

@@ -8,8 +8,8 @@
  * 「本发元素」的地方都经 el(inst)，分派后复位为 null。
  * 蓄力（贯虹灵炮）：命中扫描接受 ShotMods（伤害倍率 / 穿透加成 / 满蓄 / 反馈强度），满蓄命中经
  * ctx.combat.detonate 引爆目标身上的元素状态。
- * 固定扇形齐射（魔刀千刃）：projectile 的 yawOffset 把「枪口 → 准星落点」方向绕竖直轴偏转，
- * shareAim 让同一轮的后续弹体复用第一枚的准星落点（三柄共享落点，扇形以准星为中心）。
+ * 固定扇形齐射：projectile 的 yawOffset 把「枪口 → 准星落点」方向绕竖直轴偏转，
+ * shareAim 让同一轮的后续弹体复用第一枚的准星落点（扇形以准星为中心）。
  */
 import * as THREE from 'three';
 import type { DamageRequest, Element, GameContext, IEnemy, WeaponInstance } from '../core/types';
@@ -215,7 +215,7 @@ export class Ballistics {
 
   /**
    * 发射一枚玩家投射物。初始方向修正为「枪口 → 准星落点」，有重力时补偿抛物线下坠；
-   * fan > 0 时在该方向附近随机散开（蜂群）；yawOffset 为绕竖直轴的固定偏航（魔刀千刃的固定扇形，弧度）；
+   * fan > 0 时在该方向附近随机散开（蜂群）；yawOffset 为绕竖直轴的固定偏航（弧度）；
    * shareAim = true 时复用上一次调用的散布方向与准星落点（同一轮固定扇形的第 2 枚起）。
    */
   projectile(

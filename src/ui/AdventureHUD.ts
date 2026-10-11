@@ -113,7 +113,7 @@ export class AdventureHUD {
       this.instruction.textContent = inPreparation ? '战前补给 · 弹药、生命、护盾与装备'
         : active && info.spawnBlocked ? '守卫等待入场 · 退回通道拉开距离' : active ? `${active.label} · 击退拦路守卫`
         : phaseKey === 'reward' ? '清场奖励 · 出口即将开启'
-          : info.automaticEncounters && info.phase === 'explore' ? '沿路探索 · 接近战区自动触发' : PHASE_TEXT[info.phase];
+          : info.automaticEncounters && info.phase === 'explore' ? '主路遭遇自动触发 · 隐秘入口按 F 调查' : PHASE_TEXT[info.phase];
       this.targetLabel.textContent = inPreparation ? preparation.label : active?.label ?? (info.phase === 'cleared' && info.exit ? '前往出口' : info.objectiveLabel ?? '灵火祭坛');
     }
     let currentZone = '探索区域';
@@ -149,7 +149,8 @@ export class AdventureHUD {
     const discoveryKey = `${discoveries}/${info.sites.length}/${defeated}/${encounters.length}`;
     if (discoveryKey !== this.shownDiscoveries) {
       this.shownDiscoveries = discoveryKey;
-      this.discovered.textContent = `${discoveries}/${info.sites.length} 补给${encounters.length ? ` · ${defeated}/${encounters.length} 遭遇` : ''}`;
+      this.discovered.textContent = info.automaticEncounters ? `发现 ${discoveries} 处物资 · 完成 ${defeated} 场遭遇`
+        : `${discoveries}/${info.sites.length} 补给${encounters.length ? ` · ${defeated}/${encounters.length} 遭遇` : ''}`;
     }
     this.draw(info);
   }
@@ -205,6 +206,7 @@ export class AdventureHUD {
       c.fillText('商', 0, 0); c.restore();
     }
     for (const encounter of info.encounters ?? []) {
+      if (encounter.optional && !encounter.discovered && encounter.phase === 'undiscovered') continue;
       if (encounter.phase === 'undiscovered'
         && Math.hypot(encounter.position.x - p.x, encounter.position.z - p.z) > 18) continue;
       c.save(); c.translate(this.x(encounter.position.x), this.z(encounter.position.z));
@@ -217,6 +219,7 @@ export class AdventureHUD {
       c.restore();
     }
     for (const site of info.sites) {
+      if (info.automaticEncounters && !site.visited) continue;
       // 路线可查，支路奖励要走近才显露，保留探索感。
       if (!site.visited && Math.hypot(site.position.x - p.x, site.position.z - p.z) > 18) continue;
       c.save(); c.translate(this.x(site.position.x), this.z(site.position.z));

@@ -167,3 +167,29 @@ test('overlapping requests do not request pointer lock twice', async () => {
   resolve();
   await new Promise((done) => setImmediate(done));
 });
+
+test('a one-event flick at low fps is kept when its neighbours move the same way, even if they are slower', () => {
+  const filter = new MouseLookFilter();
+  sample(filter, 40, 4, 0);                                         // flick starts in the previous 30fps frame
+  assert.deepEqual(sample(filter, 300, 20, 33), { x: 0, y: 0 });    // whole flick coalesced into one event
+  assert.deepEqual(sample(filter, 30, 2, 66), { x: 330, y: 22 }, 'decelerating same-direction tail confirms it');
+});
+
+test('a coalesced flick followed by stillness is settled by the per-frame flush, an isolated spike is not', () => {
+  const real = new MouseLookFilter();
+  sample(real, 40, 0, 0);
+  sample(real, 300, 0, 33);
+  assert.deepEqual({ ...real.flush(90) }, { x: 0, y: 0 }, 'still inside the confirmation window');
+  assert.deepEqual({ ...real.flush(140) }, { x: 300, y: 0 });
+  assert.deepEqual({ ...real.flush(200) }, { x: 0, y: 0 }, 'settled exactly once');
+  const spike = new MouseLookFilter();
+  sample(spike, 2, 1, 0);
+  sample(spike, -280, 0, 8);
+  assert.deepEqual({ ...spike.flush(200) }, { x: 0, y: 0 }, 'tiny or opposing neighbours never confirm a spike');
+});
+
+test('a fast diagonal flick is not discarded by its combined length', () => {
+  const filter = new MouseLookFilter();
+  sample(filter, 200, 200, 0);
+  assert.deepEqual(sample(filter, 300, 300, 16), { x: 500, y: 500 }, 'both diagonal events kept');
+});

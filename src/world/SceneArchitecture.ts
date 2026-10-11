@@ -66,6 +66,9 @@ export class SceneArchitecture {
       this.built.add(assetId);
       const matching = placements.filter(a => a.assetId === assetId);
       const low = this.ctx.settings.quality === 'low', finalIndex = asset.lods.length - 1;
+      // Gates show LOD0 for their readable doorway. Walls, cover and decks start at LOD1 on purpose:
+      // occlusion and collision fit were audited against LOD1 triangles (authored-art-occlusion tests),
+      // and LOD0's decimation-free surface can sit outside that audited envelope.
       const firstIndex = low ? finalIndex : matching[0].type === 'gate' ? 0 : Math.min(1, finalIndex);
       const indices = Array.from({ length: finalIndex - firstIndex + 1 }, (_, i) => firstIndex + i);
       const bounds = architectureAssetBounds(asset.lods);

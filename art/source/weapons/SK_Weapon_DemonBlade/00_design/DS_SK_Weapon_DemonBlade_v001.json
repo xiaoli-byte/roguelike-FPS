@@ -1,0 +1,30 @@
+{
+  "references": [
+    "user-03-product-silhouette.png",
+    "user-02-closed-blade.png",
+    "user-01-edge-fragments.png"
+  ],
+  "generation": {
+    "provider": "openai",
+    "endpoint": "images/edits",
+    "model": "gpt-image-2.5-sunburst",
+    "size": "2048x1024",
+    "quality": "high",
+    "background": "opaque",
+    "usage": {
+      "input_tokens": 3763,
+      "input_tokens_details": {
+        "image_tokens": 3242,
+        "text_tokens": 521
+      },
+      "output_tokens": 1180,
+      "output_tokens_details": {
+        "image_tokens": 1180,
+        "text_tokens": 0
+      },
+      "total_tokens": 4943
+    },
+    "request_id": "req_d54d3787fed74b4a9cc29e605fa0dab0",
+    "seconds": 30.0
+  }
+}

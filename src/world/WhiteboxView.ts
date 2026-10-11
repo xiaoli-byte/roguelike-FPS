@@ -33,6 +33,12 @@ export class WhiteboxView {
     };
     boxes(L.boxes.filter(b=>b.tag==='whitebox-wall'),neutral,'whitebox-walls');
     boxes(L.boxes.filter(b=>b.tag==='whitebox-cover'),cover,'whitebox-solid-cover');
+    // Raised decks and their stairs read as walkable ground, distinct from blocking cover.
+    const deck = new THREE.MeshStandardMaterial({ color: 0xcdd6d2, roughness: 1 });
+    const tread = new THREE.MeshStandardMaterial({ color: 0xb4c2bd, roughness: 1 });
+    this.owned.push(deck, tread);
+    boxes(L.boxes.filter(b=>b.tag==='whitebox-platform'),deck,'whitebox-platforms');
+    boxes(L.boxes.filter(b=>b.tag==='whitebox-stair'),tread,'whitebox-stairs');
     boxes(meta.floorRects.map(b=>({...b,minY:L.floorY-.12,maxY:L.floorY})),floor,'whitebox-floor');
 
     const hemi = new THREE.HemisphereLight(0xffffff,0x788798,2.5);

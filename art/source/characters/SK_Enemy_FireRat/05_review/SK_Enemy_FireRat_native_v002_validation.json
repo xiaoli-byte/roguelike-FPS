@@ -1,0 +1,291 @@
+{
+  "asset": "SK_Enemy_FireRat",
+  "version": 2,
+  "glb": "art/source/characters/SK_Enemy_FireRat/04_export/SK_Enemy_FireRat_native_v002.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.6,
+      "自定义骨架：23 根骨骼（热扩散权重，0 个顶点未覆盖）": 0.1,
+      "贴图（BC + AO/ORM）": 4.1,
+      "LOD 与蒙皮上限 5925 / 2461 / 984": 0.1,
+      "导出 499 KB": 0.7
+    },
+    "source": {
+      "verts": 3367,
+      "tris": 5925,
+      "scale": 0.8072217447519665
+    },
+    "regions": {
+      "heat_unweighted_verts": 0,
+      "fallback_verts": 41,
+      "per_bone": {
+        "hips": 41,
+        "spine": 131,
+        "chest": 43,
+        "neck": 0,
+        "head": 1020,
+        "upperarm_L": 68,
+        "forearm_L": 112,
+        "paw_L": 188,
+        "thigh_L": 34,
+        "shin_L": 58,
+        "foot_L": 180,
+        "upperarm_R": 63,
+        "forearm_R": 115,
+        "paw_R": 188,
+        "thigh_R": 33,
+        "shin_R": 62,
+        "foot_R": 181,
+        "tail_1": 170,
+        "tail_2": 81,
+        "tail_3": 164,
+        "tail_4": 76,
+        "tail_5": 76
+      }
+    },
+    "bones": [
+      "chest",
+      "foot_L",
+      "foot_R",
+      "forearm_L",
+      "forearm_R",
+      "head",
+      "hips",
+      "neck",
+      "paw_L",
+      "paw_R",
+      "root",
+      "shin_L",
+      "shin_R",
+      "spine",
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "tail_4",
+      "tail_5",
+      "thigh_L",
+      "thigh_R",
+      "upperarm_L",
+      "upperarm_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.966,
+      "shade_mean": 0.965
+    },
+    "textures": {
+      "size": 1024,
+      "ao_mean": 0.861,
+      "provider_pbr": [],
+      "roughness_mean": 0.85,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Enemy_FireRat_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_FireRat_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_FireRat_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Enemy_FireRat_LOD0",
+        "tris": 5925,
+        "uv_min": [
+          0.0009765625,
+          0.0009765625
+        ],
+        "uv_max": [
+          0.99560546875,
+          0.9990234375
+        ]
+      },
+      {
+        "name": "SK_Enemy_FireRat_LOD1",
+        "tris": 2461,
+        "uv_min": [
+          0.0009765625,
+          0.001220703125
+        ],
+        "uv_max": [
+          0.99560546875,
+          0.997314453125
+        ]
+      },
+      {
+        "name": "SK_Enemy_FireRat_LOD2",
+        "tris": 984,
+        "uv_min": [
+          0.0009765625,
+          0.001220703125
+        ],
+        "uv_max": [
+          0.99560546875,
+          0.997314453125
+        ]
+      }
+    ],
+    "glb_kb": 499,
+    "_seconds": 8.2
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "499 KB / 1600 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Enemy_FireRat_LOD0', 'SK_Enemy_FireRat_LOD1', 'SK_Enemy_FireRat_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "5925 / 6000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "2461 / 2500"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "984 / 1000"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "0.620 m (design 0.62 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Enemy_FireRat']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_FireRat_ORM",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_FireRat_BC",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "23 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FireRat_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FireRat_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FireRat_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FireRat_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FireRat_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FireRat_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FireRat_LOD0 UV range",
+      "[0.001, 0.001]..[0.996, 0.999]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FireRat_LOD1 UV range",
+      "[0.001, 0.001]..[0.996, 0.997]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FireRat_LOD2 UV range",
+      "[0.001, 0.001]..[0.996, 0.997]"
+    ],
+    [
+      "warn",
+      "region heat_unweighted",
+      "0 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "41 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

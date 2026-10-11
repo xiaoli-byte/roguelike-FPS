@@ -1,0 +1,103 @@
+{
+  "source": {
+    "tris": 3121,
+    "verts": 1683
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 2.59789,
+    "iou": 0.858,
+    "iou_per_view": {
+      "front": 0.915,
+      "left": 0.836,
+      "back": 0.891,
+      "right": 0.764
+    },
+    "size_m": [
+      2.597,
+      1.929,
+      1.8
+    ],
+    "reference_m": [
+      4.0,
+      3.0,
+      1.8
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.796,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "treasure_chest_scene_3d_model_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      2048,
+      2048
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertTreasureHoard_LOD0",
+      "tris": 2984,
+      "verts": 1614,
+      "uv_min": [
+        0.0009765625,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.995849609375,
+        0.9990234375
+      ],
+      "uv_utilization": 0.683,
+      "bbox_min": [
+        -1.2983,
+        -0.9647,
+        0.0
+      ],
+      "bbox_max": [
+        1.2983,
+        0.9647,
+        1.8
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertTreasureHoard_LOD1",
+      "tris": 995,
+      "verts": 591,
+      "uv_min": [
+        0.0009765625,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.995849609375,
+        0.9983689785003662
+      ],
+      "uv_utilization": 0.585,
+      "bbox_min": [
+        -1.2933,
+        -0.9633,
+        -0.0018
+      ],
+      "bbox_max": [
+        1.3113,
+        0.9599,
+        1.792
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertTreasureHoard/04_export/SM_Tripo_DesertTreasureHoard_v002.glb",
+    "bytes": 346908
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 5.1,
+  "_seconds": 7.6
+}

@@ -1,0 +1,156 @@
+{
+  "schema": 1,
+  "assetId": "SK_Weapon_Magmashot",
+  "source": {
+    "kind": "weapon",
+    "id": "magmashot"
+  },
+  "rig": "parts",
+  "space": {
+    "up": "+Y",
+    "forward": "+Z",
+    "unit": "m",
+    "origin": "model"
+  },
+  "bounds": {
+    "min": [
+      -0.03516796106100083,
+      -0.10617792749531337,
+      -0.3830000000949949
+    ],
+    "max": [
+      0.03516796106100083,
+      0.0745299613851153,
+      0.25586408486409185
+    ]
+  },
+  "joints": [
+    {
+      "name": "j_r",
+      "parent": null,
+      "bindPosition": [
+        0,
+        0,
+        0
+      ],
+      "restLocal": [
+        0,
+        0,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "j_0",
+      "parent": "j_r",
+      "bindPosition": [
+        0,
+        0.04,
+        -0.39
+      ],
+      "restLocal": [
+        0,
+        0.04,
+        -0.39
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0.04,
+        -0.39,
+        1
+      ]
+    }
+  ],
+  "keep": [],
+  "fields": {
+    "muzzle": "j_0"
+  },
+  "parts": {
+    "body_000": "body",
+    "body_001": "body",
+    "body_002": "body",
+    "body_003": "body",
+    "body_004": "body",
+    "body_005": "body",
+    "body_006": "body",
+    "body_007": "body",
+    "body_008": "body",
+    "body_009": "body",
+    "body_010": "body",
+    "glowfx_011": "glowfx",
+    "glowfx_012": "glowfx",
+    "glowfx_013": "glowfx",
+    "glowfx_014": "glowfx",
+    "body_015": "body",
+    "body_016": "body",
+    "body_017": "body",
+    "glowfx_018": "glowfx",
+    "glowfx_019": "glowfx",
+    "glowfx_020": "glowfx",
+    "glowfx_021": "glowfx",
+    "body_022": "body",
+    "body_023": "body",
+    "body_024": "body",
+    "body_025": "body",
+    "body_026": "body",
+    "body_027": "body",
+    "body_028": "body",
+    "body_029": "body",
+    "body_030": "body",
+    "body_031": "body",
+    "body_032": "body",
+    "body_033": "body",
+    "body_034": "body",
+    "body_035": "body"
+  },
+  "exportedAt": "2026-10-06T09:34:57.223Z"
+}

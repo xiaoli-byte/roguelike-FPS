@@ -1,0 +1,37 @@
+{
+  "design": {
+    "key": "desert_firerat",
+    "chapter": "desert",
+    "name": "火浣鼠",
+    "layout": "creature",
+    "height_m": 0.7,
+    "brief": "A mythical fire rat (火鼠) whose fur is woven into fireproof cloth in Chinese legend: a round, chubby rat with a thick coat of bristling fur that burns at the tips with white-gold flames, small fierce glowing eyes, big front teeth, a long fiery tail, little paws with four toes. Shown both standing and curled into a rolling ball of fire. Cute and explosive.",
+    "weapon": "",
+    "turnaround_pose": " standing upright on its short hind legs in a neutral A-pose, the chubby round body facing straight ahead, both front paws held a little away from the body, open and relaxed; mouth closed showing the two big front teeth; eyes glowing; the long tail extending straight backwards and slightly upwards behind the body (not curled, not over the head); ALL flames are drawn as OPAQUE solid sculpted flame-shaped fur tufts with crisp edges (stylized carved fur that looks like flames, orange-red with pale gold tips), NOT transparent fire, NO glow halo, NO sparks, NO smoke, NO particles; never a rolled-up ball",
+    "turnaround_digits": "each front paw with four separate clawed fingers and each hind foot with four separate clawed toes, clearly countable; the whole tail, both ears and every flame tuft fully inside the frame."
+  },
+  "from_sheet": "DS_desert_firerat_v001.png",
+  "generation": {
+    "provider": "openai",
+    "endpoint": "images/edits",
+    "model": "gpt-image-2.5-sunburst",
+    "size": "2048x1024",
+    "quality": "high",
+    "background": "opaque",
+    "usage": {
+      "input_tokens": 1870,
+      "input_tokens_details": {
+        "image_tokens": 1458,
+        "text_tokens": 412
+      },
+      "output_tokens": 1180,
+      "output_tokens_details": {
+        "image_tokens": 1180,
+        "text_tokens": 0
+      },
+      "total_tokens": 3050
+    },
+    "request_id": "req_8c433236104846f794991819893a83b2",
+    "seconds": 32.3
+  }
+}

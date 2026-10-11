@@ -1,0 +1,138 @@
+<div id="spiritfire-scroll-catalog">
+  <style>
+    #spiritfire-scroll-catalog { color: var(--foreground); }
+    #spiritfire-scroll-catalog .catalog-heading { display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:12px; padding-right:90px; }
+    #spiritfire-scroll-catalog .catalog-heading h2 { margin:0; }
+    #spiritfire-scroll-catalog .catalog-meta { color:var(--muted-foreground); }
+    #spiritfire-scroll-catalog .catalog-controls { display:grid; gap:12px; margin:16px 0; }
+    #spiritfire-scroll-catalog .catalog-selects { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+    #spiritfire-scroll-catalog .catalog-toolbar { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+    #spiritfire-scroll-catalog .catalog-rarities { display:flex; flex-wrap:wrap; gap:6px; }
+    #spiritfire-scroll-catalog .catalog-status { display:flex; flex-wrap:wrap; justify-content:space-between; gap:10px; margin:16px 0 6px; }
+    #spiritfire-scroll-catalog .catalog-row { display:grid; grid-template-columns:142px minmax(0,1fr); gap:14px; padding:16px 0; border-bottom:1px solid var(--border); }
+    #spiritfire-scroll-catalog .catalog-name { font-weight:500; display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-bottom:8px; }
+    #spiritfire-scroll-catalog .catalog-rank { display:flex; align-items:center; flex-wrap:wrap; gap:6px; color:var(--muted-foreground); }
+    #spiritfire-scroll-catalog .catalog-dot { width:8px; height:8px; border-radius:50%; flex:none; }
+    #spiritfire-scroll-catalog .rank-0 { background:var(--muted-foreground); }
+    #spiritfire-scroll-catalog .rank-1 { background:var(--green); }
+    #spiritfire-scroll-catalog .rank-2 { background:var(--blue); }
+    #spiritfire-scroll-catalog .rank-3 { background:var(--purple); }
+    #spiritfire-scroll-catalog .rank-4 { background:var(--yellow); }
+    #spiritfire-scroll-catalog .catalog-tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; color:var(--muted-foreground); }
+    #spiritfire-scroll-catalog .catalog-effect { margin:0; overflow-wrap:anywhere; }
+    #spiritfire-scroll-catalog .catalog-pages { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px; padding:18px 0 8px; }
+    #spiritfire-scroll-catalog .catalog-empty { padding:28px 0; }
+    #spiritfire-scroll-catalog .catalog-hero { color:var(--foreground); margin-top:6px; }
+    #spiritfire-scroll-catalog .catalog-new { color:var(--foreground); }
+    #spiritfire-scroll-catalog .catalog-top { margin:0; }
+    #spiritfire-scroll-catalog .catalog-before { margin-top:8px; }
+    #spiritfire-scroll-catalog .catalog-before p { margin:8px 0 0; }
+    @media(max-width:520px) {
+      #spiritfire-scroll-catalog .catalog-selects { grid-template-columns:1fr; }
+      #spiritfire-scroll-catalog .catalog-row { grid-template-columns:1fr; gap:8px; }
+      #spiritfire-scroll-catalog .catalog-name { margin-bottom:4px; }
+    }
+  </style>
+  <header class="catalog-heading">
+    <h2>秘卷图鉴</h2>
+    <span class="text-small catalog-meta" data-summary></span>
+  </header>
+  <div class="catalog-controls">
+    <label class="form-label">搜索名称或效果
+      <input class="form-control" type="search" data-search placeholder="例如：换弹、护盾、灼烧、冷却" autocomplete="off">
+    </label>
+    <div class="catalog-selects">
+      <label class="form-label">分类<select class="form-select" data-category><option value="">全部分类</option></select></label>
+      <label class="form-label">流派标签<select class="form-select" data-tag><option value="">全部流派</option></select></label>
+      <label class="form-label">英雄限制<select class="form-select" data-hero><option value="">全部秘卷</option><option value="general">通用秘卷</option><option value="fox">赤狐专属</option><option value="falcon">雷隼专属</option><option value="bear">岩熊专属</option></select></label>
+    </div>
+    <div class="catalog-rarities" data-rarities role="group" aria-label="稀有度筛选"></div>
+    <div class="catalog-toolbar">
+      <label class="form-check"><input type="checkbox" class="form-check-input" data-redesigned checked><span class="form-check-label">仅看这次重做的 6 张</span></label>
+      <label class="form-check"><input type="checkbox" class="form-check-input" data-new><span class="form-check-label">仅看新增的 20 张</span></label>
+      <button type="button" class="btn btn-ghost" data-reset>清除筛选</button>
+    </div>
+  </div>
+  <hr>
+  <div class="catalog-status">
+    <span class="tabular-nums" data-result role="status" aria-live="polite"></span>
+    <label class="form-label catalog-top">显示数量 <select class="form-select" data-size aria-label="每页显示数量"><option value="15">每页 15 张</option><option value="30">每页 30 张</option><option value="0">展开全部</option></select></label>
+  </div>
+  <div data-list aria-label="秘卷完整效果"></div>
+  <nav class="catalog-pages" aria-label="秘卷分页">
+    <button class="btn" type="button" data-prev>上一页</button>
+    <span class="tabular-nums" data-page></span>
+    <button class="btn" type="button" data-next>下一页</button>
+  </nav>
+  <script type="application/json" data-scroll-data>__SCROLL_DATA__</script>
+  <script>
+    (() => {
+      const root = document.getElementById('spiritfire-scroll-catalog');
+      const dataset = JSON.parse(root.querySelector('[data-scroll-data]').textContent);
+      const items = dataset.items;
+      const rankNames = ['普通', '精良', '稀有', '史诗', '传说'];
+      const heroNames = {fox:'赤狐', falcon:'雷隼', bear:'岩熊'};
+      const get = name => root.querySelector('[data-' + name + ']');
+      const search = get('search'), category = get('category'), tag = get('tag'), hero = get('hero');
+      const onlyNew = get('new'), onlyRedesigned = get('redesigned'), size = get('size'), list = get('list');
+      let state = {revision:dataset.revision, q:'', category:'', tag:'', hero:'', onlyNew:false, onlyRedesigned:true, rarity:'', page:0, size:15};
+      function escape(value) { return String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+      function options(select, values) { for (const value of values) { const option = document.createElement('option'); option.value=value; option.textContent=value; select.append(option); } }
+      options(category, [...new Set(items.map(d=>d.category))]);
+      options(tag, [...new Set(items.flatMap(d=>d.tags))].sort((a,b)=>a.localeCompare(b,'zh-CN')));
+      get('summary').textContent = items.length + ' 张 · 新增 ' + items.filter(d=>d.isNew).length + ' 张 · 重做 ' + items.filter(d=>d.isRedesigned).length + ' 张';
+      get('rarities').innerHTML = [{key:'', name:'全部', count:items.length}, ...rankNames.map((name,i)=>({key:String(i), name, count:items.filter(d=>d.rarity===i).length}))]
+        .map(d=>'<button type="button" class="btn" aria-pressed="false" data-rank="'+d.key+'">'+d.name+' '+d.count+'</button>').join('');
+      function matched() {
+        const terms = state.q.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
+        return items.filter(d=> (!state.category || d.category===state.category) && (!state.tag || d.tags.includes(state.tag)) &&
+          (!state.hero || (state.hero==='general' ? !d.heroOnly : d.heroOnly===state.hero)) && (!state.onlyNew || d.isNew) && (!state.onlyRedesigned || d.isRedesigned) &&
+          (state.rarity==='' || d.rarity===Number(state.rarity)) && terms.every(term=>
+            [d.name,d.description,d.category,heroNames[d.heroOnly]||'',...d.tags].join(' ').toLocaleLowerCase().includes(term)));
+      }
+      function render() {
+        const filtered = matched();
+        const pageCount = state.size ? Math.max(1,Math.ceil(filtered.length/state.size)) : 1;
+        state.page = Math.max(0,Math.min(state.page,pageCount-1));
+        const start = state.size ? state.page*state.size : 0;
+        const visible = state.size ? filtered.slice(start,start+state.size) : filtered;
+        get('result').textContent = filtered.length ? '匹配 '+filtered.length+' / '+items.length+' 张 · 显示 '+(start+1)+'–'+(start+visible.length) : '匹配 0 / '+items.length+' 张';
+        get('page').textContent = (state.page+1)+' / '+pageCount+' 页';
+        get('prev').disabled = state.page===0;
+        get('next').disabled = state.page>=pageCount-1;
+        root.querySelectorAll('[data-rank]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.rank===state.rarity)));
+        list.innerHTML = visible.length ? visible.map(d=> {
+          const badge = d.isRedesigned ? '<span class="viz-badge">重做</span>' : d.isNew ? '<span class="viz-badge catalog-new">新增</span>' : '';
+          const before = d.previousDescription ? '<details class="catalog-before"><summary class="cursor-interaction text-small">对照旧效果</summary><p class="text-small">'+escape(d.previousDescription)+'</p></details>' : '';
+          const heroLabel = d.heroOnly ? '<div class="catalog-hero text-small">'+escape(heroNames[d.heroOnly]||d.heroOnly)+'专属</div>' : '';
+          return '<article class="catalog-row" data-scroll="'+escape(d.id)+'" aria-label="'+escape(d.name)+'">'+
+            '<div><div class="catalog-name">'+escape(d.name)+badge+'</div><div class="catalog-rank text-small"><span class="catalog-dot rank-'+d.rarity+'" aria-hidden="true"></span>'+rankNames[d.rarity]+' · '+(d.maxStacks===1?'不可叠层':'最多 '+d.maxStacks+' 层')+'</div>'+heroLabel+'</div>'+
+            '<div><p class="catalog-effect">'+escape(d.description)+'</p>'+before+'<div class="catalog-tags text-small">'+d.tags.map(t=>'<span>'+escape(t)+'</span>').join('<span aria-hidden="true">·</span>')+'</div></div></article>';
+        }).join('') : '<div class="catalog-empty">没有匹配的秘卷。可以减少筛选条件或更换关键词。</div>';
+      }
+      function save() {
+        if (window.openai?.setWidgetState) window.openai.setWidgetState({modelContent:{query:state.q, category:state.category, tag:state.tag, hero:state.hero, onlyNew:state.onlyNew, onlyRedesigned:state.onlyRedesigned, rarity:state.rarity},privateContent:{...state}}).catch(()=>{});
+      }
+      function applySaved(saved) {
+        const value = saved?.privateContent;
+        if (!value || typeof value!=='object' || value.revision !== dataset.revision) return;
+        const validCategory = ['',...category.options].map(o=>typeof o==='string'?o:o.value);
+        state = {...state, q:typeof value.q==='string'?value.q:'', category:validCategory.includes(value.category)?value.category:'',
+          tag:[...tag.options].some(o=>o.value===value.tag)?value.tag:'', hero:[...hero.options].some(o=>o.value===value.hero)?value.hero:'',
+          onlyNew:value.onlyNew===true, onlyRedesigned:value.onlyRedesigned===true, rarity:['','0','1','2','3','4'].includes(value.rarity)?value.rarity:'',
+          size:[0,15,30].includes(value.size)?value.size:15, page:Number.isInteger(value.page)?value.page:0};
+        search.value=state.q; category.value=state.category; tag.value=state.tag; hero.value=state.hero; onlyNew.checked=state.onlyNew; onlyRedesigned.checked=state.onlyRedesigned; size.value=String(state.size);
+      }
+      function change() { state={...state,q:search.value,category:category.value,tag:tag.value,hero:hero.value,onlyNew:onlyNew.checked,onlyRedesigned:onlyRedesigned.checked,size:Number(size.value),page:0}; render(); save(); }
+      search.addEventListener('input',change);
+      [category,tag,hero,onlyNew,onlyRedesigned,size].forEach(control=>control.addEventListener('change',change));
+      get('rarities').addEventListener('click',event=> {const button=event.target.closest('[data-rank]'); if (!button) return; state.rarity=button.dataset.rank; state.page=0; render(); save();});
+      get('prev').addEventListener('click',()=>{state.page--;render();save();});
+      get('next').addEventListener('click',()=>{state.page++;render();save();});
+      get('reset').addEventListener('click',()=>{ search.value='';category.value='';tag.value='';hero.value='';onlyNew.checked=false;onlyRedesigned.checked=false;state.rarity='';change(); });
+      applySaved(window.openai?.widgetState);
+      render();
+      window.addEventListener('openai:set_globals',event=> { if (event.detail?.globals?.widgetState) {applySaved(event.detail.globals.widgetState);render();} });
+    })();
+  </script>
+</div>

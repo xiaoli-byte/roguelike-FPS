@@ -17,6 +17,7 @@ import { AFFIX_NAMES, createAffix, isAffixId, type AffixController } from './Aff
 import { levelAt, playerLevel, type LevelSpot } from './Levels';
 import { glowPartMat, part, type HumanoidRig } from './Models';
 import { attachEnemyArt } from '../assets/EnemyArt';
+import type { NativeBody } from '../assets/NativeRig';
 import type { SkinnedBody } from '../assets/SkinnedBody';
 
 const _a = new THREE.Vector3();
@@ -72,6 +73,8 @@ export abstract class StandardEnemy extends EnemyBase {
   private tokenKind: TokenKind | null = null;
   /** 美术资产身体（清单里有绑定本敌人的骨骼网格时） */
   private artBody: SkinnedBody | null = null;
+  /** 原生骨架美术（按骨骼名驱动的动画用）；没有时为 null */
+  protected nativeBody: NativeBody | null = null;
 
   // 视线站位
   protected readonly vantage = new THREE.Vector3();
@@ -112,6 +115,10 @@ export abstract class StandardEnemy extends EnemyBase {
   protected afterInit(): void {}
   /** 攻击被打断（眩晕 / 死亡 / 清理 / 玩家死亡）：收起预警物、恢复移动参数、回到默认状态 */
   protected cancelAttack(): void {}
+  /** 绑定美术资产用的 id（清单 bind.id）；共用身体的变体（如蜃景分身）改成本体的 id */
+  protected artId(): string {
+    return this.def.id;
+  }
 
   // ───────────── 生命周期 ─────────────
 
@@ -204,6 +211,7 @@ export abstract class StandardEnemy extends EnemyBase {
     this.affixCtl = null;
     this.artBody?.dispose();
     this.artBody = null;
+    this.nativeBody = null;
   }
 
   // ───────────── 美术资产 ─────────────
@@ -215,7 +223,8 @@ export abstract class StandardEnemy extends EnemyBase {
   private attachArtBody(): void {
     const art = attachEnemyArt({
       host: this.model.children[0],
-      defId: this.def.id,
+      defId: this.artId(),
+      variant: this.ctx.stage?.stage?.theme,
       rig: (this as unknown as { rig?: unknown }).rig,
       renderer: this.ctx.renderer,
       lowQuality: this.ctx.settings.quality === 'low',
@@ -225,11 +234,22 @@ export abstract class StandardEnemy extends EnemyBase {
       },
     });
     this.artBody = art.body;
+    this.nativeBody = art.native;
     // 武器上的发光件按白模的方块摆放，平时显示底色会和美术模型错位（比如弧形刀刃旁的一根直条）；
     // 美术贴图里已经画了发光元素，所以改成加法混合、底色为黑：平时不可见，前摇时叠加发光，提示功能不变
     const weaponGlows = new Set(art.parts.flatMap((p) => p.glows));
+    this.glowsAsOverlay((g) => weaponGlows.has(g));
+  }
+
+  /** 已经换上美术身体（白模的身体部件被隐藏） */
+  protected get hasArtBody(): boolean {
+    return this.artBody !== null;
+  }
+
+  /** 把发光件改成加法混合、底色为黑的叠加层：平时不可见（美术贴图自带发光元素），前摇时叠加发光 */
+  protected glowsAsOverlay(which: (mesh: THREE.Mesh) => boolean = () => true): void {
     for (const g of this.glowSlots) {
-      if (!weaponGlows.has(g.mesh)) continue;
+      if (!which(g.mesh)) continue;
       const m = g.mesh.material as THREE.MeshBasicMaterial;
       m.blending = THREE.AdditiveBlending;
       m.transparent = true;
@@ -506,13 +526,31 @@ export abstract class StandardEnemy extends EnemyBase {
     const dz = p.z - this.position.z;
     const d = Math.hypot(dx, dz);
     const s = this.strafeSign;
-    if (d > maxD) {
+    // A shooter standing on a raised deck holds the high ground: it waits there for the player within
+    // 12 m past its band (a far-end dais, say) rather than walking down, and never backs or strafes over
+    // the deck edge.
+    const perched = !this.flying && this.ctx.nav.platformAt?.(this.position) === true;
+    if (d > maxD && !(perched && d <= maxD + 12)) {
       this.navigate(p, speed, Math.max(1, maxD - 1.5));
     } else if (d < minD) {
-      this.setMove(-dx - dz * 0.45 * s, -dz + dx * 0.45 * s, speed);
+      this.perchMove(perched, -dx - dz * 0.45 * s, -dz + dx * 0.45 * s, speed);
     } else {
-      this.setMove(-dz * s, dx * s, speed * strafeScale);
+      this.perchMove(perched, -dz * s, dx * s, speed * strafeScale);
     }
+  }
+
+  /** setMove, except that a perched unit turns back instead of stepping off its deck. */
+  protected perchMove(perched: boolean, dx: number, dz: number, speed: number): void {
+    if (perched) {
+      const len = Math.hypot(dx, dz) || 1, reach = this.radius + .6;
+      _a.set(this.position.x + dx / len * reach, this.position.y, this.position.z + dz / len * reach);
+      if (!this.ctx.nav.platformAt!(_a)) {
+        this.strafeSign = -this.strafeSign;
+        this.stopMoving();
+        return;
+      }
+    }
+    this.setMove(dx, dz, speed);
   }
 
   /**

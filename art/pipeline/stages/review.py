@@ -41,6 +41,8 @@ def parts_poses(blockout_json, rom: dict | None = None, seed: int = 7) -> dict:
     meta = json.loads(blockout_json.read_text(encoding="utf-8"))
     joints = meta["joints"]
     bind = {j["name"]: tuple(j["bindRotation"]) for j in joints}
+    if meta.get("source", {}).get("kind") == "hero" and meta.get("reviewPoses"):
+        return {name: {**bind, **pose} for name, pose in meta["reviewPoses"].items()}
     if rom:
         fields = meta.get("fields")
         if not fields:
@@ -83,7 +85,8 @@ def run(spec: AssetSpec, a) -> None:
     tag = f"{spec.id}_v{bd['version']:03d}"
     review_version = st.next_version("review")
     bounds_reference = spec.raw.get("reference_mode") == "bounds_only"
-    work_name = f"review_build_v{bd['version']:03d}_review_v{review_version:03d}" if bounds_reference else f"review_v{bd['version']:03d}"
+    versioned_review = bounds_reference or spec.blockout.get("source") == "hero"
+    work_name = f"review_build_v{bd['version']:03d}_review_v{review_version:03d}" if versioned_review else f"review_v{bd['version']:03d}"
     work = spec.dir / "_tmp" / work_name
     bo = st.require("blockout")
     metrics = json.loads(st.file(bd, f"{tag}_metrics.json").read_text(encoding="utf-8"))
@@ -107,8 +110,8 @@ def run(spec: AssetSpec, a) -> None:
         ("成品（LOD0）", [f"beauty_{v}" for v in ("front", "left", "back", "right", "34")]),
         ("布线 LOD0 / 1 / 2", [k for k in ("wire_lod0", "wire_lod1", "wire_lod2") if k in f]),
     ]
-    if spec.kind == "skeletal" and rom:
-        names = list(rom)
+    if spec.kind == "skeletal" and (rom or spec.blockout.get("source") == "hero"):
+        names = list(poses)
         for i in range(0, len(names), 3):  # 每行三个姿势（正面 + 3/4）
             group = names[i:i + 3]
             rows.append(("ROM：" + " / ".join(group), [f"pose_{p}_{v}" for p in group for v in ("front", "34")]))
@@ -145,7 +148,7 @@ def run(spec: AssetSpec, a) -> None:
         d.text((900, 42), "形变检测：" + ("；".join(flags) + "  ⚠ 请重点检查" if flags else "通过（拉伸 p99 " +
                " / ".join(f"{k} {v['p99_stretch']}" for k, v in deform.items()) + "）"),
                fill=(255, 120, 90) if flags else (150, 200, 150), font=font(16))
-    suffix = f"_review_v{review_version:03d}.png" if bounds_reference else "_review.png"
+    suffix = f"_review_v{review_version:03d}.png" if versioned_review else "_review.png"
     out = spec.stage_dir("review") / f"{tag}{suffix}"
     sheet.save(out)
     st.add_version("review", {"version": review_version, "from_build": bd["version"],

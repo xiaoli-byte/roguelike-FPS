@@ -4,14 +4,55 @@
     {
       "name": "dev",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "--", "--port", "5199", "--strictPort"],
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5199",
+        "--strictPort"
+      ],
       "port": 5199
     },
     {
       "name": "dev-art",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "--", "--port", "5299", "--strictPort"],
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5299",
+        "--strictPort"
+      ],
       "port": 5299
+    },
+    {
+      "name": "dev-frost",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5399",
+        "--strictPort"
+      ],
+      "port": 5399
+    },
+    {
+      "name": "frost-preview",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "vite",
+        "preview",
+        "--outDir",
+        "C:/Users/admin/AppData/Local/Temp/claude/D--personal-projects-----/2dfe0751-830d-4aeb-82d2-cbcd519f630d/scratchpad/dist",
+        "--port",
+        "5398",
+        "--strictPort"
+      ],
+      "port": 5398
     }
   ]
 }

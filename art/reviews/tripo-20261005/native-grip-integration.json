@@ -1,0 +1,23 @@
+{
+  "stage": "white_model_grip_second_pass_and_hero_selection_integration",
+  "heroes": ["fox", "bear", "falcon"],
+  "changes": [
+    "Align middle knuckles to contacts using each imported hand's actual proportions",
+    "Separate idle index finger, long-gun support hand and two-hand pistol poses",
+    "Move receiver ahead of measured chest depth and adjust carry yaw",
+    "Update attached skin bind transforms under rotating, scaling and translating stage parents",
+    "Load independent native skeleton instances in production hero selection with legacy fallback",
+    "Keep shared weapon resources outside hero disposal"
+  ],
+  "validation": {
+    "command": "node --test tests/native-hero-grip.test.mjs",
+    "result": "3 passed; 100 frames per hero under transformed parent; wrist and knuckle targets within 1 mm; unchanged bone lengths; normalized weights; finite skinned vertices; sampled receiver-to-chest clearance >45 mm; isolated bones; shared gun disposal protected",
+    "build": "npm run build passed",
+    "browser": "Hero selection opened and switched across fox, falcon and bear; native white models rendered"
+  },
+  "limits": [
+    "Chest regression checks the receiver origin against torso vertices in its height band; it is not full triangle collision detection",
+    "Fine finger surface contact and every animation frame have not been certified collision-free",
+    "White surfaces remain intentional; final textures and dedicated tail/wing animation are still pending"
+  ]
+}

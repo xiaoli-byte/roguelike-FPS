@@ -298,7 +298,7 @@
       ]
     },
     "highpoly": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -341,11 +341,37 @@
           "comfyui": "0.30.0",
           "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
           "size_mb": 8.4
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 11:12:51",
+          "files": {
+            "HP_SK_Enemy_Grunt_v002_source.fbx": {
+              "path": "02_highpoly/HP_SK_Enemy_Grunt_v002_source.fbx",
+              "sha256": "82a401f88eb33ce9fc06e5ec7708149fe9c4f036353ac66766995a521123de55"
+            },
+            "HP_SK_Enemy_Grunt_v002.glb": {
+              "path": "02_highpoly/HP_SK_Enemy_Grunt_v002.glb",
+              "sha256": "e0a0ce95901eff75d505dff8abd4184d774d2ce6dbad20c32a6673d4bfa557be"
+            },
+            "HP_SK_Enemy_Grunt_v002_graph.json": {
+              "path": "02_highpoly/HP_SK_Enemy_Grunt_v002_graph.json",
+              "sha256": "ac036b10ae39aa4fa693bbbba85071d63cc0be3eecd448f37b0367cd3268df04"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/golden-stone-staircase-with-carved-lion-statues-on-the-posts-architec-38c10bc3-9d59-4520-a4d0-11a9536104fd",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 8067,
+          "source_sha256": "82a401f88eb33ce9fc06e5ec7708149fe9c4f036353ac66766995a521123de55"
         }
       ]
     },
     "build": {
-      "current": 10,
+      "current": 13,
       "versions": [
         {
           "version": 1,
@@ -906,11 +932,179 @@
           "export_kb": 357.0,
           "seconds": 35.7,
           "bake_device": "OPTIX"
+        },
+        {
+          "version": 11,
+          "created": "2026-10-06 11:13:06",
+          "files": {
+            "SK_Enemy_Grunt_v011.blend": {
+              "path": "03_work/SK_Enemy_Grunt_v011.blend",
+              "sha256": "b0c6566a52b3cb2b5341fbf4e2accf1794ff6d34d91107203ecd9dfdf5de79df"
+            },
+            "SK_Enemy_Grunt_v011.glb": {
+              "path": "04_export/SK_Enemy_Grunt_v011.glb",
+              "sha256": "bbf37e499bc47ce46dd194684fa24ac6c77bbd15e68d8c4700c6558d2c00fcbe"
+            },
+            "SK_Enemy_Grunt_v011_metrics.json": {
+              "path": "03_work/SK_Enemy_Grunt_v011_metrics.json",
+              "sha256": "49bcccd112491095aa93d6081c18a104a93111db2fc38d0c8d5500cdf02de854"
+            },
+            "T_Enemy_Grunt_BC.png": {
+              "path": "03_work/textures_v011/T_Enemy_Grunt_BC.png",
+              "sha256": "3588581d8f8779800cc13a9a9ecd7fb1f54821ecee53ae2748b16617a35abfa1"
+            },
+            "T_Enemy_Grunt_N.png": {
+              "path": "03_work/textures_v011/T_Enemy_Grunt_N.png",
+              "sha256": "6d61ea6c47f0c52bfe2b2239c4e300c479d2c4d151aebca4d7181c687fd00905"
+            },
+            "T_Enemy_Grunt_ORM.png": {
+              "path": "03_work/textures_v011/T_Enemy_Grunt_ORM.png",
+              "sha256": "08a45d7ef4f304ab2936beac0e5075f124c4bb5d0e87d31193313b438b01f338"
+            }
+          },
+          "from": {
+            "blockout": 3,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": 2,
+            "emid": null
+          },
+          "align_iou": 0.603,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7919,
+              "verts": 4288
+            },
+            {
+              "tris": 3500,
+              "verts": 2031
+            },
+            {
+              "tris": 1499,
+              "verts": 938
+            }
+          ],
+          "export_kb": 380.5,
+          "seconds": 13.7,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 12,
+          "created": "2026-10-06 11:13:42",
+          "files": {
+            "SK_Enemy_Grunt_v012.blend": {
+              "path": "03_work/SK_Enemy_Grunt_v012.blend",
+              "sha256": "04e132eb4708f6e2af5a17e9d8126ade036a9c0e59bf6cf3ed0aab11475a8dec"
+            },
+            "SK_Enemy_Grunt_v012.glb": {
+              "path": "04_export/SK_Enemy_Grunt_v012.glb",
+              "sha256": "ddc0111584bfcdd54f6a2b0c8a827bb73e5397f9ea20db51634dc7b945142568"
+            },
+            "SK_Enemy_Grunt_v012_metrics.json": {
+              "path": "03_work/SK_Enemy_Grunt_v012_metrics.json",
+              "sha256": "4b5c5b9f7a4eb1ec3a958fba2d2dd1d19f7e947c79ba2ce40c1d6b54cdb134b7"
+            },
+            "T_Enemy_Grunt_BC.png": {
+              "path": "03_work/textures_v012/T_Enemy_Grunt_BC.png",
+              "sha256": "7d16650e5b71f8cd39064b056d5258c22d72b5285864cffabbc9c2488dbb33ae"
+            },
+            "T_Enemy_Grunt_N.png": {
+              "path": "03_work/textures_v012/T_Enemy_Grunt_N.png",
+              "sha256": "ffb465c52225e8692b93bf48abd5fa523b041653b0b3219599b7c8226c7c3f6d"
+            },
+            "T_Enemy_Grunt_ORM.png": {
+              "path": "03_work/textures_v012/T_Enemy_Grunt_ORM.png",
+              "sha256": "0f93b5bbbe5a6269c283b76f758923ab0ea631d76b81585253877d9d99f05df4"
+            }
+          },
+          "from": {
+            "blockout": 3,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": 2,
+            "emid": null
+          },
+          "align_iou": 0.888,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7919,
+              "verts": 4288
+            },
+            {
+              "tris": 3500,
+              "verts": 2031
+            },
+            {
+              "tris": 1499,
+              "verts": 938
+            }
+          ],
+          "export_kb": 373.8,
+          "seconds": 13.2,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 13,
+          "created": "2026-10-06 11:16:54",
+          "files": {
+            "SK_Enemy_Grunt_v013.blend": {
+              "path": "03_work/SK_Enemy_Grunt_v013.blend",
+              "sha256": "c945025e43b1a1305ac9846fa1f7d78ab7a808199d195a2b188a3fe4b3533eb6"
+            },
+            "SK_Enemy_Grunt_v013.glb": {
+              "path": "04_export/SK_Enemy_Grunt_v013.glb",
+              "sha256": "f9c89257e00992346f71d6994b25d60ec57364df7d83c1d388627c5dea8ddaa0"
+            },
+            "SK_Enemy_Grunt_v013_metrics.json": {
+              "path": "03_work/SK_Enemy_Grunt_v013_metrics.json",
+              "sha256": "49981c22102530b7997657040bcc62fe92b3c3db5a6164916b7402fae5c91c9d"
+            },
+            "T_Enemy_Grunt_BC.png": {
+              "path": "03_work/textures_v013/T_Enemy_Grunt_BC.png",
+              "sha256": "7d16650e5b71f8cd39064b056d5258c22d72b5285864cffabbc9c2488dbb33ae"
+            },
+            "T_Enemy_Grunt_N.png": {
+              "path": "03_work/textures_v013/T_Enemy_Grunt_N.png",
+              "sha256": "ffb465c52225e8692b93bf48abd5fa523b041653b0b3219599b7c8226c7c3f6d"
+            },
+            "T_Enemy_Grunt_ORM.png": {
+              "path": "03_work/textures_v013/T_Enemy_Grunt_ORM.png",
+              "sha256": "0f93b5bbbe5a6269c283b76f758923ab0ea631d76b81585253877d9d99f05df4"
+            }
+          },
+          "from": {
+            "blockout": 3,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": 2,
+            "emid": null
+          },
+          "align_iou": 0.888,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7919,
+              "verts": 4288
+            },
+            {
+              "tris": 3500,
+              "verts": 2031
+            },
+            {
+              "tris": 1499,
+              "verts": 938
+            }
+          ],
+          "export_kb": 373.7,
+          "seconds": 14.4,
+          "bake_device": "OPTIX"
         }
       ]
     },
     "validate": {
-      "current": 8,
+      "current": 10,
       "versions": [
         {
           "version": 1,
@@ -1027,11 +1221,41 @@
           "warnings": 0,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 9,
+          "created": "2026-10-06 11:15:05",
+          "files": {
+            "SK_Enemy_Grunt_v012_validation.json": {
+              "path": "05_review/SK_Enemy_Grunt_v012_validation.json",
+              "sha256": "870d6951abf059a386ee5755cdcd1cd8c5f2c349c0867f1ffc8ab349b401c490"
+            }
+          },
+          "from_build": 12,
+          "errors": 1,
+          "warnings": 0,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 10,
+          "created": "2026-10-06 11:16:54",
+          "files": {
+            "SK_Enemy_Grunt_v013_validation.json": {
+              "path": "05_review/SK_Enemy_Grunt_v013_validation.json",
+              "sha256": "fc83fbabee481a7419e211aff3aa9f3666aeb24a6d5f0424213d38477d8eb980"
+            }
+          },
+          "from_build": 13,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 9,
+      "current": 10,
       "versions": [
         {
           "version": 1,
@@ -1273,11 +1497,56 @@
             "note": "UV 两方案择优重建（纹素密度不低于上一发布版）；几何、蒙皮与上一已审版本一致",
             "time": "2026-10-03 20:37:32"
           }
+        },
+        {
+          "version": 10,
+          "created": "2026-10-06 11:17:21",
+          "files": {
+            "SK_Enemy_Grunt_v013_review.png": {
+              "path": "05_review/SK_Enemy_Grunt_v013_review.png",
+              "sha256": "d98f804511d64c195cbb2d2d22fdb9c25ad9aa3152b8e47aa575ea387e3567e5"
+            }
+          },
+          "from_build": 13,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0001,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.047,
+              "p1_compress": 0.835,
+              "stretch_pairs": {}
+            },
+            "walk": {
+              "bad_edge_ratio": 0.002,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.237,
+              "p1_compress": 0.769,
+              "stretch_pairs": {}
+            },
+            "attack": {
+              "bad_edge_ratio": 0.0097,
+              "stretch_ratio": 0.0072,
+              "p99_stretch": 1.446,
+              "p1_compress": 0.823,
+              "stretch_pairs": {
+                "armR ↔ armR": 47,
+                "armR ↔ torso": 28,
+                "torso ↔ torso": 19
+              }
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI初审)",
+            "note": "Tripo P2.0 网格 + 本管线骨骼适配；手脚特写：双手各 5 指（拇指 + 4 指分开），双脚靴子完整；形变检测通过",
+            "time": "2026-10-06 11:18:04"
+          }
         }
       ]
     },
     "publish": {
-      "current": 6,
+      "current": 7,
       "versions": [
         {
           "version": 1,
@@ -1349,6 +1618,18 @@
             }
           },
           "from_build": 10,
+          "url": "assets/characters/SK_Enemy_Grunt.glb"
+        },
+        {
+          "version": 7,
+          "created": "2026-10-06 11:18:05",
+          "files": {
+            "SK_Enemy_Grunt.glb": {
+              "path": "@root/public/assets/characters/SK_Enemy_Grunt.glb",
+              "sha256": "f9c89257e00992346f71d6994b25d60ec57364df7d83c1d388627c5dea8ddaa0"
+            }
+          },
+          "from_build": 13,
           "url": "assets/characters/SK_Enemy_Grunt.glb"
         }
       ]

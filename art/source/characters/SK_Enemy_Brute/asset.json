@@ -66,7 +66,7 @@
       ]
     },
     "concept": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -174,11 +174,118 @@
             "note": "四视图一致，面甲发光位置正确",
             "time": "2026-10-03 16:42:44"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 11:23:15",
+          "files": {
+            "CN_SK_Enemy_Brute_v002_sheet.png": {
+              "path": "01_concept/CN_SK_Enemy_Brute_v002_sheet.png",
+              "sha256": "abbb24716f34d1246e15ef75cd33140689a6fd7a973888387ba19ed1032c4122"
+            },
+            "CN_SK_Enemy_Brute_v002_front.png": {
+              "path": "01_concept/CN_SK_Enemy_Brute_v002_front.png",
+              "sha256": "bbccc252002adfab283d9df21a9c2eb475ddd718ee5ff40c7b46436c7e17207d"
+            },
+            "CN_SK_Enemy_Brute_v002_left.png": {
+              "path": "01_concept/CN_SK_Enemy_Brute_v002_left.png",
+              "sha256": "c130add68ef98ea7b3e26cbc1f315873ac495a7bfaf4986697247ea2096170b7"
+            },
+            "CN_SK_Enemy_Brute_v002_back.png": {
+              "path": "01_concept/CN_SK_Enemy_Brute_v002_back.png",
+              "sha256": "34ce3595c29d65b8f98b26e4495679f6818befebaaf15ed4945594baebb0a754"
+            },
+            "CN_SK_Enemy_Brute_v002_right.png": {
+              "path": "01_concept/CN_SK_Enemy_Brute_v002_right.png",
+              "sha256": "78a6c4c04f83dae26010e23bc73086709d3447e2d349e8e1a2f2738a347a46d9"
+            },
+            "CN_SK_Enemy_Brute_v002_compare.png": {
+              "path": "01_concept/CN_SK_Enemy_Brute_v002_compare.png",
+              "sha256": "7e1c27e0a4622fd65d82df84607b6825190a7200ef23a4d946605ed8b0bb179d"
+            },
+            "CN_SK_Enemy_Brute_v002_prompt.txt": {
+              "path": "01_concept/CN_SK_Enemy_Brute_v002_prompt.txt",
+              "sha256": "689cb4d1125e35cf32785b8447216760a8215882c04d314103d7f0e6d0608b99"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 2097,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 639
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3277
+          },
+          "request_id": "req_d058a8f8d8584ae8a057c940e3e853c9",
+          "seconds": 27.7,
+          "registration": {
+            "front": {
+              "scale": 0.7692,
+              "offset": [
+                42,
+                270
+              ],
+              "iou": 0.815,
+              "iou_unregistered_scale": 0.7692
+            },
+            "left": {
+              "scale": 0.7487,
+              "offset": [
+                178,
+                270
+              ],
+              "iou": 0.861,
+              "iou_unregistered_scale": 0.7601
+            },
+            "back": {
+              "scale": 0.7577,
+              "offset": [
+                42,
+                270
+              ],
+              "iou": 0.821,
+              "iou_unregistered_scale": 0.7692
+            },
+            "right": {
+              "scale": 0.7358,
+              "offset": [
+                178,
+                278
+              ],
+              "iou": 0.859,
+              "iou_unregistered_scale": 0.7586
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.814,
+            "left": 0.863,
+            "back": 0.82,
+            "right": 0.861
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI初审)",
+            "note": "v002：按新规则重出，护手拇指 + 四指分开、铁靴完整；IoU 0.81-0.86",
+            "time": "2026-10-06 11:23:36"
+          }
         }
       ]
     },
     "highpoly": {
-      "current": 1,
+      "current": null,
       "versions": [
         {
           "version": 1,
@@ -225,7 +332,7 @@
       ]
     },
     "build": {
-      "current": 10,
+      "current": null,
       "versions": [
         {
           "version": 1,
@@ -795,7 +902,7 @@
       ]
     },
     "validate": {
-      "current": 10,
+      "current": null,
       "versions": [
         {
           "version": 1,
@@ -944,7 +1051,7 @@
       ]
     },
     "review": {
-      "current": 10,
+      "current": null,
       "versions": [
         {
           "version": 1,
@@ -1240,7 +1347,7 @@
       ]
     },
     "publish": {
-      "current": 5,
+      "current": null,
       "versions": [
         {
           "version": 1,

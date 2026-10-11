@@ -227,6 +227,11 @@ export class Input {
     this.mouseDX = 0;
     this.mouseDY = 0;
     this.wheel = 0;
+    // A fast flick coalesced into one event and followed by stillness has no confirming neighbour;
+    // settle it next frame from the motion that preceded it instead of silently dropping it.
+    const settled = this.lookFilter.flush(performance.now());
+    this.mouseDX += settled.x;
+    this.mouseDY += settled.y;
   }
 
   /** 丢弃本帧累积的鼠标位移（例如解除暂停时） */

@@ -1,0 +1,199 @@
+{
+  "schema": 1,
+  "assetId": "SK_Weapon_Flamer",
+  "source": {
+    "kind": "weapon",
+    "id": "flamer"
+  },
+  "rig": "parts",
+  "space": {
+    "up": "+Y",
+    "forward": "+Z",
+    "unit": "m",
+    "origin": "model"
+  },
+  "bounds": {
+    "min": [
+      -0.04499999988824129,
+      -0.11972268597866248,
+      -0.43999999821186064
+    ],
+    "max": [
+      0.03700000047683716,
+      0.10271009793727824,
+      0.08879894116950852
+    ]
+  },
+  "joints": [
+    {
+      "name": "j_r",
+      "parent": null,
+      "bindPosition": [
+        0,
+        0,
+        0
+      ],
+      "restLocal": [
+        0,
+        0,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "j_0",
+      "parent": "j_r",
+      "bindPosition": [
+        0,
+        0.03,
+        -0.45
+      ],
+      "restLocal": [
+        0,
+        0.03,
+        -0.45
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0.03,
+        -0.45,
+        1
+      ]
+    },
+    {
+      "name": "j_25",
+      "parent": "j_r",
+      "bindPosition": [
+        0,
+        -0.07,
+        -0.088
+      ],
+      "restLocal": [
+        0,
+        -0.07,
+        -0.088
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        -0.07,
+        -0.088,
+        1
+      ]
+    }
+  ],
+  "keep": [],
+  "fields": {
+    "muzzle": "j_0",
+    "mag": "j_25"
+  },
+  "parts": {
+    "body_000": "body",
+    "glowfx_001": "glowfx",
+    "glowfx_002": "glowfx",
+    "body_003": "body",
+    "body_004": "body",
+    "glowfx_005": "glowfx",
+    "glowfx_006": "glowfx",
+    "glowfx_007": "glowfx",
+    "glowfx_008": "glowfx",
+    "body_009": "body",
+    "glowfx_010": "glowfx",
+    "glowfx_011": "glowfx",
+    "glowfx_012": "glowfx",
+    "glowfx_013": "glowfx",
+    "body_014": "body",
+    "body_015": "body",
+    "body_016": "body",
+    "body_017": "body",
+    "glowfx_018": "glowfx",
+    "glowfx_019": "glowfx",
+    "body_020": "body",
+    "glowfx_021": "glowfx",
+    "body_022": "body",
+    "glowfx_023": "glowfx",
+    "body_024": "body",
+    "body_025": "body",
+    "body_026": "body",
+    "body_027": "body",
+    "glowfx_028": "glowfx",
+    "glowfx_029": "glowfx",
+    "body_030": "body",
+    "body_031": "body",
+    "body_032": "body",
+    "body_033": "body",
+    "body_034": "body",
+    "body_035": "body"
+  },
+  "exportedAt": "2026-10-06T09:34:45.405Z"
+}

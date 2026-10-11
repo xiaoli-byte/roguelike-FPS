@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>魔刀千刃 · 演出检视</title>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#11121c;color:#e9e6f3;font:14px "Microsoft YaHei",sans-serif}canvas{display:block;width:100%;height:100%}#world-layer,#ui-root{display:none}
+aside{position:fixed;left:22px;top:22px;width:240px;background:#131722ed;border:1px solid #44445b;padding:16px;border-radius:8px;max-height:calc(100vh - 76px);overflow:auto}h1{font-size:22px;margin:0 0 8px}p{font-size:12px;line-height:1.7;color:#a9adc4}label{display:block;margin:10px 0 4px}select,button{box-sizing:border-box;background:#252b40;color:#f2edff;border:1px solid #515974;border-radius:4px;padding:8px;width:100%;font:inherit}input[type=range]{width:100%;accent-color:#ba8aff}button{cursor:pointer;margin-top:8px;background:#513979}output{font-variant-numeric:tabular-nums;color:#d7baff}#readout{white-space:pre-wrap;font-size:11px;line-height:1.65}#toggle{width:auto;padding:5px 9px;position:fixed;right:20px;top:20px}body.clean aside{display:none}
+</style></head><body><div id="app"><canvas id="game-canvas"></canvas><div id="world-layer"></div><div id="ui-root"></div></div>
+<aside><h1>魔刀千刃</h1><button onclick="location.href='/blade-range.html'">进入可操作靶场</button><p>银白碎刃 · 紫色刃光<br>碎片沿刀尖 → 刀柄流动</p>
+<label>视角</label><select id="view"><option value="model">整刀造型</option><option value="first">第一人称</option></select>
+<label>动作</label><select id="action"><option value="idle">闭合待机</option><option value="combo">三段连斩</option><option value="morph">形态切换</option><option value="ranged-ready">远程待发（前方悬浮刃阵）</option><option value="ranged">刀尖→刀柄逐片发射</option><option value="recall">真实碎片召回</option><option value="cycle">巡扫发射 → 悬停 → 召回</option><option value="skill">近战技能 · 魔刃·断空</option><option value="skill-ranged">远程技能 · 千刃·回杀</option></select>
+<label>初始飞刃 <output id="ammo-value">128</output></label><input id="ammo" aria-label="初始飞刃" type="range" min="0" max="128" value="128" step="1">
+<label>画质／目标</label><select id="quality"><option value="high">高画质</option><option value="medium">中画质</option><option value="low">低画质</option></select><select id="targets"><option value="1">1个目标</option><option value="6">6个目标</option><option value="24">24个目标压力检视</option></select>
+<label>背景</label><select id="backdrop"><option value="dark">暗色</option><option value="sand">暖砂</option><option value="snow">浅雪</option></select>
+<label><input id="play" type="checkbox" checked> 播放</label><input id="time" aria-label="动作时刻" type="range" min="0" max="8.4" step="0.000001" value="0">
+<label>播放速度</label><select id="speed"><option value="1">正常速度</option><option value="0.2">1/5 慢放</option><option value="0.05">1/20 慢放</option></select><button id="step">下一片（单个最小碎片）</button>
+<button id="recall-now">换弹召回已射出的碎片</button><button id="sample">采样性能</button><p id="readout">正在初始化…</p></aside><button id="toggle">收起面板</button>
+<script type="module" src="/src/dev/bladeLab.ts"></script></body></html>
+
+
+

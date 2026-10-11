@@ -1,0 +1,103 @@
+{
+  "source": {
+    "tris": 3031,
+    "verts": 2320
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 3.61624,
+    "iou": 0.854,
+    "iou_per_view": {
+      "front": 0.818,
+      "left": 0.903,
+      "back": 0.803,
+      "right": 0.911
+    },
+    "size_m": [
+      3.614,
+      3.17,
+      3.0
+    ],
+    "reference_m": [
+      4.0,
+      4.6,
+      3.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.748,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Tripo_DesertStairs_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      8192,
+      8192
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertStairs_LOD0",
+      "tris": 2985,
+      "verts": 2295,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.54,
+      "bbox_min": [
+        -1.8072,
+        -1.5848,
+        0.0
+      ],
+      "bbox_max": [
+        1.8072,
+        1.5848,
+        3.0
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertStairs_LOD1",
+      "tris": 995,
+      "verts": 1111,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        0.9999712705612183
+      ],
+      "uv_utilization": 0.543,
+      "bbox_min": [
+        -1.8049,
+        -1.5848,
+        0.0
+      ],
+      "bbox_max": [
+        1.8095,
+        1.5742,
+        3.002
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertStairs/04_export/SM_Tripo_DesertStairs_v001.glb",
+    "bytes": 183412
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 11.8,
+  "_seconds": 15.6
+}

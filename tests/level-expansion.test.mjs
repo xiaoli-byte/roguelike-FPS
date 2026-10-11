@@ -18,8 +18,8 @@ const { buildWhiteboxFights } = await import(await ts('../src/world/WhiteboxEnco
 const { buildShopLayout, SHOP_STALL_HALF_WIDTH, SHOP_CUSTOMER_HALF_WIDTH } = await import(await ts('../src/progression/loot/shopLayout.ts'));
 const { CollisionWorld } = await import(await ts('../src/world/Collision.ts'));
 const { NavGrid } = await import(await ts('../src/world/NavGrid.ts', { '../core/math': await ts('../src/core/math.ts') }));
-const before = JSON.parse(await readFile(new URL('../art/reviews/level-expansion-20261005/before-plans.json', import.meta.url), 'utf8'));
-const { generateWhitebox: generateBefore } = await import(await ts('../src/world/WhiteboxGen.ts', { './WhiteboxPlans': data(`export const WHITEBOX_PLANS=${JSON.stringify(before)}`) }));
+const before = JSON.parse(await readFile(new URL('./fixtures/level-expansion-before-plans.json', import.meta.url), 'utf8'));
+const { generateWhitebox: generateBefore } = await import(await ts('../src/world/WhiteboxGen.ts', { './WhiteboxPlans': data(`export const WHITEBOX_PLANS=${JSON.stringify(before)}; export const WHITEBOX_REDESIGN_PLANS=[];`) }));
 const node = (p, type = p.index === 5 ? 'boss' : 'combat') => ({ type, theme: p.chapter, chapter: ['desert', 'frost', 'inferno'].indexOf(p.chapter), index: p.index - 1, reward: 'coins' });
 const vector = p => new THREE.Vector3(p.x, .001, p.z);
 function routeLength(p) {

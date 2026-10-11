@@ -1,0 +1,250 @@
+{
+  "schema": 1,
+  "assetId": "SK_Weapon_Railgun",
+  "source": {
+    "kind": "weapon",
+    "id": "railgun"
+  },
+  "rig": "parts",
+  "space": {
+    "up": "+Y",
+    "forward": "+Z",
+    "unit": "m",
+    "origin": "model"
+  },
+  "bounds": {
+    "min": [
+      -0.04097114326529465,
+      -0.11822703214892008,
+      -0.7000000059604645
+    ],
+    "max": [
+      0.04097114326529463,
+      0.1399999997764826,
+      0.2920000002160668
+    ]
+  },
+  "joints": [
+    {
+      "name": "j_r",
+      "parent": null,
+      "bindPosition": [
+        0,
+        0,
+        0
+      ],
+      "restLocal": [
+        0,
+        0,
+        0
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "j_0",
+      "parent": "j_r",
+      "bindPosition": [
+        0,
+        0.035,
+        -0.72
+      ],
+      "restLocal": [
+        0,
+        0.035,
+        -0.72
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0.035,
+        -0.72,
+        1
+      ]
+    },
+    {
+      "name": "j_15",
+      "parent": "j_r",
+      "bindPosition": [
+        0,
+        0.035,
+        -0.42
+      ],
+      "restLocal": [
+        0,
+        0.035,
+        -0.42
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0.035,
+        -0.42,
+        1
+      ]
+    },
+    {
+      "name": "j_16",
+      "parent": "j_r",
+      "bindPosition": [
+        0,
+        0.085,
+        0.02
+      ],
+      "restLocal": [
+        0,
+        0.085,
+        0.02
+      ],
+      "bindRotation": [
+        0,
+        0,
+        0
+      ],
+      "bindScale": [
+        1,
+        1,
+        1
+      ],
+      "bindMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0.085,
+        0.02,
+        1
+      ]
+    }
+  ],
+  "keep": [],
+  "fields": {
+    "muzzle": "j_0",
+    "mag": "j_16",
+    "spinner": "j_15"
+  },
+  "parts": {
+    "body_000": "body",
+    "body_001": "body",
+    "body_002": "body",
+    "body_003": "body",
+    "body_004": "body",
+    "body_005": "body",
+    "body_006": "body",
+    "body_007": "body",
+    "body_008": "body",
+    "body_009": "body",
+    "body_010": "body",
+    "glowfx_011": "glowfx",
+    "body_012": "body",
+    "body_013": "body",
+    "glowfx_014": "glowfx",
+    "glowfx_015": "glowfx",
+    "glowfx_016": "glowfx",
+    "glowfx_017": "glowfx",
+    "glowfx_018": "glowfx",
+    "glowfx_019": "glowfx",
+    "glowfx_020": "glowfx",
+    "glowfx_021": "glowfx",
+    "body_022": "body",
+    "body_023": "body",
+    "body_024": "body",
+    "glowfx_025": "glowfx",
+    "glowfx_026": "glowfx",
+    "body_027": "body",
+    "body_028": "body",
+    "body_029": "body",
+    "body_030": "body",
+    "body_031": "body",
+    "body_032": "body",
+    "body_033": "body",
+    "body_034": "body",
+    "body_035": "body",
+    "body_036": "body",
+    "body_037": "body",
+    "body_038": "body",
+    "body_039": "body",
+    "glowfx_040": "glowfx",
+    "glowfx_041": "glowfx",
+    "glowfx_042": "glowfx",
+    "body_043": "body"
+  },
+  "exportedAt": "2026-10-06T09:35:21.180Z"
+}

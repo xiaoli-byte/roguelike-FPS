@@ -54,7 +54,7 @@ const DASH_IFRAMES = 0.12;
 const DASH_LOCKOUT = 0.06;
 
 /**
- * 受控突进（lunge，魔刀千刃的武器技能 = 硬突进 / 斩击前冲与追击 = 软突进，docs/demon-blade.md 10.5）：
+ * 受控突进（lunge；原为魔刀千刃 v1 的技能突进与斩击前冲，v2 不再使用，接口保留）：
  * 本帧沿突进方向的实际推进不足期望的这个比例且撞墙时，视为被墙挡住、提前结束（斜蹭墙面时沿墙滑行）
  */
 const LUNGE_BLOCK_FRAC = 0.35;
@@ -639,7 +639,7 @@ export class PlayerController implements IPlayer {
   }
 
   /**
-   * 受控突进（IPlayer.lunge，docs/demon-blade.md 10.5）：沿水平方向 dir 在 time 秒内移动 dist 米。
+   * 受控突进（IPlayer.lunge）：沿水平方向 dir 在 time 秒内移动 dist 米。
    * iframes > 0 为硬突进（匀速、悬停、无视输入与外力）；否则为软突进（只抬高沿 dir 的速度下限，见 IPlayer.lunge）。
    * 位移在下一次 updateMovement 开始生效（武器系统在玩家之后更新）；新的突进覆盖进行中的，进行中的冲刺直接结束。
    */

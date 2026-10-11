@@ -1,0 +1,592 @@
+{
+  "id": "SK_Weapon_Flamer",
+  "display": "朱雀吐息",
+  "kind": "skeletal",
+  "class": "weapon_fp",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:34:51",
+          "files": {
+            "BO_SK_Weapon_Flamer_v001.glb": {
+              "path": "00_blockout/BO_SK_Weapon_Flamer_v001.glb",
+              "sha256": "91a498887f98828ab005ef9ffb3237fbb7d6d48d14686cb126e256a486b3cd1f"
+            },
+            "BO_SK_Weapon_Flamer_v001.json": {
+              "path": "00_blockout/BO_SK_Weapon_Flamer_v001.json",
+              "sha256": "4c463bdc484b10ebd9f8d56545292d30e0587cf351f9236f265ade5cf01dc423"
+            },
+            "BO_SK_Weapon_Flamer_v001_views.json": {
+              "path": "00_blockout/BO_SK_Weapon_Flamer_v001_views.json",
+              "sha256": "d8fc5e30539005bd883544ed04d4e8d9d042b9373270127fedc6cbe603d27d43"
+            },
+            "BO_SK_Weapon_Flamer_v001_sheet.png": {
+              "path": "00_blockout/BO_SK_Weapon_Flamer_v001_sheet.png",
+              "sha256": "7c4a333b9eda24d14762b93befbb007fa1c22faa40983b727774ec31f7d1a82f"
+            },
+            "BO_SK_Weapon_Flamer_v001_front.png": {
+              "path": "00_blockout/BO_SK_Weapon_Flamer_v001_front.png",
+              "sha256": "e32f52ba3db046ba86ed4283189f62f1fc8183d6dbfa1d82f904e1ddd8253fec"
+            },
+            "BO_SK_Weapon_Flamer_v001_left.png": {
+              "path": "00_blockout/BO_SK_Weapon_Flamer_v001_left.png",
+              "sha256": "c64697dbc146831f8a1466cb2f5af377491c9a768884b4c6bbc197e71eb9ba12"
+            },
+            "BO_SK_Weapon_Flamer_v001_back.png": {
+              "path": "00_blockout/BO_SK_Weapon_Flamer_v001_back.png",
+              "sha256": "879595b02ac1c4ee7f1f5e8283c5a3270727d8ab827608c1c0e6aed511368700"
+            },
+            "BO_SK_Weapon_Flamer_v001_right.png": {
+              "path": "00_blockout/BO_SK_Weapon_Flamer_v001_right.png",
+              "sha256": "bfec9da9dbc64df9ca73607b9faa6bd926928361f94543b3a1947bf23d8c9918"
+            }
+          },
+          "source": {
+            "kind": "weapon",
+            "id": "flamer"
+          },
+          "joints": 3,
+          "bounds": {
+            "min": [
+              -0.04499999988824129,
+              -0.11972268597866248,
+              -0.43999999821186064
+            ],
+            "max": [
+              0.03700000047683716,
+              0.10271009793727824,
+              0.08879894116950852
+            ]
+          },
+          "blender_seconds": 5.4
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:36:22",
+          "files": {
+            "CN_SK_Weapon_Flamer_v001_sheet.png": {
+              "path": "01_concept/CN_SK_Weapon_Flamer_v001_sheet.png",
+              "sha256": "f107641a93864f80243619adc4825aa41791ed20f0f9cf74d3f59bbe01f79fd5"
+            },
+            "CN_SK_Weapon_Flamer_v001_front.png": {
+              "path": "01_concept/CN_SK_Weapon_Flamer_v001_front.png",
+              "sha256": "87eee9d22815d423eeaed489c2636974ec6c392f9b14fc4ba8927d66dd77ef1b"
+            },
+            "CN_SK_Weapon_Flamer_v001_left.png": {
+              "path": "01_concept/CN_SK_Weapon_Flamer_v001_left.png",
+              "sha256": "df8a2a4c4cacae090927af95e4b28f3091139f47294258dd10535683448a1ca7"
+            },
+            "CN_SK_Weapon_Flamer_v001_back.png": {
+              "path": "01_concept/CN_SK_Weapon_Flamer_v001_back.png",
+              "sha256": "7eb993f6afe863338aaa725901ac29aad0a19f02cdb0290db53fab14e4fe9401"
+            },
+            "CN_SK_Weapon_Flamer_v001_right.png": {
+              "path": "01_concept/CN_SK_Weapon_Flamer_v001_right.png",
+              "sha256": "0643b771ad864301f1dad69933c409124ebeb5087ddba9c1c93779ce6ea1989e"
+            },
+            "CN_SK_Weapon_Flamer_v001_compare.png": {
+              "path": "01_concept/CN_SK_Weapon_Flamer_v001_compare.png",
+              "sha256": "609524b9251c8efc05ee9fa6758272b7ec82adde7219a6126700257b9e7294a3"
+            },
+            "CN_SK_Weapon_Flamer_v001_prompt.txt": {
+              "path": "01_concept/CN_SK_Weapon_Flamer_v001_prompt.txt",
+              "sha256": "1cd5e2c3969273bd79a5bc0071558f654878d005e6b04d837b0717fdd5ec8e79"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 2060,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 602
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3240
+          },
+          "request_id": "req_f671e4f12a264bddac293eee330a458c",
+          "seconds": 32.2,
+          "registration": {
+            "front": {
+              "scale": 0.9892,
+              "offset": [
+                62,
+                55
+              ],
+              "iou": 0.876,
+              "iou_unregistered_scale": 0.9892
+            },
+            "left": {
+              "scale": 1.0018,
+              "offset": [
+                184,
+                41
+              ],
+              "iou": 0.918,
+              "iou_unregistered_scale": 0.987
+            },
+            "back": {
+              "scale": 0.9892,
+              "offset": [
+                62,
+                55
+              ],
+              "iou": 0.872,
+              "iou_unregistered_scale": 0.9892
+            },
+            "right": {
+              "scale": 0.987,
+              "offset": [
+                178,
+                55
+              ],
+              "iou": 0.917,
+              "iou_unregistered_scale": 0.987
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.877,
+            "left": 0.916,
+            "back": 0.874,
+            "right": 0.919
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "东方奇幻配色与纹饰统一，剪影贴合白模；灯纱 / 加速环为白模未含的发光件，偏差在预期内",
+            "time": "2026-10-06 17:39:55"
+          }
+        }
+      ]
+    },
+    "matid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:40:31",
+          "files": {
+            "MID_SK_Weapon_Flamer_v001_sheet.png": {
+              "path": "01_concept/MID_SK_Weapon_Flamer_v001_sheet.png",
+              "sha256": "ba0dccc3f7f9f49c0f5e7d8294dd26e000af5aabafea6c7e8dcd5ccd596ca725"
+            },
+            "MID_SK_Weapon_Flamer_v001_front.png": {
+              "path": "01_concept/MID_SK_Weapon_Flamer_v001_front.png",
+              "sha256": "323ba348f3c9364416ce6ad28e9bf9273efce8b453dae719bce636257540a630"
+            },
+            "MID_SK_Weapon_Flamer_v001_left.png": {
+              "path": "01_concept/MID_SK_Weapon_Flamer_v001_left.png",
+              "sha256": "0372ab64e5314a85c2cf37d4db13bfcd7ba65dbb3a3ce1803fa19fcb23dde331"
+            },
+            "MID_SK_Weapon_Flamer_v001_back.png": {
+              "path": "01_concept/MID_SK_Weapon_Flamer_v001_back.png",
+              "sha256": "8b3a92ca716f403ae9507935d90659964429e779b74161107c50a203ad305314"
+            },
+            "MID_SK_Weapon_Flamer_v001_right.png": {
+              "path": "01_concept/MID_SK_Weapon_Flamer_v001_right.png",
+              "sha256": "08b860cafb637f336e31bb237109c10562ca15f7829bed1235119471cc8f44df"
+            },
+            "MID_SK_Weapon_Flamer_v001_compare.png": {
+              "path": "01_concept/MID_SK_Weapon_Flamer_v001_compare.png",
+              "sha256": "d23baf7cda966ec185e18e822f16c2a62da8e7c7af631ede654b3c2d4a9bba79"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1699,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 241
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2879
+          },
+          "request_id": "req_293752656f724c9ba0f763a482c3256a",
+          "seconds": 30.8,
+          "registration": {
+            "front": {
+              "scale": 0.9839,
+              "offset": [
+                60,
+                55
+              ],
+              "iou": 0.968,
+              "iou_unregistered_scale": 0.9839,
+              "purity": 0.964
+            },
+            "left": {
+              "scale": 0.9978,
+              "offset": [
+                182,
+                42
+              ],
+              "iou": 0.96,
+              "iou_unregistered_scale": 0.9978,
+              "purity": 0.965
+            },
+            "back": {
+              "scale": 0.9839,
+              "offset": [
+                59,
+                55
+              ],
+              "iou": 0.969,
+              "iou_unregistered_scale": 0.9839,
+              "purity": 0.966
+            },
+            "right": {
+              "scale": 0.9839,
+              "offset": [
+                176,
+                55
+              ],
+              "iou": 0.977,
+              "iou_unregistered_scale": 0.9839,
+              "purity": 0.97
+            }
+          },
+          "metal_ratio": {
+            "front": 0.614,
+            "left": 0.467,
+            "back": 0.6,
+            "right": 0.788
+          }
+        }
+      ]
+    },
+    "emid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:43:45",
+          "files": {
+            "EID_SK_Weapon_Flamer_v001_sheet.png": {
+              "path": "01_concept/EID_SK_Weapon_Flamer_v001_sheet.png",
+              "sha256": "2fc7971156a66084c414c6d883b7f4529a3ede9115364af0d0c69c7c63c7f91c"
+            },
+            "EID_SK_Weapon_Flamer_v001_front.png": {
+              "path": "01_concept/EID_SK_Weapon_Flamer_v001_front.png",
+              "sha256": "98479ab39a03d0069dcb2c461c544fdbaf1e25701d8aaa110a3e013e321121cd"
+            },
+            "EID_SK_Weapon_Flamer_v001_left.png": {
+              "path": "01_concept/EID_SK_Weapon_Flamer_v001_left.png",
+              "sha256": "dc514ecc2ac6ddcc6faf29014cfea9e4a37b042ad5e3906a49407138a675bdf8"
+            },
+            "EID_SK_Weapon_Flamer_v001_back.png": {
+              "path": "01_concept/EID_SK_Weapon_Flamer_v001_back.png",
+              "sha256": "0f4b02b6615e2811f737552b47338d0485bfc5dc3a8fe2419801c65df4bf4b23"
+            },
+            "EID_SK_Weapon_Flamer_v001_right.png": {
+              "path": "01_concept/EID_SK_Weapon_Flamer_v001_right.png",
+              "sha256": "1c998dd92950e2ed596ed66c6a0a752f5be709a7b0faed0717cd82e42d63d6d6"
+            },
+            "EID_SK_Weapon_Flamer_v001_compare.png": {
+              "path": "01_concept/EID_SK_Weapon_Flamer_v001_compare.png",
+              "sha256": "482d02d030c44df24689361ae18c9ba38fd1ab48da301d72abaccf573f4168c4"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1711,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 253
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2891
+          },
+          "request_id": "req_2931cc0108c64a9da2ed0464161f4ad5",
+          "seconds": 32.7,
+          "registration": {
+            "front": {
+              "scale": 0.9765,
+              "offset": [
+                56,
+                55
+              ],
+              "iou": 0.925,
+              "iou_unregistered_scale": 0.9765,
+              "purity": 0.992
+            },
+            "left": {
+              "scale": 0.9872,
+              "offset": [
+                178,
+                42
+              ],
+              "iou": 0.924,
+              "iou_unregistered_scale": 0.9872,
+              "purity": 0.999
+            },
+            "back": {
+              "scale": 0.9775,
+              "offset": [
+                52,
+                55
+              ],
+              "iou": 0.903,
+              "iou_unregistered_scale": 0.9775,
+              "purity": 0.993
+            },
+            "right": {
+              "scale": 0.9723,
+              "offset": [
+                172,
+                55
+              ],
+              "iou": 0.935,
+              "iou_unregistered_scale": 0.9723,
+              "purity": 0.999
+            }
+          },
+          "emissive_ratio": {
+            "front": 0.113,
+            "left": 0.01,
+            "back": 0.114,
+            "right": 0.011
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:48:29",
+          "files": {
+            "HP_SK_Weapon_Flamer_v001_input_front.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Flamer_v001_input_front.png",
+              "sha256": "361fa8713b58640e6819096f665f9c36e23615960bd5d9788efe1cdc0d992d7b"
+            },
+            "HP_SK_Weapon_Flamer_v001_input_left.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Flamer_v001_input_left.png",
+              "sha256": "98b61678a3ebcfe38ba3bedb36369882e7302dfbdc310b54737305b9d663b76d"
+            },
+            "HP_SK_Weapon_Flamer_v001_input_back.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Flamer_v001_input_back.png",
+              "sha256": "085983c49518b97d9f10ae984edf6034b20242b760001069709ec83543ff8d05"
+            },
+            "HP_SK_Weapon_Flamer_v001_input_right.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Flamer_v001_input_right.png",
+              "sha256": "bf5e9eac8d90b94b5dfb8319c1aaab16994d374e8f7d747b977763fa17a0d177"
+            },
+            "HP_SK_Weapon_Flamer_v001.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Flamer_v001.glb",
+              "sha256": "e4be6382ecd2b4e321325c0a357063fa0b3e93b2abbc55ca88ccf920e2f26f29"
+            },
+            "HP_SK_Weapon_Flamer_v001_graph.json": {
+              "path": "02_highpoly/HP_SK_Weapon_Flamer_v001_graph.json",
+              "sha256": "799f5dfbcf24cdddf846534a5528c8dd9633577a3738514fb5080b578ae70740"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -289,
+              -40,
+              801,
+              1051
+            ],
+            "scale": 0.9394495412844037
+          },
+          "seconds": 146.5,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 5.3
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:48:59",
+          "files": {
+            "SK_Weapon_Flamer_v001.blend": {
+              "path": "03_work/SK_Weapon_Flamer_v001.blend",
+              "sha256": "f0032437036fe3730facf284294f0d1c758b72c593261178990618adc1fdc405"
+            },
+            "SK_Weapon_Flamer_v001.glb": {
+              "path": "04_export/SK_Weapon_Flamer_v001.glb",
+              "sha256": "e09219d26d8b3b80505b387f18e52ac6b089d0a924e90281956bd22478b9f4df"
+            },
+            "SK_Weapon_Flamer_v001_metrics.json": {
+              "path": "03_work/SK_Weapon_Flamer_v001_metrics.json",
+              "sha256": "7dcb6e265d7f5025706ed1c8e6ac830d07b3fa5816186a877ede89e8f2bb3f5d"
+            },
+            "T_Weapon_Flamer_BC.png": {
+              "path": "03_work/textures_v001/T_Weapon_Flamer_BC.png",
+              "sha256": "90793bf34ab23df8268ea664d6c91b91d8a86643f9ac2b652f0e6becb3d8e69d"
+            },
+            "T_Weapon_Flamer_E.png": {
+              "path": "03_work/textures_v001/T_Weapon_Flamer_E.png",
+              "sha256": "5a515ce582487f16ec06b2b4ca315104c4743cc550d0db31d741cd5d5f768f98"
+            },
+            "T_Weapon_Flamer_MetalMask.png": {
+              "path": "03_work/textures_v001/T_Weapon_Flamer_MetalMask.png",
+              "sha256": "b06429a6902350085d59020b3e782c83186c438482dcd126c9630ad9b18bd01e"
+            },
+            "T_Weapon_Flamer_N.png": {
+              "path": "03_work/textures_v001/T_Weapon_Flamer_N.png",
+              "sha256": "c288c414aecc8dfd67bb60eaab3ace0c53d5f2c2ceac9d6cea5f7fb59ef81398"
+            },
+            "T_Weapon_Flamer_ORM.png": {
+              "path": "03_work/textures_v001/T_Weapon_Flamer_ORM.png",
+              "sha256": "234b9529746fb52241c5978859debde61ca3f59708d379e8e63fcbd1c5d257c5"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1,
+            "emid": 1
+          },
+          "align_iou": 0.908,
+          "uncovered_ratio": 0.1819,
+          "lods": [
+            {
+              "tris": 11996,
+              "verts": 5996
+            },
+            {
+              "tris": 2996,
+              "verts": 1496
+            }
+          ],
+          "export_kb": 497.4,
+          "seconds": 30.0,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:48:59",
+          "files": {
+            "SK_Weapon_Flamer_v001_validation.json": {
+              "path": "05_review/SK_Weapon_Flamer_v001_validation.json",
+              "sha256": "cee715147a27aa12d3c70224fcb3abefb622e0a1cc4a66cd1691f88628c3a87e"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:49:06",
+          "files": {
+            "SK_Weapon_Flamer_v001_review.png": {
+              "path": "05_review/SK_Weapon_Flamer_v001_review.png",
+              "sha256": "9fcecae5755318e511f0b6690430e1000505eb0aee1027df9c975c9e1a54e0bf"
+            }
+          },
+          "from_build": 1,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "刚体部件 + 多视图高模；三轴尺寸与白模吻合，发光分区落在纹饰上（三才转轮保留程序化发光件）",
+            "time": "2026-10-06 18:04:58"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 18:04:58",
+          "files": {
+            "SK_Weapon_Flamer.glb": {
+              "path": "@root/public/assets/weapons/SK_Weapon_Flamer.glb",
+              "sha256": "e09219d26d8b3b80505b387f18e52ac6b089d0a924e90281956bd22478b9f4df"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/weapons/SK_Weapon_Flamer.glb"
+        }
+      ]
+    }
+  }
+}

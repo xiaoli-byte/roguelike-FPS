@@ -133,6 +133,8 @@ export interface DamageRequest {
   direction?: THREE.Vector3;
   /** 击退冲量（米/秒），沿 direction；explode 中只有显式设置才生效（无默认击退） */
   knockback?: number;
+  /** 无视敌人护盾层，直接打在护甲 / 生命上（魔刀千刃的刃群） */
+  bypassShield?: boolean;
   /**
    * 链式触发层数。直接伤害为 0；由 on-hit 效果（秘卷、元素连锁等）衍生出的伤害 >= 1。
    * 所有「命中时触发」的效果必须检查 procDepth < 2 以防无限递归。
@@ -236,6 +238,8 @@ export interface Settings {
   sfxVolume: number;
   musicVolume: number;
   quality: 'low' | 'medium' | 'high';
+  /** 太阳阴影贴图精度：低 1024 / 中 2048 / 高 4096（画质为「低」时不渲染阴影） */
+  shadowQuality: 'low' | 'medium' | 'high';
   damageNumbers: boolean;
   screenShake: number;     // 0..1
   invertY: boolean;
@@ -264,12 +268,8 @@ export interface GameEvents {
   'weapon:reloaded': { weapon: WeaponInstance };
   'weapon:switched': { weapon: WeaponInstance | null; slot: number };
   'weapon:acquired': { weapon: WeaponInstance };
-  /** 双形态武器开始切换形态（form 为目标形态；docs/demon-blade.md 第 10 节） */
-  'weapon:formChanged': { weapon: WeaponInstance; form: WeaponForm };
-  /** 释放武器技能（魔刀千刃「千刃·无间」） */
+  /** 释放武器技能（魔刀千刃「杀气爆发」/「人刀合一」） */
   'weapon:skillUsed': { weapon: WeaponInstance; skillId: string };
-  /** 「千刃·无间」贯穿结算（每次释放最多一次）：points 为各刃印敌人的身体中心（新建数组，HUD 画视野外方向提示） */
-  'weapon:skillImpale': { weapon: WeaponInstance; points: THREE.Vector3[] };
   'skill:used': { slot: 'primary' | 'secondary'; skillId: string };
   'stage:loaded': { stage: StageNode };
   'stage:cleared': { stage: StageNode };
@@ -434,21 +434,33 @@ export interface WeaponDescription {
   traits: string[];
   /** 元素的特殊显示（如三才转轮的「三相」）；有值时 UI 用它代替元素单字 */
   elementLabel?: string;
-  /** 双形态武器的形态显示名 [近战, 远程]（魔刀千刃：['斩', '千刃']） */
-  formNames?: [string, string];
   /** 武器技能（名称 / 按键提示 / 描述 / 基础冷却秒数），UI 单独成行显示 */
   skill?: { name: string; key: string; description: string; cooldown: number };
 }
 
 /**
- * 双形态武器的形态（docs/demon-blade.md）：'melee' = 近战形态（魔刀「斩」），'ranged' = 远程形态（魔刀「千刃」）。
+ * 魔刀千刃 v2 的碎刃去向（docs/demon-blade-v2.md）：'hand' 在手中（可斩），'swarm' 千刃出窍，'shield' 碎刃屏障，'burst' 杀气爆发。
  */
-export type WeaponForm = 'melee' | 'ranged';
+export type BladeMode = 'hand' | 'swarm' | 'shield' | 'burst';
+
+/** 魔刀千刃的 HUD 状态（IWeaponSystem.blade 返回复用对象，读取后不要保存引用） */
+export interface BladeHudState {
+  mode: BladeMode;
+  /** 刃气 0..1（右键与 R 共用） */
+  qi: number;
+  /** 杀意 0..1（满时 V 变为人刀合一） */
+  intent: number;
+  /** 人刀合一剩余比例 0..1（0 = 未进入） */
+  union: number;
+  /** 下一段斩击此刻挥出能命中至少一名敌人（准星提示攻击距离） */
+  inRange: boolean;
+}
 
 /** 武器技能的 HUD 状态（IWeaponSystem.weaponSkill 返回复用对象，读取后不要保存引用） */
 export interface WeaponSkillState {
   id: string;
   name: string;
+  description?: string;
   /** HUD 图标单字 */
   glyph: string;
   /** 按键提示（'V'） */
@@ -457,8 +469,10 @@ export interface WeaponSkillState {
   cooldownRemaining: number;
   /** 当前实际冷却时长（已算 skillHaste），HUD 画冷却环 */
   cooldownTotal: number;
-  /** 释放中（突进或等待贯穿） */
+  /** 技能正在施展 */
   active: boolean;
+  /** 附加充能 0..1（魔刀：杀意），HUD 画在冷却环外圈；缺省不显示 */
+  charge?: number;
 }
 
 export interface IWeaponSystem extends System {
@@ -473,16 +487,10 @@ export interface IWeaponSystem extends System {
   readonly currentSpread: number;
   /** 蓄力武器的当前蓄力进度 0..1（非蓄力 / 未蓄力为 0） */
   readonly chargeProgress?: number;
-  /** 当前武器的形态（非双形态武器 / 空手为 null） */
-  readonly activeForm?: WeaponForm | null;
-  /** 形态切换进度 0..1（1 = 已完成 / 未在切换） */
-  readonly formMorphProgress?: number;
-  /** 「换形一击」窗口剩余秒数（0 = 无窗口或已用掉；HUD 武器槽发光） */
-  readonly formStrikeTime?: number;
   /** 当前武器的武器技能状态（当前武器没有武器技能时为 null） */
   readonly weaponSkill?: WeaponSkillState | null;
-  /** 近战形态：下一段斩击此刻挥出能命中至少一名敌人（每 3 帧更新；非近战形态为 false，准星据此提示攻击距离） */
-  readonly meleeInRange?: boolean;
+  /** 当前武器是魔刀千刃时的状态（其他武器 / 空手为 null） */
+  readonly bladeHud?: BladeHudState | null;
   /** 当前武器实际弹匣容量（含加成） */
   magCapacity(inst: WeaponInstance): number;
   reserveCapacity(inst: WeaponInstance): number;
@@ -682,8 +690,7 @@ export interface ICombat extends System {
   previewMultiplier?(enemy: IEnemy, req: DamageRequest): number;
 }
 
-/** 'blade' = 魔刀千刃的旋转飞刃（细拖尾） */
-export type ProjectileVisual = 'orb' | 'bolt' | 'rocket' | 'arrow' | 'grenade' | 'shard' | 'flame' | 'blade';
+export type ProjectileVisual = 'orb' | 'bolt' | 'rocket' | 'arrow' | 'grenade' | 'shard' | 'flame';
 
 export interface ProjectileSpec {
   owner: 'player' | 'enemy';
@@ -722,9 +729,23 @@ export interface ProjectileSpec {
   onImpact?: (point: THREE.Vector3, hitEnemy: IEnemy | null) => void;
 }
 
+/**
+ * 玩家身前的挡弹圆盘（魔刀千刃「碎刃屏障」）：敌方投射物的运动线段穿过圆盘时被销毁并回调 onBlock。
+ * center / normal 由持有者每帧改写（normal 为单位向量，朝外）。
+ */
+export interface ProjectileWard {
+  center: THREE.Vector3;
+  normal: THREE.Vector3;
+  radius: number;
+  /** point 为穿过圆盘的位置（复用向量，按值读取），damage 为该投射物对玩家的伤害 */
+  onBlock(point: THREE.Vector3, damage: number): void;
+}
+
 export interface IProjectileSystem extends System {
   spawn(spec: ProjectileSpec): void;
   readonly count: number;
+  /** 设置 / 撤掉挡弹圆盘（同时只有一个） */
+  setWard(ward: ProjectileWard | null): void;
 }
 
 // ───────────────────────────── 关卡世界 ─────────────────────────────
@@ -772,6 +793,8 @@ export interface INavGrid {
   isWalkable(x: number, z: number): boolean;
   nearestWalkable(p: THREE.Vector3, out: THREE.Vector3): boolean;
   randomWalkable(center: THREE.Vector3, minR: number, maxR: number, out: THREE.Vector3): boolean;
+  /** Whether p stands on a deck top that a stair ramp reaches (raised spawn stations); optional. */
+  platformAt?(p: THREE.Vector3): boolean;
 }
 
 /** 当前半开放区域的导航与一次性探索状态；常规首领 / 商店关不提供此状态。 */
@@ -791,6 +814,9 @@ export interface AdventureInfo {
     id: string; label: string; kind: 'approach' | 'cache';
     position: THREE.Vector3; radius: number; triggerRadius?: number;
     phase: 'undiscovered' | 'active' | 'cleared';
+    /** Optional room encounters remain hidden and dormant until their entrance is investigated. */
+    optional?: boolean;
+    discovered?: boolean;
     siteId?: string;
   }[];
   objective: THREE.Vector3;
@@ -952,37 +978,8 @@ export interface DamageNumberOpts {
   big?: boolean;
 }
 
-/**
- * 魔刀千刃的专用特效（docs/demon-blade.md 第 8、10 节）。所有方法按值复制传入的向量。
- * 实现位于 fx/BladeFx.ts，由 FxSystem 持有（IFx.blade）、逐帧推进，并在 IFx.clear()（换关 / 开局）时清空。
- */
-export interface IBladeFx {
-  /**
-   * 挥砍弧光：以 origin（通常为 player.eye）为圆心、朝 (yaw, pitch) 的扇形拖尾面片，约 0.12 秒扫过、0.2 秒淡出。
-   * segment：0 横斩（右 → 左）/ 1 回斩（左 → 右）/ 2 下劈（上 → 下）；range 为半径（米），halfAngle 为扇形半角（弧度）。
-   */
-  slashArc(origin: THREE.Vector3, yaw: number, pitch: number, segment: number, range: number, halfAngle: number, color: number): void;
-  /** 斩击命中点的刃光与火花；dir 为斩击方向（玩家 → 敌人，单位向量），heavy = 第三段 / 技能斩击 */
-  slashHit(point: THREE.Vector3, dir: THREE.Vector3, color: number, heavy: boolean): void;
-  /** 刃印：跟随敌人的旋转红色刃环，duration 秒后自动消失（敌人死亡 / 移除时提前消失） */
-  mark(enemy: IEnemy, duration: number, color: number): void;
-  /**
-   * 千刃贯穿：数十柄刃从四面八方射入敌人身体中心（同时移除该敌人的刃印），约 0.1–0.16 秒后到齐爆闪——
-   * 调用方应提前约 IMPALE_LEAD 调用，让刃群与伤害同时到达。目标在视野外时刃群从玩家眼前上方掠过再射向它。
-   */
-  impale(enemy: IEnemy, color: number): void;
-  /** 所有仍在显示的刃印淡出（技能被中止、不会贯穿时调用） */
-  clearMarks(): void;
-  /** 突进残影与风压线：本帧位移 from → to（脚底坐标）；突进期间每帧调用一次 */
-  dashTrail(from: THREE.Vector3, to: THREE.Vector3, color: number): void;
-  /** 飞刃召回：count 柄刃片从 from 飞向 to（主场景世界坐标；to 通常为 viewmodel 枪口的世界坐标） */
-  recall(from: THREE.Vector3, to: THREE.Vector3, count: number, color: number): void;
-}
-
 /** 所有方法都会按值复制传入的向量，调用方可以传复用的临时向量。 */
 export interface IFx extends System {
-  /** 魔刀千刃专用特效 */
-  readonly blade: IBladeFx;
   impact(point: THREE.Vector3, normal: THREE.Vector3 | null, color?: number, size?: number): void;
   enemyHit(point: THREE.Vector3, color?: number, crit?: boolean): void;
   tracer(from: THREE.Vector3, to: THREE.Vector3, color?: number, width?: number): void;
@@ -1008,8 +1005,9 @@ export interface IFx extends System {
 export type SfxId =
   | 'shot_pistol' | 'shot_smg' | 'shot_rifle' | 'shot_shotgun' | 'shot_sniper' | 'shot_launcher' | 'shot_beam' | 'shot_bow' | 'shot_heavy'
   | 'reload_start' | 'reload_end' | 'dry_fire' | 'weapon_switch'
-  // 魔刀千刃：挥砍破风 / 斩击命中 / 飞刃投掷 / 召回 / 变形 / 突进 / 千刃贯穿
+  // 魔刀千刃：挥砍破风 / 斩击命中 / 千刃出窍 / 碎刃归刀 / 碎刃屏障 / 杀气聚合 / 杀气爆发 / 刃群绞杀（循环颗粒）/ 噬灵鬼眼
   | 'blade_swing' | 'blade_hit' | 'blade_throw' | 'blade_recall' | 'blade_morph' | 'blade_dash' | 'blade_impale'
+  | 'blade_swarm' | 'blade_eye'
   | 'hit' | 'hit_crit' | 'hit_shield' | 'hit_armor' | 'kill' | 'explosion'
   | 'player_hurt' | 'shield_break' | 'shield_recharge' | 'low_hp'
   | 'jump' | 'land' | 'dash' | 'footstep'
@@ -1019,6 +1017,8 @@ export type SfxId =
   | 'boss_roar' | 'boss_slam' | 'telegraph'
   | 'skill_fire' | 'skill_shock' | 'skill_earth' | 'skill_buff' | 'skill_throw'
   | 'burn_tick' | 'shock_zap' | 'corrode_tick'
+  // 邪飞天的琵琶：轮指（按旋律变调）/ 莲花和弦 / 天女散花 / 飞天赐福 / 断弦 / 琵琶被打中
+  | 'pipa_roll' | 'pipa_chord' | 'pipa_bloom' | 'pipa_bless' | 'pipa_snap' | 'pipa_hit'
   | 'ui_click' | 'ui_hover' | 'ui_confirm' | 'ui_deny'
   | 'wave_start' | 'stage_clear' | 'victory' | 'defeat';
 

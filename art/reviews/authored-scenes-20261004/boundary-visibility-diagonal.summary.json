@@ -1,0 +1,3229 @@
+{
+ "created": "2026-10-04T14:09:34.044Z",
+ "method": {
+  "heightM": 1.2,
+  "insetInsideFloorM": 0.4,
+  "maxRayM": 8,
+  "extendedDiagnosticMaxRayM": 20,
+  "maxSampleSpacingM": 2,
+  "lod": 1,
+  "geometry": "Actual decoded published Draco LOD1; production architectureMatrix using actual all-LOD bounds; double-sided visibility.",
+  "nearbyPrefilter": "World transformed actual mesh bounding box intersects ray within 20 m before triangles.",
+  "riskThreshold": "A hit more than 2.4 m from start is >2 m behind collision boundary; report as setback.",
+  "limitations": [
+   "Single outward horizontal ray per sample; missing at 1.2 m signals collision readability risk, not proof the area is visually open at every height or angle.",
+   "Gate openings, deliberate vistas, roofs and low props can count as missing although a different view may communicate the boundary.",
+   "Only layout.placements art meshes are audited; decks, technical backing/closure surfaces, ground, lighting and particles are excluded.",
+   "Collision and floor polygons are unchanged; this does not prove reachable out-of-bounds or navigation defects.",
+   "Short raster step edges receive one midpoint each; use lengthWeighted for map comparisons rather than unweighted sample percentages."
+  ],
+  "sourceSha256": {
+   "src/world/WhiteboxPlans.ts": "bef3fd2afe2df684747e5f7d539ca50a2745102ee5bb600e30b60aeff34e2d86",
+   "src/world/WhiteboxGen.ts": "4617c6f166af624f8a76102fba6f7f09ea647a292152fe7b0e26d54106e32f7f",
+   "src/world/AuthoredSceneLayout.ts": "2410e960785684c8bc260a3eb26361d73eb96eb79c94345d3b70366b39064831",
+   "src/world/SceneArchitecture.ts": "2df20dc7b992e2c6d894b1ec13e9346052a7c5e40329cd57e0d31591eceef11b"
+  },
+  "assetSha256": {
+   "SM_Env_DesertWall": "55cb93d052b694b5416452187a4dfb2ee40537e1e069f5586bcda7d2ee6b3b47",
+   "SM_Env_DesertCliff": "754f3b25f54bf87e5e94b3b1acaa33e826026f45f237200d1e34564e7abc38d9",
+   "SM_Env_DesertSandstone": "a3c6ee73e246d78e406a0cbe68cb13380f8180399f5756772ae6bda7dea5c902",
+   "SM_Env_DesertGate": "3f61c8a23acc8fe8349470f91e915770cda543eaad3e7902fda2c92563e87eb9",
+   "SM_Env_DesertRuin": "4b6b534ce41c3ec4fc56e46eb72e1bba2f7ecb2a106b94f6c5e6314f3cbf82f1",
+   "SM_Env_FrostCliff": "71700290ecc98974159c7c1da7335020abf3e82c2ea8f74fd08a088a3af23063",
+   "SM_Env_FrostWall": "f194c302a244dd1e0038ba98bb8c1d86ad9696d809c8fd61e9ac39e9b00b146c",
+   "SM_Env_InfernoBasalt": "1a622c0e52280756062c910a7cf383ebba0b9b078fae76700780e0295b4deece",
+   "SM_Env_FrostWayshrine": "09dff3832ad658ee1d685baefe67b5b0c08c6e785603af14258ead091736f9fd",
+   "SM_Env_FrostGate": "9aa58972578757cc9173ea77ad8162ddc08534991a4fb42ab683d9fc6b3e6495",
+   "SM_Env_InfernoWall": "1b593713252527ad13d85a377fbbb904ccaa3c4d1fdfe0004d60544d4c973ce5",
+   "SM_Env_InfernoCliff": "6bf0131a4fad2528345d6313f87e3d2334e6ae7956a21cf56486c26093b1e753",
+   "SM_Env_InfernoFoundry": "75e492529dee5c9681bcf55b626af3fccc6b0f6e95d3ffce8792cca27e157d67",
+   "SM_Env_InfernoGate": "4433acd5270b6432d86396b95a16732560c206a9c16185cc5b6d18cfdeade8da"
+  }
+ },
+ "maps": [
+  {
+   "planId": "desert-1",
+   "title": "风口裂隘",
+   "placements": 192,
+   "boundaries": 432,
+   "samples": 552,
+   "counts": {
+    "near": 464,
+    "setback": 80,
+    "beyond8": 4,
+    "missing20": 4
+   },
+   "noHitWithin8Fraction": 0.014492753623188406,
+   "triangleCandidateCount": 1936,
+   "lengthWeighted": {
+    "estimatedBoundaryMetres": 570.9999999999997,
+    "metresByStatus": {
+     "near": 510.47499999999974,
+     "setback": 52.625,
+     "beyond8": 3,
+     "missing20": 4.9
+    },
+    "noHitWithin8Fraction": 0.013835376532399309,
+    "notes": "Each sample represents its segment length divided by sample count; midpoint quadrature, not continuous mesh coverage."
+   },
+   "risks": [
+    {
+     "boundaryId": "z:182:1:56",
+     "length": 19,
+     "samples": 10,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 9,
+     "worstDistance": 20,
+     "nearestRoom": "东北石门"
+    },
+    {
+     "boundaryId": "z:90:-1:90",
+     "length": 3,
+     "samples": 2,
+     "noHitWithin8": 1,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 11.089597194502838,
+     "nearestRoom": "脊后补给径"
+    },
+    {
+     "boundaryId": "z:89:1:93",
+     "length": 1.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "折返峡口"
+    },
+    {
+     "boundaryId": "z:58:1:118",
+     "length": 1,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "折返峡口"
+    },
+    {
+     "boundaryId": "z:184:-1:57",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 8.131678177338536,
+     "nearestRoom": "东北石门"
+    },
+    {
+     "boundaryId": "z:60:-1:124",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 11.609163385518023,
+     "nearestRoom": "折返峡口"
+    },
+    {
+     "boundaryId": "z:167:1:85",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 8.634004573687918,
+     "nearestRoom": "弩手沙盆"
+    },
+    {
+     "boundaryId": "z:88:1:92",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "折返峡口"
+    },
+    {
+     "boundaryId": "z:139:1:50",
+     "length": 6.5,
+     "samples": 4,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 3,
+     "worstDistance": 3.575862777398239,
+     "nearestRoom": "弩手沙盆"
+    },
+    {
+     "boundaryId": "x:64:-1:123",
+     "length": 3,
+     "samples": 2,
+     "noHitWithin8": 0,
+     "setback": 2,
+     "near": 0,
+     "worstDistance": 2.9466521888546477,
+     "nearestRoom": "弩手沙盆"
+    },
+    {
+     "boundaryId": "x:67:1:65",
+     "length": 2,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 6.835915735166033,
+     "nearestRoom": "脊后补给径"
+    },
+    {
+     "boundaryId": "x:95:-1:65",
+     "length": 2,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.1882151317393976,
+     "nearestRoom": "折返峡口"
+    },
+    {
+     "boundaryId": "x:128:1:69",
+     "length": 2,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.868083086361615,
+     "nearestRoom": "折返峡口"
+    },
+    {
+     "boundaryId": "z:181:-1:39",
+     "length": 1.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.81517692400152,
+     "nearestRoom": "东北石门"
+    },
+    {
+     "boundaryId": "x:170:1:34",
+     "length": 1.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.4035362177288917,
+     "nearestRoom": "避风入口"
+    },
+    {
+     "boundaryId": "z:100:1:61",
+     "length": 1,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 5.935795803322084,
+     "nearestRoom": "脊后补给径"
+    },
+    {
+     "boundaryId": "z:102:1:58",
+     "length": 1,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 6.4405245131766105,
+     "nearestRoom": "脊后补给径"
+    },
+    {
+     "boundaryId": "z:59:-1:118",
+     "length": 1,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 7.1362361915316725,
+     "nearestRoom": "折返峡口"
+    },
+    {
+     "boundaryId": "z:93:1:119",
+     "length": 1,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.8129569006273236,
+     "nearestRoom": "折返峡口"
+    },
+    {
+     "boundaryId": "z:92:-1:28",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.8084517106410107,
+     "nearestRoom": "脊后补给径"
+    },
+    {
+     "boundaryId": "z:94:1:118",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.007780570078962,
+     "nearestRoom": "折返峡口"
+    },
+    {
+     "boundaryId": "z:88:-1:29",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.721898852691819,
+     "nearestRoom": "脊后补给径"
+    },
+    {
+     "boundaryId": "x:29:-1:184",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.6194408038426715,
+     "nearestRoom": "东北石门"
+    },
+    {
+     "boundaryId": "z:83:-1:30",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.450130282983533,
+     "nearestRoom": "脊后补给径"
+    },
+    {
+     "boundaryId": "z:79:-1:31",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.2137641307713167,
+     "nearestRoom": "脊后补给径"
+    },
+    {
+     "boundaryId": "z:79:-1:130",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.4240226475493323,
+     "nearestRoom": "折返峡口"
+    },
+    {
+     "boundaryId": "z:75:-1:32",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.4515741230822066,
+     "nearestRoom": "脊后补给径"
+    },
+    {
+     "boundaryId": "x:32:-1:183",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.4462749721845327,
+     "nearestRoom": "东北石门"
+    },
+    {
+     "boundaryId": "z:183:-1:56",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 7.632608735878289,
+     "nearestRoom": "东北石门"
+    },
+    {
+     "boundaryId": "z:71:-1:33",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 4.846161932058358,
+     "nearestRoom": "脊后补给径"
+    },
+    {
+     "boundaryId": "z:66:-1:34",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.8802739758660785,
+     "nearestRoom": "脊后补给径"
+    },
+    {
+     "boundaryId": "z:66:-1:126",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.4398060526055048,
+     "nearestRoom": "折返峡口"
+    },
+    {
+     "boundaryId": "x:35:-1:182",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.6857383778388915,
+     "nearestRoom": "东北石门"
+    },
+    {
+     "boundaryId": "z:101:1:60",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 6.303932402627784,
+     "nearestRoom": "脊后补给径"
+    },
+    {
+     "boundaryId": "x:39:-1:181",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.191082975044413,
+     "nearestRoom": "东北石门"
+    },
+    {
+     "boundaryId": "x:58:1:102",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.507016773110262,
+     "nearestRoom": "脊后补给径"
+    },
+    {
+     "boundaryId": "x:60:1:101",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.4654399921393484,
+     "nearestRoom": "脊后补给径"
+    },
+    {
+     "boundaryId": "x:61:1:100",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.6713440332848393,
+     "nearestRoom": "脊后补给径"
+    },
+    {
+     "boundaryId": "z:140:-1:62",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 6.092055306353178,
+     "nearestRoom": "弩手沙盆"
+    },
+    {
+     "boundaryId": "z:223:1:63",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.8789135326619686,
+     "nearestRoom": "东北石门"
+    },
+    {
+     "boundaryId": "z:220:1:64",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.84018474956779,
+     "nearestRoom": "东北石门"
+    },
+    {
+     "boundaryId": "z:114:-1:65",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.8240829691381832,
+     "nearestRoom": "脊后补给径"
+    },
+    {
+     "boundaryId": "z:217:1:65",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.934820577896147,
+     "nearestRoom": "东北石门"
+    },
+    {
+     "boundaryId": "z:65:-1:66",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.674736932580558,
+     "nearestRoom": "脊后补给径"
+    },
+    {
+     "boundaryId": "z:214:1:66",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.691838237355533,
+     "nearestRoom": "东北石门"
+    },
+    {
+     "boundaryId": "z:69:-1:127",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.671424539727237,
+     "nearestRoom": "折返峡口"
+    },
+    {
+     "boundaryId": "z:207:1:68",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.9108967773876273,
+     "nearestRoom": "东北石门"
+    },
+    {
+     "boundaryId": "z:81:-1:69",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 6.7498100556499665,
+     "nearestRoom": "脊后补给径"
+    },
+    {
+     "boundaryId": "z:152:1:116",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.0251677193039495,
+     "nearestRoom": "弩手沙盆"
+    },
+    {
+     "boundaryId": "z:204:1:69",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.9847868676477702,
+     "nearestRoom": "东北石门"
+    },
+    {
+     "boundaryId": "z:86:-1:70",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.6737589684781753,
+     "nearestRoom": "脊后补给径"
+    },
+    {
+     "boundaryId": "z:201:1:70",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.6784597688331786,
+     "nearestRoom": "东北石门"
+    },
+    {
+     "boundaryId": "z:91:-1:71",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.8799568632413237,
+     "nearestRoom": "脊后补给径"
+    },
+    {
+     "boundaryId": "x:73:-1:108",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.463848539518807,
+     "nearestRoom": "脊后补给径"
+    },
+    {
+     "boundaryId": "x:78:-1:107",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 4.181574312939219,
+     "nearestRoom": "脊后补给径"
+    },
+    {
+     "boundaryId": "z:163:1:79",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.868913421512982,
+     "nearestRoom": "弩手沙盆"
+    },
+    {
+     "boundaryId": "x:82:-1:106",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.5312382728415166,
+     "nearestRoom": "弩手沙盆"
+    },
+    {
+     "boundaryId": "x:83:-1:166",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 6.797502341138358,
+     "nearestRoom": "弩手沙盆"
+    },
+    {
+     "boundaryId": "x:84:-1:167",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 7.304009786426443,
+     "nearestRoom": "弩手沙盆"
+    },
+    {
+     "boundaryId": "x:85:1:167",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 7.096566948889677,
+     "nearestRoom": "弩手沙盆"
+    },
+    {
+     "boundaryId": "z:85:-1:92",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.441723552896679,
+     "nearestRoom": "折返峡口"
+    },
+    {
+     "boundaryId": "x:93:-1:88",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.6435231011418607,
+     "nearestRoom": "折返峡口"
+    },
+    {
+     "boundaryId": "x:96:-1:89",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 4.560196627134166,
+     "nearestRoom": "折返峡口"
+    },
+    {
+     "boundaryId": "x:99:1:162",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.020065905821863,
+     "nearestRoom": "弩手沙盆"
+    },
+    {
+     "boundaryId": "x:101:1:161",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.199307174637893,
+     "nearestRoom": "弩手沙盆"
+    },
+    {
+     "boundaryId": "x:104:1:160",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.340955546928967,
+     "nearestRoom": "弩手沙盆"
+    },
+    {
+     "boundaryId": "x:107:1:159",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.029892431858345,
+     "nearestRoom": "弩手沙盆"
+    },
+    {
+     "boundaryId": "x:109:1:113",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.6249094336726486,
+     "nearestRoom": "弩手沙盆"
+    },
+    {
+     "boundaryId": "x:109:1:158",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.1117830191281595,
+     "nearestRoom": "弩手沙盆"
+    },
+    {
+     "boundaryId": "x:112:1:157",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.5802398147520957,
+     "nearestRoom": "弩手沙盆"
+    },
+    {
+     "boundaryId": "x:118:1:58",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 4.002606763838552,
+     "nearestRoom": "折返峡口"
+    },
+    {
+     "boundaryId": "x:119:1:93",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.763861275238842,
+     "nearestRoom": "折返峡口"
+    },
+    {
+     "boundaryId": "x:120:-1:58",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 7.7356458870464735,
+     "nearestRoom": "折返峡口"
+    },
+    {
+     "boundaryId": "z:92:1:121",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.47093896451584,
+     "nearestRoom": "折返峡口"
+    },
+    {
+     "boundaryId": "z:91:1:122",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.4094811162248426,
+     "nearestRoom": "折返峡口"
+    },
+    {
+     "boundaryId": "z:73:-1:128",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.288036065033438,
+     "nearestRoom": "折返峡口"
+    },
+    {
+     "boundaryId": "z:76:-1:129",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.128069835836449,
+     "nearestRoom": "折返峡口"
+    },
+    {
+     "boundaryId": "z:82:-1:131",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.7657746812392183,
+     "nearestRoom": "折返峡口"
+    },
+    {
+     "boundaryId": "x:157:1:50",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.6230854937885084,
+     "nearestRoom": "避风入口"
+    },
+    {
+     "boundaryId": "z:21:-1:165",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.140760112132412,
+     "nearestRoom": "避风入口"
+    },
+    {
+     "boundaryId": "z:24:-1:166",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.44627497218454,
+     "nearestRoom": "避风入口"
+    },
+    {
+     "boundaryId": "z:27:-1:167",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.685738377838881,
+     "nearestRoom": "避风入口"
+    },
+    {
+     "boundaryId": "z:31:-1:168",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.9800356500858243,
+     "nearestRoom": "避风入口"
+    },
+    {
+     "boundaryId": "z:34:-1:169",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.122792028045474,
+     "nearestRoom": "避风入口"
+    },
+    {
+     "boundaryId": "z:37:-1:170",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.670494032420372,
+     "nearestRoom": "避风入口"
+    },
+    {
+     "boundaryId": "z:40:-1:171",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.327929714278568,
+     "nearestRoom": "避风入口"
+    }
+   ]
+  },
+  {
+   "planId": "frost-3",
+   "title": "冻湖三栈",
+   "placements": 324,
+   "boundaries": 426,
+   "samples": 762,
+   "counts": {
+    "near": 662,
+    "setback": 66,
+    "beyond8": 7,
+    "missing20": 27
+   },
+   "noHitWithin8Fraction": 0.04461942257217848,
+   "triangleCandidateCount": 2354,
+   "lengthWeighted": {
+    "estimatedBoundaryMetres": 1019.9999999999997,
+    "metresByStatus": {
+     "near": 952.3916666666663,
+     "setback": 41.416666666666664,
+     "beyond8": 9.066666666666666,
+     "missing20": 17.125
+    },
+    "noHitWithin8Fraction": 0.025678104575163407,
+    "notes": "Each sample represents its segment length divided by sample count; midpoint quadrature, not continuous mesh coverage."
+   },
+   "risks": [
+    {
+     "boundaryId": "x:92:-1:60",
+     "length": 10,
+     "samples": 5,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 4,
+     "worstDistance": 10.983524935326917,
+     "nearestRoom": "中岸工坊"
+    },
+    {
+     "boundaryId": "x:134:1:34",
+     "length": 9.5,
+     "samples": 5,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 4,
+     "worstDistance": 8.316863754168311,
+     "nearestRoom": "中岸工坊"
+    },
+    {
+     "boundaryId": "x:134:1:65",
+     "length": 6.5,
+     "samples": 4,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 3,
+     "worstDistance": 20,
+     "nearestRoom": "中岸工坊"
+    },
+    {
+     "boundaryId": "x:92:-1:34",
+     "length": 6,
+     "samples": 3,
+     "noHitWithin8": 1,
+     "setback": 1,
+     "near": 1,
+     "worstDistance": 20,
+     "nearestRoom": "中岸工坊"
+    },
+    {
+     "boundaryId": "x:66:1:34",
+     "length": 5,
+     "samples": 3,
+     "noHitWithin8": 1,
+     "setback": 1,
+     "near": 1,
+     "worstDistance": 12.658944995028296,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "x:82:-1:215",
+     "length": 1.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 8.209117128912464,
+     "nearestRoom": "中栈修船台"
+    },
+    {
+     "boundaryId": "x:77:1:212",
+     "length": 1,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "中栈修船台"
+    },
+    {
+     "boundaryId": "x:79:1:215",
+     "length": 1,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "中栈修船台"
+    },
+    {
+     "boundaryId": "x:83:-1:213",
+     "length": 1,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 9.811026077866678,
+     "nearestRoom": "中栈修船台"
+    },
+    {
+     "boundaryId": "z:121:1:41",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "北栈检修站"
+    },
+    {
+     "boundaryId": "z:126:-1:41",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "北栈检修站"
+    },
+    {
+     "boundaryId": "z:119:1:42",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "北栈检修站"
+    },
+    {
+     "boundaryId": "z:130:-1:42",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "北栈检修站"
+    },
+    {
+     "boundaryId": "x:67:-1:43",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "x:68:-1:42",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "x:72:1:54",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "x:74:1:53",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "x:75:1:52",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "x:76:1:51",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "x:78:1:214",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "中栈修船台"
+    },
+    {
+     "boundaryId": "x:77:-1:51",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "x:79:-1:52",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "x:80:-1:53",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "x:82:-1:54",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "x:88:1:44",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "中岸工坊"
+    },
+    {
+     "boundaryId": "x:90:1:45",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "中岸工坊"
+    },
+    {
+     "boundaryId": "z:216:1:185",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "尽头物资棚"
+    },
+    {
+     "boundaryId": "z:91:1:117",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 15.639324451605734,
+     "nearestRoom": "中岸工坊"
+    },
+    {
+     "boundaryId": "z:98:-1:117",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "中岸工坊"
+    },
+    {
+     "boundaryId": "z:93:1:118",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 14.27348311437463,
+     "nearestRoom": "中岸工坊"
+    },
+    {
+     "boundaryId": "z:96:-1:118",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "中岸工坊"
+    },
+    {
+     "boundaryId": "z:79:-1:125",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "中岸工坊"
+    },
+    {
+     "boundaryId": "x:136:-1:65",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "中岸工坊"
+    },
+    {
+     "boundaryId": "x:140:-1:66",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "中岸工坊"
+    },
+    {
+     "boundaryId": "x:142:1:173",
+     "length": 2.5,
+     "samples": 2,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 1,
+     "worstDistance": 2.9746214645195774,
+     "nearestRoom": "中栈修船台"
+    },
+    {
+     "boundaryId": "x:45:1:136",
+     "length": 2,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 4.2837901811282535,
+     "nearestRoom": "北栈检修站"
+    },
+    {
+     "boundaryId": "x:190:1:184",
+     "length": 1.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.6833439457603134,
+     "nearestRoom": "南栈炮位"
+    },
+    {
+     "boundaryId": "z:57:1:68",
+     "length": 1,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.4752470024302724,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "z:54:1:72",
+     "length": 1,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.7790337394788835,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "z:52:1:77",
+     "length": 1,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.434956817559055,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "z:218:-1:80",
+     "length": 1,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.4527011870544655,
+     "nearestRoom": "中栈修船台"
+    },
+    {
+     "boundaryId": "z:45:-1:88",
+     "length": 1,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.4935489894820435,
+     "nearestRoom": "中岸工坊"
+    },
+    {
+     "boundaryId": "z:125:1:28",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.805682544087632,
+     "nearestRoom": "北栈检修站"
+    },
+    {
+     "boundaryId": "z:128:1:29",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.607688954966468,
+     "nearestRoom": "北栈检修站"
+    },
+    {
+     "boundaryId": "z:131:1:30",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.2648234953327706,
+     "nearestRoom": "北栈检修站"
+    },
+    {
+     "boundaryId": "z:135:1:31",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.615256285437254,
+     "nearestRoom": "北栈检修站"
+    },
+    {
+     "boundaryId": "z:103:-1:37",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.8203115879656444,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "z:101:-1:115",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.4345721525988893,
+     "nearestRoom": "中岸工坊"
+    },
+    {
+     "boundaryId": "z:117:1:43",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.683316220704919,
+     "nearestRoom": "北栈检修站"
+    },
+    {
+     "boundaryId": "z:136:-1:44",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.755813948330674,
+     "nearestRoom": "北栈检修站"
+    },
+    {
+     "boundaryId": "z:113:1:45",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.7697886807309633,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "z:140:-1:45",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.88491671174795,
+     "nearestRoom": "北栈检修站"
+    },
+    {
+     "boundaryId": "z:207:1:187",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.7448648480424396,
+     "nearestRoom": "尽头物资棚"
+    },
+    {
+     "boundaryId": "z:211:1:186",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.0574114017525105,
+     "nearestRoom": "尽头物资棚"
+    },
+    {
+     "boundaryId": "x:67:1:58",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.6157765736758023,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "z:43:-1:67",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.054640979173442,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "x:68:1:57",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.709527964766874,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "z:42:-1:68",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.6964027797059913,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "z:217:1:91",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.2318255593748475,
+     "nearestRoom": "中栈修船台"
+    },
+    {
+     "boundaryId": "x:70:1:56",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.5824716592736756,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "z:56:1:70",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.5266670288234963,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "z:55:1:71",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.7276137130856526,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "x:72:-1:39",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.6881464369635317,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "z:207:-1:72",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.5062789980146967,
+     "nearestRoom": "北栈检修站"
+    },
+    {
+     "boundaryId": "z:222:1:72",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.411526871227366,
+     "nearestRoom": "中栈修船台"
+    },
+    {
+     "boundaryId": "z:222:1:89",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.607983532235181,
+     "nearestRoom": "中栈修船台"
+    },
+    {
+     "boundaryId": "z:208:-1:85",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.4245484705195217,
+     "nearestRoom": "中栈修船台"
+    },
+    {
+     "boundaryId": "x:74:-1:38",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.6932812519019684,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "x:75:1:210",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.8122310533219235,
+     "nearestRoom": "中栈修船台"
+    },
+    {
+     "boundaryId": "z:210:-1:74",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.9364480711890195,
+     "nearestRoom": "中栈修船台"
+    },
+    {
+     "boundaryId": "z:210:-1:84",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.5876128469021324,
+     "nearestRoom": "中栈修船台"
+    },
+    {
+     "boundaryId": "z:210:-1:177",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.6932507086711297,
+     "nearestRoom": "尽头物资棚"
+    },
+    {
+     "boundaryId": "z:225:1:74",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.4691268716650043,
+     "nearestRoom": "中栈修船台"
+    },
+    {
+     "boundaryId": "x:76:1:211",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.614849074906953,
+     "nearestRoom": "中栈修船台"
+    },
+    {
+     "boundaryId": "z:211:-1:75",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.901835893928194,
+     "nearestRoom": "中栈修船台"
+    },
+    {
+     "boundaryId": "z:51:1:76",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.7005342500421037,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "z:212:-1:76",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.867223716667354,
+     "nearestRoom": "中栈修船台"
+    },
+    {
+     "boundaryId": "x:78:1:38",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.5003487655943104,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "z:214:-1:77",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.0980047334392466,
+     "nearestRoom": "中栈修船台"
+    },
+    {
+     "boundaryId": "z:214:-1:176",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.9232449196305694,
+     "nearestRoom": "尽头物资棚"
+    },
+    {
+     "boundaryId": "z:215:-1:78",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.2994950532450176,
+     "nearestRoom": "中栈修船台"
+    },
+    {
+     "boundaryId": "z:215:-1:82",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.4138559344537924,
+     "nearestRoom": "中栈修船台"
+    },
+    {
+     "boundaryId": "x:80:1:217",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 6.612717619651804,
+     "nearestRoom": "中栈修船台"
+    },
+    {
+     "boundaryId": "z:217:-1:79",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.3970406714502346,
+     "nearestRoom": "中栈修船台"
+    },
+    {
+     "boundaryId": "x:82:1:40",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.1624228706572364,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "x:83:1:41",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 4.158768302052385,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "z:213:-1:83",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.2506772232847325,
+     "nearestRoom": "中栈修船台"
+    },
+    {
+     "boundaryId": "x:85:1:42",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.158690356823463,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "x:84:-1:55",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 4.319457312239438,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "x:85:-1:56",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.2184051290765527,
+     "nearestRoom": "北岸绞盘院"
+    },
+    {
+     "boundaryId": "z:206:-1:178",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.139324451605731,
+     "nearestRoom": "尽头物资棚"
+    },
+    {
+     "boundaryId": "z:203:-1:87",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.014727890753427,
+     "nearestRoom": "中栈修船台"
+    },
+    {
+     "boundaryId": "z:219:1:90",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.1669663152367633,
+     "nearestRoom": "中栈修船台"
+    },
+    {
+     "boundaryId": "z:94:-1:131",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.690944821595547,
+     "nearestRoom": "中岸工坊"
+    },
+    {
+     "boundaryId": "x:137:1:53",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.7727545869965056,
+     "nearestRoom": "中岸工坊"
+    },
+    {
+     "boundaryId": "x:142:1:54",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 4.350310817204969,
+     "nearestRoom": "中岸工坊"
+    },
+    {
+     "boundaryId": "x:145:-1:67",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 4.958577169163139,
+     "nearestRoom": "中岸工坊"
+    },
+    {
+     "boundaryId": "z:202:1:188",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 4.261963755499224,
+     "nearestRoom": "尽头物资棚"
+    }
+   ]
+  },
+  {
+   "planId": "inferno-3",
+   "title": "断裂输渣线",
+   "placements": 355,
+   "boundaries": 570,
+   "samples": 801,
+   "counts": {
+    "near": 675,
+    "setback": 104,
+    "beyond8": 16,
+    "missing20": 6
+   },
+   "noHitWithin8Fraction": 0.02746566791510612,
+   "triangleCandidateCount": 2641,
+   "lengthWeighted": {
+    "estimatedBoundaryMetres": 907.000000000001,
+    "metresByStatus": {
+     "near": 835.0833333333344,
+     "setback": 56.66666666666667,
+     "beyond8": 11.25,
+     "missing20": 4
+    },
+    "noHitWithin8Fraction": 0.016813671444321922,
+    "notes": "Each sample represents its segment length divided by sample count; midpoint quadrature, not continuous mesh coverage."
+   },
+   "risks": [
+    {
+     "boundaryId": "x:65:1:72",
+     "length": 36,
+     "samples": 18,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 17,
+     "worstDistance": 10.191995217893023,
+     "nearestRoom": "北岸检修场"
+    },
+    {
+     "boundaryId": "z:74:1:50",
+     "length": 2.5,
+     "samples": 2,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 1,
+     "worstDistance": 8.983246417184034,
+     "nearestRoom": "北岸检修场"
+    },
+    {
+     "boundaryId": "x:154:1:195",
+     "length": 1.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 10.765076236285458,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:199:-1:88",
+     "length": 1,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:221:1:94",
+     "length": 1,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:172:-1:61",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "x:50:1:74",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 17.69243950307332,
+     "nearestRoom": "北岸检修场"
+    },
+    {
+     "boundaryId": "z:143:-1:54",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 8.96176732263454,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "z:166:1:61",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "x:68:-1:72",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 16.883034999845755,
+     "nearestRoom": "北岸检修场"
+    },
+    {
+     "boundaryId": "x:73:-1:73",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 18.970722523707458,
+     "nearestRoom": "北岸检修场"
+    },
+    {
+     "boundaryId": "x:75:1:222",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 11.567695501248224,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "x:77:-1:74",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "北岸检修场"
+    },
+    {
+     "boundaryId": "x:82:-1:75",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 16.57014563159953,
+     "nearestRoom": "北岸检修场"
+    },
+    {
+     "boundaryId": "x:136:-1:31",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 15.93361558195006,
+     "nearestRoom": "西岸转运站"
+    },
+    {
+     "boundaryId": "x:137:1:245",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 9.820156905708275,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:152:1:139",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 20,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "x:142:-1:190",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 10.138618640769812,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:106:-1:154",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 14.157227292137042,
+     "nearestRoom": "西岸转运站"
+    },
+    {
+     "boundaryId": "x:159:1:234",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 15.93713678047879,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:39:1:185",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 12.365385194280499,
+     "nearestRoom": "西岸转运站"
+    },
+    {
+     "boundaryId": "z:194:1:255",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 1,
+     "setback": 0,
+     "near": 0,
+     "worstDistance": 8.982151031696922,
+     "nearestRoom": "出渣闸祭坛"
+    },
+    {
+     "boundaryId": "x:55:-1:74",
+     "length": 34.5,
+     "samples": 18,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 17,
+     "worstDistance": 3.0715014875006332,
+     "nearestRoom": "北岸检修场"
+    },
+    {
+     "boundaryId": "x:74:1:204",
+     "length": 3,
+     "samples": 2,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 1,
+     "worstDistance": 2.7013058489753305,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "x:39:-1:68",
+     "length": 2.5,
+     "samples": 2,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 1,
+     "worstDistance": 2.6873066351844628,
+     "nearestRoom": "北岸检修场"
+    },
+    {
+     "boundaryId": "x:158:1:235",
+     "length": 2,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.6782825350366632,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:190:-1:24",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.119335053547381,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "z:187:-1:25",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.6683589784044734,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "z:184:-1:26",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.0475607482552576,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "z:184:-1:67",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.754062862633038,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "z:180:-1:27",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.9677501743610364,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "z:180:-1:65",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.8639284181078786,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "z:218:1:27",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.125487573430192,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "z:218:1:97",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.4831733522016535,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:177:-1:28",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 4.256374943721102,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "z:177:-1:64",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.4793903930721974,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "z:174:-1:29",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 4.027441178128791,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "z:40:-1:34",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.9452309740790668,
+     "nearestRoom": "北岸检修场"
+    },
+    {
+     "boundaryId": "z:45:1:34",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 6.791409991883562,
+     "nearestRoom": "北岸检修场"
+    },
+    {
+     "boundaryId": "z:37:-1:35",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 4.040571258024933,
+     "nearestRoom": "北岸检修场"
+    },
+    {
+     "boundaryId": "z:51:1:35",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 4.3250817451943036,
+     "nearestRoom": "北岸检修场"
+    },
+    {
+     "boundaryId": "x:36:-1:225",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.8330185934386662,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "z:56:1:36",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 5.924168768711326,
+     "nearestRoom": "北岸检修场"
+    },
+    {
+     "boundaryId": "z:31:-1:37",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.7025519662850783,
+     "nearestRoom": "北岸检修场"
+    },
+    {
+     "boundaryId": "z:31:-1:136",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.4879293080269207,
+     "nearestRoom": "西岸转运站"
+    },
+    {
+     "boundaryId": "z:62:1:37",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 7.156242006940154,
+     "nearestRoom": "北岸检修场"
+    },
+    {
+     "boundaryId": "z:28:-1:38",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.6377133526622316,
+     "nearestRoom": "北岸检修场"
+    },
+    {
+     "boundaryId": "x:38:-1:226",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.9652264311408274,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "z:68:1:38",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 4.776858394077571,
+     "nearestRoom": "北岸检修场"
+    },
+    {
+     "boundaryId": "z:73:1:39",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.900310050898632,
+     "nearestRoom": "北岸检修场"
+    },
+    {
+     "boundaryId": "x:40:-1:227",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.0972525456195115,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "x:42:-1:228",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.9989961424689113,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "x:44:-1:229",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.9310008874560793,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "x:47:-1:230",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.226303178845235,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "x:49:-1:231",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.8530572367824405,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "x:51:1:231",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.9468070721707136,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "x:54:1:230",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.887114501020271,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "z:143:-1:133",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.663260705842018,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "x:57:1:229",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.430475429444691,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "x:59:1:228",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.8366647649358825,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "x:62:1:227",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.574890092490648,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "z:173:-1:62",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 4.072776213849952,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "x:64:1:226",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.9186771090553236,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "z:182:-1:66",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.490468361008709,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "x:67:1:225",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.581129713274862,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "x:70:1:224",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.6495030007538816,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "z:191:-1:70",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.767378369536676,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "z:193:-1:71",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.499681999899792,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "z:197:-1:72",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.2374593966951046,
+     "nearestRoom": "北桥落脚坪"
+    },
+    {
+     "boundaryId": "z:204:-1:156",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.9539756928666385,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:202:-1:86",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.4831733522016393,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:198:-1:154",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 4.0278463599390655,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:194:-1:113",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.719693662607291,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:235:1:113",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.6612883422613507,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:235:1:158",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 4.514908787768135,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:52:1:137",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.564987045585511,
+     "nearestRoom": "西岸转运站"
+    },
+    {
+     "boundaryId": "z:239:1:157",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.276597876991289,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "x:119:-1:240",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.50046083540337,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "x:121:-1:241",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.843390436334536,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "x:123:-1:242",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.190225993322967,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "x:125:-1:243",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.5424321856595977,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "x:127:-1:244",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.228609396884929,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:150:-1:129",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.121362407130553,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "x:129:-1:245",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.897768983343588,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:148:-1:130",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.5688641961243213,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:146:-1:131",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.7720996635329875,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:141:-1:134",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.4452300069962734,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "x:140:1:151",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.802504517159394,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:149:1:141",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.3948735154413505,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:120:-1:146",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.05490106182887,
+     "nearestRoom": "西岸转运站"
+    },
+    {
+     "boundaryId": "z:118:-1:147",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.597879858829989,
+     "nearestRoom": "西岸转运站"
+    },
+    {
+     "boundaryId": "z:138:1:147",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.5424936290315143,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:116:-1:148",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.1754682358840345,
+     "nearestRoom": "西岸转运站"
+    },
+    {
+     "boundaryId": "z:114:-1:149",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.8326850454532,
+     "nearestRoom": "西岸转运站"
+    },
+    {
+     "boundaryId": "x:150:1:244",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 4.235426045117947,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:135:1:149",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.5023163512781834,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:113:-1:150",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.992862720846306,
+     "nearestRoom": "西岸转运站"
+    },
+    {
+     "boundaryId": "z:133:1:150",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.6577686584128353,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:131:1:151",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.003756936000708,
+     "nearestRoom": "西岸转运站"
+    },
+    {
+     "boundaryId": "z:109:-1:152",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.3948735154413523,
+     "nearestRoom": "西岸转运站"
+    },
+    {
+     "boundaryId": "z:129:1:152",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.8756196473646076,
+     "nearestRoom": "西岸转运站"
+    },
+    {
+     "boundaryId": "x:154:1:67",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 6.233750622583441,
+     "nearestRoom": "西岸转运站"
+    },
+    {
+     "boundaryId": "z:128:1:153",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.497336085899616,
+     "nearestRoom": "西岸转运站"
+    },
+    {
+     "boundaryId": "z:195:-1:153",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.111992679332811,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:126:1:154",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.4694877922357694,
+     "nearestRoom": "西岸转运站"
+    },
+    {
+     "boundaryId": "z:201:-1:155",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 4.951159713725289,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:122:1:156",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.000192713330594,
+     "nearestRoom": "西岸转运站"
+    },
+    {
+     "boundaryId": "z:121:1:157",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.5245639709246,
+     "nearestRoom": "西岸转运站"
+    },
+    {
+     "boundaryId": "z:208:-1:157",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.5800184889873066,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:119:1:158",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.524239702506976,
+     "nearestRoom": "西岸转运站"
+    },
+    {
+     "boundaryId": "z:211:-1:158",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.6905750900458614,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:214:-1:159",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.219073824278688,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:115:1:160",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.0001927133305983,
+     "nearestRoom": "西岸转运站"
+    },
+    {
+     "boundaryId": "z:217:-1:160",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.1857362791607287,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "z:220:-1:161",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.9499177137895884,
+     "nearestRoom": "东岸接料坪"
+    },
+    {
+     "boundaryId": "x:180:1:64",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.5705508985828693,
+     "nearestRoom": "西岸转运站"
+    },
+    {
+     "boundaryId": "x:210:-1:174",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 3.3548910985882543,
+     "nearestRoom": "出渣闸祭坛"
+    },
+    {
+     "boundaryId": "x:214:-1:173",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 4.0579780939856676,
+     "nearestRoom": "出渣闸祭坛"
+    },
+    {
+     "boundaryId": "x:218:-1:172",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 4.819201449542788,
+     "nearestRoom": "出渣闸祭坛"
+    },
+    {
+     "boundaryId": "x:223:1:221",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 6.791409991883526,
+     "nearestRoom": "出渣闸祭坛"
+    },
+    {
+     "boundaryId": "x:224:-1:171",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 6.361716665134367,
+     "nearestRoom": "出渣闸祭坛"
+    },
+    {
+     "boundaryId": "x:229:1:220",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 4.3250817451943036,
+     "nearestRoom": "出渣闸祭坛"
+    },
+    {
+     "boundaryId": "x:234:1:219",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 5.924168768711283,
+     "nearestRoom": "出渣闸祭坛"
+    },
+    {
+     "boundaryId": "x:240:1:218",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 6.173275879296497,
+     "nearestRoom": "出渣闸祭坛"
+    },
+    {
+     "boundaryId": "x:246:1:217",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 4.0840595485528794,
+     "nearestRoom": "出渣闸祭坛"
+    },
+    {
+     "boundaryId": "z:183:-1:252",
+     "length": 0.5,
+     "samples": 1,
+     "noHitWithin8": 0,
+     "setback": 1,
+     "near": 0,
+     "worstDistance": 2.4874521473367253,
+     "nearestRoom": "出渣闸祭坛"
+    }
+   ]
+  }
+ ]
+}

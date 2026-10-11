@@ -1,0 +1,430 @@
+{
+  "id": "SM_Tripo_DesertCoverWall",
+  "display": "半掩体残墙（V2）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:15:13",
+          "files": {
+            "BO_SM_Tripo_DesertCoverWall_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertCoverWall_v001.json",
+              "sha256": "4c20fa28831840aefabaf41885982ecb6ab5ef12b7db9d4523819e3f5b6b7ea9"
+            },
+            "BO_SM_Tripo_DesertCoverWall_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertCoverWall_v001_views.json",
+              "sha256": "894f1fa9371f5174b9d2614b347b2f91762770a8b330f12b59e27e50c45cfc48"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.v2.coverwall"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -3.0,
+              0,
+              -0.6
+            ],
+            "max": [
+              3.0,
+              2.6,
+              0.6
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:15:43",
+          "files": {
+            "CN_SM_Tripo_DesertCoverWall_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCoverWall_v001_source.png",
+              "sha256": "ff3f5efa5a9163d651bfdfe1f4e2042ddcb8452c4873c0ede7f2ea7ee9af2c44"
+            },
+            "CN_SM_Tripo_DesertCoverWall_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCoverWall_v001_front.png",
+              "sha256": "76da384cb0455e9349ce4e3b713152dfe316a3113462e3a803425b535503ea5f"
+            },
+            "CN_SM_Tripo_DesertCoverWall_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCoverWall_v001_left.png",
+              "sha256": "27676327abf3dfb58e437e816a7f1f58b88357cf7aa630faca4c7b4e55ddc4ce"
+            },
+            "CN_SM_Tripo_DesertCoverWall_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCoverWall_v001_back.png",
+              "sha256": "d4193aae684ba5dbdb62422d7c9db56b3c8198239bea7301490d6cbaec06d52c"
+            },
+            "CN_SM_Tripo_DesertCoverWall_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCoverWall_v001_right.png",
+              "sha256": "07abc1fc7cc78190aae0c3e3e94e8ec371d93439d033de0a0c9282cf2483bda6"
+            },
+            "CN_SM_Tripo_DesertCoverWall_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCoverWall_v001_sheet.png",
+              "sha256": "3db43e80766a4226db6108db7705e29f0fa6f2cf081819034ff8931113df9c22"
+            },
+            "CN_SM_Tripo_DesertCoverWall_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertCoverWall_v001_prompt.txt",
+              "sha256": "b4c612683231502205143c1d757d99844bb3dbc8057257796fbd90b1a2a7338b"
+            },
+            "CN_SM_Tripo_DesertCoverWall_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertCoverWall_v001_registration.json",
+              "sha256": "c0289a7d2a591253c2a98791063145c66ce75bcdf8954973af5b80abdaec13e2"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 307,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 307
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1487
+            },
+            "request_id": "req_0a79c1df85364f94a1dd7fd965e3abd8",
+            "seconds": 26.8
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian desert temple fantasy. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (6m wide x 2.6m tall x 1.2m deep): A ruined desert sandstone wall fragment 6m long, 2.6m tall, 1.2m deep with a stepped broken top edge, a faded terracotta plaster patch and one small muted teal painted motif. Solid connected masonry, chunky chipped corners, no openings.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right: FRONT view, LEFT side view, BACK view, RIGHT side view. Same scale and same\nground line in all four, each centred in its quarter with generous empty margin, never touching or overlapping.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "ff3f5efa5a9163d651bfdfe1f4e2042ddcb8452c4873c0ede7f2ea7ee9af2c44",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.5226787284834777,
+              "offset": [
+                68,
+                413
+              ],
+              "size": [
+                375,
+                198
+              ],
+              "physical_height_m": 2.6,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5296664120193532,
+              "offset": [
+                221,
+                413
+              ],
+              "size": [
+                70,
+                198
+              ],
+              "physical_height_m": 2.6,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5254515599343185,
+              "offset": [
+                67,
+                413
+              ],
+              "size": [
+                378,
+                198
+              ],
+              "physical_height_m": 2.6,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.510554737358861,
+              "offset": [
+                216,
+                413
+              ],
+              "size": [
+                80,
+                198
+              ],
+              "physical_height_m": 2.6,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI初审)",
+            "note": "四视图同一物体、地线一致，砂岩/赤陶/青绿配色与 V2 沙寺统一",
+            "time": "2026-10-06 10:16:55"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:47:44",
+          "files": {
+            "HP_SM_Tripo_DesertCoverWall_v001_source.fbx": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertCoverWall_v001_source.fbx",
+              "sha256": "5a9950b35b5ca14398bc0da08d8590c17eb002bf6825126ed46804b614578300"
+            },
+            "HP_SM_Tripo_DesertCoverWall_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertCoverWall_v001.glb",
+              "sha256": "73ae61951cfac8db30436f702be60d44fe7781c280515210c0d5c422bbe3f56f"
+            },
+            "HP_SM_Tripo_DesertCoverWall_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertCoverWall_v001_graph.json",
+              "sha256": "e36651b4a7360625b8b70f72553148e814fb88ffaf760caa119d2945d7e096ad"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/stone-arch-gate-with-decorative-banners-sandstone-texture-sun-emblem-77bf8868-fac0-44d6-a6ad-6ba56143ab7f",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 2640,
+          "source_sha256": "5a9950b35b5ca14398bc0da08d8590c17eb002bf6825126ed46804b614578300"
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:47:55",
+          "files": {
+            "SM_Tripo_DesertCoverWall_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertCoverWall_v001.blend",
+              "sha256": "1580af411d92219f117df0b952b9bfb0fc9ad9df2199757d8c579021350da78f"
+            },
+            "SM_Tripo_DesertCoverWall_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertCoverWall_v001.glb",
+              "sha256": "6ca9ef1bc7105f9557a81227b4215ee69fb0647d9e08505923a680975d1f74df"
+            },
+            "SM_Tripo_DesertCoverWall_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertCoverWall_v001_metrics.json",
+              "sha256": "807c16f8fa6c51cc6e0c436a54332aefa5912959fa0314ae4e79da9966325f05"
+            },
+            "T_Tripo_DesertCoverWall_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertCoverWall_BC.png",
+              "sha256": "ce34606ad974def74638ab29412a6c57e410df79fb1dbcb18a2fb85f705a6e12"
+            },
+            "T_Tripo_DesertCoverWall_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertCoverWall_N.png",
+              "sha256": "d91f21f65956aca74a705fa22c33b2b59d966ec01380cd4960d601b08542851d"
+            },
+            "T_Tripo_DesertCoverWall_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertCoverWall_ORM.png",
+              "sha256": "65f3430ded2600cc4b8516299d2f518476d5ad52ef8e1690ef3b8a4479e86738"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.858,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2640,
+              "verts": 2143
+            },
+            {
+              "tris": 994,
+              "verts": 1147
+            }
+          ],
+          "export_kb": 189.9,
+          "seconds": 9.8,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:20:40",
+          "files": {
+            "SM_Tripo_DesertCoverWall_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertCoverWall_v002.blend",
+              "sha256": "cdb52b56fb06069e7a4bb980f9a14e30585cfe86c6f3fe3dee88fc6d99db5d62"
+            },
+            "SM_Tripo_DesertCoverWall_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertCoverWall_v002.glb",
+              "sha256": "140c593d2be34f151c478219a421ec62a1f7d40a2417c2cac12adccfce04e8f1"
+            },
+            "SM_Tripo_DesertCoverWall_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertCoverWall_v002_metrics.json",
+              "sha256": "e1f73dc60bb84ea98108ba6cb0fb0c7898adcfb313f45c24f764d9fccb215edb"
+            },
+            "T_Tripo_DesertCoverWall_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertCoverWall_BC.png",
+              "sha256": "ce34606ad974def74638ab29412a6c57e410df79fb1dbcb18a2fb85f705a6e12"
+            },
+            "T_Tripo_DesertCoverWall_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertCoverWall_N.png",
+              "sha256": "d91f21f65956aca74a705fa22c33b2b59d966ec01380cd4960d601b08542851d"
+            },
+            "T_Tripo_DesertCoverWall_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertCoverWall_ORM.png",
+              "sha256": "7eda0d332b86d864b9c335b8aa9a9a5526f562d467ca7b7a809c929056b86e1b"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.858,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2640,
+              "verts": 1560
+            },
+            {
+              "tris": 995,
+              "verts": 677
+            }
+          ],
+          "export_kb": 188.7,
+          "seconds": 10.4,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:47:55",
+          "files": {
+            "SM_Tripo_DesertCoverWall_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertCoverWall_v001_validation_v001.json",
+              "sha256": "3f1159002a8eb3d46e84ff3b1a9e08968aa3730bbbaa0d4cee01ccc8d1917f31"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:20:41",
+          "files": {
+            "SM_Tripo_DesertCoverWall_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertCoverWall_v002_validation_v002.json",
+              "sha256": "447974e6bac206cf25e59ee9ab69fc299d60ad56dda35749d7a6c4f50713f09b"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:48:03",
+          "files": {
+            "SM_Tripo_DesertCoverWall_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertCoverWall_v001_review_v001.png",
+              "sha256": "493e9686363dfeb9aa72f51b88f087b9c94b9d49cb38f172137e4a45f36fef8e"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI初审)",
+            "note": "IoU 0.86，断墙台阶顶与赤陶灰泥符合概念",
+            "time": "2026-10-06 10:48:35"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:20:49",
+          "files": {
+            "SM_Tripo_DesertCoverWall_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_DesertCoverWall_v002_review_v002.png",
+              "sha256": "8b239f26f24ad319f727fbdb021cd210b9b0a6b86eef076ab5e0807c2e3d3008"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI审核)",
+            "note": "LOD 裂缝修复重建：Tripo 源网格先焊接（1e-4）再减面并保留 UV 边界（bl_build_tripo.py）。五向审核图与上一版一致，贴图完整；焊接后 LOD1/LOD2 开放边长度回到 LOD0 水平。",
+            "time": "2026-10-06 21:24:06"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 10:48:36",
+          "files": {
+            "SM_Tripo_DesertCoverWall.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertCoverWall.glb",
+              "sha256": "6ca9ef1bc7105f9557a81227b4215ee69fb0647d9e08505923a680975d1f74df"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertCoverWall.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:24:07",
+          "files": {
+            "SM_Tripo_DesertCoverWall.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertCoverWall.glb",
+              "sha256": "140c593d2be34f151c478219a421ec62a1f7d40a2417c2cac12adccfce04e8f1"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_DesertCoverWall.glb"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,127 @@
+{
+  "provider": "tripo",
+  "status": "all_three_p2_meshes_generated_export_and_rig_pending",
+  "concept_approval_record": "art/pipeline/hero_limb_detail_approval_20261005.json",
+  "execution_channel": "studio_web_in_app_browser",
+  "pilot_hero": "fox",
+  "account_check": {
+    "api_authorized": true,
+    "api_region": "ov",
+    "api_balance_credits": 0,
+    "studio_balance_credits": 25200
+  },
+  "blocker": null,
+  "approved_concept_revision": "v003",
+  "source_date": "2026-10-05",
+  "generation_submitted": true,
+  "style": "Gunfire Reborn inspired stylized hand-painted game characters: chunky silhouette, clean faceted volumes, broad matte color blocks and restrained East Asian fantasy clothing. No realistic hair, microdetail, baked cast shadows or weapons fused to the body.",
+  "workflow": [
+    {
+      "step": "rig_ready_reference",
+      "provider": "built_in_imagegen",
+      "requires_approved_hero_concepts": true,
+      "params": {
+        "pose": "t_pose"
+      },
+      "prompt": "Convert the reference character to a front-facing neutral T-pose for 3D rigging. Preserve the same species, facial identity, proportions, clothing and broad matte color palette. Full body centered on a plain background. Both arms extend horizontally at shoulder height, clearly separated from the torso; straight elbows and wrists. Empty open hands with one thumb and four individually separated fingers, no gun or clenched fists. Legs slightly separated and feet forward. Keep the scarf and coat clear of the arms. Three fox tails stay behind the hips with distinct silhouettes. Stylized hand-painted game art matching Gunfire Reborn: chunky readable forms, clean faceted volumes, restrained East Asian fantasy costume. Avoid realistic fur, fine surface noise and baked cast shadows.",
+      "review": "Preserve hero identity and palette. Arms horizontal and clear of torso, shoulders/elbows/wrists readable, empty open hands with distinct thumb and four fingers, separated legs, scarf and coat clear of arms. Fox tails and falcon wings remain behind the body and do not touch the hands. Review this image before generating geometry."
+    },
+    {
+      "step": "model",
+      "endpoint": "https://studio.tripo3d.ai/zh/workspace/generate",
+      "params": {
+        "model": "P2.0",
+        "selection_source": "explicit_user_request",
+        "execution": "studio_web",
+        "quantity": 1,
+        "privacy": "private"
+      },
+      "review": "Inspect actual mesh from front, side and back. Reject fused hands, broken shoulder/wrist surfaces, missing digits or collapsed elbow geometry before rigging."
+    },
+    {
+      "step": "rig_check",
+      "endpoint": "/v3/animations/rig-check",
+      "stop_if_not_riggable": true
+    },
+    {
+      "step": "rig",
+      "endpoint": "/v3/animations/rig",
+      "params": {
+        "model": "v1.0-20240301",
+        "rig_type": "biped",
+        "spec": "mixamo",
+        "out_format": "glb"
+      }
+    },
+    {
+      "step": "local_review_and_runtime_adaptation",
+      "network_call": false,
+      "retain_provider_skinning": true,
+      "reuse_parts_rig_weights": false,
+      "review": "Inspect native skeleton, bind pose, skin weights and finger joints. Adapt animation to the supplied rest pose. Validate elbow flexion, wrist rotation, grip shape, shoulder deformation and existing tails/wings. Only publish after white-model visual review."
+    }
+  ],
+  "heroes": [
+    {
+      "hero": "fox",
+      "asset": "SK_Hero_Fox",
+      "height_m": 1.9,
+      "reference": "art/source/characters/SK_Hero_Fox/02_reference/CN_SK_Hero_Fox_v003_tpose_20261005.png",
+      "output_directory": "art/source/characters/SK_Hero_Fox/tripo_v001",
+      "identity": "female anthropomorphic red fox ranger, orange fur, cream muzzle, brown leather armor, vermilion scarf, indigo trousers, three separated orange tails with cream tips"
+    },
+    {
+      "hero": "falcon",
+      "asset": "SK_Hero_Falcon",
+      "height_m": 1.85,
+      "reference": "art/source/characters/SK_Hero_Falcon/02_reference/CN_SK_Hero_Falcon_v003_tpose_20261005.png",
+      "output_directory": "art/source/characters/SK_Hero_Falcon/tripo_v001",
+      "identity": "anthropomorphic falcon hunter, navy head, golden beak, indigo coat, ivory chest plumage, muted gold accents, folded navy and ivory wings on the back; humanoid arms separate from wings",
+      "url": "https://studio.tripo3d.ai/zh/workspace/generate/62187cb1-9791-4097-adfa-a814768a5b80",
+      "vertices": 5372,
+      "status": "mesh_generated",
+      "task_id": "62187cb1-9791-4097-adfa-a814768a5b80",
+      "topology": "Quad",
+      "model": "P2.0",
+      "faces": 6259
+    },
+    {
+      "hero": "bear",
+      "asset": "SK_Hero_Bear",
+      "height_m": 2.22,
+      "reference": "art/source/characters/SK_Hero_Bear/02_reference/CN_SK_Hero_Bear_v003_tpose_20261005.png",
+      "output_directory": "art/source/characters/SK_Hero_Bear/tripo_v001",
+      "identity": "massive anthropomorphic brown bear monk, cream muzzle, vermilion robe, indigo trousers, broad rope belt, wooden prayer beads, stone shoulder guard and bracers",
+      "status": "mesh_generated",
+      "model": "P2.0",
+      "url": "https://studio.tripo3d.ai/zh/workspace/generate/f06c600b-28a0-45b4-b234-19b7e907ae6b",
+      "last_progress": 81,
+      "task_id": "f06c600b-28a0-45b4-b234-19b7e907ae6b",
+      "topology": "Quad",
+      "vertices": 5270,
+      "faces": 5724
+    }
+  ],
+  "official_references": [
+    "https://developers.tripo3d.ai/en/docs/cli",
+    "https://developers.tripo3d.ai/en/docs/generation-image-to-model/p",
+    "https://developers.tripo3d.ai/en/docs/animations-rig"
+  ],
+  "modeling_reference_record": "art/pipeline/hero_modeling_references_20261005.json",
+  "studio_submission": {
+    "hero": "fox",
+    "generate_clicked": true,
+    "task_created_verified": true,
+    "observed_issue": "Studio and api.tripo3d.ai repeatedly time out. Fox P2 geometry exists; FBX export and Mixamo rig result unverified. Bear reference upload failed; Falcon not submitted.",
+    "balance_last_observed": 25200,
+    "topology": "Quad",
+    "vertices": 5461,
+    "task_id": "0582c359-f644-4e0f-804e-88fc0faaf8ce",
+    "rig_preset": "Mixamo",
+    "faces": 6235,
+    "url": "https://studio.tripo3d.ai/zh/workspace/generate/0582c359-f644-4e0f-804e-88fc0faaf8ce",
+    "rig_requested": true,
+    "rig_verified": false
+  },
+  "review_screenshot": "art/reviews/tripo-20261005/fox-p2-rig-status.jpg"
+}

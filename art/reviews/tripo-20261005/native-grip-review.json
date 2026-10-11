@@ -1,0 +1,26 @@
+{
+  "stage": "native_white_model_grip_first_pass",
+  "preview": "/hero-gallery.html",
+  "heroes": ["fox", "bear", "falcon"],
+  "native_bones_per_hero": 65,
+  "changes": [
+    "Original Tripo hierarchy and inverse bind matrices retained",
+    "Two-bone arm IK with explicit elbow poles and no bone stretching",
+    "Native finger flexion and thumb contact targets",
+    "Per-character two-hand weapon carry positions",
+    "Front, side, back, close-up and raised-pose review controls"
+  ],
+  "validation": {
+    "native_grip_tests": "3 passed; 100 frames per hero; wrist target error < 1 mm; fixed bone lengths; normalized runtime weights; finite skinned vertices",
+    "typescript": "passed",
+    "production_build": "passed before final review-UI adjustments; final UI typecheck passed"
+  },
+  "scope": "Development white-model gallery. Production hero selection retains the previous assets pending review.",
+  "remaining": [
+    "Detailed finger surface contact and garment collision review",
+    "Dedicated tail and wing animation bones (Tripo supplied humanoid bones only)",
+    "Final character surface and material refinement",
+    "Production hero-preview integration after pose acceptance"
+  ],
+  "archive_policy": "Original .blend and full-weight GLB archives retained. Runtime review uses four skin influences per vertex for Three.js compatibility."
+}

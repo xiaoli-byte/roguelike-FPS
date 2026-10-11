@@ -19,6 +19,7 @@ const { WaveRunner } = await import(waveUrl);
 const beaconUrl = await tsModule('../src/world/AdventureBeacon.ts');
 const { AdventureBeacon } = await import(beaconUrl);
 const directorUrl = await tsModule('../src/world/StageDirector.ts', {
+  './ChallengeEntrance': await tsModule('../src/world/ChallengeEntrance.ts'),
   '../core/Rng': rngUrl,
   '../assets/AssetLibrary': dataModule('export const AssetLibrary = { get enabled() { return globalThis.__adventureAssetsEnabled !== false; } };'),
   '../enemies/Waves': dataModule("export function buildWaves(ctx,stage){return [{entries:[{enemyId:stage.type==='boss'?'boss_test':'grunt',count:2}],triggerRemaining:0}];} export function buildEncounterWaves(){return [{entries:[{enemyId:'grunt',count:3,placement:'assault'}],triggerRemaining:0,label:'通道守卫',hint:'利用侧路接近'}];}"),
@@ -29,7 +30,7 @@ const directorUrl = await tsModule('../src/world/StageDirector.ts', {
   './Themes': dataModule('export function themeDef(id){return {id,name:id};}'),
   './WaveRunner': waveUrl,
   './AdventureBeacon': beaconUrl,
-  './WhiteboxMode': dataModule('export function usesAuthoredLayout(){return false;}'),
+  './WhiteboxMode': dataModule('export function usesAuthoredLayout(){return false;} export function usesRedesignLayout(){return false;}'),
   './WhiteboxGen': dataModule('export function generateWhitebox(){throw new Error("Unexpected whitebox generation");}'),
   './WhiteboxEncounters': dataModule('export function buildWhiteboxAdventure(){} export function buildWhiteboxFights(){return [];} export function whiteboxPlansForApproach(){} export function whiteboxSpawnRegion(){}'),
 });

@@ -8,7 +8,7 @@
 import type { Element, Rarity, WeaponAffix } from '../core/types';
 import type { Rng } from '../core/Rng';
 import { clamp } from '../core/math';
-import { isDualForm, isExplosive, isHitscan, shotsPerSecond, hitsPerShot, type WeaponDef } from './WeaponDefs';
+import { isBlade, isExplosive, isHitscan, shotsPerSecond, hitsPerShot, type WeaponDef } from './WeaponDefs';
 
 export type AffixId =
   | 'dmg' | 'rate' | 'mag' | 'reload' | 'critDmg' | 'critChance' | 'elemChance' | 'spread' | 'recoil'
@@ -55,7 +55,9 @@ const any = (): boolean => true;
  * 命中扫描（不含光束）、弩或双形态武器（魔刀千刃）：可以穿透 / 弹射 / 爆头。
  * 魔刀：爆头爆炸只在飞刃爆头时触发（斩击没有 headshot），穿透只作用于飞刃，弹射 / 破势两形态都生效
  */
-const directHit = (d: WeaponDef): boolean => isHitscan(d) || d.kind === 'crossbow' || isDualForm(d);
+const directHit = (d: WeaponDef): boolean => isHitscan(d) || d.kind === 'crossbow';
+/** 魔刀千刃没有弹匣 / 换弹 / 散布 / 后坐 / 穿透 / 爆头，这些词条不出现在它身上 */
+const gunOnly = (d: WeaponDef): boolean => !isBlade(d);
 /** 这把武器自己能否引发元素反应：带元素 / 元素轮转 / 满蓄引爆 / 已抽到副元素词条 */
 const canReact = (d: WeaponDef, e: Element, picked: readonly string[]): boolean =>
   e !== 'none' || !!d.cycle || d.chargeDetonate || picked.some((id) => id.startsWith('sub'));
@@ -77,30 +79,29 @@ function perHitChance(d: WeaponDef, raw: number): number {
 export const AFFIXES: readonly AffixDef[] = [
   { id: 'dmg', min: 0.08, max: 0.15, weight: 12, text: (v) => `伤害 +${pct(v)}`, allow: any },
   { id: 'rate', min: 0.08, max: 0.15, weight: 10, text: (v) => `射速 +${pct(v)}`, allow: any },
-  { id: 'mag', min: 0.2, max: 0.4, weight: 9, text: (v) => `弹匣容量 +${pct(v)}`, allow: any },
-  { id: 'reload', min: 0.15, max: 0.3, weight: 9, text: (v) => `换弹速度 +${pct(v)}`, allow: any },
+  { id: 'mag', min: 0.2, max: 0.4, weight: 9, text: (v) => `弹匣容量 +${pct(v)}`, allow: gunOnly },
+  { id: 'reload', min: 0.15, max: 0.3, weight: 9, text: (v) => `换弹速度 +${pct(v)}`, allow: gunOnly },
   { id: 'critDmg', min: 0.15, max: 0.35, weight: 8, text: (v) => `暴击伤害 +${pct(v)}`, allow: any },
   { id: 'critChance', min: 0.04, max: 0.08, weight: 7, text: (v) => `暴击率 +${pct(v)}`, allow: any },
   { id: 'elemChance', min: 0.06, max: 0.14, weight: 8, text: (v) => `元素触发率 +${pct(v)}`, allow: (_d, e) => e !== 'none' },
-  { id: 'spread', min: 0.2, max: 0.35, weight: 6, text: (v) => `散布 −${pct(v)}`, allow: (d) => isHitscan(d) || isDualForm(d) },
-  { id: 'recoil', min: 0.25, max: 0.4, weight: 5, text: (v) => `后坐力 −${pct(v)}`, allow: (d) => d.mode !== 'beam' },
+  { id: 'spread', min: 0.2, max: 0.35, weight: 6, text: (v) => `散布 −${pct(v)}`, allow: (d) => isHitscan(d) && gunOnly(d) },
+  { id: 'recoil', min: 0.25, max: 0.4, weight: 5, text: (v) => `后坐力 −${pct(v)}`, allow: (d) => d.mode !== 'beam' && gunOnly(d) },
   {
     id: 'headBlast', min: 0.5, max: 0.8, weight: 5,
     text: (v) => `爆头时引发小范围爆炸（${pct(v)} 单发伤害）`,
-    allow: directHit,
+    allow: (d) => directHit(d) && gunOnly(d),
   },
-  { id: 'killRefill', min: 0.12, max: 0.25, weight: 6, text: (v) => `击杀时回填 ${pct(v)} 弹匣`, allow: any },
+  { id: 'killRefill', min: 0.12, max: 0.25, weight: 6, text: (v) => `击杀时回填 ${pct(v)} 弹匣`, allow: gunOnly },
   { id: 'hitShield', min: 0.03, max: 0.06, weight: 6, text: (v) => `命中时将 ${pct(v)} 伤害转化为护盾`, allow: any },
   {
     id: 'ricochet', min: 0.25, max: 0.45, weight: 5,
     text: (v) => `命中时 ${pct(v)} 几率弹射至附近敌人（50% 伤害）`,
     allow: directHit,
   },
-  { id: 'pierce', min: 1, max: 1, fixed: true, weight: 4, text: (v) => `穿透 +${Math.round(v)}`, allow: directHit },
+  { id: 'pierce', min: 1, max: 1, fixed: true, weight: 4, text: (v) => `穿透 +${Math.round(v)}`, allow: (d) => directHit(d) && gunOnly(d) },
   { id: 'blast', min: 0.15, max: 0.3, weight: 7, text: (v) => `爆炸范围 +${pct(v)}`, allow: (d) => isExplosive(d) },
   { id: 'projSpeed', min: 0.2, max: 0.4, weight: 5, text: (v) => `弹速 +${pct(v)}`, allow: (d) => !!d.projectile },
-  // 召回式换弹（魔刀千刃）没有备弹
-  { id: 'reserve', min: 0.25, max: 0.5, weight: 6, text: (v) => `备弹上限 +${pct(v)}`, allow: (d) => !d.recall },
+  { id: 'reserve', min: 0.25, max: 0.5, weight: 6, text: (v) => `备弹上限 +${pct(v)}`, allow: gunOnly },
   { id: 'hunter', min: 0.12, max: 0.25, weight: 6, text: (v) => `对首领与精英伤害 +${pct(v)}`, allow: any },
   { id: 'swift', min: 0.4, max: 0.8, weight: 4, text: (v) => `持握时移动速度 +${v.toFixed(1)}`, allow: any },
 
@@ -157,8 +158,8 @@ export const LEGENDARIES: readonly LegendaryDef[] = [
       const sps = shotsPerSecond(d);
       return sps >= 8 ? 6 : sps >= 2.5 ? 5 : 4;
     },
-    // 双形态：斩击按段（判定帧，命中与否都算）、飞刃按轮，共用计数
-    text: (d, v) => (isDualForm(d) ? `每第 ${Math.round(v)} 次攻击必定暴击（斩击按段、飞刃按轮计）` : `每第 ${Math.round(v)} ${shotUnit(d)}必定暴击`),
+    // 魔刀：斩击按段计数（判定帧，命中与否都算）
+    text: (d, v) => (isBlade(d) ? `每第 ${Math.round(v)} 段斩击必定暴击` : `每第 ${Math.round(v)} ${shotUnit(d)}必定暴击`),
   },
   {
     id: 'lg_nova', name: '殉爆',
@@ -168,10 +169,9 @@ export const LEGENDARIES: readonly LegendaryDef[] = [
   },
   {
     id: 'lg_last', name: '终焉',
-    allow: (d) => d.mode !== 'beam',
+    allow: (d) => d.mode !== 'beam' && gunOnly(d),
     value: () => 3,
-    // 双形态：只作用于飞刃（斩击不耗弹），按「本轮打空弹匣」判定
-    text: (d, v) => (isDualForm(d) ? `最后一轮飞刃伤害 ×${v}` : `弹匣最后一${shotUnit(d)}伤害 ×${v}`),
+    text: (d, v) => `弹匣最后一${shotUnit(d)}伤害 ×${v}`,
   },
   {
     id: 'lg_prism', name: '万象',
@@ -187,10 +187,9 @@ export const LEGENDARIES: readonly LegendaryDef[] = [
   },
   {
     id: 'lg_endless', name: '无尽',
-    allow: any,
+    allow: gunOnly,
     value: () => 0.3,
-    // 双形态：只作用于飞刃（斩击本来不耗弹），免耗时整轮不扣
-    text: (d, v) => (isDualForm(d) ? `飞刃齐射时 ${pct(v)} 几率不消耗飞刃` : `开火时 ${pct(v)} 几率不消耗弹药`),
+    text: (_d, v) => `开火时 ${pct(v)} 几率不消耗弹药`,
   },
 
   // ───── 元素反应类（docs/arsenal-expansion.md 第 5 节；数值不随稀有度放大） ─────
@@ -278,16 +277,11 @@ export function rollAffixes(def: WeaponDef, rarity: Rarity, element: Element, rn
   return out;
 }
 
-/** 双形态武器上只作用于远程形态「千刃」的词条（描述末尾加「（千刃）」） */
-const RANGED_ONLY: ReadonlySet<string> = new Set<AffixId>(['mag', 'reload', 'spread', 'recoil', 'projSpeed', 'pierce', 'headBlast']);
-
 /** 词条 / 特性的中文描述；未知词条返回 null */
 export function describeAffix(def: WeaponDef, a: WeaponAffix): string | null {
   const ad = AFFIX_BY_ID.get(a.id);
   if (ad) {
-    const t = ad.text(a.value);
-    if (def.melee && RANGED_ONLY.has(a.id)) return `${t}（${def.melee.formNames[1]}）`;
-    return t;
+    return ad.text(a.value);
   }
   const l = LEGENDARY_BY_ID.get(a.id);
   if (l) return `【传说·${l.name}】${l.text(def, a.value)}`;

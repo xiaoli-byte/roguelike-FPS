@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import type { ScrollDef } from '../../core/types';
 import { ELEMENT_COLORS } from '../../core/types';
 import {
-  blastRadius, depthOf, enemyDistance, enemyHealthFrac, isDirectWeaponHit, procScale, scroll,
+  blastRadius, depthOf, enemyDistance, enemyHealthFrac, isDirectWeaponHit, isPurgeKill, procScale, scroll,
 } from './ScrollKit';
 
 /**
@@ -81,12 +81,23 @@ export const OFFENSE_SCROLLS: ScrollDef[] = [
     },
   }),
   scroll({
-    id: 'crit_streak', name: '连击心法', rarity: 2, maxStacks: 3, tags: ['暴击', '触发'],
-    description: '武器暴击后 3 秒内，暴击率每层 +5%。',
-    setup: (s, n) => {
-      const buff = s.buff([['critChance', 0.05 * n]]);
+    id: 'crit_streak', name: '连击心法', rarity: 2, maxStacks: 3, tags: ['暴击', '射速', '触发'],
+    description: '武器直接暴击获得 1 层战意，最多 5 层；每层战意提供每层秘卷 +6% 暴击伤害、+1.5% 射速。再次暴击刷新全部战意的 5 秒时长；同帧只累积一次。',
+    setup: (s, n, ctx) => {
+      // 每枚战意有独立属性来源；刷新时统一延长，不重复写入修饰。
+      const buffs = Array.from({ length: 5 }, () => s.buff([['critDamagePct', 0.06 * n], ['fireRatePct', 0.015 * n]]));
+      let count = 0, until = -Infinity, lastFrame = -1;
+      const reset = () => { count = 0; until = -Infinity; lastFrame = -1; for (const buff of buffs) buff.end(); };
+      s.on('stage:loaded', reset);
+      s.on('player:died', reset);
       s.on('enemy:damaged', ({ result }) => {
-        if (result.isCrit && isDirectWeaponHit(result)) buff.trigger(3);
+        if (!ctx.player.alive || !result.isCrit || result.dealt <= 0 || !isDirectWeaponHit(result) || isPurgeKill(result)) return;
+        if (ctx.time.now >= until) reset();
+        if (lastFrame === ctx.time.frame) return;
+        lastFrame = ctx.time.frame;
+        count = Math.min(5, count + 1);
+        until = ctx.time.now + 5;
+        for (let i = 0; i < count; i++) buffs[i].trigger(5);
       });
     },
   }),
@@ -119,11 +130,21 @@ export const OFFENSE_SCROLLS: ScrollDef[] = [
     },
   }),
   scroll({
-    id: 'meteor_shot', name: '流星', rarity: 0, maxStacks: 3, tags: ['弹速'],
-    description: '弹速每层 +20%，武器伤害每层 +3%。',
-    setup: (s, n) => {
+    id: 'meteor_shot', name: '流星', rarity: 0, maxStacks: 3, tags: ['弹速', '命中', '伤害'],
+    description: '弹速每层 +20%；武器直接命中存活敌人时追加星芒，造成每层 12 点物理伤害（随关卡强度成长），冷却 0.8 秒。星芒不暴击、不附着元素；即时命中武器与近战也可触发。',
+    setup: (s, n, ctx) => {
       s.stat('projectileSpeedPct', 0.2 * n);
-      s.stat('damagePct', 0.03 * n);
+      s.on('enemy:damaged', ({ enemy, result }) => {
+        if (!ctx.player.alive || !isDirectWeaponHit(result) || isPurgeKill(result) || result.dealt <= 0 ||
+          result.killed || !enemy.alive || enemy.untargetable || !s.ready('star', 0.8)) return;
+        const point = enemy.getBodyCenter(new THREE.Vector3());
+        ctx.fx.tracer(point.clone().add(new THREE.Vector3(0, 2.5, 0)), point, 0xd8eaff, 0.025);
+        ctx.fx.burst(point, 0xd8eaff, 6, 2, 0.2, 0.04, 0);
+        ctx.combat.damageEnemy(enemy, {
+          base: 12 * n * procScale(ctx), element: 'none', source: 'scroll', procDepth: 1, canCrit: false,
+          elementChance: 0, point,
+        });
+      });
     },
   }),
   scroll({

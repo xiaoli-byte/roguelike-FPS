@@ -33,22 +33,8 @@ interface DirIndicator {
 
 const DIR_POOL = 6;
 const DIR_MS = 1150;
-/** 近战形态：敌人在攻击距离内时准星括号收紧的像素 */
+/** 魔刀在手：敌人在攻击距离内时准星括号收紧的像素 */
 const MELEE_INRANGE_TIGHTEN = 4;
-/** 贯穿反馈：暗角闪时长、方向刃光时长与池大小、视为「视野外」的水平夹角（16:9 下水平视野约 ±56°） */
-const BLADE_FLASH_MS = 120;
-const BLADE_DIR_MS = 520;
-const BLADE_DIR_POOL = 6;
-const BLADE_OFFSCREEN = (50 * Math.PI) / 180;
-
-interface BladeDir {
-  el: HTMLDivElement;
-  x: number;
-  z: number;
-  start: number;
-  active: boolean;
-}
-
 export class Crosshair {
   readonly root: HTMLDivElement;
   private reticle: HTMLDivElement;
@@ -59,7 +45,6 @@ export class Crosshair {
   private dirRoot: HTMLDivElement;
   private flashEl: HTMLDivElement;
   private lowEl: HTMLDivElement;
-  private bladeFlashEl: HTMLDivElement;
 
   private gap = 10;
   private shownGap = -1;
@@ -73,9 +58,6 @@ export class Crosshair {
   private melee = false;
   /** 换形一击窗口内：准星朱红脉动 */
   private strike = false;
-  private bladeDirs: BladeDir[] = [];
-  private bladeFlashAt = -1e9;
-  private bladeFlashActive = false;
 
   private hitAt = -1e9;
   private hitKind: HitKind = HitKind.None;
@@ -94,17 +76,11 @@ export class Crosshair {
     this.lowEl = h('div', 'gf-lowhp', parent);
     h('div', 'gf-lowhp__pulse', this.lowEl);
     this.flashEl = h('div', 'gf-dmgflash', parent);
-    this.bladeFlashEl = h('div', 'gf-bladeflash', parent);
     this.dirRoot = h('div', 'gf-dmgdir', parent);
     for (let i = 0; i < DIR_POOL; i++) {
       const el = h('div', 'gf-dmgdir__arc', this.dirRoot);
       el.style.opacity = '0';
       this.dirs.push({ el, x: 0, z: 0, source: null, start: -1e9, strength: 0, active: false, lastOpacity: 0 });
-    }
-    for (let i = 0; i < BLADE_DIR_POOL; i++) {
-      const el = h('div', 'gf-dmgdir__arc gf-dmgdir__arc--blade', this.dirRoot);
-      el.style.opacity = '0';
-      this.bladeDirs.push({ el, x: 0, z: 0, start: -1e9, active: false });
     }
     this.scopeEl = h('div', 'gf-scope', parent);
     const lens = h('div', 'gf-scope__lens', this.scopeEl);
@@ -213,30 +189,6 @@ export class Crosshair {
     d.active = true;
   }
 
-  /**
-   * 武器技能贯穿结算（weapon:skillImpale）：0.12 秒朱红暗角闪；视野外（水平夹角 > BLADE_OFFSCREEN）的每个刃印
-   * 在屏幕边缘朝它的方向亮一道刃光（突进后刃印常在身后，贯穿本身看不到）
-   */
-  onBladeImpale(points: readonly THREE.Vector3[]): void {
-    const now = performance.now();
-    this.bladeFlashAt = now;
-    this.bladeFlashActive = true;
-    const p = this.ctx.player;
-    let slot = 0;
-    for (const pt of points) {
-      if (slot >= this.bladeDirs.length) break;
-      const dx = pt.x - p.position.x;
-      const dz = pt.z - p.position.z;
-      if (dx * dx + dz * dz < 0.25) continue;
-      if (Math.abs(angleDiff(p.yaw, yawFromDir(dx, dz))) < BLADE_OFFSCREEN) continue;
-      const d = this.bladeDirs[slot++];
-      d.x = pt.x;
-      d.z = pt.z;
-      d.start = now;
-      d.active = true;
-    }
-  }
-
   reset(): void {
     this.hitActive = false;
     this.hitKind = HitKind.None;
@@ -250,12 +202,6 @@ export class Crosshair {
     }
     this.flashActive = false;
     this.flashEl.style.opacity = '0';
-    for (const d of this.bladeDirs) {
-      d.active = false;
-      d.el.style.opacity = '0';
-    }
-    this.bladeFlashActive = false;
-    this.bladeFlashEl.style.opacity = '0';
     this.setCharge(0);
     this.setMelee(false);
     this.setStrike(false);
@@ -266,7 +212,6 @@ export class Crosshair {
     this.updateReticle(dt, playing);
     this.updateHitMarker(now);
     this.updateDirs(now);
-    this.updateBladeFx(now);
     this.updateFlash(now);
     this.updateLowHp();
   }
@@ -282,14 +227,14 @@ export class Crosshair {
       this.reticle.classList.toggle('is-hidden', scoped);
     }
 
-    // 近战形态（未提供 activeForm 的武器系统按普通武器处理）
+    // 魔刀在手（碎片未出窍）按近战准星显示；人刀合一期间准星脉动
     const w = ctx.weapons;
-    const melee = (w.activeForm ?? null) === 'melee';
+    const blade = w.bladeHud ?? null;
+    const melee = blade !== null && blade.mode === 'hand';
     this.setMelee(melee);
-    // 换形一击窗口：准星朱红脉动（视线在准星上，比武器槽边框更容易注意到）
-    this.setStrike((w.formStrikeTime ?? 0) > 0);
+    this.setStrike(blade !== null && blade.union > 0);
 
-    // 散布（弧度）按相机竖直 FOV 投影成像素；近战形态敌人在攻击距离内时收紧
+    // 散布（弧度）按相机竖直 FOV 投影成像素；魔刀在手、敌人在攻击距离内时收紧
     const spread = Math.max(0, w.currentSpread || 0);
     const halfFov = (ctx.camera.fov * Math.PI) / 360;
     const px = (Math.tan(Math.min(spread, 1.2)) / Math.tan(halfFov)) * (window.innerHeight * 0.5);
@@ -301,13 +246,13 @@ export class Crosshair {
     }
 
     // 准星压到敌人身上时变红（每 3 帧检测一次，且被墙挡住不算；暂停 / 模态时不检测）；
-    // 近战形态改为「下一段斩击此刻能砍到敌人」（武器系统按扇形判定给出），远处的敌人不再让括号变红
+    // 魔刀在手时改为「下一段斩击此刻能砍到敌人」（按扇形判定给出），远处的敌人不再让括号变红
     if (this.frame % 3 === 0) {
       let on = false;
       const p = ctx.player;
       if (playing && p.alive) {
         if (melee) {
-          on = w.meleeInRange ?? false;
+          on = blade?.inRange ?? false;
         } else {
           p.getAimDirection(_dir);
           const hit = ctx.enemies.raycast(p.eye, _dir, 150);
@@ -409,33 +354,6 @@ export class Crosshair {
         d.lastOpacity = op;
         d.el.style.opacity = op.toFixed(3);
       }
-    }
-  }
-
-  /** 贯穿反馈：暗角闪（快起慢落）与方向刃光（跟随玩家转向） */
-  private updateBladeFx(now: number): void {
-    if (this.bladeFlashActive) {
-      const e = (now - this.bladeFlashAt) / BLADE_FLASH_MS;
-      if (e >= 1) {
-        this.bladeFlashActive = false;
-        this.bladeFlashEl.style.opacity = '0';
-      } else {
-        this.bladeFlashEl.style.opacity = ((1 - e) * (1 - e)).toFixed(3);
-      }
-    }
-    const p = this.ctx.player;
-    for (const d of this.bladeDirs) {
-      if (!d.active) continue;
-      const e = (now - d.start) / BLADE_DIR_MS;
-      if (e >= 1) {
-        d.active = false;
-        d.el.style.opacity = '0';
-        continue;
-      }
-      const deg = -angleDiff(p.yaw, yawFromDir(d.x - p.position.x, d.z - p.position.z)) * DEG_PER_RAD;
-      const op = e < 0.1 ? e / 0.1 : 1 - (e - 0.1) / 0.9;
-      d.el.style.transform = `translate(-50%, -50%) rotate(${deg.toFixed(1)}deg) scale(${(1 + 0.06 * (1 - e)).toFixed(3)})`;
-      d.el.style.opacity = op.toFixed(3);
     }
   }
 

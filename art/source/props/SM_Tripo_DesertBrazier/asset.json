@@ -1,0 +1,430 @@
+{
+  "id": "SM_Tripo_DesertBrazier",
+  "display": "祭坛火盆（V2）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:02:57",
+          "files": {
+            "BO_SM_Tripo_DesertBrazier_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertBrazier_v001.json",
+              "sha256": "60b2e2d10a6f6dfda23e50384bc521009474d26018b2f7e9110024b4ac765d66"
+            },
+            "BO_SM_Tripo_DesertBrazier_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertBrazier_v001_views.json",
+              "sha256": "9941fb9740a8341c63b8533d9a7e5271706a8909bc73a285f9c044656a485b08"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.v2.brazier"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.7,
+              0,
+              -0.7
+            ],
+            "max": [
+              0.7,
+              2.4,
+              0.7
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:03:25",
+          "files": {
+            "CN_SM_Tripo_DesertBrazier_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBrazier_v001_source.png",
+              "sha256": "e2278b6ad04bdf28d397d59928d6e195430977b259a5cd1e83be147334b4014f"
+            },
+            "CN_SM_Tripo_DesertBrazier_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBrazier_v001_front.png",
+              "sha256": "adfb22879ec15ba4d42f117271777f29bd9288cac3926e801d3be6caec9ba274"
+            },
+            "CN_SM_Tripo_DesertBrazier_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBrazier_v001_left.png",
+              "sha256": "1ba3e2b1649b6b64e7f9a2421a4598996bee9b97e6425711d3536aa36fa4438d"
+            },
+            "CN_SM_Tripo_DesertBrazier_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBrazier_v001_back.png",
+              "sha256": "fdc2f3cd77cfa4bf4db9b6d8788886f3b7ecb3b28f34b39074d1a57ef4f0f2dc"
+            },
+            "CN_SM_Tripo_DesertBrazier_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBrazier_v001_right.png",
+              "sha256": "00a8bd02eabaf2bca3a3968ba3929f5aad23c0044935733367c4a29bea8354ba"
+            },
+            "CN_SM_Tripo_DesertBrazier_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBrazier_v001_sheet.png",
+              "sha256": "20cc7de82ab00263530ed1476068dc6e7c9c9cd6c604d23ccb61d19cd70328ae"
+            },
+            "CN_SM_Tripo_DesertBrazier_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertBrazier_v001_prompt.txt",
+              "sha256": "5243ea4478f134be987de1c42520f544e41bd4edee121a6769ef459775a9d649"
+            },
+            "CN_SM_Tripo_DesertBrazier_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertBrazier_v001_registration.json",
+              "sha256": "a883e4468b81622e7c70df0751c8b3666987176b43bc0ac0cff5fb87d64fed78"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 436,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 436
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1616
+            },
+            "request_id": "req_0c4561f7516a4a169a3ec8834b2340a3",
+            "seconds": 26.4
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian desert temple fantasy. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (1.4m wide x 2.4m tall x 1.4m deep): A desert temple fire brazier 1.4m wide, 2.4m tall: a square stepped sandstone pedestal with a carved sun disc on every face, topped by a wide shallow bronze fire bowl on three lion-paw feet, the bowl filled with glowing embers and a few chunky stylised flame tongues. Warm ochre stone, aged bronze with teal patina, orange-gold embers. Chunky readable shapes, one solid connected piece on a flat base, identical on all four sides.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "e2278b6ad04bdf28d397d59928d6e195430977b259a5cd1e83be147334b4014f",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.9070294784580498,
+              "offset": [
+                38,
+                120
+              ],
+              "size": [
+                435,
+                784
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.9230547342611956,
+              "offset": [
+                74,
+                120
+              ],
+              "size": [
+                363,
+                784
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.9133723419437705,
+              "offset": [
+                40,
+                120
+              ],
+              "size": [
+                432,
+                784
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.91872622437017,
+              "offset": [
+                72,
+                120
+              ],
+              "size": [
+                368,
+                784
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI审核)",
+            "note": "四面相同的方形石座铜火盆，侧视无朝向歧义。无裁切，比例一致。",
+            "time": "2026-10-06 17:10:58"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 20:14:50",
+          "files": {
+            "HP_SM_Tripo_DesertBrazier_v001_source.fbx": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertBrazier_v001_source.fbx",
+              "sha256": "5c8d1b47f4b19a468904ad5a4819cdde827f3175813524ff6c6887217686081d"
+            },
+            "HP_SM_Tripo_DesertBrazier_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertBrazier_v001.glb",
+              "sha256": "d9eae4dff2d8c2992ab1f6017d93188776d2e519e0e863e1184da5dc3bafe626"
+            },
+            "HP_SM_Tripo_DesertBrazier_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertBrazier_v001_graph.json",
+              "sha256": "0cf33872c85b3b995e5058b78be49360a20234d3fedae87a79c7c0a04c8c227a"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/594b8666-05b6-4ab4-a9a9-ba51c670eafb",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 2991,
+          "source_sha256": "5c8d1b47f4b19a468904ad5a4819cdde827f3175813524ff6c6887217686081d"
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 20:14:56",
+          "files": {
+            "SM_Tripo_DesertBrazier_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertBrazier_v001.blend",
+              "sha256": "cbf6476b647070d274922992841b3beaf6b54580ba0436b133f3aab92244d787"
+            },
+            "SM_Tripo_DesertBrazier_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertBrazier_v001.glb",
+              "sha256": "569631b9e60d93eaa6f08d0840be39c2f792774a0fec29cd74fbca235cdff947"
+            },
+            "SM_Tripo_DesertBrazier_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertBrazier_v001_metrics.json",
+              "sha256": "eb459f9f24e399e7cd4c4051eee319d24e1f89871631cc6608eead38b73d3db5"
+            },
+            "T_Tripo_DesertBrazier_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBrazier_BC.png",
+              "sha256": "1977e4ab99dccf4f35b259efa68ee9997c705bd79dc79004f20fc430a61faadb"
+            },
+            "T_Tripo_DesertBrazier_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBrazier_N.png",
+              "sha256": "960daf1734f65fbcb409181cebc354761185854f18d5507880d2fc714e762d34"
+            },
+            "T_Tripo_DesertBrazier_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBrazier_ORM.png",
+              "sha256": "cd2cc672da75f32228e30f1cb1f1810656430d32cbb641028d57da744d692b50"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.893,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2991,
+              "verts": 2513
+            },
+            {
+              "tris": 994,
+              "verts": 1248
+            }
+          ],
+          "export_kb": 250.7,
+          "seconds": 6.1,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:22:52",
+          "files": {
+            "SM_Tripo_DesertBrazier_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertBrazier_v002.blend",
+              "sha256": "5fbbd446e02ee36fcd813abf9c623e164e6f0c99f630b89417df79885540acef"
+            },
+            "SM_Tripo_DesertBrazier_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertBrazier_v002.glb",
+              "sha256": "6f7c1610236f2ad7e558d87a5f2abf7335b40003692e6ed5d7badfbd62e51704"
+            },
+            "SM_Tripo_DesertBrazier_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertBrazier_v002_metrics.json",
+              "sha256": "a03bd895b3855dce49b875656240fb2271ef1510b37966e73ddf2bdd76fd54ca"
+            },
+            "T_Tripo_DesertBrazier_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertBrazier_BC.png",
+              "sha256": "1977e4ab99dccf4f35b259efa68ee9997c705bd79dc79004f20fc430a61faadb"
+            },
+            "T_Tripo_DesertBrazier_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertBrazier_N.png",
+              "sha256": "960daf1734f65fbcb409181cebc354761185854f18d5507880d2fc714e762d34"
+            },
+            "T_Tripo_DesertBrazier_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertBrazier_ORM.png",
+              "sha256": "a2c20c3d212deb1a6ccae2dd0a99347ab5d16c4a2e900907e691cb119a8a7622"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.893,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2991,
+              "verts": 1603
+            },
+            {
+              "tris": 995,
+              "verts": 582
+            }
+          ],
+          "export_kb": 248.9,
+          "seconds": 6.9,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 20:14:57",
+          "files": {
+            "SM_Tripo_DesertBrazier_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertBrazier_v001_validation_v001.json",
+              "sha256": "d83e9028ffb0e899bf38362826720f08f648ac712a6a75d9a3e4a222a32a8ad0"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:22:52",
+          "files": {
+            "SM_Tripo_DesertBrazier_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertBrazier_v002_validation_v002.json",
+              "sha256": "e57505d22531665b9e73320cd7d69a50a6e3be9dc5f3bb3efa57e67a4781deb9"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 20:15:04",
+          "files": {
+            "SM_Tripo_DesertBrazier_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertBrazier_v001_review_v001.png",
+              "sha256": "319e965bcf842ea7f0a71bb08c562388aa12c20b7a1156d739c145cfb867d6c9"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI审核)",
+            "note": "石座铜火盆：石座日纹、铜盆、火焰完整，五向审核图无破面；IoU 0.893，30 项通过，UV 利用率 44% 警告（Tripo 自带展开，1024 贴图下可接受）。",
+            "time": "2026-10-06 20:15:56"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:22:59",
+          "files": {
+            "SM_Tripo_DesertBrazier_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_DesertBrazier_v002_review_v002.png",
+              "sha256": "44d12a65877970e7f4b62cd0d2dd4c70b926a8c5d8cb84106e887d794ff214ed"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI审核)",
+            "note": "LOD 裂缝修复重建：Tripo 源网格先焊接（1e-4）再减面并保留 UV 边界（bl_build_tripo.py）。五向审核图与上一版一致，贴图完整；焊接后 LOD1/LOD2 开放边长度回到 LOD0 水平。",
+            "time": "2026-10-06 21:24:10"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 20:15:56",
+          "files": {
+            "SM_Tripo_DesertBrazier.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertBrazier.glb",
+              "sha256": "569631b9e60d93eaa6f08d0840be39c2f792774a0fec29cd74fbca235cdff947"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertBrazier.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-06 21:24:11",
+          "files": {
+            "SM_Tripo_DesertBrazier.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertBrazier.glb",
+              "sha256": "6f7c1610236f2ad7e558d87a5f2abf7335b40003692e6ed5d7badfbd62e51704"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_DesertBrazier.glb"
+        }
+      ]
+    }
+  }
+}

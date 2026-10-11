@@ -10,6 +10,17 @@ import { PROP_COLLIDER } from './LevelGen';
 import { fitLandmarkTransform, fitNaturalPropScale, fitScenePropScale } from './ScenePropFit';
 import { applyHandPaintedEnvironment } from './SceneSurfaceMaterial';
 
+/** mulberry32: a private, deterministic stream for work that runs after an async load. */
+function seededRandom(seed: number): () => number {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
 export const SCENE_PROP_IDS: Readonly<Record<ThemeId, Partial<Record<Deco['kind'], string>>>> = {
   desert: { statue: 'SM_Prop_DesertReliquary', pots: 'SM_Prop_DesertUrns', rock: 'SM_Env_DesertSandstone', landmark: 'SM_Env_DesertRuin' },
   frost: { stoneLantern: 'SM_Prop_FrostShrine', crystal: 'SM_Prop_FrostPrayerCairn', pine: 'SM_Env_FrostPine', landmark: 'SM_Env_FrostWayshrine' },
@@ -112,12 +123,17 @@ export class SceneDressing {
     if (ctx.settings.quality !== 'low') this.atmosphere(L, st, rand);
     // A fast start can precede the background GLB load. Only these new landmarks
     // retry after preload; no placeholder art is generated while they are absent.
-    if (pendingLandmarks.length) void AssetLibrary.preload().then(() => {
+    // The callback gets its own generator, seeded now: consuming the shared arena stream later would
+    // make every decoration placed after this point depend on how fast the GLBs downloaded.
+    // Drawn unconditionally, so whether a landmark is still loading never shifts the shared stream.
+    const lateSeed = Math.floor(rand() * 0x7fffffff);
+    const lateRand = pendingLandmarks.length ? seededRandom(lateSeed) : null;
+    if (lateRand) void AssetLibrary.preload().then(() => {
       if (this.disposed) return;
       const lateContacts = pendingLandmarks.map(d => this.attachLandmark(ctx, L, d)).filter((p): p is Contact => !!p);
       if (lateContacts.length) {
         this.contactShadows(lateContacts);
-        this.surfacePatina(L, st, lateContacts, rand, false);
+        this.surfacePatina(L, st, lateContacts, lateRand, false);
       }
     });
   }

@@ -3,13 +3,15 @@
  * 伤害显示武器自身数值（稀有度 × 强化 × 词条），不含玩家的武器伤害加成；
  * 射速 / 弹匣 / 换弹等显示计入玩家属性后的实际值。
  * 蓄力武器显示伤害区间、蓄力时长与满蓄秒伤；元素轮转武器的元素行显示「三相轮转」并给出 elementLabel。
- * 双形态武器（魔刀千刃）分别列出两种形态的数值（docs/demon-blade.md 10.11.3），并给出 formNames 与武器技能。
+ * 魔刀千刃（docs/demon-blade-v2.md）列出斩、千刃出窍、刃气、屏障与武器技能。
  */
 import type { WeaponDescription, WeaponInstance } from '../core/types';
 import { ELEMENT_NAMES, RARITY_CSS, RARITY_NAMES } from '../core/types';
 import { describeAffix, isLegendaryId, legendaryName } from './Affixes';
-import { WEAPON_SKILL_KEY as SKILL_KEY } from './BladeSkill';
 import { comboCycleTime, MAX_LEVEL } from './WeaponDefs';
+
+/** 武器技能按键提示 */
+const SKILL_KEY = 'V';
 import type { ResolvedWeapon } from './WeaponStats';
 
 const pct = (v: number): string => `${Math.round(v * 100)}%`;
@@ -30,7 +32,7 @@ export function weaponDisplayName(R: ResolvedWeapon): string {
 }
 
 export function describeWeapon(inst: WeaponInstance, R: ResolvedWeapon): WeaponDescription {
-  if (R.def.melee) return describeDualForm(inst, R);
+  if (R.def.blade) return describeBlade(inst, R);
   const def = R.def;
   const count = def.projectile ? def.projectile.count : 1;
   const stats: { label: string; value: string }[] = [];
@@ -108,51 +110,36 @@ function traitLines(inst: WeaponInstance, R: ResolvedWeapon): string[] {
     if (isLegendaryId(a.id)) legendary.push(t);
     else traits.push(t);
   }
-  const sk = def.skill;
-  if (sk) {
-    const end = /[。！？]$/.test(sk.description) ? '' : '。';
-    traits.push(`【武器技能·${sk.name}】${SKILL_KEY} / 鼠标中键：${sk.description}${end}冷却 ${num(sk.cooldown)} 秒。`);
+  const b = def.blade;
+  if (b) {
+    traits.push(`【武器技能·杀气爆发】${SKILL_KEY} / 鼠标中键：碎片聚于准星落点后炸开，半径 ${num(b.burst.radius)} 米，伤害 ${num(b.burst.damage * R.damageMult)}。冷却 ${num(b.burst.cooldown)} 秒。`);
+    traits.push(`【人刀合一】杀意满时 ${SKILL_KEY} 变为人刀合一：强化爆发后 ${num(b.union.duration)} 秒内斩击放出碎刃斩波，千刃出窍不耗刃气。`);
   }
   traits.push(...legendary);
   return traits;
 }
 
 /**
- * 双形态武器：斩击各段伤害、飞刃伤害 × 枚数、攻速（一轮连段时长，射速加成 = 攻速）、射速、两形态秒伤、
- * 弹匣（飞刃）、召回（代替「备弹」「换弹」）、暴击、两形态元素几率、穿透（飞刃）、强化。
+ * 魔刀千刃：三段斩伤害、攻速、千刃出窍伤害与结算频率、两种秒伤、刃气、屏障、暴击、元素、强化。
  */
-function describeDualForm(inst: WeaponInstance, R: ResolvedWeapon): WeaponDescription {
+function describeBlade(inst: WeaponInstance, R: ResolvedWeapon): WeaponDescription {
   const def = R.def;
-  const m = def.melee!;
-  const [meleeName, rangedName] = m.formNames;
-  const count = def.projectile ? def.projectile.count : 1;
+  const b = def.blade!;
   const stats: { label: string; value: string }[] = [];
-
-  stats.push({ label: `${meleeName}击`, value: m.combo.map((s) => num(s.damage * R.damageMult)).join(' / ') });
-  stats.push({ label: '飞刃', value: count > 1 ? `${num(R.damage)} ×${count}` : num(R.damage) });
+  stats.push({ label: '斩', value: b.combo.map((s) => num(s.damage * R.damageMult)).join(' / ') });
   const cycle = comboCycleTime(def) / Math.max(0.01, R.fireRateMult);
   stats.push({ label: '攻速', value: `一轮 ${cycle.toFixed(2)} 秒` });
-  stats.push({ label: '射速', value: `${R.fireRate.toFixed(1)} 轮/秒` });
-  stats.push({ label: '秒伤', value: `${meleeName} 约 ${Math.round(R.meleeDps)} · ${rangedName} 约 ${Math.round(R.dps)}` });
-  stats.push({ label: '弹匣', value: `${R.magCap} 柄飞刃` });
-  if (def.recall) {
-    stats.push({ label: '召回', value: `${R.reloadTime.toFixed(1)} 秒` });
-  } else {
-    stats.push({ label: '备弹', value: `${R.reserveCap}` });
-    stats.push({ label: '换弹', value: `${R.reloadTime.toFixed(1)} 秒` });
-  }
+  stats.push({ label: '千刃出窍', value: `${num(b.swarm.damage * R.damageMult)} ×${num(1 / b.swarm.tick)}/秒 · 半径 ${num(b.swarm.radius)} 米` });
+  stats.push({ label: '秒伤', value: `斩 约 ${Math.round(R.meleeDps)} · 千刃 约 ${Math.round(R.dps)}` });
+  stats.push({ label: '刃气', value: `${b.qi.max}（出窍 −${b.swarm.drain}/秒 · 屏障 −${b.shield.drain}/秒）` });
   stats.push({
     label: '暴击',
     value: `×${R.critMult.toFixed(1)}${R.critChance > 0 ? `（+${pct(R.critChance)} 暴击率）` : ''}`,
   });
-  const elemText = inst.element === 'none'
-    ? ELEMENT_NAMES.none
-    : `${ELEMENT_NAMES[inst.element]} ${meleeName} ${pct(R.meleeElementChance)} · 飞刃 ${pct(R.elementChance)}`;
-  stats.push({ label: '元素', value: elemText });
-  if (R.pierce > 0) stats.push({ label: '穿透', value: `${R.pierce}（飞刃）` });
+  stats.push({ label: '元素', value: inst.element === 'none' ? ELEMENT_NAMES.none : `${ELEMENT_NAMES[inst.element]} ${pct(R.elementChance)}` });
   stats.push({ label: '强化', value: `${inst.level}/${MAX_LEVEL}` });
 
-  const desc: WeaponDescription = {
+  return {
     name: weaponDisplayName(R),
     category: def.category,
     rarity: inst.rarity,
@@ -161,9 +148,10 @@ function describeDualForm(inst: WeaponInstance, R: ResolvedWeapon): WeaponDescri
     element: inst.element,
     stats,
     traits: traitLines(inst, R),
-    formNames: [meleeName, rangedName],
+    skill: {
+      name: '杀气爆发', key: SKILL_KEY,
+      description: `碎片聚于准星落点后炸开，半径 ${num(b.burst.radius)} 米；杀意满时变为人刀合一。`,
+      cooldown: b.burst.cooldown,
+    },
   };
-  const sk = def.skill;
-  if (sk) desc.skill = { name: sk.name, key: SKILL_KEY, description: sk.description, cooldown: sk.cooldown };
-  return desc;
 }

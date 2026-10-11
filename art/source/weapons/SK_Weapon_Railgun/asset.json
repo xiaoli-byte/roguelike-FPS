@@ -1,0 +1,592 @@
+{
+  "id": "SK_Weapon_Railgun",
+  "display": "贯虹灵炮",
+  "kind": "skeletal",
+  "class": "weapon_fp",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:35:27",
+          "files": {
+            "BO_SK_Weapon_Railgun_v001.glb": {
+              "path": "00_blockout/BO_SK_Weapon_Railgun_v001.glb",
+              "sha256": "e9d786d5bd9920fd9bf1bcee7b2c454956c6c9d667ee69c5b8fe4d9e5cdec764"
+            },
+            "BO_SK_Weapon_Railgun_v001.json": {
+              "path": "00_blockout/BO_SK_Weapon_Railgun_v001.json",
+              "sha256": "b0966f444471ed63d76d0773688e19eeabf6509905be5051499569cdc9a8bacd"
+            },
+            "BO_SK_Weapon_Railgun_v001_views.json": {
+              "path": "00_blockout/BO_SK_Weapon_Railgun_v001_views.json",
+              "sha256": "17d70d814f467184180e2d50a61cd3126b283190b63ca0a4c5b3bb26e5531ee6"
+            },
+            "BO_SK_Weapon_Railgun_v001_sheet.png": {
+              "path": "00_blockout/BO_SK_Weapon_Railgun_v001_sheet.png",
+              "sha256": "c674599d78e911d30e6cb7d9091656a442fe29a71c379552ad25b023e22671d4"
+            },
+            "BO_SK_Weapon_Railgun_v001_front.png": {
+              "path": "00_blockout/BO_SK_Weapon_Railgun_v001_front.png",
+              "sha256": "5e3d2d20ce730364c9d294fd5552a3dffd1b6bc2810da4fafd74d5044964abce"
+            },
+            "BO_SK_Weapon_Railgun_v001_left.png": {
+              "path": "00_blockout/BO_SK_Weapon_Railgun_v001_left.png",
+              "sha256": "373d0b55d8c2dc325a03fb8c5f30fa9e48043c02699bcc11e46045420413fc23"
+            },
+            "BO_SK_Weapon_Railgun_v001_back.png": {
+              "path": "00_blockout/BO_SK_Weapon_Railgun_v001_back.png",
+              "sha256": "0b595ab78cc95ea794bea0750d1ded45a58181a5cbfc78f55461c8468d580ad5"
+            },
+            "BO_SK_Weapon_Railgun_v001_right.png": {
+              "path": "00_blockout/BO_SK_Weapon_Railgun_v001_right.png",
+              "sha256": "d61933e847d94c313fc086c821e22dc4782ded82918aefcc67778afe635af418"
+            }
+          },
+          "source": {
+            "kind": "weapon",
+            "id": "railgun"
+          },
+          "joints": 4,
+          "bounds": {
+            "min": [
+              -0.04097114326529465,
+              -0.11822703214892008,
+              -0.7000000059604645
+            ],
+            "max": [
+              0.04097114326529463,
+              0.1399999997764826,
+              0.2920000002160668
+            ]
+          },
+          "blender_seconds": 6.2
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:38:42",
+          "files": {
+            "CN_SK_Weapon_Railgun_v001_sheet.png": {
+              "path": "01_concept/CN_SK_Weapon_Railgun_v001_sheet.png",
+              "sha256": "b4c6eaa1da268c63bb83194438a2babacc108a759fbe525c9cdf2f7cefa3045c"
+            },
+            "CN_SK_Weapon_Railgun_v001_front.png": {
+              "path": "01_concept/CN_SK_Weapon_Railgun_v001_front.png",
+              "sha256": "8b48aeebed44c57473263755dd2ab81d0a46a06e6cc705739707099ee2515838"
+            },
+            "CN_SK_Weapon_Railgun_v001_left.png": {
+              "path": "01_concept/CN_SK_Weapon_Railgun_v001_left.png",
+              "sha256": "136ef113b61f8653c673a89cef401baf9ce53f370858d88c4fdfc468b99ed684"
+            },
+            "CN_SK_Weapon_Railgun_v001_back.png": {
+              "path": "01_concept/CN_SK_Weapon_Railgun_v001_back.png",
+              "sha256": "111fe8bd6092bc9fd10a69f455c4bf8916c823172ef6ec5a09a6eca884bbb90d"
+            },
+            "CN_SK_Weapon_Railgun_v001_right.png": {
+              "path": "01_concept/CN_SK_Weapon_Railgun_v001_right.png",
+              "sha256": "bf9894fab49df7c5274fd35c235340d0e26063faf62aa5ae70487dd5c51e5661"
+            },
+            "CN_SK_Weapon_Railgun_v001_compare.png": {
+              "path": "01_concept/CN_SK_Weapon_Railgun_v001_compare.png",
+              "sha256": "13f5de54740a04bb650d16a639fc65fb153465b17c7f1eaa9b7ed8d6925a09eb"
+            },
+            "CN_SK_Weapon_Railgun_v001_prompt.txt": {
+              "path": "01_concept/CN_SK_Weapon_Railgun_v001_prompt.txt",
+              "sha256": "383a53ade49eae89870989b045a205640ee68ba616fa0ca4cf45d54f986e6e56"
+            }
+          },
+          "from_blockout": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 2061,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 603
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 3241
+          },
+          "request_id": "req_9a2b55438f7549ea83c2e7cf42c5a1ad",
+          "seconds": 32.6,
+          "registration": {
+            "front": {
+              "scale": 0.914,
+              "offset": [
+                130,
+                96
+              ],
+              "iou": 0.754,
+              "iou_unregistered_scale": 0.9723
+            },
+            "left": {
+              "scale": 0.914,
+              "offset": [
+                210,
+                110
+              ],
+              "iou": 0.623,
+              "iou_unregistered_scale": 0.9723
+            },
+            "back": {
+              "scale": 0.914,
+              "offset": [
+                129,
+                96
+              ],
+              "iou": 0.759,
+              "iou_unregistered_scale": 0.9723
+            },
+            "right": {
+              "scale": 0.915,
+              "offset": [
+                210,
+                110
+              ],
+              "iou": 0.628,
+              "iou_unregistered_scale": 0.9734
+            }
+          },
+          "note": "",
+          "silhouette_iou": {
+            "front": 0.759,
+            "left": 0.63,
+            "back": 0.767,
+            "right": 0.633
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "东方奇幻配色与纹饰统一，剪影贴合白模；灯纱 / 加速环为白模未含的发光件，偏差在预期内",
+            "time": "2026-10-06 17:39:57"
+          }
+        }
+      ]
+    },
+    "matid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:42:39",
+          "files": {
+            "MID_SK_Weapon_Railgun_v001_sheet.png": {
+              "path": "01_concept/MID_SK_Weapon_Railgun_v001_sheet.png",
+              "sha256": "63f3e5889e4a2aa19455a5b88a8c20a1a2d41c067549faa51e4560bbf7a5d276"
+            },
+            "MID_SK_Weapon_Railgun_v001_front.png": {
+              "path": "01_concept/MID_SK_Weapon_Railgun_v001_front.png",
+              "sha256": "1528eb1641715d587b2451a24a727e3d1a704dd2b75ff0b46c0517766998af53"
+            },
+            "MID_SK_Weapon_Railgun_v001_left.png": {
+              "path": "01_concept/MID_SK_Weapon_Railgun_v001_left.png",
+              "sha256": "58575f5b0e191e282372ce71ab3f70e41d7e76d9b036b92cb163ed8d9cbed793"
+            },
+            "MID_SK_Weapon_Railgun_v001_back.png": {
+              "path": "01_concept/MID_SK_Weapon_Railgun_v001_back.png",
+              "sha256": "0ccdfadb04cc644c1706ee66860d21a018eb873fa2c60fa8264ccc87410f64f5"
+            },
+            "MID_SK_Weapon_Railgun_v001_right.png": {
+              "path": "01_concept/MID_SK_Weapon_Railgun_v001_right.png",
+              "sha256": "286fce8efb08cb2a3936a2af04ed6d20485f000072874fff5dad3325f036e1da"
+            },
+            "MID_SK_Weapon_Railgun_v001_compare.png": {
+              "path": "01_concept/MID_SK_Weapon_Railgun_v001_compare.png",
+              "sha256": "2651507ee84112f1b803a98b510c01863bdc6661abc4fd3d4d17240f9599518c"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1699,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 241
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2879
+          },
+          "request_id": "req_dadb026b71614a5bab8369afddc33b3f",
+          "seconds": 30.0,
+          "registration": {
+            "front": {
+              "scale": 0.9119,
+              "offset": [
+                126,
+                96
+              ],
+              "iou": 0.922,
+              "iou_unregistered_scale": 0.9119,
+              "purity": 0.992
+            },
+            "left": {
+              "scale": 0.9108,
+              "offset": [
+                208,
+                110
+              ],
+              "iou": 0.891,
+              "iou_unregistered_scale": 0.9108,
+              "purity": 0.979
+            },
+            "back": {
+              "scale": 0.9119,
+              "offset": [
+                125,
+                96
+              ],
+              "iou": 0.935,
+              "iou_unregistered_scale": 0.9119,
+              "purity": 0.992
+            },
+            "right": {
+              "scale": 0.9109,
+              "offset": [
+                208,
+                110
+              ],
+              "iou": 0.898,
+              "iou_unregistered_scale": 0.9109,
+              "purity": 0.976
+            }
+          },
+          "metal_ratio": {
+            "front": 0.822,
+            "left": 0.759,
+            "back": 0.824,
+            "right": 0.802
+          }
+        }
+      ]
+    },
+    "emid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 17:45:21",
+          "files": {
+            "EID_SK_Weapon_Railgun_v001_sheet.png": {
+              "path": "01_concept/EID_SK_Weapon_Railgun_v001_sheet.png",
+              "sha256": "912d5ecb7ee93bddb18e3f59386909e831c31aca0ed45e3849cb5e1b69bc3a19"
+            },
+            "EID_SK_Weapon_Railgun_v001_front.png": {
+              "path": "01_concept/EID_SK_Weapon_Railgun_v001_front.png",
+              "sha256": "dde2e9cbcfa7508eeffe3ef548ebb94eabaf5ca5cb664b72619966b172640188"
+            },
+            "EID_SK_Weapon_Railgun_v001_left.png": {
+              "path": "01_concept/EID_SK_Weapon_Railgun_v001_left.png",
+              "sha256": "db4cf4da6914fe3a1a92fcd613856e6d59195b608f4f6338aae6472a3ccfc06e"
+            },
+            "EID_SK_Weapon_Railgun_v001_back.png": {
+              "path": "01_concept/EID_SK_Weapon_Railgun_v001_back.png",
+              "sha256": "306e539dd4b3d0cdf5f429b4fb7e64407b88cda0c4fb19a1c6b00dcb612b01ed"
+            },
+            "EID_SK_Weapon_Railgun_v001_right.png": {
+              "path": "01_concept/EID_SK_Weapon_Railgun_v001_right.png",
+              "sha256": "e6df68a2c2af63f466eec2f1bef13f86a2f307ca8c86765708b306f0f4caeb9b"
+            },
+            "EID_SK_Weapon_Railgun_v001_compare.png": {
+              "path": "01_concept/EID_SK_Weapon_Railgun_v001_compare.png",
+              "sha256": "6d77ff246cf95c2386505c89115cc1fdb4c031e97c96d1db9273e64b5b7da6c6"
+            }
+          },
+          "from_concept": 1,
+          "provider": "openai",
+          "endpoint": "images/edits",
+          "model": "gpt-image-2.5-sunburst",
+          "size": "2048x1024",
+          "quality": "high",
+          "background": "transparent",
+          "usage": {
+            "input_tokens": 1719,
+            "input_tokens_details": {
+              "image_tokens": 1458,
+              "text_tokens": 261
+            },
+            "output_tokens": 1180,
+            "output_tokens_details": {
+              "image_tokens": 1180,
+              "text_tokens": 0
+            },
+            "total_tokens": 2899
+          },
+          "request_id": "req_c3cf684e12bf4397ad744fce3bbfeaed",
+          "seconds": 29.9,
+          "registration": {
+            "front": {
+              "scale": 0.9129,
+              "offset": [
+                126,
+                96
+              ],
+              "iou": 0.936,
+              "iou_unregistered_scale": 0.9129,
+              "purity": 0.994
+            },
+            "left": {
+              "scale": 0.9118,
+              "offset": [
+                209,
+                110
+              ],
+              "iou": 0.911,
+              "iou_unregistered_scale": 0.9118,
+              "purity": 0.991
+            },
+            "back": {
+              "scale": 0.9129,
+              "offset": [
+                125,
+                96
+              ],
+              "iou": 0.929,
+              "iou_unregistered_scale": 0.9129,
+              "purity": 0.993
+            },
+            "right": {
+              "scale": 0.9129,
+              "offset": [
+                208,
+                110
+              ],
+              "iou": 0.904,
+              "iou_unregistered_scale": 0.9129,
+              "purity": 0.993
+            }
+          },
+          "emissive_ratio": {
+            "front": 0.06,
+            "left": 0.048,
+            "back": 0.059,
+            "right": 0.03
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 18:00:06",
+          "files": {
+            "HP_SK_Weapon_Railgun_v001_input_front.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Railgun_v001_input_front.png",
+              "sha256": "65d24bdffda51385e1cb7fccacefed1281a6f0db5518ed467567b238862f39cd"
+            },
+            "HP_SK_Weapon_Railgun_v001_input_left.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Railgun_v001_input_left.png",
+              "sha256": "61d5d0b2e464afac874caa1a2a8765f13e653d6df6544acbb564a6ddba4a1344"
+            },
+            "HP_SK_Weapon_Railgun_v001_input_back.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Railgun_v001_input_back.png",
+              "sha256": "12c5f14e8e20357873f27cb69c52d84ffe67be88c4ddecb3222a5fc3e3856e85"
+            },
+            "HP_SK_Weapon_Railgun_v001_input_right.png": {
+              "path": "02_highpoly/HP_SK_Weapon_Railgun_v001_input_right.png",
+              "sha256": "6af7afda489f32e189d41a70eff798892101fa8657849eedfa0e335707d47352"
+            },
+            "HP_SK_Weapon_Railgun_v001.glb": {
+              "path": "02_highpoly/HP_SK_Weapon_Railgun_v001.glb",
+              "sha256": "84838e77ecb2d6116c80a0bd37cc78844c3aa3e6ade539fc3bde25e3711b7807"
+            },
+            "HP_SK_Weapon_Railgun_v001_graph.json": {
+              "path": "02_highpoly/HP_SK_Weapon_Railgun_v001_graph.json",
+              "sha256": "3504505b5c804ffa6188a4c2c3ee69d206ebb2c9f1ef4fdcdadaf6a38db596fc"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -258,
+              19,
+              770,
+              1046
+            ],
+            "scale": 0.9961089494163424
+          },
+          "seconds": 132.8,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 3.3
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 18:00:52",
+          "files": {
+            "SK_Weapon_Railgun_v001.blend": {
+              "path": "03_work/SK_Weapon_Railgun_v001.blend",
+              "sha256": "d22ff87f6e64aad2e1d5bfadfd2ac36425f63fd05ecd3d89b8d81611a2daa254"
+            },
+            "SK_Weapon_Railgun_v001.glb": {
+              "path": "04_export/SK_Weapon_Railgun_v001.glb",
+              "sha256": "b7403d9b44143f43f70644049b6dfb662128ed5fe8346faa0bcd991d65c17f6e"
+            },
+            "SK_Weapon_Railgun_v001_metrics.json": {
+              "path": "03_work/SK_Weapon_Railgun_v001_metrics.json",
+              "sha256": "751bc0547a8c2abbf9dc80e81dab01c37594a29453e23adfe02250b782f57f71"
+            },
+            "T_Weapon_Railgun_BC.png": {
+              "path": "03_work/textures_v001/T_Weapon_Railgun_BC.png",
+              "sha256": "be758a9433d35b16cafb903cf3e16f2ae2af521c094d8efb59d9709eb5063cb4"
+            },
+            "T_Weapon_Railgun_E.png": {
+              "path": "03_work/textures_v001/T_Weapon_Railgun_E.png",
+              "sha256": "6dcbdbc83719885208594e15cac682792967f75583b1be3f763afc104ff65889"
+            },
+            "T_Weapon_Railgun_MetalMask.png": {
+              "path": "03_work/textures_v001/T_Weapon_Railgun_MetalMask.png",
+              "sha256": "ae588ed94ac86af18a6491c48da5acdca2bd3271e5eb2fa809e64e77b2aa87b1"
+            },
+            "T_Weapon_Railgun_N.png": {
+              "path": "03_work/textures_v001/T_Weapon_Railgun_N.png",
+              "sha256": "11697c5ee6263872c5dc3334efa7e4131de72ac709de1f4d413774f4f11a443b"
+            },
+            "T_Weapon_Railgun_ORM.png": {
+              "path": "03_work/textures_v001/T_Weapon_Railgun_ORM.png",
+              "sha256": "36f69e21d90d0065b6d1026df23d339884c22a38bc28f27bb188b6c647a0c87c"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": 1,
+            "emid": 1
+          },
+          "align_iou": 0.822,
+          "uncovered_ratio": 0.2248,
+          "lods": [
+            {
+              "tris": 11996,
+              "verts": 6004
+            },
+            {
+              "tris": 2996,
+              "verts": 1502
+            }
+          ],
+          "export_kb": 551.3,
+          "seconds": 46.0,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 18:00:52",
+          "files": {
+            "SK_Weapon_Railgun_v001_validation.json": {
+              "path": "05_review/SK_Weapon_Railgun_v001_validation.json",
+              "sha256": "26245e93ae738ff573f20f22c84e3745da27c04a707bd15bfae97d64fefd7269"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 18:01:00",
+          "files": {
+            "SK_Weapon_Railgun_v001_review.png": {
+              "path": "05_review/SK_Weapon_Railgun_v001_review.png",
+              "sha256": "44b9550dcc40e2a4e2fb1ad246f755db9862327c8604a955be13bb74d3d90e1b"
+            }
+          },
+          "from_build": 1,
+          "deformation": {
+            "a": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            },
+            "b": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.0,
+              "p1_compress": 1.0,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "刚体部件 + 多视图高模；三轴尺寸与白模吻合，发光分区落在纹饰上（三才转轮保留程序化发光件）",
+            "time": "2026-10-06 18:05:02"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-06 18:05:02",
+          "files": {
+            "SK_Weapon_Railgun.glb": {
+              "path": "@root/public/assets/weapons/SK_Weapon_Railgun.glb",
+              "sha256": "b7403d9b44143f43f70644049b6dfb662128ed5fe8346faa0bcd991d65c17f6e"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/weapons/SK_Weapon_Railgun.glb"
+        }
+      ]
+    }
+  }
+}

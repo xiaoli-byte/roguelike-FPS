@@ -1,0 +1,899 @@
+{
+  "doc": "蝎尾弩卫 custom skeleton on the Tripo Smart Mesh P2.0 model (12172 tris, Tripo's own UVs, 8K base colour; chosen over the retopology version on 2026-10-06 for texture clarity). Bones placed from measured mesh landmarks in the scaled, grounded Blender frame (metres; front = -Y, the creature's left = +X). Weights: bone heat, then rigid sac / crossbow parts and region limits.",
+  "source": "art/source/_tripo_inbox/20261006T131051_SK_Enemy_ScorpionArcher_smartmesh.fbx",
+  "task": "https://studio.tripo3d.ai/zh/workspace/generate/2811ca3d-b184-411d-9aef-b48d17776fa8",
+  "height_m": 2.0,
+  "bones": {
+    "root": {
+      "head": [
+        0,
+        0,
+        0
+      ],
+      "tail": [
+        0,
+        0,
+        0.2
+      ],
+      "parent": null,
+      "deform": false
+    },
+    "hips": {
+      "head": [
+        0,
+        0.0,
+        0.45
+      ],
+      "tail": [
+        0,
+        -0.25,
+        0.45
+      ],
+      "parent": "root"
+    },
+    "abdomen_1": {
+      "head": [
+        0,
+        0.12,
+        0.47
+      ],
+      "tail": [
+        0,
+        0.3,
+        0.5
+      ],
+      "parent": "hips"
+    },
+    "abdomen_2": {
+      "head": [
+        0,
+        0.3,
+        0.5
+      ],
+      "tail": [
+        0,
+        0.45,
+        0.54
+      ],
+      "parent": "abdomen_1"
+    },
+    "abdomen_3": {
+      "head": [
+        0,
+        0.45,
+        0.54
+      ],
+      "tail": [
+        0,
+        0.553,
+        0.693
+      ],
+      "parent": "abdomen_2"
+    },
+    "tail_1": {
+      "head": [
+        0,
+        0.553,
+        0.693
+      ],
+      "tail": [
+        0,
+        0.666,
+        0.961
+      ],
+      "parent": "abdomen_3"
+    },
+    "tail_2": {
+      "head": [
+        0,
+        0.666,
+        0.961
+      ],
+      "tail": [
+        0,
+        0.692,
+        1.204
+      ],
+      "parent": "tail_1"
+    },
+    "tail_3": {
+      "head": [
+        0,
+        0.692,
+        1.204
+      ],
+      "tail": [
+        0,
+        0.667,
+        1.4
+      ],
+      "parent": "tail_2"
+    },
+    "tail_4": {
+      "head": [
+        0,
+        0.667,
+        1.4
+      ],
+      "tail": [
+        0,
+        0.58,
+        1.53
+      ],
+      "parent": "tail_3"
+    },
+    "sac": {
+      "head": [
+        0,
+        0.55,
+        1.55
+      ],
+      "tail": [
+        0,
+        0.45,
+        1.68
+      ],
+      "parent": "tail_4"
+    },
+    "crossbow": {
+      "head": [
+        0,
+        0.4,
+        1.74
+      ],
+      "tail": [
+        0,
+        -0.4,
+        1.76
+      ],
+      "parent": "sac"
+    },
+    "waist": {
+      "head": [
+        0,
+        -0.25,
+        0.62
+      ],
+      "tail": [
+        0,
+        -0.25,
+        0.86
+      ],
+      "parent": "hips"
+    },
+    "chest": {
+      "head": [
+        0,
+        -0.25,
+        0.86
+      ],
+      "tail": [
+        0,
+        -0.25,
+        1.12
+      ],
+      "parent": "waist"
+    },
+    "neck": {
+      "head": [
+        0,
+        -0.25,
+        1.12
+      ],
+      "tail": [
+        0,
+        -0.26,
+        1.22
+      ],
+      "parent": "chest"
+    },
+    "head": {
+      "head": [
+        0,
+        -0.26,
+        1.22
+      ],
+      "tail": [
+        0,
+        -0.27,
+        1.47
+      ],
+      "parent": "neck"
+    },
+    "shoulder_L": {
+      "head": [
+        0.05,
+        -0.24,
+        1.12
+      ],
+      "tail": [
+        0.19,
+        -0.23,
+        1.15
+      ],
+      "parent": "chest"
+    },
+    "arm_L": {
+      "head": [
+        0.19,
+        -0.23,
+        1.15
+      ],
+      "tail": [
+        0.35,
+        -0.24,
+        0.93
+      ],
+      "parent": "shoulder_L"
+    },
+    "forearm_L": {
+      "head": [
+        0.35,
+        -0.24,
+        0.93
+      ],
+      "tail": [
+        0.48,
+        -0.26,
+        0.73
+      ],
+      "parent": "arm_L"
+    },
+    "hand_L": {
+      "head": [
+        0.48,
+        -0.26,
+        0.73
+      ],
+      "tail": [
+        0.55,
+        -0.27,
+        0.62
+      ],
+      "parent": "forearm_L"
+    },
+    "claw_L1": {
+      "head": [
+        0.25,
+        -0.3,
+        0.45
+      ],
+      "tail": [
+        0.47,
+        -0.38,
+        0.42
+      ],
+      "parent": "hips"
+    },
+    "claw_L2": {
+      "head": [
+        0.47,
+        -0.38,
+        0.42
+      ],
+      "tail": [
+        0.43,
+        -0.52,
+        0.32
+      ],
+      "parent": "claw_L1"
+    },
+    "claw_L": {
+      "head": [
+        0.43,
+        -0.52,
+        0.32
+      ],
+      "tail": [
+        0.33,
+        -0.72,
+        0.1
+      ],
+      "parent": "claw_L2"
+    },
+    "pinch_L": {
+      "head": [
+        0.36,
+        -0.56,
+        0.3
+      ],
+      "tail": [
+        0.2,
+        -0.74,
+        0.12
+      ],
+      "parent": "claw_L"
+    },
+    "leg_L1a": {
+      "head": [
+        0.26,
+        -0.12,
+        0.45
+      ],
+      "tail": [
+        0.511,
+        -0.184,
+        0.55
+      ],
+      "parent": "hips"
+    },
+    "leg_L1b": {
+      "head": [
+        0.511,
+        -0.184,
+        0.55
+      ],
+      "tail": [
+        0.625,
+        -0.216,
+        0.32
+      ],
+      "parent": "leg_L1a"
+    },
+    "leg_L1c": {
+      "head": [
+        0.625,
+        -0.216,
+        0.32
+      ],
+      "tail": [
+        0.665,
+        -0.227,
+        0.1
+      ],
+      "parent": "leg_L1b"
+    },
+    "leg_L2a": {
+      "head": [
+        0.26,
+        0.06,
+        0.45
+      ],
+      "tail": [
+        0.516,
+        0.08,
+        0.55
+      ],
+      "parent": "hips"
+    },
+    "leg_L2b": {
+      "head": [
+        0.516,
+        0.08,
+        0.55
+      ],
+      "tail": [
+        0.632,
+        0.09,
+        0.32
+      ],
+      "parent": "leg_L2a"
+    },
+    "leg_L2c": {
+      "head": [
+        0.632,
+        0.09,
+        0.32
+      ],
+      "tail": [
+        0.673,
+        0.093,
+        0.105
+      ],
+      "parent": "leg_L2b"
+    },
+    "leg_L3a": {
+      "head": [
+        0.26,
+        0.24,
+        0.45
+      ],
+      "tail": [
+        0.506,
+        0.272,
+        0.55
+      ],
+      "parent": "hips"
+    },
+    "leg_L3b": {
+      "head": [
+        0.506,
+        0.272,
+        0.55
+      ],
+      "tail": [
+        0.617,
+        0.288,
+        0.32
+      ],
+      "parent": "leg_L3a"
+    },
+    "leg_L3c": {
+      "head": [
+        0.617,
+        0.288,
+        0.32
+      ],
+      "tail": [
+        0.657,
+        0.293,
+        0.126
+      ],
+      "parent": "leg_L3b"
+    },
+    "leg_L4a": {
+      "head": [
+        0.26,
+        0.4,
+        0.45
+      ],
+      "tail": [
+        0.435,
+        0.474,
+        0.55
+      ],
+      "parent": "hips"
+    },
+    "leg_L4b": {
+      "head": [
+        0.435,
+        0.474,
+        0.55
+      ],
+      "tail": [
+        0.514,
+        0.511,
+        0.32
+      ],
+      "parent": "leg_L4a"
+    },
+    "leg_L4c": {
+      "head": [
+        0.514,
+        0.511,
+        0.32
+      ],
+      "tail": [
+        0.542,
+        0.523,
+        0.128
+      ],
+      "parent": "leg_L4b"
+    },
+    "shoulder_R": {
+      "head": [
+        -0.05,
+        -0.24,
+        1.12
+      ],
+      "tail": [
+        -0.19,
+        -0.23,
+        1.15
+      ],
+      "parent": "chest"
+    },
+    "arm_R": {
+      "head": [
+        -0.19,
+        -0.23,
+        1.15
+      ],
+      "tail": [
+        -0.35,
+        -0.24,
+        0.93
+      ],
+      "parent": "shoulder_R"
+    },
+    "forearm_R": {
+      "head": [
+        -0.35,
+        -0.24,
+        0.93
+      ],
+      "tail": [
+        -0.48,
+        -0.26,
+        0.73
+      ],
+      "parent": "arm_R"
+    },
+    "hand_R": {
+      "head": [
+        -0.48,
+        -0.26,
+        0.73
+      ],
+      "tail": [
+        -0.55,
+        -0.27,
+        0.62
+      ],
+      "parent": "forearm_R"
+    },
+    "claw_R1": {
+      "head": [
+        -0.25,
+        -0.3,
+        0.45
+      ],
+      "tail": [
+        -0.47,
+        -0.38,
+        0.42
+      ],
+      "parent": "hips"
+    },
+    "claw_R2": {
+      "head": [
+        -0.47,
+        -0.38,
+        0.42
+      ],
+      "tail": [
+        -0.43,
+        -0.52,
+        0.32
+      ],
+      "parent": "claw_R1"
+    },
+    "claw_R": {
+      "head": [
+        -0.43,
+        -0.52,
+        0.32
+      ],
+      "tail": [
+        -0.33,
+        -0.72,
+        0.1
+      ],
+      "parent": "claw_R2"
+    },
+    "pinch_R": {
+      "head": [
+        -0.36,
+        -0.56,
+        0.3
+      ],
+      "tail": [
+        -0.2,
+        -0.74,
+        0.12
+      ],
+      "parent": "claw_R"
+    },
+    "leg_R1a": {
+      "head": [
+        -0.26,
+        -0.12,
+        0.45
+      ],
+      "tail": [
+        -0.511,
+        -0.184,
+        0.55
+      ],
+      "parent": "hips"
+    },
+    "leg_R1b": {
+      "head": [
+        -0.511,
+        -0.184,
+        0.55
+      ],
+      "tail": [
+        -0.625,
+        -0.216,
+        0.32
+      ],
+      "parent": "leg_R1a"
+    },
+    "leg_R1c": {
+      "head": [
+        -0.625,
+        -0.216,
+        0.32
+      ],
+      "tail": [
+        -0.665,
+        -0.227,
+        0.1
+      ],
+      "parent": "leg_R1b"
+    },
+    "leg_R2a": {
+      "head": [
+        -0.26,
+        0.06,
+        0.45
+      ],
+      "tail": [
+        -0.516,
+        0.08,
+        0.55
+      ],
+      "parent": "hips"
+    },
+    "leg_R2b": {
+      "head": [
+        -0.516,
+        0.08,
+        0.55
+      ],
+      "tail": [
+        -0.632,
+        0.09,
+        0.32
+      ],
+      "parent": "leg_R2a"
+    },
+    "leg_R2c": {
+      "head": [
+        -0.632,
+        0.09,
+        0.32
+      ],
+      "tail": [
+        -0.673,
+        0.093,
+        0.105
+      ],
+      "parent": "leg_R2b"
+    },
+    "leg_R3a": {
+      "head": [
+        -0.26,
+        0.24,
+        0.45
+      ],
+      "tail": [
+        -0.506,
+        0.272,
+        0.55
+      ],
+      "parent": "hips"
+    },
+    "leg_R3b": {
+      "head": [
+        -0.506,
+        0.272,
+        0.55
+      ],
+      "tail": [
+        -0.617,
+        0.288,
+        0.32
+      ],
+      "parent": "leg_R3a"
+    },
+    "leg_R3c": {
+      "head": [
+        -0.617,
+        0.288,
+        0.32
+      ],
+      "tail": [
+        -0.657,
+        0.293,
+        0.126
+      ],
+      "parent": "leg_R3b"
+    },
+    "leg_R4a": {
+      "head": [
+        -0.26,
+        0.4,
+        0.45
+      ],
+      "tail": [
+        -0.435,
+        0.474,
+        0.55
+      ],
+      "parent": "hips"
+    },
+    "leg_R4b": {
+      "head": [
+        -0.435,
+        0.474,
+        0.55
+      ],
+      "tail": [
+        -0.514,
+        0.511,
+        0.32
+      ],
+      "parent": "leg_R4a"
+    },
+    "leg_R4c": {
+      "head": [
+        -0.514,
+        0.511,
+        0.32
+      ],
+      "tail": [
+        -0.542,
+        0.523,
+        0.128
+      ],
+      "parent": "leg_R4b"
+    }
+  },
+  "rigid": [
+    {
+      "bone": "crossbow",
+      "box": [
+        [
+          -0.3,
+          -0.48,
+          1.66
+        ],
+        [
+          0.3,
+          0.36,
+          2.05
+        ]
+      ]
+    },
+    {
+      "bone": "sac",
+      "sphere": [
+        [
+          0,
+          0.52,
+          1.6
+        ],
+        0.17
+      ],
+      "blend": 0.3
+    }
+  ],
+  "limits": [
+    {
+      "bones": [
+        "shoulder_L",
+        "shoulder_R",
+        "arm_L",
+        "arm_R",
+        "forearm_L",
+        "forearm_R",
+        "hand_L",
+        "hand_R",
+        "waist",
+        "chest",
+        "neck",
+        "head"
+      ],
+      "box": [
+        [
+          -0.7,
+          -0.55,
+          0.56
+        ],
+        [
+          0.7,
+          0.08,
+          1.6
+        ]
+      ]
+    },
+    {
+      "bones": [
+        "claw_L1",
+        "claw_L2",
+        "claw_L",
+        "claw_R1",
+        "claw_R2",
+        "claw_R",
+        "pinch_L",
+        "pinch_R"
+      ],
+      "box": [
+        [
+          -0.75,
+          -0.85,
+          -0.05
+        ],
+        [
+          0.75,
+          -0.2,
+          0.62
+        ]
+      ]
+    },
+    {
+      "bones": [
+        "leg_L1a",
+        "leg_L1b",
+        "leg_L1c",
+        "leg_L2a",
+        "leg_L2b",
+        "leg_L2c",
+        "leg_L3a",
+        "leg_L3b",
+        "leg_L3c",
+        "leg_L4a",
+        "leg_L4b",
+        "leg_L4c",
+        "leg_R1a",
+        "leg_R1b",
+        "leg_R1c",
+        "leg_R2a",
+        "leg_R2b",
+        "leg_R2c",
+        "leg_R3a",
+        "leg_R3b",
+        "leg_R3c",
+        "leg_R4a",
+        "leg_R4b",
+        "leg_R4c"
+      ],
+      "box": [
+        [
+          -0.8,
+          -0.3,
+          -0.05
+        ],
+        [
+          0.8,
+          0.82,
+          0.62
+        ]
+      ]
+    },
+    {
+      "bones": [
+        "abdomen_1",
+        "abdomen_2",
+        "abdomen_3"
+      ],
+      "box": [
+        [
+          -0.4,
+          0.02,
+          0.2
+        ],
+        [
+          0.4,
+          0.75,
+          0.8
+        ]
+      ]
+    },
+    {
+      "bones": [
+        "tail_1",
+        "tail_2",
+        "tail_3",
+        "tail_4"
+      ],
+      "box": [
+        [
+          -0.35,
+          0.3,
+          0.55
+        ],
+        [
+          0.35,
+          0.85,
+          1.75
+        ]
+      ]
+    }
+  ],
+  "glow_shell": "sac",
+  "provider_pbr": true,
+  "bake_normal": false,
+  "paint_shading": {
+    "cavity_distance": 0.018,
+    "cavity": 0.38,
+    "ao": 0.18,
+    "saturation": 1.08,
+    "contrast": 1.05,
+    "keep_brightness": true
+  },
+  "repack_uv": false,
+  "transfer_size": 4096
+}

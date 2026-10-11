@@ -1,0 +1,103 @@
+{
+  "source": {
+    "tris": 3184,
+    "verts": 1652
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 1.75085,
+    "iou": 0.876,
+    "iou_per_view": {
+      "front": 0.953,
+      "left": 0.774,
+      "back": 0.962,
+      "right": 0.775
+    },
+    "size_m": [
+      0.863,
+      0.302,
+      1.75
+    ],
+    "reference_m": [
+      0.98,
+      0.355,
+      1.75
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.58,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "stone_relief_panel_3d_model_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_EnemyWeapon_CamelStele_LOD0",
+      "tris": 2984,
+      "verts": 1551,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.53,
+      "bbox_min": [
+        -0.4313,
+        -0.1234,
+        -0.875
+      ],
+      "bbox_max": [
+        0.4313,
+        0.1774,
+        0.875
+      ]
+    },
+    {
+      "name": "SM_EnemyWeapon_CamelStele_LOD1",
+      "tris": 995,
+      "verts": 545,
+      "uv_min": [
+        0.000244140625,
+        0.001953125
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.412,
+      "bbox_min": [
+        -0.4329,
+        -0.1221,
+        -0.875
+      ],
+      "bbox_max": [
+        0.4369,
+        0.1733,
+        0.8738
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/attachments/SM_EnemyWeapon_CamelStele/04_export/SM_EnemyWeapon_CamelStele_v001.glb",
+    "bytes": 406896
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 5.1,
+  "_seconds": 7.7
+}

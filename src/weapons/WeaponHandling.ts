@@ -36,14 +36,18 @@ export const WEAPON_HANDLING: Readonly<Record<string, HandlingProfile>> = {
 const smooth = (p: number): number => { const t = Math.max(0, Math.min(1, p)); return t * t * (3 - 2 * t); };
 export interface HandPose { x: number; y: number; z: number; roll: number; pitch: number }
 
-/** 装填循环使用逻辑层的单发进度，手送到装填口时才实际加弹。 */
-export function sampleLoadingHand(profile: HandlingProfile, progress: number, support: HandPoint, contact: HandPoint, out: HandPose): void {
+/**
+ * 装填循环使用逻辑层的单发进度，手送到装填口时才实际加弹。
+ * 逐发装填时，第一发从前握出发；后续各发从上一发结束的装填口出发并保持装填手型，
+ * 避免每发之间手跳回前握。
+ */
+export function sampleLoadingHand(profile: HandlingProfile, progress: number, support: HandPoint, contact: HandPoint, out: HandPose, firstShell = true): void {
   const p = Math.max(0, Math.min(1, progress));
   let from = support, to = contact, t = 0;
   const shell = profile.action === 'shell' || profile.action === 'breech';
   if (shell) {
     const pouch: HandPoint = [-0.11, -0.21, 0.08];
-    if (p < 0.22) { to = pouch; t = smooth(p / 0.22); }
+    if (p < 0.22) { from = firstShell ? support : contact; to = pouch; t = smooth(p / 0.22); }
     else { from = pouch; t = smooth((p - 0.22) / 0.66); }
   } else if (p < 0.14) {
     t = smooth(p / 0.14);
@@ -57,7 +61,7 @@ export function sampleLoadingHand(profile: HandlingProfile, progress: number, su
   out.x = from[0] + (to[0] - from[0]) * t;
   out.y = from[1] + (to[1] - from[1]) * t;
   out.z = from[2] + (to[2] - from[2]) * t;
-  const reach = shell ? smooth(p / 0.22) : smooth(p / 0.14) * (1 - smooth((p - 0.88) / 0.12));
+  const reach = shell ? (firstShell ? smooth(p / 0.22) : 1) : smooth(p / 0.14) * (1 - smooth((p - 0.88) / 0.12));
   const roll = profile.action === 'cellTop' || profile.action === 'boltClip' || profile.action === 'wick' ? -0.9
     : profile.action === 'speedloader' || profile.action === 'drum' ? -1.25
     : profile.action === 'tube' ? 0.65 : 0.35;
