@@ -1,0 +1,103 @@
+{
+  "source": {
+    "tris": 3210,
+    "verts": 1683
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 0.6223,
+    "iou": 0.933,
+    "iou_per_view": {
+      "front": 0.979,
+      "left": 0.887,
+      "back": 0.982,
+      "right": 0.86
+    },
+    "size_m": [
+      0.622,
+      0.149,
+      0.622
+    ],
+    "reference_m": [
+      0.622,
+      0.163,
+      0.622
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.737,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "ornate_round_mirror_3d_model_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_EnemyPart_FoxWitchMirror_LOD0",
+      "tris": 2984,
+      "verts": 1570,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.544,
+      "bbox_min": [
+        -0.311,
+        -0.0288,
+        -0.311
+      ],
+      "bbox_max": [
+        0.311,
+        0.1198,
+        0.311
+      ]
+    },
+    {
+      "name": "SM_EnemyPart_FoxWitchMirror_LOD1",
+      "tris": 995,
+      "verts": 559,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        0.999755859375
+      ],
+      "uv_utilization": 0.414,
+      "bbox_min": [
+        -0.3098,
+        -0.0288,
+        -0.31
+      ],
+      "bbox_max": [
+        0.3107,
+        0.1198,
+        0.3098
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/attachments/SM_EnemyPart_FoxWitchMirror/04_export/SM_EnemyPart_FoxWitchMirror_v001.glb",
+    "bytes": 263612
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 10.8,
+  "_seconds": 16.2
+}

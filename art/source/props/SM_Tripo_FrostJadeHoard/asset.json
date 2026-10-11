@@ -1,0 +1,482 @@
+{
+  "id": "SM_Tripo_FrostJadeHoard",
+  "display": "玉器宝藏堆（V2）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 13:37:48",
+          "files": {
+            "BO_SM_Tripo_FrostJadeHoard_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostJadeHoard_v001.json",
+              "sha256": "01b2c39008872a8ad2937ed9e813685d8f9bc6506ebd1c6e429667d28be5295b"
+            },
+            "BO_SM_Tripo_FrostJadeHoard_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostJadeHoard_v001_views.json",
+              "sha256": "f5fc2bc5a0b5e18832a3ac1ed9813139204ef546a366cbe6a181816254e7f6ca"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost.v2.jadeHoard"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.0,
+              0,
+              -1.5
+            ],
+            "max": [
+              2.0,
+              1.8,
+              1.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 13:38:18",
+          "files": {
+            "CN_SM_Tripo_FrostJadeHoard_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeHoard_v001_source.png",
+              "sha256": "63dfe7d8d98058dbc6346eb7723be2651e4b4836fbef8c71a96382b2160cb0e2"
+            },
+            "CN_SM_Tripo_FrostJadeHoard_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeHoard_v001_front.png",
+              "sha256": "b72a98594264f905f0ca8f71d1a151c9bc5706a4cf4f297854aa29adbbef8c90"
+            },
+            "CN_SM_Tripo_FrostJadeHoard_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeHoard_v001_left.png",
+              "sha256": "9a6704987f4fe748c502a0bec50a4149450eded4ac3da79d12f775aa3e92c497"
+            },
+            "CN_SM_Tripo_FrostJadeHoard_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeHoard_v001_back.png",
+              "sha256": "65a85f9e5d6117f66d93b41c6ef69696fef315850813d10f840957593b9f2c2f"
+            },
+            "CN_SM_Tripo_FrostJadeHoard_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeHoard_v001_right.png",
+              "sha256": "13bc9fc93187b6e027d77d718824fe7e61982b707a72d368cd3c3cd41f2a4cbd"
+            },
+            "CN_SM_Tripo_FrostJadeHoard_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeHoard_v001_sheet.png",
+              "sha256": "c22a1c737068ca6b1f50d9e7a51560298f2d88283715a3e77c627e0bd023f09e"
+            },
+            "CN_SM_Tripo_FrostJadeHoard_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeHoard_v001_prompt.txt",
+              "sha256": "14facdaa7b8e26667de0526cf3a0a2acb4479c1602eef8ac0782a9a1113b7a97"
+            },
+            "CN_SM_Tripo_FrostJadeHoard_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeHoard_v001_registration.json",
+              "sha256": "c53cbe2dacf768eea7ff3acb95b2c9b36d08dbbc0ea861988a43322855a00370"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 457,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 457
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1637
+            },
+            "request_id": "req_ae1c53d98ba54b9ca7e8de7d352508af",
+            "seconds": 28.8
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (4m wide x 1.8m tall x 3m deep): A treasure hoard of the Queen Mother's palace 4m wide, 1.8m tall, 3m deep: a heap of carved jade bi discs, cong tubes, jade cups and bronze mirrors spilling from two open bronze-bound chests, a few gold ingots, everything dusted with snow and half frozen in clear blue ice. Pale green jade, verdigris bronze, a little gold. One solid connected heap resting on the ground.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "63dfe7d8d98058dbc6346eb7723be2651e4b4836fbef8c71a96382b2160cb0e2",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.5485714285714285,
+              "offset": [
+                94,
+                409
+              ],
+              "size": [
+                324,
+                206
+              ],
+              "physical_height_m": 1.8,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5500381970970206,
+              "offset": [
+                169,
+                409
+              ],
+              "size": [
+                174,
+                206
+              ],
+              "physical_height_m": 1.8,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5698456667985753,
+              "offset": [
+                96,
+                409
+              ],
+              "size": [
+                320,
+                206
+              ],
+              "physical_height_m": 1.8,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5357142857142857,
+              "offset": [
+                157,
+                409
+              ],
+              "size": [
+                198,
+                206
+              ],
+              "physical_height_m": 1.8,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-07 13:40:55",
+          "files": {
+            "CN_SM_Tripo_FrostJadeHoard_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeHoard_v002_source.png",
+              "sha256": "63dfe7d8d98058dbc6346eb7723be2651e4b4836fbef8c71a96382b2160cb0e2"
+            },
+            "CN_SM_Tripo_FrostJadeHoard_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeHoard_v002_front.png",
+              "sha256": "1e7c6835bae676a2c658ecb43fc522a2d5586e89d5f162623a9be718d11f51f0"
+            },
+            "CN_SM_Tripo_FrostJadeHoard_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeHoard_v002_left.png",
+              "sha256": "84892af8bdb06a02681c20f675ef5913c7c4d95978e99e99322b766540bc30de"
+            },
+            "CN_SM_Tripo_FrostJadeHoard_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeHoard_v002_back.png",
+              "sha256": "3d4d976deda3ee99f58017545add540002e369aca2a6254871438059a8c170c8"
+            },
+            "CN_SM_Tripo_FrostJadeHoard_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeHoard_v002_right.png",
+              "sha256": "d19657955685f6fe7e220297168da1d03d6fdcef4e5c00cabc824d6d7ff770ef"
+            },
+            "CN_SM_Tripo_FrostJadeHoard_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeHoard_v002_sheet.png",
+              "sha256": "02a0c8cf6495bad23b621cb8c540585a9afe8b584616017b68739f900bd5b790"
+            },
+            "CN_SM_Tripo_FrostJadeHoard_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeHoard_v002_prompt.txt",
+              "sha256": "14facdaa7b8e26667de0526cf3a0a2acb4479c1602eef8ac0782a9a1113b7a97"
+            },
+            "CN_SM_Tripo_FrostJadeHoard_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeHoard_v002_registration.json",
+              "sha256": "5be4413f74b8a32350009643219fa83393fd21a7e6edd464c678b85bd51f244e"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 457,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 457
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1637
+            },
+            "request_id": "req_ae1c53d98ba54b9ca7e8de7d352508af",
+            "seconds": 28.8,
+            "rekeyed_from": 1
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (4m wide x 1.8m tall x 3m deep): A treasure hoard of the Queen Mother's palace 4m wide, 1.8m tall, 3m deep: a heap of carved jade bi discs, cong tubes, jade cups and bronze mirrors spilling from two open bronze-bound chests, a few gold ingots, everything dusted with snow and half frozen in clear blue ice. Pale green jade, verdigris bronze, a little gold. One solid connected heap resting on the ground.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "63dfe7d8d98058dbc6346eb7723be2651e4b4836fbef8c71a96382b2160cb0e2",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.5456612353164076,
+              "offset": [
+                95,
+                409
+              ],
+              "size": [
+                322,
+                206
+              ],
+              "physical_height_m": 1.8,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5500381970970206,
+              "offset": [
+                168,
+                409
+              ],
+              "size": [
+                175,
+                206
+              ],
+              "physical_height_m": 1.8,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5682715074980268,
+              "offset": [
+                95,
+                409
+              ],
+              "size": [
+                322,
+                206
+              ],
+              "physical_height_m": 1.8,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5329385640266469,
+              "offset": [
+                157,
+                409
+              ],
+              "size": [
+                198,
+                206
+              ],
+              "physical_height_m": 1.8,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "v002 四视图同一物件、无裁切、雪盖未被抠掉；转 Hunyuan3D 2mv 多视图建模（2026-10-11）",
+            "time": "2026-10-11 00:02:37"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:00:11",
+          "files": {
+            "HP_SM_Tripo_FrostJadeHoard_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostJadeHoard_v001_input_front.png",
+              "sha256": "fdc130a51e2fa61a2fe6f13053be2404d9f77b48a5739aa9adb06508cb32e0b5"
+            },
+            "HP_SM_Tripo_FrostJadeHoard_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostJadeHoard_v001_input_left.png",
+              "sha256": "391efd2dc9d034c55a4197991799fec1899f463523a71dfa5542e38805daf776"
+            },
+            "HP_SM_Tripo_FrostJadeHoard_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostJadeHoard_v001_input_back.png",
+              "sha256": "5c9a6ee3bd9015a8db18c0fab0af1576db344c5a0f98c39f49132b99479cd495"
+            },
+            "HP_SM_Tripo_FrostJadeHoard_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostJadeHoard_v001_input_right.png",
+              "sha256": "819591bf3005217b2befebe85f6d5e805b1a5bf8cfe34896a95b9a0b056e8910"
+            },
+            "HP_SM_Tripo_FrostJadeHoard_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostJadeHoard_v001.glb",
+              "sha256": "ee0f1c03eacc2b624635f633b42c07e5c0c2fb05a5084953f52159adcdb7fb04"
+            },
+            "HP_SM_Tripo_FrostJadeHoard_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostJadeHoard_v001_graph.json",
+              "sha256": "47ab5fef56f4e52f5901d13d41dd686cfc29ecfc7554c190782d0d75493fc41f"
+            }
+          },
+          "from_concept": 2,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              67,
+              323,
+              445,
+              701
+            ],
+            "scale": 2.708994708994709
+          },
+          "seconds": 175.9,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 18.2
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:01:33",
+          "files": {
+            "SM_Tripo_FrostJadeHoard_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostJadeHoard_v001.blend",
+              "sha256": "7f65fb5a0ca9803fa9643557ee66aed83000e1b3a90cbae26c6f787d3e6d5b93"
+            },
+            "SM_Tripo_FrostJadeHoard_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostJadeHoard_v001.glb",
+              "sha256": "e9b60a10bb9ba242c7a0345b30ec6061353a3999e6391354317151153be4e968"
+            },
+            "SM_Tripo_FrostJadeHoard_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostJadeHoard_v001_metrics.json",
+              "sha256": "9ca1445d31c07dfe8f061d58eea5a2342930443e3e6967d1f5f5ca5c61978bd6"
+            },
+            "T_Tripo_FrostJadeHoard_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostJadeHoard_BC.png",
+              "sha256": "3885230fe50f392ade783a969bae2f030ad3ed6e7f6babefd6b16dd3991bf4b1"
+            },
+            "T_Tripo_FrostJadeHoard_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostJadeHoard_N.png",
+              "sha256": "0f5df96170b3db232cb8ceb7275e51531853e27bf1cba49a11d536591e3fda9a"
+            },
+            "T_Tripo_FrostJadeHoard_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostJadeHoard_ORM.png",
+              "sha256": "7bd35d97e0cd950dcc3e645e36230f6d847818696b220cf32937e119c64fab21"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.871,
+          "uncovered_ratio": 0.4319,
+          "lods": [
+            {
+              "tris": 2998,
+              "verts": 1452
+            },
+            {
+              "tris": 999,
+              "verts": 450
+            }
+          ],
+          "export_kb": 323.7,
+          "seconds": 81.7,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:01:33",
+          "files": {
+            "SM_Tripo_FrostJadeHoard_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostJadeHoard_v001_validation_v001.json",
+              "sha256": "bb49597298b68ca08ba479dbd301ca14956b699350efaab37d84a9c15a0bb432"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:01:42",
+          "files": {
+            "SM_Tripo_FrostJadeHoard_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostJadeHoard_v001_review_v001.png",
+              "sha256": "0c155fd6ee5a8792f122960d1e3be2beb7fc2d2b980bf83d7cf892abb34e36d7"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "IoU 0.871；两只开箱、玉璧玉琮、铜镜、金锭，冰晶与雪包裹，四面一致",
+            "time": "2026-10-11 01:01:56"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:01:57",
+          "files": {
+            "SM_Tripo_FrostJadeHoard.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostJadeHoard.glb",
+              "sha256": "e9b60a10bb9ba242c7a0345b30ec6061353a3999e6391354317151153be4e968"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_FrostJadeHoard.glb"
+        }
+      ]
+    }
+  }
+}

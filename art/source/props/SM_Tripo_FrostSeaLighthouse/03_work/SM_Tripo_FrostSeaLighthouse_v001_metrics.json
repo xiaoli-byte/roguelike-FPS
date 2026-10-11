@@ -1,0 +1,141 @@
+{
+  "steps": {
+    "导入清理": 4.3,
+    "对齐": 1.1,
+    "低模与 UV": 14.1,
+    "投影着色": 30.3,
+    "烘焙": 16.7,
+    "LOD": 0.1,
+    "导出": 2.1
+  },
+  "highpoly": {
+    "faces_raw": 1139700,
+    "faces": 516862,
+    "verts": 516480,
+    "loose_parts": 2,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.91,
+    "iou_per_view": {
+      "front": 0.929,
+      "left": 0.891,
+      "back": 0.924,
+      "right": 0.888
+    },
+    "height_m": 12.7705,
+    "blockout_height_m": 13.0
+  },
+  "uv": {
+    "smart_islands": 1743,
+    "charts": 348,
+    "fallback_charts": 46,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.0206,
+    "density_merged": 0.0324
+  },
+  "projection": {
+    "uncovered_ratio": 0.5379
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Tripo_FrostSeaLighthouse_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_FrostSeaLighthouse_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_FrostSeaLighthouse_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostSeaLighthouse_LOD0",
+      "tris": 7999,
+      "verts": 3618,
+      "uv_min": [
+        0.0048667616210877895,
+        0.004844600800424814
+      ],
+      "uv_max": [
+        0.9939258694648743,
+        0.9951714873313904
+      ],
+      "uv_utilization": 0.484,
+      "bbox_min": [
+        -3.1261,
+        -3.0303,
+        -0.001
+      ],
+      "bbox_max": [
+        3.0577,
+        2.7797,
+        12.7758
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostSeaLighthouse_LOD1",
+      "tris": 2500,
+      "verts": 866,
+      "uv_min": [
+        0.005068064667284489,
+        0.005204395391047001
+      ],
+      "uv_max": [
+        0.9939258694648743,
+        0.993925929069519
+      ],
+      "uv_utilization": 0.4,
+      "bbox_min": [
+        -3.0931,
+        -3.0303,
+        0.0056
+      ],
+      "bbox_max": [
+        3.007,
+        2.7183,
+        12.7728
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostSeaLighthouse_LOD2",
+      "tris": 2062,
+      "verts": 647,
+      "uv_min": [
+        0.005068064667284489,
+        0.005204395391047001
+      ],
+      "uv_max": [
+        0.9939258694648743,
+        0.993925929069519
+      ],
+      "uv_utilization": 0.341,
+      "bbox_min": [
+        -3.0931,
+        -3.0303,
+        -0.0474
+      ],
+      "bbox_max": [
+        3.0452,
+        2.7183,
+        11.6721
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostSeaLighthouse/04_export/SM_Tripo_FrostSeaLighthouse_v001.glb",
+    "bytes": 1271464
+  },
+  "blend": "art/source/props/SM_Tripo_FrostSeaLighthouse/03_work/SM_Tripo_FrostSeaLighthouse_v001.blend",
+  "total_seconds": 68.6,
+  "_seconds": 73.4
+}

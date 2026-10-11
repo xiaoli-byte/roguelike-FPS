@@ -1,0 +1,38 @@
+{
+  "design": {
+    "key": "frost_xuangui_shell",
+    "chapter": "frost",
+    "name": "冰甲旋龟·旋壳",
+    "layout": "prop",
+    "reference_key": "frost_xuangui",
+    "height_m": 1.4,
+    "brief": "The ice turtle's spinning form, modelled separately: head, legs and tail pulled inside the shell.",
+    "turnaround_lead": "the ice-armoured turtle's shell with its head, four legs and tail fully pulled inside",
+    "turnaround_pose": ", resting level on the ground: the same tall dome of glacier-blue ice over verdigris-bronze scutes and the ring of short heavy ice spikes around the rim as on the design sheet, every opening (head, four leg holes, tail hole) closed and dark, the round vent on top dark; it reads as a spiked ice disc ready to spin",
+    "turnaround_digits": "The whole shell and every rim spike fully inside the frame; front and back views show the head opening and the tail opening, both closed and dark."
+  },
+  "from_sheet": "DS_frost_xuangui_v001.png",
+  "generation": {
+    "provider": "openai",
+    "endpoint": "images/edits",
+    "model": "gpt-image-2.5-sunburst",
+    "size": "2048x1024",
+    "quality": "high",
+    "background": "opaque",
+    "usage": {
+      "input_tokens": 1805,
+      "input_tokens_details": {
+        "image_tokens": 1458,
+        "text_tokens": 347
+      },
+      "output_tokens": 1180,
+      "output_tokens_details": {
+        "image_tokens": 1180,
+        "text_tokens": 0
+      },
+      "total_tokens": 2985
+    },
+    "request_id": "req_194219546dda48c79ceaf3dcbf8d2ff7",
+    "seconds": 43.1
+  }
+}

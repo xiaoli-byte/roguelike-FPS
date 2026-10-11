@@ -1,0 +1,117 @@
+{
+  "steps": {
+    "导入清理": 2.7,
+    "对齐": 1.4,
+    "低模与 UV": 7.5,
+    "投影着色": 17.3,
+    "烘焙": 7.9,
+    "LOD": 0.0,
+    "导出": 1.8
+  },
+  "highpoly": {
+    "faces_raw": 423698,
+    "faces": 231100,
+    "verts": 231102,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00492,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.844,
+    "iou_per_view": {
+      "front": 0.919,
+      "left": 0.724,
+      "back": 0.92,
+      "right": 0.774
+    },
+    "height_m": 2.4649,
+    "blockout_height_m": 2.6
+  },
+  "uv": {
+    "smart_islands": 295,
+    "charts": 17,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "smart",
+    "density_smart": 0.1356,
+    "density_merged": 0.1315
+  },
+  "projection": {
+    "uncovered_ratio": 0.2663
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Tripo_FrostCoverWall_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_FrostCoverWall_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_FrostCoverWall_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostCoverWall_LOD0",
+      "tris": 3000,
+      "verts": 1502,
+      "uv_min": [
+        0.0035677801351994276,
+        0.0035634865052998066
+      ],
+      "uv_max": [
+        0.992334246635437,
+        0.9965750575065613
+      ],
+      "uv_utilization": 0.663,
+      "bbox_min": [
+        -2.7427,
+        -0.6535,
+        0.0003
+      ],
+      "bbox_max": [
+        2.8229,
+        0.8343,
+        2.4725
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostCoverWall_LOD1",
+      "tris": 1000,
+      "verts": 502,
+      "uv_min": [
+        0.003937434405088425,
+        0.0035634865052998066
+      ],
+      "uv_max": [
+        0.992334246635437,
+        0.9965749979019165
+      ],
+      "uv_utilization": 0.624,
+      "bbox_min": [
+        -2.7283,
+        -0.6611,
+        0.0021
+      ],
+      "bbox_max": [
+        2.8061,
+        0.8228,
+        2.4718
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostCoverWall/04_export/SM_Tripo_FrostCoverWall_v001.glb",
+    "bytes": 232324
+  },
+  "blend": "art/source/props/SM_Tripo_FrostCoverWall/03_work/SM_Tripo_FrostCoverWall_v001.blend",
+  "total_seconds": 38.7,
+  "_seconds": 45.4
+}

@@ -1,0 +1,117 @@
+{
+  "steps": {
+    "导入清理": 5.0,
+    "对齐": 1.1,
+    "低模与 UV": 17.7,
+    "投影着色": 41.5,
+    "烘焙": 8.0,
+    "LOD": 0.0,
+    "导出": 0.9
+  },
+  "highpoly": {
+    "faces_raw": 1221392,
+    "faces": 673878,
+    "verts": 673866,
+    "loose_parts": 46,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.764,
+    "iou_per_view": {
+      "front": 0.883,
+      "left": 0.582,
+      "back": 0.948,
+      "right": 0.585
+    },
+    "height_m": 2.8739,
+    "blockout_height_m": 3.0
+  },
+  "uv": {
+    "smart_islands": 281,
+    "charts": 47,
+    "fallback_charts": 2,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "smart",
+    "density_smart": 0.1445,
+    "density_merged": 0.1445
+  },
+  "projection": {
+    "uncovered_ratio": 0.399
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Tripo_FrostSeaStairs_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_FrostSeaStairs_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_FrostSeaStairs_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostSeaStairs_LOD0",
+      "tris": 3000,
+      "verts": 1488,
+      "uv_min": [
+        0.003815094009041786,
+        0.0038151072803884745
+      ],
+      "uv_max": [
+        0.996184766292572,
+        0.9961848258972168
+      ],
+      "uv_utilization": 0.594,
+      "bbox_min": [
+        -1.1031,
+        -1.34,
+        -0.0001
+      ],
+      "bbox_max": [
+        1.1413,
+        1.0237,
+        2.8769
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostSeaStairs_LOD1",
+      "tris": 1000,
+      "verts": 488,
+      "uv_min": [
+        0.003840215504169464,
+        0.004278718959540129
+      ],
+      "uv_max": [
+        0.996184766292572,
+        0.9961848258972168
+      ],
+      "uv_utilization": 0.549,
+      "bbox_min": [
+        -1.092,
+        -1.3357,
+        0.0078
+      ],
+      "bbox_max": [
+        1.1417,
+        1.0229,
+        2.8685
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostSeaStairs/04_export/SM_Tripo_FrostSeaStairs_v001.glb",
+    "bytes": 251192
+  },
+  "blend": "art/source/props/SM_Tripo_FrostSeaStairs/03_work/SM_Tripo_FrostSeaStairs_v001.blend",
+  "total_seconds": 74.3,
+  "_seconds": 78.1
+}

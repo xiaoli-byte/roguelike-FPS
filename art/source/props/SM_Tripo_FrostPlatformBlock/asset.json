@@ -1,0 +1,726 @@
+{
+  "id": "SM_Tripo_FrostPlatformBlock",
+  "display": "白玉台基模块（V2）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 13:37:07",
+          "files": {
+            "BO_SM_Tripo_FrostPlatformBlock_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostPlatformBlock_v001.json",
+              "sha256": "b0764e79c33417af371613df8c16376e34cf0aa669c1b7ead87b906842a239c8"
+            },
+            "BO_SM_Tripo_FrostPlatformBlock_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostPlatformBlock_v001_views.json",
+              "sha256": "b871370502efdd40c84ea83510792b17ca3cc4cc285c593dbf81ef95edb114fa"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost.v2.platformblock"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.0,
+              0,
+              -2.0
+            ],
+            "max": [
+              2.0,
+              3.0,
+              2.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 13:37:33",
+          "files": {
+            "CN_SM_Tripo_FrostPlatformBlock_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPlatformBlock_v001_source.png",
+              "sha256": "d25bf2a7f95b76185befe862532ddc56e7584e526741bd5a15e182b85e98b828"
+            },
+            "CN_SM_Tripo_FrostPlatformBlock_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPlatformBlock_v001_front.png",
+              "sha256": "220294797ac75053d46a374e1c178f8f8b865eacb0aa0063de3082b1854abb7c"
+            },
+            "CN_SM_Tripo_FrostPlatformBlock_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPlatformBlock_v001_left.png",
+              "sha256": "fc6fb4536ebf211a88a01ee7c3efc7cf9903851f90bea95a887926ff2c451976"
+            },
+            "CN_SM_Tripo_FrostPlatformBlock_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPlatformBlock_v001_back.png",
+              "sha256": "8bb7cc776c84e2560f601baacf267b1ef47ebb0a35efc785c7971c0047a52bc2"
+            },
+            "CN_SM_Tripo_FrostPlatformBlock_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPlatformBlock_v001_right.png",
+              "sha256": "cade5410e354422d5eac8a38ec5d2bdfa3b2c2f89c3d8ad4b0c4aecf93b18db2"
+            },
+            "CN_SM_Tripo_FrostPlatformBlock_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPlatformBlock_v001_sheet.png",
+              "sha256": "d442ec6ff1bf8a2d1f12a13c7e3dd34d44b38600f8098c5edf65ca54bfab47f3"
+            },
+            "CN_SM_Tripo_FrostPlatformBlock_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostPlatformBlock_v001_prompt.txt",
+              "sha256": "d0ad79be77328e29f428a1719eabf0108e58dae611e40696b24a5a96a591da2d"
+            },
+            "CN_SM_Tripo_FrostPlatformBlock_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostPlatformBlock_v001_registration.json",
+              "sha256": "42875cf1960dd1f0e1539dcf9cb1eee182b033caa5526d8ba69b84d8087868ae"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 449,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 449
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1629
+            },
+            "request_id": "req_3aba4572232a4d1b91b18716d3795212",
+            "seconds": 23.7
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (4m wide x 3m tall x 4m deep): A square raised white jade terrace module 4m wide, 3m tall, 4m deep for tiling into large terraces (a Chinese xumizuo podium): solid pale stone walls with a carved lotus-petal moulding band and a verdigris bronze corner cap at the top, a flat paved top with a thin even layer of snow. All four sides finished identically so modules tile edge to edge.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "d25bf2a7f95b76185befe862532ddc56e7584e526741bd5a15e182b85e98b828",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 1.0296010296010296,
+              "offset": [
+                12,
+                340
+              ],
+              "size": [
+                487,
+                343
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 1.0358221838584376,
+              "offset": [
+                30,
+                340
+              ],
+              "size": [
+                452,
+                343
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 1.0296010296010296,
+              "offset": [
+                13,
+                340
+              ],
+              "size": [
+                485,
+                343
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 1.0327022375215145,
+              "offset": [
+                31,
+                340
+              ],
+              "size": [
+                450,
+                343
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-07 13:40:30",
+          "files": {
+            "CN_SM_Tripo_FrostPlatformBlock_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPlatformBlock_v002_source.png",
+              "sha256": "d25bf2a7f95b76185befe862532ddc56e7584e526741bd5a15e182b85e98b828"
+            },
+            "CN_SM_Tripo_FrostPlatformBlock_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPlatformBlock_v002_front.png",
+              "sha256": "927c0f04b0cf3d1d3a6ee5e50d4967e78d70df1a093a2a02baf00a553ee51bce"
+            },
+            "CN_SM_Tripo_FrostPlatformBlock_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPlatformBlock_v002_left.png",
+              "sha256": "30b5c2d1b4dee0603863c7ccc81109f3d39f7cfb24f953b205b675dc27c088f7"
+            },
+            "CN_SM_Tripo_FrostPlatformBlock_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPlatformBlock_v002_back.png",
+              "sha256": "04bdb6fd2cd9d6d8e9e08492496bb4284f1833957d3e2b4aac50774767d4c0aa"
+            },
+            "CN_SM_Tripo_FrostPlatformBlock_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPlatformBlock_v002_right.png",
+              "sha256": "ccbdb29e6bea648a2d73436f8a60816db1210cc4aec5b91fecd542290c4cc2c6"
+            },
+            "CN_SM_Tripo_FrostPlatformBlock_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPlatformBlock_v002_sheet.png",
+              "sha256": "48aa89b527686b9f451c313b287cf6525872fdcec3c84e11485e6d321aaef84f"
+            },
+            "CN_SM_Tripo_FrostPlatformBlock_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostPlatformBlock_v002_prompt.txt",
+              "sha256": "d0ad79be77328e29f428a1719eabf0108e58dae611e40696b24a5a96a591da2d"
+            },
+            "CN_SM_Tripo_FrostPlatformBlock_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostPlatformBlock_v002_registration.json",
+              "sha256": "aa942e6a26d3c2efb21f1b5ec7de946816ed34fd11a742747b1e4cf599a485f2"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 449,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 449
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1629
+            },
+            "request_id": "req_3aba4572232a4d1b91b18716d3795212",
+            "seconds": 23.7,
+            "rekeyed_from": 1
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (4m wide x 3m tall x 4m deep): A square raised white jade terrace module 4m wide, 3m tall, 4m deep for tiling into large terraces (a Chinese xumizuo podium): solid pale stone walls with a carved lotus-petal moulding band and a verdigris bronze corner cap at the top, a flat paved top with a thin even layer of snow. All four sides finished identically so modules tile edge to edge.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "d25bf2a7f95b76185befe862532ddc56e7584e526741bd5a15e182b85e98b828",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 1.0265183917878529,
+              "offset": [
+                12,
+                340
+              ],
+              "size": [
+                488,
+                343
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 1.0327022375215145,
+              "offset": [
+                30,
+                340
+              ],
+              "size": [
+                452,
+                343
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 1.023454157782516,
+              "offset": [
+                14,
+                340
+              ],
+              "size": [
+                484,
+                343
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 1.0296010296010296,
+              "offset": [
+                31,
+                340
+              ],
+              "size": [
+                450,
+                343
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "v002 四视图同一物件、无裁切、雪盖未被抠掉；转 Hunyuan3D 2mv 多视图建模（2026-10-11）",
+            "time": "2026-10-11 00:02:35"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:24:32",
+          "files": {
+            "HP_SM_Tripo_FrostPlatformBlock_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPlatformBlock_v001_input_front.png",
+              "sha256": "1ee3186dbf1676de94116b3c72238327f54fe6c71e91f7a3d18ba81c46ad5ff9"
+            },
+            "HP_SM_Tripo_FrostPlatformBlock_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPlatformBlock_v001_input_left.png",
+              "sha256": "1c3cbb268fc36788f083534afc6fe3173e33aa7c5cbaf2581e96dabf862cd1c4"
+            },
+            "HP_SM_Tripo_FrostPlatformBlock_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPlatformBlock_v001_input_back.png",
+              "sha256": "f935e933b0043598eede7cc80eb88bb07bfb69ed809cb53cacd2a3e3cdca1333"
+            },
+            "HP_SM_Tripo_FrostPlatformBlock_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPlatformBlock_v001_input_right.png",
+              "sha256": "002be89cd32ff2386e43d4d3dcd4fc0b90143213a93f4c7ecdc57f8796f079e4"
+            },
+            "HP_SM_Tripo_FrostPlatformBlock_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPlatformBlock_v001.glb",
+              "sha256": "c9245044daa82d33fc729aa11cb66edecb010c27fcb457214b7d07ca18e3ab11"
+            },
+            "HP_SM_Tripo_FrostPlatformBlock_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPlatformBlock_v001_graph.json",
+              "sha256": "56d43f71216154cb4af902943e5f02dbba8709e110db8042050ba3100caba1b4"
+            }
+          },
+          "from_concept": 2,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -30,
+              225,
+              542,
+              798
+            ],
+            "scale": 1.7902097902097902
+          },
+          "seconds": 244.8,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 50.2
+        },
+        {
+          "version": 2,
+          "created": "2026-10-11 00:37:39",
+          "files": {
+            "HP_SM_Tripo_FrostPlatformBlock_v002_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPlatformBlock_v002_input_front.png",
+              "sha256": "1ee3186dbf1676de94116b3c72238327f54fe6c71e91f7a3d18ba81c46ad5ff9"
+            },
+            "HP_SM_Tripo_FrostPlatformBlock_v002_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPlatformBlock_v002_input_left.png",
+              "sha256": "1c3cbb268fc36788f083534afc6fe3173e33aa7c5cbaf2581e96dabf862cd1c4"
+            },
+            "HP_SM_Tripo_FrostPlatformBlock_v002_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPlatformBlock_v002_input_back.png",
+              "sha256": "f935e933b0043598eede7cc80eb88bb07bfb69ed809cb53cacd2a3e3cdca1333"
+            },
+            "HP_SM_Tripo_FrostPlatformBlock_v002_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPlatformBlock_v002_input_right.png",
+              "sha256": "002be89cd32ff2386e43d4d3dcd4fc0b90143213a93f4c7ecdc57f8796f079e4"
+            },
+            "HP_SM_Tripo_FrostPlatformBlock_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPlatformBlock_v002.glb",
+              "sha256": "861900ec7ebdb98d285caba455f49057c9850d76c0e9609ad4fd32ea8bd40e05"
+            },
+            "HP_SM_Tripo_FrostPlatformBlock_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPlatformBlock_v002_graph.json",
+              "sha256": "c46eb2368e68a04cf3402c86d691147c7e2fdc3a469ca30f80e8c23a57a6bea0"
+            }
+          },
+          "from_concept": 2,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261011,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -30,
+              225,
+              542,
+              798
+            ],
+            "scale": 1.7902097902097902
+          },
+          "seconds": 357.3,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 51.2
+        },
+        {
+          "version": 3,
+          "created": "2026-10-11 00:46:54",
+          "files": {
+            "HP_SM_Tripo_FrostPlatformBlock_v003_input.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPlatformBlock_v003_input.png",
+              "sha256": "395ed9e2bd02143d4e917206410778be085445f55f7f3f7f6b808b5b48af7359"
+            },
+            "HP_SM_Tripo_FrostPlatformBlock_v003.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPlatformBlock_v003.glb",
+              "sha256": "1876994ce3ed2a75735cb6338eba4933604d1574e6c369750a45aeba4f834415"
+            },
+            "HP_SM_Tripo_FrostPlatformBlock_v003_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPlatformBlock_v003_graph.json",
+              "sha256": "de7fefa402ac164ed0d680c0d963da18b83d42b5f436d8b8b8ecd32ece891bc6"
+            }
+          },
+          "from_concept": 2,
+          "mode": "single",
+          "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+          "checkpoint": "hunyuan_3d_v2.1.safetensors",
+          "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "crop": [
+              12,
+              340,
+              500,
+              683
+            ],
+            "scale": 1.7836065573770492,
+            "offset": [
+              77,
+              206
+            ]
+          },
+          "seconds": 296.0,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 25.4
+        }
+      ]
+    },
+    "build": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:27:34",
+          "files": {
+            "SM_Tripo_FrostPlatformBlock_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostPlatformBlock_v001.blend",
+              "sha256": "786e2c08519bc0cf782eec1795be4425e9422c12fa990c1a98ac98065d386a31"
+            },
+            "SM_Tripo_FrostPlatformBlock_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostPlatformBlock_v001.glb",
+              "sha256": "153331537f273f90093c59caf1b0d2050877b6d28e1953f7e86dc18663b0f9bf"
+            },
+            "SM_Tripo_FrostPlatformBlock_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostPlatformBlock_v001_metrics.json",
+              "sha256": "60085f39d2c423e9632b9ddf3b40ac008649f689760923d1db3e87f666811bb4"
+            },
+            "T_Tripo_FrostPlatformBlock_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostPlatformBlock_BC.png",
+              "sha256": "cfc871fa927bbc5fcca1074660248d3d299c3a7841be47e82478192ac2623311"
+            },
+            "T_Tripo_FrostPlatformBlock_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostPlatformBlock_N.png",
+              "sha256": "be46d5e50858cacededab29c6ddbc971839cda91effe879fe6c7149d0c76ffbf"
+            },
+            "T_Tripo_FrostPlatformBlock_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostPlatformBlock_ORM.png",
+              "sha256": "82967ff65d8909635ac7a742c62cc709ef4bed829b0a91fb03f389b0d0944557"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.834,
+          "uncovered_ratio": 0.7347,
+          "lods": [
+            {
+              "tris": 2992,
+              "verts": 1177
+            },
+            {
+              "tris": 1726,
+              "verts": 539
+            }
+          ],
+          "export_kb": 357.9,
+          "seconds": 181.8,
+          "bake_device": "CPU",
+          "quality_status": "failed",
+          "quality_errors": [
+            "LOD1 面数"
+          ]
+        },
+        {
+          "version": 2,
+          "created": "2026-10-11 00:41:36",
+          "files": {
+            "SM_Tripo_FrostPlatformBlock_v002.blend": {
+              "path": "03_work/SM_Tripo_FrostPlatformBlock_v002.blend",
+              "sha256": "20f42ea33afb031c6148ea71b07b9b7e105c311629ba59d37e7fe3eac07ebb62"
+            },
+            "SM_Tripo_FrostPlatformBlock_v002.glb": {
+              "path": "04_export/SM_Tripo_FrostPlatformBlock_v002.glb",
+              "sha256": "c7f1f956c01af1d88cb0128259c86b8b3380861444bde2c9254946ca8db42c0e"
+            },
+            "SM_Tripo_FrostPlatformBlock_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostPlatformBlock_v002_metrics.json",
+              "sha256": "29cbc82dbb9e3cea8a2a05e280e4cbb5a7c96edf427d4baec5c4d23a5ccebbb1"
+            },
+            "T_Tripo_FrostPlatformBlock_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostPlatformBlock_BC.png",
+              "sha256": "16570e9f0cb5fbc5b47ca495c8a566340c3f96ddff875f24c1052f695ffb1c01"
+            },
+            "T_Tripo_FrostPlatformBlock_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostPlatformBlock_N.png",
+              "sha256": "9bde6e865f1f51b27dec678bc290c02a13ef5076d9746b6aa82bdb5b7aab0f3c"
+            },
+            "T_Tripo_FrostPlatformBlock_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostPlatformBlock_ORM.png",
+              "sha256": "281b4c3faf56b00ad6e95c4e82501fb486070c0dd981adce4f81489da043fb5c"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.841,
+          "uncovered_ratio": 0.7511,
+          "lods": [
+            {
+              "tris": 2997,
+              "verts": 1090
+            },
+            {
+              "tris": 2176,
+              "verts": 672
+            }
+          ],
+          "export_kb": 401.9,
+          "seconds": 220.9,
+          "bake_device": "CPU",
+          "quality_status": "failed",
+          "quality_errors": [
+            "LOD1 面数"
+          ]
+        },
+        {
+          "version": 3,
+          "created": "2026-10-11 00:49:41",
+          "files": {
+            "SM_Tripo_FrostPlatformBlock_v003.blend": {
+              "path": "03_work/SM_Tripo_FrostPlatformBlock_v003.blend",
+              "sha256": "00783c8ce1638b33b89627fda0a03a29039708a9a0f778b10b84db22f29d343b"
+            },
+            "SM_Tripo_FrostPlatformBlock_v003.glb": {
+              "path": "04_export/SM_Tripo_FrostPlatformBlock_v003.glb",
+              "sha256": "5b952c8fad901cde8162dabd0ffafd1beac3f211d0b619e1c14f7ffdb028efa1"
+            },
+            "SM_Tripo_FrostPlatformBlock_v003_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostPlatformBlock_v003_metrics.json",
+              "sha256": "56411e7d96ae38a27678aa6879ff3750c2b1bb15bd82c4dbf054f2c94bef2c7c"
+            },
+            "T_Tripo_FrostPlatformBlock_BC.png": {
+              "path": "03_work/textures_v003/T_Tripo_FrostPlatformBlock_BC.png",
+              "sha256": "246f54933a0cc3b3ae724c2c895c9b2c230d27aaa9b7d8a18716f77d9de765cb"
+            },
+            "T_Tripo_FrostPlatformBlock_N.png": {
+              "path": "03_work/textures_v003/T_Tripo_FrostPlatformBlock_N.png",
+              "sha256": "bf783ed21cd89dd52ca962087e6ed2a69d2358609e2a8fe23a7e6969ba7cdfb7"
+            },
+            "T_Tripo_FrostPlatformBlock_ORM.png": {
+              "path": "03_work/textures_v003/T_Tripo_FrostPlatformBlock_ORM.png",
+              "sha256": "97708eeb4f5ad73b8d6d7ec9ff5d74293326d46baa20d2d0a32c00e0def46ad9"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 3,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.817,
+          "uncovered_ratio": 0.5621,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1502
+            },
+            {
+              "tris": 1000,
+              "verts": 502
+            }
+          ],
+          "export_kb": 207.1,
+          "seconds": 121.9,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:27:34",
+          "files": {
+            "SM_Tripo_FrostPlatformBlock_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostPlatformBlock_v001_validation_v001.json",
+              "sha256": "e19df0cc4fcc3f98ad1dab4f0f9eb93bbccb29b15d37173d7a3a81aa47760497"
+            }
+          },
+          "from_build": 1,
+          "errors": 1,
+          "warnings": 5,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 2,
+          "created": "2026-10-11 00:41:37",
+          "files": {
+            "SM_Tripo_FrostPlatformBlock_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_FrostPlatformBlock_v002_validation_v002.json",
+              "sha256": "092fdd8e458b74433714673a28efb9df5326079f58bf975ea56a0201192df043"
+            }
+          },
+          "from_build": 2,
+          "errors": 1,
+          "warnings": 5,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 3,
+          "created": "2026-10-11 00:52:02",
+          "files": {
+            "SM_Tripo_FrostPlatformBlock_v003_validation_v003.json": {
+              "path": "05_review/SM_Tripo_FrostPlatformBlock_v003_validation_v003.json",
+              "sha256": "4fc6a92d57e07f6d277a6dbe4d14b75c9f192a6b3409b46a30cca86e03e04119"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 4,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:52:13",
+          "files": {
+            "SM_Tripo_FrostPlatformBlock_v003_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostPlatformBlock_v003_review_v001.png",
+              "sha256": "fb79e286a7a3b8c771ddd2ee58c5cdb1137a75108bfd412548ac882b66cdce62"
+            }
+          },
+          "from_build": 3,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "build v003（Hunyuan 2.1 单视图，种子 20261003）实心；莲瓣线脚、朱漆带、铜角，四面一致可拼；2mv 两版为薄壳空心盒（LOD1 卡在 1726/2176 面）弃用",
+            "time": "2026-10-11 00:55:41"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:55:43",
+          "files": {
+            "SM_Tripo_FrostPlatformBlock.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostPlatformBlock.glb",
+              "sha256": "5b952c8fad901cde8162dabd0ffafd1beac3f211d0b619e1c14f7ffdb028efa1"
+            }
+          },
+          "from_build": 3,
+          "url": "assets/props/SM_Tripo_FrostPlatformBlock.glb"
+        }
+      ]
+    }
+  }
+}

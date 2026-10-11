@@ -1,0 +1,348 @@
+{
+  "id": "SM_Tripo_FrostSeaMastRuin",
+  "display": "折断桅杆（备选 C）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 17:41:05",
+          "files": {
+            "BO_SM_Tripo_FrostSeaMastRuin_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostSeaMastRuin_v001.json",
+              "sha256": "c209b62c20e35f1d24412ee171c9e9e3dba9b1e5fcf927371d514f708d17d087"
+            },
+            "BO_SM_Tripo_FrostSeaMastRuin_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostSeaMastRuin_v001_views.json",
+              "sha256": "b5851598dcc061c00e51d97841188841147439dbbd87395d4fcba1b536b601b0"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost_c.v2.mastRuin"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -3.0,
+              0,
+              -1.5
+            ],
+            "max": [
+              3.0,
+              1.6,
+              1.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 17:42:29",
+          "files": {
+            "CN_SM_Tripo_FrostSeaMastRuin_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaMastRuin_v001_source.png",
+              "sha256": "28f4761cf33052c117bc19ba7cc50a6a77ba1889f64bc2cc8f12df958752aff1"
+            },
+            "CN_SM_Tripo_FrostSeaMastRuin_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaMastRuin_v001_front.png",
+              "sha256": "a038ac90c7e5d9f69f1d57e2538c2a4bbf685e5c73103771f7c6806110aa3e32"
+            },
+            "CN_SM_Tripo_FrostSeaMastRuin_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaMastRuin_v001_left.png",
+              "sha256": "20e025347c9832ef347274fc00a5e4a4acd0a94577de4ac28ea785e0397b5a14"
+            },
+            "CN_SM_Tripo_FrostSeaMastRuin_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaMastRuin_v001_back.png",
+              "sha256": "bdba269e562e441d9cbdecbf0e29f1a1764a1c8c28cd1b1ebd2fe4b0f6e507a2"
+            },
+            "CN_SM_Tripo_FrostSeaMastRuin_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaMastRuin_v001_right.png",
+              "sha256": "b8a0fb02dc1a0060e3fc4e5b7b79fedd2095be6f509dabdc03f19eaeff5c2485"
+            },
+            "CN_SM_Tripo_FrostSeaMastRuin_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaMastRuin_v001_sheet.png",
+              "sha256": "6c1fe28ded1d804ebec9c3e1e78791f2eb1b66500b9c6c6b5a4b348b84a70e91"
+            },
+            "CN_SM_Tripo_FrostSeaMastRuin_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaMastRuin_v001_prompt.txt",
+              "sha256": "573d45a36d53a0326cda4ccd1955ec0540fff958a01c730c0dac2c7297ccf894"
+            },
+            "CN_SM_Tripo_FrostSeaMastRuin_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaMastRuin_v001_registration.json",
+              "sha256": "098666566e6e0f28153bd633132e8a2f6ed10ab9653ff79afdf24ccb88381c71"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-5.6-terra",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-5.6-terra",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "attempt": 1,
+            "seconds": 81.9
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian frozen polar sea fantasy from the Zhuangzi's northern darkness: faceted glacier ice and dark ink-blue rock, weathered ivory whale bone, old dark ship timber with faded teal paint, frozen ropes, felt and a cold aqua deep-sea glow, thick soft snow caps and chunky icicles. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (6m wide x 1.6m tall x 3m deep): A fallen broken ship's mast lying on the ice 6m long, 1.6m tall, 3m wide, with its torn batten sail draped over a pile of barrels and a cracked yard spar, half buried in drifted snow and sea ice. Low, chunky, one solid connected group resting on the ground.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "28f4761cf33052c117bc19ba7cc50a6a77ba1889f64bc2cc8f12df958752aff1",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.2995202995202995,
+              "offset": [
+                175,
+                451
+              ],
+              "size": [
+                162,
+                122
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.3009994121105232,
+              "offset": [
+                212,
+                451
+              ],
+              "size": [
+                87,
+                122
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.2987861811391223,
+              "offset": [
+                174,
+                451
+              ],
+              "size": [
+                164,
+                122
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.29805565257887995,
+              "offset": [
+                194,
+                451
+              ],
+              "size": [
+                124,
+                122
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "四视图同一物件、朝向正确、无裁切、雪盖未被抠掉；转 Hunyuan3D 2mv 多视图建模（2026-10-11）",
+            "time": "2026-10-11 00:35:27"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:59:04",
+          "files": {
+            "HP_SM_Tripo_FrostSeaMastRuin_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaMastRuin_v001_input_front.png",
+              "sha256": "008e806ee5389c7db72f584bd12a1a67c776ca7f5c316da553ba239bd1a1ba6f"
+            },
+            "HP_SM_Tripo_FrostSeaMastRuin_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaMastRuin_v001_input_left.png",
+              "sha256": "e318bbfd79592d7866a0b2cb43792fe8ea42aced315fe3170852cee70cac523d"
+            },
+            "HP_SM_Tripo_FrostSeaMastRuin_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaMastRuin_v001_input_back.png",
+              "sha256": "bf32bd4f390b998570516e1bdbfc37ad61bf6f2263477f0c35ae2c2dc8a42ad0"
+            },
+            "HP_SM_Tripo_FrostSeaMastRuin_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaMastRuin_v001_input_right.png",
+              "sha256": "d9db5ae675a6fdd4b567dd54e0d937aa4f2726b1930df3bc4215648e0aaf6435"
+            },
+            "HP_SM_Tripo_FrostSeaMastRuin_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaMastRuin_v001.glb",
+              "sha256": "72816537367102e2f55b6a0c9dc68e126ee136374302c2efccdde68e1e1e9b05"
+            },
+            "HP_SM_Tripo_FrostSeaMastRuin_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaMastRuin_v001_graph.json",
+              "sha256": "8bdf956d70f14afaed7938d56356f63e308694782315144981357baf0226da02"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              160,
+              416,
+              352,
+              608
+            ],
+            "scale": 5.333333333333333
+          },
+          "seconds": 324.2,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 16.8
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 02:00:14",
+          "files": {
+            "SM_Tripo_FrostSeaMastRuin_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostSeaMastRuin_v001.blend",
+              "sha256": "660f7bc0b6159f6fa315a82156b719de44e0b47c523a467a373676fd613f897c"
+            },
+            "SM_Tripo_FrostSeaMastRuin_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostSeaMastRuin_v001.glb",
+              "sha256": "d62f13c4d9698702142537113cc49e09ea9d86ef1f27c21f9179c6d52901ec00"
+            },
+            "SM_Tripo_FrostSeaMastRuin_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostSeaMastRuin_v001_metrics.json",
+              "sha256": "7a384396835180819c00c44b0b15aab729a2d061dfa7cbe5e361208f63a4e31a"
+            },
+            "T_Tripo_FrostSeaMastRuin_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaMastRuin_BC.png",
+              "sha256": "e542989b33f185adebf8159e23bac4e2f2937b79d377460ec0ce91b00516e279"
+            },
+            "T_Tripo_FrostSeaMastRuin_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaMastRuin_N.png",
+              "sha256": "2f85d1d1b0dcb37d6691ab12b9ac7dad2a47fd01970dbc50bef1c21bfc9580f2"
+            },
+            "T_Tripo_FrostSeaMastRuin_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaMastRuin_ORM.png",
+              "sha256": "8676a9978f441d5b2585a768894e51ba23c7a0496be7e15af2735c6c7a524744"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.77,
+          "uncovered_ratio": 0.4674,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1388
+            },
+            {
+              "tris": 1000,
+              "verts": 388
+            }
+          ],
+          "export_kb": 310.6,
+          "seconds": 66.7,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 02:00:14",
+          "files": {
+            "SM_Tripo_FrostSeaMastRuin_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostSeaMastRuin_v001_validation_v001.json",
+              "sha256": "46bd1e05711a1b93124aa3d799517c5ef8a4a066667d56263fa722b40776a059"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 02:00:22",
+          "files": {
+            "SM_Tripo_FrostSeaMastRuin_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostSeaMastRuin_v001_review_v001.png",
+              "sha256": "5e40bb3a184a298ce42e9392d518e97935a05ae5333f0d2a5cd49e210d7f24bd"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "IoU 0.77；斜倒桅杆+破帆+木桶堆，半埋雪与海冰；帆布偏碎但轮廓可读",
+            "time": "2026-10-11 02:00:38"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 02:00:39",
+          "files": {
+            "SM_Tripo_FrostSeaMastRuin.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostSeaMastRuin.glb",
+              "sha256": "d62f13c4d9698702142537113cc49e09ea9d86ef1f27c21f9179c6d52901ec00"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_FrostSeaMastRuin.glb"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,162 @@
+{
+  "id": "SM_Tripo_FrostTaoPortalShrine",
+  "display": "道观传送门龛（备选 B）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 16:43:22",
+          "files": {
+            "BO_SM_Tripo_FrostTaoPortalShrine_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostTaoPortalShrine_v001.json",
+              "sha256": "baa47e07026617ed02549cab38b8224893915cce60f8af27c286d8f1ef51fdd3"
+            },
+            "BO_SM_Tripo_FrostTaoPortalShrine_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostTaoPortalShrine_v001_views.json",
+              "sha256": "668b448efde6fc37c470d69b041f28d04dbf111a82d78dc310a44b60bcac7cd3"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost_b.v2.portalShrine"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -5.0,
+              0,
+              -2.5
+            ],
+            "max": [
+              5.0,
+              11.0,
+              2.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 17:35:19",
+          "files": {
+            "CN_SM_Tripo_FrostTaoPortalShrine_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoPortalShrine_v001_source.png",
+              "sha256": "ff069b1a6baa4e8652a45a4b7d5fe73c4e8f19c7f8666e5d88d98c9d6fef45ac"
+            },
+            "CN_SM_Tripo_FrostTaoPortalShrine_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoPortalShrine_v001_front.png",
+              "sha256": "e7d001bb47d1c1333770f8812a470ba866ffeebccb20442d55d2c0f0f3cb67dc"
+            },
+            "CN_SM_Tripo_FrostTaoPortalShrine_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoPortalShrine_v001_left.png",
+              "sha256": "a88abf35fb79728ece6b8576022616a4d99944d01e79c3410439dc34cbfe91dd"
+            },
+            "CN_SM_Tripo_FrostTaoPortalShrine_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoPortalShrine_v001_back.png",
+              "sha256": "f410918dd904826a72546cee3f1fccb2a735e20e13f5beb7b9b3878f9a00b159"
+            },
+            "CN_SM_Tripo_FrostTaoPortalShrine_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoPortalShrine_v001_right.png",
+              "sha256": "61ca1dfcbc921c1904d4866bad47177ea4e60c99f99d1ed27b7e873cf4937bf5"
+            },
+            "CN_SM_Tripo_FrostTaoPortalShrine_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoPortalShrine_v001_sheet.png",
+              "sha256": "0591bf1f02f11c0a5893e6a24c06b5d813f4c317720577fe54a9e9e17acb3cca"
+            },
+            "CN_SM_Tripo_FrostTaoPortalShrine_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoPortalShrine_v001_prompt.txt",
+              "sha256": "6f2fc42e075df973bccca15c79e5f3056103e53ce2ed7ee86075617c18134b6d"
+            },
+            "CN_SM_Tripo_FrostTaoPortalShrine_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoPortalShrine_v001_registration.json",
+              "sha256": "09ccf1206a44a6e29d73caa0c48094f529bd9aab3924f1fba3528c160f9d34ef"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-5.6-terra",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-5.6-terra",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "attempt": 1,
+            "seconds": 102.6
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Taoist cliff abbey fantasy in the style of the Hanging Temple: dark weathered timber frames, cinnabar-red lacquered posts, slate-grey tiled roofs with upturned eaves, yellow paper talismans, verdigris bronze fittings, thick soft snow caps and a few chunky icicles. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (10m wide x 11m tall x 5m deep): A Taoist abbey shrine niche 10m wide, 11m tall, 5m deep that frames a magic portal: a timber-framed facade of white plaster and red lacquered posts with ONE tall open round moon-gate arch in the middle, 6.5m wide and 8m tall, leading into a shallow open recess 3.5m deep whose floor is flat at ground level (no steps or objects inside the recess); the recess back wall carries a big painted yin-yang bagua disc. A slate-grey tiled roof with upturned eaves under thick snow crowns the facade; giant yellow talismans hang on both sides of the arch. The back of the shrine is plain plaster and timber. The arch is empty.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "ff069b1a6baa4e8652a45a4b7d5fe73c4e8f19c7f8666e5d88d98c9d6fef45ac",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.5740378343118069,
+              "offset": [
+                67,
+                260
+              ],
+              "size": [
+                378,
+                503
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5682001614205003,
+              "offset": [
+                193,
+                260
+              ],
+              "size": [
+                125,
+                503
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5694871380035592,
+              "offset": [
+                69,
+                260
+              ],
+              "size": [
+                374,
+                503
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5701328150307742,
+              "offset": [
+                194,
+                260
+              ],
+              "size": [
+                124,
+                503
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

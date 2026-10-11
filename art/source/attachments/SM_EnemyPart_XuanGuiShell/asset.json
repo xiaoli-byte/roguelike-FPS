@@ -1,0 +1,313 @@
+{
+  "id": "SM_EnemyPart_XuanGuiShell",
+  "display": "冰甲旋龟·旋壳",
+  "kind": "static",
+  "class": "enemy_attachment",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:20:59",
+          "files": {
+            "BO_SM_EnemyPart_XuanGuiShell_v001.glb": {
+              "path": "00_blockout/BO_SM_EnemyPart_XuanGuiShell_v001.glb",
+              "sha256": "6fb6346f93812256a92d4da2c022a0f8cd030bcf130d1db9310c21bca0016864"
+            },
+            "BO_SM_EnemyPart_XuanGuiShell_v001.json": {
+              "path": "00_blockout/BO_SM_EnemyPart_XuanGuiShell_v001.json",
+              "sha256": "20b26faf4f15d9ed2c7f500a562eb2ebbc3569099289d85f07dd616f6efd1742"
+            },
+            "BO_SM_EnemyPart_XuanGuiShell_v001_views.json": {
+              "path": "00_blockout/BO_SM_EnemyPart_XuanGuiShell_v001_views.json",
+              "sha256": "b2d1dc9440a72e5b58fe2854948f07e7003388b673544180c8fa085281cb5d52"
+            },
+            "BO_SM_EnemyPart_XuanGuiShell_v001_sheet.png": {
+              "path": "00_blockout/BO_SM_EnemyPart_XuanGuiShell_v001_sheet.png",
+              "sha256": "02859803d29af074934709d8d7cb2e23e14d9130757600580bb157be8b4411cc"
+            },
+            "BO_SM_EnemyPart_XuanGuiShell_v001_front.png": {
+              "path": "00_blockout/BO_SM_EnemyPart_XuanGuiShell_v001_front.png",
+              "sha256": "00c930007d861c209470c4bae80c8905bfcec0c88fd60b001933385d7860f399"
+            },
+            "BO_SM_EnemyPart_XuanGuiShell_v001_left.png": {
+              "path": "00_blockout/BO_SM_EnemyPart_XuanGuiShell_v001_left.png",
+              "sha256": "834f2722557564d46dd4c66d102f4e84a75c2b3cc491413e1a3a5de77882e5e5"
+            },
+            "BO_SM_EnemyPart_XuanGuiShell_v001_back.png": {
+              "path": "00_blockout/BO_SM_EnemyPart_XuanGuiShell_v001_back.png",
+              "sha256": "6e8ac17a7835ca38e54cfab5484e17f9e1d3eba9b785eba756b36ea43e41ac92"
+            },
+            "BO_SM_EnemyPart_XuanGuiShell_v001_right.png": {
+              "path": "00_blockout/BO_SM_EnemyPart_XuanGuiShell_v001_right.png",
+              "sha256": "72788f5270561e3cfb23c1f7c59afcb875dedd2786728c3961984a99190d3b94"
+            }
+          },
+          "source": {
+            "kind": "enemy",
+            "id": "xuangui",
+            "attachment": "shell"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -1.1602905988693237,
+              0.0,
+              -1.2499998807907104
+            ],
+            "max": [
+              1.1602905988693237,
+              1.399999976158142,
+              1.2499998807907104
+            ]
+          },
+          "blender_seconds": 8.2
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:21:07",
+          "files": {
+            "CN_SM_EnemyPart_XuanGuiShell_v001_front.png": {
+              "path": "01_concept/CN_SM_EnemyPart_XuanGuiShell_v001_front.png",
+              "sha256": "cfc1b80d503470187b481c6e3b048e2449fddbb207d6d50315d394270e447861"
+            },
+            "CN_SM_EnemyPart_XuanGuiShell_v001_left.png": {
+              "path": "01_concept/CN_SM_EnemyPart_XuanGuiShell_v001_left.png",
+              "sha256": "18ec6fc855f56cb69cf8677263b90f36ceeeb0af32343a95f8123563d00d7ce1"
+            },
+            "CN_SM_EnemyPart_XuanGuiShell_v001_back.png": {
+              "path": "01_concept/CN_SM_EnemyPart_XuanGuiShell_v001_back.png",
+              "sha256": "d5a0a6bd87621a8eb90e89584e73e535dc6c4ab7fbb2e22b30f210423ce3a179"
+            },
+            "CN_SM_EnemyPart_XuanGuiShell_v001_right.png": {
+              "path": "01_concept/CN_SM_EnemyPart_XuanGuiShell_v001_right.png",
+              "sha256": "e585b99936ec30fc82f4ca43364e808b4ea947d6fd1b0cae5bf3cd2236e361c3"
+            },
+            "CN_SM_EnemyPart_XuanGuiShell_v001_sheet.png": {
+              "path": "01_concept/CN_SM_EnemyPart_XuanGuiShell_v001_sheet.png",
+              "sha256": "9b9b25691c573f5885ee46f952da3b089376c942ef4d4a775dd43281d539c82f"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "design turnaround",
+          "design_key": "frost_xuangui_shell",
+          "design_turnaround": "art/source/characters/_design/frost/frost_xuangui_shell/TV_frost_xuangui_shell_v001.png",
+          "source_sha256": "cfc0f6dad6958b933c36ac1fa307e7033591cb28b00dff551666ad1069b380df",
+          "reference_mode": "design_turnaround",
+          "highpoly_mode": "tripo",
+          "registration": {
+            "front": {
+              "scale": 0.9078014895546467,
+              "offset": [
+                57,
+                384
+              ],
+              "size": [
+                397,
+                256
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.927536304544965,
+              "offset": [
+                50,
+                384
+              ],
+              "size": [
+                411,
+                256
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.9045937104396126,
+              "offset": [
+                58,
+                384
+              ],
+              "size": [
+                396,
+                256
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.917562795893944,
+              "offset": [
+                53,
+                384
+              ],
+              "size": [
+                406,
+                256
+              ],
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (agent)",
+            "note": "设计四视图 TV_frost_xuangui_shell_v001 即用户送 Tripo 生成 20261010T152709 时用的输入；登记到无头白模相机里，未花新的 Tripo 额度",
+            "time": "2026-10-11 00:21:18"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:21:29",
+          "files": {
+            "HP_SM_EnemyPart_XuanGuiShell_v001_source.fbx": {
+              "path": "02_highpoly/HP_SM_EnemyPart_XuanGuiShell_v001_source.fbx",
+              "sha256": "e2f955be2a2066497d17b3370ba3988f18f7317d4a6eb3a0192ac09e8ab71c6c"
+            },
+            "HP_SM_EnemyPart_XuanGuiShell_v001.glb": {
+              "path": "02_highpoly/HP_SM_EnemyPart_XuanGuiShell_v001.glb",
+              "sha256": "cf97d7429a5af9e5f893f5e73aa633405028764b0c1ba0a281e3e70dbd9db664"
+            },
+            "HP_SM_EnemyPart_XuanGuiShell_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_EnemyPart_XuanGuiShell_v001_graph.json",
+              "sha256": "f76bead3d35653fae69ab2b15864a96a41e54419ba1ff4c62f915931b05e2e6e"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/workspace/generate/80edd403-121c-4ec5-af8b-4d54640b62ae",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 5582,
+          "source_sha256": "e2f955be2a2066497d17b3370ba3988f18f7317d4a6eb3a0192ac09e8ab71c6c"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:21:43",
+          "files": {
+            "SM_EnemyPart_XuanGuiShell_v001.blend": {
+              "path": "03_work/SM_EnemyPart_XuanGuiShell_v001.blend",
+              "sha256": "a9cafacd99703807dbb1f615d5744963faf372ec98523c57f100deebd0e1d3cc"
+            },
+            "SM_EnemyPart_XuanGuiShell_v001.glb": {
+              "path": "04_export/SM_EnemyPart_XuanGuiShell_v001.glb",
+              "sha256": "23c4efec5f5556d6b4cd40826bfaa0135c629e30b8e0546af333128851d45d59"
+            },
+            "SM_EnemyPart_XuanGuiShell_v001_metrics.json": {
+              "path": "03_work/SM_EnemyPart_XuanGuiShell_v001_metrics.json",
+              "sha256": "4b7f5b0b914c08dcec680304913f63ff76c780099aadad7815e6e10f7ce3eb0b"
+            },
+            "T_EnemyPart_XuanGuiShell_BC.png": {
+              "path": "03_work/textures_v001/T_EnemyPart_XuanGuiShell_BC.png",
+              "sha256": "94776886ff0ef54238db3a9deb958e950e16f960ff6ac1d757ede88abd84fa2e"
+            },
+            "T_EnemyPart_XuanGuiShell_N.png": {
+              "path": "03_work/textures_v001/T_EnemyPart_XuanGuiShell_N.png",
+              "sha256": "fb9f63372a7c612c723af87eec7780cfb1468cc9b1c98c6c3e75ab8ec3555345"
+            },
+            "T_EnemyPart_XuanGuiShell_ORM.png": {
+              "path": "03_work/textures_v001/T_EnemyPart_XuanGuiShell_ORM.png",
+              "sha256": "cfcb51d5f667244e8ac015b330fa29f7ea8d0f97de810bf580cfd43989fc0b30"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.796,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2984,
+              "verts": 1695
+            },
+            {
+              "tris": 995,
+              "verts": 646
+            }
+          ],
+          "export_kb": 323.2,
+          "seconds": 12.5,
+          "bake_device": "none (provider textures)"
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:21:44",
+          "files": {
+            "SM_EnemyPart_XuanGuiShell_v001_validation.json": {
+              "path": "05_review/SM_EnemyPart_XuanGuiShell_v001_validation.json",
+              "sha256": "7c67f42f56c5bb4f9dcbff2a4df38b19bfc75680006017791dd2be2fcd1bca69"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:21:54",
+          "files": {
+            "SM_EnemyPart_XuanGuiShell_v001_review.png": {
+              "path": "05_review/SM_EnemyPart_XuanGuiShell_v001_review.png",
+              "sha256": "09cc5af901ede5ad1aabfe962727cdfeb7e4feac8789ebedbb7094cb3e86180b"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (agent)",
+            "note": "四方向成品、LOD 与贴图检查通过；整体只绕竖轴旋转，朝向无关",
+            "time": "2026-10-11 00:22:05"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:22:06",
+          "files": {
+            "SM_EnemyPart_XuanGuiShell.glb": {
+              "path": "@root/public/assets/attachments/SM_EnemyPart_XuanGuiShell.glb",
+              "sha256": "23c4efec5f5556d6b4cd40826bfaa0135c629e30b8e0546af333128851d45d59"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/attachments/SM_EnemyPart_XuanGuiShell.glb"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,356 @@
+{
+  "asset": "SK_Enemy_FrostCrab",
+  "version": 4,
+  "glb": "art/source/characters/SK_Enemy_FrostCrab/04_export/SK_Enemy_FrostCrab_native_v004.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.7,
+      "自定义骨架：32 根骨骼（热扩散权重，6470 个顶点未覆盖）": 0.2,
+      "贴图（BC + AO/ORM）": 24.7,
+      "LOD 与蒙皮上限 11820 / 4924 / 1969": 0.5,
+      "发光壳 112 面": 0.0,
+      "导出 1484 KB": 4.6
+    },
+    "source": {
+      "verts": 6470,
+      "tris": 12300,
+      "scale": 2.378880675818374
+    },
+    "regions": {
+      "heat_unweighted_verts": 6470,
+      "weights": "segments (heat failed)",
+      "ground_verts": 159,
+      "body_verts": 572,
+      "claw_R_verts": 641,
+      "pincer_R_verts": 22,
+      "claw_L_verts": 617,
+      "vent_verts": 87,
+      "fallback_verts": 0,
+      "per_bone": {
+        "body": 2410,
+        "vent": 87,
+        "arm_R": 74,
+        "claw_R": 524,
+        "pincer_R": 143,
+        "arm_L": 118,
+        "claw_L": 624,
+        "leg1_thigh_L": 90,
+        "leg1_shin_L": 94,
+        "leg1_foot_L": 60,
+        "leg2_thigh_L": 144,
+        "leg2_shin_L": 141,
+        "leg2_foot_L": 65,
+        "leg3_thigh_L": 143,
+        "leg3_shin_L": 166,
+        "leg3_foot_L": 65,
+        "leg4_thigh_L": 52,
+        "leg4_shin_L": 135,
+        "leg4_foot_L": 68,
+        "leg1_thigh_R": 118,
+        "leg1_shin_R": 57,
+        "leg1_foot_R": 60,
+        "leg2_thigh_R": 130,
+        "leg2_shin_R": 174,
+        "leg2_foot_R": 56,
+        "leg3_thigh_R": 96,
+        "leg3_shin_R": 152,
+        "leg3_foot_R": 79,
+        "leg4_thigh_R": 13,
+        "leg4_shin_R": 81,
+        "leg4_foot_R": 76
+      }
+    },
+    "bones": [
+      "arm_L",
+      "arm_R",
+      "body",
+      "claw_L",
+      "claw_R",
+      "leg1_foot_L",
+      "leg1_foot_R",
+      "leg1_shin_L",
+      "leg1_shin_R",
+      "leg1_thigh_L",
+      "leg1_thigh_R",
+      "leg2_foot_L",
+      "leg2_foot_R",
+      "leg2_shin_L",
+      "leg2_shin_R",
+      "leg2_thigh_L",
+      "leg2_thigh_R",
+      "leg3_foot_L",
+      "leg3_foot_R",
+      "leg3_shin_L",
+      "leg3_shin_R",
+      "leg3_thigh_L",
+      "leg3_thigh_R",
+      "leg4_foot_L",
+      "leg4_foot_R",
+      "leg4_shin_L",
+      "leg4_shin_R",
+      "leg4_thigh_L",
+      "leg4_thigh_R",
+      "pincer_R",
+      "root",
+      "vent"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.934,
+      "shade_mean": 0.935
+    },
+    "textures": {
+      "size": 2048,
+      "ao_mean": 0.782,
+      "provider_pbr": [],
+      "roughness_mean": 0.75,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Enemy_FrostCrab_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_FrostCrab_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_FrostCrab_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Enemy_FrostCrab_LOD0",
+        "tris": 11820,
+        "uv_min": [
+          0.00146484375,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.99853515625,
+          0.993408203125
+        ]
+      },
+      {
+        "name": "SK_Enemy_FrostCrab_LOD1",
+        "tris": 4924,
+        "uv_min": [
+          0.00146484375,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.9982913732528687,
+          0.9931640625
+        ]
+      },
+      {
+        "name": "SK_Enemy_FrostCrab_LOD2",
+        "tris": 1969,
+        "uv_min": [
+          0.00146484375,
+          0.0015054265968501568
+        ],
+        "uv_max": [
+          0.99267578125,
+          0.9931640625
+        ]
+      }
+    ],
+    "glow_shell": {
+      "group": "vent",
+      "tris": 112
+    },
+    "glb_kb": 1484,
+    "_seconds": 38.6
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "1484 KB / 3000 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Enemy_FrostCrab_LOD0', 'SK_Enemy_FrostCrab_LOD1', 'SK_Enemy_FrostCrab_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "11820 / 12000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "4924 / 5000"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "1969 / 2000"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "2.200 m (design 2.2 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Enemy_FrostCrab_Glow', 'M_Enemy_FrostCrab']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "glow shell",
+      "112 tris on 'vent'"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_FrostCrab_BC",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_FrostCrab_ORM",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "32 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FrostCrab_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FrostCrab_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FrostCrab_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FrostCrab_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FrostCrab_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FrostCrab_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FrostCrab_LOD0 UV range",
+      "[0.001, 0.001]..[0.999, 0.993]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FrostCrab_LOD1 UV range",
+      "[0.001, 0.001]..[0.998, 0.993]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FrostCrab_LOD2 UV range",
+      "[0.001, 0.002]..[0.993, 0.993]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "6470 verts"
+    ],
+    [
+      "pass",
+      "region ground",
+      "159 verts"
+    ],
+    [
+      "pass",
+      "region body",
+      "572 verts"
+    ],
+    [
+      "pass",
+      "region claw_R",
+      "641 verts"
+    ],
+    [
+      "pass",
+      "region pincer_R",
+      "22 verts"
+    ],
+    [
+      "pass",
+      "region claw_L",
+      "617 verts"
+    ],
+    [
+      "pass",
+      "region vent",
+      "87 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "0 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

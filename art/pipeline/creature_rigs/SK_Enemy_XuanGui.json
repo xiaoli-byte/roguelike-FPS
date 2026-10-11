@@ -1,0 +1,51 @@
+{
+  "doc": "冰甲旋龟：Tripo 智能网格 P2.0（三角面 12000 档，实得 12752，Tripo 自带 UV，只有 4K 底色图），未绑骨，自定义龟形四足骨架。骨骼位置按网格切片实测（缩放落地后的米制：front = -Y，生物的左 = +X，up = +Z；美术高 1.7 米、长 3.5 米）。网格由 26 个岛组成：龟壳 + 腹甲 + 蛇尾是一个大岛，鹰头、四条腿（腿 + 脚掌 + 三爪）、壳顶散热孔环是独立的岛。龟壳是硬甲：壳顶（z ≥ 0.84）、腹甲中线、前后腿之间三块整体刚性锁在 body 上，只剩肩胯周围的一圈壳缘由热扩散在 body 与腿骨之间过渡（腿只做小幅前后摆）。腿：upperarm → forearm → paw / thigh → shin → foot（象腿，膝几乎不弯）。颈只有一节（缩头时鹰头整体退进壳里）。蛇尾四节 + 蛇头（蛇头刚性、带弱点发光壳）。壳顶散热孔（第二个弱点）是壳的一部分，发光由运行时特效负责。",
+  "source": "art/source/_tripo_inbox/20261010T151947_SK_Enemy_XuanGui_smartmesh.fbx",
+  "task": "https://studio.tripo3d.ai/workspace/generate/15eca790-4f17-4c20-80e4-a33220058cce",
+  "height_m": 1.7,
+  "bones": {
+    "root": { "head": [0, 0, 0], "tail": [0, 0, 0.3], "parent": null, "deform": false },
+    "body": { "head": [0, 0.1, 0.95], "tail": [0, -0.6, 0.95], "parent": "root" },
+    "neck": { "head": [0, -1.0, 0.95], "tail": [0, -1.2, 0.93], "parent": "body" },
+    "head": { "head": [0, -1.2, 0.93], "tail": [0, -1.72, 0.85], "parent": "neck" },
+    "upperarm_L": { "head": [0.47, -0.73, 0.74], "tail": [0.64, -0.84, 0.42], "parent": "body" },
+    "forearm_L": { "head": [0.64, -0.84, 0.42], "tail": [0.73, -0.88, 0.18], "parent": "upperarm_L" },
+    "paw_L": { "head": [0.73, -0.88, 0.18], "tail": [0.74, -1.12, 0.04], "parent": "forearm_L" },
+    "upperarm_R": { "head": [-0.47, -0.73, 0.74], "tail": [-0.64, -0.84, 0.42], "parent": "body" },
+    "forearm_R": { "head": [-0.64, -0.84, 0.42], "tail": [-0.73, -0.88, 0.18], "parent": "upperarm_R" },
+    "paw_R": { "head": [-0.73, -0.88, 0.18], "tail": [-0.74, -1.12, 0.04], "parent": "forearm_R" },
+    "thigh_L": { "head": [0.47, 0.34, 0.76], "tail": [0.63, 0.48, 0.44], "parent": "body" },
+    "shin_L": { "head": [0.63, 0.48, 0.44], "tail": [0.69, 0.52, 0.18], "parent": "thigh_L" },
+    "foot_L": { "head": [0.69, 0.52, 0.18], "tail": [0.74, 0.76, 0.04], "parent": "shin_L" },
+    "thigh_R": { "head": [-0.47, 0.34, 0.76], "tail": [-0.63, 0.48, 0.44], "parent": "body" },
+    "shin_R": { "head": [-0.63, 0.48, 0.44], "tail": [-0.69, 0.52, 0.18], "parent": "thigh_R" },
+    "foot_R": { "head": [-0.69, 0.52, 0.18], "tail": [-0.74, 0.76, 0.04], "parent": "shin_R" },
+    "tail_1": { "head": [0, 0.72, 0.8], "tail": [0, 1.0, 0.83], "parent": "body" },
+    "tail_2": { "head": [0, 1.0, 0.83], "tail": [0, 1.2, 0.93], "parent": "tail_1" },
+    "tail_3": { "head": [0, 1.2, 0.93], "tail": [0, 1.33, 1.15], "parent": "tail_2" },
+    "tail_4": { "head": [0, 1.33, 1.15], "tail": [0, 1.4, 1.42], "parent": "tail_3" },
+    "snake": { "head": [0, 1.4, 1.42], "tail": [0, 1.78, 1.52], "parent": "tail_4" }
+  },
+  "limits": [
+    { "bones": ["upperarm_L", "forearm_L", "paw_L"], "box": [[0.2, -1.25, -0.05], [1.15, -0.45, 0.82]] },
+    { "bones": ["upperarm_R", "forearm_R", "paw_R"], "box": [[-1.15, -1.25, -0.05], [-0.2, -0.45, 0.82]] },
+    { "bones": ["thigh_L", "shin_L", "foot_L"], "box": [[0.2, 0.1, -0.05], [1.15, 0.9, 0.86]] },
+    { "bones": ["thigh_R", "shin_R", "foot_R"], "box": [[-1.15, 0.1, -0.05], [-0.2, 0.9, 0.86]] },
+    { "bones": ["tail_1", "tail_2", "tail_3", "tail_4", "snake"], "box": [[-0.4, 0.62, 0.45], [0.4, 1.85, 1.8]] },
+    { "bones": ["neck", "head"], "box": [[-0.6, -1.85, 0.35], [0.6, -0.9, 1.45]] }
+  ],
+  "rigid": [
+    { "bone": "body", "box": [[-1.3, -1.06, 0.84], [1.3, 0.7, 1.85]] },
+    { "bone": "body", "box": [[-0.25, -1.05, -0.05], [0.25, 0.7, 0.84]] },
+    { "bone": "body", "box": [[-1.3, -0.5, -0.05], [1.3, 0.12, 0.84]] },
+    { "bone": "head", "box": [[-0.42, -1.85, 0.48], [0.42, -1.42, 1.4]] },
+    { "bone": "snake", "box": [[-0.24, 1.43, 1.28], [0.24, 1.85, 1.8]] }
+  ],
+  "ground": [{ "bones": ["paw_L", "paw_R", "foot_L", "foot_R"], "fade_z": [0.1, 0.26] }],
+  "glow_shell": "snake",
+  "provider_pbr": true,
+  "bake_normal": false,
+  "repack_uv": false,
+  "transfer_size": 4096,
+  "paint_shading": { "cavity_distance": 0.018, "cavity": 0.36, "ao": 0.18, "saturation": 1.06, "contrast": 1.05, "keep_brightness": true }
+}

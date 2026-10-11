@@ -1,0 +1,173 @@
+{
+  "id": "SM_Tripo_FrostTaoFurnace",
+  "display": "九转丹炉（备选 B 地标）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 16:41:51",
+          "files": {
+            "BO_SM_Tripo_FrostTaoFurnace_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostTaoFurnace_v001.json",
+              "sha256": "377753e9cdefce28f3fd2e7ed072b8ded7ed8a8ee9bde3161c3b2fb93f8c9b9f"
+            },
+            "BO_SM_Tripo_FrostTaoFurnace_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostTaoFurnace_v001_views.json",
+              "sha256": "d74c97729f3dfef0cc9814a298a39bafcd418ee9a1202a05ca824d0dfcba6ff0"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost_b.v2.furnace"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -6.0,
+              0,
+              -5.0
+            ],
+            "max": [
+              6.0,
+              16.0,
+              5.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 16:42:26",
+          "files": {
+            "CN_SM_Tripo_FrostTaoFurnace_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoFurnace_v001_source.png",
+              "sha256": "9b68628dd9e975bee7d3a08a4f8bc73d44f91caea7654be776e20edae80cc5bf"
+            },
+            "CN_SM_Tripo_FrostTaoFurnace_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoFurnace_v001_front.png",
+              "sha256": "9e099ca78949c3c70ed2d202ec870029f9118fe91a95ab2e89fcdd3a282e9ca4"
+            },
+            "CN_SM_Tripo_FrostTaoFurnace_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoFurnace_v001_left.png",
+              "sha256": "59572133e9c529801e33660a4bc07bc3867c22a3326c9a9e847222d91bdf11a3"
+            },
+            "CN_SM_Tripo_FrostTaoFurnace_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoFurnace_v001_back.png",
+              "sha256": "88d2c87a6bafd18b784fb623a8fd12b2ff822b193256eb75fec77888adaa1644"
+            },
+            "CN_SM_Tripo_FrostTaoFurnace_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoFurnace_v001_right.png",
+              "sha256": "699f8ac7b166a0960cf61e8c5cc46b584bcdf66022c628d6fc98517225eb09bd"
+            },
+            "CN_SM_Tripo_FrostTaoFurnace_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoFurnace_v001_sheet.png",
+              "sha256": "7415ddb480982bdbd5575e9ee3ddf5b118ac3fe70365e7ff3fdae392f5e3c4b4"
+            },
+            "CN_SM_Tripo_FrostTaoFurnace_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoFurnace_v001_prompt.txt",
+              "sha256": "884ea20ebf500f9d90f559f2e0bb2a17e7e2c672d44606e34eefe16cfc560c74"
+            },
+            "CN_SM_Tripo_FrostTaoFurnace_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoFurnace_v001_registration.json",
+              "sha256": "b1cc84e69f3aa601336f2ce8cab79688715fc0b85eb370e7e7b0ea3d6eb00322"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 515,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 515
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1695
+            },
+            "request_id": "req_913d23f1754b4ee9841d12fbe61c83e7",
+            "seconds": 33.4
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Taoist cliff abbey fantasy in the style of the Hanging Temple: dark weathered timber frames, cinnabar-red lacquered posts, slate-grey tiled roofs with upturned eaves, yellow paper talismans, verdigris bronze fittings, thick soft snow caps and a few chunky icicles. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (12m wide x 16m tall x 10m deep): A colossal three-legged bronze alchemy furnace (丹炉) 16m tall, the abbey's landmark: a huge round verdigris bronze cauldron body on three beast-paw legs standing on a stepped grey stone altar, a tall domed lid with a tiered pagoda-like finial, two big ring handles like ears, a cast beast face on the belly, the round furnace door glowing with cold pale jade-green fire painted as an opaque bright surface, frozen chains and giant talismans hanging from it, thick snow on the lid and altar. Chunky stylized forms readable from 150m away. One solid object.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "9b68628dd9e975bee7d3a08a4f8bc73d44f91caea7654be776e20edae80cc5bf",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.7120605251446372,
+              "offset": [
+                81,
+                207
+              ],
+              "size": [
+                350,
+                610
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7112296493860087,
+              "offset": [
+                101,
+                207
+              ],
+              "size": [
+                310,
+                610
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.714564841176799,
+              "offset": [
+                80,
+                207
+              ],
+              "size": [
+                352,
+                610
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7104007104007104,
+              "offset": [
+                101,
+                207
+              ],
+              "size": [
+                310,
+                610
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

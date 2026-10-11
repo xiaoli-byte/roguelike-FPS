@@ -1,0 +1,460 @@
+{
+  "id": "SM_Tripo_FrostSeaStairs",
+  "display": "冰阶（备选 C）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 17:42:17",
+          "files": {
+            "BO_SM_Tripo_FrostSeaStairs_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostSeaStairs_v001.json",
+              "sha256": "9cca0d8562efbf6951a44143ff14ad4a36f7c922dd0c0920977789fa57dbce0a"
+            },
+            "BO_SM_Tripo_FrostSeaStairs_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostSeaStairs_v001_views.json",
+              "sha256": "85be5034e4c1bfbd7693564767968e0a0c71f55fbc30fd8c2aa75a88429b43d6"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost_c.v2.stairs"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.0,
+              0,
+              -2.3
+            ],
+            "max": [
+              2.0,
+              3.0,
+              2.3
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 17:43:37",
+          "files": {
+            "CN_SM_Tripo_FrostSeaStairs_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaStairs_v001_source.png",
+              "sha256": "2db64779fdd032663f568c3103f647caa62c5ebd23fcd24b783305d4f8ac437b"
+            },
+            "CN_SM_Tripo_FrostSeaStairs_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaStairs_v001_front.png",
+              "sha256": "0c963aa755ad6dfe9cfc1e8aae67f42f8ffe4024b4fe1346b7f1b841ec3b142f"
+            },
+            "CN_SM_Tripo_FrostSeaStairs_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaStairs_v001_left.png",
+              "sha256": "cf5a8002d259c5437b3ee0b71ff155f1111d5f115287f1b4d801804ada155d3e"
+            },
+            "CN_SM_Tripo_FrostSeaStairs_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaStairs_v001_back.png",
+              "sha256": "e69bda3258f6ce8bff5d1320d2e3e1604b46bd2e5ea81cfc2fab66c162fb5cb0"
+            },
+            "CN_SM_Tripo_FrostSeaStairs_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaStairs_v001_right.png",
+              "sha256": "2796bf047211361a5fd81ad995598399e6b625c8c4ed3682b04bca3bf4ab310c"
+            },
+            "CN_SM_Tripo_FrostSeaStairs_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaStairs_v001_sheet.png",
+              "sha256": "514228ccda1fe47f4cdb950d438875d5fd976f933466716a9f9cf6ad35c74999"
+            },
+            "CN_SM_Tripo_FrostSeaStairs_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaStairs_v001_prompt.txt",
+              "sha256": "4264773b7ebb63267315d0403b79220d054d410cc703a176713a79427e9aaf97"
+            },
+            "CN_SM_Tripo_FrostSeaStairs_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaStairs_v001_registration.json",
+              "sha256": "b51ebe2a7da926b8f25c0bc83f690d78967673fb29495489a4a3ac0b5cef4964"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-5.6-terra",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-5.6-terra",
+            "size": "2048x1024",
+            "generated_size": [
+              1916,
+              821
+            ],
+            "references": [],
+            "attempt": 1,
+            "seconds": 78.3
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian frozen polar sea fantasy from the Zhuangzi's northern darkness: faceted glacier ice and dark ink-blue rock, weathered ivory whale bone, old dark ship timber with faded teal paint, frozen ropes, felt and a cold aqua deep-sea glow, thick soft snow caps and chunky icicles. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (4m wide x 3m tall x 4.6m deep): A straight flight of steps 4m wide, rising 3m over a 4.6m run, cut into a block of packed ice and dark stone, with low stone side walls topped by small bone posts; wide even treads with a thin layer of snow. One solid connected piece, open at the top and bottom.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "2db64779fdd032663f568c3103f647caa62c5ebd23fcd24b783305d4f8ac437b",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.3254766877322412,
+              "offset": [
+                191,
+                363
+              ],
+              "size": [
+                129,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.32265870775187544,
+              "offset": [
+                205,
+                363
+              ],
+              "size": [
+                101,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.3251217513225005,
+              "offset": [
+                192,
+                363
+              ],
+              "size": [
+                128,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.3205770386696053,
+              "offset": [
+                212,
+                363
+              ],
+              "size": [
+                88,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-10 20:58:14",
+          "files": {
+            "CN_SM_Tripo_FrostSeaStairs_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaStairs_v002_source.png",
+              "sha256": "4bea740fa71ac338b52d55d28f0854197d232235c53db8bb490a4c00065a6d46"
+            },
+            "CN_SM_Tripo_FrostSeaStairs_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaStairs_v002_front.png",
+              "sha256": "75b7070dc3af35232d3b748ac6a88fad88cfd66a71ab503d3184971ddb37dd51"
+            },
+            "CN_SM_Tripo_FrostSeaStairs_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaStairs_v002_left.png",
+              "sha256": "8736cb0d06ea82d12a4122edd8ef6ab712d3ab53f4d968526553724a1ee3ce5f"
+            },
+            "CN_SM_Tripo_FrostSeaStairs_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaStairs_v002_back.png",
+              "sha256": "b5abbbc0089e0372e7ac1e0cf739a988289972afa2a7dced67fca8267c8a3226"
+            },
+            "CN_SM_Tripo_FrostSeaStairs_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaStairs_v002_right.png",
+              "sha256": "370ab16eeccb88d5c74b98d599dbb5cc3d750d84541db0a7224431b582d8d061"
+            },
+            "CN_SM_Tripo_FrostSeaStairs_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaStairs_v002_sheet.png",
+              "sha256": "9471c583b458772220aa402c066cd5aae8964ce32a95fef4c82993e6e48dc728"
+            },
+            "CN_SM_Tripo_FrostSeaStairs_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaStairs_v002_prompt.txt",
+              "sha256": "4264773b7ebb63267315d0403b79220d054d410cc703a176713a79427e9aaf97"
+            },
+            "CN_SM_Tripo_FrostSeaStairs_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaStairs_v002_registration.json",
+              "sha256": "fb1c5aa878a2d068853a2a984ef0aa0df32e04726e1fb580b7a31f8781cfcf92"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a125e3-b9d4-7a30-861b-b674f72793b0",
+            "attempt": 1,
+            "seconds": 51.7
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian frozen polar sea fantasy from the Zhuangzi's northern darkness: faceted glacier ice and dark ink-blue rock, weathered ivory whale bone, old dark ship timber with faded teal paint, frozen ropes, felt and a cold aqua deep-sea glow, thick soft snow caps and chunky icicles. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (4m wide x 3m tall x 4.6m deep): A straight flight of steps 4m wide, rising 3m over a 4.6m run, cut into a block of packed ice and dark stone, with low stone side walls topped by small bone posts; wide even treads with a thin layer of snow. One solid connected piece, open at the top and bottom.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "4bea740fa71ac338b52d55d28f0854197d232235c53db8bb490a4c00065a6d46",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.5470397173628128,
+              "offset": [
+                128,
+                363
+              ],
+              "size": [
+                256,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5480453050785532,
+              "offset": [
+                132,
+                363
+              ],
+              "size": [
+                248,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5490545966164511,
+              "offset": [
+                139,
+                363
+              ],
+              "size": [
+                233,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5490545966164511,
+              "offset": [
+                134,
+                363
+              ],
+              "size": [
+                244,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "四视图同一物件、朝向正确、无裁切、雪盖未被抠掉；转 Hunyuan3D 2mv 多视图建模（2026-10-11）",
+            "time": "2026-10-11 00:35:18"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:31:32",
+          "files": {
+            "HP_SM_Tripo_FrostSeaStairs_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaStairs_v001_input_front.png",
+              "sha256": "56fb1037aefac10eca8d7a1d9c9d9f38e8970bd5b0c806b45b151e2b7e6db03e"
+            },
+            "HP_SM_Tripo_FrostSeaStairs_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaStairs_v001_input_left.png",
+              "sha256": "24027705f7a432365d98c6e15194b36ecd7edc7325c160b3ddb4efaa8df64d80"
+            },
+            "HP_SM_Tripo_FrostSeaStairs_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaStairs_v001_input_back.png",
+              "sha256": "3b2a77b170cba01aeac598792dd75ec3b35678c7137ec12d7ce87fb588f32c0d"
+            },
+            "HP_SM_Tripo_FrostSeaStairs_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaStairs_v001_input_right.png",
+              "sha256": "7abf926bc2b68780d7e2fe461ea0ef9c2cb067f8d0f8631089d9c306f573891e"
+            },
+            "HP_SM_Tripo_FrostSeaStairs_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaStairs_v001.glb",
+              "sha256": "78e2184199f4c4445a87b76cd5ed0d5bd82fc77c65d1315a052747387863b4dd"
+            },
+            "HP_SM_Tripo_FrostSeaStairs_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaStairs_v001_graph.json",
+              "sha256": "457f7ca306fcefcd5e7c463d6d43dffb473c9f314e2e06f98df48617d19c9a5b"
+            }
+          },
+          "from_concept": 2,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              81,
+              337,
+              431,
+              687
+            ],
+            "scale": 2.9257142857142857
+          },
+          "seconds": 178.3,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 22.3
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:32:52",
+          "files": {
+            "SM_Tripo_FrostSeaStairs_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostSeaStairs_v001.blend",
+              "sha256": "8ebd36e4f14923156948183edabbdc13cd1216dfa4546a38ec175bafdabee3ab"
+            },
+            "SM_Tripo_FrostSeaStairs_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostSeaStairs_v001.glb",
+              "sha256": "39d74b9c8dffcb3352b862ef3ccc0e224075c4220ca941547a69ef5dab06a639"
+            },
+            "SM_Tripo_FrostSeaStairs_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostSeaStairs_v001_metrics.json",
+              "sha256": "8a54c5e0c2735c669c8a1c51b829580a10c7128f6b47492902da298e62e52193"
+            },
+            "T_Tripo_FrostSeaStairs_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaStairs_BC.png",
+              "sha256": "862d939b5acc2e29ed09c6f4c96f1750b6be0072eba1fb63a9582b8f998d8d9b"
+            },
+            "T_Tripo_FrostSeaStairs_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaStairs_N.png",
+              "sha256": "e79351a0b04409ffb6dadb8ccee1f0f38855a95ad01c50af7ccc8106816d2542"
+            },
+            "T_Tripo_FrostSeaStairs_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaStairs_ORM.png",
+              "sha256": "86f8aed22caaa24b2e096cb9d63570ddfe40c25a3eb8cf934ef78cbe3d6e5f00"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.764,
+          "uncovered_ratio": 0.399,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1488
+            },
+            {
+              "tris": 1000,
+              "verts": 488
+            }
+          ],
+          "export_kb": 245.3,
+          "seconds": 78.1,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:32:52",
+          "files": {
+            "SM_Tripo_FrostSeaStairs_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostSeaStairs_v001_validation_v001.json",
+              "sha256": "f59359500156e752228548d95b80fa2fbdcbd9cb63f194a945631f1bea2c8aed"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:33:00",
+          "files": {
+            "SM_Tripo_FrostSeaStairs_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostSeaStairs_v001_review_v001.png",
+              "sha256": "c2e825bf7f9c15a2080ba614329cbe3edeaed9c14538093cca3d90b7727303e2"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "IoU 0.764；冰石实心台阶块，踏面积雪清楚、低端朝前；两侧骨柱做得偏大成尖齿状（风格化可接受）",
+            "time": "2026-10-11 01:33:13"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:33:14",
+          "files": {
+            "SM_Tripo_FrostSeaStairs.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostSeaStairs.glb",
+              "sha256": "39d74b9c8dffcb3352b862ef3ccc0e224075c4220ca941547a69ef5dab06a639"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_FrostSeaStairs.glb"
+        }
+      ]
+    }
+  }
+}

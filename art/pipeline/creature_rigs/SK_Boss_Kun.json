@@ -1,0 +1,43 @@
+{
+  "doc": "鲲鹏·鲲（第一阶段）：Tripo 智能网格 P2.0（30000 档，实得 32121 面，自带 UV 与 4K 贴图，未绑定）。按设计只有头和前半身，冰线（z = 0）以下不建模，模型底面是平切口。自定义骨架按网格切片与正 / 侧 / 顶正交图实测（缩放落地后的米制：front = -Y，生物的左 = +X，up = +Z）：三节脊柱负责从冰窟升起时的弓身与摇摆；头部用球形刚性区锁住吻部、獠牙、额珠和冠刺；额珠单独一根骨（发光壳）；两条须各三节，只取离开身体 0.4 米以上的悬空段；背上两扇翼鳍（化鹏的雏翼）各一根骨。下颌和喉板连成一体，分不出独立的颌骨，所以不做 jaw。",
+  "source": "art/source/_tripo_inbox/20261010T152435_SK_Boss_Kun_smartmesh.fbx",
+  "task": "https://studio.tripo3d.ai/workspace/generate/a6320cc4-94a3-4382-a97b-036bcba54a8f",
+  "height_m": 8.0,
+  "bones": {
+    "root": { "head": [0, 0, 0], "tail": [0, 0, 0.4], "parent": null, "deform": false },
+    "spine_1": { "head": [0, 0.6, 0.0], "tail": [0, 0.3, 1.8], "parent": "root" },
+    "spine_2": { "head": [0, 0.3, 1.8], "tail": [0, 0.0, 3.4], "parent": "spine_1" },
+    "spine_3": { "head": [0, 0.0, 3.4], "tail": [0, -0.4, 4.8], "parent": "spine_2" },
+    "head": { "head": [0, -0.4, 4.8], "tail": [0, -3.0, 5.4], "parent": "spine_3" },
+    "pearl": { "head": [0, -2.0, 6.3], "tail": [0, -2.75, 6.3], "parent": "head" },
+    "barbel_L_1": { "head": [2.1, -1.25, 4.3], "tail": [2.5, -0.6, 3.0], "parent": "head" },
+    "barbel_L_2": { "head": [2.5, -0.6, 3.0], "tail": [2.5, 0.4, 1.35], "parent": "barbel_L_1" },
+    "barbel_L_3": { "head": [2.5, 0.4, 1.35], "tail": [3.0, 2.1, 0.9], "parent": "barbel_L_2" },
+    "barbel_R_1": { "head": [-2.1, -1.25, 4.3], "tail": [-2.5, -0.6, 3.0], "parent": "head" },
+    "barbel_R_2": { "head": [-2.5, -0.6, 3.0], "tail": [-2.5, 0.4, 1.35], "parent": "barbel_R_1" },
+    "barbel_R_3": { "head": [-2.5, 0.4, 1.35], "tail": [-3.0, 2.1, 0.9], "parent": "barbel_R_2" },
+    "fin_L": { "head": [1.15, 0.85, 4.4], "tail": [2.05, 2.4, 7.9], "parent": "spine_3" },
+    "fin_R": { "head": [-1.15, 0.85, 4.4], "tail": [-2.05, 2.4, 7.9], "parent": "spine_3" }
+  },
+  "limits": [
+    { "bones": ["spine_1"], "box": [[-3.3, -3.7, -0.1], [3.3, 3.7, 3.6]] },
+    { "bones": ["spine_2"], "box": [[-3.3, -3.7, 0.8], [3.3, 3.7, 6.0]] },
+    { "bones": ["spine_3"], "box": [[-3.3, -3.7, 2.6], [3.3, 3.7, 8.1]] },
+    { "bones": ["head"], "box": [[-3.3, -3.7, 3.6], [3.3, 1.2, 8.1]] },
+    { "bones": ["pearl"], "box": [[-0.7, -2.95, 5.6], [0.7, -1.6, 7.0]] },
+    { "bones": ["barbel_L_1", "barbel_L_2", "barbel_L_3"], "box": [[2.2, -1.6, 0.6], [3.3, 2.4, 4.5]] },
+    { "bones": ["barbel_R_1", "barbel_R_2", "barbel_R_3"], "box": [[-3.3, -1.6, 0.6], [-2.2, 2.4, 4.5]] },
+    { "bones": ["fin_L"], "box": [[0.8, 0.2, 3.6], [3.3, 3.7, 8.1]] },
+    { "bones": ["fin_R"], "box": [[-3.3, 0.2, 3.6], [-0.8, 3.7, 8.1]] }
+  ],
+  "rigid": [
+    { "bone": "head", "sphere": [[0, -1.9, 5.7], 2.7], "blend": 0.55 },
+    { "bone": "pearl", "sphere": [[0, -2.3, 6.3], 0.5], "blend": 0.2 }
+  ],
+  "glow_shell": "pearl",
+  "provider_pbr": true,
+  "bake_normal": false,
+  "repack_uv": false,
+  "transfer_size": 4096,
+  "paint_shading": { "cavity_distance": 0.012, "cavity": 0.34, "ao": 0.18, "saturation": 1.06, "contrast": 1.05, "keep_brightness": true }
+}

@@ -1,0 +1,173 @@
+{
+  "id": "SM_Tripo_FrostTaoCoverWall",
+  "display": "坍塌木壁（备选 B）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 16:42:19",
+          "files": {
+            "BO_SM_Tripo_FrostTaoCoverWall_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostTaoCoverWall_v001.json",
+              "sha256": "4dfe8f1d831dd60b37560e7af762a2b9f280a5dac6d66593bb866512fff0b695"
+            },
+            "BO_SM_Tripo_FrostTaoCoverWall_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostTaoCoverWall_v001_views.json",
+              "sha256": "894f1fa9371f5174b9d2614b347b2f91762770a8b330f12b59e27e50c45cfc48"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost_b.v2.coverWall"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -3.0,
+              0,
+              -0.6
+            ],
+            "max": [
+              3.0,
+              2.6,
+              0.6
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 16:42:48",
+          "files": {
+            "CN_SM_Tripo_FrostTaoCoverWall_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoCoverWall_v001_source.png",
+              "sha256": "421861317f3c83dcfc5184e126e801eec39e5c113ce6782365e21a56b4b1b374"
+            },
+            "CN_SM_Tripo_FrostTaoCoverWall_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoCoverWall_v001_front.png",
+              "sha256": "a8e8e8681d5cf19b3295489c8a1cd0ca0423ac1f3fdfdaddd6b0b5e6152fada5"
+            },
+            "CN_SM_Tripo_FrostTaoCoverWall_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoCoverWall_v001_left.png",
+              "sha256": "13037ab74fb431fee4dc7a3b9fab7f2c24fe9d2011a449bbb70ec0a57abf616d"
+            },
+            "CN_SM_Tripo_FrostTaoCoverWall_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoCoverWall_v001_back.png",
+              "sha256": "172d0cb2cc60cac25ee64b6083b06df03f82ad8809b88bae5c8726469c011eee"
+            },
+            "CN_SM_Tripo_FrostTaoCoverWall_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoCoverWall_v001_right.png",
+              "sha256": "f9591d25863888d37adbf004344f85360459fcd3b9d5ffabab2eaf0c7ed2e816"
+            },
+            "CN_SM_Tripo_FrostTaoCoverWall_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoCoverWall_v001_sheet.png",
+              "sha256": "703d00be867eaa95e37735e0ffb15940c55cfb1b3ea735947a0cb5acc3fc1e8b"
+            },
+            "CN_SM_Tripo_FrostTaoCoverWall_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoCoverWall_v001_prompt.txt",
+              "sha256": "89eaee86d33bd57eee1e69d44e8ccbc369abaf1dd9f1422012ff9d6c358f1569"
+            },
+            "CN_SM_Tripo_FrostTaoCoverWall_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoCoverWall_v001_registration.json",
+              "sha256": "8e29f3478519fa65c33ffa7a95949cfeee84d89afdfc786322d5063aa949ca76"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 470,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 470
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1650
+            },
+            "request_id": "req_fe741eb2f5f3413b95c289d1d2e7546e",
+            "seconds": 27.7
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Taoist cliff abbey fantasy in the style of the Hanging Temple: dark weathered timber frames, cinnabar-red lacquered posts, slate-grey tiled roofs with upturned eaves, yellow paper talismans, verdigris bronze fittings, thick soft snow caps and a few chunky icicles. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (6m wide x 2.6m tall x 1.2m deep): A collapsed timber-and-plaster wall fragment 6m long, 2.6m tall, 1.2m deep, full-height cover: broken dark timber frame with patches of white plaster and a fallen strip of grey roof tiles leaning on it, a wedge of ice frozen into the break, snow piled along the top and drifted against the base. Solid, no openings, one connected piece.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "421861317f3c83dcfc5184e126e801eec39e5c113ce6782365e21a56b4b1b374",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.5132000986923266,
+              "offset": [
+                81,
+                413
+              ],
+              "size": [
+                350,
+                198
+              ],
+              "physical_height_m": 2.6,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5145330859616574,
+              "offset": [
+                211,
+                413
+              ],
+              "size": [
+                90,
+                198
+              ],
+              "physical_height_m": 2.6,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5185739217152829,
+              "offset": [
+                76,
+                413
+              ],
+              "size": [
+                359,
+                198
+              ],
+              "physical_height_m": 2.6,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5092422573142367,
+              "offset": [
+                205,
+                413
+              ],
+              "size": [
+                102,
+                198
+              ],
+              "physical_height_m": 2.6,
+              "method": "uniform_height_and_center"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

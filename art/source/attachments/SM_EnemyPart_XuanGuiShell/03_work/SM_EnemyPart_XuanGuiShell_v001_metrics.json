@@ -1,0 +1,103 @@
+{
+  "source": {
+    "tris": 5582,
+    "verts": 3023
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 2.57148,
+    "iou": 0.796,
+    "iou_per_view": {
+      "front": 0.782,
+      "left": 0.815,
+      "back": 0.782,
+      "right": 0.812
+    },
+    "size_m": [
+      2.525,
+      2.57,
+      1.4
+    ],
+    "reference_m": [
+      2.321,
+      2.5,
+      1.4
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.612,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "ice_crystal_ring_3d_model_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_EnemyPart_XuanGuiShell_LOD0",
+      "tris": 2984,
+      "verts": 1695,
+      "uv_min": [
+        0.0009765625,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.58,
+      "bbox_min": [
+        -1.2604,
+        -1.2888,
+        -0.0001
+      ],
+      "bbox_max": [
+        1.2613,
+        1.2866,
+        1.4
+      ]
+    },
+    {
+      "name": "SM_EnemyPart_XuanGuiShell_LOD1",
+      "tris": 995,
+      "verts": 646,
+      "uv_min": [
+        0.0019031546544283628,
+        0.0
+      ],
+      "uv_max": [
+        0.9994012117385864,
+        1.0
+      ],
+      "uv_utilization": 0.486,
+      "bbox_min": [
+        -1.2597,
+        -1.2888,
+        -0.0098
+      ],
+      "bbox_max": [
+        1.2645,
+        1.2921,
+        1.4
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/attachments/SM_EnemyPart_XuanGuiShell/04_export/SM_EnemyPart_XuanGuiShell_v001.glb",
+    "bytes": 331000
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 7.8,
+  "_seconds": 12.5
+}

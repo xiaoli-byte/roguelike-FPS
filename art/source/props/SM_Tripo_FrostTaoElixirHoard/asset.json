@@ -1,0 +1,162 @@
+{
+  "id": "SM_Tripo_FrostTaoElixirHoard",
+  "display": "仙丹宝藏（备选 B）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 16:43:34",
+          "files": {
+            "BO_SM_Tripo_FrostTaoElixirHoard_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostTaoElixirHoard_v001.json",
+              "sha256": "ac18f9d2064cfd3260437c84dc9243c8ecdcdbbe2885da13df25f2e75d0e062b"
+            },
+            "BO_SM_Tripo_FrostTaoElixirHoard_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostTaoElixirHoard_v001_views.json",
+              "sha256": "f5fc2bc5a0b5e18832a3ac1ed9813139204ef546a366cbe6a181816254e7f6ca"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost_b.v2.elixirHoard"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.0,
+              0,
+              -1.5
+            ],
+            "max": [
+              2.0,
+              1.8,
+              1.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 17:33:35",
+          "files": {
+            "CN_SM_Tripo_FrostTaoElixirHoard_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoElixirHoard_v001_source.png",
+              "sha256": "7b6dba4a764bb7c24dd7255fe0dd98bbdd12ce01f984858330ec16391eae19a0"
+            },
+            "CN_SM_Tripo_FrostTaoElixirHoard_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoElixirHoard_v001_front.png",
+              "sha256": "652bf767af8e19e3bacba6db3010d7d5e1be0d0e1f61e041bcf40122a8e4039f"
+            },
+            "CN_SM_Tripo_FrostTaoElixirHoard_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoElixirHoard_v001_left.png",
+              "sha256": "d7a09edc0a31a484c484b5973736de0b73e2f8785db9b56cdf54f25de8e6b164"
+            },
+            "CN_SM_Tripo_FrostTaoElixirHoard_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoElixirHoard_v001_back.png",
+              "sha256": "652628e4386294cefc6e5616cd65551e387f46ea9f9274c00cc896b3d00ae517"
+            },
+            "CN_SM_Tripo_FrostTaoElixirHoard_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoElixirHoard_v001_right.png",
+              "sha256": "1ca590e8a7011c71d549af42ceeee5755d7e033b81df9826daafcb4cb70081b5"
+            },
+            "CN_SM_Tripo_FrostTaoElixirHoard_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoElixirHoard_v001_sheet.png",
+              "sha256": "10674bf5f6baf00b83b81d89a3aaa0fc0ba1470ab8a4f4ecb4103f805b7bd91d"
+            },
+            "CN_SM_Tripo_FrostTaoElixirHoard_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoElixirHoard_v001_prompt.txt",
+              "sha256": "bb137abae36110fe01b813a0e35efc29a1fef484bbb298a3a686225f96196084"
+            },
+            "CN_SM_Tripo_FrostTaoElixirHoard_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoElixirHoard_v001_registration.json",
+              "sha256": "259e376d3f8d15b4f629e49012e3d1adbcadf54d1d0e0259f7acc72e4804ea1d"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-5.6-terra",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-5.6-terra",
+            "size": "2048x1024",
+            "generated_size": [
+              2016,
+              780
+            ],
+            "references": [],
+            "attempt": 1,
+            "seconds": 69.6
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Taoist cliff abbey fantasy in the style of the Hanging Temple: dark weathered timber frames, cinnabar-red lacquered posts, slate-grey tiled roofs with upturned eaves, yellow paper talismans, verdigris bronze fittings, thick soft snow caps and a few chunky icicles. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (4m wide x 1.8m tall x 3m deep): A Taoist treasure hoard 4m wide, 1.8m tall, 3m deep: two open red-lacquered chests spilling golden elixir gourds, jade pills, bronze mirrors, bundled talisman scrolls and a few gold ingots, everything dusted with snow and half frozen in pale ice. One solid connected heap resting on the ground.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "7b6dba4a764bb7c24dd7255fe0dd98bbdd12ce01f984858330ec16391eae19a0",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.42154566744730676,
+              "offset": [
+                134,
+                409
+              ],
+              "size": [
+                244,
+                206
+              ],
+              "physical_height_m": 1.8,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.4033613445378151,
+              "offset": [
+                189,
+                409
+              ],
+              "size": [
+                133,
+                206
+              ],
+              "physical_height_m": 1.8,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.41982507288629733,
+              "offset": [
+                139,
+                409
+              ],
+              "size": [
+                234,
+                206
+              ],
+              "physical_height_m": 1.8,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.41391204369071566,
+              "offset": [
+                170,
+                409
+              ],
+              "size": [
+                171,
+                206
+              ],
+              "physical_height_m": 1.8,
+              "method": "uniform_height_and_center"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

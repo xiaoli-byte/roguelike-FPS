@@ -1,0 +1,348 @@
+{
+  "id": "SM_Tripo_FrostSeaBoneLantern",
+  "display": "鲸油骨灯（备选 C）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 17:42:29",
+          "files": {
+            "BO_SM_Tripo_FrostSeaBoneLantern_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostSeaBoneLantern_v001.json",
+              "sha256": "c64ef996fcfe5835cd240d37dfe878163fa93a96506015c1945ee2d1d54adacc"
+            },
+            "BO_SM_Tripo_FrostSeaBoneLantern_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostSeaBoneLantern_v001_views.json",
+              "sha256": "9941fb9740a8341c63b8533d9a7e5271706a8909bc73a285f9c044656a485b08"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost_c.v2.boneLantern"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.7,
+              0,
+              -0.7
+            ],
+            "max": [
+              0.7,
+              2.4,
+              0.7
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 17:43:36",
+          "files": {
+            "CN_SM_Tripo_FrostSeaBoneLantern_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaBoneLantern_v001_source.png",
+              "sha256": "2db64779fdd032663f568c3103f647caa62c5ebd23fcd24b783305d4f8ac437b"
+            },
+            "CN_SM_Tripo_FrostSeaBoneLantern_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaBoneLantern_v001_front.png",
+              "sha256": "74057882574251adc01290f283c509b9c563740e1990975dfc644c7ead5ec4a9"
+            },
+            "CN_SM_Tripo_FrostSeaBoneLantern_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaBoneLantern_v001_left.png",
+              "sha256": "b8f571324e5286876869ebb9a2ae894e7335481673d8721b0b609b8ae873f36d"
+            },
+            "CN_SM_Tripo_FrostSeaBoneLantern_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaBoneLantern_v001_back.png",
+              "sha256": "6254a428a2fd4815c7c724906c0c23d82d47e588fd0a3deda61ace25ba92c9c2"
+            },
+            "CN_SM_Tripo_FrostSeaBoneLantern_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaBoneLantern_v001_right.png",
+              "sha256": "32fa3698d78617e5826059825e62259b9abb147bb37d6726f93a3394f8d2e5bc"
+            },
+            "CN_SM_Tripo_FrostSeaBoneLantern_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaBoneLantern_v001_sheet.png",
+              "sha256": "45e99283e04d3e0ad040cf2a730695fd9075537e3839d140f3ad87bd9b3d1e99"
+            },
+            "CN_SM_Tripo_FrostSeaBoneLantern_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaBoneLantern_v001_prompt.txt",
+              "sha256": "529d7dd6847f58774e612594085c2629494b58fcd23f56388d2d42ee5e4a1f17"
+            },
+            "CN_SM_Tripo_FrostSeaBoneLantern_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaBoneLantern_v001_registration.json",
+              "sha256": "04ddd2f4c674644f0496cfaa650f8600199758bd12e05cf92a165895d13b134f"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-5.6-terra",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-5.6-terra",
+            "size": "2048x1024",
+            "generated_size": [
+              1916,
+              821
+            ],
+            "references": [],
+            "attempt": 1,
+            "seconds": 65.6
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian frozen polar sea fantasy from the Zhuangzi's northern darkness: faceted glacier ice and dark ink-blue rock, weathered ivory whale bone, old dark ship timber with faded teal paint, frozen ropes, felt and a cold aqua deep-sea glow, thick soft snow caps and chunky icicles. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (1.4m wide x 2.4m tall x 1.4m deep): A shore lantern 1.4m wide, 2.4m tall: a cairn of dark stones holding up a curved whale-bone post from which hangs a round iron cage lantern glowing with a pale aqua whale-oil light (painted as an opaque bright surface, no flame), frayed teal prayer cloths and a snow cap on the cairn. Chunky readable shapes, one solid connected piece on the ground.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "2db64779fdd032663f568c3103f647caa62c5ebd23fcd24b783305d4f8ac437b",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.8555387220390339,
+              "offset": [
+                86,
+                120
+              ],
+              "size": [
+                339,
+                784
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.8481314603763583,
+              "offset": [
+                123,
+                120
+              ],
+              "size": [
+                265,
+                784
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.8546057463334298,
+              "offset": [
+                87,
+                120
+              ],
+              "size": [
+                338,
+                784
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.8426596445029624,
+              "offset": [
+                139,
+                120
+              ],
+              "size": [
+                233,
+                784
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "四视图同一物件、朝向正确、无裁切、雪盖未被抠掉；转 Hunyuan3D 2mv 多视图建模（2026-10-11）",
+            "time": "2026-10-11 00:35:28"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 02:01:35",
+          "files": {
+            "HP_SM_Tripo_FrostSeaBoneLantern_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaBoneLantern_v001_input_front.png",
+              "sha256": "e4f20b9c5c5dd01c3920e16f1b617d18518bf8ae22022d66a5c234a1856270ef"
+            },
+            "HP_SM_Tripo_FrostSeaBoneLantern_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaBoneLantern_v001_input_left.png",
+              "sha256": "e67d237c4a3fd02b709184449d8304be15b01d59ad1eef33119a73867ead6e65"
+            },
+            "HP_SM_Tripo_FrostSeaBoneLantern_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaBoneLantern_v001_input_back.png",
+              "sha256": "ab19f4a73d387c538b85ac96859d1a4f8a12c3f10952c0c0d9f1d1d490caddc0"
+            },
+            "HP_SM_Tripo_FrostSeaBoneLantern_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaBoneLantern_v001_input_right.png",
+              "sha256": "507929924bfe22566d99bdb70cd1b8053e323c2da691dd0a0005362ca2a48750"
+            },
+            "HP_SM_Tripo_FrostSeaBoneLantern_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaBoneLantern_v001.glb",
+              "sha256": "35908d86cc97da62e63bab5145144ec16547667ede8f0cbb78e624f4f16d15ba"
+            },
+            "HP_SM_Tripo_FrostSeaBoneLantern_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaBoneLantern_v001_graph.json",
+              "sha256": "b480afa8160dd0146592c9bc9a6edb0ea9cb4b44d3c5cfd6219d6ac693fbad67"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -205,
+              51,
+              717,
+              973
+            ],
+            "scale": 1.1106290672451193
+          },
+          "seconds": 150.5,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 8.6
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 02:02:20",
+          "files": {
+            "SM_Tripo_FrostSeaBoneLantern_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostSeaBoneLantern_v001.blend",
+              "sha256": "f76ae9db6286b1d3d351dbc3e7f1cc8d2244b1a4fe9d0ab67eb99938bd7fcb85"
+            },
+            "SM_Tripo_FrostSeaBoneLantern_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostSeaBoneLantern_v001.glb",
+              "sha256": "b0fe49bf7179a781ae8849187304dfb332e84cfdb776b8bf205c8e505c8b1b37"
+            },
+            "SM_Tripo_FrostSeaBoneLantern_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostSeaBoneLantern_v001_metrics.json",
+              "sha256": "6aabcc2a29e6128e9c5a54a5fe99f234f3dc75a4b29d6dc7a9139b15e30d52e2"
+            },
+            "T_Tripo_FrostSeaBoneLantern_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaBoneLantern_BC.png",
+              "sha256": "50f9907487fce6d1b941f3df3f6e2c8194e65a2856fea8cf60081d5bc3ee94fa"
+            },
+            "T_Tripo_FrostSeaBoneLantern_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaBoneLantern_N.png",
+              "sha256": "bd973990bcf3741124880d0f2f99cf02748cad7dce36e42ae90e580afdafffb6"
+            },
+            "T_Tripo_FrostSeaBoneLantern_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaBoneLantern_ORM.png",
+              "sha256": "ce9a6d36c955eee1355da49631953bb55baa2ae9a3db37083a57691afc992325"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.871,
+          "uncovered_ratio": 0.3066,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1450
+            },
+            {
+              "tris": 1000,
+              "verts": 450
+            }
+          ],
+          "export_kb": 292.8,
+          "seconds": 42.9,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 02:02:21",
+          "files": {
+            "SM_Tripo_FrostSeaBoneLantern_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostSeaBoneLantern_v001_validation_v001.json",
+              "sha256": "738ac51c1b2a1040872b637967b604c06b4ae19dc40b44afa316651b298b3e8e"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 02:02:30",
+          "files": {
+            "SM_Tripo_FrostSeaBoneLantern_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostSeaBoneLantern_v001_review_v001.png",
+              "sha256": "1b51662767e4b236179db363e1bf8b046509189acb0244d360ce1a9fe6e667a6"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "IoU 0.871；符文石堆+弯鲸骨+铁笼青光灯+经布，四面一致，灯笼悬挂清楚",
+            "time": "2026-10-11 02:02:51"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 02:02:52",
+          "files": {
+            "SM_Tripo_FrostSeaBoneLantern.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostSeaBoneLantern.glb",
+              "sha256": "b0fe49bf7179a781ae8849187304dfb332e84cfdb776b8bf205c8e505c8b1b37"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_FrostSeaBoneLantern.glb"
+        }
+      ]
+    }
+  }
+}

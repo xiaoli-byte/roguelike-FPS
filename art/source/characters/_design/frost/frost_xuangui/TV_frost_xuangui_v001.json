@@ -1,0 +1,40 @@
+{
+  "design": {
+    "key": "frost_xuangui",
+    "chapter": "frost",
+    "name": "冰甲旋龟",
+    "layout": "creature",
+    "height_m": 1.7,
+    "role": "坦克",
+    "brief": "The xuangui (旋龟) of the Shan Hai Jing, a black turtle with a bird's head and a viper's tail, frozen into a tank: a huge low turtle about 3.2 m long with a hooked eagle-like beak head, thick elephant-like legs with three blunt claws each, and a tall domed shell of translucent glacier-blue ice over dark verdigris-bronze scutes, the shell rim ringed with short heavy ice spikes. Its long viper tail ends in a snake head whose eyes and mouth glow cyan-violet (weak spot, behind it). The shell top has a round vent hole that glows when it overheats from spinning. Heavy, stubborn, armoured.",
+    "weapon": "",
+    "style_note": "Stylization: cartoon game proportions in the same family as the desert roster (jerboa soldier, fire rat, sancai tomb beast): chunky simplified masses, oversized head and hands or paws, toy-like readable forms with clean bevelled edges, ice as a few big faceted crystal shapes (never thin needles or noisy frost texture), fur as a few large carved clumps. Its defence is its own shell: it holds NO shield and NO weapon.",
+    "turnaround_lead": "Neutral bind pose for rigging:",
+    "turnaround_pose": " standing ON ALL FOURS like a big tortoise (quadruped), the shell level, the four thick legs straight under the shell and planted, front and hind legs clearly separated with a gap of air between them, belly clear of the ground; the eagle-beaked head extended forward and level on its neck, beak closed; the long viper tail extending straight backwards and slightly upward behind the shell (not curled), its snake-head tip facing backwards with the eyes painted opaque cyan-violet; the shell vent on top closed and dark; no glow halo, no flames, no particles",
+    "turnaround_digits": "each foot with three separate blunt claws; the head, the whole tail and every shell spike fully inside the frame; in the side views the long body and tail must fit inside the view with margin."
+  },
+  "from_sheet": "DS_frost_xuangui_v001.png",
+  "generation": {
+    "provider": "openai",
+    "endpoint": "images/edits",
+    "model": "gpt-image-2.5-sunburst",
+    "size": "2048x1024",
+    "quality": "high",
+    "background": "opaque",
+    "usage": {
+      "input_tokens": 1863,
+      "input_tokens_details": {
+        "image_tokens": 1458,
+        "text_tokens": 405
+      },
+      "output_tokens": 1180,
+      "output_tokens_details": {
+        "image_tokens": 1180,
+        "text_tokens": 0
+      },
+      "total_tokens": 3043
+    },
+    "request_id": "req_031b66d6836d43bda64ee13794eb0aac",
+    "seconds": 70.3
+  }
+}

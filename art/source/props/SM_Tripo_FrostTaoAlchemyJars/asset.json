@@ -1,0 +1,173 @@
+{
+  "id": "SM_Tripo_FrostTaoAlchemyJars",
+  "display": "冻结丹药坛（备选 B）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 16:42:57",
+          "files": {
+            "BO_SM_Tripo_FrostTaoAlchemyJars_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostTaoAlchemyJars_v001.json",
+              "sha256": "c14ad91d62ce744f97120ae138b1f689394738cfe508352eee40de5f7fea76f0"
+            },
+            "BO_SM_Tripo_FrostTaoAlchemyJars_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostTaoAlchemyJars_v001_views.json",
+              "sha256": "0e9127b8a50c4e2081b4488542784b0d6669d2d7597dc08da5fde2e1c62859ed"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost_b.v2.alchemyJars"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -1.5,
+              0,
+              -1.0
+            ],
+            "max": [
+              1.5,
+              1.6,
+              1.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 16:43:33",
+          "files": {
+            "CN_SM_Tripo_FrostTaoAlchemyJars_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoAlchemyJars_v001_source.png",
+              "sha256": "a2b601a686faebf379b3c7da6490f17de90506ab506921f8f1a5951708fe67d6"
+            },
+            "CN_SM_Tripo_FrostTaoAlchemyJars_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoAlchemyJars_v001_front.png",
+              "sha256": "e54a03a19fd9fa8641e8650421c7593e282a7acfb8a01adc2f63c9c42da277ef"
+            },
+            "CN_SM_Tripo_FrostTaoAlchemyJars_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoAlchemyJars_v001_left.png",
+              "sha256": "56a294ba4fd2af3f272558674b5318965ff3a71f8935edd8114aea1d716af56e"
+            },
+            "CN_SM_Tripo_FrostTaoAlchemyJars_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoAlchemyJars_v001_back.png",
+              "sha256": "a561c20e1e52ec8a9adc6e5bf55f278fee0186041ea6d6bb574b74ba6b5081c2"
+            },
+            "CN_SM_Tripo_FrostTaoAlchemyJars_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoAlchemyJars_v001_right.png",
+              "sha256": "2438d88ca3940a2d313c96b90e6ae51ff4dc2b1fca90e50681567b0600c98705"
+            },
+            "CN_SM_Tripo_FrostTaoAlchemyJars_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoAlchemyJars_v001_sheet.png",
+              "sha256": "dc0866ea5f9e80c0bba7f1cd893fcf71ce2ceebb846da6f77594d31c5bfcc0e9"
+            },
+            "CN_SM_Tripo_FrostTaoAlchemyJars_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoAlchemyJars_v001_prompt.txt",
+              "sha256": "2f35c4812d1d988367129af595e442a5c67b5a2cae0396cb5fe4fdbab6651727"
+            },
+            "CN_SM_Tripo_FrostTaoAlchemyJars_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoAlchemyJars_v001_registration.json",
+              "sha256": "8d5292251f94ef7845755f5ec25485fdcaf58b48b1ba1316101fe13a8f4dbc94"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 466,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 466
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1646
+            },
+            "request_id": "req_6855a215a8ce4013a6b69656ffd0d448",
+            "seconds": 28.5
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Taoist cliff abbey fantasy in the style of the Hanging Temple: dark weathered timber frames, cinnabar-red lacquered posts, slate-grey tiled roofs with upturned eaves, yellow paper talismans, verdigris bronze fittings, thick soft snow caps and a few chunky icicles. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (3m wide x 1.6m tall x 2m deep): A pile of frozen alchemy supplies 3m wide, 1.6m tall, 2m deep: big glazed clay jars sealed with red cloth and talisman paper, bundles of dried herbs, a small bronze tripod pot and stacked wooden medicine drawers, all glued together under a cap of snow and a sheet of clear ice. Chunky, one solid connected pile resting on the ground.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "a2b601a686faebf379b3c7da6490f17de90506ab506921f8f1a5951708fe67d6",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.6141297828955259,
+              "offset": [
+                90,
+                390
+              ],
+              "size": [
+                332,
+                244
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6141297828955259,
+              "offset": [
+                151,
+                390
+              ],
+              "size": [
+                210,
+                244
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6141297828955259,
+              "offset": [
+                90,
+                390
+              ],
+              "size": [
+                332,
+                244
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.6141297828955259,
+              "offset": [
+                137,
+                390
+              ],
+              "size": [
+                238,
+                244
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

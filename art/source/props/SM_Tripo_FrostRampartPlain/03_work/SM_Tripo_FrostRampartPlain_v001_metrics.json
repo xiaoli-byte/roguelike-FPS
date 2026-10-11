@@ -1,0 +1,141 @@
+{
+  "steps": {
+    "导入清理": 16.0,
+    "对齐": 2.3,
+    "低模与 UV": 35.6,
+    "投影着色": 75.0,
+    "烘焙": 42.1,
+    "LOD": 0.2,
+    "导出": 4.0
+  },
+  "highpoly": {
+    "faces_raw": 1309667,
+    "faces": 585114,
+    "verts": 585116,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.938,
+    "iou_per_view": {
+      "front": 0.973,
+      "left": 0.911,
+      "back": 0.969,
+      "right": 0.883
+    },
+    "height_m": 8.6542,
+    "blockout_height_m": 9.0
+  },
+  "uv": {
+    "smart_islands": 262,
+    "charts": 18,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "smart",
+    "density_smart": 0.0523,
+    "density_merged": 0.0494
+  },
+  "projection": {
+    "uncovered_ratio": 0.3602
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Tripo_FrostRampartPlain_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_FrostRampartPlain_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_FrostRampartPlain_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostRampartPlain_LOD0",
+      "tris": 8000,
+      "verts": 4002,
+      "uv_min": [
+        0.002838082378730178,
+        0.0027957437559962273
+      ],
+      "uv_max": [
+        0.9973916411399841,
+        0.993613600730896
+      ],
+      "uv_utilization": 0.649,
+      "bbox_min": [
+        -4.3237,
+        -1.1873,
+        0.0014
+      ],
+      "bbox_max": [
+        4.325,
+        1.3537,
+        8.654
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostRampartPlain_LOD1",
+      "tris": 2500,
+      "verts": 1252,
+      "uv_min": [
+        0.002838082378730178,
+        0.0030079165007919073
+      ],
+      "uv_max": [
+        0.9973916411399841,
+        0.993613600730896
+      ],
+      "uv_utilization": 0.631,
+      "bbox_min": [
+        -4.3248,
+        -1.1846,
+        0.0004
+      ],
+      "bbox_max": [
+        4.3189,
+        1.3472,
+        8.6524
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostRampartPlain_LOD2",
+      "tris": 800,
+      "verts": 402,
+      "uv_min": [
+        0.002838082378730178,
+        0.0035556983202695847
+      ],
+      "uv_max": [
+        0.9942573308944702,
+        0.993613600730896
+      ],
+      "uv_utilization": 0.604,
+      "bbox_min": [
+        -4.3028,
+        -1.1969,
+        -0.0023
+      ],
+      "bbox_max": [
+        4.2995,
+        1.3497,
+        8.6575
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostRampartPlain/04_export/SM_Tripo_FrostRampartPlain_v001.glb",
+    "bytes": 405376
+  },
+  "blend": "art/source/props/SM_Tripo_FrostRampartPlain/03_work/SM_Tripo_FrostRampartPlain_v001.blend",
+  "total_seconds": 175.1,
+  "_seconds": 184.7
+}

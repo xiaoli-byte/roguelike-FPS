@@ -1,0 +1,408 @@
+{
+  "asset": "SK_Enemy_FoxWitch",
+  "version": 2,
+  "glb": "art/source/characters/SK_Enemy_FoxWitch/04_export/SK_Enemy_FoxWitch_native_v002.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.5,
+      "自定义骨架：79 根骨骼（热扩散权重，268 个顶点未覆盖）": 0.2,
+      "贴图（BC + AO/ORM）": 5.5,
+      "LOD 与蒙皮上限 7880 / 3447 / 1476": 0.4,
+      "导出 653 KB": 1.8
+    },
+    "source": {
+      "verts": 4467,
+      "tris": 8468,
+      "scale": 1.8008793356130923
+    },
+    "regions": {
+      "heat_unweighted_verts": 268,
+      "head_verts": 842,
+      "fallback_verts": 60,
+      "per_bone": {
+        "hips": 43,
+        "spine": 262,
+        "chest": 48,
+        "neck": 27,
+        "head": 1152,
+        "shoulder_L": 63,
+        "arm_L": 80,
+        "forearm_L": 21,
+        "hand_L": 28,
+        "thumb_1_L": 7,
+        "thumb_2_L": 14,
+        "index_1_L": 8,
+        "index_2_L": 10,
+        "middle_1_L": 6,
+        "middle_2_L": 9,
+        "ring_1_L": 10,
+        "ring_2_L": 9,
+        "pinky_1_L": 3,
+        "pinky_2_L": 13,
+        "sleeve_L1": 49,
+        "sleeve_L2": 21,
+        "thigh_L": 34,
+        "shin_L": 87,
+        "foot_L": 114,
+        "toe_L": 63,
+        "robe_L1": 41,
+        "robe_L2": 29,
+        "shoulder_R": 61,
+        "arm_R": 79,
+        "forearm_R": 21,
+        "hand_R": 28,
+        "thumb_1_R": 7,
+        "thumb_2_R": 14,
+        "index_1_R": 9,
+        "index_2_R": 9,
+        "middle_1_R": 7,
+        "middle_2_R": 9,
+        "ring_1_R": 10,
+        "ring_2_R": 9,
+        "pinky_1_R": 6,
+        "pinky_2_R": 13,
+        "sleeve_R1": 47,
+        "sleeve_R2": 21,
+        "thigh_R": 34,
+        "shin_R": 87,
+        "foot_R": 114,
+        "toe_R": 65,
+        "robe_R1": 41,
+        "robe_R2": 30,
+        "robe_F1": 231,
+        "robe_F2": 49,
+        "robe_B1": 14,
+        "robe_B2": 62,
+        "tail_L1_1": 56,
+        "tail_L1_2": 31,
+        "tail_L1_3": 29,
+        "tail_L2_1": 54,
+        "tail_L2_2": 36,
+        "tail_L2_3": 37,
+        "tail_L3_1": 62,
+        "tail_L3_2": 33,
+        "tail_L3_3": 44,
+        "tail_L4_1": 45,
+        "tail_L4_2": 51,
+        "tail_L4_3": 40,
+        "tail_R1_1": 58,
+        "tail_R1_2": 31,
+        "tail_R1_3": 29,
+        "tail_R2_1": 59,
+        "tail_R2_2": 36,
+        "tail_R2_3": 37,
+        "tail_R3_1": 63,
+        "tail_R3_2": 34,
+        "tail_R3_3": 44,
+        "tail_R4_1": 46,
+        "tail_R4_2": 50,
+        "tail_R4_3": 40
+      }
+    },
+    "bones": [
+      "arm_L",
+      "arm_R",
+      "chest",
+      "foot_L",
+      "foot_R",
+      "forearm_L",
+      "forearm_R",
+      "hand_L",
+      "hand_R",
+      "head",
+      "hips",
+      "index_1_L",
+      "index_1_R",
+      "index_2_L",
+      "index_2_R",
+      "middle_1_L",
+      "middle_1_R",
+      "middle_2_L",
+      "middle_2_R",
+      "neck",
+      "pinky_1_L",
+      "pinky_1_R",
+      "pinky_2_L",
+      "pinky_2_R",
+      "ring_1_L",
+      "ring_1_R",
+      "ring_2_L",
+      "ring_2_R",
+      "robe_B1",
+      "robe_B2",
+      "robe_F1",
+      "robe_F2",
+      "robe_L1",
+      "robe_L2",
+      "robe_R1",
+      "robe_R2",
+      "root",
+      "shin_L",
+      "shin_R",
+      "shoulder_L",
+      "shoulder_R",
+      "sleeve_L1",
+      "sleeve_L2",
+      "sleeve_R1",
+      "sleeve_R2",
+      "spine",
+      "tail_L1_1",
+      "tail_L1_2",
+      "tail_L1_3",
+      "tail_L2_1",
+      "tail_L2_2",
+      "tail_L2_3",
+      "tail_L3_1",
+      "tail_L3_2",
+      "tail_L3_3",
+      "tail_L4_1",
+      "tail_L4_2",
+      "tail_L4_3",
+      "tail_R1_1",
+      "tail_R1_2",
+      "tail_R1_3",
+      "tail_R2_1",
+      "tail_R2_2",
+      "tail_R2_3",
+      "tail_R3_1",
+      "tail_R3_2",
+      "tail_R3_3",
+      "tail_R4_1",
+      "tail_R4_2",
+      "tail_R4_3",
+      "tail_root",
+      "thigh_L",
+      "thigh_R",
+      "thumb_1_L",
+      "thumb_1_R",
+      "thumb_2_L",
+      "thumb_2_R",
+      "toe_L",
+      "toe_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.938,
+      "shade_mean": 0.929
+    },
+    "textures": {
+      "size": 1024,
+      "ao_mean": 0.645,
+      "provider_pbr": [],
+      "roughness_mean": 0.75,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Enemy_FoxWitch_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_FoxWitch_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_FoxWitch_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Enemy_FoxWitch_LOD0",
+        "tris": 7880,
+        "uv_min": [
+          0.00146484375,
+          0.0014282867778092623
+        ],
+        "uv_max": [
+          0.99853515625,
+          0.998046875
+        ]
+      },
+      {
+        "name": "SK_Enemy_FoxWitch_LOD1",
+        "tris": 3447,
+        "uv_min": [
+          0.001444723573513329,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.99853515625,
+          0.997802734375
+        ]
+      },
+      {
+        "name": "SK_Enemy_FoxWitch_LOD2",
+        "tris": 1476,
+        "uv_min": [
+          0.001444723573513329,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.998291015625,
+          0.997802734375
+        ]
+      }
+    ],
+    "glb_kb": 653,
+    "_seconds": 13.9
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "653 KB / 1600 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Enemy_FoxWitch_LOD0', 'SK_Enemy_FoxWitch_LOD1', 'SK_Enemy_FoxWitch_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "7880 / 8000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "3447 / 3500"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "1476 / 1500"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "1.800 m (design 1.8 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Enemy_FoxWitch']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_FoxWitch_ORM",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_FoxWitch_BC",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "79 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FoxWitch_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FoxWitch_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FoxWitch_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FoxWitch_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FoxWitch_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FoxWitch_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FoxWitch_LOD0 UV range",
+      "[0.001, 0.001]..[0.999, 0.998]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FoxWitch_LOD1 UV range",
+      "[0.001, 0.001]..[0.999, 0.998]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FoxWitch_LOD2 UV range",
+      "[0.001, 0.001]..[0.998, 0.998]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "268 verts"
+    ],
+    [
+      "pass",
+      "region head",
+      "842 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "60 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

@@ -1,0 +1,348 @@
+{
+  "id": "SM_Tripo_FrostSeaBarricade",
+  "display": "浮木绳栏（备选 C）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 17:39:03",
+          "files": {
+            "BO_SM_Tripo_FrostSeaBarricade_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostSeaBarricade_v001.json",
+              "sha256": "c0c7e88dd7098f5edc644e4447e9c20ad150fdf4e513d7ce7f7bd38d2d65a3c5"
+            },
+            "BO_SM_Tripo_FrostSeaBarricade_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostSeaBarricade_v001_views.json",
+              "sha256": "0564439d39e24d30950e36a636503c640eb016ffa2dae875c99591743cf120e4"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost_c.v2.barricade"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -3.0,
+              0,
+              -0.6
+            ],
+            "max": [
+              3.0,
+              1.2,
+              0.6
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 17:40:09",
+          "files": {
+            "CN_SM_Tripo_FrostSeaBarricade_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaBarricade_v001_source.png",
+              "sha256": "8c4b7c5be3a9a9ada36d62c463e35e36801468d5e28d29214f0e1c3b48732c80"
+            },
+            "CN_SM_Tripo_FrostSeaBarricade_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaBarricade_v001_front.png",
+              "sha256": "df42b2f8607ca765630f49543114cd792a3dde5ae876b453dc8932528ca46600"
+            },
+            "CN_SM_Tripo_FrostSeaBarricade_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaBarricade_v001_left.png",
+              "sha256": "9012db9e7bc4a0a23b65e784e0e8646c6bb372c0294fbcb75cc3a68680650f1f"
+            },
+            "CN_SM_Tripo_FrostSeaBarricade_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaBarricade_v001_back.png",
+              "sha256": "82ff5448833037f8c7792c532934daf123e2fb50633361bf625b19a0b69937a8"
+            },
+            "CN_SM_Tripo_FrostSeaBarricade_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaBarricade_v001_right.png",
+              "sha256": "ca597a4a44a0352beccd7b33324e40c11bcce50d6a3a8e09a93584e6a734e988"
+            },
+            "CN_SM_Tripo_FrostSeaBarricade_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaBarricade_v001_sheet.png",
+              "sha256": "9833f6ce5b77709e6b1cde4474446ca3b3178295f1b1289378cdc5a2748bcc79"
+            },
+            "CN_SM_Tripo_FrostSeaBarricade_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaBarricade_v001_prompt.txt",
+              "sha256": "f3ba3919c6fa60cb1b9ff7a4b52762cc185f75a089180539510ed4e3dc4546cd"
+            },
+            "CN_SM_Tripo_FrostSeaBarricade_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaBarricade_v001_registration.json",
+              "sha256": "a1a1317c194683fd5eaf0d465061fb1ef901a0f143f63b017fd3ff824449795e"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-5.6-terra",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-5.6-terra",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "attempt": 1,
+            "seconds": 62.9
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian frozen polar sea fantasy from the Zhuangzi's northern darkness: faceted glacier ice and dark ink-blue rock, weathered ivory whale bone, old dark ship timber with faded teal paint, frozen ropes, felt and a cold aqua deep-sea glow, thick soft snow caps and chunky icicles. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (6m wide x 1.2m tall x 1.2m deep): A low barricade 6m long, 1.2m tall, 1.2m deep, waist-high cover: a row of thick weathered driftwood logs and broken ship planks lashed together with frozen rope and stacked with snow-capped stones, a few fishing floats tied to it. Solid, no gaps, one connected piece.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "8c4b7c5be3a9a9ada36d62c463e35e36801468d5e28d29214f0e1c3b48732c80",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.2939825447864033,
+              "offset": [
+                156,
+                466
+              ],
+              "size": [
+                199,
+                91
+              ],
+              "physical_height_m": 1.2,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.2729211087420042,
+              "offset": [
+                227,
+                466
+              ],
+              "size": [
+                58,
+                91
+              ],
+              "physical_height_m": 1.2,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.2939825447864033,
+              "offset": [
+                157,
+                466
+              ],
+              "size": [
+                198,
+                91
+              ],
+              "physical_height_m": 1.2,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.2689075630252101,
+              "offset": [
+                225,
+                466
+              ],
+              "size": [
+                61,
+                91
+              ],
+              "physical_height_m": 1.2,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "四视图同一物件、朝向正确、无裁切、雪盖未被抠掉；转 Hunyuan3D 2mv 多视图建模（2026-10-11）",
+            "time": "2026-10-11 00:35:12"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:23:16",
+          "files": {
+            "HP_SM_Tripo_FrostSeaBarricade_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaBarricade_v001_input_front.png",
+              "sha256": "bae593b3ace2224289a5c9e597b9af130589f9f0a5a4b6004265aa0a213c25b8"
+            },
+            "HP_SM_Tripo_FrostSeaBarricade_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaBarricade_v001_input_left.png",
+              "sha256": "23a2f5c8a28057f133f0fc3902969f32d42ba43c34ee039265258c29fda5a9ac"
+            },
+            "HP_SM_Tripo_FrostSeaBarricade_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaBarricade_v001_input_back.png",
+              "sha256": "c37f929a7f289e4300ae927606b7a2b41f092c3af6521e88dacf64dcaf4fe92c"
+            },
+            "HP_SM_Tripo_FrostSeaBarricade_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaBarricade_v001_input_right.png",
+              "sha256": "6856feefc2cccf79f9b039e3dbf92fd8a1e2f793214b88165546b80460f9a768"
+            },
+            "HP_SM_Tripo_FrostSeaBarricade_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaBarricade_v001.glb",
+              "sha256": "e32d4aeaf0412131a571875c4d36fd9b81c47f2a7563539addeaba2ba44647e4"
+            },
+            "HP_SM_Tripo_FrostSeaBarricade_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaBarricade_v001_graph.json",
+              "sha256": "2b431da0cc979024d25786e051bc6604c688d06338daa66285ea5d86aad58f24"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              139,
+              394,
+              373,
+              629
+            ],
+            "scale": 4.3760683760683765
+          },
+          "seconds": 146.2,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 9.6
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:24:03",
+          "files": {
+            "SM_Tripo_FrostSeaBarricade_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostSeaBarricade_v001.blend",
+              "sha256": "6b3182cd2b432308531509955ad0746c9270d54270f6512375f1f96180b60f74"
+            },
+            "SM_Tripo_FrostSeaBarricade_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostSeaBarricade_v001.glb",
+              "sha256": "79ede7c0fd8c6546fd1f8cc715d93b79aa8b0a049b5db4a53ccae364a25abfe8"
+            },
+            "SM_Tripo_FrostSeaBarricade_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostSeaBarricade_v001_metrics.json",
+              "sha256": "8dc880419248a4e21270d384fa77df62d5733871501aa0987d5b22b080c5ff1b"
+            },
+            "T_Tripo_FrostSeaBarricade_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaBarricade_BC.png",
+              "sha256": "20c4cda1d5a619905fe0c6756ab6e7e2767d26a29c6bf37f3cc6dd44a11fe21f"
+            },
+            "T_Tripo_FrostSeaBarricade_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaBarricade_N.png",
+              "sha256": "1ee351816e89ef5d2a396b7d85b1feedf537871280f1831d5aa236b62e4461af"
+            },
+            "T_Tripo_FrostSeaBarricade_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaBarricade_ORM.png",
+              "sha256": "5a4207d7f151230b7c058c7396da94e4a403410e7a734c61ecbd234826bb4658"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.794,
+          "uncovered_ratio": 0.2858,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1486
+            },
+            {
+              "tris": 1000,
+              "verts": 486
+            }
+          ],
+          "export_kb": 251.1,
+          "seconds": 41.4,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:24:03",
+          "files": {
+            "SM_Tripo_FrostSeaBarricade_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostSeaBarricade_v001_validation_v001.json",
+              "sha256": "ad7ce4d4d0e10ca8a27e23aefd53bf40a924ae5aa5e2784eae0c834ae77efbad"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:24:11",
+          "files": {
+            "SM_Tripo_FrostSeaBarricade_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostSeaBarricade_v001_review_v001.png",
+              "sha256": "77737e23e73ccecd5bea3a0aee66ae783c902d55e86b6eb1737985096ccafa00"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "IoU 0.794；浮木船板绑扎+石块+渔浮，积雪冰挂，四面一致，矮掩体高度合适",
+            "time": "2026-10-11 01:24:35"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:24:36",
+          "files": {
+            "SM_Tripo_FrostSeaBarricade.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostSeaBarricade.glb",
+              "sha256": "79ede7c0fd8c6546fd1f8cc715d93b79aa8b0a049b5db4a53ccae364a25abfe8"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_FrostSeaBarricade.glb"
+        }
+      ]
+    }
+  }
+}

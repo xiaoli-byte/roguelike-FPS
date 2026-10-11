@@ -1,0 +1,37 @@
+{
+  "design": {
+    "key": "frost_b_baize",
+    "chapter": "frost_b",
+    "name": "白泽",
+    "layout": "creature",
+    "height_m": 2.0,
+    "role": "辅助",
+    "alternative_of": "frost",
+    "brief": "The Baize (白泽), the all-knowing white beast of Chinese legend that taught the names of every demon: a wise lion-goat-like white quadruped with a long silky beard, curling ram horns, a third eye on its forehead and three extra eyes along each flank, a scholar's scroll case strapped to its back from which glowing yellow talisman papers unfurl and float around it; the forehead eye glows pale jade-green (weak spot). Cloven hooves. Calm, ancient, protective.",
+    "weapon": "reading an unrolled scroll held in its mouth, talismans flying out",
+    "style_note": "Stylization: cartoon game proportions in the same family as the desert roster (jerboa soldier, fire rat, sancai tomb beast): chunky simplified masses, oversized heads and hands or paws, toy-like readable forms with clean bevelled edges, ice as a few big faceted shapes, paper and cloth as thick simple bands, fur as big carved clumps. Real goat/lion anatomy under the stylization."
+  },
+  "generation": {
+    "provider": "openai",
+    "endpoint": "images/generations",
+    "model": "gpt-image-2.5-sunburst",
+    "size": "2048x1024",
+    "quality": "high",
+    "background": "opaque",
+    "usage": {
+      "input_tokens": 604,
+      "input_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 604
+      },
+      "output_tokens": 1180,
+      "output_tokens_details": {
+        "image_tokens": 1180,
+        "text_tokens": 0
+      },
+      "total_tokens": 1784
+    },
+    "request_id": "req_6e88c3d798d04cacbb61ea1dbab3da18",
+    "seconds": 35.9
+  }
+}

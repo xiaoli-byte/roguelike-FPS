@@ -1,0 +1,117 @@
+{
+  "steps": {
+    "导入清理": 3.2,
+    "对齐": 1.2,
+    "低模与 UV": 10.0,
+    "投影着色": 19.8,
+    "烘焙": 6.9,
+    "LOD": 0.0,
+    "导出": 1.0
+  },
+  "highpoly": {
+    "faces_raw": 760585,
+    "faces": 315774,
+    "verts": 315686,
+    "loose_parts": 4,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.888,
+    "iou_per_view": {
+      "front": 0.907,
+      "left": 0.869,
+      "back": 0.907,
+      "right": 0.861
+    },
+    "height_m": 4.956,
+    "blockout_height_m": 5.0
+  },
+  "uv": {
+    "smart_islands": 673,
+    "charts": 103,
+    "fallback_charts": 15,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.1009,
+    "density_merged": 0.1293
+  },
+  "projection": {
+    "uncovered_ratio": 0.384
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Tripo_FrostSeaColumn_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_FrostSeaColumn_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_FrostSeaColumn_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostSeaColumn_LOD0",
+      "tris": 2997,
+      "verts": 1412,
+      "uv_min": [
+        0.0035529930610209703,
+        0.0035529201850295067
+      ],
+      "uv_max": [
+        0.9931366443634033,
+        0.9964470863342285
+      ],
+      "uv_utilization": 0.592,
+      "bbox_min": [
+        -1.152,
+        -1.1693,
+        -0.0004
+      ],
+      "bbox_max": [
+        1.0561,
+        1.1595,
+        4.9576
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostSeaColumn_LOD1",
+      "tris": 1000,
+      "verts": 406,
+      "uv_min": [
+        0.0035937584470957518,
+        0.0038275409024208784
+      ],
+      "uv_max": [
+        0.9914053082466125,
+        0.9964470863342285
+      ],
+      "uv_utilization": 0.496,
+      "bbox_min": [
+        -1.1334,
+        -1.1191,
+        -0.0
+      ],
+      "bbox_max": [
+        1.0179,
+        1.0943,
+        4.9628
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostSeaColumn/04_export/SM_Tripo_FrostSeaColumn_v001.glb",
+    "bytes": 330912
+  },
+  "blend": "art/source/props/SM_Tripo_FrostSeaColumn/03_work/SM_Tripo_FrostSeaColumn_v001.blend",
+  "total_seconds": 42.0,
+  "_seconds": 46.3
+}

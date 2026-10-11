@@ -1,0 +1,482 @@
+{
+  "id": "SM_Tripo_FrostIceLantern",
+  "display": "青铜冰灯（V2）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 13:37:11",
+          "files": {
+            "BO_SM_Tripo_FrostIceLantern_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostIceLantern_v001.json",
+              "sha256": "55550580d4bfe59368dc9be4aec910b37866434639ba1782415756ad5237daf1"
+            },
+            "BO_SM_Tripo_FrostIceLantern_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostIceLantern_v001_views.json",
+              "sha256": "9941fb9740a8341c63b8533d9a7e5271706a8909bc73a285f9c044656a485b08"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost.v2.iceLantern"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.7,
+              0,
+              -0.7
+            ],
+            "max": [
+              0.7,
+              2.4,
+              0.7
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 13:37:42",
+          "files": {
+            "CN_SM_Tripo_FrostIceLantern_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceLantern_v001_source.png",
+              "sha256": "48f0aea82b4082c8f1d1e88faa8e58ea8fe3ad74778046d3cb8ad5b070bd6cb2"
+            },
+            "CN_SM_Tripo_FrostIceLantern_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceLantern_v001_front.png",
+              "sha256": "d9a8ed55a0f757c45c1e8f05735e1743c325316600d1bbb336e5d822a8f61347"
+            },
+            "CN_SM_Tripo_FrostIceLantern_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceLantern_v001_left.png",
+              "sha256": "2ebed14f17144c2d0b0ee3920f516e93d48e16844d6e034ed6bbf9e07b353a56"
+            },
+            "CN_SM_Tripo_FrostIceLantern_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceLantern_v001_back.png",
+              "sha256": "7138dd7f95020147628fbbeff20f634165f1f1cf0903bc4c010822a11459822b"
+            },
+            "CN_SM_Tripo_FrostIceLantern_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceLantern_v001_right.png",
+              "sha256": "5d7c635acc2291de23fae083a3c7d4a5105120a034b73740a602046bcf16b672"
+            },
+            "CN_SM_Tripo_FrostIceLantern_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceLantern_v001_sheet.png",
+              "sha256": "f51b634a1493a43cfec43c07290e5592e4f2510dd30fc075945f1fd7a8e2c81a"
+            },
+            "CN_SM_Tripo_FrostIceLantern_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceLantern_v001_prompt.txt",
+              "sha256": "6dafea7f9062688aa1f2a02ea321b5653f77747aaf8a8f66c792e2beb3774add"
+            },
+            "CN_SM_Tripo_FrostIceLantern_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceLantern_v001_registration.json",
+              "sha256": "c886e6340c33cd9092e65f48c1bfa767b5bbef2d7f64a926caed79c6a3b7b1e0"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 470,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 470
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1650
+            },
+            "request_id": "req_b39c35a03aa2473c9bd1027488f69666",
+            "seconds": 29.0
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (1.4m wide x 2.4m tall x 1.4m deep): A palace lantern 1.4m wide, 2.4m tall: a square stepped white jade pedestal topped by a verdigris bronze Han-dynasty lamp in the shape of a kneeling servant figure holding up a round lamp housing, the housing panels made of thick clear blue ice glowing with a cold cyan light inside (painted as an opaque bright pale cyan surface, no flame), a cap of snow on top. Chunky readable shapes, one solid connected piece on the ground.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "48f0aea82b4082c8f1d1e88faa8e58ea8fe3ad74778046d3cb8ad5b070bd6cb2",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.8154770753254476,
+              "offset": [
+                103,
+                120
+              ],
+              "size": [
+                305,
+                784
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.8171777574429145,
+              "offset": [
+                114,
+                120
+              ],
+              "size": [
+                284,
+                784
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.8154770753254476,
+              "offset": [
+                104,
+                120
+              ],
+              "size": [
+                303,
+                784
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.8171777574429145,
+              "offset": [
+                108,
+                120
+              ],
+              "size": [
+                296,
+                784
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-07 13:40:59",
+          "files": {
+            "CN_SM_Tripo_FrostIceLantern_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceLantern_v002_source.png",
+              "sha256": "48f0aea82b4082c8f1d1e88faa8e58ea8fe3ad74778046d3cb8ad5b070bd6cb2"
+            },
+            "CN_SM_Tripo_FrostIceLantern_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceLantern_v002_front.png",
+              "sha256": "93002194b7ef990f752e5d24450b3cdc2708e592e624af3250ad5079fe07cf6a"
+            },
+            "CN_SM_Tripo_FrostIceLantern_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceLantern_v002_left.png",
+              "sha256": "36f3691da089809030c1788f4426d3325af806d45aebbf2a1dc930bd8fe5c8e7"
+            },
+            "CN_SM_Tripo_FrostIceLantern_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceLantern_v002_back.png",
+              "sha256": "90fb9eefcd441a4bed641b430764f2b383c68b8cc4e6bc88f4d54cb10de4e864"
+            },
+            "CN_SM_Tripo_FrostIceLantern_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceLantern_v002_right.png",
+              "sha256": "0d59ea25fb5ace309962765aa680f8a0dc1230ea0140adfabc278c8023136fb9"
+            },
+            "CN_SM_Tripo_FrostIceLantern_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceLantern_v002_sheet.png",
+              "sha256": "968dc4ffc97772715412cc8f195f7ac9013b35c6a3675ec4e0762cfab93239c3"
+            },
+            "CN_SM_Tripo_FrostIceLantern_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceLantern_v002_prompt.txt",
+              "sha256": "6dafea7f9062688aa1f2a02ea321b5653f77747aaf8a8f66c792e2beb3774add"
+            },
+            "CN_SM_Tripo_FrostIceLantern_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceLantern_v002_registration.json",
+              "sha256": "df4f1826fdd82c720ab378e6a5a0a2936ac0e94908e6eec8767b8bc7b32b6b5f"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 470,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 470
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1650
+            },
+            "request_id": "req_b39c35a03aa2473c9bd1027488f69666",
+            "seconds": 29.0,
+            "rekeyed_from": 1
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (1.4m wide x 2.4m tall x 1.4m deep): A palace lantern 1.4m wide, 2.4m tall: a square stepped white jade pedestal topped by a verdigris bronze Han-dynasty lamp in the shape of a kneeling servant figure holding up a round lamp housing, the housing panels made of thick clear blue ice glowing with a cold cyan light inside (painted as an opaque bright pale cyan surface, no flame), a cap of snow on top. Chunky readable shapes, one solid connected piece on the ground.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "48f0aea82b4082c8f1d1e88faa8e58ea8fe3ad74778046d3cb8ad5b070bd6cb2",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.8146293860579574,
+              "offset": [
+                103,
+                120
+              ],
+              "size": [
+                306,
+                784
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.8163265306122448,
+              "offset": [
+                113,
+                120
+              ],
+              "size": [
+                286,
+                784
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.8137834573081568,
+              "offset": [
+                104,
+                120
+              ],
+              "size": [
+                303,
+                784
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.8163265306122448,
+              "offset": [
+                107,
+                120
+              ],
+              "size": [
+                297,
+                784
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "v002 四视图同一物件、无裁切、雪盖未被抠掉；转 Hunyuan3D 2mv 多视图建模（2026-10-11）",
+            "time": "2026-10-11 00:02:39"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:08:26",
+          "files": {
+            "HP_SM_Tripo_FrostIceLantern_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostIceLantern_v001_input_front.png",
+              "sha256": "45b56d6fd9121088083b439e38070b37d4664d87e501d64d4eea224bc2b66ae4"
+            },
+            "HP_SM_Tripo_FrostIceLantern_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostIceLantern_v001_input_left.png",
+              "sha256": "6532a1f277ea2a38242bc77fbec60f3d9cb85631cce030543b3362ceb8b61528"
+            },
+            "HP_SM_Tripo_FrostIceLantern_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostIceLantern_v001_input_back.png",
+              "sha256": "a02c2d1741fca0b6d6d9dc80179f006ec74091afa69bee3e730773ccdad077f8"
+            },
+            "HP_SM_Tripo_FrostIceLantern_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostIceLantern_v001_input_right.png",
+              "sha256": "389148878a5d0450b923adee72dfad6ba15ecca3f086773a49f50b4384f3cacd"
+            },
+            "HP_SM_Tripo_FrostIceLantern_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostIceLantern_v001.glb",
+              "sha256": "847e2656756c3ded5c391e950d5563d397f99f9d52908933a09b261389fa9a70"
+            },
+            "HP_SM_Tripo_FrostIceLantern_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostIceLantern_v001_graph.json",
+              "sha256": "5b45594e1c96547298e2260051cf778fa7fad6ee6b04db20738081d18f4d2d66"
+            }
+          },
+          "from_concept": 2,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -205,
+              51,
+              717,
+              973
+            ],
+            "scale": 1.1106290672451193
+          },
+          "seconds": 144.8,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 9.4
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:09:11",
+          "files": {
+            "SM_Tripo_FrostIceLantern_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostIceLantern_v001.blend",
+              "sha256": "d4dae87de30614e451ca9e46fe3e6d86c3b0177cbfa28eba214789789ac6e8a7"
+            },
+            "SM_Tripo_FrostIceLantern_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostIceLantern_v001.glb",
+              "sha256": "397a7f1eb5242325575b31c88c5de4f84e3cd350ae67a39d0bdafc5f8cbc7b44"
+            },
+            "SM_Tripo_FrostIceLantern_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostIceLantern_v001_metrics.json",
+              "sha256": "00270cfd99ea788fb14d78a4f77467c549149b213c63efbaf7a752ee6cf5371a"
+            },
+            "T_Tripo_FrostIceLantern_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostIceLantern_BC.png",
+              "sha256": "07448161ec816bd178f4d38f44062b98ef2e800cd67d3dec58c6d9db115e96ce"
+            },
+            "T_Tripo_FrostIceLantern_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostIceLantern_N.png",
+              "sha256": "8ed0d815156ac6eb65ad7e9cde4bf1ab6712a9becd52ddb3e6d208d1de31d09d"
+            },
+            "T_Tripo_FrostIceLantern_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostIceLantern_ORM.png",
+              "sha256": "b6f3d54f6e1e964737bb077955da367d12fef5eb4dbac22e5cb7a9cebc8c2fd4"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.867,
+          "uncovered_ratio": 0.287,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1490
+            },
+            {
+              "tris": 1000,
+              "verts": 490
+            }
+          ],
+          "export_kb": 254.8,
+          "seconds": 42.6,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:09:11",
+          "files": {
+            "SM_Tripo_FrostIceLantern_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostIceLantern_v001_validation_v001.json",
+              "sha256": "f98f8eeb50bad8609a8e16849c1c1ef04f24cba2b1881b7538f5c9fc5d8a08c1"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:09:19",
+          "files": {
+            "SM_Tripo_FrostIceLantern_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostIceLantern_v001_review_v001.png",
+              "sha256": "3776840ed3cb6ea85e22fd08600615f139ab6a7f7d63ed187880476d32028df8"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "IoU 0.867；白玉须弥座+跪俑铜灯（长信宫灯式）+冰面灯罩，四面一致；冰罩为不透明亮青色（运行时可加发光）",
+            "time": "2026-10-11 01:10:59"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:10:59",
+          "files": {
+            "SM_Tripo_FrostIceLantern.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostIceLantern.glb",
+              "sha256": "397a7f1eb5242325575b31c88c5de4f84e3cd350ae67a39d0bdafc5f8cbc7b44"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_FrostIceLantern.glb"
+        }
+      ]
+    }
+  }
+}

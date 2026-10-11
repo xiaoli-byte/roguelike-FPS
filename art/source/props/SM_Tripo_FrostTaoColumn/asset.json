@@ -1,0 +1,162 @@
+{
+  "id": "SM_Tripo_FrostTaoColumn",
+  "display": "冻符朱柱（备选 B）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 17:34:00",
+          "files": {
+            "BO_SM_Tripo_FrostTaoColumn_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostTaoColumn_v001.json",
+              "sha256": "0915c2edd7c3404421d46c0f2d5ab27dbd107203a271d8ee781166ef1e7e10fe"
+            },
+            "BO_SM_Tripo_FrostTaoColumn_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostTaoColumn_v001_views.json",
+              "sha256": "b4cd3e026fa699467cb0bcba74c12d55034d5212396c63702e2d8592881b96db"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost_b.v2.column"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -1.2,
+              0,
+              -1.2
+            ],
+            "max": [
+              1.2,
+              5.0,
+              1.2
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 18:17:30",
+          "files": {
+            "CN_SM_Tripo_FrostTaoColumn_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoColumn_v001_source.png",
+              "sha256": "014057aedcd921fc0eea76486628edd71b20e88cef242772db22f36ff1ce280d"
+            },
+            "CN_SM_Tripo_FrostTaoColumn_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoColumn_v001_front.png",
+              "sha256": "d60f819b5e99256929b159c85c839b946336d5faa93ed015557d7967809d456e"
+            },
+            "CN_SM_Tripo_FrostTaoColumn_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoColumn_v001_left.png",
+              "sha256": "e75326e26d2d30d014c0b59374bad4a64a4a7ffd3eee9e5495153a59bfe90b0b"
+            },
+            "CN_SM_Tripo_FrostTaoColumn_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoColumn_v001_back.png",
+              "sha256": "c246371485693cac6b571b81ee51456c769271dddd7299d14151379482b78b69"
+            },
+            "CN_SM_Tripo_FrostTaoColumn_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoColumn_v001_right.png",
+              "sha256": "84263276ea8c15814ef5e649f55019858e27291d3467a08c8dcbd6238f65e6d3"
+            },
+            "CN_SM_Tripo_FrostTaoColumn_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoColumn_v001_sheet.png",
+              "sha256": "adc6a2ca56f42c3c6ea6c98d7ff5d65fec6f65aaa6cdd543f9904dced0f5ac8d"
+            },
+            "CN_SM_Tripo_FrostTaoColumn_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoColumn_v001_prompt.txt",
+              "sha256": "c52b3f2cb4f80e487994d9662fc2583ad232b01413d56f761d6de6c6b6ab8e1f"
+            },
+            "CN_SM_Tripo_FrostTaoColumn_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoColumn_v001_registration.json",
+              "sha256": "1cf72fe8f5e81565e18df096a44f7d190b25cd96e813453d2bf6131d12b11e13"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              1536,
+              1024
+            ],
+            "references": [],
+            "attempt": 1,
+            "seconds": 74.6
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Taoist cliff abbey fantasy in the style of the Hanging Temple: dark weathered timber frames, cinnabar-red lacquered posts, slate-grey tiled roofs with upturned eaves, yellow paper talismans, verdigris bronze fittings, thick soft snow caps and a few chunky icicles. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (2.4m wide x 5m tall x 2.4m deep): A thick cinnabar-red lacquered timber pillar 2.4m wide, 5m tall standing on a big grey stone drum base, a verdigris bronze band near the top, the broken top capped with snow, wrapped in a frozen rope hung with yellow paper talismans, a big faceted shell of pale ice grown over one side. Chunky, solid, one connected piece standing on the ground.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "014057aedcd921fc0eea76486628edd71b20e88cef242772db22f36ff1ce280d",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.9937888198757763,
+              "offset": [
+                122,
+                55
+              ],
+              "size": [
+                267,
+                914
+              ],
+              "physical_height_m": 5.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 1.0147455208498493,
+              "offset": [
+                120,
+                55
+              ],
+              "size": [
+                271,
+                914
+              ],
+              "physical_height_m": 5.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 1.0058148672010057,
+              "offset": [
+                122,
+                55
+              ],
+              "size": [
+                268,
+                914
+              ],
+              "physical_height_m": 5.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 1.0025062656641603,
+              "offset": [
+                122,
+                55
+              ],
+              "size": [
+                268,
+                914
+              ],
+              "physical_height_m": 5.0,
+              "method": "uniform_height_and_center"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

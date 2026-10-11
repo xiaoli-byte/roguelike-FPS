@@ -1,0 +1,117 @@
+{
+  "steps": {
+    "导入清理": 22.1,
+    "对齐": 1.6,
+    "低模与 UV": 67.2,
+    "投影着色": 192.2,
+    "烘焙": 15.6,
+    "LOD": 0.0,
+    "导出": 1.1
+  },
+  "highpoly": {
+    "faces_raw": 4980572,
+    "faces": 1942290,
+    "verts": 1941602,
+    "loose_parts": 23,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00492,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.804,
+    "iou_per_view": {
+      "front": 0.841,
+      "left": 0.766,
+      "back": 0.834,
+      "right": 0.759
+    },
+    "height_m": 2.8473,
+    "blockout_height_m": 3.0
+  },
+  "uv": {
+    "smart_islands": 1637,
+    "charts": 603,
+    "fallback_charts": 115,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "smart",
+    "density_smart": 0.0394,
+    "density_merged": 0.0058
+  },
+  "projection": {
+    "uncovered_ratio": 0.7209
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Tripo_FrostSeaPlatformBlock_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_FrostSeaPlatformBlock_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_FrostSeaPlatformBlock_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostSeaPlatformBlock_LOD0",
+      "tris": 4787,
+      "verts": 1729,
+      "uv_min": [
+        0.005760882515460253,
+        0.005760872270911932
+      ],
+      "uv_max": [
+        0.992647647857666,
+        0.994239091873169
+      ],
+      "uv_utilization": 0.191,
+      "bbox_min": [
+        -1.8249,
+        -1.8547,
+        -0.038
+      ],
+      "bbox_max": [
+        1.5515,
+        1.5964,
+        2.8284
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostSeaPlatformBlock_LOD1",
+      "tris": 4578,
+      "verts": 1497,
+      "uv_min": [
+        0.005760882515460253,
+        0.005760883912444115
+      ],
+      "uv_max": [
+        0.9807577729225159,
+        0.994239091873169
+      ],
+      "uv_utilization": 0.188,
+      "bbox_min": [
+        -1.8249,
+        -1.8547,
+        -0.1626
+      ],
+      "bbox_max": [
+        1.5485,
+        1.6188,
+        2.8284
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostSeaPlatformBlock/04_export/SM_Tripo_FrostSeaPlatformBlock_v002.glb",
+    "bytes": 698988
+  },
+  "blend": "art/source/props/SM_Tripo_FrostSeaPlatformBlock/03_work/SM_Tripo_FrostSeaPlatformBlock_v002.blend",
+  "total_seconds": 299.9,
+  "_seconds": 303.9
+}

@@ -1,0 +1,36 @@
+{
+  "design": {
+    "key": "frost_boss_zhuyin",
+    "chapter": "frost",
+    "name": "烛阴",
+    "layout": "creature",
+    "height_m": 7.0,
+    "role": "Boss",
+    "brief": "Chapter boss Zhuyin (烛阴), the Torch Dragon of the Shan Hai Jing: 'a human face and a serpent's body, red; opening its eyes makes day, closing them makes night; its breath is winter'. A colossal crimson serpent whose body coils far beyond the frame, with a huge stern ancient human face: heavy brows, a long flowing white beard and moustache like frozen waterfalls, and two great eyes that glow white-gold like the sun. Its crimson scales are crusted with thick glacier ice on the back and coils, verdigris bronze ritual rings clamped around its neck. In its mouth it holds a burning candle-pearl (衔烛) that glows white-gold (weak spot). Two small clawed arms with four fingers each near its head. Ancient, terrifying, majestic.",
+    "weapon": "",
+    "style_note": "Stylization: cartoon game proportions in the same family as the desert roster (jerboa soldier, fire rat, sancai tomb beast): chunky simplified masses, oversized head and hands or paws, toy-like readable forms with clean bevelled edges, ice as a few big faceted crystal shapes (never thin needles or noisy frost texture), fur as a few large carved clumps. A boss: show only the head, neck and the first coils rising from the ground; the rest of the body disappears off the side of each view."
+  },
+  "generation": {
+    "provider": "openai",
+    "endpoint": "images/generations",
+    "model": "gpt-image-2.5-sunburst",
+    "size": "2048x1024",
+    "quality": "high",
+    "background": "opaque",
+    "usage": {
+      "input_tokens": 684,
+      "input_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 684
+      },
+      "output_tokens": 1180,
+      "output_tokens_details": {
+        "image_tokens": 1180,
+        "text_tokens": 0
+      },
+      "total_tokens": 1864
+    },
+    "request_id": "req_7a7bccdd28a048caae58302e08164cd4",
+    "seconds": 32.9
+  }
+}

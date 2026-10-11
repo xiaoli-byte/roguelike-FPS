@@ -1,0 +1,482 @@
+{
+  "id": "SM_Tripo_FrostColumnRuin",
+  "display": "倾倒冰柱段（V2）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 13:36:45",
+          "files": {
+            "BO_SM_Tripo_FrostColumnRuin_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostColumnRuin_v001.json",
+              "sha256": "610cf1047c8e38935ffa432ab750e2219184bcd86b1ab4ae02dd5ded37514a4f"
+            },
+            "BO_SM_Tripo_FrostColumnRuin_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostColumnRuin_v001_views.json",
+              "sha256": "b5851598dcc061c00e51d97841188841147439dbbd87395d4fcba1b536b601b0"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost.v2.columnRuin"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -3.0,
+              0,
+              -1.5
+            ],
+            "max": [
+              3.0,
+              1.6,
+              1.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 13:37:11",
+          "files": {
+            "CN_SM_Tripo_FrostColumnRuin_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostColumnRuin_v001_source.png",
+              "sha256": "5ed1c70cdffac31e6d916a0532db029982544bb42fe44693128ddb0116e9c9c7"
+            },
+            "CN_SM_Tripo_FrostColumnRuin_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostColumnRuin_v001_front.png",
+              "sha256": "edbaca2f466a261d6ad646c440e52259ef84861144eb4e87f56ea84a21000951"
+            },
+            "CN_SM_Tripo_FrostColumnRuin_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostColumnRuin_v001_left.png",
+              "sha256": "ad61d51bb0d9c3f13e7f1002c69be058fec5e78af059d3ddc9eb49d83636ae72"
+            },
+            "CN_SM_Tripo_FrostColumnRuin_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostColumnRuin_v001_back.png",
+              "sha256": "7750ee6640aeb4cb2ce3f8bccd412402e2dfabb84decc1fc3fdb10c1287d7360"
+            },
+            "CN_SM_Tripo_FrostColumnRuin_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostColumnRuin_v001_right.png",
+              "sha256": "7b7222de369875aa81eca5c43869ea41f92ea29d84a03c30118c3484ea5aa160"
+            },
+            "CN_SM_Tripo_FrostColumnRuin_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostColumnRuin_v001_sheet.png",
+              "sha256": "a50f4a4e74d7bb721e34b3258a50579c028ef5108aa4327953e484e9eb54a582"
+            },
+            "CN_SM_Tripo_FrostColumnRuin_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostColumnRuin_v001_prompt.txt",
+              "sha256": "d06eee2494f56d6564d789b8389bb744a4b04d14744223bb431dbc2faa2c25af"
+            },
+            "CN_SM_Tripo_FrostColumnRuin_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostColumnRuin_v001_registration.json",
+              "sha256": "a5dcb38fb3afb47d12a0233e5adba661a79e266f8c612eb2db6299febb472c6a"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 450,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 450
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1630
+            },
+            "request_id": "req_657a052702ab46ed9cdc2ebf6c05bf49",
+            "seconds": 24.3
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (6m wide x 1.6m tall x 3m deep): A toppled palace column lying on the ground 6m long, 1.6m tall, 3m wide: three thick white jade drum segments of a fallen pillar lying in a broken row with a verdigris bronze collar ring, chunks of the glacier-ice shell that covered it scattered against them, everything half buried in drifted snow. Low, chunky, one solid connected group resting on the ground.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "5ed1c70cdffac31e6d916a0532db029982544bb42fe44693128ddb0116e9c9c7",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.5209605209605209,
+              "offset": [
+                98,
+                451
+              ],
+              "size": [
+                316,
+                122
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5254515599343186,
+              "offset": [
+                176,
+                451
+              ],
+              "size": [
+                159,
+                122
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5209605209605209,
+              "offset": [
+                98,
+                451
+              ],
+              "size": [
+                316,
+                122
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5254515599343186,
+              "offset": [
+                172,
+                451
+              ],
+              "size": [
+                167,
+                122
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-07 13:40:57",
+          "files": {
+            "CN_SM_Tripo_FrostColumnRuin_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostColumnRuin_v002_source.png",
+              "sha256": "5ed1c70cdffac31e6d916a0532db029982544bb42fe44693128ddb0116e9c9c7"
+            },
+            "CN_SM_Tripo_FrostColumnRuin_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostColumnRuin_v002_front.png",
+              "sha256": "ef55bbef6de9dc7ac452bd86730e5c02aea1b59614a738d46a587363b1dc386f"
+            },
+            "CN_SM_Tripo_FrostColumnRuin_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostColumnRuin_v002_left.png",
+              "sha256": "b2b4b319d35d0c49962cc693e07aa76c0782f5f45279712e409aea7a4190abd2"
+            },
+            "CN_SM_Tripo_FrostColumnRuin_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostColumnRuin_v002_back.png",
+              "sha256": "9d7a1e9d8a5db7ec52b83f5eca3570524f8efd95ae7d7d9f6f9c50c11e6dc49d"
+            },
+            "CN_SM_Tripo_FrostColumnRuin_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostColumnRuin_v002_right.png",
+              "sha256": "d42265b16976abc2d18863aff50f79c83d34a1e98daccfec6916be6461b4e93d"
+            },
+            "CN_SM_Tripo_FrostColumnRuin_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostColumnRuin_v002_sheet.png",
+              "sha256": "c4f211a7d6924af32bb8f7038e443d52c5d45e78ea731ef145e8e2d920c43376"
+            },
+            "CN_SM_Tripo_FrostColumnRuin_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostColumnRuin_v002_prompt.txt",
+              "sha256": "d06eee2494f56d6564d789b8389bb744a4b04d14744223bb431dbc2faa2c25af"
+            },
+            "CN_SM_Tripo_FrostColumnRuin_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostColumnRuin_v002_registration.json",
+              "sha256": "0fc45c2c4c7f6b9b1b603a12ddf8127133431dddd199fcbf77770d65120bb80f"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 450,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 450
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1630
+            },
+            "request_id": "req_657a052702ab46ed9cdc2ebf6c05bf49",
+            "seconds": 24.3,
+            "rekeyed_from": 1
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (6m wide x 1.6m tall x 3m deep): A toppled palace column lying on the ground 6m long, 1.6m tall, 3m wide: three thick white jade drum segments of a fallen pillar lying in a broken row with a verdigris bronze collar ring, chunks of the glacier-ice shell that covered it scattered against them, everything half buried in drifted snow. Low, chunky, one solid connected group resting on the ground.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "5ed1c70cdffac31e6d916a0532db029982544bb42fe44693128ddb0116e9c9c7",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.516545601291364,
+              "offset": [
+                99,
+                451
+              ],
+              "size": [
+                314,
+                122
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5209605209605209,
+              "offset": [
+                176,
+                451
+              ],
+              "size": [
+                159,
+                122
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5143660839863371,
+              "offset": [
+                99,
+                451
+              ],
+              "size": [
+                313,
+                122
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5209605209605209,
+              "offset": [
+                173,
+                451
+              ],
+              "size": [
+                165,
+                122
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "v002 四视图同一物件、无裁切、雪盖未被抠掉；转 Hunyuan3D 2mv 多视图建模（2026-10-11）",
+            "time": "2026-10-11 00:02:38"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:06:00",
+          "files": {
+            "HP_SM_Tripo_FrostColumnRuin_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostColumnRuin_v001_input_front.png",
+              "sha256": "5f37955ea9b7286b36e726d372fcb085dc0cb9a3fca766aba3ce8c9660000f20"
+            },
+            "HP_SM_Tripo_FrostColumnRuin_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostColumnRuin_v001_input_left.png",
+              "sha256": "f53e2fce57bba381ddebe854dab9cd57fe4fb5a17cb7ef1be2c047f8f9767709"
+            },
+            "HP_SM_Tripo_FrostColumnRuin_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostColumnRuin_v001_input_back.png",
+              "sha256": "5ffe1b7f001a44e97ece4596c79ac249b437442a011b6373f827f4f35752ca20"
+            },
+            "HP_SM_Tripo_FrostColumnRuin_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostColumnRuin_v001_input_right.png",
+              "sha256": "82830c517a87c90ae1f0e199fc9ed2e615bbcf0cecb45439176e6f4d6f888a73"
+            },
+            "HP_SM_Tripo_FrostColumnRuin_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostColumnRuin_v001.glb",
+              "sha256": "050a1cccbd00e177a9f43ff95026cc6f16ebcc7725e0c47f9ed9ab781ed728c2"
+            },
+            "HP_SM_Tripo_FrostColumnRuin_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostColumnRuin_v001_graph.json",
+              "sha256": "0e3a18f5d2e2ee3a853a6b7cacfb823e356deb18cbb5ac9caf133b426666b930"
+            }
+          },
+          "from_concept": 2,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              72,
+              328,
+              440,
+              696
+            ],
+            "scale": 2.782608695652174
+          },
+          "seconds": 348.1,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 12.6
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:06:54",
+          "files": {
+            "SM_Tripo_FrostColumnRuin_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostColumnRuin_v001.blend",
+              "sha256": "395d4a11a91a28714e2521502df8c2116c465d8c7df0bcfcfc4297c9cbdcae13"
+            },
+            "SM_Tripo_FrostColumnRuin_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostColumnRuin_v001.glb",
+              "sha256": "e11706a12d6eedf485d8989a64af7217badd89a2ca0781ac3f68e5f4bfe702e2"
+            },
+            "SM_Tripo_FrostColumnRuin_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostColumnRuin_v001_metrics.json",
+              "sha256": "096aca6fe72f9d3a04403f1d8b1b43d2d89ddf25448bf0eb11be0ed0827c22a9"
+            },
+            "T_Tripo_FrostColumnRuin_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostColumnRuin_BC.png",
+              "sha256": "78cc7e740c04f1fa8856319f57fab22792f945c39937b4498d02715f4569fa89"
+            },
+            "T_Tripo_FrostColumnRuin_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostColumnRuin_N.png",
+              "sha256": "a89bd5cebcad332d7558c178248f2cfbca8c122915553434a046925f0bd9da42"
+            },
+            "T_Tripo_FrostColumnRuin_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostColumnRuin_ORM.png",
+              "sha256": "2efb748ba267f8e7af4021ecbd827325ff5b71392c3e66b655dbba39a6bf1c74"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.848,
+          "uncovered_ratio": 0.4936,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1482
+            },
+            {
+              "tris": 1000,
+              "verts": 482
+            }
+          ],
+          "export_kb": 226.3,
+          "seconds": 52.7,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:06:55",
+          "files": {
+            "SM_Tripo_FrostColumnRuin_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostColumnRuin_v001_validation_v001.json",
+              "sha256": "4d0e470d38dc988fb401d41b14f9fcd69012e57f170c805aca00d63b1631525f"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:07:03",
+          "files": {
+            "SM_Tripo_FrostColumnRuin_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostColumnRuin_v001_review_v001.png",
+              "sha256": "75f0647836c2f43b36fd6478c8ecff0a5b0321ed42122d397a8cd0a982bbf57e"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "IoU 0.848；三段倒柱+铜箍+冰壳碎块，半埋雪中；端面圆盘清楚",
+            "time": "2026-10-11 01:07:18"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:07:18",
+          "files": {
+            "SM_Tripo_FrostColumnRuin.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostColumnRuin.glb",
+              "sha256": "e11706a12d6eedf485d8989a64af7217badd89a2ca0781ac3f68e5f4bfe702e2"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_FrostColumnRuin.glb"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,141 @@
+{
+  "steps": {
+    "导入清理": 5.4,
+    "对齐": 1.3,
+    "低模与 UV": 16.9,
+    "投影着色": 48.5,
+    "烘焙": 19.5,
+    "LOD": 0.1,
+    "导出": 2.5
+  },
+  "highpoly": {
+    "faces_raw": 910232,
+    "faces": 487884,
+    "verts": 487836,
+    "loose_parts": 48,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.922,
+    "iou_per_view": {
+      "front": 0.949,
+      "left": 0.905,
+      "back": 0.912,
+      "right": 0.908
+    },
+    "height_m": 15.5255,
+    "blockout_height_m": 16.0
+  },
+  "uv": {
+    "smart_islands": 1086,
+    "charts": 148,
+    "fallback_charts": 17,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.0226,
+    "density_merged": 0.031
+  },
+  "projection": {
+    "uncovered_ratio": 0.3207
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Tripo_FrostKaiming_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_FrostKaiming_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_FrostKaiming_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostKaiming_LOD0",
+      "tris": 7999,
+      "verts": 3952,
+      "uv_min": [
+        0.003498344449326396,
+        0.0034838072024285793
+      ],
+      "uv_max": [
+        0.9844719767570496,
+        0.9966635704040527
+      ],
+      "uv_utilization": 0.55,
+      "bbox_min": [
+        -4.0648,
+        -3.6973,
+        0.0025
+      ],
+      "bbox_max": [
+        4.0618,
+        4.1795,
+        15.5425
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostKaiming_LOD1",
+      "tris": 2500,
+      "verts": 1200,
+      "uv_min": [
+        0.003498344449326396,
+        0.003797989571467042
+      ],
+      "uv_max": [
+        0.9814241528511047,
+        0.9966635704040527
+      ],
+      "uv_utilization": 0.517,
+      "bbox_min": [
+        -4.0675,
+        -3.6965,
+        0.0091
+      ],
+      "bbox_max": [
+        4.0555,
+        4.1634,
+        15.5556
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostKaiming_LOD2",
+      "tris": 800,
+      "verts": 350,
+      "uv_min": [
+        0.0037114941515028477,
+        0.004196275025606155
+      ],
+      "uv_max": [
+        0.9811953902244568,
+        0.9816567301750183
+      ],
+      "uv_utilization": 0.453,
+      "bbox_min": [
+        -3.9804,
+        -3.7653,
+        0.0864
+      ],
+      "bbox_max": [
+        4.0171,
+        4.2525,
+        15.5689
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostKaiming/04_export/SM_Tripo_FrostKaiming_v001.glb",
+    "bytes": 801524
+  },
+  "blend": "art/source/props/SM_Tripo_FrostKaiming/03_work/SM_Tripo_FrostKaiming_v001.blend",
+  "total_seconds": 94.2,
+  "_seconds": 101.1
+}

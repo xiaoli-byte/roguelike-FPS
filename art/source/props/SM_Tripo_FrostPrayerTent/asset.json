@@ -1,0 +1,618 @@
+{
+  "id": "SM_Tripo_FrostPrayerTent",
+  "display": "朝圣者经幡帐（V2）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 13:36:47",
+          "files": {
+            "BO_SM_Tripo_FrostPrayerTent_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostPrayerTent_v001.json",
+              "sha256": "258b120823f0ec5c6850360eec56404b8bc89acb03ea8d7c1ee3f0005758d319"
+            },
+            "BO_SM_Tripo_FrostPrayerTent_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostPrayerTent_v001_views.json",
+              "sha256": "138d58e8bd88a49fe7776abb42fd9b075886f1701a1d7761e36837c8ba370fe8"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost.v2.prayerTent"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.0,
+              0,
+              -1.5
+            ],
+            "max": [
+              2.0,
+              3.6,
+              1.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 13:37:16",
+          "files": {
+            "CN_SM_Tripo_FrostPrayerTent_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPrayerTent_v001_source.png",
+              "sha256": "e7694f76ee8119f24bc47fd6b46cdfd69ca085a06835344bccce35ec387adbc9"
+            },
+            "CN_SM_Tripo_FrostPrayerTent_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPrayerTent_v001_front.png",
+              "sha256": "66cc1f3eecfbfba4132029c0ada6f0dae719d75d351b94b500644399f79f90e2"
+            },
+            "CN_SM_Tripo_FrostPrayerTent_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPrayerTent_v001_left.png",
+              "sha256": "115d4ec3940d782831dc65414c5db1e3c205a3a55824c3e567aa22d6aeb8bac5"
+            },
+            "CN_SM_Tripo_FrostPrayerTent_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPrayerTent_v001_back.png",
+              "sha256": "6f335371365aef4852b0eb09416aed9cbaf1bb35361ab1843ec9b7fcf775a8be"
+            },
+            "CN_SM_Tripo_FrostPrayerTent_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPrayerTent_v001_right.png",
+              "sha256": "54a1e746c5540dcf89f6b4b5f62a6018b10662edbc32c5bd8e9543e7270cdc76"
+            },
+            "CN_SM_Tripo_FrostPrayerTent_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPrayerTent_v001_sheet.png",
+              "sha256": "7f2ef2c2c7f08e81849fb54875cf35fc355298399451b5bdad7b22345979041f"
+            },
+            "CN_SM_Tripo_FrostPrayerTent_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostPrayerTent_v001_prompt.txt",
+              "sha256": "0b30288e26d0e529dd0b185e83082283b9d9102081bba876a4c340ef0148d58d"
+            },
+            "CN_SM_Tripo_FrostPrayerTent_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostPrayerTent_v001_registration.json",
+              "sha256": "5756edfc75658d1a1366377168ee1b1d79f38a288a641101f7dfddb249be010a"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 455,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 455
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1635
+            },
+            "request_id": "req_1baf9cdf2bd840509239e7b2c9227451",
+            "seconds": 27.9
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (4m wide x 3.6m tall x 3m deep): A frozen pilgrims' shelter 4m wide, 3.6m tall, 3m deep: a sturdy timber frame with a thick sloped felt roof weighed down by heavy snow, strings of faded vermilion and jade prayer flags frozen stiff along the ridge, a low wooden counter in front with bronze bowls and bundled incense, icicles hanging from the roof edge. Chunky readable shapes, one solid connected piece standing on the ground.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "e7694f76ee8119f24bc47fd6b46cdfd69ca085a06835344bccce35ec387adbc9",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.8245061551674777,
+              "offset": [
+                34,
+                306
+              ],
+              "size": [
+                444,
+                411
+              ],
+              "physical_height_m": 3.6,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.8035714285714285,
+              "offset": [
+                109,
+                306
+              ],
+              "size": [
+                293,
+                411
+              ],
+              "physical_height_m": 3.6,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.8245061551674777,
+              "offset": [
+                32,
+                306
+              ],
+              "size": [
+                447,
+                411
+              ],
+              "physical_height_m": 3.6,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.8035714285714285,
+              "offset": [
+                110,
+                306
+              ],
+              "size": [
+                292,
+                411
+              ],
+              "physical_height_m": 3.6,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-07 13:40:52",
+          "files": {
+            "CN_SM_Tripo_FrostPrayerTent_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPrayerTent_v002_source.png",
+              "sha256": "e7694f76ee8119f24bc47fd6b46cdfd69ca085a06835344bccce35ec387adbc9"
+            },
+            "CN_SM_Tripo_FrostPrayerTent_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPrayerTent_v002_front.png",
+              "sha256": "f383580693fe1e55e6fb78333b7cc229239a1a986d18144267fb52983e8283de"
+            },
+            "CN_SM_Tripo_FrostPrayerTent_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPrayerTent_v002_left.png",
+              "sha256": "a7b4bdbf36d57a5bb99fd25290e23a60d2e219723d829f2b8dd8e7b1aa83159a"
+            },
+            "CN_SM_Tripo_FrostPrayerTent_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPrayerTent_v002_back.png",
+              "sha256": "355ff84b25c70fdb90e9f2ad46f34a8ee01819a921c70f23a0401038bb071b26"
+            },
+            "CN_SM_Tripo_FrostPrayerTent_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPrayerTent_v002_right.png",
+              "sha256": "5a010b45fed3ed86dfd8610206d90e42469059d1834e4ab00bac50f671ea28f1"
+            },
+            "CN_SM_Tripo_FrostPrayerTent_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPrayerTent_v002_sheet.png",
+              "sha256": "315de0ba99d0c668acbd51bd6054f0c60a76228f4ab77b2499442db8f5664d88"
+            },
+            "CN_SM_Tripo_FrostPrayerTent_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostPrayerTent_v002_prompt.txt",
+              "sha256": "0b30288e26d0e529dd0b185e83082283b9d9102081bba876a4c340ef0148d58d"
+            },
+            "CN_SM_Tripo_FrostPrayerTent_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostPrayerTent_v002_registration.json",
+              "sha256": "c1aff7d12c7c722e291476c1adcf77deaf158fcdaa05a6e35832b65defb4f5ec"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 455,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 455
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1635
+            },
+            "request_id": "req_1baf9cdf2bd840509239e7b2c9227451",
+            "seconds": 27.9,
+            "rekeyed_from": 1
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (4m wide x 3.6m tall x 3m deep): A frozen pilgrims' shelter 4m wide, 3.6m tall, 3m deep: a sturdy timber frame with a thick sloped felt roof weighed down by heavy snow, strings of faded vermilion and jade prayer flags frozen stiff along the ridge, a low wooden counter in front with bronze bowls and bundled incense, icicles hanging from the roof edge. Chunky readable shapes, one solid connected piece standing on the ground.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "e7694f76ee8119f24bc47fd6b46cdfd69ca085a06835344bccce35ec387adbc9",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.8212147134302822,
+              "offset": [
+                34,
+                306
+              ],
+              "size": [
+                444,
+                411
+              ],
+              "physical_height_m": 3.6,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.798890429958391,
+              "offset": [
+                109,
+                306
+              ],
+              "size": [
+                293,
+                411
+              ],
+              "physical_height_m": 3.6,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.8179494461800624,
+              "offset": [
+                34,
+                306
+              ],
+              "size": [
+                444,
+                411
+              ],
+              "physical_height_m": 3.6,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.8020050125313283,
+              "offset": [
+                109,
+                306
+              ],
+              "size": [
+                294,
+                411
+              ],
+              "physical_height_m": 3.6,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "v002 四视图同一物件、无裁切、雪盖未被抠掉；转 Hunyuan3D 2mv 多视图建模（2026-10-11）",
+            "time": "2026-10-11 00:02:37"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:53:50",
+          "files": {
+            "HP_SM_Tripo_FrostPrayerTent_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPrayerTent_v001_input_front.png",
+              "sha256": "abf36f6470f8ce0836783fd54953a298fb173f7a210f66bb43dfb4a892e755ec"
+            },
+            "HP_SM_Tripo_FrostPrayerTent_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPrayerTent_v001_input_left.png",
+              "sha256": "5a5fbe30dd9d90b80710309640a41bdb40642f140e6e17774c8a1adba10b5eaa"
+            },
+            "HP_SM_Tripo_FrostPrayerTent_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPrayerTent_v001_input_back.png",
+              "sha256": "e60d59a5a2dbdc9b02c6d791a798d90a508047772423c65d9bdc6e4f59226845"
+            },
+            "HP_SM_Tripo_FrostPrayerTent_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPrayerTent_v001_input_right.png",
+              "sha256": "cd9bdbc61c1310c4ff0f3a7f7a2e117020ee3d47cf3ddca872fe24e5f6450678"
+            },
+            "HP_SM_Tripo_FrostPrayerTent_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPrayerTent_v001.glb",
+              "sha256": "d13b19511b167731e332e0d012030bf800e34ba82c337388bdaccd362cf8e41a"
+            },
+            "HP_SM_Tripo_FrostPrayerTent_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPrayerTent_v001_graph.json",
+              "sha256": "5b6f96abb4c5b5ec1e6d1b0e49e83e87b19e64b648287627a44b82ca74f592d6"
+            }
+          },
+          "from_concept": 2,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -5,
+              251,
+              517,
+              772
+            ],
+            "scale": 1.9616858237547892
+          },
+          "seconds": 228.8,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 48.9
+        },
+        {
+          "version": 2,
+          "created": "2026-10-11 01:03:31",
+          "files": {
+            "HP_SM_Tripo_FrostPrayerTent_v002_input.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPrayerTent_v002_input.png",
+              "sha256": "5edd60a187aac3415f3421c16a1e211aa2af7f5eb9279ca3550c44d9f1a5ba51"
+            },
+            "HP_SM_Tripo_FrostPrayerTent_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPrayerTent_v002.glb",
+              "sha256": "7e40fa2332faed8a63bb2deb00d5eadd7fb4e7090bbe64721209834a105ec8f5"
+            },
+            "HP_SM_Tripo_FrostPrayerTent_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPrayerTent_v002_graph.json",
+              "sha256": "19946d3fb3d5d955fcf2af964f109e5c4dd045434b9e24b32ee004e9c1c8d0c3"
+            }
+          },
+          "from_concept": 2,
+          "mode": "single",
+          "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+          "checkpoint": "hunyuan_3d_v2.1.safetensors",
+          "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "crop": [
+              34,
+              306,
+              478,
+              717
+            ],
+            "scale": 1.9603603603603603,
+            "offset": [
+              77,
+              109
+            ]
+          },
+          "seconds": 231.3,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 41.5
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:57:38",
+          "files": {
+            "SM_Tripo_FrostPrayerTent_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostPrayerTent_v001.blend",
+              "sha256": "9fa73be52a6510e00a76e1b1440822f79017eca94a80125957208e70e12922d2"
+            },
+            "SM_Tripo_FrostPrayerTent_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostPrayerTent_v001.glb",
+              "sha256": "d3caa83fbc55bc2058e0eb738ceb4e36b9aa5f8cb8c87b07905141ec00f3d23e"
+            },
+            "SM_Tripo_FrostPrayerTent_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostPrayerTent_v001_metrics.json",
+              "sha256": "cbfb0fccaebdf8a870f88cdd32af6be13b1bf48e2e5f8a91a1e166093952534b"
+            },
+            "T_Tripo_FrostPrayerTent_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostPrayerTent_BC.png",
+              "sha256": "65dd4ce3a1861c82c3529b8c8a1a1b9dccdb1fd20d89dd7275c22a2c48a3fed4"
+            },
+            "T_Tripo_FrostPrayerTent_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostPrayerTent_N.png",
+              "sha256": "5805eb71ce7f1101e6fa4885b6da7e7d78d2821f2b6dfe1d12b2d7fff0d65d2b"
+            },
+            "T_Tripo_FrostPrayerTent_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostPrayerTent_ORM.png",
+              "sha256": "2991068457600cee1e20d6066da95b905343df1e89d3476d2ba4044317678c9e"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.818,
+          "uncovered_ratio": 0.6302,
+          "lods": [
+            {
+              "tris": 2983,
+              "verts": 980
+            },
+            {
+              "tris": 2800,
+              "verts": 846
+            }
+          ],
+          "export_kb": 572.7,
+          "seconds": 225.0,
+          "bake_device": "CPU",
+          "quality_status": "failed",
+          "quality_errors": [
+            "场景脚底落地",
+            "LOD1 面数"
+          ]
+        },
+        {
+          "version": 2,
+          "created": "2026-10-11 01:10:10",
+          "files": {
+            "SM_Tripo_FrostPrayerTent_v002.blend": {
+              "path": "03_work/SM_Tripo_FrostPrayerTent_v002.blend",
+              "sha256": "f2fc9aaf4f01ead5fad1620c5e6a4c5666e299de72d8438f190d73eeacd6be4a"
+            },
+            "SM_Tripo_FrostPrayerTent_v002.glb": {
+              "path": "04_export/SM_Tripo_FrostPrayerTent_v002.glb",
+              "sha256": "4fa5f4fdc2c3a9ec7dd15ff71e2f3ec7c019caa0e757fa782411f2893cb21d8e"
+            },
+            "SM_Tripo_FrostPrayerTent_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostPrayerTent_v002_metrics.json",
+              "sha256": "96f9a6148d5aa04453d734c47727cd054bf9557c19f6caa7220a209b1f990717"
+            },
+            "T_Tripo_FrostPrayerTent_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostPrayerTent_BC.png",
+              "sha256": "48b72739964ee38d8b5b9626ac6cbf8f60fa72d92ce9349ed372e8d2ba2e4ba5"
+            },
+            "T_Tripo_FrostPrayerTent_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostPrayerTent_N.png",
+              "sha256": "3ae1a711d56cc704bc8e77d126e881469b08ee87a4d6f6b9a67f1876626db7e4"
+            },
+            "T_Tripo_FrostPrayerTent_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostPrayerTent_ORM.png",
+              "sha256": "d7c6273d66e063a9d7bb950d2df84ff7465b2032b73f619426d9c3bbb780647b"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.672,
+          "uncovered_ratio": 0.66,
+          "lods": [
+            {
+              "tris": 2979,
+              "verts": 1296
+            },
+            {
+              "tris": 1386,
+              "verts": 457
+            }
+          ],
+          "export_kb": 443.1,
+          "seconds": 170.5,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:57:38",
+          "files": {
+            "SM_Tripo_FrostPrayerTent_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostPrayerTent_v001_validation_v001.json",
+              "sha256": "a9a36f81ab5b039339fa276389d017d97780e3b9035ce09632a6621f362fd4a6"
+            }
+          },
+          "from_build": 1,
+          "errors": 2,
+          "warnings": 3,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 2,
+          "created": "2026-10-11 01:10:11",
+          "files": {
+            "SM_Tripo_FrostPrayerTent_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_FrostPrayerTent_v002_validation_v002.json",
+              "sha256": "cd64ccc1bb5cd7645077774ecb443598c8bd238421e36d1838435661cb1881f3"
+            }
+          },
+          "from_build": 2,
+          "errors": 1,
+          "warnings": 5,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 3,
+          "created": "2026-10-11 01:14:17",
+          "files": {
+            "SM_Tripo_FrostPrayerTent_v002_validation_v003.json": {
+              "path": "05_review/SM_Tripo_FrostPrayerTent_v002_validation_v003.json",
+              "sha256": "73a08d74872fe7fc094e130e95b86425a4d6b83d352697343040ebd28a587e05"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 5,
+          "waived": [
+            "LOD1 面数"
+          ],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:14:25",
+          "files": {
+            "SM_Tripo_FrostPrayerTent_v002_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostPrayerTent_v002_review_v001.png",
+              "sha256": "0c50d06e4275d0c337a6bc548483c4c7d7d2dd42888d97548fe2be2ba51a1d58"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "build v002（Hunyuan 2.1 单视图）：木构架+积雪毡顶+经幡+供台，正背清楚；侧面为开敞框架（概念为单坡顶），IoU 0.672 偏低；LOD1 面数豁免；2mv 版屋顶糊成一团弃用。第二章计划暂无 stall 掩体，暂不出场",
+            "time": "2026-10-11 01:14:38"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:14:39",
+          "files": {
+            "SM_Tripo_FrostPrayerTent.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostPrayerTent.glb",
+              "sha256": "4fa5f4fdc2c3a9ec7dd15ff71e2f3ec7c019caa0e757fa782411f2893cb21d8e"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_FrostPrayerTent.glb"
+        }
+      ]
+    }
+  }
+}

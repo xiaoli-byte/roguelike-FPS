@@ -1,0 +1,31 @@
+{
+  "doc": "冰河豚：Tripo 智能网格 P2.0（6000 档，实得 6174 三角面，Tripo 自带 UV，只有底色图），未绑骨，自定义鱼形骨架。骨骼位置按网格实测（缩放落地后的米制：front = -Y，生物的左 = +X，up = +Z）：身体球心约 (0, -0.05, 0.47)、半径约 0.34（不含冰刺）；body 骨的关节放在球心，鼓气膨胀 = 运行时缩放 body（冰刺、鳍、尾跟着一起放大）；噘嘴 mouth、两片胸鳍 fin_L / fin_R（立着的小扇子，在 x ±0.34）、尾柄 tail_1 + 尾鳍 tail_2。",
+  "source": "art/source/_tripo_inbox/20261010T151431_SK_Enemy_IcePuffer_smartmesh.fbx",
+  "task": "https://studio.tripo3d.ai/workspace/generate/5d343f22-9348-4325-a152-64416accb1c7",
+  "height_m": 1.0,
+  "bones": {
+    "root": { "head": [0, 0, 0], "tail": [0, 0, 0.15], "parent": null, "deform": false },
+    "body": { "head": [0, -0.04, 0.47], "tail": [0, -0.28, 0.47], "parent": "root" },
+    "mouth": { "head": [0, -0.33, 0.41], "tail": [0, -0.47, 0.41], "parent": "body" },
+    "fin_L": { "head": [0.27, 0.02, 0.45], "tail": [0.39, 0.05, 0.45], "parent": "body" },
+    "fin_R": { "head": [-0.27, 0.02, 0.45], "tail": [-0.39, 0.05, 0.45], "parent": "body" },
+    "tail_1": { "head": [0, 0.24, 0.49], "tail": [0, 0.33, 0.5], "parent": "body" },
+    "tail_2": { "head": [0, 0.33, 0.5], "tail": [0, 0.47, 0.5], "parent": "tail_1" }
+  },
+  "limits": [
+    { "bones": ["mouth"], "box": [[-0.13, -0.5, 0.32], [0.13, -0.36, 0.48]] },
+    { "bones": ["fin_L"], "box": [[0.28, -0.1, 0.25], [0.45, 0.15, 0.62]] },
+    { "bones": ["fin_R"], "box": [[-0.45, -0.1, 0.25], [-0.28, 0.15, 0.62]] },
+    { "bones": ["tail_1", "tail_2"], "box": [[-0.08, 0.26, 0.15], [0.08, 0.5, 0.8]] }
+  ],
+  "rigid": [
+    { "bone": "fin_L", "box": [[0.31, -0.1, 0.25], [0.45, 0.15, 0.62]] },
+    { "bone": "fin_R", "box": [[-0.45, -0.1, 0.25], [-0.31, 0.15, 0.62]] },
+    { "bone": "tail_2", "box": [[-0.08, 0.36, 0.15], [0.08, 0.5, 0.8]] }
+  ],
+  "provider_pbr": true,
+  "bake_normal": false,
+  "repack_uv": false,
+  "transfer_size": 4096,
+  "paint_shading": { "cavity_distance": 0.016, "cavity": 0.3, "ao": 0.14, "saturation": 1.06, "contrast": 1.04, "keep_brightness": true }
+}

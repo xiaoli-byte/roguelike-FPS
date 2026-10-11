@@ -1,0 +1,117 @@
+{
+  "steps": {
+    "导入清理": 4.6,
+    "对齐": 1.0,
+    "低模与 UV": 15.6,
+    "投影着色": 38.1,
+    "烘焙": 7.1,
+    "LOD": 0.0,
+    "导出": 0.9
+  },
+  "highpoly": {
+    "faces_raw": 1170614,
+    "faces": 580248,
+    "verts": 580114,
+    "loose_parts": 47,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.845,
+    "iou_per_view": {
+      "front": 0.9,
+      "left": 0.798,
+      "back": 0.863,
+      "right": 0.79
+    },
+    "height_m": 1.5282,
+    "blockout_height_m": 1.6
+  },
+  "uv": {
+    "smart_islands": 783,
+    "charts": 195,
+    "fallback_charts": 26,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.2097,
+    "density_merged": 0.277
+  },
+  "projection": {
+    "uncovered_ratio": 0.3939
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Tripo_FrostSeaFishRack_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_FrostSeaFishRack_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_FrostSeaFishRack_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostSeaFishRack_LOD0",
+      "tris": 2999,
+      "verts": 1366,
+      "uv_min": [
+        0.0043950448743999004,
+        0.004395007621496916
+      ],
+      "uv_max": [
+        0.993839681148529,
+        0.995604932308197
+      ],
+      "uv_utilization": 0.523,
+      "bbox_min": [
+        -0.7145,
+        -0.2742,
+        -0.0034
+      ],
+      "bbox_max": [
+        0.6978,
+        0.4558,
+        1.5362
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostSeaFishRack_LOD1",
+      "tris": 1000,
+      "verts": 364,
+      "uv_min": [
+        0.0043950448743999004,
+        0.004400193691253662
+      ],
+      "uv_max": [
+        0.993839681148529,
+        0.987814724445343
+      ],
+      "uv_utilization": 0.371,
+      "bbox_min": [
+        -0.6823,
+        -0.255,
+        -0.0063
+      ],
+      "bbox_max": [
+        0.6898,
+        0.4349,
+        1.5411
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostSeaFishRack/04_export/SM_Tripo_FrostSeaFishRack_v001.glb",
+    "bytes": 382444
+  },
+  "blend": "art/source/props/SM_Tripo_FrostSeaFishRack/03_work/SM_Tripo_FrostSeaFishRack_v001.blend",
+  "total_seconds": 67.3,
+  "_seconds": 72.5
+}

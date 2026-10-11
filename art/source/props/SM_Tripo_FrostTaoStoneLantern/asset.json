@@ -1,0 +1,173 @@
+{
+  "id": "SM_Tripo_FrostTaoStoneLantern",
+  "display": "石灯笼（备选 B）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 16:42:52",
+          "files": {
+            "BO_SM_Tripo_FrostTaoStoneLantern_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostTaoStoneLantern_v001.json",
+              "sha256": "1849ea89861539c69f2fefb87a5f73b430fbbe5ce3e98ac4a20027f5a6c3244e"
+            },
+            "BO_SM_Tripo_FrostTaoStoneLantern_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostTaoStoneLantern_v001_views.json",
+              "sha256": "9941fb9740a8341c63b8533d9a7e5271706a8909bc73a285f9c044656a485b08"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost_b.v2.stoneLantern"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.7,
+              0,
+              -0.7
+            ],
+            "max": [
+              0.7,
+              2.4,
+              0.7
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 16:43:22",
+          "files": {
+            "CN_SM_Tripo_FrostTaoStoneLantern_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoStoneLantern_v001_source.png",
+              "sha256": "aa19c0e51bdf874b6c387940b2e6710f5d0966cc498a898992f24178a91dc02d"
+            },
+            "CN_SM_Tripo_FrostTaoStoneLantern_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoStoneLantern_v001_front.png",
+              "sha256": "9f25d09c3b6cd48440543f97e8c0314c0094993804461e424633fa39af2e6783"
+            },
+            "CN_SM_Tripo_FrostTaoStoneLantern_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoStoneLantern_v001_left.png",
+              "sha256": "472ba3c646d6e97c49fc50fc0647c5d56b7b4f52a15fbc02c8c2a24ee9ceaf6f"
+            },
+            "CN_SM_Tripo_FrostTaoStoneLantern_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoStoneLantern_v001_back.png",
+              "sha256": "61a6d855123cc222f9493516f53cd6279f5ea455bd905bc141c0017052437e67"
+            },
+            "CN_SM_Tripo_FrostTaoStoneLantern_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoStoneLantern_v001_right.png",
+              "sha256": "874ebad3efe111e4340f50b6558a23803266208b3b8c4c84123dba256c0027e9"
+            },
+            "CN_SM_Tripo_FrostTaoStoneLantern_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoStoneLantern_v001_sheet.png",
+              "sha256": "7e1f0a9e6cb05c93d29c49045c8254c8ca8c02bbb83e4e41e32f730a4e069c89"
+            },
+            "CN_SM_Tripo_FrostTaoStoneLantern_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoStoneLantern_v001_prompt.txt",
+              "sha256": "de0a2bb95a026e014d37c2292bec6ef88c6d6dd430962a2f8673369df086932a"
+            },
+            "CN_SM_Tripo_FrostTaoStoneLantern_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoStoneLantern_v001_registration.json",
+              "sha256": "6d32a54196ba154a140ad555322e72b45dbe76ffaae9cbe05c9e6705f182d300"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 477,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 477
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1657
+            },
+            "request_id": "req_104243d2e50f4f5d87b36adc6b91afba",
+            "seconds": 28.6
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Taoist cliff abbey fantasy in the style of the Hanging Temple: dark weathered timber frames, cinnabar-red lacquered posts, slate-grey tiled roofs with upturned eaves, yellow paper talismans, verdigris bronze fittings, thick soft snow caps and a few chunky icicles. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (1.4m wide x 2.4m tall x 1.4m deep): A Taoist stone lantern 1.4m wide, 2.4m tall: a square grey stone base, a slender post, a stone light chamber with square windows glowing with a cold pale jade-green ghost light (painted as opaque bright pale green surfaces, no flame), and a wide stone roof cap with upturned corners under a cap of snow. Chunky readable shapes, one solid connected piece on the ground.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "aa19c0e51bdf874b6c387940b2e6710f5d0966cc498a898992f24178a91dc02d",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.8518189884649512,
+              "offset": [
+                76,
+                120
+              ],
+              "size": [
+                360,
+                784
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.852745886167307,
+              "offset": [
+                110,
+                120
+              ],
+              "size": [
+                292,
+                784
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.8518189884649512,
+              "offset": [
+                76,
+                120
+              ],
+              "size": [
+                360,
+                784
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.8536748032546352,
+              "offset": [
+                110,
+                120
+              ],
+              "size": [
+                292,
+                784
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

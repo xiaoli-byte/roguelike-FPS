@@ -1,0 +1,173 @@
+{
+  "id": "SM_Tripo_FrostTaoIncensePavilion",
+  "display": "香亭（备选 B）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 16:42:26",
+          "files": {
+            "BO_SM_Tripo_FrostTaoIncensePavilion_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostTaoIncensePavilion_v001.json",
+              "sha256": "02c251307faa17802ac1d94ee2431eccf088019b7eec3081af80fc219647494d"
+            },
+            "BO_SM_Tripo_FrostTaoIncensePavilion_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostTaoIncensePavilion_v001_views.json",
+              "sha256": "138d58e8bd88a49fe7776abb42fd9b075886f1701a1d7761e36837c8ba370fe8"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost_b.v2.incensePavilion"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.0,
+              0,
+              -1.5
+            ],
+            "max": [
+              2.0,
+              3.6,
+              1.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 16:42:57",
+          "files": {
+            "CN_SM_Tripo_FrostTaoIncensePavilion_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoIncensePavilion_v001_source.png",
+              "sha256": "c5865fe6d34a8b059a97ddea10be6a4c89d0459d11ce531eec544a65e3e112eb"
+            },
+            "CN_SM_Tripo_FrostTaoIncensePavilion_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoIncensePavilion_v001_front.png",
+              "sha256": "5e8d043d83b6820cfc4bdaae3bc3e853d99cf42736104ea9be2669688d8d9fa8"
+            },
+            "CN_SM_Tripo_FrostTaoIncensePavilion_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoIncensePavilion_v001_left.png",
+              "sha256": "362b5db538c5a4472d681bff94a022790209f4ba72c585c62dfd171379e68fab"
+            },
+            "CN_SM_Tripo_FrostTaoIncensePavilion_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoIncensePavilion_v001_back.png",
+              "sha256": "f6085facd7b40baf3f208b2d84106c7c20ffff7257302aa3dec5a9f7458e82d8"
+            },
+            "CN_SM_Tripo_FrostTaoIncensePavilion_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoIncensePavilion_v001_right.png",
+              "sha256": "5087122e91a13321fcac213ec63f139a1c6fa145250a9a02a3540e6a3fe0998d"
+            },
+            "CN_SM_Tripo_FrostTaoIncensePavilion_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoIncensePavilion_v001_sheet.png",
+              "sha256": "c3b20754f7a969842602cc15dfecc35b48effa72c99ab1765fc422a2a85cee6f"
+            },
+            "CN_SM_Tripo_FrostTaoIncensePavilion_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoIncensePavilion_v001_prompt.txt",
+              "sha256": "093f5367c7f8632bc039e29023337da31f9a961e4aeb21537e9e18e1f1463e8b"
+            },
+            "CN_SM_Tripo_FrostTaoIncensePavilion_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoIncensePavilion_v001_registration.json",
+              "sha256": "e882e51b323f7493e378f5648aa4cebe5a368013533184bb7fdbd2bcd17aa4f8"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 477,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 477
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1657
+            },
+            "request_id": "req_cb0f4465012f49cca2d6aba3f7545043",
+            "seconds": 30.0
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Taoist cliff abbey fantasy in the style of the Hanging Temple: dark weathered timber frames, cinnabar-red lacquered posts, slate-grey tiled roofs with upturned eaves, yellow paper talismans, verdigris bronze fittings, thick soft snow caps and a few chunky icicles. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (4m wide x 3.6m tall x 3m deep): A small Taoist incense pavilion 4m wide, 3.6m tall, 3m deep: four red lacquered posts, a slate-grey tiled hip roof with upturned eaves under thick snow, a big bronze incense burner on a low stone table inside, strings of yellow talismans and frozen prayer ribbons between the posts, icicles from the eaves. Chunky readable shapes, one solid connected piece standing on the ground.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "c5865fe6d34a8b059a97ddea10be6a4c89d0459d11ce531eec544a65e3e112eb",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.6689895470383275,
+              "offset": [
+                79,
+                306
+              ],
+              "size": [
+                353,
+                411
+              ],
+              "physical_height_m": 3.6,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6668210233850428,
+              "offset": [
+                122,
+                306
+              ],
+              "size": [
+                267,
+                411
+              ],
+              "physical_height_m": 3.6,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6657420249653259,
+              "offset": [
+                82,
+                306
+              ],
+              "size": [
+                348,
+                411
+              ],
+              "physical_height_m": 3.6,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.6657420249653259,
+              "offset": [
+                127,
+                306
+              ],
+              "size": [
+                258,
+                411
+              ],
+              "physical_height_m": 3.6,
+              "method": "uniform_height_and_center"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,369 @@
+{
+  "asset": "SK_Enemy_LanternJelly",
+  "version": 2,
+  "glb": "art/source/characters/SK_Enemy_LanternJelly/04_export/SK_Enemy_LanternJelly_native_v002.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.5,
+      "自定义骨架：51 根骨骼（热扩散权重，84 个顶点未覆盖）": 0.1,
+      "贴图（BC + AO/ORM）": 4.9,
+      "LOD 与蒙皮上限 7362 / 3446 / 1477": 0.2,
+      "发光壳 809 面": 0.0,
+      "导出 651 KB": 1.4
+    },
+    "source": {
+      "verts": 4216,
+      "tris": 7362,
+      "scale": 1.8008793356130923
+    },
+    "regions": {
+      "heat_unweighted_verts": 84,
+      "core_verts": 431,
+      "crown_verts": 412,
+      "fallback_verts": 164,
+      "per_bone": {
+        "bell": 287,
+        "crown": 426,
+        "core": 574,
+        "rim_F": 437,
+        "rim_B": 154,
+        "rim_L": 129,
+        "rim_R": 125,
+        "chain_L1": 145,
+        "chain_L2": 69,
+        "chain_R1": 145,
+        "chain_R2": 72,
+        "frill": 49,
+        "oral_L1": 48,
+        "oral_L2": 63,
+        "oral_L3": 37,
+        "oral_R1": 44,
+        "oral_R2": 67,
+        "oral_R3": 36,
+        "tent_L1": 45,
+        "tent_L2": 16,
+        "tent_L3": 28,
+        "tent_L4": 89,
+        "tent_R1": 52,
+        "tent_R2": 16,
+        "tent_R3": 28,
+        "tent_R4": 89,
+        "tent_FL1": 59,
+        "tent_FL2": 14,
+        "tent_FL3": 72,
+        "tent_FL4": 41,
+        "tent_FR1": 46,
+        "tent_FR2": 13,
+        "tent_FR3": 72,
+        "tent_FR4": 41,
+        "tent_BL1": 13,
+        "tent_BL2": 14,
+        "tent_BL3": 72,
+        "tent_BL4": 41,
+        "tent_BR1": 16,
+        "tent_BR2": 13,
+        "tent_BR3": 72,
+        "tent_BR4": 41,
+        "tent_CL1": 20,
+        "tent_CL2": 18,
+        "tent_CL3": 68,
+        "tent_CL4": 41,
+        "tent_CR1": 20,
+        "tent_CR2": 18,
+        "tent_CR3": 68,
+        "tent_CR4": 41
+      }
+    },
+    "bones": [
+      "bell",
+      "chain_L1",
+      "chain_L2",
+      "chain_R1",
+      "chain_R2",
+      "core",
+      "crown",
+      "frill",
+      "oral_L1",
+      "oral_L2",
+      "oral_L3",
+      "oral_R1",
+      "oral_R2",
+      "oral_R3",
+      "rim_B",
+      "rim_F",
+      "rim_L",
+      "rim_R",
+      "root",
+      "tent_BL1",
+      "tent_BL2",
+      "tent_BL3",
+      "tent_BL4",
+      "tent_BR1",
+      "tent_BR2",
+      "tent_BR3",
+      "tent_BR4",
+      "tent_CL1",
+      "tent_CL2",
+      "tent_CL3",
+      "tent_CL4",
+      "tent_CR1",
+      "tent_CR2",
+      "tent_CR3",
+      "tent_CR4",
+      "tent_FL1",
+      "tent_FL2",
+      "tent_FL3",
+      "tent_FL4",
+      "tent_FR1",
+      "tent_FR2",
+      "tent_FR3",
+      "tent_FR4",
+      "tent_L1",
+      "tent_L2",
+      "tent_L3",
+      "tent_L4",
+      "tent_R1",
+      "tent_R2",
+      "tent_R3",
+      "tent_R4"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.936,
+      "shade_mean": 0.95
+    },
+    "textures": {
+      "size": 1024,
+      "ao_mean": 0.744,
+      "provider_pbr": [],
+      "roughness_mean": 0.75,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Enemy_LanternJelly_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_LanternJelly_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_LanternJelly_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Enemy_LanternJelly_LOD0",
+        "tris": 7362,
+        "uv_min": [
+          0.00146484375,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.98974609375,
+          0.99853515625
+        ]
+      },
+      {
+        "name": "SK_Enemy_LanternJelly_LOD1",
+        "tris": 3446,
+        "uv_min": [
+          0.0012830875348299742,
+          0.0014336472377181053
+        ],
+        "uv_max": [
+          0.98974609375,
+          0.99853515625
+        ]
+      },
+      {
+        "name": "SK_Enemy_LanternJelly_LOD2",
+        "tris": 1477,
+        "uv_min": [
+          0.0012830875348299742,
+          0.0012026519980281591
+        ],
+        "uv_max": [
+          0.989501953125,
+          0.99853515625
+        ]
+      }
+    ],
+    "glow_shell": {
+      "group": "core",
+      "tris": 809
+    },
+    "glb_kb": 651,
+    "_seconds": 12.4
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "651 KB / 1600 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Enemy_LanternJelly_LOD0', 'SK_Enemy_LanternJelly_LOD1', 'SK_Enemy_LanternJelly_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "7362 / 8000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "3446 / 3500"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "1477 / 1500"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "1.800 m (design 1.8 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Enemy_LanternJelly_Glow', 'M_Enemy_LanternJelly']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "glow shell",
+      "809 tris on 'core'"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_LanternJelly_BC",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_LanternJelly_ORM",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "51 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Enemy_LanternJelly_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_LanternJelly_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_LanternJelly_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_LanternJelly_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_LanternJelly_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_LanternJelly_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_LanternJelly_LOD0 UV range",
+      "[0.001, 0.001]..[0.99, 0.999]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_LanternJelly_LOD1 UV range",
+      "[0.001, 0.001]..[0.99, 0.999]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_LanternJelly_LOD2 UV range",
+      "[0.001, 0.001]..[0.99, 0.999]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "84 verts"
+    ],
+    [
+      "pass",
+      "region core",
+      "431 verts"
+    ],
+    [
+      "pass",
+      "region crown",
+      "412 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "164 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

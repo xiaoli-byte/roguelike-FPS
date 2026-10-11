@@ -1,0 +1,96 @@
+{
+ "asset": "SK_Boss_Kun",
+ "glb": "SK_Boss_Kun_native_v001.glb",
+ "height_m": 8.0,
+ "bones": 14,
+ "flag": 1.8,
+ "dominant_verts": {
+  "spine_1": 2430,
+  "spine_2": 2976,
+  "spine_3": 2740,
+  "fin_L": 5297,
+  "fin_R": 5419,
+  "head": 14988,
+  "barbel_L_1": 168,
+  "barbel_L_2": 288,
+  "barbel_L_3": 943,
+  "barbel_R_1": 160,
+  "barbel_R_2": 263,
+  "barbel_R_3": 949,
+  "pearl": 115
+ },
+ "poses": {
+  "inhale": {
+   "p99": 2.22,
+   "max": 40.03,
+   "over_flag": 0.01307,
+   "moved_edges": 58618,
+   "images": [
+    "rom_inhale_front.png",
+    "rom_inhale_side.png",
+    "rom_inhale_threeq.png"
+   ]
+  },
+  "slam_windup": {
+   "p99": 2.269,
+   "max": 58.39,
+   "over_flag": 0.01376,
+   "moved_edges": 61469,
+   "images": [
+    "rom_slam_windup_front.png",
+    "rom_slam_windup_side.png",
+    "rom_slam_windup_threeq.png"
+   ]
+  },
+  "slam_impact": {
+   "p99": 1.764,
+   "max": 86.56,
+   "over_flag": 0.00979,
+   "moved_edges": 61608,
+   "images": [
+    "rom_slam_impact_front.png",
+    "rom_slam_impact_side.png",
+    "rom_slam_impact_threeq.png"
+   ]
+  },
+  "turn": {
+   "p99": 2.559,
+   "max": 54.62,
+   "over_flag": 0.0151,
+   "moved_edges": 58928,
+   "images": [
+    "rom_turn_front.png",
+    "rom_turn_side.png",
+    "rom_turn_threeq.png"
+   ]
+  },
+  "roar": {
+   "p99": 2.626,
+   "max": 31.19,
+   "over_flag": 0.01651,
+   "moved_edges": 54385,
+   "images": [
+    "rom_roar_front.png",
+    "rom_roar_side.png",
+    "rom_roar_threeq.png"
+   ]
+  },
+  "barbel_swing": {
+   "p99": 1.078,
+   "max": 1.6,
+   "over_flag": 0.0,
+   "moved_edges": 5152,
+   "images": [
+    "rom_barbel_swing_front.png",
+    "rom_barbel_swing_side.png",
+    "rom_barbel_swing_threeq.png"
+   ]
+  }
+ },
+ "weight_map": [
+  "weights_front.png",
+  "weights_side.png",
+  "weights_back.png",
+  "weights_threeq.png"
+ ]
+}

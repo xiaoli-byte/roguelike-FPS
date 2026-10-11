@@ -1,0 +1,348 @@
+{
+  "id": "SM_Tripo_FrostSeaPearlHoard",
+  "display": "鲛珠宝藏（备选 C）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 17:38:38",
+          "files": {
+            "BO_SM_Tripo_FrostSeaPearlHoard_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostSeaPearlHoard_v001.json",
+              "sha256": "70e9e50029ea787c96d2b451640d1ef63df04767e0ef2a5c3c67fa2333cd6d45"
+            },
+            "BO_SM_Tripo_FrostSeaPearlHoard_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostSeaPearlHoard_v001_views.json",
+              "sha256": "f5fc2bc5a0b5e18832a3ac1ed9813139204ef546a366cbe6a181816254e7f6ca"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost_c.v2.pearlHoard"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.0,
+              0,
+              -1.5
+            ],
+            "max": [
+              2.0,
+              1.8,
+              1.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 17:39:46",
+          "files": {
+            "CN_SM_Tripo_FrostSeaPearlHoard_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaPearlHoard_v001_source.png",
+              "sha256": "50f04e9120f2cad7bce24668223b4389f43a2f02178577dba78708b35a497f2a"
+            },
+            "CN_SM_Tripo_FrostSeaPearlHoard_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaPearlHoard_v001_front.png",
+              "sha256": "740124fbb08c8f58d94b41e7b3c03d23fcb7d122fa7f51504051a25ec56073af"
+            },
+            "CN_SM_Tripo_FrostSeaPearlHoard_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaPearlHoard_v001_left.png",
+              "sha256": "2a5b296d9ee0b63d96ce0f0a652a5e9d406c0ba7d86c0e59420449054a107f00"
+            },
+            "CN_SM_Tripo_FrostSeaPearlHoard_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaPearlHoard_v001_back.png",
+              "sha256": "cf1981be8c856b9943038bbbfd8e72544600a0ce605989cb986eac45905ede3c"
+            },
+            "CN_SM_Tripo_FrostSeaPearlHoard_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaPearlHoard_v001_right.png",
+              "sha256": "737da6aa88b62d2d862f10637bb04a58df556478b79df0c2ee6ee0ddd72b13ec"
+            },
+            "CN_SM_Tripo_FrostSeaPearlHoard_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaPearlHoard_v001_sheet.png",
+              "sha256": "9da2187d3ca16525440acf15daa73e3c39905e1d5f7ab31685413c347298d455"
+            },
+            "CN_SM_Tripo_FrostSeaPearlHoard_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaPearlHoard_v001_prompt.txt",
+              "sha256": "822c6d21a10cd94c68b30e52fc59d66fa14421a20ced0dc330386988789f91a4"
+            },
+            "CN_SM_Tripo_FrostSeaPearlHoard_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaPearlHoard_v001_registration.json",
+              "sha256": "a7e38a4cfa40d579f14bb02822d8af7e6068d7a07944a17b1f9c1fa8b12411e0"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-5.6-terra",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-5.6-terra",
+            "size": "2048x1024",
+            "generated_size": [
+              1983,
+              793
+            ],
+            "references": [],
+            "attempt": 1,
+            "seconds": 66.2
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian frozen polar sea fantasy from the Zhuangzi's northern darkness: faceted glacier ice and dark ink-blue rock, weathered ivory whale bone, old dark ship timber with faded teal paint, frozen ropes, felt and a cold aqua deep-sea glow, thick soft snow caps and chunky icicles. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (4m wide x 1.8m tall x 3m deep): A shipwreck treasure hoard 4m wide, 1.8m tall, 3m deep: two broken sea chests spilling glowing pale aqua pearls (鲛珠), coral branches, porcelain bowls and a few gold ingots, a big conch shell, everything dusted with snow and half frozen in clear ice. One solid connected heap resting on the ground.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "50f04e9120f2cad7bce24668223b4389f43a2f02178577dba78708b35a497f2a",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.39484507814642167,
+              "offset": [
+                142,
+                409
+              ],
+              "size": [
+                227,
+                206
+              ],
+              "physical_height_m": 1.8,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.3609022556390977,
+              "offset": [
+                192,
+                409
+              ],
+              "size": [
+                128,
+                206
+              ],
+              "physical_height_m": 1.8,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.3628117913832199,
+              "offset": [
+                162,
+                409
+              ],
+              "size": [
+                187,
+                206
+              ],
+              "physical_height_m": 1.8,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.36409608091024015,
+              "offset": [
+                180,
+                409
+              ],
+              "size": [
+                152,
+                206
+              ],
+              "physical_height_m": 1.8,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "四视图同一物件、朝向正确、无裁切、雪盖未被抠掉；转 Hunyuan3D 2mv 多视图建模（2026-10-11）",
+            "time": "2026-10-11 00:35:24"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:53:39",
+          "files": {
+            "HP_SM_Tripo_FrostSeaPearlHoard_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaPearlHoard_v001_input_front.png",
+              "sha256": "8d710444f81417c8e531a4d581656b910559f51e272ad5aaaeb1c15454ee2bc6"
+            },
+            "HP_SM_Tripo_FrostSeaPearlHoard_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaPearlHoard_v001_input_left.png",
+              "sha256": "d66700a3a325222109984ce717c11c6dbfba6b6b8a2508cb08f7a0ef66348ccc"
+            },
+            "HP_SM_Tripo_FrostSeaPearlHoard_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaPearlHoard_v001_input_back.png",
+              "sha256": "994f238901c73361bdd1ff448962d53d4fc3490ee83a89c3905754d6b34cec35"
+            },
+            "HP_SM_Tripo_FrostSeaPearlHoard_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaPearlHoard_v001_input_right.png",
+              "sha256": "817f108826fde3ac02d19fecab2128cf12e78d58ba6580270086ec8b722db99a"
+            },
+            "HP_SM_Tripo_FrostSeaPearlHoard_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaPearlHoard_v001.glb",
+              "sha256": "558572c61ae3458ed1cc4ad202e42f4ae4e27b8ed659a814991b6f59ee1481ea"
+            },
+            "HP_SM_Tripo_FrostSeaPearlHoard_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaPearlHoard_v001_graph.json",
+              "sha256": "7d49aea2aa125746a727e1de5897256f3a309c2b20a02635d21c9013fae56144"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              122,
+              378,
+              390,
+              646
+            ],
+            "scale": 3.8208955223880596
+          },
+          "seconds": 392.2,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 28.1
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:55:14",
+          "files": {
+            "SM_Tripo_FrostSeaPearlHoard_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostSeaPearlHoard_v001.blend",
+              "sha256": "ec17c0bad3dbfbc0513444538e796ad3bbb788ee0b7c26477619702bdb3bc142"
+            },
+            "SM_Tripo_FrostSeaPearlHoard_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostSeaPearlHoard_v001.glb",
+              "sha256": "ad15722df22c1f90916bad22fe65d90a05a428c8d7ef941afa393ffd835e4bb5"
+            },
+            "SM_Tripo_FrostSeaPearlHoard_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostSeaPearlHoard_v001_metrics.json",
+              "sha256": "0be9a7183d73eb0e224bf92b89a738025c2921297d8a14891f53d7ca421b66c5"
+            },
+            "T_Tripo_FrostSeaPearlHoard_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaPearlHoard_BC.png",
+              "sha256": "5db47d9b43f1a0473b48f3c0a56bf41885cfd6bb8a752a6cdf41024e4e230c84"
+            },
+            "T_Tripo_FrostSeaPearlHoard_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaPearlHoard_N.png",
+              "sha256": "14cd31fc48821d06c6df32a92c3877e771eca729b9a9976284ed2e81384c5e7f"
+            },
+            "T_Tripo_FrostSeaPearlHoard_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaPearlHoard_ORM.png",
+              "sha256": "6135e4970aa3b9a260b41da868de63ccbfc933d84a213261b0b6881e0e3cfb70"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.725,
+          "uncovered_ratio": 0.4899,
+          "lods": [
+            {
+              "tris": 2998,
+              "verts": 1430
+            },
+            {
+              "tris": 1000,
+              "verts": 426
+            }
+          ],
+          "export_kb": 332.8,
+          "seconds": 94.6,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:55:14",
+          "files": {
+            "SM_Tripo_FrostSeaPearlHoard_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostSeaPearlHoard_v001_validation_v001.json",
+              "sha256": "b243d2d02b226b0fe2cb944571da3f5a7754191472221700cfa57cc6e58a5400"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 2,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:55:22",
+          "files": {
+            "SM_Tripo_FrostSeaPearlHoard_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostSeaPearlHoard_v001_review_v001.png",
+              "sha256": "7c0642de7c6ea072b03982a308d9cd66151143e7d94f6ceae067cc450a9f3fbb"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "IoU 0.725；破箱鲛珠、珊瑚、螺壳、鲸牙、冰棱，造型偏碎但可读；第二章计划暂无 hoard 掩体",
+            "time": "2026-10-11 01:55:50"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:55:51",
+          "files": {
+            "SM_Tripo_FrostSeaPearlHoard.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostSeaPearlHoard.glb",
+              "sha256": "ad15722df22c1f90916bad22fe65d90a05a428c8d7ef941afa393ffd835e4bb5"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_FrostSeaPearlHoard.glb"
+        }
+      ]
+    }
+  }
+}

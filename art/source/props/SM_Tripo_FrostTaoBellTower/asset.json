@@ -1,0 +1,173 @@
+{
+  "id": "SM_Tripo_FrostTaoBellTower",
+  "display": "雪崖钟楼（备选 B）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 16:41:51",
+          "files": {
+            "BO_SM_Tripo_FrostTaoBellTower_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostTaoBellTower_v001.json",
+              "sha256": "1c97a8dd3ed17a4336c12759affdf0c290d5c7c895ca3be1e46644310738c033"
+            },
+            "BO_SM_Tripo_FrostTaoBellTower_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostTaoBellTower_v001_views.json",
+              "sha256": "bf962ec7d838d673ce78cc5af53fb2a02742a70d3be9afa6ccfd9ecf24fc579b"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost_b.v2.bellTower"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -3.6,
+              0,
+              -3.6
+            ],
+            "max": [
+              3.6,
+              13.0,
+              3.6
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 16:42:25",
+          "files": {
+            "CN_SM_Tripo_FrostTaoBellTower_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoBellTower_v001_source.png",
+              "sha256": "2d5bfb4a04f55e36f39dcce0aa1bc0b0eb5d4910c41343e5623775b01ff496a4"
+            },
+            "CN_SM_Tripo_FrostTaoBellTower_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoBellTower_v001_front.png",
+              "sha256": "06bca12bc1098b85d3c985c7a2f99606b694fd4e73bfc4b66e263f165e76cd80"
+            },
+            "CN_SM_Tripo_FrostTaoBellTower_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoBellTower_v001_left.png",
+              "sha256": "4d62c218e9c7c522ad6832bdc701c8f00afea0e8778a6a9d101cd8ddbd1f0221"
+            },
+            "CN_SM_Tripo_FrostTaoBellTower_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoBellTower_v001_back.png",
+              "sha256": "5cb13eddad3876b0a8ec726c8bfb7f181182e6e3dbbb387857ea01a3e5f80435"
+            },
+            "CN_SM_Tripo_FrostTaoBellTower_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoBellTower_v001_right.png",
+              "sha256": "774c90546a6219cd9590ee9ea57a90a57401e954cd93f67ed6e159e77eca01e4"
+            },
+            "CN_SM_Tripo_FrostTaoBellTower_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoBellTower_v001_sheet.png",
+              "sha256": "cc18bd29bdbaebb89058a814a21c8f351624949f236567421bc25bb96e372e0a"
+            },
+            "CN_SM_Tripo_FrostTaoBellTower_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoBellTower_v001_prompt.txt",
+              "sha256": "2581cc2dc7ddc32b92160cc7d071bc00788c82f060005824f49112c38e07fe0b"
+            },
+            "CN_SM_Tripo_FrostTaoBellTower_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoBellTower_v001_registration.json",
+              "sha256": "44288fcbce95ddbab0b1b377984cc3710657a424239b2cf0abfeb9dec231fcaf"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 472,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 472
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1652
+            },
+            "request_id": "req_1cd3ed22fded43bab85a4937d934ab25",
+            "seconds": 32.4
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Taoist cliff abbey fantasy in the style of the Hanging Temple: dark weathered timber frames, cinnabar-red lacquered posts, slate-grey tiled roofs with upturned eaves, yellow paper talismans, verdigris bronze fittings, thick soft snow caps and a few chunky icicles. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (7.2m wide x 13m tall x 7.2m deep): A square Taoist bell tower 7.2m wide, 13m tall: a tall battered grey stone base, an upper timber storey with red lacquered posts and a big bronze bell visible behind solid lattice panels, crowned by a two-tier slate-grey tiled hip roof with upturned eaves, every roof tier under thick snow with chunky icicles. Finished on all four sides. One solid connected piece.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "2d5bfb4a04f55e36f39dcce0aa1bc0b0eb5d4910c41343e5623775b01ff496a4",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.8743610438525691,
+              "offset": [
+                33,
+                99
+              ],
+              "size": [
+                445,
+                825
+              ],
+              "physical_height_m": 13.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.8827773533655885,
+              "offset": [
+                66,
+                99
+              ],
+              "size": [
+                380,
+                825
+              ],
+              "physical_height_m": 13.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.8818342151675482,
+              "offset": [
+                41,
+                99
+              ],
+              "size": [
+                430,
+                825
+              ],
+              "physical_height_m": 13.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.8818342151675482,
+              "offset": [
+                67,
+                99
+              ],
+              "size": [
+                378,
+                825
+              ],
+              "physical_height_m": 13.0,
+              "method": "uniform_height_and_center"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "assetId": "SM_EnemyPart_XuanGuiShell",
+  "source": {
+    "kind": "enemy",
+    "id": "xuangui",
+    "attachment": "shell"
+  },
+  "space": {
+    "up": "+Y",
+    "forward": "+Z",
+    "unit": "m",
+    "origin": "attachment"
+  },
+  "bounds": {
+    "min": [
+      -1.1602905988693237,
+      0.0,
+      -1.2499998807907104
+    ],
+    "max": [
+      1.1602905988693237,
+      1.399999976158142,
+      1.2499998807907104
+    ]
+  },
+  "parts": {
+    "body_000": "body"
+  },
+  "exportedAt": "2026-10-11T00:00:00.000Z",
+  "note": "Headless blockout (no browser export): the procedural spin-shell of XuanGui.buildModel, an icosphere r=1 detail 2 scaled (1.22, 0.7, 1.25) at y=0.7 in the 'shell' socket space; rim spikes are nested parts and stay out of the views."
+}

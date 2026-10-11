@@ -1,0 +1,486 @@
+{
+  "id": "SM_Tripo_FrostRampartPlain",
+  "display": "昆仑雪城素墙段（V2）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 13:36:45",
+          "files": {
+            "BO_SM_Tripo_FrostRampartPlain_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostRampartPlain_v001.json",
+              "sha256": "b55389cba4784219df694770d0198ae58e90fa441b53264569dac538c29e85d8"
+            },
+            "BO_SM_Tripo_FrostRampartPlain_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostRampartPlain_v001_views.json",
+              "sha256": "2f9f4e3f48073e1886c4037f3c5f96d24b07a31515c2eb85afe54c0039cdbca2"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost.v2.rampartPlain"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -4.0,
+              0,
+              -1.5
+            ],
+            "max": [
+              4.0,
+              9.0,
+              1.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 13:37:13",
+          "files": {
+            "CN_SM_Tripo_FrostRampartPlain_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostRampartPlain_v001_source.png",
+              "sha256": "83036c01b09687eb1c25272812b3649d366386eda51387a6ba9183811f12926d"
+            },
+            "CN_SM_Tripo_FrostRampartPlain_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostRampartPlain_v001_front.png",
+              "sha256": "b145f5c5c468c3f0a55893939458537a392d517e95f1ed30b91251a01b23d0e1"
+            },
+            "CN_SM_Tripo_FrostRampartPlain_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostRampartPlain_v001_left.png",
+              "sha256": "e644d57cc11b464e2dedf0bf83481876fbaf50b387120ac7963f644babbddcd1"
+            },
+            "CN_SM_Tripo_FrostRampartPlain_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostRampartPlain_v001_back.png",
+              "sha256": "2f9891305ae278f33ce4ad239f7d9a5a0dd7f595f31a579663391932f637eac3"
+            },
+            "CN_SM_Tripo_FrostRampartPlain_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostRampartPlain_v001_right.png",
+              "sha256": "ae1fdb95d6f9989c5f8015fc228194bf03c3f7d0c5d1e6f889d1aa48e09ab9d0"
+            },
+            "CN_SM_Tripo_FrostRampartPlain_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostRampartPlain_v001_sheet.png",
+              "sha256": "45b460555b9f922a9ba887934e48752cac8dc6d78b6064055439c3c8d5613335"
+            },
+            "CN_SM_Tripo_FrostRampartPlain_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostRampartPlain_v001_prompt.txt",
+              "sha256": "cd2e3321e95a2588f5866933de3e5c0312dcb39f7f979f35ad9f178cf4e0587c"
+            },
+            "CN_SM_Tripo_FrostRampartPlain_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostRampartPlain_v001_registration.json",
+              "sha256": "8eca2b9197c1adbeb94f97ee7c71dec9249c2f2cea96733535c6746c6dfc64fa"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 488,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 488
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1668
+            },
+            "request_id": "req_8b86006f84b54fcc97f32e9b29d6e074",
+            "seconds": 27.1
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (8m wide x 9m tall x 3m deep): A plain tileable Kunlun mountain-palace wall section 8m wide, 9m tall, 3m deep, the quieter companion of the decorated rampart: the same battered pale granite base and white jade-like upper wall with a row of chunky square merlons along the top, but NO buttresses, NO painted band and no icicles, just a few large stone blocks and one thin verdigris bronze cap line. Thick soft snow caps on the merlons and the base ledge. Both side ends are flat cut faces so sections join seamlessly in a row. Solid wall with no openings.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "83036c01b09687eb1c25272812b3649d366386eda51387a6ba9183811f12926d",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.741045697818032,
+              "offset": [
+                5,
+                255
+              ],
+              "size": [
+                502,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7305194805194805,
+              "offset": [
+                187,
+                255
+              ],
+              "size": [
+                138,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7367990176013097,
+              "offset": [
+                7,
+                255
+              ],
+              "size": [
+                497,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7294832826747719,
+              "offset": [
+                185,
+                255
+              ],
+              "size": [
+                142,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-07 13:40:43",
+          "files": {
+            "CN_SM_Tripo_FrostRampartPlain_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostRampartPlain_v002_source.png",
+              "sha256": "83036c01b09687eb1c25272812b3649d366386eda51387a6ba9183811f12926d"
+            },
+            "CN_SM_Tripo_FrostRampartPlain_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostRampartPlain_v002_front.png",
+              "sha256": "5f7974b0e1fe28f0d55b86c4ce660d288e7ab44afc310a7ef90470cab23e68d6"
+            },
+            "CN_SM_Tripo_FrostRampartPlain_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostRampartPlain_v002_left.png",
+              "sha256": "d55d49ab4404edc2a140b18e554058df509972410dff1248a41a28e91523703c"
+            },
+            "CN_SM_Tripo_FrostRampartPlain_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostRampartPlain_v002_back.png",
+              "sha256": "166e5dca2f10ac8289f8792696e2b5c8898ec07eded7a3276ba560f634ff978c"
+            },
+            "CN_SM_Tripo_FrostRampartPlain_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostRampartPlain_v002_right.png",
+              "sha256": "dd789af729f0eaaab1f1b1688d19ef188c00ad5db1e2fb5cf521896a7be2dd7c"
+            },
+            "CN_SM_Tripo_FrostRampartPlain_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostRampartPlain_v002_sheet.png",
+              "sha256": "cf6de9aae9537462d99318230eec68dcd8ec97fc8d379ba2d20a8477027f9000"
+            },
+            "CN_SM_Tripo_FrostRampartPlain_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostRampartPlain_v002_prompt.txt",
+              "sha256": "cd2e3321e95a2588f5866933de3e5c0312dcb39f7f979f35ad9f178cf4e0587c"
+            },
+            "CN_SM_Tripo_FrostRampartPlain_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostRampartPlain_v002_registration.json",
+              "sha256": "ce19bd8692f9afec732ca5b854e384632f44222283aa110281c0464ad3a1925d"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 488,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 488
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1668
+            },
+            "request_id": "req_8b86006f84b54fcc97f32e9b29d6e074",
+            "seconds": 27.1,
+            "rekeyed_from": 1
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (8m wide x 9m tall x 3m deep): A plain tileable Kunlun mountain-palace wall section 8m wide, 9m tall, 3m deep, the quieter companion of the decorated rampart: the same battered pale granite base and white jade-like upper wall with a row of chunky square merlons along the top, but NO buttresses, NO painted band and no icicles, just a few large stone blocks and one thin verdigris bronze cap line. Thick soft snow caps on the merlons and the base ledge. Both side ends are flat cut faces so sections join seamlessly in a row. Solid wall with no openings.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "83036c01b09687eb1c25272812b3649d366386eda51387a6ba9183811f12926d",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.7389162561576353,
+              "offset": [
+                5,
+                255
+              ],
+              "size": [
+                502,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7274196807435844,
+              "offset": [
+                186,
+                255
+              ],
+              "size": [
+                140,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7346938775510203,
+              "offset": [
+                7,
+                255
+              ],
+              "size": [
+                497,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7274196807435844,
+              "offset": [
+                184,
+                255
+              ],
+              "size": [
+                143,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "v002 四视图同一物件、无裁切、雪盖未被抠掉；转 Hunyuan3D 2mv 多视图建模（2026-10-11）",
+            "time": "2026-10-11 00:02:31"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:11:41",
+          "files": {
+            "HP_SM_Tripo_FrostRampartPlain_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostRampartPlain_v001_input_front.png",
+              "sha256": "b4ccd7ebcc68147f13ddc67c7f24edf000c2a9c2e4d27f30fad411371cded0bc"
+            },
+            "HP_SM_Tripo_FrostRampartPlain_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostRampartPlain_v001_input_left.png",
+              "sha256": "fd5ac1fa3199b4d98297bd86842799731c614aac72c42bf9c650ecfbe6e70714"
+            },
+            "HP_SM_Tripo_FrostRampartPlain_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostRampartPlain_v001_input_back.png",
+              "sha256": "48507dc0dea4050a36de3b5e6c84d674b937791f36c143beaa23e235f1af6795"
+            },
+            "HP_SM_Tripo_FrostRampartPlain_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostRampartPlain_v001_input_right.png",
+              "sha256": "5a10c3fc44a02978755af2539e766031cdd829544904592b5b7b9397c75d3a51"
+            },
+            "HP_SM_Tripo_FrostRampartPlain_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostRampartPlain_v001.glb",
+              "sha256": "077f28b5d790d768360665f890df887193d1095807f694bc46286a5c46d26a91"
+            },
+            "HP_SM_Tripo_FrostRampartPlain_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostRampartPlain_v001_graph.json",
+              "sha256": "3f4be92c774d6df2797346486528cc36273732e0328b99ae9dabb21880037cb8"
+            }
+          },
+          "from_concept": 2,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -46,
+              210,
+              558,
+              814
+            ],
+            "scale": 1.695364238410596
+          },
+          "seconds": 289.0,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 22.1
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:14:47",
+          "files": {
+            "SM_Tripo_FrostRampartPlain_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostRampartPlain_v001.blend",
+              "sha256": "6788d7a8b569e59abbc8066c0c2b462ee36a90d555834ac2f98c6a13ce2fe56e"
+            },
+            "SM_Tripo_FrostRampartPlain_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostRampartPlain_v001.glb",
+              "sha256": "25fd236d8379014effbabcc506d0c9bb7f4f163e07757e9f56aba6ae96f78232"
+            },
+            "SM_Tripo_FrostRampartPlain_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostRampartPlain_v001_metrics.json",
+              "sha256": "bf3c8d6005937eb4ca46e73c1fe5d1fcf97ad5b9fb9eb0d7600a87cf4e0d9b9c"
+            },
+            "T_Tripo_FrostRampartPlain_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostRampartPlain_BC.png",
+              "sha256": "d61962c969817fb5e7915c2e41d0d8ca5531a478a8bbb4504417d8d6620527cd"
+            },
+            "T_Tripo_FrostRampartPlain_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostRampartPlain_N.png",
+              "sha256": "35cc931e5193f2174a2a61b0222d27069e27b4ca2dfc9fdcec654cc00faab33f"
+            },
+            "T_Tripo_FrostRampartPlain_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostRampartPlain_ORM.png",
+              "sha256": "128ce1a4fc6907849e02bd0725502ce0c3f1f1cde7fc7024d2e4f7f589c2c6b4"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.938,
+          "uncovered_ratio": 0.3602,
+          "lods": [
+            {
+              "tris": 8000,
+              "verts": 4002
+            },
+            {
+              "tris": 2500,
+              "verts": 1252
+            },
+            {
+              "tris": 800,
+              "verts": 402
+            }
+          ],
+          "export_kb": 395.9,
+          "seconds": 184.7,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:14:47",
+          "files": {
+            "SM_Tripo_FrostRampartPlain_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostRampartPlain_v001_validation_v001.json",
+              "sha256": "0013b6607068e6b2e7d08c393911dd86401dfb784a52cd44d43eec2f3172c473"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:15:01",
+          "files": {
+            "SM_Tripo_FrostRampartPlain_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostRampartPlain_v001_review_v001.png",
+              "sha256": "6db10f9e83875968db157e1193d35604116c2b9af542abf044e84755ee597a2a"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "IoU 0.938；五个垛口、铜线脚、雪檐完整，两端平切；LOD2 轮廓不塌",
+            "time": "2026-10-11 00:15:16"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:15:36",
+          "files": {
+            "SM_Tripo_FrostRampartPlain.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostRampartPlain.glb",
+              "sha256": "25fd236d8379014effbabcc506d0c9bb7f4f163e07757e9f56aba6ae96f78232"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_FrostRampartPlain.glb"
+        }
+      ]
+    }
+  }
+}

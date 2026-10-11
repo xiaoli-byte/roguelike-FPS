@@ -1,0 +1,486 @@
+{
+  "id": "SM_Tripo_FrostKaiming",
+  "display": "开明兽巨像（V2 地标）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 13:36:15",
+          "files": {
+            "BO_SM_Tripo_FrostKaiming_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostKaiming_v001.json",
+              "sha256": "963d37cf88ea0b0256efb5a54283557a45fcaf2bc34d7cffb2ad75d031e7128a"
+            },
+            "BO_SM_Tripo_FrostKaiming_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostKaiming_v001_views.json",
+              "sha256": "d74c97729f3dfef0cc9814a298a39bafcd418ee9a1202a05ca824d0dfcba6ff0"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost.v2.kaiming"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -6.0,
+              0,
+              -5.0
+            ],
+            "max": [
+              6.0,
+              16.0,
+              5.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 13:36:47",
+          "files": {
+            "CN_SM_Tripo_FrostKaiming_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostKaiming_v001_source.png",
+              "sha256": "ad53c317ddafaa1d0ea67a0b914c75800357b5b65b058da66abc7c26a9c9c59d"
+            },
+            "CN_SM_Tripo_FrostKaiming_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostKaiming_v001_front.png",
+              "sha256": "38d658fe41ba3aa8fccff8943eab8cf7ccdc3d1aaece3c3b9869cbe12a0ef259"
+            },
+            "CN_SM_Tripo_FrostKaiming_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostKaiming_v001_left.png",
+              "sha256": "63edbadea10b772e946f5a99ba6469b1cbad2cd7576d788f2a9040a4128af6cb"
+            },
+            "CN_SM_Tripo_FrostKaiming_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostKaiming_v001_back.png",
+              "sha256": "5f22325493a3267528054ac54d91d886f176cfce58daaaad2cbce143414c7ffa"
+            },
+            "CN_SM_Tripo_FrostKaiming_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostKaiming_v001_right.png",
+              "sha256": "f706eb6211d5119f7ae92ee9511fe29d5dd3bf5594b0bb06b63608f899a8902b"
+            },
+            "CN_SM_Tripo_FrostKaiming_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostKaiming_v001_sheet.png",
+              "sha256": "d707efa0f450f7661c564eeee5031494502ba9fcda8c12b81e53bbf6de4567e4"
+            },
+            "CN_SM_Tripo_FrostKaiming_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostKaiming_v001_prompt.txt",
+              "sha256": "012e3000438eddb53b2985594d06cf01215483c22270d2ad14a15fefac30ce2e"
+            },
+            "CN_SM_Tripo_FrostKaiming_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostKaiming_v001_registration.json",
+              "sha256": "73c109880da9b94ee7c83d8fe993f3b2a9ebbe2b52033afb57c75a11f4e5f4d9"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 492,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 492
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1672
+            },
+            "request_id": "req_b5a9a61f2e5c4143b082fe1c2b8cfef4",
+            "seconds": 30.3
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (12m wide x 16m tall x 10m deep): A colossal statue of the Kaiming beast (开明兽), the guardian of Kunlun's nine gates from the Shan Hai Jing, 16m tall: a mighty tiger-bodied beast sitting upright on its haunches on a massive stepped pedestal, its nine human-faced heads fanned out on thick necks around the neck like a crown, all facing east. Carved from white jade stone with verdigris bronze collars and armour plates, faded vermilion accents; thick snow on its back, heads and pedestal, chunky icicles under the jaws. Chunky stylized forms readable from 150m away. One solid statue.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "ad53c317ddafaa1d0ea67a0b914c75800357b5b65b058da66abc7c26a9c9c59d",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.7170868347338936,
+              "offset": [
+                96,
+                207
+              ],
+              "size": [
+                319,
+                610
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7204773162219971,
+              "offset": [
+                86,
+                207
+              ],
+              "size": [
+                340,
+                610
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7230412924363102,
+              "offset": [
+                93,
+                207
+              ],
+              "size": [
+                325,
+                610
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7204773162219971,
+              "offset": [
+                86,
+                207
+              ],
+              "size": [
+                340,
+                610
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-07 13:40:51",
+          "files": {
+            "CN_SM_Tripo_FrostKaiming_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostKaiming_v002_source.png",
+              "sha256": "ad53c317ddafaa1d0ea67a0b914c75800357b5b65b058da66abc7c26a9c9c59d"
+            },
+            "CN_SM_Tripo_FrostKaiming_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostKaiming_v002_front.png",
+              "sha256": "37510a63355b684bf31176967038146566c6ab5cfe7cc89d84365af7a6ba1875"
+            },
+            "CN_SM_Tripo_FrostKaiming_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostKaiming_v002_left.png",
+              "sha256": "bba2be383c328333b3b291e92216845df66e85dc158e6985753594ea9dfdf476"
+            },
+            "CN_SM_Tripo_FrostKaiming_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostKaiming_v002_back.png",
+              "sha256": "4adde9a3237883c5ae4be2b3614ebbcd3ec37935a71be7495be3657f80b5fc50"
+            },
+            "CN_SM_Tripo_FrostKaiming_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostKaiming_v002_right.png",
+              "sha256": "d790c2d3ff9e70dcef96dfd7637d2d48c6ddb164fa55dd69eff573921d222230"
+            },
+            "CN_SM_Tripo_FrostKaiming_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostKaiming_v002_sheet.png",
+              "sha256": "f54e5682d5d3f27c85686ae311f8ccad35fdc8a81fdebaa14c0065ad4db52af6"
+            },
+            "CN_SM_Tripo_FrostKaiming_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostKaiming_v002_prompt.txt",
+              "sha256": "012e3000438eddb53b2985594d06cf01215483c22270d2ad14a15fefac30ce2e"
+            },
+            "CN_SM_Tripo_FrostKaiming_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostKaiming_v002_registration.json",
+              "sha256": "d194d3db4c16f5f19b382915f574960d426102608fcc58507c055e02454ea7ea"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 492,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 492
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1672
+            },
+            "request_id": "req_b5a9a61f2e5c4143b082fe1c2b8cfef4",
+            "seconds": 30.3,
+            "rekeyed_from": 1
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (12m wide x 16m tall x 10m deep): A colossal statue of the Kaiming beast (开明兽), the guardian of Kunlun's nine gates from the Shan Hai Jing, 16m tall: a mighty tiger-bodied beast sitting upright on its haunches on a massive stepped pedestal, its nine human-faced heads fanned out on thick necks around the neck like a crown, all facing east. Carved from white jade stone with verdigris bronze collars and armour plates, faded vermilion accents; thick snow on its back, heads and pedestal, chunky icicles under the jaws. Chunky stylized forms readable from 150m away. One solid statue.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "ad53c317ddafaa1d0ea67a0b914c75800357b5b65b058da66abc7c26a9c9c59d",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.7154035323049408,
+              "offset": [
+                96,
+                207
+              ],
+              "size": [
+                320,
+                610
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7196266936526676,
+              "offset": [
+                86,
+                207
+              ],
+              "size": [
+                340,
+                610
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7213299520991828,
+              "offset": [
+                93,
+                207
+              ],
+              "size": [
+                325,
+                610
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7187780772686433,
+              "offset": [
+                86,
+                207
+              ],
+              "size": [
+                340,
+                610
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "v002 四视图同一物件、无裁切、雪盖未被抠掉；转 Hunyuan3D 2mv 多视图建模（2026-10-11）",
+            "time": "2026-10-11 00:02:36"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:49:59",
+          "files": {
+            "HP_SM_Tripo_FrostKaiming_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostKaiming_v001_input_front.png",
+              "sha256": "81e90344f646caa013091baa154150035154ba81e956cde2466cd5b3ac33725b"
+            },
+            "HP_SM_Tripo_FrostKaiming_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostKaiming_v001_input_left.png",
+              "sha256": "747e203ef0b3e99e389a9d377afcc24048f084b8138fcf38cd41a86326faed02"
+            },
+            "HP_SM_Tripo_FrostKaiming_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostKaiming_v001_input_back.png",
+              "sha256": "9d9f3e48e9b03a05a2f32f812b8add5ea88ae4a73111e3f9fce24d87d4ba3d0f"
+            },
+            "HP_SM_Tripo_FrostKaiming_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostKaiming_v001_input_right.png",
+              "sha256": "1e72d3c150bb448d43606ad4b527eeec85a0f18de744a58c91f65fed3e742a87"
+            },
+            "HP_SM_Tripo_FrostKaiming_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostKaiming_v001.glb",
+              "sha256": "e0272bb1afcf1929db5079c1e0187ce73d97f9271e6331719586fee9b9fc7f68"
+            },
+            "HP_SM_Tripo_FrostKaiming_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostKaiming_v001_graph.json",
+              "sha256": "776714e5606246124323665e645f1cef55ed3553276d431eedd4949275b9b4b1"
+            }
+          },
+          "from_concept": 2,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -103,
+              153,
+              615,
+              871
+            ],
+            "scale": 1.426183844011142
+          },
+          "seconds": 360.6,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 16.8
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:51:41",
+          "files": {
+            "SM_Tripo_FrostKaiming_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostKaiming_v001.blend",
+              "sha256": "c1569f70827cca4899802d5d3acd61e0fb87aa182e7b2206c87bfef5e7d787eb"
+            },
+            "SM_Tripo_FrostKaiming_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostKaiming_v001.glb",
+              "sha256": "08dc35956201b4871467881d681ccaf25277e2ab8c9ec5ed7d0e2054c931393b"
+            },
+            "SM_Tripo_FrostKaiming_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostKaiming_v001_metrics.json",
+              "sha256": "4c261b6c20ad51558d7835c290951b39ba3bcef51d878cb8e95d419d5a592f02"
+            },
+            "T_Tripo_FrostKaiming_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostKaiming_BC.png",
+              "sha256": "78217499c66579dc407197416fa888be321680ff44361c08cecc81547589f94d"
+            },
+            "T_Tripo_FrostKaiming_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostKaiming_N.png",
+              "sha256": "8ef688f1af39c236078a0f458ae312db6f9ae9bd3275a8ff5c92f5b95ee86794"
+            },
+            "T_Tripo_FrostKaiming_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostKaiming_ORM.png",
+              "sha256": "66d14133191e488082456716cc59c4617ec111579fe3e335a33563a39bcf1f31"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.922,
+          "uncovered_ratio": 0.3207,
+          "lods": [
+            {
+              "tris": 7999,
+              "verts": 3952
+            },
+            {
+              "tris": 2500,
+              "verts": 1200
+            },
+            {
+              "tris": 800,
+              "verts": 350
+            }
+          ],
+          "export_kb": 782.7,
+          "seconds": 101.1,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:51:41",
+          "files": {
+            "SM_Tripo_FrostKaiming_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostKaiming_v001_validation_v001.json",
+              "sha256": "b438b8bcc71458b87de704d88303d53c3d0df30f19f6c6e769ceb5b9f57dd06f"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:51:52",
+          "files": {
+            "SM_Tripo_FrostKaiming_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostKaiming_v001_review_v001.png",
+              "sha256": "6948e3bba48fb6614babaf4f1528ff652dbdaef50909765b811c57bee0be1170"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "IoU 0.922；九首虎身坐像+须弥座，铜甲、朱缨、积雪冰挂；正背侧一致，LOD2 远看九首轮廓仍在",
+            "time": "2026-10-11 00:55:40"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:55:42",
+          "files": {
+            "SM_Tripo_FrostKaiming.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostKaiming.glb",
+              "sha256": "08dc35956201b4871467881d681ccaf25277e2ab8c9ec5ed7d0e2054c931393b"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_FrostKaiming.glb"
+        }
+      ]
+    }
+  }
+}

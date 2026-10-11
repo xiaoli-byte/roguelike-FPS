@@ -1,10 +1,12 @@
 /**
- * Boss 注册：三章 Boss（boss_colossus / boss_matriarch / boss_warlord）
+ * Boss 注册：三章 Boss（boss_colossus / boss_matriarch / boss_warlord）、第二章新首领鲲鹏（boss_kunpeng，
+ * V2 关卡「北冥冰台」使用；LD-03 旧关卡仍由 bossIdForChapter 刷旧首领）
  * 以及妖后召唤的寒霜冰晶（boss_ice_crystal，非 Boss，仅由妖后召唤）。
  */
 import { registerEnemy } from '../Registry';
 import { Colossus, COLOSSUS_DEF } from './Colossus';
 import { CRYSTAL_DEF, IceCrystal } from './IceCrystal';
+import { KunPeng, KUNPENG_DEF } from './KunPeng';
 import { Matriarch, MATRIARCH_DEF } from './Matriarch';
 import { Warlord, WARLORD_DEF } from './Warlord';
 
@@ -13,6 +15,7 @@ export function registerBosses(): void {
   registerEnemy(MATRIARCH_DEF, (ctx, opts) => new Matriarch(ctx, opts));
   registerEnemy(WARLORD_DEF, (ctx, opts) => new Warlord(ctx, opts));
   registerEnemy(CRYSTAL_DEF, (ctx, opts) => new IceCrystal(ctx, opts));
+  registerEnemy(KUNPENG_DEF, (ctx, opts) => new KunPeng(ctx, opts));
 }
 
 /** 第 chapter 章（0-based）的 Boss 敌人 id */

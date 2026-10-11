@@ -1,0 +1,117 @@
+{
+  "steps": {
+    "导入清理": 22.5,
+    "对齐": 1.5,
+    "低模与 UV": 36.3,
+    "投影着色": 145.4,
+    "烘焙": 11.4,
+    "LOD": 0.1,
+    "导出": 1.3
+  },
+  "highpoly": {
+    "faces_raw": 2918456,
+    "faces": 1222976,
+    "verts": 1222456,
+    "loose_parts": 30,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00491,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.818,
+    "iou_per_view": {
+      "front": 0.904,
+      "left": 0.703,
+      "back": 0.912,
+      "right": 0.709
+    },
+    "height_m": 3.5503,
+    "blockout_height_m": 3.6
+  },
+  "uv": {
+    "smart_islands": 1422,
+    "charts": 349,
+    "fallback_charts": 79,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.041,
+    "density_merged": 0.0567
+  },
+  "projection": {
+    "uncovered_ratio": 0.6302
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Tripo_FrostPrayerTent_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_FrostPrayerTent_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_FrostPrayerTent_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostPrayerTent_LOD0",
+      "tris": 2983,
+      "verts": 980,
+      "uv_min": [
+        0.005676988046616316,
+        0.005482905078679323
+      ],
+      "uv_max": [
+        0.9885029792785645,
+        0.9945181608200073
+      ],
+      "uv_utilization": 0.326,
+      "bbox_min": [
+        -1.9233,
+        -1.5434,
+        0.0248
+      ],
+      "bbox_max": [
+        1.9272,
+        1.0826,
+        3.3864
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostPrayerTent_LOD1",
+      "tris": 2800,
+      "verts": 846,
+      "uv_min": [
+        0.005676988046616316,
+        0.005482905078679323
+      ],
+      "uv_max": [
+        0.9885029792785645,
+        0.9945181608200073
+      ],
+      "uv_utilization": 0.303,
+      "bbox_min": [
+        -1.725,
+        -1.5,
+        0.0248
+      ],
+      "bbox_max": [
+        1.7512,
+        1.0826,
+        3.2992
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostPrayerTent/04_export/SM_Tripo_FrostPrayerTent_v001.glb",
+    "bytes": 586492
+  },
+  "blend": "art/source/props/SM_Tripo_FrostPrayerTent/03_work/SM_Tripo_FrostPrayerTent_v001.blend",
+  "total_seconds": 218.4,
+  "_seconds": 225.0
+}

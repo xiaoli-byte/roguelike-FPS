@@ -1,0 +1,117 @@
+{
+  "steps": {
+    "导入清理": 5.5,
+    "对齐": 1.5,
+    "低模与 UV": 19.0,
+    "投影着色": 39.0,
+    "烘焙": 8.3,
+    "LOD": 0.0,
+    "导出": 1.2
+  },
+  "highpoly": {
+    "faces_raw": 1014826,
+    "faces": 544162,
+    "verts": 544114,
+    "loose_parts": 19,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00492,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.871,
+    "iou_per_view": {
+      "front": 0.935,
+      "left": 0.764,
+      "back": 0.951,
+      "right": 0.8
+    },
+    "height_m": 1.72,
+    "blockout_height_m": 1.8
+  },
+  "uv": {
+    "smart_islands": 793,
+    "charts": 146,
+    "fallback_charts": 19,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.1228,
+    "density_merged": 0.1708
+  },
+  "projection": {
+    "uncovered_ratio": 0.4319
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Tripo_FrostJadeHoard_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_FrostJadeHoard_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_FrostJadeHoard_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostJadeHoard_LOD0",
+      "tris": 2998,
+      "verts": 1452,
+      "uv_min": [
+        0.0036405003629624844,
+        0.0036404577549546957
+      ],
+      "uv_max": [
+        0.9768866896629333,
+        0.9963595271110535
+      ],
+      "uv_utilization": 0.604,
+      "bbox_min": [
+        -1.3799,
+        -0.9516,
+        0.0027
+      ],
+      "bbox_max": [
+        1.4358,
+        0.722,
+        1.7188
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostJadeHoard_LOD1",
+      "tris": 999,
+      "verts": 450,
+      "uv_min": [
+        0.0036461998242884874,
+        0.0036404577549546957
+      ],
+      "uv_max": [
+        0.9768866896629333,
+        0.9963595271110535
+      ],
+      "uv_utilization": 0.518,
+      "bbox_min": [
+        -1.3562,
+        -0.9295,
+        0.0011
+      ],
+      "bbox_max": [
+        1.446,
+        0.7351,
+        1.7242
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostJadeHoard/04_export/SM_Tripo_FrostJadeHoard_v001.glb",
+    "bytes": 331508
+  },
+  "blend": "art/source/props/SM_Tripo_FrostJadeHoard/03_work/SM_Tripo_FrostJadeHoard_v001.blend",
+  "total_seconds": 74.6,
+  "_seconds": 81.7
+}

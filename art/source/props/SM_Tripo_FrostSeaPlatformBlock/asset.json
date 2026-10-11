@@ -1,0 +1,614 @@
+{
+  "id": "SM_Tripo_FrostSeaPlatformBlock",
+  "display": "冰砖台模块（备选 C）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 17:41:22",
+          "files": {
+            "BO_SM_Tripo_FrostSeaPlatformBlock_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostSeaPlatformBlock_v001.json",
+              "sha256": "61522887108d5c2c607cff6dec04ce48089fcc5c566f3a2711b964fd86c894f8"
+            },
+            "BO_SM_Tripo_FrostSeaPlatformBlock_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostSeaPlatformBlock_v001_views.json",
+              "sha256": "b871370502efdd40c84ea83510792b17ca3cc4cc285c593dbf81ef95edb114fa"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost_c.v2.platformBlock"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.0,
+              0,
+              -2.0
+            ],
+            "max": [
+              2.0,
+              3.0,
+              2.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 17:42:17",
+          "files": {
+            "CN_SM_Tripo_FrostSeaPlatformBlock_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaPlatformBlock_v001_source.png",
+              "sha256": "653fe1a9d7cda647ce85f8265df6ae6177f63ac345fc61fe92b502ff6cc3fffe"
+            },
+            "CN_SM_Tripo_FrostSeaPlatformBlock_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaPlatformBlock_v001_front.png",
+              "sha256": "8864be350755cac26055f6d5a56138683252b8e291458b0e99d4fe5c9db2a62b"
+            },
+            "CN_SM_Tripo_FrostSeaPlatformBlock_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaPlatformBlock_v001_left.png",
+              "sha256": "926fc7ff4836a710898805ff0df537f7f1cb578e64ee41899c6c553d8cd198f2"
+            },
+            "CN_SM_Tripo_FrostSeaPlatformBlock_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaPlatformBlock_v001_back.png",
+              "sha256": "f416b197b9e088d8580bf0d915e4d55bf2e799b6f6eaf886ccbe2556bf54367e"
+            },
+            "CN_SM_Tripo_FrostSeaPlatformBlock_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaPlatformBlock_v001_right.png",
+              "sha256": "ad68695b1f023d0d039205ea10441db7ee50e799748fd59cd3aae26c09108c81"
+            },
+            "CN_SM_Tripo_FrostSeaPlatformBlock_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaPlatformBlock_v001_sheet.png",
+              "sha256": "09a2320292351add5a946758c4349384f75eea1ce248a234b46761cddb0b1e54"
+            },
+            "CN_SM_Tripo_FrostSeaPlatformBlock_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaPlatformBlock_v001_prompt.txt",
+              "sha256": "06f5e028fccaa96fca6bd29c2c3d399b85acfb60c9786e202315209f751b6464"
+            },
+            "CN_SM_Tripo_FrostSeaPlatformBlock_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaPlatformBlock_v001_registration.json",
+              "sha256": "7d73c4e8ea3c94c49a16d63a15821455c6d72869bf05bb366927f3e0cf6ba7a5"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-5.6-terra",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-5.6-terra",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "attempt": 1,
+            "seconds": 52.4
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian frozen polar sea fantasy from the Zhuangzi's northern darkness: faceted glacier ice and dark ink-blue rock, weathered ivory whale bone, old dark ship timber with faded teal paint, frozen ropes, felt and a cold aqua deep-sea glow, thick soft snow caps and chunky icicles. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (4m wide x 3m tall x 4m deep): A square raised platform module 4m wide, 3m tall, 4m deep for tiling into large terraces: big cut blocks of glacier-blue ice and dark stone stacked like masonry, the top paved with flat stones under an even layer of snow. All four sides finished identically so modules tile edge to edge.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "653fe1a9d7cda647ce85f8265df6ae6177f63ac345fc61fe92b502ff6cc3fffe",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.7157769161944527,
+              "offset": [
+                84,
+                340
+              ],
+              "size": [
+                344,
+                343
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7172743574417214,
+              "offset": [
+                96,
+                340
+              ],
+              "size": [
+                320,
+                343
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7113218731475992,
+              "offset": [
+                85,
+                340
+              ],
+              "size": [
+                341,
+                343
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7172743574417214,
+              "offset": [
+                97,
+                340
+              ],
+              "size": [
+                318,
+                343
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "四视图同一物件、朝向正确、无裁切、雪盖未被抠掉；转 Hunyuan3D 2mv 多视图建模（2026-10-11）",
+            "time": "2026-10-11 00:35:17"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:28:33",
+          "files": {
+            "HP_SM_Tripo_FrostSeaPlatformBlock_v001_input.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaPlatformBlock_v001_input.png",
+              "sha256": "832cb43177b7537fdc1eca5f6ca2ce41ba5f7f3e47917e56fae2b7f86b83f5f6"
+            },
+            "HP_SM_Tripo_FrostSeaPlatformBlock_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaPlatformBlock_v001.glb",
+              "sha256": "e3c6f3e8f249f3c47b4ff595fb9df39b344b4e9ee24dee2d2c452cd483937124"
+            },
+            "HP_SM_Tripo_FrostSeaPlatformBlock_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaPlatformBlock_v001_graph.json",
+              "sha256": "c7f05013520f1a0aa3ae526a7f7de30659b5c4243a4b0d7e0bea437da6b5bde2"
+            }
+          },
+          "from_concept": 1,
+          "mode": "single",
+          "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+          "checkpoint": "hunyuan_3d_v2.1.safetensors",
+          "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "crop": [
+              84,
+              340,
+              428,
+              683
+            ],
+            "scale": 2.530232558139535,
+            "offset": [
+              77,
+              78
+            ]
+          },
+          "seconds": 160.2,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 19.5
+        },
+        {
+          "version": 2,
+          "created": "2026-10-11 01:35:32",
+          "files": {
+            "HP_SM_Tripo_FrostSeaPlatformBlock_v002_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaPlatformBlock_v002_input_front.png",
+              "sha256": "6c55fed5a04a5380906b90b73fbc85ef1354f32fceaa3a3ab968b00687a6c1fe"
+            },
+            "HP_SM_Tripo_FrostSeaPlatformBlock_v002_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaPlatformBlock_v002_input_left.png",
+              "sha256": "58acd2bdf5da8c5175085e47b7b80fb83bd09bbbfbc45cc7450666a3073930ca"
+            },
+            "HP_SM_Tripo_FrostSeaPlatformBlock_v002_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaPlatformBlock_v002_input_back.png",
+              "sha256": "21c3318f0af61cea9fc7136c7bda355bafe9d1a3b94e4f7652978ffce278d055"
+            },
+            "HP_SM_Tripo_FrostSeaPlatformBlock_v002_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaPlatformBlock_v002_input_right.png",
+              "sha256": "39a1b56426ff3a459b93bec4ca6a959bac4e0a3716be55cc3cd2c387f1d38216"
+            },
+            "HP_SM_Tripo_FrostSeaPlatformBlock_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaPlatformBlock_v002.glb",
+              "sha256": "a3ae621ff4f338b7b979ca4d0a1a71bd2614229f7e429b5f1f900078e7010f58"
+            },
+            "HP_SM_Tripo_FrostSeaPlatformBlock_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaPlatformBlock_v002_graph.json",
+              "sha256": "77c1487a7504bd51515cc566ef48d4a3b46f85fc4c62a5e323540f10fc3f667b"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              54,
+              310,
+              458,
+              713
+            ],
+            "scale": 2.5346534653465347
+          },
+          "seconds": 294.4,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 81.4
+        },
+        {
+          "version": 3,
+          "created": "2026-10-11 01:50:42",
+          "files": {
+            "HP_SM_Tripo_FrostSeaPlatformBlock_v003_input.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaPlatformBlock_v003_input.png",
+              "sha256": "832cb43177b7537fdc1eca5f6ca2ce41ba5f7f3e47917e56fae2b7f86b83f5f6"
+            },
+            "HP_SM_Tripo_FrostSeaPlatformBlock_v003.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaPlatformBlock_v003.glb",
+              "sha256": "60fe3963ad38df35fe3c4ecd8a3fbfb2181bf24c4a500828a1a7a313372386b5"
+            },
+            "HP_SM_Tripo_FrostSeaPlatformBlock_v003_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaPlatformBlock_v003_graph.json",
+              "sha256": "b1ee573a61526064ae274c15b039f4ba003e4903d4c449ea3cf1aec7066fa3be"
+            }
+          },
+          "from_concept": 1,
+          "mode": "single",
+          "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+          "checkpoint": "hunyuan_3d_v2.1.safetensors",
+          "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261011,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "crop": [
+              84,
+              340,
+              428,
+              683
+            ],
+            "scale": 2.530232558139535,
+            "offset": [
+              77,
+              78
+            ]
+          },
+          "seconds": 293.2,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 32.9
+        }
+      ]
+    },
+    "build": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:29:46",
+          "files": {
+            "SM_Tripo_FrostSeaPlatformBlock_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostSeaPlatformBlock_v001.blend",
+              "sha256": "fec97af4d88d8d557d984a95d36d2eac8d7197998b06a961da36ba2e58d0712e"
+            },
+            "SM_Tripo_FrostSeaPlatformBlock_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostSeaPlatformBlock_v001.glb",
+              "sha256": "307df59430006d7630a35da6183b9d3731abe8133476f3f506b8789d425cd182"
+            },
+            "SM_Tripo_FrostSeaPlatformBlock_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostSeaPlatformBlock_v001_metrics.json",
+              "sha256": "20a006fd6d879cc1210e6e9cc30f98b33c462b558a30536ec704cd6c68bc07dc"
+            },
+            "T_Tripo_FrostSeaPlatformBlock_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaPlatformBlock_BC.png",
+              "sha256": "2808191024ae2b8372ec1f4991fd7c684f40ef53135f367a10e860bee8d50d16"
+            },
+            "T_Tripo_FrostSeaPlatformBlock_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaPlatformBlock_N.png",
+              "sha256": "73111176f799246412f7c7df143e6e7d64e808372a8b25b5d0c30c1b9563d922"
+            },
+            "T_Tripo_FrostSeaPlatformBlock_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaPlatformBlock_ORM.png",
+              "sha256": "20f5902053f902890ee74445b68abc791331087539b0e03f0d63036b4efcea17"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.673,
+          "uncovered_ratio": 0.6365,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1452
+            },
+            {
+              "tris": 1000,
+              "verts": 452
+            }
+          ],
+          "export_kb": 251.2,
+          "seconds": 70.9,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-11 01:45:35",
+          "files": {
+            "SM_Tripo_FrostSeaPlatformBlock_v002.blend": {
+              "path": "03_work/SM_Tripo_FrostSeaPlatformBlock_v002.blend",
+              "sha256": "75c89803972b7eed39f1fe992687d784771b26acce98246ec0460e2eec9a8634"
+            },
+            "SM_Tripo_FrostSeaPlatformBlock_v002.glb": {
+              "path": "04_export/SM_Tripo_FrostSeaPlatformBlock_v002.glb",
+              "sha256": "825d2690ea45b3b9b61ebd2fd4bf542bd695f95899381df9a97450a2050f926a"
+            },
+            "SM_Tripo_FrostSeaPlatformBlock_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostSeaPlatformBlock_v002_metrics.json",
+              "sha256": "a4dfc8d42bf302a808d173135a6cea3bbbc5c68b80da6e4c651975583df50d67"
+            },
+            "T_Tripo_FrostSeaPlatformBlock_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostSeaPlatformBlock_BC.png",
+              "sha256": "04d2acc46bd3fd9da910d65e6493bba03a8da1a5929e37f92c0d7ea88a49e5e2"
+            },
+            "T_Tripo_FrostSeaPlatformBlock_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostSeaPlatformBlock_N.png",
+              "sha256": "e18ed298a87587b5ae47436c942c143165f69709b988b758e0d2bb9a6fe5712e"
+            },
+            "T_Tripo_FrostSeaPlatformBlock_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostSeaPlatformBlock_ORM.png",
+              "sha256": "00557d40649c1f1e326995b591d516a0d162b9b9a7ea553ae5802eebfa307fe5"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.804,
+          "uncovered_ratio": 0.7209,
+          "lods": [
+            {
+              "tris": 4787,
+              "verts": 1729
+            },
+            {
+              "tris": 4578,
+              "verts": 1497
+            }
+          ],
+          "export_kb": 682.6,
+          "seconds": 303.9,
+          "bake_device": "CPU",
+          "quality_status": "failed",
+          "quality_errors": [
+            "LOD0 面数",
+            "场景脚底落地",
+            "LOD1 面数"
+          ]
+        },
+        {
+          "version": 3,
+          "created": "2026-10-11 02:02:59",
+          "files": {
+            "SM_Tripo_FrostSeaPlatformBlock_v003.blend": {
+              "path": "03_work/SM_Tripo_FrostSeaPlatformBlock_v003.blend",
+              "sha256": "1083b9ec3b8c79c27374b6549705120eb1ace558e5cdcb7ceebfdb2c9f798df7"
+            },
+            "SM_Tripo_FrostSeaPlatformBlock_v003.glb": {
+              "path": "04_export/SM_Tripo_FrostSeaPlatformBlock_v003.glb",
+              "sha256": "2f4b28c65a240a0c58e81d04e5e196efede3a78039977254fd354bc4358da4dc"
+            },
+            "SM_Tripo_FrostSeaPlatformBlock_v003_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostSeaPlatformBlock_v003_metrics.json",
+              "sha256": "4503856d4a9ede70c1cc9c725b3959e8a8a0a94258292885af4f827f8ec0a4c1"
+            },
+            "T_Tripo_FrostSeaPlatformBlock_BC.png": {
+              "path": "03_work/textures_v003/T_Tripo_FrostSeaPlatformBlock_BC.png",
+              "sha256": "adec9cfe82e0b6decf93781b15a4de15f2b5e503cf5907e53798ed020828e5f6"
+            },
+            "T_Tripo_FrostSeaPlatformBlock_N.png": {
+              "path": "03_work/textures_v003/T_Tripo_FrostSeaPlatformBlock_N.png",
+              "sha256": "0555794e20990fbf6f14f5eeb076135d1af2b55d079b40244abd1ae470e6b73d"
+            },
+            "T_Tripo_FrostSeaPlatformBlock_ORM.png": {
+              "path": "03_work/textures_v003/T_Tripo_FrostSeaPlatformBlock_ORM.png",
+              "sha256": "58bd81df8c6024fc2c6f64a4573978f3b0054bceaa8ce5e04b2e194f04e9b302"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 3,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.744,
+          "uncovered_ratio": 0.5512,
+          "lods": [
+            {
+              "tris": 2995,
+              "verts": 1368
+            },
+            {
+              "tris": 1000,
+              "verts": 358
+            }
+          ],
+          "export_kb": 411.8,
+          "seconds": 147.5,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 4,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:29:46",
+          "files": {
+            "SM_Tripo_FrostSeaPlatformBlock_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostSeaPlatformBlock_v001_validation_v001.json",
+              "sha256": "a02e073fd713eceb312a54cf060d32a1dea85794258cf8b5648b1ed924107cc3"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 4,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-11 01:45:36",
+          "files": {
+            "SM_Tripo_FrostSeaPlatformBlock_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_FrostSeaPlatformBlock_v002_validation_v002.json",
+              "sha256": "5ae71732c3e68286ce068ef4c0b9583defa91051f046a9fbb6d440a2f27b1f11"
+            }
+          },
+          "from_build": 2,
+          "errors": 3,
+          "warnings": 3,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 3,
+          "created": "2026-10-11 02:02:59",
+          "files": {
+            "SM_Tripo_FrostSeaPlatformBlock_v003_validation_v003.json": {
+              "path": "05_review/SM_Tripo_FrostSeaPlatformBlock_v003_validation_v003.json",
+              "sha256": "c5d5fddfdce1e83a3e60ae7a0f5fa8192b01260757a4b603a8f0680f21dde0f7"
+            }
+          },
+          "from_build": 3,
+          "errors": 1,
+          "warnings": 4,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 4,
+          "created": "2026-10-11 02:07:39",
+          "files": {
+            "SM_Tripo_FrostSeaPlatformBlock_v003_validation_v004.json": {
+              "path": "05_review/SM_Tripo_FrostSeaPlatformBlock_v003_validation_v004.json",
+              "sha256": "2ebe04b7c1a654a32acd0ecab21021abb2d49cc102bc9e34e756e6f8104b70b4"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 4,
+          "waived": [
+            "场景脚底落地"
+          ],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:29:54",
+          "files": {
+            "SM_Tripo_FrostSeaPlatformBlock_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostSeaPlatformBlock_v001_review_v001.png",
+              "sha256": "537c138e15b48a8188821ecf252692a6d0ea4be829838bb22e29d83551065e76"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-11 02:07:47",
+          "files": {
+            "SM_Tripo_FrostSeaPlatformBlock_v003_review_v002.png": {
+              "path": "05_review/SM_Tripo_FrostSeaPlatformBlock_v003_review_v002.png",
+              "sha256": "b5d2a2caa8d81fb89fef1d4c53450e8e5ca23206df76ba7fcbd9493b12685758"
+            }
+          },
+          "from_build": 3,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "build v003（Hunyuan 2.1 单视图，种子 20261011）：冰砖+墨石+绳箍立柱，四面一致；四角多出浅色柱面（投影盲区补色），已知问题；2mv 版 v002 为薄壳（LOD0 都减不到预算）、单视图 v001 侧面糊白，弃用；脚底 2.9 cm 豁免",
+            "time": "2026-10-11 02:08:24"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 02:08:25",
+          "files": {
+            "SM_Tripo_FrostSeaPlatformBlock.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostSeaPlatformBlock.glb",
+              "sha256": "2f4b28c65a240a0c58e81d04e5e196efede3a78039977254fd354bc4358da4dc"
+            }
+          },
+          "from_build": 3,
+          "url": "assets/props/SM_Tripo_FrostSeaPlatformBlock.glb"
+        }
+      ]
+    }
+  }
+}

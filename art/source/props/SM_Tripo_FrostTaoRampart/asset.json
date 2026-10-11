@@ -1,0 +1,173 @@
+{
+  "id": "SM_Tripo_FrostTaoRampart",
+  "display": "道观雪崖木墙段（备选 B）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 16:41:51",
+          "files": {
+            "BO_SM_Tripo_FrostTaoRampart_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostTaoRampart_v001.json",
+              "sha256": "4cf86252a2d14868449ee7407fb856ac3a8417884d2286aee25186d4edf1a226"
+            },
+            "BO_SM_Tripo_FrostTaoRampart_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostTaoRampart_v001_views.json",
+              "sha256": "2f9f4e3f48073e1886c4037f3c5f96d24b07a31515c2eb85afe54c0039cdbca2"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost_b.v2.rampart"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -4.0,
+              0,
+              -1.5
+            ],
+            "max": [
+              4.0,
+              9.0,
+              1.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 16:42:22",
+          "files": {
+            "CN_SM_Tripo_FrostTaoRampart_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoRampart_v001_source.png",
+              "sha256": "46f500ac9c928e10edb41f054b0a77db0f502c9e4826dc2ccad65b41ae51fd4a"
+            },
+            "CN_SM_Tripo_FrostTaoRampart_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoRampart_v001_front.png",
+              "sha256": "b1cb5769d0cabe44cf36cf54effacfa02330fa57635bc3ef28b0ab53d33a8760"
+            },
+            "CN_SM_Tripo_FrostTaoRampart_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoRampart_v001_left.png",
+              "sha256": "d8cb273cb006878d875ada712c3ee78c6c3e7f19b8261475c38bc6c3862e1f61"
+            },
+            "CN_SM_Tripo_FrostTaoRampart_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoRampart_v001_back.png",
+              "sha256": "60a4e02abfbbe9f000b4d24a49475174bf4113690e2682caa8a84d92ae9112ff"
+            },
+            "CN_SM_Tripo_FrostTaoRampart_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoRampart_v001_right.png",
+              "sha256": "2c6337b2c533f8df7234c5c06c26a698d2fcbe653167cf1d5b9d706c20db3671"
+            },
+            "CN_SM_Tripo_FrostTaoRampart_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoRampart_v001_sheet.png",
+              "sha256": "828eedbc00e7bea30100821536baf4405bb4429b8cf98103c5b9b2d24f77bec5"
+            },
+            "CN_SM_Tripo_FrostTaoRampart_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoRampart_v001_prompt.txt",
+              "sha256": "81b2f138fbfadef1a2298654d3384ca5ceace0df73bf22509d035a6e0ae48fbe"
+            },
+            "CN_SM_Tripo_FrostTaoRampart_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostTaoRampart_v001_registration.json",
+              "sha256": "c194242da8f9d0a0577af170cd74cb207375e65c2bc0c7be5c82cbda780a4d91"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 534,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 534
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1714
+            },
+            "request_id": "req_9d13cf3f8c6248d19057cfd5e774c7b2",
+            "seconds": 30.1
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Taoist cliff abbey fantasy in the style of the Hanging Temple: dark weathered timber frames, cinnabar-red lacquered posts, slate-grey tiled roofs with upturned eaves, yellow paper talismans, verdigris bronze fittings, thick soft snow caps and a few chunky icicles. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (8m wide x 9m tall x 3m deep): A tileable Taoist cliff-abbey outer wall section 8m wide, 9m tall, 3m deep: a battered base of rough grey cliff stone, a timber-framed upper wall of white lime plaster between dark weathered timber posts and beams, a row of dark lattice windows in the plaster (solid, not see-through), and a short slate-grey tiled coping roof with upturned ends along the top; two cinnabar-red lacquered posts. Thick snow on the coping roof and the stone ledge, a few chunky icicles under the eaves, one frayed yellow talisman pasted on the plaster. Both side ends are flat cut faces so identical sections join seamlessly in a row. Solid wall with no openings.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "46f500ac9c928e10edb41f054b0a77db0f502c9e4826dc2ccad65b41ae51fd4a",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.6551410373066423,
+              "offset": [
+                29,
+                255
+              ],
+              "size": [
+                454,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6584964331443204,
+              "offset": [
+                192,
+                255
+              ],
+              "size": [
+                127,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6568144499178981,
+              "offset": [
+                28,
+                255
+              ],
+              "size": [
+                456,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.6584964331443204,
+              "offset": [
+                193,
+                255
+              ],
+              "size": [
+                126,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

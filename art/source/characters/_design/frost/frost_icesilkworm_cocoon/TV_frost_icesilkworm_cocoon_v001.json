@@ -1,0 +1,38 @@
+{
+  "design": {
+    "key": "frost_icesilkworm_cocoon",
+    "chapter": "frost",
+    "name": "冰蚕·冻茧",
+    "layout": "prop",
+    "reference_key": "frost_icesilkworm",
+    "height_m": 1.4,
+    "brief": "The ice silkworm's healing form, modelled separately: the larva wrapped in its frozen cocoon.",
+    "turnaround_lead": "the ice silkworm wrapped inside its frozen healing cocoon",
+    "turnaround_pose": ", lying on the ground: a fat elongated oval cocoon about 3 m long made of thick shining frost-silk wound around it as a few broad wrapped bands, pale moon-white with a cold blue sheen, the silkworm's two short black horns poking out at the front end, a faint inner light painted as opaque pale cyan patches between the bands (no halo, no particles)",
+    "turnaround_digits": "The whole cocoon and both horns fully inside the frame; in the side views the long cocoon must fit inside the view with margin."
+  },
+  "from_sheet": "DS_frost_icesilkworm_v001.png",
+  "generation": {
+    "provider": "openai",
+    "endpoint": "images/edits",
+    "model": "gpt-image-2.5-sunburst",
+    "size": "2048x1024",
+    "quality": "high",
+    "background": "opaque",
+    "usage": {
+      "input_tokens": 1801,
+      "input_tokens_details": {
+        "image_tokens": 1458,
+        "text_tokens": 343
+      },
+      "output_tokens": 1180,
+      "output_tokens_details": {
+        "image_tokens": 1180,
+        "text_tokens": 0
+      },
+      "total_tokens": 2981
+    },
+    "request_id": "req_daee215bc6624304a5d0114c7d620333",
+    "seconds": 68.4
+  }
+}

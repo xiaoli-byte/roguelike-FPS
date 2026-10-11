@@ -1,0 +1,482 @@
+{
+  "id": "SM_Tripo_FrostStairs",
+  "display": "白玉台阶（V2）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 13:37:33",
+          "files": {
+            "BO_SM_Tripo_FrostStairs_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostStairs_v001.json",
+              "sha256": "21e3e61e866673df6ad4a88843c8af8db3524436b8b58bab0d5a30ba30570929"
+            },
+            "BO_SM_Tripo_FrostStairs_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostStairs_v001_views.json",
+              "sha256": "85be5034e4c1bfbd7693564767968e0a0c71f55fbc30fd8c2aa75a88429b43d6"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost.v2.stairs"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.0,
+              0,
+              -2.3
+            ],
+            "max": [
+              2.0,
+              3.0,
+              2.3
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 13:37:58",
+          "files": {
+            "CN_SM_Tripo_FrostStairs_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostStairs_v001_source.png",
+              "sha256": "24043a746478306549903b8ab4a6e8c092e477d2244f2e0b89b52e33455120c7"
+            },
+            "CN_SM_Tripo_FrostStairs_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostStairs_v001_front.png",
+              "sha256": "2e2d525f9f06ac85fb23c574f6646294a26f743fe54896a4211f77fd0c04d6a5"
+            },
+            "CN_SM_Tripo_FrostStairs_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostStairs_v001_left.png",
+              "sha256": "91492258e879b59c3dd000951776a1351bee9beb0be916ac8009c93470c39e3e"
+            },
+            "CN_SM_Tripo_FrostStairs_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostStairs_v001_back.png",
+              "sha256": "9cdf22da9654c447748c41d3abe575be15ac5e8dff98885dfb99f71131a31d8c"
+            },
+            "CN_SM_Tripo_FrostStairs_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostStairs_v001_right.png",
+              "sha256": "b3f4fcdff24249cda5c884b48779d17c11efd0c2a848661dfbbd291d63531443"
+            },
+            "CN_SM_Tripo_FrostStairs_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostStairs_v001_sheet.png",
+              "sha256": "cc7821220bef4df7ddbf8d186bcb68ce9e55989a02ce4e255b98ea442b06cfd4"
+            },
+            "CN_SM_Tripo_FrostStairs_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostStairs_v001_prompt.txt",
+              "sha256": "ce72da158ba36d41128ff42e5cb28a0c4972336f100ebcb9cf557a78355f5422"
+            },
+            "CN_SM_Tripo_FrostStairs_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostStairs_v001_registration.json",
+              "sha256": "26f0f5dd331901e647d0665aa2e634d86d26d293cde5cf4d3eb770a319c5b0eb"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 448,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 448
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1628
+            },
+            "request_id": "req_0140104c33aa4a3d8d3be989938b5ddb",
+            "seconds": 23.9
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (4m wide x 3m tall x 4.6m deep): A straight flight of white jade stone steps 4m wide, rising 3m over a 4.6m run, with low solid stone side cheeks topped by small carved cloud-scroll end posts; the steps are wide and even with a thin layer of snow on each tread and packed snow along the cheeks. Pale stone with a faint jade tint. One solid connected piece, open at the top and bottom.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "24043a746478306549903b8ab4a6e8c092e477d2244f2e0b89b52e33455120c7",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.768393417429724,
+              "offset": [
+                76,
+                363
+              ],
+              "size": [
+                359,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.8168127286650217,
+              "offset": [
+                72,
+                363
+              ],
+              "size": [
+                368,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.8190567196778377,
+              "offset": [
+                92,
+                363
+              ],
+              "size": [
+                328,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.8168127286650217,
+              "offset": [
+                72,
+                363
+              ],
+              "size": [
+                368,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-07 13:40:49",
+          "files": {
+            "CN_SM_Tripo_FrostStairs_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostStairs_v002_source.png",
+              "sha256": "24043a746478306549903b8ab4a6e8c092e477d2244f2e0b89b52e33455120c7"
+            },
+            "CN_SM_Tripo_FrostStairs_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostStairs_v002_front.png",
+              "sha256": "08e57e7803ea75352ce76df89b393e5755142748fb29dc3aa6465cd4932ae9e1"
+            },
+            "CN_SM_Tripo_FrostStairs_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostStairs_v002_left.png",
+              "sha256": "1eb4740f3c56e46e2910917ec7645b721b4c63a8a284c2630b2eda77b109bd11"
+            },
+            "CN_SM_Tripo_FrostStairs_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostStairs_v002_back.png",
+              "sha256": "464cab16af9c60b1f87f48f54aa4e4d2d5a4dc17296e9e19216e785d123ad1e9"
+            },
+            "CN_SM_Tripo_FrostStairs_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostStairs_v002_right.png",
+              "sha256": "2cfbafa6e124f787a2a2300f6561bf30b9063813913b5853fac9154f26220c58"
+            },
+            "CN_SM_Tripo_FrostStairs_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostStairs_v002_sheet.png",
+              "sha256": "ce8777d5a52519182b95c3493d3dce7ca6ec2698e8697850635844b9800b8d60"
+            },
+            "CN_SM_Tripo_FrostStairs_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostStairs_v002_prompt.txt",
+              "sha256": "ce72da158ba36d41128ff42e5cb28a0c4972336f100ebcb9cf557a78355f5422"
+            },
+            "CN_SM_Tripo_FrostStairs_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostStairs_v002_registration.json",
+              "sha256": "d5e90de11fb9bb702bb8c056c425c36cd50026e3de9822a5eb4508a56df31e59"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 448,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 448
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1628
+            },
+            "request_id": "req_0140104c33aa4a3d8d3be989938b5ddb",
+            "seconds": 23.9,
+            "rekeyed_from": 1
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (4m wide x 3m tall x 4.6m deep): A straight flight of white jade stone steps 4m wide, rising 3m over a 4.6m run, with low solid stone side cheeks topped by small carved cloud-scroll end posts; the steps are wide and even with a thin layer of snow on each tread and packed snow along the cheeks. Pale stone with a faint jade tint. One solid connected piece, open at the top and bottom.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "24043a746478306549903b8ab4a6e8c092e477d2244f2e0b89b52e33455120c7",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.7664181130147376,
+              "offset": [
+                76,
+                363
+              ],
+              "size": [
+                360,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.8123614331409617,
+              "offset": [
+                72,
+                363
+              ],
+              "size": [
+                367,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.8101539292465568,
+              "offset": [
+                93,
+                363
+              ],
+              "size": [
+                326,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.8123614331409617,
+              "offset": [
+                72,
+                363
+              ],
+              "size": [
+                368,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "v002 四视图同一物件、无裁切、雪盖未被抠掉；转 Hunyuan3D 2mv 多视图建模（2026-10-11）",
+            "time": "2026-10-11 00:02:35"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:20:26",
+          "files": {
+            "HP_SM_Tripo_FrostStairs_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostStairs_v001_input_front.png",
+              "sha256": "5f454d802adf1bf199606df0e10732ec5bf87a202790a6a1b79e0450885c59aa"
+            },
+            "HP_SM_Tripo_FrostStairs_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostStairs_v001_input_left.png",
+              "sha256": "87417ab51100474b037b1cd39c4050c75a288734428323a198d893310e8427d8"
+            },
+            "HP_SM_Tripo_FrostStairs_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostStairs_v001_input_back.png",
+              "sha256": "833bc01b845bc16ee946b86481669050deaf24e1e4bbad91f8e7a67dcbbf412f"
+            },
+            "HP_SM_Tripo_FrostStairs_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostStairs_v001_input_right.png",
+              "sha256": "3c547b8ab13b3f1f1eb952cf7f38a526fa856f755024a44dc65cc58c86281d3a"
+            },
+            "HP_SM_Tripo_FrostStairs_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostStairs_v001.glb",
+              "sha256": "2017ed30f407cc7148c7d9e24c37e7e2cf0229eb150b0ba9eb8d97547af662fa"
+            },
+            "HP_SM_Tripo_FrostStairs_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostStairs_v001_graph.json",
+              "sha256": "498a870a722e9d64910ea7a2b388b45d58cf554ad99e7710960511d03f906b99"
+            }
+          },
+          "from_concept": 2,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              40,
+              296,
+              472,
+              728
+            ],
+            "scale": 2.3703703703703702
+          },
+          "seconds": 288.5,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 43.9
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:23:49",
+          "files": {
+            "SM_Tripo_FrostStairs_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostStairs_v001.blend",
+              "sha256": "39f1e864c7dcf8967609da1ed972abef88c296040fddf25b9ec638ffe91c87d7"
+            },
+            "SM_Tripo_FrostStairs_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostStairs_v001.glb",
+              "sha256": "ad1ff4690cff9d48f595f5895857b88f1638bf1d1e4ed9046ead2965c7b4166b"
+            },
+            "SM_Tripo_FrostStairs_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostStairs_v001_metrics.json",
+              "sha256": "de66ecc1a2dc767702cd634366842ce582e2a89ca8de0e74130501080bd76238"
+            },
+            "T_Tripo_FrostStairs_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostStairs_BC.png",
+              "sha256": "29c93989ffefd2a7ac5e5d54a0863763f7af44fae7f9cdb9dc4ed2045b67a914"
+            },
+            "T_Tripo_FrostStairs_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostStairs_N.png",
+              "sha256": "22357fe344b2ff7dfa1dfdad49fad63cc14616e70fa9dd3d0f1cf011e1068f25"
+            },
+            "T_Tripo_FrostStairs_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostStairs_ORM.png",
+              "sha256": "3f0de1afd37787c28829cb815fc44e8d72f0424c6ce7ca118dc6ac621c54b71b"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.857,
+          "uncovered_ratio": 0.6463,
+          "lods": [
+            {
+              "tris": 2999,
+              "verts": 1470
+            },
+            {
+              "tris": 1000,
+              "verts": 468
+            }
+          ],
+          "export_kb": 240.8,
+          "seconds": 201.8,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:23:50",
+          "files": {
+            "SM_Tripo_FrostStairs_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostStairs_v001_validation_v001.json",
+              "sha256": "d7600d27151bda76fed4db1fdbdbef7b622305a3d91cd8e205fda02bac4b0670"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:23:57",
+          "files": {
+            "SM_Tripo_FrostStairs_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostStairs_v001_review_v001.png",
+              "sha256": "4cd7820d24df27c9f248a2e01e46bece2b8d96e5cead2ddda328ac79cf159ad4"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "IoU 0.857；单向台阶，低端朝前、两侧护栏与云纹望柱完整，可走；背面平立面上投了概念背视图的台阶纹样（贴台基使用时看不到）",
+            "time": "2026-10-11 00:30:49"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:30:51",
+          "files": {
+            "SM_Tripo_FrostStairs.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostStairs.glb",
+              "sha256": "ad1ff4690cff9d48f595f5895857b88f1638bf1d1e4ed9046ead2965c7b4166b"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_FrostStairs.glb"
+        }
+      ]
+    }
+  }
+}

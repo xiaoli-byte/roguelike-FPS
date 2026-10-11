@@ -1,0 +1,42 @@
+{
+  "doc": "冰鲸（幼鲸，炮击）：Tripo 智能网格 P2.0（三角面 12000 档，Tripo 自带 UV，4K 底色图，未绑骨），自定义鲸形骨架。骨骼位置按网格切片实测（缩放落地后的米制：front = -Y，生物的左 = +X，up = +Z；高 2.6 米含背上的残鱼叉，体长约 4.8 米，前鳍展开约 3.7 米）。按真鲸解剖 + 海豹式的上岸爬行：脊柱 hips（躯干中段）→ chest → head，尾干 tail_1、tail_2 → fluke（尾鳍上翘）；前鳍 upperarm（肩→肘）→ forearm（肘→腕）→ hand（整片鳍掌平铺在冰上，刚性）；头顶喷气孔（单独网格岛）刚性锁在 blowhole 上（发光弱点壳）。背上的残鱼叉、藤壶是单独的小网格岛，按最近的身体顶点继承权重。",
+  "source": "art/source/_tripo_inbox/20261010T152209_SK_Enemy_IceWhale_smartmesh.fbx",
+  "task": "https://studio.tripo3d.ai/workspace/generate/1ac41b9f-12ca-48fa-8dea-6a662f127934",
+  "height_m": 2.6,
+  "bones": {
+    "root": { "head": [0, 0, 0], "tail": [0, 0, 0.3], "parent": null, "deform": false },
+    "hips": { "head": [0, 0.6, 0.95], "tail": [0, -0.3, 1.05], "parent": "root" },
+    "chest": { "head": [0, -0.3, 1.05], "tail": [0, -1.15, 1.1], "parent": "hips" },
+    "head": { "head": [0, -1.15, 1.1], "tail": [0, -2.3, 1.05], "parent": "chest" },
+    "blowhole": { "head": [0, -1.66, 1.95], "tail": [0, -1.66, 2.3], "parent": "head" },
+    "tail_1": { "head": [0, 0.6, 0.95], "tail": [0, 1.05, 0.85], "parent": "hips" },
+    "tail_2": { "head": [0, 1.05, 0.85], "tail": [0, 1.4, 0.95], "parent": "tail_1" },
+    "fluke": { "head": [0, 1.4, 0.95], "tail": [0, 2.25, 1.5], "parent": "tail_2" },
+    "upperarm_L": { "head": [0.62, -1.05, 0.95], "tail": [1.15, -1.2, 0.6], "parent": "chest" },
+    "forearm_L": { "head": [1.15, -1.2, 0.6], "tail": [1.38, -1.35, 0.25], "parent": "upperarm_L" },
+    "hand_L": { "head": [1.38, -1.35, 0.25], "tail": [1.6, -1.75, 0.06], "parent": "forearm_L" },
+    "upperarm_R": { "head": [-0.62, -1.05, 0.95], "tail": [-1.15, -1.2, 0.6], "parent": "chest" },
+    "forearm_R": { "head": [-1.15, -1.2, 0.6], "tail": [-1.38, -1.35, 0.25], "parent": "upperarm_R" },
+    "hand_R": { "head": [-1.38, -1.35, 0.25], "tail": [-1.6, -1.75, 0.06], "parent": "forearm_R" }
+  },
+  "limits": [
+    { "bones": ["upperarm_L", "forearm_L", "hand_L"], "box": [[0.55, -2.2, -0.05], [2.0, -0.6, 1.3]] },
+    { "bones": ["upperarm_R", "forearm_R", "hand_R"], "box": [[-2.0, -2.2, -0.05], [-0.55, -0.6, 1.3]] },
+    { "bones": ["forearm_L", "hand_L", "forearm_R", "hand_R"], "box": [[-2.0, -2.2, -0.05], [2.0, -0.6, 0.85]] },
+    { "bones": ["tail_1", "tail_2", "fluke"], "box": [[-1.2, 0.4, 0.0], [1.2, 2.5, 2.1]] },
+    { "bones": ["fluke"], "box": [[-1.2, 1.2, 0.0], [1.2, 2.5, 2.1]] },
+    { "bones": ["head"], "box": [[-1.0, -2.5, 0.0], [1.0, -0.95, 2.4]] },
+    { "bones": ["blowhole"], "box": [[0, 0, 9], [0, 0, 9]] }
+  ],
+  "rigid": [
+    { "bone": "blowhole", "box": [[-0.27, -1.93, 1.93], [0.27, -1.39, 2.33]] },
+    { "bone": "hand_L", "box": [[0.92, -2.15, -0.05], [1.95, -0.85, 0.3]] },
+    { "bone": "hand_R", "box": [[-1.95, -2.15, -0.05], [-0.92, -0.85, 0.3]] }
+  ],
+  "glow_shell": "blowhole",
+  "provider_pbr": true,
+  "bake_normal": false,
+  "repack_uv": false,
+  "transfer_size": 4096,
+  "paint_shading": { "cavity_distance": 0.016, "cavity": 0.32, "ao": 0.16, "saturation": 1.06, "contrast": 1.05, "keep_brightness": true }
+}

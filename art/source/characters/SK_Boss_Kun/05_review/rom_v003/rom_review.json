@@ -1,0 +1,108 @@
+{
+ "asset": "SK_Boss_Kun",
+ "glb": "SK_Boss_Kun_native_v003.glb",
+ "height_m": 8.0,
+ "bones": 14,
+ "flag": 1.8,
+ "dominant_verts": {
+  "spine_1": 2430,
+  "spine_2": 2989,
+  "spine_3": 2754,
+  "fin_L": 5296,
+  "fin_R": 5416,
+  "head": 14968,
+  "barbel_L_1": 166,
+  "barbel_L_2": 288,
+  "barbel_L_3": 943,
+  "barbel_R_1": 159,
+  "barbel_R_2": 263,
+  "barbel_R_3": 949,
+  "pearl": 115
+ },
+ "poses": {
+  "inhale": {
+   "p99": 1.569,
+   "max": 22.28,
+   "p99_len": 1.708,
+   "flag_area": 0.01504,
+   "over_flag": 0.00695,
+   "moved_edges": 57560,
+   "images": [
+    "rom_inhale_front.png",
+    "rom_inhale_side.png",
+    "rom_inhale_threeq.png"
+   ]
+  },
+  "slam_windup": {
+   "p99": 1.599,
+   "max": 30.08,
+   "p99_len": 1.689,
+   "flag_area": 0.01465,
+   "over_flag": 0.00718,
+   "moved_edges": 58227,
+   "images": [
+    "rom_slam_windup_front.png",
+    "rom_slam_windup_side.png",
+    "rom_slam_windup_threeq.png"
+   ]
+  },
+  "slam_impact": {
+   "p99": 1.273,
+   "max": 41.35,
+   "p99_len": 1.323,
+   "flag_area": 0.01115,
+   "over_flag": 0.00645,
+   "moved_edges": 58618,
+   "images": [
+    "rom_slam_impact_front.png",
+    "rom_slam_impact_side.png",
+    "rom_slam_impact_threeq.png"
+   ]
+  },
+  "turn": {
+   "p99": 1.431,
+   "max": 30.53,
+   "p99_len": 1.567,
+   "flag_area": 0.01176,
+   "over_flag": 0.00688,
+   "moved_edges": 58542,
+   "images": [
+    "rom_turn_front.png",
+    "rom_turn_side.png",
+    "rom_turn_threeq.png"
+   ]
+  },
+  "roar": {
+   "p99": 1.794,
+   "max": 26.55,
+   "p99_len": 1.996,
+   "flag_area": 0.02643,
+   "over_flag": 0.00996,
+   "moved_edges": 53695,
+   "images": [
+    "rom_roar_front.png",
+    "rom_roar_side.png",
+    "rom_roar_threeq.png"
+   ]
+  },
+  "barbel_swing": {
+   "p99": 1.078,
+   "max": 1.59,
+   "p99_len": 1.097,
+   "flag_area": 0.0,
+   "over_flag": 0.0,
+   "moved_edges": 5145,
+   "images": [
+    "rom_barbel_swing_front.png",
+    "rom_barbel_swing_side.png",
+    "rom_barbel_swing_threeq.png"
+   ]
+  }
+ },
+ "weight_map": [
+  "weights_front.png",
+  "weights_side.png",
+  "weights_back.png",
+  "weights_threeq.png"
+ ]
+}

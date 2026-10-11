@@ -1,0 +1,323 @@
+{
+  "asset": "SK_Enemy_Fuzhu",
+  "version": 2,
+  "glb": "art/source/characters/SK_Enemy_Fuzhu/04_export/SK_Enemy_Fuzhu_native_v002.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.9,
+      "自定义骨架：25 根骨骼（热扩散权重，0 个顶点未覆盖）": 0.4,
+      "贴图（BC + AO/ORM）": 10.4,
+      "LOD 与蒙皮上限 7880 / 3446 / 1476": 0.2,
+      "发光壳 84 面": 0.0,
+      "导出 321 KB": 1.4
+    },
+    "source": {
+      "verts": 4417,
+      "tris": 8826,
+      "scale": 1.9009281875915973
+    },
+    "regions": {
+      "heat_unweighted_verts": 0,
+      "ground_verts": 600,
+      "head_verts": 574,
+      "gem_verts": 60,
+      "fallback_verts": 13,
+      "per_bone": {
+        "hips": 97,
+        "spine": 95,
+        "chest": 119,
+        "neck": 579,
+        "head": 1398,
+        "gem": 62,
+        "tail_1": 124,
+        "tail_2": 50,
+        "upperarm_L": 157,
+        "forearm_L": 87,
+        "fcannon_L": 64,
+        "fhoof_L": 192,
+        "upperarm_R": 146,
+        "forearm_R": 86,
+        "fcannon_R": 64,
+        "fhoof_R": 192,
+        "thigh_L": 64,
+        "shin_L": 100,
+        "hcannon_L": 86,
+        "hhoof_L": 176,
+        "thigh_R": 58,
+        "shin_R": 101,
+        "hcannon_R": 85,
+        "hhoof_R": 176
+      }
+    },
+    "bones": [
+      "chest",
+      "fcannon_L",
+      "fcannon_R",
+      "fhoof_L",
+      "fhoof_R",
+      "forearm_L",
+      "forearm_R",
+      "gem",
+      "hcannon_L",
+      "hcannon_R",
+      "head",
+      "hhoof_L",
+      "hhoof_R",
+      "hips",
+      "neck",
+      "root",
+      "shin_L",
+      "shin_R",
+      "spine",
+      "tail_1",
+      "tail_2",
+      "thigh_L",
+      "thigh_R",
+      "upperarm_L",
+      "upperarm_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.918,
+      "shade_mean": 0.952
+    },
+    "textures": {
+      "size": 1024,
+      "ao_mean": 0.859,
+      "provider_pbr": [],
+      "roughness_mean": 0.75,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Enemy_Fuzhu_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_Fuzhu_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_Fuzhu_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Enemy_Fuzhu_LOD0",
+        "tris": 7880,
+        "uv_min": [
+          0.0,
+          0.0
+        ],
+        "uv_max": [
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "SK_Enemy_Fuzhu_LOD1",
+        "tris": 3446,
+        "uv_min": [
+          0.0,
+          0.0
+        ],
+        "uv_max": [
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "SK_Enemy_Fuzhu_LOD2",
+        "tris": 1476,
+        "uv_min": [
+          0.0,
+          0.001992523204535246
+        ],
+        "uv_max": [
+          1.0,
+          1.0
+        ]
+      }
+    ],
+    "glow_shell": {
+      "group": "gem",
+      "tris": 84
+    },
+    "glb_kb": 321,
+    "_seconds": 21.8
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "321 KB / 1600 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Enemy_Fuzhu_LOD0', 'SK_Enemy_Fuzhu_LOD1', 'SK_Enemy_Fuzhu_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "7880 / 8000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "3446 / 3500"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "1476 / 1500"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "1.900 m (design 1.9 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Enemy_Fuzhu_Glow', 'M_Enemy_Fuzhu']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "glow shell",
+      "84 tris on 'gem'"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Fuzhu_BC",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Fuzhu_ORM",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "25 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Fuzhu_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Fuzhu_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Fuzhu_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Fuzhu_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Fuzhu_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Fuzhu_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Fuzhu_LOD0 UV range",
+      "[0.0, 0.0]..[1.0, 1.0]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Fuzhu_LOD1 UV range",
+      "[0.0, 0.0]..[1.0, 1.0]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Fuzhu_LOD2 UV range",
+      "[0.0, 0.002]..[1.0, 1.0]"
+    ],
+    [
+      "warn",
+      "region heat_unweighted",
+      "0 verts"
+    ],
+    [
+      "pass",
+      "region ground",
+      "600 verts"
+    ],
+    [
+      "pass",
+      "region head",
+      "574 verts"
+    ],
+    [
+      "pass",
+      "region gem",
+      "60 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "13 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

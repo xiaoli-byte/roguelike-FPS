@@ -1,0 +1,348 @@
+{
+  "id": "SM_Tripo_FrostSeaCoverWall",
+  "display": "破船舷墙（备选 C）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 17:40:09",
+          "files": {
+            "BO_SM_Tripo_FrostSeaCoverWall_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostSeaCoverWall_v001.json",
+              "sha256": "dcd60d86847dddd29bb13ac4c9b6d3b34b4ec5b0c9b671f648e529257ed9519d"
+            },
+            "BO_SM_Tripo_FrostSeaCoverWall_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostSeaCoverWall_v001_views.json",
+              "sha256": "894f1fa9371f5174b9d2614b347b2f91762770a8b330f12b59e27e50c45cfc48"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost_c.v2.coverWall"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -3.0,
+              0,
+              -0.6
+            ],
+            "max": [
+              3.0,
+              2.6,
+              0.6
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 17:41:22",
+          "files": {
+            "CN_SM_Tripo_FrostSeaCoverWall_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaCoverWall_v001_source.png",
+              "sha256": "9bacf90570164bfb5c17e320198a9debba160fab9bea004dd1210ab2e0a391ca"
+            },
+            "CN_SM_Tripo_FrostSeaCoverWall_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaCoverWall_v001_front.png",
+              "sha256": "2501fd676e3d357ea38928cfeeb4ba0f8586d490d54ac145aa62cce11d7e73aa"
+            },
+            "CN_SM_Tripo_FrostSeaCoverWall_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaCoverWall_v001_left.png",
+              "sha256": "e63243cb1e4659281dad29a07bbe8a04e81bc538e5143f342473f1e1507d9648"
+            },
+            "CN_SM_Tripo_FrostSeaCoverWall_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaCoverWall_v001_back.png",
+              "sha256": "1424d29cb2e22e24565e70aee02890b58e5240c538f94221e88d83c7dbcde036"
+            },
+            "CN_SM_Tripo_FrostSeaCoverWall_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaCoverWall_v001_right.png",
+              "sha256": "3cc6c0ab090d2037f400c6f8cc03174d953cbf9f2fc883c093dd0105f951eb67"
+            },
+            "CN_SM_Tripo_FrostSeaCoverWall_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaCoverWall_v001_sheet.png",
+              "sha256": "ab77a1e4c90225a13b6c3c8ae22c86260966f71f2489284d3a489fde4f4056cf"
+            },
+            "CN_SM_Tripo_FrostSeaCoverWall_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaCoverWall_v001_prompt.txt",
+              "sha256": "6812a843f430df08a2f1aea179801282a22130b7a20c12ecfce39851797ba4cc"
+            },
+            "CN_SM_Tripo_FrostSeaCoverWall_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaCoverWall_v001_registration.json",
+              "sha256": "3788478027b080fe61c084b3ea000b5801c757f23723d61b280d0a8726189a6d"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-5.6-terra",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-5.6-terra",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "attempt": 1,
+            "seconds": 72.5
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian frozen polar sea fantasy from the Zhuangzi's northern darkness: faceted glacier ice and dark ink-blue rock, weathered ivory whale bone, old dark ship timber with faded teal paint, frozen ropes, felt and a cold aqua deep-sea glow, thick soft snow caps and chunky icicles. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (6m wide x 2.6m tall x 1.2m deep): A broken section of an ancient wooden junk's hull 6m long, 2.6m tall, 1.2m deep, standing upright as full-height cover: thick curved dark timber planks with iron bands and rivets, a painted eye of the ship and a faded teal stripe, a jagged broken top, sea ice frozen along the bottom and snow on top. Solid, no holes, one connected piece.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "9bacf90570164bfb5c17e320198a9debba160fab9bea004dd1210ab2e0a391ca",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.3334936668270001,
+              "offset": [
+                139,
+                413
+              ],
+              "size": [
+                234,
+                198
+              ],
+              "physical_height_m": 2.6,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.34036982490590734,
+              "offset": [
+                229,
+                413
+              ],
+              "size": [
+                54,
+                198
+              ],
+              "physical_height_m": 2.6,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.33181781925500514,
+              "offset": [
+                140,
+                413
+              ],
+              "size": [
+                232,
+                198
+              ],
+              "physical_height_m": 2.6,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.34036982490590734,
+              "offset": [
+                227,
+                413
+              ],
+              "size": [
+                58,
+                198
+              ],
+              "physical_height_m": 2.6,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "四视图同一物件、朝向正确、无裁切、雪盖未被抠掉；转 Hunyuan3D 2mv 多视图建模（2026-10-11）",
+            "time": "2026-10-11 00:35:15"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:25:53",
+          "files": {
+            "HP_SM_Tripo_FrostSeaCoverWall_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaCoverWall_v001_input_front.png",
+              "sha256": "4311640fe33a22650f44fdb6288f26283103589f162c28f9e880c74bd3015d68"
+            },
+            "HP_SM_Tripo_FrostSeaCoverWall_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaCoverWall_v001_input_left.png",
+              "sha256": "0bd096f959f3890e6e84be619b90c33cc9d6e809a5a5b02dea5ff2b4ce584099"
+            },
+            "HP_SM_Tripo_FrostSeaCoverWall_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaCoverWall_v001_input_back.png",
+              "sha256": "f3fb1577fdde9b9706efe2a6a0f254fce19f0f7a1b10854f45cd009450236c23"
+            },
+            "HP_SM_Tripo_FrostSeaCoverWall_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaCoverWall_v001_input_right.png",
+              "sha256": "3434995da46dcc3805b257cc9cbf900e00254253295f5d406f7eb13007115500"
+            },
+            "HP_SM_Tripo_FrostSeaCoverWall_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaCoverWall_v001.glb",
+              "sha256": "ba82892772dfefed07fb5f8cfe82abd33f7cf463e2af7a594b284e199a5ec7eb"
+            },
+            "HP_SM_Tripo_FrostSeaCoverWall_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaCoverWall_v001_graph.json",
+              "sha256": "2666af73a4be13d2f54ea1389bbff357060189f969e22a4263cead944aa48e61"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              119,
+              375,
+              393,
+              649
+            ],
+            "scale": 3.7372262773722627
+          },
+          "seconds": 155.9,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 15.8
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:26:57",
+          "files": {
+            "SM_Tripo_FrostSeaCoverWall_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostSeaCoverWall_v001.blend",
+              "sha256": "f377843e52d733139b6c8ca77459e54fd049f4bd3c65bf9a569465ffbc8216d6"
+            },
+            "SM_Tripo_FrostSeaCoverWall_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostSeaCoverWall_v001.glb",
+              "sha256": "f5fe5e214de4b9cef7b01d33aae7c3e57d5969ca6f999ffa545f6db9eee7445a"
+            },
+            "SM_Tripo_FrostSeaCoverWall_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostSeaCoverWall_v001_metrics.json",
+              "sha256": "ccbbf8f7ddb276864cc03246621bcb1d2879278e030fd7cbbc144ba4d0bbb67e"
+            },
+            "T_Tripo_FrostSeaCoverWall_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaCoverWall_BC.png",
+              "sha256": "a617069819c381ba4c50adc590d9ee67fda0d02e6c1c137cee61d1562c6f6c3f"
+            },
+            "T_Tripo_FrostSeaCoverWall_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaCoverWall_N.png",
+              "sha256": "9f8253fa95eda18f05199c8df05c831456f669db92d3f031f8e2a42fb86e8ca2"
+            },
+            "T_Tripo_FrostSeaCoverWall_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaCoverWall_ORM.png",
+              "sha256": "25cb4561cc94ffbe2c4147b8ba46a1d5cc4f159a8d8aa9cfd0818e886834c541"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.79,
+          "uncovered_ratio": 0.457,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1484
+            },
+            {
+              "tris": 1000,
+              "verts": 484
+            }
+          ],
+          "export_kb": 230.1,
+          "seconds": 61.4,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:26:57",
+          "files": {
+            "SM_Tripo_FrostSeaCoverWall_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostSeaCoverWall_v001_validation_v001.json",
+              "sha256": "bb3a1c44367c193ef9480ee8343ab1ad1f9e68ad9bca2ae9aa7000b16706aff8"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:27:05",
+          "files": {
+            "SM_Tripo_FrostSeaCoverWall_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostSeaCoverWall_v001_review_v001.png",
+              "sha256": "14d8a516682b6239a39b7d1322aa3a8cd1fb07a2b45fdfa76d4592b3635ad9c3"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "IoU 0.79；船舷残段：木板铁箍、船眼与青绿条带、断口积雪冰挂、底部海冰，背面为内侧船板",
+            "time": "2026-10-11 01:30:35"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:30:36",
+          "files": {
+            "SM_Tripo_FrostSeaCoverWall.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostSeaCoverWall.glb",
+              "sha256": "f5fe5e214de4b9cef7b01d33aae7c3e57d5969ca6f999ffa545f6db9eee7445a"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_FrostSeaCoverWall.glb"
+        }
+      ]
+    }
+  }
+}

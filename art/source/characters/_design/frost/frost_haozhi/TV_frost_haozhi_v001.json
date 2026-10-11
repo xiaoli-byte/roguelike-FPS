@@ -1,0 +1,40 @@
+{
+  "design": {
+    "key": "frost_haozhi",
+    "chapter": "frost",
+    "name": "冰棘豪彘",
+    "layout": "creature",
+    "height_m": 0.9,
+    "role": "自爆 / 机动",
+    "brief": "The haozhi (豪彘) of the Shan Hai Jing, a pig-like beast with white quills like hairpins, frozen into a charging kamikaze: a compact stocky porcupine-boar about 1.4 m long, grey-blue bristly skin, a big crown of long thick white-and-ice-blue quills over the whole back that bristle up when angry, small tusks, a flat snout, tiny glowing cyan eyes, short legs with small cloven hooves. The quill roots on its back glow cyan-violet as it builds up to burst (weak spot: its whole quill crown). Grumpy and explosive.",
+    "weapon": "",
+    "style_note": "Stylization: cartoon game proportions in the same family as the desert roster (jerboa soldier, fire rat, sancai tomb beast): chunky simplified masses, oversized head and hands or paws, toy-like readable forms with clean bevelled edges, ice as a few big faceted crystal shapes (never thin needles or noisy frost texture), fur as a few large carved clumps. Quills are a few dozen thick simple cones, not hundreds of thin needles.",
+    "turnaround_lead": "Neutral bind pose for rigging:",
+    "turnaround_pose": " standing ON ALL FOURS like a real boar (quadruped): body level, the four short legs straight under the body and planted, front and hind legs clearly separated; head facing straight ahead, mouth closed with the small tusks showing; the quill crown relaxed and lying back along the back as thick solid cones (not bristling up); the quill roots only faintly cyan-tinted (no glow halo, no particles)",
+    "turnaround_digits": "each foot with two cloven hoof toes; the whole quill crown fully inside the frame; in the side views the body must fit inside the view with margin."
+  },
+  "from_sheet": "DS_frost_haozhi_v001.png",
+  "generation": {
+    "provider": "openai",
+    "endpoint": "images/edits",
+    "model": "gpt-image-2.5-sunburst",
+    "size": "2048x1024",
+    "quality": "high",
+    "background": "opaque",
+    "usage": {
+      "input_tokens": 1827,
+      "input_tokens_details": {
+        "image_tokens": 1458,
+        "text_tokens": 369
+      },
+      "output_tokens": 1180,
+      "output_tokens_details": {
+        "image_tokens": 1180,
+        "text_tokens": 0
+      },
+      "total_tokens": 3007
+    },
+    "request_id": "req_eeef4f372f9d4dd785b443ff5f52ab14",
+    "seconds": 71.2
+  }
+}

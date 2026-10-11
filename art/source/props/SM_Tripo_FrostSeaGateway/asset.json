@@ -1,0 +1,352 @@
+{
+  "id": "SM_Tripo_FrostSeaGateway",
+  "display": "鲸骨拱门（备选 C）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 17:36:46",
+          "files": {
+            "BO_SM_Tripo_FrostSeaGateway_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostSeaGateway_v001.json",
+              "sha256": "a96474f2bedeb741a373ccaf33a9eea83a5c5c0bbc2e572bfd50435dd7832f94"
+            },
+            "BO_SM_Tripo_FrostSeaGateway_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostSeaGateway_v001_views.json",
+              "sha256": "27b1855c6f81c787ed7912239890106dfcc8523ce33bbc95fca60f86ec8622c1"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost_c.v2.gateway"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -8.0,
+              0,
+              -2.0
+            ],
+            "max": [
+              8.0,
+              11.0,
+              2.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 17:37:56",
+          "files": {
+            "CN_SM_Tripo_FrostSeaGateway_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaGateway_v001_source.png",
+              "sha256": "1523db49daf245e9519eb706c1f4e6a0f5ab7cc047f7c710185f9153fdc610ec"
+            },
+            "CN_SM_Tripo_FrostSeaGateway_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaGateway_v001_front.png",
+              "sha256": "bfbfa39cc3efda62dd8a3f99976d9691279302622153c2009aa432372f946b98"
+            },
+            "CN_SM_Tripo_FrostSeaGateway_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaGateway_v001_left.png",
+              "sha256": "79856ca2e1bd41c353283be380882c3d6868d28f7bf6630c86f4692492f7326e"
+            },
+            "CN_SM_Tripo_FrostSeaGateway_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaGateway_v001_back.png",
+              "sha256": "0a59217af5d444d2ddd356775a7e33375908cc2edbca33459bafbd69aa0b5f55"
+            },
+            "CN_SM_Tripo_FrostSeaGateway_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaGateway_v001_right.png",
+              "sha256": "9a1e3e865d26a8fddb681c51ee644a05535487eb12d91132d0712e0f9a6d40eb"
+            },
+            "CN_SM_Tripo_FrostSeaGateway_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaGateway_v001_sheet.png",
+              "sha256": "e6760a2fcad1cc9e7b470d3e09d4fbab60bbd335e3b9c8e44eb315423440ff93"
+            },
+            "CN_SM_Tripo_FrostSeaGateway_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaGateway_v001_prompt.txt",
+              "sha256": "f6e69b1d72bf6b1b8f86145c8059a1c869ac19aaca3e6eb118db66e2ea013097"
+            },
+            "CN_SM_Tripo_FrostSeaGateway_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaGateway_v001_registration.json",
+              "sha256": "79594e91f48760c40e6ff77abf809532179661858c9aab0a17513ef520e5f773"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-5.6-terra",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-5.6-terra",
+            "size": "2048x1024",
+            "generated_size": [
+              2103,
+              748
+            ],
+            "references": [],
+            "attempt": 1,
+            "seconds": 67.3
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian frozen polar sea fantasy from the Zhuangzi's northern darkness: faceted glacier ice and dark ink-blue rock, weathered ivory whale bone, old dark ship timber with faded teal paint, frozen ropes, felt and a cold aqua deep-sea glow, thick soft snow caps and chunky icicles. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (16m wide x 11m tall x 4m deep): A monumental gateway made from the jawbones and ribs of a giant whale, 16m wide, 11m tall, 4m deep: two massive ivory whale jawbones standing on cairns of dark stones, curving up and lashed together at the top with thick frozen ropes, hung with faded teal prayer cloths, small bone charms and a carved wooden fish emblem at the apex. The open passage is 12m wide and 8m high and goes fully through the depth, empty down to the ground. Snow on the cairns and the top of the bones, chunky icicles. No doors.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "1523db49daf245e9519eb706c1f4e6a0f5ab7cc047f7c710185f9153fdc610ec",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.4740357681534152,
+              "offset": [
+                93,
+                355
+              ],
+              "size": [
+                325,
+                314
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.4733218588640275,
+              "offset": [
+                210,
+                355
+              ],
+              "size": [
+                92,
+                314
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.4754700669980549,
+              "offset": [
+                95,
+                355
+              ],
+              "size": [
+                322,
+                314
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.47261009667024706,
+              "offset": [
+                210,
+                355
+              ],
+              "size": [
+                92,
+                314
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "四视图同一物件、朝向正确、无裁切、雪盖未被抠掉；转 Hunyuan3D 2mv 多视图建模（2026-10-11）",
+            "time": "2026-10-11 00:35:05"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:18:18",
+          "files": {
+            "HP_SM_Tripo_FrostSeaGateway_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaGateway_v001_input_front.png",
+              "sha256": "0bc7596b7d968fb432857f7c2924c2ad2224265eaa16f963a9a60452eb64b43c"
+            },
+            "HP_SM_Tripo_FrostSeaGateway_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaGateway_v001_input_left.png",
+              "sha256": "a18b301a00dd5427ec0edb9834de4560c1a82ad1b658867740238f6d706d1c5a"
+            },
+            "HP_SM_Tripo_FrostSeaGateway_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaGateway_v001_input_back.png",
+              "sha256": "d955670c567935eb5f710f69f56b34420bd819c1aafe6eafb910a23a9f1f08b9"
+            },
+            "HP_SM_Tripo_FrostSeaGateway_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaGateway_v001_input_right.png",
+              "sha256": "6e469c3a80082d42021372f55490ce312c480b581aabef9885da9df0bc1384f8"
+            },
+            "HP_SM_Tripo_FrostSeaGateway_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaGateway_v001.glb",
+              "sha256": "c420da9f46ead0c57ec3f1d8e922971493363fa151e3507440124b2eacc78fe0"
+            },
+            "HP_SM_Tripo_FrostSeaGateway_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaGateway_v001_graph.json",
+              "sha256": "e66e06c13aabdcd95d69307c392ee43df16be5f1cbf507cdbe47c7121509a508"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              65,
+              321,
+              447,
+              703
+            ],
+            "scale": 2.680628272251309
+          },
+          "seconds": 157.9,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 15.8
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:19:33",
+          "files": {
+            "SM_Tripo_FrostSeaGateway_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostSeaGateway_v001.blend",
+              "sha256": "dd0c1c9c5d3fb80695c0353e63e4b017cd2aa92b83e596c9e1f73235da36ed44"
+            },
+            "SM_Tripo_FrostSeaGateway_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostSeaGateway_v001.glb",
+              "sha256": "9206185ca1f00db88ed94d12698d15c6c635815e70fbe283407d59f371574917"
+            },
+            "SM_Tripo_FrostSeaGateway_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostSeaGateway_v001_metrics.json",
+              "sha256": "3546420a09997f8b8ca10718692a699e0a1da480656479d479d2907e76c00549"
+            },
+            "T_Tripo_FrostSeaGateway_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaGateway_BC.png",
+              "sha256": "882c4d583dd7a87def61a664d2b0eeff6c30a17c8fffb4bf500e84a76d94590d"
+            },
+            "T_Tripo_FrostSeaGateway_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaGateway_N.png",
+              "sha256": "5e7eb4371e2d32f0af1db09d6aba8628373ed65eff9b637eb079fa68ce5268c6"
+            },
+            "T_Tripo_FrostSeaGateway_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaGateway_ORM.png",
+              "sha256": "3098e54b1a4b6a4b8331c0ddb10a70df272730f55cd0afe175e0610928a36ac2"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.865,
+          "uncovered_ratio": 0.43,
+          "lods": [
+            {
+              "tris": 8000,
+              "verts": 3934
+            },
+            {
+              "tris": 2500,
+              "verts": 1184
+            },
+            {
+              "tris": 800,
+              "verts": 334
+            }
+          ],
+          "export_kb": 797.2,
+          "seconds": 69.8,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:19:33",
+          "files": {
+            "SM_Tripo_FrostSeaGateway_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostSeaGateway_v001_validation_v001.json",
+              "sha256": "e7a844d379b8db37d0533ab1854c65770a43f59a1332225fa1c59d09e821aaee"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:19:41",
+          "files": {
+            "SM_Tripo_FrostSeaGateway_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostSeaGateway_v001_review_v001.png",
+              "sha256": "ed838e95fbb30becd3435b6519221af27c959d06118e27ccf325264fd603183c"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "IoU 0.865；两根鲸颌骨立于石堆、顶部绑扎+经布骨饰，拱门通到地面；侧面一致",
+            "time": "2026-10-11 01:20:03"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:20:03",
+          "files": {
+            "SM_Tripo_FrostSeaGateway.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostSeaGateway.glb",
+              "sha256": "9206185ca1f00db88ed94d12698d15c6c635815e70fbe283407d59f371574917"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_FrostSeaGateway.glb"
+        }
+      ]
+    }
+  }
+}

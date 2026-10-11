@@ -1,0 +1,148 @@
+{
+ "asset": "SK_Enemy_Jiaoren_native_v002.glb",
+ "height_m": 1.4,
+ "bones": 28,
+ "tail_bones": 3,
+ "groups": {
+  "torso": {
+   "verts": 1387,
+   "p95_dist_over_height": 0.121,
+   "max_dist_over_height": 0.133
+  },
+  "head": {
+   "verts": 2310,
+   "p95_dist_over_height": 0.138,
+   "max_dist_over_height": 0.185
+  },
+  "LeftArm": {
+   "verts": 700,
+   "p95_dist_over_height": 0.083,
+   "max_dist_over_height": 0.105
+  },
+  "RightArm": {
+   "verts": 696,
+   "p95_dist_over_height": 0.079,
+   "max_dist_over_height": 0.096
+  },
+  "LeftHand": {
+   "verts": 239,
+   "p95_dist_over_height": 0.049,
+   "max_dist_over_height": 0.052
+  },
+  "RightHand": {
+   "verts": 259,
+   "p95_dist_over_height": 0.049,
+   "max_dist_over_height": 0.052
+  },
+  "LeftLeg": {
+   "verts": 920,
+   "p95_dist_over_height": 0.075,
+   "max_dist_over_height": 0.123
+  },
+  "RightLeg": {
+   "verts": 1125,
+   "p95_dist_over_height": 0.085,
+   "max_dist_over_height": 0.123
+  },
+  "tail": {
+   "verts": 140,
+   "p95_dist_over_height": 0.075,
+   "max_dist_over_height": 0.083
+  }
+ },
+ "poses": {
+  "throw": {
+   "p99": 1.336,
+   "max": 2.93,
+   "over_flag": 0.0037,
+   "moved_edges": 2433,
+   "images": [
+    "throw_front.png",
+    "throw_side.png",
+    "throw_threeq.png"
+   ]
+  },
+  "arms_up": {
+   "p99": 1.3,
+   "max": 2.23,
+   "over_flag": 0.00243,
+   "moved_edges": 2474,
+   "images": [
+    "arms_up_front.png",
+    "arms_up_side.png",
+    "arms_up_threeq.png"
+   ]
+  },
+  "squat": {
+   "p99": 2.661,
+   "max": 6.79,
+   "over_flag": 0.03171,
+   "moved_edges": 4005,
+   "images": [
+    "squat_front.png",
+    "squat_side.png",
+    "squat_threeq.png"
+   ]
+  },
+  "quadruped": {
+   "p99": 1.791,
+   "max": 5.7,
+   "over_flag": 0.00999,
+   "moved_edges": 12118,
+   "images": [
+    "quadruped_front.png",
+    "quadruped_side.png",
+    "quadruped_threeq.png"
+   ]
+  },
+  "twist": {
+   "p99": 1.427,
+   "max": 3.69,
+   "over_flag": 0.00381,
+   "moved_edges": 7609,
+   "images": [
+    "twist_front.png",
+    "twist_side.png",
+    "twist_threeq.png"
+   ]
+  },
+  "tail_curl": {
+   "p99": 1.748,
+   "max": 2.12,
+   "over_flag": 0.00366,
+   "moved_edges": 273,
+   "images": [
+    "tail_curl_side.png",
+    "tail_curl_threeq.png"
+   ]
+  },
+  "tail_swing": {
+   "p99": 1.167,
+   "max": 1.31,
+   "over_flag": 0.0,
+   "moved_edges": 219,
+   "images": [
+    "tail_swing_side.png",
+    "tail_swing_threeq.png"
+   ]
+  },
+  "fists": {
+   "p99": 1.068,
+   "max": 1.07,
+   "over_flag": 0.0,
+   "moved_edges": 67,
+   "images": [
+    "fists_front.png",
+    "fists_side.png",
+    "fists_threeq.png"
+   ]
+  }
+ },
+ "flag": 1.8,
+ "weight_map": [
+  "weights_front.png",
+  "weights_side.png",
+  "weights_back.png",
+  "weights_threeq.png"
+ ]
+}

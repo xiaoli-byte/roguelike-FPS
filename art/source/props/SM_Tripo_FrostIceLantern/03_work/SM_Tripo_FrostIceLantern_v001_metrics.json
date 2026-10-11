@@ -1,0 +1,117 @@
+{
+  "steps": {
+    "导入清理": 2.4,
+    "对齐": 1.1,
+    "低模与 UV": 9.6,
+    "投影着色": 18.2,
+    "烘焙": 6.5,
+    "LOD": 0.0,
+    "导出": 1.1
+  },
+  "highpoly": {
+    "faces_raw": 524304,
+    "faces": 276296,
+    "verts": 276286,
+    "loose_parts": 16,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.867,
+    "iou_per_view": {
+      "front": 0.923,
+      "left": 0.72,
+      "back": 0.914,
+      "right": 0.882
+    },
+    "height_m": 2.3651,
+    "blockout_height_m": 2.4
+  },
+  "uv": {
+    "smart_islands": 420,
+    "charts": 61,
+    "fallback_charts": 1,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.2297,
+    "density_merged": 0.2668
+  },
+  "projection": {
+    "uncovered_ratio": 0.287
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Tripo_FrostIceLantern_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_FrostIceLantern_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_FrostIceLantern_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostIceLantern_LOD0",
+      "tris": 3000,
+      "verts": 1490,
+      "uv_min": [
+        0.003042489755898714,
+        0.002821257570758462
+      ],
+      "uv_max": [
+        0.9803780317306519,
+        0.9971845149993896
+      ],
+      "uv_utilization": 0.535,
+      "bbox_min": [
+        -0.4344,
+        -0.4785,
+        0.0008
+      ],
+      "bbox_max": [
+        0.4644,
+        0.4072,
+        2.3624
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostIceLantern_LOD1",
+      "tris": 1000,
+      "verts": 490,
+      "uv_min": [
+        0.003985178656876087,
+        0.0029660421423614025
+      ],
+      "uv_max": [
+        0.9726572036743164,
+        0.9961991906166077
+      ],
+      "uv_utilization": 0.485,
+      "bbox_min": [
+        -0.4343,
+        -0.4802,
+        0.0022
+      ],
+      "bbox_max": [
+        0.4589,
+        0.4047,
+        2.3621
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostIceLantern/04_export/SM_Tripo_FrostIceLantern_v001.glb",
+    "bytes": 260900
+  },
+  "blend": "art/source/props/SM_Tripo_FrostIceLantern/03_work/SM_Tripo_FrostIceLantern_v001.blend",
+  "total_seconds": 38.9,
+  "_seconds": 42.6
+}

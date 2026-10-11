@@ -1,0 +1,141 @@
+{
+  "steps": {
+    "导入清理": 9.6,
+    "对齐": 1.6,
+    "低模与 UV": 34.5,
+    "投影着色": 63.5,
+    "烘焙": 27.8,
+    "LOD": 0.2,
+    "导出": 4.2
+  },
+  "highpoly": {
+    "faces_raw": 975051,
+    "faces": 519936,
+    "verts": 519932,
+    "loose_parts": 41,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.889,
+    "iou_per_view": {
+      "front": 0.911,
+      "left": 0.868,
+      "back": 0.884,
+      "right": 0.881
+    },
+    "height_m": 11.1362,
+    "blockout_height_m": 11.0
+  },
+  "uv": {
+    "smart_islands": 1476,
+    "charts": 74,
+    "fallback_charts": 6,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.0235,
+    "density_merged": 0.0379
+  },
+  "projection": {
+    "uncovered_ratio": 0.4318
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Tripo_FrostGateway_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_FrostGateway_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_FrostGateway_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostGateway_LOD0",
+      "tris": 7995,
+      "verts": 3996,
+      "uv_min": [
+        0.0029636546969413757,
+        0.003012714209035039
+      ],
+      "uv_max": [
+        0.9970880746841431,
+        0.9942392110824585
+      ],
+      "uv_utilization": 0.549,
+      "bbox_min": [
+        -6.0001,
+        -2.0448,
+        0.0008
+      ],
+      "bbox_max": [
+        6.0038,
+        1.8549,
+        11.1473
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostGateway_LOD1",
+      "tris": 2500,
+      "verts": 1241,
+      "uv_min": [
+        0.002989719156175852,
+        0.0031783890444785357
+      ],
+      "uv_max": [
+        0.9925152659416199,
+        0.9937450289726257
+      ],
+      "uv_utilization": 0.521,
+      "bbox_min": [
+        -5.9521,
+        -2.0387,
+        0.0071
+      ],
+      "bbox_max": [
+        5.9799,
+        1.8181,
+        11.1235
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostGateway_LOD2",
+      "tris": 800,
+      "verts": 386,
+      "uv_min": [
+        0.0042251585982739925,
+        0.0035386744420975447
+      ],
+      "uv_max": [
+        0.9905027151107788,
+        0.9861197471618652
+      ],
+      "uv_utilization": 0.469,
+      "bbox_min": [
+        -5.9473,
+        -1.9843,
+        -0.022
+      ],
+      "bbox_max": [
+        5.9346,
+        1.7821,
+        11.0715
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostGateway/04_export/SM_Tripo_FrostGateway_v001.glb",
+    "bytes": 779664
+  },
+  "blend": "art/source/props/SM_Tripo_FrostGateway/03_work/SM_Tripo_FrostGateway_v001.blend",
+  "total_seconds": 141.5,
+  "_seconds": 150.3
+}

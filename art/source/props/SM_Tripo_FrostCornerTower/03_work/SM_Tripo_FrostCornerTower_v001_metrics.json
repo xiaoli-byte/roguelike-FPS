@@ -1,0 +1,141 @@
+{
+  "steps": {
+    "导入清理": 3.5,
+    "对齐": 1.1,
+    "低模与 UV": 12.7,
+    "投影着色": 26.1,
+    "烘焙": 17.8,
+    "LOD": 0.1,
+    "导出": 1.9
+  },
+  "highpoly": {
+    "faces_raw": 700890,
+    "faces": 372172,
+    "verts": 372172,
+    "loose_parts": 24,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00492,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.914,
+    "iou_per_view": {
+      "front": 0.91,
+      "left": 0.915,
+      "back": 0.921,
+      "right": 0.912
+    },
+    "height_m": 13.125,
+    "blockout_height_m": 13.0
+  },
+  "uv": {
+    "smart_islands": 987,
+    "charts": 52,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.0292,
+    "density_merged": 0.0419
+  },
+  "projection": {
+    "uncovered_ratio": 0.2983
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Tripo_FrostCornerTower_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_FrostCornerTower_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_FrostCornerTower_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostCornerTower_LOD0",
+      "tris": 8000,
+      "verts": 4000,
+      "uv_min": [
+        0.002745938953012228,
+        0.0030233636498451233
+      ],
+      "uv_max": [
+        0.9973284602165222,
+        0.997328519821167
+      ],
+      "uv_utilization": 0.56,
+      "bbox_min": [
+        -3.3546,
+        -2.7953,
+        -0.0041
+      ],
+      "bbox_max": [
+        3.3443,
+        2.7859,
+        13.1468
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostCornerTower_LOD1",
+      "tris": 2500,
+      "verts": 1250,
+      "uv_min": [
+        0.003521076636388898,
+        0.0030233636498451233
+      ],
+      "uv_max": [
+        0.9949890375137329,
+        0.997328519821167
+      ],
+      "uv_utilization": 0.536,
+      "bbox_min": [
+        -3.3401,
+        -2.7928,
+        0.0137
+      ],
+      "bbox_max": [
+        3.3275,
+        2.7838,
+        13.1468
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostCornerTower_LOD2",
+      "tris": 800,
+      "verts": 400,
+      "uv_min": [
+        0.003521076636388898,
+        0.004402050748467445
+      ],
+      "uv_max": [
+        0.9938080310821533,
+        0.9973284602165222
+      ],
+      "uv_utilization": 0.477,
+      "bbox_min": [
+        -3.2458,
+        -2.8157,
+        0.0128
+      ],
+      "bbox_max": [
+        3.2443,
+        2.829,
+        12.9049
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostCornerTower/04_export/SM_Tripo_FrostCornerTower_v001.glb",
+    "bytes": 729620
+  },
+  "blend": "art/source/props/SM_Tripo_FrostCornerTower/03_work/SM_Tripo_FrostCornerTower_v001.blend",
+  "total_seconds": 63.2,
+  "_seconds": 70.2
+}

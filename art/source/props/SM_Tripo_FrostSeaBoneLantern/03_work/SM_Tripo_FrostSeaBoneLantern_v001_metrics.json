@@ -1,0 +1,117 @@
+{
+  "steps": {
+    "导入清理": 2.6,
+    "对齐": 1.2,
+    "低模与 UV": 9.4,
+    "投影着色": 16.0,
+    "烘焙": 7.5,
+    "LOD": 0.0,
+    "导出": 1.1
+  },
+  "highpoly": {
+    "faces_raw": 498895,
+    "faces": 233462,
+    "verts": 233412,
+    "loose_parts": 7,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.871,
+    "iou_per_view": {
+      "front": 0.896,
+      "left": 0.829,
+      "back": 0.877,
+      "right": 0.868
+    },
+    "height_m": 2.3556,
+    "blockout_height_m": 2.4
+  },
+  "uv": {
+    "smart_islands": 590,
+    "charts": 82,
+    "fallback_charts": 7,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.2616,
+    "density_merged": 0.3192
+  },
+  "projection": {
+    "uncovered_ratio": 0.3066
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Tripo_FrostSeaBoneLantern_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_FrostSeaBoneLantern_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_FrostSeaBoneLantern_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostSeaBoneLantern_LOD0",
+      "tris": 3000,
+      "verts": 1450,
+      "uv_min": [
+        0.003088554833084345,
+        0.0030353115871548653
+      ],
+      "uv_max": [
+        0.9969804883003235,
+        0.994030773639679
+      ],
+      "uv_utilization": 0.593,
+      "bbox_min": [
+        -0.5021,
+        -0.35,
+        0.0007
+      ],
+      "bbox_max": [
+        0.5018,
+        0.3698,
+        2.358
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostSeaBoneLantern_LOD1",
+      "tris": 1000,
+      "verts": 450,
+      "uv_min": [
+        0.003088554833084345,
+        0.003618980525061488
+      ],
+      "uv_max": [
+        0.9954331517219543,
+        0.994030773639679
+      ],
+      "uv_utilization": 0.531,
+      "bbox_min": [
+        -0.4977,
+        -0.3519,
+        0.0029
+      ],
+      "bbox_max": [
+        0.4953,
+        0.3566,
+        2.359
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostSeaBoneLantern/04_export/SM_Tripo_FrostSeaBoneLantern_v001.glb",
+    "bytes": 299812
+  },
+  "blend": "art/source/props/SM_Tripo_FrostSeaBoneLantern/03_work/SM_Tripo_FrostSeaBoneLantern_v001.blend",
+  "total_seconds": 37.8,
+  "_seconds": 42.9
+}

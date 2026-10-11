@@ -1,0 +1,37 @@
+{
+  "design": {
+    "key": "frost_b_lantern",
+    "chapter": "frost_b",
+    "name": "冰灯鬼火",
+    "layout": "creature",
+    "height_m": 1.0,
+    "role": "自爆 / 机动",
+    "alternative_of": "frost",
+    "brief": "A floating ghost lantern of the abbey, the kamikaze: a round red-paper Chinese lantern frozen stiff, cracked and patched, with a grinning ghost face torn into its paper, a cold jade-green ghost flame burning inside (weak spot: the whole lantern), icicles hanging from its bottom rim and a frayed tassel, two little tattered paper arms. It drifts and swoops at the player, then bursts into a freezing cloud. Mischievous.",
+    "weapon": "",
+    "style_note": "Stylization: cartoon game proportions in the same family as the desert roster (jerboa soldier, fire rat, sancai tomb beast): chunky simplified masses, oversized heads and hands or paws, toy-like readable forms with clean bevelled edges, ice as a few big faceted shapes, paper and cloth as thick simple bands, fur as big carved clumps."
+  },
+  "generation": {
+    "provider": "openai",
+    "endpoint": "images/generations",
+    "model": "gpt-image-2.5-sunburst",
+    "size": "2048x1024",
+    "quality": "high",
+    "background": "opaque",
+    "usage": {
+      "input_tokens": 589,
+      "input_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 589
+      },
+      "output_tokens": 1180,
+      "output_tokens_details": {
+        "image_tokens": 1180,
+        "text_tokens": 0
+      },
+      "total_tokens": 1769
+    },
+    "request_id": "req_bbd8c577026a43dd9031dd08abb6a897",
+    "seconds": 32.2
+  }
+}

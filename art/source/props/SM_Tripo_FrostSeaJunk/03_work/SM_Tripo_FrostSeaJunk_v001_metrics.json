@@ -1,0 +1,141 @@
+{
+  "steps": {
+    "导入清理": 3.4,
+    "对齐": 1.1,
+    "低模与 UV": 12.7,
+    "投影着色": 23.9,
+    "烘焙": 22.4,
+    "LOD": 0.1,
+    "导出": 2.5
+  },
+  "highpoly": {
+    "faces_raw": 738709,
+    "faces": 357630,
+    "verts": 357546,
+    "loose_parts": 47,
+    "kept_parts": 2,
+    "remesh_voxel_m": 0.00493,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.868,
+    "iou_per_view": {
+      "front": 0.906,
+      "left": 0.821,
+      "back": 0.921,
+      "right": 0.807
+    },
+    "height_m": 15.3265,
+    "blockout_height_m": 16.0
+  },
+  "uv": {
+    "smart_islands": 1332,
+    "charts": 281,
+    "fallback_charts": 18,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.0246,
+    "density_merged": 0.0342
+  },
+  "projection": {
+    "uncovered_ratio": 0.413
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Tripo_FrostSeaJunk_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_FrostSeaJunk_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_FrostSeaJunk_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostSeaJunk_LOD0",
+      "tris": 7997,
+      "verts": 3915,
+      "uv_min": [
+        0.00428348733112216,
+        0.004344043787568808
+      ],
+      "uv_max": [
+        0.989633321762085,
+        0.9957295656204224
+      ],
+      "uv_utilization": 0.552,
+      "bbox_min": [
+        -2.8142,
+        -5.2055,
+        0.0039
+      ],
+      "bbox_max": [
+        3.0048,
+        4.5343,
+        15.3359
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostSeaJunk_LOD1",
+      "tris": 2500,
+      "verts": 1164,
+      "uv_min": [
+        0.005037191789597273,
+        0.004349271766841412
+      ],
+      "uv_max": [
+        0.989633321762085,
+        0.9954516887664795
+      ],
+      "uv_utilization": 0.508,
+      "bbox_min": [
+        -2.7661,
+        -5.189,
+        0.0052
+      ],
+      "bbox_max": [
+        3.0095,
+        4.5597,
+        15.2915
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostSeaJunk_LOD2",
+      "tris": 800,
+      "verts": 314,
+      "uv_min": [
+        0.005125582218170166,
+        0.004349271766841412
+      ],
+      "uv_max": [
+        0.9881397485733032,
+        0.993697464466095
+      ],
+      "uv_utilization": 0.41,
+      "bbox_min": [
+        -2.6496,
+        -5.1596,
+        0.0209
+      ],
+      "bbox_max": [
+        2.9003,
+        4.373,
+        14.8215
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostSeaJunk/04_export/SM_Tripo_FrostSeaJunk_v001.glb",
+    "bytes": 985760
+  },
+  "blend": "art/source/props/SM_Tripo_FrostSeaJunk/03_work/SM_Tripo_FrostSeaJunk_v001.blend",
+  "total_seconds": 66.1,
+  "_seconds": 76.1
+}

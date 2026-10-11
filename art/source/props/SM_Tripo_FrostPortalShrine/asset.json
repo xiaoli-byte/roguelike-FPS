@@ -1,0 +1,503 @@
+{
+  "id": "SM_Tripo_FrostPortalShrine",
+  "display": "瑶台传送门神龛（V2）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 13:37:42",
+          "files": {
+            "BO_SM_Tripo_FrostPortalShrine_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostPortalShrine_v001.json",
+              "sha256": "283c1e7e6ea749be3480e399055d136dea56ee2a00cba0b0569c7f0a63a6fd16"
+            },
+            "BO_SM_Tripo_FrostPortalShrine_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostPortalShrine_v001_views.json",
+              "sha256": "668b448efde6fc37c470d69b041f28d04dbf111a82d78dc310a44b60bcac7cd3"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost.v2.portalShrine"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -5.0,
+              0,
+              -2.5
+            ],
+            "max": [
+              5.0,
+              11.0,
+              2.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 13:38:12",
+          "files": {
+            "CN_SM_Tripo_FrostPortalShrine_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPortalShrine_v001_source.png",
+              "sha256": "126d913ecbc59794191b48a12f7a479f2dec8f80affea89241e891a0548a3a1b"
+            },
+            "CN_SM_Tripo_FrostPortalShrine_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPortalShrine_v001_front.png",
+              "sha256": "31e5422fcecc51b071b10746afffc3bc5fb30967c1146800ffd82e9e9f64c019"
+            },
+            "CN_SM_Tripo_FrostPortalShrine_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPortalShrine_v001_left.png",
+              "sha256": "1b50c628d33191651fa012de909d62daca11af727a989157f864b41a9a7573b8"
+            },
+            "CN_SM_Tripo_FrostPortalShrine_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPortalShrine_v001_back.png",
+              "sha256": "d2f5e22c61d40e86d89510838a4a55141f7854decedb5ad7101475433cfc989f"
+            },
+            "CN_SM_Tripo_FrostPortalShrine_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPortalShrine_v001_right.png",
+              "sha256": "cb14fdd825cd8ff80dc13b29345e47120e7f4020e7f6794d380045413e2a15bd"
+            },
+            "CN_SM_Tripo_FrostPortalShrine_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPortalShrine_v001_sheet.png",
+              "sha256": "c3eb2b9d861d483cd4fd0461afa93b4bd21cbbe8ad9f9011b85b0c61fc420b7e"
+            },
+            "CN_SM_Tripo_FrostPortalShrine_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostPortalShrine_v001_prompt.txt",
+              "sha256": "7cf1aa5c792860ef648cfcdc0c82ca5bf2ae5f1c1d228af4cbaa35d1a570ce31"
+            },
+            "CN_SM_Tripo_FrostPortalShrine_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostPortalShrine_v001_registration.json",
+              "sha256": "ed999dacc8c81a1ab76589be0f77c202597e70829d71780ba934caa172d210c2"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 513,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 513
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1693
+            },
+            "request_id": "req_fbdf84bff88648d49ff41d00633556bd",
+            "seconds": 28.3
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (10m wide x 11m tall x 5m deep): A monumental Kunlun palace shrine niche 10m wide, 11m tall, 5m deep that frames a magic portal: a thick white jade stone facade with ONE tall open round-topped moon-gate arch in the middle, 6.5m wide and 8m tall, leading into a shallow open recess 3.5m deep whose floor is flat at ground level (no steps or objects inside the recess). The recess back wall carries a large carved jade bi disc. The facade is crowned by a verdigris bronze tiled roof with upturned eaves under thick snow; faded vermilion lacquer pillars flank the arch; chunky icicles hang from the eaves. The arch is empty, nothing inside the opening.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "126d913ecbc59794191b48a12f7a479f2dec8f80affea89241e891a0548a3a1b",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.7256235827664399,
+              "offset": [
+                13,
+                260
+              ],
+              "size": [
+                485,
+                503
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7277237957411619,
+              "offset": [
+                172,
+                260
+              ],
+              "size": [
+                168,
+                503
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7277237957411619,
+              "offset": [
+                16,
+                260
+              ],
+              "size": [
+                479,
+                503
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7308970099667774,
+              "offset": [
+                165,
+                260
+              ],
+              "size": [
+                181,
+                503
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-07 13:41:00",
+          "files": {
+            "CN_SM_Tripo_FrostPortalShrine_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPortalShrine_v002_source.png",
+              "sha256": "126d913ecbc59794191b48a12f7a479f2dec8f80affea89241e891a0548a3a1b"
+            },
+            "CN_SM_Tripo_FrostPortalShrine_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPortalShrine_v002_front.png",
+              "sha256": "e7d90f874030a939fa5d85ab06880ee5d91699a5aadaaaae8d66d69ce36c77f9"
+            },
+            "CN_SM_Tripo_FrostPortalShrine_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPortalShrine_v002_left.png",
+              "sha256": "82643883658daaeda3f926b39504d6ed589c54d96f291b472c33df6f0102fc5a"
+            },
+            "CN_SM_Tripo_FrostPortalShrine_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPortalShrine_v002_back.png",
+              "sha256": "d63f042353795a447a9d01869f84e16f52de1a66ac3ec35001aede63959468fb"
+            },
+            "CN_SM_Tripo_FrostPortalShrine_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPortalShrine_v002_right.png",
+              "sha256": "b852981d76413d177ba93072245ee0fafbbc8fe4db6b51c7a233e7f7ab9c0fb1"
+            },
+            "CN_SM_Tripo_FrostPortalShrine_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPortalShrine_v002_sheet.png",
+              "sha256": "168b43118b2167e6c716391b4f72d8e8c21e6faddcbcb4efe81f90245a111ff2"
+            },
+            "CN_SM_Tripo_FrostPortalShrine_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostPortalShrine_v002_prompt.txt",
+              "sha256": "7cf1aa5c792860ef648cfcdc0c82ca5bf2ae5f1c1d228af4cbaa35d1a570ce31"
+            },
+            "CN_SM_Tripo_FrostPortalShrine_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostPortalShrine_v002_registration.json",
+              "sha256": "005e6458064d2d0d8e7852baf66df2d4ffc387ddc31e88cc820749c357ace20d"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 513,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 513
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1693
+            },
+            "request_id": "req_fbdf84bff88648d49ff41d00633556bd",
+            "seconds": 28.3,
+            "rekeyed_from": 1
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (10m wide x 11m tall x 5m deep): A monumental Kunlun palace shrine niche 10m wide, 11m tall, 5m deep that frames a magic portal: a thick white jade stone facade with ONE tall open round-topped moon-gate arch in the middle, 6.5m wide and 8m tall, leading into a shallow open recess 3.5m deep whose floor is flat at ground level (no steps or objects inside the recess). The recess back wall carries a large carved jade bi disc. The facade is crowned by a verdigris bronze tiled roof with upturned eaves under thick snow; faded vermilion lacquer pillars flank the arch; chunky icicles hang from the eaves. The arch is empty, nothing inside the opening.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "126d913ecbc59794191b48a12f7a479f2dec8f80affea89241e891a0548a3a1b",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.722495894909688,
+              "offset": [
+                14,
+                260
+              ],
+              "size": [
+                484,
+                503
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7266721717588769,
+              "offset": [
+                171,
+                260
+              ],
+              "size": [
+                170,
+                503
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7256235827664399,
+              "offset": [
+                17,
+                260
+              ],
+              "size": [
+                478,
+                503
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7298362015343147,
+              "offset": [
+                165,
+                260
+              ],
+              "size": [
+                182,
+                503
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "v002 四视图同一物件、无裁切、雪盖未被抠掉；转 Hunyuan3D 2mv 多视图建模（2026-10-11）",
+            "time": "2026-10-11 00:02:39"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:43:58",
+          "files": {
+            "HP_SM_Tripo_FrostPortalShrine_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPortalShrine_v001_input_front.png",
+              "sha256": "adb6b2d1a88c6455c247fd5664a4c38f3d0468cffbf13147085fd29685cbfa18"
+            },
+            "HP_SM_Tripo_FrostPortalShrine_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPortalShrine_v001_input_left.png",
+              "sha256": "9ebfd21a0c1b83075f876199a6da394c2c1b31fbc40c74c92a0120f2abc3cebd"
+            },
+            "HP_SM_Tripo_FrostPortalShrine_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPortalShrine_v001_input_back.png",
+              "sha256": "45684eecc4bdcdc90c77f7994854b60d49b8a6f8e6e0f69e493fb5d37d2264e5"
+            },
+            "HP_SM_Tripo_FrostPortalShrine_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPortalShrine_v001_input_right.png",
+              "sha256": "b89bbca4fabf79866b9ad17b8126a74316cf51e366fa0c6f8ef0a8af9bb758ee"
+            },
+            "HP_SM_Tripo_FrostPortalShrine_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPortalShrine_v001.glb",
+              "sha256": "b0b93ecc47cf870a28c487cd81784c485497c8cddf1cfdee7cc1af774dcbeb1e"
+            },
+            "HP_SM_Tripo_FrostPortalShrine_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPortalShrine_v001_graph.json",
+              "sha256": "c14cad49d090afde497bbe9fb5e46eb967806d1b224b1dd61cf6a5480aaff158"
+            }
+          },
+          "from_concept": 2,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -40,
+              216,
+              552,
+              807
+            ],
+            "scale": 1.7297297297297298
+          },
+          "seconds": 187.4,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 27.8
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:46:05",
+          "files": {
+            "SM_Tripo_FrostPortalShrine_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostPortalShrine_v001.blend",
+              "sha256": "18de7a5eb45b4c92b1d9e8efe511da6bd43f5544f6fc758ede185a56025a6ead"
+            },
+            "SM_Tripo_FrostPortalShrine_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostPortalShrine_v001.glb",
+              "sha256": "e90fa04817510a1b1cf002848d1288c994a3ea61c2ecaa13aadbadb180ecf9c3"
+            },
+            "SM_Tripo_FrostPortalShrine_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostPortalShrine_v001_metrics.json",
+              "sha256": "ee5d2a4eabae6b37e58fcad250d03615ce1f81d9eaae3da234d610bb5b016977"
+            },
+            "T_Tripo_FrostPortalShrine_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostPortalShrine_BC.png",
+              "sha256": "621f80a32ad63893ec895d010e5a7d1624a7587bdddfae399c4cec5453513596"
+            },
+            "T_Tripo_FrostPortalShrine_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostPortalShrine_N.png",
+              "sha256": "71493c5d25c3995382b80751fb0e03f8dbec1b368279336ee060532af6deeb06"
+            },
+            "T_Tripo_FrostPortalShrine_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostPortalShrine_ORM.png",
+              "sha256": "36335daa3274ba852019254e8c1fc41bf58ccc157730f6bd417bee2ed5d093b6"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.878,
+          "uncovered_ratio": 0.518,
+          "lods": [
+            {
+              "tris": 7997,
+              "verts": 3612
+            },
+            {
+              "tris": 2500,
+              "verts": 856
+            },
+            {
+              "tris": 2096,
+              "verts": 654
+            }
+          ],
+          "export_kb": 1307.4,
+          "seconds": 125.1,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:46:05",
+          "files": {
+            "SM_Tripo_FrostPortalShrine_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostPortalShrine_v001_validation_v001.json",
+              "sha256": "c55b3b2662c1703aa77e1899f5c41574372f92da20b8f1b17b7fa286c7a2d858"
+            }
+          },
+          "from_build": 1,
+          "errors": 1,
+          "warnings": 3,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 2,
+          "created": "2026-10-11 00:55:02",
+          "files": {
+            "SM_Tripo_FrostPortalShrine_v001_validation_v002.json": {
+              "path": "05_review/SM_Tripo_FrostPortalShrine_v001_validation_v002.json",
+              "sha256": "d9bd8d56ffce5ee64b8729b61754e7d3bc691199f4e8a72b39092f3f99412ddf"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 3,
+          "waived": [
+            "LOD2 面数"
+          ],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:55:12",
+          "files": {
+            "SM_Tripo_FrostPortalShrine_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostPortalShrine_v001_review_v001.png",
+              "sha256": "9a05a4843c6bcb45280465239a90e9f25973cc7c19d8d030fe204b713678ee88"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "IoU 0.878；月洞门浅龛+铜璧+重檐，背面封闭；LOD2 面数豁免（见登记表）；UV 碎、贴图清晰度一般；第二章计划目前没有 shrine 掩体，暂不出场",
+            "time": "2026-10-11 00:55:42"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:55:44",
+          "files": {
+            "SM_Tripo_FrostPortalShrine.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostPortalShrine.glb",
+              "sha256": "e90fa04817510a1b1cf002848d1288c994a3ea61c2ecaa13aadbadb180ecf9c3"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_FrostPortalShrine.glb"
+        }
+      ]
+    }
+  }
+}

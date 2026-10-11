@@ -1,0 +1,117 @@
+{
+  "steps": {
+    "导入清理": 4.2,
+    "对齐": 1.2,
+    "低模与 UV": 13.4,
+    "投影着色": 32.1,
+    "烘焙": 8.7,
+    "LOD": 0.0,
+    "导出": 1.7
+  },
+  "highpoly": {
+    "faces_raw": 951582,
+    "faces": 480694,
+    "verts": 480582,
+    "loose_parts": 20,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00492,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.77,
+    "iou_per_view": {
+      "front": 0.862,
+      "left": 0.829,
+      "back": 0.872,
+      "right": 0.471
+    },
+    "height_m": 1.5787,
+    "blockout_height_m": 1.6
+  },
+  "uv": {
+    "smart_islands": 679,
+    "charts": 101,
+    "fallback_charts": 23,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.1908,
+    "density_merged": 0.2313
+  },
+  "projection": {
+    "uncovered_ratio": 0.4674
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Tripo_FrostSeaMastRuin_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_FrostSeaMastRuin_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_FrostSeaMastRuin_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostSeaMastRuin_LOD0",
+      "tris": 3000,
+      "verts": 1388,
+      "uv_min": [
+        0.003436156315729022,
+        0.0034361639991402626
+      ],
+      "uv_max": [
+        0.9965638518333435,
+        0.9871028065681458
+      ],
+      "uv_utilization": 0.6,
+      "bbox_min": [
+        -1.0105,
+        -0.6294,
+        0.0014
+      ],
+      "bbox_max": [
+        1.1465,
+        0.5565,
+        1.5798
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostSeaMastRuin_LOD1",
+      "tris": 1000,
+      "verts": 388,
+      "uv_min": [
+        0.003436156315729022,
+        0.0034809219650924206
+      ],
+      "uv_max": [
+        0.9964452981948853,
+        0.9871028065681458
+      ],
+      "uv_utilization": 0.507,
+      "bbox_min": [
+        -0.9881,
+        -0.6057,
+        0.0018
+      ],
+      "bbox_max": [
+        1.1535,
+        0.5555,
+        1.5111
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostSeaMastRuin/04_export/SM_Tripo_FrostSeaMastRuin_v001.glb",
+    "bytes": 318072
+  },
+  "blend": "art/source/props/SM_Tripo_FrostSeaMastRuin/03_work/SM_Tripo_FrostSeaMastRuin_v001.blend",
+  "total_seconds": 61.4,
+  "_seconds": 66.7
+}

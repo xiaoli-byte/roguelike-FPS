@@ -1,0 +1,39 @@
+{
+  "design": {
+    "key": "frost_boss_zhuyin",
+    "chapter": "frost",
+    "name": "烛阴",
+    "layout": "creature",
+    "height_m": 7.0,
+    "role": "Boss",
+    "brief": "Chapter boss Zhuyin (烛阴), the Torch Dragon of the Shan Hai Jing: 'a human face and a serpent's body, red; opening its eyes makes day, closing them makes night; its breath is winter'. A colossal crimson serpent with NO legs, NO arms, NO claws and NO antlers or horns: only a huge stern ancient human face on a serpent's body. Heavy brows, a long flowing white beard and moustache like frozen waterfalls, two great eyes that glow white-gold like the sun, and a burning candle-pearl held between its lips (衔烛) that glows white-gold (weak spot). Its crimson scales are crusted with thick glacier ice along the back ridge and coils, and verdigris bronze ritual rings are clamped around its neck. Ancient, terrifying, majestic.",
+    "weapon": "",
+    "style_note": "Stylization: cartoon game proportions in the same family as the desert roster (jerboa soldier, fire rat, sancai tomb beast): chunky simplified masses, oversized head and hands or paws, toy-like readable forms with clean bevelled edges, ice as a few big faceted crystal shapes (never thin needles or noisy frost texture), fur as a few large carved clumps. A boss: show only the head, neck and the first coils rising from the ground; the rest of the body disappears off the side of each view. It is a pure serpent with a human face: no limbs and no horns of any kind.",
+    "turnaround_lead": "Head-and-neck model for the boss (the long body is built separately and is NOT drawn):",
+    "turnaround_pose": " the serpent neck rising straight up out of the ground and cut flat at the ground line (no coils, no body lying on the ground), about 6 m of neck under the head; the head level and facing straight ahead, the stern human face with the eyes open and painted as opaque bright white-gold (no halo), the candle-pearl held between the lips painted as an opaque bright white-gold sphere (no flame, no halo), the white beard hanging straight down in front of the neck, the bronze rings on the neck, the ice crust along the back ridge of the neck; no arms, no horns, no antlers",
+    "turnaround_digits": "no limbs anywhere; the whole head, beard and neck fully inside the frame."
+  },
+  "generation": {
+    "provider": "openai",
+    "endpoint": "images/generations",
+    "model": "gpt-image-2.5-sunburst",
+    "size": "2048x1024",
+    "quality": "high",
+    "background": "opaque",
+    "usage": {
+      "input_tokens": 705,
+      "input_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 705
+      },
+      "output_tokens": 1180,
+      "output_tokens_details": {
+        "image_tokens": 1180,
+        "text_tokens": 0
+      },
+      "total_tokens": 1885
+    },
+    "request_id": "req_df7d0516efc14021b3be67d6400e16e2",
+    "seconds": 33.7
+  }
+}

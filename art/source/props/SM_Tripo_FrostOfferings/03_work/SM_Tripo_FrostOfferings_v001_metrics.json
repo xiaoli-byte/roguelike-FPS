@@ -1,0 +1,117 @@
+{
+  "steps": {
+    "导入清理": 5.6,
+    "对齐": 1.2,
+    "低模与 UV": 18.9,
+    "投影着色": 49.9,
+    "烘焙": 8.4,
+    "LOD": 0.0,
+    "导出": 0.8
+  },
+  "highpoly": {
+    "faces_raw": 1344612,
+    "faces": 697496,
+    "verts": 697404,
+    "loose_parts": 44,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.854,
+    "iou_per_view": {
+      "front": 0.941,
+      "left": 0.761,
+      "back": 0.922,
+      "right": 0.75
+    },
+    "height_m": 1.5478,
+    "blockout_height_m": 1.6
+  },
+  "uv": {
+    "smart_islands": 683,
+    "charts": 186,
+    "fallback_charts": 33,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.1986,
+    "density_merged": 0.239
+  },
+  "projection": {
+    "uncovered_ratio": 0.381
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Tripo_FrostOfferings_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_FrostOfferings_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_FrostOfferings_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostOfferings_LOD0",
+      "tris": 2999,
+      "verts": 1408,
+      "uv_min": [
+        0.004327231086790562,
+        0.004159951116889715
+      ],
+      "uv_max": [
+        0.994023859500885,
+        0.9959577918052673
+      ],
+      "uv_utilization": 0.58,
+      "bbox_min": [
+        -0.8537,
+        -0.7374,
+        0.0008
+      ],
+      "bbox_max": [
+        0.8857,
+        0.5616,
+        1.5454
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostOfferings_LOD1",
+      "tris": 1000,
+      "verts": 406,
+      "uv_min": [
+        0.004372855182737112,
+        0.004159951116889715
+      ],
+      "uv_max": [
+        0.9872366189956665,
+        0.9959577918052673
+      ],
+      "uv_utilization": 0.475,
+      "bbox_min": [
+        -0.8412,
+        -0.7432,
+        -0.0021
+      ],
+      "bbox_max": [
+        0.8775,
+        0.5415,
+        1.5234
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostOfferings/04_export/SM_Tripo_FrostOfferings_v001.glb",
+    "bytes": 357220
+  },
+  "blend": "art/source/props/SM_Tripo_FrostOfferings/03_work/SM_Tripo_FrostOfferings_v001.blend",
+  "total_seconds": 84.8,
+  "_seconds": 89.9
+}

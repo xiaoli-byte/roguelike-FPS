@@ -1,0 +1,141 @@
+{
+  "steps": {
+    "导入清理": 9.5,
+    "对齐": 2.0,
+    "低模与 UV": 28.1,
+    "投影着色": 52.8,
+    "烘焙": 18.9,
+    "LOD": 0.3,
+    "导出": 6.3
+  },
+  "highpoly": {
+    "faces_raw": 1658549,
+    "faces": 717646,
+    "verts": 717258,
+    "loose_parts": 3,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.878,
+    "iou_per_view": {
+      "front": 0.949,
+      "left": 0.793,
+      "back": 0.938,
+      "right": 0.795
+    },
+    "height_m": 10.9267,
+    "blockout_height_m": 11.0
+  },
+  "uv": {
+    "smart_islands": 2008,
+    "charts": 575,
+    "fallback_charts": 50,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.0186,
+    "density_merged": 0.0282
+  },
+  "projection": {
+    "uncovered_ratio": 0.518
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Tripo_FrostPortalShrine_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_FrostPortalShrine_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_FrostPortalShrine_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostPortalShrine_LOD0",
+      "tris": 7997,
+      "verts": 3612,
+      "uv_min": [
+        0.005120711401104927,
+        0.005131124053150415
+      ],
+      "uv_max": [
+        0.9926931262016296,
+        0.9948943257331848
+      ],
+      "uv_utilization": 0.36,
+      "bbox_min": [
+        -5.2262,
+        -1.7489,
+        -0.0106
+      ],
+      "bbox_max": [
+        5.2319,
+        1.1878,
+        10.9203
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostPortalShrine_LOD1",
+      "tris": 2500,
+      "verts": 856,
+      "uv_min": [
+        0.0051930565387010574,
+        0.00540842255577445
+      ],
+      "uv_max": [
+        0.9926931262016296,
+        0.9948943257331848
+      ],
+      "uv_utilization": 0.307,
+      "bbox_min": [
+        -5.2074,
+        -1.7254,
+        -0.0498
+      ],
+      "bbox_max": [
+        5.1026,
+        1.1735,
+        10.9545
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostPortalShrine_LOD2",
+      "tris": 2096,
+      "verts": 654,
+      "uv_min": [
+        0.0051930565387010574,
+        0.00540842255577445
+      ],
+      "uv_max": [
+        0.9926931262016296,
+        0.9948943257331848
+      ],
+      "uv_utilization": 0.249,
+      "bbox_min": [
+        -5.2074,
+        -1.6787,
+        -0.0498
+      ],
+      "bbox_max": [
+        5.1026,
+        1.3062,
+        9.4684
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostPortalShrine/04_export/SM_Tripo_FrostPortalShrine_v001.glb",
+    "bytes": 1338804
+  },
+  "blend": "art/source/props/SM_Tripo_FrostPortalShrine/03_work/SM_Tripo_FrostPortalShrine_v001.blend",
+  "total_seconds": 117.9,
+  "_seconds": 125.1
+}

@@ -1,0 +1,348 @@
+{
+  "id": "SM_Tripo_FrostSeaFishRack",
+  "display": "冻鱼架（备选 C）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 17:37:08",
+          "files": {
+            "BO_SM_Tripo_FrostSeaFishRack_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostSeaFishRack_v001.json",
+              "sha256": "cc31c969daaeb451edfe5ce4c2bdb13ebb6e6228500fbaeba9017e3323ca7a36"
+            },
+            "BO_SM_Tripo_FrostSeaFishRack_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostSeaFishRack_v001_views.json",
+              "sha256": "0e9127b8a50c4e2081b4488542784b0d6669d2d7597dc08da5fde2e1c62859ed"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost_c.v2.fishRack"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -1.5,
+              0,
+              -1.0
+            ],
+            "max": [
+              1.5,
+              1.6,
+              1.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 17:38:38",
+          "files": {
+            "CN_SM_Tripo_FrostSeaFishRack_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaFishRack_v001_source.png",
+              "sha256": "740a4cdbd17f203a276380c00fbc8a9bdd06844ca255eacba2d964414f8fa097"
+            },
+            "CN_SM_Tripo_FrostSeaFishRack_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaFishRack_v001_front.png",
+              "sha256": "a22f06193e2dd4b4b0b93c1f3cd5961f00615c95c159246ae9362b879708b892"
+            },
+            "CN_SM_Tripo_FrostSeaFishRack_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaFishRack_v001_left.png",
+              "sha256": "5c9a8860e68a9fb6e046d3046f88347d018cc1028feab6ce686abc241596062a"
+            },
+            "CN_SM_Tripo_FrostSeaFishRack_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaFishRack_v001_back.png",
+              "sha256": "119c0163eed78c98da0f32b52fb235160f62a8db73109b6ef0b7f78c75507efb"
+            },
+            "CN_SM_Tripo_FrostSeaFishRack_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaFishRack_v001_right.png",
+              "sha256": "849c2ff3e6bafe3694d6150a52d197838693f1b55b252da2476a1e89041b31f5"
+            },
+            "CN_SM_Tripo_FrostSeaFishRack_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaFishRack_v001_sheet.png",
+              "sha256": "b07f58e5cb5a9c4f12439975e9e6de3b358b98ae8feca6e270aed937b3566e90"
+            },
+            "CN_SM_Tripo_FrostSeaFishRack_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaFishRack_v001_prompt.txt",
+              "sha256": "f0bcfb04b14a25a8be9a4f80319030220470610f3776e66350613dfa23706b1b"
+            },
+            "CN_SM_Tripo_FrostSeaFishRack_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaFishRack_v001_registration.json",
+              "sha256": "baa97b708ae35ff09510bc9424117fdd82136643db5f1577a565c3b801db4ce8"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-5.6-terra",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-5.6-terra",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "attempt": 1,
+            "seconds": 88.4
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian frozen polar sea fantasy from the Zhuangzi's northern darkness: faceted glacier ice and dark ink-blue rock, weathered ivory whale bone, old dark ship timber with faded teal paint, frozen ropes, felt and a cold aqua deep-sea glow, thick soft snow caps and chunky icicles. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (3m wide x 1.6m tall x 2m deep): A frozen fish-drying rack and supplies 3m wide, 1.6m tall, 2m deep: a low driftwood frame hung with frozen dried fish, a coil of rope, a wooden barrel and two clay jars, all glued together under snow and a sheet of ice. Chunky, one solid connected group resting on the ground.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "740a4cdbd17f203a276380c00fbc8a9bdd06844ca255eacba2d964414f8fa097",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.39009523809523805,
+              "offset": [
+                144,
+                390
+              ],
+              "size": [
+                223,
+                244
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.3894720827628176,
+              "offset": [
+                195,
+                390
+              ],
+              "size": [
+                122,
+                244
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.39968774395003903,
+              "offset": [
+                145,
+                390
+              ],
+              "size": [
+                221,
+                244
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.3888509151667046,
+              "offset": [
+                195,
+                390
+              ],
+              "size": [
+                122,
+                244
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "四视图同一物件、朝向正确、无裁切、雪盖未被抠掉；转 Hunyuan3D 2mv 多视图建模（2026-10-11）",
+            "time": "2026-10-11 00:35:22"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:47:07",
+          "files": {
+            "HP_SM_Tripo_FrostSeaFishRack_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaFishRack_v001_input_front.png",
+              "sha256": "26b0a967d13d729c5d079d154e0d486569667267bdf8a312305165b1f11e7df6"
+            },
+            "HP_SM_Tripo_FrostSeaFishRack_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaFishRack_v001_input_left.png",
+              "sha256": "047b4ff25769da3b2a4a44cbbafbb0e3ad158967f13c873ec05bff72982983c0"
+            },
+            "HP_SM_Tripo_FrostSeaFishRack_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaFishRack_v001_input_back.png",
+              "sha256": "d20c33b63557f454dee7b846d17e7fd380085e3623a2005582dd220ca928899f"
+            },
+            "HP_SM_Tripo_FrostSeaFishRack_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaFishRack_v001_input_right.png",
+              "sha256": "82beca2781f46aae5421533f871f63b857fc49f1e8e4350e0c286dcf037dccfc"
+            },
+            "HP_SM_Tripo_FrostSeaFishRack_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaFishRack_v001.glb",
+              "sha256": "af1dc46ba7d91b664742e3a70bf7fbc0f52f7e25c73e621a844b25ae2fc6f08d"
+            },
+            "HP_SM_Tripo_FrostSeaFishRack_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaFishRack_v001_graph.json",
+              "sha256": "5d634b15d46c55e3bb071715f01703aeef7dee388fcddad5ab53c3276cb1e4cd"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              112,
+              368,
+              400,
+              656
+            ],
+            "scale": 3.5555555555555554
+          },
+          "seconds": 167.1,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 21.1
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:48:21",
+          "files": {
+            "SM_Tripo_FrostSeaFishRack_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostSeaFishRack_v001.blend",
+              "sha256": "ecbbf16a68783b481f1fbf9639c499cf967ec0f803b3ac9b907859a082103b66"
+            },
+            "SM_Tripo_FrostSeaFishRack_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostSeaFishRack_v001.glb",
+              "sha256": "6bb3baaa7ba4193b2e67baadda09414eed21bd7bffda0b26d6c73bf44183c069"
+            },
+            "SM_Tripo_FrostSeaFishRack_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostSeaFishRack_v001_metrics.json",
+              "sha256": "477e113738538827cc2910c14da74730bc038132e385f0c52c42ce7c5f98bb2f"
+            },
+            "T_Tripo_FrostSeaFishRack_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaFishRack_BC.png",
+              "sha256": "9df28ade32bd58a82a48bc049a7c728705bcac86fcbad4ec0fa26d0d2f220b71"
+            },
+            "T_Tripo_FrostSeaFishRack_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaFishRack_N.png",
+              "sha256": "b87aad0cbca27e342ea1deea649c3484244d094da5a2878e2c350b61d68e35c1"
+            },
+            "T_Tripo_FrostSeaFishRack_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaFishRack_ORM.png",
+              "sha256": "557f73071ef6ec8c4549247e2a55544f5c13e5708e49b7899869cf85d81930e1"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.845,
+          "uncovered_ratio": 0.3939,
+          "lods": [
+            {
+              "tris": 2999,
+              "verts": 1366
+            },
+            {
+              "tris": 1000,
+              "verts": 364
+            }
+          ],
+          "export_kb": 373.5,
+          "seconds": 72.5,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:48:21",
+          "files": {
+            "SM_Tripo_FrostSeaFishRack_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostSeaFishRack_v001_validation_v001.json",
+              "sha256": "7c5f8656493e1c7510643fad3281662693a0d6cc8b6e661e8e245195158507d0"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:48:29",
+          "files": {
+            "SM_Tripo_FrostSeaFishRack_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostSeaFishRack_v001_review_v001.png",
+              "sha256": "6532af85dd1ad1974dc12a23a47abb612c314340dd5ab72a61a957d01c4e8cc2"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "IoU 0.845；浮木晒鱼架+冻鱼+绳圈、木桶陶罐、积雪冰挂，四面一致",
+            "time": "2026-10-11 01:48:59"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:49:00",
+          "files": {
+            "SM_Tripo_FrostSeaFishRack.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostSeaFishRack.glb",
+              "sha256": "6bb3baaa7ba4193b2e67baadda09414eed21bd7bffda0b26d6c73bf44183c069"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_FrostSeaFishRack.glb"
+        }
+      ]
+    }
+  }
+}

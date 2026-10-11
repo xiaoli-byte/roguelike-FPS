@@ -1,0 +1,117 @@
+{
+  "steps": {
+    "导入清理": 3.8,
+    "对齐": 1.2,
+    "低模与 UV": 13.0,
+    "投影着色": 30.3,
+    "烘焙": 7.3,
+    "LOD": 0.0,
+    "导出": 0.9
+  },
+  "highpoly": {
+    "faces_raw": 879179,
+    "faces": 476400,
+    "verts": 476384,
+    "loose_parts": 4,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.79,
+    "iou_per_view": {
+      "front": 0.898,
+      "left": 0.637,
+      "back": 0.888,
+      "right": 0.681
+    },
+    "height_m": 2.4656,
+    "blockout_height_m": 2.6
+  },
+  "uv": {
+    "smart_islands": 517,
+    "charts": 105,
+    "fallback_charts": 14,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.1449,
+    "density_merged": 0.1599
+  },
+  "projection": {
+    "uncovered_ratio": 0.457
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Tripo_FrostSeaCoverWall_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_FrostSeaCoverWall_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_FrostSeaCoverWall_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostSeaCoverWall_LOD0",
+      "tris": 3000,
+      "verts": 1484,
+      "uv_min": [
+        0.0023690040688961744,
+        0.002474358770996332
+      ],
+      "uv_max": [
+        0.9976322650909424,
+        0.9557369351387024
+      ],
+      "uv_utilization": 0.609,
+      "bbox_min": [
+        -1.5716,
+        -0.4152,
+        0.0008
+      ],
+      "bbox_max": [
+        1.5443,
+        0.3176,
+        2.4724
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostSeaCoverWall_LOD1",
+      "tris": 1000,
+      "verts": 484,
+      "uv_min": [
+        0.002392304129898548,
+        0.002474358770996332
+      ],
+      "uv_max": [
+        0.9976322650909424,
+        0.9557369351387024
+      ],
+      "uv_utilization": 0.573,
+      "bbox_min": [
+        -1.5611,
+        -0.4101,
+        -0.0012
+      ],
+      "bbox_max": [
+        1.535,
+        0.3176,
+        2.4698
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostSeaCoverWall/04_export/SM_Tripo_FrostSeaCoverWall_v001.glb",
+    "bytes": 235584
+  },
+  "blend": "art/source/props/SM_Tripo_FrostSeaCoverWall/03_work/SM_Tripo_FrostSeaCoverWall_v001.blend",
+  "total_seconds": 56.5,
+  "_seconds": 61.4
+}

@@ -1,0 +1,117 @@
+{
+  "steps": {
+    "导入清理": 12.0,
+    "对齐": 1.2,
+    "低模与 UV": 31.2,
+    "投影着色": 96.4,
+    "烘焙": 12.1,
+    "LOD": 0.0,
+    "导出": 0.9
+  },
+  "highpoly": {
+    "faces_raw": 2747644,
+    "faces": 1070590,
+    "verts": 1070214,
+    "loose_parts": 8,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.931,
+    "iou_per_view": {
+      "front": 0.944,
+      "left": 0.928,
+      "back": 0.919,
+      "right": 0.926
+    },
+    "height_m": 3.44,
+    "blockout_height_m": 3.6
+  },
+  "uv": {
+    "smart_islands": 1097,
+    "charts": 317,
+    "fallback_charts": 50,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.067,
+    "density_merged": 0.0857
+  },
+  "projection": {
+    "uncovered_ratio": 0.5217
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Tripo_FrostSeaYurt_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_FrostSeaYurt_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_FrostSeaYurt_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostSeaYurt_LOD0",
+      "tris": 2982,
+      "verts": 1122,
+      "uv_min": [
+        0.004886811599135399,
+        0.004886768292635679
+      ],
+      "uv_max": [
+        0.9929019808769226,
+        0.9951132535934448
+      ],
+      "uv_utilization": 0.465,
+      "bbox_min": [
+        -1.5367,
+        -1.503,
+        0.0023
+      ],
+      "bbox_max": [
+        1.4894,
+        1.472,
+        3.4217
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostSeaYurt_LOD1",
+      "tris": 2162,
+      "verts": 677,
+      "uv_min": [
+        0.004886811599135399,
+        0.004886768292635679
+      ],
+      "uv_max": [
+        0.9929019808769226,
+        0.9951132535934448
+      ],
+      "uv_utilization": 0.384,
+      "bbox_min": [
+        -1.5367,
+        -1.4552,
+        -0.0281
+      ],
+      "bbox_max": [
+        1.4553,
+        1.4403,
+        3.0054
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostSeaYurt/04_export/SM_Tripo_FrostSeaYurt_v001.glb",
+    "bytes": 468320
+  },
+  "blend": "art/source/props/SM_Tripo_FrostSeaYurt/03_work/SM_Tripo_FrostSeaYurt_v001.blend",
+  "total_seconds": 154.0,
+  "_seconds": 158.8
+}

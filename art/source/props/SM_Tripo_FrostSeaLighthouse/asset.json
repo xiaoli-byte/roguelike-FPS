@@ -1,0 +1,369 @@
+{
+  "id": "SM_Tripo_FrostSeaLighthouse",
+  "display": "鲸骨灯塔（备选 C）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 17:39:46",
+          "files": {
+            "BO_SM_Tripo_FrostSeaLighthouse_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostSeaLighthouse_v001.json",
+              "sha256": "27f6faefc1a90cbb19e445339a09bbfd0b815de6e3a944826e02560900300e5e"
+            },
+            "BO_SM_Tripo_FrostSeaLighthouse_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostSeaLighthouse_v001_views.json",
+              "sha256": "bf962ec7d838d673ce78cc5af53fb2a02742a70d3be9afa6ccfd9ecf24fc579b"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost_c.v2.lighthouse"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -3.6,
+              0,
+              -3.6
+            ],
+            "max": [
+              3.6,
+              13.0,
+              3.6
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 17:41:05",
+          "files": {
+            "CN_SM_Tripo_FrostSeaLighthouse_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaLighthouse_v001_source.png",
+              "sha256": "da3d9a1a48193b7d40de5053a971c32951a3c7adb01db7fc561bffbfd79db857"
+            },
+            "CN_SM_Tripo_FrostSeaLighthouse_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaLighthouse_v001_front.png",
+              "sha256": "b7e8b32c3356cf976553dbfb3587bbc47a0eceb2c1fca3667f657c4def7e2033"
+            },
+            "CN_SM_Tripo_FrostSeaLighthouse_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaLighthouse_v001_left.png",
+              "sha256": "09f7bf917c8c8608e51fa4c3f0816f59349d7ba0cfba76d39268795744034525"
+            },
+            "CN_SM_Tripo_FrostSeaLighthouse_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaLighthouse_v001_back.png",
+              "sha256": "18082957776d4fc7d881fccd2dbdc245224b2deb3fadf53e723ff7a30d88ca0d"
+            },
+            "CN_SM_Tripo_FrostSeaLighthouse_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaLighthouse_v001_right.png",
+              "sha256": "f28f46746df6ebf8d7ef28f4a420f09558fba22e98bbf1855abfff1805f51d74"
+            },
+            "CN_SM_Tripo_FrostSeaLighthouse_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaLighthouse_v001_sheet.png",
+              "sha256": "3ccfd77be8289600e9db34c4316d1b8ae61b8be297be3b97cc3010e80f52eb99"
+            },
+            "CN_SM_Tripo_FrostSeaLighthouse_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaLighthouse_v001_prompt.txt",
+              "sha256": "678218ed269ba0f0ae6fb6f141912453e44546b4405fce653b7b5299653e7a61"
+            },
+            "CN_SM_Tripo_FrostSeaLighthouse_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaLighthouse_v001_registration.json",
+              "sha256": "04155acec8af8c9a77c9e7d5aab5d811118bde6a3125b3a39d5c7c418721b03d"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-5.6-terra",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-5.6-terra",
+            "size": "2048x1024",
+            "generated_size": [
+              1835,
+              857
+            ],
+            "references": [],
+            "attempt": 1,
+            "seconds": 77.1
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian frozen polar sea fantasy from the Zhuangzi's northern darkness: faceted glacier ice and dark ink-blue rock, weathered ivory whale bone, old dark ship timber with faded teal paint, frozen ropes, felt and a cold aqua deep-sea glow, thick soft snow caps and chunky icicles. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (7.2m wide x 13m tall x 7.2m deep): A square watch tower and lighthouse 7.2m wide, 13m tall: a tapering base of dark stacked stones, an upper frame of lashed whale ribs and driftwood, a lamp room at the top with a glowing pale aqua whale-oil light (painted as an opaque bright surface), a conical felt-and-bone roof, snow on every ledge, chunky icicles. Finished on all four sides. One solid connected piece.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "da3d9a1a48193b7d40de5053a971c32951a3c7adb01db7fc561bffbfd79db857",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.9140607147251664,
+              "offset": [
+                51,
+                99
+              ],
+              "size": [
+                409,
+                825
+              ],
+              "physical_height_m": 13.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.9140607147251664,
+              "offset": [
+                67,
+                99
+              ],
+              "size": [
+                378,
+                825
+              ],
+              "physical_height_m": 13.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.9150740858057929,
+              "offset": [
+                52,
+                99
+              ],
+              "size": [
+                408,
+                825
+              ],
+              "physical_height_m": 13.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.9130495856159571,
+              "offset": [
+                67,
+                99
+              ],
+              "size": [
+                378,
+                825
+              ],
+              "physical_height_m": 13.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "四视图同一物件、朝向正确、无裁切、雪盖未被抠掉；转 Hunyuan3D 2mv 多视图建模（2026-10-11）",
+            "time": "2026-10-11 00:35:26"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:38:10",
+          "files": {
+            "HP_SM_Tripo_FrostSeaLighthouse_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaLighthouse_v001_input_front.png",
+              "sha256": "b3e6de6566c7424fa2608f9514eeb4ba93bf40c95e196249ebdcb68271838e42"
+            },
+            "HP_SM_Tripo_FrostSeaLighthouse_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaLighthouse_v001_input_left.png",
+              "sha256": "547381d13ac6d84a4d5930c0aec89cb43cc54a4f81e42e52f7cc60cb47c9d9e5"
+            },
+            "HP_SM_Tripo_FrostSeaLighthouse_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaLighthouse_v001_input_back.png",
+              "sha256": "d866245bad0b395720954299052222d5f6387254ff49fe7fb8e85715b9ffb8bb"
+            },
+            "HP_SM_Tripo_FrostSeaLighthouse_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaLighthouse_v001_input_right.png",
+              "sha256": "4840b3a0ed8b2bcad9206fb6aa08a9941764b24fe94d4d93fb3bca2a93965df9"
+            },
+            "HP_SM_Tripo_FrostSeaLighthouse_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaLighthouse_v001.glb",
+              "sha256": "07b0633ce89fa3ae932b010c22f9a801101d8eedf6fa908bfcf3b5b502d1d943"
+            },
+            "HP_SM_Tripo_FrostSeaLighthouse_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaLighthouse_v001_graph.json",
+              "sha256": "1f9edefb5fbaa95971bf419b12a8938fc5bc876516ca8cc0159466d454c62b58"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -229,
+              26,
+              741,
+              997
+            ],
+            "scale": 1.0556701030927835
+          },
+          "seconds": 397.6,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 19.4
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:39:28",
+          "files": {
+            "SM_Tripo_FrostSeaLighthouse_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostSeaLighthouse_v001.blend",
+              "sha256": "329cc62a745ccdd53810473511ccc2e2c6087cc49ea0a528575798ef746b17bd"
+            },
+            "SM_Tripo_FrostSeaLighthouse_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostSeaLighthouse_v001.glb",
+              "sha256": "3f667e8cd3be9f10b64ab8fefec8e961e352591454d3839bdbdeb66e0702de5f"
+            },
+            "SM_Tripo_FrostSeaLighthouse_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostSeaLighthouse_v001_metrics.json",
+              "sha256": "7f85429701e4238bc8d5d34733fe354d59cf84c1ea3f15c08ad2574896482c4e"
+            },
+            "T_Tripo_FrostSeaLighthouse_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaLighthouse_BC.png",
+              "sha256": "1ec39018b30b666c34891a93ed3907f7eafe15ddaac291eca30c234a8460e784"
+            },
+            "T_Tripo_FrostSeaLighthouse_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaLighthouse_N.png",
+              "sha256": "644a4bc4fc94845784dd4115b59937bd44eb3a8760a14343b5d35e6f6d7d6fc3"
+            },
+            "T_Tripo_FrostSeaLighthouse_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaLighthouse_ORM.png",
+              "sha256": "ba133c8ed0ca1bd1dcb6486703fe3cbf67b26ccd5f7d68b41d7d1ec765b219a1"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.91,
+          "uncovered_ratio": 0.5379,
+          "lods": [
+            {
+              "tris": 7999,
+              "verts": 3618
+            },
+            {
+              "tris": 2500,
+              "verts": 866
+            },
+            {
+              "tris": 2062,
+              "verts": 647
+            }
+          ],
+          "export_kb": 1241.7,
+          "seconds": 73.4,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:39:28",
+          "files": {
+            "SM_Tripo_FrostSeaLighthouse_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostSeaLighthouse_v001_validation_v001.json",
+              "sha256": "b056a13becd54f53e72711b9a389b6c527801016e7c5fe18ef4e9c2e716f93fe"
+            }
+          },
+          "from_build": 1,
+          "errors": 1,
+          "warnings": 3,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 2,
+          "created": "2026-10-11 01:40:21",
+          "files": {
+            "SM_Tripo_FrostSeaLighthouse_v001_validation_v002.json": {
+              "path": "05_review/SM_Tripo_FrostSeaLighthouse_v001_validation_v002.json",
+              "sha256": "bf743a29d33f9c23228d9d959d36f1ea04987f28611e0b36cf28b495536861e2"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 3,
+          "waived": [
+            "LOD2 面数"
+          ],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:40:30",
+          "files": {
+            "SM_Tripo_FrostSeaLighthouse_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostSeaLighthouse_v001_review_v001.png",
+              "sha256": "43b4b9dd7459f88b8f3125bd5c61e9bdc150d85bad5d9eee1b320bbc3d1cfc85"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "IoU 0.91；石砌塔身+鲸骨+灯室（青色鲸油灯）+锥顶，前门后旗，四面一致；LOD2 面数豁免",
+            "time": "2026-10-11 01:45:58"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:45:58",
+          "files": {
+            "SM_Tripo_FrostSeaLighthouse.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostSeaLighthouse.glb",
+              "sha256": "3f667e8cd3be9f10b64ab8fefec8e961e352591454d3839bdbdeb66e0702de5f"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_FrostSeaLighthouse.glb"
+        }
+      ]
+    }
+  }
+}

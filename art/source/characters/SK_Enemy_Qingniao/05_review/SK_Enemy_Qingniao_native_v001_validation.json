@@ -1,0 +1,305 @@
+{
+  "asset": "SK_Enemy_Qingniao",
+  "version": 1,
+  "glb": "art/source/characters/SK_Enemy_Qingniao/04_export/SK_Enemy_Qingniao_native_v001.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.9,
+      "自定义骨架：27 根骨骼（热扩散权重，378 个顶点未覆盖）": 0.3,
+      "贴图（BC + AO/ORM）": 8.8,
+      "LOD 与蒙皮上限 7880 / 3447 / 1476": 0.5,
+      "导出 647 KB": 2.3
+    },
+    "source": {
+      "verts": 4413,
+      "tris": 8694,
+      "scale": 2.8674205708131395
+    },
+    "regions": {
+      "heat_unweighted_verts": 378,
+      "head_verts": 309,
+      "fallback_verts": 560,
+      "per_bone": {
+        "hips": 192,
+        "chest": 533,
+        "neck": 108,
+        "head": 422,
+        "wing_1_L": 461,
+        "wing_2_L": 341,
+        "wing_3_L": 70,
+        "wing_1_R": 537,
+        "wing_2_R": 264,
+        "wing_3_R": 70,
+        "thigh_L": 131,
+        "shin_L": 167,
+        "foot_L": 148,
+        "thigh_R": 131,
+        "shin_R": 164,
+        "foot_R": 149,
+        "tail_0": 121,
+        "tail_C1": 26,
+        "tail_C2": 24,
+        "tail_C3": 86,
+        "tail_L1": 22,
+        "tail_L2": 35,
+        "tail_L3": 69,
+        "tail_R1": 22,
+        "tail_R2": 35,
+        "tail_R3": 69
+      }
+    },
+    "bones": [
+      "chest",
+      "foot_L",
+      "foot_R",
+      "head",
+      "hips",
+      "neck",
+      "root",
+      "shin_L",
+      "shin_R",
+      "tail_0",
+      "tail_C1",
+      "tail_C2",
+      "tail_C3",
+      "tail_L1",
+      "tail_L2",
+      "tail_L3",
+      "tail_R1",
+      "tail_R2",
+      "tail_R3",
+      "thigh_L",
+      "thigh_R",
+      "wing_1_L",
+      "wing_1_R",
+      "wing_2_L",
+      "wing_2_R",
+      "wing_3_L",
+      "wing_3_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.945,
+      "shade_mean": 0.959
+    },
+    "textures": {
+      "size": 1024,
+      "ao_mean": 0.855,
+      "provider_pbr": [],
+      "roughness_mean": 0.75,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Enemy_Qingniao_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_Qingniao_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_Qingniao_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Enemy_Qingniao_LOD0",
+        "tris": 7880,
+        "uv_min": [
+          0.00146484375,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.99853515625,
+          0.99072265625
+        ]
+      },
+      {
+        "name": "SK_Enemy_Qingniao_LOD1",
+        "tris": 3447,
+        "uv_min": [
+          0.00146484375,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.99853515625,
+          0.99072265625
+        ]
+      },
+      {
+        "name": "SK_Enemy_Qingniao_LOD2",
+        "tris": 1476,
+        "uv_min": [
+          0.0012129961978644133,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.99853515625,
+          0.99072265625
+        ]
+      }
+    ],
+    "glb_kb": 647,
+    "_seconds": 22.0
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "647 KB / 1600 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Enemy_Qingniao_LOD0', 'SK_Enemy_Qingniao_LOD1', 'SK_Enemy_Qingniao_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "7880 / 8000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "3447 / 3500"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "1472 / 1500"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "2.600 m (design 2.6 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Enemy_Qingniao']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Qingniao_ORM",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Qingniao_BC",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "27 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Qingniao_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Qingniao_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Qingniao_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Qingniao_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Qingniao_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Qingniao_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Qingniao_LOD0 UV range",
+      "[0.001, 0.001]..[0.999, 0.991]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Qingniao_LOD1 UV range",
+      "[0.001, 0.001]..[0.999, 0.991]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Qingniao_LOD2 UV range",
+      "[0.001, 0.001]..[0.999, 0.991]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "378 verts"
+    ],
+    [
+      "pass",
+      "region head",
+      "309 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "560 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

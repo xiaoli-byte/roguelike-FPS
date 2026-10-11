@@ -1,0 +1,482 @@
+{
+  "id": "SM_Tripo_FrostOfferings",
+  "display": "冻结供品堆（V2）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 13:37:16",
+          "files": {
+            "BO_SM_Tripo_FrostOfferings_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostOfferings_v001.json",
+              "sha256": "75b31cad495183ec381425c8d5272592bdbb268a7c3c8a34fe28f8c265ed1286"
+            },
+            "BO_SM_Tripo_FrostOfferings_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostOfferings_v001_views.json",
+              "sha256": "0e9127b8a50c4e2081b4488542784b0d6669d2d7597dc08da5fde2e1c62859ed"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost.v2.offerings"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -1.5,
+              0,
+              -1.0
+            ],
+            "max": [
+              1.5,
+              1.6,
+              1.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 13:37:48",
+          "files": {
+            "CN_SM_Tripo_FrostOfferings_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostOfferings_v001_source.png",
+              "sha256": "2a82344664bd2a5d104049c7b9c1fbe4704f5a4417f851f82ebe180b3e9a6cd7"
+            },
+            "CN_SM_Tripo_FrostOfferings_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostOfferings_v001_front.png",
+              "sha256": "2a3f4c80c563329f632e206af7582d48d92f7135eb6a364d78ccf034d8a541f6"
+            },
+            "CN_SM_Tripo_FrostOfferings_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostOfferings_v001_left.png",
+              "sha256": "051e96501854e4a17cff6e8a073b2fc09cba161a74b32fc3c452e69b45b1b9c4"
+            },
+            "CN_SM_Tripo_FrostOfferings_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostOfferings_v001_back.png",
+              "sha256": "f3ddc18a0843b1739a366bd35c4126b47e3fdadd194a24f24af533e9666a988d"
+            },
+            "CN_SM_Tripo_FrostOfferings_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostOfferings_v001_right.png",
+              "sha256": "e0d9f28e164dba0442ac503f5093a129ff1a9783046fe7e08891c14d4902dd4d"
+            },
+            "CN_SM_Tripo_FrostOfferings_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostOfferings_v001_sheet.png",
+              "sha256": "3512097fbf7cde9d078867626b67926465e54324d59b5008cb399677eb42e6eb"
+            },
+            "CN_SM_Tripo_FrostOfferings_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostOfferings_v001_prompt.txt",
+              "sha256": "d1bb51b3fd22454bd12afab18838d8ae49338513b84191d1cf4561421c05b36d"
+            },
+            "CN_SM_Tripo_FrostOfferings_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostOfferings_v001_registration.json",
+              "sha256": "8444b0314eff2283022a64698653b51aa175b215c08e8be227b001e9394a60ae"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 445,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 445
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1625
+            },
+            "request_id": "req_dec667820de642238225569a320b1e86",
+            "seconds": 30.3
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (3m wide x 1.6m tall x 2m deep): A pile of frozen pilgrim offerings 3m wide, 1.6m tall, 2m deep: stacked lacquered wooden chests bound with bronze bands, sealed clay jars, a rolled felt bundle and a small bronze ding cauldron, all glued together under a thick cap of snow and a sheet of clear ice. Chunky, one solid connected pile resting on the ground.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "2a82344664bd2a5d104049c7b9c1fbe4704f5a4417f851f82ebe180b3e9a6cd7",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.501665686850872,
+              "offset": [
+                119,
+                390
+              ],
+              "size": [
+                274,
+                244
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5089969181827219,
+              "offset": [
+                158,
+                390
+              ],
+              "size": [
+                196,
+                244
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5068805068805069,
+              "offset": [
+                121,
+                390
+              ],
+              "size": [
+                269,
+                244
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5068805068805069,
+              "offset": [
+                154,
+                390
+              ],
+              "size": [
+                203,
+                244
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-07 13:40:53",
+          "files": {
+            "CN_SM_Tripo_FrostOfferings_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostOfferings_v002_source.png",
+              "sha256": "2a82344664bd2a5d104049c7b9c1fbe4704f5a4417f851f82ebe180b3e9a6cd7"
+            },
+            "CN_SM_Tripo_FrostOfferings_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostOfferings_v002_front.png",
+              "sha256": "90b044d97cd85a6b19f4f34f7dac3c3f15b5d1941c467ef21ca385154de7cf48"
+            },
+            "CN_SM_Tripo_FrostOfferings_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostOfferings_v002_left.png",
+              "sha256": "e3427c5cd3f0f04e821c7e288031d39943d5d8229de370b2bf626aa4e1b00b56"
+            },
+            "CN_SM_Tripo_FrostOfferings_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostOfferings_v002_back.png",
+              "sha256": "34717c6d33134cdc6a2b904741b25e5c5a72ce69ca6fc284cdb6b5630104eb30"
+            },
+            "CN_SM_Tripo_FrostOfferings_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostOfferings_v002_right.png",
+              "sha256": "45ec36b3cd540345a3ef5b97ed76bcf791e20fdf49b3cd08a099385e205e7d29"
+            },
+            "CN_SM_Tripo_FrostOfferings_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostOfferings_v002_sheet.png",
+              "sha256": "0a29529e910e8d23d3af9d9140625c0e952c90e2109c695a1f96c54c107f27b4"
+            },
+            "CN_SM_Tripo_FrostOfferings_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostOfferings_v002_prompt.txt",
+              "sha256": "d1bb51b3fd22454bd12afab18838d8ae49338513b84191d1cf4561421c05b36d"
+            },
+            "CN_SM_Tripo_FrostOfferings_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostOfferings_v002_registration.json",
+              "sha256": "6f7ffb6f41450d90311f49aa7a18e6389afb85c552873f09cc01ee161131b633"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-image-2.5-sunburst",
+          "generation": {
+            "provider": "openai",
+            "endpoint": "images/generations",
+            "model": "gpt-image-2.5-sunburst",
+            "size": "2048x1024",
+            "quality": "high",
+            "background": "opaque",
+            "usage": {
+              "input_tokens": 445,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 445
+              },
+              "output_tokens": 1180,
+              "output_tokens_details": {
+                "image_tokens": 1180,
+                "text_tokens": 0
+              },
+              "total_tokens": 1625
+            },
+            "request_id": "req_dec667820de642238225569a320b1e86",
+            "seconds": 30.3,
+            "rekeyed_from": 1
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (3m wide x 1.6m tall x 2m deep): A pile of frozen pilgrim offerings 3m wide, 1.6m tall, 2m deep: stacked lacquered wooden chests bound with bronze bands, sealed clay jars, a rolled felt bundle and a small bronze ding cauldron, all glued together under a thick cap of snow and a sheet of clear ice. Chunky, one solid connected pile resting on the ground.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "2a82344664bd2a5d104049c7b9c1fbe4704f5a4417f851f82ebe180b3e9a6cd7",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.5006355725041557,
+              "offset": [
+                119,
+                390
+              ],
+              "size": [
+                274,
+                244
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5068805068805069,
+              "offset": [
+                158,
+                390
+              ],
+              "size": [
+                196,
+                244
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5047816227940451,
+              "offset": [
+                121,
+                390
+              ],
+              "size": [
+                269,
+                244
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5058288875716261,
+              "offset": [
+                154,
+                390
+              ],
+              "size": [
+                203,
+                244
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "v002 四视图同一物件、无裁切、雪盖未被抠掉；转 Hunyuan3D 2mv 多视图建模（2026-10-11）",
+            "time": "2026-10-11 00:02:37"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:57:14",
+          "files": {
+            "HP_SM_Tripo_FrostOfferings_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostOfferings_v001_input_front.png",
+              "sha256": "01a91ef6a2308d19a0ba13eadfebc916afc5bddd7ef4838139f27eb0de4a2b62"
+            },
+            "HP_SM_Tripo_FrostOfferings_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostOfferings_v001_input_left.png",
+              "sha256": "a11576ee2e38c854dbf3944996fabb57360ea5d2bdd97a2fe04c85a33213ff7a"
+            },
+            "HP_SM_Tripo_FrostOfferings_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostOfferings_v001_input_back.png",
+              "sha256": "23d6adedf4160bfb13e85974d7835ef5e6ca488efbd863adf6db461642a40725"
+            },
+            "HP_SM_Tripo_FrostOfferings_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostOfferings_v001_input_right.png",
+              "sha256": "3aa1e73572f859d05da519a3c0bc185038b9304cd32c4ce04c9471e47441d863"
+            },
+            "HP_SM_Tripo_FrostOfferings_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostOfferings_v001.glb",
+              "sha256": "d3a0d36de1b8fca1dd5acde236e378a7cbe28e50492c5432525505ad20b9a44f"
+            },
+            "HP_SM_Tripo_FrostOfferings_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostOfferings_v001_graph.json",
+              "sha256": "07b7699c0912951a632095fdef359bf56906613292ec62f35414e06feb8da8a9"
+            }
+          },
+          "from_concept": 2,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              95,
+              351,
+              417,
+              673
+            ],
+            "scale": 3.1801242236024843
+          },
+          "seconds": 203.6,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 24.0
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:59:08",
+          "files": {
+            "SM_Tripo_FrostOfferings_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostOfferings_v001.blend",
+              "sha256": "a78d283437d49f39ceb1cbc8799cb9f00355cb019e316369224b5bf89c3cc359"
+            },
+            "SM_Tripo_FrostOfferings_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostOfferings_v001.glb",
+              "sha256": "b8fc34f6c6c047dc088260eee9c723052d14e90150005d63833c6bd66a80981b"
+            },
+            "SM_Tripo_FrostOfferings_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostOfferings_v001_metrics.json",
+              "sha256": "d65d9fe041df77abcd5e0fdad537b5ba7cb667ffd30c592ae085f13e149af7c3"
+            },
+            "T_Tripo_FrostOfferings_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostOfferings_BC.png",
+              "sha256": "ae958c35648e28d8bd36fadf31ad98e426a6b24371e499b01186b004f6bb3f8c"
+            },
+            "T_Tripo_FrostOfferings_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostOfferings_N.png",
+              "sha256": "95046f81a44e5f04aea004cda98a29bae7180fb110e498c2abca2607e2f140aa"
+            },
+            "T_Tripo_FrostOfferings_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostOfferings_ORM.png",
+              "sha256": "474d31501e9b2b0c7802bd89a53e66f966589ea997b50241c18e0ff9918d9d44"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.854,
+          "uncovered_ratio": 0.381,
+          "lods": [
+            {
+              "tris": 2999,
+              "verts": 1408
+            },
+            {
+              "tris": 1000,
+              "verts": 406
+            }
+          ],
+          "export_kb": 348.8,
+          "seconds": 89.9,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:59:08",
+          "files": {
+            "SM_Tripo_FrostOfferings_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostOfferings_v001_validation_v001.json",
+              "sha256": "ab9f1917d99c6049eb1cb4249fcc0491a153db64b23b56d32448aeace0476339"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:59:16",
+          "files": {
+            "SM_Tripo_FrostOfferings_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostOfferings_v001_review_v001.png",
+              "sha256": "ac6e64460b5e20d4b2fa64cfef4dcc705a497a449d522ead30b10f3aab70f753"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "IoU 0.854；漆箱、陶罐、毡卷、铜鼎被雪与冰包成一堆，四面一致；LOD1 轮廓保留",
+            "time": "2026-10-11 00:59:47"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 00:59:48",
+          "files": {
+            "SM_Tripo_FrostOfferings.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostOfferings.glb",
+              "sha256": "b8fc34f6c6c047dc088260eee9c723052d14e90150005d63833c6bd66a80981b"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_FrostOfferings.glb"
+        }
+      ]
+    }
+  }
+}

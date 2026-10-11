@@ -1,0 +1,352 @@
+{
+  "id": "SM_Tripo_FrostSeaRampartPlain",
+  "display": "冰川素壁段（备选 C）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 17:35:34",
+          "files": {
+            "BO_SM_Tripo_FrostSeaRampartPlain_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostSeaRampartPlain_v001.json",
+              "sha256": "1c506f387c6727b4ad1a9a96d7da3419d786020956b4cd5d5e26b76951909402"
+            },
+            "BO_SM_Tripo_FrostSeaRampartPlain_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostSeaRampartPlain_v001_views.json",
+              "sha256": "2f9f4e3f48073e1886c4037f3c5f96d24b07a31515c2eb85afe54c0039cdbca2"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost_c.v2.rampartPlain"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -4.0,
+              0,
+              -1.5
+            ],
+            "max": [
+              4.0,
+              9.0,
+              1.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 17:36:46",
+          "files": {
+            "CN_SM_Tripo_FrostSeaRampartPlain_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaRampartPlain_v001_source.png",
+              "sha256": "0cdedf6769ab724cad50c0752f7bb6fa4e35c7b8d1db596fd3410bec073f5a6a"
+            },
+            "CN_SM_Tripo_FrostSeaRampartPlain_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaRampartPlain_v001_front.png",
+              "sha256": "3dfb6d3373bd1a6ab818f40936d3cc9b905c06ac0fa59c355c37271f74ad0da4"
+            },
+            "CN_SM_Tripo_FrostSeaRampartPlain_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaRampartPlain_v001_left.png",
+              "sha256": "a35a4d9fe49f727ace17b3a1034d89d00ab8e1f162014920de1480ed4b2f7896"
+            },
+            "CN_SM_Tripo_FrostSeaRampartPlain_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaRampartPlain_v001_back.png",
+              "sha256": "faaa24b71569a9ccc431008853aa3526b1fe682b60c6148c554a8745f49a5b14"
+            },
+            "CN_SM_Tripo_FrostSeaRampartPlain_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaRampartPlain_v001_right.png",
+              "sha256": "570fc3aad0276d4de69d11c161cc2fea2d232d97d8f47cf53e501329cd144394"
+            },
+            "CN_SM_Tripo_FrostSeaRampartPlain_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaRampartPlain_v001_sheet.png",
+              "sha256": "779eb6e55b721d13bf0c33862a3a9c1dffc45cb7b70a7e4955f0e597fbe86a87"
+            },
+            "CN_SM_Tripo_FrostSeaRampartPlain_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaRampartPlain_v001_prompt.txt",
+              "sha256": "3f4e0f22659d46d7a4bcd3d156a48c87c7ef6465dcff0e8c066a3cb7ec00458a"
+            },
+            "CN_SM_Tripo_FrostSeaRampartPlain_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaRampartPlain_v001_registration.json",
+              "sha256": "6feb964a519f7eb321ab5a68616faea3a31c8869aea317b50e58755605e1c87b"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-5.6-terra",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-5.6-terra",
+            "size": "2048x1024",
+            "generated_size": [
+              1983,
+              793
+            ],
+            "references": [],
+            "attempt": 1,
+            "seconds": 70.8
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian frozen polar sea fantasy from the Zhuangzi's northern darkness: faceted glacier ice and dark ink-blue rock, weathered ivory whale bone, old dark ship timber with faded teal paint, frozen ropes, felt and a cold aqua deep-sea glow, thick soft snow caps and chunky icicles. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (8m wide x 9m tall x 3m deep): A plain tileable glacier cliff wall section 8m wide, 9m tall, 3m deep, the quieter companion of the decorated cliff: the same faceted glacier ice and dark rock strata with a snow overhang along the top, but no icicles, no rope and no iron ring. Both side ends are flat cut faces so sections join seamlessly in a row. Solid wall with no openings.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "0cdedf6769ab724cad50c0752f7bb6fa4e35c7b8d1db596fd3410bec073f5a6a",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.6866297921037573,
+              "offset": [
+                72,
+                255
+              ],
+              "size": [
+                368,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6866297921037573,
+              "offset": [
+                184,
+                255
+              ],
+              "size": [
+                143,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.689391037916507,
+              "offset": [
+                56,
+                255
+              ],
+              "size": [
+                399,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.6875477463712757,
+              "offset": [
+                185,
+                255
+              ],
+              "size": [
+                141,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "四视图同一物件、朝向正确、无裁切、雪盖未被抠掉；转 Hunyuan3D 2mv 多视图建模（2026-10-11）",
+            "time": "2026-10-11 00:35:04"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:15:40",
+          "files": {
+            "HP_SM_Tripo_FrostSeaRampartPlain_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaRampartPlain_v001_input_front.png",
+              "sha256": "84280ec35740e1f62878537c3c321e0a1bc93eb122028301d8dec28ba2b5c9eb"
+            },
+            "HP_SM_Tripo_FrostSeaRampartPlain_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaRampartPlain_v001_input_left.png",
+              "sha256": "b7a2c618ad4db11d85ff2d0e6d4fd4fca628d63e06f881676cf46ea22d21c48c"
+            },
+            "HP_SM_Tripo_FrostSeaRampartPlain_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaRampartPlain_v001_input_back.png",
+              "sha256": "7fe1e3d99e22581b129bd4bea02448fef4569ac85b3e1f32d7f2da2a6a4e8fc2"
+            },
+            "HP_SM_Tripo_FrostSeaRampartPlain_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaRampartPlain_v001_input_right.png",
+              "sha256": "311e3e9177bae7798fcd7f95539572289ae8d602a4785216b3c47be5bcbd6db3"
+            },
+            "HP_SM_Tripo_FrostSeaRampartPlain_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaRampartPlain_v001.glb",
+              "sha256": "b081cb5a35918b75acd078f4314db0889c6e384213f255ae5d36109a3eb097a3"
+            },
+            "HP_SM_Tripo_FrostSeaRampartPlain_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaRampartPlain_v001_graph.json",
+              "sha256": "60ea9ef61481533dc8cddba4e71a81befbce0c59fadc9c7d485557e11d4ad8b5"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -46,
+              210,
+              558,
+              814
+            ],
+            "scale": 1.695364238410596
+          },
+          "seconds": 158.4,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 13.7
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:16:49",
+          "files": {
+            "SM_Tripo_FrostSeaRampartPlain_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostSeaRampartPlain_v001.blend",
+              "sha256": "19f406958ff94e6ef518437aef0e7b6fda38c286ae6c8877d5c27f5247064b50"
+            },
+            "SM_Tripo_FrostSeaRampartPlain_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostSeaRampartPlain_v001.glb",
+              "sha256": "007c0c5019c8036e384a84959a3761a14bbfa13a799631935f1f31a1cd698f75"
+            },
+            "SM_Tripo_FrostSeaRampartPlain_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostSeaRampartPlain_v001_metrics.json",
+              "sha256": "12fb08941f3c92dbb2b15bb8aa6dbfc609fd8ace643ce0db3195d6994b0d429d"
+            },
+            "T_Tripo_FrostSeaRampartPlain_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaRampartPlain_BC.png",
+              "sha256": "dbca5951ff527e5bc6da28035d43689d09d6e8ebe0083935251b1d4fa6009498"
+            },
+            "T_Tripo_FrostSeaRampartPlain_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaRampartPlain_N.png",
+              "sha256": "27f58c37eda3b1bf95b6eacced365d27558ae3c4f05f4300e606f4cbb8c68d55"
+            },
+            "T_Tripo_FrostSeaRampartPlain_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaRampartPlain_ORM.png",
+              "sha256": "4eb7b920f936095f6ed552f1c0faba3c588320dcede6bb55e50e565dda23889b"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.9,
+          "uncovered_ratio": 0.1156,
+          "lods": [
+            {
+              "tris": 8000,
+              "verts": 4002
+            },
+            {
+              "tris": 2500,
+              "verts": 1252
+            },
+            {
+              "tris": 800,
+              "verts": 402
+            }
+          ],
+          "export_kb": 382.6,
+          "seconds": 67.4,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:16:49",
+          "files": {
+            "SM_Tripo_FrostSeaRampartPlain_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostSeaRampartPlain_v001_validation_v001.json",
+              "sha256": "4564fb66c9c2861c0a0916671da49bf343b88c91c46907cc68fecde0fefbc023"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:16:58",
+          "files": {
+            "SM_Tripo_FrostSeaRampartPlain_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostSeaRampartPlain_v001_review_v001.png",
+              "sha256": "2f752828a3fd2576742629a6dd0c95458dc55e8074a0a87cf5aca8da45add2f7"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "IoU 0.90；冰与岩层斜向交错+平雪檐，无冰挂铁环；两端平切",
+            "time": "2026-10-11 01:17:12"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:17:12",
+          "files": {
+            "SM_Tripo_FrostSeaRampartPlain.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostSeaRampartPlain.glb",
+              "sha256": "007c0c5019c8036e384a84959a3761a14bbfa13a799631935f1f31a1cd698f75"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_FrostSeaRampartPlain.glb"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "steps": {
+    "导入清理": 9.6,
+    "对齐": 2.6,
+    "低模与 UV": 18.8,
+    "投影着色": 20.1,
+    "烘焙": 7.2,
+    "LOD": 0.0,
+    "导出": 1.7
+  },
+  "highpoly": {
+    "faces_raw": 584156,
+    "faces": 211982,
+    "verts": 211976,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.839,
+    "iou_per_view": {
+      "front": 0.865,
+      "left": 0.836,
+      "back": 0.85,
+      "right": 0.791
+    },
+    "height_m": 1.1831,
+    "blockout_height_m": 1.2
+  },
+  "uv": {
+    "smart_islands": 335,
+    "charts": 37,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.1601,
+    "density_merged": 0.1616
+  },
+  "projection": {
+    "uncovered_ratio": 0.5522
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Tripo_FrostBarricade_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_FrostBarricade_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_FrostBarricade_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostBarricade_LOD0",
+      "tris": 3000,
+      "verts": 1494,
+      "uv_min": [
+        0.002216097665950656,
+        0.002216028980910778
+      ],
+      "uv_max": [
+        0.9787785410881042,
+        0.9977839589118958
+      ],
+      "uv_utilization": 0.544,
+      "bbox_min": [
+        -2.1835,
+        -0.1824,
+        0.0003
+      ],
+      "bbox_max": [
+        2.2577,
+        0.2307,
+        1.1832
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostBarricade_LOD1",
+      "tris": 1000,
+      "verts": 494,
+      "uv_min": [
+        0.002216097665950656,
+        0.002216028980910778
+      ],
+      "uv_max": [
+        0.9787785410881042,
+        0.9955488443374634
+      ],
+      "uv_utilization": 0.51,
+      "bbox_min": [
+        -2.1872,
+        -0.1864,
+        0.0014
+      ],
+      "bbox_max": [
+        2.2369,
+        0.2349,
+        1.1915
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostBarricade/04_export/SM_Tripo_FrostBarricade_v001.glb",
+    "bytes": 195272
+  },
+  "blend": "art/source/props/SM_Tripo_FrostBarricade/03_work/SM_Tripo_FrostBarricade_v001.blend",
+  "total_seconds": 60.1,
+  "_seconds": 71.5
+}

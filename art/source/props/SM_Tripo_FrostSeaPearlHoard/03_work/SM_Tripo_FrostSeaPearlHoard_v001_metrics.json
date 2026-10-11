@@ -1,0 +1,117 @@
+{
+  "steps": {
+    "导入清理": 6.4,
+    "对齐": 1.1,
+    "低模与 UV": 19.8,
+    "投影着色": 51.7,
+    "烘焙": 8.7,
+    "LOD": 0.0,
+    "导出": 1.0
+  },
+  "highpoly": {
+    "faces_raw": 1542730,
+    "faces": 782246,
+    "verts": 782176,
+    "loose_parts": 74,
+    "kept_parts": 2,
+    "remesh_voxel_m": 0.00491,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.725,
+    "iou_per_view": {
+      "front": 0.87,
+      "left": 0.656,
+      "back": 0.592,
+      "right": 0.709
+    },
+    "height_m": 1.7202,
+    "blockout_height_m": 1.8
+  },
+  "uv": {
+    "smart_islands": 786,
+    "charts": 182,
+    "fallback_charts": 21,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.1626,
+    "density_merged": 0.224
+  },
+  "projection": {
+    "uncovered_ratio": 0.4899
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Tripo_FrostSeaPearlHoard_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_FrostSeaPearlHoard_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_FrostSeaPearlHoard_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostSeaPearlHoard_LOD0",
+      "tris": 2998,
+      "verts": 1430,
+      "uv_min": [
+        0.003814169904217124,
+        0.0038058410864323378
+      ],
+      "uv_max": [
+        0.9895017147064209,
+        0.9962331652641296
+      ],
+      "uv_utilization": 0.615,
+      "bbox_min": [
+        -0.917,
+        -0.7222,
+        0.0005
+      ],
+      "bbox_max": [
+        0.9142,
+        0.5638,
+        1.7208
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostSeaPearlHoard_LOD1",
+      "tris": 1000,
+      "verts": 426,
+      "uv_min": [
+        0.003814169904217124,
+        0.0038058410864323378
+      ],
+      "uv_max": [
+        0.9800004959106445,
+        0.9925015568733215
+      ],
+      "uv_utilization": 0.522,
+      "bbox_min": [
+        -0.9183,
+        -0.717,
+        -0.0061
+      ],
+      "bbox_max": [
+        0.9115,
+        0.5537,
+        1.6986
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostSeaPearlHoard/04_export/SM_Tripo_FrostSeaPearlHoard_v001.glb",
+    "bytes": 340824
+  },
+  "blend": "art/source/props/SM_Tripo_FrostSeaPearlHoard/03_work/SM_Tripo_FrostSeaPearlHoard_v001.blend",
+  "total_seconds": 88.7,
+  "_seconds": 94.6
+}

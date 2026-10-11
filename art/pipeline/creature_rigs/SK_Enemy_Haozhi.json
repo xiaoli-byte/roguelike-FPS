@@ -1,0 +1,50 @@
+{
+  "doc": "冰棘豪彘：Tripo 智能网格 P2.0（6000 档，实得 6575 三角面，Tripo 自带 UV，只有底色图），未绑骨，自定义猪形四足骨架。骨骼位置按网格切片实测（缩放落地后的米制：front = -Y，生物的左 = +X，up = +Z）：四个蹄子聚类在 x ±0.19、前 y -0.19 / 后 y +0.33；前腿 upperarm → forearm → paw（蹄），后腿 thigh → shin → foot（膝朝前、跗关节朝后，按真实野猪）；头、獠牙、耳刚性锁在 head 上；背上冰刺冠分三段（quill_1 肩上 / quill_2 背中 / quill_3 臀上）加两侧冠缘（quill_L / quill_R，只管 0.47 米以上，身侧皮毛归脊柱），蓄刺时竖起、外张；短尾一节。",
+  "source": "art/source/_tripo_inbox/20261010T151012_SK_Enemy_Haozhi_smartmesh.fbx",
+  "task": "https://studio.tripo3d.ai/workspace/generate/a263fd37-c051-40b9-9e81-bade15b4a60a",
+  "height_m": 0.9,
+  "bones": {
+    "root": { "head": [0, 0, 0], "tail": [0, 0, 0.12], "parent": null, "deform": false },
+    "hips": { "head": [0, 0.32, 0.36], "tail": [0, 0.08, 0.38], "parent": "root" },
+    "spine": { "head": [0, 0.08, 0.38], "tail": [0, -0.14, 0.4], "parent": "hips" },
+    "chest": { "head": [0, -0.14, 0.4], "tail": [0, -0.27, 0.42], "parent": "spine" },
+    "neck": { "head": [0, -0.27, 0.42], "tail": [0, -0.36, 0.42], "parent": "chest" },
+    "head": { "head": [0, -0.36, 0.42], "tail": [0, -0.52, 0.33], "parent": "neck" },
+    "upperarm_L": { "head": [0.17, -0.2, 0.3], "tail": [0.18, -0.16, 0.16], "parent": "chest" },
+    "forearm_L": { "head": [0.18, -0.16, 0.16], "tail": [0.19, -0.18, 0.05], "parent": "upperarm_L" },
+    "paw_L": { "head": [0.19, -0.18, 0.05], "tail": [0.19, -0.25, 0.01], "parent": "forearm_L" },
+    "upperarm_R": { "head": [-0.17, -0.2, 0.3], "tail": [-0.18, -0.16, 0.16], "parent": "chest" },
+    "forearm_R": { "head": [-0.18, -0.16, 0.16], "tail": [-0.19, -0.18, 0.05], "parent": "upperarm_R" },
+    "paw_R": { "head": [-0.19, -0.18, 0.05], "tail": [-0.19, -0.25, 0.01], "parent": "forearm_R" },
+    "thigh_L": { "head": [0.16, 0.3, 0.34], "tail": [0.17, 0.27, 0.18], "parent": "hips" },
+    "shin_L": { "head": [0.17, 0.27, 0.18], "tail": [0.18, 0.35, 0.08], "parent": "thigh_L" },
+    "foot_L": { "head": [0.18, 0.35, 0.08], "tail": [0.18, 0.3, 0.01], "parent": "shin_L" },
+    "thigh_R": { "head": [-0.16, 0.3, 0.34], "tail": [-0.17, 0.27, 0.18], "parent": "hips" },
+    "shin_R": { "head": [-0.17, 0.27, 0.18], "tail": [-0.18, 0.35, 0.08], "parent": "thigh_R" },
+    "foot_R": { "head": [-0.18, 0.35, 0.08], "tail": [-0.18, 0.3, 0.01], "parent": "shin_R" },
+    "quill_1": { "head": [0, -0.2, 0.55], "tail": [0, -0.24, 0.82], "parent": "chest" },
+    "quill_2": { "head": [0, 0.08, 0.6], "tail": [0, 0.12, 0.88], "parent": "spine" },
+    "quill_3": { "head": [0, 0.3, 0.55], "tail": [0, 0.45, 0.68], "parent": "hips" },
+    "quill_L": { "head": [0.18, 0.05, 0.54], "tail": [0.28, 0.12, 0.66], "parent": "spine" },
+    "quill_R": { "head": [-0.18, 0.05, 0.54], "tail": [-0.28, 0.12, 0.66], "parent": "spine" },
+    "tail": { "head": [0, 0.45, 0.38], "tail": [0, 0.52, 0.3], "parent": "hips" }
+  },
+  "limits": [
+    { "bones": ["upperarm_L", "upperarm_R", "forearm_L", "forearm_R", "paw_L", "paw_R"], "box": [[-0.32, -0.36, -0.02], [0.32, -0.02, 0.32]] },
+    { "bones": ["thigh_L", "thigh_R", "shin_L", "shin_R", "foot_L", "foot_R"], "box": [[-0.32, 0.12, -0.02], [0.32, 0.48, 0.34]] },
+    { "bones": ["neck", "head"], "box": [[-0.32, -0.56, 0.15], [0.32, -0.2, 0.62]] },
+    { "bones": ["quill_1", "quill_2", "quill_3"], "box": [[-0.35, -0.45, 0.5], [0.35, 0.56, 0.95]] },
+    { "bones": ["quill_L"], "box": [[0.14, -0.35, 0.47], [0.35, 0.45, 0.8]] },
+    { "bones": ["quill_R"], "box": [[-0.35, -0.35, 0.47], [-0.14, 0.45, 0.8]] },
+    { "bones": ["tail"], "box": [[-0.1, 0.38, 0.15], [0.1, 0.56, 0.5]] }
+  ],
+  "rigid": [
+    { "bone": "head", "box": [[-0.2, -0.56, 0.2], [0.2, -0.36, 0.58]] }
+  ],
+  "ground": [{ "bones": ["paw_L", "paw_R", "foot_L", "foot_R"], "fade_z": [0.04, 0.1] }],
+  "provider_pbr": true,
+  "bake_normal": false,
+  "repack_uv": false,
+  "transfer_size": 4096,
+  "paint_shading": { "cavity_distance": 0.016, "cavity": 0.32, "ao": 0.16, "saturation": 1.06, "contrast": 1.05, "keep_brightness": true }
+}

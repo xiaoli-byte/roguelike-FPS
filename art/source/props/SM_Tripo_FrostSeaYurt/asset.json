@@ -1,0 +1,500 @@
+{
+  "id": "SM_Tripo_FrostSeaYurt",
+  "display": "牧人毡帐（备选 C）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 17:35:41",
+          "files": {
+            "BO_SM_Tripo_FrostSeaYurt_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostSeaYurt_v001.json",
+              "sha256": "96cdea87467d0950a7a11f27e29d0e6e70f90b2b5c4fa32db330417b2eebc7fe"
+            },
+            "BO_SM_Tripo_FrostSeaYurt_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostSeaYurt_v001_views.json",
+              "sha256": "138d58e8bd88a49fe7776abb42fd9b075886f1701a1d7761e36837c8ba370fe8"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost_c.v2.yurt"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.0,
+              0,
+              -1.5
+            ],
+            "max": [
+              2.0,
+              3.6,
+              1.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-07 17:37:08",
+          "files": {
+            "CN_SM_Tripo_FrostSeaYurt_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaYurt_v001_source.png",
+              "sha256": "b01663509e63659675646d1b948da815b8a58d2d3be4a6a5f920050f23b4fc8a"
+            },
+            "CN_SM_Tripo_FrostSeaYurt_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaYurt_v001_front.png",
+              "sha256": "c06f7767f2844e9f7f95f7e36c58929a1262a34abc4accc901239b362deaa2af"
+            },
+            "CN_SM_Tripo_FrostSeaYurt_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaYurt_v001_left.png",
+              "sha256": "a26ff9b7767928408c9b04dee6ebf4315a55645ea3e919cff24922a0f5b26ab2"
+            },
+            "CN_SM_Tripo_FrostSeaYurt_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaYurt_v001_back.png",
+              "sha256": "230bb1462aa1323c59cc843f5b69d304e23388a19d83363742b905561476dacc"
+            },
+            "CN_SM_Tripo_FrostSeaYurt_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaYurt_v001_right.png",
+              "sha256": "e9fdbad639fb8ce09b1ff251981fcd551b5f391213af67f1bb72ec2acacba932"
+            },
+            "CN_SM_Tripo_FrostSeaYurt_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaYurt_v001_sheet.png",
+              "sha256": "c3c522398159ad4f9c87576846ccf9c5012165252f1f0d29d096caecc1d7ada8"
+            },
+            "CN_SM_Tripo_FrostSeaYurt_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaYurt_v001_prompt.txt",
+              "sha256": "aa8c122cd9fa7cc2d457db4776a9684eea05b50b3b6f4861cc3f46687d0e1120"
+            },
+            "CN_SM_Tripo_FrostSeaYurt_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostSeaYurt_v001_registration.json",
+              "sha256": "21217aa20eb9c2c254a96ff3af3544019871b90688fcfe339421d41efd6af579"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-5.6-terra",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-5.6-terra",
+            "size": "2048x1024",
+            "generated_size": [
+              2089,
+              753
+            ],
+            "references": [],
+            "attempt": 1,
+            "seconds": 85.7
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian frozen polar sea fantasy from the Zhuangzi's northern darkness: faceted glacier ice and dark ink-blue rock, weathered ivory whale bone, old dark ship timber with faded teal paint, frozen ropes, felt and a cold aqua deep-sea glow, thick soft snow caps and chunky icicles. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (4m wide x 3.6m tall x 3m deep): A nomad felt tent 4m wide, 3.6m tall, 3m deep: a round squat yurt of thick off-white felt bound with dark ropes, a small wooden door with teal painted patterns, a smoke ring at the top, heavy snow on the roof and drifted against the walls, a fishing net and a pair of skis leaning on it. Chunky readable shapes, one solid connected piece standing on the ground.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "b01663509e63659675646d1b948da815b8a58d2d3be4a6a5f920050f23b4fc8a",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.7009004623996106,
+              "offset": [
+                76,
+                306
+              ],
+              "size": [
+                359,
+                411
+              ],
+              "physical_height_m": 3.6,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7426508509541,
+              "offset": [
+                90,
+                306
+              ],
+              "size": [
+                332,
+                411
+              ],
+              "physical_height_m": 3.6,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7426508509541,
+              "offset": [
+                82,
+                306
+              ],
+              "size": [
+                348,
+                411
+              ],
+              "physical_height_m": 3.6,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7426508509541,
+              "offset": [
+                85,
+                306
+              ],
+              "size": [
+                342,
+                411
+              ],
+              "physical_height_m": 3.6,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "四视图同一物件、朝向正确、无裁切、雪盖未被抠掉；转 Hunyuan3D 2mv 多视图建模（2026-10-11）",
+            "time": "2026-10-11 00:35:20"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:44:19",
+          "files": {
+            "HP_SM_Tripo_FrostSeaYurt_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaYurt_v001_input_front.png",
+              "sha256": "2411b168bdd2a5e46527520e2f188a03ca9b5ad8b102559790e9444739ff00e3"
+            },
+            "HP_SM_Tripo_FrostSeaYurt_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaYurt_v001_input_left.png",
+              "sha256": "c05b0525489da86c59683f0bc3783b11927274eabd1c052f04a595fb7d0e1ed9"
+            },
+            "HP_SM_Tripo_FrostSeaYurt_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaYurt_v001_input_back.png",
+              "sha256": "c0fd469055ccde57aedc76ab2e34f769f7d4617f47e48b77549f7668b0e24480"
+            },
+            "HP_SM_Tripo_FrostSeaYurt_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaYurt_v001_input_right.png",
+              "sha256": "52be7f2034c566d3be4d055afba0055dfcecb1572963ed58f41d11e2767077ff"
+            },
+            "HP_SM_Tripo_FrostSeaYurt_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaYurt_v001.glb",
+              "sha256": "c205f3b74f2b89486553f458f9041405fdcf5af91183a9338e490ba04420c732"
+            },
+            "HP_SM_Tripo_FrostSeaYurt_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaYurt_v001_graph.json",
+              "sha256": "56b8a6d7c4921dab2132c87e3bb0662befcf9d21e1e2809670bc549eff9c0ac6"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              14,
+              270,
+              498,
+              753
+            ],
+            "scale": 2.115702479338843
+          },
+          "seconds": 211.2,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 44.7
+        },
+        {
+          "version": 2,
+          "created": "2026-10-11 01:56:26",
+          "files": {
+            "HP_SM_Tripo_FrostSeaYurt_v002_input.png": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaYurt_v002_input.png",
+              "sha256": "dce71b790a73d09f6595ab98c5bf180b1f50ee063fe7ffcea478479efc6ae7bc"
+            },
+            "HP_SM_Tripo_FrostSeaYurt_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaYurt_v002.glb",
+              "sha256": "32e406f1e9b8652cd0c8b9b77c6d83ab7602e4e0a035d6ea6acec3bd12a96bc2"
+            },
+            "HP_SM_Tripo_FrostSeaYurt_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostSeaYurt_v002_graph.json",
+              "sha256": "c7c781c92a29af0379872274bf4deb245efb205a92a899b164282103efd29f74"
+            }
+          },
+          "from_concept": 1,
+          "mode": "single",
+          "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+          "checkpoint": "hunyuan_3d_v2.1.safetensors",
+          "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "crop": [
+              76,
+              306,
+              435,
+              717
+            ],
+            "scale": 2.1177615571776154,
+            "offset": [
+              132,
+              77
+            ]
+          },
+          "seconds": 498.1,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 26.0
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:46:58",
+          "files": {
+            "SM_Tripo_FrostSeaYurt_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostSeaYurt_v001.blend",
+              "sha256": "a7713837384bf4f15fcdff3709a04b2aabd9e32f4fe0243d0dbfe544f872aab9"
+            },
+            "SM_Tripo_FrostSeaYurt_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostSeaYurt_v001.glb",
+              "sha256": "caccb8c998828c8b29d8bee97f687fca432c61f564154ef4bca8efa6f8ca806f"
+            },
+            "SM_Tripo_FrostSeaYurt_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostSeaYurt_v001_metrics.json",
+              "sha256": "feef8ea70adc51fe3d230cba56c31e3b815dbdb1f20919ace1d1d6c9234cf20b"
+            },
+            "T_Tripo_FrostSeaYurt_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaYurt_BC.png",
+              "sha256": "6ae4bcd52aeb0f955d3a0740d796f6143f85d168cc5b70ff8432c474e7371b38"
+            },
+            "T_Tripo_FrostSeaYurt_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaYurt_N.png",
+              "sha256": "55a77c2b7daad508e7ae4bdd444485671248f044f9a78e363a01174c1fe791d2"
+            },
+            "T_Tripo_FrostSeaYurt_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostSeaYurt_ORM.png",
+              "sha256": "757a719f98e12419b1d5963796803a50bf1b79e2446894df0cbc9b51c1ff45f9"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.931,
+          "uncovered_ratio": 0.5217,
+          "lods": [
+            {
+              "tris": 2982,
+              "verts": 1122
+            },
+            {
+              "tris": 2162,
+              "verts": 677
+            }
+          ],
+          "export_kb": 457.3,
+          "seconds": 158.8,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-11 02:04:53",
+          "files": {
+            "SM_Tripo_FrostSeaYurt_v002.blend": {
+              "path": "03_work/SM_Tripo_FrostSeaYurt_v002.blend",
+              "sha256": "9fe8f1380333bf314e44f86437f2e694df36fe25d36a03d6b05dea647fa4dd3e"
+            },
+            "SM_Tripo_FrostSeaYurt_v002.glb": {
+              "path": "04_export/SM_Tripo_FrostSeaYurt_v002.glb",
+              "sha256": "43e29912d02d269325efc067ea31cb33bb1250f3168ac2922afef70f134c9d6d"
+            },
+            "SM_Tripo_FrostSeaYurt_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostSeaYurt_v002_metrics.json",
+              "sha256": "89357b2714a3cfa6be73e62a9735b47eac8bb463c8f125ced241388dad417a79"
+            },
+            "T_Tripo_FrostSeaYurt_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostSeaYurt_BC.png",
+              "sha256": "d89d7b6adc8e2b0c2b3d9804bff2c9016492198cc2ea9592302690a122911926"
+            },
+            "T_Tripo_FrostSeaYurt_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostSeaYurt_N.png",
+              "sha256": "c032a0e450aaa7857a7a201a863e43384c2cb98697bc16d07b621f632d600a1e"
+            },
+            "T_Tripo_FrostSeaYurt_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostSeaYurt_ORM.png",
+              "sha256": "20feea014543c9a40261ed1fe185a919b6ae35c7f0f1bf5774d640b6275a9e45"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.931,
+          "uncovered_ratio": 0.3107,
+          "lods": [
+            {
+              "tris": 2999,
+              "verts": 1410
+            },
+            {
+              "tris": 1000,
+              "verts": 408
+            }
+          ],
+          "export_kb": 293.0,
+          "seconds": 114.2,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:46:58",
+          "files": {
+            "SM_Tripo_FrostSeaYurt_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostSeaYurt_v001_validation_v001.json",
+              "sha256": "a391a148b06b3b283e2cacdb99ecf0b8bf20c44f384e68ef0d59e1aac38c7ea9"
+            }
+          },
+          "from_build": 1,
+          "errors": 1,
+          "warnings": 2,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 2,
+          "created": "2026-10-11 01:47:42",
+          "files": {
+            "SM_Tripo_FrostSeaYurt_v001_validation_v002.json": {
+              "path": "05_review/SM_Tripo_FrostSeaYurt_v001_validation_v002.json",
+              "sha256": "1768c47bd13a36f472513b9a53a3222c208df072e3ce93b18a2e255b93d99f2c"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 2,
+          "waived": [
+            "LOD1 面数"
+          ],
+          "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-10-11 02:04:53",
+          "files": {
+            "SM_Tripo_FrostSeaYurt_v002_validation_v003.json": {
+              "path": "05_review/SM_Tripo_FrostSeaYurt_v002_validation_v003.json",
+              "sha256": "d2da3d27107c17de6b3ec8e90a471d56361735d5e5c77dbe439465917517e5f0"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 01:47:51",
+          "files": {
+            "SM_Tripo_FrostSeaYurt_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostSeaYurt_v001_review_v001.png",
+              "sha256": "5b2df74c813f2b3ceaf467299bd259584b533d5dd2ea2027ebeb85e7a5654c02"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "rejected",
+            "by": "claude(AI初审)",
+            "note": "2mv 薄壳：毡壁内外面贴近，成品出现碎玻璃状明暗与破面，LOD1 也减不下去；改 Hunyuan 2.1 单视图重出",
+            "time": "2026-10-11 01:48:06"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-11 02:05:02",
+          "files": {
+            "SM_Tripo_FrostSeaYurt_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_FrostSeaYurt_v002_review_v002.png",
+              "sha256": "9c88ac8727db54838ad7870cc36f55cc3b4f268b286a45033f67038f1a1c3fcf"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "build v002（Hunyuan 2.1 单视图）：毡帐+青绿木门+鲸骨+渔网滑雪板，实心无碎面，LOD1 达标；v001（2mv）薄壳碎面已驳回",
+            "time": "2026-10-11 02:08:25"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 02:08:26",
+          "files": {
+            "SM_Tripo_FrostSeaYurt.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostSeaYurt.glb",
+              "sha256": "43e29912d02d269325efc067ea31cb33bb1250f3168ac2922afef70f134c9d6d"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_FrostSeaYurt.glb"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,305 @@
+{
+  "asset": "SK_Enemy_Haozhi",
+  "version": 2,
+  "glb": "art/source/characters/SK_Enemy_Haozhi/04_export/SK_Enemy_Haozhi_native_v002.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 2.6,
+      "自定义骨架：24 根骨骼（热扩散权重，0 个顶点未覆盖）": 0.4,
+      "贴图（BC + AO/ORM）": 14.6,
+      "LOD 与蒙皮上限 5909 / 2462 / 985": 0.2,
+      "导出 600 KB": 1.3
+    },
+    "source": {
+      "verts": 3392,
+      "tris": 6575,
+      "scale": 1.0066630256690334
+    },
+    "regions": {
+      "heat_unweighted_verts": 0,
+      "ground_verts": 584,
+      "head_verts": 424,
+      "fallback_verts": 44,
+      "per_bone": {
+        "hips": 332,
+        "spine": 138,
+        "chest": 33,
+        "neck": 0,
+        "head": 424,
+        "upperarm_L": 105,
+        "forearm_L": 53,
+        "paw_L": 178,
+        "upperarm_R": 110,
+        "forearm_R": 49,
+        "paw_R": 180,
+        "thigh_L": 69,
+        "shin_L": 82,
+        "foot_L": 150,
+        "thigh_R": 68,
+        "shin_R": 98,
+        "foot_R": 135,
+        "quill_1": 311,
+        "quill_2": 78,
+        "quill_3": 15,
+        "quill_L": 37,
+        "quill_R": 36,
+        "tail": 26
+      }
+    },
+    "bones": [
+      "chest",
+      "foot_L",
+      "foot_R",
+      "forearm_L",
+      "forearm_R",
+      "head",
+      "hips",
+      "neck",
+      "paw_L",
+      "paw_R",
+      "quill_1",
+      "quill_2",
+      "quill_3",
+      "quill_L",
+      "quill_R",
+      "root",
+      "shin_L",
+      "shin_R",
+      "spine",
+      "tail",
+      "thigh_L",
+      "thigh_R",
+      "upperarm_L",
+      "upperarm_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.93,
+      "shade_mean": 0.93
+    },
+    "textures": {
+      "size": 1024,
+      "ao_mean": 0.724,
+      "provider_pbr": [],
+      "roughness_mean": 0.75,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Enemy_Haozhi_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_Haozhi_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_Haozhi_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Enemy_Haozhi_LOD0",
+        "tris": 5909,
+        "uv_min": [
+          0.00146484375,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.99853515625,
+          0.993896484375
+        ]
+      },
+      {
+        "name": "SK_Enemy_Haozhi_LOD1",
+        "tris": 2462,
+        "uv_min": [
+          0.00146484375,
+          0.001617504982277751
+        ],
+        "uv_max": [
+          0.99853515625,
+          0.993408203125
+        ]
+      },
+      {
+        "name": "SK_Enemy_Haozhi_LOD2",
+        "tris": 985,
+        "uv_min": [
+          0.00146484375,
+          0.001617504982277751
+        ],
+        "uv_max": [
+          0.990478515625,
+          0.993408203125
+        ]
+      }
+    ],
+    "glb_kb": 600,
+    "_seconds": 29.3
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "600 KB / 1600 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Enemy_Haozhi_LOD0', 'SK_Enemy_Haozhi_LOD1', 'SK_Enemy_Haozhi_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "5909 / 6000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "2462 / 2500"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "985 / 1000"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "0.899 m (design 0.9 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0008"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Enemy_Haozhi']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Haozhi_ORM",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Haozhi_BC",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "24 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Haozhi_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Haozhi_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Haozhi_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Haozhi_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Haozhi_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Haozhi_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Haozhi_LOD0 UV range",
+      "[0.001, 0.001]..[0.999, 0.994]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Haozhi_LOD1 UV range",
+      "[0.001, 0.002]..[0.999, 0.993]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Haozhi_LOD2 UV range",
+      "[0.001, 0.002]..[0.99, 0.993]"
+    ],
+    [
+      "warn",
+      "region heat_unweighted",
+      "0 verts"
+    ],
+    [
+      "pass",
+      "region ground",
+      "584 verts"
+    ],
+    [
+      "pass",
+      "region head",
+      "424 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "44 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}
