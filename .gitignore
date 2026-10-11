@@ -7,11 +7,20 @@ dist/
 # 美术管线：密钥、可再生的中间产物、Blender 备份
 art/pipeline/.env
 art/source/**/02_highpoly/
-# Keep the small, exact Hunyuan workflow graphs for nature assets reproducible in a fresh checkout.
+# Keep the small, exact Hunyuan workflow graphs as the record of how each scene prop was generated.
+# Their input images (HP_*_input.png, 01_concept/) stay local, so a fresh checkout can audit the
+# parameters but cannot regenerate the high-poly mesh without the author's concept sources.
 !art/source/props/SM_Env_*/02_highpoly/
 art/source/props/SM_Env_*/02_highpoly/*
 !art/source/props/SM_Env_*/02_highpoly/*_graph.json
 !art/source/props/SM_Env_*/02_highpoly/*_failure.json
+!art/source/props/SM_Prop_*/02_highpoly/
+art/source/props/SM_Prop_*/02_highpoly/*
+!art/source/props/SM_Prop_*/02_highpoly/*_graph.json
+!art/source/props/SM_Prop_*/02_highpoly/*_failure.json
+!art/source/characters/SK_Hero_*/02_highpoly/
+art/source/characters/SK_Hero_*/02_highpoly/*
+!art/source/characters/SK_Hero_*/02_highpoly/*_graph.json
 art/source/**/_tmp/
 *.blend1
 __pycache__/
@@ -25,4 +34,26 @@ art/source/**/03_work/*.blend
 art/source/**/03_work/textures_v*/
 art/source/**/04_export/
 art/source/**/05_review/*.png
+# review sub-runs (rig_vNNN/, rom_vNNN/, *_review/): regenerable sheets
+art/source/**/05_review/**/*.png
 art/source/**/_lineup*.png
+# Review evidence: commit summaries, embedded shots and fixtures; regenerable dumps stay local.
+# (Already-tracked files that docs embed stay tracked; ignore rules only stop new dumps.)
+art/reviews/**/boundary-visibility*.json
+!art/reviews/**/boundary-visibility*.summary.json
+art/reviews/**/*-structure-v*/
+art/reviews/**/*.log
+art/reviews/**/*-stderr.txt
+
+# Tripo DCC bridge inbox: provider originals, registered into art/source by the pipeline
+art/source/_tripo_inbox/
+# node test runner: type-stripped copies of src modules (tests/native-hero-grip.test.mjs)
+tests/.cache/
+
+# Design sheets / turnarounds and their working images are large AI renders: keep the prompts and records
+# (*_prompt.txt, *.json) for provenance, the images stay local; docs/art/review holds the reviewed montages.
+art/source/**/_design/**/*.png
+art/source/**/00_design/*.png
+art/source/**/02_reference/*.png
+art/source/**/03_work/*.png
+art/source/**/03_model/*.blend
