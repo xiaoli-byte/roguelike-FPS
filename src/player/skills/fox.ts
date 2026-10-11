@@ -1,11 +1,11 @@
 /**
- * 赤狐 · 焰尾游侠：燃爆雷（E）、九尾狐火（Q）、余烬（被动）。
+ * 燎 · 爆竹游侠（小熊猫）：燃爆雷（E）、尾焰火灵（Q）、余烬（被动）。
  */
 import * as THREE from 'three';
 import type { GameContext, HeroDef, IEnemy } from '../../core/types';
 import { TAU } from '../../core/math';
 import {
-  EffectSession, type HeroSkillDef, SKILL_COLORS, groundYBelow, handOrigin, radiusScale, skillHit, spawnGroundCrack, throwVelocity,
+  EffectSession, HIDDEN_PROJECTILE, type HeroSkillDef, SKILL_COLORS, flyProp, groundYBelow, handOrigin, radiusScale, skillHit, spawnGroundCrack, throwVelocity,
 } from './common';
 
 // ───────────────────────────── 数值 ─────────────────────────────
@@ -38,7 +38,40 @@ const _aim = new THREE.Vector3();
 const _to = new THREE.Vector3();
 const _cands: IEnemy[] = [];
 
-// ───────────────────────────── E：燃爆雷 ─────────────────────────────
+// ───────────────────────────── E：燃爆雷（爆竹手雷） ─────────────────────────────
+
+/** 燎的爆竹手雷：朱红纸筒、金色封口、一截冒火星的引信（选人演出里抛的同一种爆竹） */
+let crackerParts: { body: THREE.CylinderGeometry; cap: THREE.CylinderGeometry; fuse: THREE.CylinderGeometry;
+  red: THREE.MeshStandardMaterial; gold: THREE.MeshStandardMaterial; spark: THREE.MeshBasicMaterial; sparkGeo: THREE.IcosahedronGeometry } | null = null;
+function buildCracker(): { root: THREE.Group; spark: THREE.Mesh } {
+  crackerParts ??= {
+    body: new THREE.CylinderGeometry(0.075, 0.075, 0.26, 12),
+    cap: new THREE.CylinderGeometry(0.079, 0.079, 0.04, 12),
+    fuse: new THREE.CylinderGeometry(0.008, 0.008, 0.08, 5),
+    red: new THREE.MeshStandardMaterial({ color: 0xc8231b, roughness: 0.6, emissive: 0x3a0402 }),
+    gold: new THREE.MeshStandardMaterial({ color: 0xd9a441, metalness: 0.5, roughness: 0.4 }),
+    spark: new THREE.MeshBasicMaterial({ color: SKILL_COLORS.fireCore }),
+    sparkGeo: new THREE.IcosahedronGeometry(0.03, 0),
+  };
+  const P = crackerParts;
+  const root = new THREE.Group();
+  root.name = 'firecracker';
+  const body = new THREE.Mesh(P.body, P.red);
+  body.castShadow = true;
+  root.add(body);
+  for (const y of [-0.12, 0.12]) {
+    const cap = new THREE.Mesh(P.cap, P.gold);
+    cap.position.y = y;
+    root.add(cap);
+  }
+  const fuse = new THREE.Mesh(P.fuse, P.gold);
+  fuse.position.y = 0.17;
+  root.add(fuse);
+  const spark = new THREE.Mesh(P.sparkGeo, P.spark);
+  spark.position.y = 0.215;
+  root.add(spark);
+  return { root, spark };
+}
 
 /**
  * 手雷本身是带 damage 与 explosionRadius 的玩家投射物：触地 / 命中敌人 / 到期都由投射物系统调用 combat.explode
@@ -73,7 +106,7 @@ function grenadeImpactFx(ctx: GameContext, point: THREE.Vector3, r: number): voi
 const blazeGrenade: HeroSkillDef = {
   id: 'fox_blaze_grenade',
   name: '燃爆雷',
-  description: `掷出一枚火焰手雷，触地或命中敌人即爆炸，对 ${GRENADE_RADIUS} 米内敌人造成 ${GRENADE_DAMAGE} 点火焰伤害，并必定附加灼烧。2 次充能，每次充能 8 秒。`,
+  description: `掷出一枚爆竹手雷，触地或命中敌人即爆炸，对 ${GRENADE_RADIUS} 米内敌人造成 ${GRENADE_DAMAGE} 点火焰伤害，并必定附加灼烧。2 次充能，每次充能 8 秒。`,
   cooldown: 8,
   charges: 2,
   activate(ctx) {
@@ -83,6 +116,19 @@ const blazeGrenade: HeroSkillDef = {
     const r = GRENADE_RADIUS * radiusScale(ctx);
     const damage = skillHit(GRENADE_DAMAGE, 'fire', 1);
     damage.knockback = GRENADE_KNOCKBACK;
+    // 看得见的是爆竹模型（flyProp），结算伤害的投射物沿同一条抛物线飞、本身不可见
+    const cracker = buildCracker();
+    let sparkT = 0;
+    const stopProp = flyProp(ctx, cracker.root, _pos, _vel, GRENADE_GRAVITY, GRENADE_LIFETIME, 11, (p, dt) => {
+      sparkT += dt;
+      cracker.spark.scale.setScalar(0.7 + 0.6 * Math.abs(Math.sin(sparkT * 40)));
+      if (sparkT > 0.05) {
+        sparkT = 0;
+        cracker.spark.getWorldPosition(_c);
+        ctx.fx.burst(_c, SKILL_COLORS.ember, 3, 1.6, 0.25, 0.03, 1);
+      }
+      void p;
+    });
     ctx.projectiles.spawn({
       owner: 'player',
       position: _pos.clone(),
@@ -96,9 +142,11 @@ const blazeGrenade: HeroSkillDef = {
       explodeOnExpire: true,
       selfDamage: 0,
       color: SKILL_COLORS.fire,
-      visual: 'grenade',
-      scale: 1.1,
-      onImpact: (point) => grenadeImpactFx(ctx, point, r),
+      ...HIDDEN_PROJECTILE,
+      onImpact: (point) => {
+        stopProp();
+        grenadeImpactFx(ctx, point, r);
+      },
     });
     ctx.audio.play('skill_throw', { volume: 0.9 });
     return true;
@@ -223,8 +271,8 @@ function launchFoxfire(ctx: GameContext, i: number): void {
 
 const nineTails: HeroSkillDef = {
   id: 'fox_nine_tails',
-  name: '九尾狐火',
-  description: `唤出九团环绕周身的狐火，${FOXFIRE_DURATION} 秒内依次射向前方敌人并自动追踪，每团造成 ${FOXFIRE_DAMAGE} 点火焰伤害并附加灼烧，会优先分散到不同目标。冷却 20 秒。`,
+  name: '尾焰火灵',
+  description: `唤出九团绕尾而行的火灵，${FOXFIRE_DURATION} 秒内依次射向前方敌人并自动追踪，每团造成 ${FOXFIRE_DAMAGE} 点火焰伤害并附加灼烧，会优先分散到不同目标。冷却 20 秒。`,
   cooldown: 20,
   charges: 1,
   activate(ctx) {
@@ -275,10 +323,10 @@ const nineTails: HeroSkillDef = {
 
 export const FOX: HeroDef = {
   id: 'fox',
-  name: '赤狐',
-  title: '焰尾游侠',
+  name: '燎',
+  title: '爆竹游侠',
   description:
-    '焰尾部族最后的游侠，自幼与九尾狐火为伴，在荒漠遗迹里追猎了十年的沙匪。她用冲锋枪压制、以燃爆雷点燃成群的敌人，再放出追踪狐火收割——火烧得越旺，她的枪口就越致命。',
+    '丝路上最爱显摆的小熊猫游侠，斜挎一排爆竹手雷，腰挂一盏火折子灯，玩火从不怕烫。冲锋枪一路压制，燃爆雷炸开成群的敌人，再甩尾放出追踪火灵收割——火烧得越旺，燎的枪口就越致命。',
   color: 0xff6a1f,
   base: { maxHp: 100, maxShield: 60, moveSpeed: 7.8 },
   startingWeapon: 'smg',

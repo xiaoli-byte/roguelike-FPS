@@ -246,10 +246,10 @@ const bastion: HeroSkillDef = {
 
 export const BEAR: HeroDef = {
   id: 'bear',
-  name: '岩熊',
-  title: '镇山守卫',
+  name: '磐',
+  title: '工匠武僧',
   description:
-    '镇守霜雪古寺山门百年的岩熊武僧，皮糙肉厚、力可裂地。生命与护盾冠绝众人，并天生减免 10% 伤害；扛着碎岩霰弹冲进人堆，一记裂地重击把敌人震上半空，是最让人安心的前排。',
+    '修了一辈子山门石阶的穿山甲武僧，慢吞吞、推不动，一身鳞甲就是最好的盾。生命与护盾冠绝众人，并天生减免 10% 伤害；扛着钻炮霰弹走进人堆，一拳裂地把敌人震上半空，是队伍里那座山。',
   color: 0xc9a36b,
   base: { maxHp: 140, maxShield: 80, moveSpeed: 7.0, damageReduction: 0.1 },
   startingWeapon: 'shotgun',

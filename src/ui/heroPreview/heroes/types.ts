@@ -20,6 +20,20 @@ export interface HeroRig {
    * 预览台会改它们的 transparent / opacity 做淡入淡出，并在 dispose 时释放。
    */
   readonly materials: readonly THREE.Material[];
+  /** Semantic controls used to adapt authored art to the display rig. */
+  readonly artControls?: {
+    rightArm?: THREE.Object3D;
+    rigidGroups?: readonly THREE.Object3D[];
+    tailFlames?: readonly THREE.Object3D[];
+    skinJoints?: readonly THREE.Object3D[];
+  };
+  /**
+   * 专属演出（heroShows.ts）：没有时按旧约定（光柱升起、到位后约 1.5 秒亮相）。
+   * entrance：'rise' = 预览台让英雄从光柱升起；'self' = 模型自己入场（空降 / 滑翔），预览台直接显形。
+   * 两种都在开始入场时立刻 playIntro（出场动作自己包含「冒出光柱」那一段）；intro = 出场时长（秒），
+   * frameFrom = 出场中从第几秒起计入取景（之前在画外）。
+   */
+  readonly show?: { entrance: 'rise' | 'self'; intro: number; frameFrom: number };
   /** 每帧更新：待机动画（呼吸、尾巴、耳朵…）与亮相动作。dt 已夹到 ≤ 0.05；t 为累计秒数 */
   update(dt: number, t: number): void;
   /** 播放一次亮相动作（约 1–1.5 秒，结束后自然回到待机） */

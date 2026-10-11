@@ -950,6 +950,11 @@ export function buildFalconModel(): HeroRig {
     root,
     height: 1.85,
     hand,
+    artControls: { rightArm: armR.shoulder, rigidGroups: [wingL.wing, wingR.wing, skirtL, skirtRm],
+      skinJoints: [hips, spine, chest, neck, head,
+        legL.hip, legL.knee, legL.ankle, legR.hip, legR.knee, legR.ankle,
+        armL.shoulder, armL.elbow, armL.wrist, armR.shoulder, armR.elbow, armR.wrist,
+        wingL.wing, wingR.wing, skirtL, skirtRm] },
     materials: K.mats.slice(),
     update,
     playIntro(): void {

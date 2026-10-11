@@ -37,6 +37,7 @@ import { buildGunModel } from '../weapons/WeaponModels';
 import { buildAltar, type Altar } from './heroPreview/altar';
 import { ambienceKind, createAmbience, type Ambience, type AmbienceFrame, type AmbienceKind } from './heroPreview/ambience';
 import { buildHeroModel, type HeroRig } from './heroPreview/heroes/index';
+import { AssetLibrary } from '../assets/AssetLibrary';
 import { makeGlowTexture, makePillarTexture, makeRuneTexture, makeSparkTexture } from './heroPreview/textures';
 
 // ───────────────────────────── 取景 ─────────────────────────────
@@ -102,6 +103,8 @@ const ENTER_DELAY = 0.12;
 const IN_DELAY = 0.16;
 const IN_TIME = 0.6;
 const OUT_TIME = 0.32;
+/** 自带入场的英雄（空降 / 滑翔）的淡入时长 */
+const SELF_FADE = 0.12;
 /** 氛围交叉淡入淡出时长（秒）；取景跟随新英雄身高的速率 */
 const AMB_FADE = 0.45;
 const FIT_RATE = 5;
@@ -156,6 +159,8 @@ interface FadeMat {
 interface HeroSlot {
   readonly id: string;
   readonly rig: HeroRig;
+  /** 搭建时已用上发布的美术资产（false = 程序化回退，资产到达后重建） */
+  readonly art: boolean;
   /** 位置（升降）/ 朝向 / 缩放；rig.root 挂在下面，本类不改 rig.root 的变换 */
   readonly pivot: THREE.Group;
   /** 挂在 rig.hand 上的枪模根节点（释放前先摘下） */
@@ -176,6 +181,9 @@ interface HeroSlot {
   clock: number;
   /** 距上次 playIntro 的秒数（亮相拉远包络用；未在亮相时为 −1） */
   introT: number;
+  /** 亮相拉远包络的保持 / 推回时刻（秒）：专属演出按出场时长，旧模型为 PULL_HOLD / PULL_OUT */
+  introHold: number;
+  introOut: number;
   /** 氛围：包围盒中心高度、身体半宽 */
   readonly cy: number;
   readonly halfW: number;
@@ -303,11 +311,11 @@ function smooth01(x: number): number {
 }
 
 /** 亮相拉远包络：0（待机取景）→ 1（亮相取景）→ 0 */
-function introEnvelope(t: number): number {
+function introEnvelope(t: number, hold = PULL_HOLD, out = PULL_OUT): number {
   if (t < 0) return 0;
   if (t < PULL_IN_B) return smooth01((t - PULL_IN_A) / (PULL_IN_B - PULL_IN_A));
-  if (t < PULL_HOLD) return 1;
-  return 1 - smooth01((t - PULL_HOLD) / (PULL_OUT - PULL_HOLD));
+  if (t < hold) return 1;
+  return 1 - smooth01((t - hold) / (out - hold));
 }
 
 function copyPose(out: Pose, p: Readonly<Pose>): void {
@@ -467,6 +475,18 @@ export class HeroPreview {
       this.reduced = this.motionQuery.matches;
       this.motionQuery.addEventListener?.('change', this.onMotionPref);
     }
+    // A cold launch can build the stage before GLBs finish. Replace cached fallback
+    // slots once the hero assets arrive so the selection screen shows the new art.
+    void AssetLibrary.preload().then(() => {
+      if (!this.usable() || !this.built || !this.hero) return;
+      if (!this.slotList.some((s) => !s.art && AssetLibrary.findBound('hero', s.id))) return;
+      for (const slot of this.slotList) this.disposeSlot(slot);
+      this.slots.clear();
+      this.slotList.length = 0;
+      this.current = null;
+      this.warmPending = null;
+      this.applyHero(this.hero);
+    });
   }
 
   setHero(hero: HeroDef): void {
@@ -873,10 +893,15 @@ export class HeroPreview {
         if (i % 6 === 0) probe.idle(2);
       }
       rig.playIntro();
-      for (let i = 1; i <= PROBE_INTRO_STEPS; i++) {
+      // 专属演出：按出场时长快进，只从 frameFrom 起计入取景（滑翔 / 空降的前一段在画外）
+      const span = rig.show ? rig.show.intro : PROBE_INTRO_SPAN;
+      const from = rig.show ? rig.show.frameFrom : 0;
+      const steps = rig.show ? Math.ceil((span + 0.3) / PROBE_STEP) : PROBE_INTRO_STEPS;
+      for (let i = 1; i <= steps; i++) {
         clock += PROBE_STEP;
         rig.update(PROBE_STEP, clock);
-        if (i % 2 === 0 && i * PROBE_STEP <= PROBE_INTRO_SPAN) probe.intro(3);
+        const at = i * PROBE_STEP;
+        if (i % 2 === 0 && at >= from && at <= span) probe.intro(3);
       }
     } catch {
       /* 由每帧 update 处理（会记录一次并停用该模型的动画） */
@@ -912,6 +937,7 @@ export class HeroPreview {
     return {
       id: hero.id,
       rig,
+      art: !!AssetLibrary.findBound('hero', hero.id),
       pivot,
       gun,
       fades,
@@ -923,6 +949,8 @@ export class HeroPreview {
       introHalfW: clamp(probe.introHalfW, 0, height),
       clock,
       introT: -1,
+      introHold: rig.show ? Math.max(PULL_IN_B + 0.2, rig.show.intro - 0.5) : PULL_HOLD,
+      introOut: rig.show ? rig.show.intro + 0.2 : PULL_OUT,
       cy: hasBox ? clamp((minY + maxY) / 2, height * 0.3, height * 0.7) : height * 0.5,
       halfW: clamp(hasBox ? (maxX - minX) / 2 : height * 0.25, height * 0.2, height * 0.42),
       from: { ...SUNK },
@@ -944,6 +972,12 @@ export class HeroPreview {
     s.showing = show;
     copyPose(s.from, s.cur);
     s.dur = show ? IN_TIME : OUT_TIME;
+    if (show && s.rig.show?.entrance === 'self' && !instant) {
+      // 模型自己入场（空降 / 滑翔）：不从光柱升起，只用很短的淡入
+      copyPose(s.from, REST);
+      s.from.o = s.cur.o;
+      s.dur = SELF_FADE;
+    }
     s.t = instant ? s.dur : show && s.cur.o < 0.02 ? -delay : 0;
     s.used = this.time;
     if (show) {
@@ -1196,7 +1230,7 @@ export class HeroPreview {
     // 亮相拉远：包络本身是平滑的，亮相中直接跟随；切走英雄等导致目标骤降时按 PULL_RELEASE 平滑推回
     // （亮相中途重播时包络从 0 重新开始：先平滑回落，等上升沿追上再跟随）
     const inIntro = !!cur && cur.showing && !calm && cur.introT >= 0;
-    const pullTarget = inIntro ? introEnvelope(cur.introT) : 0;
+    const pullTarget = inIntro ? introEnvelope(cur.introT, cur.introHold, cur.introOut) : 0;
     const follow = pullTarget >= this.introPull || (inIntro && cur.introT >= PULL_IN_B);
     let pull = follow ? pullTarget : damp(this.introPull, pullTarget, PULL_RELEASE, dt);
     if (pull < 1e-3) pull = 0;
@@ -1308,18 +1342,11 @@ export class HeroPreview {
     p.scale.setScalar(c.s);
     if (s.introT >= 0) {
       s.introT += rigDt;
-      if (s.introT > PULL_OUT) s.introT = -1;
+      if (s.introT > s.introOut) s.introT = -1;
     }
-    if (p.visible && !s.broken) {
-      try {
-        s.clock += rigDt;
-        s.rig.update(rigDt, s.clock);
-      } catch (err) {
-        s.broken = true;
-        console.error('[HeroPreview] 英雄模型 update 出错，已停止其动画', s.id, err);
-      }
-    }
-    if (arrived && s.introPending) {
+    // 专属演出：开始入场就播出场（「从光柱冒出来」本身是出场的第一段），在本帧 update 之前触发，
+    // 免得自带入场的英雄先在原地以待机姿势闪一帧；旧模型到位后再亮相
+    if (s.introPending && s.showing && (s.rig.show ? s.t >= 0 : arrived)) {
       s.introPending = false;
       if (!this.reduced && !s.broken) {
         try {
@@ -1328,6 +1355,15 @@ export class HeroPreview {
         } catch (err) {
           console.error('[HeroPreview] 英雄亮相动作出错', s.id, err);
         }
+      }
+    }
+    if (p.visible && !s.broken) {
+      try {
+        s.clock += rigDt;
+        s.rig.update(rigDt, s.clock);
+      } catch (err) {
+        s.broken = true;
+        console.error('[HeroPreview] 英雄模型 update 出错，已停止其动画', s.id, err);
       }
     }
     // 在 rig.update 之后写不透明度（过渡期间覆盖模型自己的不透明度动画）

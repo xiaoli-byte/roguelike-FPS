@@ -60,7 +60,7 @@ export function weaponName(defId: string): string {
 }
 
 /** 英雄头像字（没有图片时用单字徽记） */
-const HERO_GLYPHS: Record<string, string> = { fox: '狐', falcon: '隼', bear: '熊' };
+const HERO_GLYPHS: Record<string, string> = { fox: '燎', falcon: '鼯', bear: '磐' };
 
 export function heroGlyph(hero: HeroDef | null | undefined): string {
   if (!hero) return '侠';
@@ -144,12 +144,12 @@ export const CONTROLS: { keys: string[]; action: string; together?: boolean }[] 
   { keys: ['空格'], action: '跳跃（部分英雄可二段跳）' },
   { keys: ['Shift'], action: '冲刺（有充能与冷却）' },
   { keys: ['左键'], action: '射击' },
-  { keys: ['右键'], action: '瞄准（缩放视野、降低散布）；持魔刀千刃时切换形态' },
-  { keys: ['R'], action: '换弹' },
+  { keys: ['右键'], action: '瞄准（缩放视野、降低散布）；持魔刀千刃时按住千刃出窍' },
+  { keys: ['R'], action: '换弹；持魔刀千刃时按住碎刃屏障' },
   { keys: ['1', '2', '滚轮', 'X'], action: '切换武器' },
   { keys: ['Q'], action: '主技能（长冷却）' },
   { keys: ['E'], action: '副技能（多充能投掷类）' },
-  { keys: ['V', '中键'], action: '武器技能（魔刀千刃：千刃·无间）' },
+  { keys: ['V', '中键'], action: '武器技能（魔刀千刃：杀气爆发，杀意满时人刀合一）' },
   { keys: ['F'], action: '交互：拾取武器、开宝箱、购买、进入传送门' },
   { keys: ['Tab'], action: '按住查看已获得秘卷与属性' },
   { keys: ['Esc', 'P'], action: '暂停' },

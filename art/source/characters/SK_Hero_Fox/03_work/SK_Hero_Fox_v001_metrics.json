@@ -1,0 +1,252 @@
+{
+  "steps": {
+    "导入清理": 1.7,
+    "对齐": 1.0,
+    "低模与 UV": 9.5,
+    "投影着色": 12.9,
+    "烘焙": 8.0,
+    "LOD": 0.1,
+    "部件骨架蒙皮": 4.0,
+    "导出": 2.7
+  },
+  "highpoly": {
+    "faces_raw": 525052,
+    "faces": 284996,
+    "verts": 284992,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.825,
+    "iou_per_view": {
+      "front": 0.832,
+      "left": 0.785,
+      "back": 0.852,
+      "right": 0.828
+    },
+    "height_m": 1.8833,
+    "blockout_height_m": 2.8935
+  },
+  "uv": {
+    "smart_islands": 601,
+    "charts": 51,
+    "fallback_charts": 1,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.3382,
+    "density_merged": 0.3451
+  },
+  "projection": {
+    "uncovered_ratio": 0.2338
+  },
+  "bake_device": "OPTIX",
+  "textures": {
+    "T_Hero_Fox_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Hero_Fox_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Hero_Fox_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "skin": {
+    "bones": [
+      "j_r",
+      "j_0",
+      "j_0_5",
+      "j_0_6",
+      "j_0_7",
+      "j_0_17",
+      "j_0_17_1",
+      "j_0_17_1_7",
+      "j_0_18",
+      "j_0_18_1",
+      "j_0_18_3",
+      "j_0_18_3_7",
+      "j_0_19",
+      "j_0_19_3",
+      "j_0_19_3_0",
+      "j_0_19_3_5",
+      "j_0_19_3_5_0",
+      "j_0_19_3_5_0_1",
+      "j_0_19_3_5_0_1_1",
+      "j_0_19_3_6",
+      "j_0_19_3_6_0",
+      "j_0_19_3_6_0_1",
+      "j_0_19_3_6_0_1_1",
+      "j_0_19_3_7",
+      "j_0_19_3_7_3",
+      "j_0_19_3_7_3_0",
+      "j_0_19_3_7_3_0_18",
+      "j_0_19_3_7_3_0_19",
+      "j_0_19_3_7_3_0_20",
+      "j_0_19_3_7_3_0_21",
+      "j_0_19_3_8",
+      "j_0_19_3_8_2",
+      "j_0_19_3_8_2_5",
+      "j_0_19_3_8_2_5_1",
+      "j_0_19_3_8_2_5_1_0",
+      "j_0_19_3_8_2_5_1_0_2",
+      "j_0_19_3_8_2_5_1_0_3",
+      "j_0_19_3_8_2_5_1_0_4",
+      "j_0_19_3_8_2_5_1_0_5",
+      "j_0_19_3_8_2_5_1_0_6",
+      "j_0_19_3_8_2_5_1_0_7",
+      "j_0_19_3_8_2_5_1_0_8",
+      "j_0_19_3_8_2_5_1_0_9",
+      "j_0_19_3_8_2_5_1_2",
+      "j_0_19_3_8_2_5_1_3",
+      "j_0_19_3_8_2_5_1_4",
+      "j_0_19_3_8_2_5_3",
+      "j_0_19_3_8_2_5_3_1",
+      "j_0_19_3_8_2_5_4",
+      "j_0_19_3_8_2_5_4_1",
+      "j_0_19_3_8_2_5_5",
+      "j_0_19_3_8_2_5_5_1",
+      "j_0_19_3_8_2_5_6",
+      "j_0_19_3_8_2_5_6_1",
+      "j_0_19_3_8_2_5_7",
+      "j_0_19_3_9",
+      "j_0_19_3_9_2",
+      "j_0_19_3_9_2_5",
+      "j_0_19_3_9_2_5_1",
+      "j_0_19_3_10",
+      "j_0_20",
+      "j_0_20_0",
+      "j_0_20_1",
+      "j_0_20_2"
+    ],
+    "per_lod": {
+      "SK_Hero_Fox_LOD0": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      },
+      "SK_Hero_Fox_LOD1": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      },
+      "SK_Hero_Fox_LOD2": {
+        "heat_failed_verts": 0,
+        "max_influences": 4,
+        "unweighted_verts": 0,
+        "weights_from": "parts"
+      }
+    },
+    "mode": "parts",
+    "sigma_m": 0.0294,
+    "rigid": false,
+    "split": {
+      "SK_Hero_Fox_LOD0": {
+        "cut_edges": 575,
+        "cap_tris": 1026,
+        "merged_fragment_faces": 214,
+        "tris": 15996
+      },
+      "SK_Hero_Fox_LOD1": {
+        "cut_edges": 295,
+        "cap_tris": 473,
+        "merged_fragment_faces": 131,
+        "tris": 5996
+      },
+      "SK_Hero_Fox_LOD2": {
+        "cut_edges": 172,
+        "cap_tris": 282,
+        "merged_fragment_faces": 65,
+        "tris": 2396
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SK_Hero_Fox_LOD0",
+      "tris": 15996,
+      "verts": 8060,
+      "uv_min": [
+        0.0026992636267095804,
+        0.0026992240455001593
+      ],
+      "uv_max": [
+        0.9641678333282471,
+        0.9973007440567017
+      ],
+      "uv_utilization": 0.5,
+      "bbox_min": [
+        -0.5862,
+        -0.3677,
+        0.0143
+      ],
+      "bbox_max": [
+        0.5888,
+        0.4989,
+        1.8839
+      ]
+    },
+    {
+      "name": "SK_Hero_Fox_LOD1",
+      "tris": 5996,
+      "verts": 3056,
+      "uv_min": [
+        0.003937467001378536,
+        0.0026992240455001593
+      ],
+      "uv_max": [
+        0.9640108942985535,
+        0.9963647723197937
+      ],
+      "uv_utilization": 0.476,
+      "bbox_min": [
+        -0.5859,
+        -0.3692,
+        0.0146
+      ],
+      "bbox_max": [
+        0.5892,
+        0.4982,
+        1.8835
+      ]
+    },
+    {
+      "name": "SK_Hero_Fox_LOD2",
+      "tris": 2396,
+      "verts": 1230,
+      "uv_min": [
+        0.003937467001378536,
+        0.0035940255038440228
+      ],
+      "uv_max": [
+        0.9640108942985535,
+        0.9963647723197937
+      ],
+      "uv_utilization": 0.447,
+      "bbox_min": [
+        -0.5866,
+        -0.3681,
+        0.0163
+      ],
+      "bbox_max": [
+        0.5884,
+        0.5008,
+        1.8877
+      ]
+    }
+  ],
+  "export": {
+    "path": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Hero_Fox\\04_export\\SK_Hero_Fox_v001.glb",
+    "bytes": 761596
+  },
+  "blend": "D:\\personal-projects\\枪火重生\\art\\source\\characters\\SK_Hero_Fox\\03_work\\SK_Hero_Fox_v001.blend",
+  "total_seconds": 39.9,
+  "_seconds": 42.6
+}

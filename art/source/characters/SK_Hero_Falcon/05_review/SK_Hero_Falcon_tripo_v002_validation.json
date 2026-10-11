@@ -1,0 +1,207 @@
+[
+  {
+    "level": "pass",
+    "check": "file size",
+    "detail": "670 KB / 3200 KB"
+  },
+  {
+    "level": "pass",
+    "check": "extensions",
+    "detail": "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+  },
+  {
+    "level": "pass",
+    "check": "draco geometry",
+    "detail": "KHR_draco_mesh_compression"
+  },
+  {
+    "level": "pass",
+    "check": "LOD count",
+    "detail": "['SK_Hero_Falcon_LOD0', 'SK_Hero_Falcon_LOD1', 'SK_Hero_Falcon_LOD2']"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 tris",
+    "detail": "10265 / 16000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 distance",
+    "detail": "extras.lod_distance=0"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 skinned",
+    "detail": "node.skin"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 tris",
+    "detail": "5644 / 6000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 decreasing",
+    "detail": "10265 -> 5644"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 distance",
+    "detail": "extras.lod_distance=10"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 skinned",
+    "detail": "node.skin"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 tris",
+    "detail": "2256 / 2400"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 decreasing",
+    "detail": "5644 -> 2256"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 distance",
+    "detail": "extras.lod_distance=24"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 skinned",
+    "detail": "node.skin"
+  },
+  {
+    "level": "pass",
+    "check": "height",
+    "detail": "1.850 m (design 1.85 m)"
+  },
+  {
+    "level": "pass",
+    "check": "feet on ground",
+    "detail": "min y=-0.0000"
+  },
+  {
+    "level": "pass",
+    "check": "centred",
+    "detail": "centre x=0.000 z=-0.000"
+  },
+  {
+    "level": "pass",
+    "check": "material count",
+    "detail": "['M_Hero_Falcon']"
+  },
+  {
+    "level": "pass",
+    "check": "material name",
+    "detail": "['M_Hero_Falcon']"
+  },
+  {
+    "level": "pass",
+    "check": "base colour texture",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "ORM texture",
+    "detail": "AO / roughness / metallic"
+  },
+  {
+    "level": "pass",
+    "check": "texture T_Hero_Falcon_ORM",
+    "detail": "2048x2048 webp (class 2048, webp)"
+  },
+  {
+    "level": "pass",
+    "check": "texture name T_Hero_Falcon_ORM",
+    "detail": "T_<Class>_<Name>_BC|ORM"
+  },
+  {
+    "level": "pass",
+    "check": "texture T_Hero_Falcon_BC",
+    "detail": "2048x2048 webp (class 2048, webp)"
+  },
+  {
+    "level": "pass",
+    "check": "texture name T_Hero_Falcon_BC",
+    "detail": "T_<Class>_<Name>_BC|ORM"
+  },
+  {
+    "level": "pass",
+    "check": "one skin",
+    "detail": "1 skins"
+  },
+  {
+    "level": "pass",
+    "check": "Mixamo joints",
+    "detail": "65 joints, missing []"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Hero_Falcon_LOD0 influences",
+    "detail": "max 4"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Hero_Falcon_LOD0 unweighted",
+    "detail": "0"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Hero_Falcon_LOD1 influences",
+    "detail": "max 4"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Hero_Falcon_LOD1 unweighted",
+    "detail": "0"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Hero_Falcon_LOD2 influences",
+    "detail": "max 4"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Hero_Falcon_LOD2 unweighted",
+    "detail": "0"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Hero_Falcon_LOD0 UV range",
+    "detail": "[0.004, 0.004]..[0.996, 0.996]"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Hero_Falcon_LOD1 UV range",
+    "detail": "[0.004, 0.004]..[0.994, 0.996]"
+  },
+  {
+    "level": "pass",
+    "check": "SK_Hero_Falcon_LOD2 UV range",
+    "detail": "[0.004, 0.004]..[0.994, 0.996]"
+  },
+  {
+    "level": "pass",
+    "check": "UV utilisation",
+    "detail": "55%"
+  },
+  {
+    "level": "pass",
+    "check": "reference alignment",
+    "detail": "silhouette IoU 0.8353"
+  },
+  {
+    "level": "note",
+    "check": "normal map",
+    "detail": "not baked: no high-poly source; faceted Tripo geometry carries the form"
+  },
+  {
+    "level": "todo",
+    "check": "fingers / toes",
+    "detail": "count digits on the _extremities.png sheet (art/README.md §9.1)"
+  }
+]

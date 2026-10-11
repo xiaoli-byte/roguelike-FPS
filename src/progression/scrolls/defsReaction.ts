@@ -340,7 +340,7 @@ export const REACTION_SCROLLS: ScrollDef[] = [
 
   // ───────────── 稀有 · 英雄专属 ─────────────
   heroCatalyst(
-    'fox_thunderfire', '狐火引雷', 'fox', 'burn', 'shock', 'thunderfire',
+    'fox_thunderfire', '火灵引雷', 'fox', 'burn', 'shock', 'thunderfire',
     ['英雄', '反应', '焚雷', '灼烧', '雷殛'],
     '技能附加灼烧时，每层 30% 概率同时附加雷殛（引发「焚雷」）；「焚雷」伤害每层 +10%。',
   ),

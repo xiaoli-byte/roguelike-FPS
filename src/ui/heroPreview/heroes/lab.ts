@@ -7,6 +7,7 @@
  *  - t=秒：把待机动画推进到该时刻后定格（默认 1.0）
  *  - intro=秒：在 t 时刻触发 playIntro()，再推进 intro 秒后定格（用于检查亮相动作的某一帧）
  *  - anim=1：持续播放（默认定格，便于截图）
+ *  - fid=序号&fu=秒：待机小动作定格（heroShows.ts）
  *  - nogun=1：不挂武器
  */
 import * as THREE from 'three';
@@ -14,6 +15,8 @@ import { HEROES } from '../../../player/Heroes';
 import { getWeaponDef } from '../../../weapons/WeaponDefs';
 import { buildGunModel } from '../../../weapons/WeaponModels';
 import { buildHeroModel } from './index';
+import { AssetLibrary } from '../../../assets/AssetLibrary';
+import { heroWhiteReview } from '../../../dev/heroWhiteReview';
 
 const params = new URLSearchParams(location.search);
 const heroId = params.get('hero') ?? 'fox';
@@ -21,6 +24,8 @@ const hero = HEROES.find((h) => h.id === heroId) ?? HEROES[0];
 const T = Number(params.get('t') ?? 1);
 const INTRO = params.has('intro') ? Number(params.get('intro')) : -1;
 const ANIM = params.get('anim') === '1';
+const WHITE = params.has('white');
+const GRIP = params.get('grip') === '1';
 
 const canvas = document.getElementById('lab') as HTMLCanvasElement;
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
@@ -41,12 +46,16 @@ scene.add(rim);
 const floor = new THREE.Mesh(new THREE.CircleGeometry(1.4, 32).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ color: 0x2a2530, roughness: 0.9 }));
 scene.add(floor);
 
+await AssetLibrary.preload();
 const rig = buildHeroModel(hero.id, hero.color);
 scene.add(rig.root);
 if (params.get('nogun') !== '1') {
   const def = getWeaponDef(hero.startingWeapon);
   rig.hand.add(buildGunModel(def.id, 0, def.element).root);
 }
+// fid=序号&fu=秒：把待机小动作定格在某一帧（heroShows.ts 的 fidgets）
+if (params.has('fid')) rig.root.userData.forceFidget = { index: Number(params.get('fid')), u: Number(params.get('fu') ?? 1) };
+const prepareWhite = WHITE ? heroWhiteReview(scene, rig.root) : null;
 
 let t = 0;
 const step = 1 / 60;
@@ -79,6 +88,7 @@ const cams = views.map((v) => {
 });
 
 const labels = document.getElementById('labels') as HTMLDivElement;
+if (GRIP) { views[4].label = '持枪近看 · 前侧'; views[5].label = '持枪近看 · 外侧'; }
 views.forEach((v) => {
   const d = document.createElement('div');
   d.textContent = v.label;
@@ -88,7 +98,16 @@ views.forEach((v) => {
 
 const COLS = 3;
 const ROWS = 2;
+const gripPoint = new THREE.Vector3();
 function render(): void {
+  prepareWhite?.();
+  if (GRIP) {
+    rig.hand.getWorldPosition(gripPoint);
+    for (const [i,offset] of [[4,[-.6,.28,.75]],[5,[-.85,.2,-.25]]] as const) {
+      cams[i].position.copy(gripPoint).add(new THREE.Vector3(...offset));
+      cams[i].lookAt(gripPoint); cams[i].fov = 32;
+    }
+  }
   const w = canvas.clientWidth;
   const h = canvas.clientHeight;
   renderer.setSize(w, h, false);
@@ -122,4 +141,4 @@ if (ANIM) {
   render();
   window.addEventListener('resize', render);
 }
-(window as unknown as { __lab: unknown }).__lab = { rig, scene, render };
+(window as unknown as { __lab: unknown }).__lab = { rig, scene, cams, render };

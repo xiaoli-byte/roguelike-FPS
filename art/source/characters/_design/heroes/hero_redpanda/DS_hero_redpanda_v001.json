@@ -1,0 +1,35 @@
+{
+  "design": {
+    "key": "hero_redpanda",
+    "chapter": "heroes",
+    "name": "燎 (red panda fire gunslinger)",
+    "layout": "hero",
+    "height_m": 1.55,
+    "role": "火系输出：燃爆雷 / 九尾狐火→爆竹火团 / 余烬",
+    "brief": "An agile anthropomorphic RED PANDA gunslinger and firework grenadier. Round head with small rounded ears with white rims, white cheek and eyebrow markings and tear-stripes, bright amber eyes, a cheeky grin. Rust-red fur on head and back, black legs and arms, a huge bushy tail with bold cream and rust rings. Wears a short dark-charcoal Song-dynasty martial jacket with a high collar and ember-orange lining, the right sleeve rolled up, a cinnabar sash, wrapped black trousers and sturdy short boots. A diagonal bandolier of red Chinese firecracker grenades (爆竹手雷) with gold paper caps across the chest, a small brass fire-starter lantern (火折子) on the hip glowing with orange-gold spirit fire. Hands with a clearly separate thumb and four separate fingers.",
+    "weapon": "a chunky stylized lever rifle with brass fittings held in one hand while the other hand flicks a lit firecracker grenade, three small orange spirit-fire wisps circling the tail"
+  },
+  "generation": {
+    "provider": "openai",
+    "endpoint": "images/generations",
+    "model": "gpt-image-2.5-sunburst",
+    "size": "2048x1024",
+    "quality": "high",
+    "background": "opaque",
+    "usage": {
+      "input_tokens": 628,
+      "input_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 628
+      },
+      "output_tokens": 1180,
+      "output_tokens_details": {
+        "image_tokens": 1180,
+        "text_tokens": 0
+      },
+      "total_tokens": 1808
+    },
+    "request_id": "req_ff2478f5b0024edd9fa356bbef2b5114",
+    "seconds": 45.5
+  }
+}

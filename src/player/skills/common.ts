@@ -375,3 +375,44 @@ export function spawnGroundCrack(ctx: GameContext, center: THREE.Vector3, radius
     mat.opacity = t < 0.5 ? 1 : 1 - (t - 0.5) / 0.5;
   }, () => mesh.removeFromParent());
 }
+
+// ───────────────────────────── 投掷物外观（跟随抛物线的道具模型） ─────────────────────────────
+
+/**
+ * 让一个道具模型沿投射物的同一条抛物线飞行：投射物系统每帧先按重力改速度、再移动（半隐式欧拉），这里用同样的
+ * 积分，所以模型和真正结算伤害的投射物重合。投射物本身用几乎不可见的外观（见 HIDDEN_PROJECTILE），模型负责
+ * 被看见（core/types 的投射物外观是冻结契约，新增造型走这条路）。
+ * spin：绕自身 X 轴的翻滚速度（弧度/秒）；onFrame 每帧回调（拖尾火星等）。返回 stop()：在投射物 onImpact 里调用，
+ * 模型被移除；到 lifetime 或换关清场时也会自动移除。
+ */
+export function flyProp(ctx: GameContext, prop: THREE.Object3D, position: THREE.Vector3, velocity: THREE.Vector3,
+  gravity: number, lifetime: number, spin: number, onFrame?: (pos: THREE.Vector3, dt: number) => void): () => void {
+  const pos = position.clone();
+  const vel = velocity.clone();
+  prop.position.copy(pos);
+  ctx.stageGroup.add(prop);
+  let age = 0;
+  let done = false;
+  const stop = (): void => {
+    done = true;
+    prop.removeFromParent();
+  };
+  ctx.tasks.add((dt) => {
+    if (done || !prop.parent) return true;
+    age += dt;
+    if (age > lifetime) {
+      stop();
+      return true;
+    }
+    vel.y -= gravity * dt;
+    pos.addScaledVector(vel, dt);
+    prop.position.copy(pos);
+    prop.rotateX(spin * dt);
+    onFrame?.(pos, dt);
+    return false;
+  });
+  return stop;
+}
+
+/** 被 flyProp 模型替代外观的投射物：最小的光点造型 × 极小缩放，看不见但仍正常结算命中 / 爆炸 */
+export const HIDDEN_PROJECTILE = { visual: 'orb', scale: 0.001 } as const;

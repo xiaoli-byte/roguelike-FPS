@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>第一人称握持</title>
+    <style>
+      html, body { margin: 0; background: #15131a; color: #eee; font: 13px "Microsoft YaHei", sans-serif; }
+      #sheet { display: block; width: 100%; height: auto; }
+      #title { padding: 6px 10px; color: #f3d9a0; font-size: 15px; }
+    </style>
+  </head>
+  <body>
+    <div id="title"></div>
+    <canvas id="sheet"></canvas>
+    <!-- Game 需要的宿主节点（隐藏，只借它的渲染器与第一人称场景） -->
+    <div id="app" style="position:fixed;left:-9999px;top:0;width:640px;height:480px"><canvas id="game-canvas"></canvas><div id="world-layer"></div><div id="ui-root"></div></div>
+    <script type="module" src="/src/dev/fpGripSheet.ts"></script>
+  </body>
+</html>

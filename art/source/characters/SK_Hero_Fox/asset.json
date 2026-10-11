@@ -1,0 +1,1072 @@
+{
+  "id": "SK_Hero_Fox",
+  "display": "赤狐·焰尾游侠",
+  "kind": "skeletal",
+  "class": "hero_display",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-05 12:15:20",
+          "files": {
+            "BO_SK_Hero_Fox_v001.glb": {
+              "path": "00_blockout/BO_SK_Hero_Fox_v001.glb",
+              "sha256": "9284d8d8c54feb0ef98f8374d22559ef86d96a4c494427d2e9931456f4a27791"
+            },
+            "BO_SK_Hero_Fox_v001.json": {
+              "path": "00_blockout/BO_SK_Hero_Fox_v001.json",
+              "sha256": "0b6572b68d33f99d3538147e616430b57e3eeaf14fb7be6c5f64db65edcf928d"
+            },
+            "BO_SK_Hero_Fox_v001_views.json": {
+              "path": "00_blockout/BO_SK_Hero_Fox_v001_views.json",
+              "sha256": "3cc1918ff21f9f87ab7cf4d8f26116e95777e28f9a2a78ddf84bca384bb4092d"
+            },
+            "BO_SK_Hero_Fox_v001_sheet.png": {
+              "path": "00_blockout/BO_SK_Hero_Fox_v001_sheet.png",
+              "sha256": "11b1d0163a148c6f87fd9888203544820572b11db424078d9a0361c5a3bddddb"
+            },
+            "BO_SK_Hero_Fox_v001_front.png": {
+              "path": "00_blockout/BO_SK_Hero_Fox_v001_front.png",
+              "sha256": "aa60dd117c18dba47065e7f9e6d36494b1b7c792c83d2e4ccda993e1e0d17a6b"
+            },
+            "BO_SK_Hero_Fox_v001_left.png": {
+              "path": "00_blockout/BO_SK_Hero_Fox_v001_left.png",
+              "sha256": "e9b93615e4a1d47d61f5ba85544f0b85ac08561b6e8899ac31108c11f78e6fb9"
+            },
+            "BO_SK_Hero_Fox_v001_back.png": {
+              "path": "00_blockout/BO_SK_Hero_Fox_v001_back.png",
+              "sha256": "5ac61028cbfef6c6e8ad5e50b1daeebaec761674b9f944d804d225fc79f49288"
+            },
+            "BO_SK_Hero_Fox_v001_right.png": {
+              "path": "00_blockout/BO_SK_Hero_Fox_v001_right.png",
+              "sha256": "c20474b231f2a60609d54866fc923f396c5f9c9c9006d71265d293c5f2879441"
+            }
+          },
+          "source": {
+            "kind": "hero",
+            "id": "fox"
+          },
+          "joints": 64,
+          "bounds": {
+            "min": [
+              -0.8610052246895981,
+              -0.0001601497934463625,
+              -0.6908534610235252
+            ],
+            "max": [
+              0.9754685091406063,
+              1.9583633173581236,
+              0.3621646062501233
+            ]
+          },
+          "blender_seconds": 9.8,
+          "amendments": [
+            {
+              "time": "2026-10-05 12:17:31",
+              "reason": "几何不变，更新白模说明"
+            },
+            {
+              "time": "2026-10-05 12:47:07",
+              "reason": "几何不变，更新白模说明"
+            }
+          ],
+          "modified": "2026-10-05 12:47:07"
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-05 12:17:56",
+          "files": {
+            "CN_SK_Hero_Fox_v001_sheet.png": {
+              "path": "01_concept/CN_SK_Hero_Fox_v001_sheet.png",
+              "sha256": "7550ffb8b4504880848fce7f9d888c34e941896f370c4d4b02409555f36523ab"
+            },
+            "CN_SK_Hero_Fox_v001_front.png": {
+              "path": "01_concept/CN_SK_Hero_Fox_v001_front.png",
+              "sha256": "d1da9ee1f1e6b9611e05b1329f6aef8f4fbca7bc2a3bed9717f0b56e93b390b9"
+            },
+            "CN_SK_Hero_Fox_v001_left.png": {
+              "path": "01_concept/CN_SK_Hero_Fox_v001_left.png",
+              "sha256": "83a96ed7d953a30a3bd0e1cff34ec6496c495462bbf2a449eaf740d81161055e"
+            },
+            "CN_SK_Hero_Fox_v001_back.png": {
+              "path": "01_concept/CN_SK_Hero_Fox_v001_back.png",
+              "sha256": "9ad675fa532dca4a8f29b97e5564ffbb84109fbc4af54b158992b0c63e7e6efd"
+            },
+            "CN_SK_Hero_Fox_v001_right.png": {
+              "path": "01_concept/CN_SK_Hero_Fox_v001_right.png",
+              "sha256": "6bcbaaa96457ccb0ae3a4b961e0d9008d8d813b2fc4317ae7f73e873fba837e7"
+            },
+            "CN_SK_Hero_Fox_v001_compare.png": {
+              "path": "01_concept/CN_SK_Hero_Fox_v001_compare.png",
+              "sha256": "41483dcbc79f7b351c4fcd0082f97e2a01031e78f0042fed0b1a727157903e71"
+            },
+            "CN_SK_Hero_Fox_v001_prompt.txt": {
+              "path": "01_concept/CN_SK_Hero_Fox_v001_prompt.txt",
+              "sha256": "27a64dd28f139b7a5472730d7020d0656c7f8fa38386b6f1831e8053a2d14f00"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Codex built-in image_gen",
+          "source_sha256": "7550ffb8b4504880848fce7f9d888c34e941896f370c4d4b02409555f36523ab",
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a10a40-1bc4-7f33-97fc-4ccd4b1ddf01\\exec-51162429-427d-4113-a389-49f64051c331.png",
+          "prompt": "Use case: stylized-concept. Finished hero turnaround for 3D game reconstruction. Stylized hand-painted 3D game character art for a fast first-person roguelite shooter, targeting the readable, moderate-detail visual direction of Gunfire Reborn. Bold chunky silhouettes, slightly exaggerated proportions, broad clean faceted planes, two or three dominant color blocks, soft painted gradients and a few restrained edge accents. Simplify East-Asian fantasy motifs into recognizable medium-scale shapes. Use the chapter or character palette in the asset brief. Favor clear solid volume and consistent materials at normal gameplay distance. Matte stone, wood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks, elaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting for reconstruction; prioritize silhouette and color coherence over surface detail.\nInput is the current procedural reference of ONE anthropomorphic fox heroine, a proportion and pose reference only. Rebuild it as a polished sculpted game character: smoother cohesive organic surfaces, appealing expressive animal face, round substantial limbs and paws. Keep the reference standing height, joint placements, hand pose, three large curved tail placement and orthographic view orientation. Remove angular triangle piles and tiled tail segments. Not Minecraft or sharp triangulated origami; also no realistic texture noise.\nCharacter: red fox female fire ranger with large expressive fox head, amber almond eyes, orange fur, cream muzzle and chest, dark ear tips and dark paws. Well-shaped short fox muzzle and friendly confident expression. Fitted but substantial brown leather ranger vest, a broad vermilion scarf, deep indigo trousers, tan shin wraps and sturdy boots. Simple bold gold clasps. THREE distinct thick sweeping fluffy orange tails, TWO raised behind each side and ONE lower curved tail, all with large cream tips. Big flowing uninterrupted tail curves with only a few broad sculpted fur clumps, not rows of shingles or serrated segments. Full orange/cream colour on all tails (reference tails are gray only because their shader is missing in export). Preserve all three tail trajectories and attachment locations in every view. Hands empty, no guns, no fire, no particles.\nExactly FOUR consistent full body orthographic views in ONE wide row: FRONT / LEFT (faces image left) / BACK / RIGHT (faces image right). Four equal panels, same figure scale, same feet baseline. Preserve reference relaxed right arm low / left forearm held in front and current leg stance, hands separated from torso. Identical character colours and volumes on all sides. Fully transparent background, no ground, shadow, text or frame. Clean hand-painted game art with soft gradients and readable broad forms.",
+          "registration": {
+            "front": {
+              "scale": 0.6215,
+              "offset": [
+                126,
+                178
+              ],
+              "iou": 0.682,
+              "iou_unregistered_scale": 0.5947
+            },
+            "left": {
+              "scale": 0.57,
+              "offset": [
+                168,
+                185
+              ],
+              "iou": 0.641,
+              "iou_unregistered_scale": 0.5877
+            },
+            "back": {
+              "scale": 0.6053,
+              "offset": [
+                119,
+                184
+              ],
+              "iou": 0.706,
+              "iou_unregistered_scale": 0.5964
+            },
+            "right": {
+              "scale": 0.5917,
+              "offset": [
+                129,
+                185
+              ],
+              "iou": 0.738,
+              "iou_unregistered_scale": 0.5917
+            }
+          },
+          "silhouette_iou": {
+            "front": 0.681,
+            "left": 0.641,
+            "back": 0.705,
+            "right": 0.738
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "New sculpted three-tail ranger. The lower overlap is an intentional replacement of serrated tail layers; head, feet and hand landmarks remain aligned. Check tail motion in the actual display.",
+            "time": "2026-10-05 12:18:18"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-05 12:20:58",
+          "files": {
+            "HP_SK_Hero_Fox_v001_input_front.png": {
+              "path": "02_highpoly/HP_SK_Hero_Fox_v001_input_front.png",
+              "sha256": "c4ab5b6aebbc91aaa43811c646ae7a7654489d214fc80bc1ed63b60de1208fa6"
+            },
+            "HP_SK_Hero_Fox_v001_input_left.png": {
+              "path": "02_highpoly/HP_SK_Hero_Fox_v001_input_left.png",
+              "sha256": "3c566488c62e08944ac7010027906e4a890bcbe92a119c0a6e1e58e780e6fd40"
+            },
+            "HP_SK_Hero_Fox_v001_input_back.png": {
+              "path": "02_highpoly/HP_SK_Hero_Fox_v001_input_back.png",
+              "sha256": "2829c05f3f8d8cf60a2f446198ea78e971995a8d9a64f28712ded9eb32b54cfa"
+            },
+            "HP_SK_Hero_Fox_v001_input_right.png": {
+              "path": "02_highpoly/HP_SK_Hero_Fox_v001_input_right.png",
+              "sha256": "3407e8afb50e348a3a69e489bbdfddb397dcbaa94726aa3440f6fd754a2919ed"
+            },
+            "HP_SK_Hero_Fox_v001.glb": {
+              "path": "02_highpoly/HP_SK_Hero_Fox_v001.glb",
+              "sha256": "6c3579c14a98068c06daf8035d2e032a7d3c9ee23bed3578df341be694c10bb9"
+            },
+            "HP_SK_Hero_Fox_v001_graph.json": {
+              "path": "02_highpoly/HP_SK_Hero_Fox_v001_graph.json",
+              "sha256": "44ab5d577fe5c448a07ae281c473a67a5446ca5e54267a964f38edc22f53a59b"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -8,
+              138,
+              520,
+              666
+            ],
+            "scale": 1.9393939393939394
+          },
+          "seconds": 157.9,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 9.4
+        }
+      ]
+    },
+    "build": {
+      "current": 5,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-05 12:21:40",
+          "files": {
+            "SK_Hero_Fox_v001.blend": {
+              "path": "03_work/SK_Hero_Fox_v001.blend",
+              "sha256": "1092527228493aa6c3974cd4a1ace65ed9b77a5331cb93fe7de9176af2792b4f"
+            },
+            "SK_Hero_Fox_v001.glb": {
+              "path": "04_export/SK_Hero_Fox_v001.glb",
+              "sha256": "722386e5d808bb939480c62785b3290f55718b3b5e2b91dc944f8b80db0e86be"
+            },
+            "SK_Hero_Fox_v001_metrics.json": {
+              "path": "03_work/SK_Hero_Fox_v001_metrics.json",
+              "sha256": "103be2c9f1bdab979bdd5d0050f5036cc86ca980b152bf145743780203724d15"
+            },
+            "T_Hero_Fox_BC.png": {
+              "path": "03_work/textures_v001/T_Hero_Fox_BC.png",
+              "sha256": "148910b771fd72a46646582165c3eb6275ef865bb0003be5cad5337e59e63fae"
+            },
+            "T_Hero_Fox_N.png": {
+              "path": "03_work/textures_v001/T_Hero_Fox_N.png",
+              "sha256": "c9067453bdf46739dbc4cf5f682e6133406b2f0098f7d0de87bb20cfcc57c444"
+            },
+            "T_Hero_Fox_ORM.png": {
+              "path": "03_work/textures_v001/T_Hero_Fox_ORM.png",
+              "sha256": "d462560e1d4249a6cf84894aa81ea07675851122aca3790e87760d2df62166d6"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.825,
+          "uncovered_ratio": 0.2338,
+          "lods": [
+            {
+              "tris": 15996,
+              "verts": 8060
+            },
+            {
+              "tris": 5996,
+              "verts": 3056
+            },
+            {
+              "tris": 2396,
+              "verts": 1230
+            }
+          ],
+          "export_kb": 743.7,
+          "seconds": 42.6,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-05 12:27:02",
+          "files": {
+            "SK_Hero_Fox_v002.blend": {
+              "path": "03_work/SK_Hero_Fox_v002.blend",
+              "sha256": "ddd31f7275e81207de0d481b75b34b1f1d4a7c4a544a509cd79a0dd9dec22961"
+            },
+            "SK_Hero_Fox_v002.glb": {
+              "path": "04_export/SK_Hero_Fox_v002.glb",
+              "sha256": "4c5dba847bdffb5a50c980a3a083fcdee60978d1c88e10923d08f051d5f3d105"
+            },
+            "SK_Hero_Fox_v002_metrics.json": {
+              "path": "03_work/SK_Hero_Fox_v002_metrics.json",
+              "sha256": "feb774d7fc3b676114a82f68956a60c5b65922d28166807c7f251a93ab7751df"
+            },
+            "T_Hero_Fox_BC.png": {
+              "path": "03_work/textures_v002/T_Hero_Fox_BC.png",
+              "sha256": "148910b771fd72a46646582165c3eb6275ef865bb0003be5cad5337e59e63fae"
+            },
+            "T_Hero_Fox_N.png": {
+              "path": "03_work/textures_v002/T_Hero_Fox_N.png",
+              "sha256": "01d1e8635a56f0737a8b9d7108890c8a588cb75a33d14c6a92b87bfa509be408"
+            },
+            "T_Hero_Fox_ORM.png": {
+              "path": "03_work/textures_v002/T_Hero_Fox_ORM.png",
+              "sha256": "d462560e1d4249a6cf84894aa81ea07675851122aca3790e87760d2df62166d6"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.825,
+          "uncovered_ratio": 0.2338,
+          "lods": [
+            {
+              "tris": 15996,
+              "verts": 8060
+            },
+            {
+              "tris": 5996,
+              "verts": 3056
+            },
+            {
+              "tris": 2396,
+              "verts": 1230
+            }
+          ],
+          "export_kb": 743.7,
+          "seconds": 54.1,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 3,
+          "created": "2026-10-05 12:29:02",
+          "files": {
+            "SK_Hero_Fox_v003.blend": {
+              "path": "03_work/SK_Hero_Fox_v003.blend",
+              "sha256": "d88cd2f4f4def1fafcb0678ce29644c542d5deae5b6fdcd867d6ac617250ae81"
+            },
+            "SK_Hero_Fox_v003.glb": {
+              "path": "04_export/SK_Hero_Fox_v003.glb",
+              "sha256": "1b967f289e59d6d5af8fb28e80647e98fab78fa5152d6ec1357bce096585b844"
+            },
+            "SK_Hero_Fox_v003_metrics.json": {
+              "path": "03_work/SK_Hero_Fox_v003_metrics.json",
+              "sha256": "710bee18a70cc421c1673ea5e7a07ccb7332b0988696f80a407a568ccaa750cb"
+            },
+            "T_Hero_Fox_BC.png": {
+              "path": "03_work/textures_v003/T_Hero_Fox_BC.png",
+              "sha256": "148910b771fd72a46646582165c3eb6275ef865bb0003be5cad5337e59e63fae"
+            },
+            "T_Hero_Fox_N.png": {
+              "path": "03_work/textures_v003/T_Hero_Fox_N.png",
+              "sha256": "6eab99580ba1310c1cd28669794a8d1706e1052d521c6e7654eb17de8b043dd5"
+            },
+            "T_Hero_Fox_ORM.png": {
+              "path": "03_work/textures_v003/T_Hero_Fox_ORM.png",
+              "sha256": "d462560e1d4249a6cf84894aa81ea07675851122aca3790e87760d2df62166d6"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.825,
+          "uncovered_ratio": 0.2338,
+          "lods": [
+            {
+              "tris": 15994,
+              "verts": 8051
+            },
+            {
+              "tris": 5996,
+              "verts": 3050
+            },
+            {
+              "tris": 2396,
+              "verts": 1218
+            }
+          ],
+          "export_kb": 731.9,
+          "seconds": 39.1,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 4,
+          "created": "2026-10-05 12:40:16",
+          "files": {
+            "SK_Hero_Fox_v004.blend": {
+              "path": "03_work/SK_Hero_Fox_v004.blend",
+              "sha256": "0f209f5c6b4d19e8af6c08e69be281e2cfa8ce5f16833f0413801be86192efe0"
+            },
+            "SK_Hero_Fox_v004.glb": {
+              "path": "04_export/SK_Hero_Fox_v004.glb",
+              "sha256": "aa1e38a07486cdd81057e936a303e459b72454721873bc6e4ea559f84243c669"
+            },
+            "SK_Hero_Fox_v004_metrics.json": {
+              "path": "03_work/SK_Hero_Fox_v004_metrics.json",
+              "sha256": "f757e231ec3397d1009fce39be36187684bee750ba7fd367866d0b5ccca1e765"
+            },
+            "T_Hero_Fox_BC.png": {
+              "path": "03_work/textures_v004/T_Hero_Fox_BC.png",
+              "sha256": "148910b771fd72a46646582165c3eb6275ef865bb0003be5cad5337e59e63fae"
+            },
+            "T_Hero_Fox_N.png": {
+              "path": "03_work/textures_v004/T_Hero_Fox_N.png",
+              "sha256": "8d9cb677d7cc88c676df7b8c2e186ce0d7319f081d2501da5df6ef9f28853d4d"
+            },
+            "T_Hero_Fox_ORM.png": {
+              "path": "03_work/textures_v004/T_Hero_Fox_ORM.png",
+              "sha256": "d462560e1d4249a6cf84894aa81ea07675851122aca3790e87760d2df62166d6"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.825,
+          "uncovered_ratio": 0.2338,
+          "lods": [
+            {
+              "tris": 16000,
+              "verts": 7996
+            },
+            {
+              "tris": 6000,
+              "verts": 2996
+            },
+            {
+              "tris": 2400,
+              "verts": 1196
+            }
+          ],
+          "export_kb": 708.6,
+          "seconds": 85.2,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 5,
+          "created": "2026-10-05 12:44:41",
+          "files": {
+            "SK_Hero_Fox_v005.blend": {
+              "path": "03_work/SK_Hero_Fox_v005.blend",
+              "sha256": "8045f3bd3d7c3bd17f87ddc97669d7b5b24da163a90f4c37b8fc4588a59b9f84"
+            },
+            "SK_Hero_Fox_v005.glb": {
+              "path": "04_export/SK_Hero_Fox_v005.glb",
+              "sha256": "1b967f289e59d6d5af8fb28e80647e98fab78fa5152d6ec1357bce096585b844"
+            },
+            "SK_Hero_Fox_v005_metrics.json": {
+              "path": "03_work/SK_Hero_Fox_v005_metrics.json",
+              "sha256": "167c14d0cdfed6b5fd2f50c4e9e05fd0b8dd319333fa5398374d31ae84931be1"
+            },
+            "T_Hero_Fox_BC.png": {
+              "path": "03_work/textures_v005/T_Hero_Fox_BC.png",
+              "sha256": "148910b771fd72a46646582165c3eb6275ef865bb0003be5cad5337e59e63fae"
+            },
+            "T_Hero_Fox_N.png": {
+              "path": "03_work/textures_v005/T_Hero_Fox_N.png",
+              "sha256": "8b9716148bd3ce63201055b6a334f9b5d8d2f5605aba061f991e90ba5929a981"
+            },
+            "T_Hero_Fox_ORM.png": {
+              "path": "03_work/textures_v005/T_Hero_Fox_ORM.png",
+              "sha256": "d462560e1d4249a6cf84894aa81ea07675851122aca3790e87760d2df62166d6"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.825,
+          "uncovered_ratio": 0.2338,
+          "lods": [
+            {
+              "tris": 15994,
+              "verts": 8051
+            },
+            {
+              "tris": 5996,
+              "verts": 3050
+            },
+            {
+              "tris": 2396,
+              "verts": 1218
+            }
+          ],
+          "export_kb": 731.9,
+          "seconds": 62.7,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 6,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-05 12:21:40",
+          "files": {
+            "SK_Hero_Fox_v001_validation.json": {
+              "path": "05_review/SK_Hero_Fox_v001_validation.json",
+              "sha256": "c402b57e03db6c5ce123fe20e1a3f89c5ba63fe883c846e14e5479b596c95482"
+            }
+          },
+          "from_build": 1,
+          "errors": 1,
+          "warnings": 0,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 2,
+          "created": "2026-10-05 12:23:18",
+          "files": {
+            "SK_Hero_Fox_v001_validation.json": {
+              "path": "05_review/SK_Hero_Fox_v001_validation.json",
+              "sha256": "9549d9589593de70364bf8fc0b61d19d496aeecef79bf5816b9a2036536e8dc3"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-10-05 12:27:02",
+          "files": {
+            "SK_Hero_Fox_v002_validation.json": {
+              "path": "05_review/SK_Hero_Fox_v002_validation.json",
+              "sha256": "9549d9589593de70364bf8fc0b61d19d496aeecef79bf5816b9a2036536e8dc3"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 4,
+          "created": "2026-10-05 12:29:02",
+          "files": {
+            "SK_Hero_Fox_v003_validation.json": {
+              "path": "05_review/SK_Hero_Fox_v003_validation.json",
+              "sha256": "17ce1c5d05f175da55ab76285641819e7fab835dcd3f6bdb58076867f5f7a40d"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 5,
+          "created": "2026-10-05 12:40:41",
+          "files": {
+            "SK_Hero_Fox_v004_validation.json": {
+              "path": "05_review/SK_Hero_Fox_v004_validation.json",
+              "sha256": "b8129b0dabbcd1bfc481a5d28f2e7643f5013e28a3ea88193d3981c2e031e1e9"
+            }
+          },
+          "from_build": 4,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 6,
+          "created": "2026-10-05 12:45:52",
+          "files": {
+            "SK_Hero_Fox_v005_validation.json": {
+              "path": "05_review/SK_Hero_Fox_v005_validation.json",
+              "sha256": "17ce1c5d05f175da55ab76285641819e7fab835dcd3f6bdb58076867f5f7a40d"
+            }
+          },
+          "from_build": 5,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 7,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-05 12:23:29",
+          "files": {
+            "SK_Hero_Fox_v001_review.png": {
+              "path": "05_review/SK_Hero_Fox_v001_review.png",
+              "sha256": "3941aee8c7e4d5ac4b65fc5008c22c3f82b8a1b79f47a09d39ca9d547f622048"
+            }
+          },
+          "from_build": 1,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.011,
+              "p1_compress": 0.986,
+              "stretch_pairs": {}
+            },
+            "intro_start": {
+              "bad_edge_ratio": 0.0003,
+              "stretch_ratio": 0.0002,
+              "p99_stretch": 1.113,
+              "p1_compress": 0.909,
+              "stretch_pairs": {
+                "j_0_18 ↔ j_0_5": 1,
+                "j_0 ↔ j_0_18": 1,
+                "j_0_18 ↔ j_0_18_1": 1,
+                "j_0 ↔ j_0_18_1": 1,
+                "j_0 ↔ j_0_7": 1
+              }
+            },
+            "intro_peak": {
+              "bad_edge_ratio": 0.0049,
+              "stretch_ratio": 0.0031,
+              "p99_stretch": 1.366,
+              "p1_compress": 0.821,
+              "stretch_pairs": {
+                "j_0_19_3_9 ↔ j_0_19_3_9": 79,
+                "j_0_19_3_9 ↔ j_0_19_3_9_2": 2,
+                "j_0 ↔ j_0_18": 1,
+                "j_0 ↔ j_0_7": 1
+              }
+            },
+            "intro_end": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.043,
+              "p1_compress": 0.951,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-05 12:24:44",
+          "files": {
+            "SK_Hero_Fox_v001_review_v002.png": {
+              "path": "05_review/SK_Hero_Fox_v001_review_v002.png",
+              "sha256": "b5773792ddb39cbf85aefba9f612414c23f6e7c4a0847fdf4d08176beb31653d"
+            }
+          },
+          "from_build": 1,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.011,
+              "p1_compress": 0.986,
+              "stretch_pairs": {}
+            },
+            "intro_start": {
+              "bad_edge_ratio": 0.0003,
+              "stretch_ratio": 0.0002,
+              "p99_stretch": 1.113,
+              "p1_compress": 0.909,
+              "stretch_pairs": {
+                "j_0_18 ↔ j_0_5": 1,
+                "j_0 ↔ j_0_18": 1,
+                "j_0_18 ↔ j_0_18_1": 1,
+                "j_0 ↔ j_0_18_1": 1,
+                "j_0 ↔ j_0_7": 1
+              }
+            },
+            "intro_peak": {
+              "bad_edge_ratio": 0.0049,
+              "stretch_ratio": 0.0031,
+              "p99_stretch": 1.366,
+              "p1_compress": 0.821,
+              "stretch_pairs": {
+                "j_0_19_3_9 ↔ j_0_19_3_9": 79,
+                "j_0_19_3_9 ↔ j_0_19_3_9_2": 2,
+                "j_0 ↔ j_0_18": 1,
+                "j_0 ↔ j_0_7": 1
+              }
+            },
+            "intro_end": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.043,
+              "p1_compress": 0.951,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "rejected",
+            "by": "Codex AI visual review",
+            "note": "Tail fragments detach during the sampled intro. Fix the posed tail influence volumes and transfer its existing chain weights before accepting.",
+            "time": "2026-10-05 12:26:07"
+          }
+        },
+        {
+          "version": 3,
+          "created": "2026-10-05 12:27:13",
+          "files": {
+            "SK_Hero_Fox_v002_review_v003.png": {
+              "path": "05_review/SK_Hero_Fox_v002_review_v003.png",
+              "sha256": "b60ebd36a602d1212b41d9e419b22b48211830a3f6778876bf7a7fe0df716663"
+            }
+          },
+          "from_build": 2,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.011,
+              "p1_compress": 0.986,
+              "stretch_pairs": {}
+            },
+            "intro_start": {
+              "bad_edge_ratio": 0.0003,
+              "stretch_ratio": 0.0002,
+              "p99_stretch": 1.113,
+              "p1_compress": 0.909,
+              "stretch_pairs": {
+                "j_0_18 ↔ j_0_5": 1,
+                "j_0 ↔ j_0_18": 1,
+                "j_0_18 ↔ j_0_18_1": 1,
+                "j_0 ↔ j_0_18_1": 1,
+                "j_0 ↔ j_0_7": 1
+              }
+            },
+            "intro_peak": {
+              "bad_edge_ratio": 0.0049,
+              "stretch_ratio": 0.0031,
+              "p99_stretch": 1.366,
+              "p1_compress": 0.821,
+              "stretch_pairs": {
+                "j_0_19_3_9 ↔ j_0_19_3_9": 79,
+                "j_0_19_3_9 ↔ j_0_19_3_9_2": 2,
+                "j_0 ↔ j_0_18": 1,
+                "j_0 ↔ j_0_7": 1
+              }
+            },
+            "intro_end": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.043,
+              "p1_compress": 0.951,
+              "stretch_pairs": {}
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "rejected",
+            "by": "Codex AI visual review",
+            "note": "Tail skin source extras were on the imported armature carrier, so the old build omitted tail influence surfaces. Rebuild with explicit carrier metadata and posed surface distances.",
+            "time": "2026-10-05 12:28:22"
+          }
+        },
+        {
+          "version": 4,
+          "created": "2026-10-05 12:29:10",
+          "files": {
+            "SK_Hero_Fox_v003_review_v004.png": {
+              "path": "05_review/SK_Hero_Fox_v003_review_v004.png",
+              "sha256": "e2342537ec461dfaea4a7e48a10e9a03e05979d347a2b9c51070219272c242c4"
+            }
+          },
+          "from_build": 3,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.012,
+              "p1_compress": 0.988,
+              "stretch_pairs": {}
+            },
+            "intro_start": {
+              "bad_edge_ratio": 0.0005,
+              "stretch_ratio": 0.0002,
+              "p99_stretch": 1.104,
+              "p1_compress": 0.873,
+              "stretch_pairs": {
+                "j_0_18 ↔ j_0_5": 1,
+                "j_0 ↔ j_0_18": 1,
+                "j_0 ↔ j_0_18_1": 1,
+                "j_0 ↔ j_0_7": 1,
+                "j_0_18 ↔ j_0_18_1": 1
+              }
+            },
+            "intro_peak": {
+              "bad_edge_ratio": 0.0185,
+              "stretch_ratio": 0.0147,
+              "p99_stretch": 2.22,
+              "p1_compress": 0.714,
+              "stretch_pairs": {
+                "j_0_20_2 ↔ j_0_20_2": 159,
+                "j_0_20_1 ↔ j_0_20_1": 127,
+                "j_0_20_1 ↔ j_0_20_2": 101,
+                "j_0 ↔ j_0_18": 1,
+                "j_0 ↔ j_0_7": 1
+              }
+            },
+            "intro_end": {
+              "bad_edge_ratio": 0.0031,
+              "stretch_ratio": 0.003,
+              "p99_stretch": 1.333,
+              "p1_compress": 0.94,
+              "stretch_pairs": {
+                "j_0_20_2 ↔ j_0_20_2": 34,
+                "j_0_20_1 ↔ j_0_20_1": 31,
+                "j_0_20_1 ↔ j_0_20_2": 14
+              }
+            }
+          },
+          "auto_flags": [
+            "intro_peak 拉伸 p99 2.22、过度拉伸边 1.5%"
+          ]
+        },
+        {
+          "version": 5,
+          "created": "2026-10-05 12:40:56",
+          "files": {
+            "SK_Hero_Fox_v004_review_v005.png": {
+              "path": "05_review/SK_Hero_Fox_v004_review_v005.png",
+              "sha256": "870c493c36ee8637278d0214dbd00da17f2c1835d07996af9669cac45337ad1a"
+            }
+          },
+          "from_build": 4,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0011,
+              "stretch_ratio": 0.0009,
+              "p99_stretch": 1.066,
+              "p1_compress": 0.979,
+              "stretch_pairs": {
+                "j_0 ↔ j_0_19_3_5_0_1_1": 10,
+                "j_0_19_3_5_0_1_1 ↔ j_0_20_2": 8,
+                "j_0_19_3_6_0_1_1 ↔ j_0_20_2": 2,
+                "j_0_19_3_5_0_1 ↔ j_0_19_3_8": 1,
+                "j_0_19_3_5_0_1 ↔ j_0_19_3_6_0_1": 1,
+                "j_0_19_3_9_2 ↔ j_0_5": 1
+              }
+            },
+            "intro_start": {
+              "bad_edge_ratio": 0.0102,
+              "stretch_ratio": 0.0095,
+              "p99_stretch": 1.69,
+              "p1_compress": 0.843,
+              "stretch_pairs": {
+                "j_0 ↔ j_0_19_3_9_2": 86,
+                "j_0_19_3_6_0_1_1 ↔ j_0_20_2": 24,
+                "j_0_17 ↔ j_0_20_1": 23,
+                "j_0_19_3_5_0_1_1 ↔ j_0_20_2": 22,
+                "j_0 ↔ j_0_18_1": 18,
+                "j_0 ↔ j_0_19_3_5_0_1_1": 12
+              }
+            },
+            "intro_peak": {
+              "bad_edge_ratio": 0.0393,
+              "stretch_ratio": 0.0342,
+              "p99_stretch": 3.758,
+              "p1_compress": 0.674,
+              "stretch_pairs": {
+                "j_0_20_2 ↔ j_0_20_2": 173,
+                "j_0_20_1 ↔ j_0_20_1": 130,
+                "j_0_20_1 ↔ j_0_20_2": 106,
+                "j_0 ↔ j_0_19_3_9_2": 99,
+                "j_0_19_3_0 ↔ j_0_19_3_8": 67,
+                "j_0_17 ↔ j_0_20_1": 38
+              }
+            },
+            "intro_end": {
+              "bad_edge_ratio": 0.0125,
+              "stretch_ratio": 0.0118,
+              "p99_stretch": 1.945,
+              "p1_compress": 0.897,
+              "stretch_pairs": {
+                "j_0 ↔ j_0_19_3_9_2": 80,
+                "j_0_19_3_6_0_1_1 ↔ j_0_20_2": 46,
+                "j_0_20_2 ↔ j_0_20_2": 37,
+                "j_0_20_1 ↔ j_0_20_1": 33,
+                "j_0_19_3_5_0_1_1 ↔ j_0_20_2": 26,
+                "j_0_20_1 ↔ j_0_20_2": 17
+              }
+            }
+          },
+          "auto_flags": [
+            "intro_peak 拉伸 p99 3.758、过度拉伸边 3.4%",
+            "intro_end 拉伸 p99 1.945、过度拉伸边 1.2%"
+          ],
+          "review": {
+            "verdict": "rejected",
+            "by": "Codex AI visual review",
+            "note": "Continuous prototype segmentation produces excessive actual intro deformation; restore bounded segmented body with animated tail-chain adaptation.",
+            "time": "2026-10-05 12:43:27"
+          }
+        },
+        {
+          "version": 6,
+          "created": "2026-10-05 12:46:01",
+          "files": {
+            "SK_Hero_Fox_v005_review_v006.png": {
+              "path": "05_review/SK_Hero_Fox_v005_review_v006.png",
+              "sha256": "9e61984d5531232a556f0175f1de8935af6024a6b9878e8ff5ce664e1c5e79d0"
+            }
+          },
+          "from_build": 5,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.012,
+              "p1_compress": 0.988,
+              "stretch_pairs": {}
+            },
+            "intro_start": {
+              "bad_edge_ratio": 0.0005,
+              "stretch_ratio": 0.0002,
+              "p99_stretch": 1.104,
+              "p1_compress": 0.873,
+              "stretch_pairs": {
+                "j_0_18 ↔ j_0_5": 1,
+                "j_0 ↔ j_0_18": 1,
+                "j_0 ↔ j_0_18_1": 1,
+                "j_0 ↔ j_0_7": 1,
+                "j_0_18 ↔ j_0_18_1": 1
+              }
+            },
+            "intro_peak": {
+              "bad_edge_ratio": 0.0185,
+              "stretch_ratio": 0.0147,
+              "p99_stretch": 2.22,
+              "p1_compress": 0.714,
+              "stretch_pairs": {
+                "j_0_20_2 ↔ j_0_20_2": 159,
+                "j_0_20_1 ↔ j_0_20_1": 127,
+                "j_0_20_1 ↔ j_0_20_2": 101,
+                "j_0 ↔ j_0_18": 1,
+                "j_0 ↔ j_0_7": 1
+              }
+            },
+            "intro_end": {
+              "bad_edge_ratio": 0.0031,
+              "stretch_ratio": 0.003,
+              "p99_stretch": 1.333,
+              "p1_compress": 0.94,
+              "stretch_pairs": {
+                "j_0_20_2 ↔ j_0_20_2": 34,
+                "j_0_20_1 ↔ j_0_20_1": 31,
+                "j_0_20_1 ↔ j_0_20_2": 14
+              }
+            }
+          },
+          "auto_flags": [
+            "intro_peak 拉伸 p99 2.22、过度拉伸边 1.5%"
+          ]
+        },
+        {
+          "version": 7,
+          "created": "2026-10-05 12:47:48",
+          "files": {
+            "SK_Hero_Fox_v005_review_v007.png": {
+              "path": "05_review/SK_Hero_Fox_v005_review_v007.png",
+              "sha256": "7f1df4f4dd176a09fee62cb8c7f433f3fd9334e58ecc8ea093e6f6ef387b7bd6"
+            }
+          },
+          "from_build": 5,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0,
+              "stretch_ratio": 0.0,
+              "p99_stretch": 1.017,
+              "p1_compress": 0.989,
+              "stretch_pairs": {}
+            },
+            "intro_start": {
+              "bad_edge_ratio": 0.0006,
+              "stretch_ratio": 0.0002,
+              "p99_stretch": 1.106,
+              "p1_compress": 0.878,
+              "stretch_pairs": {
+                "j_0_18 ↔ j_0_5": 1,
+                "j_0 ↔ j_0_18": 1,
+                "j_0 ↔ j_0_18_1": 1,
+                "j_0 ↔ j_0_7": 1,
+                "j_0_18 ↔ j_0_18_1": 1
+              }
+            },
+            "intro_peak": {
+              "bad_edge_ratio": 0.0175,
+              "stretch_ratio": 0.0156,
+              "p99_stretch": 2.302,
+              "p1_compress": 0.803,
+              "stretch_pairs": {
+                "j_0_20_2 ↔ j_0_20_2": 169,
+                "j_0_20_1 ↔ j_0_20_1": 139,
+                "j_0_20_1 ↔ j_0_20_2": 102,
+                "j_0 ↔ j_0_18": 1,
+                "j_0 ↔ j_0_7": 1
+              }
+            },
+            "intro_end": {
+              "bad_edge_ratio": 0.003,
+              "stretch_ratio": 0.0028,
+              "p99_stretch": 1.314,
+              "p1_compress": 0.942,
+              "stretch_pairs": {
+                "j_0_20_2 ↔ j_0_20_2": 34,
+                "j_0_20_1 ↔ j_0_20_1": 27,
+                "j_0_20_1 ↔ j_0_20_2": 14
+              }
+            }
+          },
+          "auto_flags": [
+            "intro_peak 拉伸 p99 2.302、过度拉伸边 1.6%"
+          ],
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Four views, three LODs and all four live display poses inspected. Native coarse-tail ROM flag is resolved by runtime transfer to 24 existing tail-chain bones: peak p99 1.475, over-2 stretch 0.73%, no invalid vertices; palm distance 6.4-7.8 mm, flames anchored to authored tips. 43 technical checks pass.",
+            "time": "2026-10-05 12:48:01"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-05 12:48:01",
+          "files": {
+            "SK_Hero_Fox.glb": {
+              "path": "@root/public/assets/characters/SK_Hero_Fox.glb",
+              "sha256": "1b967f289e59d6d5af8fb28e80647e98fab78fa5152d6ec1357bce096585b844"
+            }
+          },
+          "from_build": 5,
+          "url": "assets/characters/SK_Hero_Fox.glb"
+        }
+      ]
+    }
+  }
+}

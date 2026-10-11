@@ -350,6 +350,8 @@ const chooseOption = (control: HTMLSelectElement, value: string | null): void =>
   if (value && Array.from(control.options).some(o => o.value === value)) control.value = value;
 };
 chooseOption(mode, initial.get('mode'));
+chooseOption(hero, initial.get('hero'));
+ctx.player.resetForRun(HEROES.find(h => h.id === hero.value) ?? HEROES[0]);
 chooseOption(sceneType, initial.get('type'));
 chooseOption(targetDistance, initial.get('distance'));
 chooseMode();
@@ -376,8 +378,8 @@ function frame(now: number): void {
     if (play.checked) progress.value = String(state.reloadP);
     state.shellMode = def.reloadStyle === 'shell';
     state.aimT = aim.checked ? 1 : 0;
-    if (def.id === 'demon_blade') { state.form = 'melee'; state.blades = 12; state.bladesMax = 12; }
-    else state.form = null;
+    state.blade = null;
+    void def;
     vm.update(dt, state);
   } else if (enemy) {
     const base = enemy as EnemyBase;

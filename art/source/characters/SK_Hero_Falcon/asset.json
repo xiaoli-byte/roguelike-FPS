@@ -1,0 +1,861 @@
+{
+  "id": "SK_Hero_Falcon",
+  "display": "雷隼·天穹猎手",
+  "kind": "skeletal",
+  "class": "hero_display",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-05 12:15:32",
+          "files": {
+            "BO_SK_Hero_Falcon_v001.glb": {
+              "path": "00_blockout/BO_SK_Hero_Falcon_v001.glb",
+              "sha256": "a7d41622bdd30c7ba6fdf24b65d7ebd012fb0c8b058f3428cc34b2489da44117"
+            },
+            "BO_SK_Hero_Falcon_v001.json": {
+              "path": "00_blockout/BO_SK_Hero_Falcon_v001.json",
+              "sha256": "488f624370666751fee27d5b6d049e0b9f76ca3031ea393d15e2769649f649fd"
+            },
+            "BO_SK_Hero_Falcon_v001_views.json": {
+              "path": "00_blockout/BO_SK_Hero_Falcon_v001_views.json",
+              "sha256": "f73d00fa5aa1b6b769f2316158f2b8db0b24e9c138860bcf915f20732cccc2cb"
+            },
+            "BO_SK_Hero_Falcon_v001_sheet.png": {
+              "path": "00_blockout/BO_SK_Hero_Falcon_v001_sheet.png",
+              "sha256": "9411106d7138827c85f1cdc23afc3949666e4f5b4c53a90052214807ac6cfb27"
+            },
+            "BO_SK_Hero_Falcon_v001_front.png": {
+              "path": "00_blockout/BO_SK_Hero_Falcon_v001_front.png",
+              "sha256": "618d27e05fd75b83cef2cd116a2189a51ab3b57eabec3f3658ee9f2397c80045"
+            },
+            "BO_SK_Hero_Falcon_v001_left.png": {
+              "path": "00_blockout/BO_SK_Hero_Falcon_v001_left.png",
+              "sha256": "0efaa5bf5bb8d3b6f4774e46f775a2c67f4d11a3d689c0eeb4b34b2794f35b34"
+            },
+            "BO_SK_Hero_Falcon_v001_back.png": {
+              "path": "00_blockout/BO_SK_Hero_Falcon_v001_back.png",
+              "sha256": "df47cddc43b4e7ee373682c98ff6b7c21655861192040cd8cf29da6eb56246fd"
+            },
+            "BO_SK_Hero_Falcon_v001_right.png": {
+              "path": "00_blockout/BO_SK_Hero_Falcon_v001_right.png",
+              "sha256": "d2af587c0d8fc636662fcc2866ebc89feaabbe735e5b84cb3f73f4fd686f40bf"
+            }
+          },
+          "source": {
+            "kind": "hero",
+            "id": "falcon"
+          },
+          "joints": 135,
+          "bounds": {
+            "min": [
+              -0.497806038222867,
+              -0.0020000003799796467,
+              -0.3601325231137513
+            ],
+            "max": [
+              0.497806038222867,
+              1.8960385435646956,
+              0.28379212674498555
+            ]
+          },
+          "blender_seconds": 5.6,
+          "amendments": [
+            {
+              "time": "2026-10-05 12:17:31",
+              "reason": "几何不变，更新白模说明"
+            },
+            {
+              "time": "2026-10-05 12:42:59",
+              "reason": "几何不变，更新白模说明"
+            },
+            {
+              "time": "2026-10-05 12:47:07",
+              "reason": "几何不变，更新白模说明"
+            }
+          ],
+          "modified": "2026-10-05 12:47:07"
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-05 12:18:45",
+          "files": {
+            "CN_SK_Hero_Falcon_v001_sheet.png": {
+              "path": "01_concept/CN_SK_Hero_Falcon_v001_sheet.png",
+              "sha256": "1a53a6af2270a8f6e53b6174a1ed6dcb4579db89aa28f225e1e1abeb5af53a30"
+            },
+            "CN_SK_Hero_Falcon_v001_front.png": {
+              "path": "01_concept/CN_SK_Hero_Falcon_v001_front.png",
+              "sha256": "78389d4b9e6ac60d670ec6480c21a7053a764672d6d86cb319ab6a13f3ce7cef"
+            },
+            "CN_SK_Hero_Falcon_v001_left.png": {
+              "path": "01_concept/CN_SK_Hero_Falcon_v001_left.png",
+              "sha256": "9171357a17672cf863448617e844d11ad6e55ac6b3532c0c4950b021c3e7bab0"
+            },
+            "CN_SK_Hero_Falcon_v001_back.png": {
+              "path": "01_concept/CN_SK_Hero_Falcon_v001_back.png",
+              "sha256": "eca694030438cadfeeff08b1adb99b61eaec6e2d77767c60f3f1fe07fd31589e"
+            },
+            "CN_SK_Hero_Falcon_v001_right.png": {
+              "path": "01_concept/CN_SK_Hero_Falcon_v001_right.png",
+              "sha256": "f4c23470f3b7f858aff73bf3a4a06ba16c8c60c693521a4a150aa6b7bf43b6d5"
+            },
+            "CN_SK_Hero_Falcon_v001_compare.png": {
+              "path": "01_concept/CN_SK_Hero_Falcon_v001_compare.png",
+              "sha256": "876225c89fa813d6a451e5423d19016a048c58914e5a35f4749e968e832c4faa"
+            },
+            "CN_SK_Hero_Falcon_v001_prompt.txt": {
+              "path": "01_concept/CN_SK_Hero_Falcon_v001_prompt.txt",
+              "sha256": "351f45c8fd87211069a439c3cee3cd3c96292f115e42662b25b6a90e1208ca0d"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Codex built-in image_gen",
+          "source_sha256": "1a53a6af2270a8f6e53b6174a1ed6dcb4579db89aa28f225e1e1abeb5af53a30",
+          "source_image": "C:\\Users\\admin\\.codex\\generated_images\\01a10a40-1bc4-7f33-97fc-4ccd4b1ddf01\\exec-7703f5f6-d7bb-463e-9fc3-709ab10963f6.png",
+          "prompt": "Use case: stylized-concept. Finished hero turnaround for 3D game reconstruction. Stylized hand-painted 3D game character art for a fast first-person roguelite shooter, targeting the readable, moderate-detail visual direction of Gunfire Reborn. Bold chunky silhouettes, slightly exaggerated proportions, broad clean faceted planes, two or three dominant color blocks, soft painted gradients and a few restrained edge accents. Simplify East-Asian fantasy motifs into recognizable medium-scale shapes. Use the chapter or character palette in the asset brief. Favor clear solid volume and consistent materials at normal gameplay distance. Matte stone, wood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks, elaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting for reconstruction; prioritize silhouette and color coherence over surface detail.\nInput is the current procedural ONE falcon hunter, ONLY for joint placement, proportions, folded wing placement and pose. Rebuild an appealing sculpted anthropomorphic game hero with coherent broad rounded volumes and elegant gentle faceting. Preserve joint levels, hand position (right held low, left resting by hip) and stance. No origami, noisy triangle mosaic, jagged layered scraps, cubes, realistic dirt or miniature engraving.\nCharacter: anthropomorphic peregrine falcon lightning hunter. Proud enlarged falcon head with an expressive strong brow, icy cyan eyes, creamy cheek and throat patches, dark navy head cap and clearly readable golden hooked beak. A few broad swept back crown feathers. Indigo long hunter coat with broad cream chest feather bib, solid layered blue shoulder protection, a few bold muted gold border bands and clasps, a crimson waist accent, dark gloves and solid boots. TWO substantial folded navy and ivory-grey feathered wings on the back. Wings are real coherent folded feather wings, with a small number of broad overlapping sculpted flight feathers; do not draw bat-wing membranes or thin shards. Keep both folded wing silhouettes and anatomical roots as the reference. Coat divided in broad panels with simple gold edges, wide clean cloth folds. Hands empty, no revolver, no lightning or effects.\nExactly FOUR consistent full body orthographic views in ONE wide row: FRONT / LEFT (faces image left) / BACK / RIGHT (faces image right). Four equal panels, same size and feet baseline. Same relaxed arm stance and leg stance as reference, fingers separated from clothing. Identical character details and folded wing volumes in all views. Fully transparent background, no floor, shadow, text or frame. Clean hand-painted game art with coherent broad colour shapes.",
+          "registration": {
+            "front": {
+              "scale": 1.0199,
+              "offset": [
+                44,
+                89
+              ],
+              "iou": 0.779,
+              "iou_unregistered_scale": 1.0514
+            },
+            "left": {
+              "scale": 1.0304,
+              "offset": [
+                97,
+                126
+              ],
+              "iou": 0.612,
+              "iou_unregistered_scale": 1.0789
+            },
+            "back": {
+              "scale": 1.0249,
+              "offset": [
+                31,
+                89
+              ],
+              "iou": 0.796,
+              "iou_unregistered_scale": 1.0566
+            },
+            "right": {
+              "scale": 1.033,
+              "offset": [
+                125,
+                126
+              ],
+              "iou": 0.601,
+              "iou_unregistered_scale": 1.0817
+            }
+          },
+          "silhouette_iou": {
+            "front": 0.78,
+            "left": 0.613,
+            "back": 0.797,
+            "right": 0.602
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Coherent four-view avian head, broad navy/ivory wing volumes and simplified hunter coat. Side overlap differs intentionally from the original thin feather strips; verify folded and spread poses in game.",
+            "time": "2026-10-05 12:23:36"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-05 12:25:55",
+          "files": {
+            "HP_SK_Hero_Falcon_v001_input_front.png": {
+              "path": "02_highpoly/HP_SK_Hero_Falcon_v001_input_front.png",
+              "sha256": "960b829c035d71405fe1d94d01f3f805ffcbbe8941e551494731286afe8119cc"
+            },
+            "HP_SK_Hero_Falcon_v001_input_left.png": {
+              "path": "02_highpoly/HP_SK_Hero_Falcon_v001_input_left.png",
+              "sha256": "a9e0e1963e52ca65e88915ad89d6b5ffc219e26354775bdfb49f536d26d8d5d6"
+            },
+            "HP_SK_Hero_Falcon_v001_input_back.png": {
+              "path": "02_highpoly/HP_SK_Hero_Falcon_v001_input_back.png",
+              "sha256": "fa91829216bfc6a4daedb7dec5a03c574013c1a7ce38f14d20c3d63c721d6e06"
+            },
+            "HP_SK_Hero_Falcon_v001_input_right.png": {
+              "path": "02_highpoly/HP_SK_Hero_Falcon_v001_input_right.png",
+              "sha256": "d5196ab98a01b37db29e8ed893b62bc336d7f23a479d2e60a439ef280e5cfe42"
+            },
+            "HP_SK_Hero_Falcon_v001.glb": {
+              "path": "02_highpoly/HP_SK_Hero_Falcon_v001.glb",
+              "sha256": "221bb0f0d1881507d6d88bd9993d02c9c24129f216190847203aae6c9b46e128"
+            },
+            "HP_SK_Hero_Falcon_v001_graph.json": {
+              "path": "02_highpoly/HP_SK_Hero_Falcon_v001_graph.json",
+              "sha256": "77e833ccbbe948a30a9a3e380cfe9f9c98653167a23a27d636671f2f9a5aee7e"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -249,
+              13,
+              761,
+              1024
+            ],
+            "scale": 1.0138613861386139
+          },
+          "seconds": 137.9,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 13.7
+        }
+      ]
+    },
+    "build": {
+      "current": 4,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-05 12:27:04",
+          "files": {
+            "SK_Hero_Falcon_v001.blend": {
+              "path": "03_work/SK_Hero_Falcon_v001.blend",
+              "sha256": "9f1f265f842abb6e8bf268d2bd9b845bc388365de85cdf015fd4fd54f9c8ef8d"
+            },
+            "SK_Hero_Falcon_v001.glb": {
+              "path": "04_export/SK_Hero_Falcon_v001.glb",
+              "sha256": "0cfae3b4f32cfdeccb2a8436a65e8f17f4b79f28bdeccc0abd818f54083b4f70"
+            },
+            "SK_Hero_Falcon_v001_metrics.json": {
+              "path": "03_work/SK_Hero_Falcon_v001_metrics.json",
+              "sha256": "41799b4b2c08e1e57ddce946fa266ceaaeb9cf73a41c025cec6dfb1567a95bd3"
+            },
+            "T_Hero_Falcon_BC.png": {
+              "path": "03_work/textures_v001/T_Hero_Falcon_BC.png",
+              "sha256": "6d9c7c9f3aaceb3a05d707adf7a0d1f1bcc283b7accbc7ebb5738c9070ed9806"
+            },
+            "T_Hero_Falcon_N.png": {
+              "path": "03_work/textures_v001/T_Hero_Falcon_N.png",
+              "sha256": "e89ed31d44e4c923d4b6740550b728a5c29dffe617ac898c780d0565a6158d91"
+            },
+            "T_Hero_Falcon_ORM.png": {
+              "path": "03_work/textures_v001/T_Hero_Falcon_ORM.png",
+              "sha256": "0611855386088c52d07489d9fba9216f9d5712271cea17c007068fa8887c39d2"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.881,
+          "uncovered_ratio": 0.3993,
+          "lods": [
+            {
+              "tris": 15996,
+              "verts": 8116
+            },
+            {
+              "tris": 5996,
+              "verts": 3117
+            },
+            {
+              "tris": 2396,
+              "verts": 1237
+            }
+          ],
+          "export_kb": 864.2,
+          "seconds": 68.7,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-05 12:30:32",
+          "files": {
+            "SK_Hero_Falcon_v002.blend": {
+              "path": "03_work/SK_Hero_Falcon_v002.blend",
+              "sha256": "bab417a44ebb0469a6ff6bfac1a2d8d5653795e26fc46ba881d65b078942f8ef"
+            },
+            "SK_Hero_Falcon_v002.glb": {
+              "path": "04_export/SK_Hero_Falcon_v002.glb",
+              "sha256": "f462fdd7596c4a0ec03c891485c8e4482f68fd4da9ccf1bf4c08c6fc6d5589c8"
+            },
+            "SK_Hero_Falcon_v002_metrics.json": {
+              "path": "03_work/SK_Hero_Falcon_v002_metrics.json",
+              "sha256": "72c1ad020f9a93b1f2db087b234a02956e244019ad7e61489f8b2de9549ad65d"
+            },
+            "T_Hero_Falcon_BC.png": {
+              "path": "03_work/textures_v002/T_Hero_Falcon_BC.png",
+              "sha256": "7fb2bf9acee12989dbed7b564284530d382d08f4c55cc281ea9e31b796a06c2a"
+            },
+            "T_Hero_Falcon_N.png": {
+              "path": "03_work/textures_v002/T_Hero_Falcon_N.png",
+              "sha256": "69a7d816388d1266b7feca91e7889c2cc1c34dd0c6771603e5df6f0922fe6cc1"
+            },
+            "T_Hero_Falcon_ORM.png": {
+              "path": "03_work/textures_v002/T_Hero_Falcon_ORM.png",
+              "sha256": "21e5fbef4189d34cea2b59dae49a0e006161eed6d93ce594fe1e252f30e19046"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.866,
+          "uncovered_ratio": 0.4177,
+          "lods": [
+            {
+              "tris": 15996,
+              "verts": 8067
+            },
+            {
+              "tris": 5996,
+              "verts": 3048
+            },
+            {
+              "tris": 2395,
+              "verts": 1236
+            }
+          ],
+          "export_kb": 860.0,
+          "seconds": 53.1,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 3,
+          "created": "2026-10-05 12:40:58",
+          "files": {
+            "SK_Hero_Falcon_v003.blend": {
+              "path": "03_work/SK_Hero_Falcon_v003.blend",
+              "sha256": "463e647cc04035fcf7ea74200df76f790d5a763aef0a22396e38302fb0e3d868"
+            },
+            "SK_Hero_Falcon_v003.glb": {
+              "path": "04_export/SK_Hero_Falcon_v003.glb",
+              "sha256": "de92d72c6931103c0536e49fe8056a2a380fb70a07c20f8d2a117e0d976ba54f"
+            },
+            "SK_Hero_Falcon_v003_metrics.json": {
+              "path": "03_work/SK_Hero_Falcon_v003_metrics.json",
+              "sha256": "40ee0042a950678f07ebf8733e5dc7c4da2e0854a5dbe5fcfb3efaa36432fd35"
+            },
+            "T_Hero_Falcon_BC.png": {
+              "path": "03_work/textures_v003/T_Hero_Falcon_BC.png",
+              "sha256": "7fb2bf9acee12989dbed7b564284530d382d08f4c55cc281ea9e31b796a06c2a"
+            },
+            "T_Hero_Falcon_N.png": {
+              "path": "03_work/textures_v003/T_Hero_Falcon_N.png",
+              "sha256": "b81858f581336f6262f45868f72498e1705c10cc7986be132b502ac6452fcea6"
+            },
+            "T_Hero_Falcon_ORM.png": {
+              "path": "03_work/textures_v003/T_Hero_Falcon_ORM.png",
+              "sha256": "21e5fbef4189d34cea2b59dae49a0e006161eed6d93ce594fe1e252f30e19046"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.866,
+          "uncovered_ratio": 0.4177,
+          "lods": [
+            {
+              "tris": 16000,
+              "verts": 7984
+            },
+            {
+              "tris": 6000,
+              "verts": 2984
+            },
+            {
+              "tris": 2400,
+              "verts": 1184
+            }
+          ],
+          "export_kb": 823.6,
+          "seconds": 116.6,
+          "bake_device": "OPTIX"
+        },
+        {
+          "version": 4,
+          "created": "2026-10-05 12:44:48",
+          "files": {
+            "SK_Hero_Falcon_v004.blend": {
+              "path": "03_work/SK_Hero_Falcon_v004.blend",
+              "sha256": "48b76057faf96b7341ef5670f0a7eb9dfd56df5cb6922eafd32b42eed4d916c7"
+            },
+            "SK_Hero_Falcon_v004.glb": {
+              "path": "04_export/SK_Hero_Falcon_v004.glb",
+              "sha256": "367fb10bbec750a7f252ab0e74cefdd898c2d00e93268dc8820d93f605ad5573"
+            },
+            "SK_Hero_Falcon_v004_metrics.json": {
+              "path": "03_work/SK_Hero_Falcon_v004_metrics.json",
+              "sha256": "b7203e0f5edb86f6b2e39c542f6e61690ba168fac1e3be53bbac7e6f9d71ce8e"
+            },
+            "T_Hero_Falcon_BC.png": {
+              "path": "03_work/textures_v004/T_Hero_Falcon_BC.png",
+              "sha256": "7fb2bf9acee12989dbed7b564284530d382d08f4c55cc281ea9e31b796a06c2a"
+            },
+            "T_Hero_Falcon_N.png": {
+              "path": "03_work/textures_v004/T_Hero_Falcon_N.png",
+              "sha256": "67717eb70974ce81a79b750de8bcf94175b83a2c3f73230372c9305749be3ce4"
+            },
+            "T_Hero_Falcon_ORM.png": {
+              "path": "03_work/textures_v004/T_Hero_Falcon_ORM.png",
+              "sha256": "21e5fbef4189d34cea2b59dae49a0e006161eed6d93ce594fe1e252f30e19046"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.866,
+          "uncovered_ratio": 0.4177,
+          "lods": [
+            {
+              "tris": 15996,
+              "verts": 8006
+            },
+            {
+              "tris": 5996,
+              "verts": 2994
+            },
+            {
+              "tris": 2396,
+              "verts": 1194
+            }
+          ],
+          "export_kb": 829.1,
+          "seconds": 79.0,
+          "bake_device": "OPTIX"
+        }
+      ]
+    },
+    "validate": {
+      "current": 4,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-05 12:27:04",
+          "files": {
+            "SK_Hero_Falcon_v001_validation.json": {
+              "path": "05_review/SK_Hero_Falcon_v001_validation.json",
+              "sha256": "2901a805627b242e580391b72a627428041dd0a08cee185740ed0d968a37da3d"
+            }
+          },
+          "from_build": 1,
+          "errors": 1,
+          "warnings": 0,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 2,
+          "created": "2026-10-05 12:30:32",
+          "files": {
+            "SK_Hero_Falcon_v002_validation.json": {
+              "path": "05_review/SK_Hero_Falcon_v002_validation.json",
+              "sha256": "7161ea3a6eeaa7bca9a2e334eb0fd814cea68391edc3b3c2afa69cdb10d85b66"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-10-05 12:41:07",
+          "files": {
+            "SK_Hero_Falcon_v003_validation.json": {
+              "path": "05_review/SK_Hero_Falcon_v003_validation.json",
+              "sha256": "b3c5319bbce0cbd45149085526e35e6b7021f3058d61d252e78faf580e7a689d"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 4,
+          "created": "2026-10-05 12:45:42",
+          "files": {
+            "SK_Hero_Falcon_v004_validation.json": {
+              "path": "05_review/SK_Hero_Falcon_v004_validation.json",
+              "sha256": "189e6a4207fd12ea6f0e4c6330e18f3f885126b2bb9367b53609314c5acdc6fd"
+            }
+          },
+          "from_build": 4,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 4,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-05 12:30:40",
+          "files": {
+            "SK_Hero_Falcon_v002_review_v001.png": {
+              "path": "05_review/SK_Hero_Falcon_v002_review_v001.png",
+              "sha256": "40b207e70e84c1639e1f6f58df05b4a3ce5143ce2ad7c1fb8a8fbcded5ec5f1a"
+            }
+          },
+          "from_build": 2,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0152,
+              "stretch_ratio": 0.0111,
+              "p99_stretch": 1.877,
+              "p1_compress": 0.735,
+              "stretch_pairs": {
+                "j_0_0_0 ↔ j_0_0_0": 169,
+                "j_0_0_0_24 ↔ j_0_0_0_24": 34,
+                "j_0_0_0 ↔ j_0_0_0_25_1": 19,
+                "j_0_0_0 ↔ j_0_0_0_24": 19,
+                "j_0_0_0_25 ↔ j_0_0_0_25": 16,
+                "j_0_0_0 ↔ j_0_0_0_25": 16
+              }
+            },
+            "intro_start": {
+              "bad_edge_ratio": 0.0175,
+              "stretch_ratio": 0.0134,
+              "p99_stretch": 2.156,
+              "p1_compress": 0.732,
+              "stretch_pairs": {
+                "j_0_0_0 ↔ j_0_0_0": 123,
+                "j_0_0_0_24 ↔ j_0_0_0_24": 34,
+                "j_0_0_0 ↔ j_0_0_0_24": 19,
+                "j_0_0_0 ↔ j_0_0_0_25_1": 18,
+                "j_0_0_0_26_0_1_3 ↔ j_0_0_0_26_0_1_3": 14,
+                "j_0_0_0_27_0_0_1_3 ↔ j_0_0_0_27_0_0_1_3": 13
+              }
+            },
+            "intro_peak": {
+              "bad_edge_ratio": 0.0193,
+              "stretch_ratio": 0.0137,
+              "p99_stretch": 2.212,
+              "p1_compress": 0.647,
+              "stretch_pairs": {
+                "j_0_0_0 ↔ j_0_0_0": 134,
+                "j_0_0_0_24 ↔ j_0_0_0_24": 34,
+                "j_0_0_0 ↔ j_0_0_0_25_1": 19,
+                "j_0_0_0 ↔ j_0_0_0_24": 19,
+                "j_0_0_0_27_0_0 ↔ j_0_0_0_27_0_0": 16,
+                "j_0_0_0_25 ↔ j_0_0_0_25": 12
+              }
+            },
+            "intro_end": {
+              "bad_edge_ratio": 0.015,
+              "stretch_ratio": 0.011,
+              "p99_stretch": 1.855,
+              "p1_compress": 0.741,
+              "stretch_pairs": {
+                "j_0_0_0 ↔ j_0_0_0": 168,
+                "j_0_0_0_24 ↔ j_0_0_0_24": 34,
+                "j_0_0_0 ↔ j_0_0_0_25_1": 19,
+                "j_0_0_0 ↔ j_0_0_0_24": 19,
+                "j_0_0_0_25 ↔ j_0_0_0_25": 16,
+                "j_0_0_0 ↔ j_0_0_0_25": 14
+              }
+            }
+          },
+          "auto_flags": [
+            "idle 拉伸 p99 1.877、过度拉伸边 1.1%",
+            "intro_start 拉伸 p99 2.156、过度拉伸边 1.3%",
+            "intro_peak 拉伸 p99 2.212、过度拉伸边 1.4%",
+            "intro_end 拉伸 p99 1.855、过度拉伸边 1.1%"
+          ]
+        },
+        {
+          "version": 2,
+          "created": "2026-10-05 12:41:17",
+          "files": {
+            "SK_Hero_Falcon_v003_review_v002.png": {
+              "path": "05_review/SK_Hero_Falcon_v003_review_v002.png",
+              "sha256": "e2b827b5c5b123d0d21ed121be0240c87e0fb34f7995ed15e508ef0332135305"
+            }
+          },
+          "from_build": 3,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0443,
+              "stretch_ratio": 0.0399,
+              "p99_stretch": 10.3,
+              "p1_compress": 0.737,
+              "stretch_pairs": {
+                "j_0_0_0 ↔ j_0_0_0": 137,
+                "j_0_0_0_22_0_0_2 ↔ j_0_0_0_24": 73,
+                "j_0_0_0_23_0_0_2 ↔ j_0_0_0_25": 71,
+                "j_0_0_0_25_1 ↔ j_0_24": 46,
+                "j_0_0_0_24_1 ↔ j_0_23": 45,
+                "j_0_24 ↔ j_0_2_3": 39
+              }
+            },
+            "intro_start": {
+              "bad_edge_ratio": 0.0537,
+              "stretch_ratio": 0.0487,
+              "p99_stretch": 11.08,
+              "p1_compress": 0.688,
+              "stretch_pairs": {
+                "j_0_0_0 ↔ j_0_0_0": 101,
+                "j_0_0_0_22_0_0_2 ↔ j_0_0_0_24": 73,
+                "j_0_0_0_23_0_0_2 ↔ j_0_0_0_25": 63,
+                "j_0_0_0_25_1 ↔ j_0_24": 46,
+                "j_0_0_0_24_1 ↔ j_0_23": 45,
+                "j_0_0_0_27_0_0_8 ↔ j_0_24": 43
+              }
+            },
+            "intro_peak": {
+              "bad_edge_ratio": 0.0554,
+              "stretch_ratio": 0.0496,
+              "p99_stretch": 14.421,
+              "p1_compress": 0.638,
+              "stretch_pairs": {
+                "j_0_0_0 ↔ j_0_0_0": 103,
+                "j_0_0_0_22_0_0_2 ↔ j_0_0_0_24": 73,
+                "j_0_0_0_23_0_0_2 ↔ j_0_0_0_25": 66,
+                "j_0_0_0_25_1 ↔ j_0_24": 46,
+                "j_0_0_0_24_1 ↔ j_0_23": 45,
+                "j_0_0_0_27_0_0_8 ↔ j_0_24": 43
+              }
+            },
+            "intro_end": {
+              "bad_edge_ratio": 0.0445,
+              "stretch_ratio": 0.0402,
+              "p99_stretch": 10.374,
+              "p1_compress": 0.731,
+              "stretch_pairs": {
+                "j_0_0_0 ↔ j_0_0_0": 136,
+                "j_0_0_0_22_0_0_2 ↔ j_0_0_0_24": 73,
+                "j_0_0_0_23_0_0_2 ↔ j_0_0_0_25": 69,
+                "j_0_0_0_25_1 ↔ j_0_24": 46,
+                "j_0_0_0_24_1 ↔ j_0_23": 45,
+                "j_0_0_0 ↔ j_0_0_0_0_0": 43
+              }
+            }
+          },
+          "auto_flags": [
+            "idle 拉伸 p99 10.3、过度拉伸边 4.0%",
+            "intro_start 拉伸 p99 11.08、过度拉伸边 4.9%",
+            "intro_peak 拉伸 p99 14.421、过度拉伸边 5.0%",
+            "intro_end 拉伸 p99 10.374、过度拉伸边 4.0%"
+          ],
+          "review": {
+            "verdict": "rejected",
+            "by": "Codex AI visual review",
+            "note": "Continuous skin across prototype feather pivots fails live deformation audit; rebuild after coalescing influence volumes into semantic body joints.",
+            "time": "2026-10-05 12:43:28"
+          }
+        },
+        {
+          "version": 3,
+          "created": "2026-10-05 12:45:53",
+          "files": {
+            "SK_Hero_Falcon_v004_review_v003.png": {
+              "path": "05_review/SK_Hero_Falcon_v004_review_v003.png",
+              "sha256": "f4c87e573ac7509d805aaf6d05b34a6f2071a699afaedce87dadc634d591e26c"
+            }
+          },
+          "from_build": 4,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.0243,
+              "stretch_ratio": 0.0152,
+              "p99_stretch": 2.137,
+              "p1_compress": 0.565,
+              "stretch_pairs": {
+                "j_0_0_0 ↔ j_0_0_0": 205,
+                "j_0_0_0_24 ↔ j_0_0_0_24": 53,
+                "j_0_0_0 ↔ j_0_0_0_24": 45,
+                "j_0_0_0 ↔ j_0_0_0_25": 24,
+                "j_0_0_0 ↔ j_0_0_0_25_1": 19,
+                "j_0_0_0_25 ↔ j_0_0_0_25": 13
+              }
+            },
+            "intro_start": {
+              "bad_edge_ratio": 0.0216,
+              "stretch_ratio": 0.0126,
+              "p99_stretch": 1.991,
+              "p1_compress": 0.567,
+              "stretch_pairs": {
+                "j_0_0_0 ↔ j_0_0_0": 157,
+                "j_0_0_0_24 ↔ j_0_0_0_24": 53,
+                "j_0_0_0 ↔ j_0_0_0_24": 45,
+                "j_0_0_0 ↔ j_0_0_0_25_1": 19,
+                "j_0_0_0 ↔ j_0_0_0_25": 14,
+                "j_0_0_0 ↔ j_0_0_0_24_1": 10
+              }
+            },
+            "intro_peak": {
+              "bad_edge_ratio": 0.0235,
+              "stretch_ratio": 0.0142,
+              "p99_stretch": 2.125,
+              "p1_compress": 0.562,
+              "stretch_pairs": {
+                "j_0_0_0 ↔ j_0_0_0": 175,
+                "j_0_0_0_24 ↔ j_0_0_0_24": 53,
+                "j_0_0_0 ↔ j_0_0_0_24": 45,
+                "j_0_0_0 ↔ j_0_0_0_25": 20,
+                "j_0_0_0_25 ↔ j_0_0_0_25": 19,
+                "j_0_0_0 ↔ j_0_0_0_25_1": 19
+              }
+            },
+            "intro_end": {
+              "bad_edge_ratio": 0.0242,
+              "stretch_ratio": 0.0151,
+              "p99_stretch": 2.102,
+              "p1_compress": 0.565,
+              "stretch_pairs": {
+                "j_0_0_0 ↔ j_0_0_0": 202,
+                "j_0_0_0_24 ↔ j_0_0_0_24": 53,
+                "j_0_0_0 ↔ j_0_0_0_24": 45,
+                "j_0_0_0 ↔ j_0_0_0_25": 24,
+                "j_0_0_0 ↔ j_0_0_0_25_1": 19,
+                "j_0_0_0_25 ↔ j_0_0_0_25": 12
+              }
+            }
+          },
+          "auto_flags": [
+            "idle 拉伸 p99 2.137、过度拉伸边 1.5%",
+            "intro_start 拉伸 p99 1.991、过度拉伸边 1.3%",
+            "intro_peak 拉伸 p99 2.125、过度拉伸边 1.4%",
+            "intro_end 拉伸 p99 2.102、过度拉伸边 1.5%"
+          ]
+        },
+        {
+          "version": 4,
+          "created": "2026-10-05 12:47:38",
+          "files": {
+            "SK_Hero_Falcon_v004_review_v004.png": {
+              "path": "05_review/SK_Hero_Falcon_v004_review_v004.png",
+              "sha256": "b9fdf66fea9821a388f90054df092154d71fcac441080846ac37cd518a59cd62"
+            }
+          },
+          "from_build": 4,
+          "deformation": {
+            "idle": {
+              "bad_edge_ratio": 0.007,
+              "stretch_ratio": 0.0035,
+              "p99_stretch": 1.43,
+              "p1_compress": 0.655,
+              "stretch_pairs": {
+                "j_0_0_0 ↔ j_0_0_0": 41,
+                "j_0_0_0 ↔ j_0_0_0_25_1": 13,
+                "j_0_0_0_24 ↔ j_0_0_0_24": 8,
+                "j_0_0_0 ↔ j_0_0_0_24_1": 7,
+                "j_0_0_0 ↔ j_0_0_0_24": 7,
+                "j_0_0_0_25 ↔ j_0_0_0_25": 4
+              }
+            },
+            "intro_start": {
+              "bad_edge_ratio": 0.0094,
+              "stretch_ratio": 0.0044,
+              "p99_stretch": 1.471,
+              "p1_compress": 0.644,
+              "stretch_pairs": {
+                "j_0_0_0 ↔ j_0_0_0": 46,
+                "j_0_0_0 ↔ j_0_0_0_25_1": 19,
+                "j_0_0_0_24 ↔ j_0_0_0_24": 9,
+                "j_0_0_0 ↔ j_0_0_0_24_1": 7,
+                "j_0_0_0_25 ↔ j_0_0_0_25": 7,
+                "j_0_0_0 ↔ j_0_0_0_25": 7
+              }
+            },
+            "intro_peak": {
+              "bad_edge_ratio": 0.0116,
+              "stretch_ratio": 0.0067,
+              "p99_stretch": 1.588,
+              "p1_compress": 0.642,
+              "stretch_pairs": {
+                "j_0_0_0 ↔ j_0_0_0": 77,
+                "j_0_0_0_25 ↔ j_0_0_0_25": 21,
+                "j_0_0_0 ↔ j_0_0_0_25_1": 20,
+                "j_0_0_0 ↔ j_0_0_0_25": 20,
+                "j_0_0_0_24 ↔ j_0_0_0_24": 9,
+                "j_0_0_0 ↔ j_0_0_0_24_1": 7
+              }
+            },
+            "intro_end": {
+              "bad_edge_ratio": 0.0069,
+              "stretch_ratio": 0.0034,
+              "p99_stretch": 1.427,
+              "p1_compress": 0.657,
+              "stretch_pairs": {
+                "j_0_0_0 ↔ j_0_0_0": 41,
+                "j_0_0_0 ↔ j_0_0_0_25_1": 11,
+                "j_0_0_0_24 ↔ j_0_0_0_24": 8,
+                "j_0_0_0 ↔ j_0_0_0_24_1": 7,
+                "j_0_0_0 ↔ j_0_0_0_24": 7,
+                "j_0_0_0_25 ↔ j_0_0_0_25": 4
+              }
+            }
+          },
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Codex AI visual review",
+            "note": "Four views, three LODs and actual idle/intro poses inspected. Semantic 21-joint influence grouping removes detached feather fragments. Matrix-sampled offline and live animation audits agree: live peak p99 1.567, over-2 stretch 0.45%, palm distance 9.3-9.6 mm, no invalid vertices. Technical QA has no errors; 48% UV occupancy is an accepted packing efficiency warning.",
+            "time": "2026-10-05 12:48:02"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-05 12:48:02",
+          "files": {
+            "SK_Hero_Falcon.glb": {
+              "path": "@root/public/assets/characters/SK_Hero_Falcon.glb",
+              "sha256": "367fb10bbec750a7f252ab0e74cefdd898c2d00e93268dc8820d93f605ad5573"
+            }
+          },
+          "from_build": 4,
+          "url": "assets/characters/SK_Hero_Falcon.glb"
+        }
+      ]
+    }
+  }
+}

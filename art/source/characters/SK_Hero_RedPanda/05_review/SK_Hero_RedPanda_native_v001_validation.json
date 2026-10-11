@@ -1,0 +1,339 @@
+{
+  "asset": "SK_Hero_RedPanda",
+  "version": 1,
+  "glb": "art/source/characters/SK_Hero_RedPanda/04_export/SK_Hero_RedPanda_native_v001.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.4,
+      "骨架重整：73 根语义骨骼": 0.1,
+      "贴图（BC + AO/ORM）": 12.7,
+      "LOD 与蒙皮上限 15760 / 5909 / 2363": 0.3,
+      "法线贴图（高模 → LOD0）": 4.8,
+      "导出 1920 KB": 2.8
+    },
+    "source": {
+      "verts": 8549,
+      "tris": 16106,
+      "scale": 1.550757360457724
+    },
+    "regions": {
+      "ear_L_verts": 100,
+      "ear_R_verts": 100,
+      "tail_verts": 108,
+      "fallback_verts": 0
+    },
+    "bones": [
+      "Head",
+      "HeadTop_End",
+      "Hips",
+      "LeftArm",
+      "LeftFoot",
+      "LeftForeArm",
+      "LeftHand",
+      "LeftHandIndex1",
+      "LeftHandIndex2",
+      "LeftHandIndex3",
+      "LeftHandIndex4",
+      "LeftHandMiddle1",
+      "LeftHandMiddle2",
+      "LeftHandMiddle3",
+      "LeftHandMiddle4",
+      "LeftHandPinky1",
+      "LeftHandPinky2",
+      "LeftHandPinky3",
+      "LeftHandPinky4",
+      "LeftHandRing1",
+      "LeftHandRing2",
+      "LeftHandRing3",
+      "LeftHandRing4",
+      "LeftHandThumb1",
+      "LeftHandThumb2",
+      "LeftHandThumb3",
+      "LeftHandThumb4",
+      "LeftLeg",
+      "LeftShoulder",
+      "LeftToeBase",
+      "LeftToe_End",
+      "LeftUpLeg",
+      "Neck",
+      "RightArm",
+      "RightFoot",
+      "RightForeArm",
+      "RightHand",
+      "RightHandIndex1",
+      "RightHandIndex2",
+      "RightHandIndex3",
+      "RightHandIndex4",
+      "RightHandMiddle1",
+      "RightHandMiddle2",
+      "RightHandMiddle3",
+      "RightHandMiddle4",
+      "RightHandPinky1",
+      "RightHandPinky2",
+      "RightHandPinky3",
+      "RightHandPinky4",
+      "RightHandRing1",
+      "RightHandRing2",
+      "RightHandRing3",
+      "RightHandRing4",
+      "RightHandThumb1",
+      "RightHandThumb2",
+      "RightHandThumb3",
+      "RightHandThumb4",
+      "RightLeg",
+      "RightShoulder",
+      "RightToeBase",
+      "RightToe_End",
+      "RightUpLeg",
+      "Spine",
+      "Spine1",
+      "Spine2",
+      "ear_L",
+      "ear_R",
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "tail_4",
+      "tail_5",
+      "tail_6"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.871,
+      "shade_mean": 0.903
+    },
+    "textures": {
+      "size": 2048,
+      "ao_mean": 0.673,
+      "provider_pbr": [],
+      "roughness_mean": 0.85,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Hero_RedPanda_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Hero_RedPanda_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Hero_RedPanda_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Hero_RedPanda_LOD0",
+        "tris": 15760,
+        "uv_min": [
+          0.00146484375,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.99853515625,
+          0.993408203125
+        ]
+      },
+      {
+        "name": "SK_Hero_RedPanda_LOD1",
+        "tris": 5909,
+        "uv_min": [
+          0.00146484375,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.998291015625,
+          0.993408203125
+        ]
+      },
+      {
+        "name": "SK_Hero_RedPanda_LOD2",
+        "tris": 2363,
+        "uv_min": [
+          0.00146484375,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.998291015625,
+          0.9933470487594604
+        ]
+      }
+    ],
+    "normal_map": {
+      "size": 2048,
+      "flatness": 0.0266
+    },
+    "glb_kb": 1920,
+    "_seconds": 24.1
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "1920 KB / 3200 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Hero_RedPanda_LOD0', 'SK_Hero_RedPanda_LOD1', 'SK_Hero_RedPanda_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "15760 / 16000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "5909 / 6000"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "2361 / 2400"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "1.550 m (design 1.55 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Hero_RedPanda']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "texture T_Hero_RedPanda_N",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "texture T_Hero_RedPanda_ORM",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "texture T_Hero_RedPanda_BC",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "73 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Hero_RedPanda_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Hero_RedPanda_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Hero_RedPanda_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Hero_RedPanda_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Hero_RedPanda_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Hero_RedPanda_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Hero_RedPanda_LOD0 UV range",
+      "[0.001, 0.001]..[0.999, 0.993]"
+    ],
+    [
+      "pass",
+      "SK_Hero_RedPanda_LOD1 UV range",
+      "[0.001, 0.001]..[0.998, 0.993]"
+    ],
+    [
+      "pass",
+      "SK_Hero_RedPanda_LOD2 UV range",
+      "[0.001, 0.001]..[0.998, 0.993]"
+    ],
+    [
+      "pass",
+      "region ear_L",
+      "100 verts"
+    ],
+    [
+      "pass",
+      "region ear_R",
+      "100 verts"
+    ],
+    [
+      "pass",
+      "region tail",
+      "108 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "0 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

@@ -784,6 +784,7 @@ export function buildFoxModel(): HeroRig {
     root,
     height: 1.9,
     hand: gun,
+    artControls: { rightArm: armR.shoulder, tailFlames: tails.map(t => t.flame.root) },
     materials: kit.mats,
     update,
     playIntro() {

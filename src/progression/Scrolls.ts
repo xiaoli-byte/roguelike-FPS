@@ -124,7 +124,7 @@ export class ScrollSystem implements IScrollSystem {
   }
 
   /**
-   * 本局是否已有元素来源：元素英雄（赤狐 / 雷隼）、任一武器带元素或副元素 / 万象 / 轮回词条、
+   * 本局是否已有元素来源：元素英雄（燎 / 鼯）、任一武器带元素或副元素 / 万象 / 轮回词条、
    * 或已拥有任一元素类秘卷。
    */
   private hasElementSource(heroId: string): boolean {

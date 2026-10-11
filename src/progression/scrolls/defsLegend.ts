@@ -93,8 +93,8 @@ export const LEGEND_SCROLLS: ScrollDef[] = [
 
   // ───────────── 英雄专属 ─────────────
   scroll({
-    id: 'fox_resonance', name: '狐火共鸣', rarity: 2, maxStacks: 3, heroOnly: 'fox', tags: ['英雄', '灼烧', '技能'],
-    description: '灼烧伤害每层 +10%；使用燃爆雷（E）后，九尾狐火（Q）冷却每层减少 1.5 秒。',
+    id: 'fox_resonance', name: '火灵共鸣', rarity: 2, maxStacks: 3, heroOnly: 'fox', tags: ['英雄', '灼烧', '技能'],
+    description: '灼烧伤害每层 +10%；使用燃爆雷（E）后，尾焰火灵（Q）冷却每层减少 1.5 秒。',
     setup: (s, n, ctx) => {
       s.stat('fireDamagePct', 0.1 * n);
       s.on('skill:used', ({ slot }) => {

@@ -4,7 +4,7 @@
 import * as THREE from 'three';
 import type { DamageRequest, DamageResult, GameContext, HeroDef, IEnemy } from '../../core/types';
 import {
-  EffectSession, type HeroSkillDef, SKILL_COLORS, groundYBelow, handOrigin, nearestEnemies, radiusScale, skillHit, throwVelocity,
+  EffectSession, type HeroSkillDef, SKILL_COLORS, groundYBelow, handOrigin, nearestEnemies, radiusScale, skillHit, throwVelocity, HIDDEN_PROJECTILE, flyProp,
 } from './common';
 
 // ───────────────────────────── 数值 ─────────────────────────────
@@ -38,17 +38,22 @@ const _b = new THREE.Vector3();
 const _targets: IEnemy[] = [];
 const _exclude = new Set<IEnemy>();
 
-// ───────────────────────────── E：雷暴信标 ─────────────────────────────
+// ───────────────────────────── E：雷鼓信标 ─────────────────────────────
 
 interface BeaconParts {
-  base: THREE.CylinderGeometry;
-  pole: THREE.CylinderGeometry;
+  leg: THREE.CylinderGeometry;
+  drum: THREE.CylinderGeometry;
+  hoop: THREE.TorusGeometry;
+  head: THREE.CircleGeometry;
   orb: THREE.IcosahedronGeometry;
   glow: THREE.IcosahedronGeometry;
   ring: THREE.TorusGeometry;
   area: THREE.RingGeometry;
   disc: THREE.CircleGeometry;
-  metal: THREE.MeshStandardMaterial;
+  bronze: THREE.MeshStandardMaterial;
+  lacquer: THREE.MeshStandardMaterial;
+  hide: THREE.MeshStandardMaterial;
+  rune: THREE.MeshBasicMaterial;
   core: THREE.MeshBasicMaterial;
   halo: THREE.MeshBasicMaterial;
   line: THREE.MeshBasicMaterial;
@@ -57,24 +62,54 @@ interface BeaconParts {
 
 let parts: BeaconParts | null = null;
 
+/** 雷鼓信标（鼯腰间那面雷鼓）：三脚铜架托着红漆鼓，鼓面一圈青紫雷纹，顶上一点电光，电环绕鼓转 */
 function beaconParts(): BeaconParts {
   if (parts) return parts;
   const additive = { transparent: true, depthWrite: false, blending: THREE.AdditiveBlending } as const;
   parts = {
-    base: new THREE.CylinderGeometry(0.26, 0.34, 0.12, 10),
-    pole: new THREE.CylinderGeometry(0.04, 0.065, 0.9, 6),
-    orb: new THREE.IcosahedronGeometry(0.14, 1),
-    glow: new THREE.IcosahedronGeometry(0.3, 1),
-    ring: new THREE.TorusGeometry(0.34, 0.022, 6, 28),
+    leg: new THREE.CylinderGeometry(0.025, 0.035, 0.72, 5),
+    drum: new THREE.CylinderGeometry(0.3, 0.3, 0.3, 18, 1, true),
+    hoop: new THREE.TorusGeometry(0.305, 0.025, 6, 24),
+    head: new THREE.CircleGeometry(0.3, 18),
+    orb: new THREE.IcosahedronGeometry(0.1, 1),
+    glow: new THREE.IcosahedronGeometry(0.24, 1),
+    ring: new THREE.TorusGeometry(0.42, 0.02, 6, 32),
     area: new THREE.RingGeometry(0.965, 1, 72).rotateX(-Math.PI / 2),
     disc: new THREE.CircleGeometry(1, 48).rotateX(-Math.PI / 2),
-    metal: new THREE.MeshStandardMaterial({ color: 0x2c3644, metalness: 0.6, roughness: 0.4, emissive: 0x0b2a3a, emissiveIntensity: 0.6 }),
+    bronze: new THREE.MeshStandardMaterial({ color: 0xb5823a, metalness: 0.7, roughness: 0.35 }),
+    lacquer: new THREE.MeshStandardMaterial({ color: 0x8e1f1a, roughness: 0.55, side: THREE.DoubleSide }),
+    hide: new THREE.MeshStandardMaterial({ color: 0xe6d2a8, roughness: 0.8 }),
+    rune: new THREE.MeshBasicMaterial({ color: SKILL_COLORS.shock, transparent: true, opacity: 0.85, depthWrite: false, blending: THREE.AdditiveBlending }),
     core: new THREE.MeshBasicMaterial({ color: SKILL_COLORS.shockCore }),
     halo: new THREE.MeshBasicMaterial({ color: SKILL_COLORS.shock, opacity: 0.45, ...additive }),
     line: new THREE.MeshBasicMaterial({ color: SKILL_COLORS.shock, opacity: 0.9, ...additive }),
     zone: new THREE.MeshBasicMaterial({ color: SKILL_COLORS.shock, opacity: 0.07, side: THREE.DoubleSide, ...additive }),
   };
   return parts;
+}
+
+/** 一面鼓（鼓身 + 上下铜箍 + 上下鼓皮 + 鼓面雷纹环）；信标和抛出去的小鼓共用 */
+function buildDrum(p: BeaconParts): { drum: THREE.Group; rune: THREE.Mesh } {
+  const drum = new THREE.Group();
+  const body = new THREE.Mesh(p.drum, p.lacquer);
+  body.castShadow = true;
+  drum.add(body);
+  for (const y of [-0.15, 0.15]) {
+    const hoop = new THREE.Mesh(p.hoop, p.bronze);
+    hoop.rotation.x = Math.PI / 2;
+    hoop.position.y = y;
+    drum.add(hoop);
+    const head = new THREE.Mesh(p.head, p.hide);
+    head.rotation.x = y > 0 ? -Math.PI / 2 : Math.PI / 2;
+    head.position.y = y;
+    drum.add(head);
+  }
+  const rune = new THREE.Mesh(p.ring, p.rune);
+  rune.rotation.x = Math.PI / 2;
+  rune.scale.setScalar(0.5);
+  rune.position.y = 0.152;
+  drum.add(rune);
+  return { drum, rune };
 }
 
 interface BeaconView {
@@ -89,16 +124,19 @@ function buildBeacon(): BeaconView {
   const p = beaconParts();
   const root = new THREE.Group();
   root.name = 'stormBeacon';
-  const base = new THREE.Mesh(p.base, p.metal);
-  base.position.y = 0.06;
-  base.castShadow = true;
-  root.add(base);
 
   const mast = new THREE.Group();
-  const pole = new THREE.Mesh(p.pole, p.metal);
-  pole.position.y = 0.55;
-  pole.castShadow = true;
-  mast.add(pole);
+  for (let i = 0; i < 3; i++) {
+    const a = (i / 3) * Math.PI * 2;
+    const leg = new THREE.Mesh(p.leg, p.bronze);
+    leg.position.set(Math.cos(a) * 0.2, 0.34, Math.sin(a) * 0.2);
+    leg.rotation.set(Math.sin(a) * 0.3, 0, -Math.cos(a) * 0.3);
+    leg.castShadow = true;
+    mast.add(leg);
+  }
+  const { drum } = buildDrum(p);
+  drum.position.y = 0.78;
+  mast.add(drum);
   const orb = new THREE.Mesh(p.orb, p.core);
   orb.position.y = BEACON_TOP;
   orb.add(new THREE.Mesh(p.glow, p.halo));
@@ -106,11 +144,11 @@ function buildBeacon(): BeaconView {
   const spin = new THREE.Group();
   spin.position.y = 0.88;
   const ring = new THREE.Mesh(p.ring, p.line);
-  ring.rotation.x = Math.PI / 2 + 0.45;
+  ring.rotation.x = Math.PI / 2 + 0.35;
   spin.add(ring);
   const ring2 = new THREE.Mesh(p.ring, p.line);
-  ring2.rotation.x = Math.PI / 2 - 0.45;
-  ring2.scale.setScalar(0.75);
+  ring2.rotation.x = Math.PI / 2 - 0.35;
+  ring2.scale.setScalar(0.8);
   spin.add(ring2);
   mast.add(spin);
   root.add(mast);
@@ -125,6 +163,15 @@ function buildBeacon(): BeaconView {
   area.add(disc);
   root.add(area);
   return { root, mast, orb, spin, area };
+}
+
+/** 抛出去的小雷鼓（落地展开成信标） */
+function buildThrownDrum(): THREE.Group {
+  const { drum } = buildDrum(beaconParts());
+  drum.scale.setScalar(0.55);
+  const g = new THREE.Group();
+  g.add(drum);
+  return g;
 }
 
 function beaconZap(ctx: GameContext, top: THREE.Vector3, radius: number): number {
@@ -202,14 +249,16 @@ function deployBeacon(ctx: GameContext, point: THREE.Vector3): void {
 
 const stormBeacon: HeroSkillDef = {
   id: 'falcon_storm_beacon',
-  name: '雷暴信标',
-  description: `投出雷暴信标，落地后持续 ${BEACON_DURATION} 秒，每 ${BEACON_INTERVAL} 秒电击 ${BEACON_RADIUS} 米内最多 ${BEACON_TARGETS} 个敌人，造成 ${BEACON_DAMAGE} 点雷电伤害并必定附加雷殛（可叠层眩晕，但不会触发雷殛弹射）。2 次充能，每次充能 10 秒。`,
+  name: '雷鼓信标',
+  description: `投出雷鼓信标，落地后持续 ${BEACON_DURATION} 秒，每 ${BEACON_INTERVAL} 秒电击 ${BEACON_RADIUS} 米内最多 ${BEACON_TARGETS} 个敌人，造成 ${BEACON_DAMAGE} 点雷电伤害并必定附加雷殛（可叠层眩晕，但不会触发雷殛弹射）。2 次充能，每次充能 10 秒。`,
   cooldown: 10,
   charges: 2,
   activate(ctx) {
     if (!ctx.player.alive) return false;
     handOrigin(ctx, _pos);
     throwVelocity(ctx, 19, 3.5, _vel);
+    // 看得见的是翻滚的小雷鼓（flyProp），落地展开成信标的投射物本身不可见
+    const stopProp = flyProp(ctx, buildThrownDrum(), _pos, _vel, 22, BEACON_THROW_LIFETIME, 9);
     ctx.projectiles.spawn({
       owner: 'player',
       position: _pos.clone(),
@@ -219,9 +268,11 @@ const stormBeacon: HeroSkillDef = {
       lifetime: BEACON_THROW_LIFETIME,
       element: 'shock',
       color: SKILL_COLORS.shock,
-      visual: 'grenade',
-      scale: 1,
-      onImpact: (point) => deployBeacon(ctx, point),
+      ...HIDDEN_PROJECTILE,
+      onImpact: (point) => {
+        stopProp();
+        deployBeacon(ctx, point);
+      },
     });
     ctx.audio.play('skill_throw', { volume: 0.9, pitch: 1.1 });
     return true;
@@ -283,7 +334,7 @@ function onHawkHit(ctx: GameContext, enemy: IEnemy, result: DamageResult): void 
 
 const hawkVerdict: HeroSkillDef = {
   id: 'falcon_hawk_verdict',
-  name: '鹰眼·裁决',
+  name: '雷目·裁决',
   description: `${HAWK_DURATION} 秒内射击不消耗弹匣、射速提高 ${Math.round(HAWK_FIRE_RATE * 100)}%，武器每次命中都会向 ${HAWK_CHAIN_RANGE} 米内另一名敌人弹射闪电，造成该次伤害 ${Math.round(HAWK_CHAIN_RATIO * 100)}% 的雷电伤害。冷却 25 秒。`,
   cooldown: 25,
   charges: 1,
@@ -346,10 +397,10 @@ const hawkVerdict: HeroSkillDef = {
 
 export const FALCON: HeroDef = {
   id: 'falcon',
-  name: '雷隼',
-  title: '天穹猎手',
+  name: '鼯',
+  title: '雷鼓机关师',
   description:
-    '云巅鹰巢最年轻的猎手，踏风而行、引雷为箭。二段跳与滑翔让她始终占据高处，赤铜左轮弹无虚发；抛下雷暴信标封锁敌群，开启鹰眼裁决时一枪连一雷，弹匣永不见底。',
+    '墨家机关坊里最毛手毛脚的鼯鼠学徒，护腕线圈总在冒火花。二段跳加张膜滑翔让鼯始终占据高处，赤铜左轮弹无虚发；抛下雷鼓信标封锁敌群，开启雷目裁决时一枪连一雷，弹匣永不见底。',
   color: 0x6fd8ff,
   base: { maxHp: 90, maxShield: 70, extraJumps: 1 },
   startingWeapon: 'revolver',
@@ -357,7 +408,7 @@ export const FALCON: HeroDef = {
   secondary: stormBeacon,
   passive: {
     name: '凌空',
-    description: `可在空中额外跳跃 1 次；身处空中时造成的伤害提高 ${Math.round(AIR_BONUS * 100)}%；下落时按住空格可展翼滑翔，大幅减缓下落。`,
+    description: `可在空中额外跳跃 1 次；身处空中时造成的伤害提高 ${Math.round(AIR_BONUS * 100)}%；下落时按住空格可张开飞膜滑翔，大幅减缓下落。`,
     apply(ctx) {
       const off = ctx.combat.addOutgoingModifier((_enemy, req) =>
         !ctx.player.onGround && req.source !== 'status' ? 1 + AIR_BONUS : 1,

@@ -1,0 +1,184 @@
+{
+  "doc": "磐（docs/art/hero-roster-v2.md）：Tripo 智能网格 P2.0 + Tripo 人形自动绑定（Mixamo 65 骨）。保留全部 Mixamo 骨骼（含手指，去掉 mixamorig: 前缀，nativeTripo.ts 直接驱动），另加 Mixamo 没有的尾巴链（profile biped_tail，坐标为 Tripo FBX 应用变换后的源单位，约 1 单位高，前 = -Y，角色左 = +X）。",
+  "source": "art/source/_tripo_inbox/20261010T144745_SK_Hero_Pangolin_rig.fbx",
+  "task": "https://studio.tripo3d.ai/zh/workspace/generate/800a72a0-5b44-4d69-8610-83ef92acc02e",
+  "height_m": 1.95,
+  "profile": "biped_tail",
+  "keep": {
+    "mixamorig:Hips": "Hips",
+    "mixamorig:LeftUpLeg": "LeftUpLeg",
+    "mixamorig:LeftLeg": "LeftLeg",
+    "mixamorig:LeftFoot": "LeftFoot",
+    "mixamorig:LeftToeBase": "LeftToeBase",
+    "mixamorig:LeftToe_End": "LeftToe_End",
+    "mixamorig:RightUpLeg": "RightUpLeg",
+    "mixamorig:RightLeg": "RightLeg",
+    "mixamorig:RightFoot": "RightFoot",
+    "mixamorig:RightToeBase": "RightToeBase",
+    "mixamorig:RightToe_End": "RightToe_End",
+    "mixamorig:Spine": "Spine",
+    "mixamorig:Spine1": "Spine1",
+    "mixamorig:Spine2": "Spine2",
+    "mixamorig:LeftShoulder": "LeftShoulder",
+    "mixamorig:LeftArm": "LeftArm",
+    "mixamorig:LeftForeArm": "LeftForeArm",
+    "mixamorig:LeftHand": "LeftHand",
+    "mixamorig:LeftHandIndex1": "LeftHandIndex1",
+    "mixamorig:LeftHandIndex2": "LeftHandIndex2",
+    "mixamorig:LeftHandIndex3": "LeftHandIndex3",
+    "mixamorig:LeftHandIndex4": "LeftHandIndex4",
+    "mixamorig:LeftHandMiddle1": "LeftHandMiddle1",
+    "mixamorig:LeftHandMiddle2": "LeftHandMiddle2",
+    "mixamorig:LeftHandMiddle3": "LeftHandMiddle3",
+    "mixamorig:LeftHandMiddle4": "LeftHandMiddle4",
+    "mixamorig:LeftHandPinky1": "LeftHandPinky1",
+    "mixamorig:LeftHandPinky2": "LeftHandPinky2",
+    "mixamorig:LeftHandPinky3": "LeftHandPinky3",
+    "mixamorig:LeftHandPinky4": "LeftHandPinky4",
+    "mixamorig:LeftHandRing1": "LeftHandRing1",
+    "mixamorig:LeftHandRing2": "LeftHandRing2",
+    "mixamorig:LeftHandRing3": "LeftHandRing3",
+    "mixamorig:LeftHandRing4": "LeftHandRing4",
+    "mixamorig:LeftHandThumb1": "LeftHandThumb1",
+    "mixamorig:LeftHandThumb2": "LeftHandThumb2",
+    "mixamorig:LeftHandThumb3": "LeftHandThumb3",
+    "mixamorig:LeftHandThumb4": "LeftHandThumb4",
+    "mixamorig:Neck": "Neck",
+    "mixamorig:Head": "Head",
+    "mixamorig:HeadTop_End": "HeadTop_End",
+    "mixamorig:RightShoulder": "RightShoulder",
+    "mixamorig:RightArm": "RightArm",
+    "mixamorig:RightForeArm": "RightForeArm",
+    "mixamorig:RightHand": "RightHand",
+    "mixamorig:RightHandIndex1": "RightHandIndex1",
+    "mixamorig:RightHandIndex2": "RightHandIndex2",
+    "mixamorig:RightHandIndex3": "RightHandIndex3",
+    "mixamorig:RightHandIndex4": "RightHandIndex4",
+    "mixamorig:RightHandMiddle1": "RightHandMiddle1",
+    "mixamorig:RightHandMiddle2": "RightHandMiddle2",
+    "mixamorig:RightHandMiddle3": "RightHandMiddle3",
+    "mixamorig:RightHandMiddle4": "RightHandMiddle4",
+    "mixamorig:RightHandPinky1": "RightHandPinky1",
+    "mixamorig:RightHandPinky2": "RightHandPinky2",
+    "mixamorig:RightHandPinky3": "RightHandPinky3",
+    "mixamorig:RightHandPinky4": "RightHandPinky4",
+    "mixamorig:RightHandRing1": "RightHandRing1",
+    "mixamorig:RightHandRing2": "RightHandRing2",
+    "mixamorig:RightHandRing3": "RightHandRing3",
+    "mixamorig:RightHandRing4": "RightHandRing4",
+    "mixamorig:RightHandThumb1": "RightHandThumb1",
+    "mixamorig:RightHandThumb2": "RightHandThumb2",
+    "mixamorig:RightHandThumb3": "RightHandThumb3",
+    "mixamorig:RightHandThumb4": "RightHandThumb4"
+  },
+  "merge": {},
+  "add": {
+    "tail_1": {
+      "parent": "Hips",
+      "head": "tail:0",
+      "tail": "tail:1"
+    },
+    "tail_2": {
+      "parent": "tail_1",
+      "head": "tail:1",
+      "tail": "tail:2"
+    },
+    "tail_3": {
+      "parent": "tail_2",
+      "head": "tail:2",
+      "tail": "tail:3"
+    },
+    "tail_4": {
+      "parent": "tail_3",
+      "head": "tail:3",
+      "tail": "tail:4"
+    },
+    "tail_5": {
+      "parent": "tail_4",
+      "head": "tail:4",
+      "tail": "tail:5"
+    },
+    "tail_6": {
+      "parent": "tail_5",
+      "head": "tail:5",
+      "tail": "tail:6"
+    }
+  },
+  "regions": {
+    "tail": {
+      "joints": [
+        [
+          0,
+          -0.09,
+          0.4
+        ],
+        [
+          0,
+          0.03,
+          0.31
+        ],
+        [
+          0,
+          0.11,
+          0.245
+        ],
+        [
+          0,
+          0.18,
+          0.205
+        ],
+        [
+          0,
+          0.24,
+          0.185
+        ],
+        [
+          0,
+          0.3,
+          0.18
+        ],
+        [
+          0,
+          0.36,
+          0.185
+        ]
+      ],
+      "radius": 0.22,
+      "start_y": -0.07,
+      "blend_y": 0.1,
+      "max_z": 0.5
+    }
+  },
+  "provider_pbr": true,
+  "bake_normal": true,
+  "paint_shading": {
+    "cavity_distance": 0.018,
+    "cavity": 0.32,
+    "ao": 0.16,
+    "saturation": 1.08,
+    "contrast": 1.05,
+    "keep_brightness": true
+  },
+  "rigid_islands": [
+    {
+      "bone": "Spine2",
+      "box": [
+        [
+          -0.2,
+          -0.11,
+          0.52
+        ],
+        [
+          0.2,
+          0.03,
+          0.78
+        ]
+      ]
+    }
+  ],
+  "arm_clamp": {
+    "to": "Spine2",
+    "inner_frac": 0.85,
+    "blend": 0.04
+  }
+}
