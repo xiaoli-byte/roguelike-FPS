@@ -155,7 +155,8 @@ export function redPandaShow(L: Landmarks): HeroShow {
   const shoulderGunPole: Vec = add(L.shoulderR, -0.35, -0.35, -0.2, s);
   const hipLeft: Vec = add(L.hipL, 0.06, 0.02, 0.0, s);           // 叉腰：手背贴胯
   const akimboPole: Vec = add(L.shoulderL, 0.45, -0.15, -0.1, s);
-  const bandolier: Vec = add(L.chest, -0.05, 0.02, 0.13, s);      // 胸前斜挎的爆竹
+  const bandolier: Vec = add(L.chest, 0.07, -0.04, 0.14, s);      // 斜挎带靠左手这一侧的爆竹（不横跨胸口去够）
+  const outSide: Vec = add(L.shoulderL, 0.28, -0.06, 0.16, s);    // 抬手时先经过身体外侧（不从脸前扫过）
   const lamp: Vec = add(L.hipL, 0.05, -0.04, 0.1, s);            // 腰间火折子灯
   const overhead: Vec = add(L.shoulderL, 0.04, 0.3, 0.2, s);      // 手臂抬约 90°、略朝前（再高斜挎带会被左臂扯长）
   const catchPt: Vec = add(L.chest, 0.08, 0.06, 0.24, s);
@@ -243,7 +244,8 @@ export function redPandaShow(L: Landmarks): HeroShow {
         // 左手：抽爆竹（0.25）→ 在灯上一擦（0.42）→ 高抛（0.55–0.62 出手）→ 叉腰（1.35）
         const lt: Vec = u < 0.3 ? mixV(lamp, bandolier, clamp01(u / 0.3))
           : u < 0.45 ? mixV(bandolier, lamp, ease('io', (u - 0.3) / 0.15))
-            : u < 0.62 ? mixV(lamp, overhead, ease('out', (u - 0.45) / 0.17))
+            : u < 0.53 ? mixV(lamp, outSide, ease('in', (u - 0.45) / 0.08))
+              : u < 0.62 ? mixV(outSide, overhead, ease('out', (u - 0.53) / 0.09))
               : u < 1.2 ? mixV(overhead, add(L.shoulderL, 0.15, 0.1, 0.15, s), ease('io', (u - 0.62) / 0.58))
                 : mixV(add(L.shoulderL, 0.15, 0.1, 0.15, s), hipLeft, ease('back', clamp01((u - 1.2) / 0.25)));
         P.left.onGun = 0;

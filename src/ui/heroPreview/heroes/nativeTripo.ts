@@ -45,13 +45,17 @@ const GUN_LAYOUT: Record<string, {
     leftAcross: [0, 0, 1], leftDistal: [-1, 0, 0],
   },
   falcon: {
-    scale: 1.35, ready: [-0.11, -0.13, 0.3], yaw: 0.7, shoulder: [-0.06, -0.3, 0.16], back: 0.24,
+    scale: 1.35, ready: [-0.05, -0.2, 0.4], yaw: 0.45, shoulder: [-0.06, -0.3, 0.16], back: 0.24,
     right: [-0.035, -0.06, -0.027], left: [0.042, -0.07, -0.015], thumbR: [0.018, -0.012, -0.015], thumbL: [0.033, 0.004, -0.006],
     leftAcross: [0, 1, 0], leftDistal: [0, 0, 1],
   },
 };
 /** 转枪的转轴：扳机护圈（枪身坐标，+Z 枪口、+Y 枪背），食指勾住的位置 */
 const TRIGGER = [0, -0.035, 0.04] as const;
+/** 手肘弯曲范围（弧度）与握枪时手腕的最大扭转 */
+const ELBOW_MIN = THREE.MathUtils.degToRad(15);
+const ELBOW_MAX = THREE.MathUtils.degToRad(100);
+const WRIST_MAX = THREE.MathUtils.degToRad(75);
 /** 空手目标的平滑时间常数（秒） */
 const FREE_HAND_TAU = 0.05;
 /** 三位英雄的演出（heroShows.ts）：内部 id 不变，fox = 燎、bear = 磐、falcon = 鼯 */
@@ -181,10 +185,17 @@ export function createNativeHero(id: string, template: THREE.Object3D, options: 
    */
   function solve(side: string, target: THREE.Vector3, pole: THREE.Vector3, across: THREE.Vector3, distal: THREE.Vector3, grip = 1): void {
     const upper = bone(`${side}Arm`), lower = bone(`${side}ForeArm`), wrist = bone(`${side}Hand`);
+    // 每次求解从绑定姿势开始：多次迭代时前臂扭转、手腕转角不累加
+    for (const bn of [upper, lower, wrist]) bn.quaternion.copy(rest.get(bn)!);
+    upper.updateWorldMatrix(false, true);
     const s = world(upper), e = world(lower), w = world(wrist);
     const a = s.distanceTo(e), b = e.distanceTo(w);
     const dir = target.clone().sub(s);
-    const d = THREE.MathUtils.clamp(dir.length(), Math.abs(a - b) + 0.001, a + b - 0.002);
+    // 手肘只在 15°–100° 之间弯：拉直成棍很僵，折过 100° 时 Tripo 的手肘权重会把前臂压瘪（看起来像手臂没了）。
+    // 目标太近 / 太远时手停在够得到的地方
+    const dMin = Math.sqrt(a * a + b * b - 2 * a * b * Math.cos(Math.PI - ELBOW_MAX));
+    const dMax = Math.sqrt(a * a + b * b - 2 * a * b * Math.cos(Math.PI - ELBOW_MIN));
+    const d = THREE.MathUtils.clamp(dir.length(), dMin, dMax);
     dir.normalize();
     const bend = pole.clone().sub(s);
     bend.addScaledVector(dir, -bend.dot(dir)).normalize();
@@ -197,16 +208,22 @@ export function createNativeHero(id: string, template: THREE.Object3D, options: 
     if (grip > 0.001) {
       const current = frame(world(bone(`${side}HandIndex1`)).sub(world(bone(`${side}HandPinky1`))), world(bone(`${side}HandMiddle1`)).sub(world(wrist)));
       const aligned = frame(across, distal).multiply(current.invert()).multiply(natural);
-      want = natural.clone().slerp(aligned, Math.min(1, grip));
+      // 手腕最多拧 WRIST_MAX：再多手腕处的皮会拧成糖纸，宁可手掌略偏离枪身
+      const turn = 2 * Math.acos(Math.min(1, Math.abs(aligned.dot(natural))));
+      want = natural.clone().slerp(aligned, Math.min(1, grip) * Math.min(1, WRIST_MAX / Math.max(turn, 1e-6)));
     }
     // swing–twist：绕前臂轴的扭转一半交给前臂骨（转轴过肘和腕，手腕位置不变）
     const f = world(wrist).sub(world(lower)).normalize();
     const delta = want.clone().multiply(natural.clone().invert());
+    // 同一个旋转有 q 和 −q 两种写法：先归到 w ≥ 0 的最短路径，否则扭转角会算成接近 ±360°，前臂被反向拧一大圈、塌成细条
+    if (delta.w < 0) delta.set(-delta.x, -delta.y, -delta.z, -delta.w);
     const proj = delta.x * f.x + delta.y * f.y + delta.z * f.z;
     const twist = 2 * Math.atan2(proj, delta.w);
     if (Math.abs(twist) > 1e-3) rotateWorld(lower, f, 0.5 * THREE.MathUtils.clamp(twist, -1.6, 1.6));
     setWorldQ(wrist, want);
-    root.userData.gripAudit[side] = { wristError: world(wrist).distanceTo(target), reach: a + b, requestedReach: target.distanceTo(s) };
+    root.userData.gripAudit[side] = { wristError: world(wrist).distanceTo(target), reach: a + b, requestedReach: target.distanceTo(s),
+      elbowBend: 180 - THREE.MathUtils.radToDeg(world(upper).sub(world(lower)).angleTo(world(wrist).sub(world(lower)))),
+      wristTurn: THREE.MathUtils.radToDeg(2 * Math.acos(Math.min(1, Math.abs(want.dot(natural))))), twist: THREE.MathUtils.radToDeg(twist) };
   }
   /** 两骨 IK（腿）：end 放到 target，膝盖朝 pole */
   function twoBone(upper: THREE.Bone, lower: THREE.Bone, end: THREE.Bone, target: THREE.Vector3, pole: THREE.Vector3): void {
@@ -237,8 +254,12 @@ export function createNativeHero(id: string, template: THREE.Object3D, options: 
     // 先定腕部朝向，再按实测的中指根关节（而不是假设的手长）把手掌对到接触点
     const wrist = bone(`${side}Hand`);
     solve(side, world(wrist), pole, across.clone(), distal.clone(), gun);
-    const target = world(wrist).add(desired.clone().sub(world(bone(`${side}HandMiddle1`))));
-    solve(side, target, pole, across.clone(), distal.clone(), gun);
+    // 手腕扭转受限时手掌朝向随前臂方向变，一次换算对不准：迭代几次让中指根收敛到接触点
+    for (let it = 0; it < 4; it++) {
+      const target = world(wrist).add(desired.clone().sub(world(bone(`${side}HandMiddle1`))));
+      solve(side, target, pole, across.clone(), distal.clone(), gun);
+      if (world(bone(`${side}HandMiddle1`)).distanceTo(desired) < 0.004) break;
+    }
     fingers(side, across.clone().normalize(), gun, curl);
     root.userData.gripAudit[side].knuckleError = world(bone(`${side}HandMiddle1`)).distanceTo(desired);
   }
@@ -308,6 +329,9 @@ export function createNativeHero(id: string, template: THREE.Object3D, options: 
   };
   fx.bind({ toWorld: (p) => toWorld(p), live, gunWorld: () => hand });
 
+  // 臂长（肩到腕，绑定姿势，米）：枪位按它约束
+  const armReach: Record<string, number> = {};
+  for (const side of ['Left', 'Right']) armReach[side] = world(bone(`${side}Arm`)).distanceTo(world(bone(`${side}ForeArm`))) + world(bone(`${side}ForeArm`)).distanceTo(world(bone(`${side}Hand`)));
   const freeHand: Record<string, { p: THREE.Vector3; live: boolean }> = { Left: { p: v(0, 0, 0), live: false }, Right: { p: v(0, 0, 0), live: false } };
   let intro = -1;
   let fidget: { index: number; u: number } | null = null;
@@ -388,12 +412,14 @@ export function createNativeHero(id: string, template: THREE.Object3D, options: 
     const chest = live(bone('Spine2'));
     const readyP = v(GUN.ready[0] * s, shR.y + GUN.ready[1] * s, GUN.ready[2] * s);
     const readyQ = new THREE.Quaternion().setFromAxisAngle(v(0, 1, 0), GUN.yaw);
-    const shoulderP = shR.clone().add(v(GUN.shoulder[0] * s, GUN.shoulder[1] * s, GUN.shoulder[2] * s));
+    // 扛枪：握把在右肩前下方、离肩约 0.8 倍臂长（手肘约 80°、朝下），前臂竖起，枪口朝天——手腕顺着前臂，不用拧
+    const shoulderP = shR.clone().add(v(-0.18, -0.55, 0.82).normalize().multiplyScalar(0.8 * armReach.Right));
     // 枪口朝天：握把在胸前右侧，枪管贴着右肩前方竖直向上、略朝外（避开 Q 版的大头）、略朝前；枪背朝向角色。
     // （v2 首版是握把在腰、枪管朝后上方越过肩膀，用户看成「枪拿反了」）
     const shoulderQ = qLook(v(-0.32, 0.9, 0.28), v(0.25, 0.25, -0.93));
-    const backP = chest.clone().add(v(0.04 * s, 0.06 * s, -GUN.back * s));
-    const backQ = qLook(v(-0.5, 0.86, 0), v(0, 0, -1));
+    // 背枪：斜挂在背上，握把在右后腰（伸手往后下方拿，不用把手肘折到脑后）
+    const backP = live(bone('RightUpLeg')).add(v(-0.06 * s, 0.14 * s, -GUN.back * s));
+    const backQ = qLook(v(0.55, 0.83, 0), v(0, 0, -1));
     const gp = readyP.clone().lerp(shoulderP, P.gun.shoulder).lerp(backP, P.gun.back);
     gp.y += P.gun.lift;
     const gq = readyQ.clone().slerp(shoulderQ, P.gun.shoulder).slerp(backQ, P.gun.back);
@@ -408,9 +434,33 @@ export function createNativeHero(id: string, template: THREE.Object3D, options: 
     const gunPt = (o: readonly number[]): THREE.Vector3 => toWorld(gp.clone().add(v(o[0], o[1], o[2]).multiplyScalar(GUN.scale).applyQuaternion(gq)));
     const gunAx = (a: readonly [number, number, number]): THREE.Vector3 => v(a[0], a[1], a[2]).applyQuaternion(gw);
 
+    // 臂长约束：哪只握枪的手离握点超过 0.9 倍臂长，就把整把枪往那侧肩膀拉近（枪按身高摆，Q 版手臂短，常常够不着）
+    for (let iter = 0; iter < 3; iter++) {
+      let moved = false;
+      for (const [side, gripOff, w] of [['Right', GUN.right, 1], ['Left', GUN.left, P.left.onGun]] as const) {
+        if (w < 0.5) continue;
+        const shW = world(bone(`${side}Arm`));
+        const pt = gunPt(gripOff);
+        const over = pt.distanceTo(shW) - 0.9 * armReach[side];
+        if (over > 0.002) {
+          // 拉向两肩中点正前方 0.6 倍臂长：两只手都够得着，枪也不会被拽进身体
+          // （拉向单侧肩膀时，双手握的左轮先被左手拽进胸口，右手又近到握不住）
+          const front = world(bone('LeftArm')).add(world(bone('RightArm'))).multiplyScalar(0.5)
+            .addScaledVector(Z, 0.6 * armReach[side]).addScaledVector(Y, -0.25 * armReach[side]);
+          const pull = front.sub(pt).normalize().multiplyScalar(over);
+          const pullLocal = pull.applyQuaternion(_bodyQ.clone().invert());
+          gp.add(pullLocal);
+          moved = true;
+        }
+      }
+      if (!moved) break;
+    }
+    hand.position.copy(poseToRoot(gp.clone().add(v(...TRIGGER).multiplyScalar(GUN.scale).applyQuaternion(gq)).sub(v(...TRIGGER).multiplyScalar(GUN.scale).applyQuaternion(spinQ))));
+    hand.updateWorldMatrix(true, true);
+
     // ── 双手：握枪点与空手目标之间插值；肘部朝向同样插值
     const arms = [
-      { side: 'Right', A: P.right, grip: GUN.right, pole: v(-0.5 * s, shR.y - 0.5 * s, -0.15 * s), across: gunAx([0, 1, 0]), distal: gunAx([0, 0, 1]), thumb: GUN.thumbR },
+      { side: 'Right', A: P.right, grip: GUN.right, pole: shR.clone().add(v(-0.3 * s, -0.6 * s, -0.05 * s)), across: gunAx([0, 1, 0]), distal: gunAx([0, 0, 1]), thumb: GUN.thumbR },
       { side: 'Left', A: P.left, grip: GUN.left, pole: v(0.45 * s, shR.y - 0.45 * s, 0.05 * s), across: gunAx(GUN.leftAcross), distal: gunAx(GUN.leftDistal), thumb: GUN.thumbL },
     ] as const;
     const k = 1 - Math.exp(-Math.max(dt, 0) / FREE_HAND_TAU);

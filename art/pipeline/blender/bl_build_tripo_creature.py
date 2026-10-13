@@ -629,6 +629,47 @@ else:
                     W[idx] = avg / max(avg.sum(), 1e-6)
                     fixed += int(touches.sum())
             reg["island_majority_verts"] = fixed
+        lb = RIG.get("limb_blend")
+        if lb:   # tried 2026-10-12 on 燎: narrower elbow / wrist blends made the measured collapse worse; kept off
+            # Tripo blends the elbow over half a segment (upper-arm weight 0.3 a quarter way down the forearm) and lets
+            # the hand reach mid-forearm: bent past ~90° that wide zone averages two far-apart transforms and the
+            # forearm collapses ("the arm disappears"). Re-split the arm-chain share of each arm vertex by its
+            # position u along shoulder(0)–elbow(1)–wrist(2) with narrow smoothstep blends at the elbow and wrist.
+            moved = 0
+            for S_ in ("Left", "Right"):
+                sh, el, wr = bone_pt(f"{S_}Arm"), bone_pt(f"{S_}ForeArm"), bone_pt(f"{S_}Hand")
+                cA, cF, cH = col[f"{S_}Arm"], col[f"{S_}ForeArm"], col[f"{S_}Hand"]
+                chain = W[:, cA] + W[:, cF] + W[:, cH]
+                fingers = [col[n] for n in col if n.startswith(f"{S_}Hand") and n != f"{S_}Hand"]
+                m = (chain > 0.5) & (W[:, fingers].sum(1) < 0.05) if fingers else chain > 0.5
+                P_ = V[m]
+                def para(a, b):
+                    ab = b - a
+                    t = np.clip(((P_ - a) @ ab) / (ab @ ab), 0, 1)
+                    return t, np.linalg.norm(P_ - (a + t[:, None] * ab), axis=1)
+                t1, d1 = para(sh, el)
+                t2, d2 = para(el, wr)
+                u = np.where(d1 < d2, t1, 1 + t2)
+                def ss(x):
+                    x = np.clip(x, 0, 1)
+                    return x * x * (3 - 2 * x)
+                we, ww = lb.get("elbow") or 0.12, lb.get("wrist", 0.1)
+                to_fore = ss((u - (1 - we)) / (2 * we))
+                to_hand = ss((u - (2 - ww)) / ww)            # the hand blend sits just above the wrist joint
+                ids = np.nonzero(m)[0]
+                if lb.get("elbow") is None:
+                    # keep Tripo's upper-arm share; only re-split forearm vs hand (the hand reaching mid-forearm is what
+                    # wrings the forearm flat when the wrist turns)
+                    fh = W[ids, cF] + W[ids, cH]
+                    W[ids, cF] = fh * (1 - to_hand)
+                    W[ids, cH] = fh * to_hand
+                else:
+                    share = chain[m]
+                    W[ids, cA] = share * (1 - to_fore)
+                    W[ids, cF] = share * to_fore * (1 - to_hand)
+                    W[ids, cH] = share * to_fore * to_hand
+                moved += int(m.sum())
+            reg["limb_blend_verts"] = moved
         mb = RIG.get("membrane")
         if mb:
             islands = mesh_islands() if islands is None else islands
