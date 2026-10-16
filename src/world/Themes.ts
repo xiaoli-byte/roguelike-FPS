@@ -63,6 +63,8 @@ export interface ThemeStyle {
   sky: { celestial: 'sun' | 'moon'; diskRadius: number; horizonFalloff: number; stars: number; cloudStretch: number };
   /** 地面熔岩裂缝发光强度（0 = 无） */
   floorGlow: number;
+  /** 石面贴图的正片叠底底色（缺省按主题取旧值） */
+  floorTint?: number;
 }
 
 export const THEMES: Record<ThemeId, ThemeDef> = {
@@ -233,6 +235,33 @@ const STYLES: Record<ThemeId, ThemeStyle> = {
     floorGlow: 0.58,
   },
 };
+
+/**
+ * V2 重制关卡的主题覆盖。旧 LD-03 火狱（熔火深渊）用冷紫散射光衬托紫灰岩壁；V2 祝融火狱是玄铁、朱漆、青铜
+ * 加熔岩缝的建筑套件，冷紫光把黑铁压成一片灰、朱漆和青铜都发闷。V2 改成熔炉夜色：暗赭天空、烟褐雾、
+ * 暖灰天光，熔岩自发光仍然是画面里最亮的颜色。
+ */
+const REDESIGN_THEME_OVERRIDES: Partial<Record<ThemeId, { def: Partial<ThemeDef>; style: Partial<ThemeStyle> }>> = {
+  inferno: {
+    def: { fogColor: 0x3a2826, skyTop: 0x0e0a10, skyBottom: 0x6e2f1e, ambient: 0xd8ccc6, sun: 0xffd2a8, floor: 0x3a3736, wall: 0x47403e },
+    style: {
+      paving: 0x5f5c5c, sand: 0x3a3838, trim: 0x1e1a1a, stone: 0x5b5654, stone2: 0x363232,
+      far: 0x2e2324, farCap: 0xb4502a, fogNear: 45, fogFar: 200,
+      hemiSky: 0xd6ccc8, hemiGround: 0x4a302a, hemiIntensity: 1.4, sunIntensity: 2.2, sunDir: [-0.5, 0.55, 0.42],
+      cloud: { color: 0x2a1c1e, amount: 0.5, speed: 0.0045 },
+      sunGlow: 0.35, floorGlow: 0.55, floorTint: 0x8e8a8a,
+    },
+  },
+};
+
+/** The theme a V2 redesign plan renders with (its overrides over the shared chapter theme). */
+export function redesignThemeDef(id: ThemeId): ThemeDef {
+  return { ...themeDef(id), ...REDESIGN_THEME_OVERRIDES[id]?.def };
+}
+
+export function redesignThemeStyle(id: ThemeId): ThemeStyle {
+  return { ...themeStyle(id), ...REDESIGN_THEME_OVERRIDES[id]?.style };
+}
 
 export function themeDef(id: ThemeId): ThemeDef {
   return THEMES[id] ?? THEMES.desert;

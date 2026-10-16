@@ -1,0 +1,120 @@
+{
+  "steps": {
+    "导入清理": 1.7,
+    "对齐": 1.2,
+    "低模与 UV": 7.6,
+    "投影着色": 12.4,
+    "烘焙": 6.3,
+    "LOD": 0.0,
+    "导出": 1.4
+  },
+  "highpoly": {
+    "faces_raw": 304630,
+    "faces": 135794,
+    "verts": 135796,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.876,
+    "iou_per_view": {
+      "front": 0.902,
+      "left": 0.85,
+      "back": 0.89,
+      "right": 0.85
+    },
+    "height_m": 17.8408,
+    "blockout_height_m": 18.0
+  },
+  "uv": {
+    "smart_islands": 241,
+    "charts": 41,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "smart",
+    "density_smart": 0.0523,
+    "density_merged": 0.0499
+  },
+  "projection": {
+    "uncovered_ratio": 0.2858
+  },
+  "bake_device": "CPU",
+  "emissive_id": {
+    "emissive_texel_ratio": 0.0029
+  },
+  "textures": {
+    "T_Tripo_InfernoHallButtress_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_InfernoHallButtress_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_InfernoHallButtress_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_InfernoHallButtress_LOD0",
+      "tris": 3000,
+      "verts": 1502,
+      "uv_min": [
+        0.003737648716196418,
+        0.0037299233954399824
+      ],
+      "uv_max": [
+        0.996344804763794,
+        0.9839934706687927
+      ],
+      "uv_utilization": 0.608,
+      "bbox_min": [
+        -2.2594,
+        -1.8724,
+        -0.0025
+      ],
+      "bbox_max": [
+        2.2554,
+        1.8712,
+        17.8349
+      ]
+    },
+    {
+      "name": "SM_Tripo_InfernoHallButtress_LOD1",
+      "tris": 1000,
+      "verts": 502,
+      "uv_min": [
+        0.003983246628195047,
+        0.003808006178587675
+      ],
+      "uv_max": [
+        0.995159387588501,
+        0.9837355017662048
+      ],
+      "uv_utilization": 0.571,
+      "bbox_min": [
+        -2.2359,
+        -1.8041,
+        0.0025
+      ],
+      "bbox_max": [
+        2.217,
+        1.8514,
+        17.7947
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_InfernoHallButtress/04_export/SM_Tripo_InfernoHallButtress_v001.glb",
+    "bytes": 208660
+  },
+  "blend": "art/source/props/SM_Tripo_InfernoHallButtress/03_work/SM_Tripo_InfernoHallButtress_v001.blend",
+  "total_seconds": 30.7,
+  "_seconds": 37.2
+}

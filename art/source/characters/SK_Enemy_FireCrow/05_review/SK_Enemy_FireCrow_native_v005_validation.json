@@ -1,0 +1,319 @@
+{
+  "asset": "SK_Enemy_FireCrow",
+  "version": 5,
+  "glb": "art/source/characters/SK_Enemy_FireCrow/04_export/SK_Enemy_FireCrow_native_v005.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.4,
+      "自定义骨架：10 根骨骼（热扩散权重，347 个顶点未覆盖）": 0.1,
+      "贴图（BC + AO/ORM）": 4.4,
+      "LOD 与蒙皮上限 5909 / 2462 / 984": 0.1,
+      "导出 514 KB": 1.1
+    },
+    "source": {
+      "verts": 3441,
+      "tris": 6687,
+      "scale": 1.5986123156981786
+    },
+    "regions": {
+      "heat_unweighted_verts": 347,
+      "body_verts": 87,
+      "head_verts": 474,
+      "tail_verts": 135,
+      "leg_L_verts": 183,
+      "leg_R_verts": 183,
+      "wing_1_L_verts": 184,
+      "wing_1_R_verts": 183,
+      "wing_2_L_verts": 61,
+      "wing_2_R_verts": 60,
+      "fallback_verts": 0,
+      "per_bone": {
+        "body": 1203,
+        "head": 434,
+        "tail": 135,
+        "wing_1_L": 521,
+        "wing_2_L": 131,
+        "leg_L": 183,
+        "wing_1_R": 521,
+        "wing_2_R": 130,
+        "leg_R": 183
+      }
+    },
+    "bones": [
+      "body",
+      "head",
+      "leg_L",
+      "leg_R",
+      "root",
+      "tail",
+      "wing_1_L",
+      "wing_1_R",
+      "wing_2_L",
+      "wing_2_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.944,
+      "shade_mean": 0.951
+    },
+    "textures": {
+      "size": 1024,
+      "ao_mean": 0.793,
+      "provider_pbr": [],
+      "roughness_mean": 0.75,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Enemy_FireCrow_LOD0": {
+          "max_influences": 2,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_FireCrow_LOD1": {
+          "max_influences": 2,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_FireCrow_LOD2": {
+          "max_influences": 3,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Enemy_FireCrow_LOD0",
+        "tris": 5909,
+        "uv_min": [
+          0.001220703125,
+          0.001220703125
+        ],
+        "uv_max": [
+          0.9970703125,
+          0.998779296875
+        ]
+      },
+      {
+        "name": "SK_Enemy_FireCrow_LOD1",
+        "tris": 2462,
+        "uv_min": [
+          0.001220703125,
+          0.001220703125
+        ],
+        "uv_max": [
+          0.996826171875,
+          0.99853515625
+        ]
+      },
+      {
+        "name": "SK_Enemy_FireCrow_LOD2",
+        "tris": 984,
+        "uv_min": [
+          0.001220703125,
+          0.001708984375
+        ],
+        "uv_max": [
+          0.995849609375,
+          0.99853515625
+        ]
+      }
+    ],
+    "glb_kb": 514,
+    "_seconds": 11.0
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "514 KB / 1600 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Enemy_FireCrow_LOD0', 'SK_Enemy_FireCrow_LOD1', 'SK_Enemy_FireCrow_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "5909 / 6000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "2454 / 2500"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "970 / 1000"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "0.900 m (design 0.9 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Enemy_FireCrow']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_FireCrow_ORM",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_FireCrow_BC",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "10 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FireCrow_LOD0 influences",
+      "max 2"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FireCrow_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FireCrow_LOD1 influences",
+      "max 2"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FireCrow_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FireCrow_LOD2 influences",
+      "max 3"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FireCrow_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FireCrow_LOD0 UV range",
+      "[0.001, 0.001]..[0.997, 0.999]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FireCrow_LOD1 UV range",
+      "[0.001, 0.001]..[0.997, 0.999]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_FireCrow_LOD2 UV range",
+      "[0.001, 0.002]..[0.996, 0.999]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "347 verts"
+    ],
+    [
+      "pass",
+      "region body",
+      "87 verts"
+    ],
+    [
+      "pass",
+      "region head",
+      "474 verts"
+    ],
+    [
+      "pass",
+      "region tail",
+      "135 verts"
+    ],
+    [
+      "pass",
+      "region leg_L",
+      "183 verts"
+    ],
+    [
+      "pass",
+      "region leg_R",
+      "183 verts"
+    ],
+    [
+      "pass",
+      "region wing_1_L",
+      "184 verts"
+    ],
+    [
+      "pass",
+      "region wing_1_R",
+      "183 verts"
+    ],
+    [
+      "pass",
+      "region wing_2_L",
+      "61 verts"
+    ],
+    [
+      "pass",
+      "region wing_2_R",
+      "60 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "0 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

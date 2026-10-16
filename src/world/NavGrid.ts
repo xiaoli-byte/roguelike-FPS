@@ -60,16 +60,30 @@ export function rasterizeBlocked(
   for (let k = 0; k < boxes.length; k++) {
     const b = boxes[k];
     if (b.maxY <= y0 || b.minY >= y1) continue;
-    // 中心严格落在 (min - foot, max + foot) 内的格子
-    const i0 = Math.max(0, Math.floor((b.minX - foot - ox) / cell - 0.5) + 1);
-    const i1 = Math.min(cols - 1, Math.ceil((b.maxX + foot - ox) / cell - 0.5) - 1);
-    const j0 = Math.max(0, Math.floor((b.minZ - foot - oz) / cell - 0.5) + 1);
-    const j1 = Math.min(rows - 1, Math.ceil((b.maxZ + foot - oz) / cell - 0.5) - 1);
-    for (let j = j0; j <= j1; j++) {
-      const row = j * cols;
-      for (let i = i0; i <= i1; i++) out[row + i] = 1;
-    }
+    markRect(b.minX, b.minZ, b.maxX, b.maxZ, ox, oz, cols, rows, cell, foot, out);
   }
+}
+
+/** 中心严格落在 (min - foot, max + foot) 内的格子置为阻挡 */
+function markRect(
+  minX: number, minZ: number, maxX: number, maxZ: number, ox: number, oz: number, cols: number, rows: number,
+  cell: number, foot: number, out: Uint8Array,
+): void {
+  const i0 = Math.max(0, Math.floor((minX - foot - ox) / cell - 0.5) + 1);
+  const i1 = Math.min(cols - 1, Math.ceil((maxX + foot - ox) / cell - 0.5) - 1);
+  const j0 = Math.max(0, Math.floor((minZ - foot - oz) / cell - 0.5) + 1);
+  const j1 = Math.min(rows - 1, Math.ceil((maxZ + foot - oz) / cell - 0.5) - 1);
+  for (let j = j0; j <= j1; j++) {
+    const row = j * cols;
+    for (let i = i0; i <= i1; i++) out[row + i] = 1;
+  }
+}
+
+/** 熔岩地面（WhiteboxLava 的结构子集）：世界坐标网格掩码 + 合并后的矩形 */
+export interface NavLava {
+  minX: number; minZ: number; cols: number; rows: number; cell: number;
+  mask: Uint8Array;
+  rects: readonly { minX: number; minZ: number; maxX: number; maxZ: number }[];
 }
 
 /**
@@ -160,7 +174,36 @@ export class NavGrid implements INavGrid {
   /** 最近一次 groundPath 的终点是否就是传入的目标点（否则是同一连通区里离目标最近的格子） */
   private goalExact = false;
 
+  /** 当前关卡的熔岩地面（地面敌人不可走） */
+  private lava: NavLava | null = null;
+
   constructor(readonly ctx: GameContext) {}
+
+  /** 设置当前关卡的熔岩地面（StageDirector 在 build 之前调用；卸载关卡时传 null） */
+  setLava(lava: NavLava | null): void {
+    this.lava = lava;
+  }
+
+  /**
+   * 地面单位从 a 直线走到 b 是否会踩进熔岩（含两侧 lateral 米的身体宽度）。没有熔岩的关卡恒为 false。
+   * EnemyBase 的「直线可达」判定用它：熔岩没有碰撞盒，射线挡不住。
+   */
+  crossesLava(a: THREE.Vector3, b: THREE.Vector3, lateral = 0.5): boolean {
+    const L = this.lava;
+    if (!L) return false;
+    const dx = b.x - a.x, dz = b.z - a.z, len = Math.hypot(dx, dz);
+    const n = Math.max(1, Math.ceil(len / (L.cell * 0.5)));
+    const px = len > 1e-6 ? (-dz / len) * lateral : 0, pz = len > 1e-6 ? (dx / len) * lateral : 0;
+    const at = (x: number, z: number): boolean => {
+      const ix = Math.floor((x - L.minX) / L.cell), iz = Math.floor((z - L.minZ) / L.cell);
+      return ix >= 0 && iz >= 0 && ix < L.cols && iz < L.rows && L.mask[iz * L.cols + ix] === 1;
+    };
+    for (let k = 0; k <= n; k++) {
+      const x = a.x + (dx * k) / n, z = a.z + (dz * k) / n;
+      if (at(x, z) || at(x + px, z + pz) || at(x - px, z - pz)) return true;
+    }
+    return false;
+  }
 
   /** 设置当前关卡的高台通道（StageDirector 在 build 之后调用；卸载关卡时传空数组） */
   setRamps(ramps: readonly NavRamp[]): void {
@@ -204,6 +247,11 @@ export class NavGrid implements INavGrid {
 
     const world = this.ctx.world;
     rasterizeBlocked(world.boxes, this.ox, this.oz, this.cols, this.rows, cs, this.floorY, Math.min(NAV_FOOT, cs * 0.45), this.blocked);
+    // 熔岩地面：没有碰撞盒，但地面敌人不能走进去（与原来的透明挡墙同样外扩 NAV_FOOT）
+    if (this.lava) {
+      const foot = Math.min(NAV_FOOT, cs * 0.45);
+      for (const r of this.lava.rects) markRect(r.minX, r.minZ, r.maxX, r.maxZ, this.ox, this.oz, this.cols, this.rows, cs, foot, this.blocked);
+    }
 
     // 连通分量：最大的一块是「主区域」
     const sizes = labelComponents(this.blocked, this.cols, this.rows, this.comp, this.queue);

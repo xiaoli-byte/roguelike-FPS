@@ -32,7 +32,10 @@ elaborate miniature carvings, harsh specular highlights or baked cast shadows. E
 
 # Background key tolerance per theme: white snow sits close to the #D6D6D6 sheet background, so a loose key eats snow
 # caps; the generated background is flat (border std < 1), so a tight key leaves no fringe.
-KEY_TOL = {"desert": 28.0, "kunlun": 8.0, "taoist": 8.0, "beiming": 8.0}
+KEY_TOL = {"desert": 28.0, "kunlun": 8.0, "taoist": 8.0, "beiming": 8.0,
+           # Chapter 3's black iron / basalt / lava sits far from the grey background; a medium key also clears the
+           # anti-aliased grey halo around dark silhouettes without reaching pale ash or bronze highlights.
+           "zhurong": 18.0}
 
 # Per-chapter look, chosen by the registry entry's `style_theme` (default: the desert chapter's).
 SCENE_THEMES = {
@@ -47,6 +50,12 @@ SCENE_THEMES = {
     "beiming": ("East-Asian frozen polar sea fantasy from the Zhuangzi's northern darkness: faceted glacier ice and dark ink-blue rock, "
                 "weathered ivory whale bone, old dark ship timber with faded teal paint, frozen ropes, felt and a cold aqua "
                 "deep-sea glow, thick soft snow caps and chunky icicles."),
+    # Chapter 3 (祝融火狱): the fire god Zhurong's underground forge palace.
+    "zhurong": ("East-Asian underground forge-palace fantasy of Zhurong, the Chinese god of fire: massive black iron (xuan tie) "
+                "with heavy rivets, dark charcoal basalt blocks, deep vermilion lacquer, warm aged bronze ding cauldrons, chunky "
+                "thick iron chains always attached flat to the surfaces, soot-darkened edges, and a few channels and cracks of "
+                "molten lava. Lava, embers and fire are painted as opaque flat bright orange-yellow surfaces, never as smoke, "
+                "loose sparks or transparent effects."),
 }
 
 SHEET_LAYOUT = """Output: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views

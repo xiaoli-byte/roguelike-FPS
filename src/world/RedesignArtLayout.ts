@@ -7,7 +7,8 @@
  *    inner face on the collision line;
  *  - one gateway per passage, in the passage's stretch between rooms, its towers in the solid mass;
  *  - covers become columns (tall), barricades (vault height) or ruined cover walls (full height), unless
- *    the plan names set dressing (stall, goods pile, treasure hoard) for that cover box;
+ *    the plan names set dressing (stall, goods pile, treasure hoard) for that cover box; a tall cover too big
+ *    for a column (a machine housing, at least MASSIF_MIN wide both ways) is masonry: podium blocks tiling its box;
  *  - corner towers cap every solid chamfered room edge;
  *  - raised decks are ringed with podium blocks, and each stair ramp gets a stair flight;
  *  - one colossus landmark stands beyond the exit, visible down the final arena.
@@ -17,14 +18,15 @@ import { whiteboxInsidePolygon, whiteboxPoint } from './WhiteboxGen';
 import type { WhiteboxPlan, WhiteboxPoint } from './WhiteboxTypes';
 
 export type RedesignArtKind = 'rampart' | 'gateway' | 'column' | 'barricade' | 'coverwall' | 'platform' | 'stairs' | 'landmark'
-  | 'stall' | 'goods' | 'hoard' | 'ruin' | 'brazier' | 'tower' | 'shrine';
+  | 'stall' | 'goods' | 'hoard' | 'ruin' | 'brazier' | 'tower' | 'shrine' | 'massif';
 
 /**
  * Building kits by kit key. A plan uses its chapter's kit unless REDESIGN_PLAN_KITS names another one
  * (chapter 2 descends from the Kunlun palace to the frozen North Sea within the chapter).
  * The chapter-2 Kunlun kit keeps its historical SM_Tripo_* ids but is modelled with local Hunyuan3D 2mv.
  */
-export const REDESIGN_ART_ASSETS: Readonly<Record<string, Readonly<Record<RedesignArtKind, string>>>> = {
+/** Massif covers are tiled with the kit's podium block, so a kit names no model of its own for them. */
+export const REDESIGN_ART_ASSETS: Readonly<Record<string, Readonly<Record<Exclude<RedesignArtKind, 'massif'>, string>>>> = {
   desert: {
     rampart: 'SM_Tripo_DesertRampartPanel', gateway: 'SM_Tripo_DesertGateway', column: 'SM_Tripo_DesertColumn',
     barricade: 'SM_Tripo_DesertBarricade', coverwall: 'SM_Tripo_DesertCoverWall', platform: 'SM_Tripo_DesertPlatformBlock',
@@ -51,6 +53,17 @@ export const REDESIGN_ART_ASSETS: Readonly<Record<string, Readonly<Record<Redesi
     stall: 'SM_Tripo_FrostSeaYurt', goods: 'SM_Tripo_FrostSeaFishRack', hoard: 'SM_Tripo_FrostSeaPearlHoard',
     ruin: 'SM_Tripo_FrostSeaMastRuin', brazier: 'SM_Tripo_FrostSeaBoneLantern', tower: 'SM_Tripo_FrostSeaLighthouse',
     shrine: 'SM_Tripo_FrostSeaPortalShrine',
+  },
+  // Chapter 3, Zhurong's forge palace (local Hunyuan3D 2mv): black-iron ramparts with lava seams, a furnace-chimney
+  // corner tower and the seated fire god as the landmark. Dressing: a smith's forge stall, ingot and ore piles, the
+  // fire god's treasure, a toppled bronze ding spilling slag, fire altars (the plans' bronze dings stand as large altars).
+  inferno: {
+    rampart: 'SM_Tripo_InfernoRampartPanel', gateway: 'SM_Tripo_InfernoGateway', column: 'SM_Tripo_InfernoColumn',
+    barricade: 'SM_Tripo_InfernoBarricade', coverwall: 'SM_Tripo_InfernoCoverWall', platform: 'SM_Tripo_InfernoPlatformBlock',
+    stairs: 'SM_Tripo_InfernoStairs', landmark: 'SM_Tripo_InfernoZhurong',
+    stall: 'SM_Tripo_InfernoForgeStall', goods: 'SM_Tripo_InfernoIngotPile', hoard: 'SM_Tripo_InfernoTreasureHoard',
+    ruin: 'SM_Tripo_InfernoCauldronRuin', brazier: 'SM_Tripo_InfernoFireAltar', tower: 'SM_Tripo_InfernoFurnaceTower',
+    shrine: 'SM_Tripo_InfernoPortalShrine',
   },
 };
 
@@ -111,6 +124,17 @@ export const REDESIGN_KIT_SHAPES: Readonly<Record<string, RedesignKitShape>> = {
     tower: { width: 7.2, depth: 7.2, height: 13 },
     landmark: [5.819, 15.332, 9.74],
   },
+  // Hunyuan 2mv Zhurong kit. The gateway's piers are straight to the ground (opening 6.86 m at 1-3 m of 11.31 m). The
+  // portal shrine came out narrower than its concept (7.59 m wide, inner arch 3.2 m, recess 1.53 m deep): it stands at
+  // 1.3x its published size so the portal (about 4.4 m across) fits the arch and stands just in front of the recess
+  // wall. The furnace tower (6.13 x 4.99 x 12.86 m) stands at 1.175x, 7.2 m wide like the other kits.
+  inferno: {
+    gateway: { opening: 6.861, width: 11.311, height: 10.753, depth: 2.196, clearance: 1.04 },
+    postDepthTolerance: 1, postMaxSpan: 36, exactRuns: true, towerSpacing: 26,
+    shrine: { width: 9.866, height: 13.884, depth: 2.798 },
+    tower: { width: 7.2, depth: 5.857, height: 15.108 },
+    landmark: [7.798, 15.429, 6.833],
+  },
 };
 /** Landmarks stand this much larger than their published size (seen from across the level). */
 const LANDMARK_SCALE = 1.8;
@@ -126,6 +150,11 @@ export const REDESIGN_WALL_KITS: Readonly<Record<string, {
   panel: string; plain: string; endL: string; endR: string; widths: { panel: number; plain: number; end: number };
   /** Preferred stretch of the kit along a run. */
   scale: number;
+  /**
+   * The decorated panel is the variant instead: never two in a row, plain panels between (a run of them is counted on
+   * the mean bay width, so the narrower plain panels do not stretch it).
+   */
+  featureApart?: boolean;
 }>> = {
   desert: {
     panel: 'SM_Tripo_DesertRampartPanel', plain: 'SM_Tripo_DesertRampartPlainPanel',
@@ -144,7 +173,43 @@ export const REDESIGN_WALL_KITS: Readonly<Record<string, {
     endL: 'SM_Tripo_FrostSeaRampartEndL', endR: 'SM_Tripo_FrostSeaRampartEndR',
     widths: { panel: 4, plain: 4.4, end: .876 }, scale: 1,
   },
+  // Vermilion pilasters at x = +-2.45: bays 4.9 m with the bronze fire-sun boss and lava channel, the plain panel cut
+  // through its outer crenels (three merlons). The fire-sun boss in every other bay at most: a boss in nearly every
+  // bay read as wallpaper down a 60 m wall.
+  inferno: {
+    panel: 'SM_Tripo_InfernoRampartPanel', plain: 'SM_Tripo_InfernoRampartPlainPanel',
+    endL: 'SM_Tripo_InfernoRampartEndL', endR: 'SM_Tripo_InfernoRampartEndR',
+    widths: { panel: 4.9, plain: 3.6, end: 1.344 }, scale: 1, featureApart: true,
+  },
 };
+/**
+ * Podium block variants mixed into decks and massifs, as [asset, share]; the rest stay the kit's own block. The
+ * Zhurong block's lava band under its lid, repeated around every deck, read as a row of identical glowing chests.
+ */
+export const REDESIGN_PLATFORM_VARIANTS: Readonly<Record<string, readonly (readonly [string, number])[]>> = {
+  inferno: [['SM_Tripo_InfernoPlatformBlockB', .45], ['SM_Tripo_InfernoPlatformBlockC', .25]],
+};
+
+/**
+ * Round halls walled with their own kit instead of the rampart runs (plan id → circle in plan metres). The rampart
+ * kit needs about 7.6 m for one bay between its end pilasters; a circle faceted every 3.8 m got two stretched end
+ * pilasters per facet and read as a colonnade. A hall wall section spans two facets with flat cut ends, and a buttress
+ * stands on every joint.
+ */
+export const REDESIGN_CURVED_HALLS: Readonly<Record<string, { center: WhiteboxPoint; radius: number }>> = {
+  'inferno-5-v2': { center: [55, 40], radius: 24 },
+};
+/** Hall wall kit per kit key: section and buttress sizes (metres, published LOD0), scaled uniformly. */
+export const REDESIGN_HALL_KITS: Readonly<Record<string, {
+  wall: string; buttress: string; section: readonly [number, number, number]; pier: readonly [number, number, number];
+}>> = {
+  inferno: { wall: 'SM_Tripo_InfernoHallWall', buttress: 'SM_Tripo_InfernoHallButtress', section: [8.175, 15.804, 2.57], pier: [4.515, 17.837, 3.744] },
+};
+/** Target arc length of one hall wall section. */
+const HALL_SECTION = 7.6;
+/** Section ends sit this far outside the circle, so the chord's middle meets the faceted floor edge. */
+const HALL_OUTSET = .15;
+
 /** Share of panels that take the plain variant (never two in a row). */
 const RAMPART_VARIANT_SHARE = .3;
 /** The least stretch along a run before a plain panel (if wider) is swapped back to fit it. */
@@ -163,6 +228,8 @@ export interface RedesignArtPlacement {
 }
 
 const RAMPART_DEPTH = 3, SAMPLE = .5;
+/** A plain cover at least this tall and this wide both ways is built as podium masonry ('massif'), not one column. */
+const MASSIF_HEIGHT = 4, MASSIF_MIN = 4;
 /** Gateways keep this much of their passage clear on each side of their depth, so no face meets a room. */
 const GATEWAY_MARGIN = 1;
 /** A wall stretch that stops at a gateway's tower reaches this far into it, hiding its end piece in the tower. */
@@ -174,9 +241,9 @@ const GATEWAY_TUCK = 1;
  */
 
 /**
- * Inside an open void (WhiteboxPlan.voids, frost-5's ice hole where the boss rises): never solid mass, so its rim
- * gets no rampart or tower (the boss draws the water and ice; the generator fences it invisibly). The margin
- * covers the faceted inner edge of the ring polygon around the circle.
+ * Inside an open void (WhiteboxPlan.voids: frost-5's ice hole where the boss rises, chapter 3's lava lakes and
+ * channels): never solid mass, so its rim gets no rampart, tower or gateway and the hole or the open lava stays in
+ * view. The margin covers the faceted inner edge of the ring polygon around the circle.
  */
 function insideVoid(plan: WhiteboxPlan, p: WhiteboxPoint): boolean {
   return (plan.voids ?? []).some(v => Math.hypot(p[0] - v.center[0], p[1] - v.center[1]) <= v.radius + 1.5);
@@ -268,6 +335,53 @@ function boundaryRuns(plan: WhiteboxPlan, exact: boolean): BoundaryRun[] {
   return runs;
 }
 
+/**
+ * A round hall's wall: the stretches of its circle that are solid wall (not a passage mouth or a niche) are split into
+ * sections of about HALL_SECTION metres, each a straight chord whose front face meets the faceted floor edge, scaled
+ * uniformly to its chord and never lower than the room's walls; a buttress stands on every joint and at each end.
+ */
+function layHall(plan: WhiteboxPlan, hall: { center: WhiteboxPoint; radius: number }, kit: (typeof REDESIGN_HALL_KITS)[string],
+  wallHeight: number, world: (p: readonly number[]) => P2, yawFacing: (dx: number, dz: number) => number, out: RedesignArtPlacement[]): void {
+  const [cx, cz] = hall.center, R = hall.radius, at = (a: number, r: number): WhiteboxPoint => [cx + Math.cos(a) * r, cz + Math.sin(a) * r];
+  const solid = (a: number) => {
+    const o = at(a, R + .8);
+    return !insideFloor(plan, o) && !insideVoid(plan, o) && insideFloor(plan, at(a, R - .8));
+  };
+  // Solid stretches as angle intervals, starting from an open angle so none is split at the wrap.
+  const STEP = Math.PI / 360, n = Math.round(Math.PI * 2 / STEP);
+  let open = 0;
+  while (open < n && solid(open * STEP)) open++;
+  if (open === n) open = 0;
+  const stretches: [number, number][] = [];
+  let from = -1;
+  for (let k = 0; k <= n; k++) {
+    const a = (open + k) * STEP, wall = k < n && solid(a);
+    if (wall && from < 0) from = a;
+    if (!wall && from >= 0) { stretches.push([from, a - STEP]); from = -1; }
+  }
+  const r = R + HALL_OUTSET;
+  for (const [a0, a1] of stretches) {
+    const arc = (a1 - a0) * R;
+    if (arc < 2) continue;
+    const count = Math.max(1, Math.round(arc / HALL_SECTION)), da = (a1 - a0) / count;
+    // Every section of a stretch spans the same chord; buttresses keep the sections' scale (taller than them).
+    const chord = 2 * r * Math.sin(da / 2), scale = Math.max(chord / kit.section[0], wallHeight / kit.section[1]);
+    for (let i = 0; i <= count; i++) {
+      const a = a0 + i * da;
+      if (i < count) {
+        const mid = a + da / 2, depth = kit.section[2] * scale, face = r * Math.cos(da / 2);
+        const c = world(at(mid, face + depth / 2));
+        // A few centimetres wider than the chord so neighbouring sections close their joint behind the buttress.
+        out.push({ kind: 'rampart', assetId: kit.wall, x: c.x, y: 0, z: c.z, yaw: yawFacing(-Math.cos(mid), -Math.sin(mid)),
+          size: [chord + .3, kit.section[1] * scale, depth] });
+      }
+      // The buttress stands just proud of the joint, its back in the wall body.
+      const pier = kit.pier.map(v => v * scale) as [number, number, number], c = world(at(a, r + pier[2] / 2 - .35));
+      out.push({ kind: 'rampart', assetId: kit.buttress, x: c.x, y: 0, z: c.z, yaw: yawFacing(-Math.cos(a), -Math.sin(a)), size: pier });
+    }
+  }
+}
+
 export function buildRedesignArtLayout(L: LevelLayout): RedesignArtPlacement[] {
   const meta = L.whitebox;
   if (!meta) return [];
@@ -278,6 +392,18 @@ export function buildRedesignArtLayout(L: LevelLayout): RedesignArtPlacement[] {
   const world = (p: readonly number[]): P2 => whiteboxPoint(plan, p);
   const yawFacing = (dx: number, dz: number): number => Math.atan2(dx, dz);
   const height = L.wallHeight;
+
+  // Podium blocks pick a variant by position, so the same plan always builds the same terraces.
+  const variants = REDESIGN_PLATFORM_VARIANTS[kitKey] ?? [];
+  const platformAt = (x: number, z: number): string => {
+    let roll = hash01(x * .731 + 17.3, z * .917 - 5.1);
+    for (const [id, share] of variants) { if (roll < share) return id; roll -= share; }
+    return ids.platform;
+  };
+  // A round hall's arc gets hall wall sections instead of rampart runs and corner towers.
+  const hall = REDESIGN_CURVED_HALLS[plan.id], hallKit = hall && REDESIGN_HALL_KITS[kitKey];
+  const onHallArc = (p: readonly number[]): boolean =>
+    !!hallKit && Math.abs(Math.hypot(p[0] - hall.center[0], p[1] - hall.center[1]) - hall.radius) < 1.2;
 
   const gateways: RedesignArtPlacement[] = [];
   // One gateway per passage, centred on the stretch of its centreline that lies outside every room, so
@@ -306,7 +432,9 @@ export function buildRedesignArtLayout(L: LevelLayout): RedesignArtPlacement[] {
     for (let u = -.5; u <= .5 + 1e-9 && !intrudes; u += 1 / 16) for (let v = -.5; v <= .5 + 1e-9; v += 1 / 8) {
       const across = u * width;
       if (Math.abs(across) < opening / 2) continue;
-      if (insideFloor(plan, [mx - best.uz * across + best.ux * v * depth, mz + best.ux * across + best.uz * v * depth])) { intrudes = true; break; }
+      // Nor may a tower stand in an open void (a causeway crossing chapter 3's lava lake keeps its view).
+      const q: WhiteboxPoint = [mx - best.uz * across + best.ux * v * depth, mz + best.ux * across + best.uz * v * depth];
+      if (insideFloor(plan, q) || insideVoid(plan, q)) { intrudes = true; break; }
     }
     if (intrudes) continue;
     const c = world([mx, mz]);
@@ -326,12 +454,19 @@ export function buildRedesignArtLayout(L: LevelLayout): RedesignArtPlacement[] {
   });
   const layRun = (a0: WhiteboxPoint, ux: number, uz: number, n: WhiteboxPoint, len: number) => {
     if (!kit) return;
-    const w = kit.widths, count = Math.max(0, Math.round((len / kit.scale - 2 * w.end) / w.panel));
-    // Plain panels (never two in a row); the wider plain panel is dropped again where it would squeeze the run.
+    // featureApart: a decorated bay follows a plain one with 1 - share odds, so about 41% of the bays are decorated.
+    const w = kit.widths, feature = (1 - RAMPART_VARIANT_SHARE) / (2 - RAMPART_VARIANT_SHARE);
+    const bay = kit.featureApart ? w.panel * feature + w.plain * (1 - feature) : w.panel;
+    const count = Math.max(0, Math.round((len / kit.scale - 2 * w.end) / bay));
+    // Plain panels (never two in a row, or with featureApart never two decorated in a row); the wider plain panel is
+    // dropped again where it would squeeze the run.
     const plain: boolean[] = [];
-    for (let i = 0; i < count; i++) plain.push(!plain[i - 1] && hash01(a0[0] + ux * (i + 1) * 4.8, a0[1] + uz * (i + 1) * 4.8) < RAMPART_VARIANT_SHARE);
+    for (let i = 0; i < count; i++) {
+      const roll = hash01(a0[0] + ux * (i + 1) * 4.8, a0[1] + uz * (i + 1) * 4.8) < RAMPART_VARIANT_SHARE;
+      plain.push(kit.featureApart ? i > 0 && !plain[i - 1] || roll : !plain[i - 1] && roll);
+    }
     const modelLength = () => 2 * w.end + plain.reduce((sum, v) => sum + (v ? w.plain : w.panel), 0);
-    while (len / modelLength() < RAMPART_SCALE_MIN && plain.includes(true)) plain[plain.lastIndexOf(true)] = false;
+    while (w.plain > w.panel && len / modelLength() < RAMPART_SCALE_MIN && plain.includes(true)) plain[plain.lastIndexOf(true)] = false;
     const scale = len / modelLength();
     // The model's own +X runs along the run (sign > 0) or against it: the left end then starts the run.
     const yaw = yawFacing(-n[0], -n[1]), sign = Math.sign(Math.cos(yaw) * ux - Math.sin(yaw) * uz) || 1;
@@ -345,6 +480,7 @@ export function buildRedesignArtLayout(L: LevelLayout): RedesignArtPlacement[] {
     }
   };
   for (const run of kit ? boundaryRuns(plan, shape.exactRuns) : []) {
+    if (onHallArc(run.a) && onHallArc(run.b)) continue;
     const span = Math.hypot(run.b[0] - run.a[0], run.b[1] - run.a[1]);
     const ux = (run.b[0] - run.a[0]) / span, uz = (run.b[1] - run.a[1]) / span;
     // Runs reach past a corner only where boundaryRuns wrapped it; an open end (a passage mouth) stops on the
@@ -387,6 +523,15 @@ export function buildRedesignArtLayout(L: LevelLayout): RedesignArtPlacement[] {
       out.push({ kind: cover.art, assetId: ids[cover.art], x: c.x, y: 0, z: c.z, yaw, size: sideways ? [d, cover.height, w] : [w, cover.height, d] });
       continue;
     }
+    if (cover.height >= MASSIF_HEIGHT && thick >= MASSIF_MIN) {
+      // Podium blocks about 4 m square tile the whole box (each placement's centre lies inside it).
+      const x0 = Math.min(...xs), z0 = Math.min(...zs), nx = Math.max(1, Math.round(w / 4)), nz = Math.max(1, Math.round(d / 4));
+      for (let i = 0; i < nx; i++) for (let j = 0; j < nz; j++) {
+        const t = world([x0 + (i + .5) * w / nx, z0 + (j + .5) * d / nz]);
+        out.push({ kind: 'massif', assetId: platformAt(t.x, t.z), x: t.x, y: 0, z: t.z, yaw: 0, size: [w / nx, cover.height, d / nz] });
+      }
+      continue;
+    }
     if (cover.height >= 4) out.push({ kind: 'column', assetId: ids.column, x: c.x, y: 0, z: c.z, yaw: 0, size: [w, cover.height, d] });
     else out.push({ kind: cover.height <= 1.5 ? 'barricade' : 'coverwall', assetId: cover.height <= 1.5 ? ids.barricade : ids.coverwall,
       x: c.x, y: 0, z: c.z, yaw: along ? 0 : Math.PI / 2, size: [length, cover.height, thick] });
@@ -426,7 +571,7 @@ export function buildRedesignArtLayout(L: LevelLayout): RedesignArtPlacement[] {
     for (let i = 0; i < nx; i++) for (let j = 0; j < nz; j++) {
       if (i > 0 && i < nx - 1 && j > 0 && j < nz - 1) continue;
       const c = world([Math.min(x0, x1) + (i + .5) * w / nx, Math.min(z0, z1) + (j + .5) * d / nz]);
-      out.push({ kind: 'platform', assetId: ids.platform, x: c.x, y: 0, z: c.z, yaw: 0, size: [w / nx, deck.height, d / nz] });
+      out.push({ kind: 'platform', assetId: platformAt(c.x, c.z), x: c.x, y: 0, z: c.z, yaw: 0, size: [w / nx, deck.height, d / nz] });
     }
   }
   for (const ramp of L.ramps) {
@@ -441,7 +586,7 @@ export function buildRedesignArtLayout(L: LevelLayout): RedesignArtPlacement[] {
   // cap the joints where rampart runs turn and break the even skyline. Front face just behind the edge.
   for (const room of plan.rooms) room.polygon.forEach((a, i) => {
     const b = room.polygon[(i + 1) % room.polygon.length], len = Math.hypot(b[0] - a[0], b[1] - a[1]);
-    if (Math.abs(b[0] - a[0]) < .5 || Math.abs(b[1] - a[1]) < .5 || len < TOWER.width) return;
+    if (Math.abs(b[0] - a[0]) < .5 || Math.abs(b[1] - a[1]) < .5 || len < TOWER.width || onHallArc(a) && onHallArc(b)) return;
     const ux = (b[0] - a[0]) / len, uz = (b[1] - a[1]) / len;
     for (const s of [1, -1]) {
       const nx = uz * s, nz = -ux * s;
@@ -458,6 +603,8 @@ export function buildRedesignArtLayout(L: LevelLayout): RedesignArtPlacement[] {
         size: [TOWER.width, Math.max(TOWER.height, height + 4), TOWER.depth] });
     }
   });
+
+  if (hallKit) layHall(plan, hall, hallKit, height, world, yawFacing, out);
 
   // Landmark beyond the exit, on the far side of the exit room's wall, facing back down the level.
   const exit = world(plan.exit.at), entry = world(plan.entry.at);

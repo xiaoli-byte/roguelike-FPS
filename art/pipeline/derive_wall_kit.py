@@ -63,6 +63,18 @@ KITS = {
     "SM_Tripo_FrostSeaRampartPlain": [
         {"id": "SM_Tripo_FrostSeaRampartPlainPanel", "lo": -2.2, "hi": 2.2, "bind": "frost_sea.v2.rampartPlain.panel"},
     ],
+    # Chapter 3 Zhurong forge-palace kit (Hunyuan3D 2mv, 2026-10-11). Vermilion pilasters measured from LOD0 (front-depth
+    # profile at 5-6 and 8.1-8.6 m: x = -2.85..-2.1 and 2.1..2.82, centres +-2.45), the bronze fire-sun boss between
+    # them; the plain wall is cut through its outer crenels (merlons at +-2.4 / +-1.2 / 0, crenels x = +-1.8), so it
+    # keeps three whole merlons.
+    "SM_Tripo_InfernoRampart": [
+        {"id": "SM_Tripo_InfernoRampartPanel", "lo": -2.45, "hi": 2.45, "bind": "inferno.v2.rampart.panel"},
+        {"id": "SM_Tripo_InfernoRampartEndL", "lo": None, "hi": -2.45, "bind": "inferno.v2.rampart.endL"},
+        {"id": "SM_Tripo_InfernoRampartEndR", "lo": 2.45, "hi": None, "bind": "inferno.v2.rampart.endR"},
+    ],
+    "SM_Tripo_InfernoRampartPlain": [
+        {"id": "SM_Tripo_InfernoRampartPlainPanel", "lo": -1.8, "hi": 1.8, "bind": "inferno.v2.rampartPlain.panel"},
+    ],
 }
 
 

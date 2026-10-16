@@ -1,0 +1,120 @@
+{
+  "steps": {
+    "导入清理": 2.8,
+    "对齐": 0.9,
+    "低模与 UV": 8.4,
+    "投影着色": 21.9,
+    "烘焙": 5.9,
+    "LOD": 0.0,
+    "导出": 0.9
+  },
+  "highpoly": {
+    "faces_raw": 594192,
+    "faces": 282592,
+    "verts": 282594,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.92,
+    "iou_per_view": {
+      "front": 0.945,
+      "left": 0.889,
+      "back": 0.946,
+      "right": 0.889
+    },
+    "height_m": 4.9357,
+    "blockout_height_m": 5.0
+  },
+  "uv": {
+    "smart_islands": 351,
+    "charts": 38,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.1243,
+    "density_merged": 0.1296
+  },
+  "projection": {
+    "uncovered_ratio": 0.2704
+  },
+  "bake_device": "CPU",
+  "emissive_id": {
+    "emissive_texel_ratio": 0.007
+  },
+  "textures": {
+    "T_Tripo_InfernoColumn_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_InfernoColumn_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_InfernoColumn_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_InfernoColumn_LOD0",
+      "tris": 3000,
+      "verts": 1502,
+      "uv_min": [
+        0.0021787146106362343,
+        0.0021787320729345083
+      ],
+      "uv_max": [
+        0.9737774729728699,
+        0.9978213310241699
+      ],
+      "uv_utilization": 0.579,
+      "bbox_min": [
+        -0.9844,
+        -0.8713,
+        -0.0008
+      ],
+      "bbox_max": [
+        0.9845,
+        0.9347,
+        4.9327
+      ]
+    },
+    {
+      "name": "SM_Tripo_InfernoColumn_LOD1",
+      "tris": 1000,
+      "verts": 502,
+      "uv_min": [
+        0.0021787146106362343,
+        0.0021787320729345083
+      ],
+      "uv_max": [
+        0.9676376581192017,
+        0.9976415038108826
+      ],
+      "uv_utilization": 0.558,
+      "bbox_min": [
+        -0.9713,
+        -0.8605,
+        0.0045
+      ],
+      "bbox_max": [
+        0.9742,
+        0.9234,
+        4.9322
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_InfernoColumn/04_export/SM_Tripo_InfernoColumn_v001.glb",
+    "bytes": 217444
+  },
+  "blend": "art/source/props/SM_Tripo_InfernoColumn/03_work/SM_Tripo_InfernoColumn_v001.blend",
+  "total_seconds": 40.9,
+  "_seconds": 45.3
+}

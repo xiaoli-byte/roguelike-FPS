@@ -55,6 +55,11 @@ export function planSvg(plan, { compact = false, fixedScale = false, suffix = ''
     }).join('');
     return `<g><title>${esc(`${d.label} · 高 ${d.height}m · 台阶 ${d.stairs.length} 处`)}</title><rect x="${x0}" y="${y0}" width="${x1 - x0}" height="${y1 - y0}" fill="#e9d6b2" stroke="#8a6d43" stroke-width=".45"/>${stairs}${compact ? '' : text([cx, cy + .6], `${d.height}m`, 'deck', 1.7)}</g>`;
   }).join('');
+  // Voids (lava, ice holes): every non-floor cell inside a void circle is open (an ice hole is fenced, lava is a damaging
+  // floor), so drawing the circles under the floor shows exactly the open area. Hazard strips are drawn over the floor:
+  // lava strips are runtime lava (round-capped like WhiteboxGen's capsules), flame lanes are planned only.
+  const voids = (plan.voids ?? []).map(v => `<circle cx="${v.center[0]}" cy="${v.center[1]}" r="${v.radius}" fill="${v.kind === 'lava' ? '#e8834a' : '#a9cbd9'}"><title>${esc(v.label)}</title></circle>`).join('');
+  const hazards = (plan.hazards ?? []).map(z => `<g><title>${esc(`${z.label} · ${z.note}`)}</title><polyline points="${points(z.points)}" fill="none" stroke="${z.kind === 'lava' ? '#e8834a' : '#d9534f'}" stroke-opacity="${z.kind === 'lava' ? 1 : .75}" stroke-width="${z.width}" stroke-linecap="${z.kind === 'lava' ? 'round' : 'butt'}" stroke-linejoin="round"/></g>`).join('');
   const artNames = { stall: '摊位', goods: '货堆', hoard: '财宝堆', ruin: '倒塌柱段', brazier: '火盆', gate: '门楼', shrine: '传送门神龛' };
   const cover = c => {
     const h = c.height ?? 2.6, kind = c.art === 'gate' || c.art === 'shrine' ? 'structure' : c.art ? 'prop' : h <= 1.5 ? 'low' : 'solid';
@@ -71,9 +76,9 @@ export function planSvg(plan, { compact = false, fixedScale = false, suffix = ''
   <marker id="${uid}-up" markerWidth="4" markerHeight="4" refX="3.7" refY="2" orient="auto" markerUnits="strokeWidth"><path d="M0 0L4 2 0 4" fill="#6b5230"/></marker>` : ''}${[['main','#087eaa'],['optional','#47836b'],['return','#825d98'],['threat','#b54a48']].map(([kind,c]) => `<marker id="${uid}-${kind}" markerWidth="4" markerHeight="4" refX="3.7" refY="2" orient="auto" markerUnits="strokeWidth"><path d="M0 0L4 2 0 4" fill="${c}"/></marker>`).join('')}</defs>
   <style>text{font-family:'Microsoft YaHei','PingFang SC',sans-serif;fill:#294455;text-anchor:middle;pointer-events:none}.room-label{paint-order:stroke;stroke:#f7faf8;stroke-width:.9;stroke-linejoin:round}.dim{fill:#526978;paint-order:stroke;stroke:#dce6ec;stroke-width:.8}.portal{fill:white;font-family:Consolas,monospace;font-weight:bold}.note{fill:#465f6c;paint-order:stroke;stroke:#dce6ec;stroke-width:1}${v2 ? '.deck{fill:#6b5230;font-weight:bold;paint-order:stroke;stroke:#e9d6b2;stroke-width:.6}' : ''}</style>
   <rect width="${vw}" height="${vh}" fill="${field}"/><g transform="translate(${offX} ${offY})">
-  ${passagePolys(edge, 1.1)}${roomPolys(edge, edge, 1.1)}${passagePolys(floor, 0)}${roomPolys(floor, 'none')}
+  ${voids}${passagePolys(edge, 1.1)}${roomPolys(edge, edge, 1.1)}${passagePolys(floor, 0)}${roomPolys(floor, 'none')}
   <rect width="${w}" height="${h}" fill="url(#${uid}-grid)"/>
-  ${platforms}${plan.covers.map(cover).join('')}
+  ${hazards}${platforms}${plan.covers.map(cover).join('')}
   <g data-layer="sightlines">${compact ? '' : sightlines}</g><g data-layer="routes">${routes}</g>
   ${compact ? '' : `<g data-layer="dimensions">${widths}</g><g data-layer="labels">${plan.rooms.map(r => text(r.labelAt, r.label, 'room-label', 2.2)).join('')}</g>`}
   <g data-layer="encounters">${compact ? '' : encounters}${rewards}${merchant}</g>${portal(plan.entry, 'S', '#277b74')}${portal(plan.exit, 'X', '#455a9e')}

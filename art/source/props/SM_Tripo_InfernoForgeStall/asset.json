@@ -1,0 +1,506 @@
+{
+  "id": "SM_Tripo_InfernoForgeStall",
+  "display": "铁匠锻炉摊（V2）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 19:58:08",
+          "files": {
+            "BO_SM_Tripo_InfernoForgeStall_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoForgeStall_v001.json",
+              "sha256": "8aa8736931008c57fd676d2d6990bd6f27bd0e74991e7cc688b91b5f9b50fae5"
+            },
+            "BO_SM_Tripo_InfernoForgeStall_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoForgeStall_v001_views.json",
+              "sha256": "138d58e8bd88a49fe7776abb42fd9b075886f1701a1d7761e36837c8ba370fe8"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.v2.forgeStall"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.0,
+              0,
+              -1.5
+            ],
+            "max": [
+              2.0,
+              3.6,
+              1.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 19:59:06",
+          "files": {
+            "CN_SM_Tripo_InfernoForgeStall_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoForgeStall_v001_source.png",
+              "sha256": "76ebf0b3095294b8d7e97b78f236ab203aea8571ce20fe616ec61ebc87c7b2e5"
+            },
+            "CN_SM_Tripo_InfernoForgeStall_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoForgeStall_v001_front.png",
+              "sha256": "17d3eb75da077271eab1cf05419ca723f08e1e67ea49728319b5ca52788bf122"
+            },
+            "CN_SM_Tripo_InfernoForgeStall_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoForgeStall_v001_left.png",
+              "sha256": "f7765cc9b926dee4e730f5bd6f149f7346d14f30fff518a526a557f9d4bcea3d"
+            },
+            "CN_SM_Tripo_InfernoForgeStall_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoForgeStall_v001_back.png",
+              "sha256": "1e90c5602fd2264e9b6069ca843e32f0c9c2079543298831d3ed18ba86cbc483"
+            },
+            "CN_SM_Tripo_InfernoForgeStall_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoForgeStall_v001_right.png",
+              "sha256": "8ee978c38fe8316f007e64bc3549aa73f9ce89be4c55d57f61e774add5b5f91f"
+            },
+            "CN_SM_Tripo_InfernoForgeStall_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoForgeStall_v001_sheet.png",
+              "sha256": "862567cac9f18cd3a30b05bd5a1eec18f69f4505c04ce3408b42d108a25bd6e1"
+            },
+            "CN_SM_Tripo_InfernoForgeStall_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoForgeStall_v001_prompt.txt",
+              "sha256": "58e47c360d17f0a0cc846187717d03f91dccfd90ef9097316bfda79dae6ef8fe"
+            },
+            "CN_SM_Tripo_InfernoForgeStall_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoForgeStall_v001_registration.json",
+              "sha256": "d202804ad813a51cd8680c6d5b26a6dbf398e66af008f26b3a56aaf2b036fc23"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2048,
+              768
+            ],
+            "references": [],
+            "codex_session": "01a12ad3-d991-7700-a156-48b123f374f0",
+            "attempt": 1,
+            "seconds": 56.3
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian underground forge-palace fantasy of Zhurong, the Chinese god of fire: massive black iron (xuan tie) with heavy rivets, dark charcoal basalt blocks, deep vermilion lacquer, warm aged bronze ding cauldrons, chunky thick iron chains always attached flat to the surfaces, soot-darkened edges, and a few channels and cracks of molten lava. Lava, embers and fire are painted as opaque flat bright orange-yellow surfaces, never as smoke, loose sparks or transparent effects. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (4m wide x 3.6m tall x 3m deep): A smith's forge stall 4m wide, 3.6m tall, 3m deep: a squat dark basalt forge hearth with a bed of glowing coals (painted as an opaque bright orange surface) under a chunky black iron hood and a short thick square chimney rising through a sloping roof of dark iron tiles on a sturdy blackened timber frame with vermilion posts; a big boxy wood-and-leather bellows attached to the side of the hearth, a heavy black anvil on a thick stump in front, a few chunky hammers and tongs hanging flat against the back post. Chunky readable shapes, one solid connected piece standing on the ground.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "76ebf0b3095294b8d7e97b78f236ab203aea8571ce20fe616ec61ebc87c7b2e5",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.5597667638483964,
+              "offset": [
+                103,
+                306
+              ],
+              "size": [
+                305,
+                411
+              ],
+              "physical_height_m": 3.6,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5682715074980268,
+              "offset": [
+                154,
+                306
+              ],
+              "size": [
+                203,
+                411
+              ],
+              "physical_height_m": 3.6,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5746209098164405,
+              "offset": [
+                101,
+                306
+              ],
+              "size": [
+                309,
+                411
+              ],
+              "physical_height_m": 3.6,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5667060212514757,
+              "offset": [
+                155,
+                306
+              ],
+              "size": [
+                202,
+                411
+              ],
+              "physical_height_m": 3.6,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-11 20:04:11",
+          "files": {
+            "CN_SM_Tripo_InfernoForgeStall_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoForgeStall_v002_source.png",
+              "sha256": "76ebf0b3095294b8d7e97b78f236ab203aea8571ce20fe616ec61ebc87c7b2e5"
+            },
+            "CN_SM_Tripo_InfernoForgeStall_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoForgeStall_v002_front.png",
+              "sha256": "9ee82ff48f09d7208b21aa6b9e7cab2345b40e68b3a72ed560ceb23c05f2b137"
+            },
+            "CN_SM_Tripo_InfernoForgeStall_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoForgeStall_v002_left.png",
+              "sha256": "f7765cc9b926dee4e730f5bd6f149f7346d14f30fff518a526a557f9d4bcea3d"
+            },
+            "CN_SM_Tripo_InfernoForgeStall_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoForgeStall_v002_back.png",
+              "sha256": "dbdcc19332fa54181ba403e27eac1e53343b9efeca54695d62130400be329ed3"
+            },
+            "CN_SM_Tripo_InfernoForgeStall_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoForgeStall_v002_right.png",
+              "sha256": "e60e206ad8bf73ece5e718d8254b06807ce9946b3ed9c8cbb51fc0be7fac28c3"
+            },
+            "CN_SM_Tripo_InfernoForgeStall_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoForgeStall_v002_sheet.png",
+              "sha256": "2b6dfc1f9f5724d4996394b804c4d8795f36197dea4b9e02109dc1573619a5a7"
+            },
+            "CN_SM_Tripo_InfernoForgeStall_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoForgeStall_v002_prompt.txt",
+              "sha256": "58e47c360d17f0a0cc846187717d03f91dccfd90ef9097316bfda79dae6ef8fe"
+            },
+            "CN_SM_Tripo_InfernoForgeStall_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoForgeStall_v002_registration.json",
+              "sha256": "d202804ad813a51cd8680c6d5b26a6dbf398e66af008f26b3a56aaf2b036fc23"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2048,
+              768
+            ],
+            "references": [],
+            "codex_session": "01a12ad3-d991-7700-a156-48b123f374f0",
+            "attempt": 1,
+            "seconds": 56.3,
+            "rekeyed_from": 1
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian underground forge-palace fantasy of Zhurong, the Chinese god of fire: massive black iron (xuan tie) with heavy rivets, dark charcoal basalt blocks, deep vermilion lacquer, warm aged bronze ding cauldrons, chunky thick iron chains always attached flat to the surfaces, soot-darkened edges, and a few channels and cracks of molten lava. Lava, embers and fire are painted as opaque flat bright orange-yellow surfaces, never as smoke, loose sparks or transparent effects. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (4m wide x 3.6m tall x 3m deep): A smith's forge stall 4m wide, 3.6m tall, 3m deep: a squat dark basalt forge hearth with a bed of glowing coals (painted as an opaque bright orange surface) under a chunky black iron hood and a short thick square chimney rising through a sloping roof of dark iron tiles on a sturdy blackened timber frame with vermilion posts; a big boxy wood-and-leather bellows attached to the side of the hearth, a heavy black anvil on a thick stump in front, a few chunky hammers and tongs hanging flat against the back post. Chunky readable shapes, one solid connected piece standing on the ground.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "76ebf0b3095294b8d7e97b78f236ab203aea8571ce20fe616ec61ebc87c7b2e5",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.5597667638483964,
+              "offset": [
+                103,
+                306
+              ],
+              "size": [
+                305,
+                411
+              ],
+              "physical_height_m": 3.6,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5682715074980268,
+              "offset": [
+                154,
+                306
+              ],
+              "size": [
+                203,
+                411
+              ],
+              "physical_height_m": 3.6,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5746209098164405,
+              "offset": [
+                101,
+                306
+              ],
+              "size": [
+                309,
+                411
+              ],
+              "physical_height_m": 3.6,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5667060212514757,
+              "offset": [
+                155,
+                306
+              ],
+              "size": [
+                202,
+                411
+              ],
+              "physical_height_m": 3.6,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "用户（2026-10-11 审稿确认）",
+            "note": "用户审阅 docs/art/review/inferno-kit-v001.png 后通过全部 16 张祝融火狱套件概念，按现稿进 Hunyuan3D 2mv",
+            "time": "2026-10-11 22:10:03"
+          }
+        }
+      ]
+    },
+    "emid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:11:53",
+          "files": {
+            "EID_SM_Tripo_InfernoForgeStall_v001_front.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoForgeStall_v001_front.png",
+              "sha256": "1bfd088951f253ba28974ed1829540243b781fa821e68981168c72d99dced3b6"
+            },
+            "EID_SM_Tripo_InfernoForgeStall_v001_left.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoForgeStall_v001_left.png",
+              "sha256": "2f4e762c886925bbc75cd2b14f508390c6b86e892c435ca81d40c1a4f1681654"
+            },
+            "EID_SM_Tripo_InfernoForgeStall_v001_back.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoForgeStall_v001_back.png",
+              "sha256": "749e1ad89fc97c37f6228be6ca755d3c600eb2597c6ba267f449151b696576b0"
+            },
+            "EID_SM_Tripo_InfernoForgeStall_v001_right.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoForgeStall_v001_right.png",
+              "sha256": "595b558f819c1c9bc1ab6e3ba964c04ad4a52dafcc878fd9a017b0c39fadd615"
+            },
+            "EID_SM_Tripo_InfernoForgeStall_v001_compare.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoForgeStall_v001_compare.png",
+              "sha256": "79753bc4e66b4fe3fe4697e7445cb60a85632177a8a45cd166698d089c07d60e"
+            }
+          },
+          "from_concept": 2,
+          "provider": "colour-key",
+          "method": "HSV key of the painted lava / coals / fire on the registered concept views (value >= 0.8, saturation >= 0.62, hue 8-48 deg, 3 px open)",
+          "emissive_ratio": {
+            "front": 0.016,
+            "left": 0.013,
+            "back": 0.0,
+            "right": 0.013
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 23:08:03",
+          "files": {
+            "HP_SM_Tripo_InfernoForgeStall_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoForgeStall_v001_input_front.png",
+              "sha256": "c9a5bc3c078eee91175f4d192cd742211cfa66c3503a3e0c9445c39dd9aa3af2"
+            },
+            "HP_SM_Tripo_InfernoForgeStall_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoForgeStall_v001_input_left.png",
+              "sha256": "b0ea8c75f810873bcd1b367a9bc170dc32631ee0d140abe5cbec1a3bb1991ccf"
+            },
+            "HP_SM_Tripo_InfernoForgeStall_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoForgeStall_v001_input_back.png",
+              "sha256": "9e5432903a432309c9ab21beeb7172683127955c04132a5c31cd4ef0b3af391a"
+            },
+            "HP_SM_Tripo_InfernoForgeStall_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoForgeStall_v001_input_right.png",
+              "sha256": "1fefe8aada5a4d928ef9581891a4b7b08c41f7e41f6fca465d8da780206af8b4"
+            },
+            "HP_SM_Tripo_InfernoForgeStall_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoForgeStall_v001.glb",
+              "sha256": "e241bc5780c50aae46d8a0b0c8405a0b15f2b598be51d053e10c2412ea7c70be"
+            },
+            "HP_SM_Tripo_InfernoForgeStall_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoForgeStall_v001_graph.json",
+              "sha256": "e19b65407f4a3a30de827248f2ecedcd3f467e2d6720f6f5434deafaa9b342d1"
+            }
+          },
+          "from_concept": 2,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              14,
+              270,
+              498,
+              753
+            ],
+            "scale": 2.115702479338843
+          },
+          "seconds": 174.2,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 20.8
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 23:09:48",
+          "files": {
+            "SM_Tripo_InfernoForgeStall_v001.blend": {
+              "path": "03_work/SM_Tripo_InfernoForgeStall_v001.blend",
+              "sha256": "953dba324b08e81ec6d4b0bc6363a85084230a56811d15b696e248489028663a"
+            },
+            "SM_Tripo_InfernoForgeStall_v001.glb": {
+              "path": "04_export/SM_Tripo_InfernoForgeStall_v001.glb",
+              "sha256": "6b93b4c520566987e3f0c913bb9a2d7e16ef88098b919950f5d993e32580c82d"
+            },
+            "SM_Tripo_InfernoForgeStall_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoForgeStall_v001_metrics.json",
+              "sha256": "69438c71f8be6fa8e33876c36c5389d4785091b68d31a7069dca8f86d4e9bc94"
+            },
+            "T_Tripo_InfernoForgeStall_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoForgeStall_BC.png",
+              "sha256": "b50c0e8b3e41cc5687850daaa8c7a6062471eb0405bd87bb24242c44cad2dcdb"
+            },
+            "T_Tripo_InfernoForgeStall_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoForgeStall_E.png",
+              "sha256": "a571b844d18940c68a5c9254c73de189271dfd293f143d229c764514372aa584"
+            },
+            "T_Tripo_InfernoForgeStall_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoForgeStall_N.png",
+              "sha256": "de3841f5e4303904d1885378958996121b8d334771ae90bb2d15ed5b3ab6a639"
+            },
+            "T_Tripo_InfernoForgeStall_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoForgeStall_ORM.png",
+              "sha256": "3db3c2c8c6b283e1b53ce59226c57c41ede6fad25c4c97c039c4c576f081e1ca"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": 1
+          },
+          "align_iou": 0.876,
+          "uncovered_ratio": 0.4635,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1436
+            },
+            {
+              "tris": 1000,
+              "verts": 436
+            }
+          ],
+          "export_kb": 275.3,
+          "seconds": 101.1,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 23:09:49",
+          "files": {
+            "SM_Tripo_InfernoForgeStall_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_InfernoForgeStall_v001_validation_v001.json",
+              "sha256": "181017b8ceefcd353c3ef74096759738bb75d02c0ed801de3de3868c0b6b0652"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 23:09:58",
+          "files": {
+            "SM_Tripo_InfernoForgeStall_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_InfernoForgeStall_v001_review_v001.png",
+              "sha256": "989b64947bd385f000674b25c1581015008fd8bf4136e88372874255b09b20ae"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "2mv 种子 20261003：铁瓦坡顶与方烟囱、朱漆立柱、铁罩炉膛与炭床（自发光）、风箱、铁砧与挂墙锤钳与概念一致；实测 2.60×3.47×1.63 m（比概念窄，布局按等比放置）；IoU 0.876，LOD 无开口边。",
+            "time": "2026-10-11 23:10:48"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 23:10:49",
+          "files": {
+            "SM_Tripo_InfernoForgeStall.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoForgeStall.glb",
+              "sha256": "6b93b4c520566987e3f0c913bb9a2d7e16ef88098b919950f5d993e32580c82d"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_InfernoForgeStall.glb"
+        }
+      ]
+    }
+  }
+}

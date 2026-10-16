@@ -1,0 +1,664 @@
+{
+  "id": "SM_Tripo_InfernoTreasureHoard",
+  "display": "祝融火宝藏（V2）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 19:58:15",
+          "files": {
+            "BO_SM_Tripo_InfernoTreasureHoard_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoTreasureHoard_v001.json",
+              "sha256": "22babac02fc75ab9f44eba2c97258fd1f6e469b663904f010b46bf1613cb9eb4"
+            },
+            "BO_SM_Tripo_InfernoTreasureHoard_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoTreasureHoard_v001_views.json",
+              "sha256": "f5fc2bc5a0b5e18832a3ac1ed9813139204ef546a366cbe6a181816254e7f6ca"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.v2.treasureHoard"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.0,
+              0,
+              -1.5
+            ],
+            "max": [
+              2.0,
+              1.8,
+              1.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 19:59:05",
+          "files": {
+            "CN_SM_Tripo_InfernoTreasureHoard_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoTreasureHoard_v001_source.png",
+              "sha256": "94777286ed9596bf78dc5a023c110b8bd8128433cbe639c52d278741b12064c0"
+            },
+            "CN_SM_Tripo_InfernoTreasureHoard_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoTreasureHoard_v001_front.png",
+              "sha256": "f3fcce0fc4a06ff7d031d6f00ff7a57d8412eed009a9bae680555a6486cec82a"
+            },
+            "CN_SM_Tripo_InfernoTreasureHoard_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoTreasureHoard_v001_left.png",
+              "sha256": "a50f7f4f52888a187467aaebd730ec6c45080222e65d272cfeeb58415325dc0d"
+            },
+            "CN_SM_Tripo_InfernoTreasureHoard_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoTreasureHoard_v001_back.png",
+              "sha256": "634443653f307536271e8d2607cd9c951452635223173258180697574b2e130f"
+            },
+            "CN_SM_Tripo_InfernoTreasureHoard_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoTreasureHoard_v001_right.png",
+              "sha256": "3a502066cc15469fc2635b9f3be4767443f5aec36b1f3e1db30c949b8ba9c2aa"
+            },
+            "CN_SM_Tripo_InfernoTreasureHoard_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoTreasureHoard_v001_sheet.png",
+              "sha256": "5a587a30495a4c66d4e35e7a0fc24b02ba145f84cb8fcb2e6a6ed2ed93bb473a"
+            },
+            "CN_SM_Tripo_InfernoTreasureHoard_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoTreasureHoard_v001_prompt.txt",
+              "sha256": "0dc17d680887c5c25b4960b7fd0069f593d52394788a3b611f5d1b6a88722339"
+            },
+            "CN_SM_Tripo_InfernoTreasureHoard_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoTreasureHoard_v001_registration.json",
+              "sha256": "bef9396ecc82b64e39a8cf6c36d0be33a35491f4c947cca6f2b408bddef91693"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a12ad3-f5dd-7c41-9688-3700d365dd9b",
+            "attempt": 1,
+            "seconds": 47.9
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian underground forge-palace fantasy of Zhurong, the Chinese god of fire: massive black iron (xuan tie) with heavy rivets, dark charcoal basalt blocks, deep vermilion lacquer, warm aged bronze ding cauldrons, chunky thick iron chains always attached flat to the surfaces, soot-darkened edges, and a few channels and cracks of molten lava. Lava, embers and fire are painted as opaque flat bright orange-yellow surfaces, never as smoke, loose sparks or transparent effects. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (4m wide x 1.8m tall x 3m deep): A treasure hoard of the fire god's palace 4m wide, 1.8m tall, 3m deep: a heap of gold yuanbao ingots, red-gold coins, small bronze ding vessels and a few big faceted fire-orange gems spilling from two open vermilion-lacquered chests bound with black iron, a ceremonial bronze axe lying flat on top. Gold, bronze, vermilion and glowing orange. One solid connected heap resting on the ground.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "94777286ed9596bf78dc5a023c110b8bd8128433cbe639c52d278741b12064c0",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.4784053156146179,
+              "offset": [
+                116,
+                409
+              ],
+              "size": [
+                280,
+                206
+              ],
+              "physical_height_m": 1.8,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.47509072913229955,
+              "offset": [
+                170,
+                409
+              ],
+              "size": [
+                172,
+                206
+              ],
+              "physical_height_m": 1.8,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.4806408544726301,
+              "offset": [
+                121,
+                409
+              ],
+              "size": [
+                270,
+                206
+              ],
+              "physical_height_m": 1.8,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.4729064039408867,
+              "offset": [
+                163,
+                409
+              ],
+              "size": [
+                186,
+                206
+              ],
+              "physical_height_m": 1.8,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-11 20:04:46",
+          "files": {
+            "CN_SM_Tripo_InfernoTreasureHoard_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoTreasureHoard_v002_source.png",
+              "sha256": "94777286ed9596bf78dc5a023c110b8bd8128433cbe639c52d278741b12064c0"
+            },
+            "CN_SM_Tripo_InfernoTreasureHoard_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoTreasureHoard_v002_front.png",
+              "sha256": "f3fcce0fc4a06ff7d031d6f00ff7a57d8412eed009a9bae680555a6486cec82a"
+            },
+            "CN_SM_Tripo_InfernoTreasureHoard_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoTreasureHoard_v002_left.png",
+              "sha256": "2d7abb4faac537f1ad43b07bc56771d29b80fdc9518e59d970fedbdee304c3ff"
+            },
+            "CN_SM_Tripo_InfernoTreasureHoard_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoTreasureHoard_v002_back.png",
+              "sha256": "195f319ec55dcb77516007401f3c9e283c0f18e70a8f095d273b3773e6c7295a"
+            },
+            "CN_SM_Tripo_InfernoTreasureHoard_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoTreasureHoard_v002_right.png",
+              "sha256": "74cffb54dfeacfbe2146b1ffb40ff21f3839c8aac6af5d9a913ffdf672c52f67"
+            },
+            "CN_SM_Tripo_InfernoTreasureHoard_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoTreasureHoard_v002_sheet.png",
+              "sha256": "2eaec01d3e5f7a8c718fa3d6bf5dea5eeffbd83f5cfc41dc13c1fdaa967d9e10"
+            },
+            "CN_SM_Tripo_InfernoTreasureHoard_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoTreasureHoard_v002_prompt.txt",
+              "sha256": "0dc17d680887c5c25b4960b7fd0069f593d52394788a3b611f5d1b6a88722339"
+            },
+            "CN_SM_Tripo_InfernoTreasureHoard_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoTreasureHoard_v002_registration.json",
+              "sha256": "bef9396ecc82b64e39a8cf6c36d0be33a35491f4c947cca6f2b408bddef91693"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a12ad3-f5dd-7c41-9688-3700d365dd9b",
+            "attempt": 1,
+            "seconds": 47.9,
+            "rekeyed_from": 1
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian underground forge-palace fantasy of Zhurong, the Chinese god of fire: massive black iron (xuan tie) with heavy rivets, dark charcoal basalt blocks, deep vermilion lacquer, warm aged bronze ding cauldrons, chunky thick iron chains always attached flat to the surfaces, soot-darkened edges, and a few channels and cracks of molten lava. Lava, embers and fire are painted as opaque flat bright orange-yellow surfaces, never as smoke, loose sparks or transparent effects. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (4m wide x 1.8m tall x 3m deep): A treasure hoard of the fire god's palace 4m wide, 1.8m tall, 3m deep: a heap of gold yuanbao ingots, red-gold coins, small bronze ding vessels and a few big faceted fire-orange gems spilling from two open vermilion-lacquered chests bound with black iron, a ceremonial bronze axe lying flat on top. Gold, bronze, vermilion and glowing orange. One solid connected heap resting on the ground.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "94777286ed9596bf78dc5a023c110b8bd8128433cbe639c52d278741b12064c0",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.4784053156146179,
+              "offset": [
+                116,
+                409
+              ],
+              "size": [
+                280,
+                206
+              ],
+              "physical_height_m": 1.8,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.47509072913229955,
+              "offset": [
+                170,
+                409
+              ],
+              "size": [
+                172,
+                206
+              ],
+              "physical_height_m": 1.8,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.4806408544726301,
+              "offset": [
+                121,
+                409
+              ],
+              "size": [
+                270,
+                206
+              ],
+              "physical_height_m": 1.8,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.4729064039408867,
+              "offset": [
+                163,
+                409
+              ],
+              "size": [
+                186,
+                206
+              ],
+              "physical_height_m": 1.8,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "用户（2026-10-11 审稿确认）",
+            "note": "用户审阅 docs/art/review/inferno-kit-v001.png 后通过全部 16 张祝融火狱套件概念，按现稿进 Hunyuan3D 2mv",
+            "time": "2026-10-11 22:10:04"
+          }
+        }
+      ]
+    },
+    "emid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:11:54",
+          "files": {
+            "EID_SM_Tripo_InfernoTreasureHoard_v001_front.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoTreasureHoard_v001_front.png",
+              "sha256": "7af48416f74e26fdac90e3a0b3684c4ae96350b5b1c91a9290f877bb9fb397cc"
+            },
+            "EID_SM_Tripo_InfernoTreasureHoard_v001_left.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoTreasureHoard_v001_left.png",
+              "sha256": "a6170a428113da7eba058857f5edfd3b7a97ef790032ba690accc1d85c1d4eab"
+            },
+            "EID_SM_Tripo_InfernoTreasureHoard_v001_back.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoTreasureHoard_v001_back.png",
+              "sha256": "1cece2614c8aad34370d34f40b590e1d5ab6780eee99d2b62e687eb0d2be9298"
+            },
+            "EID_SM_Tripo_InfernoTreasureHoard_v001_right.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoTreasureHoard_v001_right.png",
+              "sha256": "06a7e0e18cf48ac723f76d29fd5b8a57778bb39f78242c66c30e1613b8a2f93a"
+            },
+            "EID_SM_Tripo_InfernoTreasureHoard_v001_compare.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoTreasureHoard_v001_compare.png",
+              "sha256": "05853ff0330e5d27092a12bddb4094c106cbb4d0138317c71382edcc29d9ec2b"
+            }
+          },
+          "from_concept": 2,
+          "provider": "colour-key",
+          "method": "HSV key of the painted lava / coals / fire on the registered concept views (value >= 0.86, saturation >= 0.8, hue 2-26 deg, 3 px open)",
+          "emissive_ratio": {
+            "front": 0.008,
+            "left": 0.017,
+            "back": 0.019,
+            "right": 0.013
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 23:14:49",
+          "files": {
+            "HP_SM_Tripo_InfernoTreasureHoard_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoTreasureHoard_v001_input_front.png",
+              "sha256": "19f4148c4c61878a1825853b7a27bda0eff328b1bab15dfe22d38c43809fdc26"
+            },
+            "HP_SM_Tripo_InfernoTreasureHoard_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoTreasureHoard_v001_input_left.png",
+              "sha256": "dbe320ffb13c1427fef10395406ddeae7ff06f85e07c3960881e97e146327de5"
+            },
+            "HP_SM_Tripo_InfernoTreasureHoard_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoTreasureHoard_v001_input_back.png",
+              "sha256": "431a8259e305dd5bfea391a24b48ec63785521d546db51036cedff3236b5f7cd"
+            },
+            "HP_SM_Tripo_InfernoTreasureHoard_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoTreasureHoard_v001_input_right.png",
+              "sha256": "37847b17b98845735b2d202b5f2e3ecccfcd58c8afb4264edda1efd32430b7eb"
+            },
+            "HP_SM_Tripo_InfernoTreasureHoard_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoTreasureHoard_v001.glb",
+              "sha256": "20e57af5d3a918de7e5076b446c1d227b5fe5ce7f6036551d40fc3058a03cdfd"
+            },
+            "HP_SM_Tripo_InfernoTreasureHoard_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoTreasureHoard_v001_graph.json",
+              "sha256": "1016b9440bf9899b127b4062061ae7b1373f934550698b3b8538e5fc97bcd105"
+            }
+          },
+          "from_concept": 2,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              92,
+              348,
+              420,
+              676
+            ],
+            "scale": 3.1219512195121952
+          },
+          "seconds": 208.0,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 28.5
+        },
+        {
+          "version": 2,
+          "created": "2026-10-11 23:21:24",
+          "files": {
+            "HP_SM_Tripo_InfernoTreasureHoard_v002_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoTreasureHoard_v002_input_front.png",
+              "sha256": "19f4148c4c61878a1825853b7a27bda0eff328b1bab15dfe22d38c43809fdc26"
+            },
+            "HP_SM_Tripo_InfernoTreasureHoard_v002_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoTreasureHoard_v002_input_left.png",
+              "sha256": "dbe320ffb13c1427fef10395406ddeae7ff06f85e07c3960881e97e146327de5"
+            },
+            "HP_SM_Tripo_InfernoTreasureHoard_v002_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoTreasureHoard_v002_input_back.png",
+              "sha256": "431a8259e305dd5bfea391a24b48ec63785521d546db51036cedff3236b5f7cd"
+            },
+            "HP_SM_Tripo_InfernoTreasureHoard_v002_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoTreasureHoard_v002_input_right.png",
+              "sha256": "37847b17b98845735b2d202b5f2e3ecccfcd58c8afb4264edda1efd32430b7eb"
+            },
+            "HP_SM_Tripo_InfernoTreasureHoard_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoTreasureHoard_v002.glb",
+              "sha256": "156d51136f228298e1d93eeca77a067ecb36379e35b6d42fac04bbebb801b2f9"
+            },
+            "HP_SM_Tripo_InfernoTreasureHoard_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoTreasureHoard_v002_graph.json",
+              "sha256": "e0d84d5d67e02251d39d719f90b1ca45e49114abf5a99897879fc76b537942a0"
+            }
+          },
+          "from_concept": 2,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261011,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              92,
+              348,
+              420,
+              676
+            ],
+            "scale": 3.1219512195121952
+          },
+          "seconds": 183.3,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 29.8
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 23:17:15",
+          "files": {
+            "SM_Tripo_InfernoTreasureHoard_v001.blend": {
+              "path": "03_work/SM_Tripo_InfernoTreasureHoard_v001.blend",
+              "sha256": "3f2c4d26609e4295bd34cc8249205b9d6bebcd6e37162227587b38ca1600b785"
+            },
+            "SM_Tripo_InfernoTreasureHoard_v001.glb": {
+              "path": "04_export/SM_Tripo_InfernoTreasureHoard_v001.glb",
+              "sha256": "da2bb0ed2f34a5e9fe42f413505f419e511b0ebc1a7360a27fe76dae1f522e30"
+            },
+            "SM_Tripo_InfernoTreasureHoard_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoTreasureHoard_v001_metrics.json",
+              "sha256": "8a4ac40fe77f6570756f48bed9c40dfd44de71e16a01eece94b1805da6fed0a1"
+            },
+            "T_Tripo_InfernoTreasureHoard_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoTreasureHoard_BC.png",
+              "sha256": "87e6c9bff34906770cfd1d758bba740ccace43f6c43fbbfdbefe967603b13b4a"
+            },
+            "T_Tripo_InfernoTreasureHoard_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoTreasureHoard_E.png",
+              "sha256": "26a4819a9c609283402e94ea3aabf6a1f2712bbebb89b9e433dea0f4b45101d8"
+            },
+            "T_Tripo_InfernoTreasureHoard_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoTreasureHoard_N.png",
+              "sha256": "49a2bb85cf5e6993ceb45e88af4b7e57f7819acbb5333ee06ebe6fc029af8700"
+            },
+            "T_Tripo_InfernoTreasureHoard_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoTreasureHoard_ORM.png",
+              "sha256": "ef6adac86294129511790744b8d3d8bf0d90f5798362e51e9f92b32d1fbeda0e"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": 1
+          },
+          "align_iou": 0.866,
+          "uncovered_ratio": 0.4573,
+          "lods": [
+            {
+              "tris": 2999,
+              "verts": 1318
+            },
+            {
+              "tris": 1140,
+              "verts": 386
+            }
+          ],
+          "export_kb": 452.2,
+          "seconds": 143.6,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-11 23:23:56",
+          "files": {
+            "SM_Tripo_InfernoTreasureHoard_v002.blend": {
+              "path": "03_work/SM_Tripo_InfernoTreasureHoard_v002.blend",
+              "sha256": "c653da6e25e2210951ec50431320525cd43479bc95dd1f1dfeb750d8022a773e"
+            },
+            "SM_Tripo_InfernoTreasureHoard_v002.glb": {
+              "path": "04_export/SM_Tripo_InfernoTreasureHoard_v002.glb",
+              "sha256": "06f592c7b1f74c49e8b2bffc96f7265186ca29eb59aab33f9c9a084c307a35f8"
+            },
+            "SM_Tripo_InfernoTreasureHoard_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoTreasureHoard_v002_metrics.json",
+              "sha256": "d1e9fb1fdd2d23569d619918aa453e2cb1b90e1f0c28273a52e2451342c8355c"
+            },
+            "T_Tripo_InfernoTreasureHoard_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoTreasureHoard_BC.png",
+              "sha256": "37d378fb381fc7cb384e4205dff6f9315ff0a3780be8cec0b67cd2a0c7a01241"
+            },
+            "T_Tripo_InfernoTreasureHoard_E.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoTreasureHoard_E.png",
+              "sha256": "d79f7e19b451c6a3495e31cdbea21a4f2916ac3cc5f1099f133cc57ea0df76d8"
+            },
+            "T_Tripo_InfernoTreasureHoard_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoTreasureHoard_N.png",
+              "sha256": "f4d45562a3f4b81af3230775dae2cc142b5212c020ab65ec2efa537e5e6e7768"
+            },
+            "T_Tripo_InfernoTreasureHoard_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoTreasureHoard_ORM.png",
+              "sha256": "7cfdb173c979631e6baea9a8aa5e140ae4edb974ccc486f08f31f8c7ca17c813"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": 1
+          },
+          "align_iou": 0.855,
+          "uncovered_ratio": 0.4584,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1350
+            },
+            {
+              "tris": 1000,
+              "verts": 350
+            }
+          ],
+          "export_kb": 448.4,
+          "seconds": 149.4,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 23:17:15",
+          "files": {
+            "SM_Tripo_InfernoTreasureHoard_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_InfernoTreasureHoard_v001_validation_v001.json",
+              "sha256": "8bcf1ee984e6f98deb21825a69dac0985234538e3639bf5bfad6f57187f89627"
+            }
+          },
+          "from_build": 1,
+          "errors": 1,
+          "warnings": 1,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 2,
+          "created": "2026-10-11 23:17:56",
+          "files": {
+            "SM_Tripo_InfernoTreasureHoard_v001_validation_v002.json": {
+              "path": "05_review/SM_Tripo_InfernoTreasureHoard_v001_validation_v002.json",
+              "sha256": "5b3ea4fb5b7c84aac51d0f25b2fa1c275fdd711f58e72eda16d5ebc1c8692277"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [
+            "LOD1 面数"
+          ],
+          "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-10-11 23:23:56",
+          "files": {
+            "SM_Tripo_InfernoTreasureHoard_v002_validation_v003.json": {
+              "path": "05_review/SM_Tripo_InfernoTreasureHoard_v002_validation_v003.json",
+              "sha256": "409ee73754b19e6887fbcb36f373720a6b9584f94bf72d755f360360bb1f817b"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 2,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 23:18:06",
+          "files": {
+            "SM_Tripo_InfernoTreasureHoard_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_InfernoTreasureHoard_v001_review_v001.png",
+              "sha256": "fa915e1434be23a634d21819e3ca800f61cbcd8e8c2b6a5008b40361ea2c299d"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-11 23:24:03",
+          "files": {
+            "SM_Tripo_InfernoTreasureHoard_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_InfernoTreasureHoard_v002_review_v002.png",
+              "sha256": "c6a13602918b345fe734d9ff332097a71b15eae5b5e91fecea9115b63c860f5c"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "v001（种子 20261003）侧视投影糊成一片、LOD1 1140 面超预算，未采用；采用 2mv 种子 20261011 的 v002：两只朱漆铁箍宝箱、元宝金币堆、青铜小鼎、横放的铜钺与火色宝石（自发光）与概念一致，侧视清楚；实测 2.31×1.71×1.56 m；IoU 0.855，LOD 3000 / 1000 在预算内且无开口边。",
+            "time": "2026-10-11 23:24:42"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 23:24:42",
+          "files": {
+            "SM_Tripo_InfernoTreasureHoard.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoTreasureHoard.glb",
+              "sha256": "06f592c7b1f74c49e8b2bffc96f7265186ca29eb59aab33f9c9a084c307a35f8"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_InfernoTreasureHoard.glb"
+        }
+      ]
+    }
+  }
+}

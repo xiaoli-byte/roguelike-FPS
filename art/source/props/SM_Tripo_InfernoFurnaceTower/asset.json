@@ -1,0 +1,510 @@
+{
+  "id": "SM_Tripo_InfernoFurnaceTower",
+  "display": "熔炉烟囱角楼（V2）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 19:59:06",
+          "files": {
+            "BO_SM_Tripo_InfernoFurnaceTower_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoFurnaceTower_v001.json",
+              "sha256": "a5ac54f8eedf81e0ab3d533a33cc9ac6943b67bacaf6c447b068d3b3a358c99d"
+            },
+            "BO_SM_Tripo_InfernoFurnaceTower_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoFurnaceTower_v001_views.json",
+              "sha256": "bf962ec7d838d673ce78cc5af53fb2a02742a70d3be9afa6ccfd9ecf24fc579b"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.v2.furnaceTower"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -3.6,
+              0,
+              -3.6
+            ],
+            "max": [
+              3.6,
+              13.0,
+              3.6
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 20:01:53",
+          "files": {
+            "CN_SM_Tripo_InfernoFurnaceTower_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFurnaceTower_v001_source.png",
+              "sha256": "688a4850421cabd681d4e420e7b2d4dd15444fb8f2501a104fa2445dac8b0382"
+            },
+            "CN_SM_Tripo_InfernoFurnaceTower_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFurnaceTower_v001_front.png",
+              "sha256": "f6aa21212d531e0b8ed29f4f5b1e3226fbafaa0e427e4b7c624b2988b33f2a85"
+            },
+            "CN_SM_Tripo_InfernoFurnaceTower_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFurnaceTower_v001_left.png",
+              "sha256": "22a5cf7dabb0308d082224bd80c31bbc9bbae95cbe78ae33b3fc6ecc98780f6e"
+            },
+            "CN_SM_Tripo_InfernoFurnaceTower_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFurnaceTower_v001_back.png",
+              "sha256": "e5f97d008b3ae49be081af0547d85ced7d5a71f044815ad8f8ed7bd05767cd0a"
+            },
+            "CN_SM_Tripo_InfernoFurnaceTower_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFurnaceTower_v001_right.png",
+              "sha256": "a60403aadbb75e335a44d91cc51aec7a4cdb14bf040ddf7381c6d35bdddb3be1"
+            },
+            "CN_SM_Tripo_InfernoFurnaceTower_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFurnaceTower_v001_sheet.png",
+              "sha256": "2ad05e3c5c74a264a55416da287fe34a1f980f73aa2c0901aae927ddea100ba1"
+            },
+            "CN_SM_Tripo_InfernoFurnaceTower_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFurnaceTower_v001_prompt.txt",
+              "sha256": "99665e3db35328721a69c846a3f1a9136bfd9dfcb0bd4569835b61bfc3a11732"
+            },
+            "CN_SM_Tripo_InfernoFurnaceTower_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFurnaceTower_v001_registration.json",
+              "sha256": "98d10db3d77196388629e83ac266c0932cb59d2074cae020428ba28e2060803f"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              1774,
+              887
+            ],
+            "references": [],
+            "codex_session": "01a12ad6-88a7-70e0-8f5e-c2020e95ffc8",
+            "attempt": 1,
+            "seconds": 48.0
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian underground forge-palace fantasy of Zhurong, the Chinese god of fire: massive black iron (xuan tie) with heavy rivets, dark charcoal basalt blocks, deep vermilion lacquer, warm aged bronze ding cauldrons, chunky thick iron chains always attached flat to the surfaces, soot-darkened edges, and a few channels and cracks of molten lava. Lava, embers and fire are painted as opaque flat bright orange-yellow surfaces, never as smoke, loose sparks or transparent effects. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (7.2m wide x 13m tall x 7.2m deep): A square forge-palace corner tower 7.2m wide, 13m tall that doubles as a giant furnace chimney, SLENDER: almost twice as tall as it is wide, and NOTHING sticks out wider than the base, the roof eaves overhang only slightly: a battered dark basalt base with a big arched furnace mouth on the front filled with glowing molten orange fire (painted as an opaque bright surface, closed and flat), a solid upper storey clad in riveted black iron with deep vermilion lacquer beams, crowned by a compact hip roof of dark bronze tiles with small upturned eave tips, and a squat thick square chimney stack rising through the roof with a glowing orange rim. No smoke, no balcony railings. Finished on all four sides. One solid connected piece.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "688a4850421cabd681d4e420e7b2d4dd15444fb8f2501a104fa2445dac8b0382",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.8894362342638202,
+              "offset": [
+                47,
+                99
+              ],
+              "size": [
+                417,
+                825
+              ],
+              "physical_height_m": 13.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.8894362342638202,
+              "offset": [
+                104,
+                99
+              ],
+              "size": [
+                303,
+                825
+              ],
+              "physical_height_m": 13.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.8894362342638202,
+              "offset": [
+                49,
+                99
+              ],
+              "size": [
+                414,
+                825
+              ],
+              "physical_height_m": 13.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.8894362342638202,
+              "offset": [
+                105,
+                99
+              ],
+              "size": [
+                301,
+                825
+              ],
+              "physical_height_m": 13.0,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-11 20:04:47",
+          "files": {
+            "CN_SM_Tripo_InfernoFurnaceTower_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFurnaceTower_v002_source.png",
+              "sha256": "688a4850421cabd681d4e420e7b2d4dd15444fb8f2501a104fa2445dac8b0382"
+            },
+            "CN_SM_Tripo_InfernoFurnaceTower_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFurnaceTower_v002_front.png",
+              "sha256": "f6aa21212d531e0b8ed29f4f5b1e3226fbafaa0e427e4b7c624b2988b33f2a85"
+            },
+            "CN_SM_Tripo_InfernoFurnaceTower_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFurnaceTower_v002_left.png",
+              "sha256": "22a5cf7dabb0308d082224bd80c31bbc9bbae95cbe78ae33b3fc6ecc98780f6e"
+            },
+            "CN_SM_Tripo_InfernoFurnaceTower_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFurnaceTower_v002_back.png",
+              "sha256": "e5f97d008b3ae49be081af0547d85ced7d5a71f044815ad8f8ed7bd05767cd0a"
+            },
+            "CN_SM_Tripo_InfernoFurnaceTower_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFurnaceTower_v002_right.png",
+              "sha256": "a60403aadbb75e335a44d91cc51aec7a4cdb14bf040ddf7381c6d35bdddb3be1"
+            },
+            "CN_SM_Tripo_InfernoFurnaceTower_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFurnaceTower_v002_sheet.png",
+              "sha256": "2ad05e3c5c74a264a55416da287fe34a1f980f73aa2c0901aae927ddea100ba1"
+            },
+            "CN_SM_Tripo_InfernoFurnaceTower_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFurnaceTower_v002_prompt.txt",
+              "sha256": "99665e3db35328721a69c846a3f1a9136bfd9dfcb0bd4569835b61bfc3a11732"
+            },
+            "CN_SM_Tripo_InfernoFurnaceTower_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFurnaceTower_v002_registration.json",
+              "sha256": "98d10db3d77196388629e83ac266c0932cb59d2074cae020428ba28e2060803f"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              1774,
+              887
+            ],
+            "references": [],
+            "codex_session": "01a12ad6-88a7-70e0-8f5e-c2020e95ffc8",
+            "attempt": 1,
+            "seconds": 48.0,
+            "rekeyed_from": 1
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian underground forge-palace fantasy of Zhurong, the Chinese god of fire: massive black iron (xuan tie) with heavy rivets, dark charcoal basalt blocks, deep vermilion lacquer, warm aged bronze ding cauldrons, chunky thick iron chains always attached flat to the surfaces, soot-darkened edges, and a few channels and cracks of molten lava. Lava, embers and fire are painted as opaque flat bright orange-yellow surfaces, never as smoke, loose sparks or transparent effects. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (7.2m wide x 13m tall x 7.2m deep): A square forge-palace corner tower 7.2m wide, 13m tall that doubles as a giant furnace chimney, SLENDER: almost twice as tall as it is wide, and NOTHING sticks out wider than the base, the roof eaves overhang only slightly: a battered dark basalt base with a big arched furnace mouth on the front filled with glowing molten orange fire (painted as an opaque bright surface, closed and flat), a solid upper storey clad in riveted black iron with deep vermilion lacquer beams, crowned by a compact hip roof of dark bronze tiles with small upturned eave tips, and a squat thick square chimney stack rising through the roof with a glowing orange rim. No smoke, no balcony railings. Finished on all four sides. One solid connected piece.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "688a4850421cabd681d4e420e7b2d4dd15444fb8f2501a104fa2445dac8b0382",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.8894362342638202,
+              "offset": [
+                47,
+                99
+              ],
+              "size": [
+                417,
+                825
+              ],
+              "physical_height_m": 13.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.8894362342638202,
+              "offset": [
+                104,
+                99
+              ],
+              "size": [
+                303,
+                825
+              ],
+              "physical_height_m": 13.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.8894362342638202,
+              "offset": [
+                49,
+                99
+              ],
+              "size": [
+                414,
+                825
+              ],
+              "physical_height_m": 13.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.8894362342638202,
+              "offset": [
+                105,
+                99
+              ],
+              "size": [
+                301,
+                825
+              ],
+              "physical_height_m": 13.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "用户（2026-10-11 审稿确认）",
+            "note": "用户审阅 docs/art/review/inferno-kit-v001.png 后通过全部 16 张祝融火狱套件概念，按现稿进 Hunyuan3D 2mv",
+            "time": "2026-10-11 22:09:59"
+          }
+        }
+      ]
+    },
+    "emid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:11:48",
+          "files": {
+            "EID_SM_Tripo_InfernoFurnaceTower_v001_front.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoFurnaceTower_v001_front.png",
+              "sha256": "336579251c0ea08ded2a7217c6a83c8c9f06f37fd7de98bb2b4005e8e8cbbb25"
+            },
+            "EID_SM_Tripo_InfernoFurnaceTower_v001_left.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoFurnaceTower_v001_left.png",
+              "sha256": "fb9542eca2348e22f8a6d5f1910918ea0d292ab13b5b4e3c206ba5880bec30cd"
+            },
+            "EID_SM_Tripo_InfernoFurnaceTower_v001_back.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoFurnaceTower_v001_back.png",
+              "sha256": "c1779e3a72638361e46efeeba682ff9e3cbfe103fcdbc29726e6cae7f6e4eb96"
+            },
+            "EID_SM_Tripo_InfernoFurnaceTower_v001_right.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoFurnaceTower_v001_right.png",
+              "sha256": "0dc86451a062bd278668f8f83f92b20c92dbd698f614ee50a0a655670343169c"
+            },
+            "EID_SM_Tripo_InfernoFurnaceTower_v001_compare.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoFurnaceTower_v001_compare.png",
+              "sha256": "1e01b78dd4b6c921a446b11f78c260fff583d55374be9c7f5499eb923637b834"
+            }
+          },
+          "from_concept": 2,
+          "provider": "colour-key",
+          "method": "HSV key of the painted lava / coals / fire on the registered concept views (value >= 0.8, saturation >= 0.62, hue 8-48 deg, 3 px open)",
+          "emissive_ratio": {
+            "front": 0.088,
+            "left": 0.015,
+            "back": 0.011,
+            "right": 0.015
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:29:11",
+          "files": {
+            "HP_SM_Tripo_InfernoFurnaceTower_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoFurnaceTower_v001_input_front.png",
+              "sha256": "b00d24108c50c1ba610f06ba549e91efdd839b1eb253b4062d92a512168e976b"
+            },
+            "HP_SM_Tripo_InfernoFurnaceTower_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoFurnaceTower_v001_input_left.png",
+              "sha256": "26c505b3ea65fd6bc54e995a534ef0c24fc9d30d53d486c3446b891778a87082"
+            },
+            "HP_SM_Tripo_InfernoFurnaceTower_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoFurnaceTower_v001_input_back.png",
+              "sha256": "21c23d18c40b244ecf16a6a07e87b7e1a221c52e65b0e735288fc4c05df39adf"
+            },
+            "HP_SM_Tripo_InfernoFurnaceTower_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoFurnaceTower_v001_input_right.png",
+              "sha256": "3a90c0144fffe2a96378f8b34e44610e112f5315cd1cc9ea45126adf244d5257"
+            },
+            "HP_SM_Tripo_InfernoFurnaceTower_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoFurnaceTower_v001.glb",
+              "sha256": "453c273afd1301fdb9f74ee528c275edfb254c2b114f4ecfb893dee3d2772967"
+            },
+            "HP_SM_Tripo_InfernoFurnaceTower_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoFurnaceTower_v001_graph.json",
+              "sha256": "3c6816804ef9b9e3a24371d116ec4a893373e16904990a6e0b6565e2910e0fdd"
+            }
+          },
+          "from_concept": 2,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -229,
+              26,
+              741,
+              997
+            ],
+            "scale": 1.0556701030927835
+          },
+          "seconds": 207.9,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 17.7
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:30:44",
+          "files": {
+            "SM_Tripo_InfernoFurnaceTower_v001.blend": {
+              "path": "03_work/SM_Tripo_InfernoFurnaceTower_v001.blend",
+              "sha256": "db04d381ab3abfda8b94dbd9fdfb472287c634806442b2aaa57b005bcc7ee3b4"
+            },
+            "SM_Tripo_InfernoFurnaceTower_v001.glb": {
+              "path": "04_export/SM_Tripo_InfernoFurnaceTower_v001.glb",
+              "sha256": "ff2d98d5d3febe3db51a23b3cdf037d60f030c858c433c63e79bb4ce5825ffde"
+            },
+            "SM_Tripo_InfernoFurnaceTower_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoFurnaceTower_v001_metrics.json",
+              "sha256": "2165e43b9b1d8694bcf0d0eb3053cadc1b32b075cda74a4406275ff1472c71ff"
+            },
+            "T_Tripo_InfernoFurnaceTower_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoFurnaceTower_BC.png",
+              "sha256": "591860118aa412657d599ce245ad06abe159b20e9bc0210723f5ec9ee406fc12"
+            },
+            "T_Tripo_InfernoFurnaceTower_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoFurnaceTower_E.png",
+              "sha256": "3628bc595b3804fc30429bc1c2f3edf4e53e04fa13623e8989e155633d2c7f1b"
+            },
+            "T_Tripo_InfernoFurnaceTower_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoFurnaceTower_N.png",
+              "sha256": "6bf5e1f950f33d48ccae6afd855252a1fbd50616fcd2470cd50a48834086e869"
+            },
+            "T_Tripo_InfernoFurnaceTower_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoFurnaceTower_ORM.png",
+              "sha256": "11047129de32ac6a179ae1608258da5999012e997a2ea96e78cc1ff3459e7fe8"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": 1
+          },
+          "align_iou": 0.931,
+          "uncovered_ratio": 0.4791,
+          "lods": [
+            {
+              "tris": 7998,
+              "verts": 3937
+            },
+            {
+              "tris": 2500,
+              "verts": 1188
+            },
+            {
+              "tris": 800,
+              "verts": 338
+            }
+          ],
+          "export_kb": 717.1,
+          "seconds": 88.6,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:30:44",
+          "files": {
+            "SM_Tripo_InfernoFurnaceTower_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_InfernoFurnaceTower_v001_validation_v001.json",
+              "sha256": "5e16fd9bf765ec23c4ccbb68d14283677613535977d3fa339bd89c2d1dd80dbe"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 2,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:30:53",
+          "files": {
+            "SM_Tripo_InfernoFurnaceTower_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_InfernoFurnaceTower_v001_review_v001.png",
+              "sha256": "980ba8fa882c3b5b8b4a9772cc9b4bb1fb9d99a7ccd379bcb34d2267d5a9a9a7"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "2mv 种子 20261003：玄武岩基座、拱形炉口、朱漆上层与火纹板、重檐铜瓦顶与方烟囱口与概念一致，四面完整；实测 6.13×4.99×12.86 m；IoU 0.931，LOD 无开口边（屋檐与烟囱叠层使射线多次穿越，属正常结构）；炉口、烟囱口、窗缝与基座熔岩裂纹自发光。",
+            "time": "2026-10-11 22:32:43"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:32:44",
+          "files": {
+            "SM_Tripo_InfernoFurnaceTower.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoFurnaceTower.glb",
+              "sha256": "ff2d98d5d3febe3db51a23b3cdf037d60f030c858c433c63e79bb4ce5825ffde"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_InfernoFurnaceTower.glb"
+        }
+      ]
+    }
+  }
+}

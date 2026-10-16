@@ -18,7 +18,7 @@ import { Particles, SkyDome, drawFarRing } from './Sky';
 import { drawStructures } from './Structures';
 import { makeFloorTextures, makeRuneTexture, makeStoneTexture, makeWoodTexture, preloadSceneSurface, surfaceRelief, type FloorTextures } from './Textures';
 import type { ThemeStyle } from './Themes';
-import { themeStyle } from './Themes';
+import { redesignThemeStyle, themeStyle } from './Themes';
 import { SceneDressing } from './SceneDressing';
 import { sceneFlameMaterial } from './SceneFlame';
 import { SceneBackdrop } from './SceneBackdrop';
@@ -103,7 +103,7 @@ export class ArenaView {
     // the stage director choose its fallback.
     try {
       this.group.name = 'arena';
-      const st = themeStyle(L.theme);
+      const st = L.whitebox?.plan.id.endsWith('-v2') ? redesignThemeStyle(L.theme) : themeStyle(L.theme);
       this.st = st;
       if (L.whitebox) {
         // Reviewed LD-03 plans use their art direction; V2 redesign plans use the Tripo kit placed from plan geometry.

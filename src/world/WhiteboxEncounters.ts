@@ -36,11 +36,12 @@ const ROLES: EnemyPlacement[] = ['assault', 'flank', 'ranged', 'precision', 'art
 // 赤沙新阵容：蝎尾弩卫远程、蜃楼蟾曲射炮击、火浣鼠与跳鼠刀兵侧翼、邪飞天辅助，镇墓兽按默认正面推进。
 // 昆仑雪墟新阵容：冰鲸炮击、夫诸精确远程、三青鸟远程、狐巫与冰灯水母辅助、冻鲛人与冰河豚侧翼，
 // 雪狌狌、冰棘豪彘、冰甲旋龟、玄冰巨蟹按默认正面推进。
-const ARTILLERY = new Set(['mortar', 'mirage_toad', 'ice_whale']);
-const PRECISION = new Set(['marksman', 'fuzhu']);
-const SUPPORT = new Set(['shaman', 'apsara', 'fox_witch', 'lantern_jelly']);
-const FLANK = new Set(['bomber', 'jerboa_blade', 'fire_rat', 'jiaoren', 'ice_puffer']);
-const RANGED = new Set(['archer', 'wisp', 'scorpion_archer', 'qingniao']);
+// 祝融火狱新阵容：炮仗傀儡炮击、毕方精确远程、马面远程、熔铜匠与傩巫辅助、祸斗与神火飞鸦侧翼，炭童、铁牛、火鼍正面推进。
+const ARTILLERY = new Set(['mortar', 'mirage_toad', 'ice_whale', 'firecracker']);
+const PRECISION = new Set(['marksman', 'fuzhu', 'bifang']);
+const SUPPORT = new Set(['shaman', 'apsara', 'fox_witch', 'lantern_jelly', 'founder', 'nuo']);
+const FLANK = new Set(['bomber', 'jerboa_blade', 'fire_rat', 'jiaoren', 'ice_puffer', 'huodou', 'fire_crow']);
+const RANGED = new Set(['archer', 'wisp', 'scorpion_archer', 'qingniao', 'mamian']);
 const roleFor = (id: string): EnemyPlacement => ARTILLERY.has(id) ? 'artillery' : PRECISION.has(id) ? 'precision'
   : SUPPORT.has(id) ? 'support' : FLANK.has(id) ? 'flank' : RANGED.has(id) ? 'ranged' : 'assault';
 /**
@@ -48,13 +49,14 @@ const roleFor = (id: string): EnemyPlacement => ARTILLERY.has(id) ? 'artillery' 
  * monkey climbs onto decks by itself; the fuzhu needs room around it to leap away).
  */
 const GROUND_ONLY = new Set(['jerboa_blade', 'scorpion_archer', 'mirage_toad', 'fire_rat', 'tomb_beast',
-  'jiaoren', 'xingxing', 'haozhi', 'fuzhu', 'ice_whale', 'xuangui', 'frost_crab', 'fox_witch']);
+  'jiaoren', 'xingxing', 'haozhi', 'fuzhu', 'ice_whale', 'xuangui', 'frost_crab', 'fox_witch',
+  'tantong', 'huodou', 'iron_ox', 'tuo', 'mamian', 'founder', 'nuo']);
 /** Chargers need a lane: an assault slot filled only by them arrives from the far side of the room, not at the door. */
 const CHARGERS = new Set(['tomb_beast', 'xuangui', 'haozhi']);
 /** Heavy enemies an elite stage promotes first. */
-const ELITE_FIRST = ['brute', 'tomb_beast', 'xuangui', 'frost_crab'];
+const ELITE_FIRST = ['brute', 'tomb_beast', 'xuangui', 'frost_crab', 'iron_ox', 'tuo'];
 /** Seconds supports and back-line shooters wait so the front line is already in the fight when they appear. */
-const LATE_SHOOTERS = new Set(['mortar', 'marksman', 'ice_whale', 'fuzhu']);
+const LATE_SHOOTERS = new Set(['mortar', 'marksman', 'ice_whale', 'fuzhu', 'firecracker', 'bifang']);
 const arrivalDelayFor = (id: string): number => SUPPORT.has(id) ? .6 : LATE_SHOOTERS.has(id) ? 1.2 : 0;
 
 export interface WhiteboxFight {

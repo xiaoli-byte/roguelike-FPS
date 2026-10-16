@@ -43,11 +43,18 @@ export interface WhiteboxPlan {
    */
   platforms?: WhiteboxPlatform[];
   /**
-   * Non-walkable holes inside the playable area (frost-5's ice hole where the boss rises). Unlike the outer mass
-   * they raise no tall wall: only an invisible, shot-through fence keeps players and enemies out, so the hole stays
-   * open to sight and gunfire and its own art (water, ice, the boss) shows through.
+   * Open holes inside the playable area: every non-floor cell inside a void circle. A plain void (frost-5's ice hole
+   * where the boss rises) raises no tall wall: only an invisible, shot-through fence keeps players and enemies out, so
+   * the hole stays open to sight and gunfire and its own art (water, ice, the boss) shows through. A `kind: 'lava'`
+   * void (chapter 3's lava lakes and channels) has no fence at all: it is a damaging lava floor (WhiteboxLava).
    */
   voids?: WhiteboxVoid[];
+  /**
+   * Strips laid over the floor. `kind: 'lava'` strips (inferno-5's narrow radial channels) cut lava into walkable
+   * floor and are lava at runtime, exactly like lava voids. `kind: 'flame'` lanes are planned only (no runtime yet):
+   * the whitebox keeps them as ordinary floor; the floor-plan atlas draws them for review.
+   */
+  hazards?: WhiteboxHazard[];
   encounters: { id: string; at: WhiteboxPoint; room: string; label: string; roster: string; timing: string; facing: WhiteboxPoint;
     /** Enemy squad carried by the plan itself: [enemyId, count, elite?]. Falls back to WHITEBOX_SQUADS. */
     squad?: [string, number, boolean?][];
@@ -77,10 +84,40 @@ export interface WhiteboxVoid {
   label: string;
   center: WhiteboxPoint;
   radius: number;
+  /** Absent: a fenced hole. 'lava': an unfenced lava floor that hurts and returns the player (WhiteboxLava). */
+  kind?: 'lava';
+}
+
+export interface WhiteboxHazard {
+  id: string;
+  label: string;
+  kind: 'lava' | 'flame';
+  /** Centre line of the strip and its width in metres. */
+  points: WhiteboxPoint[];
+  width: number;
+  note: string;
 }
 
 export interface WhiteboxRect { minX: number; minZ: number; maxX: number; maxZ: number }
 export interface WhiteboxCheckpoint { id: string; label: string; x: number; z: number; yaw: number }
+
+/**
+ * Runtime lava floor (lava voids + lava hazard strips) rasterised on the whitebox grid, in world coordinates.
+ * The floor stays at floorY and the player can walk, jump or be knocked onto it (LavaSystem hurts them and lifts
+ * them back to safe ground); enemy navigation treats lava as blocked. There is no collision fence.
+ */
+export interface WhiteboxLava {
+  minX: number;
+  minZ: number;
+  cols: number;
+  rows: number;
+  /** Cell size in metres (WHITEBOX_GRID_SIZE). */
+  cell: number;
+  /** 1 = lava, row-major (z * cols + x). */
+  mask: Uint8Array;
+  /** Lava cells merged into rectangles (surface mesh, nav rasterisation). */
+  rects: WhiteboxRect[];
+}
 
 /** Technical blockout only. These shapes do not replace the Hunyuan art pipeline. */
 export interface WhiteboxMetadata {
@@ -90,4 +127,6 @@ export interface WhiteboxMetadata {
   floorRects: WhiteboxRect[];
   checkpoints: WhiteboxCheckpoint[];
   gridSize: number;
+  /** Present only when the plan has lava (lava voids or lava hazard strips). */
+  lava?: WhiteboxLava;
 }

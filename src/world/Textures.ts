@@ -230,7 +230,7 @@ export function makeFloorTextures(id: ThemeId, theme: ThemeDef, st: ThemeStyle, 
   if (stoneSurface) {
     g.drawImage(stoneSurface, 0, 0, S, S);
     g.globalCompositeOperation = 'multiply';
-    g.fillStyle = css(id === 'desert' ? 0xdfc79e : id === 'frost' ? 0xb8c9da : 0x817d90);
+    g.fillStyle = css(id === 'desert' ? 0xdfc79e : id === 'frost' ? 0xb8c9da : st.floorTint ?? 0x817d90);
     g.fillRect(0, 0, S, S); g.globalCompositeOperation = 'source-over';
     // Retain the generated stone's broad joints under a painted palette wash.
     // Reuse this 512px tile; routes still use the existing single road-mask sample.

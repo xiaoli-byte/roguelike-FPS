@@ -1,0 +1,119 @@
+{
+ "asset": "SK_Enemy_Tantong",
+ "glb": "SK_Enemy_Tantong_native_v002.glb",
+ "height_m": 1.0,
+ "bones": 25,
+ "flag": 1.8,
+ "dominant_verts": {
+  "hips": 254,
+  "spine": 273,
+  "chest": 271,
+  "neck": 466,
+  "head": 1632,
+  "flame": 263,
+  "shoulder_L": 197,
+  "arm_L": 157,
+  "forearm_L": 240,
+  "hand_L": 794,
+  "fingers_L": 138,
+  "shoulder_R": 160,
+  "arm_R": 133,
+  "forearm_R": 266,
+  "hand_R": 792,
+  "fingers_R": 135,
+  "thigh_L": 335,
+  "shin_L": 223,
+  "foot_L": 406,
+  "toe_L": 148,
+  "thigh_R": 329,
+  "shin_R": 156,
+  "foot_R": 441,
+  "toe_R": 154
+ },
+ "poses": {
+  "pounce_windup": {
+   "p99": 1.356,
+   "max": 4.94,
+   "p99_len": 1.394,
+   "flag_area": 0.00875,
+   "over_flag": 0.0032,
+   "moved_edges": 12488,
+   "images": [
+    "rom_pounce_windup_front.png",
+    "rom_pounce_windup_side.png",
+    "rom_pounce_windup_threeq.png"
+   ]
+  },
+  "flail": {
+   "p99": 1.288,
+   "max": 3.91,
+   "p99_len": 1.298,
+   "flag_area": 0.00938,
+   "over_flag": 0.003,
+   "moved_edges": 8681,
+   "images": [
+    "rom_flail_front.png",
+    "rom_flail_side.png",
+    "rom_flail_threeq.png"
+   ]
+  },
+  "throw": {
+   "p99": 1.291,
+   "max": 5.18,
+   "p99_len": 1.295,
+   "flag_area": 0.00786,
+   "over_flag": 0.00262,
+   "moved_edges": 8393,
+   "images": [
+    "rom_throw_front.png",
+    "rom_throw_side.png",
+    "rom_throw_threeq.png"
+   ]
+  },
+  "blow": {
+   "p99": 1.362,
+   "max": 3.49,
+   "p99_len": 1.389,
+   "flag_area": 0.01059,
+   "over_flag": 0.00394,
+   "moved_edges": 12704,
+   "images": [
+    "rom_blow_front.png",
+    "rom_blow_side.png",
+    "rom_blow_threeq.png"
+   ]
+  },
+  "fists": {
+   "p99": 1.4,
+   "max": 1.89,
+   "p99_len": 1.388,
+   "flag_area": 0.00415,
+   "over_flag": 0.0027,
+   "moved_edges": 2591,
+   "images": [
+    "rom_fists_front.png",
+    "rom_fists_side.png",
+    "rom_fists_threeq.png"
+   ]
+  },
+  "stride": {
+   "p99": 1.133,
+   "max": 2.36,
+   "p99_len": 1.175,
+   "flag_area": 0.00207,
+   "over_flag": 0.00094,
+   "moved_edges": 12723,
+   "images": [
+    "rom_stride_front.png",
+    "rom_stride_side.png",
+    "rom_stride_threeq.png"
+   ]
+  }
+ },
+ "weight_map": [
+  "weights_front.png",
+  "weights_side.png",
+  "weights_back.png",
+  "weights_threeq.png"
+ ]
+}

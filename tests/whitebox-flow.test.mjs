@@ -27,7 +27,9 @@ const bodyDefs = Object.fromEntries(await Promise.all([
   ['jiaoren', 'types/Jiaoren'], ['xingxing', 'types/Xingxing'], ['haozhi', 'types/Haozhi'], ['ice_puffer', 'types/IcePuffer'],
   ['qingniao', 'types/Qingniao'], ['fuzhu', 'types/Fuzhu'], ['ice_whale', 'types/IceWhale'], ['fox_witch', 'types/FoxWitch'],
   ['lantern_jelly', 'types/LanternJelly'], ['xuangui', 'types/XuanGui'], ['frost_crab', 'types/FrostCrab'],
-  ['boss_colossus', 'bosses/Colossus'], ['boss_matriarch', 'bosses/Matriarch'], ['boss_warlord', 'bosses/Warlord'], ['boss_kunpeng', 'bosses/KunPeng'],
+  ['tantong', 'types/Tantong'], ['huodou', 'types/Huodou'], ['iron_ox', 'types/IronOx'], ['tuo', 'types/Tuo'], ['bifang', 'types/Bifang'],
+  ['mamian', 'types/Mamian'], ['firecracker', 'types/Firecracker'], ['fire_crow', 'types/FireCrow'], ['founder', 'types/Founder'], ['nuo', 'types/Nuo'],
+  ['boss_colossus', 'bosses/Colossus'], ['boss_matriarch', 'bosses/Matriarch'], ['boss_warlord', 'bosses/Warlord'], ['boss_kunpeng', 'bosses/KunPeng'], ['boss_qilin', 'bosses/Qilin'],
 ].map(async ([id, path]) => {
   const source = await readFile(new URL(`../src/enemies/${path}.ts`, import.meta.url), 'utf8');
   // Art-scaled bodies (def.scale) are as large in the spawner as in game.
@@ -48,8 +50,9 @@ const directorUrl = await ts('../src/world/StageDirector.ts', {
   './ArenaBuilder': moduleUrl(`import * as THREE from '${threeUrl}'; export function addCollision(world,L){for(const b of L.boxes)world.addBox(b.minX,b.minY,b.minZ,b.maxX,b.maxY,b.maxZ,b.tag,b.noRaycast);} export class ArenaView {group=new THREE.Group();update(){}dispose(){this.group.removeFromParent();}}`),
   './LevelGen': moduleUrl('export function generateLevel(){throw new Error("Unexpected legacy map");}'),
   './NavGrid': navUrl,
+  './Lava': await ts('../src/world/Lava.ts'),
   './Portal': moduleUrl('export class Portal{constructor(ctx,node,position){ctx.portals.push({node,position});}update(){}dispose(){}}'),
-  './Themes': moduleUrl('export function themeDef(id){return {id,name:id};}'),
+  './Themes': moduleUrl('export function themeDef(id){return {id,name:id};} export function redesignThemeDef(id){return {id,name:id};}'),
   './WaveRunner': waveUrl,
   './AdventureBeacon': moduleUrl('export class AdventureBeacon{constructor(){throw new Error("Whitebox must not add a duplicate altar");}}'),
   './WhiteboxMode': moduleUrl('export function usesAuthoredLayout(){return true;} export function usesRedesignLayout(){return globalThis.__redesign === true;}'),

@@ -1,0 +1,120 @@
+{
+  "steps": {
+    "导入清理": 4.4,
+    "对齐": 1.4,
+    "低模与 UV": 13.7,
+    "投影着色": 35.4,
+    "烘焙": 8.8,
+    "LOD": 0.0,
+    "导出": 1.1
+  },
+  "highpoly": {
+    "faces_raw": 724961,
+    "faces": 387550,
+    "verts": 387476,
+    "loose_parts": 15,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00492,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.791,
+    "iou_per_view": {
+      "front": 0.843,
+      "left": 0.756,
+      "back": 0.795,
+      "right": 0.742
+    },
+    "height_m": 1.5382,
+    "blockout_height_m": 1.6
+  },
+  "uv": {
+    "smart_islands": 748,
+    "charts": 151,
+    "fallback_charts": 15,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.1417,
+    "density_merged": 0.1887
+  },
+  "projection": {
+    "uncovered_ratio": 0.482
+  },
+  "bake_device": "CPU",
+  "emissive_id": {
+    "emissive_texel_ratio": 0.009
+  },
+  "textures": {
+    "T_Tripo_InfernoCauldronRuin_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_InfernoCauldronRuin_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_InfernoCauldronRuin_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_InfernoCauldronRuin_LOD0",
+      "tris": 2998,
+      "verts": 1426,
+      "uv_min": [
+        0.003824221668764949,
+        0.0038242607843130827
+      ],
+      "uv_max": [
+        0.9928879737854004,
+        0.9961757063865662
+      ],
+      "uv_utilization": 0.615,
+      "bbox_min": [
+        -1.5868,
+        -0.7629,
+        -0.0038
+      ],
+      "bbox_max": [
+        1.5185,
+        0.7645,
+        1.5339
+      ]
+    },
+    {
+      "name": "SM_Tripo_InfernoCauldronRuin_LOD1",
+      "tris": 999,
+      "verts": 424,
+      "uv_min": [
+        0.003951935563236475,
+        0.0038242607843130827
+      ],
+      "uv_max": [
+        0.9928879737854004,
+        0.9954894781112671
+      ],
+      "uv_utilization": 0.528,
+      "bbox_min": [
+        -1.5955,
+        -0.7316,
+        0.0002
+      ],
+      "bbox_max": [
+        1.5233,
+        0.7657,
+        1.5294
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_InfernoCauldronRuin/04_export/SM_Tripo_InfernoCauldronRuin_v001.glb",
+    "bytes": 320724
+  },
+  "blend": "art/source/props/SM_Tripo_InfernoCauldronRuin/03_work/SM_Tripo_InfernoCauldronRuin_v001.blend",
+  "total_seconds": 64.9,
+  "_seconds": 69.1
+}

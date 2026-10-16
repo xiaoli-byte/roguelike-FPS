@@ -1,0 +1,54 @@
+{
+  "doc": "火鼍：Tripo 智能网格 P2.0（三角面 12000 档，实得 13503，Tripo 自带 UV，只有 4K 底色图），未绑骨，自定义鳄形骨架；网格是一个整岛。骨骼位置按网格切片实测（缩放落地后的米制：front = -Y，生物的左 = +X，up = +Z；高 1.9 米含背棘、长 4.26 米。设计稿写的是高 1.4 米、长 6 米，Tripo 的体型更敦实，按长度取 1.9 米高，游戏里再放大 1.3 倍约 5.5 米长）。脊柱 hips → spine → chest → neck → head 五节（左右摆的高位爬行步态：运行时让脊柱一节节横摆成 S 形），尾六节 tail_1..tail_6；下颌 jaw 刚性锁住嘴线（z 0.8）以下的下巴。四肢外展：上臂 / 大腿水平伸出，肘 / 膝在身体外侧，前臂 / 小腿向下，脚掌朝前（鳄类的真实结构）。背上 8 块玄武岩甲不拆网格、不分骨：运行时按顶点的绑定位置分区（着色器区域 ID），碎甲改成熔肉发光。",
+  "source": "art/source/_tripo_inbox/20261011T151200_SK_Enemy_Tuo_smartmesh.fbx",
+  "task": "https://studio.tripo3d.ai/workspace/generate/abe0dc53-1012-44c8-bae5-15c8fd04f919",
+  "height_m": 1.9,
+  "bones": {
+    "root": {"head": [0, 0, 0], "tail": [0, 0, 0.3], "parent": null, "deform": false},
+    "hips": {"head": [0, 0.35, 0.85], "tail": [0, -0.2, 0.9], "parent": "root"},
+    "spine": {"head": [0, -0.2, 0.9], "tail": [0, -0.75, 0.92], "parent": "hips"},
+    "chest": {"head": [0, -0.75, 0.92], "tail": [0, -1.25, 0.88], "parent": "spine"},
+    "neck": {"head": [0, -1.25, 0.88], "tail": [0, -1.5, 0.88], "parent": "chest"},
+    "head": {"head": [0, -1.5, 0.88], "tail": [0, -2.1, 0.88], "parent": "neck"},
+    "jaw": {"head": [0, -1.5, 0.78], "tail": [0, -2.05, 0.7], "parent": "head"},
+    "tail_1": {"head": [0, 0.35, 0.85], "tail": [0, 0.65, 0.84], "parent": "hips"},
+    "tail_2": {"head": [0, 0.65, 0.84], "tail": [0, 0.95, 0.8], "parent": "tail_1"},
+    "tail_3": {"head": [0, 0.95, 0.8], "tail": [0, 1.25, 0.76], "parent": "tail_2"},
+    "tail_4": {"head": [0, 1.25, 0.76], "tail": [0, 1.55, 0.72], "parent": "tail_3"},
+    "tail_5": {"head": [0, 1.55, 0.72], "tail": [0, 1.85, 0.62], "parent": "tail_4"},
+    "tail_6": {"head": [0, 1.85, 0.62], "tail": [0, 2.13, 0.46], "parent": "tail_5"},
+    "upperarm_L": {"head": [0.42, -1.02, 0.72], "tail": [0.74, -1.0, 0.55], "parent": "chest"},
+    "forearm_L": {"head": [0.74, -1.0, 0.55], "tail": [0.68, -1.02, 0.2], "parent": "upperarm_L"},
+    "paw_L": {"head": [0.68, -1.02, 0.2], "tail": [0.66, -1.32, 0.03], "parent": "forearm_L"},
+    "thigh_L": {"head": [0.42, 0.15, 0.75], "tail": [0.76, 0.12, 0.5], "parent": "hips"},
+    "shin_L": {"head": [0.76, 0.12, 0.5], "tail": [0.68, 0.32, 0.18], "parent": "thigh_L"},
+    "foot_L": {"head": [0.68, 0.32, 0.18], "tail": [0.7, 0.0, 0.03], "parent": "shin_L"},
+    "upperarm_R": {"head": [-0.42, -1.02, 0.72], "tail": [-0.74, -1.0, 0.55], "parent": "chest"},
+    "forearm_R": {"head": [-0.74, -1.0, 0.55], "tail": [-0.68, -1.02, 0.2], "parent": "upperarm_R"},
+    "paw_R": {"head": [-0.68, -1.02, 0.2], "tail": [-0.66, -1.32, 0.03], "parent": "forearm_R"},
+    "thigh_R": {"head": [-0.42, 0.15, 0.75], "tail": [-0.76, 0.12, 0.5], "parent": "hips"},
+    "shin_R": {"head": [-0.76, 0.12, 0.5], "tail": [-0.68, 0.32, 0.18], "parent": "thigh_R"},
+    "foot_R": {"head": [-0.68, 0.32, 0.18], "tail": [-0.7, 0.0, 0.03], "parent": "shin_R"}
+  },
+  "limits": [
+    {"bones": ["upperarm_L", "forearm_L", "paw_L"], "box": [[0.36, -1.55, -0.05], [1.0, -0.62, 1.05]]},
+    {"bones": ["upperarm_R", "forearm_R", "paw_R"], "box": [[-1.0, -1.55, -0.05], [-0.36, -0.62, 1.05]]},
+    {"bones": ["thigh_L", "shin_L", "foot_L"], "box": [[0.36, -0.25, -0.05], [1.0, 0.65, 1.05]]},
+    {"bones": ["thigh_R", "shin_R", "foot_R"], "box": [[-1.0, -0.25, -0.05], [-0.36, 0.65, 1.05]]},
+    {"bones": ["neck", "head", "jaw"], "box": [[-0.6, -2.2, 0.3], [0.6, -1.15, 1.6]]},
+    {"bones": ["jaw"], "box": [[-0.5, -2.2, 0.3], [0.5, -1.45, 0.82]]},
+    {"bones": ["tail_1", "tail_2", "tail_3", "tail_4", "tail_5", "tail_6"], "box": [[-0.55, 0.3, 0.2], [0.55, 2.2, 1.5]]}
+  ],
+  "rigid": [
+    {"bone": "head", "box": [[-0.55, -2.2, 0.8], [0.55, -1.55, 1.6]]},
+    {"bone": "jaw", "box": [[-0.45, -2.2, 0.3], [0.45, -1.65, 0.8]]}
+  ],
+  "ground": [
+    {"bones": ["paw_L", "paw_R", "foot_L", "foot_R"], "fade_z": [0.1, 0.24]}
+  ],
+  "provider_pbr": true,
+  "bake_normal": false,
+  "repack_uv": false,
+  "transfer_size": 4096,
+  "paint_shading": {"cavity_distance": 0.018, "cavity": 0.36, "ao": 0.18, "saturation": 1.06, "contrast": 1.05, "keep_brightness": true}
+}

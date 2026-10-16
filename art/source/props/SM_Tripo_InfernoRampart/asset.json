@@ -1,0 +1,511 @@
+{
+  "id": "SM_Tripo_InfernoRampart",
+  "display": "祝融火狱玄铁城垣墙段（V2）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 19:55:51",
+          "files": {
+            "BO_SM_Tripo_InfernoRampart_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoRampart_v001.json",
+              "sha256": "59df5fde9d0d3e60a8b0da4625e8a664e0fe1e534fadf1b4b4f009b064bdddf3"
+            },
+            "BO_SM_Tripo_InfernoRampart_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoRampart_v001_views.json",
+              "sha256": "2f9f4e3f48073e1886c4037f3c5f96d24b07a31515c2eb85afe54c0039cdbca2"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.v2.rampart"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -4.0,
+              0,
+              -1.5
+            ],
+            "max": [
+              4.0,
+              9.0,
+              1.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 19:57:04",
+          "files": {
+            "CN_SM_Tripo_InfernoRampart_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRampart_v001_source.png",
+              "sha256": "dbc256b3a726c43218c7ef59198e3739e84b8d7d9c891fce9ecea8a9dbab79e9"
+            },
+            "CN_SM_Tripo_InfernoRampart_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRampart_v001_front.png",
+              "sha256": "72a8da46b84be305d5645b84885c2e2df44c9b18db27962f3b33829229de5d55"
+            },
+            "CN_SM_Tripo_InfernoRampart_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRampart_v001_left.png",
+              "sha256": "d240fc26566c96428ccff71dd19eb37830b5fd6ff8d772db5691a9bc5f17d4df"
+            },
+            "CN_SM_Tripo_InfernoRampart_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRampart_v001_back.png",
+              "sha256": "c04a254f048a5c28248004dce90978211e0e3bf6905c3dc7abde19d257b3eae6"
+            },
+            "CN_SM_Tripo_InfernoRampart_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRampart_v001_right.png",
+              "sha256": "ceb9dd07089727333583ca02b7c7cca9ad9d69f47033f727ae05a551deb506b3"
+            },
+            "CN_SM_Tripo_InfernoRampart_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRampart_v001_sheet.png",
+              "sha256": "140d7861ac979d23b53cc628ecff2c52c72cf300a3c98a05cc20b21548e1462e"
+            },
+            "CN_SM_Tripo_InfernoRampart_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRampart_v001_prompt.txt",
+              "sha256": "93b94003d9e6afc7282b98de9499bfe7ebf119caefa1b6b504b1b93f7e9322d2"
+            },
+            "CN_SM_Tripo_InfernoRampart_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRampart_v001_registration.json",
+              "sha256": "53fb747e11a060b3ae248c566c124d2330a16b6eb7ade38acb587061de13331d"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a12ad1-ca7d-7902-b201-ce9eab5a8e12",
+            "attempt": 1,
+            "seconds": 72.3
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian underground forge-palace fantasy of Zhurong, the Chinese god of fire: massive black iron (xuan tie) with heavy rivets, dark charcoal basalt blocks, deep vermilion lacquer, warm aged bronze ding cauldrons, chunky thick iron chains always attached flat to the surfaces, soot-darkened edges, and a few channels and cracks of molten lava. Lava, embers and fire are painted as opaque flat bright orange-yellow surfaces, never as smoke, loose sparks or transparent effects. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (8m wide x 9m tall x 3m deep): A massive tileable rampart section of the fire god Zhurong's underground forge palace, 8m wide, 9m tall, 3m deep: a battered base of big dark charcoal basalt blocks, a thick upper wall clad in black iron plates with big round rivets, a row of chunky square merlons along the top capped with aged bronze, two shallow buttress pilasters faced with deep vermilion lacquer placed at a regular even rhythm, and one straight recessed lava channel running along the base ledge, glowing molten orange (painted as an opaque flat bright orange-yellow surface). In the middle bay a big round bronze fire-sun boss with one short thick iron chain swag bolted flat against the wall. Both side ends are flat cut faces so identical sections join seamlessly in a row. Solid wall with no openings.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "dbc256b3a726c43218c7ef59198e3739e84b8d7d9c891fce9ecea8a9dbab79e9",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.624133148404993,
+              "offset": [
+                34,
+                255
+              ],
+              "size": [
+                444,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.624133148404993,
+              "offset": [
+                199,
+                255
+              ],
+              "size": [
+                113,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6233766233766233,
+              "offset": [
+                33,
+                255
+              ],
+              "size": [
+                446,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.6233766233766233,
+              "offset": [
+                198,
+                255
+              ],
+              "size": [
+                115,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-11 19:59:40",
+          "files": {
+            "CN_SM_Tripo_InfernoRampart_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRampart_v002_source.png",
+              "sha256": "6a6ac196194b94e7510987cd75b4636ebffb4e088b2a44cff4184614da0e6364"
+            },
+            "CN_SM_Tripo_InfernoRampart_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRampart_v002_front.png",
+              "sha256": "00899daf5690a27a65201970a1fc09ae7d7f6f20f62f0bb5ba356cd81507166e"
+            },
+            "CN_SM_Tripo_InfernoRampart_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRampart_v002_left.png",
+              "sha256": "d869af6940c7a5b2cae8c4d8c588b43a0f7c105ff0b90eae528f65abe8c1fd8f"
+            },
+            "CN_SM_Tripo_InfernoRampart_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRampart_v002_back.png",
+              "sha256": "b0c3b2d307219c3983efb72b76ff447da329a74454d1b416f1dd070024b66f76"
+            },
+            "CN_SM_Tripo_InfernoRampart_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRampart_v002_right.png",
+              "sha256": "51637bc4c0848b4985683ef881270a45f011c878fbc17fdb7f30f009505b2bfc"
+            },
+            "CN_SM_Tripo_InfernoRampart_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRampart_v002_sheet.png",
+              "sha256": "1d2be681c507199ee3deb80c2c4924230e0992639a64bbae00ea694eae542ec6"
+            },
+            "CN_SM_Tripo_InfernoRampart_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRampart_v002_prompt.txt",
+              "sha256": "93b94003d9e6afc7282b98de9499bfe7ebf119caefa1b6b504b1b93f7e9322d2"
+            },
+            "CN_SM_Tripo_InfernoRampart_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRampart_v002_registration.json",
+              "sha256": "3746c5d42579e68d7d3081e5bdaac74aa2b317125a72520347f1d4e4d527ed8e"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a12ad1-ca7d-7902-b201-ce9eab5a8e12",
+            "attempt": 1,
+            "seconds": 72.3,
+            "sides_fixed_from": 1,
+            "sides_fix": "swap"
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian underground forge-palace fantasy of Zhurong, the Chinese god of fire: massive black iron (xuan tie) with heavy rivets, dark charcoal basalt blocks, deep vermilion lacquer, warm aged bronze ding cauldrons, chunky thick iron chains always attached flat to the surfaces, soot-darkened edges, and a few channels and cracks of molten lava. Lava, embers and fire are painted as opaque flat bright orange-yellow surfaces, never as smoke, loose sparks or transparent effects. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (8m wide x 9m tall x 3m deep): A massive tileable rampart section of the fire god Zhurong's underground forge palace, 8m wide, 9m tall, 3m deep: a battered base of big dark charcoal basalt blocks, a thick upper wall clad in black iron plates with big round rivets, a row of chunky square merlons along the top capped with aged bronze, two shallow buttress pilasters faced with deep vermilion lacquer placed at a regular even rhythm, and one straight recessed lava channel running along the base ledge, glowing molten orange (painted as an opaque flat bright orange-yellow surface). In the middle bay a big round bronze fire-sun boss with one short thick iron chain swag bolted flat against the wall. Both side ends are flat cut faces so identical sections join seamlessly in a row. Solid wall with no openings.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "6a6ac196194b94e7510987cd75b4636ebffb4e088b2a44cff4184614da0e6364",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.624133148404993,
+              "offset": [
+                34,
+                255
+              ],
+              "size": [
+                444,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6233766233766233,
+              "offset": [
+                198,
+                255
+              ],
+              "size": [
+                115,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6233766233766233,
+              "offset": [
+                33,
+                255
+              ],
+              "size": [
+                445,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.624133148404993,
+              "offset": [
+                199,
+                255
+              ],
+              "size": [
+                113,
+                514
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "用户（2026-10-11 审稿确认）",
+            "note": "用户审阅 docs/art/review/inferno-kit-v001.png 后通过全部 16 张祝融火狱套件概念，按现稿进 Hunyuan3D 2mv",
+            "time": "2026-10-11 22:09:58"
+          }
+        }
+      ]
+    },
+    "emid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:11:46",
+          "files": {
+            "EID_SM_Tripo_InfernoRampart_v001_front.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoRampart_v001_front.png",
+              "sha256": "463f5b0c5c9187bc57df504e2e221690f67a5cd382eb76d334438a5c35108d7b"
+            },
+            "EID_SM_Tripo_InfernoRampart_v001_left.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoRampart_v001_left.png",
+              "sha256": "3b105d4cdec7038421d6eb87eb589d16913a281218034ce21bc3a8c12bdf4ae2"
+            },
+            "EID_SM_Tripo_InfernoRampart_v001_back.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoRampart_v001_back.png",
+              "sha256": "de8a9a682967e6e68044d82f68765f07f891ff50839565e2bd5914d2d1314361"
+            },
+            "EID_SM_Tripo_InfernoRampart_v001_right.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoRampart_v001_right.png",
+              "sha256": "32e90655ead21fb40519c4caf2d5d13fb7ed07e059a2b6e674f411d6348912fc"
+            },
+            "EID_SM_Tripo_InfernoRampart_v001_compare.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoRampart_v001_compare.png",
+              "sha256": "7a860b0b6607b1be66e99800732e503c132bcd8be497d6cac4b32ecb65c2325a"
+            }
+          },
+          "from_concept": 2,
+          "provider": "colour-key",
+          "method": "HSV key of the painted lava / coals / fire on the registered concept views (value >= 0.8, saturation >= 0.62, hue 8-48 deg, 3 px open)",
+          "emissive_ratio": {
+            "front": 0.012,
+            "left": 0.006,
+            "back": 0.012,
+            "right": 0.007
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:13:02",
+          "files": {
+            "HP_SM_Tripo_InfernoRampart_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoRampart_v001_input_front.png",
+              "sha256": "7813845dec87ca2ee37e47d6265bdfa7017d083b59bcf2692a019abb27bf8612"
+            },
+            "HP_SM_Tripo_InfernoRampart_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoRampart_v001_input_left.png",
+              "sha256": "d3c04d3f21553affe97bdd24fd3d9c94304463e7b60ac44338b44d5b9df9cecc"
+            },
+            "HP_SM_Tripo_InfernoRampart_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoRampart_v001_input_back.png",
+              "sha256": "1392226c93e02d97e0d180f34b3e6552003c2adfe8e20306bd592511614d148f"
+            },
+            "HP_SM_Tripo_InfernoRampart_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoRampart_v001_input_right.png",
+              "sha256": "7d34adbbd7afba40768d3c40ca201056bf012d277a577398a7232e5bb51b3b71"
+            },
+            "HP_SM_Tripo_InfernoRampart_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoRampart_v001.glb",
+              "sha256": "03636e4189607c3962edc4ed119892d0ada3d162b0f01a4b3e3080e87530cb80"
+            },
+            "HP_SM_Tripo_InfernoRampart_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoRampart_v001_graph.json",
+              "sha256": "82252eff14e2538aedd125e7919b72e31b4ff4203b82e91a1c9a268e9cec51ac"
+            }
+          },
+          "from_concept": 2,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -46,
+              210,
+              558,
+              814
+            ],
+            "scale": 1.695364238410596
+          },
+          "seconds": 167.5,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 13.7
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:14:17",
+          "files": {
+            "SM_Tripo_InfernoRampart_v001.blend": {
+              "path": "03_work/SM_Tripo_InfernoRampart_v001.blend",
+              "sha256": "081e0b7a85e58f58ac30f912a6e9695ee41f0d106a22e14b60360b6d2bfb41ac"
+            },
+            "SM_Tripo_InfernoRampart_v001.glb": {
+              "path": "04_export/SM_Tripo_InfernoRampart_v001.glb",
+              "sha256": "63ede8078b2a493638dd82c6766b0aad6b78bbc543797952bd5ed557fe5fa6b2"
+            },
+            "SM_Tripo_InfernoRampart_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoRampart_v001_metrics.json",
+              "sha256": "6f2b4b69937e1dd5e4d8589f07298fa234043de335f40ec94cc7cf1728dde890"
+            },
+            "T_Tripo_InfernoRampart_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoRampart_BC.png",
+              "sha256": "acb8fb12e9d8b6c9275d4b396e73b1e1fd25eb21dcb671b4996ebb9e0b68095f"
+            },
+            "T_Tripo_InfernoRampart_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoRampart_E.png",
+              "sha256": "8a7c6b95410115e0235486e92d1b58f257dbd3fe202dcd365c00d3a477162ffc"
+            },
+            "T_Tripo_InfernoRampart_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoRampart_N.png",
+              "sha256": "eca8fad2ca811c3a56fcf43f642f0703dd77840a382ecef72613d9dc0dbb8094"
+            },
+            "T_Tripo_InfernoRampart_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoRampart_ORM.png",
+              "sha256": "f89f6a660810eabb5889ecd5a137c022f1a50d2f441b0ee648cc807da2f77166"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": 1
+          },
+          "align_iou": 0.917,
+          "uncovered_ratio": 0.2146,
+          "lods": [
+            {
+              "tris": 8000,
+              "verts": 3988
+            },
+            {
+              "tris": 2500,
+              "verts": 1238
+            },
+            {
+              "tris": 800,
+              "verts": 388
+            }
+          ],
+          "export_kb": 551.8,
+          "seconds": 71.7,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:14:17",
+          "files": {
+            "SM_Tripo_InfernoRampart_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_InfernoRampart_v001_validation_v001.json",
+              "sha256": "c256a381867ba4a3028a4cc4198118ed2ea74d67253bc58a9f9c901e00832b2a"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:14:32",
+          "files": {
+            "SM_Tripo_InfernoRampart_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_InfernoRampart_v001_review_v001.png",
+              "sha256": "ccc1ff27242ec0ff7e200e3b1e6b804b06dc425db6cb4f40b2dcc1aafc232929"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "2mv 种子 20261003：墙基熔岩槽、朱漆壁柱、铜日纹与铁链、城垛与概念一致，两端平切可拼接；IoU 0.917，校验 37 过 1 警告（轴心 z 偏 0.23 m，墙体底座外扩所致），LOD 0/1/2 无开口边；熔岩槽色键自发光。",
+            "time": "2026-10-11 22:15:52"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:15:52",
+          "files": {
+            "SM_Tripo_InfernoRampart.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoRampart.glb",
+              "sha256": "63ede8078b2a493638dd82c6766b0aad6b78bbc543797952bd5ed557fe5fa6b2"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_InfernoRampart.glb"
+        }
+      ]
+    }
+  }
+}

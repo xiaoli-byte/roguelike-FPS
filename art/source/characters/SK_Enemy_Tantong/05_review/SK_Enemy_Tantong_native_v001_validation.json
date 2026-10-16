@@ -1,0 +1,329 @@
+{
+  "asset": "SK_Enemy_Tantong",
+  "version": 1,
+  "glb": "art/source/characters/SK_Enemy_Tantong/04_export/SK_Enemy_Tantong_native_v001.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.3,
+      "自定义骨架：25 根骨骼（热扩散权重，36 个顶点未覆盖）": 0.1,
+      "贴图（BC + AO/ORM）": 4.6,
+      "LOD 与蒙皮上限 5910 / 2462 / 983": 0.1,
+      "发光壳 177 面": 0.0,
+      "导出 533 KB": 1.1
+    },
+    "source": {
+      "verts": 3382,
+      "tris": 6562,
+      "scale": 1.0004885197850513
+    },
+    "regions": {
+      "heat_unweighted_verts": 36,
+      "ground_verts": 398,
+      "head_verts": 524,
+      "flame_verts": 156,
+      "hips_verts": 63,
+      "fallback_verts": 36,
+      "per_bone": {
+        "hips": 125,
+        "spine": 170,
+        "chest": 73,
+        "neck": 109,
+        "head": 594,
+        "flame": 156,
+        "shoulder_L": 71,
+        "shoulder_R": 68,
+        "arm_L": 52,
+        "arm_R": 51,
+        "forearm_L": 84,
+        "forearm_R": 90,
+        "hand_L": 338,
+        "hand_R": 332,
+        "fingers_L": 54,
+        "fingers_R": 54,
+        "thigh_L": 126,
+        "thigh_R": 127,
+        "shin_L": 93,
+        "shin_R": 56,
+        "foot_L": 169,
+        "foot_R": 169,
+        "toe_L": 64,
+        "toe_R": 64
+      }
+    },
+    "bones": [
+      "arm_L",
+      "arm_R",
+      "chest",
+      "fingers_L",
+      "fingers_R",
+      "flame",
+      "foot_L",
+      "foot_R",
+      "forearm_L",
+      "forearm_R",
+      "hand_L",
+      "hand_R",
+      "head",
+      "hips",
+      "neck",
+      "root",
+      "shin_L",
+      "shin_R",
+      "shoulder_L",
+      "shoulder_R",
+      "spine",
+      "thigh_L",
+      "thigh_R",
+      "toe_L",
+      "toe_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.963,
+      "shade_mean": 0.962
+    },
+    "textures": {
+      "size": 1024,
+      "ao_mean": 0.867,
+      "provider_pbr": [],
+      "roughness_mean": 0.75,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Enemy_Tantong_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_Tantong_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_Tantong_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Enemy_Tantong_LOD0",
+        "tris": 5910,
+        "uv_min": [
+          0.00146484375,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.98583984375,
+          0.99853515625
+        ]
+      },
+      {
+        "name": "SK_Enemy_Tantong_LOD1",
+        "tris": 2462,
+        "uv_min": [
+          0.00146484375,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.98583984375,
+          0.99853515625
+        ]
+      },
+      {
+        "name": "SK_Enemy_Tantong_LOD2",
+        "tris": 983,
+        "uv_min": [
+          0.001708984375,
+          0.001708984375
+        ],
+        "uv_max": [
+          0.985595703125,
+          0.99853515625
+        ]
+      }
+    ],
+    "glow_shell": {
+      "group": "flame",
+      "tris": 177
+    },
+    "glb_kb": 533,
+    "_seconds": 9.4
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "533 KB / 1600 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Enemy_Tantong_LOD0', 'SK_Enemy_Tantong_LOD1', 'SK_Enemy_Tantong_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "5910 / 6000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "2462 / 2500"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "983 / 1000"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "1.000 m (design 1 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Enemy_Tantong_Glow', 'M_Enemy_Tantong']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "glow shell",
+      "177 tris on 'flame'"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Tantong_BC",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Tantong_ORM",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "25 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Tantong_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Tantong_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Tantong_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Tantong_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Tantong_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Tantong_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Tantong_LOD0 UV range",
+      "[0.001, 0.001]..[0.986, 0.999]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Tantong_LOD1 UV range",
+      "[0.001, 0.001]..[0.986, 0.999]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Tantong_LOD2 UV range",
+      "[0.002, 0.002]..[0.986, 0.999]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "36 verts"
+    ],
+    [
+      "pass",
+      "region ground",
+      "398 verts"
+    ],
+    [
+      "pass",
+      "region head",
+      "524 verts"
+    ],
+    [
+      "pass",
+      "region flame",
+      "156 verts"
+    ],
+    [
+      "pass",
+      "region hips",
+      "63 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "36 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

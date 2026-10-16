@@ -349,6 +349,11 @@ export abstract class EnemyBase implements IEnemy {
     this.onDeath(result);
   }
 
+  /** 正被击退（失控滑行中）：被打进熔岩的判定用（LavaSystem） */
+  get knockedBack(): boolean {
+    return this.controlLoss > 0;
+  }
+
   knockback(impulse: THREE.Vector3): void {
     if (!this.alive) return;
     const k = 1 - this.knockbackResist;
@@ -577,6 +582,8 @@ export abstract class EnemyBase implements IEnemy {
    * 侧向射线避免大体型单位沿障碍物边缘「擦边」直走后卡在棱角上。
    */
   protected directPathClear(target: THREE.Vector3): boolean {
+    // 熔岩地面没有碰撞盒：直线会踩进熔岩时改走导航网格（导航把熔岩当阻挡）
+    if (this.ctx.nav?.crossesLava?.(this.position, target, this.radius * 0.85)) return false;
     const w = this.ctx.world;
     const knee = this.position.y + 0.6;
     _v1.set(this.position.x, knee, this.position.z);

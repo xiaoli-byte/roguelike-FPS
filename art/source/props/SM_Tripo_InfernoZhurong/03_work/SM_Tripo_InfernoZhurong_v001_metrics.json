@@ -1,0 +1,144 @@
+{
+  "steps": {
+    "导入清理": 3.6,
+    "对齐": 1.3,
+    "低模与 UV": 12.7,
+    "投影着色": 45.6,
+    "烘焙": 30.4,
+    "LOD": 0.1,
+    "导出": 3.3
+  },
+  "highpoly": {
+    "faces_raw": 818772,
+    "faces": 408788,
+    "verts": 408756,
+    "loose_parts": 16,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00492,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.928,
+    "iou_per_view": {
+      "front": 0.935,
+      "left": 0.918,
+      "back": 0.938,
+      "right": 0.916
+    },
+    "height_m": 15.4306,
+    "blockout_height_m": 16.0
+  },
+  "uv": {
+    "smart_islands": 1161,
+    "charts": 171,
+    "fallback_charts": 12,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.0229,
+    "density_merged": 0.033
+  },
+  "projection": {
+    "uncovered_ratio": 0.363
+  },
+  "bake_device": "CPU",
+  "emissive_id": {
+    "emissive_texel_ratio": 0.0052
+  },
+  "textures": {
+    "T_Tripo_InfernoZhurong_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_InfernoZhurong_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_InfernoZhurong_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_InfernoZhurong_LOD0",
+      "tris": 7995,
+      "verts": 3967,
+      "uv_min": [
+        0.0035820864140987396,
+        0.0036266467068344355
+      ],
+      "uv_max": [
+        0.9870454668998718,
+        0.996536374092102
+      ],
+      "uv_utilization": 0.522,
+      "bbox_min": [
+        -3.9016,
+        -3.5396,
+        0.0084
+      ],
+      "bbox_max": [
+        3.8962,
+        3.2933,
+        15.4369
+      ]
+    },
+    {
+      "name": "SM_Tripo_InfernoZhurong_LOD1",
+      "tris": 2500,
+      "verts": 1212,
+      "uv_min": [
+        0.0038075537886470556,
+        0.0036266467068344355
+      ],
+      "uv_max": [
+        0.9850972294807434,
+        0.9944862127304077
+      ],
+      "uv_utilization": 0.495,
+      "bbox_min": [
+        -3.8692,
+        -3.5461,
+        0.009
+      ],
+      "bbox_max": [
+        3.8649,
+        3.2392,
+        15.4547
+      ]
+    },
+    {
+      "name": "SM_Tripo_InfernoZhurong_LOD2",
+      "tris": 800,
+      "verts": 362,
+      "uv_min": [
+        0.004195298533886671,
+        0.0036481553688645363
+      ],
+      "uv_max": [
+        0.9832093715667725,
+        0.9944862127304077
+      ],
+      "uv_utilization": 0.425,
+      "bbox_min": [
+        -3.8586,
+        -3.5513,
+        -0.0016
+      ],
+      "bbox_max": [
+        3.7953,
+        3.2505,
+        15.2641
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_InfernoZhurong/04_export/SM_Tripo_InfernoZhurong_v001.glb",
+    "bytes": 817304
+  },
+  "blend": "art/source/props/SM_Tripo_InfernoZhurong/03_work/SM_Tripo_InfernoZhurong_v001.blend",
+  "total_seconds": 97.1,
+  "_seconds": 103.0
+}

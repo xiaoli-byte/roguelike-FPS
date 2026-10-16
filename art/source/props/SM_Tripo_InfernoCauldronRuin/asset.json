@@ -1,0 +1,505 @@
+{
+  "id": "SM_Tripo_InfernoCauldronRuin",
+  "display": "倾覆巨鼎（V2）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 19:59:05",
+          "files": {
+            "BO_SM_Tripo_InfernoCauldronRuin_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoCauldronRuin_v001.json",
+              "sha256": "129e6e6c3df7db17d04583574ec5841af3872f8cb4960802dd2563c1f5b7f5dc"
+            },
+            "BO_SM_Tripo_InfernoCauldronRuin_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoCauldronRuin_v001_views.json",
+              "sha256": "b5851598dcc061c00e51d97841188841147439dbbd87395d4fcba1b536b601b0"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.v2.cauldronRuin"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -3.0,
+              0,
+              -1.5
+            ],
+            "max": [
+              3.0,
+              1.6,
+              1.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 20:00:16",
+          "files": {
+            "CN_SM_Tripo_InfernoCauldronRuin_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCauldronRuin_v001_source.png",
+              "sha256": "11bcf98346d5f62adb1deac8750cdb0bff99c175655aa1ef13bb141b6907c779"
+            },
+            "CN_SM_Tripo_InfernoCauldronRuin_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCauldronRuin_v001_front.png",
+              "sha256": "cea1a431936c63c6fefd0d0fa0cf5bd27f486ebe27c53362808256b0c5f6b45f"
+            },
+            "CN_SM_Tripo_InfernoCauldronRuin_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCauldronRuin_v001_left.png",
+              "sha256": "47b4dbac73d5a183f723d529c65aa7ad9139ef8c46f6c37c913c334be9ce09d2"
+            },
+            "CN_SM_Tripo_InfernoCauldronRuin_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCauldronRuin_v001_back.png",
+              "sha256": "ac40d1ee6ecb3abc45baac50ae38f160294a6bbf5d078f04d4defafb8aefffb7"
+            },
+            "CN_SM_Tripo_InfernoCauldronRuin_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCauldronRuin_v001_right.png",
+              "sha256": "f963435d3fd146f13d2952ea9098e6900f738a6e34db8546a0d1e0e09c627999"
+            },
+            "CN_SM_Tripo_InfernoCauldronRuin_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCauldronRuin_v001_sheet.png",
+              "sha256": "ce51eb18a28ea7a8e0b9d91de0c70356cedbb57b762ca147c6434b8a2d95eac8"
+            },
+            "CN_SM_Tripo_InfernoCauldronRuin_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCauldronRuin_v001_prompt.txt",
+              "sha256": "3627221a64a2e644b8f5d48285b63f776843e12eb059472320a551377235e3cd"
+            },
+            "CN_SM_Tripo_InfernoCauldronRuin_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCauldronRuin_v001_registration.json",
+              "sha256": "f9c0398ae438dd608d0ad97f433527f9ee9b6b761ff1a71077713a00f5dc6ef7"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a12ad4-b61b-78d0-b3c7-c64eacce1953",
+            "attempt": 1,
+            "seconds": 69.5
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian underground forge-palace fantasy of Zhurong, the Chinese god of fire: massive black iron (xuan tie) with heavy rivets, dark charcoal basalt blocks, deep vermilion lacquer, warm aged bronze ding cauldrons, chunky thick iron chains always attached flat to the surfaces, soot-darkened edges, and a few channels and cracks of molten lava. Lava, embers and fire are painted as opaque flat bright orange-yellow surfaces, never as smoke, loose sparks or transparent effects. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (6m wide x 1.6m tall x 3m deep): A toppled giant bronze ding cauldron lying on its side on the ground, 6m long, 1.6m tall, 3m deep: the thick cracked bronze vessel with green-brown patina and a broken leg, spilling a low flat tongue of cooled black slag with glowing orange cracks (painted as an opaque bright surface), resting against two fallen black iron pillar drums. Low, chunky, one solid connected group resting on the ground.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "11bcf98346d5f62adb1deac8750cdb0bff99c175655aa1ef13bb141b6907c779",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.3208020050125313,
+              "offset": [
+                178,
+                451
+              ],
+              "size": [
+                156,
+                122
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.3208020050125313,
+              "offset": [
+                183,
+                451
+              ],
+              "size": [
+                145,
+                122
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.33126293995859213,
+              "offset": [
+                179,
+                451
+              ],
+              "size": [
+                153,
+                122
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.3208020050125313,
+              "offset": [
+                180,
+                451
+              ],
+              "size": [
+                151,
+                122
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-11 20:03:05",
+          "files": {
+            "CN_SM_Tripo_InfernoCauldronRuin_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCauldronRuin_v002_source.png",
+              "sha256": "f435240573f6ec0138854300c2787836cf9935ffb339dfbad86b8dc95514075e"
+            },
+            "CN_SM_Tripo_InfernoCauldronRuin_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCauldronRuin_v002_front.png",
+              "sha256": "94d213f044a8b2e7b704e6cc30cf596561aef4b861b7b4beb59e7958526e0665"
+            },
+            "CN_SM_Tripo_InfernoCauldronRuin_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCauldronRuin_v002_left.png",
+              "sha256": "318069b44b6bc16707c5d960cf64222512f534696adcb2c612a00947ccfe97d6"
+            },
+            "CN_SM_Tripo_InfernoCauldronRuin_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCauldronRuin_v002_back.png",
+              "sha256": "4b29b94014b8fb3fcff1c7e1728ca0ed9837b336bd8b8365232e47782287d189"
+            },
+            "CN_SM_Tripo_InfernoCauldronRuin_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCauldronRuin_v002_right.png",
+              "sha256": "d86b1894420070110552627b82980e46de850f8bb71fcb5ed7fbde5c66267e89"
+            },
+            "CN_SM_Tripo_InfernoCauldronRuin_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCauldronRuin_v002_sheet.png",
+              "sha256": "d587b613c548eda357ccc44d752c16c7186c4983d40c457465184feae80eaa48"
+            },
+            "CN_SM_Tripo_InfernoCauldronRuin_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCauldronRuin_v002_prompt.txt",
+              "sha256": "e6d4ccdc446573135b90e6ad5625569b21c0b32c48a3c4c1ef1eb82aa0c8bd25"
+            },
+            "CN_SM_Tripo_InfernoCauldronRuin_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCauldronRuin_v002_registration.json",
+              "sha256": "40f42ea9196ae5e239a0d1c6aceaec8130e64bf08f4f87c68915dc59e3c94a69"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a12ad7-48da-7fb0-8d67-91dc13eed14b",
+            "attempt": 1,
+            "seconds": 70.4
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian underground forge-palace fantasy of Zhurong, the Chinese god of fire: massive black iron (xuan tie) with heavy rivets, dark charcoal basalt blocks, deep vermilion lacquer, warm aged bronze ding cauldrons, chunky thick iron chains always attached flat to the surfaces, soot-darkened edges, and a few channels and cracks of molten lava. Lava, embers and fire are painted as opaque flat bright orange-yellow surfaces, never as smoke, loose sparks or transparent effects. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (6m wide x 1.6m tall x 3m deep): A low ruin 6m long, 1.6m tall, 3m deep, LONG AND FLAT (nearly four times as long as it is tall), its long axis running left to right in the FRONT view: a giant square bronze ding cauldron with green-brown patina lying toppled on its side with its open mouth facing the RIGHT end, cracked and with one broken leg, a low flat tongue of cooled black slag with glowing orange cracks (painted as an opaque bright surface) spilling out of the mouth along the ground to the right, and two fallen black iron pillar drums lying lengthwise along the left end. Low, chunky, one solid connected group resting on the ground.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "f435240573f6ec0138854300c2787836cf9935ffb339dfbad86b8dc95514075e",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.39968774395003903,
+              "offset": [
+                118,
+                451
+              ],
+              "size": [
+                275,
+                122
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.36498431708012546,
+              "offset": [
+                208,
+                451
+              ],
+              "size": [
+                96,
+                122
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.39197672638187103,
+              "offset": [
+                147,
+                451
+              ],
+              "size": [
+                218,
+                122
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.3694083694083694,
+              "offset": [
+                191,
+                451
+              ],
+              "size": [
+                129,
+                122
+              ],
+              "physical_height_m": 1.6,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "用户（2026-10-11 审稿确认）",
+            "note": "用户审阅 docs/art/review/inferno-kit-v001.png 后通过全部 16 张祝融火狱套件概念，按现稿进 Hunyuan3D 2mv",
+            "time": "2026-10-11 22:10:05"
+          }
+        }
+      ]
+    },
+    "emid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:11:54",
+          "files": {
+            "EID_SM_Tripo_InfernoCauldronRuin_v001_front.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoCauldronRuin_v001_front.png",
+              "sha256": "140e1f94773dc175fdf396f4e28d90b20e6c74ee4a6529ed0d19a746626e6ba8"
+            },
+            "EID_SM_Tripo_InfernoCauldronRuin_v001_left.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoCauldronRuin_v001_left.png",
+              "sha256": "24f23182d37b2d391dd01a38fd89a41d12a42cfdba64fa2a56c92754151eed56"
+            },
+            "EID_SM_Tripo_InfernoCauldronRuin_v001_back.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoCauldronRuin_v001_back.png",
+              "sha256": "9874f639ffa2dced83eeca2e4032df7c9d69a570e02496a0c228791c2ae34806"
+            },
+            "EID_SM_Tripo_InfernoCauldronRuin_v001_right.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoCauldronRuin_v001_right.png",
+              "sha256": "e1aecb9a60bb34b5df785c14c8b912e52a9104bfd08a1e0e7569c30228c32408"
+            },
+            "EID_SM_Tripo_InfernoCauldronRuin_v001_compare.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoCauldronRuin_v001_compare.png",
+              "sha256": "1d876c204e5c0d4d45eca304e74cea871f7c88a17252b0faa760a58a31f16cf0"
+            }
+          },
+          "from_concept": 2,
+          "provider": "colour-key",
+          "method": "HSV key of the painted lava / coals / fire on the registered concept views (value >= 0.8, saturation >= 0.62, hue 8-48 deg, 3 px open)",
+          "emissive_ratio": {
+            "front": 0.012,
+            "left": 0.0,
+            "back": 0.003,
+            "right": 0.032
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 23:17:35",
+          "files": {
+            "HP_SM_Tripo_InfernoCauldronRuin_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoCauldronRuin_v001_input_front.png",
+              "sha256": "d68532ae5907b29b579433bdd786edf454f39e84da2c1b3b66ae69d74f1e3669"
+            },
+            "HP_SM_Tripo_InfernoCauldronRuin_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoCauldronRuin_v001_input_left.png",
+              "sha256": "5f3bd5377df5409c431b97b8141b7a28d04e142a2a893ffd2aef2493ef708d05"
+            },
+            "HP_SM_Tripo_InfernoCauldronRuin_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoCauldronRuin_v001_input_back.png",
+              "sha256": "71d064e2c76bb9f03e55e45c028c07d4c606ba399dac401e50d22f50c75d9deb"
+            },
+            "HP_SM_Tripo_InfernoCauldronRuin_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoCauldronRuin_v001_input_right.png",
+              "sha256": "75c86eca3f2c6dd03ee210bdca7ea521164fe9cb575b9bc47e8bcd385ce147c8"
+            },
+            "HP_SM_Tripo_InfernoCauldronRuin_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoCauldronRuin_v001.glb",
+              "sha256": "b6e9349833137b0aa191e7ca96b757f0d05f6aa6b52c3b61bfc5ce1c539072b8"
+            },
+            "HP_SM_Tripo_InfernoCauldronRuin_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoCauldronRuin_v001_graph.json",
+              "sha256": "715f627b08281e9351c8b6f96cbadb8316578259815b3db2f50eee07bf5d1e94"
+            }
+          },
+          "from_concept": 2,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              94,
+              350,
+              418,
+              674
+            ],
+            "scale": 3.1604938271604937
+          },
+          "seconds": 164.9,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 13.0
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 23:18:44",
+          "files": {
+            "SM_Tripo_InfernoCauldronRuin_v001.blend": {
+              "path": "03_work/SM_Tripo_InfernoCauldronRuin_v001.blend",
+              "sha256": "9bcfc7489dd2a2ec2a022435c680dbffd2d274de82b413ae283984f8eec0df28"
+            },
+            "SM_Tripo_InfernoCauldronRuin_v001.glb": {
+              "path": "04_export/SM_Tripo_InfernoCauldronRuin_v001.glb",
+              "sha256": "c5c0e61df1e3c8999c21ec57b727806c9519084c5743ee5159897dd4b1f2c79c"
+            },
+            "SM_Tripo_InfernoCauldronRuin_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoCauldronRuin_v001_metrics.json",
+              "sha256": "c35d177c8fd6baa8e904f721651f9813968d15fd5e725997e58ce5a049ba28da"
+            },
+            "T_Tripo_InfernoCauldronRuin_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoCauldronRuin_BC.png",
+              "sha256": "01bad24c5bf4f5ea1ae367c6a4dc7996d720e66ce1f77d99848b35e037c037f6"
+            },
+            "T_Tripo_InfernoCauldronRuin_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoCauldronRuin_E.png",
+              "sha256": "d4100d9206a05fa79623885c9bb96c2c9d64ba8b77581ae4c3ca4845faa9d98a"
+            },
+            "T_Tripo_InfernoCauldronRuin_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoCauldronRuin_N.png",
+              "sha256": "caa2c1dc1bf42d0a26ecb25c9d2e8270c7ca4e61fb13e33e7d415499bffb4071"
+            },
+            "T_Tripo_InfernoCauldronRuin_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoCauldronRuin_ORM.png",
+              "sha256": "69bc2b41d9494ec87281029acc4f54a32a33b61e6e04304835dffd2868ea38cc"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": 1
+          },
+          "align_iou": 0.791,
+          "uncovered_ratio": 0.482,
+          "lods": [
+            {
+              "tris": 2998,
+              "verts": 1426
+            },
+            {
+              "tris": 999,
+              "verts": 424
+            }
+          ],
+          "export_kb": 313.2,
+          "seconds": 69.1,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 23:18:44",
+          "files": {
+            "SM_Tripo_InfernoCauldronRuin_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_InfernoCauldronRuin_v001_validation_v001.json",
+              "sha256": "dd693602d6c84b93117868e377e5b91e7950f0c90315b8bf8afd67f51a8126de"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 23:18:53",
+          "files": {
+            "SM_Tripo_InfernoCauldronRuin_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_InfernoCauldronRuin_v001_review_v001.png",
+              "sha256": "8b497a9830952b4a70f011accd17eebdba0d72863725eace0de6f94fc781860e"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "2mv 种子 20261003：侧倒的青铜方鼎（鼎口朝右、断足）、口中流出的冷却炉渣舌（熔岩裂纹自发光）、左端两段倒下的铁柱鼓与概念一致；实测 3.11×1.54×1.53 m（比概念短，布局等比放大）；IoU 0.791（低矮道具剪影小），LOD0 / LOD1 仅 0.24 m 开口边（炉渣薄边），可接受。",
+            "time": "2026-10-11 23:19:26"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 23:19:26",
+          "files": {
+            "SM_Tripo_InfernoCauldronRuin.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoCauldronRuin.glb",
+              "sha256": "c5c0e61df1e3c8999c21ec57b727806c9519084c5743ee5159897dd4b1f2c79c"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_InfernoCauldronRuin.glb"
+        }
+      ]
+    }
+  }
+}

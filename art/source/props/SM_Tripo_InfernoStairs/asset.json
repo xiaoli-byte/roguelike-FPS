@@ -1,0 +1,618 @@
+{
+  "id": "SM_Tripo_InfernoStairs",
+  "display": "玄武岩台阶（V2）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 19:57:10",
+          "files": {
+            "BO_SM_Tripo_InfernoStairs_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoStairs_v001.json",
+              "sha256": "e452a828d20a2b6adf5b884dedc2757c4014da753dca1b48e4b0b64c4cd9cf9d"
+            },
+            "BO_SM_Tripo_InfernoStairs_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoStairs_v001_views.json",
+              "sha256": "85be5034e4c1bfbd7693564767968e0a0c71f55fbc30fd8c2aa75a88429b43d6"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.v2.stairs"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.0,
+              0,
+              -2.3
+            ],
+            "max": [
+              2.0,
+              3.0,
+              2.3
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 19:58:15",
+          "files": {
+            "CN_SM_Tripo_InfernoStairs_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoStairs_v001_source.png",
+              "sha256": "dea2fb526fef5d36de64d4f494f41862bee6dcea683f0867a42d709088db4d8f"
+            },
+            "CN_SM_Tripo_InfernoStairs_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoStairs_v001_front.png",
+              "sha256": "5c787f2fe1a080747a34b51f05d8c1cee82dd477a5c2af69d517dfdacbccf8d6"
+            },
+            "CN_SM_Tripo_InfernoStairs_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoStairs_v001_left.png",
+              "sha256": "0dbb6867fbd4b52a882c4f019eb477b7b15a9545634c7075763932e7c5eabb9b"
+            },
+            "CN_SM_Tripo_InfernoStairs_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoStairs_v001_back.png",
+              "sha256": "01de575c7903f1f097fba4a5a5bbec10ddba070431f8d7507610fbf565ef6df9"
+            },
+            "CN_SM_Tripo_InfernoStairs_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoStairs_v001_right.png",
+              "sha256": "a1f4d13f72f2189403166e0dc19c9961d20eaed82d591ef54b13414240ed499f"
+            },
+            "CN_SM_Tripo_InfernoStairs_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoStairs_v001_sheet.png",
+              "sha256": "3c5771598e82cb32d100b316a857e04a1469535eaa9d6bbbeef196faff7f6f22"
+            },
+            "CN_SM_Tripo_InfernoStairs_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoStairs_v001_prompt.txt",
+              "sha256": "b3c39ba265c5e47ef0f3b717cf6f188cc866fa4034c62370641afbfe5f6e63a3"
+            },
+            "CN_SM_Tripo_InfernoStairs_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoStairs_v001_registration.json",
+              "sha256": "181e03aea20ab395a813cfc1f951e43e4f9a2a61071daf6bd45873b537731852"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a12ad2-f599-7a72-93c7-f29a62ca316b",
+            "attempt": 1,
+            "seconds": 64.3
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian underground forge-palace fantasy of Zhurong, the Chinese god of fire: massive black iron (xuan tie) with heavy rivets, dark charcoal basalt blocks, deep vermilion lacquer, warm aged bronze ding cauldrons, chunky thick iron chains always attached flat to the surfaces, soot-darkened edges, and a few channels and cracks of molten lava. Lava, embers and fire are painted as opaque flat bright orange-yellow surfaces, never as smoke, loose sparks or transparent effects. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (4m wide x 3m tall x 4.6m deep): A straight flight of dark basalt steps 4m wide, rising 3m over a 4.6m run, with low solid side cheeks clad in riveted black iron and topped by squat aged bronze end posts; the treads are wide and even with worn edges, and a narrow lava groove glowing molten orange (painted as an opaque bright surface) runs along the outer face of each cheek. One solid connected piece, open at the top and bottom.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "dea2fb526fef5d36de64d4f494f41862bee6dcea683f0867a42d709088db4d8f",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.48715138229204724,
+              "offset": [
+                140,
+                363
+              ],
+              "size": [
+                232,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.4911641613883574,
+              "offset": [
+                150,
+                363
+              ],
+              "size": [
+                211,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.4879486840633927,
+              "offset": [
+                145,
+                363
+              ],
+              "size": [
+                221,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.4919746633048398,
+              "offset": [
+                148,
+                363
+              ],
+              "size": [
+                215,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-11 20:01:07",
+          "files": {
+            "CN_SM_Tripo_InfernoStairs_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoStairs_v002_source.png",
+              "sha256": "e251ed08f8b902ef9e8c4c0a181adee0665405f6f672b522f81547688ed691aa"
+            },
+            "CN_SM_Tripo_InfernoStairs_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoStairs_v002_front.png",
+              "sha256": "69cb2f829fb3d5ff6142362697cdddf6a89458c721d80fc3b57024fa268857cd"
+            },
+            "CN_SM_Tripo_InfernoStairs_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoStairs_v002_left.png",
+              "sha256": "17cd1e31c3f6c2a3b3ae85f978e763de5ac0d0f8a315d60b9445c0bd03929516"
+            },
+            "CN_SM_Tripo_InfernoStairs_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoStairs_v002_back.png",
+              "sha256": "0c8fcbfb9d9c8fc696eec82e3b6d1d89f9952ea44f92d5fc69c6c16eaf9e26c5"
+            },
+            "CN_SM_Tripo_InfernoStairs_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoStairs_v002_right.png",
+              "sha256": "40cf88091b6cc0becffae621a17b8c82fc6935ee57a59ba8feaac98175c3af58"
+            },
+            "CN_SM_Tripo_InfernoStairs_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoStairs_v002_sheet.png",
+              "sha256": "f1b791bfae3a2f3e32dd15a81d791953b4280251d88e6bb7e7c64fb2fada95d6"
+            },
+            "CN_SM_Tripo_InfernoStairs_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoStairs_v002_prompt.txt",
+              "sha256": "53ebe1392ad9d629e29f6d23cc3c1e8a3a69c6a4f94fe91407d9d48c27609885"
+            },
+            "CN_SM_Tripo_InfernoStairs_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoStairs_v002_registration.json",
+              "sha256": "51a36032f28a37f6f78353c29e3834f74cd892babc5ac4885b41b9c97d90a12a"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a12ad5-aeba-7c51-adc9-cdf7f31a9012",
+            "attempt": 1,
+            "seconds": 56.1
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian underground forge-palace fantasy of Zhurong, the Chinese god of fire: massive black iron (xuan tie) with heavy rivets, dark charcoal basalt blocks, deep vermilion lacquer, warm aged bronze ding cauldrons, chunky thick iron chains always attached flat to the surfaces, soot-darkened edges, and a few channels and cracks of molten lava. Lava, embers and fire are painted as opaque flat bright orange-yellow surfaces, never as smoke, loose sparks or transparent effects. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (4m wide x 3m tall x 4.6m deep): A straight flight of dark basalt steps 4m wide, rising 3m over a 4.6m run, with low solid side cheeks clad in riveted black iron and topped by squat aged bronze end posts; the treads are wide and even with worn edges, and a narrow lava groove glowing molten orange (painted as an opaque bright surface) runs along the outer face of each cheek. The FRONT is the bottom step facing the viewer; in the side views the low bottom end of the flight points the way the front points; the BACK view shows the tall flat solid back wall under the top step (no treads visible from behind). One solid connected piece, open at the top and bottom.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "e251ed08f8b902ef9e8c4c0a181adee0665405f6f672b522f81547688ed691aa",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.6303100337478498,
+              "offset": [
+                120,
+                363
+              ],
+              "size": [
+                272,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6198267067832285,
+              "offset": [
+                124,
+                363
+              ],
+              "size": [
+                264,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6224147097343068,
+              "offset": [
+                136,
+                363
+              ],
+              "size": [
+                239,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.6198267067832285,
+              "offset": [
+                124,
+                363
+              ],
+              "size": [
+                264,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 3,
+          "created": "2026-10-11 20:04:48",
+          "files": {
+            "CN_SM_Tripo_InfernoStairs_v003_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoStairs_v003_source.png",
+              "sha256": "e251ed08f8b902ef9e8c4c0a181adee0665405f6f672b522f81547688ed691aa"
+            },
+            "CN_SM_Tripo_InfernoStairs_v003_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoStairs_v003_front.png",
+              "sha256": "69cb2f829fb3d5ff6142362697cdddf6a89458c721d80fc3b57024fa268857cd"
+            },
+            "CN_SM_Tripo_InfernoStairs_v003_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoStairs_v003_left.png",
+              "sha256": "17cd1e31c3f6c2a3b3ae85f978e763de5ac0d0f8a315d60b9445c0bd03929516"
+            },
+            "CN_SM_Tripo_InfernoStairs_v003_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoStairs_v003_back.png",
+              "sha256": "0c8fcbfb9d9c8fc696eec82e3b6d1d89f9952ea44f92d5fc69c6c16eaf9e26c5"
+            },
+            "CN_SM_Tripo_InfernoStairs_v003_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoStairs_v003_right.png",
+              "sha256": "40cf88091b6cc0becffae621a17b8c82fc6935ee57a59ba8feaac98175c3af58"
+            },
+            "CN_SM_Tripo_InfernoStairs_v003_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoStairs_v003_sheet.png",
+              "sha256": "f1b791bfae3a2f3e32dd15a81d791953b4280251d88e6bb7e7c64fb2fada95d6"
+            },
+            "CN_SM_Tripo_InfernoStairs_v003_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoStairs_v003_prompt.txt",
+              "sha256": "53ebe1392ad9d629e29f6d23cc3c1e8a3a69c6a4f94fe91407d9d48c27609885"
+            },
+            "CN_SM_Tripo_InfernoStairs_v003_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoStairs_v003_registration.json",
+              "sha256": "51a36032f28a37f6f78353c29e3834f74cd892babc5ac4885b41b9c97d90a12a"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a12ad5-aeba-7c51-adc9-cdf7f31a9012",
+            "attempt": 1,
+            "seconds": 56.1,
+            "rekeyed_from": 2
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian underground forge-palace fantasy of Zhurong, the Chinese god of fire: massive black iron (xuan tie) with heavy rivets, dark charcoal basalt blocks, deep vermilion lacquer, warm aged bronze ding cauldrons, chunky thick iron chains always attached flat to the surfaces, soot-darkened edges, and a few channels and cracks of molten lava. Lava, embers and fire are painted as opaque flat bright orange-yellow surfaces, never as smoke, loose sparks or transparent effects. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (4m wide x 3m tall x 4.6m deep): A straight flight of dark basalt steps 4m wide, rising 3m over a 4.6m run, with low solid side cheeks clad in riveted black iron and topped by squat aged bronze end posts; the treads are wide and even with worn edges, and a narrow lava groove glowing molten orange (painted as an opaque bright surface) runs along the outer face of each cheek. The FRONT is the bottom step facing the viewer; in the side views the low bottom end of the flight points the way the front points; the BACK view shows the tall flat solid back wall under the top step (no treads visible from behind). One solid connected piece, open at the top and bottom.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "e251ed08f8b902ef9e8c4c0a181adee0665405f6f672b522f81547688ed691aa",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.6303100337478498,
+              "offset": [
+                120,
+                363
+              ],
+              "size": [
+                272,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6198267067832285,
+              "offset": [
+                124,
+                363
+              ],
+              "size": [
+                264,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6224147097343068,
+              "offset": [
+                136,
+                363
+              ],
+              "size": [
+                239,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.6198267067832285,
+              "offset": [
+                124,
+                363
+              ],
+              "size": [
+                264,
+                298
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "用户（2026-10-11 审稿确认）",
+            "note": "用户审阅 docs/art/review/inferno-kit-v001.png 后通过全部 16 张祝融火狱套件概念，按现稿进 Hunyuan3D 2mv",
+            "time": "2026-10-11 22:10:01"
+          }
+        }
+      ]
+    },
+    "emid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:11:50",
+          "files": {
+            "EID_SM_Tripo_InfernoStairs_v001_front.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoStairs_v001_front.png",
+              "sha256": "32421cd84b55b1f09389cab3af33ad65e3a9596f61663cc105f4252a5e5ce3b4"
+            },
+            "EID_SM_Tripo_InfernoStairs_v001_left.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoStairs_v001_left.png",
+              "sha256": "7806fbad123dc0eec261d806af889a7c7e8660ac6905a9f2ad0317b4959e819f"
+            },
+            "EID_SM_Tripo_InfernoStairs_v001_back.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoStairs_v001_back.png",
+              "sha256": "2e22bf4dd7eb3667cc2c0f94e06cf97d3a219fffb122ce52995252f91faba77e"
+            },
+            "EID_SM_Tripo_InfernoStairs_v001_right.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoStairs_v001_right.png",
+              "sha256": "f4c2915088976e4b339240b080526e9649352eea2236f24436fa846c04095195"
+            },
+            "EID_SM_Tripo_InfernoStairs_v001_compare.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoStairs_v001_compare.png",
+              "sha256": "27dc58622ef616131d7157ded50ca6630c202431d17153d0071fea1c06ba86b5"
+            }
+          },
+          "from_concept": 3,
+          "provider": "colour-key",
+          "method": "HSV key of the painted lava / coals / fire on the registered concept views (value >= 0.8, saturation >= 0.62, hue 8-48 deg, 3 px open)",
+          "emissive_ratio": {
+            "front": 0.026,
+            "left": 0.041,
+            "back": 0.0,
+            "right": 0.042
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:54:27",
+          "files": {
+            "HP_SM_Tripo_InfernoStairs_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoStairs_v001_input_front.png",
+              "sha256": "a12c189d7541175a38a671876ccb26ec63ada4df378a0ef57d166ec947da2f7a"
+            },
+            "HP_SM_Tripo_InfernoStairs_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoStairs_v001_input_left.png",
+              "sha256": "f4ef3d8b0b268567afeb59fc3a59acd0f1e77195f018674adb82478fc3cfd9a5"
+            },
+            "HP_SM_Tripo_InfernoStairs_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoStairs_v001_input_back.png",
+              "sha256": "84c8f31c70fd197bb4090a11f52f59b18d3771cad6671b2d04d57f94fceeed73"
+            },
+            "HP_SM_Tripo_InfernoStairs_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoStairs_v001_input_right.png",
+              "sha256": "33b79e5816fd69e80c38148cd88931b513d940034a3048a1847b3c04e836cacf"
+            },
+            "HP_SM_Tripo_InfernoStairs_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoStairs_v001.glb",
+              "sha256": "5b2a20b24393b52df408b29d821a50c22b76e13a07b5ef8c0fc5848102570ad1"
+            },
+            "HP_SM_Tripo_InfernoStairs_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoStairs_v001_graph.json",
+              "sha256": "19b3811f06ed011ffbdaba1c4b74e122b71f37be1d13756bae81f455955d9805"
+            }
+          },
+          "from_concept": 3,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              81,
+              337,
+              431,
+              687
+            ],
+            "scale": 2.9257142857142857
+          },
+          "seconds": 2.0,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 24.8
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:56:26",
+          "files": {
+            "SM_Tripo_InfernoStairs_v001.blend": {
+              "path": "03_work/SM_Tripo_InfernoStairs_v001.blend",
+              "sha256": "86382f3c27308b3670b9b3ad551b06604e0af98b076d170b79d728f256619182"
+            },
+            "SM_Tripo_InfernoStairs_v001.glb": {
+              "path": "04_export/SM_Tripo_InfernoStairs_v001.glb",
+              "sha256": "e03d16b91169de9d0bdec91685c902421f4cbf09062028f678265f88b01bf06e"
+            },
+            "SM_Tripo_InfernoStairs_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoStairs_v001_metrics.json",
+              "sha256": "48c5b780dbad00101ca2abb74ae6a0597268d868286159244a89b5d39712d223"
+            },
+            "T_Tripo_InfernoStairs_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoStairs_BC.png",
+              "sha256": "918d44cb31561e145a924621e7208225528d1f6a3de43cbb5e67e7bcf6d21c73"
+            },
+            "T_Tripo_InfernoStairs_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoStairs_E.png",
+              "sha256": "3d25f3a248849631047f72bc1df8b264b84427793a342aa913879f8894ed1c00"
+            },
+            "T_Tripo_InfernoStairs_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoStairs_N.png",
+              "sha256": "5bd9e6190d4a056e8d23c4783b6e763f7c632a729f41ca59a74f3a712d0f36d4"
+            },
+            "T_Tripo_InfernoStairs_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoStairs_ORM.png",
+              "sha256": "23df53d00f8350c33c75786b2e94bd61b91912f8fcb89ee3cf6128865d71680c"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 3,
+            "highpoly": 1,
+            "matid": null,
+            "emid": 1
+          },
+          "align_iou": 0.902,
+          "uncovered_ratio": 0.4054,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1502
+            },
+            {
+              "tris": 1000,
+              "verts": 502
+            }
+          ],
+          "export_kb": 215.6,
+          "seconds": 114.9,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:56:26",
+          "files": {
+            "SM_Tripo_InfernoStairs_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_InfernoStairs_v001_validation_v001.json",
+              "sha256": "8a3284fbde8e83d03745d549ce8d871fae64afe86599380d545585489420d19a"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:56:39",
+          "files": {
+            "SM_Tripo_InfernoStairs_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_InfernoStairs_v001_review_v001.png",
+              "sha256": "dffa514e99a5d8beebde76a6ed0f6414b6d07b4f6abb7737c92a1a3699e04d8f"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "2mv 种子 20261003：直跑玄武岩台阶，正面为最低一级、背面是实心背墙，铁皮挡墙与铜柱头、两侧熔岩槽（自发光）与概念一致；实心（射线两次穿越）；IoU 0.902，校验 0 警告，LOD 无开口边。",
+            "time": "2026-10-11 22:57:30"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:57:30",
+          "files": {
+            "SM_Tripo_InfernoStairs.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoStairs.glb",
+              "sha256": "e03d16b91169de9d0bdec91685c902421f4cbf09062028f678265f88b01bf06e"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_InfernoStairs.glb"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,418 @@
+{
+  "asset": "SK_Enemy_Firecracker",
+  "version": 2,
+  "glb": "art/source/characters/SK_Enemy_Firecracker/04_export/SK_Enemy_Firecracker_native_v002.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.5,
+      "自定义骨架：23 根骨骼（热扩散权重，4489 个顶点未覆盖）": 0.0,
+      "贴图（BC + AO/ORM）": 4.2,
+      "LOD 与蒙皮上限 7880 / 3446 / 1477": 0.1,
+      "导出 679 KB": 0.9
+    },
+    "source": {
+      "verts": 4489,
+      "tris": 8294,
+      "scale": 1.9009281875915973
+    },
+    "regions": {
+      "heat_unweighted_verts": 4489,
+      "weights": "segments (heat failed)",
+      "chest_verts": 211,
+      "head_verts": 292,
+      "pompom_verts": 120,
+      "string_1_L_verts": 129,
+      "string_1_R_verts": 129,
+      "string_2_L_verts": 91,
+      "string_2_R_verts": 91,
+      "upperarm_L_verts": 85,
+      "upperarm_R_verts": 85,
+      "forearm_L_verts": 136,
+      "forearm_R_verts": 136,
+      "hand_L_verts": 368,
+      "hand_R_verts": 368,
+      "thigh_L_verts": 167,
+      "thigh_R_verts": 167,
+      "shin_L_verts": 281,
+      "shin_R_verts": 281,
+      "foot_L_verts": 149,
+      "foot_R_verts": 149,
+      "string_3_L_verts": 6,
+      "string_3_R_verts": 6,
+      "fallback_verts": 0,
+      "per_bone": {
+        "hips": 0,
+        "chest": 1162,
+        "head": 292,
+        "pompom": 120,
+        "upperarm_L": 85,
+        "forearm_L": 136,
+        "hand_L": 367,
+        "thigh_L": 164,
+        "shin_L": 258,
+        "foot_L": 237,
+        "string_1_L": 129,
+        "string_2_L": 68,
+        "string_3_L": 14,
+        "upperarm_R": 85,
+        "forearm_R": 136,
+        "hand_R": 367,
+        "thigh_R": 164,
+        "shin_R": 258,
+        "foot_R": 236,
+        "string_1_R": 129,
+        "string_2_R": 68,
+        "string_3_R": 14
+      }
+    },
+    "bones": [
+      "chest",
+      "foot_L",
+      "foot_R",
+      "forearm_L",
+      "forearm_R",
+      "hand_L",
+      "hand_R",
+      "head",
+      "hips",
+      "pompom",
+      "root",
+      "shin_L",
+      "shin_R",
+      "string_1_L",
+      "string_1_R",
+      "string_2_L",
+      "string_2_R",
+      "string_3_L",
+      "string_3_R",
+      "thigh_L",
+      "thigh_R",
+      "upperarm_L",
+      "upperarm_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.89,
+      "shade_mean": 0.914
+    },
+    "textures": {
+      "size": 1024,
+      "ao_mean": 0.648,
+      "provider_pbr": [],
+      "roughness_mean": 0.75,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Enemy_Firecracker_LOD0": {
+          "max_influences": 2,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_Firecracker_LOD1": {
+          "max_influences": 2,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_Firecracker_LOD2": {
+          "max_influences": 3,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Enemy_Firecracker_LOD0",
+        "tris": 7880,
+        "uv_min": [
+          0.00146484375,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.99853515625,
+          0.991943359375
+        ]
+      },
+      {
+        "name": "SK_Enemy_Firecracker_LOD1",
+        "tris": 3446,
+        "uv_min": [
+          0.00146484375,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.9981199502944946,
+          0.99169921875
+        ]
+      },
+      {
+        "name": "SK_Enemy_Firecracker_LOD2",
+        "tris": 1477,
+        "uv_min": [
+          0.00146484375,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.989990234375,
+          0.99072265625
+        ]
+      }
+    ],
+    "glb_kb": 679,
+    "_seconds": 10.1
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "679 KB / 1600 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Enemy_Firecracker_LOD0', 'SK_Enemy_Firecracker_LOD1', 'SK_Enemy_Firecracker_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "7880 / 8000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "3446 / 3500"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "1459 / 1500"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "1.900 m (design 1.9 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=-0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Enemy_Firecracker']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Firecracker_ORM",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Firecracker_BC",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "23 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Firecracker_LOD0 influences",
+      "max 2"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Firecracker_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Firecracker_LOD1 influences",
+      "max 2"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Firecracker_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Firecracker_LOD2 influences",
+      "max 3"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Firecracker_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Firecracker_LOD0 UV range",
+      "[0.001, 0.001]..[0.999, 0.992]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Firecracker_LOD1 UV range",
+      "[0.001, 0.001]..[0.998, 0.992]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Firecracker_LOD2 UV range",
+      "[0.001, 0.001]..[0.99, 0.991]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "4489 verts"
+    ],
+    [
+      "pass",
+      "region chest",
+      "211 verts"
+    ],
+    [
+      "pass",
+      "region head",
+      "292 verts"
+    ],
+    [
+      "pass",
+      "region pompom",
+      "120 verts"
+    ],
+    [
+      "pass",
+      "region string_1_L",
+      "129 verts"
+    ],
+    [
+      "pass",
+      "region string_1_R",
+      "129 verts"
+    ],
+    [
+      "pass",
+      "region string_2_L",
+      "91 verts"
+    ],
+    [
+      "pass",
+      "region string_2_R",
+      "91 verts"
+    ],
+    [
+      "pass",
+      "region upperarm_L",
+      "85 verts"
+    ],
+    [
+      "pass",
+      "region upperarm_R",
+      "85 verts"
+    ],
+    [
+      "pass",
+      "region forearm_L",
+      "136 verts"
+    ],
+    [
+      "pass",
+      "region forearm_R",
+      "136 verts"
+    ],
+    [
+      "pass",
+      "region hand_L",
+      "368 verts"
+    ],
+    [
+      "pass",
+      "region hand_R",
+      "368 verts"
+    ],
+    [
+      "pass",
+      "region thigh_L",
+      "167 verts"
+    ],
+    [
+      "pass",
+      "region thigh_R",
+      "167 verts"
+    ],
+    [
+      "pass",
+      "region shin_L",
+      "281 verts"
+    ],
+    [
+      "pass",
+      "region shin_R",
+      "281 verts"
+    ],
+    [
+      "pass",
+      "region foot_L",
+      "149 verts"
+    ],
+    [
+      "pass",
+      "region foot_R",
+      "149 verts"
+    ],
+    [
+      "warn",
+      "region string_3_L",
+      "6 verts"
+    ],
+    [
+      "warn",
+      "region string_3_R",
+      "6 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "0 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

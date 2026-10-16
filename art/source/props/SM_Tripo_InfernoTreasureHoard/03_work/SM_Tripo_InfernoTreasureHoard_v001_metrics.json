@@ -1,0 +1,120 @@
+{
+  "steps": {
+    "导入清理": 8.4,
+    "对齐": 1.3,
+    "低模与 UV": 23.4,
+    "投影着色": 90.1,
+    "烘焙": 13.7,
+    "LOD": 0.0,
+    "导出": 1.6
+  },
+  "highpoly": {
+    "faces_raw": 1484890,
+    "faces": 789062,
+    "verts": 788880,
+    "loose_parts": 161,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00492,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.866,
+    "iou_per_view": {
+      "front": 0.948,
+      "left": 0.768,
+      "back": 0.908,
+      "right": 0.8
+    },
+    "height_m": 1.72,
+    "blockout_height_m": 1.8
+  },
+  "uv": {
+    "smart_islands": 1169,
+    "charts": 241,
+    "fallback_charts": 50,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.106,
+    "density_merged": 0.152
+  },
+  "projection": {
+    "uncovered_ratio": 0.4573
+  },
+  "bake_device": "CPU",
+  "emissive_id": {
+    "emissive_texel_ratio": 0.0113
+  },
+  "textures": {
+    "T_Tripo_InfernoTreasureHoard_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_InfernoTreasureHoard_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_InfernoTreasureHoard_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_InfernoTreasureHoard_LOD0",
+      "tris": 2999,
+      "verts": 1318,
+      "uv_min": [
+        0.004693623166531324,
+        0.004693618975579739
+      ],
+      "uv_max": [
+        0.9916738867759705,
+        0.9953064322471619
+      ],
+      "uv_utilization": 0.508,
+      "bbox_min": [
+        -1.1672,
+        -0.842,
+        0.0023
+      ],
+      "bbox_max": [
+        1.1656,
+        0.6677,
+        1.7198
+      ]
+    },
+    {
+      "name": "SM_Tripo_InfernoTreasureHoard_LOD1",
+      "tris": 1140,
+      "verts": 386,
+      "uv_min": [
+        0.004693623166531324,
+        0.0049668243154883385
+      ],
+      "uv_max": [
+        0.9916738867759705,
+        0.9953064322471619
+      ],
+      "uv_utilization": 0.273,
+      "bbox_min": [
+        -1.1379,
+        -0.8293,
+        -0.0026
+      ],
+      "bbox_max": [
+        1.153,
+        0.6677,
+        1.4731
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_InfernoTreasureHoard/04_export/SM_Tripo_InfernoTreasureHoard_v001.glb",
+    "bytes": 463040
+  },
+  "blend": "art/source/props/SM_Tripo_InfernoTreasureHoard/03_work/SM_Tripo_InfernoTreasureHoard_v001.blend",
+  "total_seconds": 138.5,
+  "_seconds": 143.6
+}

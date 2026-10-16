@@ -1,0 +1,313 @@
+{
+  "asset": "SK_Enemy_Bifang",
+  "version": 2,
+  "glb": "art/source/characters/SK_Enemy_Bifang/04_export/SK_Enemy_Bifang_native_v002.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.5,
+      "自定义骨架：26 根骨骼（热扩散权重，62 个顶点未覆盖）": 0.1,
+      "贴图（BC + AO/ORM）": 6.4,
+      "LOD 与蒙皮上限 7878 / 3446 / 1476": 0.3,
+      "导出 539 KB": 1.3
+    },
+    "source": {
+      "verts": 4347,
+      "tris": 8672,
+      "scale": 2.0009770395701025
+    },
+    "regions": {
+      "heat_unweighted_verts": 62,
+      "head_verts": 375,
+      "tarsus_verts": 63,
+      "toes_verts": 454,
+      "fallback_verts": 8,
+      "per_bone": {
+        "hips": 430,
+        "chest": 383,
+        "neck_1": 16,
+        "neck_2": 18,
+        "neck_3": 33,
+        "neck_4": 14,
+        "neck_5": 15,
+        "neck_6": 40,
+        "head": 1377,
+        "crest_1": 192,
+        "crest_2": 79,
+        "wing_1_L": 151,
+        "wing_2_L": 137,
+        "wing_3_L": 63,
+        "wing_1_R": 151,
+        "wing_2_R": 136,
+        "wing_3_R": 63,
+        "tail_1": 150,
+        "tail_2": 82,
+        "thigh": 105,
+        "shin": 68,
+        "tarsus": 85,
+        "toes": 474
+      }
+    },
+    "bones": [
+      "beak_tip",
+      "chest",
+      "crest_1",
+      "crest_2",
+      "ember",
+      "head",
+      "hips",
+      "neck_1",
+      "neck_2",
+      "neck_3",
+      "neck_4",
+      "neck_5",
+      "neck_6",
+      "root",
+      "shin",
+      "tail_1",
+      "tail_2",
+      "tarsus",
+      "thigh",
+      "toes",
+      "wing_1_L",
+      "wing_1_R",
+      "wing_2_L",
+      "wing_2_R",
+      "wing_3_L",
+      "wing_3_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.919,
+      "shade_mean": 0.942
+    },
+    "textures": {
+      "size": 1024,
+      "ao_mean": 0.788,
+      "provider_pbr": [],
+      "roughness_mean": 0.75,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Enemy_Bifang_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_Bifang_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_Bifang_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Enemy_Bifang_LOD0",
+        "tris": 7878,
+        "uv_min": [
+          0.001220703125,
+          0.001220703125
+        ],
+        "uv_max": [
+          0.998779296875,
+          0.990234375
+        ]
+      },
+      {
+        "name": "SK_Enemy_Bifang_LOD1",
+        "tris": 3446,
+        "uv_min": [
+          0.0012849293416365981,
+          0.001220703125
+        ],
+        "uv_max": [
+          0.998779296875,
+          0.990234375
+        ]
+      },
+      {
+        "name": "SK_Enemy_Bifang_LOD2",
+        "tris": 1476,
+        "uv_min": [
+          0.0012849293416365981,
+          0.001220703125
+        ],
+        "uv_max": [
+          0.998046875,
+          0.990234375
+        ]
+      }
+    ],
+    "glb_kb": 539,
+    "_seconds": 15.8
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "539 KB / 1600 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Enemy_Bifang_LOD0', 'SK_Enemy_Bifang_LOD1', 'SK_Enemy_Bifang_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "7878 / 8000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "3446 / 3500"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "1476 / 1500"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "1.999 m (design 2.0 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0008"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Enemy_Bifang']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Bifang_ORM",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Bifang_BC",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "26 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Bifang_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Bifang_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Bifang_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Bifang_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Bifang_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Bifang_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Bifang_LOD0 UV range",
+      "[0.001, 0.001]..[0.999, 0.99]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Bifang_LOD1 UV range",
+      "[0.001, 0.001]..[0.999, 0.99]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Bifang_LOD2 UV range",
+      "[0.001, 0.001]..[0.998, 0.99]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "62 verts"
+    ],
+    [
+      "pass",
+      "region head",
+      "375 verts"
+    ],
+    [
+      "pass",
+      "region tarsus",
+      "63 verts"
+    ],
+    [
+      "pass",
+      "region toes",
+      "454 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "8 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

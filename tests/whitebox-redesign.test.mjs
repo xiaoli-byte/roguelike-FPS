@@ -122,11 +122,12 @@ test('enemy navigation reaches the top of every raised deck through its stair ra
 
 // The desert roster burrows, rolls or charges along the ground (confirmed by the enemy sessions, 2026-10-07).
 const GROUND_ONLY = new Set(['jerboa_blade', 'scorpion_archer', 'mirage_toad', 'fire_rat', 'tomb_beast',
-  'jiaoren', 'xingxing', 'haozhi', 'fuzhu', 'ice_whale', 'xuangui', 'frost_crab', 'fox_witch']);
+  'jiaoren', 'xingxing', 'haozhi', 'fuzhu', 'ice_whale', 'xuangui', 'frost_crab', 'fox_witch',
+  'tantong', 'huodou', 'iron_ox', 'tuo', 'mamian', 'founder', 'nuo']);
 // Deck stations still serve shooters that can stand on a deck: checked with a deck-capable roster in the same rooms.
 const DECK_ROSTER = [['archer', 2], ['mortar', 1], ['grunt', 3]];
-const roleOf = id => ({ archer: 'ranged', wisp: 'ranged', scorpion_archer: 'ranged', qingniao: 'ranged', marksman: 'precision', fuzhu: 'precision',
-  mortar: 'artillery', mirage_toad: 'artillery', ice_whale: 'artillery' })[id] ?? 'other';
+const roleOf = id => ({ archer: 'ranged', wisp: 'ranged', scorpion_archer: 'ranged', qingniao: 'ranged', mamian: 'ranged', marksman: 'precision', fuzhu: 'precision', bifang: 'precision',
+  mortar: 'artillery', mirage_toad: 'artillery', ice_whale: 'artillery', firecracker: 'artillery' })[id] ?? 'other';
 const withRoster = (L, squad) => ({ ...L, whitebox: { ...L.whitebox, plan: { ...L.whitebox.plan, encounters: L.whitebox.plan.encounters.map(e => ({ ...e, squad })) } } });
 
 test('ground-only enemies never take deck stations; deck-capable shooters stand on the deck tops; squads spread with the room', () => {

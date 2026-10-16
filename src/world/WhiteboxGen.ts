@@ -1,7 +1,7 @@
 import type { StageNode } from '../core/types';
 import type { LayoutBox, LevelLayout, P2, RampInfo } from './LevelTypes';
 import { WHITEBOX_PLANS, WHITEBOX_REDESIGN_PLANS } from './WhiteboxPlans';
-import type { WhiteboxCheckpoint, WhiteboxPlan, WhiteboxPlatform, WhiteboxPoint, WhiteboxRect } from './WhiteboxTypes';
+import type { WhiteboxCheckpoint, WhiteboxLava, WhiteboxPlan, WhiteboxPlatform, WhiteboxPoint, WhiteboxRect } from './WhiteboxTypes';
 
 /** Fixed 0.5 m cells: centre sampling shifts edges by up to ~0.36 m diagonally. */
 export const WHITEBOX_GRID_SIZE = 0.5;
@@ -104,18 +104,32 @@ export function generateWhitebox(stage: StageNode, opts: { redesign?: boolean } 
   const plan = getWhiteboxPlan(stage, opts.redesign), [width, depth] = plan.bounds;
   const minX = -width / 2 - OUTER_PAD, minZ = -depth / 2 - OUTER_PAD;
   const cols = Math.ceil((width + OUTER_PAD * 2) / WHITEBOX_GRID_SIZE), rows = Math.ceil((depth + OUTER_PAD * 2) / WHITEBOX_GRID_SIZE);
-  // 0 = traversable floor, 1 = outside mass, 2 = authored cover, 3 = inner void (see WhiteboxPlan.voids).
+  // 0 = traversable floor, 1 = outside mass, 2 = authored cover, 3 = fenced inner void (see WhiteboxPlan.voids),
+  // 4 = lava floor (lava voids and lava hazard strips; walkable for the player, no fence, blocked for enemy nav).
   const cells = new Uint8Array(cols * rows);
   // A cell belongs to a void when its centre lies within the void's radius plus half a cell (the ring's faceted inner
   // edge stays floor; anything else non-floor near the hole is fence, not wall).
-  const inVoid = (p: WhiteboxPoint): boolean => (plan.voids ?? []).some(v =>
-    Math.hypot(p[0] - v.center[0], p[1] - v.center[1]) <= v.radius + WHITEBOX_GRID_SIZE / 2);
+  const voidAt = (p: WhiteboxPoint): 3 | 4 | 0 => {
+    let hit: 3 | 4 | 0 = 0;
+    for (const v of plan.voids ?? []) if (Math.hypot(p[0] - v.center[0], p[1] - v.center[1]) <= v.radius + WHITEBOX_GRID_SIZE / 2) {
+      if (v.kind === 'lava') return 4;
+      hit = 3;
+    }
+    return hit;
+  };
+  const lavaStrips = (plan.hazards ?? []).filter(h => h.kind === 'lava');
+  const inLavaStrip = (p: WhiteboxPoint): boolean => lavaStrips.some(h =>
+    h.points.some((b, i) => i > 0 && segmentDistance(p, h.points[i - 1], b) <= h.width / 2));
   for (let z = 0; z < rows; z++) for (let x = 0; x < cols; x++) {
     const p: WhiteboxPoint = [(x + .5) * WHITEBOX_GRID_SIZE - OUTER_PAD, (z + .5) * WHITEBOX_GRID_SIZE - OUTER_PAD];
     const floor = plan.rooms.some(room => whiteboxInsidePolygon(p, room.polygon)) || plan.passages.some(path =>
       path.points.some((b, i) => i > 0 && segmentDistance(p, path.points[i - 1], b) <= path.width / 2));
-    cells[z * cols + x] = !floor ? (inVoid(p) ? 3 : 1) : plan.covers.some(cover => whiteboxInsidePolygon(p, cover.polygon)) ? 2 : 0;
+    cells[z * cols + x] = !floor ? (voidAt(p) || 1)
+      : plan.covers.some(cover => whiteboxInsidePolygon(p, cover.polygon)) ? 2 : inLavaStrip(p) ? 4 : 0;
   }
+  const lava = buildLava(cells, cols, rows, minX, minZ);
+  /** Whether a disc of radius r around p touches a lava cell (placement clearance; false without lava). */
+  const touchesLava = (p: P2, r: number): boolean => !!lava && lavaWithin(lava, p.x, p.z, r);
   const boxes: LayoutBox[] = [];
   // Outer masses must out-reach a double jump from the tallest standable top (pillar or deck):
   // jump apex ≈ 2.7 m plus body clearance. Shipped plans (2.6 m cover) keep the reviewed 8 m.
@@ -150,7 +164,9 @@ export function generateWhitebox(stage: StageNode, opts: { redesign?: boolean } 
   const firstPoints = firstPath?.from === plan.entry.room ? firstPath.points : firstPath?.points.slice().reverse();
   const lookAt = firstPoints?.find(point => Math.hypot(point[0] - plan.entry.at[0], point[1] - plan.entry.at[1]) > 2);
   const playerYaw = heading(playerSpawn, lookAt ? whiteboxPoint(plan, lookAt) : exit);
-  const overlaps = (p: P2, radius: number): boolean => boxes.some(b => p.x + radius > b.minX && p.x - radius < b.maxX && p.z + radius > b.minZ && p.z - radius < b.maxZ);
+  // Lava counts as an obstacle for every placement (portal, reward, shop, enemy spawns); plans without lava are unchanged.
+  const overlaps = (p: P2, radius: number): boolean => boxes.some(b => p.x + radius > b.minX && p.x - radius < b.maxX && p.z + radius > b.minZ && p.z - radius < b.maxZ)
+    || touchesLava(p, radius);
   const exitRoom = plan.rooms.find(room => room.id === plan.exit.room)!;
   const insideExit = (p: P2): boolean => whiteboxInsidePolygon([p.x + width / 2, p.z + depth / 2], exitRoom.polygon);
   const portalPoints: P2[] = [];
@@ -255,6 +271,29 @@ export function generateWhitebox(stage: StageNode, opts: { redesign?: boolean } 
     boxes, decos: [], lights: [{ x: playerSpawn.x, y: 3, z: playerSpawn.z }, { x: center.x, y: 3, z: center.z }], runes: [], ramps,
     playerSpawn, playerYaw, spawnPoints, rewardPoint, portalPoints, shopPoint, bossPoint, center,
     checks: checkpoints.map(({ x, z }) => ({ x, z, g: 0 })),
-    whitebox: { planId: plan.id, title: plan.title, plan, floorRects, checkpoints, gridSize: WHITEBOX_GRID_SIZE },
+    whitebox: { planId: plan.id, title: plan.title, plan, floorRects, checkpoints, gridSize: WHITEBOX_GRID_SIZE, ...(lava ? { lava } : {}) },
   };
+}
+
+/** Lava cells (value 4) as a runtime field; undefined when the plan has none. */
+function buildLava(cells: Uint8Array, cols: number, rows: number, minX: number, minZ: number): WhiteboxLava | undefined {
+  const mask = new Uint8Array(cols * rows);
+  let any = false;
+  for (let i = 0; i < cells.length; i++) if (cells[i] === 4) { mask[i] = 1; any = true; }
+  if (!any) return undefined;
+  return { minX, minZ, cols, rows, cell: WHITEBOX_GRID_SIZE, mask, rects: mergeCells(cells, cols, rows, cell => cell === 4, minX, minZ) };
+}
+
+/** Whether any lava cell lies within r metres of world point (x, z) (cell squares, not centres; Lava.ts nearLava). */
+function lavaWithin(lava: WhiteboxLava, x: number, z: number, r: number): boolean {
+  const c = lava.cell;
+  const x0 = Math.max(0, Math.floor((x - r - lava.minX) / c)), x1 = Math.min(lava.cols - 1, Math.floor((x + r - lava.minX) / c));
+  const z0 = Math.max(0, Math.floor((z - r - lava.minZ) / c)), z1 = Math.min(lava.rows - 1, Math.floor((z + r - lava.minZ) / c));
+  for (let iz = z0; iz <= z1; iz++) for (let ix = x0; ix <= x1; ix++) {
+    if (lava.mask[iz * lava.cols + ix] !== 1) continue;
+    const cx = lava.minX + ix * c, cz = lava.minZ + iz * c;
+    const dx = Math.max(cx - x, 0, x - cx - c), dz = Math.max(cz - z, 0, z - cz - c);
+    if (dx * dx + dz * dz < r * r) return true;
+  }
+  return false;
 }

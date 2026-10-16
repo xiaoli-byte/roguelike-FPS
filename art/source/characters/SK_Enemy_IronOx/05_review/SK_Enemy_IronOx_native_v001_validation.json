@@ -1,0 +1,340 @@
+{
+  "asset": "SK_Enemy_IronOx",
+  "version": 1,
+  "glb": "art/source/characters/SK_Enemy_IronOx/04_export/SK_Enemy_IronOx_native_v001.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.3,
+      "自定义骨架：24 根骨骼（热扩散权重，7542 个顶点未覆盖）": 0.1,
+      "贴图（BC + AO/ORM）": 13.1,
+      "LOD 与蒙皮上限 11819 / 4925 / 1970": 0.3,
+      "发光壳 1591 面": 0.0,
+      "导出 1258 KB": 3.2
+    },
+    "source": {
+      "verts": 7542,
+      "tris": 14315,
+      "scale": 0.9999999602635717
+    },
+    "regions": {
+      "heat_unweighted_verts": 7542,
+      "weights": "segments (heat failed)",
+      "ground_verts": 264,
+      "spine_verts": 1512,
+      "head_verts": 463,
+      "bellows_L_verts": 49,
+      "bellows_R_verts": 50,
+      "door_verts": 2,
+      "fallback_verts": 0,
+      "per_bone": {
+        "hips": 191,
+        "spine": 1452,
+        "chest": 195,
+        "neck": 0,
+        "head": 526,
+        "door": 1147,
+        "bellows_L": 139,
+        "upperarm_L": 279,
+        "forearm_L": 62,
+        "paw_L": 116,
+        "thigh_L": 292,
+        "shin_L": 95,
+        "foot_L": 154,
+        "bellows_R": 140,
+        "upperarm_R": 283,
+        "forearm_R": 62,
+        "paw_R": 116,
+        "thigh_R": 298,
+        "shin_R": 95,
+        "foot_R": 154,
+        "tail_1": 100,
+        "tail_2": 128,
+        "tail_3": 156
+      }
+    },
+    "bones": [
+      "bellows_L",
+      "bellows_R",
+      "chest",
+      "door",
+      "foot_L",
+      "foot_R",
+      "forearm_L",
+      "forearm_R",
+      "head",
+      "hips",
+      "neck",
+      "paw_L",
+      "paw_R",
+      "root",
+      "shin_L",
+      "shin_R",
+      "spine",
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "thigh_L",
+      "thigh_R",
+      "upperarm_L",
+      "upperarm_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.809,
+      "shade_mean": 0.873
+    },
+    "textures": {
+      "size": 2048,
+      "ao_mean": 0.659,
+      "provider_pbr": [],
+      "roughness_mean": 0.75,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Enemy_IronOx_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_IronOx_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_IronOx_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Enemy_IronOx_LOD0",
+        "tris": 11819,
+        "uv_min": [
+          0.0,
+          -2.4758046492934227e-06
+        ],
+        "uv_max": [
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "SK_Enemy_IronOx_LOD1",
+        "tris": 4925,
+        "uv_min": [
+          0.0,
+          -2.4758046492934227e-06
+        ],
+        "uv_max": [
+          1.0,
+          1.000000238418579
+        ]
+      },
+      {
+        "name": "SK_Enemy_IronOx_LOD2",
+        "tris": 1970,
+        "uv_min": [
+          0.00048828125,
+          0.0006149964174255729
+        ],
+        "uv_max": [
+          1.0,
+          0.9990234375
+        ]
+      }
+    ],
+    "glow_shell": {
+      "group": "door",
+      "tris": 1591
+    },
+    "glb_kb": 1258,
+    "_seconds": 20.8
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "1258 KB / 3000 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Enemy_IronOx_LOD0', 'SK_Enemy_IronOx_LOD1', 'SK_Enemy_IronOx_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "11819 / 12000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "4925 / 5000"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "1966 / 2000"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "2.400 m (design 2.4 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=-0.0004"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Enemy_IronOx_Glow', 'M_Enemy_IronOx']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "glow shell",
+      "1591 tris on 'door'"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_IronOx_BC",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_IronOx_ORM",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "24 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Enemy_IronOx_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_IronOx_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_IronOx_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_IronOx_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_IronOx_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_IronOx_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_IronOx_LOD0 UV range",
+      "[0.0, -0.0]..[1.0, 1.0]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_IronOx_LOD1 UV range",
+      "[0.0, -0.0]..[1.0, 1.0]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_IronOx_LOD2 UV range",
+      "[0.0, 0.001]..[1.0, 0.999]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "7542 verts"
+    ],
+    [
+      "pass",
+      "region ground",
+      "264 verts"
+    ],
+    [
+      "pass",
+      "region spine",
+      "1512 verts"
+    ],
+    [
+      "pass",
+      "region head",
+      "463 verts"
+    ],
+    [
+      "pass",
+      "region bellows_L",
+      "49 verts"
+    ],
+    [
+      "pass",
+      "region bellows_R",
+      "50 verts"
+    ],
+    [
+      "warn",
+      "region door",
+      "2 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "0 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

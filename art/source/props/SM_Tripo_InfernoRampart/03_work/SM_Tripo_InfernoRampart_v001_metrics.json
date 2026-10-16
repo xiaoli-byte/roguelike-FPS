@@ -1,0 +1,144 @@
+{
+  "steps": {
+    "导入清理": 2.9,
+    "对齐": 1.0,
+    "低模与 UV": 10.2,
+    "投影着色": 29.0,
+    "烘焙": 18.4,
+    "LOD": 0.1,
+    "导出": 3.3
+  },
+  "highpoly": {
+    "faces_raw": 763996,
+    "faces": 419540,
+    "verts": 419528,
+    "loose_parts": 6,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.917,
+    "iou_per_view": {
+      "front": 0.977,
+      "left": 0.836,
+      "back": 0.985,
+      "right": 0.839
+    },
+    "height_m": 8.8179,
+    "blockout_height_m": 9.0
+  },
+  "uv": {
+    "smart_islands": 384,
+    "charts": 68,
+    "fallback_charts": 5,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "smart",
+    "density_smart": 0.0602,
+    "density_merged": 0.0558
+  },
+  "projection": {
+    "uncovered_ratio": 0.2146
+  },
+  "bake_device": "CPU",
+  "emissive_id": {
+    "emissive_texel_ratio": 0.0112
+  },
+  "textures": {
+    "T_Tripo_InfernoRampart_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_InfernoRampart_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_InfernoRampart_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_InfernoRampart_LOD0",
+      "tris": 8000,
+      "verts": 3988,
+      "uv_min": [
+        0.003229407360777259,
+        0.003256222466006875
+      ],
+      "uv_max": [
+        0.9968101382255554,
+        0.9639934301376343
+      ],
+      "uv_utilization": 0.637,
+      "bbox_min": [
+        -3.7944,
+        -0.956,
+        0.0003
+      ],
+      "bbox_max": [
+        3.7936,
+        1.408,
+        8.817
+      ]
+    },
+    {
+      "name": "SM_Tripo_InfernoRampart_LOD1",
+      "tris": 2500,
+      "verts": 1238,
+      "uv_min": [
+        0.003958732355386019,
+        0.0032566157169640064
+      ],
+      "uv_max": [
+        0.9962870478630066,
+        0.9639934301376343
+      ],
+      "uv_utilization": 0.615,
+      "bbox_min": [
+        -3.7957,
+        -0.9537,
+        -0.0007
+      ],
+      "bbox_max": [
+        3.7931,
+        1.4056,
+        8.814
+      ]
+    },
+    {
+      "name": "SM_Tripo_InfernoRampart_LOD2",
+      "tris": 800,
+      "verts": 388,
+      "uv_min": [
+        0.003958732355386019,
+        0.0032566157169640064
+      ],
+      "uv_max": [
+        0.9962870478630066,
+        0.9639934301376343
+      ],
+      "uv_utilization": 0.587,
+      "bbox_min": [
+        -3.7815,
+        -0.9523,
+        0.0139
+      ],
+      "bbox_max": [
+        3.7751,
+        1.3942,
+        8.8812
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_InfernoRampart/04_export/SM_Tripo_InfernoRampart_v001.glb",
+    "bytes": 565024
+  },
+  "blend": "art/source/props/SM_Tripo_InfernoRampart/03_work/SM_Tripo_InfernoRampart_v001.blend",
+  "total_seconds": 64.9,
+  "_seconds": 71.7
+}

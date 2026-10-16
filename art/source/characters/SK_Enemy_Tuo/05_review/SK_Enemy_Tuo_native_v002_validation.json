@@ -1,0 +1,313 @@
+{
+  "asset": "SK_Enemy_Tuo",
+  "version": 2,
+  "glb": "art/source/characters/SK_Enemy_Tuo/04_export/SK_Enemy_Tuo_native_v002.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.4,
+      "自定义骨架：25 根骨骼（热扩散权重，0 个顶点未覆盖）": 0.3,
+      "贴图（BC + AO/ORM）": 12.7,
+      "LOD 与蒙皮上限 11820 / 4925 / 1969": 0.3,
+      "导出 1402 KB": 1.9
+    },
+    "source": {
+      "verts": 6790,
+      "tris": 13503,
+      "scale": 4.261993428258489
+    },
+    "regions": {
+      "heat_unweighted_verts": 0,
+      "ground_verts": 571,
+      "head_verts": 697,
+      "jaw_verts": 223,
+      "fallback_verts": 0,
+      "per_bone": {
+        "hips": 313,
+        "spine": 1000,
+        "chest": 395,
+        "neck": 63,
+        "head": 697,
+        "jaw": 276,
+        "tail_1": 229,
+        "tail_2": 131,
+        "tail_3": 230,
+        "tail_4": 147,
+        "tail_5": 108,
+        "tail_6": 110,
+        "upperarm_L": 295,
+        "forearm_L": 149,
+        "paw_L": 213,
+        "thigh_L": 289,
+        "shin_L": 111,
+        "foot_L": 174,
+        "upperarm_R": 304,
+        "forearm_R": 149,
+        "paw_R": 210,
+        "thigh_R": 287,
+        "shin_R": 114,
+        "foot_R": 171
+      }
+    },
+    "bones": [
+      "chest",
+      "foot_L",
+      "foot_R",
+      "forearm_L",
+      "forearm_R",
+      "head",
+      "hips",
+      "jaw",
+      "neck",
+      "paw_L",
+      "paw_R",
+      "root",
+      "shin_L",
+      "shin_R",
+      "spine",
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "tail_4",
+      "tail_5",
+      "tail_6",
+      "thigh_L",
+      "thigh_R",
+      "upperarm_L",
+      "upperarm_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.944,
+      "shade_mean": 0.953
+    },
+    "textures": {
+      "size": 2048,
+      "ao_mean": 0.87,
+      "provider_pbr": [],
+      "roughness_mean": 0.75,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Enemy_Tuo_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_Tuo_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_Tuo_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Enemy_Tuo_LOD0",
+        "tris": 11820,
+        "uv_min": [
+          0.001708984375,
+          0.001708984375
+        ],
+        "uv_max": [
+          0.993408203125,
+          0.998046875
+        ]
+      },
+      {
+        "name": "SK_Enemy_Tuo_LOD1",
+        "tris": 4925,
+        "uv_min": [
+          0.0017067615408450365,
+          0.001708984375
+        ],
+        "uv_max": [
+          0.993408203125,
+          0.99267578125
+        ]
+      },
+      {
+        "name": "SK_Enemy_Tuo_LOD2",
+        "tris": 1969,
+        "uv_min": [
+          0.0017067615408450365,
+          0.001708984375
+        ],
+        "uv_max": [
+          0.993408203125,
+          0.984130859375
+        ]
+      }
+    ],
+    "glb_kb": 1402,
+    "_seconds": 18.9
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "1402 KB / 3000 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Enemy_Tuo_LOD0', 'SK_Enemy_Tuo_LOD1', 'SK_Enemy_Tuo_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "11820 / 12000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "4925 / 5000"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "1969 / 2000"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "1.900 m (design 1.9 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0002"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Enemy_Tuo']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Tuo_ORM",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Tuo_BC",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "25 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Tuo_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Tuo_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Tuo_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Tuo_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Tuo_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Tuo_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Tuo_LOD0 UV range",
+      "[0.002, 0.002]..[0.993, 0.998]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Tuo_LOD1 UV range",
+      "[0.002, 0.002]..[0.993, 0.993]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Tuo_LOD2 UV range",
+      "[0.002, 0.002]..[0.993, 0.984]"
+    ],
+    [
+      "warn",
+      "region heat_unweighted",
+      "0 verts"
+    ],
+    [
+      "pass",
+      "region ground",
+      "571 verts"
+    ],
+    [
+      "pass",
+      "region head",
+      "697 verts"
+    ],
+    [
+      "pass",
+      "region jaw",
+      "223 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "0 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

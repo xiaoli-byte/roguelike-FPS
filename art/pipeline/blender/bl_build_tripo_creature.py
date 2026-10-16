@@ -467,6 +467,14 @@ else:
             merge_to[src] = target
     groups = {g.index: g.name for g in mesh.vertex_groups}
     nv = len(V)
+    if RIG.get("forearm_twist"):
+        # 2026-10-13 tried on all three heroes and measured with /hero-skin-audit.html: with Tripo's auto weights (hand
+        # weight reaching mid-forearm) a roll bone did not reduce collapse, and narrowing the hand blend for it raised
+        # wrist stretch (falcon 129 → 287 stretched edges). Kept as an option, off for the heroes.
+        # Mixamo has no forearm roll bone: add one per arm (child of the forearm, from mid-forearm to the wrist) so a
+        # wrist turn spreads along the forearm instead of wringing the skin at the wrist (see biped_fixes)
+        for S_ in ("Left", "Right"):
+            RIG["add"][f"{S_}ForeArmTwist"] = {"parent": f"{S_}ForeArm", "head": f"twist_head:{S_}", "tail": f"twist_tail:{S_}"}
     names = sorted(set(keep.values()) | set(merge_to.values()) | set(RIG["add"]))
     col = {n: i for i, n in enumerate(names)}
     W = np.zeros((nv, len(names)))
@@ -629,6 +637,42 @@ else:
                     W[idx] = avg / max(avg.sum(), 1e-6)
                     fixed += int(touches.sum())
             reg["island_majority_verts"] = fixed
+        ft = RIG.get("forearm_twist")
+        if ft:
+            # Forearm skin: hand weight only right at the wrist (it used to reach mid-forearm, so every wrist bend dragged
+            # the forearm), the rest ramps linearly from the forearm bone (elbow) to the twist bone (wrist). Upper-arm
+            # weight and fingers are left alone.
+            hb = ft.get("hand_blend") if isinstance(ft, dict) else None
+            moved = 0
+            for S_ in ("Left", "Right"):
+                el, wr = bone_pt(f"{S_}ForeArm"), bone_pt(f"{S_}Hand")
+                cF, cH, cT = col[f"{S_}ForeArm"], col[f"{S_}Hand"], col[f"{S_}ForeArmTwist"]
+                ax = wr - el
+                L_ = float(np.linalg.norm(ax))
+                t = ((V - el) @ ax) / (L_ * L_)
+                radial = np.linalg.norm((V - el) - np.outer(t, ax), axis=1)
+                # only the sleeve / glove around the forearm (a gliding membrane or a big pauldron hanging off the
+                # forearm would swing wide if it rolled with the wrist)
+                rmax = (ft.get("max_radius", 0.5) if isinstance(ft, dict) else 0.5) * L_
+                m = (W[:, cF] + W[:, cH] > 1e-4) & (t > -0.05) & (t < 1.0) & (radial < rmax)
+                tt = np.clip(t[m], 0, 1)
+                idx = np.nonzero(m)[0]
+                if hb is None:
+                    # keep Tripo's hand weights (narrowing them stretches the wrist when it bends); split only the
+                    # forearm share into forearm → twist
+                    f_ = W[idx, cF]
+                    W[idx, cT] = f_ * tt
+                    W[idx, cF] = f_ * (1 - tt)
+                else:
+                    fh = W[idx, cF] + W[idx, cH]
+                    x = np.clip((tt - (1 - hb)) / hb, 0, 1)
+                    hand = fh * x * x * (3 - 2 * x)
+                    rest_ = fh - hand
+                    W[idx, cH] = hand
+                    W[idx, cT] = rest_ * tt
+                    W[idx, cF] = rest_ * (1 - tt)
+                moved += len(idx)
+            reg["forearm_twist_verts"] = moved
         lb = RIG.get("limb_blend")
         if lb:   # tried 2026-10-12 on 燎: narrower elbow / wrist blends made the measured collapse worse; kept off
             # Tripo blends the elbow over half a segment (upper-arm weight 0.3 a quarter way down the forearm) and lets
@@ -788,6 +832,11 @@ else:
             seeds[f"ear_tip:{side}"] = Vector(to_scaled([sx * cfg["ears"]["tip"][0], *cfg["ears"]["tip"][1:]]).tolist())
         if "part" in cfg:
             seeds["part"] = Vector(to_scaled(cfg["part"]["centre"]).tolist())
+        if RIG.get("forearm_twist"):
+            for S_ in ("Left", "Right"):
+                el, wr = bone_pt(f"{S_}ForeArm"), bone_pt(f"{S_}Hand")
+                seeds[f"twist_head:{S_}"] = Vector(((el + wr) / 2).tolist())
+                seeds[f"twist_tail:{S_}"] = Vector(wr.tolist())
         seeds["origin"] = Vector((0, 0, 0))
         return seeds
 

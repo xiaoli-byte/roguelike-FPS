@@ -1,0 +1,144 @@
+{
+  "steps": {
+    "导入清理": 3.9,
+    "对齐": 1.2,
+    "低模与 UV": 13.4,
+    "投影着色": 34.8,
+    "烘焙": 29.0,
+    "LOD": 0.2,
+    "导出": 6.5
+  },
+  "highpoly": {
+    "faces_raw": 791377,
+    "faces": 415176,
+    "verts": 415170,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.919,
+    "iou_per_view": {
+      "front": 0.955,
+      "left": 0.87,
+      "back": 0.962,
+      "right": 0.872
+    },
+    "height_m": 10.6832,
+    "blockout_height_m": 11.0
+  },
+  "uv": {
+    "smart_islands": 695,
+    "charts": 34,
+    "fallback_charts": 1,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.0434,
+    "density_merged": 0.05
+  },
+  "projection": {
+    "uncovered_ratio": 0.288
+  },
+  "bake_device": "CPU",
+  "emissive_id": {
+    "emissive_texel_ratio": 0.0039
+  },
+  "textures": {
+    "T_Tripo_InfernoPortalShrine_BC": {
+      "size": 2048,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_InfernoPortalShrine_N": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_InfernoPortalShrine_ORM": {
+      "size": 2048,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_InfernoPortalShrine_LOD0",
+      "tris": 8000,
+      "verts": 3994,
+      "uv_min": [
+        0.002204286865890026,
+        0.002204323885962367
+      ],
+      "uv_max": [
+        0.9977957010269165,
+        0.9977957606315613
+      ],
+      "uv_utilization": 0.599,
+      "bbox_min": [
+        -3.7926,
+        -0.9689,
+        0.0018
+      ],
+      "bbox_max": [
+        3.7963,
+        1.1832,
+        10.682
+      ]
+    },
+    {
+      "name": "SM_Tripo_InfernoPortalShrine_LOD1",
+      "tris": 2500,
+      "verts": 1244,
+      "uv_min": [
+        0.0023893211036920547,
+        0.0025246895384043455
+      ],
+      "uv_max": [
+        0.9977957010269165,
+        0.9977957606315613
+      ],
+      "uv_utilization": 0.59,
+      "bbox_min": [
+        -3.7697,
+        -0.9679,
+        0.0059
+      ],
+      "bbox_max": [
+        3.7951,
+        1.1832,
+        10.647
+      ]
+    },
+    {
+      "name": "SM_Tripo_InfernoPortalShrine_LOD2",
+      "tris": 800,
+      "verts": 394,
+      "uv_min": [
+        0.002412969246506691,
+        0.0025246895384043455
+      ],
+      "uv_max": [
+        0.9942440986633301,
+        0.9977957606315613
+      ],
+      "uv_utilization": 0.557,
+      "bbox_min": [
+        -3.8227,
+        -0.9424,
+        0.0108
+      ],
+      "bbox_max": [
+        3.8107,
+        1.1483,
+        10.5149
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_InfernoPortalShrine/04_export/SM_Tripo_InfernoPortalShrine_v001.glb",
+    "bytes": 609808
+  },
+  "blend": "art/source/props/SM_Tripo_InfernoPortalShrine/03_work/SM_Tripo_InfernoPortalShrine_v001.blend",
+  "total_seconds": 89.0,
+  "_seconds": 96.1
+}

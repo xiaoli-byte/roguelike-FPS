@@ -10,10 +10,10 @@ import { Rng } from '../core/Rng';
 import { AssetLibrary, type LoadedAsset } from '../assets/AssetLibrary';
 import { applyArtEnvironment } from '../assets/ArtEnvironment';
 import type { LevelLayout, P2 } from './LevelTypes';
-import { buildRedesignArtLayout, REDESIGN_ART_ASSETS, REDESIGN_WALL_KITS, type RedesignArtKind, type RedesignArtPlacement } from './RedesignArtLayout';
+import { buildRedesignArtLayout, REDESIGN_ART_ASSETS, REDESIGN_PLATFORM_VARIANTS, REDESIGN_WALL_KITS, redesignKitKey, type RedesignArtKind, type RedesignArtPlacement } from './RedesignArtLayout';
 import { buildRedesignBackdrop } from './RedesignBackdrop';
 import { Particles, SkyDome } from './Sky';
-import { themeStyle, type ThemeStyle } from './Themes';
+import { redesignThemeStyle, type ThemeStyle } from './Themes';
 import { makeFloorTextures } from './Textures';
 import { ShadowCadence, fitSunShadow, followSun, shadowMapSize, syncShadowMapSize, type ShadowFollow } from './ShadowCadence';
 import { WhiteboxView } from './WhiteboxView';
@@ -31,7 +31,10 @@ const NEAREST_LOD: Readonly<Record<string, number>> = { ...Object.fromEntries(WA
 /** LOD switch distance scale per kit (default 1.5x the prop-scale manifest distances; the landmark is seen from afar). */
 const LOD_RANGE: Readonly<Record<string, number>> = { ...Object.fromEntries(KITS.map(k => [k.landmark, 3])), ...Object.fromEntries(WALL_KIT.map(id => [id, .85])) };
 /** While a variant is unpublished its placements use the kit it varies (never leaving collision bare). */
-const FALLBACK_ASSET: Readonly<Record<string, string>> = Object.fromEntries(Object.values(REDESIGN_WALL_KITS).map(k => [k.plain, k.panel]));
+const FALLBACK_ASSET: Readonly<Record<string, string>> = Object.fromEntries([
+  ...Object.values(REDESIGN_WALL_KITS).map(k => [k.plain, k.panel]),
+  ...Object.entries(REDESIGN_PLATFORM_VARIANTS).flatMap(([kit, list]) => list.map(([id]) => [id, REDESIGN_ART_ASSETS[kit].platform])),
+]);
 /** Kits whose instances each get a slight brightness / warmth shift, so long runs never read as copies. */
 const TINTED = new Set([...WALL_KIT, ...KITS.map(k => k.tower)]);
 /** Deck-top slabs stop this far inside the deck rectangle, leaving the podium blocks' edges as its rim. */
@@ -126,13 +129,36 @@ function erodedEdge(rand: () => number): THREE.CanvasTexture {
  * play, so the displayed geometry drops them. Shadow proxies keep the whole mesh.
  */
 /**
- * Chapter-2 'brazier' models are lanterns, not fire bowls: a cold glow on the lamp (share of the model height, offset
- * along its own X as a share of its width, glow size as a share of its height), measured from the published LOD0.
- * Any other brazier keeps the warm flame glow.
+ * Glow billboards measured from each published LOD0: height as a share of the model height, offsets along its own X
+ * (side) and +Z front (front) as shares of its width / depth, glow size as a share of its height. Chapter-2 'brazier'
+ * models are lanterns (a cold glow on the lamp); chapter-3 fire altars, forge hearths and furnace mouths burn warm.
+ * Every 'brazier' placement glows (an unlisted one keeps the desert flame glow); other kinds glow only when listed.
  */
-const LAMP_GLOW: Readonly<Record<string, { at: number; side: number; scale: number }>> = {
-  SM_Tripo_FrostIceLantern: { at: .8, side: 0, scale: .45 },
-  SM_Tripo_FrostSeaBoneLantern: { at: .67, side: -.3, scale: .4 },
+const LAMP_GLOW: Readonly<Record<string, { at: number; side: number; front?: number; scale: number; cold?: boolean }>> = {
+  SM_Tripo_FrostIceLantern: { at: .8, side: 0, scale: .45, cold: true },
+  SM_Tripo_FrostSeaBoneLantern: { at: .67, side: -.3, scale: .4, cold: true },
+  // Zhurong kit: the altar's flame tongues above its bowl, the forge stall's coal bed under its hood, and the corner
+  // tower's arched furnace mouth at the foot of its front face.
+  SM_Tripo_InfernoFireAltar: { at: .9, side: 0, scale: .55 },
+  SM_Tripo_InfernoForgeStall: { at: .3, side: 0, front: .25, scale: .3 },
+  SM_Tripo_InfernoFurnaceTower: { at: .12, side: 0, front: .5, scale: .2 },
+};
+
+/**
+ * Kits whose models carry an emissive mask (T_*_E, colour-keyed from the concepts' painted lava, coals and furnace
+ * fire): the mask is white in the GLB, the kit's glow colour and a slow breathing pulse come from here.
+ */
+const KIT_EMISSIVE: Readonly<Record<string, { color: number; intensity: number; pulse: number }>> = {
+  inferno: { color: 0xff6a1c, intensity: 2.2, pulse: .15 },
+};
+/**
+ * Share of the kit glow per asset. Every deck block's lava band under its lid and every wall bay's lava channel at full
+ * strength drew one unbroken orange line around each room and along each deck (rows of identical glowing chests); the
+ * repeated pieces glow low so the fire altars, furnace mouths, gateway lintel and floor cracks carry the heat.
+ */
+const KIT_EMISSIVE_SHARE: Readonly<Record<string, number>> = {
+  SM_Tripo_InfernoPlatformBlock: .3, SM_Tripo_InfernoStairs: .45,
+  SM_Tripo_InfernoRampartPanel: .5, SM_Tripo_InfernoRampartEndL: .5, SM_Tripo_InfernoRampartEndR: .5,
 };
 
 /** Placement kinds that stand on a plan cover box (each replaces exactly one greybox cover box). */
@@ -210,6 +236,10 @@ export class RedesignSceneView {
   private readonly particles: Particles;
   /** Additive glow billboards over each brazier's flame (no real lights: four point lights would cost every lit pixel). */
   private flames: { sprite: THREE.Sprite; size: number; phase: number }[] = [];
+  /** Kit materials whose emissive mask glows (KIT_EMISSIVE), pulsed together in update(). */
+  private readonly glowing: { material: THREE.MeshStandardMaterial; share: number; phase: number }[] = [];
+  /** The ground's lava-crack emissive (inferno), breathing slowly in update(). */
+  private groundGlow: THREE.MeshStandardMaterial | null = null;
   private readonly shadowCadence = new ShadowCadence();
   private sunShadow: THREE.DirectionalLightShadow | null = null;
   /** The sun and its player-following shadow box (the level is wider than the box). */
@@ -225,7 +255,7 @@ export class RedesignSceneView {
     // The greybox owns collision-matching boxes; art hides it piece by piece as models arrive.
     this.greybox = new WhiteboxView(ctx, layout);
     this.group.add(this.greybox.group); this.owned.push(this.greybox);
-    const style = themeStyle(layout.theme);
+    const style = redesignThemeStyle(layout.theme);
     ctx.scene.background = new THREE.Color(theme.fogColor);
     ctx.scene.fog = new THREE.Fog(theme.fogColor, Math.max(60, style.fogNear), Math.max(220, style.fogFar));
     this.placements = buildRedesignArtLayout(layout);
@@ -246,11 +276,15 @@ export class RedesignSceneView {
   get pendingAssets(): string[] { return [...new Set(this.placements.map(p => p.assetId))].filter(id => !this.built.has(id)); }
 
   private buildGround(rand: () => number): void {
-    const L = this.layout, style = themeStyle(L.theme), rng = new Rng(Math.floor(rand() * 0xFFFFFFFF));
+    const L = this.layout, style = redesignThemeStyle(L.theme), rng = new Rng(Math.floor(rand() * 0xFFFFFFFF));
     const maps = makeFloorTextures(L.theme, this.theme, style, () => rng.next());
     for (const t of [maps.map, maps.bump, maps.roughness, maps.emissive]) if (t) { t.repeat.set(1 / maps.tile, 1 / maps.tile); this.owned.push(t); }
     const material = new THREE.MeshStandardMaterial({ map: maps.map, bumpMap: maps.bump, bumpScale: .012,
       roughnessMap: maps.roughness, roughness: .97, metalness: 0 });
+    if (maps.emissive && style.floorGlow > 0) {
+      material.emissiveMap = maps.emissive; material.emissive.setHex(0xffffff); material.emissiveIntensity = material.userData.glow = style.floorGlow;
+      this.groundGlow = material;
+    }
     this.owned.push(material);
     // One merged plane per floor rect, UVs in world metres so the tiling is continuous across rects.
     const positions: number[] = [], uvs: number[] = [], index: number[] = [];
@@ -337,7 +371,7 @@ export class RedesignSceneView {
     geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
     geometry.setAttribute('uv1', new THREE.Float32BufferAttribute(edge, 2));
     geometry.setIndex(index); geometry.computeVertexNormals();
-    const style = themeStyle(L.theme), { map, bump } = pavingTexture(style, () => rng.next()), alphaMap = erodedEdge(() => rng.next());
+    const style = redesignThemeStyle(L.theme), { map, bump } = pavingTexture(style, () => rng.next()), alphaMap = erodedEdge(() => rng.next());
     alphaMap.channel = 1;
     const material = new THREE.MeshStandardMaterial({ map, bumpMap: bump, bumpScale: .02, alphaMap, transparent: true, depthWrite: false, roughness: .9, metalness: 0,
       polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
@@ -347,7 +381,7 @@ export class RedesignSceneView {
   }
 
   private buildLights(center: THREE.Vector3): void {
-    const style = themeStyle(this.layout.theme), L = this.layout;
+    const style = redesignThemeStyle(this.layout.theme), L = this.layout;
     const hemi = new THREE.HemisphereLight(style.hemiSky, style.hemiGround, style.hemiIntensity * 1.15);
     const sun = new THREE.DirectionalLight(this.theme.sun, style.sunIntensity);
     sun.position.copy(center).addScaledVector(new THREE.Vector3(...style.sunDir).normalize(), 180);
@@ -369,11 +403,20 @@ export class RedesignSceneView {
     this.sunShadow = sun.shadow; this.sun = sun;
   }
 
-  private material(original: THREE.Material): THREE.Material {
+  private material(original: THREE.Material, assetId: string): THREE.Material {
     const existing = this.materials.get(original);
     if (existing) return existing;
     const copy = original.clone();
-    if (copy instanceof THREE.MeshStandardMaterial) { applyArtEnvironment(copy, this.ctx.renderer); copy.envMapIntensity = .35; }
+    if (copy instanceof THREE.MeshStandardMaterial) {
+      applyArtEnvironment(copy, this.ctx.renderer); copy.envMapIntensity = .35;
+      // Lava seams, coals and furnace mouths: the kit's emissive mask, tinted and pulsed (update()).
+      const glow = this.layout.whitebox ? KIT_EMISSIVE[redesignKitKey(this.layout.whitebox.plan)] : undefined;
+      if (glow && copy.emissiveMap) {
+        const share = KIT_EMISSIVE_SHARE[assetId] ?? 1;
+        copy.emissive.setHex(glow.color); copy.emissiveIntensity = glow.intensity * share;
+        this.glowing.push({ material: copy, share, phase: this.glowing.length * 2.399 });
+      }
+    }
     this.materials.set(original, copy); this.owned.push(copy);
     return copy;
   }
@@ -444,7 +487,7 @@ export class RedesignSceneView {
         for (const index of levels) {
           const source = asset.lods[index];
           source.updateWorldMatrix(true, false);
-          const material = Array.isArray(source.material) ? source.material.map(m => this.material(m)) : this.material(source.material);
+          const material = Array.isArray(source.material) ? source.material.map(m => this.material(m, assetId)) : this.material(source.material, assetId);
           const geometry = this.displayGeometry(assetId, index, source, bounds);
           const mesh = new THREE.InstancedMesh(geometry, material, chunk.length);
           // Shadows come from the chunk's proxy below, never from the displayed LOD.
@@ -472,7 +515,7 @@ export class RedesignSceneView {
    * model (the greybox box stands in until it is published) and costs one tiny draw per brazier.
    */
   private buildFlames(): void {
-    const braziers = this.placements.filter(p => p.kind === 'brazier');
+    const braziers = this.placements.filter(p => p.kind === 'brazier' || LAMP_GLOW[p.assetId]);
     if (!braziers.length) return;
     const materials = new Map<boolean, THREE.SpriteMaterial>();
     const material = (cold: boolean): THREE.SpriteMaterial => {
@@ -493,10 +536,12 @@ export class RedesignSceneView {
     for (const p of braziers) {
       // Desert braziers: the bowl rim sits at about 80% of the height, the warm glow in the flame just above it.
       // Frost lanterns (LAMP_GLOW) get a smaller cold glow on their lamp instead of a fire.
-      const lamp = LAMP_GLOW[p.assetId], glow = p.size[1] * (lamp?.scale ?? .85), side = (lamp?.side ?? 0) * p.size[0];
-      const sprite = new THREE.Sprite(material(Boolean(lamp)));
-      // The lamp's offset along the model's own X, turned by the placement yaw.
-      sprite.position.set(p.x + Math.cos(p.yaw) * side, p.y + p.size[1] * (lamp?.at ?? .88), p.z - Math.sin(p.yaw) * side);
+      const lamp = LAMP_GLOW[p.assetId], glow = p.size[1] * (lamp?.scale ?? .85);
+      const side = (lamp?.side ?? 0) * p.size[0], front = (lamp?.front ?? 0) * p.size[2];
+      const sprite = new THREE.Sprite(material(Boolean(lamp?.cold)));
+      // The lamp's offset along the model's own X and +Z (front), turned by the placement yaw.
+      sprite.position.set(p.x + Math.cos(p.yaw) * side + Math.sin(p.yaw) * front, p.y + p.size[1] * (lamp?.at ?? .88),
+        p.z - Math.sin(p.yaw) * side + Math.cos(p.yaw) * front);
       sprite.scale.setScalar(glow);
       sprite.name = 'redesign.brazierGlow'; sprite.renderOrder = 3;
       this.group.add(sprite);
@@ -531,6 +576,8 @@ export class RedesignSceneView {
       this.coverMatrices = Array.from({ length: mesh.count }, (_, i) => { const m = new THREE.Matrix4(); mesh.getMatrixAt(i, m); return m; });
     }
     const built = this.placements.filter(p => COVER_KINDS.has(p.kind) && this.built.has(p.assetId));
+    // Massif covers are tiled by several podium blocks: any built tile inside the box covers it.
+    const massifs = this.placements.filter(p => p.kind === 'massif' && this.built.has(p.assetId));
     // Gate posts are drawn by the gateway standing over them: any cover box inside a built gateway's footprint.
     const gates = this.placements.filter(p => (p.kind === 'gateway' || p.kind === 'shrine') && this.built.has(p.assetId));
     const underGate = (x: number, z: number) => gates.some(g => {
@@ -541,7 +588,8 @@ export class RedesignSceneView {
     let showing = false;
     this.coverMatrices.forEach((m, i) => {
       centre.setFromMatrixPosition(m);
-      const covered = built.some(p => Math.abs(p.x - centre.x) < .3 && Math.abs(p.z - centre.z) < .3) || underGate(centre.x, centre.z);
+      const covered = built.some(p => Math.abs(p.x - centre.x) < .3 && Math.abs(p.z - centre.z) < .3) || underGate(centre.x, centre.z)
+        || massifs.some(p => Math.abs(p.x - centre.x) <= m.elements[0] / 2 && Math.abs(p.z - centre.z) <= m.elements[10] / 2);
       mesh.setMatrixAt(i, covered ? hidden : m);
       showing ||= !covered;
     });
@@ -558,6 +606,14 @@ export class RedesignSceneView {
       const flicker = 1 + Math.sin(time * 9.1 + f.phase) * .06 + Math.sin(time * 23.7 + f.phase * 3) * .04;
       f.sprite.scale.setScalar(f.size * flicker);
     }
+    if (this.glowing.length) {
+      const glow = KIT_EMISSIVE[redesignKitKey(this.layout.whitebox!.plan)];
+      for (const g of this.glowing)
+        g.material.emissiveIntensity = glow.intensity * g.share * (1 + Math.sin(time * 1.3 + g.phase) * glow.pulse * .6 + Math.sin(time * 3.1 + g.phase * 1.7) * glow.pulse * .4);
+    }
+    if (this.groundGlow) {
+      this.groundGlow.emissiveIntensity = this.groundGlow.userData.glow * (.9 + .07 * Math.sin(time * .8) + .03 * Math.sin(time * 2.3));
+    }
     if (this.sunShadow) syncShadowMapSize(this.sunShadow, shadowMapSize(this.ctx.settings));
     followSun(this.shadowFollow, this.sun, this.ctx.player?.position);
     if (this.sunShadow && this.shadowCadence.advance(dt, this.ctx.world.version)) this.sunShadow.needsUpdate = true;
@@ -567,7 +623,7 @@ export class RedesignSceneView {
     if (this.disposed) return;
     this.disposed = true; this.group.removeFromParent(); this.group.clear();
     for (const r of this.owned) r.dispose();
-    this.owned.length = 0; this.materials.clear(); this.lods.length = 0;
+    this.owned.length = 0; this.materials.clear(); this.lods.length = 0; this.glowing.length = 0; this.groundGlow = null;
     this.ctx.scene.background = this.previousBackground; this.ctx.scene.fog = this.previousFog;
   }
 }

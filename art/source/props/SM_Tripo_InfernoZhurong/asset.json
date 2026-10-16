@@ -1,0 +1,509 @@
+{
+  "id": "SM_Tripo_InfernoZhurong",
+  "display": "祝融神像（V2 地标）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 19:58:06",
+          "files": {
+            "BO_SM_Tripo_InfernoZhurong_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoZhurong_v001.json",
+              "sha256": "6d619b9285b4dea4bef27350c10353fe8feeea95c788df035262781ee2872ca1"
+            },
+            "BO_SM_Tripo_InfernoZhurong_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoZhurong_v001_views.json",
+              "sha256": "d74c97729f3dfef0cc9814a298a39bafcd418ee9a1202a05ca824d0dfcba6ff0"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.v2.zhurong"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -6.0,
+              0,
+              -5.0
+            ],
+            "max": [
+              6.0,
+              16.0,
+              5.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 19:59:15",
+          "files": {
+            "CN_SM_Tripo_InfernoZhurong_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoZhurong_v001_source.png",
+              "sha256": "e6274aee527369aabcbe0f8fd39e21482c0d29c6e18871dd563e7c77f30e2891"
+            },
+            "CN_SM_Tripo_InfernoZhurong_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoZhurong_v001_front.png",
+              "sha256": "f2b00109cfd90f5771502cc9bde69ab61db109b6b82e0c61f2d488ed1b210a30"
+            },
+            "CN_SM_Tripo_InfernoZhurong_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoZhurong_v001_left.png",
+              "sha256": "b7e5e327ac76af4e67e6d3d9bd64d11af921a6c9c6f8f996a5d24d25d0218ed0"
+            },
+            "CN_SM_Tripo_InfernoZhurong_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoZhurong_v001_back.png",
+              "sha256": "41cf2d619353a3b8bc53176a4a7b3d2d31e60db2b8fc5e73d1e38c92f756a66e"
+            },
+            "CN_SM_Tripo_InfernoZhurong_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoZhurong_v001_right.png",
+              "sha256": "7783b417e2a098773118e6c072695a06155708fd370e1e79f56e0778ffbf00b4"
+            },
+            "CN_SM_Tripo_InfernoZhurong_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoZhurong_v001_sheet.png",
+              "sha256": "38bc5611a0c3dc71a7bbca3c638518e5910e904ea94e3eed8e80034536df9686"
+            },
+            "CN_SM_Tripo_InfernoZhurong_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoZhurong_v001_prompt.txt",
+              "sha256": "477e7867234e5e59ed6308e7eafdffff1707de0dfd2b5de2ec40517b4efd8dec"
+            },
+            "CN_SM_Tripo_InfernoZhurong_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoZhurong_v001_registration.json",
+              "sha256": "353422ff4646053de8bd721023768fad19e07797c2e19b6087af53b528faae79"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              1983,
+              793
+            ],
+            "references": [],
+            "codex_session": "01a12ad3-d0c0-7632-bfb2-93bca7ff4230",
+            "attempt": 1,
+            "seconds": 68.4
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian underground forge-palace fantasy of Zhurong, the Chinese god of fire: massive black iron (xuan tie) with heavy rivets, dark charcoal basalt blocks, deep vermilion lacquer, warm aged bronze ding cauldrons, chunky thick iron chains always attached flat to the surfaces, soot-darkened edges, and a few channels and cracks of molten lava. Lava, embers and fire are painted as opaque flat bright orange-yellow surfaces, never as smoke, loose sparks or transparent effects. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (12m wide x 16m tall x 10m deep): A colossal statue of Zhurong (祝融), the Chinese god of fire, 16m tall, who in the Shan Hai Jing rides two dragons: a mighty bearded god seated upright on a massive stepped basalt throne, wearing heavy black iron armour with vermilion lacquer and aged bronze trim and a tall flame-shaped bronze crown, both big hands resting on the head of a huge bronze forge hammer standing upright between his knees (large blocky hands with clearly modelled fingers), a thick solid bronze flame-ring halo attached behind his shoulders. Two thick-bodied fire dragons coil around the front corners of the throne base, their bodies attached to it. Glowing molten lava seams in the armour joints, the throne steps and the dragons' mouths (painted as opaque bright orange). Facing the viewer. Chunky stylized forms readable from 150m away. One solid statue.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "e6274aee527369aabcbe0f8fd39e21482c0d29c6e18871dd563e7c77f30e2891",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.6484295845997974,
+              "offset": [
+                107,
+                207
+              ],
+              "size": [
+                297,
+                610
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6512006512006512,
+              "offset": [
+                116,
+                207
+              ],
+              "size": [
+                279,
+                610
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6429576049829214,
+              "offset": [
+                102,
+                207
+              ],
+              "size": [
+                307,
+                610
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.6505056665142044,
+              "offset": [
+                117,
+                207
+              ],
+              "size": [
+                278,
+                610
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-11 20:00:51",
+          "files": {
+            "CN_SM_Tripo_InfernoZhurong_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoZhurong_v002_source.png",
+              "sha256": "ec329dc07a53881d42ab325e84f1762882fad2b0e8762014798bc9e54b0ac90f"
+            },
+            "CN_SM_Tripo_InfernoZhurong_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoZhurong_v002_front.png",
+              "sha256": "3c5d3733aba63d118b5dc157c7e520b3b151e515cccf456214cf0aeb91e37b07"
+            },
+            "CN_SM_Tripo_InfernoZhurong_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoZhurong_v002_left.png",
+              "sha256": "f4b77051eaaa76137311918eb6b064c5acc4bb82fb82520df52473fd44598756"
+            },
+            "CN_SM_Tripo_InfernoZhurong_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoZhurong_v002_back.png",
+              "sha256": "3443cbafcf69254e1aecdc4d5321d49ccc63e8928d578f87d27fcd8bac96c44d"
+            },
+            "CN_SM_Tripo_InfernoZhurong_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoZhurong_v002_right.png",
+              "sha256": "40dae6255afeb7e19de14d17ab219fa8bdad3c31f71e01024d21ede16c625d79"
+            },
+            "CN_SM_Tripo_InfernoZhurong_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoZhurong_v002_sheet.png",
+              "sha256": "e989652ff41b0a531e4ae6a05b4748a167dc8de9a6e6594b971dafaadf78b122"
+            },
+            "CN_SM_Tripo_InfernoZhurong_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoZhurong_v002_prompt.txt",
+              "sha256": "6daf453d28aa38ad899ff3c2efb7d762d0d113c285ea17836ec86768c886cb54"
+            },
+            "CN_SM_Tripo_InfernoZhurong_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoZhurong_v002_registration.json",
+              "sha256": "4760d05391260f4aa94601f2333461928b6188b4f0d3779db9851a9b68fff1a7"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              1983,
+              793
+            ],
+            "references": [],
+            "codex_session": "01a12ad5-73ea-70f3-8bc4-d8e44e6e914e",
+            "attempt": 1,
+            "seconds": 56.6
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian underground forge-palace fantasy of Zhurong, the Chinese god of fire: massive black iron (xuan tie) with heavy rivets, dark charcoal basalt blocks, deep vermilion lacquer, warm aged bronze ding cauldrons, chunky thick iron chains always attached flat to the surfaces, soot-darkened edges, and a few channels and cracks of molten lava. Lava, embers and fire are painted as opaque flat bright orange-yellow surfaces, never as smoke, loose sparks or transparent effects. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (12m wide x 16m tall x 10m deep): A colossal statue of Zhurong (祝融), the Chinese god of fire, 16m tall, who in the Shan Hai Jing rides two dragons: a mighty bearded god seated upright on a massive stepped basalt throne, wearing heavy black iron armour with vermilion lacquer and aged bronze trim and a tall flame-shaped bronze crown, both big hands resting on the head of a huge bronze forge hammer standing upright between his knees (large blocky hands with clearly modelled fingers), a big SOLID round bronze sun-disc halo with a chunky flame-tongue rim, thick like a millstone (a solid filled disc, not a thin open ring), attached directly to the top of the throne back behind his head. Two thick-bodied fire dragons coil around the front corners of the throne base, their bodies attached to it. Glowing molten lava seams in the armour joints, the throne steps and the dragons' mouths (painted as opaque bright orange). Facing the viewer. Chunky stylized forms readable from 150m away. One solid statue.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "ec329dc07a53881d42ab325e84f1762882fad2b0e8762014798bc9e54b0ac90f",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.6532945439697851,
+              "offset": [
+                96,
+                207
+              ],
+              "size": [
+                319,
+                610
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6484295845997974,
+              "offset": [
+                116,
+                207
+              ],
+              "size": [
+                279,
+                610
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6505056665142044,
+              "offset": [
+                96,
+                207
+              ],
+              "size": [
+                319,
+                610
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.6484295845997974,
+              "offset": [
+                116,
+                207
+              ],
+              "size": [
+                280,
+                610
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "用户（2026-10-11 审稿确认）",
+            "note": "用户审阅 docs/art/review/inferno-kit-v001.png 后通过全部 16 张祝融火狱套件概念，按现稿进 Hunyuan3D 2mv",
+            "time": "2026-10-11 22:10:00"
+          }
+        }
+      ]
+    },
+    "emid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:11:49",
+          "files": {
+            "EID_SM_Tripo_InfernoZhurong_v001_front.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoZhurong_v001_front.png",
+              "sha256": "da0699c497be1eadde9355c7d4c1a5907f9090500d577bc5abc2ceca7ac1237c"
+            },
+            "EID_SM_Tripo_InfernoZhurong_v001_left.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoZhurong_v001_left.png",
+              "sha256": "72c79cc061fd07522935c18af1abbf139cef47adac6d37203e1e9685ecae5cc1"
+            },
+            "EID_SM_Tripo_InfernoZhurong_v001_back.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoZhurong_v001_back.png",
+              "sha256": "ddf484c079709d0ce3d1348f5b606868cd3b535d99326d1108f49f81c9fcc7f5"
+            },
+            "EID_SM_Tripo_InfernoZhurong_v001_right.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoZhurong_v001_right.png",
+              "sha256": "64bce464ca955e05e69f1c1203ae566a52a87dab319aceb10752b11de171d1d8"
+            },
+            "EID_SM_Tripo_InfernoZhurong_v001_compare.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoZhurong_v001_compare.png",
+              "sha256": "22a0a08a3ddc8b33ca62151174beb812c37ebd7e27edee9e4e0ae706a639f50c"
+            }
+          },
+          "from_concept": 2,
+          "provider": "colour-key",
+          "method": "HSV key of the painted lava / coals / fire on the registered concept views (value >= 0.8, saturation >= 0.62, hue 8-48 deg, 3 px open)",
+          "emissive_ratio": {
+            "front": 0.013,
+            "left": 0.008,
+            "back": 0.005,
+            "right": 0.008
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:31:55",
+          "files": {
+            "HP_SM_Tripo_InfernoZhurong_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoZhurong_v001_input_front.png",
+              "sha256": "4cb654b066fd5fa63a087fa1a05ce398e6817762b352f70586dae8703caba3ce"
+            },
+            "HP_SM_Tripo_InfernoZhurong_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoZhurong_v001_input_left.png",
+              "sha256": "6132092bb1ef69b42d0149308cd153ae68c4a1e6ec09cb775d24c2c7062ae58f"
+            },
+            "HP_SM_Tripo_InfernoZhurong_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoZhurong_v001_input_back.png",
+              "sha256": "0cc687327fa3d9170eae3a8a109d51ab910d2e9330e39253ad733514ad5ff28a"
+            },
+            "HP_SM_Tripo_InfernoZhurong_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoZhurong_v001_input_right.png",
+              "sha256": "cb5fbe4afa31daad3640cc6244e695f36acb9d82fcb59392e51d0fe70e317b45"
+            },
+            "HP_SM_Tripo_InfernoZhurong_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoZhurong_v001.glb",
+              "sha256": "b9c87452c0a2db5011a2643383a966d539c685ce02b85a28d6b23e9c44fc6ad4"
+            },
+            "HP_SM_Tripo_InfernoZhurong_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoZhurong_v001_graph.json",
+              "sha256": "8763d254b771bdc5c3e0f273460b46d4959e3f071daef55752412b43c3c0d9e1"
+            }
+          },
+          "from_concept": 2,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -103,
+              153,
+              615,
+              871
+            ],
+            "scale": 1.426183844011142
+          },
+          "seconds": 163.8,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 14.4
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:33:41",
+          "files": {
+            "SM_Tripo_InfernoZhurong_v001.blend": {
+              "path": "03_work/SM_Tripo_InfernoZhurong_v001.blend",
+              "sha256": "abaf826ee5ebc6b878b6426c3b36e0e55d6883727748bf700356574c1716573e"
+            },
+            "SM_Tripo_InfernoZhurong_v001.glb": {
+              "path": "04_export/SM_Tripo_InfernoZhurong_v001.glb",
+              "sha256": "3bc72e7c5ed1e79dbc97d2a4b806402b01e448ca47f661b50f1eef218ee56b9c"
+            },
+            "SM_Tripo_InfernoZhurong_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoZhurong_v001_metrics.json",
+              "sha256": "89ed39b51db89f86869957b68b68a57ebd4b82642e1333bdf7d0b30e12404501"
+            },
+            "T_Tripo_InfernoZhurong_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoZhurong_BC.png",
+              "sha256": "a86e7dcd9b46031f9ff29abcbceb3792956213ac27c4ba601ce7eb912b5f26e4"
+            },
+            "T_Tripo_InfernoZhurong_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoZhurong_E.png",
+              "sha256": "06957a0695cc67c9ec5a04d396929f7ca248784cf5c4d300ee235c871e1271ca"
+            },
+            "T_Tripo_InfernoZhurong_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoZhurong_N.png",
+              "sha256": "5549de22bbd65ca640527f3a83d61cdeb364df6027038153907d7adae1a55f56"
+            },
+            "T_Tripo_InfernoZhurong_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoZhurong_ORM.png",
+              "sha256": "4e5af13be4346f9ec62b1d7845155d57499194cf5a4ab92b9190cabc62179abe"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": 1
+          },
+          "align_iou": 0.928,
+          "uncovered_ratio": 0.363,
+          "lods": [
+            {
+              "tris": 7995,
+              "verts": 3967
+            },
+            {
+              "tris": 2500,
+              "verts": 1212
+            },
+            {
+              "tris": 800,
+              "verts": 362
+            }
+          ],
+          "export_kb": 798.1,
+          "seconds": 103.0,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:33:41",
+          "files": {
+            "SM_Tripo_InfernoZhurong_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_InfernoZhurong_v001_validation_v001.json",
+              "sha256": "1d866233e4228499b066ee5da7912a2058804b6d2f879bae17ff0204f34dec1e"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:33:51",
+          "files": {
+            "SM_Tripo_InfernoZhurong_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_InfernoZhurong_v001_review_v001.png",
+              "sha256": "78739fa5c38c9abad58ce4a274319b4c7af1cdfab3ed21d20a36c408645e36f3"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "2mv 种子 20261003：祝融坐像（须髯、火焰冠、玄铁甲、拄铜锻锤、实心日轮光背）与双火龙缠座与概念一致，背面宝座帷幔完整；IoU 0.928，LOD 无开口边；甲缝、台阶与龙口熔岩自发光。",
+            "time": "2026-10-11 22:34:27"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:34:28",
+          "files": {
+            "SM_Tripo_InfernoZhurong.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoZhurong.glb",
+              "sha256": "3bc72e7c5ed1e79dbc97d2a4b806402b01e448ca47f661b50f1eef218ee56b9c"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_InfernoZhurong.glb"
+        }
+      ]
+    }
+  }
+}

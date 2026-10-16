@@ -1,0 +1,393 @@
+{
+  "id": "SM_Tripo_InfernoColumn",
+  "display": "熔岩锁链玄铁柱（V2）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 19:57:04",
+          "files": {
+            "BO_SM_Tripo_InfernoColumn_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoColumn_v001.json",
+              "sha256": "f5408981ac2d430996a66c0be00a27b010f4a5f5cb77f486e457dfb4287a6378"
+            },
+            "BO_SM_Tripo_InfernoColumn_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoColumn_v001_views.json",
+              "sha256": "b4cd3e026fa699467cb0bcba74c12d55034d5212396c63702e2d8592881b96db"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.v2.column"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -1.2,
+              0,
+              -1.2
+            ],
+            "max": [
+              1.2,
+              5.0,
+              1.2
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 19:58:06",
+          "files": {
+            "CN_SM_Tripo_InfernoColumn_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoColumn_v001_source.png",
+              "sha256": "d0806e6ee59d77e7579727d2a04874904004bf6d746c255feda4a56013fbf400"
+            },
+            "CN_SM_Tripo_InfernoColumn_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoColumn_v001_front.png",
+              "sha256": "1ad1a50a8838ea11ccde16193fa702895a35ce587968f9dababa089ea39483a4"
+            },
+            "CN_SM_Tripo_InfernoColumn_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoColumn_v001_left.png",
+              "sha256": "a4a1af895a2eea666e3426879c069504b5c4b335852be85821ba93d937d44c6d"
+            },
+            "CN_SM_Tripo_InfernoColumn_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoColumn_v001_back.png",
+              "sha256": "5eb37e0d3bc71f2e4c9c2d7f04c9329e30d39ed5ceb9480b2d3bd1ab8f0e47b8"
+            },
+            "CN_SM_Tripo_InfernoColumn_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoColumn_v001_right.png",
+              "sha256": "12904ce3d2aab50e4c95dac365709797b3568df621ca27ba78df970efd4a3fe3"
+            },
+            "CN_SM_Tripo_InfernoColumn_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoColumn_v001_sheet.png",
+              "sha256": "14282767bea01029d2fc0d30f2683493d5c3baf79cea547f9a2d8c6ea42dc62b"
+            },
+            "CN_SM_Tripo_InfernoColumn_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoColumn_v001_prompt.txt",
+              "sha256": "a6f41b66da9349abee3b0acaf7054ce2edc109121c85a3d8d7ab53957b84f899"
+            },
+            "CN_SM_Tripo_InfernoColumn_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoColumn_v001_registration.json",
+              "sha256": "fa531da145b0d8b4f1e2abb664b5ea423b1a76306b314c72d3a5d93a399b4c4e"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              1536,
+              1024
+            ],
+            "references": [],
+            "codex_session": "01a12ad2-df32-7440-83f2-1200b3cf69ad",
+            "attempt": 1,
+            "seconds": 60.3
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian underground forge-palace fantasy of Zhurong, the Chinese god of fire: massive black iron (xuan tie) with heavy rivets, dark charcoal basalt blocks, deep vermilion lacquer, warm aged bronze ding cauldrons, chunky thick iron chains always attached flat to the surfaces, soot-darkened edges, and a few channels and cracks of molten lava. Lava, embers and fire are painted as opaque flat bright orange-yellow surfaces, never as smoke, loose sparks or transparent effects. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (2.4m wide x 5m tall x 2.4m deep): A thick square column 2.4m wide, 5m tall: a black iron pillar with vermilion lacquer panels on its faces standing on a stepped dark basalt plinth, an aged bronze capital band with a simple taotie mask, one thick chunky iron chain wound tightly around its middle (attached flat, no loose ends), and a deep crack running up one corner filled with glowing molten orange lava (painted as an opaque bright surface). Chunky, solid, one connected piece standing on the ground.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "d0806e6ee59d77e7579727d2a04874904004bf6d746c255feda4a56013fbf400",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 1.0413276928083306,
+              "offset": [
+                74,
+                55
+              ],
+              "size": [
+                364,
+                914
+              ],
+              "physical_height_m": 5.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 1.0413276928083306,
+              "offset": [
+                97,
+                55
+              ],
+              "size": [
+                318,
+                914
+              ],
+              "physical_height_m": 5.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 1.0413276928083306,
+              "offset": [
+                74,
+                55
+              ],
+              "size": [
+                363,
+                914
+              ],
+              "physical_height_m": 5.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 1.0413276928083306,
+              "offset": [
+                95,
+                55
+              ],
+              "size": [
+                322,
+                914
+              ],
+              "physical_height_m": 5.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "用户（2026-10-11 审稿确认）",
+            "note": "用户审阅 docs/art/review/inferno-kit-v001.png 后通过全部 16 张祝融火狱套件概念，按现稿进 Hunyuan3D 2mv",
+            "time": "2026-10-11 22:10:01"
+          }
+        }
+      ]
+    },
+    "emid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:11:51",
+          "files": {
+            "EID_SM_Tripo_InfernoColumn_v001_front.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoColumn_v001_front.png",
+              "sha256": "48fe39555d86ed209ff33dd191e0f86e0808f277eb39f44723394bf961b75cb3"
+            },
+            "EID_SM_Tripo_InfernoColumn_v001_left.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoColumn_v001_left.png",
+              "sha256": "56f63fec6648b6bcc58d0937125d46851b2ef9c152d2a03c99be44932f60d75d"
+            },
+            "EID_SM_Tripo_InfernoColumn_v001_back.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoColumn_v001_back.png",
+              "sha256": "d3613c1fa15cf0531820b3ad48760a12b64c1972c00ff0cc75fc22cfe966e700"
+            },
+            "EID_SM_Tripo_InfernoColumn_v001_right.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoColumn_v001_right.png",
+              "sha256": "fe19ed3ec8d0ac126c1772c9864b97ca9ca54ae96c11ac419a289d402a21a9cb"
+            },
+            "EID_SM_Tripo_InfernoColumn_v001_compare.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoColumn_v001_compare.png",
+              "sha256": "b5887ed66c27956f7db69d193a5f1b5520ec94ad60c59bc04805d4dd55922b57"
+            }
+          },
+          "from_concept": 1,
+          "provider": "colour-key",
+          "method": "HSV key of the painted lava / coals / fire on the registered concept views (value >= 0.8, saturation >= 0.62, hue 8-48 deg, 3 px open)",
+          "emissive_ratio": {
+            "front": 0.019,
+            "left": 0.004,
+            "back": 0.0,
+            "right": 0.028
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:57:22",
+          "files": {
+            "HP_SM_Tripo_InfernoColumn_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoColumn_v001_input_front.png",
+              "sha256": "fe117b47b749b93d1c997924edaa647ad434f6c5ba78b2762d019afd1e6a826d"
+            },
+            "HP_SM_Tripo_InfernoColumn_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoColumn_v001_input_left.png",
+              "sha256": "739256c0f532122f6489cb66e771b81a699e100ca901353088ed77c24545015a"
+            },
+            "HP_SM_Tripo_InfernoColumn_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoColumn_v001_input_back.png",
+              "sha256": "d7b0d771ab12be3a55a1d98e8b2eb9e3513409010eb970ba3679833ceb225285"
+            },
+            "HP_SM_Tripo_InfernoColumn_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoColumn_v001_input_right.png",
+              "sha256": "60cc0d7a8433317a189dbc4f491391230d4efaa6cdec4de685524b4066e48f0b"
+            },
+            "HP_SM_Tripo_InfernoColumn_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoColumn_v001.glb",
+              "sha256": "e8fc9f956e804e0020b950de8c91235cf31313730ca214253bd592d74d2e2899"
+            },
+            "HP_SM_Tripo_InfernoColumn_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoColumn_v001_graph.json",
+              "sha256": "991b734171956a6dd76d473af2f27d4a715ea3209852449279b178c7733483cc"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -282,
+              -26,
+              794,
+              1050
+            ],
+            "scale": 0.9516728624535316
+          },
+          "seconds": 174.9,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 10.2
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:58:10",
+          "files": {
+            "SM_Tripo_InfernoColumn_v001.blend": {
+              "path": "03_work/SM_Tripo_InfernoColumn_v001.blend",
+              "sha256": "c022aa8179af1e3bc7574d9904bae1f488b9c67defd06328cb5e881988f08380"
+            },
+            "SM_Tripo_InfernoColumn_v001.glb": {
+              "path": "04_export/SM_Tripo_InfernoColumn_v001.glb",
+              "sha256": "9ed4cbc7cd3d7abefddb3c7c4cd2648ec416e642998acb9ef6e838a9fde575c8"
+            },
+            "SM_Tripo_InfernoColumn_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoColumn_v001_metrics.json",
+              "sha256": "0e739d5e71c61f1fb1549724de8805a39f39668c31bdda1be8baabb1ec6e5dad"
+            },
+            "T_Tripo_InfernoColumn_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoColumn_BC.png",
+              "sha256": "cb3cd5bef9cd18583fd79e44bcf69856cd4d3ae15bfce9c618f5cdd01b1bb729"
+            },
+            "T_Tripo_InfernoColumn_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoColumn_E.png",
+              "sha256": "967ac291cdb4d7eda9773564ba4749dedf54d9007faedaa04bc4d9eda80508f4"
+            },
+            "T_Tripo_InfernoColumn_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoColumn_N.png",
+              "sha256": "1413fe59311e86c86c84cd22fc727232de9b228ac0eecd4d5d4333d4e3fe6602"
+            },
+            "T_Tripo_InfernoColumn_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoColumn_ORM.png",
+              "sha256": "f6944104beb91c26034a83ea1228d4a26ca5d288a797015e4efb8940779fa45f"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": 1
+          },
+          "align_iou": 0.92,
+          "uncovered_ratio": 0.2704,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1502
+            },
+            {
+              "tris": 1000,
+              "verts": 502
+            }
+          ],
+          "export_kb": 212.3,
+          "seconds": 45.3,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:58:10",
+          "files": {
+            "SM_Tripo_InfernoColumn_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_InfernoColumn_v001_validation_v001.json",
+              "sha256": "97ce5c0386ee6e2fec5c4b16b42a9ce692db7edd96ba893af5d403bb68a0185c"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:58:18",
+          "files": {
+            "SM_Tripo_InfernoColumn_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_InfernoColumn_v001_review_v001.png",
+              "sha256": "329d36266373d08d794b63f11e1592583936492fa9eb5de71be709db29f460ed"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "2mv 种子 20261003：玄铁朱漆方柱、饕餮铜柱头、缠柱铁链、阶梯基座与概念一致；转角熔岩裂缝自发光；IoU 0.92，校验 0 警告，LOD 无开口边。",
+            "time": "2026-10-11 22:58:49"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:58:50",
+          "files": {
+            "SM_Tripo_InfernoColumn.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoColumn.glb",
+              "sha256": "9ed4cbc7cd3d7abefddb3c7c4cd2648ec416e642998acb9ef6e838a9fde575c8"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_InfernoColumn.glb"
+        }
+      ]
+    }
+  }
+}

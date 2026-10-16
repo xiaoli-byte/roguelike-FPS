@@ -1,0 +1,327 @@
+{
+  "asset": "SK_Enemy_Huodou",
+  "version": 1,
+  "glb": "art/source/characters/SK_Enemy_Huodou/04_export/SK_Enemy_Huodou_native_v001.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.3,
+      "自定义骨架：29 根骨骼（热扩散权重，0 个顶点未覆盖）": 0.1,
+      "贴图（BC + AO/ORM）": 3.5,
+      "LOD 与蒙皮上限 5910 / 2461 / 984": 0.1,
+      "导出 314 KB": 0.7
+    },
+    "source": {
+      "verts": 3265,
+      "tris": 6498,
+      "scale": 1.1005373717635565
+    },
+    "regions": {
+      "heat_unweighted_verts": 0,
+      "ground_verts": 480,
+      "head_verts": 314,
+      "jaw_verts": 20,
+      "bell_verts": 334,
+      "fallback_verts": 5,
+      "per_bone": {
+        "hips": 143,
+        "spine": 69,
+        "chest": 77,
+        "neck": 342,
+        "head": 409,
+        "jaw": 23,
+        "bell": 373,
+        "scapula_L": 116,
+        "scapula_R": 111,
+        "upperarm_L": 60,
+        "upperarm_R": 59,
+        "forearm_L": 72,
+        "forearm_R": 72,
+        "paw_L": 195,
+        "paw_R": 194,
+        "thigh_L": 49,
+        "thigh_R": 49,
+        "shin_L": 61,
+        "shin_R": 60,
+        "foot_L": 59,
+        "foot_R": 59,
+        "toe_L": 171,
+        "toe_R": 172,
+        "tail_1": 25,
+        "tail_2": 16,
+        "tail_3": 17,
+        "tail_4": 53,
+        "tail_5": 34
+      }
+    },
+    "bones": [
+      "bell",
+      "chest",
+      "foot_L",
+      "foot_R",
+      "forearm_L",
+      "forearm_R",
+      "head",
+      "hips",
+      "jaw",
+      "neck",
+      "paw_L",
+      "paw_R",
+      "root",
+      "scapula_L",
+      "scapula_R",
+      "shin_L",
+      "shin_R",
+      "spine",
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "tail_4",
+      "tail_5",
+      "thigh_L",
+      "thigh_R",
+      "toe_L",
+      "toe_R",
+      "upperarm_L",
+      "upperarm_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.917,
+      "shade_mean": 0.949
+    },
+    "textures": {
+      "size": 1024,
+      "ao_mean": 0.851,
+      "provider_pbr": [],
+      "roughness_mean": 0.75,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Enemy_Huodou_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_Huodou_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_Huodou_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Enemy_Huodou_LOD0",
+        "tris": 5910,
+        "uv_min": [
+          0.0,
+          0.0
+        ],
+        "uv_max": [
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "SK_Enemy_Huodou_LOD1",
+        "tris": 2461,
+        "uv_min": [
+          0.0,
+          0.0003478231083136052
+        ],
+        "uv_max": [
+          1.0,
+          0.999755859375
+        ]
+      },
+      {
+        "name": "SK_Enemy_Huodou_LOD2",
+        "tris": 984,
+        "uv_min": [
+          0.0,
+          0.000797711662016809
+        ],
+        "uv_max": [
+          1.0,
+          0.999755859375
+        ]
+      }
+    ],
+    "glb_kb": 314,
+    "_seconds": 7.7
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "314 KB / 1600 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Enemy_Huodou_LOD0', 'SK_Enemy_Huodou_LOD1', 'SK_Enemy_Huodou_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "5910 / 6000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "2461 / 2500"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "984 / 1000"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "1.100 m (design 1.1 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Enemy_Huodou']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Huodou_ORM",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Huodou_BC",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "29 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Huodou_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Huodou_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Huodou_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Huodou_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Huodou_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Huodou_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Huodou_LOD0 UV range",
+      "[0.0, 0.0]..[1.0, 1.0]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Huodou_LOD1 UV range",
+      "[0.0, 0.0]..[1.0, 1.0]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Huodou_LOD2 UV range",
+      "[0.0, 0.001]..[1.0, 1.0]"
+    ],
+    [
+      "warn",
+      "region heat_unweighted",
+      "0 verts"
+    ],
+    [
+      "pass",
+      "region ground",
+      "480 verts"
+    ],
+    [
+      "pass",
+      "region head",
+      "314 verts"
+    ],
+    [
+      "warn",
+      "region jaw",
+      "20 verts"
+    ],
+    [
+      "pass",
+      "region bell",
+      "334 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "5 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

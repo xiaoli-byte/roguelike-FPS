@@ -1,0 +1,117 @@
+{
+  "steps": {
+    "导入清理": 8.7,
+    "对齐": 1.7,
+    "低模与 UV": 29.3,
+    "投影着色": 86.2,
+    "烘焙": 14.0,
+    "LOD": 0.0,
+    "导出": 2.0
+  },
+  "highpoly": {
+    "faces_raw": 1477556,
+    "faces": 818104,
+    "verts": 818106,
+    "loose_parts": 13,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.912,
+    "iou_per_view": {
+      "front": 0.944,
+      "left": 0.871,
+      "back": 0.946,
+      "right": 0.872
+    },
+    "height_m": 2.8899,
+    "blockout_height_m": 3.0
+  },
+  "uv": {
+    "smart_islands": 238,
+    "charts": 13,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "smart",
+    "density_smart": 0.1404,
+    "density_merged": 0.1277
+  },
+  "projection": {
+    "uncovered_ratio": 0.3153
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Tripo_InfernoPlatformBlockB_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_InfernoPlatformBlockB_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_InfernoPlatformBlockB_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_InfernoPlatformBlockB_LOD0",
+      "tris": 3000,
+      "verts": 1502,
+      "uv_min": [
+        0.002431314205750823,
+        0.002764171687886119
+      ],
+      "uv_max": [
+        0.9975777268409729,
+        0.9746246337890625
+      ],
+      "uv_utilization": 0.781,
+      "bbox_min": [
+        -1.4315,
+        -1.1635,
+        0.0004
+      ],
+      "bbox_max": [
+        1.4335,
+        0.9765,
+        2.8921
+      ]
+    },
+    {
+      "name": "SM_Tripo_InfernoPlatformBlockB_LOD1",
+      "tris": 1000,
+      "verts": 502,
+      "uv_min": [
+        0.0025381960440427065,
+        0.002764171687886119
+      ],
+      "uv_max": [
+        0.9969909191131592,
+        0.9737814664840698
+      ],
+      "uv_utilization": 0.768,
+      "bbox_min": [
+        -1.4323,
+        -1.1659,
+        0.0007
+      ],
+      "bbox_max": [
+        1.4335,
+        0.9804,
+        2.8921
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_InfernoPlatformBlockB/04_export/SM_Tripo_InfernoPlatformBlockB_v001.glb",
+    "bytes": 159624
+  },
+  "blend": "art/source/props/SM_Tripo_InfernoPlatformBlockB/03_work/SM_Tripo_InfernoPlatformBlockB_v001.blend",
+  "total_seconds": 142.1,
+  "_seconds": 149.3
+}

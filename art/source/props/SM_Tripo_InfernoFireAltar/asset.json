@@ -1,0 +1,506 @@
+{
+  "id": "SM_Tripo_InfernoFireAltar",
+  "display": "祝融火坛（V2）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 19:59:15",
+          "files": {
+            "BO_SM_Tripo_InfernoFireAltar_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoFireAltar_v001.json",
+              "sha256": "d7ff043f59520a6c80aae8388d04de2432f97a6c200a38ae6774983169546a1b"
+            },
+            "BO_SM_Tripo_InfernoFireAltar_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoFireAltar_v001_views.json",
+              "sha256": "9941fb9740a8341c63b8533d9a7e5271706a8909bc73a285f9c044656a485b08"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.v2.fireAltar"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.7,
+              0,
+              -0.7
+            ],
+            "max": [
+              0.7,
+              2.4,
+              0.7
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 20:00:20",
+          "files": {
+            "CN_SM_Tripo_InfernoFireAltar_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFireAltar_v001_source.png",
+              "sha256": "a2a299165608414aec86b9b9fba2d4bf92a5d2ab3e85aca17b12302afb6d99ab"
+            },
+            "CN_SM_Tripo_InfernoFireAltar_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFireAltar_v001_front.png",
+              "sha256": "510af9a8e8a2ef1c6278abbf166563582b8e0fc4bd26b4090773f25223d4614d"
+            },
+            "CN_SM_Tripo_InfernoFireAltar_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFireAltar_v001_left.png",
+              "sha256": "4654012dd301615f43e5222756c3d463bec4c5b73e3f29e110de63320f2d8d81"
+            },
+            "CN_SM_Tripo_InfernoFireAltar_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFireAltar_v001_back.png",
+              "sha256": "c655031c26b66f82b786e9343d4bf0852b64aeb7f72373c0c5985911f295664a"
+            },
+            "CN_SM_Tripo_InfernoFireAltar_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFireAltar_v001_right.png",
+              "sha256": "a78a9ecd6b2e162eaf6b0e0adf3f22f2d63c6fa58a4fafbef7167383d031ef73"
+            },
+            "CN_SM_Tripo_InfernoFireAltar_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFireAltar_v001_sheet.png",
+              "sha256": "ccf97f63a279f797d944af5f5444023da1c22114d02c68a7f41975929110ddcf"
+            },
+            "CN_SM_Tripo_InfernoFireAltar_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFireAltar_v001_prompt.txt",
+              "sha256": "36931a0bc5a713ceb9f1171c3e9d2304838d7a31a7dac2f38ca9f181a1a3e6b3"
+            },
+            "CN_SM_Tripo_InfernoFireAltar_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFireAltar_v001_registration.json",
+              "sha256": "de779ebd99cbfda110ad3fa8883c862feabab39b23b882641032b5088d5c03ee"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              1916,
+              821
+            ],
+            "references": [],
+            "codex_session": "01a12ad4-e019-75d1-85c0-c76e9b6bc1f7",
+            "attempt": 1,
+            "seconds": 62.5
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian underground forge-palace fantasy of Zhurong, the Chinese god of fire: massive black iron (xuan tie) with heavy rivets, dark charcoal basalt blocks, deep vermilion lacquer, warm aged bronze ding cauldrons, chunky thick iron chains always attached flat to the surfaces, soot-darkened edges, and a few channels and cracks of molten lava. Lava, embers and fire are painted as opaque flat bright orange-yellow surfaces, never as smoke, loose sparks or transparent effects. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (1.4m wide x 2.4m tall x 1.4m deep): A fire altar brazier 1.4m wide, 2.4m tall: a square stepped dark basalt pedestal with a vermilion lacquer panel and a bronze fire-sun disc on every face, topped by a wide aged-bronze ding cauldron bowl on three thick legs, the bowl heaped with glowing coals and a few chunky stylised flame tongues (all painted as opaque bright orange-yellow solid shapes). Chunky readable shapes, one solid connected piece on a flat base, identical on all four sides.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "a2a299165608414aec86b9b9fba2d4bf92a5d2ab3e85aca17b12302afb6d99ab",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.8855067450709097,
+              "offset": [
+                68,
+                120
+              ],
+              "size": [
+                375,
+                784
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.8845073017920486,
+              "offset": [
+                67,
+                120
+              ],
+              "size": [
+                377,
+                784
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.8855067450709097,
+              "offset": [
+                67,
+                120
+              ],
+              "size": [
+                377,
+                784
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.8845073017920486,
+              "offset": [
+                67,
+                120
+              ],
+              "size": [
+                377,
+                784
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-11 20:04:44",
+          "files": {
+            "CN_SM_Tripo_InfernoFireAltar_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFireAltar_v002_source.png",
+              "sha256": "a2a299165608414aec86b9b9fba2d4bf92a5d2ab3e85aca17b12302afb6d99ab"
+            },
+            "CN_SM_Tripo_InfernoFireAltar_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFireAltar_v002_front.png",
+              "sha256": "93ed7a62e5e86476076492d6ad363f097636d540f0c723a784eb713d362e8d16"
+            },
+            "CN_SM_Tripo_InfernoFireAltar_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFireAltar_v002_left.png",
+              "sha256": "76d44774f02f261ce3d78789f9f30e7246449ccf44feb089c1acc34209ee3186"
+            },
+            "CN_SM_Tripo_InfernoFireAltar_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFireAltar_v002_back.png",
+              "sha256": "e88ef6989509ca3502d7016576048da548371e9523d1678d1e861c32283ea43a"
+            },
+            "CN_SM_Tripo_InfernoFireAltar_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFireAltar_v002_right.png",
+              "sha256": "a4a956e4a56721b326af94fe9ee62e32eb14d9f1a3fdad66d4c57dd60a005653"
+            },
+            "CN_SM_Tripo_InfernoFireAltar_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFireAltar_v002_sheet.png",
+              "sha256": "47e9725697d26bed73a82d90c3a58798d4051d31056a97c88098dc0cebe41d3b"
+            },
+            "CN_SM_Tripo_InfernoFireAltar_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFireAltar_v002_prompt.txt",
+              "sha256": "36931a0bc5a713ceb9f1171c3e9d2304838d7a31a7dac2f38ca9f181a1a3e6b3"
+            },
+            "CN_SM_Tripo_InfernoFireAltar_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoFireAltar_v002_registration.json",
+              "sha256": "de779ebd99cbfda110ad3fa8883c862feabab39b23b882641032b5088d5c03ee"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              1916,
+              821
+            ],
+            "references": [],
+            "codex_session": "01a12ad4-e019-75d1-85c0-c76e9b6bc1f7",
+            "attempt": 1,
+            "seconds": 62.5,
+            "rekeyed_from": 1
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian underground forge-palace fantasy of Zhurong, the Chinese god of fire: massive black iron (xuan tie) with heavy rivets, dark charcoal basalt blocks, deep vermilion lacquer, warm aged bronze ding cauldrons, chunky thick iron chains always attached flat to the surfaces, soot-darkened edges, and a few channels and cracks of molten lava. Lava, embers and fire are painted as opaque flat bright orange-yellow surfaces, never as smoke, loose sparks or transparent effects. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (1.4m wide x 2.4m tall x 1.4m deep): A fire altar brazier 1.4m wide, 2.4m tall: a square stepped dark basalt pedestal with a vermilion lacquer panel and a bronze fire-sun disc on every face, topped by a wide aged-bronze ding cauldron bowl on three thick legs, the bowl heaped with glowing coals and a few chunky stylised flame tongues (all painted as opaque bright orange-yellow solid shapes). Chunky readable shapes, one solid connected piece on a flat base, identical on all four sides.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "a2a299165608414aec86b9b9fba2d4bf92a5d2ab3e85aca17b12302afb6d99ab",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.8855067450709097,
+              "offset": [
+                68,
+                120
+              ],
+              "size": [
+                375,
+                784
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.8845073017920486,
+              "offset": [
+                67,
+                120
+              ],
+              "size": [
+                377,
+                784
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.8855067450709097,
+              "offset": [
+                67,
+                120
+              ],
+              "size": [
+                377,
+                784
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.8845073017920486,
+              "offset": [
+                67,
+                120
+              ],
+              "size": [
+                377,
+                784
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "用户（2026-10-11 审稿确认）",
+            "note": "用户审阅 docs/art/review/inferno-kit-v001.png 后通过全部 16 张祝融火狱套件概念，按现稿进 Hunyuan3D 2mv",
+            "time": "2026-10-11 22:10:03"
+          }
+        }
+      ]
+    },
+    "emid": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 22:11:52",
+          "files": {
+            "EID_SM_Tripo_InfernoFireAltar_v001_front.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoFireAltar_v001_front.png",
+              "sha256": "1aebed83f4b5546eba9517b4a209b4ce32152fa3e6ffe9ef62e9e9c3ee76b9a9"
+            },
+            "EID_SM_Tripo_InfernoFireAltar_v001_left.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoFireAltar_v001_left.png",
+              "sha256": "437e62cbcac4f1368d47b014b0561eebbb6e1c4c2799abc83086e504104d4623"
+            },
+            "EID_SM_Tripo_InfernoFireAltar_v001_back.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoFireAltar_v001_back.png",
+              "sha256": "3c78cda58b0b690f79d2579ecd4f2040395d05c606d5a66dc40a47f19293b816"
+            },
+            "EID_SM_Tripo_InfernoFireAltar_v001_right.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoFireAltar_v001_right.png",
+              "sha256": "65f55fb90b9cc74cfd63b4f9ee8ab55db8aa01b092075fe9d15ba619858e17f9"
+            },
+            "EID_SM_Tripo_InfernoFireAltar_v001_compare.png": {
+              "path": "01_concept/EID_SM_Tripo_InfernoFireAltar_v001_compare.png",
+              "sha256": "568985448e91a6dfd4f54d8c32642696c5b8e2411cf6b35e2fed3c1ef730c610"
+            }
+          },
+          "from_concept": 2,
+          "provider": "colour-key",
+          "method": "HSV key of the painted lava / coals / fire on the registered concept views (value >= 0.8, saturation >= 0.62, hue 8-48 deg, 3 px open)",
+          "emissive_ratio": {
+            "front": 0.043,
+            "left": 0.043,
+            "back": 0.043,
+            "right": 0.042
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 23:05:08",
+          "files": {
+            "HP_SM_Tripo_InfernoFireAltar_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoFireAltar_v001_input_front.png",
+              "sha256": "4cf3d6a0aa7ce8ae31dd701625316b2e52abb9911721c9d942feea253a45715d"
+            },
+            "HP_SM_Tripo_InfernoFireAltar_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoFireAltar_v001_input_left.png",
+              "sha256": "bd63e7e6797539cd2fc9ac1ea803d5c58fcf0f6a4abe5a5227a4513f38224f95"
+            },
+            "HP_SM_Tripo_InfernoFireAltar_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoFireAltar_v001_input_back.png",
+              "sha256": "b53556678a440865792b2735b93398d6930a39c54e60ea6e686972aedd1b4e6a"
+            },
+            "HP_SM_Tripo_InfernoFireAltar_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoFireAltar_v001_input_right.png",
+              "sha256": "d21e6128fddf9d5dbaa8ea333645d75d5dfc2cb1a4b5af1f4757263210547ae8"
+            },
+            "HP_SM_Tripo_InfernoFireAltar_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoFireAltar_v001.glb",
+              "sha256": "ad2a155915cade27263de9b7ad890802a2fb735923d46c92c9daff8f1fb8b8c9"
+            },
+            "HP_SM_Tripo_InfernoFireAltar_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoFireAltar_v001_graph.json",
+              "sha256": "7546600b1ae254e28c4b34fe0afec5ed88857ba003c090e9d0c2cc4f8ad9ee0b"
+            }
+          },
+          "from_concept": 2,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              -205,
+              51,
+              717,
+              973
+            ],
+            "scale": 1.1106290672451193
+          },
+          "seconds": 158.6,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 13.0
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 23:06:23",
+          "files": {
+            "SM_Tripo_InfernoFireAltar_v001.blend": {
+              "path": "03_work/SM_Tripo_InfernoFireAltar_v001.blend",
+              "sha256": "4b3cb6ad5dace979dd49609cda5d50cc15f04bed9571e0698ccc1cc4e441b0de"
+            },
+            "SM_Tripo_InfernoFireAltar_v001.glb": {
+              "path": "04_export/SM_Tripo_InfernoFireAltar_v001.glb",
+              "sha256": "ecbac3fc3b1b911032b4fa081748e4dab14388981977bdedc619b1c0f240a0c9"
+            },
+            "SM_Tripo_InfernoFireAltar_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoFireAltar_v001_metrics.json",
+              "sha256": "beb57b28f4d73d27946c4a69c6a89b1bf4fd073c361a3c97f0ae94981742e885"
+            },
+            "T_Tripo_InfernoFireAltar_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoFireAltar_BC.png",
+              "sha256": "f063ed462417e7ee91d22e78327d3fc256712f0ecc175414ed46dd058a524859"
+            },
+            "T_Tripo_InfernoFireAltar_E.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoFireAltar_E.png",
+              "sha256": "117bdd20c8b34e4e01b6877f3ee1086e600ae243676b1bf5d8d20b386349a86b"
+            },
+            "T_Tripo_InfernoFireAltar_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoFireAltar_N.png",
+              "sha256": "6a9c9f5c812fa55923087fd459ae3d6f107b2eec479136ce2c61d1ca615f88d5"
+            },
+            "T_Tripo_InfernoFireAltar_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoFireAltar_ORM.png",
+              "sha256": "8ab9f4c3e6b5e78156337562d1dd8be0ed0d897366f516f998d1d714eefca2b3"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": 1
+          },
+          "align_iou": 0.908,
+          "uncovered_ratio": 0.333,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1434
+            },
+            {
+              "tris": 1000,
+              "verts": 434
+            }
+          ],
+          "export_kb": 294.4,
+          "seconds": 70.4,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 23:06:23",
+          "files": {
+            "SM_Tripo_InfernoFireAltar_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_InfernoFireAltar_v001_validation_v001.json",
+              "sha256": "f185ee891a60ab140a9d53ef6d99e9c60a3d177a2ac33d853c48bd84e4dc73a1"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 23:06:32",
+          "files": {
+            "SM_Tripo_InfernoFireAltar_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_InfernoFireAltar_v001_review_v001.png",
+              "sha256": "f956de1da94f0a917d9760a9741922e6601fd5b6aa590a12d158f500bb92efc0"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "2mv 种子 20261003：阶梯玄武岩座（朱漆日纹板、铁链）、三足铜鼎盆、炭堆与火舌与概念一致，四面一致；炭火与火舌自发光；实测 1.13×2.36×1.15 m；IoU 0.908，校验 0 警告，LOD 无开口边。",
+            "time": "2026-10-11 23:07:17"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-11 23:07:19",
+          "files": {
+            "SM_Tripo_InfernoFireAltar.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoFireAltar.glb",
+              "sha256": "ecbac3fc3b1b911032b4fa081748e4dab14388981977bdedc619b1c0f240a0c9"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_InfernoFireAltar.glb"
+        }
+      ]
+    }
+  }
+}

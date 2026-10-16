@@ -11,8 +11,9 @@ import { buildEncounterWaves, buildWaves } from '../enemies/Waves';
 import { ArenaView, addCollision } from './ArenaBuilder';
 import { generateLevel, type LevelLayout } from './LevelGen';
 import { NavGrid, type NavRamp } from './NavGrid';
+import { LavaSystem } from './Lava';
 import { Portal } from './Portal';
-import { themeDef } from './Themes';
+import { redesignThemeDef, themeDef } from './Themes';
 import { BOSS_LEAD, WaveRunner, isBossId } from './WaveRunner';
 import { AdventureBeacon } from './AdventureBeacon';
 import { ChallengeEntrance } from './ChallengeEntrance';
@@ -59,7 +60,7 @@ function insidePlanRoom(plan: WhiteboxPlan, roomId: string, position: { x: numbe
 }
 
 /** Chapter names shown (stage banner, boss title) on V2 redesign plans, where the chapter got a new identity. */
-const REDESIGN_CHAPTER_NAMES: Readonly<Record<string, string>> = { frost: '昆仑雪墟' };
+const REDESIGN_CHAPTER_NAMES: Readonly<Record<string, string>> = { frost: '昆仑雪墟', inferno: '祝融火狱' };
 
 function toArena(L: LevelLayout, theme: ThemeDef): ArenaInfo {
   const v = (p: { x: number; z: number }): THREE.Vector3 => new THREE.Vector3(p.x, L.floorY, p.z);
@@ -134,6 +135,10 @@ export class StageDirector implements IStageDirector {
 
   private layout: LevelLayout | null = null;
   private view: ArenaView | null = null;
+  /** Chapter-3 lava floor (WhiteboxLava): hurts and returns the player, burns enemies knocked in. */
+  private lava: LavaSystem | null = null;
+  /** The current level's lava runtime (dev tools, tests); null on levels without lava. */
+  get lavaSystem(): LavaSystem | null { return this.lava; }
   private waves: WaveRunner | null = null;
   private encounterWaves: WaveRunner | null = null;
   private activeEncounterId: string | null = null;
@@ -203,7 +208,9 @@ export class StageDirector implements IStageDirector {
     }
     this.layout = L;
     // A V2 redesign plan may rename its chapter (frost V2 is 昆仑雪墟; the LD-03 frost maps keep 霜雪古寺).
-    const base = themeDef(stage.theme), renamed = L.whitebox?.plan.id.endsWith('-v2') ? REDESIGN_CHAPTER_NAMES[stage.theme] : undefined;
+    // V2 plans also render with their own theme overrides (the V2 inferno forge palace is lit warm, LD-03 cold violet).
+    const v2 = !!L.whitebox?.plan.id.endsWith('-v2');
+    const base = v2 ? redesignThemeDef(stage.theme) : themeDef(stage.theme), renamed = v2 ? REDESIGN_CHAPTER_NAMES[stage.theme] : undefined;
     const theme = renamed ? { ...base, name: renamed } : base;
     const arena = toArena(L, theme);
     this.arena = arena;
@@ -222,9 +229,15 @@ export class StageDirector implements IStageDirector {
       console.error('[StageDirector] arena build failed', err);
       this.view = null;
     }
+    // Lava has no collision box: navigation blocks it directly (set before the grid is built).
+    if (ctx.nav instanceof NavGrid) ctx.nav.setLava(L.whitebox?.lava ?? null);
     ctx.nav.build(arena);
     if (ctx.nav instanceof NavGrid) ctx.nav.setRamps(toNavRamps(L));
     ctx.player.teleport(arena.playerSpawn.clone(), arena.playerYaw);
+    if (L.whitebox?.lava) {
+      this.lava = new LavaSystem(ctx, L.whitebox.lava, L.floorY, arena.playerSpawn);
+      ctx.scene.add(this.lava.group);
+    }
 
     switch (stage.type) {
       case 'combat':
@@ -275,8 +288,9 @@ export class StageDirector implements IStageDirector {
       this.view.dispose();
       this.view = null;
     }
+    this.lava?.dispose(); this.lava = null;
     ctx.world.clear();
-    if (ctx.nav instanceof NavGrid) ctx.nav.setRamps([]);
+    if (ctx.nav instanceof NavGrid) { ctx.nav.setRamps([]); ctx.nav.setLava(null); }
     ctx.scene.fog = null;
     if (this.bosses.length > 0) ctx.ui.setBoss(null);
     this.stage = null;
@@ -576,6 +590,7 @@ export class StageDirector implements IStageDirector {
     this.t += dt;
     const t = this.t;
     this.view?.update(dt, t);
+    this.lava?.update(dt, t);
     this.beacon?.update(dt, t);
     for (const entrance of this.challengeEntrances) entrance.update(dt, t);
     this.updateEncounters();

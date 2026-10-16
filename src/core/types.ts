@@ -795,6 +795,8 @@ export interface INavGrid {
   randomWalkable(center: THREE.Vector3, minR: number, maxR: number, out: THREE.Vector3): boolean;
   /** Whether p stands on a deck top that a stair ramp reaches (raised spawn stations); optional. */
   platformAt?(p: THREE.Vector3): boolean;
+  /** Whether a ground body walking straight from a to b would step onto lava (WhiteboxLava); optional, false without lava. */
+  crossesLava?(a: THREE.Vector3, b: THREE.Vector3, lateral?: number): boolean;
 }
 
 /** 当前半开放区域的导航与一次性探索状态；常规首领 / 商店关不提供此状态。 */

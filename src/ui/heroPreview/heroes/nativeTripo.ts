@@ -186,7 +186,8 @@ export function createNativeHero(id: string, template: THREE.Object3D, options: 
   function solve(side: string, target: THREE.Vector3, pole: THREE.Vector3, across: THREE.Vector3, distal: THREE.Vector3, grip = 1): void {
     const upper = bone(`${side}Arm`), lower = bone(`${side}ForeArm`), wrist = bone(`${side}Hand`);
     // 每次求解从绑定姿势开始：多次迭代时前臂扭转、手腕转角不累加
-    for (const bn of [upper, lower, wrist]) bn.quaternion.copy(rest.get(bn)!);
+    const roll = bones.get(`${side}ForeArmTwist`);
+    for (const bn of roll ? [upper, lower, wrist, roll] : [upper, lower, wrist]) bn.quaternion.copy(rest.get(bn)!);
     upper.updateWorldMatrix(false, true);
     const s = world(upper), e = world(lower), w = world(wrist);
     const a = s.distanceTo(e), b = e.distanceTo(w);
@@ -212,14 +213,18 @@ export function createNativeHero(id: string, template: THREE.Object3D, options: 
       const turn = 2 * Math.acos(Math.min(1, Math.abs(aligned.dot(natural))));
       want = natural.clone().slerp(aligned, Math.min(1, grip) * Math.min(1, WRIST_MAX / Math.max(turn, 1e-6)));
     }
-    // swing–twist：绕前臂轴的扭转一半交给前臂骨（转轴过肘和腕，手腕位置不变）
+    // swing–twist：绕前臂轴的扭转交给前臂旋转骨（构建时加的 <side>ForeArmTwist，蒙皮从肘到腕线性渐变，扭转沿前臂均匀摊开）；
+    // 没有旋转骨的旧资产退回「一半交给前臂骨」。转轴过肘和腕，手腕位置不变
     const f = world(wrist).sub(world(lower)).normalize();
     const delta = want.clone().multiply(natural.clone().invert());
     // 同一个旋转有 q 和 −q 两种写法：先归到 w ≥ 0 的最短路径，否则扭转角会算成接近 ±360°，前臂被反向拧一大圈、塌成细条
     if (delta.w < 0) delta.set(-delta.x, -delta.y, -delta.z, -delta.w);
     const proj = delta.x * f.x + delta.y * f.y + delta.z * f.z;
     const twist = 2 * Math.atan2(proj, delta.w);
-    if (Math.abs(twist) > 1e-3) rotateWorld(lower, f, 0.5 * THREE.MathUtils.clamp(twist, -1.6, 1.6));
+    if (Math.abs(twist) > 1e-3) {
+      if (roll) rotateWorld(roll, f, THREE.MathUtils.clamp(twist, -2.2, 2.2));
+      else rotateWorld(lower, f, 0.5 * THREE.MathUtils.clamp(twist, -1.6, 1.6));
+    }
     setWorldQ(wrist, want);
     root.userData.gripAudit[side] = { wristError: world(wrist).distanceTo(target), reach: a + b, requestedReach: target.distanceTo(s),
       elbowBend: 180 - THREE.MathUtils.radToDeg(world(upper).sub(world(lower)).angleTo(world(wrist).sub(world(lower)))),

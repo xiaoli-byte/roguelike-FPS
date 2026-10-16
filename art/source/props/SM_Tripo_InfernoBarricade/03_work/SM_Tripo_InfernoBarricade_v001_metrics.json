@@ -1,0 +1,117 @@
+{
+  "steps": {
+    "导入清理": 1.7,
+    "对齐": 1.0,
+    "低模与 UV": 8.0,
+    "投影着色": 12.2,
+    "烘焙": 5.2,
+    "LOD": 0.0,
+    "导出": 0.9
+  },
+  "highpoly": {
+    "faces_raw": 308892,
+    "faces": 167134,
+    "verts": 167136,
+    "loose_parts": 1,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00493,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.853,
+    "iou_per_view": {
+      "front": 0.871,
+      "left": 0.843,
+      "back": 0.841,
+      "right": 0.847
+    },
+    "height_m": 1.1831,
+    "blockout_height_m": 1.2
+  },
+  "uv": {
+    "smart_islands": 327,
+    "charts": 37,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "merged",
+    "density_smart": 0.2153,
+    "density_merged": 0.2201
+  },
+  "projection": {
+    "uncovered_ratio": 0.2536
+  },
+  "bake_device": "CPU",
+  "textures": {
+    "T_Tripo_InfernoBarricade_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_InfernoBarricade_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_InfernoBarricade_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_InfernoBarricade_LOD0",
+      "tris": 3000,
+      "verts": 1502,
+      "uv_min": [
+        0.0021189625840634108,
+        0.002118875039741397
+      ],
+      "uv_max": [
+        0.9978811144828796,
+        0.9888095259666443
+      ],
+      "uv_utilization": 0.549,
+      "bbox_min": [
+        -1.8076,
+        -0.2353,
+        0.0002
+      ],
+      "bbox_max": [
+        1.7558,
+        0.2346,
+        1.1834
+      ]
+    },
+    {
+      "name": "SM_Tripo_InfernoBarricade_LOD1",
+      "tris": 1000,
+      "verts": 502,
+      "uv_min": [
+        0.0021189625840634108,
+        0.002118875039741397
+      ],
+      "uv_max": [
+        0.9978811144828796,
+        0.9886460900306702
+      ],
+      "uv_utilization": 0.526,
+      "bbox_min": [
+        -1.8027,
+        -0.2343,
+        0.0003
+      ],
+      "bbox_max": [
+        1.7516,
+        0.235,
+        1.1776
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_InfernoBarricade/04_export/SM_Tripo_InfernoBarricade_v001.glb",
+    "bytes": 179580
+  },
+  "blend": "art/source/props/SM_Tripo_InfernoBarricade/03_work/SM_Tripo_InfernoBarricade_v001.blend",
+  "total_seconds": 29.0,
+  "_seconds": 33.1
+}

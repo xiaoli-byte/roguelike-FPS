@@ -1,0 +1,492 @@
+{
+  "id": "SM_Tripo_InfernoPlatformBlockC",
+  "display": "朱漆铜饰台基模块（V2 变体）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-13 09:30:02",
+          "files": {
+            "BO_SM_Tripo_InfernoPlatformBlockC_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoPlatformBlockC_v001.json",
+              "sha256": "dfdd2a7761c878aba8778f58bac3376df4573919c6a7b08d8f4a9382348467b5"
+            },
+            "BO_SM_Tripo_InfernoPlatformBlockC_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoPlatformBlockC_v001_views.json",
+              "sha256": "b871370502efdd40c84ea83510792b17ca3cc4cc285c593dbf81ef95edb114fa"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.v2.platformblockC"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.0,
+              0,
+              -2.0
+            ],
+            "max": [
+              2.0,
+              3.0,
+              2.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-13 09:30:56",
+          "files": {
+            "CN_SM_Tripo_InfernoPlatformBlockC_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoPlatformBlockC_v001_source.png",
+              "sha256": "c09712a7147d3c06153c3e44c8faa56afd788a9b0c5322e7b62feb45bcb38e48"
+            },
+            "CN_SM_Tripo_InfernoPlatformBlockC_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoPlatformBlockC_v001_front.png",
+              "sha256": "47744be33e8bddbb179c0dfb6e356f3cd27faa65f2d82f6cbc7f60caf3e0753b"
+            },
+            "CN_SM_Tripo_InfernoPlatformBlockC_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoPlatformBlockC_v001_left.png",
+              "sha256": "898acdbf690108d549b58928af8cb992e225a89a221267208afeb09fb4e243ba"
+            },
+            "CN_SM_Tripo_InfernoPlatformBlockC_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoPlatformBlockC_v001_back.png",
+              "sha256": "b531f9a1c26d7dbccafe856ae8eb874bff66c9a72da7ab999c58bc7aee903567"
+            },
+            "CN_SM_Tripo_InfernoPlatformBlockC_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoPlatformBlockC_v001_right.png",
+              "sha256": "dae43a13f5bc3bae6a338ad44c08d700d6f098812b0e9a9e99b66803589cf899"
+            },
+            "CN_SM_Tripo_InfernoPlatformBlockC_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoPlatformBlockC_v001_sheet.png",
+              "sha256": "cdd441134cdcc5d805a5fefa926dc11e3b3591af7d11d7d031f7012eb86404cf"
+            },
+            "CN_SM_Tripo_InfernoPlatformBlockC_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoPlatformBlockC_v001_prompt.txt",
+              "sha256": "100cc55ff207d60beb96ef1e009f7ab0875feaef72f2227c02c15a0219b5a552"
+            },
+            "CN_SM_Tripo_InfernoPlatformBlockC_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoPlatformBlockC_v001_registration.json",
+              "sha256": "d10bb0d620b0e4107b0e258f1c5bfe21c42ec81cc5cc547577be89fcabd80876"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a132e1-8694-73e0-a8a5-f98dad00daac",
+            "attempt": 1,
+            "seconds": 51.9
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian underground forge-palace fantasy of Zhurong, the Chinese god of fire: massive black iron (xuan tie) with heavy rivets, dark charcoal basalt blocks, deep vermilion lacquer, warm aged bronze ding cauldrons, chunky thick iron chains always attached flat to the surfaces, soot-darkened edges, and a few channels and cracks of molten lava. Lava, embers and fire are painted as opaque flat bright orange-yellow surfaces, never as smoke, loose sparks or transparent effects. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (4m wide x 3m tall x 4m deep): A square raised forge-hall terrace module 4m wide, 3m tall, 4m deep for tiling into large terraces, a ceremonial variant of the podium block with EXACTLY the same outer silhouette: a completely solid block with a thick dark charcoal basalt plinth and cap course, each side face holding one big recessed deep vermilion lacquer panel framed by black iron with big round rivets and a single large aged bronze fire-sun (flame disc) emblem in the middle of the panel, aged bronze corner caps at the top and a flat paved top of dark grey flagstones. NO lava and NO glow. All four sides finished identically so modules tile edge to edge.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "c09712a7147d3c06153c3e44c8faa56afd788a9b0c5322e7b62feb45bcb38e48",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.6384676775738228,
+              "offset": [
+                112,
+                340
+              ],
+              "size": [
+                287,
+                343
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6384676775738228,
+              "offset": [
+                116,
+                340
+              ],
+              "size": [
+                280,
+                343
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6384676775738228,
+              "offset": [
+                112,
+                340
+              ],
+              "size": [
+                287,
+                343
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.6372809346787042,
+              "offset": [
+                116,
+                340
+              ],
+              "size": [
+                280,
+                343
+              ],
+              "physical_height_m": 3.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "用户（2026-10-13 审阅确认）",
+            "note": "用户于 2026-10-13 审阅确认 docs/art/review/inferno-kit-additions-v001.png 的第三章 4 张补件概念，按现稿进 Hunyuan3D 2mv",
+            "time": "2026-10-13 09:38:32"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-13 09:59:21",
+          "files": {
+            "HP_SM_Tripo_InfernoPlatformBlockC_v001_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoPlatformBlockC_v001_input_front.png",
+              "sha256": "521b75c2402ce44a72a1b3a840956dc1c7d8a321e20403f8379090b0a7b777bc"
+            },
+            "HP_SM_Tripo_InfernoPlatformBlockC_v001_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoPlatformBlockC_v001_input_left.png",
+              "sha256": "d8fcbd7cf53a57fe49a20985891d7e584427b0e1b93b17b540bf5c5d28a2ad00"
+            },
+            "HP_SM_Tripo_InfernoPlatformBlockC_v001_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoPlatformBlockC_v001_input_back.png",
+              "sha256": "cadf6a549feb5515b031e4d6195cc49416ccdceaa3509535a69ba282f6b63863"
+            },
+            "HP_SM_Tripo_InfernoPlatformBlockC_v001_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoPlatformBlockC_v001_input_right.png",
+              "sha256": "ce72643d11aca54f14dc564deef11e4fb0958c34f6b619a1feffe9681dc012b2"
+            },
+            "HP_SM_Tripo_InfernoPlatformBlockC_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoPlatformBlockC_v001.glb",
+              "sha256": "66145d5c05b68d58ffdb04edf1bfd429579671a3e69f89150fa66454b8b967f5"
+            },
+            "HP_SM_Tripo_InfernoPlatformBlockC_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoPlatformBlockC_v001_graph.json",
+              "sha256": "3faba6eb61a7d0193a573fdd4f69073e64fb11eb587c7175515dca73792cabbb"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261003,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              54,
+              310,
+              458,
+              713
+            ],
+            "scale": 2.5346534653465347
+          },
+          "seconds": 330.1,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 58.4
+        },
+        {
+          "version": 2,
+          "created": "2026-10-13 10:09:51",
+          "files": {
+            "HP_SM_Tripo_InfernoPlatformBlockC_v002_input_front.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoPlatformBlockC_v002_input_front.png",
+              "sha256": "521b75c2402ce44a72a1b3a840956dc1c7d8a321e20403f8379090b0a7b777bc"
+            },
+            "HP_SM_Tripo_InfernoPlatformBlockC_v002_input_left.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoPlatformBlockC_v002_input_left.png",
+              "sha256": "d8fcbd7cf53a57fe49a20985891d7e584427b0e1b93b17b540bf5c5d28a2ad00"
+            },
+            "HP_SM_Tripo_InfernoPlatformBlockC_v002_input_back.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoPlatformBlockC_v002_input_back.png",
+              "sha256": "cadf6a549feb5515b031e4d6195cc49416ccdceaa3509535a69ba282f6b63863"
+            },
+            "HP_SM_Tripo_InfernoPlatformBlockC_v002_input_right.png": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoPlatformBlockC_v002_input_right.png",
+              "sha256": "ce72643d11aca54f14dc564deef11e4fb0958c34f6b619a1feffe9681dc012b2"
+            },
+            "HP_SM_Tripo_InfernoPlatformBlockC_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoPlatformBlockC_v002.glb",
+              "sha256": "449a9e2e7a74d11e27b7dfad4f581419c2d9b547902551d5acb2f08467595b17"
+            },
+            "HP_SM_Tripo_InfernoPlatformBlockC_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_InfernoPlatformBlockC_v002_graph.json",
+              "sha256": "a666279068407d0206a6d38ce2c343dca5b1049e84acd6e5617ace43167d9ceb"
+            }
+          },
+          "from_concept": 1,
+          "mode": "multiview",
+          "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+          "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+          "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发",
+          "seed": 20261011,
+          "steps": 50,
+          "cfg": 5.0,
+          "shift": 1.0,
+          "octree_resolution": 384,
+          "num_chunks": 32000,
+          "threshold": 0.6,
+          "input_transform": {
+            "box": [
+              54,
+              310,
+              458,
+              713
+            ],
+            "scale": 2.5346534653465347
+          },
+          "seconds": 226.6,
+          "comfyui": "0.30.0",
+          "gpu": "cuda:0 NVIDIA GeForce RTX 5090 Laptop GPU : cudaMallocAsync",
+          "size_mb": 27.6
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-13 10:03:49",
+          "files": {
+            "SM_Tripo_InfernoPlatformBlockC_v001.blend": {
+              "path": "03_work/SM_Tripo_InfernoPlatformBlockC_v001.blend",
+              "sha256": "dd4989d4eab9b8c02aee2fa19cc406d716ab266d26bed47a70f5d884622e87b2"
+            },
+            "SM_Tripo_InfernoPlatformBlockC_v001.glb": {
+              "path": "04_export/SM_Tripo_InfernoPlatformBlockC_v001.glb",
+              "sha256": "170c1d5f5652950edc0fe08deb95c8fbd52d3f69f4d26245d6abe50091cf3141"
+            },
+            "SM_Tripo_InfernoPlatformBlockC_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoPlatformBlockC_v001_metrics.json",
+              "sha256": "09f5dc4dc32261be87279740fb8fcd9e389b9031c599e04aeb8a4002a247e300"
+            },
+            "T_Tripo_InfernoPlatformBlockC_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoPlatformBlockC_BC.png",
+              "sha256": "08f186d038511e40b744bbccd30e2adfb7c8b5c15b16bcfd09d4ce7aa89c8199"
+            },
+            "T_Tripo_InfernoPlatformBlockC_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoPlatformBlockC_N.png",
+              "sha256": "e018453a9d68cee660aab44391441fdaf35926b8500187b2f2ac5b8a88a2d8a9"
+            },
+            "T_Tripo_InfernoPlatformBlockC_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_InfernoPlatformBlockC_ORM.png",
+              "sha256": "2bd35ab29a9bd5c9ea6ce3ff59d13e8ec894f268b57a42c17c10e04f8043c0f8"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.906,
+          "uncovered_ratio": 0.6267,
+          "lods": [
+            {
+              "tris": 2998,
+              "verts": 1485
+            },
+            {
+              "tris": 1000,
+              "verts": 486
+            }
+          ],
+          "export_kb": 164.9,
+          "seconds": 267.9,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-13 10:12:31",
+          "files": {
+            "SM_Tripo_InfernoPlatformBlockC_v002.blend": {
+              "path": "03_work/SM_Tripo_InfernoPlatformBlockC_v002.blend",
+              "sha256": "d59b3e76eee143eb459747698e9ebd8b89c7f94e93e4345071c09fec4cc836bc"
+            },
+            "SM_Tripo_InfernoPlatformBlockC_v002.glb": {
+              "path": "04_export/SM_Tripo_InfernoPlatformBlockC_v002.glb",
+              "sha256": "d337eedfdf7f6de9f53aaedc2aed243f2cade2f108a371253cc4bf37626e3815"
+            },
+            "SM_Tripo_InfernoPlatformBlockC_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_InfernoPlatformBlockC_v002_metrics.json",
+              "sha256": "d7faf94fd4eeec7c960b5f8d5bde2b374df138a389a9a10602b4948acef5a368"
+            },
+            "T_Tripo_InfernoPlatformBlockC_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoPlatformBlockC_BC.png",
+              "sha256": "e9e18cf7408ee3da1a7ca286def81ec5e0f4ac294a7961cd0c1c358d63469b15"
+            },
+            "T_Tripo_InfernoPlatformBlockC_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoPlatformBlockC_N.png",
+              "sha256": "a51225a16cd0442f07e2d34ac7acc0f485a1ba8582af469cde1df7e5104606b9"
+            },
+            "T_Tripo_InfernoPlatformBlockC_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_InfernoPlatformBlockC_ORM.png",
+              "sha256": "d4d6494877d4ff0bf0678897290b1503e37b187ab439185861ef2753736a8d36"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.924,
+          "uncovered_ratio": 0.3315,
+          "lods": [
+            {
+              "tris": 3000,
+              "verts": 1502
+            },
+            {
+              "tris": 1000,
+              "verts": 502
+            }
+          ],
+          "export_kb": 144.6,
+          "seconds": 159.4,
+          "bake_device": "CPU",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-13 10:03:49",
+          "files": {
+            "SM_Tripo_InfernoPlatformBlockC_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_InfernoPlatformBlockC_v001_validation_v001.json",
+              "sha256": "bde5fa539210016f5303c6ea5f8bb11d4ffea89cab86005015f07ebcb05b50c6"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-13 10:12:31",
+          "files": {
+            "SM_Tripo_InfernoPlatformBlockC_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_InfernoPlatformBlockC_v002_validation_v002.json",
+              "sha256": "6cb3270b13cd052ada54657830e0423bedff44082772ff7498a193f21a597948"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-13 10:04:02",
+          "files": {
+            "SM_Tripo_InfernoPlatformBlockC_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_InfernoPlatformBlockC_v001_review_v001.png",
+              "sha256": "bd0f12eb1ed2e70e9acd3ffd3a6693849fb97629571cd47a932368ace5523acb"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "rejected",
+            "by": "claude(AI初审)",
+            "note": "2mv 种子 20261003 出空心薄壳（体积/包围盒 0.022，投影未覆盖 62.7%，内壁大片未上色），火纹只是贴图没有起伏，弃用；换种子重跑。",
+            "time": "2026-10-13 10:06:02"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-13 10:12:43",
+          "files": {
+            "SM_Tripo_InfernoPlatformBlockC_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_InfernoPlatformBlockC_v002_review_v002.png",
+              "sha256": "572092134604abb306ecff05d5136333908dc9c064d9e54661dee12872906162"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "claude(AI初审)",
+            "note": "v001（2mv 种子 20261003）空心薄壳已驳回；v002 = 2mv 种子 20261011（assetctl run --seed 20261011）：实心方台（体积/包围盒 0.812，单连通，焊接后 0 开边），LOD 0/0 开边无裂缝；四面凹进朱漆面板 + 铆钉铁框 + 青铜火纹、铜回纹角帽、玄武岩基座与压顶与概念一致，无熔岩无发光（不做 emid）；外轮廓与 A 同为平顶方块（运行时按包围盒适配 4×3×4）。顶面为扩散补色的平涂暗棕灰（概念无顶视图，石板缝不明显），色调接近 A 顶面；转角有与 A 同级的浅色接缝渗色。IoU 0.924，校验 0 警告 0 错误。",
+            "time": "2026-10-13 10:14:25"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-13 10:14:26",
+          "files": {
+            "SM_Tripo_InfernoPlatformBlockC.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_InfernoPlatformBlockC.glb",
+              "sha256": "d337eedfdf7f6de9f53aaedc2aed243f2cade2f108a371253cc4bf37626e3815"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_InfernoPlatformBlockC.glb"
+        }
+      ]
+    }
+  }
+}

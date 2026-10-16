@@ -1,0 +1,120 @@
+{
+  "steps": {
+    "导入清理": 5.5,
+    "对齐": 1.0,
+    "低模与 UV": 19.8,
+    "投影着色": 72.1,
+    "烘焙": 10.7,
+    "LOD": 0.0,
+    "导出": 1.0
+  },
+  "highpoly": {
+    "faces_raw": 1376676,
+    "faces": 764658,
+    "verts": 764660,
+    "loose_parts": 14,
+    "kept_parts": 1,
+    "remesh_voxel_m": 0.00494,
+    "texture_source": "concept projection"
+  },
+  "align": {
+    "yaw_deg": 0,
+    "iou": 0.902,
+    "iou_per_view": {
+      "front": 0.861,
+      "left": 0.958,
+      "back": 0.855,
+      "right": 0.957
+    },
+    "height_m": 2.8908,
+    "blockout_height_m": 3.0
+  },
+  "uv": {
+    "smart_islands": 248,
+    "charts": 35,
+    "fallback_charts": 0,
+    "flipped_faces": 0,
+    "flipped_ratio": 0.0,
+    "method": "smart",
+    "density_smart": 0.1334,
+    "density_merged": 0.1301
+  },
+  "projection": {
+    "uncovered_ratio": 0.4054
+  },
+  "bake_device": "CPU",
+  "emissive_id": {
+    "emissive_texel_ratio": 0.0359
+  },
+  "textures": {
+    "T_Tripo_InfernoStairs_BC": {
+      "size": 1024,
+      "colorspace": "sRGB"
+    },
+    "T_Tripo_InfernoStairs_N": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    },
+    "T_Tripo_InfernoStairs_ORM": {
+      "size": 1024,
+      "colorspace": "Non-Color"
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_InfernoStairs_LOD0",
+      "tris": 3000,
+      "verts": 1502,
+      "uv_min": [
+        0.003417466301470995,
+        0.0035335365682840347
+      ],
+      "uv_max": [
+        0.9923983812332153,
+        0.9966945052146912
+      ],
+      "uv_utilization": 0.646,
+      "bbox_min": [
+        -1.3086,
+        -1.3097,
+        0.001
+      ],
+      "bbox_max": [
+        1.3065,
+        1.2825,
+        2.8904
+      ]
+    },
+    {
+      "name": "SM_Tripo_InfernoStairs_LOD1",
+      "tris": 1000,
+      "verts": 502,
+      "uv_min": [
+        0.0039375596679747105,
+        0.003615772817283869
+      ],
+      "uv_max": [
+        0.9910897612571716,
+        0.9966945052146912
+      ],
+      "uv_utilization": 0.627,
+      "bbox_min": [
+        -1.3003,
+        -1.3084,
+        0.0069
+      ],
+      "bbox_max": [
+        1.3023,
+        1.2784,
+        2.8892
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_InfernoStairs/04_export/SM_Tripo_InfernoStairs_v001.glb",
+    "bytes": 220804
+  },
+  "blend": "art/source/props/SM_Tripo_InfernoStairs/03_work/SM_Tripo_InfernoStairs_v001.blend",
+  "total_seconds": 110.1,
+  "_seconds": 114.9
+}

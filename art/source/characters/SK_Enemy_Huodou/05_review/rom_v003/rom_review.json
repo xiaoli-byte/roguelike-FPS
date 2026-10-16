@@ -1,0 +1,136 @@
+{
+ "asset": "SK_Enemy_Huodou",
+ "glb": "SK_Enemy_Huodou_native_v003.glb",
+ "height_m": 1.1,
+ "bones": 29,
+ "flag": 1.8,
+ "dominant_verts": {
+  "hips": 184,
+  "spine": 97,
+  "chest": 164,
+  "neck": 478,
+  "bell": 452,
+  "head": 546,
+  "jaw": 31,
+  "scapula_L": 199,
+  "upperarm_L": 85,
+  "forearm_L": 85,
+  "paw_L": 219,
+  "scapula_R": 175,
+  "upperarm_R": 83,
+  "forearm_R": 85,
+  "paw_R": 223,
+  "tail_1": 34,
+  "tail_2": 25,
+  "tail_3": 19,
+  "tail_4": 79,
+  "tail_5": 44,
+  "thigh_L": 73,
+  "shin_L": 78,
+  "foot_L": 86,
+  "toe_L": 204,
+  "thigh_R": 75,
+  "shin_R": 73,
+  "foot_R": 81,
+  "toe_R": 205
+ },
+ "poses": {
+  "gallop_gathered": {
+   "p99": 1.682,
+   "max": 6.29,
+   "p99_len": 1.764,
+   "flag_area": 0.02934,
+   "over_flag": 0.00767,
+   "moved_edges": 9776,
+   "images": [
+    "rom_gallop_gathered_front.png",
+    "rom_gallop_gathered_side.png",
+    "rom_gallop_gathered_threeq.png"
+   ]
+  },
+  "gallop_extended": {
+   "p99": 1.867,
+   "max": 3.89,
+   "p99_len": 1.922,
+   "flag_area": 0.03323,
+   "over_flag": 0.011,
+   "moved_edges": 8731,
+   "images": [
+    "rom_gallop_extended_front.png",
+    "rom_gallop_extended_side.png",
+    "rom_gallop_extended_threeq.png"
+   ]
+  },
+  "eat": {
+   "p99": 1.82,
+   "max": 12.49,
+   "p99_len": 1.834,
+   "flag_area": 0.02089,
+   "over_flag": 0.01054,
+   "moved_edges": 9863,
+   "images": [
+    "rom_eat_front.png",
+    "rom_eat_side.png",
+    "rom_eat_threeq.png"
+   ]
+  },
+  "spit": {
+   "p99": 1.572,
+   "max": 3.45,
+   "p99_len": 1.593,
+   "flag_area": 0.01688,
+   "over_flag": 0.00751,
+   "moved_edges": 3464,
+   "images": [
+    "rom_spit_front.png",
+    "rom_spit_side.png",
+    "rom_spit_threeq.png"
+   ]
+  },
+  "bite_windup": {
+   "p99": 1.562,
+   "max": 5.75,
+   "p99_len": 1.585,
+   "flag_area": 0.01595,
+   "over_flag": 0.0067,
+   "moved_edges": 9547,
+   "images": [
+    "rom_bite_windup_front.png",
+    "rom_bite_windup_side.png",
+    "rom_bite_windup_threeq.png"
+   ]
+  },
+  "tail_whip": {
+   "p99": 1.106,
+   "max": 1.24,
+   "p99_len": 1.118,
+   "flag_area": 0.0,
+   "over_flag": 0.0,
+   "moved_edges": 434,
+   "images": [
+    "rom_tail_whip_front.png",
+    "rom_tail_whip_side.png",
+    "rom_tail_whip_threeq.png"
+   ]
+  },
+  "bell_swing": {
+   "p99": 2.062,
+   "max": 5.14,
+   "p99_len": 1.991,
+   "flag_area": 0.05053,
+   "over_flag": 0.01366,
+   "moved_edges": 952,
+   "images": [
+    "rom_bell_swing_front.png",
+    "rom_bell_swing_side.png",
+    "rom_bell_swing_threeq.png"
+   ]
+  }
+ },
+ "weight_map": [
+  "weights_front.png",
+  "weights_side.png",
+  "weights_back.png",
+  "weights_threeq.png"
+ ]
+}

@@ -1,0 +1,335 @@
+{
+  "asset": "SK_Boss_QilinBurn",
+  "version": 3,
+  "glb": "art/source/characters/SK_Boss_QilinBurn/04_export/SK_Boss_QilinBurn_native_v003.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.4,
+      "自定义骨架：28 根骨骼（热扩散权重，3 个顶点未覆盖）": 0.5,
+      "贴图（BC + AO/ORM）": 13.2,
+      "LOD 与蒙皮上限 29549 / 11820 / 4924": 0.8,
+      "发光壳 78 面": 0.0,
+      "导出 2094 KB": 3.2
+    },
+    "source": {
+      "verts": 17250,
+      "tris": 34309,
+      "scale": 6.002931118710308
+    },
+    "regions": {
+      "heat_unweighted_verts": 3,
+      "ground_verts": 364,
+      "head_verts": 216,
+      "jaw_verts": 773,
+      "pearl_verts": 64,
+      "fallback_verts": 374,
+      "per_bone": {
+        "hips": 313,
+        "spine": 478,
+        "chest": 605,
+        "neck_1": 630,
+        "neck_2": 1803,
+        "head": 1094,
+        "jaw": 1138,
+        "pearl": 68,
+        "upperarm_L": 322,
+        "forearm_L": 561,
+        "fcannon_L": 182,
+        "fhoof_L": 784,
+        "upperarm_R": 320,
+        "forearm_R": 557,
+        "fcannon_R": 129,
+        "fhoof_R": 839,
+        "thigh_L": 322,
+        "shin_L": 441,
+        "hcannon_L": 619,
+        "hhoof_L": 350,
+        "thigh_R": 317,
+        "shin_R": 441,
+        "hcannon_R": 600,
+        "hhoof_R": 368,
+        "tail_1": 313,
+        "tail_2": 807,
+        "tail_3": 1250
+      }
+    },
+    "bones": [
+      "chest",
+      "fcannon_L",
+      "fcannon_R",
+      "fhoof_L",
+      "fhoof_R",
+      "forearm_L",
+      "forearm_R",
+      "hcannon_L",
+      "hcannon_R",
+      "head",
+      "hhoof_L",
+      "hhoof_R",
+      "hips",
+      "jaw",
+      "neck_1",
+      "neck_2",
+      "pearl",
+      "root",
+      "shin_L",
+      "shin_R",
+      "spine",
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "thigh_L",
+      "thigh_R",
+      "upperarm_L",
+      "upperarm_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.935,
+      "shade_mean": 0.936
+    },
+    "textures": {
+      "size": 2048,
+      "ao_mean": 0.79,
+      "provider_pbr": [],
+      "roughness_mean": 0.75,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Boss_QilinBurn_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Boss_QilinBurn_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Boss_QilinBurn_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Boss_QilinBurn_LOD0",
+        "tris": 29549,
+        "uv_min": [
+          0.001953125,
+          0.001953125
+        ],
+        "uv_max": [
+          0.994384765625,
+          0.998046875
+        ]
+      },
+      {
+        "name": "SK_Boss_QilinBurn_LOD1",
+        "tris": 11820,
+        "uv_min": [
+          0.001953125,
+          0.0018794285133481026
+        ],
+        "uv_max": [
+          0.994384765625,
+          0.9980469346046448
+        ]
+      },
+      {
+        "name": "SK_Boss_QilinBurn_LOD2",
+        "tris": 4924,
+        "uv_min": [
+          0.001953125,
+          0.001953125
+        ],
+        "uv_max": [
+          0.994140625,
+          0.99267578125
+        ]
+      }
+    ],
+    "glow_shell": {
+      "group": "pearl",
+      "tris": 78
+    },
+    "glb_kb": 2094,
+    "_seconds": 21.1
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "2094 KB / 6000 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Boss_QilinBurn_LOD0', 'SK_Boss_QilinBurn_LOD1', 'SK_Boss_QilinBurn_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "29549 / 30000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "11820 / 12000"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "4924 / 5000"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "6.000 m (design 6.0 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Boss_QilinBurn_Glow', 'M_Boss_QilinBurn']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "glow shell",
+      "78 tris on 'pearl'"
+    ],
+    [
+      "pass",
+      "texture T_Boss_QilinBurn_BC",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "texture T_Boss_QilinBurn_ORM",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "28 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Boss_QilinBurn_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Boss_QilinBurn_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Boss_QilinBurn_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Boss_QilinBurn_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Boss_QilinBurn_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Boss_QilinBurn_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Boss_QilinBurn_LOD0 UV range",
+      "[0.002, 0.002]..[0.994, 0.998]"
+    ],
+    [
+      "pass",
+      "SK_Boss_QilinBurn_LOD1 UV range",
+      "[0.002, 0.002]..[0.994, 0.998]"
+    ],
+    [
+      "pass",
+      "SK_Boss_QilinBurn_LOD2 UV range",
+      "[0.002, 0.002]..[0.994, 0.993]"
+    ],
+    [
+      "warn",
+      "region heat_unweighted",
+      "3 verts"
+    ],
+    [
+      "pass",
+      "region ground",
+      "364 verts"
+    ],
+    [
+      "pass",
+      "region head",
+      "216 verts"
+    ],
+    [
+      "pass",
+      "region jaw",
+      "773 verts"
+    ],
+    [
+      "pass",
+      "region pearl",
+      "64 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "374 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

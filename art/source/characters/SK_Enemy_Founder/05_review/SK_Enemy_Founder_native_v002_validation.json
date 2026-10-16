@@ -1,0 +1,376 @@
+{
+  "asset": "SK_Enemy_Founder",
+  "version": 2,
+  "glb": "art/source/characters/SK_Enemy_Founder/04_export/SK_Enemy_Founder_native_v002.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.3,
+      "自定义骨架：52 根骨骼（热扩散权重，6 个顶点未覆盖）": 0.1,
+      "贴图（BC + AO/ORM）": 3.9,
+      "LOD 与蒙皮上限 7880 / 3446 / 1476": 0.1,
+      "发光壳 31 面": 0.0,
+      "导出 679 KB": 1.0
+    },
+    "source": {
+      "verts": 4320,
+      "tris": 8472,
+      "scale": 1.6007816316560821
+    },
+    "regions": {
+      "heat_unweighted_verts": 6,
+      "head_verts": 535,
+      "crucible_verts": 103,
+      "bronze_verts": 33,
+      "fallback_verts": 34,
+      "per_bone": {
+        "hips": 65,
+        "spine": 73,
+        "chest": 1,
+        "neck": 0,
+        "head": 568,
+        "beard_1": 200,
+        "beard_2": 33,
+        "beard_3": 64,
+        "crucible": 651,
+        "bronze": 39,
+        "shoulder_L": 124,
+        "shoulder_R": 140,
+        "arm_L": 109,
+        "arm_R": 133,
+        "forearm_L": 150,
+        "forearm_R": 123,
+        "hand_L": 9,
+        "hand_R": 9,
+        "thumb_1_L": 20,
+        "thumb_1_R": 20,
+        "thumb_2_L": 31,
+        "thumb_2_R": 31,
+        "index_1_L": 13,
+        "index_1_R": 13,
+        "index_2_L": 24,
+        "index_2_R": 24,
+        "middle_1_L": 12,
+        "middle_1_R": 12,
+        "middle_2_L": 22,
+        "middle_2_R": 22,
+        "ring_1_L": 14,
+        "ring_1_R": 14,
+        "ring_2_L": 22,
+        "ring_2_R": 22,
+        "pinky_1_L": 19,
+        "pinky_1_R": 19,
+        "pinky_2_L": 22,
+        "pinky_2_R": 22,
+        "thigh_L": 97,
+        "thigh_R": 102,
+        "shin_L": 106,
+        "shin_R": 99,
+        "foot_L": 142,
+        "foot_R": 149,
+        "toe_L": 99,
+        "toe_R": 94,
+        "apron_F1": 61,
+        "apron_F2": 96,
+        "apron_B1": 38,
+        "apron_B2": 36
+      }
+    },
+    "bones": [
+      "apron_B1",
+      "apron_B2",
+      "apron_F1",
+      "apron_F2",
+      "arm_L",
+      "arm_R",
+      "beard_1",
+      "beard_2",
+      "beard_3",
+      "bronze",
+      "chest",
+      "crucible",
+      "foot_L",
+      "foot_R",
+      "forearm_L",
+      "forearm_R",
+      "hand_L",
+      "hand_R",
+      "head",
+      "hips",
+      "index_1_L",
+      "index_1_R",
+      "index_2_L",
+      "index_2_R",
+      "middle_1_L",
+      "middle_1_R",
+      "middle_2_L",
+      "middle_2_R",
+      "neck",
+      "pinky_1_L",
+      "pinky_1_R",
+      "pinky_2_L",
+      "pinky_2_R",
+      "ring_1_L",
+      "ring_1_R",
+      "ring_2_L",
+      "ring_2_R",
+      "root",
+      "shin_L",
+      "shin_R",
+      "shoulder_L",
+      "shoulder_R",
+      "spine",
+      "spout_tip",
+      "thigh_L",
+      "thigh_R",
+      "thumb_1_L",
+      "thumb_1_R",
+      "thumb_2_L",
+      "thumb_2_R",
+      "toe_L",
+      "toe_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.957,
+      "shade_mean": 0.952
+    },
+    "textures": {
+      "size": 1024,
+      "ao_mean": 0.774,
+      "provider_pbr": [],
+      "roughness_mean": 0.75,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Enemy_Founder_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_Founder_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_Founder_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Enemy_Founder_LOD0",
+        "tris": 7880,
+        "uv_min": [
+          0.00146484375,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.99853515625,
+          0.990478515625
+        ]
+      },
+      {
+        "name": "SK_Enemy_Founder_LOD1",
+        "tris": 3446,
+        "uv_min": [
+          0.00146484375,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.99853515625,
+          0.990478515625
+        ]
+      },
+      {
+        "name": "SK_Enemy_Founder_LOD2",
+        "tris": 1476,
+        "uv_min": [
+          0.0017422372475266457,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.998291015625,
+          0.9903260469436646
+        ]
+      }
+    ],
+    "glow_shell": {
+      "group": "bronze",
+      "tris": 31
+    },
+    "glb_kb": 679,
+    "_seconds": 8.8
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "679 KB / 1600 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Enemy_Founder_LOD0', 'SK_Enemy_Founder_LOD1', 'SK_Enemy_Founder_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "7880 / 8000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "3446 / 3500"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "1476 / 1500"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "1.601 m (design 1.6 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Enemy_Founder_Glow', 'M_Enemy_Founder']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "glow shell",
+      "31 tris on 'bronze'"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Founder_BC",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Founder_ORM",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "52 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Founder_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Founder_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Founder_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Founder_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Founder_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Founder_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Founder_LOD0 UV range",
+      "[0.001, 0.001]..[0.999, 0.99]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Founder_LOD1 UV range",
+      "[0.001, 0.001]..[0.999, 0.99]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Founder_LOD2 UV range",
+      "[0.002, 0.001]..[0.998, 0.99]"
+    ],
+    [
+      "warn",
+      "region heat_unweighted",
+      "6 verts"
+    ],
+    [
+      "pass",
+      "region head",
+      "535 verts"
+    ],
+    [
+      "pass",
+      "region crucible",
+      "103 verts"
+    ],
+    [
+      "pass",
+      "region bronze",
+      "33 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "34 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

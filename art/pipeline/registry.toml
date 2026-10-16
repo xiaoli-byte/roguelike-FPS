@@ -2582,3 +2582,585 @@ keep_glow = "all"
 brief = """
 The fox priestess's round bronze mirror, modelled separately: it floats in front of her by magic.
 """
+
+# ── 第三章 · 祝融火狱建筑套件（V2）：2026-10-11 第一版概念经用户审稿通过（16 张），本机 Hunyuan3D 2mv 建模已发布 ──
+# 尺寸与昆仑套件一一对应（地图布局、derive_wall_kit 墙体拼接可复用）。熔岩 / 炭火在概念图里画成不透明亮橙，
+# 发光由后续材质 emissive 处理；keep_glow 只管骨骼体的程序化发光件，静态件一律 none。
+
+[assets.SM_Tripo_InfernoRampart]
+display = "祝融火狱玄铁城垣墙段（V2）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "hunyuan"  # 地图模型用本机 Hunyuan3D 2mv（同第二章套件）；概念图仍走 tripo_assets.py concept
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "inferno.v2.rampart" }
+reference_mode = "bounds_only"
+reference_dimensions = [8.0, 9.0, 3.0]
+architecture_role = "wall"
+style_theme = "zhurong"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.2 }
+brief = """A massive tileable rampart section of the fire god Zhurong's underground forge palace, 8m wide, 9m tall, 3m deep: a battered base of big dark charcoal basalt blocks, a thick upper wall clad in black iron plates with big round rivets, a row of chunky square merlons along the top capped with aged bronze, two shallow buttress pilasters faced with deep vermilion lacquer placed at a regular even rhythm, and one straight recessed lava channel running along the base ledge, glowing molten orange (painted as an opaque flat bright orange-yellow surface). In the middle bay a big round bronze fire-sun boss with one short thick iron chain swag bolted flat against the wall. Both side ends are flat cut faces so identical sections join seamlessly in a row. Solid wall with no openings."""
+
+[assets.SM_Tripo_InfernoRampartPlain]
+# 2026-10-11：2mv 种子 20261003 出薄壳空心墙、2.1 单视图把墙深猜成 21 m，均弃用；发布的是 2mv 种子 20261011（assetctl highpoly --seed 20261011）
+display = "祝融火狱玄铁素墙段（V2）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "hunyuan"  # 地图模型用本机 Hunyuan3D 2mv（同第二章套件）；概念图仍走 tripo_assets.py concept
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "inferno.v2.rampartPlain" }
+reference_mode = "bounds_only"
+reference_dimensions = [8.0, 9.0, 3.0]
+architecture_role = "wall"
+style_theme = "zhurong"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.2 }
+brief = """A plain tileable forge-palace wall section 8m wide, 9m tall, 3m deep, the quieter companion of the decorated rampart with EXACTLY the same silhouette and profile: the same battered stepped base of big dark charcoal basalt blocks that flares out wider at the bottom, the same thick upper wall clad in plain black iron plates with big round rivets and the same row of chunky square merlons along the top capped with aged bronze, but NO buttress pilasters, NO vermilion, NO chain, NO bronze boss and NO lava, just a few large iron plates and basalt blocks with soot-darkened edges and one aged-bronze cap line under the merlons. Front and back faces look the same. Both side ends are flat cut faces so sections join seamlessly in a row. Solid wall with no openings."""
+
+[assets.SM_Tripo_InfernoGateway]
+display = "祝融熔铁门阙（V2）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "hunyuan"  # 地图模型用本机 Hunyuan3D 2mv（同第二章套件）；概念图仍走 tripo_assets.py concept
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "inferno.v2.gateway" }
+reference_mode = "bounds_only"
+reference_dimensions = [16.0, 11.0, 4.0]
+architecture_role = "gate"
+passage_min_width_m = 12.0
+lintel_bottom_target_m = 8.0
+style_theme = "zhurong"
+keep_glow = "none"
+material = { roughness = 0.7, metallic = 0.3 }
+brief = """A monumental open gateway of Zhurong's forge palace 16m wide, 11m tall, 4m deep, WIDER THAN IT IS TALL (width about one and a half times the height): two narrow massive square gate piers, each only about 2m wide, of dark basalt clad in riveted black iron with vermilion lacquer panels, their inner faces STRAIGHT and VERTICAL down to the ground (no sloping plinths or steps that narrow the passage), joined at the top by a thick heavy black iron lintel beam 3m tall with a big round bronze fire-sun emblem in its centre, a row of short bronze merlons along its top and a molten lava seam along its underside; low squat bronze fire trays of glowing coals sit flat on top of the two piers. The open passage between the piers is very wide: 12m wide and 8m high, going fully through the depth, empty down to the ground: no doors, no gate leaves, no chains or anything hanging in the passage."""
+
+[assets.SM_Tripo_InfernoColumn]
+display = "熔岩锁链玄铁柱（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 地图模型用本机 Hunyuan3D 2mv（同第二章套件）；概念图仍走 tripo_assets.py concept
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "inferno.v2.column" }
+reference_mode = "bounds_only"
+reference_dimensions = [2.4, 5.0, 2.4]
+architecture_role = "cover"
+style_theme = "zhurong"
+keep_glow = "none"
+material = { roughness = 0.6, metallic = 0.35 }
+brief = """A thick square column 2.4m wide, 5m tall: a black iron pillar with vermilion lacquer panels on its faces standing on a stepped dark basalt plinth, an aged bronze capital band with a simple taotie mask, one thick chunky iron chain wound tightly around its middle (attached flat, no loose ends), and a deep crack running up one corner filled with glowing molten orange lava (painted as an opaque bright surface). Chunky, solid, one connected piece standing on the ground."""
+
+[assets.SM_Tripo_InfernoBarricade]
+display = "铸铁矮栏（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 地图模型用本机 Hunyuan3D 2mv（同第二章套件）；概念图仍走 tripo_assets.py concept
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "inferno.v2.barricade" }
+reference_mode = "bounds_only"
+reference_dimensions = [6.0, 1.2, 1.2]
+architecture_role = "cover"
+style_theme = "zhurong"
+keep_glow = "none"
+material = { roughness = 0.7, metallic = 0.4 }
+brief = """A low cast-iron barrier 6m long, 1.2m tall, 1.2m deep, waist-high cover, VERY LONG AND LOW (its length is five times its height): a solid row of five heavy black iron casting-mould blocks set on a dark basalt curb, chunky square posts with aged bronze caps between them, the blocks fully solid (no holes) with a simple raised fire-cloud relief, a few big rivets, one end chipped and scorched. Soot-dark iron with vermilion accents. One solid connected piece."""
+
+[assets.SM_Tripo_InfernoCoverWall]
+display = "熔裂残墙（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 地图模型用本机 Hunyuan3D 2mv（同第二章套件）；概念图仍走 tripo_assets.py concept
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "inferno.v2.coverwall" }
+reference_mode = "bounds_only"
+reference_dimensions = [6.0, 2.6, 1.2]
+architecture_role = "cover"
+style_theme = "zhurong"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.1 }
+brief = """A ruined forge-palace wall fragment 6m long, 2.6m tall, 1.2m deep, full-height cover: big dark charcoal basalt blocks with a jagged broken top, a strip of scorched vermilion plaster and one bent riveted black iron plate on one face, a wide crack through the middle glowing with molten orange lava (painted as an opaque bright surface), heaped black slag and rubble along the base. Solid, no openings, one connected piece."""
+
+[assets.SM_Tripo_InfernoPlatformBlock]
+display = "玄武岩台基模块（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 地图模型用本机 Hunyuan3D 2mv（同第二章套件）；概念图仍走 tripo_assets.py concept
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "inferno.v2.platformblock" }
+reference_mode = "bounds_only"
+reference_dimensions = [4.0, 3.0, 4.0]
+architecture_role = "platform"
+style_theme = "zhurong"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.15 }
+brief = """A square raised forge-hall terrace module 4m wide, 3m tall, 4m deep for tiling into large terraces (a Chinese xumizuo podium): a completely solid block of dark basalt with a riveted black iron band, a stepped moulding with one narrow inlaid lava groove glowing molten orange (painted as an opaque bright surface), aged bronze corner caps at the top and a flat paved top of dark grey flagstones. All four sides finished identically so modules tile edge to edge."""
+
+[assets.SM_Tripo_InfernoStairs]
+display = "玄武岩台阶（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 地图模型用本机 Hunyuan3D 2mv（同第二章套件）；概念图仍走 tripo_assets.py concept
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "inferno.v2.stairs" }
+reference_mode = "bounds_only"
+reference_dimensions = [4.0, 3.0, 4.6]
+architecture_role = "stairs"
+style_theme = "zhurong"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.15 }
+brief = """A straight flight of dark basalt steps 4m wide, rising 3m over a 4.6m run, with low solid side cheeks clad in riveted black iron and topped by squat aged bronze end posts; the treads are wide and even with worn edges, and a narrow lava groove glowing molten orange (painted as an opaque bright surface) runs along the outer face of each cheek. The FRONT is the bottom step facing the viewer; in the side views the low bottom end of the flight points the way the front points; the BACK view shows the tall flat solid back wall under the top step (no treads visible from behind). One solid connected piece, open at the top and bottom."""
+
+[assets.SM_Tripo_InfernoZhurong]
+display = "祝融神像（V2 地标）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "hunyuan"  # 地图模型用本机 Hunyuan3D 2mv（同第二章套件）；概念图仍走 tripo_assets.py concept
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "inferno.v2.zhurong" }
+reference_mode = "bounds_only"
+reference_dimensions = [12.0, 16.0, 10.0]
+architecture_role = "landmark"
+style_theme = "zhurong"
+keep_glow = "none"
+material = { roughness = 0.7, metallic = 0.3 }
+brief = """A colossal statue of Zhurong (祝融), the Chinese god of fire, 16m tall, who in the Shan Hai Jing rides two dragons: a mighty bearded god seated upright on a massive stepped basalt throne, wearing heavy black iron armour with vermilion lacquer and aged bronze trim and a tall flame-shaped bronze crown, both big hands resting on the head of a huge bronze forge hammer standing upright between his knees (large blocky hands with clearly modelled fingers), a big SOLID round bronze sun-disc halo with a chunky flame-tongue rim, thick like a millstone (a solid filled disc, not a thin open ring), attached directly to the top of the throne back behind his head. Two thick-bodied fire dragons coil around the front corners of the throne base, their bodies attached to it. Glowing molten lava seams in the armour joints, the throne steps and the dragons' mouths (painted as opaque bright orange). Facing the viewer. Chunky stylized forms readable from 150m away. One solid statue."""
+
+[assets.SM_Tripo_InfernoForgeStall]
+display = "铁匠锻炉摊（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 地图模型用本机 Hunyuan3D 2mv（同第二章套件）；概念图仍走 tripo_assets.py concept
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "inferno.v2.forgeStall" }
+reference_mode = "bounds_only"
+reference_dimensions = [4.0, 3.6, 3.0]
+architecture_role = "dressing"
+style_theme = "zhurong"
+keep_glow = "none"
+material = { roughness = 0.75, metallic = 0.3 }
+brief = """A smith's forge stall 4m wide, 3.6m tall, 3m deep: a squat dark basalt forge hearth with a bed of glowing coals (painted as an opaque bright orange surface) under a chunky black iron hood and a short thick square chimney rising through a sloping roof of dark iron tiles on a sturdy blackened timber frame with vermilion posts; a big boxy wood-and-leather bellows attached to the side of the hearth, a heavy black anvil on a thick stump in front, a few chunky hammers and tongs hanging flat against the back post. Chunky readable shapes, one solid connected piece standing on the ground."""
+
+[assets.SM_Tripo_InfernoIngotPile]
+display = "铁锭矿石堆（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 地图模型用本机 Hunyuan3D 2mv（同第二章套件）；概念图仍走 tripo_assets.py concept
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "inferno.v2.ingotPile" }
+reference_mode = "bounds_only"
+reference_dimensions = [3.0, 1.6, 2.0]
+architecture_role = "dressing"
+style_theme = "zhurong"
+keep_glow = "none"
+material = { roughness = 0.6, metallic = 0.5 }
+brief = """A pile of forge materials 3m wide, 1.6m tall, 2m deep: criss-cross stacks of chunky black iron ingots and bronze ingots, a heavy wooden crate full of dark ore lumps with glowing orange veins, a squat clay crucible and a thick coiled iron chain lying on top, all pressed tightly together. Chunky, one solid connected pile resting on the ground."""
+
+[assets.SM_Tripo_InfernoTreasureHoard]
+# 2026-10-11：2mv 种子 20261003 侧视投影糊、LOD1 超预算，弃用；发布的是 2mv 种子 20261011
+display = "祝融火宝藏（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 地图模型用本机 Hunyuan3D 2mv（同第二章套件）；概念图仍走 tripo_assets.py concept
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "inferno.v2.treasureHoard" }
+reference_mode = "bounds_only"
+reference_dimensions = [4.0, 1.8, 3.0]
+architecture_role = "dressing"
+style_theme = "zhurong"
+keep_glow = "none"
+material = { roughness = 0.4, metallic = 0.6 }
+brief = """A treasure hoard of the fire god's palace 4m wide, 1.8m tall, 3m deep: a heap of gold yuanbao ingots, red-gold coins, small bronze ding vessels and a few big faceted fire-orange gems spilling from two open vermilion-lacquered chests bound with black iron, a ceremonial bronze axe lying flat on top. Gold, bronze, vermilion and glowing orange. One solid connected heap resting on the ground."""
+
+[assets.SM_Tripo_InfernoCauldronRuin]
+display = "倾覆巨鼎（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 地图模型用本机 Hunyuan3D 2mv（同第二章套件）；概念图仍走 tripo_assets.py concept
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "inferno.v2.cauldronRuin" }
+reference_mode = "bounds_only"
+reference_dimensions = [6.0, 1.6, 3.0]
+architecture_role = "dressing"
+style_theme = "zhurong"
+keep_glow = "none"
+material = { roughness = 0.6, metallic = 0.45 }
+brief = """A low ruin 6m long, 1.6m tall, 3m deep, LONG AND FLAT (nearly four times as long as it is tall), its long axis running left to right in the FRONT view: a giant square bronze ding cauldron with green-brown patina lying toppled on its side with its open mouth facing the RIGHT end, cracked and with one broken leg, a low flat tongue of cooled black slag with glowing orange cracks (painted as an opaque bright surface) spilling out of the mouth along the ground to the right, and two fallen black iron pillar drums lying lengthwise along the left end. Low, chunky, one solid connected group resting on the ground."""
+
+[assets.SM_Tripo_InfernoFireAltar]
+display = "祝融火坛（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 地图模型用本机 Hunyuan3D 2mv（同第二章套件）；概念图仍走 tripo_assets.py concept
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "inferno.v2.fireAltar" }
+reference_mode = "bounds_only"
+reference_dimensions = [1.4, 2.4, 1.4]
+architecture_role = "dressing"
+style_theme = "zhurong"
+keep_glow = "none"
+material = { roughness = 0.6, metallic = 0.4 }
+brief = """A fire altar brazier 1.4m wide, 2.4m tall: a square stepped dark basalt pedestal with a vermilion lacquer panel and a bronze fire-sun disc on every face, topped by a wide aged-bronze ding cauldron bowl on three thick legs, the bowl heaped with glowing coals and a few chunky stylised flame tongues (all painted as opaque bright orange-yellow solid shapes). Chunky readable shapes, one solid connected piece on a flat base, identical on all four sides."""
+
+[assets.SM_Tripo_InfernoFurnaceTower]
+display = "熔炉烟囱角楼（V2）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "hunyuan"  # 地图模型用本机 Hunyuan3D 2mv（同第二章套件）；概念图仍走 tripo_assets.py concept
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "inferno.v2.furnaceTower" }
+reference_mode = "bounds_only"
+reference_dimensions = [7.2, 13.0, 7.2]
+architecture_role = "tower"
+style_theme = "zhurong"
+keep_glow = "none"
+material = { roughness = 0.75, metallic = 0.3 }
+brief = """A square forge-palace corner tower 7.2m wide, 13m tall that doubles as a giant furnace chimney, SLENDER: almost twice as tall as it is wide, and NOTHING sticks out wider than the base, the roof eaves overhang only slightly: a battered dark basalt base with a big arched furnace mouth on the front filled with glowing molten orange fire (painted as an opaque bright surface, closed and flat), a solid upper storey clad in riveted black iron with deep vermilion lacquer beams, crowned by a compact hip roof of dark bronze tiles with small upturned eave tips, and a squat thick square chimney stack rising through the roof with a glowing orange rim. No smoke, no balcony railings. Finished on all four sides. One solid connected piece."""
+
+[assets.SM_Tripo_InfernoPortalShrine]
+display = "祝融火门神龛（V2）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "hunyuan"  # 地图模型用本机 Hunyuan3D 2mv（同第二章套件）；概念图仍走 tripo_assets.py concept
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "inferno.v2.portalShrine" }
+reference_mode = "bounds_only"
+reference_dimensions = [10.0, 11.0, 5.0]
+architecture_role = "shrine"
+style_theme = "zhurong"
+keep_glow = "none"
+material = { roughness = 0.75, metallic = 0.3 }
+brief = """A monumental forge-palace shrine niche 10m wide, 11m tall, 5m deep that frames a magic portal: a thick facade of dark basalt and riveted black iron with ONE tall open round-topped arch in the middle, 6.5m wide and 8m tall, leading into a shallow open recess 3.5m deep whose floor is flat at ground level (no steps or objects inside the recess). The recess back wall carries a large carved bronze fire-sun disc. Two vermilion lacquer pillars flank the arch, each topped by a small bronze fire bowl with glowing coals; a narrow lava groove glowing molten orange outlines the arch; the facade is crowned by a dark bronze tiled roof with upturned eaves. The arch is empty, nothing inside the opening."""
+
+# ───────────── 第三章 · 祝融火狱阵容（2026-10-11 用户确认设计稿，docs/art/enemy-roster-v2.md 第三章）─────────────
+# Tripo 智能网格 P2.0（三角面、数量 1、贴图 4k），已经 DCC Bridge 存进 art/source/_tripo_inbox（任务号见 art/source/_tripo_tasks_inferno.json）。
+# 身体走 build_tripo_creature.py（creature_rigs/<asset>.json 自定义骨架）。
+
+[assets.SK_Enemy_Tantong]
+# 炭童（群怪）。设计稿 / 四视图 art/source/characters/_design/inferno/inferno_tantong/；Tripo 原件 art/source/_tripo_inbox/20261011T144644_SK_Enemy_Tantong_smartmesh.fbx
+source_provider = "tripo"
+matid_hint = "Charred coal body, lava cracks, cloth bib and rope are NON-METAL (blue). Nothing on it is metal."
+display = "炭童"
+kind = "skeletal"
+class = "enemy_swarm"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "tantong" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+A pack-swarming charcoal imp child (炭童), one of the stokers that feed the fire god's furnaces: a small impish kid about 1 m tall whose whole body is built of a few big chunky lumps of matte black charcoal with glowing lava-orange cracks between them, a big round charcoal head with two bright ember eyes and a wide toothy grin, and a little burning ember tuft on the top of its head like a candle wick, glowing yellow-orange (weak spot). It wears only a small frayed vermilion-red Chinese child's bib apron (肚兜) tied with a cord around its neck, and a blackened bronze anklet. Big hands with a clearly separate thumb and four stubby fingers; bare feet with five stubby toes. Cheeky, mischievous and a little creepy.
+"""
+
+[assets.SK_Enemy_Tantong.rom]
+# 炭童招式的极限角度（src/enemies/types/Tantong.ts）：扑抓举爪、乱抓、掰炭抛炭、蹲身吹火、握拳
+pounce_windup = { arm_L = [-2.4, 0, 0.25], arm_R = [-2.4, 0, -0.25], forearm_L = [-0.7, 0, 0], forearm_R = [-0.7, 0, 0], thigh_L = [-0.7, 0, 0], thigh_R = [-0.7, 0, 0], shin_L = [1.1, 0, 0], shin_R = [1.1, 0, 0], spine = [0.3, 0, 0] }
+flail = { arm_L = [-1.7, 0, 0.7], arm_R = [-0.9, 0, -0.7], forearm_L = [-0.6, 0, 0], forearm_R = [-1.0, 0, 0], chest = [0.25, 0.35, 0] }
+throw = { arm_R = [-2.8, 0, -0.35], forearm_R = [-1.3, 0, 0], arm_L = [-0.6, 0, 0.3], chest = [0, -0.5, 0], head = [0, 0.3, 0] }
+blow = { thigh_L = [-1.1, 0, 0], thigh_R = [-1.1, 0, 0], shin_L = [1.7, 0, 0], shin_R = [1.7, 0, 0], spine = [0.45, 0, 0], neck = [-0.3, 0, 0], head = [-0.25, 0, 0], arm_L = [-0.9, 0, 0], arm_R = [-0.9, 0, 0] }
+fists = { fingers_L = [-1.3, 0, 0], fingers_R = [-1.3, 0, 0], hand_L = [-0.4, 0, 0], hand_R = [-0.4, 0, 0] }
+stride = { thigh_L = [-0.7, 0, 0], shin_L = [0.6, 0, 0], thigh_R = [0.5, 0, 0], shin_R = [0.9, 0, 0], arm_L = [0.5, 0, 0], arm_R = [-0.5, 0, 0], hips = [0, 0, 0.12] }
+
+[assets.SK_Enemy_Huodou]
+# 祸斗（群怪）。设计稿 / 四视图 art/source/characters/_design/inferno/inferno_huodou/；Tripo 原件 art/source/_tripo_inbox/20261011T144811_SK_Enemy_Huodou_smartmesh.fbx
+source_provider = "tripo"
+matid_hint = "Fur, hide, glowing belly, claws and teeth are NON-METAL (blue). Only the collar bell, if any, is METAL (red)."
+display = "祸斗"
+kind = "skeletal"
+class = "enemy_swarm"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "huodou" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+The huodou (祸斗) of Chinese folklore, a black dog that eats fire and spits fire, an omen of fire disasters, hunting in packs: a lean long-legged Chinese sighthound (细犬) with real dog anatomy — deep narrow chest, tucked waist, long thin legs, long narrow muzzle, folded ears, long whip tail — about 1.6 m long and 1.1 m tall at the head. Its short coat is charred matte black like burnt wood, with a ruff of big sculpted fur clumps on the neck; jagged cracks over the ribcage on both flanks reveal a glowing molten fire belly inside (weak spot), the mouth and throat glow lava orange, small ember eyes. A frayed vermilion temple collar with a little blackened bronze bell. Hungry, fast and sly. NOT a lion, NOT a wolf, NOT a fox: a slim sighthound.
+"""
+
+[assets.SK_Enemy_Huodou.rom]
+# 祸斗的极限角度（src/enemies/types/Huodou.ts）：双悬空奔跑的收拢 / 伸展、低头吃火、张嘴吐火、扑咬蓄力、甩尾、铃铛
+gallop_gathered = { spine = [0.35, 0, 0], hips = [-0.25, 0, 0], chest = [0.1, 0, 0], scapula_L = [0.25, 0, 0], scapula_R = [0.25, 0, 0], upperarm_L = [0.8, 0, 0], upperarm_R = [0.7, 0, 0], forearm_L = [-0.9, 0, 0], forearm_R = [-0.8, 0, 0], thigh_L = [-1.0, 0, 0], thigh_R = [-0.9, 0, 0], shin_L = [0.5, 0, 0], shin_R = [0.5, 0, 0] }
+gallop_extended = { spine = [-0.22, 0, 0], hips = [0.15, 0, 0], scapula_L = [-0.2, 0, 0], scapula_R = [-0.2, 0, 0], upperarm_L = [-0.85, 0, 0], upperarm_R = [-0.75, 0, 0], forearm_L = [0.3, 0, 0], forearm_R = [0.3, 0, 0], thigh_L = [0.9, 0, 0], thigh_R = [0.8, 0, 0], shin_L = [-0.5, 0, 0], shin_R = [-0.5, 0, 0], foot_L = [0.6, 0, 0], foot_R = [0.6, 0, 0] }
+eat = { hips = [0.22, 0, 0], spine = [0.1, 0, 0], chest = [0.12, 0, 0], neck = [0.95, 0, 0], head = [0.45, 0, 0], jaw = [0.25, 0, 0], upperarm_L = [-0.45, 0, 0.05], upperarm_R = [-0.45, 0, -0.05], forearm_L = [0.35, 0, 0], forearm_R = [0.35, 0, 0] }
+spit = { neck = [0.25, 0, 0], head = [-0.2, 0, 0], jaw = [0.3, 0, 0] }
+bite_windup = { spine = [0.2, 0, 0], hips = [-0.15, 0, 0], neck = [0.45, 0, 0], jaw = [0.3, 0, 0], upperarm_L = [-0.5, 0, 0], upperarm_R = [-0.5, 0, 0], forearm_L = [0.6, 0, 0], forearm_R = [0.6, 0, 0] }
+tail_whip = { tail_1 = [-0.3, 0.6, 0], tail_2 = [0, 0.45, 0], tail_3 = [0, 0.35, 0], tail_4 = [0, 0.3, 0], tail_5 = [0, 0.3, 0] }
+bell_swing = { bell = [0.4, 0, 0.25] }
+
+[assets.SK_Enemy_Bifang]
+# 毕方（远程）。设计稿 / 四视图 art/source/characters/_design/inferno/inferno_bifang/；Tripo 原件 art/source/_tripo_inbox/20261011T145439_SK_Enemy_Bifang_smartmesh.fbx
+source_provider = "tripo"
+matid_hint = "Feathers, beak, crest and the glowing ember are NON-METAL (blue). Only the bronze leg ring and ornaments are METAL (red)."
+display = "毕方"
+kind = "skeletal"
+class = "enemy_standard"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "bifang" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+The bifang (毕方) of the Shan Hai Jing, 'shaped like a crane, with ONE SINGLE LEG, red markings on a dark ground and a white beak', whose appearance brings strange fires: a tall slender crane-like bird about 2 m tall standing on EXACTLY ONE long thin leg placed in the middle under its body, ending in one foot with three forward toes and one back toe; it has NO second leg anywhere, not even tucked up. A long S-curved neck, a long sharp white beak holding a glowing coal ember (衔火) that glows yellow-orange (weak spot), a crest of a few stiff vermilion flame-shaped feathers, deep blue-black plumage boldly patterned with vermilion stripes and spots, wings folded tightly against the body with flame-shaped vermilion tips, a short fan of stiff tail feathers. Elegant, eerie and sharp-eyed; it perches high on pillars and spears fire with its beak.
+"""
+
+[assets.SK_Enemy_Mamian]
+# 马面狱卒（远程（钩拉））。设计稿 / 四视图 art/source/characters/_design/inferno/inferno_mamian/；Tripo 原件 art/source/_tripo_inbox/20261011T145611_SK_Enemy_Mamian_smartmesh.fbx
+source_provider = "tripo"
+matid_hint = "Horse head, skin, mane, robes, sash and sandals are NON-METAL (blue). The wrist shackle, chain and lock core are METAL (red)."
+display = "马面狱卒"
+kind = "skeletal"
+class = "enemy_standard"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "mamian" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+Horse-Face (马面), the horse-headed jailer of Chinese folklore, now the warden of the fire god's prison: a tall lanky hunched figure about 2.1 m tall with a long grim horse head (a long black mane as a few big carved locks, flared glowing nostrils, big yellow teeth, small ember eyes), a lean muscular human body with charcoal-grey skin, a jailer's black short coat with a vermilion sash, wrapped trousers and a black official's cap with two short side flaps. On its LEFT forearm a huge heavy black-iron shackle cuff with a big glowing lava-orange lock core (锁芯, weak spot); a heavy iron chain riveted to that cuff is coiled several times around the forearm and ends in a big barbed soul-hook (勾魂钩). Big hands with a clearly separate thumb and four long fingers; straw sandals showing five toes on each foot. Sinister and patient: it throws the chain hook and drags its victims in.
+"""
+
+[assets.SK_Enemy_Firecracker]
+# 炮仗傀儡（炮击）。设计稿 / 四视图 art/source/characters/_design/inferno/inferno_firecracker/；Tripo 原件 art/source/_tripo_inbox/20261011T150247_SK_Enemy_Firecracker_smartmesh.fbx
+source_provider = "tripo"
+matid_hint = "Lacquered wooden puppet body, paper firecracker strings and cloth are NON-METAL (blue). Only the brass fittings, hinges and rocket-box bands are METAL (red)."
+display = "炮仗傀儡"
+kind = "skeletal"
+class = "enemy_standard"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "firecracker" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+A firecracker puppet (炮仗傀儡), an artillery construct of the fire god's forge built like a giant temple-fair wooden marionette whose strings have burnt off: a stout top-heavy puppet about 1.9 m tall of red-lacquered wood and bamboo with visible ball joints, a big round carved wooden head with a painted grinning opera face (red cheeks, bold black brows, gold accents) and a small black cap with a red pompom. Its whole chest is a hexagonal red-and-black wooden Ming rocket box (一窝蜂) packed with a honeycomb of rocket-arrow tubes with paper fuses; long strings of red firecrackers (鞭炮) hang over its shoulders like bandoliers. At the bottom of the rocket box, at its belly, a brass powder chamber with a fuse port glows lava orange (weak spot). Jointed wooden hands with a clearly separate thumb and four fingers; chunky wooden feet with five carved toes. Jolly-looking and very dangerous.
+"""
+
+[assets.SK_Enemy_Founder]
+# 熔铜匠（辅助）。设计稿 / 四视图 art/source/characters/_design/inferno/inferno_founder/；Tripo 原件 art/source/_tripo_inbox/20261011T150358_SK_Enemy_Founder_smartmesh.fbx
+source_provider = "tripo"
+matid_hint = "Skin, beard, apron, cloth wraps and leather straps are NON-METAL (blue). The crucible, spout and bronze fittings are METAL (red)."
+display = "熔铜匠"
+kind = "skeletal"
+class = "enemy_standard"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "founder" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+A bronze-founder smith spirit (熔铜匠) of the fire god's foundry, the support: a short, very broad, hunchbacked old smith about 1.6 m tall with huge forearms and hands, soot-black skin with lava-orange cracks, a bald head with a small topknot, bushy white eyebrows and a big braided white beard tied with a bronze ring, small squinting ember eyes, a thick leather smith's apron over a bare chest, wrapped wrists. Fused into its back like a hump is a big round clay-and-bronze crucible full of glowing molten bronze (weak spot, the molten surface seen from behind and above), with a long curved bronze spout arching forward over its right shoulder. It throws molten bronze from the spout onto its allies to cast them in armour. Big hands with a clearly separate thumb and four thick fingers, both empty; bare feet with five toes. Gruff and proud.
+"""
+
+[assets.SK_Enemy_Nuo]
+# 变脸傩巫（辅助）。设计稿 / 四视图 art/source/characters/_design/inferno/inferno_nuo/；Tripo 原件 art/source/_tripo_inbox/20261011T150540_SK_Enemy_Nuo_smartmesh.fbx
+source_provider = "tripo"
+matid_hint = "Skin, robes, feathers, ribbons and the painted wooden mask are NON-METAL (blue). Only small bronze bells and ornaments are METAL (red)."
+display = "变脸傩巫"
+kind = "skeletal"
+class = "enemy_standard"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "nuo" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+A Nuo exorcist shaman (傩巫) of the fire god's altar, the support who drives other fiends with a fire Nuo dance and changes faces like Sichuan-opera face-changing (变脸): a lean dancer about 1.8 m tall wearing a big carved wooden Nuo mask (傩面) that covers the whole face — bulging round eyes, flared nostrils, a tusked grin, painted bold vermilion red with black and gold, its eyes glowing lava orange (the mask is the weak spot) — a crown of long stiff pheasant tail feathers and red cloth streamers, a layered vermilion and black ritual robe with wide flaring sleeves, a rope belt with small bronze bells and paper charms, bare forearms with bronze bangles, bare feet with ankle bells. Hands with a clearly separate thumb and four fingers, empty. Wild, theatrical and ritual.
+"""
+
+[assets.SK_Enemy_FireCrow]
+# 神火飞鸦（自爆）。设计稿 / 四视图 art/source/characters/_design/inferno/inferno_fire_crow/；Tripo 原件 art/source/_tripo_inbox/20261011T150741_SK_Enemy_FireCrow_smartmesh.fbx
+source_provider = "tripo"
+matid_hint = "Paper and bamboo wings, body and the glowing powder drum are NON-METAL (blue). Only the four rocket tubes' metal bands, if any, are METAL (red)."
+display = "神火飞鸦"
+kind = "skeletal"
+class = "enemy_swarm"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "fire_crow" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+A divine fire crow (神火飞鸦), the Ming-dynasty winged rocket bomb shaped like a crow, brought to life in the fire god's forge as a flying kamikaze: a crow-shaped construct about 1.6 m in wingspan made of a light bamboo frame covered in black lacquered paper, with real crow proportions (stout body, thick strong beak, fanned tail), big painted fierce red-and-gold eyes, vermilion paper wing edges; its fat round belly is a paper-and-bamboo gunpowder drum glowing lava orange through the paper seams (weak spot: the whole belly), and under each wing hang two small bamboo rocket tubes with paper fuses that it flies with. Little bamboo-and-wire legs with four clawed toes. Twitchy, shrieking, explosive.
+"""
+
+[assets.SK_Enemy_IronOx]
+# 熔炉铁牛（坦克）。设计稿 / 四视图 art/source/characters/_design/inferno/inferno_iron_ox/；Tripo 原件 art/source/_tripo_inbox/20261011T150935_SK_Enemy_IronOx_smartmesh.fbx
+# 原生骨架：python art/pipeline/build_tripo_creature.py SK_Enemy_IronOx（creature_rigs/SK_Enemy_IronOx.json）。源网格先过 art/tools/cut_furnace_door.py：
+# 胸口炉门切成单独的岛（刚性锁在 door 骨上、铰链在门顶），胸腔里挖出炉膛凹腔；炉门不另做 SM_EnemyPart 附件。
+source_provider = "tripo"
+matid_hint = "The whole bull is black iron armour plates, chains and bronze fittings: METAL (red). Only the hide between plates, horns and the glowing furnace interior are NON-METAL (blue)."
+display = "熔炉铁牛"
+kind = "skeletal"
+class = "enemy_large"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "iron_ox" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+A colossal cast-iron furnace ox (熔炉铁牛), modelled on the Tang-dynasty cast-iron river-guardian oxen (镇河铁牛) and cast in the fire god's forge with a living furnace inside: a massive ox about 4 m long and 2.4 m at the shoulder with real cattle anatomy (huge shoulder hump, deep dewlap, thick legs with big cloven hooves, a broad low head with short thick forward-curving horns, a heavy tufted tail). Its whole body is rough black cast iron in big riveted plates with sparse rust-red wear, heavy chains wrapped around its neck and horns. Its flanks are built-in pleated iron bellows panels that swell when it breathes. In the middle of its chest, below the neck, sits a round heavy bronze furnace door with a beast-face grille; when it raises its head the door swings open and the white-hot furnace mouth inside glows yellow-orange (weak spot, on the FRONT). Lava-orange glow leaks from the plate seams, nostrils and eyes. Slow, unstoppable, oppressive.
+"""
+
+[assets.SK_Enemy_Tuo]
+# 火鼍（坦克）。设计稿 / 四视图 art/source/characters/_design/inferno/inferno_tuo/；Tripo 原件 art/source/_tripo_inbox/20261011T151200_SK_Enemy_Tuo_smartmesh.fbx
+# 原生骨架：python art/pipeline/build_tripo_creature.py SK_Enemy_Tuo（creature_rigs/SK_Enemy_Tuo.json）。背上 8 块岩甲是运行时着色器分区（Tuo.ts），不拆网格。
+source_provider = "tripo"
+matid_hint = "Basalt shell plates, scales, molten cracks, claws and teeth are NON-METAL (blue). Nothing on it is metal."
+display = "火鼍"
+kind = "skeletal"
+class = "enemy_large"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "tuo" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+The tuo dragon (鼍龙) of the Black River in Journey to the West, reborn as a giant Chinese alligator (扬子鳄) that lives in the rivers of lava: a huge heavy alligator about 6 m long and 1.4 m tall with real crocodilian anatomy — broad blunt snout lined with jagged teeth, small eyes and nostrils high on the head, short sprawling legs with clawed feet, a long heavy tail with a double crest of plates. Its back is armoured with rows of big thick plates of cooled black basalt crust (like solidified lava rock), separated by glowing molten lava seams; a bright molten seam runs along its spine (weak spot). Its belly and the sides of the head are dark red-brown hide. Ancient, heavy and patient.
+"""
+
+[assets.SK_Boss_Qilin]
+# 火麒麟·玄鳞（Boss）。设计稿 / 四视图 art/source/characters/_design/inferno/inferno_boss_qilin/；Tripo 原件 art/source/_tripo_inbox/20261011T152710_SK_Boss_Qilin_smartmesh.fbx
+source_provider = "tripo"
+matid_hint = "Scales, mane, horn, hooves and molten seams are NON-METAL (blue). Only small bronze ornaments, if any, are METAL (red)."
+display = "火麒麟·玄鳞"
+kind = "skeletal"
+class = "boss"
+rig = "parts"
+rig_sigma = 0.02
+# 原生骨架：python art/pipeline/build_tripo_creature.py SK_Boss_Qilin（creature_rigs/SK_Boss_Qilin.json），不走 assetctl build 的部件骨架。
+# 绑定 id 不等于敌人 id：玄鳞 / 焚身两个模型都由 boss_qilin（src/enemies/bosses/Qilin.ts）自己挂载、换形时切换
+# （绑 boss_qilin 会被 BossBase 当成通用部件身体自动挂上）。
+blockout = { source = "enemy", id = "boss_qilin_xuan" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+Chapter boss, the Fire Qilin (火麒麟) that guards the furnace heart of the fire god's palace, FIRST form 'black-iron scales' (玄鳞): a colossal qilin (麒麟) about 4.5 m tall at the head and 7 m long with real hoofed-animal anatomy and TALL, LONG-LEGGED horse-and-deer proportions (long slender powerful legs with big cloven hooves, a long arched horse-like neck that carries the head high, a deep chest, a lean deer-like body with a tucked waist, an ox-like tail ending in a big tuft) — NOT a lion, NOT a foo dog, NOT stocky or short-legged and a fierce dragon-like head with a broad snout, long whiskers, a lion-like mane of big solid sculpted flame-shaped locks, and ONE long single horn rising from the forehead with a glowing lava-orange fire pearl set at its root (weak spot). Its whole body is armoured in big overlapping scales of black iron (玄铁) edged in dark bronze, with molten lava glowing in the seams between the scales; the mane is deep red and orange; flame-shaped tufts at the elbows and fetlocks like cloud scrolls; the tail tuft is a big solid flame shape. Majestic, ancient and furious.
+"""
+
+# 原生骨架的 ROM（格式同 SK_Boss_Kun.rom：旋转向量，模型空间 X = 生物左侧、Y = 上、Z = 前，绕 +X 正转 = 前倾 / 腿向后摆 / 尾巴上翘），
+# 与 Qilin.ts 里 NativePose.rotate 的参数一致；取自招式的极限姿势（奔驰伸展 / 收拢、人立张鳞、饮熔低头、吐息扫颈、眩晕喘息、
+# 跃起收腿、俯冲踏地、甩尾、转头）。审核：blender -b --python art/tools/review_creature_rom.py -- <build.glb> <out_dir> SK_Boss_Qilin
+[assets.SK_Boss_Qilin.rom]
+gallop_reach = { upperarm_L = [-0.55, 0, 0], upperarm_R = [-0.55, 0, 0], forearm_L = [-0.2, 0, 0], forearm_R = [-0.2, 0, 0], thigh_L = [0.45, 0, 0], thigh_R = [0.45, 0, 0], shin_L = [0.2, 0, 0], shin_R = [0.2, 0, 0], hcannon_L = [0.2, 0, 0], hcannon_R = [0.2, 0, 0], tail_1 = [0.3, 0, 0], neck_1 = [0.15, 0, 0] }
+gallop_gather = { upperarm_L = [0.35, 0, 0], upperarm_R = [0.35, 0, 0], forearm_L = [0.45, 0, 0], forearm_R = [0.45, 0, 0], fcannon_L = [1.2, 0, 0], fcannon_R = [1.2, 0, 0], thigh_L = [-0.55, 0, 0], thigh_R = [-0.55, 0, 0], shin_L = [-0.25, 0, 0], shin_R = [-0.25, 0, 0], hcannon_L = [-0.8, 0, 0], hcannon_R = [-0.8, 0, 0], neck_1 = [-0.12, 0, 0] }
+rear_scales = { upperarm_L = [-0.6, 0, 0.1], upperarm_R = [-0.6, 0, -0.1], forearm_L = [0.3, 0, 0], forearm_R = [0.3, 0, 0], fcannon_L = [1.4, 0, 0], fcannon_R = [1.4, 0, 0], thigh_L = [0.35, 0, 0], thigh_R = [0.35, 0, 0], neck_1 = [-0.35, 0, 0], head = [-0.15, 0, 0], jaw = [0.25, 0, 0], tail_1 = [0.35, 0, 0] }
+drink = { neck_1 = [0.5, 0, 0], neck_2 = [0.35, 0, 0], head = [0.15, 0, 0], jaw = [0.2, 0, 0], upperarm_L = [-0.25, 0, 0.12], upperarm_R = [-0.25, 0, -0.12] }
+breath_sweep = { neck_1 = [0.1, 0.35, 0], neck_2 = [0, 0.3, 0], head = [0, 0.1, 0], jaw = [0.25, 0, 0] }
+stun_pant = { neck_1 = [0.45, 0, 0], neck_2 = [0.25, 0, 0], head = [0.1, 0, 0], jaw = [0.25, 0, 0], upperarm_L = [0.1, 0, 0.15], upperarm_R = [0.1, 0, -0.15], thigh_L = [0, 0, 0.12], thigh_R = [0, 0, -0.12], tail_1 = [-0.2, 0, 0] }
+leap_tuck = { upperarm_L = [-0.4, 0, 0], upperarm_R = [-0.4, 0, 0], forearm_L = [0.4, 0, 0], forearm_R = [0.4, 0, 0], fcannon_L = [1.5, 0, 0], fcannon_R = [1.5, 0, 0], thigh_L = [-0.6, 0, 0], thigh_R = [-0.6, 0, 0], hcannon_L = [-1.0, 0, 0], hcannon_R = [-1.0, 0, 0], neck_1 = [-0.2, 0, 0] }
+stomp_land = { upperarm_L = [-0.5, 0, 0], upperarm_R = [-0.5, 0, 0], forearm_L = [-0.2, 0, 0], forearm_R = [-0.2, 0, 0], thigh_L = [0.55, 0, 0], thigh_R = [0.55, 0, 0], shin_L = [0.3, 0, 0], shin_R = [0.3, 0, 0], neck_1 = [0.3, 0, 0], head = [0.1, 0, 0] }
+tail_swing = { tail_1 = [0.2, 0.35, 0], tail_2 = [0.15, 0.3, 0], tail_3 = [0.1, 0.3, 0] }
+look = { neck_1 = [0, 0.3, 0], neck_2 = [0, 0.25, 0], head = [-0.05, 0.1, 0] }
+
+[assets.SK_Boss_QilinBurn]
+# 火麒麟·焚身（Boss（第二阶段））。设计稿 / 四视图 art/source/characters/_design/inferno/inferno_boss_qilin_burn/；Tripo 原件 art/source/_tripo_inbox/20261011T151444_SK_Boss_QilinBurn_smartmesh.fbx
+source_provider = "tripo"
+matid_hint = "Burning body, flame mane, cracks, horn and hooves are NON-METAL (blue). Nothing on it is metal."
+display = "火麒麟·焚身"
+kind = "skeletal"
+class = "boss"
+rig = "parts"
+rig_sigma = 0.02
+# 原生骨架：python art/pipeline/build_tripo_creature.py SK_Boss_QilinBurn（creature_rigs/SK_Boss_QilinBurn.json）。
+blockout = { source = "enemy", id = "boss_qilin_burn" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+Chapter boss, the Fire Qilin (火麒麟), SECOND form 'burning body' (焚身): the SAME qilin as the first form after its black-iron scales have burst off — a colossal qilin (麒麟) about 4.5 m tall at the head and 7 m long with real hoofed-animal anatomy and TALL, LONG-LEGGED horse-and-deer proportions (long slender powerful legs with big cloven hooves, a long arched horse-like neck that carries the head high, a deep chest, a lean deer-like body with a tucked waist, an ox-like tail ending in a big tuft) — NOT a lion, NOT a foo dog, NOT stocky or short-legged and a fierce dragon-like head with a broad snout, long whiskers, a lion-like mane of big solid sculpted flame-shaped locks, and ONE long single horn rising from the forehead with a glowing lava-orange fire pearl set at its root (weak spot). Its body is now cracked molten lava rock: dark crust plates with wide glowing yellow-orange fissures; its mane and tail tuft have erupted into much bigger solid sculpted flames in vermilion, orange and yellow; cloud-shaped flame scrolls curl around its hooves (it runs on air, 踏云); a big glowing molten heart core is exposed in the middle of its chest where the scales broke away (weak spot, together with the horn pearl). A few broken black-iron scales still cling to its shoulders and haunches. Faster, wilder, blazing.
+"""
+
+# 原生骨架的 ROM（格式同 SK_Boss_Qilin.rom）：焚身不人立、不饮熔，只审它用到的姿势（奔驰 / 踏云、吐息扫颈、喘息、跃起收腿、俯冲踏地、甩尾、转头）。
+# 审核：blender -b --python art/tools/review_creature_rom.py -- <build.glb> <out_dir> SK_Boss_QilinBurn
+[assets.SK_Boss_QilinBurn.rom]
+gallop_reach = { upperarm_L = [-0.55, 0, 0], upperarm_R = [-0.55, 0, 0], forearm_L = [-0.2, 0, 0], forearm_R = [-0.2, 0, 0], thigh_L = [0.45, 0, 0], thigh_R = [0.45, 0, 0], shin_L = [0.2, 0, 0], shin_R = [0.2, 0, 0], hcannon_L = [0.2, 0, 0], hcannon_R = [0.2, 0, 0], tail_1 = [0.3, 0, 0], neck_1 = [0.15, 0, 0] }
+gallop_gather = { upperarm_L = [0.35, 0, 0], upperarm_R = [0.35, 0, 0], forearm_L = [0.45, 0, 0], forearm_R = [0.45, 0, 0], fcannon_L = [1.2, 0, 0], fcannon_R = [1.2, 0, 0], thigh_L = [-0.55, 0, 0], thigh_R = [-0.55, 0, 0], shin_L = [-0.25, 0, 0], shin_R = [-0.25, 0, 0], hcannon_L = [-0.8, 0, 0], hcannon_R = [-0.8, 0, 0], neck_1 = [-0.12, 0, 0] }
+breath_sweep = { neck_1 = [0.1, 0.35, 0], neck_2 = [0, 0.3, 0], head = [0, 0.1, 0], jaw = [0.25, 0, 0] }
+stun_pant = { neck_1 = [0.45, 0, 0], neck_2 = [0.25, 0, 0], head = [0.1, 0, 0], jaw = [0.25, 0, 0], upperarm_L = [0.1, 0, 0.15], upperarm_R = [0.1, 0, -0.15], thigh_L = [0, 0, 0.12], thigh_R = [0, 0, -0.12], tail_1 = [-0.2, 0, 0] }
+leap_tuck = { upperarm_L = [-0.4, 0, 0], upperarm_R = [-0.4, 0, 0], forearm_L = [0.4, 0, 0], forearm_R = [0.4, 0, 0], fcannon_L = [1.5, 0, 0], fcannon_R = [1.5, 0, 0], thigh_L = [-0.6, 0, 0], thigh_R = [-0.6, 0, 0], hcannon_L = [-1.0, 0, 0], hcannon_R = [-1.0, 0, 0], neck_1 = [-0.2, 0, 0] }
+stomp_land = { upperarm_L = [-0.5, 0, 0], upperarm_R = [-0.5, 0, 0], forearm_L = [-0.2, 0, 0], forearm_R = [-0.2, 0, 0], thigh_L = [0.55, 0, 0], thigh_R = [0.55, 0, 0], shin_L = [0.3, 0, 0], shin_R = [0.3, 0, 0], neck_1 = [0.3, 0, 0], head = [0.1, 0, 0] }
+tail_swing = { tail_1 = [0.2, 0.35, 0], tail_2 = [0.15, 0.3, 0], tail_3 = [0.1, 0.3, 0] }
+look = { neck_1 = [0, 0.3, 0], neck_2 = [0, 0.25, 0], head = [-0.05, 0.1, 0] }
+
+[assets.SM_Tripo_InfernoPlatformBlockB]
+# 2026-10-13：台基变体。原台基每块都有一圈熔岩槽，铺成高台后侧面是一排相同的发光“箱子”；变体 B 不发光、变体 C 朱漆面板，三者混排。
+display = "玄铁箍台基模块（V2 变体）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 地图模型用本机 Hunyuan3D 2mv（同第二章套件）；概念图仍走 tripo_assets.py concept
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "inferno.v2.platformblockB" }
+reference_mode = "bounds_only"
+reference_dimensions = [4.0, 3.0, 4.0]
+architecture_role = "platform"
+style_theme = "zhurong"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.2 }
+brief = """A square raised forge-hall terrace module 4m wide, 3m tall, 4m deep for tiling into large terraces, the quiet variant of the lava-grooved podium block with EXACTLY the same outer silhouette: a completely solid block of big dark charcoal basalt masonry courses, wrapped near the top by one broad riveted black iron band with big round rivets, a thick plain basalt plinth course at the bottom, aged bronze corner caps at the top and a flat paved top of dark grey flagstones. NO lava, NO glow, NO vermilion: just stone, iron and soot-darkened edges, one or two large chipped corners. All four sides finished identically so modules tile edge to edge."""
+
+[assets.SM_Tripo_InfernoPlatformBlockC]
+# 2026-10-13：台基变体 C（朱漆面板 + 青铜火纹），与 A（熔岩槽）、B（玄铁箍）混排。
+# 2026-10-13：2mv 种子 20261003 出空心薄壳（体积/包围盒 0.022），弃用；发布的是 2mv 种子 20261011（assetctl run --seed 20261011）
+display = "朱漆铜饰台基模块（V2 变体）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 地图模型用本机 Hunyuan3D 2mv（同第二章套件）；概念图仍走 tripo_assets.py concept
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "inferno.v2.platformblockC" }
+reference_mode = "bounds_only"
+reference_dimensions = [4.0, 3.0, 4.0]
+architecture_role = "platform"
+style_theme = "zhurong"
+keep_glow = "none"
+material = { roughness = 0.7, metallic = 0.25 }
+brief = """A square raised forge-hall terrace module 4m wide, 3m tall, 4m deep for tiling into large terraces, a ceremonial variant of the podium block with EXACTLY the same outer silhouette: a completely solid block with a thick dark charcoal basalt plinth and cap course, each side face holding one big recessed deep vermilion lacquer panel framed by black iron with big round rivets and a single large aged bronze fire-sun (flame disc) emblem in the middle of the panel, aged bronze corner caps at the top and a flat paved top of dark grey flagstones. NO lava and NO glow. All four sides finished identically so modules tile edge to edge."""
+
+[assets.SM_Tripo_InfernoHallWall]
+# 2026-10-13：inferno-5 圆形炉心殿（半径 24 m）的外墙。原城垣墙套件在 3.77 m 的圆周短边上只能放端头立柱，殿墙读成一圈柱廊；殿墙段左右切平无端头，接缝压一根扶壁柱（SM_Tripo_InfernoHallButtress）。
+display = "祝融炉心殿殿墙段（V2）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "hunyuan"  # 地图模型用本机 Hunyuan3D 2mv（同第二章套件）；概念图仍走 tripo_assets.py concept
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "inferno.v2.hallwall" }
+reference_mode = "bounds_only"
+reference_dimensions = [8.0, 16.0, 3.0]
+architecture_role = "wall"
+style_theme = "zhurong"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.2 }
+brief = """A tall tileable wall section of the round furnace-heart hall of the fire god Zhurong, 8m wide, 16m tall, 3m deep, meant to repeat side by side around a huge circular hall: from bottom to top a battered plinth of big dark charcoal basalt blocks with one thin glowing molten orange lava seam along its top edge (painted as an opaque bright surface), a tall smooth upper wall of big dark basalt ashlar courses, a broad deep vermilion lacquer frieze band about two thirds up studded with a row of round aged bronze bosses, and a heavy black iron cornice with short square iron spikes along the very top. NO pilasters, NO columns, NO towers and NO openings: both side ends are flat cut faces so sections join seamlessly in a row. Front and back faces look the same. Massive, calm, monumental."""
+
+[assets.SM_Tripo_InfernoHallButtress]
+# 2026-10-13：压在炉心殿殿墙段接缝上的扶壁柱，每 7.5 m 一根，形成柱的节奏并遮住段间折角。
+display = "祝融炉心殿扶壁柱（V2）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "hunyuan"  # 地图模型用本机 Hunyuan3D 2mv（同第二章套件）；概念图仍走 tripo_assets.py concept
+highpoly_mode = "multiview"
+bake_device = "CPU"
+blockout = { source = "scene", id = "inferno.v2.hallbuttress" }
+reference_mode = "bounds_only"
+reference_dimensions = [2.4, 18.0, 2.4]
+architecture_role = "cover"
+style_theme = "zhurong"
+keep_glow = "none"
+material = { roughness = 0.65, metallic = 0.35 }
+brief = """A very tall square buttress pier 2.4m wide, 18m tall, 2.4m deep that stands against a huge hall wall: a stepped dark charcoal basalt plinth, a tall black iron shaft with a long recessed deep vermilion lacquer strip running up its front face, three heavy aged bronze bands spaced up the shaft, one thin crack of glowing molten orange lava running up from the plinth (painted as an opaque bright surface), and a chunky bronze capital crowned with a short square iron finial. Simple, bold and readable from far away; one connected piece standing on the ground."""

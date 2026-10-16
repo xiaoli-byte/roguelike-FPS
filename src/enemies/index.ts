@@ -18,6 +18,7 @@ import { MORTAR_DEF, Mortar } from './types/Mortar';
 import { SHAMAN_DEF, Shaman } from './types/Shaman';
 import { WISP_DEF, Wisp } from './types/Wisp';
 import { registerFrostEnemies } from './frost';
+import { registerInfernoEnemies } from './inferno';
 
 /** 普通敌人 id（与 DESIGN.md 第 8 节一致） */
 export const STANDARD_ENEMY_IDS = ['grunt', 'archer', 'brute', 'bomber', 'wisp', 'shaman', 'mortar', 'marksman'] as const;
@@ -48,4 +49,6 @@ export function registerStandardEnemies(): void {
   registerEnemy(APSARA_DEF, (ctx, opts) => new Apsara(ctx, opts));
   // 第二章新阵容：分组注册（src/enemies/frost/）
   registerFrostEnemies();
+  // 第三章新阵容：分组注册（src/enemies/inferno/）
+  registerInfernoEnemies();
 }
