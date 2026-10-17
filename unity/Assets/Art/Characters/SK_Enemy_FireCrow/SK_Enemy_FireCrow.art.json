@@ -1,0 +1,132 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SK_Enemy_FireCrow",
+  "kind": "skeletal",
+  "class": "enemy_swarm",
+  "category": "characters",
+  "bind": {
+    "source": "enemy",
+    "id": "fire_crow"
+  },
+  "keepGlow": "all",
+  "lodDistance": [
+    0,
+    12,
+    26
+  ],
+  "budget": {
+    "lodTris": [
+      6000,
+      2500,
+      1000
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "bounds": {
+    "min": [
+      -0.7989159822463989,
+      0,
+      -0.401604562997818
+    ],
+    "max": [
+      0.7996021509170532,
+      0.8998825550079346,
+      0.401604562997818
+    ]
+  },
+  "rig": {
+    "type": "generic",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": [
+      "root",
+      "body",
+      "head",
+      "leg_L",
+      "leg_R",
+      "tail",
+      "wing_1_L",
+      "wing_2_L",
+      "wing_1_R",
+      "wing_2_R"
+    ]
+  },
+  "meshes": [
+    {
+      "name": "SK_Enemy_FireCrow_LOD0",
+      "lod": 0,
+      "tris": 5909,
+      "verts": 9230,
+      "materials": [
+        "M_Enemy_FireCrow"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_FireCrow_LOD1",
+      "lod": 1,
+      "tris": 2454,
+      "verts": 4578,
+      "materials": [
+        "M_Enemy_FireCrow"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_FireCrow_LOD2",
+      "lod": 2,
+      "tris": 970,
+      "verts": 2099,
+      "materials": [
+        "M_Enemy_FireCrow"
+      ],
+      "skinned": true
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Enemy_FireCrow",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Enemy_FireCrow_BC.png",
+        "ORM": "Textures/T_Enemy_FireCrow_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/characters/SK_Enemy_FireCrow@hi.glb",
+    "sha256": "c813cfa0da8888bb990e397d3ca72f63db3e5f16a70228e2aed5d4f6fef1c2a1",
+    "hiRes": true,
+    "version": {
+      "native_build": 6
+    },
+    "generator": {
+      "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+      "mode": "tripo_native",
+      "checkpoint": "P2.0"
+    },
+    "license": null
+  },
+  "exported": "2026-10-17 11:24:00"
+}

@@ -1,0 +1,126 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SM_Tripo_InfernoFurnaceTower",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "inferno.v2.furnaceTower"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    24,
+    60
+  ],
+  "budget": {
+    "lodTris": [
+      8000,
+      2500,
+      800
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "bounds": {
+    "min": [
+      -3.0317580699920654,
+      -0.008212599903345108,
+      -2.688983201980591
+    ],
+    "max": [
+      3.0965940952301025,
+      12.849404335021973,
+      2.2963011264801025
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_InfernoFurnaceTower_LOD0",
+      "lod": 0,
+      "tris": 7998,
+      "verts": 5290,
+      "materials": [
+        "M_Tripo_InfernoFurnaceTower"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_InfernoFurnaceTower_LOD1",
+      "lod": 1,
+      "tris": 2500,
+      "verts": 2098,
+      "materials": [
+        "M_Tripo_InfernoFurnaceTower"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_InfernoFurnaceTower_LOD2",
+      "lod": 2,
+      "tris": 800,
+      "verts": 997,
+      "materials": [
+        "M_Tripo_InfernoFurnaceTower"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_InfernoFurnaceTower",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_InfernoFurnaceTower_BC.png",
+        "N": "Textures/T_Tripo_InfernoFurnaceTower_N.png",
+        "ORM": "Textures/T_Tripo_InfernoFurnaceTower_ORM.png",
+        "E": "Textures/T_Tripo_InfernoFurnaceTower_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_InfernoFurnaceTower.glb",
+    "sha256": "ff2d98d5d3febe3db51a23b3cdf037d60f030c858c433c63e79bb4ce5825ffde",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 2,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+      "mode": "multiview",
+      "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+    },
+    "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+  },
+  "exported": "2026-10-17 11:22:56"
+}

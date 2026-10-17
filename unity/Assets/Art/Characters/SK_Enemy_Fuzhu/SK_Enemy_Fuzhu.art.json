@@ -1,0 +1,181 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SK_Enemy_Fuzhu",
+  "kind": "skeletal",
+  "class": "enemy_standard",
+  "category": "characters",
+  "bind": {
+    "source": "enemy",
+    "id": "fuzhu"
+  },
+  "keepGlow": "all",
+  "lodDistance": [
+    0,
+    14,
+    30
+  ],
+  "budget": {
+    "lodTris": [
+      8000,
+      3500,
+      1500
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "bounds": {
+    "min": [
+      -0.2844895124435425,
+      0,
+      -0.6130679249763489
+    ],
+    "max": [
+      0.2844895124435425,
+      1.9003196954727173,
+      0.6130679249763489
+    ]
+  },
+  "rig": {
+    "type": "generic",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": [
+      "root",
+      "hips",
+      "spine",
+      "chest",
+      "gem",
+      "neck",
+      "head",
+      "upperarm_L",
+      "forearm_L",
+      "fcannon_L",
+      "fhoof_L",
+      "upperarm_R",
+      "forearm_R",
+      "fcannon_R",
+      "fhoof_R",
+      "tail_1",
+      "tail_2",
+      "thigh_L",
+      "shin_L",
+      "hcannon_L",
+      "hhoof_L",
+      "thigh_R",
+      "shin_R",
+      "hcannon_R",
+      "hhoof_R"
+    ]
+  },
+  "meshes": [
+    {
+      "name": "SK_Enemy_Fuzhu_GlowShell",
+      "lod": null,
+      "tris": 84,
+      "verts": 87,
+      "materials": [
+        "M_Enemy_Fuzhu_Glow"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_Fuzhu_LOD0",
+      "lod": 0,
+      "tris": 7880,
+      "verts": 5400,
+      "materials": [
+        "M_Enemy_Fuzhu"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_Fuzhu_LOD1",
+      "lod": 1,
+      "tris": 3446,
+      "verts": 2810,
+      "materials": [
+        "M_Enemy_Fuzhu"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_Fuzhu_LOD2",
+      "lod": 2,
+      "tris": 1476,
+      "verts": 1537,
+      "materials": [
+        "M_Enemy_Fuzhu"
+      ],
+      "skinned": true
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Enemy_Fuzhu_Glow",
+      "baseColor": [
+        0.800000011920929,
+        0.800000011920929,
+        0.800000011920929,
+        1
+      ],
+      "metallic": 0,
+      "roughness": 0.5,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": false,
+      "occlusionSeparate": false,
+      "textures": {
+        "E": "Textures/T_Enemy_Fuzhu_BC.png"
+      }
+    },
+    {
+      "name": "M_Enemy_Fuzhu",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Enemy_Fuzhu_BC.png",
+        "ORM": "Textures/T_Enemy_Fuzhu_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/characters/SK_Enemy_Fuzhu@hi.glb",
+    "sha256": "84c57783a3fb2d5b202f9087a012437fceb0ccad6bcb144b8c1a464c9fd1a7cc",
+    "hiRes": true,
+    "version": {
+      "native_build": 2
+    },
+    "generator": {
+      "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+      "mode": "tripo_native",
+      "checkpoint": "P2.0"
+    },
+    "license": null
+  },
+  "exported": "2026-10-17 11:20:35"
+}

@@ -1,0 +1,118 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SK_Weapon_Trinity",
+  "kind": "skeletal",
+  "class": "weapon_fp",
+  "category": "weapons",
+  "bind": {
+    "source": "weapon",
+    "id": "trinity"
+  },
+  "keepGlow": "all",
+  "lodDistance": [
+    0,
+    6
+  ],
+  "budget": {
+    "lodTris": [
+      12000,
+      3000
+    ],
+    "texture": 2048,
+    "maxFileKb": 3000
+  },
+  "bounds": {
+    "min": [
+      -0.03440260514616966,
+      -0.11554186791181564,
+      -0.27719175815582275
+    ],
+    "max": [
+      0.034391626715660095,
+      0.08965494483709335,
+      0.08186829835176468
+    ]
+  },
+  "rig": {
+    "type": "generic",
+    "profile": null,
+    "partsMode": "parts",
+    "human": {},
+    "tpose": null,
+    "bones": [
+      "j_r",
+      "j_0",
+      "j_8"
+    ]
+  },
+  "meshes": [
+    {
+      "name": "SK_Weapon_Trinity_LOD0",
+      "lod": 0,
+      "tris": 11996,
+      "verts": 8489,
+      "materials": [
+        "M_Weapon_Trinity"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Weapon_Trinity_LOD1",
+      "lod": 1,
+      "tris": 2996,
+      "verts": 2802,
+      "materials": [
+        "M_Weapon_Trinity"
+      ],
+      "skinned": true
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Weapon_Trinity",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Weapon_Trinity_BC.png",
+        "N": "Textures/T_Weapon_Trinity_N.png",
+        "ORM": "Textures/T_Weapon_Trinity_ORM.png",
+        "E": "Textures/T_Weapon_Trinity_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/weapons/SK_Weapon_Trinity.glb",
+    "sha256": "28d19a132144ecb78b8138c4f59814c70e71dbe6547eab38fc23686cfc6c57f1",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 2
+    },
+    "generator": {
+      "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+      "mode": "multiview",
+      "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+    },
+    "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+  },
+  "exported": "2026-10-17 11:20:07"
+}

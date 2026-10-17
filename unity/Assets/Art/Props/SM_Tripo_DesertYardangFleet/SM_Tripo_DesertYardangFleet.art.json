@@ -1,0 +1,128 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_DesertYardangFleet",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "desert.silkroad.yardangFleet"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    24,
+    60
+  ],
+  "budget": {
+    "lodTris": [
+      8000,
+      2500,
+      2500
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {
+    "LOD2 递减": "Tripo 碎 UV：LOD2 再减面会跨 UV 接缝糊成斜条纹，暂与 LOD1 同面数（2026-10-17，根治待做）"
+  },
+  "bounds": {
+    "min": [
+      -2.2465624809265137,
+      0,
+      -6.746139049530029
+    ],
+    "max": [
+      2.2465624809265137,
+      10,
+      6.746139049530029
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_DesertYardangFleet_LOD0",
+      "lod": 0,
+      "tris": 7960,
+      "verts": 4807,
+      "materials": [
+        "M_Tripo_DesertYardangFleet"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_DesertYardangFleet_LOD1",
+      "lod": 1,
+      "tris": 2486,
+      "verts": 1794,
+      "materials": [
+        "M_Tripo_DesertYardangFleet"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_DesertYardangFleet_LOD2",
+      "lod": 2,
+      "tris": 2486,
+      "verts": 1794,
+      "materials": [
+        "M_Tripo_DesertYardangFleet"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_DesertYardangFleet",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_DesertYardangFleet_BC.png",
+        "N": "Textures/T_Tripo_DesertYardangFleet_N.png",
+        "ORM": "Textures/T_Tripo_DesertYardangFleet_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_DesertYardangFleet.glb",
+    "sha256": "4ae6a881ae64d8ed818b9bca9c7806f3d597df7cec596b3cac7ad7ef656a90cf",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 2
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-17 23:07:45"
+}

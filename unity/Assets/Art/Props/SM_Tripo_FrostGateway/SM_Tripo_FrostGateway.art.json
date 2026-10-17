@@ -1,0 +1,125 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SM_Tripo_FrostGateway",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "frost.v2.gateway"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    24,
+    60
+  ],
+  "budget": {
+    "lodTris": [
+      8000,
+      2500,
+      800
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "bounds": {
+    "min": [
+      -6.003758430480957,
+      0.0007875984301790595,
+      -1.8548747301101685
+    ],
+    "max": [
+      6.000056266784668,
+      11.147306442260742,
+      2.0447874069213867
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_FrostGateway_LOD0",
+      "lod": 0,
+      "tris": 7995,
+      "verts": 5274,
+      "materials": [
+        "M_Tripo_FrostGateway"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_FrostGateway_LOD1",
+      "lod": 1,
+      "tris": 2500,
+      "verts": 2161,
+      "materials": [
+        "M_Tripo_FrostGateway"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_FrostGateway_LOD2",
+      "lod": 2,
+      "tris": 800,
+      "verts": 923,
+      "materials": [
+        "M_Tripo_FrostGateway"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_FrostGateway",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_FrostGateway_BC.png",
+        "N": "Textures/T_Tripo_FrostGateway_N.png",
+        "ORM": "Textures/T_Tripo_FrostGateway_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_FrostGateway.glb",
+    "sha256": "0863ab4de75e254f471373dcb8900a51a65f9d158bd56e600d974e5e00b513c1",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 2,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+      "mode": "multiview",
+      "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+    },
+    "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+  },
+  "exported": "2026-10-17 11:21:09"
+}

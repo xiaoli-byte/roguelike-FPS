@@ -1,0 +1,164 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SK_Boss_Matriarch",
+  "kind": "skeletal",
+  "class": "boss",
+  "category": "characters",
+  "bind": {
+    "source": "enemy",
+    "id": "boss_matriarch"
+  },
+  "keepGlow": "all",
+  "lodDistance": [
+    0,
+    25,
+    60
+  ],
+  "budget": {
+    "lodTris": [
+      30000,
+      12000,
+      5000
+    ],
+    "texture": 2048,
+    "maxFileKb": 6000
+  },
+  "bounds": {
+    "min": [
+      -0.8677263259887695,
+      0.12686856091022491,
+      -0.8574320673942566
+    ],
+    "max": [
+      0.8649502992630005,
+      3.655181884765625,
+      0.851885199546814
+    ]
+  },
+  "rig": {
+    "type": "generic",
+    "profile": null,
+    "partsMode": "parts",
+    "human": {},
+    "tpose": null,
+    "bones": [
+      "j_r",
+      "j_0",
+      "j_0_3",
+      "j_0_4",
+      "j_0_5",
+      "j_0_6",
+      "j_0_7",
+      "j_0_8",
+      "j_0_9",
+      "j_0_10",
+      "j_0_11",
+      "j_0_12",
+      "j_0_13",
+      "j_0_13_12",
+      "j_0_13_13",
+      "j_0_13_13_1",
+      "j_0_13_13_1_6",
+      "j_0_13_14",
+      "j_0_13_14_1",
+      "j_0_13_14_1_6",
+      "j_0_13_16",
+      "j_0_13_16_4",
+      "j_0_13_16_4_0",
+      "j_0_13_16_4_1",
+      "j_0_13_16_4_2",
+      "j_0_13_16_4_3",
+      "j_0_13_16_4_4",
+      "j_0_13_16_8",
+      "j_0_13_17",
+      "j_0_13_17_0",
+      "j_0_13_17_0_0",
+      "j_0_13_17_0_1",
+      "j_0_13_17_0_2",
+      "j_0_13_17_0_3",
+      "j_0_13_17_0_4",
+      "j_0_13_17_1",
+      "j_0_13_17_1_0",
+      "j_0_13_17_1_1",
+      "j_0_13_17_1_2",
+      "j_0_13_17_1_3",
+      "j_0_13_17_1_4",
+      "j_0_14"
+    ]
+  },
+  "meshes": [
+    {
+      "name": "SK_Boss_Matriarch_LOD0",
+      "lod": 0,
+      "tris": 29996,
+      "verts": 18289,
+      "materials": [
+        "M_Boss_Matriarch"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Boss_Matriarch_LOD1",
+      "lod": 1,
+      "tris": 11996,
+      "verts": 8292,
+      "materials": [
+        "M_Boss_Matriarch"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Boss_Matriarch_LOD2",
+      "lod": 2,
+      "tris": 4994,
+      "verts": 4088,
+      "materials": [
+        "M_Boss_Matriarch"
+      ],
+      "skinned": true
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Boss_Matriarch",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Boss_Matriarch_BC.png",
+        "N": "Textures/T_Boss_Matriarch_N.png",
+        "ORM": "Textures/T_Boss_Matriarch_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/characters/SK_Boss_Matriarch.glb",
+    "sha256": "14b1dbca28996bd3ff92c3831cf118b2d3c15cbc98c43553249da00dc11721ba",
+    "hiRes": false,
+    "version": {
+      "blockout": 2,
+      "concept": 1,
+      "highpoly": 4,
+      "build": 6
+    },
+    "generator": null,
+    "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
+  },
+  "exported": "2026-10-17 11:18:50"
+}

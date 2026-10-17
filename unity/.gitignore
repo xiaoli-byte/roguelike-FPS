@@ -1,0 +1,59 @@
+# Unity 生成目录（可由编辑器重建）
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+
+# IDE 工程文件（Unity 自动生成）
+.vs/
+.idea/
+*.csproj
+*.sln
+*.slnx
+*.suo
+*.user
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# 崩溃与构建报告
+sysinfo.txt
+crashlytics-build.properties
+*.apk
+*.aab
+*.unitypackage
+
+# 美术管线：Mixamo 原始动画由作者本机下载（Adobe 许可只允许在项目内使用，不再分发原始文件）
+/Assets/Art/Animations/Mixamo/*.fbx
+/Assets/Art/Animations/Mixamo/*.fbx.meta
+# 审核截图可重新生成
+/Assets/Art/_Review/
+/Assets/Art/_Review.meta
+
+# 美术管线生成物：FBX 与贴图可由 art/pipeline/unity_export.py 从 public/assets 重新生成，不入库；
+# 它们的 .meta、*.art.json、材质与 Prefab 入库，引用 GUID 保持稳定。
+# 新机器上务必先跑 unity_export.py 再打开 Unity——资产缺失时 Unity 会删掉孤立的 .meta。
+/Assets/Art/Characters/**/*.fbx
+/Assets/Art/Weapons/**/*.fbx
+/Assets/Art/Attachments/**/*.fbx
+/Assets/Art/Props/**/*.fbx
+/Assets/Art/Environment/**/*.fbx
+/Assets/Art/*/*/Textures/*.png
+# 原生骨架动画：采样数据由 scripts/unity/bake-native-anims.mjs 生成，片段由 Sync 生成；.meta 与状态机入库
+/Assets/Art/Characters/*/Anim/*.native-anim.json
+/Assets/Art/Characters/*/Anim/*.anim
+# 关卡生成物：地形数据、NavMesh、边界网格与程序化地表贴图都由 Spiritfire ▸ Levels ▸ Build …（Level_x_y.cs）重新生成；
+# .meta、材质、TerrainLayer 与场景入库。美术开始在 Terrain 上手工雕刻后，把对应的 TD_*.asset 从这里移出、改为入库。
+/Assets/Levels/*/TD_*.asset
+/Assets/Levels/*/NavMesh_*.asset
+/Assets/Levels/*/Boundary_*.asset
+/Assets/Levels/**/*.png

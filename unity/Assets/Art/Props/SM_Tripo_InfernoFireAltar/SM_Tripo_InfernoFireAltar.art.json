@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SM_Tripo_InfernoFireAltar",
+  "kind": "static",
+  "class": "tripo_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "inferno.v2.fireAltar"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    20
+  ],
+  "budget": {
+    "lodTris": [
+      3000,
+      1000
+    ],
+    "texture": 1024,
+    "maxFileKb": 700
+  },
+  "bounds": {
+    "min": [
+      -0.5665155053138733,
+      0.000597673817537725,
+      -0.5840890407562256
+    ],
+    "max": [
+      0.5674339532852173,
+      2.3566441535949707,
+      0.5669610500335693
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_InfernoFireAltar_LOD0",
+      "lod": 0,
+      "tris": 3000,
+      "verts": 2547,
+      "materials": [
+        "M_Tripo_InfernoFireAltar"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_InfernoFireAltar_LOD1",
+      "lod": 1,
+      "tris": 1000,
+      "verts": 1245,
+      "materials": [
+        "M_Tripo_InfernoFireAltar"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_InfernoFireAltar",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_InfernoFireAltar_BC.png",
+        "N": "Textures/T_Tripo_InfernoFireAltar_N.png",
+        "ORM": "Textures/T_Tripo_InfernoFireAltar_ORM.png",
+        "E": "Textures/T_Tripo_InfernoFireAltar_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_InfernoFireAltar.glb",
+    "sha256": "ecbac3fc3b1b911032b4fa081748e4dab14388981977bdedc619b1c0f240a0c9",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 2,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+      "mode": "multiview",
+      "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+    },
+    "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+  },
+  "exported": "2026-10-17 11:23:21"
+}

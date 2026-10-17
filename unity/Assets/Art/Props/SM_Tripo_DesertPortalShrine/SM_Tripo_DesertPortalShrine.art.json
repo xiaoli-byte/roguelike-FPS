@@ -1,0 +1,125 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SM_Tripo_DesertPortalShrine",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "desert.v2.portalShrine"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    24,
+    60
+  ],
+  "budget": {
+    "lodTris": [
+      8000,
+      2500,
+      800
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "bounds": {
+    "min": [
+      -4.839033603668213,
+      0,
+      -1.652418851852417
+    ],
+    "max": [
+      4.839033603668213,
+      11,
+      1.652418851852417
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_DesertPortalShrine_LOD0",
+      "lod": 0,
+      "tris": 7943,
+      "verts": 11320,
+      "materials": [
+        "M_Tripo_DesertPortalShrine"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_DesertPortalShrine_LOD1",
+      "lod": 1,
+      "tris": 2486,
+      "verts": 4320,
+      "materials": [
+        "M_Tripo_DesertPortalShrine"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_DesertPortalShrine_LOD2",
+      "lod": 2,
+      "tris": 796,
+      "verts": 1698,
+      "materials": [
+        "M_Tripo_DesertPortalShrine"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_DesertPortalShrine",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_DesertPortalShrine_BC.png",
+        "N": "Textures/T_Tripo_DesertPortalShrine_N.png",
+        "ORM": "Textures/T_Tripo_DesertPortalShrine_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_DesertPortalShrine.glb",
+    "sha256": "2c4d396ae54841800973608f867ba00b76ecf2fb738cd6be82d7c6c197af97bf",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-17 00:30:29"
+}

@@ -1,0 +1,113 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SM_Tripo_InfernoBarricade",
+  "kind": "static",
+  "class": "tripo_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "inferno.v2.barricade"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    20
+  ],
+  "budget": {
+    "lodTris": [
+      3000,
+      1000
+    ],
+    "texture": 1024,
+    "maxFileKb": 700
+  },
+  "bounds": {
+    "min": [
+      -1.7558461427688599,
+      0.0001727619528537616,
+      -0.23463961482048035
+    ],
+    "max": [
+      1.8075733184814453,
+      1.1833916902542114,
+      0.23534388840198517
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_InfernoBarricade_LOD0",
+      "lod": 0,
+      "tris": 3000,
+      "verts": 2036,
+      "materials": [
+        "M_Tripo_InfernoBarricade"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_InfernoBarricade_LOD1",
+      "lod": 1,
+      "tris": 1000,
+      "verts": 862,
+      "materials": [
+        "M_Tripo_InfernoBarricade"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_InfernoBarricade",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_InfernoBarricade_BC.png",
+        "N": "Textures/T_Tripo_InfernoBarricade_N.png",
+        "ORM": "Textures/T_Tripo_InfernoBarricade_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_InfernoBarricade.glb",
+    "sha256": "2b984c6457637f6a7bd7ac8e57f65934b46f77959d5e30702025ce09b1cf96ce",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 2,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+      "mode": "multiview",
+      "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+    },
+    "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+  },
+  "exported": "2026-10-17 11:23:17"
+}

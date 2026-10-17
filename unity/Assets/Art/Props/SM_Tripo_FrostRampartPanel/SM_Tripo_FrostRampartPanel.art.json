@@ -1,0 +1,120 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SM_Tripo_FrostRampartPanel",
+  "kind": "static",
+  "class": "tripo_architecture_kit",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "frost.v2.rampart.panel"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    24,
+    60
+  ],
+  "budget": {
+    "lodTris": [
+      8000,
+      2500,
+      800
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "bounds": {
+    "min": [
+      -2.8499999046325684,
+      0.0013968253042548895,
+      -1.2881131172180176
+    ],
+    "max": [
+      2.8499999046325684,
+      8.81725788116455,
+      1.2866777181625366
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_FrostRampartPanel_LOD0",
+      "lod": 0,
+      "tris": 5885,
+      "verts": 5215,
+      "materials": [
+        "M_Tripo_FrostRampart"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_FrostRampartPanel_LOD1",
+      "lod": 1,
+      "tris": 1839,
+      "verts": 2815,
+      "materials": [
+        "M_Tripo_FrostRampart"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_FrostRampartPanel_LOD2",
+      "lod": 2,
+      "tris": 588,
+      "verts": 1048,
+      "materials": [
+        "M_Tripo_FrostRampart"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_FrostRampart",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_FrostRampart_BC.png",
+        "N": "Textures/T_Tripo_FrostRampart_N.png",
+        "ORM": "Textures/T_Tripo_FrostRampart_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_FrostRampartPanel.glb",
+    "sha256": "b0226a1cf13bc01008ac5d1c4ece9cd14a9c8624d532ed1b3f77ee5965add93e",
+    "hiRes": false,
+    "version": null,
+    "generator": {
+      "tool": "derived",
+      "mode": "wall_kit",
+      "checkpoint": "SM_Tripo_FrostRampart"
+    },
+    "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+  },
+  "exported": "2026-10-17 11:24:47"
+}

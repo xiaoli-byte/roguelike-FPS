@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SK_Weapon_Swarm",
+  "kind": "skeletal",
+  "class": "weapon_fp",
+  "category": "weapons",
+  "bind": {
+    "source": "weapon",
+    "id": "swarm"
+  },
+  "keepGlow": "all",
+  "lodDistance": [
+    0,
+    6
+  ],
+  "budget": {
+    "lodTris": [
+      12000,
+      3000
+    ],
+    "texture": 2048,
+    "maxFileKb": 3000
+  },
+  "bounds": {
+    "min": [
+      -0.07406449317932129,
+      -0.09100848436355591,
+      -0.2971755564212799
+    ],
+    "max": [
+      0.0741415023803711,
+      0.18570858240127563,
+      0.13407041132450104
+    ]
+  },
+  "rig": {
+    "type": "generic",
+    "profile": null,
+    "partsMode": "parts",
+    "human": {},
+    "tpose": null,
+    "bones": [
+      "j_r",
+      "j_0",
+      "j_4"
+    ]
+  },
+  "meshes": [
+    {
+      "name": "SK_Weapon_Swarm_LOD0",
+      "lod": 0,
+      "tris": 12000,
+      "verts": 7216,
+      "materials": [
+        "M_Weapon_Swarm"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Weapon_Swarm_LOD1",
+      "lod": 1,
+      "tris": 3000,
+      "verts": 2329,
+      "materials": [
+        "M_Weapon_Swarm"
+      ],
+      "skinned": true
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Weapon_Swarm",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Weapon_Swarm_BC.png",
+        "N": "Textures/T_Weapon_Swarm_N.png",
+        "ORM": "Textures/T_Weapon_Swarm_ORM.png",
+        "E": "Textures/T_Weapon_Swarm_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/weapons/SK_Weapon_Swarm.glb",
+    "sha256": "9ba38f0210c968143f676d6b72561c6bc17824e9cc54e70c2bac0e5de43ff585",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": null,
+    "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
+  },
+  "exported": "2026-10-17 11:19:15"
+}

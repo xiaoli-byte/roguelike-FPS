@@ -1,0 +1,113 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SM_Tripo_FrostSeaStairs",
+  "kind": "static",
+  "class": "tripo_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "frost_c.v2.stairs"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    20
+  ],
+  "budget": {
+    "lodTris": [
+      3000,
+      1000
+    ],
+    "texture": 1024,
+    "maxFileKb": 700
+  },
+  "bounds": {
+    "min": [
+      -1.1413089036941528,
+      -0.00010720657155616209,
+      -1.0237202644348145
+    ],
+    "max": [
+      1.1031171083450317,
+      2.876883029937744,
+      1.3399882316589355
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_FrostSeaStairs_LOD0",
+      "lod": 0,
+      "tris": 3000,
+      "verts": 3014,
+      "materials": [
+        "M_Tripo_FrostSeaStairs"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_FrostSeaStairs_LOD1",
+      "lod": 1,
+      "tris": 1000,
+      "verts": 1369,
+      "materials": [
+        "M_Tripo_FrostSeaStairs"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_FrostSeaStairs",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_FrostSeaStairs_BC.png",
+        "N": "Textures/T_Tripo_FrostSeaStairs_N.png",
+        "ORM": "Textures/T_Tripo_FrostSeaStairs_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_FrostSeaStairs.glb",
+    "sha256": "39d74b9c8dffcb3352b862ef3ccc0e224075c4220ca941547a69ef5dab06a639",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 2,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+      "mode": "multiview",
+      "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+    },
+    "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+  },
+  "exported": "2026-10-17 11:22:27"
+}

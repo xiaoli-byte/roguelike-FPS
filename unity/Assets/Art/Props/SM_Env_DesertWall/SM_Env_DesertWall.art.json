@@ -1,0 +1,125 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SM_Env_DesertWall",
+  "kind": "static",
+  "class": "nature_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "desert.wall"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    18,
+    42
+  ],
+  "budget": {
+    "lodTris": [
+      5000,
+      1600,
+      500
+    ],
+    "texture": 1024,
+    "maxFileKb": 900
+  },
+  "bounds": {
+    "min": [
+      -3.5463955402374268,
+      0.0011297255987301469,
+      -0.6719123721122742
+    ],
+    "max": [
+      3.547262668609619,
+      4.257271766662598,
+      0.7256079316139221
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Env_DesertWall_LOD0",
+      "lod": 0,
+      "tris": 5000,
+      "verts": 3996,
+      "materials": [
+        "M_Env_DesertWall"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Env_DesertWall_LOD1",
+      "lod": 1,
+      "tris": 1600,
+      "verts": 1698,
+      "materials": [
+        "M_Env_DesertWall"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Env_DesertWall_LOD2",
+      "lod": 2,
+      "tris": 500,
+      "verts": 610,
+      "materials": [
+        "M_Env_DesertWall"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Env_DesertWall",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Env_DesertWall_BC.png",
+        "N": "Textures/T_Env_DesertWall_N.png",
+        "ORM": "Textures/T_Env_DesertWall_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Env_DesertWall.glb",
+    "sha256": "55cb93d052b694b5416452187a4dfb2ee40537e1e069f5586bcda7d2ee6b3b47",
+    "hiRes": false,
+    "version": {
+      "blockout": 2,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+      "mode": "multiview",
+      "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+    },
+    "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+  },
+  "exported": "2026-10-17 11:19:34"
+}

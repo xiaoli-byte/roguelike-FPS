@@ -1,0 +1,113 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SM_Tripo_DesertTreasureHoard",
+  "kind": "static",
+  "class": "tripo_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "desert.v2.hoard"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    20
+  ],
+  "budget": {
+    "lodTris": [
+      3000,
+      1000
+    ],
+    "texture": 1024,
+    "maxFileKb": 700
+  },
+  "bounds": {
+    "min": [
+      -1.2983088493347168,
+      0,
+      -0.9646936058998108
+    ],
+    "max": [
+      1.2983088493347168,
+      1.7999999523162842,
+      0.9646936058998108
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_DesertTreasureHoard_LOD0",
+      "lod": 0,
+      "tris": 2984,
+      "verts": 4521,
+      "materials": [
+        "M_Tripo_DesertTreasureHoard"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_DesertTreasureHoard_LOD1",
+      "lod": 1,
+      "tris": 995,
+      "verts": 1908,
+      "materials": [
+        "M_Tripo_DesertTreasureHoard"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_DesertTreasureHoard",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_DesertTreasureHoard_BC.png",
+        "N": "Textures/T_Tripo_DesertTreasureHoard_N.png",
+        "ORM": "Textures/T_Tripo_DesertTreasureHoard_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_DesertTreasureHoard.glb",
+    "sha256": "6b12ed2b1b58d656ac01067dd0e40ddf4241399a474370002e58c289fa9a2b06",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 2
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-17 00:30:22"
+}

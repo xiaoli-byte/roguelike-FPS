@@ -1,0 +1,125 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SM_Env_DesertSandstone",
+  "kind": "static",
+  "class": "nature_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "desert.rock"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    18,
+    42
+  ],
+  "budget": {
+    "lodTris": [
+      5000,
+      1600,
+      500
+    ],
+    "texture": 1024,
+    "maxFileKb": 900
+  },
+  "bounds": {
+    "min": [
+      -1.6671547889709473,
+      0.0005523354047909379,
+      -1.1365830898284912
+    ],
+    "max": [
+      1.7097365856170654,
+      2.882888078689575,
+      1.407835602760315
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Env_DesertSandstone_LOD0",
+      "lod": 0,
+      "tris": 5000,
+      "verts": 3154,
+      "materials": [
+        "M_Env_DesertSandstone"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Env_DesertSandstone_LOD1",
+      "lod": 1,
+      "tris": 1600,
+      "verts": 1237,
+      "materials": [
+        "M_Env_DesertSandstone"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Env_DesertSandstone_LOD2",
+      "lod": 2,
+      "tris": 500,
+      "verts": 512,
+      "materials": [
+        "M_Env_DesertSandstone"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Env_DesertSandstone",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Env_DesertSandstone_BC.png",
+        "N": "Textures/T_Env_DesertSandstone_N.png",
+        "ORM": "Textures/T_Env_DesertSandstone_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Env_DesertSandstone.glb",
+    "sha256": "a3c6ee73e246d78e406a0cbe68cb13380f8180399f5756772ae6bda7dea5c902",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 2,
+      "highpoly": 2,
+      "build": 2
+    },
+    "generator": {
+      "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+      "mode": "single",
+      "checkpoint": "hunyuan_3d_v2.1.safetensors"
+    },
+    "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+  },
+  "exported": "2026-10-17 00:30:34"
+}

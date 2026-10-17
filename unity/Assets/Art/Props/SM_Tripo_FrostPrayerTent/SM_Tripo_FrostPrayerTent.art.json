@@ -1,0 +1,116 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SM_Tripo_FrostPrayerTent",
+  "kind": "static",
+  "class": "tripo_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "frost.v2.prayerTent"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    20
+  ],
+  "budget": {
+    "lodTris": [
+      3000,
+      1000
+    ],
+    "texture": 1024,
+    "maxFileKb": 700
+  },
+  "qaWaivers": {
+    "LOD1 面数": "单视图高模的薄毡顶与经幡让边折叠减面停在约 1380 面（焊接 1.5% 高度也只到 1170）；20 m 外多约 400 面可接受，第一版先用（2026-10-11）"
+  },
+  "bounds": {
+    "min": [
+      -2.0065553188323975,
+      0.004372571129351854,
+      -1.7327699661254883
+    ],
+    "max": [
+      1.9987715482711792,
+      3.5354976654052734,
+      2.130808115005493
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_FrostPrayerTent_LOD0",
+      "lod": 0,
+      "tris": 2979,
+      "verts": 3487,
+      "materials": [
+        "M_Tripo_FrostPrayerTent"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_FrostPrayerTent_LOD1",
+      "lod": 1,
+      "tris": 1386,
+      "verts": 2169,
+      "materials": [
+        "M_Tripo_FrostPrayerTent"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_FrostPrayerTent",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_FrostPrayerTent_BC.png",
+        "N": "Textures/T_Tripo_FrostPrayerTent_N.png",
+        "ORM": "Textures/T_Tripo_FrostPrayerTent_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_FrostPrayerTent.glb",
+    "sha256": "4fa5f4fdc2c3a9ec7dd15ff71e2f3ec7c019caa0e757fa782411f2893cb21d8e",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 2,
+      "highpoly": 2,
+      "build": 2
+    },
+    "generator": {
+      "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+      "mode": "single",
+      "checkpoint": "hunyuan_3d_v2.1.safetensors"
+    },
+    "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+  },
+  "exported": "2026-10-17 11:34:29"
+}

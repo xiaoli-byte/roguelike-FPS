@@ -1,0 +1,125 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SM_Env_InfernoBasalt",
+  "kind": "static",
+  "class": "nature_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "inferno.rock"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    18,
+    42
+  ],
+  "budget": {
+    "lodTris": [
+      5000,
+      1600,
+      500
+    ],
+    "texture": 1024,
+    "maxFileKb": 900
+  },
+  "bounds": {
+    "min": [
+      -1.3031460046768188,
+      0.00018573629495222121,
+      -1.1489542722702026
+    ],
+    "max": [
+      1.2714039087295532,
+      2.8542466163635254,
+      1.2378196716308594
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Env_InfernoBasalt_LOD0",
+      "lod": 0,
+      "tris": 5000,
+      "verts": 3239,
+      "materials": [
+        "M_Env_InfernoBasalt"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Env_InfernoBasalt_LOD1",
+      "lod": 1,
+      "tris": 1600,
+      "verts": 1305,
+      "materials": [
+        "M_Env_InfernoBasalt"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Env_InfernoBasalt_LOD2",
+      "lod": 2,
+      "tris": 500,
+      "verts": 537,
+      "materials": [
+        "M_Env_InfernoBasalt"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Env_InfernoBasalt",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Env_InfernoBasalt_BC.png",
+        "N": "Textures/T_Env_InfernoBasalt_N.png",
+        "ORM": "Textures/T_Env_InfernoBasalt_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Env_InfernoBasalt.glb",
+    "sha256": "1a622c0e52280756062c910a7cf383ebba0b9b078fae76700780e0295b4deece",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 2,
+      "highpoly": 2,
+      "build": 2
+    },
+    "generator": {
+      "tool": "Hunyuan3D 2.1（ComfyUI 原生节点）",
+      "mode": "single",
+      "checkpoint": "hunyuan_3d_v2.1.safetensors"
+    },
+    "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+  },
+  "exported": "2026-10-17 11:19:28"
+}

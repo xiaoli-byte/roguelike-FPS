@@ -1,0 +1,116 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_DesertCaravanWreck",
+  "kind": "static",
+  "class": "tripo_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "desert.silkroad.caravanWreck"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    20
+  ],
+  "budget": {
+    "lodTris": [
+      3000,
+      1000
+    ],
+    "texture": 1024,
+    "maxFileKb": 700
+  },
+  "qaWaivers": {
+    "场景高度": "Tripo 成品比参考包围盒更扁宽，等比缩放后货包顶约 1.8 m（参考 2.2 m 是估值）；1.8 m 正好作中掩体（2026-10-17）"
+  },
+  "bounds": {
+    "min": [
+      -1.8958475589752197,
+      0,
+      -2.0160000324249268
+    ],
+    "max": [
+      1.8958475589752197,
+      1.8180437088012695,
+      2.0160000324249268
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_DesertCaravanWreck_LOD0",
+      "lod": 0,
+      "tris": 2940,
+      "verts": 4471,
+      "materials": [
+        "M_Tripo_DesertCaravanWreck"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_DesertCaravanWreck_LOD1",
+      "lod": 1,
+      "tris": 995,
+      "verts": 1965,
+      "materials": [
+        "M_Tripo_DesertCaravanWreck"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_DesertCaravanWreck",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_DesertCaravanWreck_BC.png",
+        "N": "Textures/T_Tripo_DesertCaravanWreck_N.png",
+        "ORM": "Textures/T_Tripo_DesertCaravanWreck_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_DesertCaravanWreck.glb",
+    "sha256": "c23206985d5220a357bc775a8c7009af2e2a8899bc3f2d01c4ec2120af6edbdd",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 3,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-17 23:39:21"
+}

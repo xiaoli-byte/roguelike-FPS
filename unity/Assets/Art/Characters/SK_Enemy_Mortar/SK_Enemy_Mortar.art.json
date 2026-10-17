@@ -1,0 +1,135 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SK_Enemy_Mortar",
+  "kind": "skeletal",
+  "class": "enemy_standard",
+  "category": "characters",
+  "bind": {
+    "source": "enemy",
+    "id": "mortar"
+  },
+  "keepGlow": "all",
+  "lodDistance": [
+    0,
+    14,
+    30
+  ],
+  "budget": {
+    "lodTris": [
+      8000,
+      3500,
+      1500
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "bounds": {
+    "min": [
+      -0.7516978979110718,
+      -4.330117008066736e-06,
+      -0.5973161458969116
+    ],
+    "max": [
+      0.7509786486625671,
+      2.214473247528076,
+      0.6148645877838135
+    ]
+  },
+  "rig": {
+    "type": "generic",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": [
+      "hips",
+      "legL",
+      "kneeL",
+      "legR",
+      "kneeR",
+      "torso",
+      "armL",
+      "elbowL",
+      "handL",
+      "armR",
+      "elbowR",
+      "handR",
+      "head"
+    ]
+  },
+  "meshes": [
+    {
+      "name": "SK_Enemy_Mortar_LOD0",
+      "lod": 0,
+      "tris": 7999,
+      "verts": 5029,
+      "materials": [
+        "M_Enemy_Mortar"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_Mortar_LOD1",
+      "lod": 1,
+      "tris": 3500,
+      "verts": 2529,
+      "materials": [
+        "M_Enemy_Mortar"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_Mortar_LOD2",
+      "lod": 2,
+      "tris": 1500,
+      "verts": 1299,
+      "materials": [
+        "M_Enemy_Mortar"
+      ],
+      "skinned": true
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Enemy_Mortar",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Enemy_Mortar_BC.png",
+        "N": "Textures/T_Enemy_Mortar_N.png",
+        "ORM": "Textures/T_Enemy_Mortar_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/characters/SK_Enemy_Mortar.glb",
+    "sha256": "7885de89df04575686ceb59e50d1b8dd43c4538beb731b7a67f7ed6e92de0f12",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 6
+    },
+    "generator": null,
+    "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
+  },
+  "exported": "2026-10-17 11:18:23"
+}

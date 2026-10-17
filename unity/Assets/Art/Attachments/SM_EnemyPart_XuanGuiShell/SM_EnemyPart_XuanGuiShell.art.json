@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SM_EnemyPart_XuanGuiShell",
+  "kind": "static",
+  "class": "enemy_attachment",
+  "category": "attachments",
+  "bind": {
+    "source": "enemy",
+    "id": "xuangui",
+    "attachment": "shell"
+  },
+  "keepGlow": "all",
+  "lodDistance": [
+    0,
+    14
+  ],
+  "budget": {
+    "lodTris": [
+      3000,
+      1000
+    ],
+    "texture": 1024,
+    "maxFileKb": 700
+  },
+  "bounds": {
+    "min": [
+      -1.2612557411193848,
+      -0.0001372136321151629,
+      -1.2866469621658325
+    ],
+    "max": [
+      1.2603847980499268,
+      1.399999976158142,
+      1.2887599468231201
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_EnemyPart_XuanGuiShell_LOD0",
+      "lod": 0,
+      "tris": 2984,
+      "verts": 2455,
+      "materials": [
+        "M_EnemyPart_XuanGuiShell"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_EnemyPart_XuanGuiShell_LOD1",
+      "lod": 1,
+      "tris": 995,
+      "verts": 1137,
+      "materials": [
+        "M_EnemyPart_XuanGuiShell"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_EnemyPart_XuanGuiShell",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_EnemyPart_XuanGuiShell_BC.png",
+        "N": "Textures/T_EnemyPart_XuanGuiShell_N.png",
+        "ORM": "Textures/T_EnemyPart_XuanGuiShell_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/attachments/SM_EnemyPart_XuanGuiShell.glb",
+    "sha256": "23c4efec5f5556d6b4cd40826bfaa0135c629e30b8e0546af333128851d45d59",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-17 11:21:11"
+}

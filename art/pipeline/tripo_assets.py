@@ -32,7 +32,7 @@ elaborate miniature carvings, harsh specular highlights or baked cast shadows. E
 
 # Background key tolerance per theme: white snow sits close to the #D6D6D6 sheet background, so a loose key eats snow
 # caps; the generated background is flat (border std < 1), so a tight key leaves no fringe.
-KEY_TOL = {"desert": 28.0, "kunlun": 8.0, "taoist": 8.0, "beiming": 8.0,
+KEY_TOL = {"desert": 28.0, "silkroad": 28.0, "kunlun": 8.0, "taoist": 8.0, "beiming": 8.0,
            # Chapter 3's black iron / basalt / lava sits far from the grey background; a medium key also clears the
            # anti-aliased grey halo around dark silhouettes without reaching pale ash or bronze highlights.
            "zhurong": 18.0}
@@ -40,6 +40,10 @@ KEY_TOL = {"desert": 28.0, "kunlun": 8.0, "taoist": 8.0, "beiming": 8.0,
 # Per-chapter look, chosen by the registry entry's `style_theme` (default: the desert chapter's).
 SCENE_THEMES = {
     "desert": "East-Asian desert temple fantasy.",
+    # Chapter 1 Unity maps (赤沙古道, docs/level-design/unity-maps-v1.md): Han-dynasty Silk Road gobi terrain pieces.
+    "silkroad": ("East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved "
+                 "yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown "
+                 "timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion."),
     "kunlun": ("East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, "
                "faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes."),
     # Chapter 2 alternative B (寒山道观): timber cliff abbey instead of the jade palace.

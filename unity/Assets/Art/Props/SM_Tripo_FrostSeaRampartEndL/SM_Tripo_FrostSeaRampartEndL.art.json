@@ -1,0 +1,120 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SM_Tripo_FrostSeaRampartEndL",
+  "kind": "static",
+  "class": "tripo_architecture_kit",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "frost_sea.v2.rampart.endL"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    24,
+    60
+  ],
+  "budget": {
+    "lodTris": [
+      8000,
+      2500,
+      800
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "bounds": {
+    "min": [
+      2,
+      2.97851820505457e-05,
+      -0.8288566470146179
+    ],
+    "max": [
+      2.8756461143493652,
+      8.79797649383545,
+      1.0498183965682983
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_FrostSeaRampartEndL_LOD0",
+      "lod": 0,
+      "tris": 1761,
+      "verts": 1683,
+      "materials": [
+        "M_Tripo_FrostSeaRampart"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_FrostSeaRampartEndL_LOD1",
+      "lod": 1,
+      "tris": 549,
+      "verts": 881,
+      "materials": [
+        "M_Tripo_FrostSeaRampart"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_FrostSeaRampartEndL_LOD2",
+      "lod": 2,
+      "tris": 176,
+      "verts": 373,
+      "materials": [
+        "M_Tripo_FrostSeaRampart"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_FrostSeaRampart",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_FrostSeaRampart_BC.png",
+        "N": "Textures/T_Tripo_FrostSeaRampart_N.png",
+        "ORM": "Textures/T_Tripo_FrostSeaRampart_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_FrostSeaRampartEndL.glb",
+    "sha256": "577dcd8fa31d15f2a1a6fe7c89fc083bfbfe2835b97eab0d7f45af8de88718af",
+    "hiRes": false,
+    "version": null,
+    "generator": {
+      "tool": "derived",
+      "mode": "wall_kit",
+      "checkpoint": "SM_Tripo_FrostSeaRampart"
+    },
+    "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+  },
+  "exported": "2026-10-17 11:25:00"
+}

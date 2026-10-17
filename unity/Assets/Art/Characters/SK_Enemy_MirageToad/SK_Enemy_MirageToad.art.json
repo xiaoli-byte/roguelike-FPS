@@ -1,0 +1,181 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SK_Enemy_MirageToad",
+  "kind": "skeletal",
+  "class": "enemy_large",
+  "category": "characters",
+  "bind": {
+    "source": "enemy",
+    "id": "mirage_toad"
+  },
+  "keepGlow": "all",
+  "lodDistance": [
+    0,
+    18,
+    40
+  ],
+  "budget": {
+    "lodTris": [
+      12000,
+      5000,
+      2000
+    ],
+    "texture": 2048,
+    "maxFileKb": 3000
+  },
+  "bounds": {
+    "min": [
+      -1.182303547859192,
+      0,
+      -1.1808135509490967
+    ],
+    "max": [
+      1.182303547859192,
+      3.0500001907348633,
+      1.1808135509490967
+    ]
+  },
+  "rig": {
+    "type": "generic",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": [
+      "root",
+      "hips",
+      "spine",
+      "chest",
+      "arm_L",
+      "forearm_L",
+      "hand_L",
+      "arm_R",
+      "forearm_R",
+      "hand_R",
+      "head",
+      "sac",
+      "pagoda",
+      "banner_L1",
+      "banner_L2",
+      "banner_L3",
+      "banner_R1",
+      "banner_R2",
+      "banner_R3",
+      "thigh_L",
+      "shin_L",
+      "foot_L",
+      "thigh_R",
+      "shin_R",
+      "foot_R"
+    ]
+  },
+  "meshes": [
+    {
+      "name": "SK_Enemy_MirageToad_GlowShell",
+      "lod": null,
+      "tris": 215,
+      "verts": 227,
+      "materials": [
+        "M_Enemy_MirageToad_Glow"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_MirageToad_LOD0",
+      "lod": 0,
+      "tris": 11820,
+      "verts": 16933,
+      "materials": [
+        "M_Enemy_MirageToad"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_MirageToad_LOD1",
+      "lod": 1,
+      "tris": 4905,
+      "verts": 8669,
+      "materials": [
+        "M_Enemy_MirageToad"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_MirageToad_LOD2",
+      "lod": 2,
+      "tris": 1942,
+      "verts": 4004,
+      "materials": [
+        "M_Enemy_MirageToad"
+      ],
+      "skinned": true
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Enemy_MirageToad_Glow",
+      "baseColor": [
+        0.800000011920929,
+        0.800000011920929,
+        0.800000011920929,
+        1
+      ],
+      "metallic": 0,
+      "roughness": 0.5,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": false,
+      "occlusionSeparate": false,
+      "textures": {
+        "E": "Textures/T_Enemy_MirageToad_BC.png"
+      }
+    },
+    {
+      "name": "M_Enemy_MirageToad",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Enemy_MirageToad_BC.png",
+        "ORM": "Textures/T_Enemy_MirageToad_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/characters/SK_Enemy_MirageToad.glb",
+    "sha256": "8ce13c211bf88af1968bbafb771e66f72f38d22dde315fb211afe78a4a152ff6",
+    "hiRes": false,
+    "version": {
+      "native_build": 16
+    },
+    "generator": {
+      "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+      "mode": "tripo_native",
+      "checkpoint": "P2.0"
+    },
+    "license": null
+  },
+  "exported": "2026-10-17 00:29:38"
+}

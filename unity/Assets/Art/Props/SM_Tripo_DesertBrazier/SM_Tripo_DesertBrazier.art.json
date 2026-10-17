@@ -1,0 +1,113 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SM_Tripo_DesertBrazier",
+  "kind": "static",
+  "class": "tripo_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "desert.v2.brazier"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    20
+  ],
+  "budget": {
+    "lodTris": [
+      3000,
+      1000
+    ],
+    "texture": 1024,
+    "maxFileKb": 700
+  },
+  "bounds": {
+    "min": [
+      -0.6606742143630981,
+      0,
+      -0.6020519137382507
+    ],
+    "max": [
+      0.6606742143630981,
+      2.4000000953674316,
+      0.6020519137382507
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_DesertBrazier_LOD0",
+      "lod": 0,
+      "tris": 2991,
+      "verts": 2513,
+      "materials": [
+        "M_Tripo_DesertBrazier"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_DesertBrazier_LOD1",
+      "lod": 1,
+      "tris": 995,
+      "verts": 1153,
+      "materials": [
+        "M_Tripo_DesertBrazier"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_DesertBrazier",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_DesertBrazier_BC.png",
+        "N": "Textures/T_Tripo_DesertBrazier_N.png",
+        "ORM": "Textures/T_Tripo_DesertBrazier_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_DesertBrazier.glb",
+    "sha256": "6f7c1610236f2ad7e558d87a5f2abf7335b40003692e6ed5d7badfbd62e51704",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 2
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-17 00:30:27"
+}

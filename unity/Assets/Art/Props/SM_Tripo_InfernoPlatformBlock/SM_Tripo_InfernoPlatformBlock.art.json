@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SM_Tripo_InfernoPlatformBlock",
+  "kind": "static",
+  "class": "tripo_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "inferno.v2.platformblock"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    20
+  ],
+  "budget": {
+    "lodTris": [
+      3000,
+      1000
+    ],
+    "texture": 1024,
+    "maxFileKb": 700
+  },
+  "bounds": {
+    "min": [
+      -1.5775154829025269,
+      0.0003276446950621903,
+      -1.2913626432418823
+    ],
+    "max": [
+      1.5802271366119385,
+      2.862055778503418,
+      1.436337947845459
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_InfernoPlatformBlock_LOD0",
+      "lod": 0,
+      "tris": 3000,
+      "verts": 1854,
+      "materials": [
+        "M_Tripo_InfernoPlatformBlock"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_InfernoPlatformBlock_LOD1",
+      "lod": 1,
+      "tris": 1000,
+      "verts": 737,
+      "materials": [
+        "M_Tripo_InfernoPlatformBlock"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_InfernoPlatformBlock",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_InfernoPlatformBlock_BC.png",
+        "N": "Textures/T_Tripo_InfernoPlatformBlock_N.png",
+        "ORM": "Textures/T_Tripo_InfernoPlatformBlock_ORM.png",
+        "E": "Textures/T_Tripo_InfernoPlatformBlock_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_InfernoPlatformBlock.glb",
+    "sha256": "dfa302f5bdc58bcb7ccc7599956efd5c20c8536eb65fbfdce5b78646545e532d",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+      "mode": "multiview",
+      "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+    },
+    "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+  },
+  "exported": "2026-10-17 11:23:03"
+}

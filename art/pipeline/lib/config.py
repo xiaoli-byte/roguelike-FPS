@@ -84,6 +84,9 @@ class Config:
         self.registry = tomllib.loads((PIPELINE_DIR / "registry.toml").read_text(encoding="utf-8")).get("assets", {})
         self.paths = self.data["paths"]
         self.tools = self.data["tools"]
+        # 各机器的安装位置不同：.env 或环境变量里的 ART_BLENDER 覆盖 pipeline.toml 的默认路径
+        if os.environ.get("ART_BLENDER"):
+            self.tools["blender"] = os.environ["ART_BLENDER"]
 
     def section(self, name: str) -> dict:
         return self.data[name]
@@ -119,7 +122,7 @@ class Config:
             brief=raw.get("brief", "").strip(),
             material={"roughness": 0.8, "metallic": 0.0, **raw.get("material", {})},
             keep_glow=raw.get("keep_glow", "attachments"),
-            lod_tris=list(cls["lod_tris"]),
+            lod_tris=list(raw.get("lod_tris", cls["lod_tris"])),  # 资产可覆盖规格档的 LOD 预算（如 Tripo 碎 UV 的远景 LOD）
             lod_distance=list(cls["lod_distance"]),
             texture=int(cls["texture"]),
             texel_density=int(cls["texel_density"]),

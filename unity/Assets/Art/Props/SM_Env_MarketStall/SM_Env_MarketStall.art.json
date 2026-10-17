@@ -1,0 +1,125 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SM_Env_MarketStall",
+  "kind": "static",
+  "class": "nature_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "desert.marketStall"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    18,
+    42
+  ],
+  "budget": {
+    "lodTris": [
+      5000,
+      1600,
+      500
+    ],
+    "texture": 1024,
+    "maxFileKb": 900
+  },
+  "bounds": {
+    "min": [
+      -1.7655044794082642,
+      0.0009936863789334893,
+      -1.2027766704559326
+    ],
+    "max": [
+      1.7253363132476807,
+      3.089397668838501,
+      1.3988101482391357
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Env_MarketStall_LOD0",
+      "lod": 0,
+      "tris": 5000,
+      "verts": 3240,
+      "materials": [
+        "M_Env_MarketStall"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Env_MarketStall_LOD1",
+      "lod": 1,
+      "tris": 1600,
+      "verts": 1342,
+      "materials": [
+        "M_Env_MarketStall"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Env_MarketStall_LOD2",
+      "lod": 2,
+      "tris": 500,
+      "verts": 577,
+      "materials": [
+        "M_Env_MarketStall"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Env_MarketStall",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Env_MarketStall_BC.png",
+        "N": "Textures/T_Env_MarketStall_N.png",
+        "ORM": "Textures/T_Env_MarketStall_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Env_MarketStall.glb",
+    "sha256": "da4b1e4d929551d77af18a2ddd6bb5a0d19daa21b8c291357003802489106bab",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+      "mode": "multiview",
+      "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+    },
+    "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+  },
+  "exported": "2026-10-17 11:19:51"
+}

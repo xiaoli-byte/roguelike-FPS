@@ -1,0 +1,126 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_DesertHanWallEnd",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "desert.silkroad.hanWallEnd"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    24,
+    60
+  ],
+  "budget": {
+    "lodTris": [
+      8000,
+      2500,
+      800
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -2.827348470687866,
+      0,
+      -1.084254264831543
+    ],
+    "max": [
+      2.827348470687866,
+      3.5,
+      1.084254264831543
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_DesertHanWallEnd_LOD0",
+      "lod": 0,
+      "tris": 4304,
+      "verts": 2902,
+      "materials": [
+        "M_Tripo_DesertHanWallEnd"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_DesertHanWallEnd_LOD1",
+      "lod": 1,
+      "tris": 2486,
+      "verts": 1891,
+      "materials": [
+        "M_Tripo_DesertHanWallEnd"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_DesertHanWallEnd_LOD2",
+      "lod": 2,
+      "tris": 796,
+      "verts": 807,
+      "materials": [
+        "M_Tripo_DesertHanWallEnd"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_DesertHanWallEnd",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_DesertHanWallEnd_BC.png",
+        "N": "Textures/T_Tripo_DesertHanWallEnd_N.png",
+        "ORM": "Textures/T_Tripo_DesertHanWallEnd_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_DesertHanWallEnd.glb",
+    "sha256": "9600c0690236b9d4d7d9a1e79dedc7a6021e027bc4a750a92c3bb1cdfc24a482",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 3,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-17 23:39:19"
+}

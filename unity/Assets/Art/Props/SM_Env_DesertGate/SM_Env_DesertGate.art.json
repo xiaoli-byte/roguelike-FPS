@@ -1,0 +1,125 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SM_Env_DesertGate",
+  "kind": "static",
+  "class": "nature_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "desert.gate"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    18,
+    42
+  ],
+  "budget": {
+    "lodTris": [
+      5000,
+      1600,
+      500
+    ],
+    "texture": 1024,
+    "maxFileKb": 900
+  },
+  "bounds": {
+    "min": [
+      -5.451815128326416,
+      0.0006738716620020568,
+      -0.7055538296699524
+    ],
+    "max": [
+      5.46034574508667,
+      6.756953716278076,
+      0.7038785815238953
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Env_DesertGate_LOD0",
+      "lod": 0,
+      "tris": 5000,
+      "verts": 4436,
+      "materials": [
+        "M_Env_DesertGate"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Env_DesertGate_LOD1",
+      "lod": 1,
+      "tris": 1600,
+      "verts": 1851,
+      "materials": [
+        "M_Env_DesertGate"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Env_DesertGate_LOD2",
+      "lod": 2,
+      "tris": 500,
+      "verts": 694,
+      "materials": [
+        "M_Env_DesertGate"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Env_DesertGate",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Env_DesertGate_BC.png",
+        "N": "Textures/T_Env_DesertGate_N.png",
+        "ORM": "Textures/T_Env_DesertGate_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Env_DesertGate.glb",
+    "sha256": "3f61c8a23acc8fe8349470f91e915770cda543eaad3e7902fda2c92563e87eb9",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 2,
+      "highpoly": 2,
+      "build": 2
+    },
+    "generator": {
+      "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+      "mode": "multiview",
+      "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+    },
+    "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+  },
+  "exported": "2026-10-17 11:19:41"
+}

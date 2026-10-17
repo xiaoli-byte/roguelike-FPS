@@ -1,0 +1,139 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SK_Enemy_Grunt",
+  "kind": "skeletal",
+  "class": "enemy_standard",
+  "category": "characters",
+  "bind": {
+    "source": "enemy",
+    "id": "grunt"
+  },
+  "keepGlow": "all",
+  "lodDistance": [
+    0,
+    14,
+    30
+  ],
+  "budget": {
+    "lodTris": [
+      8000,
+      3500,
+      1500
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "bounds": {
+    "min": [
+      -0.5830768346786499,
+      0,
+      -0.28446444869041443
+    ],
+    "max": [
+      0.582908570766449,
+      1.9774413108825684,
+      0.2555404007434845
+    ]
+  },
+  "rig": {
+    "type": "generic",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": [
+      "hips",
+      "legL",
+      "kneeL",
+      "legR",
+      "kneeR",
+      "torso",
+      "armL",
+      "elbowL",
+      "handL",
+      "armR",
+      "elbowR",
+      "handR",
+      "head"
+    ]
+  },
+  "meshes": [
+    {
+      "name": "SK_Enemy_Grunt_LOD0",
+      "lod": 0,
+      "tris": 7919,
+      "verts": 5214,
+      "materials": [
+        "M_Enemy_Grunt"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_Grunt_LOD1",
+      "lod": 1,
+      "tris": 3500,
+      "verts": 2760,
+      "materials": [
+        "M_Enemy_Grunt"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_Grunt_LOD2",
+      "lod": 2,
+      "tris": 1499,
+      "verts": 1446,
+      "materials": [
+        "M_Enemy_Grunt"
+      ],
+      "skinned": true
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Enemy_Grunt",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Enemy_Grunt_BC.png",
+        "N": "Textures/T_Enemy_Grunt_N.png",
+        "ORM": "Textures/T_Enemy_Grunt_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/characters/SK_Enemy_Grunt.glb",
+    "sha256": "f9c89257e00992346f71d6994b25d60ec57364df7d83c1d388627c5dea8ddaa0",
+    "hiRes": false,
+    "version": {
+      "blockout": 3,
+      "concept": 1,
+      "highpoly": 2,
+      "build": 13
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-17 11:18:13"
+}

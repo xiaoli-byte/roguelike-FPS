@@ -1,0 +1,126 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SM_Tripo_InfernoRampart",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "inferno.v2.rampart"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    24,
+    60
+  ],
+  "budget": {
+    "lodTris": [
+      8000,
+      2500,
+      800
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "bounds": {
+    "min": [
+      -3.7935538291931152,
+      0.0003284092526882887,
+      -1.4079705476760864
+    ],
+    "max": [
+      3.794398784637451,
+      8.816976547241211,
+      0.9560239911079407
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_InfernoRampart_LOD0",
+      "lod": 0,
+      "tris": 8000,
+      "verts": 6407,
+      "materials": [
+        "M_Tripo_InfernoRampart"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_InfernoRampart_LOD1",
+      "lod": 1,
+      "tris": 2500,
+      "verts": 2550,
+      "materials": [
+        "M_Tripo_InfernoRampart"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_InfernoRampart_LOD2",
+      "lod": 2,
+      "tris": 800,
+      "verts": 1072,
+      "materials": [
+        "M_Tripo_InfernoRampart"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_InfernoRampart",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_InfernoRampart_BC.png",
+        "N": "Textures/T_Tripo_InfernoRampart_N.png",
+        "ORM": "Textures/T_Tripo_InfernoRampart_ORM.png",
+        "E": "Textures/T_Tripo_InfernoRampart_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_InfernoRampart.glb",
+    "sha256": "63ede8078b2a493638dd82c6766b0aad6b78bbc543797952bd5ed557fe5fa6b2",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 2,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+      "mode": "multiview",
+      "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+    },
+    "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+  },
+  "exported": "2026-10-17 11:22:48"
+}

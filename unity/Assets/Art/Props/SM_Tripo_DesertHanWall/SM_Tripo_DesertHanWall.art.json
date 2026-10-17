@@ -1,0 +1,128 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_DesertHanWall",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "desert.silkroad.hanWall"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    24,
+    60
+  ],
+  "budget": {
+    "lodTris": [
+      8000,
+      2500,
+      2500
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {
+    "LOD2 递减": "Tripo 碎 UV：LOD2 再减面会跨 UV 接缝糊成斜条纹，暂与 LOD1 同面数（2026-10-17，根治待做）"
+  },
+  "bounds": {
+    "min": [
+      -2.6673495769500732,
+      0,
+      -0.6867091059684753
+    ],
+    "max": [
+      2.6673495769500732,
+      3.5,
+      0.6867091059684753
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_DesertHanWall_LOD0",
+      "lod": 0,
+      "tris": 4218,
+      "verts": 2755,
+      "materials": [
+        "M_Tripo_DesertHanWall"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_DesertHanWall_LOD1",
+      "lod": 1,
+      "tris": 2486,
+      "verts": 1813,
+      "materials": [
+        "M_Tripo_DesertHanWall"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_DesertHanWall_LOD2",
+      "lod": 2,
+      "tris": 2486,
+      "verts": 1813,
+      "materials": [
+        "M_Tripo_DesertHanWall"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_DesertHanWall",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_DesertHanWall_BC.png",
+        "N": "Textures/T_Tripo_DesertHanWall_N.png",
+        "ORM": "Textures/T_Tripo_DesertHanWall_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_DesertHanWall.glb",
+    "sha256": "ae2d51f7f73be6394694c7b55c7b640fa3c55a4c27ccbb511f2068d35640b3ea",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 2
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-17 23:07:48"
+}

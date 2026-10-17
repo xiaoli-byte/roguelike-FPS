@@ -1,0 +1,180 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SK_Enemy_TombBeast",
+  "kind": "skeletal",
+  "class": "enemy_large",
+  "category": "characters",
+  "bind": {
+    "source": "enemy",
+    "id": "tomb_beast"
+  },
+  "keepGlow": "all",
+  "lodDistance": [
+    0,
+    18,
+    40
+  ],
+  "budget": {
+    "lodTris": [
+      12000,
+      5000,
+      2000
+    ],
+    "texture": 2048,
+    "maxFileKb": 3000
+  },
+  "bounds": {
+    "min": [
+      -0.7684770822525024,
+      0,
+      -1.3049317598342896
+    ],
+    "max": [
+      0.7684492468833923,
+      2.1996307373046875,
+      1.3038218021392822
+    ]
+  },
+  "rig": {
+    "type": "generic",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": [
+      "root",
+      "hips",
+      "spine",
+      "chest",
+      "neck",
+      "head",
+      "upperarm_L",
+      "forearm_L",
+      "paw_L",
+      "upperarm_R",
+      "forearm_R",
+      "paw_R",
+      "wing_L",
+      "wing_R",
+      "crack",
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "thigh_L",
+      "shin_L",
+      "foot_L",
+      "thigh_R",
+      "shin_R",
+      "foot_R"
+    ]
+  },
+  "meshes": [
+    {
+      "name": "SK_Enemy_TombBeast_GlowShell",
+      "lod": null,
+      "tris": 655,
+      "verts": 467,
+      "materials": [
+        "M_Enemy_TombBeast_Glow"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_TombBeast_LOD0",
+      "lod": 0,
+      "tris": 11820,
+      "verts": 7743,
+      "materials": [
+        "M_Enemy_TombBeast"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_TombBeast_LOD1",
+      "lod": 1,
+      "tris": 4924,
+      "verts": 3778,
+      "materials": [
+        "M_Enemy_TombBeast"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_TombBeast_LOD2",
+      "lod": 2,
+      "tris": 1969,
+      "verts": 1883,
+      "materials": [
+        "M_Enemy_TombBeast"
+      ],
+      "skinned": true
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Enemy_TombBeast_Glow",
+      "baseColor": [
+        0.800000011920929,
+        0.800000011920929,
+        0.800000011920929,
+        1
+      ],
+      "metallic": 0,
+      "roughness": 0.5,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": false,
+      "occlusionSeparate": false,
+      "textures": {
+        "E": "Textures/T_Enemy_TombBeast_BC.png"
+      }
+    },
+    {
+      "name": "M_Enemy_TombBeast",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Enemy_TombBeast_BC.png",
+        "ORM": "Textures/T_Enemy_TombBeast_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/characters/SK_Enemy_TombBeast.glb",
+    "sha256": "168716001c665b00af11590da724bd112a56efe84fe0e22af221e72533ac7aaf",
+    "hiRes": false,
+    "version": {
+      "native_build": 2
+    },
+    "generator": {
+      "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+      "mode": "tripo_native",
+      "checkpoint": "P2.0"
+    },
+    "license": null
+  },
+  "exported": "2026-10-17 11:20:23"
+}

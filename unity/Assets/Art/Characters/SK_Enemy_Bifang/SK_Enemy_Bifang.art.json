@@ -1,0 +1,148 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SK_Enemy_Bifang",
+  "kind": "skeletal",
+  "class": "enemy_standard",
+  "category": "characters",
+  "bind": {
+    "source": "enemy",
+    "id": "bifang"
+  },
+  "keepGlow": "all",
+  "lodDistance": [
+    0,
+    14,
+    30
+  ],
+  "budget": {
+    "lodTris": [
+      8000,
+      3500,
+      1500
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "bounds": {
+    "min": [
+      -0.26641687750816345,
+      0.000777537003159523,
+      -0.5788959860801697
+    ],
+    "max": [
+      0.2662433087825775,
+      2,
+      0.5794148445129395
+    ]
+  },
+  "rig": {
+    "type": "generic",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": [
+      "root",
+      "hips",
+      "chest",
+      "neck_1",
+      "neck_2",
+      "neck_3",
+      "neck_4",
+      "neck_5",
+      "neck_6",
+      "head",
+      "beak_tip",
+      "crest_1",
+      "crest_2",
+      "ember",
+      "wing_1_L",
+      "wing_2_L",
+      "wing_3_L",
+      "wing_1_R",
+      "wing_2_R",
+      "wing_3_R",
+      "tail_1",
+      "tail_2",
+      "thigh",
+      "shin",
+      "tarsus",
+      "toes"
+    ]
+  },
+  "meshes": [
+    {
+      "name": "SK_Enemy_Bifang_LOD0",
+      "lod": 0,
+      "tris": 7878,
+      "verts": 10137,
+      "materials": [
+        "M_Enemy_Bifang"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_Bifang_LOD1",
+      "lod": 1,
+      "tris": 3446,
+      "verts": 5584,
+      "materials": [
+        "M_Enemy_Bifang"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_Bifang_LOD2",
+      "lod": 2,
+      "tris": 1476,
+      "verts": 2927,
+      "materials": [
+        "M_Enemy_Bifang"
+      ],
+      "skinned": true
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Enemy_Bifang",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Enemy_Bifang_BC.png",
+        "ORM": "Textures/T_Enemy_Bifang_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/characters/SK_Enemy_Bifang@hi.glb",
+    "sha256": "0541133dbd7424e88bc3b51d17103d5a025b4287b64e5e322d5b6b1dda8d72f3",
+    "hiRes": true,
+    "version": {
+      "native_build": 2
+    },
+    "generator": {
+      "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+      "mode": "tripo_native",
+      "checkpoint": "P2.0"
+    },
+    "license": null
+  },
+  "exported": "2026-10-17 11:23:42"
+}

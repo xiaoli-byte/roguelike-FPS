@@ -1,0 +1,149 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SK_Enemy_Qingniao",
+  "kind": "skeletal",
+  "class": "enemy_standard",
+  "category": "characters",
+  "bind": {
+    "source": "enemy",
+    "id": "qingniao"
+  },
+  "keepGlow": "all",
+  "lodDistance": [
+    0,
+    14,
+    30
+  ],
+  "budget": {
+    "lodTris": [
+      8000,
+      3500,
+      1500
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "bounds": {
+    "min": [
+      -1.433010458946228,
+      0,
+      -0.5523425936698914
+    ],
+    "max": [
+      1.433010458946228,
+      2.6000001430511475,
+      0.5523425936698914
+    ]
+  },
+  "rig": {
+    "type": "generic",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": [
+      "root",
+      "hips",
+      "chest",
+      "neck",
+      "head",
+      "wing_1_L",
+      "wing_2_L",
+      "wing_3_L",
+      "wing_1_R",
+      "wing_2_R",
+      "wing_3_R",
+      "tail_0",
+      "tail_C1",
+      "tail_C2",
+      "tail_C3",
+      "tail_L1",
+      "tail_L2",
+      "tail_L3",
+      "tail_R1",
+      "tail_R2",
+      "tail_R3",
+      "thigh_L",
+      "shin_L",
+      "foot_L",
+      "thigh_R",
+      "shin_R",
+      "foot_R"
+    ]
+  },
+  "meshes": [
+    {
+      "name": "SK_Enemy_Qingniao_LOD0",
+      "lod": 0,
+      "tris": 7880,
+      "verts": 11723,
+      "materials": [
+        "M_Enemy_Qingniao"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_Qingniao_LOD1",
+      "lod": 1,
+      "tris": 3447,
+      "verts": 6438,
+      "materials": [
+        "M_Enemy_Qingniao"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_Qingniao_LOD2",
+      "lod": 2,
+      "tris": 1472,
+      "verts": 3138,
+      "materials": [
+        "M_Enemy_Qingniao"
+      ],
+      "skinned": true
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Enemy_Qingniao",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Enemy_Qingniao_BC.png",
+        "ORM": "Textures/T_Enemy_Qingniao_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/characters/SK_Enemy_Qingniao@hi.glb",
+    "sha256": "e58af5d7d1a2a191952bb3951f6faa49f114fd959561998bf6ed4078afc6905a",
+    "hiRes": true,
+    "version": {
+      "native_build": 2
+    },
+    "generator": {
+      "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+      "mode": "tripo_native",
+      "checkpoint": "P2.0"
+    },
+    "license": null
+  },
+  "exported": "2026-10-17 11:21:00"
+}

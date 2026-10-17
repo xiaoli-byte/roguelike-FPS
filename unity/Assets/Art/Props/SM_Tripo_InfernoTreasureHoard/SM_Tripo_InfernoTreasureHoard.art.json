@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SM_Tripo_InfernoTreasureHoard",
+  "kind": "static",
+  "class": "tripo_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "inferno.v2.treasureHoard"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    20
+  ],
+  "budget": {
+    "lodTris": [
+      3000,
+      1000
+    ],
+    "texture": 1024,
+    "maxFileKb": 700
+  },
+  "bounds": {
+    "min": [
+      -1.1533352136611938,
+      0.0005553419468924403,
+      -0.6800283789634705
+    ],
+    "max": [
+      1.1587780714035034,
+      1.713595986366272,
+      0.8758109211921692
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_InfernoTreasureHoard_LOD0",
+      "lod": 0,
+      "tris": 3000,
+      "verts": 3178,
+      "materials": [
+        "M_Tripo_InfernoTreasureHoard"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_InfernoTreasureHoard_LOD1",
+      "lod": 1,
+      "tris": 1000,
+      "verts": 1605,
+      "materials": [
+        "M_Tripo_InfernoTreasureHoard"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_InfernoTreasureHoard",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_InfernoTreasureHoard_BC.png",
+        "N": "Textures/T_Tripo_InfernoTreasureHoard_N.png",
+        "ORM": "Textures/T_Tripo_InfernoTreasureHoard_ORM.png",
+        "E": "Textures/T_Tripo_InfernoTreasureHoard_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_InfernoTreasureHoard.glb",
+    "sha256": "06f592c7b1f74c49e8b2bffc96f7265186ca29eb59aab33f9c9a084c307a35f8",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 2,
+      "highpoly": 2,
+      "build": 2
+    },
+    "generator": {
+      "tool": "Hunyuan3D 2mv（ComfyUI 原生节点，四视图条件）",
+      "mode": "multiview",
+      "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+    },
+    "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
+  },
+  "exported": "2026-10-17 11:23:28"
+}

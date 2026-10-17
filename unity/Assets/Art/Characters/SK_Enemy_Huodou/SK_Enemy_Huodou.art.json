@@ -1,0 +1,151 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SK_Enemy_Huodou",
+  "kind": "skeletal",
+  "class": "enemy_swarm",
+  "category": "characters",
+  "bind": {
+    "source": "enemy",
+    "id": "huodou"
+  },
+  "keepGlow": "all",
+  "lodDistance": [
+    0,
+    12,
+    26
+  ],
+  "budget": {
+    "lodTris": [
+      6000,
+      2500,
+      1000
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "bounds": {
+    "min": [
+      -0.12601369619369507,
+      0,
+      -0.4998379945755005
+    ],
+    "max": [
+      0.12601369619369507,
+      1.1002966165542603,
+      0.49948713183403015
+    ]
+  },
+  "rig": {
+    "type": "generic",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": [
+      "root",
+      "hips",
+      "spine",
+      "chest",
+      "neck",
+      "bell",
+      "head",
+      "jaw",
+      "scapula_L",
+      "upperarm_L",
+      "forearm_L",
+      "paw_L",
+      "scapula_R",
+      "upperarm_R",
+      "forearm_R",
+      "paw_R",
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "tail_4",
+      "tail_5",
+      "thigh_L",
+      "shin_L",
+      "foot_L",
+      "toe_L",
+      "thigh_R",
+      "shin_R",
+      "foot_R",
+      "toe_R"
+    ]
+  },
+  "meshes": [
+    {
+      "name": "SK_Enemy_Huodou_LOD0",
+      "lod": 0,
+      "tris": 5910,
+      "verts": 4182,
+      "materials": [
+        "M_Enemy_Huodou"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_Huodou_LOD1",
+      "lod": 1,
+      "tris": 2461,
+      "verts": 2168,
+      "materials": [
+        "M_Enemy_Huodou"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_Huodou_LOD2",
+      "lod": 2,
+      "tris": 984,
+      "verts": 1145,
+      "materials": [
+        "M_Enemy_Huodou"
+      ],
+      "skinned": true
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Enemy_Huodou",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Enemy_Huodou_BC.png",
+        "ORM": "Textures/T_Enemy_Huodou_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/characters/SK_Enemy_Huodou@hi.glb",
+    "sha256": "735537cb0b0d11c1fcf89d1ac096d660b155cd596348f4fcb705b3d7792c1e94",
+    "hiRes": true,
+    "version": {
+      "native_build": 3
+    },
+    "generator": {
+      "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+      "mode": "tripo_native",
+      "checkpoint": "P2.0"
+    },
+    "license": null
+  },
+  "exported": "2026-10-17 11:23:32"
+}

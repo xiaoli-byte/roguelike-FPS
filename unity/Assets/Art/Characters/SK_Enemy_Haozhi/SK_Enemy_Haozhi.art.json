@@ -1,0 +1,146 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SK_Enemy_Haozhi",
+  "kind": "skeletal",
+  "class": "enemy_swarm",
+  "category": "characters",
+  "bind": {
+    "source": "enemy",
+    "id": "haozhi"
+  },
+  "keepGlow": "all",
+  "lodDistance": [
+    0,
+    12,
+    26
+  ],
+  "budget": {
+    "lodTris": [
+      6000,
+      2500,
+      1000
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "bounds": {
+    "min": [
+      -0.3035227060317993,
+      0.0007634231587871909,
+      -0.5030858516693115
+    ],
+    "max": [
+      0.3035227060317993,
+      0.9000000357627869,
+      0.5030858516693115
+    ]
+  },
+  "rig": {
+    "type": "generic",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": [
+      "root",
+      "hips",
+      "quill_3",
+      "spine",
+      "chest",
+      "neck",
+      "head",
+      "quill_1",
+      "upperarm_L",
+      "forearm_L",
+      "paw_L",
+      "upperarm_R",
+      "forearm_R",
+      "paw_R",
+      "quill_2",
+      "quill_L",
+      "quill_R",
+      "tail",
+      "thigh_L",
+      "shin_L",
+      "foot_L",
+      "thigh_R",
+      "shin_R",
+      "foot_R"
+    ]
+  },
+  "meshes": [
+    {
+      "name": "SK_Enemy_Haozhi_LOD0",
+      "lod": 0,
+      "tris": 5909,
+      "verts": 8684,
+      "materials": [
+        "M_Enemy_Haozhi"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_Haozhi_LOD1",
+      "lod": 1,
+      "tris": 2462,
+      "verts": 4705,
+      "materials": [
+        "M_Enemy_Haozhi"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_Haozhi_LOD2",
+      "lod": 2,
+      "tris": 985,
+      "verts": 2295,
+      "materials": [
+        "M_Enemy_Haozhi"
+      ],
+      "skinned": true
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Enemy_Haozhi",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Enemy_Haozhi_BC.png",
+        "ORM": "Textures/T_Enemy_Haozhi_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/characters/SK_Enemy_Haozhi@hi.glb",
+    "sha256": "bbad10b9608d21e12dca584fc3c0cd28eb1caf1bbd6cebe40993118cf0c83207",
+    "hiRes": true,
+    "version": {
+      "native_build": 3
+    },
+    "generator": {
+      "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+      "mode": "tripo_native",
+      "checkpoint": "P2.0"
+    },
+    "license": null
+  },
+  "exported": "2026-10-17 11:20:42"
+}

@@ -1,0 +1,251 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SK_Enemy_Founder",
+  "kind": "skeletal",
+  "class": "enemy_standard",
+  "category": "characters",
+  "bind": {
+    "source": "enemy",
+    "id": "founder"
+  },
+  "keepGlow": "all",
+  "lodDistance": [
+    0,
+    14,
+    30
+  ],
+  "budget": {
+    "lodTris": [
+      8000,
+      3500,
+      1500
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -0.44748419523239136,
+      0,
+      -0.3427455425262451
+    ],
+    "max": [
+      0.44758403301239014,
+      1.601299524307251,
+      0.3427455425262451
+    ]
+  },
+  "rig": {
+    "type": "humanoid",
+    "profile": "semantic",
+    "partsMode": null,
+    "human": {
+      "Hips": "hips",
+      "Spine": "spine",
+      "Chest": "chest",
+      "Neck": "neck",
+      "Head": "head",
+      "LeftShoulder": "shoulder_L",
+      "LeftUpperArm": "arm_L",
+      "LeftLowerArm": "forearm_L",
+      "LeftHand": "hand_L",
+      "LeftUpperLeg": "thigh_L",
+      "LeftLowerLeg": "shin_L",
+      "LeftFoot": "foot_L",
+      "LeftToes": "toe_L",
+      "Left Thumb Proximal": "thumb_1_L",
+      "Left Thumb Intermediate": "thumb_2_L",
+      "Left Index Proximal": "index_1_L",
+      "Left Index Intermediate": "index_2_L",
+      "Left Middle Proximal": "middle_1_L",
+      "Left Middle Intermediate": "middle_2_L",
+      "Left Ring Proximal": "ring_1_L",
+      "Left Ring Intermediate": "ring_2_L",
+      "Left Little Proximal": "pinky_1_L",
+      "Left Little Intermediate": "pinky_2_L",
+      "RightShoulder": "shoulder_R",
+      "RightUpperArm": "arm_R",
+      "RightLowerArm": "forearm_R",
+      "RightHand": "hand_R",
+      "RightUpperLeg": "thigh_R",
+      "RightLowerLeg": "shin_R",
+      "RightFoot": "foot_R",
+      "RightToes": "toe_R",
+      "Right Thumb Proximal": "thumb_1_R",
+      "Right Thumb Intermediate": "thumb_2_R",
+      "Right Index Proximal": "index_1_R",
+      "Right Index Intermediate": "index_2_R",
+      "Right Middle Proximal": "middle_1_R",
+      "Right Middle Intermediate": "middle_2_R",
+      "Right Ring Proximal": "ring_1_R",
+      "Right Ring Intermediate": "ring_2_R",
+      "Right Little Proximal": "pinky_1_R",
+      "Right Little Intermediate": "pinky_2_R"
+    },
+    "tpose": null,
+    "bones": [
+      "root",
+      "hips",
+      "apron_B1",
+      "apron_B2",
+      "apron_F1",
+      "apron_F2",
+      "spine",
+      "chest",
+      "crucible",
+      "bronze",
+      "spout_tip",
+      "neck",
+      "head",
+      "beard_1",
+      "beard_2",
+      "beard_3",
+      "shoulder_L",
+      "arm_L",
+      "forearm_L",
+      "hand_L",
+      "index_1_L",
+      "index_2_L",
+      "middle_1_L",
+      "middle_2_L",
+      "pinky_1_L",
+      "pinky_2_L",
+      "ring_1_L",
+      "ring_2_L",
+      "thumb_1_L",
+      "thumb_2_L",
+      "shoulder_R",
+      "arm_R",
+      "forearm_R",
+      "hand_R",
+      "index_1_R",
+      "index_2_R",
+      "middle_1_R",
+      "middle_2_R",
+      "pinky_1_R",
+      "pinky_2_R",
+      "ring_1_R",
+      "ring_2_R",
+      "thumb_1_R",
+      "thumb_2_R",
+      "thigh_L",
+      "shin_L",
+      "foot_L",
+      "toe_L",
+      "thigh_R",
+      "shin_R",
+      "foot_R",
+      "toe_R"
+    ]
+  },
+  "meshes": [
+    {
+      "name": "SK_Enemy_Founder_GlowShell",
+      "lod": null,
+      "tris": 31,
+      "verts": 47,
+      "materials": [
+        "M_Enemy_Founder_Glow"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_Founder_LOD0",
+      "lod": 0,
+      "tris": 7880,
+      "verts": 11203,
+      "materials": [
+        "M_Enemy_Founder"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_Founder_LOD1",
+      "lod": 1,
+      "tris": 3446,
+      "verts": 6121,
+      "materials": [
+        "M_Enemy_Founder"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_Founder_LOD2",
+      "lod": 2,
+      "tris": 1476,
+      "verts": 3062,
+      "materials": [
+        "M_Enemy_Founder"
+      ],
+      "skinned": true
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Enemy_Founder_Glow",
+      "baseColor": [
+        0.800000011920929,
+        0.800000011920929,
+        0.800000011920929,
+        1
+      ],
+      "metallic": 0,
+      "roughness": 0.5,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": false,
+      "occlusionSeparate": false,
+      "textures": {
+        "E": "Textures/T_Enemy_Founder_BC.png"
+      }
+    },
+    {
+      "name": "M_Enemy_Founder",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Enemy_Founder_BC.png",
+        "ORM": "Textures/T_Enemy_Founder_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/characters/SK_Enemy_Founder@hi.glb",
+    "sha256": "73d868e4eeeb78f087cbe20e16b3872d120201c4c70932da63f3c679d8e304ff",
+    "hiRes": true,
+    "version": {
+      "native_build": 2
+    },
+    "generator": {
+      "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+      "mode": "tripo_native",
+      "checkpoint": "P2.0"
+    },
+    "license": null
+  },
+  "exported": "2026-10-17 14:08:53"
+}

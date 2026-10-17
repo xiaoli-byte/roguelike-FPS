@@ -1,0 +1,125 @@
+{
+  "schema": 1,
+  "exporterVersion": 4,
+  "id": "SM_Tripo_DesertColossus",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "desert.v2.colossus"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    24,
+    60
+  ],
+  "budget": {
+    "lodTris": [
+      8000,
+      2500,
+      800
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "bounds": {
+    "min": [
+      -4.381046295166016,
+      0,
+      -4.764045715332031
+    ],
+    "max": [
+      4.381046295166016,
+      16.000194549560547,
+      4.764045715332031
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_DesertColossus_LOD0",
+      "lod": 0,
+      "tris": 7960,
+      "verts": 11267,
+      "materials": [
+        "M_Tripo_DesertColossus"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_DesertColossus_LOD1",
+      "lod": 1,
+      "tris": 2487,
+      "verts": 4535,
+      "materials": [
+        "M_Tripo_DesertColossus"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_DesertColossus_LOD2",
+      "lod": 2,
+      "tris": 795,
+      "verts": 1810,
+      "materials": [
+        "M_Tripo_DesertColossus"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_DesertColossus",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_DesertColossus_BC.png",
+        "N": "Textures/T_Tripo_DesertColossus_N.png",
+        "ORM": "Textures/T_Tripo_DesertColossus_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_DesertColossus.glb",
+    "sha256": "2bb21e16d1a3efc12129f3861bad136b5d3ee2c63b5016ffa80c244cee1dc9d8",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 2
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-17 00:30:32"
+}
