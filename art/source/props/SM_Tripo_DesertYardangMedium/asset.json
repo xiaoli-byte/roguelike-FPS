@@ -1,0 +1,517 @@
+{
+  "id": "SM_Tripo_DesertYardangMedium",
+  "display": "雅丹岩丘·中（9 m）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 16:25:10",
+          "files": {
+            "BO_SM_Tripo_DesertYardangMedium_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertYardangMedium_v001.json",
+              "sha256": "b164e1659b5c815eae05943cedb7c75caa331fc06a39086adf8f7dd69d9f2d11"
+            },
+            "BO_SM_Tripo_DesertYardangMedium_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertYardangMedium_v001_views.json",
+              "sha256": "665265c5951b6395f3682078ace54b3e10194d2703408bdde0880d61dab8ea18"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.yardangMedium"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -3.25,
+              0,
+              -8.0
+            ],
+            "max": [
+              3.25,
+              9.0,
+              8.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 4,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 16:26:06",
+          "files": {
+            "CN_SM_Tripo_DesertYardangMedium_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v001_source.png",
+              "sha256": "d3093b8fc10ac4ce305fcb5ee5581b3c7cf24d6173742b323dc57bc9cfb81e19"
+            },
+            "CN_SM_Tripo_DesertYardangMedium_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v001_front.png",
+              "sha256": "c0b45fe4ae6bf020efe037aab09e8576c71088ac000c633ee846ea9601c74d1b"
+            },
+            "CN_SM_Tripo_DesertYardangMedium_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v001_left.png",
+              "sha256": "17c56b8f5d70a945eec2886123f3f9cc48879cf2e1c3fa1c4eaa6e9a561cf3e2"
+            },
+            "CN_SM_Tripo_DesertYardangMedium_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v001_back.png",
+              "sha256": "e9e70c22809e863faa281ac5b6e9a3024b9048fdfbc86746f82990aff70947f3"
+            },
+            "CN_SM_Tripo_DesertYardangMedium_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v001_right.png",
+              "sha256": "fc10b9f2a6da6339d1d49e6d2835c7781ef049d0dbaf8d27a3252aadf305e552"
+            },
+            "CN_SM_Tripo_DesertYardangMedium_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v001_sheet.png",
+              "sha256": "e41b28595f44465833568c53ebfce9d075dd09fff9778e3a0ac45d5a21fbf646"
+            },
+            "CN_SM_Tripo_DesertYardangMedium_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v001_prompt.txt",
+              "sha256": "e816d3c08ebce0a8a777fc1c81f4f643eae02ac5e20ab14510847cc10093b602"
+            },
+            "CN_SM_Tripo_DesertYardangMedium_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v001_registration.json",
+              "sha256": "61128a1677b484f3d67e9129cf02f421109e81f8e0bf29467a4fcefb5fafb009"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-5.6-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-5.6-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a148f7-0701-7ba2-9aa8-ed617c45b331",
+            "attempt": 1,
+            "seconds": 52.8
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (6.5m wide x 9m tall x 16m deep): A medium wind-eroded yardang rock mound 9m tall, 6.5m wide and 16m long, its long axis running front-to-back along the prevailing wind: a blunt, steep, rounded upwind head at the FRONT and a long body that tapers and lowers gently toward a narrower tail at the BACK. Flat, slightly tilted walkable top; steep near-vertical sides carved by broad vertical wind flutes and grooves, with a shallow undercut notch near the base. Bold horizontal sediment banding in alternating ochre-red and sand-yellow layers wraps all the way around. Broad faceted hand-painted planes, chunky readable forms, two or three colour blocks, no tiny cracks, pebbles, vegetation or man-made parts. One solid rock mass on a flat base. The FRONT and BACK views show the narrow 6.5m ends; the LEFT and RIGHT side views show the long 16m profile.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "d3093b8fc10ac4ce305fcb5ee5581b3c7cf24d6173742b323dc57bc9cfb81e19",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.4806408544726301,
+              "offset": [
+                184,
+                383
+              ],
+              "size": [
+                143,
+                257
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5173900546133946,
+              "offset": [
+                90,
+                383
+              ],
+              "size": [
+                332,
+                257
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.523712540005819,
+              "offset": [
+                193,
+                383
+              ],
+              "size": [
+                126,
+                257
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5122367672168469,
+              "offset": [
+                91,
+                383
+              ],
+              "size": [
+                330,
+                257
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "rejected",
+            "by": "TheSoulOfCommunism",
+            "note": "正视图像柱体、顶面像斜坡、基部拱洞过于规整。重画：顶面基本水平（略向尾部降低），侧壁陡直带水平层理与竖向风蚀槽，基部浅掏蚀而非拱洞",
+            "time": "2026-10-17 16:50:35"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-17 17:00:47",
+          "files": {
+            "CN_SM_Tripo_DesertYardangMedium_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v002_source.png",
+              "sha256": "6712f30f25e6850f51e3ee4937704f72645bf7765e81f9da892c047d23762490"
+            },
+            "CN_SM_Tripo_DesertYardangMedium_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v002_front.png",
+              "sha256": "c9a97969907047872f423c5dc1fc539c68cf25a0e031d4821b867d1608c8b869"
+            },
+            "CN_SM_Tripo_DesertYardangMedium_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v002_left.png",
+              "sha256": "a34fbb0f4d6684f871dd41813d4e0a022a2c9d604da258adf5e84982a9aebac4"
+            },
+            "CN_SM_Tripo_DesertYardangMedium_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v002_back.png",
+              "sha256": "3a9a18d82560947ec5edefe3374ffabf8d55a5196d2f3f27a137a07cf1ed18d6"
+            },
+            "CN_SM_Tripo_DesertYardangMedium_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v002_right.png",
+              "sha256": "f1c89b598bd9e97747ab12f500ad8d7bd0252e2496b8f005bfb4e3c81af0fa7f"
+            },
+            "CN_SM_Tripo_DesertYardangMedium_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v002_sheet.png",
+              "sha256": "5abccd00b542d765d51bca624899b14cf66f436738a7800750bdb6900e691996"
+            },
+            "CN_SM_Tripo_DesertYardangMedium_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v002_prompt.txt",
+              "sha256": "9a099b190990f56dc01d8904291c9339c58e8eeee6061cc11772ceaccc318434"
+            },
+            "CN_SM_Tripo_DesertYardangMedium_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v002_registration.json",
+              "sha256": "67799e1c7e06ff2276aa1b6f26427dac1a69c902f0aced3c0bbc181f5cdf1008"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-5.6-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-5.6-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a14916-c139-7b93-90af-3f27dd5fb607",
+            "attempt": 1,
+            "seconds": 54.9
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (6.5m wide x 9m tall x 16m deep): A medium wind-eroded yardang rock mound 9m tall, 6.5m wide and 16m long, its long axis running front-to-back along the wind, made of the same rock as a big ship-shaped yardang ridge: bold, perfectly horizontal sediment strata in alternating ochre-red and pale sand-yellow bands, each band a broad flat stripe that wraps all the way around at the same height on every side. Shape: one massive flat-topped loaf-like rock body, NOT a slender pillar or tower and NOT a ramp or wedge. The top is a broad, almost level flat plateau: a full 9m high from the front head over the front three quarters of the length, then one low step down by about 1.5m over the last quarter to the tail at the BACK end. The side walls are steep and near-vertical with slightly rounded upper edges, carved by a few broad vertical wind flutes and grooves. Along the foot a continuous shallow horizontal undercut groove runs all around like a waterline notch, a recessed band about 1m tall; no arches, caves, holes or separate legs, the rock sits solidly on the ground along its whole length. The FRONT is the blunt rounded upwind head. EXACT VIEW PROPORTIONS, all four views drawn at the same 9m height: FRONT and BACK views show the 6.5m narrow end, drawn clearly taller than wide (width about 0.7 of the height), a sturdy upright mass with a broad flat top nearly as wide as the base, only slightly rounded shoulders and sides that flare a little outward to the footing, the horizontal bands running straight across it; the BACK outline is the FRONT outline mirrored at the same full height, because the taller head still shows behind the lower tail step, which appears as a lower ledge in front. LEFT and RIGHT side views show the long 16m profile, drawn 1.8 times as long as tall (never longer), the two side views exact mirror images of each other: a nearly horizontal top line with the blunt head at the front end and the single low step down near the back end, the horizontal bands parallel to the ground, never diagonal. Broad faceted hand-painted planes, chunky readable forms, two or three colour blocks, no tiny cracks, pebbles, vegetation or man-made parts. One solid rock mass on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "6712f30f25e6850f51e3ee4937704f72645bf7765e81f9da892c047d23762490",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.627177700348432,
+              "offset": [
+                174,
+                383
+              ],
+              "size": [
+                163,
+                257
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6380716058135412,
+              "offset": [
+                33,
+                383
+              ],
+              "size": [
+                445,
+                257
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.627177700348432,
+              "offset": [
+                175,
+                383
+              ],
+              "size": [
+                162,
+                257
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.6380716058135412,
+              "offset": [
+                44,
+                383
+              ],
+              "size": [
+                424,
+                257
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "rejected",
+            "by": "TheSoulOfCommunism",
+            "note": "v002：顶平、层理水平、无拱洞都对，但笔触偏软偏糊、整体像方台地。重画：迎风的头部钝圆流线（像倒扣的船底/鲸背），尾部逐渐收窄降低，侧壁陡、带竖向风蚀槽；层理条带清晰利落，参照已通过的雅丹舰形的画法",
+            "time": "2026-10-17 23:13:43"
+          }
+        },
+        {
+          "version": 3,
+          "created": "2026-10-17 23:16:46",
+          "files": {
+            "CN_SM_Tripo_DesertYardangMedium_v003_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v003_source.png",
+              "sha256": "998a303b3d50c990783036b1fa14087f9701451f4ad62634dde187bfa491e799"
+            },
+            "CN_SM_Tripo_DesertYardangMedium_v003_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v003_front.png",
+              "sha256": "74ee27bf4bae2b897ceeef2394d8ffa15fc5eeec0c23096f5e53c746924c4d9c"
+            },
+            "CN_SM_Tripo_DesertYardangMedium_v003_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v003_left.png",
+              "sha256": "2cf931ce3aadad0fc10ab21c8b8266846da159bf9c79c33480f9817a830310d6"
+            },
+            "CN_SM_Tripo_DesertYardangMedium_v003_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v003_back.png",
+              "sha256": "7959ebce0f63e3c10b96ad541e539b13d7213dae3ad91ce76928f2c25caf8532"
+            },
+            "CN_SM_Tripo_DesertYardangMedium_v003_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v003_right.png",
+              "sha256": "fbab424be92e0b4c2ed03c84a12ee8f027de34bb82797019ba84fb3a079f9408"
+            },
+            "CN_SM_Tripo_DesertYardangMedium_v003_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v003_sheet.png",
+              "sha256": "d925ad52b9e41855bc75995faeeb423ed5bb20d48a8241d0cb9488c596cd0705"
+            },
+            "CN_SM_Tripo_DesertYardangMedium_v003_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v003_prompt.txt",
+              "sha256": "e5ca38b579337bd61d7a4a26d10667bbe768a096ea0d32768f7f63103dd0b8fa"
+            },
+            "CN_SM_Tripo_DesertYardangMedium_v003_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v003_registration.json",
+              "sha256": "9c2c5410afabc6cd36d02ea5ce51d0870aec02e13e817fe427d95e1a170dfd1a"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-5.6-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-5.6-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2243,
+              701
+            ],
+            "references": [],
+            "codex_session": "01a14a6e-1afa-7b01-975b-0e3b0676ef0f",
+            "attempt": 1,
+            "seconds": 112.1
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (6.5m wide x 9m tall x 16m deep): A medium wind-eroded yardang rock mound 9m tall, 6.5m wide and 16m long, its long axis running front-to-back along the wind: a smaller sibling of a big ship-shaped yardang ridge, painted in exactly the same crisp style, but streamlined like an upturned boat hull or a whale's back, NOT a square block, mesa, table or loaf, and NOT a pointed ship prow. Shape: the FRONT is the upwind head, blunt and smoothly rounded like the bow of an upturned hull, its silhouette a big convex curve that bulges forward low down and rolls back over the top, no flat vertical front face and no sharp corners. The top is broad and walkable, highest (9m) just behind the head, a gently arched whale-back line that stays nearly level over the front half and then slopes down smoothly and gradually to a low rounded tail about 5m high at the BACK end; no steps, ledges or terraces. Seen from above the body is a long teardrop: full 6.5m width at the head, steadily narrowing toward the tail. The side walls are steep and near-vertical with rounded upper shoulders, carved by many bold vertical wind flutes: parallel rounded grooves and ribs running from top to foot like organ pipes, each groove with a crisp darker shadow side. Along the foot a continuous shallow horizontal undercut groove runs all around like a waterline notch, a recessed band about 1m tall; no arches, caves, holes, pockets or separate legs, the rock sits solidly on the ground along its whole length. Strata: perfectly horizontal sediment bands parallel to the ground, never diagonal, alternating saturated ochre-red and pale sand-yellow with a few thin dark rust-red pinstripe lines between them, each band a clean hard-edged flat stripe that wraps all the way around at the same height on every side; high contrast, sharp clean edges, no soft blur, no smudged watercolour bleeding, no airbrushed haze. EXACT VIEW PROPORTIONS, all four views drawn at the same 9m height: FRONT view shows the 6.5m head end, taller than wide (width about 0.7 of the height), a rounded dome-shouldered upright mass like the cross-section of an upturned boat, widest at the base and rounding over at the top; BACK view shows the same full-height head outline behind, with the narrower, lower rounded tail stacked in front of it. LEFT and RIGHT side views show the long 16m profile, drawn 1.8 times as long as tall (never longer), exact mirror images of each other: the big rounded blunt head at the front end, the arched top line, the long smooth taper down to the low tail at the back end. Broad faceted hand-painted planes, chunky readable forms, two or three colour blocks, no tiny cracks, pebbles, vegetation or man-made parts. One solid rock mass on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "998a303b3d50c990783036b1fa14087f9701451f4ad62634dde187bfa491e799",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.523712540005819,
+              "offset": [
+                190,
+                383
+              ],
+              "size": [
+                132,
+                257
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5482790130977764,
+              "offset": [
+                73,
+                383
+              ],
+              "size": [
+                365,
+                257
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5226480836236933,
+              "offset": [
+                191,
+                383
+              ],
+              "size": [
+                130,
+                257
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5357142857142857,
+              "offset": [
+                83,
+                383
+              ],
+              "size": [
+                345,
+                257
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 4,
+          "created": "2026-10-17 23:18:20",
+          "files": {
+            "CN_SM_Tripo_DesertYardangMedium_v004_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v004_source.png",
+              "sha256": "637d6f4bb10851499887f8fc497c34c148b79b78ed5eb670786d7d42e12ee284"
+            },
+            "CN_SM_Tripo_DesertYardangMedium_v004_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v004_front.png",
+              "sha256": "9a25ec866ab2004c336967010afb7991089053b5808622099c07a7935b297d72"
+            },
+            "CN_SM_Tripo_DesertYardangMedium_v004_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v004_left.png",
+              "sha256": "90063868e3d30b0a82c929cb2438b6a41f29ad76e9fbcf8c8c4e7c00e9beb7c0"
+            },
+            "CN_SM_Tripo_DesertYardangMedium_v004_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v004_back.png",
+              "sha256": "992dce9e3731426a51d80dee353b033722ddf557c16c346b604e9e677b6d032c"
+            },
+            "CN_SM_Tripo_DesertYardangMedium_v004_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v004_right.png",
+              "sha256": "3534b29e61ed4095a64d3161d9161d7b84b071eb09021abaaa372540ac4dba01"
+            },
+            "CN_SM_Tripo_DesertYardangMedium_v004_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v004_sheet.png",
+              "sha256": "982092183ad65ec78e7e324eaf9bf3d6d5a9cdf7162e2fe6a3e47420c929719f"
+            },
+            "CN_SM_Tripo_DesertYardangMedium_v004_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v004_prompt.txt",
+              "sha256": "ab04fc2f4a46f2d4503a01efb730fcaca5837ae5f1b8533cc292201bd886caed"
+            },
+            "CN_SM_Tripo_DesertYardangMedium_v004_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangMedium_v004_registration.json",
+              "sha256": "10c0324e7f23f13231f0586b93e05618b15ff2ab3ec39e0144fa2898d52f9213"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-5.6-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-5.6-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a14a70-5d9f-7372-a874-1fe584f5f876",
+            "attempt": 1,
+            "seconds": 58.3
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (6.5m wide x 9m tall x 16m deep): A medium wind-eroded yardang rock mound 9m tall, 6.5m wide and 16m long, its long axis running front-to-back along the wind: a smaller sibling of a big ship-shaped yardang ridge, painted in exactly the same crisp style, but streamlined like a long upturned boat hull or a whale's back lying low along the ground, NOT a square block, mesa or table, NOT a narrow bullet, thumb, pillar or tower, NOT a ramp or wedge, and NOT a pointed ship prow. Shape: the FRONT is the upwind head, blunt and smoothly rounded like the bow of an upturned hull, a big convex curve that rolls back over the top, no flat vertical front face and no sharp corners. The top is broad and walkable: a gently arched whale-back line, full 9m height and almost level over the front 60% of the length, then easing down smoothly to a rounded tail that is still about 6m high at the BACK end; no steps, ledges or terraces. Seen from above the body is a long teardrop: full 6.5m width at the head, gradually narrowing to about 4.5m at the tail. The side walls are steep and near-vertical with rounded upper shoulders, carved by many bold vertical wind flutes: parallel rounded grooves and ribs running from top to foot like organ pipes, each groove with a crisp darker shadow side. At the foot a continuous shallow horizontal undercut groove about 1m tall is cut INTO the rock all around like a waterline notch, the rock meeting the ground directly below it; no protruding plinth, pedestal, base slab or skirt, no arches, caves, holes, pockets or separate legs. Strata: horizontal sediment layers like a sliced layer cake, five or six alternating bands from foot to top, saturated ochre-red and pale sand-yellow (at least three broad sand-yellow bands, evenly spread over the whole height including the upper half), a few thin dark rust-red pinstripe lines between them, the top surface capped pale sand-yellow. CRITICAL: every band stays at one fixed height above the ground along the entire length and is dead level, perfectly parallel to the ground line; where the top descends toward the tail it simply cuts across the upper bands, which end there; bands never bend, dip, tilt or follow the top curve. Each band a clean hard-edged flat stripe wrapping all the way around; high contrast, sharp clean edges, no soft blur, no smudged watercolour bleeding, no airbrushed haze. EXACT VIEW PROPORTIONS, all four views drawn at the same 9m height: FRONT view shows the 6.5m head end, a broad massive mass whose width is 0.72 of its height (wide, never slender), sides nearly vertical, flaring a little toward the ground, rounding over only in the top quarter like the cross-section of an upturned boat; BACK view shows the same broad full-height head outline behind, with the narrower, lower (6m) rounded tail stacked in front of it. LEFT and RIGHT side views show the long 16m profile, drawn 1.8 times as long as tall (long and low, clearly longer than in a squat sketch, never longer than 1.8), exact mirror images of each other: the big rounded blunt head at the front end, the long almost level arched top, the gentle ease-down to the still-tall tail at the back end. Broad faceted hand-painted planes, chunky readable forms, two or three colour blocks, no tiny cracks, pebbles, vegetation or man-made parts. One solid rock mass on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "637d6f4bb10851499887f8fc497c34c148b79b78ed5eb670786d7d42e12ee284",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.6477150053976249,
+              "offset": [
+                165,
+                383
+              ],
+              "size": [
+                182,
+                257
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6838905775075987,
+              "offset": [
+                30,
+                383
+              ],
+              "size": [
+                452,
+                257
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6838905775075987,
+              "offset": [
+                166,
+                383
+              ],
+              "size": [
+                179,
+                257
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.6857142857142856,
+              "offset": [
+                32,
+                383
+              ],
+              "size": [
+                448,
+                257
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "rejected",
+            "by": "TheSoulOfCommunism",
+            "note": "v004 像圆面包、风蚀槽过于规整、基部一排小凹洞。决定先砍掉此资产：中等雅丹由地形高度场负责，远景用舰形雅丹；保留登记，不再重画（2026-10-17）",
+            "time": "2026-10-17 23:39:16"
+          }
+        }
+      ]
+    }
+  }
+}

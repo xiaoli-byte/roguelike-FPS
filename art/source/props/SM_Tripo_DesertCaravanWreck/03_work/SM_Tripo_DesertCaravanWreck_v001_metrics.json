@@ -1,0 +1,103 @@
+{
+  "source": {
+    "tris": 2940,
+    "verts": 1708
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 4.03397,
+    "iou": 0.712,
+    "iou_per_view": {
+      "front": 0.653,
+      "left": 0.754,
+      "back": 0.698,
+      "right": 0.774
+    },
+    "size_m": [
+      3.792,
+      4.032,
+      1.818
+    ],
+    "reference_m": [
+      5.0,
+      3.6,
+      2.2
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.556,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Tripo_DesertCaravanWreck_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertCaravanWreck_LOD0",
+      "tris": 2940,
+      "verts": 1708,
+      "uv_min": [
+        0.0009765625,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.992919921875,
+        0.9990234375
+      ],
+      "uv_utilization": 0.709,
+      "bbox_min": [
+        -1.8958,
+        -2.016,
+        0.0
+      ],
+      "bbox_max": [
+        1.8958,
+        2.016,
+        1.818
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertCaravanWreck_LOD1",
+      "tris": 995,
+      "verts": 688,
+      "uv_min": [
+        0.0009765625,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.992919921875,
+        0.9990234375
+      ],
+      "uv_utilization": 0.586,
+      "bbox_min": [
+        -1.8958,
+        -2.0268,
+        0.0017
+      ],
+      "bbox_max": [
+        1.8958,
+        2.016,
+        1.8181
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertCaravanWreck/04_export/SM_Tripo_DesertCaravanWreck_v001.glb",
+    "bytes": 331768
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 9.5,
+  "_seconds": 10.8
+}

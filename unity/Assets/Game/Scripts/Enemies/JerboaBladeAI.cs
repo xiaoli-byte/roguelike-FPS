@@ -1,0 +1,194 @@
+using UnityEngine;
+
+namespace Spiritfire.Game
+{
+    /// <summary>
+    /// 跳鼠刀兵（Three.js 版 src/enemies/types/JerboaBlade.ts）：成群的侧翼骚扰者。
+    ///   逼近：12 m 外直扑；12 m 内左右折线（0.45–0.85 s 换向）；冷却中在 3.8–6.5 m 的距离带上绕圈，不贴脸
+    ///   扑斩：4–9 m、看得见、拿到近战名额 → 蹲伏 0.4 s（落点预警）→ 真跳向预判落点（提前 35%）→ 落地 360° 旋斩 2 m（伤害 ×1.3）
+    ///         → 硬直 0.5 s（反击窗口）→ 离得近就向后跳开
+    ///   贴脸：1.5 m 内交叉斩，前摇 0.3 s
+    /// </summary>
+    public sealed class JerboaBladeAI : EnemyAI
+    {
+        const float LeapMin = 4, LeapMax = 9, LeapWindup = 0.4f, Gravity = 26, LeapShort = 0.9f, LeapLead = 0.35f;
+        const float SpinRange = 2f, SpinTime = 0.28f, SpinMult = 1.3f, SlashRange = 1.5f, SlashWindup = 0.3f;
+        const float RecoverAfterSpin = 0.5f, HopBackTime = 0.42f, HopBackSpeed = 7.5f;
+
+        float windTime, recoverTime, leapTime, zigzagTimer, strafeSign = 1;
+        Vector3 leapTarget;
+        bool leapHit;
+
+        static readonly Color Warn = new(1f, 0.55f, 0.2f);
+
+        protected override void Think(float dt)
+        {
+            float d = DistToPlayer;
+            switch (state)
+            {
+                case "chase":
+                {
+                    if (cooldown <= 0 && sees)
+                    {
+                        if (d <= SlashRange + 0.3f && RequestAttack(AttackTokens.Kind.Melee, 1.2f))
+                        {
+                            windTime = Windup(SlashWindup, 0.22f);
+                            SetState("slashWindup");
+                            break;
+                        }
+                        if (d >= LeapMin && d <= LeapMax && RequestAttack(AttackTokens.Kind.Melee, 2.2f))
+                        {
+                            BeginCrouch(LeapWindup);
+                            break;
+                        }
+                    }
+                    zigzagTimer -= dt;
+                    if (zigzagTimer <= 0)
+                    {
+                        zigzagTimer = Random.Range(0.45f, 0.85f);
+                        strafeSign = -strafeSign;
+                    }
+                    if (d > 12 || !sees)
+                    {
+                        MoveTo(PlayerPos, moveSpeed);
+                        FaceMovement(720, dt);
+                    }
+                    else if (cooldown > 0.25f)
+                    {
+                        KeepRange(3.8f, 6.5f, moveSpeed, strafeSign);
+                        FaceTravel(dt);
+                    }
+                    else
+                    {
+                        var to = (PlayerPos - transform.position).normalized;
+                        var side = new Vector3(-to.z, 0, to.x) * strafeSign;
+                        float fwd = d > LeapMin - 0.5f ? 1f : 0.2f;
+                        MoveTo(transform.position + (to * fwd + side * (d > 2 ? 0.85f : 0.4f)) * 4f, moveSpeed);
+                        FaceTravel(dt);
+                    }
+                    break;
+                }
+                case "crouch":
+                    Stop();
+                    FacePlayer(460, dt);
+                    if (stateTime >= windTime) LaunchLeap();
+                    break;
+                case "leap":
+                    FaceTowards(leapTarget, 720, dt);
+                    if ((ManualGrounded && stateTime > 0.1f) || stateTime >= leapTime + 0.35f || (HitWall && stateTime > 0.15f)) Spin();
+                    break;
+                case "spin":
+                    Stop();
+                    if (stateTime >= SpinTime)
+                    {
+                        recoverTime = RecoverAfterSpin;
+                        SetState("recover");
+                    }
+                    break;
+                case "slashWindup":
+                    FacePlayer(460, dt);
+                    if (d > 1f) MoveTo(PlayerPos, moveSpeed * 0.5f);
+                    else Stop();
+                    if (stateTime >= windTime)
+                    {
+                        Play("spin", 0.05f);
+                        Melee(SlashRange, Damage, 0.2f);
+                        recoverTime = 0.38f;
+                        SetState("recover");
+                    }
+                    break;
+                case "recover":
+                    Stop();
+                    FacePlayer(230, dt);
+                    if (stateTime >= recoverTime / Mathf.Sqrt(auraAttackRate))
+                    {
+                        ReleaseAttack();
+                        RollCooldown(1.4f, 2.6f);
+                        if (d < 3.5f)
+                        {
+                            // 打了就跑：向后（略斜）跳开
+                            var away = (transform.position - PlayerPos);
+                            away.y = 0;
+                            away = away.normalized;
+                            var dir = (away + new Vector3(-away.z, 0, away.x) * strafeSign * 0.5f).normalized;
+                            BeginManualMotion(dir * HopBackSpeed + Vector3.up * 5.2f, Gravity);
+                            SetState("hopBack");
+                        }
+                        else
+                        {
+                            PlayLocomotion();
+                            SetState("chase");
+                        }
+                    }
+                    break;
+                case "hopBack":
+                    FacePlayer(340, dt);
+                    if (stateTime >= HopBackTime || (ManualGrounded && stateTime > 0.15f))
+                    {
+                        EndManualMotion();
+                        PlayLocomotion();
+                        SetState("chase");
+                    }
+                    break;
+                default:
+                    PlayLocomotion();
+                    SetState("chase");
+                    break;
+            }
+        }
+
+        void FaceTravel(float dt)
+        {
+            if (agent.velocity.magnitude > 2 && DistToPlayer > 2.4f) FaceMovement(570, dt);
+            else FacePlayer(570, dt);
+        }
+
+        void BeginCrouch(float time)
+        {
+            windTime = Windup(time, 0.26f);
+            Stop();
+            Play("crouch", 0.06f);
+            SetState("crouch");
+            // 预警：预判落点
+            leapTarget = PredictLanding(out _);
+            Telegraph.Circle(leapTarget, SpinRange, windTime + 0.5f, Warn);
+        }
+
+        Vector3 PredictLanding(out float dist)
+        {
+            var to = PlayerPos - transform.position;
+            to.y = 0;
+            float est = 0.32f + to.magnitude * 0.035f;
+            var target = PredictPlayer(est * LeapLead);
+            var dir = target - transform.position;
+            dir.y = 0;
+            float len = Mathf.Max(0.01f, dir.magnitude);
+            dist = Mathf.Clamp(len - LeapShort, 1.5f, LeapMax);
+            return transform.position + dir / len * dist;
+        }
+
+        /// <summary>真跳跃：按落点距离定飞行时间，竖直初速让它在 leapTime 后回到起跳高度</summary>
+        void LaunchLeap()
+        {
+            leapTarget = PredictLanding(out float dist);
+            leapTime = 0.32f + dist * 0.035f;
+            var dir = leapTarget - transform.position;
+            dir.y = 0;
+            dir.Normalize();
+            transform.rotation = Quaternion.LookRotation(dir);
+            leapHit = false;
+            HitWall = false;
+            BeginManualMotion(dir * (dist / leapTime) + Vector3.up * (Gravity * leapTime * 0.5f), Gravity);
+            Play("leap", 0.04f);
+            SetState("leap");
+        }
+
+        void Spin()
+        {
+            EndManualMotion();
+            Play("spin", 0.04f);
+            leapHit = Burst(transform.position, SpinRange, Damage * SpinMult);
+            SetState("spin");
+        }
+    }
+}

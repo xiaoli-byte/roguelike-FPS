@@ -1,0 +1,683 @@
+{
+  "id": "SM_Tripo_DesertBeaconTower",
+  "display": "汉代烽燧（赤沙古道地标）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 16:22:11",
+          "files": {
+            "BO_SM_Tripo_DesertBeaconTower_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertBeaconTower_v001.json",
+              "sha256": "f1eabc1352f321c286b66326ff34e1cb349ceda0e96712b4b6cc5404dabcb8f8"
+            },
+            "BO_SM_Tripo_DesertBeaconTower_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertBeaconTower_v001_views.json",
+              "sha256": "4a668a5e122e60edf9ce054abf39f176d2ff6ce7d835b3059cb98cbc25fb42d4"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.beaconTower"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -4.5,
+              0,
+              -4.5
+            ],
+            "max": [
+              4.5,
+              14.0,
+              4.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 16:23:16",
+          "files": {
+            "CN_SM_Tripo_DesertBeaconTower_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBeaconTower_v001_source.png",
+              "sha256": "76b4777f28be510abe6b681752fa16ae71a212b18fdeb0970d71e39f93ab0083"
+            },
+            "CN_SM_Tripo_DesertBeaconTower_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBeaconTower_v001_front.png",
+              "sha256": "46280ba9e9ee1c0dbb8ce31059810d2f4bf310a117159f300f818d586c889cb5"
+            },
+            "CN_SM_Tripo_DesertBeaconTower_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBeaconTower_v001_left.png",
+              "sha256": "8e7fac5cb857ee6c4b0b0ae0fc460b51ece896a3f221e49952869997d8aee7ac"
+            },
+            "CN_SM_Tripo_DesertBeaconTower_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBeaconTower_v001_back.png",
+              "sha256": "f057d4b18d08aacc1e8f1df3f5c0eb54f4dddbbb19bdea490c93b824d2b5bb45"
+            },
+            "CN_SM_Tripo_DesertBeaconTower_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBeaconTower_v001_right.png",
+              "sha256": "529bed3d62646d1e627bed6a7d7b6e7114ea2605718a7bf1750d53dfb3a84a3b"
+            },
+            "CN_SM_Tripo_DesertBeaconTower_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBeaconTower_v001_sheet.png",
+              "sha256": "7b27a9f6c9d1734a5d5ed8176a7c374bdee5636b8b21f06f6f7e4978ee4cf280"
+            },
+            "CN_SM_Tripo_DesertBeaconTower_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertBeaconTower_v001_prompt.txt",
+              "sha256": "da2bbd6397d4d0b1f8242be05015a96279c71c15bfbc6fc20adc7b3a0767587d"
+            },
+            "CN_SM_Tripo_DesertBeaconTower_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertBeaconTower_v001_registration.json",
+              "sha256": "851966c7a83af9fb13b60b42784b005d57a556804d8905d64166deb539bf611c"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-5.6-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-5.6-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a148f4-52a4-7730-afa3-2b05ba30fa19",
+            "attempt": 1,
+            "seconds": 63.1
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (9m wide x 14m tall x 9m deep): A Han-dynasty Silk Road frontier beacon tower (fengsui) 14m tall in total, standing on a low square rammed-earth platform 9m wide and 1m high: a solid square tapering rammed-earth tower about 7m wide at the base narrowing to 4.5m at the top, its walls showing broad horizontal rammed-earth courses separated by thin darker layers of compressed reeds and timber, with three rows of chunky square timber beam ends poking out of every face. On the flat top: a low earthen parapet, a small square timber-and-mud lookout hut with a flat timber roof on the BACK half, and one big woven wicker-and-iron smoke basket on a stout timber post at the FRONT, filled with dark brushwood (no smoke, no fire). Ochre-red and pale sand-yellow rammed earth, weathered grey-brown timber, one faded Dunhuang malachite-green and vermilion painted lintel on the hut. A bold simple landmark silhouette readable from 150m, broad faceted planes, sparse soft erosion, no micro detail, no ladders or thin poles. One solid connected piece on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "76b4777f28be510abe6b681752fa16ae71a212b18fdeb0970d71e39f93ab0083",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.788371520078837,
+              "offset": [
+                58,
+                156
+              ],
+              "size": [
+                396,
+                711
+              ],
+              "physical_height_m": 14.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7981045018082054,
+              "offset": [
+                95,
+                156
+              ],
+              "size": [
+                322,
+                711
+              ],
+              "physical_height_m": 14.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.8117706747843733,
+              "offset": [
+                63,
+                156
+              ],
+              "size": [
+                386,
+                711
+              ],
+              "physical_height_m": 14.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7999000124984376,
+              "offset": [
+                92,
+                156
+              ],
+              "size": [
+                328,
+                711
+              ],
+              "physical_height_m": 14.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "TheSoulOfCommunism",
+            "note": "剪影与地标感好；左右视图柴笼位置对调，Tripo 以正视图为主",
+            "time": "2026-10-17 16:50:34"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 22:30:10",
+          "files": {
+            "HP_SM_Tripo_DesertBeaconTower_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertBeaconTower_v001_source.glb",
+              "sha256": "571ac69689751c9d1cfba3b4e17147869954870056b0f913e99cacfdb19e76cb"
+            },
+            "HP_SM_Tripo_DesertBeaconTower_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertBeaconTower_v001.glb",
+              "sha256": "f3a3a35037a9b47ba6491a5445ac7cfeb8b6a2269fb97da98f48e578c6e24c4b"
+            },
+            "HP_SM_Tripo_DesertBeaconTower_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertBeaconTower_v001_graph.json",
+              "sha256": "d60671033bb3cfa7f4e62a6ab059c9a43b2206662d49581293ffd55c41eb2171"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/f948e7e4-f041-4d21-a64f-a76ded1090d3",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 7524,
+          "source_sha256": "571ac69689751c9d1cfba3b4e17147869954870056b0f913e99cacfdb19e76cb"
+        }
+      ]
+    },
+    "build": {
+      "current": 5,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 22:30:50",
+          "files": {
+            "SM_Tripo_DesertBeaconTower_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertBeaconTower_v001.blend",
+              "sha256": "0acfa23f9f74c2f9e87e27ac2464ad3affaacfaeb982a0a27433addb9b7930e7"
+            },
+            "SM_Tripo_DesertBeaconTower_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertBeaconTower_v001.glb",
+              "sha256": "1defb52d931cc5e98d8ccb28df863edbd9ff52e15c4fc3d2153bf19f50b26f54"
+            },
+            "SM_Tripo_DesertBeaconTower_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertBeaconTower_v001_metrics.json",
+              "sha256": "584b3ef3eae69977f0b021460fd32732f5ab40edb84c3ceafb831cb169521254"
+            },
+            "T_Tripo_DesertBeaconTower_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBeaconTower_BC.png",
+              "sha256": "47877b76a2a19e970b7a6793c6dec25e5752c040eb07e8edfdc74454e8b95644"
+            },
+            "T_Tripo_DesertBeaconTower_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBeaconTower_N.png",
+              "sha256": "11ed646364a402bb9d8cde998e3f1c70b42930c2f3e2c45b1ffdb946680e29a8"
+            },
+            "T_Tripo_DesertBeaconTower_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBeaconTower_ORM.png",
+              "sha256": "16c558a79ee2aea6d7ac592a4953cd5e14ee5fbd7ee637b584c8319a330a641e"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.913,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7524,
+              "verts": 4296
+            },
+            {
+              "tris": 2487,
+              "verts": 1614
+            },
+            {
+              "tris": 791,
+              "verts": 633
+            }
+          ],
+          "export_kb": 1334.5,
+          "seconds": 29.3,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-17 22:55:48",
+          "files": {
+            "SM_Tripo_DesertBeaconTower_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertBeaconTower_v002.blend",
+              "sha256": "54116609ab6626eccbf4ab8ee1d721fafb44a8cf7db2071634bc7597b7d54148"
+            },
+            "SM_Tripo_DesertBeaconTower_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertBeaconTower_v002.glb",
+              "sha256": "8bc57139ae39c757c9175ec16c3668eb8e6adfaac32256fa19092a673335ab71"
+            },
+            "SM_Tripo_DesertBeaconTower_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertBeaconTower_v002_metrics.json",
+              "sha256": "c2845e91ecf7079be8530c0778ec51fa2e990ae3c4d6cedd301a4d6e448fed4a"
+            },
+            "T_Tripo_DesertBeaconTower_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertBeaconTower_BC.png",
+              "sha256": "47877b76a2a19e970b7a6793c6dec25e5752c040eb07e8edfdc74454e8b95644"
+            },
+            "T_Tripo_DesertBeaconTower_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertBeaconTower_N.png",
+              "sha256": "11ed646364a402bb9d8cde998e3f1c70b42930c2f3e2c45b1ffdb946680e29a8"
+            },
+            "T_Tripo_DesertBeaconTower_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertBeaconTower_ORM.png",
+              "sha256": "16c558a79ee2aea6d7ac592a4953cd5e14ee5fbd7ee637b584c8319a330a641e"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.913,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7524,
+              "verts": 4296
+            },
+            {
+              "tris": 7023,
+              "verts": 4001
+            },
+            {
+              "tris": 7017,
+              "verts": 3995
+            }
+          ],
+          "export_kb": 1500.3,
+          "seconds": 31.4,
+          "bake_device": "none (provider textures)"
+        },
+        {
+          "version": 3,
+          "created": "2026-10-17 22:57:10",
+          "files": {
+            "SM_Tripo_DesertBeaconTower_v003.blend": {
+              "path": "03_work/SM_Tripo_DesertBeaconTower_v003.blend",
+              "sha256": "f453df57d180b70bd5e51efc984fe47a760306d812d54ba07f0be31848c9a027"
+            },
+            "SM_Tripo_DesertBeaconTower_v003.glb": {
+              "path": "04_export/SM_Tripo_DesertBeaconTower_v003.glb",
+              "sha256": "00f53f61526138d30082d745a6272584ed7da68b1689ee02a0b87c567e85e740"
+            },
+            "SM_Tripo_DesertBeaconTower_v003_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertBeaconTower_v003_metrics.json",
+              "sha256": "2829ae65bc61cd7a960925a12c9f6405d53b6b9a734677e0311509b46967d2f1"
+            },
+            "T_Tripo_DesertBeaconTower_BC.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertBeaconTower_BC.png",
+              "sha256": "47877b76a2a19e970b7a6793c6dec25e5752c040eb07e8edfdc74454e8b95644"
+            },
+            "T_Tripo_DesertBeaconTower_N.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertBeaconTower_N.png",
+              "sha256": "11ed646364a402bb9d8cde998e3f1c70b42930c2f3e2c45b1ffdb946680e29a8"
+            },
+            "T_Tripo_DesertBeaconTower_ORM.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertBeaconTower_ORM.png",
+              "sha256": "16c558a79ee2aea6d7ac592a4953cd5e14ee5fbd7ee637b584c8319a330a641e"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.913,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7524,
+              "verts": 4296
+            },
+            {
+              "tris": 2487,
+              "verts": 1614
+            },
+            {
+              "tris": 1491,
+              "verts": 1054
+            }
+          ],
+          "export_kb": 1354.1,
+          "seconds": 29.0,
+          "bake_device": "none (provider textures)"
+        },
+        {
+          "version": 4,
+          "created": "2026-10-17 22:58:47",
+          "files": {
+            "SM_Tripo_DesertBeaconTower_v004.blend": {
+              "path": "03_work/SM_Tripo_DesertBeaconTower_v004.blend",
+              "sha256": "391d154b15125db163af9d2c58605f7d46fd48e9fd1bc0ae84aa9e6e23101130"
+            },
+            "SM_Tripo_DesertBeaconTower_v004.glb": {
+              "path": "04_export/SM_Tripo_DesertBeaconTower_v004.glb",
+              "sha256": "89a50fb7782d6b3c049dee7cb7609ffb93249c23f45f3242b1861ea4e9788e89"
+            },
+            "SM_Tripo_DesertBeaconTower_v004_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertBeaconTower_v004_metrics.json",
+              "sha256": "1fc7487f50dd783060b4ac83ad3831d55af226dde730fa337075604e0914b164"
+            },
+            "T_Tripo_DesertBeaconTower_BC.png": {
+              "path": "03_work/textures_v004/T_Tripo_DesertBeaconTower_BC.png",
+              "sha256": "47877b76a2a19e970b7a6793c6dec25e5752c040eb07e8edfdc74454e8b95644"
+            },
+            "T_Tripo_DesertBeaconTower_N.png": {
+              "path": "03_work/textures_v004/T_Tripo_DesertBeaconTower_N.png",
+              "sha256": "11ed646364a402bb9d8cde998e3f1c70b42930c2f3e2c45b1ffdb946680e29a8"
+            },
+            "T_Tripo_DesertBeaconTower_ORM.png": {
+              "path": "03_work/textures_v004/T_Tripo_DesertBeaconTower_ORM.png",
+              "sha256": "16c558a79ee2aea6d7ac592a4953cd5e14ee5fbd7ee637b584c8319a330a641e"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.913,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7524,
+              "verts": 4296
+            },
+            {
+              "tris": 2487,
+              "verts": 1614
+            },
+            {
+              "tris": 2487,
+              "verts": 1614
+            }
+          ],
+          "export_kb": 1375.5,
+          "seconds": 31.1,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 5,
+          "created": "2026-10-17 23:31:21",
+          "files": {
+            "SM_Tripo_DesertBeaconTower_v005.blend": {
+              "path": "03_work/SM_Tripo_DesertBeaconTower_v005.blend",
+              "sha256": "f43af64ffe2723a5bc9b36ea4d43a2b29cad11b9bdb8ea8698fd37a755c82f56"
+            },
+            "SM_Tripo_DesertBeaconTower_v005.glb": {
+              "path": "04_export/SM_Tripo_DesertBeaconTower_v005.glb",
+              "sha256": "e881f1860745c22586caf67b04096643b59875f75df20b6fc6973fa0d45b82f9"
+            },
+            "SM_Tripo_DesertBeaconTower_v005_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertBeaconTower_v005_metrics.json",
+              "sha256": "b7a61c5c49311d9661f1a879165dbdd992b525e51010575eb7bcf872a3a6bd02"
+            },
+            "T_Tripo_DesertBeaconTower_BC.png": {
+              "path": "03_work/textures_v005/T_Tripo_DesertBeaconTower_BC.png",
+              "sha256": "47877b76a2a19e970b7a6793c6dec25e5752c040eb07e8edfdc74454e8b95644"
+            },
+            "T_Tripo_DesertBeaconTower_LOD2_BC.png": {
+              "path": "03_work/textures_v005/T_Tripo_DesertBeaconTower_LOD2_BC.png",
+              "sha256": "291cc1b42778bbf205b4a5430cdece69d1191459b9b9e1f77e7c0af64574e523"
+            },
+            "T_Tripo_DesertBeaconTower_LOD2_N.png": {
+              "path": "03_work/textures_v005/T_Tripo_DesertBeaconTower_LOD2_N.png",
+              "sha256": "c15f74f83394ddded9075031a4d95f24107c9853d6f14ee57d2275baddb25a7d"
+            },
+            "T_Tripo_DesertBeaconTower_LOD2_ORM.png": {
+              "path": "03_work/textures_v005/T_Tripo_DesertBeaconTower_LOD2_ORM.png",
+              "sha256": "5d74f1e489cb905216b79528af142949ea5f0b662aff4a18ea2564c8403ee7b7"
+            },
+            "T_Tripo_DesertBeaconTower_N.png": {
+              "path": "03_work/textures_v005/T_Tripo_DesertBeaconTower_N.png",
+              "sha256": "11ed646364a402bb9d8cde998e3f1c70b42930c2f3e2c45b1ffdb946680e29a8"
+            },
+            "T_Tripo_DesertBeaconTower_ORM.png": {
+              "path": "03_work/textures_v005/T_Tripo_DesertBeaconTower_ORM.png",
+              "sha256": "16c558a79ee2aea6d7ac592a4953cd5e14ee5fbd7ee637b584c8319a330a641e"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.913,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7524,
+              "verts": 4296
+            },
+            {
+              "tris": 2487,
+              "verts": 1614
+            },
+            {
+              "tris": 791,
+              "verts": 633
+            }
+          ],
+          "export_kb": 1467.0,
+          "seconds": 37.3,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 5,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 22:30:50",
+          "files": {
+            "SM_Tripo_DesertBeaconTower_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertBeaconTower_v001_validation_v001.json",
+              "sha256": "2238d7c6441220936a181e11dc67e6573e70a75fbaf11a9f30bf2ae74173b7eb"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-17 22:58:47",
+          "files": {
+            "SM_Tripo_DesertBeaconTower_v004_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertBeaconTower_v004_validation_v002.json",
+              "sha256": "8c4c31d7e17a20e724a7cd8d5c0deea9e9b6f007a1e9897e5fccc4e25bb55294"
+            }
+          },
+          "from_build": 4,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-10-17 23:00:29",
+          "files": {
+            "SM_Tripo_DesertBeaconTower_v004_validation_v003.json": {
+              "path": "05_review/SM_Tripo_DesertBeaconTower_v004_validation_v003.json",
+              "sha256": "d4ee245f90f5981bb20f2309055c5806e0ae070f763093ffabae9da8f3109d37"
+            }
+          },
+          "from_build": 4,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [
+            "LOD2 递减"
+          ],
+          "passed": true
+        },
+        {
+          "version": 4,
+          "created": "2026-10-17 23:31:25",
+          "files": {
+            "SM_Tripo_DesertBeaconTower_v005_validation_v004.json": {
+              "path": "05_review/SM_Tripo_DesertBeaconTower_v005_validation_v004.json",
+              "sha256": "69c1aecf2631a97e383db880120d6a628b75970fd3a607d2e0359b954ac26c93"
+            }
+          },
+          "from_build": 5,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 5,
+          "created": "2026-10-18 15:09:33",
+          "files": {
+            "SM_Tripo_DesertBeaconTower_v005_validation_v005.json": {
+              "path": "05_review/SM_Tripo_DesertBeaconTower_v005_validation_v005.json",
+              "sha256": "69c1aecf2631a97e383db880120d6a628b75970fd3a607d2e0359b954ac26c93"
+            }
+          },
+          "from_build": 5,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": null,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 22:32:17",
+          "files": {
+            "SM_Tripo_DesertBeaconTower_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertBeaconTower_v001_review_v001.png",
+              "sha256": "c3546cee20ad05553cd4678a6c84e237f29f84ebbb868d8467553656ec40b8d8"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "TheSoulOfCommunism",
+            "note": "成品审核通过（Tripo P2.0 智能网格 + 4k 贴图）",
+            "time": "2026-10-17 22:46:37"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-17 22:58:53",
+          "files": {
+            "SM_Tripo_DesertBeaconTower_v004_review_v002.png": {
+              "path": "05_review/SM_Tripo_DesertBeaconTower_v004_review_v002.png",
+              "sha256": "10a6ced3050350fae3c125d51e7a0f5c9e3a2b4353f39d9f38152bfb8a1cc994"
+            }
+          },
+          "from_build": 4,
+          "deformation": {},
+          "auto_flags": []
+        },
+        {
+          "version": 3,
+          "created": "2026-10-17 23:00:35",
+          "files": {
+            "SM_Tripo_DesertBeaconTower_v004_review_v003.png": {
+              "path": "05_review/SM_Tripo_DesertBeaconTower_v004_review_v003.png",
+              "sha256": "598624d01c2e8e3779b21913c1570a0298f5e29aa2e665aae43879060ce42fa0"
+            }
+          },
+          "from_build": 4,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "TheSoulOfCommunism",
+            "note": "仅远景 LOD 规则变更（LOD2 停在约 2500 面防贴图拉花），LOD0 与上一版审核一致",
+            "time": "2026-10-17 23:04:59"
+          }
+        },
+        {
+          "version": 4,
+          "created": "2026-10-17 23:43:25",
+          "files": {
+            "SM_Tripo_DesertBeaconTower_v005_review_v004.png": {
+              "path": "05_review/SM_Tripo_DesertBeaconTower_v005_review_v004.png",
+              "sha256": "cc98503de6fb3be60e951fc21aa64e94fd94f38f4af299de164eccfa1251c270"
+            }
+          },
+          "from_build": 5,
+          "deformation": {},
+          "auto_flags": []
+        }
+      ]
+    },
+    "publish": {
+      "current": null,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 22:46:37",
+          "files": {
+            "SM_Tripo_DesertBeaconTower.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertBeaconTower.glb",
+              "sha256": "1defb52d931cc5e98d8ccb28df863edbd9ff52e15c4fc3d2153bf19f50b26f54"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertBeaconTower.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-17 23:04:59",
+          "files": {
+            "SM_Tripo_DesertBeaconTower.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertBeaconTower.glb",
+              "sha256": "89a50fb7782d6b3c049dee7cb7609ffb93249c23f45f3242b1861ea4e9788e89"
+            }
+          },
+          "from_build": 4,
+          "url": "assets/props/SM_Tripo_DesertBeaconTower.glb"
+        }
+      ]
+    }
+  }
+}

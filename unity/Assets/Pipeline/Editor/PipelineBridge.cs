@@ -13,7 +13,7 @@ namespace Spiritfire.Art.Editor
     /// 外部写 Library/SpiritfireBridge/request.json：{ "id": "...", "command": "all" }，编辑器每秒轮询一次，
     /// 先 AssetDatabase.Refresh（脚本有改动就编译、域重载，重载后接着处理同一个请求），再执行命令，
     /// 结果写 Library/SpiritfireBridge/response-&lt;id&gt;.json（状态、耗时、期间的日志）。
-    /// 命令：refresh / sync / scenes / capture / sheets / motion / all（sync → scenes → capture → sheets → motion）。
+    /// 命令：refresh / sync / scenes / capture / sheets / motion / all（sync → scenes → capture → sheets → motion）/ level11 / playtest。
     /// 安全：Play 模式中、或当前场景有未保存的修改时拒绝执行（不替用户丢弃修改）；执行完重新打开用户原来的场景。
     /// </summary>
     [InitializeOnLoad]
@@ -54,6 +54,13 @@ namespace Spiritfire.Art.Editor
                 return;
             }
             if (EditorUtility.scriptCompilationFailed) { Respond(id, command, "failed", "脚本编译失败，见 Console", null, 0); return; }
+            if (command == "playtest")
+            {
+                // 冒烟测试要进 Play 模式（会域重载），由 Playtest 自己在退出 Play 后写回应
+                File.Delete(RequestPath);
+                Playtest.Begin(id);
+                return;
+            }
             Run(id, command);
         }
 
@@ -102,7 +109,7 @@ namespace Spiritfire.Art.Editor
             }
         }
 
-        static void Respond(string id, string command, string status, string error, List<string> log, double seconds)
+        internal static void Respond(string id, string command, string status, string error, List<string> log, double seconds)
         {
             var res = new JObject
             {

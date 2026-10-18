@@ -1,0 +1,583 @@
+{
+  "id": "SM_Tripo_DesertHanWall",
+  "display": "汉长城夯土残墙·直段",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 16:23:16",
+          "files": {
+            "BO_SM_Tripo_DesertHanWall_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertHanWall_v001.json",
+              "sha256": "e317338d17c65970e9f480ec9131c5c5f91b25480ef17d998a05ede90f454690"
+            },
+            "BO_SM_Tripo_DesertHanWall_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertHanWall_v001_views.json",
+              "sha256": "989e941c19b811dfa5f276a8acf641ee779e3902a67c3c25404987029ec4d555"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.hanWall"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -4.0,
+              0,
+              -1.2
+            ],
+            "max": [
+              4.0,
+              3.5,
+              1.2
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 16:24:09",
+          "files": {
+            "CN_SM_Tripo_DesertHanWall_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWall_v001_source.png",
+              "sha256": "0eb3c8c2be50ba3419c09e606979aca84643c3b40c02640264c4352f957a2d7a"
+            },
+            "CN_SM_Tripo_DesertHanWall_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWall_v001_front.png",
+              "sha256": "1ccba083458346c97f433ab9c10123b5854b276310a49971b040151c046e5724"
+            },
+            "CN_SM_Tripo_DesertHanWall_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWall_v001_left.png",
+              "sha256": "2bb57049fe95b83f358d5c74bc6228339629a72ccab8bfc72e03600a91520cf6"
+            },
+            "CN_SM_Tripo_DesertHanWall_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWall_v001_back.png",
+              "sha256": "2fc6fba7f084b4d219ca4c418c52c623935670d1f6eda6ff6e4c4fd378c076cc"
+            },
+            "CN_SM_Tripo_DesertHanWall_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWall_v001_right.png",
+              "sha256": "22070bbcc61953ad5dd6636277c429772017f5c299af167184302d712809786e"
+            },
+            "CN_SM_Tripo_DesertHanWall_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWall_v001_sheet.png",
+              "sha256": "9508803424a355c1ab557f8b11cbab7164e7e77531df32bff5e1be72379d91b0"
+            },
+            "CN_SM_Tripo_DesertHanWall_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWall_v001_prompt.txt",
+              "sha256": "b55b1e92ef3fb0771cec564057a3d625d8802174f6762f848c092f7f691082ec"
+            },
+            "CN_SM_Tripo_DesertHanWall_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWall_v001_registration.json",
+              "sha256": "e9d39ce5dce705cb9ee99e9315c15bf7f316e9925ffba7e7f9e87d6af3839cef"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-5.6-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-5.6-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a148f5-4a39-7783-aa0a-f45e5c9ba90e",
+            "attempt": 1,
+            "seconds": 49.5
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (8m wide x 3.5m tall x 2.4m deep): A straight Han-dynasty Great Wall (Han changcheng) rammed-earth wall segment 8m long, 3.5m tall, 2.4m thick at the base tapering to 1.6m at the top; seen from the FRONT it is a long low block exactly 8m wide and 3.5m tall. About seven broad horizontal rammed-earth courses, each separated by a thin darker layer of compressed reeds and tamarisk branches whose chunky stub ends show on the faces. The top is wind-eroded into a gently uneven rounded crest, slightly lower toward the middle, with two shallow erosion grooves running down the FRONT face. Both side ends are flat vertical cut faces so identical segments join seamlessly in a straight line. Ochre-red and pale sand-yellow earth in two or three colour blocks, khaki-brown reed layers, broad faceted planes, low-poly chunky forms, no loose bricks, debris or micro cracks. Solid wall with no openings; FRONT and BACK faces look nearly the same.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "0eb3c8c2be50ba3419c09e606979aca84643c3b40c02640264c4352f957a2d7a",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.43290043290043284,
+              "offset": [
+                105,
+                412
+              ],
+              "size": [
+                302,
+                200
+              ],
+              "physical_height_m": 3.5,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.43290043290043284,
+              "offset": [
+                217,
+                412
+              ],
+              "size": [
+                77,
+                200
+              ],
+              "physical_height_m": 3.5,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.43196544276457877,
+              "offset": [
+                105,
+                412
+              ],
+              "size": [
+                302,
+                200
+              ],
+              "physical_height_m": 3.5,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.43196544276457877,
+              "offset": [
+                217,
+                412
+              ],
+              "size": [
+                77,
+                200
+              ],
+              "physical_height_m": 3.5,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "TheSoulOfCommunism",
+            "note": "夯土层 + 芦苇夹层到位；比例偏短（约 5.5 m），导入后沿长度方向拉伸到 8 m",
+            "time": "2026-10-17 16:50:35"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 22:30:15",
+          "files": {
+            "HP_SM_Tripo_DesertHanWall_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertHanWall_v001_source.glb",
+              "sha256": "1a73467b26ee7d1425c30abf203fa56af2babd761cc65cda48edbff9f0820b7f"
+            },
+            "HP_SM_Tripo_DesertHanWall_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertHanWall_v001.glb",
+              "sha256": "353dffb9eec0c7518686a28420c6336a89ebf8b5e404fad43830ac65420f2d1b"
+            },
+            "HP_SM_Tripo_DesertHanWall_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertHanWall_v001_graph.json",
+              "sha256": "daf9fb4fd3c1177681bcf68e7be9902ce4a51cc2fe9c634601e753e95fc08df5"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/20b58662-d88c-4e57-aa8c-f90913fdd1bf",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 4218,
+          "source_sha256": "1a73467b26ee7d1425c30abf203fa56af2babd761cc65cda48edbff9f0820b7f"
+        }
+      ]
+    },
+    "build": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 22:31:49",
+          "files": {
+            "SM_Tripo_DesertHanWall_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertHanWall_v001.blend",
+              "sha256": "37767ca2e22b6326d202ca8412dac33f8c94510cffaed80168c5da27dcef742b"
+            },
+            "SM_Tripo_DesertHanWall_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertHanWall_v001.glb",
+              "sha256": "239439edf8b5cf4bae77a3f44bbefb523b0f861d26bc71a9a80e4df91eb5ee6a"
+            },
+            "SM_Tripo_DesertHanWall_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertHanWall_v001_metrics.json",
+              "sha256": "83eb1edcb9c4aa7416e1d221290008687a0e68a418f8d27f8eb5b9ce73967bce"
+            },
+            "T_Tripo_DesertHanWall_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertHanWall_BC.png",
+              "sha256": "40363c0814204196813f06152e4b021825bf281a713162e7516e287dde93efb8"
+            },
+            "T_Tripo_DesertHanWall_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertHanWall_N.png",
+              "sha256": "8c8c2ec6b1710f66c71fe74435ff6ddb98c8af3a6a64519cacd6e60123f9edec"
+            },
+            "T_Tripo_DesertHanWall_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertHanWall_ORM.png",
+              "sha256": "a6d1cf09bac1e5e49f173a6f6634de06160ff4323c9c6a0c2cad87b2fee2993a"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.881,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 4218,
+              "verts": 2116
+            },
+            {
+              "tris": 2486,
+              "verts": 1250
+            },
+            {
+              "tris": 796,
+              "verts": 403
+            }
+          ],
+          "export_kb": 1124.4,
+          "seconds": 27.2,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-17 22:59:57",
+          "files": {
+            "SM_Tripo_DesertHanWall_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertHanWall_v002.blend",
+              "sha256": "1141d074cbc9e497087a9e90a2c2b77913e69ea72bba73824201b144eb3ad030"
+            },
+            "SM_Tripo_DesertHanWall_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertHanWall_v002.glb",
+              "sha256": "ae2d51f7f73be6394694c7b55c7b640fa3c55a4c27ccbb511f2068d35640b3ea"
+            },
+            "SM_Tripo_DesertHanWall_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertHanWall_v002_metrics.json",
+              "sha256": "e6772375cf0fd55c5251833eb33ae841440aebf346a4b3d27c42bf591097e91f"
+            },
+            "T_Tripo_DesertHanWall_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertHanWall_BC.png",
+              "sha256": "40363c0814204196813f06152e4b021825bf281a713162e7516e287dde93efb8"
+            },
+            "T_Tripo_DesertHanWall_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertHanWall_N.png",
+              "sha256": "8c8c2ec6b1710f66c71fe74435ff6ddb98c8af3a6a64519cacd6e60123f9edec"
+            },
+            "T_Tripo_DesertHanWall_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertHanWall_ORM.png",
+              "sha256": "a6d1cf09bac1e5e49f173a6f6634de06160ff4323c9c6a0c2cad87b2fee2993a"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.881,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 4218,
+              "verts": 2116
+            },
+            {
+              "tris": 2486,
+              "verts": 1250
+            },
+            {
+              "tris": 2486,
+              "verts": 1250
+            }
+          ],
+          "export_kb": 1138.5,
+          "seconds": 27.3,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 3,
+          "created": "2026-10-17 23:33:02",
+          "files": {
+            "SM_Tripo_DesertHanWall_v003.blend": {
+              "path": "03_work/SM_Tripo_DesertHanWall_v003.blend",
+              "sha256": "f7fdeb07f9f6b6b4be5f0fe0f4f8205facb400700edc15db60a6629208370d42"
+            },
+            "SM_Tripo_DesertHanWall_v003.glb": {
+              "path": "04_export/SM_Tripo_DesertHanWall_v003.glb",
+              "sha256": "d18e686e2eeb30fe549ea339b3e39c2dd08e079923a999758a98568113a30eda"
+            },
+            "SM_Tripo_DesertHanWall_v003_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertHanWall_v003_metrics.json",
+              "sha256": "9aa5069ce660f66fc74a16bd0102b726d5ed77b18de3a46ac8b1b5567d2fb913"
+            },
+            "T_Tripo_DesertHanWall_BC.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertHanWall_BC.png",
+              "sha256": "40363c0814204196813f06152e4b021825bf281a713162e7516e287dde93efb8"
+            },
+            "T_Tripo_DesertHanWall_LOD1_BC.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertHanWall_LOD1_BC.png",
+              "sha256": "b6d680018d16bf3cfeb70c0bdf036a7422ea97a52499f145ab70faf7ae38d1ec"
+            },
+            "T_Tripo_DesertHanWall_LOD1_N.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertHanWall_LOD1_N.png",
+              "sha256": "699e8af6d40a13ab382368f0324a4623f004f7f59dda13e0edb737b8a167ade6"
+            },
+            "T_Tripo_DesertHanWall_LOD1_ORM.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertHanWall_LOD1_ORM.png",
+              "sha256": "c842267a50e39b3c018012545fbf042b941128897a2d3b4bbac47b3e09b14712"
+            },
+            "T_Tripo_DesertHanWall_LOD2_BC.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertHanWall_LOD2_BC.png",
+              "sha256": "e92d377b80154dd250e2f388f2f0626dfd0797b1d316808859408ba9d3bdc221"
+            },
+            "T_Tripo_DesertHanWall_LOD2_N.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertHanWall_LOD2_N.png",
+              "sha256": "2bb3e29a6449adf76fe504c9f4642807562f859cf2bc8915a3ca596e881f0d56"
+            },
+            "T_Tripo_DesertHanWall_LOD2_ORM.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertHanWall_LOD2_ORM.png",
+              "sha256": "5f123952bdbba5710d9e2490ae2bbabd498fdb96abee14b18ca175b80330b208"
+            },
+            "T_Tripo_DesertHanWall_N.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertHanWall_N.png",
+              "sha256": "8c8c2ec6b1710f66c71fe74435ff6ddb98c8af3a6a64519cacd6e60123f9edec"
+            },
+            "T_Tripo_DesertHanWall_ORM.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertHanWall_ORM.png",
+              "sha256": "a6d1cf09bac1e5e49f173a6f6634de06160ff4323c9c6a0c2cad87b2fee2993a"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.881,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 4218,
+              "verts": 2116
+            },
+            {
+              "tris": 2486,
+              "verts": 1250
+            },
+            {
+              "tris": 796,
+              "verts": 403
+            }
+          ],
+          "export_kb": 1468.3,
+          "seconds": 38.8,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 5,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 22:31:50",
+          "files": {
+            "SM_Tripo_DesertHanWall_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertHanWall_v001_validation_v001.json",
+              "sha256": "8c5c52a7d775baeb73b939cdb76d1f05c2ed9c9a3d0d4c8312f52726706cd009"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-17 22:59:57",
+          "files": {
+            "SM_Tripo_DesertHanWall_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertHanWall_v002_validation_v002.json",
+              "sha256": "bcc796065895d1297cf3564c067505019185043a1c95a6982154aa4b52de7a4d"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-10-17 23:00:41",
+          "files": {
+            "SM_Tripo_DesertHanWall_v002_validation_v003.json": {
+              "path": "05_review/SM_Tripo_DesertHanWall_v002_validation_v003.json",
+              "sha256": "28c1440b5759669dd66c480563e0898dde4f019e164b5aebc3ed9ec0eab7d458"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [
+            "LOD2 递减"
+          ],
+          "passed": true
+        },
+        {
+          "version": 4,
+          "created": "2026-10-17 23:33:06",
+          "files": {
+            "SM_Tripo_DesertHanWall_v003_validation_v004.json": {
+              "path": "05_review/SM_Tripo_DesertHanWall_v003_validation_v004.json",
+              "sha256": "264de98332dea6f894e36f22c0b9eec74bfb06be11f5b29121337e39dbecb1ef"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 5,
+          "created": "2026-10-18 15:09:42",
+          "files": {
+            "SM_Tripo_DesertHanWall_v003_validation_v005.json": {
+              "path": "05_review/SM_Tripo_DesertHanWall_v003_validation_v005.json",
+              "sha256": "264de98332dea6f894e36f22c0b9eec74bfb06be11f5b29121337e39dbecb1ef"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": null,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 22:32:28",
+          "files": {
+            "SM_Tripo_DesertHanWall_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertHanWall_v001_review_v001.png",
+              "sha256": "b729ca4e8307bb8fa65166d8ea3150d843c6dfa39b85380b3509af9e8f014354"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "TheSoulOfCommunism",
+            "note": "成品审核通过（Tripo P2.0 智能网格 + 4k 贴图）",
+            "time": "2026-10-17 22:46:38"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-17 23:00:03",
+          "files": {
+            "SM_Tripo_DesertHanWall_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_DesertHanWall_v002_review_v002.png",
+              "sha256": "4411248f21fb701420c231d1331c50fc738f3fc7a32167dc4c96408ccc232233"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": []
+        },
+        {
+          "version": 3,
+          "created": "2026-10-17 23:00:47",
+          "files": {
+            "SM_Tripo_DesertHanWall_v002_review_v003.png": {
+              "path": "05_review/SM_Tripo_DesertHanWall_v002_review_v003.png",
+              "sha256": "3b33c293bd656b97c9ec828e7a7d59a3851e0a67769650fd8a74117a7829cdac"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "TheSoulOfCommunism",
+            "note": "仅远景 LOD 规则变更（LOD2 停在约 2500 面防贴图拉花），LOD0 与上一版审核一致",
+            "time": "2026-10-17 23:05:00"
+          }
+        },
+        {
+          "version": 4,
+          "created": "2026-10-17 23:33:13",
+          "files": {
+            "SM_Tripo_DesertHanWall_v003_review_v004.png": {
+              "path": "05_review/SM_Tripo_DesertHanWall_v003_review_v004.png",
+              "sha256": "6c340c9889278e52d1c265a4abf4053091044e16dd606689a9fb70ba39b46170"
+            }
+          },
+          "from_build": 3,
+          "deformation": {},
+          "auto_flags": []
+        }
+      ]
+    },
+    "publish": {
+      "current": null,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 22:46:38",
+          "files": {
+            "SM_Tripo_DesertHanWall.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertHanWall.glb",
+              "sha256": "239439edf8b5cf4bae77a3f44bbefb523b0f861d26bc71a9a80e4df91eb5ee6a"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertHanWall.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-17 23:05:00",
+          "files": {
+            "SM_Tripo_DesertHanWall.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertHanWall.glb",
+              "sha256": "ae2d51f7f73be6394694c7b55c7b640fa3c55a4c27ccbb511f2068d35640b3ea"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_DesertHanWall.glb"
+        }
+      ]
+    }
+  }
+}

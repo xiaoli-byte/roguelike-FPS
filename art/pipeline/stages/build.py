@@ -57,6 +57,8 @@ def run(spec: AssetSpec, a) -> None:
         "min_component_fraction": spec.raw.get("min_component_fraction", cls.get("min_component_fraction", 0.01)),
         "remesh_voxel": spec.raw.get("remesh_voxel", cls.get("remesh_voxel", 0.0025)),
         "far_lod_budget_weld_max_fraction": spec.raw.get("far_lod_budget_weld_max_fraction", cls.get("far_lod_budget_weld_max_fraction", 0)),
+        # Tripo static: a collapsed LOD whose UVs stretch past this area fraction (bl_lod_texcheck) is re-unwrapped and baked from LOD0
+        "lod_rebake_stretch": spec.raw.get("lod_rebake_stretch", cls.get("lod_rebake_stretch", 0.02)),
         "ao_samples": b["ao_samples"], "bake_margin_px": b["bake_margin_px"],
         "cage_extrusion": b["cage_extrusion"], "projection_sharpness": b["projection_sharpness"],
         "max_bone_influences": b["max_bone_influences"],

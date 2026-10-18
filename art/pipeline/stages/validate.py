@@ -8,13 +8,23 @@ from __future__ import annotations
 import json
 import re
 
+from lib import blender
 from lib.config import CFG, ROOT, AssetSpec, PipelineError
 from lib.glb import Glb
 from lib.state import AssetState
 
 SUPPORTED_EXT = {"KHR_draco_mesh_compression", "EXT_texture_webp", "KHR_texture_transform",
                  "KHR_materials_emissive_strength", "KHR_mesh_quantization", "EXT_meshopt_compression"}
-TEX_SUFFIX = re.compile(r"^T_[A-Z][A-Za-z]+_[A-Z][A-Za-z0-9]+_(BC|N|ORM|E)$")
+# 远景 LOD 重展 UV 烘焙时自带一套贴图与材质：T_<类>_<名>_LOD<i>_BC|N|ORM、M_<类>_<名>_LOD<i>
+TEX_SUFFIX = re.compile(r"^T_[A-Z][A-Za-z]+_[A-Z][A-Za-z0-9]+(_LOD\d)?_(BC|N|ORM|E)$")
+MAT_NAME = re.compile(r"M_[A-Z][A-Za-z]+_[A-Z][A-Za-z0-9]+(_LOD\d)?")
+LOD_SUFFIX = re.compile(r"_LOD(\d)$")
+# LOD 贴图一致性（blender/bl_lod_texcheck.py，用 SM_Tripo_DesertBeaconTower 校准）：
+# UV 拉伸——减面跨 UV 岛的斜条纹：糊的 1491 / 791 面 LOD2 为 7.7% / 12.9%，正常的 2487 面 LOD1 1.3%，重烘的 LOD 0%；
+# 上限按规格档 lod_rebake_stretch（构建时超过它的 LOD 会重展 UV 烘焙，所以构建正常时这里必然通过）；
+# 重烘过的 LOD（自带 M_*_LOD<i>）不查拉伸——它的 UV 是新展的，和 LOD0 的 Tripo UV 比密度没有意义，只看色差。
+# 色差——和 LOD0 颜色对不上的面积（烘焙打错表面、贴图丢失）：重烘的 791 面 LOD2 2.5–2.9%，糊的 791 面 15%。
+SMEAR_LIMIT = 0.06
 
 
 def run(spec: AssetSpec, a) -> None:
@@ -109,22 +119,59 @@ def run(spec: AssetSpec, a) -> None:
             ok("水平居中", abs(cx) <= 0.06 and abs(cz) <= 0.08, f"包围盒中心 x={cx:.3f} z={cz:.3f}", "warn")
 
     mats = J.get("materials", [])
-    ok("材质数量", len(mats) == 1, f"{[x.get('name') for x in mats]}（一个资产一个材质，便于合批）", "warn")
-    ok("材质命名", all(re.fullmatch(r"M_[A-Z][A-Za-z]+_[A-Z][A-Za-z0-9]+", x.get("name", "")) for x in mats),
-       f"{[x.get('name') for x in mats]}")
+    base_mats = [x for x in mats if not LOD_SUFFIX.search(x.get("name", ""))]
+    ok("材质数量", len(base_mats) == 1, f"{[x.get('name') for x in mats]}（一个资产一个材质，便于合批；"
+       "重烘的远景 LOD 另有 M_*_LOD<i>）", "warn")
+    ok("材质命名", all(MAT_NAME.fullmatch(x.get("name", "")) for x in mats), f"{[x.get('name') for x in mats]}")
+    rebaked = set()  # 带自己重烘材质 M_*_LOD<i> 的 LOD 序号
+    for i, name in enumerate(lod_nodes):
+        used = {mats[p["material"]].get("name", "") for p in J["meshes"][nodes[name]["mesh"]]["primitives"]
+                if "material" in p}
+        own = [LOD_SUFFIX.search(u) for u in used]
+        if any(m and int(m.group(1)) == i for m in own):
+            rebaked.add(i)
+        ok(f"LOD{i} 材质", all(m is None or int(m.group(1)) == i for m in own) and (i > 0 or not any(own)),
+           f"{sorted(used)}（M_*_LOD<i> 只能给第 i 级 LOD 用）")
     for i, img in enumerate(J.get("images", [])):
         w, h, fmt = g.image_size(i)
         nm = img.get("name", "")
-        ok(f"贴图 {nm}", w == h == spec.texture and (w & (w - 1)) == 0, f"{w}×{h} {fmt}（规格 {spec.texture}²）")
-        ok(f"贴图命名 {nm}", bool(TEX_SUFFIX.match(nm)), "T_<类>_<名>_BC|N|ORM|E")
+        if re.search(r"_LOD\d_", nm):
+            ok(f"贴图 {nm}", w == h <= spec.texture and (w & (w - 1)) == 0,
+               f"{w}×{h} {fmt}（远景 LOD 重烘贴图，2 的幂且 ≤ 规格 {spec.texture}²）")
+        else:
+            ok(f"贴图 {nm}", w == h == spec.texture and (w & (w - 1)) == 0, f"{w}×{h} {fmt}（规格 {spec.texture}²）")
+        ok(f"贴图命名 {nm}", bool(TEX_SUFFIX.match(nm)), "T_<类>_<名>[_LOD<i>]_BC|N|ORM|E")
     if mats:
         ef = mats[0].get("emissiveFactor") or [0, 0, 0]
         if max(ef) > 0:  # 有自发光强度却没有遮罩贴图 = 整个模型发光
             ok("自发光贴图", "emissiveTexture" in mats[0], f"emissiveFactor {ef}")
-        pbr = mats[0].get("pbrMetallicRoughness", {})
-        ok("BaseColor 贴图", "baseColorTexture" in pbr, "")
-        ok("法线贴图", "normalTexture" in mats[0], "")
-        ok("ORM 贴图", "metallicRoughnessTexture" in pbr and "occlusionTexture" in mats[0], "AO / 粗糙度 / 金属度")
+    for m_ in [mats[0], *[x for x in mats if LOD_SUFFIX.search(x.get("name", ""))]] if mats else []:
+        tag_ = "" if m_ is mats[0] else f" {m_.get('name')}"
+        pbr = m_.get("pbrMetallicRoughness", {})
+        ok(f"BaseColor 贴图{tag_}", "baseColorTexture" in pbr, "")
+        ok(f"法线贴图{tag_}", "normalTexture" in m_, "")
+        ok(f"ORM 贴图{tag_}", "metallicRoughnessTexture" in pbr and "occlusionTexture" in m_, "AO / 粗糙度 / 金属度")
+
+    # ── LOD 贴图一致性：每级 LOD 带贴图看起来是否还像 LOD0（Blender 读导出的 GLB，Draco / WebP 之后）──
+    if len(lod_nodes) > 1:
+        cls = CFG.section("classes")[spec.cls]
+        stretch_limit = spec.raw.get("lod_rebake_stretch", cls.get("lod_rebake_stretch", 0.02))
+        # Tripo 静态件的构建会自动重烘超限的 LOD，这里不通过就是错误；其他构建（Hunyuan / 骨骼）还没有自动修复，先记警告
+        level = "error" if spec.raw.get("source_provider") == "tripo" and spec.kind == "static" else "warn"
+        tc = blender.run("bl_lod_texcheck.py", {"glb": str(glb_path)}, spec.dir / "_tmp" / f"validate_{tag}", "lod_texcheck")
+        for k, v in tc["lods"].items():
+            if v["samples"] == 0:
+                ok(f"{k} 贴图一致性", False, "没有能和 LOD0 对上的采样点（LOD 与 LOD0 不重合？）", level)
+                continue
+            # 重烘的 LOD 是在自己新展的 UV 上从高模烘的贴图，不存在跨岛拉伸；拉伸量是拿它的贴图密度和 LOD0（Tripo 原 UV，
+            # 各岛密度不一）比，对重烘的 LOD 没有意义（断口端头 v002 重烘后色差 0.7% / 1.2%，拉伸却算成 9.9% / 12.3%）。只看色差
+            if int(k[3:]) in rebaked:
+                ok(f"{k} 贴图拉伸", True, f"重烘贴图（UV 拉伸量 {v['stretched_ratio']:.1%} 不适用，看色差）")
+            else:
+                ok(f"{k} 贴图拉伸", v["stretched_ratio"] <= stretch_limit,
+                   f"UV 拉伸面积 {v['stretched_ratio']:.1%} / 上限 {stretch_limit:.0%}（减面跨 UV 岛，贴图拉成斜条纹）", level)
+            ok(f"{k} 贴图色差", v["smeared_ratio"] <= SMEAR_LIMIT,
+               f"与 LOD0 色差面积 {v['smeared_ratio']:.1%} / 上限 {SMEAR_LIMIT:.0%}，平均色差 {v['mean_delta']}", level)
 
     # ── 骨骼 ──
     if spec.kind == "skeletal":

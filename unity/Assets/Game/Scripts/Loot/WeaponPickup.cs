@@ -1,0 +1,116 @@
+using Spiritfire.Art;
+using UnityEngine;
+
+namespace Spiritfire.Game
+{
+    /// <summary>
+    /// 地上的枪（Three.js 版 src/progression/loot/WeaponDrops.ts）：抛到地上 → 离地 0.9 m 悬浮自转，稀有度色光柱 + 光晕。
+    /// 按 F 拾取：有空槽放空槽，否则替换手里的枪，被换下的枪落在原地（可以再换回来）。
+    /// </summary>
+    public sealed class WeaponPickup : MonoBehaviour, IInteractable
+    {
+        public WeaponInstance weapon;
+        Vector3 velocity, basePos;
+        bool grounded;
+        float age, phase;
+        Transform model, beam;
+
+        public static WeaponPickup Drop(WeaponInstance w, Vector3 pos, Vector3 toss)
+        {
+            var go = new GameObject($"Weapon · {w.def.name}");
+            go.transform.position = pos;
+            var p = go.AddComponent<WeaponPickup>();
+            p.weapon = w;
+            p.velocity = toss;
+            p.phase = Random.value * 10;
+            p.Build();
+            return p;
+        }
+
+        void Build()
+        {
+            var color = WeaponLibrary.RarityColor[Mathf.Clamp(weapon.rarity, 0, 4)];
+            model = new GameObject("Model").transform;
+            model.SetParent(transform, false);
+            var prefab = LootCatalog.WeaponModel(weapon.def.prefab);
+            if (prefab)
+            {
+                var inst = Instantiate(prefab, model, false);
+                foreach (var c in inst.GetComponentsInChildren<Collider>(true)) Destroy(c);
+                foreach (var a in inst.GetComponentsInChildren<Animator>(true)) a.enabled = false;
+                // 居中：按包围盒把枪身中心挪到原点
+                var rs = inst.GetComponentsInChildren<Renderer>();
+                if (rs.Length > 0)
+                {
+                    var b = rs[0].bounds;
+                    foreach (var r in rs) b.Encapsulate(r.bounds);
+                    inst.transform.position -= b.center - model.position;
+                }
+            }
+            else
+            {
+                var box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                Destroy(box.GetComponent<Collider>());
+                box.transform.SetParent(model, false);
+                box.transform.localScale = new Vector3(0.12f, 0.2f, 0.6f);
+            }
+            FxMaterials.GlowSprite(model, 1.4f, new Color(color.r, color.g, color.b, 0.35f));
+            beam = FxMaterials.BeamSprite(transform, 0.6f, 3.2f, new Color(color.r, color.g, color.b, 0.3f));
+            Interaction.Add(this);
+        }
+
+        void OnDestroy() => Interaction.Remove(this);
+
+        // ── IInteractable ──
+        public Vector3 Focus => model ? model.position : transform.position;
+        public float Radius => 2.6f;
+        public bool CanInteract => grounded || age > 0.6f;
+
+        public string Prompt
+        {
+            get
+            {
+                var rarity = WeaponLibrary.RarityName[Mathf.Clamp(weapon.rarity, 0, 4)];
+                var hex = ColorUtility.ToHtmlStringRGB(WeaponLibrary.RarityColor[Mathf.Clamp(weapon.rarity, 0, 4)]);
+                var wc = PlayerVitals.Instance ? PlayerVitals.Instance.GetComponent<WeaponController>() : null;
+                bool full = wc && wc.slots[0] != null && wc.slots[1] != null;
+                return $"拾取 <color=#{hex}>{rarity} · {weapon.Title}</color>" + (full ? $"（替换 {wc.Active.Title}）" : "");
+            }
+        }
+
+        public void Interact()
+        {
+            var wc = PlayerVitals.Instance ? PlayerVitals.Instance.GetComponent<WeaponController>() : null;
+            if (!wc) return;
+            var old = wc.Give(weapon);
+            Hud.Instance?.Toast($"获得 {WeaponLibrary.RarityName[Mathf.Clamp(weapon.rarity, 0, 4)]} · {weapon.Title}");
+            if (old != null) Drop(old, Focus, Vector3.up * 3f);
+            Destroy(gameObject);
+        }
+
+        void Update()
+        {
+            float dt = Time.deltaTime;
+            age += dt;
+            if (!grounded)
+            {
+                velocity.y -= 18f * dt;
+                var next = transform.position + velocity * dt;
+                if (velocity.y < 0 && Physics.Raycast(transform.position + Vector3.up * 0.3f, Vector3.down, out var hit, 0.5f - velocity.y * dt, Layers.WorldMask, QueryTriggerInteraction.Ignore))
+                {
+                    next = hit.point;
+                    grounded = true;
+                    basePos = next;
+                    ShotFx.Instance?.Impact(next, Vector3.up, false, 1.5f);
+                }
+                transform.position = next;
+            }
+            if (model)
+            {
+                float lift = grounded ? 0.9f + Mathf.Sin((age + phase) * 2f) * 0.08f : 0.3f;
+                model.localPosition = Vector3.up * lift;
+                model.Rotate(0, 60f * dt, 0, Space.World);
+            }
+        }
+    }
+}

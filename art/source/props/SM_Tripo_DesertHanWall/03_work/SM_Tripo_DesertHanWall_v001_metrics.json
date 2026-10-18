@@ -1,0 +1,127 @@
+{
+  "source": {
+    "tris": 4218,
+    "verts": 2116
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 5.3373,
+    "iou": 0.881,
+    "iou_per_view": {
+      "front": 0.917,
+      "left": 0.838,
+      "back": 0.914,
+      "right": 0.838
+    },
+    "size_m": [
+      5.335,
+      1.373,
+      3.5
+    ],
+    "reference_m": [
+      8.0,
+      2.4,
+      3.5
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.728,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_DesertHanWall_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertHanWall_LOD0",
+      "tris": 4218,
+      "verts": 2116,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.603,
+      "bbox_min": [
+        -2.6673,
+        -0.6867,
+        0.0
+      ],
+      "bbox_max": [
+        2.6673,
+        0.6867,
+        3.5
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertHanWall_LOD1",
+      "tris": 2486,
+      "verts": 1250,
+      "uv_min": [
+        0.00048828125,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        0.9991766214370728
+      ],
+      "uv_utilization": 0.557,
+      "bbox_min": [
+        -2.669,
+        -0.6871,
+        -0.0009
+      ],
+      "bbox_max": [
+        2.6673,
+        0.687,
+        3.5
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertHanWall_LOD2",
+      "tris": 796,
+      "verts": 403,
+      "uv_min": [
+        0.0009138763998635113,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        0.99560546875
+      ],
+      "uv_utilization": 0.45,
+      "bbox_min": [
+        -2.6646,
+        -0.6763,
+        0.0078
+      ],
+      "bbox_max": [
+        2.6618,
+        0.6783,
+        3.4977
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertHanWall/04_export/SM_Tripo_DesertHanWall_v001.glb",
+    "bytes": 1151352
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 26.0,
+  "_seconds": 27.2
+}

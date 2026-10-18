@@ -104,6 +104,11 @@ for v in ("front", "left", "back", "right"):
     shot(f"beauty_{v}", v)
 shot("beauty_34", "front", -35)
 
+# 1b) 每级 LOD 带贴图（3/4 视角）：减面跨 UV 岛的斜条纹只有带贴图才看得出来，布线图看不出
+for i, o in sorted(lod_objs.items()):
+    only(o)
+    shot(f"tex_lod{i}", "front", -35)
+
 # 2) 布线：白模材质 + 线框（每级 LOD 正面）
 clay = bpy.data.materials.new("clay")
 clay.diffuse_color = (0.7, 0.7, 0.7, 1)

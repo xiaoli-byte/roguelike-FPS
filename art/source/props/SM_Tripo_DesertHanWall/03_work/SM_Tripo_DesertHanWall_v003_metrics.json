@@ -1,0 +1,197 @@
+{
+  "source": {
+    "tris": 4218,
+    "verts": 2116
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 5.3373,
+    "iou": 0.881,
+    "iou_per_view": {
+      "front": 0.917,
+      "left": 0.838,
+      "back": 0.914,
+      "right": 0.838
+    },
+    "size_m": [
+      5.335,
+      1.373,
+      3.5
+    ],
+    "reference_m": [
+      8.0,
+      2.4,
+      3.5
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.728,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_DesertHanWall_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "rebaked",
+      "texture": 1024,
+      "cage_m": 0.0525,
+      "uv": {
+        "smart_islands": 160,
+        "charts": 13,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "merged",
+        "density_smart": 0.117,
+        "density_merged": 0.1186,
+        "coverage": 0.737
+      },
+      "collapse": {
+        "samples": 23959,
+        "matched_ratio": 0.998,
+        "mean_delta": 0.0131,
+        "p90_delta": 0.0309,
+        "smeared_ratio": 0.0018,
+        "stretched_ratio": 0.0438,
+        "dist_p99_m": 0.0057
+      },
+      "final": {
+        "samples": 23959,
+        "matched_ratio": 0.998,
+        "mean_delta": 0.0078,
+        "p90_delta": 0.0188,
+        "smeared_ratio": 0.0,
+        "stretched_ratio": 0.0001,
+        "dist_p99_m": 0.0057
+      }
+    },
+    "LOD2": {
+      "method": "rebaked",
+      "texture": 512,
+      "cage_m": 0.0596,
+      "uv": {
+        "smart_islands": 122,
+        "charts": 18,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "smart",
+        "density_smart": 0.1169,
+        "density_merged": 0.1139,
+        "coverage": 0.83
+      },
+      "collapse": {
+        "samples": 23762,
+        "matched_ratio": 0.99,
+        "mean_delta": 0.0243,
+        "p90_delta": 0.0563,
+        "smeared_ratio": 0.0099,
+        "stretched_ratio": 0.1064,
+        "dist_p99_m": 0.0298
+      },
+      "final": {
+        "samples": 23762,
+        "matched_ratio": 0.99,
+        "mean_delta": 0.0153,
+        "p90_delta": 0.0358,
+        "smeared_ratio": 0.0015,
+        "stretched_ratio": 0.0001,
+        "dist_p99_m": 0.0298
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertHanWall_LOD0",
+      "tris": 4218,
+      "verts": 2116,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.603,
+      "bbox_min": [
+        -2.6673,
+        -0.6867,
+        0.0
+      ],
+      "bbox_max": [
+        2.6673,
+        0.6867,
+        3.5
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertHanWall_LOD1",
+      "tris": 2486,
+      "verts": 1250,
+      "uv_min": [
+        0.0012183879734948277,
+        0.0012183748185634613
+      ],
+      "uv_max": [
+        0.9936729073524475,
+        0.9987816214561462
+      ],
+      "uv_utilization": 0.709,
+      "bbox_min": [
+        -2.669,
+        -0.6871,
+        -0.0009
+      ],
+      "bbox_max": [
+        2.6673,
+        0.687,
+        3.5
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertHanWall_LOD2",
+      "tris": 796,
+      "verts": 403,
+      "uv_min": [
+        0.0029484000988304615,
+        0.0028069319669157267
+      ],
+      "uv_max": [
+        0.9663232564926147,
+        0.9973697066307068
+      ],
+      "uv_utilization": 0.685,
+      "bbox_min": [
+        -2.6646,
+        -0.6763,
+        0.0078
+      ],
+      "bbox_max": [
+        2.6618,
+        0.6783,
+        3.4977
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertHanWall/04_export/SM_Tripo_DesertHanWall_v003.glb",
+    "bytes": 1503504
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 37.5,
+  "_seconds": 38.8
+}

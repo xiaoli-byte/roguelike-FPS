@@ -14,6 +14,8 @@
 #   keep_glow 运行时保留白模上哪些发光部件（"all" | "attachments" | "none"），默认 attachments。
 #             敌人一律用 all：眼睛 / 面甲缝是攻击前摇的发光提示（设计支柱「可读的敌人」），不能丢
 #   qa_waivers QA 豁免（可选）：{ "<检查项名>" = "<理由>" }，有意的设计偏差不阻塞流程，校验报告里记为「已豁免」
+#   lod_tris  覆盖规格档的各级 LOD 面数上限（可选，[LOD0, LOD1, …]）
+#   lod_rebake_stretch  Tripo 静态件：减面后 UV 拉伸面积超过它的 LOD 重展 UV 烘焙（可选，默认取规格档，见 pipeline.toml）
 #   rig       绑定方式（可选）："parts" = 通用部件骨架（非人形敌人 / Boss）：骨骼是程序化模型的每个节点，
 #             权重按离哪个白模部件最近生成；rig_sigma = 部件交界处的过渡带宽度（相对资产尺寸，默认 0.015，越小越刚性）
 #   rig_rigid  部件骨架的刚体分段（石像、甲壳、板甲、灯笼等硬表面角色）：每个部件 100% 跟随自己的骨骼，所有部件交界切开并封口，
@@ -1421,6 +1423,95 @@ architecture_role = "wall"
 keep_glow = "none"
 material = { roughness = 0.9, metallic = 0.0 }
 brief = """A massive tileable desert fortress rampart section 8m wide, 9m tall, 3m deep, a weathered variant of the same wall: battered sandstone base, thick upper wall with chunky crenellations along the top but two merlons broken off, two shallow buttress pilasters, NO painted plaster band; instead the plain weathered sandstone face carries one large carved sun-disc relief medallion in the middle at two thirds height and a few cracked, slightly displaced blocks. Both side ends are flat cut faces so it joins seamlessly with identical wall sections in a row. Warm ochre sandstone blocks, broad hand-painted planes, sparse chipped edges. Solid wall with no openings."""
+
+# ───────────── 第一章 · 赤沙古道地形件与地标（Unity 版，docs/level-design/unity-maps-v1.md 1-1 / 1-2 / 5）─────────────
+# 2026-10-17 第一批概念（本机 Codex 四视图，待用户审稿后再进 Tripo Studio）；style_theme = "silkroad"（汉代戈壁丝路）。
+# 尺寸：烽燧 14 m（立在地形的 6 m 夯土台上）、汉长城残墙 8×3.5 m、雅丹中 9 m / 舰形 20 m 长、驼队残骸约 5 m。
+[assets.SM_Tripo_DesertBeaconTower]
+display = "汉代烽燧（赤沙古道地标）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "silkroad"
+blockout = { source = "scene", id = "desert.silkroad.beaconTower" }
+reference_mode = "bounds_only"
+reference_dimensions = [9.0, 14.0, 9.0]
+architecture_role = "landmark"
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """A Han-dynasty Silk Road frontier beacon tower (fengsui) 14m tall in total, standing on a low square rammed-earth platform 9m wide and 1m high: a solid square tapering rammed-earth tower about 7m wide at the base narrowing to 4.5m at the top, its walls showing broad horizontal rammed-earth courses separated by thin darker layers of compressed reeds and timber, with three rows of chunky square timber beam ends poking out of every face. On the flat top: a low earthen parapet, a small square timber-and-mud lookout hut with a flat timber roof on the BACK half, and one big woven wicker-and-iron smoke basket on a stout timber post at the FRONT, filled with dark brushwood (no smoke, no fire). Ochre-red and pale sand-yellow rammed earth, weathered grey-brown timber, one faded Dunhuang malachite-green and vermilion painted lintel on the hut. A bold simple landmark silhouette readable from 150m, broad faceted planes, sparse soft erosion, no micro detail, no ladders or thin poles. One solid connected piece on a flat base."""
+
+[assets.SM_Tripo_DesertHanWall]
+display = "汉长城夯土残墙·直段"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "silkroad"
+blockout = { source = "scene", id = "desert.silkroad.hanWall" }
+reference_mode = "bounds_only"
+reference_dimensions = [8.0, 3.5, 2.4]
+architecture_role = "wall"
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """A straight Han-dynasty Great Wall (Han changcheng) rammed-earth wall segment 8m long, 3.5m tall, 2.4m thick at the base tapering to 1.6m at the top; seen from the FRONT it is a long low block exactly 8m wide and 3.5m tall. About seven broad horizontal rammed-earth courses, each separated by a thin darker layer of compressed reeds and tamarisk branches whose chunky stub ends show on the faces. The top is wind-eroded into a gently uneven rounded crest, slightly lower toward the middle, with two shallow erosion grooves running down the FRONT face. Both side ends are flat vertical cut faces so identical segments join seamlessly in a straight line. Ochre-red and pale sand-yellow earth in two or three colour blocks, khaki-brown reed layers, broad faceted planes, low-poly chunky forms, no loose bricks, debris or micro cracks. Solid wall with no openings; FRONT and BACK faces look nearly the same."""
+
+[assets.SM_Tripo_DesertHanWallEnd]
+display = "汉长城夯土残墙·断口端头"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "silkroad"
+blockout = { source = "scene", id = "desert.silkroad.hanWallEnd" }
+reference_mode = "bounds_only"
+reference_dimensions = [8.0, 3.5, 2.4]
+architecture_role = "wall"
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """The broken END piece of the SAME Han-dynasty Great Wall rammed-earth wall as the straight segment, built exactly the same way, only collapsing at one end. PROPORTIONS: in the FRONT and BACK views it is a very long, low wall, 8m long and only 3.5m tall at its highest, so its drawn width is 2.3 times its drawn height, much wider than tall, like a long low bench; 2.4m thick at the base tapering to 1.6m at the top. Construction: seven broad horizontal rammed-earth courses stacked like thick layers of a cake, each course one continuous monolithic band of compacted earth running the whole length with softly rounded edges, with NO vertical joints, seams, bricks, cut stone blocks or masonry anywhere; between every two courses a thin darker layer of compressed reeds and tamarisk branches with chunky stub ends. The courses alternate ochre-red and pale sand-yellow earth, the reed layers are khaki-brown. In the FRONT view the LEFT half of the length (a full 4m, half of the wall) stands at the full 3.5m height with a softly eroded, gently uneven rounded crest and a flat vertical cut end face at the far left that joins a straight segment; only past the middle, across the RIGHT half, does the wall break down in a long, shallow staircase collapse where the courses peel back one by one, each higher course ending a little further left than the course below it, every step a rounded eroded earth ledge with its reed layer showing as the step edge, down to a low stump of the two bottom courses about 1m high at the right end. At the foot of the collapse, inside the 8m length, lie two large fallen chunks of the same layered rammed earth: thick slabs with the same reed-layer stripe across them and soft rounded broken edges, not square stones. The BACK view is the FRONT view mirrored, with the same long low proportions: collapse on the image-left, intact full-height half on the image-right. Both side views share the same outline, a tapered trapezoid 2.4m wide at the base, 1.6m wide at the top and 3.5m tall: the LEFT side view looks at the collapsed end and shows the low stepped stump and the fallen chunks in front of that full-height tapered profile; the RIGHT side view looks at the intact end and shows the flat cut end face with the seven course bands and reed layers. Broad faceted planes, low-poly chunky forms, two or three colour blocks, no small debris, pebbles or micro cracks. One solid connected piece on a flat base, no openings."""
+
+# 2026-10-18 用户决定先砍掉（概念三版都没过审）：只保留登记与概念记录，不进 Tripo，1-1 里没有用到
+[assets.SM_Tripo_DesertYardangMedium]
+display = "雅丹岩丘·中（9 m）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "silkroad"
+blockout = { source = "scene", id = "desert.silkroad.yardangMedium" }
+reference_mode = "bounds_only"
+reference_dimensions = [6.5, 9.0, 16.0]
+architecture_role = "terrain"
+keep_glow = "none"
+material = { roughness = 0.95, metallic = 0.0 }
+brief = """A medium wind-eroded yardang rock mound 9m tall, 6.5m wide and 16m long, its long axis running front-to-back along the wind, made of the same rock as a big ship-shaped yardang ridge: bold, perfectly horizontal sediment strata in alternating ochre-red and pale sand-yellow bands, each band a broad flat stripe that wraps all the way around at the same height on every side. Shape: one massive flat-topped loaf-like rock body, NOT a slender pillar or tower and NOT a ramp or wedge. The top is a broad, almost level flat plateau: a full 9m high from the front head over the front three quarters of the length, then one low step down by about 1.5m over the last quarter to the tail at the BACK end. The side walls are steep and near-vertical with slightly rounded upper edges, carved by a few broad vertical wind flutes and grooves. Along the foot a continuous shallow horizontal undercut groove runs all around like a waterline notch, a recessed band about 1m tall; no arches, caves, holes or separate legs, the rock sits solidly on the ground along its whole length. The FRONT is the blunt rounded upwind head. EXACT VIEW PROPORTIONS, all four views drawn at the same 9m height: FRONT and BACK views show the 6.5m narrow end, drawn clearly taller than wide (width about 0.7 of the height), a sturdy upright mass with a broad flat top nearly as wide as the base, only slightly rounded shoulders and sides that flare a little outward to the footing, the horizontal bands running straight across it; the BACK outline is the FRONT outline mirrored at the same full height, because the taller head still shows behind the lower tail step, which appears as a lower ledge in front. LEFT and RIGHT side views show the long 16m profile, drawn 1.8 times as long as tall (never longer), the two side views exact mirror images of each other: a nearly horizontal top line with the blunt head at the front end and the single low step down near the back end, the horizontal bands parallel to the ground, never diagonal. Broad faceted hand-painted planes, chunky readable forms, two or three colour blocks, no tiny cracks, pebbles, vegetation or man-made parts. One solid rock mass on a flat base."""
+
+[assets.SM_Tripo_DesertYardangFleet]
+display = "雅丹「舰队」岩脊（20 m 地标）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "silkroad"
+blockout = { source = "scene", id = "desert.silkroad.yardangFleet" }
+reference_mode = "bounds_only"
+reference_dimensions = [8.0, 10.0, 20.0]
+architecture_role = "landmark"
+keep_glow = "none"
+material = { roughness = 0.95, metallic = 0.0 }
+brief = """A large hero landmark "fleet" yardang: a ship-shaped wind-eroded rock ridge 20m long, 8m wide and 10m tall, long axis front-to-back, like a stranded stone warship. At the FRONT a raised blunt prow rises to the full 10m height, steep and slightly overhanging like a ship bow; behind it a long flat deck-like top steps down in two broad terraces to a lower squared stern about 5m tall at the BACK. Steep fluted sides with broad vertical wind grooves, a long undercut notch along the base like a hull waterline, and bold horizontal sediment banding in alternating ochre-red and sand-yellow layers. Broad faceted hand-painted planes, a chunky silhouette readable from far away, no tiny cracks, pebbles, vegetation or man-made parts. One solid rock mass on a flat base. The FRONT and BACK views show the narrow 8m ends; the LEFT and RIGHT side views show the long ship profile with the raised prow."""
+
+[assets.SM_Tripo_DesertCaravanWreck]
+display = "驼队残骸（车辕、货包、驼骨）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+style_theme = "silkroad"
+blockout = { source = "scene", id = "desert.silkroad.caravanWreck" }
+reference_mode = "bounds_only"
+reference_dimensions = [5.0, 2.2, 3.6]
+architecture_role = "dressing"
+keep_glow = "none"
+qa_waivers = { "场景高度" = "Tripo 成品比参考包围盒更扁宽，等比缩放后货包顶约 1.8 m（参考 2.2 m 是估值）；1.8 m 正好作中掩体（2026-10-17）" }
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """An abandoned Silk Road caravan wreck 5m wide, 2.2m tall, 3.6m deep, half sunk in one low, compact sand drift mound that joins everything and does not spread beyond the parts. PROPORTIONS: a low, wide cluster only 2.2m tall including the cargo, so in the FRONT and BACK views it is drawn 2.3 times wider than tall and in the side views 1.6 times wider than tall; the cargo bundles sit low and squat on the cart bed. Draw every view small enough to leave wide empty grey gaps between neighbouring views; no view, wheel, shaft or sand edge may come near another view. Only four parts, all big and chunky: (1) one broken two-wheeled wooden cart, (2) two bulky cargo bundles on it, (3) one terracotta water jar, (4) one half-buried camel skeleton. FIXED LAYOUT as seen in the FRONT view: the cart fills the RIGHT and centre of the scene with its two thick shafts pointing straight toward the viewer, tilted forward so the shaft tips rest in the sand; the camel skeleton lies at the cart's LEFT-REAR corner, on the image-left and further back than the cart. The cart: a heavy plank box bed with low thick sides and two big solid wooden wheels with only four thick spokes each, both still upright on the axle, one on each side of the bed; on the bed one large terracotta-red cloth bundle and one large indigo-blue cloth bundle, each tied with two thick ropes, and exactly one round terracotta jar between them (no other jars). The camel skeleton: a short thick spine lying on the ground parallel to the cart's axle, only five or six very thick chunky ivory ribs arching up out of the sand like big curved bars (each rib as thick as a forearm, with wide gaps between them), and one large chunky camel skull lying on the sand at the outer left end of the spine. All four views must show this one layout exactly: FRONT view - cart on the right with its shafts toward the viewer, rib cage on the left seen from the side as a row of arches, skull at the far left; BACK view - mirrored, cart on the image-left showing its plank tailboard, rib cage on the image-right closest to the camera, skull at the far right; LEFT side view (looking from the cart's wheel side) - the cart in front with its shafts pointing to the image-left and one wheel seen face-on, the rib tops just visible behind the cart toward the image-right; RIGHT side view (looking from the skeleton side) - the rib cage seen end-on in front on the image-left with the skull facing the camera, the cart behind it with its shafts pointing to the image-right. Weathered grey-brown timber, faded terracotta and indigo cloth, pale ivory bone, sand-yellow drift. Chunky simplified shapes at Gunfire Reborn fidelity, broad faceted planes, two or three dominant colour blocks, no thin spokes, loose ropes, thin or fine bones, flags, cloth banners or scattered debris; everything touching as one solid connected cluster on a flat base."""
 
 
 # ───────────── Playable heroes · Tripo P2.0 native-rig builds ─────────────

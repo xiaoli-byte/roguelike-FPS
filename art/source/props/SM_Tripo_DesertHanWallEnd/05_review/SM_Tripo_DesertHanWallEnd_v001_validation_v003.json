@@ -1,0 +1,212 @@
+[
+  {
+    "level": "pass",
+    "check": "文件大小",
+    "detail": "562 KB / 上限 1600 KB"
+  },
+  {
+    "level": "pass",
+    "check": "扩展可用",
+    "detail": "必需扩展 ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+  },
+  {
+    "level": "pass",
+    "check": "LOD 数量",
+    "detail": "['SM_Tripo_DesertHanWallEnd_LOD0', 'SM_Tripo_DesertHanWallEnd_LOD1', 'SM_Tripo_DesertHanWallEnd_LOD2']，规格 3 级"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 面数",
+    "detail": "4304 / 预算 8000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 切换距离",
+    "detail": "extras.lod_distance=0"
+  },
+  {
+    "level": "pass",
+    "check": "场景参考占地 X 轴",
+    "detail": "5.655 m / 参考 9.200 m；超出时引擎按碰撞体等比适配"
+  },
+  {
+    "level": "pass",
+    "check": "场景有效尺寸 X 轴",
+    "detail": "5.655 m / 极限 24.000 m"
+  },
+  {
+    "level": "pass",
+    "check": "场景参考占地 Z 轴",
+    "detail": "2.169 m / 参考 2.760 m；超出时引擎按碰撞体等比适配"
+  },
+  {
+    "level": "pass",
+    "check": "场景有效尺寸 Z 轴",
+    "detail": "2.169 m / 极限 7.200 m"
+  },
+  {
+    "level": "pass",
+    "check": "场景高度",
+    "detail": "3.500 m / 参考 3.500 m"
+  },
+  {
+    "level": "pass",
+    "check": "场景脚底落地",
+    "detail": "最低点 y=0.0000"
+  },
+  {
+    "level": "pass",
+    "check": "场景轴心居中",
+    "detail": "中心 x=0.000 z=0.000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 面数",
+    "detail": "2486 / 预算 2500"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 递减",
+    "detail": "4304 → 2486"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 切换距离",
+    "detail": "extras.lod_distance=24"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 面数",
+    "detail": "796 / 预算 800"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 递减",
+    "detail": "2486 → 796"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 切换距离",
+    "detail": "extras.lod_distance=60"
+  },
+  {
+    "level": "pass",
+    "check": "材质数量",
+    "detail": "['M_Tripo_DesertHanWallEnd']（一个资产一个材质，便于合批；重烘的远景 LOD 另有 M_*_LOD<i>）"
+  },
+  {
+    "level": "pass",
+    "check": "材质命名",
+    "detail": "['M_Tripo_DesertHanWallEnd']"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 材质",
+    "detail": "['M_Tripo_DesertHanWallEnd']（M_*_LOD<i> 只能给第 i 级 LOD 用）"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 材质",
+    "detail": "['M_Tripo_DesertHanWallEnd']（M_*_LOD<i> 只能给第 i 级 LOD 用）"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 材质",
+    "detail": "['M_Tripo_DesertHanWallEnd']（M_*_LOD<i> 只能给第 i 级 LOD 用）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Tripo_DesertHanWallEnd_N",
+    "detail": "2048×2048 webp（规格 2048²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Tripo_DesertHanWallEnd_N",
+    "detail": "T_<类>_<名>[_LOD<i>]_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Tripo_DesertHanWallEnd_ORM",
+    "detail": "2048×2048 webp（规格 2048²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Tripo_DesertHanWallEnd_ORM",
+    "detail": "T_<类>_<名>[_LOD<i>]_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Tripo_DesertHanWallEnd_BC",
+    "detail": "2048×2048 webp（规格 2048²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Tripo_DesertHanWallEnd_BC",
+    "detail": "T_<类>_<名>[_LOD<i>]_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "BaseColor 贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "法线贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "ORM 贴图",
+    "detail": "AO / 粗糙度 / 金属度"
+  },
+  {
+    "level": "error",
+    "check": "LOD1 贴图拉伸",
+    "detail": "UV 拉伸面积 3.3% / 上限 2%（减面跨 UV 岛，贴图拉成斜条纹）"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 贴图色差",
+    "detail": "与 LOD0 色差面积 0.1% / 上限 6%，平均色差 0.01"
+  },
+  {
+    "level": "error",
+    "check": "LOD2 贴图拉伸",
+    "detail": "UV 拉伸面积 5.5% / 上限 2%（减面跨 UV 岛，贴图拉成斜条纹）"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 贴图色差",
+    "detail": "与 LOD0 色差面积 2.5% / 上限 6%，平均色差 0.025"
+  },
+  {
+    "level": "pass",
+    "check": "SM_Tripo_DesertHanWallEnd_LOD0 UV 范围",
+    "detail": "[0.0, 0.0]..[1.0, 1.0]"
+  },
+  {
+    "level": "pass",
+    "check": "SM_Tripo_DesertHanWallEnd_LOD1 UV 范围",
+    "detail": "[0.0, 0.0048828125]..[0.998046875, 1.0]"
+  },
+  {
+    "level": "pass",
+    "check": "SM_Tripo_DesertHanWallEnd_LOD2 UV 范围",
+    "detail": "[0.0, 0.006160383112728596]..[0.998046875, 1.0]"
+  },
+  {
+    "level": "pass",
+    "check": "UV 利用率",
+    "detail": "50%"
+  },
+  {
+    "level": "pass",
+    "check": "高模对齐",
+    "detail": "剪影 IoU 0.846（{'front': 0.937, 'left': 0.737, 'back': 0.922, 'right': 0.74}）"
+  },
+  {
+    "level": "pass",
+    "check": "投影覆盖",
+    "detail": "未覆盖顶点 0%（扩散补色）"
+  }
+]

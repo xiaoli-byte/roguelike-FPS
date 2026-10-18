@@ -108,7 +108,8 @@ def run(spec: AssetSpec, a) -> None:
 
     rows = [
         ("成品（LOD0）", [f"beauty_{v}" for v in ("front", "left", "back", "right", "34")]),
-        ("布线 LOD0 / 1 / 2", [k for k in ("wire_lod0", "wire_lod1", "wire_lod2") if k in f]),
+        ("布线 / 贴图 LOD0–2", [k for k in ("wire_lod0", "wire_lod1", "wire_lod2") if k in f]
+         + [k for k in ("tex_lod0", "tex_lod1", "tex_lod2") if k in f]),
     ]
     if spec.kind == "skeletal" and (rom or spec.blockout.get("source") == "hero"):
         names = list(poses)

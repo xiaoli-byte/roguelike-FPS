@@ -1,0 +1,730 @@
+{
+  "id": "SM_Tripo_DesertHanWallEnd",
+  "display": "汉长城夯土残墙·断口端头",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 16:24:09",
+          "files": {
+            "BO_SM_Tripo_DesertHanWallEnd_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertHanWallEnd_v001.json",
+              "sha256": "54a79b242784b7e8d28b11a212e62059e0c474f9d3bb7f2890941c5944e5ddaa"
+            },
+            "BO_SM_Tripo_DesertHanWallEnd_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertHanWallEnd_v001_views.json",
+              "sha256": "989e941c19b811dfa5f276a8acf641ee779e3902a67c3c25404987029ec4d555"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.hanWallEnd"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -4.0,
+              0,
+              -1.2
+            ],
+            "max": [
+              4.0,
+              3.5,
+              1.2
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 16:25:10",
+          "files": {
+            "CN_SM_Tripo_DesertHanWallEnd_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWallEnd_v001_source.png",
+              "sha256": "0cddc0dfe88ad89a0e47df8ea75cf7aeb6394f352103486aa46f9480e1eb4c32"
+            },
+            "CN_SM_Tripo_DesertHanWallEnd_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWallEnd_v001_front.png",
+              "sha256": "c4841081c3d743de04f7f346b0932f010803dd5a1efaf114899d9cc53cbc1992"
+            },
+            "CN_SM_Tripo_DesertHanWallEnd_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWallEnd_v001_left.png",
+              "sha256": "c36798d89d4272f31940968810f1a78972dfb799db31ac3bd39b26c67acd1cf4"
+            },
+            "CN_SM_Tripo_DesertHanWallEnd_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWallEnd_v001_back.png",
+              "sha256": "f92322b972d604bd12682f18474f14bc0970876fd6954d303bb9853140da87ed"
+            },
+            "CN_SM_Tripo_DesertHanWallEnd_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWallEnd_v001_right.png",
+              "sha256": "26c66c7b15fc0f2a289023fd2cae7642e5e4f05491d942150f9e8862d88a33be"
+            },
+            "CN_SM_Tripo_DesertHanWallEnd_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWallEnd_v001_sheet.png",
+              "sha256": "4f223582abefc6ae355380d4eb9ffb43213f2e8f5459ed61b5359f08ad5d4328"
+            },
+            "CN_SM_Tripo_DesertHanWallEnd_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWallEnd_v001_prompt.txt",
+              "sha256": "b41c9e96864a6f12eff6a4e78e03f75c6117b85cc9adec3552249492f8262f62"
+            },
+            "CN_SM_Tripo_DesertHanWallEnd_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWallEnd_v001_registration.json",
+              "sha256": "cff08aa131d254e68550839af3a6395570a9698b7b983991335b68c88ae09078"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-5.6-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-5.6-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a148f6-1614-7273-bad9-912fadfe0fa0",
+            "attempt": 1,
+            "seconds": 59.1
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (8m wide x 3.5m tall x 2.4m deep): A broken END segment of the same Han-dynasty Great Wall rammed-earth wall, 8m long, 2.4m thick at the base, 3.5m tall at its intact LEFT end (as seen in the FRONT view): the same broad horizontal rammed-earth courses separated by thin darker compressed reed-and-branch layers with chunky stub ends. The LEFT end is a flat vertical cut face that joins a straight wall segment; toward the RIGHT the wall breaks off in a big stepped diagonal collapse, the courses ending layer by layer down to a low eroded stump about 1m high at the right end, with two or three large chunky fallen earth blocks resting against the foot of the break, all inside the 8m length. Ochre-red and pale sand-yellow earth, khaki-brown reed layers, broad faceted planes, low-poly chunky forms, no small debris or micro cracks. One solid connected piece on a flat base, no openings.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "0cddc0dfe88ad89a0e47df8ea75cf7aeb6394f352103486aa46f9480e1eb4c32",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.4132231404958677,
+              "offset": [
+                114,
+                412
+              ],
+              "size": [
+                283,
+                200
+              ],
+              "physical_height_m": 3.5,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.41580041580041577,
+              "offset": [
+                226,
+                412
+              ],
+              "size": [
+                59,
+                200
+              ],
+              "physical_height_m": 3.5,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.4132231404958677,
+              "offset": [
+                114,
+                412
+              ],
+              "size": [
+                283,
+                200
+              ],
+              "physical_height_m": 3.5,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.41928721174004185,
+              "offset": [
+                200,
+                412
+              ],
+              "size": [
+                111,
+                200
+              ],
+              "physical_height_m": 3.5,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "rejected",
+            "by": "TheSoulOfCommunism",
+            "note": "画成了石块砌筑而非夯土；两侧视图不一致。重画：保持直段同样的夯土层与芦苇夹层，断口是夯层逐层剥落的阶梯状坍塌，坠落的是夯土块而非方石",
+            "time": "2026-10-17 16:50:35"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-17 16:55:07",
+          "files": {
+            "CN_SM_Tripo_DesertHanWallEnd_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWallEnd_v002_source.png",
+              "sha256": "6da811caf98a764f5121b7fac48d18f6fdbcf00efbf6e7aa5a53e9620e972b76"
+            },
+            "CN_SM_Tripo_DesertHanWallEnd_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWallEnd_v002_front.png",
+              "sha256": "9df069c2b39eb34532b01d16fdc53b64c8aebfea66441aa8098554a733dec22c"
+            },
+            "CN_SM_Tripo_DesertHanWallEnd_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWallEnd_v002_left.png",
+              "sha256": "96d40210bbb1bc8d71af7a971d66c661aaf5ffa82c727e975cadcdbbf38d2a00"
+            },
+            "CN_SM_Tripo_DesertHanWallEnd_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWallEnd_v002_back.png",
+              "sha256": "885431039fb025593e87dcd24ceb901a256a9aeb5bacfc6aec351a0f56d4f357"
+            },
+            "CN_SM_Tripo_DesertHanWallEnd_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWallEnd_v002_right.png",
+              "sha256": "68dd7f9b552d9c1bd07432fadcae7bfd8f09dcf3104f08e67cbe3aec109564df"
+            },
+            "CN_SM_Tripo_DesertHanWallEnd_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWallEnd_v002_sheet.png",
+              "sha256": "8b6621cd84d5bc350ff773aeb2a2a3a0ebd2d8bd6824a95130cd83f2312645ea"
+            },
+            "CN_SM_Tripo_DesertHanWallEnd_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWallEnd_v002_prompt.txt",
+              "sha256": "3f88c52aad9e104ad666553cf0362cedd8de537cb94602f38326085dae836bff"
+            },
+            "CN_SM_Tripo_DesertHanWallEnd_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWallEnd_v002_registration.json",
+              "sha256": "e0ee0d1b0c24aa81fbc6f435d50b811b200eec04a81f1c5b67738c8ae51c83d2"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-5.6-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-5.6-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a14911-7fde-75d3-9f58-6535869465f8",
+            "attempt": 1,
+            "seconds": 60.6
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (8m wide x 3.5m tall x 2.4m deep): The broken END piece of the SAME Han-dynasty Great Wall rammed-earth wall as the straight segment, built exactly the same way, only collapsing at one end. Seen from the FRONT it is a long low wall exactly 8m long and 3.5m tall at its highest, about 2.3 times as wide as it is tall, 2.4m thick at the base tapering to 1.6m at the top. Construction: seven broad horizontal rammed-earth courses stacked like thick layers of a cake, each course one continuous monolithic band of compacted earth running the whole length with softly rounded edges, with NO vertical joints, seams, bricks, cut stone blocks or masonry anywhere; between every two courses a thin darker layer of compressed reeds and tamarisk branches with chunky stub ends. The courses alternate ochre-red and pale sand-yellow earth, the reed layers are khaki-brown. In the FRONT view the LEFT half (about 4m) stands at the full 3.5m height with a softly eroded rounded crest and a flat vertical cut end face at the far left that joins a straight segment; across the RIGHT half the wall breaks down in a broad staircase collapse where the courses peel back one by one, each higher course ending a little further left than the course below it, every step a rounded eroded earth ledge with its reed layer showing as the step edge, down to a low stump of the two bottom courses about 1m high at the right end. At the foot of the collapse, inside the 8m length, lie two large fallen chunks of the same layered rammed earth: thick slabs with the same reed-layer stripe across them and soft rounded broken edges, not square stones. The BACK view is the FRONT view mirrored: collapse on the image-left, intact full-height part on the image-right. Both side views share the same outline, a tapered trapezoid 2.4m wide at the base, 1.6m wide at the top and 3.5m tall: the LEFT side view looks at the collapsed end and shows the low stepped stump and the fallen chunks in front of that full-height tapered profile; the RIGHT side view looks at the intact end and shows the flat cut end face with the seven course bands and reed layers. Broad faceted planes, low-poly chunky forms, two or three colour blocks, no small debris, pebbles or micro cracks. One solid connected piece on a flat base, no openings.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "6da811caf98a764f5121b7fac48d18f6fdbcf00efbf6e7aa5a53e9620e972b76",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.44843049327354256,
+              "offset": [
+                107,
+                412
+              ],
+              "size": [
+                297,
+                200
+              ],
+              "physical_height_m": 3.5,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.44843049327354256,
+              "offset": [
+                204,
+                412
+              ],
+              "size": [
+                104,
+                200
+              ],
+              "physical_height_m": 3.5,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.44642857142857134,
+              "offset": [
+                102,
+                412
+              ],
+              "size": [
+                307,
+                200
+              ],
+              "physical_height_m": 3.5,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.44444444444444436,
+              "offset": [
+                211,
+                412
+              ],
+              "size": [
+                90,
+                200
+              ],
+              "physical_height_m": 3.5,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 3,
+          "created": "2026-10-17 16:59:50",
+          "files": {
+            "CN_SM_Tripo_DesertHanWallEnd_v003_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWallEnd_v003_source.png",
+              "sha256": "cf67fd921a1b78f315ba6a355b89b803e560a3d26c307945b93b4f096f6be3d9"
+            },
+            "CN_SM_Tripo_DesertHanWallEnd_v003_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWallEnd_v003_front.png",
+              "sha256": "f94ae99a8ae04335eab8aaed6957c3f375d0d505dd49423797251eca66de9d46"
+            },
+            "CN_SM_Tripo_DesertHanWallEnd_v003_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWallEnd_v003_left.png",
+              "sha256": "4b00dd8c7ded57437bcf52ca8f03ab0f37d42dea85c2e38ccc39ea3e5edec5ce"
+            },
+            "CN_SM_Tripo_DesertHanWallEnd_v003_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWallEnd_v003_back.png",
+              "sha256": "83361a4c7cb8a5c350dd158c1132c9d564ba5b41240c150ca7540166c87b7e9b"
+            },
+            "CN_SM_Tripo_DesertHanWallEnd_v003_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWallEnd_v003_right.png",
+              "sha256": "5ebbf5c156fb348df73969df698c30efdb0463064d21b77cb6f3beb163767395"
+            },
+            "CN_SM_Tripo_DesertHanWallEnd_v003_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWallEnd_v003_sheet.png",
+              "sha256": "378475b6adaead485773fedc52c01e02192386e770fe48ac3e6ae1610e32fed4"
+            },
+            "CN_SM_Tripo_DesertHanWallEnd_v003_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWallEnd_v003_prompt.txt",
+              "sha256": "febe4cf2872a754cc1a28ed04e729d6fb8315b977cc4ea98ad0ef67a616dd073"
+            },
+            "CN_SM_Tripo_DesertHanWallEnd_v003_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertHanWallEnd_v003_registration.json",
+              "sha256": "ea76942341020880aac0c94a2bcf05a3107adb7e17353fd535cc422a0c64c49b"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-5.6-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-5.6-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2243,
+              701
+            ],
+            "references": [],
+            "codex_session": "01a14915-d16e-7bd2-9c44-a75faa72e769",
+            "attempt": 1,
+            "seconds": 58.8
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (8m wide x 3.5m tall x 2.4m deep): The broken END piece of the SAME Han-dynasty Great Wall rammed-earth wall as the straight segment, built exactly the same way, only collapsing at one end. PROPORTIONS: in the FRONT and BACK views it is a very long, low wall, 8m long and only 3.5m tall at its highest, so its drawn width is 2.3 times its drawn height, much wider than tall, like a long low bench; 2.4m thick at the base tapering to 1.6m at the top. Construction: seven broad horizontal rammed-earth courses stacked like thick layers of a cake, each course one continuous monolithic band of compacted earth running the whole length with softly rounded edges, with NO vertical joints, seams, bricks, cut stone blocks or masonry anywhere; between every two courses a thin darker layer of compressed reeds and tamarisk branches with chunky stub ends. The courses alternate ochre-red and pale sand-yellow earth, the reed layers are khaki-brown. In the FRONT view the LEFT half of the length (a full 4m, half of the wall) stands at the full 3.5m height with a softly eroded, gently uneven rounded crest and a flat vertical cut end face at the far left that joins a straight segment; only past the middle, across the RIGHT half, does the wall break down in a long, shallow staircase collapse where the courses peel back one by one, each higher course ending a little further left than the course below it, every step a rounded eroded earth ledge with its reed layer showing as the step edge, down to a low stump of the two bottom courses about 1m high at the right end. At the foot of the collapse, inside the 8m length, lie two large fallen chunks of the same layered rammed earth: thick slabs with the same reed-layer stripe across them and soft rounded broken edges, not square stones. The BACK view is the FRONT view mirrored, with the same long low proportions: collapse on the image-left, intact full-height half on the image-right. Both side views share the same outline, a tapered trapezoid 2.4m wide at the base, 1.6m wide at the top and 3.5m tall: the LEFT side view looks at the collapsed end and shows the low stepped stump and the fallen chunks in front of that full-height tapered profile; the RIGHT side view looks at the intact end and shows the flat cut end face with the seven course bands and reed layers. Broad faceted planes, low-poly chunky forms, two or three colour blocks, no small debris, pebbles or micro cracks. One solid connected piece on a flat base, no openings.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "cf67fd921a1b78f315ba6a355b89b803e560a3d26c307945b93b4f096f6be3d9",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.4926108374384236,
+              "offset": [
+                92,
+                412
+              ],
+              "size": [
+                327,
+                200
+              ],
+              "physical_height_m": 3.5,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.4901960784313725,
+              "offset": [
+                207,
+                412
+              ],
+              "size": [
+                98,
+                200
+              ],
+              "physical_height_m": 3.5,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.49140049140049136,
+              "offset": [
+                84,
+                412
+              ],
+              "size": [
+                344,
+                200
+              ],
+              "physical_height_m": 3.5,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.48661800486617995,
+              "offset": [
+                207,
+                412
+              ],
+              "size": [
+                98,
+                200
+              ],
+              "physical_height_m": 3.5,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "TheSoulOfCommunism",
+            "note": "v003：夯土层 + 芦苇夹层与直段一致，阶梯式坍塌，夯土坠块；比例偏短，导入后同直段拉长",
+            "time": "2026-10-17 23:13:42"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 23:36:00",
+          "files": {
+            "HP_SM_Tripo_DesertHanWallEnd_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertHanWallEnd_v001_source.glb",
+              "sha256": "7d53168648a65c4b395d3bed35f086ae546df742d44cc89dce9549acb6ef586f"
+            },
+            "HP_SM_Tripo_DesertHanWallEnd_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertHanWallEnd_v001.glb",
+              "sha256": "c6d617998ec146148a6c53a9c5c028569ff0a7c01d676324fb52e0ccbec54933"
+            },
+            "HP_SM_Tripo_DesertHanWallEnd_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertHanWallEnd_v001_graph.json",
+              "sha256": "c897f773cffd991c838041efcd70dad5823a9b587cac89af2e7db8c8d884bed6"
+            }
+          },
+          "from_concept": 3,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/172ba0eb-7489-460e-a9f5-b9cb411af70a",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 4304,
+          "source_sha256": "7d53168648a65c4b395d3bed35f086ae546df742d44cc89dce9549acb6ef586f"
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 23:36:28",
+          "files": {
+            "SM_Tripo_DesertHanWallEnd_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertHanWallEnd_v001.blend",
+              "sha256": "a29c1d2948c949bf1f8e7434aa45d232df9a9f26ea4478d96bb7e5117df277cd"
+            },
+            "SM_Tripo_DesertHanWallEnd_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertHanWallEnd_v001.glb",
+              "sha256": "9600c0690236b9d4d7d9a1e79dedc7a6021e027bc4a750a92c3bb1cdfc24a482"
+            },
+            "SM_Tripo_DesertHanWallEnd_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertHanWallEnd_v001_metrics.json",
+              "sha256": "bb760de8562c6d66a4c4ee0b046baa0ea1ffa6c7025392cc310809aef4272a2a"
+            },
+            "T_Tripo_DesertHanWallEnd_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertHanWallEnd_BC.png",
+              "sha256": "8b1e9fb3573023997e14b81d10bc58e76d315986735a34df6645b1e5791eb777"
+            },
+            "T_Tripo_DesertHanWallEnd_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertHanWallEnd_N.png",
+              "sha256": "78a1cab632948299557a17b2c3580fbdc7b532272f39738a9f43b981ec52151b"
+            },
+            "T_Tripo_DesertHanWallEnd_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertHanWallEnd_ORM.png",
+              "sha256": "36ff7eb2f976c049d3679b7cef84c128183454c4022937b2bb0e375890dbf3e9"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 3,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.846,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 4304,
+              "verts": 2154
+            },
+            {
+              "tris": 2486,
+              "verts": 1245
+            },
+            {
+              "tris": 796,
+              "verts": 400
+            }
+          ],
+          "export_kb": 561.8,
+          "seconds": 25.5,
+          "bake_device": "none (provider textures)",
+          "quality_status": "failed",
+          "quality_errors": [
+            "LOD1 贴图拉伸",
+            "LOD2 贴图拉伸"
+          ]
+        },
+        {
+          "version": 2,
+          "created": "2026-10-18 15:10:55",
+          "files": {
+            "SM_Tripo_DesertHanWallEnd_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertHanWallEnd_v002.blend",
+              "sha256": "f98fd034342e345685f34fd86ebe8925478362a4819feb5e13200dbf80989f5a"
+            },
+            "SM_Tripo_DesertHanWallEnd_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertHanWallEnd_v002.glb",
+              "sha256": "ce634c4d9e5034529a8e78d90eceb12f6a444f3901da880bf8ce81dab09576d3"
+            },
+            "SM_Tripo_DesertHanWallEnd_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertHanWallEnd_v002_metrics.json",
+              "sha256": "826169a62b7ce31c267c4170259facfae366d11a9402c4190e844c2ac8ed3115"
+            },
+            "T_Tripo_DesertHanWallEnd_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertHanWallEnd_BC.png",
+              "sha256": "8b1e9fb3573023997e14b81d10bc58e76d315986735a34df6645b1e5791eb777"
+            },
+            "T_Tripo_DesertHanWallEnd_LOD1_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertHanWallEnd_LOD1_BC.png",
+              "sha256": "02716170f399825bfe00180a75371a858145bda95aa15c6c8b05cdc8a92c97c6"
+            },
+            "T_Tripo_DesertHanWallEnd_LOD1_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertHanWallEnd_LOD1_N.png",
+              "sha256": "94f8af9d28dcc177056be0e31e572feb9995dceb80bc319d1c14bf00f2326695"
+            },
+            "T_Tripo_DesertHanWallEnd_LOD1_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertHanWallEnd_LOD1_ORM.png",
+              "sha256": "07f3522d1e24f2caa0291bb5ecbed4397941b9d1bb2ed78c7e4237d12c0ce898"
+            },
+            "T_Tripo_DesertHanWallEnd_LOD2_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertHanWallEnd_LOD2_BC.png",
+              "sha256": "24d2e665ad5f6fe52839bdf7bea3921687cb445099898be780111aab7650ebc6"
+            },
+            "T_Tripo_DesertHanWallEnd_LOD2_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertHanWallEnd_LOD2_N.png",
+              "sha256": "f2918fa9ee46ee2fcc7abaa1ef39c3c1b5392b6a83a52f4695fd46755e5d5346"
+            },
+            "T_Tripo_DesertHanWallEnd_LOD2_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertHanWallEnd_LOD2_ORM.png",
+              "sha256": "b3119ae79e18d1931b7e748a696317f1fb189ed5f443152854cf997984e45d19"
+            },
+            "T_Tripo_DesertHanWallEnd_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertHanWallEnd_N.png",
+              "sha256": "78a1cab632948299557a17b2c3580fbdc7b532272f39738a9f43b981ec52151b"
+            },
+            "T_Tripo_DesertHanWallEnd_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertHanWallEnd_ORM.png",
+              "sha256": "36ff7eb2f976c049d3679b7cef84c128183454c4022937b2bb0e375890dbf3e9"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 3,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.846,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 4304,
+              "verts": 2154
+            },
+            {
+              "tris": 2486,
+              "verts": 1245
+            },
+            {
+              "tris": 796,
+              "verts": 400
+            }
+          ],
+          "export_kb": 755.5,
+          "seconds": 40.0,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 5,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 23:37:28",
+          "files": {
+            "SM_Tripo_DesertHanWallEnd_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertHanWallEnd_v001_validation_v001.json",
+              "sha256": "beddcfa33e69de1327b77dbcbaafeb1c74790f7a713a3a476eba64a5b23918e2"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-18 15:09:46",
+          "files": {
+            "SM_Tripo_DesertHanWallEnd_v001_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertHanWallEnd_v001_validation_v002.json",
+              "sha256": "faaddebeb8329b991ca7d56b411b76e99076f7f57842ef97b6e9a1ceb5f1ae43"
+            }
+          },
+          "from_build": 1,
+          "errors": 2,
+          "warnings": 0,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 3,
+          "created": "2026-10-18 15:10:04",
+          "files": {
+            "SM_Tripo_DesertHanWallEnd_v001_validation_v003.json": {
+              "path": "05_review/SM_Tripo_DesertHanWallEnd_v001_validation_v003.json",
+              "sha256": "faaddebeb8329b991ca7d56b411b76e99076f7f57842ef97b6e9a1ceb5f1ae43"
+            }
+          },
+          "from_build": 1,
+          "errors": 2,
+          "warnings": 0,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 4,
+          "created": "2026-10-18 15:11:06",
+          "files": {
+            "SM_Tripo_DesertHanWallEnd_v002_validation_v004.json": {
+              "path": "05_review/SM_Tripo_DesertHanWallEnd_v002_validation_v004.json",
+              "sha256": "03d6995e0b75f33823c26086ec4f83572987266b2acc165213722fc8057f931e"
+            }
+          },
+          "from_build": 2,
+          "errors": 2,
+          "warnings": 0,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 5,
+          "created": "2026-10-18 15:12:19",
+          "files": {
+            "SM_Tripo_DesertHanWallEnd_v002_validation_v005.json": {
+              "path": "05_review/SM_Tripo_DesertHanWallEnd_v002_validation_v005.json",
+              "sha256": "63f67364ad40d1e0942b7f6bde5e455516e21bf459ef84337f016dbd75d1a9ee"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 23:37:34",
+          "files": {
+            "SM_Tripo_DesertHanWallEnd_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertHanWallEnd_v001_review_v001.png",
+              "sha256": "31159a694ccfff5104c68c05cc127b34120b34b4bf8dbef47e2cf3c47e90f180"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "TheSoulOfCommunism",
+            "note": "成品审核通过（Tripo P2.0 智能网格 + 4k 贴图）",
+            "time": "2026-10-17 23:39:15"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-18 15:13:08",
+          "files": {
+            "SM_Tripo_DesertHanWallEnd_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_DesertHanWallEnd_v002_review_v002.png",
+              "sha256": "0ff21766484cdae762fb65c48bf9eac1f6222c6263ec3095304c4a4ff5504363"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude (AI审核)",
+            "note": "v002 只重烘远景 LOD 贴图（模型同 v001，用户已审过）；按用户此前「LOD 重建直接通过并发布」放行",
+            "time": "2026-10-18 15:13:40"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 23:39:15",
+          "files": {
+            "SM_Tripo_DesertHanWallEnd.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertHanWallEnd.glb",
+              "sha256": "9600c0690236b9d4d7d9a1e79dedc7a6021e027bc4a750a92c3bb1cdfc24a482"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertHanWallEnd.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-18 15:13:40",
+          "files": {
+            "SM_Tripo_DesertHanWallEnd.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertHanWallEnd.glb",
+              "sha256": "ce634c4d9e5034529a8e78d90eceb12f6a444f3901da880bf8ce81dab09576d3"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_DesertHanWallEnd.glb"
+        }
+      ]
+    }
+  }
+}

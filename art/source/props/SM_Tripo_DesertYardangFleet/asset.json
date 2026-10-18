@@ -1,0 +1,583 @@
+{
+  "id": "SM_Tripo_DesertYardangFleet",
+  "display": "雅丹「舰队」岩脊（20 m 地标）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 16:26:06",
+          "files": {
+            "BO_SM_Tripo_DesertYardangFleet_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertYardangFleet_v001.json",
+              "sha256": "66c2ddb617cd97d738360c8177c8f6df72d9f8074c3ea6caeefa70de9a11ea04"
+            },
+            "BO_SM_Tripo_DesertYardangFleet_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertYardangFleet_v001_views.json",
+              "sha256": "a3d4b518f54332fd9cbe8c2f7b0822ad8b86be03d809a2536bd671bbf50a7603"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.yardangFleet"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -4.0,
+              0,
+              -10.0
+            ],
+            "max": [
+              4.0,
+              10.0,
+              10.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 16:27:05",
+          "files": {
+            "CN_SM_Tripo_DesertYardangFleet_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangFleet_v001_source.png",
+              "sha256": "4e554a6a050db678a2d7b419ca3958da89235830d98eed3d3dcc26e7be51f6ab"
+            },
+            "CN_SM_Tripo_DesertYardangFleet_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangFleet_v001_front.png",
+              "sha256": "e098eb5b7e9e7b5516cbbfecaecf0669c948a2b6acd911caed367e661bddd18b"
+            },
+            "CN_SM_Tripo_DesertYardangFleet_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangFleet_v001_left.png",
+              "sha256": "a3d9869b5c18881480054d82bf07207d53dda8ce5491c017dfd6e0f1918b4ac6"
+            },
+            "CN_SM_Tripo_DesertYardangFleet_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangFleet_v001_back.png",
+              "sha256": "1a8ac3004765ba7675c9ed0d49d261431f59f5d50ab0fd916d8dedf063d78042"
+            },
+            "CN_SM_Tripo_DesertYardangFleet_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangFleet_v001_right.png",
+              "sha256": "6509e07488ed588524318e18ad3da7522b5a2f40915c170d65e702616fed35a5"
+            },
+            "CN_SM_Tripo_DesertYardangFleet_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangFleet_v001_sheet.png",
+              "sha256": "25a69f48e3f09af9c2efab17b6503fad950a7304bca78f037d0640170994fe7f"
+            },
+            "CN_SM_Tripo_DesertYardangFleet_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangFleet_v001_prompt.txt",
+              "sha256": "b19ae1393b64f39d861623061b7a8289a38710f846cc957f90c1781dd6bc038e"
+            },
+            "CN_SM_Tripo_DesertYardangFleet_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangFleet_v001_registration.json",
+              "sha256": "b74113a915019e03fb77fbe58a780aa62d2dc9596c0e0c14646bba5172544e7a"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-5.6-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-5.6-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a148f7-df75-76b0-b8c3-167ceb59248f",
+            "attempt": 1,
+            "seconds": 56.3
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (8m wide x 10m tall x 20m deep): A large hero landmark \"fleet\" yardang: a ship-shaped wind-eroded rock ridge 20m long, 8m wide and 10m tall, long axis front-to-back, like a stranded stone warship. At the FRONT a raised blunt prow rises to the full 10m height, steep and slightly overhanging like a ship bow; behind it a long flat deck-like top steps down in two broad terraces to a lower squared stern about 5m tall at the BACK. Steep fluted sides with broad vertical wind grooves, a long undercut notch along the base like a hull waterline, and bold horizontal sediment banding in alternating ochre-red and sand-yellow layers. Broad faceted hand-painted planes, a chunky silhouette readable from far away, no tiny cracks, pebbles, vegetation or man-made parts. One solid rock mass on a flat base. The FRONT and BACK views show the narrow 8m ends; the LEFT and RIGHT side views show the long ship profile with the raised prow.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "4e554a6a050db678a2d7b419ca3958da89235830d98eed3d3dcc26e7be51f6ab",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.4517221908526256,
+              "offset": [
+                206,
+                397
+              ],
+              "size": [
+                99,
+                229
+              ],
+              "physical_height_m": 10.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.46647230320699706,
+              "offset": [
+                94,
+                397
+              ],
+              "size": [
+                324,
+                229
+              ],
+              "physical_height_m": 10.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6512006512006512,
+              "offset": [
+                182,
+                397
+              ],
+              "size": [
+                148,
+                229
+              ],
+              "physical_height_m": 10.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.46457607433217185,
+              "offset": [
+                110,
+                397
+              ],
+              "size": [
+                291,
+                229
+              ],
+              "physical_height_m": 10.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "TheSoulOfCommunism",
+            "note": "舰形雅丹：船首、阶梯甲板、基部掏蚀都对",
+            "time": "2026-10-17 16:50:35"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 22:30:12",
+          "files": {
+            "HP_SM_Tripo_DesertYardangFleet_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertYardangFleet_v001_source.glb",
+              "sha256": "03e1f5f080d2e0108cf28ffd16398f664c689919cc455466196bb15fd0a4cad8"
+            },
+            "HP_SM_Tripo_DesertYardangFleet_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertYardangFleet_v001.glb",
+              "sha256": "0c95160c576032295362fc4d3bdb4b42cb7940dfa042ccced3f1bdb366147237"
+            },
+            "HP_SM_Tripo_DesertYardangFleet_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertYardangFleet_v001_graph.json",
+              "sha256": "a1d565ae5a8d65aa42b99124434d669a4c7c852a80871d8d225cc71157526332"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/b308205f-5bf0-468b-a019-d0b822dea6eb",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 9022,
+          "source_sha256": "03e1f5f080d2e0108cf28ffd16398f664c689919cc455466196bb15fd0a4cad8"
+        }
+      ]
+    },
+    "build": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 22:31:21",
+          "files": {
+            "SM_Tripo_DesertYardangFleet_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertYardangFleet_v001.blend",
+              "sha256": "6f7c81ee1cbbf68a691d71159a3d571964c4c73b33332595b4e9462506c88e88"
+            },
+            "SM_Tripo_DesertYardangFleet_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertYardangFleet_v001.glb",
+              "sha256": "0f8cace691a436a05bdad229339a73173086b875044bed516733d25e8619684e"
+            },
+            "SM_Tripo_DesertYardangFleet_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertYardangFleet_v001_metrics.json",
+              "sha256": "e9472ad7f878f7c9d1a972c54701d5e41a21505e04f4aec38bc41a8cc71084da"
+            },
+            "T_Tripo_DesertYardangFleet_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertYardangFleet_BC.png",
+              "sha256": "d7e0403d5885db61748a585b9721dbbbb1592788c28d249fc3ddf8b33b5a7af8"
+            },
+            "T_Tripo_DesertYardangFleet_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertYardangFleet_N.png",
+              "sha256": "a4040a41ff4aee1abd78f5d44703677839fcbdce89b4bd7733a36e595e4fdea7"
+            },
+            "T_Tripo_DesertYardangFleet_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertYardangFleet_ORM.png",
+              "sha256": "d2a35a12c2cab474839580ef4709adda0a7dba5eacfe02ec55ca9d3f2d720156"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.853,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7960,
+              "verts": 3982
+            },
+            {
+              "tris": 2486,
+              "verts": 1245
+            },
+            {
+              "tris": 796,
+              "verts": 400
+            }
+          ],
+          "export_kb": 468.0,
+          "seconds": 31.1,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-17 22:59:23",
+          "files": {
+            "SM_Tripo_DesertYardangFleet_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertYardangFleet_v002.blend",
+              "sha256": "2e4a9f536496152b18ab7b60e5b593091aeea573f7a760875d23f9ad0e4ff93d"
+            },
+            "SM_Tripo_DesertYardangFleet_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertYardangFleet_v002.glb",
+              "sha256": "4ae6a881ae64d8ed818b9bca9c7806f3d597df7cec596b3cac7ad7ef656a90cf"
+            },
+            "SM_Tripo_DesertYardangFleet_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertYardangFleet_v002_metrics.json",
+              "sha256": "1dae604f5737c5b8776117a608ec05ab0e8b86c507e7eb1363826ad0871065d5"
+            },
+            "T_Tripo_DesertYardangFleet_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertYardangFleet_BC.png",
+              "sha256": "d7e0403d5885db61748a585b9721dbbbb1592788c28d249fc3ddf8b33b5a7af8"
+            },
+            "T_Tripo_DesertYardangFleet_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertYardangFleet_N.png",
+              "sha256": "a4040a41ff4aee1abd78f5d44703677839fcbdce89b4bd7733a36e595e4fdea7"
+            },
+            "T_Tripo_DesertYardangFleet_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertYardangFleet_ORM.png",
+              "sha256": "d2a35a12c2cab474839580ef4709adda0a7dba5eacfe02ec55ca9d3f2d720156"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.853,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7960,
+              "verts": 3982
+            },
+            {
+              "tris": 2486,
+              "verts": 1245
+            },
+            {
+              "tris": 2486,
+              "verts": 1245
+            }
+          ],
+          "export_kb": 482.8,
+          "seconds": 29.1,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 3,
+          "created": "2026-10-17 23:32:12",
+          "files": {
+            "SM_Tripo_DesertYardangFleet_v003.blend": {
+              "path": "03_work/SM_Tripo_DesertYardangFleet_v003.blend",
+              "sha256": "92e68f13a9f3aad200ad2c05241916a192679d3cd0897affa01c368de510b059"
+            },
+            "SM_Tripo_DesertYardangFleet_v003.glb": {
+              "path": "04_export/SM_Tripo_DesertYardangFleet_v003.glb",
+              "sha256": "3f58cd9b70d6efd0e2e4ac1b1fdfa6fb59e18b10ef91e9108e593b084dee6e5c"
+            },
+            "SM_Tripo_DesertYardangFleet_v003_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertYardangFleet_v003_metrics.json",
+              "sha256": "f6976a374ad8d08d95daa1e98db2c80beb290ded1d09216afbd9c3d309498152"
+            },
+            "T_Tripo_DesertYardangFleet_BC.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertYardangFleet_BC.png",
+              "sha256": "d7e0403d5885db61748a585b9721dbbbb1592788c28d249fc3ddf8b33b5a7af8"
+            },
+            "T_Tripo_DesertYardangFleet_LOD1_BC.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertYardangFleet_LOD1_BC.png",
+              "sha256": "7348fe3fe518cb4d123f42a68c8010b9af666ccdc662050613aa8594c27fa483"
+            },
+            "T_Tripo_DesertYardangFleet_LOD1_N.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertYardangFleet_LOD1_N.png",
+              "sha256": "b5e5a245e3132d141676c64c218f44b8fc6ef693e61862a3cbdcf6ae4ca85d0e"
+            },
+            "T_Tripo_DesertYardangFleet_LOD1_ORM.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertYardangFleet_LOD1_ORM.png",
+              "sha256": "c7338f351b8317b0489ffeabb5c163139548568b6ef2b2f1b7414228c6641e17"
+            },
+            "T_Tripo_DesertYardangFleet_LOD2_BC.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertYardangFleet_LOD2_BC.png",
+              "sha256": "ea24af5a77703356b78fdcf64660f5b66e88c7139bcf544b790dc4d11e48eace"
+            },
+            "T_Tripo_DesertYardangFleet_LOD2_N.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertYardangFleet_LOD2_N.png",
+              "sha256": "91b3399b4c453901c31d323c50c0a03579ea37777be76228174a6bb69dde8553"
+            },
+            "T_Tripo_DesertYardangFleet_LOD2_ORM.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertYardangFleet_LOD2_ORM.png",
+              "sha256": "819340207cd7238699bab0fd25c50b54705d16144c574470a7a99ba7ecccccc6"
+            },
+            "T_Tripo_DesertYardangFleet_N.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertYardangFleet_N.png",
+              "sha256": "a4040a41ff4aee1abd78f5d44703677839fcbdce89b4bd7733a36e595e4fdea7"
+            },
+            "T_Tripo_DesertYardangFleet_ORM.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertYardangFleet_ORM.png",
+              "sha256": "d2a35a12c2cab474839580ef4709adda0a7dba5eacfe02ec55ca9d3f2d720156"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.853,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7960,
+              "verts": 3982
+            },
+            {
+              "tris": 2486,
+              "verts": 1245
+            },
+            {
+              "tris": 796,
+              "verts": 400
+            }
+          ],
+          "export_kb": 625.8,
+          "seconds": 46.5,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 5,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 22:31:22",
+          "files": {
+            "SM_Tripo_DesertYardangFleet_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertYardangFleet_v001_validation_v001.json",
+              "sha256": "60a6767a8e526a561e4f610ffe36d5254ce0594ad469e55941277d06253d2b16"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-17 22:59:23",
+          "files": {
+            "SM_Tripo_DesertYardangFleet_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertYardangFleet_v002_validation_v002.json",
+              "sha256": "aa203a82a294ff3603160e125d2b84fb4d6c2b4ff86c7408cb7e3824548ab984"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-10-17 23:00:35",
+          "files": {
+            "SM_Tripo_DesertYardangFleet_v002_validation_v003.json": {
+              "path": "05_review/SM_Tripo_DesertYardangFleet_v002_validation_v003.json",
+              "sha256": "63ee4fd89a3374678468343578d66fdeaee135370c0322c5094845a704f4d561"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [
+            "LOD2 递减"
+          ],
+          "passed": true
+        },
+        {
+          "version": 4,
+          "created": "2026-10-17 23:32:16",
+          "files": {
+            "SM_Tripo_DesertYardangFleet_v003_validation_v004.json": {
+              "path": "05_review/SM_Tripo_DesertYardangFleet_v003_validation_v004.json",
+              "sha256": "5ca3649cc40d490bff6396deacd7c8aec897472827b2e06a8f0a08b231f27da5"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 5,
+          "created": "2026-10-18 15:09:37",
+          "files": {
+            "SM_Tripo_DesertYardangFleet_v003_validation_v005.json": {
+              "path": "05_review/SM_Tripo_DesertYardangFleet_v003_validation_v005.json",
+              "sha256": "5ca3649cc40d490bff6396deacd7c8aec897472827b2e06a8f0a08b231f27da5"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": null,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 22:32:23",
+          "files": {
+            "SM_Tripo_DesertYardangFleet_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertYardangFleet_v001_review_v001.png",
+              "sha256": "95f8858cb1a1bddc949e439a6cb7f226574d4d2368cce84daef2ea2893082e21"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "TheSoulOfCommunism",
+            "note": "成品审核通过（Tripo P2.0 智能网格 + 4k 贴图）",
+            "time": "2026-10-17 22:46:37"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-17 22:59:29",
+          "files": {
+            "SM_Tripo_DesertYardangFleet_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_DesertYardangFleet_v002_review_v002.png",
+              "sha256": "b8c31033254258908c478df718c25902b360cd35c10c7e354738bfea4d9e54d9"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": []
+        },
+        {
+          "version": 3,
+          "created": "2026-10-17 23:00:41",
+          "files": {
+            "SM_Tripo_DesertYardangFleet_v002_review_v003.png": {
+              "path": "05_review/SM_Tripo_DesertYardangFleet_v002_review_v003.png",
+              "sha256": "0bf65487965ae95a45966c15463e28d83b154ecf35c05f2edaed082ffdb34a23"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "TheSoulOfCommunism",
+            "note": "仅远景 LOD 规则变更（LOD2 停在约 2500 面防贴图拉花），LOD0 与上一版审核一致",
+            "time": "2026-10-17 23:05:00"
+          }
+        },
+        {
+          "version": 4,
+          "created": "2026-10-17 23:32:23",
+          "files": {
+            "SM_Tripo_DesertYardangFleet_v003_review_v004.png": {
+              "path": "05_review/SM_Tripo_DesertYardangFleet_v003_review_v004.png",
+              "sha256": "2839c7d9a37e6950313d8f43df815d285f13ccae3554ef606ef067de26ed7d86"
+            }
+          },
+          "from_build": 3,
+          "deformation": {},
+          "auto_flags": []
+        }
+      ]
+    },
+    "publish": {
+      "current": null,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 22:46:37",
+          "files": {
+            "SM_Tripo_DesertYardangFleet.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertYardangFleet.glb",
+              "sha256": "0f8cace691a436a05bdad229339a73173086b875044bed516733d25e8619684e"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertYardangFleet.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-17 23:05:00",
+          "files": {
+            "SM_Tripo_DesertYardangFleet.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertYardangFleet.glb",
+              "sha256": "4ae6a881ae64d8ed818b9bca9c7806f3d597df7cec596b3cac7ad7ef656a90cf"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_DesertYardangFleet.glb"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,175 @@
+{
+  "source": {
+    "tris": 7524,
+    "verts": 4296
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 14.00684,
+    "iou": 0.913,
+    "iou_per_view": {
+      "front": 0.938,
+      "left": 0.91,
+      "back": 0.9,
+      "right": 0.892
+    },
+    "size_m": [
+      7.516,
+      5.465,
+      14.0
+    ],
+    "reference_m": [
+      9.0,
+      9.0,
+      14.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.621,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_DesertBeaconTower_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "provider",
+      "collapse": {
+        "samples": 23094,
+        "matched_ratio": 0.962,
+        "mean_delta": 0.023,
+        "p90_delta": 0.0566,
+        "smeared_ratio": 0.0091,
+        "stretched_ratio": 0.0126,
+        "dist_p99_m": 0.0256
+      }
+    },
+    "LOD2": {
+      "method": "rebaked",
+      "texture": 512,
+      "cage_m": 0.287,
+      "uv": {
+        "smart_islands": 467,
+        "charts": 234,
+        "fallback_charts": 67,
+        "flipped_faces": 14,
+        "flipped_ratio": 0.0177,
+        "method": "smart",
+        "density_smart": 0.0465,
+        "density_merged": 0.0473,
+        "coverage": 0.787
+      },
+      "collapse": {
+        "samples": 21337,
+        "matched_ratio": 0.889,
+        "mean_delta": 0.0689,
+        "p90_delta": 0.1871,
+        "smeared_ratio": 0.1419,
+        "stretched_ratio": 0.1362,
+        "dist_p99_m": 0.1435
+      },
+      "final": {
+        "samples": 21337,
+        "matched_ratio": 0.889,
+        "mean_delta": 0.0335,
+        "p90_delta": 0.0802,
+        "smeared_ratio": 0.0248,
+        "stretched_ratio": 0.0,
+        "dist_p99_m": 0.1435
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertBeaconTower_LOD0",
+      "tris": 7524,
+      "verts": 4296,
+      "uv_min": [
+        0.001220703125,
+        0.001220703125
+      ],
+      "uv_max": [
+        0.997802734375,
+        0.998779296875
+      ],
+      "uv_utilization": 0.604,
+      "bbox_min": [
+        -3.7582,
+        -2.7323,
+        0.0
+      ],
+      "bbox_max": [
+        3.7582,
+        2.7323,
+        14.0
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertBeaconTower_LOD1",
+      "tris": 2487,
+      "verts": 1614,
+      "uv_min": [
+        0.001220703125,
+        0.0012207026593387127
+      ],
+      "uv_max": [
+        0.997802734375,
+        0.998779296875
+      ],
+      "uv_utilization": 0.53,
+      "bbox_min": [
+        -3.7537,
+        -2.7173,
+        -0.0
+      ],
+      "bbox_max": [
+        3.7484,
+        2.7141,
+        14.001
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertBeaconTower_LOD2",
+      "tris": 791,
+      "verts": 633,
+      "uv_min": [
+        0.0038900324143469334,
+        0.0038900193758308887
+      ],
+      "uv_max": [
+        0.9961099028587341,
+        0.9961099624633789
+      ],
+      "uv_utilization": 0.61,
+      "bbox_min": [
+        -3.7395,
+        -2.7002,
+        -0.0
+      ],
+      "bbox_max": [
+        3.7392,
+        2.7003,
+        13.9874
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertBeaconTower/04_export/SM_Tripo_DesertBeaconTower_v005.glb",
+    "bytes": 1502164
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 36.0,
+  "_seconds": 37.3
+}

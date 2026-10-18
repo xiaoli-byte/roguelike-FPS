@@ -177,7 +177,20 @@ far_lod_budget_weld_max_fraction = 0.015 # 仅最远 LOD 小拓扑环阻塞减�
 
 # ───────────── Tripo Studio 资产（P2.0 智能网格：游戏级低模 + 供应方 PBR 贴图）─────────────
 # 来源模型已是低模并自带贴图，构建只做对齐、减面出 LOD、贴图降到预算与压缩，不再从概念投影上色。
+# Tripo 的 UV 碎成很多小岛，深度减面会跨岛把贴图拉成斜条纹：减面后 UV 拉伸面积超过 lod_rebake_stretch 的 LOD
+# 自动重展 UV，从 LOD0 烘焙自己的 BC / N / ORM（边长按面数占比缩小，如 800 面 → 512²），材质 M_<名>_LOD<i>。
 [classes.tripo_architecture]
+category = "props"
+lod_tris = [8000, 2500, 800]
+lod_distance = [0, 24, 60]
+texture = 2048
+texel_density = 128
+max_file_kb = 1600
+lod_rebake_stretch = 0.02          # 1% 时 2500 面的 LOD1 也会重烘（1024²），烽燧 GLB 会到 1.8 MB，超出 max_file_kb
+
+# derive_wall_kit.py 从整段城墙切出的墙板 / 端头（只写进 manifest，不在 registry 登记）：
+# 每块都是母件的一部分，预算沿用母件 tripo_architecture，供 Unity 侧 QA 检查。
+[classes.tripo_architecture_kit]
 category = "props"
 lod_tris = [8000, 2500, 800]
 lod_distance = [0, 24, 60]
@@ -192,3 +205,4 @@ lod_distance = [0, 20]
 texture = 1024
 texel_density = 256
 max_file_kb = 700
+lod_rebake_stretch = 0.02

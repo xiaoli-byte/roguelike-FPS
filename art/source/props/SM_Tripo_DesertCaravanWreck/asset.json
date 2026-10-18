@@ -1,0 +1,599 @@
+{
+  "id": "SM_Tripo_DesertCaravanWreck",
+  "display": "驼队残骸（车辕、货包、驼骨）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 16:27:05",
+          "files": {
+            "BO_SM_Tripo_DesertCaravanWreck_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertCaravanWreck_v001.json",
+              "sha256": "8fb13f402ae6f0d1be615eff1466d6d97f4a9a5d31c434439a5ec241ef23bd21"
+            },
+            "BO_SM_Tripo_DesertCaravanWreck_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertCaravanWreck_v001_views.json",
+              "sha256": "33803aba1b898dc22799b68ab20b7049656d80005e56d978e8bc4f44a5df541e"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.caravanWreck"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.5,
+              0,
+              -1.8
+            ],
+            "max": [
+              2.5,
+              2.2,
+              1.8
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 16:28:04",
+          "files": {
+            "CN_SM_Tripo_DesertCaravanWreck_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanWreck_v001_source.png",
+              "sha256": "caadf7422214cef3378ddd4c408c12daf4a8e6f43053cd739ae985fc76a8cfd7"
+            },
+            "CN_SM_Tripo_DesertCaravanWreck_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanWreck_v001_front.png",
+              "sha256": "791fea17bf7e07a0bfbed9e69ec2a4b57cac12b88c4d3eab203e1ae995d7bea2"
+            },
+            "CN_SM_Tripo_DesertCaravanWreck_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanWreck_v001_left.png",
+              "sha256": "4e99e4bdb88f65f8caf54f8efd5ca1df65b0486910c21fdd37dd25c92ee7bbfd"
+            },
+            "CN_SM_Tripo_DesertCaravanWreck_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanWreck_v001_back.png",
+              "sha256": "023a62539e47b09b51b678e896b3634c759d3ec7e82a5358c7b05ebb6db8fb4a"
+            },
+            "CN_SM_Tripo_DesertCaravanWreck_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanWreck_v001_right.png",
+              "sha256": "d323fea47c5d242a18606e61546ba0be3537e5a4f94981eec517c58afc03189a"
+            },
+            "CN_SM_Tripo_DesertCaravanWreck_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanWreck_v001_sheet.png",
+              "sha256": "82e489591885cab5a951381c4e89f8e7ef7928c689a2d14ffe8759784cc2d3c1"
+            },
+            "CN_SM_Tripo_DesertCaravanWreck_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanWreck_v001_prompt.txt",
+              "sha256": "25a5534e6bec5bfb776c292ca6f1c32c33a80e4a20dd5b196d1051eb3dd103ce"
+            },
+            "CN_SM_Tripo_DesertCaravanWreck_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanWreck_v001_registration.json",
+              "sha256": "7a9cb4d9e212ad64d19c2327dc1baa5f1f07b55adebf36ec8b85bbb5757efb5e"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-5.6-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-5.6-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a148f8-c6a5-7e32-a297-6d9bc5e20721",
+            "attempt": 1,
+            "seconds": 56.3
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (5m wide x 2.2m tall x 3.6m deep): An abandoned Silk Road caravan wreck cluster 5m wide, 2.2m tall, 3.6m deep, half sunk in one low sand drift that joins everything: on the LEFT a broken two-wheeled wooden cart tilted forward onto its snapped thick shafts, one big solid wooden wheel with four chunky spokes still upright and the other wheel fallen flat against the cart side; on the cart bed three bulky cargo bundles wrapped in faded terracotta and indigo cloth tied with thick rope, and two terracotta water jars. On the RIGHT a half-buried camel skeleton: a chunky stylized ivory rib cage arching out of the sand mound with the camel skull resting in front of it. Weathered grey-brown timber, faded Dunhuang terracotta, indigo and malachite cloth, pale ivory bone, sand-yellow drift. Chunky simplified shapes at Gunfire Reborn fidelity, thick parts only (no thin spokes, loose ropes, fine bones or scattered debris), everything touching as one solid connected cluster on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "caadf7422214cef3378ddd4c408c12daf4a8e6f43053cd739ae985fc76a8cfd7",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.5556432517758485,
+              "offset": [
+                119,
+                411
+              ],
+              "size": [
+                273,
+                201
+              ],
+              "physical_height_m": 2.2,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5307199396909159,
+              "offset": [
+                128,
+                411
+              ],
+              "size": [
+                256,
+                201
+              ],
+              "physical_height_m": 2.2,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5618515562649641,
+              "offset": [
+                128,
+                411
+              ],
+              "size": [
+                255,
+                201
+              ],
+              "physical_height_m": 2.2,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.542164035425491,
+              "offset": [
+                115,
+                411
+              ],
+              "size": [
+                281,
+                201
+              ],
+              "physical_height_m": 2.2,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "rejected",
+            "by": "TheSoulOfCommunism",
+            "note": "四视图不一致（驼骨、车轮位置变化），肋骨过细。重画：构件更少更粗壮，驼骨固定在车的左后方，四视图严格对应同一布局",
+            "time": "2026-10-17 16:50:36"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-17 16:57:10",
+          "files": {
+            "CN_SM_Tripo_DesertCaravanWreck_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanWreck_v002_source.png",
+              "sha256": "5b47a986962601ad17c43922dcd24624a85d4df53e146b8f1deed8d54770c9ce"
+            },
+            "CN_SM_Tripo_DesertCaravanWreck_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanWreck_v002_front.png",
+              "sha256": "71ac08aad2840d8a375d7540e9ce0f13a171273ac19e7a468e293cb6627506e8"
+            },
+            "CN_SM_Tripo_DesertCaravanWreck_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanWreck_v002_left.png",
+              "sha256": "cc1a7d51797987401222a2e35589bc7f03fd03a8cd5f76cbec4022f66bd0735a"
+            },
+            "CN_SM_Tripo_DesertCaravanWreck_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanWreck_v002_back.png",
+              "sha256": "330e40477e1a13c3ddfd3c6c63f8d9b167f31ae040c59094d861003cacc5ee7a"
+            },
+            "CN_SM_Tripo_DesertCaravanWreck_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanWreck_v002_right.png",
+              "sha256": "7760dbf5ba18cd17e0561a89de0bde5b25895e69053a35200fe4c143a69d19a7"
+            },
+            "CN_SM_Tripo_DesertCaravanWreck_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanWreck_v002_sheet.png",
+              "sha256": "9596b9712a4189d68d539a1a69fe02399613f8c7180e6f42652df556e1d248e2"
+            },
+            "CN_SM_Tripo_DesertCaravanWreck_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanWreck_v002_prompt.txt",
+              "sha256": "bd7199dca447a9e9a7872400e75ccd8f31f4ec32504d6b9bf3ad4479b3dad3e1"
+            },
+            "CN_SM_Tripo_DesertCaravanWreck_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanWreck_v002_registration.json",
+              "sha256": "e7ec1f067f155e7ac93179734527c002d645e6eb310224feb36d792d596f48e1"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-5.6-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-5.6-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a14913-5a12-7113-b518-aa1290b96c8a",
+            "attempt": 1,
+            "seconds": 60.9
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (5m wide x 2.2m tall x 3.6m deep): An abandoned Silk Road caravan wreck 5m wide, 2.2m tall, 3.6m deep, half sunk in one low sand drift mound that joins everything. Only four parts, all big and chunky: (1) one broken two-wheeled wooden cart, (2) two bulky cargo bundles on it, (3) one terracotta water jar, (4) one half-buried camel skeleton. FIXED LAYOUT as seen in the FRONT view: the cart fills the RIGHT and centre of the scene with its two thick shafts pointing straight toward the viewer, tilted forward so the shaft tips rest in the sand; the camel skeleton lies at the cart's LEFT-REAR corner, on the image-left and further back than the cart. The cart: a heavy plank box bed with low thick sides and two big solid wooden wheels with only four thick spokes each, both still upright on the axle, one on each side of the bed; on the bed one large terracotta-red cloth bundle and one large indigo-blue cloth bundle, each tied with two thick ropes, and one round terracotta jar between them. The camel skeleton: a short thick spine lying on the ground parallel to the cart's axle, only five or six very thick chunky ivory ribs arching up out of the sand like big curved bars (each rib as thick as a forearm, with wide gaps between them), and one large chunky camel skull lying on the sand at the outer left end of the spine. All four views must show this one layout exactly: FRONT view - cart on the right with its shafts toward the viewer, rib cage on the left seen from the side as a row of arches, skull at the far left; BACK view - mirrored, cart on the image-left showing its plank tailboard, rib cage on the image-right closest to the camera, skull at the far right; LEFT side view (looking from the cart's wheel side) - the cart in front with its shafts pointing to the image-left and one wheel seen face-on, the rib tops just visible behind the cart toward the image-right; RIGHT side view (looking from the skeleton side) - the rib cage seen end-on in front on the image-left with the skull facing the camera, the cart behind it with its shafts pointing to the image-right. Weathered grey-brown timber, faded terracotta and indigo cloth, pale ivory bone, sand-yellow drift. Chunky simplified shapes at Gunfire Reborn fidelity, broad faceted planes, two or three dominant colour blocks, no thin spokes, loose ropes, thin or fine bones, flags, cloth banners or scattered debris; everything touching as one solid connected cluster on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "5b47a986962601ad17c43922dcd24624a85d4df53e146b8f1deed8d54770c9ce",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.5830227743271221,
+              "offset": [
+                112,
+                411
+              ],
+              "size": [
+                287,
+                201
+              ],
+              "physical_height_m": 2.2,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6004264392324093,
+              "offset": [
+                102,
+                411
+              ],
+              "size": [
+                307,
+                201
+              ],
+              "physical_height_m": 2.2,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6573295985060691,
+              "offset": [
+                87,
+                411
+              ],
+              "size": [
+                337,
+                201
+              ],
+              "physical_height_m": 2.2,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5587301587301587,
+              "offset": [
+                119,
+                411
+              ],
+              "size": [
+                273,
+                201
+              ],
+              "physical_height_m": 2.2,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 3,
+          "created": "2026-10-17 17:01:53",
+          "files": {
+            "CN_SM_Tripo_DesertCaravanWreck_v003_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanWreck_v003_source.png",
+              "sha256": "f420914dfb2697e80d164a50971082eb9b5e669ec96443ebc4e46a6c98515f80"
+            },
+            "CN_SM_Tripo_DesertCaravanWreck_v003_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanWreck_v003_front.png",
+              "sha256": "aa71e698f0daf3d0cc023533bad4a29cea50ce55a24e3602a241765bc974388b"
+            },
+            "CN_SM_Tripo_DesertCaravanWreck_v003_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanWreck_v003_left.png",
+              "sha256": "3b9a1c4f974074f253353728e7d1f519682f8b80c959de9f2f4991cc8e64d100"
+            },
+            "CN_SM_Tripo_DesertCaravanWreck_v003_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanWreck_v003_back.png",
+              "sha256": "483ca23a9803d9c867ccbd2580b07482b2a668a279aaced8e8c0aa90e976461f"
+            },
+            "CN_SM_Tripo_DesertCaravanWreck_v003_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanWreck_v003_right.png",
+              "sha256": "0372d341377bcbd359513ba3508763d66958d0bab4c45e3565f136953fea77a7"
+            },
+            "CN_SM_Tripo_DesertCaravanWreck_v003_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanWreck_v003_sheet.png",
+              "sha256": "d291339aae8cab0b40a4aab72fbf92dbe0ceaf73ed2d7dde8920e8ebdfb0221c"
+            },
+            "CN_SM_Tripo_DesertCaravanWreck_v003_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanWreck_v003_prompt.txt",
+              "sha256": "dbdc2018175fccf9ec1db1b4d78f2df61ef73fc3203199b99cbee7b12e5db51c"
+            },
+            "CN_SM_Tripo_DesertCaravanWreck_v003_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertCaravanWreck_v003_registration.json",
+              "sha256": "4624c117bc7b4b172063fe5494fae86e00570d33ac921db72a6939b4d1981089"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-5.6-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-5.6-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a14917-a1df-7a83-b1ba-e25c2227cafa",
+            "attempt": 1,
+            "seconds": 62.7
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (5m wide x 2.2m tall x 3.6m deep): An abandoned Silk Road caravan wreck 5m wide, 2.2m tall, 3.6m deep, half sunk in one low, compact sand drift mound that joins everything and does not spread beyond the parts. PROPORTIONS: a low, wide cluster only 2.2m tall including the cargo, so in the FRONT and BACK views it is drawn 2.3 times wider than tall and in the side views 1.6 times wider than tall; the cargo bundles sit low and squat on the cart bed. Draw every view small enough to leave wide empty grey gaps between neighbouring views; no view, wheel, shaft or sand edge may come near another view. Only four parts, all big and chunky: (1) one broken two-wheeled wooden cart, (2) two bulky cargo bundles on it, (3) one terracotta water jar, (4) one half-buried camel skeleton. FIXED LAYOUT as seen in the FRONT view: the cart fills the RIGHT and centre of the scene with its two thick shafts pointing straight toward the viewer, tilted forward so the shaft tips rest in the sand; the camel skeleton lies at the cart's LEFT-REAR corner, on the image-left and further back than the cart. The cart: a heavy plank box bed with low thick sides and two big solid wooden wheels with only four thick spokes each, both still upright on the axle, one on each side of the bed; on the bed one large terracotta-red cloth bundle and one large indigo-blue cloth bundle, each tied with two thick ropes, and exactly one round terracotta jar between them (no other jars). The camel skeleton: a short thick spine lying on the ground parallel to the cart's axle, only five or six very thick chunky ivory ribs arching up out of the sand like big curved bars (each rib as thick as a forearm, with wide gaps between them), and one large chunky camel skull lying on the sand at the outer left end of the spine. All four views must show this one layout exactly: FRONT view - cart on the right with its shafts toward the viewer, rib cage on the left seen from the side as a row of arches, skull at the far left; BACK view - mirrored, cart on the image-left showing its plank tailboard, rib cage on the image-right closest to the camera, skull at the far right; LEFT side view (looking from the cart's wheel side) - the cart in front with its shafts pointing to the image-left and one wheel seen face-on, the rib tops just visible behind the cart toward the image-right; RIGHT side view (looking from the skeleton side) - the rib cage seen end-on in front on the image-left with the skull facing the camera, the cart behind it with its shafts pointing to the image-right. Weathered grey-brown timber, faded terracotta and indigo cloth, pale ivory bone, sand-yellow drift. Chunky simplified shapes at Gunfire Reborn fidelity, broad faceted planes, two or three dominant colour blocks, no thin spokes, loose ropes, thin or fine bones, flags, cloth banners or scattered debris; everything touching as one solid connected cluster on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "f420914dfb2697e80d164a50971082eb9b5e669ec96443ebc4e46a6c98515f80",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.7796234772978959,
+              "offset": [
+                72,
+                411
+              ],
+              "size": [
+                367,
+                201
+              ],
+              "physical_height_m": 2.2,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7796234772978959,
+              "offset": [
+                72,
+                411
+              ],
+              "size": [
+                368,
+                201
+              ],
+              "physical_height_m": 2.2,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.8380952380952381,
+              "offset": [
+                49,
+                411
+              ],
+              "size": [
+                413,
+                201
+              ],
+              "physical_height_m": 2.2,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7619047619047619,
+              "offset": [
+                72,
+                411
+              ],
+              "size": [
+                367,
+                201
+              ],
+              "physical_height_m": 2.2,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "TheSoulOfCommunism",
+            "note": "v003：四视图一致、构件粗壮；驼骨在正视图画面左侧偏后，可以",
+            "time": "2026-10-17 23:13:43"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 23:36:02",
+          "files": {
+            "HP_SM_Tripo_DesertCaravanWreck_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertCaravanWreck_v001_source.glb",
+              "sha256": "4a5c69e5ba306a34d83afda68ffae5bae9e01e866855659adf04134be1f2a69c"
+            },
+            "HP_SM_Tripo_DesertCaravanWreck_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertCaravanWreck_v001.glb",
+              "sha256": "c8eb5c97363cc427773ea37f1c8466a3ac065bbdee444405cdcaaf00181b371b"
+            },
+            "HP_SM_Tripo_DesertCaravanWreck_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertCaravanWreck_v001_graph.json",
+              "sha256": "08cc1f2f2c3398a4eaa3d57c0189b9e94e7de71cdd8ce4b5ae9b3a50b4c05889"
+            }
+          },
+          "from_concept": 3,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/f0b0e26c-c819-46c8-b2a8-d937c88a08e4",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 2940,
+          "source_sha256": "4a5c69e5ba306a34d83afda68ffae5bae9e01e866855659adf04134be1f2a69c"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 23:36:39",
+          "files": {
+            "SM_Tripo_DesertCaravanWreck_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertCaravanWreck_v001.blend",
+              "sha256": "59dcf4c71f42ad3fb7ce83d326eb8016e1340fe6ccc8ab4e4bce8fefe04319b8"
+            },
+            "SM_Tripo_DesertCaravanWreck_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertCaravanWreck_v001.glb",
+              "sha256": "c23206985d5220a357bc775a8c7009af2e2a8899bc3f2d01c4ec2120af6edbdd"
+            },
+            "SM_Tripo_DesertCaravanWreck_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertCaravanWreck_v001_metrics.json",
+              "sha256": "455bba678d131cce6eccddd0cdde8ef6e97e6c76123b6d7acbaf2c074f585c1d"
+            },
+            "T_Tripo_DesertCaravanWreck_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertCaravanWreck_BC.png",
+              "sha256": "77126b9cc663a4dc3d45e88094c2498e9b7203ce0bdeb17dfc3a66887e66f4a2"
+            },
+            "T_Tripo_DesertCaravanWreck_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertCaravanWreck_N.png",
+              "sha256": "1e021f58ae713f5f6d5fe891504951b0e0c556160d006165751d61a8dafd47d5"
+            },
+            "T_Tripo_DesertCaravanWreck_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertCaravanWreck_ORM.png",
+              "sha256": "ee9e89165db6db313fc010bfa675ab48e0563887a96ae4bbe0ed2fea7c977f6c"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 3,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.712,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2940,
+              "verts": 1708
+            },
+            {
+              "tris": 995,
+              "verts": 688
+            }
+          ],
+          "export_kb": 324.0,
+          "seconds": 10.8,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 4,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 23:37:34",
+          "files": {
+            "SM_Tripo_DesertCaravanWreck_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertCaravanWreck_v001_validation_v001.json",
+              "sha256": "dcdeae615985ff5bb2240f00dc6869e2fd0979d51ea18cd93897b1ab59b80cb3"
+            }
+          },
+          "from_build": 1,
+          "errors": 1,
+          "warnings": 1,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 2,
+          "created": "2026-10-17 23:37:48",
+          "files": {
+            "SM_Tripo_DesertCaravanWreck_v001_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertCaravanWreck_v001_validation_v002.json",
+              "sha256": "9399e36b6f813277fc71516802479e79b7429e0c565e3e55b04f03528182fc8c"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [
+            "场景高度"
+          ],
+          "passed": true
+        },
+        {
+          "version": 3,
+          "created": "2026-10-18 15:09:50",
+          "files": {
+            "SM_Tripo_DesertCaravanWreck_v001_validation_v003.json": {
+              "path": "05_review/SM_Tripo_DesertCaravanWreck_v001_validation_v003.json",
+              "sha256": "b2c8a926a226dd5450d742a1f050579049940c1f07a12b0ed6caaad3e455a0c0"
+            }
+          },
+          "from_build": 1,
+          "errors": 1,
+          "warnings": 1,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 4,
+          "created": "2026-10-18 15:12:49",
+          "files": {
+            "SM_Tripo_DesertCaravanWreck_v001_validation_v004.json": {
+              "path": "05_review/SM_Tripo_DesertCaravanWreck_v001_validation_v004.json",
+              "sha256": "d6dfc5c2ab1e7422385f4a43394a1df3e78ce380d495be29787e16d14159fa7b"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [
+            "场景高度"
+          ],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": null,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 23:37:53",
+          "files": {
+            "SM_Tripo_DesertCaravanWreck_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertCaravanWreck_v001_review_v001.png",
+              "sha256": "1b68b1684bf19a9b555f8283ca04f60524ed259ebcd81411d9a20f3fa3e7cbaa"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "TheSoulOfCommunism",
+            "note": "成品审核通过（Tripo P2.0 智能网格 + 4k 贴图）",
+            "time": "2026-10-17 23:39:15"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": null,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-17 23:39:15",
+          "files": {
+            "SM_Tripo_DesertCaravanWreck.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertCaravanWreck.glb",
+              "sha256": "c23206985d5220a357bc775a8c7009af2e2a8899bc3f2d01c4ec2120af6edbdd"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertCaravanWreck.glb"
+        }
+      ]
+    }
+  }
+}

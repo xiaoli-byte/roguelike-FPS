@@ -1,3 +1,4 @@
+using Spiritfire.Art;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -35,6 +36,8 @@ namespace Spiritfire.Art.Editor.Levels
         // ── 场地 ──
         static readonly Vector2 Spawn = new(26, 38), Gravel = new(80, 58), Yardang = new(120, 100), Beacon = new(180, 142),
             Camp = new(220, 74), Exit = new(250, 58);
+        /// <summary>出口祭坛门洞相对祭坛中心沿正面的距离（米）</summary>
+        const float ExitDoorOffset = 1.2f;
 
         static readonly (Vector2 c, float r)[] Sites =
         {
@@ -298,28 +301,20 @@ namespace Spiritfire.Art.Editor.Levels
             }
             BuildMarkers(terrain, markers);
 
-            // 玩家（第一人称，枪模挂在眼睛上）
-            var cam = ShowcaseSceneBuilder.BuildCameras(theme, out var fpRig);
-            var player = new GameObject("Player");
-            player.transform.position = LevelKit.OnGround(terrain, Spawn.x, Spawn.y, 0.05f);
-            player.transform.rotation = Quaternion.LookRotation(new Vector3(Gravel.x - Spawn.x, 0, Gravel.y - Spawn.y));
-            var cc = player.AddComponent<CharacterController>();
-            cc.height = 1.8f;
-            cc.radius = 0.35f;
-            cc.center = new Vector3(0, 0.9f, 0);
-            cc.stepOffset = 0.45f;
-            cc.slopeLimit = 45;
-            cc.skinWidth = 0.04f;
-            var motor = player.AddComponent<PlayerMotor>();
-            cam.transform.SetParent(player.transform, false);
-            cam.transform.localPosition = new Vector3(0, 1.62f, 0);
-            cam.transform.localRotation = Quaternion.identity;
-            motor.eye = cam.transform;
-            cam.farClipPlane = 1500;
-            fpRig.SetActive(true);
-            ShowcaseSceneBuilder.SetLayer(player, LayerMask.NameToLayer(ShowcaseSceneBuilder.CharacterLayer));
-            ShowcaseSceneBuilder.SetLayer(fpRig, LayerMask.NameToLayer(ShowcaseSceneBuilder.FirstPersonLayer));
-            cam.gameObject.layer = 0;
+            // 可玩玩家：燎，冲锋枪起手（第一人称 rig、血量护盾、武器、HUD、会话）
+            var player = PlayerRigBuilder.Build(theme, PlayerRigBuilder.Liao, LevelKit.OnGround(terrain, Spawn.x, Spawn.y, 0.05f),
+                Quaternion.LookRotation(new Vector3(Gravel.x - Spawn.x, 0, Gravel.y - Spawn.y)), "1-1 · 古道穿越戈壁", out var cam);
+            var fpRig = player.GetComponentInChildren<FirstPersonViewmodel>(true).gameObject;
+            var sites = BuildEncounters(markers);
+            // 出口传送门：嵌在出口祭坛正面，四个场地肃清后开启
+            if (exit)
+            {
+                var portal = new GameObject("Exit Portal").AddComponent<Spiritfire.Game.ExitPortal>();
+                var face = exit.transform.forward;
+                portal.transform.SetPositionAndRotation(LevelKit.OnGround(terrain, Exit.x + face.x * ExitDoorOffset, Exit.y + face.z * ExitDoorOffset, 0),
+                    Quaternion.LookRotation(-face));
+                portal.requires = sites;
+            }
 
             EditorSceneManager.SaveScene(scene, ScenePath);
             ShowcaseSceneBuilder.BakeEnvironmentLighting(theme, Dir);
@@ -598,6 +593,68 @@ namespace Spiritfire.Art.Editor.Levels
             LevelKit.Prop("SM_Prop_DesertUrns", props, t, 218, 78, 10);
             LevelKit.Prop("SM_Tripo_DesertMarketStall", props, t, 230, 70, -30);
             LevelKit.Prop("SM_Tripo_DesertBarricade", props, t, 212, 62, 100);
+        }
+
+        /// <summary>
+        /// 遭遇战（docs/level-design/unity-maps-v1.md 1-1 的四个场地，按顺序解锁）：
+        ///   ① 黑戈壁砾石滩：跳鼠群 + 蝎尾弩卫远程压制（玩家从长城缺口进来就开打）
+        ///   ② 雅丹石阵：蜃楼蟾在岩丘后吊射 + 跳鼠绕岩伏击
+        ///   ③ 烽燧台地：镇墓兽冲锋上坡 + 邪飞天在台顶支援（先打琵琶）
+        ///   ④ 驼队残骸营地：混编精英波——火浣鼠滚进来逼走位，精英蝎卫压制
+        /// 出生锚点用 BuildMarkers 摆的 Enemy_N_* 标记；场景里放一份敌人 Prefab / 挂件目录供运行时生成。
+        /// </summary>
+        static Spiritfire.Game.EncounterSite[] BuildEncounters(Transform markers)
+        {
+            var catalog = new GameObject("Enemy Catalog").AddComponent<Spiritfire.Game.EnemyCatalog>();
+            var prefabs = new List<GameObject>();
+            foreach (var def in Spiritfire.Game.EnemyRoster.All)
+            {
+                var prefab = ShowcaseSceneBuilder.Prefab(def.prefab);
+                if (!prefab) Debug.LogWarning($"[Level] 缺少敌人 Prefab {def.prefab}");
+                else if (!prefabs.Contains(prefab)) prefabs.Add(prefab);
+            }
+            catalog.prefabs = prefabs.ToArray();
+            catalog.attachments = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/Art/Prefabs/Attachments" })
+                .Select(g => AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(g)))
+                .Where(g => g && g.GetComponent<ArtAssetInfo>() && !string.IsNullOrEmpty(g.GetComponent<ArtAssetInfo>().bindAttachment))
+                .ToArray();
+
+            var root = new GameObject("Encounters").transform;
+            Spiritfire.Game.EncounterSite Site(int index, string marker, string title, float trigger, float arena,
+                Spiritfire.Game.EncounterSite prev, params Spiritfire.Game.EncounterSite.Squad[] squads)
+            {
+                var site = new GameObject($"Site {index} · {title}").AddComponent<Spiritfire.Game.EncounterSite>();
+                site.transform.SetParent(root, false);
+                site.transform.position = markers.Find(marker).position;
+                site.title = title;
+                site.triggerRadius = trigger;
+                site.arenaRadius = arena;
+                site.squads = squads;
+                site.requires = prev ? new[] { prev } : System.Array.Empty<Spiritfire.Game.EncounterSite>();
+                var anchors = new List<Transform>();
+                foreach (Transform m in markers)
+                    if (m.name.StartsWith($"Enemy_{index}_")) anchors.Add(m);
+                site.anchors = anchors.ToArray();
+                return site;
+            }
+            Spiritfire.Game.EncounterSite.Squad Sq(string enemy, int count, float delay = 0, bool elite = false) =>
+                new() { enemy = enemy, count = count, delay = delay, elite = elite };
+
+            // 奖励节奏：① 给第二把枪（左轮），② 秘卷，③ 霰弹（精良），④ 秘卷 + 出口前的灵石
+            var s1 = Site(1, "Site_1_GravelField", "黑戈壁砾石滩", 17, 28, null,
+                Sq("jerboa_blade", 4), Sq("scorpion_archer", 2, 1.2f));
+            s1.reward = "weapon:revolver";
+            var s2 = Site(2, "Site_2_Yardang", "雅丹石阵", 18, 30, s1,
+                Sq("mirage_toad", 2), Sq("jerboa_blade", 3, 0.6f), Sq("jerboa_blade", 3, 6f));
+            s2.reward = "scroll";
+            var s3 = Site(3, "Site_3_BeaconPlateau", "烽燧台地", 20, 30, s2,
+                Sq("tomb_beast", 1), Sq("apsara", 1, 1.5f), Sq("jerboa_blade", 3, 4f), Sq("scorpion_archer", 1, 8f));
+            s3.reward = "weapon:shotgun:1";
+            var s4 = Site(4, "Site_4_CaravanCamp", "驼队残骸营地", 18, 30, s3,
+                Sq("fire_rat", 3), Sq("jerboa_blade", 3, 1f), Sq("scorpion_archer", 1, 2f, true),
+                Sq("mirage_toad", 1, 6f), Sq("fire_rat", 3, 9f), Sq("tomb_beast", 1, 12f, true));
+            s4.reward = "scroll";
+            return new[] { s1, s2, s3, s4 };
         }
 
         static void BuildMarkers(Terrain t, Transform root)

@@ -59,8 +59,12 @@ namespace Spiritfire.Art.Editor.Levels
         }
 
         /// <summary>周期 Voronoi：返回 (到最近点的距离, 最近与次近的差 = 裂缝)，cells = 每边格子数</summary>
-        static Vector2 Voronoi(float u, float v, int cells, int seed)
+        static Vector2 Voronoi(float u, float v, int cells, int seed) => Voronoi(u, v, cells, seed, out _);
+
+        /// <summary>同上，另外给出最近点所在（周期折回后的）格子编号 = wy * cells + wx，用来给整颗石子 / 整块裂片取同一个随机值</summary>
+        static Vector2 Voronoi(float u, float v, int cells, int seed, out int id)
         {
+            id = 0;
             float x = u * cells, y = v * cells;
             int cx = Mathf.FloorToInt(x), cy = Mathf.FloorToInt(y);
             float d1 = 9, d2 = 9;
@@ -71,7 +75,7 @@ namespace Spiritfire.Art.Editor.Levels
                 int wx = ((gx % cells) + cells) % cells, wy = ((gy % cells) + cells) % cells;
                 float px = gx + Hash(wx, wy, seed), py = gy + Hash(wx, wy, seed + 91);
                 float d = Mathf.Sqrt((px - x) * (px - x) + (py - y) * (py - y));
-                if (d < d1) { d2 = d1; d1 = d; } else if (d < d2) d2 = d;
+                if (d < d1) { d2 = d1; d1 = d; id = wy * cells + wx; } else if (d < d2) d2 = d;
             }
             return new Vector2(d1, d2 - d1);
         }
@@ -107,23 +111,31 @@ namespace Spiritfire.Art.Editor.Levels
                     }
                     case Kind.Gravel:
                     {
-                        // 黑戈壁：砾石铺满地面（荒漠漆皮的深色卵石），石与石之间只露一点土黄；
-                        // 石子明暗只差一档、带受光的顶面，远看是一片有颗粒感的暗褐色，而不是豹纹斑点
+                        // 黑戈壁（荒漠砾幕）：大小不一的圆卵石密密地撒在一层发暗的土上，再叠一层细砾；
+                        // 每颗石子整颗同一色调（取最近点所在格子，不跨格跳色），石与土只差一档明度——
+                        // 近看是一颗颗石子，远看是均匀的暗褐颗粒，不是豹纹斑点，也不是铺地砖
                         float ground = Fbm(u, v, 4, seed);
-                        c = Color.Lerp(p.a, p.b, Smooth(0.3f, 0.7f, ground));
-                        const int cells = 34;
-                        var vo = Voronoi(u, v, cells, seed);
-                        int cx = Mathf.FloorToInt(u * cells), cy = Mathf.FloorToInt(v * cells);
-                        float size = 0.38f + Hash(cx, cy, seed + 3) * 0.16f;
-                        float stone = 1 - Smooth(size - 0.1f, size, vo.x);
-                        float tone = Hash(cx, cy, seed + 9);
-                        // 顶光：石子中心偏上更亮（假的球面受光）
-                        float lit = 1 - Smooth(0.0f, size, vo.x);
-                        var stoneCol = Color.Lerp(p.dark, p.accent, tone * 0.6f + lit * 0.4f);
-                        // 有些区域石子稀一点（风把细土吹出来），整体仍以石为主
-                        float sparse = Smooth(0.55f, 0.75f, Fbm(u, v, 3, seed + 21));
-                        c = Color.Lerp(c, stoneCol, stone * (1 - sparse * 0.6f));
-                        h = Mathf.Lerp(0.25f + ground * 0.1f, 0.6f + lit * 0.3f, stone);
+                        var soil = Color.Lerp(Color.Lerp(p.a, p.dark, 0.35f), p.b, Smooth(0.3f, 0.75f, ground) * 0.6f);
+                        float sparse = Smooth(0.55f, 0.78f, Fbm(u, v, 3, seed + 21));
+                        c = soil;
+                        h = 0.25f + ground * 0.1f;
+                        // 两层卵石：大一点的稀、小一点的密；石子半径按格子随机，带中心受光
+                        for (int layer = 0; layer < 2; layer++)
+                        {
+                            int cells = layer == 0 ? 40 : 76;
+                            var vo = Voronoi(u, v, cells, seed + layer * 57, out int id);
+                            int ix = id % cells, iy = id / cells;
+                            float keep = Hash(ix, iy, seed + 40 + layer);
+                            if (keep < (layer == 0 ? 0.25f + sparse * 0.35f : 0.1f + sparse * 0.3f)) continue;
+                            float size = (layer == 0 ? 0.3f : 0.26f) + Hash(ix, iy, seed + 3 + layer) * 0.16f;
+                            float stone = 1 - Smooth(size - 0.08f, size, vo.x);
+                            if (stone <= 0) continue;
+                            float tone = Hash(ix, iy, seed + 9 + layer);
+                            float lit = 1 - Smooth(0f, size, vo.x);
+                            var stoneCol = Color.Lerp(p.dark, p.accent, 0.25f + tone * 0.45f + lit * 0.25f);
+                            c = Color.Lerp(c, stoneCol, stone);
+                            h = Mathf.Lerp(h, 0.5f + lit * 0.35f, stone);
+                        }
                         break;
                     }
                     case Kind.Packed:

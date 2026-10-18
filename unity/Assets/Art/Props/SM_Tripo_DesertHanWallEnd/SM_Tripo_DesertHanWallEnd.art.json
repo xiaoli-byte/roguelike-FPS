@@ -60,9 +60,9 @@
       "name": "SM_Tripo_DesertHanWallEnd_LOD1",
       "lod": 1,
       "tris": 2486,
-      "verts": 1891,
+      "verts": 2521,
       "materials": [
-        "M_Tripo_DesertHanWallEnd"
+        "M_Tripo_DesertHanWallEnd_LOD1"
       ],
       "skinned": false
     },
@@ -70,9 +70,9 @@
       "name": "SM_Tripo_DesertHanWallEnd_LOD2",
       "lod": 2,
       "tris": 796,
-      "verts": 807,
+      "verts": 1014,
       "materials": [
-        "M_Tripo_DesertHanWallEnd"
+        "M_Tripo_DesertHanWallEnd_LOD2"
       ],
       "skinned": false
     }
@@ -103,17 +103,69 @@
         "N": "Textures/T_Tripo_DesertHanWallEnd_N.png",
         "ORM": "Textures/T_Tripo_DesertHanWallEnd_ORM.png"
       }
+    },
+    {
+      "name": "M_Tripo_DesertHanWallEnd_LOD1",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_DesertHanWallEnd_LOD1_BC.png",
+        "N": "Textures/T_Tripo_DesertHanWallEnd_LOD1_N.png",
+        "ORM": "Textures/T_Tripo_DesertHanWallEnd_LOD1_ORM.png"
+      }
+    },
+    {
+      "name": "M_Tripo_DesertHanWallEnd_LOD2",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_DesertHanWallEnd_LOD2_BC.png",
+        "N": "Textures/T_Tripo_DesertHanWallEnd_LOD2_N.png",
+        "ORM": "Textures/T_Tripo_DesertHanWallEnd_LOD2_ORM.png"
+      }
     }
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_DesertHanWallEnd.glb",
-    "sha256": "9600c0690236b9d4d7d9a1e79dedc7a6021e027bc4a750a92c3bb1cdfc24a482",
+    "sha256": "ce634c4d9e5034529a8e78d90eceb12f6a444f3901da880bf8ce81dab09576d3",
     "hiRes": false,
     "version": {
       "blockout": 1,
       "concept": 3,
       "highpoly": 1,
-      "build": 1
+      "build": 2
     },
     "generator": {
       "tool": "Tripo Studio",
@@ -122,5 +174,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-17 23:39:19"
+  "exported": "2026-10-18 15:13:58"
 }
