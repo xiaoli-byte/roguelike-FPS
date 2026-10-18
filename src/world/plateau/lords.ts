@@ -423,10 +423,11 @@ function kui(): { root: THREE.Group; setEnv(env: KuiEnv): void; reset(): void; u
 }
 
 /** 化蛇：人面豺身、鸟翼、蛇行（设计稿 DS_plateau_boss_huashe_v002）。身体分 16 节，按正弦波左右游、后段一拱一拱地出水；
- * 四条短腿外撇，翅膀（展开约 10 m）慢慢扇，张开的嘴发紫红光（弱点）。全长约 11 m */
+ * 四条短腿外撇，翅膀（展开约 9 m）慢慢扇，张开的嘴发紫红光（弱点）。全长约 9 m */
 function huashe(): { root: THREE.Group; update(t: number): void } {
   const root = new THREE.Group();
-  const SEG = 16, GAP = 0.72;
+  // 全长约 9 m（15 节间距 + 头 + 尾鳍），翼展约 9 m：体型见 enemy-roster-v2.md「领主的体型与建模规格」
+  const SEG = 16, GAP = 0.5;
   const slate = '#38475b', fur = '#6e5640', belly = '#e2d6bc';
   const radius = (k: number): number => k < 3 ? 0.62 + k * 0.05 : k < 7 ? 0.72 - (k - 3) * 0.02 : Math.max(0.14, 0.64 - (k - 7) * 0.06);
   const segs: THREE.Group[] = [];
