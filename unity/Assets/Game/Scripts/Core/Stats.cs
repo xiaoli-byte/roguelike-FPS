@@ -10,6 +10,8 @@ namespace Spiritfire.Game
         CritChance, CritDamagePct, DamagePct, FireRatePct, ReloadSpeedPct, MagPct, DamageReduction,
         PickupRadius, SkillHaste, SkillDamagePct, ExplosionDamagePct, ElementChancePct, KillHeal, KillShield,
         WeakpointDamagePct,
+        // 元素反应（docs/arsenal-expansion.md 0.1）：反应伤害、反应急速（冷却 / (1 + 值)）、爆炸 / 反应范围
+        ReactionDamagePct, ReactionHaste, ExplosionRadiusPct,
     }
 
     /// <summary>

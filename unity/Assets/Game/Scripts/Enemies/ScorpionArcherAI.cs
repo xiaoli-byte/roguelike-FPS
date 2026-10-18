@@ -194,6 +194,16 @@ namespace Spiritfire.Game
             }
         }
 
+        protected override void OnStunned()
+        {
+            // 钻沙途中被定住：钻回地面上
+            sink = 0;
+            if (model) model.localPosition = Vector3.zero;
+            SetModelVisible(true);
+            SetColliders(true);
+            hp.untargetable = false;
+        }
+
         void SetColliders(bool on)
         {
             foreach (var c in GetComponents<Collider>()) c.enabled = on;

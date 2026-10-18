@@ -58,6 +58,26 @@ namespace Spiritfire.Art
             nearest?.body.AddForceAtPosition(impulse, point, ForceMode.Impulse);
         }
 
+        /// <summary>
+        /// 按速度激活（战斗击杀用）：所有部件统一带上 velocity（米 / 秒），受击点最近的部件再多一半，让尸体顺着受击方向翻倒；
+        /// 和体重无关，大块头和小怪被同样的击退打出去的距离一致
+        /// </summary>
+        public void ActivateWithVelocity(Vector3 velocity, Vector3 point)
+        {
+            if (Active) return;
+            Activate(Vector3.zero, point);
+            Part nearest = null;
+            float best = float.MaxValue;
+            foreach (var p in parts)
+            {
+                if (!p.body) continue;
+                p.body.linearVelocity = velocity;
+                float d = (p.body.worldCenterOfMass - point).sqrMagnitude;
+                if (d < best) { best = d; nearest = p; }
+            }
+            nearest?.body.AddForceAtPosition(velocity * 0.5f, point, ForceMode.VelocityChange);
+        }
+
         public void Restore()
         {
             if (!Active) return;

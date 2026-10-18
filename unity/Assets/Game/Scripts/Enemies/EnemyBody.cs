@@ -89,8 +89,13 @@ namespace Spiritfire.Game
         void OnDamaged(DamageInfo info, DamageResult r)
         {
             if (r.total <= 0) return;
-            flash = 1f;
-            float strength = Mathf.Clamp01(r.total / Mathf.Max(1, Health.maxHealth) * 4f + 0.25f);
+            // 闪白按伤害占比：光束 / 冲锋枪的小伤害只淡淡一闪（连射时不会一直是个白影），重击、反应才全白
+            float hitFlash = Mathf.Lerp(0.22f, 1f, Mathf.Clamp01(r.total / Mathf.Max(1, Health.maxHealth) * 6f));
+            if (info.source == DamageSource.Status && !info.reaction) hitFlash = 0.15f;
+            flash = Mathf.Max(flash, hitFlash);
+            // 受击晃动按伤害占比：持续伤害（灼烧 / 蚀化跳伤、弹射）不晃，光束一跳只轻轻一晃，重击和反应才明显
+            if (info.source == DamageSource.Status && !info.reaction) return;
+            float strength = Mathf.Clamp01(r.total / Mathf.Max(1, Health.maxHealth) * 4f);
             if (Rig) Rig.Hit(info.direction, strength);
             if (hasHitTrigger && r.total >= Health.maxHealth * staggerFraction && !r.killed) Animator.SetTrigger(HitId);
         }
@@ -100,7 +105,15 @@ namespace Spiritfire.Game
             deadTime = Time.time;
             if (WeakPoint) WeakPoint.gameObject.SetActive(false);
             var dir = info.direction.sqrMagnitude > 0.01f ? info.direction.normalized : -transform.forward;
-            if (ragdoll) ragdoll.Activate(dir * (25f + info.knockback * 10f) + Vector3.up * 6f, info.point);
+            if (ragdoll)
+            {
+                // 尸体初速度（米 / 秒）：普通子弹 ~1.6、爆炸 / 反应（击退 7）~5，上限 6，按击退抗性削弱——被打翻、滑出一两米，不飞
+                var ai = GetComponent<EnemyAI>();
+                float resist = ai ? ai.knockbackResist : 0;
+                float v = Mathf.Min(6f, 1.5f + info.knockback * 0.5f) * (1 - resist * 0.6f);
+                var flat = new Vector3(dir.x, 0, dir.z).normalized;
+                ragdoll.ActivateWithVelocity(flat * v + Vector3.up * (0.8f + v * 0.2f), info.point);
+            }
             else if (Animator) Animator.enabled = false;
         }
 

@@ -306,6 +306,11 @@ namespace Spiritfire.Art.Editor.Levels
                 Quaternion.LookRotation(new Vector3(Gravel.x - Spawn.x, 0, Gravel.y - Spawn.y)), "1-1 · 古道穿越戈壁", out var cam);
             var fpRig = player.GetComponentInChildren<FirstPersonViewmodel>(true).gameObject;
             var sites = BuildEncounters(markers);
+            // 武器架（测试便利，做完随机掉落后撤掉）：出生点前方 4.5 m 横排左轮 / 霰弹 / 榴弹
+            var fwd = new Vector3(Gravel.x - Spawn.x, 0, Gravel.y - Spawn.y).normalized;
+            var rack = new GameObject("Weapon Rack (test)").AddComponent<Spiritfire.Game.WeaponRack>();
+            var rackAt = Spawn + new Vector2(fwd.x, fwd.z) * 4.5f;
+            rack.transform.SetPositionAndRotation(LevelKit.OnGround(terrain, rackAt.x, rackAt.y, 0), Quaternion.LookRotation(-fwd));
             // 出口传送门：嵌在出口祭坛正面，四个场地肃清后开启
             if (exit)
             {
@@ -640,16 +645,17 @@ namespace Spiritfire.Art.Editor.Levels
             Spiritfire.Game.EncounterSite.Squad Sq(string enemy, int count, float delay = 0, bool elite = false) =>
                 new() { enemy = enemy, count = count, delay = delay, elite = elite };
 
-            // 奖励节奏：① 给第二把枪（左轮），② 秘卷，③ 霰弹（精良），④ 秘卷 + 出口前的灵石
+            // 奖励节奏：① 雷弧发射器（雷，配燎的火技能出焚雷），② 秘卷，
+            //          ③ 青冥雷蛊（精良，蚀 + 雷：封脉 / 熔金 / 归墟），④ 秘卷
             var s1 = Site(1, "Site_1_GravelField", "黑戈壁砾石滩", 17, 28, null,
                 Sq("jerboa_blade", 4), Sq("scorpion_archer", 2, 1.2f));
-            s1.reward = "weapon:revolver";
+            s1.reward = "weapon:beam";
             var s2 = Site(2, "Site_2_Yardang", "雅丹石阵", 18, 30, s1,
                 Sq("mirage_toad", 2), Sq("jerboa_blade", 3, 0.6f), Sq("jerboa_blade", 3, 6f));
             s2.reward = "scroll";
             var s3 = Site(3, "Site_3_BeaconPlateau", "烽燧台地", 20, 30, s2,
                 Sq("tomb_beast", 1), Sq("apsara", 1, 1.5f), Sq("jerboa_blade", 3, 4f), Sq("scorpion_archer", 1, 8f));
-            s3.reward = "weapon:shotgun:1";
+            s3.reward = "weapon:stormpod:1";
             var s4 = Site(4, "Site_4_CaravanCamp", "驼队残骸营地", 18, 30, s3,
                 Sq("fire_rat", 3), Sq("jerboa_blade", 3, 1f), Sq("scorpion_archer", 1, 2f, true),
                 Sq("mirage_toad", 1, 6f), Sq("fire_rat", 3, 9f), Sq("tomb_beast", 1, 12f, true));

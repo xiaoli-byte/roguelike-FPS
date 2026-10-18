@@ -3,7 +3,20 @@ using UnityEngine;
 
 namespace Spiritfire.Game
 {
-    public enum FireMode { Semi, Auto }
+    /// <summary>Semi 单发、Auto 连发、Beam 按住持续放电（每秒 fireRate 跳）</summary>
+    public enum FireMode { Semi, Auto, Beam }
+
+    /// <summary>投射物武器（榴弹、蛊弹）：不走射线，发射 <see cref="PlayerProjectile"/></summary>
+    public sealed class ProjectileSpec
+    {
+        public float speed = 30, gravity, radius = 0.15f, explosionRadius, lifetime = 3f, scale = 1f;
+        /// <summary>撞墙 / 地面反弹次数；用完后 rollAfter = true 时贴地滚动到时间耗尽再炸，否则下一次触地就炸</summary>
+        public int bounces;
+        public bool rollAfter, explodeOnExpire = true;
+        public Color color = Color.white;
+        /// <summary>外观：grenade 榴弹 / orb 蛊弹</summary>
+        public string visual = "grenade";
+    }
     public enum ReloadStyle { Magazine, Shell }
 
     /// <summary>
@@ -28,6 +41,12 @@ namespace Spiritfire.Game
         public float aimFov;
         public Element element;
         public float elementChance;
+        /// <summary>固有副元素（青冥雷蛊「副·雷」40%）：命中时另掷一次</summary>
+        public Element subElement;
+        public float subChance;
+        public ProjectileSpec projectile;
+        /// <summary>光束弹射：命中后向 chainRange 米内最近的 1 个敌人放电，伤害 × chainFraction</summary>
+        public float chainFraction, chainRange;
         public Vector3 viewHip, viewAim;
         /// <summary>第一人称握持（枪模局部坐标，已换算成 Unity：x 取反）</summary>
         public Vector3 rightHand, leftHand;
@@ -104,6 +123,45 @@ namespace Spiritfire.Game
                 elementChance = 0.06f, viewHip = V(0.22f, -0.22f, -0.5f), viewAim = V(0, -0.096f, -0.4f),
                 rightHand = H(0, 0.006f, 0.02f), rightPitch = -0.12f, leftHand = H(0, -0.002f, -0.3f),
                 description = "以碎岩为铳管衬里的泵动霰弹枪，贴脸一击足以撼山。",
+            });
+            // ── 元素武器（试玩版 8 把里的 3 把，docs/demo-scope.md 2.3）──
+            Add(new WeaponDef
+            {
+                id = "launcher", name = "焚城榴弹", prefab = "SK_Weapon_Launcher", mode = FireMode.Semi, reload = ReloadStyle.Magazine,
+                damage = 110, fireRate = 1.1f, mag = 4, reserve = 20, reloadTime = 2.4f,
+                spreadHip = 0.005f, spreadAim = 0.002f, spreadPerShot = 0.005f, spreadMax = 0.012f, spreadRecovery = 0.3f,
+                recoilPitch = 0.03f, recoilYaw = 0.004f,
+                critMult = 1.8f, range = 120, element = Element.Fire, elementChance = 0.6f,
+                projectile = new ProjectileSpec { speed = 34, gravity = 9, radius = 0.14f, explosionRadius = 4, lifetime = 3.2f, scale = 1.1f, color = new Color(1f, 0.54f, 0.23f), visual = "grenade" },
+                knockback = 7, kickBack = 0.07f, kickRot = 0.14f, shake = 0.16f, flash = 0.26f, aimFov = -10,
+                viewHip = V(0.23f, -0.24f, -0.52f), viewAim = V(0.1f, -0.18f, -0.44f),
+                rightHand = H(0, 0, 0), leftHand = H(0, -0.01f, -0.27f),
+                description = "发射燃烧榴弹的转轮发射器，所过之处尽成火海。",
+            });
+            Add(new WeaponDef
+            {
+                id = "beam", name = "雷弧发射器", prefab = "SK_Weapon_Beam", mode = FireMode.Beam, reload = ReloadStyle.Magazine,
+                damage = 8, fireRate = 10, mag = 100, reserve = 400, reloadTime = 2.2f,
+                spreadHip = 0.005f, spreadAim = 0.0025f, spreadPerShot = 0, spreadMax = 0, spreadRecovery = 1,
+                recoilPitch = 0.0004f, recoilYaw = 0.0006f,
+                critMult = 1.8f, range = 25, element = Element.Shock, elementChance = 0.1f, chainFraction = 0.4f, chainRange = 7,
+                knockback = 0, kickBack = 0.003f, kickRot = 0.004f, shake = 0.012f, flash = 0.14f, aimFov = -10,
+                viewHip = V(0.22f, -0.22f, -0.48f), viewAim = V(0.05f, -0.14f, -0.4f),
+                rightHand = H(0, 0, 0), leftHand = H(0, 0, -0.17f),
+                description = "释放持续雷弧的能量武器，电流会在敌群间跳跃。",
+            });
+            Add(new WeaponDef
+            {
+                id = "stormpod", name = "青冥雷蛊", prefab = "SK_Weapon_Stormpod", mode = FireMode.Semi, reload = ReloadStyle.Magazine,
+                damage = 95, fireRate = 1.2f, mag = 5, reserve = 30, reloadTime = 2.5f,
+                spreadHip = 0.005f, spreadAim = 0.002f, spreadPerShot = 0.005f, spreadMax = 0.012f, spreadRecovery = 0.3f,
+                recoilPitch = 0.04f, recoilYaw = 0.008f,
+                critMult = 1.6f, range = 90, element = Element.Corrode, elementChance = 0.6f, subElement = Element.Shock, subChance = 0.4f,
+                projectile = new ProjectileSpec { speed = 30, gravity = 14, radius = 0.15f, explosionRadius = 3.2f, lifetime = 1.8f, scale = 0.9f, bounces = 2, rollAfter = true, color = new Color(0.62f, 1f, 0.29f), visual = "orb" },
+                knockback = 4, kickBack = 0.06f, kickRot = 0.12f, shake = 0.13f, flash = 0.2f, aimFov = -10,
+                viewHip = V(0.23f, -0.24f, -0.52f), viewAim = V(0.08f, -0.17f, -0.44f),
+                rightHand = H(0, 0, 0), leftHand = H(0, -0.02f, -0.2f),
+                description = "以青铜蛊罐封存雷蛊与蚀毒的弹跳榴弹，落地翻滚，炸开一片青雷。",
             });
         }
     }

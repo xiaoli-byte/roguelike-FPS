@@ -35,7 +35,7 @@ namespace Spiritfire.Art
             [Range(0, 1)] public float stiffness = 0.15f;
             [Range(0, 1)] public float damping = 0.1f;
             public float gravity;
-            [NonSerialized] public Vector3[] pos, prev;
+            [NonSerialized] public Vector3[] pos, prev, vel;
         }
 
         [Header("References (CreatureRigBuilder)")]
@@ -68,8 +68,18 @@ namespace Spiritfire.Art
 
         float pelvisOffset, lookYaw, lookPitch, lookBlend, leanCur;
         Vector3 hitAngle, hitVel;
+        /// <summary>当前受击弹簧把身体压歪了多少度（测试 / 调参看）</summary>
+        public float HitAngleDeg => hitAngle.magnitude * Mathf.Rad2Deg;
         Vector3 lastRootPos;
         bool initialized;
+
+        // 姿势保护：本层的修正都是「叠在当前姿势上」（rotation = 偏移 × rotation）。没有动画曲线的骨骼每帧不会被 Animator 重写，
+        // 修正就会一帧帧累积（持续挨打时脊柱越压越歪 → 整个侧翻）。每帧开始时：骨骼还是上一帧写的值 → 动画没碰它 →
+        // 先还原成上一帧修正前的姿势，再叠这一帧的修正
+        Transform[] guarded;
+        Quaternion[] guardBase, guardWrote;
+        Vector3 pelvisBase, pelvisWrote;
+        bool guardValid;
 
         public void OnAnimEvent(string name) => AnimEvent?.Invoke(name);
 
@@ -81,18 +91,24 @@ namespace Spiritfire.Art
         }
 
         /// <summary>一次受击：dir = 力的方向（攻击者 → 本体，世界空间），strength ≈ 伤害 / 最大生命（0.1 轻、1 重）</summary>
+        /// <summary>受击：身体顺着受击方向压一下（弹簧回位）。strength 0–1：小伤害只轻轻一晃，重击 / 反应才明显后仰</summary>
         public void Hit(Vector3 dir, float strength)
         {
             dir.y = 0;
             if (dir.sqrMagnitude < 1e-6f) dir = -Root.forward;
             var axis = Vector3.Cross(Vector3.up, dir.normalized);
-            hitVel += axis * Mathf.Lerp(3f, 9f, Mathf.Clamp01(strength));
+            hitVel += axis * Mathf.Lerp(1.2f, 9f, Mathf.Clamp01(strength));
+            // 连续命中（光束、冲锋枪）叠加的角速度有上限，不会越叠越大
+            if (hitVel.magnitude > MaxHitVel) hitVel = hitVel.normalized * MaxHitVel;
         }
+
+        const float MaxHitAngle = 25f * Mathf.Deg2Rad, MaxHitVel = 10f, HitStep = 1f / 120f;
 
         /// <summary>传送 / 重生后调用：弹簧与脚锁重置到当前动画姿势</summary>
         public void ResetState()
         {
             initialized = false;
+            guardValid = false;
             foreach (var l in legs) { l.locked = false; l.lockBlend = 0; }
             pelvisOffset = 0;
             hitAngle = hitVel = Vector3.zero;
@@ -109,6 +125,7 @@ namespace Spiritfire.Art
                 initialized = true;
             }
             lastRootPos = root.position;
+            GuardBegin();
             // 转弯倾斜：骨盆绕前进轴压向弯内侧（先于脚步 IK，脚再贴回地面）
             leanCur = Mathf.Lerp(leanCur, lean, 1 - Mathf.Exp(-6f * dt));
             if (pelvis && Mathf.Abs(leanCur) > 0.05f) pelvis.rotation = Quaternion.AngleAxis(-leanCur, root.forward) * pelvis.rotation;
@@ -116,6 +133,48 @@ namespace Spiritfire.Art
             if (lookBones.Length > 0) Look(root, dt);
             HitReaction(root, dt);
             Springs(dt);
+            GuardEnd();
+        }
+
+        void GuardBegin()
+        {
+            if (guarded == null)
+            {
+                var set = new System.Collections.Generic.List<Transform>();
+                void Add(Transform t)
+                {
+                    if (t && !set.Contains(t)) set.Add(t);
+                }
+                Add(pelvis);
+                foreach (var l in legs) { Add(l.upper); Add(l.mid); Add(l.end); }
+                foreach (var b in lookBones) Add(b);
+                foreach (var b in spineBones) Add(b);
+                foreach (var c in springs) foreach (var b in c.bones) Add(b);
+                guarded = set.ToArray();
+                guardBase = new Quaternion[guarded.Length];
+                guardWrote = new Quaternion[guarded.Length];
+                guardValid = false;
+            }
+            for (int i = 0; i < guarded.Length; i++)
+            {
+                var b = guarded[i];
+                if (!b) continue;
+                if (guardValid && b.localRotation == guardWrote[i]) b.localRotation = guardBase[i];
+                guardBase[i] = b.localRotation;
+            }
+            if (pelvis)
+            {
+                if (guardValid && pelvis.localPosition == pelvisWrote) pelvis.localPosition = pelvisBase;
+                pelvisBase = pelvis.localPosition;
+            }
+        }
+
+        void GuardEnd()
+        {
+            for (int i = 0; i < guarded.Length; i++)
+                if (guarded[i]) guardWrote[i] = guarded[i].localRotation;
+            if (pelvis) pelvisWrote = pelvis.localPosition;
+            guardValid = true;
         }
 
         // ───────────── 脚步 ─────────────
@@ -250,9 +309,22 @@ namespace Spiritfire.Art
         // ───────────── 受击 ─────────────
         void HitReaction(Transform root, float dt)
         {
-            // 二阶弹簧：角度向量 θ'' = −kθ − cθ'
-            hitVel += (-hitStiffness * hitAngle - hitDamping * hitVel) * dt;
-            hitAngle += hitVel * dt;
+            // 二阶弹簧：角度向量 θ'' = −kθ − cθ'。按 1/120 s 定步长子步积分：帧率掉到 10–20 帧时单步显式积分会发散
+            // （k = 160、c = 14、dt = 0.1 时特征值 |λ| ≈ 1.3，每帧放大，身体会被压歪几百度 = 「侧翻」）
+            int steps = Mathf.Clamp(Mathf.CeilToInt(dt / HitStep), 1, 30);
+            float h = dt / steps;
+            for (int i = 0; i < steps; i++)
+            {
+                hitVel += (-hitStiffness * hitAngle - hitDamping * hitVel) * h;
+                hitAngle += hitVel * h;
+            }
+            // 最多压歪 25°：再大就不像受击而像倒地
+            if (hitAngle.magnitude > MaxHitAngle)
+            {
+                hitAngle = hitAngle.normalized * MaxHitAngle;
+                float outward = Vector3.Dot(hitVel, hitAngle.normalized);
+                if (outward > 0) hitVel -= hitAngle.normalized * outward;
+            }
             float ang = hitAngle.magnitude;
             if (ang < 1e-4f) return;
             var chain = spineBones.Length > 0 ? spineBones : pelvis ? new[] { pelvis } : Array.Empty<Transform>();
@@ -268,6 +340,7 @@ namespace Spiritfire.Art
                 int n = s.bones.Length;
                 s.pos = new Vector3[n];
                 s.prev = new Vector3[n];
+                s.vel = new Vector3[n];
                 for (int i = 0; i < n; i++) s.pos[i] = s.prev[i] = Tip(s, i);
             }
         }
@@ -282,31 +355,53 @@ namespace Spiritfire.Art
             return b.position + (d.sqrMagnitude > 1e-8f ? d * 0.5f : b.up * 0.05f);
         }
 
+        const float SpringStep = 1f / 120f, SpringMaxAngle = 60f;
+
+        /// <summary>
+        /// 弹簧骨：每节骨骼的末端是一个质点，用二阶弹簧（刚度、阻尼按秒计）追向动画姿势里的末端，定步长 1/120 s 子步积分，
+        /// 再约束骨长、限制最大偏摆 60°，最后把骨骼转向质点。
+        /// 以前按「每 1/60 秒拉回的比例」做位置 Verlet：多节链首尾互相带动、帧率一变就会自激（蝎尾待机时 184°/s 乱甩）。
+        /// 刚度 / 阻尼沿用 Builder 里的数值并换算：固有频率 ω = 32·√刚度（尾巴 0.2 → 14 rad/s ≈ 2.3 Hz），阻尼比 ζ = 0.35 + 2·阻尼
+        /// </summary>
         void Springs(float dt)
         {
-            float steps = dt * 60f;
+            if (dt > 0.25f) { InitSprings(); return; } // 卡顿 / 瞬移：直接重置，别甩一大下
+            int steps = Mathf.Clamp(Mathf.CeilToInt(dt / SpringStep), 1, 30);
+            float h = dt / steps;
             foreach (var s in springs)
             {
-                if (s.pos == null || s.pos.Length != s.bones.Length) { InitSprings(); return; }
-                float stiff = 1 - Mathf.Pow(1 - s.stiffness, steps);
-                float keep = Mathf.Pow(1 - s.damping, steps);
+                if (s.pos == null || s.pos.Length != s.bones.Length || s.vel == null) { InitSprings(); return; }
+                float w = 32f * Mathf.Sqrt(Mathf.Max(0.01f, s.stiffness));
+                float zeta = 0.35f + 2f * s.damping;
+                float k = w * w, c = 2f * zeta * w;
                 for (int i = 0; i < s.bones.Length; i++)
                 {
                     var b = s.bones[i];
                     if (!b) continue;
                     var target = Tip(s, i);
-                    var vel = (s.pos[i] - s.prev[i]) * keep;
-                    s.prev[i] = s.pos[i];
-                    var p = s.pos[i] + vel + Vector3.down * (s.gravity * dt * dt);
-                    p += (target - p) * stiff;
-                    float len = (target - b.position).magnitude;
-                    var off = p - b.position;
-                    p = b.position + (off.sqrMagnitude > 1e-10f ? off.normalized * len : target - b.position);
-                    s.pos[i] = p;
-                    var from = target - b.position;
-                    var to = p - b.position;
-                    if (from.sqrMagnitude > 1e-10f && to.sqrMagnitude > 1e-10f)
-                        b.rotation = Quaternion.FromToRotation(from, to) * b.rotation;
+                    var origin = b.position;
+                    float len = (target - origin).magnitude;
+                    if (len < 1e-5f) continue;
+                    var x = s.pos[i];
+                    var v = s.vel[i];
+                    for (int k2 = 0; k2 < steps; k2++)
+                    {
+                        var acc = k * (target - x) - c * v + Vector3.down * s.gravity;
+                        v += acc * h;
+                        x += v * h;
+                    }
+                    // 约束骨长，去掉沿骨方向的速度
+                    var off = x - origin;
+                    var dir = off.sqrMagnitude > 1e-10f ? off.normalized : (target - origin) / len;
+                    var rest = (target - origin) / len;
+                    // 最大偏摆
+                    float ang = Vector3.Angle(rest, dir);
+                    if (ang > SpringMaxAngle) dir = Vector3.Slerp(rest, dir, SpringMaxAngle / ang);
+                    x = origin + dir * len;
+                    v -= dir * Vector3.Dot(v, dir);
+                    s.pos[i] = x;
+                    s.vel[i] = v;
+                    b.rotation = Quaternion.FromToRotation(rest, dir) * b.rotation;
                 }
             }
         }

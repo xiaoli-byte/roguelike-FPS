@@ -26,6 +26,8 @@ namespace Spiritfire.Game
         {
             Instance = this;
             Time.timeScale = 1;
+            // 物理必须自动模拟：否则布娃娃不动、移动中的敌人碰撞体留在原地（射线打不到它现在的位置）
+            if (Physics.simulationMode != SimulationMode.FixedUpdate) Physics.simulationMode = SimulationMode.FixedUpdate;
             startTime = Time.time;
         }
 

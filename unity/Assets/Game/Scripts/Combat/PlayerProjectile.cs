@@ -13,6 +13,10 @@ namespace Spiritfire.Game
         public Vector3 velocity;
         public float gravity, radius = 0.2f, lifetime = 4f, explodeRadius, homing;
         public bool explodeOnExpire = true;
+        /// <summary>撞墙 / 地面反弹次数（弹回 60% 速度）；用完后 rollAfter 时贴地滚动直到时间耗尽，否则触地即炸</summary>
+        public int bounces;
+        public bool rollAfter;
+        bool rolling;
         public DamageInfo damage;
         public Damageable target;
         public Action<Vector3> onImpact;
@@ -49,6 +53,30 @@ namespace Spiritfire.Game
             float len = step.magnitude;
             if (len > 1e-4f && Cast(from, step / len, len, out var hit, out var enemy))
             {
+                if (!enemy && (bounces > 0 || (rollAfter && !rolling)))
+                {
+                    // 撞到地形：反弹（或开始贴地滚动），继续飞到时间耗尽 / 碰到敌人
+                    transform.position = hit.point + hit.normal * (radius + 0.02f);
+                    if (bounces > 0)
+                    {
+                        bounces--;
+                        velocity = Vector3.Reflect(velocity, hit.normal) * 0.6f;
+                        ShotFx.Instance?.Impact(hit.point, hit.normal, false, 0.8f);
+                    }
+                    else
+                    {
+                        rolling = true;
+                        velocity = Vector3.ProjectOnPlane(velocity, hit.normal) * 0.7f;
+                    }
+                    return;
+                }
+                if (!enemy && rolling)
+                {
+                    // 滚动中：贴着地面走，摩擦减速
+                    transform.position = hit.point + hit.normal * (radius + 0.01f);
+                    velocity = Vector3.ProjectOnPlane(velocity, hit.normal) * Mathf.Exp(-2.5f * dt);
+                    return;
+                }
                 transform.position = hit.point;
                 Impact(hit.point, hit.normal, enemy);
                 return;

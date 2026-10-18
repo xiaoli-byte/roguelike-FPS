@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Spiritfire.Art;
 using UnityEngine;
 using UnityEngine.AI;
@@ -30,6 +31,11 @@ namespace Spiritfire.Game
 
         protected EnemyBody body;
         protected Damageable hp;
+        /// <summary>场上所有敌人（反应、弹射、追踪找目标用）；死亡 / 销毁时移出</summary>
+        public static readonly List<EnemyAI> All = new();
+        public Damageable Health => hp;
+        EnemyStatus status;
+        bool wasStunned;
         protected NavMeshAgent agent;
         protected Transform player;
         protected PlayerVitals vitals;
@@ -76,7 +82,10 @@ namespace Spiritfire.Game
             agent.autoBraking = true;
             agent.stoppingDistance = 0.3f;
             hp.Died += OnDied;
+            All.Add(this);
         }
+
+        void OnDestroy() => All.Remove(this);
 
         /// <summary>生成器调用：等级与精英决定生命，出生无敌 0.7 s</summary>
         public virtual void Spawn(int lvl, bool isElite)
@@ -108,6 +117,7 @@ namespace Spiritfire.Game
 
         void OnDied(DamageInfo info)
         {
+            All.Remove(this);
             AttackTokens.Release(this);
             if (agent && agent.enabled) agent.enabled = false;
             Removed?.Invoke(this);
@@ -143,8 +153,35 @@ namespace Spiritfire.Game
                 }
                 return;
             }
+            // 眩晕（雷殛叠满、封脉）：AI 停摆，打断正在做的动作；醒来从初始状态重新开始
+            if (!status) status = GetComponent<EnemyStatus>();
+            if (status && status.Stunned)
+            {
+                if (!wasStunned)
+                {
+                    wasStunned = true;
+                    if (manual) EndManualMotion();
+                    Stop();
+                    AttackTokens.Release(this);
+                    OnStunned();
+                    Play("Hit", 0.05f);
+                }
+                return;
+            }
+            if (wasStunned)
+            {
+                wasStunned = false;
+                PlayLocomotion();
+                SetState(InitialState);
+            }
             Think(dt);
         }
+
+        /// <summary>被眩晕的那一刻：子类在这里收拾自己的中间状态（钻了一半的沙、悬空的冲锋…）</summary>
+        protected virtual void OnStunned() { }
+
+        /// <summary>移速倍率：光环 × 元素减速（蚀化、封脉）</summary>
+        protected float SpeedMult => auraSpeed * (status ? status.SlowMult : 1f);
 
         /// <summary>
         /// 邪飞天加成：16 m 内有一只没被沉默的邪飞天就吃光环（多只不叠加）；赐福另算、相乘。
@@ -187,7 +224,7 @@ namespace Spiritfire.Game
         {
             if (manual || !agent.isOnNavMesh) return;
             agent.isStopped = false;
-            agent.speed = speed * auraSpeed;
+            agent.speed = speed * SpeedMult;
             repathTimer -= Time.deltaTime;
             if (repathTimer <= 0 || (dest - lastDest).sqrMagnitude > 1f)
             {

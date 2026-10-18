@@ -21,6 +21,8 @@ namespace Spiritfire.Game
         [NonSerialized] public bool untargetable;
         /// <summary>承伤倍率（邪飞天光环 ×0.75、祝福 ×0.5 等相乘）</summary>
         [NonSerialized] public float damageTakenMult = 1f;
+        /// <summary>元素状态的承伤倍率（蚀化 ×1.2），由 EnemyStatus 每帧写入；和光环那一份分开，免得互相覆盖</summary>
+        [NonSerialized] public float statusTakenMult = 1f;
         public Func<DamageInfo, float> incomingModifier;
 
         public bool Dead { get; private set; }
@@ -51,7 +53,7 @@ namespace Spiritfire.Game
             }
             float mod = incomingModifier != null ? incomingModifier(info) : 1f;
             if (mod < 0.5f) r.blocked = true;
-            float left = amount * mod * damageTakenMult;
+            float left = amount * mod * damageTakenMult * statusTakenMult;
 
             // 每一层：剩余伤害 × 该层元素倍率，吃不完的按倍率折回原始量继续往下
             left = Eat(ref shield, left, DamageTable.LayerMult(info.element, DamageLayer.Shield), ref r.shield, ref r, DamageLayer.Shield);

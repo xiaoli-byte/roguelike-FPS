@@ -159,7 +159,7 @@ namespace Spiritfire.Game
             // ── 开火 ──
             cooldown -= dt;
             if (!fireDown) triggerHeld = false;
-            bool wantFire = def.mode == FireMode.Auto ? fireDown : firePressed || (fireDown && !triggerHeld);
+            bool wantFire = def.mode != FireMode.Semi ? fireDown : firePressed || (fireDown && !triggerHeld);
             if (wantFire && cooldown <= 0 && !Reloading && switchTimer <= 0 && w.mag > 0 && !motor.Dashing)
             {
                 Fire(w);
@@ -179,6 +179,7 @@ namespace Spiritfire.Game
 
         void LateUpdate()
         {
+            UpdateBeam();
             // 屏震：在 PlayerMotor 写完视角之后叠一个小的随机转角
             if (shakeTime <= 0 || !eye) return;
             shakeTime -= Time.deltaTime;
@@ -278,11 +279,14 @@ namespace Spiritfire.Game
             var tracerColor = new Color(1f, 0.82f, 0.5f, 1f);
             // 整发的方向先按散布偏一次（霰弹整团跟着走），每颗弹丸再在锥内偏
             var center = Scatter(camT.forward, camT, spreadNow);
-            for (int i = 0; i < def.pellets; i++)
-            {
-                var dir = def.pellets > 1 ? Scatter(center, camT, cone) : center;
-                Shoot(origin, dir, muzzle, def, dmg, tracerColor, def.pellets > 1 ? 0.6f : 1f);
-            }
+            if (def.projectile != null) Launch(origin, center, muzzle, def, dmg);
+            else if (def.mode == FireMode.Beam) BeamTick(origin, center, muzzle, def, dmg);
+            else
+                for (int i = 0; i < def.pellets; i++)
+                {
+                    var dir = def.pellets > 1 ? Scatter(center, camT, cone) : center;
+                    Shoot(origin, dir, muzzle, def, dmg, tracerColor, def.pellets > 1 ? 0.6f : 1f);
+                }
 
             bloom = Mathf.Min(def.spreadMax, bloom + def.spreadPerShot);
             float climb = 1 + Mathf.Min(consecutive, 12) * def.recoilClimb;
@@ -315,6 +319,136 @@ namespace Spiritfire.Game
             return null;
         }
 
+        DamageInfo HitInfo(WeaponDef def, float amount, Vector3 point, Vector3 dir) => new()
+        {
+            amount = amount, source = DamageSource.Weapon, critMult = def.critMult, point = point, direction = dir,
+            knockback = def.knockback, element = def.element, instigator = this,
+            statusChance = def.element != Element.None ? def.elementChance : 0, subElement = def.subElement, subChance = def.subChance,
+        };
+
+        /// <summary>
+        /// 投射物武器：从枪口射向准星指着的点（射线找落点，最远 60 m），有重力时按飞行时间解抛物线，
+        /// 准星指哪儿就落在哪儿（同 Three.js 版 Firing 的抛物线补偿）
+        /// </summary>
+        void Launch(Vector3 origin, Vector3 dir, Vector3 muzzle, WeaponDef def, float dmg)
+        {
+            var spec = def.projectile;
+            float reach = Mathf.Min(60f, def.range);
+            var aimPoint = origin + dir * reach;
+            foreach (var h in SortedHits(origin, dir, reach))
+            {
+                if (h.collider == selfCollider) continue;
+                aimPoint = h.point;
+                break;
+            }
+            Vector3 vel;
+            if (spec.gravity > 0)
+            {
+                float t = Mathf.Max(0.05f, Vector3.Distance(muzzle, aimPoint) / spec.speed);
+                vel = EnemyProjectile.Ballistic(muzzle, aimPoint, t, spec.gravity);
+            }
+            else vel = (aimPoint - muzzle).normalized * spec.speed;
+            var info = HitInfo(def, dmg, muzzle, dir);
+            var p = PlayerProjectile.Spawn(muzzle, vel, info, spec.radius, spec.lifetime, spec.gravity, spec.explosionRadius);
+            p.explodeOnExpire = spec.explodeOnExpire;
+            p.bounces = spec.bounces;
+            p.rollAfter = spec.rollAfter;
+            ProjectileLook(p.transform, spec);
+            p.onImpact = point =>
+            {
+                ShotFx.Instance?.Impact(point, Vector3.up, def.element == Element.Fire, spec.explosionRadius * 2.2f);
+                ShotFx.Instance?.MuzzleFlash(point + Vector3.up * 0.4f, spec.explosionRadius * 1.3f);
+                Telegraph.Wave(point + Vector3.up * 0.05f, spec.explosionRadius, 20f, spec.color);
+            };
+        }
+
+        static void ProjectileLook(Transform parent, ProjectileSpec spec)
+        {
+            var core = GameObject.CreatePrimitive(spec.visual == "orb" ? PrimitiveType.Sphere : PrimitiveType.Capsule);
+            Destroy(core.GetComponent<Collider>());
+            core.transform.SetParent(parent, false);
+            core.transform.localRotation = Quaternion.Euler(90, 0, 0);
+            float r = spec.radius * 2f * spec.scale;
+            core.transform.localScale = spec.visual == "orb" ? Vector3.one * r * 1.2f : new Vector3(r, r * 0.9f, r);
+            var mr = core.GetComponent<Renderer>();
+            mr.sharedMaterial = FxMaterials.Unlit;
+            FxMaterials.Tint(mr, Color.Lerp(spec.color, Color.white, 0.25f));
+            FxMaterials.GlowSprite(parent, r * 6f, new Color(spec.color.r, spec.color.g, spec.color.b, 0.7f));
+            var trail = parent.gameObject.AddComponent<TrailRenderer>();
+            trail.time = 0.22f;
+            trail.startWidth = r * 0.8f;
+            trail.endWidth = 0;
+            trail.sharedMaterial = FxMaterials.Additive;
+            trail.startColor = new Color(spec.color.r, spec.color.g, spec.color.b, 0.8f);
+            trail.endColor = new Color(spec.color.r, spec.color.g, spec.color.b, 0);
+            trail.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        }
+
+        // ── 光束（雷弧发射器）──
+        LineRenderer beamLine;
+        Vector3 beamEnd;
+        float beamUntil;
+
+        /// <summary>光束一跳：射线命中 → 伤害 + 雷殛几率；打中敌人时向附近 1 个敌人弹射（伤害 × chainFraction）</summary>
+        void BeamTick(Vector3 origin, Vector3 dir, Vector3 muzzle, WeaponDef def, float dmg)
+        {
+            var target = Shoot(origin, dir, muzzle, def, dmg, Color.clear, 0.45f, out var end);
+            beamEnd = end;
+            beamUntil = Time.time + 1.4f / Mathf.Max(1, def.fireRate);
+            if (!target || def.chainFraction <= 0) return;
+            foreach (var o in ReactionSystem.Nearest(end, def.chainRange, 1, target, true))
+            {
+                var oc = ReactionSystem.CenterOf(o);
+                Lightning.Spawn(end, oc, DamageTable.ElementColor(def.element));
+                var info = HitInfo(def, dmg * def.chainFraction, oc, (oc - end).normalized);
+                info.depth = 1;
+                Combat.DamageEnemy(o, info);
+            }
+        }
+
+        void UpdateBeam()
+        {
+            bool on = Time.time < beamUntil && Active?.def.mode == FireMode.Beam;
+            if (!on)
+            {
+                if (beamLine) beamLine.enabled = false;
+                return;
+            }
+            if (!beamLine)
+            {
+                var go = new GameObject("Beam");
+                beamLine = go.AddComponent<LineRenderer>();
+                beamLine.positionCount = 8;
+                beamLine.sharedMaterial = FxMaterials.Additive;
+                // 枪口那头离相机很近，透视会把它放大成一大片：起点细、远端粗
+                beamLine.widthCurve = new AnimationCurve(new Keyframe(0, 0.012f), new Keyframe(0.25f, 0.035f), new Keyframe(1, 0.07f));
+                beamLine.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            }
+            beamLine.enabled = true;
+            var camT = eye.transform;
+            var from = camT.TransformPoint(Vector3.Lerp(new Vector3(0.2f, -0.13f, 0.75f), new Vector3(0, -0.08f, 0.7f), aimT));
+            var c = DamageTable.ElementColor(Active.def.element);
+            float flicker = 0.75f + UnityEngine.Random.value * 0.25f;
+            beamLine.startColor = new Color(c.r, c.g, c.b, 0.55f * flicker);
+            beamLine.endColor = new Color(Mathf.Lerp(c.r, 1, 0.3f), Mathf.Lerp(c.g, 1, 0.3f), 1f, 0.9f * flicker);
+            var d = beamEnd - from;
+            var side = Vector3.Cross(d, Vector3.up).normalized;
+            var up = Vector3.Cross(side, d).normalized;
+            for (int i = 0; i < 8; i++)
+            {
+                float t = i / 7f;
+                float k = Mathf.Sin(t * Mathf.PI) * 0.12f;
+                beamLine.SetPosition(i, Vector3.Lerp(from, beamEnd, t) + side * UnityEngine.Random.Range(-k, k) + up * UnityEngine.Random.Range(-k, k));
+            }
+        }
+
+        RaycastHit[] SortedHits(Vector3 origin, Vector3 dir, float range)
+        {
+            var hits = Physics.RaycastAll(origin, dir, range, Layers.ShotMask, QueryTriggerInteraction.Ignore);
+            Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+            return hits;
+        }
+
         static Vector3 Scatter(Vector3 dir, Transform basis, float halfAngle)
         {
             if (halfAngle <= 0) return dir;
@@ -324,11 +458,15 @@ namespace Spiritfire.Game
             return (dir + basis.right * (Mathf.Cos(a) * r) + basis.up * (Mathf.Sin(a) * r)).normalized;
         }
 
-        void Shoot(Vector3 origin, Vector3 dir, Vector3 muzzle, WeaponDef def, float dmg, Color tracer, float fxScale)
+        void Shoot(Vector3 origin, Vector3 dir, Vector3 muzzle, WeaponDef def, float dmg, Color tracer, float fxScale) =>
+            Shoot(origin, dir, muzzle, def, dmg, tracer, fxScale, out _);
+
+        /// <summary>射线命中结算；返回打中的敌人（没打中 / 打在地形上为 null），end = 落点。tracer 透明时不画曳光</summary>
+        Damageable Shoot(Vector3 origin, Vector3 dir, Vector3 muzzle, WeaponDef def, float dmg, Color tracer, float fxScale, out Vector3 end)
         {
-            Vector3 end = origin + dir * def.range;
-            var hits = Physics.RaycastAll(origin, dir, def.range, Layers.ShotMask, QueryTriggerInteraction.Ignore);
-            Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+            Damageable struck = null;
+            end = origin + dir * def.range;
+            var hits = SortedHits(origin, dir, def.range);
             // 贴脸：射线起点已经在敌人胶囊里时 RaycastAll 打不到它（敌人走进玩家身上、大体型敌人），直接算命中这个敌人
             var inside = PointBlank(origin);
             if (inside)
@@ -371,20 +509,18 @@ namespace Spiritfire.Game
                 if (target && !target.Dead)
                 {
                     // 出生中 / 遁地中（还露在外面时）：子弹停在身上，结算出「免疫」字样，让玩家知道不是没打中
-                    var info = new DamageInfo
-                    {
-                        amount = dmg * def.Falloff(h.distance) * (hb ? hb.multiplier : 1f),
-                        source = DamageSource.Weapon, weakpoint = hb && hb.weakpoint, critMult = def.critMult,
-                        point = h.point, direction = dir, knockback = def.knockback, element = def.element, instigator = this,
-                    };
+                    var info = HitInfo(def, dmg * def.Falloff(h.distance) * (hb ? hb.multiplier : 1f), h.point, dir);
+                    info.weakpoint = hb && hb.weakpoint;
                     Combat.DamageEnemy(target, info);
+                    struck = target;
                     ShotFx.Instance?.Impact(h.point, h.normal, !target.untargetable, fxScale);
                 }
                 else if (!target)
                     ShotFx.Instance?.Impact(h.point, h.normal, false, fxScale);
                 break;
             }
-            ShotFx.Instance?.Tracer(muzzle, end, tracer, def.pellets > 1 ? 0.012f : 0.02f);
+            if (tracer.a > 0) ShotFx.Instance?.Tracer(muzzle, end, tracer, def.pellets > 1 ? 0.012f : 0.02f);
+            return struck;
         }
     }
 }

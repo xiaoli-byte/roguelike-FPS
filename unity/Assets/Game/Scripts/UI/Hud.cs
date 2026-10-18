@@ -41,7 +41,13 @@ namespace Spiritfire.Game
             public Text text;
             public Vector3 world, drift;
             public float life, max, scale;
+            /// <summary>合并用：同一个目标、同一类（普通 / 持续）的数字在窗口内累加</summary>
+            public Damageable target;
+            public int kind;
+            public float value, mergeUntil;
         }
+
+        const float MergeWindow = 0.35f;
 
         readonly List<Number> numbers = new();
         public int coins;
@@ -247,8 +253,30 @@ namespace Spiritfire.Game
                 : info.element != Element.None ? DamageTable.ElementColor(info.element)
                 : Color.white;
             if (r.crit && !r.immune) c = Color.Lerp(c, new Color(1f, 0.7f, 0.15f), 0.75f);
+            float scale = r.crit ? 1.45f : info.reaction ? 1.15f : info.source == DamageSource.Status ? 0.75f : 1f;
+            // 合并：普通命中 / 持续伤害在 0.35 s 内对同一个目标累加成一个数字（光束、冲锋枪不再刷屏）；暴击、反应、免疫、格挡单独弹
+            int kind = r.crit || info.reaction || r.immune || r.blocked ? 0 : info.source == DamageSource.Status ? 2 : 1;
+            if (kind != 0 && target)
+                foreach (var n in numbers)
+                    if (n.life > 0 && n.target == target && n.kind == kind && Time.time < n.mergeUntil)
+                    {
+                        n.value += r.total;
+                        n.text.text = Mathf.Max(1, Mathf.RoundToInt(n.value)).ToString();
+                        n.text.color = c;
+                        n.world = info.point;
+                        n.max = n.life = 0.85f;
+                        n.mergeUntil = Time.time + MergeWindow;
+                        // 越累越大一点，上限 1.6 倍
+                        n.scale = Mathf.Min(scale * 1.6f, n.scale * 1.03f);
+                        n.text.fontSize = Mathf.RoundToInt(34 * n.scale);
+                        return;
+                    }
             string s = r.immune ? "免疫" : r.blocked && r.total < 1 ? "格挡" : Mathf.Max(1, Mathf.RoundToInt(r.total)).ToString();
-            SpawnNumber(info.point, s, c, r.crit ? 1.45f : info.source == DamageSource.Status ? 0.75f : 1f);
+            var num = SpawnNumber(info.point, s, c, scale);
+            num.target = kind != 0 ? target : null;
+            num.kind = kind;
+            num.value = r.total;
+            num.mergeUntil = Time.time + MergeWindow;
         }
 
         void OnEnemyKilled(Damageable target, DamageInfo info) => killUntil = Time.time + 0.3f;
@@ -259,7 +287,15 @@ namespace Spiritfire.Game
             hurtArrowUntil = Time.time + 0.9f;
         }
 
-        void SpawnNumber(Vector3 world, string text, Color c, float scale)
+        /// <summary>世界空间浮字（元素反应名「焚雷」…）：比伤害数字停留久一点、往上飘</summary>
+        public void FloatText(Vector3 world, string text, Color c, float scale = 1.3f)
+        {
+            var n = SpawnNumber(world, text, c, scale);
+            n.drift = new Vector3(0, 1.1f, 0);
+            n.max = n.life = 1.15f;
+        }
+
+        Number SpawnNumber(Vector3 world, string text, Color c, float scale)
         {
             Number n = null;
             foreach (var x in numbers)
@@ -282,7 +318,10 @@ namespace Spiritfire.Game
             n.drift = new Vector3(Random.Range(-0.6f, 0.6f), 1.6f, 0);
             n.max = n.life = 0.85f;
             n.scale = scale;
+            n.target = null;
+            n.kind = 0;
             n.text.enabled = true;
+            return n;
         }
 
         // ───────────── 每帧 ─────────────

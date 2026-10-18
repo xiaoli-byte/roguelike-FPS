@@ -8,6 +8,7 @@ namespace Spiritfire.Game
     ///   暴击 = 强制暴击 ∨ 命中弱点 ∨ 掷骰 &lt; 暴击率（持续伤害不暴击；弱点必暴）
     ///   倍率 = 来源加成（武器 → 伤害%，技能 → 技能伤害%，爆炸 → 爆炸伤害%）× 暴击（critMult × (1 + 暴伤%)）× 弱点加成
     ///   然后交给目标按护盾 / 护甲 / 生命分层结算。
+    /// 元素：带元素的命中按概率附着状态，附着前先判定元素反应（<see cref="ReactionSystem"/>）。
     /// 结果以事件广播：伤害数字、命中标记、击杀掉落都订阅这里，不互相引用。
     /// </summary>
     public static class Combat
@@ -24,19 +25,49 @@ namespace Spiritfire.Game
         {
             if (!target || target.Dead) return default;
             var stats = playerStats;
-            bool crit = info.source != DamageSource.Status &&
+            bool crit = !info.reaction && info.source != DamageSource.Status &&
                         (info.forceCrit || info.weakpoint || UnityEngine.Random.value < (stats?.Get(Stat.CritChance) ?? 0.05f));
-            float mult = extraMult * SourceMult(info.source, stats);
+            // 反应伤害只吃「反应伤害」加成：附着强度来自那一击的实际伤害，已经含了其他加成
+            float mult = extraMult * (info.reaction ? stats?.Mult(Stat.ReactionDamagePct) ?? 1f : SourceMult(info.source, stats));
+            if (info.element == Element.Shock && EnemyStatus.Has(target, Element.Shock)) mult *= EnemyStatus.ShockMarkBonus;
             foreach (var m in OutgoingModifiers) mult *= m(target, info);
             if (crit) mult *= (info.critMult > 0 ? info.critMult : 2f) * (stats?.Mult(Stat.CritDamagePct) ?? 1f);
             if (info.weakpoint) mult *= stats?.Mult(Stat.WeakpointDamagePct) ?? 1f;
             var r = target.ApplyLayers(info, info.amount * mult, crit);
+            // 元素附着（持续伤害、反应伤害不再附着）：附着强度 = 这一击的实际伤害（上限最大生命一半）；击杀那一击也判定两两反应
+            if (!info.reaction && info.source != DamageSource.Status && info.element != Element.None && r.total > 0)
+            {
+                float chance = info.statusChance + (stats?.Get(Stat.ElementChancePct) ?? 0);
+                if (chance > 0 && UnityEngine.Random.value < chance)
+                    Attach(target, info.element, Mathf.Min(r.total, target.maxHealth * 0.5f), info.depth, r.killed);
+            }
+            if (!info.reaction && info.source != DamageSource.Status && info.subElement != Element.None && info.subChance > 0 && r.total > 0 &&
+                UnityEngine.Random.value < info.subChance)
+                Attach(target, info.subElement, Mathf.Min(r.total, target.maxHealth * 0.5f), info.depth, r.killed);
             if (r.total > 0 || r.immune || r.blocked) EnemyDamaged?.Invoke(target, info, r);
             if (r.killed) EnemyKilled?.Invoke(target, info);
-            else if (info.element == Element.Fire && info.source != DamageSource.Status && info.statusChance > 0 && r.total > 0 &&
-                     UnityEngine.Random.value < info.statusChance)
-                EnemyStatus.ApplyBurn(target, r.total);
             return r;
+        }
+
+        /// <summary>附着元素：先判定反应（要看附着前身上有什么），再挂状态</summary>
+        static void Attach(Damageable target, Element element, float power, int depth, bool killed)
+        {
+            ReactionSystem.TryReact(target, element, power, depth, killed);
+            EnemyStatus.Apply(target, element, power, depth, killed);
+        }
+
+        /// <summary>反应扩散出去的元素（焚雷点燃周围、熔池附蚀、封脉导流）：深度由调用方 +1，可以再引发最多一级反应</summary>
+        public static void AttachFromReaction(Damageable target, Element element, float power, int depth)
+        {
+            if (!target || target.Dead || target.untargetable || power <= 0) return;
+            Attach(target, element, Mathf.Min(power, target.maxHealth * 0.5f), depth, false);
+        }
+
+        /// <summary>技能 / 秘卷直接挂元素（不经过伤害），同样判定反应</summary>
+        public static void ApplyElement(Damageable target, Element element, float power, int depth = 0)
+        {
+            if (!target || target.Dead || target.untargetable || power <= 0) return;
+            Attach(target, element, Mathf.Min(power, target.maxHealth * 0.5f), depth, false);
         }
 
         static float SourceMult(DamageSource source, StatSheet s)
@@ -65,7 +96,11 @@ namespace Spiritfire.Game
         /// 范围爆炸：球形范围内的敌人按到碰撞体表面的距离线性衰减（中心 100% → 边缘 30%），墙后不受伤。
         /// hurtPlayer 时同样衰减地伤害玩家。
         /// </summary>
-        public static void Explode(Vector3 center, float radius, DamageInfo info, bool hurtEnemies = true, float playerDamage = 0)
+        /// <param name="exclude">不受这次爆炸伤害的单位（反应的中心敌人已经吃过中心伤害）</param>
+        /// <param name="edge">边缘伤害比例（默认 30%；反应余波 60%）</param>
+        /// <param name="hitList">收集被炸到的敌人（画雷弧、计数）</param>
+        public static void Explode(Vector3 center, float radius, DamageInfo info, bool hurtEnemies = true, float playerDamage = 0,
+            Damageable exclude = null, float edge = 0.3f, System.Collections.Generic.List<Damageable> hitList = null)
         {
             if (hurtEnemies)
             {
@@ -75,15 +110,16 @@ namespace Spiritfire.Game
                 {
                     var hb = c.GetComponent<Hitbox>();
                     var d = hb ? hb.owner : c.GetComponentInParent<Damageable>();
-                    if (!d || d.Dead || !seen.Add(d)) continue;
+                    if (!d || d.Dead || d == exclude || !seen.Add(d)) continue;
                     var closest = c.ClosestPoint(center);
                     if (Blocked(center, closest, c)) continue;
-                    float k = Mathf.Lerp(1f, 0.3f, Mathf.Clamp01(Vector3.Distance(center, closest) / radius));
+                    float k = Mathf.Lerp(1f, edge, Mathf.Clamp01(Vector3.Distance(center, closest) / radius));
                     var hit = info;
                     hit.amount = info.amount * k;
                     hit.point = closest;
                     hit.direction = (closest - center).normalized;
-                    DamageEnemy(d, hit);
+                    var res = DamageEnemy(d, hit);
+                    if (hitList != null && res.total > 0) hitList.Add(d);
                 }
             }
             if (playerDamage > 0 && PlayerVitals.Instance)
