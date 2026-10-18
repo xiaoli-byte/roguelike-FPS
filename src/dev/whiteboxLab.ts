@@ -231,7 +231,11 @@ $('wb-walk').onclick = () => {
 };
 $('wb-stop-walk').onclick = () => walker.stop();
 invulnerable.onchange = () => { ctx.player.invulnerableTime = invulnerable.checked ? 1e9 : 0; };
-theme.onchange = () => { refreshChoices('0'); loadStage(); };
+theme.onchange = () => {
+  // 川藏高原是起伏地形，平地白盒表达不了，跳到它自己的地形检视页（docs/level-design/chuanzang-v1.md）
+  if (theme.value === 'plateau') { location.href = '/plateau-lab.html'; return; }
+  refreshChoices('0'); loadStage();
+};
 stageChoice.onchange = () => { typeChoice.disabled = stageChoice.value === '4'; loadStage(); };
 typeChoice.onchange = () => loadStage();
 planChoice.onchange = () => {

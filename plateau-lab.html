@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>雪域天路 · 4-1 折多垭口</title>
+<style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0d1520;color:#efe7d3;font:13px "Microsoft YaHei","PingFang SC",sans-serif}
+#view{width:100%;height:100%;display:block;outline:none}
+#panel{position:fixed;right:16px;top:16px;width:290px;max-height:calc(100vh - 32px);overflow-y:auto;background:#0f1b26e8;border:1px solid #4d6170;border-radius:6px;padding:12px 14px;box-sizing:border-box}
+#panel h1{font-size:15px;margin:0 0 2px;color:#f6e7c1;letter-spacing:1px}
+#panel .sub{color:#9fb6c4;font-size:12px;margin-bottom:8px}
+#panel h2{font-size:12px;margin:12px 0 6px;color:#d9b45a;border-bottom:1px solid #2f4352;padding-bottom:3px;font-weight:normal;letter-spacing:1px}
+#panel button{font:inherit;background:#22384a;color:#f5eedc;border:1px solid #56707f;border-radius:3px;padding:4px 7px;margin:2px 2px 2px 0;cursor:pointer}
+#panel button:hover{background:#2f4b61}
+#panel button kbd{color:#d9b45a;font:11px monospace;margin-right:3px}
+#panel label{display:block;margin:3px 0;cursor:pointer}
+#panel .row{line-height:1.7;white-space:pre-line;color:#c6d6df;font-size:12px}
+#panel .ok{color:#8fd18a}#panel .bad{color:#ff8a7a}
+#panel.collapsed .body{display:none}
+#toggle{float:right;font-size:11px!important}
+#map{position:fixed;left:16px;bottom:16px;border:1px solid #4d6170;border-radius:4px;background:#0f1b26;image-rendering:auto;cursor:pointer}
+#map.big{left:50%;top:50%;bottom:auto;transform:translate(-50%,-50%);width:min(86vw,1100px);height:auto}
+#hud{position:fixed;left:16px;top:16px;background:#0f1b26c8;border:1px solid #3d5160;border-radius:4px;padding:8px 10px;line-height:1.6;font-size:12px;white-space:pre-line;color:#dce7ec;min-width:200px}
+#hud b{color:#f6e7c1;font-size:14px}
+#cross{position:fixed;left:50%;top:50%;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:#fff8;box-shadow:0 0 2px #000;pointer-events:none}
+#hint{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#0f1b26d8;border:1px solid #4d6170;border-radius:4px;padding:6px 14px;color:#dce7ec;pointer-events:none;transition:opacity .4s}
+#storm{position:fixed;inset:0;pointer-events:none;opacity:0;background:radial-gradient(ellipse at center,#eef3f8aa 0%,#f4f7fbee 70%,#fbfcfe 100%);transition:opacity .3s}
+#storm-text{position:fixed;left:50%;top:38%;transform:translateX(-50%);color:#3b4e60;font-size:20px;letter-spacing:3px;pointer-events:none;opacity:0;transition:opacity .4s;text-shadow:0 0 8px #fff}
+#panel input[type=range]{width:120px;vertical-align:middle}
+#loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#0d1520;color:#d9b45a;font-size:16px;letter-spacing:2px;z-index:10}
+</style></head>
+<body>
+<canvas id="view" tabindex="0"></canvas>
+<div id="storm"></div><div id="storm-text">风雪太大，回到盆地里去</div>
+<div id="cross"></div>
+<div id="hud"></div>
+<canvas id="map" title="点击或按 M 放大 / 缩小"></canvas>
+<aside id="panel"><button id="toggle">收起</button><h1>雪域天路 · 4-1</h1><div class="sub">折多垭口·天路草甸（开放盆地，程序化白模）<br><a href="/whitebox-lab.html" style="color:#9fd0ff">← 白盒检视（其他章节）</a></div>
+<div class="body">
+<h2>机位</h2><div id="views"></div>
+<h2>选项</h2>
+<label><input type="checkbox" id="opt-double"> 二段跳（鼯 / 额外跳跃秘卷）</label>
+<label><input type="checkbox" id="opt-cloud" checked> 云影</label>
+<label><input type="checkbox" id="opt-bound"> 显示盆地轮廓（黄）与风雪线（红）</label>
+<label><input type="checkbox" id="opt-coll"> 显示碰撞体</label>
+<label><input type="checkbox" id="opt-scatter" checked> 草与野花</label>
+<label><input type="checkbox" id="opt-monsters" checked> 雷魅白模（第四章怪物）</label>
+<label><input type="checkbox" id="opt-kui"> 夔一直现身（看蹦跳和拄拳步态，不用等雷暴）</label>
+<label><input type="checkbox" id="opt-encounters" checked> 平面图显示遇敌区</label>
+<label>画质 <select id="opt-quality"><option value="high">高</option><option value="mid">中</option><option value="low">低</option></select>（帧率低时自动降分辨率）</label>
+<label>天气 <select id="opt-weather"><option value="clear">晴</option><option value="storm">雷暴</option></select></label>
+<label>点亮灵火 <input type="range" id="opt-fire" min="0" max="6" step="1" value="0"> <span id="fire-val">0/6</span></label>
+<h2>操作</h2>
+<div class="row">点击画面锁定鼠标，Esc 解锁
+WASD 移动　空格 跳　Shift 冲刺
+G 行走 / 飞行（飞行：空格升、C 降、Shift 加速）
+M 平面图　1–9 机位</div>
+<h2>自动验收</h2><div class="row" id="checks">计算中…</div>
+<h2>性能</h2><div class="row" id="perf">—</div>
+</div></aside>
+<div id="hint">点击画面开始 · WASD 移动 · G 飞行</div>
+<div id="loading">正在生成高原…</div>
+<script type="module" src="/src/dev/plateauLab.ts"></script>
+</body></html>
