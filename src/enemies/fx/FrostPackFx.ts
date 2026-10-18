@@ -113,7 +113,7 @@ const spearPool: Pooled[] = [];
 export interface SpearFlight {
   /** 投射物撞到东西（玩家 / 墙 / 地面）：point 为撞击点 */
   impact(point: THREE.Vector3): void;
-  /** 投射物被挡下（魔刀千刃碎刃屏障等）：飞矛停在 point、当场碎开 */
+  /** 投射物被挡下（碎刃碎刃屏障等）：飞矛停在 point、当场碎开 */
   block(point: THREE.Vector3): void;
   /** 飞矛外观是否已经结束（碎掉 / 回收），测试与调试用 */
   readonly done: boolean;

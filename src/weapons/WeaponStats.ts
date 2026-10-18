@@ -14,7 +14,7 @@ export interface ResolvedWeapon {
   damage: number;
   /**
    * 本武器伤害倍率 = 稀有度倍率 × 强化倍率 × (1 + 伤害词条)（damage = def.damage × damageMult）。
-   * 魔刀千刃的斩击 / 刃群 / 杀气爆发伤害 = 基础值 × damageMult（docs/demon-blade-v2.md）
+   * 碎刃的斩击 / 刃群 / 杀气爆发伤害 = 基础值 × damageMult（docs/demon-blade-v2.md）
    */
   damageMult: number;
   /** 每秒射击次数（不含「狂热」层数） */
@@ -67,13 +67,13 @@ export interface ResolvedWeapon {
   legendaryValue: number;
   /** 每次扣扳机的总伤害（弹丸 × 弹体） */
   perShot: number;
-  /** 理论秒伤（不含换弹；蓄力武器按每发满蓄计；魔刀千刃为千刃出窍的单体秒伤） */
+  /** 理论秒伤（不含换弹；蓄力武器按每发满蓄计；碎刃为千刃出窍的单体秒伤） */
   dps: number;
-  /** 魔刀千刃三段斩的单体理论秒伤（一轮连段伤害 / 一轮时长，射速加成 = 攻速）；普通武器 0 */
+  /** 碎刃三段斩的单体理论秒伤（一轮连段伤害 / 一轮时长，射速加成 = 攻速）；普通武器 0 */
   meleeDps: number;
   /**
    * 斩击命中的「每次命中几率」归一化系数 = 千刃出窍每秒结算数 / 每秒挥砍段数，钳制在 [0.5, 3]
-   * （魔刀 = 10 / 2.73 → 3；普通武器 1）。副元素 / 万象等几率按千刃出窍的结算频率抽取，斩击命中时乘上它
+   * （碎刃 = 10 / 2.73 → 3；普通武器 1）。副元素 / 万象等几率按千刃出窍的结算频率抽取，斩击命中时乘上它
    */
   meleeHitScale: number;
   // 缓存键

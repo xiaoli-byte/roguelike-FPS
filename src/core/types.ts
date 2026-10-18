@@ -133,7 +133,7 @@ export interface DamageRequest {
   direction?: THREE.Vector3;
   /** 击退冲量（米/秒），沿 direction；explode 中只有显式设置才生效（无默认击退） */
   knockback?: number;
-  /** 无视敌人护盾层，直接打在护甲 / 生命上（魔刀千刃的刃群） */
+  /** 无视敌人护盾层，直接打在护甲 / 生命上（碎刃的刃群） */
   bypassShield?: boolean;
   /**
    * 链式触发层数。直接伤害为 0；由 on-hit 效果（秘卷、元素连锁等）衍生出的伤害 >= 1。
@@ -268,7 +268,7 @@ export interface GameEvents {
   'weapon:reloaded': { weapon: WeaponInstance };
   'weapon:switched': { weapon: WeaponInstance | null; slot: number };
   'weapon:acquired': { weapon: WeaponInstance };
-  /** 释放武器技能（魔刀千刃「杀气爆发」/「人刀合一」） */
+  /** 释放武器技能（碎刃「杀气爆发」/「人刀合一」） */
   'weapon:skillUsed': { weapon: WeaponInstance; skillId: string };
   'skill:used': { slot: 'primary' | 'secondary'; skillId: string };
   'stage:loaded': { stage: StageNode };
@@ -365,7 +365,7 @@ export interface IPlayer extends System {
   readonly isDashing: boolean;
   readonly dashCharges: number;
   readonly dashCooldownRemaining: number;
-  /** 正在被 lunge() 驱动位移（魔刀千刃的武器技能突进 / 第三段前冲） */
+  /** 正在被 lunge() 驱动位移（碎刃的武器技能突进 / 第三段前冲） */
   readonly isLunging: boolean;
   readonly skills: { primary: SkillState | null; secondary: SkillState | null };
   maxHp(): number;
@@ -439,11 +439,11 @@ export interface WeaponDescription {
 }
 
 /**
- * 魔刀千刃 v2 的碎刃去向（docs/demon-blade-v2.md）：'hand' 在手中（可斩），'swarm' 千刃出窍，'shield' 碎刃屏障，'burst' 杀气爆发。
+ * 碎刃 v2 的碎刃去向（docs/demon-blade-v2.md）：'hand' 在手中（可斩），'swarm' 千刃出窍，'shield' 碎刃屏障，'burst' 杀气爆发。
  */
 export type BladeMode = 'hand' | 'swarm' | 'shield' | 'burst';
 
-/** 魔刀千刃的 HUD 状态（IWeaponSystem.blade 返回复用对象，读取后不要保存引用） */
+/** 碎刃的 HUD 状态（IWeaponSystem.blade 返回复用对象，读取后不要保存引用） */
 export interface BladeHudState {
   mode: BladeMode;
   /** 刃气 0..1（右键与 R 共用） */
@@ -471,7 +471,7 @@ export interface WeaponSkillState {
   cooldownTotal: number;
   /** 技能正在施展 */
   active: boolean;
-  /** 附加充能 0..1（魔刀：杀意），HUD 画在冷却环外圈；缺省不显示 */
+  /** 附加充能 0..1（碎刃：杀意），HUD 画在冷却环外圈；缺省不显示 */
   charge?: number;
 }
 
@@ -489,7 +489,7 @@ export interface IWeaponSystem extends System {
   readonly chargeProgress?: number;
   /** 当前武器的武器技能状态（当前武器没有武器技能时为 null） */
   readonly weaponSkill?: WeaponSkillState | null;
-  /** 当前武器是魔刀千刃时的状态（其他武器 / 空手为 null） */
+  /** 当前武器是碎刃时的状态（其他武器 / 空手为 null） */
   readonly bladeHud?: BladeHudState | null;
   /** 当前武器实际弹匣容量（含加成） */
   magCapacity(inst: WeaponInstance): number;
@@ -730,7 +730,7 @@ export interface ProjectileSpec {
 }
 
 /**
- * 玩家身前的挡弹圆盘（魔刀千刃「碎刃屏障」）：敌方投射物的运动线段穿过圆盘时被销毁并回调 onBlock。
+ * 玩家身前的挡弹圆盘（碎刃「碎刃屏障」）：敌方投射物的运动线段穿过圆盘时被销毁并回调 onBlock。
  * center / normal 由持有者每帧改写（normal 为单位向量，朝外）。
  */
 export interface ProjectileWard {
@@ -1007,7 +1007,7 @@ export interface IFx extends System {
 export type SfxId =
   | 'shot_pistol' | 'shot_smg' | 'shot_rifle' | 'shot_shotgun' | 'shot_sniper' | 'shot_launcher' | 'shot_beam' | 'shot_bow' | 'shot_heavy'
   | 'reload_start' | 'reload_end' | 'dry_fire' | 'weapon_switch'
-  // 魔刀千刃：挥砍破风 / 斩击命中 / 千刃出窍 / 碎刃归刀 / 碎刃屏障 / 杀气聚合 / 杀气爆发 / 刃群绞杀（循环颗粒）/ 噬灵鬼眼
+  // 碎刃：挥砍破风 / 斩击命中 / 千刃出窍 / 碎刃归刀 / 碎刃屏障 / 杀气聚合 / 杀气爆发 / 刃群绞杀（循环颗粒）/ 噬灵鬼眼
   | 'blade_swing' | 'blade_hit' | 'blade_throw' | 'blade_recall' | 'blade_morph' | 'blade_dash' | 'blade_impale'
   | 'blade_swarm' | 'blade_eye'
   | 'hit' | 'hit_crit' | 'hit_shield' | 'hit_armor' | 'kill' | 'explosion'

@@ -83,7 +83,7 @@ export const TACTIC_SCROLLS: ScrollDef[] = [
   }),
   scroll({
     id: 'tac_dash_load', name: '滑步装填', rarity: 2, maxStacks: 3, tags: ['机动', '弹匣'],
-    description: '冲刺时将备弹中的每层 2 发装入当前弹匣；不超过弹匣容量，不触发换弹效果；冷却 2 秒。无备弹或持魔刀千刃时不生效。',
+    description: '冲刺时将备弹中的每层 2 发装入当前弹匣；不超过弹匣容量，不触发换弹效果；冷却 2 秒。无备弹或持碎刃时不生效。',
     setup: (s, n, ctx) => {
       s.on('player:dashed', () => {
         const w = ctx.weapons.active;

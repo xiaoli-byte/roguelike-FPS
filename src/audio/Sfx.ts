@@ -52,7 +52,7 @@ export const SFX_META: Record<SfxId, SfxMeta> = {
   reload_end: m(0.46, { prio: 3, throttle: 0.05 }),
   dry_fire: m(0.4, { prio: 3, throttle: 0.08, pitch: 0.02 }),
   weapon_switch: m(0.4, { prio: 3, throttle: 0.05 }),
-  // 魔刀千刃：挥砍 / 命中节流很短（三段连斩约每 0.3 秒一次），贯穿混响最多（「千刃」的空间感）
+  // 碎刃：挥砍 / 命中节流很短（三段连斩约每 0.3 秒一次），贯穿混响最多（「千刃」的空间感）
   blade_swing: m(0.62, { prio: 3, throttle: 0.03, pitch: 0.05, send: 0.06 }),
   blade_hit: m(0.5, { prio: 3, throttle: 0.04, pitch: 0.05, send: 0.08 }),
   blade_throw: m(0.75, { prio: 3, throttle: 0.15, pitch: 0.03, send: 0.18 }),

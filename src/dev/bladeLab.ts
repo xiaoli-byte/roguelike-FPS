@@ -1,5 +1,5 @@
 /**
- * 魔刀千刃 v2 模型检视页（blade-lab.html，只在 dev 服务中使用）：整刀、128 片碎刃的几种排布、鬼眼。
+ * 碎刃 v2 模型检视页（blade-lab.html，只在 dev 服务中使用）：整刀、128 片碎刃的几种排布、鬼眼。
  * 不依赖游戏上下文；碎片排布是检视用的示意动画，实战动作由 DemonBlade 控制器驱动。
  */
 import * as THREE from 'three';

@@ -1,11 +1,11 @@
 /**
- * 魔刀千刃 v2 的玩法控制器（docs/demon-blade-v2.md 第 2–8 节）。
+ * 碎刃 v2 的玩法控制器（docs/demon-blade-v2.md 第 2–8 节）。
  *
  * 碎刃去向（mode）：hand 在手里（左键三段斩）/ swarm 千刃出窍（右键按住，刃群追着准星绞杀）/
  * shield 碎刃屏障（R 按住，身前圆盾挡弹）/ burst 杀气爆发（V：碎片聚于一点后炸开）。
- * 右键与 R 共用刃气；斩中回复刃气。杀意满时 V 变为人刀合一（强化爆发 + 8 秒强化）。用魔刀击杀时刀根鬼眼睁开吸魂回血。
+ * 右键与 R 共用刃气；斩中回复刃气。杀意满时 V 变为人刀合一（强化爆发 + 8 秒强化）。用碎刃击杀时刀根鬼眼睁开吸魂回血。
  *
- * WeaponSystem 在当前武器是魔刀时每帧调用 update()，切走 / 死亡 / 换关时调用 stow()；冷却与杀意在 tick() 里推进（不论当前武器）。
+ * WeaponSystem 在当前武器是碎刃时每帧调用 update()，切走 / 死亡 / 换关时调用 stow()；冷却与杀意在 tick() 里推进（不论当前武器）。
  * 所有伤害 source 为 'weapon'，带本武器的伤害倍率、元素、暴击与 weaponUid，因此正常触发词条、秘卷与元素反应。
  */
 import * as THREE from 'three';
@@ -65,7 +65,7 @@ export interface BladeHost {
   resolve(inst: WeaponInstance): ResolvedWeapon;
   /** 「天命」等传说计数（每段斩击算一次射击） */
   countShot(inst: WeaponInstance): number;
-  /** 当前显示的第一人称魔刀（没有时为 null） */
+  /** 当前显示的第一人称碎刃（没有时为 null） */
   view(): BladeView | null;
 }
 
@@ -225,7 +225,7 @@ export class DemonBlade {
     this.swarm.setProvider(null);
   }
 
-  // ───────────── 每帧（当前武器是魔刀） ─────────────
+  // ───────────── 每帧（当前武器是碎刃） ─────────────
 
   update(dt: number, inst: WeaponInstance, R: ResolvedWeapon, inp: BladeInput): void {
     const ctx = this.ctx;

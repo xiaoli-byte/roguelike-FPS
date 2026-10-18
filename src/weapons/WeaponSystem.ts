@@ -4,7 +4,7 @@
  *
  * 其他模块只通过 IWeaponSystem 接口访问。开镜是唯一写 ctx.cameraFx.fovKick 的地方。
  *
- * 魔刀千刃（docs/demon-blade-v2.md）不走开火状态机：当前武器是魔刀时整帧交给 DemonBlade 控制器
+ * 碎刃（docs/demon-blade-v2.md）不走开火状态机：当前武器是碎刃时整帧交给 DemonBlade 控制器
  * （左键斩、右键千刃出窍、R 碎刃屏障、V 杀气爆发 / 人刀合一），右键不开镜、R 不换弹。切走 / 死亡 / 换关时收刀。
  */
 import * as THREE from 'three';
@@ -48,7 +48,7 @@ const CHAPTER_RARITY: readonly (readonly number[])[] = [
   [10, 26, 32, 22, 10],
 ];
 
-/** 持魔刀时 currentSpread 的目标值（准星张开，提示近战） */
+/** 持碎刃时 currentSpread 的目标值（准星张开，提示近战） */
 const MELEE_HUD_SPREAD = 0.035;
 
 let nextUid = 1;
@@ -119,7 +119,7 @@ export class WeaponSystem implements IWeaponSystem {
   // 齐射
   /** 本轮实际弹体数 */
   private volleyCount = 0;
-  /** 魔刀千刃 v2 控制器（刃群 / 特效常驻，冷却与杀意不论当前武器逐帧推进） */
+  /** 碎刃 v2 控制器（刃群 / 特效常驻，冷却与杀意不论当前武器逐帧推进） */
   private readonly blade: DemonBlade;
 
   constructor(readonly ctx: GameContext) {
@@ -176,7 +176,7 @@ export class WeaponSystem implements IWeaponSystem {
     return inst && getWeaponDef(inst.defId).blade ? this.blade.skillState() : null;
   }
 
-  /** 当前武器是魔刀千刃时的 HUD 状态 */
+  /** 当前武器是碎刃时的 HUD 状态 */
   get bladeHud(): BladeHudState | null {
     const inst = this.active;
     return inst && getWeaponDef(inst.defId).blade ? this.blade.hud : null;
@@ -235,7 +235,7 @@ export class WeaponSystem implements IWeaponSystem {
       this.shellMode = false;
     }
     this.stopActions();
-    // 换关：魔刀碎片瞬间归刀、人刀合一结束；武器技能冷却保留
+    // 换关：碎刃碎片瞬间归刀、人刀合一结束；武器技能冷却保留
     this.blade.stow();
     this.aimT = 0;
     this.bloom = 0;
@@ -360,7 +360,7 @@ export class WeaponSystem implements IWeaponSystem {
     if (this.switchTimer > 0) this.switchTimer = Math.max(0, this.switchTimer - dt);
     if (this.dryTimer > 0) this.dryTimer -= dt;
     this.cooldown -= dt;
-    // 魔刀：冷却 / 杀意 / 人刀合一计时（不论当前武器）
+    // 碎刃：冷却 / 杀意 / 人刀合一计时（不论当前武器）
     this.blade.tick(dt);
 
     const inst = this.active;
@@ -384,7 +384,7 @@ export class WeaponSystem implements IWeaponSystem {
     const rateMult = R.fireRateMult * frenzyMult * haste;
 
     if (def.blade) {
-      // 魔刀：右键 = 千刃出窍、R = 碎刃屏障，不开镜、不换弹；开镜与 FOV 按空手的方式衰减到 0
+      // 碎刃：右键 = 千刃出窍、R = 碎刃屏障，不开镜、不换弹；开镜与 FOV 按空手的方式衰减到 0
       this.aimT = damp(this.aimT, 0, 16, dt);
       const fov = damp(ctx.cameraFx.fovKick, 0, 16, dt);
       ctx.cameraFx.fovKick = Math.abs(fov) < 0.02 ? 0 : fov;
@@ -505,7 +505,7 @@ export class WeaponSystem implements IWeaponSystem {
     this.ctx.events.emit('weapon:switched', { weapon: target, slot });
   }
 
-  /** 中断换弹、点射、光束、机炮、连射计数；魔刀收刀（保留弹药） */
+  /** 中断换弹、点射、光束、机炮、连射计数；碎刃收刀（保留弹药） */
   private stopActions(): void {
     if (this.blade.active) this.blade.stow();
     if (this.reloading) this.cancelReload();
@@ -823,7 +823,7 @@ export class WeaponSystem implements IWeaponSystem {
       this.starvedTime = 0;
       return;
     }
-    // 魔刀千刃不耗弹，永不算空
+    // 碎刃不耗弹，永不算空
     let allEmpty = true;
     for (const w of this.slots) {
       if (w && (w.mag > 0 || w.reserve > 0 || getWeaponDef(w.defId).blade)) {
@@ -1027,7 +1027,7 @@ export class WeaponSystem implements IWeaponSystem {
     if (shown !== inst) s.cock = 1;
     else if (this.reloading) s.cock = clamp01((s.reloadP - 0.6) / 0.3);
     else s.cock = infinite || inst.mag > 0 ? clamp01(1 - this.cooldown * rate) : 0;
-    // 魔刀：控制器的姿态输入（切枪收放中显示的是另一把时为 null）
+    // 碎刃：控制器的姿态输入（切枪收放中显示的是另一把时为 null）
     s.blade = shown === inst && getWeaponDef(shown.defId).blade ? this.blade.pose : null;
     this.vm.update(dt, s);
   }

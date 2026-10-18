@@ -166,15 +166,15 @@ class Vitals {
 // ───────────────────────────── 武器 ─────────────────────────────
 
 /** 双形态武器没有给出形态名时的兜底 [近战, 远程] */
-/** 魔刀千刃碎刃去向的徽记文字 */
+/** 碎刃碎刃去向的徽记文字 */
 const BLADE_MODE_NAMES: Record<BladeMode, string> = { hand: '斩', swarm: '千刃', shield: '屏障', burst: '爆发' };
-/** 魔刀徽记下的「右键 千刃出窍 · R 屏障」提示：本次会话前几次出窍 / 结盾后淡出 */
+/** 碎刃徽记下的「右键 千刃出窍 · R 屏障」提示：本次会话前几次出窍 / 结盾后淡出 */
 const FORM_HINT_MORPHS = 5;
 /** 本次会话已出窍 / 结盾的次数（跨关卡 / 跨局保留，提示只教一次） */
 let formHintMorphs = 0;
 
 /**
- * 武器槽。魔刀千刃（`IWeaponSystem.bladeHud` 非空）额外显示：碎刃去向徽记（斩 / 千刃 / 屏障 / 爆发）、
+ * 武器槽。碎刃（`IWeaponSystem.bladeHud` 非空）额外显示：碎刃去向徽记（斩 / 千刃 / 屏障 / 爆发）、
  * 弹药位换成刃气（数字 + 按储量着色），去向切换时徽记翻转（is-morphing），人刀合一期间边框发光（is-strike）。
  */
 class WeaponPanel {
@@ -213,7 +213,7 @@ class WeaponPanel {
   private hint = '';
   private reloadQ = -2;
   private hasWeapon = true;
-  /** 当前显示的魔刀碎刃去向（null = 普通武器） */
+  /** 当前显示的碎刃去向（null = 普通武器） */
   private form: BladeMode | null = null;
   private morphing = false;
   private morphUntil = 0;
@@ -233,7 +233,7 @@ class WeaponPanel {
     this.elemEl = h('span', 'gf-weapon__elem', title);
     this.nameEl = h('span', 'gf-weapon__name', title);
     this.lvlEl = h('span', 'gf-weapon__lvl', title);
-    // 魔刀：徽记下方「右键 千刃出窍 · R 屏障」（新玩家不知道右键已经不是开镜），前几次使用后淡出
+    // 碎刃：徽记下方「右键 千刃出窍 · R 屏障」（新玩家不知道右键已经不是开镜），前几次使用后淡出
     this.formHintEl = h('div', 'gf-weapon__formhint', this.main);
     this.formHintEl.hidden = true;
 
@@ -262,7 +262,7 @@ class WeaponPanel {
     if (formHintMorphs >= FORM_HINT_MORPHS) this.formHintEl.classList.add('is-off');
   }
 
-  /** 操作提示：魔刀显示「右键 千刃出窍 · R 屏障」；普通武器隐藏。已学会（is-off）时由 CSS 淡出并收起高度 */
+  /** 操作提示：碎刃显示「右键 千刃出窍 · R 屏障」；普通武器隐藏。已学会（is-off）时由 CSS 淡出并收起高度 */
   private syncFormHint(form: BladeMode | null): void {
     this.formHintEl.hidden = form === null;
     this.formHintEl.classList.toggle('is-off', formHintMorphs >= FORM_HINT_MORPHS);
@@ -323,7 +323,7 @@ class WeaponPanel {
       this.reloadQ = q;
       if (q >= 0) this.reloadFill.style.transform = `scaleX(${(q / 100).toFixed(2)})`;
     }
-    // 魔刀不换弹、不耗弹；刃气耗尽时提示
+    // 碎刃不换弹、不耗弹；刃气耗尽时提示
     let hint = '';
     const form = w ? this.form : null;
     if (reloading) hint = '换弹中';
@@ -355,7 +355,7 @@ class WeaponPanel {
       named = true;
     }
 
-    // 魔刀：碎刃去向徽记、刃气（代替弹药）、人刀合一
+    // 碎刃：碎刃去向徽记、刃气（代替弹药）、人刀合一
     const blade = ws.bladeHud ?? null;
     const form = blade ? blade.mode : null;
     if (form !== this.form || named) {
@@ -404,7 +404,7 @@ class WeaponPanel {
     }
   }
 
-  /** 魔刀碎刃去向显示（切到普通武器 / 空手时 form = null）：徽记、弹药位改为刃气 */
+  /** 碎刃去向显示（切到普通武器 / 空手时 form = null）：徽记、弹药位改为刃气 */
   private setForm(form: BladeMode | null): void {
     const was = this.form;
     this.form = form;
@@ -464,7 +464,7 @@ class WeaponPanel {
 
 const RING_R = 27;
 const RING_C = 2 * Math.PI * RING_R;
-/** 武器技能的外圈充能环（魔刀杀意） */
+/** 武器技能的外圈充能环（碎刃杀意） */
 const CHARGE_R = 31;
 const CHARGE_C = 2 * Math.PI * CHARGE_R;
 
@@ -594,7 +594,7 @@ class SkillIcon {
 }
 
 /**
- * 武器技能图标（魔刀千刃「杀气爆发 / 人刀合一」，docs/demon-blade-v2.md 第 9 节）：结构与 SkillIcon 相同
+ * 武器技能图标（碎刃「杀气爆发 / 人刀合一」，docs/demon-blade-v2.md 第 9 节）：结构与 SkillIcon 相同
  * （圆盘 + 冷却环 + 单字 + 冷却秒数 + 按键角标），外圈多一道充能环（杀意），满时图标换成「合」并发光。
  * 当前武器没有武器技能（IWeaponSystem.weaponSkill 为 null 或未提供）时隐藏；冷却转好时闪一下。
  */

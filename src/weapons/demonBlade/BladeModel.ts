@@ -1,5 +1,5 @@
 /**
- * 魔刀千刃 v2 的运行时模型（docs/demon-blade-v2.md 第 9 节）。
+ * 碎刃 v2 的运行时模型（docs/demon-blade-v2.md 第 9 节）。
  *
  * - 128 片碎刃：BladeShape 的 Voronoi 单元各自建成带倒角的厚片，合并成一个几何体（顶点带片号与片心）。
  *   每片的位置 / 朝向 / 缩放 / 亮度存在一张 128×3 的浮点纹理（ShardBuffer）里，顶点着色器按片号取出变换。
@@ -567,7 +567,7 @@ let haloGeo: THREE.BufferGeometry | null = null;
 let hiltMat: THREE.MeshStandardMaterial | null = null;
 
 /**
- * 新建一把魔刀。dynamic = true（第一人称）：独享 ShardBuffer 与材质，可逐片动画；
+ * 新建一把碎刃。dynamic = true（第一人称）：独享 ShardBuffer 与材质，可逐片动画；
  * false（世界掉落等静态展示）：共享全局材质，所有实例都是完整刀身。
  */
 export function buildDemonBlade(dynamic: boolean): DemonBladeModel {

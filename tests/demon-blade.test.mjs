@@ -1,4 +1,4 @@
-// 魔刀千刃 v2（docs/demon-blade-v2.md）：碎刃几何、武器参数基准、词条规则、刃群无视护盾的分层结算。
+// 碎刃 v2（docs/demon-blade-v2.md）：碎刃几何、武器参数基准、词条规则、刃群无视护盾的分层结算。
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFile } from 'node:fs/promises';

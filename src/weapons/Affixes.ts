@@ -52,11 +52,11 @@ interface LegendaryDef {
 const pct = (v: number): string => `${Math.round(v * 100)}%`;
 const any = (): boolean => true;
 /**
- * 命中扫描（不含光束）、弩或双形态武器（魔刀千刃）：可以穿透 / 弹射 / 爆头。
- * 魔刀：爆头爆炸只在飞刃爆头时触发（斩击没有 headshot），穿透只作用于飞刃，弹射 / 破势两形态都生效
+ * 命中扫描（不含光束）、弩或双形态武器（碎刃）：可以穿透 / 弹射 / 爆头。
+ * 碎刃：爆头爆炸只在飞刃爆头时触发（斩击没有 headshot），穿透只作用于飞刃，弹射 / 破势两形态都生效
  */
 const directHit = (d: WeaponDef): boolean => isHitscan(d) || d.kind === 'crossbow';
-/** 魔刀千刃没有弹匣 / 换弹 / 散布 / 后坐 / 穿透 / 爆头，这些词条不出现在它身上 */
+/** 碎刃没有弹匣 / 换弹 / 散布 / 后坐 / 穿透 / 爆头，这些词条不出现在它身上 */
 const gunOnly = (d: WeaponDef): boolean => !isBlade(d);
 /** 这把武器自己能否引发元素反应：带元素 / 元素轮转 / 满蓄引爆 / 已抽到副元素词条 */
 const canReact = (d: WeaponDef, e: Element, picked: readonly string[]): boolean =>
@@ -158,7 +158,7 @@ export const LEGENDARIES: readonly LegendaryDef[] = [
       const sps = shotsPerSecond(d);
       return sps >= 8 ? 6 : sps >= 2.5 ? 5 : 4;
     },
-    // 魔刀：斩击按段计数（判定帧，命中与否都算）
+    // 碎刃：斩击按段计数（判定帧，命中与否都算）
     text: (d, v) => (isBlade(d) ? `每第 ${Math.round(v)} 段斩击必定暴击` : `每第 ${Math.round(v)} ${shotUnit(d)}必定暴击`),
   },
   {

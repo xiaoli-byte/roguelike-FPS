@@ -1,5 +1,5 @@
 /**
- * 魔刀千刃 v2 的世界特效（docs/demon-blade-v2.md 第 7–9 节）：人刀合一的碎刃斩波、噬灵鬼眼的魂力光点。
+ * 碎刃 v2 的世界特效（docs/demon-blade-v2.md 第 7–9 节）：人刀合一的碎刃斩波、噬灵鬼眼的魂力光点。
  * 斩波的伤害判定由 DemonBlade 控制器按 waveProgress 结算，这里只管表现；暂停时不推进（控制器不调用 update）。
  */
 import * as THREE from 'three';

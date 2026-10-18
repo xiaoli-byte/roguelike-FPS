@@ -3,7 +3,7 @@
  * 伤害显示武器自身数值（稀有度 × 强化 × 词条），不含玩家的武器伤害加成；
  * 射速 / 弹匣 / 换弹等显示计入玩家属性后的实际值。
  * 蓄力武器显示伤害区间、蓄力时长与满蓄秒伤；元素轮转武器的元素行显示「三相轮转」并给出 elementLabel。
- * 魔刀千刃（docs/demon-blade-v2.md）列出斩、千刃出窍、刃气、屏障与武器技能。
+ * 碎刃（docs/demon-blade-v2.md）列出斩、千刃出窍、刃气、屏障与武器技能。
  */
 import type { WeaponDescription, WeaponInstance } from '../core/types';
 import { ELEMENT_NAMES, RARITY_CSS, RARITY_NAMES } from '../core/types';
@@ -120,7 +120,7 @@ function traitLines(inst: WeaponInstance, R: ResolvedWeapon): string[] {
 }
 
 /**
- * 魔刀千刃：三段斩伤害、攻速、千刃出窍伤害与结算频率、两种秒伤、刃气、屏障、暴击、元素、强化。
+ * 碎刃：三段斩伤害、攻速、千刃出窍伤害与结算频率、两种秒伤、刃气、屏障、暴击、元素、强化。
  */
 function describeBlade(inst: WeaponInstance, R: ResolvedWeapon): WeaponDescription {
   const def = R.def;

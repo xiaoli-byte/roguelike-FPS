@@ -39,7 +39,7 @@ export interface GunModel {
   leftParent: THREE.Object3D | null;
   /** 美术枪模的实例材质（带自发光遮罩时）：自发光颜色 = 元素色（无元素时稀有度色）；userData.glowBase 是基准色，第一人称在其上做脉动 */
   artGlow: THREE.MeshStandardMaterial | null;
-  /** 魔刀千刃的静态整刀（掉落 / 商店展示；第一人称另由 demonBlade/BladeView 构建）；其他武器为 null */
+  /** 碎刃的静态整刀（掉落 / 商店展示；第一人称另由 demonBlade/BladeView 构建）；其他武器为 null */
   blade: DemonBladeModel | null;
 }
 
@@ -1013,7 +1013,7 @@ const BUILDERS: Record<string, (b: Builder, m: GunModel) => void> = {
   demon_blade: (b) => bladeGun(b),
 };
 
-/** 魔刀千刃的静态整刀：刀身轴（模型 +Y）转到枪模约定的 −Z，刃口朝下 */
+/** 碎刃的静态整刀：刀身轴（模型 +Y）转到枪模约定的 −Z，刃口朝下 */
 function bladeGun(b: Builder): GunModel {
   const model = buildDemonBlade(false);
   model.root.rotation.set(-Math.PI / 2, 0, Math.PI / 2);

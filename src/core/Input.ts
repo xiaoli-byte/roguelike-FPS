@@ -24,7 +24,7 @@ export const DEFAULT_BINDINGS: Record<Action, string[]> = {
   interact: ['KeyF'],
   skillPrimary: ['KeyQ'],
   skillSecondary: ['KeyE'],
-  /** 武器技能（魔刀千刃「千刃·无间」）；另绑定鼠标中键，见 MOUSE_ACTIONS */
+  /** 武器技能（碎刃「千刃·无间」）；另绑定鼠标中键，见 MOUSE_ACTIONS */
   weaponSkill: ['KeyV'],
   weapon1: ['Digit1'],
   weapon2: ['Digit2'],

@@ -22,12 +22,12 @@
 | 空格 | 跳跃（部分英雄可二段跳） |
 | Shift | 冲刺（有充能与冷却） |
 | 鼠标左键 | 射击 |
-| 鼠标右键 | 瞄准（缩放视野、降低散布）；持魔刀千刃时切换形态「斩」/「千刃」（不开镜） |
-| R | 换弹（魔刀千刃「千刃」形态为召回飞刃，「斩」形态无效果） |
+| 鼠标右键 | 瞄准（缩放视野、降低散布）；持碎刃时切换形态「斩」/「千刃」（不开镜） |
+| R | 换弹（碎刃「千刃」形态为召回飞刃，「斩」形态无效果） |
 | 1 / 2 / 滚轮 / X | 切换武器 |
 | Q | 主技能（长冷却） |
 | E | 副技能（多充能投掷类） |
-| V / 鼠标中键 | 武器技能（当前武器有武器技能时；目前只有魔刀千刃「千刃·无间」） |
+| V / 鼠标中键 | 武器技能（当前武器有武器技能时；目前只有碎刃「千刃·无间」） |
 | F | 交互（拾取武器、开宝箱、购买、进入传送门） |
 | Tab（按住） | 查看已获得秘卷与属性 |
 | Esc / P | 暂停 |
@@ -150,20 +150,20 @@
 | `trinity` | 三才转轮 | 手枪 | 半自动 + 元素轮转 | 伤害 42、射速 3、弹匣 6、暴击 2.4；弹巢按 灼烧 → 雷殛 → 蚀化 轮转出膛（各 45%），换弹从灼烧重来；归墟引擎 |
 | `railgun` | 贯虹灵炮 | 蓄能炮 | 蓄力 | 按住蓄力 0.9 秒、松开发射，满蓄 155（未满 20%–100%，按进度平方）；满蓄额外穿透 3 并引爆命中目标的元素状态 |
 | `lantern` | 蚀蛊灯 | 蛊灯 | 半自动慢速追踪 | 55 伤害、穿透 6、自动寻敌；蚀化 60% + 固有「蛊种」50%（反应传染给附近敌人） |
-| `demon_blade` | 魔刀千刃 | 刀 | 近战 + 刃群（无弹药） | 128 片碎刃组成的刀（《刺客伍六七》柒的佩刀）。左键「斩」：30 / 30 / 60，第三段伸刃到 6 米（一轮 1.1 秒约 109 DPS），斩中回刃气；右键按住「千刃出窍」：刃群追着准星绞杀，半径 2.2 米、每 0.1 秒 6 点（约 60 DPS / 目标、最多 8 个），无视护盾；R 按住「碎刃屏障」挡敌方弹道、受伤 −30%。两者共用刃气（100，出窍 −20/秒）。V「杀气爆发」：碎片聚于一点后炸开（6 米、240，冷却 15 秒）；杀意满时变为「人刀合一」（强化爆发 + 8 秒斩波 / 刃群不耗刃气 / 移速 +15%）。被动「噬灵鬼眼」：用魔刀击杀回复 2% / 5% / 12% 最大生命 |
+| `demon_blade` | 碎刃 | 刀 | 近战 + 刃群（无弹药） | 128 片碎刃组成的刀（2026-10-18 由「魔刀千刃」改名，玩法不变）。左键「斩」：30 / 30 / 60，第三段伸刃到 6 米（一轮 1.1 秒约 109 DPS），斩中回刃气；右键按住「千刃出窍」：刃群追着准星绞杀，半径 2.2 米、每 0.1 秒 6 点（约 60 DPS / 目标、最多 8 个），无视护盾；R 按住「碎刃屏障」挡敌方弹道、受伤 −30%。两者共用刃气（100，出窍 −20/秒）。V「杀气爆发」：碎片聚于一点后炸开（6 米、240，冷却 15 秒）；杀意满时变为「人刀合一」（强化爆发 + 8 秒斩波 / 刃群不耗刃气 / 移速 +15%）。被动「噬灵鬼眼」：用碎刃击杀回复 2% / 5% / 12% 最大生命 |
 
-- 共 18 把（原 11 把 + 武器库扩充 6 把 + 魔刀千刃，详见 `docs/arsenal-expansion.md` 第 3 节与 `docs/demon-blade-v2.md`）。新武器裸 DPS 63–86，反应引擎类压在 63–71，用差额换取反应潜力；贯虹灵炮必须蓄满才划算；魔刀「斩」因必须贴身，允许到约 110。
-- **魔刀千刃**（`docs/demon-blade-v2.md`）：`WeaponDef.blade` 非空的武器不走开火状态机，整帧交给 `weapons/demonBlade/DemonBlade` 控制器（右键不开镜、R 不换弹）；根字段描述「千刃出窍」的结算（`damage × fireRate` = 刃群单体秒伤），供描述与词条换算。所有伤害 `source: 'weapon'`，正常吃伤害加成、稀有度、词条、元素附着与命中类效果；每段斩击视为一次开火（`weapon:fired`），射速加成同时加快斩击。没有弹药（`mag 1 / reserve 0`），弹药补给、应急补给与弹匣 / 换弹 / 散布 / 后坐 / 穿透 / 爆头类词条自动跳过它。
-- **武器技能**（V / 鼠标中键，目前只有魔刀的杀气爆发 / 人刀合一）：冷却由控制器持有、全局一条（两把魔刀互切不能刷技能），受「技能急速」影响、不受英雄技能冷却缩减影响，换关保留、开新局清零；伤害不吃「技能伤害」。`IPlayer.lunge()`（受控突进）保留在契约里，当前没有武器使用。
+- 共 18 把（原 11 把 + 武器库扩充 6 把 + 碎刃，详见 `docs/arsenal-expansion.md` 第 3 节与 `docs/demon-blade-v2.md`）。新武器裸 DPS 63–86，反应引擎类压在 63–71，用差额换取反应潜力；贯虹灵炮必须蓄满才划算；碎刃「斩」因必须贴身，允许到约 110。
+- **碎刃**（`docs/demon-blade-v2.md`）：`WeaponDef.blade` 非空的武器不走开火状态机，整帧交给 `weapons/demonBlade/DemonBlade` 控制器（右键不开镜、R 不换弹）；根字段描述「千刃出窍」的结算（`damage × fireRate` = 刃群单体秒伤），供描述与词条换算。所有伤害 `source: 'weapon'`，正常吃伤害加成、稀有度、词条、元素附着与命中类效果；每段斩击视为一次开火（`weapon:fired`），射速加成同时加快斩击。没有弹药（`mag 1 / reserve 0`），弹药补给、应急补给与弹匣 / 换弹 / 散布 / 后坐 / 穿透 / 爆头类词条自动跳过它。
+- **武器技能**（V / 鼠标中键，目前只有碎刃的杀气爆发 / 人刀合一）：冷却由控制器持有、全局一条（两把碎刃互切不能刷技能），受「技能急速」影响、不受英雄技能冷却缩减影响，换关保留、开新局清零；伤害不吃「技能伤害」。`IPlayer.lunge()`（受控突进）保留在契约里，当前没有武器使用。
 - 新开火机制只有两种：**元素轮转**（`WeaponDef.cycle`，三才转轮；武器灵纹显示下一发元素）与**蓄力**（`mode: 'charge'` + `chargeTime / chargeMinMult / chargeFullPierce / chargeDetonate`，贯虹灵炮；准星显示蓄力环）。投射物新增 `bounces`（撞墙反弹）。
 - 固有词条 `WeaponDef.innate`：生成实例时放在词条最前面，不占名额、不随稀有度放大、不会被重复抽到。
-- 掉落权重 `WeaponDef.dropWeight`（默认 1）：三才转轮、贯虹灵炮、蚀蛊灯为 0.8，魔刀千刃为 0.6。
+- 掉落权重 `WeaponDef.dropWeight`（默认 1）：三才转轮、贯虹灵炮、蚀蛊灯为 0.8，碎刃为 0.6。
 - 稀有度决定伤害倍率与词条数（普通 0 / 精良 1 / 稀有 1 / 史诗 2 / 传说 3 + 1 个传说特性）。
 - 反应类词条 10 个（副·焚 / 副·雷 / 副·蚀〔按射速归一化为每次命中几率〕、化合、回元、疾化、乘隙、化盾、破势、蛊种）与传说特性 4 个（合璧〔同一敌人按最短反应冷却限频，避免雷殛叠层眩晕锁死；可抽条件比文档的 `canReact` 窄，只允许带元素或元素轮转的武器——合璧附加的是本发实际元素，物理弹即使有副元素词条 / 满蓄引爆也无元素可附加，按文档会出现完全无效的传说，因此物理的贯虹灵炮 / 赤铜左轮只有随机到元素时才能抽到合璧〕、轮回、涅槃、鼎沸），词条池 19 → 29、传说 6 → 10，见设计文档第 4–5 节。
 - 物理武器在精良及以上有 35% 概率带随机元素（含 railgun）；自带元素的武器保持默认元素：launcher、flamer、magmashot、trinity 为火（trinity 实际按轮转出膛），beam 为雷，stormpod、lantern 为蚀。
 - 稀有度随章节提升：第一章以普通/精良为主，第三章常见史诗；`luck` 属性提高高稀有度权重。
 - 强化：商店强化台，费用 `50 × (level + 1) × (1 + 0.3 × chapter)`，最多 5 级。
-- 瞄准（右键）：只有武器系统写 `ctx.cameraFx.fovKick`（负数 = 放大），玩家控制器读取它来设置 FOV。持魔刀千刃时右键只用于切换形态，不写 `fovKick`。
+- 瞄准（右键）：只有武器系统写 `ctx.cameraFx.fovKick`（负数 = 放大），玩家控制器读取它来设置 FOV。持碎刃时右键只用于切换形态，不写 `fovKick`。
 
 ## 8. 敌人（`enemies/`，id 固定）
 
@@ -230,7 +230,7 @@
 - 秘卷三选一模态框（按稀有度着色的卡片）。
 - HUD：生命 / 护盾条、弹药、两个武器槽（名称 + 稀有度色）、Q/E 技能冷却环与充能、冲刺充能、金币、关卡标签与波次、剩余敌人数、动态准星（随 `weapons.currentSpread` 张开）、命中 / 暴击 / 击杀标记、受击方向指示、低血量暗角、护盾破碎闪光、Boss 血条（护盾 / 护甲 / 生命分层）、敌人头顶血条（受伤或精英时显示，含分层与状态图标）、交互提示（武器对比信息）、提示消息队列、大标题横幅、黑幕淡入淡出、Tab 面板（秘卷与属性）。
 - 元素反应相关：血条状态行身负两种元素时呼吸发光（`is-reactive`）、三种齐聚时紫色急促发光（`is-primed`，「归墟就绪」）；准星蓄力环（读 `weapons.chargeProgress`，满蓄转金）；武器徽记优先显示 `WeaponDescription.elementLabel`（三才转轮为三色「三」徽记，Tab 面板显示「三相 轮转」）；每局每种反应首次出现时 toast 教学（`ReactionTips`，记录在 `run.flags['rx:<id>']`）。
-- 魔刀千刃相关（`docs/demon-blade-v2.md` 第 9 节）：武器槽标题前的碎刃去向徽记（斩 / 千刃 / 屏障 / 爆发，切换时翻入），弹药位换成刃气数字（低于 25% 变红），徽记下方前几次提示「右键 千刃出窍 · R 屏障」；人刀合一期间武器槽边框与准星紫色脉动；武器槽左侧的武器技能图标（冷却环 + 外圈杀意充能环，满时换成「合」并发光）；刀在手时准星换成左右两道弧形括号，敌人在下一段斩击范围内时收紧。全部读 `IWeaponSystem.bladeHud / weaponSkill`，缺省按普通武器显示。
+- 碎刃相关（`docs/demon-blade-v2.md` 第 9 节）：武器槽标题前的碎刃去向徽记（斩 / 千刃 / 屏障 / 爆发，切换时翻入），弹药位换成刃气数字（低于 25% 变红），徽记下方前几次提示「右键 千刃出窍 · R 屏障」；人刀合一期间武器槽边框与准星紫色脉动；武器槽左侧的武器技能图标（冷却环 + 外圈杀意充能环，满时换成「合」并发光）；刀在手时准星换成左右两道弧形括号，敌人在下一段斩击范围内时收紧。全部读 `IWeaponSystem.bladeHud / weaponSkill`，缺省按普通武器显示。
 - 风格：东方奇幻（墨色、朱红、鎏金），系统字体（"Microsoft YaHei", "PingFang SC", sans-serif），不引用外部字体或图片。
 
 ---
@@ -313,9 +313,13 @@
 - 约定：`run.flags['rx:<reactionId>']` 由 UI 写入，表示本局已提示过该反应（每局新建 RunState 自动重置）。
 - 新文件：`combat/Reactions.ts`（ReactionSystem）、`progression/scrolls/defsReaction.ts`（24 个反应秘卷）、`ui/ReactionTips.ts`（反应首次提示）。
 
-#### 变更记录：魔刀千刃 v2 重做（2026-10-06，`docs/demon-blade-v2.md`）
+#### 变更记录：魔刀千刃改名为碎刃（2026-10-18）
 
-用户要求按《刺客伍六七》原作从零重做魔刀千刃，旧的双形态实现整体移除（归档在 `archive/demon-blade-v1/`）。下面的旧记录只作历史保留。
+只改玩家可见的名字与武器描述，玩法、数值、技能名不变。武器 id 仍是 `demon_blade`，代码目录 `weapons/demonBlade/` 与贴图 `T_DemonBlade_*` 的文件名都不动。描述去掉了原作人物与地名，改为原创设定。本文与代码注释里的旧名一并换成「碎刃」，下面的历史记录同样按新名书写。
+
+#### 变更记录：碎刃 v2 重做（2026-10-06，`docs/demon-blade-v2.md`）
+
+用户要求按《刺客伍六七》原作从零重做碎刃，旧的双形态实现整体移除（归档在 `archive/demon-blade-v1/`）。下面的旧记录只作历史保留。
 
 - `core/types.ts`
   - 删除 `WeaponForm`、`IWeaponSystem.activeForm / formMorphProgress / formStrikeTime / meleeInRange`、`WeaponDescription.formNames`、事件 `'weapon:formChanged' / 'weapon:skillImpale'`、`IBladeFx` 与 `IFx.blade`、`ProjectileVisual 'blade'`、`ProjectileSpec.bladeFragmentIndex / bladeWeaponUid` 及 `IProjectileSystem` 的碎片召回方法。
@@ -326,7 +330,7 @@
 - 贴图：`public/assets/weapons/T_DemonBlade_Hilt_D.webp / _E.webp`，由 `art/pipeline/demon_blade_textures.py` 从用户确认的设计图裁出。
 - `SfxId` 新增 `'blade_swarm'`（千刃出窍期间的绞杀颗粒）与 `'blade_eye'`（噬灵鬼眼睁眼）；`blade_throw / blade_dash` 的配方改为「千刃出窍 / 杀气聚合」。
 
-#### 变更记录：魔刀千刃（`docs/demon-blade.md` 第 10 节，已被 v2 取代）
+#### 变更记录：碎刃（`docs/demon-blade.md` 第 10 节，已被 v2 取代）
 
 契约阶段一次性落地（清单见设计稿 10.12），全部为可选字段 / 新键 + 编译桩，向后兼容，现有 17 把武器行为不变；之后逻辑（L）、表现（V）、玩家·HUD·音效·文档（P）三条流并行实现。
 
@@ -342,7 +346,7 @@
 - `combat/Projectiles.ts`：敌方投射物在玩家 `(isDashing || isLunging) && invulnerableTime > 0` 时穿身而过；`'blade'` 投射物的细拖尾。
 - weapons 模块内部共享接口：`FireMode` 加 `'melee'`（只由 `formMode()` 返回，不写在任何 def 上）、`WeaponKind` 加 `'blade'`、`ReloadStyle` 加 `'recall'`；`ProjectileParams.fanFixed`（默认 `false`）；`MeleeSegment / MeleeParams / WeaponSkillParams`；`WeaponDef` 加 `melee / skill / recall / perProjectileAmmo`（默认 `null / null / false / false`）与 `isDualForm / formMode / comboCycleTime`；`ResolvedWeapon.damageMult / meleeElementChance`；`WeaponRuntime.form`；`ViewmodelState` 加 `form / morphT / swing / swingP / swingHitP / blades / bladesMax / skillT / strikeT`（`createViewmodelState()`）与 `onSlash / onSlashHit`。
 - 编译桩（各流随后替换）：`PlayerController.lunge` 返回 `false`（技能原地结算）、`Fx.blade` 为空实现、`'blade'` 暂用 shard 外观、7 个占位音色。
-- `ui/labels.ts`：`WEAPON_NAMES.demon_blade`；`CONTROLS` 右键说明补「持魔刀千刃时切换形态」，新增 V / 中键「武器技能」。
+- `ui/labels.ts`：`WEAPON_NAMES.demon_blade`；`CONTROLS` 右键说明补「持碎刃时切换形态」，新增 V / 中键「武器技能」。
 - 约定：武器技能冷却全局一条（WeaponSystem 持有，换关保留、开新局清零）；HUD 只读 `IWeaponSystem` 的可选字段，不 import weapons 模块。
 
 #### 变更记录：权威关卡、首领备战商店与审查修复（提交 7351e37–c71dd77 及 2026-10-06 修复）

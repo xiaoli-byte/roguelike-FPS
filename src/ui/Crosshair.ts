@@ -33,7 +33,7 @@ interface DirIndicator {
 
 const DIR_POOL = 6;
 const DIR_MS = 1150;
-/** 魔刀在手：敌人在攻击距离内时准星括号收紧的像素 */
+/** 碎刃在手：敌人在攻击距离内时准星括号收紧的像素 */
 const MELEE_INRANGE_TIGHTEN = 4;
 export class Crosshair {
   readonly root: HTMLDivElement;
@@ -54,7 +54,7 @@ export class Crosshair {
   private reloadShown = -1;
   /** 已写入 DOM 的蓄力量化值（0 = 隐藏，CHARGE_STEPS = 满蓄） */
   private chargeShown = 0;
-  /** 双形态武器处于近战形态（魔刀「斩」）：准星换成弧形括号 */
+  /** 双形态武器处于近战形态（碎刃「斩」）：准星换成弧形括号 */
   private melee = false;
   /** 换形一击窗口内：准星朱红脉动 */
   private strike = false;
@@ -227,14 +227,14 @@ export class Crosshair {
       this.reticle.classList.toggle('is-hidden', scoped);
     }
 
-    // 魔刀在手（碎片未出窍）按近战准星显示；人刀合一期间准星脉动
+    // 碎刃在手（碎片未出窍）按近战准星显示；人刀合一期间准星脉动
     const w = ctx.weapons;
     const blade = w.bladeHud ?? null;
     const melee = blade !== null && blade.mode === 'hand';
     this.setMelee(melee);
     this.setStrike(blade !== null && blade.union > 0);
 
-    // 散布（弧度）按相机竖直 FOV 投影成像素；魔刀在手、敌人在攻击距离内时收紧
+    // 散布（弧度）按相机竖直 FOV 投影成像素；碎刃在手、敌人在攻击距离内时收紧
     const spread = Math.max(0, w.currentSpread || 0);
     const halfFov = (ctx.camera.fov * Math.PI) / 360;
     const px = (Math.tan(Math.min(spread, 1.2)) / Math.tan(halfFov)) * (window.innerHeight * 0.5);
@@ -246,7 +246,7 @@ export class Crosshair {
     }
 
     // 准星压到敌人身上时变红（每 3 帧检测一次，且被墙挡住不算；暂停 / 模态时不检测）；
-    // 魔刀在手时改为「下一段斩击此刻能砍到敌人」（按扇形判定给出），远处的敌人不再让括号变红
+    // 碎刃在手时改为「下一段斩击此刻能砍到敌人」（按扇形判定给出），远处的敌人不再让括号变红
     if (this.frame % 3 === 0) {
       let on = false;
       const p = ctx.player;

@@ -52,7 +52,7 @@ export const WEAPON_NAMES: Record<string, { name: string; category: string }> = 
   trinity: { name: '三才转轮', category: '手枪' },
   railgun: { name: '贯虹灵炮', category: '蓄能炮' },
   lantern: { name: '蚀蛊灯', category: '蛊灯' },
-  demon_blade: { name: '魔刀千刃', category: '刀' },
+  demon_blade: { name: '碎刃', category: '刀' },
 };
 
 export function weaponName(defId: string): string {
@@ -144,12 +144,12 @@ export const CONTROLS: { keys: string[]; action: string; together?: boolean }[] 
   { keys: ['空格'], action: '跳跃（部分英雄可二段跳）' },
   { keys: ['Shift'], action: '冲刺（有充能与冷却）' },
   { keys: ['左键'], action: '射击' },
-  { keys: ['右键'], action: '瞄准（缩放视野、降低散布）；持魔刀千刃时按住千刃出窍' },
-  { keys: ['R'], action: '换弹；持魔刀千刃时按住碎刃屏障' },
+  { keys: ['右键'], action: '瞄准（缩放视野、降低散布）；持碎刃时按住千刃出窍' },
+  { keys: ['R'], action: '换弹；持碎刃时按住碎刃屏障' },
   { keys: ['1', '2', '滚轮', 'X'], action: '切换武器' },
   { keys: ['Q'], action: '主技能（长冷却）' },
   { keys: ['E'], action: '副技能（多充能投掷类）' },
-  { keys: ['V', '中键'], action: '武器技能（魔刀千刃：杀气爆发，杀意满时人刀合一）' },
+  { keys: ['V', '中键'], action: '武器技能（碎刃：杀气爆发，杀意满时人刀合一）' },
   { keys: ['F'], action: '交互：拾取武器、开宝箱、购买、进入传送门' },
   { keys: ['Tab'], action: '按住查看已获得秘卷与属性' },
   { keys: ['Esc', 'P'], action: '暂停' },

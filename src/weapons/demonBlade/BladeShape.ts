@@ -1,5 +1,5 @@
 /**
- * 魔刀千刃 v2 的刀身几何（docs/demon-blade-v2.md 第 9 节）：轮廓、刀根分界与 128 片 Voronoi 碎刃。纯数学，不依赖 three。
+ * 碎刃 v2 的刀身几何（docs/demon-blade-v2.md 第 9 节）：轮廓、刀根分界与 128 片 Voronoi 碎刃。纯数学，不依赖 three。
  *
  * 刀身局部坐标：+Y 从刀身起点（护手铜环上沿）指向刀尖；刀背在 −X，刃口在 +X；Z 为厚度方向。单位米。
  * 刀根（鬼面那段）不碎，分界线按设计图手绘的紫缝走（art/pipeline/demon_blade_textures.py 打印的分界点）。

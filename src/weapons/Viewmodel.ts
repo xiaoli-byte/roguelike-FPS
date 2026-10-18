@@ -4,7 +4,7 @@
  * 动画：呼吸摆动、移动晃动、鼠标惯性、横移倾斜、跳跃 / 落地、冲刺姿态、开火后坐、
  * 换弹（按 ReloadStyle）、切枪收放、机炮转管、霰弹泵动、左轮转轮、弩弦上弦、
  * 元素轮转（灵纹改色 + 转轮对准下一发）、蓄力（线圈加速、颤动与枪口聚光）、
- * 魔刀千刃由 demonBlade/BladeView 负责（持刀姿态、三段斩、剑指、128 片碎刃、刀光），这里只叠通用摆动。
+ * 碎刃由 demonBlade/BladeView 负责（持刀姿态、三段斩、剑指、128 片碎刃、刀光），这里只叠通用摆动。
  * 枪口火焰为加法混合精灵；武器场景里一个复用的 PointLight 照亮枪身。
  * 主场景不再放枪口点光源（主场景点光源数量会让所有受光材质的片元开销上升，集成阶段要求压缩）。
  */
@@ -47,7 +47,7 @@ export interface ViewmodelState {
   /** 元素轮转：弹巢进度（转轮对准下一发所在弹膛）；非轮转武器为 −1 */
   cycleIndex: number;
 
-  /** 魔刀千刃：控制器的姿态输入（WeaponSystem 每帧写入；其他武器为 null） */
+  /** 碎刃：控制器的姿态输入（WeaponSystem 每帧写入；其他武器为 null） */
   blade: BladePoseInput | null;
 }
 
@@ -79,7 +79,7 @@ interface VmEntry {
   magBase: THREE.Vector3;
   magRotX: number;
   pumpBase: number;
-  /** 魔刀千刃的第一人称表现；其他武器为 null */
+  /** 碎刃的第一人称表现；其他武器为 null */
   blade: BladeView | null;
 }
 
@@ -92,7 +92,7 @@ const _handPose: HandPose = { x: 0, y: 0, z: 0, roll: 0, pitch: 0 };
 const _supportPoint: [number, number, number] = [0, 0, 0];
 const _loadPoint: [number, number, number] = [0, 0, 0];
 const _v2 = new THREE.Vector3();
-/** 魔刀不在挥砍等状态时的默认姿态输入 */
+/** 碎刃不在挥砍等状态时的默认姿态输入 */
 const BLADE_IDLE = createBladePoseInput();
 
 /**
@@ -132,7 +132,7 @@ function magCurve(p: number): number {
 
 /**
  * 第一人称手套与袖子的材质。袖子是偏暗的布料色，只带一点英雄主题色倾向；主题色本身只用在袖口的一圈细滚边上，
- * 避免整条手臂变成一大块高饱和色块（例如赤狐的橙色）。dim < 1 时袖子再压暗（魔刀）。
+ * 避免整条手臂变成一大块高饱和色块（例如赤狐的橙色）。dim < 1 时袖子再压暗（碎刃）。
  */
 function armMaterials(heroColor: number, dim = 1): { glove: THREE.Material; cuff: THREE.Material; sleeve: THREE.Material; trim: THREE.Material } {
   const glove = solidMat(0x2e241e, 0.05, 0.9);
@@ -188,8 +188,8 @@ export function buildArm(side: 'r' | 'l', heroColor: number): THREE.Group {
 
 /**
  * 给枪模装上第一人称手臂。
- * - 魔刀千刃：拳头横握刀柄；返回前臂节点（腕部为原点、袖子挂在下面）：挥砍时手腕翻转幅度很大，袖子若随手腕整体旋转
- *   会像一块木板扫进画面，所以 Viewmodel 每帧让它只跟随刀姿旋转的 FOREARM_FOLLOW。美术手臂是握枪姿势，魔刀保持程序化手臂。
+ * - 碎刃：拳头横握刀柄；返回前臂节点（腕部为原点、袖子挂在下面）：挥砍时手腕翻转幅度很大，袖子若随手腕整体旋转
+ *   会像一块木板扫进画面，所以 Viewmodel 每帧让它只跟随刀姿旋转的 FOREARM_FOLLOW。美术手臂是握枪姿势，碎刃保持程序化手臂。
  * - 其他武器：左右手（buildArm）；该英雄有美术手臂资产（bind = fp / 英雄 id / arm_r|arm_l）时换上美术网格，
  *   返回它们的实例材质（换枪时释放）。
  */
@@ -371,7 +371,7 @@ export class Viewmodel {
     this.cur?.blade?.resetAnim();
   }
 
-  /** 当前显示的魔刀（第一人称）；不是魔刀时为 null */
+  /** 当前显示的碎刃（第一人称）；不是碎刃时为 null */
   bladeView(): BladeView | null {
     return this.cur?.blade ?? null;
   }
@@ -450,7 +450,7 @@ export class Viewmodel {
     };
   }
 
-  /** 魔刀千刃：BladeView 自带刀模、双手与刀光；关键帧是相机空间的真实位置，不做 VM_SCALE 缩放 */
+  /** 碎刃：BladeView 自带刀模、双手与刀光；关键帧是相机空间的真实位置，不做 VM_SCALE 缩放 */
   private buildBlade(inst: WeaponInstance): VmEntry {
     const def = getWeaponDef(inst.defId);
     const view = new BladeView(this.ctx, this.ctx.player.hero?.color ?? 0x5a6a7a);

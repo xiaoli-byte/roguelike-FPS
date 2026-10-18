@@ -178,7 +178,7 @@ test('冻鲛人 telegraphs 0.5 s, then throws a dodgeable bone spear from 10–1
   attackDirector.reset();
 });
 
-test('冻鲛人 spear blocked by a projectile ward (魔刀千刃 shard barrier): no damage, and the flying spear mesh shatters on the ward', async () => {
+test('冻鲛人 spear blocked by a projectile ward (碎刃 shard barrier): no damage, and the flying spear mesh shatters on the ward', async () => {
   // 真实的投射物系统：飞矛弹道穿过玩家身前的挡弹圆盘 → 伤害取消、onBlocked 回调 → 飞矛外观当场碎掉
   const pvUrl = await ts('../src/combat/ProjectileVisuals.ts', { '../core/math': mathUrl });
   const blastUrl = await ts('../src/combat/Blast.ts', { '../core/math': mathUrl });

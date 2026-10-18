@@ -7,14 +7,14 @@
  * 光束 77（74，单跳伤害 7→8 后；旁边有第二名敌人吃电弧时约 105）、机炮 94（90）、蜂群 89（82）、榴弹 111（火焰对生命 ×1.25，另有灼烧 DOT）；
  * 狙击 120（107），作为必须开镜、射速最慢的精准武器有意略高。
  * 所有角度为弧度「半角」；射速为「每秒发数」（burst 为每秒轮数，beam 为每秒跳数，charge 为松手后冷却 1 / fireRate）。
- * 魔刀千刃（docs/demon-blade-v2.md）：玩法参数在 blade；根字段描述「千刃出窍」的结算（damage / fireRate），供描述与词条换算。
+ * 碎刃（docs/demon-blade-v2.md）：玩法参数在 blade；根字段描述「千刃出窍」的结算（damage / fireRate），供描述与词条换算。
  */
 import type { Element, ProjectileVisual, SfxId } from '../core/types';
 
-/** 开火模式（魔刀千刃不走开火状态机，由 DemonBlade 控制器处理，mode 只用于描述） */
+/** 开火模式（碎刃不走开火状态机，由 DemonBlade 控制器处理，mode 只用于描述） */
 export type FireMode = 'semi' | 'auto' | 'burst' | 'beam' | 'spinup' | 'charge';
 export type WeaponKind = 'pistol' | 'smg' | 'rifle' | 'shotgun' | 'sniper' | 'launcher' | 'crossbow' | 'beam' | 'heavy' | 'blade';
-/** 第一人称换弹动画风格（魔刀千刃不换弹） */
+/** 第一人称换弹动画风格（碎刃不换弹） */
 export type ReloadStyle = 'mag' | 'cylinder' | 'shell' | 'tube' | 'cell' | 'box';
 
 export interface ProjectileParams {
@@ -36,7 +36,7 @@ export interface ProjectileParams {
   /** 多发弹体的扇形散开半角 */
   fan: number;
   /**
-   * 固定扇形（魔刀千刃）：true 时一轮 count 发弹体按水平偏航角均匀分布在 [−fan, +fan]（3 发 = −fan / 0 / +fan），
+   * 固定扇形（碎刃）：true 时一轮 count 发弹体按水平偏航角均匀分布在 [−fan, +fan]（3 发 = −fan / 0 / +fan），
    * 不做随机锥形与上抬；false（缺省）为蜂群式随机散开
    */
   fanFixed: boolean;
@@ -59,7 +59,7 @@ export interface RecoilParams {
 }
 
 /**
- * 魔刀千刃 v2 的一段斩击（docs/demon-blade-v2.md 第 3 节）。时间为未计攻速的秒数，WeaponSystem 按「射速」倍率缩短。
+ * 碎刃 v2 的一段斩击（docs/demon-blade-v2.md 第 3 节）。时间为未计攻速的秒数，WeaponSystem 按「射速」倍率缩短。
  * 判定只在判定帧（开始挥砍后 windup 秒）结算一次：扇形 + 高度 + 视线，范围内所有敌人各命中一次。
  */
 export interface BladeSlash {
@@ -78,7 +78,7 @@ export interface BladeSlash {
   stretch: number;
 }
 
-/** 魔刀千刃 v2 的全部玩法参数（docs/demon-blade-v2.md）。伤害均为基础值，× 本武器伤害倍率 */
+/** 碎刃 v2 的全部玩法参数（docs/demon-blade-v2.md）。伤害均为基础值，× 本武器伤害倍率 */
 export interface DemonBladeParams {
   combo: BladeSlash[];
   /** 一段结束后空闲超过此秒数，连段重置 */
@@ -192,7 +192,7 @@ export interface WeaponDef {
   chargeDetonate: boolean;
   /** roll() 不指定 defId 时的抽取权重 */
   dropWeight: number;
-  /** 魔刀千刃 v2（docs/demon-blade-v2.md）；null = 普通武器。有值时根字段描述「千刃出窍」的结算频率（fireRate = 每秒结算次数） */
+  /** 碎刃 v2（docs/demon-blade-v2.md）；null = 普通武器。有值时根字段描述「千刃出窍」的结算频率（fireRate = 每秒结算次数） */
   blade: DemonBladeParams | null;
 }
 
@@ -480,10 +480,10 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
     notes: ['发射缓缓飘行的蛊灯，自动寻敌并穿透多名敌人'],
   }),
 
-  // ───── 魔刀千刃 v2（docs/demon-blade-v2.md；数值见第 3–8 节） ─────
+  // ───── 碎刃 v2（docs/demon-blade-v2.md；数值见第 3–8 节） ─────
 
   def({
-    id: 'demon_blade', name: '魔刀千刃', category: '刀', kind: 'blade', mode: 'auto',
+    id: 'demon_blade', name: '碎刃', category: '刀', kind: 'blade', mode: 'auto',
     // 根字段 = 千刃出窍的一次结算（每 0.1 秒 6 点，单体 60 DPS）；没有弹药与换弹（mag 1 只为不触发应急补给）
     damage: 6, fireRate: 10, mag: 1, reserve: 0, reloadTime: 0, reloadStyle: 'box',
     spreadHip: 0, spreadAim: 0, spreadPerShot: 0, spreadMax: 0, spreadRecovery: 0,
@@ -510,13 +510,13 @@ export const WEAPON_DEFS: readonly WeaponDef[] = [
       union: { duration: 8, burstMult: 1.5, burstRadius: 8, waveRange: 12, waveFrac: 0.5, swarmRadiusMult: 1.5, moveSpeed: 0.15, stretch: 1.3 },
       eye: { heal: 0.02, healElite: 0.05, healBoss: 0.12, open: 1.2 },
     },
-    description: '玄武国首席暗影刺客「柒」的佩刀。刀刃由上千块碎片组成，随心意化作刃雨绞杀敌人，用毕自行归鞘；刀根的千年恶灵会吞噬亡者的魂力。',
+    description: '百余片陨铁碎刃以灵火相系，合则为刀，散则为雨，绞杀之后自行归位；刀根封着一只鬼眼，以亡者魂力为食。',
     notes: [
       '左键「斩」：三段连斩，第三段伸刃横扫 6 米；斩中回复刃气',
       '右键按住「千刃出窍」：整把刀化作刃群追着准星绞杀，无视敌人护盾；松开归刀',
       'R 按住「碎刃屏障」：碎片在身前结成圆盾，挡下敌方弹道',
       'V「杀气爆发」：碎片聚于一点后炸开；杀意满时变为「人刀合一」',
-      '噬灵鬼眼：用魔刀击杀时刀根睁眼，吸取魂力回复生命',
+      '噬灵鬼眼：用碎刃击杀时刀根睁眼，吸取魂力回复生命',
     ],
   }),
 ];
@@ -552,12 +552,12 @@ export function shotsPerSecond(d: WeaponDef, rate = d.fireRate): number {
   return rate * d.burstCount;
 }
 
-/** 魔刀千刃 v2（WeaponDef.blade 非 null） */
+/** 碎刃 v2（WeaponDef.blade 非 null） */
 export function isBlade(d: WeaponDef): boolean {
   return d.blade !== null;
 }
 
-/** 三段连斩一轮的总时长（秒，未计攻速）；非魔刀为 0 */
+/** 三段连斩一轮的总时长（秒，未计攻速）；非碎刃为 0 */
 export function comboCycleTime(d: WeaponDef): number {
   if (!d.blade) return 0;
   let t = 0;
