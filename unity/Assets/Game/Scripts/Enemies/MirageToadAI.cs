@@ -167,7 +167,7 @@ namespace Spiritfire.Game
             var v = EnemyProjectile.Ballistic(from, target, T, BallGravity);
             var color = isDecoy ? new Color(0.65f, 0.9f, 1f) : new Color(1f, 0.55f, 0.18f);
             Telegraph.Circle(target, BallRadius, T, isDecoy ? new Color(0.6f, 0.85f, 1f) : new Color(1f, 0.45f, 0.15f));
-            EnemyProjectile.Spawn(from, v, BallGravity, Damage, 0.32f * transform.localScale.x, BallRadius, color, T + 1.5f, Element.Fire, isDecoy);
+            EnemyProjectile.Spawn(from, v, BallGravity, Damage, 0.32f * transform.localScale.x, BallRadius, color, T + 1.5f, Element.Fire, isDecoy, Taunted);
         }
 
         void CastMirage()

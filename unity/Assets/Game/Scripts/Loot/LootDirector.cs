@@ -6,7 +6,7 @@ namespace Spiritfire.Game
 {
     /// <summary>
     /// 掉落与奖励（Three.js 版 src/progression/Loot.ts）：
-    ///   击杀：灵石（按敌人基础耐久折算，精英 ×3）、弹药 30%（所有枪备弹都低于 35% 时 50%）、生命 10%；精英必掉弹药与生命；
+    ///   击杀：灵石（按敌人基础耐久折算，精英 ×3）、弹药 30%（所有枪备弹都低于 35% 时 50%）、生命 10%；精英必掉弹药与生命，6% 掉灵兽封印；
     ///         秘卷「收割 / 摄魂」的击杀回血回盾在这里结算。分身、自爆等 noReward 的死亡什么都不掉
     ///   场地肃清：场上灵石全部吸向玩家；场地配了奖励就在场地上落一个宝箱
     ///   Grant：宝箱奖励发放；秘卷三选一排队弹出（一次只开一个，两次之间隔 0.6 s）
@@ -15,7 +15,7 @@ namespace Spiritfire.Game
     {
         public static LootDirector Instance { get; private set; }
 
-        const float AmmoChance = 0.3f, AmmoChanceLow = 0.5f, LowAmmo = 0.35f, HealthChance = 0.1f, OfferGap = 0.6f;
+        const float AmmoChance = 0.3f, AmmoChanceLow = 0.5f, LowAmmo = 0.35f, HealthChance = 0.1f, OfferGap = 0.6f, ElitePetChance = 0.06f;
 
         public readonly ScrollInventory scrolls = new();
         readonly Queue<int> offers = new();
@@ -54,6 +54,7 @@ namespace Spiritfire.Game
                     if (w != null && (w.mag + w.reserve) >= (w.def.mag + w.def.reserve) * LowAmmo) lowAmmo = false;
             if (d.elite || Random.value < (lowAmmo ? AmmoChanceLow : AmmoChance)) Pickup.Spawn(Pickup.Kind.Ammo, pos, 0.25f);
             if (d.elite || Random.value < HealthChance) Pickup.Spawn(Pickup.Kind.Health, pos, 0);
+            if (d.elite && Random.value < ElitePetChance) PetSeal.DropRandom(pos, null, true);
 
             float kh = pv.stats.Get(Stat.KillHeal), ks = pv.stats.Get(Stat.KillShield);
             if (kh > 0) pv.Heal(kh);
@@ -84,7 +85,7 @@ namespace Spiritfire.Game
             Hud.Instance?.Toast("宝箱出现了");
         }
 
-        /// <summary>宝箱奖励："weapon:&lt;id&gt;[:稀有度]" / "scroll" / "coins" / "heal"</summary>
+        /// <summary>宝箱奖励："weapon:&lt;id&gt;[:稀有度]" / "scroll" / "coins" / "heal" / "pet"（按权重抽）/ "pet:&lt;id&gt;" / "pet:rarity=&lt;0–2&gt;"</summary>
         public void Grant(string reward, Vector3 pos)
         {
             var parts = reward.Split(':');
@@ -107,6 +108,19 @@ namespace Spiritfire.Game
                 case "coins":
                     DropCoins(pos, Random.Range(60, 121), 1.7f);
                     break;
+                case "pet":
+                {
+                    // 灵兽封印：落在宝箱前方，朝玩家抛一点
+                    var toPlayer = pv ? pv.transform.position - pos : Vector3.forward;
+                    toPlayer.y = 0;
+                    var toss = toPlayer.normalized * 1.4f + Vector3.up * 4.5f;
+                    var arg = parts.Length > 1 ? parts[1] : "";
+                    if (arg.StartsWith("rarity=") && int.TryParse(arg.Substring(7), out var tier))
+                        PetSeal.DropRandom(pos + Vector3.up * 0.4f, (PetRarity)Mathf.Clamp(tier, 0, 2), true, toss);
+                    else if (PetLibrary.Get(arg) is { } petDef) PetSeal.Drop(petDef, pos + Vector3.up * 0.4f, toss, announce: true);
+                    else PetSeal.DropRandom(pos + Vector3.up * 0.4f, null, true, toss);
+                    break;
+                }
                 case "heal":
                     if (!pv) break;
                     pv.stats.Add("reward", Stat.MaxHp, 10);

@@ -242,7 +242,8 @@ namespace Spiritfire.Game
         // ───────────── 事件 ─────────────
         void OnEnemyDamaged(Damageable target, DamageInfo info, DamageResult r)
         {
-            if (info.source != DamageSource.Status)
+            // 灵宠的命中照样出伤害数字，但不触发玩家的命中 / 击杀标记
+            if (info.source != DamageSource.Status && info.source != DamageSource.Pet)
             {
                 hitUntil = Time.time + 0.12f;
                 hitColor = r.crit ? new Color(1f, 0.78f, 0.25f) : Color.white;
@@ -279,7 +280,11 @@ namespace Spiritfire.Game
             num.mergeUntil = Time.time + MergeWindow;
         }
 
-        void OnEnemyKilled(Damageable target, DamageInfo info) => killUntil = Time.time + 0.3f;
+        void OnEnemyKilled(Damageable target, DamageInfo info)
+        {
+            // 灵宠的伤害（含它挂的元素烧死 / 反应炸死）不触发玩家的击杀标记
+            if (info.source != DamageSource.Pet && !(info.instigator is Pet)) killUntil = Time.time + 0.3f;
+        }
 
         void OnPlayerDamaged(float amount, Vector3 from)
         {

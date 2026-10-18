@@ -47,6 +47,10 @@ art/reviews/**/*-stderr.txt
 
 # Tripo DCC bridge inbox: provider originals, registered into art/source by the pipeline
 art/source/_tripo_inbox/
+# 灵宠（docs/pet-system.md）：概念图四视图可由 art/pipeline/pet_concepts.py 重生成（提示词与生成记录入库），导出中间文件不入库；
+# Tripo 原件 art/source/pets/<ID>/03_model/*.glb 入库
+art/source/pets/*/concept/*.png
+art/source/pets/*/export/
 # node test runner: type-stripped copies of src modules (tests/native-hero-grip.test.mjs)
 tests/.cache/
 

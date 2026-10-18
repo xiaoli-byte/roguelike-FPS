@@ -169,7 +169,7 @@ namespace Spiritfire.Game
                 if (along > -0.3f && along < 2.4f && side.magnitude < ChargeHalfWidth + 0.35f && v.y > -1 && v.y < 2.2f)
                 {
                     chargeHit = true;
-                    if (Combat.DamagePlayer(Damage * ChargeMult, transform.position) > 0)
+                    if (HitTarget(Damage * ChargeMult, transform.position))
                         player.GetComponent<PlayerMotor>()?.AddImpulse(chargeDir * ChargeKnock + Vector3.up * 7f);
                 }
             }
@@ -237,11 +237,11 @@ namespace Spiritfire.Game
             to.y = 0;
             float dist = to.magnitude;
             if (dist <= StompCore || Mathf.Abs(dist - r) > 0.7f) return;
-            var motor = player.GetComponent<PlayerMotor>();
+            var motor = Taunted ? null : player.GetComponent<PlayerMotor>();
             if (motor && !motor.Grounded) return;
             if (Mathf.Abs(dy) > 1.2f) return;
             waveHit = true;
-            Combat.DamagePlayer(Damage * WaveMult, waveCenter);
+            HitTarget(Damage * WaveMult, waveCenter);
         }
     }
 }

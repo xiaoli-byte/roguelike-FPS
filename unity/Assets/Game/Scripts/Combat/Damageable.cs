@@ -19,6 +19,8 @@ namespace Spiritfire.Game
         [NonSerialized] public float health, armor, shield;
         /// <summary>无法被选中（遁地、出生、死亡中）：子弹穿过、显示「免疫」</summary>
         [NonSerialized] public bool untargetable;
+        /// <summary>最近一次给它挂元素的出手者（持续伤害 / 反应伤害的 instigator 沿用它：灵宠挂的火烧死人不算玩家击杀标记）</summary>
+        [NonSerialized] public UnityEngine.Object lastElementBy;
         /// <summary>承伤倍率（邪飞天光环 ×0.75、祝福 ×0.5 等相乘）</summary>
         [NonSerialized] public float damageTakenMult = 1f;
         /// <summary>元素状态的承伤倍率（蚀化 ×1.2），由 EnemyStatus 每帧写入；和光环那一份分开，免得互相覆盖</summary>

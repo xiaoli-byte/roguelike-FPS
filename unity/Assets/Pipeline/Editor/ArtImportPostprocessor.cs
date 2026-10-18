@@ -17,7 +17,8 @@ namespace Spiritfire.Art.Editor
         public const int Version = 4;
         public override uint GetVersion() => Version;
 
-        static bool InArt(string path) => path.StartsWith(ArtSidecar.ArtRoot + "/");
+        // 灵宠模型（Assets/Art/Pets）不走 sidecar，导入设置由 PetArtImport 管
+        static bool InArt(string path) => path.StartsWith(ArtSidecar.ArtRoot + "/") && !path.StartsWith(PetArtImport.Root + "/");
 
         void OnPreprocessTexture()
         {

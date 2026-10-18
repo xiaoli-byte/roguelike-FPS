@@ -4,7 +4,8 @@ namespace Spiritfire.Game
 {
     public enum Element { None, Fire, Shock, Corrode }
 
-    public enum DamageSource { Weapon, Skill, Explosion, Status, Enemy, Environment }
+    /// <summary>Pet：灵宠的攻击（只吃「灵宠伤害」加成，默认不随机暴击，见 docs/pet-system.md）</summary>
+    public enum DamageSource { Weapon, Skill, Explosion, Status, Enemy, Environment, Pet }
 
     /// <summary>伤害层：护盾 → 护甲 → 生命，依次吃伤害</summary>
     public enum DamageLayer { Shield, Armor, Health }
@@ -17,6 +18,8 @@ namespace Spiritfire.Game
         public DamageSource source;
         /// <summary>命中弱点（头部 / 敌人各自的弱点部位）：必定暴击</summary>
         public bool weakpoint;
+        /// <summary>被改判为弱点（神兽白泽）：只影响暴击与弱点加成，敌人机制（琵琶、正面格挡）仍看 <see cref="weakpoint"/></summary>
+        public bool forcedWeakpoint;
         public bool forceCrit;
         /// <summary>暴击倍率（武器表的 critMult，默认 2）</summary>
         public float critMult;

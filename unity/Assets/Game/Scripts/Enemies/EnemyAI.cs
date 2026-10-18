@@ -15,6 +15,7 @@ namespace Spiritfire.Game
     ///   状态：字符串状态 + 计时；动作动画直接按状态名 CrossFade（烘焙的动作链用 next 自动接续）。
     ///   等级：生命 × 等级，伤害 × (1 + (等级 − 1) × 0.55)；精英生命 × 2.6、伤害 × 1.25。
     /// 出生 0.7 s 内不可选中（地面预警在生成器那边先播 0.8 s）。
+    /// 嘲讽（灵宠讙）：<see cref="Taunt"/> 期间 <see cref="Target"/> 换成诱饵，瞄准、走位、近战都对着它；打到诱饵无效，玩家不吃这只敌人的伤害。
     /// </summary>
     [RequireComponent(typeof(EnemyBody), typeof(NavMeshAgent))]
     public abstract class EnemyAI : MonoBehaviour
@@ -50,6 +51,9 @@ namespace Spiritfire.Game
         [NonSerialized] public float blessedUntil;
         public bool Blessed => blessedBy && !blessedBy.Dead && !blessedBy.Silenced && Time.time < blessedUntil;
         Vector3 lastDest;
+        Transform taunt, playerLook;
+        float tauntUntil, tauntEye;
+        static float blockTextAt;
         bool manual;
         Vector3 manualVelocity;
         float manualGravity;
@@ -58,8 +62,12 @@ namespace Spiritfire.Game
         public float Damage => damage * DamageMult;
         public bool Dead => hp && hp.Dead;
         public string State => state;
-        protected Vector3 PlayerPos => player ? player.position : transform.position;
-        protected Vector3 PlayerEye => player ? player.position + Vector3.up * 1.62f : transform.position;
+        /// <summary>被嘲讽中（目标是灵宠诱饵）</summary>
+        public bool Taunted => taunt && Time.time < tauntUntil;
+        /// <summary>当前目标：被嘲讽时是诱饵，否则是玩家</summary>
+        protected Transform Target => Taunted ? taunt : player;
+        protected Vector3 PlayerPos => Target ? Target.position : transform.position;
+        protected Vector3 PlayerEye => Taunted ? taunt.position + Vector3.up * tauntEye : player ? player.position + Vector3.up * 1.62f : transform.position;
         protected float DistToPlayer
         {
             get
@@ -111,7 +119,8 @@ namespace Spiritfire.Game
         {
             vitals = PlayerVitals.Instance;
             player = vitals ? vitals.transform : null;
-            if (body.Rig && vitals) body.Rig.lookTarget = vitals.GetComponent<PlayerMotor>().eye;
+            playerLook = vitals ? vitals.GetComponent<PlayerMotor>().eye : null;
+            if (body.Rig && playerLook) body.Rig.lookTarget = playerLook;
             cooldown = UnityEngine.Random.Range(0.4f, 1.6f);
         }
 
@@ -127,6 +136,8 @@ namespace Spiritfire.Game
         protected virtual void Update()
         {
             if (Dead || !player) return;
+            // 引用判空：诱饵被销毁（换宠 / 解除结契）也要把视线还给玩家
+            if (!ReferenceEquals(taunt, null) && !Taunted) EndTaunt();
             float dt = Time.deltaTime;
             age += dt;
             stateTime += dt;
@@ -328,6 +339,42 @@ namespace Spiritfire.Game
             return Physics.Raycast(p + Vector3.up * 3f, Vector3.down, out var hit, 20f, Layers.WorldMask, QueryTriggerInteraction.Ignore) ? hit.point.y : p.y;
         }
 
+        // ───────────── 嘲讽 ─────────────
+        /// <summary>嘲讽：seconds 秒内瞄准、走位、近战都对着 decoy（eyeHeight = 瞄准点离地高度）；重复嘲讽取更晚的结束时间</summary>
+        public void Taunt(Transform decoy, float seconds, float eyeHeight = 0.5f)
+        {
+            if (Dead || !decoy || seconds <= 0) return;
+            tauntUntil = taunt == decoy ? Mathf.Max(tauntUntil, Time.time + seconds) : Time.time + seconds;
+            taunt = decoy;
+            tauntEye = eyeHeight;
+            if (body.Rig) body.Rig.lookTarget = decoy;
+        }
+
+        void EndTaunt()
+        {
+            taunt = null;
+            if (body.Rig && playerLook) body.Rig.lookTarget = playerLook;
+        }
+
+        /// <summary>对当前目标造成伤害：被嘲讽时打在灵体诱饵上，无效（偶尔冒「格挡」）</summary>
+        protected bool HitTarget(float dmg, Vector3 from)
+        {
+            if (Taunted)
+            {
+                DecoyBlocked(taunt);
+                return false;
+            }
+            return Combat.DamagePlayer(dmg, from) > 0;
+        }
+
+        /// <summary>诱饵挡下一击：全场共用节流，免得一群怪同时刷屏</summary>
+        public static void DecoyBlocked(Transform decoy)
+        {
+            if (!decoy || Time.time < blockTextAt) return;
+            blockTextAt = Time.time + 0.45f;
+            Hud.Instance?.FloatText(decoy.position + Vector3.up * 0.9f + UnityEngine.Random.insideUnitSphere * 0.25f, "格挡", new Color(0.82f, 0.86f, 0.95f), 0.9f);
+        }
+
         // ───────────── 攻击 ─────────────
         /// <summary>即时扇形近战判定：水平距离 ≤ range、在正面 arcCos 之内、高度差合理</summary>
         protected bool Melee(float range, float dmg, float arcCos)
@@ -338,7 +385,7 @@ namespace Spiritfire.Game
             to.y = 0;
             if (to.magnitude > range + 0.35f || Mathf.Abs(dy) > 2.2f) return false;
             if (to.sqrMagnitude > 0.01f && Vector3.Dot(transform.forward, to.normalized) < arcCos) return false;
-            return Combat.DamagePlayer(dmg, transform.position + Vector3.up) > 0;
+            return HitTarget(dmg, transform.position + Vector3.up);
         }
 
         /// <summary>环形 / 圆形范围伤害（落地旋斩、踩地）</summary>
@@ -349,12 +396,13 @@ namespace Spiritfire.Game
             float dy = to.y;
             to.y = 0;
             if (to.magnitude > radius + 0.35f || Mathf.Abs(dy) > 2.2f) return false;
-            return Combat.DamagePlayer(dmg, center) > 0;
+            return HitTarget(dmg, center);
         }
 
         /// <summary>预测玩家位置：lead 秒后（只取水平速度）</summary>
         protected Vector3 PredictPlayer(float lead)
         {
+            if (Taunted) return PlayerPos;
             var motor = player ? player.GetComponent<PlayerMotor>() : null;
             var v = motor ? motor.Velocity : Vector3.zero;
             v.y = 0;
@@ -368,6 +416,41 @@ namespace Spiritfire.Game
 
         /// <summary>前摇时长：攻速加成只缩短一部分前摇（保持可读的预警）</summary>
         protected float Windup(float time, float minFraction) => time * Mathf.Max(minFraction, 1f / Mathf.Sqrt(Mathf.Max(0.1f, auraAttackRate)));
+    }
+
+    /// <summary>
+    /// 灵体诱饵（被嘲讽的敌人对着它打）：敌人弹丸穿过它的胶囊（脚底 → height，半径 radius）时被吸收，不会再飞向玩家
+    /// </summary>
+    public static class Decoys
+    {
+        public struct Entry
+        {
+            public Transform t;
+            public float radius, height, until;
+        }
+
+        static readonly List<Entry> all = new();
+
+        /// <summary>登记 / 续期一个诱饵，until 为 Time.time 的到期时刻</summary>
+        public static void Set(Transform t, float radius, float height, float until)
+        {
+            for (int i = 0; i < all.Count; i++)
+                if (all[i].t == t)
+                {
+                    all[i] = new Entry { t = t, radius = radius, height = height, until = Mathf.Max(until, all[i].until) };
+                    return;
+                }
+            all.Add(new Entry { t = t, radius = radius, height = height, until = until });
+        }
+
+        public static void Remove(Transform t) => all.RemoveAll(e => !e.t || e.t == t);
+
+        /// <summary>当前有效的诱饵（顺手清掉过期 / 已销毁的）</summary>
+        public static List<Entry> Active()
+        {
+            if (all.Count > 0) all.RemoveAll(e => !e.t || Time.time >= e.until);
+            return all;
+        }
     }
 
     /// <summary>

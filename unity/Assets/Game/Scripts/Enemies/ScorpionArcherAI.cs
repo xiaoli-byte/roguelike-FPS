@@ -249,7 +249,7 @@ namespace Spiritfire.Game
             else target = PredictPlayer(flight * 0.35f) + Vector3.up * 1.1f;
             var dir = (target - from).normalized;
             dir = Quaternion.Euler(Random.Range(-0.7f, 0.7f), Random.Range(-0.7f, 0.7f), 0) * dir;
-            EnemyProjectile.Spawn(from, dir * BoltSpeed, 0, Damage, 0.14f, 0, new Color(1f, 0.82f, 0.48f), 3f);
+            EnemyProjectile.Spawn(from, dir * BoltSpeed, 0, Damage, 0.14f, 0, new Color(1f, 0.82f, 0.48f), 3f, spirit: Taunted);
         }
 
         /// <summary>钻出点：玩家 13–20 m 外、可走、从那里看得见玩家</summary>

@@ -123,7 +123,9 @@ namespace Spiritfire.Game
             var c = Center;
             var info = DamageInfo.Simple(0, DamageSource.Enemy, c, Vector3.up);
             info.element = Element.Fire;
-            Combat.Explode(c, BlastRadius, info, false, Damage);
+            // 被嘲讽时扑的是灵体诱饵：炸不到玩家
+            if (Taunted) DecoyBlocked(Target);
+            else Combat.Explode(c, BlastRadius, info, false, Damage);
             Blast(c);
             hp.noReward = true;
             hp.Kill(info);

@@ -47,6 +47,8 @@ crashlytics-build.properties
 /Assets/Art/Attachments/**/*.fbx
 /Assets/Art/Props/**/*.fbx
 /Assets/Art/Environment/**/*.fbx
+# 灵宠模型由 art/pipeline/pet_export.py 从 art/source/pets/<ID>/03_model 的 Tripo 原件重新生成
+/Assets/Art/Pets/**/*.fbx
 /Assets/Art/*/*/Textures/*.png
 # 原生骨架动画：采样数据由 scripts/unity/bake-native-anims.mjs 生成，片段由 Sync 生成；.meta 与状态机入库
 /Assets/Art/Characters/*/Anim/*.native-anim.json

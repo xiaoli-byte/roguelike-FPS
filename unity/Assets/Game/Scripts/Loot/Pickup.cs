@@ -128,6 +128,17 @@ namespace Spiritfire.Game
                 if (p.kind == Kind.Coin) p.attracted = true;
         }
 
+        /// <summary>把 center 周围 range 内的掉落物吸向玩家（神兽白泽觉醒）：灵石总是吸，弹药 / 生命只在用得上时吸</summary>
+        public static void Attract(Vector3 center, float range)
+        {
+            var pv = PlayerVitals.Instance;
+            if (!pv || pv.Dead) return;
+            var wc = pv.GetComponent<WeaponController>();
+            foreach (var p in Active)
+                if (!p.attracted && p.age > 0.45f && (p.transform.position - center).sqrMagnitude < range * range && p.Wanted(pv, wc))
+                    p.attracted = true;
+        }
+
         void Update()
         {
             float dt = Time.deltaTime;

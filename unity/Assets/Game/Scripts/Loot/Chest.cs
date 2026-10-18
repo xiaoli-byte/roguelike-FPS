@@ -6,7 +6,7 @@ namespace Spiritfire.Game
     /// <summary>
     /// 奖励宝箱（Three.js 版 src/progression/loot/Chests.ts）：从空中落下 → 待机（宝石脉动、盖子偶尔轻颤、奖励色光柱）
     /// → 按 F 开启（开盖 0.5 s，0.32 s 时发放奖励）→ 光柱淡出，空箱留在原地。
-    /// 奖励 reward："weapon:&lt;id&gt;[:稀有度]" / "scroll" / "coins" / "heal"。模型先用程序化体块（漆木箱 + 铜边 + 宝石），之后换美术资产。
+    /// 奖励 reward："weapon:&lt;id&gt;[:稀有度]" / "scroll" / "coins" / "heal" / "pet[:…]"（灵兽封印）。模型先用程序化体块（漆木箱 + 铜边 + 宝石），之后换美术资产。
     /// </summary>
     public sealed class Chest : MonoBehaviour, IInteractable
     {
@@ -43,6 +43,7 @@ namespace Spiritfire.Game
             "scroll" => new Color(0.55f, 0.75f, 1f),
             "coins" => new Color(1f, 0.85f, 0.35f),
             "heal" => new Color(0.4f, 1f, 0.55f),
+            "pet" => new Color(1f, 0.55f, 0.85f),
             _ => Color.white,
         };
 
@@ -112,6 +113,7 @@ namespace Spiritfire.Game
             "scroll" => "秘卷",
             "coins" => "灵石",
             "heal" => "生命",
+            "pet" => "灵宠",
             _ => "奖励",
         };
 

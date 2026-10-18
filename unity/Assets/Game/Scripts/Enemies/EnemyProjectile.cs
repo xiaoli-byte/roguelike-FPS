@@ -5,18 +5,19 @@ namespace Spiritfire.Game
     /// <summary>
     /// 敌人弹丸（弩箭、火球）：逐帧推进 + 重力，扫掠检测地形 / 建筑；与玩家胶囊做球-胶囊距离判定（比物理触发器稳定，不漏判）。
     /// explodeRadius &gt; 0 时落地 / 命中后爆炸（范围伤害 + 地面火光），否则只打直接命中。
+    /// spirit = 被嘲讽的敌人射出的（对着灵体诱饵打）：不伤玩家，穿过诱饵胶囊时被吸收；没被嘲讽的弹丸直接穿过灵体。
     /// </summary>
     public sealed class EnemyProjectile : MonoBehaviour
     {
         Vector3 velocity;
         float gravity, damage, radius, explodeRadius, life;
         Element element;
-        bool fake;
+        bool fake, spirit;
         TrailRenderer trail;
         Light glow;
 
         public static EnemyProjectile Spawn(Vector3 pos, Vector3 velocity, float gravity, float damage, float radius, float explodeRadius,
-            Color color, float lifetime = 4f, Element element = Element.None, bool fake = false)
+            Color color, float lifetime = 4f, Element element = Element.None, bool fake = false, bool spirit = false)
         {
             // 外观：发白的热核（不透明小球）+ 朝向相机的加色光晕 + 加色拖尾（顶点色）
             var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -36,6 +37,7 @@ namespace Spiritfire.Game
             p.life = lifetime;
             p.element = element;
             p.fake = fake;
+            p.spirit = spirit;
 
             FxMaterials.GlowSprite(go.transform, explodeRadius > 0 ? 3.6f : 2.4f, new Color(color.r, color.g, color.b, 0.85f));
 
@@ -67,9 +69,22 @@ namespace Spiritfire.Game
             var step = velocity * dt;
             float len = step.magnitude;
 
+            // 灵体诱饵（被嘲讽的敌人对着它打）：穿过它的胶囊就被吸收；被嘲讽时射出的弹丸不伤玩家
+            if (spirit)
+                foreach (var d in Decoys.Active())
+                {
+                    var p0 = d.t.position + Vector3.up * 0.1f;
+                    if (SegmentSegmentDistance(from, from + step, p0, p0 + Vector3.up * Mathf.Max(0.1f, d.height - 0.1f)) < radius + d.radius)
+                    {
+                        EnemyAI.DecoyBlocked(d.t);
+                        fake = true;
+                        Impact(from + step * 0.5f, false);
+                        return;
+                    }
+                }
             // 玩家：线段（本帧移动）到玩家胶囊轴线的最近距离
             var pv = PlayerVitals.Instance;
-            if (pv && !pv.Dead)
+            if (!spirit && pv && !pv.Dead)
             {
                 var a = pv.transform.position + Vector3.up * 0.35f;
                 var b = pv.transform.position + Vector3.up * 1.45f;
@@ -112,13 +127,13 @@ namespace Spiritfire.Game
             {
                 var info = DamageInfo.Simple(0, DamageSource.Enemy, at, velocity.normalized);
                 info.element = element;
-                Combat.Explode(at, explodeRadius, info, false, damage);
+                Combat.Explode(at, explodeRadius, info, false, spirit ? 0 : damage);
                 ShotFx.Instance?.Impact(at, Vector3.up, false, 3f);
                 ShotFx.Instance?.Impact(at, Vector3.up, true, 3f);
             }
             else
             {
-                if (hitPlayer) Combat.DamagePlayer(damage, at - velocity.normalized, element);
+                if (hitPlayer && !spirit) Combat.DamagePlayer(damage, at - velocity.normalized, element);
                 ShotFx.Instance?.Impact(at, -velocity.normalized, false, 0.8f);
             }
             Destroy(gameObject);

@@ -13,7 +13,8 @@ namespace Spiritfire.Art.Editor
     /// 外部写 Library/SpiritfireBridge/request.json：{ "id": "...", "command": "all" }，编辑器每秒轮询一次，
     /// 先 AssetDatabase.Refresh（脚本有改动就编译、域重载，重载后接着处理同一个请求），再执行命令，
     /// 结果写 Library/SpiritfireBridge/response-&lt;id&gt;.json（状态、耗时、期间的日志）。
-    /// 命令：refresh / sync / scenes / capture / sheets / motion / all（sync → scenes → capture → sheets → motion）/ level11 / playtest。
+    /// 命令：refresh / sync / scenes / capture / sheets / motion / all（sync → scenes → capture → sheets → motion）/ level11 / playtest /
+    /// pets（导入 Assets/Art/Pets 下的灵宠模型，生成 Resources/Pets 预制体）。
     /// 安全：Play 模式中、或当前场景有未保存的修改时拒绝执行（不替用户丢弃修改）；执行完重新打开用户原来的场景。
     /// </summary>
     [InitializeOnLoad]
@@ -89,6 +90,7 @@ namespace Spiritfire.Art.Editor
                     foreach (var t in ShowcaseTheme.All)
                         if (File.Exists(t.ScenePath)) foreach (bool ik in new[] { false, true }) ShowcaseSimulator.Simulate(t, ik);
                 if (command == "level11" && Levels.Level_1_1.Build(true) > 0) status = "level-checks-failed";
+                if (command == "pets") errors += PetArtImport.ImportAll();
                 // 临时诊断：调用 Spiritfire.Art.Editor.Diag.Run()（存在时），排查问题用，用完删掉那个类
                 if (command == "diag")
                     Type.GetType("Spiritfire.Art.Editor.Diag, Spiritfire.Art.Editor")?.GetMethod("Run")?.Invoke(null, null);

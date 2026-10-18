@@ -13,8 +13,8 @@ namespace Spiritfire.Game.Testing
     /// <summary>
     /// 自动冒烟测试（bridge.sh playtest）：Play 模式里由脚本操控玩家，逐项检查切片的玩法回路，结果写成文本，
     /// 截图存 Assets/Art/_Review/playtest_*.png。不替代手玩，只保证「能跑、数值对、没有运行时报错」。
-    /// 步骤：换弹 / 拾枪切枪
-    ///       → 依次进入 ①–④ 触发遭遇战，自动瞄最近的敌人射击直到肃清（玩家临时 5000 血，记录敌人打出的伤害）
+    /// 步骤：换弹 / 拾枪切枪 → 灵宠（八只依次结契打几只敌人、放灵技，日志前缀 [pets]）
+    ///       → 依次进入 ①–④ 触发遭遇战，自动瞄最近的敌人射击直到肃清（玩家临时 5000 血，记录敌人打出的伤害；② 的宝箱是灵兽封印）
     ///       → 玩家受伤（护盾 / 生命）→ 阵亡。
     /// </summary>
     public sealed class PlaytestRunner : MonoBehaviour
@@ -24,7 +24,7 @@ namespace Spiritfire.Game.Testing
 
         readonly List<string> lines = new();
         int errors, hits, crits, kills, skillHits, burnTicks, skillCasts;
-        float damage, playerDamage, totalPlayerDamage;
+        float damage, playerDamage, totalPlayerDamage, petDamage;
         readonly Dictionary<string, int> killsById = new();
         readonly Dictionary<string, int> reactionsById = new();
 
@@ -80,6 +80,11 @@ namespace Spiritfire.Game.Testing
 
         void OnDamaged(Damageable d, DamageInfo info, DamageResult r)
         {
+            if (info.source == DamageSource.Pet)
+            {
+                petDamage += r.total;
+                return;
+            }
             if (info.source == DamageSource.Skill) skillHits++;
             if (info.source == DamageSource.Status) burnTicks++;
             if (info.source is DamageSource.Skill or DamageSource.Status) return;
@@ -114,6 +119,7 @@ namespace Spiritfire.Game.Testing
             WeaponController.TestMode = true;
             Interactor.TestMode = true;
             HeroSkills.TestMode = true;
+            PetOwner.TestMode = true;
             var skills = FindAnyObjectByType<HeroSkills>();
             if (!skills) Fail("玩家身上没有 HeroSkills");
             else skills.Cast += _ => skillCasts++;
@@ -140,6 +146,9 @@ namespace Spiritfire.Game.Testing
             yield return new WaitForSeconds(0.5f);
             if (weapons.ActiveSlot != 0) Fail("切回 1 号槽失败");
             weapons.slots[1] = null; // 还原成开局状态：第二把枪要从 ① 的宝箱里拿
+
+            // ── 灵宠：八只依次结契，各打几只敌人、放一次灵技；灵契升级觉醒、换宠留封印 ──
+            yield return PetTest(motor, eye, vitals);
 
             // ── 动画控制器诊断：敌人身上的动画到底有没有在播 ──
             yield return AnimatorDiag(motor);
@@ -234,6 +243,8 @@ namespace Spiritfire.Game.Testing
                             skillAt = Time.time + 4f;
                             if (skills.secondary.charges > 0) skills.testE = true;
                             else if (skills.primary.charges > 0) skills.testQ = true;
+                            var pets = PetOwner.Instance;
+                            if (pets && pets.Current && pets.Current.SkillReady) pets.testSkill = true;
                         }
                         if (!shotMid && Time.time - fightStart > 4f)
                         {
@@ -303,6 +314,7 @@ namespace Spiritfire.Game.Testing
 
             Line($"合计：武器命中 {hits}，伤害 {damage:F0}，暴击 {crits}，击杀 {kills}");
             Line($"技能：释放 {skillCasts} 次，技能命中 {skillHits}，灼烧跳伤 {burnTicks}");
+            Line($"[pets] 灵宠伤害合计 {petDamage:F0}（当前灵宠 {(PetOwner.Instance && PetOwner.Instance.Current ? PetOwner.Instance.Current.def.Label : "无")}）");
             if (skills && skillCasts == 0) Fail("整局没有放出技能");
             if (skills && skillHits == 0) Fail("技能一次都没打中敌人");
             if (skills && burnTicks == 0) Fail("没有任何灼烧跳伤（火焰技能必定灼烧）");
@@ -394,8 +406,145 @@ namespace Spiritfire.Game.Testing
                 if (after != before + 1) Fail("选了秘卷但层数没有增加");
                 if (Time.timeScale != 1) Fail("选完秘卷后时间没有恢复");
             }
+            else if (kind == "pet")
+            {
+                // 灵兽封印：落在宝箱前 → 走过去按 F 结契
+                PetSeal seal = null;
+                t0 = Time.time;
+                while (!seal && Time.time - t0 < 2f)
+                {
+                    foreach (var s in PetSeal.Active)
+                        if (s && !s.fromAltar && Vector3.Distance(s.transform.position, chest.transform.position) < 8f) seal = s;
+                    yield return null;
+                }
+                if (!seal)
+                {
+                    Fail($"宝箱 {site.reward} 没有掉出灵兽封印");
+                    yield break;
+                }
+                yield return new WaitForSeconds(1.2f);
+                var back = eye.forward;
+                back.y = 0;
+                Teleport(motor, seal.transform.position - (back.sqrMagnitude > 1e-4f ? back.normalized : Vector3.forward) * 1.6f);
+                yield return null;
+                Aim(motor, eye, seal.Focus);
+                yield return new WaitForSeconds(0.1f);
+                if (interactor.Current as PetSeal != seal) Fail($"灵兽封印没有交互提示（当前 {interactor.Current?.Prompt ?? "无"}）");
+                var petDef = seal.def;
+                interactor.testInteract = true;
+                yield return new WaitForSeconds(0.6f);
+                var cur = PetOwner.Instance ? PetOwner.Instance.Current : null;
+                Line($"[pets] 宝箱 → 灵兽封印 {petDef.Label}：{(cur && cur.def == petDef ? "已结契" : "结契失败")}");
+                if (!cur || cur.def != petDef) Fail("开宝箱得到的灵兽封印没能结契");
+                Shot(weapons.eye, $"pet_{index}");
+            }
             yield return new WaitForSeconds(0.8f);
             if (Hud.Instance) Line($"  灵石 {Hud.Instance.coins}（本段拾取 {Hud.Instance.coins - coins0}）");
+        }
+
+        /// <summary>
+        /// 灵宠：八只依次结契，在玩家前方生成几只敌人，各打 4 s、开打 0.6 s 时按 G；记录每只的伤害、击杀与灵技是否放出。
+        /// 最后测灵契升级觉醒（经验加满 16 → 3 级）与换宠（旧灵宠变回封印），然后解除结契，后面的流程照旧。
+        /// </summary>
+        IEnumerator PetTest(PlayerMotor motor, Transform eye, PlayerVitals vitals)
+        {
+            var owner = PetOwner.Instance ? PetOwner.Instance : motor.GetComponent<PetOwner>();
+            if (!owner)
+            {
+                Fail("[pets] 玩家身上没有 PetOwner（PetBootstrap 没有运行）");
+                yield break;
+            }
+            if (!FindAnyObjectByType<PetAltar>()) Fail("[pets] 场景里没有灵兽台");
+            if (!FindAnyObjectByType<PetHud>()) Fail("[pets] HUD 上没有灵宠面板");
+            vitals.stats.Add("playtest_pets", Stat.MaxHp, 5000);
+            var home = motor.transform.position;
+            var fwd = motor.transform.forward;
+            fwd.y = 0;
+            fwd.Normalize();
+            var side = Vector3.Cross(Vector3.up, fwd);
+            var cam = eye.GetComponent<Camera>();
+            // 灵兽台全景：站到半圆开口前方看过去
+            var altar = FindAnyObjectByType<PetAltar>();
+            if (altar && cam)
+            {
+                var at = altar.transform;
+                var mid = at.position + at.right * altar.radius - at.forward * altar.radius * 0.45f;
+                Teleport(motor, mid + at.forward * (altar.radius + 4.5f));
+                yield return new WaitForSeconds(0.6f);
+                Aim(motor, eye, mid + Vector3.up * 0.6f);
+                yield return null;
+                Shot(cam, "pet_altar");
+            }
+            var roster = new[] { ("jerboa_blade", -3f), ("jerboa_blade", 0f), ("scorpion_archer", 3f), ("mirage_toad", 5.5f) };
+            foreach (var def in PetLibrary.All)
+            {
+                owner.Unbind();
+                Teleport(motor, home);
+                vitals.Heal(99999);
+                var enemies = new List<EnemyAI>();
+                foreach (var (id, off) in roster)
+                {
+                    var ai = EnemyRoster.Spawn(id, home + fwd * 11f + side * off, Quaternion.LookRotation(-fwd), 1, false);
+                    if (ai) enemies.Add(ai);
+                }
+                var pet = owner.Bind(def);
+                yield return new WaitForSeconds(0.9f); // 敌人出生无敌 + 灵宠出场
+                float dealt0 = pet ? pet.DamageDealt : 0, t0 = Time.time;
+                bool pressed = false, cast = false, shot = false;
+                while (Time.time - t0 < 4f)
+                {
+                    var target = NearestEnemy(eye.position);
+                    if (target) Aim(motor, eye, BodyCenter(target));
+                    // 实战截图：灵技放出后约 1 秒，把镜头临时挪到灵宠侧后方拍特写（第一人称离得太远看不清）
+                    if (!shot && cast && Time.time - t0 > 1.8f && cam && pet)
+                    {
+                        shot = true;
+                        PetCloseUp(cam, pet, target ? BodyCenter(target) : pet.Center + pet.transform.forward * 4f, $"pet_{def.id}");
+                    }
+                    if (!pressed && Time.time - t0 > 0.6f)
+                    {
+                        pressed = true;
+                        owner.testSkill = true;
+                    }
+                    else if (pressed && !cast && pet && pet.SkillLeft > 0) cast = true;
+                    yield return null;
+                }
+                float dealt = pet ? pet.DamageDealt - dealt0 : 0;
+                int killed = enemies.Count(e => !e || e.Dead);
+                var msg = $"[pets] {def.Label}（{def.title}）：4 s 伤害 {dealt:F0}，击杀 {killed}/{enemies.Count}，灵技「{def.skillName}」{(cast ? "已放出" : "没放出")}，Lv.{(pet ? pet.Level : 0)}";
+                Line(msg);
+                Debug.Log(msg);
+                if (!pet) Fail($"[pets] {def.name} 结契后没有生成灵宠");
+                else if (dealt <= 0) Fail($"[pets] {def.name} 4 秒内没有造成伤害");
+                if (!cast) Fail($"[pets] {def.name} 的灵技没有放出来");
+                foreach (var e in enemies)
+                    if (e) Destroy(e.gameObject);
+                yield return new WaitForSeconds(0.3f);
+            }
+            // 灵契：经验加满 16 → 3 级觉醒
+            var p = owner.Current;
+            if (p)
+            {
+                int lv0 = p.Level;
+                for (int i = 0; i < 16 && !p.Awakened; i++) p.AddXp(1);
+                Line($"[pets] 灵契：Lv.{lv0} → Lv.{p.Level}，觉醒 {(p.Awakened ? "是" : "否")}");
+                if (!p.Awakened) Fail("[pets] 灵契经验加满 16 没有觉醒");
+            }
+            // 换宠：旧灵宠变回封印
+            int seals0 = PetSeal.Active.Count;
+            owner.Bind(PetLibrary.Get("baize"));
+            yield return null;
+            Line($"[pets] 换宠：封印 {seals0} → {PetSeal.Active.Count}");
+            if (PetSeal.Active.Count != seals0 + 1) Fail("[pets] 换宠后旧灵宠没有变回封印");
+            yield return new WaitForSeconds(1f);
+            if (cam) Shot(cam, "pets");
+            owner.Unbind();
+            foreach (var s in PetSeal.Active.ToArray())
+                if (s && !s.fromAltar) Destroy(s.gameObject);
+            Teleport(motor, home);
+            vitals.stats.Remove("playtest_pets");
+            vitals.Heal(99999);
+            yield return new WaitForSeconds(0.3f);
         }
 
         IEnumerator AnimatorDiag(PlayerMotor motor)
@@ -1003,6 +1152,27 @@ namespace Spiritfire.Game.Testing
             Destroy(go);
         }
 
+        /// <summary>灵宠特写：相机临时放到灵宠侧后上方、朝灵宠与目标之间看，关掉第一人称层（手和枪），拍完复原</summary>
+        void PetCloseUp(Camera cam, Pet pet, Vector3 focus, string name)
+        {
+            var t = cam.transform;
+            var p0 = t.position;
+            var r0 = t.rotation;
+            int mask = cam.cullingMask;
+            var center = pet.Center;
+            var dir = focus - center;
+            dir.y = 0;
+            dir = dir.sqrMagnitude > 0.01f ? dir.normalized : pet.transform.forward;
+            float size = Mathf.Max(1.3f, pet.Height * 1.9f);
+            var pos = center - dir * size * 1.5f + Vector3.Cross(Vector3.up, dir) * size * 1.1f + Vector3.up * size * 0.45f;
+            t.position = pos;
+            t.rotation = Quaternion.LookRotation(Vector3.Lerp(center, focus, 0.3f) - pos);
+            cam.cullingMask = mask & ~(1 << Layers.FirstPerson);
+            Shot(cam, name);
+            t.SetPositionAndRotation(p0, r0);
+            cam.cullingMask = mask;
+        }
+
         void Shot(Camera cam, string name)
         {
             if (string.IsNullOrEmpty(shotDir) || !cam) return;
@@ -1028,6 +1198,7 @@ namespace Spiritfire.Game.Testing
             WeaponController.TestMode = false;
             Interactor.TestMode = false;
             HeroSkills.TestMode = false;
+            PetOwner.TestMode = false;
             Flush(errors == 0 ? "全部通过" : $"不合格 {errors} 项");
             Done = true;
         }
