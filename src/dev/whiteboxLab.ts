@@ -234,6 +234,7 @@ invulnerable.onchange = () => { ctx.player.invulnerableTime = invulnerable.check
 theme.onchange = () => {
   // 川藏高原是起伏地形，平地白盒表达不了，跳到它自己的地形检视页（docs/level-design/chuanzang-v1.md）
   if (theme.value === 'plateau') { location.href = '/plateau-lab.html'; return; }
+  if (theme.value === 'plateau-4-2') { location.href = '/plateau-lab.html?map=4-2'; return; }
   refreshChoices('0'); loadStage();
 };
 stageChoice.onchange = () => { typeChoice.disabled = stageChoice.value === '4'; loadStage(); };

@@ -6,10 +6,12 @@
  */
 import * as THREE from 'three';
 import { MAP } from './spec';
-import { basinDistance, type Terrain } from './terrain';
+import type { HeightGrid } from './grid';
+import { basinDistance } from './terrain';
 
-export interface BoxCollider { kind: 'box'; x: number; z: number; hx: number; hz: number; yaw: number; y0: number; y1: number; walkable: boolean }
-export interface CylCollider { kind: 'cyl'; x: number; z: number; r: number; y0: number; y1: number; walkable: boolean }
+/** off：暂时关掉（被落石砸断的栈道、被淹的跳石） */
+export interface BoxCollider { kind: 'box'; x: number; z: number; hx: number; hz: number; yaw: number; y0: number; y1: number; walkable: boolean; off?: boolean }
+export interface CylCollider { kind: 'cyl'; x: number; z: number; r: number; y0: number; y1: number; walkable: boolean; off?: boolean }
 export type Collider = BoxCollider | CylCollider;
 
 const CELL = 8;
@@ -23,7 +25,7 @@ export class CollisionWorld {
   readonly list: Collider[] = [];
   private grid = new Map<number, Collider[]>();
 
-  constructor(readonly terrain: Terrain) {}
+  constructor(readonly terrain: HeightGrid) {}
 
   add(c: Collider): void {
     this.list.push(c);
@@ -61,7 +63,7 @@ export class CollisionWorld {
 
   /** 这一点是否在任何碰撞体的占地范围内（散布避让用，不看高度） */
   occupied(x: number, z: number, pad = 0.2): boolean {
-    for (const c of this.near(x, z)) if (this.footprintDist(c, x, z) < pad) return true;
+    for (const c of this.near(x, z)) if (!c.off && this.footprintDist(c, x, z) < pad) return true;
     return false;
   }
 
@@ -69,7 +71,7 @@ export class CollisionWorld {
   groundAt(x: number, z: number, feetY: number): number {
     let g = this.terrain.heightAt(x, z);
     for (const c of this.near(x, z)) {
-      if (!c.walkable || c.y1 > feetY + STEP + 0.01 || c.y1 <= g) continue;
+      if (c.off || !c.walkable || c.y1 > feetY + STEP + 0.01 || c.y1 <= g) continue;
       if (this.footprintDist(c, x, z) <= 0.05) g = c.y1;
     }
     return g;
@@ -78,7 +80,7 @@ export class CollisionWorld {
   /** 身体（脚 + STEP 到头顶）是否与不可通行的碰撞体相交 */
   blocked(x: number, z: number, feetY: number): boolean {
     for (const c of this.near(x, z)) {
-      if (c.y1 <= feetY + STEP || c.y0 >= feetY + HEIGHT) continue;
+      if (c.off || c.y1 <= feetY + STEP || c.y0 >= feetY + HEIGHT) continue;
       if (this.footprintDist(c, x, z) < RADIUS) return true;
     }
     return false;
@@ -106,7 +108,15 @@ export class Walker {
   private dashDir = new THREE.Vector2();
   private carry = new THREE.Vector2();
 
-  constructor(private readonly world: CollisionWorld) {}
+  /**
+   * bound：到可玩区边界的有符号距离（区内为负），softBoundary：超出多少米开始起风把人推回去。
+   * 默认是 4-1 的盆地轮廓；4-2 传峡谷坡顶。
+   */
+  constructor(
+    private readonly world: CollisionWorld,
+    private readonly bound: (x: number, z: number) => number = basinDistance,
+    private readonly softBoundary = MAP.softBoundary,
+  ) {}
 
   place(x: number, z: number, y?: number): void {
     this.feet.set(x, y ?? this.world.groundAt(x, z, 1e4), z);
@@ -164,15 +174,21 @@ export class Walker {
     for (let s = 0; s < n; s++) {
       const sx = (vx * dt) / n, sz = (vz * dt) / n;
       if (!this.tryMove(sx, sz)) {
-        if (!this.tryMove(sx, 0)) this.tryMove(0, sz);
+        // 先按坐标轴分开试；斜着的窄桥、栈道扶手两个轴都会被挡，再把这一步转 ±25° / ±50° 贴着扶手滑过去
+        if (!this.tryMove(sx, 0) && !this.tryMove(0, sz)) {
+          for (const a of [0.44, -0.44, 0.87, -0.87]) {
+            const c = Math.cos(a), s = Math.sin(a);
+            if (this.tryMove((sx * c - sz * s) * c, (sx * s + sz * c) * c)) break;
+          }
+        }
       }
     }
     // 软边界：离开盆地太远就起风雪，把人往盆地里推
-    const d = basinDistance(this.feet.x, this.feet.z);
-    this.wind = Math.min(1, Math.max(0, (d - MAP.softBoundary) / 14));
+    const d = this.bound(this.feet.x, this.feet.z);
+    this.wind = Math.min(1, Math.max(0, (d - this.softBoundary) / 14));
     if (this.wind > 0) {
       const e = 1.5, x = this.feet.x, z = this.feet.z;
-      const gx = basinDistance(x + e, z) - basinDistance(x - e, z), gz = basinDistance(x, z + e) - basinDistance(x, z - e);
+      const gx = this.bound(x + e, z) - this.bound(x - e, z), gz = this.bound(x, z + e) - this.bound(x, z - e);
       const gl = Math.hypot(gx, gz) || 1;
       const push = (4 + 18 * this.wind) * dt;
       this.tryMove((-gx / gl) * push, (-gz / gl) * push, true);
@@ -204,7 +220,9 @@ export class Walker {
     if (dx === 0 && dz === 0) return true;
     const x = this.feet.x + dx, z = this.feet.z + dz;
     if (this.world.blocked(x, z, this.feet.y)) return false;
-    if (this.world.terrain.waterDepthAt(x, z) > 1.1 && this.world.terrain.waterDepthAt(this.feet.x, this.feet.z) <= 1.1) return false;
+    // 深水走不进去（人在水面附近时才算；桥面、栈道高高在上，下面是深水也照走）
+    const T = this.world.terrain;
+    if (T.waterDepthAt(x, z) > 1.1 && T.waterDepthAt(this.feet.x, this.feet.z) <= 1.1 && this.feet.y < T.waterLevelAt(x, z) + 1) return false;
     if (forced) { this.feet.x = x; this.feet.z = z; return true; }
     // 空中也一样：前方地面高过脚底 STEP 就是撞墙，不能吸附上去
     if (!this.grounded && this.world.groundAt(x, z, this.feet.y) > this.feet.y + STEP + 0.01) return false;

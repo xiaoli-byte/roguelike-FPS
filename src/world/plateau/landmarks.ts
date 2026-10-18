@@ -9,7 +9,8 @@ import { FLAG_COLORS, FlagSystem } from './flags';
 import { GeoBuilder, mat4 } from './geo';
 import { waterMaterial } from './fx';
 import { materials, patchMaterial, textTexture, type MaterialKey } from './materials';
-import { FIRES_TO_UNLOCK, FLAG_LINES, PLACEMENTS, type LandmarkKind, type Placement } from './spec';
+import type { HeightGrid } from './grid';
+import { FIRES_TO_UNLOCK, FLAG_LINES, PLACEMENTS, type FlagLine, type LandmarkKind, type Placement } from './spec';
 import type { Terrain } from './terrain';
 import type { CollisionWorld } from './walker';
 
@@ -21,7 +22,8 @@ export interface MapIcon { name: string; x: number; z: number; kind: LandmarkKin
 export const FIRE_STATE = { lit: 0 };
 
 export interface BuildCtx {
-  terrain: Terrain;
+  /** 4-1 的盆地或 4-2 的峡谷；roadNearest 让房子、经幡避开路面 */
+  terrain: HeightGrid & { roadNearest(x: number, z: number): { d: number } };
   b: GeoBuilder;
   flags: FlagSystem;
   world: CollisionWorld;
@@ -34,7 +36,7 @@ export interface BuildCtx {
   conductors?: THREE.Vector3[];
 }
 
-const C = {
+export const C = {
   stone: '#f1ede6', stoneDark: '#cec6ba', white: '#ffffff', chorten: '#f7f4ee',
   ochre: '#963625', black: '#1b1917', wood: '#ffffff', woodPale: '#e6c9a6', woodDark: '#5a2e1f',
   gold: '#e8b43c', red: '#b8322b', blue: '#2c5fb8', green: '#2f8f4c', yellow: '#e2b830',
@@ -44,37 +46,37 @@ const C = {
 
 // ───────────────────────────── 局部工具 ─────────────────────────────
 
-interface Here { x: number; y: number; z: number; yaw: number }
+export interface Here { x: number; y: number; z: number; yaw: number }
 
 function yawOf(p: Placement): number {
   if (p.face) return Math.atan2(p.face[0] - p.x, p.face[1] - p.z);
   return p.yaw ?? 0;
 }
 
-function ground(ctx: BuildCtx, p: Placement, hx: number, hz: number, sink = 0.08): Here {
+export function ground(ctx: BuildCtx, p: Placement, hx: number, hz: number, sink = 0.08): Here {
   const yaw = yawOf(p);
   return { x: p.x, z: p.z, yaw, y: ctx.terrain.footprintMin(p.x, p.z, hx, hz, yaw) - sink };
 }
 
-function frame(ctx: BuildCtx, h: Here): void { ctx.b.setFrame(h.x, h.y, h.z, h.yaw); }
+export function frame(ctx: BuildCtx, h: Here): void { ctx.b.setFrame(h.x, h.y, h.z, h.yaw); }
 
 /** 局部坐标下的碰撞方块（y 相对底面） */
-function boxC(ctx: BuildCtx, h: Here, lx: number, lz: number, hx: number, hz: number, y0: number, y1: number, walkable: boolean, lyaw = 0): void {
+export function boxC(ctx: BuildCtx, h: Here, lx: number, lz: number, hx: number, hz: number, y0: number, y1: number, walkable: boolean, lyaw = 0): void {
   const w = ctx.b.world(lx, 0, lz);
   ctx.world.add({ kind: 'box', x: w.x, z: w.z, hx, hz, yaw: h.yaw + lyaw, y0: h.y + y0, y1: h.y + y1, walkable });
 }
 
-function cylC(ctx: BuildCtx, h: Here, lx: number, lz: number, r: number, y0: number, y1: number, walkable = false): void {
+export function cylC(ctx: BuildCtx, h: Here, lx: number, lz: number, r: number, y0: number, y1: number, walkable = false): void {
   const w = ctx.b.world(lx, 0, lz);
   ctx.world.add({ kind: 'cyl', x: w.x, z: w.z, r, y0: h.y + y0, y1: h.y + y1, walkable });
 }
 
-function part(b: GeoBuilder, key: MaterialKey, geo: THREE.BufferGeometry, color: THREE.ColorRepresentation, M: THREE.Matrix4, sub?: THREE.Matrix4): void {
+export function part(b: GeoBuilder, key: MaterialKey, geo: THREE.BufferGeometry, color: THREE.ColorRepresentation, M: THREE.Matrix4, sub?: THREE.Matrix4): void {
   b.add(key, geo, color, sub ? M.clone().multiply(sub) : M);
 }
 
 /** 藏式窗：黑色梯形窗套 + 木窗 + 三色窗楣布 + 小檐。窗面朝局部 +z，M 给出墙面上的位置与朝向 */
-function tibetWindow(b: GeoBuilder, M: THREE.Matrix4, w: number, h: number, door = false): void {
+export function tibetWindow(b: GeoBuilder, M: THREE.Matrix4, w: number, h: number, door = false): void {
   const wb = w + 0.55, wt = w + 0.2, H = h + 0.3;
   const shape = new THREE.Shape();
   shape.moveTo(-wb / 2, -0.15); shape.lineTo(wb / 2, -0.15); shape.lineTo(wt / 2, H - 0.15); shape.lineTo(-wt / 2, H - 0.15); shape.closePath();
@@ -86,7 +88,7 @@ function tibetWindow(b: GeoBuilder, M: THREE.Matrix4, w: number, h: number, door
 }
 
 /** 四角白石（嘉绒民居和碉楼屋顶四角的白色台座） */
-function cornerHorn(b: GeoBuilder, x: number, y: number, z: number): void {
+export function cornerHorn(b: GeoBuilder, x: number, y: number, z: number): void {
   b.box('whitewash', 0.7, 0.55, 0.7, C.white, x, y, z);
   b.box('whitewash', 0.45, 0.4, 0.45, C.white, x, y + 0.55, z);
   b.rock('plain', 0.18, '#fbfbf7', x, y + 0.95, z, 0.9, x * 3 + z);
@@ -99,7 +101,7 @@ function miniChorten(b: GeoBuilder, x: number, y: number, z: number, s = 1): voi
   b.cyl('gold', 0.04 * s, 0.13 * s, 0.7 * s, C.gold, x, y + 1.65 * s, z, 8);
 }
 
-function flagPole(ctx: BuildCtx, x: number, z: number, height: number, banner = false): THREE.Vector3 {
+export function flagPole(ctx: BuildCtx, x: number, z: number, height: number, banner = false): THREE.Vector3 {
   const y = ctx.terrain.heightAt(x, z) - 0.2;
   ctx.b.clearFrame();
   ctx.b.cyl('wood', 0.07, 0.1, height + 0.2, C.woodPale, x, y, z, 6);
@@ -977,7 +979,7 @@ const BUILDERS: Partial<Record<LandmarkKind, (ctx: BuildCtx, p: Placement) => vo
 
 // ───────────────────────────── 道路附属：木桥、挡土墙 ─────────────────────────────
 
-function bridges(ctx: BuildCtx): void {
+function bridges(ctx: BuildCtx & { terrain: Terrain }): void {
   for (const br of ctx.terrain.bridges) bridge(ctx, br);
 }
 
@@ -1000,7 +1002,7 @@ function bridge(ctx: BuildCtx, br: Terrain['bridges'][number]): void {
   ctx.icons.push({ name: br.road ? '桥' : '木桥', x: br.x, z: br.z, kind: 'bridge' });
 }
 
-function retainingWalls(ctx: BuildCtx): void {
+function retainingWalls(ctx: BuildCtx & { terrain: Terrain }): void {
   const b = ctx.b;
   for (const w of ctx.terrain.walls) {
     const h: Here = { x: w.x, z: w.z, yaw: w.yaw, y: w.bottom };
@@ -1016,17 +1018,16 @@ function retainingWalls(ctx: BuildCtx): void {
 
 // ───────────────────────────── 入口 ─────────────────────────────
 
-export function buildLandmarks(ctx: BuildCtx): void {
-  altarIndex = 0;
-  for (const p of PLACEMENTS) {
+function place(ctx: BuildCtx, placements: readonly Placement[]): void {
+  for (const p of placements) {
     const fn = BUILDERS[p.kind];
     if (fn) fn(ctx, p);
     ctx.b.clearFrame();
   }
-  bridges(ctx);
-  retainingWalls(ctx);
-  ctx.b.clearFrame();
-  for (const line of FLAG_LINES) {
+}
+
+function stringFlags(ctx: BuildCtx, lines: readonly FlagLine[]): void {
+  for (const line of lines) {
     const ga = ctx.terrain.heightAt(line.a[0], line.a[1]), gb = ctx.terrain.heightAt(line.b[0], line.b[1]);
     if (line.poles) {
       flagPole(ctx, line.a[0], line.a[1], line.ha + 0.3);
@@ -1034,6 +1035,24 @@ export function buildLandmarks(ctx: BuildCtx): void {
     }
     ctx.flags.addLine(new THREE.Vector3(line.a[0], ga + line.ha, line.a[1]), new THREE.Vector3(line.b[0], gb + line.hb, line.b[1]), { sag: line.sag ?? 0.06 });
   }
+}
+
+/** 4-1：spec 里的全部地标、天路的木桥与挡土墙、经幡绳 */
+export function buildLandmarks(ctx: BuildCtx & { terrain: Terrain }): void {
+  altarIndex = 0;
+  place(ctx, PLACEMENTS);
+  bridges(ctx);
+  retainingWalls(ctx);
+  ctx.b.clearFrame();
+  stringFlags(ctx, FLAG_LINES);
+  ctx.b.clearFrame();
+}
+
+/** 别的图（4-2）复用这套地标：按给定的摆放表和经幡绳搭，灵火坛按摆放顺序编号 */
+export function buildPlacements(ctx: BuildCtx, placements: readonly Placement[], lines: readonly FlagLine[] = []): void {
+  altarIndex = 0;
+  place(ctx, placements);
+  stringFlags(ctx, lines);
   ctx.b.clearFrame();
 }
 

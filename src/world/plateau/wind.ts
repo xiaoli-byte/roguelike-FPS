@@ -18,7 +18,13 @@ const smooth = (a: number, b: number, x: number): number => {
 
 export interface WindSample { dx: number; dz: number; strength: number }
 
+let field: ((x: number, z: number) => WindSample) | null = null;
+
+/** 换一张图的风场（4-2 的峡谷风）；不调用就是 4-1 飞廉的风场 */
+export function setWindField(f: ((x: number, z: number) => WindSample) | null): void { field = f; }
+
 export function windAt(x: number, z: number): WindSample {
+  if (field) return field(x, z);
   const bl = Math.hypot(WIND.base[0], WIND.base[1]);
   const bx = WIND.base[0] / bl, bz = WIND.base[1] / bl;
   const tx = WIND.lair[0] - x, tz = WIND.lair[1] - z;

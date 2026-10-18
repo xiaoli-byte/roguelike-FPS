@@ -6,14 +6,14 @@
  */
 import * as THREE from 'three';
 import { WORLD_UNIFORMS } from './materials';
-import type { Terrain } from './terrain';
+import type { HeightGrid } from './grid';
 
 export interface WeatherRig {
   scene: THREE.Scene; sun: THREE.DirectionalLight; hemi: THREE.HemisphereLight; fog: THREE.Fog;
   clearFog: { color: THREE.Color; near: number; far: number }; stormFog: THREE.Color;
 }
 
-interface Strike { at: THREE.Vector3; t: number; ring: THREE.Mesh; bolt: THREE.Group | null }
+interface Strike { at: THREE.Vector3; t: number; ring: THREE.Mesh; bolt: THREE.Group | null; conductor: THREE.Vector3 | null }
 
 const RAIN = 2600;
 
@@ -34,7 +34,12 @@ export class Weather {
   private readonly hemiBase: number;
   private seed = 9;
 
-  constructor(private readonly rig: WeatherRig, private readonly terrain: Terrain, private readonly conductors: THREE.Vector3[]) {
+  /** 落雷劈下来的那一刻（at = 落点；导体被劈中时 conductor 是那个导体） */
+  onStrike: ((at: THREE.Vector3, conductor: THREE.Vector3 | null) => void) | null = null;
+  /** 大导体（4-2 的铁索桥）：给一个落点，返回要把雷引过去的导体点（不引就返回 null）；4-1 不用 */
+  attract: ((x: number, z: number, r: number) => THREE.Vector3 | null) | null = null;
+
+  constructor(private readonly rig: WeatherRig, private readonly terrain: HeightGrid, private readonly conductors: THREE.Vector3[]) {
     this.sunBase = rig.sun.intensity;
     this.hemiBase = rig.hemi.intensity;
     this.rainPos = new Float32Array(RAIN * 6);
@@ -112,10 +117,12 @@ export class Weather {
     const a = this.rand() * Math.PI * 2, d = 20 + this.rand() * 90;
     const x = camera.x + Math.cos(a) * d, z = camera.z + Math.sin(a) * d;
     let at = new THREE.Vector3(x, this.terrain.heightAt(x, z), z);
-    let best = 8;
-    for (const c of this.conductors) {
+    let best = 8, hit: THREE.Vector3 | null = null;
+    const pulled = this.attract?.(x, z, this.rand());
+    if (pulled) { at = pulled.clone(); hit = pulled; }
+    else for (const c of this.conductors) {
       const dd = Math.hypot(c.x - x, c.z - z);
-      if (dd < best) { best = dd; at = c.clone(); }
+      if (dd < best) { best = dd; at = c.clone(); hit = c; }
     }
     const ring = new THREE.Mesh(this.ringGeo, new THREE.MeshBasicMaterial({
       color: '#ff5ad8', transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide,
@@ -124,7 +131,7 @@ export class Weather {
     const gy = this.terrain.heightAt(at.x, at.z);
     ring.position.set(at.x, gy + 0.15, at.z);
     this.rig.scene.add(ring);
-    this.strikes.push({ at, t: 0, ring, bolt: null });
+    this.strikes.push({ at, t: 0, ring, bolt: null, conductor: hit });
   }
 
   private tick(k: Strike, dt: number): void {
@@ -137,6 +144,7 @@ export class Weather {
       k.bolt = this.bolt(k.at);
       this.rig.scene.add(k.bolt);
       this.flash = 1;
+      this.onStrike?.(k.at, k.conductor);
     }
     if (k.bolt) {
       const age = k.t - 1.2;

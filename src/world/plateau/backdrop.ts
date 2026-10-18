@@ -103,7 +103,10 @@ function colorFor(out: THREE.Color, y: number, slope: number, snowLine: number, 
 }
 
 /** 单座山峰：径向网格；ridges 条主山脊把圆锥切成金字塔；sharp 越大越尖 */
-function peak(o: { x: number; z: number; height: number; radius: number; ridges: number; sharp: number; seed: number; snow: number; green: number }): THREE.BufferGeometry {
+/** 一座远山：位置、高度、底半径、山脊数、尖锐度、噪声种子、雪线（占高度的比例，>1 无雪）、绿坡比例 */
+export interface PeakSpec { x: number; z: number; height: number; radius: number; ridges: number; sharp: number; seed: number; snow: number; green: number }
+
+function peak(o: PeakSpec): THREE.BufferGeometry {
   const rings = 34, segs = 72;
   const pos: number[] = [], col: number[] = [], idx: number[] = [];
   const c = new THREE.Color();
@@ -249,24 +252,26 @@ export function buildFarTerrain(terrain: Terrain): THREE.Mesh {
   return mesh;
 }
 
-export function buildMountains(): THREE.Group {
+/** 4-1 的远山：贡嘎主峰在北偏东，周围一圈雪峰，南面是绿色远丘 */
+export const PLATEAU_PEAKS: PeakSpec[] = [
+  { x: GONGGA.x, z: GONGGA.z, height: GONGGA.height, radius: GONGGA.radius, ridges: 3, sharp: 1.55, seed: 1.3, snow: 0.38, green: 0 },
+  { x: 230, z: -1560, height: 430, radius: 560, ridges: 4, sharp: 1.3, seed: 2.1, snow: 0.45, green: 0.2 },
+  { x: 720, z: -1880, height: 520, radius: 640, ridges: 3, sharp: 1.4, seed: 3.7, snow: 0.42, green: 0 },
+  { x: 940, z: -1460, height: 380, radius: 560, ridges: 4, sharp: 1.2, seed: 4.4, snow: 0.5, green: 0.2 },
+  { x: 40, z: -1760, height: 360, radius: 600, ridges: 3, sharp: 1.25, seed: 5.2, snow: 0.5, green: 0.2 },
+  { x: 580, z: -1360, height: 250, radius: 460, ridges: 5, sharp: 1.15, seed: 6.6, snow: 0.6, green: 0.35 },
+  { x: 1350, z: -760, height: 300, radius: 560, ridges: 4, sharp: 1.3, seed: 7.9, snow: 0.5, green: 0.2 },
+  { x: -950, z: -1050, height: 260, radius: 620, ridges: 4, sharp: 1.15, seed: 8.3, snow: 0.6, green: 0.4 },
+  { x: -1150, z: 560, height: 170, radius: 700, ridges: 5, sharp: 1.0, seed: 9.1, snow: 1.4, green: 1 },
+  { x: 220, z: 1300, height: 150, radius: 760, ridges: 5, sharp: 1.0, seed: 10.4, snow: 1.4, green: 1 },
+];
+
+export function buildMountains(peaks: readonly PeakSpec[] = PLATEAU_PEAKS): THREE.Group {
   const group = new THREE.Group();
   group.name = 'mountains';
   const mat = patchMaterial(new THREE.MeshLambertMaterial({ vertexColors: true, side: THREE.DoubleSide }));
   const ringMesh = new THREE.Mesh(ring(), mat);
   group.add(ringMesh);
-  const peaks = [
-    { x: GONGGA.x, z: GONGGA.z, height: GONGGA.height, radius: GONGGA.radius, ridges: 3, sharp: 1.55, seed: 1.3, snow: 0.38, green: 0 },
-    { x: 230, z: -1560, height: 430, radius: 560, ridges: 4, sharp: 1.3, seed: 2.1, snow: 0.45, green: 0.2 },
-    { x: 720, z: -1880, height: 520, radius: 640, ridges: 3, sharp: 1.4, seed: 3.7, snow: 0.42, green: 0 },
-    { x: 940, z: -1460, height: 380, radius: 560, ridges: 4, sharp: 1.2, seed: 4.4, snow: 0.5, green: 0.2 },
-    { x: 40, z: -1760, height: 360, radius: 600, ridges: 3, sharp: 1.25, seed: 5.2, snow: 0.5, green: 0.2 },
-    { x: 580, z: -1360, height: 250, radius: 460, ridges: 5, sharp: 1.15, seed: 6.6, snow: 0.6, green: 0.35 },
-    { x: 1350, z: -760, height: 300, radius: 560, ridges: 4, sharp: 1.3, seed: 7.9, snow: 0.5, green: 0.2 },
-    { x: -950, z: -1050, height: 260, radius: 620, ridges: 4, sharp: 1.15, seed: 8.3, snow: 0.6, green: 0.4 },
-    { x: -1150, z: 560, height: 170, radius: 700, ridges: 5, sharp: 1.0, seed: 9.1, snow: 1.4, green: 1 },
-    { x: 220, z: 1300, height: 150, radius: 760, ridges: 5, sharp: 1.0, seed: 10.4, snow: 1.4, green: 1 },
-  ];
   for (const p of peaks) group.add(new THREE.Mesh(peak(p), mat));
   return group;
 }

@@ -6,8 +6,8 @@
  */
 import * as THREE from 'three';
 import { GeoBuilder, mat4 } from './geo';
-import { ENCOUNTERS, ROAMER, type MonsterKind } from './spec';
-import type { Terrain } from './terrain';
+import type { HeightGrid } from './grid';
+import { ENCOUNTERS, ROAMER, type Encounter, type MonsterKind, type V2 } from './spec';
 
 export interface Monster { kind: MonsterKind; root: THREE.Group; update(t: number, dt: number): void }
 
@@ -367,8 +367,16 @@ function make(kind: MonsterKind, seed: number, sentinel = false): Monster {
 
 export interface MonsterField { group: THREE.Group; monsters: Monster[]; update(t: number, dt: number): void }
 
-/** 按遇敌表摆怪：天狗绕群中心转圈巡视，其余原地待机；穷奇沿巡视路线走 */
-export function buildMonsters(terrain: Terrain): MonsterField {
+/** 游猎精英：沿闭合路线巡视 */
+export interface Roamer { kind: MonsterKind; speed: number; path: V2[] }
+
+/**
+ * 按遇敌表摆怪：天狗绕群中心转圈巡视，其余原地待机；穷奇沿巡视路线走。
+ * ground：怪站的地面高度（默认地形；4-2 传「地形或桥面 / 栈道」）。
+ */
+export function buildMonsters(
+  terrain: Pick<HeightGrid, 'heightAt'>, encounters: readonly Encounter[] = ENCOUNTERS, roamer: Roamer | null = ROAMER,
+): MonsterField {
   const group = new THREE.Group();
   group.name = 'monsters';
   const monsters: Monster[] = [];
@@ -376,13 +384,13 @@ export function buildMonsters(terrain: Terrain): MonsterField {
   let seed = 1;
   // 啸獭洞口：小土堆 + 黑洞
   const mounds = new GeoBuilder();
-  for (const e of ENCOUNTERS) for (const [x, z] of e.burrows ?? []) {
+  for (const e of encounters) for (const [x, z] of e.burrows ?? []) {
     const y = terrain.heightAt(x, z);
     mounds.lathe('plain', [[0, 0], [0.9, 0], [0.55, 0.28], [0.3, 0.32], [0, 0.3]], '#7d6448', x, y - 0.05, z, 10);
     mounds.add('plain', new THREE.CircleGeometry(0.22, 10), '#1a1410', mat4(x, y + 0.31, z, 0, -Math.PI / 2));
   }
   if (!mounds.isEmpty()) group.add(mounds.build('burrows'));
-  for (const e of ENCOUNTERS) {
+  for (const e of encounters) {
     const tiangou = e.units.filter(u => u.kind === 'tiangou');
     const cx = tiangou.reduce((s, u) => s + u.at[0], 0) / Math.max(1, tiangou.length);
     const cz = tiangou.reduce((s, u) => s + u.at[2], 0) / Math.max(1, tiangou.length);
@@ -407,21 +415,23 @@ export function buildMonsters(terrain: Terrain): MonsterField {
     });
   }
   // 穷奇沿闭合路线巡视
-  const roam = make(ROAMER.kind, 99);
-  const path = ROAMER.path.map(([x, z]) => new THREE.Vector2(x, z));
-  const lens = path.map((p, i) => p.distanceTo(path[(i + 1) % path.length]));
-  const total = lens.reduce((a, b) => a + b, 0);
-  group.add(roam.root);
-  monsters.push(roam);
-  movers.push((t) => {
-    let d = (t * ROAMER.speed) % total, i = 0;
-    while (d > lens[i]) { d -= lens[i]; i++; }
-    const a = path[i], b = path[(i + 1) % path.length];
-    const k = d / lens[i];
-    const x = a.x + (b.x - a.x) * k, z = a.y + (b.y - a.y) * k;
-    roam.root.position.set(x, terrain.heightAt(x, z), z);
-    roam.root.rotation.y = Math.atan2(b.x - a.x, b.y - a.y);
-  });
+  if (roamer) {
+    const roam = make(roamer.kind, 99);
+    const path = roamer.path.map(([x, z]) => new THREE.Vector2(x, z));
+    const lens = path.map((p, i) => p.distanceTo(path[(i + 1) % path.length]));
+    const total = lens.reduce((a, b) => a + b, 0);
+    group.add(roam.root);
+    monsters.push(roam);
+    movers.push((t) => {
+      let d = (t * roamer.speed) % total, i = 0;
+      while (d > lens[i]) { d -= lens[i]; i++; }
+      const a = path[i], b = path[(i + 1) % path.length];
+      const k = d / lens[i];
+      const x = a.x + (b.x - a.x) * k, z = a.y + (b.y - a.y) * k;
+      roam.root.position.set(x, terrain.heightAt(x, z), z);
+      roam.root.rotation.y = Math.atan2(b.x - a.x, b.y - a.y);
+    });
+  }
   group.traverse(o => { if ((o as THREE.Mesh).isMesh) { o.castShadow = true; o.receiveShadow = true; } });
   return {
     group, monsters,

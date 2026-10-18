@@ -6,7 +6,8 @@
  */
 import * as THREE from 'three';
 import { patchMaterial } from './materials';
-import { fbm, smoothstep, type Terrain } from './terrain';
+import type { HeightGrid } from './grid';
+import { fbm, smoothstep } from './terrain';
 
 type Rand = () => number;
 
@@ -136,7 +137,7 @@ export class GrassField {
   instances = 0;
 
   constructor(
-    private readonly terrain: Terrain,
+    private readonly terrain: HeightGrid,
     private readonly occupied: (x: number, z: number) => boolean,
     private readonly size = 32,
     /** 流式半径；画质设置会改它 */
@@ -229,7 +230,7 @@ export class GrassField {
 
 export interface ScatterStats { bushes: number; rocks: number }
 
-export function buildStaticScatter(terrain: Terrain, occupied: (x: number, z: number) => boolean): { group: THREE.Group; stats: ScatterStats } {
+export function buildStaticScatter(terrain: HeightGrid, occupied: (x: number, z: number) => boolean): { group: THREE.Group; stats: ScatterStats } {
   const group = new THREE.Group();
   group.name = 'scatter-static';
   const r = rng(20261019);

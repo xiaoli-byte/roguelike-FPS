@@ -16,6 +16,8 @@ export const WORLD_UNIFORMS = {
   /** 风场：飞廉巢穴 (x, z, 影响半径) 与基础风向（spec.WIND，见 wind.ts） */
   uWindLair: { value: new THREE.Vector3(WIND.lair[0], WIND.lair[1], WIND.radius) },
   uWindBase: { value: new THREE.Vector2(WIND.base[0], WIND.base[1]).normalize() },
+  /** 全图阵风 0..1（4-2 的峡谷风）：经幡抖得更快更猛；4-1 不用，一直是 0 */
+  uGust: { value: 0 },
 };
 
 const NOISE_GLSL = /* glsl */ `
@@ -60,15 +62,16 @@ export function patchMaterial<T extends THREE.Material>(mat: T, opts: PatchOptio
     vs = vs.replace('#include <common>', `#include <common>
 uniform float uTime;
 varying vec3 vPfWorld;
-${opts.flutter ? 'attribute float aFlap; attribute float aPhase; attribute vec3 aWind; attribute float aGust;' : ''}
+${opts.flutter ? 'attribute float aFlap; attribute float aPhase; attribute vec3 aWind; attribute float aGust; uniform float uGust;' : ''}
 ${opts.sway ? 'uniform vec3 uWindLair; uniform vec2 uWindBase;' : ''}
 ${opts.splat ? 'attribute vec4 aMat; varying vec4 vMat; varying vec3 vPfN;' : ''}`);
     let begin = '#include <begin_vertex>';
     if (opts.flutter) begin += `
 {
-  // 风强（aGust）越大抖得越快越猛
-  float w = sin(uTime * (5.5 + 7.0 * aGust) + aPhase + aFlap * 2.6) * (0.45 + 0.3 * aGust) + sin(uTime * (9.1 + 8.0 * aGust) + aPhase * 1.7) * 0.15;
-  transformed += aWind * aFlap * (0.62 + w);
+  // 风强（aGust，加上全图阵风 uGust）越大抖得越快越猛
+  float gu = min(1.0, aGust + uGust);
+  float w = sin(uTime * (5.5 + 7.0 * gu) + aPhase + aFlap * 2.6) * (0.45 + 0.3 * gu) + sin(uTime * (9.1 + 8.0 * gu) + aPhase * 1.7) * 0.15;
+  transformed += aWind * aFlap * (0.62 + w + uGust * 0.5);
   transformed.y += aFlap * 0.06 * sin(uTime * 7.3 + aPhase);
 }`;
     if (opts.sway) begin += `
