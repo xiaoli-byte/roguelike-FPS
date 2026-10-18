@@ -123,6 +123,7 @@ namespace Spiritfire.Game
             state = State.Open;
             t = 0;
             ShotFx.Instance?.Impact(Focus, Vector3.up, true, 3f);
+            GameAudio.PlayAt("chest_open", Focus);
         }
 
         static float EaseOutBack(float k)
@@ -145,7 +146,11 @@ namespace Spiritfire.Game
                     }
                     else
                     {
-                        if (root.localPosition.y > 0) ShotFx.Instance?.Impact(basePos, Vector3.up, false, 3f);
+                        if (root.localPosition.y > 0)
+                        {
+                            ShotFx.Instance?.Impact(basePos, Vector3.up, false, 3f);
+                            GameAudio.PlayAt("land", basePos, 0.8f, 0.7f);
+                        }
                         root.localPosition = Vector3.zero;
                         float k = Mathf.Clamp01((t - DropTime) / (SettleTime - DropTime));
                         float squash = Mathf.Sin(k * Mathf.PI) * 0.14f * (1 - k);

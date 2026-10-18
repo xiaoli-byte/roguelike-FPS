@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>音频烘焙</title>
+<style>
+html,body{margin:0;background:#11161c;color:#e8e2d2;font:13px "Microsoft YaHei","PingFang SC",monospace}
+#wrap{padding:16px 20px}
+h1{font-size:15px;margin:0 0 4px;color:#f3dfb0}
+.sub{color:#9aa9b4;margin-bottom:12px;line-height:1.6}
+#log div{padding:1px 0;color:#c3ccd2}
+#log .ok{color:#8fd18a}#log .bad{color:#ff8a7a}
+</style>
+</head>
+<body>
+<div id="wrap">
+<h1>音频烘焙：Three.js 合成音效 / 配乐 → WAV</h1>
+<div class="sub">先运行 <code>python -I scripts/audio/bake_receiver.py &lt;输出目录&gt;</code>，再打开本页；完成后 <code>python -I scripts/audio/bake.py &lt;输出目录&gt;</code> 转 ogg 放进 Unity。</div>
+<div id="log"></div>
+</div>
+<script type="module" src="/src/dev/audioBake.ts"></script>
+</body>
+</html>

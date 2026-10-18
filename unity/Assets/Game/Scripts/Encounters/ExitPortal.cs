@@ -84,6 +84,7 @@ namespace Spiritfire.Game
             if (!open || used) return;
             used = true;
             ShotFx.Instance?.Impact(Focus, Vector3.up, false, 8f);
+            GameAudio.Play("portal");
             GameSession.Instance?.CompleteStage(nextStage);
         }
     }

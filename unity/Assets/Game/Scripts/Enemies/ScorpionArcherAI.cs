@@ -54,6 +54,7 @@ namespace Spiritfire.Game
                     if (burrowCd <= 0 && d < BurrowTrigger && FindExit(out tunnelTarget))
                     {
                         Stop();
+                        Sfx("telegraph", 0.55f, 0.7f);
                         Play("dive", 0.06f);
                         SetState("dive");
                         break;
@@ -61,6 +62,7 @@ namespace Spiritfire.Game
                     if (d < SnapRange * Size && cooldown <= 0.6f && RequestAttack(AttackTokens.Kind.Melee, SnapWindup + 0.6f))
                     {
                         snapHit = false;
+                        Sfx("telegraph", 0.6f, 1.3f);
                         Stop();
                         PlayTimed("snapWindup", Windup(SnapWindup, 0.2f), 0.06f);
                         SetState("snapWindup");
@@ -128,6 +130,7 @@ namespace Spiritfire.Game
                     {
                         Stop();
                         SetModelVisible(true);
+                        Sfx("telegraph", 0.7f, 0.5f);
                         Play("emerge", 0.05f);
                         Telegraph.Circle(transform.position, EmergeRadius * Size, EmergeTime, new Color(0.9f, 0.75f, 0.45f));
                         emergeHit = false;
@@ -224,6 +227,7 @@ namespace Spiritfire.Game
                 return;
             }
             aimTime = Windup(time, 0.3f);
+            Sfx("telegraph", 0.5f, 1.6f);
             Stop();
             PlayTimed("aim", aimTime, 0.08f);
             SetState("aim");
@@ -242,6 +246,7 @@ namespace Spiritfire.Game
         void FireBolt(int index, int total)
         {
             var from = Muzzle();
+            GameAudio.PlayAt("enemy_shot", from, 0.6f);
             var chest = PlayerPos + Vector3.up * 1.1f;
             float flight = Vector3.Distance(from, chest) / BoltSpeed;
             Vector3 target;

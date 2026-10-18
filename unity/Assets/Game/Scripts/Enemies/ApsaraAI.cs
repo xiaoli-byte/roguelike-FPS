@@ -58,6 +58,7 @@ namespace Spiritfire.Game
         {
             if (!info.weakpoint || Silenced || Dead) return;
             pipaDamage += r.total;
+            if (pipaDamage < hp.maxHealth * PipaBreak) GameAudio.PlayAt("pipa_hit", info.point, 0.8f);
             if (pipaDamage < hp.maxHealth * PipaBreak) return;
             // 琴碎：沉默 20 s，打断正在念的曲子
             pipaDamage = 0;
@@ -66,6 +67,10 @@ namespace Spiritfire.Game
             if (body.WeakPoint) body.WeakPoint.gameObject.SetActive(false);
             ShotFx.Instance?.Impact(info.point, -info.direction, false, 6f);
             Hud.Instance?.Toast("琵琶已碎 · 邪飞天沉默");
+            // 断弦崩裂 + 哀鸣
+            GameAudio.PlayAt("pipa_snap", info.point, 1f, 0.8f);
+            GameAudio.PlayAt("shield_break", info.point, 0.9f, 1.5f);
+            Sfx("boss_roar", 0.45f, 2f);
             if (state != "hover")
             {
                 PlayLocomotion();
@@ -73,12 +78,31 @@ namespace Spiritfire.Game
             }
         }
 
+        // 轮指：每 0.6 s 弹旋律的下一个音（同 Three.js：D5 = 74 为基准，0 = 休止；十六轮一句）
+        static readonly int[] Melody = { 81, 78, 76, 74, 76, 78, 81, 0, 86, 83, 81, 78, 76, 78, 74, 0 };
+        const float Lunzhi = 0.6f;
+        float lunzhiAt;
+        int melodyStep;
+
+        void PlayMelody()
+        {
+            if (Silenced || Dead || state == "spawn" || Time.time < lunzhiAt) return;
+            lunzhiAt = Time.time + Lunzhi;
+            int note = Melody[melodyStep];
+            melodyStep = (melodyStep + 1) % Melody.Length;
+            if (note == 0) return;
+            float detune = 1 + Random.Range(-0.004f, 0.004f);
+            GameAudio.PlayAt("pipa_roll", TetherOrigin, 0.32f, Mathf.Pow(2, (note - 74) / 12f) * detune);
+        }
+
         protected override void Think(float dt)
         {
+            PlayMelody();
             if (!Silenced && pipa && !pipa.gameObject.activeSelf)
             {
                 // 琵琶重铸
                 pipa.gameObject.SetActive(true);
+                GameAudio.PlayAt("pipa_bloom", TetherOrigin, 0.7f, 0.9f);
                 if (body.WeakPoint) body.WeakPoint.gameObject.SetActive(true);
             }
             chordCd -= dt;
@@ -166,6 +190,7 @@ namespace Spiritfire.Game
             casting = spell;
             castTime = Windup(windup, 0.6f);
             PlayTimed(spell + "Windup", castTime, 0.1f);
+            GameAudio.PlayAt("pipa_roll", TetherOrigin, 0.55f, 1.2f);
             SetState("cast");
             Telegraph.Circle(transform.position, 1.2f, castTime, spell == "bless" ? new Color(1f, 0.8f, 0.3f) : new Color(0.6f, 1f, 0.75f));
         }
@@ -176,15 +201,18 @@ namespace Spiritfire.Game
             switch (spell)
             {
                 case "chord":
+                    GameAudio.PlayAt("pipa_chord", TetherOrigin, 0.9f);
                     foreach (var a in allies) a.AddTimedShield(a.maxHealth * 0.5f, 8f);
                     chordCd = Random.Range(7f, 9f);
                     break;
                 case "bloom":
+                    GameAudio.PlayAt("pipa_bloom", TetherOrigin, 0.85f);
                     foreach (var a in allies) a.Heal(a.maxHealth * 0.25f);
                     bloomCd = Random.Range(9f, 11f);
                     break;
                 case "bless":
                 {
+                    GameAudio.PlayAt("pipa_bless", TetherOrigin, 0.9f);
                     EnemyAI best = null;
                     float bestHp = -1;
                     foreach (var e in FindObjectsByType<EnemyAI>())

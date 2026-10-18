@@ -91,6 +91,7 @@ namespace Spiritfire.Game
             }
             Total = queue.Count;
             Hud.Instance?.Banner(title, 2f);
+            GameAudio.Play("wave_start");
             Hud.Instance?.SetObjective($"{title} · 剩余敌人 {Remaining}");
         }
 
@@ -142,6 +143,7 @@ namespace Spiritfire.Game
         {
             phase = Phase.Cleared;
             Hud.Instance?.Banner("区域肃清", 2.5f);
+            GameAudio.Play("stage_clear");
             Hud.Instance?.SetObjective("");
             Cleared?.Invoke(this);
             AnySiteCleared?.Invoke(this);

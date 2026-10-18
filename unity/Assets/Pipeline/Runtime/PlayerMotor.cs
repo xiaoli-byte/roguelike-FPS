@@ -54,6 +54,15 @@ namespace Spiritfire.Art
         /// <summary>剩余冲刺充能（含小数：0.5 = 下一格充了一半），HUD 读取</summary>
         public float DashChargeLevel => dashCharge;
         public event Action Dashed;
+        /// <summary>起跳（true = 空中再跳）</summary>
+        public event Action<bool> Jumped;
+        /// <summary>落地（下落速度 m/s，≥ 1.5 才算）</summary>
+        public event Action<float> Landed;
+        /// <summary>脚步：地面上每走 2.05 m 一步（同 Three.js CameraRig 的 STEP_LENGTH），参数 = 速度 / 移速</summary>
+        public event Action<float> Footstep;
+        const float StepLength = 2.05f;
+        float stepAcc, airFall;
+        bool wasGrounded = true;
 
         /// <summary>武器后坐：pitch / yaw 为角度（度），正 pitch = 枪口上抬</summary>
         public void AddRecoil(float pitchDeg, float yawDeg)
@@ -155,6 +164,7 @@ namespace Spiritfire.Art
                     velocity.y = canGround ? jumpVelocity : jumpVelocity * airJumpMult;
                     lastGrounded = -1;
                     lastJumpPress = -1;
+                    Jumped?.Invoke(!canGround);
                 }
             }
 
@@ -195,8 +205,24 @@ namespace Spiritfire.Art
             }
 
             groundNormal = Vector3.up;
+            if (!grounded) airFall = Mathf.Max(airFall, -velocity.y);
             var flags = cc.Move(velocity * dt);
             if ((flags & CollisionFlags.Above) != 0 && velocity.y > 0) velocity.y = 0;
+            // 落地 / 脚步（音效、镜头由玩法层订阅）
+            bool nowGrounded = cc.isGrounded;
+            if (nowGrounded && !wasGrounded && airFall >= 1.5f) Landed?.Invoke(airFall);
+            if (nowGrounded) airFall = 0;
+            wasGrounded = nowGrounded;
+            if (nowGrounded && !dashing)
+            {
+                float sp = new Vector3(velocity.x, 0, velocity.z).magnitude;
+                stepAcc += sp * dt;
+                if (stepAcc >= StepLength)
+                {
+                    stepAcc -= StepLength;
+                    Footstep?.Invoke(sp / Mathf.Max(1, walkSpeed));
+                }
+            }
         }
 
         void UpdateRecoil(float dt, float now)

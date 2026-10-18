@@ -152,6 +152,7 @@ namespace Spiritfire.Game
                     if (loco) loco.speedOverride = speed * SpeedMult;
                     if (!isDecoy && mirageCd <= 0 && sees && d <= MaxRange + 6 && Landed)
                     {
+                        Sfx("telegraph", 0.6f, 1.4f);
                         Stop();
                         Play("mirage", 0.08f);
                         SetState("mirage");
@@ -165,6 +166,7 @@ namespace Spiritfire.Game
                         if (isDecoy || RequestAttack(AttackTokens.Kind.Heavy, PuffTime + 1.2f))
                         {
                             windTime = Windup(PuffTime, 0.6f);
+                            Sfx("telegraph", 0.75f, 0.55f);
                             Stop();
                             PlayTimed("puff", windTime, 0.08f);
                             SetState("puff");
@@ -243,6 +245,7 @@ namespace Spiritfire.Game
         void Spit(int index)
         {
             var from = Mouth();
+            GameAudio.PlayAt("shot_launcher", from, 0.8f, 0.55f);
             var to = PlayerPos - from;
             to.y = 0;
             float T = Mathf.Clamp(1.2f + to.magnitude / 30f * 0.6f, 1.2f, 1.8f);

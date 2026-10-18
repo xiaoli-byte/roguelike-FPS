@@ -217,6 +217,7 @@ namespace Spiritfire.Game
                         Lightning.Spawn(c, CenterOf(hitList[i]), new Color(0.44f, 0.85f, 1f));
                     ShotFx.Instance?.Impact(c, Vector3.up, true, 9f);
                     ShotFx.Instance?.MuzzleFlash(c, 5f);
+                    GameAudio.PlayAt("shock_zap", c, 0.5f, 1.1f);
                     Telegraph.Wave(Ground(c), r, 18f, color);
                     break;
                 }
@@ -226,6 +227,8 @@ namespace Spiritfire.Game
                     var foot = alive ? e.transform.position : Ground(c);
                     SpawnPool(foot + Vector3.up * 0.05f, Radius(2.5f), b, p.depth);
                     ShotFx.Instance?.Impact(c, Vector3.up, true, 6f);
+                    GameAudio.PlayAt("skill_fire", c, 0.55f, 0.75f);
+                    GameAudio.PlayAt("corrode_tick", c, 0.7f);
                     break;
                 }
                 case Reaction.Veinseal:
@@ -251,10 +254,13 @@ namespace Spiritfire.Game
                     }
                     Telegraph.Wave(Ground(c), 1.6f, 8f, color);
                     ShotFx.Instance?.Impact(c + Vector3.up * 0.8f, Vector3.up, false, 3f);
+                    GameAudio.PlayAt("skill_shock", c, 0.5f, 0.8f);
+                    GameAudio.PlayAt("shock_zap", c, 0.6f, 0.7f);
                     break;
                 }
                 case Reaction.Abyss:
                 {
+                    GameAudio.PlayAt("hit_crit", c, 0.8f, 0.8f);
                     if (alive && p.cash > 0)
                     {
                         // 灼烧结清：普通持续伤害（不带反应标记）

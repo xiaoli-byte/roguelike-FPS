@@ -120,6 +120,7 @@ namespace Spiritfire.Game
             Destroy(panel.gameObject);
             Destroy(this);
             GameSession.Instance?.SetModal(false);
+            GameAudio.Play("scroll_get");
             onPick?.Invoke(choices[index]);
         }
     }

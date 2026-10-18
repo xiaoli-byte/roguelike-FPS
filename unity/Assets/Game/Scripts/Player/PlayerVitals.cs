@@ -40,6 +40,14 @@ namespace Spiritfire.Game
             shield = lastMaxShield = MaxShield;
             stats.Changed += OnStatsChanged;
             ApplyMotorStats();
+            // 身体动作的声音（同 Three.js PlayerController：起跳、落地按下落速度、冲刺、脚步按跑速）
+            if (motor)
+            {
+                motor.Jumped += air => GameAudio.Play("jump", air ? 0.8f : 0.7f, air ? 1.2f : 0.95f + UnityEngine.Random.value * 0.1f);
+                motor.Landed += fall => GameAudio.Play("land", Mathf.Clamp(0.25f + fall / 16f, 0.25f, 1f), Mathf.Clamp(1.15f - fall / 60f, 0.8f, 1.15f));
+                motor.Dashed += () => GameAudio.Play("dash", 0.8f, 0.95f + UnityEngine.Random.value * 0.1f);
+                motor.Footstep += run => GameAudio.Play("footstep", 0.35f + 0.25f * Mathf.Clamp(run, 0.4f, 1.3f), 0.9f + UnityEngine.Random.value * 0.2f);
+            }
         }
 
         void OnDestroy()
@@ -76,7 +84,18 @@ namespace Spiritfire.Game
             shield -= toShield;
             float toHealth = amount - toShield;
             health -= toHealth;
-            if (hadShield && shield <= 0) ShieldBroken?.Invoke();
+            // 受伤声：0.22 s 内只响一次，掉到生命时略尖
+            if (Time.time - lastHurtSound >= 0.22f)
+            {
+                lastHurtSound = Time.time;
+                GameAudio.Play("player_hurt", Mathf.Clamp(0.45f + amount / 40f, 0.45f, 1f), toHealth > 0 ? 1f : 1.15f);
+            }
+            regenerating = false;
+            if (hadShield && shield <= 0)
+            {
+                ShieldBroken?.Invoke();
+                GameAudio.Play("shield_break", 0.9f);
+            }
             if (health <= 0)
             {
                 health = 0;
@@ -107,11 +126,36 @@ namespace Spiritfire.Game
             motor.inputEnabled = true;
         }
 
+        float lastHurtSound = -1, heartbeat;
+        bool regenerating;
+
         void Update()
         {
             if (Dead) return;
             if (shield < MaxShield && Time.time - lastDamage >= stats.Get(Stat.ShieldRegenDelay))
+            {
+                // 开始回盾时响一声（同 Three.js shield_recharge）
+                if (!regenerating)
+                {
+                    regenerating = true;
+                    GameAudio.Play("shield_recharge", 0.6f);
+                }
                 shield = Mathf.Min(MaxShield, shield + stats.Get(Stat.ShieldRegenRate) * Time.deltaTime);
+            }
+            else if (shield >= MaxShield) regenerating = false;
+            // 低血量心跳：三成以下，血越少越急
+            float ratio = health / Mathf.Max(1, MaxHealth);
+            if (ratio < 0.3f)
+            {
+                heartbeat -= Time.deltaTime;
+                if (heartbeat <= 0)
+                {
+                    float t = ratio / 0.3f;
+                    GameAudio.Play("low_hp", Mathf.Lerp(1f, 0.55f, t));
+                    heartbeat = Mathf.Lerp(0.55f, 1f, t);
+                }
+            }
+            else heartbeat = 0;
         }
     }
 }

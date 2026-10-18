@@ -204,6 +204,7 @@ namespace Spiritfire.Game
         {
             if (!source || power <= 0) return;
             var from = ReactionSystem.CenterOf(source);
+            GameAudio.PlayAt("shock_zap", from, 0.65f, 0.9f + Random.value * 0.25f);
             var picked = ReactionSystem.Nearest(from, ShockChainRange, ShockChainTargets, source, true);
             foreach (var t in picked)
             {
@@ -237,6 +238,7 @@ namespace Spiritfire.Game
                     float sum = 0;
                     foreach (var s in burn) sum += s.power * BurnRatio;
                     Dot(sum, Element.Fire);
+                    GameAudio.PlayAt("burn_tick", transform.position + Vector3.up, 0.28f, 0.9f + Random.value * 0.2f);
                 }
                 for (int i = burn.Count - 1; i >= 0; i--)
                 {
@@ -258,6 +260,7 @@ namespace Spiritfire.Game
                 {
                     corrodeTimer += CorrodeTick;
                     Dot(corrodePower * CorrodeRatio, Element.Corrode);
+                    GameAudio.PlayAt("corrode_tick", transform.position + Vector3.up, 0.28f, 0.9f + Random.value * 0.2f);
                 }
                 corrodeRemaining -= dt;
                 if (corrodeRemaining <= 0) corrodePower = 0;

@@ -22,7 +22,7 @@ namespace Spiritfire.Game
 
         float chargeCd = 2f, windTime, chargeDist, trailAt, blockFxAt, pawFxAt, dazeFxAt;
         Telegraph.LineHandle lane;
-        bool enraged, chargeHit, recharge;
+        bool enraged, chargeHit, recharge, alerted;
         Vector3 chargeDir;
         // 踏地冲击波
         bool waveActive, waveHit;
@@ -39,6 +39,9 @@ namespace Spiritfire.Game
             if (body.Rig) body.Rig.Footfall += OnFootfall;
         }
 
+        /// <summary>仰头长吼（头顶的位置出声）</summary>
+        void Roar(float volume) => GameAudio.PlayAt("boss_roar", transform.position + (Vector3.up * 1.3f + transform.forward * 1.1f) * Size, volume, 0.75f);
+
         /// <summary>
         /// 落脚扬尘 + 轻微震地（Three.js footfall）：走动时每一步，越接近冲锋速度尘越大、震得越重（22 m 内感觉得到）
         /// </summary>
@@ -52,6 +55,7 @@ namespace Spiritfire.Game
             at.y = transform.position.y + 0.05f;
             ShotFx.Instance?.Impact(at, Vector3.up, false, (0.9f + 1.4f * sn) * Size);
             CameraShake.Quake(at, 0.05f + 0.1f * sn, 22f, 0.12f);
+            GameAudio.PlayAt("footstep", at, 0.5f + 0.4f * sn, 0.45f);
         }
 
         /// <summary>釉甲格挡中：只有推进、两种蓄力时举着（同 Three.js guarding）；冲锋、撞晕、刹车、踏地后摇、被眩晕时不挡——那是反击窗口</summary>
@@ -72,6 +76,7 @@ namespace Spiritfire.Game
                 blockFxAt = Time.time;
                 var p = transform.position + transform.forward * 1.2f * Size + Vector3.up * (0.7f + Random.value * 0.9f) * Size + transform.right * (Random.value - 0.5f) * 0.9f * Size;
                 ShotFx.Instance?.Impact(p, transform.forward, false, 1.4f);
+                GameAudio.PlayAt("shield_break", p, 0.4f, 2.1f);
             }
             return info.weakpoint ? GuardFactor * 0.5f : GuardFactor;
         }
@@ -80,9 +85,16 @@ namespace Spiritfire.Game
         {
             float d = DistToPlayer;
             chargeCd -= dt * auraAttackRate * (enraged ? 2 : 1);
+            // 第一次看见玩家：仰头长吼
+            if (!alerted && sees && d < 30)
+            {
+                alerted = true;
+                Roar(0.7f);
+            }
             if (!enraged && hp.Fraction < RageAt)
             {
                 enraged = true;
+                Roar(1f);
                 ShotFx.Instance?.Impact(transform.position + Vector3.up * 1.5f * Size, Vector3.up, true, 6f);
                 CameraShake.Quake(transform.position, 0.35f, 28f, 0.5f);
             }
@@ -134,6 +146,7 @@ namespace Spiritfire.Game
                         pawFxAt = Time.time;
                         ShotFx.Instance?.Impact(transform.position + transform.forward * 1.1f * Size, Vector3.up, false, 2.5f);
                         CameraShake.Quake(transform.position, 0.12f, 16f, 0.15f);
+                        GameAudio.PlayAt("footstep", transform.position + transform.forward * 1.1f * Size, 0.8f, 0.5f);
                     }
                     if (stateTime >= windTime) StartCharge();
                     break;
@@ -192,6 +205,7 @@ namespace Spiritfire.Game
         {
             windTime = Windup(windup, 0.45f);
             Stop();
+            Roar(0.7f);
             PlayTimed("chargeWindup", windTime, 0.1f);
             SetState("chargeWindup");
             var from = transform.position + transform.forward * 1.2f * Size;
@@ -207,6 +221,7 @@ namespace Spiritfire.Game
             BeginManualMotion(chargeDir * ChargeSpeed, 26f);
             Play("charge", 0.06f);
             SetState("charge");
+            Sfx("enemy_charge", 1f, 0.6f);
             CameraShake.Quake(transform.position, 0.3f, 20f, 0.25f);
         }
 
@@ -231,6 +246,7 @@ namespace Spiritfire.Game
                     {
                         player.GetComponent<PlayerMotor>()?.AddImpulse(chargeDir * ChargeKnock + Vector3.up * 7f);
                         CameraShake.Add(0.9f, 0.4f);
+                        GameAudio.PlayAt("boss_slam", PlayerPos, 0.8f, 1.3f);
                     }
                 }
             }
@@ -242,6 +258,8 @@ namespace Spiritfire.Game
                 ShotFx.Instance?.Impact(at, -chargeDir, false, 9f);
                 ShotFx.Instance?.Impact(at + Vector3.up * 0.6f, -chargeDir, true, 4f);
                 CameraShake.Quake(transform.position, 0.8f, 24f, 0.45f);
+                GameAudio.PlayAt("boss_slam", at, 1f, 0.8f);
+                GameAudio.PlayAt("shield_break", at, 0.7f, 0.9f);
                 body.Rig?.Hit(-chargeDir, 1f);
                 PlayLocomotion();
                 SetState("dazed");
@@ -268,6 +286,7 @@ namespace Spiritfire.Game
             windTime = Windup(StompWindup, 0.5f);
             Stop();
             PlayTimed("stompWindup", windTime, 0.08f);
+            Sfx("telegraph", 0.8f, 0.5f);
             Telegraph.Circle(transform.position, WaveRadius, windTime, new Color(1f, 0.5f, 0.2f, 0.6f));
             SetState("stompWindup");
         }
@@ -278,6 +297,9 @@ namespace Spiritfire.Game
             SetState("stomp");
             Burst(transform.position, StompCore * Size, Damage);
             CameraShake.Quake(transform.position, 0.9f, 26f, 0.45f);
+            var ground = transform.position + transform.forward * 1f * Size;
+            GameAudio.PlayAt("boss_slam", ground, 1f, 0.7f);
+            GameAudio.PlayAt("explosion", ground, 0.5f, 0.6f);
             ShotFx.Instance?.Impact(transform.position, Vector3.up, false, 8f);
             Telegraph.Wave(transform.position, WaveRadius, WaveSpeed, new Color(1f, 0.75f, 0.4f));
             waveActive = true;

@@ -58,8 +58,10 @@ namespace Spiritfire.Game
             dmg.knockback = Knockback;
             var p = PlayerProjectile.Spawn(pos, vel, dmg, 0.2f, Lifetime, Gravity, Radius);
             BuildCracker(p.transform);
+            GameAudio.Play("skill_throw", 0.9f);
             p.onImpact = point =>
             {
+                GameAudio.PlayAt("skill_fire", point, 0.9f);
                 ShotFx.Instance?.Impact(point, Vector3.up, true, 12f);
                 ShotFx.Instance?.Impact(point, Vector3.up, false, 7f);
                 ShotFx.Instance?.MuzzleFlash(point + Vector3.up * 0.5f, 6f);
@@ -137,6 +139,8 @@ namespace Spiritfire.Game
             var p = owner.transform.position;
             ShotFx.Instance?.Impact(p + Vector3.up * 1.1f, Vector3.up, true, 6f);
             Telegraph.Wave(p + Vector3.up * 0.05f, 3.2f, 10f, LiaoSkills.Fire);
+            GameAudio.Play("skill_buff", 0.7f, 1.1f);
+            GameAudio.Play("skill_fire", 0.8f, 0.8f);
             return true;
         }
 
@@ -207,6 +211,7 @@ namespace Spiritfire.Game
             trail.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             p.onImpact = point => ShotFx.Instance?.Impact(point, Vector3.up, true, 3f);
             ShotFx.Instance?.Impact(pos, Vector3.up, true, 1f);
+            GameAudio.Play("skill_fire", 0.45f, 1.15f + Random.value * 0.25f);
         }
 
         public override void Reset()

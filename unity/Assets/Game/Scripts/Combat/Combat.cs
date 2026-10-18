@@ -114,6 +114,8 @@ namespace Spiritfire.Game
         public static void Explode(Vector3 center, float radius, DamageInfo info, bool hurtEnemies = true, float playerDamage = 0,
             Damageable exclude = null, float edge = 0.3f, System.Collections.Generic.List<Damageable> hitList = null)
         {
+            // 爆炸声：半径越大越响、越沉（同 Three.js Combat.explode）
+            GameAudio.PlayAt("explosion", center, Mathf.Clamp(0.5f + radius * 0.09f, 0.5f, 1f), Mathf.Clamp(1.25f - radius * 0.06f, 0.75f, 1.2f));
             if (hurtEnemies)
             {
                 var hits = Physics.OverlapSphere(center, radius, ~0, QueryTriggerInteraction.Ignore);

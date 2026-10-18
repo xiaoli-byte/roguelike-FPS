@@ -48,6 +48,7 @@ namespace Spiritfire.Game
                         if (d <= SlashRange + 0.3f && RequestAttack(AttackTokens.Kind.Melee, 1.2f))
                         {
                             windTime = Windup(SlashWindup, 0.22f);
+                            Sfx("enemy_alert", 0.35f, 1.9f + Random.value * 0.2f);
                             Stop();
                             PlayTimed("slashWindup", windTime, 0.05f);
                             SetState("slashWindup");
@@ -140,6 +141,7 @@ namespace Spiritfire.Game
                             var dir = (away + new Vector3(-away.z, 0, away.x) * strafeSign * 0.5f).normalized;
                             BeginManualMotion(dir * HopBackSpeed + Vector3.up * 5.2f, Gravity);
                             Play("hopBack", 0.05f);
+                            Sfx("jump", 0.35f, 1.6f);
                             SetState("hopBack");
                         }
                         else
@@ -176,6 +178,7 @@ namespace Spiritfire.Game
             windTime = Windup(time, 0.26f);
             Stop();
             PlayTimed("crouch", windTime, 0.06f);
+            Sfx("enemy_charge", 0.45f, 1.9f + Random.value * 0.2f);
             SetState("crouch");
             // 预警：预判落点
             leapTarget = PredictLanding(out _);
@@ -209,6 +212,7 @@ namespace Spiritfire.Game
             BeginManualMotion(dir * (dist / leapTime) + Vector3.up * (Gravity * leapTime * 0.5f), Gravity);
             Play("leap", 0.04f);
             SetState("leap");
+            Sfx("dash", 0.5f, 1.5f);
         }
 
         /// <summary>X 字刀光：两道斜劈交叉（同 Three.js crossSlashFx）</summary>
@@ -224,6 +228,7 @@ namespace Spiritfire.Game
         {
             EndManualMotion();
             Play("spin", 0.04f);
+            Sfx("land", 0.5f, 1.4f);
             leapHit = Burst(transform.position, SpinRange, Damage * SpinMult);
             SetState("spin");
             // 落地旋斩：一圈刀光 + 地面扬尘环（伤害范围不随体型放大，同 Three.js；刀光随体型）

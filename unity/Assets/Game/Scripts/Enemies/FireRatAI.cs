@@ -55,6 +55,7 @@ namespace Spiritfire.Game
                         curlTime = Windup(CurlTime, 0.4f);
                         Stop();
                         PlayTimed("curl", curlTime, 0.06f);
+                        Sfx("telegraph", 0.8f, 1.7f);
                         SetState("curl");
                         break;
                     }
@@ -107,6 +108,7 @@ namespace Spiritfire.Game
                         {
                             EndManualMotion();
                             Play("dizzy", 0.06f);
+                            Sfx("land", 0.6f, 1.4f);
                             SetState("dizzy");
                         }
                     }

@@ -165,6 +165,14 @@ namespace Spiritfire.Game.Testing
                 yield break;
             }
 
+            // ── 音频：片段齐全、开枪真的发声、配乐按战况切换（聚焦模式 audio 只跑这一组）──
+            yield return AudioTest(weapons);
+            if (focus == "audio")
+            {
+                Finish();
+                yield break;
+            }
+
             // ── 灵宠：八只依次结契，各打几只敌人、放一次灵技；灵契升级觉醒、换宠留封印 ──
             yield return PetTest(motor, eye, vitals);
 
@@ -232,6 +240,9 @@ namespace Spiritfire.Game.Testing
                     break;
                 }
                 Line($"遭遇战「{site.title}」开始：敌人 {site.Total} 只");
+                // 配乐导演 0.5 s 轮询一次，交战后应切到战斗曲
+                yield return new WaitForSecondsRealtime(0.7f);
+                if (GameAudio.CurrentMusic != "combat") Fail($"遭遇战开始后配乐是 {GameAudio.CurrentMusic}（应为 combat）");
                 float fightStart = Time.time, flankAt = 0, skillAt = Time.time + 1f;
                 while (site.phase != EncounterSite.Phase.Cleared && Time.time - fightStart < 120f)
                 {
@@ -286,6 +297,15 @@ namespace Spiritfire.Game.Testing
                 var rx = new List<string>();
                 foreach (var (k, v) in reactionsById) rx.Add($"{k}×{v}");
                 Line($"  元素反应：{(rx.Count > 0 ? string.Join("、", rx) : "无")}（武器 {weapons.slots[0]?.def.name} / {weapons.slots[1]?.def.name ?? "空"}）");
+                // 超时诊断：还活着的敌人在哪、在干什么（够不着 / 卡住 / 不可选中？）
+                if (site.phase != EncounterSite.Phase.Cleared)
+                    foreach (var e in EnemyAI.All)
+                        if (e && !e.Dead)
+                        {
+                            var ag = e.GetComponent<UnityEngine.AI.NavMeshAgent>();
+                            Line($"  残敌 {e.enemyId}：状态 {e.State}，位置 {e.transform.position}，离玩家 {Vector3.Distance(e.transform.position, motor.transform.position):F1} m，" +
+                                 $"可选中 {!e.Health.untargetable}，导航网格上 {(ag ? ag.isOnNavMesh : false)}，激活 {e.isActiveAndEnabled}");
+                        }
                 if (site.phase != EncounterSite.Phase.Cleared) Fail($"120 s 内没有肃清「{site.title}」（剩 {site.Remaining}）");
                 totalPlayerDamage += playerDamage;
                 if (site.phase != EncounterSite.Phase.Cleared) break;
@@ -639,6 +659,36 @@ namespace Spiritfire.Game.Testing
             if (swing < 10f) Fail($"眩晕时头只摆 {swing:F0}°（晕眩动作没出来）");
             Destroy(ai.gameObject);
             yield return new WaitForSeconds(0.2f);
+        }
+
+        // ───────────── 音频 ─────────────
+
+        IEnumerator AudioTest(WeaponController weapons)
+        {
+            var need = new[]
+            {
+                "shot_smg", "shot_pistol", "shot_shotgun", "shot_launcher", "reload_start", "reload_end", "dry_fire", "weapon_switch",
+                "hit", "hit_crit", "hit_shield", "hit_armor", "kill", "explosion", "player_hurt", "shield_break", "jump", "land", "dash", "footstep",
+                "pickup_coin", "chest_open", "scroll_get", "enemy_shot", "enemy_melee", "enemy_death", "enemy_charge", "telegraph",
+                "boss_roar", "boss_slam", "pipa_roll", "pipa_chord", "burn_tick", "shock_zap", "skill_fire", "skill_throw", "wave_start", "stage_clear",
+            };
+            var missing = new List<string>();
+            foreach (var id in need) if (!GameAudio.Has(id)) missing.Add(id);
+            // 开枪：几帧内要有声道在响
+            weapons.testFire = true;
+            int peak = 0;
+            for (int i = 0; i < 20; i++)
+            {
+                yield return null;
+                peak = Mathf.Max(peak, GameAudio.ActiveVoices);
+            }
+            weapons.testFire = false;
+            yield return new WaitForSecondsRealtime(1.2f);
+            string music = GameAudio.CurrentMusic;
+            Line($"音频：{need.Length - missing.Count}/{need.Length} 个关键音效有片段{(missing.Count > 0 ? "，缺 " + string.Join("、", missing) : "")}；开枪时同时发声 {peak} 个声道；场景配乐 {music}");
+            if (missing.Count > 0) Fail($"缺音效片段：{string.Join("、", missing)}");
+            if (peak == 0) Fail("开枪没有声音（没有声道在响）");
+            if (music != "calm") Fail($"没交战时配乐是 {music}（应为 calm）");
         }
 
         // ───────────── 动作同步 / 敌人表现 ─────────────

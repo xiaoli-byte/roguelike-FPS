@@ -37,6 +37,9 @@ namespace Spiritfire.Game
         /// <summary>伤害衰减：start 米内全额，end 米处降到 mult，之后保持</summary>
         public float falloffStart = 999, falloffEnd = 1000, falloffMult = 1f;
         public float knockback, kickBack, kickRot, shake, flash;
+        /// <summary>枪声（GameAudio 的 SfxId）与音量（同 Three.js WeaponDefs 的 sfx / sfxVolume）</summary>
+        public string sfx = "shot_pistol";
+        public float sfxVolume = 1f;
         /// <summary>开镜视角变化（度，负数 = 放大）</summary>
         public float aimFov;
         public Element element;
@@ -89,7 +92,7 @@ namespace Spiritfire.Game
         {
             Add(new WeaponDef
             {
-                id = "smg", name = "蜂鸣冲锋枪", prefab = "SK_Weapon_Smg", mode = FireMode.Auto, reload = ReloadStyle.Magazine,
+                id = "smg", sfx = "shot_smg", sfxVolume = 0.6f, name = "蜂鸣冲锋枪", prefab = "SK_Weapon_Smg", mode = FireMode.Auto, reload = ReloadStyle.Magazine,
                 damage = 11, fireRate = 13, mag = 36, reserve = 252, reloadTime = 1.7f,
                 spreadHip = 0.012f, spreadAim = 0.005f, spreadPerShot = 0.001f, spreadMax = 0.026f, spreadRecovery = 0.6f,
                 recoilPitch = 0.0045f, recoilYaw = 0.0026f, recoilBias = 0.0002f, recoilClimb = 0.015f,
@@ -101,7 +104,7 @@ namespace Spiritfire.Game
             });
             Add(new WeaponDef
             {
-                id = "revolver", name = "赤铜左轮", prefab = "SK_Weapon_Revolver", mode = FireMode.Semi, reload = ReloadStyle.Magazine,
+                id = "revolver", sfx = "shot_pistol", sfxVolume = 1f, name = "赤铜左轮", prefab = "SK_Weapon_Revolver", mode = FireMode.Semi, reload = ReloadStyle.Magazine,
                 damage = 38, fireRate = 3.5f, mag = 8, reserve = 64, reloadTime = 1.6f,
                 spreadHip = 0.003f, spreadAim = 0.001f, spreadPerShot = 0.005f, spreadMax = 0.014f, spreadRecovery = 0.4f,
                 recoilPitch = 0.022f, recoilYaw = 0.004f,
@@ -113,7 +116,7 @@ namespace Spiritfire.Game
             });
             Add(new WeaponDef
             {
-                id = "shotgun", name = "碎岩霰弹", prefab = "SK_Weapon_Shotgun", mode = FireMode.Semi, reload = ReloadStyle.Shell,
+                id = "shotgun", sfx = "shot_shotgun", sfxVolume = 0.9f, name = "碎岩霰弹", prefab = "SK_Weapon_Shotgun", mode = FireMode.Semi, reload = ReloadStyle.Shell,
                 damage = 12, pellets = 9, pelletCone = 0.06f, fireRate = 1.4f, mag = 6, reserve = 42,
                 reloadTime = 3.6f, shellTime = 0.48f, reloadStart = 0.4f,
                 spreadHip = 0.004f, spreadAim = 0.002f, spreadPerShot = 0.004f, spreadMax = 0.012f, spreadRecovery = 0.3f,
@@ -127,7 +130,7 @@ namespace Spiritfire.Game
             // ── 元素武器（试玩版 8 把里的 3 把，docs/demo-scope.md 2.3）──
             Add(new WeaponDef
             {
-                id = "launcher", name = "焚城榴弹", prefab = "SK_Weapon_Launcher", mode = FireMode.Semi, reload = ReloadStyle.Magazine,
+                id = "launcher", sfx = "shot_launcher", sfxVolume = 0.9f, name = "焚城榴弹", prefab = "SK_Weapon_Launcher", mode = FireMode.Semi, reload = ReloadStyle.Magazine,
                 damage = 110, fireRate = 1.1f, mag = 4, reserve = 20, reloadTime = 2.4f,
                 spreadHip = 0.005f, spreadAim = 0.002f, spreadPerShot = 0.005f, spreadMax = 0.012f, spreadRecovery = 0.3f,
                 recoilPitch = 0.03f, recoilYaw = 0.004f,
@@ -140,7 +143,7 @@ namespace Spiritfire.Game
             });
             Add(new WeaponDef
             {
-                id = "beam", name = "雷弧发射器", prefab = "SK_Weapon_Beam", mode = FireMode.Beam, reload = ReloadStyle.Magazine,
+                id = "beam", sfx = "shot_beam", sfxVolume = 0.35f, name = "雷弧发射器", prefab = "SK_Weapon_Beam", mode = FireMode.Beam, reload = ReloadStyle.Magazine,
                 damage = 8, fireRate = 10, mag = 100, reserve = 400, reloadTime = 2.2f,
                 spreadHip = 0.005f, spreadAim = 0.0025f, spreadPerShot = 0, spreadMax = 0, spreadRecovery = 1,
                 recoilPitch = 0.0004f, recoilYaw = 0.0006f,
@@ -152,7 +155,7 @@ namespace Spiritfire.Game
             });
             Add(new WeaponDef
             {
-                id = "stormpod", name = "青冥雷蛊", prefab = "SK_Weapon_Stormpod", mode = FireMode.Semi, reload = ReloadStyle.Magazine,
+                id = "stormpod", sfx = "shot_launcher", sfxVolume = 0.5f, name = "青冥雷蛊", prefab = "SK_Weapon_Stormpod", mode = FireMode.Semi, reload = ReloadStyle.Magazine,
                 damage = 95, fireRate = 1.2f, mag = 5, reserve = 30, reloadTime = 2.5f,
                 spreadHip = 0.005f, spreadAim = 0.002f, spreadPerShot = 0.005f, spreadMax = 0.012f, spreadRecovery = 0.3f,
                 recoilPitch = 0.04f, recoilYaw = 0.008f,

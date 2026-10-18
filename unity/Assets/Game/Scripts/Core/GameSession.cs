@@ -53,6 +53,8 @@ namespace Spiritfire.Game
 
         void OnDied()
         {
+            GameAudio.Play("defeat");
+            GameAudio.SetMusic("none");
             Time.timeScale = 0.3f;
             hud?.ShowDeath("阵 亡\n<size=34>按 R 重新开始</size>");
             Cursor.lockState = CursorLockMode.None;
@@ -101,6 +103,8 @@ namespace Spiritfire.Game
         {
             if (complete) return;
             complete = true;
+            GameAudio.Play("victory");
+            GameAudio.SetMusic("calm");
             float t = Time.time - startTime;
             int scrolls = 0;
             if (LootDirector.Instance)

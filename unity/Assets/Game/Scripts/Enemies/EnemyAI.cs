@@ -113,6 +113,7 @@ namespace Spiritfire.Game
             }
             hp.untargetable = true;
             SetState("spawn");
+            GameAudio.PlayAt("enemy_spawn", transform.position, 0.5f);
         }
 
         protected virtual void Start()
@@ -295,6 +296,9 @@ namespace Spiritfire.Game
         }
 
         protected void PlayLocomotion() => Play("Locomotion", 0.15f);
+
+        /// <summary>敌人身上出声（音效 id 见 GameAudio；有敌方音色时自动换）</summary>
+        protected void Sfx(string id, float volume = 1, float pitch = 1) => GameAudio.PlayAt(id, transform.position + Vector3.up * 0.6f * Size, volume, pitch);
 
         /// <summary>弱点发光壳的亮度目标（0..1，见 EnemyBody.glow）：各敌人按状态每帧写</summary>
         protected float Glow { set => body.glow = value; }
@@ -512,7 +516,9 @@ namespace Spiritfire.Game
             to.y = 0;
             if (to.magnitude > range + 0.35f || Mathf.Abs(dy) > 2.2f) return false;
             if (to.sqrMagnitude > 0.01f && Vector3.Dot(transform.forward, to.normalized) < arcCos) return false;
-            return HitTarget(dmg, transform.position + Vector3.up);
+            bool hit = HitTarget(dmg, transform.position + Vector3.up);
+            if (hit) GameAudio.PlayAt("enemy_melee", transform.position);
+            return hit;
         }
 
         /// <summary>环形 / 圆形范围伤害（落地旋斩、踩地）</summary>

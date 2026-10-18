@@ -91,6 +91,7 @@ namespace Spiritfire.Game
         void SwitchTo(int slot, bool force = false)
         {
             if (slots[slot] == null || (slot == ActiveSlot && !force)) return;
+            if (slot != ActiveSlot || force) GameAudio.Play("weapon_switch", 0.7f);
             ActiveSlot = slot;
             CancelReload();
             switchTimer = 0.35f;
@@ -160,6 +161,8 @@ namespace Spiritfire.Game
             cooldown -= dt;
             if (!fireDown) triggerHeld = false;
             bool wantFire = def.mode != FireMode.Semi ? fireDown : firePressed || (fireDown && !triggerHeld);
+            // 空膛：弹匣和备弹都打空了还扣扳机
+            if (firePressed && w.mag <= 0 && w.reserve <= 0 && !Reloading) GameAudio.Play("dry_fire", 0.8f);
             if (wantFire && cooldown <= 0 && !Reloading && switchTimer <= 0 && w.mag > 0 && !motor.Dashing)
             {
                 Fire(w);
@@ -221,6 +224,7 @@ namespace Spiritfire.Game
                 shellTimer = w.def.reloadStart / speed;
             }
             else reloadTotal = w.def.reloadTime / speed;
+            GameAudio.Play("reload_start", 0.8f);
             Changed?.Invoke();
         }
 
@@ -243,6 +247,8 @@ namespace Spiritfire.Game
                     w.mag++;
                     w.reserve--;
                     shellTimer += w.def.shellTime / speed;
+                    // 逐发装填：每塞一发一声轻响
+                    GameAudio.Play("reload_end", 0.45f, 1.3f + UnityEngine.Random.value * 0.1f);
                     Changed?.Invoke();
                 }
                 if (w.mag >= capacity || w.reserve <= 0) CancelReload();
@@ -252,6 +258,7 @@ namespace Spiritfire.Game
                 int take = Mathf.Min(capacity - w.mag, w.reserve);
                 w.mag += take;
                 w.reserve -= take;
+                GameAudio.Play("reload_end", 0.85f);
                 CancelReload();
                 Changed?.Invoke();
             }
@@ -297,6 +304,9 @@ namespace Spiritfire.Game
             motor.AddRecoil(pitch * RecoilScale * Mathf.Rad2Deg, yaw * RecoilScale * Mathf.Rad2Deg);
             ActiveView()?.Kick(def.kickBack * 0.76f * ViewKickScale, def.kickRot * ViewKickScale);
             ShotFx.Instance?.MuzzleFlash(muzzle, def.flash / 0.12f);
+            // 枪声（光束武器是持续音：每次开火刷新）
+            if (def.mode == FireMode.Beam) GameAudio.HoldBeam(def.sfxVolume);
+            else GameAudio.Play(def.sfx, def.sfxVolume, 0.94f + UnityEngine.Random.value * 0.12f);
             shakeAmp = def.shake;
             shakeTime = def.shake > 0.15f ? 0.16f : 0.08f;
             shakeSeed = new Vector3(UnityEngine.Random.value * 10, UnityEngine.Random.value * 10, 0);

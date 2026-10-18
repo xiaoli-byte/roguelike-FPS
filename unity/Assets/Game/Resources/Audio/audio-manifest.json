@@ -1,0 +1,800 @@
+{
+ "sampleRate": 44100,
+ "generated": "2026-10-18T19:20:45.104Z",
+ "beamLoop": "shot_beam_loop",
+ "mix": {
+  "master": 0.8,
+  "sfx": 0.9,
+  "music": 0.3
+ },
+ "sfx": [
+  {
+   "id": "shot_pistol",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.55,
+   "pitch": 0.035,
+   "throttle": 0,
+   "send": 0.18,
+   "prio": 3
+  },
+  {
+   "id": "shot_smg",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.4,
+   "pitch": 0.035,
+   "throttle": 0,
+   "send": 0.1,
+   "prio": 3
+  },
+  {
+   "id": "shot_rifle",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.48,
+   "pitch": 0.035,
+   "throttle": 0,
+   "send": 0.12,
+   "prio": 3
+  },
+  {
+   "id": "shot_shotgun",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.62,
+   "pitch": 0.035,
+   "throttle": 0,
+   "send": 0.2,
+   "prio": 3
+  },
+  {
+   "id": "shot_sniper",
+   "variants": 3,
+   "enemyVariants": 3,
+   "gain": 0.66,
+   "pitch": 0.035,
+   "throttle": 0,
+   "send": 0.42,
+   "prio": 3
+  },
+  {
+   "id": "shot_launcher",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.58,
+   "pitch": 0.035,
+   "throttle": 0,
+   "send": 0.2,
+   "prio": 3
+  },
+  {
+   "id": "shot_beam",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.4,
+   "pitch": 0.035,
+   "throttle": 0,
+   "send": 0.12,
+   "prio": 3
+  },
+  {
+   "id": "shot_bow",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.5,
+   "pitch": 0.035,
+   "throttle": 0,
+   "send": 0.12,
+   "prio": 3
+  },
+  {
+   "id": "shot_heavy",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.42,
+   "pitch": 0.035,
+   "throttle": 0,
+   "send": 0.1,
+   "prio": 3
+  },
+  {
+   "id": "reload_start",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.42,
+   "pitch": 0.04,
+   "throttle": 0.05,
+   "send": 0.12,
+   "prio": 3
+  },
+  {
+   "id": "reload_end",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.46,
+   "pitch": 0.04,
+   "throttle": 0.05,
+   "send": 0.12,
+   "prio": 3
+  },
+  {
+   "id": "dry_fire",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.4,
+   "pitch": 0.02,
+   "throttle": 0.08,
+   "send": 0.12,
+   "prio": 3
+  },
+  {
+   "id": "weapon_switch",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.4,
+   "pitch": 0.04,
+   "throttle": 0.05,
+   "send": 0.12,
+   "prio": 3
+  },
+  {
+   "id": "blade_swing",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.62,
+   "pitch": 0.05,
+   "throttle": 0.03,
+   "send": 0.06,
+   "prio": 3
+  },
+  {
+   "id": "blade_hit",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.5,
+   "pitch": 0.05,
+   "throttle": 0.04,
+   "send": 0.08,
+   "prio": 3
+  },
+  {
+   "id": "blade_throw",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.75,
+   "pitch": 0.03,
+   "throttle": 0.15,
+   "send": 0.18,
+   "prio": 3
+  },
+  {
+   "id": "blade_recall",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.62,
+   "pitch": 0.04,
+   "throttle": 0.08,
+   "send": 0.12,
+   "prio": 3
+  },
+  {
+   "id": "blade_morph",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.42,
+   "pitch": 0.04,
+   "throttle": 0.08,
+   "send": 0.12,
+   "prio": 3
+  },
+  {
+   "id": "blade_dash",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.38,
+   "pitch": 0.04,
+   "throttle": 0.1,
+   "send": 0.12,
+   "prio": 3
+  },
+  {
+   "id": "blade_swarm",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.6,
+   "pitch": 0.08,
+   "throttle": 0.06,
+   "send": 0.1,
+   "prio": 2
+  },
+  {
+   "id": "blade_eye",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.7,
+   "pitch": 0.03,
+   "throttle": 0.15,
+   "send": 0.25,
+   "prio": 3
+  },
+  {
+   "id": "blade_impale",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.7,
+   "pitch": 0.02,
+   "throttle": 0.1,
+   "send": 0.3,
+   "prio": 3
+  },
+  {
+   "id": "hit",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.4,
+   "pitch": 0.06,
+   "throttle": 0.035,
+   "send": 0.02,
+   "prio": 2
+  },
+  {
+   "id": "hit_crit",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.5,
+   "pitch": 0.02,
+   "throttle": 0.05,
+   "send": 0.08,
+   "prio": 3
+  },
+  {
+   "id": "hit_shield",
+   "variants": 3,
+   "enemyVariants": 3,
+   "gain": 0.38,
+   "pitch": 0.06,
+   "throttle": 0.04,
+   "send": 0.04,
+   "prio": 2
+  },
+  {
+   "id": "hit_armor",
+   "variants": 3,
+   "enemyVariants": 3,
+   "gain": 0.38,
+   "pitch": 0.06,
+   "throttle": 0.04,
+   "send": 0.06,
+   "prio": 2
+  },
+  {
+   "id": "kill",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.5,
+   "pitch": 0.02,
+   "throttle": 0.05,
+   "send": 0.08,
+   "prio": 3
+  },
+  {
+   "id": "explosion",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.75,
+   "pitch": 0.08,
+   "throttle": 0.03,
+   "send": 0.35,
+   "prio": 2
+  },
+  {
+   "id": "player_hurt",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.55,
+   "pitch": 0.04,
+   "throttle": 0.08,
+   "send": 0.05,
+   "prio": 3
+  },
+  {
+   "id": "shield_break",
+   "variants": 3,
+   "enemyVariants": 3,
+   "gain": 0.6,
+   "pitch": 0.04,
+   "throttle": 0.25,
+   "send": 0.2,
+   "prio": 3
+  },
+  {
+   "id": "shield_recharge",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.42,
+   "pitch": 0.04,
+   "throttle": 0.3,
+   "send": 0.15,
+   "prio": 3
+  },
+  {
+   "id": "low_hp",
+   "variants": 1,
+   "enemyVariants": 0,
+   "gain": 0.6,
+   "pitch": 0,
+   "throttle": 0.3,
+   "send": 0.02,
+   "prio": 3
+  },
+  {
+   "id": "jump",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.38,
+   "pitch": 0.04,
+   "throttle": 0.06,
+   "send": 0.03,
+   "prio": 3
+  },
+  {
+   "id": "land",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.5,
+   "pitch": 0.04,
+   "throttle": 0.08,
+   "send": 0.05,
+   "prio": 3
+  },
+  {
+   "id": "dash",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.5,
+   "pitch": 0.04,
+   "throttle": 0.08,
+   "send": 0.08,
+   "prio": 3
+  },
+  {
+   "id": "footstep",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.32,
+   "pitch": 0.1,
+   "throttle": 0.08,
+   "send": 0.03,
+   "prio": 1
+  },
+  {
+   "id": "enemy_shot",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.4,
+   "pitch": 0.07,
+   "throttle": 0.04,
+   "send": 0.12,
+   "prio": 1
+  },
+  {
+   "id": "enemy_melee",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.5,
+   "pitch": 0.06,
+   "throttle": 0.05,
+   "send": 0.12,
+   "prio": 1
+  },
+  {
+   "id": "enemy_alert",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.4,
+   "pitch": 0.1,
+   "throttle": 0.15,
+   "send": 0.12,
+   "prio": 1
+  },
+  {
+   "id": "enemy_death",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.45,
+   "pitch": 0.1,
+   "throttle": 0.04,
+   "send": 0.15,
+   "prio": 1
+  },
+  {
+   "id": "enemy_spawn",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.4,
+   "pitch": 0.08,
+   "throttle": 0.08,
+   "send": 0.2,
+   "prio": 0
+  },
+  {
+   "id": "enemy_charge",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.5,
+   "pitch": 0.05,
+   "throttle": 0.1,
+   "send": 0.12,
+   "prio": 2
+  },
+  {
+   "id": "boss_roar",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.68,
+   "pitch": 0.03,
+   "throttle": 0.3,
+   "send": 0.4,
+   "prio": 3
+  },
+  {
+   "id": "boss_slam",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.85,
+   "pitch": 0.04,
+   "throttle": 0.1,
+   "send": 0.35,
+   "prio": 3
+  },
+  {
+   "id": "telegraph",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.5,
+   "pitch": 0.02,
+   "throttle": 0.06,
+   "send": 0.12,
+   "prio": 2
+  },
+  {
+   "id": "skill_fire",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.6,
+   "pitch": 0.04,
+   "throttle": 0.05,
+   "send": 0.2,
+   "prio": 3
+  },
+  {
+   "id": "skill_shock",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.55,
+   "pitch": 0.04,
+   "throttle": 0.05,
+   "send": 0.2,
+   "prio": 3
+  },
+  {
+   "id": "skill_earth",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.7,
+   "pitch": 0.04,
+   "throttle": 0.05,
+   "send": 0.28,
+   "prio": 3
+  },
+  {
+   "id": "skill_buff",
+   "variants": 1,
+   "enemyVariants": 3,
+   "gain": 0.55,
+   "pitch": 0,
+   "throttle": 0.1,
+   "send": 0.3,
+   "prio": 3
+  },
+  {
+   "id": "pipa_roll",
+   "variants": 1,
+   "enemyVariants": 0,
+   "gain": 0.32,
+   "pitch": 0,
+   "throttle": 0.25,
+   "send": 0.3,
+   "prio": 1
+  },
+  {
+   "id": "pipa_chord",
+   "variants": 1,
+   "enemyVariants": 0,
+   "gain": 0.6,
+   "pitch": 0,
+   "throttle": 0.3,
+   "send": 0.35,
+   "prio": 2
+  },
+  {
+   "id": "pipa_bloom",
+   "variants": 1,
+   "enemyVariants": 0,
+   "gain": 0.55,
+   "pitch": 0,
+   "throttle": 0.3,
+   "send": 0.4,
+   "prio": 2
+  },
+  {
+   "id": "pipa_bless",
+   "variants": 1,
+   "enemyVariants": 0,
+   "gain": 0.7,
+   "pitch": 0,
+   "throttle": 0.3,
+   "send": 0.4,
+   "prio": 2
+  },
+  {
+   "id": "pipa_snap",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.75,
+   "pitch": 0.02,
+   "throttle": 0.05,
+   "send": 0.2,
+   "prio": 3
+  },
+  {
+   "id": "pipa_hit",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.5,
+   "pitch": 0.03,
+   "throttle": 0.06,
+   "send": 0.12,
+   "prio": 3
+  },
+  {
+   "id": "skill_throw",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.5,
+   "pitch": 0.04,
+   "throttle": 0.05,
+   "send": 0.08,
+   "prio": 3
+  },
+  {
+   "id": "burn_tick",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.28,
+   "pitch": 0.12,
+   "throttle": 0.07,
+   "send": 0.03,
+   "prio": 0
+  },
+  {
+   "id": "shock_zap",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.34,
+   "pitch": 0.1,
+   "throttle": 0.05,
+   "send": 0.06,
+   "prio": 0
+  },
+  {
+   "id": "corrode_tick",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.28,
+   "pitch": 0.12,
+   "throttle": 0.08,
+   "send": 0.03,
+   "prio": 0
+  },
+  {
+   "id": "pickup_coin",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.42,
+   "pitch": 0.03,
+   "throttle": 0.04,
+   "send": 0.08,
+   "prio": 2
+  },
+  {
+   "id": "pickup_ammo",
+   "variants": 3,
+   "enemyVariants": 0,
+   "gain": 0.48,
+   "pitch": 0.04,
+   "throttle": 0.06,
+   "send": 0.06,
+   "prio": 2
+  },
+  {
+   "id": "pickup_health",
+   "variants": 1,
+   "enemyVariants": 0,
+   "gain": 0.5,
+   "pitch": 0,
+   "throttle": 0.08,
+   "send": 0.12,
+   "prio": 2
+  },
+  {
+   "id": "pickup_weapon",
+   "variants": 1,
+   "enemyVariants": 0,
+   "gain": 0.55,
+   "pitch": 0,
+   "throttle": 0.08,
+   "send": 0.12,
+   "prio": 3
+  },
+  {
+   "id": "chest_open",
+   "variants": 1,
+   "enemyVariants": 0,
+   "gain": 0.6,
+   "pitch": 0,
+   "throttle": 0.2,
+   "send": 0.25,
+   "prio": 3
+  },
+  {
+   "id": "portal",
+   "variants": 1,
+   "enemyVariants": 0,
+   "gain": 0.6,
+   "pitch": 0,
+   "throttle": 0.2,
+   "send": 0.3,
+   "prio": 3
+  },
+  {
+   "id": "buy",
+   "variants": 1,
+   "enemyVariants": 0,
+   "gain": 0.55,
+   "pitch": 0,
+   "throttle": 0.08,
+   "send": 0.1,
+   "prio": 3
+  },
+  {
+   "id": "scroll_get",
+   "variants": 1,
+   "enemyVariants": 0,
+   "gain": 0.62,
+   "pitch": 0,
+   "throttle": 0.2,
+   "send": 0.35,
+   "prio": 3
+  },
+  {
+   "id": "ui_click",
+   "variants": 1,
+   "enemyVariants": 0,
+   "gain": 0.5,
+   "pitch": 0,
+   "throttle": 0.03,
+   "send": 0.04,
+   "prio": 3
+  },
+  {
+   "id": "ui_hover",
+   "variants": 1,
+   "enemyVariants": 0,
+   "gain": 0.45,
+   "pitch": 0,
+   "throttle": 0.04,
+   "send": 0.04,
+   "prio": 3
+  },
+  {
+   "id": "ui_confirm",
+   "variants": 1,
+   "enemyVariants": 0,
+   "gain": 0.55,
+   "pitch": 0,
+   "throttle": 0.03,
+   "send": 0.04,
+   "prio": 3
+  },
+  {
+   "id": "ui_deny",
+   "variants": 1,
+   "enemyVariants": 0,
+   "gain": 0.5,
+   "pitch": 0,
+   "throttle": 0.03,
+   "send": 0.04,
+   "prio": 3
+  },
+  {
+   "id": "wave_start",
+   "variants": 1,
+   "enemyVariants": 0,
+   "gain": 0.62,
+   "pitch": 0,
+   "throttle": 0.2,
+   "send": 0.32,
+   "prio": 3
+  },
+  {
+   "id": "stage_clear",
+   "variants": 1,
+   "enemyVariants": 0,
+   "gain": 0.62,
+   "pitch": 0,
+   "throttle": 0.2,
+   "send": 0.32,
+   "prio": 3
+  },
+  {
+   "id": "victory",
+   "variants": 1,
+   "enemyVariants": 0,
+   "gain": 0.72,
+   "pitch": 0,
+   "throttle": 0.2,
+   "send": 0.4,
+   "prio": 3
+  },
+  {
+   "id": "defeat",
+   "variants": 1,
+   "enemyVariants": 0,
+   "gain": 0.72,
+   "pitch": 0,
+   "throttle": 0.2,
+   "send": 0.4,
+   "prio": 3
+  }
+ ],
+ "music": [
+  {
+   "id": "menu",
+   "seconds": 106.66666666666667,
+   "loopSeconds": 26.666666666666668,
+   "bpm": 72,
+   "level": 0.9,
+   "send": 0.55,
+   "peak": 0.8530144095420837
+  },
+  {
+   "id": "calm",
+   "seconds": 85.33333333333333,
+   "loopSeconds": 21.333333333333332,
+   "bpm": 90,
+   "level": 0.85,
+   "send": 0.4,
+   "peak": 0.7104659676551819
+  },
+  {
+   "id": "combat",
+   "seconds": 58.18181405895692,
+   "loopSeconds": 14.545454545454545,
+   "bpm": 132,
+   "level": 0.8,
+   "send": 0.22,
+   "peak": 1.754624843597412
+  },
+  {
+   "id": "boss",
+   "seconds": 51.2,
+   "loopSeconds": 12.8,
+   "bpm": 150,
+   "level": 0.8,
+   "send": 0.2,
+   "peak": 1.7229806184768677
+  }
+ ]
+}
