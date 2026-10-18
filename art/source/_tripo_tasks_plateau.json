@@ -1,0 +1,186 @@
+{
+  "note": "第四章 · 雪域天路 Tripo 任务记录（智能网格 P2.0、三角面、数量 1，全部带贴图 +30 积分）。2026-10-19 生成；拆分、体型和四视图审核见 docs/art/enemy-roster-v2.md。status：textured = 网格 + 贴图已在 Tripo 生成、还没导出；superseded = 用错了四视图，作废不导出。",
+  "credits": {
+    "before": 12295,
+    "after": 10215,
+    "wasted_on_superseded": 260
+  },
+  "tasks": [
+    {
+      "key": "plateau_marmot",
+      "name": "啸獭",
+      "faces": 6000,
+      "task": "db071861-bc3d-4f66-aa47-b4508df1caff",
+      "views": "front/left/right/back TV v001",
+      "texture": true,
+      "status": "superseded",
+      "asset": "SK_Enemy_Marmot",
+      "note": "四视图 v001 把发光、电刺画进了身体，没有分离特效；已用 v002 重做，这个任务不导出"
+    },
+    {
+      "key": "plateau_tiangou",
+      "name": "天狗",
+      "faces": 6000,
+      "task": "2cc2fa7e-516a-4969-93d7-0c6f24ba1232",
+      "views": "front/left/right/back TV v001",
+      "texture": true,
+      "status": "superseded",
+      "asset": "SK_Enemy_Tiangou",
+      "note": "四视图 v001 把发光、电刺画进了身体，没有分离特效；已用 v002 重做，这个任务不导出"
+    },
+    {
+      "key": "plateau_aoyin",
+      "name": "獓狠",
+      "faces": 12000,
+      "task": "73e30bba-aa94-48f8-9a2c-c6bc86a30dfd",
+      "views": "front/left/right/back TV v001",
+      "texture": true,
+      "status": "textured",
+      "asset": "SK_Enemy_Aoyin",
+      "note": "实得 13329 面；贴图已开始"
+    },
+    {
+      "key": "plateau_manman",
+      "name": "蛮蛮",
+      "faces": 6000,
+      "task": "28e3e738-bfe0-4bf5-8414-cfb29df37d73",
+      "views": "front/back only TV v001",
+      "texture": true,
+      "status": "textured",
+      "asset": "SK_Enemy_Manman",
+      "note": "实得 6897 面；贴图已开始"
+    },
+    {
+      "key": "plateau_boss_feilian",
+      "name": "飞廉",
+      "faces": 30000,
+      "task": "41ccb75a-96e1-4131-8bba-871d4c9c5875",
+      "views": "front/left/right/back TV v001",
+      "texture": true,
+      "status": "textured",
+      "asset": "SK_Boss_Feilian",
+      "note": "实得 30137 面，鹿角清楚不用拆；贴图已开始"
+    },
+    {
+      "key": "plateau_liangu_drum",
+      "name": "连鼓灵·鼓",
+      "faces": 3000,
+      "task": "cfc83eef-0ee2-4583-bcae-c296c9d81935",
+      "views": "front/left/right/back TV v001",
+      "texture": true,
+      "status": "textured",
+      "asset": "SM_EnemyPart_LianguDrum",
+      "note": "贴图已开始"
+    },
+    {
+      "key": "plateau_liangu_mallet",
+      "name": "连鼓灵·骨槌",
+      "faces": 3000,
+      "task": "3ac44226-b81c-47f8-88b2-00a4fa482711",
+      "views": "front/left/right/back TV v001",
+      "texture": true,
+      "status": "textured",
+      "asset": "SM_EnemyPart_LianguMallet",
+      "note": "贴图已开始"
+    },
+    {
+      "key": "plateau_kui_broken_drum",
+      "name": "夔·残破雷鼓",
+      "faces": 3000,
+      "task": "3ce97093-ec26-4af3-a389-35cae667da36",
+      "views": "front/left/right/back TV v001",
+      "texture": true,
+      "status": "textured",
+      "asset": "SM_Prop_KuiBrokenDrum",
+      "note": "贴图已开始"
+    },
+    {
+      "key": "plateau_liangu_core",
+      "name": "连鼓灵·骨笼雷心",
+      "faces": 6000,
+      "task": "274427d7-d803-4f2c-983b-20603b9f9b66",
+      "views": "front/left/right/back TV v002（雷心改成平涂不发光）",
+      "texture": true,
+      "status": "textured",
+      "asset": "SM_EnemyPart_LianguCore",
+      "note": ""
+    },
+    {
+      "key": "plateau_marmot",
+      "name": "啸獭",
+      "faces": 6000,
+      "task": "c8366a78-c016-45b0-8fa5-7bd87e15a090",
+      "views": "front/left/right/back TV v002（特效分离）",
+      "texture": true,
+      "status": "textured",
+      "asset": "SK_Enemy_Marmot",
+      "note": ""
+    },
+    {
+      "key": "plateau_tiangou",
+      "name": "天狗",
+      "faces": 6000,
+      "task": "1df6ca54-eddb-4940-bff1-4913ab092891",
+      "views": "front/left/right/back TV v002（特效分离）",
+      "texture": true,
+      "status": "textured",
+      "asset": "SK_Enemy_Tiangou",
+      "note": ""
+    },
+    {
+      "key": "plateau_jufu",
+      "name": "举父",
+      "faces": 8000,
+      "task": "af66035a-fb17-41e3-b2dd-d7ad19343deb",
+      "views": "front/left/right/back TV v002（特效分离）",
+      "texture": true,
+      "status": "textured",
+      "asset": "SK_Enemy_Jufu",
+      "note": ""
+    },
+    {
+      "key": "plateau_dijiang",
+      "name": "帝江",
+      "faces": 6000,
+      "task": "515e99c5-7eed-4294-864e-f77a7c6359d7",
+      "views": "front/left/right/back TV v002（特效分离）",
+      "texture": true,
+      "status": "textured",
+      "asset": "SK_Enemy_Dijiang",
+      "note": ""
+    },
+    {
+      "key": "plateau_qiongqi",
+      "name": "穷奇",
+      "faces": 8000,
+      "task": "2b54e66f-4a4c-4ad6-91da-2532151e4af1",
+      "views": "front/left/right/back TV v002（特效分离）",
+      "texture": true,
+      "status": "textured",
+      "asset": "SK_Enemy_Qiongqi",
+      "note": ""
+    },
+    {
+      "key": "plateau_boss_kui",
+      "name": "夔",
+      "faces": 30000,
+      "task": "84622d33-ea0e-488c-9f65-ec0ed65eac3f",
+      "views": "front/left/right/back TV v002（设计稿 v002，特效分离）",
+      "texture": true,
+      "status": "textured",
+      "asset": "SK_Boss_Kui",
+      "note": ""
+    },
+    {
+      "key": "plateau_boss_huashe",
+      "name": "化蛇",
+      "faces": 30000,
+      "task": "922be511-a71d-4292-9da6-127928c557bb",
+      "views": "front/left/right TV v003（不传背视；大图 + 特效分离）",
+      "texture": true,
+      "status": "textured",
+      "asset": "SK_Boss_Huashe",
+      "note": ""
+    }
+  ]
+}
