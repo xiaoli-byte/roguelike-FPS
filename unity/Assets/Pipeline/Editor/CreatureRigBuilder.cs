@@ -33,6 +33,15 @@ namespace Spiritfire.Art.Editor
             (new Regex(@"^(mane|beard|crest|feather|quill|frill|tent|hair|braid)", RegexOptions.IgnoreCase), "fur", 0.22f, 0.15f, 1f),
         };
 
+        /// <summary>
+        /// 不挂弹簧的链（资产 → 族）：这些骨骼是主动控制的肢体，动画已经精确给出姿势，再叠惯性只会乱甩。
+        /// 蝎尾弩卫的尾巴举着毒囊、对着玩家瞄准（Three.js 版也是按瞄准程序化控制，不是甩的尾巴）
+        /// </summary>
+        static readonly System.Collections.Generic.Dictionary<string, string[]> NoSprings = new()
+        {
+            ["SK_Enemy_ScorpionArcher"] = new[] { "tail" },
+        };
+
         public static void Setup(GameObject root, Animator animator, ArtSidecar sc)
         {
             var bones = animator.GetComponentsInChildren<Transform>(true)
@@ -78,6 +87,7 @@ namespace Spiritfire.Art.Editor
             {
                 var fam = Families.FirstOrDefault(f => f.re.IsMatch(b.name));
                 if (fam.re == null || (b.parent && fam.re.IsMatch(b.parent.name))) continue;
+                if (NoSprings.TryGetValue(sc.Id, out var skip) && skip.Contains(fam.family)) continue;
                 var chain = new List<Transform> { b };
                 for (var t = b; ;)
                 {

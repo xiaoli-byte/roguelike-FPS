@@ -13,7 +13,7 @@ namespace Spiritfire.Game
         static Telegraph instance;
         Material circleMat, lineMat, waveMat;
 
-        sealed class Item
+        internal sealed class Item
         {
             public Transform t;
             public Renderer r;
@@ -21,6 +21,28 @@ namespace Spiritfire.Game
             public Color color;
             public bool line, wave;
             public float waveSpeed, waveMax;
+            /// <summary>对象池复用计数：句柄只控制自己拿到的那一次</summary>
+            public int gen;
+        }
+
+        /// <summary>预警线句柄：蓄力期间跟着朝向更新（镇墓兽冲锋方向在前 60% 还能调整）</summary>
+        public sealed class LineHandle
+        {
+            internal Item it;
+            internal int gen;
+            public bool Alive => it != null && it.gen == gen && it.life > 0;
+
+            public void Move(Vector3 from, Vector3 to, float width)
+            {
+                if (Alive) Place(it, from, to, width);
+            }
+
+            public void End()
+            {
+                if (!Alive) return;
+                it.life = 0;
+                it.t.gameObject.SetActive(false);
+            }
         }
 
         readonly List<Item> items = new();
@@ -111,18 +133,24 @@ namespace Spiritfire.Game
             it.color = color;
         }
 
-        public static void Line(Vector3 from, Vector3 to, float width, float duration, Color color)
+        public static LineHandle Line(Vector3 from, Vector3 to, float width, float duration, Color color)
         {
             var g = Get();
             var it = g.Take(true);
+            Place(it, from, to, width);
+            it.life = it.max = duration;
+            it.color = color;
+            return new LineHandle { it = it, gen = it.gen };
+        }
+
+        static void Place(Item it, Vector3 from, Vector3 to, float width)
+        {
             var d = to - from;
             d.y = 0;
             var mid = (from + to) * 0.5f;
             float y = Mathf.Max(GroundY(from), GroundY(mid)) + 0.06f;
             it.t.SetPositionAndRotation(new Vector3(mid.x, y, mid.z), Quaternion.LookRotation(d.sqrMagnitude > 1e-4f ? d : Vector3.forward) * Quaternion.Euler(90, 0, 0));
             it.t.localScale = new Vector3(width, d.magnitude, 1);
-            it.life = it.max = duration;
-            it.color = color;
         }
 
         static float GroundY(Vector3 p) =>
@@ -134,6 +162,7 @@ namespace Spiritfire.Game
                 if (x.life <= 0 && x.line == line && x.wave == wave)
                 {
                     x.t.gameObject.SetActive(true);
+                    x.gen++;
                     return x;
                 }
             var go = GameObject.CreatePrimitive(PrimitiveType.Quad);

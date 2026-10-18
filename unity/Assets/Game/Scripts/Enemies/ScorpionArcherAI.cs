@@ -32,6 +32,7 @@ namespace Spiritfire.Game
             base.Awake();
             model = anim ? anim.transform : null;
             burrowCd = Random.Range(2f, 4f);
+            GlowStyle(0.06f, 0.03f, 2.6f, 0.55f);
             foreach (var t in GetComponentsInChildren<Transform>(true))
                 if (t.name.EndsWith("crossbow")) { crossbow = t; break; }
         }
@@ -49,6 +50,7 @@ namespace Spiritfire.Game
             switch (state)
             {
                 case "move":
+                    Glow = 0.25f + 0.1f * Mathf.Sin(age * 2.6f);
                     if (burrowCd <= 0 && d < BurrowTrigger && FindExit(out tunnelTarget))
                     {
                         Stop();
@@ -56,19 +58,20 @@ namespace Spiritfire.Game
                         SetState("dive");
                         break;
                     }
-                    if (d < SnapRange && cooldown <= 0.6f && RequestAttack(AttackTokens.Kind.Melee, SnapWindup + 0.6f))
+                    if (d < SnapRange * Size && cooldown <= 0.6f && RequestAttack(AttackTokens.Kind.Melee, SnapWindup + 0.6f))
                     {
                         snapHit = false;
                         Stop();
-                        Play("snapWindup", 0.06f);
+                        PlayTimed("snapWindup", Windup(SnapWindup, 0.2f), 0.06f);
                         SetState("snapWindup");
                         break;
                     }
                     KeepRange(MinRange, MaxRange, d < MinRange ? moveSpeed * 1.3f : moveSpeed, strafeSign);
-                    FacePlayer(200, dt);
+                    FaceAimTravel(200, dt);
                     if (cooldown <= 0 && sees && d <= MaxRange + 8) BeginAim(AimTime, false);
                     break;
                 case "aim":
+                    Glow = 0.35f + 0.65f * Mathf.Clamp01(stateTime / Mathf.Max(0.05f, aimTime));
                     Stop();
                     FacePlayer(290, dt);
                     if (!sees && stateTime > 0.35f && !ambush)
@@ -89,6 +92,7 @@ namespace Spiritfire.Game
                     break;
                 case "fire":
                 {
+                    Glow = 1;
                     FacePlayer(340, dt);
                     int total = elite ? 5 : 3;
                     shotTimer -= dt;
@@ -125,7 +129,7 @@ namespace Spiritfire.Game
                         Stop();
                         SetModelVisible(true);
                         Play("emerge", 0.05f);
-                        Telegraph.Circle(transform.position, EmergeRadius, EmergeTime, new Color(0.9f, 0.75f, 0.45f));
+                        Telegraph.Circle(transform.position, EmergeRadius * Size, EmergeTime, new Color(0.9f, 0.75f, 0.45f));
                         emergeHit = false;
                         SetState("emerge");
                     }
@@ -136,7 +140,7 @@ namespace Spiritfire.Game
                     if (!emergeHit && stateTime >= 0.18f)
                     {
                         emergeHit = true;
-                        Burst(transform.position, EmergeRadius, Damage * 0.8f);
+                        Burst(transform.position, EmergeRadius * Size, Damage * 0.8f);
                         ShotFx.Instance?.Impact(transform.position, Vector3.up, false, 4f);
                     }
                     if (stateTime >= EmergeTime)
@@ -159,7 +163,7 @@ namespace Spiritfire.Game
                     if (!snapHit && stateTime >= 0.06f)
                     {
                         snapHit = true;
-                        Melee(SnapRange, Damage * SnapMult, 0.3f);
+                        Melee(SnapRange * Size, Damage * SnapMult, 0.3f);
                     }
                     if (stateTime >= 0.25f)
                     {
@@ -168,8 +172,9 @@ namespace Spiritfire.Game
                     }
                     break;
                 case "recover":
+                    Glow = 0.25f;
                     KeepRange(MinRange, MaxRange, moveSpeed * 0.6f, strafeSign);
-                    FacePlayer(230, dt);
+                    FaceAimTravel(230, dt, 0.35f);
                     if (stateTime >= recoverTime / Mathf.Sqrt(auraAttackRate))
                     {
                         ReleaseAttack();
@@ -184,7 +189,8 @@ namespace Spiritfire.Game
                     SetState("move");
                     break;
             }
-            if (model) model.localPosition = new Vector3(0, -sink * SinkDepth * transform.localScale.y, 0);
+            // 模型是子物体：局部位移已随根节点缩放，SinkDepth 是设计尺寸下的深度，不再乘体型
+            if (model) model.localPosition = new Vector3(0, -sink * SinkDepth, 0);
             // 遁地：大半截身子进沙里才打不到（露在外面的部分一直能打），钻出来一冒头就能打；
             // 完全在地下时关掉碰撞体，免得看不见的身体挡子弹 / 挡路
             if (state is "dive" or "tunnel" or "emerge")
@@ -219,7 +225,7 @@ namespace Spiritfire.Game
             }
             aimTime = Windup(time, 0.3f);
             Stop();
-            Play("aim", 0.08f);
+            PlayTimed("aim", aimTime, 0.08f);
             SetState("aim");
         }
 
@@ -260,7 +266,7 @@ namespace Spiritfire.Game
                 float a = Random.value * Mathf.PI * 2, r = Random.Range(13f, 20f);
                 var p = PlayerPos + new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a)) * r;
                 if (!NavMesh.SamplePosition(p, out var hit, 2f, NavMesh.AllAreas)) continue;
-                if (Combat.Blocked(hit.position + Vector3.up * 1.6f, PlayerEye, null)) continue;
+                if (Combat.Blocked(hit.position + Vector3.up * 1.6f * Size, PlayerEye, null)) continue;
                 exit = hit.position;
                 return true;
             }

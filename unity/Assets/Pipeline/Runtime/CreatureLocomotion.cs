@@ -17,6 +17,11 @@ namespace Spiritfire.Art
         [Tooltip("转弯倾斜：度 / (弧度每秒 × 米每秒)")] public float leanPerTurn = 2.2f;
         public float maxLean = 12f;
         public bool autoTick = true;
+        /// <summary>
+        /// 由玩法直接指定动画速度（≥ 0 时生效，替代实测水平速度）：位移本身不均匀的步态用，
+        /// 例如蜃楼蟾只在腾空段前进——实测速度一跳之内在 0.5–7 m/s 之间跳动，喂给混合树会忽而待机忽而加速
+        /// </summary>
+        [System.NonSerialized] public float speedOverride = -1f;
 
         static readonly int SpeedId = Animator.StringToHash("Speed");
         static readonly int MoveScaleId = Animator.StringToHash("MoveScale");
@@ -73,14 +78,15 @@ namespace Spiritfire.Art
 
             // 原地转身：几乎没有平移、但在转 → 用脚掌的弧速度驱动一个慢步态
             float turnStep = Mathf.Abs(YawRate) * turnRadius;
-            float want = PlanarSpeed < 0.3f && turnStep > 0.15f ? Mathf.Max(PlanarSpeed, Mathf.Min(turnStep, maxClipSpeed * 0.5f)) : PlanarSpeed;
+            float planar = speedOverride >= 0 ? speedOverride : PlanarSpeed;
+            float want = planar < 0.3f && turnStep > 0.15f ? Mathf.Max(planar, Mathf.Min(turnStep, maxClipSpeed * 0.5f)) : planar;
             speedSmoothed = Mathf.Lerp(speedSmoothed, want, 1 - Mathf.Exp(-12f * dt));
             if (animator && animator.runtimeAnimatorController && animator.enabled)
             {
                 animator.SetFloat(SpeedId, speedSmoothed);
                 if (hasMoveScale) animator.SetFloat(MoveScaleId, speedSmoothed > maxClipSpeed ? Mathf.Min(2.5f, speedSmoothed / maxClipSpeed) : 1f);
             }
-            if (rig) rig.lean = Mathf.Clamp(YawRate * PlanarSpeed * leanPerTurn, -maxLean, maxLean);
+            if (rig) rig.lean = Mathf.Clamp(YawRate * planar * leanPerTurn, -maxLean, maxLean);
         }
     }
 }

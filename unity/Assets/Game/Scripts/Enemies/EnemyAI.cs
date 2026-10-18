@@ -149,6 +149,7 @@ namespace Spiritfire.Game
                 sees = !Combat.Blocked(transform.position + Vector3.up * Mathf.Max(0.6f, hp.GetComponent<Collider>() ? hp.GetComponent<Collider>().bounds.extents.y : 0.8f), PlayerEye, null);
             }
             if (manual) StepManual(dt);
+            StepPush(dt);
             buffTimer -= dt;
             if (buffTimer <= 0)
             {
@@ -166,6 +167,7 @@ namespace Spiritfire.Game
             }
             // 眩晕（雷殛叠满、封脉）：AI 停摆，打断正在做的动作；醒来从初始状态重新开始
             if (!status) status = GetComponent<EnemyStatus>();
+            if (body.Rig) body.Rig.daze = (status && status.Stunned) || DazeOverlay ? 1f : 0f;
             if (status && status.Stunned)
             {
                 if (!wasStunned)
@@ -188,11 +190,28 @@ namespace Spiritfire.Game
             Think(dt);
         }
 
+        /// <summary>子类自己的晕眩状态（镇墓兽撞墙撞晕）：打开 CreatureRig 的晕眩叠加</summary>
+        protected virtual bool DazeOverlay => false;
+
+        protected bool Stunned
+        {
+            get
+            {
+                if (!status) status = GetComponent<EnemyStatus>();
+                return status && status.Stunned;
+            }
+        }
+
         /// <summary>被眩晕的那一刻：子类在这里收拾自己的中间状态（钻了一半的沙、悬空的冲锋…）</summary>
         protected virtual void OnStunned() { }
 
         /// <summary>移速倍率：光环 × 元素减速（蚀化、封脉）</summary>
         protected float SpeedMult => auraSpeed * (status ? status.SlowMult : 1f);
+        /// <summary>步态对位移的调制（蜃楼蟾只在腾空段前进）；1 = 匀速</summary>
+        protected virtual float GaitMult => 1f;
+
+        /// <summary>体型（名册 scale × 精英 1.25）：Three.js 版按 sizeScale 放大的判定距离 / 半径都乘它</summary>
+        protected float Size => transform.localScale.x;
 
         /// <summary>
         /// 邪飞天加成：16 m 内有一只没被沉默的邪飞天就吃光环（多只不叠加）；赐福另算、相乘。
@@ -225,17 +244,77 @@ namespace Spiritfire.Game
 
         protected void Play(string animState, float fade = 0.08f)
         {
-            if (anim && anim.isActiveAndEnabled) anim.CrossFadeInFixedTime(animState, fade);
+            if (!anim || !anim.isActiveAndEnabled) return;
+            SetActScale(1);
+            anim.CrossFadeInFixedTime(animState, fade);
+        }
+
+        /// <summary>
+        /// 播一个招式片段并拉伸到 seconds 正好播完：前摇被光环加速、或片段录制时长与玩法计时不一致时，
+        /// 动作链的下一段（出招）才和玩法的出招时刻对得上，不会提前出手或停在最后一帧干等
+        /// </summary>
+        protected void PlayTimed(string animState, float seconds, float fade = 0.08f)
+        {
+            if (!anim || !anim.isActiveAndEnabled) return;
+            float len = ClipLength(animState);
+            SetActScale(len > 0 && seconds > 0.05f ? Mathf.Clamp(len / seconds, 0.4f, 2.5f) : 1);
+            anim.CrossFadeInFixedTime(animState, fade);
+        }
+
+        static readonly int ActScaleId = Animator.StringToHash("ActScale");
+        static readonly Dictionary<RuntimeAnimatorController, Dictionary<string, float>> clipLengths = new();
+        int hasActScale = -1;
+
+        void SetActScale(float k)
+        {
+            if (hasActScale < 0)
+            {
+                hasActScale = 0;
+                foreach (var p in anim.parameters) if (p.nameHash == ActScaleId) hasActScale = 1;
+            }
+            if (hasActScale == 1) anim.SetFloat(ActScaleId, k);
+        }
+
+        /// <summary>状态对应片段的时长（烘焙片段名 = &lt;资产&gt;_&lt;状态&gt;）；找不到返回 0</summary>
+        float ClipLength(string animState)
+        {
+            var ctrl = anim.runtimeAnimatorController;
+            if (!ctrl) return 0;
+            if (!clipLengths.TryGetValue(ctrl, out var map))
+            {
+                map = new Dictionary<string, float>();
+                foreach (var c in ctrl.animationClips)
+                {
+                    if (!c) continue;
+                    int i = c.name.LastIndexOf('_');
+                    if (i >= 0) map[c.name[(i + 1)..]] = c.length;
+                }
+                clipLengths[ctrl] = map;
+            }
+            return map.TryGetValue(animState, out var len) ? len : 0;
         }
 
         protected void PlayLocomotion() => Play("Locomotion", 0.15f);
+
+        /// <summary>弱点发光壳的亮度目标（0..1，见 EnemyBody.glow）：各敌人按状态每帧写</summary>
+        protected float Glow { set => body.glow = value; }
+
+        /// <summary>发光壳的亮度换算（Three.js 各敌人 glowShell.opacity 的公式）</summary>
+        protected void GlowStyle(float baseline, float breath, float rate, float gain, bool squared = true)
+        {
+            body.glowBase = baseline;
+            body.glowBreath = breath;
+            body.glowRate = rate;
+            body.glowGain = gain;
+            body.glowSquared = squared;
+        }
 
         // ───────────── 移动 ─────────────
         protected void MoveTo(Vector3 dest, float speed)
         {
             if (manual || !agent.isOnNavMesh) return;
             agent.isStopped = false;
-            agent.speed = speed * SpeedMult;
+            agent.speed = speed * SpeedMult * GaitMult;
             repathTimer -= Time.deltaTime;
             if (repathTimer <= 0 || (dest - lastDest).sqrMagnitude > 1f)
             {
@@ -277,11 +356,59 @@ namespace Spiritfire.Game
 
         protected void FacePlayer(float rateDeg, float dt) => FaceTowards(PlayerPos, rateDeg, dt);
 
+        /// <summary>
+        /// 边横移边对着玩家：只有前进步态的片段，正对玩家横着走就是「太空步」。横移时身体朝移动方向偏过去
+        /// （最多 travel × 90°，按横移占比），头由 CreatureRig 的看向继续盯着玩家；前进 / 后退时照样正对玩家（后撤不背身）
+        /// </summary>
+        protected void FaceAimTravel(float rateDeg, float dt, float travel = 0.5f)
+        {
+            var toP = PlayerPos - transform.position;
+            toP.y = 0;
+            if (toP.sqrMagnitude < 1e-4f) return;
+            toP.Normalize();
+            var dir = toP;
+            var v = manual ? manualVelocity : agent.desiredVelocity;
+            v.y = 0;
+            if (v.sqrMagnitude > 0.04f)
+            {
+                var vd = v.normalized;
+                float lateral = Mathf.Abs(Vector3.Dot(vd, new Vector3(-toP.z, 0, toP.x)));
+                float fwd = Vector3.Dot(vd, toP);
+                // 横移成分越大偏得越多；带后退成分时偏转渐弱（不把屁股对着玩家）
+                float k = travel * lateral * Mathf.Clamp01(1 + fwd * 1.5f);
+                dir = Vector3.Slerp(toP, vd, k);
+            }
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(dir), rateDeg * dt);
+        }
+
         protected void FaceMovement(float rateDeg, float dt)
         {
             var v = manual ? manualVelocity : agent.velocity;
             v.y = 0;
             if (v.sqrMagnitude > 0.25f) transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(v), rateDeg * dt);
+        }
+
+        Vector3 push;
+
+        /// <summary>
+        /// 击退（Three.js EnemyBase.knockback）：水平冲量 × (1 − 击退抗性) 叠到一个推力上，沿导航网格推开、按 8/s 衰减。
+        /// 跳跃 / 冲锋这类脚本位移期间不推（不打断招式的轨迹）
+        /// </summary>
+        public void Knockback(Vector3 impulse)
+        {
+            if (Dead) return;
+            float k = 1 - knockbackResist;
+            if (k <= 0) return;
+            impulse.y = 0;
+            push += impulse * k;
+            if (push.sqrMagnitude > 81) push = push.normalized * 9;
+        }
+
+        void StepPush(float dt)
+        {
+            if (push.sqrMagnitude < 0.0004f) return;
+            if (!manual && agent.isOnNavMesh) agent.Move(push * dt);
+            push *= Mathf.Exp(-8f * dt);
         }
 
         /// <summary>离开导航网格的位移（跳跃、冲锋、遁地）：给初速度与重力，脚本按物理推进；落地 / 结束时交还 agent</summary>

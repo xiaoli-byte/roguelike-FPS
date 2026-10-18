@@ -16,6 +16,8 @@ namespace Spiritfire.Game
         {
             public string id, prefab, name;
             public float hp, armor, shield, speed, damage, knockbackResist;
+            /// <summary>体型倍率（Three.js 版 ScaledEnemyDef.scale）：美术 Prefab 是设计尺寸，生成时整体放大，碰撞体 / 导航 / 弱点一起变</summary>
+            public float scale = 1f;
             public string weakBone;
             public float weakRadius;
             public Type ai;
@@ -26,12 +28,12 @@ namespace Spiritfire.Game
         {
             ["jerboa_blade"] = new Def
             {
-                id = "jerboa_blade", prefab = "SK_Enemy_JerboaBlade", name = "跳鼠刀兵", hp = 42, speed = 7, damage = 9,
+                id = "jerboa_blade", prefab = "SK_Enemy_JerboaBlade", name = "跳鼠刀兵", scale = 1.3f, hp = 42, speed = 7, damage = 9,
                 weakBone = "bell", weakRadius = 0.17f, ai = typeof(JerboaBladeAI),
             },
             ["scorpion_archer"] = new Def
             {
-                id = "scorpion_archer", prefab = "SK_Enemy_ScorpionArcher", name = "蝎尾弩卫", hp = 120, speed = 3.4f, damage = 11,
+                id = "scorpion_archer", prefab = "SK_Enemy_ScorpionArcher", name = "蝎尾弩卫", scale = 1.8f, hp = 120, speed = 3.4f, damage = 11,
                 knockbackResist = 0.5f, weakBone = "sac", weakRadius = 0.26f, ai = typeof(ScorpionArcherAI), role = AttackTokens.Kind.Ranged,
             },
             ["mirage_toad"] = new Def
@@ -46,17 +48,17 @@ namespace Spiritfire.Game
             },
             ["tomb_beast"] = new Def
             {
-                id = "tomb_beast", prefab = "SK_Enemy_TombBeast", name = "三彩镇墓兽", hp = 640, armor = 160, speed = 2.2f, damage = 42,
+                id = "tomb_beast", prefab = "SK_Enemy_TombBeast", name = "三彩镇墓兽", scale = 1.7f, hp = 640, armor = 160, speed = 2.2f, damage = 42,
                 knockbackResist = 1f, weakBone = "crack", weakRadius = 0.42f, ai = typeof(TombBeastAI), role = AttackTokens.Kind.Heavy,
             },
             ["apsara"] = new Def
             {
-                id = "apsara", prefab = "SK_Enemy_Apsara", name = "邪飞天", hp = 170, speed = 4.2f, damage = 0,
+                id = "apsara", prefab = "SK_Enemy_Apsara", name = "邪飞天", scale = 1.3f, hp = 170, speed = 4.2f, damage = 0,
                 knockbackResist = 0.3f, weakBone = "socket_pipa", weakRadius = 0.3f, ai = typeof(ApsaraAI), role = AttackTokens.Kind.Ranged,
             },
             ["fire_rat"] = new Def
             {
-                id = "fire_rat", prefab = "SK_Enemy_FireRat", name = "火浣鼠", hp = 26, speed = 6, damage = 26,
+                id = "fire_rat", prefab = "SK_Enemy_FireRat", name = "火浣鼠", scale = 1.6f, hp = 26, speed = 6, damage = 26,
                 weakBone = "spine", weakRadius = 0.3f, ai = typeof(FireRatAI),
             },
         };
@@ -76,6 +78,7 @@ namespace Spiritfire.Game
             }
             if (NavMesh.SamplePosition(position, out var hit, 4f, NavMesh.AllAreas)) position = hit.position;
             var go = UnityEngine.Object.Instantiate(prefab, position, rotation, parent);
+            go.transform.localScale = prefab.transform.localScale * def.scale;
             // 先停用再挂组件：AddComponent 在激活的物体上会立刻跑 Awake，那时字段还没填
             go.SetActive(false);
             go.name = $"{def.name} ({id})";

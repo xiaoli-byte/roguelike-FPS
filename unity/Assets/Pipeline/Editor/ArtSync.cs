@@ -53,9 +53,35 @@ namespace Spiritfire.Art.Editor
             }
             EditorUtility.ClearProgressBar();
             AssetDatabase.SaveAssets();
+            errors = RelinkControllers();
+            // 灵宠：有角色预制体（SK_Pet_*）/ 发光件挂件（SM_PetPart_*）的重建 Resources/Pets 嵌套预制体（新出现的不用再手动跑 pets）；不计入错误数
+            try { PetArtImport.SyncRigged(); }
+            catch (System.Exception e) { Debug.LogWarning($"[pets] 灵宠预制体没能更新：{e.Message}"); }
             var results = ArtValidator.ValidateAll(sidecars);
-            errors = results.Sum(r => r.errors.Count);
+            errors += results.Sum(r => r.errors.Count);
             return results;
+        }
+
+        /// <summary>
+        /// 原生动画控制器每次 Sync 都会删掉重建：磁盘上 Prefab 的引用（GUID + 文件内 ID）是对的，但编辑器内存里的 Prefab
+        /// 可能还指着被替换掉的旧控制器对象——运行时 Animator 的控制器是空的，敌人只剩绑定姿势（2026-10-18 一次 Sync 后
+        /// 1-1 六种敌人全部没有动画）。这里强制重新导入角色 Prefab，再逐个核对：文件里引用了控制器、加载出来却是空的就报错。
+        /// </summary>
+        static int RelinkControllers()
+        {
+            var paths = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/Art/Prefabs/Characters" }).Select(AssetDatabase.GUIDToAssetPath).ToList();
+            foreach (var p in paths) AssetDatabase.ImportAsset(p, ImportAssetOptions.ForceUpdate);
+            int broken = 0;
+            foreach (var p in paths)
+            {
+                var go = AssetDatabase.LoadAssetAtPath<GameObject>(p);
+                var anim = go ? go.GetComponentInChildren<Animator>(true) : null;
+                if (!anim || anim.runtimeAnimatorController) continue;
+                if (!System.IO.File.ReadAllText(p).Contains("m_Controller: {fileID: 9100000")) continue;
+                Debug.LogError($"[Sync] {go.name} 的动画控制器引用没有接上（重新导入后仍为空）");
+                broken++;
+            }
+            return broken;
         }
 
         /// <summary>sidecar 比模型新（重新导出过）或导入规则版本变了，就强制重新导入模型与贴图。</summary>

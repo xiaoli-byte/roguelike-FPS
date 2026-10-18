@@ -18,7 +18,9 @@ namespace Spiritfire.Art.Editor
     /// 再乘上 Unity 这边同名骨骼自己的绑定朝向——不依赖 Blender / FBX 改过的骨骼局部轴向。位置同理用增量。
     /// 人形资产（Humanoid Avatar）的变换曲线不能直接播放：逐帧摆好骨骼后用 HumanPoseHandler 读成肌肉曲线，
     /// 非人形部分（尾巴、飘带、耳朵）保留变换曲线。
-    /// 状态机 AC_&lt;资产&gt;：Idle ⇄ Move（Speed），任意状态 → Hit（触发）/ 各招式（触发 act_&lt;状态&gt;），招式播完回 Idle。
+    /// 状态机 AC_&lt;资产&gt;：Idle ⇄ Move（Speed），任意状态 → 各招式（触发 act_&lt;状态&gt;），招式播完回 Idle。
+    /// 受击（触发 Hit）在叠加层 Flinch 上播：同 Three.js 的 hurtKick 叠在当前动作上，不打断出招、移动中也不滑步；
+    /// 底层的 Hit 状态只给眩晕用（玩法直接 CrossFade 过去）。
     /// </summary>
     public static class NativeClipBuilder
     {
@@ -164,9 +166,23 @@ namespace Spiritfire.Art.Editor
                     foreach (HumanBodyBones hb in System.Enum.GetValues(typeof(HumanBodyBones)))
                         if (hb != HumanBodyBones.LastBone && animator.GetBoneTransform(hb) is { } ht) humanBones.Add(ht);
 
-                foreach (var (name, clipTok) in (JObject)data["clips"])
+                // 受击叠加片段 Flinch：待机第 0 帧 + Hit 全部帧。叠加层以片段自己的第 0 帧为参考姿势，
+                // 叠上去的就是「受击一抖再衰减」本身（Hit 采样时 hurtKick 直接置 1，它的第 0 帧已经是踢满的姿势，不能当参考；
+                // AnimationUtility.SetAdditiveReferencePose 又不接受我们生成的片段）
+                var clipToks = ((JObject)data["clips"]).Properties().Select(p => (p.Name, (JObject)p.Value)).ToList();
+                if (data["clips"]?["Hit"] is JObject hitTok && data["clips"]?["Idle"] is JObject idleTok)
                 {
-                    var c = (JObject)clipTok;
+                    var fl = (JObject)hitTok.DeepClone();
+                    var fr = (JArray)fl["frames"];
+                    fr.Insert(0, ((JArray)idleTok["frames"])[0].DeepClone());
+                    if (fl["rootY"] is JArray ry) ry.Insert(0, ((JArray)idleTok["rootY"])?[0] ?? 0);
+                    fl["events"] = new JArray();
+                    fl["loop"] = false;
+                    clipToks.Add(("Flinch", fl));
+                }
+
+                foreach (var (name, c) in clipToks)
+                {
                     var frames = (JArray)c["frames"];
                     var rootY = c["rootY"]?.ToObject<float[]>();
                     bool loop = (bool?)c["loop"] ?? false;
@@ -372,24 +388,50 @@ namespace Spiritfire.Art.Editor
             {
                 var hit = sm.AddState("Hit", new Vector3(520, -80, 0));
                 hit.motion = hitClip;
-                var any = sm.AddAnyStateTransition(hit);
-                any.AddCondition(AnimatorConditionMode.If, 0, "Hit");
-                any.hasExitTime = false;
-                any.duration = 0.05f;
                 var back = hit.AddTransition(idle);
                 back.hasExitTime = true;
                 back.exitTime = 0.95f;
                 back.duration = 0.1f;
             }
+            if (clips.TryGetValue("Flinch", out var flinchClip))
+            {
+                // 叠加层：Flinch 片段 = 待机第 0 帧 + Hit（见 Build），以自己的第 0 帧为参考姿势
+                ac.AddLayer("Flinch");
+                var layers = ac.layers;
+                var fl = layers[^1];
+                fl.blendingMode = AnimatorLayerBlendingMode.Additive;
+                fl.defaultWeight = 1;
+                ac.layers = layers;
+                var fsm = fl.stateMachine;
+                var none = fsm.AddState("FlinchNone", new Vector3(300, 0, 0));
+                none.writeDefaultValues = false;
+                var flinch = fsm.AddState("Flinch", new Vector3(300, 80, 0));
+                flinch.motion = flinchClip;
+                flinch.writeDefaultValues = false;
+                fsm.defaultState = none;
+                var anyHit = fsm.AddAnyStateTransition(flinch);
+                anyHit.AddCondition(AnimatorConditionMode.If, 0, "Hit");
+                anyHit.hasExitTime = false;
+                anyHit.duration = 0.03f;
+                anyHit.canTransitionToSelf = true;
+                var settle = flinch.AddTransition(none);
+                settle.hasExitTime = true;
+                settle.exitTime = 0.9f;
+                settle.duration = 0.1f;
+            }
 
             // 招式：采样时连续出现的状态（windup → 出招 → 收招）串成连段，只有段首挂触发器 act_<状态>
-            var actions = clips.Where(kv => kv.Key is not ("Idle" or "Walk" or "Move" or "Hit")).ToList();
+            var actions = clips.Where(kv => kv.Key is not ("Idle" or "Walk" or "Move" or "Hit" or "Flinch")).ToList();
+            // 招式播放速度：玩法按实际前摇时长拉伸片段（EnemyAI.PlayTimed），默认 1
+            ac.AddParameter("ActScale", AnimatorControllerParameterType.Float);
             var states = new Dictionary<string, AnimatorState>();
             int row = 0;
             foreach (var (name, clip) in actions)
             {
                 var st = sm.AddState(name, new Vector3(520, 40 + 60 * row++, 0));
                 st.motion = clip;
+                st.speedParameterActive = true;
+                st.speedParameter = "ActScale";
                 states[name] = st;
             }
             string Next(string n) => (string)data["clips"]?[n]?["next"];
@@ -413,7 +455,7 @@ namespace Spiritfire.Art.Editor
             }
             // 浮点参数默认 0 会让 Move 状态以 0 倍速播放：MoveScale 默认 1
             var ps = ac.parameters;
-            foreach (var p in ps) if (p.name == "MoveScale") p.defaultFloat = 1f;
+            foreach (var p in ps) if (p.name is "MoveScale" or "ActScale") p.defaultFloat = 1f;
             ac.parameters = ps;
             EditorUtility.SetDirty(ac);
             return ac;

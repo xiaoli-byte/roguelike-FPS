@@ -2,6 +2,7 @@
 // 手绘固有色为主，光照只负责体积：主光 N·L 经软阶梯（ramp）分成亮 / 暗两大块，暗部带冷色偏移而不是变黑；
 // 环境光取球谐，ORM 的 AO 与 SSAO 取小；金属 / 低粗糙度区域加一圈阶梯高光与环境反射；
 // 边缘光（菲涅尔）勾出剪影，受击闪白 / 词缀着色走 _FlashAmount / _Tint。
+// _Tint.a = 输出 alpha（默认 1；不透明材质的混合是 One Zero，不受影响）：幻影类实例把材质切到 SrcAlpha 混合后靠它淡化 / 闪烁。
 Shader "Spiritfire/StylizedLit"
 {
     Properties
@@ -168,7 +169,7 @@ Shader "Spiritfire/StylizedLit"
                 #if defined(_EMISSION)
                 glow = SAMPLE_TEXTURE2D(_EmissionMap, sampler_EmissionMap, i.uv).rgb * _EmissionColor.rgb;
                 #endif
-                return half4(MixFogColor(glow, half3(0,0,0), i.fogAndVertexLight.x), 1);
+                return half4(MixFogColor(glow * _Tint.a, half3(0,0,0), i.fogAndVertexLight.x), 1);
                 #endif
 
                 StylizedStyle st;
@@ -185,7 +186,7 @@ Shader "Spiritfire/StylizedLit"
 
                 color = lerp(color, _FlashColor.rgb, _FlashAmount);
                 color = MixFog(color, i.fogAndVertexLight.x);
-                return half4(color, 1);
+                return half4(color, _Tint.a);
             }
             ENDHLSL
         }

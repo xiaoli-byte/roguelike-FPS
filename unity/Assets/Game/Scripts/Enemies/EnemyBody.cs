@@ -22,6 +22,7 @@ namespace Spiritfire.Game
 
         static readonly int FlashId = Shader.PropertyToID("_FlashAmount");
         static readonly int HitId = Animator.StringToHash("Hit");
+        static readonly int TintId = Shader.PropertyToID("_Tint");
 
         public Damageable Health { get; private set; }
         public Animator Animator { get; private set; }
@@ -29,7 +30,19 @@ namespace Spiritfire.Game
         public Transform WeakPoint { get; private set; }
 
         CreatureRagdoll ragdoll;
-        Renderer[] renderers;
+        Renderer[] renderers, glowShells;
+        float glowLevel;
+
+        /// <summary>
+        /// 弱点发光壳（美术的 *_GlowShell：喉囊、铜铃、弩匣、裂纹日火…）的亮度通道，同 Three.js 的 glowTarget / glowShell.opacity：
+        /// AI 每帧按状态写目标 0..1（前摇时随蓄力升到 1——玩家看得见「要出招了」），这里按 14/s 阻尼过渡，
+        /// 换算成不透明度 = base + breath·sin(t·rate) + gain·level（squared 时 level²），写进发光材质的 _Tint.a
+        /// </summary>
+        [System.NonSerialized] public float glow;
+        [System.NonSerialized] public float glowBase = 0.08f, glowBreath = 0.03f, glowRate = 2.6f, glowGain = 0.6f;
+        [System.NonSerialized] public bool glowSquared = true;
+        /// <summary>当前发光壳不透明度（测试用；没有发光壳时 -1）</summary>
+        public float GlowOpacity { get; private set; } = -1;
         MaterialPropertyBlock block;
         float flash, deadTime = -1;
         bool hasHitTrigger;
@@ -43,6 +56,7 @@ namespace Spiritfire.Game
             Rig = GetComponentInChildren<CreatureRig>();
             ragdoll = GetComponent<CreatureRagdoll>();
             renderers = GetComponentsInChildren<Renderer>(true);
+            glowShells = System.Array.FindAll(renderers, r => r.name.Contains("GlowShell"));
             block = new MaterialPropertyBlock();
             home = transform.position;
             homeRot = transform.rotation;
@@ -75,7 +89,8 @@ namespace Spiritfire.Game
             // 骨骼可能带缩放：半径换算回世界尺寸
             float s = Mathf.Max(1e-3f, bone.lossyScale.x);
             var sphere = go.AddComponent<SphereCollider>();
-            sphere.radius = weakRadius / s;
+            // weakRadius 是设计尺寸下的半径：随根节点体型（名册 scale、精英）放大，同 Three.js 的 headRadius × sizeScale
+            sphere.radius = weakRadius * transform.lossyScale.x / s;
             sphere.isTrigger = false;
             var rb = go.AddComponent<Rigidbody>();
             rb.isKinematic = true;
@@ -98,6 +113,8 @@ namespace Spiritfire.Game
             float strength = Mathf.Clamp01(r.total / Mathf.Max(1, Health.maxHealth) * 4f);
             if (Rig) Rig.Hit(info.direction, strength);
             if (hasHitTrigger && r.total >= Health.maxHealth * staggerFraction && !r.killed) Animator.SetTrigger(HitId);
+            // 击退：武器 / 爆炸 / 反应带的击退量沿命中方向推开活着的敌人（死了的交给布娃娃）
+            if (!r.killed && info.knockback > 0 && info.direction.sqrMagnitude > 1e-4f && GetComponent<EnemyAI>() is { } ai) ai.Knockback(info.direction.normalized * info.knockback);
         }
 
         void OnDied(DamageInfo info)
@@ -119,6 +136,20 @@ namespace Spiritfire.Game
 
         void Update()
         {
+            if (glowShells.Length > 0)
+            {
+                glowLevel = Mathf.Lerp(glowLevel, Health.Dead ? 0 : Mathf.Clamp01(glow), 1 - Mathf.Exp(-14f * Time.deltaTime));
+                float g = glowSquared ? glowLevel * glowLevel : glowLevel;
+                GlowOpacity = Mathf.Clamp01(glowBase + glowBreath * Mathf.Sin(Time.time * glowRate) + g * glowGain);
+                var tint = new Color(1, 1, 1, GlowOpacity);
+                foreach (var r in glowShells)
+                {
+                    if (!r) continue;
+                    r.GetPropertyBlock(block);
+                    block.SetColor(TintId, tint);
+                    r.SetPropertyBlock(block);
+                }
+            }
             if (flash > 0)
             {
                 flash = Mathf.Max(0, flash - Time.deltaTime / 0.12f);

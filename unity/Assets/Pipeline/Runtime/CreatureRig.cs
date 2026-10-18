@@ -62,11 +62,14 @@ namespace Spiritfire.Art
 
         [Header("Lean")]
         [Tooltip("转弯倾斜（度，正 = 向右压），由 CreatureLocomotion 每帧设置")] public float lean;
+        [Tooltip("晕眩 0–1（眩晕、撞墙撞晕）：头左右甩、骨盆打晃，叠在任何动作上；由玩法每帧设置")] public float daze;
 
         public bool autoTick = true;
         public event Action<string> AnimEvent;
+        /// <summary>落脚：某条腿进入支撑相、脚被锁到地面的那一刻（腿序号、落脚点）。重型怪用它扬尘 / 震地</summary>
+        public event Action<int, Vector3> Footfall;
 
-        float pelvisOffset, lookYaw, lookPitch, lookBlend, leanCur;
+        float pelvisOffset, lookYaw, lookPitch, lookBlend, leanCur, dazeCur;
         Vector3 hitAngle, hitVel;
         /// <summary>当前受击弹簧把身体压歪了多少度（测试 / 调参看）</summary>
         public float HitAngleDeg => hitAngle.magnitude * Mathf.Rad2Deg;
@@ -131,6 +134,7 @@ namespace Spiritfire.Art
             if (pelvis && Mathf.Abs(leanCur) > 0.05f) pelvis.rotation = Quaternion.AngleAxis(-leanCur, root.forward) * pelvis.rotation;
             if (feetIK && legs.Length > 0 && pelvis) Feet(root, dt);
             if (lookBones.Length > 0) Look(root, dt);
+            Daze(root, dt);
             HitReaction(root, dt);
             Springs(dt);
             GuardEnd();
@@ -181,10 +185,13 @@ namespace Spiritfire.Art
         void Feet(Transform root, float dt)
         {
             var up = Vector3.up;
+            // legLength / restLift 是设计尺寸下的值：随根节点缩放（名册体型、精英）换算到世界尺寸
+            float sc = Mathf.Max(0.01f, root.lossyScale.y);
+            float leg = legLength * sc;
             float floor = root.position.y;
             int n = legs.Length;
             // 身体离地（飞行 / 悬浮 / 跳起）：根节点比脚下地面高出 12 厘米以上就不做脚步 IK，否则会把腿拉到地上
-            bool bodyAirborne = !Physics.Raycast(root.position + up * 0.5f, Vector3.down, out var under, 0.5f + legLength * 2f, groundMask, QueryTriggerInteraction.Ignore)
+            bool bodyAirborne = !Physics.Raycast(root.position + up * 0.5f, Vector3.down, out var under, 0.5f + leg * 2f, groundMask, QueryTriggerInteraction.Ignore)
                                 || root.position.y - under.point.y > 0.12f;
             Span<Vector3> targets = stackalloc Vector3[n];
             Span<float> weights = stackalloc float[n];
@@ -196,21 +203,26 @@ namespace Spiritfire.Art
                 if (!l.end || !l.mid || !l.upper) continue;
                 var animEnd = l.end.position;
                 float lift = animEnd.y - floor;
-                bool airborne = bodyAirborne || lift - l.restLift > legLength * airborneLift;
+                bool airborne = bodyAirborne || lift - l.restLift * sc > leg * airborneLift;
                 float w = 0;
                 var target = animEnd;
-                var from = animEnd + up * (legLength * 0.6f);
-                if (!airborne && Physics.Raycast(from, Vector3.down, out var hit, legLength * 1.6f + lift, groundMask, QueryTriggerInteraction.Ignore))
+                var from = animEnd + up * (leg * 0.6f);
+                if (!airborne && Physics.Raycast(from, Vector3.down, out var hit, leg * 1.6f + lift, groundMask, QueryTriggerInteraction.Ignore))
                 {
                     // 脚骨（踝）在静止姿势下离脚底 restLift：落脚高度至少是「地面 + 踝高」，脚底不会插进地里。
                     // Three.js 版的 IK 把踝关节直接钉在地面上（忽略踝高），采样数据里走路时脚会陷进地里约一个踝高，这里一并纠正
-                    target.y = hit.point.y + Mathf.Max(lift, l.restLift);
+                    target.y = hit.point.y + Mathf.Max(lift, l.restLift * sc);
                     w = 1;
                     // 支撑相：动画里脚贴近地面（按静止姿势的踝高算）就锁住世界位置；动画抬脚或被拉得太远才松开。
                     // 不看脚的世界速度——片段速度与实际移动对不上时脚恰恰在滑，按速度判定会永远锁不上
-                    bool stance = lift - l.restLift < legLength * 0.08f;
-                    if (stance && !l.locked) { l.locked = true; l.lockPos = target; }
-                    if (l.locked && (!stance || Vector2.Distance(new Vector2(l.lockPos.x, l.lockPos.z), new Vector2(target.x, target.z)) > legLength * 0.3f))
+                    bool stance = lift - l.restLift * sc < leg * 0.08f;
+                    if (stance && !l.locked)
+                    {
+                        l.locked = true;
+                        l.lockPos = target;
+                        Footfall?.Invoke(i, target);
+                    }
+                    if (l.locked && (!stance || Vector2.Distance(new Vector2(l.lockPos.x, l.lockPos.z), new Vector2(target.x, target.z)) > leg * 0.3f))
                         l.locked = false;
                     l.lockBlend = Mathf.MoveTowards(l.lockBlend, l.locked ? 1 : 0, dt * 8f);
                     if (l.lockBlend > 0)
@@ -227,7 +239,7 @@ namespace Spiritfire.Art
                 weights[i] = l.weight;
             }
             // 骨盆：按最需要下探的那只脚整体降低（上台阶时所有脚都要抬，则整体抬高），限幅、平滑
-            float want = any ? Mathf.Clamp(minOffset, -legLength * 0.45f, legLength * 0.45f) : 0f;
+            float want = any ? Mathf.Clamp(minOffset, -leg * 0.45f, leg * 0.45f) : 0f;
             pelvisOffset = Mathf.Lerp(pelvisOffset, want, 1 - Mathf.Exp(-12f * dt));
             pelvis.position += up * pelvisOffset;
             for (int i = 0; i < n; i++)
@@ -290,7 +302,8 @@ namespace Spiritfire.Art
                 float yaw = Mathf.Atan2(local.x, local.z) * Mathf.Rad2Deg;
                 float pitch = -Mathf.Atan2(local.y, new Vector2(local.x, local.z).magnitude) * Mathf.Rad2Deg;
                 // 目标在身后（超过限角 1.6 倍）就放开，不扭断脖子
-                wantBlend = Mathf.Abs(yaw) < lookYawLimit * 1.6f ? lookWeight : 0f;
+                // 晕眩时放开看向（同 Three.js：daze 时 look = 0），只剩甩头
+                wantBlend = (Mathf.Abs(yaw) < lookYawLimit * 1.6f ? lookWeight : 0f) * (1 - dazeCur);
                 wantYaw = Mathf.Clamp(yaw, -lookYawLimit, lookYawLimit);
                 wantPitch = Mathf.Clamp(pitch, -lookPitchLimit, lookPitchLimit);
             }
@@ -304,6 +317,19 @@ namespace Spiritfire.Art
             float share = 1f / lookBones.Length;
             foreach (var b in lookBones)
                 if (b) b.rotation = Quaternion.Slerp(Quaternion.identity, q, share) * b.rotation;
+        }
+
+        // ───────────── 晕眩 ─────────────
+        /// <summary>同 Three.js 各敌人 poseNative 的晕眩项：头绕竖轴甩 ±20°（11 rad/s），骨盆绕前进轴打晃 ±4.6°（7 rad/s）</summary>
+        void Daze(Transform root, float dt)
+        {
+            dazeCur = Mathf.MoveTowards(dazeCur, Mathf.Clamp01(daze), dt * 4f);
+            if (dazeCur < 0.01f) return;
+            float t = Time.time;
+            if (pelvis) pelvis.rotation = Quaternion.AngleAxis(Mathf.Sin(t * 7f) * 4.6f * dazeCur, root.forward) * pelvis.rotation;
+            var head = lookBones.Length > 0 ? lookBones[^1] : null;
+            if (head) head.rotation = Quaternion.AngleAxis(Mathf.Sin(t * 11f) * 20f * dazeCur, root.up) * head.rotation;
+            if (lookBones.Length > 1 && lookBones[0]) lookBones[0].rotation = Quaternion.AngleAxis(Mathf.Sin(t * 11f - 0.6f) * 8f * dazeCur, root.up) * lookBones[0].rotation;
         }
 
         // ───────────── 受击 ─────────────

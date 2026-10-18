@@ -7,7 +7,7 @@ namespace Spiritfire.Game
     ///   逼近：12 m 外直扑；12 m 内左右折线（0.45–0.85 s 换向）；冷却中在 3.8–6.5 m 的距离带上绕圈，不贴脸
     ///   扑斩：4–9 m、看得见、拿到近战名额 → 蹲伏 0.4 s（落点预警）→ 真跳向预判落点（提前 35%）→ 落地 360° 旋斩 2 m（伤害 ×1.3）
     ///         → 硬直 0.5 s（反击窗口）→ 离得近就向后跳开
-    ///   贴脸：1.5 m 内交叉斩，前摇 0.3 s
+    ///   贴脸：1.5 m 内交叉斩，前摇 0.3 s（举刀蓄势、半速贴近）→ 出刀 0.14 s（X 字刀光、略向前冲）→ 收招 0.38 s → 向后跳开
     /// </summary>
     public sealed class JerboaBladeAI : EnemyAI
     {
@@ -21,9 +21,24 @@ namespace Spiritfire.Game
 
         static readonly Color Warn = new(1f, 0.55f, 0.2f);
 
+        protected override void Awake()
+        {
+            base.Awake();
+            GlowStyle(0.12f, 0.06f, 3f, 0.7f);
+        }
+
         protected override void Think(float dt)
         {
             float d = DistToPlayer;
+            // 铜铃亮度：蓄势 / 扑跳 / 出刀时全亮，旋斩后半亮，收招 / 后跳熄下去
+            Glow = state switch
+            {
+                "crouch" or "leap" or "slashWindup" => 1f,
+                "spin" => 0.6f,
+                "slash" => 0.5f,
+                "recover" or "hopBack" => 0.1f,
+                _ => 0.15f + 0.1f * Mathf.Sin(age * 3),
+            };
             switch (state)
             {
                 case "chase":
@@ -33,6 +48,8 @@ namespace Spiritfire.Game
                         if (d <= SlashRange + 0.3f && RequestAttack(AttackTokens.Kind.Melee, 1.2f))
                         {
                             windTime = Windup(SlashWindup, 0.22f);
+                            Stop();
+                            PlayTimed("slashWindup", windTime, 0.05f);
                             SetState("slashWindup");
                             break;
                         }
@@ -91,8 +108,18 @@ namespace Spiritfire.Game
                     else Stop();
                     if (stateTime >= windTime)
                     {
-                        Play("spin", 0.05f);
+                        Play("slash", 0.03f);
                         Melee(SlashRange, Damage, 0.2f);
+                        CrossSlashFx();
+                        SetState("slash");
+                    }
+                    break;
+                case "slash":
+                    // 出刀时顺势向前一冲（同 Three.js：1.5 m/s）
+                    MoveTo(transform.position + transform.forward * 2f, 1.5f);
+                    if (stateTime >= 0.14f)
+                    {
+                        Stop();
                         recoverTime = 0.38f;
                         SetState("recover");
                     }
@@ -112,6 +139,7 @@ namespace Spiritfire.Game
                             away = away.normalized;
                             var dir = (away + new Vector3(-away.z, 0, away.x) * strafeSign * 0.5f).normalized;
                             BeginManualMotion(dir * HopBackSpeed + Vector3.up * 5.2f, Gravity);
+                            Play("hopBack", 0.05f);
                             SetState("hopBack");
                         }
                         else
@@ -147,7 +175,7 @@ namespace Spiritfire.Game
         {
             windTime = Windup(time, 0.26f);
             Stop();
-            Play("crouch", 0.06f);
+            PlayTimed("crouch", windTime, 0.06f);
             SetState("crouch");
             // 预警：预判落点
             leapTarget = PredictLanding(out _);
@@ -183,12 +211,26 @@ namespace Spiritfire.Game
             SetState("leap");
         }
 
+        /// <summary>X 字刀光：两道斜劈交叉（同 Three.js crossSlashFx）</summary>
+        void CrossSlashFx()
+        {
+            float k = Size;
+            var c = transform.position + Vector3.up * 0.55f * k;
+            foreach (int s in new[] { 1, -1 })
+                SlashArc.Spawn(c, transform.eulerAngles.y, 1.1f * k, 1.7f, s, s * 0.75f, 0.3f * k, 0.2f, new Color(1f, 0.77f, 0.42f));
+        }
+
         void Spin()
         {
             EndManualMotion();
             Play("spin", 0.04f);
             leapHit = Burst(transform.position, SpinRange, Damage * SpinMult);
             SetState("spin");
+            // 落地旋斩：一圈刀光 + 地面扬尘环（伤害范围不随体型放大，同 Three.js；刀光随体型）
+            float k = Size;
+            SlashArc.Spawn(transform.position + Vector3.up * 0.42f * k, transform.eulerAngles.y, SpinRange * 0.85f * k, Mathf.PI * 1.9f, 1, 0, 0.5f * k, 0.26f, new Color(1f, 0.71f, 0.29f));
+            Telegraph.Wave(transform.position, SpinRange * k, 9f, new Color(0.85f, 0.69f, 0.47f));
+            ShotFx.Instance?.Impact(transform.position, Vector3.up, false, 2.4f);
         }
     }
 }

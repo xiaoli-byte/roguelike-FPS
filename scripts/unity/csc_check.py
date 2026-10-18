@@ -1,0 +1,79 @@
+"""在编辑器外检查 Unity C# 能不能编译（编辑器在 Play 模式、桥接命令被拒时用）。
+
+用 Unity 上次生成的 Library/Bee/artifacts/<dag>/<程序集>.rsp（引用、宏、分析器都在里面），把源文件列表换成当前磁盘上的文件，
+输出写到临时目录，用编辑器自带的 Roslyn 编译。依赖它的程序集会引用这里刚编出来的 dll，而不是 Library 里的旧版。
+
+    python scripts/unity/csc_check.py                 # 依次检查 Art.Runtime → Game → Art.Editor
+    python scripts/unity/csc_check.py Spiritfire.Game
+
+退出码 0 = 全部编译通过；有错误时打印 error CS… 行。
+"""
+import glob
+import os
+import subprocess
+import sys
+import tempfile
+
+ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "unity")
+UNITY = os.environ.get("UNITY_EDITOR_DATA", r"S:\Unity Hub\Editor\6000.5.4f1\Editor\Data")
+# 程序集 → 源文件 glob（与各自 asmdef 所在目录一致）
+ASSEMBLIES = {
+    "Spiritfire.Art.Runtime": "Assets/Pipeline/Runtime/**/*.cs",
+    "Spiritfire.Game": "Assets/Game/Scripts/**/*.cs",
+    "Spiritfire.Art.Editor": "Assets/Pipeline/Editor/**/*.cs",
+}
+
+
+def find_rsp(name: str) -> str:
+    hits = glob.glob(os.path.join(ROOT, "Library", "Bee", "artifacts", "*", f"{name}.rsp"))
+    if not hits:
+        sys.exit(f"找不到 {name}.rsp：先让编辑器正常编译一次")
+    return max(hits, key=os.path.getmtime)
+
+
+def csc() -> list[str]:
+    dotnet = os.path.join(UNITY, "NetCoreRuntime", "dotnet.exe")
+    dlls = glob.glob(os.path.join(UNITY, "DotNetSdk", "sdk", "*", "Roslyn", "bincore", "csc.dll"))
+    if not os.path.exists(dotnet) or not dlls:
+        sys.exit(f"在 {UNITY} 下找不到 dotnet / csc.dll（可用环境变量 UNITY_EDITOR_DATA 指定 Editor/Data）")
+    return [dotnet, dlls[0]]
+
+
+def main() -> int:
+    sys.stdout.reconfigure(encoding="utf-8")
+    names = sys.argv[1:] or list(ASSEMBLIES)
+    out_dir = tempfile.mkdtemp(prefix="csc_check_")
+    built: dict[str, str] = {}
+    failed = False
+    os.chdir(ROOT)
+    for name in names:
+        lines = open(find_rsp(name), encoding="utf-8").read().splitlines()
+        keep = []
+        for line in lines:
+            if line.startswith('"Assets') or line.startswith("-out:") or line.startswith("-refout:"):
+                continue
+            # 引用本次刚编过的程序集
+            for dep, path in built.items():
+                if line.startswith("-r:") and line.rstrip('"').endswith(f"{dep}.ref.dll"):
+                    line = f'-r:"{path}"'
+            keep.append(line)
+        dll = os.path.join(out_dir, f"{name}.dll")
+        keep.append(f'-out:"{dll}"')
+        files = sorted(glob.glob(ASSEMBLIES.get(name, ""), recursive=True))
+        keep += ['"' + f.replace(os.sep, "/") + '"' for f in files]
+        rsp = os.path.join(out_dir, f"{name}.rsp")
+        with open(rsp, "w", encoding="utf-8") as fh:
+            fh.write("\n".join(keep) + "\n")
+        r = subprocess.run(csc() + ["-nologo", f"@{rsp}"], capture_output=True, text=True, encoding="utf-8", errors="replace")
+        errors = [l for l in (r.stdout + r.stderr).splitlines() if "error CS" in l]
+        print(f"{name}: {len(files)} 个文件，{'通过' if r.returncode == 0 else f'{len(errors)} 个错误'}")
+        for e in errors[:30]:
+            print("  " + e[e.find("Assets"):] if "Assets" in e else "  " + e)
+        if r.returncode != 0:
+            failed = True
+        built[name] = dll
+    return 1 if failed else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

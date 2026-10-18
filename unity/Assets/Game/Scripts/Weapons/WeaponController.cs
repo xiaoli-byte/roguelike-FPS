@@ -180,10 +180,11 @@ namespace Spiritfire.Game
         void LateUpdate()
         {
             UpdateBeam();
-            // 屏震：在 PlayerMotor 写完视角之后叠一个小的随机转角
-            if (shakeTime <= 0 || !eye) return;
-            shakeTime -= Time.deltaTime;
-            float a = shakeAmp * Mathf.Clamp01(shakeTime / 0.12f);
+            // 屏震：在 PlayerMotor 写完视角之后叠一个小的随机转角（开枪的抖动和敌人的震动取较强的那个）
+            if (!eye) return;
+            if (shakeTime > 0) shakeTime -= Time.deltaTime;
+            float a = Mathf.Max(shakeTime > 0 ? shakeAmp * Mathf.Clamp01(shakeTime / 0.12f) : 0, CameraShake.Current);
+            if (a <= 0) return;
             float t = Time.time * 40f;
             eye.transform.localRotation *= Quaternion.Euler(
                 (Mathf.PerlinNoise(t, shakeSeed.x) - 0.5f) * a * 6f, (Mathf.PerlinNoise(shakeSeed.y, t) - 0.5f) * a * 6f, 0);

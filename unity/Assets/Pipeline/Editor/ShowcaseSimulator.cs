@@ -63,7 +63,6 @@ namespace Spiritfire.Art.Editor
                 if (an) { an.Rebind(); an.Update(0); }
             }
             if (!ik) File.Delete($"{ReviewCapture.OutDir}/motion_{theme.key}_metrics.txt"); // 每章先跑「IK 关」，重新开始记录
-            var prevMode = Physics.simulationMode;
             Physics.simulationMode = SimulationMode.Script;
             bool wasAsync = ShaderUtil.allowAsyncCompilation;
             ShaderUtil.allowAsyncCompilation = false;
@@ -158,7 +157,8 @@ namespace Spiritfire.Art.Editor
             {
                 cam.targetTexture = null;
                 ShaderUtil.allowAsyncCompilation = wasAsync;
-                Physics.simulationMode = prevMode;
+                // 一律还原成 FixedUpdate：还原「开始时的值」会把一次中断留下的 Script 永远传下去（见 PhysicsSettingsGuard）
+                Physics.simulationMode = SimulationMode.FixedUpdate;
                 Object.DestroyImmediate(rt);
                 Object.DestroyImmediate(tile);
                 foreach (var t in sheets.Values) Object.DestroyImmediate(t);

@@ -302,9 +302,10 @@ function bakeEnemy(defId, asset) {
     }
   }
 
-  // 3) 出招：玩家在 3 / 7 / 12 米，各跑 18 秒，按状态切段（辅助型放几个同伴，才会施法）
+  // 3) 出招：玩家在 3 / 7 / 12 米，各跑 18 秒，按状态切段（辅助型放几个同伴，才会施法）；
+  //    最后补一轮 1.2 米（贴脸招：跳鼠交叉斩 → 后跳），放在最后，前面三轮录到的片段不受影响
   const seen = new Set(['Idle', 'Walk', 'Move', 'Hit', clips.Move?.sourceState, IDLE_STATE[defId], 'move', 'chase', 'advance']);
-  for (const dist of [3, 7, 12]) {
+  for (const dist of [3, 7, 12, 1.2]) {
     attackDirector.reset?.();
     const ctx = makeContext(variant);
     ctx.player.position.set(0, 0, dist);
@@ -328,7 +329,8 @@ function bakeEnemy(defId, asset) {
       while (j < frames.length && frames[j].state === frames[i].state) j++;
       const st = frames[i].state;
       const n = j - i;
-      if (!st || seen.has(st) || n < 0.2 * FPS || n > 8 * FPS) continue;
+      // 最短 0.12 秒：交叉斩的出刀段只有 0.14 秒
+      if (!st || seen.has(st) || n < 0.12 * FPS || n > 8 * FPS) continue;
       if (i === 0) continue; // 段首不完整
       seen.add(st);
       clips[st] = clipFrom(frames, i, j, false);

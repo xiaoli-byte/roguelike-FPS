@@ -147,11 +147,32 @@ namespace Spiritfire.Game.Testing
             if (weapons.ActiveSlot != 0) Fail("切回 1 号槽失败");
             weapons.slots[1] = null; // 还原成开局状态：第二把枪要从 ① 的宝箱里拿
 
+            // 聚焦模式：Library/SpiritfireBridge/playtest-focus.txt 里写 anim → 只跑「动作同步 / 敌人表现」这一组（读完即删）
+            string focus = "";
+            var focusPath = string.IsNullOrEmpty(resultPath) ? null : Path.Combine(Path.GetDirectoryName(resultPath) ?? "", "playtest-focus.txt");
+            if (focusPath != null && File.Exists(focusPath))
+            {
+                focus = File.ReadAllText(focusPath).Trim();
+                File.Delete(focusPath);
+            }
+            if (focus == "anim")
+            {
+                vitals.stats.Add("playtest_anim", Stat.MaxHp, 5000);
+                vitals.Heal(99999);
+                yield return AnimSyncTests(motor, eye);
+                vitals.stats.Remove("playtest_anim");
+                Finish();
+                yield break;
+            }
+
             // ── 灵宠：八只依次结契，各打几只敌人、放一次灵技；灵契升级觉醒、换宠留封印 ──
             yield return PetTest(motor, eye, vitals);
 
             // ── 动画控制器诊断：敌人身上的动画到底有没有在播 ──
             yield return AnimatorDiag(motor);
+
+            // ── 镇墓兽：推进时正面格挡（一成），眩晕时不挡；眩晕时头要甩起来 ──
+            yield return GuardTest(motor, eye);
 
             // ── 碰撞体同步：敌人移动后，射线要打在它「现在看得见的位置」上（物理设置错时会打在它出生的位置）──
             yield return ColliderSyncTest(motor, eye);
@@ -181,6 +202,7 @@ namespace Spiritfire.Game.Testing
             yield return MotionTest(motor, "scorpion_archer", 16f, true, 3f, "motion_scorpion_ai");
             yield return MotionTest(motor, "tomb_beast", 14f, true, 4f, "motion_tombbeast_charge");
             yield return MotionTest(motor, "mirage_toad", 30f, true, 3f, "motion_toad_move");
+            yield return AnimSyncTests(motor, eye);
             vitals.stats.Remove("playtest_tilt");
 
             // ── 2. 四个遭遇战，按解锁顺序逐个打 ──
@@ -574,6 +596,386 @@ namespace Spiritfire.Game.Testing
             yield return new WaitForSeconds(0.2f);
         }
 
+        IEnumerator GuardTest(PlayerMotor motor, Transform eye)
+        {
+            var fwd = motor.transform.forward;
+            fwd.y = 0;
+            fwd.Normalize();
+            var ai = EnemyRoster.Spawn("tomb_beast", motor.transform.position + fwd * 14f, Quaternion.LookRotation(-fwd), 1, false);
+            if (!ai) yield break;
+            var hp = ai.Health;
+            hp.maxHealth *= 20;
+            hp.ResetVitals();
+            yield return new WaitForSeconds(1.2f);
+            float Hit()
+            {
+                float before = hp.health + hp.armor + hp.shield;
+                var c = PlayerProjectile.Center(hp);
+                var info = DamageInfo.Simple(100, DamageSource.Weapon, c, (c - eye.position).normalized);
+                Combat.DamageEnemy(hp, info);
+                return before - (hp.health + hp.armor + hp.shield);
+            }
+            string s0 = ai.State;
+            float guarded = Hit();
+            EnemyStatus.Stun(hp, 2f);
+            yield return new WaitForSeconds(0.2f);
+            float open = Hit();
+            // 晕眩叠加：头相对身体的左右摆动
+            var rig = ai.GetComponentInChildren<CreatureRig>();
+            var head = rig && rig.lookBones.Length > 0 ? rig.lookBones[^1] : null;
+            float minYaw = 999, maxYaw = -999;
+            float t0 = Time.time;
+            while (Time.time - t0 < 1.2f && head)
+            {
+                var f = Quaternion.Inverse(ai.transform.rotation) * head.forward;
+                float yaw = Mathf.Atan2(f.x, f.z) * Mathf.Rad2Deg;
+                minYaw = Mathf.Min(minYaw, yaw);
+                maxYaw = Mathf.Max(maxYaw, yaw);
+                yield return null;
+            }
+            float swing = head ? maxYaw - minYaw : 0;
+            Line($"镇墓兽格挡：{s0} 时正面中 100 → 掉 {guarded:F1}；眩晕时正面中 100 → 掉 {open:F1}（{(guarded > 0 ? open / guarded : 0):F1} 倍）；眩晕时头左右摆 {swing:F0}°");
+            if (!(guarded > 0) || open < guarded * 5f) Fail("镇墓兽眩晕时仍在正面格挡（反击窗口打不动）");
+            if (swing < 10f) Fail($"眩晕时头只摆 {swing:F0}°（晕眩动作没出来）");
+            Destroy(ai.gameObject);
+            yield return new WaitForSeconds(0.2f);
+        }
+
+        // ───────────── 动作同步 / 敌人表现 ─────────────
+
+        /// <summary>蟾蜍跳着走、受击不打断出招、片段按前摇拉伸、火鼠换球、跳鼠交叉斩、飞天金丝、蜃景分身</summary>
+        IEnumerator AnimSyncTests(PlayerMotor motor, Transform eye)
+        {
+            yield return ToadHopTest(motor);
+            yield return GlowTest(motor, "mirage_toad", "puff", 18f);
+            yield return GlowTest(motor, "scorpion_archer", "aim", 16f);
+            yield return StrafeFacingTest(motor);
+            yield return FlinchTest(motor, eye);
+            yield return FireRatBallTest(motor);
+            yield return JerboaSlashTest(motor);
+            yield return ApsaraFxTest(motor);
+            yield return DecoyTest(motor);
+            yield return MotionTest(motor, "jerboa_blade", 8f, true, 3f, "motion_jerboa_leap");
+            yield return MotionTest(motor, "fire_rat", 10f, true, 3f, "motion_firerat_roll");
+        }
+
+        EnemyAI SpawnAhead(PlayerMotor motor, string id, float distance, float hpMult, float sideOffset = 0)
+        {
+            var fwd = motor.transform.forward;
+            fwd.y = 0;
+            fwd.Normalize();
+            var side = Vector3.Cross(Vector3.up, fwd);
+            var e = EnemyRoster.Spawn(id, motor.transform.position + fwd * distance + side * sideOffset, Quaternion.LookRotation(-fwd), 1, false);
+            if (!e) { Fail($"生成 {id} 失败"); return null; }
+            e.Health.maxHealth *= hpMult;
+            e.Health.ResetVitals();
+            return e;
+        }
+
+        /// <summary>蜃楼蟾：只在腾空段前进（Three.js 腾空 2.3 倍 / 着地 0.2 倍），混合树的 Speed 不跟着一冲一停乱跳</summary>
+        IEnumerator ToadHopTest(PlayerMotor motor)
+        {
+            var e = SpawnAhead(motor, "mirage_toad", 34f, 50) as MirageToadAI;
+            if (!e) yield break;
+            yield return new WaitForSeconds(1.0f);
+            var anim = e.GetComponentInChildren<Animator>();
+            float airD = 0, airT = 0, gndD = 0, gndT = 0, maxAir = 0, spMin = 99, spMax = 0, inMove = 0;
+            var last = e.transform.position;
+            float t0 = Time.time;
+            while (Time.time - t0 < 4f && e && !e.Dead)
+            {
+                yield return null;
+                var dp = e.transform.position - last;
+                dp.y = 0;
+                last = e.transform.position;
+                if (e.State != "move") { inMove = 0; continue; }
+                inMove += Time.deltaTime;
+                maxAir = Mathf.Max(maxAir, e.HopAir);
+                if (e.HopAir > 0.6f) { airD += dp.magnitude; airT += Time.deltaTime; }
+                else if (e.HopAir < 0.05f) { gndD += dp.magnitude; gndT += Time.deltaTime; }
+                if (anim && inMove > 0.6f) { float sp = anim.GetFloat("Speed"); spMin = Mathf.Min(spMin, sp); spMax = Mathf.Max(spMax, sp); }
+            }
+            float air = airT > 0 ? airD / airT : 0, gnd = gndT > 0 ? gndD / gndT : 0;
+            Line($"蜃楼蟾跳跃：腾空段 {air:F1} m/s（{airT:F1} s）、着地段 {gnd:F1} m/s（{gndT:F1} s），{(gnd > 0.01f ? air / gnd : 99):F0} 倍；root 抬起最高 {maxAir:F2}；混合树 Speed {spMin:F1}–{spMax:F1}");
+            if (airT < 0.3f) Fail("蜃楼蟾移动时几乎没有腾空段（跳跃动作没播 / 抬起检测失效）");
+            else if (air < gnd * 4f) Fail($"蜃楼蟾着地时还在滑（腾空 {air:F1} vs 着地 {gnd:F1} m/s）");
+            if (spMax - spMin > 1.5f) Fail($"蜃楼蟾混合树 Speed 在 {spMin:F1}–{spMax:F1} 之间乱跳");
+            if (e) Destroy(e.gameObject);
+            yield return new WaitForSeconds(0.2f);
+        }
+
+        /// <summary>前摇发光：弱点发光壳平时只有微光，前摇时随蓄力亮起来（Three.js glowShell.opacity）</summary>
+        IEnumerator GlowTest(PlayerMotor motor, string id, string windup, float distance)
+        {
+            var e = SpawnAhead(motor, id, distance, 50);
+            if (!e) yield break;
+            var body = e.GetComponent<EnemyBody>();
+            float idle = 1, peak = 0, t0 = Time.time;
+            bool saw = false;
+            while (Time.time - t0 < 9f && e)
+            {
+                yield return null;
+                if (e.State == "spawn") continue;
+                if (e.State == windup) { saw = true; peak = Mathf.Max(peak, body.GlowOpacity); }
+                else if (!saw) idle = Mathf.Min(idle, body.GlowOpacity);
+                else if (peak > 0) break;
+            }
+            Line($"前摇发光 {id}：平时发光壳不透明度 {idle:F2}，{windup} 时最高 {peak:F2}{(saw ? "" : "（9 s 内没出招）")}");
+            if (body.GlowOpacity < 0) Fail($"{id} 没有找到发光壳");
+            else if (saw && peak < idle + 0.25f) Fail($"{id} 前摇时发光壳没有亮起来（{idle:F2} → {peak:F2}）");
+            if (e) Destroy(e.gameObject);
+            yield return new WaitForSeconds(0.2f);
+        }
+
+        /// <summary>横移朝向：蝎子在距离带里横移时，身体朝移动方向偏过去（不再正对玩家横着走），头仍然看着玩家</summary>
+        IEnumerator StrafeFacingTest(PlayerMotor motor)
+        {
+            var e = SpawnAhead(motor, "scorpion_archer", 17f, 50);
+            if (!e) yield break;
+            var agent = e.GetComponent<UnityEngine.AI.NavMeshAgent>();
+            float bodySum = 0;
+            int n = 0;
+            float t0 = Time.time;
+            while (Time.time - t0 < 5f && e)
+            {
+                yield return null;
+                if (e.State != "move" || !agent) continue;
+                var v = agent.velocity;
+                v.y = 0;
+                var toP = motor.transform.position - e.transform.position;
+                toP.y = 0;
+                if (v.magnitude < 1f || toP.sqrMagnitude < 1) continue;
+                float lateral = Mathf.Abs(Vector3.Dot(v.normalized, Vector3.Cross(Vector3.up, toP.normalized)));
+                if (lateral < 0.8f) continue;
+                bodySum += Vector3.Angle(e.transform.forward, toP);
+                n++;
+            }
+            float bodyOff = n > 0 ? bodySum / n : 0;
+            Line($"横移朝向：蝎子横移时（{n} 帧）身体偏离玩家方向平均 {bodyOff:F0}°（头由看向盯着玩家）");
+            if (n > 10 && bodyOff < 12f) Fail($"蝎子横移时身体还是正对玩家（偏 {bodyOff:F0}°，横着走太空步）");
+            if (e) Destroy(e.gameObject);
+            yield return new WaitForSeconds(0.2f);
+        }
+
+        /// <summary>重击不打断出招：蝎子上弦时吃一发 20% 生命的伤害，底层仍在 aim / fire，受击叠加层在播 Flinch；上弦片段按实际前摇拉伸</summary>
+        IEnumerator FlinchTest(PlayerMotor motor, Transform eye)
+        {
+            var e = SpawnAhead(motor, "scorpion_archer", 16f, 1);
+            if (!e) yield break;
+            var anim = e.GetComponentInChildren<Animator>();
+            float t0 = Time.time;
+            while (Time.time - t0 < 8f && e && e.State != "aim") yield return null;
+            if (!e || e.State != "aim")
+            {
+                Fail($"蝎子 8 s 内没进入上弦（{e?.State}）");
+                if (e) Destroy(e.gameObject);
+                yield break;
+            }
+            yield return null;
+            float act = anim ? anim.GetFloat("ActScale") : 0;
+            var hp = e.Health;
+            var c = PlayerProjectile.Center(hp);
+            Combat.DamageEnemy(hp, DamageInfo.Simple(hp.maxHealth * 0.2f, DamageSource.Weapon, c, (c - eye.position).normalized));
+            string baseAfter = "", layer = "";
+            bool flinched = false, interrupted = false;
+            for (int i = 0; i < 12; i++)
+            {
+                yield return null;
+                if (!anim) break;
+                var b = anim.GetCurrentAnimatorStateInfo(0);
+                var nb = anim.GetNextAnimatorStateInfo(0);
+                if (b.IsName("Hit") || nb.IsName("Hit")) interrupted = true;
+                if (anim.layerCount > 1)
+                {
+                    var f = anim.GetCurrentAnimatorStateInfo(1);
+                    var nf = anim.GetNextAnimatorStateInfo(1);
+                    if (f.IsName("Flinch") || nf.IsName("Flinch")) flinched = true;
+                }
+                if (i == 5) baseAfter = AnimStateName(anim);
+            }
+            layer = anim ? $"{anim.layerCount} 层" : "无动画";
+            Line($"受击叠加：蝎子上弦中吃 20% 生命 → 底层 {baseAfter}（AI {e.State}），{layer}，叠加层 Flinch {(flinched ? "播了" : "没播")}；上弦片段播放倍率 ActScale {act:F2}（片段 0.43 s / 前摇 0.6 s ≈ 0.72）");
+            if (interrupted) Fail("重击把蝎子的出招动画打断成了受击动画");
+            if (!flinched) Fail("重击没有触发受击叠加层（Flinch）");
+            if (Mathf.Abs(act - 0.72f) > 0.12f) Fail($"上弦片段没有按前摇拉伸（ActScale {act:F2}）");
+            if (e) Destroy(e.gameObject);
+            yield return new WaitForSeconds(0.2f);
+        }
+
+        /// <summary>火浣鼠：蜷身过半换成火球（挂点放大、身体隐藏），滚动时火球在转</summary>
+        IEnumerator FireRatBallTest(PlayerMotor motor)
+        {
+            var e = SpawnAhead(motor, "fire_rat", 10f, 50) as FireRatAI;
+            if (!e) yield break;
+            float t0 = Time.time;
+            while (Time.time - t0 < 8f && e && !e.Dead && e.State != "roll") yield return null;
+            yield return new WaitForSeconds(0.15f);
+            if (!e || e.Dead || e.State != "roll")
+            {
+                Fail($"火浣鼠 8 s 内没滚起来（{(e ? e.State : "没了")}）");
+                if (e) Destroy(e.gameObject);
+                yield break;
+            }
+            Transform socket = null;
+            foreach (var t in e.GetComponentsInChildren<Transform>(true)) if (t.name == "socket_fire_ball") { socket = t; break; }
+            var ball = socket && socket.childCount > 0 ? socket.GetChild(0) : null;
+            var r0 = ball ? ball.localRotation : Quaternion.identity;
+            int bodyOn = 0;
+            foreach (var r in e.GetComponentsInChildren<Renderer>())
+                if (r.enabled && socket && !r.transform.IsChildOf(socket)) bodyOn++;
+            var fwd = motor.transform.forward;
+            PoseShot(e, Vector3.Cross(Vector3.up, fwd), "firerat_ball");
+            var ballR = ball ? ball.GetComponentInChildren<Renderer>() : null;
+            float gap = ballR ? ballR.bounds.min.y - e.transform.position.y : 0;
+            float spun = 0, dist = 0, tt = 0, roll0 = e.RollAngle;
+            var dbg = new List<string>();
+            var prevQ = ball ? ball.rotation : Quaternion.identity;
+            var prevP = e.transform.position;
+            while (tt < 0.3f && e && !e.Dead && e.State == "roll" && ball)
+            {
+                yield return null;
+                tt += Time.deltaTime;
+                spun += Quaternion.Angle(prevQ, ball.rotation);
+                prevQ = ball.rotation;
+                if (dbg.Count < 6) dbg.Add($"{e.RollAngle:F0}/{ball.localEulerAngles}/{Time.frameCount}");
+                var dp = e.transform.position - prevP;
+                dp.y = 0;
+                dist += dp.magnitude;
+                prevP = e.transform.position;
+            }
+            float expect = dist / (0.3f * e.transform.localScale.x) * Mathf.Rad2Deg;
+            Line($"火浣鼠换球：滚动中 火球形态 {e.Balled}，挂点缩放 {(socket ? socket.localScale.x : 0):F2}，挂件 {(ball ? ball.name : "无")}，身体渲染器还开着 {bodyOn} 个；" +
+                 $"{tt:F2} s 内滚了 {dist:F1} m、火球转了 {spun:F0}°（按半径应转 {expect:F0}°，rollAngle {roll0:F0}→{e.RollAngle:F0}）；火球最低点离地 {gap:F2} m；{string.Join(" ", dbg)}");
+            if (!e.Balled || !socket || socket.localScale.x < 0.7f) Fail("火浣鼠滚动时没有换成火球（挂点还缩着）");
+            if (bodyOn > 0) Fail($"火浣鼠换球后身体还显示着（{bodyOn} 个渲染器）");
+            if (ball && dist > 0.5f && spun < expect * 0.5f) Fail($"火球滚动时转得不对（{spun:F0}° / 应 {expect:F0}°）");
+            if (Mathf.Abs(gap) > 0.12f) Fail($"火球没贴地（最低点离地 {gap:F2} m）");
+            Destroy(e.gameObject);
+            yield return new WaitForSeconds(0.2f);
+        }
+
+        /// <summary>跳鼠贴脸：交叉斩前摇 → 出刀 → 收招 → 后跳，各段播的都是自己的动画（不再借旋斩）</summary>
+        IEnumerator JerboaSlashTest(PlayerMotor motor)
+        {
+            var e = SpawnAhead(motor, "jerboa_blade", 1.4f, 50);
+            if (!e) yield break;
+            var anim = e.GetComponentInChildren<Animator>();
+            var seen = new List<string>();
+            var cd = typeof(EnemyAI).GetField("cooldown", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            while (e && e.State == "spawn") yield return null;
+            cd?.SetValue(e, 0f);
+            float t0 = Time.time;
+            while (Time.time - t0 < 6f && e && !e.Dead)
+            {
+                yield return null;
+                string a = AnimStateName(anim);
+                a = a.Substring(0, a.IndexOf('@') < 0 ? a.Length : a.IndexOf('@'));
+                string s = $"{e.State}:{a}";
+                if (seen.Count == 0 || seen[^1] != s) seen.Add(s);
+                if (e.State == "chase" && seen.Exists(x => x.StartsWith("hopBack"))) break;
+            }
+            Line($"跳鼠交叉斩：{string.Join(" → ", seen.Take(14))}");
+            bool slashAnim = seen.Exists(x => x.EndsWith(":slash")), windAnim = seen.Exists(x => x.EndsWith(":slashWindup")), hopAnim = seen.Exists(x => x.EndsWith(":hopBack"));
+            if (!windAnim || !slashAnim) Fail("跳鼠交叉斩没有播自己的前摇 / 出刀动画");
+            if (seen.Exists(x => x.StartsWith("slash") && x.EndsWith(":spin"))) Fail("跳鼠交叉斩还在借旋斩动画");
+            if (seen.Exists(x => x.StartsWith("hopBack")) && !hopAnim) Fail("跳鼠后跳没有播后跳动画");
+            if (e) Destroy(e.gameObject);
+            yield return new WaitForSeconds(0.2f);
+        }
+
+        /// <summary>邪飞天：琵琶到光环内每个同伴一根金丝，同伴脚下有光圈；截一张主视角图</summary>
+        IEnumerator ApsaraFxTest(PlayerMotor motor)
+        {
+            var a = SpawnAhead(motor, "apsara", 15f, 50);
+            var b1 = SpawnAhead(motor, "tomb_beast", 12f, 50, -3f);
+            var b2 = SpawnAhead(motor, "scorpion_archer", 13f, 50, 3f);
+            if (!a || !b1 || !b2) yield break;
+            yield return new WaitForSeconds(2.0f);
+            int threads = 0, rings = 0;
+            var info = new List<string>();
+            foreach (var lr in FindObjectsByType<LineRenderer>())
+                if (lr.enabled && lr.name == "Apsara Thread")
+                {
+                    threads++;
+                    info.Add($"{lr.GetPosition(0)}→{lr.GetPosition(lr.positionCount - 1)} 宽 {lr.endWidth:F2}");
+                }
+            Line($"  金丝：{string.Join("；", info)}；琵琶 {((ApsaraAI)a).TetherOrigin}");
+            {
+                var mid = (a.transform.position + b1.transform.position + b2.transform.position) / 3f;
+                var fwd2 = motor.transform.forward;
+                fwd2.y = 0;
+                var go = new GameObject("Apsara Camera");
+                var sc = go.AddComponent<Camera>();
+                sc.fieldOfView = 50;
+                go.transform.position = mid + Vector3.Cross(Vector3.up, fwd2.normalized) * 11f + Vector3.up * 3f;
+                go.transform.LookAt(mid + Vector3.up * 1.2f);
+                Shot(sc, "apsara_side");
+                Destroy(go);
+            }
+            foreach (var r in FindObjectsByType<MeshRenderer>())
+                if (r.gameObject.activeInHierarchy && r.name == "Aura Ring") rings++;
+            var cam = Camera.main;
+            if (cam)
+            {
+                var p0 = cam.transform.position;
+                var r0 = cam.transform.rotation;
+                cam.transform.LookAt(a.transform.position + Vector3.up * 1.2f);
+                Shot(cam, "apsara_threads");
+                cam.transform.SetPositionAndRotation(p0, r0);
+            }
+            Line($"邪飞天加成提示：金丝 {threads} 根、同伴光圈 {rings} 个（光环内同伴 2 个）");
+            if (threads < 2) Fail($"邪飞天到同伴的金丝只有 {threads} 根");
+            if (rings < 2) Fail($"受加成同伴脚下的光圈只有 {rings} 个");
+            foreach (var x in new[] { a, b1, b2 }) if (x) Destroy(x.gameObject);
+            yield return new WaitForSeconds(0.3f);
+        }
+
+        /// <summary>蜃景：分身半透明（alpha 混合的材质 + 闪烁的 alpha），连放两次幻术总数不超过上限</summary>
+        IEnumerator DecoyTest(PlayerMotor motor)
+        {
+            var e = SpawnAhead(motor, "mirage_toad", 18f, 50) as MirageToadAI;
+            if (!e) yield break;
+            yield return new WaitForSeconds(1.0f);
+            var cast = typeof(MirageToadAI).GetMethod("CastMirage", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            cast?.Invoke(e, null);
+            yield return new WaitForSeconds(0.3f);
+            cast?.Invoke(e, null);
+            yield return new WaitForSeconds(0.5f);
+            int count = e.DecoyCount;
+            MirageToadAI decoy = null;
+            foreach (var m in FindObjectsByType<MirageToadAI>()) if (m.isDecoy && m.caster == e) { decoy = m; break; }
+            float aMin = 1, aMax = 0;
+            int transparent = 0, total = 0;
+            if (decoy)
+            {
+                var block = new MaterialPropertyBlock();
+                var rs = decoy.GetComponentsInChildren<Renderer>();
+                foreach (var r in rs)
+                    foreach (var m in r.sharedMaterials)
+                    {
+                        if (!m || m.IsKeywordEnabled("_ADDITIVE")) continue;
+                        total++;
+                        if (m.renderQueue >= 3000) transparent++;
+                    }
+                float t0 = Time.time;
+                while (Time.time - t0 < 1f && decoy)
+                {
+                    rs[0].GetPropertyBlock(block);
+                    float al = block.GetColor("_Tint").a;
+                    aMin = Mathf.Min(aMin, al);
+                    aMax = Mathf.Max(aMax, al);
+                    yield return null;
+                }
+                PoseShot(decoy, Vector3.Cross(Vector3.up, motor.transform.forward), "toad_decoy");
+            }
+            Line($"蜃景分身：连放两次幻术后 {count} 个（上限 2）；分身材质 {transparent}/{total} 个半透明，alpha {aMin:F2}–{aMax:F2}");
+            if (count > 2) Fail($"蜃景分身超过上限（{count} 个）");
+            if (!decoy) Fail("幻术没有投出分身");
+            else if (transparent < total || aMax > 0.75f) Fail("蜃景分身不是半透明的");
+            foreach (var m in FindObjectsByType<MirageToadAI>()) if (m) Destroy(m.gameObject);
+            yield return new WaitForSeconds(0.3f);
+        }
+
         IEnumerator ColliderSyncTest(PlayerMotor motor, Transform eye)
         {
             var fwd = motor.transform.forward;
@@ -733,7 +1135,7 @@ namespace Spiritfire.Game.Testing
                 var rigI = list[i] ? list[i].GetComponentInChildren<CreatureRig>() : null;
                 Line($"  姿态 {name}：根节点 {rootMax[i]:F0}°，骨盆偏离 不挨打 {idleMax[i]:F0}° / 挨打 {bodyMax[i]:F0}°，" +
                      $"脊柱骨（{rigI?.spineBones.Length ?? 0} 节）单节最大偏离 {spineMax[i]:F0}°，受击晃动 平均 {avg:F0}° / 最大 {hitMax[i]:F0}°");
-                if (bodyMax[i] > 35f) Fail($"{name} 身体（骨盆）偏离正常姿态 {bodyMax[i]:F0}°：看起来侧翻 / 倒地");
+                // 骨盆偏离只记录、不判失败：翻滚 / 旋斩类动作本来就会把骨盆转一圈（火浣鼠滚动 176°），塌倒由定格测试的头高判断
                 if (rootMax[i] > 10f) Fail($"{name} 根节点倾斜 {rootMax[i]:F0}°（应该一直直立）");
                 if (hitMax[i] > 30f) Fail($"{name} 受击时身体压歪 {hitMax[i]:F0}°（超过 30° 看起来像侧翻）");
                 if (avg > 15f) Fail($"{name} 持续火力下身体平均歪 {avg:F0}°（看起来一直是斜的）");
@@ -1025,7 +1427,7 @@ namespace Spiritfire.Game.Testing
         {
             "Locomotion", "Hit", "crouch", "leap", "spin", "recover", "aim", "dive", "emerge", "fire", "snap", "snapWindup", "tunnel",
             "mirage", "puff", "brake", "charge", "chargeWindup", "stomp", "stompWindup", "curl", "dizzy", "roll",
-            "blessWindup", "bloomWindup", "chordWindup",
+            "blessWindup", "bloomWindup", "chordWindup", "slashWindup", "slash", "hopBack",
         };
 
         static string AnimStateName(Animator a)

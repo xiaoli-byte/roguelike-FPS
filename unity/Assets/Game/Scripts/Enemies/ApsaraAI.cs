@@ -11,6 +11,7 @@ namespace Spiritfire.Game
     ///   花开（9–11 s，前摇 1.5 s）：同伴回复 25% 生命（有人掉血才放）
     ///   赐福（14–18 s，前摇 1.3 s）：生命最高的同伴 伤害 ×1.6、承伤 ×0.5，10 s
     ///   琵琶：打琵琶（弱点）累计到她最大生命的 30% → 琴碎、沉默 20 s（光环与施法全停）——玩家的优先目标
+    ///   提示：琵琶到光环内同伴的金丝、同伴脚下的光圈、被赐福者的金莲与头顶光环由 <see cref="SupportFx"/> 画
     /// </summary>
     public sealed class ApsaraAI : EnemyAI
     {
@@ -23,6 +24,10 @@ namespace Spiritfire.Game
         Transform pipa;
 
         public bool Silenced => Time.time < silencedUntil;
+        /// <summary>光环内的同伴（0.3 s 缓存）</summary>
+        public List<Damageable> AuraAllies => Allies();
+        /// <summary>金丝的起点：琵琶（琴碎时退到胸前）</summary>
+        public Vector3 TetherOrigin => pipa && pipa.gameObject.activeInHierarchy ? pipa.position : transform.position + Vector3.up * 1.35f * transform.localScale.y;
         protected override string InitialState => "hover";
 
         protected override void Awake()
@@ -35,7 +40,11 @@ namespace Spiritfire.Game
             hp.Damaged += OnPipaHit;
         }
 
-        void OnEnable() => Active.Add(this);
+        void OnEnable()
+        {
+            Active.Add(this);
+            SupportFx.Ensure();
+        }
         void OnDisable() => Active.Remove(this);
 
         protected override void Start()
@@ -156,7 +165,7 @@ namespace Spiritfire.Game
         {
             casting = spell;
             castTime = Windup(windup, 0.6f);
-            Play(spell + "Windup", 0.1f);
+            PlayTimed(spell + "Windup", castTime, 0.1f);
             SetState("cast");
             Telegraph.Circle(transform.position, 1.2f, castTime, spell == "bless" ? new Color(1f, 0.8f, 0.3f) : new Color(0.6f, 1f, 0.75f));
         }
