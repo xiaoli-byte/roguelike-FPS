@@ -22,6 +22,8 @@ export type FlyingPetId = 'jingwei' | 'chongming' | 'yinglong';
 /** 三只会飞的灵宠：模型、平时大小（随身）、飞渡时变大到多高、抓哪两根爪子骨骼、滑翔手感、灵火颜色 */
 export const FLYING_PETS: Record<FlyingPetId, {
   name: string; url: string; carryHeight: number; rideHeight: number; grip: [string, string];
+  /** bird：静止时身体立着（长轴 = 模型 Y），飞的时候整只俯成水平；dragon：四足站姿、身体本来就是水平的（长轴 = 模型 Z），姿态另算（dragonPose） */
+  kind: 'bird' | 'dragon';
   speed: number; sink: number; flap: number;
   /** 模型静止时身体是立着的（站姿），飞的时候整个往前俯 pitch 弧度成水平；腿再往回摆，爪子朝下 */
   pitch: number; legs: string[];
@@ -29,16 +31,16 @@ export const FLYING_PETS: Record<FlyingPetId, {
   fire: [string, string]; shard: string;
 }> = {
   jingwei: {
-    name: '精卫', url: 'assets/characters/SK_Pet_Jingwei.glb', carryHeight: 0.75, rideHeight: 3.6, grip: ['talon_L', 'talon_R'],
+    name: '精卫', url: 'assets/characters/SK_Pet_Jingwei.glb', carryHeight: 0.75, rideHeight: 3.6, grip: ['talon_L', 'talon_R'], kind: 'bird',
     speed: 13, sink: 1.9, flap: 1.25, pitch: 1.15, legs: ['thigh_L', 'thigh_R'], fire: ['#fff2c4', '#ff7a2a'], shard: '#ff5a3a',
   },
   chongming: {
-    name: '重明鸟', url: 'assets/characters/SK_Pet_Chongming.glb', carryHeight: 1.1, rideHeight: 4.2, grip: ['talon_L', 'talon_R'],
+    name: '重明鸟', url: 'assets/characters/SK_Pet_Chongming.glb', carryHeight: 1.1, rideHeight: 4.2, grip: ['talon_L', 'talon_R'], kind: 'bird',
     speed: 14, sink: 1.6, flap: 1.0, pitch: 1.15, legs: ['thigh_L', 'thigh_R'], fire: ['#f4ffff', '#4fd8ff'], shard: '#ffcc4a',
   },
   yinglong: {
-    name: '应龙', url: 'assets/characters/SK_Pet_Yinglong.glb', carryHeight: 1.4, rideHeight: 4.6, grip: ['claw_L', 'claw_R'],
-    speed: 16.5, sink: 1.1, flap: 0.8, pitch: 0.6, legs: ['upperarm_L', 'upperarm_R', 'thigh_L', 'thigh_R'], fire: ['#f0fff6', '#3fe0b0'], shard: '#9ff7ff',
+    name: '应龙', url: 'assets/characters/SK_Pet_Yinglong.glb', carryHeight: 1.4, rideHeight: 4.6, grip: ['claw_L', 'claw_R'], kind: 'dragon',
+    speed: 16.5, sink: 1.1, flap: 0.8, pitch: 0.12, legs: [], fire: ['#f0fff6', '#3fe0b0'], shard: '#9ff7ff',
   },
 };
 
@@ -109,6 +111,16 @@ function turn(p: Posable, name: string, axis: THREE.Vector3, angle: number): voi
   b.quaternion.copy(r.local).multiply(_q.setFromAxisAngle(_a, angle));
 }
 
+/** 同一根骨骼先绕 ax1 转 a1、再绕 ax2 转 a2（两个轴都在模型根坐标系里，比如脊椎同时上下弯和左右摆） */
+function turn2(p: Posable, name: string, ax1: THREE.Vector3, a1: number, ax2: THREE.Vector3, a2: number): void {
+  const b = p.bones.get(name), r = p.rest.get(name);
+  if (!b || !r) return;
+  const inv = r.rel.clone().invert();
+  const q1 = new THREE.Quaternion().setFromAxisAngle(ax1.clone().applyQuaternion(inv).normalize(), a1);
+  const q2 = new THREE.Quaternion().setFromAxisAngle(ax2.clone().applyQuaternion(inv).normalize(), a2);
+  b.quaternion.copy(r.local).multiply(q1).multiply(q2);
+}
+
 /** 骨骼 a → b 的静止方向（模型根坐标系，单位向量） */
 function restDir(p: Posable, a: string, b: string): THREE.Vector3 {
   const A = p.bones.get(a), B = p.bones.get(b);
@@ -127,6 +139,16 @@ function aim(p: Posable, upper: string, lower: string, dir: THREE.Vector3): void
   const s = Math.hypot(_q.x, _q.y, _q.z);
   if (s < 1e-6) { const b = p.bones.get(upper), r = p.rest.get(upper); if (b && r) b.quaternion.copy(r.local); return; }
   turn(p, upper, new THREE.Vector3(_q.x / s, _q.y / s, _q.z / s), 2 * Math.atan2(s, _q.w));
+}
+
+/**
+ * 一条腿（upper → mid → end）：upper 指向 d1、mid 指向 d2（都在父骨骼的坐标系里，也就是跟着身体走）。
+ * mid 的方向要先扣掉 upper 已经转的那一下，不然会转两遍。
+ */
+function aimLimb(p: Posable, upper: string, mid: string, end: string, d1: THREE.Vector3, d2: THREE.Vector3): void {
+  aim(p, upper, mid, d1);
+  const q1 = new THREE.Quaternion().setFromUnitVectors(restDir(p, upper, mid), d1.clone().normalize());
+  aim(p, mid, end, d2.clone().normalize().applyQuaternion(q1.invert()));
 }
 
 const ease = (k: number): number => { const t = Math.min(1, Math.max(0, k)); return t * t * (3 - 2 * t); };
@@ -380,6 +402,8 @@ export class PetFlight {
   private fYaw = 0; private fYawRate = 0;
   /** 翅膀扇动的相位（累加，扇动快慢变了也不跳）和这一刻的快慢 / 幅度 */
   private flapPh = 0; private flapT = -1; private flapS = 1; private flapA = 0.6;
+  /** 应龙回头看的角度（叠在 dragonPose 的脖子和头上） */
+  private dragonLook = 0;
 
   constructor(
     /** 脚下的地面（地形或桥面、屋顶）：y 以下最高的可站立面 */
@@ -491,26 +515,91 @@ export class PetFlight {
     this.flapT = time;
     this.flapPh = (this.flapPh + step * Math.PI * 2 * S.flap * speed) % (Math.PI * 2000);
     const ph = this.flapPh;
-    // 静止姿势身体是立着的，身体长轴 = 模型 Y；翅膀绕它上下扇（身体俯成水平后就是绕飞行方向扇）
-    const Y = new THREE.Vector3(0, 1, 0);
+    // 翅膀绕身体长轴上下扇：鸟静止时身体立着，长轴 = 模型 Y（俯成水平后就是绕飞行方向扇）；
+    // 龙是四足站姿，长轴 = 模型 Z，静止时翅膀往上收着，扇的时候先压到接近水平
+    const dragon = S.kind === 'dragon';
+    const ax = dragon ? new THREE.Vector3(0, 0, 1) : new THREE.Vector3(0, 1, 0), bias = dragon ? -0.55 : 0.12;
     for (const [side, sgn] of [['L', 1], ['R', -1]] as const) {
-      turn(p, `wing_1_${side}`, Y, sgn * (0.12 + amp * Math.sin(ph)));
-      turn(p, `wing_2_${side}`, Y, sgn * amp * 0.45 * Math.sin(ph - 0.6));
-      turn(p, `wing_3_${side}`, Y, sgn * amp * 0.3 * Math.sin(ph - 1.1));
+      turn(p, `wing_1_${side}`, ax, sgn * (bias + amp * Math.sin(ph)));
+      turn(p, `wing_2_${side}`, ax, sgn * amp * 0.45 * Math.sin(ph - 0.6));
+      turn(p, `wing_3_${side}`, ax, sgn * amp * 0.3 * Math.sin(ph - 1.1));
     }
+    if (dragon) return;
     const X = new THREE.Vector3(1, 0, 0);
     for (let k = 1; k <= 6; k++) turn(p, `tail_${k}`, X, 0.12 * Math.sin(time * 2 + k * 0.6));
   }
 
   /**
    * 灵宠的身体：俯 k × pitch 成飞行姿势，腿往回摆同样的角度（爪子朝下）；bank = 转弯侧倾，nose = 抬头（负）/ 低头；
-   * face = 模型朝向角（朝向 (sin, cos)），默认就是飞行方向。
+   * face = 模型朝向角（朝向 (sin, cos)），默认就是飞行方向；hold = 爪子抓着燎的程度（龙的前爪会往下伸直握住）。
    */
-  private body(k: number, bank: number, nose = 0, face = this.heading + Math.PI): void {
+  private body(k: number, bank: number, nose = 0, face = this.heading + Math.PI, hold = 0): void {
     const p = this.pet!, S = FLYING_PETS[this.loadedId!];
     p.root.rotation.set(S.pitch * k + nose, face, -bank, 'YXZ');
+    if (S.kind === 'dragon') { this.dragonPose(k, hold, S.pitch * k + nose); return; }
     const X = new THREE.Vector3(1, 0, 0);
     for (const l of S.legs) turn(p, l, X, -S.pitch * k * 0.9);
+  }
+
+  /**
+   * 应龙（有翼的四足中国龙）的飞行姿态，参考中国龙「游」的动态：头领着身体，波从脖子传到尾巴尖、越往后越大，头反过来抵消一部分保持平稳；
+   * 四肢不直挺挺垂着，而是贴着身体——前爪往前探、微微握着（左前爪托着宝珠），后腿顺着尾巴往后拖，四条腿对角交替慢慢划（像在云里游），比身体的波晚半拍。
+   * 悬停时腿放低、前爪张开往前抓；平飞时收紧、脖子往前伸；抓着燎时两只前爪往下伸直握住，后腿往后拖着荡。
+   * k：0.4 以下是悬停，到 1 是平飞（和鸟的 k 同一个刻度）；hold：0..1 抓人的程度。
+   */
+  private dragonPose(k: number, hold: number, rootPitch: number): void {
+    const p = this.pet!;
+    const c = clamp01((k - 0.4) / 0.6), h = clamp01(hold);
+    const ph = this.flapPh, t = Math.max(0, this.flapT);
+    const X = new THREE.Vector3(1, 0, 0), Y = new THREE.Vector3(0, 1, 0);
+    // ── 身体的波：脖子 → 胸 → 腰 → 尾巴，相位依次往后推 0.7、幅度越往后越大；竖直的波跟着扇翅膀，左右的慢波是「游」 ──
+    const spine = ['neck_2', 'neck_1', 'chest', 'spine2', 'spine1', 'tail_1', 'tail_2', 'tail_3', 'tail_4', 'tail_5', 'tail_6'];
+    let frontPitch = 0, frontYaw = 0;
+    spine.forEach((n, i) => {
+      // 抓着人时前半身的波压小（爪子要稳），尾巴照样甩
+      const damp = i < 5 ? 1 - 0.6 * h : 1;
+      const v = (0.03 + 0.018 * i) * Math.sin(ph - 0.7 * i) * damp;
+      const l = (0.025 + 0.022 * i) * Math.sin(t * 2.1 - 0.8 * i) * (0.45 + 0.55 * c) * damp;
+      // 平飞时脖子往前伸（静止时脖子是竖着的，像站着的马），头再抬回来平视前方
+      const reach = n === 'neck_1' ? 0.5 * c : n === 'neck_2' ? 0.25 * c : 0;
+      turn2(p, n, X, v + reach, Y, l + (n === 'neck_2' ? this.dragonLook * 0.4 : 0));
+      if (i < 5) { frontPitch += v + reach; frontYaw += l; }
+    });
+    // 头抵消身体的波和整体俯仰，保持平稳（头是飞行方向的指示，不能跟着晃）
+    turn2(p, 'head', X, -frontPitch * 0.85 - rootPitch * 0.6, Y, -frontYaw * 0.8 + this.dragonLook * 0.6);
+    // ── 四肢：方向在身体坐标系里（+z 前、+y 上、+x 左），划动绕身体左右轴转 ──
+    const paddle = (phase: number, amp: number) => amp * Math.sin(t * 3.0 + phase) * (1 - h);
+    const limb = (side: 'L' | 'R', front: boolean) => {
+      const o = side === 'L' ? 1 : -1;
+      const v3 = (x: number, y: number, z: number) => new THREE.Vector3(x * o, y, z);
+      let d1: THREE.Vector3, d2: THREE.Vector3, curl: number;
+      if (front) {
+        // 悬停：往前下方张开爪子抓；平飞：往前探、贴着下巴；左前爪托珠，探得更前更高
+        const pearl = side === 'L' ? 1 : 0;
+        const hover1 = v3(0.35, -0.8, 0.5), hover2 = v3(0.2, -0.45, 0.87);
+        const cruise1 = v3(0.3, -0.45 + 0.15 * pearl, 0.85), cruise2 = v3(0.1, 0.05 + 0.15 * pearl, 1);
+        const hold1 = v3(0.18, -1, 0.12), hold2 = v3(0.1, -1, 0.02);
+        d1 = hover1.lerp(cruise1, c).lerp(hold1, h);
+        d2 = hover2.lerp(cruise2, c).lerp(hold2, h);
+        curl = (-0.25 + 0.75 * c) * (1 - h) + 0.9 * h;
+        // 前爪对角交替划：左前和右后同相
+        d1.applyAxisAngle(X, paddle(side === 'L' ? 0 : Math.PI, 0.26 - 0.12 * c));
+      } else {
+        // 悬停：往下后方放低；平飞 / 抓人：贴着尾巴下面往后拖（尾巴本身往下垂，腿要更低才在它下面）
+        const hover1 = v3(0.3, -0.88, -0.3), hover2 = v3(0.2, -0.85, -0.5);
+        const cruise1 = v3(0.3, -0.72, -0.63), cruise2 = v3(0.14, -0.5, -0.86);
+        d1 = hover1.lerp(cruise1, Math.max(c, h));
+        d2 = hover2.lerp(cruise2, Math.max(c, h));
+        // 后爪顺着腿往后伸（爪尖朝后下方），悬停时略微张开
+        curl = 0.25 - 0.75 * Math.max(c, h);
+        // 后腿比同侧前腿晚半拍；抓人时不划，改成被风吹着荡
+        d1.applyAxisAngle(X, paddle(side === 'L' ? Math.PI - 1.2 : -1.2, 0.2 - 0.08 * c) + 0.12 * h * Math.sin(t * 2.4 + (side === 'L' ? 0 : 1)));
+      }
+      const [u, m, e] = front ? [`upperarm_${side}`, `forearm_${side}`, `claw_${side}`] : [`thigh_${side}`, `shin_${side}`, `hclaw_${side}`];
+      aimLimb(p, u, m, e, d1, d2);
+      turn(p, e, X, curl);
+    };
+    limb('L', true); limb('R', true); limb('L', false); limb('R', false);
   }
 
   /**
@@ -906,6 +995,8 @@ export class PetFlight {
   /** 头和脖子绕竖直方向转 angle（转向世界里的「上」，跟身子俯多少无关）；0 = 回正 */
   private turnHead(angle: number): void {
     const p = this.pet!;
+    // 龙的脖子和头每帧由 dragonPose 摆（身体的波、头的平衡），回头看的角度交给它叠上去
+    if (this.loadedId && FLYING_PETS[this.loadedId].kind === 'dragon') { this.dragonLook = angle; return; }
     const names = HEAD_BONES.filter(n => p.bones.has(n));
     if (!names.length) return;
     const ax = new THREE.Vector3(0, 1, 0).applyQuaternion(p.root.quaternion.clone().invert());
@@ -1061,7 +1152,7 @@ export class PetFlight {
           const k = (tau - G.swoop) / (GRAB_CATCH - G.swoop);
           const flareK = ease((k - 0.62) / 0.38);
           this.bank += (0 - this.bank) * Math.min(1, dt * 6);
-          this.body(1, this.bank, 0.28 * (1 - flareK) - 0.4 * flareK, Math.atan2(fwd.x, fwd.z));
+          this.body(1, this.bank, 0.28 * (1 - flareK) - 0.4 * flareK, Math.atan2(fwd.x, fwd.z), ease(k));
           const gripOff = this.grip(tmp).sub(p.root.position);
           const C = this.catchAt.clone().sub(gripOff);
           const c1 = B.clone().addScaledVector(fwd, 3).addScaledVector(up, -1.5), c2 = C.clone().addScaledVector(fwd, -1.6).addScaledVector(up, 0.3);
@@ -1113,8 +1204,14 @@ export class PetFlight {
           this.flash.position.copy(hd); this.flash.intensity = 14;
         }
         const hv = 8.6 + (S.speed * 0.75 - 8.6) * ease(k);
-        this.vel.set(fwd.x * hv, -1.6 + 4.8 * ease(clamp01(tc / 0.65)), fwd.z * hv);
+        // 先往下一沉再爬升；前面是上坡就提前爬（照这个速度 0.8 s 后脚下的地面，留 1.2 m），不会一头撞进坡里
+        const ahead = this.ground(this.pos.x + fwd.x * hv * 0.8, this.pos.z + fwd.z * hv * 0.8, this.pos.y + 30);
+        const vyWant = Math.max(-1.6 + 4.8 * ease(clamp01(tc / 0.65)), (ahead + 1.2 - this.pos.y) / 0.8);
+        this.vel.set(fwd.x * hv, tc - dt <= 0 ? this.vel.y : this.vel.y + (vyWant - this.vel.y) * Math.min(1, dt * 8), fwd.z * hv);
         this.pos.addScaledVector(this.vel, dt);
+        // 保险：脚下至少离地 0.6 m
+        const floor = this.ground(this.pos.x, this.pos.z, this.pos.y + 1) + 0.6;
+        if (this.pos.y < floor) { this.pos.y = floor; this.vel.y = Math.max(this.vel.y, 0); }
         // 腿：被一把带走，先甩到后面，再像钟摆一样荡回来（越荡越小），慢慢换成滑翔时的晃腿
         const legs = 0.7 * Math.exp(-2.6 * tc) * Math.cos(5.2 * tc) * (1 - k * k);
         this.poseHeroFull({
@@ -1123,7 +1220,7 @@ export class PetFlight {
           look: k < 0.8 ? p.root.position.clone().add(new THREE.Vector3(0, S.rideHeight * 0.35, 0)) : null, time,
         });
         this.placeHero(0.1 * ease(k), tc);
-        this.body(1, 0, -0.35 * (1 - ease(clamp01(tc / 0.4))));
+        this.body(1, 0, -0.35 * (1 - ease(clamp01(tc / 0.4))), undefined, 1);
         this.flapWings(time, (2.1 - 0.8 * k) * slow, 1.0 - 0.3 * k);
         this.snapPetToHands();
         this.wingTrails(0.4 * k);
@@ -1189,7 +1286,7 @@ export class PetFlight {
       if (this.agl < 0.3) this.pos.y = g2 + 0.3;
       this.poseHeroFull({ arms: 1, tuck: 0.35, swing: 0.3 + 0.2 * Math.min(1, this.speed / 18), grip: 1, time });
       this.placeHero(0.1, this.t);
-      this.body(1, this.bank * 0.6);
+      this.body(1, this.bank * 0.6, 0, undefined, 1);
       this.flapWings(time, 0.65 + 0.4 * Math.min(1, this.speed / 20) + this.flare * 0.8, 0.55 + this.flare * 0.3);
       this.snapPetToHands();
       this.wingTrails(Math.min(1, this.speed / 18) * 0.55);
@@ -1223,7 +1320,7 @@ export class PetFlight {
         this.pos.y = Math.max(g, this.pos.y - (this.pos.y - g) * Math.min(1, dt * 8));
         this.poseHeroFull({ arms: 1, tuck: 0.35 * (1 - k), swing: 0.1, grip: 1, time });
         this.placeHero(0.1 * (1 - k), 0);
-        this.body(1 - 0.6 * k, 0, -0.5 * k);
+        this.body(1 - 0.6 * k, 0, -0.5 * k, undefined, 1);
         this.flapWings(time, 2.2, 1.0);
         this.snapPetToHands();
         if (this.t + dt >= D1) { this.pos.y = g; this.puffDust(this.pos, 30, 6); this.shockRing(this.pos); this.petFrom.copy(p.root.position); }
@@ -1244,7 +1341,7 @@ export class PetFlight {
         p.root.position.copy(bezier(this.petFrom, upHigh, shoulder, e));
         this.setScale(big + (small - big) * ease(k * 1.5));
         if (k > 0.3 && k - dt / D2 <= 0.3) this.burstSparks(p.root.position.clone().add(new THREE.Vector3(0, 1.5, 0)), 60, 3.5, 0.14, 0.9, this.fireCore, 0.4);
-        this.body(0.55, 0);
+        this.body(0.55, 0, 0, undefined, 1 - ease(Math.min(1, k * 2)));
         this.flapWings(time, 1.3, 0.7);
         // 镜头：从身后弧线回到眼睛，先抬高绕到头顶后方，最后落进眼睛（燎的模型在离头 1.4 m 内隐藏）
         const mid = eyeNow.clone().addScaledVector(f, -2.8).add(new THREE.Vector3(0, 1.4, 0));
