@@ -54,7 +54,7 @@ interface Posable {
   root: THREE.Group;
   bones: Map<string, THREE.Bone>;
   /** 每根骨骼的静止局部旋转、在模型根坐标系里的静止旋转 */
-  rest: Map<string, { local: THREE.Quaternion; rel: THREE.Quaternion }>;
+  rest: Map<string, { local: THREE.Quaternion; rel: THREE.Quaternion; pos: THREE.Vector3 }>;
   /** 模型原始高度（米，缩放前） */
   height: number;
   meshes: THREE.Mesh[];
@@ -91,8 +91,13 @@ function loadPosable(url: string): Promise<Posable | null> {
       const bones = new Map<string, THREE.Bone>();
       scene.traverse(o => { if ((o as THREE.Bone).isBone) bones.set(o.name.replace(/^mixamorig:?/, ''), o as THREE.Bone); });
       const inv = root.getWorldQuaternion(new THREE.Quaternion()).invert();
-      const rest = new Map<string, { local: THREE.Quaternion; rel: THREE.Quaternion }>();
-      for (const [name, b] of bones) rest.set(name, { local: b.quaternion.clone(), rel: inv.clone().multiply(b.getWorldQuaternion(new THREE.Quaternion())) });
+      const toRoot = root.matrixWorld.clone().invert();
+      // 绑定姿势下每根骨骼在模型根坐标系里的朝向和位置（一加载就记下来：之后骨骼都摆过姿势了，再量就不是静止姿势了）
+      const rest = new Map<string, { local: THREE.Quaternion; rel: THREE.Quaternion; pos: THREE.Vector3 }>();
+      for (const [name, b] of bones) rest.set(name, {
+        local: b.quaternion.clone(), rel: inv.clone().multiply(b.getWorldQuaternion(new THREE.Quaternion())),
+        pos: b.getWorldPosition(new THREE.Vector3()).applyMatrix4(toRoot),
+      });
       const box = new THREE.Box3().setFromObject(scene);
       return { root, bones, rest, height: Math.max(0.1, box.max.y - box.min.y), meshes };
     }).catch(err => { console.warn(`[灵宠飞渡] ${url} 加载失败`, err); return null; });
@@ -121,15 +126,15 @@ function turn2(p: Posable, name: string, ax1: THREE.Vector3, a1: number, ax2: TH
   b.quaternion.copy(r.local).multiply(q1).multiply(q2);
 }
 
-/** 骨骼 a → b 的静止方向（模型根坐标系，单位向量） */
+/**
+ * 骨骼 a → b 的静止方向（模型根坐标系，单位向量），按加载时记下的绑定姿势算。
+ * （以前是第一次用到时按「那一刻」的姿势量，那时腿可能已经被转过了，量出来的「静止方向」偏了二三十度，
+ * 之后每帧都拿错的基准去转，应龙的上臂被多转了快 40°，胸口的皮被拉得鼓出来。）
+ */
 function restDir(p: Posable, a: string, b: string): THREE.Vector3 {
-  const A = p.bones.get(a), B = p.bones.get(b);
+  const A = p.rest.get(a), B = p.rest.get(b);
   if (!A || !B) return new THREE.Vector3(0, -1, 0);
-  const key = `dir:${b}`;
-  if (A.userData[key]) return A.userData[key] as THREE.Vector3;
-  const inv = new THREE.Matrix4().copy(p.root.matrixWorld).invert();
-  const pa = A.getWorldPosition(new THREE.Vector3()).applyMatrix4(inv), pb = B.getWorldPosition(new THREE.Vector3()).applyMatrix4(inv);
-  return (A.userData[key] = pb.sub(pa).normalize());
+  return B.pos.clone().sub(A.pos).normalize();
 }
 
 /** 把骨骼 upper（指向 lower）从静止方向转到 dir（模型根坐标系） */
@@ -568,32 +573,40 @@ export class PetFlight {
     // 头抵消身体的波和整体俯仰，保持平稳（头是飞行方向的指示，不能跟着晃）
     turn2(p, 'head', X, -frontPitch * 0.85 - rootPitch * 0.6, Y, -frontYaw * 0.8 + this.dragonLook * 0.6);
     // ── 四肢：方向在身体坐标系里（+z 前、+y 上、+x 左），划动绕身体左右轴转 ──
+    // 上臂、大腿只在静止方向附近小幅转：前胸两侧的皮有一部分挂在上臂上、肚子最下面一圈挂在大腿上，转多了会把胸口、肚子拉得鼓出来
+    // （量过：上臂往前 10° 时胸口最多拉长 33%、30° 时 99%、60° 时 191%；大腿往后 30° 时肚子底下 5% 的边拉长 16% 以上）。
+    // 所以上臂最多往前约 11°、大腿最多往后约 7°，往前探、往后拖主要靠小臂 / 小腿和爪子（它们的权重只在腿上）
     const paddle = (phase: number, amp: number) => amp * Math.sin(t * 3.0 + phase) * (1 - h);
     const limb = (side: 'L' | 'R', front: boolean) => {
       const o = side === 'L' ? 1 : -1;
       const v3 = (x: number, y: number, z: number) => new THREE.Vector3(x * o, y, z);
       let d1: THREE.Vector3, d2: THREE.Vector3, curl: number;
       if (front) {
-        // 悬停：往前下方张开爪子抓；平飞：往前探、贴着下巴；左前爪托珠，探得更前更高
+        // 上臂：悬停略往前、平飞往前约 11°、抓人就是静止方向；小臂：悬停往前下方抓，平飞往前探、贴着下巴（左前爪托珠，抬得更高），抓人往下伸直
         const pearl = side === 'L' ? 1 : 0;
-        const hover1 = v3(0.35, -0.8, 0.5), hover2 = v3(0.2, -0.45, 0.87);
-        const cruise1 = v3(0.3, -0.45 + 0.15 * pearl, 0.85), cruise2 = v3(0.1, 0.05 + 0.15 * pearl, 1);
-        const hold1 = v3(0.18, -1, 0.12), hold2 = v3(0.1, -1, 0.02);
+        // （小臂也只抬到 40° 左右：胸口底下靠前爪内侧的皮有四分之一挂在小臂上）
+        const hover1 = v3(0.3, -0.95, 0.12), hover2 = v3(0.2, -0.62, 0.76);
+        const cruise1 = v3(0.3, -0.93, 0.25), cruise2 = v3(0.15, -0.6 + 0.1 * pearl, 0.78);
+        const hold1 = v3(0.31, -0.95, 0.06), hold2 = v3(0.15, -1, 0.04);
         d1 = hover1.lerp(cruise1, c).lerp(hold1, h);
         d2 = hover2.lerp(cruise2, c).lerp(hold2, h);
         curl = (-0.25 + 0.75 * c) * (1 - h) + 0.9 * h;
-        // 前爪对角交替划：左前和右后同相
-        d1.applyAxisAngle(X, paddle(side === 'L' ? 0 : Math.PI, 0.26 - 0.12 * c));
+        // 对角交替划（左前和右后同相），划主要在小臂上
+        const pd = paddle(side === 'L' ? 0 : Math.PI, 1);
+        d1.applyAxisAngle(X, pd * 0.05);
+        d2.applyAxisAngle(X, pd * (0.22 - 0.08 * c));
       } else {
-        // 悬停：往下后方放低；平飞 / 抓人：贴着尾巴下面往后拖（尾巴本身往下垂，腿要更低才在它下面）
-        const hover1 = v3(0.3, -0.88, -0.3), hover2 = v3(0.2, -0.85, -0.5);
-        const cruise1 = v3(0.3, -0.72, -0.63), cruise2 = v3(0.14, -0.5, -0.86);
+        // 大腿：几乎就是静止方向，平飞再往后 10° 左右；小腿：悬停往下后方，平飞 / 抓人往后下方拖（约 53°，在肚子下面，不贴到侧腹上）
+        const hover1 = v3(0.28, -0.9, -0.33), hover2 = v3(0.15, -0.8, -0.58);
+        const cruise1 = v3(0.28, -0.82, -0.5), cruise2 = v3(0.12, -0.6, -0.8);
         d1 = hover1.lerp(cruise1, Math.max(c, h));
         d2 = hover2.lerp(cruise2, Math.max(c, h));
         // 后爪顺着腿往后伸（爪尖朝后下方），悬停时略微张开
         curl = 0.25 - 0.75 * Math.max(c, h);
-        // 后腿比同侧前腿晚半拍；抓人时不划，改成被风吹着荡
-        d1.applyAxisAngle(X, paddle(side === 'L' ? Math.PI - 1.2 : -1.2, 0.2 - 0.08 * c) + 0.12 * h * Math.sin(t * 2.4 + (side === 'L' ? 0 : 1)));
+        // 后腿比同侧前腿晚半拍；抓人时不划，改成被风吹着荡（都主要在小腿上）
+        const pd = paddle(side === 'L' ? Math.PI - 1.2 : -1.2, 1) + 0.6 * h * Math.sin(t * 2.4 + (side === 'L' ? 0 : 1));
+        d1.applyAxisAngle(X, pd * 0.04);
+        d2.applyAxisAngle(X, pd * (0.27 - 0.08 * c));
       }
       const [u, m, e] = front ? [`upperarm_${side}`, `forearm_${side}`, `claw_${side}`] : [`thigh_${side}`, `shin_${side}`, `hclaw_${side}`];
       aimLimb(p, u, m, e, d1, d2);
