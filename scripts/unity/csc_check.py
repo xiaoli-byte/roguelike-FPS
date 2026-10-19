@@ -6,6 +6,8 @@
     python scripts/unity/csc_check.py                 # 依次检查 Art.Runtime → Game → Art.Editor
     python scripts/unity/csc_check.py Spiritfire.Game
 
+在 git worktree 里也能用：worktree 没有 Library，就借主工作区 unity/Library 里的 .rsp 和引用，源文件仍取当前 worktree。
+
 退出码 0 = 全部编译通过；有错误时打印 error CS… 行。
 """
 import glob
@@ -14,7 +16,7 @@ import subprocess
 import sys
 import tempfile
 
-ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "unity")
+ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "unity"))
 UNITY = os.environ.get("UNITY_EDITOR_DATA", r"S:\Unity Hub\Editor\6000.5.4f1\Editor\Data")
 # 程序集 → 源文件 glob（与各自 asmdef 所在目录一致）
 ASSEMBLIES = {
@@ -24,8 +26,20 @@ ASSEMBLIES = {
 }
 
 
+def library_root() -> str:
+    """有 Library 的 unity 目录：本工作区自己的，没有就找主工作区的（worktree 的 git common dir 在主工作区 .git）"""
+    if os.path.isdir(os.path.join(ROOT, "Library", "Bee")):
+        return ROOT
+    r = subprocess.run(["git", "-C", ROOT, "rev-parse", "--path-format=absolute", "--git-common-dir"],
+                       capture_output=True, text=True)
+    main = os.path.join(os.path.dirname(r.stdout.strip()), "unity") if r.returncode == 0 else ""
+    if main and os.path.isdir(os.path.join(main, "Library", "Bee")):
+        return os.path.normpath(main)
+    sys.exit(f"{ROOT} 和主工作区都没有 Library/Bee：先让编辑器正常编译一次")
+
+
 def find_rsp(name: str) -> str:
-    hits = glob.glob(os.path.join(ROOT, "Library", "Bee", "artifacts", "*", f"{name}.rsp"))
+    hits = glob.glob(os.path.join(library_root(), "Library", "Bee", "artifacts", "*", f"{name}.rsp"))
     if not hits:
         sys.exit(f"找不到 {name}.rsp：先让编辑器正常编译一次")
     return max(hits, key=os.path.getmtime)
@@ -45,7 +59,8 @@ def main() -> int:
     out_dir = tempfile.mkdtemp(prefix="csc_check_")
     built: dict[str, str] = {}
     failed = False
-    os.chdir(ROOT)
+    # .rsp 里的引用是相对 Library 所在目录的路径；源文件用当前工作区的绝对路径
+    os.chdir(library_root())
     for name in names:
         lines = open(find_rsp(name), encoding="utf-8").read().splitlines()
         keep = []
@@ -59,7 +74,7 @@ def main() -> int:
             keep.append(line)
         dll = os.path.join(out_dir, f"{name}.dll")
         keep.append(f'-out:"{dll}"')
-        files = sorted(glob.glob(ASSEMBLIES.get(name, ""), recursive=True))
+        files = sorted(glob.glob(os.path.join(ROOT, ASSEMBLIES.get(name, "")), recursive=True))
         keep += ['"' + f.replace(os.sep, "/") + '"' for f in files]
         rsp = os.path.join(out_dir, f"{name}.rsp")
         with open(rsp, "w", encoding="utf-8") as fh:
