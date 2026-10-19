@@ -332,7 +332,7 @@ namespace Spiritfire.Game
 
         DamageInfo HitInfo(WeaponDef def, float amount, Vector3 point, Vector3 dir) => new()
         {
-            amount = amount, source = DamageSource.Weapon, critMult = def.critMult, point = point, direction = dir,
+            amount = amount, source = DamageSource.Weapon, tags = DamageTag.Weapon, critMult = def.critMult, point = point, direction = dir,
             knockback = def.knockback, element = def.element, instigator = this,
             statusChance = def.element != Element.None ? def.elementChance : 0, subElement = def.subElement, subChance = def.subChance,
         };
@@ -413,6 +413,7 @@ namespace Spiritfire.Game
                 Lightning.Spawn(end, oc, DamageTable.ElementColor(def.element));
                 var info = HitInfo(def, dmg * def.chainFraction, oc, (oc - end).normalized);
                 info.depth = 1;
+                info.tags |= DamageTag.Chain;
                 Combat.DamageEnemy(o, info);
             }
         }

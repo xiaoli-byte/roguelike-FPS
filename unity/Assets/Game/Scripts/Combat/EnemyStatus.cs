@@ -77,17 +77,19 @@ namespace Spiritfire.Game
         /// <summary>
         /// 附着元素状态。killed = 这一击已经打死了它：只做雷殛弹射（深度 0），不再挂状态。
         /// 调用前由 <see cref="ReactionSystem.TryReact"/> 判定反应（反应不消耗两两状态，所以照常附着）。
+        /// power = 状态强度（不含元素 / 精英 / 首领加成，每一跳结算时再乘）。返回是否挂上（击杀那一击的雷殛弹射也算）。
         /// </summary>
-        public static void Apply(Damageable d, Element e, float power, int depth, bool killed)
+        public static bool Apply(Damageable d, Element e, float power, int depth, bool killed)
         {
-            if (!d || e == Element.None || power <= 0) return;
+            if (!d || e == Element.None || power <= 0) return false;
             power = Mathf.Min(power, d.maxHealth * 0.5f);
             if (killed || d.Dead)
             {
-                if (e == Element.Shock && depth == 0) ChainFrom(d, power, depth);
-                return;
+                if (e != Element.Shock || depth != 0) return false;
+                ChainFrom(d, power, depth);
+                return true;
             }
-            if (d.untargetable) return;
+            if (d.untargetable) return false;
             var s = Ensure(d);
             switch (e)
             {
@@ -95,6 +97,7 @@ namespace Spiritfire.Game
                 case Element.Shock: s.AddShock(power, depth); break;
                 case Element.Corrode: s.AddCorrode(power); break;
             }
+            return true;
         }
 
         public static void Stun(Damageable d, float seconds)
@@ -213,6 +216,7 @@ namespace Spiritfire.Game
                 var info = DamageInfo.Simple(power * ShockChainRatio, DamageSource.Status, to, (to - from).normalized);
                 info.element = Element.Shock;
                 info.depth = depth + 1;
+                info.tags = DamageTag.Chain;
                 Combat.DamageEnemy(t, info);
             }
         }
@@ -286,6 +290,7 @@ namespace Spiritfire.Game
             var info = DamageInfo.Simple(amount, DamageSource.Status, c, Vector3.up);
             info.element = e;
             info.depth = 1;
+            info.tags = DamageTag.Dot;
             if (e == Element.Fire) ShotFx.Instance?.Impact(c + Random.insideUnitSphere * 0.3f, Vector3.up, true, 0.8f);
             Combat.DamageEnemy(hp, info);
         }

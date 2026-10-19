@@ -873,6 +873,7 @@ namespace Spiritfire.Game
         public DamageInfo Info(float amount, Element element, float statusChance, Vector3 point, Vector3 dir, int depth = 0)
         {
             var info = DamageInfo.Simple(amount * DamageMult, DamageSource.Pet, point, dir);
+            info.tags = DamageTag.Pet;
             info.element = element;
             info.statusChance = statusChance;
             info.depth = depth;

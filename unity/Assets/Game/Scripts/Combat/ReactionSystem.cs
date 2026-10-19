@@ -203,9 +203,9 @@ namespace Spiritfire.Game
             {
                 case Reaction.Thunderfire:
                 {
-                    if (center && Hit(e, b, Element.Fire, p.depth, c)) hits++;
+                    if (center && Hit(e, b, Element.Fire, p.depth, c, p.id)) hits++;
                     var hitList = new List<Damageable>();
-                    var info = ReactionHit(b * 0.6f, Element.Fire, p.depth, c);
+                    var info = ReactionHit(b * 0.6f, Element.Fire, p.depth, c, p.id);
                     info.knockback = 7;
                     float r = Radius(3f);
                     Combat.Explode(c, r, info, true, 0, e, 0.6f, hitList);
@@ -223,7 +223,7 @@ namespace Spiritfire.Game
                 }
                 case Reaction.Meltdown:
                 {
-                    if (center && Hit(e, b * (e.armor > 0 ? 2 : 1), Element.Corrode, p.depth, c)) hits++;
+                    if (center && Hit(e, b * (e.armor > 0 ? 2 : 1), Element.Corrode, p.depth, c, p.id)) hits++;
                     var foot = alive ? e.transform.position : Ground(c);
                     SpawnPool(foot + Vector3.up * 0.05f, Radius(2.5f), b, p.depth);
                     ShotFx.Instance?.Impact(c, Vector3.up, true, 6f);
@@ -235,7 +235,7 @@ namespace Spiritfire.Game
                 {
                     if (center)
                     {
-                        if (Hit(e, b * (e.shield > 0 ? 2 : 1), Element.Shock, p.depth, c)) hits++;
+                        if (Hit(e, b * (e.shield > 0 ? 2 : 1), Element.Shock, p.depth, c, p.id)) hits++;
                         float now = Time.time;
                         if (!sealStunReady.TryGetValue(e, out var ready) || now >= ready)
                         {
@@ -249,7 +249,7 @@ namespace Spiritfire.Game
                     {
                         var oc = CenterOf(o);
                         Lightning.Spawn(c, oc, color);
-                        if (Hit(o, b * 0.3f, Element.Shock, p.depth, oc)) hits++;
+                        if (Hit(o, b * 0.3f, Element.Shock, p.depth, oc, p.id)) hits++;
                         Combat.AttachFromReaction(o, Element.Corrode, b * 0.35f, p.depth + 1);
                     }
                     Telegraph.Wave(Ground(c), 1.6f, 8f, color);
@@ -267,6 +267,7 @@ namespace Spiritfire.Game
                         var cash = DamageInfo.Simple(p.cash, DamageSource.Status, c, Vector3.up);
                         cash.element = Element.Fire;
                         cash.depth = p.depth + 1;
+                        cash.tags = DamageTag.Dot;
                         Combat.DamageEnemy(e, cash);
                     }
                     if (alive)
@@ -275,11 +276,11 @@ namespace Spiritfire.Game
                         foreach (var el in new[] { Element.Fire, Element.Shock, Element.Corrode })
                         {
                             if (e.Dead) break;
-                            if (Hit(e, b / 3f, el, p.depth, c)) hits++;
+                            if (Hit(e, b / 3f, el, p.depth, c, p.id)) hits++;
                         }
                     }
                     bool centerDead = !e || e.Dead;
-                    var after = ReactionHit(b * (centerDead ? 0.6f : 0.3f), Element.None, p.depth, c);
+                    var after = ReactionHit(b * (centerDead ? 0.6f : 0.3f), Element.None, p.depth, c, p.id);
                     after.knockback = 9;
                     var hitList = new List<Damageable>();
                     Combat.Explode(c, Radius(3f), after, true, 0, e, 0.6f, hitList);
@@ -297,19 +298,31 @@ namespace Spiritfire.Game
             Reacted?.Invoke(e, p.id, c, b, hits);
         }
 
-        static DamageInfo ReactionHit(float amount, Element element, int depth, Vector3 point)
+        /// <summary>反应 → 伤害标签（Reaction + 反应自己的标签）</summary>
+        public static DamageTag TagOf(Reaction id) => DamageTag.Reaction | id switch
+        {
+            Reaction.Thunderfire => DamageTag.Thunderfire,
+            Reaction.Meltdown => DamageTag.Meltdown,
+            Reaction.Veinseal => DamageTag.Veinseal,
+            _ => DamageTag.Abyss,
+        };
+
+        static DamageInfo ReactionHit(float amount, Element element, int depth, Vector3 point, Reaction id, DamageTag extra = DamageTag.None)
         {
             var info = DamageInfo.Simple(amount, DamageSource.Status, point, Vector3.up);
             info.element = element;
             info.depth = depth + 1;
             info.reaction = true;
+            info.reactionId = id;
+            info.tags = TagOf(id) | extra;
+            info.noCrit = true;
             return info;
         }
 
-        static bool Hit(Damageable d, float amount, Element element, int depth, Vector3 point)
+        static bool Hit(Damageable d, float amount, Element element, int depth, Vector3 point, Reaction id, DamageTag extra = DamageTag.None)
         {
             if (!d || d.Dead) return false;
-            var r = Combat.DamageEnemy(d, ReactionHit(amount, element, depth, point));
+            var r = Combat.DamageEnemy(d, ReactionHit(amount, element, depth, point, id, extra));
             return r.total > 0;
         }
 
@@ -339,7 +352,7 @@ namespace Spiritfire.Game
                     float dy = flat.y;
                     flat.y = 0;
                     if (flat.magnitude > pool.radius || dy > 1.5f || dy < -1f) continue;
-                    Hit(d, pool.b * 0.12f, Element.Fire, pool.depth, CenterOf(d));
+                    Hit(d, pool.b * 0.12f, Element.Fire, pool.depth, CenterOf(d), Reaction.Meltdown, DamageTag.Dot);
                     if (pool.touched.Add(d)) Combat.AttachFromReaction(d, Element.Corrode, pool.b * 0.25f, pool.depth + 1);
                 }
                 for (int k = 0; k < 2; k++)

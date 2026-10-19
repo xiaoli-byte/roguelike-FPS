@@ -4,16 +4,17 @@ using UnityEngine;
 namespace Spiritfire.Game
 {
     /// <summary>
-    /// 可受伤的单位（敌人、训练木桩）：护盾 / 护甲 / 生命三层，按 <see cref="DamageTable"/> 的元素倍率依次吃伤害。
-    /// 敌人各自的特殊减伤（镇墓兽正面格挡、邪飞天琵琶护体…）通过 <see cref="incomingModifier"/> 挂进来，
-    /// 返回乘数（0.1 = 只吃一成）。
+    /// 可受伤的单位（敌人、训练木桩）：护盾 / 护甲 / 生命三层，按 <see cref="DamageCalc.LayerMultiplier"/> 的元素倍率依次吃伤害。
+    /// 敌人各自的特殊减伤（镇墓兽正面格挡、邪飞天琵琶护体…）登记到 <see cref="Incoming"/>，返回乘数（0.1 = 只吃一成），
+    /// 乘积低于 0.5 记为「格挡」。
     /// </summary>
     public sealed class Damageable : MonoBehaviour
     {
         public float maxHealth = 100, maxArmor, maxShield;
         /// <summary>显示名（头顶血条、精英名）</summary>
         public string displayName;
-        public bool elite;
+        /// <summary>级别：精英 / 首领吃「精英伤害 / 首领伤害」加成，眩晕等有各自的抗性</summary>
+        public Rank rank;
         /// <summary>不给击杀奖励、不计入场地击杀（蜃景分身等召唤物）</summary>
         public bool noReward;
         [NonSerialized] public float health, armor, shield;
@@ -25,7 +26,34 @@ namespace Spiritfire.Game
         [NonSerialized] public float damageTakenMult = 1f;
         /// <summary>元素状态的承伤倍率（蚀化 ×1.2），由 EnemyStatus 每帧写入；和光环那一份分开，免得互相覆盖</summary>
         [NonSerialized] public float statusTakenMult = 1f;
-        public Func<DamageInfo, float> incomingModifier;
+
+        /// <summary>承伤修饰器（正面格挡、护体…）：返回倍率，全部相乘；乘积 &lt; 0.5 记为格挡</summary>
+        public readonly ModifierList<Incoming> Incoming = new();
+
+        /// <summary>精英（兼容旧字段：读写都映射到 <see cref="rank"/>）</summary>
+        public bool elite
+        {
+            get => rank == Rank.Elite;
+            set => rank = value ? Rank.Elite : rank == Rank.Elite ? Rank.Normal : rank;
+        }
+
+        public bool IsBoss => rank == Rank.Boss;
+
+        Func<DamageInfo, float> legacyModifier;
+        IDisposable legacyHandle;
+
+        /// <summary>旧接口：单个承伤修饰（赋值即替换上一个），现在转登记到 <see cref="Incoming"/></summary>
+        public Func<DamageInfo, float> incomingModifier
+        {
+            get => legacyModifier;
+            set
+            {
+                legacyHandle?.Dispose();
+                legacyHandle = null;
+                legacyModifier = value;
+                if (value != null) legacyHandle = Incoming.Add((in IncomingHit h) => value(h.info));
+            }
+        }
 
         public bool Dead { get; private set; }
         public float Fraction => maxHealth > 0 ? health / maxHealth : 0;
@@ -43,32 +71,81 @@ namespace Spiritfire.Game
             Dead = false;
         }
 
-        /// <summary>已算好倍率（暴击、加成）后的伤害按层结算；返回实际造成的伤害</summary>
+        struct IncomingCall : IModifierCall<Incoming>
+        {
+            public IncomingHit h;
+            public float raw;
+
+            public float Invoke(Incoming fn, float current)
+            {
+                h.amount = raw * current;
+                return fn(in h);
+            }
+        }
+
+        /// <summary>
+        /// 已算好倍率（暴击、加成）后的伤害按层结算；返回实际造成的伤害。
+        /// 每一层：剩余伤害 × 该层倍率，吃不完的按倍率折回原始量继续往下（同 Three.js applyLayers）；bypassShield 跳过护盾层。
+        /// </summary>
         public DamageResult ApplyLayers(DamageInfo info, float amount, bool crit)
         {
-            var r = new DamageResult { crit = crit, layer = DamageLayer.Health };
+            var r = new DamageResult { crit = crit, layer = DamageLayer.Health, firstLayer = DamageLayer.Health };
             if (Dead) return r;
             if (untargetable)
             {
                 r.immune = true;
                 return r;
             }
-            float mod = incomingModifier != null ? incomingModifier(info) : 1f;
+            float mod = 1f;
+            if (Incoming.Count > 0)
+            {
+                var call = new IncomingCall
+                {
+                    raw = amount,
+                    h = new IncomingHit
+                    {
+                        amount = amount, element = info.element, target = this, info = info, crit = crit, source = info.instigator, from = info.point,
+                    },
+                };
+                mod = Incoming.Apply(1f, ref call);
+            }
             if (mod < 0.5f) r.blocked = true;
             float left = amount * mod * damageTakenMult * statusTakenMult;
 
-            // 每一层：剩余伤害 × 该层元素倍率，吃不完的按倍率折回原始量继续往下
-            left = Eat(ref shield, left, DamageTable.LayerMult(info.element, DamageLayer.Shield), ref r.shield, ref r, DamageLayer.Shield);
-            left = Eat(ref armor, left, DamageTable.LayerMult(info.element, DamageLayer.Armor), ref r.armor, ref r, DamageLayer.Armor);
-            Eat(ref health, left, DamageTable.LayerMult(info.element, DamageLayer.Health), ref r.health, ref r, DamageLayer.Health);
+            bool skipShield = info.bypassShield;
+            r.firstLayer = shield > 0 && !skipShield ? DamageLayer.Shield : armor > 0 ? DamageLayer.Armor : DamageLayer.Health;
+            bool hadShield = shield > 0, hadArmor = armor > 0;
+            if (!skipShield) left = Eat(ref shield, left, DamageCalc.LayerMultiplier(info.element, DamageLayer.Shield), ref r.shield, ref r, DamageLayer.Shield);
+            left = Eat(ref armor, left, DamageCalc.LayerMultiplier(info.element, DamageLayer.Armor), ref r.armor, ref r, DamageLayer.Armor);
+            float healthMult = DamageCalc.LayerMultiplier(info.element, DamageLayer.Health);
+            float overflow = Eat(ref health, left, healthMult, ref r.health, ref r, DamageLayer.Health);
             r.total = r.shield + r.armor + r.health;
+            r.effective = r.total + (overflow > 0 && r.health > 0 ? overflow * healthMult : 0);
+            r.shieldBroken = hadShield && !skipShield && shield <= 0;
+            r.armorBroken = hadArmor && armor <= 0;
             if (health <= 0 && !Dead)
             {
                 Dead = true;
                 r.killed = true;
             }
-            Damaged?.Invoke(info, r);
-            if (r.killed) Died?.Invoke(info);
+            // 监听者（受击动画、琵琶）抛异常也要照常发死亡事件，不留「血空了却没死」的敌人
+            try
+            {
+                Damaged?.Invoke(info, r);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
+            if (r.killed)
+                try
+                {
+                    Died?.Invoke(info);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogException(e);
+                }
             return r;
         }
 

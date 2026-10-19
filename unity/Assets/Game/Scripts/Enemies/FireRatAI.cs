@@ -210,6 +210,7 @@ namespace Spiritfire.Game
             if (state != "roll") return;
             // 滚动中被打爆：火球照样炸开，只伤其他敌人
             var blast = DamageInfo.Simple(DeathBlastBase * level * (elite ? 1.5f : 1f), DamageSource.Explosion, c, Vector3.up);
+            blast.tags = DamageTag.Explosion;
             blast.element = Element.Fire;
             blast.knockback = 6;
             Blast(c);

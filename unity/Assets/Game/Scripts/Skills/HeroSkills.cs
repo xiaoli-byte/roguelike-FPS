@@ -45,7 +45,8 @@ namespace Spiritfire.Game
         public PlayerVitals Vitals { get; private set; }
         public Transform Eye { get; private set; }
         public event Action<Skill> Cast;
-        Func<Damageable, DamageInfo, float> passive;
+        /// <summary>被动的输出修饰器句柄（换英雄 / 销毁时撤销）</summary>
+        IDisposable passive;
 
         void Awake()
         {
@@ -58,13 +59,14 @@ namespace Spiritfire.Game
 
         void OnDestroy()
         {
-            if (passive != null) Combat.OutgoingModifiers.Remove(passive);
+            passive?.Dispose();
+            passive = null;
         }
 
         public void Configure(string id)
         {
             heroId = id;
-            if (passive != null) Combat.OutgoingModifiers.Remove(passive);
+            passive?.Dispose();
             passive = null;
             switch (id)
             {
@@ -73,12 +75,11 @@ namespace Spiritfire.Game
                     secondary = new LiaoBlazeGrenade();
                     passiveName = "余烬";
                     passiveDescription = $"对处于灼烧状态的敌人造成的所有伤害提高 {LiaoSkills.EmberBonus * 100:F0}%。";
-                    passive = (d, info) => EnemyStatus.IsBurning(d) ? 1 + LiaoSkills.EmberBonus : 1f;
+                    passive = Combat.Outgoing.Add((in HitContext c) => EnemyStatus.IsBurning(c.target) ? 1 + LiaoSkills.EmberBonus : 1f);
                     break;
             }
             primary.Bind(this);
             secondary.Bind(this);
-            if (passive != null) Combat.OutgoingModifiers.Add(passive);
         }
 
         /// <summary>手边的出手点（side = 1 右手 / -1 左手）</summary>

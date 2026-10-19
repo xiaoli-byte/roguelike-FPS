@@ -12,6 +12,7 @@ namespace Spiritfire.Game
         public static DamageInfo SkillHit(float amount)
         {
             var info = DamageInfo.Simple(amount, DamageSource.Skill, Vector3.zero, Vector3.zero);
+            info.tags = DamageTag.Skill;
             info.element = Element.Fire;
             info.statusChance = 1f;
             return info;
