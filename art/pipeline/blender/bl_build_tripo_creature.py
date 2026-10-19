@@ -380,6 +380,9 @@ def build_custom_skeleton() -> None:
         d = D[rows, order]
         w = np.where(np.isfinite(d), 1.0 / np.maximum(d, 1e-3) ** 4, 0.0)
         W[rows, order] = w
+        # 1/d^4 runs into the hundreds of thousands: normalise each vertex now, or the soft parts of the rigid / ground
+        # overrides below (sphere blend, fade_z) are drowned and only their w = 1 cores take effect
+        W /= np.maximum(W.sum(1, keepdims=True), 1e-9)
         reg["weights"] = "segments (heat failed)" if method != "segments" else "segments"
     for lim in RIG.get("limits", []):
         m = np.ones(len(V), bool)

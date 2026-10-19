@@ -1,5 +1,5 @@
 {
-  "doc": "应龙（神兽灵宠）：Tripo 智能网格 P2.0 多视图 v3（爪中无珠；宝珠是单独零件 SM_PetPart_YinglongPearl，运行时挂在 pearl 挂点），未绑骨，自定义龙形骨架。缩放落地后的米制（front = -Y，生物的左 = +X，up = +Z）：高 2.05 米含角，鼻尖到尾羽尖 2.4 米，翼展 1.89 米。水平飞行姿态：身体水平（z≈0.9-1.05），颈向上弯到头，双翼上扬，尾向后下垂成羽扇。glb 在 UV 缝处拆开顶点（17486 顶点 / 焊接后 6641），heat 权重全部失败，用 segments 权重（缝不会裂）。骨骼：hips（身体中段）→ spine1 → spine2 → chest → neck_1 → neck_2 → head；mane_1..3 挂 head 沿头后白色火焰鬃（弹簧）；tail_1..6 从 hips 往后到羽扇；wing_1/2/3_X 挂 chest 沿翼前缘下方；前腿 upperarm → forearm → claw，后腿 thigh → shin → hclaw（不触发脚 IK）。限制：翼骨只在 |x| ≥ 0.08、z ≥ 1.05；躯干骨只在 |x| ≤ 0.22（翼羽不吃脊柱）；后腿骨不进翼羽（z ≤ 1.1）；neck_2 只到 z 1.58、|x| ≤ 0.19（头后鳍不与 mane 交换）；两只角、两对长须、下巴用硬框锁在 head。挂点（不变形）：mouth 嘴前，pearl 在左前爪掌心（爪尖围成的窝里，原点即宝珠中心）。",
+  "doc": "应龙（神兽灵宠）：Tripo 智能网格 P2.0 多视图 v3（爪中无珠；宝珠是单独零件 SM_PetPart_YinglongPearl，运行时挂在 pearl 挂点），未绑骨，自定义龙形骨架。缩放落地后的米制（front = -Y，生物的左 = +X，up = +Z）：高 2.05 米含角，鼻尖到尾羽尖 2.4 米，翼展 1.89 米。水平飞行姿态：身体水平（z≈0.9-1.05），颈向上弯到头，双翼上扬，尾向后下垂成羽扇。glb 在 UV 缝处拆开顶点（17486 顶点 / 焊接后 6641），heat 权重全部失败，用 segments 权重（缝不会裂）。骨骼：hips（身体中段）→ spine1 → spine2 → chest → neck_1 → neck_2 → head；mane_1..3 挂 head 沿头后白色火焰鬃（弹簧）；tail_1..6 从 hips 往后到羽扇；wing_1/2/3_X 挂 chest 沿翼前缘下方；前腿 upperarm → forearm → claw，后腿 thigh → shin → hclaw（不触发脚 IK）。限制：翼骨只在 |x| ≥ 0.08、z ≥ 1.05；躯干骨只在 |x| ≤ 0.22（翼羽不吃脊柱）；后腿骨不进翼羽（z ≤ 1.1）；neck_2 只到 z 1.58、|x| ≤ 0.19（头后鳍不与 mane 交换）；两只角、两对长须、下巴用硬框锁在 head；鬃毛根紧贴角根的硬框后边界、鬃毛后端压在颈上，这两处各加 head 的线性渐变球（角根后 ±0.12 半径 0.06；鬃尾半径 0.035、球心高出颈面，不碰颈上的下沿，否则仰头吼时那里多拉伸），鬃毛摆动时从头部渐变过渡，不在硬框边界上撕开（segments 权重按顶点归一化后软边才生效）。挂点（不变形）：mouth 嘴前，pearl 在左前爪掌心（爪尖围成的窝里，原点即宝珠中心）。",
   "source": "art/source/pets/SK_Pet_Yinglong/03_model/SK_Pet_Yinglong_tripo_v3.glb",
   "task": "https://studio.tripo3d.ai/zh/workspace/generate/ddd502f4-1cb7-4c67-b23f-7e33536e0022",
   "height_m": 2.05,
@@ -819,6 +819,42 @@
           1.43
         ]
       ]
+    },
+    {
+      "bone": "head",
+      "sphere": [
+        [
+          0.12,
+          -0.93,
+          1.7
+        ],
+        0.06
+      ],
+      "blend": 1.0
+    },
+    {
+      "bone": "head",
+      "sphere": [
+        [
+          -0.12,
+          -0.93,
+          1.7
+        ],
+        0.06
+      ],
+      "blend": 1.0
+    },
+    {
+      "bone": "head",
+      "sphere": [
+        [
+          0,
+          -0.64,
+          1.6
+        ],
+        0.035
+      ],
+      "blend": 1.0
     }
   ],
   "provider_pbr": true,
