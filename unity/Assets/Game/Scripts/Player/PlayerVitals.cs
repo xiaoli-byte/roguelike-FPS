@@ -8,8 +8,10 @@ namespace Spiritfire.Game
     /// 玩家生命与护盾（Three.js 版 PlayerController.takeDamage / 护盾回复）：
     ///   受击 → 冲刺无敌帧 / invulnerableUntil 内免疫 → × (1 − 减伤，上限 80%) → 受伤修饰器（<see cref="Incoming"/>）
     ///   → 护盾先吃，溢出扣生命 → 发 <see cref="GameEvents.PlayerHit"/>（在死亡判定之前：监听者可以把生命还回去免死）→ 死亡判定；
-    ///   不受伤 shieldRegenDelay（3 s）后以 shieldRegenRate（30/s）回盾；生命归零死亡。
+    ///   护盾被打空时响一声并轻震屏（0.25 / 0.2 s）；不受伤 shieldRegenDelay（3 s）后以 shieldRegenRate（30/s）回盾；
+    ///   生命按 HpRegen（每秒）持续回复（不发 PlayerHealed，同 Three.js）；生命归零死亡。
     /// 属性来自 <see cref="StatSheet"/>（英雄基础值 + 卷轴），变化时上限同步、当前值按比例保持。
+    /// 减益（寒意、日晒、点燃）在 <see cref="PlayerStatus"/>：走路速度 = 移速属性 × 减益的移速倍率（不改属性表）。
     /// PlayerMotor 在 Art.Runtime 程序集里，它的起跳 / 落地 / 冲刺由这里转发进 <see cref="GameEvents"/>。
     /// </summary>
     [RequireComponent(typeof(PlayerMotor))]
@@ -42,13 +44,20 @@ namespace Spiritfire.Game
         public event Action Died;
 
         PlayerMotor motor;
+        PlayerStatus status;
         float lastDamage = -10;
         float lastMaxHp, lastMaxShield;
+
+        /// <summary>玩家的减益（寒意、日晒、点燃）</summary>
+        public PlayerStatus Status => status;
 
         void Awake()
         {
             Instance = this;
             motor = GetComponent<PlayerMotor>();
+            // 旧场景（编辑期烘好的玩家）没有减益组件：运行时补上
+            status = GetComponent<PlayerStatus>();
+            if (!status) status = gameObject.AddComponent<PlayerStatus>();
             stats ??= StatSheet.Default();
             Combat.playerStats = stats;
             health = lastMaxHp = MaxHealth;
@@ -93,9 +102,15 @@ namespace Spiritfire.Game
             ApplyMotorStats();
         }
 
+        /// <summary>走路速度 = 移速属性 × 减益的移速倍率（寒意）。减益变化时由 PlayerStatus 调用</summary>
+        internal void RefreshMotorSpeed()
+        {
+            if (motor && stats != null) motor.walkSpeed = stats.Get(Stat.MoveSpeed) * (status ? status.SpeedMult : 1f);
+        }
+
         void ApplyMotorStats()
         {
-            motor.walkSpeed = stats.Get(Stat.MoveSpeed);
+            RefreshMotorSpeed();
             motor.dashCooldown = stats.Get(Stat.DashCooldown);
             motor.dashCharges = Mathf.Max(1, Mathf.RoundToInt(stats.Get(Stat.DashCharges)));
             // 额外跳跃（二段跳）：以前 airJumps 没有任何地方赋值，秘卷给的 ExtraJumps 在这里生效
@@ -161,6 +176,7 @@ namespace Spiritfire.Game
                 }
                 GameEvents.RaisePlayerShieldBroken();
                 GameAudio.Play("shield_break", 0.9f);
+                CameraShake.Add(0.25f, 0.2f);
             }
             // 读的是监听者处理之后的生命：被 PlayerHit 监听者救回来的不会死
             if (health <= 0 && !Dead)
@@ -207,6 +223,7 @@ namespace Spiritfire.Game
             health = MaxHealth;
             shield = MaxShield;
             motor.inputEnabled = true;
+            if (status) status.ClearAll();
         }
 
         float lastHurtSound = -1, heartbeat;
@@ -226,6 +243,9 @@ namespace Spiritfire.Game
                 shield = Mathf.Min(MaxShield, shield + stats.Get(Stat.ShieldRegenRate) * Time.deltaTime);
             }
             else if (shield >= MaxShield) regenerating = false;
+            // 生命恢复（每秒 HpRegen；没有来源时为 0）
+            float regen = stats.Get(Stat.HpRegen);
+            if (regen > 0 && health < MaxHealth) health = Mathf.Min(MaxHealth, health + regen * Time.deltaTime);
             // 低血量心跳：三成以下，血越少越急
             float ratio = health / Mathf.Max(1, MaxHealth);
             if (ratio < 0.3f)

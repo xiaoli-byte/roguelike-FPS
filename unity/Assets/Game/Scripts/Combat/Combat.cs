@@ -27,8 +27,10 @@ namespace Spiritfire.Game
         public DamageInfo info;
         /// <summary>边缘伤害比例：中心 100% → 范围边缘 falloff（按到碰撞体表面的距离线性插值）</summary>
         public float falloff;
-        /// <summary>对玩家的伤害（0 = 不伤玩家），同样按距离衰减到 falloff</summary>
+        /// <summary>对玩家的伤害（0 = 不伤玩家），按到玩家胶囊表面的距离同样衰减到 falloff，并把玩家掀开（<see cref="Combat.BlastPlayer"/>）</summary>
         public float playerDamage;
+        /// <summary>对玩家伤害的出手者（受伤修饰器、PlayerHit 事件里的 source；可为 null）</summary>
+        public UnityEngine.Object source;
         /// <summary>不伤敌人（敌人的自爆、敌方炮弹）</summary>
         public bool noEnemies;
         /// <summary>不播爆炸特效与爆炸声</summary>
@@ -50,6 +52,7 @@ namespace Spiritfire.Game
             this.info = info;
             falloff = 0.5f;
             playerDamage = 0;
+            source = null;
             noEnemies = noFx = flatKnockback = false;
             excludeOne = null;
             exclude = null;
@@ -377,7 +380,7 @@ namespace Spiritfire.Game
 
         /// <summary>
         /// 范围爆炸（旧接口）：球形范围内的敌人按到碰撞体表面的距离线性衰减（中心 100% → 边缘 edge，默认 30%），墙后不受伤；
-        /// 击退不衰减。hurtPlayer 时同样衰减地伤害玩家。新代码用 <see cref="Explode(in ExplosionOptions)"/>。
+        /// 击退不衰减。playerDamage &gt; 0 时同样衰减地伤害玩家并把玩家掀开（<see cref="BlastPlayer"/>）。新代码用 <see cref="Explode(in ExplosionOptions)"/>。
         /// </summary>
         /// <param name="exclude">不受这次爆炸伤害的单位（反应的中心敌人已经吃过中心伤害）</param>
         /// <param name="edge">边缘伤害比例（默认 30%；反应余波 60%）</param>
@@ -395,6 +398,7 @@ namespace Spiritfire.Game
         /// <summary>
         /// 范围爆炸：球形范围内的敌人按到碰撞体表面的距离线性衰减（中心 100% → 边缘 falloff），墙后不受伤；击退同样衰减（flatKnockback 除外）。
         /// 每个敌人收到的请求都加上 <see cref="DamageTag.Explosion"/>（吃「爆炸伤害」；武器投射物的爆炸同时吃「武器伤害」），来源 / 武器 / 深度照旧。
+        /// 不可选中的敌人不吃爆炸、也不弹「免疫」。playerDamage &gt; 0 时经 <see cref="BlastPlayer"/> 波及玩家（胶囊表面距离、两点视线、冲击、无敌帧跳过）。
         /// 嵌套（爆炸炸死的敌人又爆炸…）超过 <see cref="MaxExplodeDepth"/> 层不再伤敌人。返回造成了伤害的敌人数。
         /// </summary>
         public static int Explode(in ExplosionOptions o)
@@ -465,14 +469,53 @@ namespace Spiritfire.Game
                     Array.Clear(buf, 0, n);
                 }
             }
-            if (o.playerDamage > 0 && PlayerVitals.Instance)
-            {
-                var p = PlayerVitals.Instance.transform.position + Vector3.up * 0.9f;
-                float dist = Vector3.Distance(center, p) - 0.35f;
-                if (dist < radius && !Blocked(center, p, null))
-                    DamagePlayer(o.playerDamage * Mathf.Lerp(1f, o.falloff, Mathf.Clamp01(dist / radius)), center, o.info.element);
-            }
+            if (o.playerDamage > 0) BlastPlayer(center, radius, o.playerDamage, o.falloff, o.info.element, o.source);
             return hits;
+        }
+
+        /// <summary>
+        /// 爆炸波及玩家（Three.js 版 Blast.blastPlayer）：伤害按爆心到玩家胶囊（脚底到头顶）表面的距离线性衰减到边缘 falloff；
+        /// 胸口与眼睛两点都被墙挡住时不受伤；冲刺无敌帧 / 无敌期间整个爆炸都不影响玩家（不扣血也不被掀飞——冲刺穿过爆炸是合法的闪避）。
+        /// 命中时附带一个冲击：水平向外 6.5 × k、向上 3.2 × k m/s（k = 衰减系数）。返回实际扣除量。
+        /// 敌人的自爆、敌方炮弹、首领的范围招式都走这里（<see cref="ExplosionOptions.playerDamage"/> 自动转来）。
+        /// </summary>
+        public static float BlastPlayer(Vector3 center, float radius, float damage, float falloff = 0.5f, Element element = Element.None,
+            UnityEngine.Object source = null)
+        {
+            var p = PlayerVitals.Instance;
+            if (!p || p.Dead || !(damage > 0) || !(radius > 0) || float.IsInfinity(radius) || float.IsNaN(center.x + center.y + center.z)) return 0;
+            var pos = p.transform.position;
+            var cc = p.GetComponent<CharacterController>();
+            float r = cc ? cc.radius : 0.35f, h = cc ? cc.height : 1.8f;
+            float feet = cc ? pos.y + cc.center.y - h * 0.5f : pos.y;
+            // 胶囊轴线上离爆心最近的点
+            var axis = new Vector3(pos.x, Mathf.Clamp(center.y, feet + r, feet + Mathf.Max(r, h - r)), pos.z);
+            float surf = Mathf.Max(0, Vector3.Distance(axis, center) - r);
+            if (surf > radius) return 0;
+            var motor = p.GetComponent<PlayerMotor>();
+            var chest = new Vector3(pos.x, feet + h * 0.55f, pos.z);
+            var eye = motor && motor.eye ? motor.eye.position : new Vector3(pos.x, feet + h * 0.9f, pos.z);
+            if (!LineClear(chest, center) && !LineClear(eye, center)) return 0;
+            if (p.Invulnerable) return 0;
+            float k = 1 - (1 - Mathf.Clamp01(falloff)) * Mathf.Clamp01(surf / radius);
+            // 冲击方向先算好：DamagePlayer 会同步派发受伤事件，监听者可能重入
+            var dir = new Vector3(axis.x - center.x, 0, axis.z - center.z);
+            float flat = dir.magnitude;
+            dir = flat > 1e-3f ? dir / flat : Vector3.zero;
+            float dealt = DamagePlayer(damage * k, center, element, source);
+            if (!p.Dead && motor) motor.AddImpulse(new Vector3(dir.x * 6.5f * k, 3.2f * k, dir.z * 6.5f * k));
+            return dealt;
+        }
+
+        /// <summary>
+        /// from → to 之间没有地形 / 建筑遮挡（Three.js lineClear）：射线在 to 前 margin 米停下，to 贴在墙面 / 地面上（爆炸点常见情况）也不算被挡。
+        /// </summary>
+        public static bool LineClear(Vector3 from, Vector3 to, float margin = 0.15f)
+        {
+            var d = to - from;
+            float len = d.magnitude;
+            if (len <= margin + 0.05f) return true;
+            return !Blocked(from, from + d * ((len - margin) / len), null);
         }
 
         static RaycastHit[] rayBuf = new RaycastHit[16];

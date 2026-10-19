@@ -6,13 +6,18 @@ using Random = UnityEngine.Random;
 namespace Spiritfire.Game
 {
     /// <summary>
-    /// 状态种类（Three.js StatusId）：敌人身上的三种元素状态 + 眩晕、减速。只往末尾追加（<see cref="StatusMask"/> 按序号取位）。
+    /// 状态种类（Three.js StatusId + 玩家减益）：敌人身上的三种元素状态 + 眩晕、减速；玩家身上的寒意、日晒灼烧、点燃。
+    /// 只往末尾追加（<see cref="StatusMask"/> 按序号取位）。
     /// </summary>
-    public enum StatusId { Burn, Shock, Corrode, Stun, Slow }
+    public enum StatusId { Burn, Shock, Corrode, Stun, Slow, Chill, Sunburn, Ignite }
 
     /// <summary>状态集合（死亡瞬间身上有什么：<see cref="EnemyStatus.DiedWith"/>）：第 n 位 = StatusId n</summary>
     [Flags]
-    public enum StatusMask { None = 0, Burn = 1 << 0, Shock = 1 << 1, Corrode = 1 << 2, Stun = 1 << 3, Slow = 1 << 4 }
+    public enum StatusMask
+    {
+        None = 0, Burn = 1 << 0, Shock = 1 << 1, Corrode = 1 << 2, Stun = 1 << 3, Slow = 1 << 4,
+        Chill = 1 << 5, Sunburn = 1 << 6, Ignite = 1 << 7,
+    }
 
     /// <summary>某个状态此刻的读数（EnemyStatus.TryGet）</summary>
     public struct StatusView
@@ -31,9 +36,10 @@ namespace Spiritfire.Game
     public enum StatusHosts { None = 0, Enemy = 1 << 0, Player = 1 << 1 }
 
     /// <summary>
-    /// 施加一次状态的参数（<see cref="EnemyStatus.Apply(Damageable, StatusId, in StatusApply)"/>）：
+    /// 施加一次状态的参数（<see cref="EnemyStatus.Apply(Damageable, StatusId, in StatusApply)"/>、<see cref="PlayerStatus.Apply"/>）：
     /// power 的含义随状态而定——灼烧 / 雷殛 / 蚀化是状态强度（不含元素 / 精英 / 首领加成，内部钳到最大生命 × 0.5），
-    /// 减速是比例（0.3 = −30%，&gt; 1 按百分数解释），眩晕不看。duration ≤ 0 用该状态的默认时长。
+    /// 减速 / 寒意是比例（0.3 = −30%，&gt; 1 按百分数解释），眩晕不看；点燃是每跳伤害，日晒是这次暴露的秒数（已乘增益）。
+    /// duration ≤ 0 用该状态的默认时长。
     /// </summary>
     public struct StatusApply
     {
@@ -215,6 +221,27 @@ namespace Spiritfire.Game
         protected void Glow(ref Transform glow, Color c, Vector3 offset)
         {
             if (host) host.Glow(ref glow, c, offset);
+        }
+    }
+
+    /// <summary>
+    /// 挂在玩家身上的状态实例：宿主是 <see cref="PlayerStatus"/>。宿主为空（EditMode 测试直接 new）时只推进数据，不发事件、不造成伤害。
+    /// </summary>
+    public abstract class PlayerStatusInstance : StatusInstance
+    {
+        protected readonly PlayerStatus host;
+
+        protected PlayerStatusInstance(PlayerStatus host) => this.host = host;
+
+        protected void Notify(int stacks)
+        {
+            if (host) host.Notify(Id, stacks);
+        }
+
+        /// <summary>对玩家造成一跳伤害（经 Combat.DamagePlayer：无敌帧、减伤、受伤修饰器照常）；宿主为空时什么都不做</summary>
+        protected void Hurt(float amount, Element e, Vector3? from = null)
+        {
+            if (host) host.Hurt(amount, e, from);
         }
     }
 }

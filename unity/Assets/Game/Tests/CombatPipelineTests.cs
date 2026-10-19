@@ -294,6 +294,53 @@ namespace Spiritfire.Game.Tests
             }
         }
 
+        // ───────────── 玩家减益（C3） ─────────────
+
+        [Test]
+        public void ChillTakesStrongestCappedAt70Percent()
+        {
+            Assert.AreEqual(0.35f, ChillStatus.Fraction(35), Eps, "> 1 按百分数");
+            var chill = new ChillInstance(null);
+            chill.Apply(new StatusApply(0.35f, 1.5f));
+            chill.Apply(new StatusApply(0.9f, 0.5f));
+            Assert.AreEqual(0.7f, chill.Slow, Eps, "取最强的一条，上限 70%");
+            Assert.AreEqual(0.3f, chill.SpeedMult, Eps);
+            chill.Tick(0.6f);
+            Assert.AreEqual(0.65f, chill.SpeedMult, Eps, "强的那条到期后回落到次强的");
+            chill.Tick(1f);
+            Assert.IsFalse(chill.Active);
+            Assert.AreEqual(1f, chill.SpeedMult, Eps);
+        }
+
+        [Test]
+        public void IgniteTicksEveryHalfSecondAndRefreshesWithoutStacking()
+        {
+            var ignite = new IgniteInstance(null);
+            ignite.Apply(new StatusApply(3, 2));
+            Assert.AreEqual(4 * 3f, ignite.RemainingDotRaw, Eps, "2 s × 每 0.5 s 一跳 = 4 跳");
+            ignite.Apply(new StatusApply(5, 1));
+            Assert.AreEqual(4 * 5f, ignite.RemainingDotRaw, Eps, "再点燃：时长取更晚的到期，跳伤取较大");
+            Assert.AreEqual(4, CountDrops(ignite, 2.5f));
+            Assert.IsFalse(ignite.Active);
+        }
+
+        [Test]
+        public void SunburnStacksWhileExposedAndFadesInShade()
+        {
+            var sun = new SunburnInstance(null);
+            sun.Apply(new StatusApply(SunburnStatus.StackSeconds));
+            Assert.AreEqual(1, sun.Stacks);
+            for (int i = 0; i < 20; i++) sun.Apply(new StatusApply(SunburnStatus.StackSeconds));
+            Assert.AreEqual(SunburnStatus.MaxStacks, sun.Stacks, "最多 10 层");
+            Assert.AreEqual(SunburnStatus.MaxStacks * SunburnStatus.DamagePerStack, sun.TickDamage, Eps);
+            sun.Tick(0.2f);
+            Assert.AreEqual(SunburnStatus.MaxStacks, sun.Stacks, "刚离开日晒还不消退");
+            sun.Tick(0.2f);
+            Assert.Less(sun.Stacks, SunburnStatus.MaxStacks, "离开 0.3 s 后开始消退");
+            for (int i = 0; i < 300 && sun.Active; i++) sun.Tick(1f / 60f);
+            Assert.IsFalse(sun.Active, "躲进影子几秒内清空");
+        }
+
         // ───────────── 注册表 ─────────────
 
         [Test]
@@ -309,6 +356,8 @@ namespace Spiritfire.Game.Tests
             }
             foreach (var id in new[] { StatusId.Burn, StatusId.Shock, StatusId.Corrode, StatusId.Stun, StatusId.Slow })
                 Assert.IsTrue((StatusRegistry.Get(id).Hosts & StatusHosts.Enemy) != 0, $"{id} 应能挂在敌人身上");
+            foreach (var id in new[] { StatusId.Chill, StatusId.Sunburn, StatusId.Ignite })
+                Assert.AreEqual(StatusHosts.Player, StatusRegistry.Get(id).Hosts, $"{id} 只挂在玩家身上");
             Assert.AreEqual(Element.Fire, StatusRegistry.Get(StatusId.Burn).Element);
         }
     }
