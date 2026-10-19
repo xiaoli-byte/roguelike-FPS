@@ -3256,6 +3256,255 @@ keep_glow = "none"
 material = { roughness = 0.65, metallic = 0.35 }
 brief = """A very tall square buttress pier 2.4m wide, 18m tall, 2.4m deep that stands against a huge hall wall: a stepped dark charcoal basalt plinth, a tall black iron shaft with a long recessed deep vermilion lacquer strip running up its front face, three heavy aged bronze bands spaced up the shaft, one thin crack of glowing molten orange lava running up from the plinth (painted as an opaque bright surface), and a chunky bronze capital crowned with a short square iron finial. Simple, bold and readable from far away; one connected piece standing on the ground."""
 
+# ───────────── 第四章 · 雪域天路阵容（2026-10-18 用户定稿，docs/art/enemy-roster-v2.md 第四章）─────────────
+# Tripo 智能网格 P2.0（三角面、数量 1、带贴图，导出 GLB 4k），存在 art/source/_tripo_inbox（任务号、sha256 见 art/source/_tripo_tasks_plateau.json）。
+# 生物走 build_tripo_creature.py（creature_rigs/<asset>.json 自定义骨架，Tripo 没有自动绑骨）；连鼓灵的三个部件和夔的残破雷鼓是静态件，
+# 走 bounds_only 参考 → tripo_assets.py adopt / import → assetctl build / validate / review / publish。
+# 拆分（哪些进主体、哪些程序化 / 特效）见 enemy-roster-v2.md「建模、骨架与特效拆分（第二版）」；四视图是「特效分离的底态」，不发光。
+
+[assets.SK_Enemy_Marmot]
+# 啸獭（群怪·哨兵）。设计稿 / 四视图 art/source/characters/_design/plateau/plateau_marmot/；Tripo 原件 art/source/_tripo_inbox/20261018T235847_SK_Enemy_Marmot.glb
+# 原生骨架：python art/pipeline/build_tripo_creature.py SK_Enemy_Marmot（creature_rigs/SK_Enemy_Marmot.json），不走 assetctl build 的部件骨架。
+source_provider = "tripo"
+matid_hint = "Fur, claws, teeth, ears, eyes and the painted lightning veins are NON-METAL (blue). Nothing on it is metal."
+display = "啸獭"
+kind = "skeletal"
+class = "enemy_swarm"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "marmot" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+A Himalayan marmot (旱獭) sentinel charged with corrupted thunder: a fat round-bodied plateau marmot with a short bushy tail, small round ears, big buck teeth and stubby clawed paws, shown STANDING UPRIGHT on its hind legs like a lookout, chubby belly, mouth wide open in a sharp alarm whistle. Golden-brown fur with a cream belly and a dark face mask, carved in a few large clumps; the fur bristles up with static, tufts on the back and cheeks tipped with magenta-violet sparks; the puffed-up tail tip is a glowing magenta static ball (weak spot). Small glowing violet eyes. Cute but feral. NOT a squirrel, NOT a beaver: a stout marmot.
+"""
+
+[assets.SK_Enemy_Tiangou]
+# 天狗（群怪·包抄）。设计稿 / 四视图 art/source/characters/_design/plateau/plateau_tiangou/；Tripo 原件 art/source/_tripo_inbox/20261018T235812_SK_Enemy_Tiangou.glb
+# 原生骨架：python art/pipeline/build_tripo_creature.py SK_Enemy_Tiangou（creature_rigs/SK_Enemy_Tiangou.json），不走 assetctl build 的部件骨架。
+source_provider = "tripo"
+matid_hint = "Fur, ruff, claws, eyes and the painted forehead rune are NON-METAL (blue). Nothing on it is metal."
+display = "天狗"
+kind = "skeletal"
+class = "enemy_swarm"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "tiangou" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+The Tiangou (天狗) of Yin Mountain in the Shan Hai Jing's Western Mountains, 'shaped like a wildcat with a white head': a lean, fast pack hunter about 1.4 m long and 0.8 m at the shoulder, with a slim wildcat body, long legs, a bushy tail and a big pure WHITE head with a short muzzle, pointed ears and a white mane-like ruff; the body fur is dark slate grey with rusty red legs. A jagged magenta-violet thunder rune glows on its white forehead (weak spot); violet glowing eyes; lightning veins along the spine. Main pose: howling with the head thrown back. Sly and quick. NOT a wolf, NOT a fox: a white-headed wildcat-like beast.
+"""
+
+[assets.SK_Enemy_Aoyin]
+# 獓狠（坦克；雷牦复用本模型（缩小约 0.75、换暗毛色、不挂雷球））。设计稿 / 四视图 art/source/characters/_design/plateau/plateau_aoyin/；Tripo 原件 art/source/_tripo_inbox/20261019T000508_SK_Enemy_Aoyin.glb
+# 原生骨架：python art/pipeline/build_tripo_creature.py SK_Enemy_Aoyin（creature_rigs/SK_Enemy_Aoyin.json），不走 assetctl build 的部件骨架。
+source_provider = "tripo"
+matid_hint = "Hair tiers, hide, horns, hooves and eyes are NON-METAL (blue). Only the weathered copper nose ring is METAL (red)."
+display = "獓狠"
+kind = "skeletal"
+class = "enemy_large"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "aoyin" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+The Aoyin (獓狠) of Sanwei Mountain in the Shan Hai Jing, 'shaped like an ox, white body, four horns, its hair like a straw raincoat, it eats people': a colossal white yak-like ox about 2.6 m at the shoulder and 4.2 m long, with a massive humped back, a low heavy head and FOUR long curved horns (two sweeping forward, two curling back). The whole body is draped in very long shaggy cream-white hair hanging almost to the ground in thick layered tiers like a straw rain cape (蓑衣), sculpted as big carved overlapping hair panels; magenta-violet lightning veins glow in the gaps between the tiers. Nested between the four horn bases sits a glowing magenta-violet thunder orb (weak spot), attached to the skull. Small fierce violet eyes, a weathered copper nose ring, heavy black hooves. Huge, slow and terrifying. NOT a two-horned bull.
+"""
+
+[assets.SK_Enemy_Jufu]
+# 举父（炮击；双手空着，雷石复用关卡巨石）。设计稿 / 四视图 art/source/characters/_design/plateau/plateau_jufu/；Tripo 原件 art/source/_tripo_inbox/20261018T235728_SK_Enemy_Jufu.glb
+# 原生骨架：python art/pipeline/build_tripo_creature.py SK_Enemy_Jufu（creature_rigs/SK_Enemy_Jufu.json），不走 assetctl build 的部件骨架。
+source_provider = "tripo"
+matid_hint = "Fur, skin, striped arms, hands, face and the painted chest palm print are NON-METAL (blue). Nothing on it is metal."
+display = "举父"
+kind = "skeletal"
+class = "enemy_standard"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "jufu" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+The Jufu (举父) of Chongwu Mountain in the Shan Hai Jing, 'like a macaque with patterned arms, tiger- and leopard-like, good at throwing': a hunched, powerful ape about 1.9 m tall with very long thick arms in a knuckle-walking stance, a small fierce face with a short snout, golden-brown shaggy fur on the shoulders and back, and bold tiger-like black-and-amber STRIPES on both long arms. The boulder it throws is cracked with glowing magenta-violet lightning veins (the weak spot while it is lifted); a glowing magenta palm print on its chest. Big hands, each with a clearly visible thumb and four fingers. Cunning brute thrower. NOT a gorilla: a lean-hipped macaque with striped arms.
+"""
+
+[assets.SK_Enemy_Manman]
+# 蛮蛮（远程；只有左翼，右翼那只是镜像）。设计稿 / 四视图 art/source/characters/_design/plateau/plateau_manman/；Tripo 原件 art/source/_tripo_inbox/20261019T000426_SK_Enemy_Manman.glb
+# 原生骨架：python art/pipeline/build_tripo_creature.py SK_Enemy_Manman（creature_rigs/SK_Enemy_Manman.json），不走 assetctl build 的部件骨架。
+source_provider = "tripo"
+matid_hint = "Feathers, bill, webbed feet and the single eye are NON-METAL (blue). Nothing on it is metal."
+display = "蛮蛮"
+kind = "skeletal"
+class = "enemy_swarm"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "manman" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+The Manman (蛮蛮) birds of Chongwu Mountain in the Shan Hai Jing, 'shaped like a wild duck, each with only one wing and one eye, they can fly only when paired': stout cartoon wild-duck-like birds about 0.9 m tall. Each bird has only ONE wing and ONE single big glowing violet eye in the middle of its face (weak spot); slate-blue and rust feathers carved as big clumps, orange bill and webbed feet. Main pose: the PAIR flying side by side (the left bird has only a left wing, the right bird only a right wing, mirror images), joined wing-tip to wing-tip by a short solid sculpted magenta lightning bar. Front, side and back views: ONE bird alone, the one with a left wing only.
+"""
+
+[assets.SK_Enemy_Dijiang]
+# 帝江（自爆）。设计稿 / 四视图 art/source/characters/_design/plateau/plateau_dijiang/；Tripo 原件 art/source/_tripo_inbox/20261018T235652_SK_Enemy_Dijiang.glb
+# 原生骨架：python art/pipeline/build_tripo_creature.py SK_Enemy_Dijiang（creature_rigs/SK_Enemy_Dijiang.json），不走 assetctl build 的部件骨架。
+source_provider = "tripo"
+matid_hint = "Leather sack, legs, wings and the painted seams are NON-METAL (blue). Nothing on it is metal."
+display = "帝江"
+kind = "skeletal"
+class = "enemy_swarm"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "dijiang" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+Dijiang (帝江) of Tian Mountain in the Shan Hai Jing, 'shaped like a yellow sack, red as cinnabar fire, six legs and four wings, chaotic and faceless, it knows song and dance': a round plump leather-sack creature about 1.0 m tall, glossy cinnabar red with a yellow belly, COMPLETELY FACELESS (no eyes, no mouth, a smooth front), six short stubby legs on tiptoe and four small stubby wings on its back fluttering like a dancer's sleeves; magenta-violet lightning seams glow around the wing roots (the brightest point, weak spot) and a few glowing zig-zag veins run across the sack. Main pose: a mid-air dancing hop. Joyful, bouncy and ominous.
+"""
+
+[assets.SK_Enemy_Qiongqi]
+# 穷奇（精英游猎）。设计稿 / 四视图 art/source/characters/_design/plateau/plateau_qiongqi/；Tripo 原件 art/source/_tripo_inbox/20261018T235616_SK_Enemy_Qiongqi.glb
+# 原生骨架：python art/pipeline/build_tripo_creature.py SK_Enemy_Qiongqi（creature_rigs/SK_Enemy_Qiongqi.json），不走 assetctl build 的部件骨架。
+source_provider = "tripo"
+matid_hint = "Fur, wings, quills, claws, teeth and eyes are NON-METAL (blue). Nothing on it is metal."
+display = "穷奇"
+kind = "skeletal"
+class = "enemy_standard"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "qiongqi" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+Qiongqi (穷奇), one of the Four Fiends of Chinese myth, 'shaped like a tiger with wings', with the 'hedgehog-quill fur' of its Western Mountains description: a powerful winged tiger about 2.6 m long and 1.3 m at the shoulder, rusty orange-and-black tiger stripes, a big blocky head with a fierce snarl and fangs, two large feathered wings (dark brown with cream bands) spread for a gliding pounce, and a crest of stiff quill-like spines along the neck and back that crackles with magenta-violet lightning and glows (weak spot); violet glowing eyes, lightning veins along the wing bones. Apex predator. NOT a griffin: a real tiger body with wings.
+"""
+
+[assets.SK_Boss_Kui]
+# 夔（4-1 经幡山头领主；残破雷鼓另建 SM_Prop_KuiBrokenDrum）。设计稿 / 四视图 art/source/characters/_design/plateau/plateau_boss_kui/；Tripo 原件 art/source/_tripo_inbox/20261018T235542_SK_Boss_Kui.glb
+# 原生骨架：python art/pipeline/build_tripo_creature.py SK_Boss_Kui（creature_rigs/SK_Boss_Kui.json），不走 assetctl build 的部件骨架。
+source_provider = "tripo"
+matid_hint = "Hide, cloud shapes, ribs, the drum skin, hooves and eyes are NON-METAL (blue). Only the copper bands on the fists and the ankle are METAL (red)."
+display = "夔"
+kind = "skeletal"
+class = "boss"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "boss_kui" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+Kui (夔), the one-legged thunder beast of the Shan Hai Jing ('like an ox, grey-blue, hornless, with ONE LEG; whenever it enters or leaves the water there is wind and rain; its light is like the sun and moon, its voice like thunder'), whose hide the Yellow Emperor made into a war drum. It returns as a storm revenant about 6 m tall. HEAD: a colossal hornless OX head, clearly bovine: a broad flat cattle muzzle with a wide dark nose pad and big nostrils, heavy brow, small cattle ears sticking out sideways, a thick dewlap, NO horns (only two worn stumps), blazing white-violet eyes; NOT a bear (no round bear ears, no pointed bear snout). BODY: a massive hunched front body of grey-blue hide in big carved plates; a huge open ribcage on its chest framing a tattered round DRUM SKIN stretched over the ribs and painted with red thunder spirals (the drum it lost), a glowing magenta-violet core behind a tear in the drum (weak spot); solid sculpted grey-blue and white storm-cloud shapes on its shoulders and back. LIMBS: it stands on EXACTLY ONE thick central leg ending in one huge hoof (no second leg, no hind legs), and has two VERY LONG, thick, gorilla-like ARMS, longer than its leg, ending in big hoof-fists bound with copper bands: standing upright the arms hang so the fists reach below the knee, nearly to the ground, and when it leans forward it walks on the knuckles of both fists like a gorilla on crutches, swinging its one leg through between them. Main pose: this tripod stance, leaning forward with both knuckle-fists planted on the ground in front of it and the single leg behind, roaring. Front, side and back views: standing upright on its one leg with the long arms hanging. Majestic and terrifying.
+"""
+
+[assets.SK_Boss_Feilian]
+# 飞廉（4-1 冰川口领主；风雷珠程序化、风带是特效）。设计稿 / 四视图 art/source/characters/_design/plateau/plateau_boss_feilian/；Tripo 原件 art/source/_tripo_inbox/20261019T000352_SK_Boss_Feilian.glb
+# 原生骨架：python art/pipeline/build_tripo_creature.py SK_Boss_Feilian（creature_rigs/SK_Boss_Feilian.json），不走 assetctl build 的部件骨架。
+source_provider = "tripo"
+matid_hint = "Coat, antlers, beak, scales, tail feathers, hooves and eyes are NON-METAL (blue). Nothing on it is metal."
+display = "飞廉"
+kind = "skeletal"
+class = "boss"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "boss_feilian" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+Feilian (飞廉), the Wind Earl of Chinese myth: 'a deer's body, a head like a sparrow's, with horns, a snake's tail and leopard spots'. A large graceful beast about 4 m tall at the head, with a strong deer body and long legs, a big round sparrow-like bird head with a short stout beak and large dark eyes, a pair of branching antler-like horns, a tawny coat covered in dark leopard rosettes, and a long scaled snake tail ending in a fan of feathers. Wind is shown as solid sculpted swirling ribbon shapes coiling around its legs and tail (opaque, part of the design), threaded with magenta-violet lightning veins; a glowing magenta wind orb sits between the antler bases (weak spot). Lofty, wild and tempestuous.
+"""
+
+[assets.SK_Boss_Huashe]
+# 化蛇（4-1 圣湖海子领主）。设计稿 / 四视图 art/source/characters/_design/plateau/plateau_boss_huashe/；Tripo 原件 art/source/_tripo_inbox/20261018T235456_SK_Boss_Huashe.glb
+# 原生骨架：python art/pipeline/build_tripo_creature.py SK_Boss_Huashe（creature_rigs/SK_Boss_Huashe.json），不走 assetctl build 的部件骨架。
+source_provider = "tripo"
+matid_hint = "Fur, scales, wings, water weed, mask face, claws and eyes are NON-METAL (blue). Nothing on it is metal."
+display = "化蛇"
+kind = "skeletal"
+class = "boss"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "boss_huashe" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+Huashe (化蛇) of the Shan Hai Jing's Central Mountains ('a human face and a jackal's body, a bird's wings, it moves like a snake, its cry is like scolding; wherever it appears there are great floods'). A long sinuous creature about 9 m long with a wingspan of about 9 m that slithers low on its belly like a snake: a lean jackal-like body, a pair of large bird wings with slate-blue and sea-green feathers, a long eel-like tail, wet glossy fur and scales with strands of water weed, and a stern stylized mask-like face (not a realistic person) with a wide shouting mouth. ANATOMY, identical in every view: exactly FOUR short jackal legs, two front legs under the chest and two hind legs under the hips just before the body tapers into the long eel tail, all four legs short, splayed sideways and bent like a lizard's so the belly almost touches the ground; exactly two wings and one tail. The FRONT, SIDE and BACK views and the main pose must all show the same four legs (in the side view both near legs are clearly visible, front and hind). Magenta-violet thunder veins run along the spine; the open shouting mouth glows magenta (weak spot). Unsettling, fast, bringer of floods.
+"""
+
+[assets.SM_EnemyPart_LianguDrum]
+# 连鼓灵·鼓（单独建模的部件）。六面鼓共用这一面（运行时复用 6 次，红鼓在引擎里换材质），原点 = 鼓心（绕雷心转的挂点）。
+# 四视图 art/source/characters/_design/plateau/plateau_liangu_drum/；Tripo 原件 art/source/_tripo_inbox/20261019T000318_SM_EnemyPart_LianguDrum.glb
+source_provider = "tripo"
+matid_hint = "The copper hoops, studs and lugs are METAL (red). The dark lacquered barrel staves and the pale drumheads are NON-METAL (blue)."
+display = "连鼓灵·鼓"
+kind = "static"
+class = "enemy_attachment"
+presentation = false
+blockout = { source = "enemy", id = "liangu", attachment = "drum" }
+reference_mode = "bounds_only"
+reference_dimensions = [0.5, 0.5, 0.46]
+reference_origin = "center"
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "none"
+brief = """
+One of the six small barrel drums of the Liangu, modelled separately: the ring of six is assembled in the engine.
+"""
+
+[assets.SM_EnemyPart_LianguCore]
+# 连鼓灵·骨笼雷心（单独建模的部件）。弱点、离镜头近，用 boss_attachment 档；原点 = 雷心中心。雷心是平涂紫块，发光由着色器给。
+# 四视图 art/source/characters/_design/plateau/plateau_liangu_core/；Tripo 原件 art/source/_tripo_inbox/20261018T235928_SM_EnemyPart_LianguCore.glb
+source_provider = "tripo"
+matid_hint = "The bone cage and the matte thunder core are NON-METAL (blue). Only the bronze caps and clasps are METAL (red)."
+display = "连鼓灵·骨笼雷心"
+kind = "static"
+class = "boss_attachment"
+presentation = false
+blockout = { source = "enemy", id = "liangu", attachment = "core" }
+reference_mode = "bounds_only"
+reference_dimensions = [0.62, 0.9, 0.6]
+reference_origin = "center"
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "none"
+brief = """
+The Liangu's thunder core in its cage of beast bone, modelled separately (weak spot).
+"""
+
+[assets.SM_EnemyPart_LianguMallet]
+# 连鼓灵·骨槌（单独建模的部件）。竖直摆放、骨节槌头朝上，原点 = 握柄末端（敲鼓时绕它挥）。
+# 四视图 art/source/characters/_design/plateau/plateau_liangu_mallet/；Tripo 原件 art/source/_tripo_inbox/20261019T000238_SM_EnemyPart_LianguMallet.glb
+source_provider = "tripo"
+matid_hint = "The bone shaft, knob and the red cloth wrapping are NON-METAL (blue). Only the bronze ferrule rings are METAL (red)."
+display = "连鼓灵·骨槌"
+kind = "static"
+class = "enemy_attachment"
+presentation = false
+blockout = { source = "enemy", id = "liangu", attachment = "mallet" }
+reference_mode = "bounds_only"
+reference_dimensions = [0.28, 1.1, 0.25]
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "none"
+brief = """
+The Liangu's long drumstick carved from a beast bone, modelled separately.
+"""
+
+[assets.SM_Prop_KuiBrokenDrum]
+# 夔·残破雷鼓。夔没现身时倒在 4-1 经幡山头的场景道具（夔从鼓里长出来）；按四视图立着建，摆进关卡时放倒。裂口的光是自发光贴图，不是几何。
+# 四视图 art/source/characters/_design/plateau/plateau_kui_broken_drum/；Tripo 原件 art/source/_tripo_inbox/20261019T000002_SM_Prop_KuiBrokenDrum.glb
+source_provider = "tripo"
+matid_hint = "The drum skin, rib bones, rope lashing and the wooden hoop are NON-METAL (blue). Nothing on it is metal."
+display = "夔·残破雷鼓"
+kind = "static"
+class = "tripo_prop"
+blockout = { source = "scene", id = "plateau.kui_broken_drum" }
+reference_mode = "bounds_only"
+reference_dimensions = [1.94, 2.2, 0.51]
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.0 }
+brief = """
+The broken thunder drum lying on the prayer-flag summit while Kui is absent (a level prop; Kui grows out of it in storms).
+"""
+
 # ───────────── 灵宠（docs/pet-system.md 第 7 节；设计稿 / 四视图在 art/source/characters/_design/pets/<key>/，用户 2026-10-18 通过）─────────────
 # 和第一章 Tripo 敌人（镇墓兽、青鸟、火鸦……）同一条原生骨架路线：Tripo 智能网格 + 贴图（不用 Tripo 自动绑骨）→
 #   python art/pipeline/build_tripo_creature.py SK_Pet_<名>（creature_rigs/SK_Pet_<名>.json：语义骨骼、权重、ORM/AO、LOD、校验）

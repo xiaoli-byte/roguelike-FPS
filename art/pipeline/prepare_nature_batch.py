@@ -47,7 +47,10 @@ def reference_data(spec) -> tuple[dict, dict]:
     if len(dims) != 3 or any(not math.isfinite(v) or v <= 0 for v in dims):
         raise PipelineError(f"{spec.id}: reference_dimensions must contain three positive metres")
     width, height, depth = dims
-    bounds = {"min": [-width / 2, 0, -depth / 2], "max": [width / 2, height, depth / 2]}
+    # Attachments whose socket is their middle (a drum orbiting a core, a floating core): reference_origin = "center"
+    # puts the box around the origin instead of standing it on the floor; bl_build_tripo fits the mesh into this box.
+    floor = -height / 2 if spec.raw.get("reference_origin") == "center" else 0.0
+    bounds = {"min": [-width / 2, floor, -depth / 2], "max": [width / 2, floor + height, depth / 2]}
     meta = {"schema": 1, "assetId": spec.id, "source": {"kind": "scene", "id": spec.blockout["id"]},
             "reference_mode": "bounds_only", "bounds": bounds, "joints": [],
             "note": "Numeric size/pivot reference only. No blockout mesh; the artistic shape must come from local Hunyuan3D."}
@@ -56,10 +59,10 @@ def reference_data(spec) -> tuple[dict, dict]:
     cameras = []
     for view, (direction, right) in VIEWS.items():
         cameras.append({"view": view, "dir": direction, "right": right, "up": [0, 0, 1],
-                        "center": [0, 0, height / 2], "world_w": world_h * pw / ph,
+                        "center": [0, 0, floor + height / 2], "world_w": world_h * pw / ph,
                         "world_h": world_h, "px_w": pw, "px_h": ph})
-    views = {"panel": list(PANEL), "views": cameras, "bbox_min": [-width / 2, -depth / 2, 0],
-             "bbox_max": [width / 2, depth / 2, height], "presentation": None,
+    views = {"panel": list(PANEL), "views": cameras, "bbox_min": [-width / 2, -depth / 2, floor],
+             "bbox_max": [width / 2, depth / 2, floor + height], "presentation": None,
              "reference_mode": "bounds_only"}
     return meta, views
 
