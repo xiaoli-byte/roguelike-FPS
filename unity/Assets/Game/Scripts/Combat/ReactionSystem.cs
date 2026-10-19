@@ -9,7 +9,7 @@ namespace Spiritfire.Game
     /// <summary>反应是怎么来的：两种元素相遇（Status）、引爆身上的状态（Detonate）、秘卷 / 词条强制引发（Forced）</summary>
     public enum ReactionOrigin { Status, Detonate, Forced }
 
-    /// <summary>引爆的结果：引发了某个反应，或单一状态的「崩解」</summary>
+    /// <summary>引爆的结果：引发了某个反应，或单一状态的「崩解」（前四项与 <see cref="Reaction"/> 同序，处理器也按它编号）</summary>
     public enum DetonateOutcome { Thunderfire, Meltdown, Veinseal, Abyss, Collapse }
 
     /// <summary>一次反应执行完毕（<see cref="GameEvents.Reacted"/>）</summary>
@@ -53,6 +53,8 @@ namespace Spiritfire.Game
     /// <summary>强制反应参数（<see cref="ReactionSystem.Trigger"/>）</summary>
     public struct TriggerOpts
     {
+        /// <summary>强度：作为附着强度 Pin 代入威力公式（给了 <see cref="fixedBase"/> 时不用）</summary>
+        public float power;
         public int depth;
         public int weaponUid;
         /// <summary>反应中心；敌人已死时必须给</summary>
@@ -67,84 +69,68 @@ namespace Spiritfire.Game
         public DamageTag tag;
     }
 
+    /// <summary>直接挂元素的参数（<see cref="ReactionSystem.ApplyStatus"/>，Three.js StatusApplyOpts）</summary>
+    public struct StatusApplyOpts
+    {
+        /// <summary>这次附着的深度（≥ 2 不引发反应；只有 0 会触发雷殛弹射）</summary>
+        public int depth;
+        /// <summary>归属武器（由它引发的反应带上该 weaponUid）</summary>
+        public int weaponUid;
+        /// <summary>由这次附着引发的反应的威力倍率，0（未设）视为 1（传说「万象」传 0.6）</summary>
+        public float reactionScale;
+        /// <summary>出手者（持续伤害 / 反应伤害的 instigator 沿用它）</summary>
+        public UnityEngine.Object instigator;
+    }
+
     /// <summary>
     /// 元素反应（docs/arsenal-expansion.md 第 2 节，Three.js 版 src/combat/Reactions.ts）：
-    ///   焚雷 = 灼烧 + 雷殛：中心火伤 B，3 m 爆炸 0.6B（击退 7）并把灼烧扩散给周围（0.2B）
-    ///   熔金 = 灼烧 + 蚀化：中心蚀伤 B（有护甲 ×2），脚下 2.5 m 熔池 3 s（每 0.5 s 0.12B 火伤，首次踩到附蚀 0.25B）
-    ///   封脉 = 雷殛 + 蚀化：中心雷伤 B（有护盾 ×2），眩晕 0.7 s（同一敌人 3.5 s 一次）+ 减速 40% 3 s，向 8 m 内 3 个敌人导流（0.3B + 附蚀 0.35B）
-    ///   归墟 = 三种齐聚再补一种：消耗灼烧（结清剩余伤害）与雷殛，0.35 s 收束后三色天雷 3 × B/3，3 m 余波 0.3B（中心已死 0.6B）
-    /// 威力 B = clamp(k × 附着强度, 下限 × S, 上限 × S)，S = 1 + (等级 − 1) × 0.85；两两反应不消耗状态，频率由逐敌冷却封顶。
+    ///   焚雷 = 灼烧 + 雷殛 · 熔金 = 灼烧 + 蚀化 · 封脉 = 雷殛 + 蚀化 · 归墟 = 三种齐聚；崩解 = 引爆单一状态。
+    /// 各自的效果在 Combat/Reactions/&lt;Id&gt;Handler.cs（<see cref="IReactionHandler"/>，注册表自动发现），数值在 <see cref="CombatTuning"/>。
+    /// 威力 B = clamp(k × 附着强度, 下限 × S, 上限 × S) × scale，S = 1 + (等级 − 1) × 0.85；两两反应不消耗状态，频率由逐敌冷却封顶。
+    /// 入口（都只入队、不同步造成伤害，可以在任意事件回调里调用）：
+    ///   <see cref="TryReact"/>（元素附着前，Combat 调用）· <see cref="ApplyStatus"/>（技能 / 秘卷直接挂元素，带 reactionScale）·
+    ///   <see cref="Detonate"/>（引爆：三相 → 归墟，两相 → 按优先级，单相 → 崩解；0.5 s 冷却、同一击并入）·
+    ///   <see cref="Trigger"/>（强制反应：ignoreIcd / fixedBase / scale / tag）。
+    /// 判定与排队在 <see cref="ReactionScheduler"/>，这里在 Update 里执行到时的条目、发浮字、派发 <see cref="GameEvents.Reacted"/>
+    /// （origin = Status / Detonate / Forced；旧的 <see cref="Reacted"/> 照常转发；崩解不派发）。
     /// 防递归：深度 ≥ 2 的附着不反应；反应伤害深度 +1、source Status（不再附着）；扩散出去的元素深度 +1，最多再连锁一级（延后 0.15 s）。
-    /// 预算：每帧最多接受 8 次反应、队列 32 条、熔池同时 4 个。判定只入队，效果在 Update 里执行（不在伤害结算里嵌套造成伤害）。
-    /// 每条执行完派发 <see cref="GameEvents.Reacted"/>（旧的 <see cref="Reacted"/> 照常转发）。
-    /// 引爆 <see cref="Detonate"/> 与强制反应 <see cref="Trigger"/> 的签名已定，由 C1 单元实现。
+    /// 预算：每帧接受 8 次反应、队列 32 条；大特效 3 个 / 帧、反应浮字 4 条 / 帧（同一敌人 0.3 s 一条）；熔池同时 4 个。
+    /// 首领被封脉不眩晕，改为「脉滞」：4 s 内受到的伤害 ×1.12（登记在它的 <see cref="Damageable.Incoming"/> 上）。
     /// </summary>
     public sealed class ReactionSystem : MonoBehaviour
     {
-        struct Tuning
-        {
-            public float k, floor, cap, icd;
-            public Tuning(float k, float floor, float cap, float icd) { this.k = k; this.floor = floor; this.cap = cap; this.icd = icd; }
-        }
-
-        static readonly Tuning[] Tune =
-        {
-            new(1.0f, 14, 80, 1.0f),   // 焚雷
-            new(1.0f, 14, 100, 1.2f),  // 熔金
-            new(1.0f, 14, 90, 1.2f),   // 封脉
-            new(1.5f, 40, 320, 6.0f),  // 归墟
-        };
-
-        public static readonly string[] Names = { "焚雷", "熔金", "封脉", "归墟" };
-        public static readonly Color[] Colors =
-        {
-            new(1f, 0.85f, 0.29f), new(1f, 0.48f, 0.1f), new(0.35f, 1f, 0.82f), new(0.78f, 0.61f, 1f),
-        };
-
-        const int MaxDepth = 2, FrameBudget = 8, QueueCap = 32, MaxPools = 4;
-        const float CascadeDelay = 0.15f, AbyssWindup = 0.35f, IcdFloor = 0.3f, SealStunIcd = 3.5f;
+        /// <summary>反应名（浮字），同 <see cref="CombatTuning.ReactionNames"/></summary>
+        public static string[] Names => CombatTuning.ReactionNames;
+        /// <summary>反应颜色，同 <see cref="CombatTuning.ReactionColors"/></summary>
+        public static Color[] Colors => CombatTuning.ReactionColors;
 
         static readonly EventChannel<Action<Damageable, Reaction, Vector3, float, int>> reacted = new();
 
         /// <summary>旧事件（转发，第 4 批删除）：(中心敌人, 反应, 中心点, 威力 B, 受到伤害的敌人数)。新代码订阅 <see cref="GameEvents.Reacted"/></summary>
         public static event Action<Damageable, Reaction, Vector3, float, int> Reacted { add => reacted.Add(value); remove => reacted.Remove(value); }
 
-        static bool warnedDetonate, warnedTrigger;
+        static readonly ReactionStats stats = new();
+
+        /// <summary>反应计数（接受 / 执行 / 丢弃 / 预算峰值；调试叠层读）</summary>
+        public static ReactionStats Stats => stats;
+
+        static bool warnedMissing;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics()
         {
             reacted.Clear();
-            warnedDetonate = warnedTrigger = false;
-        }
-
-        sealed class Pending
-        {
-            public Reaction id;
-            public Damageable enemy;
-            public Vector3 point;
-            public float pin, cash, at, scale;
-            public int depth, weaponUid;
-            public bool killed;
-            public ReactionOrigin origin;
-            public DamageTag tag;
-        }
-
-        sealed class Pool
-        {
-            public Vector3 center;
-            public float radius, b, age, next;
-            public int ticks, depth, weaponUid;
-            public readonly HashSet<Damageable> touched = new();
+            stats.Reset();
+            warnedMissing = false;
+            instance = null;
         }
 
         static ReactionSystem instance;
-        readonly List<Pending> queue = new();
-        readonly List<Pending> batch = new();
-        readonly List<Pool> pools = new();
-        readonly Dictionary<Damageable, float[]> icd = new();
-        readonly Dictionary<Damageable, float> sealStunReady = new();
-        int frame = -1, used;
+        ReactionScheduler scheduler;
+        readonly List<ReactionJob> batch = new();
+        readonly FrameBudget bigFx = new(CombatTuning.BigFxBudget);
+        readonly LabelThrottle labels = new();
+        bool flushing;
 
         static ReactionSystem Instance
         {
@@ -155,262 +141,232 @@ namespace Spiritfire.Game
             }
         }
 
+        ReactionScheduler Scheduler => scheduler ??= new ReactionScheduler(GameReactionEnv.Instance, stats);
+
         void OnDestroy()
         {
-            if (instance == this) instance = null;
+            if (instance != this && instance) return;
+            instance = null;
+            scheduler?.Clear();
+            labels.Clear();
+            ReactionHandlers.ClearAll();
         }
 
-        static float Radius(float r) => r * (Combat.playerStats?.Mult(Stat.ExplosionRadiusPct) ?? 1f);
-
-        static float LevelScale(Damageable d)
-        {
-            var ai = d ? d.GetComponent<EnemyAI>() : null;
-            return 1 + Mathf.Max(0, (ai ? ai.level : 1) - 1) * 0.85f;
-        }
-
-        static float Base(Reaction id, float pin, float s)
-        {
-            var t = Tune[(int)id];
-            return Mathf.Clamp(t.k * Mathf.Max(0, pin), t.floor * s, t.cap * s);
-        }
-
-        // ───────────── 判定 ─────────────
+        // ───────────── 判定入口 ─────────────
 
         /// <summary>
         /// 元素附着前的反应判定（Combat 在附着状态之前调用）：判定成功则记冷却、（归墟）消耗状态、入队，返回反应；
-        /// 之后调用方照常附着 incoming。击杀那一击只能引发两两反应。weaponUid = 引发它的那一击出自哪把武器（反应伤害沿用）。
+        /// 之后调用方照常附着 incoming。击杀那一击只能引发两两反应。weaponUid = 引发它的那一击出自哪把武器（反应伤害沿用）；
+        /// scale = 反应威力倍率（附着的 reactionScale）。
         /// </summary>
-        public static Reaction? TryReact(Damageable enemy, Element incoming, float pin, int depth, bool killed, int weaponUid = 0)
+        public static Reaction? TryReact(Damageable enemy, Element incoming, float pin, int depth, bool killed, int weaponUid = 0, float scale = 1f)
         {
-            if (depth >= MaxDepth || incoming == Element.None || !enemy) return null;
+            if (depth >= CombatTuning.MaxReactionDepth || incoming == Element.None || !enemy) return null;
             if (!killed && enemy.Dead) return null;
-            var st = EnemyStatus.Of(enemy);
-            if (!st) return null;
-            bool hb = incoming != Element.Fire && st.Burning;
-            bool hs = incoming != Element.Shock && st.Shocked;
-            bool hc = incoming != Element.Corrode && st.Corroded;
-            int others = (hb ? 1 : 0) + (hs ? 1 : 0) + (hc ? 1 : 0);
-            if (others == 0) return null;
-            var sys = Instance;
-            float now = Time.time;
-            Reaction? id = null;
-            if (others == 2 && !killed && sys.Ready(enemy, Reaction.Abyss, now)) id = Reaction.Abyss;
-            else
-            {
-                // 优先级：焚雷 > 熔金 > 封脉
-                bool fire = incoming == Element.Fire, shock = incoming == Element.Shock, cor = incoming == Element.Corrode;
-                if (((fire && hs) || (shock && hb)) && sys.Ready(enemy, Reaction.Thunderfire, now)) id = Reaction.Thunderfire;
-                else if (((fire && hc) || (cor && hb)) && sys.Ready(enemy, Reaction.Meltdown, now)) id = Reaction.Meltdown;
-                else if (((shock && hc) || (cor && hs)) && sys.Ready(enemy, Reaction.Veinseal, now)) id = Reaction.Veinseal;
-            }
-            if (id == null || !sys.CanAccept()) return null;
-            sys.SetCooldown(enemy, id.Value, now);
-            var p = new Pending
-            {
-                id = id.Value, enemy = enemy, point = CenterOf(enemy), pin = Mathf.Min(pin, enemy.maxHealth * 0.5f),
-                depth = depth, killed = killed, scale = 1, at = now + (depth >= 1 ? CascadeDelay : 0),
-                weaponUid = weaponUid, origin = ReactionOrigin.Status,
-            };
-            if (id == Reaction.Abyss)
-            {
-                // 收束：消耗灼烧（结清剩余伤害）与雷殛，蚀化保留；0.35 s 预警后劈下
-                if (hb) p.cash = st.ConsumeBurn();
-                if (hs) st.ConsumeShock();
-                p.at += AbyssWindup;
-                Telegraph.Circle(Ground(p.point), 1.6f, AbyssWindup, Colors[(int)Reaction.Abyss]);
-            }
-            sys.queue.Add(p);
-            return id;
+            if (!EnemyStatus.Of(enemy)) return null; // 从没挂过状态：不可能反应，也不必建反应系统
+            var j = Instance.Scheduler.TryReact(enemy, incoming, pin, depth, killed, weaponUid, scale, Time.time, Time.frameCount);
+            return j != null ? j.Reaction : null;
         }
 
         /// <summary>
-        /// 引爆敌人身上已有的元素状态：三相 → 归墟，两相 → 按优先级的两两反应，单相 → 崩解。只入队，不同步造成伤害。
-        /// 被冷却 / 预算 / 深度拒绝、或身上没有状态时返回 null。（C1 单元实现；在那之前打一次警告并返回 null）
+        /// 技能 / 秘卷直接挂元素（不经过伤害，Three.js applyStatus）：先判定反应（威力 × opts.reactionScale），再挂状态。
+        /// power = 状态强度（不含元素 / 精英 / 首领加成，钳到最大生命 × 0.5），反应强度按它乘回属性倍率。返回引发的反应（只是入队）。
+        /// </summary>
+        public static Reaction? ApplyStatus(Damageable target, Element element, float power, in StatusApplyOpts opts)
+        {
+            if (!target || target.Dead || target.untargetable || element == Element.None || !(power > 0)) return null;
+            float cap = target.maxHealth * CombatTuning.PinCapOfMaxHp;
+            float statusPower = Mathf.Min(power, cap);
+            float pin = Mathf.Min(DamageCalc.ReactionPowerFromStatus(target, element, statusPower), cap);
+            target.lastElementBy = opts.instigator;
+            float scale = opts.reactionScale > 0 ? opts.reactionScale : 1f;
+            Reaction? rx = null;
+            if (opts.depth < CombatTuning.MaxReactionDepth)
+            {
+                var j = Instance.Scheduler.TryReact(target, element, pin, opts.depth, false, opts.weaponUid, scale, Time.time, Time.frameCount);
+                if (j != null) rx = j.Reaction;
+            }
+            EnemyStatus.Apply(target, element, statusPower, opts.depth, false);
+            return rx;
+        }
+
+        /// <summary>
+        /// 引爆敌人身上已有的元素状态：三相 → 归墟，两相 → 按优先级的两两反应，单相 → 崩解（不消耗状态）。只入队，不同步造成伤害。
+        /// 同一敌人 0.5 s 内只引爆一次；冷却内同一击（本帧 / 上一帧）的再次引爆并入还没执行的那次（取较高强度），返回那次的结果。
+        /// 被冷却 / 预算 / 深度拒绝、敌人不存活 / 不可选中、或身上没有元素状态时返回 null。
         /// </summary>
         public static DetonateOutcome? Detonate(Damageable enemy, in DetonateOpts opts)
         {
-            if (!warnedDetonate)
-            {
-                warnedDetonate = true;
-                Debug.LogWarning("[Reaction] Detonate 还没实现（单元 C1），这次调用被忽略");
-            }
-            return null;
+            if (!enemy || enemy.Dead) return null;
+            var j = Instance.Scheduler.Detonate(enemy, opts, Time.time, Time.frameCount);
+            return j?.kind;
         }
 
         /// <summary>
-        /// 强制引发一次反应（不需要、也不消耗元素状态）：被预算 / 深度 / 冷却拒绝时返回 null，否则返回入队的反应。只入队，不同步造成伤害。
-        /// （C1 单元实现；在那之前打一次警告并返回 null）
+        /// 强制引发一次反应（不需要、也不消耗元素状态；opts.power 作为附着强度，或 fixedBase 直接给 B）。只入队，不同步造成伤害。
+        /// 被预算 / 深度 / 冷却拒绝时返回 null，否则返回入队的反应。敌人可以已死（必须给 opts.point）：中心伤害跳过，范围部分照常。
         /// </summary>
         public static Reaction? Trigger(Damageable enemy, Reaction id, in TriggerOpts opts)
         {
-            if (!warnedTrigger)
-            {
-                warnedTrigger = true;
-                Debug.LogWarning("[Reaction] Trigger 还没实现（单元 C1），这次调用被忽略");
-            }
-            return null;
+            if (ReferenceEquals(enemy, null)) return null;
+            var j = Instance.Scheduler.Trigger(enemy, id, opts, Time.time, Time.frameCount);
+            return j != null ? j.Reaction : null;
         }
 
-        bool Ready(Damageable e, Reaction id, float now) => !icd.TryGetValue(e, out var t) || now >= t[(int)id];
-
-        void SetCooldown(Damageable e, Reaction id, float now)
-        {
-            if (!icd.TryGetValue(e, out var t)) icd[e] = t = new float[4];
-            float haste = 1 + (Combat.playerStats?.Get(Stat.ReactionHaste) ?? 0);
-            t[(int)id] = now + Mathf.Max(IcdFloor, Tune[(int)id].icd / haste);
-        }
-
-        bool CanAccept()
-        {
-            if (Time.frameCount != frame)
-            {
-                frame = Time.frameCount;
-                used = 0;
-            }
-            if (used >= FrameBudget || queue.Count >= QueueCap) return false;
-            used++;
-            return true;
-        }
+        /// <summary>封脉首领「脉滞」倍率：生效中 1.12，否则 1（伤害预览用；实际伤害已经由修饰器乘上）</summary>
+        public static float VulnMult(Damageable d) => instance && instance.scheduler != null ? instance.scheduler.VulnMult(d, Time.time) : 1f;
 
         // ───────────── 执行 ─────────────
 
         void Update()
         {
-            float now = Time.time, dt = Time.deltaTime;
-            batch.Clear();
-            for (int i = queue.Count - 1; i >= 0; i--)
-                if (queue[i].at <= now)
-                {
-                    batch.Add(queue[i]);
-                    queue.RemoveAt(i);
-                }
-            for (int i = batch.Count - 1; i >= 0; i--) Execute(batch[i]);
-            UpdatePools(dt);
-            if (Time.frameCount % 300 == 0)
+            float now = Time.time;
+            int frame = Time.frameCount;
+            var s = Scheduler;
+            if (!flushing)
             {
-                // 回收已销毁敌人的冷却记录
-                var dead = new List<Damageable>();
-                foreach (var k in icd.Keys) if (!k) dead.Add(k);
-                foreach (var k in dead) { icd.Remove(k); sealStunReady.Remove(k); }
+                batch.Clear();
+                s.TakeDue(now, batch);
+                if (batch.Count > 0)
+                {
+                    flushing = true;
+                    try
+                    {
+                        for (int i = 0; i < batch.Count; i++)
+                        {
+                            var j = batch[i];
+                            try
+                            {
+                                Execute(j);
+                            }
+                            catch (Exception e)
+                            {
+                                stats.errors++;
+                                Debug.LogException(e);
+                            }
+                            finally
+                            {
+                                s.Release(j);
+                            }
+                        }
+                    }
+                    finally
+                    {
+                        batch.Clear();
+                        flushing = false;
+                    }
+                }
+            }
+            var table = ReactionHandlers.Table;
+            for (int i = 0; i < table.Length; i++)
+            {
+                if (table[i] == null) continue;
+                try
+                {
+                    table[i].Tick(Time.deltaTime);
+                }
+                catch (Exception e)
+                {
+                    stats.errors++;
+                    Debug.LogException(e);
+                }
+            }
+            if (frame % 300 == 0)
+            {
+                // 回收已销毁敌人的冷却 / 浮字记录
+                s.Prune();
+                labels.Prune();
             }
         }
 
-        void Execute(Pending p)
+        void Execute(ReactionJob j)
         {
-            var e = p.enemy;
-            bool alive = e && !e.Dead;
-            var c = alive ? CenterOf(e) : p.point;
-            float b = Base(p.id, p.pin, e ? LevelScale(e) : 1) * p.scale;
-            bool center = alive && !p.killed;
-            int hits = 0;
-            bool stunned = false;
-            int uid = p.weaponUid;
-            var color = Colors[(int)p.id];
-            switch (p.id)
+            var h = ReactionHandlers.Get(j.kind);
+            if (h == null)
             {
-                case Reaction.Thunderfire:
+                if (!warnedMissing)
                 {
-                    if (center && Hit(e, b, Element.Fire, p.depth, c, p.id, uid)) hits++;
-                    var hitList = new List<Damageable>();
-                    var info = ReactionHit(b * 0.6f, Element.Fire, p.depth, c, p.id, uid);
-                    info.knockback = 7;
-                    float r = Radius(3f);
-                    Combat.Explode(c, r, info, true, 0, e, 0.6f, hitList);
-                    hits += hitList.Count;
-                    // 扩散：周围的敌人也烧起来（带雷殛的再焚雷、带蚀化的熔金）
-                    foreach (var o in Nearest(c, r, 16, e, false))
-                        Combat.AttachFromReaction(o, Element.Fire, b * 0.2f, p.depth + 1, uid);
-                    for (int i = 0; i < hitList.Count && i < 4; i++)
-                        Lightning.Spawn(c, CenterOf(hitList[i]), new Color(0.44f, 0.85f, 1f));
-                    ShotFx.Instance?.Impact(c, Vector3.up, true, 9f);
-                    ShotFx.Instance?.MuzzleFlash(c, 5f);
-                    GameAudio.PlayAt("shock_zap", c, 0.5f, 1.1f);
-                    Telegraph.Wave(Ground(c), r, 18f, color);
-                    break;
+                    warnedMissing = true;
+                    Debug.LogError($"[Reaction] 没有 {j.kind} 的处理器（Combat/Reactions/*Handler 要带 [Defs]）");
                 }
-                case Reaction.Meltdown:
-                {
-                    if (center && Hit(e, b * (e.armor > 0 ? 2 : 1), Element.Corrode, p.depth, c, p.id, uid)) hits++;
-                    var foot = alive ? e.transform.position : Ground(c);
-                    SpawnPool(foot + Vector3.up * 0.05f, Radius(2.5f), b, p.depth, uid);
-                    ShotFx.Instance?.Impact(c, Vector3.up, true, 6f);
-                    GameAudio.PlayAt("skill_fire", c, 0.55f, 0.75f);
-                    GameAudio.PlayAt("corrode_tick", c, 0.7f);
-                    break;
-                }
-                case Reaction.Veinseal:
-                {
-                    if (center)
-                    {
-                        if (Hit(e, b * (e.shield > 0 ? 2 : 1), Element.Shock, p.depth, c, p.id, uid)) hits++;
-                        float now = Time.time;
-                        if (!sealStunReady.TryGetValue(e, out var ready) || now >= ready)
-                        {
-                            sealStunReady[e] = now + SealStunIcd;
-                            stunned = EnemyStatus.Stun(e, 0.7f);
-                        }
-                        EnemyStatus.Slow(e, 0.4f, 3f);
-                    }
-                    // 导流：8 m 内最近的 3 个敌人（要有视线）
-                    foreach (var o in Nearest(c, 8f, 3, e, true))
-                    {
-                        var oc = CenterOf(o);
-                        Lightning.Spawn(c, oc, color);
-                        if (Hit(o, b * 0.3f, Element.Shock, p.depth, oc, p.id, uid)) hits++;
-                        Combat.AttachFromReaction(o, Element.Corrode, b * 0.35f, p.depth + 1, uid);
-                    }
-                    Telegraph.Wave(Ground(c), 1.6f, 8f, color);
-                    ShotFx.Instance?.Impact(c + Vector3.up * 0.8f, Vector3.up, false, 3f);
-                    GameAudio.PlayAt("skill_shock", c, 0.5f, 0.8f);
-                    GameAudio.PlayAt("shock_zap", c, 0.6f, 0.7f);
-                    break;
-                }
-                case Reaction.Abyss:
-                {
-                    GameAudio.PlayAt("hit_crit", c, 0.8f, 0.8f);
-                    if (alive && p.cash > 0)
-                    {
-                        // 灼烧结清：普通持续伤害（不带反应标记）
-                        var cash = DamageInfo.Simple(p.cash, DamageSource.Status, c, Vector3.up);
-                        cash.element = Element.Fire;
-                        cash.depth = p.depth + 1;
-                        cash.tags = DamageTag.Dot;
-                        cash.weaponUid = uid;
-                        Combat.DamageEnemy(e, cash);
-                    }
-                    if (alive)
-                    {
-                        // 三色天雷：火打血、雷打盾、蚀打甲，各 B/3
-                        foreach (var el in new[] { Element.Fire, Element.Shock, Element.Corrode })
-                        {
-                            if (e.Dead) break;
-                            if (Hit(e, b / 3f, el, p.depth, c, p.id, uid)) hits++;
-                        }
-                    }
-                    bool centerDead = !e || e.Dead;
-                    var after = ReactionHit(b * (centerDead ? 0.6f : 0.3f), Element.None, p.depth, c, p.id, uid);
-                    after.knockback = 9;
-                    var hitList = new List<Damageable>();
-                    Combat.Explode(c, Radius(3f), after, true, 0, e, 0.6f, hitList);
-                    hits += hitList.Count;
-                    int i = 0;
-                    foreach (var el in new[] { Element.Fire, Element.Shock, Element.Corrode })
-                        Lightning.Spawn(c + Vector3.up * 7f + new Vector3((i++ - 1) * 0.6f, 0, 0), c, DamageTable.ElementColor(el), 0.12f);
-                    Telegraph.Wave(Ground(c), 3f, 12f, color);
-                    ShotFx.Instance?.Impact(c, Vector3.up, false, 10f);
-                    ShotFx.Instance?.MuzzleFlash(c, 8f);
-                    break;
-                }
+                return;
             }
-            Hud.Instance?.FloatText(c + Vector3.up * 0.9f, Names[(int)p.id], color, p.id == Reaction.Abyss ? 1.9f : 1.35f);
+            var e = j.enemy;
+            if (j.kind == DetonateOutcome.Collapse)
+            {
+                if (!e || e.Dead) return;
+                stats.executed[(int)j.kind]++;
+                h.Execute(j);
+                return;
+            }
+
+            bool alive = e && !e.Dead;
+            j.center = alive ? CenterOf(e) : j.point;
+            float strength = e ? Scheduler.Env.Strength(e) : j.strength;
+            var id = j.Reaction;
+            j.B = j.fixedBase ?? ReactionMath.Base(id, j.pin, strength) * j.scale;
+            if (!(j.B > 0)) return;
+            j.centerAlive = alive && !j.killed;
+            j.hits = 0;
+            j.stunned = false;
+            stats.executed[(int)j.kind]++;
+            h.Execute(j);
+
+            Label(e, j.center, Names[(int)id], Colors[(int)id], id == Reaction.Abyss);
             var ev = new ReactionEvent
             {
-                enemy = e, id = p.id, point = c, B = b, depth = p.depth, hits = hits, origin = p.origin, tag = p.tag, weaponUid = uid,
-                centerKilled = !e || e.Dead, stunned = stunned,
+                enemy = e, id = id, point = j.center, B = j.B, depth = j.depth, hits = j.hits, origin = j.origin, tag = j.tag, weaponUid = j.weaponUid,
+                centerKilled = !e || e.Dead, stunned = j.stunned,
             };
             GameEvents.RaiseReacted(in ev);
-            reacted.Raise(e, p.id, c, b, hits);
+            reacted.Raise(e, id, j.center, j.B, j.hits);
         }
+
+        // ───────────── 处理器共用的工具 ─────────────
+
+        /// <summary>本帧还能不能放一个「大」反应特效（爆炸声 + 大爆闪）：每帧最多 <see cref="CombatTuning.BigFxBudget"/> 个，能的话占一份</summary>
+        public static bool TryBigFx()
+        {
+            if (!instance) return true;
+            var b = instance.bigFx;
+            bool ok = b.TryTake(Time.frameCount);
+            if (ok) stats.bigFxFrameMax = Mathf.Max(stats.bigFxFrameMax, b.Peak);
+            else stats.bigFxDenied++;
+            return ok;
+        }
+
+        /// <summary>
+        /// 反应浮字（「焚雷」「崩解」…）：画在 at 上方 0.9 m。每帧最多 <see cref="CombatTuning.LabelBudget"/> 条，
+        /// 同一敌人 <see cref="CombatTuning.LabelGap"/> 秒一条（big = 大号，不受逐敌节流）。
+        /// </summary>
+        public static void Label(Damageable enemy, Vector3 at, string text, Color color, bool big)
+        {
+            if (!instance) return;
+            var l = instance.labels;
+            if (!l.Allow(enemy, big, Time.time, Time.frameCount))
+            {
+                stats.labelsDenied++;
+                return;
+            }
+            stats.labelFrameMax = Mathf.Max(stats.labelFrameMax, l.Budget.Peak);
+            var hud = Hud.Instance;
+            if (hud) hud.FloatText(at + Vector3.up * 0.9f, text, color, big ? 1.9f : 1.35f);
+        }
+
+        /// <summary>封脉眩晕的独立冷却（3.5 s，不吃急速）：就绪则记下冷却并返回 true</summary>
+        public static bool TryArmSealStun(Damageable enemy) => Instance.Scheduler.TryArmSealStun(enemy, Time.time);
+
+        /// <summary>首领「脉滞」：seconds 秒内受到的伤害 ×1.12（第一次在它身上登记受伤修饰器，之后只续时间）</summary>
+        public static void MarkVuln(Damageable enemy, float seconds) => Instance.Scheduler.MarkVuln(enemy, Time.time + seconds, vulnModifier);
+
+        static readonly Incoming vulnModifier = VulnIncoming;
+
+        // 敌人之间、环境的伤害不吃（脉滞只放大玩家方的伤害）
+        static float VulnIncoming(in IncomingHit h) =>
+            h.info.source is DamageSource.Enemy or DamageSource.Environment ? 1f : VulnMult(h.target);
+
+        /// <summary>反应半径 × 玩家「爆炸范围」</summary>
+        public static float Radius(float r) => r * (Combat.playerStats?.Mult(Stat.ExplosionRadiusPct) ?? 1f);
 
         /// <summary>反应 → 伤害标签（Reaction + 反应自己的标签）</summary>
         public static DamageTag TagOf(Reaction id) => DamageTag.Reaction | id switch
@@ -421,7 +377,12 @@ namespace Spiritfire.Game
             _ => DamageTag.Abyss,
         };
 
-        static DamageInfo ReactionHit(float amount, Element element, int depth, Vector3 point, Reaction id, int weaponUid, DamageTag extra = DamageTag.None)
+        /// <summary>反应伤害请求：source Status、不暴击、深度 +1、标签 Reaction + 反应 id（+ extra），只吃「反应伤害」加成</summary>
+        public static DamageInfo ReactionHit(float amount, Element element, int depth, Vector3 point, Reaction id, int weaponUid, DamageTag extra = DamageTag.None) =>
+            ReactionHit(amount, element, depth, point, TagOf(id) | extra, id, weaponUid);
+
+        /// <summary>反应类伤害请求（通用：崩解用 Reaction + Collapse、id 为 null）</summary>
+        public static DamageInfo ReactionHit(float amount, Element element, int depth, Vector3 point, DamageTag tags, Reaction? id, int weaponUid)
         {
             var info = DamageInfo.Simple(amount, DamageSource.Status, point, Vector3.up);
             info.weaponUid = weaponUid;
@@ -429,57 +390,26 @@ namespace Spiritfire.Game
             info.depth = depth + 1;
             info.reaction = true;
             info.reactionId = id;
-            info.tags = TagOf(id) | extra;
+            info.tags = tags | DamageTag.Reaction;
             info.noCrit = true;
             return info;
         }
 
-        static bool Hit(Damageable d, float amount, Element element, int depth, Vector3 point, Reaction id, int weaponUid, DamageTag extra = DamageTag.None)
+        /// <summary>反应对单个敌人的伤害；造成了伤害返回 true</summary>
+        public static bool Hit(Damageable d, float amount, Element element, int depth, Vector3 point, Reaction id, int weaponUid, DamageTag extra = DamageTag.None)
         {
             if (!d || d.Dead) return false;
             var r = Combat.DamageEnemy(d, ReactionHit(amount, element, depth, point, id, weaponUid, extra));
             return r.total > 0;
         }
 
-        void SpawnPool(Vector3 center, float radius, float b, int depth, int weaponUid)
+        /// <summary>反应类伤害（通用标签版）；造成了伤害返回 true</summary>
+        public static bool Hit(Damageable d, float amount, Element element, int depth, Vector3 point, DamageTag tags, Reaction? id, int weaponUid)
         {
-            if (pools.Count >= MaxPools) pools.RemoveAt(0);
-            var pool = new Pool { center = center, radius = radius, b = b, depth = depth, weaponUid = weaponUid, next = 0.5f };
-            pools.Add(pool);
-            Telegraph.Circle(center, radius, 3f, new Color(1f, 0.48f, 0.1f, 0.55f));
+            if (!d || d.Dead) return false;
+            var r = Combat.DamageEnemy(d, ReactionHit(amount, element, depth, point, tags, id, weaponUid));
+            return r.total > 0;
         }
-
-        void UpdatePools(float dt)
-        {
-            for (int i = pools.Count - 1; i >= 0; i--)
-            {
-                var pool = pools[i];
-                pool.age += dt;
-                if (pool.age < pool.next) continue;
-                pool.next += 0.5f;
-                pool.ticks++;
-                foreach (var ai in EnemyAI.All.ToArray())
-                {
-                    if (!ai || ai.Dead) continue;
-                    var d = ai.Health;
-                    var pos = ai.transform.position;
-                    var flat = pos - pool.center;
-                    float dy = flat.y;
-                    flat.y = 0;
-                    if (flat.magnitude > pool.radius || dy > 1.5f || dy < -1f) continue;
-                    Hit(d, pool.b * 0.12f, Element.Fire, pool.depth, CenterOf(d), Reaction.Meltdown, pool.weaponUid, DamageTag.Dot);
-                    if (pool.touched.Add(d)) Combat.AttachFromReaction(d, Element.Corrode, pool.b * 0.25f, pool.depth + 1, pool.weaponUid);
-                }
-                for (int k = 0; k < 2; k++)
-                {
-                    var off = UnityEngine.Random.insideUnitCircle * pool.radius * 0.8f;
-                    ShotFx.Instance?.Impact(pool.center + new Vector3(off.x, 0.1f, off.y), Vector3.up, true, 0.8f);
-                }
-                if (pool.ticks >= 6) pools.RemoveAt(i);
-            }
-        }
-
-        // ───────────── 工具 ─────────────
 
         public static Vector3 CenterOf(Damageable d)
         {
@@ -487,36 +417,69 @@ namespace Spiritfire.Game
             return col && col.enabled ? col.bounds.center : d.transform.position + Vector3.up;
         }
 
-        static Vector3 Ground(Vector3 p)
+        /// <summary>p 正下方 6 m 内的地面（抬 5 cm）；没有地面返回 p</summary>
+        public static Vector3 Ground(Vector3 p)
         {
             if (Physics.Raycast(p + Vector3.up * 0.5f, Vector3.down, out var hit, 6f, Layers.WorldMask, QueryTriggerInteraction.Ignore))
                 return hit.point + Vector3.up * 0.05f;
             return p;
         }
 
-        /// <summary>from 附近 range 内最近的若干个活着、可选中的敌人（排除 exclude；needSight 时要求视线不被地形挡住）</summary>
-        public static List<Damageable> Nearest(Vector3 from, float range, int count, Damageable exclude, bool needSight)
+        // Nearest 的候选缓冲（Nearest 内部只做射线检测、不回调外部代码，不会重入）
+        static readonly List<Damageable> nearCand = new();
+        static readonly List<float> nearDist = new();
+
+        /// <summary>
+        /// from 附近 range 内最近的若干个活着、可选中的敌人（排除 exclude；needSight 时要求视线不被地形挡住），按距离由近到远写进 results（先清空）。
+        /// 不分配（调用方给结果列表）。返回个数。
+        /// </summary>
+        public static int Nearest(Vector3 from, float range, int count, Damageable exclude, bool needSight, List<Damageable> results)
         {
-            var list = new List<(float d, Damageable e)>();
-            foreach (var ai in EnemyAI.All.ToArray())
+            results.Clear();
+            if (count <= 0) return 0;
+            var cand = nearCand;
+            var dist = nearDist;
+            cand.Clear();
+            dist.Clear();
+            var all = EnemyAI.All;
+            for (int i = 0; i < all.Count; i++)
             {
+                var ai = all[i];
                 if (!ai || ai.Dead) continue;
                 var d = ai.Health;
                 if (!d || d == exclude || d.untargetable) continue;
-                var c = CenterOf(d);
-                float dist = Vector3.Distance(from, c);
-                if (dist > range) continue;
-                list.Add((dist, d));
+                float dd = Vector3.Distance(from, CenterOf(d));
+                if (dd > range) continue;
+                cand.Add(d);
+                dist.Add(dd);
             }
-            list.Sort((a, b) => a.d.CompareTo(b.d));
-            var picked = new List<Damageable>();
-            foreach (var (_, e) in list)
+            while (results.Count < count)
             {
-                if (picked.Count >= count) break;
+                int bi = -1;
+                float bd = float.PositiveInfinity;
+                for (int i = 0; i < dist.Count; i++)
+                    if (dist[i] < bd)
+                    {
+                        bd = dist[i];
+                        bi = i;
+                    }
+                if (bi < 0) break;
+                dist[bi] = float.PositiveInfinity;
+                var e = cand[bi];
                 if (needSight && Combat.Blocked(from, CenterOf(e), e.GetComponent<Collider>())) continue;
-                picked.Add(e);
+                results.Add(e);
             }
-            return picked;
+            cand.Clear();
+            dist.Clear();
+            return results.Count;
+        }
+
+        /// <summary>同 <see cref="Nearest(Vector3, float, int, Damageable, bool, List{Damageable})"/>，返回新列表（旧接口，热路径用上面那个）</summary>
+        public static List<Damageable> Nearest(Vector3 from, float range, int count, Damageable exclude, bool needSight)
+        {
+            var list = new List<Damageable>(Mathf.Clamp(count, 0, 16));
+            Nearest(from, range, count, exclude, needSight, list);
+            return list;
         }
     }
 }

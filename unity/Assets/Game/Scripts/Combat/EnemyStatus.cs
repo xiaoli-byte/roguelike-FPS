@@ -262,6 +262,23 @@ namespace Spiritfire.Game
             shockRemaining = 0;
         }
 
+        /// <summary>
+        /// 灼烧 / 蚀化剩下的跳伤还会造成的总量（与强度同口径、不含属性倍率、不修改状态；Three.js dotRemainingRaw）：
+        /// 按共享的跳伤计时对齐，灼烧逐层算。其他状态为 0。崩解（<see cref="ReactionSystem.Detonate"/>）用。
+        /// </summary>
+        public float DotRemainingRaw(StatusId id)
+        {
+            if (id == StatusId.Burn)
+            {
+                float total = 0;
+                foreach (var st in burn) total += st.power * ReactionMath.TicksLeft(st.remaining, burnTimer, BurnTick);
+                return total * BurnRatio;
+            }
+            if (id == StatusId.Corrode && corrodeRemaining > 0)
+                return corrodePower * CorrodeRatio * ReactionMath.TicksLeft(corrodeRemaining, corrodeTimer, CorrodeTick);
+            return 0;
+        }
+
         Vector3 Center
         {
             get
