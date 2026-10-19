@@ -1,0 +1,329 @@
+{
+  "asset": "SK_Boss_Feilian",
+  "version": 3,
+  "glb": "art/source/characters/SK_Boss_Feilian/04_export/SK_Boss_Feilian_native_v003.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.4,
+      "自定义骨架：36 根骨骼（热扩散权重，35755 个顶点未覆盖）": 0.7,
+      "贴图（BC + AO/ORM）": 17.4,
+      "LOD 与蒙皮上限 29549 / 11820 / 4925": 1.9,
+      "导出 1741 KB": 2.6
+    },
+    "source": {
+      "verts": 35755,
+      "tris": 30137,
+      "scale": 5.3025891548607715
+    },
+    "regions": {
+      "heat_unweighted_verts": 35755,
+      "weights": "segments",
+      "ground_verts": 2787,
+      "head_verts": 4024,
+      "fallback_verts": 0,
+      "per_bone": {
+        "hips": 385,
+        "spine": 664,
+        "chest": 122,
+        "neck": 1878,
+        "head": 6345,
+        "antler_L": 2014,
+        "scapula_L": 501,
+        "upperarm_L": 282,
+        "forearm_L": 863,
+        "fcannon_L": 573,
+        "fhoof_L": 1160,
+        "haunch_L": 198,
+        "thigh_L": 190,
+        "shin_L": 342,
+        "hcannon_L": 776,
+        "hhoof_L": 1288,
+        "antler_R": 2017,
+        "scapula_R": 588,
+        "upperarm_R": 308,
+        "forearm_R": 915,
+        "fcannon_R": 595,
+        "fhoof_R": 1195,
+        "haunch_R": 312,
+        "thigh_R": 219,
+        "shin_R": 340,
+        "hcannon_R": 837,
+        "hhoof_R": 1346,
+        "tail_1": 586,
+        "tail_2": 373,
+        "tail_3": 380,
+        "tail_4": 591,
+        "tail_5": 401,
+        "tail_6": 205,
+        "tail_7": 655
+      }
+    },
+    "bones": [
+      "antler_L",
+      "antler_R",
+      "chest",
+      "fcannon_L",
+      "fcannon_R",
+      "fhoof_L",
+      "fhoof_R",
+      "forearm_L",
+      "forearm_R",
+      "haunch_L",
+      "haunch_R",
+      "hcannon_L",
+      "hcannon_R",
+      "head",
+      "hhoof_L",
+      "hhoof_R",
+      "hips",
+      "neck",
+      "orb",
+      "root",
+      "scapula_L",
+      "scapula_R",
+      "shin_L",
+      "shin_R",
+      "spine",
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "tail_4",
+      "tail_5",
+      "tail_6",
+      "tail_7",
+      "thigh_L",
+      "thigh_R",
+      "upperarm_L",
+      "upperarm_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.883,
+      "shade_mean": 0.921
+    },
+    "textures": {
+      "size": 2048,
+      "ao_mean": 0.804,
+      "provider_pbr": [],
+      "roughness_mean": 0.75,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Boss_Feilian_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Boss_Feilian_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Boss_Feilian_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Boss_Feilian_LOD0",
+        "tris": 29549,
+        "uv_min": [
+          0.001708984375,
+          0.001708984375
+        ],
+        "uv_max": [
+          0.998291015625,
+          0.99462890625
+        ]
+      },
+      {
+        "name": "SK_Boss_Feilian_LOD1",
+        "tris": 11820,
+        "uv_min": [
+          0.001708984375,
+          0.0016978950006887317
+        ],
+        "uv_max": [
+          0.993896484375,
+          0.994384765625
+        ]
+      },
+      {
+        "name": "SK_Boss_Feilian_LOD2",
+        "tris": 4925,
+        "uv_min": [
+          0.001708984375,
+          0.0016978950006887317
+        ],
+        "uv_max": [
+          0.9809799194335938,
+          0.9814453125
+        ]
+      }
+    ],
+    "glb_kb": 1741,
+    "_seconds": 24.6
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "1741 KB / 6000 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Boss_Feilian_LOD0', 'SK_Boss_Feilian_LOD1', 'SK_Boss_Feilian_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "29549 / 30000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "11820 / 12000"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "4925 / 5000"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "5.300 m (design 5.3 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Boss_Feilian']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "texture T_Boss_Feilian_ORM",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "texture T_Boss_Feilian_BC",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "36 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Boss_Feilian_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Boss_Feilian_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Boss_Feilian_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Boss_Feilian_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Boss_Feilian_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Boss_Feilian_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Boss_Feilian_LOD0 UV range",
+      "[0.002, 0.002]..[0.998, 0.995]"
+    ],
+    [
+      "pass",
+      "SK_Boss_Feilian_LOD1 UV range",
+      "[0.002, 0.002]..[0.994, 0.994]"
+    ],
+    [
+      "pass",
+      "SK_Boss_Feilian_LOD2 UV range",
+      "[0.002, 0.002]..[0.981, 0.981]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "35755 verts"
+    ],
+    [
+      "pass",
+      "region ground",
+      "2787 verts"
+    ],
+    [
+      "pass",
+      "region head",
+      "4024 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "0 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}
