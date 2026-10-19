@@ -19,6 +19,7 @@ import { Terrain, basinDistance } from '../world/plateau/terrain';
 import { Weather } from '../world/plateau/weather';
 import { CollisionWorld, EYE, Walker } from '../world/plateau/walker';
 import { WindStreaks, buildWindMarks, windAt } from '../world/plateau/wind';
+import { PlayMode } from '../world/plateau/play/game';
 
 const $ = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T;
 const canvas = $<HTMLCanvasElement>('view');
@@ -124,12 +125,18 @@ VIEWPOINTS.forEach((vp, i) => {
 
 const keys = new Set<string>();
 let jumpPressed = false, dashPressed = false, bigMap = false;
+/** 游玩模式（射击、雷魅、灵火、领主战）；null = 检视模式 */
+let play: PlayMode | null = null;
+let firing = false, reloadPressed = false;
+addEventListener('mousedown', e => { if (e.button === 0 && document.pointerLockElement === canvas) firing = true; });
+addEventListener('mouseup', e => { if (e.button === 0) firing = false; });
 addEventListener('keydown', e => {
   if ((e.target as HTMLElement)?.tagName === 'INPUT') return;
   keys.add(e.code);
   if (e.code === 'Space') { e.preventDefault(); if (!e.repeat) jumpPressed = true; }
   if ((e.code === 'ShiftLeft' || e.code === 'ShiftRight') && !e.repeat) dashPressed = true;
-  if (e.code === 'KeyG' && !e.repeat) {
+  if (e.code === 'KeyR' && !e.repeat) reloadPressed = true;
+  if (e.code === 'KeyG' && !e.repeat && !play) {
     walker.fly = !walker.fly;
     if (walker.fly) walker.feet.y += EYE;
     else walker.place(walker.feet.x, walker.feet.z);
@@ -137,7 +144,7 @@ addEventListener('keydown', e => {
   }
   if (e.code === 'KeyM' && !e.repeat) toggleMap();
   const digit = /^Digit([1-9])$/.exec(e.code);
-  if (digit && VIEWPOINTS[+digit[1] - 1]) goTo(VIEWPOINTS[+digit[1] - 1]);
+  if (digit && VIEWPOINTS[+digit[1] - 1] && !play) goTo(VIEWPOINTS[+digit[1] - 1]);
 });
 addEventListener('keyup', e => keys.delete(e.code));
 addEventListener('blur', () => keys.clear());
@@ -167,7 +174,7 @@ document.addEventListener('pointerlockchange', () => {
   lookFilter.reset();
   // 锁定时浏览器会重定位光标，短暂忽略这段过渡事件
   ignoreMouseUntil = locked ? performance.now() + 50 : 0;
-  if (!locked) keys.clear();
+  if (!locked) { keys.clear(); firing = false; }
 });
 addEventListener('mousemove', e => {
   if (document.pointerLockElement !== canvas || performance.now() < ignoreMouseUntil) return;
@@ -576,11 +583,42 @@ goTo(VIEWPOINTS[0]);
 $('loading').remove();
 showHint('点击画面开始 · WASD 移动 · G 飞行 · 1–9 机位');
 
+/** 进入游玩模式：加载正式模型、摆怪；检视用的白模、天气 / 灵火滑块、飞行和机位都停用 */
+async function startPlay(): Promise<void> {
+  if (play) return;
+  $('play-choice')?.remove();
+  monsters.group.visible = false;
+  lords.group.visible = false;
+  $('panel').classList.add('collapsed');
+  $('toggle').textContent = '展开';
+  for (const id of ['opt-fire', 'opt-weather', 'opt-kui', 'opt-monsters']) $<HTMLInputElement>(id).disabled = true;
+  weather.stormy = false;
+  walker.fly = false;
+  const mode = new PlayMode(scene, camera, terrain, world, walker, weather);
+  play = mode;
+  await mode.start();
+  showHint('左键射击 · R 换弹 · E 点亮灵火 · 空格跳 · Shift 冲刺 · M 地图');
+}
+
+// 开局选择：游玩 / 检视；网址带 ?play 直接进游玩
+if (new URLSearchParams(location.search).has('play')) void startPlay();
+else {
+  const choice = document.createElement('div');
+  choice.id = 'play-choice';
+  choice.innerHTML = `<div><h2>雪域天路 · 4-1 折多垭口</h2>
+    <button id="btn-play">开始游玩</button><p>射击、雷魅、灵火、三场领主战，完整打一遍</p>
+    <button id="btn-inspect">检视地图</button><p>飞行、机位、白模、验收（原来的检视页）</p></div>`;
+  document.body.appendChild(choice);
+  $('btn-play').onclick = () => { void startPlay(); canvas.focus(); };
+  $('btn-inspect').onclick = () => choice.remove();
+}
+
 const shadowCenter = new THREE.Vector3(), ahead = new THREE.Vector3();
 let last = performance.now();
 let time = 0;
-function frame(now: number): void {
-  const dt = Math.min(0.05, (now - last) / 1000);
+/** manual：脚本推进（检视面板隐藏时浏览器不给 rAF），只模拟、可选不渲染、不排下一帧 */
+function frame(now: number, manual = false, render = true): void {
+  const dt = Math.max(0, Math.min(0.05, (now - last) / 1000));
   last = now;
   time += dt;
   WORLD_UNIFORMS.uTime.value = time;
@@ -610,17 +648,26 @@ function frame(now: number): void {
   for (const a of anim) a.update(time, dt);
   monsters.update(time, dt);
   weather.update(dt, camera.position);
-  lords.update(time, dt, weather.level);
+  if (play) play.update(dt, { firing, interact: keys.has('KeyE'), reload: reloadPressed });
+  else lords.update(time, dt, weather.level);
+  reloadPressed = false;
   windMarks.update(time);
   windStreaks.update(dt, camera.position);
   adaptResolution(dt);
   smoke.update(dt);
-  renderer.render(scene, camera);
-  drawMap();
-  updateHud(dt);
-  requestAnimationFrame(frame);
+  if (render) {
+    renderer.render(scene, camera);
+    drawMap();
+    updateHud(dt);
+  }
+  if (!manual) requestAnimationFrame(t => frame(t));
 }
-requestAnimationFrame(frame);
+requestAnimationFrame(t => frame(t));
+
+/** 调试：按固定步长推进 seconds 秒（脚本化试玩用） */
+function simulate(seconds: number, step = 1 / 30, render = false): void {
+  for (let k = 0; k < seconds / step; k++) frame(last + step * 1000, true, render);
+}
 
 // 调试入口（检视用）
-Object.assign(window, { plateau: { scene, camera, renderer, terrain, world, walker, goTo, VIEWPOINTS, grass, FIRE_STATE, weather, monsters, lords, windAt } });
+Object.assign(window, { plateau: { scene, camera, renderer, terrain, world, walker, goTo, VIEWPOINTS, grass, FIRE_STATE, weather, monsters, lords, windAt, get play() { return play; }, startPlay, simulate, setFiring: (v: boolean) => { firing = v; } } });

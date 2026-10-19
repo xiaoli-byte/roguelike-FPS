@@ -102,6 +102,7 @@ export function buildWater(terrain: Terrain): THREE.Group {
     pg.rotateY(-L.rot);
     const lake = new THREE.Mesh(pg, waterMaterial(L.deep, L.shallow, 0, true));
     lake.position.set(L.x, terrain.lakeLevel[n], L.z);
+    lake.name = `lake.${L.id}`;
     lake.renderOrder = 2;
     group.add(lake);
   });

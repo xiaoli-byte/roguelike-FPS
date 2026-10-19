@@ -19,7 +19,8 @@ export interface SmokeEmitter { x: number; y: number; z: number; big: boolean; s
 export interface MapIcon { name: string; x: number; z: number; kind: LandmarkKind | 'bridge' }
 
 /** 点亮的灵火数（检视页开关）；按灵火坛摆放顺序点亮，≥ FIRES_TO_UNLOCK 时垭口经幡门打开 */
-export const FIRE_STATE = { lit: 0 };
+/** 灵火：lit 是点亮的个数（垭口经幡门看它）；mask 给了就按坛子编号单独点亮（游玩模式），没给就点亮前 lit 个（检视滑块） */
+export const FIRE_STATE: { lit: number; mask?: boolean[] } = { lit: 0 };
 
 export interface BuildCtx {
   /** 4-1 的盆地或 4-2 的峡谷；roadNearest 让房子、经幡避开路面 */
@@ -879,7 +880,7 @@ function altar(ctx: BuildCtx, p: Placement): void {
   const emberMat = ember.material as THREE.MeshBasicMaterial;
   ctx.anim.push({
     update: (t) => {
-      const lit = index < FIRE_STATE.lit;
+      const lit = FIRE_STATE.mask ? !!FIRE_STATE.mask[index] : index < FIRE_STATE.lit;
       flame.visible = lit;
       emberMat.color.set(lit ? '#c9f6ff' : '#ff6a2a');
       ember.scale.set(1, lit ? 0.5 : 0.3 + 0.05 * Math.sin(t * 3 + index), 1);

@@ -77,6 +77,15 @@ export class CollisionWorld {
     return g;
   }
 
+  /** 这一点是否在某个碰撞体的实体里（子弹、投射物撞墙用） */
+  solidAt(x: number, y: number, z: number): boolean {
+    for (const c of this.near(x, z)) {
+      if (c.off || y < c.y0 || y > c.y1) continue;
+      if (this.footprintDist(c, x, z) < 0) return true;
+    }
+    return false;
+  }
+
   /** 身体（脚 + STEP 到头顶）是否与不可通行的碰撞体相交 */
   blocked(x: number, z: number, feetY: number): boolean {
     for (const c of this.near(x, z)) {
@@ -126,6 +135,19 @@ export class Walker {
   }
 
   eye(out: THREE.Vector3): THREE.Vector3 { return out.copy(this.feet).setY(this.feet.y + (this.fly ? 0 : EYE)); }
+
+  /** 被击退：水平速度叠加到惯性上（按地面摩擦衰减），up > 0 时同时被掀起来 */
+  knock(vx: number, vz: number, up = 0): void {
+    if (this.fly) return;
+    this.carry.x += vx; this.carry.y += vz;
+    if (up > 0) { this.vy = Math.max(this.vy, up); this.grounded = false; }
+  }
+
+  /** 外力推一下（风、水流）：照常被墙和深水挡住 */
+  shove(dx: number, dz: number): void {
+    if (this.fly || (dx === 0 && dz === 0)) return;
+    if (!this.tryMove(dx, dz)) { this.tryMove(dx, 0); this.tryMove(0, dz); }
+  }
 
   lookAt(target: THREE.Vector3): void {
     const e = this.eye(new THREE.Vector3());
