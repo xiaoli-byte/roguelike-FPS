@@ -137,6 +137,9 @@ category = "characters"
 lod_tris = [30000, 12000, 5000]
 lod_distance = [0, 25, 60]
 texture = 2048
+# 画质「高」时加载的 4096 高清贴图版本（<资产>@hi.glb，build_tripo_creature.py 生成）：6 米的夔用 2048 近看会糊
+# （docs/art/enemy-roster-v2.md「领主的体型与建模规格」）。前几章的原生骨架 Boss 重建时自动带上
+texture_hi = 4096
 texel_density = 512
 max_file_kb = 6000
 
