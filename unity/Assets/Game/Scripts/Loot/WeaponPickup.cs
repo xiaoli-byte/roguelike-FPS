@@ -33,11 +33,16 @@ namespace Spiritfire.Game
             model = new GameObject("Model").transform;
             model.SetParent(transform, false);
             var prefab = LootCatalog.WeaponModel(weapon.def.prefab);
+            float glow = 1.4f;
             if (prefab)
             {
                 var inst = Instantiate(prefab, model, false);
+                // 掉落模型缩放（TS worldScale：枪模按建模尺寸，地上放大到看得清）
+                inst.transform.localScale *= weapon.def.worldScale;
                 foreach (var c in inst.GetComponentsInChildren<Collider>(true)) Destroy(c);
                 foreach (var a in inst.GetComponentsInChildren<Animator>(true)) a.enabled = false;
+                // 元素：枪身纹路发元素色（MPB）
+                WeaponTint.Apply(inst, weapon.element, weapon.rarity);
                 // 居中：按包围盒把枪身中心挪到原点
                 var rs = inst.GetComponentsInChildren<Renderer>();
                 if (rs.Length > 0)
@@ -45,6 +50,8 @@ namespace Spiritfire.Game
                     var b = rs[0].bounds;
                     foreach (var r in rs) b.Encapsulate(r.bounds);
                     inst.transform.position -= b.center - model.position;
+                    // 光晕随枪身长度与稀有度放大（同 TS buildWorldModel）
+                    glow = Mathf.Max(1f, Mathf.Max(b.size.x, b.size.z) * 1.3f * (0.95f + weapon.rarity * 0.12f));
                 }
             }
             else
@@ -54,7 +61,13 @@ namespace Spiritfire.Game
                 box.transform.SetParent(model, false);
                 box.transform.localScale = new Vector3(0.12f, 0.2f, 0.6f);
             }
-            FxMaterials.GlowSprite(model, 1.4f, new Color(color.r, color.g, color.b, 0.35f));
+            FxMaterials.GlowSprite(model, glow, new Color(color.r, color.g, color.b, 0.35f));
+            // 元素光：带元素的枪再叠一层元素色小光晕
+            if (weapon.element != Element.None)
+            {
+                var ec = WeaponTint.ElementColor(weapon.element);
+                FxMaterials.GlowSprite(model, glow * 0.6f, new Color(ec.r, ec.g, ec.b, 0.3f));
+            }
             beam = FxMaterials.BeamSprite(transform, 0.6f, 3.2f, new Color(color.r, color.g, color.b, 0.3f));
             Interaction.Add(this);
         }

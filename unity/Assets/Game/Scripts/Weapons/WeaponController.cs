@@ -72,6 +72,8 @@ namespace Spiritfire.Game
         }
 
         StatSheet Stats => vitals ? vitals.stats : null;
+        /// <summary>实际数值（定义 × 品质 × 强化 × 词条 × 玩家属性，带缓存）：开火、换弹、散布、后坐都读它</summary>
+        ResolvedWeapon Resolved(WeaponInstance w) => WeaponStatsResolver.Resolve(w, Stats);
 
         void OnEnable()
         {
@@ -142,7 +144,7 @@ namespace Spiritfire.Game
         public void RefillReserve(float fraction)
         {
             foreach (var w in slots)
-                if (w != null) w.reserve = Mathf.Min(w.def.reserve, w.reserve + Mathf.CeilToInt(w.def.reserve * fraction));
+                if (w != null) w.reserve = Mathf.Min(Resolved(w).reserveCap, w.reserve + Mathf.CeilToInt(Resolved(w).reserveCap * fraction));
             Changed?.Invoke();
         }
 
@@ -227,7 +229,7 @@ namespace Spiritfire.Game
             {
                 Fire(w);
                 triggerHeld = true;
-                cooldown = 1f / Mathf.Max(0.1f, def.fireRate * (Stats?.Mult(Stat.FireRatePct) ?? 1));
+                cooldown = 1f / Mathf.Max(0.1f, Resolved(w).fireRate);
             }
 
             UpdateSpread(dt, def, now);
@@ -257,35 +259,36 @@ namespace Spiritfire.Game
 
         void UpdateSpread(float dt, WeaponDef def, float now)
         {
-            float delay = Mathf.Clamp(1.25f / Mathf.Max(0.1f, def.fireRate), 0.08f, 0.35f);
+            var R = Resolved(Active);
+            float delay = Mathf.Clamp(1.25f / Mathf.Max(0.1f, R.fireRate), 0.08f, 0.35f);
             if (now - lastShot > delay) bloom = Mathf.Max(0, bloom - def.spreadRecovery * dt);
             float baseSpread = Mathf.Lerp(def.spreadHip, def.spreadAim, aimT);
             var v = motor.Velocity;
             // 跑动 / 滞空只轻微放大散布（Three.js 版是 +60% / ×1.5）：边跑边打、跳起来打都要打得中（同 RecoilScale 注释：要射得爽）
             float moveF = 1 + Mathf.Clamp01(new Vector2(v.x, v.z).magnitude / 7.5f) * (0.2f - 0.1f * aimT);
             float airF = motor.Grounded ? 1 : 1.15f - 0.1f * aimT;
-            spreadNow = baseSpread * moveF * airF + bloom * (1 - 0.45f * aimT);
+            spreadNow = (baseSpread * moveF * airF + bloom * (1 - 0.45f * aimT)) * R.spreadMult;
             float hud = Mathf.Clamp(spreadNow + PelletCone(def), 0, 0.25f);
             HudSpread = Mathf.Lerp(HudSpread, hud, 1 - Mathf.Exp(-18f * dt));
         }
 
         float spreadNow;
-        float PelletCone(WeaponDef def) => def.pelletCone > 0 ? def.pelletCone * Mathf.Lerp(1, 0.72f, aimT) : 0;
+        float PelletCone(WeaponDef def) => def.pelletCone > 0 ? def.pelletCone * Mathf.Lerp(1, 0.72f, aimT) * (Active != null ? Resolved(Active).spreadMult : 1) : 0;
 
         void StartReload()
         {
             var w = Active;
-            if (w == null || Reloading || w.mag >= Mathf.RoundToInt(w.def.mag * (Stats?.Mult(Stat.MagPct) ?? 1)) || w.reserve <= 0) return;
-            float speed = Stats?.Mult(Stat.ReloadSpeedPct) ?? 1;
+            if (w == null || Reloading || w.mag >= Resolved(w).magCap || w.reserve <= 0) return;
+            var R = Resolved(w);
             shellReload = w.def.reload == ReloadStyle.Shell;
             reloadElapsed = 0;
             if (shellReload)
             {
-                int need = Mathf.Min(w.def.mag - w.mag, w.reserve);
-                reloadTotal = (w.def.reloadStart + w.def.shellTime * need) / speed;
-                shellTimer = w.def.reloadStart / speed;
+                int need = Mathf.Min(R.magCap - w.mag, w.reserve);
+                reloadTotal = R.reloadStart + R.shellTime * need;
+                shellTimer = R.reloadStart;
             }
-            else reloadTotal = w.def.reloadTime / speed;
+            else reloadTotal = R.reloadTime;
             reloadWeapon = w;
             shellsInserted = 0;
             GameAudio.Play("reload_start", 0.8f);
@@ -302,8 +305,8 @@ namespace Spiritfire.Game
                 return;
             }
             reloadElapsed += dt;
-            float speed = Stats?.Mult(Stat.ReloadSpeedPct) ?? 1;
-            int capacity = Mathf.RoundToInt(w.def.mag * (Stats?.Mult(Stat.MagPct) ?? 1));
+            var R = Resolved(w);
+            int capacity = R.magCap;
             if (shellReload)
             {
                 shellTimer -= dt;
@@ -312,7 +315,7 @@ namespace Spiritfire.Game
                     w.mag++;
                     w.reserve--;
                     shellsInserted++;
-                    shellTimer += w.def.shellTime / speed;
+                    shellTimer += R.shellTime;
                     // 逐发装填：每塞一发一声轻响
                     GameAudio.Play("reload_end", 0.45f, 1.3f + UnityEngine.Random.value * 0.1f);
                     Changed?.Invoke();
@@ -354,7 +357,8 @@ namespace Spiritfire.Game
             var def = w.def;
             w.mag--;
             float now = Time.time;
-            float gap = 1f / Mathf.Max(0.1f, def.fireRate);
+            var R = Resolved(w);
+            float gap = 1f / Mathf.Max(0.1f, R.fireRate);
             consecutive = now - lastShot < gap * 1.6f + 0.05f ? consecutive + 1 : 0;
             lastShot = now;
 
@@ -362,7 +366,7 @@ namespace Spiritfire.Game
             var origin = camT.position;
             var muzzle = camT.TransformPoint(Vector3.Lerp(new Vector3(0.2f, -0.13f, 0.75f), new Vector3(0, -0.08f, 0.7f), aimT));
             float cone = PelletCone(def);
-            float dmg = def.damage * w.DamageMult;
+            float dmg = R.damage;
             var tracerColor = new Color(1f, 0.82f, 0.5f, 1f);
             // 整发的方向先按散布偏一次（霰弹整团跟着走），每颗弹丸再在锥内偏
             var center = Scatter(camT.forward, camT, spreadNow);
@@ -377,7 +381,7 @@ namespace Spiritfire.Game
 
             bloom = Mathf.Min(def.spreadMax, bloom + def.spreadPerShot);
             float climb = 1 + Mathf.Min(consecutive, 12) * def.recoilClimb;
-            float k = 1 - 0.5f * aimT;
+            float k = (1 - 0.5f * aimT) * R.recoilMult;
             float pitch = def.recoilPitch * climb * k * UnityEngine.Random.Range(0.85f, 1.15f);
             float yaw = (def.recoilBias + UnityEngine.Random.Range(-1f, 1f) * def.recoilYaw) * k;
             motor.AddRecoil(pitch * RecoilScale * Mathf.Rad2Deg, yaw * RecoilScale * Mathf.Rad2Deg);
@@ -410,12 +414,18 @@ namespace Spiritfire.Game
             return null;
         }
 
-        DamageInfo HitInfo(WeaponDef def, float amount, Vector3 point, Vector3 dir) => new()
+        DamageInfo HitInfo(WeaponDef def, float amount, Vector3 point, Vector3 dir)
         {
-            amount = amount, source = DamageSource.Weapon, tags = DamageTag.Weapon, weaponUid = Active?.uid ?? 0, critMult = def.critMult, point = point, direction = dir,
-            knockback = def.knockback, element = def.element, instigator = this,
-            statusChance = def.element != Element.None ? def.elementChance : 0, subElement = def.subElement, subChance = def.subChance,
-        };
+            // 实例数值：随机元素、暴伤 / 元素率词条；词条暴击率在这里掷，掷中 forceCrit（同 TS Firing.rollCrit）
+            var R = Active != null ? Resolved(Active) : null;
+            return new DamageInfo
+            {
+                amount = amount, source = DamageSource.Weapon, tags = DamageTag.Weapon, weaponUid = Active?.uid ?? 0, critMult = R?.critMult ?? def.critMult, point = point, direction = dir,
+                knockback = def.knockback, element = R?.element ?? def.element, instigator = this,
+                statusChance = R?.elementChance ?? (def.element != Element.None ? def.elementChance : 0), subElement = def.subElement, subChance = def.subChance,
+                forceCrit = R != null && R.critChance > 0 && UnityEngine.Random.value < R.critChance,
+            };
+        }
 
         /// <summary>
         /// 投射物武器：从枪口射向准星指着的点（射线找落点，最远 60 m），有重力时按飞行时间解抛物线，
@@ -433,22 +443,31 @@ namespace Spiritfire.Game
                 break;
             }
             Vector3 vel;
+            var R = Resolved(Active);
+            float speed = R.projectileSpeed, blast = R.explosionRadius;
             if (spec.gravity > 0)
             {
-                float t = Mathf.Max(0.05f, Vector3.Distance(muzzle, aimPoint) / spec.speed);
+                float t = Mathf.Max(0.05f, Vector3.Distance(muzzle, aimPoint) / speed);
                 vel = EnemyProjectile.Ballistic(muzzle, aimPoint, t, spec.gravity);
             }
-            else vel = (aimPoint - muzzle).normalized * spec.speed;
+            else vel = (aimPoint - muzzle).normalized * speed;
             var info = HitInfo(def, dmg, muzzle, dir);
-            var p = PlayerProjectile.Spawn(muzzle, vel, info, spec, def.pierce);
+            // 池化发射（C4），爆炸半径 / 穿透用结算后的数值（W2：吃玩家属性与词条）
+            var ps = new PlayerProjectileSpec(muzzle, vel, info, spec.radius, spec.lifetime)
+            {
+                gravity = spec.gravity, explosionRadius = blast, bounces = spec.bounces, rollAfter = spec.rollAfter,
+                explodeOnExpire = spec.explodeOnExpire, homing = spec.homing, pierce = R.pierce,
+                visual = spec.visual, color = spec.color, scale = spec.scale,
+            };
+            var p = PlayerProjectile.Spawn(in ps);
             p.explodeOnExpire = spec.explodeOnExpire;
             p.bounces = spec.bounces;
             p.rollAfter = spec.rollAfter;
             p.onImpact = point =>
             {
-                ShotFx.Instance?.Impact(point, Vector3.up, def.element == Element.Fire, spec.explosionRadius * 2.2f);
-                ShotFx.Instance?.MuzzleFlash(point + Vector3.up * 0.4f, spec.explosionRadius * 1.3f);
-                Telegraph.Wave(point + Vector3.up * 0.05f, spec.explosionRadius, 20f, spec.color);
+                ShotFx.Instance?.Impact(point, Vector3.up, info.element == Element.Fire, blast * 2.2f);
+                ShotFx.Instance?.MuzzleFlash(point + Vector3.up * 0.4f, blast * 1.3f);
+                Telegraph.Wave(point + Vector3.up * 0.05f, blast, 20f, spec.color);
             };
         }
 

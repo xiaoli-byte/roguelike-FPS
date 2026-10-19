@@ -149,6 +149,21 @@ namespace Spiritfire.Game
         public bool IsHitscan => projectile == null && mode != FireMode.Beam;
         public bool IsExplosive => projectile != null && projectile.explosionRadius > 0;
         public bool IsBlade => blade != null;
+        /// <summary>每次扣扳机（或每跳）的伤害单位数：弹丸数 × 弹体数（TS hitsPerShot）</summary>
+        public int HitsPerShot => pellets * (projectile != null ? projectile.count : 1);
+        /// <summary>每秒「射击次数」（点射算每发；TS shotsPerSecond）。rate &lt; 0 = 用定义射速</summary>
+        public float ShotsPerSecond(float rate = -1) => (rate < 0 ? fireRate : rate) * burstCount;
+        /// <summary>碎刃三段连斩一轮的总时长（秒，未计攻速）；非碎刃为 0（TS comboCycleTime）</summary>
+        public float ComboCycleTime
+        {
+            get
+            {
+                if (blade == null) return 0;
+                float t = 0;
+                foreach (var s in blade.combo) t += s.duration;
+                return t;
+            }
+        }
 
         public float Falloff(float dist)
         {
@@ -201,6 +216,7 @@ namespace Spiritfire.Game
     /// <summary>
     /// 武器表门面：读 <see cref="Registry{T}"/>，外部调用（WeaponController、掉落、测试）不用改。
     /// 品质倍率与强化同 TS 的 RARITY_DAMAGE / MAX_LEVEL / LEVEL_DAMAGE；稀有度名字与颜色统一走 <see cref="Rarity"/>（D10）。
+    /// 强化费用同 TS WeaponSystem.upgradeCost：50 × (等级 + 1) × (1 + 0.3 × 章)，四舍五入；满级（+5）返回 null。
     /// </summary>
     public static class WeaponLibrary
     {
@@ -210,10 +226,34 @@ namespace Spiritfire.Game
         public static readonly Color[] RarityColor = Rarity.Colors;
         public const int MaxUpgrade = 5;
         public const float UpgradeStep = 0.12f;
+        /// <summary>强化费用：基数 50 灵石 × (等级 + 1)，每章 +30%</summary>
+        public const int UpgradeBaseCost = 50;
+        public const float UpgradeChapterStep = 0.3f;
 
         /// <summary>全部武器（按 TS 的 WEAPON_DEFS 顺序，见 Weapons/Defs 里各文件的 [Defs(order)]）</summary>
         public static IReadOnlyList<WeaponDef> All => Registry<WeaponDef>.All;
 
         public static WeaponDef Get(string id) => Registry<WeaponDef>.Get(id);
+
+        /// <summary>
+        /// 强化到下一级的费用（灵石）；已满级返回 null。chapter 从 0 起（0 = 第一章），负数按 0。
+        /// 例：第一章 +0→+1 = 50，+4→+5 = 250；第三章 +0→+1 = 80
+        /// </summary>
+        public static int? UpgradeCost(WeaponInstance w, int chapter)
+        {
+            if (w == null || w.level >= MaxUpgrade) return null;
+            return Mathf.FloorToInt(UpgradeBaseCost * (w.level + 1) * (1 + UpgradeChapterStep * Mathf.Max(0, chapter)) + 0.5f);
+        }
+
+        /// <summary>强化一级（满级时不变）；返回是否升了级</summary>
+        public static bool Upgrade(WeaponInstance w)
+        {
+            if (w == null || w.level >= MaxUpgrade) return false;
+            w.level++;
+            return true;
+        }
+
+        /// <summary>武器显示名（不含强化等级，HUD / 提示自己拼 +N）。词条框架（AF1）接上传说前缀「天命·赤铜左轮」</summary>
+        public static string DisplayName(WeaponInstance w) => w?.def?.name ?? "";
     }
 }
