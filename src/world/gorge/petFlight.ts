@@ -3,7 +3,7 @@
  * 带着会飞的灵宠（精卫、重明鸟、应龙）走到峡谷里的三处风马旗台，按 F，演出分五段：
  *   ① 起势 1.2 s：镜头从眼睛弧线拉到身侧，灵宠从侧前方飞回来，绕着燎螺旋上升，一路洒灵火火星；
  *   ② 化形 1.3 s：灵宠悬在前上方，被灵火光罩包住、带回弹地变大，地上一圈冲击环，一道闪光，羽毛 / 鳞光四散；
- *   ③ 擒起约 2.4 s（见 GRAB）：灵宠绕到身后高处俯冲下来，燎下蹲蓄力、蹬地起跳、双手抡上去，跳到最高点抓住爪子（慢动作），
+ *   ③ 擒起约 2.4 s（见 GRAB，鸟）/ 上背约 2.9 s（见 MOUNT，应龙：龙低低地悬停到身旁，燎跳上龙背骑着飞）：灵宠绕到身后高处俯冲下来，燎下蹲蓄力、蹬地起跳、双手抡上去，跳到最高点抓住爪子（慢动作），
  *      被一把带走、腿甩到后面再荡回来，镜头从侧面绕到身后；
  *   ④ 滑翔：鼠标或 A / D 转向，W 俯冲，S 拉平，峡谷阵风往上托，翅尖拖出风痕，越快视野越宽；离地 8 m 内自动拉平减速；
  *   ⑤ 落地 2.2 s：灵宠猛扇翅膀减速、把人放到地上（扬起尘土，燎屈膝缓冲、松手），再飞起来缩回原样、回到侧前方的跟随位，镜头弧线回到眼睛。
@@ -168,6 +168,14 @@ const GRAB = { swoop: 0.8, crouch: 0.5, takeoff: 0.88, push: 0.1, apex: 1.15, dr
 const GRAB_LEAVE = GRAB.takeoff + GRAB.push;
 const GRAB_V0 = Math.sqrt(2 * GRAB.gravity * GRAB.apex);
 const GRAB_CATCH = GRAB_LEAVE + GRAB_V0 / GRAB.gravity;
+/** 应龙背上坐的地方（模型根坐标系，绑定姿势）：两只翅膀根部后面一点、背脊上；双手抓的背鬃在两翼之间 */
+const SADDLE = new THREE.Vector3(0, 1.13, 0.3);
+const RIDE_GRIP = new THREE.Vector3(0, 1.2, 0.52);
+/**
+ * ③ 上背（应龙）的时间轴（秒）：arrive 前龙兜一圈、低低地悬停到燎身旁 side 米处，座位离地 seatH；crouch → takeoff 燎下蹲蓄力，
+ * 再 push 秒蹬地离地，走一道高 arc 米的弧，seat 时坐到背上；lift 起龙往前上方飞，rise 秒后交给滑翔。
+ */
+const MOUNT = { arrive: 1.0, crouch: 0.6, takeoff: 0.95, push: 0.1, seat: 1.55, lift: 1.85, rise: 1.0, side: 2.3, seatH: 1.75, arc: 0.85 };
 /** 0..1..0 的平滑小包（a 到 b 之间） */
 const bump = (t: number, a: number, b: number): number => { const u = (t - a) / (b - a); return u <= 0 || u >= 1 ? 0 : Math.sin(u * Math.PI) ** 2; };
 const clamp01 = (k: number): number => Math.min(1, Math.max(0, k));
@@ -330,7 +338,8 @@ void main() {
 
 // ───────────────────────────── 飞渡 ─────────────────────────────
 
-type Phase = 'idle' | 'rise' | 'grow' | 'grab' | 'glide' | 'land' | 'drop';
+/** grab：鸟——燎跳起来抓住爪子；mount：应龙——燎跳上龙背骑着飞 */
+type Phase = 'idle' | 'rise' | 'grow' | 'grab' | 'mount' | 'glide' | 'land' | 'drop';
 
 /** yaw：想飞的方向（鼠标和 A / D 都改它，检视页里就是第一人称的朝向） */
 export interface FlightInput { forward: number; right: number; yaw: number; release: boolean; dt: number }
@@ -376,6 +385,12 @@ export class PetFlight {
   private readonly grabOff = new THREE.Vector3();
   private readonly grabOffV = new THREE.Vector3();
   private legLen = 0.85;
+  /** 骑龙：燎的脚（模型根）在哪（由龙背上的座位推出来）、龙停在燎的哪一侧、燎的腰离脚多高、下背时从哪跳到哪 */
+  private readonly riderPos = new THREE.Vector3();
+  private mountSide = 1;
+  private hipH = 0.95;
+  private readonly seatFrom = new THREE.Vector3();
+  private readonly landAt = new THREE.Vector3();
   private readonly sparks = new Particles(700, true, 1.6);
   private readonly dust = new Particles(260, false, 1.2);
   private readonly aura: THREE.Mesh;
@@ -445,6 +460,9 @@ export class PetFlight {
       const bp = (n: string) => h.bones.get(n)?.getWorldPosition(new THREE.Vector3());
       const hip = bp('LeftUpLeg'), knee = bp('LeftLeg'), ankle = bp('LeftFoot');
       if (hip && knee && ankle) this.legLen = hip.distanceTo(knee) + knee.distanceTo(ankle);
+      // 腰（Hips）离脚多高：骑龙时把腰放到座位上
+      const hips = h.rest.get('Hips');
+      if (hips) this.hipH = hips.pos.y * this.heroScale;
       h.root.visible = false;
       this.group.add(h.root);
     });
@@ -676,6 +694,99 @@ export class PetFlight {
   /** 下蹲 crouch 时腰（模型根）要往下沉多少米，脚才还踩在地上 */
   private crouchDrop(crouch: number): number { return this.legLen * (1 - Math.cos(0.95 * crouch)); }
 
+  /**
+   * 应龙身上某一点（模型根坐标系里的绑定姿势坐标 at，挂在骨骼 bone 上，跟着那一节身体起伏）的世界坐标；
+   * quat 给出那一节身体的朝向（没有起伏时就是整只龙的朝向）。
+   */
+  private dragonPoint(bone: string, at: THREE.Vector3, out: THREE.Vector3, quat?: THREE.Quaternion): THREE.Vector3 {
+    const p = this.pet!;
+    p.root.updateMatrixWorld(true);
+    const b = p.bones.get(bone), r = p.rest.get(bone);
+    if (!b || !r) { quat?.copy(p.root.quaternion); return out.copy(at).applyMatrix4(p.root.matrixWorld); }
+    const relInv = r.rel.clone().invert();
+    const bw = b.getWorldQuaternion(new THREE.Quaternion());
+    const off = at.clone().sub(r.pos).applyQuaternion(relInv).applyQuaternion(bw).multiplyScalar(p.root.scale.x);
+    quat?.copy(bw).multiply(relInv);
+    return b.getWorldPosition(out).add(off);
+  }
+
+  /** 骨骼 name 的父骨骼相对绑定姿势转了多少（模型根坐标系）：父骨骼被转过时，子骨骼要对准的方向得先扣掉这一下 */
+  private parentTurn(h: Posable, name: string): THREE.Quaternion {
+    const b = h.bones.get(name), par = b?.parent;
+    const pr = par ? h.rest.get(par.name.replace(/^mixamorig:?/, '')) : undefined;
+    if (!b || !par || !pr) return new THREE.Quaternion();
+    h.root.updateMatrixWorld(true);
+    const cur = h.root.getWorldQuaternion(new THREE.Quaternion()).invert().multiply(par.getWorldQuaternion(new THREE.Quaternion()));
+    return cur.multiply(pr.rel.clone().invert());
+  }
+
+  /**
+   * 燎骑龙的姿势。spread：0 = 跳起来时收腿，1 = 两腿分开夹住龙身（大腿往前往外、小腿顺着龙的侧腹往下往后、绷脚尖）；
+   * lean：上身前倾；grip：手指握拢；reach：双手去抓的地方（世界坐标，龙两翼之间的背鬃），不给就垂手。
+   */
+  private poseRider(o: { spread: number; lean: number; grip: number; reach: THREE.Vector3 | null; time: number }): void {
+    const h = this.hero;
+    if (!h) return;
+    for (const [n, b] of h.bones) { const r = h.rest.get(n); if (r) b.quaternion.copy(r.local); }
+    const Y = new THREE.Vector3(0, 1, 0), Z = new THREE.Vector3(0, 0, 1);
+    // 燎自己的坐标系：前方是 heroFace（模型不一定朝 +z）
+    const F = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z).applyAxisAngle(Y, this.heroFace);
+    const side = F(1, 0, 0), sp = ease(o.spread);
+    for (const [up, low, foot] of [['LeftUpLeg', 'LeftLeg', 'LeftFoot'], ['RightUpLeg', 'RightLeg', 'RightFoot']] as const) {
+      const out = Math.sign(h.rest.get(up)?.pos.dot(side) ?? 1) || 1;
+      const thigh = F(0.12 * out, -0.75, 0.65).lerp(F(0.42 * out, -0.42, 0.8), sp);
+      const shin = F(0.05 * out, -0.85, -0.5).lerp(F(0.16 * out, -0.93, -0.33), sp);
+      aimLimb(h, up, low, foot, thigh, shin);
+      turn(h, foot, side, 0.45 * sp);
+    }
+    turn(h, 'Spine', side, o.lean * 0.4);
+    turn(h, 'Spine1', side, o.lean * 0.35);
+    turn(h, 'Spine2', side, o.lean * 0.25);
+    // 头抬起来看前方（抵掉前倾）
+    turn(h, 'Neck', side, -o.lean * 0.4);
+    turn(h, 'Head', side, -o.lean * 0.45 - 0.08);
+    for (const [s, upper, lower] of [['Left', 'LeftArm', 'LeftForeArm'], ['Right', 'RightArm', 'RightForeArm']] as const) {
+      const out = Math.sign(restDir(h, upper, lower).dot(side)) || (s === 'Left' ? 1 : -1);
+      let dir: THREE.Vector3;
+      if (o.reach) {
+        const ub = h.bones.get(upper);
+        h.root.updateMatrixWorld(true);
+        const shoulder = ub ? h.root.worldToLocal(ub.getWorldPosition(new THREE.Vector3())) : F(0.2 * out, 1.4 / this.heroScale, 0);
+        // 两只手分开一点，抓在背鬃两边
+        const tgt = h.root.worldToLocal(o.reach.clone()).addScaledVector(side, 0.1 * out / this.heroScale);
+        dir = tgt.sub(shoulder).normalize();
+      } else dir = F(0.16 * out, -1, 0.05).normalize();
+      // 胳膊的父骨骼（肩、脊椎）已经跟着前倾转过了，方向先扣掉这一下
+      aim(h, upper, lower, dir.applyQuaternion(this.parentTurn(h, upper).invert()));
+      const fb = h.bones.get(lower), fr = h.rest.get(lower);
+      if (fb && fr) fb.quaternion.copy(fr.local);
+      for (const f of ['Index', 'Middle', 'Ring', 'Pinky']) for (let j = 1; j <= 3; j++) turn(h, `${s}Hand${f}${j}`, Z, -out * o.grip * (j === 1 ? 0.8 : 1.1));
+      turn(h, `${s}HandThumb2`, Y, out * o.grip * 0.6);
+    }
+  }
+
+  /** 把燎放到龙背上：腰（Hips）落在座位上，朝向跟着背上那一节身体（起伏、侧倾都跟着），再摆骑乘的姿势；sink = 落座时往下压多少米 */
+  private seatRider(o: { spread: number; lean: number; grip: number; reach: THREE.Vector3 | null; time: number }, sink = 0): void {
+    const h = this.hero;
+    if (!h) return;
+    const q = new THREE.Quaternion();
+    const seat = this.dragonPoint('spine2', SADDLE, new THREE.Vector3(), q);
+    h.root.quaternion.copy(q).multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), -this.heroFace));
+    const up = new THREE.Vector3(0, 1, 0).applyQuaternion(q);
+    h.root.position.copy(seat).sub(this.hipsOffset(h.root.quaternion)).addScaledVector(up, -sink);
+    this.riderPos.copy(h.root.position);
+    this.poseRider(o);
+  }
+
+  /** 燎的腰（Hips）相对脚（模型根）的位置（世界尺度，按朝向 q 转过）：把腰放到座位上时用 */
+  private hipsOffset(q: THREE.Quaternion): THREE.Vector3 {
+    const hp = this.hero?.rest.get('Hips');
+    return hp ? hp.pos.clone().multiplyScalar(this.heroScale).applyQuaternion(q) : new THREE.Vector3(0, this.hipH, 0).applyQuaternion(q);
+  }
+
+  /** 双手去抓的地方：两翼之间的背鬃 */
+  private ridingGrip(out: THREE.Vector3): THREE.Vector3 { return this.dragonPoint('chest', RIDE_GRIP, out); }
+
   private placeHero(lean = 0, swingT = 0): void {
     const h = this.hero!;
     h.root.position.copy(this.pos);
@@ -788,7 +899,7 @@ export class PetFlight {
   private heroVisibility(): void {
     const h = this.hero;
     if (!h) return;
-    const head = this.pos.clone().add(new THREE.Vector3(0, EYE, 0));
+    const head = h.root.position.clone().add(new THREE.Vector3(0, EYE, 0));
     h.root.visible = this.cam.distanceTo(head) > 1.4;
   }
 
@@ -1022,7 +1133,8 @@ export class PetFlight {
    */
   update(time: number, inp: FlightInput, eye: THREE.Vector3, feet: THREE.Vector3): THREE.Vector3 | null {
     // 擒起抓住的那一下前后放慢到三成（演出里的东西都按放慢后的时间走，火星也是）
-    const slow = this.phase === 'grab' ? 1 - 0.68 * bump(this.t, GRAB_CATCH - 0.14, GRAB_CATCH + 0.24) : 1;
+    const slow = this.phase === 'grab' ? 1 - 0.68 * bump(this.t, GRAB_CATCH - 0.14, GRAB_CATCH + 0.24)
+      : this.phase === 'mount' ? 1 - 0.5 * bump(this.t, MOUNT.seat - 0.18, MOUNT.seat + 0.2) : 1;
     const dt = inp.dt * slow;
     this.updateFx(dt, time);
     if (!this.active) {
@@ -1106,11 +1218,124 @@ export class PetFlight {
       this.look.lerpVectors(this.lookFrom, subj, ease(k * 1.5));
       this.heroVisibility();
       if (k >= 1) {
-        this.phase = 'grab'; this.t = 0; this.petFrom.copy(p.root.position);
+        this.phase = S.kind === 'dragon' ? 'mount' : 'grab'; this.t = 0; this.petFrom.copy(p.root.position);
         this.camFrom.copy(this.cam); this.lookFrom.copy(this.look);
         this.aura.visible = false;
       }
       return this.pos.clone();
+    }
+
+    if (this.phase === 'mount') {
+      // ③ 上背（应龙，时间轴见 MOUNT）：龙兜一圈、低低地悬停到燎身旁，侧身对着他；燎抬头看着它，下蹲蓄力、蹬地从侧面跳起，
+      // 空中把腿分开，跨坐到龙背上（龙往下一沉，燎的身子也压一下），抓住两翼之间的背鬃；龙猛扇翅膀往前上方冲，镜头从侧面绕到身后上方
+      const M = MOUNT, tau = this.t, g0 = this.start0.y, Y = new THREE.Vector3(0, 1, 0);
+      const scale = p.root.scale.x, face = Math.atan2(fwd.x, fwd.z);
+      if (!this.catchReady) {
+        // 龙停哪一边：两边都量，挑空旷的一边（不是上坡、中间不隔东西）；镜头放在燎的另一边，隔着燎看龙
+        let best = -1e9;
+        for (const sg of [1, -1]) {
+          const at = this.start0.clone().addScaledVector(side, sg * M.side);
+          const score = this.clearRun(this.start0.clone().add(new THREE.Vector3(0, 1.6, 0)), at.clone().add(new THREE.Vector3(0, 1.6, 0)))
+            - Math.max(0, this.terrainAt(at.x, at.z) - g0) * 0.5;
+          if (score > best + 0.02) { best = score; this.mountSide = sg; }
+        }
+        this.camSide = -this.mountSide;
+        this.grabOff.copy(this.cam).sub(this.start0);
+        this.grabOffV.set(0, 0, 0);
+        this.riderPos.copy(this.start0);
+        this.catchReady = true;
+      }
+      const sideD = side.clone().multiplyScalar(this.mountSide);
+      // 龙悬停的位置：在燎身旁 side 米，座位离地 seatH（龙的根在脚下，座位在它上面 SADDLE.y × 缩放）
+      const low = this.start0.clone().addScaledVector(sideD, M.side).addScaledVector(fwd, -0.3);
+      low.y = Math.max(g0, this.terrainAt(low.x, low.z)) + M.seatH - SADDLE.y * scale;
+      if (tau < M.arrive) {
+        // 从化形的前上方兜到身后、再低低地滑到燎身旁，最后抬头刹住
+        const k = tau / M.arrive, e = ease(k), flareK = ease((k - 0.55) / 0.45);
+        const mid = low.clone().addScaledVector(fwd, -7).addScaledVector(sideD, 3).add(new THREE.Vector3(0, 3.5, 0));
+        p.root.position.copy(bezier(this.petFrom, mid, low, e));
+        this.body(0.95 - 0.5 * flareK, -0.35 * Math.sin(k * Math.PI) * this.mountSide, -0.3 * flareK, face, 0);
+        this.flapWings(time, (0.9 + 1.1 * flareK) * slow, 0.6 + 0.4 * flareK);
+      } else if (tau < M.lift) {
+        // 悬停等人：轻轻上下浮；人坐上去的那一下往下一沉
+        p.root.position.copy(low).add(new THREE.Vector3(0, 0.08 * Math.sin(tau * 5) - 0.32 * bump(tau, M.seat - 0.04, M.seat + 0.45), 0));
+        this.body(0.45, 0, 0, face, 0);
+        this.flapWings(time, 1.6 * slow, 0.8);
+      } else {
+        // 起飞：猛扇翅膀往前上方冲，速度慢慢加到滑翔的起始速度；前面是上坡就爬得更急
+        const tl = tau - M.lift, kl = clamp01(tl / M.rise);
+        if (tl - dt <= 0) this.pos.copy(p.root.position);
+        const hv = S.speed * 0.75 * ease(kl);
+        const ahead = this.ground(this.pos.x + fwd.x * (hv + 2), this.pos.z + fwd.z * (hv + 2), this.pos.y + 30);
+        const vy = Math.max(3.4 * Math.sin(Math.min(1, tl / 0.6) * Math.PI * 0.5) * (1 - 0.15 * kl), (ahead + 1.5 - this.pos.y) / 0.8);
+        this.vel.set(fwd.x * hv, vy, fwd.z * hv);
+        this.pos.addScaledVector(this.vel, dt);
+        // 离地下限从悬停时的高度（龙根在地面以下一点，腿收着、肚子贴着地）慢慢过渡到 0.3 m，不会一下被顶上去
+        const hoverDepth = low.y - Math.max(g0, this.terrainAt(low.x, low.z));
+        this.pos.y = Math.max(this.pos.y, this.ground(this.pos.x, this.pos.z, this.pos.y + 1) + hoverDepth + (0.3 - hoverDepth) * kl);
+        p.root.position.copy(this.pos);
+        this.body(0.45 + 0.55 * ease(kl), 0, -0.3 * (1 - kl), face, 0);
+        this.flapWings(time, 2.1 - 0.8 * kl, 1.0 - 0.3 * kl);
+        this.wingTrails(0.4 * kl);
+        this.speed = this.vel.length();
+      }
+      // ── 燎 ──
+      const q = new THREE.Quaternion();
+      const seat = this.dragonPoint('spine2', SADDLE, new THREE.Vector3(), q);
+      const seatRoot = seat.clone().sub(this.hipsOffset(q.clone().multiply(new THREE.Quaternion().setFromAxisAngle(Y, -this.heroFace))));
+      const gripAt = this.ridingGrip(new THREE.Vector3());
+      const h = this.hero!;
+      const leave = M.takeoff + M.push;
+      if (tau < leave) {
+        // 站着看龙 → 下蹲蓄力、手往后摆 → 蹬地
+        const kC = clamp01((tau - M.crouch) / (M.takeoff - M.crouch)), kP = clamp01((tau - M.takeoff) / M.push);
+        const crouch = tau < M.takeoff ? ease(kC) : 1 - kP * kP;
+        this.riderPos.copy(this.start0).setY(g0 - this.crouchDrop(crouch));
+        h.root.position.copy(this.riderPos);
+        h.root.rotation.set(0, face - this.heroFace, 0);
+        this.poseHeroFull({ arms: tau < M.crouch ? 0.25 * (1 - ease(tau / 0.35)) : 0, back: tau < M.takeoff ? ease(kC) : 1 - kP, crouch, look: seat, time });
+        if (tau >= M.takeoff && tau - dt < M.takeoff) this.puffDust(this.start0, 16, 4);
+      } else if (tau < M.seat) {
+        // 空中：从地上到背上走一道弧（越过龙背），身子转到龙的朝向，腿慢慢分开，手伸向背鬃
+        const u = (tau - leave) / (M.seat - leave);
+        this.riderPos.lerpVectors(this.start0, seatRoot, u).add(new THREE.Vector3(0, M.arc * 4 * u * (1 - u), 0));
+        h.root.position.copy(this.riderPos);
+        const q0 = new THREE.Quaternion().setFromAxisAngle(Y, face - this.heroFace);
+        const q1 = q.clone().multiply(new THREE.Quaternion().setFromAxisAngle(Y, -this.heroFace));
+        h.root.quaternion.slerpQuaternions(q0, q1, ease(u));
+        this.poseRider({ spread: ease(clamp01((u - 0.15) / 0.75)), lean: 0.1 + 0.25 * u, grip: 0, reach: gripAt, time });
+      } else {
+        // 坐稳：落座压一下（腰往下沉一点、上身前倾），抓住背鬃
+        const ts = tau - M.seat, squash = bump(ts, -0.02, 0.4);
+        this.seatRider({ spread: 1, lean: 0.35 + 0.25 * squash, grip: ease(clamp01(ts / 0.1)), reach: gripAt, time }, 0.07 * squash);
+        if (ts - dt <= 0) {
+          this.burstSparks(seat, 40, 2.8, 0.13, 0.7, this.fireCore, 0.4);
+          this.burstSparks(seat, 18, 1.8, 0.2, 0.9, this.shardCol, 0.2);
+          this.flash.position.copy(seat); this.flash.intensity = 12;
+        }
+      }
+      // ── 镜头：燎的另一边、略高，隔着燎看龙（燎在前景、龙在后面）；起飞后慢慢绕到身后上方，接上滑翔的追尾机位 ──
+      // （龙飞来时镜头主要盯着燎，龙到了再把两个一起框进来；燎起跳后机位升高到龙背上方 4 m 多、往龙头前方挪，
+      // 从前上方往下看他落座——平视的话，龙靠镜头这边举起的翅膀正好挡住背上的人）
+      const chest = this.riderPos.clone().add(new THREE.Vector3(0, 1.1, 0));
+      const subj = chest.clone().lerp(seat, 0.15 + 0.3 * ease(clamp01((tau - 0.5) / (M.arrive - 0.5))));
+      const rise = ease(clamp01((tau - M.takeoff) / 0.6));
+      const want = this.lockedSide(subj, fwd, 6.8 - 1.0 * rise, 1.2 + 2.8 * rise, 0.8 + 4.0 * rise, new THREE.Vector3());
+      const kc = ease(clamp01((tau - M.lift) / M.rise));
+      if (kc > 0) want.lerp(this.shot(seat.clone().add(new THREE.Vector3(0, 1.2, 0)), fwd, 10, 1.6, 3.0, new THREE.Vector3(), true), kc);
+      dampVec(this.grabOff, want.sub(this.riderPos), this.grabOffV, 0.3, dt, 30);
+      this.cam.copy(this.riderPos).add(this.grabOff);
+      this.look.lerpVectors(this.lookFrom, subj, ease(clamp01(tau / 0.75)));
+      // 看的点等镜头绕到身后了才往前移（镜头还在龙前面时就往前看，龙会跑到画面边上）
+      if (kc > 0) this.look.lerp(seat.clone().add(new THREE.Vector3(0, 1.2, 0)).addScaledVector(fwd, 6), kc * kc);
+      this.fov += (72 - 4 * bump(tau, M.seat - 0.3, M.seat + 0.3) - this.fov) * Math.min(1, dt * 8);
+      this.keepCamAbove();
+      this.heroVisibility();
+      if (tau >= M.lift + M.rise) {
+        this.phase = 'glide'; this.t = 0;
+        for (const t of this.trails) t.reset();
+      }
+      return this.riderPos.clone();
     }
 
     if (this.phase === 'grab') {
@@ -1261,7 +1486,8 @@ export class PetFlight {
     }
 
     if (this.phase === 'glide') {
-      // ④ 滑翔
+      // ④ 滑翔（鸟：燎挂在爪子下面，pos 是燎的脚；应龙：燎骑在背上，pos 是龙的脚）
+      const riding = S.kind === 'dragon';
       const turnRate = 1.1;
       let dYaw = Math.atan2(Math.sin(inp.yaw - this.heading), Math.cos(inp.yaw - this.heading));
       dYaw = THREE.MathUtils.clamp(dYaw, -turnRate * dt, turnRate * dt);
@@ -1297,18 +1523,29 @@ export class PetFlight {
       const g2 = this.ground(this.pos.x, this.pos.z, this.pos.y + 0.5);
       this.agl = this.pos.y - g2;
       if (this.agl < 0.3) this.pos.y = g2 + 0.3;
-      this.poseHeroFull({ arms: 1, tuck: 0.35, swing: 0.3 + 0.2 * Math.min(1, this.speed / 18), grip: 1, time });
-      this.placeHero(0.1, this.t);
-      this.body(1, this.bank * 0.6, 0, undefined, 1);
-      this.flapWings(time, 0.65 + 0.4 * Math.min(1, this.speed / 20) + this.flare * 0.8, 0.55 + this.flare * 0.3);
-      this.snapPetToHands();
+      const flap = 0.65 + 0.4 * Math.min(1, this.speed / 20) + this.flare * 0.8, flapAmp = 0.55 + this.flare * 0.3;
+      if (riding) {
+        // 应龙：龙在 pos（脚下），燎坐在背上、上身随速度更前倾
+        p.root.position.copy(this.pos);
+        this.body(1, this.bank * 0.6, 0, undefined, 0);
+        this.flapWings(time, flap, flapAmp);
+        this.seatRider({ spread: 1, lean: 0.35 + 0.12 * Math.min(1, this.speed / 20), grip: 1, reach: this.ridingGrip(new THREE.Vector3()), time });
+      } else {
+        this.poseHeroFull({ arms: 1, tuck: 0.35, swing: 0.3 + 0.2 * Math.min(1, this.speed / 18), grip: 1, time });
+        this.placeHero(0.1, this.t);
+        this.body(1, this.bank * 0.6, 0, undefined, 1);
+        this.flapWings(time, flap, flapAmp);
+        this.snapPetToHands();
+      }
       this.wingTrails(Math.min(1, this.speed / 18) * 0.55);
       if (this.wind() > 0.3 && this.rand() < 0.4) this.burstSparks(p.root.position.clone().addScaledVector(f, -2), 1, 1.5, 0.1, 0.7, this.fireEdge, 0.4);
       this.fov += ((72 + 12 * Math.min(1, Math.max(0, (this.speed - 10) / 12))) - this.fov) * Math.min(1, dt * 2);
-      const want = this.shot(this.pos.clone().add(new THREE.Vector3(0, 2.0, 0)), f, 7.5, 2.6, 1.0, new THREE.Vector3());
+      // 追尾镜头：鸟——对着挂在爪子下的燎；应龙——对着背上的燎，退得更远、更高（龙大，要整只看得见）
+      const subj = riding ? this.riderPos.clone().add(new THREE.Vector3(0, 1.3, 0)) : this.pos.clone().add(new THREE.Vector3(0, 2.0, 0));
+      const want = riding ? this.shot(subj, f, 10, 1.6, 3.0, new THREE.Vector3()) : this.shot(subj, f, 7.5, 2.6, 1.0, new THREE.Vector3());
       this.cam.lerp(want, Math.min(1, dt * 4));
       this.keepCamAbove();
-      this.look.lerp(this.pos.clone().add(new THREE.Vector3(0, 2, 0)).addScaledVector(f, 7), Math.min(1, dt * 6));
+      this.look.lerp(subj.clone().addScaledVector(f, riding ? 6 : 7), Math.min(1, dt * 6));
       this.heroVisibility();
       if (this.t > 1.2 && this.agl < 1.1) {
         this.phase = 'land'; this.t = 0;
@@ -1318,7 +1555,84 @@ export class PetFlight {
         this.thirdPerson = false;
         if (this.hero) this.hero.root.visible = false;
       }
-      return this.pos.clone();
+      return riding ? this.riderPos.clone() : this.pos.clone();
+    }
+
+    if (this.phase === 'land' && S.kind === 'dragon') {
+      // ⑤ 落地（应龙）：前 0.8 s 龙猛扇翅膀刹住、四爪放低落到地上（扬尘 + 冲击环）；燎从镜头那一侧跳下来、屈膝缓冲，
+      // 龙再飞起来缩回原样、回到跟随位；镜头弧线回到燎的眼睛
+      const D1 = 0.8, J = 0.65, D2 = 1.9;
+      const f = new THREE.Vector3(-Math.sin(this.heading), 0, -Math.cos(this.heading)), sv = new THREE.Vector3(-f.z, 0, f.x);
+      const g = this.ground(this.pos.x, this.pos.z, this.pos.y + 0.5);
+      const gripAt = this.ridingGrip(new THREE.Vector3());
+      if (this.t < D1) {
+        const k = this.t / D1;
+        this.pos.addScaledVector(f, Math.max(0, 1 - k) * this.speed * 0.5 * dt);
+        this.pos.y = Math.max(g, this.pos.y - (this.pos.y - g) * Math.min(1, dt * 7));
+        p.root.position.copy(this.pos);
+        this.body(1 - 0.55 * k, 0, -0.4 * k, undefined, 0);
+        this.flapWings(time, 2.2, 1.0);
+        this.seatRider({ spread: 1, lean: 0.35 - 0.15 * k, grip: 1, reach: gripAt, time });
+        if (this.t + dt >= D1) {
+          this.pos.y = g;
+          this.puffDust(this.pos, 34, 7); this.shockRing(this.pos);
+          this.petFrom.copy(this.pos);
+          this.seatFrom.copy(this.riderPos);
+          // 跳到镜头那一侧的地上（看得见人落地），离龙 2.4 m
+          this.landAt.copy(this.pos).addScaledVector(sv, 2.4 * this.camSide);
+          this.landAt.y = this.ground(this.landAt.x, this.landAt.z, this.landAt.y + 3);
+        }
+        this.wingTrails(0);
+        this.heroVisibility();
+        return this.riderPos.clone();
+      }
+      const tt = this.t - D1, h = this.hero!;
+      // ── 燎：从背上跳下来（一道弧，腿并拢、手松开），落地屈膝缓冲 ──
+      if (tt < J) {
+        const u = tt / J;
+        this.riderPos.lerpVectors(this.seatFrom, this.landAt, u).add(new THREE.Vector3(0, 0.9 * 4 * u * (1 - u), 0));
+        const q = new THREE.Quaternion();
+        this.dragonPoint('spine2', SADDLE, new THREE.Vector3(), q);
+        const q0 = q.clone().multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), -this.heroFace));
+        const q1 = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), this.heading + Math.PI - this.heroFace);
+        h.root.quaternion.slerpQuaternions(q0, q1, ease(u));
+        h.root.position.copy(this.riderPos);
+        this.poseRider({ spread: 1 - ease(u), lean: 0.2 * (1 - u), grip: Math.max(0, 1 - u * 4), reach: u < 0.3 ? gripAt : null, time });
+      } else {
+        const absorb = 0.6 * bump(tt - J, -0.05, 0.45);
+        this.riderPos.copy(this.landAt);
+        this.poseHeroFull({ arms: 0, crouch: absorb, time });
+        h.root.position.copy(this.riderPos);
+        h.root.position.y -= this.crouchDrop(absorb);
+        h.root.rotation.set(0, this.heading + Math.PI - this.heroFace, 0);
+        if (tt - dt < J) this.puffDust(this.landAt, 14, 3.5);
+      }
+      // ── 龙：等人下去后飞起来，缩回原样飞到跟随位；缩小那一下洒一圈光点 ──
+      const k = clamp01((tt - 0.4) / (D2 - 0.4)), e = ease(k);
+      const eyeNow = this.landAt.clone().add(new THREE.Vector3(0, EYE, 0));
+      const slot = this.followSlot(eyeNow, this.heading, 1);
+      slot.y = Math.max(slot.y, this.terrainAt(slot.x, slot.z) + 0.55 + 0.45 * S.carryHeight);
+      const upHigh = this.petFrom.clone().add(new THREE.Vector3(0, 6, 0)).addScaledVector(f, 4);
+      p.root.position.copy(bezier(this.petFrom, upHigh, slot, e));
+      this.setScale(big + (small - big) * ease(k * 1.5));
+      if (k > 0.3 && k - dt / (D2 - 0.4) <= 0.3) this.burstSparks(p.root.position.clone().add(new THREE.Vector3(0, 1.5, 0)), 60, 3.5, 0.14, 0.9, this.fireCore, 0.4);
+      this.body(k > 0 ? 0.55 + 0.3 * Math.sin(k * Math.PI) : 0.45, 0, 0, undefined, 0);
+      this.flapWings(time, k > 0 ? 1.5 : 1.3, 0.8);
+      // ── 镜头：人落地后（0.6 s 起）弧线回到眼睛 ──
+      const kc = clamp01((tt - 0.6) / (D2 - 0.6)), ec = ease(kc);
+      if (kc <= 0) { this.camFrom.copy(this.cam); this.lookFrom.copy(this.look); }
+      else {
+        const mid = eyeNow.clone().addScaledVector(f, -2.8).add(new THREE.Vector3(0, 1.4, 0));
+        mid.y = Math.max(mid.y, this.terrainAt(mid.x, mid.z) + 2);
+        this.cam.copy(bezier(this.camFrom, mid, eyeNow, ec));
+        if (kc < 0.85) this.keepCamAbove();
+        this.look.lerpVectors(this.lookFrom, eyeNow.clone().addScaledVector(f, 10), ec);
+      }
+      this.fov += (72 - this.fov) * Math.min(1, dt * 3);
+      this.wingTrails(0);
+      this.heroVisibility();
+      if (tt >= D2) { this.pos.copy(this.landAt); this.finish(); }
+      return this.riderPos.clone();
     }
 
     if (this.phase === 'land') {
