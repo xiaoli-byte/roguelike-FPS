@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_PetPart_YinglongPearl",
+  "kind": "static",
+  "class": "pet_attachment",
+  "category": "attachments",
+  "bind": {
+    "source": "pet",
+    "id": "yinglong",
+    "attachment": "pearl"
+  },
+  "keepGlow": "attachments",
+  "lodDistance": [
+    0,
+    14
+  ],
+  "budget": {
+    "lodTris": [
+      1200,
+      400
+    ],
+    "texture": 512,
+    "maxFileKb": 400
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -0.07930580526590347,
+      -0.07869431376457214,
+      -0.07942868024110794
+    ],
+    "max": [
+      0.07934167236089706,
+      0.07988923043012619,
+      0.07930723577737808
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_PetPart_YinglongPearl_LOD0",
+      "lod": 0,
+      "tris": 1176,
+      "verts": 719,
+      "materials": [
+        "M_PetPart_YinglongPearl"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_PetPart_YinglongPearl_LOD1",
+      "lod": 1,
+      "tris": 392,
+      "verts": 277,
+      "materials": [
+        "M_PetPart_YinglongPearl"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_PetPart_YinglongPearl",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": false,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_PetPart_YinglongPearl_BC.png",
+        "N": "Textures/T_PetPart_YinglongPearl_N.png",
+        "ORM": "Textures/T_PetPart_YinglongPearl_ORM.png",
+        "E": "Textures/T_PetPart_YinglongPearl_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/attachments/SM_PetPart_YinglongPearl.glb",
+    "sha256": "485796eb368d9153e3fc8da6703f6b952ee6238676152635cce4ac765b2d138a",
+    "hiRes": false,
+    "version": {
+      "build": 6
+    },
+    "generator": {
+      "tool": "Blender (bl_proc_pet_part.py)",
+      "mode": "procedural",
+      "recipe": "cloud_pearl",
+      "seed": 3
+    },
+    "license": "project-original procedural asset"
+  },
+  "exported": "2026-10-19 00:20:48"
+}

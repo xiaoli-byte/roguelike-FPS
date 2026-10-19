@@ -68,7 +68,8 @@ namespace Spiritfire.Game
             var visual = new GameObject("Model").transform;
             visual.SetParent(spirit, false);
             var model = PetVisuals.Build(def, visual);
-            float s = Mathf.Min(1f, 0.9f / Mathf.Max(0.3f, model.size));
+            model.Display(); // 骨骼动画：原地待机，转圈不触发步态 / 脚步 IK
+            float s =Mathf.Min(1f, 0.9f / Mathf.Max(0.3f, model.size));
             visual.localScale = Vector3.one * s;
             var b = PetVisuals.LocalBounds(spirit, visual.gameObject);
             visual.localPosition = -b.center;

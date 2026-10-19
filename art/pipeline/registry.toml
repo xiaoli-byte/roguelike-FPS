@@ -3255,3 +3255,131 @@ style_theme = "zhurong"
 keep_glow = "none"
 material = { roughness = 0.65, metallic = 0.35 }
 brief = """A very tall square buttress pier 2.4m wide, 18m tall, 2.4m deep that stands against a huge hall wall: a stepped dark charcoal basalt plinth, a tall black iron shaft with a long recessed deep vermilion lacquer strip running up its front face, three heavy aged bronze bands spaced up the shaft, one thin crack of glowing molten orange lava running up from the plinth (painted as an opaque bright surface), and a chunky bronze capital crowned with a short square iron finial. Simple, bold and readable from far away; one connected piece standing on the ground."""
+
+# ───────────── 灵宠（docs/pet-system.md 第 7 节；设计稿 / 四视图在 art/source/characters/_design/pets/<key>/，用户 2026-10-18 通过）─────────────
+# 和第一章 Tripo 敌人（镇墓兽、青鸟、火鸦……）同一条原生骨架路线：Tripo 智能网格 + 贴图（不用 Tripo 自动绑骨）→
+#   python art/pipeline/build_tripo_creature.py SK_Pet_<名>（creature_rigs/SK_Pet_<名>.json：语义骨骼、权重、ORM/AO、LOD、校验）
+#   → --publish → unity_export.py → Unity Sync。不要对它们跑 assetctl build / review / publish。
+# Tripo 原件入库在 art/source/pets/<ID>/03_model/<ID>_tripo_original.glb（v2 网格，_v2 后缀）；bind.source = "pet"。
+
+[assets.SK_Pet_Dangkang]
+display = "当康"
+source_provider = "tripo"
+kind = "skeletal"
+class = "pet"
+blockout = { source = "pet", id = "dangkang" }
+material = { roughness = 0.8, metallic = 0.0 }
+keep_glow = "all"
+matid_hint = "The whole creature is fur, hooves, tusks, rice-grain stalks and red cord: all NON-METAL (blue). Only the round coin charm on the cord is METAL (red)."
+brief = """A small chubby auspicious piglet-boar spirit with a golden rice-grain crest, wheat-gold fur, a dark russet bristle ridge and dark brown legs, small tusks, a red cord knot holding a glowing bronze coin charm."""
+
+[assets.SK_Pet_Huan]
+display = "讙"
+source_provider = "tripo"
+kind = "skeletal"
+class = "pet"
+blockout = { source = "pet", id = "huan" }
+material = { roughness = 0.85, metallic = 0.0 }
+keep_glow = "all"
+matid_hint = "The whole cat is fur, eye and leather collar: all NON-METAL (blue). Only the three bells on the collar are METAL (red)."
+brief = """A lean one-eyed wild mountain cat spirit with three bushy tails, dark charcoal fur with silver stripes, tufted lynx ears and a collar of three bronze bells (middle bell glowing)."""
+
+[assets.SK_Pet_Jingwei]
+display = "精卫"
+source_provider = "tripo"
+kind = "skeletal"
+class = "pet"
+blockout = { source = "pet", id = "jingwei" }
+material = { roughness = 0.85, metallic = 0.0 }
+keep_glow = "all"
+matid_hint = "The whole bird is feathers, beak, feet and a stone: all NON-METAL (blue). Nothing on it is metal."
+brief = """A crow-sized black-and-crimson songbird with ember-orange wing tips, white beak, red feet and a glowing ember-cracked pebble in its beak, wings spread flat for rigging."""
+
+[assets.SK_Pet_Chongming]
+display = "重明鸟"
+source_provider = "tripo"
+kind = "skeletal"
+class = "pet"
+blockout = { source = "pet", id = "chongming" }
+material = { roughness = 0.8, metallic = 0.0 }
+keep_glow = "all"
+matid_hint = "Feathers, beak, eyes and feet are NON-METAL (blue). Only the small coin charm on the chest is METAL (red)."
+brief = """A deep lapis-blue and gold double-pupilled pheasant with long gold-to-indigo tail feathers, a gold crest and glowing cyan double pupils, wings spread flat for rigging."""
+
+[assets.SK_Pet_Suanni]
+display = "狻猊"
+source_provider = "tripo"
+kind = "skeletal"
+class = "pet"
+blockout = { source = "pet", id = "suanni" }
+material = { roughness = 0.7, metallic = 0.0 }
+keep_glow = "all"
+matid_hint = "The mane, body, ribbon and bell rope are NON-METAL (blue). The incense burner on the back and the bell are METAL bronze (red)."
+brief = """A stout guardian lion-dog with a huge curly jade-green mane, a dark aged-bronze body, a bronze incense burner (ding) on its back with a glowing ember inside, and a red ribbon with a bronze bell."""
+
+[assets.SK_Pet_Zheng]
+display = "狰"
+source_provider = "tripo"
+kind = "skeletal"
+class = "pet"
+blockout = { source = "pet", id = "zheng" }
+material = { roughness = 0.8, metallic = 0.0 }
+keep_glow = "all"
+matid_hint = "The whole leopard is fur, horn and claws: all NON-METAL (blue). Nothing on it is metal."
+brief = """A lean crimson leopard with black rosettes, a dark face mask and paws, one curved flint-grey horn with a glowing tip, and exactly five long whip tails."""
+
+[assets.SK_Pet_Baize]
+display = "白泽"
+source_provider = "tripo"
+kind = "skeletal"
+class = "pet_mythic"
+blockout = { source = "pet", id = "baize" }
+material = { roughness = 0.8, metallic = 0.0 }
+keep_glow = "all"
+matid_hint = "Fur, mane, beard, horns and the jade pendant are NON-METAL (blue). The gold cloud ornaments on the shoulders are METAL gold (red)."
+brief = """The legendary sage beast Baize: lion-goat body in deep slate-indigo with pale gold cloud markings, white mane and beard, curved dark-gold horns, a glowing red-gold third eye and small golden flank eyes, gold shoulder ornaments and a jade pendant."""
+
+[assets.SK_Pet_Yinglong]
+display = "应龙"
+source_provider = "tripo"
+kind = "skeletal"
+class = "pet_mythic"
+blockout = { source = "pet", id = "yinglong" }
+material = { roughness = 0.6, metallic = 0.0 }
+keep_glow = "all"
+matid_hint = "Scales, wings, mane, whiskers and antlers are NON-METAL (blue). Nothing on it is metal; the pearl is a glowing gem (non-metal)."
+brief = """A young winged Chinese loong: long jade-green serpentine body with a deep-teal back and gold belly, large feathered teal-to-blue wings, deer antlers, white mane and whiskers, four small clawed legs and a glowing pearl, body stretched horizontally for rigging."""
+
+# 灵宠的独立部件（用户 2026-10-18：精卫的火石和喙熔在一起要分离；应龙的宝珠也分离，「杀蚩尤」时升起召雷）。
+# 静态网格：python art/pipeline/build_hero_part.py <ID> [--publish]（part.source = 入库的 Tripo 原件 GLB，size = 最大边长）
+[assets.SM_PetPart_JingweiPebble]
+display = "精卫·火石"
+source_provider = "procedural"
+kind = "static"
+class = "pet_attachment"
+blockout = { source = "pet", id = "jingwei", attachment = "pebble" }
+material = { roughness = 0.85, metallic = 0.0 }
+brief = """The small round grey stone with glowing ember-orange cracks that Jingwei carries in its beak."""
+
+[assets.SM_PetPart_JingweiPebble.part]
+# Tripo 版（任务 8f49deb9…）成了一块扁片、只有一侧边缘发光，改由 Blender 程序化生成（blender/bl_proc_pet_part.py）
+procedural = "lava_pebble"
+seed = 7
+design = "art/source/characters/_design/pets/pet_jingwei_pebble/TV_pet_jingwei_pebble_v001.png"
+size = 0.08
+
+[assets.SM_PetPart_YinglongPearl]
+display = "应龙·宝珠"
+source_provider = "procedural"
+kind = "static"
+class = "pet_attachment"
+blockout = { source = "pet", id = "yinglong", attachment = "pearl" }
+material = { roughness = 0.4, metallic = 0.0 }
+brief = """The round golden-white glowing dragon pearl with a faint cloud pattern that Yinglong holds in its front claw."""
+
+[assets.SM_PetPart_YinglongPearl.part]
+# Tripo 版（任务 d04588f5…）成了蛋形、祥云糊成一片，改由 Blender 程序化生成（blender/bl_proc_pet_part.py）
+procedural = "cloud_pearl"
+seed = 3
+design = "art/source/characters/_design/pets/pet_yinglong_pearl/TV_pet_yinglong_pearl_v002.png"
+size = 0.16

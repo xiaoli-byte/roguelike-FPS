@@ -11,6 +11,8 @@ namespace Spiritfire.Game
     /// 被动（<see cref="OnBind"/> 登记、<see cref="Tick"/> 每帧）、灵技 G（<see cref="Skill"/>，冷却由 Pet 管）、3 级觉醒（<see cref="OnAwaken"/>）。
     /// 玩家身上的加成一律登记在来源 "pet:&lt;id&gt;" 下；静态事件、<see cref="Combat.OutgoingModifiers"/> 在 <see cref="Unbind"/> 里撤掉
     /// （静态列表跨场景存活，漏撤会一直生效）。数值为灵契 1 级，伤害再乘 <see cref="Pet.DamageMult"/>。
+    /// 动作：出手时 <see cref="Pet.PlayAct"/>（状态名见 docs/pet-system.md 7.3），玩法时机仍由这里的代码决定；
+    /// 程序前冲 / 甩尾照常叠上（骨骼动画灵宠的前冲自动缩小，占位体全靠它们动）。特效出处优先用挂点（<see cref="Pet.SocketPos"/>）。
     /// </summary>
     public abstract class PetBehaviour
     {
@@ -104,6 +106,7 @@ namespace Spiritfire.Game
         IEnumerator Charge(Damageable t)
         {
             var dir = Flatten(t.transform.position - pet.transform.position);
+            pet.PlayAct("chargeWindup", 0.18f);
             pet.Lunge(-dir, 0.25f, 0.25f); // 蓄力后坐
             ShotFx.Instance?.Impact(pet.transform.position, Vector3.up, false, 0.8f);
             yield return new WaitForSeconds(0.18f);
@@ -111,9 +114,12 @@ namespace Spiritfire.Game
             var c = t.transform.position;
             dir = Flatten(c - pet.transform.position);
             float reach = Pet.Flat(c - pet.transform.position);
+            float run = Mathf.Max(0, reach - 0.6f - Pet.RadiusOf(t));
             float dust = 0;
             var dashFrom = pet.transform.position;
-            yield return pet.DashTo(pet.transform.position + dir * Mathf.Max(0, reach - 0.6f - Pet.RadiusOf(t)), ChargeSpeed, (a, b) =>
+            // 冲撞片段（蓄力之后接着播）对到冲刺 + 撞上的时长
+            pet.PlayAct("ram", run / ChargeSpeed + 0.2f);
+            yield return pet.DashTo(pet.transform.position + dir * run, ChargeSpeed, (a, b) =>
             {
                 dust += Vector3.Distance(a, b);
                 if (dust < 0.8f) return;
@@ -121,6 +127,7 @@ namespace Spiritfire.Game
                 ShotFx.Instance?.Impact(b, Vector3.up, false, 0.5f);
             }, 1.2f);
             if (!t || t.Dead || pet.DistTo(t) > 1.8f) yield break;
+            pet.PlayAct("ram"); // 撞上：冲撞片段还在播就不重来
             pet.Lunge(dir, 0.45f, 0.2f);
             pet.Hit(t, ChargeDamage, knockback: 4);
             EnemyStatus.Stun(t, Stun(ChargeStun));
@@ -140,6 +147,7 @@ namespace Spiritfire.Game
         {
             yield return new WaitForSeconds(0.6f);
             if (!pet) yield break;
+            pet.PlayAct("dig", 0.6f, priority: true);
             for (int i = 0; i < 3; i++)
             {
                 pet.Lunge(pet.transform.forward + Vector3.down * 0.6f, 0.25f, 0.18f);
@@ -150,6 +158,7 @@ namespace Spiritfire.Game
             int amount = Random.Range(20, 36);
             LootDirector.DropCoins(at, amount, 1.2f);
             if (pet.Awakened) Pickup.Spawn(Pickup.Kind.Health, at, 0, 0.8f);
+            PetFx.Burst(pet.SocketPos("coin", pet.Center), new Color(1f, 0.85f, 0.4f), 1.2f, 0.35f); // 铜钱坠一闪
             pet.Say($"丰穰 +{amount}", new Color(1f, 0.85f, 0.4f), 1.2f);
             Telegraph.Wave(at, 2.5f, 8f, new Color(1f, 0.85f, 0.4f));
             yield return new WaitForSeconds(1.1f);
@@ -170,8 +179,10 @@ namespace Spiritfire.Game
         {
             if (Pet.Flat(pet.transform.position - start) > 1.5f) pet.Teleport(start);
             pet.Say("丰年冲！", Fx, 1.2f);
+            pet.PlayAct("chargeWindup", 0.2f, priority: true);
             pet.Lunge(-dir, 0.3f, 0.2f);
             yield return new WaitForSeconds(0.2f);
+            pet.PlayAct("ram", RushLength / RushSpeed, priority: true);
             var hit = new HashSet<Damageable>();
             float dust = 0;
             yield return pet.DashTo(pet.transform.position + dir * RushLength, RushSpeed, (a, b) =>
@@ -241,6 +252,7 @@ namespace Spiritfire.Game
             {
                 if (!t || t.Dead) yield break;
                 var dir = Pet.CenterOf(t) - pet.Center;
+                pet.PlayAct("claw", 0.12f, restart: true, fade: 0.04f); // 每一爪从头播
                 pet.Lunge(dir, 0.28f, 0.13f);
                 pet.Hit(t, ClawDamage);
                 ShotFx.Instance?.Impact(Pet.CenterOf(t), -dir.normalized, true, 0.5f);
@@ -283,6 +295,7 @@ namespace Spiritfire.Game
             if (n == 0 && !skill) return 0;
             if (n > 0) Decoys.Set(pet.transform, 0.55f, Mathf.Max(1.4f, pet.Height + 0.5f), Time.time + seconds);
             Telegraph.Wave(pet.transform.position, radius, radius * 2.4f, Fx);
+            pet.PlayAct("taunt", 0, priority: skill);
             pet.Lunge(Vector3.up, 0.3f, 0.3f);
             pet.WhipTails();
             pet.Say(Phrases[Random.Range(0, Phrases.Length)], Fx, 1.1f);
@@ -306,7 +319,7 @@ namespace Spiritfire.Game
     /// <summary>精卫：飞到目标上空投火石；灵技「衔石填海」准星处 2 秒落 10 颗；觉醒火石范围 2.8 米</summary>
     public sealed class JingweiBehaviour : PetBehaviour
     {
-        const float StoneDamage = 16, StoneBurn = 0.5f, RainDamage = 24, RainRadius = 5, Gravity = 22;
+        const float StoneDamage = 16, StoneBurn = 0.5f, RainDamage = 24, RainRadius = 5, Gravity = 22, PebbleRegrow = 0.6f, PebbleSize = 0.16f;
         const int RainCount = 10;
         static readonly Color Fire = new(1f, 0.45f, 0.12f);
         float Radius => pet.Awakened ? 2.8f : 2f;
@@ -325,9 +338,11 @@ namespace Spiritfire.Game
 
         public override void Attack(Damageable t)
         {
-            var from = pet.Mouth;
+            var from = pet.PartPos(pet.SocketPos("pebble", pet.Mouth)); // 口中衔的火石
             var to = Pet.CenterOf(t);
+            pet.PlayAct("drop");
             pet.Lunge(Vector3.down, 0.3f, 0.2f);
+            pet.HidePart(PebbleRegrow); // 松口：嘴里的火石扔出去了，过一会儿再衔一颗
             DropStone(from, to, StoneDamage, StoneBurn, 0.35f);
         }
 
@@ -346,18 +361,35 @@ namespace Spiritfire.Game
             };
         }
 
-        /// <summary>火石：灰色小石头 + 火光 + 余烬拖尾</summary>
-        static Transform Pebble()
+        /// <summary>
+        /// 火石：精卫衔的那颗发光件模型（Resources/Pets/Parts，放大到约 0.16 米好认），没有就用灰色小球；外加火光 + 余烬拖尾
+        /// </summary>
+        Transform Pebble()
         {
-            var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            UnityEngine.Object.Destroy(go.GetComponent<Collider>());
+            GameObject go = PetVisuals.InstantiatePart(Def.partId);
+            float scale;
+            if (go)
+            {
+                go.transform.rotation = Random.rotation;
+                var rs = go.GetComponentsInChildren<Renderer>();
+                var b = rs.Length > 0 ? rs[0].bounds : new Bounds(go.transform.position, Vector3.one * PebbleSize);
+                foreach (var rr in rs) b.Encapsulate(rr.bounds);
+                scale = PebbleSize / Mathf.Max(1e-3f, Mathf.Max(b.size.x, b.size.y, b.size.z));
+                go.transform.localScale = Vector3.one * scale;
+            }
+            else
+            {
+                go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                UnityEngine.Object.Destroy(go.GetComponent<Collider>());
+                scale = PebbleSize;
+                go.transform.localScale = Vector3.one * scale;
+                var r = go.GetComponent<Renderer>();
+                var block = new MaterialPropertyBlock();
+                block.SetColor("_BaseColor", new Color(0.45f, 0.42f, 0.4f));
+                r.SetPropertyBlock(block);
+            }
             go.name = "Fire Pebble";
-            go.transform.localScale = Vector3.one * 0.16f;
-            var r = go.GetComponent<Renderer>();
-            var block = new MaterialPropertyBlock();
-            block.SetColor("_BaseColor", new Color(0.45f, 0.42f, 0.4f));
-            r.SetPropertyBlock(block);
-            FxMaterials.GlowSprite(go.transform, 5f, new Color(Fire.r, Fire.g, Fire.b, 0.8f));
+            FxMaterials.GlowSprite(go.transform, 0.8f / scale, new Color(Fire.r, Fire.g, Fire.b, 0.8f));
             var trail = go.AddComponent<TrailRenderer>();
             trail.time = 0.25f;
             trail.startWidth = 0.14f;
@@ -396,6 +428,8 @@ namespace Spiritfire.Game
                 g.y = Pet.GroundY(g + Vector3.up * 2f);
                 var from = g + new Vector3(Random.Range(-1f, 1f), 9f, Random.Range(-1f, 1f));
                 DropStone(from, g, RainDamage, 1f, 0.4f);
+                pet.PlayAct("drop"); // 0.2 秒一颗：片段没播到 90% 就不重来
+                pet.HidePart(PebbleRegrow); // 落完最后一颗 0.6 秒后嘴里才再有
                 pet.Lunge(Vector3.down, 0.2f, 0.15f);
                 yield return new WaitForSeconds(0.2f);
             }
@@ -459,8 +493,10 @@ namespace Spiritfire.Game
         public override void Attack(Damageable t)
         {
             var c = Pet.CenterOf(t);
-            var eyeL = pet.Mouth - pet.transform.right * 0.07f;
-            var eyeR = pet.Mouth + pet.transform.right * 0.07f;
+            pet.PlayAct("gaze");
+            var eye = pet.SocketPos("eyefx", pet.Mouth); // 双瞳
+            var eyeL = eye - pet.transform.right * 0.07f;
+            var eyeR = eye + pet.transform.right * 0.07f;
             Lightning.Spawn(eyeL, c, Shock, 0.05f);
             Lightning.Spawn(eyeR, c, Shock, 0.05f);
             for (int i = 0; i < Bolts; i++) pet.Hit(t, BoltDamage, Element.Shock, BoltShock);
@@ -496,6 +532,7 @@ namespace Spiritfire.Game
         IEnumerator Chain(Damageable first)
         {
             pet.Say("辟邪！", Shock, 1.3f);
+            pet.PlayAct("cry", 0, priority: true);
             var visited = new HashSet<Damageable>();
             var from = pet.Mouth;
             var cur = first;
@@ -564,6 +601,7 @@ namespace Spiritfire.Game
         {
             var mouth = pet.Mouth;
             var dir = (Pet.CenterOf(t) - mouth).normalized;
+            pet.PlayAct("breathe"); // 0.25 秒一跳：片段没播到 90% 就不重来，连着吐就是一口长气
             if (smoke)
             {
                 smoke.transform.SetPositionAndRotation(mouth, Quaternion.LookRotation(dir));
@@ -607,6 +645,7 @@ namespace Spiritfire.Game
             foreach (var d in Pet.EnemiesNear(PlayerPos + Vector3.up, RoarRadius + 1f, false))
                 if (Pet.Flat(d.transform.position - PlayerPos) <= RoarRadius) EnemyStatus.Stun(d, RoarStun);
             Telegraph.Wave(PlayerPos, RoarRadius, 16f, Corrode);
+            pet.PlayAct("roar", 0, priority: true);
             pet.Lunge(PlayerPos - pet.transform.position, 0.3f, 0.25f);
             pet.Say("护主！", Corrode, 1.3f);
             Hud.Instance?.Toast($"狻猊怒吼：护盾 +{RoarShield:F0}", 1.6f);
@@ -622,16 +661,18 @@ namespace Spiritfire.Game
         {
             // 离玩家远就先瞬移回身边再吼
             if (Pet.Flat(pet.transform.position - PlayerPos) > 5f) pet.Teleport(PlayerPos + Owner.Forward * 1.5f);
+            pet.PlayAct("roar", 0, priority: true);
             pet.Lunge(-pet.transform.forward, 0.25f, 0.2f);
             yield return new WaitForSeconds(0.15f);
             var c = pet.transform.position;
             pet.Lunge(pet.transform.forward, 0.5f, 0.35f);
             pet.Say("镇宅狮吼！", Corrode, 1.4f);
             Telegraph.Wave(c, SkillRadius, 22f, Corrode);
-            ShotFx.Instance?.MuzzleFlash(pet.Center, 2.5f);
+            ShotFx.Instance?.MuzzleFlash(pet.Mouth, 2.5f);
             if (smoke)
             {
-                smoke.transform.SetPositionAndRotation(pet.Mouth, Quaternion.LookRotation(Vector3.up));
+                // 香炉喷出一大团烟（没有 ember 挂点就从嘴里）
+                smoke.transform.SetPositionAndRotation(pet.SocketPos("ember", pet.Mouth), Quaternion.LookRotation(Vector3.up));
                 smoke.Emit(40);
             }
             foreach (var d in Pet.EnemiesNear(c + Vector3.up, SkillRadius + 1f, false))
@@ -715,14 +756,17 @@ namespace Spiritfire.Game
         {
             if (pet.DistTo(t) > 1.8f)
             {
-                // 扑击：低伏一下再扑上去
+                // 扑击：低伏一下再扑上去（片段对到伏身 + 扑过去的时长）
                 var dir = Flatten(t.transform.position - pet.transform.position);
+                float leap = Mathf.Min(0.6f, Mathf.Max(0, Pet.Flat(t.transform.position - pet.transform.position) - 0.9f - Pet.RadiusOf(t)) / 20f);
+                pet.PlayAct("pounce", 0.12f + leap);
                 pet.Lunge(-dir, 0.2f, 0.15f);
                 yield return new WaitForSeconds(0.12f);
                 if (!t || t.Dead) yield break;
                 var dest = t.transform.position - Flatten(t.transform.position - pet.transform.position) * (0.9f + Pet.RadiusOf(t));
                 yield return pet.DashTo(dest, 20f, null, 0.6f);
             }
+            pet.PlayAct("tailLash", Tails * 0.07f, restart: true); // 五尾（觉醒七尾）连抽，片段对到整轮
             pet.WhipTails();
             var stats = Stats;
             for (int i = 0; i < Tails; i++)
@@ -806,8 +850,11 @@ namespace Spiritfire.Game
                 var start = pet.transform.position;
                 var dir = Flatten(t.transform.position - start);
                 var dest = t.transform.position + dir * (1.2f + Pet.RadiusOf(t));
+                // 每一次穿刺从头播裂石，片段对到这一段冲刺；残影沿角尖走（没有挂点就离地 0.5 米）
+                pet.PlayAct("rend", Mathf.Min(0.7f, Pet.Flat(dest - start) / RendSpeed) + 0.1f, priority: true, restart: true, fade: 0.05f);
+                var hornFrom = pet.SocketPos("horntip", start + Vector3.up * 0.5f);
                 yield return pet.DashTo(dest, RendSpeed, null, 0.7f);
-                PetFx.Beam(start + Vector3.up * 0.5f, pet.transform.position + Vector3.up * 0.5f, Fx, 0.12f, 0.3f);
+                PetFx.Beam(hornFrom, pet.SocketPos("horntip", pet.transform.position + Vector3.up * 0.5f), Fx, 0.12f, 0.3f);
                 if (t && !t.Dead)
                 {
                     pet.Hit(t, RendDamage, forceCrit: true, knockback: 6, from: start);
@@ -898,7 +945,8 @@ namespace Spiritfire.Game
         /// <summary>金光三连射：额上第三只眼同时射出三道金光，各打一个目标</summary>
         public override void Attack(Damageable t)
         {
-            var eye = pet.Mouth + Vector3.up * 0.15f;
+            pet.PlayAct("gaze");
+            var eye = pet.SocketPos("eyefx", pet.Mouth + Vector3.up * 0.15f); // 额上第三只眼
             var targets = new List<Damageable> { t };
             foreach (var d in Pet.EnemiesNear(Pet.CenterOf(t), ShotRange))
             {
@@ -935,6 +983,7 @@ namespace Spiritfire.Game
             if (skills)
                 foreach (var s in new[] { skills.primary, skills.secondary })
                     if (s != null && s.charges < s.maxCharges) s.recharge += (s.cooldown - s.recharge) * 0.5f;
+            pet.PlayAct("scroll", 0, priority: true);
             Telegraph.Wave(center, ScrollRadius, 40f, Gold);
             PetFx.Pillar(pet.transform.position, Gold, 2f, 14f, 1.2f);
             PetFx.Burst(pet.Center, Gold, 6f, 0.6f);
@@ -953,6 +1002,7 @@ namespace Spiritfire.Game
     {
         const float RainRange = 28, RainDamage = 50, BreathDamage = 20, BreathRange = 22, BreathShock = 0.15f;
         const float StormTime = 6, StormRate = 12, StormDamage = 70, StormRange = 30;
+        const float PearlRise = 0.4f, PearlHeight = 1.5f, PearlReturn = 0.35f, PearlSpin = 90f;
         static readonly Color Shock = DamageTable.ElementColor(Element.Shock);
         static readonly Element[] Cycle = { Element.Fire, Element.Shock, Element.Corrode };
 
@@ -972,13 +1022,16 @@ namespace Spiritfire.Game
             Strike(list[Random.Range(0, list.Count)], RainDamage, Element.Shock, rainCount % 3 == 0 ? Element.Corrode : Element.None);
         }
 
-        /// <summary>天雷：从高空劈到敌人身上（sub = 副元素，必定附着：蚀雨）</summary>
-        void Strike(Damageable d, float dmg, Element element, Element sub)
+        /// <summary>
+        /// 天雷：从高空劈到敌人身上（sub = 副元素，必定附着：蚀雨）。source = 雷的出处（杀蚩尤时悬在头顶的宝珠）：
+        /// 主雷从它劈出，另有一道细白雷照旧从天上落下
+        /// </summary>
+        void Strike(Damageable d, float dmg, Element element, Element sub, Vector3? source = null)
         {
             var c = Pet.CenterOf(d);
             var sky = c + new Vector3(Random.Range(-2f, 2f), 16f, Random.Range(-2f, 2f));
             var color = sub == Element.Corrode ? Color.Lerp(Shock, DamageTable.ElementColor(Element.Corrode), 0.6f) : DamageTable.ElementColor(element);
-            Lightning.Spawn(sky, c, color, 0.16f);
+            Lightning.Spawn(source ?? sky, c, color, 0.16f);
             Lightning.Spawn(sky + Vector3.right * 0.3f, c, Color.white, 0.05f);
             ShotFx.Instance?.Impact(d.transform.position + Vector3.up * 0.1f, Vector3.up, false, 1.5f);
             var info = pet.Info(dmg, element, 1f, c, Vector3.down);
@@ -995,8 +1048,10 @@ namespace Spiritfire.Game
         {
             var mouth = pet.Mouth;
             var c = Pet.CenterOf(t);
+            pet.PlayAct("breath"); // 0.2 秒一跳：片段没播到 90% 就不重来
             PetFx.Beam(mouth, c, Shock, 0.14f, 0.2f);
-            if (Random.value < 0.5f) Lightning.Spawn(mouth, c, Color.white, 0.04f);
+            // 细雷从爪中宝珠窜出（雷暴时从头顶悬着的宝珠）；没有宝珠就从嘴里
+            if (Random.value < 0.5f) Lightning.Spawn(pet.PartPos(mouth), c, Color.white, 0.04f);
             PetFx.Burst(mouth, Shock, 0.8f, 0.18f);
             pet.Hit(t, BreathDamage, Element.Shock, BreathShock, from: mouth);
         }
@@ -1004,6 +1059,9 @@ namespace Spiritfire.Game
         public override bool Skill()
         {
             if (Vitals) Vitals.AddShield(Vitals.MaxShield);
+            // 雷暴期间还会照常吐龙息：priority 让兴云布雨的动作播完再被龙息接上
+            pet.PlayAct("storm", 0, priority: true);
+            PetFx.Burst(pet.PartPos(pet.SocketPos("pearl", pet.Center)), Shock, 1.6f, 0.45f); // 爪中宝珠一亮
             pet.StartCoroutine(Storm());
             return true;
         }
@@ -1014,28 +1072,57 @@ namespace Spiritfire.Game
             Hud.Instance?.Toast("杀蚩尤 · 雷暴 6 秒，护盾回满", 2f);
             PetHud.Instance?.Flash(new Color(0.45f, 0.6f, 1f, 0.3f), 0.6f);
             Telegraph.Wave(PlayerPos, StormRange, 45f, Shock);
-            float end = Time.time + StormTime, next = Time.time;
+            float start = Time.time, end = start + StormTime, next = start;
             int i = 0;
+            // 宝珠离爪：0.4 秒升到龙头上方 1.5 米，雷暴期间悬着慢慢转、发亮，天雷从它劈出；结束后飞回爪中
+            var pearl = pet.DetachPart();
+            var pearlFrom = pearl ? pearl.position : Vector3.zero;
             while (Time.time < end && pet)
             {
+                if (pearl)
+                {
+                    float k = Mathf.Clamp01((Time.time - start) / PearlRise);
+                    var hover = PearlHover();
+                    pearl.position = k < 1 ? Vector3.Lerp(pearlFrom, hover, 1 - (1 - k) * (1 - k))
+                        : Vector3.Lerp(pearl.position, hover, 1 - Mathf.Exp(-12f * Time.deltaTime));
+                    pearl.Rotate(0, PearlSpin * Time.deltaTime, 0, Space.World);
+                    if (pet.PartGlow) pet.PartGlow.boost = k;
+                }
                 while (Time.time >= next)
                 {
                     next += 1f / StormRate;
                     var element = Cycle[i++ % Cycle.Length];
+                    Vector3? source = pearl ? pearl.position : null;
                     var list = EnemiesAround(PlayerPos + Vector3.up, StormRange + 2f, StormRange);
-                    if (list.Count > 0) Strike(list[Random.Range(0, list.Count)], StormDamage, element, Element.None);
+                    if (list.Count > 0) Strike(list[Random.Range(0, list.Count)], StormDamage, element, Element.None, source);
                     else
                     {
                         // 没敌人也照样打雷（只有特效）
                         var r = Random.insideUnitCircle * 12f;
                         var g = PlayerPos + new Vector3(r.x, 0, r.y);
                         g.y = Pet.GroundY(g + Vector3.up * 2f);
-                        Lightning.Spawn(g + Vector3.up * 16f, g, DamageTable.ElementColor(element), 0.12f);
+                        Lightning.Spawn(source ?? g + Vector3.up * 16f, g, DamageTable.ElementColor(element), 0.12f);
                     }
                 }
                 yield return null;
             }
+            if (!pearl || !pet) yield break;
+            // 飞回爪中（挂点跟着龙在动：每帧追当前位置）
+            var back = pearl.position;
+            for (float t = 0; t < PearlReturn && pearl; t += Time.deltaTime)
+            {
+                float k = t / PearlReturn;
+                pearl.position = Vector3.Lerp(back, pet.PartHomePos, k * k);
+                if (pet.PartGlow) pet.PartGlow.boost = 1 - k;
+                yield return null;
+            }
+            pet.ReattachPart();
+            if (pet.Part) PetFx.Burst(pet.Part.position, Shock, 0.6f, 0.25f);
         }
+
+        /// <summary>宝珠悬停点：龙头上方 1.5 米，轻轻起伏</summary>
+        Vector3 PearlHover() =>
+            pet.SocketPos("head", pet.Center + Vector3.up * pet.Height * 0.4f) + Vector3.up * (PearlHeight + Mathf.Sin(Time.time * 2.2f) * 0.08f);
     }
 
     /// <summary>灵宠留在地上的持续伤害区（狻猊觉醒的蚀雾）：radius 内每 0.5 秒结算一次；灵宠没了就散</summary>

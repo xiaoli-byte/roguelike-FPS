@@ -147,7 +147,7 @@ namespace Spiritfire.Game.Testing
             if (weapons.ActiveSlot != 0) Fail("切回 1 号槽失败");
             weapons.slots[1] = null; // 还原成开局状态：第二把枪要从 ① 的宝箱里拿
 
-            // 聚焦模式：Library/SpiritfireBridge/playtest-focus.txt 里写 anim → 只跑「动作同步 / 敌人表现」这一组（读完即删）
+            // 聚焦模式：Library/SpiritfireBridge/playtest-focus.txt 里写 anim → 只跑「动作同步 / 敌人表现」这一组，audio / pets 跑到那一组为止（读完即删）
             string focus = "";
             var focusPath = string.IsNullOrEmpty(resultPath) ? null : Path.Combine(Path.GetDirectoryName(resultPath) ?? "", "playtest-focus.txt");
             if (focusPath != null && File.Exists(focusPath))
@@ -173,8 +173,13 @@ namespace Spiritfire.Game.Testing
                 yield break;
             }
 
-            // ── 灵宠：八只依次结契，各打几只敌人、放一次灵技；灵契升级觉醒、换宠留封印 ──
+            // ── 灵宠：八只依次结契，各打几只敌人、放一次灵技；灵契升级觉醒、换宠留封印（聚焦模式 pets 只跑这一组）──
             yield return PetTest(motor, eye, vitals);
+            if (focus == "pets")
+            {
+                Finish();
+                yield break;
+            }
 
             // ── 动画控制器诊断：敌人身上的动画到底有没有在播 ──
             yield return AnimatorDiag(motor);

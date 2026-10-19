@@ -71,7 +71,12 @@ def ids(spec: str) -> list[int]:
 # ───────────────────────────── 1. Import, units, pivot ─────────────────────────────
 t = time.time()
 bpy.ops.wm.read_factory_settings(use_empty=True)
-bpy.ops.import_scene.fbx(filepath=P["source"])
+# Tripo originals arrive as FBX (DCC Bridge inbox) or as the committed GLB (art/source/pets/<ID>/03_model/): glTF's +Z
+# front comes in as Blender −Y, the same frame the rig JSON uses.
+if P["source"].lower().endswith((".glb", ".gltf")):
+    bpy.ops.import_scene.gltf(filepath=P["source"])
+else:
+    bpy.ops.import_scene.fbx(filepath=P["source"])
 # Custom-skeleton rigs ("bones" in the rig JSON) take an unrigged provider mesh; Tripo-rigged ones bring an armature.
 CUSTOM = "bones" in RIG
 arm = next((o for o in bpy.data.objects if o.type == "ARMATURE"), None)

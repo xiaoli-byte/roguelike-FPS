@@ -1,0 +1,74 @@
+{
+  "metrics": {
+    "recipe": "lava_pebble",
+    "seed": 7,
+    "closed_borders": 1,
+    "fading_borders": 3,
+    "crack_area": 0.172,
+    "dims_m": [
+      0.08,
+      0.0465,
+      0.0732
+    ],
+    "textures": {
+      "size": 512,
+      "BC_mean": [
+        0.479,
+        0.327,
+        0.205
+      ],
+      "E_mean": [
+        0.292,
+        0.155,
+        0.044
+      ],
+      "ORM_mean": [
+        0.709,
+        0.578,
+        0.0
+      ]
+    },
+    "lod_tris": [
+      1176,
+      392
+    ],
+    "source_tris": 1310720,
+    "size": 0.08,
+    "review": [
+      "back",
+      "front",
+      "left",
+      "right",
+      "three_quarter"
+    ],
+    "seconds": 29.6,
+    "_seconds": 31.5
+  },
+  "checks": [
+    [
+      "file size",
+      true,
+      "161 KB / 400 KB"
+    ],
+    [
+      "LOD count",
+      true,
+      "['SM_PetPart_JingweiPebble_LOD0', 'SM_PetPart_JingweiPebble_LOD1']"
+    ],
+    [
+      "LOD budget",
+      true,
+      "[1176, 392]"
+    ],
+    [
+      "webp textures",
+      true,
+      "4"
+    ],
+    [
+      "draco",
+      true,
+      ""
+    ]
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "metrics": {
+    "recipe": "cloud_pearl",
+    "seed": 3,
+    "cloud_area": 0.233,
+    "dims_m": [
+      0.1587,
+      0.1587,
+      0.16
+    ],
+    "textures": {
+      "size": 512,
+      "BC_mean": [
+        0.623,
+        0.56,
+        0.399
+      ],
+      "E_mean": [
+        0.399,
+        0.358,
+        0.253
+      ],
+      "ORM_mean": [
+        0.612,
+        0.2,
+        0.0
+      ]
+    },
+    "lod_tris": [
+      1176,
+      392
+    ],
+    "source_tris": 1310720,
+    "size": 0.16,
+    "review": [
+      "back",
+      "front",
+      "left",
+      "right",
+      "three_quarter"
+    ],
+    "seconds": 23.9,
+    "_seconds": 25.5
+  },
+  "checks": [
+    [
+      "file size",
+      true,
+      "51 KB / 400 KB"
+    ],
+    [
+      "LOD count",
+      true,
+      "['SM_PetPart_YinglongPearl_LOD0', 'SM_PetPart_YinglongPearl_LOD1']"
+    ],
+    [
+      "LOD budget",
+      true,
+      "[1176, 392]"
+    ],
+    [
+      "webp textures",
+      true,
+      "4"
+    ],
+    [
+      "draco",
+      true,
+      ""
+    ]
+  ]
+}

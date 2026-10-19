@@ -1,0 +1,355 @@
+{
+  "asset": "SK_Pet_Huan",
+  "version": 1,
+  "glb": "art/source/characters/SK_Pet_Huan/04_export/SK_Pet_Huan_native_v001.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.2,
+      "自定义骨架：46 根骨骼（热扩散权重，12740 个顶点未覆盖）": 0.2,
+      "贴图（BC + AO/ORM）": 5.7,
+      "LOD 与蒙皮上限 7879 / 3447 / 1477": 0.4,
+      "导出 599 KB": 0.9
+    },
+    "source": {
+      "verts": 12740,
+      "tris": 8912,
+      "scale": 0.6080158337456705
+    },
+    "regions": {
+      "heat_unweighted_verts": 12740,
+      "weights": "segments",
+      "ground_verts": 2240,
+      "head_verts": 1083,
+      "bell_verts": 59,
+      "fallback_verts": 0,
+      "per_bone": {
+        "hips": 153,
+        "spine": 27,
+        "chest": 78,
+        "neck": 288,
+        "head": 1563,
+        "bell": 1122,
+        "ear_L": 569,
+        "upperarm_L": 267,
+        "forearm_L": 101,
+        "paw_L": 660,
+        "thigh_L": 111,
+        "shin_L": 55,
+        "foot_L": 600,
+        "ear_R": 560,
+        "upperarm_R": 281,
+        "forearm_R": 93,
+        "paw_R": 704,
+        "thigh_R": 117,
+        "shin_R": 51,
+        "foot_R": 625,
+        "tailA_1": 75,
+        "tailA_2": 67,
+        "tailA_3": 97,
+        "tailA_4": 279,
+        "tailB_1": 61,
+        "tailB_2": 58,
+        "tailB_3": 110,
+        "tailB_4": 271,
+        "tailC_1": 139,
+        "tailC_2": 37,
+        "tailC_3": 80,
+        "tailC_4": 224,
+        "tailD_1": 139,
+        "tailD_2": 43,
+        "tailD_3": 79,
+        "tailD_4": 208,
+        "tailE_1": 154,
+        "tailE_2": 89,
+        "tailE_3": 138,
+        "tailE_4": 113,
+        "tailF_1": 136,
+        "tailF_2": 84,
+        "tailF_3": 163,
+        "tailF_4": 119
+      }
+    },
+    "bones": [
+      "bell",
+      "chest",
+      "ear_L",
+      "ear_R",
+      "foot_L",
+      "foot_R",
+      "forearm_L",
+      "forearm_R",
+      "head",
+      "hips",
+      "mouth",
+      "neck",
+      "paw_L",
+      "paw_R",
+      "root",
+      "shin_L",
+      "shin_R",
+      "spine",
+      "tailA_1",
+      "tailA_2",
+      "tailA_3",
+      "tailA_4",
+      "tailB_1",
+      "tailB_2",
+      "tailB_3",
+      "tailB_4",
+      "tailC_1",
+      "tailC_2",
+      "tailC_3",
+      "tailC_4",
+      "tailD_1",
+      "tailD_2",
+      "tailD_3",
+      "tailD_4",
+      "tailE_1",
+      "tailE_2",
+      "tailE_3",
+      "tailE_4",
+      "tailF_1",
+      "tailF_2",
+      "tailF_3",
+      "tailF_4",
+      "thigh_L",
+      "thigh_R",
+      "upperarm_L",
+      "upperarm_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.955,
+      "shade_mean": 0.954
+    },
+    "textures": {
+      "size": 1024,
+      "ao_mean": 0.805,
+      "provider_pbr": [],
+      "roughness_mean": 0.85,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Pet_Huan_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Pet_Huan_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Pet_Huan_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Pet_Huan_LOD0",
+        "tris": 7879,
+        "uv_min": [
+          0.00146484375,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.99853515625,
+          0.990966796875
+        ]
+      },
+      {
+        "name": "SK_Pet_Huan_LOD1",
+        "tris": 3447,
+        "uv_min": [
+          0.00146484375,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.99853515625,
+          0.99072265625
+        ]
+      },
+      {
+        "name": "SK_Pet_Huan_LOD2",
+        "tris": 1477,
+        "uv_min": [
+          0.00146484375,
+          0.0012340480461716652
+        ],
+        "uv_max": [
+          0.9775881171226501,
+          0.967041015625
+        ]
+      }
+    ],
+    "glb_kb": 599,
+    "_seconds": 9.0
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "599 KB / 1600 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Pet_Huan_LOD0', 'SK_Pet_Huan_LOD1', 'SK_Pet_Huan_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "7879 / 8000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "3447 / 3500"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "1477 / 1500"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "0.601 m (design 0.6 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Pet_Huan']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "texture T_Pet_Huan_ORM",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "texture T_Pet_Huan_BC",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "46 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Pet_Huan_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Pet_Huan_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Pet_Huan_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Pet_Huan_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Pet_Huan_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Pet_Huan_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Pet_Huan_LOD0 UV range",
+      "[0.001, 0.001]..[0.999, 0.991]"
+    ],
+    [
+      "pass",
+      "SK_Pet_Huan_LOD1 UV range",
+      "[0.001, 0.001]..[0.999, 0.991]"
+    ],
+    [
+      "pass",
+      "SK_Pet_Huan_LOD2 UV range",
+      "[0.001, 0.001]..[0.978, 0.967]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "12740 verts"
+    ],
+    [
+      "pass",
+      "region ground",
+      "2240 verts"
+    ],
+    [
+      "pass",
+      "region head",
+      "1083 verts"
+    ],
+    [
+      "pass",
+      "region bell",
+      "59 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "0 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

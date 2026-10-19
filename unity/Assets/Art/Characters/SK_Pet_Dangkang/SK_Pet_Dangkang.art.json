@@ -1,0 +1,154 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SK_Pet_Dangkang",
+  "kind": "skeletal",
+  "class": "pet",
+  "category": "characters",
+  "bind": {
+    "source": "pet",
+    "id": "dangkang"
+  },
+  "keepGlow": "all",
+  "lodDistance": [
+    0,
+    14,
+    30
+  ],
+  "budget": {
+    "lodTris": [
+      8000,
+      3500,
+      1500
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -0.2503437101840973,
+      -0.000219338879105635,
+      -0.3493160903453827
+    ],
+    "max": [
+      0.25005418062210083,
+      0.699999988079071,
+      0.34917932748794556
+    ]
+  },
+  "rig": {
+    "type": "generic",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": [
+      "root",
+      "hips",
+      "haunch_L",
+      "haunch_R",
+      "spine",
+      "chest",
+      "bell",
+      "coin",
+      "neck",
+      "head",
+      "crest_1",
+      "crest_2",
+      "mouth",
+      "scapula_L",
+      "scapula_R",
+      "upperarm_L",
+      "forearm_L",
+      "fhoof_L",
+      "upperarm_R",
+      "forearm_R",
+      "fhoof_R",
+      "withers",
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "thigh_L",
+      "shin_L",
+      "hhoof_L",
+      "thigh_R",
+      "shin_R",
+      "hhoof_R"
+    ]
+  },
+  "meshes": [
+    {
+      "name": "SK_Pet_Dangkang_LOD0",
+      "lod": 0,
+      "tris": 7880,
+      "verts": 12078,
+      "materials": [
+        "M_Pet_Dangkang"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Pet_Dangkang_LOD1",
+      "lod": 1,
+      "tris": 3447,
+      "verts": 6432,
+      "materials": [
+        "M_Pet_Dangkang"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Pet_Dangkang_LOD2",
+      "lod": 2,
+      "tris": 1477,
+      "verts": 2811,
+      "materials": [
+        "M_Pet_Dangkang"
+      ],
+      "skinned": true
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Pet_Dangkang",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Pet_Dangkang_BC.png",
+        "ORM": "Textures/T_Pet_Dangkang_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/characters/SK_Pet_Dangkang@hi.glb",
+    "sha256": "adb122d142765c3d94628bb14b192cfc024a85d29e7934ed47d45e47d12c37ed",
+    "hiRes": true,
+    "version": {
+      "native_build": 4
+    },
+    "generator": {
+      "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+      "mode": "tripo_native",
+      "checkpoint": "P2.0"
+    },
+    "license": null
+  },
+  "exported": "2026-10-19 07:53:53"
+}

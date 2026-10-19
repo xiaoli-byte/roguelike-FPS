@@ -1,0 +1,171 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SK_Pet_Huan",
+  "kind": "skeletal",
+  "class": "pet",
+  "category": "characters",
+  "bind": {
+    "source": "pet",
+    "id": "huan"
+  },
+  "keepGlow": "all",
+  "lodDistance": [
+    0,
+    14,
+    30
+  ],
+  "budget": {
+    "lodTris": [
+      8000,
+      3500,
+      1500
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -0.16640278697013855,
+      0,
+      -0.30385950207710266
+    ],
+    "max": [
+      0.16640278697013855,
+      0.600622296333313,
+      0.30385950207710266
+    ]
+  },
+  "rig": {
+    "type": "generic",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": [
+      "root",
+      "hips",
+      "haunch_L",
+      "haunch_R",
+      "spine",
+      "chest",
+      "neck",
+      "bell",
+      "head",
+      "ear_L",
+      "ear_R",
+      "mouth",
+      "ribs_L",
+      "ribs_R",
+      "upperarm_L",
+      "forearm_L",
+      "paw_L",
+      "upperarm_R",
+      "forearm_R",
+      "paw_R",
+      "tailA_1",
+      "tailA_2",
+      "tailA_3",
+      "tailA_4",
+      "tailB_1",
+      "tailB_2",
+      "tailB_3",
+      "tailB_4",
+      "tailC_1",
+      "tailC_2",
+      "tailC_3",
+      "tailC_4",
+      "tailD_1",
+      "tailD_2",
+      "tailD_3",
+      "tailD_4",
+      "tailE_1",
+      "tailE_2",
+      "tailE_3",
+      "tailF_1",
+      "tailF_2",
+      "tailF_3",
+      "thigh_L",
+      "shin_L",
+      "foot_L",
+      "thigh_R",
+      "shin_R",
+      "foot_R"
+    ]
+  },
+  "meshes": [
+    {
+      "name": "SK_Pet_Huan_LOD0",
+      "lod": 0,
+      "tris": 7879,
+      "verts": 11933,
+      "materials": [
+        "M_Pet_Huan"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Pet_Huan_LOD1",
+      "lod": 1,
+      "tris": 3447,
+      "verts": 6365,
+      "materials": [
+        "M_Pet_Huan"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Pet_Huan_LOD2",
+      "lod": 2,
+      "tris": 1477,
+      "verts": 2777,
+      "materials": [
+        "M_Pet_Huan"
+      ],
+      "skinned": true
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Pet_Huan",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Pet_Huan_BC.png",
+        "ORM": "Textures/T_Pet_Huan_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/characters/SK_Pet_Huan@hi.glb",
+    "sha256": "e8f08a8f3c180b4614bb1d05a4958069f1e8e13ab6a5da048a792d15596887e5",
+    "hiRes": true,
+    "version": {
+      "native_build": 4
+    },
+    "generator": {
+      "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+      "mode": "tripo_native",
+      "checkpoint": "P2.0"
+    },
+    "license": null
+  },
+  "exported": "2026-10-19 07:53:56"
+}

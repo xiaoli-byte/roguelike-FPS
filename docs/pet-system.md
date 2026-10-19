@@ -114,27 +114,101 @@
 
 ## 7. 美术
 
-- 8 只灵宠由本地 Codex 出四视图 → Tripo Studio（智能网格、多视图、P2.0、带贴图）→ `art/source/_tripo_inbox/`（不入库）→ `pet_export.py` 归档到 `art/source/pets/<ID>/03_model/`（入库）。
-  概念脚本 `art/pipeline/pet_concepts.py`，导出脚本 `art/pipeline/blender/bl_pet_export.py`（GLB → 落地、朝向、缩放、FBX + 贴图）。
-- 第一版是**静态网格 + 程序动画**：漂浮、呼吸、跑动时上下颠、转身倾斜、攻击前冲 / 缩放挤压。骨骼绑定（Tripo 自动绑骨 →
-  `build_tripo_creature.py`）放到第二版。
-- 模型缺失时自动用程序化占位体（同色系的简单几何），系统本身不依赖美术。
+### 7.1 第二版：和敌人走同一条正式管线（2026-10-18 用户决定）
+
+同场景对比发现第一版宠物和现有角色不统一：缺 ORM/AO 贴图（偏平、浅色发白），没走资产表与审核，没有骨骼动作。第二版全部重做：
+
+1. **设计稿**：`art/pipeline/redesign_sheets.py --designs pet_designs_v1.json`，和敌人同一套设计稿提示词与版式；画风锚点是第一章已批角色
+   （燎、火浣鼠、三彩镇墓兽、蜃楼蟾）成品模型的渲染图（`art/pipeline/blender/bl_style_anchor.py`）。白泽、重明鸟按要求加深。
+   审稿总图 [art/review/pets-roster-v001.png](art/review/pets-roster-v001.png)，**用户 2026-10-18 通过**。
+2. **四视图**：`redesign_sheets.py --designs pet_designs_v1.json --turnaround <key>`，只画需要建模的实体（见 7.2）。
+3. Tripo 多视图建模 + 贴图（不用 Tripo 自动绑骨，和敌人一样）→ 骨骼表 `art/pipeline/creature_rigs/<ID>.json`（按网格实测，
+   审查姿势 `creature_rigs/review_poses/<ID>.json`）→ `build_tripo_creature.py <ID> --publish`（ORM/AO、远处低模、校验、审查图）
+   → `unity_export.py` → 动作 `scripts/unity/bake-pet-anims.mjs`（待机 / 走 / 跑 / 出招，写 `native-anim.json`）→ Unity Sync。
+4. **2026-10-19 全部接通**：8 只都是骨骼动画模型，第一版的快速通道（`pet_concepts.py` / `pet_export.py` / `bl_pet_export.py`）退役，
+   `Resources/Pets/<ID>.prefab` 改由 `PetArtImport` 从正式 Prefab 生成。
+
+### 7.2 建模件、发光件与特效
+
+用户要求：分清哪些是特效、哪些要建模。**建模件**进 Tripo；其中**发光件**做成模型上的自发光材质（`_Glow`），常亮；**特效**一律不进模型、
+四视图里不画，由游戏里的特效系统（`PetFx`、`ShotFx`、`Lightning`、`Telegraph`）在出招时生成。
+
+| 灵宠 | 建模件 | 发光件（模型自发光） | 特效（游戏里生成） |
+|---|---|---|---|
+| 当康 | 身体、獠牙、稻穗冠、红绳结 | 铜钱坠（暖金） | 冲撞尘土与速度线、钱币闪光、拱出钱袋 |
+| 讙 | 身体（独眼）、三条尾巴、三铃项圈 | 中间的铜铃（暖金） | 嘲讽声波圈、爪击拖尾 |
+| 精卫 | 鸟身、翅膀、扇尾、红爪（喙空着）；**火石单独建模** `SM_PetPart_JingweiPebble`，挂 `pebble` | 火石上的余烬裂纹 | 石子周围的火焰与火星拖尾、落下的火石与爆炸 |
+| 重明鸟 | 鸟身、翅膀、长尾羽、金冠、胸前铜坠 | 双瞳（青色） | 双瞳雷光、连锁闪电、标记图标 |
+| 狻猊 | 身体、卷鬃、卷尾、背上香炉（带盖）、红绸铜铃 | 香炉口里的一点余烬 | 香炉上升的烟、吐出的蚀香、狮吼冲击波 |
+| 狰 | 身体、独角、五条尾巴 | 角尖（白金） | 爪击 / 甩尾拖尾、冲刺残影 |
+| 白泽 | 身体、白鬃白须、双角、金云饰、玉坠 | 第三只眼（赤金）、身侧的一排小金眼 | 金光、白泽图卷轴与光环、神光粒子 |
+| 应龙 | 蛇身、四足（爪子空着）、羽翼、鹿角、鬃须；**宝珠单独建模** `SM_PetPart_YinglongPearl`，挂 `pearl` | 宝珠 | 环身雷弧、天雷与雷暴、龙息雷光；「杀蚩尤」时宝珠升起召雷 |
+
+设计稿大图里画出来的光束、闪电、烟、火焰都属于特效列，只是示意出招效果，不建模。
+
+**什么时候必须单独建模**（2026-10-18 用户指出精卫的火石和喙熔在一起）：Tripo 出的是一整块网格，所以凡是① 玩法里会离开身体 / 隐藏 / 重新出现，
+② 要做身体带不动的独立动作，或 ③ 要用完全不同的材质的部件，都要单独出四视图、单独建模，挂到骨骼挂点上（同火浣鼠滚球、邪飞天琵琶）。
+本批分离了精卫的火石（会被投出）和应龙的宝珠（用户选择，「杀蚩尤」时升起召雷）；其余熔在一起的部件不离开身体，绑骨时整块锁在对应骨骼上。
+部件用 `art/pipeline/build_hero_part.py <ID>` 构建（规格档 `pet_attachment`）。
+
+**两个发光件改为代码生成**（2026-10-19）：Tripo 出的火石成了一块扁片、只有一侧边缘发光，宝珠成了蛋形，于是改用
+`art/pipeline/blender/bl_proc_pet_part.py` 程序化生成（资产表 `source_provider = "procedural"`，`[part] procedural = 配方, seed`）：
+- `lava_pebble`（火石）：扁圆石体，扭曲的三维 Voronoi 岩板、圆边、平面凿痕；裂缝是凹槽，黄芯 → 橙 → 红边，旁边石面带暖光；
+  部分裂缝收成细线后合上（不留折痕）。
+- `cloud_pearl`（宝珠）：正球体，金色自发光，凸起的白色祥云（圆云团 + 螺旋卷 + 渐细云尾）。
+
+做法：高模（约 130 万面）在 numpy 里按配方推形状、算颜色 → 同一配方的低模减到 LOD0 → Cycles 烘焙法线与 BC / ORM / 自发光贴图
+→ LOD1 → GLB。每次构建出一张「设计稿 / 五个视角」对照图 `art/source/attachments/<ID>/05_review/<ID>_vNNN_review.png`。
+同一个 seed 结果完全一样，要换花纹改 seed。
+
+### 7.3 骨骼、动作约定（第二版，所有环节共用）
+
+骨骼由 `art/pipeline/creature_rigs/SK_Pet_<名>.json` 按网格实测摆放（坐标系：缩放落地后米制，前 = −Y，生物左 = +X，上 = +Z），
+名字必须让 Unity 的 `CreatureRigBuilder` 认出来（脚 IK、看向、弹簧骨），也是动作生成脚本 `scripts/unity/bake-pet-anims.mjs` 找骨骼的依据。
+
+| 体型 | 灵宠 | 骨骼 |
+|---|---|---|
+| 四足 | 当康、讙、狻猊、狰、白泽 | `root`（不变形）、`hips`、`spine`、`chest`、`neck`（白泽可 `neck_1`/`neck_2`）、`head`；前腿 `upperarm_X → forearm_X → paw_X`（当康、白泽是蹄：`fhoof_X`）；后腿 `thigh_X → shin_X → foot_X`（蹄：`hhoof_X`）；可选 `ear_X`、`jaw` |
+| 尾巴 | | 单尾 `tail_1..n` 挂 `hips`；多尾每条一串、各自挂 `hips`：讙 `tailA_1..`～`tailC_…`，狰 `tailA_1..`～`tailE_…`（共用 `tail` 根骨会让弹簧只认一条） |
+| 鸟 | 精卫、重明鸟 | `root`、`hips`、`chest`、`neck`（或 `neck_1..`）、`head`；翅膀 `wing_1_X → wing_2_X → wing_3_X` 挂 `chest`；腿 `thigh_X → shin_X → talon_X`（**不用 foot**，免得悬停时被脚 IK 拽向地面）；尾羽 `tail_1..n` |
+| 龙 | 应龙 | `root`、`hips`（身体中段）、`spine1`、`spine2`、`chest`、`neck_1`、`neck_2`、`head`；尾段 `tail_1..6` 从 `hips` 往后；翅膀 `wing_1/2/3_X` 挂 `chest`；前腿 `upperarm_X → forearm_X → claw_X`、后腿 `thigh_X → shin_X → hclaw_X`（不触发脚 IK） |
+| 弹簧件 | | `mane_*`、`beard_*`、`crest_*`（毛 / 冠）、`ear_X`、`bell`（铃铛坠） |
+| 特效挂点（不变形） | | `mouth`（嘴前，喷吐 / 吼叫出处）、当康 `coin`、精卫 `pebble`、重明鸟与白泽 `eyefx`、狻猊 `ember`、狰 `horntip`、应龙 `pearl` |
+
+动作片段（`native-anim.json` → Unity `AC_SK_Pet_<名>`），状态名不带下划线、`next` 不成环：
+
+| 灵宠 | 动作 |
+|---|---|
+| 全部 | `Idle`（循环）、`Walk`、`Move`（循环，记录移动速度） |
+| 当康 | `chargeWindup` → `ram`、`dig` |
+| 讙 | `claw`、`taunt` |
+| 精卫 | `drop` |
+| 重明鸟 | `gaze`、`cry` |
+| 狻猊 | `breathe`、`roar` |
+| 狰 | `pounce`、`tailLash`、`rend` |
+| 白泽 | `gaze`、`scroll` |
+| 应龙 | `breath`、`storm` |
 
 ## 8. 代码结构（`unity/Assets/Game/Scripts/Pets/`）
 
 | 文件 | 内容 |
 |---|---|
-| `PetDefs.cs` | 品阶表、八只灵宠的数据（名称、出处、元素、形态、数值）、按权重抽取 |
-| `Pet.cs` | 灵宠本体：跟随 / 交战 / 归位、移动（NavMeshAgent 或飞行）、程序动画、灵契等级、通用攻击工具 |
-| `PetBehaviours.cs` | 八只灵宠各自的普攻 / 被动 / 灵技 / 觉醒 |
+| `PetDefs.cs` | 品阶表、八只灵宠的数据（名称、出处、元素、形态、数值、发光件 `partId` / `partSocket`）、按权重抽取 |
+| `Pet.cs` | 灵宠本体：跟随 / 交战 / 归位、移动（NavMeshAgent 或飞行）、灵契等级、通用攻击工具；骨骼动画接口 `PlayAct`（按状态名播出招）、`PlayLocomotion`，步态速度喂给 `CreatureLocomotion.speedOverride`；发光件 `HidePart` / `DetachPart` / `ReattachPart` |
+| `PetBehaviours.cs` | 八只灵宠各自的普攻 / 被动 / 灵技 / 觉醒，出招时播对应动作（如当康 chargeWindup → ram、应龙 storm 时宝珠升起 1.5 m 当落雷源） |
 | `PetOwner.cs` | 挂在玩家身上：当前灵宠、结契 / 换宠、G 键、经验、玩家属性加成的登记与撤销 |
 | `PetSeal.cs` | 灵兽封印（可交互）、灵兽台（测试） |
 | `PetHud.cs` | HUD 灵宠面板 |
-| `PetVisuals.cs` | 模型加载（`Resources/Pets/<ID>`）与程序化占位体 |
+| `PetVisuals.cs` | 模型加载（`Resources/Pets/<ID>`，骨骼动画模型 + 挂点；没有时退回静态模型 / 程序化占位体）、发光件挂接与呼吸光（`PetPartGlow`） |
 | `PetBootstrap.cs` | 场景加载后自动挂上 PetOwner / PetHud / 灵兽台（不用重建场景） |
 
+编辑器（`unity/Assets/Pipeline/Editor/`）：`PetArtImport.cs`（Sync 时把 `Prefabs/Characters/SK_Pet_*` 与 `Prefabs/Attachments/SM_PetPart_*`
+包成 `Resources/Pets/<ID>.prefab` / `Resources/Pets/Parts/<ID>.prefab`）、`PetStyleCompare.cs`（`bridge.sh petcompare`：灵宠放进沙寺样板场景和燎、
+蜃楼蟾同框拍对比图；当前场景有未保存改动时不执行）。自动试玩 `playtest-focus.txt` 写 `pets` 只跑到灵宠这一组。
+
 改动到的现有代码：`Damage.cs`（`DamageSource.Pet`）、`Stats.cs`（`Stat.PetDamagePct`）、`Combat.cs`（灵宠伤害倍率、不随机暴击）、
-`Hud.cs`（灵宠伤害不触发命中标记）、`EnemyAI.cs`（嘲讽目标）、`LootDirector.cs` / `Chest.cs`（`pet` 奖励、精英掉封印）。
+`Hud.cs`（灵宠伤害不触发命中标记）、`EnemyAI.cs`（嘲讽目标）、`LootDirector.cs` / `Chest.cs`（`pet` 奖励、精英掉封印）、
+`CreatureLocomotion.cs`（`speedOverride`）。
 
 ## 9. 以后
 
@@ -143,25 +217,33 @@
 - 灵宠秘卷：灵宠伤害、灵技急速、「与灵宠同元素时反应伤害 +X%」等。
 - 第二批灵宠：乘黄、貔貅、獬豸、文鳐鱼、驺虞、鸾鸟（名字已查过不和现有敌人重名）。
 
-## 10. 进度（2026-10-18 晚）
+## 10. 进度（2026-10-19）
 
 **已完成**
-- 8 只灵宠全部有 Tripo 正式模型（带贴图，静态网格 + 程序动画）：预览 [pet-gallery.png](pet-gallery.png)，游戏内截图 [pet-playtest.jpg](pet-playtest.jpg)。
-- 第 2–6 节的玩法全部实现：品阶抽取、灵兽封印（结契 / 换宠留封印 / 换回保留冷却与灵契）、灵契升级与 3 级觉醒、G 灵技（普攻中按下会排队到攻击结束再放）、HUD 面板、神兽现世横幅 + 金色光柱、讙的嘲讽（敌人瞄准 / 近战 / 投射物都转向讙，玩家不吃这些伤害）、白泽的「必定弱点暴击」（只算暴击，不破坏邪飞天琵琶 / 镇墓兽正面格挡这类机制）。
-- 1-1：出生点附近自动摆「灵兽台」（测试用，8 只全摆）；场地 ② 宝箱改为灵兽封印；精英 6% 掉封印。
-- 自动试玩（`scripts/unity/bridge.sh playtest`）新增 `[pets]` 段：8 只依次结契各打 4 秒并放灵技，测灵契觉醒和换宠，截图 `Assets/Art/_Review/playtest_pet_*.png`。最近一次：8 只全部通过；唯一不合格项是原有的「火浣鼠侧翻」，与灵宠无关。
+- 第二版美术全部接通（见 7.1）：8 只都是正式管线的骨骼动画模型，带 ORM/AO 与远处低模，资产校验 0 错误；精卫的火石、应龙的宝珠是程序化
+  发光件（见 7.2）。同场景画风对比 [art/review/pets-unity-v002.jpg](art/review/pets-unity-v002.jpg)，实战截图
+  [art/review/pets-playtest-v002.jpg](art/review/pets-playtest-v002.jpg)。
+- 骨骼（发布版本）：当康 v003、讙 v003、精卫 v002、重明鸟 v003、狻猊 v003、狰 v001、白泽 v003、应龙 v002。
+  讙实际 6 条尾、狰 7 条（Tripo 做成左右对称），每条一条骨链；几只加了只跟身体走的辅助骨（肩胛 / 胯 / 肋），防止腿摆动时撕开胸侧。
+- 动作：每只都有 Idle / Walk / Move 和各自出招（7.3），60 fps，循环首尾无缝。当康、狻猊、狰腿短，跑步做成腾空长的蹦跳 / 快奔，
+  录制速度 3.7–4.6 m/s，玩法速度 9–11 m/s 时 `MoveScale` 不超 2.5× 上限。
+- 第 2–6 节的玩法全部实现（品阶抽取、灵兽封印、灵契升级与觉醒、G 灵技、HUD、神兽现世、讙的嘲讽、白泽必定弱点暴击）。
+- 自动试玩 `[pets]` 段 8 只全部通过（结契、造成伤害、放出灵技、灵契觉醒、换宠留封印）。
 
-**试玩数据**（4 秒，含灵技，1 级，对 2 跳鼠 + 1 蝎尾 + 1 蜃楼蟾）
+**试玩数据**（4 秒，含灵技，1 级，对 2 跳鼠 + 1 蝎尾 + 1 蜃楼蟾；2026-10-19 骨骼动画版）
 
 | 当康 | 讙 | 精卫 | 重明鸟 | 狻猊 | 狰 | 白泽 | 应龙 |
 |---|---|---|---|---|---|---|---|
-| 64 | 30 | 24 | 295 | 119 | 374 | 258（另有玩家必暴击） | 314 |
+| 154 | 42 | 37 | 301 | 101 | 374 | 258（另有玩家必暴击） | 344 |
 
 **怎么玩到**：Unity 打开 `L1_1_GobiRoad` → Play → 出生点附近找 8 道光柱（灵兽台）→ 对封印按 F 结契 → G 放灵技。
 
 **已知问题 / 下一步**
 - 凡灵（讙、精卫）伤害偏低，灵兽的灵技爆发偏高，等手玩后一起调。
-- 敌人被撞不会被击退（只有尸体飞出去）；飞行宠物没有寻路，只会抬高越过障碍。
-- 静态模型没有骨骼动作；Tripo 自动绑骨 → 步态 / 扑击 / 扇翅动画是第二版。
+- 飞行宠物没有寻路，只会抬高越过障碍。
 - 灵宠不跨关卡（等 RunState）。
-- 模型源文件：Tripo 原件入库在 `art/source/pets/<ID>/03_model/<ID>_tripo_original.glb`；Unity 里的 FBX / 贴图不入库，新机器上先跑 `python art/pipeline/pet_export.py`，再在 Unity 跑「Spiritfire/Pets/Import Pet Models」（或 `bridge.sh pets`）。概念图四视图不入库（提示词和生成记录入库，`pet_concepts.py` 可重生成）。
+- 从 GLB 构建时顶点在 UV 缝处断开，热扩散权重全部失败，只能用 segments 权重；而 segments 权重叠 `rigid` / `ground` 软边前没有归一化，
+  软渐变不生效（现在的骨骼都用硬框避开了）。修法：`bl_build_tripo_creature.py` 的 segments 之后先按行归一化。
+- 两只鸟的翼面接近竖直（飞羽下垂），按绕前后轴拍翅绑定，没有在运行时把翅膀转平。
+- 源文件：Tripo 网格入库在 `art/source/pets/<ID>/03_model/`；构建中间件（`03_work`、`04_export`、审查图）和绑骨草稿
+  `art/source/pets/<ID>/rigwork/` 不入库，可由骨骼表重新构建。

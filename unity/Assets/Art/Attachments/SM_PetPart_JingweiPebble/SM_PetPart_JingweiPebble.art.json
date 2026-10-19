@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_PetPart_JingweiPebble",
+  "kind": "static",
+  "class": "pet_attachment",
+  "category": "attachments",
+  "bind": {
+    "source": "pet",
+    "id": "jingwei",
+    "attachment": "pebble"
+  },
+  "keepGlow": "attachments",
+  "lodDistance": [
+    0,
+    14
+  ],
+  "budget": {
+    "lodTris": [
+      1200,
+      400
+    ],
+    "texture": 512,
+    "maxFileKb": 400
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -0.040043819695711136,
+      -0.036796972155570984,
+      -0.023232942447066307
+    ],
+    "max": [
+      0.04008851200342178,
+      0.03668978810310364,
+      0.023215102031826973
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_PetPart_JingweiPebble_LOD0",
+      "lod": 0,
+      "tris": 1176,
+      "verts": 1286,
+      "materials": [
+        "M_PetPart_JingweiPebble"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_PetPart_JingweiPebble_LOD1",
+      "lod": 1,
+      "tris": 392,
+      "verts": 553,
+      "materials": [
+        "M_PetPart_JingweiPebble"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_PetPart_JingweiPebble",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "doubleSided": false,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_PetPart_JingweiPebble_BC.png",
+        "N": "Textures/T_PetPart_JingweiPebble_N.png",
+        "ORM": "Textures/T_PetPart_JingweiPebble_ORM.png",
+        "E": "Textures/T_PetPart_JingweiPebble_E.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/attachments/SM_PetPart_JingweiPebble.glb",
+    "sha256": "0eca950f9378dc1083270b41dfd1f12346c8c6af3812e9ca575bf0f39c2307ea",
+    "hiRes": false,
+    "version": {
+      "build": 9
+    },
+    "generator": {
+      "tool": "Blender (bl_proc_pet_part.py)",
+      "mode": "procedural",
+      "recipe": "lava_pebble",
+      "seed": 7
+    },
+    "license": "project-original procedural asset"
+  },
+  "exported": "2026-10-19 00:20:47"
+}

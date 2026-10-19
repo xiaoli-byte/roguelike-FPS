@@ -1,0 +1,182 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SK_Pet_Zheng",
+  "kind": "skeletal",
+  "class": "pet",
+  "category": "characters",
+  "bind": {
+    "source": "pet",
+    "id": "zheng"
+  },
+  "keepGlow": "all",
+  "lodDistance": [
+    0,
+    14,
+    30
+  ],
+  "budget": {
+    "lodTris": [
+      8000,
+      3500,
+      1500
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -0.2260991930961609,
+      0,
+      -0.3361383080482483
+    ],
+    "max": [
+      0.2260991930961609,
+      0.8502368927001953,
+      0.3361383080482483
+    ]
+  },
+  "rig": {
+    "type": "generic",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": [
+      "root",
+      "hips",
+      "haunch_L",
+      "haunch_R",
+      "spine",
+      "chest",
+      "neck",
+      "head",
+      "brow",
+      "chin",
+      "horntip",
+      "mouth",
+      "ribs_L",
+      "ribs_R",
+      "upperarm_L",
+      "forearm_L",
+      "paw_L",
+      "upperarm_R",
+      "forearm_R",
+      "paw_R",
+      "tailA_1",
+      "tailA_2",
+      "tailA_3",
+      "tailA_4",
+      "tailA_5",
+      "tailB_1",
+      "tailB_2",
+      "tailB_3",
+      "tailB_4",
+      "tailB_5",
+      "tailC_1",
+      "tailC_2",
+      "tailC_3",
+      "tailC_4",
+      "tailC_5",
+      "tailD_1",
+      "tailD_2",
+      "tailD_3",
+      "tailD_4",
+      "tailD_5",
+      "tailE_1",
+      "tailE_2",
+      "tailE_3",
+      "tailE_4",
+      "tailE_5",
+      "tailF_1",
+      "tailF_2",
+      "tailF_3",
+      "tailF_4",
+      "tailG_1",
+      "tailG_2",
+      "tailG_3",
+      "tailG_4",
+      "thigh_L",
+      "shin_L",
+      "foot_L",
+      "thigh_R",
+      "shin_R",
+      "foot_R"
+    ]
+  },
+  "meshes": [
+    {
+      "name": "SK_Pet_Zheng_LOD0",
+      "lod": 0,
+      "tris": 7880,
+      "verts": 11338,
+      "materials": [
+        "M_Pet_Zheng"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Pet_Zheng_LOD1",
+      "lod": 1,
+      "tris": 3447,
+      "verts": 6123,
+      "materials": [
+        "M_Pet_Zheng"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Pet_Zheng_LOD2",
+      "lod": 2,
+      "tris": 1477,
+      "verts": 2789,
+      "materials": [
+        "M_Pet_Zheng"
+      ],
+      "skinned": true
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Pet_Zheng",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Pet_Zheng_BC.png",
+        "ORM": "Textures/T_Pet_Zheng_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/characters/SK_Pet_Zheng@hi.glb",
+    "sha256": "c0f11992a2455dd5edb0682ef3c6ddc9c821ee51829dd78972e1cade28b3e02e",
+    "hiRes": true,
+    "version": {
+      "native_build": 2
+    },
+    "generator": {
+      "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+      "mode": "tripo_native",
+      "checkpoint": "P2.0"
+    },
+    "license": null
+  },
+  "exported": "2026-10-19 07:54:06"
+}

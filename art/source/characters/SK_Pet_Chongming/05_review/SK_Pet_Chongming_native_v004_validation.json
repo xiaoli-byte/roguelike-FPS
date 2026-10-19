@@ -1,0 +1,372 @@
+{
+  "asset": "SK_Pet_Chongming",
+  "version": 4,
+  "glb": "art/source/characters/SK_Pet_Chongming/04_export/SK_Pet_Chongming_native_v004.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.3,
+      "自定义骨架：25 根骨骼（热扩散权重，10642 个顶点未覆盖）": 0.1,
+      "贴图（BC + AO/ORM）": 6.2,
+      "LOD 与蒙皮上限 7879 / 3447 / 1477": 0.4,
+      "导出 484 KB": 0.7
+    },
+    "source": {
+      "verts": 10642,
+      "tris": 8707,
+      "scale": 1.4106888128969222
+    },
+    "regions": {
+      "heat_unweighted_verts": 10642,
+      "weights": "segments",
+      "chest_verts": 786,
+      "hips_verts": 1962,
+      "thigh_L_verts": 384,
+      "thigh_R_verts": 404,
+      "wing_2_L_verts": 1521,
+      "wing_2_R_verts": 1447,
+      "wing_3_L_verts": 504,
+      "wing_3_R_verts": 519,
+      "neck_verts": 2189,
+      "head_verts": 2134,
+      "tail_1_verts": 80,
+      "crest_1_verts": 302,
+      "crest_2_verts": 66,
+      "fallback_verts": 0,
+      "per_bone": {
+        "hips": 690,
+        "chest": 1830,
+        "neck": 149,
+        "head": 1789,
+        "crest_1": 256,
+        "crest_2": 66,
+        "wing_1_L": 0,
+        "wing_2_L": 1017,
+        "wing_3_L": 504,
+        "thigh_L": 244,
+        "shin_L": 142,
+        "talon_L": 512,
+        "wing_1_R": 0,
+        "wing_2_R": 928,
+        "wing_3_R": 519,
+        "thigh_R": 262,
+        "shin_R": 145,
+        "talon_R": 513,
+        "tail_1": 118,
+        "tail_2": 102,
+        "tail_3": 184,
+        "tail_4": 253
+      }
+    },
+    "bones": [
+      "chest",
+      "crest_1",
+      "crest_2",
+      "eyefx",
+      "head",
+      "hips",
+      "mouth",
+      "neck",
+      "root",
+      "shin_L",
+      "shin_R",
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "tail_4",
+      "talon_L",
+      "talon_R",
+      "thigh_L",
+      "thigh_R",
+      "wing_1_L",
+      "wing_1_R",
+      "wing_2_L",
+      "wing_2_R",
+      "wing_3_L",
+      "wing_3_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.972,
+      "shade_mean": 0.975
+    },
+    "textures": {
+      "size": 1024,
+      "ao_mean": 0.895,
+      "provider_pbr": [],
+      "roughness_mean": 0.8,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Pet_Chongming_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Pet_Chongming_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Pet_Chongming_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Pet_Chongming_LOD0",
+        "tris": 7879,
+        "uv_min": [
+          0.0009769066236913204,
+          0.0009765625
+        ],
+        "uv_max": [
+          0.9990234375,
+          0.9970703125
+        ]
+      },
+      {
+        "name": "SK_Pet_Chongming_LOD1",
+        "tris": 3447,
+        "uv_min": [
+          0.0008662358741275966,
+          0.0009765625
+        ],
+        "uv_max": [
+          0.9988568425178528,
+          0.996826171875
+        ]
+      },
+      {
+        "name": "SK_Pet_Chongming_LOD2",
+        "tris": 1477,
+        "uv_min": [
+          0.0011975264642387629,
+          0.001220703125
+        ],
+        "uv_max": [
+          0.98046875,
+          0.98779296875
+        ]
+      }
+    ],
+    "glb_kb": 484,
+    "_seconds": 9.4
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "484 KB / 1600 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Pet_Chongming_LOD0', 'SK_Pet_Chongming_LOD1', 'SK_Pet_Chongming_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "7879 / 8000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "3447 / 3500"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "1477 / 1500"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "1.410 m (design 1.41 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Pet_Chongming']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "texture T_Pet_Chongming_ORM",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "texture T_Pet_Chongming_BC",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "25 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Pet_Chongming_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Pet_Chongming_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Pet_Chongming_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Pet_Chongming_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Pet_Chongming_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Pet_Chongming_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Pet_Chongming_LOD0 UV range",
+      "[0.001, 0.001]..[0.999, 0.997]"
+    ],
+    [
+      "pass",
+      "SK_Pet_Chongming_LOD1 UV range",
+      "[0.001, 0.001]..[0.999, 0.997]"
+    ],
+    [
+      "pass",
+      "SK_Pet_Chongming_LOD2 UV range",
+      "[0.001, 0.001]..[0.98, 0.988]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "10642 verts"
+    ],
+    [
+      "pass",
+      "region chest",
+      "786 verts"
+    ],
+    [
+      "pass",
+      "region hips",
+      "1962 verts"
+    ],
+    [
+      "pass",
+      "region thigh_L",
+      "384 verts"
+    ],
+    [
+      "pass",
+      "region thigh_R",
+      "404 verts"
+    ],
+    [
+      "pass",
+      "region wing_2_L",
+      "1521 verts"
+    ],
+    [
+      "pass",
+      "region wing_2_R",
+      "1447 verts"
+    ],
+    [
+      "pass",
+      "region wing_3_L",
+      "504 verts"
+    ],
+    [
+      "pass",
+      "region wing_3_R",
+      "519 verts"
+    ],
+    [
+      "pass",
+      "region neck",
+      "2189 verts"
+    ],
+    [
+      "pass",
+      "region head",
+      "2134 verts"
+    ],
+    [
+      "pass",
+      "region tail_1",
+      "80 verts"
+    ],
+    [
+      "pass",
+      "region crest_1",
+      "302 verts"
+    ],
+    [
+      "pass",
+      "region crest_2",
+      "66 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "0 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

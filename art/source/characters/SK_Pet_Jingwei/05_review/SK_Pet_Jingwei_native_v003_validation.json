@@ -1,0 +1,382 @@
+{
+  "asset": "SK_Pet_Jingwei",
+  "version": 3,
+  "glb": "art/source/characters/SK_Pet_Jingwei/04_export/SK_Pet_Jingwei_native_v003.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.3,
+      "自定义骨架：21 根骨骼（热扩散权重，108 个顶点未覆盖）": 0.2,
+      "贴图（BC + AO/ORM）": 6.4,
+      "LOD 与蒙皮上限 7879 / 3446 / 1477": 0.3,
+      "导出 340 KB": 0.6
+    },
+    "source": {
+      "verts": 6507,
+      "tris": 9360,
+      "scale": 0.8998242530755711
+    },
+    "regions": {
+      "heat_unweighted_verts": 108,
+      "weights": "segments",
+      "chest_verts": 6507,
+      "hips_verts": 1895,
+      "thigh_L_verts": 27,
+      "thigh_R_verts": 23,
+      "neck_verts": 2057,
+      "head_verts": 2216,
+      "wing_2_L_verts": 850,
+      "wing_2_R_verts": 857,
+      "wing_3_L_verts": 385,
+      "wing_3_R_verts": 379,
+      "tail_1_verts": 207,
+      "tail_2_verts": 218,
+      "shin_L_verts": 562,
+      "talon_L_verts": 404,
+      "shin_R_verts": 559,
+      "talon_R_verts": 409,
+      "fallback_verts": 0,
+      "per_bone": {
+        "hips": 258,
+        "chest": 578,
+        "neck": 0,
+        "head": 2019,
+        "wing_1_L": 0,
+        "wing_2_L": 465,
+        "wing_3_L": 385,
+        "thigh_L": 27,
+        "shin_L": 158,
+        "talon_L": 404,
+        "wing_1_R": 0,
+        "wing_2_R": 478,
+        "wing_3_R": 379,
+        "thigh_R": 23,
+        "shin_R": 150,
+        "talon_R": 409,
+        "tail_1": 218,
+        "tail_2": 173
+      }
+    },
+    "bones": [
+      "chest",
+      "head",
+      "hips",
+      "mouth",
+      "neck",
+      "pebble",
+      "root",
+      "shin_L",
+      "shin_R",
+      "tail_1",
+      "tail_2",
+      "talon_L",
+      "talon_R",
+      "thigh_L",
+      "thigh_R",
+      "wing_1_L",
+      "wing_1_R",
+      "wing_2_L",
+      "wing_2_R",
+      "wing_3_L",
+      "wing_3_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.864,
+      "shade_mean": 0.935
+    },
+    "textures": {
+      "size": 1024,
+      "ao_mean": 0.786,
+      "provider_pbr": [],
+      "roughness_mean": 0.85,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Pet_Jingwei_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Pet_Jingwei_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Pet_Jingwei_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Pet_Jingwei_LOD0",
+        "tris": 7879,
+        "uv_min": [
+          0.0,
+          0.0
+        ],
+        "uv_max": [
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "SK_Pet_Jingwei_LOD1",
+        "tris": 3446,
+        "uv_min": [
+          0.0,
+          0.0
+        ],
+        "uv_max": [
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "SK_Pet_Jingwei_LOD2",
+        "tris": 1477,
+        "uv_min": [
+          0.0,
+          1.9217259250581264e-06
+        ],
+        "uv_max": [
+          1.0,
+          0.9990234375
+        ]
+      }
+    ],
+    "glb_kb": 340,
+    "_seconds": 10.4
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "340 KB / 1600 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Pet_Jingwei_LOD0', 'SK_Pet_Jingwei_LOD1', 'SK_Pet_Jingwei_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "7879 / 8000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "3446 / 3500"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "1477 / 1500"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "0.750 m (design 0.75 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=-0.0003"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Pet_Jingwei']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "texture T_Pet_Jingwei_ORM",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "texture T_Pet_Jingwei_BC",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "21 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Pet_Jingwei_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Pet_Jingwei_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Pet_Jingwei_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Pet_Jingwei_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Pet_Jingwei_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Pet_Jingwei_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Pet_Jingwei_LOD0 UV range",
+      "[0.0, 0.0]..[1.0, 1.0]"
+    ],
+    [
+      "pass",
+      "SK_Pet_Jingwei_LOD1 UV range",
+      "[0.0, 0.0]..[1.0, 1.0]"
+    ],
+    [
+      "pass",
+      "SK_Pet_Jingwei_LOD2 UV range",
+      "[0.0, 0.0]..[1.0, 0.999]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "108 verts"
+    ],
+    [
+      "pass",
+      "region chest",
+      "6507 verts"
+    ],
+    [
+      "pass",
+      "region hips",
+      "1895 verts"
+    ],
+    [
+      "pass",
+      "region thigh_L",
+      "27 verts"
+    ],
+    [
+      "pass",
+      "region thigh_R",
+      "23 verts"
+    ],
+    [
+      "pass",
+      "region neck",
+      "2057 verts"
+    ],
+    [
+      "pass",
+      "region head",
+      "2216 verts"
+    ],
+    [
+      "pass",
+      "region wing_2_L",
+      "850 verts"
+    ],
+    [
+      "pass",
+      "region wing_2_R",
+      "857 verts"
+    ],
+    [
+      "pass",
+      "region wing_3_L",
+      "385 verts"
+    ],
+    [
+      "pass",
+      "region wing_3_R",
+      "379 verts"
+    ],
+    [
+      "pass",
+      "region tail_1",
+      "207 verts"
+    ],
+    [
+      "pass",
+      "region tail_2",
+      "218 verts"
+    ],
+    [
+      "pass",
+      "region shin_L",
+      "562 verts"
+    ],
+    [
+      "pass",
+      "region talon_L",
+      "404 verts"
+    ],
+    [
+      "pass",
+      "region shin_R",
+      "559 verts"
+    ],
+    [
+      "pass",
+      "region talon_R",
+      "409 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "0 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

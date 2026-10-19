@@ -1,0 +1,42 @@
+{
+  "design": {
+    "key": "pet_jingwei",
+    "asset": "SK_Pet_Jingwei",
+    "chapter": "pets",
+    "name": "精卫",
+    "layout": "creature",
+    "height_m": 0.45,
+    "rarity": "凡灵",
+    "brief": "A small mythical bird (Jingwei of the Shan Hai Jing, daughter of the Flame Emperor, who carries pebbles to fill the sea): a crow-sized songbird with a patterned black-and-white head, a white beak and bright red feet, glossy black body plumage (the dark colour block) with crimson wings and ember-orange wing tips, and a round pebble glowing with ember fire held in its beak. Stubborn and fearless; shown diving with its wings swept back, dropping the glowing pebble. About 0.45 m long with a 0.9 m wingspan.",
+    "turnaround_lead": "Flying pose",
+    "turnaround_pose": " with both wings spread fully OUT TO THE SIDES, flat and horizontal like a cross, tail feathers fanned straight backwards, both legs hanging straight down below the body with the feet visible, head facing forward, the beak CLOSED and EMPTY: NO pebble, NO stone and nothing held in the beak; NO flames, sparks or motion lines",
+    "turnaround_digits": "each foot has three forward toes and one back toe; the long wing feathers are clearly separated; wing tips are never cut off by the frame.",
+    "status": "approved",
+    "modeled": [
+      "bird body, wings and fanned tail",
+      "red feet",
+      "beak closed and empty (the pebble is the separate part pet_jingwei_pebble)"
+    ],
+    "effects": [
+      "flames and ember trail around the pebble",
+      "falling fire pebbles and their explosions"
+    ],
+    "revision": "2026-10-18 用户指出火石和喙熔在一起：鸟身重出四视图（喙空着），火石单独建模（SM_PetPart_JingweiPebble），挂 pebble 挂点"
+  },
+  "from_sheet": "DS_pet_jingwei_v001.png",
+  "generation": {
+    "provider": "codex",
+    "model": "gpt-5.6-sol",
+    "size": "2048x1024",
+    "generated_size": [
+      2172,
+      724
+    ],
+    "references": [
+      "DS_pet_jingwei_v001.png"
+    ],
+    "codex_session": "01a14f9c-dfa1-7e12-9cdb-5055bf8dca24",
+    "attempt": 1,
+    "seconds": 65.7
+  }
+}

@@ -56,6 +56,13 @@ namespace Spiritfire.Game
         public Color body, accent, fx;
         public string attackDesc, passiveName, passiveDesc, skillName, skillDesc, awakenDesc;
         public float skillCooldown = 20f;
+        /// <summary>
+        /// 单独建模、可拆下的发光件（Resources/Pets/Parts/&lt;partId&gt;，PetArtImport 从 Assets/Art/Prefabs/Attachments 生成）挂在骨骼挂点 partSocket 上：
+        /// 精卫口中的火石（投掷时藏起、0.6 秒后再衔一颗）、应龙爪中的宝珠（杀蚩尤时飞到头顶）。空 = 没有
+        /// </summary>
+        public string partId, partSocket;
+        /// <summary>发光件的辉光色</summary>
+        public Color partGlow = new(1f, 0.8f, 0.45f);
         public Func<PetBehaviour> create;
 
         public Color RarityColor => PetRarities.Color(rarity);
@@ -102,6 +109,7 @@ namespace Spiritfire.Game
                 passiveName = "", passiveDesc = "",
                 skillName = "衔石填海", skillDesc = "准星处 5 米内 2 秒落下 10 颗火石，每颗 24 伤害 + 必定灼烧", skillCooldown = 16,
                 awakenDesc = "火石爆炸范围 2.8 米", create = () => new JingweiBehaviour(),
+                partId = "SM_PetPart_JingweiPebble", partSocket = "pebble", partGlow = new Color(1f, 0.5f, 0.18f),
             },
             new()
             {
@@ -157,6 +165,7 @@ namespace Spiritfire.Game
                 passiveName = "布雨", passiveDesc = "每 0.6 秒对 28 米内随机敌人降一道天雷（50 伤害 + 必定雷殛），每第 3 道附蚀化",
                 skillName = "杀蚩尤", skillDesc = "6 秒雷暴，每秒 12 道天雷（70 伤害，火 → 雷 → 蚀轮转）；释放时你的护盾回满", skillCooldown = 25,
                 awakenDesc = "布雨间隔 0.4 秒", create = () => new YinglongBehaviour(),
+                partId = "SM_PetPart_YinglongPearl", partSocket = "pearl", partGlow = new Color(0.6f, 0.8f, 1f),
             },
         };
 

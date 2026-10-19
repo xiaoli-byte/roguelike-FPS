@@ -1,0 +1,149 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SK_Pet_Baize",
+  "kind": "skeletal",
+  "class": "pet_mythic",
+  "category": "characters",
+  "bind": {
+    "source": "pet",
+    "id": "baize"
+  },
+  "keepGlow": "all",
+  "lodDistance": [
+    0,
+    18,
+    40
+  ],
+  "budget": {
+    "lodTris": [
+      12000,
+      5000,
+      2000
+    ],
+    "texture": 2048,
+    "maxFileKb": 3000
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -0.25561803579330444,
+      0,
+      -0.4397285580635071
+    ],
+    "max": [
+      0.25561803579330444,
+      1.3001155853271484,
+      0.4397899806499481
+    ]
+  },
+  "rig": {
+    "type": "generic",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": [
+      "root",
+      "hips",
+      "spine",
+      "chest",
+      "neck_1",
+      "neck_2",
+      "head",
+      "beard_1",
+      "beard_2",
+      "eyefx",
+      "mouth",
+      "upperarm_L",
+      "forearm_L",
+      "fhoof_L",
+      "upperarm_R",
+      "forearm_R",
+      "fhoof_R",
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "thigh_L",
+      "shin_L",
+      "hhoof_L",
+      "thigh_R",
+      "shin_R",
+      "hhoof_R"
+    ]
+  },
+  "meshes": [
+    {
+      "name": "SK_Pet_Baize_LOD0",
+      "lod": 0,
+      "tris": 11820,
+      "verts": 8369,
+      "materials": [
+        "M_Pet_Baize"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Pet_Baize_LOD1",
+      "lod": 1,
+      "tris": 4925,
+      "verts": 4375,
+      "materials": [
+        "M_Pet_Baize"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Pet_Baize_LOD2",
+      "lod": 2,
+      "tris": 1970,
+      "verts": 2169,
+      "materials": [
+        "M_Pet_Baize"
+      ],
+      "skinned": true
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Pet_Baize",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Pet_Baize_BC.png",
+        "ORM": "Textures/T_Pet_Baize_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/characters/SK_Pet_Baize.glb",
+    "sha256": "76da9e486ae622171c976dd2be9e472b8713f0735b00e261f1002ffcb420f867",
+    "hiRes": false,
+    "version": {
+      "native_build": 4
+    },
+    "generator": {
+      "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+      "mode": "tripo_native",
+      "checkpoint": "P2.0"
+    },
+    "license": null
+  },
+  "exported": "2026-10-19 07:54:08"
+}

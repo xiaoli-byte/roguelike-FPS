@@ -6,6 +6,11 @@
 Registry entry: kind = "static", class = "hero_attachment", bind = { source = "hero", id, attachment },
 [assets.<id>.part] source = inbox FBX, task = Tripo URL, size = largest dimension in metres (origin = bounding-box centre).
 Runtime: src/ui/heroPreview/heroes/heroShowFx.ts finds it with AssetLibrary.findAttachments('hero', id).
+
+Procedural parts (pet glow parts, source_provider = "procedural"): [assets.<id>.part] procedural = recipe name
+(lava_pebble / cloud_pearl), seed, size, optional design = turnaround PNG. No provider model: blender/bl_proc_pet_part.py
+makes the mesh and bakes BC / N / ORM / E itself, renders five review views, and this script stacks them under the design
+sheet into 05_review/<stem>_review.png.
 """
 from __future__ import annotations
 
@@ -39,12 +44,21 @@ def main() -> None:
     version = max(existing) + 1 if existing else 1
     stem = f"{a.asset}_v{version:03d}"
     glb = out / "04_export" / f"{stem}.glb"
-    params = {"asset_id": a.asset, "source": str(resolve_path(part["source"])), "size": part["size"],
+    proc = part.get("procedural")
+    params = {"asset_id": a.asset, "size": part["size"],
               "texture": cls["texture"], "lod_tris": cls["lod_tris"], "lod_distance": cls["lod_distance"],
               "roughness": reg.get("material", {}).get("roughness", 0.7),
               "out_glb": str(glb), "out_blend": str(out / "03_work" / f"{stem}.blend")}
+    if proc:
+        params.update(procedural=proc, seed=part.get("seed", 1), review_dir=str(out / "05_review" / stem))
+    else:
+        params["source"] = str(resolve_path(part["source"]))
     print(f"→ {a.asset} build v{version:03d} …", flush=True)
-    metrics = blender.run("bl_build_hero_part.py", params, out / "_tmp" / stem, "part_build")
+    metrics = blender.run("bl_proc_pet_part.py" if proc else "bl_build_hero_part.py", params, out / "_tmp" / stem,
+                          "part_build")
+    if proc:
+        sheet = review_sheet(out / "05_review" / stem, part.get("design"))
+        print(f"  review: {sheet.relative_to(ROOT)}")
     g = Glb(glb)
     names = sorted(n["name"] for n in g.json["nodes"] if "_LOD" in n.get("name", ""))
     checks = [
@@ -73,12 +87,38 @@ def main() -> None:
         "url": f"assets/attachments/{a.asset}.glb", "kind": "static", "class": reg["class"], "bind": reg["blockout"],
         "keepGlow": "attachments", "lodDistance": cls["lod_distance"], "bounds": {"min": lo, "max": hi},
         "version": {"build": version}, "sha256": sha256(dst), "bytes": dst.stat().st_size, "published": now(),
-        "generator": {"tool": "Tripo Studio", "mode": "tripo", "checkpoint": "P2.0"}, "source_task": part.get("task"),
-        "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+        "generator": ({"tool": "Blender (bl_proc_pet_part.py)", "mode": "procedural", "recipe": proc,
+                       "seed": part.get("seed", 1)} if proc else {"tool": "Tripo Studio", "mode": "tripo", "checkpoint": "P2.0"}),
+        "source_task": part.get("task"),
+        "license": "project-original procedural asset" if proc else "Tripo Studio paid-plan output (commercial use per Tripo terms)",
     }
     manifest["updated"] = now()
     manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"✔ published {dst.relative_to(ROOT)} ({dst.stat().st_size / 1024:.0f} KB)")
+
+
+def review_sheet(shots: Path, design: str | None) -> Path:
+    """Five transparent renders on the review grey, in a row; the design turnaround (if any) above at the same width."""
+    from PIL import Image
+    tiles = []
+    for k in ("front", "left", "back", "right", "three_quarter"):
+        im = Image.open(shots / f"{k}.png").convert("RGBA")
+        bg = Image.new("RGBA", im.size, (214, 214, 214, 255))
+        tiles.append(Image.alpha_composite(bg, im).convert("RGB"))
+    w, h = tiles[0].size
+    row = Image.new("RGB", (w * len(tiles), h), (214, 214, 214))
+    for i, t in enumerate(tiles):
+        row.paste(t, (i * w, 0))
+    if design and resolve_path(design).exists():
+        d = Image.open(resolve_path(design)).convert("RGB")
+        d = d.resize((row.width, round(d.height * row.width / d.width)))
+        both = Image.new("RGB", (row.width, d.height + row.height), (214, 214, 214))
+        both.paste(d, (0, 0))
+        both.paste(row, (0, d.height))
+        row = both
+    path = shots.parent / f"{shots.name}_review.png"
+    row.save(path)
+    return path
 
 
 if __name__ == "__main__":

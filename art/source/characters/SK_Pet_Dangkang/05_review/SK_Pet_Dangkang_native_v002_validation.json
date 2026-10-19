@@ -1,0 +1,332 @@
+{
+  "asset": "SK_Pet_Dangkang",
+  "version": 2,
+  "glb": "art/source/characters/SK_Pet_Dangkang/04_export/SK_Pet_Dangkang_native_v002.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.3,
+      "自定义骨架：26 根骨骼（热扩散权重，12820 个顶点未覆盖）": 0.2,
+      "贴图（BC + AO/ORM）": 5.8,
+      "LOD 与蒙皮上限 7880 / 3447 / 1477": 0.7,
+      "导出 581 KB": 1.1
+    },
+    "source": {
+      "verts": 12820,
+      "tris": 8877,
+      "scale": 0.7003419638495358
+    },
+    "regions": {
+      "heat_unweighted_verts": 12820,
+      "weights": "segments",
+      "ground_verts": 1297,
+      "chest_verts": 269,
+      "crest_1_verts": 792,
+      "crest_2_verts": 222,
+      "tail_3_verts": 391,
+      "bell_verts": 258,
+      "fallback_verts": 0,
+      "per_bone": {
+        "hips": 783,
+        "spine": 2,
+        "chest": 794,
+        "neck": 0,
+        "head": 865,
+        "crest_1": 2521,
+        "crest_2": 422,
+        "bell": 258,
+        "upperarm_L": 5,
+        "forearm_L": 0,
+        "fhoof_L": 279,
+        "upperarm_R": 4,
+        "forearm_R": 0,
+        "fhoof_R": 275,
+        "thigh_L": 49,
+        "shin_L": 14,
+        "hhoof_L": 285,
+        "thigh_R": 36,
+        "shin_R": 14,
+        "hhoof_R": 279,
+        "tail_1": 54,
+        "tail_2": 57,
+        "tail_3": 622
+      }
+    },
+    "bones": [
+      "bell",
+      "chest",
+      "coin",
+      "crest_1",
+      "crest_2",
+      "fhoof_L",
+      "fhoof_R",
+      "forearm_L",
+      "forearm_R",
+      "head",
+      "hhoof_L",
+      "hhoof_R",
+      "hips",
+      "mouth",
+      "neck",
+      "root",
+      "shin_L",
+      "shin_R",
+      "spine",
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "thigh_L",
+      "thigh_R",
+      "upperarm_L",
+      "upperarm_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.963,
+      "shade_mean": 0.952
+    },
+    "textures": {
+      "size": 1024,
+      "ao_mean": 0.774,
+      "provider_pbr": [],
+      "roughness_mean": 0.8,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Pet_Dangkang_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Pet_Dangkang_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Pet_Dangkang_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Pet_Dangkang_LOD0",
+        "tris": 7880,
+        "uv_min": [
+          0.00146484375,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.9951171875,
+          0.998291015625
+        ]
+      },
+      {
+        "name": "SK_Pet_Dangkang_LOD1",
+        "tris": 3447,
+        "uv_min": [
+          0.00146484375,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.989501953125,
+          0.998291015625
+        ]
+      },
+      {
+        "name": "SK_Pet_Dangkang_LOD2",
+        "tris": 1477,
+        "uv_min": [
+          0.00146484375,
+          0.001953125
+        ],
+        "uv_max": [
+          0.964599609375,
+          0.949462890625
+        ]
+      }
+    ],
+    "glb_kb": 581,
+    "_seconds": 9.5
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "581 KB / 1600 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Pet_Dangkang_LOD0', 'SK_Pet_Dangkang_LOD1', 'SK_Pet_Dangkang_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "7880 / 8000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "3447 / 3500"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "1477 / 1500"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "0.700 m (design 0.7 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=-0.0002"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Pet_Dangkang']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "texture T_Pet_Dangkang_ORM",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "texture T_Pet_Dangkang_BC",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "26 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Pet_Dangkang_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Pet_Dangkang_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Pet_Dangkang_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Pet_Dangkang_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Pet_Dangkang_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Pet_Dangkang_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Pet_Dangkang_LOD0 UV range",
+      "[0.001, 0.001]..[0.995, 0.998]"
+    ],
+    [
+      "pass",
+      "SK_Pet_Dangkang_LOD1 UV range",
+      "[0.001, 0.001]..[0.99, 0.998]"
+    ],
+    [
+      "pass",
+      "SK_Pet_Dangkang_LOD2 UV range",
+      "[0.001, 0.002]..[0.965, 0.949]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "12820 verts"
+    ],
+    [
+      "pass",
+      "region ground",
+      "1297 verts"
+    ],
+    [
+      "pass",
+      "region chest",
+      "269 verts"
+    ],
+    [
+      "pass",
+      "region crest_1",
+      "792 verts"
+    ],
+    [
+      "pass",
+      "region crest_2",
+      "222 verts"
+    ],
+    [
+      "pass",
+      "region tail_3",
+      "391 verts"
+    ],
+    [
+      "pass",
+      "region bell",
+      "258 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "0 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

@@ -1,0 +1,257 @@
+{
+  "doc": "docs/pet-system.md",
+  "style": "Original character design for a polished STYLIZED 3D first-person roguelite shooter, at the production\nquality of Gunfire Reborn characters. Strongly stylized, not realistic: simplified chunky shapes, exaggerated cartoon-like\nproportions (big head and paws, compact body), bold readable silhouette, smooth sculpted forms with clean bevelled\nedges, hair, fur and feathers as a few large carved clumps (never individual strands), flat-ish hand-painted textures\nwith soft gradients and restrained edge wear, two or three dominant colour blocks plus one small glowing spirit-fire\naccent. Every design has one clearly DARK colour block so it reads against bright desert sand and white snow. No\nphotorealistic fur, feathers, skin or anatomy detail, no semi-realistic painting. Distinctly Chinese mythological\nfantasy. Memorable at 30 metres.",
+  "style_ref_images": [
+    "art/source/characters/_design/pets/_style_anchor/STYLE_ANCHOR_desert_v001.png"
+  ],
+  "chapters": {
+    "pets": "Spirit companions (灵宠): auspicious beasts of the Shan Hai Jing bound to the heroes by spirit fire (灵火). Unlike the corrupted enemies they are loyal, brave and charming, clean and bright, with no corruption cracks and no evil glow; each wears at most one small piece of Chinese ornament (bronze bell, red cord knot, coin charm, jade pendant). Same world and art style as the heroes and enemies: Silk Road, Dunhuang murals and the Shan Hai Jing; colour accents from Dunhuang murals (malachite green, cinnabar red, lapis blue, old gold)."
+  },
+  "designs": [
+    {
+      "key": "pet_dangkang",
+      "asset": "SK_Pet_Dangkang",
+      "chapter": "pets",
+      "name": "当康",
+      "layout": "creature",
+      "height_m": 0.7,
+      "rarity": "凡灵",
+      "brief": "A small chubby auspicious piglet-boar spirit (Dangkang of the Shan Hai Jing, omen of bumper harvests), a loyal companion: a round barrel body on four short sturdy legs with small split hooves, a short upturned snout, two small curved ivory tusks, big friendly dark eyes, floppy ears, warm wheat-gold fur carved in a few big clumps, a dark russet-brown ridge of bristles along the spine and dark brown lower legs (the dark colour block), a crest of golden rice-grain stalks growing from its forehead, and a red cord knot around its neck holding a round bronze coin charm that glows warm gold. Cheerful, brave and a little greedy; shown charging head first.",
+      "turnaround_lead": "Neutral standing pose on all four legs",
+      "turnaround_pose": ", legs straight and slightly apart so all four are clearly separate, head level and facing forward, mouth closed, the short curly tail visible behind; NO dust, sparkles or motion lines",
+      "turnaround_digits": "each leg ends in a clearly split two-toed hoof; ears, rice crest and tail never cut off by the frame.",
+      "status": "approved",
+      "modeled": [
+        "body with tusks and carved fur clumps",
+        "golden rice-grain crest",
+        "red cord knot",
+        "bronze coin charm (emissive warm gold)"
+      ],
+      "effects": [
+        "charge dust and speed streaks",
+        "coin sparkle",
+        "coin pouch popping out of the ground"
+      ]
+    },
+    {
+      "key": "pet_huan",
+      "asset": "SK_Pet_Huan",
+      "chapter": "pets",
+      "name": "讙",
+      "layout": "creature",
+      "height_m": 0.6,
+      "rarity": "凡灵",
+      "brief": "A mischievous wild mountain cat spirit (Huan of the Shan Hai Jing, which mimics a hundred voices): a lean agile cat with ONE single big round amber eye in the middle of its face, tall tufted lynx ears, three long bushy tails, dark smoky charcoal fur with pale silver stripes (the dark colour block), a cream chest ruff, and a collar of three small bronze bells, the middle bell glowing warm gold. A trickster and decoy; shown yowling with its mouth wide open and its three tails fanned.",
+      "turnaround_lead": "Neutral standing pose on all four legs",
+      "turnaround_pose": ", legs straight and slightly apart, head level, mouth closed, the three tails extended straight backwards and slightly up, fanned apart so each tail is clearly separate from the others and from the body; NO sound waves, sparkles or motion lines",
+      "turnaround_digits": "each paw shows four separate toes; the ears and all three tails are never cut off by the frame.",
+      "status": "approved",
+      "modeled": [
+        "body with the single big eye",
+        "three tails",
+        "collar of three bronze bells (middle bell emissive warm gold)"
+      ],
+      "effects": [
+        "taunt sound-wave rings",
+        "claw swipe trails"
+      ]
+    },
+    {
+      "key": "pet_jingwei",
+      "asset": "SK_Pet_Jingwei",
+      "chapter": "pets",
+      "name": "精卫",
+      "layout": "creature",
+      "height_m": 0.45,
+      "rarity": "凡灵",
+      "brief": "A small mythical bird (Jingwei of the Shan Hai Jing, daughter of the Flame Emperor, who carries pebbles to fill the sea): a crow-sized songbird with a patterned black-and-white head, a white beak and bright red feet, glossy black body plumage (the dark colour block) with crimson wings and ember-orange wing tips, and a round pebble glowing with ember fire held in its beak. Stubborn and fearless; shown diving with its wings swept back, dropping the glowing pebble. About 0.45 m long with a 0.9 m wingspan.",
+      "turnaround_lead": "Flying pose",
+      "turnaround_pose": " with both wings spread fully OUT TO THE SIDES, flat and horizontal like a cross, tail feathers fanned straight backwards, both legs hanging straight down below the body with the feet visible, head facing forward, the beak CLOSED and EMPTY: NO pebble, NO stone and nothing held in the beak; NO flames, sparks or motion lines",
+      "turnaround_digits": "each foot has three forward toes and one back toe; the long wing feathers are clearly separated; wing tips are never cut off by the frame.",
+      "status": "approved",
+      "modeled": [
+        "bird body, wings and fanned tail",
+        "red feet",
+        "beak closed and empty (the pebble is the separate part pet_jingwei_pebble)"
+      ],
+      "effects": [
+        "flames and ember trail around the pebble",
+        "falling fire pebbles and their explosions"
+      ],
+      "revision": "2026-10-18 用户指出火石和喙熔在一起：鸟身重出四视图（喙空着），火石单独建模（SM_PetPart_JingweiPebble），挂 pebble 挂点"
+    },
+    {
+      "key": "pet_jingwei_pebble",
+      "asset": "SM_PetPart_JingweiPebble",
+      "chapter": "pets",
+      "name": "精卫·火石",
+      "layout": "prop",
+      "reference_key": "pet_jingwei",
+      "height_m": 0.08,
+      "rarity": "凡灵",
+      "status": "approved",
+      "brief": "The glowing pebble Jingwei carries in its beak (the same stone as on the approved design sheet), modelled on its own.",
+      "turnaround_lead": "the small round pebble that the bird carries in its beak, alone and at a large scale filling most of each view",
+      "turnaround_pose": ", a smooth slightly flattened round grey river stone with a few glowing ember-orange cracks painted on its surface",
+      "turnaround_digits": "",
+      "modeled": [
+        "round grey stone with emissive ember cracks"
+      ],
+      "effects": [
+        "flames and ember trail when thrown",
+        "impact explosion"
+      ]
+    },
+    {
+      "key": "pet_chongming",
+      "asset": "SK_Pet_Chongming",
+      "chapter": "pets",
+      "name": "重明鸟",
+      "layout": "creature",
+      "height_m": 0.9,
+      "rarity": "灵兽",
+      "brief": "A mythical double-pupilled pheasant (the Chongming bird, which drives away evil beasts): body and neck in DEEP lapis blue with dark indigo shading (the dark colour block), wings in old gold with deep lapis-blue tips and zigzag lightning markings, long tail feathers fading from gold to deep indigo, an upswept gold crest, and large eyes that each show two glowing cyan pupils side by side. It must read clearly darker than desert sand: no pale white plumage. Majestic and watchful; shown spreading its wings and shooting twin lightning beams from its eyes. Wingspan about 1.3 m.",
+      "turnaround_lead": "Flying pose",
+      "turnaround_pose": " with both wings spread fully OUT TO THE SIDES, flat and horizontal like a cross, the long tail feathers hanging straight back and down in one clean bundle, both legs hanging straight down below the body with the feet visible, head facing forward, beak closed; NO lightning beams or sparks anywhere, the eyes only glow",
+      "turnaround_digits": "each foot has three forward toes and one back toe; the long wing feathers are clearly separated; wing tips and tail are never cut off by the frame.",
+      "status": "approved",
+      "modeled": [
+        "bird body, wings and long tail feathers",
+        "gold crest",
+        "double-pupil eyes (emissive cyan pupils)",
+        "small coin charm on the chest"
+      ],
+      "effects": [
+        "twin lightning beams from the eyes",
+        "chain lightning",
+        "enemy mark sprite"
+      ]
+    },
+    {
+      "key": "pet_suanni",
+      "asset": "SK_Pet_Suanni",
+      "chapter": "pets",
+      "name": "狻猊",
+      "layout": "creature",
+      "height_m": 0.8,
+      "rarity": "灵兽",
+      "brief": "The lion-dragon Suanni (one of the dragon's nine sons, guardian of incense burners) as a small stout guardian lion-dog: a big round head with a huge curly mane carved in jade-green and teal swirls, bulging round eyes, a wide grinning mouth with small fangs, a stocky body in dark aged bronze (the dark colour block), curly flame-like tufts at the elbows, a thick curly tail, a small round bronze incense burner (ding) with three tiny legs sitting on its back like a saddle with a wisp of glowing incense ember, and a red silk ribbon with a bronze bell on its chest. Proud and protective; shown roaring with its mouth wide open.",
+      "turnaround_lead": "Neutral standing pose on all four legs",
+      "turnaround_pose": ", legs straight and slightly apart, head facing forward, mouth closed in a grin, the curly tail raised behind the incense burner but clearly separate from it; NO smoke above the incense burner, only a small glowing ember inside its open top",
+      "turnaround_digits": "each paw shows four separate clawed toes; the mane, burner and tail are never cut off by the frame.",
+      "status": "approved",
+      "modeled": [
+        "lion-dog body with curly mane and tail",
+        "bronze incense burner (ding) with lid on the back, with a small emissive ember inside its open top",
+        "red ribbon and bronze bell"
+      ],
+      "effects": [
+        "incense smoke rising from the burner",
+        "corrosive smoke breath",
+        "roar shockwave"
+      ]
+    },
+    {
+      "key": "pet_zheng",
+      "asset": "SK_Pet_Zheng",
+      "chapter": "pets",
+      "name": "狰",
+      "layout": "creature",
+      "height_m": 0.85,
+      "rarity": "灵兽",
+      "brief": "A ferocious mythical beast (Zheng of the Shan Hai Jing, five tails and one horn, with a cry like striking stones): a lean muscular crimson leopard with black rosette spots, a dark charcoal face mask and dark charcoal paws (the dark colour block), a cream belly, ONE curved flint-grey horn on its forehead whose tip glows white-gold, bared fangs, and exactly FIVE long whip-like tails. Fierce but loyal; shown pouncing with the five tails lashing.",
+      "turnaround_lead": "Neutral standing pose on all four legs",
+      "turnaround_pose": ", legs straight and slightly apart, head facing forward, mouth closed, exactly five tails extended backwards and fanned out like a hand so every tail is clearly separate from the others and from the body; NO motion trails, sparks or afterimages",
+      "turnaround_digits": "exactly FIVE tails, no more and no fewer; each paw shows four separate clawed toes; the horn and all five tails are never cut off by the frame.",
+      "status": "approved",
+      "modeled": [
+        "leopard body",
+        "one curved horn (tip emissive white-gold)",
+        "exactly five tails"
+      ],
+      "effects": [
+        "claw and tail-lash trails",
+        "dash afterimages"
+      ]
+    },
+    {
+      "key": "pet_baize",
+      "asset": "SK_Pet_Baize",
+      "chapter": "pets",
+      "name": "白泽",
+      "layout": "creature",
+      "height_m": 1.3,
+      "rarity": "神兽",
+      "brief": "The legendary sage beast Baize, who knows every demon in the world, as a mythic companion: a majestic lion-goat body. Snow-white fur ONLY on the flowing mane, beard and chest; the body, legs and face mask are DEEP slate-indigo (the dark colour block) patterned with pale gold cloud markings, so it reads with strong value contrast and never as an all-white shape. Two curved dark-gold horns, a glowing red-gold third eye on its forehead, a row of small golden eyes along each flank, gold cloud ornaments on the shoulders, a jade talisman pendant at the chest, and dark cloud-shaped fur tufts at the hooves. Noble, wise and radiant; shown rearing with its third eye blazing.",
+      "turnaround_lead": "Neutral standing pose on all four legs",
+      "turnaround_pose": ", legs straight and slightly apart, head facing forward, mouth closed, the tufted tail hanging down behind and clearly separate from the hind legs; NO light rays, aura or sparkles, the eyes only glow",
+      "turnaround_digits": "each leg ends in a clearly split two-toed hoof; the horns, mane and tail are never cut off by the frame.",
+      "status": "approved",
+      "modeled": [
+        "lion-goat body with white mane and beard",
+        "two curved horns",
+        "third eye (emissive red-gold)",
+        "row of small flank eyes (emissive gold)",
+        "gold cloud ornaments",
+        "jade talisman pendant"
+      ],
+      "effects": [
+        "golden light beams",
+        "白泽图 scroll and aura",
+        "divine sparkles"
+      ]
+    },
+    {
+      "key": "pet_yinglong",
+      "asset": "SK_Pet_Yinglong",
+      "chapter": "pets",
+      "name": "应龙",
+      "layout": "creature",
+      "height_m": 1.0,
+      "rarity": "神兽",
+      "brief": "The legendary winged dragon Yinglong, who brings rain and slew Chiyou, as a young Chinese loong companion: a long sinuous serpentine body with jade-green scales, a darker deep-teal back ridge (the dark colour block) and a gold belly, two large feathered eagle-like wings in teal fading to deep blue with storm-blue lightning streaks, deer antlers, a flowing white mane and long whiskers, four small clawed legs, and a glowing pearl held in one front claw. Mighty and proud; shown coiling in the air and roaring with lightning around it. About 2.4 m long.",
+      "turnaround_lead": "Flying pose",
+      "turnaround_pose": " with the long body stretched nearly straight and horizontal from head to tail with only a gentle wave, both wings spread fully OUT TO THE SIDES, flat and horizontal, the four legs visible below the body with the claws open and EMPTY: NO pearl, NO orb and nothing held in any claw, head facing forward, mouth closed, the mane and whiskers flowing back; NO lightning or clouds anywhere",
+      "turnaround_digits": "each foot shows four separate claws; the wings, antlers and the tail tip are never cut off by the frame.",
+      "status": "approved",
+      "modeled": [
+        "serpentine dragon body with four legs (claws empty)",
+        "two feathered wings",
+        "antlers, mane and whiskers"
+      ],
+      "effects": [
+        "lightning arcs around the body",
+        "thunderbolts and storm",
+        "breath beam"
+      ],
+      "revision": "2026-10-18 用户决定宝珠分离：龙身重出四视图（爪子空着），宝珠单独建模（SM_PetPart_YinglongPearl），挂 pearl 挂点；「杀蚩尤」时宝珠升起召雷"
+    },
+    {
+      "key": "pet_yinglong_pearl",
+      "asset": "SM_PetPart_YinglongPearl",
+      "chapter": "pets",
+      "name": "应龙·宝珠",
+      "layout": "prop",
+      "reference_key": "pet_yinglong",
+      "height_m": 0.16,
+      "rarity": "神兽",
+      "status": "approved",
+      "brief": "The glowing pearl Yinglong holds in its front claw (as on the approved design sheet), modelled on its own.",
+      "turnaround_lead": "the round glowing dragon pearl that the dragon holds in its claw, alone and at a large scale filling most of each view",
+      "turnaround_pose": ", a PERFECT SPHERE exactly as wide as it is tall in every view (not an egg, not an oval), a pearl of warm golden-white light with a faint swirling cloud pattern on its surface, smooth and solid",
+      "turnaround_digits": "",
+      "modeled": [
+        "round pearl (emissive)"
+      ],
+      "effects": [
+        "light rays and lightning when it rises during 杀蚩尤"
+      ]
+    }
+  ],
+  "review": {
+    "sheet": "docs/art/review/pets-roster-v001.png",
+    "status": "approved",
+    "approved": "2026-10-18",
+    "note": "用户：设计稿通过，要区分好哪些是特效、哪些需要建模。modeled = 进 Tripo 的实体（含自发光件），effects = 游戏里由特效系统做，四视图里不画。"
+  }
+}

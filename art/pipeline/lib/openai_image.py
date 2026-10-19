@@ -18,10 +18,14 @@ from .config import PipelineError
 
 
 def _codex_model() -> str | None:
-    """pipeline.toml [concept] provider = "codex" routes every image call through the local Codex CLI (ChatGPT sign-in)."""
+    """pipeline.toml [concept] provider = "codex" routes every image call through the local Codex CLI (ChatGPT sign-in).
+    ART_CODEX_MODEL overrides codex_model for one run (an older local codex-cli may not accept the configured model)."""
+    import os
     from .config import CFG
     cfg = CFG.section("concept")
-    return cfg.get("codex_model", "gpt-6.1-sol") if cfg.get("provider") == "codex" else None
+    if cfg.get("provider") != "codex":
+        return None
+    return os.environ.get("ART_CODEX_MODEL") or cfg.get("codex_model", "gpt-6.1-sol")
 
 
 def _multipart(fields: dict[str, str], files: list[tuple[str, Path]]) -> tuple[bytes, str]:

@@ -4,6 +4,8 @@
   python redesign_sheets.py --turnaround KEY        four-view model sheet for Tripo from the latest approved design
   python redesign_sheets.py --designs hero_designs_v2.json [KEY ...]   another roster (heroes: docs/art/hero-roster-v2.md);
                                                     its optional "style" / "layouts" replace STYLE / LAYOUT
+  python redesign_sheets.py --designs pet_designs_v1.json [KEY ...]    pets (docs/pet-system.md); its "style_ref_images"
+                                                    (renders of approved in-game models) anchor the style
 
 Text-only generation (no earlier art is used as a reference). Each sheet is a free character design: key pose,
 turnaround views and hand / foot close-ups. Output: art/source/characters/_design/<chapter>/<key>/DS_<key>_v<NNN>.png
@@ -70,7 +72,18 @@ def generate(design: dict, data: dict, force: bool) -> str:
     # style_refs: approved sheets of the same roster used ONLY as a style anchor (stylization, proportions, rendering),
     # so a later addition matches characters the user already approved
     refs = [sorted((OUT / design["chapter"] / k).glob(f"DS_{k}_v*.png"))[-1] for k in design.get("style_refs", [])]
-    if refs:
+    # style_ref_images (roster- or design-level): renders of finished, approved in-game models, for rosters whose
+    # approved sheets are not on this machine (design PNGs are not in git); same role as style_refs
+    renders = [resolve_path(p) for p in data.get("style_ref_images", []) + design.get("style_ref_images", [])]
+    if renders:
+        prompt = (f"The {len(renders)} attached image(s) show finished, approved 3D characters from the same game. "
+                  "Use them ONLY as the style reference: match their exact stylization, head-to-body ratio, chunky "
+                  "carved fur clumps, eye style, bevels, colour saturation and value contrast. Do not copy their "
+                  "species, outfits, props or colours.\n\n" + prompt)
+        refs += renders
+        png, info = openai_image.edit(prompt, refs, model=cfg["model"], size="2048x1024", quality=cfg["quality"],
+                                      background="opaque")
+    elif refs:
         prompt = (f"The {len(refs)} attached images are approved design sheets of OTHER characters from the same game. "
                   "Use them ONLY as the style reference: match their exact stylization, head-to-body ratio, eye style, "
                   "fur and cloth rendering, line of bevels, colour saturation, lighting and sheet layout. Do not copy "

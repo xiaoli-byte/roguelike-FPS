@@ -22,7 +22,10 @@ P = args()
 name = P["asset_id"]
 T0 = time.time()
 bpy.ops.wm.read_factory_settings(use_empty=True)
-bpy.ops.import_scene.fbx(filepath=P["source"])
+if P["source"].lower().endswith((".glb", ".gltf")):  # committed Tripo originals (pet parts) are GLB
+    bpy.ops.import_scene.gltf(filepath=P["source"])
+else:
+    bpy.ops.import_scene.fbx(filepath=P["source"])
 for o in [o for o in bpy.data.objects if o.type != "MESH"]:
     bpy.data.objects.remove(o, do_unlink=True)
 meshes = [o for o in bpy.data.objects if o.type == "MESH"]

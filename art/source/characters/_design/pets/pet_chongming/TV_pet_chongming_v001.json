@@ -1,0 +1,33 @@
+{
+  "design": {
+    "key": "pet_chongming",
+    "asset": "SK_Pet_Chongming",
+    "chapter": "pets",
+    "name": "重明鸟",
+    "layout": "creature",
+    "height_m": 0.9,
+    "rarity": "灵兽",
+    "brief": "A mythical double-pupilled pheasant (the Chongming bird, which drives away evil beasts): body and neck in DEEP lapis blue with dark indigo shading (the dark colour block), wings in old gold with deep lapis-blue tips and zigzag lightning markings, long tail feathers fading from gold to deep indigo, an upswept gold crest, and large eyes that each show two glowing cyan pupils side by side. It must read clearly darker than desert sand: no pale white plumage. Majestic and watchful; shown spreading its wings and shooting twin lightning beams from its eyes. Wingspan about 1.3 m.",
+    "turnaround_lead": "Flying pose",
+    "turnaround_pose": " with both wings spread fully OUT TO THE SIDES, flat and horizontal like a cross, the long tail feathers hanging straight back and down in one clean bundle, both legs hanging straight down below the body with the feet visible, head facing forward, beak closed; NO lightning beams or sparks anywhere, the eyes only glow",
+    "turnaround_digits": "each foot has three forward toes and one back toe; the long wing feathers are clearly separated; wing tips and tail are never cut off by the frame.",
+    "status": "approved",
+    "modeled": [
+      "bird body, wings and long tail feathers",
+      "gold crest",
+      "double-pupil eyes (emissive cyan pupils)",
+      "small coin charm on the chest"
+    ],
+    "effects": [
+      "twin lightning beams from the eyes",
+      "chain lightning",
+      "enemy mark sprite"
+    ]
+  },
+  "from_sheet": "DS_pet_chongming_v001.png",
+  "generation": {
+    "provider": "codex",
+    "model": "gpt-5.6-sol",
+    "note": "split_views failed (wing tips touch); views split by hand at the sparsest columns 681 / 946 / 1620"
+  }
+}

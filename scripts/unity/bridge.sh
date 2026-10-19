@@ -34,6 +34,7 @@ case "$cmd" in
   sheets) method=Spiritfire.Art.Editor.AnimReviewSheet.BatchRender ;;
   motion) method=Spiritfire.Art.Editor.ShowcaseSimulator.BatchMotion ;;
   level11) method=Spiritfire.Art.Editor.Levels.Level_1_1.BatchBuild ;;
+  petcompare) method=Spiritfire.Art.Editor.PetStyleCompare.BatchRun ;;
   playtest) echo "playtest 需要打开的编辑器（Play 模式）" >&2; exit 1 ;;
   *) echo "未知命令 $cmd" >&2; exit 1 ;;
 esac

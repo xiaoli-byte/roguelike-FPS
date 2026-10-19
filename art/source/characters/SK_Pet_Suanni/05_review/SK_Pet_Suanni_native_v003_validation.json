@@ -1,0 +1,318 @@
+{
+  "asset": "SK_Pet_Suanni",
+  "version": 3,
+  "glb": "art/source/characters/SK_Pet_Suanni/04_export/SK_Pet_Suanni_native_v003.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.2,
+      "自定义骨架：28 根骨骼（热扩散权重，13918 个顶点未覆盖）": 0.2,
+      "贴图（BC + AO/ORM）": 11.4,
+      "LOD 与蒙皮上限 7880 / 3447 / 1477": 0.9,
+      "导出 651 KB": 1.6
+    },
+    "source": {
+      "verts": 13918,
+      "tris": 9074,
+      "scale": 0.8003908158280411
+    },
+    "regions": {
+      "heat_unweighted_verts": 13918,
+      "weights": "segments",
+      "ground_verts": 917,
+      "spine_verts": 707,
+      "bell_verts": 332,
+      "fallback_verts": 0,
+      "per_bone": {
+        "hips": 178,
+        "spine": 1302,
+        "chest": 0,
+        "neck": 305,
+        "head": 1093,
+        "bell": 701,
+        "upperarm_L": 0,
+        "forearm_L": 345,
+        "paw_L": 373,
+        "upperarm_R": 0,
+        "forearm_R": 376,
+        "paw_R": 340,
+        "thigh_L": 70,
+        "shin_L": 224,
+        "foot_L": 329,
+        "thigh_R": 64,
+        "shin_R": 249,
+        "foot_R": 312,
+        "scapula_L": 157,
+        "haunch_L": 101,
+        "scapula_R": 176,
+        "haunch_R": 99,
+        "tail_1": 116,
+        "tail_2": 329,
+        "tail_3": 473
+      }
+    },
+    "bones": [
+      "bell",
+      "chest",
+      "ember",
+      "foot_L",
+      "foot_R",
+      "forearm_L",
+      "forearm_R",
+      "haunch_L",
+      "haunch_R",
+      "head",
+      "hips",
+      "mouth",
+      "neck",
+      "paw_L",
+      "paw_R",
+      "root",
+      "scapula_L",
+      "scapula_R",
+      "shin_L",
+      "shin_R",
+      "spine",
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "thigh_L",
+      "thigh_R",
+      "upperarm_L",
+      "upperarm_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.974,
+      "shade_mean": 0.964
+    },
+    "textures": {
+      "size": 1024,
+      "ao_mean": 0.836,
+      "provider_pbr": [],
+      "roughness_mean": 0.7,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Pet_Suanni_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Pet_Suanni_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Pet_Suanni_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Pet_Suanni_LOD0",
+        "tris": 7880,
+        "uv_min": [
+          0.001708984375,
+          0.0017065885476768017
+        ],
+        "uv_max": [
+          0.994384765625,
+          0.998291015625
+        ]
+      },
+      {
+        "name": "SK_Pet_Suanni_LOD1",
+        "tris": 3447,
+        "uv_min": [
+          0.001708984375,
+          0.0017065885476768017
+        ],
+        "uv_max": [
+          0.994140625,
+          0.98388671875
+        ]
+      },
+      {
+        "name": "SK_Pet_Suanni_LOD2",
+        "tris": 1477,
+        "uv_min": [
+          0.001819346914999187,
+          0.001708984375
+        ],
+        "uv_max": [
+          0.956787109375,
+          0.9572060108184814
+        ]
+      }
+    ],
+    "glb_kb": 651,
+    "_seconds": 16.2
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "651 KB / 1600 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Pet_Suanni_LOD0', 'SK_Pet_Suanni_LOD1', 'SK_Pet_Suanni_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "7880 / 8000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "3447 / 3500"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "1477 / 1500"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "0.801 m (design 0.8 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=-0.0012"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Pet_Suanni']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "texture T_Pet_Suanni_ORM",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "texture T_Pet_Suanni_BC",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "28 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Pet_Suanni_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Pet_Suanni_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Pet_Suanni_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Pet_Suanni_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Pet_Suanni_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Pet_Suanni_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Pet_Suanni_LOD0 UV range",
+      "[0.002, 0.002]..[0.994, 0.998]"
+    ],
+    [
+      "pass",
+      "SK_Pet_Suanni_LOD1 UV range",
+      "[0.002, 0.002]..[0.994, 0.984]"
+    ],
+    [
+      "pass",
+      "SK_Pet_Suanni_LOD2 UV range",
+      "[0.002, 0.002]..[0.957, 0.957]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "13918 verts"
+    ],
+    [
+      "pass",
+      "region ground",
+      "917 verts"
+    ],
+    [
+      "pass",
+      "region spine",
+      "707 verts"
+    ],
+    [
+      "pass",
+      "region bell",
+      "332 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "0 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

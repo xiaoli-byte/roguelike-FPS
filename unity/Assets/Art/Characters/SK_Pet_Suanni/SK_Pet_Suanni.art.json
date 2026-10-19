@@ -1,0 +1,151 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SK_Pet_Suanni",
+  "kind": "skeletal",
+  "class": "pet",
+  "category": "characters",
+  "bind": {
+    "source": "pet",
+    "id": "suanni"
+  },
+  "keepGlow": "all",
+  "lodDistance": [
+    0,
+    14,
+    30
+  ],
+  "budget": {
+    "lodTris": [
+      8000,
+      3500,
+      1500
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -0.1803615391254425,
+      -0.0012148077366873622,
+      -0.3699072301387787
+    ],
+    "max": [
+      0.1803615391254425,
+      0.800000011920929,
+      0.3699072301387787
+    ]
+  },
+  "rig": {
+    "type": "generic",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": [
+      "root",
+      "hips",
+      "haunch_L",
+      "haunch_R",
+      "spine",
+      "chest",
+      "bell",
+      "neck",
+      "head",
+      "mouth",
+      "scapula_L",
+      "scapula_R",
+      "upperarm_L",
+      "forearm_L",
+      "paw_L",
+      "upperarm_R",
+      "forearm_R",
+      "paw_R",
+      "ember",
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "thigh_L",
+      "shin_L",
+      "foot_L",
+      "thigh_R",
+      "shin_R",
+      "foot_R"
+    ]
+  },
+  "meshes": [
+    {
+      "name": "SK_Pet_Suanni_LOD0",
+      "lod": 0,
+      "tris": 7880,
+      "verts": 12899,
+      "materials": [
+        "M_Pet_Suanni"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Pet_Suanni_LOD1",
+      "lod": 1,
+      "tris": 3447,
+      "verts": 6741,
+      "materials": [
+        "M_Pet_Suanni"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Pet_Suanni_LOD2",
+      "lod": 2,
+      "tris": 1477,
+      "verts": 2983,
+      "materials": [
+        "M_Pet_Suanni"
+      ],
+      "skinned": true
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Pet_Suanni",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Pet_Suanni_BC.png",
+        "ORM": "Textures/T_Pet_Suanni_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/characters/SK_Pet_Suanni@hi.glb",
+    "sha256": "fd71acf2db41a7f22d74719b4f4e7a8ba2d33ad62ea3d39f1c7021a697f4e99c",
+    "hiRes": true,
+    "version": {
+      "native_build": 4
+    },
+    "generator": {
+      "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+      "mode": "tripo_native",
+      "checkpoint": "P2.0"
+    },
+    "license": null
+  },
+  "exported": "2026-10-19 07:54:03"
+}
