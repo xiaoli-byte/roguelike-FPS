@@ -5,72 +5,78 @@ using UnityEngine;
 
 namespace Spiritfire.Game
 {
-    /// <summary>秘卷（Three.js 版 src/progression/scrolls/*）：切片只收纯属性类，数值同原版；可叠层，每层同样的加成</summary>
-    public sealed class ScrollDef
+    /// <summary>
+    /// 秘卷定义（Three.js 版 src/core/types.ts 的 ScrollDef）：稀有度 0–4（<see cref="Rarity"/>）、层数上限、标签、英雄专属、描述模板，
+    /// 效果写在 <see cref="Install"/> 里——每次获得一层都按新层数重装（旧作用域先卸载，见 <see cref="ScrollScope"/>）。
+    /// 纯属性的卷用 <see cref="StatScroll"/> 写成组文件（Progression/Scrolls/&lt;组&gt;/*StatScrolls.cs，<see cref="IDefSource{T}"/>）；
+    /// 带行为的卷继承本类 + [Defs]，一卷一个文件。都由 <see cref="Registry{T}"/> 收集。
+    /// </summary>
+    public abstract class ScrollDef : IDef
     {
-        public string id, name, description, tag;
-        public int rarity, maxStacks = 3;
-        public (Stat stat, float perStack)[] stats = Array.Empty<(Stat, float)>();
-        /// <summary>获得一层时的一次性效果（上限类不用写：PlayerVitals 加上限时会同步加当前值）</summary>
-        public Action<PlayerVitals> onGain;
+        public string id, name;
+        /// <summary>描述模板：可以写 {n} 占位，<see cref="Describe"/> 换成层数；不带占位的原样显示</summary>
+        public string description;
+        /// <summary>稀有度 0–4：普通 / 精良 / 稀有 / 史诗 / 传说</summary>
+        public int rarity;
+        public int maxStacks = 3;
+        /// <summary>标签（第一个是卡面上显示的主标签；反应 / 元素 / 流派标签参与出卡加权）</summary>
+        public string[] tags = Array.Empty<string>();
+        /// <summary>英雄专属：只在这个英雄（HeroDef.id）的卡池里出现；null = 通用</summary>
+        public string heroOnly;
+
+        string IDef.Id => id;
+
+        /// <summary>卡面上显示的主标签</summary>
+        public string tag => tags.Length > 0 ? tags[0] : "";
+
+        public bool HasTag(string t) => Array.IndexOf(tags, t) >= 0;
+
+        public string Describe(int stacks) => description == null ? "" : description.Replace("{n}", stacks.ToString());
+
+        /// <summary>按层数安装效果：属性走 scope.Stat，订阅走 scope.Hook / OnUninstall（卸载时自动撤掉）</summary>
+        public virtual void Install(ScrollScope scope, int stacks) { }
     }
 
+    /// <summary>纯属性秘卷：每层同样的加成（总量 = 每层 × 层数）</summary>
+    public sealed class StatScroll : ScrollDef
+    {
+        public (Stat stat, float perStack)[] stats = Array.Empty<(Stat, float)>();
+
+        public override void Install(ScrollScope scope, int stacks)
+        {
+            foreach (var (stat, per) in stats) scope.Stat(stat, per * stacks);
+        }
+    }
+
+    /// <summary>
+    /// 秘卷表门面：读 <see cref="Registry{T}"/>，外部调用（三选一界面、掉落、测试）不用改。
+    /// 稀有度 4 档 → 5 档（D10）的映射：普通 0 → 0、精良 1 → 1、稀有 2 → 2、旧「传说」3 → 4，新增的「史诗」3 暂时没有秘卷。
+    /// 出卡权重沿用旧表 60 / 30 / 9 / 1（史诗插 3），所以现有 16 卷的出卡概率与改动前完全一致；
+    /// S0（ScrollRoll）换成 Three.js 的 [100, 52, 26, 11, 4] + 幸运 / 章节 / 已有 / 专属 / 元素源 / 流派加权。
+    /// </summary>
     public static class ScrollLibrary
     {
-        public static readonly string[] RarityName = { "普通", "精良", "稀有", "传说" };
-        public static readonly Color[] RarityColor =
-        {
-            new(0.82f, 0.84f, 0.86f), new(0.4f, 0.8f, 0.45f), new(0.35f, 0.62f, 1f), new(1f, 0.62f, 0.2f),
-        };
-        static readonly float[] RarityWeight = { 60, 30, 9, 1 };
+        public static readonly string[] RarityName = Rarity.Names;
+        public static readonly Color[] RarityColor = Rarity.Colors;
+        static readonly float[] RarityWeight = { 60, 30, 9, 3, 1 };
 
-        public static readonly ScrollDef[] All =
-        {
-            new() { id = "keen_blade", name = "利刃", tag = "伤害", rarity = 0, maxStacks = 5, description = "武器伤害每层 +6%。", stats = new[] { (Stat.DamagePct, 0.06f) } },
-            new() { id = "hawk_eye", name = "鹰目", tag = "暴击", rarity = 0, maxStacks = 5, description = "暴击率每层 +4%。", stats = new[] { (Stat.CritChance, 0.04f) } },
-            new() { id = "fatal_art", name = "致命诀", tag = "暴击", rarity = 1, maxStacks = 4, description = "暴击伤害每层 +15%。", stats = new[] { (Stat.CritDamagePct, 0.15f) } },
-            new() { id = "rapid_fire", name = "骤雨", tag = "射速", rarity = 1, maxStacks = 4, description = "射速每层 +7%。", stats = new[] { (Stat.FireRatePct, 0.07f) } },
-            new() { id = "swift_hands", name = "疾手", tag = "换弹", rarity = 0, maxStacks = 5, description = "换弹速度每层 +10%。", stats = new[] { (Stat.ReloadSpeedPct, 0.1f) } },
-            new() { id = "bottomless", name = "百宝囊", tag = "弹匣", rarity = 0, maxStacks = 3, description = "弹匣容量每层 +10%。", stats = new[] { (Stat.MagPct, 0.1f) } },
-            new()
-            {
-                id = "iron_bones", name = "铁骨", tag = "生存", rarity = 0, maxStacks = 5, description = "生命上限每层 +12（获得时同时回复 12 生命）。",
-                stats = new[] { (Stat.MaxHp, 12f) },
-            },
-            new()
-            {
-                id = "spirit_ward", name = "灵盾", tag = "护盾", rarity = 0, maxStacks = 5, description = "护盾上限每层 +10（获得时同时补充 10 护盾）。",
-                stats = new[] { (Stat.MaxShield, 10f) },
-            },
-            new()
-            {
-                id = "quick_recovery", name = "回春", tag = "护盾", rarity = 1, maxStacks = 3, description = "护盾恢复延迟每层 −0.4 秒，恢复速度每层 +8/秒。",
-                stats = new[] { (Stat.ShieldRegenDelay, -0.4f), (Stat.ShieldRegenRate, 8f) },
-            },
-            new() { id = "harvest", name = "收割", tag = "击杀", rarity = 1, maxStacks = 4, description = "击杀敌人时每层回复 3 生命。", stats = new[] { (Stat.KillHeal, 3f) } },
-            new() { id = "soul_siphon", name = "摄魂", tag = "击杀", rarity = 1, maxStacks = 4, description = "击杀敌人时每层回复 4 护盾。", stats = new[] { (Stat.KillShield, 4f) } },
-            new() { id = "stone_skin", name = "石肤", tag = "生存", rarity = 1, maxStacks = 3, description = "伤害减免每层 +5%。", stats = new[] { (Stat.DamageReduction, 0.05f) } },
-            new() { id = "wind_walker", name = "踏风", tag = "机动", rarity = 0, maxStacks = 3, description = "移动速度每层 +0.4。", stats = new[] { (Stat.MoveSpeed, 0.4f) } },
-            new() { id = "streamer", name = "流光", tag = "机动", rarity = 2, maxStacks = 1, description = "冲刺次数 +1。", stats = new[] { (Stat.DashCharges, 1f) } },
-            new() { id = "weak_point", name = "破绽", tag = "暴击", rarity = 1, maxStacks = 3, description = "弱点伤害每层 +15%。", stats = new[] { (Stat.WeakpointDamagePct, 0.15f) } },
-            new() { id = "spirit_lure", name = "灵引", tag = "经济", rarity = 0, maxStacks = 2, description = "拾取范围每层 +2 米。", stats = new[] { (Stat.PickupRadius, 2f) } },
-        };
+        public static IReadOnlyList<ScrollDef> All => Registry<ScrollDef>.All;
 
-        public static ScrollDef Get(string id) => All.FirstOrDefault(d => d.id == id);
+        public static ScrollDef Get(string id) => Registry<ScrollDef>.Get(id);
 
-        /// <summary>按稀有度权重抽 count 张不重复、未满层的秘卷</summary>
-        public static List<ScrollDef> Roll(ScrollInventory inv, int count, int minRarity = 0)
+        /// <summary>按稀有度权重抽 count 张不重复、未满层的秘卷；英雄专属卷只给对应英雄（heroId 为空时不出）</summary>
+        public static List<ScrollDef> Roll(ScrollInventory inv, int count, int minRarity = 0, string heroId = null)
         {
-            var pool = All.Where(d => d.rarity >= minRarity && inv.Stacks(d.id) < d.maxStacks).ToList();
+            var pool = All.Where(d => d.rarity >= minRarity && inv.Stacks(d.id) < d.maxStacks && (d.heroOnly == null || d.heroOnly == heroId)).ToList();
             var picked = new List<ScrollDef>();
             while (picked.Count < count && pool.Count > 0)
             {
-                float total = pool.Sum(d => RarityWeight[d.rarity]);
+                float total = pool.Sum(Weight);
                 float r = UnityEngine.Random.value * total;
                 var choice = pool[^1];
                 foreach (var d in pool)
                 {
-                    r -= RarityWeight[d.rarity];
+                    r -= Weight(d);
                     if (r <= 0) { choice = d; break; }
                 }
                 picked.Add(choice);
@@ -78,27 +84,61 @@ namespace Spiritfire.Game
             }
             return picked;
         }
+
+        static float Weight(ScrollDef d) => RarityWeight[Rarity.Clamp(d.rarity)];
     }
 
-    /// <summary>本局持有的秘卷（层数）：每层登记一份属性修正（来源 = scroll:id:层）</summary>
+    /// <summary>
+    /// 本局持有的秘卷（层数 + 每卷当前的安装作用域）。
+    /// 获得一层：旧作用域卸载 → 按新层数 Install → 属性按差量提交（来源 scroll:&lt;id&gt;）。已满层时什么都不做并返回 false
+    /// （以前会按满层重新登记一遍、再发一次获得事件）。
+    /// </summary>
     public sealed class ScrollInventory
     {
         readonly Dictionary<string, int> stacks = new();
+        readonly Dictionary<string, ScrollScope> scopes = new();
         public event Action<ScrollDef, int> Gained;
         public IReadOnlyDictionary<string, int> All => stacks;
 
         public int Stacks(string id) => stacks.TryGetValue(id, out var n) ? n : 0;
+        public bool IsMaxed(ScrollDef def) => def != null && Stacks(def.id) >= def.maxStacks;
 
-        public void Gain(ScrollDef def, PlayerVitals vitals)
+        /// <summary>给玩家加一层；已满层返回 false</summary>
+        public bool Gain(ScrollDef def, PlayerVitals vitals) => Gain(def, vitals ? vitals.stats : null, vitals);
+
+        /// <summary>给一张属性表加一层（测试可以不带玩家）；已满层返回 false</summary>
+        public bool Gain(ScrollDef def, StatSheet sheet, PlayerVitals vitals = null)
         {
-            int n = Mathf.Min(def.maxStacks, Stacks(def.id) + 1);
+            if (def == null || IsMaxed(def)) return false;
+            int n = Stacks(def.id) + 1;
+            scopes.TryGetValue(def.id, out var old);
+            old?.Dispose();
+            var scope = new ScrollScope(def, n, sheet, vitals);
+            try { def.Install(scope, n); }
+            catch (Exception e) { Debug.LogException(e); }
+            scope.CommitStats(old);
+            scopes[def.id] = scope;
             stacks[def.id] = n;
-            // 每层单独登记（来源 scroll:id:层），只加增量：上限类属性的「同时回复」就只回这一层的量
-            var source = $"scroll:{def.id}:{n}";
-            vitals.stats.Remove(source);
-            foreach (var (stat, per) in def.stats) vitals.stats.Add(source, stat, per);
-            def.onGain?.Invoke(vitals);
             Gained?.Invoke(def, n);
+            return true;
+        }
+
+        /// <summary>整卷移除（卸载回调 + 撤属性）</summary>
+        public void Remove(string id)
+        {
+            if (scopes.TryGetValue(id, out var scope))
+            {
+                scope.Dispose();
+                scope.RemoveStats();
+                scopes.Remove(id);
+            }
+            stacks.Remove(id);
+        }
+
+        /// <summary>全部移除（新开一局）</summary>
+        public void Clear()
+        {
+            foreach (var id in stacks.Keys.ToList()) Remove(id);
         }
     }
 }

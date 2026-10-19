@@ -55,7 +55,7 @@ namespace Spiritfire.Game
             for (int i = 0; i < choices.Count; i++)
             {
                 var def = choices[i];
-                var rc = ScrollLibrary.RarityColor[Mathf.Clamp(def.rarity, 0, 3)];
+                var rc = Rarity.Color(def.rarity);
                 float x = x0 + i * (w + gap);
                 var card = Hud.Rect($"Card {i + 1}", panel, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(x, -h / 2), new Vector2(x + w, h / 2));
                 var frame = Hud.Img("Frame", card, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, rc);
@@ -68,7 +68,7 @@ namespace Spiritfire.Game
                 var rarity = hud.Label("Rarity", card, new Vector2(0, 1), new Vector2(1, 1), 24, TextAnchor.MiddleRight, rc);
                 rarity.rectTransform.offsetMin = new Vector2(0, -60);
                 rarity.rectTransform.offsetMax = new Vector2(-18, -14);
-                rarity.text = $"{ScrollLibrary.RarityName[Mathf.Clamp(def.rarity, 0, 3)]} · {def.tag}";
+                rarity.text = $"{Rarity.Name(def.rarity)} · {def.tag}";
                 var name = hud.Label("Name", card, new Vector2(0, 1), new Vector2(1, 1), 52, TextAnchor.MiddleCenter, Color.white);
                 name.rectTransform.offsetMin = new Vector2(0, -190);
                 name.rectTransform.offsetMax = new Vector2(0, -110);

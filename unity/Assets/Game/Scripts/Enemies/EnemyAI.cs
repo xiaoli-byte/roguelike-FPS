@@ -22,7 +22,8 @@ namespace Spiritfire.Game
     {
         public string enemyId;
         public float moveSpeed = 4f, damage = 10f;
-        public int level = 1;
+        /// <summary>强度倍率（= 局难度，同 TS 的 level，可以是小数；下限 0.5）</summary>
+        public float level = 1;
         public bool elite;
         [Tooltip("击退抗性 0–1")] public float knockbackResist;
 
@@ -95,10 +96,10 @@ namespace Spiritfire.Game
 
         void OnDestroy() => All.Remove(this);
 
-        /// <summary>生成器调用：等级与精英决定生命，出生无敌 0.7 s</summary>
-        public virtual void Spawn(int lvl, bool isElite)
+        /// <summary>生成器调用：强度倍率（局难度）与精英决定生命，出生无敌 0.7 s</summary>
+        public virtual void Spawn(float lvl, bool isElite)
         {
-            level = lvl;
+            level = Mathf.Max(0.5f, lvl);
             elite = isElite;
             float mult = level * (elite ? 2.6f : 1f);
             hp.maxHealth *= mult;

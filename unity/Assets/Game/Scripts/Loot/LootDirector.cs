@@ -9,7 +9,7 @@ namespace Spiritfire.Game
     ///   击杀：灵石（按敌人基础耐久折算，精英 ×3）、弹药 30%（所有枪备弹都低于 35% 时 50%）、生命 10%；精英必掉弹药与生命，6% 掉灵兽封印；
     ///         秘卷「收割 / 摄魂」的击杀回血回盾在这里结算。分身、自爆等 noReward 的死亡什么都不掉
     ///   场地肃清：场上灵石全部吸向玩家；场地配了奖励就在场地上落一个宝箱
-    ///   Grant：宝箱奖励发放；秘卷三选一排队弹出（一次只开一个，两次之间隔 0.6 s）
+    ///   Grant：宝箱奖励发放（按 key 分给 Loot/Rewards 的处理器）；秘卷三选一排队弹出（一次只开一个，两次之间隔 0.6 s）
     /// </summary>
     public sealed class LootDirector : MonoBehaviour
     {
@@ -85,50 +85,11 @@ namespace Spiritfire.Game
             Hud.Instance?.Toast("宝箱出现了");
         }
 
-        /// <summary>宝箱奖励："weapon:&lt;id&gt;[:稀有度]" / "scroll" / "coins" / "heal" / "pet"（按权重抽）/ "pet:&lt;id&gt;" / "pet:rarity=&lt;0–2&gt;"</summary>
-        public void Grant(string reward, Vector3 pos)
-        {
-            var parts = reward.Split(':');
-            var pv = PlayerVitals.Instance;
-            switch (parts[0])
-            {
-                case "weapon":
-                {
-                    var def = WeaponLibrary.Get(parts.Length > 1 ? parts[1] : "revolver");
-                    if (def == null) break;
-                    int rarity = parts.Length > 2 && int.TryParse(parts[2], out var r) ? r : 0;
-                    var toPlayer = pv ? pv.transform.position - pos : Vector3.forward;
-                    toPlayer.y = 0;
-                    WeaponPickup.Drop(new WeaponInstance(def, rarity), pos + Vector3.up * 0.4f, toPlayer.normalized * 1.6f + Vector3.up * 5f);
-                    break;
-                }
-                case "scroll":
-                    OfferScrolls(3);
-                    break;
-                case "coins":
-                    DropCoins(pos, Random.Range(60, 121), 1.7f);
-                    break;
-                case "pet":
-                {
-                    // 灵兽封印：落在宝箱前方，朝玩家抛一点
-                    var toPlayer = pv ? pv.transform.position - pos : Vector3.forward;
-                    toPlayer.y = 0;
-                    var toss = toPlayer.normalized * 1.4f + Vector3.up * 4.5f;
-                    var arg = parts.Length > 1 ? parts[1] : "";
-                    if (arg.StartsWith("rarity=") && int.TryParse(arg.Substring(7), out var tier))
-                        PetSeal.DropRandom(pos + Vector3.up * 0.4f, (PetRarity)Mathf.Clamp(tier, 0, 2), true, toss);
-                    else if (PetLibrary.Get(arg) is { } petDef) PetSeal.Drop(petDef, pos + Vector3.up * 0.4f, toss, announce: true);
-                    else PetSeal.DropRandom(pos + Vector3.up * 0.4f, null, true, toss);
-                    break;
-                }
-                case "heal":
-                    if (!pv) break;
-                    pv.stats.Add("reward", Stat.MaxHp, 10);
-                    pv.Heal(pv.MaxHealth * 0.5f);
-                    Hud.Instance?.Toast("生命上限 +10，回复 50% 生命");
-                    break;
-            }
-        }
+        /// <summary>
+        /// 宝箱奖励："weapon:&lt;id&gt;[:稀有度]" / "scroll" / "coins" / "heal" / "pet"（按权重抽）/ "pet:&lt;id&gt;" / "pet:rarity=&lt;0–2&gt;"。
+        /// 按 key 分发给 Loot/Rewards 里的处理器（<see cref="RewardRegistry"/>）；新奖励种类加一个 &lt;Kind&gt;Reward.cs 就行。
+        /// </summary>
+        public void Grant(string reward, Vector3 pos) => RewardRegistry.Grant(reward, pos, this);
 
         public void OfferScrolls(int count) => offers.Enqueue(count);
 
@@ -137,13 +98,17 @@ namespace Spiritfire.Game
             if (offers.Count == 0 || ScrollChoice.Open || Time.unscaledTime < offerReadyAt) return;
             var pv = PlayerVitals.Instance;
             if (!pv || pv.Dead) return;
-            var choices = ScrollLibrary.Roll(scrolls, offers.Dequeue());
+            var hero = pv.GetComponent<HeroSkills>();
+            var choices = ScrollLibrary.Roll(scrolls, offers.Dequeue(), 0, hero ? hero.heroId : null);
             if (choices.Count == 0) return;
             ScrollChoice.Show(choices, scrolls, def =>
             {
-                scrolls.Gain(def, pv);
-                int n = scrolls.Stacks(def.id);
-                Hud.Instance?.Toast($"获得秘卷「{def.name}」" + (def.maxStacks > 1 ? $" · {n} 层" : ""));
+                if (scrolls.Gain(def, pv))
+                {
+                    int n = scrolls.Stacks(def.id);
+                    Hud.Instance?.Toast($"获得秘卷「{def.name}」" + (def.maxStacks > 1 ? $" · {n} 层" : ""));
+                }
+                else Hud.Instance?.Toast($"「{def.name}」已达最大层数");
                 offerReadyAt = Time.unscaledTime + OfferGap;
             });
         }

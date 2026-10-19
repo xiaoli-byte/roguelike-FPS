@@ -37,15 +37,8 @@ namespace Spiritfire.Game
             return c;
         }
 
-        public static Color RewardColor(string reward) => reward.Split(':')[0] switch
-        {
-            "weapon" => new Color(1f, 0.62f, 0.25f),
-            "scroll" => new Color(0.55f, 0.75f, 1f),
-            "coins" => new Color(1f, 0.85f, 0.35f),
-            "heal" => new Color(0.4f, 1f, 0.55f),
-            "pet" => new Color(1f, 0.55f, 0.85f),
-            _ => Color.white,
-        };
+        /// <summary>宝石 / 光柱颜色：由奖励处理器（Loot/Rewards）决定</summary>
+        public static Color RewardColor(string reward) => RewardRegistry.Color(reward);
 
         void Build()
         {
@@ -107,15 +100,7 @@ namespace Spiritfire.Game
         public Vector3 Focus => basePos + Vector3.up * 0.6f;
         public float Radius => 2.6f;
         public bool CanInteract => state == State.Idle;
-        public string Prompt => "打开宝箱 · " + reward.Split(':')[0] switch
-        {
-            "weapon" => "武器",
-            "scroll" => "秘卷",
-            "coins" => "灵石",
-            "heal" => "生命",
-            "pet" => "灵宠",
-            _ => "奖励",
-        };
+        public string Prompt => "打开宝箱 · " + RewardRegistry.Hint(reward);
 
         public void Interact()
         {

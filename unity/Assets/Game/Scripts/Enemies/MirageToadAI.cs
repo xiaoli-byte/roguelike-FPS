@@ -279,7 +279,7 @@ namespace Spiritfire.Game
                 float r = Random.Range(4f, 7f) * Size;
                 var p = transform.position + new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a)) * r;
                 if (!NavMesh.SamplePosition(p, out var hit, 3f, NavMesh.AllAreas)) continue;
-                var decoy = EnemyRoster.Spawn("mirage_toad_decoy", hit.position, transform.rotation, level, false, transform.parent);
+                var decoy = EnemyRoster.Spawn("mirage_toad_decoy", hit.position, transform.rotation, level, false, new SpawnOptions { parent = transform.parent });
                 ShotFx.Instance?.Impact(hit.position + Vector3.up, Vector3.up, false, 4f);
                 if (decoy is MirageToadAI m)
                 {

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Spiritfire.Art;
 using UnityEngine;
@@ -6,83 +5,62 @@ using UnityEngine.AI;
 
 namespace Spiritfire.Game
 {
+    /// <summary>生成选项（同 Three.js 版 SpawnOptions 里除位置 / 精英 / 等级以外的部分）</summary>
+    public sealed class SpawnOptions
+    {
+        /// <summary>挂到哪个物体下（场地、关卡根）</summary>
+        public Transform parent;
+        /// <summary>精英词缀 id（词缀框架 EN4 解释；之前忽略）</summary>
+        public string affix;
+    }
+
     /// <summary>
-    /// 敌人名册：每种敌人的基础数值（Three.js 版 src/enemies/types/* 的 DEF，等级 1）与行为组件。
-    /// 生成时实例化美术 Prefab，再按名册挂上受伤体、身体、导航与 AI——美术 Prefab 保持纯美术，不带玩法组件。
+    /// 敌人名册门面：定义来自 <see cref="Registry{T}"/>（Enemies/Defs/*/Enemy_*.cs），外部调用（遭遇、测试、关卡生成器）不用改。
+    /// 生成时实例化美术 Prefab，再按定义挂上受伤体、身体、导航与 AI——美术 Prefab 保持纯美术，不带玩法组件。
+    /// 场景里没有这个 Prefab 时生成 <see cref="PlaceholderBody"/>（按定义尺寸的胶囊 + 弱点球），AI 照常运行（4.11 占位策略）。
     /// </summary>
     public static class EnemyRoster
     {
-        public sealed class Def
-        {
-            public string id, prefab, name;
-            public float hp, armor, shield, speed, damage, knockbackResist;
-            /// <summary>体型倍率（Three.js 版 ScaledEnemyDef.scale）：美术 Prefab 是设计尺寸，生成时整体放大，碰撞体 / 导航 / 弱点一起变</summary>
-            public float scale = 1f;
-            public string weakBone;
-            public float weakRadius;
-            public Type ai;
-            public AttackTokens.Kind role;
-        }
+        static readonly HashSet<string> warnedPlaceholder = new();
 
-        static readonly Dictionary<string, Def> defs = new()
-        {
-            ["jerboa_blade"] = new Def
-            {
-                id = "jerboa_blade", prefab = "SK_Enemy_JerboaBlade", name = "跳鼠刀兵", scale = 1.3f, hp = 42, speed = 7, damage = 9,
-                weakBone = "bell", weakRadius = 0.17f, ai = typeof(JerboaBladeAI),
-            },
-            ["scorpion_archer"] = new Def
-            {
-                id = "scorpion_archer", prefab = "SK_Enemy_ScorpionArcher", name = "蝎尾弩卫", scale = 1.8f, hp = 120, speed = 3.4f, damage = 11,
-                knockbackResist = 0.5f, weakBone = "sac", weakRadius = 0.26f, ai = typeof(ScorpionArcherAI), role = AttackTokens.Kind.Ranged,
-            },
-            ["mirage_toad"] = new Def
-            {
-                id = "mirage_toad", prefab = "SK_Enemy_MirageToad", name = "蜃楼蟾", hp = 170, speed = 2.6f, damage = 24,
-                knockbackResist = 0.7f, weakBone = "sac", weakRadius = 0.42f, ai = typeof(MirageToadAI), role = AttackTokens.Kind.Heavy,
-            },
-            ["mirage_toad_decoy"] = new Def
-            {
-                id = "mirage_toad_decoy", prefab = "SK_Enemy_MirageToad", name = "蜃景", hp = 30, speed = 2.6f, damage = 0,
-                knockbackResist = 0.3f, weakBone = "sac", weakRadius = 0.42f, ai = typeof(MirageToadAI), role = AttackTokens.Kind.Heavy,
-            },
-            ["tomb_beast"] = new Def
-            {
-                id = "tomb_beast", prefab = "SK_Enemy_TombBeast", name = "三彩镇墓兽", scale = 1.7f, hp = 640, armor = 160, speed = 2.2f, damage = 42,
-                knockbackResist = 1f, weakBone = "crack", weakRadius = 0.42f, ai = typeof(TombBeastAI), role = AttackTokens.Kind.Heavy,
-            },
-            ["apsara"] = new Def
-            {
-                id = "apsara", prefab = "SK_Enemy_Apsara", name = "邪飞天", scale = 1.3f, hp = 170, speed = 4.2f, damage = 0,
-                knockbackResist = 0.3f, weakBone = "socket_pipa", weakRadius = 0.3f, ai = typeof(ApsaraAI), role = AttackTokens.Kind.Ranged,
-            },
-            ["fire_rat"] = new Def
-            {
-                id = "fire_rat", prefab = "SK_Enemy_FireRat", name = "火浣鼠", scale = 1.6f, hp = 26, speed = 6, damage = 26,
-                weakBone = "spine", weakRadius = 0.3f, ai = typeof(FireRatAI),
-            },
-        };
+        public static EnemyDef Get(string id) => Registry<EnemyDef>.Get(id);
+        public static IReadOnlyList<EnemyDef> All => Registry<EnemyDef>.All;
 
-        public static Def Get(string id) => defs.TryGetValue(id, out var d) ? d : null;
-        public static IEnumerable<Def> All => defs.Values;
+        /// <summary>旧接口：整数等级（= 难度倍率），转发到 float 难度版本，数值不变</summary>
+        public static EnemyAI Spawn(string id, Vector3 position, Quaternion rotation, int level, bool elite, Transform parent = null) =>
+            Spawn(id, position, rotation, (float)level, elite, parent ? new SpawnOptions { parent = parent } : null);
 
-        /// <summary>生成一只敌人（贴到导航网格上），返回 AI；Prefab 缺失时返回 null</summary>
-        public static EnemyAI Spawn(string id, Vector3 position, Quaternion rotation, int level, bool elite, Transform parent = null)
+        /// <summary>
+        /// 生成一只敌人（贴到导航网格上），返回 AI；名册里没有这个 id 时返回 null。
+        /// difficulty = 强度倍率（局难度，D1：1 + 0.8 × 章 + 0.16 × 关序）：生命 × difficulty，伤害 × (1 + (difficulty − 1) × 0.55)。
+        /// </summary>
+        public static EnemyAI Spawn(string id, Vector3 position, Quaternion rotation, float difficulty, bool elite, SpawnOptions options = null)
         {
             var def = Get(id);
-            var prefab = def != null ? EnemyCatalog.Prefab(def.prefab) : null;
-            if (!prefab)
+            if (def == null)
             {
-                Debug.LogWarning($"[Enemy] 没有 {id} 的 Prefab");
+                Debug.LogWarning($"[Enemy] 名册里没有 {id}");
                 return null;
             }
+            var parent = options?.parent;
+            var prefab = EnemyCatalog.Prefab(def.prefab);
             if (NavMesh.SamplePosition(position, out var hit, 4f, NavMesh.AllAreas)) position = hit.position;
-            var go = UnityEngine.Object.Instantiate(prefab, position, rotation, parent);
-            go.transform.localScale = prefab.transform.localScale * def.scale;
-            // 先停用再挂组件：AddComponent 在激活的物体上会立刻跑 Awake，那时字段还没填
-            go.SetActive(false);
-            go.name = $"{def.name} ({id})";
-            AttachParts(go);
+            GameObject go;
+            bool placeholder = !prefab;
+            if (!placeholder)
+            {
+                go = Object.Instantiate(prefab, position, rotation, parent);
+                go.transform.localScale = prefab.transform.localScale * def.scale;
+                // 先停用再挂组件：AddComponent 在激活的物体上会立刻跑 Awake，那时字段还没填
+                go.SetActive(false);
+                go.name = $"{def.name} ({id})";
+                AttachParts(go);
+            }
+            else
+            {
+                if (warnedPlaceholder.Add(id)) Debug.LogWarning($"[Enemy] 没有 {id} 的 Prefab（{def.prefab}），用占位体");
+                go = PlaceholderBody.Create(def, position, rotation, parent);
+            }
             SetLayer(go, Layers.Character);
             var dmg = go.AddComponent<Damageable>();
             dmg.maxHealth = def.hp;
@@ -90,7 +68,7 @@ namespace Spiritfire.Game
             dmg.maxShield = def.shield;
             dmg.displayName = def.name;
             var body = go.AddComponent<EnemyBody>();
-            body.weakBone = def.weakBone;
+            body.weakBone = placeholder ? PlaceholderBody.WeakBoneName(def) : def.weakBone;
             body.weakRadius = def.weakRadius;
             var col = go.GetComponent<CapsuleCollider>();
             var agent = go.AddComponent<NavMeshAgent>();
@@ -98,14 +76,14 @@ namespace Spiritfire.Game
             agent.height = col ? col.height : 1.8f;
             agent.baseOffset = 0;
             agent.obstacleAvoidanceType = ObstacleAvoidanceType.MedQualityObstacleAvoidance;
-            agent.avoidancePriority = UnityEngine.Random.Range(30, 70);
+            agent.avoidancePriority = Random.Range(30, 70);
             var ai = (EnemyAI)go.AddComponent(def.ai);
             ai.enemyId = id;
             ai.moveSpeed = def.speed;
             ai.damage = def.damage;
             ai.knockbackResist = def.knockbackResist;
             go.SetActive(true);
-            ai.Spawn(level, elite);
+            ai.Spawn(difficulty, elite);
             var loco = go.GetComponent<CreatureLocomotion>();
             if (loco) loco.Teleported();
             return ai;
@@ -124,9 +102,9 @@ namespace Spiritfire.Game
                 foreach (var t in go.GetComponentsInChildren<Transform>(true))
                     if (t.name == "socket_" + pi.bindAttachment) { socket = t; break; }
                 if (!socket) continue;
-                var inst = UnityEngine.Object.Instantiate(part, socket, false);
+                var inst = Object.Instantiate(part, socket, false);
                 inst.name = part.name;
-                foreach (var c in inst.GetComponentsInChildren<Collider>(true)) UnityEngine.Object.Destroy(c);
+                foreach (var c in inst.GetComponentsInChildren<Collider>(true)) Object.Destroy(c);
             }
         }
 
@@ -134,5 +112,8 @@ namespace Spiritfire.Game
         {
             foreach (var t in go.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = layer;
         }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStatics() => warnedPlaceholder.Clear();
     }
 }
