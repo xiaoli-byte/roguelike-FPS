@@ -50,6 +50,8 @@ namespace Spiritfire.Game
         readonly List<(string id, bool elite, Vector3 pos, float at)> warned = new();
         readonly List<EnemyAI> alive = new();
         float startTime, lastProgress;
+        /// <summary>有到点的敌人却选不到出生点的起始时刻（-1 = 没卡住）：卡得越久放得越宽（同 Three.js「没有安全点就推迟，再逐步放宽」）</summary>
+        float stallSince = -1;
         int killed;
 
         void Update()
@@ -104,7 +106,12 @@ namespace Spiritfire.Game
             {
                 var q = queue[i];
                 if (q.at > t || alive.Count + warned.Count >= MaxAlive) continue;
-                if (!PickSpawnPoint(ppos, out var pos)) continue;
+                if (!PickSpawnPoint(ppos, out var pos))
+                {
+                    if (stallSince < 0) stallSince = Time.time;
+                    continue;
+                }
+                stallSince = -1;
                 Telegraph.Circle(pos, 1.1f, WarnTime, new Color(1f, 0.4f, 0.25f));
                 warned.Add((q.id, q.elite, pos, Time.time + WarnTime));
                 queue.RemoveAt(i);
@@ -164,6 +171,12 @@ namespace Spiritfire.Game
 
         bool PickSpawnPoint(Vector3 ppos, out Vector3 point)
         {
+            // 玩家可能站在导航网格外（台顶、箱子上）：路径终点取离他最近的网格点，否则所有候选点都会算不出完整路径、增援永远刷不出来
+            var goal = NavMesh.SamplePosition(ppos, out var near, 6f, NavMesh.AllAreas) ? near.position : ppos;
+            // 卡住 2 s 后放宽距离带，6 s 后连不完整的路径也接受（敌人走到网格边缘再远程 / 等玩家下来）
+            float stalled = stallSince < 0 ? 0 : Time.time - stallSince;
+            float minDist = stalled > 2f ? 6f : 10f, maxDist = stalled > 2f ? 45f : 28f;
+            bool partialOk = stalled > 6f;
             for (int attempt = 0; attempt < 16; attempt++)
             {
                 Vector3 p;
@@ -174,10 +187,11 @@ namespace Spiritfire.Game
                     p = transform.position + new Vector3(r.x, 0, r.y);
                 }
                 float dist = Flat(p - ppos);
-                if (dist < 10f || dist > 28f) continue;
+                if (dist < minDist || dist > maxDist) continue;
                 if (!NavMesh.SamplePosition(p, out var hit, 2.5f, NavMesh.AllAreas)) continue;
                 var path = new NavMeshPath();
-                if (!NavMesh.CalculatePath(hit.position, ppos, NavMesh.AllAreas, path) || path.status != NavMeshPathStatus.PathComplete) continue;
+                if (!NavMesh.CalculatePath(hit.position, goal, NavMesh.AllAreas, path)) continue;
+                if (path.status != NavMeshPathStatus.PathComplete && !(partialOk && path.status == NavMeshPathStatus.PathPartial)) continue;
                 point = hit.position;
                 return true;
             }
