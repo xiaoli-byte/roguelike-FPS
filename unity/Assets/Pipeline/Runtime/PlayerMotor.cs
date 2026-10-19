@@ -53,6 +53,8 @@ namespace Spiritfire.Art
         public bool Invulnerable => Time.time < iframeUntil;
         /// <summary>剩余冲刺充能（含小数：0.5 = 下一格充了一半），HUD 读取</summary>
         public float DashChargeLevel => dashCharge;
+        /// <summary>最近一次冲刺的方向（水平单位向量；Dashed 事件里读到的就是这一次的）</summary>
+        public Vector3 DashDirection => dashDir;
         public event Action Dashed;
         /// <summary>起跳（true = 空中再跳）</summary>
         public event Action<bool> Jumped;

@@ -120,6 +120,7 @@ namespace Spiritfire.Game
             scopes[def.id] = scope;
             stacks[def.id] = n;
             Gained?.Invoke(def, n);
+            GameEvents.RaiseScrollAcquired(def, n);
             return true;
         }
 

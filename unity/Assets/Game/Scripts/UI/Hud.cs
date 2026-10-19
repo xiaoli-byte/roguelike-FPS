@@ -237,6 +237,7 @@ namespace Spiritfire.Game
         public void AddCoins(int n)
         {
             coins += n;
+            GameEvents.RaiseCoinsChanged(n, coins);
         }
 
         // ───────────── 事件 ─────────────

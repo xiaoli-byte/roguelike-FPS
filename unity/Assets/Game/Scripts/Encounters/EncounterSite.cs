@@ -93,6 +93,7 @@ namespace Spiritfire.Game
             Hud.Instance?.Banner(title, 2f);
             GameAudio.Play("wave_start");
             Hud.Instance?.SetObjective($"{title} · 剩余敌人 {Remaining}");
+            GameEvents.RaiseEncounterStarted(this);
         }
 
         void Tick(Vector3 ppos)
@@ -147,6 +148,7 @@ namespace Spiritfire.Game
             Hud.Instance?.SetObjective("");
             Cleared?.Invoke(this);
             AnySiteCleared?.Invoke(this);
+            GameEvents.RaiseEncounterCleared(this);
         }
 
         void Unstick(Vector3 ppos)

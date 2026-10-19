@@ -197,6 +197,7 @@ namespace Spiritfire.Game
 
         void Collect(PlayerVitals pv)
         {
+            float got = amount;
             switch (kind)
             {
                 case Kind.Coin:
@@ -213,12 +214,14 @@ namespace Spiritfire.Game
                     break;
                 case Kind.Health:
                     float heal = amount > 0 ? amount : pv.MaxHealth * 0.15f;
+                    got = heal;
                     pv.Heal(heal);
                     Hud.Instance?.Toast($"生命 +{heal:F0}");
                     GameAudio.Play("pickup_health", 0.85f);
                     break;
             }
             ShotFx.Instance?.Impact(transform.position, Vector3.up, false, kind == Kind.Coin ? 0.3f : 1f);
+            GameEvents.RaisePickedUp(kind, got);
             Destroy(gameObject);
         }
     }

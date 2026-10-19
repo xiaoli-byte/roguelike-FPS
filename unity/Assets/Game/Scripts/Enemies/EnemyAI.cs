@@ -115,6 +115,7 @@ namespace Spiritfire.Game
             hp.untargetable = true;
             SetState("spawn");
             GameAudio.PlayAt("enemy_spawn", transform.position, 0.5f);
+            GameEvents.RaiseEnemySpawned(this);
         }
 
         protected virtual void Start()
@@ -496,7 +497,7 @@ namespace Spiritfire.Game
                 DecoyBlocked(taunt);
                 return false;
             }
-            return Combat.DamagePlayer(dmg, from) > 0;
+            return Combat.DamagePlayer(dmg, from, Element.None, this) > 0;
         }
 
         /// <summary>诱饵挡下一击：全场共用节流，免得一群怪同时刷屏</summary>

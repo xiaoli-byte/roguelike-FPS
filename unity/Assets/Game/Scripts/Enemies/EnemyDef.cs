@@ -3,9 +3,6 @@ using UnityEngine;
 
 namespace Spiritfire.Game
 {
-    /// <summary>敌人定义的级别：普通 / 精英 / 首领（精英通常是生成时的选项，这里是「天生」的级别）</summary>
-    public enum EnemyRank { Normal, Elite, Boss }
-
     /// <summary>遭遇编排里的站位角色（同 Three.js 版 EnemyPlacement）：正面推进 / 侧翼 / 远程 / 精确远程 / 炮击 / 辅助</summary>
     public enum EnemyPlacement { Assault, Flank, Ranged, Precision, Artillery, Support }
 
@@ -31,7 +28,8 @@ namespace Spiritfire.Game
         /// <summary>出手名额类别（AttackTokens）</summary>
         public AttackTokens.Kind role;
 
-        public EnemyRank rank;
+        /// <summary>天生的级别（<see cref="Rank"/>；精英通常是生成时的选项）</summary>
+        public Rank rank;
         /// <summary>遭遇编排的站位角色（TS WhiteboxEncounters 的 roleFor）</summary>
         public EnemyPlacement placementRole;
         /// <summary>飞行（TS flying）。目前只是标记：生成仍按地面单位挂 NavMeshAgent，飞行基类（E3）落地后接上</summary>

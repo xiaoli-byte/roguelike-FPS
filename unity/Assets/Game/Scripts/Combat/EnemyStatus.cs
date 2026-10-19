@@ -1,8 +1,29 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Spiritfire.Game
 {
+    /// <summary>敌人身上的状态种类（Three.js StatusId）：三种元素状态 + 眩晕、减速</summary>
+    public enum StatusId { Burn, Shock, Corrode, Stun, Slow }
+
+    /// <summary>状态集合（死亡瞬间身上有什么：<see cref="EnemyStatus.DiedWith"/>）</summary>
+    [Flags]
+    public enum StatusMask { None = 0, Burn = 1 << 0, Shock = 1 << 1, Corrode = 1 << 2, Stun = 1 << 3, Slow = 1 << 4 }
+
+    /// <summary>某个状态此刻的读数（EnemyStatus.TryGet）</summary>
+    public struct StatusView
+    {
+        public StatusId id;
+        /// <summary>层数（灼烧 / 雷殛 / 减速条数；蚀化、眩晕为 1）</summary>
+        public int stacks;
+        /// <summary>剩余秒数（多层时取最长的一层）</summary>
+        public float remaining;
+        /// <summary>强度：灼烧为各层之和、雷殛 / 蚀化为当前强度、减速为最强那条的比例；眩晕为 0</summary>
+        public float power;
+    }
+
     /// <summary>
     /// 敌人身上的状态（Three.js 版 src/combat/Status.ts）：
     ///   灼烧：每层独立计时 4 s，最多 3 层（满层替换剩余最短的一层），每 0.5 s 跳 Σ层强度 × 0.16（一层烧满 = 强度 × 1.28）
@@ -12,6 +33,7 @@ namespace Spiritfire.Game
     ///   眩晕：AI 停摆（精英时长 ×0.75）；减速：最多 4 条，取最强的一条
     /// 强度 = 附着那一下的实际伤害，上限为敌人最大生命的一半。持续伤害走 Combat.DamageEnemy（source Status，不暴击、不再附着）。
     /// 元素相遇的反应判定在 <see cref="ReactionSystem"/>（附着之前判定）。第一次附着时才挂到敌人身上。
+    /// 每次挂上状态发 <see cref="Applied"/> 与 <see cref="GameEvents.StatusApplied"/>；死亡瞬间身上的状态记在 <see cref="DiedWith"/>。
     /// </summary>
     public sealed class EnemyStatus : MonoBehaviour
     {
@@ -47,7 +69,104 @@ namespace Spiritfire.Game
         /// <summary>移速倍率（蚀化 ×0.8、减速），AI 移动时乘上</summary>
         public float SlowMult { get; private set; } = 1f;
 
+        /// <summary>挂上一个状态（状态, 当前层数）</summary>
+        public event Action<StatusId, int> Applied;
+        /// <summary>最近一次挂上的状态与时间（没有过为 null / −1）</summary>
+        public StatusId? LastApplied { get; private set; }
+        public float LastAppliedAt { get; private set; } = -1;
+        /// <summary>死亡瞬间身上的状态（击杀时效果用：之后状态会被清空）</summary>
+        public StatusMask DiedWith { get; private set; }
+
+        /// <summary>此刻身上的状态</summary>
+        public StatusMask Mask =>
+            (Burning ? StatusMask.Burn : 0) | (Shocked ? StatusMask.Shock : 0) | (Corroded ? StatusMask.Corrode : 0) |
+            (Stunned ? StatusMask.Stun : 0) | (slows.Count > 0 ? StatusMask.Slow : 0);
+
         public static EnemyStatus Of(Damageable d) => d ? d.GetComponent<EnemyStatus>() : null;
+
+        /// <summary>元素 → 它附着的状态（None 没有）</summary>
+        public static StatusId? StatusOf(Element e) => e switch
+        {
+            Element.Fire => StatusId.Burn,
+            Element.Shock => StatusId.Shock,
+            Element.Corrode => StatusId.Corrode,
+            _ => null,
+        };
+
+        /// <summary>敌人死亡瞬间身上的状态（从没挂过状态的为 None）</summary>
+        public static StatusMask DeathStatuses(Damageable d)
+        {
+            var s = Of(d);
+            return s ? s.DiedWith : StatusMask.None;
+        }
+
+        public static bool TryGet(Damageable d, StatusId id, out StatusView view)
+        {
+            var s = Of(d);
+            if (s) return s.TryGet(id, out view);
+            view = default;
+            return false;
+        }
+
+        /// <summary>读某个状态：身上没有返回 false</summary>
+        public bool TryGet(StatusId id, out StatusView view)
+        {
+            view = new StatusView { id = id };
+            switch (id)
+            {
+                case StatusId.Burn:
+                    if (burn.Count == 0) return false;
+                    view.stacks = burn.Count;
+                    foreach (var st in burn)
+                    {
+                        view.power += st.power;
+                        view.remaining = Mathf.Max(view.remaining, st.remaining);
+                    }
+                    return true;
+                case StatusId.Shock:
+                    if (shockStacks <= 0) return false;
+                    view.stacks = shockStacks;
+                    view.remaining = shockRemaining;
+                    view.power = shockPower;
+                    return true;
+                case StatusId.Corrode:
+                    if (corrodeRemaining <= 0) return false;
+                    view.stacks = 1;
+                    view.remaining = corrodeRemaining;
+                    view.power = corrodePower;
+                    return true;
+                case StatusId.Stun:
+                    if (!Stunned) return false;
+                    view.stacks = 1;
+                    view.remaining = stunUntil - Time.time;
+                    return true;
+                case StatusId.Slow:
+                    if (slows.Count == 0) return false;
+                    view.stacks = slows.Count;
+                    foreach (var st in slows)
+                    {
+                        view.power = Mathf.Max(view.power, st.power);
+                        view.remaining = Mathf.Max(view.remaining, st.remaining);
+                    }
+                    return true;
+            }
+            return false;
+        }
+
+        void Notify(StatusId id, int stacks)
+        {
+            LastApplied = id;
+            LastAppliedAt = Time.time;
+            try
+            {
+                Applied?.Invoke(id, stacks);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
+            GameEvents.RaiseStatusApplied(hp, id, stacks);
+        }
 
         static EnemyStatus Ensure(Damageable d)
         {
@@ -100,13 +219,16 @@ namespace Spiritfire.Game
             return true;
         }
 
-        public static void Stun(Damageable d, float seconds)
+        /// <summary>眩晕（精英时长 ×0.75）：返回是否眩晕上了</summary>
+        public static bool Stun(Damageable d, float seconds)
         {
-            if (!d || d.Dead || d.untargetable) return;
+            if (!d || d.Dead || d.untargetable) return false;
             var s = Ensure(d);
             if (d.elite) seconds *= 0.75f;
             s.stunUntil = Mathf.Max(s.stunUntil, Time.time + seconds);
             ShotFx.Instance?.Impact(s.Center + Vector3.up * 0.5f, Vector3.up, false, 2f);
+            s.Notify(StatusId.Stun, 1);
+            return true;
         }
 
         public static void Slow(Damageable d, float strength, float seconds)
@@ -122,6 +244,7 @@ namespace Spiritfire.Game
                     if (s.slows[i].power * s.slows[i].remaining < s.slows[weakest].power * s.slows[weakest].remaining) weakest = i;
                 s.slows[weakest] = new Stack { power = strength, remaining = seconds };
             }
+            s.Notify(StatusId.Slow, s.slows.Count);
         }
 
         /// <summary>归墟消耗灼烧：清空并返回剩余伤害的结清值 Σ层强度 × 0.16 × 剩余跳数</summary>
@@ -148,7 +271,19 @@ namespace Spiritfire.Game
             }
         }
 
-        void Awake() => hp = GetComponent<Damageable>();
+        void Awake()
+        {
+            hp = GetComponent<Damageable>();
+            if (hp) hp.Died += OnOwnerDied;
+        }
+
+        void OnDestroy()
+        {
+            if (hp) hp.Died -= OnOwnerDied;
+        }
+
+        // 死亡事件在状态清空（下一次 Update）之前：记下这一刻身上有什么
+        void OnOwnerDied(DamageInfo info) => DiedWith = Mask;
 
         void AddBurn(float power)
         {
@@ -162,6 +297,7 @@ namespace Spiritfire.Game
                 burn[oldest] = new Stack { power = power, remaining = BurnDuration };
             }
             Glow(ref burnGlow, new Color(1f, 0.45f, 0.12f, 0.45f), Vector3.zero);
+            Notify(StatusId.Burn, burn.Count);
         }
 
         void AddShock(float power, int depth)
@@ -170,6 +306,7 @@ namespace Spiritfire.Game
             shockRemaining = Mathf.Max(shockRemaining, ShockDuration);
             shockPower = Mathf.Max(shockPower, power);
             Glow(ref shockGlow, new Color(0.45f, 0.75f, 1f, 0.5f), Vector3.up * 0.25f);
+            Notify(StatusId.Shock, shockStacks);
             if (depth == 0 && Time.time >= chainReadyAt)
             {
                 chainReadyAt = Time.time + ChainCooldown;
@@ -188,6 +325,7 @@ namespace Spiritfire.Game
             corrodeRemaining = Mathf.Max(corrodeRemaining, CorrodeDuration);
             corrodePower = Mathf.Max(corrodePower, power);
             Glow(ref corrodeGlow, new Color(0.55f, 0.95f, 0.3f, 0.45f), Vector3.down * 0.25f);
+            Notify(StatusId.Corrode, 1);
         }
 
         void Glow(ref Transform glow, Color c, Vector3 offset)

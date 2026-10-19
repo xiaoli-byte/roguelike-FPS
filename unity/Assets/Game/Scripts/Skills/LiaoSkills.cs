@@ -44,6 +44,7 @@ namespace Spiritfire.Game
 
         public LiaoBlazeGrenade()
         {
+            id = "fox_blaze_grenade";
             name = "燃爆雷";
             cooldown = 8;
             maxCharges = 2;
@@ -117,6 +118,7 @@ namespace Spiritfire.Game
 
         public LiaoNineTails()
         {
+            id = "fox_nine_tails";
             name = "尾焰火灵";
             cooldown = 20;
             description = $"唤出九团绕尾而行的火灵，{Duration} 秒内依次射向前方敌人并自动追踪，每团造成 {Damage} 点火焰伤害并附加灼烧，会优先分散到不同目标。冷却 {cooldown} 秒。";

@@ -74,10 +74,12 @@ namespace Spiritfire.Game
         /// <summary>拾取 / 宝箱给的枪：有空槽放空槽，否则替换当前槽；返回被替换下来的枪</summary>
         public WeaponInstance Give(WeaponInstance w)
         {
+            GameEvents.RaiseWeaponAcquired(w);
             int slot = slots[0] == null ? 0 : slots[1] == null ? 1 : ActiveSlot;
             var old = slots[slot];
+            var prev = Active;
             slots[slot] = w;
-            SwitchTo(slot, true);
+            SwitchTo(slot, true, prev);
             return old;
         }
 
@@ -88,7 +90,10 @@ namespace Spiritfire.Game
             Changed?.Invoke();
         }
 
-        void SwitchTo(int slot, bool force = false)
+        void SwitchTo(int slot, bool force = false) => SwitchTo(slot, force, Active);
+
+        /// <summary>prev = 切之前手上的枪（拾取替换当前槽时由 Give 传入被换下来的那把）</summary>
+        void SwitchTo(int slot, bool force, WeaponInstance prev)
         {
             if (slots[slot] == null || (slot == ActiveSlot && !force)) return;
             if (slot != ActiveSlot || force) GameAudio.Play("weapon_switch", 0.7f);
@@ -98,6 +103,7 @@ namespace Spiritfire.Game
             consecutive = 0;
             ApplyRigs();
             Changed?.Invoke();
+            GameEvents.RaiseWeaponSwitched(prev, Active);
         }
 
         void ApplyRigs()
@@ -224,8 +230,11 @@ namespace Spiritfire.Game
                 shellTimer = w.def.reloadStart / speed;
             }
             else reloadTotal = w.def.reloadTime / speed;
+            reloadWeapon = w;
+            shellsInserted = 0;
             GameAudio.Play("reload_start", 0.8f);
             Changed?.Invoke();
+            GameEvents.RaiseReloadStarted(w);
         }
 
         void UpdateReload(float dt, bool interrupt)
@@ -246,6 +255,7 @@ namespace Spiritfire.Game
                 {
                     w.mag++;
                     w.reserve--;
+                    shellsInserted++;
                     shellTimer += w.def.shellTime / speed;
                     // 逐发装填：每塞一发一声轻响
                     GameAudio.Play("reload_end", 0.45f, 1.3f + UnityEngine.Random.value * 0.1f);
@@ -261,13 +271,26 @@ namespace Spiritfire.Game
                 GameAudio.Play("reload_end", 0.85f);
                 CancelReload();
                 Changed?.Invoke();
+                GameEvents.RaiseReloaded(w);
             }
         }
 
+        WeaponInstance reloadWeapon;
+        int shellsInserted;
+
+        /// <summary>
+        /// 结束 / 打断换弹。逐发装填已经压进一发以上的（装满、备弹打空、开火或切枪打断）算一次（部分）换弹完成，
+        /// 发 Reloaded（同 Three.js cancelReload）；弹匣式换弹中途打断不算
+        /// </summary>
         void CancelReload()
         {
+            var w = reloadWeapon;
+            bool partial = reloadTotal > 0 && shellReload && shellsInserted > 0 && w != null;
             reloadTotal = 0;
             reloadElapsed = 0;
+            reloadWeapon = null;
+            shellsInserted = 0;
+            if (partial) GameEvents.RaiseReloaded(w);
         }
 
         void Fire(WeaponInstance w)
@@ -312,6 +335,7 @@ namespace Spiritfire.Game
             shakeSeed = new Vector3(UnityEngine.Random.value * 10, UnityEngine.Random.value * 10, 0);
             Fired?.Invoke(w);
             Changed?.Invoke();
+            GameEvents.RaiseWeaponFired(w);
         }
 
         static readonly Collider[] overlap = new Collider[8];
@@ -332,7 +356,7 @@ namespace Spiritfire.Game
 
         DamageInfo HitInfo(WeaponDef def, float amount, Vector3 point, Vector3 dir) => new()
         {
-            amount = amount, source = DamageSource.Weapon, tags = DamageTag.Weapon, critMult = def.critMult, point = point, direction = dir,
+            amount = amount, source = DamageSource.Weapon, tags = DamageTag.Weapon, weaponUid = Active?.uid ?? 0, critMult = def.critMult, point = point, direction = dir,
             knockback = def.knockback, element = def.element, instigator = this,
             statusChance = def.element != Element.None ? def.elementChance : 0, subElement = def.subElement, subChance = def.subChance,
         };

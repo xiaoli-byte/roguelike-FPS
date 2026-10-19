@@ -6,6 +6,67 @@ namespace Spiritfire.Game
 {
     public enum Reaction { Thunderfire, Meltdown, Veinseal, Abyss }
 
+    /// <summary>反应是怎么来的：两种元素相遇（Status）、引爆身上的状态（Detonate）、秘卷 / 词条强制引发（Forced）</summary>
+    public enum ReactionOrigin { Status, Detonate, Forced }
+
+    /// <summary>引爆的结果：引发了某个反应，或单一状态的「崩解」</summary>
+    public enum DetonateOutcome { Thunderfire, Meltdown, Veinseal, Abyss, Collapse }
+
+    /// <summary>一次反应执行完毕（<see cref="GameEvents.Reacted"/>）</summary>
+    public struct ReactionEvent
+    {
+        /// <summary>中心敌人（可能已经死了 / 销毁）</summary>
+        public Damageable enemy;
+        public Reaction id;
+        /// <summary>反应中心</summary>
+        public Vector3 point;
+        /// <summary>威力 B</summary>
+        public float B;
+        /// <summary>引发这次反应的附着深度（0 = 直接命中引发）</summary>
+        public int depth;
+        /// <summary>受到伤害的敌人数</summary>
+        public int hits;
+        public ReactionOrigin origin;
+        /// <summary>强制反应的来源标签（Echo / Nirvana / Kalpa），其他为 None</summary>
+        public DamageTag tag;
+        /// <summary>归属武器（引发这次附着的那一击的 weaponUid；0 = 不是武器引发的）</summary>
+        public int weaponUid;
+        /// <summary>执行完时中心敌人已死</summary>
+        public bool centerKilled;
+        /// <summary>这次反应把中心敌人眩晕了（封脉）</summary>
+        public bool stunned;
+    }
+
+    /// <summary>引爆参数（<see cref="ReactionSystem.Detonate"/>）</summary>
+    public struct DetonateOpts
+    {
+        /// <summary>引爆这一击的强度（通常 = 该次实际伤害；内部钳到最大生命 × 0.5）</summary>
+        public float power;
+        /// <summary>强度倍率，0（未设）视为 1</summary>
+        public float mult;
+        public int depth;
+        public int weaponUid;
+        /// <summary>反应中心（null = 敌人身体中心）</summary>
+        public Vector3? point;
+    }
+
+    /// <summary>强制反应参数（<see cref="ReactionSystem.Trigger"/>）</summary>
+    public struct TriggerOpts
+    {
+        public int depth;
+        public int weaponUid;
+        /// <summary>反应中心；敌人已死时必须给</summary>
+        public Vector3? point;
+        /// <summary>无视该敌人该反应的内置冷却</summary>
+        public bool ignoreIcd;
+        /// <summary>直接指定威力 B（跳过 k × 强度与上下限）</summary>
+        public float? fixedBase;
+        /// <summary>威力倍率，0（未设）视为 1</summary>
+        public float scale;
+        /// <summary>透传到 <see cref="ReactionEvent.tag"/>（Echo / Nirvana / Kalpa）</summary>
+        public DamageTag tag;
+    }
+
     /// <summary>
     /// 元素反应（docs/arsenal-expansion.md 第 2 节，Three.js 版 src/combat/Reactions.ts）：
     ///   焚雷 = 灼烧 + 雷殛：中心火伤 B，3 m 爆炸 0.6B（击退 7）并把灼烧扩散给周围（0.2B）
@@ -15,6 +76,8 @@ namespace Spiritfire.Game
     /// 威力 B = clamp(k × 附着强度, 下限 × S, 上限 × S)，S = 1 + (等级 − 1) × 0.85；两两反应不消耗状态，频率由逐敌冷却封顶。
     /// 防递归：深度 ≥ 2 的附着不反应；反应伤害深度 +1、source Status（不再附着）；扩散出去的元素深度 +1，最多再连锁一级（延后 0.15 s）。
     /// 预算：每帧最多接受 8 次反应、队列 32 条、熔池同时 4 个。判定只入队，效果在 Update 里执行（不在伤害结算里嵌套造成伤害）。
+    /// 每条执行完派发 <see cref="GameEvents.Reacted"/>（旧的 <see cref="Reacted"/> 照常转发）。
+    /// 引爆 <see cref="Detonate"/> 与强制反应 <see cref="Trigger"/> 的签名已定，由 C1 单元实现。
     /// </summary>
     public sealed class ReactionSystem : MonoBehaviour
     {
@@ -41,8 +104,19 @@ namespace Spiritfire.Game
         const int MaxDepth = 2, FrameBudget = 8, QueueCap = 32, MaxPools = 4;
         const float CascadeDelay = 0.15f, AbyssWindup = 0.35f, IcdFloor = 0.3f, SealStunIcd = 3.5f;
 
-        /// <summary>反应执行完毕：(中心敌人, 反应, 中心点, 威力 B, 受到伤害的敌人数)</summary>
-        public static event Action<Damageable, Reaction, Vector3, float, int> Reacted;
+        static readonly EventChannel<Action<Damageable, Reaction, Vector3, float, int>> reacted = new();
+
+        /// <summary>旧事件（转发，第 4 批删除）：(中心敌人, 反应, 中心点, 威力 B, 受到伤害的敌人数)。新代码订阅 <see cref="GameEvents.Reacted"/></summary>
+        public static event Action<Damageable, Reaction, Vector3, float, int> Reacted { add => reacted.Add(value); remove => reacted.Remove(value); }
+
+        static bool warnedDetonate, warnedTrigger;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStatics()
+        {
+            reacted.Clear();
+            warnedDetonate = warnedTrigger = false;
+        }
 
         sealed class Pending
         {
@@ -50,15 +124,17 @@ namespace Spiritfire.Game
             public Damageable enemy;
             public Vector3 point;
             public float pin, cash, at, scale;
-            public int depth;
+            public int depth, weaponUid;
             public bool killed;
+            public ReactionOrigin origin;
+            public DamageTag tag;
         }
 
         sealed class Pool
         {
             public Vector3 center;
             public float radius, b, age, next;
-            public int ticks, depth;
+            public int ticks, depth, weaponUid;
             public readonly HashSet<Damageable> touched = new();
         }
 
@@ -102,9 +178,9 @@ namespace Spiritfire.Game
 
         /// <summary>
         /// 元素附着前的反应判定（Combat 在附着状态之前调用）：判定成功则记冷却、（归墟）消耗状态、入队，返回反应；
-        /// 之后调用方照常附着 incoming。击杀那一击只能引发两两反应。
+        /// 之后调用方照常附着 incoming。击杀那一击只能引发两两反应。weaponUid = 引发它的那一击出自哪把武器（反应伤害沿用）。
         /// </summary>
-        public static Reaction? TryReact(Damageable enemy, Element incoming, float pin, int depth, bool killed)
+        public static Reaction? TryReact(Damageable enemy, Element incoming, float pin, int depth, bool killed, int weaponUid = 0)
         {
             if (depth >= MaxDepth || incoming == Element.None || !enemy) return null;
             if (!killed && enemy.Dead) return null;
@@ -133,6 +209,7 @@ namespace Spiritfire.Game
             {
                 id = id.Value, enemy = enemy, point = CenterOf(enemy), pin = Mathf.Min(pin, enemy.maxHealth * 0.5f),
                 depth = depth, killed = killed, scale = 1, at = now + (depth >= 1 ? CascadeDelay : 0),
+                weaponUid = weaponUid, origin = ReactionOrigin.Status,
             };
             if (id == Reaction.Abyss)
             {
@@ -144,6 +221,34 @@ namespace Spiritfire.Game
             }
             sys.queue.Add(p);
             return id;
+        }
+
+        /// <summary>
+        /// 引爆敌人身上已有的元素状态：三相 → 归墟，两相 → 按优先级的两两反应，单相 → 崩解。只入队，不同步造成伤害。
+        /// 被冷却 / 预算 / 深度拒绝、或身上没有状态时返回 null。（C1 单元实现；在那之前打一次警告并返回 null）
+        /// </summary>
+        public static DetonateOutcome? Detonate(Damageable enemy, in DetonateOpts opts)
+        {
+            if (!warnedDetonate)
+            {
+                warnedDetonate = true;
+                Debug.LogWarning("[Reaction] Detonate 还没实现（单元 C1），这次调用被忽略");
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 强制引发一次反应（不需要、也不消耗元素状态）：被预算 / 深度 / 冷却拒绝时返回 null，否则返回入队的反应。只入队，不同步造成伤害。
+        /// （C1 单元实现；在那之前打一次警告并返回 null）
+        /// </summary>
+        public static Reaction? Trigger(Damageable enemy, Reaction id, in TriggerOpts opts)
+        {
+            if (!warnedTrigger)
+            {
+                warnedTrigger = true;
+                Debug.LogWarning("[Reaction] Trigger 还没实现（单元 C1），这次调用被忽略");
+            }
+            return null;
         }
 
         bool Ready(Damageable e, Reaction id, float now) => !icd.TryGetValue(e, out var t) || now >= t[(int)id];
@@ -198,21 +303,23 @@ namespace Spiritfire.Game
             float b = Base(p.id, p.pin, e ? LevelScale(e) : 1) * p.scale;
             bool center = alive && !p.killed;
             int hits = 0;
+            bool stunned = false;
+            int uid = p.weaponUid;
             var color = Colors[(int)p.id];
             switch (p.id)
             {
                 case Reaction.Thunderfire:
                 {
-                    if (center && Hit(e, b, Element.Fire, p.depth, c, p.id)) hits++;
+                    if (center && Hit(e, b, Element.Fire, p.depth, c, p.id, uid)) hits++;
                     var hitList = new List<Damageable>();
-                    var info = ReactionHit(b * 0.6f, Element.Fire, p.depth, c, p.id);
+                    var info = ReactionHit(b * 0.6f, Element.Fire, p.depth, c, p.id, uid);
                     info.knockback = 7;
                     float r = Radius(3f);
                     Combat.Explode(c, r, info, true, 0, e, 0.6f, hitList);
                     hits += hitList.Count;
                     // 扩散：周围的敌人也烧起来（带雷殛的再焚雷、带蚀化的熔金）
                     foreach (var o in Nearest(c, r, 16, e, false))
-                        Combat.AttachFromReaction(o, Element.Fire, b * 0.2f, p.depth + 1);
+                        Combat.AttachFromReaction(o, Element.Fire, b * 0.2f, p.depth + 1, uid);
                     for (int i = 0; i < hitList.Count && i < 4; i++)
                         Lightning.Spawn(c, CenterOf(hitList[i]), new Color(0.44f, 0.85f, 1f));
                     ShotFx.Instance?.Impact(c, Vector3.up, true, 9f);
@@ -223,9 +330,9 @@ namespace Spiritfire.Game
                 }
                 case Reaction.Meltdown:
                 {
-                    if (center && Hit(e, b * (e.armor > 0 ? 2 : 1), Element.Corrode, p.depth, c, p.id)) hits++;
+                    if (center && Hit(e, b * (e.armor > 0 ? 2 : 1), Element.Corrode, p.depth, c, p.id, uid)) hits++;
                     var foot = alive ? e.transform.position : Ground(c);
-                    SpawnPool(foot + Vector3.up * 0.05f, Radius(2.5f), b, p.depth);
+                    SpawnPool(foot + Vector3.up * 0.05f, Radius(2.5f), b, p.depth, uid);
                     ShotFx.Instance?.Impact(c, Vector3.up, true, 6f);
                     GameAudio.PlayAt("skill_fire", c, 0.55f, 0.75f);
                     GameAudio.PlayAt("corrode_tick", c, 0.7f);
@@ -235,12 +342,12 @@ namespace Spiritfire.Game
                 {
                     if (center)
                     {
-                        if (Hit(e, b * (e.shield > 0 ? 2 : 1), Element.Shock, p.depth, c, p.id)) hits++;
+                        if (Hit(e, b * (e.shield > 0 ? 2 : 1), Element.Shock, p.depth, c, p.id, uid)) hits++;
                         float now = Time.time;
                         if (!sealStunReady.TryGetValue(e, out var ready) || now >= ready)
                         {
                             sealStunReady[e] = now + SealStunIcd;
-                            EnemyStatus.Stun(e, 0.7f);
+                            stunned = EnemyStatus.Stun(e, 0.7f);
                         }
                         EnemyStatus.Slow(e, 0.4f, 3f);
                     }
@@ -249,8 +356,8 @@ namespace Spiritfire.Game
                     {
                         var oc = CenterOf(o);
                         Lightning.Spawn(c, oc, color);
-                        if (Hit(o, b * 0.3f, Element.Shock, p.depth, oc, p.id)) hits++;
-                        Combat.AttachFromReaction(o, Element.Corrode, b * 0.35f, p.depth + 1);
+                        if (Hit(o, b * 0.3f, Element.Shock, p.depth, oc, p.id, uid)) hits++;
+                        Combat.AttachFromReaction(o, Element.Corrode, b * 0.35f, p.depth + 1, uid);
                     }
                     Telegraph.Wave(Ground(c), 1.6f, 8f, color);
                     ShotFx.Instance?.Impact(c + Vector3.up * 0.8f, Vector3.up, false, 3f);
@@ -268,6 +375,7 @@ namespace Spiritfire.Game
                         cash.element = Element.Fire;
                         cash.depth = p.depth + 1;
                         cash.tags = DamageTag.Dot;
+                        cash.weaponUid = uid;
                         Combat.DamageEnemy(e, cash);
                     }
                     if (alive)
@@ -276,11 +384,11 @@ namespace Spiritfire.Game
                         foreach (var el in new[] { Element.Fire, Element.Shock, Element.Corrode })
                         {
                             if (e.Dead) break;
-                            if (Hit(e, b / 3f, el, p.depth, c, p.id)) hits++;
+                            if (Hit(e, b / 3f, el, p.depth, c, p.id, uid)) hits++;
                         }
                     }
                     bool centerDead = !e || e.Dead;
-                    var after = ReactionHit(b * (centerDead ? 0.6f : 0.3f), Element.None, p.depth, c, p.id);
+                    var after = ReactionHit(b * (centerDead ? 0.6f : 0.3f), Element.None, p.depth, c, p.id, uid);
                     after.knockback = 9;
                     var hitList = new List<Damageable>();
                     Combat.Explode(c, Radius(3f), after, true, 0, e, 0.6f, hitList);
@@ -295,7 +403,13 @@ namespace Spiritfire.Game
                 }
             }
             Hud.Instance?.FloatText(c + Vector3.up * 0.9f, Names[(int)p.id], color, p.id == Reaction.Abyss ? 1.9f : 1.35f);
-            Reacted?.Invoke(e, p.id, c, b, hits);
+            var ev = new ReactionEvent
+            {
+                enemy = e, id = p.id, point = c, B = b, depth = p.depth, hits = hits, origin = p.origin, tag = p.tag, weaponUid = uid,
+                centerKilled = !e || e.Dead, stunned = stunned,
+            };
+            GameEvents.RaiseReacted(in ev);
+            reacted.Raise(e, p.id, c, b, hits);
         }
 
         /// <summary>反应 → 伤害标签（Reaction + 反应自己的标签）</summary>
@@ -307,9 +421,10 @@ namespace Spiritfire.Game
             _ => DamageTag.Abyss,
         };
 
-        static DamageInfo ReactionHit(float amount, Element element, int depth, Vector3 point, Reaction id, DamageTag extra = DamageTag.None)
+        static DamageInfo ReactionHit(float amount, Element element, int depth, Vector3 point, Reaction id, int weaponUid, DamageTag extra = DamageTag.None)
         {
             var info = DamageInfo.Simple(amount, DamageSource.Status, point, Vector3.up);
+            info.weaponUid = weaponUid;
             info.element = element;
             info.depth = depth + 1;
             info.reaction = true;
@@ -319,17 +434,17 @@ namespace Spiritfire.Game
             return info;
         }
 
-        static bool Hit(Damageable d, float amount, Element element, int depth, Vector3 point, Reaction id, DamageTag extra = DamageTag.None)
+        static bool Hit(Damageable d, float amount, Element element, int depth, Vector3 point, Reaction id, int weaponUid, DamageTag extra = DamageTag.None)
         {
             if (!d || d.Dead) return false;
-            var r = Combat.DamageEnemy(d, ReactionHit(amount, element, depth, point, id, extra));
+            var r = Combat.DamageEnemy(d, ReactionHit(amount, element, depth, point, id, weaponUid, extra));
             return r.total > 0;
         }
 
-        void SpawnPool(Vector3 center, float radius, float b, int depth)
+        void SpawnPool(Vector3 center, float radius, float b, int depth, int weaponUid)
         {
             if (pools.Count >= MaxPools) pools.RemoveAt(0);
-            var pool = new Pool { center = center, radius = radius, b = b, depth = depth, next = 0.5f };
+            var pool = new Pool { center = center, radius = radius, b = b, depth = depth, weaponUid = weaponUid, next = 0.5f };
             pools.Add(pool);
             Telegraph.Circle(center, radius, 3f, new Color(1f, 0.48f, 0.1f, 0.55f));
         }
@@ -352,8 +467,8 @@ namespace Spiritfire.Game
                     float dy = flat.y;
                     flat.y = 0;
                     if (flat.magnitude > pool.radius || dy > 1.5f || dy < -1f) continue;
-                    Hit(d, pool.b * 0.12f, Element.Fire, pool.depth, CenterOf(d), Reaction.Meltdown, DamageTag.Dot);
-                    if (pool.touched.Add(d)) Combat.AttachFromReaction(d, Element.Corrode, pool.b * 0.25f, pool.depth + 1);
+                    Hit(d, pool.b * 0.12f, Element.Fire, pool.depth, CenterOf(d), Reaction.Meltdown, pool.weaponUid, DamageTag.Dot);
+                    if (pool.touched.Add(d)) Combat.AttachFromReaction(d, Element.Corrode, pool.b * 0.25f, pool.depth + 1, pool.weaponUid);
                 }
                 for (int k = 0; k < 2; k++)
                 {

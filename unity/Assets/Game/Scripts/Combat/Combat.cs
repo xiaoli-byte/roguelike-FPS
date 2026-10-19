@@ -64,7 +64,8 @@ namespace Spiritfire.Game
     ///          × 输出修饰器（<see cref="Outgoing"/>，在暴击掷骰之后求值）× 暴击（critMult × (1 + 暴伤%)）× 弱点加成
     ///   然后交给目标按护盾 / 护甲 / 生命分层结算。
     /// 元素：带元素的命中按概率附着状态，附着前先判定元素反应（<see cref="ReactionSystem"/>）。
-    /// 结果以事件广播：伤害数字、命中标记、击杀掉落都订阅这里，不互相引用。
+    /// 结果以事件广播（<see cref="GameEvents"/>；这里的旧事件照常转发）：伤害数字、命中标记、击杀掉落都订阅事件，不互相引用。
+    /// 事件顺序：（破盾 / 破甲）→ 元素附着与反应判定 → EnemyDamaged → EnemyKilled。监听者互相隔离，抛异常不会打断结算。
     /// </summary>
     public static class Combat
     {
@@ -78,10 +79,17 @@ namespace Spiritfire.Game
 
         /// <summary>把玩家的直接命中（武器 / 技能 / 爆炸）改判为弱点（神兽白泽「万鬼图」）：任一返回 true 即算弱点</summary>
         public static readonly List<Func<Damageable, DamageInfo, bool>> ForceWeakpoint = new();
-        public static event Action<Damageable, DamageInfo, DamageResult> EnemyDamaged;
-        public static event Action<Damageable, DamageInfo> EnemyKilled;
-        /// <summary>玩家受到伤害（数值已扣减）：来源位置用于受击方向指示</summary>
-        public static event Action<float, Vector3> PlayerDamaged;
+
+        static readonly EventChannel<Action<Damageable, DamageInfo, DamageResult>> enemyDamaged = new();
+        static readonly EventChannel<Action<Damageable, DamageInfo>> enemyKilled = new();
+        static readonly EventChannel<Action<float, Vector3>> playerDamaged = new();
+
+        /// <summary>旧事件（转发，第 4 批删除）：新代码订阅 <see cref="GameEvents.EnemyDamaged"/></summary>
+        public static event Action<Damageable, DamageInfo, DamageResult> EnemyDamaged { add => enemyDamaged.Add(value); remove => enemyDamaged.Remove(value); }
+        /// <summary>旧事件（转发，第 4 批删除）：新代码订阅 <see cref="GameEvents.EnemyKilled"/></summary>
+        public static event Action<Damageable, DamageInfo> EnemyKilled { add => enemyKilled.Add(value); remove => enemyKilled.Remove(value); }
+        /// <summary>玩家受到伤害（数值已扣减，死亡判定之后才发）：来源位置用于受击方向指示。新代码订阅 <see cref="GameEvents.PlayerHit"/></summary>
+        public static event Action<float, Vector3> PlayerDamaged { add => playerDamaged.Add(value); remove => playerDamaged.Remove(value); }
 
         /// <summary>爆炸嵌套上限：超过这一层的爆炸不再伤敌人（只出声、伤玩家），再深一倍直接忽略（连锁自爆不爆栈）</summary>
         public const int MaxExplodeDepth = 6;
@@ -93,6 +101,9 @@ namespace Spiritfire.Game
         {
             Outgoing.Clear();
             OutgoingModifiers.Clear();
+            enemyDamaged.Clear();
+            enemyKilled.Clear();
+            playerDamaged.Clear();
             explodeDepth = 0;
         }
 
@@ -144,10 +155,14 @@ namespace Spiritfire.Game
             if (crit) mult *= (info.critMult > 0 ? info.critMult : 2f) * (stats?.Mult(Stat.CritDamagePct) ?? 1f);
             if (weak) mult *= stats?.Mult(Stat.WeakpointDamagePct) ?? 1f;
             var r = target.ApplyLayers(info, info.amount * mult, crit);
+            bool purge = info.Has(DamageTag.Purge);
+            // 破盾 / 破甲事件不带请求，监听者认不出静默处决，所以 purge 时不发（result 上的标记照常保留）
+            if (r.shieldBroken && !purge) GameEvents.RaiseEnemyShieldBroken(target);
+            if (r.armorBroken && !purge) GameEvents.RaiseEnemyArmorBroken(target);
             // 元素附着（持续伤害、反应伤害、静默处决不再附着）：反应强度 = 这一击的实际伤害（上限最大生命一半），
             // 状态强度再除掉每一跳会乘回的属性倍率；击杀那一击也判定两两反应。
             // 附着出错也不能打断后面的事件（掉落、击杀计数）
-            bool attach = !reaction && info.source != DamageSource.Status && !info.Has(DamageTag.Purge) && r.total > 0;
+            bool attach = !reaction && info.source != DamageSource.Status && !purge && r.total > 0;
             try
             {
                 if (attach && info.element != Element.None)
@@ -170,8 +185,18 @@ namespace Spiritfire.Game
             {
                 Debug.LogException(e);
             }
-            if (r.total > 0 || r.immune || r.blocked) EnemyDamaged?.Invoke(target, info, r);
-            if (r.killed) EnemyKilled?.Invoke(target, info);
+            if (r.total > 0 || r.immune || r.blocked)
+            {
+                var hit = new HitEvent { enemy = target, info = info, result = r };
+                GameEvents.RaiseEnemyDamaged(in hit);
+                enemyDamaged.Raise(target, info, r);
+            }
+            if (r.killed)
+            {
+                var kill = new KillEvent { enemy = target, info = info, result = r };
+                GameEvents.RaiseEnemyKilled(in kill);
+                enemyKilled.Raise(target, info);
+            }
             return r;
         }
 
@@ -189,7 +214,7 @@ namespace Spiritfire.Game
             out Reaction? rx)
         {
             target.lastElementBy = by;
-            rx = ReactionSystem.TryReact(target, element, pin, depth, killed);
+            rx = ReactionSystem.TryReact(target, element, pin, depth, killed, weaponUid);
             return EnemyStatus.Apply(target, element, power, depth, killed);
         }
 
@@ -233,13 +258,13 @@ namespace Spiritfire.Game
             return r;
         }
 
-        /// <summary>敌人打玩家：交给 <see cref="PlayerVitals"/>（无敌帧、减伤在那边处理）</summary>
-        public static float DamagePlayer(float amount, Vector3 from, Element element = Element.None)
+        /// <summary>敌人打玩家：交给 <see cref="PlayerVitals"/>（无敌帧、减伤、受伤修饰器在那边处理）；source = 出手者（敌人 AI 等，可为 null）</summary>
+        public static float DamagePlayer(float amount, Vector3 from, Element element = Element.None, UnityEngine.Object source = null)
         {
             var p = PlayerVitals.Instance;
             if (!p) return 0;
-            float dealt = p.TakeDamage(amount, from);
-            if (dealt > 0) PlayerDamaged?.Invoke(dealt, from);
+            float dealt = p.TakeDamage(amount, from, element, source);
+            if (dealt > 0) playerDamaged.Raise(dealt, from);
             return dealt;
         }
 
