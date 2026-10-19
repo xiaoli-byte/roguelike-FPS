@@ -127,7 +127,7 @@ namespace Spiritfire.Game
                 rightHand = H(0, 0.006f, 0.02f), rightPitch = -0.12f, leftHand = H(0, -0.002f, -0.3f),
                 description = "以碎岩为铳管衬里的泵动霰弹枪，贴脸一击足以撼山。",
             });
-            // ── 元素武器（试玩版 8 把里的 3 把，docs/demo-scope.md 2.3）──
+            // ── 元素武器 ──
             Add(new WeaponDef
             {
                 id = "launcher", sfx = "shot_launcher", sfxVolume = 0.9f, name = "焚城榴弹", prefab = "SK_Weapon_Launcher", mode = FireMode.Semi, reload = ReloadStyle.Magazine,
