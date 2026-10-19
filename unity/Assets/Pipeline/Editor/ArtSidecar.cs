@@ -43,6 +43,8 @@ namespace Spiritfire.Art.Editor
         public bool IsCharacter => Category == "characters";
         public bool IsStaticScenery => Category is "props" or "environment";
         public JArray Meshes => (JArray)raw["meshes"] ?? new JArray();
+        /// <summary>毛发 / 羽毛配置（registry.toml 的 [assets.&lt;ID&gt;.fur]）；没有时为 null，见 <see cref="FurSettings"/></summary>
+        public JObject Fur => raw["fur"] as JObject;
         public JArray Materials => (JArray)raw["materials"] ?? new JArray();
 
         public float[] LodDistance => raw["lodDistance"]?.ToObject<float[]>() ?? new[] { 0f };

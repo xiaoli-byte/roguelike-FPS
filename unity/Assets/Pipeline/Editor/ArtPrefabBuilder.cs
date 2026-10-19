@@ -14,6 +14,7 @@ namespace Spiritfire.Art.Editor
     public static class ArtPrefabBuilder
     {
         public const string ShaderName = "Spiritfire/StylizedLit";
+        public const string FurShellShaderName = "Spiritfire/FurShell";
         const float ReferenceFov = 70f; // LOD 距离换算屏幕高度时的参考竖直视角
 
         /// <summary>按类别的风格化光照参数：角色边缘光更强、场景件暗部更暖、枪械高光更亮。</summary>
@@ -110,6 +111,19 @@ namespace Spiritfire.Art.Editor
             mat.SetFloat("_RimStrength", p.rimStrength);
             mat.SetFloat("_FlashAmount", 0f);
 
+            // 毛发细节（画质「中」以上由全局 _SFFurDetail 打开）：只给身体材质，发光壳 / 重烘的远景 LOD 材质不要
+            var fur = FurSettings.From(sc);
+            bool furry = fur != null && !IsGlow(name) && !System.Text.RegularExpressions.Regex.IsMatch(name, @"_LOD\d+$");
+            mat.SetFloat("_Fur", furry ? 1f : 0f);
+            if (furry)
+            {
+                mat.EnableKeyword("_FUR");
+                mat.SetFloat("_FurDensity", fur.density);
+                mat.SetFloat("_FurDetailStrength", fur.detail);
+                mat.SetFloat("_FurSheen", fur.sheen);
+                mat.SetFloat("_FurFuzz", fur.fuzz);
+            }
+
             mat.SetFloat("_Cull", (bool?)m["doubleSided"] == true ? (float)CullMode.Off : (float)CullMode.Back);
             string alphaMode = (string)m["alphaMode"] ?? "OPAQUE";
             if (IsGlow(name))
@@ -143,6 +157,52 @@ namespace Spiritfire.Art.Editor
                 mat.SetShaderPassEnabled("DepthOnly", true);
                 mat.SetShaderPassEnabled("DepthNormals", true);
             }
+            EditorUtility.SetDirty(mat);
+            return mat;
+        }
+
+        /// <summary>
+        /// 壳层毛发材质模板 M_&lt;名&gt;_FurShell（Spiritfire/FurShell）：底色 / AO 贴图取自身体材质，光照参数同角色预设，
+        /// 明暗交界更软、边缘光更强（毛梢透光）。FurShells 运行时按层数复制它、只改 _ShellIndex。
+        /// </summary>
+        static Material BuildFurShellMaterial(ArtSidecar sc, Material body, FurSettings fur)
+        {
+            string path = sc.MaterialAssetPath(body.name + "_FurShell");
+            var shellShader = UnityEngine.Shader.Find(FurShellShaderName);
+            var mat = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (!mat)
+            {
+                mat = new Material(shellShader) { name = body.name + "_FurShell" };
+                AssetDatabase.CreateAsset(mat, path);
+            }
+            mat.shader = shellShader;
+            mat.shaderKeywords = new string[0];
+            var p = StylePreset.For(sc.Category);
+            mat.SetTexture("_BaseMap", body.GetTexture("_BaseMap"));
+            mat.SetColor("_BaseColor", body.GetColor("_BaseColor"));
+            mat.SetColor("_Tint", Color.white);
+            mat.SetTexture("_ORMMap", body.HasProperty("_ORMMap") ? body.GetTexture("_ORMMap") : null);
+            mat.SetFloat("_FurLength", fur.length);
+            mat.SetFloat("_FurDensity", fur.density);
+            mat.SetFloat("_FurThickness", fur.thickness);
+            mat.SetFloat("_FurStretch", fur.stretch);
+            mat.SetFloat("_FurFacing", fur.facing);
+            mat.SetFloat("_FurComb", fur.comb);
+            mat.SetFloat("_FurDroop", fur.droop);
+            mat.SetFloat("_FurRootShade", fur.IsFeather ? 0.85f : 0.8f);
+            mat.SetFloat("_FurTipLight", fur.IsFeather ? 0.04f : 0.06f);
+            mat.SetFloat("_ShellIndex", 0f);
+            mat.SetFloat("_ShellCount", fur.shells);
+            mat.SetColor("_ShadowTint", p.shadowTint);
+            mat.SetFloat("_RampThreshold", p.rampThreshold);
+            mat.SetFloat("_RampSoftness", p.rampSoftness * 2.2f);
+            mat.SetFloat("_ShadowLift", p.shadowLift);
+            mat.SetFloat("_AmbientStrength", p.ambient);
+            mat.SetColor("_RimColor", p.rimColor);
+            mat.SetFloat("_RimPower", p.rimPower * 0.8f);
+            mat.SetFloat("_RimStrength", p.rimStrength * 1.4f);
+            mat.SetFloat("_FlashAmount", 0f);
+            mat.renderQueue = (int)RenderQueue.AlphaTest + 10;
             EditorUtility.SetDirty(mat);
             return mat;
         }
@@ -196,6 +256,23 @@ namespace Spiritfire.Art.Editor
 
             var bounds = sc.DesignBounds ?? new Bounds(Vector3.up, Vector3.one * 2);
             float size = Mathf.Max(bounds.size.x, bounds.size.y, bounds.size.z);
+
+            // 壳层毛发（画质「高」）：LOD0 的蒙皮渲染器 + 壳层材质模板，运行时按画质追加材质槽
+            var fur = FurSettings.From(sc);
+            if (fur != null && lodRenderers.TryGetValue(lodRenderers.Count > 0 ? lodRenderers.Keys.First() : 0, out var lod0))
+            {
+                var target = lod0.OfType<SkinnedMeshRenderer>().FirstOrDefault();
+                if (target && target.sharedMaterials.Length > 0 && target.sharedMaterials[0])
+                {
+                    var furComp = root.AddComponent<FurShells>();
+                    furComp.target = target;
+                    furComp.shellTemplate = BuildFurShellMaterial(sc, target.sharedMaterials[0], fur);
+                    furComp.shellsHigh = fur.shells;
+                    furComp.kind = fur.kind;
+                }
+                else Debug.LogWarning($"[Art] {sc.Id}: 有 fur 配置，但 LOD0 不是带材质的蒙皮渲染器，不加壳层");
+            }
+
             if (lodRenderers.Count > 1)
             {
                 var dist = sc.LodDistance;

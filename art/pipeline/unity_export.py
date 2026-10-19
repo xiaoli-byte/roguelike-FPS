@@ -213,9 +213,12 @@ def export_one(asset_id: str, entry: dict, force: bool) -> str:
     out_dir = UNITY_ART / CATEGORY_DIR.get(category, category.title()) / asset_id
     sidecar = out_dir / f"{asset_id}.art.json"
     src_hash = sha256(src)
+    # registry.toml 的 [assets.<ID>.fur]：毛发 / 羽毛（Unity 导入时 FurBake 烘毛向，FurShells 按画质叠壳层），改了也要重导
+    fur = CFG.registry.get(asset_id, {}).get("fur")
     if not force and sidecar.exists():
         old = json.loads(sidecar.read_text(encoding="utf-8"))
-        if old.get("source", {}).get("sha256") == src_hash and old.get("exporterVersion") == EXPORTER_VERSION:
+        if (old.get("source", {}).get("sha256") == src_hash and old.get("exporterVersion") == EXPORTER_VERSION
+                and old.get("fur") == fur):
             return "unchanged"
 
     doc, binc = read_glb(src)
@@ -252,6 +255,7 @@ def export_one(asset_id: str, entry: dict, force: bool) -> str:
         "budget": budget(entry.get("class"), asset_id),
         # registry.toml 的 qa_waivers（检查项名 → 理由）：Unity 侧 QA 同名检查记为「已豁免」，不阻塞
         "qaWaivers": CFG.registry.get(asset_id, {}).get("qa_waivers", {}),
+        **({"fur": fur} if fur else {}),
         "bounds": gltf_to_unity_bounds(entry.get("bounds")),
         "rig": {
             "type": "humanoid" if profile else ("generic" if res["armature"] else "none"),

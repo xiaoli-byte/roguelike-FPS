@@ -3,6 +3,8 @@
 // 环境光取球谐，ORM 的 AO 与 SSAO 取小；金属 / 低粗糙度区域加一圈阶梯高光与环境反射；
 // 边缘光（菲涅尔）勾出剪影，受击闪白 / 词缀着色走 _FlashAmount / _Tint。
 // _Tint.a = 输出 alpha（默认 1；不透明材质的混合是 One Zero，不受影响）：幻影类实例把材质切到 SrcAlpha 混合后靠它淡化 / 闪烁。
+// _FUR：带毛 / 羽的角色（sidecar 的 fur 配置）。画质「中」以上（全局 _SFFurDetail）加顺毛向的发丝明暗、各向异性光泽、
+// 剪影绒边，明暗交界更软；画质「高」再由 FurShells 叠 Spiritfire/FurShell 壳层（见 SF_Fur.hlsl）。
 Shader "Spiritfire/StylizedLit"
 {
     Properties
@@ -30,6 +32,13 @@ Shader "Spiritfire/StylizedLit"
         _RimColor("Rim Color", Color) = (1, 0.93, 0.8, 1)
         _RimPower("Rim Power", Range(0.5,8)) = 3.5
         _RimStrength("Rim Strength", Range(0,2)) = 0.35
+
+        [Header(Fur)]
+        [Toggle(_FUR)] _Fur("Fur Detail", Float) = 0
+        _FurDensity("Strand Density (per m)", Float) = 200
+        _FurDetailStrength("Strand Detail", Range(0,1)) = 0.6
+        _FurSheen("Fur Sheen", Range(0,1)) = 0.25
+        _FurFuzz("Fur Fuzz (silhouette)", Range(0,1)) = 0.5
 
         [Header(Runtime)]
         _FlashColor("Flash Color", Color) = (1,1,1,1)
@@ -66,6 +75,7 @@ Shader "Spiritfire/StylizedLit"
             #pragma shader_feature_local_fragment _EMISSION
             #pragma shader_feature_local_fragment _ALPHATEST_ON
             #pragma shader_feature_local_fragment _ADDITIVE
+            #pragma shader_feature_local _FUR
 
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
             #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
@@ -88,6 +98,7 @@ Shader "Spiritfire/StylizedLit"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
             #include "SF_StylizedShading.hlsl"
+            #include "SF_Fur.hlsl"
 
             struct Attributes
             {
@@ -95,6 +106,11 @@ Shader "Spiritfire/StylizedLit"
                 float3 normalOS   : NORMAL;
                 float4 tangentOS  : TANGENT;
                 float2 uv         : TEXCOORD0;
+                #if defined(_FUR)
+                float4 furBind    : TEXCOORD2; // 绑定姿势位置（SF_Fur.hlsl）
+                float4 furFlow    : TEXCOORD3; // 毛向 T / B 分量、遮罩
+                float3 furFlowBind : TEXCOORD4; // 绑定空间毛向
+                #endif
                 UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
@@ -104,10 +120,15 @@ Shader "Spiritfire/StylizedLit"
                 float2 uv         : TEXCOORD0;
                 float3 positionWS : TEXCOORD1;
                 half3  normalWS   : TEXCOORD2;
-                #if defined(_NORMALMAP)
+                #if defined(_NORMALMAP) || defined(_FUR)
                 half4  tangentWS  : TEXCOORD3;
                 #endif
                 half4  fogAndVertexLight : TEXCOORD4; // x = 雾，yzw = 顶点光
+                #if defined(_FUR)
+                float3 furBind    : TEXCOORD5;
+                half3  furFlow    : TEXCOORD6;
+                half3  furFlowBind : TEXCOORD7;
+                #endif
                 UNITY_VERTEX_INPUT_INSTANCE_ID
                 UNITY_VERTEX_OUTPUT_STEREO
             };
@@ -124,8 +145,13 @@ Shader "Spiritfire/StylizedLit"
                 o.positionCS = pos.positionCS;
                 o.positionWS = pos.positionWS;
                 o.normalWS = nrm.normalWS;
-                #if defined(_NORMALMAP)
+                #if defined(_NORMALMAP) || defined(_FUR)
                 o.tangentWS = half4(nrm.tangentWS, input.tangentOS.w * GetOddNegativeScale());
+                #endif
+                #if defined(_FUR)
+                o.furBind = input.furBind.xyz;
+                o.furFlow = input.furFlow.xyz;
+                o.furFlowBind = input.furFlowBind;
                 #endif
                 o.uv = TRANSFORM_TEX(input.uv, _BaseMap);
                 half3 vertexLight = VertexLighting(pos.positionWS, nrm.normalWS);
@@ -176,9 +202,34 @@ Shader "Spiritfire/StylizedLit"
                 st.shadowTint = _ShadowTint.rgb; st.rampThreshold = _RampThreshold; st.rampSoftness = _RampSoftness;
                 st.shadowLift = _ShadowLift; st.ambient = _AmbientStrength; st.specStrength = _SpecStrength; st.specSize = _SpecSize;
                 st.rimColor = _RimColor.rgb; st.rimPower = _RimPower; st.rimStrength = _RimStrength;
+
+                #if defined(_FUR)
+                // 毛发细节（画质「中」以上）：沿毛向拉长的噪声压出一道道顺毛的笔触；明暗交界更软（毛是蓬的，不是硬壳）
+                half furMask = i.furFlow.z * _SFFurDetail;
+                half3 furFlow = SFFurFlowWS(i.furFlow.xy, i.normalWS, i.tangentWS);
+                if (furMask > 0.001)
+                {
+                    half strands = SFFurStreaks(i.furBind, SafeNormalize(i.furFlowBind), _FurDensity);
+                    albedo *= lerp(1.0, 0.74 + 0.42 * strands, furMask * _FurDetailStrength);
+                    st.rampSoftness *= 1.0 + 0.6 * furMask;
+                }
+                #endif
+
                 half mainLit;
                 half3 color = SFShade(albedo, N, i.positionWS, i.positionCS, ao, metallic, roughness, i.fogAndVertexLight.yzw,
                                       i.fogAndVertexLight.x, st, mainLit);
+
+                #if defined(_FUR)
+                if (furMask > 0.001)
+                {
+                    // 顺毛向的光泽带 + 剪影处的绒边（掠射角把毛色往外透一点，轮廓不再是一条硬线）
+                    Light furLight = GetMainLight();
+                    half sheen = SFFurSheen(furFlow, N, V, furLight.direction, 0.15) * mainLit;
+                    color += albedo * furLight.color * sheen * _FurSheen * furMask;
+                    half fres = pow(1.0 - saturate(dot(N, V)), 4.0);
+                    color += albedo * (SampleSH(N) * 0.5 + furLight.color * (0.3 + 0.7 * mainLit) * 0.35) * fres * _FurFuzz * furMask;
+                }
+                #endif
 
                 #if defined(_EMISSION)
                 color += SAMPLE_TEXTURE2D(_EmissionMap, sampler_EmissionMap, i.uv).rgb * _EmissionColor.rgb;

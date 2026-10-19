@@ -3632,3 +3632,29 @@ procedural = "cloud_pearl"
 seed = 3
 design = "art/source/characters/_design/pets/pet_yinglong_pearl/TV_pet_yinglong_pearl_v002.png"
 size = 0.16
+
+# ───────────── 毛发 / 羽毛（按画质：低 = 无；中 = 着色细节；高 = 再叠壳层，docs/unity-art-pipeline.md「毛发」）─────────────
+# Unity 导入时 FurBake 按骨架与蒙皮权重烘毛向（躯干 / 颈 / 头往后顺，四肢、尾巴、耳朵顺到末端）和遮罩，FurShells 按画质给 LOD0 叠壳层。
+#   kind = "fur" | "feather"；length = 最长处毛长（米，缺省身高 × 2% / 羽 1.2%）；density = 每米发丝格数（缺省 1 / (0.35 × length)）；
+#   shells = 画质「高」的层数（缺省毛 10 / 羽 6）；comb / droop = 顺毛梳 / 重力下垂；detail / sheen / fuzz = 画质「中」的发丝明暗 / 光泽 / 绒边；
+#   bones = { 骨骼名通配 = 毛长倍数 }（0 = 不长毛：爪、蹄、喙、铃铛…）；exclude = [{ center, radius }]（骨架坐标：front = -Y，左 = +X，up = +Z；眼睛、鼻口）。
+# 改了以后：python art/pipeline/unity_export.py <ID> → Unity Sync（sidecar 的 fur 变了会自动重新导入模型）。
+
+[assets.SK_Pet_Huan.fur]
+kind = "fur"
+length = 0.026
+bones = { "bell" = 0.0, "paw_*" = 0.4, "foot_*" = 0.4, "head" = 0.55, "ear_*" = 0.5, "tail*" = 1.25 }
+exclude = [ { center = [0, -0.30, 0.375], radius = 0.045 }, { center = [0, -0.305, 0.33], radius = 0.03 } ]
+
+[assets.SK_Enemy_Marmot.fur]
+kind = "fur"
+length = 0.028
+bones = { "paw_*" = 0.35, "foot_*" = 0.3, "head" = 0.5, "ear_*" = 0.4, "tail_*" = 1.2 }
+exclude = [ { center = [0.043, -0.186, 0.678], radius = 0.035 }, { center = [-0.043, -0.186, 0.678], radius = 0.035 },
+            { center = [0, -0.25, 0.62], radius = 0.045 }, { center = [0, -0.265, 0.665], radius = 0.025 } ]
+
+[assets.SK_Enemy_Manman.fur]
+kind = "feather"
+length = 0.015
+bones = { "thigh_*" = 0.6, "shin_*" = 0.0, "foot_*" = 0.0, "wing_3_*" = 1.3 }
+exclude = [ { center = [-0.21, -0.27, 0.6], radius = 0.065 }, { center = [-0.21, -0.2, 0.665], radius = 0.05 } ]

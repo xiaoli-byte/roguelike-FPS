@@ -68,6 +68,41 @@ Unity 侧所有设置都从 sidecar 推导，编辑器里手改的导入设置�
 
 按类别的参数预设在 `ArtPrefabBuilder.StylePreset`：角色边缘光更强，枪械高光更亮，场景件暗部更暖、边缘光更弱。
 
+### 4.1 毛发与羽毛（按画质）
+
+带毛 / 羽的灵宠和怪物在 registry.toml 里登记一张 `[assets.<ID>.fur]`（集中写在文件末尾「毛发 / 羽毛」一节），经 `unity_export.py` 写进 sidecar 的 `fur`。按画质分三档（`Spiritfire.Art.ArtQuality`，与网页版设置里的「画质」同名同档）：
+
+| 画质 | 效果 | 开销 |
+|---|---|---|
+| 低 | 不加毛发，和以前一样 | 0 |
+| 中 | StylizedLit 的 `_FUR` 细节：顺毛向拉长的发丝笔触、沿毛向的各向异性光泽带、剪影处的绒边，明暗交界更软 | 每像素几次值噪声，不加绘制 |
+| 高 | 再给 LOD0 叠壳层（`FurShells` + `Spiritfire/FurShell`）：毛 10 层、羽 6 层，剪影上长出一圈发丝 | 每层多画一次已蒙皮的 LOD0，例如啸獭约多 5.9 万三角面；远了 LOD 切走就没有了 |
+
+- **毛向和遮罩是导入时自动烘的**（`FurBake`，在 `ArtImportPostprocessor.OnPostprocessModel` 里）：
+  - 每个顶点的毛向是蒙皮权重加权的骨骼方向。躯干、颈、头这一组（hips / spine / chest / neck / head / body）反过来用，所以毛往后、往下顺；四肢、尾巴、耳朵、翅膀的毛顺到末端；再往下偏一点（重力）。
+  - 遮罩是权重加权的每根骨骼毛长倍数（`bones`，可用通配符；0 = 不长毛，如爪、蹄、喙、铃铛），再乘上排除球（`exclude`，眼睛、鼻口）的软边。
+  - 写进网格的有三组：UV2 存绑定姿势下的位置，发丝图案贴在皮肤上，动画时不游走；UV3 存毛向在切线和副切线上的分量和遮罩，切线随蒙皮转动，所以毛向跟着骨骼走；UV4 存绑定空间的毛向，发丝沿它拉长。
+  - 排除球用 creature_rigs 的骨架坐标（front = -Y，左 = +X，up = +Z），导入时换算成模型空间 (-x, z, -y)。
+  - Sync 日志里的 `[fur]` 一行记录每级 LOD 的遮罩均值、无毛顶点比例和头骨位置，用来核对坐标。
+- **配置项**：
+  - `kind`：fur 或 feather。
+  - `length`：毛长，缺省是身高的 2%，羽毛是 1.2%。
+  - `density`：发丝格的密度，缺省 1 / (0.5 × length)。毛越长，发丝越粗越稀，大怪不会被画成一层细绒。
+  - `shells`：「高」档的壳层数。
+  - `comb` / `droop`：顺毛梳和重力下垂。
+  - `stretch`：发丝沿毛向拉长的程度。
+  - `facing`：正对镜头的面只留长发丝的程度。从正上方看，发丝是一颗颗点，像砂纸，所以把毛感集中到轮廓上。
+  - `detail` / `sheen` / `fuzz`：「中」档的发丝笔触、光泽和绒边强度。
+  - 改完以后：先 `python art/pipeline/unity_export.py <ID>`，再 Sync。sidecar 的 fur 变了会自动重新导入模型。
+- **壳层的实现**：网格只有一个子网格时，多出来的材质槽会把同一个已蒙皮的网格再画一遍。所以骨骼动画、受击闪白（渲染器上的 MaterialPropertyBlock）和 LOD 交叉淡化都自动跟着，不需要几何着色器或自定义渲染通道。
+  - 壳层材质按（模板，层数）缓存，同种角色的所有实例共用，SRP Batcher 照常合批。
+  - 壳层只有 UniversalForward 通道：不投影，也不进深度和法线预通道。
+- **切换画质**：`ArtQuality.Set(...)` 会存进 PlayerPrefs，并广播 `Changed`，FurShells 随之重新套用。没存过时按 Unity 画质档推断：Mobile → 低，其余 → 高。
+  - 游戏里还没有设置面板，之后接到设置 UI 上就行。
+- **对比截图**：Spiritfire ▸ Art ▸ Fur Quality Shots，或 `bash scripts/unity/bridge.sh fur`。
+  - 每个带毛的角色出一张 `Assets/Art/_Review/fur_<ID>.png`：低 / 中 / 高三档左右并排，上排全身、下排头胸。
+  - `fur_summary.txt` 记壳层数和「高」档多画的三角面。
+
 ## 5. 人形动画：Mixamo
 
 人形资产（跳鼠刀兵、邪飞天、英雄……）共用 `Assets/Art/Animations/AC_Humanoid.controller`。参数有 `Speed`（米/秒）、`Attack`、`Hit`（触发）和 `Dead`（布尔）。Locomotion 是 Idle / Walk / Run 的一维混合树，另有攻击、受击、死亡三个状态。

@@ -29,6 +29,11 @@ CBUFFER_START(UnityPerMaterial)
     // 运行时状态（受击闪白 / 词缀着色可用 MaterialPropertyBlock 覆盖）
     half4  _FlashColor;
     half   _FlashAmount;
+    // 毛发细节（_FUR；画质「中」以上由全局 _SFFurDetail 打开）
+    float  _FurDensity;
+    half   _FurDetailStrength;
+    half   _FurSheen;
+    half   _FurFuzz;
 CBUFFER_END
 
 TEXTURE2D(_ORMMap);     SAMPLER(sampler_ORMMap);

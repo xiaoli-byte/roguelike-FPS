@@ -92,12 +92,21 @@ namespace Spiritfire.Art.Editor
                 var mi = AssetImporter.GetAtPath(sc.FbxPath);
                 if (!mi) continue;
                 string stamp = $"{(string)sc.raw["source"]?["sha256"]}:{(string)sc.raw["exported"]}:{ArtImportPostprocessor.Version}:{sc.EffectiveRigType}";
+                // 毛发配置变了也要重新导入（FurBake 在导入时烘 UV2 / UV3）；没有毛发的资产戳记保持原样，不会全体重导
+                if (sc.Fur != null) stamp += $":fur{FurStamp(sc.Fur)}";
                 if (mi.userData == stamp) continue;
                 mi.userData = stamp;
                 foreach (var tex in AssetDatabase.FindAssets("t:Texture2D", new[] { sc.Dir + "/Textures" }))
                     AssetDatabase.ImportAsset(AssetDatabase.GUIDToAssetPath(tex), ImportAssetOptions.ForceUpdate);
                 mi.SaveAndReimport();
             }
+        }
+
+        static string FurStamp(Newtonsoft.Json.Linq.JObject fur)
+        {
+            using var md5 = System.Security.Cryptography.MD5.Create();
+            var bytes = md5.ComputeHash(System.Text.Encoding.UTF8.GetBytes(fur.ToString(Newtonsoft.Json.Formatting.None) + FurBake.Version));
+            return System.BitConverter.ToString(bytes, 0, 6).Replace("-", "");
         }
 
         public static void BatchSync()
