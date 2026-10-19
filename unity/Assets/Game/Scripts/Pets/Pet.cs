@@ -270,8 +270,8 @@ namespace Spiritfire.Game
                 if (Level == AwakenLevel)
                 {
                     Behaviour.OnAwaken();
-                    Hud.Instance?.Banner($"灵契觉醒 · {def.name}", 2.2f);
-                    Hud.Instance?.Toast(def.awakenDesc, 3f);
+                    GameUI.Banner($"灵契觉醒 · {def.name}", seconds: 2.2f);
+                    GameUI.Toast(def.awakenDesc, seconds: 3f);
                     PetFx.Pillar(transform.position, PetRarities.Gold, 1.2f, 8f, 1.4f);
                 }
                 LeveledUp?.Invoke(this);
@@ -946,7 +946,7 @@ namespace Spiritfire.Game
 
         /// <summary>头顶浮字（灵契升级、学舌、怒吼）</summary>
         public void Say(string text, Color c, float scale = 1.1f) =>
-            Hud.Instance?.FloatText(transform.position + Vector3.up * (Height + def.hover + 0.45f), text, c, scale);
+            GameUI.FloatText(transform.position + Vector3.up * (Height + def.hover + 0.45f), text, c, scale);
 
         public static float GroundY(Vector3 p) =>
             Physics.Raycast(p + Vector3.up * 3f, Vector3.down, out var hit, 40f, Layers.WorldMask, QueryTriggerInteraction.Ignore) ? hit.point.y : p.y;

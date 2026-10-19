@@ -158,12 +158,12 @@ namespace Spiritfire.Game
         {
             if (def.rarity == PetRarity.Mythic)
             {
-                Hud.Instance?.Banner("<size=96>神兽现世</size>", 3f);
-                Hud.Instance?.Toast($"灵兽封印 · {def.Label}", 3f);
-                PetHud.Instance?.Flash(new Color(1f, 0.82f, 0.4f, 0.4f), 0.9f);
+                GameUI.Banner("<size=96>神兽现世</size>", seconds: 3f);
+                GameUI.Toast($"灵兽封印 · {def.Label}", seconds: 3f);
+                GameUI.ScreenFlash(new Color(1f, 0.82f, 0.4f, 0.4f), 0.9f);
                 PetFx.Pillar(transform.position, PetRarities.Gold, 3f, 40f, 3f);
             }
-            else Hud.Instance?.Toast($"灵兽封印 · {def.Label}", 2.5f);
+            else GameUI.Toast($"灵兽封印 · {def.Label}", seconds: 2.5f);
         }
 
         // ── IInteractable ──

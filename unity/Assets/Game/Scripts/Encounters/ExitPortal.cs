@@ -57,8 +57,8 @@ namespace Spiritfire.Game
             beam.gameObject.SetActive(true);
             if (requires.Length > 0)
             {
-                Hud.Instance?.Banner("出口已开启");
-                Hud.Instance?.SetObjective("前往出口祭坛");
+                GameUI.Banner("出口已开启");
+                GameUI.SetObjective("前往出口祭坛");
             }
         }
 

@@ -648,7 +648,7 @@ namespace Spiritfire.Game
             pet.PlayAct("roar", 0, priority: true);
             pet.Lunge(PlayerPos - pet.transform.position, 0.3f, 0.25f);
             pet.Say("护主！", Corrode, 1.3f);
-            Hud.Instance?.Toast($"狻猊怒吼：护盾 +{RoarShield:F0}", 1.6f);
+            GameUI.Toast($"狻猊怒吼：护盾 +{RoarShield:F0}", seconds: 1.6f);
         }
 
         public override bool Skill()
@@ -684,7 +684,7 @@ namespace Spiritfire.Game
             Stats?.Remove(BuffSource);
             Stats?.Add(BuffSource, Stat.DamageReduction, SkillReduction);
             buffUntil = Time.time + SkillBuff;
-            Hud.Instance?.Toast($"伤害减免 +{SkillReduction * 100:F0}%（{SkillBuff:F0} 秒）", 1.8f);
+            GameUI.Toast($"伤害减免 +{SkillReduction * 100:F0}%（{SkillBuff:F0} 秒）", seconds: 1.8f);
             yield return new WaitForSeconds(0.3f);
         }
 
@@ -988,8 +988,8 @@ namespace Spiritfire.Game
             PetFx.Pillar(pet.transform.position, Gold, 2f, 14f, 1.2f);
             PetFx.Burst(pet.Center, Gold, 6f, 0.6f);
             pet.Lunge(Vector3.up, 0.4f, 0.4f);
-            PetHud.Instance?.Flash(new Color(1f, 0.85f, 0.45f, 0.35f), 0.5f);
-            Hud.Instance?.Toast($"白泽图 · 万鬼现形（{n}）", 2f);
+            GameUI.ScreenFlash(new Color(1f, 0.85f, 0.45f, 0.35f), 0.5f);
+            GameUI.Toast($"白泽图 · 万鬼现形（{n}）", seconds: 2f);
             return true;
         }
     }
@@ -1069,8 +1069,8 @@ namespace Spiritfire.Game
         IEnumerator Storm()
         {
             pet.Say("杀蚩尤！", PetRarities.Gold, 1.5f);
-            Hud.Instance?.Toast("杀蚩尤 · 雷暴 6 秒，护盾回满", 2f);
-            PetHud.Instance?.Flash(new Color(0.45f, 0.6f, 1f, 0.3f), 0.6f);
+            GameUI.Toast("杀蚩尤 · 雷暴 6 秒，护盾回满", seconds: 2f);
+            GameUI.ScreenFlash(new Color(0.45f, 0.6f, 1f, 0.3f), 0.6f);
             Telegraph.Wave(PlayerPos, StormRange, 45f, Shock);
             float start = Time.time, end = start + StormTime, next = start;
             int i = 0;

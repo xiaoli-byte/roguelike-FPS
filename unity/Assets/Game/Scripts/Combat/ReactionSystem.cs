@@ -349,8 +349,7 @@ namespace Spiritfire.Game
                 return;
             }
             stats.labelFrameMax = Mathf.Max(stats.labelFrameMax, l.Budget.Peak);
-            var hud = Hud.Instance;
-            if (hud) hud.FloatText(at + Vector3.up * 0.9f, text, color, big ? 1.9f : 1.35f);
+            GameUI.FloatText(at + Vector3.up * 0.9f, text, color, big ? 1.9f : 1.35f);
         }
 
         /// <summary>封脉眩晕的独立冷却（3.5 s，不吃急速）：就绪则记下冷却并返回 true</summary>

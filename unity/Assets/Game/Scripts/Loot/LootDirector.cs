@@ -82,7 +82,7 @@ namespace Spiritfire.Game
             if (NavMesh.SamplePosition(p, out var hit, 4f, NavMesh.AllAreas)) p = hit.position;
             var face = PlayerVitals.Instance ? PlayerVitals.Instance.transform.position : p + Vector3.forward;
             Chest.Spawn(p, site.reward, face);
-            Hud.Instance?.Toast("宝箱出现了");
+            GameUI.Toast("宝箱出现了");
         }
 
         /// <summary>
@@ -106,9 +106,9 @@ namespace Spiritfire.Game
                 if (scrolls.Gain(def, pv))
                 {
                     int n = scrolls.Stacks(def.id);
-                    Hud.Instance?.Toast($"获得秘卷「{def.name}」" + (def.maxStacks > 1 ? $" · {n} 层" : ""));
+                    GameUI.Toast($"获得秘卷「{def.name}」" + (def.maxStacks > 1 ? $" · {n} 层" : ""));
                 }
-                else Hud.Instance?.Toast($"「{def.name}」已达最大层数");
+                else GameUI.Toast($"「{def.name}」已达最大层数");
                 offerReadyAt = Time.unscaledTime + OfferGap;
             });
         }

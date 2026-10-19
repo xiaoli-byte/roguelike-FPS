@@ -505,7 +505,7 @@ namespace Spiritfire.Game
         {
             if (!decoy || Time.time < blockTextAt) return;
             blockTextAt = Time.time + 0.45f;
-            Hud.Instance?.FloatText(decoy.position + Vector3.up * 0.9f + UnityEngine.Random.insideUnitSphere * 0.25f, "格挡", new Color(0.82f, 0.86f, 0.95f), 0.9f);
+            GameUI.FloatText(decoy.position + Vector3.up * 0.9f + UnityEngine.Random.insideUnitSphere * 0.25f, "格挡", new Color(0.82f, 0.86f, 0.95f), 0.9f);
         }
 
         // ───────────── 攻击 ─────────────

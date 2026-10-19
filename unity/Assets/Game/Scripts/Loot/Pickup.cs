@@ -201,7 +201,7 @@ namespace Spiritfire.Game
             switch (kind)
             {
                 case Kind.Coin:
-                    Hud.Instance?.AddCoins(Mathf.RoundToInt(amount));
+                    RunState.Ensure().Credit(Mathf.RoundToInt(amount), "pickup");
                     // 连捡灵石音调一颗比一颗高（同 Three.js coinCombo）
                     coinCombo = Time.time - lastCoin < 0.6f ? Mathf.Min(coinCombo + 1, 12) : 0;
                     lastCoin = Time.time;
@@ -209,14 +209,14 @@ namespace Spiritfire.Game
                     break;
                 case Kind.Ammo:
                     pv.GetComponent<WeaponController>()?.RefillReserve(amount);
-                    Hud.Instance?.Toast("弹药补充");
+                    GameUI.Toast("弹药补充");
                     GameAudio.Play("pickup_ammo", 0.8f);
                     break;
                 case Kind.Health:
                     float heal = amount > 0 ? amount : pv.MaxHealth * 0.15f;
                     got = heal;
                     pv.Heal(heal);
-                    Hud.Instance?.Toast($"生命 +{heal:F0}");
+                    GameUI.Toast($"生命 +{heal:F0}");
                     GameAudio.Play("pickup_health", 0.85f);
                     break;
             }

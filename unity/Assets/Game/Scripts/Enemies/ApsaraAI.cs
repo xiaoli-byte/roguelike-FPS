@@ -66,7 +66,7 @@ namespace Spiritfire.Game
             if (pipa) pipa.gameObject.SetActive(false);
             if (body.WeakPoint) body.WeakPoint.gameObject.SetActive(false);
             ShotFx.Instance?.Impact(info.point, -info.direction, false, 6f);
-            Hud.Instance?.Toast("琵琶已碎 · 邪飞天沉默");
+            GameUI.Toast("琵琶已碎 · 邪飞天沉默");
             // 断弦崩裂 + 哀鸣
             GameAudio.PlayAt("pipa_snap", info.point, 1f, 0.8f);
             GameAudio.PlayAt("shield_break", info.point, 0.9f, 1.5f);

@@ -92,9 +92,9 @@ namespace Spiritfire.Game
                 }
             }
             Total = queue.Count;
-            Hud.Instance?.Banner(title, 2f);
+            GameUI.Banner(title, seconds: 2f);
             GameAudio.Play("wave_start");
-            Hud.Instance?.SetObjective($"{title} · 剩余敌人 {Remaining}");
+            GameUI.SetObjective($"{title} · 剩余敌人 {Remaining}");
             GameEvents.RaiseEncounterStarted(this);
         }
 
@@ -144,15 +144,15 @@ namespace Spiritfire.Game
             alive.Remove(ai);
             killed++;
             lastProgress = Time.time;
-            Hud.Instance?.SetObjective(Remaining > 0 ? $"{title} · 剩余敌人 {Remaining}" : "");
+            GameUI.SetObjective(Remaining > 0 ? $"{title} · 剩余敌人 {Remaining}" : "");
         }
 
         void Clear()
         {
             phase = Phase.Cleared;
-            Hud.Instance?.Banner("区域肃清", 2.5f);
+            GameUI.Banner("区域肃清", seconds: 2.5f);
             GameAudio.Play("stage_clear");
-            Hud.Instance?.SetObjective("");
+            GameUI.SetObjective("");
             Cleared?.Invoke(this);
             AnySiteCleared?.Invoke(this);
             GameEvents.RaiseEncounterCleared(this);

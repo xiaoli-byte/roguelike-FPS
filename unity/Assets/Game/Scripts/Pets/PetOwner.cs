@@ -8,10 +8,10 @@ namespace Spiritfire.Game
     /// <summary>
     /// 挂在玩家身上（docs/pet-system.md 第 2、3、5 节）：当前灵宠、结契 / 换宠（旧灵宠变回封印留在原地，灵契等级保留）、
     /// G 键灵技（测试用 testSkill 代替按键）、任何敌人被击杀给灵契经验（普通 1、精英 4；召唤物不给）。
-    /// 每局只带 1 只。
+    /// 每局只带 1 只；跨关时由 <see cref="IRunPersistent"/> 存进 <see cref="RunState.pet"/>（D15）。
     /// </summary>
     [DisallowMultipleComponent]
-    public sealed class PetOwner : MonoBehaviour
+    public sealed class PetOwner : MonoBehaviour, IRunPersistent
     {
         public static PetOwner Instance { get; private set; }
         public static bool TestMode;
@@ -48,8 +48,32 @@ namespace Spiritfire.Game
             Eye = wc && wc.eye ? wc.eye.transform : Motor && Motor.eye ? Motor.eye : transform;
         }
 
-        void OnEnable() => Combat.EnemyKilled += OnKilled;
-        void OnDisable() => Combat.EnemyKilled -= OnKilled;
+        void OnEnable()
+        {
+            Combat.EnemyKilled += OnKilled;
+            RunPersistence.Register(this);
+        }
+
+        void OnDisable()
+        {
+            Combat.EnemyKilled -= OnKilled;
+            RunPersistence.Unregister(this);
+        }
+
+        /// <summary>跨关快照：当前灵宠的 id、灵契等级 / 经验、灵技冷却剩余</summary>
+        public void Capture(RunState s)
+        {
+            s.pet = Current ? new PetSave { id = Current.def.id, level = Current.Level, xp = Current.Xp, cooldownLeft = Current.SkillLeft } : null;
+        }
+
+        /// <summary>新关卡里按快照重新结契（按「换回来」处理：神兽不再放出场演出，冷却接着算）</summary>
+        public void Restore(RunState s)
+        {
+            if (s.pet == null || string.IsNullOrEmpty(s.pet.id)) return;
+            if (Current && Current.def.id == s.pet.id) return;
+            var def = PetLibrary.Get(s.pet.id);
+            if (def != null) Bind(def, Mathf.Max(1, s.pet.level), s.pet.xp, null, Time.time + s.pet.cooldownLeft, true);
+        }
 
         void OnDestroy()
         {
@@ -107,25 +131,24 @@ namespace Spiritfire.Game
         void Announce(PetDef def, bool rebind)
         {
             // 横幅 / 提示整体淡出，富文本颜色标签不会跟着淡，所以这里只用 size 标签
-            var hud = Hud.Instance;
             if (def.rarity == PetRarity.Mythic && !rebind)
             {
                 // 神兽：大横幅 + 金色光柱冲天 + 全屏金光
                 // 横幅框只有一行高：两行会压到下面的提示上，所以神兽名放进提示里
-                hud?.Banner("<size=92>神兽现世</size>", 3.2f);
+                GameUI.Banner("<size=92>神兽现世</size>", seconds: 3.2f);
                 PetFx.Pillar(Current.transform.position, PetRarities.Gold, 2.4f, 30f, 2.6f);
                 PetFx.Pillar(Current.transform.position, PetRarities.Color(PetRarity.Mythic), 1f, 30f, 2.2f);
-                PetHud.Instance?.Flash(new Color(1f, 0.82f, 0.4f, 0.45f), 0.9f);
+                GameUI.ScreenFlash(new Color(1f, 0.82f, 0.4f, 0.45f), 0.9f);
                 ShotFx.Instance?.MuzzleFlash(Current.transform.position + Vector3.up, 4f);
             }
             else
             {
-                hud?.Banner($"结契 · {def.Label}", 2.2f);
+                GameUI.Banner($"结契 · {def.Label}", seconds: 2.2f);
                 PetFx.Pillar(Current.transform.position, def.RarityColor, 1f, 6f, 1.2f);
             }
-            hud?.Toast(def.rarity == PetRarity.Mythic && !rebind
+            GameUI.Toast(def.rarity == PetRarity.Mythic && !rebind
                 ? $"结契 · 神兽 {def.name} · {def.title}　[G] {def.skillName}"
-                : $"{def.title} · {def.role}　[G] {def.skillName}", 3.2f);
+                : $"{def.title} · {def.role}　[G] {def.skillName}", seconds: 3.2f);
         }
 
         void OnKilled(Damageable d, DamageInfo info)
@@ -150,7 +173,7 @@ namespace Spiritfire.Game
             if (!Current) return false;
             if (!Current.TryCast())
             {
-                if (Current.SkillLeft > 0) Hud.Instance?.Toast($"{Current.def.skillName} 冷却中 {Current.SkillLeft:F0} 秒", 0.8f);
+                if (Current.SkillLeft > 0) GameUI.Toast($"{Current.def.skillName} 冷却中 {Current.SkillLeft:F0} 秒", seconds: 0.8f);
                 return false;
             }
             SkillCast?.Invoke(Current);

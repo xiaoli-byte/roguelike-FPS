@@ -10,7 +10,10 @@ namespace Spiritfire.Game
     ///   左下 护盾条（蓝）叠在生命条上 + 冲刺充能 · 右下 武器名（品质色）/ 弹匣 / 备弹 / 换弹进度
     ///   中央 随散布张开的准星、命中 / 暴击 / 击杀标记 · 受击方向指示 · 低血量红边与受击闪红
     ///   顶部 横幅（区域肃清、波次）与提示 · 右上 灵石数 · 屏幕下方 交互提示 · 伤害数字（世界坐标投影）· 阵亡画面
+    ///   全屏闪光（<see cref="ScreenFlash"/>）与黑幕（<see cref="FadeTo"/>）
     /// Canvas 用 Screen Space - Camera 挂在主相机上，编辑器里的截图也能拍到 HUD。
+    /// 玩法代码不直接找 Hud：走 <see cref="GameUI"/> 门面（U1 把后端换成 UI Toolkit 时调用方不用改）。
+    /// 灵石在 <see cref="RunState"/> 里，<see cref="coins"/> / <see cref="AddCoins"/> 只是给旧调用方（冒烟测试）的转发。
     /// </summary>
     public sealed class Hud : MonoBehaviour
     {
@@ -23,7 +26,7 @@ namespace Spiritfire.Game
 
         Font font;
         RectTransform root;
-        Image hpFill, hpTrail, shieldFill, vignette, hurtFlash, reloadFill;
+        Image hpFill, hpTrail, shieldFill, vignette, hurtFlash, reloadFill, screenFlash, fade;
         Text hpText, weaponName, ammoText, reserveText, bannerText, toastText, coinText, promptText, stageText, deathText, objectiveText;
         RectTransform[] cross = new RectTransform[4];
         Image[] crossImg = new Image[4];
@@ -33,7 +36,9 @@ namespace Spiritfire.Game
         Image hurtArrowImg;
         readonly List<Image> dashPips = new();
         float hitUntil, killUntil, bannerUntil, toastUntil, hurtArrowUntil, trail = 1;
-        Color hitColor;
+        float flashUntil, flashTime = 1, fadeAlpha;
+        int fadeToken;
+        Color hitColor, toastColor = Color.white, flashColor;
         Vector3 hurtFrom;
 
         sealed class Number
@@ -50,8 +55,14 @@ namespace Spiritfire.Game
         const float MergeWindow = 0.35f;
 
         readonly List<Number> numbers = new();
-        public int coins;
+        /// <summary>本局灵石（转发 <see cref="RunState.coins"/>；旧 API，冒烟测试在读）</summary>
+        public int coins => RunState.Current?.coins ?? 0;
         internal RectTransform Root => root;
+        /// <summary>伤害数字开关（设置「伤害数字」；反应名等浮字不受影响）</summary>
+        public static bool DamageNumbers = true;
+        /// <summary>当前首领（<see cref="GameUI.SetBoss"/>；首领血条由 U3 接上，现在只记着）</summary>
+        public Damageable Boss { get; private set; }
+        public string BossTitle { get; private set; }
 
         void Awake()
         {
@@ -159,6 +170,11 @@ namespace Spiritfire.Game
             promptText.gameObject.AddComponent<Outline>().effectColor = new Color(0, 0, 0, 0.7f);
             deathText = Label("Death", root, new Vector2(0, 0.4f), new Vector2(1, 0.62f), 72, TextAnchor.MiddleCenter, new Color(1f, 0.35f, 0.25f, 0));
             deathText.gameObject.AddComponent<Outline>().effectColor = new Color(0, 0, 0, 0.7f);
+
+            // 全屏闪光 / 黑幕：平时全透明
+            screenFlash = Img("Screen Flash", root, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, new Color(1, 1, 1, 0));
+            fade = Img("Fade", root, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, new Color(0, 0, 0, 0));
+            fade.enabled = false;
         }
 
         internal static RectTransform Rect(string name, Transform parent, Vector2 aMin, Vector2 aMax, Vector2 oMin, Vector2 oMax)
@@ -217,10 +233,12 @@ namespace Spiritfire.Game
             bannerUntil = Time.time + seconds;
         }
 
-        public void Toast(string text, float seconds = 2.2f)
+        /// <summary>单行提示；color = 文字颜色（缺省白色）</summary>
+        public void Toast(string text, float seconds = 2.2f, Color? color = null)
         {
             toastText.text = text;
             toastUntil = Time.time + seconds;
+            toastColor = color ?? Color.white;
         }
 
         /// <summary>弹出模态界面前收起横幅与提示</summary>
@@ -234,10 +252,67 @@ namespace Spiritfire.Game
         public void SetPrompt(string text) => promptText.text = text ?? "";
         public void ShowDeath(string text) => deathText.text = text;
 
-        public void AddCoins(int n)
+        /// <summary>交互提示卡 → 一行富文本：[键] 标题 副标题 价格，说明逐行跟在下面。只有标题时与旧的 SetPrompt(string) 完全一样</summary>
+        public void SetPromptCard(InteractPrompt? card)
         {
-            coins += n;
-            GameEvents.RaiseCoinsChanged(n, coins);
+            if (card == null)
+            {
+                promptText.text = "";
+                return;
+            }
+            var p = card.Value;
+            string title = p.color.a > 0 ? $"<color=#{ColorUtility.ToHtmlStringRGB(p.color)}>{p.title}</color>" : p.title;
+            var sb = new System.Text.StringBuilder();
+            sb.Append("<color=#ffd27a>[").Append(p.action ?? "F").Append("]</color> ").Append(title);
+            if (!string.IsNullOrEmpty(p.subtitle)) sb.Append(" <size=24><color=#e8e0d0>").Append(p.subtitle).Append("</color></size>");
+            if (p.cost > 0) sb.Append(p.canAfford ? "　<color=#ffd98a>" : "　<color=#ff6a50>").Append("灵石 ").Append(p.cost).Append("</color>");
+            if (p.lines != null)
+                foreach (var line in p.lines)
+                    if (!string.IsNullOrEmpty(line)) sb.Append("\n<size=24><color=#e8e0d0>").Append(line).Append("</color></size>");
+            promptText.text = sb.ToString();
+        }
+
+        /// <summary>旧 API：进账灵石（转发 <see cref="RunState.Credit"/>）</summary>
+        public void AddCoins(int n) => RunState.Ensure().Credit(n, "hud");
+
+        /// <summary>全屏闪光：颜色（含 alpha）按剩余时间平方淡出，用不缩放时间（暂停中也会淡完）</summary>
+        public void ScreenFlash(Color c, float seconds)
+        {
+            flashColor = c;
+            flashTime = Mathf.Max(0.05f, seconds);
+            flashUntil = Time.unscaledTime + flashTime;
+            screenFlash.transform.SetAsLastSibling();
+        }
+
+        /// <summary>首领（null = 清掉）；U3 的首领血条读它</summary>
+        public void SetBoss(Damageable boss, string title)
+        {
+            Boss = boss;
+            BossTitle = boss ? title ?? boss.name : null;
+        }
+
+        /// <summary>全屏黑幕淡到 to（0 透明 → 1 全黑），用不缩放时间；新的淡入淡出会打断旧的</summary>
+        public async Awaitable FadeTo(float to, float seconds)
+        {
+            int token = ++fadeToken;
+            to = Mathf.Clamp01(to);
+            float from = fadeAlpha, t = 0;
+            fade.transform.SetAsLastSibling();
+            while (t < seconds)
+            {
+                SetFade(Mathf.Lerp(from, to, t / seconds));
+                await Awaitable.NextFrameAsync();
+                if (!this || token != fadeToken) return;
+                t += Time.unscaledDeltaTime;
+            }
+            SetFade(to);
+        }
+
+        void SetFade(float a)
+        {
+            fadeAlpha = a;
+            fade.color = new Color(0, 0, 0, a);
+            fade.enabled = a > 0;
         }
 
         // ───────────── 事件 ─────────────
@@ -249,6 +324,7 @@ namespace Spiritfire.Game
                 hitUntil = Time.time + 0.12f;
                 hitColor = r.crit ? new Color(1f, 0.78f, 0.25f) : Color.white;
             }
+            if (!DamageNumbers) return;
             Color c = r.immune ? new Color(0.7f, 0.7f, 0.7f)
                 : r.layer == DamageLayer.Shield ? new Color(0.5f, 0.8f, 1f)
                 : r.layer == DamageLayer.Armor ? new Color(1f, 0.85f, 0.35f)
@@ -392,7 +468,10 @@ namespace Spiritfire.Game
 
             float ba = Mathf.Clamp01((bannerUntil - now) / 0.5f);
             bannerText.color = new Color(1f, 0.9f, 0.65f, ba);
-            toastText.color = new Color(1, 1, 1, Mathf.Clamp01((toastUntil - now) / 0.4f));
+            toastText.color = new Color(toastColor.r, toastColor.g, toastColor.b, Mathf.Clamp01((toastUntil - now) / 0.4f));
+            float fk = Mathf.Clamp01((flashUntil - Time.unscaledTime) / flashTime);
+            screenFlash.enabled = fk > 0;
+            if (fk > 0) screenFlash.color = new Color(flashColor.r, flashColor.g, flashColor.b, flashColor.a * fk * fk);
             coinText.text = $"灵石 {coins}";
 
             // 受击方向：屏幕中心外圈的红条指向来源（水平方位）

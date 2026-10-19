@@ -12,8 +12,9 @@ namespace Spiritfire.Game
     /// 弹道：从眼睛（准星）发射线，曳光从枪口画到命中点；扩散 = (腰射 / 开镜基础 × 移动 × 空中 + 连射累积) 的半角。
     /// 后坐：抬枪量 = pitch × (1 + 连发数 × climb) × 开镜减半 × RecoilScale，交给 <see cref="PlayerMotor.AddRecoil"/> 记成回正债。
     /// 第一人称：每把枪一个 rig（枪模 + 手臂），由 PlayerRigBuilder 生成，这里只切换显示、写开镜 / 下沉 / 后坐。
+    /// 跨关：<see cref="IRunPersistent"/> 把两个槽存进 <see cref="RunState.weapons"/>。
     /// </summary>
-    public sealed class WeaponController : MonoBehaviour
+    public sealed class WeaponController : MonoBehaviour, IRunPersistent
     {
         [Serializable]
         public sealed class Rig
@@ -70,6 +71,45 @@ namespace Spiritfire.Game
         }
 
         StatSheet Stats => vitals ? vitals.stats : null;
+
+        void OnEnable() => RunPersistence.Register(this);
+        void OnDisable() => RunPersistence.Unregister(this);
+
+        /// <summary>跨关快照：两个槽的枪（定义、品质、强化、元素、弹药）和当前槽。词条由 AF 单元补进 WeaponSave</summary>
+        public void Capture(RunState s)
+        {
+            s.weapons ??= new System.Collections.Generic.List<WeaponSave>();
+            s.weapons.Clear();
+            for (int i = 0; i < slots.Length; i++)
+            {
+                var w = slots[i];
+                if (w == null) continue;
+                s.weapons.Add(new WeaponSave { id = w.def.id, rarity = w.rarity, level = w.level, element = w.element, mag = w.mag, reserve = w.reserve, active = i == ActiveSlot });
+            }
+        }
+
+        /// <summary>按快照重建两个槽（不放切枪音效、不发切枪事件）；快照里没有枪时保持开局武器</summary>
+        public void Restore(RunState s)
+        {
+            if (s.weapons == null || s.weapons.Count == 0) return;
+            int active = 0, n = 0;
+            for (int i = 0; i < slots.Length; i++) slots[i] = null;
+            foreach (var save in s.weapons)
+            {
+                var def = WeaponLibrary.Get(save.id);
+                if (def == null || n >= slots.Length) continue;
+                slots[n] = new WeaponInstance(def, save.rarity) { level = save.level, element = save.element, mag = save.mag, reserve = save.reserve };
+                if (save.active) active = n;
+                n++;
+            }
+            if (n == 0) slots[0] = new WeaponInstance(WeaponLibrary.Get(startWeapon) ?? WeaponLibrary.Get("smg"));
+            ActiveSlot = slots[active] != null ? active : 0;
+            CancelReload();
+            switchTimer = 0;
+            consecutive = 0;
+            ApplyRigs();
+            Changed?.Invoke();
+        }
 
         /// <summary>拾取 / 宝箱给的枪：有空槽放空槽，否则替换当前槽；返回被替换下来的枪</summary>
         public WeaponInstance Give(WeaponInstance w)

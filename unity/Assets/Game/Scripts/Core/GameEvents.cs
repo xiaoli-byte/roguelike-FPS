@@ -134,7 +134,7 @@ namespace Spiritfire.Game
     /// 旧的分散事件（Combat.EnemyDamaged / EnemyKilled / PlayerDamaged、ReactionSystem.Reacted、EncounterSite.AnySiteCleared）
     /// 照常派发，第 4 批再删。局 / 关卡 / 首领类事件（RunStarted、StageLoaded、BossPhase…）由定义那些类型的单元追加。
     /// </summary>
-    public static class GameEvents
+    public static partial class GameEvents
     {
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics()

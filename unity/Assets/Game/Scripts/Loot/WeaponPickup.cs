@@ -84,7 +84,7 @@ namespace Spiritfire.Game
             if (!wc) return;
             var old = wc.Give(weapon);
             GameAudio.Play("pickup_weapon");
-            Hud.Instance?.Toast($"获得 {WeaponLibrary.RarityName[Mathf.Clamp(weapon.rarity, 0, 4)]} · {weapon.Title}");
+            GameUI.Toast($"获得 {WeaponLibrary.RarityName[Mathf.Clamp(weapon.rarity, 0, 4)]} · {weapon.Title}");
             if (old != null) Drop(old, Focus, Vector3.up * 3f);
             Destroy(gameObject);
         }

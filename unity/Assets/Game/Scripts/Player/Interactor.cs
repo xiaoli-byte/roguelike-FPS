@@ -1,3 +1,4 @@
+using System;
 using Spiritfire.Art;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -13,7 +14,7 @@ namespace Spiritfire.Game
         WeaponController weapons;
         PlayerMotor motor;
         PlayerVitals vitals;
-        string shown;
+        InteractPrompt? shown;
         public IInteractable Current { get; private set; }
 
         void Awake()
@@ -28,11 +29,11 @@ namespace Spiritfire.Game
             var eye = weapons && weapons.eye ? weapons.eye.transform : transform;
             bool canAct = (TestMode || (motor && motor.inputEnabled)) && (!vitals || !vitals.Dead) && Time.timeScale > 0;
             Current = canAct ? Interaction.Pick(eye) : null;
-            var text = Current != null ? $"<color=#ffd27a>[F]</color> {Current.Prompt}" : null;
-            if (text != shown)
+            InteractPrompt? card = Current != null ? Current.PromptCard : null;
+            if (!Nullable.Equals(card, shown))
             {
-                shown = text;
-                Hud.Instance?.SetPrompt(text);
+                shown = card;
+                GameUI.SetPrompt(card);
             }
             if (Current == null) return;
             var kb = Keyboard.current;

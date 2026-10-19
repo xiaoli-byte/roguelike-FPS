@@ -14,7 +14,7 @@ namespace Spiritfire.Game
             if (!pv) return;
             pv.stats.Add("reward", Stat.MaxHp, 10);
             pv.Heal(pv.MaxHealth * 0.5f);
-            Hud.Instance?.Toast("生命上限 +10，回复 50% 生命");
+            GameUI.Toast("生命上限 +10，回复 50% 生命");
         }
 
         public override string Hint(string[] args) => "生命";
