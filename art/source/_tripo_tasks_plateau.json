@@ -1,5 +1,5 @@
 {
-  "note": "第四章 · 雪域天路 Tripo 任务记录（智能网格 P2.0、三角面、数量 1，全部带贴图 +30 积分）。2026-10-19 生成；拆分、体型和四视图审核见 docs/art/enemy-roster-v2.md。status：in_inbox = 已导出 GLB（4k 贴图）并存进 art/source/_tripo_inbox（收据同名 .json，含 sha256）；superseded = 用错了四视图，作废不导出。",
+  "note": "第四章 · 雪域天路 Tripo 任务记录（智能网格 P2.0、三角面、数量 1，全部带贴图 +30 积分）。2026-10-19 生成；拆分、体型和四视图审核见 docs/art/enemy-roster-v2.md。status：in_inbox = 已导出 GLB（4k 贴图）并存进 art/source/_tripo_inbox（收据同名 .json，含 sha256）；superseded = 用错了四视图，作废不导出；published = 已绑骨 / 构建、校验并发布到 public/assets 与 Unity（build 是发布的构建版本，见 docs/art/enemy-roster-v2.md「绑骨与发布」）。",
   "credits": {
     "before": 12295,
     "after": 10215,
@@ -35,13 +35,15 @@
       "task": "73e30bba-aa94-48f8-9a2c-c6bc86a30dfd",
       "views": "front/left/right/back TV v001",
       "texture": true,
-      "status": "in_inbox",
+      "status": "published",
       "asset": "SK_Enemy_Aoyin",
       "note": "实得 13329 面；贴图已开始",
       "inbox": "20261019T000508_SK_Enemy_Aoyin.glb",
       "sha256": "aec7fe16d8689e5a733030e47c393e5fc2af6ec326c59ae81c461eeeb14baddc",
       "triangles": 13329,
-      "bytes": 4655048
+      "bytes": 4655048,
+      "build": "native_v002",
+      "published": "assets/characters/SK_Enemy_Aoyin.glb"
     },
     {
       "key": "plateau_manman",
@@ -50,13 +52,15 @@
       "task": "28e3e738-bfe0-4bf5-8414-cfb29df37d73",
       "views": "front/back only TV v001",
       "texture": true,
-      "status": "in_inbox",
+      "status": "published",
       "asset": "SK_Enemy_Manman",
       "note": "实得 6897 面；贴图已开始",
       "inbox": "20261019T000426_SK_Enemy_Manman.glb",
       "sha256": "f0eef40001e4d86870a0a79177d58f496830ca8d69234268ed38c1f7b30bf98c",
       "triangles": 6897,
-      "bytes": 3065156
+      "bytes": 3065156,
+      "build": "native_v002",
+      "published": "assets/characters/SK_Enemy_Manman.glb"
     },
     {
       "key": "plateau_boss_feilian",
@@ -65,13 +69,15 @@
       "task": "41ccb75a-96e1-4131-8bba-871d4c9c5875",
       "views": "front/left/right/back TV v001",
       "texture": true,
-      "status": "in_inbox",
+      "status": "published",
       "asset": "SK_Boss_Feilian",
       "note": "实得 30137 面，鹿角清楚不用拆；贴图已开始",
       "inbox": "20261019T000352_SK_Boss_Feilian.glb",
       "sha256": "109dff57aa2d47725b88b17f846e173392fe44bbac2a43805843c8b9ae1dae74",
       "triangles": 30137,
-      "bytes": 5056136
+      "bytes": 5056136,
+      "build": "native_v002",
+      "published": "assets/characters/SK_Boss_Feilian.glb"
     },
     {
       "key": "plateau_liangu_drum",
@@ -80,13 +86,15 @@
       "task": "cfc83eef-0ee2-4583-bcae-c296c9d81935",
       "views": "front/left/right/back TV v001",
       "texture": true,
-      "status": "in_inbox",
+      "status": "published",
       "asset": "SM_EnemyPart_LianguDrum",
       "note": "贴图已开始",
       "inbox": "20261019T000318_SM_EnemyPart_LianguDrum.glb",
       "sha256": "13cb9f3454e0096719a6086f49e17d5261454f4933cd3c2fe97c0adb3f553272",
       "triangles": 2848,
-      "bytes": 2200196
+      "bytes": 2200196,
+      "build": "build_v001",
+      "published": "assets/attachments/SM_EnemyPart_LianguDrum.glb"
     },
     {
       "key": "plateau_liangu_mallet",
@@ -95,13 +103,15 @@
       "task": "3ac44226-b81c-47f8-88b2-00a4fa482711",
       "views": "front/left/right/back TV v001",
       "texture": true,
-      "status": "in_inbox",
+      "status": "published",
       "asset": "SM_EnemyPart_LianguMallet",
       "note": "贴图已开始",
       "inbox": "20261019T000238_SM_EnemyPart_LianguMallet.glb",
       "sha256": "e1cca1e6a2b830b2854c6b5e18d31f477e88917fa17cf681090ddcf76f09f1c7",
       "triangles": 3250,
-      "bytes": 2692680
+      "bytes": 2692680,
+      "build": "build_v001",
+      "published": "assets/attachments/SM_EnemyPart_LianguMallet.glb"
     },
     {
       "key": "plateau_kui_broken_drum",
@@ -110,13 +120,15 @@
       "task": "3ce97093-ec26-4af3-a389-35cae667da36",
       "views": "front/left/right/back TV v001",
       "texture": true,
-      "status": "in_inbox",
+      "status": "published",
       "asset": "SM_Prop_KuiBrokenDrum",
       "note": "贴图已开始",
       "inbox": "20261019T000002_SM_Prop_KuiBrokenDrum.glb",
       "sha256": "aeaad38eaeb5e44051949bacadbf5bf794014e65b082e54dffa1ec8dff6e5720",
       "triangles": 3112,
-      "bytes": 4272048
+      "bytes": 4272048,
+      "build": "build_v001",
+      "published": "assets/props/SM_Prop_KuiBrokenDrum.glb"
     },
     {
       "key": "plateau_liangu_core",
@@ -125,13 +137,15 @@
       "task": "274427d7-d803-4f2c-983b-20603b9f9b66",
       "views": "front/left/right/back TV v002（雷心改成平涂不发光）",
       "texture": true,
-      "status": "in_inbox",
+      "status": "published",
       "asset": "SM_EnemyPart_LianguCore",
       "note": "",
       "inbox": "20261018T235928_SM_EnemyPart_LianguCore.glb",
       "sha256": "59dfd36d5b1252d8333680e17e9d53f13f7b4157f064461bd622a49d45e27d83",
       "triangles": 6228,
-      "bytes": 2514328
+      "bytes": 2514328,
+      "build": "build_v001",
+      "published": "assets/attachments/SM_EnemyPart_LianguCore.glb"
     },
     {
       "key": "plateau_marmot",
@@ -140,13 +154,15 @@
       "task": "c8366a78-c016-45b0-8fa5-7bd87e15a090",
       "views": "front/left/right/back TV v002（特效分离）",
       "texture": true,
-      "status": "in_inbox",
+      "status": "published",
       "asset": "SK_Enemy_Marmot",
       "note": "",
       "inbox": "20261018T235847_SK_Enemy_Marmot.glb",
       "sha256": "630e2ad6a35af7ec9114ca4c247b651f4892bac57ce0f1ad1b7ff0a08ff85b61",
       "triangles": 6953,
-      "bytes": 2207592
+      "bytes": 2207592,
+      "build": "native_v004",
+      "published": "assets/characters/SK_Enemy_Marmot.glb"
     },
     {
       "key": "plateau_tiangou",
@@ -155,13 +171,15 @@
       "task": "1df6ca54-eddb-4940-bff1-4913ab092891",
       "views": "front/left/right/back TV v002（特效分离）",
       "texture": true,
-      "status": "in_inbox",
+      "status": "published",
       "asset": "SK_Enemy_Tiangou",
       "note": "",
       "inbox": "20261018T235812_SK_Enemy_Tiangou.glb",
       "sha256": "8cb0b28b14ee679627c0e656de5f2c10052290c58b4573ffe2583d9b0d57d9f9",
       "triangles": 6688,
-      "bytes": 3092156
+      "bytes": 3092156,
+      "build": "native_v002",
+      "published": "assets/characters/SK_Enemy_Tiangou.glb"
     },
     {
       "key": "plateau_jufu",
@@ -170,13 +188,15 @@
       "task": "af66035a-fb17-41e3-b2dd-d7ad19343deb",
       "views": "front/left/right/back TV v002（特效分离）",
       "texture": true,
-      "status": "in_inbox",
+      "status": "published",
       "asset": "SK_Enemy_Jufu",
       "note": "",
       "inbox": "20261018T235728_SK_Enemy_Jufu.glb",
       "sha256": "165ddda056c3acc63c27327e775109fcfc1ee78c4fca43c7a012b690ec74e0a0",
       "triangles": 8856,
-      "bytes": 2843952
+      "bytes": 2843952,
+      "build": "native_v002",
+      "published": "assets/characters/SK_Enemy_Jufu.glb"
     },
     {
       "key": "plateau_dijiang",
@@ -185,13 +205,15 @@
       "task": "515e99c5-7eed-4294-864e-f77a7c6359d7",
       "views": "front/left/right/back TV v002（特效分离）",
       "texture": true,
-      "status": "in_inbox",
+      "status": "published",
       "asset": "SK_Enemy_Dijiang",
       "note": "",
       "inbox": "20261018T235652_SK_Enemy_Dijiang.glb",
       "sha256": "cbada8648c980b79298085db3f1e3669a4f481db8563a41652ba0f16866f93f3",
       "triangles": 6826,
-      "bytes": 2310076
+      "bytes": 2310076,
+      "build": "native_v002",
+      "published": "assets/characters/SK_Enemy_Dijiang.glb"
     },
     {
       "key": "plateau_qiongqi",
@@ -200,13 +222,15 @@
       "task": "2b54e66f-4a4c-4ad6-91da-2532151e4af1",
       "views": "front/left/right/back TV v002（特效分离）",
       "texture": true,
-      "status": "in_inbox",
+      "status": "published",
       "asset": "SK_Enemy_Qiongqi",
       "note": "",
       "inbox": "20261018T235616_SK_Enemy_Qiongqi.glb",
       "sha256": "d4ce109280771db7f16e7463b4b074605337abe64b51e7061c3b32fe2f28bdb8",
       "triangles": 8872,
-      "bytes": 3956064
+      "bytes": 3956064,
+      "build": "native_v002",
+      "published": "assets/characters/SK_Enemy_Qiongqi.glb"
     },
     {
       "key": "plateau_boss_kui",
@@ -215,13 +239,15 @@
       "task": "84622d33-ea0e-488c-9f65-ec0ed65eac3f",
       "views": "front/left/right/back TV v002（设计稿 v002，特效分离）",
       "texture": true,
-      "status": "in_inbox",
+      "status": "published",
       "asset": "SK_Boss_Kui",
       "note": "",
       "inbox": "20261018T235542_SK_Boss_Kui.glb",
       "sha256": "a170745a04889b1e75c2a2d983622ed49063091aabc1c9b4a4822d994a812b88",
       "triangles": 32675,
-      "bytes": 5449532
+      "bytes": 5449532,
+      "build": "native_v002",
+      "published": "assets/characters/SK_Boss_Kui.glb"
     },
     {
       "key": "plateau_boss_huashe",
@@ -230,13 +256,15 @@
       "task": "922be511-a71d-4292-9da6-127928c557bb",
       "views": "front/left/right TV v003（不传背视；大图 + 特效分离）",
       "texture": true,
-      "status": "in_inbox",
+      "status": "published",
       "asset": "SK_Boss_Huashe",
       "note": "",
       "inbox": "20261018T235456_SK_Boss_Huashe.glb",
       "sha256": "0c35d4cf163a21de116947336cc778f5d908df5d83888ac1f71a445bad1a1c12",
       "triangles": 30006,
-      "bytes": 5469128
+      "bytes": 5469128,
+      "build": "native_v002",
+      "published": "assets/characters/SK_Boss_Huashe.glb"
     }
   ]
 }
