@@ -1,0 +1,142 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SK_Enemy_Dijiang",
+  "kind": "skeletal",
+  "class": "enemy_swarm",
+  "category": "characters",
+  "bind": {
+    "source": "enemy",
+    "id": "dijiang"
+  },
+  "keepGlow": "all",
+  "lodDistance": [
+    0,
+    12,
+    26
+  ],
+  "budget": {
+    "lodTris": [
+      6000,
+      2500,
+      1000
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -0.48219412565231323,
+      -0.0005028275190852582,
+      -0.33572402596473694
+    ],
+    "max": [
+      0.48235106468200684,
+      1,
+      0.33634594082832336
+    ]
+  },
+  "rig": {
+    "type": "generic",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": [
+      "root",
+      "body",
+      "core",
+      "leg1_thigh_L",
+      "leg1_foot_L",
+      "leg1_thigh_R",
+      "leg1_foot_R",
+      "leg2_thigh_L",
+      "leg2_foot_L",
+      "leg2_thigh_R",
+      "leg2_foot_R",
+      "leg3_thigh_L",
+      "leg3_foot_L",
+      "leg3_thigh_R",
+      "leg3_foot_R",
+      "wing_lower_L",
+      "wing_lower_R",
+      "wing_upper_L",
+      "wing_upper_R"
+    ]
+  },
+  "meshes": [
+    {
+      "name": "SK_Enemy_Dijiang_LOD0",
+      "lod": 0,
+      "tris": 5910,
+      "verts": 4059,
+      "materials": [
+        "M_Enemy_Dijiang"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_Dijiang_LOD1",
+      "lod": 1,
+      "tris": 2462,
+      "verts": 2138,
+      "materials": [
+        "M_Enemy_Dijiang"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_Dijiang_LOD2",
+      "lod": 2,
+      "tris": 984,
+      "verts": 1054,
+      "materials": [
+        "M_Enemy_Dijiang"
+      ],
+      "skinned": true
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Enemy_Dijiang",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Enemy_Dijiang_BC.png",
+        "ORM": "Textures/T_Enemy_Dijiang_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/characters/SK_Enemy_Dijiang@hi.glb",
+    "sha256": "887afb533d279b221b80d80894b48d8b32b16f70062905fee43bc33568e8421a",
+    "hiRes": true,
+    "version": {
+      "native_build": 2
+    },
+    "generator": {
+      "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+      "mode": "tripo_native",
+      "checkpoint": "P2.0"
+    },
+    "license": null
+  },
+  "exported": "2026-10-19 20:33:53"
+}
