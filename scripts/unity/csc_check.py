@@ -3,10 +3,11 @@
 用 Unity 上次生成的 Library/Bee/artifacts/<dag>/<程序集>.rsp（引用、宏、分析器都在里面），把源文件列表换成当前磁盘上的文件，
 输出写到临时目录，用编辑器自带的 Roslyn 编译。依赖它的程序集会引用这里刚编出来的 dll，而不是 Library 里的旧版。
 
-    python scripts/unity/csc_check.py                 # 依次检查 Art.Runtime → Game → Art.Editor
+    python scripts/unity/csc_check.py                 # 依次检查 Art.Runtime → Game → Art.Editor → Game.Tests
     python scripts/unity/csc_check.py Spiritfire.Game
 
 在 git worktree 里也能用：worktree 没有 Library，就借主工作区 unity/Library 里的 .rsp 和引用，源文件仍取当前 worktree。
+EditMode 测试程序集（Spiritfire.Game.Tests）是新加的：编辑器还没编译过它、Library 里没有它的 .rsp 时只提示跳过，不算失败。
 
 退出码 0 = 全部编译通过；有错误时打印 error CS… 行。
 """
@@ -23,7 +24,10 @@ ASSEMBLIES = {
     "Spiritfire.Art.Runtime": "Assets/Pipeline/Runtime/**/*.cs",
     "Spiritfire.Game": "Assets/Game/Scripts/**/*.cs",
     "Spiritfire.Art.Editor": "Assets/Pipeline/Editor/**/*.cs",
+    "Spiritfire.Game.Tests": "Assets/Game/Tests/**/*.cs",
 }
+# 找不到 .rsp 时跳过而不是报错的程序集（编辑器第一次导入 asmdef 之前没有 .rsp）
+OPTIONAL = {"Spiritfire.Game.Tests"}
 
 
 def library_root() -> str:
@@ -38,9 +42,11 @@ def library_root() -> str:
     sys.exit(f"{ROOT} 和主工作区都没有 Library/Bee：先让编辑器正常编译一次")
 
 
-def find_rsp(name: str) -> str:
+def find_rsp(name: str, optional: bool = False):
     hits = glob.glob(os.path.join(library_root(), "Library", "Bee", "artifacts", "*", f"{name}.rsp"))
     if not hits:
+        if optional:
+            return None
         sys.exit(f"找不到 {name}.rsp：先让编辑器正常编译一次")
     return max(hits, key=os.path.getmtime)
 
@@ -62,7 +68,11 @@ def main() -> int:
     # .rsp 里的引用是相对 Library 所在目录的路径；源文件用当前工作区的绝对路径
     os.chdir(library_root())
     for name in names:
-        lines = open(find_rsp(name), encoding="utf-8").read().splitlines()
+        rsp_in = find_rsp(name, name in OPTIONAL)
+        if rsp_in is None:
+            print(f"{name}: 跳过（Library 里还没有 {name}.rsp：编辑器导入这个程序集、编译一次之后才能检查）")
+            continue
+        lines = open(rsp_in, encoding="utf-8").read().splitlines()
         keep = []
         for line in lines:
             if line.startswith('"Assets') or line.startswith("-out:") or line.startswith("-refout:"):

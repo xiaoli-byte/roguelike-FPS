@@ -19,8 +19,9 @@ namespace Spiritfire.Art.Editor.Levels
     ///   → ④ 驼队残骸营地 (220,74)：沙丘围合的盆地 → 出口 (250,58)
     ///
     /// 主风向从东北吹向西南：雅丹长轴、沙丘脊线、狼烟的偏斜都按它排，地貌读起来是同一场风塑造的。
-    /// 生成：Spiritfire ▸ Levels ▸ Build 1-1 古道穿越戈壁（或 bridge.sh level11）。
+    /// 生成：Spiritfire ▸ Levels ▸ Build 1-1 古道穿越戈壁（或 bridge.sh level 1-1，旧名 level11）。
     /// </summary>
+    [LevelBuilder("1-1", Level_1_1.ScenePath)]
     public static class Level_1_1
     {
         public const string Dir = "Assets/Levels/L1_1_GobiRoad";
