@@ -76,7 +76,7 @@ namespace Spiritfire.Game
         /// <summary>当前局（没开局时为 null；<see cref="Ensure"/> 保证有一个）</summary>
         public static RunState Current;
 
-        public string heroId = "liao";
+        public string heroId = "fox";
         public int seed;
         /// <summary>当前关：章（1 起）、章内关序（0 起）、编号（「1-1」）</summary>
         public int chapter = 1, stage;
@@ -103,7 +103,7 @@ namespace Spiritfire.Game
         /// <summary>开一局：设为 <see cref="Current"/>，进入第一关，发 <see cref="GameEvents.RunStarted"/></summary>
         public static RunState Begin(string heroId, int seed, StageSpec first = null, bool dev = false)
         {
-            var s = new RunState { heroId = string.IsNullOrEmpty(heroId) ? "liao" : heroId, seed = seed, dev = dev };
+            var s = new RunState { heroId = string.IsNullOrEmpty(heroId) ? "fox" : heroId, seed = seed, dev = dev };
             s.EnterStage(first ?? RunPlan.First);
             Current = s;
             GameEvents.RaiseRunStarted(s);
