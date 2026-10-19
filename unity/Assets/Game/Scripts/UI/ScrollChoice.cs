@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Spiritfire.Art;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace Spiritfire.Game
@@ -90,13 +89,11 @@ namespace Spiritfire.Game
 
         void Update()
         {
-            var kb = Keyboard.current;
-            var mouse = Mouse.current;
             var hud = Hud.Instance;
             hover = -1;
-            if (mouse != null && hud)
+            if (hud)
                 for (int i = 0; i < cards.Count; i++)
-                    if (RectTransformUtility.RectangleContainsScreenPoint(cards[i], mouse.position.ReadValue(), hud.cam)) hover = i;
+                    if (RectTransformUtility.RectangleContainsScreenPoint(cards[i], GameInput.PointerPosition, hud.cam)) hover = i;
             for (int i = 0; i < cards.Count; i++)
             {
                 float s = i == hover ? 1.04f : 1f;
@@ -104,13 +101,10 @@ namespace Spiritfire.Game
             }
             // 刚弹出时忽略输入一小会儿，免得开枪的那一下误选
             if (Time.unscaledTime - openedAt < 0.35f) return;
-            if (kb != null)
-            {
-                if (kb.digit1Key.wasPressedThisFrame) Choose(0);
-                else if (kb.digit2Key.wasPressedThisFrame) Choose(1);
-                else if (kb.digit3Key.wasPressedThisFrame) Choose(2);
-            }
-            if (current == this && hover >= 0 && mouse != null && mouse.leftButton.wasPressedThisFrame) Choose(hover);
+            if (GameInput.Pressed(UIAction.Choice1)) Choose(0);
+            else if (GameInput.Pressed(UIAction.Choice2)) Choose(1);
+            else if (GameInput.Pressed(UIAction.Choice3)) Choose(2);
+            if (current == this && hover >= 0 && GameInput.Pressed(UIAction.Click)) Choose(hover);
         }
 
         void Choose(int index)

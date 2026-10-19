@@ -1,12 +1,11 @@
 using Spiritfire.Art;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 namespace Spiritfire.Game
 {
     /// <summary>
-    /// 一关的会话：关卡标题（按场景路径查 <see cref="RunPlan"/>）、阵亡后 R 重开、Esc 暂停（弹出 <see cref="PauseMenu"/>，含画质设置）、
+    /// 一关的会话：关卡标题（按场景路径查 <see cref="RunPlan"/>）、阵亡后 R 重开、Esc / P 暂停（弹出 <see cref="PauseMenu"/>，含画质设置）、
     /// 模态界面、本关结算、失焦暂停。局的数据（灵石、击杀、用时…）在 <see cref="RunState"/>；直接打开关卡场景时这里建一个调试局。
     /// 状态走 <see cref="GameStateMachine"/>（暂停 / 模态 / 结算是模态栈上的项，时间由 <see cref="TimeScaleArbiter"/> 统一结算），
     /// 光标和玩家输入跟着「有没有模态挡着」走。场景流转（下一关、Core 场景）是 L1 的事，现在通关后仍是「下一关制作中，按 R 重开」。
@@ -96,28 +95,23 @@ namespace Spiritfire.Game
 
         void Update()
         {
-            var kb = Keyboard.current;
             // 复活（测试 / 以后的复活道具）：撤掉阵亡慢动作
             if (deathSlowMo != null && player && !player.Dead)
             {
                 deathSlowMo.Dispose();
                 deathSlowMo = null;
             }
-            if (complete)
+            // 阵亡 / 结算画面上「按 R 重新开始」：R 即换弹键（手柄 X）
+            if (complete || (player && player.Dead))
             {
-                if (kb != null && kb.rKey.wasPressedThisFrame) Restart();
-                return;
-            }
-            if (player && player.Dead)
-            {
-                if (kb != null && kb.rKey.wasPressedThisFrame) Restart();
+                if (GameInput.Pressed(GameAction.Reload)) Restart();
                 return;
             }
             if (GameStateMachine.IsPlaying && RunState.Current != null) RunState.Current.time += Time.deltaTime;
             // 模态界面（秘卷三选一…）在最上面时 Esc 不响应；暂停菜单在最上面时 Esc 继续
             var top = GameStateMachine.Current;
             if (top != GameState.Playing && top != GameState.Paused) return;
-            if (kb != null && kb.escapeKey.wasPressedThisFrame) SetPaused(!Paused);
+            if (GameInput.Pressed(GameAction.Pause)) SetPaused(!Paused);
         }
 
         /// <summary>失焦（切出游戏窗口）自动暂停：正常游玩时才暂停；冒烟测试在后台跑时不暂停</summary>

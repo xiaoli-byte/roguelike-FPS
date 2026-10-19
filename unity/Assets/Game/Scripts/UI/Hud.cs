@@ -58,8 +58,6 @@ namespace Spiritfire.Game
         /// <summary>本局灵石（转发 <see cref="RunState.coins"/>；旧 API，冒烟测试在读）</summary>
         public int coins => RunState.Current?.coins ?? 0;
         internal RectTransform Root => root;
-        /// <summary>伤害数字开关（设置「伤害数字」；反应名等浮字不受影响）</summary>
-        public static bool DamageNumbers = true;
         /// <summary>当前首领（<see cref="GameUI.SetBoss"/>；首领血条由 U3 接上，现在只记着）</summary>
         public Damageable Boss { get; private set; }
         public string BossTitle { get; private set; }
@@ -263,7 +261,7 @@ namespace Spiritfire.Game
             var p = card.Value;
             string title = p.color.a > 0 ? $"<color=#{ColorUtility.ToHtmlStringRGB(p.color)}>{p.title}</color>" : p.title;
             var sb = new System.Text.StringBuilder();
-            sb.Append("<color=#ffd27a>[").Append(p.action ?? "F").Append("]</color> ").Append(title);
+            sb.Append("<color=#ffd27a>[").Append(p.action ?? GameInput.BindingLabel(GameAction.Interact)).Append("]</color> ").Append(title);
             if (!string.IsNullOrEmpty(p.subtitle)) sb.Append(" <size=24><color=#e8e0d0>").Append(p.subtitle).Append("</color></size>");
             if (p.cost > 0) sb.Append(p.canAfford ? "　<color=#ffd98a>" : "　<color=#ff6a50>").Append("灵石 ").Append(p.cost).Append("</color>");
             if (p.lines != null)
@@ -324,7 +322,8 @@ namespace Spiritfire.Game
                 hitUntil = Time.time + 0.12f;
                 hitColor = r.crit ? new Color(1f, 0.78f, 0.25f) : Color.white;
             }
-            if (!DamageNumbers) return;
+            // 设置「伤害数字」关掉时只留命中标记（反应名等浮字不受影响）
+            if (!GameSettings.DamageNumbers.Bool) return;
             Color c = r.immune ? new Color(0.7f, 0.7f, 0.7f)
                 : r.layer == DamageLayer.Shield ? new Color(0.5f, 0.8f, 1f)
                 : r.layer == DamageLayer.Armor ? new Color(1f, 0.85f, 0.35f)

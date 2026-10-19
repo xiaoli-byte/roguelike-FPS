@@ -1,13 +1,12 @@
 using System;
 using Spiritfire.Art;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Spiritfire.Game
 {
     /// <summary>
     /// 玩家武器（Three.js 版 WeaponSystem + Firing 的切片版）：
-    ///   两个武器槽（1 / 2 / 滚轮切换，切枪 0.35 s）· 左键开火（半自动 / 全自动）· 右键开镜 · R 换弹（打空自动换）
+    ///   两个武器槽（1 / 2 / X / 滚轮切换，切枪 0.35 s）· 左键开火（半自动 / 全自动）· 右键开镜 · R 换弹（打空自动换）；按键走 <see cref="GameInput"/>，手柄同样可用
     ///   霰弹逐发装填，装填中开火立即打断。
     /// 弹道：从眼睛（准星）发射线，曳光从枪口画到命中点；扩散 = (腰射 / 开镜基础 × 移动 × 空中 + 连射累积) 的半角。
     /// 后坐：抬枪量 = pitch × (1 + 连发数 × climb) × 开镜减半 × RecoilScale，交给 <see cref="PlayerMotor.AddRecoil"/> 记成回正债。
@@ -26,6 +25,7 @@ namespace Spiritfire.Game
         public Camera eye;
         public Rig[] rigs = Array.Empty<Rig>();
         public string startWeapon = "smg";
+        /// <summary>腰射 FOV：运行时由设置「视野」覆盖（默认 80°，见 <see cref="GameSettings.Fov"/>）</summary>
         public float baseFov = 70f;
 
         public readonly WeaponInstance[] slots = new WeaponInstance[2];
@@ -68,12 +68,28 @@ namespace Spiritfire.Game
             var def = WeaponLibrary.Get(startWeapon) ?? WeaponLibrary.Get("smg");
             slots[0] = new WeaponInstance(def);
             ApplyRigs();
+            OnSetting(null);
         }
 
         StatSheet Stats => vitals ? vitals.stats : null;
 
-        void OnEnable() => RunPersistence.Register(this);
-        void OnDisable() => RunPersistence.Unregister(this);
+        void OnEnable()
+        {
+            RunPersistence.Register(this);
+            GameSettings.Changed += OnSetting;
+        }
+
+        void OnDisable()
+        {
+            RunPersistence.Unregister(this);
+            GameSettings.Changed -= OnSetting;
+        }
+
+        /// <summary>设置「视野」= 腰射 FOV（开镜按武器的 aimFov 在它上面收）</summary>
+        void OnSetting(SettingDef d)
+        {
+            if (d == null || d == GameSettings.Fov) baseFov = GameSettings.Fov.Value;
+        }
 
         /// <summary>跨关快照：两个槽的枪（定义、品质、强化、元素、弹药）和当前槽。词条由 AF 单元补进 WeaponSave</summary>
         public void Capture(RunState s)
@@ -166,17 +182,15 @@ namespace Spiritfire.Game
             var w = Active;
             if (w == null || !eye) return;
             float dt = Time.deltaTime, now = Time.time;
-            var mouse = Mouse.current;
-            var kb = Keyboard.current;
             bool canAct = (TestMode || (motor.inputEnabled && Cursor.lockState == CursorLockMode.Locked)) && (!vitals || !vitals.Dead);
             var def = w.def;
 
             // ── 切枪 ──
-            if (canAct && kb != null)
+            if (canAct)
             {
-                if (kb.digit1Key.wasPressedThisFrame) SwitchTo(0);
-                if (kb.digit2Key.wasPressedThisFrame) SwitchTo(1);
-                if (kb.xKey.wasPressedThisFrame || (mouse != null && Mathf.Abs(mouse.scroll.ReadValue().y) > 0.1f))
+                if (GameInput.Pressed(GameAction.Weapon1)) SwitchTo(0);
+                if (GameInput.Pressed(GameAction.Weapon2)) SwitchTo(1);
+                if (GameInput.Pressed(GameAction.Swap))
                     SwitchTo(slots[1 - ActiveSlot] != null ? 1 - ActiveSlot : ActiveSlot);
             }
             if (TestMode && testSwitch >= 0)
@@ -187,7 +201,7 @@ namespace Spiritfire.Game
             if (switchTimer > 0) switchTimer -= dt;
 
             // ── 开镜 ──
-            bool aimInput = TestMode ? testAim : mouse != null && mouse.rightButton.isPressed;
+            bool aimInput = TestMode ? testAim : GameInput.Down(GameAction.Aim);
             bool aiming = canAct && aimInput && !Reloading && switchTimer <= 0 && !motor.Dashing;
             aimT = Mathf.MoveTowards(aimT, aiming ? 1 : 0, dt * 7f);
             float fov = baseFov + def.aimFov * aimT;
@@ -195,10 +209,10 @@ namespace Spiritfire.Game
             motor.lookScale = Mathf.Tan(fov * 0.5f * Mathf.Deg2Rad) / Mathf.Tan(baseFov * 0.5f * Mathf.Deg2Rad);
 
             // ── 换弹 ──
-            bool fireDown = canAct && (TestMode ? testFire : mouse != null && mouse.leftButton.isPressed);
-            bool firePressed = canAct && (TestMode ? testFire && !prevTestFire : mouse != null && mouse.leftButton.wasPressedThisFrame);
+            bool fireDown = canAct && (TestMode ? testFire : GameInput.Down(GameAction.Fire));
+            bool firePressed = canAct && (TestMode ? testFire && !prevTestFire : GameInput.Pressed(GameAction.Fire));
             prevTestFire = testFire;
-            if (canAct && (TestMode ? testReload : kb != null && kb.rKey.wasPressedThisFrame)) StartReload();
+            if (canAct && (TestMode ? testReload : GameInput.Pressed(GameAction.Reload))) StartReload();
             testReload = false;
             if (w.mag <= 0 && !Reloading && w.reserve > 0 && switchTimer <= 0 && (fireDown || now - lastShot > 0.35f)) StartReload();
             if (Reloading) UpdateReload(dt, firePressed && shellReload && w.mag > 0);
@@ -233,6 +247,8 @@ namespace Spiritfire.Game
             if (!eye) return;
             if (shakeTime > 0) shakeTime -= Time.deltaTime;
             float a = Mathf.Max(shakeTime > 0 ? shakeAmp * Mathf.Clamp01(shakeTime / 0.12f) : 0, CameraShake.Current);
+            if (a <= 0) return;
+            a *= GameSettings.ScreenShake.Value;
             if (a <= 0) return;
             float t = Time.time * 40f;
             eye.transform.localRotation *= Quaternion.Euler(

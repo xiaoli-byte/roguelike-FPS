@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Spiritfire.Art;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -46,11 +47,9 @@ namespace Spiritfire.Game
         public static void Poll()
         {
             if (!Enabled) return;
-            var kb = Keyboard.current;
-            if (kb == null) return;
             foreach (var c in All)
             {
-                if (c.Hotkey == Key.None || !kb[c.Hotkey].wasPressedThisFrame) continue;
+                if (!GameInput.KeyPressed(c.Hotkey)) continue;
                 if (c.PlayingOnly && !GameStateMachine.IsPlaying) continue;
                 Execute(c);
             }

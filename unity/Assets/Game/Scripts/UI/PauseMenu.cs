@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Spiritfire.Art;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace Spiritfire.Game
@@ -137,10 +136,9 @@ namespace Spiritfire.Game
 
         void Update()
         {
-            var mouse = Mouse.current;
             var hud = Hud.Instance;
-            if (mouse == null || !hud) return;
-            var pos = mouse.position.ReadValue();
+            if (!hud) return;
+            var pos = GameInput.PointerPosition;
             int h = -1;
             for (int i = 0; i < targets.Count; i++)
                 if (RectTransformUtility.RectangleContainsScreenPoint(targets[i], pos, hud.cam)) h = i;
@@ -151,8 +149,8 @@ namespace Spiritfire.Game
                 hover = h;
                 Refresh();
             }
-            if (mouse.leftButton.wasPressedThisFrame) pressed = at;
-            if (!mouse.leftButton.wasReleasedThisFrame) return;
+            if (GameInput.Pressed(UIAction.Click)) pressed = at;
+            if (!GameInput.Released(UIAction.Click)) return;
             int clicked = pressed == at ? at : -2;
             pressed = -2;
             if (clicked >= 0 && clicked < Levels.Length) Choose(Levels[clicked]);

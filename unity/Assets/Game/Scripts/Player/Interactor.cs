@@ -1,11 +1,10 @@
 using System;
 using Spiritfire.Art;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Spiritfire.Game
 {
-    /// <summary>玩家交互：每帧挑一个可交互物，在 HUD 上提示「[F] …」，按 F 触发。测试用 testInteract 代替按键</summary>
+    /// <summary>玩家交互：每帧挑一个可交互物，在 HUD 上显示它的提示卡（[F] …），按交互键（F / 手柄 Y）触发。测试用 testInteract 代替按键</summary>
     public sealed class Interactor : MonoBehaviour
     {
         public static bool TestMode;
@@ -36,8 +35,7 @@ namespace Spiritfire.Game
                 GameUI.SetPrompt(card);
             }
             if (Current == null) return;
-            var kb = Keyboard.current;
-            if (TestMode ? testInteract : kb != null && kb.fKey.wasPressedThisFrame)
+            if (TestMode ? testInteract : GameInput.Pressed(GameAction.Interact))
             {
                 testInteract = false;
                 Current.Interact();

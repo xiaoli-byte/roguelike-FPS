@@ -1,7 +1,6 @@
 using System;
 using Spiritfire.Art;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Spiritfire.Game
 {
@@ -159,8 +158,7 @@ namespace Spiritfire.Game
 
         void Update()
         {
-            var kb = Keyboard.current;
-            bool g = TestMode ? testSkill : kb != null && kb.gKey.wasPressedThisFrame;
+            bool g = TestMode ? testSkill : GameInput.Pressed(GameAction.PetSkill);
             testSkill = false;
             if (!g || !Current) return;
             bool canAct = (TestMode || (Motor && Motor.inputEnabled && Cursor.lockState == CursorLockMode.Locked)) && Vitals && !Vitals.Dead && Time.timeScale > 0;

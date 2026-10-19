@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Spiritfire.Art
 {
@@ -47,7 +46,7 @@ namespace Spiritfire.Art
             move = Mathf.Lerp(move, Mathf.Clamp01(planar / 5f), 1 - Mathf.Exp(-8 * dt));
             bobPhase += dt * (6f + 4f * move);
 
-            var d = Mouse.current != null ? Mouse.current.delta.ReadValue() : Vector2.zero;
+            var d = Application.isPlaying ? GameInput.LookDelta : Vector2.zero;
             swayX = Mathf.Lerp(swayX, Mathf.Clamp(-d.x * swayAmount, -0.05f, 0.05f), 1 - Mathf.Exp(-10 * dt));
             swayY = Mathf.Lerp(swayY, Mathf.Clamp(-d.y * swayAmount, -0.05f, 0.05f), 1 - Mathf.Exp(-10 * dt));
 

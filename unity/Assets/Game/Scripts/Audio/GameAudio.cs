@@ -49,8 +49,24 @@ namespace Spiritfire.Game
         static GameAudio instance;
         static bool failed;
 
-        /// <summary>设置里的音量（0..1）</summary>
+        /// <summary>设置里的音量（0..1），跟着 <see cref="GameSettings"/> 走</summary>
         public static float MasterVolume = 1, SfxVolume = 1, MusicVolume = 1;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void BindSettings()
+        {
+            GameSettings.Changed -= OnSetting;
+            GameSettings.Changed += OnSetting;
+            OnSetting(null);
+        }
+
+        static void OnSetting(SettingDef d)
+        {
+            if (d != null && d != GameSettings.MasterVolume && d != GameSettings.MusicVolume && d != GameSettings.SfxVolume) return;
+            MasterVolume = GameSettings.MasterVolume.Value;
+            MusicVolume = GameSettings.MusicVolume.Value;
+            SfxVolume = GameSettings.SfxVolume.Value;
+        }
 
         readonly Dictionary<string, Def> defs = new();
         readonly Dictionary<string, float> lastPlayed = new(), lastEnemy = new();

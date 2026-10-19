@@ -1,7 +1,6 @@
 using System;
 using Spiritfire.Art;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Spiritfire.Game
 {
@@ -164,9 +163,8 @@ namespace Spiritfire.Game
                 s.Tick(dt);
             }
             bool canAct = (TestMode || (Motor.inputEnabled && Cursor.lockState == CursorLockMode.Locked)) && Vitals && !Vitals.Dead;
-            var kb = Keyboard.current;
-            bool q = TestMode ? testQ : kb != null && kb.qKey.wasPressedThisFrame;
-            bool e = TestMode ? testE : kb != null && kb.eKey.wasPressedThisFrame;
+            bool q = TestMode ? testQ : GameInput.Pressed(GameAction.SkillQ);
+            bool e = TestMode ? testE : GameInput.Pressed(GameAction.SkillE);
             testQ = testE = false;
             if (!canAct) return;
             if (q) TryCast(SkillSlot.Primary);
