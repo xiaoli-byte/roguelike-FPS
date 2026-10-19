@@ -1,0 +1,151 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SK_Enemy_Aoyin",
+  "kind": "skeletal",
+  "class": "enemy_large",
+  "category": "characters",
+  "bind": {
+    "source": "enemy",
+    "id": "aoyin"
+  },
+  "keepGlow": "all",
+  "lodDistance": [
+    0,
+    18,
+    40
+  ],
+  "budget": {
+    "lodTris": [
+      12000,
+      5000,
+      2000
+    ],
+    "texture": 2048,
+    "maxFileKb": 3000
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -0.718856930732727,
+      -0.0009449275676161051,
+      -1.2112849950790405
+    ],
+    "max": [
+      0.7175323963165283,
+      3.000002384185791,
+      1.2124147415161133
+    ]
+  },
+  "rig": {
+    "type": "generic",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": [
+      "root",
+      "hips",
+      "haunch_L",
+      "thigh_L",
+      "shin_L",
+      "hhoof_L",
+      "haunch_R",
+      "thigh_R",
+      "shin_R",
+      "hhoof_R",
+      "spine",
+      "chest",
+      "neck",
+      "head",
+      "horn_L",
+      "horn_R",
+      "orb",
+      "scapula_L",
+      "upperarm_L",
+      "forearm_L",
+      "fhoof_L",
+      "scapula_R",
+      "upperarm_R",
+      "forearm_R",
+      "fhoof_R",
+      "tail_1",
+      "tail_2",
+      "tail_3"
+    ]
+  },
+  "meshes": [
+    {
+      "name": "SK_Enemy_Aoyin_LOD0",
+      "lod": 0,
+      "tris": 11819,
+      "verts": 17562,
+      "materials": [
+        "M_Enemy_Aoyin"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_Aoyin_LOD1",
+      "lod": 1,
+      "tris": 4925,
+      "verts": 9393,
+      "materials": [
+        "M_Enemy_Aoyin"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_Aoyin_LOD2",
+      "lod": 2,
+      "tris": 1970,
+      "verts": 3784,
+      "materials": [
+        "M_Enemy_Aoyin"
+      ],
+      "skinned": true
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Enemy_Aoyin",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Enemy_Aoyin_BC.png",
+        "ORM": "Textures/T_Enemy_Aoyin_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/characters/SK_Enemy_Aoyin.glb",
+    "sha256": "e76c803699fc24b655f5876616161c2d82377c8cb090a275bad0fc68f8728fdb",
+    "hiRes": false,
+    "version": {
+      "native_build": 2
+    },
+    "generator": {
+      "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+      "mode": "tripo_native",
+      "checkpoint": "P2.0"
+    },
+    "license": null
+  },
+  "exported": "2026-10-19 20:40:59"
+}
