@@ -1,0 +1,309 @@
+{
+  "asset": "SK_Enemy_Marmot",
+  "version": 4,
+  "glb": "art/source/characters/SK_Enemy_Marmot/04_export/SK_Enemy_Marmot_native_v004.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.1,
+      "自定义骨架：29 根骨骼（热扩散权重，52 个顶点未覆盖）": 0.2,
+      "贴图（BC + AO/ORM）": 5.8,
+      "LOD 与蒙皮上限 5910 / 2462 / 985": 0.2,
+      "导出 327 KB": 0.6
+    },
+    "source": {
+      "verts": 4941,
+      "tris": 6953,
+      "scale": 0.7503663898387885
+    },
+    "regions": {
+      "heat_unweighted_verts": 52,
+      "weights": "segments",
+      "head_verts": 325,
+      "fallback_verts": 0,
+      "per_bone": {
+        "hips": 91,
+        "haunch_L": 72,
+        "haunch_R": 70,
+        "spine": 10,
+        "chest": 21,
+        "scapula_L": 170,
+        "scapula_R": 159,
+        "neck": 46,
+        "head": 434,
+        "ear_L": 122,
+        "ear_R": 111,
+        "upperarm_L": 47,
+        "forearm_L": 183,
+        "paw_L": 218,
+        "upperarm_R": 39,
+        "forearm_R": 193,
+        "paw_R": 222,
+        "thigh_L": 44,
+        "shin_L": 40,
+        "foot_L": 303,
+        "thigh_R": 56,
+        "shin_R": 33,
+        "foot_R": 328,
+        "tail_1": 31,
+        "tail_2": 10,
+        "tail_3": 17,
+        "tail_4": 34
+      }
+    },
+    "bones": [
+      "chest",
+      "ear_L",
+      "ear_R",
+      "foot_L",
+      "foot_R",
+      "forearm_L",
+      "forearm_R",
+      "haunch_L",
+      "haunch_R",
+      "head",
+      "hips",
+      "neck",
+      "orb",
+      "paw_L",
+      "paw_R",
+      "root",
+      "scapula_L",
+      "scapula_R",
+      "shin_L",
+      "shin_R",
+      "spine",
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "tail_4",
+      "thigh_L",
+      "thigh_R",
+      "upperarm_L",
+      "upperarm_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.868,
+      "shade_mean": 0.927
+    },
+    "textures": {
+      "size": 1024,
+      "ao_mean": 0.8,
+      "provider_pbr": [],
+      "roughness_mean": 0.75,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Enemy_Marmot_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_Marmot_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_Marmot_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Enemy_Marmot_LOD0",
+        "tris": 5910,
+        "uv_min": [
+          0.0,
+          0.0
+        ],
+        "uv_max": [
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "SK_Enemy_Marmot_LOD1",
+        "tris": 2462,
+        "uv_min": [
+          0.0,
+          0.0
+        ],
+        "uv_max": [
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "SK_Enemy_Marmot_LOD2",
+        "tris": 985,
+        "uv_min": [
+          4.8726422392064705e-05,
+          0.005142928101122379
+        ],
+        "uv_max": [
+          1.0,
+          0.999755859375
+        ]
+      }
+    ],
+    "glb_kb": 327,
+    "_seconds": 8.4
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "327 KB / 1600 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Enemy_Marmot_LOD0', 'SK_Enemy_Marmot_LOD1', 'SK_Enemy_Marmot_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "5910 / 6000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "2462 / 2500"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "985 / 1000"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "0.750 m (design 0.75 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Enemy_Marmot']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Marmot_ORM",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Marmot_BC",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "29 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Marmot_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Marmot_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Marmot_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Marmot_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Marmot_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Marmot_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Marmot_LOD0 UV range",
+      "[0.0, 0.0]..[1.0, 1.0]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Marmot_LOD1 UV range",
+      "[0.0, 0.0]..[1.0, 1.0]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Marmot_LOD2 UV range",
+      "[0.0, 0.005]..[1.0, 1.0]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "52 verts"
+    ],
+    [
+      "pass",
+      "region head",
+      "325 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "0 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

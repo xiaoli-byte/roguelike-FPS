@@ -1,0 +1,152 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SK_Enemy_Marmot",
+  "kind": "skeletal",
+  "class": "enemy_swarm",
+  "category": "characters",
+  "bind": {
+    "source": "enemy",
+    "id": "marmot"
+  },
+  "keepGlow": "all",
+  "lodDistance": [
+    0,
+    12,
+    26
+  ],
+  "budget": {
+    "lodTris": [
+      6000,
+      2500,
+      1000
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -0.26240548491477966,
+      0,
+      -0.3050195872783661
+    ],
+    "max": [
+      0.26215195655822754,
+      0.75,
+      0.3050195872783661
+    ]
+  },
+  "rig": {
+    "type": "generic",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": [
+      "root",
+      "hips",
+      "haunch_L",
+      "thigh_L",
+      "shin_L",
+      "foot_L",
+      "haunch_R",
+      "thigh_R",
+      "shin_R",
+      "foot_R",
+      "spine",
+      "chest",
+      "neck",
+      "head",
+      "ear_L",
+      "ear_R",
+      "scapula_L",
+      "upperarm_L",
+      "forearm_L",
+      "paw_L",
+      "scapula_R",
+      "upperarm_R",
+      "forearm_R",
+      "paw_R",
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "tail_4",
+      "orb"
+    ]
+  },
+  "meshes": [
+    {
+      "name": "SK_Enemy_Marmot_LOD0",
+      "lod": 0,
+      "tris": 5910,
+      "verts": 4393,
+      "materials": [
+        "M_Enemy_Marmot"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_Marmot_LOD1",
+      "lod": 1,
+      "tris": 2462,
+      "verts": 2367,
+      "materials": [
+        "M_Enemy_Marmot"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_Marmot_LOD2",
+      "lod": 2,
+      "tris": 985,
+      "verts": 1197,
+      "materials": [
+        "M_Enemy_Marmot"
+      ],
+      "skinned": true
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Enemy_Marmot",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Enemy_Marmot_BC.png",
+        "ORM": "Textures/T_Enemy_Marmot_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/characters/SK_Enemy_Marmot@hi.glb",
+    "sha256": "71f035841e3bc04816d61b6033ba5a963f29b2d05d760e5a3e805c2b751637b4",
+    "hiRes": true,
+    "version": {
+      "native_build": 4
+    },
+    "generator": {
+      "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+      "mode": "tripo_native",
+      "checkpoint": "P2.0"
+    },
+    "license": null
+  },
+  "exported": "2026-10-19 20:17:03"
+}
