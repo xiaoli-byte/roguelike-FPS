@@ -1,0 +1,321 @@
+{
+  "asset": "SK_Enemy_Tiangou",
+  "version": 1,
+  "glb": "art/source/characters/SK_Enemy_Tiangou/04_export/SK_Enemy_Tiangou_native_v001.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.2,
+      "自定义骨架：32 根骨骼（热扩散权重，9539 个顶点未覆盖）": 0.1,
+      "贴图（BC + AO/ORM）": 5.4,
+      "LOD 与蒙皮上限 5909 / 2462 / 985": 0.3,
+      "导出 475 KB": 0.8
+    },
+    "source": {
+      "verts": 9539,
+      "tris": 6688,
+      "scale": 1.418703612073231
+    },
+    "regions": {
+      "heat_unweighted_verts": 9539,
+      "weights": "segments",
+      "ground_verts": 1337,
+      "head_verts": 321,
+      "fallback_verts": 0,
+      "per_bone": {
+        "hips": 99,
+        "spine": 4,
+        "chest": 26,
+        "neck": 474,
+        "head": 1111,
+        "ear_L": 232,
+        "ear_R": 246,
+        "scapula_L": 157,
+        "upperarm_L": 89,
+        "forearm_L": 310,
+        "paw_L": 675,
+        "scapula_R": 93,
+        "upperarm_R": 99,
+        "forearm_R": 317,
+        "paw_R": 659,
+        "haunch_L": 142,
+        "thigh_L": 126,
+        "shin_L": 265,
+        "foot_L": 297,
+        "toe_L": 444,
+        "haunch_R": 97,
+        "thigh_R": 128,
+        "shin_R": 241,
+        "foot_R": 277,
+        "toe_R": 422,
+        "tail_1": 92,
+        "tail_2": 61,
+        "tail_3": 71,
+        "tail_4": 93,
+        "tail_5": 74
+      }
+    },
+    "bones": [
+      "chest",
+      "ear_L",
+      "ear_R",
+      "foot_L",
+      "foot_R",
+      "forearm_L",
+      "forearm_R",
+      "haunch_L",
+      "haunch_R",
+      "head",
+      "hips",
+      "neck",
+      "paw_L",
+      "paw_R",
+      "root",
+      "rune",
+      "scapula_L",
+      "scapula_R",
+      "shin_L",
+      "shin_R",
+      "spine",
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "tail_4",
+      "tail_5",
+      "thigh_L",
+      "thigh_R",
+      "toe_L",
+      "toe_R",
+      "upperarm_L",
+      "upperarm_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.969,
+      "shade_mean": 0.97
+    },
+    "textures": {
+      "size": 1024,
+      "ao_mean": 0.902,
+      "provider_pbr": [],
+      "roughness_mean": 0.75,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Enemy_Tiangou_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_Tiangou_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_Tiangou_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Enemy_Tiangou_LOD0",
+        "tris": 5909,
+        "uv_min": [
+          0.00146484375,
+          0.0014572530053555965
+        ],
+        "uv_max": [
+          0.99853515625,
+          0.98876953125
+        ]
+      },
+      {
+        "name": "SK_Enemy_Tiangou_LOD1",
+        "tris": 2462,
+        "uv_min": [
+          0.00146484375,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.998291015625,
+          0.988525390625
+        ]
+      },
+      {
+        "name": "SK_Enemy_Tiangou_LOD2",
+        "tris": 985,
+        "uv_min": [
+          0.0017268623923882842,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.9706521034240723,
+          0.949462890625
+        ]
+      }
+    ],
+    "glb_kb": 475,
+    "_seconds": 8.2
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "475 KB / 1600 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Enemy_Tiangou_LOD0', 'SK_Enemy_Tiangou_LOD1', 'SK_Enemy_Tiangou_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "5909 / 6000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "2462 / 2500"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "985 / 1000"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "1.401 m (design 1.4 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Enemy_Tiangou']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Tiangou_ORM",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Tiangou_BC",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "32 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Tiangou_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Tiangou_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Tiangou_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Tiangou_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Tiangou_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Tiangou_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Tiangou_LOD0 UV range",
+      "[0.001, 0.001]..[0.999, 0.989]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Tiangou_LOD1 UV range",
+      "[0.001, 0.001]..[0.998, 0.989]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Tiangou_LOD2 UV range",
+      "[0.002, 0.001]..[0.971, 0.949]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "9539 verts"
+    ],
+    [
+      "pass",
+      "region ground",
+      "1337 verts"
+    ],
+    [
+      "pass",
+      "region head",
+      "321 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "0 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

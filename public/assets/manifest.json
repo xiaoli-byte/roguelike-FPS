@@ -10266,7 +10266,99 @@
       "source_task": "https://studio.tripo3d.ai/zh/workspace/generate/c8366a78-c016-45b0-8fa5-7bd87e15a090",
       "hiUrl": "assets/characters/SK_Enemy_Marmot@hi.glb",
       "hiBytes": 695416
+    },
+    "SK_Enemy_Tiangou": {
+      "url": "assets/characters/SK_Enemy_Tiangou.glb",
+      "kind": "skeletal",
+      "class": "enemy_swarm",
+      "bind": {
+        "source": "enemy",
+        "id": "tiangou"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        12,
+        26
+      ],
+      "skeleton": {
+        "mode": "native",
+        "convention": "creature",
+        "joints": 32
+      },
+      "bounds": {
+        "min": [
+          -0.20591048896312714,
+          0,
+          -0.7090054750442505
+        ],
+        "max": [
+          0.20583179593086243,
+          1.4014850854873657,
+          0.7090054750442505
+        ]
+      },
+      "version": {
+        "native_build": 2
+      },
+      "sha256": "48eb565041b7ba9703129471dda8b6fc05dc39d63796e79a5ed0dfde9f1d317d",
+      "bytes": 486076,
+      "published": "2026-10-19 20:22:21",
+      "generator": {
+        "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+        "mode": "tripo_native",
+        "checkpoint": "P2.0"
+      },
+      "source_task": "https://studio.tripo3d.ai/zh/workspace/generate/1df6ca54-eddb-4940-bff1-4913ab092891",
+      "hiUrl": "assets/characters/SK_Enemy_Tiangou@hi.glb",
+      "hiBytes": 886588
+    },
+    "SK_Enemy_Jufu": {
+      "url": "assets/characters/SK_Enemy_Jufu.glb",
+      "kind": "skeletal",
+      "class": "enemy_standard",
+      "bind": {
+        "source": "enemy",
+        "id": "jufu"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        14,
+        30
+      ],
+      "skeleton": {
+        "mode": "native",
+        "convention": "creature",
+        "joints": 26
+      },
+      "bounds": {
+        "min": [
+          -0.5202491879463196,
+          0,
+          -0.3661700487136841
+        ],
+        "max": [
+          0.5202491879463196,
+          1.9001551866531372,
+          0.3661700487136841
+        ]
+      },
+      "version": {
+        "native_build": 2
+      },
+      "sha256": "8cdcbb88d65470d2e6ee5f167aabc11207c7a386aa42f65805616ee2ad7f0935",
+      "bytes": 450872,
+      "published": "2026-10-19 20:23:12",
+      "generator": {
+        "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+        "mode": "tripo_native",
+        "checkpoint": "P2.0"
+      },
+      "source_task": "https://studio.tripo3d.ai/zh/workspace/generate/af66035a-fb17-41e3-b2dd-d7ad19343deb",
+      "hiUrl": "assets/characters/SK_Enemy_Jufu@hi.glb",
+      "hiBytes": 929340
     }
   },
-  "updated": "2026-10-19 20:17:00"
+  "updated": "2026-10-19 20:30:00"
 }
