@@ -7,8 +7,9 @@ namespace Spiritfire.Art
     public enum ArtQualityLevel { Low = 0, Medium = 1, High = 2 }
 
     /// <summary>
-    /// 美术画质：低 = 不加毛发；中 = 风格化着色里的毛发细节（顺毛向的发丝明暗、各向异性光泽、剪影绒边，几乎不加开销）；
-    /// 高 = 再给近处（LOD0）的毛 / 羽叠壳层（<see cref="FurShells"/>，每层多一次蒙皮网格绘制）。
+    /// 美术画质：低 = 不加毛发；中 = 风格化着色里的毛发细节（顺毛向的发丝明暗、各向异性光泽、剪影绒边）
+    /// + 轮廓发丝面片（fins：只在轮廓附近显示，其余面片在顶点着色器里收掉，开销很小）；
+    /// 高 = 再给近处（LOD0）的毛 / 羽叠 16 层壳（<see cref="FurShells"/>，每层多一次蒙皮网格绘制）。
     /// 存在 PlayerPrefs；没存过时按 Unity 画质档推断（Mobile → 低，其余 → 高）。改档时广播 <see cref="Changed"/>，
     /// 着色器的全局开关 _SFFurDetail 同步设置。
     /// </summary>
@@ -69,6 +70,9 @@ namespace Spiritfire.Art
 
         /// <summary>当前档下一个资产的毛发壳层数（<paramref name="high"/> = 它在「高」档的层数）</summary>
         public static int FurShells(int high) => Level == ArtQualityLevel.High ? high : 0;
+
+        /// <summary>轮廓发丝面片（fins）：画质「中」以上</summary>
+        public static bool FurFins => Level >= ArtQualityLevel.Medium;
 
         public static string Label(ArtQualityLevel l) => l switch
         {

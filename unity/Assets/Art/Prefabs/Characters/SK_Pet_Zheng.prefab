@@ -117,8 +117,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.046553757
-  m_Height: 0.24216782
+  m_Radius: 0.04930318
+  m_Height: 0.24766667
   m_Direction: 1
   m_Center: {x: 0.0000000018626451, y: 0.07453017, z: -0.000000031664964}
 --- !u!54 &8419449407278676448
@@ -129,7 +129,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 234489198033096021}
   serializedVersion: 5
-  m_Mass: 0.91340667
+  m_Mass: 1.0244826
   m_LinearDamping: 0.1
   m_AngularDamping: 0.6
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -310,8 +310,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.01999999
-  m_Height: 0.122764684
+  m_Radius: 0.023143753
+  m_Height: 0.1290522
   m_Direction: 1
   m_Center: {x: 0, y: 0.04138235, z: -0.000000040978193}
 --- !u!54 &9018557894423391609
@@ -441,8 +441,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.046545412
-  m_Height: 0.24215117
+  m_Radius: 0.046186827
+  m_Height: 0.24143401
   m_Direction: 1
   m_Center: {x: 0.0000000074505815, y: 0.07453019, z: -0.0000000055879354}
 --- !u!54 &3204872712449569226
@@ -453,7 +453,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1310387007934595918}
   serializedVersion: 5
-  m_Mass: 0.9130789
+  m_Mass: 0.8990644
   m_LinearDamping: 0.1
   m_AngularDamping: 0.6
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -572,8 +572,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.042809792
-  m_Height: 0.15579796
+  m_Radius: 0.03715783
+  m_Height: 0.14449403
   m_Direction: 1
   m_Center: {x: -0.0000000051222746, y: 0.035089195, z: 0}
 --- !u!54 &6170189475331243639
@@ -584,7 +584,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1377203847682473556}
   serializedVersion: 5
-  m_Mass: 0.3636482
+  m_Mass: 0.3
   m_LinearDamping: 0.1
   m_AngularDamping: 0.6
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -701,8 +701,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Spiritfire.Art.Runtime::Spiritfire.Art.FurShells
   target: {fileID: 931328297831179722}
   shellTemplate: {fileID: 2100000, guid: 452971dd27ab52241b6d1bedddf16bc1, type: 2}
-  shellsHigh: 10
+  shellsHigh: 16
   kind: fur
+  finRenderer: {fileID: 6234038126112966356}
 --- !u!205 &2174401838621376984
 LODGroup:
   m_ObjectHideFlags: 0
@@ -711,8 +712,8 @@ LODGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1437025304230465863}
   serializedVersion: 3
-  m_LocalReferencePoint: {x: 0.0015185475, y: 0.40750325, z: 0.0069648325}
-  m_Size: 0.9163344
+  m_LocalReferencePoint: {x: 0.0018550754, y: 0.40821785, z: 0.0068891346}
+  m_Size: 0.9890374
   m_FadeMode: 1
   m_AnimateCrossFading: 1
   m_LastLODIsBillboard: 0
@@ -721,6 +722,7 @@ LODGroup:
     fadeTransitionWidth: 0
     renderers:
     - renderer: {fileID: 931328297831179722}
+    - renderer: {fileID: 6234038126112966356}
   - screenRelativeHeight: 0.020237736
     fadeTransitionWidth: 0
     renderers:
@@ -920,8 +922,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.032953765
-  m_Height: 0.12552296
+  m_Radius: 0.035220932
+  m_Height: 0.13005729
   m_Direction: 1
   m_Center: {x: -0.000000011175874, y: 0.029807728, z: 0.000000054948025}
 --- !u!54 &5451622936345236872
@@ -1083,8 +1085,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.026298223
-  m_Height: 0.13670944
+  m_Radius: 0.026024228
+  m_Height: 0.13616145
   m_Direction: 1
   m_Center: {x: 0.000000018626453, y: 0.042056464, z: 0.00000004284084}
 --- !u!54 &4167036665208934327
@@ -1214,8 +1216,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.027987018
-  m_Height: 0.124450274
+  m_Radius: 0.026734918
+  m_Height: 0.121946074
   m_Direction: 1
   m_Center: {x: -0.000000006519256, y: 0.034238115, z: 0.000000027939674}
 --- !u!54 &7083633174057038062
@@ -1345,8 +1347,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.02362913
-  m_Height: 0.14666155
+  m_Radius: 0.02511023
+  m_Height: 0.14962375
   m_Direction: 1
   m_Center: {x: 0.00000002002344, y: 0.049701575, z: 0.000000009313227}
 --- !u!54 &5517861228214877636
@@ -1607,8 +1609,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.036726892
-  m_Height: 0.1330692
+  m_Radius: 0.032936104
+  m_Height: 0.12548763
   m_Direction: 1
   m_Center: {x: 0.000000009313226, y: 0.029807722, z: 0.000000040978183}
 --- !u!54 &7755080507125865835
@@ -1738,8 +1740,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.02958594
-  m_Height: 0.16156316
+  m_Radius: 0.030532967
+  m_Height: 0.1634572
   m_Direction: 1
   m_Center: {x: 7.382983e-15, y: 0.051195614, z: 0.000000016763808}
 --- !u!54 &7986930609196720973
@@ -1869,8 +1871,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.022491097
-  m_Height: 0.14206976
+  m_Radius: 0.021407813
+  m_Height: 0.13990319
   m_Direction: 1
   m_Center: {x: 0.000000011175879, y: 0.048543762, z: 0.000000035506673}
 --- !u!54 &2826654076722016800
@@ -2463,8 +2465,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.023958137
-  m_Height: 0.14731953
+  m_Radius: 0.028871499
+  m_Height: 0.15714626
   m_Direction: 1
   m_Center: {x: -0.000000011175873, y: 0.049701564, z: 0}
 --- !u!54 &3306299855545813747
@@ -2625,8 +2627,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.025936367
-  m_Height: 0.11823538
+  m_Radius: 0.025950132
+  m_Height: 0.11826291
   m_Direction: 1
   m_Center: {x: 0.000000012107195, y: 0.033181313, z: 0.0000000130385205}
 --- !u!54 &4283095538753769434
@@ -2969,8 +2971,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.0407989
-  m_Height: 0.21825424
+  m_Radius: 0.040350668
+  m_Height: 0.21735777
   m_Direction: 1
   m_Center: {x: 0.0000000055879363, y: 0.068328224, z: 0.000000019557774}
 --- !u!54 &1352134474110429044
@@ -2981,7 +2983,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4553650300834706620}
   serializedVersion: 5
-  m_Mass: 0.6431598
+  m_Mass: 0.6291055
   m_LinearDamping: 0.1
   m_AngularDamping: 0.6
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -3378,8 +3380,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.037166454
-  m_Height: 0.14451124
+  m_Radius: 0.03818903
+  m_Height: 0.14655639
   m_Direction: 1
   m_Center: {x: 4.6566134e-10, y: 0.035089165, z: -0.0000000111758744}
 --- !u!54 &5151166414853860155
@@ -3455,6 +3457,157 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!1 &5398936305420010107
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6197949553937525618}
+  - component: {fileID: 6234038126112966356}
+  m_Layer: 7
+  m_Name: SK_Pet_Zheng_FurFins
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6197949553937525618
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5398936305420010107}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.000000053385076, y: 0.7071068, z: -0.70710677, w: -0.00000005338508}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3079081923896231308}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!137 &6234038126112966356
+SkinnedMeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5398936305420010107}
+  m_Enabled: 0
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 3
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 56f34f937f70b5c4d8ea0e1df776ed48, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  serializedVersion: 2
+  m_Quality: 0
+  m_UpdateWhenOffscreen: 0
+  m_SkinnedMotionVectors: 1
+  m_Mesh: {fileID: 3246715690000115731, guid: 7ff74edaab400884dafc7552de68f620, type: 3}
+  m_Bones:
+  - {fileID: 300799220840172310}
+  - {fileID: 7420164598295376785}
+  - {fileID: 3207268065472958182}
+  - {fileID: 937822937875165382}
+  - {fileID: 2239862045577789581}
+  - {fileID: 8824830325349083293}
+  - {fileID: 759651334649931193}
+  - {fileID: 25428910562845418}
+  - {fileID: 212568525131678078}
+  - {fileID: 5461826598520900268}
+  - {fileID: 7994369109678442497}
+  - {fileID: 9118281106279634634}
+  - {fileID: 1236140981191483652}
+  - {fileID: 2438766345132943}
+  - {fileID: 682186629470458594}
+  - {fileID: 5870454792992881345}
+  - {fileID: 4759178957550715591}
+  - {fileID: 2761028195061813172}
+  - {fileID: 6572913664008731540}
+  - {fileID: 3283666407075623734}
+  - {fileID: 1941431389414219899}
+  - {fileID: 4759415386174448598}
+  - {fileID: 6055217139612772793}
+  - {fileID: 8110835575736525426}
+  - {fileID: 3397845266911204896}
+  - {fileID: 5756729600215241176}
+  - {fileID: 4136834807864937583}
+  - {fileID: 7565405269050211489}
+  - {fileID: 5107856694311813840}
+  - {fileID: 8130533889810457014}
+  - {fileID: 1669193318270081528}
+  - {fileID: 3926767916484517755}
+  - {fileID: 4657300866179712739}
+  - {fileID: 7887625268457201655}
+  - {fileID: 70845674217828556}
+  - {fileID: 7354359493503210723}
+  - {fileID: 7933524179699289004}
+  - {fileID: 1033803965311021573}
+  - {fileID: 6333022927416720111}
+  - {fileID: 5702911366454087717}
+  - {fileID: 9120091603027569841}
+  - {fileID: 9055287348235833178}
+  - {fileID: 1983340609522966870}
+  - {fileID: 5822566320700670438}
+  - {fileID: 37448814273421816}
+  - {fileID: 500680320228851230}
+  - {fileID: 752185723965461662}
+  - {fileID: 2995340787542303715}
+  - {fileID: 5711213208429941143}
+  - {fileID: 4105116315553285099}
+  - {fileID: 4525791289868564961}
+  - {fileID: 7307888650760231878}
+  - {fileID: 4711742684375496896}
+  - {fileID: 1612116240853147677}
+  - {fileID: 3986697679721882232}
+  - {fileID: 3074300503623252278}
+  - {fileID: 7775420334970527450}
+  - {fileID: 6970102360159835787}
+  - {fileID: 8191245847861236731}
+  m_BlendShapeWeights: []
+  m_RootBone: {fileID: 300799220840172310}
+  m_AABB:
+    m_Center: {x: -0.0018550754, y: 0.40821785, z: -0.0068890005}
+    m_Extent: {x: 0.33011854, y: 0.49451864, z: 0.43682474}
+  m_DirtyAABB: 0
 --- !u!1 &5407011111271046241
 GameObject:
   m_ObjectHideFlags: 0
@@ -3987,6 +4140,7 @@ Transform:
   - {fileID: 7889940322235423739}
   - {fileID: 7044721833596948353}
   - {fileID: 6792459551043926541}
+  - {fileID: 6197949553937525618}
   m_Father: {fileID: 6337862561273362061}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &5870551563598207083
@@ -4218,8 +4372,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.029039824
-  m_Height: 0.12655586
+  m_Radius: 0.02901959
+  m_Height: 0.12651539
   m_Direction: 1
   m_Center: {x: 0.0000000037252899, y: 0.034238108, z: 0.000000040046874}
 --- !u!54 &2439064643020513909
@@ -4381,8 +4535,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.04091873
-  m_Height: 0.21849383
+  m_Radius: 0.041569944
+  m_Height: 0.21979627
   m_Direction: 1
   m_Center: {x: -0.0000000018626454, y: 0.06832818, z: 0.000000009313225}
 --- !u!54 &4868325858358606929
@@ -4393,7 +4547,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7360115237563478053}
   serializedVersion: 5
-  m_Mass: 0.64694375
+  m_Mass: 0.6676996
   m_LinearDamping: 0.1
   m_AngularDamping: 0.6
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -4737,8 +4891,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.026853602
-  m_Height: 0.12006972
+  m_Radius: 0.02594943
+  m_Height: 0.118261375
   m_Direction: 1
   m_Center: {x: -0.000000016763808, y: 0.03318128, z: 0.000000050291444}
 --- !u!54 &252478006414242077
@@ -4868,8 +5022,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.026059272
-  m_Height: 0.13623151
+  m_Radius: 0.025748465
+  m_Height: 0.13560991
   m_Direction: 1
   m_Center: {x: -0.000000018626453, y: 0.04205647, z: 0.000000040978193}
 --- !u!54 &6231187232035168939
@@ -5219,8 +5373,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.022146465
-  m_Height: 0.14138037
+  m_Radius: 0.02321946
+  m_Height: 0.14352636
   m_Direction: 1
   m_Center: {x: -0.0000000018626426, y: 0.048543774, z: 0.000000017229468}
 --- !u!54 &3364131654337913898

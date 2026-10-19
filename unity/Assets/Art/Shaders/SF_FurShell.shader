@@ -1,6 +1,7 @@
 // 灵火破晓 · 壳层毛发 / 羽毛（画质「高」）
 // FurShells 给 LOD0 的蒙皮渲染器追加 N 个本材质的副本（_ShellIndex = 0..N-1），每个副本把同一个已蒙皮的网格
-// 沿法线推出 (i+1)/N × _FurLength × 遮罩，再顺毛向梳、按重力下垂，片元按绑定空间的发丝图案裁掉（SF_Fur.hlsl）。
+// 沿法线推出 (i+1)/N × _FurLength × 遮罩，再顺毛向梳、按重力下垂，片元按绑定空间的发丝图案算覆盖率（SF_Fur.hlsl），
+// 经 AlphaToMask（MSAA 下的 alpha-to-coverage）写成柔边的发丝：不排序、不闪，远处渐变成平均密度的绒感。
 // 光照与身体同一套风格化模型（SFShade），明暗交界更软；根部压暗、发梢提亮，剪影上是一圈蓬松的毛边。
 // 只有 UniversalForward：壳层不投影、不进深度 / 法线预通道（SSAO 只看身体）。
 // 受击闪白、词缀着色（_FlashAmount / _Tint）由渲染器上的 MaterialPropertyBlock 统一给到每一层。
@@ -52,6 +53,7 @@ Shader "Spiritfire/FurShell"
             Tags { "LightMode"="UniversalForward" }
             ZWrite On
             Cull Back
+            AlphaToMask On
 
             HLSLPROGRAM
             #pragma target 3.5
@@ -132,6 +134,7 @@ Shader "Spiritfire/FurShell"
                 half   furMask    : TEXCOORD4;
                 half4  fogAndVertexLight : TEXCOORD5;
                 half3  furFlowBind : TEXCOORD6;
+                half3  strandWS   : TEXCOORD7; // 发丝走向（法线 + 梳向 + 下垂），给顺发丝的高光
                 UNITY_VERTEX_INPUT_INSTANCE_ID
                 UNITY_VERTEX_OUTPUT_STEREO
             };
@@ -163,6 +166,7 @@ Shader "Spiritfire/FurShell"
                 o.furBind = input.furBind.xyz;
                 o.furMask = input.furFlow.z;
                 o.furFlowBind = input.furFlowBind;
+                o.strandWS = TransformObjectToWorldDir(n + (comb * _FurComb + gravity * _FurDroop) * (2.0 * h), false);
                 o.fogAndVertexLight = half4(ComputeFogFactor(pos.positionCS.z), VertexLighting(pos.positionWS, nrm.normalWS));
                 return o;
             }
@@ -172,12 +176,14 @@ Shader "Spiritfire/FurShell"
                 UNITY_SETUP_INSTANCE_ID(i);
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
                 half h = ShellHeight();
-                clip(i.furMask - 0.08);
                 // 正对镜头的面只留最长的发丝（俯看发丝是一颗颗点，像砂纸），剪影处给满：毛感集中在轮廓上
                 half3 N = SafeNormalize(i.normalWS);
-                half facing = saturate(dot(N, GetWorldSpaceNormalizeViewDir(i.positionWS)));
+                half3 V = GetWorldSpaceNormalizeViewDir(i.positionWS);
+                half facing = saturate(dot(N, V));
                 half hEff = saturate(h + _FurFacing * facing * facing * (1.0 - h));
-                clip(SFFurCoverage(i.furBind, SafeNormalize(i.furFlowBind), _FurDensity, hEff, _FurThickness, _FurStretch));
+                half alpha = SFFurShellAlpha(i.furBind, SafeNormalize(i.furFlowBind), _FurDensity, hEff, _FurThickness, _FurStretch)
+                           * saturate((i.furMask - 0.05) * 10.0);
+                clip(alpha - 0.01);
                 #if defined(LOD_FADE_CROSSFADE)
                 LODFadeCrossFade(i.positionCS);
                 #endif
@@ -194,9 +200,13 @@ Shader "Spiritfire/FurShell"
                 half mainLit;
                 half3 color = SFShade(albedo, N, i.positionWS, i.positionCS, 1.0, 0.0, 1.0, i.fogAndVertexLight.yzw,
                                       i.fogAndVertexLight.x, st, mainLit);
+                // 顺发丝走向的 Kajiya-Kay 高光带：越靠发梢越亮，毛是一缕缕反光的，不是一层哑光的壳
+                Light furLight = GetMainLight();
+                half sheen = SFFurSheen(SafeNormalize(i.strandWS), N, V, furLight.direction, 0.0);
+                color += albedo * furLight.color * sheen * mainLit * 0.3 * h;
                 color = lerp(color, _FlashColor.rgb, _FlashAmount);
                 color = MixFog(color, i.fogAndVertexLight.x);
-                return half4(color, 1);
+                return half4(color, alpha);
             }
             ENDHLSL
         }

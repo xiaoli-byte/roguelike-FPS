@@ -211,7 +211,7 @@ Shader "Spiritfire/StylizedLit"
                 {
                     half strands = SFFurStreaks(i.furBind, SafeNormalize(i.furFlowBind), _FurDensity);
                     albedo *= lerp(1.0, 0.74 + 0.42 * strands, furMask * _FurDetailStrength);
-                    st.rampSoftness *= 1.0 + 0.6 * furMask;
+                    st.rampSoftness *= 1.0 + 0.35 * furMask;
                 }
                 #endif
 

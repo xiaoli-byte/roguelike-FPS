@@ -131,7 +131,8 @@ namespace Spiritfire.Art.Editor
                 foreach (var r in inst.GetComponentsInChildren<Renderer>(true))
                 {
                     if (r.sharedMaterials.Any(m => !m)) res.errors.Add($"{r.name} 有空材质槽");
-                    else if (r.sharedMaterials.Any(m => m.shader.name != ArtPrefabBuilder.ShaderName))
+                    else if (r.sharedMaterials.Any(m => m.shader.name != ArtPrefabBuilder.ShaderName &&
+                                                        m.shader.name != ArtPrefabBuilder.FurFinShaderName))
                         res.errors.Add($"{r.name} 没有使用 {ArtPrefabBuilder.ShaderName}");
                 }
 

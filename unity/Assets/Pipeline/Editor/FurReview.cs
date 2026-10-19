@@ -47,7 +47,7 @@ namespace Spiritfire.Art.Editor
             var hero = Object.FindObjectsByType<ArtAssetInfo>(FindObjectsSortMode.None).FirstOrDefault(i => i.assetId == "SK_Hero_RedPanda");
             var spot = (hero ? hero.transform.position : Vector3.zero) + Vector3.right * 1.3f + Vector3.back * 0.5f;
             // 样板场景里的角色排也有毛发：拍对比时统一关掉，只看摆进来的这一只
-            foreach (var f in Object.FindObjectsByType<FurShells>(FindObjectsSortMode.None)) f.Apply(0);
+            foreach (var f in Object.FindObjectsByType<FurShells>(FindObjectsSortMode.None)) f.ApplyTier(ArtQualityLevel.Low);
 
             Directory.CreateDirectory(ReviewCapture.OutDir);
             var rt = new RenderTexture(W, H, 24, RenderTextureFormat.ARGB32) { antiAliasing = 4 };
@@ -88,7 +88,7 @@ namespace Spiritfire.Art.Editor
                     for (int t = 0; t < Tiers.Length; t++)
                     {
                         ArtQuality.Set(Tiers[t], save: false);
-                        fur.Apply(ArtQuality.FurShells(fur.shellsHigh));
+                        fur.ApplyTier(Tiers[t]);
                         Shot(cam, rt, tile, full.Item1, full.Item2);
                         sheet.SetPixels(t * W, H, W, H, tile.GetPixels());
                         Shot(cam, rt, tile, close.Item1, close.Item2);

@@ -75,8 +75,8 @@ Unity 侧所有设置都从 sidecar 推导，编辑器里手改的导入设置�
 | 画质 | 效果 | 开销 |
 |---|---|---|
 | 低 | 不加毛发，和以前一样 | 0 |
-| 中 | StylizedLit 的 `_FUR` 细节：顺毛向拉长的发丝笔触、沿毛向的各向异性光泽带、剪影处的绒边，明暗交界更软 | 每像素几次值噪声，不加绘制 |
-| 高 | 再给 LOD0 叠壳层（`FurShells` + `Spiritfire/FurShell`）：毛 10 层、羽 6 层，剪影上长出一圈发丝 | 每层多画一次已蒙皮的 LOD0，例如啸獭约多 5.9 万三角面；远了 LOD 切走就没有了 |
+| 中 | StylizedLit 的 `_FUR` 细节：顺毛向拉长的发丝笔触、沿毛向的各向异性光泽带、剪影处的绒边，明暗交界更软；再加轮廓发丝面片（fins，`Spiritfire/FurFin`），轮廓上竖起一圈柔边发丝 | 细节是每像素几次值噪声；fins 多一次蒙皮绘制，但只有轮廓附近的面片会光栅化，其余在顶点着色器里收成线 |
+| 高 | 再给 LOD0 叠壳层（`FurShells` + `Spiritfire/FurShell`）：毛 16 层、羽 10 层，表面也有立体的发丝 | 每层多画一次已蒙皮的 LOD0，例如火浣鼠「高」档多约 9.5 万三角面；远了 LOD 切走就没有了 |
 
 - **毛向和遮罩是导入时自动烘的**（`FurBake`，在 `ArtImportPostprocessor.OnPostprocessModel` 里）：
   - 每个顶点的毛向是蒙皮权重加权的骨骼方向。躯干、颈、头这一组（hips / spine / chest / neck / head / body）反过来用，所以毛往后、往下顺；四肢、尾巴、耳朵、翅膀的毛顺到末端；再往下偏一点（重力）。
@@ -88,12 +88,18 @@ Unity 侧所有设置都从 sidecar 推导，编辑器里手改的导入设置�
   - `kind`：fur 或 feather。
   - `length`：毛长，缺省是身高的 2%，羽毛是 1.2%。
   - `density`：发丝格的密度，缺省 1 / (0.5 × length)。毛越长，发丝越粗越稀，大怪不会被画成一层细绒。
-  - `shells`：「高」档的壳层数。
+  - `shells`：「高」档的壳层数（缺省毛 16 / 羽 10）。
+  - `fins`：是否生成轮廓发丝面片（缺省 true）。
   - `comb` / `droop`：顺毛梳和重力下垂。
   - `stretch`：发丝沿毛向拉长的程度。
   - `facing`：正对镜头的面只留长发丝的程度。从正上方看，发丝是一颗颗点，像砂纸，所以把毛感集中到轮廓上。
   - `detail` / `sheen` / `fuzz`：「中」档的发丝笔触、光泽和绒边强度。
   - 改完以后：先 `python art/pipeline/unity_export.py <ID>`，再 Sync。sidecar 的 fur 变了会自动重新导入模型。
+- **为什么这样做**（2026-10-19 调研后重做；第一版只有硬裁剪的 10 层壳，近看是一圈锯齿噪点，读不出发丝）：
+  - Lengyel 等《Real-Time Fur over Arbitrary Surfaces》（I3D 2001）和 NVIDIA 的 shells + fins 白皮书：壳层约 16 层、层距约为模型尺寸的千分之一，层距太大会露出一层层台阶；壳层到了轮廓会变透、露缝，所以在网格边上竖垂直于表面的 fins，按 max(0, 2|p| − 1)（p = 面片法线 · 视线）只在轮廓附近淡入；发丝贴图是预滤波的半透明体，不是硬裁剪；光照用沿发丝方向 T 的 Kajiya-Kay 模型，内层按 Banks 的近似压暗。
+  - 我们的取舍：PC 档开着 4× MSAA，所以发丝用 alpha-to-coverage（`AlphaToMask On`）而不是半透明混合：不用排序，边缘由解析的覆盖率（有符号距离 / fwidth）在一个像素内过渡，柔边不闪；发丝格在屏幕上不到两个像素时，覆盖率渐变成该高度的平均值（代替贴图的 mipmap），远处是一层绒而不是噪点。发丝截面只量切平面里的距离（法线由绑定位置的屏幕导数求出），每根粗细一致。
+  - 资料：[Lengyel 2001](https://hhoppe.com/fur.pdf)、[NVIDIA Fur (Shells and Fins)](https://developer.download.nvidia.com/SDK/10.5/direct3d/Source/Fur/doc/FurShellsAndFins.pdf)、[Unity AlphaToMask](https://docs.unity3d.com/2021.3/Documentation/Manual/SL-AlphaToMask.html)、[hecomi/UnityFurURP](https://github.com/hecomi/UnityFurURP)（URP 的 shell / fin 实现参考）。
+- **fins 的实现**（`FurBake.BuildFins`）：导入时取 LOD1 的边（按位置焊接后去重，遮罩均值 ≥ 0.12），每条边一片四边形，根在边上、梢由着色器沿法线推出，并且与壳层同样顺毛梳、下垂。四个顶点沿用边两端的蒙皮权重、切线和毛发数据，所以面片跟着骨骼动；面片法线存成在端点切线框架里的分量（UV2），着色器里用蒙皮后的切线还原。生成的网格是模型资产的子资产，挂在 `<ID>_FurFins` 上；Prefab 把它放进 LOD0 组，`FurShells.finRenderer` 按画质开关。
 - **壳层的实现**：网格只有一个子网格时，多出来的材质槽会把同一个已蒙皮的网格再画一遍。所以骨骼动画、受击闪白（渲染器上的 MaterialPropertyBlock）和 LOD 交叉淡化都自动跟着，不需要几何着色器或自定义渲染通道。
   - 壳层材质按（模板，层数）缓存，同种角色的所有实例共用，SRP Batcher 照常合批。
   - 壳层只有 UniversalForward 通道：不投影，也不进深度和法线预通道。

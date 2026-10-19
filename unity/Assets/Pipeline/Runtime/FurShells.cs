@@ -21,6 +21,7 @@ namespace Spiritfire.Art
         [Tooltip("壳层材质模板（Spiritfire/FurShell），每层复制一份、只改 _ShellIndex")] public Material shellTemplate;
         [Tooltip("画质「高」时的层数")] [Range(1, 16)] public int shellsHigh = 10;
         [Tooltip("fur / feather，只用于显示")] public string kind = "fur";
+        [Tooltip("轮廓发丝面片（<ID>_FurFins，画质「中」以上打开）")] public Renderer finRenderer;
 
         Material[] baseMaterials;
         int applied = -1;
@@ -39,6 +40,7 @@ namespace Spiritfire.Art
         {
             ArtQuality.Changed -= OnQuality;
             Apply(0);
+            if (finRenderer) finRenderer.enabled = false;
         }
 
         void OnQuality(ArtQualityLevel _) => Apply();
@@ -52,8 +54,19 @@ namespace Spiritfire.Art
             baseMaterials = list.ToArray();
         }
 
-        /// <summary>按当前画质套用壳层</summary>
-        public void Apply() => Apply(ArtQuality.FurShells(shellsHigh));
+        /// <summary>按当前画质套用壳层与轮廓发丝面片</summary>
+        public void Apply()
+        {
+            Apply(ArtQuality.FurShells(shellsHigh));
+            if (finRenderer) finRenderer.enabled = ArtQuality.FurFins;
+        }
+
+        /// <summary>按指定画质档套用（截图 / 对比工具在编辑器里直接调用，不改全局画质）</summary>
+        public void ApplyTier(ArtQualityLevel tier)
+        {
+            Apply(tier == ArtQualityLevel.High ? shellsHigh : 0);
+            if (finRenderer) finRenderer.enabled = tier >= ArtQualityLevel.Medium;
+        }
 
         /// <summary>强制指定层数（0 = 关）：截图 / 对比工具在编辑器里直接调用</summary>
         public void Apply(int shells)

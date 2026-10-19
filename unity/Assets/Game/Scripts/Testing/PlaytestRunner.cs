@@ -715,6 +715,9 @@ namespace Spiritfire.Game.Testing
                 if (tiered && unity != (level == ArtQualityLevel.Low ? "Mobile" : "PC")) Fail($"画质「{ArtQuality.Label(level)}」时 Unity 渲染档是 {unity}");
                 if (detail != (level >= ArtQualityLevel.Medium ? 1 : 0)) Fail($"画质「{ArtQuality.Label(level)}」时 _SFFurDetail = {detail}");
                 if (fur && shells != expectShells) Fail($"画质「{ArtQuality.Label(level)}」时火浣鼠壳层 {shells}，应为 {expectShells}");
+                bool fins = fur && fur.finRenderer && fur.finRenderer.enabled;
+                if (fur && fur.finRenderer && fins != (level >= ArtQualityLevel.Medium))
+                    Fail($"画质「{ArtQuality.Label(level)}」时火浣鼠的轮廓发丝面片{(fins ? "开着" : "关着")}");
                 Shot(cam, $"pause_quality_{level.ToString().ToLowerInvariant()}");
             }
             session.SetPaused(false);

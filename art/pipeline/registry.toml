@@ -3637,18 +3637,19 @@ size = 0.16
 # Unity 导入时 FurBake 按骨架与蒙皮权重烘毛向（躯干 / 颈 / 头往后顺，四肢、尾巴、耳朵顺到末端）和遮罩，FurShells 按画质给 LOD0 叠壳层。
 #   kind = "fur" | "feather"；length = 最长处毛长（米，缺省身高 × 2% / 羽 1.2%）；density = 每米发丝格数（缺省 1 / (0.35 × length)）；
 #   shells = 画质「高」的层数（缺省毛 10 / 羽 6）；comb / droop = 顺毛梳 / 重力下垂；detail / sheen / fuzz = 画质「中」的发丝明暗 / 光泽 / 绒边；
-#   bones = { 骨骼名通配 = 毛长倍数 }（0 = 不长毛：爪、蹄、喙、铃铛…）；exclude = [{ center, radius }]（骨架坐标：front = -Y，左 = +X，up = +Z；眼睛、鼻口）。
+#   bones = { 骨骼名通配 = 毛长倍数 }（0 = 不长毛：爪、蹄、喙、铃铛…）；exclude = [{ center, radius } | { min, max }]（骨架坐标：front = -Y，左 = +X，up = +Z；
+#   球用于眼睛、鼻口，长方体用于鹿角这类细长部件）；fins = false 关掉轮廓发丝面片。
 # 改了以后：python art/pipeline/unity_export.py <ID> → Unity Sync（sidecar 的 fur 变了会自动重新导入模型）。
 
 [assets.SK_Pet_Huan.fur]
 kind = "fur"
-length = 0.034
+length = 0.022
 bones = { "bell" = 0.0, "paw_*" = 0.4, "foot_*" = 0.4, "head" = 0.55, "ear_*" = 0.5, "tail*" = 1.25 }
 exclude = [ { center = [0, -0.30, 0.375], radius = 0.045 }, { center = [0, -0.305, 0.33], radius = 0.03 } ]
 
 [assets.SK_Enemy_Marmot.fur]
 kind = "fur"
-length = 0.036
+length = 0.023
 bones = { "paw_*" = 0.35, "foot_*" = 0.3, "head" = 0.5, "ear_*" = 0.4, "tail_*" = 1.2 }
 exclude = [ { center = [0.043, -0.186, 0.678], radius = 0.035 }, { center = [-0.043, -0.186, 0.678], radius = 0.035 },
             { center = [0, -0.25, 0.62], radius = 0.045 }, { center = [0, -0.265, 0.665], radius = 0.025 } ]
@@ -3661,24 +3662,25 @@ exclude = [ { center = [-0.21, -0.27, 0.6], radius = 0.065 }, { center = [-0.21,
 
 [assets.SK_Pet_Baize.fur]
 kind = "fur"
-length = 0.039
+length = 0.025
 bones = { "fhoof_*" = 0.0, "hhoof_*" = 0.0, "head" = 0.5, "beard_*" = 1.2, "tail_*" = 1.3 }
 exclude = [ { center = [0.045, -0.385, 0.955], radius = 0.03 }, { center = [-0.045, -0.385, 0.955], radius = 0.03 },
             { center = [0, -0.40, 1.0], radius = 0.03 }, { center = [0, -0.44, 0.885], radius = 0.04 },
             { center = [0.06, -0.34, 1.03], radius = 0.04 }, { center = [-0.06, -0.34, 1.03], radius = 0.04 },
             { center = [0.10, -0.33, 1.10], radius = 0.05 }, { center = [-0.10, -0.33, 1.10], radius = 0.05 },
-            { center = [0.14, -0.32, 1.18], radius = 0.06 }, { center = [-0.14, -0.32, 1.18], radius = 0.06 } ]
+            { center = [0.14, -0.32, 1.18], radius = 0.06 }, { center = [-0.14, -0.32, 1.18], radius = 0.06 },
+            { min = [0.045, -0.46, 1.0], max = [0.3, -0.14, 1.32] }, { min = [-0.3, -0.46, 1.0], max = [-0.045, -0.14, 1.32] } ]
 
 [assets.SK_Pet_Suanni.fur]
 kind = "fur"
-length = 0.029
+length = 0.019
 bones = { "bell" = 0.0, "paw_*" = 0.5, "foot_*" = 0.4, "head" = 0.8, "tail_*" = 1.2 }
 exclude = [ { center = [0.045, -0.31, 0.533], radius = 0.026 }, { center = [-0.045, -0.31, 0.533], radius = 0.026 },
             { center = [0, -0.36, 0.525], radius = 0.03 }, { center = [0, -0.345, 0.47], radius = 0.035 } ]
 
 [assets.SK_Pet_Zheng.fur]
 kind = "fur"
-length = 0.029
+length = 0.019
 bones = { "paw_*" = 0.5, "foot_*" = 0.5, "head" = 0.55, "brow" = 0.0, "chin" = 0.6, "tail*" = 1.2 }
 exclude = [ { center = [0.029, -0.296, 0.378], radius = 0.02 }, { center = [-0.029, -0.296, 0.378], radius = 0.02 },
             { center = [0, -0.33, 0.33], radius = 0.03 } ]
@@ -3700,12 +3702,12 @@ exclude = [ { center = [0.043, -0.407, 1.10], radius = 0.03 }, { center = [-0.04
 [assets.SK_Pet_Yinglong.fur]
 # 应龙身上是鳞片，只给白色鬃毛长毛
 kind = "fur"
-length = 0.039
+length = 0.025
 bones = { "*" = 0.0, "mane_*" = 1.0 }
 
 [assets.SK_Enemy_Tiangou.fur]
 kind = "fur"
-length = 0.039
+length = 0.025
 bones = { "paw_*" = 0.5, "foot_*" = 0.6, "toe_*" = 0.3, "ear_*" = 0.4, "head" = 0.6, "tail_*" = 1.3 }
 exclude = [ { center = [0.055, -0.61, 1.126], radius = 0.035 }, { center = [-0.055, -0.61, 1.126], radius = 0.035 },
             { center = [0, -0.71, 1.075], radius = 0.035 }, { center = [0, -0.56, 1.2], radius = 0.045 } ]
@@ -3713,20 +3715,20 @@ exclude = [ { center = [0.055, -0.61, 1.126], radius = 0.035 }, { center = [-0.0
 [assets.SK_Enemy_Jufu.fur]
 # 猕猴脸、手掌、脚掌是皮，不长毛
 kind = "fur"
-length = 0.046
+length = 0.03
 bones = { "hand_*" = 0.0, "fingers_*" = 0.0, "foot_*" = 0.0, "toe_*" = 0.0, "shin_*" = 0.8 }
 exclude = [ { center = [0, -0.33, 1.56], radius = 0.1 }, { center = [0, -0.2, 1.25], radius = 0.1 } ]
 
 [assets.SK_Enemy_Aoyin.fur]
 kind = "fur"
-length = 0.091
+length = 0.059
 bones = { "horn_*" = 0.0, "fhoof_*" = 0.0, "hhoof_*" = 0.0, "tail_*" = 1.2 }
 exclude = [ { center = [0.115, -1.03, 1.79], radius = 0.06 }, { center = [-0.115, -1.03, 1.79], radius = 0.06 },
             { center = [0, -1.17, 1.47], radius = 0.15 } ]
 
 [assets.SK_Enemy_Qiongqi.fur]
 kind = "fur"
-length = 0.052
+length = 0.034
 bones = { "paw_*" = 0.5, "toe_*" = 0.3, "wing_*" = 0.6, "tail_*" = 1.2 }
 exclude = [ { center = [0.08, -1.29, 1.416], radius = 0.05 }, { center = [-0.08, -1.29, 1.416], radius = 0.05 },
             { center = [0, -1.36, 1.31], radius = 0.07 } ]
@@ -3734,14 +3736,14 @@ exclude = [ { center = [0.08, -1.29, 1.416], radius = 0.05 }, { center = [-0.08,
 [assets.SK_Boss_Feilian.fur]
 # 鹿身毛皮 + 雀头羽毛；蛇尾前段是鳞，只有末端的羽扇长毛
 kind = "fur"
-length = 0.104
+length = 0.068
 bones = { "antler_*" = 0.0, "fhoof_*" = 0.0, "hhoof_*" = 0.0, "fcannon_*" = 0.5, "hcannon_*" = 0.5, "tail_*" = 0.0, "tail_6" = 1.0, "tail_7" = 1.2 }
 exclude = [ { center = [0.12, -2.287, 3.715], radius = 0.07 }, { center = [-0.12, -2.287, 3.715], radius = 0.07 },
             { center = [0, -2.45, 3.52], radius = 0.15 } ]
 
 [assets.SK_Enemy_FireRat.fur]
 kind = "fur"
-length = 0.021
+length = 0.014
 bones = { "paw_*" = 0.4, "foot_*" = 0.4, "tail_*" = 0.6 }
 exclude = [ { center = [0.054, -0.355, 0.265], radius = 0.025 }, { center = [-0.054, -0.355, 0.265], radius = 0.025 },
             { center = [0, -0.395, 0.215], radius = 0.035 } ]
@@ -3749,7 +3751,7 @@ exclude = [ { center = [0.054, -0.355, 0.265], radius = 0.025 }, { center = [-0.
 [assets.SK_Enemy_Huodou.fur]
 # 细犬是短毛：毛短、壳层少
 kind = "fur"
-length = 0.016
+length = 0.01
 shells = 8
 bones = { "bell" = 0.0, "paw_*" = 0.4, "toe_*" = 0.4, "jaw" = 0.3 }
 exclude = [ { center = [0.03, -0.424, 0.98], radius = 0.02 }, { center = [-0.03, -0.424, 0.98], radius = 0.02 },
