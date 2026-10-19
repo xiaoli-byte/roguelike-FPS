@@ -23,11 +23,12 @@ import { Hazards } from '../world/gorge/hazards';
 import { buildGorgeLandmarks } from '../world/gorge/landmarks';
 import { buildNav } from '../world/gorge/nav';
 import {
-  ALERT_RADIUS, BANK_NAMES, ENCOUNTERS, FIRES_TO_UNLOCK, FORD_CROSSING, LORD, MAP, POIS, ROAMER, ROCKFALL,
+  ALERT_RADIUS, BANK_NAMES, ENCOUNTERS, FIRES_TO_UNLOCK, FLIGHT_PERCHES, FORD_CROSSING, LORD, MAP, POIS, ROAMER, ROCKFALL,
   SIGHT_CHECKS, SITES, SPANS, STONES, VIEWPOINTS, ZIPS, type MonsterKind, type Viewpoint,
 } from '../world/gorge/spec';
 import { GorgeTerrain, PATHS, fordWeight, macroAt, nearest } from '../world/gorge/terrain';
 import { GorgeWater } from '../world/gorge/water';
+import { FLYING_PETS, PetFlight, type FlyingPetId } from '../world/gorge/petFlight';
 
 const $ = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T;
 const canvas = $<HTMLCanvasElement>('view');
@@ -51,6 +52,7 @@ document.querySelector('#panel .body')!.innerHTML = `
 <label><input type="checkbox" id="opt-monsters" checked> 雷魅白模（第四章怪物）</label>
 <label><input type="checkbox" id="opt-dae" checked> 领主大鹗（演示循环）</label>
 <label><input type="checkbox" id="opt-encounters" checked> 平面图显示遇敌区</label>
+<label>随身灵宠 <select id="opt-pet"><option value="">无（没有会飞的灵宠）</option><option value="jingwei">精卫</option><option value="chongming" selected>重明鸟</option><option value="yinglong">应龙（神兽）</option></select></label>
 <label>画质 <select id="opt-quality"><option value="high">高</option><option value="mid">中</option><option value="low">低</option></select>（帧率低时自动降分辨率）</label>
 <label>天气 <select id="opt-weather"><option value="clear">晴</option><option value="storm">雷暴</option></select></label>
 <label>点亮灵火 <input type="range" id="opt-fire" min="0" max="5" step="1" value="0"> <span id="fire-val">0/5</span></label>
@@ -65,6 +67,7 @@ document.querySelector('#panel .body')!.innerHTML = `
 <div class="row">点击画面锁定鼠标，Esc 解锁
 WASD 移动　空格 跳　Shift 冲刺
 E 在溜索起点挂上溜索，空格中途松手
+F 在风马旗台上：灵宠飞渡（会飞的灵宠变大，抓着爪子飞下去，第三人称；鼠标 / A D 转向，W 俯冲，S 拉平，空格松手）
 G 行走 / 飞行（飞行：空格升、C 降、Shift 加速）
 M 平面图　1–9 机位
 掉进急流不会死：被冲到下游河滩</div>
@@ -161,6 +164,25 @@ const boundAt = (x: number, z: number): number => {
   return terrain.basin[Math.round(z - terrain.minZ) * terrain.nx + Math.round(x - terrain.minX)];
 };
 const walker = new Walker(world, boundAt, MAP.softBoundary);
+
+// 彩蛋 · 灵宠飞渡（3.8）：会飞的灵宠跟在身边；到风马旗台按 F
+const flight = new PetFlight((x, z, y) => world.groundAt(x, z, y), boundAt, () => hazards.gust);
+scene.add(flight.group);
+const petParam = new URLSearchParams(location.search).get('pet');
+const startPet = (petParam === '' || petParam === 'none') ? null : (petParam && petParam in FLYING_PETS ? petParam as FlyingPetId : 'chongming');
+flight.setPet(startPet);
+$<HTMLSelectElement>('opt-pet').value = startPet ?? '';
+$<HTMLSelectElement>('opt-pet').onchange = e => {
+  const v = (e.target as HTMLSelectElement).value as FlyingPetId | '';
+  flight.setPet(v || null);
+  showHint(v ? `随身灵宠：${FLYING_PETS[v].name}` : '没有会飞的灵宠：风马旗台上起不了飞');
+};
+function tryFlight(): void {
+  if (flight.active || ride.zip >= 0 || walker.fly) return;
+  if (!flight.petId) { showHint('要有会飞的灵宠（精卫、重明鸟、应龙）才能飞渡'); return; }
+  if (!flight.canStart(walker.feet, walker.grounded)) { showHint('走到风马旗台（高处的风马旗杆旁）再按 F'); return; }
+  if (flight.start(walker.feet, walker.yaw, camera.position)) showHint(`${flight.petName}变大了——抓住它的爪子！`);
+}
 $<HTMLInputElement>('opt-double').onchange = e => { walker.doubleJump = (e.target as HTMLInputElement).checked; };
 
 /** 溜索：E 挂上，沿钢索往下滑（越陡越快，顺风更快），空格松手，到头自动下到平台 */
@@ -245,13 +267,14 @@ VIEWPOINTS.forEach((vp, i) => {
 // ───────────────────────────── 输入 ─────────────────────────────
 
 const keys = new Set<string>();
-let jumpPressed = false, dashPressed = false, bigMap = false;
+let jumpPressed = false, dashPressed = false, releasePressed = false, bigMap = false;
 addEventListener('keydown', e => {
   if ((e.target as HTMLElement)?.tagName === 'INPUT') return;
   keys.add(e.code);
-  if (e.code === 'Space') { e.preventDefault(); if (!e.repeat) { if (ride.zip >= 0) dropZip(); else jumpPressed = true; } }
+  if (e.code === 'Space') { e.preventDefault(); if (!e.repeat) { if (flight.phase === 'glide') releasePressed = true; else if (ride.zip >= 0) dropZip(); else jumpPressed = true; } }
   if ((e.code === 'ShiftLeft' || e.code === 'ShiftRight') && !e.repeat) dashPressed = true;
   if (e.code === 'KeyE' && !e.repeat) tryZip();
+  if (e.code === 'KeyF' && !e.repeat) tryFlight();
   if (e.code === 'KeyG' && !e.repeat) {
     if (ride.zip >= 0) dropZip();
     walker.fly = !walker.fly;
@@ -521,6 +544,13 @@ function drawOverlay(g: CanvasRenderingContext2D): void {
     label(g, s.name, s.x, s.z - s.r * 0.2, s.kind === 'exit' ? '#9fe8ff' : '#fff6dc');
   }
   for (const p of POIS) label(g, p.name, p.x, p.z, '#ffe9a8', 8);
+  // 灵宠飞渡的起飞台（风马旗台）
+  for (const p of FLIGHT_PERCHES) {
+    const [mx, my] = toMap(p.x, p.z);
+    g.fillStyle = '#000'; g.beginPath(); g.moveTo(mx, my - 5); g.lineTo(mx + 4, my); g.lineTo(mx, my + 5); g.lineTo(mx - 4, my); g.closePath(); g.fill();
+    g.fillStyle = '#8ff0ff'; g.beginPath(); g.moveTo(mx, my - 3.6); g.lineTo(mx + 2.8, my); g.lineTo(mx, my + 3.6); g.lineTo(mx - 2.8, my); g.closePath(); g.fill();
+    label(g, '灵宠飞渡', p.x, p.z + 12, '#bff6ff', 8);
+  }
   const marks: Partial<Record<MapIcon['kind'], string>> = { diaolou: '#d94f3a', house: '#c9a27b', flagGate: '#7fe0ff', daoban: '#a2442e', cave: '#3a2a20', stele: '#ff6ae0' };
   for (const ic of icons) {
     const color = marks[ic.kind];
@@ -708,7 +738,7 @@ function updateHud(dt: number): void {
   const fps = fpsN / fpsAcc; fpsAcc = 0; fpsN = 0; hudT = 0;
   const f = walker.feet;
   const L = terrain.layerAt(f.x, f.z);
-  const mode = ride.zip >= 0 ? `溜索 ${ride.v.toFixed(1)} m/s` : swept.t > 0 ? '被急流冲走！' : walker.fly ? '飞行' : walker.grounded ? '行走' : '空中';
+  const mode = flight.active ? `灵宠飞渡 · ${flight.petName}${flight.phase === 'glide' ? ` ${flight.speed.toFixed(0)} m/s　离地 ${flight.agl.toFixed(0)} m` : ''}` : ride.zip >= 0 ? `溜索 ${ride.v.toFixed(1)} m/s` : swept.t > 0 ? '被急流冲走！' : walker.fly ? '飞行' : walker.grounded ? '行走' : '空中';
   const env = [
     hazards.gust > 0.05 ? `峡谷风 ${(hazards.gust * 100).toFixed(0)}%` : '',
     hazards.floodLevel > 0.05 ? `涨水 +${hazards.floodLevel.toFixed(1)} m` : '',
@@ -725,7 +755,10 @@ function updateHud(dt: number): void {
 // ───────────────────────────── 主循环 ─────────────────────────────
 
 layoutMap();
-goTo(VIEWPOINTS[0]);
+// 地址参数（检视、截图、发链接用）：view=机位 id，panel=0 收起面板，dae=大鹗动作名的开头（先快进到那个动作）
+const params = new URLSearchParams(location.search);
+goTo(VIEWPOINTS.find(v => v.id === params.get('view')) ?? VIEWPOINTS[0]);
+if (params.get('panel') === '0') { $('panel').classList.add('collapsed'); $('toggle').textContent = '展开'; }
 $('loading').remove();
 showHint('点击画面开始 · WASD 移动 · E 挂溜索 · G 飞行 · 1–9 机位');
 setTimeout(() => { $('checks').innerHTML = runChecks(); }, 400);
@@ -733,6 +766,8 @@ setTimeout(() => { $('checks').innerHTML = runChecks(); }, 400);
 const shadowCenter = new THREE.Vector3(), ahead = new THREE.Vector3();
 const beaconSmoke: THREE.Vector3[] = [];
 let last = performance.now(), time = 0, onIron = false;
+let nearPerch: (typeof FLIGHT_PERCHES)[number] | null = null;
+const eyeTmp = new THREE.Vector3();
 function frame(now: number): void {
   const dt = Math.min(0.05, (now - last) / 1000);
   last = now;
@@ -748,7 +783,18 @@ function tick(dt: number, render: boolean): void {
   look(settled.x, settled.y);
   hazards.update(dt, (x, z, y) => world.groundAt(x, z, y));
   water.flood = hazards.floodLevel;
-  if (ride.zip >= 0) updateRide(dt);
+  // 灵宠飞渡：飞的时候人挂在爪子下面，位置由飞渡决定；落地 / 松手后交还给行走
+  const before = flight.phase;
+  const inp = { forward: (keys.has('KeyW') ? 1 : 0) - (keys.has('KeyS') ? 1 : 0), right: (keys.has('KeyD') ? 1 : 0) - (keys.has('KeyA') ? 1 : 0) };
+  if (flight.phase === 'glide') walker.yaw -= inp.right * 1.1 * dt;
+  const flightFeet = flight.update(time, { ...inp, yaw: walker.yaw, release: releasePressed, dt }, walker.eye(eyeTmp), walker.feet);
+  releasePressed = false;
+  if (before !== 'idle' && flight.phase === 'idle' && before === 'land') { walker.place(walker.feet.x, walker.feet.z); showHint('落地了'); }
+  if (before === 'glide' && flight.phase === 'drop') { walker.grounded = false; walker.vy = -2; showHint('松手了'); }
+  if (flight.near && !nearPerch) showHint(flight.petId ? `风马旗台：按 F 让${flight.petName}带你飞` : '风马旗台：要有会飞的灵宠才能飞渡');
+  nearPerch = flight.near;
+  if (flightFeet) { walker.feet.copy(flightFeet); walker.vy = 0; }
+  else if (ride.zip >= 0) updateRide(dt);
   else {
     const fly = walker.fly;
     walker.update(dt, {
@@ -765,7 +811,7 @@ function tick(dt: number, render: boolean): void {
     }
   }
   jumpPressed = dashPressed = false;
-  updateCurrent(dt);
+  if (!flightFeet) updateCurrent(dt);
   // 铁索带电：人在铁索桥上就被电
   const mid = crossings.ironMid;
   const onBridge = !walker.fly && Math.abs(walker.feet.y - mid.y) < 3 && Math.hypot(walker.feet.x - mid.x, walker.feet.z - mid.z) < 42;
@@ -774,8 +820,8 @@ function tick(dt: number, render: boolean): void {
   $('storm').style.background = onIron ? 'radial-gradient(ellipse at center,#ff5ad800 30%,#ff5ad866 100%)' : '';
   // 雷桩：雷暴时慢慢攒电
   for (const p of props.thunderPosts) p.charge = Math.min(1, p.charge + (weather.level > 0.6 ? dt / 25 : 0));
-  walker.eye(camera.position);
-  camera.rotation.set(walker.pitch, walker.yaw, 0, 'YXZ');
+  if (flight.thirdPerson) { camera.position.copy(flight.cam); camera.lookAt(flight.look); }
+  else { walker.eye(camera.position); camera.rotation.set(walker.pitch, walker.yaw, 0, 'YXZ'); }
   sky.position.copy(camera.position);
   ahead.set(-Math.sin(walker.yaw), 0, -Math.cos(walker.yaw)).multiplyScalar(60).add(camera.position);
   shadowCenter.set(Math.round(ahead.x / 8) * 8, 0, Math.round(ahead.z / 8) * 8);
@@ -796,6 +842,19 @@ function tick(dt: number, render: boolean): void {
   drawMap();
   updateHud(dt);
 }
+// fly=秒：站到起飞台、灵宠加载好就起飞，先快进这么多秒（截图检视第三人称用）
+const flyAt = Number(params.get('fly'));
+if (flyAt > 0) {
+  const wait = setInterval(() => {
+    if (!flight.canStart(walker.feet, true)) return;
+    clearInterval(wait);
+    walker.grounded = true;
+    tryFlight();
+    simulate(flyAt);
+  }, 300);
+}
+const daeAt = params.get('dae');
+if (daeAt) { for (let n = 0; n < 400 && !dae.state.startsWith(daeAt); n++) simulate(0.5); simulate(1); }
 requestAnimationFrame(frame);
 
 /** 检视脚本用：按住一些键、按固定步长跑 seconds 秒（页面在后台时浏览器不跑动画帧） */
@@ -806,4 +865,4 @@ function simulate(seconds: number, hold: string[] = [], dt = 1 / 60): void {
 }
 
 // 调试入口（检视用）
-Object.assign(window, { gorge: { scene, camera, renderer, terrain, world, walker, goTo, VIEWPOINTS, crossings, hazards, weather, dae, props, monsters, macroAt, PATHS, runChecks, buildMs, ride, tryZip, dropZip, simulate, swept, jump: () => { jumpPressed = true; }, render: () => { renderer.render(scene, camera); drawMap(); updateHud(0.3); } } });
+Object.assign(window, { gorge: { scene, camera, renderer, terrain, world, walker, goTo, VIEWPOINTS, crossings, hazards, weather, dae, props, monsters, macroAt, PATHS, runChecks, buildMs, ride, tryZip, dropZip, simulate, swept, flight, tryFlight, jump: () => { jumpPressed = true; }, render: () => { renderer.render(scene, camera); drawMap(); updateHud(0.3); } } });

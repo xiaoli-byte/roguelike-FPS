@@ -314,6 +314,10 @@ export const PLACEMENTS: Placement[] = [
   { kind: 'darchor', x: 200, z: 16 },
   // 灵火坛
   ...SITES.filter(s => s.altar).map(s => ({ kind: 'altar' as const, x: s.altar![0], z: s.altar![1], face: [s.x, s.z] as V2 })),
+  // 灵宠飞渡的起飞台：玛尼堆 + 一根高高的风马旗杆，从对岸也看得见
+  { kind: 'darchor', x: -166, z: 99 }, { kind: 'maniPile', x: -171, z: 98, scale: 0.8 },
+  { kind: 'darchor', x: 17, z: -149 }, { kind: 'maniPile', x: 10, z: -150, scale: 0.8 },
+  { kind: 'darchor', x: 197, z: 27 }, { kind: 'maniPile', x: 191, z: 28, scale: 0.8 },
   // 小兴趣点
   { kind: 'maniPile', x: -170, z: 70, scale: 0.9 },
   { kind: 'maniPile', x: 140, z: -150, scale: 0.9 },
@@ -431,6 +435,16 @@ export const LORD = {
   ],
 };
 
+// ───────────────────────────── 彩蛋 · 灵宠飞渡 ─────────────────────────────
+
+/** 起飞台：带着会飞的灵宠（精卫、重明鸟、应龙）站在这里按 F，灵宠变大，抓着它的爪子从高处飞下去（3.8） */
+export interface FlightPerch { id: string; name: string; x: number; z: number; r: number }
+export const FLIGHT_PERCHES: FlightPerch[] = [
+  { id: 'fw', name: '西岸坡顶·风马旗台', x: -168, z: 102, r: 6 },
+  { id: 'fn', name: '江嘴碉楼·风马旗台', x: 14, z: -146, r: 6 },
+  { id: 'fe', name: '古驿道山口·风马旗台', x: 194, z: 24, r: 6 },
+];
+
 // ───────────────────────────── 机位与视线 ─────────────────────────────
 
 export interface Viewpoint { id: string; name: string; pos: V3; look: V3; walk: boolean }
@@ -445,6 +459,11 @@ export const VIEWPOINTS: Viewpoint[] = [
   { id: 'plank', name: '东岸栈道', pos: [41, 0, 43], look: [0, 22, -10], walk: true },
   { id: 'over', name: '鸟瞰全图', pos: [-330, 230, 300], look: [0, 0, -20], walk: false },
   { id: 'nest', name: '鹗巢（看大鹗）', pos: [-60, 60, 30], look: [-4, 30, -50], walk: false },
+  { id: 'bridgeAir', name: '铁索桥（空中）', pos: [-28, 34, 90], look: [-2, 19, 62], walk: false },
+  { id: 'plankAir', name: '东岸栈道（空中）', pos: [-34, 42, 34], look: [22, 24, 2], walk: false },
+  { id: 'villageAir', name: '甲居寨坡（空中）', pos: [-66, 74, 44], look: [-130, 40, -16], walk: false },
+  { id: 'fordAir', name: '河滩磨坊（空中）', pos: [-90, 44, 236], look: [-12, 0, 190], walk: false },
+  { id: 'perch', name: '灵宠飞渡（西岸起飞台）', pos: [-170, 0, 106], look: [-2, 14, 50], walk: true },
 ];
 
 /** 视线检查：from 处人眼高度看 to（rel = to 的 y 相对地面） */
