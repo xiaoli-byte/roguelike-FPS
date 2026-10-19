@@ -3,9 +3,10 @@
  * 带着会飞的灵宠（精卫、重明鸟、应龙）走到峡谷里的三处风马旗台，按 F，演出分五段：
  *   ① 起势 1.2 s：镜头从眼睛弧线拉到身侧，灵宠从侧前方飞回来，绕着燎螺旋上升，一路洒灵火火星；
  *   ② 化形 1.3 s：灵宠悬在前上方，被灵火光罩包住、带回弹地变大，地上一圈冲击环，一道闪光，羽毛 / 鳞光四散；
- *   ③ 擒起 1.1 s：灵宠绕到身后俯冲过头顶，燎起跳、双手举起抓住爪子，被提离地面，镜头转到身后；
+ *   ③ 擒起约 2.4 s（见 GRAB）：灵宠绕到身后高处俯冲下来，燎下蹲蓄力、蹬地起跳、双手抡上去，跳到最高点抓住爪子（慢动作），
+ *      被一把带走、腿甩到后面再荡回来，镜头从侧面绕到身后；
  *   ④ 滑翔：鼠标或 A / D 转向，W 俯冲，S 拉平，峡谷阵风往上托，翅尖拖出风痕，越快视野越宽；离地 8 m 内自动拉平减速；
- *   ⑤ 落地 2.2 s：灵宠猛扇翅膀减速、把人放到地上（扬起尘土），再飞起来缩回原样、回到侧前方的跟随位，镜头弧线回到眼睛。
+ *   ⑤ 落地 2.2 s：灵宠猛扇翅膀减速、把人放到地上（扬起尘土，燎屈膝缓冲、松手），再飞起来缩回原样、回到侧前方的跟随位，镜头弧线回到眼睛。
  * 空格中途松手：人自己掉下去，灵宠缩回原样跟上。
  * 模型用美术管线发布的骨骼模型（public/assets/characters/SK_Pet_*.glb、SK_Hero_Fox.glb），动作全部程序化：
  * 翅膀骨骼绕身体长轴扇、身体俯成水平、腿往回摆；燎的上臂从 T 字姿势转到垂手 / 举手，每帧把灵宠的爪子对齐到燎的双手。
@@ -129,6 +130,27 @@ function aim(p: Posable, upper: string, lower: string, dir: THREE.Vector3): void
 }
 
 const ease = (k: number): number => { const t = Math.min(1, Math.max(0, k)); return t * t * (3 - 2 * t); };
+
+/**
+ * ③ 擒起的时间轴（秒，演出内的本地时间，抓住前后有慢动作）：
+ * 0 起 灵宠从前上方绕到身后高处（swoop 之前），燎抬头看着它；crouch → takeoff 下蹲蓄力、双手往后摆；
+ * takeoff → +push 蹬地（腿伸直、手往前上方甩）；离地后按重力飞到 apex 米高，最高点那一刻（catch）正好抓住俯冲下来的爪子；
+ * 之后 carry 秒被带着往前上方飞，交给滑翔。
+ */
+const GRAB = { swoop: 0.8, crouch: 0.5, takeoff: 0.88, push: 0.1, apex: 1.15, drift: 0.5, gravity: 13, carry: 0.75 };
+const GRAB_LEAVE = GRAB.takeoff + GRAB.push;
+const GRAB_V0 = Math.sqrt(2 * GRAB.gravity * GRAB.apex);
+const GRAB_CATCH = GRAB_LEAVE + GRAB_V0 / GRAB.gravity;
+/** 0..1..0 的平滑小包（a 到 b 之间） */
+const bump = (t: number, a: number, b: number): number => { const u = (t - a) / (b - a); return u <= 0 || u >= 1 ? 0 : Math.sin(u * Math.PI) ** 2; };
+const clamp01 = (k: number): number => Math.min(1, Math.max(0, k));
+
+/**
+ * 燎的全身姿势。arms：0 垂手 → 1 双手举成 V 字；back：手往身后摆（蓄力）；crouch：下蹲（脚踩在地上，腰往下沉，上身前倾）；
+ * lean：上身前倾（负 = 后仰）；tuck：空中收腿；legs：两条大腿一起往后（正）/ 往前甩；swing：两腿交替前后荡的幅度；
+ * toes：绷脚尖；grip：手指握拢；look：看向这个世界坐标（不给就按 arms 抬头）。
+ */
+interface HeroPose { arms: number; back?: number; crouch?: number; lean?: number; tuck?: number; legs?: number; swing?: number; toes?: number; grip?: number; look?: THREE.Vector3 | null; time: number }
 
 /** 跟随位偏离视线多少（弧度，约 31°）：在画面右（左）前方，整只看得见又不挡准星 */
 const FOLLOW_SIDE = 0.55;
@@ -320,7 +342,13 @@ export class PetFlight {
   private readonly petFrom = new THREE.Vector3();
   private readonly camFrom = new THREE.Vector3();
   private readonly lookFrom = new THREE.Vector3();
-  private heroUp = 0;
+  /** 擒起：跳到最高点时双手在哪（灵宠爪子要到的地方）、量过没有；燎的腿长（下蹲时腰沉多少） */
+  private readonly catchAt = new THREE.Vector3();
+  private catchReady = false;
+  /** 擒起时镜头相对燎的偏移（走弹簧，拉近、被挡住抬高时都平滑） */
+  private readonly grabOff = new THREE.Vector3();
+  private readonly grabOffV = new THREE.Vector3();
+  private legLen = 0.85;
   private readonly sparks = new Particles(700, true, 1.6);
   private readonly dust = new Particles(260, false, 1.2);
   private readonly aura: THREE.Mesh;
@@ -383,6 +411,11 @@ export class PetFlight {
       // 朝向：脚跟 → 脚尖是前方，转成 +z
       const fwd = restDir(h, 'LeftFoot', 'LeftToeBase');
       this.heroFace = Math.atan2(fwd.x, fwd.z);
+      // 腿长：髋 → 膝 → 踝（缩放后的米数），下蹲时据此算腰往下沉多少，脚才踩在地上
+      h.root.updateMatrixWorld(true);
+      const bp = (n: string) => h.bones.get(n)?.getWorldPosition(new THREE.Vector3());
+      const hip = bp('LeftUpLeg'), knee = bp('LeftLeg'), ankle = bp('LeftFoot');
+      if (hip && knee && ankle) this.legLen = hip.distanceTo(knee) + knee.distanceTo(ankle);
       h.root.visible = false;
       this.group.add(h.root);
     });
@@ -439,7 +472,7 @@ export class PetFlight {
     this.lookFrom.copy(eye).addScaledVector(lookDir, 10);
     this.cam.copy(eye);
     this.look.copy(this.lookFrom);
-    this.heroUp = 0;
+    this.catchReady = false;
     this.flare = 0;
     for (const t of this.trails) t.reset();
     this.turnHead(0);
@@ -485,30 +518,61 @@ export class PetFlight {
    * 胳膊的方向按模型自己的静止方向算（Mixamo 是 T 字，左臂朝 +x），不依赖骨骼的局部轴。
    */
   private poseHero(arms: number, tuck: number, swing: number, time: number): void {
+    this.poseHeroFull({ arms, tuck, swing, time });
+  }
+
+  private poseHeroFull(o: HeroPose): void {
     const h = this.hero;
     if (!h) return;
-    for (const [side, upper, lower, hand] of [['L', 'LeftArm', 'LeftForeArm', 'LeftHand'], ['R', 'RightArm', 'RightForeArm', 'RightHand']] as const) {
-      const out = Math.sign(restDir(h, upper, lower).x) || (side === 'L' ? 1 : -1);
-      // 举起来是 V 字（燎头大、耳朵高，手要在头两边，爪子才不会扎进耳朵）
-      const down = new THREE.Vector3(0.16 * out, -1, 0.05), up = new THREE.Vector3(0.55 * out, 1, 0.12);
-      const dir = down.clone().lerp(up, ease(arms)).normalize();
-      // 中间那段（举到一半）往前划个弧，不从身体里穿过去
-      dir.z += Math.sin(ease(arms) * Math.PI) * 0.9;
+    const back = ease(o.back ?? 0), crouch = o.crouch ?? 0, grip = o.grip ?? 0, arms = ease(o.arms);
+    const X = new THREE.Vector3(1, 0, 0), Y = new THREE.Vector3(0, 1, 0), Z = new THREE.Vector3(0, 0, 1);
+    for (const [side, upper, lower] of [['Left', 'LeftArm', 'LeftForeArm'], ['Right', 'RightArm', 'RightForeArm']] as const) {
+      const out = Math.sign(restDir(h, upper, lower).x) || (side === 'Left' ? 1 : -1);
+      // 垂手 → （蓄力时）往身后摆 → 举成 V 字（燎头大、耳朵高，手要在头两边，爪子才不会扎进耳朵）
+      const down = new THREE.Vector3(0.16 * out, -1, 0.05), behind = new THREE.Vector3(0.24 * out, -0.7, -0.68), up = new THREE.Vector3(0.55 * out, 1, 0.12);
+      const dir = down.clone().lerp(behind, back).lerp(up, arms).normalize();
+      // 中间那段（举到一半）往前划个弧，不从身体里穿过去（从身后甩上来时弧更大，像真的抡上去）
+      dir.z += Math.sin(arms * Math.PI) * (0.9 + 0.5 * back);
       aim(h, upper, lower, dir.normalize());
       // 前臂保持静止的局部姿势（跟着上臂伸直）：上臂已经转到 dir，前臂再转一次就转过头了
       const fb = h.bones.get(lower), fr = h.rest.get(lower);
       if (fb && fr) fb.quaternion.copy(fr.local);
-      void hand;
+      // 手指握拢（T 字姿势手心朝下，四指往手心那边弯）
+      for (const f of ['Index', 'Middle', 'Ring', 'Pinky']) for (let j = 1; j <= 3; j++) turn(h, `${side}Hand${f}${j}`, Z, -out * grip * (j === 1 ? 0.8 : 1.1));
+      turn(h, `${side}HandThumb2`, Y, out * grip * 0.6);
     }
-    const X = new THREE.Vector3(1, 0, 0);
-    const sw = swing * Math.sin(time * 2.4);
-    turn(h, 'LeftUpLeg', X, -0.5 * tuck + sw);
-    turn(h, 'RightUpLeg', X, -0.25 * tuck - sw);
-    turn(h, 'LeftLeg', X, 0.9 * tuck);
-    turn(h, 'RightLeg', X, 0.5 * tuck);
-    // 抬头看灵宠
-    turn(h, 'Head', X, -0.45 * Math.min(1, arms * 1.4));
+    // 腿：下蹲 = 大腿往前 a、膝盖往回 2a、脚掌往前 a（脚底保持平，腰往下沉多少由 crouchDrop 算）
+    const a = 0.95 * crouch, sw = (o.swing ?? 0) * Math.sin(o.time * 2.4), tuck = o.tuck ?? 0, legs = o.legs ?? 0, toes = o.toes ?? 0;
+    turn(h, 'LeftUpLeg', X, -a - 0.5 * tuck + sw + legs);
+    turn(h, 'RightUpLeg', X, -a - 0.25 * tuck - sw + legs);
+    turn(h, 'LeftLeg', X, 2 * a + 0.9 * tuck);
+    turn(h, 'RightLeg', X, 2 * a + 0.5 * tuck);
+    turn(h, 'LeftFoot', X, -a + toes * 0.7);
+    turn(h, 'RightFoot', X, -a + toes * 0.7);
+    // 上身：下蹲时前倾保持平衡，lean 再加减
+    const lean = 0.4 * crouch + (o.lean ?? 0);
+    turn(h, 'Spine', X, lean * 0.5);
+    turn(h, 'Spine1', X, lean * 0.5);
+    // 头：看向 look（脖子转左右、头抬低），不给就按举手的程度抬头
+    if (o.look) {
+      h.root.updateMatrixWorld(true);
+      const head = h.bones.get('Head');
+      const hp = head ? h.root.worldToLocal(head.getWorldPosition(new THREE.Vector3())) : new THREE.Vector3(0, 1.6 / this.heroScale, 0);
+      const d = h.root.worldToLocal(o.look.clone()).sub(hp);
+      const yaw = THREE.MathUtils.clamp(wrapAngle(Math.atan2(d.x, d.z) - this.heroFace), -1.2, 1.2);
+      const pitch = THREE.MathUtils.clamp(Math.atan2(d.y, Math.hypot(d.x, d.z)), -0.5, 1.15);
+      turn(h, 'Spine2', Y, yaw * 0.3);
+      turn(h, 'Neck', Y, yaw * 0.7);
+      turn(h, 'Head', X, -pitch * 0.8 + lean * 0.4);
+    } else {
+      turn(h, 'Spine2', Y, 0);
+      turn(h, 'Neck', Y, 0);
+      turn(h, 'Head', X, -0.45 * Math.min(1, o.arms * 1.4));
+    }
   }
+
+  /** 下蹲 crouch 时腰（模型根）要往下沉多少米，脚才还踩在地上 */
+  private crouchDrop(crouch: number): number { return this.legLen * (1 - Math.cos(0.95 * crouch)); }
 
   private placeHero(lean = 0, swingT = 0): void {
     const h = this.hero!;
@@ -557,11 +621,11 @@ export class PetFlight {
    * 第三人称机位：在 subject 身后 back 米、偏到一侧 side 米、高 up 米。右边、左边都试，挑没被挡住的那边
    * （两边都挡就挑挡得少的那边、往前推到挡住之前）；永远在地面以上。
    */
-  private shot(subject: THREE.Vector3, f: THREE.Vector3, back: number, side: number, up: number, out: THREE.Vector3): THREE.Vector3 {
+  private shot(subject: THREE.Vector3, f: THREE.Vector3, back: number, side: number, up: number, out: THREE.Vector3, lock = false): THREE.Vector3 {
     const s = new THREE.Vector3(-f.z, 0, f.x);
     let best = -1;
     const cand = new THREE.Vector3();
-    for (const sg of [this.camSide, -this.camSide]) {
+    for (const sg of lock ? [this.camSide] : [this.camSide, -this.camSide]) {
       cand.copy(subject).addScaledVector(f, -back).addScaledVector(s, side * sg).add(new THREE.Vector3(0, up, 0));
       cand.y = Math.max(cand.y, this.terrainAt(cand.x, cand.z) + 1.2);
       const run = this.clearRun(subject, cand);
@@ -592,6 +656,24 @@ export class PetFlight {
         out.lerpVectors(subject, cand, Math.max(0.25, run));
         if (run >= 1) { this.camSide = sg; break; }
       }
+    }
+    out.y = Math.max(out.y, this.terrainAt(out.x, out.z) + 1.2);
+    return out;
+  }
+
+  /**
+   * 擒起用的侧面机位：边是起跳前选好的，整段不换（换边会从人身上扫过去）；被挡住先往上抬，抬不开再往前推。
+   */
+  private lockedSide(subject: THREE.Vector3, f: THREE.Vector3, dist: number, ahead: number, up: number, out: THREE.Vector3): THREE.Vector3 {
+    const s = new THREE.Vector3(-f.z, 0, f.x).multiplyScalar(this.camSide);
+    const base = subject.clone().addScaledVector(s, dist).addScaledVector(f, ahead).add(new THREE.Vector3(0, up, 0));
+    let best = -1;
+    for (const lift of [0, 1.5, 3, 4.5]) {
+      const cand = base.clone();
+      cand.y = Math.max(cand.y + lift, this.terrainAt(cand.x, cand.z) + 1.5);
+      const run = this.clearRun(subject, cand);
+      if (run > best + 0.02) { best = run; out.lerpVectors(subject, cand, Math.max(0.3, run)); }
+      if (run >= 1) break;
     }
     out.y = Math.max(out.y, this.terrainAt(out.x, out.z) + 1.2);
     return out;
@@ -835,7 +917,9 @@ export class PetFlight {
    * eye 是第一人称的眼睛位置。平时的跟随不在这里，在 companion()（检视页摆好镜头之后调）。
    */
   update(time: number, inp: FlightInput, eye: THREE.Vector3, feet: THREE.Vector3): THREE.Vector3 | null {
-    const dt = inp.dt;
+    // 擒起抓住的那一下前后放慢到三成（演出里的东西都按放慢后的时间走，火星也是）
+    const slow = this.phase === 'grab' ? 1 - 0.68 * bump(this.t, GRAB_CATCH - 0.14, GRAB_CATCH + 0.24) : 1;
+    const dt = inp.dt * slow;
     this.updateFx(dt, time);
     if (!this.active) {
       this.near = FLIGHT_PERCHES.find(p => Math.hypot(p.x - feet.x, p.z - feet.z) < p.r) ?? null;
@@ -926,39 +1010,143 @@ export class PetFlight {
     }
 
     if (this.phase === 'grab') {
-      // ③ 擒起：灵宠从前上方绕到身后、俯冲过头顶；燎起跳举手，爪子正好落到手上，人被提起来
-      const D = 1.1, k = Math.min(1, this.t / D), e = ease(k);
-      const jump = Math.max(0, Math.sin(Math.min(1, Math.max(0, (k - 0.45) / 0.35)) * Math.PI * 0.5));
-      this.heroUp = k < 0.62 ? jump * 0.7 : 0.7 + 2.6 * ease((k - 0.62) / 0.38);
-      this.pos.y = this.start0.y + this.heroUp;
-      this.poseHero(Math.min(1, 0.25 + k * 1.4), jump * 0.6, 0, time);
-      this.heroFacing(fwd);
-      // 灵宠沿弧线：前上方 → 身后上方 → 落到手上（最后 40% 直接对齐到手）
-      const behind = this.start0.clone().addScaledVector(fwd, -7).add(new THREE.Vector3(0, 7, 0));
-      if (k < 0.6) {
-        p.root.position.copy(bezier(this.petFrom, behind.clone().add(side.clone().multiplyScalar(6)), behind, ease(k / 0.6)));
-        this.body(0.9, 0.5 * Math.sin(k / 0.6 * Math.PI));
+      // ③ 擒起（时间轴见 GRAB）：灵宠从前上方绕到身后高处、俯冲下来；燎抬头盯着它，下蹲蓄力、双手往后摆，
+      // 蹬地起跳、双手抡上去，跳到最高点那一刻正好抓住爪子（慢动作、火星、镜头一震），被一把带走，腿先被甩到后面再荡回来
+      const G = GRAB, tau = this.t, up = new THREE.Vector3(0, 1, 0);
+      const g0 = this.start0.y;
+      if (!this.catchReady) {
+        // 镜头放哪一侧：蹲着和跳到最高点两个机位都试，挑两边里挡得少的那边，整段擒起不再换
+        let bestSide = this.camSide, bestRun = -1;
+        for (const sg of [this.camSide, -this.camSide]) {
+          const sv = side.clone().multiplyScalar(sg);
+          const low = this.start0.clone().add(new THREE.Vector3(0, 1.1, 0)), high = low.clone().add(new THREE.Vector3(0, G.apex, 0));
+          const run = Math.min(
+            this.clearRun(low, low.clone().addScaledVector(sv, 4.6).addScaledVector(fwd, 0.8)),
+            this.clearRun(high, high.clone().addScaledVector(sv, 6.2).addScaledVector(fwd, 1.2).add(new THREE.Vector3(0, -0.3, 0))),
+          );
+          if (run > bestRun + 0.05) { bestRun = run; bestSide = sg; }
+        }
+        this.camSide = bestSide;
+        this.grabOff.copy(this.cam).sub(this.start0);
+        this.grabOffV.set(0, 0, 0);
+        // 跳到最高点时双手在哪：摆成举手的姿势放到最高点量一次，灵宠的俯冲就瞄准这里
+        this.pos.copy(this.start0).addScaledVector(fwd, G.drift).setY(g0 + G.apex);
+        this.poseHeroFull({ arms: 1, time });
+        this.heroFacing(fwd);
+        this.hands(this.catchAt);
+        this.pos.copy(this.start0);
+        this.catchReady = true;
+      }
+      // 灵宠从镜头对面那一侧绕过去（不从镜头和燎之间穿过）
+      const pSide = side.clone().multiplyScalar(-this.camSide);
+      const chest = new THREE.Vector3();
+      if (tau < GRAB_CATCH) {
+        // ── 灵宠 ──
+        const B = this.start0.clone().addScaledVector(fwd, -6.5).addScaledVector(pSide, 2).setY(g0 + G.apex + 6);
+        const prevFace = p.root.rotation.y;
+        if (tau < G.swoop) {
+          // 绕：前上方 → 侧面兜一个大弧 → 身后高处，一边飞一边转身
+          const k = tau / G.swoop, e = ease(k);
+          const mid = this.start0.clone().addScaledVector(pSide, 7).addScaledVector(fwd, 1).setY(g0 + G.apex + 7.5);
+          const at = bezier(this.petFrom, mid, B, e), nxt = bezier(this.petFrom, mid, B, Math.min(1, e + 0.02));
+          const tan = nxt.sub(at);
+          if (k > 0.98 || tan.lengthSq() < 1e-6) tan.copy(fwd);
+          const face = Math.atan2(tan.x, tan.z);
+          this.bank += (THREE.MathUtils.clamp(wrapAngle(face - prevFace) / Math.max(dt, 1e-4) * 0.12, -0.7, 0.7) - this.bank) * Math.min(1, dt * 6);
+          this.body(0.85, this.bank, 0, face);
+          p.root.position.copy(at);
+          this.flapWings(time, 1.3 * slow, 0.9);
+        } else {
+          // 俯冲：先压低机头扎下来（翅膀收起），快到时抬头拉平、猛扇翅膀、爪子往前伸，爪子正好落在最高点的双手上
+          const k = (tau - G.swoop) / (GRAB_CATCH - G.swoop);
+          const flareK = ease((k - 0.62) / 0.38);
+          this.bank += (0 - this.bank) * Math.min(1, dt * 6);
+          this.body(1, this.bank, 0.28 * (1 - flareK) - 0.4 * flareK, Math.atan2(fwd.x, fwd.z));
+          const gripOff = this.grip(tmp).sub(p.root.position);
+          const C = this.catchAt.clone().sub(gripOff);
+          const c1 = B.clone().addScaledVector(fwd, 3).addScaledVector(up, -1.5), c2 = C.clone().addScaledVector(fwd, -1.6).addScaledVector(up, 0.3);
+          p.root.position.copy(cubic(B, c1, c2, C, k));
+          this.flapWings(time, (0.45 + 1.8 * flareK) * slow, 0.25 + 0.75 * flareK);
+          if (k > 0.5 && this.rand() < 0.7) this.burstSparks(this.grip(tmp), 1, 0.6, 0.1, 0.5, this.fireEdge, 0.2);
+        }
+        // ── 燎 ──
+        const kC = clamp01((tau - G.crouch) / (G.takeoff - G.crouch));
+        const kP = clamp01((tau - G.takeoff) / G.push);
+        // 下蹲 → 蹬地（越蹬越快）；离地后按重力走，最高点 = catch
+        const crouch = tau < G.takeoff ? ease(kC) : 1 - kP * kP;
+        const air = Math.max(0, tau - GRAB_LEAVE);
+        const y = tau < GRAB_LEAVE ? g0 - this.crouchDrop(crouch) : g0 + GRAB_V0 * air - 0.5 * G.gravity * air * air;
+        this.pos.copy(this.start0).addScaledVector(fwd, G.drift * ease(clamp01((tau - G.takeoff) / (GRAB_CATCH - G.takeoff)))).setY(y);
+        // 手：先放下（化形时抬起了一点）→ 蓄力往后摆 → 蹬地时往前上方抡 → 举直等着抓
+        const swingUp = ease(clamp01((tau - G.takeoff + 0.04) / 0.3));
+        const back = tau < G.takeoff ? ease(kC) : 1 - swingUp;
+        const arms = tau < G.crouch ? 0.25 * (1 - ease(tau / 0.35)) : swingUp;
+        this.poseHeroFull({
+          arms, back, crouch,
+          lean: -0.16 * bump(tau, G.takeoff, GRAB_CATCH - 0.05),
+          tuck: 0.4 * ease(clamp01(air / 0.3)),
+          toes: bump(tau, G.takeoff - 0.02, G.takeoff + 0.4),
+          look: p.root.position.clone().add(new THREE.Vector3(0, S.rideHeight * 0.3, 0)),
+          time,
+        });
+        this.heroFacing(fwd);
+        if (tau >= GRAB_LEAVE && tau - dt < GRAB_LEAVE) this.puffDust(this.start0, 18, 4.5);
+        // ── 镜头：侧面，蓄力、起跳时拉近看清动作；灵宠扎下来时退开、压低往上拍，把人和灵宠一起框进来 ──
+        chest.copy(this.pos).add(new THREE.Vector3(0, 1.1, 0));
+        const petC = p.root.position.clone().add(new THREE.Vector3(0, S.rideHeight * 0.3, 0));
+        const wide = ease(clamp01((tau - 0.95) / (GRAB_CATCH - 0.95)));
+        const subj = chest.clone().lerp(petC, 0.12 + 0.3 * wide);
+        const want = this.lockedSide(chest, fwd, 4.6 + 1.6 * wide, 0.8 + 0.4 * wide, 0.15 - 0.45 * wide, new THREE.Vector3());
+        // 镜头相对燎的偏移走弹簧：从化形的远景拉近（约 0.7 s）、被挡住抬高都是平滑的，不会跳
+        dampVec(this.grabOff, want.sub(this.pos), this.grabOffV, 0.3, dt, 30);
+        this.cam.copy(this.pos).add(this.grabOff);
+        this.look.lerpVectors(this.lookFrom, subj, ease(clamp01(tau / 0.75)));
+        this.fov += (72 - 4 * bump(tau, GRAB_CATCH - 0.3, GRAB_CATCH + 0.3) - this.fov) * Math.min(1, dt * 8);
       } else {
-        this.body(1, 0, -0.35 * (1 - ease((k - 0.6) / 0.4)));
-        const from = behind.clone(), target = p.root.position.clone();
+        // ── 抓住了：灵宠带着人往前上方飞（人在前、灵宠对齐到手上），先往下一沉（接住人的重量）再爬升 ──
+        const tc = tau - GRAB_CATCH, k = clamp01(tc / G.carry);
+        if (tc - dt <= 0) {
+          this.vel.copy(fwd).multiplyScalar(8.6).add(new THREE.Vector3(0, -1.6, 0));
+          const hd = this.hands(new THREE.Vector3());
+          this.burstSparks(hd, 46, 3.2, 0.13, 0.7, this.fireCore, 0.3);
+          this.burstSparks(hd, 20, 2, 0.2, 0.9, this.shardCol, 0);
+          this.flash.position.copy(hd); this.flash.intensity = 14;
+        }
+        const hv = 8.6 + (S.speed * 0.75 - 8.6) * ease(k);
+        this.vel.set(fwd.x * hv, -1.6 + 4.8 * ease(clamp01(tc / 0.65)), fwd.z * hv);
+        this.pos.addScaledVector(this.vel, dt);
+        // 腿：被一把带走，先甩到后面，再像钟摆一样荡回来（越荡越小），慢慢换成滑翔时的晃腿
+        const legs = 0.7 * Math.exp(-2.6 * tc) * Math.cos(5.2 * tc) * (1 - k * k);
+        this.poseHeroFull({
+          arms: 1, grip: ease(clamp01(tc / 0.08)), tuck: 0.4 - 0.05 * k, legs, swing: 0.3 * ease(k),
+          // 抬头看灵宠，交给滑翔前回正（滑翔时不转头）
+          look: k < 0.8 ? p.root.position.clone().add(new THREE.Vector3(0, S.rideHeight * 0.35, 0)) : null, time,
+        });
+        this.placeHero(0.1 * ease(k), tc);
+        this.body(1, 0, -0.35 * (1 - ease(clamp01(tc / 0.4))));
+        this.flapWings(time, (2.1 - 0.8 * k) * slow, 1.0 - 0.3 * k);
         this.snapPetToHands();
-        target.copy(p.root.position);
-        p.root.position.lerpVectors(from, target, ease((k - 0.6) / 0.4));
-        if (k > 0.95) this.snapPetToHands();
+        this.wingTrails(0.4 * k);
+        // 镜头：侧面（接着抓住前的机位）→ 慢慢绕到身后，正好接上滑翔的追尾机位；抓住那一下震一震
+        chest.copy(this.pos).add(new THREE.Vector3(0, 1.1, 0));
+        const sideCam = this.lockedSide(chest, fwd, 6.2, 1.2, -0.3, new THREE.Vector3());
+        const chase = this.shot(this.pos.clone().add(new THREE.Vector3(0, 2.0, 0)), fwd, 7.5, 2.6, 1.0, new THREE.Vector3(), true);
+        const kc = ease(k);
+        dampVec(this.grabOff, sideCam.lerp(chase, kc).sub(this.pos), this.grabOffV, 0.25, dt, 30);
+        this.cam.copy(this.pos).add(this.grabOff);
+        const shake = 0.16 * Math.exp(-tc / 0.12);
+        this.cam.add(new THREE.Vector3(Math.sin(tc * 97) * shake, Math.sin(tc * 79 + 1) * shake, Math.sin(tc * 61 + 2) * shake * 0.6));
+        // （看的点接着抓住前那一帧：人和灵宠之间偏人那边）
+        const petC = p.root.position.clone().add(new THREE.Vector3(0, S.rideHeight * 0.3, 0));
+        this.look.lerpVectors(chest.clone().lerp(petC, 0.42), this.pos.clone().add(new THREE.Vector3(0, 2, 0)).addScaledVector(fwd, 7), kc);
+        this.fov += (72 - this.fov) * Math.min(1, dt * 4);
+        if (k >= 1) {
+          this.phase = 'glide'; this.t = 0;
+          for (const t of this.trails) t.reset();
+        }
       }
-      this.flapWings(time, 1.5, 0.95);
-      if (k > 0.6 && this.t - dt <= D * 0.62) { this.puffDust(this.start0, 18, 5); this.burstSparks(this.hands(new THREE.Vector3()), 30, 3, 0.12, 0.6, this.fireCore, 0.4); }
-      const subj = this.pos.clone().add(new THREE.Vector3(0, 1.4, 0)).lerp(p.root.position, 0.4);
-      const want = this.shot(subj, fwd, 6 + 0.6 * p.root.position.distanceTo(this.pos), 3.5, 0.8, new THREE.Vector3());
-      this.cam.lerpVectors(this.camFrom, want, e);
       this.keepCamAbove();
-      this.look.lerpVectors(this.lookFrom, subj.clone().addScaledVector(fwd, 3 * e), e);
       this.heroVisibility();
-      if (k >= 1) {
-        this.phase = 'glide'; this.t = 0;
-        this.vel.copy(fwd).multiplyScalar(S.speed * 0.75).add(new THREE.Vector3(0, 3.2, 0));
-        for (const t of this.trails) t.reset();
-      }
       return this.pos.clone();
     }
 
@@ -999,7 +1187,7 @@ export class PetFlight {
       const g2 = this.ground(this.pos.x, this.pos.z, this.pos.y + 0.5);
       this.agl = this.pos.y - g2;
       if (this.agl < 0.3) this.pos.y = g2 + 0.3;
-      this.poseHero(1, 0.35, 0.3 + 0.2 * Math.min(1, this.speed / 18), time);
+      this.poseHeroFull({ arms: 1, tuck: 0.35, swing: 0.3 + 0.2 * Math.min(1, this.speed / 18), grip: 1, time });
       this.placeHero(0.1, this.t);
       this.body(1, this.bank * 0.6);
       this.flapWings(time, 0.65 + 0.4 * Math.min(1, this.speed / 20) + this.flare * 0.8, 0.55 + this.flare * 0.3);
@@ -1033,7 +1221,7 @@ export class PetFlight {
         const v = Math.max(0, 1 - k) * this.speed * 0.5;
         this.pos.addScaledVector(f, v * dt);
         this.pos.y = Math.max(g, this.pos.y - (this.pos.y - g) * Math.min(1, dt * 8));
-        this.poseHero(1, 0.35 * (1 - k), 0.1, time);
+        this.poseHeroFull({ arms: 1, tuck: 0.35 * (1 - k), swing: 0.1, grip: 1, time });
         this.placeHero(0.1 * (1 - k), 0);
         this.body(1 - 0.6 * k, 0, -0.5 * k);
         this.flapWings(time, 2.2, 1.0);
@@ -1042,8 +1230,11 @@ export class PetFlight {
       } else {
         const k = Math.min(1, (this.t - D1) / D2), e = ease(k);
         this.pos.y = g;
-        this.poseHero(Math.max(0, 1 - k * 2.5), 0, 0, time);
+        // 落地屈膝缓冲一下（腰往下沉、膝盖弯），同时松手、手放下
+        const absorb = 0.55 * bump(k, -0.05, 0.4);
+        this.poseHeroFull({ arms: Math.max(0, 1 - k * 2.5), grip: Math.max(0, 1 - k * 5), crouch: absorb, time });
         this.placeHero(0, 0);
+        if (this.hero) this.hero.root.position.y -= this.crouchDrop(absorb);
         // 灵宠先往上飞开，再缩小飞回跟随位；缩小那一下洒一圈光点
         const eyeNow = this.pos.clone().add(new THREE.Vector3(0, EYE, 0));
         const shoulder = this.followSlot(eyeNow, this.heading, 1);
@@ -1107,6 +1298,16 @@ export class PetFlight {
     this.fState = 'resume';
     if (this.pet && this.loadedId) this.setScale(FLYING_PETS[this.loadedId].carryHeight / this.pet.height);
   }
+}
+
+/** 三次贝塞尔：a → (b, c) → d */
+function cubic(a: THREE.Vector3, b: THREE.Vector3, c: THREE.Vector3, d: THREE.Vector3, t: number): THREE.Vector3 {
+  const u = 1 - t, w0 = u * u * u, w1 = 3 * u * u * t, w2 = 3 * u * t * t, w3 = t * t * t;
+  return new THREE.Vector3(
+    w0 * a.x + w1 * b.x + w2 * c.x + w3 * d.x,
+    w0 * a.y + w1 * b.y + w2 * c.y + w3 * d.y,
+    w0 * a.z + w1 * b.z + w2 * c.z + w3 * d.z,
+  );
 }
 
 /** 二次贝塞尔：a → (b) → c */
