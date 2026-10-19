@@ -1,0 +1,140 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SK_Enemy_Manman",
+  "kind": "skeletal",
+  "class": "enemy_swarm",
+  "category": "characters",
+  "bind": {
+    "source": "enemy",
+    "id": "manman"
+  },
+  "keepGlow": "all",
+  "lodDistance": [
+    0,
+    12,
+    26
+  ],
+  "budget": {
+    "lodTris": [
+      6000,
+      2500,
+      1000
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -0.3814118802547455,
+      -0.0001898011687444523,
+      -0.31941869854927063
+    ],
+    "max": [
+      0.3814118802547455,
+      0.9017245769500732,
+      0.31941869854927063
+    ]
+  },
+  "rig": {
+    "type": "generic",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": [
+      "root",
+      "hips",
+      "chest",
+      "neck",
+      "head",
+      "eye",
+      "wing_1_L",
+      "wing_2_L",
+      "wing_3_L",
+      "tail_1",
+      "tail_2",
+      "thigh_L",
+      "shin_L",
+      "foot_L",
+      "thigh_R",
+      "shin_R",
+      "foot_R"
+    ]
+  },
+  "meshes": [
+    {
+      "name": "SK_Enemy_Manman_LOD0",
+      "lod": 0,
+      "tris": 5910,
+      "verts": 9284,
+      "materials": [
+        "M_Enemy_Manman"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_Manman_LOD1",
+      "lod": 1,
+      "tris": 2462,
+      "verts": 4682,
+      "materials": [
+        "M_Enemy_Manman"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Enemy_Manman_LOD2",
+      "lod": 2,
+      "tris": 985,
+      "verts": 1917,
+      "materials": [
+        "M_Enemy_Manman"
+      ],
+      "skinned": true
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Enemy_Manman",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Enemy_Manman_BC.png",
+        "ORM": "Textures/T_Enemy_Manman_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/characters/SK_Enemy_Manman@hi.glb",
+    "sha256": "3b339a1ce11b8db3e797e8e30f0974923ced50f5710998ee4aa0a554c9124fb2",
+    "hiRes": true,
+    "version": {
+      "native_build": 2
+    },
+    "generator": {
+      "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+      "mode": "tripo_native",
+      "checkpoint": "P2.0"
+    },
+    "license": null
+  },
+  "exported": "2026-10-19 20:29:05"
+}
