@@ -56,7 +56,7 @@ namespace Spiritfire.Game
         public float DotRemainingRaw(Damageable d, StatusId id)
         {
             var s = EnemyStatus.Of(d);
-            return s ? s.DotRemainingRaw(id) : 0;
+            return s ? s.RemainingDotRaw(id) : 0;
         }
 
         public float ConsumeBurn(Damageable d)

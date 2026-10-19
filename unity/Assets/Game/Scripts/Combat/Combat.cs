@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Spiritfire.Art;
 using UnityEngine;
 
 namespace Spiritfire.Game
@@ -59,17 +60,28 @@ namespace Spiritfire.Game
 
     /// <summary>
     /// 伤害结算（Three.js 版 src/combat/Combat.ts 的 damageEnemy / damagePlayer）：
+    ///   不可选中（出生、遁地、首领登场）：完全不结算；直接命中弹「免疫」（同一敌人 0.4 s 最多一次），持续伤害跳伤与处决不弹
     ///   暴击 = 强制暴击 ∨ 命中弱点 ∨ (可随机暴击 ∧ 掷骰 &lt; 暴击率)（持续伤害、反应不暴击；弱点必暴）
     ///   倍率 = 属性乘区（按标签：<see cref="DamageCalc.StatMultiplier(StatSheet, in DamageInfo, Damageable)"/>）× 雷殛标记
     ///          × 输出修饰器（<see cref="Outgoing"/>，在暴击掷骰之后求值）× 暴击（critMult × (1 + 暴伤%)）× 弱点加成
     ///   然后交给目标按护盾 / 护甲 / 生命分层结算。
-    /// 元素：带元素的命中按概率附着状态，附着前先判定元素反应（<see cref="ReactionSystem"/>）。
-    /// 结果以事件广播（<see cref="GameEvents"/>；这里的旧事件照常转发）：伤害数字、命中标记、击杀掉落都订阅事件，不互相引用。
-    /// 事件顺序：（破盾 / 破甲）→ 元素附着与反应判定 → EnemyDamaged → EnemyKilled。监听者互相隔离，抛异常不会打断结算。
+    /// 元素：带元素的命中按概率附着状态，附着前先判定元素反应（<see cref="ReactionSystem"/>）。持续伤害每一跳同样吃元素 / 精英 / 首领加成，
+    ///   附着时已从状态强度里除掉（<see cref="DamageCalc.StatusPowerFromDealt"/>），同一份加成只算一次。
+    /// 吸血：武器直接伤害（含武器投射物的爆炸）按实际伤害 × 吸血回血，单次上限最大生命 5%（至少 2 点）。
+    /// 击杀：<see cref="KillResolver"/> 结算魂晶与精英死亡震屏，再派发击杀事件；灵石掉落仍由 LootDirector 订阅击杀事件处理。
+    /// 处决（基础伤害 ≥ 1e6 或带 Purge）：不弹伤害数字、不出命中音（旧事件 EnemyDamaged 不转发）；
+    ///   静默处决（Purge）另外不算玩家战果——不附着、不吸血、不破盾事件、不给魂晶，旧事件 EnemyKilled 也不转发（不掉落、不计击杀）。
+    /// 结果以事件广播（<see cref="GameEvents"/>，总是带完整请求，新监听者按标签过滤；这里的旧事件按上面的规则转发）。
+    /// 事件顺序：（破盾 / 破甲）→ 元素附着与反应判定 → EnemyDamaged → 吸血 → 击杀结算 → EnemyKilled。监听者互相隔离，抛异常不会打断结算。
     /// </summary>
     public static class Combat
     {
         public static StatSheet playerStats;
+
+        /// <summary>单次吸血上限：玩家最大生命的 5%（至少 2 点）</summary>
+        public const float LifestealCapRatio = 0.05f, LifestealCapMin = 2f;
+        /// <summary>同一敌人两次「免疫」提示的最短间隔</summary>
+        public const float ImmuneFeedbackGap = 0.4f;
 
         /// <summary>输出修饰器：Add 返回句柄，Dispose 即撤销。在暴击掷骰之后求值（c.crit 可用）</summary>
         public static readonly ModifierList<Outgoing> Outgoing = new();
@@ -105,6 +117,7 @@ namespace Spiritfire.Game
             enemyKilled.Clear();
             playerDamaged.Clear();
             explodeDepth = 0;
+            immuneAt.Clear();
         }
 
         struct OutgoingCall : IModifierCall<Outgoing>
@@ -116,6 +129,7 @@ namespace Spiritfire.Game
         public static DamageResult DamageEnemy(Damageable target, DamageInfo info, float extraMult = 1f)
         {
             if (!target || target.Dead) return default;
+            if (target.untargetable) return Immune(target, info);
             var stats = playerStats;
             bool reaction = DamageCalc.IsReaction(info);
             if (!info.weakpoint && !reaction && ForceWeakpoint.Count > 0 &&
@@ -156,6 +170,7 @@ namespace Spiritfire.Game
             if (weak) mult *= stats?.Mult(Stat.WeakpointDamagePct) ?? 1f;
             var r = target.ApplyLayers(info, info.amount * mult, crit);
             bool purge = info.Has(DamageTag.Purge);
+            bool execute = DamageCalc.IsExecute(info);
             // 破盾 / 破甲事件不带请求，监听者认不出静默处决，所以 purge 时不发（result 上的标记照常保留）
             if (r.shieldBroken && !purge) GameEvents.RaiseEnemyShieldBroken(target);
             if (r.armorBroken && !purge) GameEvents.RaiseEnemyArmorBroken(target);
@@ -189,15 +204,77 @@ namespace Spiritfire.Game
             {
                 var hit = new HitEvent { enemy = target, info = info, result = r };
                 GameEvents.RaiseEnemyDamaged(in hit);
-                enemyDamaged.Raise(target, info, r);
+                // 旧事件的监听者（伤害数字、命中音、灵宠记仇、冒烟统计）不认标签：处决不转发，首领倒下时残余爪牙不会一齐冒数字、刷音效
+                if (!execute) enemyDamaged.Raise(target, info, r);
             }
+            if (!purge && r.total > 0)
+                try
+                {
+                    Lifesteal(in info, r.total);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogException(e);
+                }
             if (r.killed)
             {
                 var kill = new KillEvent { enemy = target, info = info, result = r };
+                KillResolver.Resolve(in kill);
                 GameEvents.RaiseEnemyKilled(in kill);
-                enemyKilled.Raise(target, info);
+                // 静默处决不算玩家战果：旧监听者（掉落、击杀回复、击杀计数、灵宠）不认标签，干脆不转发
+                if (!purge) enemyKilled.Raise(target, info);
             }
             return r;
+        }
+
+        // 同一敌人上一次弹「免疫」的时间（节流）；敌人销毁后的残留键在表变大时清掉
+        static readonly Dictionary<Damageable, float> immuneAt = new();
+        static readonly List<Damageable> immuneStale = new();
+
+        /// <summary>
+        /// 不可选中的敌人挨打：不结算（不掷暴击、不跑修饰器、不附着、不吸血）。直接命中给「免疫」反馈——同一敌人 0.4 s 最多一次，
+        /// 只有放行的这一次才派发 EnemyDamaged（result.immune）；持续伤害跳伤、处决、0 伤害不提示。同 Three.js damageEnemy 第 0 步。
+        /// </summary>
+        static DamageResult Immune(Damageable target, in DamageInfo info)
+        {
+            var r = new DamageResult { immune = true, layer = DamageLayer.Health, firstLayer = DamageLayer.Health };
+            if (!(info.amount > 0) || DamageCalc.IsDot(info) || DamageCalc.IsExecute(info)) return r;
+            float now = Time.time;
+            if (immuneAt.TryGetValue(target, out var last) && now - last < ImmuneFeedbackGap && now >= last) return r;
+            if (immuneAt.Count > 64)
+            {
+                foreach (var k in immuneAt.Keys)
+                    if (!k) immuneStale.Add(k);
+                foreach (var k in immuneStale) immuneAt.Remove(k);
+                immuneStale.Clear();
+            }
+            immuneAt[target] = now;
+            var hit = new HitEvent { enemy = target, info = info, result = r };
+            GameEvents.RaiseEnemyDamaged(in hit);
+            enemyDamaged.Raise(target, info, r);
+            return r;
+        }
+
+        /// <summary>
+        /// 吸血（Three.js afterHit 第 7 步）：只对武器直接伤害（来源 Weapon、深度 0，含武器投射物的爆炸），按实际伤害回血。
+        /// 静默处决不吸（调用方已过滤）。
+        /// </summary>
+        static void Lifesteal(in DamageInfo info, float dealt)
+        {
+            if (info.source != DamageSource.Weapon || info.depth != 0) return;
+            var s = playerStats;
+            var p = PlayerVitals.Instance;
+            if (s == null || !p || p.Dead) return;
+            float heal = LifestealHeal(dealt, s.Get(Stat.Lifesteal), p.MaxHealth);
+            if (heal > 0) p.Heal(heal);
+        }
+
+        /// <summary>一次吸血回多少：实际伤害 × 吸血，单次上限 max(2, 最大生命 × 5%)；吸血 ≤ 0 为 0</summary>
+        public static float LifestealHeal(float dealt, float lifesteal, float maxHp)
+        {
+            if (!(lifesteal > 0) || !(dealt > 0)) return 0;
+            float heal = Mathf.Min(dealt * lifesteal, Mathf.Max(LifestealCapMin, maxHp * LifestealCapRatio));
+            return float.IsInfinity(heal) ? 0 : heal;
         }
 
         static bool AttachHit(Damageable target, Element element, float dealt, in DamageInfo info, bool killed, out Reaction? rx)
@@ -208,11 +285,16 @@ namespace Spiritfire.Game
 
         /// <summary>
         /// 附着元素：先判定反应（要看附着前身上有什么），再挂状态。pin = 反应强度（含属性加成），power = 状态强度（不含元素 / 精英 / 首领加成）。
-        /// 返回状态是否挂上（击杀那一击只做雷殛弹射）；rx = 引发的反应
+        /// 不可选中的敌人既不反应也不附着。返回状态是否挂上（击杀那一击只做雷殛弹射）；rx = 引发的反应
         /// </summary>
         static bool Attach(Damageable target, Element element, float pin, float power, int depth, bool killed, UnityEngine.Object by, int weaponUid,
             out Reaction? rx)
         {
+            if (target.untargetable)
+            {
+                rx = null;
+                return false;
+            }
             target.lastElementBy = by;
             rx = ReactionSystem.TryReact(target, element, pin, depth, killed, weaponUid);
             return EnemyStatus.Apply(target, element, power, depth, killed);
@@ -237,10 +319,35 @@ namespace Spiritfire.Game
             Attach(target, element, pin, statusPower, depth, false, instigator, weaponUid, out _);
         }
 
+        /// <summary>引爆敌人身上的元素状态（<see cref="ReactionSystem.Detonate"/>）：死亡 / 不可选中的敌人直接返回 null（同 Three.js Combat.detonate）</summary>
+        public static DetonateOutcome? Detonate(Damageable target, in DetonateOpts opts) =>
+            !target || target.Dead || target.untargetable ? null : ReactionSystem.Detonate(target, opts);
+
+        /// <summary>强制引发一次反应（<see cref="ReactionSystem.Trigger"/>）：不可选中的敌人直接返回 null；已死的交给反应系统判断（要给反应中心）</summary>
+        public static Reaction? TriggerReaction(Damageable target, Reaction id, in TriggerOpts opts) =>
+            !target || target.untargetable ? null : ReactionSystem.Trigger(target, id, opts);
+
         /// <summary>
-        /// 处决：一击打死（不暴击、不附着元素，按处决处理）。purge = 静默处决（清场）：带 <see cref="DamageTag.Purge"/>，
-        /// 不算玩家战果（掉落 / 击杀时效果由监听者按标签过滤）。伤害被免疫（不可选中、修饰器返回 0）而没死的直接走死亡流程
-        /// （同 Three.js forceKill：不派发击杀事件）。
+        /// 按与玩家眼睛的距离震屏（Three.js Blast.explosionShake）：radius × 3 + 8 米外没有，强度 (0.1 + 0.055 × 半径) × k² × scale（≤ 0.75），
+        /// 时长 0.2 + min(0.3, 0.03 × 半径)。精英死亡（半径 2、×0.8）用它；爆炸特效单元的大爆炸也可以用。
+        /// </summary>
+        public static void ExplosionShake(Vector3 center, float radius, float scale = 1f)
+        {
+            var p = PlayerVitals.Instance;
+            if (!p || !(radius >= 0)) return;
+            var motor = p.GetComponent<PlayerMotor>();
+            var eye = motor && motor.eye ? motor.eye.position : p.transform.position + Vector3.up * 1.62f;
+            float k = Mathf.Clamp01(1 - Vector3.Distance(eye, center) / (radius * 3 + 8));
+            if (k <= 0) return;
+            float intensity = Mathf.Min(0.75f, (0.1f + radius * 0.055f) * k * k * scale);
+            if (intensity < 0.01f) return;
+            CameraShake.Add(intensity, 0.2f + Mathf.Min(0.3f, radius * 0.03f));
+        }
+
+        /// <summary>
+        /// 处决：一击打死（不暴击、不附着元素，按处决处理：不弹伤害数字、不出命中音）。purge = 静默处决（清场）：带 <see cref="DamageTag.Purge"/>，
+        /// 不算玩家战果——不给魂晶、不吸血，旧的 EnemyKilled 不转发（不掉落、不计击杀、不触发击杀回复）；GameEvents 照常带标签派发。
+        /// 伤害被免疫（不可选中、修饰器返回 0）而没死的直接走死亡流程（同 Three.js forceKill：不派发击杀事件、没有战果）。
         /// </summary>
         public static DamageResult Execute(Damageable d, bool purge)
         {
@@ -334,7 +441,8 @@ namespace Spiritfire.Game
                         if (!c) continue;
                         var hb = c.GetComponent<Hitbox>();
                         var d = hb ? hb.owner : c.GetComponentInParent<Damageable>();
-                        if (!d || d.Dead || d == o.excludeOne || (o.exclude != null && o.exclude.Contains(d)) || !seen.Add(d)) continue;
+                        // 不可选中的敌人不吃爆炸，也不刷「免疫」提示（同 Three.js explodeAt）
+                        if (!d || d.Dead || d.untargetable || d == o.excludeOne || (o.exclude != null && o.exclude.Contains(d)) || !seen.Add(d)) continue;
                         var closest = c.ClosestPoint(center);
                         if (Blocked(center, closest, c)) continue;
                         float k = Mathf.Lerp(1f, o.falloff, Mathf.Clamp01(Vector3.Distance(center, closest) / radius));
