@@ -204,7 +204,12 @@ namespace Spiritfire.Art.Editor
             RenderSettings.fogStartDistance = t.fogStart;
             RenderSettings.fogEndDistance = t.fogEnd;
 
+            // 先把 profile 存成资产，再加组件、逐个挂成它的子资产（PersistVolumeComponents）。
+            // 以前是先 Add 再 CreateAsset：组件只活在内存里，.asset 里的 components 全是 {fileID: 0}，
+            // 重开工程后色调映射 / Bloom / 调色整套丢失（docs/unity-parity.md 3.0）。
+            string profilePath = $"{dir}/VP_{t.key}.asset";
             var profile = ScriptableObject.CreateInstance<VolumeProfile>();
+            SaveAsset(profile, profilePath);
             profile.Add<Tonemapping>(true).mode.Override(TonemappingMode.Neutral);
             var bloom = profile.Add<Bloom>(true);
             bloom.threshold.Override(t.bloomThreshold);
@@ -219,10 +224,38 @@ namespace Spiritfire.Art.Editor
             var vig = profile.Add<Vignette>(true);
             vig.intensity.Override(t.vignette);
             vig.smoothness.Override(0.45f);
-            SaveAsset(profile, $"{dir}/VP_{t.key}.asset");
+            PersistVolumeComponents(profile);
             var vol = new GameObject("Global Volume").AddComponent<Volume>();
             vol.isGlobal = true;
             vol.sharedProfile = profile;
+        }
+
+        /// <summary>
+        /// 把 VolumeProfile 里的组件挂成它的子资产并落盘（profile 必须已经是资产，见 <see cref="SaveAsset"/>）。
+        /// <see cref="VolumeProfile.Add{T}"/> 只是 CreateInstance 一个组件放进 components 列表，不登记成子资产的话
+        /// 存盘时引用写成 {fileID: 0}，重开工程后组件全部丢失。做法同编辑器自己的 Volume 面板：隐藏标记 + AddObjectToAsset。
+        /// 存完从资产里数一遍组件，对不上直接报错——不留一个「这次看着正常、重开就没了」的 profile。
+        /// </summary>
+        internal static void PersistVolumeComponents(VolumeProfile profile)
+        {
+            string path = AssetDatabase.GetAssetPath(profile);
+            if (string.IsNullOrEmpty(path))
+            {
+                Debug.LogError($"[Showcase] VolumeProfile {profile.name} 还不是资产：先 SaveAsset 再加组件，否则组件存不进去");
+                return;
+            }
+            foreach (var c in profile.components)
+            {
+                if (!c || AssetDatabase.Contains(c)) continue;
+                c.name = c.GetType().Name;
+                c.hideFlags = HideFlags.HideInInspector | HideFlags.HideInHierarchy;
+                AssetDatabase.AddObjectToAsset(c, profile);
+            }
+            EditorUtility.SetDirty(profile);
+            AssetDatabase.SaveAssets();
+            int saved = AssetDatabase.LoadAllAssetsAtPath(path).OfType<VolumeComponent>().Count();
+            if (saved != profile.components.Count)
+                Debug.LogError($"[Showcase] {path}：profile 有 {profile.components.Count} 个后处理组件，资产里只存下 {saved} 个");
         }
 
         internal static void BakeEnvironmentLighting(ShowcaseTheme t, string dir = Dir)
