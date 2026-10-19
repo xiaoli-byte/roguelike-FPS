@@ -1,0 +1,142 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SK_Boss_Kui",
+  "kind": "skeletal",
+  "class": "boss",
+  "category": "characters",
+  "bind": {
+    "source": "enemy",
+    "id": "boss_kui"
+  },
+  "keepGlow": "all",
+  "lodDistance": [
+    0,
+    25,
+    60
+  ],
+  "budget": {
+    "lodTris": [
+      30000,
+      12000,
+      5000
+    ],
+    "texture": 2048,
+    "maxFileKb": 6000
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -1.6047877073287964,
+      0,
+      -1.140230417251587
+    ],
+    "max": [
+      1.6047877073287964,
+      6.000150203704834,
+      1.1411889791488647
+    ]
+  },
+  "rig": {
+    "type": "generic",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": [
+      "root",
+      "hips",
+      "spine",
+      "chest",
+      "neck",
+      "head",
+      "shoulder_L",
+      "arm_L",
+      "forearm_L",
+      "fist_L",
+      "shoulder_R",
+      "arm_R",
+      "forearm_R",
+      "fist_R",
+      "drum",
+      "drum_core",
+      "thigh",
+      "shin",
+      "hoof"
+    ]
+  },
+  "meshes": [
+    {
+      "name": "SK_Boss_Kui_LOD0",
+      "lod": 0,
+      "tris": 29550,
+      "verts": 39025,
+      "materials": [
+        "M_Boss_Kui"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Boss_Kui_LOD1",
+      "lod": 1,
+      "tris": 11820,
+      "verts": 19566,
+      "materials": [
+        "M_Boss_Kui"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Boss_Kui_LOD2",
+      "lod": 2,
+      "tris": 4925,
+      "verts": 8676,
+      "materials": [
+        "M_Boss_Kui"
+      ],
+      "skinned": true
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Boss_Kui",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Boss_Kui_BC.png",
+        "ORM": "Textures/T_Boss_Kui_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/characters/SK_Boss_Kui.glb",
+    "sha256": "4c785fd518db2c8c934c2ea6fe8a4939e2c86c67ec4e26c9f75e00a2bf1ae979",
+    "hiRes": false,
+    "version": {
+      "native_build": 2
+    },
+    "generator": {
+      "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+      "mode": "tripo_native",
+      "checkpoint": "P2.0"
+    },
+    "license": null
+  },
+  "exported": "2026-10-19 20:46:55"
+}
