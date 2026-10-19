@@ -1,0 +1,331 @@
+{
+  "asset": "SK_Boss_Huashe",
+  "version": 1,
+  "glb": "art/source/characters/SK_Boss_Huashe/04_export/SK_Boss_Huashe_native_v001.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.4,
+      "自定义骨架：40 根骨骼（热扩散权重，40332 个顶点未覆盖）": 0.8,
+      "贴图（BC + AO/ORM）": 16.5,
+      "LOD 与蒙皮上限 29549 / 11820 / 4925": 1.9,
+      "导出 2039 KB": 2.6
+    },
+    "source": {
+      "verts": 40332,
+      "tris": 30006,
+      "scale": 8.9215876089061
+    },
+    "regions": {
+      "heat_unweighted_verts": 40332,
+      "weights": "segments",
+      "head_verts": 1113,
+      "fallback_verts": 141,
+      "per_bone": {
+        "hips": 0,
+        "spine1": 176,
+        "spine2": 231,
+        "spine3": 73,
+        "chest": 25,
+        "neck": 1745,
+        "head": 2805,
+        "jaw": 637,
+        "tail_1": 66,
+        "tail_2": 177,
+        "tail_3": 296,
+        "tail_4": 216,
+        "tail_5": 100,
+        "tail_6": 46,
+        "tail_7": 0,
+        "tail_8": 147,
+        "scapula_L": 297,
+        "upperarm_L": 1024,
+        "forearm_L": 1027,
+        "paw_L": 785,
+        "haunch_L": 231,
+        "thigh_L": 502,
+        "shin_L": 331,
+        "foot_L": 528,
+        "wing_1_L": 3066,
+        "wing_2_L": 1726,
+        "wing_3_L": 796,
+        "scapula_R": 290,
+        "upperarm_R": 1021,
+        "forearm_R": 1074,
+        "paw_R": 772,
+        "haunch_R": 139,
+        "thigh_R": 481,
+        "shin_R": 313,
+        "foot_R": 506,
+        "wing_1_R": 2968,
+        "wing_2_R": 1875,
+        "wing_3_R": 760
+      }
+    },
+    "bones": [
+      "chest",
+      "foot_L",
+      "foot_R",
+      "forearm_L",
+      "forearm_R",
+      "haunch_L",
+      "haunch_R",
+      "head",
+      "hips",
+      "jaw",
+      "mouth",
+      "neck",
+      "paw_L",
+      "paw_R",
+      "root",
+      "scapula_L",
+      "scapula_R",
+      "shin_L",
+      "shin_R",
+      "spine1",
+      "spine2",
+      "spine3",
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "tail_4",
+      "tail_5",
+      "tail_6",
+      "tail_7",
+      "tail_8",
+      "thigh_L",
+      "thigh_R",
+      "upperarm_L",
+      "upperarm_R",
+      "wing_1_L",
+      "wing_1_R",
+      "wing_2_L",
+      "wing_2_R",
+      "wing_3_L",
+      "wing_3_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.906,
+      "shade_mean": 0.911
+    },
+    "textures": {
+      "size": 2048,
+      "ao_mean": 0.696,
+      "provider_pbr": [],
+      "roughness_mean": 0.75,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Boss_Huashe_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Boss_Huashe_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Boss_Huashe_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Boss_Huashe_LOD0",
+        "tris": 29549,
+        "uv_min": [
+          0.001708984375,
+          0.001708984375
+        ],
+        "uv_max": [
+          0.998291015625,
+          0.99462890625
+        ]
+      },
+      {
+        "name": "SK_Boss_Huashe_LOD1",
+        "tris": 11820,
+        "uv_min": [
+          0.0017075681826099753,
+          0.001708984375
+        ],
+        "uv_max": [
+          0.9892578125,
+          0.994384765625
+        ]
+      },
+      {
+        "name": "SK_Boss_Huashe_LOD2",
+        "tris": 4925,
+        "uv_min": [
+          0.001708984375,
+          0.001708984375
+        ],
+        "uv_max": [
+          0.976318359375,
+          0.97607421875
+        ]
+      }
+    ],
+    "glb_kb": 2039,
+    "_seconds": 23.6
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "2039 KB / 6000 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Boss_Huashe_LOD0', 'SK_Boss_Huashe_LOD1', 'SK_Boss_Huashe_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "29549 / 30000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "11820 / 12000"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "4925 / 5000"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "4.500 m (design 4.5 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Boss_Huashe']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "texture T_Boss_Huashe_ORM",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "texture T_Boss_Huashe_BC",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "40 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Boss_Huashe_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Boss_Huashe_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Boss_Huashe_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Boss_Huashe_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Boss_Huashe_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Boss_Huashe_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Boss_Huashe_LOD0 UV range",
+      "[0.002, 0.002]..[0.998, 0.995]"
+    ],
+    [
+      "pass",
+      "SK_Boss_Huashe_LOD1 UV range",
+      "[0.002, 0.002]..[0.989, 0.994]"
+    ],
+    [
+      "pass",
+      "SK_Boss_Huashe_LOD2 UV range",
+      "[0.002, 0.002]..[0.976, 0.976]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "40332 verts"
+    ],
+    [
+      "pass",
+      "region head",
+      "1113 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "141 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

@@ -1,0 +1,163 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SK_Boss_Huashe",
+  "kind": "skeletal",
+  "class": "boss",
+  "category": "characters",
+  "bind": {
+    "source": "enemy",
+    "id": "boss_huashe"
+  },
+  "keepGlow": "all",
+  "lodDistance": [
+    0,
+    25,
+    60
+  ],
+  "budget": {
+    "lodTris": [
+      30000,
+      12000,
+      5000
+    ],
+    "texture": 2048,
+    "maxFileKb": 6000
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -4.131897926330566,
+      0,
+      -4.458616256713867
+    ],
+    "max": [
+      4.131897926330566,
+      4.5,
+      4.458616256713867
+    ]
+  },
+  "rig": {
+    "type": "generic",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": [
+      "root",
+      "hips",
+      "haunch_L",
+      "thigh_L",
+      "shin_L",
+      "foot_L",
+      "haunch_R",
+      "thigh_R",
+      "shin_R",
+      "foot_R",
+      "spine1",
+      "spine2",
+      "spine3",
+      "chest",
+      "neck",
+      "head",
+      "jaw",
+      "mouth",
+      "scapula_L",
+      "upperarm_L",
+      "forearm_L",
+      "paw_L",
+      "scapula_R",
+      "upperarm_R",
+      "forearm_R",
+      "paw_R",
+      "wing_1_L",
+      "wing_2_L",
+      "wing_3_L",
+      "wing_1_R",
+      "wing_2_R",
+      "wing_3_R",
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "tail_4",
+      "tail_5",
+      "tail_6",
+      "tail_7",
+      "tail_8"
+    ]
+  },
+  "meshes": [
+    {
+      "name": "SK_Boss_Huashe_LOD0",
+      "lod": 0,
+      "tris": 29549,
+      "verts": 40202,
+      "materials": [
+        "M_Boss_Huashe"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Boss_Huashe_LOD1",
+      "lod": 1,
+      "tris": 11820,
+      "verts": 20394,
+      "materials": [
+        "M_Boss_Huashe"
+      ],
+      "skinned": true
+    },
+    {
+      "name": "SK_Boss_Huashe_LOD2",
+      "lod": 2,
+      "tris": 4925,
+      "verts": 9053,
+      "materials": [
+        "M_Boss_Huashe"
+      ],
+      "skinned": true
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Boss_Huashe",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Boss_Huashe_BC.png",
+        "ORM": "Textures/T_Boss_Huashe_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/characters/SK_Boss_Huashe.glb",
+    "sha256": "b371a180611ad9821784807c2bff78cf66b2e84b6cf022fa14f508b3a685ba90",
+    "hiRes": false,
+    "version": {
+      "native_build": 2
+    },
+    "generator": {
+      "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+      "mode": "tripo_native",
+      "checkpoint": "P2.0"
+    },
+    "license": null
+  },
+  "exported": "2026-10-19 20:52:04"
+}
