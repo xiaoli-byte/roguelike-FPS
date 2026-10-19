@@ -19,7 +19,7 @@ namespace Spiritfire.Art
 
         [Tooltip("LOD0 的蒙皮渲染器")] public Renderer target;
         [Tooltip("壳层材质模板（Spiritfire/FurShell），每层复制一份、只改 _ShellIndex")] public Material shellTemplate;
-        [Tooltip("画质「高」时的层数")] [Range(1, 16)] public int shellsHigh = 10;
+        [Tooltip("画质「高」时的层数（0 = 只要轮廓发丝面片，不叠壳层）")] [Range(0, 16)] public int shellsHigh = 16;
         [Tooltip("fur / feather，只用于显示")] public string kind = "fur";
         [Tooltip("轮廓发丝面片（<ID>_FurFins，画质「中」以上打开）")] public Renderer finRenderer;
 

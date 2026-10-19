@@ -88,8 +88,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.1793962
-  m_Height: 0.6893978
+  m_Radius: 0.17901209
+  m_Height: 0.68862957
   m_Direction: 1
   m_Center: {x: -1.64313e-14, y: 0.16530275, z: -0.00000010430814}
 --- !u!54 &8456735979036899377
@@ -100,7 +100,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 323623641892396639}
   serializedVersion: 5
-  m_Mass: 30.083553
+  m_Mass: 29.954866
   m_LinearDamping: 0.1
   m_AngularDamping: 0.6
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -173,8 +173,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.18846193
-  m_Height: 0.6909301
+  m_Radius: 0.19091873
+  m_Height: 0.69584376
   m_Direction: 1
   m_Center: {x: -0.000000006519259, y: 0.15700321, z: -0.000000014901161}
 --- !u!54 &2600537689912234811
@@ -185,7 +185,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 505381028217755690}
   serializedVersion: 5
-  m_Mass: 31.53391
+  m_Mass: 32.361427
   m_LinearDamping: 0.1
   m_AngularDamping: 0.6
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -304,8 +304,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.19199288
-  m_Height: 0.6979922
+  m_Radius: 0.18707478
+  m_Height: 0.688156
   m_Direction: 1
   m_Center: {x: 0.000000014901161, y: 0.15700328, z: -0.00000007450582}
 --- !u!54 &5654996562281287710
@@ -316,7 +316,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 616889093351656098}
   serializedVersion: 5
-  m_Mass: 32.726627
+  m_Mass: 31.071447
   m_LinearDamping: 0.1
   m_AngularDamping: 0.6
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -412,134 +412,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1070236260434116820}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &739345574702954186
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6130479536619891724}
-  - component: {fileID: 8371393668394096921}
-  m_Layer: 7
-  m_Name: SK_Enemy_Qiongqi_FurFins
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &6130479536619891724
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 739345574702954186}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.000000053385076, y: 0.7071068, z: -0.70710677, w: -0.00000005338508}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 173660797337022858}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!137 &8371393668394096921
-SkinnedMeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 739345574702954186}
-  m_Enabled: 0
-  m_CastShadows: 0
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 3
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 84212cddf3e537241bedf7ce00ea4683, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  serializedVersion: 2
-  m_Quality: 0
-  m_UpdateWhenOffscreen: 0
-  m_SkinnedMotionVectors: 1
-  m_Mesh: {fileID: 5722322983071924653, guid: 4f48106a4f333e04291e9f246d2f79e3, type: 3}
-  m_Bones:
-  - {fileID: 5228808997815099854}
-  - {fileID: 2018160604463303935}
-  - {fileID: 6493877087042734671}
-  - {fileID: 8897938387147085699}
-  - {fileID: 7635745670889230541}
-  - {fileID: 1188584209507681074}
-  - {fileID: 8294307664663646242}
-  - {fileID: 2920114332407841585}
-  - {fileID: 6224266138467328805}
-  - {fileID: 190625821188561376}
-  - {fileID: 5035600566513459363}
-  - {fileID: 5445625033086669236}
-  - {fileID: 1619190154046189847}
-  - {fileID: 5595720515280420567}
-  - {fileID: 1615861828585994810}
-  - {fileID: 8003828421932778169}
-  - {fileID: 4248694867802277845}
-  - {fileID: 660434486569055611}
-  - {fileID: 8130507422945499232}
-  - {fileID: 5012570930739540639}
-  - {fileID: 3644673365665866503}
-  - {fileID: 273800804746016836}
-  - {fileID: 5263521224173556183}
-  - {fileID: 1070236260434116820}
-  - {fileID: 8664355774168407554}
-  - {fileID: 839624232471983922}
-  - {fileID: 522987896582702469}
-  - {fileID: 5053579372047124165}
-  - {fileID: 6313358064504722413}
-  - {fileID: 5329822938033999569}
-  - {fileID: 7779090489201123964}
-  - {fileID: 3982205091206190840}
-  - {fileID: 2163491310725716303}
-  - {fileID: 1011745665120794564}
-  - {fileID: 5918967506162255553}
-  - {fileID: 6875325841111798478}
-  m_BlendShapeWeights: []
-  m_RootBone: {fileID: 5228808997815099854}
-  m_AABB:
-    m_Center: {x: 0.0025115013, y: 1.1109564, z: -0.026525259}
-    m_Extent: {x: 1.6007643, y: 1.3376714, z: 1.6895922}
-  m_DirtyAABB: 0
 --- !u!1 &753939853996399836
 GameObject:
   m_ObjectHideFlags: 0
@@ -594,8 +466,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.09759805
-  m_Height: 0.51472706
+  m_Radius: 0.09395996
+  m_Height: 0.5074509
   m_Direction: 1
   m_Center: {x: 8.881784e-15, y: 0.15976548, z: 0.00000009313255}
 --- !u!54 &6609846231648650937
@@ -606,7 +478,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 753939853996399836}
   serializedVersion: 5
-  m_Mass: 8.605722
+  m_Mass: 7.976101
   m_LinearDamping: 0.1
   m_AngularDamping: 0.6
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -787,8 +659,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.1837355
-  m_Height: 0.68147737
+  m_Radius: 0.18307282
+  m_Height: 0.680152
   m_Direction: 1
   m_Center: {x: -0.000000038184236, y: 0.15700321, z: -0.000000022351745}
 --- !u!54 &1689060171417163613
@@ -799,7 +671,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1118087212336872735}
   serializedVersion: 5
-  m_Mass: 29.972065
+  m_Mass: 29.756252
   m_LinearDamping: 0.1
   m_AngularDamping: 0.6
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -1046,8 +918,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.16517287
-  m_Height: 0.67646694
+  m_Radius: 0.16421935
+  m_Height: 0.6745599
   m_Direction: 1
   m_Center: {x: 0.000000014901161, y: 0.17306075, z: 0.00000008940695}
 --- !u!54 &8383718871722080290
@@ -1058,7 +930,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1700028005874551645}
   serializedVersion: 5
-  m_Mass: 26.699223
+  m_Mass: 26.39185
   m_LinearDamping: 0.1
   m_AngularDamping: 0.6
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -1422,7 +1294,6 @@ Transform:
   - {fileID: 753724934621154699}
   - {fileID: 4129186430466495653}
   - {fileID: 859243689616133485}
-  - {fileID: 6130479536619891724}
   m_Father: {fileID: 8483735808473706110}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &6929621373706045214
@@ -1597,7 +1468,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8483735808473706110}
-  - component: {fileID: 4287743252239741190}
   - component: {fileID: 5373376980401953702}
   - component: {fileID: 7418298479149576279}
   - component: {fileID: 7872514741372366807}
@@ -1626,23 +1496,6 @@ Transform:
   - {fileID: 173660797337022858}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4287743252239741190
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3404903687696585892}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bfd46ad0bb2d78d4e8f20cd386ffc524, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Spiritfire.Art.Runtime::Spiritfire.Art.FurShells
-  target: {fileID: 7181204364711319487}
-  shellTemplate: {fileID: 2100000, guid: 1562f95bc6a737b4396e534e74dd42f1, type: 2}
-  shellsHigh: 16
-  kind: fur
-  finRenderer: {fileID: 8371393668394096921}
 --- !u!205 &5373376980401953702
 LODGroup:
   m_ObjectHideFlags: 0
@@ -1651,8 +1504,8 @@ LODGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3404903687696585892}
   serializedVersion: 3
-  m_LocalReferencePoint: {x: -0.0025115013, y: 1.1109563, z: 0.026525617}
-  m_Size: 3.3791857
+  m_LocalReferencePoint: {x: 0.0002757311, y: 1.1252658, z: 0.022318482}
+  m_Size: 3.2516
   m_FadeMode: 1
   m_AnimateCrossFading: 1
   m_LastLODIsBillboard: 0
@@ -1661,7 +1514,6 @@ LODGroup:
     fadeTransitionWidth: 0
     renderers:
     - renderer: {fileID: 7181204364711319487}
-    - renderer: {fileID: 8371393668394096921}
   - screenRelativeHeight: 0.06556017
     fadeTransitionWidth: 0
     renderers:
@@ -1997,8 +1849,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.20535915
-  m_Height: 0.72472435
+  m_Radius: 0.18706626
+  m_Height: 0.68813854
   m_Direction: 1
   m_Center: {x: -0.000000022351738, y: 0.15700328, z: -0.00000003725291}
 --- !u!54 &2625085183408899811
@@ -2009,7 +1861,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3911189270001505927}
   serializedVersion: 5
-  m_Mass: 37.44202
+  m_Mass: 31.068628
   m_LinearDamping: 0.1
   m_AngularDamping: 0.6
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -2385,8 +2237,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.11086727
-  m_Height: 0.67295456
+  m_Radius: 0.11543329
+  m_Height: 0.6820866
   m_Direction: 1
   m_Center: {x: 0.000000009313225, y: 0.22561023, z: -0.00000008940698}
 --- !u!54 &1129723897861711750
@@ -2397,7 +2249,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5173876823851475272}
   serializedVersion: 5
-  m_Mass: 15.681529
+  m_Mass: 16.9998
   m_LinearDamping: 0.1
   m_AngularDamping: 0.6
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -2676,8 +2528,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.12660736
-  m_Height: 0.52616125
+  m_Radius: 0.09045637
+  m_Height: 0.4538593
   m_Direction: 1
   m_Center: {x: 1.54321e-14, y: 0.13647325, z: 0.00000004656613}
 --- !u!54 &2472373444004949675
@@ -2688,7 +2540,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5553438694138985092}
   serializedVersion: 5
-  m_Mass: 12.370536
+  m_Mass: 6.314645
   m_LinearDamping: 0.1
   m_AngularDamping: 0.6
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -2870,8 +2722,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.110212564
-  m_Height: 0.67164516
+  m_Radius: 0.115453474
+  m_Height: 0.682127
   m_Direction: 1
   m_Center: {x: -0.000000067055225, y: 0.22561033, z: -0.00000010617079}
 --- !u!54 &8152403345629668598
@@ -2882,7 +2734,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6200906503259525664}
   serializedVersion: 5
-  m_Mass: 15.496868
+  m_Mass: 17.005747
   m_LinearDamping: 0.1
   m_AngularDamping: 0.6
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -3001,8 +2853,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.1739585
-  m_Height: 0.6940383
+  m_Radius: 0.16419317
+  m_Height: 0.6745076
   m_Direction: 1
   m_Center: {x: -0.0000000074505815, y: 0.17306075, z: 0.000000022351742}
 --- !u!54 &4842454107556238930
@@ -3013,7 +2865,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6246716813017181783}
   serializedVersion: 5
-  m_Mass: 29.615047
+  m_Mass: 26.383434
   m_LinearDamping: 0.1
   m_AngularDamping: 0.6
   m_CenterOfMass: {x: 0, y: 0, z: 0}

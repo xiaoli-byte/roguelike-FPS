@@ -78,6 +78,11 @@ Unity 侧所有设置都从 sidecar 推导，编辑器里手改的导入设置�
 | 中 | StylizedLit 的 `_FUR` 细节：顺毛向拉长的发丝笔触、沿毛向的各向异性光泽带、剪影处的绒边，明暗交界更软；再加轮廓发丝面片（fins，`Spiritfire/FurFin`），轮廓上竖起一圈柔边发丝 | 细节是每像素几次值噪声；fins 多一次蒙皮绘制，但只有轮廓附近的面片会光栅化，其余在顶点着色器里收成线 |
 | 高 | 再给 LOD0 叠壳层（`FurShells` + `Spiritfire/FurShell`）：毛 16 层、羽 10 层，表面也有立体的发丝 | 每层多画一次已蒙皮的 LOD0，例如火浣鼠「高」档多约 9.5 万三角面；远了 LOD 切走就没有了 |
 
+- **用在哪**（2026-10-19 定）：毛发不是越多越好。项目是《枪火重生》式的大块面风格，Tripo 模型上的毛本来就是雕出来的大毛簇；
+  战斗里怪物多在 5–20 米外快速移动，到 LOD 切换距离毛发就没了，同屏数量一多开销却成倍涨。所以只用在看得见、加分的地方：
+  - **灵宠（讙、狻猊、狰、白泽、应龙的鬃毛）**：一直跟在玩家身边、会被近看，给完整毛发（「中」fins、「高」再叠 16 层壳）。
+  - **大白毛（獓狠、天狗、飞廉）**：`shells = 0`，「中」「高」都只有轮廓发丝面片 + 着色细节，不叠壳层；雷牦群复用獓狠模型时也不会成倍加开销。
+  - **不加**：群怪（啸獭、火浣鼠、祸斗）、举父、穷奇，以及全部羽毛（精卫、重明、三青鸟、毕方、蛮蛮：雕出来的大片羽毛加了几乎没区别）。
 - **毛向和遮罩是导入时自动烘的**（`FurBake`，在 `ArtImportPostprocessor.OnPostprocessModel` 里）：
   - 每个顶点的毛向是蒙皮权重加权的骨骼方向。躯干、颈、头这一组（hips / spine / chest / neck / head / body）反过来用，所以毛往后、往下顺；四肢、尾巴、耳朵、翅膀的毛顺到末端；再往下偏一点（重力）。
   - 遮罩是权重加权的每根骨骼毛长倍数（`bones`，可用通配符；0 = 不长毛，如爪、蹄、喙、铃铛），再乘上排除球（`exclude`，眼睛、鼻口）的软边。
@@ -88,7 +93,7 @@ Unity 侧所有设置都从 sidecar 推导，编辑器里手改的导入设置�
   - `kind`：fur 或 feather。
   - `length`：毛长，缺省是身高的 2%，羽毛是 1.2%。
   - `density`：发丝格的密度，缺省 1 / (0.5 × length)。毛越长，发丝越粗越稀，大怪不会被画成一层细绒。
-  - `shells`：「高」档的壳层数（缺省毛 16 / 羽 10）。
+  - `shells`：「高」档的壳层数（缺省毛 16 / 羽 10；0 = 只要轮廓发丝面片，「高」档也不叠壳层）。
   - `fins`：是否生成轮廓发丝面片（缺省 true）。
   - `comb` / `droop`：顺毛梳和重力下垂。
   - `stretch`：发丝沿毛向拉长的程度。
@@ -108,6 +113,7 @@ Unity 侧所有设置都从 sidecar 推导，编辑器里手改的导入设置�
   - 样板场景里按 G 循环 低 → 中 → 高（`ShowcaseCamera`），左上角显示当前档。这个设置和游戏里的是同一项，也会保存。
   - Play 时「画质」同时切 Unity 渲染档（`GraphicsQuality`）：低 → Mobile（0.8 倍渲染分辨率、单级硬阴影、Forward、无 SSAO / MSAA），中 / 高 → PC。只换 QualitySettings 档位，不改 URP 资产；编辑器退出 Play 时还原进 Play 前的档。Mobile 档原本排除了 Standalone，现在 PC 上也能选，PC 的默认档仍是 PC。编辑器里第一次切到 Mobile 时，新的着色器变体是异步编译的，头几帧角色只画出影子。Fur Quality Shots 不进 Play，只对比毛发。
   - 冒烟测试 `PlaytestRunner.QualityMenuTest` 打开暂停菜单，依次点三档，核对 Unity 档、`_SFFurDetail` 和火浣鼠的壳层数，拍 `playtest_pause_quality_<low|medium|high>.png`。只跑这一组：在 `Library/SpiritfireBridge/playtest-focus.txt` 里写 `quality`，再跑 `bridge.sh playtest`。
+- **帧耗时基准**：Spiritfire ▸ Art ▸ Fur Bench，或 `bash scripts/unity/bridge.sh furbench`。在样板场景里摆最坏情况（白泽 + 讙在身边、一群 6 头獓狠在 7–14 米），玩家眼高机位，1920×1080、4× MSAA，三档各测两轮取平均，写到 `Assets/Art/_Review/fur_bench.txt`。2026-10-19 实测：低 13.16 ms、中 13.27 ms（+0.11）、高 13.86 ms（+0.70）。开销很小，所以 PC 没存过设置时默认仍是「高」，Mobile 档默认「低」。
 - **对比截图**：Spiritfire ▸ Art ▸ Fur Quality Shots，或 `bash scripts/unity/bridge.sh fur`。
   - 每个带毛的角色出一张 `Assets/Art/_Review/fur_<ID>.png`：低 / 中 / 高三档左右并排，上排全身、下排头胸。
   - `fur_summary.txt` 记壳层数和「高」档多画的三角面。

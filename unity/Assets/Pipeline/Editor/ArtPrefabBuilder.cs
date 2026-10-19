@@ -313,7 +313,10 @@ namespace Spiritfire.Art.Editor
                 {
                     var furComp = root.AddComponent<FurShells>();
                     furComp.target = target;
-                    furComp.shellTemplate = BuildFurShellMaterial(sc, target.sharedMaterials[0], fur);
+                    // shells = 0：只要轮廓发丝面片（「高」档也不叠壳层）。以前生成过的壳层材质删掉，免得留下没人用的生成物
+                    string stalePath = sc.MaterialAssetPath(target.sharedMaterials[0].name + "_FurShell");
+                    if (fur.shells <= 0 && AssetDatabase.LoadAssetAtPath<Material>(stalePath)) AssetDatabase.DeleteAsset(stalePath);
+                    furComp.shellTemplate = fur.shells > 0 ? BuildFurShellMaterial(sc, target.sharedMaterials[0], fur) : null;
                     furComp.shellsHigh = fur.shells;
                     furComp.kind = fur.kind;
                     if (furFins)

@@ -17,7 +17,7 @@ namespace Spiritfire.Art.Editor
     /// 多个会话共用一个编辑器：执行期间别人提交的请求留在队列里排队，不会互相覆盖或被删。
     /// 旧版 bridge.sh 的单槽 request.json 仍然接受（排在队列前面），过渡期用。
     /// 命令：refresh / sync / scenes / capture / sheets / motion / all（sync → scenes → capture → sheets → motion）/ level11 / playtest /
-    /// pets（导入 Assets/Art/Pets 下的灵宠模型，生成 Resources/Pets 预制体）/ petcompare（灵宠与现有角色同场景画风对比截图）/ fur（毛发画质 低 / 中 / 高 对比截图）。
+    /// pets（导入 Assets/Art/Pets 下的灵宠模型，生成 Resources/Pets 预制体）/ petcompare（灵宠与现有角色同场景画风对比截图）/ fur（毛发画质 低 / 中 / 高 对比截图）/ furbench（毛发三档帧耗时）。
     /// 安全：Play 模式中、或当前场景有未保存的修改时拒绝执行（不替用户丢弃修改）；执行完重新打开用户原来的场景。
     /// </summary>
     [InitializeOnLoad]
@@ -124,6 +124,7 @@ namespace Spiritfire.Art.Editor
                 if (command == "pets") errors += PetArtImport.ImportAll();
                 if (command == "petcompare") PetStyleCompare.Run();
                 if (command == "fur") FurReview.Run();
+                if (command == "furbench") FurBench.Run();
                 // 临时诊断：调用 Spiritfire.Art.Editor.Diag.Run()（存在时），排查问题用，用完删掉那个类
                 if (command == "diag")
                     Type.GetType("Spiritfire.Art.Editor.Diag, Spiritfire.Art.Editor")?.GetMethod("Run")?.Invoke(null, null);

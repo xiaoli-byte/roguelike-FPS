@@ -678,7 +678,8 @@ namespace Spiritfire.Game.Testing
 
         /// <summary>
         /// 暂停菜单的画质：Esc 暂停要弹出菜单、停时间；依次点 低 / 中 / 高，核对 Unity 渲染档（低 → Mobile，中高 → PC）、
-        /// 着色器全局开关 _SFFurDetail（中高 = 1）和带毛敌人（火浣鼠）LOD0 上的壳层数（只有高档有），每档拍一张；继续后菜单关、时间恢复。
+        /// 着色器全局开关 _SFFurDetail（中高 = 1）、带毛灵宠（讙，临时摆在玩家前方）LOD0 上的壳层数（只有高档有）与轮廓发丝面片
+        /// （中高打开），每档拍一张；继续后菜单关、时间恢复。
         /// 测完把玩家自己的画质（PlayerPrefs）原样还回去。
         /// </summary>
         IEnumerator QualityMenuTest(PlayerMotor motor, Camera cam)
@@ -692,9 +693,17 @@ namespace Spiritfire.Game.Testing
                 Fail("场景里没有 GameSession，测不了暂停菜单");
                 yield break;
             }
-            var rat = SpawnAhead(motor, "fire_rat", 3.2f, 50);
+            // 毛发只留给灵宠和少数大白毛（docs/unity-art-pipeline.md 4.1）：拿灵宠讙的预制体摆在玩家前方 2.5 米检查
+            var petPrefab = Resources.Load<GameObject>("Pets/SK_Pet_Huan");
+            GameObject rat = null;
+            if (petPrefab)
+            {
+                var fwd = Vector3.ProjectOnPlane(motor.transform.forward, Vector3.up).normalized;
+                rat = Instantiate(petPrefab, motor.transform.position + fwd * 2.5f, Quaternion.LookRotation(-fwd));
+            }
+            else Fail("找不到 Resources/Pets/SK_Pet_Huan");
             var fur = rat ? rat.GetComponentInChildren<FurShells>() : null;
-            if (rat && !fur) Fail("火浣鼠身上没有 FurShells（registry.toml 的 fur 配置没导出到 Prefab？）");
+            if (rat && !fur) Fail("灵宠讙身上没有 FurShells（registry.toml 的 fur 配置没导出到 Prefab？）");
             yield return new WaitForSeconds(0.3f);
             session.SetPaused(true);
             yield return null;
@@ -710,14 +719,14 @@ namespace Spiritfire.Game.Testing
                 string unity = names[QualitySettings.GetQualityLevel()];
                 float detail = Shader.GetGlobalFloat("_SFFurDetail");
                 int shells = fur ? fur.ActiveShells : 0, expectShells = fur && level == ArtQualityLevel.High ? fur.shellsHigh : 0;
-                Line($"画质「{ArtQuality.Label(level)}」：Unity 档 {unity}，_SFFurDetail {detail:0}，火浣鼠壳层 {shells}{(fur ? $" / 高档 {fur.shellsHigh}" : "")}");
+                Line($"画质「{ArtQuality.Label(level)}」：Unity 档 {unity}，_SFFurDetail {detail:0}，讙壳层 {shells}{(fur ? $" / 高档 {fur.shellsHigh}" : "")}");
                 if (ArtQuality.Level != level) Fail($"点了「{ArtQuality.Label(level)}」，画质却是「{ArtQuality.Label(ArtQuality.Level)}」");
                 if (tiered && unity != (level == ArtQualityLevel.Low ? "Mobile" : "PC")) Fail($"画质「{ArtQuality.Label(level)}」时 Unity 渲染档是 {unity}");
                 if (detail != (level >= ArtQualityLevel.Medium ? 1 : 0)) Fail($"画质「{ArtQuality.Label(level)}」时 _SFFurDetail = {detail}");
-                if (fur && shells != expectShells) Fail($"画质「{ArtQuality.Label(level)}」时火浣鼠壳层 {shells}，应为 {expectShells}");
+                if (fur && shells != expectShells) Fail($"画质「{ArtQuality.Label(level)}」时讙壳层 {shells}，应为 {expectShells}");
                 bool fins = fur && fur.finRenderer && fur.finRenderer.enabled;
                 if (fur && fur.finRenderer && fins != (level >= ArtQualityLevel.Medium))
-                    Fail($"画质「{ArtQuality.Label(level)}」时火浣鼠的轮廓发丝面片{(fins ? "开着" : "关着")}");
+                    Fail($"画质「{ArtQuality.Label(level)}」时讙的轮廓发丝面片{(fins ? "开着" : "关着")}");
                 Shot(cam, $"pause_quality_{level.ToString().ToLowerInvariant()}");
             }
             session.SetPaused(false);
@@ -730,7 +739,7 @@ namespace Spiritfire.Game.Testing
                 PlayerPrefs.DeleteKey(prefKey);
                 ArtQuality.Set(before, false);
             }
-            if (rat) Destroy(rat.gameObject);
+            if (rat) Destroy(rat);
             yield return new WaitForSeconds(0.2f);
         }
 

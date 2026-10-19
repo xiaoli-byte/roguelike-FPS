@@ -3640,25 +3640,15 @@ size = 0.16
 #   bones = { 骨骼名通配 = 毛长倍数 }（0 = 不长毛：爪、蹄、喙、铃铛…）；exclude = [{ center, radius } | { min, max }]（骨架坐标：front = -Y，左 = +X，up = +Z；
 #   球用于眼睛、鼻口，长方体用于鹿角这类细长部件）；fins = false 关掉轮廓发丝面片。
 # 改了以后：python art/pipeline/unity_export.py <ID> → Unity Sync（sidecar 的 fur 变了会自动重新导入模型）。
+# 用在哪（2026-10-19 定）：灵宠（一直在玩家身边、会被近看）给完整毛发；獓狠 / 天狗 / 飞廉这类大白毛只给 shells = 0
+#（画质「中」「高」都只有轮廓发丝面片 + 着色细节，不叠壳层，雷牦群复用獓狠时也不会成倍加开销）；
+# 群怪、举父、穷奇不加（战斗距离上看不见，同屏数量多）；羽毛不加（雕出来的大片羽毛加了几乎没区别）。
 
 [assets.SK_Pet_Huan.fur]
 kind = "fur"
 length = 0.022
 bones = { "bell" = 0.0, "paw_*" = 0.4, "foot_*" = 0.4, "head" = 0.55, "ear_*" = 0.5, "tail*" = 1.25 }
 exclude = [ { center = [0, -0.30, 0.375], radius = 0.045 }, { center = [0, -0.305, 0.33], radius = 0.03 } ]
-
-[assets.SK_Enemy_Marmot.fur]
-kind = "fur"
-length = 0.023
-bones = { "paw_*" = 0.35, "foot_*" = 0.3, "head" = 0.5, "ear_*" = 0.4, "tail_*" = 1.2 }
-exclude = [ { center = [0.043, -0.186, 0.678], radius = 0.035 }, { center = [-0.043, -0.186, 0.678], radius = 0.035 },
-            { center = [0, -0.25, 0.62], radius = 0.045 }, { center = [0, -0.265, 0.665], radius = 0.025 } ]
-
-[assets.SK_Enemy_Manman.fur]
-kind = "feather"
-length = 0.015
-bones = { "thigh_*" = 0.6, "shin_*" = 0.0, "foot_*" = 0.0, "wing_3_*" = 1.3 }
-exclude = [ { center = [-0.21, -0.27, 0.6], radius = 0.065 }, { center = [-0.21, -0.2, 0.665], radius = 0.05 } ]
 
 [assets.SK_Pet_Baize.fur]
 kind = "fur"
@@ -3685,20 +3675,6 @@ bones = { "paw_*" = 0.5, "foot_*" = 0.5, "head" = 0.55, "brow" = 0.0, "chin" = 0
 exclude = [ { center = [0.029, -0.296, 0.378], radius = 0.02 }, { center = [-0.029, -0.296, 0.378], radius = 0.02 },
             { center = [0, -0.33, 0.33], radius = 0.03 } ]
 
-[assets.SK_Pet_Jingwei.fur]
-kind = "feather"
-length = 0.01
-bones = { "shin_*" = 0.0, "talon_*" = 0.0, "head" = 0.6 }
-exclude = [ { center = [0.038, -0.171, 0.525], radius = 0.022 }, { center = [-0.038, -0.171, 0.525], radius = 0.022 },
-            { center = [0, -0.21, 0.485], radius = 0.035 } ]
-
-[assets.SK_Pet_Chongming.fur]
-kind = "feather"
-length = 0.018
-bones = { "shin_*" = 0.0, "talon_*" = 0.0 }
-exclude = [ { center = [0.043, -0.407, 1.10], radius = 0.03 }, { center = [-0.043, -0.407, 1.10], radius = 0.03 },
-            { center = [0, -0.455, 1.07], radius = 0.05 }, { center = [0, -0.43, 0.86], radius = 0.06 } ]
-
 [assets.SK_Pet_Yinglong.fur]
 # 应龙身上是鳞片，只给白色鬃毛长毛
 kind = "fur"
@@ -3707,66 +3683,25 @@ bones = { "*" = 0.0, "mane_*" = 1.0 }
 
 [assets.SK_Enemy_Tiangou.fur]
 kind = "fur"
+shells = 0
 length = 0.025
 bones = { "paw_*" = 0.5, "foot_*" = 0.6, "toe_*" = 0.3, "ear_*" = 0.4, "head" = 0.6, "tail_*" = 1.3 }
 exclude = [ { center = [0.055, -0.61, 1.126], radius = 0.035 }, { center = [-0.055, -0.61, 1.126], radius = 0.035 },
             { center = [0, -0.71, 1.075], radius = 0.035 }, { center = [0, -0.56, 1.2], radius = 0.045 } ]
 
-[assets.SK_Enemy_Jufu.fur]
-# 猕猴脸、手掌、脚掌是皮，不长毛
-kind = "fur"
-length = 0.03
-bones = { "hand_*" = 0.0, "fingers_*" = 0.0, "foot_*" = 0.0, "toe_*" = 0.0, "shin_*" = 0.8 }
-exclude = [ { center = [0, -0.33, 1.56], radius = 0.1 }, { center = [0, -0.2, 1.25], radius = 0.1 } ]
-
 [assets.SK_Enemy_Aoyin.fur]
 kind = "fur"
+shells = 0
 length = 0.059
 bones = { "horn_*" = 0.0, "fhoof_*" = 0.0, "hhoof_*" = 0.0, "tail_*" = 1.2 }
 exclude = [ { center = [0.115, -1.03, 1.79], radius = 0.06 }, { center = [-0.115, -1.03, 1.79], radius = 0.06 },
             { center = [0, -1.17, 1.47], radius = 0.15 } ]
 
-[assets.SK_Enemy_Qiongqi.fur]
-kind = "fur"
-length = 0.034
-bones = { "paw_*" = 0.5, "toe_*" = 0.3, "wing_*" = 0.6, "tail_*" = 1.2 }
-exclude = [ { center = [0.08, -1.29, 1.416], radius = 0.05 }, { center = [-0.08, -1.29, 1.416], radius = 0.05 },
-            { center = [0, -1.36, 1.31], radius = 0.07 } ]
-
 [assets.SK_Boss_Feilian.fur]
 # 鹿身毛皮 + 雀头羽毛；蛇尾前段是鳞，只有末端的羽扇长毛
 kind = "fur"
+shells = 0
 length = 0.068
 bones = { "antler_*" = 0.0, "fhoof_*" = 0.0, "hhoof_*" = 0.0, "fcannon_*" = 0.5, "hcannon_*" = 0.5, "tail_*" = 0.0, "tail_6" = 1.0, "tail_7" = 1.2 }
 exclude = [ { center = [0.12, -2.287, 3.715], radius = 0.07 }, { center = [-0.12, -2.287, 3.715], radius = 0.07 },
             { center = [0, -2.45, 3.52], radius = 0.15 } ]
-
-[assets.SK_Enemy_FireRat.fur]
-kind = "fur"
-length = 0.014
-bones = { "paw_*" = 0.4, "foot_*" = 0.4, "tail_*" = 0.6 }
-exclude = [ { center = [0.054, -0.355, 0.265], radius = 0.025 }, { center = [-0.054, -0.355, 0.265], radius = 0.025 },
-            { center = [0, -0.395, 0.215], radius = 0.035 } ]
-
-[assets.SK_Enemy_Huodou.fur]
-# 细犬是短毛：毛短、壳层少
-kind = "fur"
-length = 0.01
-shells = 8
-bones = { "bell" = 0.0, "paw_*" = 0.4, "toe_*" = 0.4, "jaw" = 0.3 }
-exclude = [ { center = [0.03, -0.424, 0.98], radius = 0.02 }, { center = [-0.03, -0.424, 0.98], radius = 0.02 },
-            { center = [0, -0.48, 0.9], radius = 0.055 } ]
-
-[assets.SK_Enemy_Qingniao.fur]
-kind = "feather"
-length = 0.03
-bones = { "shin_*" = 0.0, "foot_*" = 0.0 }
-exclude = [ { center = [0.06, -0.47, 2.206], radius = 0.04 }, { center = [-0.06, -0.47, 2.206], radius = 0.04 },
-            { center = [0, -0.5, 2.14], radius = 0.08 } ]
-
-[assets.SK_Enemy_Bifang.fur]
-kind = "feather"
-length = 0.022
-bones = { "toes" = 0.0, "tarsus" = 0.0, "shin" = 0.5 }
-exclude = [ { center = [0.068, -0.309, 1.63], radius = 0.035 }, { center = [-0.068, -0.309, 1.63], radius = 0.035 },
-            { center = [0, -0.4, 1.56], radius = 0.1 }, { center = [0, -0.47, 1.45], radius = 0.07 } ]

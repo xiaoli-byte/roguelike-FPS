@@ -3,7 +3,7 @@
 #   编辑器开着 → 写请求给编辑器里的 PipelineBridge，等它执行完；
 #   编辑器没开 → 直接 -batchmode 跑同样的命令。
 # 多个会话同时提交时在编辑器里排队，按提交顺序逐个执行（见 PipelineBridge.cs）。
-# 命令：refresh / sync / scenes / capture / sheets / motion / all / level11（1-1 古道穿越戈壁白盒 + 验收 + 截图）/ fur（毛发画质对比截图）
+# 命令：refresh / sync / scenes / capture / sheets / motion / all / level11（1-1 古道穿越戈壁白盒 + 验收 + 截图）/ fur（毛发画质对比截图）/ furbench（毛发三档帧耗时）
 set -euo pipefail
 cmd="${1:-all}"
 timeout="${2:-3600}"
@@ -50,6 +50,7 @@ case "$cmd" in
   level11) method=Spiritfire.Art.Editor.Levels.Level_1_1.BatchBuild ;;
   petcompare) method=Spiritfire.Art.Editor.PetStyleCompare.BatchRun ;;
   fur) method=Spiritfire.Art.Editor.FurReview.BatchRun ;;
+  furbench) method=Spiritfire.Art.Editor.FurBench.BatchRun ;;
   playtest) echo "playtest 需要打开的编辑器（Play 模式）" >&2; exit 1 ;;
   *) echo "未知命令 $cmd" >&2; exit 1 ;;
 esac
