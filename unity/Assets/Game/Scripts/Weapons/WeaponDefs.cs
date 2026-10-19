@@ -1,60 +1,154 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Spiritfire.Game
 {
-    /// <summary>Semi 单发、Auto 连发、Beam 按住持续放电（每秒 fireRate 跳）</summary>
-    public enum FireMode { Semi, Auto, Beam }
+    /// <summary>
+    /// 开火模式（同 Three.js 版 FireMode）：Semi 单发、Auto 连发、Beam 按住持续放电（每秒 fireRate 跳）；
+    /// Burst 点射（burstCount 发 / 轮）、Spinup 预热（机炮）、Charge 蓄力松手发射——这三种由 W1 的开火框架实现，之前按 Auto 处理。
+    /// </summary>
+    public enum FireMode { Semi, Auto, Beam, Burst, Spinup, Charge }
 
-    /// <summary>投射物武器（榴弹、蛊弹）：不走射线，发射 <see cref="PlayerProjectile"/></summary>
-    public sealed class ProjectileSpec
-    {
-        public float speed = 30, gravity, radius = 0.15f, explosionRadius, lifetime = 3f, scale = 1f;
-        /// <summary>撞墙 / 地面反弹次数；用完后 rollAfter = true 时贴地滚动到时间耗尽再炸，否则下一次触地就炸</summary>
-        public int bounces;
-        public bool rollAfter, explodeOnExpire = true;
-        public Color color = Color.white;
-        /// <summary>外观：grenade 榴弹 / orb 蛊弹</summary>
-        public string visual = "grenade";
-    }
-    public enum ReloadStyle { Magazine, Shell }
+    /// <summary>武器类别（同 Three.js 版 WeaponKind）：词条准入、描述、换弹动作按它分</summary>
+    public enum WeaponKind { Pistol, Smg, Rifle, Shotgun, Sniper, Launcher, Crossbow, Beam, Heavy, Blade }
 
     /// <summary>
-    /// 武器定义（数值来自 Three.js 版 src/weapons/WeaponDefs.ts，散布已按「射得爽」收紧到约 40%；角度一律是半角弧度，射速 = 发 / 秒）。
-    /// 视图偏移 viewHip / viewAim 用 Three.js 的相机空间坐标（x 右、y 上、z 前为负），在 Unity 里 z 取反。
+    /// 换弹风格（同 Three.js 版 ReloadStyle：mag / shell / cylinder / tube / cell / box）。
+    /// 逐发装填只认 Shell（WeaponController 按它走逐发流程，其余都是整匣）；其余几种目前只区分第一人称动作，W1 / W4 接上。
     /// </summary>
-    public sealed class WeaponDef
+    public enum ReloadStyle { Magazine, Shell, Cylinder, Tube, Cell, Box }
+
+    /// <summary>投射物武器（榴弹、蛊弹、飞弹、弩箭）：不走射线，发射 <see cref="PlayerProjectile"/>。默认值同 Three.js 版 def() 的 projectile 缺省</summary>
+    public sealed class ProjectileSpec
+    {
+        public float speed = 30, gravity, radius = 0.1f, explosionRadius, lifetime = 3f, scale = 1f;
+        /// <summary>撞墙 / 地面反弹次数；用完后 rollAfter = true 时贴地滚动到时间耗尽再炸，否则下一次触地就炸</summary>
+        public int bounces;
+        /// <summary>Unity 独有：反弹用完后贴地滚动（青冥雷蛊）</summary>
+        public bool rollAfter;
+        public bool explodeOnExpire;
+        /// <summary>无元素时弹体颜色（TS 缺省 #ffd9a0）</summary>
+        public Color color = new(1f, 0.851f, 0.627f);
+        /// <summary>外观：grenade 榴弹 / orb 蛊弹 / rocket / bolt / arrow / shard / flame</summary>
+        public string visual = "grenade";
+        /// <summary>追踪转向速率（弧度 / 秒）</summary>
+        public float homing;
+        /// <summary>每次扣扳机发射的弹体数（蜂群 5）、多发间隔（秒）、扇形散开半角</summary>
+        public int count = 1;
+        public float stagger, fan;
+        /// <summary>固定扇形（碎刃）：count 发均匀分布在 [−fan, +fan]，不做随机锥形；false = 蜂群式随机散开</summary>
+        public bool fanFixed;
+    }
+
+    /// <summary>散布五项：锥角为半角弧度，恢复 = 停火后每秒收回的弧度</summary>
+    [Serializable]
+    public struct SpreadParams
+    {
+        public float hip, aim, perShot, max, recovery;
+
+        public SpreadParams(float hip, float aim, float perShot, float max, float recovery)
+        {
+            this.hip = hip;
+            this.aim = aim;
+            this.perShot = perShot;
+            this.max = max;
+            this.recovery = recovery;
+        }
+    }
+
+    /// <summary>
+    /// 武器定义（数值来自 Three.js 版 src/weapons/WeaponDefs.ts，字段与 TS 的 WeaponDef 一一对应；角度一律是半角弧度，射速 = 发 / 秒）。
+    /// 每把一个文件 Weapons/Defs/Weapon_&lt;Id&gt;.cs（<see cref="IDefSource{T}"/> + [Defs]），由 <see cref="Registry{T}"/> 收集。
+    /// 散布（D11）：spreadTs 照抄 TS 原值，有效值 = 原值 × spreadScale；D11 之前手调过的 6 把把手调值放在 spreadTuned，原样生效。
+    /// 视图偏移 viewHip / viewAim 用 Three.js 的相机空间坐标（x 右、y 上、z 前为负），在 Unity 里 z 取反（<see cref="View"/>）。
+    /// TS 里嵌套的字段在这里摊平：recoil → recoilPitch…，kick → kickBack / kickRot，falloff → falloffStart / End / Mult，
+    /// viewOffset / aimOffset → viewHip / viewAim。缺省值同 TS 的 def()。
+    /// </summary>
+    public sealed class WeaponDef : IDef
     {
         public string id, name, prefab;
+        /// <summary>类别中文名（「手枪」「冲锋枪」…）</summary>
+        public string category;
+        public WeaponKind kind;
         public FireMode mode;
         public ReloadStyle reload;
-        public float damage, fireRate, reloadTime, shellTime, reloadStart;
+        /// <summary>单发 / 单弹丸 / 单跳基础伤害</summary>
+        public float damage, fireRate = 1;
+        /// <summary>整匣换弹时间；逐发装填：每发耗时 shellTime、开始前准备 reloadStart</summary>
+        public float reloadTime, shellTime, reloadStart;
         public int mag, reserve, pellets = 1;
+        /// <summary>点射：每轮发数与轮内间隔（秒）</summary>
+        public int burstCount = 1;
+        public float burstInterval;
+        /// <summary>霰弹弹丸锥角（半角）</summary>
         public float pelletCone;
-        public float spreadHip, spreadAim, spreadPerShot, spreadMax, spreadRecovery;
+        /// <summary>穿透敌人数（0 = 不穿透）</summary>
+        public int pierce;
+
+        /// <summary>散布原值（照抄 TS，D11）</summary>
+        public SpreadParams spreadTs;
+        /// <summary>D11：有效散布 = TS 原值 × spreadScale（锥角四项；恢复速度不缩）。收紧到约 40% 是为了「射得爽」</summary>
+        public float spreadScale = 0.4f;
+        /// <summary>手调覆盖：有值时直接用（D11 之前 6 把逐项按手感调过，比例并不统一）；新武器留空</summary>
+        public SpreadParams? spreadTuned;
+        public float spreadHip => spreadTuned?.hip ?? spreadTs.hip * spreadScale;
+        public float spreadAim => spreadTuned?.aim ?? spreadTs.aim * spreadScale;
+        public float spreadPerShot => spreadTuned?.perShot ?? spreadTs.perShot * spreadScale;
+        public float spreadMax => spreadTuned?.max ?? spreadTs.max * spreadScale;
+        public float spreadRecovery => spreadTuned?.recovery ?? spreadTs.recovery;
+
+        /// <summary>后坐（TS recoil）：每发上跳、水平随机、水平固定偏移、连射累计系数</summary>
         public float recoilPitch, recoilYaw, recoilBias, recoilClimb;
         public float critMult = 2f, range = 80f;
-        /// <summary>伤害衰减：start 米内全额，end 米处降到 mult，之后保持</summary>
+        /// <summary>伤害衰减（TS falloff）：start 米内全额，end 米处降到 mult，之后保持；缺省 = 无衰减</summary>
         public float falloffStart = 999, falloffEnd = 1000, falloffMult = 1f;
+        /// <summary>击退冲量（米 / 秒，每弹丸）；第一人称后坐 kickBack / kickRot（TS kick）；每发屏震；枪口火焰尺寸</summary>
         public float knockback, kickBack, kickRot, shake, flash;
+        /// <summary>曳光宽度、命中特效尺寸（FX 单元接上）</summary>
+        public float tracerWidth, impactSize = 1f;
         /// <summary>枪声（GameAudio 的 SfxId）与音量（同 Three.js WeaponDefs 的 sfx / sfxVolume）</summary>
         public string sfx = "shot_pistol";
-        public float sfxVolume = 1f;
-        /// <summary>开镜视角变化（度，负数 = 放大）</summary>
-        public float aimFov;
+        public float sfxVolume = 0.8f;
+        /// <summary>开镜视角变化（度，负数 = 放大）与开镜过渡速度（damp lambda）</summary>
+        public float aimFov, aimSpeed = 16f;
+        /// <summary>默认元素与命中附着几率</summary>
         public Element element;
         public float elementChance;
-        /// <summary>固有副元素（青冥雷蛊「副·雷」40%）：命中时另掷一次</summary>
+        /// <summary>固有副元素（青冥雷蛊「副·雷」40%）：命中时另掷一次。词条框架（AF）接管 innate 后撤掉</summary>
         public Element subElement;
         public float subChance;
+        /// <summary>固有词条（TS innate）：生成实例时放在词条最前，不占名额、不随稀有度放大。AF 单元之前只是数据</summary>
+        public WeaponAffix[] innate = Array.Empty<WeaponAffix>();
+        /// <summary>元素轮转（三才转轮）；null = 不轮转</summary>
+        public Element[] cycle;
         public ProjectileSpec projectile;
         /// <summary>光束弹射：命中后向 chainRange 米内最近的 1 个敌人放电，伤害 × chainFraction</summary>
         public float chainFraction, chainRange;
+        /// <summary>机炮预热秒数；开火时移速惩罚</summary>
+        public float spinup, moveSlow;
+        /// <summary>蓄力：满蓄秒数（0 = 非蓄力）、未满最低倍率、满蓄额外穿透、满蓄引爆元素状态</summary>
+        public float chargeTime, chargeMinMult = 0.2f;
+        public int chargeFullPierce;
+        public bool chargeDetonate;
+        /// <summary>随机掉落权重；地上的枪的模型缩放</summary>
+        public float dropWeight = 1f, worldScale = 1.25f;
+        /// <summary>碎刃 v2 的玩法参数；null = 普通武器</summary>
+        public DemonBladeSpec blade;
+
         public Vector3 viewHip, viewAim;
-        /// <summary>第一人称握持（枪模局部坐标，已换算成 Unity：x 取反）</summary>
+        /// <summary>第一人称握持（枪模局部坐标，已换算成 Unity：x 取反，见 <see cref="Grip"/>）</summary>
         public Vector3 rightHand, leftHand;
         public float rightPitch, leftRoll;
         public string description;
+        /// <summary>固有特性（显示在描述里）</summary>
+        public string[] notes = Array.Empty<string>();
+
+        string IDef.Id => id;
+
+        public bool IsHitscan => projectile == null && mode != FireMode.Beam;
+        public bool IsExplosive => projectile != null && projectile.explosionRadius > 0;
+        public bool IsBlade => blade != null;
 
         public float Falloff(float dist)
         {
@@ -62,129 +156,64 @@ namespace Spiritfire.Game
             if (dist >= falloffEnd) return falloffMult;
             return Mathf.Lerp(1, falloffMult, (dist - falloffStart) / (falloffEnd - falloffStart));
         }
+
+        /// <summary>Three.js 视图偏移（z 为负 = 前方）→ Unity 相机局部（z 为正 = 前方）</summary>
+        public static Vector3 View(float x, float y, float z) => new(x, y, -z);
+        /// <summary>握点：Three.js 枪模局部 → Unity（导入时 X 取反）</summary>
+        public static Vector3 Grip(float x, float y, float z) => new(-x, y, z);
     }
 
+    /// <summary>碎刃 v2 的一段斩击（同 TS BladeSlash；时间为未计攻速的秒数）</summary>
+    public sealed class BladeSlash
+    {
+        public float damage, windup, duration, range, halfAngle, knockback, shake, stretch = 1f;
+    }
+
+    /// <summary>碎刃 v2 的全部玩法参数（同 TS DemonBladeParams，docs/demon-blade-v2.md）；WC5–WC7 填值并实现</summary>
+    public sealed class DemonBladeSpec
+    {
+        public BladeSlash[] combo = Array.Empty<BladeSlash>();
+        public float comboReset, reachBelow, reachAbove;
+        public QiSpec qi = new();
+        public SwarmSpec swarm = new();
+        public ShieldSpec shield = new();
+        public BurstSpec burst = new();
+        public IntentSpec intent = new();
+        public UnionSpec union = new();
+        public EyeSpec eye = new();
+
+        /// <summary>刃气：上限、回复延迟、每秒回复、每次斩击命中回复</summary>
+        public sealed class QiSpec { public float max, regenDelay, regen, perSlashHit; }
+        /// <summary>千刃出窍：射程、刃群半径、结算间隔、每次伤害、目标上限、刃气每秒消耗、追随速度、元素附着系数</summary>
+        public sealed class SwarmSpec { public float range, radius, tick, damage; public int maxTargets; public float drain, follow, elementScale; }
+        /// <summary>碎刃屏障：盾心距眼睛、半径、刃气每秒消耗、每挡一发额外消耗、受伤减免、移速惩罚</summary>
+        public sealed class ShieldSpec { public float distance, radius, drain, perBlock, reduction, moveSlow; }
+        /// <summary>杀气爆发：射程、聚合时长、半径、伤害、击退、冷却</summary>
+        public sealed class BurstSpec { public float range, gather, radius, damage, knockback, cooldown; }
+        /// <summary>杀意：上限与各项获得量，脱战衰减</summary>
+        public sealed class IntentSpec { public float max, slashHit, swarmHit, kill, block, decayDelay, decay; }
+        /// <summary>人刀合一：时长、强化爆发倍率与半径、斩波射程 / 伤害比例、刃群半径倍率、移速加成、刀身常态伸长</summary>
+        public sealed class UnionSpec { public float duration, burstMult, burstRadius, waveRange, waveFrac, swarmRadiusMult, moveSpeed, stretch; }
+        /// <summary>噬灵鬼眼：击杀回复（最大生命比例：普通 / 精英 / 首领）与睁眼时长</summary>
+        public sealed class EyeSpec { public float heal, healElite, healBoss, open; }
+    }
+
+    /// <summary>
+    /// 武器表门面：读 <see cref="Registry{T}"/>，外部调用（WeaponController、掉落、测试）不用改。
+    /// 品质倍率与强化同 TS 的 RARITY_DAMAGE / MAX_LEVEL / LEVEL_DAMAGE；稀有度名字与颜色统一走 <see cref="Rarity"/>（D10）。
+    /// </summary>
     public static class WeaponLibrary
     {
         /// <summary>品质倍率：普通 / 精良 / 稀有 / 史诗 / 传说</summary>
         public static readonly float[] RarityDamage = { 1f, 1.15f, 1.35f, 1.6f, 1.9f };
-        public static readonly string[] RarityName = { "普通", "精良", "稀有", "史诗", "传说" };
-        public static readonly Color[] RarityColor =
-        {
-            new(0.85f, 0.85f, 0.85f), new(0.45f, 0.85f, 0.45f), new(0.4f, 0.65f, 1f), new(0.75f, 0.45f, 1f), new(1f, 0.7f, 0.25f),
-        };
+        public static readonly string[] RarityName = Rarity.Names;
+        public static readonly Color[] RarityColor = Rarity.Colors;
         public const int MaxUpgrade = 5;
         public const float UpgradeStep = 0.12f;
 
-        static readonly Dictionary<string, WeaponDef> defs = new();
-        public static IEnumerable<WeaponDef> All => defs.Values;
+        /// <summary>全部武器（按 TS 的 WEAPON_DEFS 顺序，见 Weapons/Defs 里各文件的 [Defs(order)]）</summary>
+        public static IReadOnlyList<WeaponDef> All => Registry<WeaponDef>.All;
 
-        public static WeaponDef Get(string id) => defs.TryGetValue(id, out var d) ? d : null;
-
-        static void Add(WeaponDef d) => defs[d.id] = d;
-
-        // Three.js 视图偏移（z 为负 = 前方）→ Unity 相机局部（z 为正 = 前方）
-        static Vector3 V(float x, float y, float z) => new(x, y, -z);
-        // 握点：Three.js 枪模局部 → Unity（导入时 X 取反）
-        static Vector3 H(float x, float y, float z) => new(-x, y, z);
-
-        static WeaponLibrary()
-        {
-            Add(new WeaponDef
-            {
-                id = "smg", sfx = "shot_smg", sfxVolume = 0.6f, name = "蜂鸣冲锋枪", prefab = "SK_Weapon_Smg", mode = FireMode.Auto, reload = ReloadStyle.Magazine,
-                damage = 11, fireRate = 13, mag = 36, reserve = 252, reloadTime = 1.7f,
-                spreadHip = 0.012f, spreadAim = 0.005f, spreadPerShot = 0.001f, spreadMax = 0.026f, spreadRecovery = 0.6f,
-                recoilPitch = 0.0045f, recoilYaw = 0.0026f, recoilBias = 0.0002f, recoilClimb = 0.015f,
-                critMult = 2, range = 45, falloffStart = 16, falloffEnd = 40, falloffMult = 0.55f,
-                knockback = 0.25f, kickBack = 0.012f, kickRot = 0.03f, shake = 0.035f, flash = 0.12f, aimFov = -10,
-                elementChance = 0.08f, viewHip = V(0.21f, -0.2f, -0.46f), viewAim = V(0, -0.1f, -0.36f),
-                rightHand = H(0, 0, 0), leftHand = H(0, 0.02f, -0.235f), leftRoll = 0.04f,
-                description = "嗡鸣不止的轻型冲锋枪，近距离弹幕压制。",
-            });
-            Add(new WeaponDef
-            {
-                id = "revolver", sfx = "shot_pistol", sfxVolume = 1f, name = "赤铜左轮", prefab = "SK_Weapon_Revolver", mode = FireMode.Semi, reload = ReloadStyle.Magazine,
-                damage = 38, fireRate = 3.5f, mag = 8, reserve = 64, reloadTime = 1.6f,
-                spreadHip = 0.003f, spreadAim = 0.001f, spreadPerShot = 0.005f, spreadMax = 0.014f, spreadRecovery = 0.4f,
-                recoilPitch = 0.022f, recoilYaw = 0.004f,
-                critMult = 2.5f, range = 80, falloffStart = 35, falloffEnd = 80, falloffMult = 0.7f,
-                knockback = 1.5f, kickBack = 0.06f, kickRot = 0.22f, shake = 0.09f, flash = 0.12f, aimFov = -12,
-                elementChance = 0.3f, viewHip = V(0.2f, -0.17f, -0.42f), viewAim = V(0, -0.089f, -0.34f),
-                rightHand = H(0, -0.003f, 0), rightPitch = -0.02f, leftHand = H(-0.034f, -0.04f, 0.035f), leftRoll = 0.65f,
-                description = "赤铜铸就的八膛转轮手枪，弹道笔直，爆头倍率极高。",
-            });
-            Add(new WeaponDef
-            {
-                id = "shotgun", sfx = "shot_shotgun", sfxVolume = 0.9f, name = "碎岩霰弹", prefab = "SK_Weapon_Shotgun", mode = FireMode.Semi, reload = ReloadStyle.Shell,
-                damage = 12, pellets = 9, pelletCone = 0.06f, fireRate = 1.4f, mag = 6, reserve = 42,
-                reloadTime = 3.6f, shellTime = 0.48f, reloadStart = 0.4f,
-                spreadHip = 0.004f, spreadAim = 0.002f, spreadPerShot = 0.004f, spreadMax = 0.012f, spreadRecovery = 0.3f,
-                recoilPitch = 0.035f, recoilYaw = 0.006f,
-                critMult = 2, range = 32, falloffStart = 9, falloffEnd = 30, falloffMult = 0.35f,
-                knockback = 0.9f, kickBack = 0.085f, kickRot = 0.22f, shake = 0.22f, flash = 0.24f, aimFov = -10,
-                elementChance = 0.06f, viewHip = V(0.22f, -0.22f, -0.5f), viewAim = V(0, -0.096f, -0.4f),
-                rightHand = H(0, 0.006f, 0.02f), rightPitch = -0.12f, leftHand = H(0, -0.002f, -0.3f),
-                description = "以碎岩为铳管衬里的泵动霰弹枪，贴脸一击足以撼山。",
-            });
-            // ── 元素武器 ──
-            Add(new WeaponDef
-            {
-                id = "launcher", sfx = "shot_launcher", sfxVolume = 0.9f, name = "焚城榴弹", prefab = "SK_Weapon_Launcher", mode = FireMode.Semi, reload = ReloadStyle.Magazine,
-                damage = 110, fireRate = 1.1f, mag = 4, reserve = 20, reloadTime = 2.4f,
-                spreadHip = 0.005f, spreadAim = 0.002f, spreadPerShot = 0.005f, spreadMax = 0.012f, spreadRecovery = 0.3f,
-                recoilPitch = 0.03f, recoilYaw = 0.004f,
-                critMult = 1.8f, range = 120, element = Element.Fire, elementChance = 0.6f,
-                projectile = new ProjectileSpec { speed = 34, gravity = 9, radius = 0.14f, explosionRadius = 4, lifetime = 3.2f, scale = 1.1f, color = new Color(1f, 0.54f, 0.23f), visual = "grenade" },
-                knockback = 7, kickBack = 0.07f, kickRot = 0.14f, shake = 0.16f, flash = 0.26f, aimFov = -10,
-                viewHip = V(0.23f, -0.24f, -0.52f), viewAim = V(0.1f, -0.18f, -0.44f),
-                rightHand = H(0, 0, 0), leftHand = H(0, -0.01f, -0.27f),
-                description = "发射燃烧榴弹的转轮发射器，所过之处尽成火海。",
-            });
-            Add(new WeaponDef
-            {
-                id = "beam", sfx = "shot_beam", sfxVolume = 0.35f, name = "雷弧发射器", prefab = "SK_Weapon_Beam", mode = FireMode.Beam, reload = ReloadStyle.Magazine,
-                damage = 8, fireRate = 10, mag = 100, reserve = 400, reloadTime = 2.2f,
-                spreadHip = 0.005f, spreadAim = 0.0025f, spreadPerShot = 0, spreadMax = 0, spreadRecovery = 1,
-                recoilPitch = 0.0004f, recoilYaw = 0.0006f,
-                critMult = 1.8f, range = 25, element = Element.Shock, elementChance = 0.1f, chainFraction = 0.4f, chainRange = 7,
-                knockback = 0, kickBack = 0.003f, kickRot = 0.004f, shake = 0.012f, flash = 0.14f, aimFov = -10,
-                viewHip = V(0.22f, -0.22f, -0.48f), viewAim = V(0.05f, -0.14f, -0.4f),
-                rightHand = H(0, 0, 0), leftHand = H(0, 0, -0.17f),
-                description = "释放持续雷弧的能量武器，电流会在敌群间跳跃。",
-            });
-            Add(new WeaponDef
-            {
-                id = "stormpod", sfx = "shot_launcher", sfxVolume = 0.5f, name = "青冥雷蛊", prefab = "SK_Weapon_Stormpod", mode = FireMode.Semi, reload = ReloadStyle.Magazine,
-                damage = 95, fireRate = 1.2f, mag = 5, reserve = 30, reloadTime = 2.5f,
-                spreadHip = 0.005f, spreadAim = 0.002f, spreadPerShot = 0.005f, spreadMax = 0.012f, spreadRecovery = 0.3f,
-                recoilPitch = 0.04f, recoilYaw = 0.008f,
-                critMult = 1.6f, range = 90, element = Element.Corrode, elementChance = 0.6f, subElement = Element.Shock, subChance = 0.4f,
-                projectile = new ProjectileSpec { speed = 30, gravity = 14, radius = 0.15f, explosionRadius = 3.2f, lifetime = 1.8f, scale = 0.9f, bounces = 2, rollAfter = true, color = new Color(0.62f, 1f, 0.29f), visual = "orb" },
-                knockback = 4, kickBack = 0.06f, kickRot = 0.12f, shake = 0.13f, flash = 0.2f, aimFov = -10,
-                viewHip = V(0.23f, -0.24f, -0.52f), viewAim = V(0.08f, -0.17f, -0.44f),
-                rightHand = H(0, 0, 0), leftHand = H(0, -0.02f, -0.2f),
-                description = "以青铜蛊罐封存雷蛊与蚀毒的弹跳榴弹，落地翻滚，炸开一片青雷。",
-            });
-        }
-    }
-
-    /// <summary>一把具体的枪：品质、强化等级、弹匣与备弹</summary>
-    public sealed class WeaponInstance
-    {
-        public readonly WeaponDef def;
-        public int rarity, level;
-        public int mag, reserve;
-
-        public WeaponInstance(WeaponDef def, int rarity = 0)
-        {
-            this.def = def;
-            this.rarity = rarity;
-            mag = def.mag;
-            reserve = def.reserve;
-        }
-
-        public float DamageMult => WeaponLibrary.RarityDamage[Mathf.Clamp(rarity, 0, 4)] * (1 + level * WeaponLibrary.UpgradeStep);
-        public string Title => level > 0 ? $"{def.name} +{level}" : def.name;
+        public static WeaponDef Get(string id) => Registry<WeaponDef>.Get(id);
     }
 }

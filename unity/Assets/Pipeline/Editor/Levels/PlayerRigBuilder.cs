@@ -9,23 +9,22 @@ namespace Spiritfire.Art.Editor.Levels
     /// <summary>
     /// 关卡里的可玩玩家：角色控制器 + PlayerMotor + PlayerVitals + WeaponController + HUD + 会话，
     /// 第一人称每把枪一套 rig（枪模 + 英雄手臂，握点按 Three.js 版 WeaponHandling），切枪时只切换显示。
+    /// 英雄与武器都从注册表读（<see cref="Registry{T}"/>：Skills/Heroes/Hero_*.cs、Weapons/Defs/Weapon_*.cs）。
+    /// rig 与掉落模型的顺序：初始武器在前，其余按武器表顺序（关卡截图取第一个 rig 当第一人称画面）。
     /// </summary>
     public static class PlayerRigBuilder
     {
-        public sealed class Hero
-        {
-            public string id, name, armR, armL, startWeapon;
-            public float maxHp, maxShield, moveSpeed;
-        }
-
         /// <summary>燎（爆竹游侠）：Three.js 版 heroes fox，红熊猫美术</summary>
-        public static readonly Hero Liao = new()
-        {
-            id = "fox", name = "燎", armR = "SM_Arms_RedPandaR", armL = "SM_Arms_RedPandaL", startWeapon = "smg",
-            maxHp = 100, maxShield = 60, moveSpeed = 7.8f,
-        };
+        public static HeroDef Liao => Hero("fox");
 
-        public static GameObject Build(ShowcaseTheme theme, Hero hero, Vector3 position, Quaternion rotation, string stageTitle, out Camera cam)
+        /// <summary>按 id 取英雄；没有则报错</summary>
+        public static HeroDef Hero(string id) =>
+            Registry<HeroDef>.Get(id) ?? throw new System.ArgumentException($"[PlayerRig] 没有英雄 {id}（Skills/Heroes/Hero_*.cs）");
+
+        public static GameObject Build(ShowcaseTheme theme, string heroId, Vector3 position, Quaternion rotation, string stageTitle, out Camera cam) =>
+            Build(theme, Hero(heroId), position, rotation, stageTitle, out cam);
+
+        public static GameObject Build(ShowcaseTheme theme, HeroDef hero, Vector3 position, Quaternion rotation, string stageTitle, out Camera cam)
         {
             cam = ShowcaseSceneBuilder.BuildCameras(theme, out var showcaseRig);
             Object.DestroyImmediate(showcaseRig);
@@ -54,8 +53,9 @@ namespace Spiritfire.Art.Editor.Levels
             weapons.eye = cam;
             weapons.baseFov = cam.fieldOfView;
             weapons.startWeapon = hero.startWeapon;
+            var weaponDefs = WeaponOrder(hero);
             var rigs = new List<WeaponController.Rig>();
-            foreach (var def in WeaponLibrary.All)
+            foreach (var def in weaponDefs)
             {
                 var view = BuildWeaponRig(def, hero, cam.transform);
                 if (view) rigs.Add(new WeaponController.Rig { weaponId = def.id, view = view });
@@ -82,7 +82,7 @@ namespace Spiritfire.Art.Editor.Levels
             systems.AddComponent<LootDirector>();
             // 地上的枪的世界模型（运行时拿不到 AssetDatabase）
             var models = new List<GameObject>();
-            foreach (var def in WeaponLibrary.All)
+            foreach (var def in weaponDefs)
             {
                 var prefab = ShowcaseSceneBuilder.Prefab(def.prefab);
                 if (prefab) models.Add(prefab);
@@ -91,7 +91,18 @@ namespace Spiritfire.Art.Editor.Levels
             return player;
         }
 
-        static FirstPersonViewmodel BuildWeaponRig(WeaponDef def, Hero hero, Transform cam)
+        /// <summary>初始武器在前，其余按武器表顺序</summary>
+        static List<WeaponDef> WeaponOrder(HeroDef hero)
+        {
+            var list = new List<WeaponDef>();
+            var start = WeaponLibrary.Get(hero.startWeapon);
+            if (start != null) list.Add(start);
+            foreach (var def in WeaponLibrary.All)
+                if (def != start) list.Add(def);
+            return list;
+        }
+
+        static FirstPersonViewmodel BuildWeaponRig(WeaponDef def, HeroDef hero, Transform cam)
         {
             if (!ShowcaseSceneBuilder.Prefab(def.prefab)) return null;
             var rig = new GameObject($"FP Rig {def.id}");

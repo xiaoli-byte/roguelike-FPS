@@ -26,6 +26,9 @@ namespace Spiritfire.Game
             stats.SetBase(Stat.MaxHp, maxHp);
             stats.SetBase(Stat.MaxShield, maxShield);
             stats.SetBase(Stat.MoveSpeed, moveSpeed);
+            // 其余基础属性覆盖（HeroDef.baseStats，如磐的减伤）：燎没有
+            if (Registry<HeroDef>.Get(heroId) is { } hero)
+                foreach (var (stat, value) in hero.baseStats) stats.SetBase(stat, value);
             var vitals = GetComponent<PlayerVitals>();
             if (vitals) vitals.stats = stats;
         }

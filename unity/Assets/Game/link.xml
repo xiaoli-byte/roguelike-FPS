@@ -1,0 +1,7 @@
+<!--
+  IL2CPP 裁剪：内容定义（[Defs] 武器 / 敌人 / 秘卷 / 英雄 / 奖励…）和 [GameSystem] 组件都靠反射发现，
+  没有任何代码直接 new 它们，裁剪器会当成死代码删掉。整个 Spiritfire.Game 程序集保留（docs/unity-parity.md 4.3）。
+-->
+<linker>
+  <assembly fullname="Spiritfire.Game" preserve="all" />
+</linker>
