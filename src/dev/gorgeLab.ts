@@ -774,7 +774,7 @@ const shadowCenter = new THREE.Vector3(), ahead = new THREE.Vector3();
 const beaconSmoke: THREE.Vector3[] = [];
 let last = performance.now(), time = 0, onIron = false;
 let nearPerch: (typeof FLIGHT_PERCHES)[number] | null = null;
-const eyeTmp = new THREE.Vector3();
+const eyeTmp = new THREE.Vector3(), lookTmp = new THREE.Vector3();
 function frame(now: number): void {
   const dt = Math.min(0.05, (now - last) / 1000);
   last = now;
@@ -830,6 +830,8 @@ function tick(dt: number, render: boolean): void {
   for (const p of props.thunderPosts) p.charge = Math.min(1, p.charge + (weather.level > 0.6 ? dt / 25 : 0));
   if (flight.thirdPerson) { camera.position.copy(flight.cam); camera.lookAt(flight.look); }
   else { walker.eye(camera.position); camera.rotation.set(walker.pitch, walker.yaw, 0, 'YXZ'); }
+  // 灵宠平时跟着飞：放在镜头摆好之后，用这一帧的眼睛和视线（不落后一帧，走路时不抖）
+  flight.companion(time, dt, camera.position, camera.getWorldDirection(lookTmp), Math.atan(Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2) * camera.aspect));
   // 滑翔越快视野越宽（飞渡结束后慢慢回到 72°）
   if (Math.abs(camera.fov - flight.fov) > 0.05) { camera.fov = flight.fov; camera.updateProjectionMatrix(); }
   sky.position.copy(camera.position);

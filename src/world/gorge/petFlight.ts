@@ -1,11 +1,11 @@
 /**
  * 4-2 彩蛋 · 灵宠飞渡（docs/level-design/chuanzang-v1.md 3.8）：
  * 带着会飞的灵宠（精卫、重明鸟、应龙）走到峡谷里的三处风马旗台，按 F，演出分五段：
- *   ① 起势 1.2 s：镜头从眼睛弧线拉到身侧，灵宠离开肩头，绕着燎螺旋上升，一路洒灵火火星；
+ *   ① 起势 1.2 s：镜头从眼睛弧线拉到身侧，灵宠从侧前方飞回来，绕着燎螺旋上升，一路洒灵火火星；
  *   ② 化形 1.3 s：灵宠悬在前上方，被灵火光罩包住、带回弹地变大，地上一圈冲击环，一道闪光，羽毛 / 鳞光四散；
  *   ③ 擒起 1.1 s：灵宠绕到身后俯冲过头顶，燎起跳、双手举起抓住爪子，被提离地面，镜头转到身后；
  *   ④ 滑翔：鼠标或 A / D 转向，W 俯冲，S 拉平，峡谷阵风往上托，翅尖拖出风痕，越快视野越宽；离地 8 m 内自动拉平减速；
- *   ⑤ 落地 2.2 s：灵宠猛扇翅膀减速、把人放到地上（扬起尘土），再飞起来缩回原样、回到肩头，镜头弧线回到眼睛。
+ *   ⑤ 落地 2.2 s：灵宠猛扇翅膀减速、把人放到地上（扬起尘土），再飞起来缩回原样、回到侧前方的跟随位，镜头弧线回到眼睛。
  * 空格中途松手：人自己掉下去，灵宠缩回原样跟上。
  * 模型用美术管线发布的骨骼模型（public/assets/characters/SK_Pet_*.glb、SK_Hero_Fox.glb），动作全部程序化：
  * 翅膀骨骼绕身体长轴扇、身体俯成水平、腿往回摆；燎的上臂从 T 字姿势转到垂手 / 举手，每帧把灵宠的爪子对齐到燎的双手。
@@ -129,6 +129,41 @@ function aim(p: Posable, upper: string, lower: string, dir: THREE.Vector3): void
 }
 
 const ease = (k: number): number => { const t = Math.min(1, Math.max(0, k)); return t * t * (3 - 2 * t); };
+
+/** 跟随位偏离视线多少（弧度，约 31°）：在画面右（左）前方，整只看得见又不挡准星 */
+const FOLLOW_SIDE = 0.55;
+/** 回头看用的骨骼（有哪根转哪根，角度平分） */
+const HEAD_BONES = ['neck', 'neck_1', 'neck_2', 'head'];
+
+const wrapAngle = (a: number): number => Math.atan2(Math.sin(a), Math.cos(a));
+
+/** 临界阻尼弹簧（SmoothDamp）：cur 朝 target 走，smooth ≈ 追上要的秒数，st.v 是速度状态，maxSpeed 限速 */
+function damp(cur: number, target: number, st: { v: number }, smooth: number, dt: number, maxSpeed = Infinity): number {
+  if (dt <= 0) return cur;
+  const w = 2 / Math.max(1e-4, smooth), x = w * dt, e = 1 / (1 + x + 0.48 * x * x + 0.235 * x * x * x);
+  const lim = maxSpeed * smooth;
+  const d = THREE.MathUtils.clamp(cur - target, -lim, lim), to = cur - d;
+  const tmp = (st.v + w * d) * dt;
+  st.v = (st.v - w * tmp) * e;
+  let out = to + (d + tmp) * e;
+  if ((target - cur > 0) === (out > target)) { out = target; st.v = 0; }
+  return out;
+}
+
+/** 向量版：整体限速（不是每个分量各限各的） */
+function dampVec(cur: THREE.Vector3, target: THREE.Vector3, vel: THREE.Vector3, smooth: number, dt: number, maxSpeed: number): void {
+  if (dt <= 0) return;
+  const w = 2 / Math.max(1e-4, smooth), x = w * dt, e = 1 / (1 + x + 0.48 * x * x + 0.235 * x * x * x);
+  const d = cur.clone().sub(target);
+  const lim = maxSpeed * smooth;
+  if (d.length() > lim) d.setLength(lim);
+  const to = cur.clone().sub(d);
+  const tmp = vel.clone().addScaledVector(d, w).multiplyScalar(dt);
+  vel.addScaledVector(tmp, -w).multiplyScalar(e);
+  const out = to.add(d.add(tmp).multiplyScalar(e));
+  if (target.clone().sub(cur).dot(out.clone().sub(target)) > 0) { out.copy(target); vel.set(0, 0, 0); }
+  cur.copy(out);
+}
 const back = (k: number): number => { const t = Math.min(1, Math.max(0, k)), c = 1.7; return 1 + (c + 1) * (t - 1) ** 3 + c * (t - 1) ** 2; };
 
 // ───────────────────────────── 特效 ─────────────────────────────
@@ -299,6 +334,24 @@ export class PetFlight {
   private seed = 11;
   /** 镜头偏在哪一侧（1 右 / −1 左），被挡住时换边，换了就保持 */
   private camSide = 1;
+  // 平时跟随的状态：灵宠位置 / 速度，它在燎周围的方位角、距离、高度（各带一个弹簧速度），朝向、侧倾、俯仰
+  private fState: 'init' | 'resume' | 'run' = 'init';
+  private readonly fPos = new THREE.Vector3();
+  private readonly fVel = new THREE.Vector3();
+  private readonly fEye = new THREE.Vector3();
+  /** 跟随位上一帧在哪、它自己移动的速度（燎走路 + 绕着燎转，平滑过）：位置弹簧按它加提前量 */
+  private readonly fSlot = new THREE.Vector3();
+  private readonly fSlotV = new THREE.Vector3();
+  private fAng = 0; private readonly fAngV = { v: 0 };
+  private fRad = 3; private readonly fRadV = { v: 0 };
+  private fUp = 0.6; private readonly fUpV = { v: 0 };
+  private fFace = 0; private readonly fFaceV = { v: 0 };
+  private fBank = 0; private fPitch = 0.5; private fNose = 0; private fHead = 0;
+  private fSide = 1; private fSideT = 0; private fMoving = false; private fAwayT = 0; private fLookT = 3;
+  /** 视角转得多快（弧度 / 秒，平滑过）：持续转动时灵宠按这个提前量追，不会一直落在画面外 */
+  private fYaw = 0; private fYawRate = 0;
+  /** 翅膀扇动的相位（累加，扇动快慢变了也不跳）和这一刻的快慢 / 幅度 */
+  private flapPh = 0; private flapT = -1; private flapS = 1; private flapA = 0.6;
 
   constructor(
     /** 脚下的地面（地形或桥面、屋顶）：y 以下最高的可站立面 */
@@ -353,6 +406,7 @@ export class PetFlight {
       this.loadedId = want;
       this.group.add(p.root);
       this.setScale(FLYING_PETS[want].carryHeight / p.height);
+      this.fState = 'init';
       const S = FLYING_PETS[want];
       this.fireCore.set(S.fire[0]); this.fireEdge.set(S.fire[1]); this.shardCol.set(S.shard);
       (this.aura.material as THREE.ShaderMaterial).uniforms.uCore.value.set(S.fire[0]);
@@ -388,6 +442,7 @@ export class PetFlight {
     this.heroUp = 0;
     this.flare = 0;
     for (const t of this.trails) t.reset();
+    this.turnHead(0);
     this.thirdPerson = true;
     return true;
   }
@@ -398,7 +453,11 @@ export class PetFlight {
     const p = this.pet;
     if (!p || !this.loadedId) return;
     const S = FLYING_PETS[this.loadedId];
-    const ph = time * Math.PI * 2 * S.flap * speed;
+    // 相位按这一帧的快慢累加（直接用 time × speed 的话，speed 一变相位就跳，翅膀会抽一下）
+    const step = this.flapT < 0 ? 0 : Math.min(0.1, Math.max(0, time - this.flapT));
+    this.flapT = time;
+    this.flapPh = (this.flapPh + step * Math.PI * 2 * S.flap * speed) % (Math.PI * 2000);
+    const ph = this.flapPh;
     // 静止姿势身体是立着的，身体长轴 = 模型 Y；翅膀绕它上下扇（身体俯成水平后就是绕飞行方向扇）
     const Y = new THREE.Vector3(0, 1, 0);
     for (const [side, sgn] of [['L', 1], ['R', -1]] as const) {
@@ -588,29 +647,198 @@ export class PetFlight {
 
   // ─────────── 每帧 ───────────
 
-  /** 没在飞渡：灵宠跟在玩家右前方飞（第一人称时在画面右边缘看得见） */
-  private follow(eye: THREE.Vector3, yaw: number, time: number, dt: number): void {
-    if (!this.pet) return;
-    const f = new THREE.Vector3(-Math.sin(yaw), 0, -Math.cos(yaw)), r = new THREE.Vector3(-f.z, 0, f.x);
-    const target = eye.clone().addScaledVector(r, 1.4).addScaledVector(f, 1.3).add(new THREE.Vector3(0, -0.15 + 0.12 * Math.sin(time * 2.1), 0));
-    this.pet.root.position.lerp(target, Math.min(1, dt * 7));
-    this.heading = yaw;
-    this.body(0.55, 0);
-    this.flapWings(time, 0.9, 0.55);
+  /** 平时跟随的距离（燎的眼睛到灵宠，米）和比眼睛高多少：个子越大离得越远，画面里看着差不多大 */
+  private followRange(): { rad: number; up: number } {
+    const c = this.loadedId ? FLYING_PETS[this.loadedId].carryHeight : 1;
+    return { rad: 1.6 + 1.6 * c, up: 0.2 + 0.2 * c };
+  }
+
+  /** 侧前方的跟随位（side = 1 右 / −1 左），落地收尾时灵宠飞回这里，跟随接着从这里开始 */
+  private followSlot(eye: THREE.Vector3, yaw: number, side: number, ang = FOLLOW_SIDE): THREE.Vector3 {
+    const { rad, up } = this.followRange(), a = yaw - side * ang;
+    return eye.clone().add(new THREE.Vector3(-Math.sin(a) * rad, up, -Math.cos(a) * rad));
+  }
+
+  /** 这一侧的跟随位下面最高的东西（地形 / 屋顶 / 桥面）比眼睛高多少：贴着坡走时那一侧是山壁，换到另一边飞 */
+  private sideFloor(eye: THREE.Vector3, yaw: number, side: number, ang: number): number {
+    const s = this.followSlot(eye, yaw, side, ang);
+    return Math.max(this.terrainAt(s.x, s.z), this.ground(s.x, s.z, s.y + 2)) - eye.y;
+  }
+
+  /**
+   * 平时跟随（没在飞渡时每帧调一次，在第一人称镜头摆好之后）。灵宠有自己的位置，绕着燎飞：
+   * - 视角小幅转动时它留在原地，像真东西一样在画面里滑过去，再慢慢靠回侧前方；
+   * - 跑到身后看不见、或者挡在画面正中间，才绕个弧飞回侧前方（从身后绕，不横穿视线），离得近的那一侧；
+   * - 走路时跟着往前飞（略超前一点，不拖在后面）；贴着坡走、那一侧是山壁就换到另一侧；
+   * - 飞得快朝飞的方向、转弯侧倾，悬停时直起身子快扇翅膀，平飞时一阵扇一阵滑，偶尔回头看燎一眼；
+   * - 不贴脸（离眼睛至少 1.5 m 多）、不钻进地里、不进房子。
+   * halfFov：画面水平半视角（弧度），据此判断灵宠出没出画面、侧前方偏多少。
+   */
+  companion(time: number, dt: number, eye: THREE.Vector3, lookDir: THREE.Vector3, halfFov = 0.9): void {
+    const p = this.pet;
+    if (!p || !this.loadedId || this.active) return;
+    const S = FLYING_PETS[this.loadedId];
+    const yaw = Math.atan2(-lookDir.x, -lookDir.z);
+    const { rad: R0, up: U0 } = this.followRange();
+    // 低头看时跟着往下一点、抬头往上一点（还在画面里）
+    const pitch = Math.asin(THREE.MathUtils.clamp(lookDir.y, -1, 1));
+    const tilt = THREE.MathUtils.clamp(Math.tan(THREE.MathUtils.clamp(pitch, -0.6, 0.6)) * R0 * 0.75, -1.8, 1.8);
+    // 刚换灵宠 / 瞬移到别的机位：直接放到跟随位；飞渡刚结束：从灵宠现在的位置接着飞
+    if (this.fState !== 'run' || this.fEye.distanceTo(eye) > 12) {
+      if (this.fState === 'resume') {
+        this.fPos.copy(p.root.position);
+        this.fFace = this.heading;
+      } else {
+        this.fSide = 1;
+        this.fPos.copy(this.followSlot(eye, yaw, 1, THREE.MathUtils.clamp(halfFov - Math.atan2(0.8 * S.carryHeight, R0) - 0.07, 0.3, FOLLOW_SIDE)));
+        this.fPos.y += tilt;
+        this.fFace = yaw;
+      }
+      const d = this.fPos.clone().sub(eye);
+      this.fAng = Math.atan2(-d.x, -d.z);
+      this.fRad = Math.max(1.5, Math.hypot(d.x, d.z));
+      this.fUp = d.y;
+      this.fVel.set(0, 0, 0); this.fEye.copy(eye);
+      this.fSlot.copy(this.fPos); this.fSlotV.set(0, 0, 0);
+      this.fAngV.v = this.fRadV.v = this.fUpV.v = this.fFaceV.v = 0;
+      this.fMoving = false; this.fAwayT = 0; this.fLookT = 3;
+      this.fYaw = yaw; this.fYawRate = 0;
+      this.fState = 'run';
+    }
+    if (dt <= 0) { p.root.position.copy(this.fPos); return; }
+
+    this.fEye.copy(eye);
+    this.fSideT += dt;
+    this.fYawRate += (wrapAngle(yaw - this.fYaw) / dt - this.fYawRate) * Math.min(1, dt * 6);
+    this.fYaw = yaw;
+
+    // 灵宠在视线的哪一边：phi > 0 在右，< 0 在左；0 正前方，±π 正后方
+    const phi = wrapAngle(yaw - this.fAng), aphi = Math.abs(phi);
+    // 侧前方偏多少：整只都在画面里（个子大、画面窄就往里收），出画面的判定也按半个身子算
+    const halfSize = Math.atan2(0.8 * S.carryHeight, R0);
+    const sideAng = THREE.MathUtils.clamp(halfFov - halfSize - 0.07, 0.3, FOLLOW_SIDE), edge = halfFov - halfSize * 0.5;
+    if (!this.fMoving) {
+      // 挡在正中间，或者出了画面边缘一小会儿（甩一下视角又甩回来不算）；视角还在猛甩就先等它停下，看停在哪再飞
+      const bad = aphi < 0.3 || aphi > edge;
+      this.fAwayT = bad ? (Math.abs(this.fYawRate) > 2.5 ? this.fAwayT : this.fAwayT + dt) : 0;
+      if (this.fAwayT > (aphi > edge + 0.8 ? 0.1 : 0.25)) {
+        this.fMoving = true;
+        this.fSide = Math.sign(phi) || this.fSide;
+      }
+    } else if (Math.abs(wrapAngle(phi - this.fSide * sideAng)) < 0.12 && Math.abs(this.fYawRate) < 0.35 && Math.abs(this.fAngV.v) < 0.3) {
+      // 追到了、停稳了、视角也不转了，才回到「原地悬停」（一直在转就一直跟着追）
+      this.fMoving = false;
+    }
+    if (!this.fMoving) this.fSide = Math.sign(phi) || this.fSide;
+    // 这一侧是山壁（跟随位下面的地比眼睛还高）、另一侧开阔：换边，换过 2 s 内不再换
+    if (this.fSideT > 2) {
+      const here = this.sideFloor(eye, yaw, this.fSide, sideAng), there = this.sideFloor(eye, yaw, -this.fSide, sideAng);
+      if (here > -0.6 && there < here - 1.5) { this.fSide = -this.fSide; this.fMoving = true; this.fSideT = 0; }
+    }
+    // 角度往哪边走：默认走近路；近路要横穿视线正前方时绕到身后走远路（看不见，就不晃眼）
+    const wander = 0.09 * Math.sin(time * 0.31 + 1.3) + 0.05 * Math.sin(time * 0.83 + 0.4);
+    const want = this.fSide * (sideAng + wander);
+    let delta = wrapAngle(want - phi);
+    if (this.fMoving && aphi > 0.3 && Math.sign(phi) !== Math.sign(want) && aphi + Math.abs(want) < Math.PI) delta -= Math.sign(delta) * Math.PI * 2;
+    // 舒适区里很软（视角转它几乎不动），要绕回来时才快；追的时候按视角转速加提前量（弹簧本身会落后 转速 × 时间）
+    const angSmooth = this.fMoving ? 0.35 : 2.4;
+    // （只按「持续地转」算提前量：猛甩一下不算，不然灵宠会跟着视角来回急掉头）
+    const lead = this.fMoving ? THREE.MathUtils.clamp(this.fYawRate, -1.5, 1.5) * angSmooth : 0;
+    // 绕回来时角速度封顶（绕得太急像被甩过来；掉头太猛由下面位置的加速度上限管），同时飞得开一点
+    this.fAng = damp(this.fAng, this.fAng - delta + lead, this.fAngV, angSmooth, dt, this.fMoving ? 2.7 : 0.7);
+    this.fRad = damp(this.fRad, R0 + (this.fMoving ? 1.1 : 0) + 0.3 * Math.sin(time * 0.23), this.fRadV, 0.7, dt);
+    // 高度：跟着低头抬头（tilt），追的时候飞高一点绕过来，平时上下轻轻浮
+    this.fUp = damp(this.fUp, U0 + tilt + (this.fMoving ? 0.5 : 0) + 0.16 * Math.sin(time * 1.7) + 0.22 * Math.sin(time * 0.37 + 2), this.fUpV, 0.6, dt);
+
+    // 想去的位置：眼睛 + 极坐标；下面有地 / 屋顶就抬高，钻进房子就往上躲
+    const posSmooth = this.fMoving ? 0.4 : 0.36;
+    const slot = eye.clone();
+    slot.x += -Math.sin(this.fAng) * this.fRad;
+    slot.z += -Math.cos(this.fAng) * this.fRad;
+    slot.y += this.fUp;
+    const clear = 0.55 + 0.45 * S.carryHeight;
+    slot.y = Math.max(slot.y, this.terrainAt(slot.x, slot.z) + clear, this.ground(slot.x, slot.z, slot.y + 2) + clear);
+    for (let i = 0; i < 8 && this.solid(slot.x, slot.y, slot.z); i++) slot.y += 0.6;
+    // 往前看一小段：照现在的速度飞过去会擦到坡，就提前抬高（追人、绕弯时常常是贴着坡飞过去的）
+    const ahead = this.fPos.clone().addScaledVector(this.fVel, 0.4);
+    slot.y = Math.max(slot.y, this.terrainAt(ahead.x, ahead.z) + clear);
+    // 跟随位自己在动（燎走路、绕着燎转）：弹簧追一个匀速移动的点会落后「速度 × 弹簧时间」，按这个提前量追就跟得上
+    const sv = slot.clone().sub(this.fSlot).divideScalar(dt);
+    if (sv.length() > 30) sv.setLength(30);
+    this.fSlotV.lerp(sv, Math.min(1, dt * 6));
+    this.fSlot.copy(slot);
+    const prevVel = this.fVel.clone(), pos0 = this.fPos.clone();
+    dampVec(this.fPos, slot.clone().addScaledVector(this.fSlotV, posSmooth), this.fVel, posSmooth, dt, 26);
+    // 加速度封顶 60 m/s²：起步、急停、掉头都是一个弧，不会一下折过去（再低就追不上快走的人，反倒会撞到「不贴脸」的硬约束上）
+    // （速度一律用这一帧实际走的距离算，不用弹簧内部的速度，上限才是对着真实运动卡的）
+    const dv = this.fPos.clone().sub(pos0).divideScalar(dt).sub(prevVel);
+    if (dv.length() > 60 * dt) dv.setLength(60 * dt);
+    this.fVel.copy(prevVel).add(dv);
+    this.fPos.copy(pos0).addScaledVector(this.fVel, dt);
+    // 硬约束：不贴脸、不在地下
+    const toPet = this.fPos.clone().sub(eye), dMin = 1.5 + 0.6 * S.carryHeight;
+    if (toPet.length() < dMin) this.fPos.copy(eye).addScaledVector(toPet.normalize(), dMin);
+    this.fPos.y = Math.max(this.fPos.y, this.terrainAt(this.fPos.x, this.fPos.z) + 0.4);
+    p.root.position.copy(this.fPos);
+
+    // 朝向：飞得快朝飞的方向，悬停时跟燎看同一个方向
+    const hv = Math.hypot(this.fVel.x, this.fVel.z);
+    const velYaw = Math.atan2(-this.fVel.x, -this.fVel.z);
+    const w = THREE.MathUtils.smoothstep(hv, 0.8, 3);
+    this.fFace = damp(this.fFace, this.fFace + wrapAngle(yaw + wrapAngle(velYaw - yaw) * w - this.fFace), this.fFaceV, 0.3, dt, 4.5);
+    const turnRate = this.fFaceV.v;
+    // 转弯往里侧倾（越快倾得越多）；越快身子越平；爬升抬头、下滑低头
+    this.fBank += (THREE.MathUtils.clamp(turnRate * (0.2 + hv * 0.07), -0.7, 0.7) - this.fBank) * Math.min(1, dt * 5);
+    this.fPitch += (0.45 + 0.5 * THREE.MathUtils.smoothstep(hv, 0.5, 7) - this.fPitch) * Math.min(1, dt * 3);
+    this.fNose += (THREE.MathUtils.clamp(-this.fVel.y * 0.07, -0.35, 0.3) - this.fNose) * Math.min(1, dt * 4);
+    this.heading = this.fFace;
+    this.body(this.fPitch, this.fBank, this.fNose, this.fFace + Math.PI);
+
+    // 翅膀：悬停快扇；平飞稳扇，隔一阵收翅滑一段；往下滑收翅；爬升、急加速用力扇
+    const acc = this.fVel.clone().sub(prevVel).divideScalar(dt).length();
+    const cruise = THREE.MathUtils.smoothstep(hv, 1, 6);
+    let fs = 1.15 - 0.35 * cruise, fa = 0.72 - 0.16 * cruise;
+    const effort = Math.min(1, Math.max(0, this.fVel.y * 0.4) + acc * 0.05);
+    fs += 0.35 * effort; fa += 0.2 * effort;
+    const glide = Math.max(
+      THREE.MathUtils.smoothstep(-this.fVel.y, 0.5, 1.6) * THREE.MathUtils.smoothstep(hv, 2.5, 5),
+      THREE.MathUtils.smoothstep(Math.sin(time * 0.7 + 0.5), 0.55, 0.85) * cruise * (1 - effort),
+    );
+    fs += (0.3 - fs) * glide; fa += (0.1 - fa) * glide;
+    this.flapS += (fs - this.flapS) * Math.min(1, dt * 3);
+    this.flapA += (fa - this.flapA) * Math.min(1, dt * 3);
+    this.flapWings(time, this.flapS, this.flapA);
+
+    // 头：平时往转弯的方向看，隔几秒回头看燎一眼
+    this.fLookT -= dt;
+    if (this.fLookT < -1.6) this.fLookT = 3 + this.rand() * 4;
+    const toEye = Math.atan2(-(eye.x - this.fPos.x), -(eye.z - this.fPos.z));
+    const headWant = this.fLookT < 0 ? THREE.MathUtils.clamp(wrapAngle(toEye - this.fFace), -1.1, 1.1) : THREE.MathUtils.clamp(turnRate * 0.2, -0.45, 0.45);
+    this.fHead += (headWant - this.fHead) * Math.min(1, dt * 4);
+    this.turnHead(this.fHead);
+
     // 平时也在身后飘几颗小火星
-    if (this.rand() < dt * 5) this.sparks.emit(this.pet.root.position.clone().add(new THREE.Vector3(0, 0.3, 0)), new THREE.Vector3(0, 0.3, 0), this.fireEdge, 0.05, 0.8);
+    if (this.rand() < dt * 5) this.sparks.emit(this.fPos.clone().add(new THREE.Vector3(0, 0.3, 0)), new THREE.Vector3(0, 0.3, 0), this.fireEdge, 0.05, 0.8);
+  }
+
+  /** 头和脖子绕竖直方向转 angle（转向世界里的「上」，跟身子俯多少无关）；0 = 回正 */
+  private turnHead(angle: number): void {
+    const p = this.pet!;
+    const names = HEAD_BONES.filter(n => p.bones.has(n));
+    if (!names.length) return;
+    const ax = new THREE.Vector3(0, 1, 0).applyQuaternion(p.root.quaternion.clone().invert());
+    for (const n of names) turn(p, n, ax, angle / names.length);
   }
 
   /**
    * 返回值：演出 / 滑翔期间燎的脚应该在哪（检视页把行走者放到这里）；没在飞渡或松手往下掉时返回 null。
-   * eye / lookDir 是第一人称的眼睛位置和视线（灵宠跟随、镜头拉出来的起点）。
+   * eye 是第一人称的眼睛位置。平时的跟随不在这里，在 companion()（检视页摆好镜头之后调）。
    */
   update(time: number, inp: FlightInput, eye: THREE.Vector3, feet: THREE.Vector3): THREE.Vector3 | null {
     const dt = inp.dt;
     this.updateFx(dt, time);
     if (!this.active) {
       this.near = FLIGHT_PERCHES.find(p => Math.hypot(p.x - feet.x, p.z - feet.z) < p.r) ?? null;
-      if (this.pet) this.follow(eye, inp.yaw, time, dt);
       this.aura.visible = false;
       this.fov += (72 - this.fov) * Math.min(1, dt * 3);
       return null;
@@ -623,7 +851,7 @@ export class PetFlight {
     const tmp = new THREE.Vector3();
 
     if (this.phase === 'rise') {
-      // ① 起势：灵宠离开肩头，绕燎螺旋上升一圈半；镜头从眼睛弧线拉到身侧（先往后、再往旁边绕）
+      // ① 起势：灵宠从侧前方飞回来，绕燎螺旋上升一圈半；镜头从眼睛弧线拉到身侧（先往后、再往旁边绕）
       const D = 1.2, k = Math.min(1, this.t / D), e = ease(k);
       const ang = Math.atan2(this.petFrom.z - this.pos.z, this.petFrom.x - this.pos.x) + e * Math.PI * 3;
       const rad = 1.6 + 2.6 * e, hgt = EYE + 3.6 * e;
@@ -796,7 +1024,7 @@ export class PetFlight {
     }
 
     if (this.phase === 'land') {
-      // ⑤ 落地：前 0.6 s 灵宠猛扇翅膀刹住、把人放到地上（扬尘），再 1.6 s 飞起来缩回原样、回到肩头；镜头弧线回到眼睛
+      // ⑤ 落地：前 0.6 s 灵宠猛扇翅膀刹住、把人放到地上（扬尘），再 1.6 s 飞起来缩回原样、回到侧前方的跟随位；镜头弧线回到眼睛
       const D1 = 0.6, D2 = 1.6;
       const f = new THREE.Vector3(-Math.sin(this.heading), 0, -Math.cos(this.heading));
       const g = this.ground(this.pos.x, this.pos.z, this.pos.y + 0.5);
@@ -816,9 +1044,11 @@ export class PetFlight {
         this.pos.y = g;
         this.poseHero(Math.max(0, 1 - k * 2.5), 0, 0, time);
         this.placeHero(0, 0);
-        // 灵宠先往上飞开，再缩小绕回肩头；缩小那一下洒一圈光点
+        // 灵宠先往上飞开，再缩小飞回跟随位；缩小那一下洒一圈光点
         const eyeNow = this.pos.clone().add(new THREE.Vector3(0, EYE, 0));
-        const shoulder = eyeNow.clone().addScaledVector(new THREE.Vector3(-f.z, 0, f.x), 1.4).addScaledVector(f, 1.3).add(new THREE.Vector3(0, -0.15, 0));
+        const shoulder = this.followSlot(eyeNow, this.heading, 1);
+        // 跟随位在坡上可能低过地面：抬到离地的高度（跟随接手时就不会被「不在地下」硬顶上去）
+        shoulder.y = Math.max(shoulder.y, this.terrainAt(shoulder.x, shoulder.z) + 0.55 + 0.45 * S.carryHeight);
         const upHigh = this.petFrom.clone().add(new THREE.Vector3(0, 5, 0)).addScaledVector(f, 3);
         p.root.position.copy(bezier(this.petFrom, upHigh, shoulder, e));
         this.setScale(big + (small - big) * ease(k * 1.5));
@@ -874,6 +1104,7 @@ export class PetFlight {
     this.aura.visible = false;
     this.speed = 0; this.agl = 0; this.bank = 0;
     for (const t of this.trails) t.reset();
+    this.fState = 'resume';
     if (this.pet && this.loadedId) this.setScale(FLYING_PETS[this.loadedId].carryHeight / this.pet.height);
   }
 }
