@@ -440,11 +440,10 @@ namespace Spiritfire.Game
             }
             else vel = (aimPoint - muzzle).normalized * spec.speed;
             var info = HitInfo(def, dmg, muzzle, dir);
-            var p = PlayerProjectile.Spawn(muzzle, vel, info, spec.radius, spec.lifetime, spec.gravity, spec.explosionRadius);
+            var p = PlayerProjectile.Spawn(muzzle, vel, info, spec, def.pierce);
             p.explodeOnExpire = spec.explodeOnExpire;
             p.bounces = spec.bounces;
             p.rollAfter = spec.rollAfter;
-            ProjectileLook(p.transform, spec);
             p.onImpact = point =>
             {
                 ShotFx.Instance?.Impact(point, Vector3.up, def.element == Element.Fire, spec.explosionRadius * 2.2f);
