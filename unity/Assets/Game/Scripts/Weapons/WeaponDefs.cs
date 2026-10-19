@@ -253,7 +253,7 @@ namespace Spiritfire.Game
             return true;
         }
 
-        /// <summary>武器显示名（不含强化等级，HUD / 提示自己拼 +N）。词条框架（AF1）接上传说前缀「天命·赤铜左轮」</summary>
-        public static string DisplayName(WeaponInstance w) => w?.def?.name ?? "";
+        /// <summary>武器显示名：传说前缀 + 名称「天命·赤铜左轮」（不含强化等级，HUD / 提示自己拼 +N），见 <see cref="AffixText.DisplayName(WeaponInstance)"/></summary>
+        public static string DisplayName(WeaponInstance w) => w?.def == null ? "" : AffixText.DisplayName(w);
     }
 }

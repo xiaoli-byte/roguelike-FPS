@@ -9,7 +9,7 @@ namespace Spiritfire.Game
     ///   1. 武器：指定 id 就用它，否则按 <see cref="WeaponDef.dropWeight"/> 加权抽（新机制武器略低）；
     ///   2. 品质：指定就用（夹到 0–4），否则按章节权重表 × 幸运抽，低于保底的权重为 0，抽完再抬到保底；
     ///   3. 元素：定义无元素、精良及以上时 35% 随机灼烧 / 雷殛 / 蚀化之一；
-    ///   4. 词条：固有词条放最前（词条框架 AF1 接上随机词条）；
+    ///   4. 词条：<see cref="AffixRoll"/>（固有词条最前、普通 0/1/1/2/3 条、传说再加一条特性）；
     ///   5. 弹匣、备弹按解析后的容量装满（计入玩家属性）。
     /// 章节从 0 起（0 = 第一章），超出表的按最后一章。局状态（W0-5 RunState）落地前章节取 <see cref="ChapterSource"/>（缺省 0）。
     /// 随机数：调用方可以传 System.Random（测试 / 种子局）；不传用 <see cref="Rng"/>（RunRng 落地后由它替换）。
@@ -84,7 +84,8 @@ namespace Spiritfire.Game
             if (rarity < min) rarity = min;
             var inst = new WeaponInstance(def, rarity);
             inst.element = RollElement(def, rarity, rng);
-            // 词条：词条框架（AF1）接上之前只有构造时放进去的固有词条
+            // 词条：固有 → 按稀有度抽的普通词条（准入、重新过滤、perHit 归一）→ 传说特性
+            inst.SetAffixes(AffixRoll.Roll(def, rarity, inst.element, rng));
             var r = WeaponStatsResolver.Resolve(inst, o.useNoStats ? null : o.stats ?? WeaponStatsResolver.PlayerStats);
             inst.mag = r.magCap;
             inst.reserve = r.reserveCap;
