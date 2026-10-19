@@ -98,7 +98,10 @@ Unity 侧所有设置都从 sidecar 推导，编辑器里手改的导入设置�
   - 壳层材质按（模板，层数）缓存，同种角色的所有实例共用，SRP Batcher 照常合批。
   - 壳层只有 UniversalForward 通道：不投影，也不进深度和法线预通道。
 - **切换画质**：`ArtQuality.Set(...)` 会存进 PlayerPrefs，并广播 `Changed`，FurShells 随之重新套用。没存过时按 Unity 画质档推断：Mobile → 低，其余 → 高。
-  - 游戏里还没有设置面板，之后接到设置 UI 上就行。
+  - 玩家入口：游戏里按 Esc 弹出暂停菜单（`PauseMenu`），「画面 · 画质」三档 低 / 中 / 高，点选即时生效并保存。Esc、「继续游戏」或点击面板外的空白处继续。
+  - 样板场景里按 G 循环 低 → 中 → 高（`ShowcaseCamera`），左上角显示当前档。这个设置和游戏里的是同一项，也会保存。
+  - Play 时「画质」同时切 Unity 渲染档（`GraphicsQuality`）：低 → Mobile（0.8 倍渲染分辨率、单级硬阴影、Forward、无 SSAO / MSAA），中 / 高 → PC。只换 QualitySettings 档位，不改 URP 资产；编辑器退出 Play 时还原进 Play 前的档。Mobile 档原本排除了 Standalone，现在 PC 上也能选，PC 的默认档仍是 PC。编辑器里第一次切到 Mobile 时，新的着色器变体是异步编译的，头几帧角色只画出影子。Fur Quality Shots 不进 Play，只对比毛发。
+  - 冒烟测试 `PlaytestRunner.QualityMenuTest` 打开暂停菜单，依次点三档，核对 Unity 档、`_SFFurDetail` 和火浣鼠的壳层数，拍 `playtest_pause_quality_<low|medium|high>.png`。只跑这一组：在 `Library/SpiritfireBridge/playtest-focus.txt` 里写 `quality`，再跑 `bridge.sh playtest`。
 - **对比截图**：Spiritfire ▸ Art ▸ Fur Quality Shots，或 `bash scripts/unity/bridge.sh fur`。
   - 每个带毛的角色出一张 `Assets/Art/_Review/fur_<ID>.png`：低 / 中 / 高三档左右并排，上排全身、下排头胸。
   - `fur_summary.txt` 记壳层数和「高」档多画的三角面。
@@ -185,7 +188,7 @@ node --import ./scripts/unity/register.mjs scripts/unity/bake-native-anims.mjs f
 - **布局**：广场、北面城门，城墙套件按 4.5 m 墙板加两端端头拼接，四角角楼；西侧集市，东侧高台和传送神龛；远景是崖壁和巨像。中央一排角色：跳鼠刀兵（人形）、邪飞天和琵琶（人形）、小熊猫英雄（Mixamo 命名的人形）、蜃楼蛤蟆（非人形）。
 - **光照**：暖色低角度主光、三色渐变环境光、天空盒反射，火盆点光用来测试 Forward+ 附加光。后处理是 Neutral 色调映射、Bloom、对比度和饱和度微调、轻微暖白平衡、暗角，再加线性沙尘雾。
 - **第一人称**：转轮手枪和小熊猫左右手臂挂在一台叠加相机上（竖直视角 60°，FirstPerson 层）。腰射位置、手臂挂点取自 Three.js 版的 `viewOffset` 与 `WEAPON_HANDLING.revolver`。
-- **操作**：右键 + 鼠标转视角，WASD / QE 移动，Shift 加速；F 切换第一人称；1–8 切到预设机位；H 让所有角色受击闪白。
+- **操作**：右键 + 鼠标转视角，WASD / QE 移动，Shift 加速；F 切换第一人称；1–8 切到预设机位；H 让所有角色受击闪白；G 循环切换画质 低 / 中 / 高（对比毛发）。
 - **审核截图**：`ReviewCapture` 按机位输出 1920×1080 的 PNG 到 `Assets/Art/_Review/`（不入库）。
 
 ## 7. Unity 侧自动 QA（`ArtValidator`）

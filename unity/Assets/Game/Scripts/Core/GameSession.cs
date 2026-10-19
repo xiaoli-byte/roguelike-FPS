@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 namespace Spiritfire.Game
 {
     /// <summary>
-    /// 一局的会话状态（切片版）：关卡标题、阵亡后 R 重开、Esc 暂停（释放鼠标、时间停止，再点画面继续）、模态界面。
+    /// 一局的会话状态（切片版）：关卡标题、阵亡后 R 重开、Esc 暂停（释放鼠标、时间停止，弹出 <see cref="PauseMenu"/>，含画质设置）、模态界面。
     /// 之后接关卡流程（1-1 → 1-2 …）、局外进度时从这里扩展。
     /// </summary>
     public sealed class GameSession : MonoBehaviour
@@ -77,16 +77,20 @@ namespace Spiritfire.Game
             }
             if (modal) return;
             if (kb.escapeKey.wasPressedThisFrame) SetPaused(!paused);
-            if (paused && Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame) SetPaused(false);
         }
 
-        void SetPaused(bool p)
+        public bool Paused => paused;
+
+        /// <summary>Esc 暂停 / 继续（冒烟测试也直接调它）</summary>
+        public void SetPaused(bool p)
         {
             paused = p;
             Time.timeScale = p ? 0 : 1;
             if (motor) motor.inputEnabled = !p;
             Cursor.lockState = p ? CursorLockMode.None : CursorLockMode.Locked;
-            hud?.ShowDeath(p ? "暂 停\n<size=34>点击画面继续</size>" : "");
+            // 暂停菜单（含画质设置）里点「继续游戏」或面板外的空白处，也回到这里继续
+            if (p) PauseMenu.Show(() => SetPaused(false));
+            else PauseMenu.Hide();
         }
 
         /// <summary>模态界面（秘卷三选一…）：停时间、放开鼠标、屏蔽玩家输入；Esc 暂停在模态期间不响应</summary>

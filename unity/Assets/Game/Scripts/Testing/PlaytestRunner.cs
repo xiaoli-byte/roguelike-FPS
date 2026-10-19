@@ -13,7 +13,7 @@ namespace Spiritfire.Game.Testing
     /// <summary>
     /// 自动冒烟测试（bridge.sh playtest）：Play 模式里由脚本操控玩家，逐项检查切片的玩法回路，结果写成文本，
     /// 截图存 Assets/Art/_Review/playtest_*.png。不替代手玩，只保证「能跑、数值对、没有运行时报错」。
-    /// 步骤：换弹 / 拾枪切枪 → 灵宠（八只依次结契打几只敌人、放灵技，日志前缀 [pets]）
+    /// 步骤：换弹 / 拾枪切枪 → 暂停菜单的画质三档 → 灵宠（八只依次结契打几只敌人、放灵技，日志前缀 [pets]）
     ///       → 依次进入 ①–④ 触发遭遇战，自动瞄最近的敌人射击直到肃清（玩家临时 5000 血，记录敌人打出的伤害；② 的宝箱是灵兽封印）
     ///       → 玩家受伤（护盾 / 生命）→ 阵亡。
     /// </summary>
@@ -147,7 +147,7 @@ namespace Spiritfire.Game.Testing
             if (weapons.ActiveSlot != 0) Fail("切回 1 号槽失败");
             weapons.slots[1] = null; // 还原成开局状态：第二把枪要从 ① 的宝箱里拿
 
-            // 聚焦模式：Library/SpiritfireBridge/playtest-focus.txt 里写 anim → 只跑「动作同步 / 敌人表现」这一组，audio / pets 跑到那一组为止（读完即删）
+            // 聚焦模式：Library/SpiritfireBridge/playtest-focus.txt 里写 anim → 只跑「动作同步 / 敌人表现」这一组，quality / audio / pets 跑到那一组为止（读完即删）
             string focus = "";
             var focusPath = string.IsNullOrEmpty(resultPath) ? null : Path.Combine(Path.GetDirectoryName(resultPath) ?? "", "playtest-focus.txt");
             if (focusPath != null && File.Exists(focusPath))
@@ -161,6 +161,14 @@ namespace Spiritfire.Game.Testing
                 vitals.Heal(99999);
                 yield return AnimSyncTests(motor, eye);
                 vitals.stats.Remove("playtest_anim");
+                Finish();
+                yield break;
+            }
+
+            // ── 暂停菜单 · 画质：三档要同时切 Unity 渲染档、毛发细节开关和毛发壳层（聚焦模式 quality 只跑这一组）──
+            yield return QualityMenuTest(motor, weapons.eye);
+            if (focus == "quality")
+            {
                 Finish();
                 yield break;
             }
@@ -667,6 +675,61 @@ namespace Spiritfire.Game.Testing
         }
 
         // ───────────── 音频 ─────────────
+
+        /// <summary>
+        /// 暂停菜单的画质：Esc 暂停要弹出菜单、停时间；依次点 低 / 中 / 高，核对 Unity 渲染档（低 → Mobile，中高 → PC）、
+        /// 着色器全局开关 _SFFurDetail（中高 = 1）和带毛敌人（火浣鼠）LOD0 上的壳层数（只有高档有），每档拍一张；继续后菜单关、时间恢复。
+        /// 测完把玩家自己的画质（PlayerPrefs）原样还回去。
+        /// </summary>
+        IEnumerator QualityMenuTest(PlayerMotor motor, Camera cam)
+        {
+            const string prefKey = "spiritfire.artQuality"; // ArtQuality 存 PlayerPrefs 的键
+            bool hadPref = PlayerPrefs.HasKey(prefKey);
+            var before = ArtQuality.Level;
+            var session = GameSession.Instance;
+            if (!session)
+            {
+                Fail("场景里没有 GameSession，测不了暂停菜单");
+                yield break;
+            }
+            var rat = SpawnAhead(motor, "fire_rat", 3.2f, 50);
+            var fur = rat ? rat.GetComponentInChildren<FurShells>() : null;
+            if (rat && !fur) Fail("火浣鼠身上没有 FurShells（registry.toml 的 fur 配置没导出到 Prefab？）");
+            yield return new WaitForSeconds(0.3f);
+            session.SetPaused(true);
+            yield return null;
+            if (!PauseMenu.Open) Fail("暂停后没有弹出暂停菜单");
+            if (Time.timeScale != 0) Fail($"暂停后时间没有停（×{Time.timeScale}）");
+            var names = QualitySettings.names;
+            bool tiered = Array.IndexOf(names, "Mobile") >= 0 && Array.IndexOf(names, "PC") >= 0;
+            foreach (var level in new[] { ArtQualityLevel.Low, ArtQualityLevel.Medium, ArtQualityLevel.High })
+            {
+                PauseMenu.Pick(level);
+                // 换渲染档后新的着色器变体在编辑器里是异步编译的，头几帧角色只画出影子：等一会儿再拍（暂停中，用真实时间）
+                yield return new WaitForSecondsRealtime(1f);
+                string unity = names[QualitySettings.GetQualityLevel()];
+                float detail = Shader.GetGlobalFloat("_SFFurDetail");
+                int shells = fur ? fur.ActiveShells : 0, expectShells = fur && level == ArtQualityLevel.High ? fur.shellsHigh : 0;
+                Line($"画质「{ArtQuality.Label(level)}」：Unity 档 {unity}，_SFFurDetail {detail:0}，火浣鼠壳层 {shells}{(fur ? $" / 高档 {fur.shellsHigh}" : "")}");
+                if (ArtQuality.Level != level) Fail($"点了「{ArtQuality.Label(level)}」，画质却是「{ArtQuality.Label(ArtQuality.Level)}」");
+                if (tiered && unity != (level == ArtQualityLevel.Low ? "Mobile" : "PC")) Fail($"画质「{ArtQuality.Label(level)}」时 Unity 渲染档是 {unity}");
+                if (detail != (level >= ArtQualityLevel.Medium ? 1 : 0)) Fail($"画质「{ArtQuality.Label(level)}」时 _SFFurDetail = {detail}");
+                if (fur && shells != expectShells) Fail($"画质「{ArtQuality.Label(level)}」时火浣鼠壳层 {shells}，应为 {expectShells}");
+                Shot(cam, $"pause_quality_{level.ToString().ToLowerInvariant()}");
+            }
+            session.SetPaused(false);
+            yield return null;
+            if (PauseMenu.Open) Fail("继续游戏后暂停菜单没有关");
+            if (Time.timeScale != 1) Fail($"继续游戏后时间没有恢复（×{Time.timeScale}）");
+            if (hadPref) ArtQuality.Set(before);
+            else
+            {
+                PlayerPrefs.DeleteKey(prefKey);
+                ArtQuality.Set(before, false);
+            }
+            if (rat) Destroy(rat.gameObject);
+            yield return new WaitForSeconds(0.2f);
+        }
 
         IEnumerator AudioTest(WeaponController weapons)
         {

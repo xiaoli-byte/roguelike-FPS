@@ -8,6 +8,7 @@ namespace Spiritfire.Art
     ///   右键按住 + 鼠标  转视角        WASD / QE  移动 / 升降       Shift  加速
     ///   F                第一人称 / 自由视角切换（第一人称时显示枪与手臂，相机固定在 1.6 米眼高）
     ///   1–9              跳到 Viewpoints 下的第 n 个机位        H  所有角色从镜头方向受击        K  全部倒下（布娃娃）/ 复活
+    ///   G                画质 低 → 中 → 高 循环（<see cref="ArtQuality.Cycle"/>，对比毛发；会存进 PlayerPrefs，和游戏里暂停菜单的「画质」是同一项）
     /// </summary>
     public sealed class ShowcaseCamera : MonoBehaviour
     {
@@ -19,6 +20,8 @@ namespace Spiritfire.Art
         public bool firstPerson;
 
         float yaw, pitch;
+        float toastUntil;
+        GUIStyle toastStyle;
 
         void Start()
         {
@@ -58,6 +61,12 @@ namespace Spiritfire.Art
                 bool anyAlive = System.Array.Exists(all, a => !a.IsDead);
                 foreach (var a in all) { if (anyAlive) a.Kill(); else a.Respawn(); }
             }
+            if (kb.gKey.wasPressedThisFrame)
+            {
+                var level = ArtQuality.Cycle();
+                toastUntil = Time.unscaledTime + 1.6f;
+                Debug.Log($"[showcase] 画质 → {ArtQuality.Label(level)}");
+            }
             for (int i = 0; i < 9; i++)
                 if (kb[Key.Digit1 + i].wasPressedThisFrame) GoTo(i);
 
@@ -89,6 +98,19 @@ namespace Spiritfire.Art
                 if (kb.qKey.isPressed) move += Vector3.down;
                 transform.position += transform.rotation * move * speed;
             }
+        }
+
+        // 按 G 后左上角短暂显示当前画质（样板场景没有 HUD）
+        void OnGUI()
+        {
+            if (Time.unscaledTime > toastUntil) return;
+            toastStyle ??= new GUIStyle
+            {
+                font = Font.CreateDynamicFontFromOSFont(new[] { "Microsoft YaHei UI", "Microsoft YaHei", "SimHei", "Arial" }, 28),
+                fontSize = 28,
+                normal = { textColor = new Color(1f, 0.9f, 0.7f) },
+            };
+            GUI.Label(new Rect(24, 20, 400, 40), $"画质：{ArtQuality.Label(ArtQuality.Level)}", toastStyle);
         }
     }
 }
