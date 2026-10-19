@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Enemy_Qingniao",
   "kind": "skeletal",
   "class": "enemy_standard",
@@ -23,6 +23,41 @@
     ],
     "texture": 2048,
     "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "fur": {
+    "kind": "feather",
+    "length": 0.03,
+    "bones": {
+      "shin_*": 0.0,
+      "foot_*": 0.0
+    },
+    "exclude": [
+      {
+        "center": [
+          0.06,
+          -0.47,
+          2.206
+        ],
+        "radius": 0.04
+      },
+      {
+        "center": [
+          -0.06,
+          -0.47,
+          2.206
+        ],
+        "radius": 0.04
+      },
+      {
+        "center": [
+          0,
+          -0.5,
+          2.14
+        ],
+        "radius": 0.08
+      }
+    ]
   },
   "bounds": {
     "min": [
@@ -145,5 +180,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-17 11:21:00"
+  "exported": "2026-10-19 21:10:53"
 }

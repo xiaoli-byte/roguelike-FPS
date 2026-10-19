@@ -38,7 +38,7 @@ namespace Spiritfire.Art.Editor
                 length = (float?)f["length"] ?? height * (feather ? 0.012f : 0.02f),
                 thickness = (float?)f["thickness"] ?? (feather ? 0.3f : 0.27f),
                 stretch = (float?)f["stretch"] ?? (feather ? 0.3f : 0.4f),
-                facing = (float?)f["facing"] ?? 0.6f,
+                facing = (float?)f["facing"] ?? 0.45f,
                 comb = (float?)f["comb"] ?? (feather ? 1.2f : 0.8f),
                 droop = (float?)f["droop"] ?? (feather ? 0.15f : 0.35f),
                 flowDroop = (float?)f["flow_droop"] ?? 0.35f,

@@ -127,9 +127,8 @@ namespace Spiritfire.Art.Editor
         static void Shot(Camera cam, RenderTexture rt, Texture2D tile, Vector3 pos, Vector3 look)
         {
             cam.transform.SetPositionAndRotation(pos, Quaternion.LookRotation(look - pos));
-            // 第一帧会触发着色器变体编译与阴影初始化：先渲一遍再截
-            cam.Render();
-            cam.Render();
+            // 换机位后的头几帧会触发着色器变体编译、阴影初始化与流送：多渲两遍再截
+            for (int k = 0; k < 3; k++) cam.Render();
             RenderTexture.active = rt;
             tile.ReadPixels(new Rect(0, 0, W, H), 0, 0);
             tile.Apply();

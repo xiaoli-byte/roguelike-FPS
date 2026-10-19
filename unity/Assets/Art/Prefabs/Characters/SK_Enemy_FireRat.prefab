@@ -833,6 +833,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2089489296777505693}
+  - component: {fileID: 1019882184802684788}
   - component: {fileID: 7347958769155610714}
   - component: {fileID: 403543659780708544}
   - component: {fileID: 8326574723864800760}
@@ -861,6 +862,22 @@ Transform:
   - {fileID: 4732909122168575411}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1019882184802684788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3185511537160144546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfd46ad0bb2d78d4e8f20cd386ffc524, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Spiritfire.Art.Runtime::Spiritfire.Art.FurShells
+  target: {fileID: 8565228637518206597}
+  shellTemplate: {fileID: 2100000, guid: a1f8f10df1e320947927f3f3ad538387, type: 2}
+  shellsHigh: 10
+  kind: fur
 --- !u!205 &7347958769155610714
 LODGroup:
   m_ObjectHideFlags: 0

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Enemy_Huodou",
   "kind": "skeletal",
   "class": "enemy_swarm",
@@ -23,6 +23,44 @@
     ],
     "texture": 2048,
     "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "fur": {
+    "kind": "fur",
+    "length": 0.016,
+    "shells": 8,
+    "bones": {
+      "bell": 0.0,
+      "paw_*": 0.4,
+      "toe_*": 0.4,
+      "jaw": 0.3
+    },
+    "exclude": [
+      {
+        "center": [
+          0.03,
+          -0.424,
+          0.98
+        ],
+        "radius": 0.02
+      },
+      {
+        "center": [
+          -0.03,
+          -0.424,
+          0.98
+        ],
+        "radius": 0.02
+      },
+      {
+        "center": [
+          0,
+          -0.48,
+          0.9
+        ],
+        "radius": 0.055
+      }
+    ]
   },
   "bounds": {
     "min": [
@@ -147,5 +185,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-17 11:23:32"
+  "exported": "2026-10-19 21:18:11"
 }

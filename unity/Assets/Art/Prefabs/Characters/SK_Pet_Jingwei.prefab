@@ -1601,6 +1601,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1657457726663477055}
+  - component: {fileID: 8769472974186509842}
   - component: {fileID: 2209882458416208926}
   - component: {fileID: 2674930796018815425}
   - component: {fileID: 3547230397420458581}
@@ -1629,6 +1630,22 @@ Transform:
   - {fileID: 580382820830530951}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8769472974186509842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8801749890324638884}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfd46ad0bb2d78d4e8f20cd386ffc524, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Spiritfire.Art.Runtime::Spiritfire.Art.FurShells
+  target: {fileID: 3806476765591244630}
+  shellTemplate: {fileID: 2100000, guid: 10cbfd517af37164eacb280e0ae67149, type: 2}
+  shellsHigh: 6
+  kind: feather
 --- !u!205 &2209882458416208926
 LODGroup:
   m_ObjectHideFlags: 0
