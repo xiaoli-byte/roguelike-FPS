@@ -314,10 +314,11 @@ export const PLACEMENTS: Placement[] = [
   { kind: 'darchor', x: 200, z: 16 },
   // 灵火坛
   ...SITES.filter(s => s.altar).map(s => ({ kind: 'altar' as const, x: s.altar![0], z: s.altar![1], face: [s.x, s.z] as V2 })),
-  // 灵宠飞渡的起飞台：玛尼堆 + 一根高高的风马旗杆，从对岸也看得见
-  { kind: 'darchor', x: -166, z: 99 }, { kind: 'maniPile', x: -171, z: 98, scale: 0.8 },
-  { kind: 'darchor', x: 17, z: -149 }, { kind: 'maniPile', x: 10, z: -150, scale: 0.8 },
-  { kind: 'darchor', x: 197, z: 27 }, { kind: 'maniPile', x: 191, z: 28, scale: 0.8 },
+  // 灵宠飞渡的起飞台：台边一座玛尼堆；高高的风马旗杆（从对岸也看得见）立在背向峡谷约 18 m 外，
+  // 它那一圈 10 m 的经幡绳不会罩住起飞台，起飞时的镜头弧线不会穿过经幡
+  { kind: 'darchor', x: -186, z: 108 }, { kind: 'maniPile', x: -173, z: 100, scale: 0.8 },
+  { kind: 'darchor', x: 16, z: -164 }, { kind: 'maniPile', x: 10, z: -150, scale: 0.8 },
+  { kind: 'darchor', x: 212, z: 27 }, { kind: 'maniPile', x: 198, z: 29, scale: 0.8 },
   // 小兴趣点
   { kind: 'maniPile', x: -170, z: 70, scale: 0.9 },
   { kind: 'maniPile', x: 140, z: -150, scale: 0.9 },

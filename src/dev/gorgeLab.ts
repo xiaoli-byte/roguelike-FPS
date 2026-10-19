@@ -166,7 +166,14 @@ const boundAt = (x: number, z: number): number => {
 const walker = new Walker(world, boundAt, MAP.softBoundary);
 
 // 彩蛋 · 灵宠飞渡（3.8）：会飞的灵宠跟在身边；到风马旗台按 F
-const flight = new PetFlight((x, z, y) => world.groundAt(x, z, y), boundAt, () => hazards.gust);
+// 镜头避让：点在任何碰撞体里（房子、桥楼、旗杆、碉楼……，多留 0.6 m）就算挡住
+const solidAt = (x: number, y: number, z: number): boolean => world.list.some(c => {
+  if (c.off || y < c.y0 - 0.3 || y > c.y1 + 0.6) return false;
+  if (c.kind === 'cyl') return Math.hypot(x - c.x, z - c.z) < c.r + 0.6;
+  const dx = x - c.x, dz = z - c.z, cs = Math.cos(c.yaw), sn = Math.sin(c.yaw);
+  return Math.abs(dx * cs - dz * sn) < c.hx + 0.6 && Math.abs(dx * sn + dz * cs) < c.hz + 0.6;
+});
+const flight = new PetFlight((x, z, y) => world.groundAt(x, z, y), (x, z) => terrain.heightAt(x, z), solidAt, boundAt, () => hazards.gust);
 scene.add(flight.group);
 const petParam = new URLSearchParams(location.search).get('pet');
 const startPet = (petParam === '' || petParam === 'none') ? null : (petParam && petParam in FLYING_PETS ? petParam as FlyingPetId : 'chongming');
@@ -181,7 +188,7 @@ function tryFlight(): void {
   if (flight.active || ride.zip >= 0 || walker.fly) return;
   if (!flight.petId) { showHint('要有会飞的灵宠（精卫、重明鸟、应龙）才能飞渡'); return; }
   if (!flight.canStart(walker.feet, walker.grounded)) { showHint('走到风马旗台（高处的风马旗杆旁）再按 F'); return; }
-  if (flight.start(walker.feet, walker.yaw, camera.position)) showHint(`${flight.petName}变大了——抓住它的爪子！`);
+  if (flight.start(walker.feet, walker.yaw, camera.position, camera.getWorldDirection(new THREE.Vector3()))) showHint(`${flight.petName}化形——抓住它的爪子！`);
 }
 $<HTMLInputElement>('opt-double').onchange = e => { walker.doubleJump = (e.target as HTMLInputElement).checked; };
 
@@ -771,7 +778,7 @@ const eyeTmp = new THREE.Vector3();
 function frame(now: number): void {
   const dt = Math.min(0.05, (now - last) / 1000);
   last = now;
-  tick(dt, true);
+  tick(frozen ? 0 : dt, true);
   requestAnimationFrame(frame);
 }
 
@@ -787,11 +794,12 @@ function tick(dt: number, render: boolean): void {
   const before = flight.phase;
   const inp = { forward: (keys.has('KeyW') ? 1 : 0) - (keys.has('KeyS') ? 1 : 0), right: (keys.has('KeyD') ? 1 : 0) - (keys.has('KeyA') ? 1 : 0) };
   if (flight.phase === 'glide') walker.yaw -= inp.right * 1.1 * dt;
+  if (flight.phase === 'glide' && flight.pull > 0.05) walker.yaw = flight.heading;
   const flightFeet = flight.update(time, { ...inp, yaw: walker.yaw, release: releasePressed, dt }, walker.eye(eyeTmp), walker.feet);
   releasePressed = false;
   if (before !== 'idle' && flight.phase === 'idle' && before === 'land') { walker.place(walker.feet.x, walker.feet.z); showHint('落地了'); }
   if (before === 'glide' && flight.phase === 'drop') { walker.grounded = false; walker.vy = -2; showHint('松手了'); }
-  if (flight.near && !nearPerch) showHint(flight.petId ? `风马旗台：按 F 让${flight.petName}带你飞` : '风马旗台：要有会飞的灵宠才能飞渡');
+  if (flight.near && !nearPerch && !flight.active) showHint(flight.petId ? `风马旗台：按 F 让${flight.petName}带你飞` : '风马旗台：要有会飞的灵宠才能飞渡');
   nearPerch = flight.near;
   if (flightFeet) { walker.feet.copy(flightFeet); walker.vy = 0; }
   else if (ride.zip >= 0) updateRide(dt);
@@ -822,6 +830,8 @@ function tick(dt: number, render: boolean): void {
   for (const p of props.thunderPosts) p.charge = Math.min(1, p.charge + (weather.level > 0.6 ? dt / 25 : 0));
   if (flight.thirdPerson) { camera.position.copy(flight.cam); camera.lookAt(flight.look); }
   else { walker.eye(camera.position); camera.rotation.set(walker.pitch, walker.yaw, 0, 'YXZ'); }
+  // 滑翔越快视野越宽（飞渡结束后慢慢回到 72°）
+  if (Math.abs(camera.fov - flight.fov) > 0.05) { camera.fov = flight.fov; camera.updateProjectionMatrix(); }
   sky.position.copy(camera.position);
   ahead.set(-Math.sin(walker.yaw), 0, -Math.cos(walker.yaw)).multiplyScalar(60).add(camera.position);
   shadowCenter.set(Math.round(ahead.x / 8) * 8, 0, Math.round(ahead.z / 8) * 8);
@@ -842,8 +852,12 @@ function tick(dt: number, render: boolean): void {
   drawMap();
   updateHud(dt);
 }
-// fly=秒：站到起飞台、灵宠加载好就起飞，先快进这么多秒（截图检视第三人称用）
-const flyAt = Number(params.get('fly'));
+// fly=秒：站到起飞台、灵宠加载好就起飞，先快进这么多秒（截图检视第三人称用）；freeze=1 快进完定格
+const flyParam = params.get('fly') ?? '';
+// 地址里的「+」会被解成空格，两种都认
+const flyLand = /^land[+ ]([\d.]+)$/.exec(flyParam);
+const flyAt = flyLand ? 0.01 : Number(flyParam);
+let frozen = false;
 if (flyAt > 0) {
   const wait = setInterval(() => {
     if (!flight.canStart(walker.feet, true)) return;
@@ -851,6 +865,9 @@ if (flyAt > 0) {
     walker.grounded = true;
     tryFlight();
     simulate(flyAt);
+    // fly=land+秒：一直飞到开始落地，再快进这么多秒
+    if (flyLand) { for (let n = 0; n < 4000 && flight.phase !== 'land'; n++) simulate(1 / 30); simulate(Number(flyLand[1])); }
+    frozen = params.get('freeze') === '1';
   }, 300);
 }
 const daeAt = params.get('dae');
