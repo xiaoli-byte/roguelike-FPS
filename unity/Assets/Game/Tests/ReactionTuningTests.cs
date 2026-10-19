@@ -18,38 +18,34 @@ namespace Spiritfire.Game.Tests
     {
         const BindingFlags Any = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 
-        /// <summary>Unity 侧调参的读取口（反射）</summary>
+        /// <summary>Unity 侧调参的读取口：C1 之后都在 <see cref="CombatTuning"/> / <see cref="ReactionMath"/> 里（单一来源）</summary>
         static class Rx
         {
-            public static FieldInfo Field(string name) =>
-                typeof(ReactionSystem).GetField(name, Any)
-                ?? throw new AssertionException($"ReactionSystem.{name} 不见了：反应调参搬家后，把 ReactionTuningTests.Rx 改成读新位置");
+            static readonly System.Collections.Generic.Dictionary<string, object> Consts = new()
+            {
+                ["MaxDepth"] = CombatTuning.MaxReactionDepth,
+                ["FrameBudget"] = CombatTuning.FrameBudget,
+                ["QueueCap"] = CombatTuning.QueueCap,
+                ["MaxPools"] = CombatTuning.Meltdown.MaxPools,
+                ["CascadeDelay"] = CombatTuning.CascadeDelay,
+                ["AbyssWindup"] = CombatTuning.AbyssWindup,
+                ["IcdFloor"] = CombatTuning.IcdFloor,
+                ["SealStunIcd"] = CombatTuning.Veinseal.StunIcd,
+            };
 
-            public static T Const<T>(string name) => (T)Field(name).GetValue(null);
+            public static T Const<T>(string name) =>
+                Consts.TryGetValue(name, out var v) ? (T)v : throw new AssertionException($"CombatTuning 里没有对应 {name} 的常量");
 
-            /// <summary>Tune[(int)id] 的 (k, floor, cap, icd)</summary>
+            /// <summary>反应调参的 (k, floor, cap, icd)</summary>
             public static (float k, float floor, float cap, float icd) Tune(Reaction id)
             {
-                var arr = (Array)Field("Tune").GetValue(null);
-                var t = arr.GetValue((int)id);
-                float F(string f) => (float)(t.GetType().GetField(f, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                                             ?? throw new AssertionException($"ReactionSystem.Tuning.{f} 不见了")).GetValue(t);
-                return (F("k"), F("floor"), F("cap"), F("icd"));
+                var t = CombatTuning.Of(id);
+                return (t.k, t.floor, t.cap, t.icd);
             }
 
-            public static float Base(Reaction id, float pin, float s)
-            {
-                var m = typeof(ReactionSystem).GetMethod("Base", Any, null, new[] { typeof(Reaction), typeof(float), typeof(float) }, null)
-                        ?? throw new AssertionException("ReactionSystem.Base(Reaction, float, float) 不见了");
-                return (float)m.Invoke(null, new object[] { id, pin, s });
-            }
+            public static float Base(Reaction id, float pin, float s) => ReactionMath.Base(id, pin, s);
 
-            public static float LevelScale(Damageable d)
-            {
-                var m = typeof(ReactionSystem).GetMethod("LevelScale", Any, null, new[] { typeof(Damageable) }, null)
-                        ?? throw new AssertionException("ReactionSystem.LevelScale(Damageable) 不见了");
-                return (float)m.Invoke(null, new object[] { d });
-            }
+            public static float LevelScale(Damageable d) => new GameReactionEnv().Strength(d);
         }
 
         /// <summary>REACTION_TUNING（Reactions.ts）</summary>

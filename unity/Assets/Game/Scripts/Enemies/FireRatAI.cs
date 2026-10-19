@@ -22,6 +22,8 @@ namespace Spiritfire.Game
 
         float dashTimer, dashYaw, curlTime;
         bool dashing, detonated;
+        /// <summary>已经自爆（同 Three.js：自爆死亡不派发击杀事件、不给奖励）</summary>
+        public bool Detonated => detonated;
         Vector3 rollDir;
         Transform ballSocket, ball;
         Renderer[] bodyRenderers;

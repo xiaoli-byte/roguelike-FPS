@@ -120,7 +120,7 @@ namespace Spiritfire.Game.Tests
             Assert.AreEqual(10, StatusTiming.TicksLeft(5f, 0.5f, 0.5f));
             Assert.AreEqual(1, StatusTiming.TicksLeft(0.5f, 0.5f, 0.5f), "最后一跳与到期同一刻也算");
             Assert.AreEqual(0, StatusTiming.TicksLeft(0.3f, 0.5f, 0.5f));
-            Assert.AreEqual(7, StatusTiming.TicksLeft(3.6f, 0.1f, 0.5f));
+            Assert.AreEqual(8, StatusTiming.TicksLeft(3.6f, 0.1f, 0.5f), "0.1、0.6 … 3.6 共 8 跳（末跳与到期同刻也算）");
         }
 
         static int CountDrops(StatusInstance s, float seconds, float dt = 1f / 60f)
