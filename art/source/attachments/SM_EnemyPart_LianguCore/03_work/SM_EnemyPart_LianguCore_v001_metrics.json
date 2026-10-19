@@ -1,0 +1,117 @@
+{
+  "source": {
+    "tris": 6228,
+    "verts": 3210
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 0.90044,
+    "iou": 0.908,
+    "iou_per_view": {
+      "front": 0.939,
+      "left": 0.872,
+      "back": 0.938,
+      "right": 0.868
+    },
+    "size_m": [
+      0.624,
+      0.598,
+      0.9
+    ],
+    "reference_m": [
+      0.62,
+      0.6,
+      0.9
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.487,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_EnemyPart_LianguCore_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "provider",
+      "collapse": {
+        "samples": 23275,
+        "matched_ratio": 0.97,
+        "mean_delta": 0.0158,
+        "p90_delta": 0.0389,
+        "smeared_ratio": 0.006,
+        "stretched_ratio": 0.0141,
+        "dist_p99_m": 0.0058
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_EnemyPart_LianguCore_LOD0",
+      "tris": 5970,
+      "verts": 3081,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.61,
+      "bbox_min": [
+        -0.3117,
+        -0.2988,
+        -0.45
+      ],
+      "bbox_max": [
+        0.3118,
+        0.2988,
+        0.45
+      ]
+    },
+    {
+      "name": "SM_EnemyPart_LianguCore_LOD1",
+      "tris": 1990,
+      "verts": 1070,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.543,
+      "bbox_min": [
+        -0.3123,
+        -0.2969,
+        -0.4507
+      ],
+      "bbox_max": [
+        0.3114,
+        0.2995,
+        0.4501
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/attachments/SM_EnemyPart_LianguCore/04_export/SM_EnemyPart_LianguCore_v001.glb",
+    "bytes": 665216
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 45.4,
+  "_seconds": 47.4
+}

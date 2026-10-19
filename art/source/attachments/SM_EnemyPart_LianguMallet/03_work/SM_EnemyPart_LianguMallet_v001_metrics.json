@@ -1,0 +1,139 @@
+{
+  "source": {
+    "tris": 3250,
+    "verts": 1627
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 1.10054,
+    "iou": 0.87,
+    "iou_per_view": {
+      "front": 0.895,
+      "left": 0.846,
+      "back": 0.886,
+      "right": 0.839
+    },
+    "size_m": [
+      0.283,
+      0.252,
+      1.1
+    ],
+    "reference_m": [
+      0.28,
+      0.25,
+      1.1
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.787,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_EnemyPart_LianguMallet_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "rebaked",
+      "texture": 512,
+      "cage_m": 0.0165,
+      "uv": {
+        "smart_islands": 236,
+        "charts": 53,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "merged",
+        "density_smart": 0.972,
+        "density_merged": 1.0613,
+        "coverage": 0.656
+      },
+      "collapse": {
+        "samples": 23517,
+        "matched_ratio": 0.98,
+        "mean_delta": 0.0295,
+        "p90_delta": 0.0687,
+        "smeared_ratio": 0.0114,
+        "stretched_ratio": 0.0669,
+        "dist_p99_m": 0.0042
+      },
+      "final": {
+        "samples": 23517,
+        "matched_ratio": 0.98,
+        "mean_delta": 0.0102,
+        "p90_delta": 0.0251,
+        "smeared_ratio": 0.0019,
+        "stretched_ratio": 0.0103,
+        "dist_p99_m": 0.0042
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_EnemyPart_LianguMallet_LOD0",
+      "tris": 2984,
+      "verts": 1494,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.604,
+      "bbox_min": [
+        -0.1416,
+        -0.126,
+        0.0001
+      ],
+      "bbox_max": [
+        0.1416,
+        0.126,
+        1.1
+      ]
+    },
+    {
+      "name": "SM_EnemyPart_LianguMallet_LOD1",
+      "tris": 994,
+      "verts": 499,
+      "uv_min": [
+        0.0026658272836357355,
+        0.0026657762937247753
+      ],
+      "uv_max": [
+        0.9973342418670654,
+        0.9737486243247986
+      ],
+      "uv_utilization": 0.558,
+      "bbox_min": [
+        -0.1415,
+        -0.1262,
+        -0.0012
+      ],
+      "bbox_max": [
+        0.1436,
+        0.1255,
+        1.0999
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/attachments/SM_EnemyPart_LianguMallet/04_export/SM_EnemyPart_LianguMallet_v001.glb",
+    "bytes": 294460
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 18.4,
+  "_seconds": 19.7
+}

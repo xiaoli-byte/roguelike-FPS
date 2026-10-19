@@ -1,0 +1,139 @@
+{
+  "source": {
+    "tris": 2848,
+    "verts": 1538
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 0.50024,
+    "iou": 0.714,
+    "iou_per_view": {
+      "front": 0.721,
+      "left": 0.706,
+      "back": 0.726,
+      "right": 0.699
+    },
+    "size_m": [
+      0.498,
+      0.459,
+      0.5
+    ],
+    "reference_m": [
+      0.5,
+      0.46,
+      0.5
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.726,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_EnemyPart_LianguDrum_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "rebaked",
+      "texture": 512,
+      "cage_m": 0.0082,
+      "uv": {
+        "smart_islands": 223,
+        "charts": 47,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "merged",
+        "density_smart": 0.7848,
+        "density_merged": 0.8046,
+        "coverage": 0.704
+      },
+      "collapse": {
+        "samples": 23664,
+        "matched_ratio": 0.986,
+        "mean_delta": 0.0256,
+        "p90_delta": 0.0642,
+        "smeared_ratio": 0.0149,
+        "stretched_ratio": 0.0292,
+        "dist_p99_m": 0.0041
+      },
+      "final": {
+        "samples": 23664,
+        "matched_ratio": 0.986,
+        "mean_delta": 0.0096,
+        "p90_delta": 0.027,
+        "smeared_ratio": 0.0022,
+        "stretched_ratio": 0.0,
+        "dist_p99_m": 0.0041
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_EnemyPart_LianguDrum_LOD0",
+      "tris": 2848,
+      "verts": 1538,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.572,
+      "bbox_min": [
+        -0.2488,
+        -0.2297,
+        -0.25
+      ],
+      "bbox_max": [
+        0.2488,
+        0.2297,
+        0.25
+      ]
+    },
+    {
+      "name": "SM_EnemyPart_LianguDrum_LOD1",
+      "tris": 995,
+      "verts": 604,
+      "uv_min": [
+        0.002385311294347048,
+        0.002511054277420044
+      ],
+      "uv_max": [
+        0.9977988004684448,
+        0.9977987408638
+      ],
+      "uv_utilization": 0.624,
+      "bbox_min": [
+        -0.2485,
+        -0.2301,
+        -0.2503
+      ],
+      "bbox_max": [
+        0.2488,
+        0.2295,
+        0.2501
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/attachments/SM_EnemyPart_LianguDrum/04_export/SM_EnemyPart_LianguDrum_v001.glb",
+    "bytes": 221416
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 23.3,
+  "_seconds": 24.9
+}

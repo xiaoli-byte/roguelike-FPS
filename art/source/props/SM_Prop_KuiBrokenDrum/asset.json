@@ -1,0 +1,291 @@
+{
+  "id": "SM_Prop_KuiBrokenDrum",
+  "display": "夔·残破雷鼓",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-19 20:03:19",
+          "files": {
+            "BO_SM_Prop_KuiBrokenDrum_v001.json": {
+              "path": "00_blockout/BO_SM_Prop_KuiBrokenDrum_v001.json",
+              "sha256": "be8ee940628a22c039598e5e95cbcdd476f3f1f43dfce9336595081a20e5d4fa"
+            },
+            "BO_SM_Prop_KuiBrokenDrum_v001_views.json": {
+              "path": "00_blockout/BO_SM_Prop_KuiBrokenDrum_v001_views.json",
+              "sha256": "d2e9b599d08ecdd930f2c1c19db1b0e22f230ce01b3afb191efae8e3acb86219"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "plateau.kui_broken_drum"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.97,
+              0.0,
+              -0.255
+            ],
+            "max": [
+              0.97,
+              2.2,
+              0.255
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-19 20:03:23",
+          "files": {
+            "CN_SM_Prop_KuiBrokenDrum_v001_front.png": {
+              "path": "01_concept/CN_SM_Prop_KuiBrokenDrum_v001_front.png",
+              "sha256": "96a9a94ceb256ca1f79b2775ac89b98b238e0f749ba63851c0f421a22da0bf69"
+            },
+            "CN_SM_Prop_KuiBrokenDrum_v001_left.png": {
+              "path": "01_concept/CN_SM_Prop_KuiBrokenDrum_v001_left.png",
+              "sha256": "0fcd1cbc57fb1dde5693227eee96119b4365460ad48e08f5cbecd7963b3b60a5"
+            },
+            "CN_SM_Prop_KuiBrokenDrum_v001_back.png": {
+              "path": "01_concept/CN_SM_Prop_KuiBrokenDrum_v001_back.png",
+              "sha256": "d8d20c0e5ec51dbb74cd50398622fd482d05b1f03923e1056952fc7faa9d46a6"
+            },
+            "CN_SM_Prop_KuiBrokenDrum_v001_right.png": {
+              "path": "01_concept/CN_SM_Prop_KuiBrokenDrum_v001_right.png",
+              "sha256": "823e7ff60169df0f22e0f203e8b8516af2da1e438ec5a024b49d851f9b3c818d"
+            },
+            "CN_SM_Prop_KuiBrokenDrum_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Prop_KuiBrokenDrum_v001_sheet.png",
+              "sha256": "d10f984597b246adeed7823e22fdb2e7d19d1a52e5a81ea1c21a6dcc44057947"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "design turnaround",
+          "design_key": "plateau_kui_broken_drum",
+          "design_turnaround": "art/source/characters/_design/plateau/plateau_kui_broken_drum/TV_plateau_kui_broken_drum_v001.png",
+          "source_sha256": "4719d674e8e9df99ff539ae9657cb3c4bd9a648da9250cea29529f3d26c78aba",
+          "reference_mode": "design_turnaround",
+          "highpoly_mode": "tripo",
+          "registration": {
+            "front": {
+              "scale": 0.7270819433743625,
+              "offset": [
+                45,
+                253
+              ],
+              "size": [
+                421,
+                518
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7270819433743625,
+              "offset": [
+                163,
+                253
+              ],
+              "size": [
+                186,
+                518
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7301541205998879,
+              "offset": [
+                47,
+                253
+              ],
+              "size": [
+                417,
+                518
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7270819433743625,
+              "offset": [
+                162,
+                253
+              ],
+              "size": [
+                188,
+                518
+              ],
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude（AI 初审；依据：用户 2026-10-18 已审四视图并用它生成 Tripo 模型，2026-10-19 用户授权不再逐项审核）",
+            "note": "",
+            "time": "2026-10-19 20:03:32"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-19 20:03:46",
+          "files": {
+            "HP_SM_Prop_KuiBrokenDrum_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Prop_KuiBrokenDrum_v001_source.glb",
+              "sha256": "aeaad38eaeb5e44051949bacadbf5bf794014e65b082e54dffa1ec8dff6e5720"
+            },
+            "HP_SM_Prop_KuiBrokenDrum_v001.glb": {
+              "path": "02_highpoly/HP_SM_Prop_KuiBrokenDrum_v001.glb",
+              "sha256": "c68ba190868dc4ba5ac90dd34e182ffb70263dc8674f07f2f740c12705e885c6"
+            },
+            "HP_SM_Prop_KuiBrokenDrum_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Prop_KuiBrokenDrum_v001_graph.json",
+              "sha256": "e8be4f45d0b7e277f28e56e504e9c3dd0123cc5883b2766686c178054d33b3e1"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/3ce97093-ec26-4af3-a389-35cae667da36\r",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 3112,
+          "source_sha256": "aeaad38eaeb5e44051949bacadbf5bf794014e65b082e54dffa1ec8dff6e5720"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-19 20:06:46",
+          "files": {
+            "SM_Prop_KuiBrokenDrum_v001.blend": {
+              "path": "03_work/SM_Prop_KuiBrokenDrum_v001.blend",
+              "sha256": "72f9c25c1f79559c7287cd0f9a09833b441a71c6b44b65bd58a46e802f869fc9"
+            },
+            "SM_Prop_KuiBrokenDrum_v001.glb": {
+              "path": "04_export/SM_Prop_KuiBrokenDrum_v001.glb",
+              "sha256": "9fd54382a7f41e0bb14f3dfde210eea480af2ab37b3f8c955f55e4f622706cfb"
+            },
+            "SM_Prop_KuiBrokenDrum_v001_metrics.json": {
+              "path": "03_work/SM_Prop_KuiBrokenDrum_v001_metrics.json",
+              "sha256": "fef58e34b1dd0cd63f888bad76afe16540cc4bca8c3023bd9cb67bfa81c60a5e"
+            },
+            "T_Prop_KuiBrokenDrum_BC.png": {
+              "path": "03_work/textures_v001/T_Prop_KuiBrokenDrum_BC.png",
+              "sha256": "0940b3dae83098055a2a4eae2b8294a248fb54399bfe829a335b4950cc34d138"
+            },
+            "T_Prop_KuiBrokenDrum_N.png": {
+              "path": "03_work/textures_v001/T_Prop_KuiBrokenDrum_N.png",
+              "sha256": "a851a8554008e979080b3053478d6c06fb13e4aed817c580af892fde942c043e"
+            },
+            "T_Prop_KuiBrokenDrum_ORM.png": {
+              "path": "03_work/textures_v001/T_Prop_KuiBrokenDrum_ORM.png",
+              "sha256": "d7187bca79611c95a5e92fb89fd563ef21641d89a652efeadff5c9ab123de079"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.767,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2984,
+              "verts": 1549
+            },
+            {
+              "tris": 994,
+              "verts": 533
+            }
+          ],
+          "export_kb": 400.7,
+          "seconds": 16.2,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-19 20:06:49",
+          "files": {
+            "SM_Prop_KuiBrokenDrum_v001_validation_v001.json": {
+              "path": "05_review/SM_Prop_KuiBrokenDrum_v001_validation_v001.json",
+              "sha256": "00526f9f2949b9907e1e874f88731f1dead9bdfddea06cdd9e635592514fcb41"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-19 20:06:55",
+          "files": {
+            "SM_Prop_KuiBrokenDrum_v001_review_v001.png": {
+              "path": "05_review/SM_Prop_KuiBrokenDrum_v001_review_v001.png",
+              "sha256": "520d4b3105f88c28eaa0db29922b0db0b5b28d774805d2d8108a49ef24c7f24c"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude（AI 初审；用户 2026-10-19 授权不再逐项审核）",
+            "note": "",
+            "time": "2026-10-19 20:07:38"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-19 20:07:38",
+          "files": {
+            "SM_Prop_KuiBrokenDrum.glb": {
+              "path": "@root/public/assets/props/SM_Prop_KuiBrokenDrum.glb",
+              "sha256": "9fd54382a7f41e0bb14f3dfde210eea480af2ab37b3f8c955f55e4f622706cfb"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Prop_KuiBrokenDrum.glb"
+        }
+      ]
+    }
+  }
+}

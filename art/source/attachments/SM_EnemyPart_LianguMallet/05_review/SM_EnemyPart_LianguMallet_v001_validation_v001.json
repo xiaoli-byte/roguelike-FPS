@@ -1,0 +1,207 @@
+[
+  {
+    "level": "pass",
+    "check": "文件大小",
+    "detail": "288 KB / 上限 700 KB"
+  },
+  {
+    "level": "pass",
+    "check": "扩展可用",
+    "detail": "必需扩展 ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+  },
+  {
+    "level": "pass",
+    "check": "LOD 数量",
+    "detail": "['SM_EnemyPart_LianguMallet_LOD0', 'SM_EnemyPart_LianguMallet_LOD1']，规格 2 级"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 面数",
+    "detail": "2984 / 预算 3000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 切换距离",
+    "detail": "extras.lod_distance=0"
+  },
+  {
+    "level": "pass",
+    "check": "尺寸 X 轴",
+    "detail": "0.283 m（白模 0.280 m）"
+  },
+  {
+    "level": "pass",
+    "check": "尺寸 Y 轴",
+    "detail": "1.100 m（白模 1.100 m）"
+  },
+  {
+    "level": "pass",
+    "check": "尺寸 Z 轴（深度轴）",
+    "detail": "0.252 m（白模 0.250 m）"
+  },
+  {
+    "level": "pass",
+    "check": "相对挂点位置",
+    "detail": "中心偏移 0.000 m（上限 0.066）"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 面数",
+    "detail": "994 / 预算 1000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 递减",
+    "detail": "2984 → 994"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 切换距离",
+    "detail": "extras.lod_distance=14"
+  },
+  {
+    "level": "pass",
+    "check": "材质数量",
+    "detail": "['M_EnemyPart_LianguMallet', 'M_EnemyPart_LianguMallet_LOD1']（一个资产一个材质，便于合批；重烘的远景 LOD 另有 M_*_LOD<i>）"
+  },
+  {
+    "level": "pass",
+    "check": "材质命名",
+    "detail": "['M_EnemyPart_LianguMallet', 'M_EnemyPart_LianguMallet_LOD1']"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 材质",
+    "detail": "['M_EnemyPart_LianguMallet']（M_*_LOD<i> 只能给第 i 级 LOD 用）"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 材质",
+    "detail": "['M_EnemyPart_LianguMallet_LOD1']（M_*_LOD<i> 只能给第 i 级 LOD 用）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_EnemyPart_LianguMallet_N",
+    "detail": "1024×1024 webp（规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_EnemyPart_LianguMallet_N",
+    "detail": "T_<类>_<名>[_LOD<i>]_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_EnemyPart_LianguMallet_ORM",
+    "detail": "1024×1024 webp（规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_EnemyPart_LianguMallet_ORM",
+    "detail": "T_<类>_<名>[_LOD<i>]_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_EnemyPart_LianguMallet_BC",
+    "detail": "1024×1024 webp（规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_EnemyPart_LianguMallet_BC",
+    "detail": "T_<类>_<名>[_LOD<i>]_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_EnemyPart_LianguMallet_LOD1_N",
+    "detail": "512×512 webp（远景 LOD 重烘贴图，2 的幂且 ≤ 规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_EnemyPart_LianguMallet_LOD1_N",
+    "detail": "T_<类>_<名>[_LOD<i>]_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_EnemyPart_LianguMallet_LOD1_ORM",
+    "detail": "512×512 webp（远景 LOD 重烘贴图，2 的幂且 ≤ 规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_EnemyPart_LianguMallet_LOD1_ORM",
+    "detail": "T_<类>_<名>[_LOD<i>]_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_EnemyPart_LianguMallet_LOD1_BC",
+    "detail": "512×512 webp（远景 LOD 重烘贴图，2 的幂且 ≤ 规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_EnemyPart_LianguMallet_LOD1_BC",
+    "detail": "T_<类>_<名>[_LOD<i>]_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "BaseColor 贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "法线贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "ORM 贴图",
+    "detail": "AO / 粗糙度 / 金属度"
+  },
+  {
+    "level": "pass",
+    "check": "BaseColor 贴图 M_EnemyPart_LianguMallet_LOD1",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "法线贴图 M_EnemyPart_LianguMallet_LOD1",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "ORM 贴图 M_EnemyPart_LianguMallet_LOD1",
+    "detail": "AO / 粗糙度 / 金属度"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 贴图拉伸",
+    "detail": "重烘贴图（UV 拉伸量 1.0% 不适用，看色差）"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 贴图色差",
+    "detail": "与 LOD0 色差面积 0.3% / 上限 6%，平均色差 0.0118"
+  },
+  {
+    "level": "pass",
+    "check": "SM_EnemyPart_LianguMallet_LOD0 UV 范围",
+    "detail": "[0.0, 0.0]..[1.0, 1.0]"
+  },
+  {
+    "level": "pass",
+    "check": "SM_EnemyPart_LianguMallet_LOD1 UV 范围",
+    "detail": "[0.0026658272836357355, 0.0026657762937247753]..[0.9973342418670654, 0.9737486243247986]"
+  },
+  {
+    "level": "pass",
+    "check": "UV 利用率",
+    "detail": "60%"
+  },
+  {
+    "level": "pass",
+    "check": "高模对齐",
+    "detail": "剪影 IoU 0.87（{'front': 0.895, 'left': 0.846, 'back': 0.886, 'right': 0.839}）"
+  },
+  {
+    "level": "pass",
+    "check": "投影覆盖",
+    "detail": "未覆盖顶点 0%（扩散补色）"
+  }
+]

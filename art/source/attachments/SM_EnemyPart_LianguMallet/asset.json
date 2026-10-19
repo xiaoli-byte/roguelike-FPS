@@ -1,0 +1,303 @@
+{
+  "id": "SM_EnemyPart_LianguMallet",
+  "display": "连鼓灵·骨槌",
+  "kind": "static",
+  "class": "enemy_attachment",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-19 20:03:10",
+          "files": {
+            "BO_SM_EnemyPart_LianguMallet_v001.json": {
+              "path": "00_blockout/BO_SM_EnemyPart_LianguMallet_v001.json",
+              "sha256": "dce21f171953df41f9664a449d8318be490577dea6ca72257ecb3792e57ceddf"
+            },
+            "BO_SM_EnemyPart_LianguMallet_v001_views.json": {
+              "path": "00_blockout/BO_SM_EnemyPart_LianguMallet_v001_views.json",
+              "sha256": "3cbe58108070882dcadf9353701164812608485378cdeb8753b59a3fdbbc9add"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "liangu"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.14,
+              0.0,
+              -0.125
+            ],
+            "max": [
+              0.14,
+              1.1,
+              0.125
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-19 20:03:18",
+          "files": {
+            "CN_SM_EnemyPart_LianguMallet_v001_front.png": {
+              "path": "01_concept/CN_SM_EnemyPart_LianguMallet_v001_front.png",
+              "sha256": "eca62fc2dc8a19f863322d23b9755ae2f6f939d6f6ff257c289599f18a4d9433"
+            },
+            "CN_SM_EnemyPart_LianguMallet_v001_left.png": {
+              "path": "01_concept/CN_SM_EnemyPart_LianguMallet_v001_left.png",
+              "sha256": "75b2b219677765957b6a1cf8c7b2d171f3de93fe5357f87f78ced5b7c3513d26"
+            },
+            "CN_SM_EnemyPart_LianguMallet_v001_back.png": {
+              "path": "01_concept/CN_SM_EnemyPart_LianguMallet_v001_back.png",
+              "sha256": "fbd07ceb2f15e2b129cc050390ecb6402f11f7e44a1c2b18305365cf005e1579"
+            },
+            "CN_SM_EnemyPart_LianguMallet_v001_right.png": {
+              "path": "01_concept/CN_SM_EnemyPart_LianguMallet_v001_right.png",
+              "sha256": "d98e02a5b8e130196e19a20dae465211f6c7d96b02a14533c2bb60b43158fca4"
+            },
+            "CN_SM_EnemyPart_LianguMallet_v001_sheet.png": {
+              "path": "01_concept/CN_SM_EnemyPart_LianguMallet_v001_sheet.png",
+              "sha256": "07de17cb84cd74a924c61c81cc3d28a4e865bcf7c627298df6ed4242490c7376"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "design turnaround",
+          "design_key": "plateau_liangu_mallet",
+          "design_turnaround": "art/source/characters/_design/plateau/plateau_liangu_mallet/TV_plateau_liangu_mallet_v001.png",
+          "source_sha256": "ce5e24fb4a46d88048612084b9e4b759eb295559eace362e719c85818d62a34d",
+          "reference_mode": "design_turnaround",
+          "highpoly_mode": "tripo",
+          "registration": {
+            "front": {
+              "scale": 0.9788926277148975,
+              "offset": [
+                143,
+                55
+              ],
+              "size": [
+                226,
+                914
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.9788926277148975,
+              "offset": [
+                158,
+                55
+              ],
+              "size": [
+                196,
+                914
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.9788926277148975,
+              "offset": [
+                144,
+                55
+              ],
+              "size": [
+                223,
+                914
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.9778456837280366,
+              "offset": [
+                158,
+                55
+              ],
+              "size": [
+                195,
+                914
+              ],
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude（AI 初审；依据：用户 2026-10-18 已审四视图并用它生成 Tripo 模型，2026-10-19 用户授权不再逐项审核）",
+            "note": "",
+            "time": "2026-10-19 20:03:31"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-19 20:03:44",
+          "files": {
+            "HP_SM_EnemyPart_LianguMallet_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_EnemyPart_LianguMallet_v001_source.glb",
+              "sha256": "e1cca1e6a2b830b2854c6b5e18d31f477e88917fa17cf681090ddcf76f09f1c7"
+            },
+            "HP_SM_EnemyPart_LianguMallet_v001.glb": {
+              "path": "02_highpoly/HP_SM_EnemyPart_LianguMallet_v001.glb",
+              "sha256": "7c213b1af292531fcd306b87244cd4917d1458d8b44591eef548ca78593d6544"
+            },
+            "HP_SM_EnemyPart_LianguMallet_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_EnemyPart_LianguMallet_v001_graph.json",
+              "sha256": "f935f37892aca2495ef14ed60f07a2d3e78a09643fc423a5b32e31c76a83e245"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/3ac44226-b81c-47f8-88b2-00a4fa482711\r",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 3250,
+          "source_sha256": "e1cca1e6a2b830b2854c6b5e18d31f477e88917fa17cf681090ddcf76f09f1c7"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-19 20:06:18",
+          "files": {
+            "SM_EnemyPart_LianguMallet_v001.blend": {
+              "path": "03_work/SM_EnemyPart_LianguMallet_v001.blend",
+              "sha256": "1d795acc8c3e8da0c78f9fb4879b8e2c8b6e432223b1986554673941558a5f35"
+            },
+            "SM_EnemyPart_LianguMallet_v001.glb": {
+              "path": "04_export/SM_EnemyPart_LianguMallet_v001.glb",
+              "sha256": "0ceef298872fb4adffb5e35c8ad6587423b743f8bea28dc8334e318532079b14"
+            },
+            "SM_EnemyPart_LianguMallet_v001_metrics.json": {
+              "path": "03_work/SM_EnemyPart_LianguMallet_v001_metrics.json",
+              "sha256": "c025de686acc0fd60c08c42fa562448f6c9c06015d860cc5cb215f55359254ab"
+            },
+            "T_EnemyPart_LianguMallet_BC.png": {
+              "path": "03_work/textures_v001/T_EnemyPart_LianguMallet_BC.png",
+              "sha256": "5a3eb089662dc8b5644ea7959778651d13b8afec9572a2c4d773ef6c4b69133c"
+            },
+            "T_EnemyPart_LianguMallet_LOD1_BC.png": {
+              "path": "03_work/textures_v001/T_EnemyPart_LianguMallet_LOD1_BC.png",
+              "sha256": "a49251e13607444f559edf034f22c5865f84ebe475dde8db94834c26cc46a8d2"
+            },
+            "T_EnemyPart_LianguMallet_LOD1_N.png": {
+              "path": "03_work/textures_v001/T_EnemyPart_LianguMallet_LOD1_N.png",
+              "sha256": "03ae725c7b9680e1f63e1e2de109d266b9c7d5d5d8980c9bc3a824d842b68012"
+            },
+            "T_EnemyPart_LianguMallet_LOD1_ORM.png": {
+              "path": "03_work/textures_v001/T_EnemyPart_LianguMallet_LOD1_ORM.png",
+              "sha256": "e7a5f64cecc89c3ad204442ad8e80a4a9fa90676fd2ea1ed45067587e965245f"
+            },
+            "T_EnemyPart_LianguMallet_N.png": {
+              "path": "03_work/textures_v001/T_EnemyPart_LianguMallet_N.png",
+              "sha256": "e905ed043f66baf0a97deb814c3b7c301e0b22b3b56281be9a37f78af253f872"
+            },
+            "T_EnemyPart_LianguMallet_ORM.png": {
+              "path": "03_work/textures_v001/T_EnemyPart_LianguMallet_ORM.png",
+              "sha256": "160a64b3b396e04a9b7a931a32f19f12a51898572aad0754ccbbe55e6c1eb8a6"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.87,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2984,
+              "verts": 1494
+            },
+            {
+              "tris": 994,
+              "verts": 499
+            }
+          ],
+          "export_kb": 287.6,
+          "seconds": 19.7,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-19 20:06:22",
+          "files": {
+            "SM_EnemyPart_LianguMallet_v001_validation_v001.json": {
+              "path": "05_review/SM_EnemyPart_LianguMallet_v001_validation_v001.json",
+              "sha256": "d6a7994f94acb151d2ebe5e12ed03ee74d79dfd2887fa61d3bcf843c75418fb3"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-19 20:06:30",
+          "files": {
+            "SM_EnemyPart_LianguMallet_v001_review_v001.png": {
+              "path": "05_review/SM_EnemyPart_LianguMallet_v001_review_v001.png",
+              "sha256": "4c4f97fa523bdfa40d9ceed49dff4dc2f7b613eb20eae37eeb6462c157f9e341"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude（AI 初审；用户 2026-10-19 授权不再逐项审核）",
+            "note": "",
+            "time": "2026-10-19 20:07:38"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-19 20:07:38",
+          "files": {
+            "SM_EnemyPart_LianguMallet.glb": {
+              "path": "@root/public/assets/attachments/SM_EnemyPart_LianguMallet.glb",
+              "sha256": "0ceef298872fb4adffb5e35c8ad6587423b743f8bea28dc8334e318532079b14"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/attachments/SM_EnemyPart_LianguMallet.glb"
+        }
+      ]
+    }
+  }
+}

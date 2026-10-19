@@ -1,0 +1,303 @@
+{
+  "id": "SM_EnemyPart_LianguDrum",
+  "display": "连鼓灵·鼓",
+  "kind": "static",
+  "class": "enemy_attachment",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-19 20:03:03",
+          "files": {
+            "BO_SM_EnemyPart_LianguDrum_v001.json": {
+              "path": "00_blockout/BO_SM_EnemyPart_LianguDrum_v001.json",
+              "sha256": "b199b7b5ffff4e23344f04eced4bed5793b7ea94383c70ce412c632c4f10e3fc"
+            },
+            "BO_SM_EnemyPart_LianguDrum_v001_views.json": {
+              "path": "00_blockout/BO_SM_EnemyPart_LianguDrum_v001_views.json",
+              "sha256": "bc792d81ca325bd7afb8db29290079404625e2df58ef6b45d57ac10aaa101ce5"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "liangu"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.25,
+              -0.25,
+              -0.23
+            ],
+            "max": [
+              0.25,
+              0.25,
+              0.23
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-19 20:03:06",
+          "files": {
+            "CN_SM_EnemyPart_LianguDrum_v001_front.png": {
+              "path": "01_concept/CN_SM_EnemyPart_LianguDrum_v001_front.png",
+              "sha256": "667e1633c18c066134c85fc81d29505ff024223386c561a41bd5988c4612a45a"
+            },
+            "CN_SM_EnemyPart_LianguDrum_v001_left.png": {
+              "path": "01_concept/CN_SM_EnemyPart_LianguDrum_v001_left.png",
+              "sha256": "7c28529a82c094192f4f5bffda542c5d5dd96d7e93b1d4b97812e4f5ae0ec07e"
+            },
+            "CN_SM_EnemyPart_LianguDrum_v001_back.png": {
+              "path": "01_concept/CN_SM_EnemyPart_LianguDrum_v001_back.png",
+              "sha256": "df388f14116c6b5b247e633e0ecd1560a76d86f186593fc77d550bbfa1a821f3"
+            },
+            "CN_SM_EnemyPart_LianguDrum_v001_right.png": {
+              "path": "01_concept/CN_SM_EnemyPart_LianguDrum_v001_right.png",
+              "sha256": "d6c39c9dd60e313a8a51b2446fecf37f922f939c498e455983d888ec3b4f065f"
+            },
+            "CN_SM_EnemyPart_LianguDrum_v001_sheet.png": {
+              "path": "01_concept/CN_SM_EnemyPart_LianguDrum_v001_sheet.png",
+              "sha256": "45812075ed37207912354aa926169559c431c0dd2e68d0248af0cf81d4add9dc"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "design turnaround",
+          "design_key": "plateau_liangu_drum",
+          "design_turnaround": "art/source/characters/_design/plateau/plateau_liangu_drum/TV_plateau_liangu_drum_v001.png",
+          "source_sha256": "5b61d1abb8e49eb523053cac497b0b9f207a448c02ba78bebdc06d685704d701",
+          "reference_mode": "design_turnaround",
+          "highpoly_mode": "tripo",
+          "registration": {
+            "front": {
+              "scale": 0.8592910848549946,
+              "offset": [
+                70,
+                283
+              ],
+              "size": [
+                372,
+                457
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.8592910848549946,
+              "offset": [
+                94,
+                283
+              ],
+              "size": [
+                323,
+                457
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.8592910848549946,
+              "offset": [
+                68,
+                283
+              ],
+              "size": [
+                376,
+                457
+              ],
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.8592910848549946,
+              "offset": [
+                96,
+                283
+              ],
+              "size": [
+                320,
+                457
+              ],
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude（AI 初审；依据：用户 2026-10-18 已审四视图并用它生成 Tripo 模型，2026-10-19 用户授权不再逐项审核）",
+            "note": "",
+            "time": "2026-10-19 20:03:30"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-19 20:03:41",
+          "files": {
+            "HP_SM_EnemyPart_LianguDrum_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_EnemyPart_LianguDrum_v001_source.glb",
+              "sha256": "13cb9f3454e0096719a6086f49e17d5261454f4933cd3c2fe97c0adb3f553272"
+            },
+            "HP_SM_EnemyPart_LianguDrum_v001.glb": {
+              "path": "02_highpoly/HP_SM_EnemyPart_LianguDrum_v001.glb",
+              "sha256": "6c22283d04240faeaa9feb46612f4714cccf10bf0ce8d649f1057fd3bfce6637"
+            },
+            "HP_SM_EnemyPart_LianguDrum_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_EnemyPart_LianguDrum_v001_graph.json",
+              "sha256": "6af90cfbb8826517038e44d6dbfcd093edaa39c7f6958baec4bd60d0f99d3a11"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/cfc83eef-0ee2-4583-bcae-c296c9d81935\r",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 2848,
+          "source_sha256": "13cb9f3454e0096719a6086f49e17d5261454f4933cd3c2fe97c0adb3f553272"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-19 20:04:18",
+          "files": {
+            "SM_EnemyPart_LianguDrum_v001.blend": {
+              "path": "03_work/SM_EnemyPart_LianguDrum_v001.blend",
+              "sha256": "dbc5b78c7d610c4ccfc5dad6d380a64a9aa322025350d1625769ed7df93a6685"
+            },
+            "SM_EnemyPart_LianguDrum_v001.glb": {
+              "path": "04_export/SM_EnemyPart_LianguDrum_v001.glb",
+              "sha256": "87b27b6a169522b1bf50ac7672230ad09dacbb6667ba4f636b7fef13b0787736"
+            },
+            "SM_EnemyPart_LianguDrum_v001_metrics.json": {
+              "path": "03_work/SM_EnemyPart_LianguDrum_v001_metrics.json",
+              "sha256": "7a558a57b8a799a949d871a46a7f7a024083ad5cd1a5d2c459770dc6fe29dae5"
+            },
+            "T_EnemyPart_LianguDrum_BC.png": {
+              "path": "03_work/textures_v001/T_EnemyPart_LianguDrum_BC.png",
+              "sha256": "6ee7e705f61c027d9def14a07740c0a8154f20cecb01972c14cade328bb5338c"
+            },
+            "T_EnemyPart_LianguDrum_LOD1_BC.png": {
+              "path": "03_work/textures_v001/T_EnemyPart_LianguDrum_LOD1_BC.png",
+              "sha256": "dc5912891c3c74e8c22859c020c1f4df975f79f6d5766a0dce75d2acac659a00"
+            },
+            "T_EnemyPart_LianguDrum_LOD1_N.png": {
+              "path": "03_work/textures_v001/T_EnemyPart_LianguDrum_LOD1_N.png",
+              "sha256": "57042d5bd9c93382849e52dff5ae239cd086a9b56f4f2e99c9b1be380819e0b0"
+            },
+            "T_EnemyPart_LianguDrum_LOD1_ORM.png": {
+              "path": "03_work/textures_v001/T_EnemyPart_LianguDrum_LOD1_ORM.png",
+              "sha256": "84db30f4d5023c2a469aff1dcca373725f9e479c2187c6ec6ae60900e6fdbd61"
+            },
+            "T_EnemyPart_LianguDrum_N.png": {
+              "path": "03_work/textures_v001/T_EnemyPart_LianguDrum_N.png",
+              "sha256": "a8bb3aa822d6c7e9c8a29a767272c23caf742b63527150c7915baa20ee1cd5bb"
+            },
+            "T_EnemyPart_LianguDrum_ORM.png": {
+              "path": "03_work/textures_v001/T_EnemyPart_LianguDrum_ORM.png",
+              "sha256": "d13f1e7ad696fa64ed4fede0b9828c9c9c24f3a79accabd83ed113919e03e8ff"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.714,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2848,
+              "verts": 1538
+            },
+            {
+              "tris": 995,
+              "verts": 604
+            }
+          ],
+          "export_kb": 216.2,
+          "seconds": 24.9,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-19 20:04:22",
+          "files": {
+            "SM_EnemyPart_LianguDrum_v001_validation_v001.json": {
+              "path": "05_review/SM_EnemyPart_LianguDrum_v001_validation_v001.json",
+              "sha256": "e91df3d7373678d5ca4698205a44e1ec9f4a9b4dd19f8b438dcd9e50084655a4"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-19 20:05:02",
+          "files": {
+            "SM_EnemyPart_LianguDrum_v001_review_v001.png": {
+              "path": "05_review/SM_EnemyPart_LianguDrum_v001_review_v001.png",
+              "sha256": "2490f059185e0a51f33fc10de00d1ae16e31c66e072e7733ede5a15cad6c1be7"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude（AI 初审；用户 2026-10-19 授权不再逐项审核）",
+            "note": "",
+            "time": "2026-10-19 20:07:37"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-19 20:07:37",
+          "files": {
+            "SM_EnemyPart_LianguDrum.glb": {
+              "path": "@root/public/assets/attachments/SM_EnemyPart_LianguDrum.glb",
+              "sha256": "87b27b6a169522b1bf50ac7672230ad09dacbb6667ba4f636b7fef13b0787736"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/attachments/SM_EnemyPart_LianguDrum.glb"
+        }
+      ]
+    }
+  }
+}

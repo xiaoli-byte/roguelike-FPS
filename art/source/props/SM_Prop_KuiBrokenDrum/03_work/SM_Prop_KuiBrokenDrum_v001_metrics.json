@@ -1,0 +1,117 @@
+{
+  "source": {
+    "tris": 3112,
+    "verts": 1613
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 2.20107,
+    "iou": 0.767,
+    "iou_per_view": {
+      "front": 0.882,
+      "left": 0.631,
+      "back": 0.873,
+      "right": 0.626
+    },
+    "size_m": [
+      1.938,
+      0.508,
+      2.2
+    ],
+    "reference_m": [
+      1.94,
+      0.51,
+      2.2
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.716,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Prop_KuiBrokenDrum_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "provider",
+      "collapse": {
+        "samples": 23200,
+        "matched_ratio": 0.967,
+        "mean_delta": 0.0245,
+        "p90_delta": 0.0602,
+        "smeared_ratio": 0.0107,
+        "stretched_ratio": 0.0111,
+        "dist_p99_m": 0.0147
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Prop_KuiBrokenDrum_LOD0",
+      "tris": 2984,
+      "verts": 1549,
+      "uv_min": [
+        0.000732421875,
+        0.000732421875
+      ],
+      "uv_max": [
+        0.999267578125,
+        0.999267578125
+      ],
+      "uv_utilization": 0.746,
+      "bbox_min": [
+        -0.9689,
+        -0.2542,
+        0.0
+      ],
+      "bbox_max": [
+        0.9689,
+        0.2542,
+        2.2
+      ]
+    },
+    {
+      "name": "SM_Prop_KuiBrokenDrum_LOD1",
+      "tris": 994,
+      "verts": 533,
+      "uv_min": [
+        0.0008983255829662085,
+        0.000732421875
+      ],
+      "uv_max": [
+        0.997802734375,
+        0.997802734375
+      ],
+      "uv_utilization": 0.652,
+      "bbox_min": [
+        -0.9661,
+        -0.2503,
+        -0.0106
+      ],
+      "bbox_max": [
+        0.9738,
+        0.2542,
+        2.1966
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Prop_KuiBrokenDrum/04_export/SM_Prop_KuiBrokenDrum_v001.glb",
+    "bytes": 410288
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 14.2,
+  "_seconds": 16.2
+}
