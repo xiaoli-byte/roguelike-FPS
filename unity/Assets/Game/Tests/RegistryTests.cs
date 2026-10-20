@@ -15,8 +15,8 @@ namespace Spiritfire.Game.Tests
         /// <summary>各注册表应有的条数（W0 契约）</summary>
         static readonly Dictionary<Type, int> Expected = new()
         {
-            [typeof(WeaponDef)] = 6,
-            [typeof(EnemyDef)] = 7,
+            [typeof(WeaponDef)] = 17, // 原 6 + WC1/WC2 6 + WC3/WC4 5（碎刃另计）
+            [typeof(EnemyDef)] = 16, // 第一章 7 + 冰 EN2d–e 5 + 火 EN3d–e 4
             [typeof(ScrollDef)] = 119, // 16 + S1 攻击 18 + S2 元素 10 + S3/S4 功能 · 传说 · 英雄 31 + S5 反应 24 + S6 战术 20（TS 118 + 破绽）
             [typeof(HeroDef)] = 3,
         };
