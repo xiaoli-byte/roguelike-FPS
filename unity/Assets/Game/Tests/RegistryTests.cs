@@ -17,7 +17,7 @@ namespace Spiritfire.Game.Tests
         {
             [typeof(WeaponDef)] = 6,
             [typeof(EnemyDef)] = 7,
-            [typeof(ScrollDef)] = 16,
+            [typeof(ScrollDef)] = 44, // 16 + S1 攻击 18 + S2 元素 10
             [typeof(HeroDef)] = 1,
         };
 
