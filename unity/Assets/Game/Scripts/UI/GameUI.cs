@@ -4,11 +4,12 @@ namespace Spiritfire.Game
 {
     /// <summary>
     /// UI 门面（docs/unity-parity.md 4.8）：玩法代码只调这里，不直接找 <see cref="Hud"/> 或 UI Toolkit 组件。
-    /// 后端（U1 起）：
-    ///   UI Toolkit（<see cref="UIRoot"/>）—— <see cref="Toast"/>（队列、叠放、合并 ×N）、<see cref="Banner"/>、<see cref="Fade"/>（黑幕）、<see cref="ScreenFlash"/>，
+    /// 后端：
+    ///   UI Toolkit 全局件（<see cref="UIRoot"/>，U1）—— <see cref="Toast"/>（队列、叠放、合并 ×N）、<see cref="Banner"/>、<see cref="Fade"/>（黑幕）、<see cref="ScreenFlash"/>，
     ///     全部用不缩放时间（暂停中照常淡出），换场景不丢；
-    ///   uGUI 的 <see cref="Hud"/>（没有 Hud 时什么都不做）—— FloatText、交互提示、目标、首领、关卡名、中央大字，U2 / U3 迁走之前留在这里。
-    /// 时长参数都是秒。
+    ///   HUD 部件（<see cref="Hud"/> 宿主上的 [HudWidget]，U2）—— 交互提示卡、目标、关卡名、中央大字、技能拒绝闪红；
+    ///   旧 uGUI（U3 迁走之前）—— 世界浮字、首领。
+    /// 没有 HUD 宿主（编辑模式、主菜单）时 HUD 类调用什么都不做；关卡名 / 目标记在这里，HUD 起来时补上。时长参数都是秒。
     /// </summary>
     public static class GameUI
     {
@@ -20,6 +21,16 @@ namespace Spiritfire.Game
                 return h ? h : null;
             }
         }
+
+        static T W<T>() where T : HudWidget
+        {
+            var h = Hud;
+            return h ? h.Widget<T>() : null;
+        }
+
+        /// <summary>当前关卡名 / 目标（HUD 重建时补上；测试用）</summary>
+        public static string StageText { get; private set; } = "";
+        public static string ObjectiveText { get; private set; } = "";
 
         /// <summary>提示（屏幕左侧往下叠，最多 4 条，和上一条相同就合并 ×N）；color = 强调色，缺省鎏金</summary>
         public static void Toast(string text, Color? color = null, float seconds = 2.8f) => UIRoot.Ensure()?.Toasts.Push(text, color, seconds);
@@ -44,11 +55,15 @@ namespace Spiritfire.Game
         /// <summary>世界空间浮字（反应名「焚雷」、「格挡」、灵宠台词…）：往上飘（U3 之前在 Hud）</summary>
         public static void FloatText(Vector3 world, string text, Color c, float scale = 1.3f) => Hud?.FloatText(world, text, c, scale);
 
-        /// <summary>交互提示卡（null = 收起；U2 之前在 Hud）</summary>
-        public static void SetPrompt(InteractPrompt? p) => Hud?.SetPromptCard(p);
+        /// <summary>交互提示卡（null = 收起）</summary>
+        public static void SetPrompt(InteractPrompt? p) => W<PromptWidget>()?.Set(p);
 
-        /// <summary>左上目标文字（null / 空 = 收起；U2 之前在 Hud）</summary>
-        public static void SetObjective(string text) => Hud?.SetObjective(text);
+        /// <summary>目标文字（右上信息角；null / 空 = 收起）</summary>
+        public static void SetObjective(string text)
+        {
+            ObjectiveText = text ?? "";
+            W<InfoWidget>()?.SetObjective(ObjectiveText);
+        }
 
         /// <summary>
         /// 当前首领（null = 清掉），首领血条由 U3 接上。
@@ -59,14 +74,18 @@ namespace Spiritfire.Game
         /// <summary>全屏闪光（颜色含 alpha，按剩余时间平方淡出；不受暂停影响）</summary>
         public static void ScreenFlash(Color c, float seconds) => UIRoot.Ensure()?.Flash.Play(c, seconds);
 
-        /// <summary>技能放不出来（冷却中 / 没有充能 / 正在持续）：技能栏对应的格子闪红。现在的后端是 SkillHud（订阅 <see cref="SkillDeniedShown"/>）</summary>
+        /// <summary>技能放不出来（冷却中 / 没有充能 / 正在持续）：技能盘闪红抖一下（<see cref="SkillWidget"/> 订阅 <see cref="SkillDeniedShown"/>）</summary>
         public static void SkillDenied(SkillSlot slot) => SkillDeniedShown?.Invoke(slot);
 
         /// <summary>UI 后端订阅：哪个技能格要闪红</summary>
         public static event System.Action<SkillSlot> SkillDeniedShown;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetStatics() => SkillDeniedShown = null;
+        static void ResetStatics()
+        {
+            SkillDeniedShown = null;
+            StageText = ObjectiveText = "";
+        }
 
         /// <summary>全屏黑幕淡到 to（0 透明 → 1 全黑），可 await；新的淡入淡出打断旧的（旧的 await 立刻返回）。没有 UI（编辑模式）时立刻完成</summary>
         public static async Awaitable Fade(float to, float seconds)
@@ -81,21 +100,22 @@ namespace Spiritfire.Game
         // ───────── 局流程的临时接口（U5 换成 Screens 之前 GameSession 用）─────────
 
         /// <summary>右上角关卡名</summary>
-        public static void SetStage(string text) => Hud?.SetStage(text);
+        public static void SetStage(string text)
+        {
+            StageText = text ?? "";
+            W<InfoWidget>()?.SetStage(StageText);
+        }
 
         /// <summary>收起横幅与提示（弹模态界面、结算前）</summary>
         public static void ClearMessages()
         {
             var ui = UIRoot.Instance;
-            if (ui)
-            {
-                ui.Toasts.Clear();
-                ui.Banner.Hide(true);
-            }
-            Hud?.ClearMessages();
+            if (!ui) return;
+            ui.Toasts.Clear();
+            ui.Banner.Hide(true);
         }
 
         /// <summary>屏幕中央的大字（阵亡 / 本关完成，富文本；null / 空 = 收起）</summary>
-        public static void SetCenterText(string richText) => Hud?.ShowDeath(richText ?? "");
+        public static void SetCenterText(string richText) => W<CenterTextWidget>()?.Set(richText ?? "");
     }
 }
