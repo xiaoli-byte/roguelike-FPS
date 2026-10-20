@@ -10,7 +10,8 @@ namespace Spiritfire.Game
     ///   受击闪屏：扣到生命为红、只扣护盾为蓝（四周暗角），峰值 0.25–0.75 按伤害比例，0.38 s 平方淡出；
     ///   低血量（&lt; 30%）：深红暗角渐浓 + 1.05 s 心跳脉动。
     /// 来源：<see cref="GameEvents.PlayerHit"/>（在死亡判定之前派发，免死的那一下也照样闪）。时间用不缩放时间。
-    /// 对外钩子：<see cref="Flash"/>（技能 / 机关想闪一下受击色）、<see cref="Indicate"/>（不扣血的威胁方向提示）。
+    /// 对外钩子（<see cref="GameUI.HurtFlash"/> / <see cref="GameUI.ThreatFrom"/> / <see cref="GameUI.SetVignetteBoost"/>）：
+    /// <see cref="Flash"/>（技能 / 机关想闪一下受击色）、<see cref="Indicate"/>（不扣血的威胁方向提示）、<see cref="VignetteBoost"/>（寒意、日晒这类减益压暗四周）。
     /// </summary>
     [HudWidget("hurt", Order = 10)]
     public sealed class HurtWidget : HudWidget
@@ -35,6 +36,9 @@ namespace Spiritfire.Game
         VisualElement low, pulse, flash, dirRoot;
         readonly Dir[] dirs = new Dir[Pool];
         float flashAt = -10, flashPeak, lowV, size = -1;
+
+        /// <summary>暗角额外强度 0..1（叠在低血量之上，取大的那个）</summary>
+        public float VignetteBoost { get; set; }
         bool flashActive, flashShield;
 
         protected override VisualElement Build()
@@ -190,6 +194,7 @@ namespace Spiritfire.Game
             float max = Mathf.Max(1, p.MaxHealth);
             float frac = p.Dead ? 0 : p.health / max;
             float target = frac < 0.3f && !p.Dead ? 0.45f + (1 - frac / 0.3f) * 0.55f : 0;
+            target = Mathf.Max(target, Mathf.Clamp01(VignetteBoost));
             lowV = HudArt.Damp(lowV, target, 6f, f.unscaledDt);
             if (lowV < 0.004f && target <= 0) lowV = 0;
             float lq = Mathf.Round(lowV * 50) / 50;
@@ -200,7 +205,9 @@ namespace Spiritfire.Game
         void UpdateDirs(PlayerVitals p, float now)
         {
             var cam = Ctx.Cam;
-            var fwd = cam ? cam.transform.forward : p.transform.forward;
+            var motor = Ctx.Motor;
+            // 朝向取不抖的眼睛节点（震屏时弧不跟着抖）
+            var fwd = motor && motor.eye ? motor.eye.forward : cam ? cam.transform.forward : p.transform.forward;
             float camYaw = Mathf.Atan2(fwd.x, fwd.z) * Mathf.Rad2Deg;
             var origin = p.transform.position;
             foreach (var d in dirs)

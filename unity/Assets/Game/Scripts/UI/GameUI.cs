@@ -7,8 +7,8 @@ namespace Spiritfire.Game
     /// 后端：
     ///   UI Toolkit 全局件（<see cref="UIRoot"/>，U1）—— <see cref="Toast"/>（队列、叠放、合并 ×N）、<see cref="Banner"/>、<see cref="Fade"/>（黑幕）、<see cref="ScreenFlash"/>，
     ///     全部用不缩放时间（暂停中照常淡出），换场景不丢；
-    ///   HUD 部件（<see cref="Hud"/> 宿主上的 [HudWidget]，U2）—— 交互提示卡、目标、关卡名、中央大字、技能拒绝闪红；
-    ///   旧 uGUI（U3 迁走之前）—— 世界浮字、首领。
+    ///   HUD 部件（<see cref="Hud"/> 宿主上的 [HudWidget]，U2 / U3）—— 交互提示卡、目标、关卡名、中央大字、技能拒绝闪红、
+    ///     世界浮字（<see cref="DamageNumbers"/>）、首领血条（<see cref="BossBar"/>）。
     /// 没有 HUD 宿主（编辑模式、主菜单）时 HUD 类调用什么都不做；关卡名 / 目标记在这里，HUD 起来时补上。时长参数都是秒。
     /// </summary>
     public static class GameUI
@@ -52,8 +52,11 @@ namespace Spiritfire.Game
             ui.Banner.Show(title, sub, seconds);
         }
 
-        /// <summary>世界空间浮字（反应名「焚雷」、「格挡」、灵宠台词…）：往上飘（U3 之前在 Hud）</summary>
-        public static void FloatText(Vector3 world, string text, Color c, float scale = 1.3f) => Hud?.FloatText(world, text, c, scale);
+        /// <summary>
+        /// 世界空间浮字（反应名「焚雷」、「格挡」、灵宠台词…）：往上飘，不参与伤害数字的合并，也不受「伤害数字」开关影响。
+        /// scale ≥ 1.25 带墨底描边框（反应名），≥ 1.6 大号（归墟），&lt; 1 小号
+        /// </summary>
+        public static void FloatText(Vector3 world, string text, Color c, float scale = 1.3f) => W<DamageNumbers>()?.Float(world, text, c, scale);
 
         /// <summary>交互提示卡（null = 收起）</summary>
         public static void SetPrompt(InteractPrompt? p) => W<PromptWidget>()?.Set(p);
@@ -66,13 +69,35 @@ namespace Spiritfire.Game
         }
 
         /// <summary>
-        /// 当前首领（null = 清掉），首领血条由 U3 接上。
-        /// 计划里的签名是 SetBoss(BossBrain)：BossBrain 由首领单元（B0）定义，在那之前先收 Damageable + 名字
+        /// 当前首领（null = 收起；刚死的首领先显示「已击破」再收起）：只有一个受伤体 + 名字的旧写法，血条上没有阶段刻度。
+        /// 首领框架用 <see cref="SetBoss{T}"/>（BossBrain 实现 <see cref="IBossBarSource"/>，刻度来自 BossDef，D23）
         /// </summary>
-        public static void SetBoss(Damageable boss, string title = null) => Hud?.SetBoss(boss, title);
+        public static void SetBoss(Damageable boss, string title = null) => W<BossBar>()?.Set(boss ? new DamageableBossSource(boss, title) : null);
+
+        /// <summary>
+        /// 当前首领（D23：名字、副标题、阶段刻度、无敌都从数据源每帧读）。用法 <c>GameUI.SetBoss(this)</c>；收起用 <c>GameUI.SetBoss(null)</c>。
+        /// 泛型是为了让 <c>SetBoss(null)</c> 仍然只匹配 Damageable 那一个重载（null 推不出 T）
+        /// </summary>
+        public static void SetBoss<T>(T source) where T : class, IBossBarSource => W<BossBar>()?.Set(source);
+
+        /// <summary>首领血条当前的数据源（没有为 null）</summary>
+        public static IBossBarSource Boss => W<BossBar>()?.Source;
 
         /// <summary>全屏闪光（颜色含 alpha，按剩余时间平方淡出；不受暂停影响）</summary>
         public static void ScreenFlash(Color c, float seconds) => UIRoot.Ensure()?.Flash.Play(c, seconds);
+
+        /// <summary>受击闪屏（四周暗角；shieldOnly = 蓝，否则红；peak = 峰值不透明度 0..1）。玩家受伤时 HUD 自己会闪，这里给技能 / 机关 / 减益用</summary>
+        public static void HurtFlash(bool shieldOnly, float peak = 0.4f) => W<HurtWidget>()?.Flash(shieldOnly, peak);
+
+        /// <summary>威胁方向弧（不扣血的预警：来源在哪就在哪一侧亮一道弧；source 活着时跟踪它）；strength 0..1</summary>
+        public static void ThreatFrom(Vector3 from, Transform source = null, float strength = 0.7f) => W<HurtWidget>()?.Indicate(source, from, strength);
+
+        /// <summary>四周暗角的额外强度 0..1（寒意、日晒灼烧这类减益；0 = 只按低血量）</summary>
+        public static void SetVignetteBoost(float strength)
+        {
+            var w = W<HurtWidget>();
+            if (w != null) w.VignetteBoost = strength;
+        }
 
         /// <summary>技能放不出来（冷却中 / 没有充能 / 正在持续）：技能盘闪红抖一下（<see cref="SkillWidget"/> 订阅 <see cref="SkillDeniedShown"/>）</summary>
         public static void SkillDenied(SkillSlot slot) => SkillDeniedShown?.Invoke(slot);

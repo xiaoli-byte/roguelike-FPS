@@ -6,7 +6,7 @@ namespace Spiritfire.Game
     /// <summary>
     /// 右上 信息角（Three.js HUD.ts InfoPanel + css/hud.css .gf-info；目标行取自 AdventureHUD 的指引）：
     ///   关卡名（标题字体，右侧朱砂竖线；首领关偏红）、目标（<see cref="GameUI.SetObjective"/>：场地「剩余敌人 N」、出口指引…，前面一枚双刃图标）、
-    ///   钱袋：灵石（铜钱图标、千分位）+ 魂晶；灵石变化时数字旁飘「+N / −N」并弹一下（<see cref="GameEvents.CoinsChanged"/>）。
+    ///   钱袋：灵石（铜钱图标、千分位）+ 魂晶；灵石变化时数字旁飘「+N / -N」并弹一下（<see cref="GameEvents.CoinsChanged"/>）。
     /// 墨色右实左透的衬底：亮天空下也看得清。
     /// </summary>
     [HudWidget("info", Order = 50)]
@@ -78,7 +78,7 @@ namespace Spiritfire.Game
         void OnCoins(int delta, int total)
         {
             if (delta == 0) return;
-            coinFloat.text = delta > 0 ? "+" + delta : "−" + (-delta);
+            coinFloat.text = delta > 0 ? "+" + delta : delta.ToString();
             HudArt.Toggle(coinFloat, "is-neg", delta < 0);
             floatAt = Time.unscaledTime;
             floating = true;

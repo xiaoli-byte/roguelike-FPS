@@ -36,6 +36,9 @@ namespace Spiritfire.Game
         /// <summary>准星压在敌人身上（测试用）</summary>
         public bool OnTarget => onTarget;
 
+        /// <summary>藏起十字 / 括号（狙击镜遮罩 WC1 开镜时设；换弹环、蓄力环、命中标记照常）</summary>
+        public bool Suppressed { get; set; }
+
         protected override VisualElement Build()
         {
             var root = HudArt.El("sf-xhair");
@@ -229,7 +232,7 @@ namespace Spiritfire.Game
                     lines[3].style.translate = new Translate(-gap - 12, -2);
                 }
             }
-            float ra = Mathf.Round((1 - src.Aim * 0.5f) * 50) / 50;
+            float ra = Suppressed ? 0 : Mathf.Round((1 - src.Aim * 0.5f) * 50) / 50;
             if (!Mathf.Approximately(ra, reticleAlpha))
             {
                 reticleAlpha = ra;
@@ -272,12 +275,14 @@ namespace Spiritfire.Game
             UpdateHitMarker(now);
         }
 
-        /// <summary>沿视线第一个挡住的东西是活着、可选中的敌人（自己的碰撞体跳过）</summary>
+        /// <summary>沿瞄准线（不抖的眼睛节点）第一个挡住的东西是活着、可选中的敌人（自己的碰撞体跳过）</summary>
         bool DetectTarget(float range)
         {
             var cam = Ctx.Cam;
             var self = Ctx.Vitals ? Ctx.Vitals.transform : null;
-            var eye = Ctx.Weapons && Ctx.Weapons.eye ? Ctx.Weapons.eye.transform : cam.transform;
+            // 不抖的瞄准节点（motor.eye；F3 起渲染相机挂在它下面、会晃）
+            var motor = Ctx.Motor;
+            var eye = motor && motor.eye ? motor.eye : Ctx.Weapons && Ctx.Weapons.eye ? Ctx.Weapons.eye.transform : cam.transform;
             int n = Physics.RaycastNonAlloc(eye.position, eye.forward, rayBuf, range, Layers.ShotMask, QueryTriggerInteraction.Ignore);
             float best = float.MaxValue;
             Collider hitCol = null;

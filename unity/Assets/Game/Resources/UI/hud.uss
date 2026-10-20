@@ -895,3 +895,428 @@
     -unity-text-outline-color: rgba(40, 6, 4, 0.8);
     text-shadow: 0 3px 12px rgba(0, 0, 0, 0.8);
 }
+
+/* ═════════════════════════ U3：伤害数字 / 头顶血条 / 首领血条 / 反应教学 ═════════════════════════ */
+
+/* ───────────────────────── 伤害数字与世界浮字 ───────────────────────── */
+
+.sf-dn-layer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+}
+
+/* 零尺寸锚点：代码按投影写 translate；数字本身以锚点为中心 */
+.sf-dn-anchor {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+}
+
+.sf-dn {
+    position: absolute;
+    left: 0;
+    top: 0;
+    translate: -50% -50%;
+    white-space: nowrap;
+    -unity-text-align: middle-center;
+    font-size: 24px;
+    color: #ffffff;
+    -unity-text-outline-width: 1.2px;
+    -unity-text-outline-color: #000000;
+    text-shadow: 0 3px 6px rgba(0, 0, 0, 0.55);
+}
+
+/* 持续伤害跳伤：小一号、描边细一些（颜色压暗、半透明在代码里） */
+.sf-dn--dot {
+    font-size: 17px;
+    -unity-text-outline-width: 1px;
+    text-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* 暴击：大号、焦棕描边 + 金色光晕 */
+.sf-dn--crit {
+    font-size: 34px;
+    -unity-text-outline-width: 1.6px;
+    -unity-text-outline-color: #6b3300;
+    text-shadow: 0 0 10px rgba(255, 170, 30, 0.9);
+}
+
+.sf-dn--immune {
+    font-size: 18px;
+    letter-spacing: 2px;
+}
+
+/* 反应名：墨底 + 反应色细框（边框颜色在代码里随文字色） */
+.sf-dn--text {
+    font-size: 21px;
+    letter-spacing: 3px;
+    padding: 3px 6px 3px 9px;
+    border-width: 1px;
+    border-radius: 3px;
+    background-color: rgba(10, 6, 12, 0.72);
+    -unity-text-outline-width: 1.5px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+/* 灵宠台词等无框浮字 */
+.sf-dn--say {
+    font-size: 19px;
+    letter-spacing: 1px;
+}
+
+.sf-dn--big {
+    font-size: 27px;
+    padding: 4px 8px 4px 11px;
+}
+
+.sf-dn--small {
+    font-size: 15px;
+}
+
+/* ───────────────────────── 敌人头顶血条 ───────────────────────── */
+
+.sf-ebars {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+}
+
+.sf-ebar-anchor {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+}
+
+/* 底边贴锚点、水平居中（缩放的轴心在底边中点，代码里设） */
+.sf-ebar {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 74px;
+    translate: -50% 0;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.sf-ebar.is-elite {
+    width: 96px;
+}
+
+.sf-ebar__name {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1px;
+}
+
+.sf-ebar__nametext {
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-size: 13px;
+    letter-spacing: 1px;
+    color: #f4d893;
+    -unity-text-outline-width: 0.6px;
+    -unity-text-outline-color: rgba(0, 0, 0, 0.85);
+    text-shadow: 0 1px 2px #000000;
+}
+
+.sf-ebar__affix {
+    flex-shrink: 0;
+    margin-right: 4px;
+    padding: 1px 4px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: #0b090d;
+    border-radius: 2px;
+}
+
+.sf-ebar__status {
+    flex-direction: row;
+    justify-content: center;
+    margin-bottom: 2px;
+}
+
+.sf-ebar__badge {
+    width: 15px;
+    height: 15px;
+    margin: 0 1.5px;
+    border-radius: 2px;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 反应提示的外发光（代码里按 1.2 s / 0.6 s 呼吸） */
+.sf-ebar__glow {
+    position: absolute;
+    left: -8px;
+    top: -8px;
+    right: -8px;
+    bottom: -8px;
+}
+
+.sf-ebar__glyph {
+    font-size: 10px;
+    color: #0b090d;
+    -unity-text-align: middle-center;
+}
+
+.sf-ebar__stacks {
+    position: absolute;
+    right: -6px;
+    bottom: -5px;
+    font-size: 9px;
+    color: #ffffff;
+    -unity-text-outline-width: 1px;
+    -unity-text-outline-color: #000000;
+}
+
+/* 行高含 1 px 黑框（Three.js box-shadow 0 0 0 1px）：护盾 / 护甲 4 px，生命 6 px，精英 7 px 描金 */
+.sf-ebar__row {
+    height: 6px;
+    margin-top: 1px;
+    overflow: hidden;
+    background-color: rgba(7, 6, 10, 0.82);
+    border-width: 1px;
+    border-color: rgba(0, 0, 0, 0.8);
+}
+
+.sf-ebar__row--hp {
+    height: 8px;
+}
+
+.sf-ebar.is-elite .sf-ebar__row--hp {
+    height: 9px;
+    border-color: rgba(244, 216, 147, 0.7);
+}
+
+/* ───────────────────────── 首领血条 ───────────────────────── */
+
+.sf-boss {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 18px;
+    align-items: center;
+}
+
+.sf-boss__panel {
+    flex-direction: column;
+    align-items: center;
+    width: 720px;
+}
+
+.sf-boss__head {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.sf-boss__name {
+    margin: 0 14px;
+    padding-left: 11px;
+    font-size: 27px;
+    letter-spacing: 11px;
+    color: #ffe6c8;
+    -unity-text-outline-width: 0.8px;
+    -unity-text-outline-color: rgba(30, 6, 4, 0.8);
+    text-shadow: 0 2px 10px rgba(201, 55, 42, 0.75);
+}
+
+.sf-boss.is-dead .sf-boss__name {
+    color: #f4d893;
+}
+
+.sf-boss .sf-boss__cloud {
+    width: 58px;
+    height: 23px;
+    opacity: 0.9;
+    -unity-background-image-tint-color: #c9372a;
+}
+
+.sf-boss .sf-boss__cloud--r {
+    scale: -1 1;
+}
+
+.sf-boss__sub {
+    margin-top: 2px;
+    font-size: 13px;
+    letter-spacing: 4px;
+    color: #c8b999;
+    text-shadow: 0 1px 3px #000000;
+}
+
+.sf-boss__bars {
+    align-self: stretch;
+    flex-direction: column;
+    margin-top: 6px;
+    padding: 4px;
+    border-width: 1px;
+    border-color: rgba(212, 169, 85, 0.42);
+    background-color: rgba(7, 6, 10, 0.72);
+}
+
+.sf-boss.is-invuln .sf-boss__bars {
+    border-color: rgba(200, 185, 153, 0.28);
+}
+
+.sf-boss__row {
+    height: 6px;
+    margin-bottom: 3px;
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.06);
+}
+
+.sf-boss__row--hp {
+    height: 16px;
+    margin-bottom: 0;
+}
+
+.sf-boss__tick {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    margin-left: -1px;
+    background-color: rgba(244, 216, 147, 0.9);
+}
+
+.sf-boss__tick.is-passed {
+    background-color: rgba(255, 255, 255, 0.22);
+}
+
+/* 无敌：蒙一层灰（Three.js grayscale + 压暗）；越过刻度：整条亮一下 */
+.sf-boss__veil,
+.sf-boss__flash {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.sf-boss__veil {
+    background-color: rgba(58, 54, 62, 0.62);
+}
+
+.sf-boss__flash {
+    background-color: rgb(255, 236, 200);
+}
+
+.sf-boss__foot {
+    align-self: stretch;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 4px;
+    padding: 0 2px;
+}
+
+.sf-boss__state {
+    flex-direction: row;
+    align-items: center;
+}
+
+.sf-boss .sf-boss__lock {
+    width: 12px;
+    height: 12px;
+    margin-right: 4px;
+    -unity-background-image-tint-color: #c8b999;
+}
+
+.sf-boss__layer {
+    font-size: 12px;
+    letter-spacing: 4px;
+    color: #ff7a5a;
+    text-shadow: 0 1px 2px #000000;
+}
+
+.sf-boss__num {
+    font-size: 13px;
+    color: #c8b999;
+    text-shadow: 0 1px 2px #000000;
+}
+
+/* ───────────────────────── 反应首遇教学卡（右上信息角下方）───────────────────────── */
+
+.sf-rtips {
+    position: absolute;
+    right: 28px;
+    top: 168px;
+    align-items: flex-end;
+}
+
+.sf-rtip {
+    width: 330px;
+    flex-direction: column;
+    padding: 10px 16px 12px 14px;
+    border-left-width: 3px;
+    border-left-color: #ffd84a;
+}
+
+.sf-rtip__head {
+    flex-direction: row;
+    align-items: center;
+}
+
+.sf-rtip__tag {
+    margin-right: 8px;
+    padding: 1px 5px;
+    font-size: 11px;
+    letter-spacing: 2px;
+    border-width: 1px;
+    border-radius: 2px;
+}
+
+.sf-rtip__name {
+    font-size: 24px;
+    letter-spacing: 6px;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+}
+
+.sf-rtip__recipe {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 6px;
+}
+
+.sf-rtip__badge {
+    width: 18px;
+    height: 18px;
+    border-radius: 2px;
+    align-items: center;
+    justify-content: center;
+}
+
+.sf-rtip__glyph {
+    font-size: 11px;
+    color: #0b090d;
+    -unity-text-align: middle-center;
+}
+
+.sf-rtip__op {
+    margin: 0 6px;
+    font-size: 14px;
+    color: #8a7f6d;
+}
+
+.sf-rtip__effect {
+    font-size: 16px;
+    letter-spacing: 2px;
+}
+
+.sf-rtip__desc {
+    margin-top: 5px;
+    font-size: 12.5px;
+    white-space: normal;
+    color: #c8b999;
+}
