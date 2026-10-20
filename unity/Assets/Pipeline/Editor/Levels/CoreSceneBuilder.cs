@@ -93,7 +93,13 @@ namespace Spiritfire.Art.Editor.Levels
                     .Where(n => n.StartsWith("SM_Arms_"))
                     .OrderBy(n => n, System.StringComparer.Ordinal));
             db.arms = Collect(armIds, "手臂");
-            db.enemies = Collect(EnemyRoster.All.Select(d => d.prefab), "敌人");
+            // 名册敌人 + 首领（首领不进名册：各形态的正式模型与代理模型，外加美术库里所有 SK_Boss_* 本体，换上正式美术不用改代码）
+            var bossIds = Bosses.All.SelectMany(b => b.forms).SelectMany(f => new[] { f.prefab, f.proxyPrefab })
+                .Concat(AssetDatabase.FindAssets("t:Prefab SK_Boss_")
+                    .Select(g => Path.GetFileNameWithoutExtension(AssetDatabase.GUIDToAssetPath(g)))
+                    .Where(n => n.StartsWith("SK_Boss_")));
+            db.enemies = Collect(EnemyRoster.All.Select(d => d.prefab).Concat(bossIds)
+                .Where(n => !string.IsNullOrEmpty(n)).Distinct(), "敌人 / 首领");
             db.attachments = AssetDatabase.IsValidFolder(AttachmentsDir)
                 ? AssetDatabase.FindAssets("t:Prefab", new[] { AttachmentsDir })
                     .Select(g => AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(g)))

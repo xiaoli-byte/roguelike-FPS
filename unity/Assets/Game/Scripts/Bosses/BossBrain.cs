@@ -21,10 +21,10 @@ namespace Spiritfire.Game
     ///   召唤：<see cref="Summons"/>（上限、预警、转阶段 / 倒下时崩解）。场地：<see cref="Arena"/>（<see cref="BossArena"/> 显式锚点，走位都夹在场地里）。
     ///   倒下：招式打断、召唤物崩解、血条收起、<see cref="GameEvents.BossDefeated"/>，溃散演出交给 <see cref="BossDefeatSequence"/>。
     ///   动画事件：模型的 CreatureRig.AnimEvent 转给当前招式（<see cref="BossMove.Cue"/>）；通用的 "sfx:&lt;id&gt;" / "fx:shake" 在这里直接处理。
-    /// 血条（U3）读 <see cref="Title"/>、<see cref="Subtitle"/>、<see cref="BarTicks"/>、<see cref="PhaseFraction"/>；现在先经 <see cref="GameUI.SetBoss"/> 交给 Hud。
+    /// 血条（U3）经 <see cref="IBossBarSource"/> 读 <see cref="Title"/>、<see cref="Subtitle"/>、<see cref="BarTicks"/>（刻度来自 BossDef）。
     /// 生成走 <see cref="Bosses.Spawn(string, BossArena, float, Transform)"/>（首领不在敌人名册里）。
     /// </summary>
-    public class BossBrain : EnemyAI, IStunPolicy
+    public class BossBrain : EnemyAI, IStunPolicy, IBossBarSource
     {
         // 由 Bosses.Spawn 在激活之前填写
         [NonSerialized] internal BossDef def;
@@ -948,11 +948,19 @@ namespace Spiritfire.Game
             GameEvents.RaiseBossDefeated(this);
         }
 
-        /// <summary>血条交给 Hud（U3 之前）：显示最近生成、还活着的首领，没有就收起</summary>
+        // ───────────── 首领血条（U3 的 IBossBarSource）：刻度来自 BossDef（D23），换形时受伤体跟着换 ─────────────
+        Damageable IBossBarSource.BarHealth => Health;
+        string IBossBarSource.BarTitle => Title;
+        string IBossBarSource.BarSubtitle => Subtitle;
+        IReadOnlyList<float> IBossBarSource.BarThresholds => BarTicks;
+        bool IBossBarSource.BarInvulnerable => Health && !Health.Dead && Health.untargetable;
+
+        /// <summary>血条：显示最近生成、还活着的首领，没有就收起</summary>
         public static void RefreshBossBar()
         {
             var p = Primary;
-            GameUI.SetBoss(p ? p.Health : null, p ? p.Title : null);
+            if (p) GameUI.SetBoss<IBossBarSource>(p);
+            else GameUI.SetBoss(null);
         }
 
         // ───────────── 给招式用的工具 ─────────────

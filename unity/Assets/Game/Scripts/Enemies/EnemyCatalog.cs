@@ -48,7 +48,10 @@ namespace Spiritfire.Game
             if (!c) return GameDatabase.Enemy(name);
             foreach (var p in c.prefabs)
                 if (p && p.name == name) return p;
-            return null;
+            // 场景目录只收名册敌人：首领等名册外的模型退回 GameDatabase。名册里的却不在场景目录 = 有意缺省（走占位体），不退回
+            foreach (var d in EnemyRoster.All)
+                if (d.prefab == name) return null;
+            return GameDatabase.Enemy(name);
         }
     }
 }

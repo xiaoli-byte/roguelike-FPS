@@ -64,11 +64,13 @@ namespace Spiritfire.Game
             return Mathf.Max(0, baseValue) * (rank == Rank.Elite ? EliteEssenceMult : 1);
         }
 
-        /// <summary>这只敌人的定义（名册生成的才有）</summary>
+        /// <summary>这只敌人的定义：名册里的敌人，或首领（首领不进名册，取 BossDef 转出的那份，灵石 / 魂晶按首领奖励算）</summary>
         public static EnemyDef DefOf(Damageable d)
         {
             var ai = d ? d.GetComponent<EnemyAI>() : null;
-            return ai ? EnemyRoster.Get(ai.enemyId) : null;
+            if (!ai) return null;
+            if (ai is BossBrain boss && boss.Def != null) return boss.Def.ToEnemyDef();
+            return EnemyRoster.Get(ai.enemyId);
         }
 
         /// <summary>结算一次击杀（Combat 调用；异常只报错，不打断击杀事件）</summary>

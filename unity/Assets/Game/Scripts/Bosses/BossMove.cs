@@ -15,7 +15,7 @@ namespace Spiritfire.Game
     /// 每段可以指定一个动作（Animator 状态名，缺片段时不播、只警告一次）。
     /// 出手时刻优先跟动画事件走（<see cref="Cue"/>：E5 的 events.json 叠加表写成 CreatureRig.OnAnimEvent），没有事件就按时间兜底。
     /// 打断（转阶段、眩晕、硬直、玩家阵亡、死亡）：<see cref="OnEnd"/>(cancelled = true)，并撤回本招画出、还没填满的预警（能撤回的那部分：直线预警有句柄；
-    /// 圆形预警等 F2 的句柄接口落地后在 <see cref="WarnCircle"/> 一处接上）。
+    /// 圆形预警用 F2 的贴花句柄，打断时撤回）。
     /// 调度参数（冷却、权重、首次可用延迟、限定形态 / 阶段）也写在招式上，<see cref="BossBrain"/> 按它们抽招。
     /// 一只首领一份招式对象（BossDef.moves 是工厂），招式可以有自己的字段。
     /// </summary>
@@ -74,6 +74,7 @@ namespace Spiritfire.Game
         readonly HashSet<string> cuesSeen = new();
         readonly HashSet<string> cuesFired = new();
         readonly List<Telegraph.LineHandle> lines = new();
+        readonly List<TelegraphHandle> circles = new();
 
         // ───────────── 首领调用 ─────────────
 
@@ -100,6 +101,7 @@ namespace Spiritfire.Game
             cuesSeen.Clear();
             cuesFired.Clear();
             lines.Clear();
+            circles.Clear();
             TimesStarted++;
             WindupTime = Mathf.Max(0, windup * Brain.WindupScale);
             OnStart();
@@ -240,14 +242,14 @@ namespace Spiritfire.Game
         /// <summary>预警色</summary>
         protected Color WarnTint => warnColor ?? (Brain && Brain.Def != null ? Brain.Def.WarnColor : new Color(1f, 0.4f, 0.2f));
 
-        /// <summary>
-        /// 圆形地面预警（落点、砸地）：现在的 Telegraph.Circle 没有句柄，打断时撤不回，只能等它按时长自己消失（F2 换成带句柄的接口后在这里接上）
-        /// </summary>
-        protected void WarnCircle(Vector3 center, float radius, float seconds, Color? color = null)
+        /// <summary>圆形地面预警（落点、砸地）：返回句柄；招式被打断时还没填满的会撤回（F2 贴花预警）</summary>
+        protected TelegraphHandle WarnCircle(Vector3 center, float radius, float seconds, Color? color = null)
         {
             TelegraphCount++;
-            Telegraph.Circle(center, radius, Mathf.Max(0.05f, seconds), color ?? WarnTint);
+            var h = Telegraph.Circle(center, radius, Mathf.Max(0.05f, seconds), color ?? WarnTint);
+            circles.Add(h);
             Brain.NotifyTelegraph(this);
+            return h;
         }
 
         /// <summary>直线地面预警（冲撞、俯冲路径）：返回句柄（可以在前摇里跟着朝向挪），打断时自动撤回</summary>
@@ -260,11 +262,13 @@ namespace Spiritfire.Game
             return h;
         }
 
-        /// <summary>撤回本招还活着的直线预警</summary>
+        /// <summary>撤回本招还活着的预警：直线收起；圆形只撤还没填满的（填满即已兑现）</summary>
         protected void EndWarnings()
         {
             foreach (var h in lines) h?.End();
             lines.Clear();
+            foreach (var h in circles) h.Cancel();
+            circles.Clear();
         }
 
         public override string ToString() => $"{Name}（{Id}，{Stage}，{T:F1} s）";
