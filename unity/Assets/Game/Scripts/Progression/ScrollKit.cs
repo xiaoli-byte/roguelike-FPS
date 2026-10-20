@@ -41,7 +41,8 @@ namespace Spiritfire.Game
 
         /// <summary>玩家武器的直接命中（非衍生、非秘卷触发、非处决；同 TS isDirectWeaponHit）</summary>
         public static bool IsDirectWeaponHit(in DamageInfo i) =>
-            i.source == DamageSource.Weapon && i.depth == 0 && !i.Has(DamageTag.Proc) && !i.Has(DamageTag.Purge);
+            (i.source == DamageSource.Weapon || i.source == DamageSource.Melee) // 碎刃斩击在 TS 里来源就是 'weapon'
+            && i.depth == 0 && !i.Has(DamageTag.Proc) && !i.Has(DamageTag.Purge);
 
         /// <summary>
         /// 由一次命中推出状态强度，与 Combat 自己附着元素时的口径一致（同 TS statusPowerFrom）：
