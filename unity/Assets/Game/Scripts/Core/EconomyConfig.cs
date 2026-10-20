@@ -21,7 +21,7 @@ namespace Spiritfire.Game
     ///   击杀灵石：EnemyDef.coins [lo, hi] 掷整数 × 精英 3 × (1 + 0.15 × 章)；首领没写时 60–100（首领包另加 2 弹药 + 2 生命）。
     ///   一次性奖励（宝箱灵石、强化 / 秘卷满层转灵石）：× (1 + 0.35 × 章)；宝箱灵石 60–120，精英场 × 1.4。
     ///   灵石获取（Stat.CoinGainPct）只在入账时乘一次（<see cref="CreditCoins"/>，小数部分累计到下一次，不因每颗取整而丢失）。
-    /// 投影（<see cref="Project"/>）：按 RunPlan 的关卡数估每章收入，D24「按每章收入重调」的依据；调试命令 economy（F10）打到日志。
+    /// 投影（<see cref="Project"/>）：按 RunPlan 的关卡数估每章收入，D24「按每章收入重调」的依据；调试命令 economy 打到日志。
     /// </summary>
     public static class EconomyConfig
     {
@@ -327,13 +327,12 @@ namespace Spiritfire.Game
     }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-    /// <summary>F10 把每章收入投影打到日志（D24 调经济用）</summary>
+    /// <summary>把每章收入投影打到日志（D24 调经济用）。没有热键（F10 归战斗调试叠层清零），用 DevCommands.Run("economy")</summary>
     [Defs]
     public sealed class EconomyProjectionCommand : DevCommand
     {
         public override string Id => "economy";
         public override string Label => "经济投影";
-        public override Key Hotkey => Key.F10;
         public override bool PlayingOnly => false;
 
         public override void Execute()
