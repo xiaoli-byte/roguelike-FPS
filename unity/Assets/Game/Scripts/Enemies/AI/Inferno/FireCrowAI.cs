@@ -15,7 +15,7 @@ namespace Spiritfire.Game
     ///     旁边的飞鸦被炸死就接着炸）；不伤玩家。被炮仗傀儡的死亡爆炸引爆时同样在空中炸开。清场时不炸。
     /// 状态机：circle → ignite → dive →（撞地 / 撞墙 / 贴脸）自爆。动作片段：ignite / dive + Locomotion（翼面转平已采样进片段）。
     /// </summary>
-    public sealed class FireCrowAI : FlyingEnemyAI, IExplosiveKin
+    public sealed class FireCrowAI : FlyingEnemyAI, IExplosiveKin, ISelfDestruct
     {
         /// <summary>盘旋高度带、绕圈半径带、角速度（弧度 / 秒）、出生时脚底至少离地（× 体型）</summary>
         public const float AltMin = 8, AltMax = 14, OrbitRMin = 7, OrbitRMax = 10, OrbitW = 0.5f, SpawnAlt = 2.5f;
@@ -74,6 +74,12 @@ namespace Spiritfire.Game
         TelegraphHandle warn, lane;
         Transform drumGlow;
         float drumBase = 1, sparkTimer;
+
+        /// <summary>
+        /// 撞地 / 撞墙 / 贴脸自爆死的（<see cref="ISelfDestruct"/>）：直接 Kill、不经伤害管线、不算玩家击杀（同 TS）。
+        /// 空中被打爆 / 被连环爆引爆不算——那两种都走 <see cref="Combat.DamageEnemy"/>
+        /// </summary>
+        public bool Detonated => crashed;
 
         /// <summary>锁定的落点（测试 / 调试）</summary>
         public Vector3 DiveTarget => diveTarget;

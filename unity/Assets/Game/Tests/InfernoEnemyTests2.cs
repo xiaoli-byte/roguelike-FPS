@@ -85,6 +85,7 @@ namespace Spiritfire.Game.Tests
             Assert.IsTrue(typeof(IExplosiveKin).IsAssignableFrom(typeof(FirecrackerAI)));
             Assert.IsTrue(typeof(IExplosiveKin).IsAssignableFrom(typeof(FireCrowAI)));
             Assert.IsTrue(typeof(FlyingEnemyAI).IsAssignableFrom(typeof(FireCrowAI)), "神火飞鸦走飞行基类");
+            Assert.IsTrue(typeof(ISelfDestruct).IsAssignableFrom(typeof(FireCrowAI)), "撞地自爆不算玩家击杀：冒烟套件据此豁免");
             Assert.IsFalse(typeof(IExplosiveKin).IsAssignableFrom(typeof(FounderAI)));
             CollectionAssert.Contains(Def("firecracker").affixExclusions, "volatile", "死亡爆炸本来就是它的机制");
             CollectionAssert.Contains(Def("fire_crow").affixExclusions, "volatile");
