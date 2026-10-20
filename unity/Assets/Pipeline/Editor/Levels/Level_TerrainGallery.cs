@@ -101,7 +101,8 @@ namespace Spiritfire.Art.Editor.Levels
 
         static Specimen Yardang()
         {
-            var y = new YardangSpec { wind = Wind, spacing = 36, length = 76, width = 17, height = 15, edge = 3.2f, density = 0.8f, meander = 6, seed = 3 };
+            // unity-maps-v1 1-2：岩墙 12–25 m 高、走廊 8–12 m——脊距 30、脊宽 18（走廊约 12 m），平均高 17（单条 10–20 m），排得密（0.88）
+            var y = new YardangSpec { wind = Wind, spacing = 30, length = 82, width = 18, height = 17, edge = 3.4f, density = 0.88f, meander = 6, seed = 3 };
             return new Specimen
             {
                 key = "yardang", title = "雅丹场（1-2 雅丹迷城）", theme = ShowcaseTheme.Desert, center = new Vector2(-160, 160),
@@ -158,8 +159,8 @@ namespace Spiritfire.Art.Editor.Levels
         {
             var wall = new List<Vector2> { new(-100, 40), new(30, 40), new(30, -100) };
             const float wallH = 7f, half = 3f;
-            // 北墙西段只埋墙脚，往东到转角埋到垛口（沙坡能走上墙头），东墙往南又退回墙脚
-            float Crest(float t) => t < 0.48f ? Mathf.Lerp(1.5f, wallH + 0.6f, t / 0.48f) : Mathf.Lerp(wallH + 0.6f, 2f, (t - 0.48f) / 0.52f);
+            // 北墙西段只埋墙脚，往东到转角埋到垛口（贴墙沙面高出墙顶 0.8 m，沙坡能走上墙头），东墙往南又退回墙脚
+            float Crest(float t) => t < 0.48f ? Mathf.Lerp(1.5f, wallH + 0.8f, t / 0.48f) : Mathf.Lerp(wallH + 0.8f, 2f, (t - 0.48f) / 0.52f);
             float Ground(Vector2 q) => Base + Fbm(q, 55, 3, 2);
             float Drift(Vector2 q) => SandDrift(q, wall, Wind, Crest, 34, 12, half, 12, out _);
             var gate = new Vector2(-40, 40);

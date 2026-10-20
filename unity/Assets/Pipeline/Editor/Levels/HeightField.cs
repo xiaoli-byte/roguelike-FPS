@@ -434,7 +434,8 @@ namespace Spiritfire.Art.Editor.Levels
 
         /// <summary>
         /// 墙边积沙：风把沙推到墙的迎风面，堆成一道能走上墙头的沙坡（坡长 reach，坡脚缓、近墙陡）；背风面只有一道矮而短的沙尾（leeReach）。
-        /// crest(t) = 沿墙 t（0–1）处迎风面的积沙顶高（米）——可以从「只埋墙脚」渐变到「埋到垛口」（1-3 西北段）。
+        /// crest(t) = 沿墙 t（0–1）处迎风面<b>贴着墙面</b>的积沙顶高（米）——可以从「只埋墙脚」渐变到「埋到垛口」（1-3 西北段）。
+        /// reach / leeReach 从墙面（中线外 halfThick）量起：墙面处就是 crest，不会在墙厚里先掉一截。
         /// 墙厚 halfThick 内两面平滑过渡（墙模型盖住）。返回积沙高度（≥ 0）；windward = 迎风面遮罩。
         /// 墙模型摆在原地面上，积沙自然埋住墙脚，同一批城墙资产就有了「半埋」的新形态。
         /// </summary>
@@ -445,9 +446,11 @@ namespace Spiritfire.Art.Editor.Levels
             var n = new Vector2(-tangent.y, tangent.x);
             // 有符号横距：正 = 迎风面（该面的外法线迎着风）
             float s = Vector2.Dot(p - closest, n) * (Vector2.Dot(n, wind) < 0 ? 1 : -1);
-            float c = Mathf.Max(0, crest(t)) * (1 + Fbm(p, 14, 2, seed) * 0.12f);
-            float up = c * Mathf.Pow(1 - Mathf.Clamp01(d / reach), 1.6f);
-            float lee = 0.4f * c * Mathf.Pow(1 - Mathf.Clamp01(d / leeReach), 2f);
+            // 积沙顶高沿墙只做小幅起伏（±4%）：沙坡能不能走上墙头取决于它，不能被噪声随机削掉
+            float c = Mathf.Max(0, crest(t)) * (1 + Fbm(p, 14, 2, seed) * 0.08f);
+            float face = Mathf.Max(0, d - halfThick);
+            float up = c * Mathf.Pow(1 - Mathf.Clamp01(face / reach), 1.6f);
+            float lee = 0.4f * c * Mathf.Pow(1 - Mathf.Clamp01(face / leeReach), 2f);
             windward = Smooth(-halfThick, halfThick, s);
             float ripple = 1 + Fbm(p, 5, 2, seed + 3) * 0.04f;
             return Mathf.Lerp(lee, up, windward) * ripple;
@@ -542,13 +545,19 @@ namespace Spiritfire.Art.Editor.Levels
         /// 平湖：椭圆湖岸叠角向噪声（irregular = 半径起伏比例），湖内返回 0、岸带 shore 米内平滑升到 1。
         /// 用法：h = Lerp(湖面高, h, k)——湖内绝对平（冰面、水面、熔岩面）。lake = 湖面遮罩，shoreMask = 岸带遮罩。
         /// </summary>
-        public static float LakeShore(Vector2 p, Vector2 center, Vector2 radius, float shore, float irregular, int seed, out float lake, out float shoreMask)
+        public static float LakeShore(Vector2 p, Vector2 center, Vector2 radius, float shore, float irregular, int seed, out float lake, out float shoreMask) =>
+            LakeShore(p, center, radius, shore, irregular, seed, out lake, out shoreMask, out _);
+
+        /// <summary>同上，另给离湖岸的米数 edgeDist（湖内为负，岸带 0 … shore，陆上 &gt; shore）</summary>
+        public static float LakeShore(Vector2 p, Vector2 center, Vector2 radius, float shore, float irregular, int seed, out float lake, out float shoreMask,
+            out float edgeDist)
         {
             var d = p - center;
             float r = Mathf.Sqrt(d.x * d.x / (radius.x * radius.x) + d.y * d.y / (radius.y * radius.y));
             float ang = Mathf.Atan2(d.y, d.x);
             float edge = 1 + irregular * Loop(ang, 5, 3, seed);
             float x = (r - edge) * Mathf.Min(radius.x, radius.y); // 离湖岸的米数（湖内为负）
+            edgeDist = x;
             lake = 1 - Smooth(-0.6f, 0.2f, x);
             shoreMask = Smooth(-1.5f, 0.5f, x) * (1 - Smooth(shore * 0.6f, shore * 1.4f, x));
             return Smooth(0, shore, x);
@@ -734,17 +743,24 @@ namespace Spiritfire.Art.Editor.Levels
             /// <summary>堤道：没给纵断面的一律 level + causewayHeight；给了的（WithHeights / Level）按纵断面</summary>
             public PathSpline[] causeways = Array.Empty<PathSpline>();
             public float causewayHalfWidth = 3.5f, causewayHeight = 1.4f, causewayEdge = 1.8f;
+            /// <summary>堤道上岛 / 上岸的引坡坡度（度）：岛顶、岸上都比堤面高，堤道按这个坡度爬上去，不在岛沿、岸边留一道坎</summary>
+            public float causewayRampGrade = 9f;
             public int seed;
         }
+
+        /// <summary>岛的最大外沿（米，离岛心）：岛沿 r + 1.5 再加边缘抖动的上限（0.18 r）——堤道的上岛引坡从这里开始，保证压在岛沿之上</summary>
+        static float IslandReach(float r) => r + 1.5f + 0.18f * r;
 
         /// <summary>
         /// 熔岩湖 + 岛 + 堤道：湖内压到 level − bedDepth（熔岩面是 L7 LavaField 的平面），岸带渐变回 ground；
         /// 岛是顶平侧陡的玄武岩墩，堤道是侧壁陡、顶面平的路堤（只填不挖），一个湖可以有多条堤道、互相在岛上交汇。
+        /// 堤面本身只高出熔岩 causewayHeight，岛顶、岸上更高：端点落在岛上的堤道，在岛的最大外沿以内与岛顶齐平、往外按 causewayRampGrade
+        /// 落回堤面；进岸带后同样按坡度爬到原地面——沿堤道走不会撞上岛沿、岸边的陡坎。
         /// 外圈火山口壁用 <see cref="CaveBowl"/> 叠。返回高度；lava / shore / causeway / island 遮罩。
         /// </summary>
         public static float LavaLake(Vector2 p, float ground, LavaLakeSpec s, out float lava, out float shore, out float causeway, out float island)
         {
-            float k = LakeShore(p, s.center, s.radius, s.shore, s.irregular, s.seed, out lava, out shore);
+            float k = LakeShore(p, s.center, s.radius, s.shore, s.irregular, s.seed, out lava, out shore, out float edgeDist);
             float h = Mathf.Lerp(s.level - s.bedDepth, ground, k);
             island = 0;
             foreach (var (c, r, ih) in s.islands)
@@ -758,12 +774,22 @@ namespace Spiritfire.Art.Editor.Levels
                 island = Mathf.Max(island, m);
             }
             causeway = 0;
+            float grade = Mathf.Tan(Mathf.Clamp(s.causewayRampGrade, 1, 30) * Mathf.Deg2Rad);
             foreach (var cw in s.causeways)
             {
                 var (d, t) = cw.Nearest(p, s.causewayHalfWidth + s.causewayEdge);
                 float m = 1 - Smooth(s.causewayHalfWidth, s.causewayHalfWidth + s.causewayEdge, d);
                 if (m <= 0) continue;
                 float top = cw.HasProfile ? cw.HeightAt(t) : s.level + s.causewayHeight;
+                // 上岸：岸带里（离陆地 shore − edgeDist 米）按坡度爬到原地面
+                top = Mathf.Max(top, ground - grade * Mathf.Max(0, s.shore - edgeDist));
+                // 上岛：只对端点落在岛上的堤道（路过的岛不让堤道拱起来）
+                foreach (var (c, r, ih) in s.islands)
+                {
+                    float reach = IslandReach(r);
+                    if (Vector2.Distance(cw.points[0], c) > reach && Vector2.Distance(cw.points[^1], c) > reach) continue;
+                    top = Mathf.Max(top, s.level + ih - grade * Mathf.Max(0, Vector2.Distance(p, c) - reach));
+                }
                 h = Mathf.Max(h, Mathf.Lerp(h, top, m));
                 causeway = Mathf.Max(causeway, m);
             }
