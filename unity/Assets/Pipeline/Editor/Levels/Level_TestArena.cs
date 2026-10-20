@@ -145,16 +145,12 @@ namespace Spiritfire.Art.Editor.Levels
             return rep.failures;
         }
 
-        /// <summary>验收：主线连通（出生点 → 刷怪台 → 坡度台面 → 三座台顶）、台面实际高度、武器架与敌人目录、后处理 profile 存盘</summary>
+        /// <summary>验收：台面实际高度、武器架与敌人目录、后处理 profile 存盘，再跑 L5 规则集（主线连通 出生点 → 刷怪台 → 坡度台面 → 三座台顶、锚点、越界…，见 <see cref="Spec"/>）</summary>
         static LevelKit.Report Validate(WeaponRack rack)
         {
             var rep = new LevelKit.Report();
             rep.Line("测试场 TestArena · 白盒验收");
             Physics.SyncTransforms();
-            rep.Line("— 连通（NavMesh，人形代理）—");
-            var path = new List<(string, Vector3)> { ("出生点", G(Spawn)), ("刷怪台", G(Pad)), ("坡度台面", G(DeckCenter, DeckHeight)) };
-            foreach (var (c, h) in Platforms) path.Add(($"{h} m 台顶", G(c, h)));
-            LevelKit.CheckPath(rep, path.ToArray());
 
             rep.Line("— 台面高度（自上而下射线）—");
             void Height(string what, Vector2 at, float expect)
@@ -185,8 +181,28 @@ namespace Spiritfire.Art.Editor.Levels
             if (!profile || profile.components.Count == 0) rep.Fail($"{vp} 没有后处理组件");
             else if (comps != profile.components.Count) rep.Fail($"{vp}：profile 有 {profile.components.Count} 个组件，资产里只存下 {comps} 个（重开工程会丢）");
             else rep.Line($"✓ 后处理 profile：{comps} 个组件已存为子资产（{string.Join("、", profile.components.Select(c => c.GetType().Name))}）");
+            LevelValidator.Run(Spec(), rep);
             rep.Line(rep.failures == 0 ? "全部通过" : $"不合格 {rep.failures} 项");
             return rep;
+        }
+
+        /// <summary>
+        /// 交给验收规则集的声明：可玩区 = 围堤脚以内；刷怪台锚点按名册里最大的体型查净空；占位条带只列清单（Warn）。
+        /// 东侧高台区当已知几何的回归样本：三座台都有 20° 坡道 → 俯射层不靠二段跳可达，台子侧壁算掩体。
+        /// </summary>
+        static LevelSpec Spec()
+        {
+            var spec = new LevelSpec
+            {
+                id = "arena", title = "测试场", playerSpawn = G(Spawn), bounds = new Rect(Origin, Size),
+                playable = p => Mathf.Max(Mathf.Abs(p.x), Mathf.Abs(p.y)) <= BermStart ? 1 : 0,
+                anchors = { new AnchorSpec { name = "SpawnAnchor_Pad（刷怪台）", pos = G(Pad) } },
+                sites = { new SiteSpec { name = "东侧高台区", center = G(new Vector2(34, -10)), size = 40, minCover = 2, minLayers = 2, overlook = true } },
+                placeholders = PlaceholderPolicy.Warn,
+            };
+            spec.Route("出生点", G(Spawn)).Route("刷怪台", G(Pad)).Route("坡度台面", G(DeckCenter, DeckHeight));
+            foreach (var (c, h) in Platforms) spec.Route($"{h} m 台顶", G(c, h));
+            return spec;
         }
 
         sealed class Materials

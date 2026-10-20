@@ -340,21 +340,7 @@ namespace Spiritfire.Art.Editor.Levels
             Vector3 G(Vector2 q, float dy = 0) => LevelKit.OnGround(terrain, q.x, q.y, dy);
             float top = LevelKit.GroundY(terrain, Beacon.x, Beacon.y);
             rep.Line($"烽燧台面 y = {top:F1}（台脚 {LevelKit.GroundY(terrain, RampWFoot.x, RampWFoot.y):F1}），雅丹低丘顶 y = {LevelKit.GroundY(terrain, Mesas[0].c.x, Mesas[0].c.y):F1}");
-            rep.Line("— 主线连通（NavMesh，人形代理）—");
-            LevelKit.CheckPath(rep, new[]
-            {
-                ("出生·驿站", G(Spawn)), ("① 黑戈壁", G(Gravel)), ("② 雅丹", G(Yardang)), ("② 低丘顶", G(Mesas[0].c)), ("② 雅丹", G(Yardang)),
-                ("③ 烽燧台顶", G(Beacon)), ("④ 营地", G(Camp)), ("出口", G(Exit)),
-            });
-            rep.Line("— 坡度 —");
-            LevelKit.CheckRoadSlope(rep, terrain, Road);
-            rep.Line("— 地标可见（眼高 1.62 m）—");
-            LevelKit.CheckSight(rep, "出生点 → 烽燧狼烟", G(Spawn, 1.62f), smokeAt + Vector3.up * 8);
-            LevelKit.CheckSight(rep, "① 入口 → 雅丹高丘", G(new Vector2(58, 50), 1.62f), G(Mesas[2].c, Mesas[2].h - 0.5f), 8);
-            LevelKit.CheckSight(rep, "② 出口 → 烽燧", G(new Vector2(140, 118), 1.62f), smokeAt, 6);
-            LevelKit.CheckSight(rep, "③ 台顶 → ④ 营地", G(new Vector2(188, 136), 1.62f), G(Camp, 1.5f), 6);
-            LevelKit.CheckSight(rep, "③ 台顶 → 远景雅丹群", G(new Vector2(182, 150), 1.62f), G(Mesas[5].c, Mesas[5].h * 0.8f), 14, "SM_Tripo_DesertYardangFleet");
-            LevelKit.CheckSight(rep, "④ 入口 → 出口祭坛", G(new Vector2(212, 96), 1.62f), G(Exit, 2.5f), 6);
+            LevelValidator.Run(Spec(terrain, smokeAt), rep); // 主线、坡度、视线 + L5 规则集，见文件末尾的 Spec
             CheckSceneContents(rep, scene);
             rep.Line(rep.failures == 0 ? "全部通过" : $"不合格 {rep.failures} 项");
             rep.Save($"{LevelKit.ReviewDir}/level_1-1_report.txt");
@@ -716,8 +702,42 @@ namespace Spiritfire.Art.Editor.Levels
             Mk("Enemy_2_Jerboa_Flank", new Vector2(100, 116));
             Mk("Enemy_3_TombBeast_RampW", new Vector2(160, 132));
             Mk("Enemy_3_Apsara_Top", Beacon + new Vector2(4, -2));
-            Mk("Enemy_4_EliteWave_A", Camp + new Vector2(6, -4));
+            Mk("Enemy_4_EliteWave_A", Camp + new Vector2(5, -1)); // 离货摊 ≥ 3.5 m：精英镇墓兽半径约 1.9 m（L5 出生净空）
             Mk("Enemy_4_EliteWave_B", Camp + new Vector2(-8, 6));
+        }
+
+        /// <summary>
+        /// 交给验收规则集（<see cref="LevelValidator"/>，docs/unity-parity.md L5）的声明：主线、古道坡度、6 条地标视线沿用白盒验收；
+        /// 可玩区遮罩与 LevelKit.Boundary 同一个；场地尺寸取 unity-maps-v1.md 1-1 表。掩体 / 层数阈值只防退化，实测数字看报告。
+        /// 锚点、宝箱落点、出口传送门、占位件、渲染器由检查项自己从场景里找。
+        /// </summary>
+        static LevelSpec Spec(Terrain terrain, Vector3 smokeAt)
+        {
+            Vector3 G(Vector2 q, float dy = 0) => LevelKit.OnGround(terrain, q.x, q.y, dy);
+            SiteSpec S(string name, Vector2 c, float size, int cover = -1, int layers = -1, bool overlook = false, bool combat = true) =>
+                new() { name = name, center = G(c), size = size, minCover = cover, minLayers = layers, overlook = overlook, combat = combat };
+            return new LevelSpec
+                {
+                    id = "1-1", title = "古道穿越戈壁", playerSpawn = G(Spawn), bounds = new Rect(Origin, Size),
+                    playable = p => Playable(p, Polyline(p, Road).dist),
+                    slopePaths = { new SlopePath { name = "古道", points = Road } },
+                    sites =
+                    {
+                        S("驿站废墟（缓冲）", Spawn, 30, combat: false),
+                        S("① 黑戈壁砾石滩", Gravel, 55, cover: 4),
+                        S("② 雅丹石阵", Yardang, 50, cover: 3, layers: 2, overlook: true),
+                        S("③ 烽燧台地", Beacon, 40, cover: 2, layers: 2, overlook: true),
+                        S("④ 驼队残骸营地", Camp, 45, cover: 3),
+                    },
+                }
+                .Route("出生·驿站", G(Spawn)).Route("① 黑戈壁", G(Gravel)).Route("② 雅丹", G(Yardang)).Route("② 低丘顶", G(Mesas[0].c))
+                .Route("② 雅丹", G(Yardang)).Route("③ 烽燧台顶", G(Beacon)).Route("④ 营地", G(Camp)).Route("出口", G(Exit))
+                .Sight("出生点 → 烽燧狼烟", G(Spawn, 1.62f), smokeAt + Vector3.up * 8)
+                .Sight("① 入口 → 雅丹高丘", G(new Vector2(58, 50), 1.62f), G(Mesas[2].c, Mesas[2].h - 0.5f), 8)
+                .Sight("② 出口 → 烽燧", G(new Vector2(140, 118), 1.62f), smokeAt, 6)
+                .Sight("③ 台顶 → ④ 营地", G(new Vector2(188, 136), 1.62f), G(Camp, 1.5f), 6)
+                .Sight("③ 台顶 → 远景雅丹群", G(new Vector2(182, 150), 1.62f), G(Mesas[5].c, Mesas[5].h * 0.8f), 14, "SM_Tripo_DesertYardangFleet")
+                .Sight("④ 入口 → 出口祭坛", G(new Vector2(212, 96), 1.62f), G(Exit, 2.5f), 6);
         }
     }
 }

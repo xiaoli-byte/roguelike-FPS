@@ -65,5 +65,49 @@ namespace Spiritfire.Art.Editor.Levels
             if (go) go.isStatic = true;
             return go;
         }
+
+        // ───────────── 占位（L5，docs/unity-parity.md 4.11）─────────────
+        /// <summary>占位件的标签：验收规则集（PlaceholderCheck）按它列清单</summary>
+        public const string PlaceholderTag = "Placeholder";
+        /// <summary>占位白盒的共用材质目录</summary>
+        public const string PlaceholderDir = "Assets/Levels/_Shared";
+
+        /// <summary>
+        /// 按 id 摆 Prefab；还没有这个 Prefab 时放一个 size 大小的白盒（名字「Placeholder · id」，打 Placeholder 标签），
+        /// 验收报告会列出全部占位件，正式图不允许有。baseCenter = 底面中心（世界坐标）；scale 只作用于 Prefab。
+        /// 换正式资产只需要导出 Prefab 后重新生成关卡，不改代码。
+        /// </summary>
+        public static GameObject PlaceOrBox(string prefabId, Transform parent, Vector3 baseCenter, Vector3 size, float yaw = 0, float scale = 1, Material boxMat = null)
+        {
+            if (ShowcaseSceneBuilder.Prefab(prefabId))
+            {
+                var go = ShowcaseSceneBuilder.Place(prefabId, parent, baseCenter, yaw, scale);
+                if (go) go.isStatic = true;
+                return go;
+            }
+            EnsureTag(PlaceholderTag);
+            var box = Box($"Placeholder · {prefabId}", parent, baseCenter, size, yaw,
+                boxMat ? boxMat : Mat(PlaceholderDir, "Placeholder", new Color(0.93f, 0.93f, 0.9f)), 0.1f);
+            box.tag = PlaceholderTag;
+            Debug.LogWarning($"[Level] 缺少 Prefab {prefabId}，放了占位白盒 {size.x:F1} × {size.y:F1} × {size.z:F1} m @ {baseCenter}");
+            return box;
+        }
+
+        /// <summary>
+        /// 贴地版：摆到地形 (x, z) 上，Prefab 按设计包围盒缩放到 targetHeight（≤ 0 不缩放，同 <see cref="Prop"/>）；
+        /// 没有 Prefab 时白盒用 size（targetHeight &gt; 0 时高度取 targetHeight）。
+        /// </summary>
+        public static GameObject PlaceOrBox(string prefabId, Transform parent, Terrain t, float x, float z, float yaw, Vector3 size, float targetHeight = 0, float sink = 0.15f)
+        {
+            if (ShowcaseSceneBuilder.Prefab(prefabId)) return Prop(prefabId, parent, t, x, z, yaw, targetHeight, sink);
+            if (targetHeight > 0) size.y = targetHeight;
+            return PlaceOrBox(prefabId, parent, OnGround(t, x, z), size, yaw);
+        }
+
+        /// <summary>TagManager 里没有就加一个标签（改的是 ProjectSettings/TagManager.asset，生成后要一起提交）</summary>
+        public static void EnsureTag(string tag)
+        {
+            if (System.Array.IndexOf(UnityEditorInternal.InternalEditorUtility.tags, tag) < 0) UnityEditorInternal.InternalEditorUtility.AddTag(tag);
+        }
     }
 }

@@ -8,13 +8,15 @@ using Object = UnityEngine.Object;
 
 namespace Spiritfire.Art.Editor.Levels
 {
-    // LevelKit · 验收：检查报告（主线连通、地标可见、坡度）与审核截图。归 L5。
+    // LevelKit · 验收：检查报告（主线连通、地标可见、坡度）、审核截图与俯视地图。归 L5。规则集见 LevelValidator / LevelChecks/。
     public static partial class LevelKit
     {
         public sealed class Report
         {
             readonly StringBuilder sb = new();
             public int failures;
+            /// <summary>提醒条数（不算不合格：声明里没写阈值的项、软边界就绪这类前瞻检查）</summary>
+            public int warnings;
 
             public void Line(string s)
             {
@@ -27,6 +29,15 @@ namespace Spiritfire.Art.Editor.Levels
                 failures++;
                 Line($"✗ {s}");
             }
+
+            public void Warn(string s)
+            {
+                warnings++;
+                Line($"⚠ {s}");
+            }
+
+            /// <summary>小节标题「— title —」</summary>
+            public void Section(string title) => Line($"— {title} —");
 
             public void Save(string path)
             {
@@ -76,8 +87,8 @@ namespace Spiritfire.Art.Editor.Levels
             else rep.Line($"✓ {what}：可见（{Vector3.Distance(eye, target):F0} m）");
         }
 
-        /// <summary>沿主线采样坡度：超过 maxSlope 的路段算不合格（玩家走不上去、NavMesh 也会断）</summary>
-        public static void CheckRoadSlope(Report rep, Terrain t, IReadOnlyList<Vector2> road, float maxSlope = 24f)
+        /// <summary>沿主线采样坡度：超过 maxSlope 的路段算不合格（玩家走不上去、NavMesh 也会断）。label = 报告里的路名</summary>
+        public static void CheckRoadSlope(Report rep, Terrain t, IReadOnlyList<Vector2> road, float maxSlope = 24f, string label = "古道")
         {
             int bad = 0, n = 0;
             float worst = 0;
@@ -100,8 +111,85 @@ namespace Spiritfire.Art.Editor.Levels
                     if (slope > worst) { worst = slope; worstAt = p; }
                 }
             }
-            if (bad > 0) rep.Fail($"古道有 {bad}/{n} m 坡度超过 {maxSlope}°（最陡 {worst:F0}° @ ({worstAt.x:F0}, {worstAt.y:F0})）");
-            else rep.Line($"✓ 古道坡度：最陡 {worst:F0}° @ ({worstAt.x:F0}, {worstAt.y:F0})，全程 ≤ {maxSlope}°");
+            if (bad > 0) rep.Fail($"{label}有 {bad}/{n} m 坡度超过 {maxSlope}°（最陡 {worst:F0}° @ ({worstAt.x:F0}, {worstAt.y:F0})）");
+            else rep.Line($"✓ {label}坡度：最陡 {worst:F0}° @ ({worstAt.x:F0}, {worstAt.y:F0})，全程 ≤ {maxSlope}°");
+        }
+
+        // ───────────── 俯视地图 ─────────────
+        /// <summary>
+        /// 正交俯视图：北（+Z）朝上，覆盖 area（世界 XZ），长边 pixels 像素，关雾、透明底。写 Assets/Art/_Review/level_&lt;id&gt;_map.png，
+        /// 旁边的 .json 记世界坐标 ↔ 像素的映射（U7 全图 / 罗盘用：u = (x − xMin) / width，v = (z − zMin) / height）。返回 png 路径。
+        /// </summary>
+        public static string CaptureMap(string id, Rect area, int pixels = 2048)
+        {
+            Directory.CreateDirectory(ReviewDir);
+            int w = area.width >= area.height ? pixels : Mathf.Max(64, Mathf.RoundToInt(pixels * area.width / area.height));
+            int h = area.width >= area.height ? Mathf.Max(64, Mathf.RoundToInt(pixels * area.height / area.width)) : pixels;
+            Physics.SyncTransforms();
+            float top = 200, bottom = -200;
+            foreach (var r in Object.FindObjectsByType<Renderer>())
+            {
+                var b = r.bounds;
+                if (b.max.x < area.xMin || b.min.x > area.xMax || b.max.z < area.yMin || b.min.z > area.yMax) continue;
+                top = Mathf.Max(top, b.max.y);
+                bottom = Mathf.Min(bottom, b.min.y);
+            }
+            foreach (var t in Terrain.activeTerrains)
+            {
+                top = Mathf.Max(top, t.transform.position.y + t.terrainData.size.y);
+                bottom = Mathf.Min(bottom, t.transform.position.y);
+            }
+            top = Mathf.Min(top, 3000) + 20;
+            bottom = Mathf.Max(bottom, -3000) - 20;
+
+            var go = new GameObject("Map Capture (temp)") { hideFlags = HideFlags.HideAndDontSave };
+            var cam = go.AddComponent<Camera>();
+            cam.orthographic = true;
+            cam.orthographicSize = area.height * 0.5f;
+            cam.aspect = area.width / area.height;
+            cam.transform.SetPositionAndRotation(new Vector3(area.center.x, top, area.center.y), Quaternion.Euler(90, 0, 0));
+            cam.nearClipPlane = 0.5f;
+            cam.farClipPlane = top - bottom + 10;
+            cam.clearFlags = CameraClearFlags.SolidColor;
+            cam.backgroundColor = new Color(0, 0, 0, 0);
+            int fp = LayerMask.NameToLayer(ShowcaseSceneBuilder.FirstPersonLayer), ch = LayerMask.NameToLayer(ShowcaseSceneBuilder.CharacterLayer);
+            cam.cullingMask = ~((fp >= 0 ? 1 << fp : 0) | (ch >= 0 ? 1 << ch : 0));
+            var rt = new RenderTexture(w, h, 24, RenderTextureFormat.ARGB32) { antiAliasing = 1 };
+            var shot = new Texture2D(w, h, TextureFormat.RGBA32, false);
+            bool fogWas = RenderSettings.fog, wasAsync = ShaderUtil.allowAsyncCompilation;
+            float lodBias = QualitySettings.lodBias;
+            string png = $"{ReviewDir}/level_{id}_map.png";
+            try
+            {
+                ShaderUtil.allowAsyncCompilation = false;
+                RenderSettings.fog = false;
+                // 正交高空机位离物体很远：抬高 LOD 偏置，别让俯视图全是最低一级 LOD
+                QualitySettings.lodBias = Mathf.Max(lodBias, 8f);
+                cam.targetTexture = rt;
+                cam.Render();
+                cam.Render();
+                RenderTexture.active = rt;
+                shot.ReadPixels(new Rect(0, 0, w, h), 0, 0);
+                shot.Apply();
+                RenderTexture.active = null;
+                File.WriteAllBytes(png, shot.EncodeToPNG());
+                var inv = System.Globalization.CultureInfo.InvariantCulture;
+                File.WriteAllText($"{ReviewDir}/level_{id}_map.json", string.Format(inv,
+                    "{{\n  \"id\": \"{0}\",\n  \"xMin\": {1},\n  \"zMin\": {2},\n  \"width\": {3},\n  \"height\": {4},\n  \"pixelsW\": {5},\n  \"pixelsH\": {6},\n  \"northUp\": true\n}}\n",
+                    id, area.xMin, area.yMin, area.width, area.height, w, h));
+                Debug.Log($"[Review] {png}");
+            }
+            finally
+            {
+                QualitySettings.lodBias = lodBias;
+                RenderSettings.fog = fogWas;
+                ShaderUtil.allowAsyncCompilation = wasAsync;
+                cam.targetTexture = null;
+                Object.DestroyImmediate(go);
+                Object.DestroyImmediate(rt);
+                Object.DestroyImmediate(shot);
+            }
+            return png;
         }
 
         // ───────────── 审核截图 ─────────────
