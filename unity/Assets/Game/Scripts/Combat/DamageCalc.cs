@@ -11,7 +11,7 @@ namespace Spiritfire.Game
         /// <summary>「处决」：基础伤害达到这个值，或带 <see cref="DamageTag.Purge"/></summary>
         public const float ExecuteBase = 1e6f;
 
-        /// <summary>请求的全部标签：显式写的 + 来源隐含的（武器 → Weapon、技能 → Skill、爆炸 → Explosion、灵宠 → Pet）+ reaction 字段</summary>
+        /// <summary>请求的全部标签：显式写的 + 来源隐含的（武器 → Weapon、近战 → Weapon + Melee、技能 → Skill、爆炸 → Explosion、灵宠 → Pet；秘卷不隐含任何加成标签）+ reaction 字段</summary>
         public static DamageTag EffectiveTags(in DamageInfo i)
         {
             var t = i.tags;
@@ -21,6 +21,7 @@ namespace Spiritfire.Game
                 case DamageSource.Skill: t |= DamageTag.Skill; break;
                 case DamageSource.Explosion: t |= DamageTag.Explosion; break;
                 case DamageSource.Pet: t |= DamageTag.Pet; break;
+                case DamageSource.Melee: t |= DamageTag.Weapon | DamageTag.Melee; break;
             }
             if (i.reaction) t |= DamageTag.Reaction;
             return t;

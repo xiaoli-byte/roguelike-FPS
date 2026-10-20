@@ -5,8 +5,12 @@ namespace Spiritfire.Game
 {
     public enum Element { None, Fire, Shock, Corrode }
 
-    /// <summary>Pet：灵宠的攻击（只吃「灵宠伤害」加成，默认不随机暴击，见 docs/pet-system.md）</summary>
-    public enum DamageSource { Weapon, Skill, Explosion, Status, Enemy, Environment, Pet }
+    /// <summary>
+    /// Pet：灵宠的攻击（只吃「灵宠伤害」加成，默认不随机暴击，见 docs/pet-system.md）。
+    /// Scroll：秘卷触发的伤害（同 Three.js 'scroll'：不吃武器 / 技能 / 爆炸加成，只吃元素、精英、首领类）；
+    /// Melee：近战（同 Three.js 'melee'：按武器伤害算，碎刃的斩击用）。只往末尾追加。
+    /// </summary>
+    public enum DamageSource { Weapon, Skill, Explosion, Status, Enemy, Environment, Pet, Scroll, Melee }
 
     /// <summary>伤害层：护盾 → 护甲 → 生命，依次吃伤害</summary>
     public enum DamageLayer { Shield, Armor, Health }
