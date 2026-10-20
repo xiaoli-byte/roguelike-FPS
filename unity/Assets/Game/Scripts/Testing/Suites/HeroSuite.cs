@@ -16,7 +16,9 @@ namespace Spiritfire.Game.Testing
     ///   · 滑翔：起跳 14 m/s，过了最高点一直「按住跳跃」（<see cref="Glide.TestHeld"/>）——鼯下落不超过 2.4 m/s，别人照常下坠；
     ///   · 滞空增伤：同一只靶子在地上 / 空中各吃一发 40 点武器伤害（不暴击），鼯空中 ×1.15，别人 ×1；
     ///   · 技能：Q / E 都能放出（扣充能、发 SkillUsed），各英雄的专项见 <see cref="FalconCase"/>（信标落地展开跳满 10 次并电到敌人；
-    ///     雷目·裁决射速 +40%、无限弹药、命中弹射、8 s 后撤干净）；没有专项的英雄（燎）对着靶子放 E / Q，要打出技能伤害；
+    ///     雷目·裁决射速 +40%、无限弹药、命中弹射、8 s 后撤干净）与 <see cref="BearCase"/>（天生减伤、厚皮破盾冲击波与内置冷却、
+    ///     裂地重击砸中并把靶子掀上半空、眩晕；磐石壁垒回满护盾、减伤叠到 ×0.45、挡弹罩挡下正面飞来的敌方弹丸、收尾冲击波、撤干净）；
+    ///     没有专项的英雄（燎）对着靶子放 E / Q，要打出技能伤害；
     ///   · 全程没有运行时报错（宿主另外记不合格，这里按英雄归账）。
     /// 靶子是两只生命 ×40 的跳鼠刀客（A 在台面中心，B 在旁边 3 m：雷目要 10 m 内的第二名敌人）；玩家全程无敌（受伤类检查临时关掉）。
     /// </summary>
@@ -74,7 +76,7 @@ namespace Spiritfire.Game.Testing
                 }
                 yield return null;
 
-                foreach (var id in new[] { "fox", "falcon" })
+                foreach (var id in new[] { "fox", "falcon", "bear" })
                     if (HeroLibrary.Get(id) == null) Fail($"英雄 {id} 没有登记（Skills/Heroes/Hero_*.cs）");
                 Line($"英雄：{string.Join("、", HeroLibrary.All.Select(h => $"{h.name}（{h.id}）"))}");
                 foreach (var hero in HeroLibrary.All.ToList()) yield return HeroCase(hero);
@@ -134,6 +136,9 @@ namespace Spiritfire.Game.Testing
                 {
                     case "falcon":
                         yield return FalconCase(a);
+                        break;
+                    case "bear":
+                        yield return BearCase(a, b);
                         break;
                     default:
                         yield return GenericCasts(hero, a);
@@ -382,6 +387,172 @@ namespace Spiritfire.Game.Testing
             if (!Approx(rate2, rate0)) Fail("雷目·裁决结束后射速加成没撤");
             if (w.InfiniteAmmo) Fail("雷目·裁决结束后还是无限弹药");
         }
+
+        /// <summary>
+        /// 磐：天生减伤 10%；厚皮（护盾恢复延迟 3 → 2 s、破盾冲击波打到身边的靶子、8 s 内置冷却内不再放）；
+        /// E 裂地重击（站在 A 前 3 m 面朝它；先把两只靶子定身 0.8 s，免得赶上它们自己的跳扑）：砸中、A 被掀起离地 ≥ 0.3 m、砸完 0.9 s 后仍在眩晕（定身早过了）；
+        /// Q 磐石壁垒：护盾回满、减伤叠到 ×0.45、挡弹罩挡下正前方 10 m 直奔胸口的敌方弹丸、8 s 后收尾冲击波打到靶子、减伤 / 加成 / 挡弹罩全部撤掉
+        /// </summary>
+        IEnumerator BearCase(EnemyAI a, EnemyAI b)
+        {
+            var s = rig.skills;
+            var m = rig.motor;
+            var v = rig.vitals;
+
+            // ── 天生减伤 / 厚皮 ──
+            float plain = Probe(100);
+            float delay = v.stats.Get(Stat.ShieldRegenDelay);
+            Line($"减伤：100 → {plain:F1}；护盾恢复延迟 {delay:F1} s");
+            if (!Approx(plain, 90)) Fail($"磐受到 100 点伤害实际扣 {plain:F1}（应 90：减伤 10%）");
+            if (!Approx(delay, 2)) Fail($"厚皮：护盾恢复延迟 {delay:F1} s（应 3 − 1 = 2）");
+            Stand(a, 2f);
+            yield return null;
+            int hits0 = skillHits;
+            BreakShield();
+            yield return new WaitForSeconds(0.3f);
+            int wave = skillHits - hits0;
+            BreakShield();
+            yield return new WaitForSeconds(0.3f);
+            int again = skillHits - hits0 - wave;
+            v.health = v.MaxHealth;
+            v.shield = v.MaxShield;
+            Line($"厚皮：破盾冲击波打中 {wave} 次；8 s 内再破盾 {again} 次");
+            if (wave == 0) Fail("厚皮：破盾后 6 m 内的靶子没吃到冲击波");
+            if (again > 0) Fail("厚皮：内置冷却 8 s 内又放了一次冲击波");
+
+            // ── E：裂地重击 ──
+            if (s.secondary is not BearEarthSplitter slam)
+            {
+                Fail($"磐的 E 是 {s.secondary?.GetType().Name}");
+                yield break;
+            }
+            yield return WaitGrounded(m, 2f);
+            Stand(a, 3f);
+            yield return null;
+            foreach (var e in new[] { a, b })
+                if (e && e.Health) EnemyStatus.Stun(e.Health, 0.8f);
+            yield return null;
+            Stand(a, 3f);
+            yield return null;
+            yield return Cast(SkillSlot.Secondary, a);
+            float t0 = Time.time, rise = 0, landedAt = -1;
+            bool launched = false;
+            while (Time.time - t0 < 3f && (slam.Active || Time.time - landedAt < 0.6f))
+            {
+                if (!slam.Active && landedAt < 0) landedAt = Time.time;
+                foreach (var e in new[] { a, b })
+                {
+                    if (!e) continue;
+                    launched |= e.LaunchedUp;
+                    if (e == a) rise = Mathf.Max(rise, HeightAboveGround(e.transform.position));
+                }
+                yield return null;
+            }
+            if (landedAt < 0) landedAt = Time.time;
+            while (Time.time - landedAt < 0.9f) yield return null;
+            var status = a ? a.GetComponent<EnemyStatus>() : null;
+            bool stunned = status && status.Stunned;
+            Line($"裂地重击：砸中 {slam.LastHits} 个，A 离地最高 {rise:F2} m，{(launched ? "有" : "没有")}靶子被掀起，砸完 0.9 s 后 A {(stunned ? "仍在眩晕" : "没在眩晕")}");
+            if (slam.Active) Fail("裂地重击 3 s 内没有落地砸下");
+            if (slam.LastHits <= 0) Fail("裂地重击没砸到 6 m 内的靶子");
+            if (!launched) Fail("裂地重击没把靶子掀起来（EnemyAI.LaunchUp）");
+            else if (rise < 0.3f) Fail($"靶子只离地 {rise:F2} m（上抛 7 m/s 应 ≈ 0.9 m）");
+            if (!stunned) Fail("裂地重击没有眩晕靶子（1.2 s）");
+
+            // ── Q：磐石壁垒 ──
+            if (s.primary is not BearBastion bastion)
+            {
+                Fail($"磐的 Q 是 {s.primary?.GetType().Name}");
+                yield break;
+            }
+            yield return WaitGrounded(m, 2f);
+            Stand(a, 3f);
+            yield return null;
+            int wards0 = ProjectileWard.ActiveCount;
+            float pct0 = v.stats.Get(Stat.DamagePct);
+            v.shield = 1;
+            yield return Cast(SkillSlot.Primary, a);
+            bool full = Approx(v.shield, v.MaxShield);
+            bool ward = bastion.Ward && ProjectileWard.ActiveCount == wards0 + 1;
+            float pct1 = v.stats.Get(Stat.DamagePct);
+            float guarded = Probe(100);
+            Line($"磐石壁垒：护盾 {(full ? "回满" : $"{v.shield:F0}/{v.MaxShield:F0}")}，挡弹罩 {(ward ? "有" : "没有")}，伤害 +{(pct1 - pct0) * 100:F0}%，100 → {guarded:F1}");
+            if (!bastion.Active) Fail("磐石壁垒放出后没有生效");
+            if (!full) Fail("磐石壁垒没有回满护盾");
+            if (!ward) Fail("磐石壁垒没有立起挡弹罩");
+            if (!Approx(pct1 - pct0, BearBastion.DamagePct)) Fail($"磐石壁垒伤害 +{pct1 - pct0:F2}（应 +{BearBastion.DamagePct}）");
+            if (!Approx(guarded, 45)) Fail($"磐石壁垒期间 100 点伤害实际扣 {guarded:F1}（应 45：天生 10% 再减半）");
+
+            // 挡弹：正前方 10 m 一发 20 m/s 直奔胸口的敌方弹丸
+            var chest = m.transform.position + Vector3.up * 1.1f;
+            var fwd = m.transform.forward;
+            fwd.y = 0;
+            fwd = fwd.sqrMagnitude > 1e-6f ? fwd.normalized : Vector3.forward;
+            var from = chest + fwd * 10f;
+            bool blocked = false, hitPlayer = false;
+            var spec = new EnemyProjectileSpec(from, (chest - from).normalized * 20f, 15f, 0.22f, 3f)
+            {
+                onBlocked = _ => blocked = true,
+                onImpact = (_, onPlayer) => hitPlayer |= onPlayer,
+            };
+            EnemyProjectile.Spawn(in spec);
+            t0 = Time.time;
+            while (!blocked && !hitPlayer && Time.time - t0 < 1.5f) yield return null;
+            Line($"挡弹：正面来的弹丸{(blocked ? "被挡下" : hitPlayer ? "打中了玩家" : "没有结果")}，本次共挡 {bastion.Blocked} 发");
+            if (!blocked) Fail("磐石壁垒的挡弹罩没挡下正面飞来的敌方弹丸");
+            if (hitPlayer) Fail("敌方弹丸穿过挡弹罩打中了玩家");
+
+            // 等自然结束：最后 1.5 s 站到靶子身边，收尾冲击波要打到它
+            t0 = Time.time;
+            bool near = false;
+            while (bastion.Active && Time.time - t0 < BearBastion.Duration + 1)
+            {
+                if (!near && bastion.Remaining < 1.5f)
+                {
+                    near = true;
+                    Stand(a, 2.5f);
+                }
+                yield return null;
+            }
+            yield return null;
+            float after = Probe(100);
+            float pct2 = v.stats.Get(Stat.DamagePct);
+            Line($"磐石壁垒结束：收尾冲击波打中 {bastion.LastWaveHits} 个，挡弹罩 {ProjectileWard.ActiveCount - wards0} 个，伤害加成 {(pct2 - pct0) * 100:F0}%，100 → {after:F1}");
+            if (bastion.Active) Fail("磐石壁垒 8 s 后没有结束");
+            if (bastion.LastWaveHits <= 0) Fail("磐石壁垒收尾冲击波没打到身边的靶子");
+            if (ProjectileWard.ActiveCount != wards0) Fail("磐石壁垒结束后挡弹罩没撤");
+            if (!Approx(pct2, pct0)) Fail("磐石壁垒结束后伤害加成没撤");
+            if (!Approx(after, 90)) Fail($"磐石壁垒结束后 100 点伤害扣 {after:F1}（应回到 90）");
+        }
+
+        /// <summary>临时关掉无敌、护盾垫到 1 万（不破盾、不掉血）受一下 amount 点伤害，返回减伤与受伤修饰器之后的实际扣除；生命 / 护盾 / 无敌原样还原</summary>
+        float Probe(float amount)
+        {
+            var v = rig.vitals;
+            float until = v.invulnerableUntil, hp = v.health, sh = v.shield;
+            v.invulnerableUntil = -1;
+            v.shield = 10000;
+            float got = v.TakeDamage(amount, v.transform.position + v.transform.forward * 3);
+            v.health = hp;
+            v.shield = sh;
+            v.invulnerableUntil = until;
+            return got;
+        }
+
+        /// <summary>护盾只剩 1 点时挨 5 点：破盾（厚皮的触发），生命掉一点；无敌原样还原</summary>
+        void BreakShield()
+        {
+            var v = rig.vitals;
+            float until = v.invulnerableUntil;
+            v.invulnerableUntil = -1;
+            v.health = v.MaxHealth;
+            v.shield = 1;
+            v.TakeDamage(5, v.transform.position + v.transform.forward * 3);
+            v.invulnerableUntil = until;
+        }
+
+        static float HeightAboveGround(Vector3 p) =>
+            Physics.Raycast(p + Vector3.up * 0.3f, Vector3.down, out var hit, 20f, Layers.WorldMask, QueryTriggerInteraction.Ignore) ? p.y - hit.point.y : 0;
 
         // ───────────── 工具 ─────────────
 

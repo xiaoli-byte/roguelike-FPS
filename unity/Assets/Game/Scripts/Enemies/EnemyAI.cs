@@ -174,6 +174,12 @@ namespace Spiritfire.Game
                 sees = !Combat.Blocked(transform.position + Vector3.up * Mathf.Max(0.6f, hp.GetComponent<Collider>() ? hp.GetComponent<Collider>().bounds.extents.y : 0.8f), PlayerEye, null);
             }
             if (manual) StepManual(dt);
+            // 被掀上半空（LaunchUp）：落地交还导航（被别的脚本位移接管 / 被托回时直接收尾）
+            if (launched && (!manual || ManualGrounded))
+            {
+                launched = false;
+                EndManualMotion();
+            }
             StepPush(dt);
             Buffs.Tick(Time.time);
             if (StepFallRecovery(dt)) return;
@@ -194,7 +200,8 @@ namespace Spiritfire.Game
                 if (!wasStunned)
                 {
                     wasStunned = true;
-                    if (manual) EndManualMotion();
+                    // 被掀飞的照样飞完再落地（裂地重击先击飞后眩晕）；其余脚本位移就地收住
+                    if (manual && !launched) EndManualMotion();
                     Stop();
                     InterruptAttack();
                     OnStunned();
@@ -563,9 +570,35 @@ namespace Spiritfire.Game
             push *= Mathf.Exp(-8f * dt);
         }
 
+        /// <summary>被掀飞时的重力（同 Three.js EnemyBase 的 GRAVITY）</summary>
+        public const float LaunchGravity = 26f;
+        bool launched;
+
+        /// <summary>正被 <see cref="LaunchUp"/> 掀在半空（落地前）</summary>
+        public bool LaunchedUp => launched;
+
+        /// <summary>
+        /// 击飞上抛（Three.js EnemyBase.knockback 的竖直分量；裂地重击、磐石壁垒、厚皮的冲击波用）：上抛速度 × (1 − 击退抗性)，
+        /// 连同还没推完的水平击退（<see cref="Knockback"/> 先调）一起交给脚本位移，重力 26，落地交还导航。
+        /// 首领（抗性 1）、不走导航网格的（飞行）、出生中、已经在跳跃 / 冲锋这类脚本位移里的不受影响。返回是否掀起来了
+        /// </summary>
+        public bool LaunchUp(float velocity)
+        {
+            if (Dead || manual || state == "spawn" || !UsesNavMesh || !agent || !agent.enabled || !(velocity > 0)) return false;
+            float vy = velocity * (1 - knockbackResist);
+            if (vy < 0.5f) return false;
+            var v = push;
+            v.y = vy;
+            push = Vector3.zero;
+            BeginManualMotion(v, LaunchGravity);
+            launched = true;
+            return true;
+        }
+
         /// <summary>离开导航网格的位移（跳跃、冲锋、遁地）：给初速度与重力，脚本按物理推进；落地 / 结束时交还 agent</summary>
         protected void BeginManualMotion(Vector3 velocity, float gravity)
         {
+            launched = false;
             manual = true;
             manualVelocity = velocity;
             manualGravity = gravity;

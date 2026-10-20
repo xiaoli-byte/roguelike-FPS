@@ -6,9 +6,9 @@ using UnityEngine;
 namespace Spiritfire.Game.Tests
 {
     /// <summary>
-    /// 英雄内容（HC1 鼯）：数值与 Three.js 一致（skills/falcon.ts、Heroes.ts、labels.ts 的 HERO_META），
+    /// 英雄内容（HC1 鼯、HC2 磐）：数值与 Three.js 一致（skills/falcon.ts、skills/bear.ts、Heroes.ts、labels.ts 的 HERO_META），
     /// 凌空的滞空增伤只认玩家打出的伤害、滑翔规则（运动修饰器）在平地模拟里把下落速度压到 2.4 m/s、额外跳跃属性真的给出二段跳（≈ 2.7 m），
-    /// 雷目·裁决的弹射判定与伤害，被动装卸干净。
+    /// 雷目·裁决的弹射判定与伤害，厚皮的内置冷却，被动装卸干净。场景里的效果（信标、砸地击飞、挡弹罩）由冒烟套件 heroes 验。
     /// </summary>
     public sealed class HeroTests
     {
@@ -18,9 +18,7 @@ namespace Spiritfire.Game.Tests
         public void HeroesAreRegisteredInThreeJsOrder()
         {
             var ids = HeroLibrary.All.Select(h => h.id).ToList();
-            Assert.AreEqual("fox", ids[0], "燎在最前（缺省英雄）");
-            Assert.Contains("falcon", ids);
-            Assert.Less(ids.IndexOf("fox"), ids.IndexOf("falcon"));
+            CollectionAssert.AreEqual(new[] { "fox", "falcon", "bear" }, ids, "同 TS HEROES 的顺序，燎在最前（缺省英雄）");
             foreach (var h in HeroLibrary.All)
             {
                 Assert.AreEqual(0, h.unlockCost, $"{h.id}：D8 三人默认全开");
@@ -75,6 +73,88 @@ namespace Spiritfire.Game.Tests
             var p = h.CreatePassive();
             Assert.AreEqual("凌空", p.Name);
             StringAssert.Contains("15%", p.Description);
+        }
+
+        [Test]
+        public void BearNumbersMatchThreeJs()
+        {
+            var h = HeroLibrary.Get("bear");
+            Assert.IsNotNull(h, "磐（bear）没有登记");
+            Assert.AreEqual("磐", h.name);
+            Assert.AreEqual("工匠武僧", h.title);
+            Assert.AreEqual(140f, h.maxHp);
+            Assert.AreEqual(80f, h.maxShield);
+            Assert.AreEqual(7.0f, h.moveSpeed);
+            CollectionAssert.AreEqual(new[] { (Stat.DamageReduction, 0.1f) }, h.baseStats);
+            Assert.AreEqual("shotgun", h.startWeapon);
+            Assert.AreEqual("SM_Arms_PangolinR", h.armR);
+            Assert.AreEqual("SM_Arms_PangolinL", h.armL);
+            Assert.AreEqual(Hex.Rgb(0xc9a36b), h.color);
+            Assert.AreEqual(1, h.difficulty);
+            CollectionAssert.AreEqual(new[] { "护盾", "控制", "霰弹" }, h.tags);
+
+            var q = h.CreatePrimary();
+            Assert.IsInstanceOf<BearBastion>(q);
+            Assert.AreEqual("bear_bastion", q.Id);
+            Assert.AreEqual(22f, q.cooldown);
+            Assert.AreEqual(1, q.maxCharges);
+            Assert.AreEqual(8f, ((TimedSkill)q).duration, "磐石壁垒持续 8 s");
+            Assert.AreEqual(0.5f, BearBastion.Reduction);
+            Assert.AreEqual(0.25f, BearBastion.DamagePct);
+            Assert.AreEqual(7f, BearBastion.WaveRadius);
+            Assert.AreEqual(100f, BearBastion.WaveDamage);
+
+            var e = h.CreateSecondary();
+            Assert.IsInstanceOf<BearEarthSplitter>(e);
+            Assert.AreEqual("bear_earth_splitter", e.Id);
+            Assert.AreEqual(9f, e.cooldown);
+            Assert.AreEqual(2, e.maxCharges);
+            Assert.AreEqual(6f, BearEarthSplitter.Radius);
+            Assert.AreEqual(150f, BearEarthSplitter.Damage);
+            Assert.AreEqual(1.2f, BearEarthSplitter.Stun);
+            Assert.AreEqual(15f, BearEarthSplitter.Knockback);
+            Assert.AreEqual(7f, BearEarthSplitter.Lift);
+            Assert.AreEqual(8f, BearEarthSplitter.LeapForward);
+            Assert.AreEqual(7f, BearEarthSplitter.LeapUp);
+            Assert.AreEqual(22f, BearEarthSplitter.DownSpeed);
+
+            var p = h.CreatePassive();
+            Assert.AreEqual("厚皮", p.Name);
+            Assert.AreEqual(-1f, BearSkills.HideRegenDelay);
+            Assert.AreEqual(60f, BearSkills.HideWaveDamage);
+        }
+
+        [Test]
+        public void BearBaseStatsGiveTenPercentReduction()
+        {
+            var bear = HeroLibrary.Get("bear");
+            var stats = StatSheet.Default();
+            foreach (var (stat, value) in bear.baseStats) stats.SetBase(stat, value);
+            Assert.AreEqual(0.1f, stats.Get(Stat.DamageReduction), 1e-6f, "HeroStats 按 baseStats SetBase：PlayerVitals 受伤 × (1 − 0.1)");
+            Assert.AreEqual(3f, stats.Get(Stat.ShieldRegenDelay), "厚皮的 −1 s 是被动装上的，不在基础值里");
+        }
+
+        // ───────────── 厚皮 ─────────────
+
+        [Test]
+        public void ThickHideWaveHasAnEightSecondInternalCooldown()
+        {
+            Assert.IsTrue(BearSkills.HideWaveReady(0, float.NegativeInfinity), "第一次破盾一定放");
+            Assert.IsFalse(BearSkills.HideWaveReady(12, 5), "7 s 后再破盾不放");
+            Assert.IsTrue(BearSkills.HideWaveReady(13, 5), "8 s 后可以再放");
+        }
+
+        [Test]
+        public void ThickHidePassiveWithoutPlayerIsHarmless()
+        {
+            int before = Combat.Outgoing.Count;
+            var p = new BearThickHide();
+            var handle = p.Apply(null);
+            Assert.AreEqual(before, Combat.Outgoing.Count, "厚皮不登记输出修饰器");
+            handle.Dispose();
+            handle.Dispose();
+            Assert.AreEqual(0, p.Waves);
+            StringAssert.Contains("8 秒", p.Description);
         }
 
         // ───────────── 凌空 ─────────────

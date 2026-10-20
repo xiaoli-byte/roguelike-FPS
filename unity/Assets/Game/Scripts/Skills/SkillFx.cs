@@ -15,7 +15,7 @@ namespace Spiritfire.Game
         public float elementChance;
         /// <summary>中心处的水平击退速度（m/s，边缘减半）</summary>
         public float knockback;
-        /// <summary>中心处的上抛速度（m/s）：敌人还没有上抛接口，先记着（HC2 / E1）</summary>
+        /// <summary>中心处的上抛速度（m/s，边缘减半）：<see cref="EnemyAI.LaunchUp"/> 把敌人连同水平击退一起掀上半空</summary>
         public float lift;
         /// <summary>眩晕秒数（0 = 不眩晕）</summary>
         public float stun;
@@ -184,12 +184,13 @@ namespace Spiritfire.Game
                 }
                 if (d.Dead) continue;
                 float k = 1 - 0.5f * t;
-                if (o.knockback > 0)
+                var ai = d.GetComponent<EnemyAI>();
+                if (ai)
                 {
-                    var ai = d.GetComponent<EnemyAI>();
-                    if (ai) ai.Knockback(dir * (o.knockback * k));
+                    if (o.knockback > 0) ai.Knockback(dir * (o.knockback * k));
+                    // 击飞：先记水平击退，再上抛——LaunchUp 把还没推完的水平击退一起带上天
+                    if (o.lift > 0) ai.LaunchUp(o.lift * k);
                 }
-                // TODO(HC2 / E1)：o.lift × k 的上抛（敌人击飞）等 EnemyAI 有离地接口后接上
                 if (o.stun > 0) EnemyStatus.Stun(d, o.stun);
             }
 
