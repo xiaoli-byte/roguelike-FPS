@@ -212,6 +212,8 @@ namespace Spiritfire.Game
             // 阵亡 / 结算画面上：R 重来（R 即换弹键，手柄 X）；F / 确认：结算后进下一关、阵亡后重新开局（常驻会话）
             if (complete || (player && player.Dead))
             {
+                // 整局结算界面（U5 的 SummaryScreen，RunEnd 弹出）开着时由它接管输入：确认 / 返回不再落到这里
+                if (UIRouter.Blocking) return;
                 if (Managed && Time.unscaledTime - completedAt > 0.5f &&
                     (GameInput.Pressed(GameAction.Interact) || GameInput.Pressed(UIAction.Submit)))
                 {

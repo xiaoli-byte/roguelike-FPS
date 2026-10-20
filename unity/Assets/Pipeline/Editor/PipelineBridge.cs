@@ -23,7 +23,8 @@ namespace Spiritfire.Art.Editor
     /// 旧版 bridge.sh 的单槽 request.json 仍然接受（排在队列前面），过渡期用。
     /// 命令：refresh / sync / scenes / capture / sheets / motion / all（sync → scenes → capture → sheets → motion）/
     /// level &lt;id&gt;（按 [LevelBuilder] 登记生成一张关卡 + 验收 + 截图；level11 = level 1-1）/
-    /// core（常驻 Core 场景 + GameDatabase，构建设置 Core 排第 0、关卡按 RunPlan 排，见 CoreSceneBuilder）/ levels（先 core，再全部登记的关卡）/
+    /// core（常驻 Core 场景 + GameDatabase，构建设置 Core 排第 0、关卡按 RunPlan 排，见 CoreSceneBuilder）/ levels（先 core，再全部登记的关卡，最后主菜单）/
+    /// menu（主菜单场景 MainMenu.unity：展示场景做远景 + 选英雄祭台，见 MenuSceneBuilder）/
     /// tests [过滤]（EditMode 测试，过滤 = 测试全名的正则；汇总写进回应的 tests 字段，明细 Assets/Art/_Review/tests_report.txt）/
     /// playtest [套件] [场景]（Play 模式冒烟测试，默认 slice11，见 Playtest.cs）/
     /// pets（导入 Assets/Art/Pets 下的灵宠模型，生成 Resources/Pets 预制体）/ petcompare（灵宠与现有角色同场景画风对比截图）/ fur（毛发画质 低 / 中 / 高 对比截图）/ furbench（毛发三档帧耗时）/
@@ -168,6 +169,13 @@ namespace Spiritfire.Art.Editor
                     string levels = BuildLevels(LevelBuilders.Ids.ToArray(), extra, ref error);
                     if (levels != "ok") status = levels;
                     LevelBuilders.SyncBuildSettings();
+                }
+                // menu：主菜单场景（展示场景做远景 + 选英雄祭台，见 MenuSceneBuilder）；levels 也顺带生成
+                if (command == "menu" || command == "levels")
+                {
+                    int menuFails = MenuSceneBuilder.Build();
+                    extra["menu"] = new JObject { ["scene"] = MenuSceneBuilder.ScenePath, ["failures"] = menuFails };
+                    if (menuFails > 0 && status == "ok") status = "level-checks-failed";
                 }
                 if (command == "pets") errors += PetArtImport.ImportAll();
                 if (command == "petcompare") PetStyleCompare.Run();

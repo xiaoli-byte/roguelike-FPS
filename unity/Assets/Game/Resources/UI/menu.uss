@@ -1,0 +1,671 @@
+/*
+ * 局外界面：主菜单、天赋、操作说明、整局结算（U5），选英雄（U6）。
+ * 移植自 Three.js src/ui/css/menu.css、panels.css（.gf-talents / .gf-controls / .gf-heroes）、overlays.css（.gf-summary）。
+ * 主菜单叠在 3D 远景上（MenuDirector），所以没有 Three.js 那套 CSS 假远景（朱日、流云、远山）；左右两侧压一层墨色渐隐保证字看得清。
+ * 设计像素按 1920×1080；颜色变量来自 theme.uss。通用件（页签、页头页脚、徽记、属性网格…）在 screens.uss。
+ */
+
+/* 子页（天赋 / 操作说明）垫在主菜单上的暗底 */
+.sf-menu-sub__backdrop {
+    background-color: rgba(7, 6, 10, 0.66);
+}
+
+/* ───────────────────────── 主菜单 ───────────────────────── */
+
+.sf-menu__home {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    transition-property: opacity;
+    transition-duration: 0.32s;
+}
+
+.sf-menu__home--covered {
+    opacity: 0;
+}
+
+.sf-menu__shade {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+}
+
+.sf-menu__shade--l {
+    left: 0;
+    width: 46%;
+}
+
+.sf-menu__shade--r {
+    right: 0;
+    width: 40%;
+    scale: -1 1;
+}
+
+.sf-menu__shade--b {
+    left: 0;
+    right: 0;
+    top: auto;
+    height: 76px;
+}
+
+.sf-menu__top {
+    position: absolute;
+    top: 26px;
+    left: 40px;
+    right: 40px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sf-menu__latin {
+    font-size: 12px;
+    letter-spacing: 8px;
+    color: var(--paper-3);
+}
+
+/* 魂晶余额 */
+.sf-wallet {
+    flex-direction: row;
+    align-items: center;
+    padding: 6px 14px;
+    background-color: rgba(7, 6, 10, 0.6);
+    border-width: 1px;
+    border-color: var(--line-soft);
+}
+
+.sf-wallet > .sf-icon {
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+}
+
+.sf-wallet__label {
+    margin-right: 10px;
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: var(--paper-3);
+}
+
+.sf-wallet__num {
+    font-size: 22px;
+    color: #cfeaff;
+}
+
+/* 导航 */
+.sf-menu__nav {
+    position: absolute;
+    left: 8%;
+    top: 50%;
+    translate: 0 -46%;
+}
+
+.sf-nav {
+    flex-direction: row;
+    align-items: center;
+    margin: 0 0 4px;
+    padding: 10px 52px 10px 22px;
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+    border-radius: 0;
+}
+
+.sf-nav__brush {
+    position: absolute;
+    left: 22px;
+    top: 6px;
+    bottom: 6px;
+    right: -30px;
+    scale: 0 1;
+    transform-origin: 0% 50%;
+    transition-property: scale;
+    transition-duration: 0.38s;
+    transition-timing-function: ease-out-cubic;
+}
+
+.sf-nav:hover .sf-nav__brush,
+.sf-nav:focus .sf-nav__brush {
+    scale: 1 1;
+}
+
+.sf-nav__mark {
+    width: 8px;
+    height: 8px;
+    margin-right: 18px;
+    rotate: 45deg;
+    background-color: var(--gold);
+    opacity: 0.7;
+}
+
+.sf-nav--primary .sf-nav__mark {
+    background-color: var(--cinnabar-hi);
+    opacity: 1;
+}
+
+.sf-nav__label {
+    font-size: 32px;
+    letter-spacing: 8px;
+    color: var(--paper);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+    transition-property: color, translate;
+    transition-duration: 0.25s;
+}
+
+.sf-nav--primary .sf-nav__label {
+    font-size: 40px;
+    color: var(--gold-hi);
+}
+
+.sf-nav__hint {
+    margin-top: 2px;
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: var(--paper-3);
+    transition-property: color, translate;
+    transition-duration: 0.25s;
+}
+
+.sf-nav:hover .sf-nav__label,
+.sf-nav:focus .sf-nav__label {
+    color: #fffaf0;
+    translate: 6px 0;
+}
+
+.sf-nav:hover .sf-nav__hint,
+.sf-nav:focus .sf-nav__hint {
+    color: #f6d9c8;
+    translate: 6px 0;
+}
+
+/* 标题 */
+.sf-menu__brand {
+    position: absolute;
+    right: 9%;
+    top: 50%;
+    translate: 0 -62%;
+    align-items: center;
+}
+
+.sf-menu__title {
+    flex-direction: row;
+}
+
+.sf-menu__char {
+    margin: 0 2px;
+    font-size: 132px;
+    color: #f3dcae;
+    text-shadow: 0 4px 14px rgba(0, 0, 0, 0.85);
+    -unity-text-outline-width: 0.6px;
+    -unity-text-outline-color: rgba(90, 50, 20, 0.6);
+}
+
+.sf-menu__seal {
+    position: absolute;
+    right: -34px;
+    top: -30px;
+    padding: 6px;
+}
+
+.sf-menu__sealchar {
+    font-size: 22px;
+    color: #f8e9d2;
+    -unity-text-align: middle-center;
+    white-space: normal;
+}
+
+.sf-menu__sub {
+    margin-top: 10px;
+    padding: 10px 0 0 10px;
+    font-size: 19px;
+    letter-spacing: 10px;
+    color: var(--paper-2);
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9);
+    border-top-width: 1px;
+    border-color: var(--line);
+}
+
+/* 生涯统计 */
+.sf-menu__stats {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 24px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.sf-menu__stat {
+    flex-direction: row;
+    align-items: center;
+}
+
+.sf-menu__statk {
+    margin-right: 8px;
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: var(--paper-3);
+}
+
+.sf-menu__statv {
+    font-size: 18px;
+    color: var(--paper);
+}
+
+.sf-menu__stat--first {
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: var(--paper-2);
+}
+
+.sf-menu__dot {
+    width: 4px;
+    height: 4px;
+    margin: 0 16px;
+    rotate: 45deg;
+    background-color: var(--gold-lo);
+}
+
+/* ───────────────────────── 天赋 ───────────────────────── */
+
+.sf-talents {
+    width: 1180px;
+    height: 800px;
+}
+
+.sf-panel__head--split {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
+.sf-talents__scroll {
+    flex-grow: 1;
+}
+
+.sf-talents__grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.sf-talent {
+    width: 49%;
+    margin: 0 1% 10px 0;
+    flex-direction: row;
+    align-items: center;
+    padding: 12px 14px;
+    background-color: rgba(24, 20, 27, 0.85);
+    border-width: 1px;
+    border-color: var(--line-soft);
+}
+
+.sf-talent--maxed {
+    border-color: rgba(212, 169, 85, 0.45);
+}
+
+.sf-talent__info {
+    flex-grow: 1;
+    flex-shrink: 1;
+    margin-right: 12px;
+}
+
+.sf-talent__namerow {
+    flex-direction: row;
+    align-items: center;
+}
+
+.sf-talent__name {
+    font-size: 20px;
+    letter-spacing: 3px;
+    color: var(--paper);
+}
+
+.sf-talent__lvl {
+    margin-left: 10px;
+    font-size: 14px;
+    color: var(--gold-hi);
+}
+
+.sf-talent__desc {
+    margin-top: 3px;
+    font-size: 13px;
+    color: var(--paper-2);
+    white-space: normal;
+}
+
+.sf-talent__effect {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 6px;
+}
+
+.sf-talent__pips {
+    flex-direction: row;
+    margin-right: 12px;
+}
+
+.sf-talent__pip {
+    width: 8px;
+    height: 8px;
+    margin: 0 3px;
+    rotate: 45deg;
+    border-width: 1px;
+    border-color: var(--gold-lo);
+}
+
+.sf-talent__pip--on {
+    background-color: var(--gold);
+    border-color: var(--gold-hi);
+}
+
+.sf-talent__now {
+    margin-right: 12px;
+    font-size: 12.5px;
+    color: var(--paper-2);
+}
+
+.sf-talent__next {
+    font-size: 12.5px;
+    color: var(--good);
+}
+
+.sf-talents__total {
+    font-size: 15px;
+    color: var(--paper-2);
+}
+
+/* 购买按钮 */
+.sf-buy {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    min-width: 108px;
+    margin: 0;
+    padding: 8px 12px;
+    background-color: var(--cinnabar);
+    border-width: 1px;
+    border-color: rgba(244, 216, 147, 0.7);
+    border-radius: 2px;
+    transition-property: background-color, border-color;
+    transition-duration: 0.18s;
+}
+
+.sf-buy:hover,
+.sf-buy:focus {
+    background-color: #d8412f;
+    border-color: var(--gold-hi);
+}
+
+.sf-buy > .sf-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+}
+
+.sf-buy__cost {
+    font-size: 18px;
+    color: #fff4e2;
+}
+
+.sf-buy__label {
+    font-size: 13px;
+    color: var(--paper-3);
+}
+
+.sf-buy--short,
+.sf-buy--short:hover {
+    background-color: var(--ink-3);
+    border-color: var(--line-soft);
+}
+
+.sf-buy--short:focus {
+    background-color: var(--ink-3);
+    border-color: var(--gold);
+}
+
+.sf-buy--short .sf-buy__cost {
+    color: var(--paper-3);
+}
+
+.sf-buy--maxed,
+.sf-buy--maxed:hover,
+.sf-buy--maxed:focus {
+    background-color: rgba(0, 0, 0, 0);
+    border-color: var(--line-soft);
+}
+
+/* ───────────────────────── 操作说明 ───────────────────────── */
+
+.sf-controls {
+    width: 980px;
+    height: 840px;
+}
+
+.sf-controls__scroll {
+    flex-grow: 1;
+}
+
+.sf-controls__row {
+    flex-direction: row;
+    align-items: center;
+    min-height: 40px;
+    border-bottom-width: 1px;
+    border-color: rgba(212, 169, 85, 0.08);
+}
+
+.sf-controls__row--head {
+    min-height: 28px;
+}
+
+.sf-controls__row--head > .sf-controls__action,
+.sf-controls__row--head > .sf-controls__keys {
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--paper-3);
+    -unity-text-align: middle-center;
+}
+
+.sf-controls__action {
+    flex-grow: 1;
+    font-size: 14px;
+    color: var(--paper);
+}
+
+.sf-controls__row--head > .sf-controls__action {
+    -unity-text-align: middle-left;
+}
+
+.sf-controls__keys {
+    width: 240px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.sf-controls__key {
+    margin: 0 3px;
+}
+
+.sf-controls__tips {
+    margin-top: 12px;
+}
+
+.sf-controls__tip {
+    margin-top: 4px;
+    font-size: 13px;
+    color: var(--paper-2);
+    white-space: normal;
+}
+
+/* ───────────────────────── 整局结算 ───────────────────────── */
+
+.sf-summary {
+    align-items: center;
+    justify-content: center;
+}
+
+.sf-summary__bg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(6, 5, 8, 0.94);
+}
+
+.sf-summary__glow {
+    position: absolute;
+    left: 15%;
+    right: 15%;
+    top: -12%;
+    height: 72%;
+}
+
+.sf-summary__panel {
+    width: 1000px;
+    align-items: center;
+    padding: 24px 20px 26px;
+}
+
+.sf-summary__title {
+    flex-direction: row;
+}
+
+.sf-summary__char {
+    margin: 0 18px;
+    font-size: 140px;
+    color: #f3dcae;
+    text-shadow: 0 4px 16px rgba(0, 0, 0, 0.85);
+}
+
+.sf-summary--defeat .sf-summary__char {
+    color: #ff7a5a;
+    -unity-text-outline-width: 0.6px;
+    -unity-text-outline-color: rgba(110, 25, 15, 0.8);
+}
+
+.sf-summary__epitaph {
+    margin-top: 10px;
+    padding-left: 10px;
+    font-size: 17px;
+    letter-spacing: 10px;
+    color: var(--paper-2);
+}
+
+.sf-summary__hero {
+    flex-direction: row;
+    align-items: center;
+    margin: 28px 0 20px;
+}
+
+.sf-summary__heroinfo {
+    margin-left: 14px;
+}
+
+.sf-summary__heroname {
+    font-size: 22px;
+    letter-spacing: 3px;
+    color: var(--paper);
+}
+
+.sf-summary__reach {
+    margin-top: 2px;
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: var(--paper-3);
+}
+
+.sf-summary__stats {
+    flex-direction: row;
+    width: 100%;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-color: var(--line-soft);
+}
+
+.sf-summary__stat {
+    flex-grow: 1;
+    flex-basis: 0;
+    align-items: center;
+    padding: 16px 6px;
+    border-left-width: 1px;
+    border-color: var(--line-soft);
+}
+
+.sf-summary__stat > .sf-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.sf-summary__slabel {
+    margin-top: 6px;
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: var(--paper-3);
+}
+
+.sf-summary__sval {
+    margin-top: 4px;
+    font-size: 26px;
+    color: var(--paper);
+}
+
+.sf-summary__stat--essence .sf-summary__sval {
+    color: #cfeaff;
+    text-shadow: 0 0 10px rgba(120, 190, 255, 0.7);
+}
+
+.sf-summary__essence {
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--paper-3);
+}
+
+.sf-summary__lists {
+    flex-direction: row;
+    width: 100%;
+    margin-top: 18px;
+}
+
+.sf-summary__list {
+    flex-grow: 1;
+    flex-basis: 0;
+    margin-right: 26px;
+}
+
+.sf-summary__listtitle {
+    margin-bottom: 8px;
+    font-size: 17px;
+    letter-spacing: 6px;
+    color: var(--gold-hi);
+}
+
+.sf-summary .sf-chip {
+    margin: 0 6px 6px 0;
+}
+
+.sf-chip__name {
+    font-size: 13px;
+}
+
+.sf-chip__count {
+    margin-left: 6px;
+    font-size: 12px;
+    color: var(--paper-3);
+}
+
+.sf-chip--weapon {
+    color: var(--paper);
+}
+
+.sf-summary__foot {
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.sf-summary__foot > .sf-btn {
+    margin: 0 8px;
+}

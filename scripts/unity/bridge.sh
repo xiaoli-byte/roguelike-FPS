@@ -10,7 +10,8 @@
 #   fx                      FxBuilder：特效程序贴图、材质、粒子风格预制体、着色器变体集、URP 贴花渲染特性（改了 G/Fx/Presets 后重跑）
 #   blade                   BladeMeshBaker：碎刃网格、渐变 / 刀柄贴图（webp 用 python + Pillow 转码）、材质、SK_Weapon_DemonBlade Prefab；之后跑 core
 #   level <id>              按 [LevelBuilder] 登记生成一张关卡 + 验收 + 截图（level 1-1 = 1-1 古道穿越戈壁；旧名 level11 仍可用）
-#   levels                  生成全部登记的关卡，构建设置里的关卡场景按登记顺序排
+#   levels                  生成全部登记的关卡，构建设置里的关卡场景按登记顺序排（最后顺带生成主菜单场景）
+#   menu                    主菜单场景 Assets/Scenes/MainMenu.unity：展示场景做远景 + 选英雄祭台（MenuSceneBuilder.cs）
 #   tests [过滤]            EditMode 测试（过滤 = 测试全名的正则，如 StatSheet）；汇总在回应的 tests 字段，明细 unity/Assets/Art/_Review/tests_report.txt
 #   playtest [套件] [场景]  Play 模式冒烟测试（默认 slice11 = 1-1 切片）；场景可写 Assets/… .unity、关卡 id 或 Assets/Scenes 下的场景名
 #   ui                      UI Toolkit 基座资产：Resources/UI 下的 SDF 字体、分层 PanelSettings、文本设置（UIBuilder.cs；字体子集先跑 scripts/unity/subset_fonts.py）
@@ -79,7 +80,7 @@ case "$cmd" in
   petcompare) method=Spiritfire.Art.Editor.PetStyleCompare.BatchRun ;;
   fur) method=Spiritfire.Art.Editor.FurReview.BatchRun ;;
   furbench) method=Spiritfire.Art.Editor.FurBench.BatchRun ;;
-  level|levels|ui|fx|blade)
+  level|levels|ui|fx|blade|menu)
     # 和编辑器里走同一套命令分发（PipelineBridge.BatchRun），回应写 response-batch-<命令>.json
     batch=(-bridgeCommand "$cmd")
     for a in ${args[@]+"${args[@]}"}; do batch+=(-bridgeArg "$a"); done
