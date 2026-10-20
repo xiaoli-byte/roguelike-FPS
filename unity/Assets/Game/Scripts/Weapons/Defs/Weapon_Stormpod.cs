@@ -5,7 +5,7 @@ using static Spiritfire.Game.WeaponDef;
 namespace Spiritfire.Game
 {
     /// <summary>
-    /// 青冥雷蛊（TS stormpod）：弹跳蛊弹，蚀雷双属。固有「副·雷」40% 目前走 subElement / subChance（innate 只是数据，AF 接管后二选一）。
+    /// 青冥雷蛊（TS stormpod）：弹跳蛊弹，蚀雷双属。固有「副·雷」40% 是固有词条 subShock（同 TS innate），由词条派发（<see cref="Affix_SubShock"/>）。
     /// 音量 0.5 是 Unity 手调值（TS 0.8）；反弹用完贴地滚动（rollAfter）是 Unity 独有。
     /// </summary>
     [Defs(120)]
@@ -21,7 +21,7 @@ namespace Spiritfire.Game
                 spreadTs = new SpreadParams(0.012f, 0.005f, 0.012f, 0.03f, 0.1f),
                 spreadTuned = new SpreadParams(0.005f, 0.002f, 0.005f, 0.012f, 0.3f),
                 recoilPitch = 0.04f, recoilYaw = 0.008f,
-                critMult = 1.6f, range = 90, element = Element.Corrode, elementChance = 0.6f, subElement = Element.Shock, subChance = 0.4f,
+                critMult = 1.6f, range = 90, element = Element.Corrode, elementChance = 0.6f,
                 innate = new[] { new WeaponAffix("subShock", 0.4f) },
                 projectile = new ProjectileSpec
                 {

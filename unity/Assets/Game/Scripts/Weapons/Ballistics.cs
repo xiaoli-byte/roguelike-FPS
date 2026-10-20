@@ -202,7 +202,8 @@ namespace Spiritfire.Game
             if (tracer.a > 0)
             {
                 ShotFx.Instance?.Tracer(muzzle, end, tracer, tracerWidth);
-                if (s.full) ShotFx.Instance?.Tracer(muzzle, end, FullChargeColor, tracerWidth * 1.8f);
+                // 满蓄一击：沿弹道追加主光束 + 虹光（WC3 贯虹灵炮）
+                if (s.full) RailgunBeam.Spawn(muzzle, end, s.element, Mathf.Max(tracerWidth, def.tracerWidth));
             }
             return first;
         }
