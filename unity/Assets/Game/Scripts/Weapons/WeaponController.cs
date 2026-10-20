@@ -1,19 +1,25 @@
 using System;
+using System.Collections.Generic;
 using Spiritfire.Art;
 using UnityEngine;
 
 namespace Spiritfire.Game
 {
     /// <summary>
-    /// 玩家武器（Three.js 版 WeaponSystem + Firing 的切片版）：
-    ///   两个武器槽（1 / 2 / X / 滚轮切换，切枪 0.35 s）· 左键开火（半自动 / 全自动）· 右键开镜 · R 换弹（打空自动换）；按键走 <see cref="GameInput"/>，手柄同样可用
-    ///   霰弹逐发装填，装填中开火立即打断。
-    /// 弹道：从眼睛（准星）发射线，曳光从枪口画到命中点；扩散 = (腰射 / 开镜基础 × 移动 × 空中 + 连射累积) 的半角。
-    /// 后坐：抬枪量 = pitch × (1 + 连发数 × climb) × 开镜减半 × RecoilScale，交给 <see cref="PlayerMotor.AddRecoil"/> 记成回正债。
-    /// 第一人称：每把枪一个 rig（枪模 + 手臂），由 PlayerRigBuilder 生成，这里只切换显示、写开镜 / 下沉 / 后坐。
-    /// 跨关：<see cref="IRunPersistent"/> 把两个槽存进 <see cref="RunState.weapons"/>。
+    /// 玩家武器（Three.js 版 WeaponSystem + Firing）。三层：
+    ///   · <see cref="WeaponStateMachine"/>（纯逻辑）：两个槽、切枪（先收后出 0.35 s，每把枪各自的 readyAt）、开火缓冲 0.14 s、
+    ///     开火模式（<see cref="IFireMode"/>：半自动 / 全自动 / 点射 / 光束 / 预热 / 蓄力 / 齐射，见 Weapons/FireModes）、
+    ///     换弹（整匣 / 逐发 + 0.3 s 上膛）、打空自动换弹与空仓、无限弹药、应急补给、换关清理；
+    ///   · <see cref="Ballistics"/>：命中扫描（穿透、弱点、贴脸）、投射物、光束一跳；
+    ///   · 这里：读输入（<see cref="GameInput"/>，手柄同样可用；TestMode 读 testFire / testAim / testReload / testSwitch）、开镜与 FOV、散布、
+    ///     后坐与反馈、音效与事件、第一人称 rig（每把枪一个，由 PlayerRigBuilder / PlayerFactory 生成，这里只切显示、写开镜 / 下沉 / 后坐）、
+    ///     武器接管（<see cref="IWeaponTakeover"/>，碎刃）、HUD 数据源（<see cref="IWeaponHudSource"/>）。
+    /// 散布 = (腰射 / 开镜基础 × 移动 × 空中 + 连射累积) × 散布倍率 的半角。
+    /// 后坐：抬枪量 = pitch × (1 + 连发数 × climb) × 开镜减半 × 后坐倍率 × RecoilScale，交给 <see cref="PlayerMotor.AddRecoil"/> 记成回正债。
+    /// 跨关：<see cref="IRunPersistent"/> 把两个槽存进 <see cref="RunState.weapons"/>；关卡就绪（<see cref="GameEvents.StageLoaded"/>）时 <see cref="ClearForStage"/>，
+    /// 补 35% 备弹由 LootDirector 在同一事件上调 <see cref="RefillReserve"/>。
     /// </summary>
-    public sealed class WeaponController : MonoBehaviour, IRunPersistent
+    public sealed class WeaponController : MonoBehaviour, IRunPersistent, IWeaponEffects, IWeaponHudSource
     {
         [Serializable]
         public sealed class Rig
@@ -29,18 +35,49 @@ namespace Spiritfire.Game
         public float baseFov = 70f;
 
         public readonly WeaponInstance[] slots = new WeaponInstance[2];
-        public int ActiveSlot { get; private set; }
+
+        /// <summary>武器状态机（第一次访问时建）</summary>
+        public WeaponStateMachine Machine => machine ??= CreateMachine();
+        public int ActiveSlot => Machine.ActiveSlot;
         public WeaponInstance Active => slots[ActiveSlot];
-        public bool Reloading => reloadTotal > 0;
-        public float ReloadProgress => reloadTotal > 0 ? Mathf.Clamp01(reloadElapsed / reloadTotal) : 0;
+        public bool Reloading => Machine.Reloading;
+        public float ReloadProgress => Machine.ReloadProgress;
         /// <summary>当前散布半角（弧度，含霰弹锥），准星读取</summary>
         public float HudSpread { get; private set; }
         public float AimT => aimT;
+        /// <summary>当前武器的开火模式</summary>
+        public IFireMode ActiveMode => Machine.Mode;
+        /// <summary>切枪剩余时间（秒）；收枪阶段显示的旧枪</summary>
+        public float SwitchTimer => Machine.SwitchTimer;
+        public WeaponInstance Holstering => Machine.Holster;
+        /// <summary>HUD 数据源：平时是控制器自己，武器被接管时换成接管者的（它给 null 时仍是控制器）</summary>
+        public IWeaponHudSource Hud => takeover?.Hud ?? this;
+        /// <summary>当前接管者（碎刃）；没有为 null</summary>
+        public IWeaponTakeover Takeover => takeover;
+
+        /// <summary>
+        /// 武器带来的移速变化（米 / 秒，负数 = 减速）：机炮转满开火时 −def.moveSlow（TS −2）。
+        /// 已经以属性来源 <see cref="SlowSource"/> 加进玩家属性表的 MoveSpeed（PlayerVitals 每次属性变化写 motor.walkSpeed，同 TS 的 stats.add），
+        /// 这里只读：给镜头 / 第一人称 / 动作参考，PlayerMotor 不要再叠一次
+        /// </summary>
+        public float MoveSpeedDelta => -appliedSlow;
+        public const string SlowSource = "weapon:minigun";
+
+        /// <summary>局内旗标名：&gt; 0 时无限弹药（同 TS run.flags.infiniteAmmo，技能写入；换关归零由局流程负责）</summary>
+        public const string InfiniteAmmoFlag = "infiniteAmmo";
+        /// <summary>无限弹药：本组件的计数（<see cref="AddInfiniteAmmo"/>）或局内旗标任一 &gt; 0</summary>
+        public bool InfiniteAmmo => infiniteStacks > 0 || (RunState.Current != null && RunState.Current.Flag(InfiniteAmmoFlag) > 0);
+        /// <summary>加一层无限弹药（技能开始时调，结束时 <see cref="RemoveInfiniteAmmo"/>；换关清零）</summary>
+        public void AddInfiniteAmmo() => infiniteStacks++;
+        public void RemoveInfiniteAmmo() => infiniteStacks = Mathf.Max(0, infiniteStacks - 1);
 
         public event Action<WeaponInstance> Fired;
         public event Action Changed;
 
-        /// <summary>自动化冒烟测试：绕过鼠标锁定与真实输入，由 testFire / testAim / testReload / testSwitch 驱动</summary>
+        /// <summary>
+        /// 自动化冒烟测试：绕过鼠标锁定与真实输入，由 testFire / testAim / testReload / testSwitch 驱动。
+        /// 按住 testFire 时点射 / 齐射自动连发、蓄力满了自动松手（套件只对 Semi 一下一下扣），所以每种开火模式都能用它驱动
+        /// </summary>
         public static bool TestMode;
         [NonSerialized] public bool testFire, testAim, testReload;
         [NonSerialized] public int testSwitch = -1;
@@ -49,43 +86,76 @@ namespace Spiritfire.Game
         PlayerMotor motor;
         PlayerVitals vitals;
         Collider selfCollider;
-        float cooldown, bloom, lastShot = -10, aimT, switchTimer, reloadElapsed, reloadTotal, shellTimer;
-        int consecutive;
-        bool shellReload, triggerHeld;
+        WeaponStateMachine machine;
+        Ballistics ballistics;
+        readonly BeamLine beam = new();
+        IWeaponTakeover takeover;
+        WeaponInstance engaged;
+        float bloom, lastShot = -10, aimT, spreadNow, appliedSlow;
+        int consecutive, infiniteStacks;
         float shakeAmp, shakeTime;
+        Vector3 shakeSeed;
+        string shownRig = "\0";
         /// <summary>
         /// 后坐整体缩放。这不是硬核 FPS：目标是「射得爽」，后坐只做手感、不做惩罚——镜头只轻轻上跳（0.3）且会完全回正，
         /// 枪模保留明显的上抬（0.55）当作打击感。要单独调某把枪改武器表，整体手感改这里
         /// </summary>
         const float RecoilScale = 0.3f, ViewKickScale = 0.55f;
-        Vector3 shakeSeed;
+        /// <summary>持接管武器（碎刃）时准星张开到这个半角，提示近战</summary>
+        const float MeleeHudSpread = 0.035f;
+        static readonly Vector3 MuzzleHip = new(0.2f, -0.13f, 0.75f), MuzzleAim = new(0, -0.08f, 0.7f);
 
         void Awake()
         {
             motor = GetComponent<PlayerMotor>();
             vitals = GetComponent<PlayerVitals>();
             selfCollider = GetComponent<Collider>();
+            ballistics = new Ballistics(selfCollider, this);
             var def = WeaponLibrary.Get(startWeapon) ?? WeaponLibrary.Get("smg");
             slots[0] = new WeaponInstance(def);
-            ApplyRigs();
+            ApplyRigs(Active?.def.id);
             OnSetting(null);
         }
+
+        /// <summary>运行时 PlayerFactory 在 AddComponent（Awake）之后才填 rigs：第一帧按最终的 rigs 重新显示一次</summary>
+        void Start() => shownRig = "\0";
+
+        WeaponStateMachine CreateMachine() => new(slots, this, () => Time.time, Resolved)
+        {
+            isTakeover = w => WeaponTakeovers.Find(w) != null,
+            enemiesAlive = AnyEnemyAlive,
+        };
 
         StatSheet Stats => vitals ? vitals.stats : null;
         /// <summary>实际数值（定义 × 品质 × 强化 × 词条 × 玩家属性，带缓存）：开火、换弹、散布、后坐都读它</summary>
         ResolvedWeapon Resolved(WeaponInstance w) => WeaponStatsResolver.Resolve(w, Stats);
 
+        static bool AnyEnemyAlive()
+        {
+            var all = EnemyAI.All;
+            for (int i = 0; i < all.Count; i++)
+                if (all[i] && !all[i].Dead) return true;
+            return false;
+        }
+
         void OnEnable()
         {
             RunPersistence.Register(this);
             GameSettings.Changed += OnSetting;
+            GameEvents.StageLoaded += OnStageLoaded;
         }
 
         void OnDisable()
         {
             RunPersistence.Unregister(this);
             GameSettings.Changed -= OnSetting;
+            GameEvents.StageLoaded -= OnStageLoaded;
+            ApplySlow(0);
+            ReleaseTakeover();
+            beam.Hide();
         }
+
+        void OnDestroy() => beam.Destroy();
 
         /// <summary>设置「视野」= 腰射 FOV（开镜按武器的 aimFov 在它上面收）</summary>
         void OnSetting(SettingDef d)
@@ -93,10 +163,12 @@ namespace Spiritfire.Game
             if (d == null || d == GameSettings.Fov) baseFov = GameSettings.Fov.Value;
         }
 
+        // ───────────── 跨关 / 拾取 / 弹药 ─────────────
+
         /// <summary>跨关快照：两个槽的枪（定义、品质、强化、元素、弹药）和当前槽。词条由 AF 单元补进 WeaponSave</summary>
         public void Capture(RunState s)
         {
-            s.weapons ??= new System.Collections.Generic.List<WeaponSave>();
+            s.weapons ??= new List<WeaponSave>();
             s.weapons.Clear();
             for (int i = 0; i < slots.Length; i++)
             {
@@ -121,130 +193,156 @@ namespace Spiritfire.Game
                 n++;
             }
             if (n == 0) slots[0] = new WeaponInstance(WeaponLibrary.Get(startWeapon) ?? WeaponLibrary.Get("smg"));
-            ActiveSlot = slots[active] != null ? active : 0;
-            CancelReload();
-            switchTimer = 0;
+            ReleaseTakeover();
+            Machine.Reset(active);
             consecutive = 0;
-            ApplyRigs();
+            bloom = 0;
+            beam.Hide();
+            ApplySlow(0);
+            ApplyRigs(Active?.def.id);
             Changed?.Invoke();
         }
 
         /// <summary>拾取 / 宝箱给的枪：有空槽放空槽，否则替换当前槽；返回被替换下来的枪</summary>
-        public WeaponInstance Give(WeaponInstance w)
-        {
-            GameEvents.RaiseWeaponAcquired(w);
-            int slot = slots[0] == null ? 0 : slots[1] == null ? 1 : ActiveSlot;
-            var old = slots[slot];
-            var prev = Active;
-            slots[slot] = w;
-            SwitchTo(slot, true, prev);
-            return old;
-        }
+        public WeaponInstance Give(WeaponInstance w) => Machine.Give(w);
 
+        /// <summary>按备弹上限的比例补备弹（弹药掉落；已满的跳过、否则至少 1 发）</summary>
         public void RefillReserve(float fraction)
         {
-            foreach (var w in slots)
-                if (w != null) w.reserve = Mathf.Min(Resolved(w).reserveCap, w.reserve + Mathf.CeilToInt(Resolved(w).reserveCap * fraction));
+            Machine.AddAmmoFraction(fraction);
             Changed?.Invoke();
         }
 
-        void SwitchTo(int slot, bool force = false) => SwitchTo(slot, force, Active);
-
-        /// <summary>prev = 切之前手上的枪（拾取替换当前槽时由 Give 传入被换下来的那把）</summary>
-        void SwitchTo(int slot, bool force, WeaponInstance prev)
+        /// <summary>同 <see cref="RefillReserve"/>（TS 名字）；返回是否补了</summary>
+        public bool AddAmmoFraction(float fraction)
         {
-            if (slots[slot] == null || (slot == ActiveSlot && !force)) return;
-            if (slot != ActiveSlot || force) GameAudio.Play("weapon_switch", 0.7f);
-            ActiveSlot = slot;
-            CancelReload();
-            switchTimer = 0.35f;
+            bool any = Machine.AddAmmoFraction(fraction);
+            if (any) Changed?.Invoke();
+            return any;
+        }
+
+        /// <summary>
+        /// 换关 / 开局（同 TS Game.clearStage → weapons.clear）：进行中的换弹直接完成、停下一切动作（光束、机炮减速、蓄力、齐射剩余作废）、
+        /// 退镜、清散布与冷却、清无限弹药计数、收起接管武器。不补弹药。
+        /// 自己订阅了 <see cref="GameEvents.StageLoaded"/>；换关补 35% 备弹由 LootDirector 在同一事件上调 <see cref="RefillReserve"/>（EconomyConfig.StageAmmoRefill，同 TS Loot.ts），这里不重复补
+        /// </summary>
+        public void ClearForStage()
+        {
+            ReleaseTakeover();
+            Machine.ClearForStage();
+            infiniteStacks = 0;
+            aimT = 0;
+            bloom = 0;
             consecutive = 0;
-            ApplyRigs();
-            Changed?.Invoke();
-            GameEvents.RaiseWeaponSwitched(prev, Active);
+            beam.Hide();
+            ApplySlow(0);
+            if (eye) eye.fieldOfView = baseFov;
+            if (motor) motor.lookScale = 1;
         }
 
-        void ApplyRigs()
+        void OnStageLoaded(StageSpec s) => ClearForStage();
+
+        // ───────────── 第一人称 rig ─────────────
+
+        void ApplyRigs(string id)
         {
-            var id = Active?.def.id;
+            shownRig = id;
             foreach (var r in rigs)
-                if (r.view) r.view.gameObject.SetActive(r.weaponId == id);
+                if (r.view) r.view.gameObject.SetActive(id != null && r.weaponId == id);
         }
 
-        FirstPersonViewmodel ActiveView()
+        FirstPersonViewmodel ViewFor(string id)
         {
-            var id = Active?.def.id;
+            if (id == null) return null;
             foreach (var r in rigs)
                 if (r.weaponId == id) return r.view;
             return null;
         }
 
+        Vector3 Muzzle() => eye.transform.TransformPoint(Vector3.Lerp(MuzzleHip, MuzzleAim, aimT));
+
+        // ───────────── 每帧 ─────────────
+
         void Update()
         {
             var w = Active;
             if (w == null || !eye) return;
-            float dt = Time.deltaTime, now = Time.time;
-            bool canAct = (TestMode || (motor.inputEnabled && Cursor.lockState == CursorLockMode.Locked)) && (!vitals || !vitals.Dead);
-            var def = w.def;
+            var sm = Machine;
+            float dt = Time.deltaTime;
+            bool alive = !vitals || !vitals.Dead;
+            bool canAct = (TestMode || (motor.inputEnabled && Cursor.lockState == CursorLockMode.Locked)) && alive;
 
             // ── 切枪 ──
             if (canAct)
             {
-                if (GameInput.Pressed(GameAction.Weapon1)) SwitchTo(0);
-                if (GameInput.Pressed(GameAction.Weapon2)) SwitchTo(1);
-                if (GameInput.Pressed(GameAction.Swap))
-                    SwitchTo(slots[1 - ActiveSlot] != null ? 1 - ActiveSlot : ActiveSlot);
+                if (GameInput.Pressed(GameAction.Weapon1)) sm.SwitchTo(0);
+                if (GameInput.Pressed(GameAction.Weapon2)) sm.SwitchTo(1);
+                if (GameInput.Pressed(GameAction.Swap)) sm.Swap();
             }
             if (TestMode && testSwitch >= 0)
             {
-                SwitchTo(testSwitch);
+                sm.SwitchTo(testSwitch);
                 testSwitch = -1;
             }
-            if (switchTimer > 0) switchTimer -= dt;
+            w = Active;
+            if (w == null) return;
+            // 接管：当前武器归谁管变了（或换成了同一接管者的另一把）就先收起旧的再接上新的；死亡时接管者收到 ready = false
+            var tk = WeaponTakeovers.Find(w);
+            if (tk != takeover || (tk != null && w != engaged))
+            {
+                ReleaseTakeover();
+                takeover = tk;
+                engaged = tk != null ? w : null;
+                tk?.Engage(this, w);
+            }
 
-            // ── 开镜 ──
-            bool aimInput = TestMode ? testAim : GameInput.Down(GameAction.Aim);
-            bool aiming = canAct && aimInput && !Reloading && switchTimer <= 0 && !motor.Dashing;
-            aimT = Mathf.MoveTowards(aimT, aiming ? 1 : 0, dt * 7f);
-            float fov = baseFov + def.aimFov * aimT;
-            eye.fieldOfView = fov;
-            motor.lookScale = Mathf.Tan(fov * 0.5f * Mathf.Deg2Rad) / Mathf.Tan(baseFov * 0.5f * Mathf.Deg2Rad);
-
-            // ── 换弹 ──
+            // ── 输入 ──
             bool fireDown = canAct && (TestMode ? testFire : GameInput.Down(GameAction.Fire));
             bool firePressed = canAct && (TestMode ? testFire && !prevTestFire : GameInput.Pressed(GameAction.Fire));
             prevTestFire = testFire;
-            if (canAct && (TestMode ? testReload : GameInput.Pressed(GameAction.Reload))) StartReload();
+            bool reloadPressed = canAct && (TestMode ? testReload : GameInput.Pressed(GameAction.Reload));
             testReload = false;
-            if (w.mag <= 0 && !Reloading && w.reserve > 0 && switchTimer <= 0 && (fireDown || now - lastShot > 0.35f)) StartReload();
-            if (Reloading) UpdateReload(dt, firePressed && shellReload && w.mag > 0);
+            bool aimInput = canAct && (TestMode ? testAim : GameInput.Down(GameAction.Aim));
 
-            // ── 开火 ──
-            cooldown -= dt;
-            if (!fireDown) triggerHeld = false;
-            bool wantFire = def.mode != FireMode.Semi ? fireDown : firePressed || (fireDown && !triggerHeld);
-            // 空膛：弹匣和备弹都打空了还扣扳机
-            if (firePressed && w.mag <= 0 && w.reserve <= 0 && !Reloading) GameAudio.Play("dry_fire", 0.8f);
-            if (wantFire && cooldown <= 0 && !Reloading && switchTimer <= 0 && w.mag > 0 && !motor.Dashing)
+            // ── 开镜（换弹 / 切枪 / 冲刺 / 被接管时不开镜）──
+            bool aiming = aimInput && tk == null && !sm.Reloading && sm.SwitchTimer <= 0 && !motor.Dashing;
+            aimT = Mathf.MoveTowards(aimT, aiming ? 1 : 0, dt * 7f);
+            float fov = baseFov + w.def.aimFov * aimT;
+            eye.fieldOfView = fov;
+            motor.lookScale = Mathf.Tan(fov * 0.5f * Mathf.Deg2Rad) / Mathf.Tan(baseFov * 0.5f * Mathf.Deg2Rad);
+
+            // ── 状态机：换弹 → 开火模式 → 空匣 / 补给 ──
+            sm.Tick(new WeaponFrame
             {
-                Fire(w);
-                triggerHeld = true;
-                cooldown = 1f / Mathf.Max(0.1f, Resolved(w).fireRate);
-            }
+                dt = dt, alive = alive, canAct = canAct, fireDown = fireDown, firePressed = firePressed, reloadPressed = reloadPressed,
+                blocked = motor.Dashing, infinite = InfiniteAmmo, takeover = tk != null, testAuto = TestMode,
+            });
 
-            UpdateSpread(dt, def, now);
-
-            var view = ActiveView();
-            if (view)
+            if (tk != null)
             {
-                view.aim = aimT;
-                view.lower = Mathf.Max(Reloading ? Mathf.Sin(Mathf.Clamp01(ReloadProgress) * Mathf.PI) * 0.6f : 0, switchTimer > 0 ? switchTimer / 0.35f : 0);
+                tk.Tick(this, w, new TakeoverInput
+                {
+                    dt = dt, fireDown = fireDown, firePressed = firePressed, aimDown = aimInput,
+                    reloadDown = canAct && !TestMode && GameInput.Down(GameAction.Reload),
+                    skillPressed = canAct && !TestMode && GameInput.Pressed(GameAction.WeaponSkill),
+                    ready = sm.SwitchTimer <= 0 && alive, speed = Resolved(w).fireRateMult,
+                });
+                ApplySlow(0);
+                HudSpread = Mathf.Lerp(HudSpread, MeleeHudSpread, 1 - Mathf.Exp(-18f * dt));
             }
+            else
+            {
+                ApplySlow(sm.MoveSlow);
+                UpdateSpread(dt);
+            }
+            UpdateViewmodel();
         }
 
         void LateUpdate()
         {
-            UpdateBeam();
+            var w = Active;
+            if (eye && w != null) beam.Draw(Muzzle(), DamageTable.ElementColor(w.element));
+            else beam.Hide();
             // 屏震：在 PlayerMotor 写完视角之后叠一个小的随机转角（开枪的抖动和敌人的震动取较强的那个）
             if (!eye) return;
             if (shakeTime > 0) shakeTime -= Time.deltaTime;
@@ -257,380 +355,249 @@ namespace Spiritfire.Game
                 (Mathf.PerlinNoise(t, shakeSeed.x) - 0.5f) * a * 6f, (Mathf.PerlinNoise(shakeSeed.y, t) - 0.5f) * a * 6f, 0);
         }
 
-        void UpdateSpread(float dt, WeaponDef def, float now)
+        /// <summary>先收后出：收枪阶段显示旧枪下沉，之后新枪抬起；换弹时下沉 sin(进度 × π) × 0.6；接管渲染时不显示 rig</summary>
+        void UpdateViewmodel()
         {
-            var R = Resolved(Active);
-            float delay = Mathf.Clamp(1.25f / Mathf.Max(0.1f, R.fireRate), 0.08f, 0.35f);
-            if (now - lastShot > delay) bloom = Mathf.Max(0, bloom - def.spreadRecovery * dt);
+            var sm = Machine;
+            bool showHolster = WeaponTiming.SwitchPose(sm.SwitchTimer, sm.Holster != null, out float switchLower);
+            var shown = showHolster ? sm.Holster : Active;
+            bool hidden = !showHolster && takeover != null && takeover.OwnsViewmodel;
+            string id = hidden ? null : shown?.def.id;
+            if (id != shownRig) ApplyRigs(id);
+            var view = ViewFor(id);
+            if (!view) return;
+            view.aim = showHolster ? 0 : aimT;
+            float reloadLower = !showHolster && sm.Reloading ? Mathf.Sin(Mathf.Clamp01(sm.ReloadProgress) * Mathf.PI) * 0.6f : 0;
+            view.lower = Mathf.Max(reloadLower, switchLower);
+        }
+
+        void UpdateSpread(float dt)
+        {
+            var w = Active;
+            if (w == null) return;
+            var def = w.def;
+            var R = Resolved(w);
+            float delay = Mathf.Clamp(1.25f / Mathf.Max(0.1f, R.fireRate * Mathf.Max(1, def.burstCount)), 0.08f, 0.35f);
+            if (Time.time - lastShot > delay) bloom = Mathf.Max(0, bloom - def.spreadRecovery * dt);
             float baseSpread = Mathf.Lerp(def.spreadHip, def.spreadAim, aimT);
             var v = motor.Velocity;
             // 跑动 / 滞空只轻微放大散布（Three.js 版是 +60% / ×1.5）：边跑边打、跳起来打都要打得中（同 RecoilScale 注释：要射得爽）
             float moveF = 1 + Mathf.Clamp01(new Vector2(v.x, v.z).magnitude / 7.5f) * (0.2f - 0.1f * aimT);
             float airF = motor.Grounded ? 1 : 1.15f - 0.1f * aimT;
             spreadNow = (baseSpread * moveF * airF + bloom * (1 - 0.45f * aimT)) * R.spreadMult;
-            float hud = Mathf.Clamp(spreadNow + PelletCone(def), 0, 0.25f);
+            float hud = Mathf.Clamp(spreadNow + PelletCone(def, R), 0, 0.25f);
             HudSpread = Mathf.Lerp(HudSpread, hud, 1 - Mathf.Exp(-18f * dt));
         }
 
-        float spreadNow;
-        float PelletCone(WeaponDef def) => def.pelletCone > 0 ? def.pelletCone * Mathf.Lerp(1, 0.72f, aimT) * (Active != null ? Resolved(Active).spreadMult : 1) : 0;
+        float PelletCone(WeaponDef def, ResolvedWeapon R) => def.pelletCone > 0 ? def.pelletCone * Mathf.Lerp(1, 0.72f, aimT) * R.spreadMult : 0;
 
-        void StartReload()
+        /// <summary>机炮减速登记成属性来源（同 TS updateSlow）；只在变化时改属性表</summary>
+        void ApplySlow(float slow)
         {
-            var w = Active;
-            if (w == null || Reloading || w.mag >= Resolved(w).magCap || w.reserve <= 0) return;
-            var R = Resolved(w);
-            shellReload = w.def.reload == ReloadStyle.Shell;
-            reloadElapsed = 0;
-            if (shellReload)
+            if (Mathf.Approximately(slow, appliedSlow)) return;
+            var s = Stats;
+            if (s == null)
             {
-                int need = Mathf.Min(R.magCap - w.mag, w.reserve);
-                reloadTotal = R.reloadStart + R.shellTime * need;
-                shellTimer = R.reloadStart;
-            }
-            else reloadTotal = R.reloadTime;
-            reloadWeapon = w;
-            shellsInserted = 0;
-            GameAudio.Play("reload_start", 0.8f);
-            Changed?.Invoke();
-            GameEvents.RaiseReloadStarted(w);
-        }
-
-        void UpdateReload(float dt, bool interrupt)
-        {
-            var w = Active;
-            if (interrupt)
-            {
-                CancelReload();
+                appliedSlow = 0;
                 return;
             }
-            reloadElapsed += dt;
-            var R = Resolved(w);
-            int capacity = R.magCap;
-            if (shellReload)
+            s.BeginBatch();
+            try
             {
-                shellTimer -= dt;
-                while (shellTimer <= 0 && w.mag < capacity && w.reserve > 0)
-                {
-                    w.mag++;
-                    w.reserve--;
-                    shellsInserted++;
-                    shellTimer += R.shellTime;
-                    // 逐发装填：每塞一发一声轻响
-                    GameAudio.Play("reload_end", 0.45f, 1.3f + UnityEngine.Random.value * 0.1f);
-                    Changed?.Invoke();
-                }
-                if (w.mag >= capacity || w.reserve <= 0) CancelReload();
+                s.Remove(SlowSource);
+                if (slow > 0) s.Add(SlowSource, Stat.MoveSpeed, -slow);
             }
-            else if (reloadElapsed >= reloadTotal)
-            {
-                int take = Mathf.Min(capacity - w.mag, w.reserve);
-                w.mag += take;
-                w.reserve -= take;
-                GameAudio.Play("reload_end", 0.85f);
-                CancelReload();
-                Changed?.Invoke();
-                GameEvents.RaiseReloaded(w);
-            }
+            finally { s.EndBatch(); }
+            appliedSlow = slow;
         }
 
-        WeaponInstance reloadWeapon;
-        int shellsInserted;
-
-        /// <summary>
-        /// 结束 / 打断换弹。逐发装填已经压进一发以上的（装满、备弹打空、开火或切枪打断）算一次（部分）换弹完成，
-        /// 发 Reloaded（同 Three.js cancelReload）；弹匣式换弹中途打断不算
-        /// </summary>
-        void CancelReload()
+        void ReleaseTakeover()
         {
-            var w = reloadWeapon;
-            bool partial = reloadTotal > 0 && shellReload && shellsInserted > 0 && w != null;
-            reloadTotal = 0;
-            reloadElapsed = 0;
-            reloadWeapon = null;
-            shellsInserted = 0;
-            if (partial) GameEvents.RaiseReloaded(w);
+            var tk = takeover;
+            takeover = null;
+            engaged = null;
+            tk?.Release(this);
         }
 
-        void Fire(WeaponInstance w)
+        // ───────────── IWeaponEffects：弹道与反馈 ─────────────
+
+        ShotContext Context(WeaponInstance w, ResolvedWeapon R, Element el, in ShotMods mods) => new()
+        {
+            weapon = w, stats = R, element = el, damage = R.damage * mods.mult, pierce = R.pierce + mods.pierceBonus,
+            full = mods.full, detonate = mods.full && w.def.chargeDetonate,
+        };
+
+        /// <summary>一次射击：连射计数、散布累积、弹道（命中扫描逐弹丸 / 投射物 / 光束一跳；齐射开始时不发）、反馈、事件</summary>
+        void IWeaponEffects.Shoot(WeaponInstance w, in ShotMods mods, Element element)
         {
             var def = w.def;
-            w.mag--;
-            float now = Time.time;
             var R = Resolved(w);
-            float gap = 1f / Mathf.Max(0.1f, R.fireRate);
+            float now = Time.time;
+            float gap = 1f / Mathf.Max(0.1f, R.fireRate * Mathf.Max(1, def.burstCount));
             consecutive = now - lastShot < gap * 1.6f + 0.05f ? consecutive + 1 : 0;
             lastShot = now;
 
             var camT = eye.transform;
             var origin = camT.position;
-            var muzzle = camT.TransformPoint(Vector3.Lerp(new Vector3(0.2f, -0.13f, 0.75f), new Vector3(0, -0.08f, 0.7f), aimT));
-            float cone = PelletCone(def);
-            float dmg = R.damage;
-            var tracerColor = new Color(1f, 0.82f, 0.5f, 1f);
+            var muzzle = Muzzle();
+            var ctx = Context(w, R, element, in mods);
             // 整发的方向先按散布偏一次（霰弹整团跟着走），每颗弹丸再在锥内偏
-            var center = Scatter(camT.forward, camT, spreadNow);
-            if (def.projectile != null) Launch(origin, center, muzzle, def, dmg);
-            else if (def.mode == FireMode.Beam) BeamTick(origin, center, muzzle, def, dmg);
+            var center = Ballistics.Scatter(camT.forward, camT, spreadNow);
+            if (mods.deferred) { }
+            else if (def.projectile != null) ballistics.Projectile(in ctx, origin, center, muzzle);
+            else if (def.mode == FireMode.Beam)
+            {
+                ballistics.BeamTick(in ctx, origin, center, muzzle, out var end);
+                beam.Hold(end, 1.4f / Mathf.Max(1, def.fireRate));
+            }
             else
+            {
+                float cone = PelletCone(def, R);
+                bool multi = def.pellets > 1;
                 for (int i = 0; i < def.pellets; i++)
                 {
-                    var dir = def.pellets > 1 ? Scatter(center, camT, cone) : center;
-                    Shoot(origin, dir, muzzle, def, dmg, tracerColor, def.pellets > 1 ? 0.6f : 1f);
+                    var dir = multi ? Ballistics.Scatter(center, camT, cone) : center;
+                    ballistics.Hitscan(in ctx, origin, dir, muzzle, multi ? 0.6f : 1f, Ballistics.TracerColor, multi ? 0.012f : 0.02f, out _);
                 }
+            }
 
             bloom = Mathf.Min(def.spreadMax, bloom + def.spreadPerShot);
-            float climb = 1 + Mathf.Min(consecutive, 12) * def.recoilClimb;
-            float k = (1 - 0.5f * aimT) * R.recoilMult;
-            float pitch = def.recoilPitch * climb * k * UnityEngine.Random.Range(0.85f, 1.15f);
-            float yaw = (def.recoilBias + UnityEngine.Random.Range(-1f, 1f) * def.recoilYaw) * k;
-            motor.AddRecoil(pitch * RecoilScale * Mathf.Rad2Deg, yaw * RecoilScale * Mathf.Rad2Deg);
-            ActiveView()?.Kick(def.kickBack * 0.76f * ViewKickScale, def.kickRot * ViewKickScale);
-            ShotFx.Instance?.MuzzleFlash(muzzle, def.flash / 0.12f);
-            // 枪声（光束武器是持续音：每次开火刷新）
-            if (def.mode == FireMode.Beam) GameAudio.HoldBeam(def.sfxVolume);
-            else GameAudio.Play(def.sfx, def.sfxVolume, 0.94f + UnityEngine.Random.value * 0.12f);
-            shakeAmp = def.shake;
-            shakeTime = def.shake > 0.15f ? 0.16f : 0.08f;
-            shakeSeed = new Vector3(UnityEngine.Random.value * 10, UnityEngine.Random.value * 10, 0);
+            if (!mods.deferred) Feedback(w, R, mods.strength, muzzle);
             Fired?.Invoke(w);
             Changed?.Invoke();
             GameEvents.RaiseWeaponFired(w);
         }
 
-        static readonly Collider[] overlap = new Collider[8];
-
-        /// <summary>起点落在哪个活着的敌人碰撞体里（贴脸开枪）：返回那个命中盒，没有则 null</summary>
-        Hitbox PointBlank(Vector3 origin)
-        {
-            int n = Physics.OverlapSphereNonAlloc(origin, 0.05f, overlap, 1 << Layers.Character, QueryTriggerInteraction.Ignore);
-            for (int i = 0; i < n; i++)
-            {
-                var c = overlap[i];
-                if (c == selfCollider) continue;
-                var hb = c.GetComponent<Hitbox>();
-                if (hb && hb.owner && !hb.owner.Dead) return hb;
-            }
-            return null;
-        }
-
-        DamageInfo HitInfo(WeaponDef def, float amount, Vector3 point, Vector3 dir)
-        {
-            // 实例数值：随机元素、暴伤 / 元素率词条；词条暴击率在这里掷，掷中 forceCrit（同 TS Firing.rollCrit）
-            var R = Active != null ? Resolved(Active) : null;
-            return new DamageInfo
-            {
-                amount = amount, source = DamageSource.Weapon, tags = DamageTag.Weapon, weaponUid = Active?.uid ?? 0, critMult = R?.critMult ?? def.critMult, point = point, direction = dir,
-                knockback = def.knockback, element = R?.element ?? def.element, instigator = this,
-                statusChance = R?.elementChance ?? (def.element != Element.None ? def.elementChance : 0), subElement = def.subElement, subChance = def.subChance,
-                forceCrit = R != null && R.critChance > 0 && UnityEngine.Random.value < R.critChance,
-            };
-        }
-
         /// <summary>
-        /// 投射物武器：从枪口射向准星指着的点（射线找落点，最远 60 m），有重力时按飞行时间解抛物线，
-        /// 准星指哪儿就落在哪儿（同 Three.js 版 Firing 的抛物线补偿）
+        /// 齐射的一枚：随机散开（蜂群）每枚各自按散布找落点；固定扇形按整轮槽位间距、以准星为中心排布——第 i 枚偏航 fan × (2i − (n − 1)) / (count − 1)，
+        /// 第 2 枚起共享第一枚的落点（同 TS fireVolleyProjectile）
         /// </summary>
-        void Launch(Vector3 origin, Vector3 dir, Vector3 muzzle, WeaponDef def, float dmg)
+        void IWeaponEffects.VolleyProjectile(WeaponInstance w, int index, int count, bool feedback)
         {
-            var spec = def.projectile;
-            float reach = Mathf.Min(60f, def.range);
-            var aimPoint = origin + dir * reach;
-            foreach (var h in SortedHits(origin, dir, reach))
-            {
-                if (h.collider == selfCollider) continue;
-                aimPoint = h.point;
-                break;
-            }
-            Vector3 vel;
-            var R = Resolved(Active);
-            float speed = R.projectileSpeed, blast = R.explosionRadius;
-            if (spec.gravity > 0)
-            {
-                float t = Mathf.Max(0.05f, Vector3.Distance(muzzle, aimPoint) / speed);
-                vel = EnemyProjectile.Ballistic(muzzle, aimPoint, t, spec.gravity);
-            }
-            else vel = (aimPoint - muzzle).normalized * speed;
-            var info = HitInfo(def, dmg, muzzle, dir);
-            // 池化发射（C4），爆炸半径 / 穿透用结算后的数值（W2：吃玩家属性与词条）
-            var ps = new PlayerProjectileSpec(muzzle, vel, info, spec.radius, spec.lifetime)
-            {
-                gravity = spec.gravity, explosionRadius = blast, bounces = spec.bounces, rollAfter = spec.rollAfter,
-                explodeOnExpire = spec.explodeOnExpire, homing = spec.homing, pierce = R.pierce,
-                visual = spec.visual, color = spec.color, scale = spec.scale,
-            };
-            var p = PlayerProjectile.Spawn(in ps);
-            p.explodeOnExpire = spec.explodeOnExpire;
-            p.bounces = spec.bounces;
-            p.rollAfter = spec.rollAfter;
-            p.onImpact = point =>
-            {
-                ShotFx.Instance?.Impact(point, Vector3.up, info.element == Element.Fire, blast * 2.2f);
-                ShotFx.Instance?.MuzzleFlash(point + Vector3.up * 0.4f, blast * 1.3f);
-                Telegraph.Wave(point + Vector3.up * 0.05f, blast, 20f, spec.color);
-            };
-        }
-
-        static void ProjectileLook(Transform parent, ProjectileSpec spec)
-        {
-            var core = GameObject.CreatePrimitive(spec.visual == "orb" ? PrimitiveType.Sphere : PrimitiveType.Capsule);
-            Destroy(core.GetComponent<Collider>());
-            core.transform.SetParent(parent, false);
-            core.transform.localRotation = Quaternion.Euler(90, 0, 0);
-            float r = spec.radius * 2f * spec.scale;
-            core.transform.localScale = spec.visual == "orb" ? Vector3.one * r * 1.2f : new Vector3(r, r * 0.9f, r);
-            var mr = core.GetComponent<Renderer>();
-            mr.sharedMaterial = FxMaterials.Unlit;
-            FxMaterials.Tint(mr, Color.Lerp(spec.color, Color.white, 0.25f));
-            FxMaterials.GlowSprite(parent, r * 6f, new Color(spec.color.r, spec.color.g, spec.color.b, 0.7f));
-            var trail = parent.gameObject.AddComponent<TrailRenderer>();
-            trail.time = 0.22f;
-            trail.startWidth = r * 0.8f;
-            trail.endWidth = 0;
-            trail.sharedMaterial = FxMaterials.Additive;
-            trail.startColor = new Color(spec.color.r, spec.color.g, spec.color.b, 0.8f);
-            trail.endColor = new Color(spec.color.r, spec.color.g, spec.color.b, 0);
-            trail.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-        }
-
-        // ── 光束（雷弧发射器）──
-        LineRenderer beamLine;
-        Vector3 beamEnd;
-        float beamUntil;
-
-        /// <summary>光束一跳：射线命中 → 伤害 + 雷殛几率；打中敌人时向附近 1 个敌人弹射（伤害 × chainFraction）</summary>
-        void BeamTick(Vector3 origin, Vector3 dir, Vector3 muzzle, WeaponDef def, float dmg)
-        {
-            var target = Shoot(origin, dir, muzzle, def, dmg, Color.clear, 0.45f, out var end);
-            beamEnd = end;
-            beamUntil = Time.time + 1.4f / Mathf.Max(1, def.fireRate);
-            if (!target || def.chainFraction <= 0) return;
-            foreach (var o in ReactionSystem.Nearest(end, def.chainRange, 1, target, true))
-            {
-                var oc = ReactionSystem.CenterOf(o);
-                Lightning.Spawn(end, oc, DamageTable.ElementColor(def.element));
-                var info = HitInfo(def, dmg * def.chainFraction, oc, (oc - end).normalized);
-                info.depth = 1;
-                info.tags |= DamageTag.Chain;
-                Combat.DamageEnemy(o, info);
-            }
-        }
-
-        void UpdateBeam()
-        {
-            bool on = Time.time < beamUntil && Active?.def.mode == FireMode.Beam;
-            if (!on)
-            {
-                if (beamLine) beamLine.enabled = false;
-                return;
-            }
-            if (!beamLine)
-            {
-                var go = new GameObject("Beam");
-                beamLine = go.AddComponent<LineRenderer>();
-                beamLine.positionCount = 8;
-                beamLine.sharedMaterial = FxMaterials.Additive;
-                // 枪口那头离相机很近，透视会把它放大成一大片：起点细、远端粗
-                beamLine.widthCurve = new AnimationCurve(new Keyframe(0, 0.012f), new Keyframe(0.25f, 0.035f), new Keyframe(1, 0.07f));
-                beamLine.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            }
-            beamLine.enabled = true;
+            var p = w.def.projectile;
+            if (p == null || !eye) return;
+            var R = Resolved(w);
             var camT = eye.transform;
-            var from = camT.TransformPoint(Vector3.Lerp(new Vector3(0.2f, -0.13f, 0.75f), new Vector3(0, -0.08f, 0.7f), aimT));
-            var c = DamageTable.ElementColor(Active.def.element);
-            float flicker = 0.75f + UnityEngine.Random.value * 0.25f;
-            beamLine.startColor = new Color(c.r, c.g, c.b, 0.55f * flicker);
-            beamLine.endColor = new Color(Mathf.Lerp(c.r, 1, 0.3f), Mathf.Lerp(c.g, 1, 0.3f), 1f, 0.9f * flicker);
-            var d = beamEnd - from;
-            var side = Vector3.Cross(d, Vector3.up).normalized;
-            var up = Vector3.Cross(side, d).normalized;
-            for (int i = 0; i < 8; i++)
+            var muzzle = Muzzle();
+            var ctx = Context(w, R, w.element, in ShotMods.Volley);
+            var dir = Ballistics.Scatter(camT.forward, camT, spreadNow);
+            if (p.fanFixed)
             {
-                float t = i / 7f;
-                float k = Mathf.Sin(t * Mathf.PI) * 0.12f;
-                beamLine.SetPosition(i, Vector3.Lerp(from, beamEnd, t) + side * UnityEngine.Random.Range(-k, k) + up * UnityEngine.Random.Range(-k, k));
+                float yaw = p.fan * (2 * index - (count - 1)) / Mathf.Max(1, p.count - 1);
+                ballistics.Projectile(in ctx, camT.position, dir, muzzle, 0, yaw, index > 0);
+            }
+            else ballistics.Projectile(in ctx, camT.position, dir, muzzle, p.fan);
+            if (feedback) Feedback(w, R, 1, muzzle);
+        }
+
+        /// <summary>后坐、第一人称后坐、枪口火焰、枪声（光束是持续音）、屏震；strength = 蓄力强度</summary>
+        void Feedback(WeaponInstance w, ResolvedWeapon R, float strength, Vector3 muzzle)
+        {
+            var def = w.def;
+            float climb = 1 + Mathf.Min(consecutive, 12) * def.recoilClimb;
+            // 开镜大幅稳定（参考枪火重生：开镜后坐约为腰射的一半）
+            float k = (1 - 0.5f * aimT) * R.recoilMult * strength;
+            float pitch = def.recoilPitch * climb * k * UnityEngine.Random.Range(0.85f, 1.15f);
+            float yaw = (def.recoilBias + UnityEngine.Random.Range(-1f, 1f) * def.recoilYaw) * k;
+            motor.AddRecoil(pitch * RecoilScale * Mathf.Rad2Deg, yaw * RecoilScale * Mathf.Rad2Deg);
+            ViewFor(shownRig)?.Kick(def.kickBack * 0.76f * ViewKickScale * strength, def.kickRot * ViewKickScale * strength);
+            ShotFx.Instance?.MuzzleFlash(muzzle, def.flash / 0.12f);
+            if (def.mode == FireMode.Beam) GameAudio.HoldBeam(def.sfxVolume);
+            else GameAudio.Play(def.sfx, def.sfxVolume, 0.94f + UnityEngine.Random.value * 0.12f);
+            shakeAmp = def.shake * strength;
+            shakeTime = def.shake > 0.15f ? 0.16f : 0.08f;
+            shakeSeed = new Vector3(UnityEngine.Random.value * 10, UnityEngine.Random.value * 10, 0);
+        }
+
+        void IWeaponEffects.Cue(WeaponInstance w, FireCue cue)
+        {
+            switch (cue)
+            {
+                case FireCue.SpinUp: GameAudio.Play("weapon_switch", 0.5f, 0.55f); break;
+                case FireCue.ChargeStart: GameAudio.Play("weapon_switch", 0.4f, 0.6f); break;
+                case FireCue.ChargeFull: GameAudio.Play("telegraph", 0.35f, 1.6f); break;
             }
         }
 
-        RaycastHit[] SortedHits(Vector3 origin, Vector3 dir, float range)
+        void IWeaponEffects.Notify(WeaponNote note, WeaponInstance w, WeaponInstance other)
         {
-            var hits = Physics.RaycastAll(origin, dir, range, Layers.ShotMask, QueryTriggerInteraction.Ignore);
-            Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
-            return hits;
+            switch (note)
+            {
+                case WeaponNote.Changed:
+                    Changed?.Invoke();
+                    break;
+                case WeaponNote.Acquired:
+                    GameEvents.RaiseWeaponAcquired(w);
+                    break;
+                case WeaponNote.Switched:
+                    GameAudio.Play("weapon_switch", 0.7f);
+                    consecutive = 0;
+                    bloom = 0;
+                    Changed?.Invoke();
+                    GameEvents.RaiseWeaponSwitched(other, w);
+                    break;
+                case WeaponNote.ReloadStarted:
+                    beam.Hide();
+                    GameAudio.Play("reload_start", 0.8f);
+                    Changed?.Invoke();
+                    GameEvents.RaiseReloadStarted(w);
+                    break;
+                case WeaponNote.ShellInserted:
+                    // 逐发装填：每塞一发一声轻响
+                    GameAudio.Play("reload_end", 0.45f, 1.3f + UnityEngine.Random.value * 0.1f);
+                    Changed?.Invoke();
+                    break;
+                case WeaponNote.Reloaded:
+                    GameAudio.Play("reload_end", 0.85f);
+                    Changed?.Invoke();
+                    GameEvents.RaiseReloaded(w);
+                    break;
+                case WeaponNote.ReloadPartial:
+                    Changed?.Invoke();
+                    GameEvents.RaiseReloaded(w);
+                    break;
+                case WeaponNote.DryFire:
+                    GameAudio.Play("dry_fire", 0.8f);
+                    break;
+                case WeaponNote.Resupplied:
+                    GameAudio.Play("pickup_ammo");
+                    GameUI.Toast("应急补给：弹药 +1 匣", new Color(0.91f, 0.77f, 0.42f));
+                    Changed?.Invoke();
+                    break;
+                case WeaponNote.Stopped:
+                    consecutive = 0;
+                    beam.Hide();
+                    break;
+            }
         }
 
-        static Vector3 Scatter(Vector3 dir, Transform basis, float halfAngle)
-        {
-            if (halfAngle <= 0) return dir;
-            // 圆锥内均匀分布（半径取 sqrt 让中心不过密）
-            float r = Mathf.Sqrt(UnityEngine.Random.value) * Mathf.Tan(halfAngle);
-            float a = UnityEngine.Random.value * Mathf.PI * 2;
-            return (dir + basis.right * (Mathf.Cos(a) * r) + basis.up * (Mathf.Sin(a) * r)).normalized;
-        }
+        // ───────────── IWeaponHudSource ─────────────
 
-        void Shoot(Vector3 origin, Vector3 dir, Vector3 muzzle, WeaponDef def, float dmg, Color tracer, float fxScale) =>
-            Shoot(origin, dir, muzzle, def, dmg, tracer, fxScale, out _);
+        WeaponInstance IWeaponHudSource.Weapon => Active;
+        int IWeaponHudSource.Mag => Active?.mag ?? 0;
+        int IWeaponHudSource.MagCapacity => Active != null ? Resolved(Active).magCap : 0;
+        int IWeaponHudSource.Reserve => Active?.reserve ?? 0;
+        int IWeaponHudSource.ReserveCapacity => Active != null ? Resolved(Active).reserveCap : 0;
+        bool IWeaponHudSource.InfiniteAmmo => InfiniteAmmo;
+        bool IWeaponHudSource.Reloading => Reloading;
+        float IWeaponHudSource.ReloadProgress => ReloadProgress;
+        float IWeaponHudSource.Charge => ActiveMode?.Charge ?? 0;
+        bool IWeaponHudSource.ChargeFull => ActiveMode is ChargeMode c && c.Full;
+        float IWeaponHudSource.Heat => ActiveMode?.Spin ?? 0;
+        bool IWeaponHudSource.Firing => ActiveMode?.Firing ?? false;
+        float IWeaponHudSource.Spread => HudSpread;
+        float IWeaponHudSource.Aim => aimT;
+        string IWeaponHudSource.ModeId => ActiveMode?.Id ?? "";
 
-        /// <summary>射线命中结算；返回打中的敌人（没打中 / 打在地形上为 null），end = 落点。tracer 透明时不画曳光</summary>
-        Damageable Shoot(Vector3 origin, Vector3 dir, Vector3 muzzle, WeaponDef def, float dmg, Color tracer, float fxScale, out Vector3 end)
+        Element IWeaponHudSource.NextElement
         {
-            Damageable struck = null;
-            end = origin + dir * def.range;
-            var hits = SortedHits(origin, dir, def.range);
-            // 贴脸：射线起点已经在敌人胶囊里时 RaycastAll 打不到它（敌人走进玩家身上、大体型敌人），直接算命中这个敌人
-            var inside = PointBlank(origin);
-            if (inside)
+            get
             {
-                var pb = new RaycastHit();
-                hits = new[] { pb };
-                hits[0].point = origin + dir * 0.3f;
-                hits[0].normal = -dir;
-                hits[0].distance = 0.3f;
+                var w = Active;
+                if (w == null) return Element.None;
+                var cycle = w.def.cycle;
+                return cycle != null && cycle.Length > 0 ? cycle[w.cycleIndex % cycle.Length] : w.element;
             }
-            for (int i = 0; i < hits.Length; i++)
-            {
-                var h = hits[i];
-                Hitbox hb;
-                Damageable target;
-                if (inside)
-                {
-                    hb = inside;
-                    target = inside.owner;
-                }
-                else
-                {
-                    if (h.collider == selfCollider) continue;
-                    hb = h.collider.GetComponent<Hitbox>();
-                    target = hb ? hb.owner : h.collider.GetComponentInParent<Damageable>();
-                }
-                // 身体胶囊往往把头 / 弱点包在里面：射线先进胶囊，但 1.5 m 内穿过同一单位的弱点就按弱点算
-                if (target && hb && !hb.weakpoint && !inside)
-                    for (int j = i + 1; j < hits.Length && hits[j].distance < h.distance + 1.5f; j++)
-                    {
-                        var wb = hits[j].collider.GetComponent<Hitbox>();
-                        if (wb && wb.weakpoint && wb.owner == target)
-                        {
-                            hb = wb;
-                            h = hits[j];
-                            break;
-                        }
-                    }
-                end = h.point;
-                if (target && !target.Dead)
-                {
-                    // 出生中 / 遁地中（还露在外面时）：子弹停在身上，结算出「免疫」字样，让玩家知道不是没打中
-                    var info = HitInfo(def, dmg * def.Falloff(h.distance) * (hb ? hb.multiplier : 1f), h.point, dir);
-                    info.weakpoint = hb && hb.weakpoint;
-                    Combat.DamageEnemy(target, info);
-                    struck = target;
-                    ShotFx.Instance?.Impact(h.point, h.normal, !target.untargetable, fxScale);
-                }
-                else if (!target)
-                    ShotFx.Instance?.Impact(h.point, h.normal, false, fxScale);
-                break;
-            }
-            if (tracer.a > 0) ShotFx.Instance?.Tracer(muzzle, end, tracer, def.pellets > 1 ? 0.012f : 0.02f);
-            return struck;
         }
     }
 }
