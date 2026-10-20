@@ -1,0 +1,495 @@
+/*
+ * 秘卷三选一（挂轴）+ 秘卷触发弹字（S7；移植自 Three.js src/ui/css/overlays.css 的 .gf-choice / .gf-scroll）。
+ * 设计像素按 1920×1080；颜色变量来自 theme.uss（挂在层根上，这里继承）。
+ * 动画（落下、展开、呼吸、流光）由 ScrollChoiceScreen.Tick 用不缩放时间驱动；悬停 / 选中 / 落选用这里的过渡。
+ * UI Toolkit 没有渐变：绫绢的点阵、暗角、分割线、流光都是 ScreenKit / UITheme 的程序贴图。
+ */
+
+/* ───────────────────────── 界面 ───────────────────────── */
+
+.sf-choice {
+    align-items: center;
+    justify-content: center;
+}
+
+.sf-choice__backdrop {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(8, 6, 10, 0.72);
+}
+
+.sf-choice__vignette {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.sf-choice__inner {
+    align-items: center;
+}
+
+.sf-choice__head {
+    align-items: center;
+    margin-bottom: 52px;
+}
+
+.sf-choice__title {
+    font-size: 50px;
+    letter-spacing: 25px;
+    padding-left: 25px;
+    color: var(--gold-hi);
+    -unity-text-align: middle-center;
+    text-shadow: 0 3px 10px rgba(0, 0, 0, 0.8);
+    -unity-text-outline-width: 0.5px;
+    -unity-text-outline-color: rgba(70, 45, 10, 0.8);
+}
+
+.sf-choice__sub {
+    margin-top: 8px;
+    font-size: 13px;
+    letter-spacing: 3px;
+    color: var(--paper-3);
+    -unity-text-align: middle-center;
+}
+
+.sf-choice__cards {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+/* ───────────────────────── 挂轴 ───────────────────────── */
+
+.sf-scroll {
+    width: 292px;
+    margin: 0 28px;
+    padding: 0;
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+    color: #231c15;
+    transition-property: translate, scale, opacity;
+    transition-duration: 0.3s, 0.3s, 0.3s;
+    transition-timing-function: ease-out-cubic;
+}
+
+.sf-scroll:hover,
+.sf-scroll:focus {
+    translate: 0 -8px;
+}
+
+.sf-scroll--chosen,
+.sf-scroll--chosen:hover,
+.sf-scroll--chosen:focus {
+    translate: 0 -16px;
+    scale: 1.04 1.04;
+}
+
+.sf-scroll--rejected,
+.sf-scroll--rejected:hover,
+.sf-scroll--rejected:focus {
+    opacity: 0.2;
+    translate: 0 12px;
+    scale: 0.95 0.95;
+}
+
+.sf-scroll__body {
+    width: 100%;
+    align-items: center;
+}
+
+/* 史诗 / 传说的外发光（径向光晕片，呼吸由代码驱动） */
+.sf-scroll__glow {
+    position: absolute;
+    left: -70px;
+    right: -70px;
+    top: -60px;
+    bottom: -40px;
+}
+
+/* 挂绳：两根斜线汇到顶点 */
+.sf-scroll__cord {
+    position: absolute;
+    top: -26px;
+    left: 50%;
+    width: 64px;
+    height: 28px;
+    margin-left: -32px;
+    opacity: 0.75;
+}
+
+.sf-scroll__cordl,
+.sf-scroll__cordr {
+    position: absolute;
+    top: 28px;
+    width: 42.5px;
+    height: 1.5px;
+    background-color: var(--gold);
+    transform-origin: 0% 50%;
+}
+
+.sf-scroll__cordl {
+    left: 0;
+    rotate: -41.2deg;
+}
+
+.sf-scroll__cordr {
+    left: 64px;
+    rotate: -138.8deg;
+}
+
+/* 轴杆 + 鎏金轴头 */
+.sf-scroll__rod {
+    width: 316px;
+    height: 14px;
+    margin-left: -12px;
+    margin-right: -12px;
+    border-radius: 7px;
+    background-color: #4a2f19;
+    border-bottom-width: 3px;
+    border-bottom-color: #1a0f07;
+}
+
+.sf-scroll__knob {
+    position: absolute;
+    top: -3px;
+    width: 12px;
+    height: 20px;
+    border-radius: 3px;
+    background-color: var(--gold);
+    border-top-width: 2px;
+    border-top-color: var(--gold-hi);
+    border-bottom-width: 2px;
+    border-bottom-color: var(--gold-lo);
+}
+
+.sf-scroll__knob--l {
+    left: -7px;
+}
+
+.sf-scroll__knob--r {
+    right: -7px;
+}
+
+.sf-scroll--legend .sf-scroll__knob {
+    background-color: var(--gold-hi);
+}
+
+/* 展开区：max-height 由代码从 0 推到放开 */
+.sf-scroll__roll {
+    width: 100%;
+    overflow: hidden;
+}
+
+/* 装裱绫绢：底色 = 稀有度（代码写），上面铺点阵 */
+.sf-scroll__silk {
+    padding: 14px 13px 16px;
+    border-width: 1px;
+    border-color: rgba(0, 0, 0, 0.45);
+}
+
+.sf-scroll--legend .sf-scroll__silk {
+    border-width: 2px;
+}
+
+.sf-scroll__dots {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.sf-scroll__shimmerclip {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+}
+
+.sf-scroll__shimmer {
+    position: absolute;
+    top: -30px;
+    bottom: -30px;
+    width: 45%;
+    rotate: 16deg;
+}
+
+/* 宣纸 */
+.sf-scroll__paper {
+    align-items: center;
+    min-height: 340px;
+    padding: 26px 18px 18px;
+    background-color: #eadfc4;
+    border-width: 2px;
+    border-color: rgba(0, 0, 0, 0.3);
+    transition-property: border-color;
+    transition-duration: 0.25s;
+}
+
+.sf-scroll--r0:hover .sf-scroll__paper,
+.sf-scroll--r0:focus .sf-scroll__paper { border-color: var(--rarity-0); }
+.sf-scroll--r1:hover .sf-scroll__paper,
+.sf-scroll--r1:focus .sf-scroll__paper { border-color: var(--rarity-1); }
+.sf-scroll--r2:hover .sf-scroll__paper,
+.sf-scroll--r2:focus .sf-scroll__paper { border-color: var(--rarity-2); }
+.sf-scroll--r3:hover .sf-scroll__paper,
+.sf-scroll--r3:focus .sf-scroll__paper { border-color: var(--rarity-3); }
+.sf-scroll--r4 .sf-scroll__paper { border-color: rgba(212, 169, 85, 0.7); }
+.sf-scroll--r4:hover .sf-scroll__paper,
+.sf-scroll--r4:focus .sf-scroll__paper { border-color: var(--gold-hi); }
+
+.sf-scroll__frame {
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    right: 6px;
+    bottom: 6px;
+    border-width: 1px;
+    border-color: rgba(140, 100, 50, 0.3);
+}
+
+/* 竖排稀有度印 */
+.sf-scroll__rarity {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    padding: 5px 3px;
+    font-size: 13px;
+    color: #fbe9d2;
+    -unity-text-align: middle-center;
+    white-space: normal;
+    border-width: 1px;
+    border-color: rgba(255, 240, 220, 0.6);
+    border-radius: 2px;
+    rotate: -3deg;
+}
+
+/* 新得 / 升层 */
+.sf-scroll__state {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    padding: 1px 6px;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: #8a3a22;
+    border-width: 1px;
+    border-color: rgba(138, 58, 34, 0.5);
+}
+
+.sf-scroll__name {
+    margin-top: 22px;
+    padding: 0 16px;
+    font-size: 29px;
+    letter-spacing: 4px;
+    color: #1c140e;
+    -unity-text-align: middle-center;
+    white-space: normal;
+}
+
+.sf-scroll__rule {
+    width: 60%;
+    height: 1px;
+    margin: 10px 0 12px;
+}
+
+.sf-scroll__desc {
+    flex-grow: 1;
+    padding: 0 4px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #3a2e22;
+    -unity-text-align: upper-center;
+    white-space: normal;
+}
+
+/* 代价行（传说 / 高风险卷）：朱字另起一行 */
+.sf-scroll__downside {
+    flex-direction: row;
+    align-items: flex-start;
+    width: 100%;
+    margin: 0 0 10px;
+    padding: 5px 8px;
+    background-color: rgba(179, 38, 26, 0.08);
+    border-left-width: 2px;
+    border-left-color: #b3261a;
+}
+
+.sf-scroll__downlabel {
+    margin-right: 6px;
+    padding: 0 4px;
+    font-size: 11px;
+    color: #fff3ea;
+    background-color: #b3261a;
+}
+
+.sf-scroll__downtext {
+    flex-shrink: 1;
+    font-size: 13px;
+    color: #a52416;
+    white-space: normal;
+}
+
+/* 下一层预览：属性 当前 → 下一层 */
+.sf-scroll__preview {
+    width: 100%;
+    margin: 0 0 10px;
+    padding: 5px 10px;
+    background-color: rgba(120, 90, 50, 0.1);
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-color: rgba(120, 90, 50, 0.22);
+}
+
+.sf-scroll__prow {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sf-scroll__pname {
+    font-size: 12px;
+    color: #6b5a44;
+}
+
+.sf-scroll__pvals {
+    flex-direction: row;
+    align-items: center;
+}
+
+.sf-scroll__pold {
+    font-size: 14px;
+    color: #8a7a62;
+}
+
+.sf-scroll__parrow {
+    margin: 0 4px;
+    font-size: 12px;
+    color: #8a7a62;
+}
+
+.sf-scroll__pnew {
+    font-size: 15px;
+    -unity-font-style: bold;
+    color: #2f6b2a;
+}
+
+.sf-scroll__pnew--bad {
+    color: #a52416;
+}
+
+/* 层数菱形 */
+.sf-scroll__stacks {
+    align-items: center;
+}
+
+.sf-scroll__pips {
+    flex-direction: row;
+    margin-bottom: 6px;
+}
+
+.sf-scroll__pip {
+    width: 9px;
+    height: 9px;
+    margin: 0 3.5px;
+    rotate: 45deg;
+    border-width: 1px;
+    border-color: #8a7050;
+}
+
+.sf-scroll__pip--owned {
+    background-color: #8a7050;
+}
+
+.sf-scroll__pip--next {
+    border-color: rgba(60, 34, 15, 0.8);
+}
+
+.sf-scroll__count {
+    font-size: 13px;
+    letter-spacing: 1px;
+    color: #6b5a44;
+    -unity-text-align: middle-center;
+}
+
+.sf-scroll__tags {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 8px;
+}
+
+.sf-scroll__tag {
+    margin: 2px;
+    padding: 1px 7px;
+    font-size: 11px;
+    color: #5a4630;
+    border-width: 1px;
+    border-color: rgba(90, 60, 30, 0.35);
+    background-color: rgba(255, 255, 255, 0.28);
+}
+
+.sf-scroll__tag--hero {
+    color: #8a2a18;
+    border-color: rgba(138, 42, 24, 0.5);
+}
+
+.sf-scroll__tag--risk {
+    color: #fff3ea;
+    background-color: #a52416;
+    border-color: #a52416;
+}
+
+.sf-scroll__key {
+    margin-top: 10px;
+}
+
+/* ───────────────────────── 触发弹字（HUD） ───────────────────────── */
+
+.sf-procs {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: 64px;
+    margin-top: -118px;
+}
+
+.sf-procs__list {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.sf-proc {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 3px;
+    padding: 2px 16px 2px 8px;
+    transform-origin: 0% 50%;
+}
+
+.sf-proc__mark {
+    width: 7px;
+    height: 7px;
+    margin-right: 8px;
+    rotate: 45deg;
+}
+
+.sf-proc__name {
+    font-size: 17px;
+    letter-spacing: 2px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+.sf-proc__count {
+    margin-left: 6px;
+    font-size: 15px;
+    -unity-font-style: bold;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
