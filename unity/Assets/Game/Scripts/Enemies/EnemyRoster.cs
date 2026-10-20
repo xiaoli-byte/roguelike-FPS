@@ -10,7 +10,7 @@ namespace Spiritfire.Game
     {
         /// <summary>挂到哪个物体下（场地、关卡根）</summary>
         public Transform parent;
-        /// <summary>精英词缀 id（词缀框架 EN4 解释；之前忽略）</summary>
+        /// <summary>精英词缀 id（<see cref="EliteAffixes.Resolve"/>：登记过、不在排除表里就用它，否则精英随机一个；非精英 / 首领忽略）</summary>
         public string affix;
     }
 
@@ -35,6 +35,7 @@ namespace Spiritfire.Game
         /// difficulty = 强度倍率（局难度，D1：1 + 0.8 × (章 − 1) + 0.16 × 关序，浮点）：生命 × difficulty（取整），伤害 × (1 + (difficulty − 1) × 0.55)。
         /// 缺省 / 非法（≤ 0、NaN）时用本局当前关的难度（<see cref="RunState.Current"/>），再没有就是 1（同 TS EnemyManager.spawn）。
         /// 级别：<see cref="Damageable.rank"/> 先取定义的 <see cref="EnemyDef.rank"/>（首领），elite 时普通升成精英。
+        /// 精英（不含首领）由 <see cref="EliteAffixes.Dress"/> 挂金环、加「精英·」名字前缀、装词缀（options.affix 可用就用它，否则随机）。
         /// </summary>
         public static EnemyAI Spawn(string id, Vector3 position, Quaternion rotation, float difficulty, bool elite, SpawnOptions options = null)
         {
@@ -94,6 +95,15 @@ namespace Spiritfire.Game
             ai.knockbackResist = def.knockbackResist;
             go.SetActive(true);
             ai.Spawn(difficulty, elite);
+            // 精英：金环、名字前缀、词缀（EN4）；词缀出错也不能让生成失败
+            try
+            {
+                EliteAffixes.Dress(ai, def, options?.affix);
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogException(e);
+            }
             var loco = go.GetComponent<CreatureLocomotion>();
             if (loco) loco.Teleported();
             return ai;
