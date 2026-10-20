@@ -385,6 +385,8 @@ namespace Spiritfire.Game
             float moveF = 1 + Mathf.Clamp01(new Vector2(v.x, v.z).magnitude / 7.5f) * (0.2f - 0.1f * aimT);
             float airF = motor.Grounded ? 1 : 1.15f - 0.1f * aimT;
             spreadNow = (baseSpread * moveF * airF + bloom * (1 - 0.45f * aimT)) * R.spreadMult;
+            // 进了镜（狙击镜，WC1）：零散布
+            if (WeaponSight.Scoped(FovKick)) spreadNow = 0;
             float hud = Mathf.Clamp(spreadNow + PelletCone(def, R), 0, 0.25f);
             HudSpread = Mathf.Lerp(HudSpread, hud, 1 - Mathf.Exp(-18f * dt));
         }
@@ -444,6 +446,8 @@ namespace Spiritfire.Game
             // 整发的方向先按散布偏一次（霰弹整团跟着走），每颗弹丸再在锥内偏
             var center = Ballistics.Scatter(camT.forward, camT, spreadNow);
             if (mods.deferred) { }
+            // 喷火器（WC2）：火焰锥一次 OverlapCapsule 结算 + 共享粒子，不发投射物
+            else if (FlameCone.Handles(def)) FlameCone.Emit(ballistics, in ctx, origin, center, muzzle);
             else if (def.projectile != null) ballistics.Projectile(in ctx, origin, center, muzzle);
             else if (def.mode == FireMode.Beam)
             {
