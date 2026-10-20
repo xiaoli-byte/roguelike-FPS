@@ -781,9 +781,30 @@ MonoBehaviour:
   - family: tail
     bones:
     - {fileID: 8137595731602036397}
+    stiffness: 0.2
+    damping: 0.12
+    gravity: 0
+  - family: tail
+    bones:
     - {fileID: 3385965905511092161}
     - {fileID: 4564268984626898649}
     - {fileID: 6012651786238966888}
+    stiffness: 0.2
+    damping: 0.12
+    gravity: 0
+  - family: tail
+    bones:
+    - {fileID: 3310045054109604569}
+    - {fileID: 6071687944832260935}
+    - {fileID: 1554884619085531908}
+    stiffness: 0.2
+    damping: 0.12
+    gravity: 0
+  - family: tail
+    bones:
+    - {fileID: 1012991688539120572}
+    - {fileID: 5024222244295050570}
+    - {fileID: 8400573852421715556}
     stiffness: 0.2
     damping: 0.12
     gravity: 0
@@ -1301,9 +1322,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3385965905511092161}
-  - component: {fileID: 1281279937157459559}
-  - component: {fileID: 7045662990301266028}
-  - component: {fileID: 5851697337234342446}
   m_Layer: 7
   m_Name: tail_C1
   m_TagString: Untagged
@@ -1327,102 +1345,6 @@ Transform:
   - {fileID: 4564268984626898649}
   m_Father: {fileID: 8137595731602036397}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &1281279937157459559
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4039329675023401060}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Radius: 0.025521394
-  m_Height: 0.40614823
-  m_Direction: 1
-  m_Center: {x: 8.548717e-15, y: 0.1775529, z: 0.00000011827798}
---- !u!54 &7045662990301266028
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4039329675023401060}
-  serializedVersion: 5
-  m_Mass: 0.65397143
-  m_LinearDamping: 0.1
-  m_AngularDamping: 0.6
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 3
---- !u!144 &5851697337234342446
-CharacterJoint:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4039329675023401060}
-  serializedVersion: 3
-  m_ConnectedBody: {fileID: 8933631977621136076}
-  m_ConnectedArticulationBody: {fileID: 0}
-  m_Anchor: {x: 0, y: 0, z: 0}
-  m_Axis: {x: 1, y: 0, z: 0}
-  m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 0, z: 0}
-  m_SwingAxis: {x: 0, y: 1, z: 0}
-  m_TwistLimitSpring:
-    spring: 0
-    damper: 0
-  m_LowTwistLimit:
-    limit: -20
-    bounciness: 0
-    contactDistance: 0
-  m_HighTwistLimit:
-    limit: 20
-    bounciness: 0
-    contactDistance: 0
-  m_SwingLimitSpring:
-    spring: 0
-    damper: 0
-  m_Swing1Limit:
-    limit: 35
-    bounciness: 0
-    contactDistance: 0
-  m_Swing2Limit:
-    limit: 35
-    bounciness: 0
-    contactDistance: 0
-  m_EnableProjection: 1
-  m_ProjectionDistance: 0.1
-  m_ProjectionAngle: 180
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_EnableCollision: 0
-  m_EnablePreprocessing: 1
-  m_MassScale: 1
-  m_ConnectedMassScale: 1
 --- !u!1 &5098455373803181627
 GameObject:
   m_ObjectHideFlags: 0
@@ -1841,8 +1763,6 @@ MonoBehaviour:
     collider: {fileID: 7523460747726690306}
   - body: {fileID: 2176260521955308896}
     collider: {fileID: 5197374113199333699}
-  - body: {fileID: 7045662990301266028}
-    collider: {fileID: 1281279937157459559}
   - body: {fileID: 2984188590825534670}
     collider: {fileID: 3898530878921584110}
 --- !u!136 &9084848746210202242

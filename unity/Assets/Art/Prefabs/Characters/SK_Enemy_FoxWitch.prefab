@@ -492,9 +492,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6994470315150792907}
-  - component: {fileID: 1027589964711284604}
-  - component: {fileID: 2316233940242269198}
-  - component: {fileID: 3736902535771306150}
   m_Layer: 7
   m_Name: tail_C_1
   m_TagString: Untagged
@@ -518,102 +515,6 @@ Transform:
   - {fileID: 953371293591198415}
   m_Father: {fileID: 7318650355269455944}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &1027589964711284604
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1077424451582199108}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Radius: 0.114047565
-  m_Height: 0.5192279
-  m_Direction: 1
-  m_Center: {x: -4.6566134e-10, y: 0.14556639, z: 0.000000044703476}
---- !u!54 &2316233940242269198
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1077424451582199108}
-  serializedVersion: 5
-  m_Mass: 10.70671
-  m_LinearDamping: 0.1
-  m_AngularDamping: 0.6
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 3
---- !u!144 &3736902535771306150
-CharacterJoint:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1077424451582199108}
-  serializedVersion: 3
-  m_ConnectedBody: {fileID: 7380074127172479879}
-  m_ConnectedArticulationBody: {fileID: 0}
-  m_Anchor: {x: 0, y: 0, z: 0}
-  m_Axis: {x: 1, y: 0, z: 0}
-  m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 0, z: 0}
-  m_SwingAxis: {x: 0, y: 1, z: 0}
-  m_TwistLimitSpring:
-    spring: 0
-    damper: 0
-  m_LowTwistLimit:
-    limit: -20
-    bounciness: 0
-    contactDistance: 0
-  m_HighTwistLimit:
-    limit: 20
-    bounciness: 0
-    contactDistance: 0
-  m_SwingLimitSpring:
-    spring: 0
-    damper: 0
-  m_Swing1Limit:
-    limit: 35
-    bounciness: 0
-    contactDistance: 0
-  m_Swing2Limit:
-    limit: 35
-    bounciness: 0
-    contactDistance: 0
-  m_EnableProjection: 1
-  m_ProjectionDistance: 0.1
-  m_ProjectionAngle: 180
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_EnableCollision: 0
-  m_EnablePreprocessing: 1
-  m_MassScale: 1
-  m_ConnectedMassScale: 1
 --- !u!1 &1251327989362797595
 GameObject:
   m_ObjectHideFlags: 0
@@ -1265,8 +1166,6 @@ MonoBehaviour:
     collider: {fileID: 8276196370194979642}
   - body: {fileID: 7560632965495185367}
     collider: {fileID: 8540499050016853808}
-  - body: {fileID: 2316233940242269198}
-    collider: {fileID: 1027589964711284604}
   - body: {fileID: 8760586009098894520}
     collider: {fileID: 3501951051070226852}
   - body: {fileID: 4984340085707129971}
@@ -2687,9 +2586,78 @@ MonoBehaviour:
   - family: tail
     bones:
     - {fileID: 7318650355269455944}
+    stiffness: 0.2
+    damping: 0.12
+    gravity: 0
+  - family: tail
+    bones:
     - {fileID: 6994470315150792907}
     - {fileID: 953371293591198415}
     - {fileID: 2583371354302190745}
+    stiffness: 0.2
+    damping: 0.12
+    gravity: 0
+  - family: tail
+    bones:
+    - {fileID: 7291424337065031982}
+    - {fileID: 1773041594371997339}
+    - {fileID: 3141808669604621720}
+    stiffness: 0.2
+    damping: 0.12
+    gravity: 0
+  - family: tail
+    bones:
+    - {fileID: 8721345971266480416}
+    - {fileID: 5894526438381725152}
+    - {fileID: 8690163056784525463}
+    stiffness: 0.2
+    damping: 0.12
+    gravity: 0
+  - family: tail
+    bones:
+    - {fileID: 3659844098750025711}
+    - {fileID: 5040235716775038344}
+    - {fileID: 4679275760873915800}
+    stiffness: 0.2
+    damping: 0.12
+    gravity: 0
+  - family: tail
+    bones:
+    - {fileID: 6058541441978342600}
+    - {fileID: 6167936436642141093}
+    - {fileID: 1201663488262664280}
+    stiffness: 0.2
+    damping: 0.12
+    gravity: 0
+  - family: tail
+    bones:
+    - {fileID: 4192668698855383002}
+    - {fileID: 3561454042734549037}
+    - {fileID: 8812257593152475587}
+    stiffness: 0.2
+    damping: 0.12
+    gravity: 0
+  - family: tail
+    bones:
+    - {fileID: 3952629173101169115}
+    - {fileID: 1597349519396531107}
+    - {fileID: 3922781178171386284}
+    stiffness: 0.2
+    damping: 0.12
+    gravity: 0
+  - family: tail
+    bones:
+    - {fileID: 1995867253518796642}
+    - {fileID: 6030973271062030015}
+    - {fileID: 6384929563404645609}
+    stiffness: 0.2
+    damping: 0.12
+    gravity: 0
+  - family: tail
+    bones:
+    - {fileID: 1575417070411503572}
+    - {fileID: 3709815069685825770}
+    - {fileID: 425010065439487137}
     stiffness: 0.2
     damping: 0.12
     gravity: 0
