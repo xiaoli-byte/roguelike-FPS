@@ -91,7 +91,8 @@ namespace Spiritfire.Game
 
     /// <summary>
     /// 传说特性（同 TS LegendaryDef）：rarity = 传说时在普通词条之后另抽一条（各特性等概率），数值由武器决定、不随稀有度放大。
-    /// 名字用作武器名前缀「天命·赤铜左轮」，描述加「【传说·天命】」前缀（<see cref="AffixText"/>）。AF3 实现各特性。
+    /// 名字用作武器名前缀「天命·赤铜左轮」，描述加「【传说·天命】」前缀（<see cref="AffixText"/>）。
+    /// 10 条特性各一个文件 Weapons/Legendaries/Legendary_&lt;Name&gt;.cs（AF3），生效同触发词条走 <see cref="AffixDef.Effect"/>（开火、射速、命中、击杀、反应、输出修饰）。
     /// </summary>
     public abstract class LegendaryDef : AffixDef
     {

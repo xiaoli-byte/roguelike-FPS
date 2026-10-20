@@ -34,7 +34,7 @@ namespace Spiritfire.Game.Tests
 
         // ───────────── 假环境与工具 ─────────────
 
-        sealed class FakeEnv : IAffixEnv
+        internal sealed class FakeEnv : IAffixEnv
         {
             public float now, rand, haste;
             public bool triggerOk = true;
@@ -85,7 +85,7 @@ namespace Spiritfire.Game.Tests
             return d;
         }
 
-        static WeaponDef Def(string id)
+        internal static WeaponDef Def(string id)
         {
             var d = WeaponLibrary.Get(id);
             Assert.IsNotNull(d, $"武器表里没有 {id}");
@@ -93,7 +93,7 @@ namespace Spiritfire.Game.Tests
         }
 
         /// <summary>只带给定词条的枪（替换掉固有词条），登记进假环境的「玩家槽位」</summary>
-        static WeaponInstance Gun(FakeEnv env, string weapon, params (string id, float v)[] affixes)
+        internal static WeaponInstance Gun(FakeEnv env, string weapon, params (string id, float v)[] affixes)
         {
             var w = new WeaponInstance(Def(weapon), Rarity.Rare);
             w.SetAffixes(affixes.Select(a => new WeaponAffix(a.id, a.v)));
@@ -101,7 +101,7 @@ namespace Spiritfire.Game.Tests
             return w;
         }
 
-        static HitEvent Hit(Damageable e, WeaponInstance w, float dealt, bool weak = false, bool crit = false, bool killed = false, int depth = 0,
+        internal static HitEvent Hit(Damageable e, WeaponInstance w, float dealt, bool weak = false, bool crit = false, bool killed = false, int depth = 0,
             Element element = Element.None, Element applied = Element.None, DamageSource source = DamageSource.Weapon)
         {
             return new HitEvent
@@ -116,14 +116,14 @@ namespace Spiritfire.Game.Tests
             };
         }
 
-        static KillEvent Kill(Damageable e, WeaponInstance w, int depth = 0, Element element = Element.None) => new()
+        internal static KillEvent Kill(Damageable e, WeaponInstance w, int depth = 0, Element element = Element.None) => new()
         {
             enemy = e,
             info = new DamageInfo { amount = 10, source = DamageSource.Weapon, tags = DamageTag.Weapon, weaponUid = w?.uid ?? 0, depth = depth, element = element },
             result = new DamageResult { total = 10, killed = true },
         };
 
-        static ReactionEvent Rx(Damageable e, WeaponInstance w, Reaction id = Reaction.Thunderfire, float B = 40, int depth = 0, DamageTag tag = DamageTag.None) => new()
+        internal static ReactionEvent Rx(Damageable e, WeaponInstance w, Reaction id = Reaction.Thunderfire, float B = 40, int depth = 0, DamageTag tag = DamageTag.None) => new()
         {
             enemy = e, id = id, point = e.transform.position, B = B, depth = depth, weaponUid = w?.uid ?? 0, tag = tag,
         };

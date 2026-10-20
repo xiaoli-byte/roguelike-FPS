@@ -9,6 +9,7 @@ namespace Spiritfire.Game
     /// 按实例弱引用挂着（<see cref="Of"/>），切走再切回还在，枪被换掉 / 丢掉后随 GC 回收。
     ///   开火框架（W1）：开火模式实例、切走时的 readyAt、累计发数；
     ///   触发词条（AF2）：爆头爆炸 / 破势 / 回元 / 化盾的内置冷却、疾化截止时间；
+    ///   传说特性（AF3）：狂热 / 鼎沸层数、轮回进度；
     ///   开火钩子：<see cref="BeginShot"/>（扣弹、累计发数、<see cref="IAffixEffect.OnFire"/>：天命、终焉、无尽）、
     ///   射速钩子：<see cref="RateMult"/>（<see cref="IAffixEffect.FireRate"/>：疾化、狂热），都由 <see cref="WeaponStateMachine"/> 调用。
     /// </summary>
@@ -47,6 +48,17 @@ namespace Spiritfire.Game
         public float lastHeadBlast = -99, lastDetonate = -99, lastRefill = -99, lastShield = -99;
         /// <summary>「疾化」射速加成的截止时刻</summary>
         public float rxnHasteUntil = -99;
+
+        // ── 传说特性（AF3）──
+        /// <summary>「狂热」层数与最近一次叠层时刻</summary>
+        public int frenzy;
+        public float frenzyTime = -99;
+        /// <summary>「鼎沸」层数与最近一次叠层时刻</summary>
+        public int boil;
+        public float boilTime = -99;
+        /// <summary>「轮回」下次可附着的时刻与轮转序号（灼烧 → 雷殛 → 蚀化）</summary>
+        public float lunhuiAt = -99;
+        public int lunhuiIdx;
 
         /// <summary>
         /// 一次射击的开火钩子（状态机在弹道之前调）：累计发数 → 派发 <see cref="IAffixEffect.OnFire"/>（天命、终焉、无尽）→ 不免耗就扣一发 →

@@ -16,6 +16,9 @@ namespace Spiritfire.Game
         /// <summary>一位小数（同 TS toFixed(1)）</summary>
         public static string Fixed1(float v) => v.ToString("0.0", CultureInfo.InvariantCulture);
 
+        /// <summary>原样的数（同 TS 模板里直接插值 ${v}：4 → "4"，0.6 → "0.6"）</summary>
+        public static string Num(float v) => v.ToString(CultureInfo.InvariantCulture);
+
         /// <summary>开火单位（同 TS shotUnit）：光束「跳」、多弹体「轮」、其余「发」</summary>
         public static string ShotUnit(WeaponDef d)
         {
