@@ -1,0 +1,197 @@
+{
+  "source": {
+    "tris": 8894,
+    "verts": 4459
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 20.10033,
+    "iou": 0.768,
+    "iou_per_view": {
+      "front": 0.923,
+      "left": 0.6,
+      "back": 0.873,
+      "right": 0.599
+    },
+    "size_m": [
+      20.091,
+      9.039,
+      9.0
+    ],
+    "reference_m": [
+      26.0,
+      14.0,
+      9.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.696,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Env_DesertCaveCeilingRift_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "rebaked",
+      "texture": 1024,
+      "cage_m": 0.135,
+      "uv": {
+        "smart_islands": 321,
+        "charts": 34,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "merged",
+        "density_smart": 0.0326,
+        "density_merged": 0.034,
+        "coverage": 0.664
+      },
+      "collapse": {
+        "samples": 23921,
+        "matched_ratio": 0.997,
+        "mean_delta": 0.0079,
+        "p90_delta": 0.0186,
+        "smeared_ratio": 0.0,
+        "stretched_ratio": 0.0254,
+        "dist_p99_m": 0.0431
+      },
+      "final": {
+        "samples": 23921,
+        "matched_ratio": 0.997,
+        "mean_delta": 0.0016,
+        "p90_delta": 0.0033,
+        "smeared_ratio": 0.0,
+        "stretched_ratio": 0.0003,
+        "dist_p99_m": 0.0431
+      }
+    },
+    "LOD2": {
+      "method": "rebaked",
+      "texture": 512,
+      "cage_m": 0.2454,
+      "uv": {
+        "smart_islands": 136,
+        "charts": 38,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "merged",
+        "density_smart": 0.0344,
+        "density_merged": 0.0347,
+        "coverage": 0.716
+      },
+      "collapse": {
+        "samples": 23733,
+        "matched_ratio": 0.989,
+        "mean_delta": 0.0235,
+        "p90_delta": 0.0537,
+        "smeared_ratio": 0.0266,
+        "stretched_ratio": 0.0621,
+        "dist_p99_m": 0.1227
+      },
+      "final": {
+        "samples": 23733,
+        "matched_ratio": 0.989,
+        "mean_delta": 0.0037,
+        "p90_delta": 0.0087,
+        "smeared_ratio": 0.0,
+        "stretched_ratio": 0.0003,
+        "dist_p99_m": 0.1227
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Env_DesertCaveCeilingRift_LOD0",
+      "tris": 7960,
+      "verts": 3992,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.58,
+      "bbox_min": [
+        -10.0453,
+        -4.5196,
+        -0.0015
+      ],
+      "bbox_max": [
+        10.0453,
+        4.5196,
+        9.0
+      ]
+    },
+    {
+      "name": "SM_Env_DesertCaveCeilingRift_LOD1",
+      "tris": 2487,
+      "verts": 1252,
+      "uv_min": [
+        0.0020767468959093094,
+        0.002076714066788554
+      ],
+      "uv_max": [
+        0.9771331548690796,
+        0.9979232549667358
+      ],
+      "uv_utilization": 0.626,
+      "bbox_min": [
+        -10.046,
+        -4.4958,
+        -0.0094
+      ],
+      "bbox_max": [
+        10.0629,
+        4.52,
+        8.9869
+      ]
+    },
+    {
+      "name": "SM_Env_DesertCaveCeilingRift_LOD2",
+      "tris": 795,
+      "verts": 404,
+      "uv_min": [
+        0.002178058959543705,
+        0.0021780328825116158
+      ],
+      "uv_max": [
+        0.9933406114578247,
+        0.9978219270706177
+      ],
+      "uv_utilization": 0.64,
+      "bbox_min": [
+        -10.0249,
+        -4.4759,
+        0.0076
+      ],
+      "bbox_max": [
+        10.022,
+        4.4406,
+        8.9806
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Env_DesertCaveCeilingRift/04_export/SM_Env_DesertCaveCeilingRift_v001.glb",
+    "bytes": 601528
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 39.8,
+  "_seconds": 41.3
+}

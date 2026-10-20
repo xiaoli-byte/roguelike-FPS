@@ -1,0 +1,336 @@
+{
+  "id": "SM_Tripo_DesertStupaBuried",
+  "display": "半埋佛塔（1-2 塔尖广场地标）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:29:03",
+          "files": {
+            "BO_SM_Tripo_DesertStupaBuried_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertStupaBuried_v001.json",
+              "sha256": "b962126972aea6e6d3faae5487c804074d48e846b9441a2c72ee9cb39ff01a61"
+            },
+            "BO_SM_Tripo_DesertStupaBuried_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertStupaBuried_v001_views.json",
+              "sha256": "d05c311a1f940e7f0534cb66cefb152ce53e0f133a354131d3af699258ac9cca"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.stupaBuried"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -8.0,
+              0.0,
+              -8.0
+            ],
+            "max": [
+              8.0,
+              11.0,
+              8.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:30:06",
+          "files": {
+            "CN_SM_Tripo_DesertStupaBuried_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertStupaBuried_v001_source.png",
+              "sha256": "7d3949addc8249ef7fea71ad2c946c75425eae10bf51bc36556f17b8cf456e82"
+            },
+            "CN_SM_Tripo_DesertStupaBuried_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertStupaBuried_v001_front.png",
+              "sha256": "0676572a25b9a20807db54f961a395651db7122517192baaaee232502e7dc3a3"
+            },
+            "CN_SM_Tripo_DesertStupaBuried_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertStupaBuried_v001_left.png",
+              "sha256": "7672c82f05b9b7eac7c7a7eeb77c7bcb685d2a6d362a3d2d99a611a588a8c69b"
+            },
+            "CN_SM_Tripo_DesertStupaBuried_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertStupaBuried_v001_back.png",
+              "sha256": "326e4efa06a9ff0149b79c9fe95872e5bceae61c2591ad380a1aa0ed2ca6db59"
+            },
+            "CN_SM_Tripo_DesertStupaBuried_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertStupaBuried_v001_right.png",
+              "sha256": "d56f033c9b9ab3c7e1f95fb1276e960c906449eb709790a70866a32341f2e872"
+            },
+            "CN_SM_Tripo_DesertStupaBuried_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertStupaBuried_v001_sheet.png",
+              "sha256": "c5cf2c5aca4ed8b09349528276808738dc81618f4dbccea6a0222d56d6913a63"
+            },
+            "CN_SM_Tripo_DesertStupaBuried_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertStupaBuried_v001_prompt.txt",
+              "sha256": "658abb53381c44eb7c56de96debabfc7304090d8113e66660d24bf5b64264fa7"
+            },
+            "CN_SM_Tripo_DesertStupaBuried_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertStupaBuried_v001_registration.json",
+              "sha256": "b7682f74060a863704f6f171f069387c6f74e52bd37bbbbbbe4ced4a3bdac281"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2135,
+              736
+            ],
+            "references": [],
+            "codex_session": "01a15949-5fa3-74e1-8536-ed3177af802d",
+            "attempt": 1,
+            "seconds": 60.9
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (16m wide x 11m tall x 16m deep): A massive ruined Western-Regions Buddhist stupa of rammed earth and sun-dried mud brick, like the stupas of Miran and Subashi on the Silk Road, 16m square at the base and 11m tall, built as big stepped square tiers with walkable flat terraces: a lowest square plinth 16m wide and 3.5m tall, a second square tier 11m wide and 2.5m tall set back so it leaves a 2.5m-wide flat walkable terrace all around at 3.5m, then a round drum 8m wide and 1.5m tall leaving a second flat ring terrace at 6m, crowned by a weathered hemispherical dome 7m wide reaching 10m, with a short broken square spire stump on top reaching 11m. On the FRONT face one broad straight staircase of chunky deep steps climbs from the ground to the first terrace, and a second flight continues from the first terrace up to the second terrace, both cut into the front of the tiers. Ochre-red and pale sand-yellow mud brick in broad horizontal courses, the dome surface wind-eroded smooth with soft vertical rain grooves, one row of blind arched niches around the second tier with faded Dunhuang malachite-green and vermilion paint inside. PROPORTIONS: all four views are drawn about 1.45 times as wide as tall, a broad stepped mound; LEFT, RIGHT and BACK views look the same except that only the FRONT has the stairs. Broad faceted planes, chunky readable forms, no loose bricks, debris or micro cracks. One solid connected piece on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "7d3949addc8249ef7fea71ad2c946c75425eae10bf51bc36556f17b8cf456e82",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.5572441742654508,
+              "offset": [
+                120,
+                355
+              ],
+              "size": [
+                271,
+                314
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5612244897959183,
+              "offset": [
+                133,
+                355
+              ],
+              "size": [
+                245,
+                314
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5622284692052134,
+              "offset": [
+                121,
+                355
+              ],
+              "size": [
+                270,
+                314
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5592272496187087,
+              "offset": [
+                132,
+                355
+              ],
+              "size": [
+                247,
+                314
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "两级方台 + 环台可走、正面两段台阶、覆钵顶 + 断刹；四视图一致",
+            "time": "2026-10-20 20:30:42"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:17:17",
+          "files": {
+            "HP_SM_Tripo_DesertStupaBuried_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertStupaBuried_v001_source.glb",
+              "sha256": "b5ec0a564592a4fa9d2fdfaafec5aa6d50ba7e6ba1cd929b69c7f25a718c28db"
+            },
+            "HP_SM_Tripo_DesertStupaBuried_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertStupaBuried_v001.glb",
+              "sha256": "a5027ab8a75a653f44e45f1a860a57bece2298e2b5c9e733b103c8f7ae8b5cf0"
+            },
+            "HP_SM_Tripo_DesertStupaBuried_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertStupaBuried_v001_graph.json",
+              "sha256": "a512c7ac8f85484a46606210755ba72b7ec9854cbc201ad1e003fbe1120e3c42"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/f4a2ba07-ce47-4669-9177-c74cebd72608",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 7127,
+          "source_sha256": "b5ec0a564592a4fa9d2fdfaafec5aa6d50ba7e6ba1cd929b69c7f25a718c28db"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:18:16",
+          "files": {
+            "SM_Tripo_DesertStupaBuried_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertStupaBuried_v001.blend",
+              "sha256": "9aa23a52e592e8ef39427e269197652b93c579a77095e772df75bf8b16ee2585"
+            },
+            "SM_Tripo_DesertStupaBuried_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertStupaBuried_v001.glb",
+              "sha256": "60bcc310e6594e1f1aa9747b16c0702a27bd9a578ea507813750fb8c4a663f61"
+            },
+            "SM_Tripo_DesertStupaBuried_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertStupaBuried_v001_metrics.json",
+              "sha256": "58083f207280a2d1606fe76e1821179fdc4dac5efd60ed62343f2fb943a911f0"
+            },
+            "T_Tripo_DesertStupaBuried_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertStupaBuried_BC.png",
+              "sha256": "9ce4251d908739e528856c9142003da8e9ba6f1a78d00952ea24f5771280123c"
+            },
+            "T_Tripo_DesertStupaBuried_LOD2_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertStupaBuried_LOD2_BC.png",
+              "sha256": "b20fafcd8ac9493c622ac51e946efb6abf37a095abb9a9c2b6105f4e6840ba81"
+            },
+            "T_Tripo_DesertStupaBuried_LOD2_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertStupaBuried_LOD2_N.png",
+              "sha256": "9d3b3d8dc7043d95aad349672268cae55b0b568d502aeeae97e0a855db388e21"
+            },
+            "T_Tripo_DesertStupaBuried_LOD2_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertStupaBuried_LOD2_ORM.png",
+              "sha256": "742168766f5265bf2e63cc7f5c41e50c8349f4cdc703fe87e0d0573055eba562"
+            },
+            "T_Tripo_DesertStupaBuried_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertStupaBuried_N.png",
+              "sha256": "a05698479f9fa7ca163e7f1a739c55bd93eb4a5ae22f9e5bda28b7f0bc30ffa3"
+            },
+            "T_Tripo_DesertStupaBuried_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertStupaBuried_ORM.png",
+              "sha256": "0d325c9398d37f0090d0b8bd959995156f7a71ee4d513090aa12711703e56618"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.881,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7127,
+              "verts": 4152
+            },
+            {
+              "tris": 2487,
+              "verts": 1666
+            },
+            {
+              "tris": 796,
+              "verts": 650
+            }
+          ],
+          "export_kb": 742.8,
+          "seconds": 57.5,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:18:20",
+          "files": {
+            "SM_Tripo_DesertStupaBuried_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertStupaBuried_v001_validation_v001.json",
+              "sha256": "f0650acc4577d24aab9d6b56b25510dd5d43355279baa22e954640ae48789d0e"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:18:26",
+          "files": {
+            "SM_Tripo_DesertStupaBuried_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertStupaBuried_v001_review_v001.png",
+              "sha256": "e3c57c311da8c04be0bef1330af0f6d2dac9dc28f2e0877850aadd52dfae4e11"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "成品审核通过（Tripo P2.0 + 纹理）：四视图与概念一致，LOD 远看轮廓不塌、无斜条纹",
+            "time": "2026-10-20 21:51:02"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:51:02",
+          "files": {
+            "SM_Tripo_DesertStupaBuried.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertStupaBuried.glb",
+              "sha256": "60bcc310e6594e1f1aa9747b16c0702a27bd9a578ea507813750fb8c4a663f61"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertStupaBuried.glb"
+        }
+      ]
+    }
+  }
+}

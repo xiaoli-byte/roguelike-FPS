@@ -1,0 +1,139 @@
+{
+  "source": {
+    "tris": 1239,
+    "verts": 822
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 1.01746,
+    "iou": 0.907,
+    "iou_per_view": {
+      "front": 0.914,
+      "left": 0.904,
+      "back": 0.905,
+      "right": 0.899
+    },
+    "size_m": [
+      1.017,
+      1.009,
+      0.7
+    ],
+    "reference_m": [
+      1.3,
+      1.2,
+      0.7
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.7,
+    "samples": 64
+  },
+  "textures": {
+    "size": 512,
+    "base": "SM_Tripo_DesertCamelthorn_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "rebaked",
+      "texture": 256,
+      "cage_m": 0.0522,
+      "uv": {
+        "smart_islands": 233,
+        "charts": 97,
+        "fallback_charts": 6,
+        "flipped_faces": 2,
+        "flipped_ratio": 0.0034,
+        "method": "smart",
+        "density_smart": 0.4068,
+        "density_merged": 0.3915,
+        "coverage": 0.847
+      },
+      "collapse": {
+        "samples": 22703,
+        "matched_ratio": 0.946,
+        "mean_delta": 0.0245,
+        "p90_delta": 0.0605,
+        "smeared_ratio": 0.0155,
+        "stretched_ratio": 0.0748,
+        "dist_p99_m": 0.0261
+      },
+      "final": {
+        "samples": 22703,
+        "matched_ratio": 0.946,
+        "mean_delta": 0.0226,
+        "p90_delta": 0.0443,
+        "smeared_ratio": 0.036,
+        "stretched_ratio": 0.0,
+        "dist_p99_m": 0.0261
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertCamelthorn_LOD0",
+      "tris": 1194,
+      "verts": 794,
+      "uv_min": [
+        0.0009765625,
+        0.000732421875
+      ],
+      "uv_max": [
+        0.999267578125,
+        0.999267578125
+      ],
+      "uv_utilization": 0.753,
+      "bbox_min": [
+        -0.5085,
+        -0.5045,
+        0.0
+      ],
+      "bbox_max": [
+        0.5085,
+        0.5045,
+        0.7
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertCamelthorn_LOD1",
+      "tris": 596,
+      "verts": 426,
+      "uv_min": [
+        0.004166204482316971,
+        0.0041712322272360325
+      ],
+      "uv_max": [
+        0.9937411546707153,
+        0.9958376288414001
+      ],
+      "uv_utilization": 0.608,
+      "bbox_min": [
+        -0.5082,
+        -0.5115,
+        0.0027
+      ],
+      "bbox_max": [
+        0.5107,
+        0.5045,
+        0.7012
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertCamelthorn/04_export/SM_Tripo_DesertCamelthorn_v003.glb",
+    "bytes": 146168
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 13.1,
+  "_seconds": 14.8
+}

@@ -1,0 +1,175 @@
+{
+  "source": {
+    "tris": 6746,
+    "verts": 4121
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 8.00391,
+    "iou": 0.845,
+    "iou_per_view": {
+      "front": 0.839,
+      "left": 0.854,
+      "back": 0.846,
+      "right": 0.844
+    },
+    "size_m": [
+      6.319,
+      3.091,
+      8.0
+    ],
+    "reference_m": [
+      9.0,
+      7.0,
+      8.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.531,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_DesertShopHouse_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "provider",
+      "collapse": {
+        "samples": 22992,
+        "matched_ratio": 0.958,
+        "mean_delta": 0.0097,
+        "p90_delta": 0.0272,
+        "smeared_ratio": 0.0054,
+        "stretched_ratio": 0.011,
+        "dist_p99_m": 0.0373
+      }
+    },
+    "LOD2": {
+      "method": "rebaked",
+      "texture": 512,
+      "cage_m": 0.2792,
+      "uv": {
+        "smart_islands": 370,
+        "charts": 141,
+        "fallback_charts": 7,
+        "flipped_faces": 2,
+        "flipped_ratio": 0.0026,
+        "method": "merged",
+        "density_smart": 0.0406,
+        "density_merged": 0.0422,
+        "coverage": 0.695
+      },
+      "collapse": {
+        "samples": 19627,
+        "matched_ratio": 0.818,
+        "mean_delta": 0.033,
+        "p90_delta": 0.1,
+        "smeared_ratio": 0.0449,
+        "stretched_ratio": 0.066,
+        "dist_p99_m": 0.1396
+      },
+      "final": {
+        "samples": 19627,
+        "matched_ratio": 0.818,
+        "mean_delta": 0.0535,
+        "p90_delta": 0.1414,
+        "smeared_ratio": 0.0826,
+        "stretched_ratio": 0.1073,
+        "dist_p99_m": 0.1396
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertShopHouse_LOD0",
+      "tris": 6746,
+      "verts": 4121,
+      "uv_min": [
+        0.0009765625,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.99755859375,
+        0.9990234375
+      ],
+      "uv_utilization": 0.647,
+      "bbox_min": [
+        -3.1597,
+        -1.5457,
+        0.0
+      ],
+      "bbox_max": [
+        3.1597,
+        1.5457,
+        8.0
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertShopHouse_LOD1",
+      "tris": 2486,
+      "verts": 1766,
+      "uv_min": [
+        0.0009765625,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.993408203125,
+        0.9990067481994629
+      ],
+      "uv_utilization": 0.606,
+      "bbox_min": [
+        -3.1441,
+        -1.5457,
+        -0.0
+      ],
+      "bbox_max": [
+        3.1558,
+        1.5423,
+        8.0
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertShopHouse_LOD2",
+      "tris": 777,
+      "verts": 785,
+      "uv_min": [
+        0.003640612820163369,
+        0.0036577261053025723
+      ],
+      "uv_max": [
+        0.9930106401443481,
+        0.9964230060577393
+      ],
+      "uv_utilization": 0.54,
+      "bbox_min": [
+        -3.1289,
+        -1.5526,
+        0.0001
+      ],
+      "bbox_max": [
+        3.1246,
+        1.5423,
+        7.9803
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertShopHouse/04_export/SM_Tripo_DesertShopHouse_v002.glb",
+    "bytes": 1250708
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 49.0,
+  "_seconds": 51.8
+}

@@ -1,0 +1,175 @@
+{
+  "source": {
+    "tris": 5025,
+    "verts": 3292
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 7.50366,
+    "iou": 0.798,
+    "iou_per_view": {
+      "front": 0.917,
+      "left": 0.682,
+      "back": 0.838,
+      "right": 0.697
+    },
+    "size_m": [
+      6.166,
+      2.854,
+      7.5
+    ],
+    "reference_m": [
+      8.0,
+      5.0,
+      7.5
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.691,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_DesertCloister_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "provider",
+      "collapse": {
+        "samples": 23726,
+        "matched_ratio": 0.989,
+        "mean_delta": 0.0148,
+        "p90_delta": 0.0346,
+        "smeared_ratio": 0.0157,
+        "stretched_ratio": 0.0001,
+        "dist_p99_m": 0.0268
+      }
+    },
+    "LOD2": {
+      "method": "rebaked",
+      "texture": 512,
+      "cage_m": 0.1922,
+      "uv": {
+        "smart_islands": 411,
+        "charts": 155,
+        "fallback_charts": 3,
+        "flipped_faces": 1,
+        "flipped_ratio": 0.0013,
+        "method": "merged",
+        "density_smart": 0.0525,
+        "density_merged": 0.0576,
+        "coverage": 0.869
+      },
+      "collapse": {
+        "samples": 21451,
+        "matched_ratio": 0.894,
+        "mean_delta": 0.0259,
+        "p90_delta": 0.0799,
+        "smeared_ratio": 0.0338,
+        "stretched_ratio": 0.0489,
+        "dist_p99_m": 0.0961
+      },
+      "final": {
+        "samples": 21451,
+        "matched_ratio": 0.894,
+        "mean_delta": 0.0286,
+        "p90_delta": 0.0794,
+        "smeared_ratio": 0.027,
+        "stretched_ratio": 0.1877,
+        "dist_p99_m": 0.0961
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertCloister_LOD0",
+      "tris": 5025,
+      "verts": 3292,
+      "uv_min": [
+        0.0009765625,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.994873046875,
+        0.9990234375
+      ],
+      "uv_utilization": 0.76,
+      "bbox_min": [
+        -3.0832,
+        -1.4271,
+        0.0
+      ],
+      "bbox_max": [
+        3.0832,
+        1.4271,
+        7.5
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertCloister_LOD1",
+      "tris": 2487,
+      "verts": 1898,
+      "uv_min": [
+        0.0009765625,
+        0.0009758342057466507
+      ],
+      "uv_max": [
+        0.9948731064796448,
+        0.9990234375
+      ],
+      "uv_utilization": 0.727,
+      "bbox_min": [
+        -3.0858,
+        -1.4271,
+        0.0
+      ],
+      "bbox_max": [
+        3.0819,
+        1.4271,
+        7.4948
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertCloister_LOD2",
+      "tris": 795,
+      "verts": 876,
+      "uv_min": [
+        0.0031421619933098555,
+        0.003230419708415866
+      ],
+      "uv_max": [
+        0.99690842628479,
+        0.9969084858894348
+      ],
+      "uv_utilization": 0.764,
+      "bbox_min": [
+        -3.0631,
+        -1.4233,
+        -0.0019
+      ],
+      "bbox_max": [
+        3.0625,
+        1.4229,
+        7.4739
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertCloister/04_export/SM_Tripo_DesertCloister_v001.glb",
+    "bytes": 1087324
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 82.5,
+  "_seconds": 84.6
+}

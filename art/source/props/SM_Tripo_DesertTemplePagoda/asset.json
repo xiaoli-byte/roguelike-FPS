@@ -1,0 +1,336 @@
+{
+  "id": "SM_Tripo_DesertTemplePagoda",
+  "display": "寺塔（1-3 寺院前庭地标）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:21:54",
+          "files": {
+            "BO_SM_Tripo_DesertTemplePagoda_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertTemplePagoda_v001.json",
+              "sha256": "4ebea0b3dbfe6abca37a7c992fce2ba3fa38edb55edd288d20973db9f1cb1c36"
+            },
+            "BO_SM_Tripo_DesertTemplePagoda_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertTemplePagoda_v001_views.json",
+              "sha256": "acdae6dbdb9a6b944f6f440a0617a2ec86990692770013234e42d5f98a766d8f"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.templePagoda"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -4.5,
+              0.0,
+              -4.5
+            ],
+            "max": [
+              4.5,
+              24.0,
+              4.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:28:17",
+          "files": {
+            "CN_SM_Tripo_DesertTemplePagoda_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertTemplePagoda_v001_source.png",
+              "sha256": "45311dde2afae2b1b4f52a093aca6ce15717cedf0bbd5790e0f31643e74460f3"
+            },
+            "CN_SM_Tripo_DesertTemplePagoda_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertTemplePagoda_v001_front.png",
+              "sha256": "23ca0675e43397de32aaac8d2fcb80b32864bb8b045cd72e6165360de20e5644"
+            },
+            "CN_SM_Tripo_DesertTemplePagoda_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertTemplePagoda_v001_left.png",
+              "sha256": "66f364481171d80258061f53c493b26bf111b6a2e244e15c4a2114a49b46b003"
+            },
+            "CN_SM_Tripo_DesertTemplePagoda_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertTemplePagoda_v001_back.png",
+              "sha256": "a28ee5b624e6e5cf214d9ac04126531d3e65c7a36fd96c8a9f40fc71ac555b1b"
+            },
+            "CN_SM_Tripo_DesertTemplePagoda_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertTemplePagoda_v001_right.png",
+              "sha256": "2547d8a0f3b3f810099eefb6e4889eb273cba4a036b51d40e0c74cb975020d59"
+            },
+            "CN_SM_Tripo_DesertTemplePagoda_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertTemplePagoda_v001_sheet.png",
+              "sha256": "6370b7a26f4d2439e4dac8403962ffa7dca72947449ca4b727b317fb3375a71b"
+            },
+            "CN_SM_Tripo_DesertTemplePagoda_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertTemplePagoda_v001_prompt.txt",
+              "sha256": "36a8d04ff4a1bf0603dcd79a93b1bd73fd80cc5f8c19a081838b66c62bdfd07f"
+            },
+            "CN_SM_Tripo_DesertTemplePagoda_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertTemplePagoda_v001_registration.json",
+              "sha256": "47470c32e3564cc1e6ad149dbc51af270895e23696f7cb57917bf29100b0e234"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              1774,
+              887
+            ],
+            "references": [],
+            "codex_session": "01a15947-9f1c-7a10-956b-0826053b7a0a",
+            "attempt": 1,
+            "seconds": 66.5
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (9m wide x 24m tall x 9m deep): A square Tang-dynasty brick temple pagoda 24m tall, like a simplified Giant Wild Goose Pagoda of the Silk Road: a broad square stone plinth 9m wide and 1.5m tall, then seven storeys of solid ochre-red and sand-yellow brick, each storey slightly smaller than the one below so the tower tapers evenly to about 5m wide at the top, each storey separated by a chunky corbelled brick eave that juts out in two or three thick steps. Every storey has one dark round-arched window niche in the middle of each face; the ground storey has a taller arched doorway on the FRONT. On top a squat pyramidal cap and a chunky bronze finial of stacked rings and a jewel. Faded Dunhuang paint: a vermilion band under each eave, malachite-green and lapis-blue patches around the doorway. The lowest storey is partly banked by a smooth sand drift on the BACK and one side. PROPORTIONS: all four views are drawn about 2.7 times as tall as wide, a tapering stepped tower, nearly identical on all sides except the doorway on the front. Broad faceted hand-painted planes, chunky readable forms, no bells, thin spikes, chains, plants or micro cracks. One solid connected piece on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "45311dde2afae2b1b4f52a093aca6ce15717cedf0bbd5790e0f31643e74460f3",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.9415918787700456,
+              "offset": [
+                46,
+                55
+              ],
+              "size": [
+                419,
+                914
+              ],
+              "physical_height_m": 24.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.9415918787700456,
+              "offset": [
+                58,
+                55
+              ],
+              "size": [
+                395,
+                914
+              ],
+              "physical_height_m": 24.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.9415918787700456,
+              "offset": [
+                54,
+                55
+              ],
+              "size": [
+                403,
+                914
+              ],
+              "physical_height_m": 24.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.9415918787700456,
+              "offset": [
+                55,
+                55
+              ],
+              "size": [
+                402,
+                914
+              ],
+              "physical_height_m": 24.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "七层密檐砖塔，收分均匀，只有正面开门，四视图一致",
+            "time": "2026-10-20 20:30:23"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:16:17",
+          "files": {
+            "HP_SM_Tripo_DesertTemplePagoda_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertTemplePagoda_v001_source.glb",
+              "sha256": "3b7f9d1ded3f685d0f18b3514937aa2d0281a460fa2b1a29c3fa072451ee5b5f"
+            },
+            "HP_SM_Tripo_DesertTemplePagoda_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertTemplePagoda_v001.glb",
+              "sha256": "9818add66f853378d0ae17db400b3d5c735dcbc2976c0ab3603a187383f0acc9"
+            },
+            "HP_SM_Tripo_DesertTemplePagoda_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertTemplePagoda_v001_graph.json",
+              "sha256": "4a3bae980ae6c0cb39125977e201ea360c0311671dd80fd53bce9730341d5f20"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/c2ca2df0-c361-4074-9345-3a8640b70331",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 5981,
+          "source_sha256": "3b7f9d1ded3f685d0f18b3514937aa2d0281a460fa2b1a29c3fa072451ee5b5f"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:17:02",
+          "files": {
+            "SM_Tripo_DesertTemplePagoda_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertTemplePagoda_v001.blend",
+              "sha256": "1117fa5f1413ba6cffb17c13a83d3c8e28d96e2da3a9d51e764340e99ab06f45"
+            },
+            "SM_Tripo_DesertTemplePagoda_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertTemplePagoda_v001.glb",
+              "sha256": "e9635ab2ed3efd547aaaa4e95089590601601cd085c8ac6874b9d0f482ad0e17"
+            },
+            "SM_Tripo_DesertTemplePagoda_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertTemplePagoda_v001_metrics.json",
+              "sha256": "2d8c24ee2aa2e927599ddc240454294b7888f67c57ddf62b6ac331d49e8d933b"
+            },
+            "T_Tripo_DesertTemplePagoda_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertTemplePagoda_BC.png",
+              "sha256": "e68001e5ac2cf4058ff729ab720510b81bc30e63298b44d71ad928a77a1fb1ba"
+            },
+            "T_Tripo_DesertTemplePagoda_LOD2_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertTemplePagoda_LOD2_BC.png",
+              "sha256": "84a6c501f0a0573df68ab53447a6d24cf7d3fb5e37fb0186f19e92cbaf118944"
+            },
+            "T_Tripo_DesertTemplePagoda_LOD2_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertTemplePagoda_LOD2_N.png",
+              "sha256": "67486d6fbac062a136fdce08a136548ca397d54e223fa5a61c5671152eaa2f8b"
+            },
+            "T_Tripo_DesertTemplePagoda_LOD2_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertTemplePagoda_LOD2_ORM.png",
+              "sha256": "ad44682797b96a795536a48d380fca892e7b07432dfb71c8d1b35c8fd3f3feb4"
+            },
+            "T_Tripo_DesertTemplePagoda_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertTemplePagoda_N.png",
+              "sha256": "62fa70646908a95d09a18d0efb3da0489f0e6a46926205d074bb971ad3f3aa82"
+            },
+            "T_Tripo_DesertTemplePagoda_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertTemplePagoda_ORM.png",
+              "sha256": "b7cb7241ae53557592d6361d00f605fa0d36328a09edf75da4843f01a86017c9"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.83,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 5981,
+              "verts": 4067
+            },
+            {
+              "tris": 2487,
+              "verts": 2112
+            },
+            {
+              "tris": 795,
+              "verts": 1063
+            }
+          ],
+          "export_kb": 1211.1,
+          "seconds": 43.5,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:17:06",
+          "files": {
+            "SM_Tripo_DesertTemplePagoda_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertTemplePagoda_v001_validation_v001.json",
+              "sha256": "fe2538758c499327b59dca2a8a6c4f0b9a4e28aac2b1e7ddfc2391d252ec419c"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:17:12",
+          "files": {
+            "SM_Tripo_DesertTemplePagoda_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertTemplePagoda_v001_review_v001.png",
+              "sha256": "c6b46374a7aaa279aee5d81e8556949ae955c4a34f35906ffc740c4294d76c23"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "成品审核通过（Tripo P2.0 + 纹理）：四视图与概念一致，LOD1/2 无斜条纹",
+            "time": "2026-10-20 21:23:29"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:23:29",
+          "files": {
+            "SM_Tripo_DesertTemplePagoda.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertTemplePagoda.glb",
+              "sha256": "e9635ab2ed3efd547aaaa4e95089590601601cd085c8ac6874b9d0f482ad0e17"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertTemplePagoda.glb"
+        }
+      ]
+    }
+  }
+}

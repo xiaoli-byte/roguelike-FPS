@@ -1,0 +1,348 @@
+{
+  "id": "SM_Tripo_DesertYardangSphinx",
+  "display": "狮身雅丹（1-2 地标岩丘）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:30:07",
+          "files": {
+            "BO_SM_Tripo_DesertYardangSphinx_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertYardangSphinx_v001.json",
+              "sha256": "34b5926a88b80e20ca65dd600bd26b99d2d0af34bc033eda150af05c4c658e63"
+            },
+            "BO_SM_Tripo_DesertYardangSphinx_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertYardangSphinx_v001_views.json",
+              "sha256": "fe10f4be097d274e72bc0252ec2eb888e5b0906859d304381ffe0f2c4da514a8"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.yardangSphinx"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -5.0,
+              0.0,
+              -13.0
+            ],
+            "max": [
+              5.0,
+              13.0,
+              13.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:31:26",
+          "files": {
+            "CN_SM_Tripo_DesertYardangSphinx_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangSphinx_v001_source.png",
+              "sha256": "7912b8649716a8708c14342822ff326525971c8dc48a1a8ce14813c893ce7159"
+            },
+            "CN_SM_Tripo_DesertYardangSphinx_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangSphinx_v001_front.png",
+              "sha256": "31ef67894bc444b31aadd822efa0076c16fab3d32cfb1619c3f3ecc6ed68d355"
+            },
+            "CN_SM_Tripo_DesertYardangSphinx_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangSphinx_v001_left.png",
+              "sha256": "cdafa1f4d93bbf6bf088b0f2ffcd861dc847fe71be046a429f570fd486268c02"
+            },
+            "CN_SM_Tripo_DesertYardangSphinx_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangSphinx_v001_back.png",
+              "sha256": "1c0c4f65fd7513a5d4bc0dfd0eff3c7575be61d75c1818495993fbe0316f934b"
+            },
+            "CN_SM_Tripo_DesertYardangSphinx_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangSphinx_v001_right.png",
+              "sha256": "3b9ab4c3eea8c924a1004cb9a7ab4f0eab1b49b09fc24492b598d92ebcd91492"
+            },
+            "CN_SM_Tripo_DesertYardangSphinx_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangSphinx_v001_sheet.png",
+              "sha256": "b723cb273c58cf6ec5e406f651cc844e3ee6ed1513418519c323d1b921e3316b"
+            },
+            "CN_SM_Tripo_DesertYardangSphinx_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangSphinx_v001_prompt.txt",
+              "sha256": "83793fd7810c56a7c429dc753d03fdfb6445a3d27cda37deb5313069983257bf"
+            },
+            "CN_SM_Tripo_DesertYardangSphinx_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangSphinx_v001_registration.json",
+              "sha256": "7712334ffcd5645a4de7bced502a9e4058feb30be58c4a5867a658284a21d578"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a1594a-5995-71d1-aa8f-bd27200f9e5a",
+            "attempt": 1,
+            "seconds": 76.5
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (10m wide x 13m tall x 26m deep): A famous natural landmark yardang shaped like a crouching sphinx-lion, 26m long, 10m wide and 13m tall, long axis front-to-back along the wind, made of wind-eroded ochre-red and sand-yellow sedimentary rock with bold, perfectly horizontal strata bands that wrap around the whole body at the same heights. At the FRONT a raised blunt head-like rock mass reaches the full 13m, its upwind face weathered into the suggestion of a broad lion face: a heavy brow ledge, two deep hollow eye shadows and a broad blunt muzzle, all purely natural erosion shapes, no carving. Behind the head the long flat back descends in one gentle step to a long level body about 8m tall, ending at the BACK in a lower rounded haunch about 6m tall. Along the sides near the front, two broad low rock spurs stick forward from the base like the outstretched front paws of a crouching lion. Steep fluted sides with a few broad vertical wind grooves, and a shallow undercut notch along the base. PROPORTIONS: the LEFT and RIGHT views show the long 26m crouching-lion profile drawn twice as long as tall, mirror images of each other; the FRONT view shows the head face-on, 10m wide and 13m tall; the BACK view shows the lower rounded haunch with the head rising behind it. Broad faceted hand-painted planes, a chunky silhouette readable from far away, no vegetation, cracks or man-made parts. One solid rock mass on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "7912b8649716a8708c14342822ff326525971c8dc48a1a8ce14813c893ce7159",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.5056890012642224,
+              "offset": [
+                178,
+                397
+              ],
+              "size": [
+                156,
+                229
+              ],
+              "physical_height_m": 13.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5056890012642224,
+              "offset": [
+                89,
+                397
+              ],
+              "size": [
+                334,
+                229
+              ],
+              "physical_height_m": 13.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5136436597110754,
+              "offset": [
+                175,
+                397
+              ],
+              "size": [
+                161,
+                229
+              ],
+              "physical_height_m": 13.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5068102629078238,
+              "offset": [
+                95,
+                397
+              ],
+              "size": [
+                321,
+                229
+              ],
+              "physical_height_m": 13.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "狮身轮廓一眼可读、层理水平、侧视图互为镜像；脸部比要求的自然风蚀更像雕刻，作为地标保留",
+            "time": "2026-10-20 20:37:34"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:20:49",
+          "files": {
+            "HP_SM_Tripo_DesertYardangSphinx_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertYardangSphinx_v001_source.glb",
+              "sha256": "569e9f453c27946cd83cd48df8adbe5bc23c4cce790a72d80c81686416a2c09c"
+            },
+            "HP_SM_Tripo_DesertYardangSphinx_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertYardangSphinx_v001.glb",
+              "sha256": "eacebfb8ffd53c055ce0f19133be57b2d2ac59c3330991a115eb8f46a07028fc"
+            },
+            "HP_SM_Tripo_DesertYardangSphinx_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertYardangSphinx_v001_graph.json",
+              "sha256": "aa30b7b44118e4db41bc4ebcbaf3455a2c773dc1124c217ce30b9b8477fbaaa8"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/fa33dc80-d712-4a53-86a2-462ae6e851dd",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 8378,
+          "source_sha256": "569e9f453c27946cd83cd48df8adbe5bc23c4cce790a72d80c81686416a2c09c"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:21:31",
+          "files": {
+            "SM_Tripo_DesertYardangSphinx_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertYardangSphinx_v001.blend",
+              "sha256": "ace9d9ac95dd7cb0ab655d95522031f24a772ed3cb6bd0faf499fc38fc8298f5"
+            },
+            "SM_Tripo_DesertYardangSphinx_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertYardangSphinx_v001.glb",
+              "sha256": "2d4029f36a319a1445f3ffbe3cbe0db6d36d108b86feeb51cb3cfb64aec0941d"
+            },
+            "SM_Tripo_DesertYardangSphinx_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertYardangSphinx_v001_metrics.json",
+              "sha256": "c97630b4a67994f7ed0ef67a2db8e857a20324d4a8acb4582196893e79b60251"
+            },
+            "T_Tripo_DesertYardangSphinx_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertYardangSphinx_BC.png",
+              "sha256": "27015b39f3dc5310bceb74962095b59c6a08c2fcea4a3a377694cf778bf4ea64"
+            },
+            "T_Tripo_DesertYardangSphinx_LOD1_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertYardangSphinx_LOD1_BC.png",
+              "sha256": "f904c9fa5be6f73f798777907d7f9bef31c99ef6c83dca000efdddce6d6b5f99"
+            },
+            "T_Tripo_DesertYardangSphinx_LOD1_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertYardangSphinx_LOD1_N.png",
+              "sha256": "367ab4fda1f91a9571ac9415427634eb63c3e8e2d9fd435c34eac2e1b6733c33"
+            },
+            "T_Tripo_DesertYardangSphinx_LOD1_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertYardangSphinx_LOD1_ORM.png",
+              "sha256": "6c9fd081a65c56b3bca0b3a2bd86386fb323ac8345141da28f8e23a4df84a302"
+            },
+            "T_Tripo_DesertYardangSphinx_LOD2_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertYardangSphinx_LOD2_BC.png",
+              "sha256": "94cf8d1d8acf4691522d5031097d8a88eb64462445c9cca1004be1d1299865c9"
+            },
+            "T_Tripo_DesertYardangSphinx_LOD2_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertYardangSphinx_LOD2_N.png",
+              "sha256": "d6828615634fd214e90fa21b86e9c1ad72681d940652b1ceaf00308684679768"
+            },
+            "T_Tripo_DesertYardangSphinx_LOD2_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertYardangSphinx_LOD2_ORM.png",
+              "sha256": "e20243cc21095babc11cdbad17755cd48d46e7b14d9f8ad9990cda699432bd47"
+            },
+            "T_Tripo_DesertYardangSphinx_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertYardangSphinx_N.png",
+              "sha256": "dea5a927af6580f43e7703b6307fb34792d81e6b2a95325fddc525ad25afe04f"
+            },
+            "T_Tripo_DesertYardangSphinx_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertYardangSphinx_ORM.png",
+              "sha256": "062f9c52954eee179285ddc22839cc66db360fa97e4bc53581cc963f7951c6ae"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.895,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7960,
+              "verts": 4004
+            },
+            {
+              "tris": 2487,
+              "verts": 1259
+            },
+            {
+              "tris": 795,
+              "verts": 410
+            }
+          ],
+          "export_kb": 525.7,
+          "seconds": 40.4,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:48:20",
+          "files": {
+            "SM_Tripo_DesertYardangSphinx_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertYardangSphinx_v001_validation_v001.json",
+              "sha256": "bf65a264ef31169caa57950c4f6e60b4ac09f30163bbf3bb7bf5605557eb3606"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:48:28",
+          "files": {
+            "SM_Tripo_DesertYardangSphinx_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertYardangSphinx_v001_review_v001.png",
+              "sha256": "e42fb5b8df9229119648cce91ec38bea8b41198afe27a04d179282c5c193f16f"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "成品通过：狮脸 + 前爪 + 平背 + 后臀，层理水平；网格量得头部在正面（高度后→前 6.8→13 m）；长度 17.5 m（参考 26 m）",
+            "time": "2026-10-20 21:53:44"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:53:45",
+          "files": {
+            "SM_Tripo_DesertYardangSphinx.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertYardangSphinx.glb",
+              "sha256": "2d4029f36a319a1445f3ffbe3cbe0db6d36d108b86feeb51cb3cfb64aec0941d"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertYardangSphinx.glb"
+        }
+      ]
+    }
+  }
+}

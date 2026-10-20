@@ -1,0 +1,175 @@
+{
+  "source": {
+    "tris": 7127,
+    "verts": 4152
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 11.00537,
+    "iou": 0.881,
+    "iou_per_view": {
+      "front": 0.931,
+      "left": 0.833,
+      "back": 0.934,
+      "right": 0.8
+    },
+    "size_m": [
+      9.452,
+      8.883,
+      11.0
+    ],
+    "reference_m": [
+      16.0,
+      16.0,
+      11.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.77,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_DesertStupaBuried_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "provider",
+      "collapse": {
+        "samples": 23785,
+        "matched_ratio": 0.991,
+        "mean_delta": 0.0038,
+        "p90_delta": 0.0094,
+        "smeared_ratio": 0.0,
+        "stretched_ratio": 0.0022,
+        "dist_p99_m": 0.0158
+      }
+    },
+    "LOD2": {
+      "method": "rebaked",
+      "texture": 512,
+      "cage_m": 0.165,
+      "uv": {
+        "smart_islands": 224,
+        "charts": 67,
+        "fallback_charts": 6,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "merged",
+        "density_smart": 0.0388,
+        "density_merged": 0.0401,
+        "coverage": 0.838
+      },
+      "collapse": {
+        "samples": 23194,
+        "matched_ratio": 0.966,
+        "mean_delta": 0.0126,
+        "p90_delta": 0.0359,
+        "smeared_ratio": 0.0031,
+        "stretched_ratio": 0.0221,
+        "dist_p99_m": 0.0672
+      },
+      "final": {
+        "samples": 23194,
+        "matched_ratio": 0.966,
+        "mean_delta": 0.011,
+        "p90_delta": 0.0301,
+        "smeared_ratio": 0.0028,
+        "stretched_ratio": 0.0033,
+        "dist_p99_m": 0.0672
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertStupaBuried_LOD0",
+      "tris": 7127,
+      "verts": 4152,
+      "uv_min": [
+        0.0009765625,
+        0.000732421875
+      ],
+      "uv_max": [
+        0.999267578125,
+        0.9990234375
+      ],
+      "uv_utilization": 0.782,
+      "bbox_min": [
+        -4.7262,
+        -4.4414,
+        0.0
+      ],
+      "bbox_max": [
+        4.7262,
+        4.4414,
+        11.0
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertStupaBuried_LOD1",
+      "tris": 2487,
+      "verts": 1666,
+      "uv_min": [
+        0.00106447609141469,
+        0.000731979904230684
+      ],
+      "uv_max": [
+        0.9959566593170166,
+        0.9990234375
+      ],
+      "uv_utilization": 0.764,
+      "bbox_min": [
+        -4.7262,
+        -4.4286,
+        -0.0055
+      ],
+      "bbox_max": [
+        4.7262,
+        4.4414,
+        10.9949
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertStupaBuried_LOD2",
+      "tris": 796,
+      "verts": 650,
+      "uv_min": [
+        0.0026978508103638887,
+        0.002522303955629468
+      ],
+      "uv_max": [
+        0.9975735545158386,
+        0.9975734353065491
+      ],
+      "uv_utilization": 0.746,
+      "bbox_min": [
+        -4.7095,
+        -4.5009,
+        -0.0071
+      ],
+      "bbox_max": [
+        4.709,
+        4.4339,
+        11.0092
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertStupaBuried/04_export/SM_Tripo_DesertStupaBuried_v001.glb",
+    "bytes": 760648
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 56.1,
+  "_seconds": 57.5
+}

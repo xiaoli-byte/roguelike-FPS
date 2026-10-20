@@ -1,0 +1,175 @@
+{
+  "source": {
+    "tris": 7887,
+    "verts": 4082
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 14.01673,
+    "iou": 0.915,
+    "iou_per_view": {
+      "front": 0.91,
+      "left": 0.897,
+      "back": 0.912,
+      "right": 0.942
+    },
+    "size_m": [
+      6.208,
+      14.01,
+      9.0
+    ],
+    "reference_m": [
+      8.0,
+      18.0,
+      9.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.613,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_DesertYardangMedium_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "provider",
+      "collapse": {
+        "samples": 23910,
+        "matched_ratio": 0.996,
+        "mean_delta": 0.0058,
+        "p90_delta": 0.0126,
+        "smeared_ratio": 0.0018,
+        "stretched_ratio": 0.0168,
+        "dist_p99_m": 0.0239
+      }
+    },
+    "LOD2": {
+      "method": "rebaked",
+      "texture": 512,
+      "cage_m": 0.3232,
+      "uv": {
+        "smart_islands": 182,
+        "charts": 48,
+        "fallback_charts": 13,
+        "flipped_faces": 1,
+        "flipped_ratio": 0.0013,
+        "method": "merged",
+        "density_smart": 0.0334,
+        "density_merged": 0.0346,
+        "coverage": 0.77
+      },
+      "collapse": {
+        "samples": 23237,
+        "matched_ratio": 0.968,
+        "mean_delta": 0.0285,
+        "p90_delta": 0.0781,
+        "smeared_ratio": 0.0423,
+        "stretched_ratio": 0.0559,
+        "dist_p99_m": 0.1616
+      },
+      "final": {
+        "samples": 23237,
+        "matched_ratio": 0.968,
+        "mean_delta": 0.0174,
+        "p90_delta": 0.0293,
+        "smeared_ratio": 0.0287,
+        "stretched_ratio": 0.0028,
+        "dist_p99_m": 0.1616
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertYardangMedium_LOD0",
+      "tris": 7887,
+      "verts": 4082,
+      "uv_min": [
+        0.000732421875,
+        0.000732421875
+      ],
+      "uv_max": [
+        0.997802734375,
+        0.999267578125
+      ],
+      "uv_utilization": 0.703,
+      "bbox_min": [
+        -3.1038,
+        -7.0049,
+        0.0
+      ],
+      "bbox_max": [
+        3.1038,
+        7.0049,
+        9.0
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertYardangMedium_LOD1",
+      "tris": 2486,
+      "verts": 1338,
+      "uv_min": [
+        0.000732421875,
+        0.000732421875
+      ],
+      "uv_max": [
+        0.9978223443031311,
+        0.9992679357528687
+      ],
+      "uv_utilization": 0.676,
+      "bbox_min": [
+        -3.1056,
+        -7.0002,
+        -0.0016
+      ],
+      "bbox_max": [
+        3.1195,
+        7.0014,
+        9.0056
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertYardangMedium_LOD2",
+      "tris": 796,
+      "verts": 440,
+      "uv_min": [
+        0.0021680190693587065,
+        0.0021452244836837053
+      ],
+      "uv_max": [
+        0.9870256185531616,
+        0.9978721737861633
+      ],
+      "uv_utilization": 0.687,
+      "bbox_min": [
+        -3.1168,
+        -6.9493,
+        -0.0291
+      ],
+      "bbox_max": [
+        3.1014,
+        7.0576,
+        8.917
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertYardangMedium/04_export/SM_Tripo_DesertYardangMedium_v001.glb",
+    "bytes": 656608
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 44.0,
+  "_seconds": 45.5
+}

@@ -1,0 +1,152 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_DesertBuriedRoofHouse",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "desert.silkroad.buriedRoofHouse"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    24,
+    60
+  ],
+  "budget": {
+    "lodTris": [
+      8000,
+      2500,
+      800
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -2.3777754306793213,
+      0,
+      -1.5786012411117554
+    ],
+    "max": [
+      2.3777754306793213,
+      4.5,
+      1.5786012411117554
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_DesertBuriedRoofHouse_LOD0",
+      "lod": 0,
+      "tris": 5747,
+      "verts": 7174,
+      "materials": [
+        "M_Tripo_DesertBuriedRoofHouse"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_DesertBuriedRoofHouse_LOD1",
+      "lod": 1,
+      "tris": 2486,
+      "verts": 3690,
+      "materials": [
+        "M_Tripo_DesertBuriedRoofHouse"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_DesertBuriedRoofHouse_LOD2",
+      "lod": 2,
+      "tris": 795,
+      "verts": 767,
+      "materials": [
+        "M_Tripo_DesertBuriedRoofHouse_LOD2"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_DesertBuriedRoofHouse",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_DesertBuriedRoofHouse_BC.png",
+        "N": "Textures/T_Tripo_DesertBuriedRoofHouse_N.png",
+        "ORM": "Textures/T_Tripo_DesertBuriedRoofHouse_ORM.png"
+      }
+    },
+    {
+      "name": "M_Tripo_DesertBuriedRoofHouse_LOD2",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_DesertBuriedRoofHouse_LOD2_BC.png",
+        "N": "Textures/T_Tripo_DesertBuriedRoofHouse_LOD2_N.png",
+        "ORM": "Textures/T_Tripo_DesertBuriedRoofHouse_LOD2_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_DesertBuriedRoofHouse.glb",
+    "sha256": "593de50a2d53063afcc3bc147b03279b8a4982bb43b41b8ccd17c579e234269b",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-20 21:54:21"
+}

@@ -1,0 +1,649 @@
+{
+  "id": "SM_Tripo_DesertCamelthorn",
+  "display": "骆驼刺（散布件）",
+  "kind": "static",
+  "class": "tripo_scatter",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:38:27",
+          "files": {
+            "BO_SM_Tripo_DesertCamelthorn_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertCamelthorn_v001.json",
+              "sha256": "4475df8dfed86cbb7797251ec21cc1ed3c28decb909b104efcb268039cba0ca2"
+            },
+            "BO_SM_Tripo_DesertCamelthorn_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertCamelthorn_v001_views.json",
+              "sha256": "cc79930ff51ad0ad86c79876374870af3d9477274cda15c77696927fdea439c5"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.camelthorn"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.65,
+              0.0,
+              -0.6
+            ],
+            "max": [
+              0.65,
+              0.7,
+              0.6
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:39:17",
+          "files": {
+            "CN_SM_Tripo_DesertCamelthorn_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCamelthorn_v001_source.png",
+              "sha256": "f4c05175a03d51b0f98c7ea7734ef68b6553d77c55b997dd0115fcd23c611b18"
+            },
+            "CN_SM_Tripo_DesertCamelthorn_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCamelthorn_v001_front.png",
+              "sha256": "4458cc6a85a2cb411c7fceadbb45d9b833b069a935584457ce2666fbe1af49d3"
+            },
+            "CN_SM_Tripo_DesertCamelthorn_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCamelthorn_v001_left.png",
+              "sha256": "6714fb141051300fee790496f4401ff660fc2ef4bf27adc8240ba658fa7abf55"
+            },
+            "CN_SM_Tripo_DesertCamelthorn_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCamelthorn_v001_back.png",
+              "sha256": "060c05511421344c152069782ab8f6b0a946526f8041350324282c386ca4ab22"
+            },
+            "CN_SM_Tripo_DesertCamelthorn_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCamelthorn_v001_right.png",
+              "sha256": "4d0ea8bc7ea8276510a031c463c8773597da9b145c01f4330d65f6e1eb96180e"
+            },
+            "CN_SM_Tripo_DesertCamelthorn_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCamelthorn_v001_sheet.png",
+              "sha256": "72805b99f4c20b30a23ce6d27d2b20e7dbe184609334020ca7cf30c45ecb1281"
+            },
+            "CN_SM_Tripo_DesertCamelthorn_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertCamelthorn_v001_prompt.txt",
+              "sha256": "3d46309b2b34660b1ba412ee30f3cd0c1dc1c94f6f6f40836c13d804c9658f87"
+            },
+            "CN_SM_Tripo_DesertCamelthorn_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertCamelthorn_v001_registration.json",
+              "sha256": "37a6a7f269249a4fcd02601c9455c461471af731cf91c06ba9a40aafec9d2654"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a15951-fd85-7da0-88e7-8dd492cc1b0f",
+            "attempt": 1,
+            "seconds": 46.8
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (1.3m wide x 0.7m tall x 1.2m deep): A low desert camelthorn shrub (Alhagi) clump 1.3m wide and 0.7m tall growing out of a small sand mound: a rounded low dome of five or six chunky stylized foliage clusters, each cluster a faceted lump of small spiky leaves painted as one solid mass, dusty sage-green and olive with a few dark grey-brown thorny branch stubs showing between the clusters at the base, and a sprinkling of tiny magenta-pink flower dots painted on the clusters. The clump sits on a low sand-yellow mound that flares out slightly at the base. PROPORTIONS: a low wide dome, all four views drawn almost twice as wide as tall and nearly the same. Gunfire Reborn style stylized vegetation: solid chunky leaf masses with soft painted gradients, no individual thin twigs, needles or alpha cards. One solid connected piece on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "f4c05175a03d51b0f98c7ea7734ef68b6553d77c55b997dd0115fcd23c611b18",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.7073386383731209,
+              "offset": [
+                66,
+                389
+              ],
+              "size": [
+                380,
+                246
+              ],
+              "physical_height_m": 0.7,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7155635062611805,
+              "offset": [
+                120,
+                389
+              ],
+              "size": [
+                271,
+                246
+              ],
+              "physical_height_m": 0.7,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7053118800969802,
+              "offset": [
+                70,
+                389
+              ],
+              "size": [
+                371,
+                246
+              ],
+              "physical_height_m": 0.7,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7155635062611805,
+              "offset": [
+                117,
+                389
+              ],
+              "size": [
+                278,
+                246
+              ],
+              "physical_height_m": 0.7,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "大块叶团 + 粉花点 + 沙包底座，手绘风统一",
+            "time": "2026-10-20 20:49:14"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-20 21:55:33",
+          "files": {
+            "CN_SM_Tripo_DesertCamelthorn_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCamelthorn_v002_source.png",
+              "sha256": "34e44a117babb2b8bffc563797cfbec1a9c8bb666be3563439b59a328243dd8a"
+            },
+            "CN_SM_Tripo_DesertCamelthorn_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCamelthorn_v002_front.png",
+              "sha256": "165a3861347ae6a6deaa4602ee60a61667de577169e7789f2288fb59e962e080"
+            },
+            "CN_SM_Tripo_DesertCamelthorn_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCamelthorn_v002_left.png",
+              "sha256": "89afef249a6b7a082faab2a2f24411c852ae280f8c943e180b6e528225884186"
+            },
+            "CN_SM_Tripo_DesertCamelthorn_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCamelthorn_v002_back.png",
+              "sha256": "137b536fd4b70641f8ad10e135304cec293a5bd5522e5d28c89f7cbe97540534"
+            },
+            "CN_SM_Tripo_DesertCamelthorn_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCamelthorn_v002_right.png",
+              "sha256": "59ec1f7bee0a9ccb4c76724d0281c5a279dd88affe1609b525c830b626448424"
+            },
+            "CN_SM_Tripo_DesertCamelthorn_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertCamelthorn_v002_sheet.png",
+              "sha256": "4d6855538893767cc229e7359efa360c63c088a80285d5a88fa3193dfc1fcedb"
+            },
+            "CN_SM_Tripo_DesertCamelthorn_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertCamelthorn_v002_prompt.txt",
+              "sha256": "3d46309b2b34660b1ba412ee30f3cd0c1dc1c94f6f6f40836c13d804c9658f87"
+            },
+            "CN_SM_Tripo_DesertCamelthorn_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertCamelthorn_v002_registration.json",
+              "sha256": "cb41e0e388ef4a40962662a0150dd03088c67c78b887a807482db96e9d8d14a5"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a15951-fd85-7da0-88e7-8dd492cc1b0f",
+            "attempt": 1,
+            "seconds": 46.8,
+            "rekeyed_from": 1,
+            "fix": "all four views = front figure (back mirrored)"
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (1.3m wide x 0.7m tall x 1.2m deep): A low desert camelthorn shrub (Alhagi) clump 1.3m wide and 0.7m tall growing out of a small sand mound: a rounded low dome of five or six chunky stylized foliage clusters, each cluster a faceted lump of small spiky leaves painted as one solid mass, dusty sage-green and olive with a few dark grey-brown thorny branch stubs showing between the clusters at the base, and a sprinkling of tiny magenta-pink flower dots painted on the clusters. The clump sits on a low sand-yellow mound that flares out slightly at the base. PROPORTIONS: a low wide dome, all four views drawn almost twice as wide as tall and nearly the same. Gunfire Reborn style stylized vegetation: solid chunky leaf masses with soft painted gradients, no individual thin twigs, needles or alpha cards. One solid connected piece on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "34e44a117babb2b8bffc563797cfbec1a9c8bb666be3563439b59a328243dd8a",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.7073386383731209,
+              "offset": [
+                75,
+                389
+              ],
+              "size": [
+                362,
+                246
+              ],
+              "physical_height_m": 0.7,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7073386383731209,
+              "offset": [
+                75,
+                389
+              ],
+              "size": [
+                362,
+                246
+              ],
+              "physical_height_m": 0.7,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7073386383731209,
+              "offset": [
+                75,
+                389
+              ],
+              "size": [
+                362,
+                246
+              ],
+              "physical_height_m": 0.7,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7073386383731209,
+              "offset": [
+                75,
+                389
+              ],
+              "size": [
+                362,
+                246
+              ],
+              "physical_height_m": 0.7,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "v002 = v001 正视图复制到四向（背面镜像），让 Tripo 生成各向一致的圆冠",
+            "time": "2026-10-20 21:55:33"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:44:30",
+          "files": {
+            "HP_SM_Tripo_DesertCamelthorn_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertCamelthorn_v001_source.glb",
+              "sha256": "68ccd3019cb1317ff5c8edf56da8e4dd709a90bb26d0b19a82c11cef05acff4d"
+            },
+            "HP_SM_Tripo_DesertCamelthorn_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertCamelthorn_v001.glb",
+              "sha256": "49b867bb8ac78d2a5d3ce353ed9c2326615874a0d875c1df67c8c7db4ca25e2d"
+            },
+            "HP_SM_Tripo_DesertCamelthorn_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertCamelthorn_v001_graph.json",
+              "sha256": "5bc2c3feea6448ea20320afcc0b51d467a330904ea748f59f708a009779452b3"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/82e1a3e1-e58b-4b15-84fc-10c61f53f87c",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 1249,
+          "source_sha256": "68ccd3019cb1317ff5c8edf56da8e4dd709a90bb26d0b19a82c11cef05acff4d"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-20 22:34:29",
+          "files": {
+            "HP_SM_Tripo_DesertCamelthorn_v002_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertCamelthorn_v002_source.glb",
+              "sha256": "42ecd5c0eb10bb19a97ad44c01940b040078faf01c74d94007d0cbb5a90fda19"
+            },
+            "HP_SM_Tripo_DesertCamelthorn_v002.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertCamelthorn_v002.glb",
+              "sha256": "7f95f8b77e9b3e0e6284b498220379d89e90ce04d9ec4d3942a3dedd6d651b3f"
+            },
+            "HP_SM_Tripo_DesertCamelthorn_v002_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertCamelthorn_v002_graph.json",
+              "sha256": "5f358d5d9d47d6e3e6a13eb1374b8dc95fd7e9b7c56a9019f7ddf87e595c1da8"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/0a7913d1-1d3f-4601-bac6-9d11ddfae2d1",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 1239,
+          "source_sha256": "42ecd5c0eb10bb19a97ad44c01940b040078faf01c74d94007d0cbb5a90fda19"
+        }
+      ]
+    },
+    "build": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:44:41",
+          "files": {
+            "SM_Tripo_DesertCamelthorn_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertCamelthorn_v001.blend",
+              "sha256": "573c0c555684ae5be6489f0283af5e20e6b989741928d890f8e5daaa47dc417d"
+            },
+            "SM_Tripo_DesertCamelthorn_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertCamelthorn_v001.glb",
+              "sha256": "349289ae68678af6c7f0336f307b333db42dbe773afe4fbda1e568d3350ce2d8"
+            },
+            "SM_Tripo_DesertCamelthorn_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertCamelthorn_v001_metrics.json",
+              "sha256": "dd47d8af7b2a9b5483c812cffd1a4f1a57c7fd41fabf6db0013643d6f422147a"
+            },
+            "T_Tripo_DesertCamelthorn_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertCamelthorn_BC.png",
+              "sha256": "e5103b1cd92ab34dbd6c4a7e38b73d3d080534a4318c6abee37398a7ca817485"
+            },
+            "T_Tripo_DesertCamelthorn_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertCamelthorn_N.png",
+              "sha256": "ef6ea971c094a51954a1e44c30aed28001e598c4d65eb5937cfee52cd0cdfb0b"
+            },
+            "T_Tripo_DesertCamelthorn_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertCamelthorn_ORM.png",
+              "sha256": "f94368f1c72bc74c81c5d7ce360c8941fbf7600440291c1f64b882e0d547ef6d"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.878,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 1194,
+              "verts": 850
+            },
+            {
+              "tris": 397,
+              "verts": 378
+            }
+          ],
+          "export_kb": 89.3,
+          "seconds": 9.1,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-20 22:34:46",
+          "files": {
+            "SM_Tripo_DesertCamelthorn_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertCamelthorn_v002.blend",
+              "sha256": "3f1b65ab9bf69b8933a15a31fad062ab2bf00244e89db01a97ff7e746cc5e770"
+            },
+            "SM_Tripo_DesertCamelthorn_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertCamelthorn_v002.glb",
+              "sha256": "9b5aae1334d0200ed9087c388047d67b375ef97146e5d7cf21461d5c7fff5aba"
+            },
+            "SM_Tripo_DesertCamelthorn_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertCamelthorn_v002_metrics.json",
+              "sha256": "53dd1578cebb896acbb505341c4c64f03298c277dbbad54f63e8a3323ebc51b2"
+            },
+            "T_Tripo_DesertCamelthorn_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertCamelthorn_BC.png",
+              "sha256": "5e963b7c61ec0a201d755f6f8a6f829a14b0c62f9e1f5f1ff08ce248bac4f00b"
+            },
+            "T_Tripo_DesertCamelthorn_LOD1_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertCamelthorn_LOD1_BC.png",
+              "sha256": "78fcce7995f83185c57da6da54a31d91c2270aefb5fde36969e404429c7b7248"
+            },
+            "T_Tripo_DesertCamelthorn_LOD1_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertCamelthorn_LOD1_N.png",
+              "sha256": "c92332618c96146b2bfeef3968f1ed3f37295ea6e0495368ac9d331d8a1b1f79"
+            },
+            "T_Tripo_DesertCamelthorn_LOD1_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertCamelthorn_LOD1_ORM.png",
+              "sha256": "42c598de5592355f806cfad98424e6751cb1835e9d7028be38e28c918fe58295"
+            },
+            "T_Tripo_DesertCamelthorn_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertCamelthorn_N.png",
+              "sha256": "429495bda994d9801599b7d0d24631c28d8c73a145583072ce9dfd8ca2354b9e"
+            },
+            "T_Tripo_DesertCamelthorn_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertCamelthorn_ORM.png",
+              "sha256": "e4484f831d06838124dc4d9094df0470f80021e35966a43a6fbecea4661ad7c5"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.907,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 1194,
+              "verts": 794
+            },
+            {
+              "tris": 397,
+              "verts": 294
+            }
+          ],
+          "export_kb": 140.8,
+          "seconds": 15.1,
+          "bake_device": "none (provider textures)",
+          "quality_status": "failed",
+          "quality_errors": [
+            "LOD1 贴图色差"
+          ]
+        },
+        {
+          "version": 3,
+          "created": "2026-10-20 22:35:19",
+          "files": {
+            "SM_Tripo_DesertCamelthorn_v003.blend": {
+              "path": "03_work/SM_Tripo_DesertCamelthorn_v003.blend",
+              "sha256": "83bb9c49ac7b2cdd65fc7efe86257c9ec734e6c8507f6ef4517b1c17f8396777"
+            },
+            "SM_Tripo_DesertCamelthorn_v003.glb": {
+              "path": "04_export/SM_Tripo_DesertCamelthorn_v003.glb",
+              "sha256": "45cdbd2b5f40ef170512530892fdb2f7230b1fb9323432b3786e4fc188e9d7a9"
+            },
+            "SM_Tripo_DesertCamelthorn_v003_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertCamelthorn_v003_metrics.json",
+              "sha256": "eba007dd07e3071763f2d7861018700c94be7a38f4906572530cc6ef0dbb1b2e"
+            },
+            "T_Tripo_DesertCamelthorn_BC.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertCamelthorn_BC.png",
+              "sha256": "5e963b7c61ec0a201d755f6f8a6f829a14b0c62f9e1f5f1ff08ce248bac4f00b"
+            },
+            "T_Tripo_DesertCamelthorn_LOD1_BC.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertCamelthorn_LOD1_BC.png",
+              "sha256": "2b748175eda70bf5787a9d6083ad18d948a0ee07443e901a31d74bc5ad05556f"
+            },
+            "T_Tripo_DesertCamelthorn_LOD1_N.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertCamelthorn_LOD1_N.png",
+              "sha256": "f9d3139ffe4d06deeb1017ee71dfec9814ad59b0b2a7f26872ae94b8ef83c8b5"
+            },
+            "T_Tripo_DesertCamelthorn_LOD1_ORM.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertCamelthorn_LOD1_ORM.png",
+              "sha256": "f71a44edec1a45ca2c22b9210d0427c23d7e919f87fbafa032026c4d7992710a"
+            },
+            "T_Tripo_DesertCamelthorn_N.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertCamelthorn_N.png",
+              "sha256": "429495bda994d9801599b7d0d24631c28d8c73a145583072ce9dfd8ca2354b9e"
+            },
+            "T_Tripo_DesertCamelthorn_ORM.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertCamelthorn_ORM.png",
+              "sha256": "e4484f831d06838124dc4d9094df0470f80021e35966a43a6fbecea4661ad7c5"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.907,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 1194,
+              "verts": 794
+            },
+            {
+              "tris": 596,
+              "verts": 426
+            }
+          ],
+          "export_kb": 142.7,
+          "seconds": 14.8,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:44:44",
+          "files": {
+            "SM_Tripo_DesertCamelthorn_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertCamelthorn_v001_validation_v001.json",
+              "sha256": "3380c0074f0f4e8fa9754e30c1cfe224840928ad25c1be87c5aa72dc1d287886"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-20 22:34:48",
+          "files": {
+            "SM_Tripo_DesertCamelthorn_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertCamelthorn_v002_validation_v002.json",
+              "sha256": "fe0212ef2f5c7d1276afcf3da292ef2a04fc6d2aaffe2c1476c67be14a88a3b8"
+            }
+          },
+          "from_build": 2,
+          "errors": 1,
+          "warnings": 0,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 3,
+          "created": "2026-10-20 22:35:22",
+          "files": {
+            "SM_Tripo_DesertCamelthorn_v003_validation_v003.json": {
+              "path": "05_review/SM_Tripo_DesertCamelthorn_v003_validation_v003.json",
+              "sha256": "dfd9965413883e7ff97724822aefca5ef3b75ed5527f1bd7ce9fc4347e1c1f09"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:44:51",
+          "files": {
+            "SM_Tripo_DesertCamelthorn_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertCamelthorn_v001_review_v001.png",
+              "sha256": "17b3712fba5a3a48751e85ed196f18ef82379e1321160ab4de9597a69878bcbc"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "rejected",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "叶团被生成成一片薄墙（侧视只剩一条），散布件要各向都圆；改用正视图作四向输入重生成",
+            "time": "2026-10-20 21:52:30"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-20 22:35:28",
+          "files": {
+            "SM_Tripo_DesertCamelthorn_v003_review_v002.png": {
+              "path": "05_review/SM_Tripo_DesertCamelthorn_v003_review_v002.png",
+              "sha256": "b643f14ce783f37a971d097a2cc06bd61ee317e8c7b47721d1c2d9a9c4bfaba2"
+            }
+          },
+          "from_build": 3,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "v003 通过：四向输入重生成后叶团各向都圆（v001 是一片薄墙），LOD1 600 面色差 3.6%",
+            "time": "2026-10-20 22:35:39"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 22:35:39",
+          "files": {
+            "SM_Tripo_DesertCamelthorn.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertCamelthorn.glb",
+              "sha256": "45cdbd2b5f40ef170512530892fdb2f7230b1fb9323432b3786e4fc188e9d7a9"
+            }
+          },
+          "from_build": 3,
+          "url": "assets/props/SM_Tripo_DesertCamelthorn.glb"
+        }
+      ]
+    }
+  }
+}

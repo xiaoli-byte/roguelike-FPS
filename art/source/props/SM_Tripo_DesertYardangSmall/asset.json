@@ -1,0 +1,348 @@
+{
+  "id": "SM_Tripo_DesertYardangSmall",
+  "display": "雅丹岩丘·小（4 m）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:36:25",
+          "files": {
+            "BO_SM_Tripo_DesertYardangSmall_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertYardangSmall_v001.json",
+              "sha256": "70f59c333ac56bc30589c36412491439c675019453da0fc75b0d94a3eef25872"
+            },
+            "BO_SM_Tripo_DesertYardangSmall_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertYardangSmall_v001_views.json",
+              "sha256": "7d96d7a6e12a41f297e5fd9bace2f6c286085c3e2eb5818cd5d31f9c9de3092b"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.yardangSmall"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.5,
+              0.0,
+              -5.0
+            ],
+            "max": [
+              2.5,
+              4.0,
+              5.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:37:22",
+          "files": {
+            "CN_SM_Tripo_DesertYardangSmall_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangSmall_v001_source.png",
+              "sha256": "fe5c5d2364a261505a436d90d990498c4d87274f9de38da1719175f8ed51788b"
+            },
+            "CN_SM_Tripo_DesertYardangSmall_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangSmall_v001_front.png",
+              "sha256": "0cfb7926cb3671d4fe0998ebb6286d436c96666d51ee93c95042cdb908ea9643"
+            },
+            "CN_SM_Tripo_DesertYardangSmall_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangSmall_v001_left.png",
+              "sha256": "6ebcc3ad7eb4bf986e1f085be87cc04514ca8663ed6db96459316849fd1e0e54"
+            },
+            "CN_SM_Tripo_DesertYardangSmall_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangSmall_v001_back.png",
+              "sha256": "23a1013dce5387f46191ad60e84de385fb3ad0a6467e08267618028e733cd449"
+            },
+            "CN_SM_Tripo_DesertYardangSmall_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangSmall_v001_right.png",
+              "sha256": "21b7ea874dc222bfeafacd0252c26e681e213f03ad28a2280b31bc2a3679765f"
+            },
+            "CN_SM_Tripo_DesertYardangSmall_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangSmall_v001_sheet.png",
+              "sha256": "97d2b957dba9b88c13e913228f8c7b913de7e6fdfa294aa5740837e3aca8416d"
+            },
+            "CN_SM_Tripo_DesertYardangSmall_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangSmall_v001_prompt.txt",
+              "sha256": "2c02a84fe2e8da8cfbf4554c0fe32eabcf8327d72de781b09deab9b6f711d46a"
+            },
+            "CN_SM_Tripo_DesertYardangSmall_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertYardangSmall_v001_registration.json",
+              "sha256": "7b18dd75b479a1fc6c1487fbaf0d3ac5053a0ffb2181f52c8fbaf9fa807b44c7"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a15950-21a6-7872-9778-83854112eac9",
+            "attempt": 1,
+            "seconds": 54.2
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (5m wide x 4m tall x 10m deep): A small wind-eroded yardang rock mound 10m long, 5m wide and 4m tall, long axis front-to-back along the wind, shaped like an upturned boat or a whale's back: a blunt, high, rounded upwind head at the FRONT where it is 4m tall, a long almost level flat top that sinks gently toward the BACK, and a lower tapering tail about 2.5m tall at the back end. Steep near-vertical sides with slightly rounded upper edges and three or four broad vertical wind grooves on each side; a shallow undercut notch runs along the foot. Bold, perfectly horizontal sediment strata in alternating ochre-red and pale sand-yellow bands, each band a broad crisp flat stripe wrapping around at the same height on every side. On the BACK end a smooth pale sand ramp leans against the tail up to its top, so a player can walk up onto the flat top from behind. PROPORTIONS: LEFT and RIGHT views show the long profile drawn 2.5 times as long as tall, mirror images; FRONT view shows the blunt 5m-wide head drawn 1.25 times as wide as tall; BACK view shows the low tail with the sand ramp in front of it and the taller head rising behind. Broad faceted hand-painted planes, crisp clean bands, chunky readable forms, no tiny cracks, pebbles, holes, vegetation or man-made parts. One solid rock mass on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "fe5c5d2364a261505a436d90d990498c4d87274f9de38da1719175f8ed51788b",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.4915514592933947,
+              "offset": [
+                172,
+                420
+              ],
+              "size": [
+                167,
+                183
+              ],
+              "physical_height_m": 4.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5009784735812133,
+              "offset": [
+                103,
+                420
+              ],
+              "size": [
+                305,
+                183
+              ],
+              "physical_height_m": 4.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5315614617940199,
+              "offset": [
+                156,
+                420
+              ],
+              "size": [
+                199,
+                183
+              ],
+              "physical_height_m": 4.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5009784735812133,
+              "offset": [
+                120,
+                420
+              ],
+              "size": [
+                272,
+                183
+              ],
+              "physical_height_m": 4.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "船底形：钝圆迎风头 + 平顶 + 尾部沙坡可上顶；层理清楚利落，侧视图互为镜像",
+            "time": "2026-10-20 20:49:38"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:36:26",
+          "files": {
+            "HP_SM_Tripo_DesertYardangSmall_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertYardangSmall_v001_source.glb",
+              "sha256": "c89a2900458eb909e52b5a01e61771459d6d92b64981b2ea19b7136d07e2ce2e"
+            },
+            "HP_SM_Tripo_DesertYardangSmall_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertYardangSmall_v001.glb",
+              "sha256": "b667ce5a03cf0623cc6ac96ada2dffb5b6e071533dd9d28d2eab5c1244d1689e"
+            },
+            "HP_SM_Tripo_DesertYardangSmall_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertYardangSmall_v001_graph.json",
+              "sha256": "f9e5d58ca95159cb105feb69b8c1b645c454218543344bc1d120fe76190d3987"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/de4d640f-4c6b-4a3f-8a75-74ba8841b00b",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 6424,
+          "source_sha256": "c89a2900458eb909e52b5a01e61771459d6d92b64981b2ea19b7136d07e2ce2e"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:37:21",
+          "files": {
+            "SM_Tripo_DesertYardangSmall_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertYardangSmall_v001.blend",
+              "sha256": "8019dc9d68c478f674b925317892db932c3dbb89f8c73561fde784547ed72b6f"
+            },
+            "SM_Tripo_DesertYardangSmall_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertYardangSmall_v001.glb",
+              "sha256": "6c9c098cb8d9a073c9e96c1888b1d8693fc383540fb21930d56a916dd410aa13"
+            },
+            "SM_Tripo_DesertYardangSmall_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertYardangSmall_v001_metrics.json",
+              "sha256": "bd82225b1c2bf85457264587e2ad2f8d8ffe7d316773754394c6181c973cc464"
+            },
+            "T_Tripo_DesertYardangSmall_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertYardangSmall_BC.png",
+              "sha256": "0f5337d8c3c102f8c2e05e38a8164b3802fc465a4ebb347adf443cd515f1723b"
+            },
+            "T_Tripo_DesertYardangSmall_LOD1_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertYardangSmall_LOD1_BC.png",
+              "sha256": "475bdfbf580606d8336ed2f1685b18477e129bff42f3e12224e024ab9810ce3f"
+            },
+            "T_Tripo_DesertYardangSmall_LOD1_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertYardangSmall_LOD1_N.png",
+              "sha256": "0a63f5b3554f17dffc1815b944ef0f91e40fd93e66bf69ef7fb644d4e1e9b59c"
+            },
+            "T_Tripo_DesertYardangSmall_LOD1_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertYardangSmall_LOD1_ORM.png",
+              "sha256": "7d0dce359034962b0107586e70cf9845d0914148687884c2be60b737e96aba0e"
+            },
+            "T_Tripo_DesertYardangSmall_LOD2_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertYardangSmall_LOD2_BC.png",
+              "sha256": "7585cc989aa7f1269166faf13c2cd6bc887f949dcf6183651206f6651c755aa9"
+            },
+            "T_Tripo_DesertYardangSmall_LOD2_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertYardangSmall_LOD2_N.png",
+              "sha256": "d09b64bc094643c583b606a3e404e8916f03549ba5dad027e1255377df7a5882"
+            },
+            "T_Tripo_DesertYardangSmall_LOD2_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertYardangSmall_LOD2_ORM.png",
+              "sha256": "031d79e663db6fbad5bed8c2356e5a33d89027299e4cd423e19cee2ddbae5d21"
+            },
+            "T_Tripo_DesertYardangSmall_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertYardangSmall_N.png",
+              "sha256": "ce6bd09c5fcaa1c1dbbbede4a7b1b92a36dd4b5d2242b7bc3917c3c0577c8b09"
+            },
+            "T_Tripo_DesertYardangSmall_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertYardangSmall_ORM.png",
+              "sha256": "841fb8a607f4e6c4d4669869a602d680da65cfefdaa0e86ea8b5cd78822a7ac0"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.888,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 6424,
+              "verts": 3228
+            },
+            {
+              "tris": 2487,
+              "verts": 1254
+            },
+            {
+              "tris": 796,
+              "verts": 406
+            }
+          ],
+          "export_kb": 426.8,
+          "seconds": 53.2,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:37:26",
+          "files": {
+            "SM_Tripo_DesertYardangSmall_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertYardangSmall_v001_validation_v001.json",
+              "sha256": "43f9db60d4f010c2bb8ec2384fdf10c59ce0eb2e38469eacfe39cc32b908e162"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:37:35",
+          "files": {
+            "SM_Tripo_DesertYardangSmall_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertYardangSmall_v001_review_v001.png",
+              "sha256": "1408e233df538cda4b4012e32668466ffcc19c7f88648c3504f38f58fa2bd840"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "成品通过：层理利落、头高尾低；Tripo 把长度做短了（3.8 × 5.7 × 4 m，参考 5 × 10 × 4），背面沙坡没生成，关卡里沿长度拉伸 / 用地形沙坡补",
+            "time": "2026-10-20 21:52:29"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:52:29",
+          "files": {
+            "SM_Tripo_DesertYardangSmall.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertYardangSmall.glb",
+              "sha256": "6c9c098cb8d9a073c9e96c1888b1d8693fc383540fb21930d56a916dd410aa13"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertYardangSmall.glb"
+        }
+      ]
+    }
+  }
+}

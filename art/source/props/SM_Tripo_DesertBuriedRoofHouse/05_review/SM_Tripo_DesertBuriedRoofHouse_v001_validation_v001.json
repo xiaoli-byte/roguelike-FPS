@@ -1,0 +1,257 @@
+[
+  {
+    "level": "pass",
+    "check": "文件大小",
+    "detail": "976 KB / 上限 1600 KB"
+  },
+  {
+    "level": "pass",
+    "check": "扩展可用",
+    "detail": "必需扩展 ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+  },
+  {
+    "level": "pass",
+    "check": "LOD 数量",
+    "detail": "['SM_Tripo_DesertBuriedRoofHouse_LOD0', 'SM_Tripo_DesertBuriedRoofHouse_LOD1', 'SM_Tripo_DesertBuriedRoofHouse_LOD2']，规格 3 级"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 面数",
+    "detail": "5747 / 预算 8000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 切换距离",
+    "detail": "extras.lod_distance=0"
+  },
+  {
+    "level": "pass",
+    "check": "场景参考占地 X 轴",
+    "detail": "4.756 m / 参考 8.050 m；超出时引擎按碰撞体等比适配"
+  },
+  {
+    "level": "pass",
+    "check": "场景有效尺寸 X 轴",
+    "detail": "4.756 m / 极限 21.000 m"
+  },
+  {
+    "level": "pass",
+    "check": "场景参考占地 Z 轴",
+    "detail": "3.157 m / 参考 5.750 m；超出时引擎按碰撞体等比适配"
+  },
+  {
+    "level": "pass",
+    "check": "场景有效尺寸 Z 轴",
+    "detail": "3.157 m / 极限 15.000 m"
+  },
+  {
+    "level": "pass",
+    "check": "场景高度",
+    "detail": "4.500 m / 参考 4.500 m"
+  },
+  {
+    "level": "pass",
+    "check": "场景脚底落地",
+    "detail": "最低点 y=0.0000"
+  },
+  {
+    "level": "pass",
+    "check": "场景轴心居中",
+    "detail": "中心 x=0.000 z=0.000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 面数",
+    "detail": "2486 / 预算 2500"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 递减",
+    "detail": "5747 → 2486"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 切换距离",
+    "detail": "extras.lod_distance=24"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 面数",
+    "detail": "795 / 预算 800"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 递减",
+    "detail": "2486 → 795"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 切换距离",
+    "detail": "extras.lod_distance=60"
+  },
+  {
+    "level": "pass",
+    "check": "材质数量",
+    "detail": "['M_Tripo_DesertBuriedRoofHouse', 'M_Tripo_DesertBuriedRoofHouse_LOD2']（一个资产一个材质，便于合批；重烘的远景 LOD 另有 M_*_LOD<i>）"
+  },
+  {
+    "level": "pass",
+    "check": "材质命名",
+    "detail": "['M_Tripo_DesertBuriedRoofHouse', 'M_Tripo_DesertBuriedRoofHouse_LOD2']"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 材质",
+    "detail": "['M_Tripo_DesertBuriedRoofHouse']（M_*_LOD<i> 只能给第 i 级 LOD 用）"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 材质",
+    "detail": "['M_Tripo_DesertBuriedRoofHouse']（M_*_LOD<i> 只能给第 i 级 LOD 用）"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 材质",
+    "detail": "['M_Tripo_DesertBuriedRoofHouse_LOD2']（M_*_LOD<i> 只能给第 i 级 LOD 用）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Tripo_DesertBuriedRoofHouse_N",
+    "detail": "2048×2048 webp（规格 2048²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Tripo_DesertBuriedRoofHouse_N",
+    "detail": "T_<类>_<名>[_LOD<i>]_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Tripo_DesertBuriedRoofHouse_ORM",
+    "detail": "2048×2048 webp（规格 2048²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Tripo_DesertBuriedRoofHouse_ORM",
+    "detail": "T_<类>_<名>[_LOD<i>]_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Tripo_DesertBuriedRoofHouse_BC",
+    "detail": "2048×2048 webp（规格 2048²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Tripo_DesertBuriedRoofHouse_BC",
+    "detail": "T_<类>_<名>[_LOD<i>]_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Tripo_DesertBuriedRoofHouse_LOD2_N",
+    "detail": "512×512 webp（远景 LOD 重烘贴图，2 的幂且 ≤ 规格 2048²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Tripo_DesertBuriedRoofHouse_LOD2_N",
+    "detail": "T_<类>_<名>[_LOD<i>]_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Tripo_DesertBuriedRoofHouse_LOD2_ORM",
+    "detail": "512×512 webp（远景 LOD 重烘贴图，2 的幂且 ≤ 规格 2048²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Tripo_DesertBuriedRoofHouse_LOD2_ORM",
+    "detail": "T_<类>_<名>[_LOD<i>]_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Tripo_DesertBuriedRoofHouse_LOD2_BC",
+    "detail": "512×512 webp（远景 LOD 重烘贴图，2 的幂且 ≤ 规格 2048²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Tripo_DesertBuriedRoofHouse_LOD2_BC",
+    "detail": "T_<类>_<名>[_LOD<i>]_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "BaseColor 贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "法线贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "ORM 贴图",
+    "detail": "AO / 粗糙度 / 金属度"
+  },
+  {
+    "level": "pass",
+    "check": "BaseColor 贴图 M_Tripo_DesertBuriedRoofHouse_LOD2",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "法线贴图 M_Tripo_DesertBuriedRoofHouse_LOD2",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "ORM 贴图 M_Tripo_DesertBuriedRoofHouse_LOD2",
+    "detail": "AO / 粗糙度 / 金属度"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 贴图拉伸",
+    "detail": "UV 拉伸面积 0.7% / 上限 2%（减面跨 UV 岛，贴图拉成斜条纹）"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 贴图色差",
+    "detail": "与 LOD0 色差面积 0.2% / 上限 6%，平均色差 0.011"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 贴图拉伸",
+    "detail": "重烘贴图（UV 拉伸量 4.8% 不适用，看色差）"
+  },
+  {
+    "level": "pass",
+    "check": "LOD2 贴图色差",
+    "detail": "与 LOD0 色差面积 1.0% / 上限 6%，平均色差 0.0247"
+  },
+  {
+    "level": "pass",
+    "check": "SM_Tripo_DesertBuriedRoofHouse_LOD0 UV 范围",
+    "detail": "[0.0009765625, 0.0009765625]..[0.99755859375, 0.9990234375]"
+  },
+  {
+    "level": "pass",
+    "check": "SM_Tripo_DesertBuriedRoofHouse_LOD1 UV 范围",
+    "detail": "[0.001220703125, 0.0009765625]..[0.99755859375, 0.9984792470932007]"
+  },
+  {
+    "level": "pass",
+    "check": "SM_Tripo_DesertBuriedRoofHouse_LOD2 UV 范围",
+    "detail": "[0.0025863423943519592, 0.0026633189991116524]..[0.9790845513343811, 0.9974319934844971]"
+  },
+  {
+    "level": "pass",
+    "check": "UV 利用率",
+    "detail": "70%"
+  },
+  {
+    "level": "pass",
+    "check": "高模对齐",
+    "detail": "剪影 IoU 0.882（{'front': 0.934, 'left': 0.806, 'back': 0.954, 'right': 0.808}）"
+  },
+  {
+    "level": "pass",
+    "check": "投影覆盖",
+    "detail": "未覆盖顶点 0%（扩散补色）"
+  }
+]

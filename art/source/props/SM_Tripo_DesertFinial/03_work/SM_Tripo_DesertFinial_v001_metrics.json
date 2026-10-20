@@ -1,0 +1,117 @@
+{
+  "source": {
+    "tris": 3036,
+    "verts": 1621
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 5.50269,
+    "iou": 0.915,
+    "iou_per_view": {
+      "front": 0.949,
+      "left": 0.888,
+      "back": 0.911,
+      "right": 0.896
+    },
+    "size_m": [
+      2.534,
+      2.281,
+      5.5
+    ],
+    "reference_m": [
+      2.6,
+      2.6,
+      5.5
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.619,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Tripo_DesertFinial_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "provider",
+      "collapse": {
+        "samples": 23767,
+        "matched_ratio": 0.99,
+        "mean_delta": 0.0182,
+        "p90_delta": 0.0408,
+        "smeared_ratio": 0.0146,
+        "stretched_ratio": 0.0106,
+        "dist_p99_m": 0.0257
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertFinial_LOD0",
+      "tris": 2985,
+      "verts": 1595,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.561,
+      "bbox_min": [
+        -1.2669,
+        -1.1406,
+        0.0
+      ],
+      "bbox_max": [
+        1.2669,
+        1.1406,
+        5.5
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertFinial_LOD1",
+      "tris": 995,
+      "verts": 578,
+      "uv_min": [
+        0.0,
+        0.004574118182063103
+      ],
+      "uv_max": [
+        1.0,
+        0.9987469911575317
+      ],
+      "uv_utilization": 0.491,
+      "bbox_min": [
+        -1.261,
+        -1.1356,
+        -0.0053
+      ],
+      "bbox_max": [
+        1.2621,
+        1.1406,
+        5.5042
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertFinial/04_export/SM_Tripo_DesertFinial_v001.glb",
+    "bytes": 256204
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 8.7,
+  "_seconds": 9.9
+}

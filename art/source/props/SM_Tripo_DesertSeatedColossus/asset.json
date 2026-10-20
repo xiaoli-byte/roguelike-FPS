@@ -1,0 +1,348 @@
+{
+  "id": "SM_Tripo_DesertSeatedColossus",
+  "display": "敦煌坐像（1-1 远景地标 / 1-3 寺院前庭巨像）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:21:54",
+          "files": {
+            "BO_SM_Tripo_DesertSeatedColossus_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertSeatedColossus_v001.json",
+              "sha256": "170c9f2782b9c80f3049bee70c563fa9750d03dc0ddbc20aecb315076805befa"
+            },
+            "BO_SM_Tripo_DesertSeatedColossus_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertSeatedColossus_v001_views.json",
+              "sha256": "051eeeedd81c2b0ce537397631469c4fe096159baa484bc5309a7d147d6a8446"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.seatedColossus"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -7.0,
+              0.0,
+              -5.0
+            ],
+            "max": [
+              7.0,
+              20.0,
+              5.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:29:02",
+          "files": {
+            "CN_SM_Tripo_DesertSeatedColossus_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertSeatedColossus_v001_source.png",
+              "sha256": "1feddc2cfeff44db50cffab6aa772d322d228c34c5ef9be8573c00649afd2189"
+            },
+            "CN_SM_Tripo_DesertSeatedColossus_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertSeatedColossus_v001_front.png",
+              "sha256": "27a8b8ef2a1829b20611614510e6530aa39a59a45b96767bc4fd1f3b46d41b4b"
+            },
+            "CN_SM_Tripo_DesertSeatedColossus_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertSeatedColossus_v001_left.png",
+              "sha256": "f03b9523e4ec57061d92daaab4f3ff77dde9216c6a8b238cccce7bff3c0c7f4e"
+            },
+            "CN_SM_Tripo_DesertSeatedColossus_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertSeatedColossus_v001_back.png",
+              "sha256": "1869e08c74d6d708ad6f535177b0e8367a01cad5d8eac1299c3d052740cf69a6"
+            },
+            "CN_SM_Tripo_DesertSeatedColossus_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertSeatedColossus_v001_right.png",
+              "sha256": "d96241e6900f4d0bf9ac7d04b2906ba0607ec6e312d389f74ba8f6fb98c1cd62"
+            },
+            "CN_SM_Tripo_DesertSeatedColossus_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertSeatedColossus_v001_sheet.png",
+              "sha256": "0cad3b08d15bdfd0cd021a89648b908ea7516225fa54ed6b97aae519cfdc8c8b"
+            },
+            "CN_SM_Tripo_DesertSeatedColossus_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertSeatedColossus_v001_prompt.txt",
+              "sha256": "5befdf8f1f82bc138c632129cbeeef4189e72f85cf7f20289c68cd897a6838c3"
+            },
+            "CN_SM_Tripo_DesertSeatedColossus_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertSeatedColossus_v001_registration.json",
+              "sha256": "d12cbba5dbc9ae689d359ee62a15b56d00894638c920cf3419889c70c00ef3f6"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2098,
+              749
+            ],
+            "references": [],
+            "codex_session": "01a15948-33b2-73b2-b13e-ba6cd55a44b7",
+            "attempt": 1,
+            "seconds": 74.3
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (14m wide x 20m tall x 10m deep): A colossal ancient seated stone statue 20m tall in the style of the Dunhuang Mogao and Yulin cave-temple giant figures, carved from ochre-red sandstone: a serene seated guardian king with a calm downcast face, elongated earlobes, a tall simple crown, broad shoulders, both hands resting on the knees, legs pendant (seated European-style on a throne block) with large feet resting on a lotus footstool. Behind the head and shoulders rises a huge round flat stone halo disc carved as concentric rings, the most striking part of the silhouette, wider than the shoulders. The figure wears a simple broad-pleated robe carved as big soft folds. The lower part, the throne block and the knees, is half swallowed by a smooth sand drift that slopes up against the front and both sides. Weathered ochre-red and sand-yellow sandstone with large faded patches of Dunhuang mineral paint: malachite green on the robe, lapis blue on the halo rings, vermilion on the crown, all softened and partly worn away; horizontal strata lines across the body. PROPORTIONS: FRONT and BACK views are drawn 1.4 times as tall as wide; the side views show the deep seated profile with the halo disc as a thick vertical slab behind the head. The BACK is plain rough rock behind the halo. A bold simple landmark silhouette readable from 300m, broad faceted planes, chunky forms, no fine ornament, cracks, hands-held objects or broken limbs. One solid connected piece on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "1feddc2cfeff44db50cffab6aa772d322d228c34c5ef9be8573c00649afd2189",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.7176496972415339,
+              "offset": [
+                74,
+                185
+              ],
+              "size": [
+                363,
+                653
+              ],
+              "physical_height_m": 20.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.715291593088495,
+              "offset": [
+                99,
+                185
+              ],
+              "size": [
+                314,
+                653
+              ],
+              "physical_height_m": 20.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7113956693788627,
+              "offset": [
+                69,
+                185
+              ],
+              "size": [
+                374,
+                653
+              ],
+              "physical_height_m": 20.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7168619368713457,
+              "offset": [
+                103,
+                185
+              ],
+              "size": [
+                305,
+                653
+              ],
+              "physical_height_m": 20.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "敦煌坐像 + 日轮式头光，四视图一致，沙丘半埋，远景剪影清楚",
+            "time": "2026-10-20 20:30:23"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:15:11",
+          "files": {
+            "HP_SM_Tripo_DesertSeatedColossus_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertSeatedColossus_v001_source.glb",
+              "sha256": "ad17ad00dfed0ba876d21ed99d8264b2008927a9c05824dde77f45c85468abc8"
+            },
+            "HP_SM_Tripo_DesertSeatedColossus_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertSeatedColossus_v001.glb",
+              "sha256": "fff26ecea6f14c9bd1b02156f0f073935cf587772bd8ba1f74831dcf9b2ae0ff"
+            },
+            "HP_SM_Tripo_DesertSeatedColossus_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertSeatedColossus_v001_graph.json",
+              "sha256": "bf0244ca6c6370c0d4389a2d8870eb5dc4b3d3ccce13ee5463b87ed80f566de8"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/222ac83b-69d4-4ac5-ba61-ef6dd831e37f",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 8549,
+          "source_sha256": "ad17ad00dfed0ba876d21ed99d8264b2008927a9c05824dde77f45c85468abc8"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:16:00",
+          "files": {
+            "SM_Tripo_DesertSeatedColossus_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertSeatedColossus_v001.blend",
+              "sha256": "d70be44b54e00213f7e051c6eb01b75cc12aae7de11721367a9f055cefd592cd"
+            },
+            "SM_Tripo_DesertSeatedColossus_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertSeatedColossus_v001.glb",
+              "sha256": "b6f8d8388e953bfcff4f52827d582d4a0fb814aae56163e737b8439866f5cf73"
+            },
+            "SM_Tripo_DesertSeatedColossus_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertSeatedColossus_v001_metrics.json",
+              "sha256": "a1c5448fb47ad902f636556b6183a58dda990931d6fd927e6d633bca6f4ce97e"
+            },
+            "T_Tripo_DesertSeatedColossus_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertSeatedColossus_BC.png",
+              "sha256": "1b9134f241b561ac3a2729139c56985f241b159da25e8027f622a613133648c1"
+            },
+            "T_Tripo_DesertSeatedColossus_LOD1_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertSeatedColossus_LOD1_BC.png",
+              "sha256": "a0acdbfc4b53489f920564a76be97342df3cd028b386c7eb4cf923ed2283e38b"
+            },
+            "T_Tripo_DesertSeatedColossus_LOD1_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertSeatedColossus_LOD1_N.png",
+              "sha256": "321ed2866fc87959e2333f7db46794c5f57ad27762e3cee70fae85c3c40d77f8"
+            },
+            "T_Tripo_DesertSeatedColossus_LOD1_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertSeatedColossus_LOD1_ORM.png",
+              "sha256": "157b28d94e4085ab0b520e6ca535d8224664b010e0b5477eaee49223b4e6f2a7"
+            },
+            "T_Tripo_DesertSeatedColossus_LOD2_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertSeatedColossus_LOD2_BC.png",
+              "sha256": "4fe9bfd36d77dee10afc27e3949736020582a4979c967fa2f73fde2953c801d2"
+            },
+            "T_Tripo_DesertSeatedColossus_LOD2_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertSeatedColossus_LOD2_N.png",
+              "sha256": "167bc15fe0460591ad9d2449e4de23413460c9a2b309dd5c3ef55740f63740da"
+            },
+            "T_Tripo_DesertSeatedColossus_LOD2_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertSeatedColossus_LOD2_ORM.png",
+              "sha256": "266f0ba4e96b5f23fafa655a3d9422ee19815d1f04d4d59658f798fe3a5fa4a2"
+            },
+            "T_Tripo_DesertSeatedColossus_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertSeatedColossus_N.png",
+              "sha256": "4e889e48c91dbc8a75dbfd28650aace1884f177bd9dc0d575d34e7939c64442d"
+            },
+            "T_Tripo_DesertSeatedColossus_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertSeatedColossus_ORM.png",
+              "sha256": "00a2a7c829b08805b256c8d8a85b09634a2e062d6a34090b4a03236c88e4f18f"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.906,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7960,
+              "verts": 4102
+            },
+            {
+              "tris": 2486,
+              "verts": 1329
+            },
+            {
+              "tris": 795,
+              "verts": 448
+            }
+          ],
+          "export_kb": 1459.4,
+          "seconds": 48.1,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:16:05",
+          "files": {
+            "SM_Tripo_DesertSeatedColossus_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertSeatedColossus_v001_validation_v001.json",
+              "sha256": "e322b859da95fd348ff92c40b393afcb694770c709d99d0f4c61ab3548e23827"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:16:12",
+          "files": {
+            "SM_Tripo_DesertSeatedColossus_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertSeatedColossus_v001_review_v001.png",
+              "sha256": "88e15582103e5b5e454606113b082722297b3e8f6bdd32e052013631a3dea142"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "成品审核通过（Tripo P2.0 + 纹理）：四视图与概念一致，LOD1/2 无斜条纹",
+            "time": "2026-10-20 21:23:28"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:23:29",
+          "files": {
+            "SM_Tripo_DesertSeatedColossus.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertSeatedColossus.glb",
+              "sha256": "b6f8d8388e953bfcff4f52827d582d4a0fb814aae56163e737b8439866f5cf73"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertSeatedColossus.glb"
+        }
+      ]
+    }
+  }
+}

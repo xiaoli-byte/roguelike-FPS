@@ -1,0 +1,332 @@
+{
+  "id": "SM_Tripo_DesertBrushwoodPile",
+  "display": "烽燧积薪（1-1 烽燧台地）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:37:33",
+          "files": {
+            "BO_SM_Tripo_DesertBrushwoodPile_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertBrushwoodPile_v001.json",
+              "sha256": "33f04bbd29bab5175a01e97c25d49c4a4e571d07dba80ba5087ad31824623382"
+            },
+            "BO_SM_Tripo_DesertBrushwoodPile_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertBrushwoodPile_v001_views.json",
+              "sha256": "36fb254a43bb922283692adc5f8c65bfe4fbfc7169938c60250d3089b32aba09"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.brushwoodPile"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -1.1,
+              0.0,
+              -1.1
+            ],
+            "max": [
+              1.1,
+              1.3,
+              1.1
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:38:27",
+          "files": {
+            "CN_SM_Tripo_DesertBrushwoodPile_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBrushwoodPile_v001_source.png",
+              "sha256": "594dc4e809c174c570cbad51d5e1b3d69588a1c59f19e18a8f7388e670aaa52f"
+            },
+            "CN_SM_Tripo_DesertBrushwoodPile_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBrushwoodPile_v001_front.png",
+              "sha256": "b29a2de6eec5885849664475e6461315924a98fcf63485e8fd74f26385e2c086"
+            },
+            "CN_SM_Tripo_DesertBrushwoodPile_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBrushwoodPile_v001_left.png",
+              "sha256": "90c6c356ee4b8186f100eb464873e81d3db4fd38b349f79326bd4cf95bb7adf2"
+            },
+            "CN_SM_Tripo_DesertBrushwoodPile_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBrushwoodPile_v001_back.png",
+              "sha256": "c8a1fec47a839be9e7e1c4e901052e9c8b1b6ae74e2ee15b4c6c028da1b258f1"
+            },
+            "CN_SM_Tripo_DesertBrushwoodPile_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBrushwoodPile_v001_right.png",
+              "sha256": "f6afc9e7f93f2974caaaae889e3ef2809321a168f6856fc1db918e367317eea4"
+            },
+            "CN_SM_Tripo_DesertBrushwoodPile_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBrushwoodPile_v001_sheet.png",
+              "sha256": "3299297b6c2455ed0a8d7a35f208f3de276f79e460d7837a1e2ac030d6a138ec"
+            },
+            "CN_SM_Tripo_DesertBrushwoodPile_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertBrushwoodPile_v001_prompt.txt",
+              "sha256": "d052fa9e26f85358d0dc343a41aae67f49e079d3425ce7639253b868ebbb9bcb"
+            },
+            "CN_SM_Tripo_DesertBrushwoodPile_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertBrushwoodPile_v001_registration.json",
+              "sha256": "604b2836f79dbeada6d10bc76fd8534609601a7f6b65b143222ce26769598778"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a15951-2819-76e3-80cc-3180ba97808e",
+            "attempt": 1,
+            "seconds": 51.8
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (2.2m wide x 1.3m tall x 2.2m deep): A Han-dynasty beacon signal fuel stack (jixin) 2.2m square and 1.3m tall: a neat square crib stack of thick bundled reed and tamarisk faggots, each bundle a fat cylinder about 0.3m thick and 2m long tied with two chunky rope bands, laid in four layers that alternate direction like a log cabin, so on every face the visible layers alternate between the long sides of bundles and the round cut ends of bundles. The top layer is slightly domed with a few loose bundles. Straw-yellow and khaki reed with darker grey-brown tamarisk bundles mixed in, faded rope. PROPORTIONS: a squat block, all four views drawn about 1.7 times as wide as tall, and the FRONT and LEFT views differ only in which layers show bundle ends. Chunky simplified bundles at Gunfire Reborn fidelity, broad faceted planes, no thin twigs, loose straw or fire. One solid connected piece on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "594dc4e809c174c570cbad51d5e1b3d69588a1c59f19e18a8f7388e670aaa52f",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.5546814581722178,
+              "offset": [
+                129,
+                377
+              ],
+              "size": [
+                254,
+                270
+              ],
+              "physical_height_m": 1.3,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5698942407803166,
+              "offset": [
+                130,
+                377
+              ],
+              "size": [
+                251,
+                270
+              ],
+              "physical_height_m": 1.3,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5581195663840292,
+              "offset": [
+                129,
+                377
+              ],
+              "size": [
+                254,
+                270
+              ],
+              "physical_height_m": 1.3,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.572309046885318,
+              "offset": [
+                130,
+                377
+              ],
+              "size": [
+                252,
+                270
+              ],
+              "physical_height_m": 1.3,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "交错码放的捆束 + 绳箍，侧面露捆头；比要求的芦苇更像木捆，风格可接受",
+            "time": "2026-10-20 20:40:05"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:34:41",
+          "files": {
+            "HP_SM_Tripo_DesertBrushwoodPile_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertBrushwoodPile_v001_source.glb",
+              "sha256": "ff812403f043955780d15f3f9a781efa723d390f7805f2b341b7538c18caf7e8"
+            },
+            "HP_SM_Tripo_DesertBrushwoodPile_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertBrushwoodPile_v001.glb",
+              "sha256": "70180c49f9a60fba0a4f79555eb834084a5dc15db2c0c0aa8925e26935d1d202"
+            },
+            "HP_SM_Tripo_DesertBrushwoodPile_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertBrushwoodPile_v001_graph.json",
+              "sha256": "33c4374178418aed8bc53f65b791b73ba9f3d7e14d94f391c84ca1e5a0b7d06e"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/a05f2ddb-f75c-4958-adc2-7dc4bf748255",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 2837,
+          "source_sha256": "ff812403f043955780d15f3f9a781efa723d390f7805f2b341b7538c18caf7e8"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:35:00",
+          "files": {
+            "SM_Tripo_DesertBrushwoodPile_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertBrushwoodPile_v001.blend",
+              "sha256": "731a803fe270513a88afcde0c3b3a3f7d549ab54da015ce29ba2758ed31ef91e"
+            },
+            "SM_Tripo_DesertBrushwoodPile_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertBrushwoodPile_v001.glb",
+              "sha256": "9030290cab4273e276fa01e9f2bd95c36820d36b07457bd1acd088f0fef85168"
+            },
+            "SM_Tripo_DesertBrushwoodPile_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertBrushwoodPile_v001_metrics.json",
+              "sha256": "776b906ea3a88707436f53c6aaf236528d45a71984c7dfd71021f260e367b748"
+            },
+            "T_Tripo_DesertBrushwoodPile_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBrushwoodPile_BC.png",
+              "sha256": "85c235852055e2fcaa3c78a0c52052b1f32f8b8939cddab4b0826ab00b1e5e9b"
+            },
+            "T_Tripo_DesertBrushwoodPile_LOD1_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBrushwoodPile_LOD1_BC.png",
+              "sha256": "e199735c94aca95be45e6f88d24034af78a7c976a36c9ff999b6f277568b3b36"
+            },
+            "T_Tripo_DesertBrushwoodPile_LOD1_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBrushwoodPile_LOD1_N.png",
+              "sha256": "6a4ef0a21e588d58ee715247434289544f373d25c9a733369ba9414d268bf5f4"
+            },
+            "T_Tripo_DesertBrushwoodPile_LOD1_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBrushwoodPile_LOD1_ORM.png",
+              "sha256": "7956cb47b325da8a4129b774d68b9751b2a7ed5fd277bc1b19b54dd881931982"
+            },
+            "T_Tripo_DesertBrushwoodPile_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBrushwoodPile_N.png",
+              "sha256": "70da2801b7f749690193a3919936fb145a2fd80352f652207c0297675097a93c"
+            },
+            "T_Tripo_DesertBrushwoodPile_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBrushwoodPile_ORM.png",
+              "sha256": "dd2d9948c25954529707aee7d07a833e5c69b01a97f35cc75803ab5f2832c803"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.947,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2837,
+              "verts": 1790
+            },
+            {
+              "tris": 994,
+              "verts": 799
+            }
+          ],
+          "export_kb": 412.0,
+          "seconds": 17.8,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:35:03",
+          "files": {
+            "SM_Tripo_DesertBrushwoodPile_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertBrushwoodPile_v001_validation_v001.json",
+              "sha256": "cb823ac7fa98643009852d0a66d4bac063267ff0c95cc0494dcf9b38ecd44a10"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:35:09",
+          "files": {
+            "SM_Tripo_DesertBrushwoodPile_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertBrushwoodPile_v001_review_v001.png",
+              "sha256": "4c708cd79d5c0ecb4851dd8df15f852a154b47b3505466d5660d3a0e8b1e41e2"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "成品审核通过（Tripo P2.0 + 纹理）：四视图与概念一致，LOD 远看轮廓不塌",
+            "time": "2026-10-20 21:52:27"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:52:27",
+          "files": {
+            "SM_Tripo_DesertBrushwoodPile.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertBrushwoodPile.glb",
+              "sha256": "9030290cab4273e276fa01e9f2bd95c36820d36b07457bd1acd088f0fef85168"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertBrushwoodPile.glb"
+        }
+      ]
+    }
+  }
+}

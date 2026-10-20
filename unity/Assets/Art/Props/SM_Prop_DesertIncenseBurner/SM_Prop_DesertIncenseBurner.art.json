@@ -1,0 +1,140 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Prop_DesertIncenseBurner",
+  "kind": "static",
+  "class": "tripo_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "desert.silkroad.incenseBurner"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    20
+  ],
+  "budget": {
+    "lodTris": [
+      3000,
+      1000
+    ],
+    "texture": 1024,
+    "maxFileKb": 700
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -0.6636542081832886,
+      0,
+      -0.5823646187782288
+    ],
+    "max": [
+      0.6636542081832886,
+      2.5999999046325684,
+      0.5823646187782288
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Prop_DesertIncenseBurner_LOD0",
+      "lod": 0,
+      "tris": 2984,
+      "verts": 2393,
+      "materials": [
+        "M_Prop_DesertIncenseBurner"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Prop_DesertIncenseBurner_LOD1",
+      "lod": 1,
+      "tris": 995,
+      "verts": 783,
+      "materials": [
+        "M_Prop_DesertIncenseBurner_LOD1"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Prop_DesertIncenseBurner",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Prop_DesertIncenseBurner_BC.png",
+        "N": "Textures/T_Prop_DesertIncenseBurner_N.png",
+        "ORM": "Textures/T_Prop_DesertIncenseBurner_ORM.png"
+      }
+    },
+    {
+      "name": "M_Prop_DesertIncenseBurner_LOD1",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Prop_DesertIncenseBurner_LOD1_BC.png",
+        "N": "Textures/T_Prop_DesertIncenseBurner_LOD1_N.png",
+        "ORM": "Textures/T_Prop_DesertIncenseBurner_LOD1_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Prop_DesertIncenseBurner.glb",
+    "sha256": "005d0056d93b506b031c798e8eee057eac80854ac15b6b7ca171d78568f4523a",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-20 21:54:43"
+}

@@ -1,0 +1,348 @@
+{
+  "id": "SM_Env_DesertCaveCeilingRift",
+  "display": "穴顶裂缝岩体（1-4 巨穴顶部，成对拼出日光裂缝）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:35:45",
+          "files": {
+            "BO_SM_Env_DesertCaveCeilingRift_v001.json": {
+              "path": "00_blockout/BO_SM_Env_DesertCaveCeilingRift_v001.json",
+              "sha256": "9bf3a168a87933113bb94f4b19b8221a2e2140ef4e6733d4f9074d435e7dde7c"
+            },
+            "BO_SM_Env_DesertCaveCeilingRift_v001_views.json": {
+              "path": "00_blockout/BO_SM_Env_DesertCaveCeilingRift_v001_views.json",
+              "sha256": "46d5baaced7f00659ac406bf0ec14c3a34ab90faab1fa9a599ec98e587aedd63"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.caveCeilingRift"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -13.0,
+              0.0,
+              -7.0
+            ],
+            "max": [
+              13.0,
+              9.0,
+              7.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:36:36",
+          "files": {
+            "CN_SM_Env_DesertCaveCeilingRift_v001_source.png": {
+              "path": "01_concept/CN_SM_Env_DesertCaveCeilingRift_v001_source.png",
+              "sha256": "692f7d4266657ef5ba829034b9870695b54dcffc8b24da27730addf40d6c96de"
+            },
+            "CN_SM_Env_DesertCaveCeilingRift_v001_front.png": {
+              "path": "01_concept/CN_SM_Env_DesertCaveCeilingRift_v001_front.png",
+              "sha256": "3e5df618acd41fe8586333d2e8c9fe157693087cd33dd1f8bbacfb7f4bafe6e5"
+            },
+            "CN_SM_Env_DesertCaveCeilingRift_v001_left.png": {
+              "path": "01_concept/CN_SM_Env_DesertCaveCeilingRift_v001_left.png",
+              "sha256": "0b7801c569c112d259b4a0ff5ab628a2f79955c05aa84e2ab235de7809d72657"
+            },
+            "CN_SM_Env_DesertCaveCeilingRift_v001_back.png": {
+              "path": "01_concept/CN_SM_Env_DesertCaveCeilingRift_v001_back.png",
+              "sha256": "d98b189e0e76405c6fb0d19a1363e830de09f9eef48fa386780caf1baf05427f"
+            },
+            "CN_SM_Env_DesertCaveCeilingRift_v001_right.png": {
+              "path": "01_concept/CN_SM_Env_DesertCaveCeilingRift_v001_right.png",
+              "sha256": "361bf8622b33372becf12214e1085b8d0c50bb1e2394c7cfd74991c4107403ff"
+            },
+            "CN_SM_Env_DesertCaveCeilingRift_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Env_DesertCaveCeilingRift_v001_sheet.png",
+              "sha256": "56aca9357b1ed4ba44ed8732cbb3fbfe42e0c38aa137d1bc77d551121aa4760e"
+            },
+            "CN_SM_Env_DesertCaveCeilingRift_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Env_DesertCaveCeilingRift_v001_prompt.txt",
+              "sha256": "b10e57f343fcdf96bf25d4c341b96290e642725db6405244aea8ce24d9fd16be"
+            },
+            "CN_SM_Env_DesertCaveCeilingRift_v001_registration.json": {
+              "path": "01_concept/CN_SM_Env_DesertCaveCeilingRift_v001_registration.json",
+              "sha256": "661304c9d8278f651767e127eb30b16f9c92bba3f1b3c1a1b3258a4966150c86"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a1594f-82b9-7ff2-9b4c-e477d2e965c4",
+            "attempt": 1,
+            "seconds": 48.0
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (26m wide x 9m tall x 14m deep): A huge overhanging slab of layered ochre-red and sand-yellow sandstone forming one lip of a sunlit fissure in the roof of a giant desert cave, 26m long, 14m deep and 9m thick, meant to hang high overhead (two of these face each other with a gap between them to form the crack of daylight). The flat top is a gently uneven rock surface dusted with pale sand. The FRONT long side is the broken lip of the fissure: a steep jagged overhanging edge that juts outward toward the viewer at the top and steps back in big blocky strata ledges toward the bottom, with two or three large chunky blocks hanging lower than the rest. The underside bulges down in broad heavy rounded rock masses with horizontal strata bands, like the ceiling of a cave seen from below. The BACK long side and both short ends are rough vertical rock faces where the slab continues into the cave dome. Bold, perfectly horizontal sediment strata in alternating ochre-red and sand-yellow bands wrap around every side at the same heights. PROPORTIONS: FRONT and BACK views drawn almost three times as wide as tall, a long thick slab; the side views show its 14m-deep wedge profile with the overhanging lip on the front side, drawn about 1.5 times as wide as tall. Broad faceted hand-painted planes, chunky forms, no stalactites, thin spikes, vegetation or man-made parts. One solid rock mass; draw it resting on a flat base line.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "692f7d4266657ef5ba829034b9870695b54dcffc8b24da27730addf40d6c96de",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.5023547880690737,
+              "offset": [
+                75,
+                433
+              ],
+              "size": [
+                362,
+                158
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5023547880690737,
+              "offset": [
+                200,
+                433
+              ],
+              "size": [
+                111,
+                158
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.500765057727083,
+              "offset": [
+                85,
+                433
+              ],
+              "size": [
+                342,
+                158
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5023547880690737,
+              "offset": [
+                200,
+                433
+              ],
+              "size": [
+                112,
+                158
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "悬挑岩板，前缘参差下挂，层理水平；两块对放拼出日光裂缝",
+            "time": "2026-10-20 20:38:22"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:25:53",
+          "files": {
+            "HP_SM_Env_DesertCaveCeilingRift_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Env_DesertCaveCeilingRift_v001_source.glb",
+              "sha256": "3b6f7f86a5f59e5699b25e5b002cf378eff737480df4e215965615580e632937"
+            },
+            "HP_SM_Env_DesertCaveCeilingRift_v001.glb": {
+              "path": "02_highpoly/HP_SM_Env_DesertCaveCeilingRift_v001.glb",
+              "sha256": "a68e1a4459ca42218d880284c7b13e1ac7612db6d36b5322219335084702bc82"
+            },
+            "HP_SM_Env_DesertCaveCeilingRift_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Env_DesertCaveCeilingRift_v001_graph.json",
+              "sha256": "bf66d133489132535b2680fe3a2ad3e1469f55052a04e1686b0e519a77babd12"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/0a1adf08-224d-4590-915b-d3729b132900",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 8894,
+          "source_sha256": "3b6f7f86a5f59e5699b25e5b002cf378eff737480df4e215965615580e632937"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:26:35",
+          "files": {
+            "SM_Env_DesertCaveCeilingRift_v001.blend": {
+              "path": "03_work/SM_Env_DesertCaveCeilingRift_v001.blend",
+              "sha256": "503bb2333450c5239e07b26e6297044362b73fd0f416b96f1b0e016e7e63cf7e"
+            },
+            "SM_Env_DesertCaveCeilingRift_v001.glb": {
+              "path": "04_export/SM_Env_DesertCaveCeilingRift_v001.glb",
+              "sha256": "81e726f98a1287738e658a160d39ab54c93900ba1158b422b0e5a4023fa0afb9"
+            },
+            "SM_Env_DesertCaveCeilingRift_v001_metrics.json": {
+              "path": "03_work/SM_Env_DesertCaveCeilingRift_v001_metrics.json",
+              "sha256": "0c91a940f49378930f535cb40ee555782da63da8a631ef07907e6ba7f7fa647c"
+            },
+            "T_Env_DesertCaveCeilingRift_BC.png": {
+              "path": "03_work/textures_v001/T_Env_DesertCaveCeilingRift_BC.png",
+              "sha256": "8d83c8163322c31375e15c43cf656d6f3b735dabc4249488206dd3a029ae4ee0"
+            },
+            "T_Env_DesertCaveCeilingRift_LOD1_BC.png": {
+              "path": "03_work/textures_v001/T_Env_DesertCaveCeilingRift_LOD1_BC.png",
+              "sha256": "80ae928481e3217bdea6f5f6613b2dab027a4a6ee7a76bfbc3d799b2a43eb6ae"
+            },
+            "T_Env_DesertCaveCeilingRift_LOD1_N.png": {
+              "path": "03_work/textures_v001/T_Env_DesertCaveCeilingRift_LOD1_N.png",
+              "sha256": "5f905b1e07481fd2d1114964adb466a8fd606481dd161c827afc5bd00805b936"
+            },
+            "T_Env_DesertCaveCeilingRift_LOD1_ORM.png": {
+              "path": "03_work/textures_v001/T_Env_DesertCaveCeilingRift_LOD1_ORM.png",
+              "sha256": "7f7e562e5d0b42c046150782e3f6865010129a60f72d46821c7ec85227d4aba4"
+            },
+            "T_Env_DesertCaveCeilingRift_LOD2_BC.png": {
+              "path": "03_work/textures_v001/T_Env_DesertCaveCeilingRift_LOD2_BC.png",
+              "sha256": "d3e2c48dbb9a30c573b213a62f5457b04f257b8fecd2be07bd3a9867911484c5"
+            },
+            "T_Env_DesertCaveCeilingRift_LOD2_N.png": {
+              "path": "03_work/textures_v001/T_Env_DesertCaveCeilingRift_LOD2_N.png",
+              "sha256": "880a97825e5e266cb0b5a850d9cdc6d29fd8fc7d2e2f383d075130c742406794"
+            },
+            "T_Env_DesertCaveCeilingRift_LOD2_ORM.png": {
+              "path": "03_work/textures_v001/T_Env_DesertCaveCeilingRift_LOD2_ORM.png",
+              "sha256": "9bc5542f5f0be8f4ff68a6fcd2afb79d64b837b337aecbd5a9493f73b094e116"
+            },
+            "T_Env_DesertCaveCeilingRift_N.png": {
+              "path": "03_work/textures_v001/T_Env_DesertCaveCeilingRift_N.png",
+              "sha256": "95e167bfbdb3457ad1f374c532ef01e1a0ff9de6e494be04c3acc3851f19dc68"
+            },
+            "T_Env_DesertCaveCeilingRift_ORM.png": {
+              "path": "03_work/textures_v001/T_Env_DesertCaveCeilingRift_ORM.png",
+              "sha256": "acce4b25d68c8eeb90c22006891d37910565762185ebde801c573accfc385f7c"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.768,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7960,
+              "verts": 3992
+            },
+            {
+              "tris": 2487,
+              "verts": 1252
+            },
+            {
+              "tris": 795,
+              "verts": 404
+            }
+          ],
+          "export_kb": 587.4,
+          "seconds": 41.3,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:26:40",
+          "files": {
+            "SM_Env_DesertCaveCeilingRift_v001_validation_v001.json": {
+              "path": "05_review/SM_Env_DesertCaveCeilingRift_v001_validation_v001.json",
+              "sha256": "302a55dfff33d9e0ccc21f3122febc003ea1f15c887e279178cf919289046132"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:26:45",
+          "files": {
+            "SM_Env_DesertCaveCeilingRift_v001_review_v001.png": {
+              "path": "05_review/SM_Env_DesertCaveCeilingRift_v001_review_v001.png",
+              "sha256": "6ccdae0614b691bcd6689bb183f15d787d45f33f276c5b65ff6288cfe64be716"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "成品审核通过（Tripo P2.0 + 纹理）：四视图与概念一致，LOD 远看轮廓不塌、无斜条纹",
+            "time": "2026-10-20 21:51:04"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:51:04",
+          "files": {
+            "SM_Env_DesertCaveCeilingRift.glb": {
+              "path": "@root/public/assets/props/SM_Env_DesertCaveCeilingRift.glb",
+              "sha256": "81e726f98a1287738e658a160d39ab54c93900ba1158b422b0e5a4023fa0afb9"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Env_DesertCaveCeilingRift.glb"
+        }
+      ]
+    }
+  }
+}

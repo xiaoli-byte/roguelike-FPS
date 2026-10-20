@@ -1,0 +1,599 @@
+{
+  "id": "SM_Tripo_DesertBuriedRoofHall",
+  "display": "半埋屋顶·殿堂歇山顶（1-2 屋脊之海）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:32:45",
+          "files": {
+            "BO_SM_Tripo_DesertBuriedRoofHall_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertBuriedRoofHall_v001.json",
+              "sha256": "3726b270a000545b631a888b672922703565e009eb68fd8f6ffe5951cf5ec791"
+            },
+            "BO_SM_Tripo_DesertBuriedRoofHall_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertBuriedRoofHall_v001_views.json",
+              "sha256": "7a16cc475700b826b40513c182f36a80063aff5129440cc0d3ac13c5ec2c3e18"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.buriedRoofHall"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -5.5,
+              0.0,
+              -3.75
+            ],
+            "max": [
+              5.5,
+              5.5,
+              3.75
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:33:31",
+          "files": {
+            "CN_SM_Tripo_DesertBuriedRoofHall_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBuriedRoofHall_v001_source.png",
+              "sha256": "70a6165ed40dbb1a9e016597fcd47b9ec3112b0d4e50b8ee614f9ed0cd25122a"
+            },
+            "CN_SM_Tripo_DesertBuriedRoofHall_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBuriedRoofHall_v001_front.png",
+              "sha256": "2c88d5ba1ff298606f6bd899700f56574eaa7b543ed848722ecde94ead797562"
+            },
+            "CN_SM_Tripo_DesertBuriedRoofHall_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBuriedRoofHall_v001_left.png",
+              "sha256": "b017e297af42091d416b1f3b56444a0bd6b2ccbf372b7e935ee7837fe465746c"
+            },
+            "CN_SM_Tripo_DesertBuriedRoofHall_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBuriedRoofHall_v001_back.png",
+              "sha256": "b972dcbd2eef82175d5b7a6408a249d148c9e501b696b2a3faa80f0ef04ab075"
+            },
+            "CN_SM_Tripo_DesertBuriedRoofHall_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBuriedRoofHall_v001_right.png",
+              "sha256": "98eaf622abf8e5bf738ba72a0667d14a7f022edfcddabce467b36ffd99d0b489"
+            },
+            "CN_SM_Tripo_DesertBuriedRoofHall_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBuriedRoofHall_v001_sheet.png",
+              "sha256": "0263aee3fcf2e3e64ff63205c85195c6ef02d1e2ca5200bc8b104c2ca860ca89"
+            },
+            "CN_SM_Tripo_DesertBuriedRoofHall_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertBuriedRoofHall_v001_prompt.txt",
+              "sha256": "b867e19ac6607e9b49fb6fc0e38340160fa35e265c891134ee949f67a502855a"
+            },
+            "CN_SM_Tripo_DesertBuriedRoofHall_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertBuriedRoofHall_v001_registration.json",
+              "sha256": "062478aca4908f3ab3e82bfec0cea7452ef51939af794621306e9c807c5c9314"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a1594c-c394-7fb0-bb4a-10c4aec93c23",
+            "attempt": 1,
+            "seconds": 43.6
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (11m wide x 5.5m tall x 7.5m deep): The top of a Tang-dynasty Silk Road temple hall drowned in sand, as a separate piece: a big hip-and-gable (xieshan) roof of grey-brown fired tiles with broad gently curving slopes and a long straight main ridge, chunky ridge-end ornaments (simple upturned owl-tail chiwen blocks), and wide eaves with thick weathered timber rafter ends, sitting on the top 2.5m of the hall's walls: thick ochre-red rammed-earth walls with a row of three square lattice windows under the eaves on the FRONT, a faded vermilion timber band below the eaves. The walls continue straight down to the flat base so the piece can be sunk into sand up to the window sills. Dimensions: 11m wide, 7.5m deep, 5.5m tall to the main ridge, eaves at 3m. A thin layer of pale sand lies in the roof valleys and on the lower tile courses. PROPORTIONS: FRONT and BACK views drawn twice as wide as tall, the roof taking the upper half; the side views show the triangular gable end with the hip slopes below it, drawn 1.4 times as wide as tall. Broad faceted hand-painted planes, tiles suggested by a few broad painted stripes, chunky forms, no loose tiles or debris. One solid connected piece on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "70a6165ed40dbb1a9e016597fcd47b9ec3112b0d4e50b8ee614f9ed0cd25122a",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.4438280166435506,
+              "offset": [
+                121,
+                397
+              ],
+              "size": [
+                270,
+                229
+              ],
+              "physical_height_m": 5.5,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.4329004329004329,
+              "offset": [
+                181,
+                397
+              ],
+              "size": [
+                150,
+                229
+              ],
+              "physical_height_m": 5.5,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.4429678848283499,
+              "offset": [
+                121,
+                397
+              ],
+              "size": [
+                269,
+                229
+              ],
+              "physical_height_m": 5.5,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.4329004329004329,
+              "offset": [
+                181,
+                397
+              ],
+              "size": [
+                149,
+                229
+              ],
+              "physical_height_m": 5.5,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "歇山顶 + 鸱吻 + 斗拱檐口，墙体直落到底可下沉",
+            "time": "2026-10-20 20:37:34"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:23:35",
+          "files": {
+            "HP_SM_Tripo_DesertBuriedRoofHall_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertBuriedRoofHall_v001_source.glb",
+              "sha256": "773ab68a4960f9176e57977bb9130cbcc15ce14cf2d4b3aa3293cc590e41ab16"
+            },
+            "HP_SM_Tripo_DesertBuriedRoofHall_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertBuriedRoofHall_v001.glb",
+              "sha256": "7b99c8eb0e3e5cdcfc0920abde417c198e824beec8f41591824497010a87d7e4"
+            },
+            "HP_SM_Tripo_DesertBuriedRoofHall_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertBuriedRoofHall_v001_graph.json",
+              "sha256": "e26b01d620f995fbd6dc3e7a6a464c9a137b2bb5d85177a0bbdc7cad9a108cd8"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/345d62fb-9f47-43de-a481-4a2adf2dc290",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 5777,
+          "source_sha256": "773ab68a4960f9176e57977bb9130cbcc15ce14cf2d4b3aa3293cc590e41ab16"
+        }
+      ]
+    },
+    "build": {
+      "current": 4,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:24:19",
+          "files": {
+            "SM_Tripo_DesertBuriedRoofHall_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertBuriedRoofHall_v001.blend",
+              "sha256": "c648471f309c4cce9fd9fd23231848fcfc268fa9e03d82cb501f85bf8973c96d"
+            },
+            "SM_Tripo_DesertBuriedRoofHall_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertBuriedRoofHall_v001.glb",
+              "sha256": "fed0efc291165f2a85f89e9253520337e0a9b698855dd4d7d6d7337e4257e8db"
+            },
+            "SM_Tripo_DesertBuriedRoofHall_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertBuriedRoofHall_v001_metrics.json",
+              "sha256": "77cecf3aa411ca0a797470fbc97a2cd02e47b82c9f1d753779e62a3e58ea0de5"
+            },
+            "T_Tripo_DesertBuriedRoofHall_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBuriedRoofHall_BC.png",
+              "sha256": "94c4d8ace26348295a9e8dee9be366d15899b52ad1169c652af5c1e3f8ac03a3"
+            },
+            "T_Tripo_DesertBuriedRoofHall_LOD1_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBuriedRoofHall_LOD1_BC.png",
+              "sha256": "6cb72dbc4fb832d722d44eab33024862f9267991dee2e222d188633fa126eb04"
+            },
+            "T_Tripo_DesertBuriedRoofHall_LOD1_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBuriedRoofHall_LOD1_N.png",
+              "sha256": "66f1eaaa5c242ded0468674955e1bad77fd53e620d2be8a43b7036903ebcf203"
+            },
+            "T_Tripo_DesertBuriedRoofHall_LOD1_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBuriedRoofHall_LOD1_ORM.png",
+              "sha256": "95f6742d5235f75578b0b72e2a7e5a37ddbfc481bd6af45410ce41976e03cdf2"
+            },
+            "T_Tripo_DesertBuriedRoofHall_LOD2_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBuriedRoofHall_LOD2_BC.png",
+              "sha256": "7f3f04d4c53554d7c7bbda8c645f306d61868d06bf34e165fb7f0c4844fe08e9"
+            },
+            "T_Tripo_DesertBuriedRoofHall_LOD2_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBuriedRoofHall_LOD2_N.png",
+              "sha256": "15850ef7ab94daf2ce6e0f36e097754bc5d63614fd635b7016973d2f9e2e7eed"
+            },
+            "T_Tripo_DesertBuriedRoofHall_LOD2_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBuriedRoofHall_LOD2_ORM.png",
+              "sha256": "23374d166a61f4b12038334ce2926e71cf3cbcf9a07412c3b6c4bfb254dc412b"
+            },
+            "T_Tripo_DesertBuriedRoofHall_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBuriedRoofHall_N.png",
+              "sha256": "1be05372e85b3c69c70f535548e8f446141e22e86b99123d6025cc7fa768b119"
+            },
+            "T_Tripo_DesertBuriedRoofHall_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBuriedRoofHall_ORM.png",
+              "sha256": "bd2485899518c7bf56175a7ea54dc5975878d49b6cd1533b49fdb2e1b5fd3a68"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.888,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 5777,
+              "verts": 4290
+            },
+            {
+              "tris": 2486,
+              "verts": 2247
+            },
+            {
+              "tris": 787,
+              "verts": 1176
+            }
+          ],
+          "export_kb": 1693.5,
+          "seconds": 42.8,
+          "bake_device": "none (provider textures)",
+          "quality_status": "failed",
+          "quality_errors": [
+            "文件大小",
+            "LOD1 贴图色差"
+          ]
+        },
+        {
+          "version": 2,
+          "created": "2026-10-20 21:48:08",
+          "files": {
+            "SM_Tripo_DesertBuriedRoofHall_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertBuriedRoofHall_v002.blend",
+              "sha256": "f89ba60ea25cc7de3e7cb410d24fa6dd1f0510a2f2ef31bc67084fb3bc0d60ae"
+            },
+            "SM_Tripo_DesertBuriedRoofHall_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertBuriedRoofHall_v002.glb",
+              "sha256": "e71ed81c3c56bae2fc9474b2ef43eb5fd3ae9b7b0d92d19659c6ad2eaf3ccb16"
+            },
+            "SM_Tripo_DesertBuriedRoofHall_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertBuriedRoofHall_v002_metrics.json",
+              "sha256": "97a92037e346e5012d07876a6af73dccad392e68dc6214cb9736e4f245b9067a"
+            },
+            "T_Tripo_DesertBuriedRoofHall_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertBuriedRoofHall_BC.png",
+              "sha256": "94c4d8ace26348295a9e8dee9be366d15899b52ad1169c652af5c1e3f8ac03a3"
+            },
+            "T_Tripo_DesertBuriedRoofHall_LOD2_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertBuriedRoofHall_LOD2_BC.png",
+              "sha256": "fc2813a2ed41fe4607ee49bdf29bf4e22fbd8396bb668aca152bf65321e4993b"
+            },
+            "T_Tripo_DesertBuriedRoofHall_LOD2_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertBuriedRoofHall_LOD2_N.png",
+              "sha256": "2da91be4bb800f3cee52d5e7fba4874874ca0ad6a5912e1c57060f03c3505b8e"
+            },
+            "T_Tripo_DesertBuriedRoofHall_LOD2_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertBuriedRoofHall_LOD2_ORM.png",
+              "sha256": "56eaeb351f88b150d353362453b717863c6afebd62891262d14727e4d800e8be"
+            },
+            "T_Tripo_DesertBuriedRoofHall_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertBuriedRoofHall_N.png",
+              "sha256": "1be05372e85b3c69c70f535548e8f446141e22e86b99123d6025cc7fa768b119"
+            },
+            "T_Tripo_DesertBuriedRoofHall_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertBuriedRoofHall_ORM.png",
+              "sha256": "bd2485899518c7bf56175a7ea54dc5975878d49b6cd1533b49fdb2e1b5fd3a68"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.888,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 5777,
+              "verts": 4290
+            },
+            {
+              "tris": 2486,
+              "verts": 2247
+            },
+            {
+              "tris": 787,
+              "verts": 1176
+            }
+          ],
+          "export_kb": 1443.3,
+          "seconds": 47.7,
+          "bake_device": "none (provider textures)",
+          "quality_status": "failed",
+          "quality_errors": [
+            "LOD2 贴图色差"
+          ]
+        },
+        {
+          "version": 3,
+          "created": "2026-10-20 21:49:29",
+          "files": {
+            "SM_Tripo_DesertBuriedRoofHall_v003.blend": {
+              "path": "03_work/SM_Tripo_DesertBuriedRoofHall_v003.blend",
+              "sha256": "e865de290e17421e561b3bb1cf5f94165a7c33817495fead5d79b3ecf16eb97c"
+            },
+            "SM_Tripo_DesertBuriedRoofHall_v003.glb": {
+              "path": "04_export/SM_Tripo_DesertBuriedRoofHall_v003.glb",
+              "sha256": "d2c0641cc79e428729c05f0b62c84ef059bdf411f20dee507981ddf4159a458f"
+            },
+            "SM_Tripo_DesertBuriedRoofHall_v003_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertBuriedRoofHall_v003_metrics.json",
+              "sha256": "091ce48152bab68a02e8894d7f177b92849f467b8ae9d28af99b107fc8dfdbb1"
+            },
+            "T_Tripo_DesertBuriedRoofHall_BC.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertBuriedRoofHall_BC.png",
+              "sha256": "94c4d8ace26348295a9e8dee9be366d15899b52ad1169c652af5c1e3f8ac03a3"
+            },
+            "T_Tripo_DesertBuriedRoofHall_LOD2_BC.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertBuriedRoofHall_LOD2_BC.png",
+              "sha256": "038df96fd23e967166d3249de04598ab5a421de35d1131a14ac2473d0a13c076"
+            },
+            "T_Tripo_DesertBuriedRoofHall_LOD2_N.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertBuriedRoofHall_LOD2_N.png",
+              "sha256": "551a578f9a0bf21bd3608dbb403ccfa18244fb4f5dc4b9da0f2750cfdc56dd2e"
+            },
+            "T_Tripo_DesertBuriedRoofHall_LOD2_ORM.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertBuriedRoofHall_LOD2_ORM.png",
+              "sha256": "8f1dd9103d7f52b88298bc519e88da648ae4dce32fd742e9ff82337686603eb0"
+            },
+            "T_Tripo_DesertBuriedRoofHall_N.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertBuriedRoofHall_N.png",
+              "sha256": "1be05372e85b3c69c70f535548e8f446141e22e86b99123d6025cc7fa768b119"
+            },
+            "T_Tripo_DesertBuriedRoofHall_ORM.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertBuriedRoofHall_ORM.png",
+              "sha256": "bd2485899518c7bf56175a7ea54dc5975878d49b6cd1533b49fdb2e1b5fd3a68"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.888,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 5777,
+              "verts": 4290
+            },
+            {
+              "tris": 2486,
+              "verts": 2247
+            },
+            {
+              "tris": 1487,
+              "verts": 1640
+            }
+          ],
+          "export_kb": 1694.2,
+          "seconds": 48.2,
+          "bake_device": "none (provider textures)",
+          "quality_status": "failed",
+          "quality_errors": [
+            "文件大小",
+            "LOD2 贴图色差"
+          ]
+        },
+        {
+          "version": 4,
+          "created": "2026-10-20 21:50:22",
+          "files": {
+            "SM_Tripo_DesertBuriedRoofHall_v004.blend": {
+              "path": "03_work/SM_Tripo_DesertBuriedRoofHall_v004.blend",
+              "sha256": "b4f78d8375f0b542a03ec45885d00a3c6782768723fe345c3b718be46fd99bdc"
+            },
+            "SM_Tripo_DesertBuriedRoofHall_v004.glb": {
+              "path": "04_export/SM_Tripo_DesertBuriedRoofHall_v004.glb",
+              "sha256": "2f759a8bd8ffe729a7477ef635f6036f0e667564507a86d64887f2f496e522a4"
+            },
+            "SM_Tripo_DesertBuriedRoofHall_v004_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertBuriedRoofHall_v004_metrics.json",
+              "sha256": "3a6f17eb5d11258b51ec79721c847b8afb2aa0ce4416e17bbe6b76df3d89c236"
+            },
+            "T_Tripo_DesertBuriedRoofHall_BC.png": {
+              "path": "03_work/textures_v004/T_Tripo_DesertBuriedRoofHall_BC.png",
+              "sha256": "94c4d8ace26348295a9e8dee9be366d15899b52ad1169c652af5c1e3f8ac03a3"
+            },
+            "T_Tripo_DesertBuriedRoofHall_N.png": {
+              "path": "03_work/textures_v004/T_Tripo_DesertBuriedRoofHall_N.png",
+              "sha256": "1be05372e85b3c69c70f535548e8f446141e22e86b99123d6025cc7fa768b119"
+            },
+            "T_Tripo_DesertBuriedRoofHall_ORM.png": {
+              "path": "03_work/textures_v004/T_Tripo_DesertBuriedRoofHall_ORM.png",
+              "sha256": "bd2485899518c7bf56175a7ea54dc5975878d49b6cd1533b49fdb2e1b5fd3a68"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.888,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 5777,
+              "verts": 4290
+            },
+            {
+              "tris": 2486,
+              "verts": 2247
+            },
+            {
+              "tris": 1487,
+              "verts": 1640
+            }
+          ],
+          "export_kb": 1327.8,
+          "seconds": 34.7,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 4,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:24:23",
+          "files": {
+            "SM_Tripo_DesertBuriedRoofHall_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertBuriedRoofHall_v001_validation_v001.json",
+              "sha256": "47b8a5b0f46aede9b5fdf2215d72b7bd46393f677090edf09236a03bf99389fa"
+            }
+          },
+          "from_build": 1,
+          "errors": 2,
+          "warnings": 0,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 2,
+          "created": "2026-10-20 21:48:13",
+          "files": {
+            "SM_Tripo_DesertBuriedRoofHall_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertBuriedRoofHall_v002_validation_v002.json",
+              "sha256": "50db16f074471756650ab9873a12b74ea5186fcf8d0eb2e54693e4165c20bb33"
+            }
+          },
+          "from_build": 2,
+          "errors": 1,
+          "warnings": 0,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 3,
+          "created": "2026-10-20 21:49:35",
+          "files": {
+            "SM_Tripo_DesertBuriedRoofHall_v003_validation_v003.json": {
+              "path": "05_review/SM_Tripo_DesertBuriedRoofHall_v003_validation_v003.json",
+              "sha256": "1ba8206bd8b37ed0bb30d8160e485a68c5cae90a5dddec4d723287dcf4d0d557"
+            }
+          },
+          "from_build": 3,
+          "errors": 2,
+          "warnings": 0,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 4,
+          "created": "2026-10-20 21:50:26",
+          "files": {
+            "SM_Tripo_DesertBuriedRoofHall_v004_validation_v004.json": {
+              "path": "05_review/SM_Tripo_DesertBuriedRoofHall_v004_validation_v004.json",
+              "sha256": "55d352c501a9680084269befde15b974632ac65b2a31ac636bb333ad9141a8cb"
+            }
+          },
+          "from_build": 4,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:50:32",
+          "files": {
+            "SM_Tripo_DesertBuriedRoofHall_v004_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertBuriedRoofHall_v004_review_v001.png",
+              "sha256": "903600c49d6515f66ba41d28ac9cc3aa89d9c9c6db01d08785ecac5f2d91c7a2"
+            }
+          },
+          "from_build": 4,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "成品审核通过（Tripo P2.0 + 纹理）：四视图与概念一致，LOD 远看轮廓不塌、无斜条纹",
+            "time": "2026-10-20 21:51:05"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:51:05",
+          "files": {
+            "SM_Tripo_DesertBuriedRoofHall.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertBuriedRoofHall.glb",
+              "sha256": "2f759a8bd8ffe729a7477ef635f6036f0e667564507a86d64887f2f496e522a4"
+            }
+          },
+          "from_build": 4,
+          "url": "assets/props/SM_Tripo_DesertBuriedRoofHall.glb"
+        }
+      ]
+    }
+  }
+}

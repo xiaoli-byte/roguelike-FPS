@@ -1,0 +1,332 @@
+{
+  "id": "SM_Tripo_DesertWell",
+  "display": "集市井台（1-3 下沉广场）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:32:23",
+          "files": {
+            "BO_SM_Tripo_DesertWell_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertWell_v001.json",
+              "sha256": "5c90e53e8f5984ad3f1c6fee6cda9e43c0dfa8eb1aa58c54f656ca637442476a"
+            },
+            "BO_SM_Tripo_DesertWell_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertWell_v001_views.json",
+              "sha256": "06a029239a4955a101c99ccc576ed14f9cf1a86a0b44fea019e3b7bf8adca01b"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.well"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.2,
+              0.0,
+              -2.2
+            ],
+            "max": [
+              2.2,
+              3.4,
+              2.2
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:33:52",
+          "files": {
+            "CN_SM_Tripo_DesertWell_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertWell_v001_source.png",
+              "sha256": "d16ed30e069e0c1a613e32fb67cd528dea6ee6d139032ab1acad108469b3da97"
+            },
+            "CN_SM_Tripo_DesertWell_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertWell_v001_front.png",
+              "sha256": "0ad11490abbcfd1e104639103474c35c8fa6257adebda9a214139dfffc130aeb"
+            },
+            "CN_SM_Tripo_DesertWell_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertWell_v001_left.png",
+              "sha256": "71e463eb1013ea5f9da624fdcc8a5cb522830b1f2166d66b8c3f1ef465e9139f"
+            },
+            "CN_SM_Tripo_DesertWell_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertWell_v001_back.png",
+              "sha256": "9a137fd6a349d5a15bd2aea826f394391033088588b5b1350ff7bd1a5dc4b515"
+            },
+            "CN_SM_Tripo_DesertWell_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertWell_v001_right.png",
+              "sha256": "990d12cf736b124ebe4a05eefc38e13b92d9314c1115ddf8e64c735a9d9311fc"
+            },
+            "CN_SM_Tripo_DesertWell_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertWell_v001_sheet.png",
+              "sha256": "548c206e8a032fe97e418f02f2349d47affefb8e9e7c2df837ea22c62cfde106"
+            },
+            "CN_SM_Tripo_DesertWell_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertWell_v001_prompt.txt",
+              "sha256": "451d72497dbd73e96e19bb6efd12d245ea47a9c89484fcc10dd599f604e2ff4b"
+            },
+            "CN_SM_Tripo_DesertWell_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertWell_v001_registration.json",
+              "sha256": "4575ecda30ac6f7bfd32d6c752f70338114b49d8330a3aaa2ffc6d770f8ad107"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2070,
+              760
+            ],
+            "references": [],
+            "codex_session": "01a1594c-6c7f-76c3-a706-62ac2e182c13",
+            "attempt": 1,
+            "seconds": 86.8
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (4.4m wide x 3.4m tall x 4.4m deep): A Silk Road town market well platform 4.4m square and 3.4m tall: a square raised platform of big ochre-red sandstone blocks 4.4m wide and 1m tall, with two chunky steps leading up on the FRONT side; in its centre a round stone well curb 1.6m wide and 0.7m tall with a thick rounded rim and a dark round opening; over the well a sturdy timber windlass frame of two thick square posts and a thick horizontal roller with a crank, carrying a small square hipped roof of grey-brown tiles about 2m wide on top, reaching 3.4m; one chunky wooden bucket sits on the curb. Ochre-red and sand-yellow stone, weathered grey-brown timber, faded vermilion paint on the roof beam. PROPORTIONS: FRONT and BACK views drawn about 1.3 times as wide as tall, platform wide and low with the windlass rising in the middle; side views the same except the steps only on the front. Broad faceted hand-painted planes, chunky forms, no ropes, chains or thin parts, no debris. One solid connected piece on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "d16ed30e069e0c1a613e32fb67cd528dea6ee6d139032ab1acad108469b3da97",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.5233285233285233,
+              "offset": [
+                110,
+                335
+              ],
+              "size": [
+                291,
+                353
+              ],
+              "physical_height_m": 3.4,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5468215994531783,
+              "offset": [
+                153,
+                335
+              ],
+              "size": [
+                205,
+                353
+              ],
+              "physical_height_m": 3.4,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5468215994531783,
+              "offset": [
+                122,
+                335
+              ],
+              "size": [
+                267,
+                353
+              ],
+              "physical_height_m": 3.4,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5468215994531783,
+              "offset": [
+                143,
+                335
+              ],
+              "size": [
+                225,
+                353
+              ],
+              "physical_height_m": 3.4,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "石台 + 井圈 + 辘轳亭 + 木桶，四视图一致",
+            "time": "2026-10-20 20:38:22"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:31:36",
+          "files": {
+            "HP_SM_Tripo_DesertWell_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertWell_v001_source.glb",
+              "sha256": "f5464390393ccddad4f9f47745c87b004e754627a1ac78d33224102038b14026"
+            },
+            "HP_SM_Tripo_DesertWell_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertWell_v001.glb",
+              "sha256": "b7091014cc6628b8564626597117b009e3c8aea734ae8073d63a4c8d39a85242"
+            },
+            "HP_SM_Tripo_DesertWell_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertWell_v001_graph.json",
+              "sha256": "cbc5b640b2bb2cd6541f7d4dac3c1861b8be8ed22b2c185a97902cc7a31008bf"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/d3c48be9-1e3d-418f-a123-705f688a3e42",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 2855,
+          "source_sha256": "f5464390393ccddad4f9f47745c87b004e754627a1ac78d33224102038b14026"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:31:56",
+          "files": {
+            "SM_Tripo_DesertWell_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertWell_v001.blend",
+              "sha256": "7479d673ff1f971e1fbf12af2caa31771962d54d893d7fc65053e48222d55a7e"
+            },
+            "SM_Tripo_DesertWell_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertWell_v001.glb",
+              "sha256": "278eac764b9a329b1df47044809b3c38aba990cc0c39751e55e1b12ef21a62e4"
+            },
+            "SM_Tripo_DesertWell_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertWell_v001_metrics.json",
+              "sha256": "ea061251b62753f63a408aba56fd0a9147710963d0c53d1da1cc87ceaf9180c9"
+            },
+            "T_Tripo_DesertWell_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertWell_BC.png",
+              "sha256": "a1b2bdc482d8fa9f9ec8d87753ea77636a3c48d98e4b47a9695fc6aa85951fd4"
+            },
+            "T_Tripo_DesertWell_LOD1_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertWell_LOD1_BC.png",
+              "sha256": "d93bd65044870e3564a6c36007bb4f334dc0e29ec50d3ef65d96646da80c049d"
+            },
+            "T_Tripo_DesertWell_LOD1_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertWell_LOD1_N.png",
+              "sha256": "9c1cf1a50b73b3f1894d9e17136f09e2350bcb7e51fd68eac352b6d1051ffa24"
+            },
+            "T_Tripo_DesertWell_LOD1_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertWell_LOD1_ORM.png",
+              "sha256": "714b204e41a03ce222f06a3ef216cb5769da023025aace0ce0554ffd2f109197"
+            },
+            "T_Tripo_DesertWell_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertWell_N.png",
+              "sha256": "1c90b5c2e9db45f22ee866a89ad4b8bdc8ac1913890b6660411ced966cf08eb2"
+            },
+            "T_Tripo_DesertWell_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertWell_ORM.png",
+              "sha256": "a0c9393debff0515a5dd8792acb7d2388bc3ecf75658ad92d0e8d756bbb79caa"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.692,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2855,
+              "verts": 1601
+            },
+            {
+              "tris": 995,
+              "verts": 617
+            }
+          ],
+          "export_kb": 365.7,
+          "seconds": 18.4,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:31:59",
+          "files": {
+            "SM_Tripo_DesertWell_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertWell_v001_validation_v001.json",
+              "sha256": "086ebcaeff6117923004b7a08321aa035245de345d92351ed74724d30c5c141e"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:32:04",
+          "files": {
+            "SM_Tripo_DesertWell_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertWell_v001_review_v001.png",
+              "sha256": "8a7e257f93153ec5439fb88dcb8c36b240ba98de90c3e459c7b2a5108bafae15"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "成品审核通过（Tripo P2.0 + 纹理）：四视图与概念一致，LOD 远看轮廓不塌、无斜条纹",
+            "time": "2026-10-20 21:51:36"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:51:36",
+          "files": {
+            "SM_Tripo_DesertWell.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertWell.glb",
+              "sha256": "278eac764b9a329b1df47044809b3c38aba990cc0c39751e55e1b12ef21a62e4"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertWell.glb"
+        }
+      ]
+    }
+  }
+}

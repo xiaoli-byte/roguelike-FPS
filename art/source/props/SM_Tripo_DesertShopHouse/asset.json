@@ -1,0 +1,510 @@
+{
+  "id": "SM_Tripo_DesertShopHouse",
+  "display": "二层店铺楼（1-3 半埋长街）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:28:17",
+          "files": {
+            "BO_SM_Tripo_DesertShopHouse_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertShopHouse_v001.json",
+              "sha256": "b7008a049411b9fd1dc8b7b7758bad88a7afbd78429da5cbcc7db29f28467ede"
+            },
+            "BO_SM_Tripo_DesertShopHouse_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertShopHouse_v001_views.json",
+              "sha256": "630821f1eb4374ebea392ed3205c5d0ac560ba1a1cd91aa57bb7840a53d1fd33"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.shopHouse"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -4.5,
+              0.0,
+              -3.5
+            ],
+            "max": [
+              4.5,
+              8.0,
+              3.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:29:35",
+          "files": {
+            "CN_SM_Tripo_DesertShopHouse_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertShopHouse_v001_source.png",
+              "sha256": "5ef179b0b92c71633ccd1496a5a115876eafbb846a0bb99c5e5220cf882897c0"
+            },
+            "CN_SM_Tripo_DesertShopHouse_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertShopHouse_v001_front.png",
+              "sha256": "35f5e269fd02499290fae163afe98c615f449a082b258cffdf0ff8d3b13f6856"
+            },
+            "CN_SM_Tripo_DesertShopHouse_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertShopHouse_v001_left.png",
+              "sha256": "bfd1840b67e5f484bef3507ad2a5646104dea83dd4918d8d2041e3430969628a"
+            },
+            "CN_SM_Tripo_DesertShopHouse_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertShopHouse_v001_back.png",
+              "sha256": "a10a36df4b6c3eaab65cce100c7e2335ce8546027028bf22e730b333244ea514"
+            },
+            "CN_SM_Tripo_DesertShopHouse_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertShopHouse_v001_right.png",
+              "sha256": "e73008bbfdd067901c67d6887f0d5cf07631d10f99267b608801a4d0c299d177"
+            },
+            "CN_SM_Tripo_DesertShopHouse_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertShopHouse_v001_sheet.png",
+              "sha256": "11fb5abf25d6fd4b3cb69e92c7c4b63d72b12a5eaf7cd0dab77cc758a2dac30b"
+            },
+            "CN_SM_Tripo_DesertShopHouse_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertShopHouse_v001_prompt.txt",
+              "sha256": "ab5b701bef8293a58d6517c34b8f8dfe23ec2eb512f00dadcdb0d65afe24f142"
+            },
+            "CN_SM_Tripo_DesertShopHouse_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertShopHouse_v001_registration.json",
+              "sha256": "24e1054ccbac9d38d86695637c345e88dce1f3c28a773a7a574006ae0add0067"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a15948-ae66-7f13-a8e0-1d5b028999b6",
+            "attempt": 1,
+            "seconds": 76.0
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (9m wide x 8m tall x 7m deep): A two-storey Tang-dynasty Silk Road shop house 9m wide, 7m deep and 8m tall, timber frame with thick mud-brick walls. GROUND FLOOR (0-3.5m): the FRONT is a wide open shop front, three bays between four thick square timber posts, with a chunky waist-high timber counter across the middle bay; the side and back walls are solid pale sand-yellow plastered mud brick. A flat timber floor deck at 3.5m projects slightly over the front as a balcony. UPPER FLOOR (3.5-6.5m): an open timber loggia with a big wide opening on the FRONT (two bays between three posts, with a low chunky balustrade only at the ends, leaving a 4m-wide gap to walk through) and one large plain doorway 2m wide and 2.4m tall in the BACK wall and in each side wall, so a player can walk straight through the upper floor from any side. ROOF: a shallow single-slope grey-brown tiled roof with deep eaves and chunky rafter ends, topped by a thick ridge, reaching 8m; a faded vermilion and malachite-green painted cloth awning hangs stiffly over the front of the upper floor. Weathered grey-brown timber, pale sand-yellow plaster, ochre-red brick where the plaster has flaked, faded Dunhuang vermilion and malachite trim. PROPORTIONS: FRONT and BACK views drawn about 1.1 times as wide as tall; side views a little less wide than tall. The openings must read clearly as see-through dark voids. Broad faceted hand-painted planes, chunky forms, no hanging goods, lanterns, signs or text, no debris. One solid connected piece on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "5ef179b0b92c71633ccd1496a5a115876eafbb846a0bb99c5e5220cf882897c0",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.5461682881037718,
+              "offset": [
+                83,
+                309
+              ],
+              "size": [
+                346,
+                406
+              ],
+              "physical_height_m": 8.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5360807471625413,
+              "offset": [
+                181,
+                309
+              ],
+              "size": [
+                149,
+                406
+              ],
+              "physical_height_m": 8.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5454351763076595,
+              "offset": [
+                87,
+                309
+              ],
+              "size": [
+                338,
+                406
+              ],
+              "physical_height_m": 8.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5353744484179266,
+              "offset": [
+                183,
+                309
+              ],
+              "size": [
+                145,
+                406
+              ],
+              "physical_height_m": 8.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "一层敞开店面 + 柜台，二层前廊开敞、背面与侧面有门洞可穿行；单坡顶（背视图把屋面画成可见，Tripo 以正侧视图为准）",
+            "time": "2026-10-20 20:30:42"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:18:46",
+          "files": {
+            "HP_SM_Tripo_DesertShopHouse_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertShopHouse_v001_source.glb",
+              "sha256": "7d545f1a920a7746c2086bb0bac9590b7978198fbad80ea1fd0d6da8816d3a57"
+            },
+            "HP_SM_Tripo_DesertShopHouse_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertShopHouse_v001.glb",
+              "sha256": "3bedcbfcd2691ba4fb00e79f1ba4b519e5aa4fe0747ad292a4675e7b4abed565"
+            },
+            "HP_SM_Tripo_DesertShopHouse_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertShopHouse_v001_graph.json",
+              "sha256": "e343e49474825c092a20cbc655fef0afd99c3ddd420f73dc7da354f8ba57872c"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/db9a1e2a-373b-4880-bac3-a7f12e742a13",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 6746,
+          "source_sha256": "7d545f1a920a7746c2086bb0bac9590b7978198fbad80ea1fd0d6da8816d3a57"
+        }
+      ]
+    },
+    "build": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:19:29",
+          "files": {
+            "SM_Tripo_DesertShopHouse_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertShopHouse_v001.blend",
+              "sha256": "a99f3d43103d820d767a122c877a45a0be8010ba7ab789192993b2957b3a6dad"
+            },
+            "SM_Tripo_DesertShopHouse_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertShopHouse_v001.glb",
+              "sha256": "4b81055f6fc706592fe286b3431a289b2087b9618892216f41a6499abe4fd2c0"
+            },
+            "SM_Tripo_DesertShopHouse_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertShopHouse_v001_metrics.json",
+              "sha256": "784efa3345ac94f7d0584436d4ce7002ac8ee7d22eb03685db1c0cf43ce3b570"
+            },
+            "T_Tripo_DesertShopHouse_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertShopHouse_BC.png",
+              "sha256": "60118470271efe55a3fede65bc50a36d0d420fa77a7c8d69205a85c52a44d7c6"
+            },
+            "T_Tripo_DesertShopHouse_LOD2_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertShopHouse_LOD2_BC.png",
+              "sha256": "be546b0cfa25abdf69243138f1a54d04b3199abdcf0269233969055f6d51553f"
+            },
+            "T_Tripo_DesertShopHouse_LOD2_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertShopHouse_LOD2_N.png",
+              "sha256": "64b74e6f1d2a2288b6bfe9b059dc187b946dfcdc88d649b159afe26e347a9e33"
+            },
+            "T_Tripo_DesertShopHouse_LOD2_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertShopHouse_LOD2_ORM.png",
+              "sha256": "8d3f3aa4a74e48aa5bedeb74e74d38c833627abb41f10d58496d9e169da99810"
+            },
+            "T_Tripo_DesertShopHouse_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertShopHouse_N.png",
+              "sha256": "f272e504bb34ba9ad5b56146ac688c192b8f4aa7919b7509207fe7967641a70e"
+            },
+            "T_Tripo_DesertShopHouse_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertShopHouse_ORM.png",
+              "sha256": "c16288f5ebc02488a6a6401f34aa3ca44f75c4513bc0aee5cf45891395feb7b8"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.845,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 6746,
+              "verts": 4121
+            },
+            {
+              "tris": 2486,
+              "verts": 1766
+            },
+            {
+              "tris": 777,
+              "verts": 785
+            }
+          ],
+          "export_kb": 1221.4,
+          "seconds": 42.0,
+          "bake_device": "none (provider textures)",
+          "quality_status": "failed",
+          "quality_errors": [
+            "LOD2 贴图色差"
+          ]
+        },
+        {
+          "version": 2,
+          "created": "2026-10-20 21:20:41",
+          "files": {
+            "SM_Tripo_DesertShopHouse_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertShopHouse_v002.blend",
+              "sha256": "1006de4d2e891efda345748b049d13781a4001c58fafcd0f6bdbf9c0d71f739a"
+            },
+            "SM_Tripo_DesertShopHouse_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertShopHouse_v002.glb",
+              "sha256": "4b81055f6fc706592fe286b3431a289b2087b9618892216f41a6499abe4fd2c0"
+            },
+            "SM_Tripo_DesertShopHouse_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertShopHouse_v002_metrics.json",
+              "sha256": "af64fc1a1379af3d9b8fdb790a5beb99e824800be2c77df9c36a879cf5ae09dc"
+            },
+            "T_Tripo_DesertShopHouse_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertShopHouse_BC.png",
+              "sha256": "60118470271efe55a3fede65bc50a36d0d420fa77a7c8d69205a85c52a44d7c6"
+            },
+            "T_Tripo_DesertShopHouse_LOD2_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertShopHouse_LOD2_BC.png",
+              "sha256": "be546b0cfa25abdf69243138f1a54d04b3199abdcf0269233969055f6d51553f"
+            },
+            "T_Tripo_DesertShopHouse_LOD2_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertShopHouse_LOD2_N.png",
+              "sha256": "64b74e6f1d2a2288b6bfe9b059dc187b946dfcdc88d649b159afe26e347a9e33"
+            },
+            "T_Tripo_DesertShopHouse_LOD2_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertShopHouse_LOD2_ORM.png",
+              "sha256": "8d3f3aa4a74e48aa5bedeb74e74d38c833627abb41f10d58496d9e169da99810"
+            },
+            "T_Tripo_DesertShopHouse_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertShopHouse_N.png",
+              "sha256": "f272e504bb34ba9ad5b56146ac688c192b8f4aa7919b7509207fe7967641a70e"
+            },
+            "T_Tripo_DesertShopHouse_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertShopHouse_ORM.png",
+              "sha256": "c16288f5ebc02488a6a6401f34aa3ca44f75c4513bc0aee5cf45891395feb7b8"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.845,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 6746,
+              "verts": 4121
+            },
+            {
+              "tris": 2486,
+              "verts": 1766
+            },
+            {
+              "tris": 777,
+              "verts": 785
+            }
+          ],
+          "export_kb": 1221.4,
+          "seconds": 51.8,
+          "bake_device": "none (provider textures)",
+          "quality_status": "failed",
+          "quality_errors": [
+            "LOD2 贴图色差"
+          ]
+        },
+        {
+          "version": 3,
+          "created": "2026-10-20 21:22:58",
+          "files": {
+            "SM_Tripo_DesertShopHouse_v003.blend": {
+              "path": "03_work/SM_Tripo_DesertShopHouse_v003.blend",
+              "sha256": "8bcbd845fe52ca9511b8ddaadbe7f2c2acd723289cb21a6a06c59ae0c0572d05"
+            },
+            "SM_Tripo_DesertShopHouse_v003.glb": {
+              "path": "04_export/SM_Tripo_DesertShopHouse_v003.glb",
+              "sha256": "57ae0668d7e5fca523f91b6324ce419669a17cb33732b333b5e92b7ba2ea4e12"
+            },
+            "SM_Tripo_DesertShopHouse_v003_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertShopHouse_v003_metrics.json",
+              "sha256": "ee20b81b5a501eca5419e7162de295cf5632b9a14d2213c2292262bc68d3b8fb"
+            },
+            "T_Tripo_DesertShopHouse_BC.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertShopHouse_BC.png",
+              "sha256": "60118470271efe55a3fede65bc50a36d0d420fa77a7c8d69205a85c52a44d7c6"
+            },
+            "T_Tripo_DesertShopHouse_LOD2_BC.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertShopHouse_LOD2_BC.png",
+              "sha256": "15abe363f86e516bdce090bc87813706e97f5016ec89b93f54f82e6737990195"
+            },
+            "T_Tripo_DesertShopHouse_LOD2_N.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertShopHouse_LOD2_N.png",
+              "sha256": "93014220ba6b2ab29f0435a1433c0bc657e42ec7d9f609611a26171a82c61416"
+            },
+            "T_Tripo_DesertShopHouse_LOD2_ORM.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertShopHouse_LOD2_ORM.png",
+              "sha256": "82af43d48a32f22425ef092207df6df2cb8d7419fb4167c81f03057220e41d88"
+            },
+            "T_Tripo_DesertShopHouse_N.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertShopHouse_N.png",
+              "sha256": "f272e504bb34ba9ad5b56146ac688c192b8f4aa7919b7509207fe7967641a70e"
+            },
+            "T_Tripo_DesertShopHouse_ORM.png": {
+              "path": "03_work/textures_v003/T_Tripo_DesertShopHouse_ORM.png",
+              "sha256": "c16288f5ebc02488a6a6401f34aa3ca44f75c4513bc0aee5cf45891395feb7b8"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.845,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 6746,
+              "verts": 4121
+            },
+            {
+              "tris": 2486,
+              "verts": 1766
+            },
+            {
+              "tris": 1191,
+              "verts": 1038
+            }
+          ],
+          "export_kb": 1229.9,
+          "seconds": 54.9,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:19:33",
+          "files": {
+            "SM_Tripo_DesertShopHouse_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertShopHouse_v001_validation_v001.json",
+              "sha256": "6924a64de4a49cdfeafb5b6db2620cf9c652a064fff5a7b634b4d83fd188398a"
+            }
+          },
+          "from_build": 1,
+          "errors": 1,
+          "warnings": 0,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 2,
+          "created": "2026-10-20 21:20:45",
+          "files": {
+            "SM_Tripo_DesertShopHouse_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertShopHouse_v002_validation_v002.json",
+              "sha256": "6924a64de4a49cdfeafb5b6db2620cf9c652a064fff5a7b634b4d83fd188398a"
+            }
+          },
+          "from_build": 2,
+          "errors": 1,
+          "warnings": 0,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 3,
+          "created": "2026-10-20 21:23:02",
+          "files": {
+            "SM_Tripo_DesertShopHouse_v003_validation_v003.json": {
+              "path": "05_review/SM_Tripo_DesertShopHouse_v003_validation_v003.json",
+              "sha256": "fe5eb37fd25cb729d8e8926579ff77f316377b1e1dd7356eae2167cf1c1f0cdf"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:23:08",
+          "files": {
+            "SM_Tripo_DesertShopHouse_v003_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertShopHouse_v003_review_v001.png",
+              "sha256": "1448cd100f694e7e0c1683c709bdb035de1c2b5297e4c7c35aed039e31763723"
+            }
+          },
+          "from_build": 3,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "成品审核通过（Tripo P2.0 + 纹理）：四视图与概念一致，LOD 远看轮廓不塌、无斜条纹",
+            "time": "2026-10-20 21:51:02"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:51:03",
+          "files": {
+            "SM_Tripo_DesertShopHouse.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertShopHouse.glb",
+              "sha256": "57ae0668d7e5fca523f91b6324ce419669a17cb33732b333b5e92b7ba2ea4e12"
+            }
+          },
+          "from_build": 3,
+          "url": "assets/props/SM_Tripo_DesertShopHouse.glb"
+        }
+      ]
+    }
+  }
+}

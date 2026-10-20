@@ -1,0 +1,178 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_DesertYardangSphinx",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "desert.silkroad.yardangSphinx"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    24,
+    60
+  ],
+  "budget": {
+    "lodTris": [
+      8000,
+      2500,
+      800
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -4.784307956695557,
+      0,
+      -8.736376762390137
+    ],
+    "max": [
+      4.784307956695557,
+      13,
+      8.73927116394043
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_DesertYardangSphinx_LOD0",
+      "lod": 0,
+      "tris": 7960,
+      "verts": 4903,
+      "materials": [
+        "M_Tripo_DesertYardangSphinx"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_DesertYardangSphinx_LOD1",
+      "lod": 1,
+      "tris": 2487,
+      "verts": 1697,
+      "materials": [
+        "M_Tripo_DesertYardangSphinx_LOD1"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_DesertYardangSphinx_LOD2",
+      "lod": 2,
+      "tris": 795,
+      "verts": 629,
+      "materials": [
+        "M_Tripo_DesertYardangSphinx_LOD2"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_DesertYardangSphinx",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_DesertYardangSphinx_BC.png",
+        "N": "Textures/T_Tripo_DesertYardangSphinx_N.png",
+        "ORM": "Textures/T_Tripo_DesertYardangSphinx_ORM.png"
+      }
+    },
+    {
+      "name": "M_Tripo_DesertYardangSphinx_LOD1",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_DesertYardangSphinx_LOD1_BC.png",
+        "N": "Textures/T_Tripo_DesertYardangSphinx_LOD1_N.png",
+        "ORM": "Textures/T_Tripo_DesertYardangSphinx_LOD1_ORM.png"
+      }
+    },
+    {
+      "name": "M_Tripo_DesertYardangSphinx_LOD2",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_DesertYardangSphinx_LOD2_BC.png",
+        "N": "Textures/T_Tripo_DesertYardangSphinx_LOD2_N.png",
+        "ORM": "Textures/T_Tripo_DesertYardangSphinx_LOD2_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_DesertYardangSphinx.glb",
+    "sha256": "2d4029f36a319a1445f3ffbe3cbe0db6d36d108b86feeb51cb3cfb64aec0941d",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-20 21:54:13"
+}

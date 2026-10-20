@@ -1,0 +1,175 @@
+{
+  "source": {
+    "tris": 6756,
+    "verts": 4527
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 11.00537,
+    "iou": 0.756,
+    "iou_per_view": {
+      "front": 0.774,
+      "left": 0.685,
+      "back": 0.781,
+      "right": 0.777
+    },
+    "size_m": [
+      8.528,
+      7.625,
+      11.0
+    ],
+    "reference_m": [
+      14.0,
+      10.0,
+      11.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.659,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_DesertCrescentPavilion_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "provider",
+      "collapse": {
+        "samples": 22092,
+        "matched_ratio": 0.92,
+        "mean_delta": 0.015,
+        "p90_delta": 0.0425,
+        "smeared_ratio": 0.0039,
+        "stretched_ratio": 0.0084,
+        "dist_p99_m": 0.0668
+      }
+    },
+    "LOD2": {
+      "method": "rebaked",
+      "texture": 512,
+      "cage_m": 0.3554,
+      "uv": {
+        "smart_islands": 510,
+        "charts": 197,
+        "fallback_charts": 6,
+        "flipped_faces": 2,
+        "flipped_ratio": 0.0025,
+        "method": "merged",
+        "density_smart": 0.0336,
+        "density_merged": 0.0393,
+        "coverage": 0.767
+      },
+      "collapse": {
+        "samples": 20196,
+        "matched_ratio": 0.842,
+        "mean_delta": 0.0298,
+        "p90_delta": 0.0861,
+        "smeared_ratio": 0.0327,
+        "stretched_ratio": 0.0274,
+        "dist_p99_m": 0.1777
+      },
+      "final": {
+        "samples": 20196,
+        "matched_ratio": 0.842,
+        "mean_delta": 0.0237,
+        "p90_delta": 0.0642,
+        "smeared_ratio": 0.0093,
+        "stretched_ratio": 0.1606,
+        "dist_p99_m": 0.1777
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertCrescentPavilion_LOD0",
+      "tris": 6756,
+      "verts": 4527,
+      "uv_min": [
+        0.001220703125,
+        0.001220703125
+      ],
+      "uv_max": [
+        0.998779296875,
+        0.994873046875
+      ],
+      "uv_utilization": 0.578,
+      "bbox_min": [
+        -4.264,
+        -3.8127,
+        0.0
+      ],
+      "bbox_max": [
+        4.264,
+        3.8127,
+        11.0
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertCrescentPavilion_LOD1",
+      "tris": 2486,
+      "verts": 2120,
+      "uv_min": [
+        0.001220703125,
+        0.001220703125
+      ],
+      "uv_max": [
+        0.998779296875,
+        0.994873046875
+      ],
+      "uv_utilization": 0.502,
+      "bbox_min": [
+        -4.2461,
+        -3.8409,
+        0.0
+      ],
+      "bbox_max": [
+        4.255,
+        3.82,
+        11.0083
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertCrescentPavilion_LOD2",
+      "tris": 794,
+      "verts": 1055,
+      "uv_min": [
+        0.004098948091268539,
+        0.003992656245827675
+      ],
+      "uv_max": [
+        0.9876736998558044,
+        0.9960083961486816
+      ],
+      "uv_utilization": 0.618,
+      "bbox_min": [
+        -4.2461,
+        -3.8623,
+        0.0
+      ],
+      "bbox_max": [
+        4.2172,
+        3.6417,
+        10.5388
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertCrescentPavilion/04_export/SM_Tripo_DesertCrescentPavilion_v001.glb",
+    "bytes": 1264760
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 37.2,
+  "_seconds": 38.7
+}

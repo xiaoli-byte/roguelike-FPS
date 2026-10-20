@@ -1523,11 +1523,11 @@ source_provider = "tripo"
 style_theme = "silkroad"
 blockout = { source = "scene", id = "desert.silkroad.yardangMedium" }
 reference_mode = "bounds_only"
-reference_dimensions = [6.5, 9.0, 16.0]
+reference_dimensions = [8.0, 9.0, 18.0]
 architecture_role = "terrain"
 keep_glow = "none"
 material = { roughness = 0.95, metallic = 0.0 }
-brief = """A medium wind-eroded yardang rock mound 9m tall, 6.5m wide and 16m long, its long axis running front-to-back along the wind, made of the same rock as a big ship-shaped yardang ridge: bold, perfectly horizontal sediment strata in alternating ochre-red and pale sand-yellow bands, each band a broad flat stripe that wraps all the way around at the same height on every side. Shape: one massive flat-topped loaf-like rock body, NOT a slender pillar or tower and NOT a ramp or wedge. The top is a broad, almost level flat plateau: a full 9m high from the front head over the front three quarters of the length, then one low step down by about 1.5m over the last quarter to the tail at the BACK end. The side walls are steep and near-vertical with slightly rounded upper edges, carved by a few broad vertical wind flutes and grooves. Along the foot a continuous shallow horizontal undercut groove runs all around like a waterline notch, a recessed band about 1m tall; no arches, caves, holes or separate legs, the rock sits solidly on the ground along its whole length. The FRONT is the blunt rounded upwind head. EXACT VIEW PROPORTIONS, all four views drawn at the same 9m height: FRONT and BACK views show the 6.5m narrow end, drawn clearly taller than wide (width about 0.7 of the height), a sturdy upright mass with a broad flat top nearly as wide as the base, only slightly rounded shoulders and sides that flare a little outward to the footing, the horizontal bands running straight across it; the BACK outline is the FRONT outline mirrored at the same full height, because the taller head still shows behind the lower tail step, which appears as a lower ledge in front. LEFT and RIGHT side views show the long 16m profile, drawn 1.8 times as long as tall (never longer), the two side views exact mirror images of each other: a nearly horizontal top line with the blunt head at the front end and the single low step down near the back end, the horizontal bands parallel to the ground, never diagonal. Broad faceted hand-painted planes, chunky readable forms, two or three colour blocks, no tiny cracks, pebbles, vegetation or man-made parts. One solid rock mass on a flat base."""
+brief = """A medium wind-eroded yardang rock mound 18m long, 8m wide and 9m tall, long axis front-to-back along the wind, made of the same rock as the big ship-shaped yardang ridge, shaped like an upturned boat hull or a whale's back: a blunt, rounded, high upwind head at the FRONT where it is the full 9m tall, a long flat top that stays almost level over the front half and then sinks in one low soft step to a lower, narrower tail about 5.5m tall at the BACK. Steep near-vertical sides with slightly rounded upper edges, carved by four or five broad irregular vertical wind flutes on each side; a shallow undercut notch runs along the foot. Bold, perfectly horizontal sediment strata in alternating ochre-red and pale sand-yellow bands, each band a broad crisp flat stripe with a hard clean edge wrapping around at the same height on every side, painted with the same crisp banding as the approved ship-shaped yardang. PROPORTIONS: LEFT and RIGHT views show the long profile drawn twice as long as tall, mirror images of each other, with the high blunt head at the front end; the FRONT view shows the blunt 8m-wide head drawn a little narrower than tall, with a broad flat top and steep sides; the BACK view shows the lower narrower tail with the taller head rising behind it. Broad faceted hand-painted planes, crisp bands, chunky readable forms, no arches, caves, holes, tiny cracks, pebbles, vegetation or man-made parts. One solid rock mass on a flat base."""
 
 [assets.SM_Tripo_DesertYardangFleet]
 display = "雅丹「舰队」岩脊（20 m 地标）"
@@ -1557,6 +1557,333 @@ keep_glow = "none"
 qa_waivers = { "场景高度" = "Tripo 成品比参考包围盒更扁宽，等比缩放后货包顶约 1.8 m（参考 2.2 m 是估值）；1.8 m 正好作中掩体（2026-10-17）" }
 material = { roughness = 0.9, metallic = 0.0 }
 brief = """An abandoned Silk Road caravan wreck 5m wide, 2.2m tall, 3.6m deep, half sunk in one low, compact sand drift mound that joins everything and does not spread beyond the parts. PROPORTIONS: a low, wide cluster only 2.2m tall including the cargo, so in the FRONT and BACK views it is drawn 2.3 times wider than tall and in the side views 1.6 times wider than tall; the cargo bundles sit low and squat on the cart bed. Draw every view small enough to leave wide empty grey gaps between neighbouring views; no view, wheel, shaft or sand edge may come near another view. Only four parts, all big and chunky: (1) one broken two-wheeled wooden cart, (2) two bulky cargo bundles on it, (3) one terracotta water jar, (4) one half-buried camel skeleton. FIXED LAYOUT as seen in the FRONT view: the cart fills the RIGHT and centre of the scene with its two thick shafts pointing straight toward the viewer, tilted forward so the shaft tips rest in the sand; the camel skeleton lies at the cart's LEFT-REAR corner, on the image-left and further back than the cart. The cart: a heavy plank box bed with low thick sides and two big solid wooden wheels with only four thick spokes each, both still upright on the axle, one on each side of the bed; on the bed one large terracotta-red cloth bundle and one large indigo-blue cloth bundle, each tied with two thick ropes, and exactly one round terracotta jar between them (no other jars). The camel skeleton: a short thick spine lying on the ground parallel to the cart's axle, only five or six very thick chunky ivory ribs arching up out of the sand like big curved bars (each rib as thick as a forearm, with wide gaps between them), and one large chunky camel skull lying on the sand at the outer left end of the spine. All four views must show this one layout exactly: FRONT view - cart on the right with its shafts toward the viewer, rib cage on the left seen from the side as a row of arches, skull at the far left; BACK view - mirrored, cart on the image-left showing its plank tailboard, rib cage on the image-right closest to the camera, skull at the far right; LEFT side view (looking from the cart's wheel side) - the cart in front with its shafts pointing to the image-left and one wheel seen face-on, the rib tops just visible behind the cart toward the image-right; RIGHT side view (looking from the skeleton side) - the rib cage seen end-on in front on the image-left with the skull facing the camera, the cart behind it with its shafts pointing to the image-right. Weathered grey-brown timber, faded terracotta and indigo cloth, pale ivory bone, sand-yellow drift. Chunky simplified shapes at Gunfire Reborn fidelity, broad faceted planes, two or three dominant colour blocks, no thin spokes, loose ropes, thin or fine bones, flags, cloth banners or scattered debris; everything touching as one solid connected cluster on a flat base."""
+
+
+# ───────────── 第一章地图件 A（ART3，docs/unity-parity.md 第 5 节）：1-1 收尾 + 1-2 雅丹迷城 ─────────────
+# 2026-10-20：Codex 概念 → Tripo Studio P2.0 智能网格（建筑约 8000 面、重复墙件约 4000 面、散布件约 1500 面）+ 纹理。
+# 摆放在地图单元 M11 / M12 做（LevelKit.PlaceOrBox 按这里的 ID 找 Prefab）；记录见 docs/art/ch1-map-kit.md。
+
+[assets.SM_Tripo_DesertPosthouseWall]
+display = "驿站残墙（1-1 出生驿站）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "silkroad"
+blockout = { source = "scene", id = "desert.silkroad.posthouseWall" }
+reference_mode = "bounds_only"
+reference_dimensions = [6.0, 3.2, 1.0]
+architecture_role = "wall"
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """A ruined courtyard wall section of a Han-dynasty Silk Road relay post station (yizhan), 6m long, 3.2m tall at its highest and 1m thick: a straight free-standing wall of sun-dried mud brick laid in broad horizontal courses, covered by a thick pale sand-yellow mud-plaster skin that has flaked off in two or three large soft-edged patches showing the ochre-red brick courses beneath. PROPORTIONS: in the FRONT and BACK views it is a long low wall drawn almost twice as wide as tall; the crest is broken: the LEFT third stands at the full 3.2m with a thin overhanging timber coping beam and a row of chunky square beam ends, the middle steps down in two broad eroded rounded steps, and the RIGHT third is only about 2m tall. One small square window opening with a thick grey-brown timber frame sits in the tall left part, about 1.6m above the ground, going straight through the wall. Both ends are flat vertical cut faces so identical sections join in a line or at a corner. FRONT and BACK faces look nearly the same; the side views are narrow upright slabs, 1m thick and 3.2m (left end) tall. Broad faceted hand-painted planes, chunky readable forms, two or three colour blocks, no loose bricks, debris, plants or micro cracks. One solid connected piece on a flat base."""
+
+[assets.SM_Tripo_DesertBeaconParapet]
+display = "烽燧台垛墙（1-1 烽燧台地边缘）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+style_theme = "silkroad"
+blockout = { source = "scene", id = "desert.silkroad.beaconParapet" }
+reference_mode = "bounds_only"
+reference_dimensions = [3.5, 1.1, 0.7]
+architecture_role = "cover"
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """A short crenellated rammed-earth parapet segment from the edge of a Han-dynasty beacon tower platform, 3.5m long, 1.1m tall and 0.7m thick, built exactly like the Han Great Wall: broad horizontal rammed-earth courses in alternating ochre-red and pale sand-yellow bands with thin darker khaki reed layers between them. Shape: a low solid wall with two chunky merlons, each 1.2m wide and the full 1.1m tall, and between them one wide square crenel notch 1.1m wide cut down to 0.6m, so a crouching shooter can fire through it; the tops are softly eroded and rounded. Both ends are flat vertical cut faces so segments join in a row. PROPORTIONS: in the FRONT and BACK views it is drawn three times as wide as tall, a long low notched block; the side views are small upright rectangles 0.7m wide and 1.1m tall. FRONT and BACK look the same. Broad faceted hand-painted planes, chunky forms, no bricks, debris or micro cracks. One solid connected piece on a flat base."""
+
+[assets.SM_Tripo_DesertBrushwoodPile]
+display = "烽燧积薪（1-1 烽燧台地）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+style_theme = "silkroad"
+blockout = { source = "scene", id = "desert.silkroad.brushwoodPile" }
+reference_mode = "bounds_only"
+reference_dimensions = [2.2, 1.3, 2.2]
+architecture_role = "cover"
+keep_glow = "none"
+material = { roughness = 0.95, metallic = 0.0 }
+brief = """A Han-dynasty beacon signal fuel stack (jixin) 2.2m square and 1.3m tall: a neat square crib stack of thick bundled reed and tamarisk faggots, each bundle a fat cylinder about 0.3m thick and 2m long tied with two chunky rope bands, laid in four layers that alternate direction like a log cabin, so on every face the visible layers alternate between the long sides of bundles and the round cut ends of bundles. The top layer is slightly domed with a few loose bundles. Straw-yellow and khaki reed with darker grey-brown tamarisk bundles mixed in, faded rope. PROPORTIONS: a squat block, all four views drawn about 1.7 times as wide as tall, and the FRONT and LEFT views differ only in which layers show bundle ends. Chunky simplified bundles at Gunfire Reborn fidelity, broad faceted planes, no thin twigs, loose straw or fire. One solid connected piece on a flat base."""
+
+[assets.SM_Tripo_DesertCamelthorn]
+display = "骆驼刺（散布件）"
+kind = "static"
+class = "tripo_scatter"
+# 叶团碎岛多：400 面的 LOD1 重烘到 256² 后色差 9%（上限 6%），LOD1 放到 600 面
+lod_tris = [1200, 600]
+source_provider = "tripo"
+style_theme = "silkroad"
+blockout = { source = "scene", id = "desert.silkroad.camelthorn" }
+reference_mode = "bounds_only"
+reference_dimensions = [1.3, 0.7, 1.2]
+architecture_role = "dressing"
+keep_glow = "none"
+material = { roughness = 0.95, metallic = 0.0 }
+brief = """A low desert camelthorn shrub (Alhagi) clump 1.3m wide and 0.7m tall growing out of a small sand mound: a rounded low dome of five or six chunky stylized foliage clusters, each cluster a faceted lump of small spiky leaves painted as one solid mass, dusty sage-green and olive with a few dark grey-brown thorny branch stubs showing between the clusters at the base, and a sprinkling of tiny magenta-pink flower dots painted on the clusters. The clump sits on a low sand-yellow mound that flares out slightly at the base. PROPORTIONS: a low wide dome, all four views drawn almost twice as wide as tall and nearly the same. Gunfire Reborn style stylized vegetation: solid chunky leaf masses with soft painted gradients, no individual thin twigs, needles or alpha cards. One solid connected piece on a flat base."""
+
+[assets.SM_Tripo_DesertGravelScatter]
+display = "黑戈壁砾石（散布件）"
+kind = "static"
+class = "tripo_scatter"
+source_provider = "tripo"
+style_theme = "silkroad"
+blockout = { source = "scene", id = "desert.silkroad.gravelScatter" }
+reference_mode = "bounds_only"
+reference_dimensions = [1.8, 0.45, 1.5]
+architecture_role = "dressing"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.0 }
+brief = """A small cluster of black Gobi desert stones 1.8m wide, 0.45m tall and 1.5m deep, half sunk in a thin flat patch of sand: one larger angular flat-topped stone about 0.7m across and 0.45m tall, two medium stones and four small fist-to-head-sized pebbles around it, all chunky low-poly faceted rocks with broad flat facets and slightly rounded edges. The stones have the dark desert-varnish look of the black Gobi: charcoal-black and dark brown-grey tops with a warm rusty-brown tint, paler ochre undersides where they meet the sand. The sand patch under them is a very thin irregular disc, pale sand-yellow, connecting all stones. PROPORTIONS: a flat low cluster, all four views drawn about four times as wide as tall. Broad faceted hand-painted planes, no tiny grit or cracks. One solid connected piece on a flat base."""
+
+[assets.SM_Tripo_DesertSeatedColossus]
+display = "敦煌坐像（1-1 远景地标 / 1-3 寺院前庭巨像）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "silkroad"
+blockout = { source = "scene", id = "desert.silkroad.seatedColossus" }
+reference_mode = "bounds_only"
+reference_dimensions = [14.0, 20.0, 10.0]
+architecture_role = "landmark"
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """A colossal ancient seated stone statue 20m tall in the style of the Dunhuang Mogao and Yulin cave-temple giant figures, carved from ochre-red sandstone: a serene seated guardian king with a calm downcast face, elongated earlobes, a tall simple crown, broad shoulders, both hands resting on the knees, legs pendant (seated European-style on a throne block) with large feet resting on a lotus footstool. Behind the head and shoulders rises a huge round flat stone halo disc carved as concentric rings, the most striking part of the silhouette, wider than the shoulders. The figure wears a simple broad-pleated robe carved as big soft folds. The lower part, the throne block and the knees, is half swallowed by a smooth sand drift that slopes up against the front and both sides. Weathered ochre-red and sand-yellow sandstone with large faded patches of Dunhuang mineral paint: malachite green on the robe, lapis blue on the halo rings, vermilion on the crown, all softened and partly worn away; horizontal strata lines across the body. PROPORTIONS: FRONT and BACK views are drawn 1.4 times as tall as wide; the side views show the deep seated profile with the halo disc as a thick vertical slab behind the head. The BACK is plain rough rock behind the halo. A bold simple landmark silhouette readable from 300m, broad faceted planes, chunky forms, no fine ornament, cracks, hands-held objects or broken limbs. One solid connected piece on a flat base."""
+
+[assets.SM_Tripo_DesertStupaBuried]
+display = "半埋佛塔（1-2 塔尖广场地标）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "silkroad"
+blockout = { source = "scene", id = "desert.silkroad.stupaBuried" }
+reference_mode = "bounds_only"
+reference_dimensions = [16.0, 11.0, 16.0]
+architecture_role = "landmark"
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """A massive ruined Western-Regions Buddhist stupa of rammed earth and sun-dried mud brick, like the stupas of Miran and Subashi on the Silk Road, 16m square at the base and 11m tall, built as big stepped square tiers with walkable flat terraces: a lowest square plinth 16m wide and 3.5m tall, a second square tier 11m wide and 2.5m tall set back so it leaves a 2.5m-wide flat walkable terrace all around at 3.5m, then a round drum 8m wide and 1.5m tall leaving a second flat ring terrace at 6m, crowned by a weathered hemispherical dome 7m wide reaching 10m, with a short broken square spire stump on top reaching 11m. On the FRONT face one broad straight staircase of chunky deep steps climbs from the ground to the first terrace, and a second flight continues from the first terrace up to the second terrace, both cut into the front of the tiers. Ochre-red and pale sand-yellow mud brick in broad horizontal courses, the dome surface wind-eroded smooth with soft vertical rain grooves, one row of blind arched niches around the second tier with faded Dunhuang malachite-green and vermilion paint inside. PROPORTIONS: all four views are drawn about 1.45 times as wide as tall, a broad stepped mound; LEFT, RIGHT and BACK views look the same except that only the FRONT has the stairs. Broad faceted planes, chunky readable forms, no loose bricks, debris or micro cracks. One solid connected piece on a flat base."""
+
+[assets.SM_Tripo_DesertYardangSphinx]
+display = "狮身雅丹（1-2 地标岩丘）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "silkroad"
+blockout = { source = "scene", id = "desert.silkroad.yardangSphinx" }
+reference_mode = "bounds_only"
+reference_dimensions = [10.0, 13.0, 26.0]
+architecture_role = "landmark"
+keep_glow = "none"
+material = { roughness = 0.95, metallic = 0.0 }
+brief = """A famous natural landmark yardang shaped like a crouching sphinx-lion, 26m long, 10m wide and 13m tall, long axis front-to-back along the wind, made of wind-eroded ochre-red and sand-yellow sedimentary rock with bold, perfectly horizontal strata bands that wrap around the whole body at the same heights. At the FRONT a raised blunt head-like rock mass reaches the full 13m, its upwind face weathered into the suggestion of a broad lion face: a heavy brow ledge, two deep hollow eye shadows and a broad blunt muzzle, all purely natural erosion shapes, no carving. Behind the head the long flat back descends in one gentle step to a long level body about 8m tall, ending at the BACK in a lower rounded haunch about 6m tall. Along the sides near the front, two broad low rock spurs stick forward from the base like the outstretched front paws of a crouching lion. Steep fluted sides with a few broad vertical wind grooves, and a shallow undercut notch along the base. PROPORTIONS: the LEFT and RIGHT views show the long 26m crouching-lion profile drawn twice as long as tall, mirror images of each other; the FRONT view shows the head face-on, 10m wide and 13m tall; the BACK view shows the lower rounded haunch with the head rising behind it. Broad faceted hand-painted planes, a chunky silhouette readable from far away, no vegetation, cracks or man-made parts. One solid rock mass on a flat base."""
+
+[assets.SM_Tripo_DesertRockArch]
+display = "雅丹岩拱（1-2 出口）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "silkroad"
+blockout = { source = "scene", id = "desert.silkroad.rockArch" }
+reference_mode = "bounds_only"
+reference_dimensions = [16.0, 13.0, 7.0]
+architecture_role = "gate"
+keep_glow = "none"
+material = { roughness = 0.95, metallic = 0.0 }
+brief = """A massive natural sandstone rock arch 16m wide, 13m tall and 7m deep, a wind-carved yardang ridge with a big opening through it that a path passes under from front to back: two thick rock pillars, each about 5m wide, standing on the ground on the left and right, joined overhead by a heavy rock lintel about 5m thick with a flat eroded top. The opening is 6m wide at the ground and 7.5m tall at its highest, an irregular rounded arch with a slightly flattened top, clearly open all the way through so the background shows through it in the FRONT and BACK views. Bold perfectly horizontal sediment strata in alternating ochre-red and sand-yellow bands wrap around the pillars and the lintel at the same heights; steep sides with broad vertical wind grooves, a slight undercut notch along the base of each pillar. PROPORTIONS: the FRONT and BACK views show the arch face-on, drawn 1.25 times as wide as tall with the see-through opening in the middle; the LEFT and RIGHT views show the 7m-deep side of one pillar as a solid upright rock mass about half as wide as tall. Broad faceted hand-painted planes, chunky readable forms, no fallen rocks, vegetation, cracks or man-made parts. One solid connected rock mass on a flat base."""
+
+[assets.SM_Tripo_DesertBuriedRoofHall]
+display = "半埋屋顶·殿堂歇山顶（1-2 屋脊之海）"
+kind = "static"
+class = "tripo_architecture"
+# 斗拱檐口碎岛多，重展 UV 烘焙在这件上不稳定（LOD1 拉伸 5.9% → 48.7%，LOD2 色差 4.5% → 14–18%）；
+# 两级远景 LOD 都沿用供应方 UV：LOD1 拉伸 5.9% / 色差 1.9%，LOD2 放到 1500 面后拉伸 9.5% / 色差 4.5%
+lod_rebake_stretch = 0.10
+lod_tris = [8000, 2500, 1500]
+source_provider = "tripo"
+style_theme = "silkroad"
+blockout = { source = "scene", id = "desert.silkroad.buriedRoofHall" }
+reference_mode = "bounds_only"
+reference_dimensions = [11.0, 5.5, 7.5]
+architecture_role = "platform"
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.0 }
+brief = """The top of a Tang-dynasty Silk Road temple hall drowned in sand, as a separate piece: a big hip-and-gable (xieshan) roof of grey-brown fired tiles with broad gently curving slopes and a long straight main ridge, chunky ridge-end ornaments (simple upturned owl-tail chiwen blocks), and wide eaves with thick weathered timber rafter ends, sitting on the top 2.5m of the hall's walls: thick ochre-red rammed-earth walls with a row of three square lattice windows under the eaves on the FRONT, a faded vermilion timber band below the eaves. The walls continue straight down to the flat base so the piece can be sunk into sand up to the window sills. Dimensions: 11m wide, 7.5m deep, 5.5m tall to the main ridge, eaves at 3m. A thin layer of pale sand lies in the roof valleys and on the lower tile courses. PROPORTIONS: FRONT and BACK views drawn twice as wide as tall, the roof taking the upper half; the side views show the triangular gable end with the hip slopes below it, drawn 1.4 times as wide as tall. Broad faceted hand-painted planes, tiles suggested by a few broad painted stripes, chunky forms, no loose tiles or debris. One solid connected piece on a flat base."""
+
+[assets.SM_Tripo_DesertBuriedRoofHouse]
+display = "半埋屋顶·民居两坡顶（1-2 屋脊之海）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "silkroad"
+blockout = { source = "scene", id = "desert.silkroad.buriedRoofHouse" }
+reference_mode = "bounds_only"
+reference_dimensions = [7.0, 4.5, 5.0]
+architecture_role = "platform"
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.0 }
+brief = """The top of a small Silk Road town house drowned in sand, as a separate piece: a simple gabled roof of grey-brown fired tiles with two straight slopes and a thick straight ridge with small upturned ridge-end blocks, short eaves with chunky timber rafter ends, sitting on the top 2m of the house: pale sand-yellow plastered mud-brick walls with ochre-red brick showing where plaster has flaked, one small square timber-framed window on the FRONT under the eaves and one on the BACK, and on the LEFT gable wall the top half of a doorway with a thick timber lintel. The walls continue straight down to the flat base so the piece can be sunk into sand. Dimensions: 7m wide, 5m deep, 4.5m tall to the ridge, eaves at 2.3m. A thin drift of pale sand lies on the lower tile courses at one corner. PROPORTIONS: FRONT and BACK views drawn about 1.55 times as wide as tall, the side views show the triangular gable end drawn about 1.1 times as wide as tall. Broad faceted hand-painted planes, tiles suggested by broad painted stripes, chunky forms, no loose tiles or debris. One solid connected piece on a flat base."""
+
+[assets.SM_Tripo_DesertBuriedRoofFlat]
+display = "半埋屋顶·平顶土坯房（1-2 屋脊之海）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "silkroad"
+blockout = { source = "scene", id = "desert.silkroad.buriedRoofFlat" }
+reference_mode = "bounds_only"
+reference_dimensions = [7.0, 3.6, 7.0]
+architecture_role = "platform"
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """The top of a flat-roofed Western-Regions adobe house drowned in sand, as a separate piece: a square block 7m by 7m whose flat walkable mud roof sits at 3m, edged by a low 0.6m parapet with rounded corners that has two gaps for drainage spouts; on the roof's back-left corner a small square rooftop room 2.5m wide with its own flat roof (reaching 3.6m) and a dark square doorway facing the front. The walls are thick pale sand-yellow mud plaster over ochre-red mud brick with softly rounded edges; on the FRONT face, near the top, the upper half of a round-arched doorway framed in faded Dunhuang malachite-green and vermilion painted timber, and two chunky timber drain spouts sticking out under the parapet. The walls continue straight down to the flat base so the piece can be sunk into sand. PROPORTIONS: FRONT and BACK views drawn about twice as wide as tall, the rooftop room rising at one side; side views the same. Broad faceted hand-painted planes, chunky forms, two or three colour blocks, no debris, plants or micro cracks. One solid connected piece on a flat base."""
+
+[assets.SM_Tripo_DesertFinial]
+display = "塔刹（1-2 屋脊之海掩体）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+style_theme = "silkroad"
+blockout = { source = "scene", id = "desert.silkroad.finial" }
+reference_mode = "bounds_only"
+reference_dimensions = [2.6, 5.5, 2.6]
+architecture_role = "cover"
+keep_glow = "none"
+material = { roughness = 0.75, metallic = 0.15 }
+matid_hint = "The stacked parasol discs and top jewel are tarnished gilt bronze (metal); the square base block is mud brick (non-metal)."
+brief = """The spire (chattra finial) of a buried Silk Road stupa sticking up out of the sand, 5.5m tall and 2.6m wide: at the bottom a chunky square mud-brick base block (harmika) 2.6m wide and 1.5m tall with one thin plain cornice, ochre-red with a faded vermilion band; on it a thick central mast carrying seven stacked round parasol discs that taper from 2.2m wide at the bottom to 0.9m at the top, each disc a thick chunky ring with rounded edges and an even gap between rings; on top a fat lotus-bud jewel finial. The discs and jewel are tarnished dark gilt bronze with warm gold highlights and patches of verdigris green; one disc is slightly tilted for a weathered look. PROPORTIONS: all four views are identical, drawn about 2.1 times as tall as wide, a tapering stack like a chunky tiered parasol tower. Broad faceted hand-painted planes, chunky forms, no hanging bells, chains, thin spikes or ornaments. One solid connected piece on a flat base."""
+
+[assets.SM_Tripo_DesertYardangSmall]
+display = "雅丹岩丘·小（4 m）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "silkroad"
+blockout = { source = "scene", id = "desert.silkroad.yardangSmall" }
+reference_mode = "bounds_only"
+reference_dimensions = [5.0, 4.0, 10.0]
+architecture_role = "terrain"
+keep_glow = "none"
+material = { roughness = 0.95, metallic = 0.0 }
+brief = """A small wind-eroded yardang rock mound 10m long, 5m wide and 4m tall, long axis front-to-back along the wind, shaped like an upturned boat or a whale's back: a blunt, high, rounded upwind head at the FRONT where it is 4m tall, a long almost level flat top that sinks gently toward the BACK, and a lower tapering tail about 2.5m tall at the back end. Steep near-vertical sides with slightly rounded upper edges and three or four broad vertical wind grooves on each side; a shallow undercut notch runs along the foot. Bold, perfectly horizontal sediment strata in alternating ochre-red and pale sand-yellow bands, each band a broad crisp flat stripe wrapping around at the same height on every side. On the BACK end a smooth pale sand ramp leans against the tail up to its top, so a player can walk up onto the flat top from behind. PROPORTIONS: LEFT and RIGHT views show the long profile drawn 2.5 times as long as tall, mirror images; FRONT view shows the blunt 5m-wide head drawn 1.25 times as wide as tall; BACK view shows the low tail with the sand ramp in front of it and the taller head rising behind. Broad faceted hand-painted planes, crisp clean bands, chunky readable forms, no tiny cracks, pebbles, holes, vegetation or man-made parts. One solid rock mass on a flat base."""
+
+# 中丘 v001–v004 的概念（2026-10-17）都被否决、曾经砍掉；ART3 要求补齐三档，2026-10-20 换成船底 / 鲸背形重画（见 asset.json 审核记录）。
+
+# ───────────── 第一章地图件 B（ART4）：1-3 沉沙古城 + 1-4 干涸月牙泉 ─────────────
+
+[assets.SM_Tripo_DesertShopHouse]
+display = "二层店铺楼（1-3 半埋长街）"
+kind = "static"
+class = "tripo_architecture"
+# 敞开的二层木构：800 面远景 LOD 把柱、栏、檐的颜色并成一片（色差 7.8% > 6%），LOD2 放到 1200 面
+lod_tris = [8000, 2500, 1200]
+source_provider = "tripo"
+style_theme = "silkroad"
+blockout = { source = "scene", id = "desert.silkroad.shopHouse" }
+reference_mode = "bounds_only"
+reference_dimensions = [9.0, 8.0, 7.0]
+architecture_role = "platform"
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.0 }
+brief = """A two-storey Tang-dynasty Silk Road shop house 9m wide, 7m deep and 8m tall, timber frame with thick mud-brick walls. GROUND FLOOR (0-3.5m): the FRONT is a wide open shop front, three bays between four thick square timber posts, with a chunky waist-high timber counter across the middle bay; the side and back walls are solid pale sand-yellow plastered mud brick. A flat timber floor deck at 3.5m projects slightly over the front as a balcony. UPPER FLOOR (3.5-6.5m): an open timber loggia with a big wide opening on the FRONT (two bays between three posts, with a low chunky balustrade only at the ends, leaving a 4m-wide gap to walk through) and one large plain doorway 2m wide and 2.4m tall in the BACK wall and in each side wall, so a player can walk straight through the upper floor from any side. ROOF: a shallow single-slope grey-brown tiled roof with deep eaves and chunky rafter ends, topped by a thick ridge, reaching 8m; a faded vermilion and malachite-green painted cloth awning hangs stiffly over the front of the upper floor. Weathered grey-brown timber, pale sand-yellow plaster, ochre-red brick where the plaster has flaked, faded Dunhuang vermilion and malachite trim. PROPORTIONS: FRONT and BACK views drawn about 1.1 times as wide as tall; side views a little less wide than tall. The openings must read clearly as see-through dark voids. Broad faceted hand-painted planes, chunky forms, no hanging goods, lanterns, signs or text, no debris. One solid connected piece on a flat base."""
+
+[assets.SM_Tripo_DesertWell]
+display = "集市井台（1-3 下沉广场）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+style_theme = "silkroad"
+blockout = { source = "scene", id = "desert.silkroad.well" }
+reference_mode = "bounds_only"
+reference_dimensions = [4.4, 3.4, 4.4]
+architecture_role = "cover"
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.0 }
+brief = """A Silk Road town market well platform 4.4m square and 3.4m tall: a square raised platform of big ochre-red sandstone blocks 4.4m wide and 1m tall, with two chunky steps leading up on the FRONT side; in its centre a round stone well curb 1.6m wide and 0.7m tall with a thick rounded rim and a dark round opening; over the well a sturdy timber windlass frame of two thick square posts and a thick horizontal roller with a crank, carrying a small square hipped roof of grey-brown tiles about 2m wide on top, reaching 3.4m; one chunky wooden bucket sits on the curb. Ochre-red and sand-yellow stone, weathered grey-brown timber, faded vermilion paint on the roof beam. PROPORTIONS: FRONT and BACK views drawn about 1.3 times as wide as tall, platform wide and low with the windlass rising in the middle; side views the same except the steps only on the front. Broad faceted hand-painted planes, chunky forms, no ropes, chains or thin parts, no debris. One solid connected piece on a flat base."""
+
+[assets.SM_Tripo_DesertTemplePagoda]
+display = "寺塔（1-3 寺院前庭地标）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "silkroad"
+blockout = { source = "scene", id = "desert.silkroad.templePagoda" }
+reference_mode = "bounds_only"
+reference_dimensions = [9.0, 24.0, 9.0]
+architecture_role = "landmark"
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.0 }
+brief = """A square Tang-dynasty brick temple pagoda 24m tall, like a simplified Giant Wild Goose Pagoda of the Silk Road: a broad square stone plinth 9m wide and 1.5m tall, then seven storeys of solid ochre-red and sand-yellow brick, each storey slightly smaller than the one below so the tower tapers evenly to about 5m wide at the top, each storey separated by a chunky corbelled brick eave that juts out in two or three thick steps. Every storey has one dark round-arched window niche in the middle of each face; the ground storey has a taller arched doorway on the FRONT. On top a squat pyramidal cap and a chunky bronze finial of stacked rings and a jewel. Faded Dunhuang paint: a vermilion band under each eave, malachite-green and lapis-blue patches around the doorway. The lowest storey is partly banked by a smooth sand drift on the BACK and one side. PROPORTIONS: all four views are drawn about 2.7 times as tall as wide, a tapering stepped tower, nearly identical on all sides except the doorway on the front. Broad faceted hand-painted planes, chunky readable forms, no bells, thin spikes, chains, plants or micro cracks. One solid connected piece on a flat base."""
+
+[assets.SM_Tripo_DesertCloister]
+display = "寺院回廊·二层（1-3 寺院前庭两侧）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "silkroad"
+blockout = { source = "scene", id = "desert.silkroad.cloister" }
+reference_mode = "bounds_only"
+reference_dimensions = [8.0, 7.5, 5.0]
+architecture_role = "wall"
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.0 }
+brief = """One straight 8m bay segment of a two-storey Tang-dynasty temple cloister gallery, 8m long, 5m deep and 7.5m tall, designed to repeat in a row. The BACK is a solid thick pale sand-yellow plastered mud-brick wall running the full length and height. The FRONT is open: GROUND FLOOR a row of three thick round timber columns (faded vermilion lacquer, chunky stone bases) standing 2.6m apart, carrying an upper floor deck at 3.5m whose thick timber edge beam shows across the front; UPPER FLOOR a covered walkway along the front with three more columns and a chunky low timber railing 0.9m tall; ROOF a single-slope grey-brown tiled lean-to roof sloping from the back wall down toward the front, with deep eaves and chunky rafter ends, reaching 7.5m at the back. Both ends of the segment are flat vertical cuts through the floor, roof and back wall so identical segments join seamlessly in a line (no end columns or end walls). Faded vermilion columns, weathered grey-brown timber, grey-brown tiles, pale plaster, a faded malachite-green and lapis-blue band under the eaves. PROPORTIONS: FRONT and BACK views drawn about 1.05 times as wide as tall; side views show the lean-to section, the open front and the solid back wall, about 0.7 times as wide as tall. Broad faceted hand-painted planes, chunky forms, no lanterns, banners or debris. One solid connected piece on a flat base."""
+
+[assets.SM_Prop_DesertIncenseBurner]
+display = "寺院香炉（1-3 寺院前庭）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+style_theme = "silkroad"
+blockout = { source = "scene", id = "desert.silkroad.incenseBurner" }
+reference_mode = "bounds_only"
+reference_dimensions = [2.0, 2.6, 2.0]
+architecture_role = "cover"
+keep_glow = "none"
+material = { roughness = 0.6, metallic = 0.5 }
+matid_hint = "The whole burner is cast bronze (metal); only the low stone pedestal is non-metal."
+brief = """A large Tang-dynasty temple courtyard bronze incense burner 2.6m tall: a low square stone pedestal 2m wide and 0.4m tall; on it a big round-bellied bronze cauldron 1.6m wide standing on three thick stubby cabriole legs ending in lion paws, with two chunky upright loop handles on the rim; above it a separate tiered bronze lid shaped like a small pavilion roof with upturned corners, held up by four short thick posts so there are open gaps between the cauldron rim and the lid, topped by a fat round knob finial. Dark aged bronze with warm brown-gold highlights and soft verdigris-green patches, a few broad simplified cloud-scroll reliefs on the belly; ochre-red sandstone pedestal. PROPORTIONS: all four views nearly identical, drawn about 1.3 times as tall as wide. Broad faceted hand-painted planes, chunky forms, no smoke, incense sticks, ash or fine ornament. One solid connected piece on a flat base."""
+
+[assets.SM_Prop_DesertStele]
+display = "龟趺碑（1-3 寺院前庭）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+style_theme = "silkroad"
+blockout = { source = "scene", id = "desert.silkroad.stele" }
+reference_mode = "bounds_only"
+reference_dimensions = [1.6, 3.8, 2.6]
+architecture_role = "cover"
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """A Tang-dynasty memorial stone stele on a tortoise base (bixi), 3.8m tall: a big chunky stone tortoise 1.6m wide, 2.6m long and 1m tall with a broad domed shell carved in a few large hexagon plates, a blunt raised head looking forward at the FRONT and four stubby legs; standing upright on its back a tall thick flat stone tablet 1.3m wide, 0.45m thick and 2.4m tall, its face smooth and blank (no text), crowned by a rounded top carved in low relief with two simple coiled dragon shapes framing a small plain arched panel. Weathered grey-ochre sandstone for the tortoise and pale sand-yellow stone for the tablet, faded vermilion paint on the arched panel. The tablet's broad face faces the FRONT. PROPORTIONS: FRONT and BACK views show the tablet face-on above the tortoise, drawn about 2.4 times as tall as wide; LEFT and RIGHT views show the long tortoise in profile with the thin tablet edge rising from its back, drawn about 1.5 times as tall as wide. Broad faceted hand-painted planes, chunky forms, no inscriptions, cracks or debris. One solid connected piece on a flat base."""
+
+[assets.SM_Tripo_DesertCrescentPavilion]
+display = "月牙阁（1-4 首领场，6 m 二层台）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "silkroad"
+blockout = { source = "scene", id = "desert.silkroad.crescentPavilion" }
+reference_mode = "bounds_only"
+reference_dimensions = [14.0, 11.0, 10.0]
+architecture_role = "platform"
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.0 }
+brief = """A ruined two-storey Tang-dynasty waterside pavilion (the Crescent Moon Pavilion) 14m wide, 10m deep and 11m tall, standing on the bank of a dried-up spring. A low square stone terrace 14m by 10m and 1m tall with chunky stone steps on the FRONT. GROUND FLOOR (1-6m): an open colonnade of twelve thick round timber columns in faded vermilion lacquer on stone bases (four across the front, four across the back, two on each side between the corners), open on all sides so the space underneath is a deep shaded hall. UPPER FLOOR: a thick flat timber floor deck at 6m, edged with a chunky low timber balustrade 0.9m tall, walkable all round; a broad straight external timber staircase with solid side walls climbs along the RIGHT side from the terrace up to the deck. ROOF: only the back half of a double-eaved hip roof of grey-brown tiles survives, supported by four columns on the back half of the deck and reaching 11m with upturned corner eaves; the front half of the roof has collapsed, leaving the front half of the deck open to the sky. Weathered grey-brown timber, faded vermilion columns, ochre-red stone terrace, grey-brown tiles, a faded malachite-green and lapis-blue painted beam band under the eaves, sand dust in the corners. PROPORTIONS: FRONT and BACK views drawn about 1.3 times as wide as tall; side views about as wide as tall, showing the staircase on the right side. Broad faceted hand-painted planes, chunky forms, no hanging lanterns, banners, plants or debris. One solid connected piece on a flat base."""
+
+[assets.SM_Env_DesertCaveCeilingRift]
+display = "穴顶裂缝岩体（1-4 巨穴顶部，成对拼出日光裂缝）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "silkroad"
+blockout = { source = "scene", id = "desert.silkroad.caveCeilingRift" }
+reference_mode = "bounds_only"
+reference_dimensions = [26.0, 9.0, 14.0]
+architecture_role = "terrain"
+keep_glow = "none"
+material = { roughness = 0.95, metallic = 0.0 }
+brief = """A huge overhanging slab of layered ochre-red and sand-yellow sandstone forming one lip of a sunlit fissure in the roof of a giant desert cave, 26m long, 14m deep and 9m thick, meant to hang high overhead (two of these face each other with a gap between them to form the crack of daylight). The flat top is a gently uneven rock surface dusted with pale sand. The FRONT long side is the broken lip of the fissure: a steep jagged overhanging edge that juts outward toward the viewer at the top and steps back in big blocky strata ledges toward the bottom, with two or three large chunky blocks hanging lower than the rest. The underside bulges down in broad heavy rounded rock masses with horizontal strata bands, like the ceiling of a cave seen from below. The BACK long side and both short ends are rough vertical rock faces where the slab continues into the cave dome. Bold, perfectly horizontal sediment strata in alternating ochre-red and sand-yellow bands wrap around every side at the same heights. PROPORTIONS: FRONT and BACK views drawn almost three times as wide as tall, a long thick slab; the side views show its 14m-deep wedge profile with the overhanging lip on the front side, drawn about 1.5 times as wide as tall. Broad faceted hand-painted planes, chunky forms, no stalactites, thin spikes, vegetation or man-made parts. One solid rock mass; draw it resting on a flat base line."""
 
 
 # ───────────── Playable heroes · Tripo P2.0 native-rig builds ─────────────

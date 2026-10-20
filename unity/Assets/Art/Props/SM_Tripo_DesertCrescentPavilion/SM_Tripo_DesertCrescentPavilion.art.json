@@ -1,0 +1,152 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_DesertCrescentPavilion",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "desert.silkroad.crescentPavilion"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    24,
+    60
+  ],
+  "budget": {
+    "lodTris": [
+      8000,
+      2500,
+      800
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -4.264045715332031,
+      0,
+      -3.8126535415649414
+    ],
+    "max": [
+      4.264045715332031,
+      11,
+      3.8126535415649414
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_DesertCrescentPavilion_LOD0",
+      "lod": 0,
+      "tris": 6756,
+      "verts": 11244,
+      "materials": [
+        "M_Tripo_DesertCrescentPavilion"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_DesertCrescentPavilion_LOD1",
+      "lod": 1,
+      "tris": 2486,
+      "verts": 5079,
+      "materials": [
+        "M_Tripo_DesertCrescentPavilion"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_DesertCrescentPavilion_LOD2",
+      "lod": 2,
+      "tris": 794,
+      "verts": 1068,
+      "materials": [
+        "M_Tripo_DesertCrescentPavilion_LOD2"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_DesertCrescentPavilion",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_DesertCrescentPavilion_BC.png",
+        "N": "Textures/T_Tripo_DesertCrescentPavilion_N.png",
+        "ORM": "Textures/T_Tripo_DesertCrescentPavilion_ORM.png"
+      }
+    },
+    {
+      "name": "M_Tripo_DesertCrescentPavilion_LOD2",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_DesertCrescentPavilion_LOD2_BC.png",
+        "N": "Textures/T_Tripo_DesertCrescentPavilion_LOD2_N.png",
+        "ORM": "Textures/T_Tripo_DesertCrescentPavilion_LOD2_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_DesertCrescentPavilion.glb",
+    "sha256": "4c8745119b2fa1d43fc504cde25dc514103550d76421ce1586461f2bc5189c5d",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-20 21:54:48"
+}

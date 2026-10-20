@@ -1,0 +1,139 @@
+{
+  "source": {
+    "tris": 3096,
+    "verts": 1550
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 1.88835,
+    "iou": 0.843,
+    "iou_per_view": {
+      "front": 0.899,
+      "left": 0.772,
+      "back": 0.903,
+      "right": 0.771
+    },
+    "size_m": [
+      1.887,
+      0.377,
+      1.1
+    ],
+    "reference_m": [
+      3.5,
+      0.7,
+      1.1
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.841,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Tripo_DesertBeaconParapet_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "rebaked",
+      "texture": 512,
+      "cage_m": 0.0165,
+      "uv": {
+        "smart_islands": 37,
+        "charts": 10,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "smart",
+        "density_smart": 0.3812,
+        "density_merged": 0.3478,
+        "coverage": 0.878
+      },
+      "collapse": {
+        "samples": 23999,
+        "matched_ratio": 1.0,
+        "mean_delta": 0.0223,
+        "p90_delta": 0.058,
+        "smeared_ratio": 0.0082,
+        "stretched_ratio": 0.2013,
+        "dist_p99_m": 0.0026
+      },
+      "final": {
+        "samples": 23999,
+        "matched_ratio": 1.0,
+        "mean_delta": 0.0041,
+        "p90_delta": 0.0115,
+        "smeared_ratio": 0.0001,
+        "stretched_ratio": 0.0018,
+        "dist_p99_m": 0.0026
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertBeaconParapet_LOD0",
+      "tris": 2984,
+      "verts": 1494,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        0.99951171875
+      ],
+      "uv_utilization": 0.557,
+      "bbox_min": [
+        -0.9437,
+        -0.1886,
+        0.0
+      ],
+      "bbox_max": [
+        0.9437,
+        0.1886,
+        1.1
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertBeaconParapet_LOD1",
+      "tris": 994,
+      "verts": 499,
+      "uv_min": [
+        0.0013081376673653722,
+        0.0017324069049209356
+      ],
+      "uv_max": [
+        0.9867359399795532,
+        0.998740017414093
+      ],
+      "uv_utilization": 0.827,
+      "bbox_min": [
+        -0.9425,
+        -0.1886,
+        0.0008
+      ],
+      "bbox_max": [
+        0.9427,
+        0.1886,
+        1.0988
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertBeaconParapet/04_export/SM_Tripo_DesertBeaconParapet_v001.glb",
+    "bytes": 242288
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 12.5,
+  "_seconds": 13.8
+}

@@ -1,0 +1,175 @@
+{
+  "source": {
+    "tris": 5777,
+    "verts": 4290
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 6.48474,
+    "iou": 0.888,
+    "iou_per_view": {
+      "front": 0.925,
+      "left": 0.848,
+      "back": 0.92,
+      "right": 0.841
+    },
+    "size_m": [
+      6.482,
+      3.701,
+      5.5
+    ],
+    "reference_m": [
+      11.0,
+      7.5,
+      5.5
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.54,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_DesertBuriedRoofHall_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "provider",
+      "collapse": {
+        "samples": 22362,
+        "matched_ratio": 0.932,
+        "mean_delta": 0.0197,
+        "p90_delta": 0.0573,
+        "smeared_ratio": 0.0191,
+        "stretched_ratio": 0.059,
+        "dist_p99_m": 0.0309
+      }
+    },
+    "LOD2": {
+      "method": "rebaked",
+      "texture": 1024,
+      "cage_m": 0.0864,
+      "uv": {
+        "smart_islands": 838,
+        "charts": 274,
+        "fallback_charts": 5,
+        "flipped_faces": 1,
+        "flipped_ratio": 0.0007,
+        "method": "merged",
+        "density_smart": 0.0466,
+        "density_merged": 0.0612,
+        "coverage": 0.695
+      },
+      "collapse": {
+        "samples": 21643,
+        "matched_ratio": 0.902,
+        "mean_delta": 0.0315,
+        "p90_delta": 0.0895,
+        "smeared_ratio": 0.0454,
+        "stretched_ratio": 0.0954,
+        "dist_p99_m": 0.0432
+      },
+      "final": {
+        "samples": 21643,
+        "matched_ratio": 0.902,
+        "mean_delta": 0.0756,
+        "p90_delta": 0.2359,
+        "smeared_ratio": 0.1413,
+        "stretched_ratio": 0.2251,
+        "dist_p99_m": 0.0432
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertBuriedRoofHall_LOD0",
+      "tris": 5777,
+      "verts": 4290,
+      "uv_min": [
+        0.001220703125,
+        0.001220703125
+      ],
+      "uv_max": [
+        0.994384765625,
+        0.998779296875
+      ],
+      "uv_utilization": 0.62,
+      "bbox_min": [
+        -3.2408,
+        -1.8507,
+        0.0
+      ],
+      "bbox_max": [
+        3.2408,
+        1.8507,
+        5.5
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertBuriedRoofHall_LOD1",
+      "tris": 2486,
+      "verts": 2247,
+      "uv_min": [
+        0.001220703125,
+        0.001220703125
+      ],
+      "uv_max": [
+        0.994384765625,
+        0.998779296875
+      ],
+      "uv_utilization": 0.539,
+      "bbox_min": [
+        -3.237,
+        -1.8437,
+        -0.0007
+      ],
+      "bbox_max": [
+        3.2334,
+        1.8469,
+        5.5
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertBuriedRoofHall_LOD2",
+      "tris": 1487,
+      "verts": 1640,
+      "uv_min": [
+        0.004021839704364538,
+        0.004021785221993923
+      ],
+      "uv_max": [
+        0.9936726689338684,
+        0.9959781169891357
+      ],
+      "uv_utilization": 0.737,
+      "bbox_min": [
+        -3.2413,
+        -1.8548,
+        -0.0007
+      ],
+      "bbox_max": [
+        3.247,
+        1.858,
+        5.4891
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertBuriedRoofHall/04_export/SM_Tripo_DesertBuriedRoofHall_v003.glb",
+    "bytes": 1734892
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 46.1,
+  "_seconds": 48.2
+}

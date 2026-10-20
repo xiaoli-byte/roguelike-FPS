@@ -1,0 +1,197 @@
+{
+  "source": {
+    "tris": 6424,
+    "verts": 3228
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 5.74071,
+    "iou": 0.888,
+    "iou_per_view": {
+      "front": 0.895,
+      "left": 0.837,
+      "back": 0.877,
+      "right": 0.941
+    },
+    "size_m": [
+      3.765,
+      5.738,
+      4.0
+    ],
+    "reference_m": [
+      5.0,
+      10.0,
+      4.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.687,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_DesertYardangSmall_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "rebaked",
+      "texture": 1024,
+      "cage_m": 0.06,
+      "uv": {
+        "smart_islands": 233,
+        "charts": 27,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "smart",
+        "density_smart": 0.0902,
+        "density_merged": 0.0898,
+        "coverage": 0.694
+      },
+      "collapse": {
+        "samples": 23944,
+        "matched_ratio": 0.998,
+        "mean_delta": 0.0052,
+        "p90_delta": 0.014,
+        "smeared_ratio": 0.0,
+        "stretched_ratio": 0.1776,
+        "dist_p99_m": 0.012
+      },
+      "final": {
+        "samples": 23944,
+        "matched_ratio": 0.998,
+        "mean_delta": 0.0008,
+        "p90_delta": 0.0014,
+        "smeared_ratio": 0.0,
+        "stretched_ratio": 0.0,
+        "dist_p99_m": 0.012
+      }
+    },
+    "LOD2": {
+      "method": "rebaked",
+      "texture": 512,
+      "cage_m": 0.084,
+      "uv": {
+        "smart_islands": 102,
+        "charts": 22,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "merged",
+        "density_smart": 0.0887,
+        "density_merged": 0.0927,
+        "coverage": 0.686
+      },
+      "collapse": {
+        "samples": 23739,
+        "matched_ratio": 0.989,
+        "mean_delta": 0.0146,
+        "p90_delta": 0.0305,
+        "smeared_ratio": 0.0144,
+        "stretched_ratio": 0.1968,
+        "dist_p99_m": 0.042
+      },
+      "final": {
+        "samples": 23739,
+        "matched_ratio": 0.989,
+        "mean_delta": 0.002,
+        "p90_delta": 0.004,
+        "smeared_ratio": 0.0,
+        "stretched_ratio": 0.0001,
+        "dist_p99_m": 0.042
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertYardangSmall_LOD0",
+      "tris": 6424,
+      "verts": 3228,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.611,
+      "bbox_min": [
+        -1.8823,
+        -2.869,
+        0.0
+      ],
+      "bbox_max": [
+        1.8823,
+        2.869,
+        4.0
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertYardangSmall_LOD1",
+      "tris": 2487,
+      "verts": 1254,
+      "uv_min": [
+        0.003910798579454422,
+        0.003691714955493808
+      ],
+      "uv_max": [
+        0.9942030310630798,
+        0.9963274598121643
+      ],
+      "uv_utilization": 0.61,
+      "bbox_min": [
+        -1.8901,
+        -2.8694,
+        -0.0004
+      ],
+      "bbox_max": [
+        1.8901,
+        2.8723,
+        3.9955
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertYardangSmall_LOD2",
+      "tris": 796,
+      "verts": 406,
+      "uv_min": [
+        0.0021538164000958204,
+        0.0018098087748512626
+      ],
+      "uv_max": [
+        0.9604272842407227,
+        0.9984387755393982
+      ],
+      "uv_utilization": 0.631,
+      "bbox_min": [
+        -1.8995,
+        -2.9054,
+        -0.0037
+      ],
+      "bbox_max": [
+        1.9026,
+        2.8682,
+        4.006
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertYardangSmall/04_export/SM_Tripo_DesertYardangSmall_v001.glb",
+    "bytes": 437084
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 51.8,
+  "_seconds": 53.2
+}

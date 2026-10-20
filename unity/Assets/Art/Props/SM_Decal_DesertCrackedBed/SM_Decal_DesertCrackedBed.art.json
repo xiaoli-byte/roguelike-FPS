@@ -1,0 +1,109 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Decal_DesertCrackedBed",
+  "kind": "static",
+  "class": "ground_decal",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "desert.silkroad.crackedBed"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    30
+  ],
+  "budget": {
+    "lodTris": [
+      256,
+      8
+    ],
+    "texture": 1024,
+    "maxFileKb": 1200
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -4.0,
+      0.02,
+      -4.0
+    ],
+    "max": [
+      4.0,
+      0.02,
+      4.0
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Decal_DesertCrackedBed_LOD0",
+      "lod": 0,
+      "tris": 128,
+      "verts": 81,
+      "materials": [
+        "M_Decal_DesertCrackedBed"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Decal_DesertCrackedBed_LOD1",
+      "lod": 1,
+      "tris": 4,
+      "verts": 6,
+      "materials": [
+        "M_Decal_DesertCrackedBed"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Decal_DesertCrackedBed",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": false,
+      "alphaMode": "MASK",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Decal_DesertCrackedBed_BC.png",
+        "N": "Textures/T_Decal_DesertCrackedBed_N.png",
+        "ORM": "Textures/T_Decal_DesertCrackedBed_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Decal_DesertCrackedBed.glb",
+    "sha256": "43c8c2ec783b4774fdddcc4f0d674f68ab303996c3e0c16b72829d0429b4ea5d",
+    "hiRes": false,
+    "version": null,
+    "generator": {
+      "tool": "procedural",
+      "mode": "ground_decal",
+      "checkpoint": "seed 23"
+    },
+    "license": "project-original procedural texture"
+  },
+  "exported": "2026-10-20 22:33:30"
+}

@@ -237,3 +237,22 @@ texture = 1024
 texel_density = 256
 max_file_kb = 700
 lod_rebake_stretch = 0.02
+
+# 地面贴花（车辙、龟裂泉床）：build_ground_decals.py 程序绘制的镂空网格；LOD1 只是去掉细分的 1×2 面片
+[classes.ground_decal]
+category = "props"
+lod_tris = [256, 8]
+lod_distance = [0, 30]
+texture = 1024
+texel_density = 128
+max_file_kb = 1200
+
+# 地形散布件（骆驼刺、砾石）：GPU instancing 成百上千个，面数与贴图压到最低；Tripo 端按约 1500 面生成
+[classes.tripo_scatter]
+category = "props"
+lod_tris = [1200, 400]
+lod_distance = [0, 16]
+texture = 512
+texel_density = 256
+max_file_kb = 300
+lod_rebake_stretch = 0.02

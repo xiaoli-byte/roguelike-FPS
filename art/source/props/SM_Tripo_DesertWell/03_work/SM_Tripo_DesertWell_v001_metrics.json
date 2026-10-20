@@ -1,0 +1,139 @@
+{
+  "source": {
+    "tris": 2855,
+    "verts": 1601
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 3.40166,
+    "iou": 0.692,
+    "iou_per_view": {
+      "front": 0.716,
+      "left": 0.612,
+      "back": 0.732,
+      "right": 0.698
+    },
+    "size_m": [
+      2.815,
+      2.483,
+      3.4
+    ],
+    "reference_m": [
+      4.4,
+      4.4,
+      3.4
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.798,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Tripo_DesertWell_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "rebaked",
+      "texture": 512,
+      "cage_m": 0.0618,
+      "uv": {
+        "smart_islands": 312,
+        "charts": 59,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "merged",
+        "density_smart": 0.1194,
+        "density_merged": 0.1282,
+        "coverage": 0.765
+      },
+      "collapse": {
+        "samples": 23126,
+        "matched_ratio": 0.964,
+        "mean_delta": 0.0152,
+        "p90_delta": 0.0416,
+        "smeared_ratio": 0.0032,
+        "stretched_ratio": 0.0235,
+        "dist_p99_m": 0.0309
+      },
+      "final": {
+        "samples": 23126,
+        "matched_ratio": 0.964,
+        "mean_delta": 0.0115,
+        "p90_delta": 0.031,
+        "smeared_ratio": 0.0006,
+        "stretched_ratio": 0.031,
+        "dist_p99_m": 0.0309
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertWell_LOD0",
+      "tris": 2855,
+      "verts": 1601,
+      "uv_min": [
+        0.0009765625,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.995849609375,
+        0.9990234375
+      ],
+      "uv_utilization": 0.722,
+      "bbox_min": [
+        -1.4077,
+        -1.2416,
+        0.0
+      ],
+      "bbox_max": [
+        1.4077,
+        1.2416,
+        3.4
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertWell_LOD1",
+      "tris": 995,
+      "verts": 617,
+      "uv_min": [
+        0.00276967347599566,
+        0.002769617596641183
+      ],
+      "uv_max": [
+        0.9937915802001953,
+        0.9972303509712219
+      ],
+      "uv_utilization": 0.651,
+      "bbox_min": [
+        -1.4052,
+        -1.2373,
+        -0.0004
+      ],
+      "bbox_max": [
+        1.4004,
+        1.2416,
+        3.3982
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertWell/04_export/SM_Tripo_DesertWell_v001.glb",
+    "bytes": 374476
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 16.9,
+  "_seconds": 18.4
+}

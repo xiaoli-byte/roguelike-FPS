@@ -1,0 +1,139 @@
+{
+  "source": {
+    "tris": 2837,
+    "verts": 1790
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 1.30064,
+    "iou": 0.947,
+    "iou_per_view": {
+      "front": 0.949,
+      "left": 0.942,
+      "back": 0.949,
+      "right": 0.945
+    },
+    "size_m": [
+      1.205,
+      1.186,
+      1.3
+    ],
+    "reference_m": [
+      2.2,
+      2.2,
+      1.3
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.618,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Tripo_DesertBrushwoodPile_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "rebaked",
+      "texture": 512,
+      "cage_m": 0.0428,
+      "uv": {
+        "smart_islands": 334,
+        "charts": 85,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "smart",
+        "density_smart": 0.1803,
+        "density_merged": 0.1721,
+        "coverage": 0.754
+      },
+      "collapse": {
+        "samples": 22748,
+        "matched_ratio": 0.948,
+        "mean_delta": 0.0257,
+        "p90_delta": 0.0652,
+        "smeared_ratio": 0.0111,
+        "stretched_ratio": 0.0597,
+        "dist_p99_m": 0.0214
+      },
+      "final": {
+        "samples": 22748,
+        "matched_ratio": 0.948,
+        "mean_delta": 0.0262,
+        "p90_delta": 0.0724,
+        "smeared_ratio": 0.0224,
+        "stretched_ratio": 0.0,
+        "dist_p99_m": 0.0214
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertBrushwoodPile_LOD0",
+      "tris": 2837,
+      "verts": 1790,
+      "uv_min": [
+        0.001220703125,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.989013671875,
+        0.9990234375
+      ],
+      "uv_utilization": 0.655,
+      "bbox_min": [
+        -0.6024,
+        -0.5928,
+        0.0
+      ],
+      "bbox_max": [
+        0.6024,
+        0.5928,
+        1.3
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertBrushwoodPile_LOD1",
+      "tris": 994,
+      "verts": 799,
+      "uv_min": [
+        0.00461976882070303,
+        0.004487748257815838
+      ],
+      "uv_max": [
+        0.9932760000228882,
+        0.9955753684043884
+      ],
+      "uv_utilization": 0.539,
+      "bbox_min": [
+        -0.6024,
+        -0.5939,
+        -0.0037
+      ],
+      "bbox_max": [
+        0.5948,
+        0.5927,
+        1.2874
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertBrushwoodPile/04_export/SM_Tripo_DesertBrushwoodPile_v001.glb",
+    "bytes": 421868
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 16.4,
+  "_seconds": 17.8
+}

@@ -1,0 +1,152 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_DesertYardangMedium",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "desert.silkroad.yardangMedium"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    24,
+    60
+  ],
+  "budget": {
+    "lodTris": [
+      8000,
+      2500,
+      800
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -3.1038026809692383,
+      0,
+      -7.00494384765625
+    ],
+    "max": [
+      3.1038026809692383,
+      9,
+      7.00494384765625
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_DesertYardangMedium_LOD0",
+      "lod": 0,
+      "tris": 7887,
+      "verts": 7582,
+      "materials": [
+        "M_Tripo_DesertYardangMedium"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_DesertYardangMedium_LOD1",
+      "lod": 1,
+      "tris": 2486,
+      "verts": 3302,
+      "materials": [
+        "M_Tripo_DesertYardangMedium"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_DesertYardangMedium_LOD2",
+      "lod": 2,
+      "tris": 796,
+      "verts": 735,
+      "materials": [
+        "M_Tripo_DesertYardangMedium_LOD2"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_DesertYardangMedium",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_DesertYardangMedium_BC.png",
+        "N": "Textures/T_Tripo_DesertYardangMedium_N.png",
+        "ORM": "Textures/T_Tripo_DesertYardangMedium_ORM.png"
+      }
+    },
+    {
+      "name": "M_Tripo_DesertYardangMedium_LOD2",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_DesertYardangMedium_LOD2_BC.png",
+        "N": "Textures/T_Tripo_DesertYardangMedium_LOD2_N.png",
+        "ORM": "Textures/T_Tripo_DesertYardangMedium_LOD2_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_DesertYardangMedium.glb",
+    "sha256": "89733bc44b231a01a7362a8160b12d4b19dd5c2e751d3eb91f7805cd509f37d3",
+    "hiRes": false,
+    "version": {
+      "blockout": 2,
+      "concept": 5,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-20 21:54:31"
+}

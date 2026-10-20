@@ -1,0 +1,109 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Decal_DesertCartRuts",
+  "kind": "static",
+  "class": "ground_decal",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "desert.silkroad.cartRuts"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    30
+  ],
+  "budget": {
+    "lodTris": [
+      256,
+      8
+    ],
+    "texture": 1024,
+    "maxFileKb": 1200
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -1.2,
+      0.02,
+      -4.0
+    ],
+    "max": [
+      1.2,
+      0.02,
+      4.0
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Decal_DesertCartRuts_LOD0",
+      "lod": 0,
+      "tris": 128,
+      "verts": 85,
+      "materials": [
+        "M_Decal_DesertCartRuts"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Decal_DesertCartRuts_LOD1",
+      "lod": 1,
+      "tris": 4,
+      "verts": 6,
+      "materials": [
+        "M_Decal_DesertCartRuts"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Decal_DesertCartRuts",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": false,
+      "alphaMode": "MASK",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Decal_DesertCartRuts_BC.png",
+        "N": "Textures/T_Decal_DesertCartRuts_N.png",
+        "ORM": "Textures/T_Decal_DesertCartRuts_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Decal_DesertCartRuts.glb",
+    "sha256": "c48393768ca596250f00102413bfc8b1c1146e2f9f5ec58dc60461576f3dd572",
+    "hiRes": false,
+    "version": null,
+    "generator": {
+      "tool": "procedural",
+      "mode": "ground_decal",
+      "checkpoint": "seed 11"
+    },
+    "license": "project-original procedural texture"
+  },
+  "exported": "2026-10-20 22:33:27"
+}

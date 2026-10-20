@@ -1,0 +1,175 @@
+{
+  "source": {
+    "tris": 8164,
+    "verts": 4128
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 15.68886,
+    "iou": 0.874,
+    "iou_per_view": {
+      "front": 0.869,
+      "left": 0.868,
+      "back": 0.874,
+      "right": 0.89
+    },
+    "size_m": [
+      15.681,
+      6.611,
+      13.0
+    ],
+    "reference_m": [
+      16.0,
+      7.0,
+      13.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.728,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_DesertRockArch_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "provider",
+      "collapse": {
+        "samples": 23970,
+        "matched_ratio": 0.999,
+        "mean_delta": 0.0059,
+        "p90_delta": 0.0141,
+        "smeared_ratio": 0.0,
+        "stretched_ratio": 0.0059,
+        "dist_p99_m": 0.0431
+      }
+    },
+    "LOD2": {
+      "method": "rebaked",
+      "texture": 512,
+      "cage_m": 0.2866,
+      "uv": {
+        "smart_islands": 115,
+        "charts": 32,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "smart",
+        "density_smart": 0.0365,
+        "density_merged": 0.0361,
+        "coverage": 0.762
+      },
+      "collapse": {
+        "samples": 23845,
+        "matched_ratio": 0.994,
+        "mean_delta": 0.0241,
+        "p90_delta": 0.0642,
+        "smeared_ratio": 0.0243,
+        "stretched_ratio": 0.0377,
+        "dist_p99_m": 0.1433
+      },
+      "final": {
+        "samples": 23845,
+        "matched_ratio": 0.994,
+        "mean_delta": 0.0037,
+        "p90_delta": 0.0084,
+        "smeared_ratio": 0.0,
+        "stretched_ratio": 0.0,
+        "dist_p99_m": 0.1433
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertRockArch_LOD0",
+      "tris": 7960,
+      "verts": 4026,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.592,
+      "bbox_min": [
+        -7.8406,
+        -3.3055,
+        0.0
+      ],
+      "bbox_max": [
+        7.8406,
+        3.3055,
+        13.0
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertRockArch_LOD1",
+      "tris": 2486,
+      "verts": 1279,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.562,
+      "bbox_min": [
+        -7.8402,
+        -3.3119,
+        -0.0123
+      ],
+      "bbox_max": [
+        7.8407,
+        3.3284,
+        13.0056
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertRockArch_LOD2",
+      "tris": 796,
+      "verts": 419,
+      "uv_min": [
+        0.003183754626661539,
+        0.003362172283232212
+      ],
+      "uv_max": [
+        0.9731034636497498,
+        0.9968376755714417
+      ],
+      "uv_utilization": 0.625,
+      "bbox_min": [
+        -7.7845,
+        -3.3606,
+        -0.0605
+      ],
+      "bbox_max": [
+        7.7558,
+        3.2505,
+        12.9726
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertRockArch/04_export/SM_Tripo_DesertRockArch_v001.glb",
+    "bytes": 490256
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 49.5,
+  "_seconds": 50.7
+}

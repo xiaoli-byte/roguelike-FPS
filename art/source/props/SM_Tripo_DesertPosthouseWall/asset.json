@@ -1,0 +1,438 @@
+{
+  "id": "SM_Tripo_DesertPosthouseWall",
+  "display": "驿站残墙（1-1 出生驿站）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:21:54",
+          "files": {
+            "BO_SM_Tripo_DesertPosthouseWall_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertPosthouseWall_v001.json",
+              "sha256": "dcde3cd7a4eb83d589f08b5525b695b114c7b2ff13a270e896af4febc7565434"
+            },
+            "BO_SM_Tripo_DesertPosthouseWall_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertPosthouseWall_v001_views.json",
+              "sha256": "87f5621f595f665f966f52d5c2612aa4ca1524e42d8cbdf8f4aaea39fb940240"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.posthouseWall"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -3.0,
+              0.0,
+              -0.5
+            ],
+            "max": [
+              3.0,
+              3.2,
+              0.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:27:45",
+          "files": {
+            "CN_SM_Tripo_DesertPosthouseWall_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertPosthouseWall_v001_source.png",
+              "sha256": "5601500e9d87b494f8b6ccbc88e2eda9f8ae436487aa991999766b665f33d9fb"
+            },
+            "CN_SM_Tripo_DesertPosthouseWall_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertPosthouseWall_v001_front.png",
+              "sha256": "7e27068cafbfe5b551da96389e8b16b19166e1bb83905a68201941ea8601b4ac"
+            },
+            "CN_SM_Tripo_DesertPosthouseWall_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertPosthouseWall_v001_left.png",
+              "sha256": "662540644458fae2ea402e3aa50c3ec8516caf87d0a268075f2fd1640dfa5c77"
+            },
+            "CN_SM_Tripo_DesertPosthouseWall_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertPosthouseWall_v001_back.png",
+              "sha256": "347739093b8a9cbed4a0132d582d2aaa7614c5baf3a0e9d3536083316038e881"
+            },
+            "CN_SM_Tripo_DesertPosthouseWall_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertPosthouseWall_v001_right.png",
+              "sha256": "6ab75a6af553c5c622753dda74ce5de72b54dfba3c5f11e907f8d70ef3367e79"
+            },
+            "CN_SM_Tripo_DesertPosthouseWall_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertPosthouseWall_v001_sheet.png",
+              "sha256": "9a247c67d12e0019b4c3b8a965bbed5f345354e0ee41eb3fdc35c5601dd2183c"
+            },
+            "CN_SM_Tripo_DesertPosthouseWall_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertPosthouseWall_v001_prompt.txt",
+              "sha256": "922d9ad0fedce1a8f2c4ee09727291c199b805c8764093bd3a745e0c877ebe1e"
+            },
+            "CN_SM_Tripo_DesertPosthouseWall_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertPosthouseWall_v001_registration.json",
+              "sha256": "0daa676089c7d0c85c8e8143d5641f9c51ab31f25403f867f42d3657d17a0445"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a15947-6476-7cd3-bb0a-7e7db5e511b1",
+            "attempt": 1,
+            "seconds": 50.2
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (6m wide x 3.2m tall x 1m deep): A ruined courtyard wall section of a Han-dynasty Silk Road relay post station (yizhan), 6m long, 3.2m tall at its highest and 1m thick: a straight free-standing wall of sun-dried mud brick laid in broad horizontal courses, covered by a thick pale sand-yellow mud-plaster skin that has flaked off in two or three large soft-edged patches showing the ochre-red brick courses beneath. PROPORTIONS: in the FRONT and BACK views it is a long low wall drawn almost twice as wide as tall; the crest is broken: the LEFT third stands at the full 3.2m with a thin overhanging timber coping beam and a row of chunky square beam ends, the middle steps down in two broad eroded rounded steps, and the RIGHT third is only about 2m tall. One small square window opening with a thick grey-brown timber frame sits in the tall left part, about 1.6m above the ground, going straight through the wall. Both ends are flat vertical cut faces so identical sections join in a line or at a corner. FRONT and BACK faces look nearly the same; the side views are narrow upright slabs, 1m thick and 3.2m (left end) tall. Broad faceted hand-painted planes, chunky readable forms, two or three colour blocks, no loose bricks, debris, plants or micro cracks. One solid connected piece on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "5601500e9d87b494f8b6ccbc88e2eda9f8ae436487aa991999766b665f33d9fb",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.5122048819527811,
+              "offset": [
+                68,
+                390
+              ],
+              "size": [
+                375,
+                244
+              ],
+              "physical_height_m": 3.2,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5068805068805069,
+              "offset": [
+                227,
+                390
+              ],
+              "size": [
+                57,
+                244
+              ],
+              "physical_height_m": 3.2,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5122048819527811,
+              "offset": [
+                65,
+                390
+              ],
+              "size": [
+                381,
+                244
+              ],
+              "physical_height_m": 3.2,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5068805068805069,
+              "offset": [
+                228,
+                390
+              ],
+              "size": [
+                56,
+                244
+              ],
+              "physical_height_m": 3.2,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-20 20:30:22",
+          "files": {
+            "CN_SM_Tripo_DesertPosthouseWall_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertPosthouseWall_v002_source.png",
+              "sha256": "d7cea612dc5ecf9bf4dd55c03d422392c2bcc20cf3c5f7b620e63dc449a804c0"
+            },
+            "CN_SM_Tripo_DesertPosthouseWall_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertPosthouseWall_v002_front.png",
+              "sha256": "7e27068cafbfe5b551da96389e8b16b19166e1bb83905a68201941ea8601b4ac"
+            },
+            "CN_SM_Tripo_DesertPosthouseWall_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertPosthouseWall_v002_left.png",
+              "sha256": "662540644458fae2ea402e3aa50c3ec8516caf87d0a268075f2fd1640dfa5c77"
+            },
+            "CN_SM_Tripo_DesertPosthouseWall_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertPosthouseWall_v002_back.png",
+              "sha256": "36e39db12f90f5c57b6026f597c1fd67dde35efbdbd434e7e60207ef8ef8f2e3"
+            },
+            "CN_SM_Tripo_DesertPosthouseWall_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertPosthouseWall_v002_right.png",
+              "sha256": "6ab75a6af553c5c622753dda74ce5de72b54dfba3c5f11e907f8d70ef3367e79"
+            },
+            "CN_SM_Tripo_DesertPosthouseWall_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertPosthouseWall_v002_sheet.png",
+              "sha256": "3dc4c55a153eacc0277ed9b861f8b3264cc545d421fb63d1f846900ea091aaf0"
+            },
+            "CN_SM_Tripo_DesertPosthouseWall_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertPosthouseWall_v002_prompt.txt",
+              "sha256": "922d9ad0fedce1a8f2c4ee09727291c199b805c8764093bd3a745e0c877ebe1e"
+            },
+            "CN_SM_Tripo_DesertPosthouseWall_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertPosthouseWall_v002_registration.json",
+              "sha256": "0daa676089c7d0c85c8e8143d5641f9c51ab31f25403f867f42d3657d17a0445"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a15947-6476-7cd3-bb0a-7e7db5e511b1",
+            "attempt": 1,
+            "seconds": 50.2,
+            "rekeyed_from": 1,
+            "fix": "back mirrored"
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (6m wide x 3.2m tall x 1m deep): A ruined courtyard wall section of a Han-dynasty Silk Road relay post station (yizhan), 6m long, 3.2m tall at its highest and 1m thick: a straight free-standing wall of sun-dried mud brick laid in broad horizontal courses, covered by a thick pale sand-yellow mud-plaster skin that has flaked off in two or three large soft-edged patches showing the ochre-red brick courses beneath. PROPORTIONS: in the FRONT and BACK views it is a long low wall drawn almost twice as wide as tall; the crest is broken: the LEFT third stands at the full 3.2m with a thin overhanging timber coping beam and a row of chunky square beam ends, the middle steps down in two broad eroded rounded steps, and the RIGHT third is only about 2m tall. One small square window opening with a thick grey-brown timber frame sits in the tall left part, about 1.6m above the ground, going straight through the wall. Both ends are flat vertical cut faces so identical sections join in a line or at a corner. FRONT and BACK faces look nearly the same; the side views are narrow upright slabs, 1m thick and 3.2m (left end) tall. Broad faceted hand-painted planes, chunky readable forms, two or three colour blocks, no loose bricks, debris, plants or micro cracks. One solid connected piece on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "d7cea612dc5ecf9bf4dd55c03d422392c2bcc20cf3c5f7b620e63dc449a804c0",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.5122048819527811,
+              "offset": [
+                68,
+                390
+              ],
+              "size": [
+                375,
+                244
+              ],
+              "physical_height_m": 3.2,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5068805068805069,
+              "offset": [
+                227,
+                390
+              ],
+              "size": [
+                57,
+                244
+              ],
+              "physical_height_m": 3.2,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5122048819527811,
+              "offset": [
+                65,
+                390
+              ],
+              "size": [
+                381,
+                244
+              ],
+              "physical_height_m": 3.2,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5068805068805069,
+              "offset": [
+                228,
+                390
+              ],
+              "size": [
+                56,
+                244
+              ],
+              "physical_height_m": 3.2,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "v002 = v001 背视图水平镜像（原图背视图画成了正视图的复制）；比例、夯土 + 灰皮剥落、断口阶梯都对",
+            "time": "2026-10-20 20:30:23"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:13:02",
+          "files": {
+            "HP_SM_Tripo_DesertPosthouseWall_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertPosthouseWall_v001_source.glb",
+              "sha256": "61baca83a675f6dfd51fed04ab0f3d0ba2dee4f733f39156097f1492e5b1c7ac"
+            },
+            "HP_SM_Tripo_DesertPosthouseWall_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertPosthouseWall_v001.glb",
+              "sha256": "cf1f5233fe07de004dbc842e2b4f4c0ab9b3c609f9c0e11da2a02fb21b0bd11a"
+            },
+            "HP_SM_Tripo_DesertPosthouseWall_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertPosthouseWall_v001_graph.json",
+              "sha256": "7b570f0bcfac92f45ab094dcdfe740a19040203fe099704e2ea3751b4c198ca2"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/5fe3a3b0-7d0e-4a5c-b729-14fc3ba24f42",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 3957,
+          "source_sha256": "61baca83a675f6dfd51fed04ab0f3d0ba2dee4f733f39156097f1492e5b1c7ac"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:13:48",
+          "files": {
+            "SM_Tripo_DesertPosthouseWall_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertPosthouseWall_v001.blend",
+              "sha256": "fa7917b7d90c453f327a6a4a4b2a64aa8682187c5c55f43aed5a77e039eeaffc"
+            },
+            "SM_Tripo_DesertPosthouseWall_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertPosthouseWall_v001.glb",
+              "sha256": "81790fb9badb1c15e631f0d06ce5bba6ee2afd0058f914a3b8d6f722e76cbdf7"
+            },
+            "SM_Tripo_DesertPosthouseWall_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertPosthouseWall_v001_metrics.json",
+              "sha256": "9dcdc9933450ed9303e02769fa6a1f0e80ce99264dedde3931a3c2de9fb5acd1"
+            },
+            "T_Tripo_DesertPosthouseWall_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertPosthouseWall_BC.png",
+              "sha256": "4f3c31a1151b48270eee310fadbe83aeecfd82056d89812e9a710836b25c8c9b"
+            },
+            "T_Tripo_DesertPosthouseWall_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertPosthouseWall_N.png",
+              "sha256": "fe4bd6222a29a175e24692fa803d5791b3496c11c44f164b66ee12a7c18d405a"
+            },
+            "T_Tripo_DesertPosthouseWall_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertPosthouseWall_ORM.png",
+              "sha256": "1ead2d441c5fa26009124559d8a656d5ebfaa192f648164336a65bca39833332"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.795,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 3957,
+              "verts": 2069
+            },
+            {
+              "tris": 2486,
+              "verts": 1308
+            },
+            {
+              "tris": 796,
+              "verts": 445
+            }
+          ],
+          "export_kb": 586.5,
+          "seconds": 37.2,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:13:53",
+          "files": {
+            "SM_Tripo_DesertPosthouseWall_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertPosthouseWall_v001_validation_v001.json",
+              "sha256": "efaddf0f8a7e245cbd5baf6e9f3b96677291764e8bb63271fc4249f128e9bf36"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:14:00",
+          "files": {
+            "SM_Tripo_DesertPosthouseWall_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertPosthouseWall_v001_review_v001.png",
+              "sha256": "2b019b283399c478cba0a179b0e9a7534b58d462f26c25f395609d8e7791eaf8"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "成品审核通过（Tripo P2.0 智能网格 4000 面 + 纹理）：剥落灰皮、断口阶梯、木窗都在，LOD 无斜条纹",
+            "time": "2026-10-20 21:14:49"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:14:49",
+          "files": {
+            "SM_Tripo_DesertPosthouseWall.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertPosthouseWall.glb",
+              "sha256": "81790fb9badb1c15e631f0d06ce5bba6ee2afd0058f914a3b8d6f722e76cbdf7"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertPosthouseWall.glb"
+        }
+      ]
+    }
+  }
+}

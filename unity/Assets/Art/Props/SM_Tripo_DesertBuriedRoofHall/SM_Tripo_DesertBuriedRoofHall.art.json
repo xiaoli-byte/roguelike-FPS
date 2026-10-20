@@ -1,0 +1,126 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_DesertBuriedRoofHall",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "desert.silkroad.buriedRoofHall"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    24,
+    60
+  ],
+  "budget": {
+    "lodTris": [
+      8000,
+      2500,
+      1500
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -3.2407894134521484,
+      0,
+      -1.8507490158081055
+    ],
+    "max": [
+      3.2407894134521484,
+      5.5,
+      1.8507490158081055
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_DesertBuriedRoofHall_LOD0",
+      "lod": 0,
+      "tris": 5777,
+      "verts": 9760,
+      "materials": [
+        "M_Tripo_DesertBuriedRoofHall"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_DesertBuriedRoofHall_LOD1",
+      "lod": 1,
+      "tris": 2486,
+      "verts": 5328,
+      "materials": [
+        "M_Tripo_DesertBuriedRoofHall"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_DesertBuriedRoofHall_LOD2",
+      "lod": 2,
+      "tris": 1487,
+      "verts": 3280,
+      "materials": [
+        "M_Tripo_DesertBuriedRoofHall"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_DesertBuriedRoofHall",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_DesertBuriedRoofHall_BC.png",
+        "N": "Textures/T_Tripo_DesertBuriedRoofHall_N.png",
+        "ORM": "Textures/T_Tripo_DesertBuriedRoofHall_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_DesertBuriedRoofHall.glb",
+    "sha256": "2f759a8bd8ffe729a7477ef635f6036f0e667564507a86d64887f2f496e522a4",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 4
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-20 21:54:18"
+}

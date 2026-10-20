@@ -1,0 +1,197 @@
+{
+  "source": {
+    "tris": 5506,
+    "verts": 3050
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 3.87024,
+    "iou": 0.849,
+    "iou_per_view": {
+      "front": 0.861,
+      "left": 0.811,
+      "back": 0.893,
+      "right": 0.825
+    },
+    "size_m": [
+      3.562,
+      3.868,
+      3.6
+    ],
+    "reference_m": [
+      7.0,
+      7.0,
+      3.6
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.562,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_DesertBuriedRoofFlat_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "rebaked",
+      "texture": 1024,
+      "cage_m": 0.054,
+      "uv": {
+        "smart_islands": 253,
+        "charts": 44,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "smart",
+        "density_smart": 0.1016,
+        "density_merged": 0.1005,
+        "coverage": 0.767
+      },
+      "collapse": {
+        "samples": 23620,
+        "matched_ratio": 0.984,
+        "mean_delta": 0.0131,
+        "p90_delta": 0.0309,
+        "smeared_ratio": 0.0085,
+        "stretched_ratio": 0.0456,
+        "dist_p99_m": 0.0032
+      },
+      "final": {
+        "samples": 23620,
+        "matched_ratio": 0.984,
+        "mean_delta": 0.0081,
+        "p90_delta": 0.0221,
+        "smeared_ratio": 0.0052,
+        "stretched_ratio": 0.0081,
+        "dist_p99_m": 0.0032
+      }
+    },
+    "LOD2": {
+      "method": "rebaked",
+      "texture": 512,
+      "cage_m": 0.054,
+      "uv": {
+        "smart_islands": 157,
+        "charts": 44,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "smart",
+        "density_smart": 0.1056,
+        "density_merged": 0.1025,
+        "coverage": 0.879
+      },
+      "collapse": {
+        "samples": 23157,
+        "matched_ratio": 0.965,
+        "mean_delta": 0.035,
+        "p90_delta": 0.0977,
+        "smeared_ratio": 0.0488,
+        "stretched_ratio": 0.1509,
+        "dist_p99_m": 0.0198
+      },
+      "final": {
+        "samples": 23157,
+        "matched_ratio": 0.965,
+        "mean_delta": 0.0103,
+        "p90_delta": 0.0265,
+        "smeared_ratio": 0.0076,
+        "stretched_ratio": 0.0065,
+        "dist_p99_m": 0.0198
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertBuriedRoofFlat_LOD0",
+      "tris": 5506,
+      "verts": 3050,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.467,
+      "bbox_min": [
+        -1.7811,
+        -1.9342,
+        0.0
+      ],
+      "bbox_max": [
+        1.7811,
+        1.9342,
+        3.6
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertBuriedRoofFlat_LOD1",
+      "tris": 2486,
+      "verts": 1457,
+      "uv_min": [
+        0.003462686436250806,
+        0.0034481456968933344
+      ],
+      "uv_max": [
+        0.988598644733429,
+        0.9966034889221191
+      ],
+      "uv_utilization": 0.68,
+      "bbox_min": [
+        -1.7814,
+        -1.9342,
+        0.0
+      ],
+      "bbox_max": [
+        1.7814,
+        1.9342,
+        3.6022
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertBuriedRoofFlat_LOD2",
+      "tris": 796,
+      "verts": 546,
+      "uv_min": [
+        0.00317565631121397,
+        0.0031975985039025545
+      ],
+      "uv_max": [
+        0.9968467354774475,
+        0.9949657917022705
+      ],
+      "uv_utilization": 0.729,
+      "bbox_min": [
+        -1.7778,
+        -1.9351,
+        -0.0031
+      ],
+      "bbox_max": [
+        1.7778,
+        1.9213,
+        3.6053
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertBuriedRoofFlat/04_export/SM_Tripo_DesertBuriedRoofFlat_v001.glb",
+    "bytes": 766488
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 40.5,
+  "_seconds": 41.8
+}

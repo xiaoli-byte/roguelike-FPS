@@ -1,0 +1,197 @@
+{
+  "source": {
+    "tris": 8549,
+    "verts": 4397
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 20.00977,
+    "iou": 0.906,
+    "iou_per_view": {
+      "front": 0.949,
+      "left": 0.869,
+      "back": 0.894,
+      "right": 0.89
+    },
+    "size_m": [
+      11.969,
+      9.761,
+      20.0
+    ],
+    "reference_m": [
+      14.0,
+      10.0,
+      20.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.813,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_DesertSeatedColossus_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "rebaked",
+      "texture": 1024,
+      "cage_m": 0.3,
+      "uv": {
+        "smart_islands": 503,
+        "charts": 41,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "merged",
+        "density_smart": 0.0291,
+        "density_merged": 0.0326,
+        "coverage": 0.636
+      },
+      "collapse": {
+        "samples": 23780,
+        "matched_ratio": 0.991,
+        "mean_delta": 0.018,
+        "p90_delta": 0.0433,
+        "smeared_ratio": 0.001,
+        "stretched_ratio": 0.0296,
+        "dist_p99_m": 0.0604
+      },
+      "final": {
+        "samples": 23780,
+        "matched_ratio": 0.991,
+        "mean_delta": 0.009,
+        "p90_delta": 0.0192,
+        "smeared_ratio": 0.0037,
+        "stretched_ratio": 0.0036,
+        "dist_p99_m": 0.0604
+      }
+    },
+    "LOD2": {
+      "method": "rebaked",
+      "texture": 512,
+      "cage_m": 0.3222,
+      "uv": {
+        "smart_islands": 200,
+        "charts": 40,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "merged",
+        "density_smart": 0.0335,
+        "density_merged": 0.0337,
+        "coverage": 0.695
+      },
+      "collapse": {
+        "samples": 23209,
+        "matched_ratio": 0.967,
+        "mean_delta": 0.032,
+        "p90_delta": 0.076,
+        "smeared_ratio": 0.0087,
+        "stretched_ratio": 0.0846,
+        "dist_p99_m": 0.1611
+      },
+      "final": {
+        "samples": 23209,
+        "matched_ratio": 0.967,
+        "mean_delta": 0.0136,
+        "p90_delta": 0.0318,
+        "smeared_ratio": 0.0019,
+        "stretched_ratio": 0.004,
+        "dist_p99_m": 0.1611
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertSeatedColossus_LOD0",
+      "tris": 7960,
+      "verts": 4102,
+      "uv_min": [
+        0.001220703125,
+        0.001220703125
+      ],
+      "uv_max": [
+        0.998779296875,
+        0.9931640625
+      ],
+      "uv_utilization": 0.637,
+      "bbox_min": [
+        -5.9844,
+        -4.8803,
+        -0.0009
+      ],
+      "bbox_max": [
+        5.9844,
+        4.8803,
+        20.0
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertSeatedColossus_LOD1",
+      "tris": 2486,
+      "verts": 1329,
+      "uv_min": [
+        0.002423316240310669,
+        0.0023560053668916225
+      ],
+      "uv_max": [
+        0.9976896643638611,
+        0.9786859154701233
+      ],
+      "uv_utilization": 0.593,
+      "bbox_min": [
+        -5.9743,
+        -4.8948,
+        -0.0283
+      ],
+      "bbox_max": [
+        5.9844,
+        4.8654,
+        19.977
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertSeatedColossus_LOD2",
+      "tris": 795,
+      "verts": 448,
+      "uv_min": [
+        0.002521080896258354,
+        0.0024656534660607576
+      ],
+      "uv_max": [
+        0.9961093664169312,
+        0.9976980686187744
+      ],
+      "uv_utilization": 0.612,
+      "bbox_min": [
+        -5.9648,
+        -4.8715,
+        -0.1737
+      ],
+      "bbox_max": [
+        5.9844,
+        4.8654,
+        20.0731
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertSeatedColossus/04_export/SM_Tripo_DesertSeatedColossus_v001.glb",
+    "bytes": 1494384
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 46.7,
+  "_seconds": 48.1
+}

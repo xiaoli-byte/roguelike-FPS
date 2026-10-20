@@ -1,0 +1,348 @@
+{
+  "id": "SM_Tripo_DesertBuriedRoofFlat",
+  "display": "半埋屋顶·平顶土坯房（1-2 屋脊之海）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:21:54",
+          "files": {
+            "BO_SM_Tripo_DesertBuriedRoofFlat_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertBuriedRoofFlat_v001.json",
+              "sha256": "6578a280133f28f992a856a66a2d5842078414d50cedaff1c0a1d3c034d90312"
+            },
+            "BO_SM_Tripo_DesertBuriedRoofFlat_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertBuriedRoofFlat_v001_views.json",
+              "sha256": "cbb223b51c64d6b046b6ebae32a3a3d79678029776d4fcf5255ad15a3097fccf"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.buriedRoofFlat"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -3.5,
+              0.0,
+              -3.5
+            ],
+            "max": [
+              3.5,
+              3.6,
+              3.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:35:27",
+          "files": {
+            "CN_SM_Tripo_DesertBuriedRoofFlat_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBuriedRoofFlat_v001_source.png",
+              "sha256": "ca9fbd50461234b77a5d38e3966d411fe66cf9decaf6a6d3c2d87986cb56dd36"
+            },
+            "CN_SM_Tripo_DesertBuriedRoofFlat_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBuriedRoofFlat_v001_front.png",
+              "sha256": "7ffb50dded7c028ed0a548e55417e8872c7cfe75268e0bd6c0e5cf5cbb4a72eb"
+            },
+            "CN_SM_Tripo_DesertBuriedRoofFlat_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBuriedRoofFlat_v001_left.png",
+              "sha256": "b20fd8f4b662fbd6e3df6178e61b60352491968b16da1a9f18fcb9f779a67ace"
+            },
+            "CN_SM_Tripo_DesertBuriedRoofFlat_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBuriedRoofFlat_v001_back.png",
+              "sha256": "25732e52cb87595e2e2e1ce7cb7ad850a6692dea47c06638d21798ac2ad3fb40"
+            },
+            "CN_SM_Tripo_DesertBuriedRoofFlat_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBuriedRoofFlat_v001_right.png",
+              "sha256": "8c29bf4c0d001ed771867e4baf9814543ddd77edf092768b066c96526dadecd5"
+            },
+            "CN_SM_Tripo_DesertBuriedRoofFlat_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBuriedRoofFlat_v001_sheet.png",
+              "sha256": "ff5a0f659aa51cf03c9902d1f53c232217088828b35e1abbca010cb553260478"
+            },
+            "CN_SM_Tripo_DesertBuriedRoofFlat_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertBuriedRoofFlat_v001_prompt.txt",
+              "sha256": "feebddfecc75ec0ed6add567f1965884dc18d63b8cbf4b16a77ec414e45a1ee5"
+            },
+            "CN_SM_Tripo_DesertBuriedRoofFlat_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertBuriedRoofFlat_v001_registration.json",
+              "sha256": "eb96bf4131f071210ef3b39398f9cc02ac5147d8420234ecc915cf6017cca00c"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a1594e-69f2-7573-8888-95c551730ea6",
+            "attempt": 1,
+            "seconds": 51.9
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (7m wide x 3.6m tall x 7m deep): The top of a flat-roofed Western-Regions adobe house drowned in sand, as a separate piece: a square block 7m by 7m whose flat walkable mud roof sits at 3m, edged by a low 0.6m parapet with rounded corners that has two gaps for drainage spouts; on the roof's back-left corner a small square rooftop room 2.5m wide with its own flat roof (reaching 3.6m) and a dark square doorway facing the front. The walls are thick pale sand-yellow mud plaster over ochre-red mud brick with softly rounded edges; on the FRONT face, near the top, the upper half of a round-arched doorway framed in faded Dunhuang malachite-green and vermilion painted timber, and two chunky timber drain spouts sticking out under the parapet. The walls continue straight down to the flat base so the piece can be sunk into sand. PROPORTIONS: FRONT and BACK views drawn about twice as wide as tall, the rooftop room rising at one side; side views the same. Broad faceted hand-painted planes, chunky forms, two or three colour blocks, no debris, plants or micro cracks. One solid connected piece on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "ca9fbd50461234b77a5d38e3966d411fe66cf9decaf6a6d3c2d87986cb56dd36",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.4646285391627006,
+              "offset": [
+                147,
+                394
+              ],
+              "size": [
+                218,
+                235
+              ],
+              "physical_height_m": 3.6,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.4970444837554472,
+              "offset": [
+                143,
+                394
+              ],
+              "size": [
+                225,
+                235
+              ],
+              "physical_height_m": 3.6,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.49915507604315607,
+              "offset": [
+                142,
+                394
+              ],
+              "size": [
+                228,
+                235
+              ],
+              "physical_height_m": 3.6,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.4970444837554472,
+              "offset": [
+                144,
+                394
+              ],
+              "size": [
+                224,
+                235
+              ],
+              "physical_height_m": 3.6,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "平顶土坯房 + 屋顶小间（左后角）+ 正面拱门上半，四视图方位一致",
+            "time": "2026-10-20 20:37:35"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:28:00",
+          "files": {
+            "HP_SM_Tripo_DesertBuriedRoofFlat_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertBuriedRoofFlat_v001_source.glb",
+              "sha256": "900294d0b87b6bbdaeaf9352f59d6928a4b87b6d77493eaae467e13eeb9c4bd0"
+            },
+            "HP_SM_Tripo_DesertBuriedRoofFlat_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertBuriedRoofFlat_v001.glb",
+              "sha256": "e5ca3b8bd6b5da09fb1062f65853559bb430fe98411c98aa2b8a251d90c719c9"
+            },
+            "HP_SM_Tripo_DesertBuriedRoofFlat_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertBuriedRoofFlat_v001_graph.json",
+              "sha256": "a824f26c9ebb4845513fc1fb90af417a5b3dcfd7b95b880ff07de7a0ee39ef5e"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/066cbbe3-3882-46bb-a22b-a8b946c3a094",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 5506,
+          "source_sha256": "900294d0b87b6bbdaeaf9352f59d6928a4b87b6d77493eaae467e13eeb9c4bd0"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:28:43",
+          "files": {
+            "SM_Tripo_DesertBuriedRoofFlat_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertBuriedRoofFlat_v001.blend",
+              "sha256": "6cf2875a0c730fabf608a51493e8e18c582256e7f52a7c23878e6e7944898d61"
+            },
+            "SM_Tripo_DesertBuriedRoofFlat_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertBuriedRoofFlat_v001.glb",
+              "sha256": "c3b4da9c87485b2d3673d85255d93ab63b456a5d6b55f102597124960d9768a9"
+            },
+            "SM_Tripo_DesertBuriedRoofFlat_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertBuriedRoofFlat_v001_metrics.json",
+              "sha256": "983a0a91dc658ad2e36d9d1145f6b74e5b320b21b94e4dde0b5e50b5a0ff9c29"
+            },
+            "T_Tripo_DesertBuriedRoofFlat_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBuriedRoofFlat_BC.png",
+              "sha256": "9db1df141e957c46719f03ffb749502ae1f5e7e467434d2bb5bdacdcf152faa6"
+            },
+            "T_Tripo_DesertBuriedRoofFlat_LOD1_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBuriedRoofFlat_LOD1_BC.png",
+              "sha256": "772c4b3e1069d45587b1dceb0476303815a0ff0cb04925944d5888a25c110486"
+            },
+            "T_Tripo_DesertBuriedRoofFlat_LOD1_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBuriedRoofFlat_LOD1_N.png",
+              "sha256": "e6889518297363a232f03f9b180be34025b11d8c440e335ba376fbd24fdd96d9"
+            },
+            "T_Tripo_DesertBuriedRoofFlat_LOD1_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBuriedRoofFlat_LOD1_ORM.png",
+              "sha256": "f4456b4f80cd85fe8a01f6e32b5ba6306ac295f55de9ac2ce23792b55e90482a"
+            },
+            "T_Tripo_DesertBuriedRoofFlat_LOD2_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBuriedRoofFlat_LOD2_BC.png",
+              "sha256": "ae926686796918cdc287733bc63eb4b00fc7e37e5b3164c3b0b5e75b6f1430f1"
+            },
+            "T_Tripo_DesertBuriedRoofFlat_LOD2_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBuriedRoofFlat_LOD2_N.png",
+              "sha256": "e9a0114bf9eb9f4d58eaccd688d5be0c41f11da46df4004d51ef6df433a840ce"
+            },
+            "T_Tripo_DesertBuriedRoofFlat_LOD2_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBuriedRoofFlat_LOD2_ORM.png",
+              "sha256": "ce340982dcda2156254bb6c3e99610a791982ecd7f5dd7dfa79580d749daa9bf"
+            },
+            "T_Tripo_DesertBuriedRoofFlat_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBuriedRoofFlat_N.png",
+              "sha256": "6f70e2980baa1ef0cf31263f8733820fd57b61b500666be5bebdb83f11df0253"
+            },
+            "T_Tripo_DesertBuriedRoofFlat_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBuriedRoofFlat_ORM.png",
+              "sha256": "eda00380f5b5f79c3bc98d4f8d3ad6a699852954f6f1111728499e6f18995be0"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.849,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 5506,
+              "verts": 3050
+            },
+            {
+              "tris": 2486,
+              "verts": 1457
+            },
+            {
+              "tris": 796,
+              "verts": 546
+            }
+          ],
+          "export_kb": 748.5,
+          "seconds": 41.8,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:28:47",
+          "files": {
+            "SM_Tripo_DesertBuriedRoofFlat_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertBuriedRoofFlat_v001_validation_v001.json",
+              "sha256": "3dcc79f933b765c4072dd097dc7b44081b66062e37be8e84a883f8339b5e1353"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:28:53",
+          "files": {
+            "SM_Tripo_DesertBuriedRoofFlat_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertBuriedRoofFlat_v001_review_v001.png",
+              "sha256": "50fac41b626da8eeaf211132c5f6a6cb15bb37ddfd7ebb7abf068f76ad9ef9bf"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "成品审核通过（Tripo P2.0 + 纹理）：四视图与概念一致，LOD 远看轮廓不塌、无斜条纹",
+            "time": "2026-10-20 21:51:35"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:51:35",
+          "files": {
+            "SM_Tripo_DesertBuriedRoofFlat.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertBuriedRoofFlat.glb",
+              "sha256": "c3b4da9c87485b2d3673d85255d93ab63b456a5d6b55f102597124960d9768a9"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertBuriedRoofFlat.glb"
+        }
+      ]
+    }
+  }
+}

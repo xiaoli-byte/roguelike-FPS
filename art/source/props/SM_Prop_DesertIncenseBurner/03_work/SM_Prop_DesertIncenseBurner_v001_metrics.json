@@ -1,0 +1,139 @@
+{
+  "source": {
+    "tris": 3008,
+    "verts": 1623
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 2.60127,
+    "iou": 0.872,
+    "iou_per_view": {
+      "front": 0.878,
+      "left": 0.865,
+      "back": 0.861,
+      "right": 0.881
+    },
+    "size_m": [
+      1.327,
+      1.165,
+      2.6
+    ],
+    "reference_m": [
+      2.0,
+      2.0,
+      2.6
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.683,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Prop_DesertIncenseBurner_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "rebaked",
+      "texture": 512,
+      "cage_m": 0.039,
+      "uv": {
+        "smart_islands": 186,
+        "charts": 46,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "merged",
+        "density_smart": 0.2246,
+        "density_merged": 0.2287,
+        "coverage": 0.739
+      },
+      "collapse": {
+        "samples": 23477,
+        "matched_ratio": 0.978,
+        "mean_delta": 0.0241,
+        "p90_delta": 0.0574,
+        "smeared_ratio": 0.0083,
+        "stretched_ratio": 0.0452,
+        "dist_p99_m": 0.0145
+      },
+      "final": {
+        "samples": 23477,
+        "matched_ratio": 0.978,
+        "mean_delta": 0.009,
+        "p90_delta": 0.0236,
+        "smeared_ratio": 0.0003,
+        "stretched_ratio": 0.062,
+        "dist_p99_m": 0.0145
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Prop_DesertIncenseBurner_LOD0",
+      "tris": 2984,
+      "verts": 1611,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.443,
+      "bbox_min": [
+        -0.6637,
+        -0.5824,
+        0.0
+      ],
+      "bbox_max": [
+        0.6637,
+        0.5824,
+        2.6
+      ]
+    },
+    {
+      "name": "SM_Prop_DesertIncenseBurner_LOD1",
+      "tris": 995,
+      "verts": 601,
+      "uv_min": [
+        0.002419053576886654,
+        0.0024190752301365137
+      ],
+      "uv_max": [
+        0.9975810050964355,
+        0.994443953037262
+      ],
+      "uv_utilization": 0.655,
+      "bbox_min": [
+        -0.6621,
+        -0.5761,
+        -0.005
+      ],
+      "bbox_max": [
+        0.6589,
+        0.5753,
+        2.6017
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Prop_DesertIncenseBurner/04_export/SM_Prop_DesertIncenseBurner_v001.glb",
+    "bytes": 335992
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 20.8,
+  "_seconds": 22.3
+}

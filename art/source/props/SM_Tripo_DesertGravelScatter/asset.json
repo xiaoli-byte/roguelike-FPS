@@ -1,0 +1,332 @@
+{
+  "id": "SM_Tripo_DesertGravelScatter",
+  "display": "黑戈壁砾石（散布件）",
+  "kind": "static",
+  "class": "tripo_scatter",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:39:17",
+          "files": {
+            "BO_SM_Tripo_DesertGravelScatter_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertGravelScatter_v001.json",
+              "sha256": "ca997a9e83792630c56d74854b4bbbbc439455d3402f5b45fe38008937766077"
+            },
+            "BO_SM_Tripo_DesertGravelScatter_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertGravelScatter_v001_views.json",
+              "sha256": "5c8b64e099bff7017de1409020320f63237c208809ae3322677086e86fc7eae0"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.gravelScatter"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.9,
+              0.0,
+              -0.75
+            ],
+            "max": [
+              0.9,
+              0.45,
+              0.75
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:40:38",
+          "files": {
+            "CN_SM_Tripo_DesertGravelScatter_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertGravelScatter_v001_source.png",
+              "sha256": "0a41850a029d03be65e3e338c28218a2aa2d7b2fdbe6ea8920c02976c30001fe"
+            },
+            "CN_SM_Tripo_DesertGravelScatter_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertGravelScatter_v001_front.png",
+              "sha256": "ee6d7f8ea4127114e96607cd2c89d77229268093656b1bbe221ad6887e1a8ef1"
+            },
+            "CN_SM_Tripo_DesertGravelScatter_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertGravelScatter_v001_left.png",
+              "sha256": "1acc0926d243d9c9ac13b17212f42ff0276793556192893f20733b7ee01d74c1"
+            },
+            "CN_SM_Tripo_DesertGravelScatter_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertGravelScatter_v001_back.png",
+              "sha256": "773120d68b1fb2bf4bae5e4783c702da92c3205db4f4ee51fbb109fba27f3857"
+            },
+            "CN_SM_Tripo_DesertGravelScatter_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertGravelScatter_v001_right.png",
+              "sha256": "a020574b4bf0d28d3e510df3cf02abba87e9b115de06da76d2287c457b3602fc"
+            },
+            "CN_SM_Tripo_DesertGravelScatter_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertGravelScatter_v001_sheet.png",
+              "sha256": "4fc535456fb14b008cb2c949ce0a61da03c51dabe21fb6960d209b13e7709f43"
+            },
+            "CN_SM_Tripo_DesertGravelScatter_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertGravelScatter_v001_prompt.txt",
+              "sha256": "69b8368abd7a77b9bc13f21e7a85bbaa8fb93d4e2bee1c926b716b952d75b22f"
+            },
+            "CN_SM_Tripo_DesertGravelScatter_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertGravelScatter_v001_registration.json",
+              "sha256": "b51e7dc16682a9327145d988716d701922c473e3ab617aaab507ebe1b820754e"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a15952-c12b-7cc0-bee5-fccd8b13209d",
+            "attempt": 1,
+            "seconds": 77.1
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (1.8m wide x 0.45m tall x 1.5m deep): A small cluster of black Gobi desert stones 1.8m wide, 0.45m tall and 1.5m deep, half sunk in a thin flat patch of sand: one larger angular flat-topped stone about 0.7m across and 0.45m tall, two medium stones and four small fist-to-head-sized pebbles around it, all chunky low-poly faceted rocks with broad flat facets and slightly rounded edges. The stones have the dark desert-varnish look of the black Gobi: charcoal-black and dark brown-grey tops with a warm rusty-brown tint, paler ochre undersides where they meet the sand. The sand patch under them is a very thin irregular disc, pale sand-yellow, connecting all stones. PROPORTIONS: a flat low cluster, all four views drawn about four times as wide as tall. Broad faceted hand-painted planes, no tiny grit or cracks. One solid connected piece on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "0a41850a029d03be65e3e338c28218a2aa2d7b2fdbe6ea8920c02976c30001fe",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.4571428571428571,
+              "offset": [
+                142,
+                455
+              ],
+              "size": [
+                227,
+                114
+              ],
+              "physical_height_m": 0.45,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.4645760743321718,
+              "offset": [
+                155,
+                455
+              ],
+              "size": [
+                202,
+                114
+              ],
+              "physical_height_m": 0.45,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.466472303206997,
+              "offset": [
+                141,
+                455
+              ],
+              "size": [
+                229,
+                114
+              ],
+              "physical_height_m": 0.45,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.466472303206997,
+              "offset": [
+                155,
+                455
+              ],
+              "size": [
+                202,
+                114
+              ],
+              "physical_height_m": 0.45,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "黑戈壁漆皮砾石一组 + 薄沙盘；比参考 0.45 m 略高，构建按宽度适配",
+            "time": "2026-10-20 20:49:15"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:45:42",
+          "files": {
+            "HP_SM_Tripo_DesertGravelScatter_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertGravelScatter_v001_source.glb",
+              "sha256": "5b03671c8a7aeacfec3ee32089bd075ac443b96e34c6c42b89d6cd2e0d45048d"
+            },
+            "HP_SM_Tripo_DesertGravelScatter_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertGravelScatter_v001.glb",
+              "sha256": "bbcdd354e11a7d3d2691926d30089a5ced5dde61ab613c59e38c341f55a7d21e"
+            },
+            "HP_SM_Tripo_DesertGravelScatter_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertGravelScatter_v001_graph.json",
+              "sha256": "042260e4b14ba271bcafd523afd057dda32c352c475d5f987e5b68677895d18d"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/fcb4eae2-6eee-4642-be43-2b1ec61dab40",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 1359,
+          "source_sha256": "5b03671c8a7aeacfec3ee32089bd075ac443b96e34c6c42b89d6cd2e0d45048d"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:45:57",
+          "files": {
+            "SM_Tripo_DesertGravelScatter_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertGravelScatter_v001.blend",
+              "sha256": "ee9a1a9a7520dcc524097f32bd585bfc8381704bc3961713c0120e47931cbf78"
+            },
+            "SM_Tripo_DesertGravelScatter_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertGravelScatter_v001.glb",
+              "sha256": "53715483094a8b1041e428770d4b50315d065df6776af50baa9e730f0f9f9813"
+            },
+            "SM_Tripo_DesertGravelScatter_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertGravelScatter_v001_metrics.json",
+              "sha256": "4e7aba4e5effc9618d9b33b0b2dd6cde034fb747c53dbecf5e799204580d0cf3"
+            },
+            "T_Tripo_DesertGravelScatter_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertGravelScatter_BC.png",
+              "sha256": "84d63ad1b878e0e6433bc60a1252a848ff4eb091ec74f51dbd2c5688daa7508a"
+            },
+            "T_Tripo_DesertGravelScatter_LOD1_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertGravelScatter_LOD1_BC.png",
+              "sha256": "b36ef19eef6b3228549b9365d11190c612635f02da34abe1092258599400eb54"
+            },
+            "T_Tripo_DesertGravelScatter_LOD1_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertGravelScatter_LOD1_N.png",
+              "sha256": "f95dcb7d7db12300df791551b242f1a5e5f7be860b445d7e513a6c2488bca4a6"
+            },
+            "T_Tripo_DesertGravelScatter_LOD1_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertGravelScatter_LOD1_ORM.png",
+              "sha256": "fa440458522701b64b49a8913865da3cf051465b83f9daf7336da8378c368d1a"
+            },
+            "T_Tripo_DesertGravelScatter_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertGravelScatter_N.png",
+              "sha256": "bd340510637bc49fe69ffc941936c9ae8dafe8a42f58f9523127ae2d3b15f831"
+            },
+            "T_Tripo_DesertGravelScatter_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertGravelScatter_ORM.png",
+              "sha256": "cdd0d2df670c61cefdcdf15bc50a7cf237026c1885dcff225d83edf45efec7fd"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.732,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 1194,
+              "verts": 711
+            },
+            {
+              "tris": 398,
+              "verts": 284
+            }
+          ],
+          "export_kb": 94.2,
+          "seconds": 13.2,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:46:00",
+          "files": {
+            "SM_Tripo_DesertGravelScatter_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertGravelScatter_v001_validation_v001.json",
+              "sha256": "a268b68ab9d75bd896c63181faf428f9abfd22ace0554439addec59b9c1e67b2"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:46:06",
+          "files": {
+            "SM_Tripo_DesertGravelScatter_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertGravelScatter_v001_review_v001.png",
+              "sha256": "b66bb1949ae9bd136f49e99b644fe8ebe2d747e927eb778075454155625d1880"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "成品审核通过（Tripo P2.0 + 纹理）：四视图与概念一致，LOD 远看轮廓不塌",
+            "time": "2026-10-20 21:52:28"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:52:28",
+          "files": {
+            "SM_Tripo_DesertGravelScatter.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertGravelScatter.glb",
+              "sha256": "53715483094a8b1041e428770d4b50315d065df6776af50baa9e730f0f9f9813"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertGravelScatter.glb"
+        }
+      ]
+    }
+  }
+}

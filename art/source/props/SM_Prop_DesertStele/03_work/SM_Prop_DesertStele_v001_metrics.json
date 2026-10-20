@@ -1,0 +1,117 @@
+{
+  "source": {
+    "tris": 3150,
+    "verts": 1582
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 3.80186,
+    "iou": 0.909,
+    "iou_per_view": {
+      "front": 0.977,
+      "left": 0.822,
+      "back": 0.966,
+      "right": 0.839
+    },
+    "size_m": [
+      1.68,
+      2.14,
+      3.8
+    ],
+    "reference_m": [
+      1.6,
+      2.6,
+      3.8
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.794,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Prop_DesertStele_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "provider",
+      "collapse": {
+        "samples": 23738,
+        "matched_ratio": 0.989,
+        "mean_delta": 0.0086,
+        "p90_delta": 0.0211,
+        "smeared_ratio": 0.0004,
+        "stretched_ratio": 0.0143,
+        "dist_p99_m": 0.0152
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Prop_DesertStele_LOD0",
+      "tris": 2984,
+      "verts": 1499,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.566,
+      "bbox_min": [
+        -0.84,
+        -1.0702,
+        0.0
+      ],
+      "bbox_max": [
+        0.84,
+        1.0702,
+        3.8
+      ]
+    },
+    {
+      "name": "SM_Prop_DesertStele_LOD1",
+      "tris": 995,
+      "verts": 503,
+      "uv_min": [
+        0.0,
+        0.004165298771113157
+      ],
+      "uv_max": [
+        0.999755859375,
+        1.0
+      ],
+      "uv_utilization": 0.511,
+      "bbox_min": [
+        -0.841,
+        -1.0642,
+        -0.0003
+      ],
+      "bbox_max": [
+        0.8359,
+        1.0702,
+        3.803
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Prop_DesertStele/04_export/SM_Prop_DesertStele_v001.glb",
+    "bytes": 197376
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 9.2,
+  "_seconds": 10.5
+}

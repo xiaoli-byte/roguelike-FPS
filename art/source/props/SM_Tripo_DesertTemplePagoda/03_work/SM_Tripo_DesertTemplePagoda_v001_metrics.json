@@ -1,0 +1,175 @@
+{
+  "source": {
+    "tris": 5981,
+    "verts": 4067
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 22.17383,
+    "iou": 0.83,
+    "iou_per_view": {
+      "front": 0.854,
+      "left": 0.795,
+      "back": 0.866,
+      "right": 0.792
+    },
+    "size_m": [
+      9.928,
+      10.08,
+      22.163
+    ],
+    "reference_m": [
+      9.0,
+      9.0,
+      24.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.557,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_DesertTemplePagoda_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "provider",
+      "collapse": {
+        "samples": 23062,
+        "matched_ratio": 0.961,
+        "mean_delta": 0.0116,
+        "p90_delta": 0.0343,
+        "smeared_ratio": 0.0007,
+        "stretched_ratio": 0.0018,
+        "dist_p99_m": 0.0686
+      }
+    },
+    "LOD2": {
+      "method": "rebaked",
+      "texture": 512,
+      "cage_m": 0.6842,
+      "uv": {
+        "smart_islands": 408,
+        "charts": 178,
+        "fallback_charts": 3,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "merged",
+        "density_smart": 0.0242,
+        "density_merged": 0.0268,
+        "coverage": 0.772
+      },
+      "collapse": {
+        "samples": 19910,
+        "matched_ratio": 0.83,
+        "mean_delta": 0.0269,
+        "p90_delta": 0.0744,
+        "smeared_ratio": 0.0148,
+        "stretched_ratio": 0.0523,
+        "dist_p99_m": 0.3421
+      },
+      "final": {
+        "samples": 19910,
+        "matched_ratio": 0.83,
+        "mean_delta": 0.0335,
+        "p90_delta": 0.073,
+        "smeared_ratio": 0.0156,
+        "stretched_ratio": 0.131,
+        "dist_p99_m": 0.3421
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertTemplePagoda_LOD0",
+      "tris": 5981,
+      "verts": 4067,
+      "uv_min": [
+        0.001220703125,
+        0.001220703125
+      ],
+      "uv_max": [
+        0.99853515625,
+        0.998779296875
+      ],
+      "uv_utilization": 0.654,
+      "bbox_min": [
+        -4.9642,
+        -5.04,
+        0.0
+      ],
+      "bbox_max": [
+        4.9642,
+        5.04,
+        22.163
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertTemplePagoda_LOD1",
+      "tris": 2487,
+      "verts": 2112,
+      "uv_min": [
+        0.001220703125,
+        0.001220703125
+      ],
+      "uv_max": [
+        0.998291015625,
+        0.998779296875
+      ],
+      "uv_utilization": 0.609,
+      "bbox_min": [
+        -4.9642,
+        -5.0643,
+        -0.0003
+      ],
+      "bbox_max": [
+        4.9642,
+        5.04,
+        22.1821
+      ]
+    },
+    {
+      "name": "SM_Tripo_DesertTemplePagoda_LOD2",
+      "tris": 795,
+      "verts": 1063,
+      "uv_min": [
+        0.003851165296509862,
+        0.003966751042753458
+      ],
+      "uv_max": [
+        0.9943269491195679,
+        0.9961514472961426
+      ],
+      "uv_utilization": 0.622,
+      "bbox_min": [
+        -4.9535,
+        -5.0495,
+        -0.0036
+      ],
+      "bbox_max": [
+        4.9443,
+        5.0235,
+        21.9434
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertTemplePagoda/04_export/SM_Tripo_DesertTemplePagoda_v001.glb",
+    "bytes": 1240140
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 42.1,
+  "_seconds": 43.5
+}

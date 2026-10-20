@@ -1,0 +1,332 @@
+{
+  "id": "SM_Tripo_DesertBeaconParapet",
+  "display": "烽燧台垛墙（1-1 烽燧台地边缘）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:38:12",
+          "files": {
+            "BO_SM_Tripo_DesertBeaconParapet_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertBeaconParapet_v001.json",
+              "sha256": "d7ed1a9269d813a60064b45359b1a58101341d29fc801c2b4aee08fca2bc92f0"
+            },
+            "BO_SM_Tripo_DesertBeaconParapet_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_DesertBeaconParapet_v001_views.json",
+              "sha256": "6b2cb27f2ac76cd1b0abbb0929fae28c179e909ba850e82f22ec054a15fb4e0c"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.beaconParapet"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -1.75,
+              0.0,
+              -0.35
+            ],
+            "max": [
+              1.75,
+              1.1,
+              0.35
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 20:39:31",
+          "files": {
+            "CN_SM_Tripo_DesertBeaconParapet_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBeaconParapet_v001_source.png",
+              "sha256": "bafc342b4c8805356de40722d73ab816b99822ac30b3c840d6a01b6924787ce7"
+            },
+            "CN_SM_Tripo_DesertBeaconParapet_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBeaconParapet_v001_front.png",
+              "sha256": "db56f7c9c080bee34299b1df437b82a37355c01dcddd38f2d77f08ef49d400ff"
+            },
+            "CN_SM_Tripo_DesertBeaconParapet_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBeaconParapet_v001_left.png",
+              "sha256": "fba756d57ba9c378575539ded048053bf20ce5fc1579b6f9779f1fdd7118c1cf"
+            },
+            "CN_SM_Tripo_DesertBeaconParapet_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBeaconParapet_v001_back.png",
+              "sha256": "f7c7cbb11e8e9c7b007fb50d459f23107ee6d44d21a769c114e88d5bcab4e486"
+            },
+            "CN_SM_Tripo_DesertBeaconParapet_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBeaconParapet_v001_right.png",
+              "sha256": "535e6571f185fc09425793bbaa97c17639a7fb1dd5a36c16631c82feb72f4a3a"
+            },
+            "CN_SM_Tripo_DesertBeaconParapet_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_DesertBeaconParapet_v001_sheet.png",
+              "sha256": "6a7f54056ba3df30bbe0af9683c6f0affc4eec1198a56534edbade2b06d4c01a"
+            },
+            "CN_SM_Tripo_DesertBeaconParapet_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_DesertBeaconParapet_v001_prompt.txt",
+              "sha256": "3519817d02f679a33f45b0bf4e95d7949f14c15add0452cdd23c3703f33bec34"
+            },
+            "CN_SM_Tripo_DesertBeaconParapet_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_DesertBeaconParapet_v001_registration.json",
+              "sha256": "d81b1977e4de2bd39eb2d5d1025c36b4790abc9e04b07ac922100ab9c8c95f78"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a15951-c107-73f1-be82-2455b3ecf948",
+            "attempt": 1,
+            "seconds": 76.8
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian Silk Road frontier fantasy of the Han-dynasty Gobi desert: ochre-red sandstone and wind-carved yardang rock with horizontal strata, pale sand-yellow rammed earth with reed layers, weathered grey-brown timber, and only a few faded Dunhuang mural accents in malachite green, lapis blue and vermilion. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (3.5m wide x 1.1m tall x 0.7m deep): A short crenellated rammed-earth parapet segment from the edge of a Han-dynasty beacon tower platform, 3.5m long, 1.1m tall and 0.7m thick, built exactly like the Han Great Wall: broad horizontal rammed-earth courses in alternating ochre-red and pale sand-yellow bands with thin darker khaki reed layers between them. Shape: a low solid wall with two chunky merlons, each 1.2m wide and the full 1.1m tall, and between them one wide square crenel notch 1.1m wide cut down to 0.6m, so a crouching shooter can fire through it; the tops are softly eroded and rounded. Both ends are flat vertical cut faces so segments join in a row. PROPORTIONS: in the FRONT and BACK views it is drawn three times as wide as tall, a long low notched block; the side views are small upright rectangles 0.7m wide and 1.1m tall. FRONT and BACK look the same. Broad faceted hand-painted planes, chunky forms, no bricks, debris or micro cracks. One solid connected piece on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "bafc342b4c8805356de40722d73ab816b99822ac30b3c840d6a01b6924787ce7",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.3437164339419978,
+              "offset": [
+                133,
+                440
+              ],
+              "size": [
+                245,
+                144
+              ],
+              "physical_height_m": 1.1,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.34703736567090604,
+              "offset": [
+                232,
+                440
+              ],
+              "size": [
+                48,
+                144
+              ],
+              "physical_height_m": 1.1,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.3453689167974882,
+              "offset": [
+                132,
+                440
+              ],
+              "size": [
+                247,
+                144
+              ],
+              "physical_height_m": 1.1,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.34787764984928593,
+              "offset": [
+                232,
+                440
+              ],
+              "size": [
+                47,
+                144
+              ],
+              "physical_height_m": 1.1,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "两垛一口，垛口 0.6 m 可蹲射，夯土层 + 芦苇夹层，四视图一致",
+            "time": "2026-10-20 20:49:38"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:35:28",
+          "files": {
+            "HP_SM_Tripo_DesertBeaconParapet_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertBeaconParapet_v001_source.glb",
+              "sha256": "28c3f5ce291f2497a9e7f417da1a3549c84a9e9b099dd52b99f8a7f9849a6380"
+            },
+            "HP_SM_Tripo_DesertBeaconParapet_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertBeaconParapet_v001.glb",
+              "sha256": "0f7eb7e4da6fc98fae9bf2432aabbc7d88c6b6991bebd4c7f287ec0c2cbc4115"
+            },
+            "HP_SM_Tripo_DesertBeaconParapet_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_DesertBeaconParapet_v001_graph.json",
+              "sha256": "b8537a239cb674f002e3d9b10648f395ec9fe4a248ad88a85179a8a347708982"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/658bb989-a85a-49ef-924f-40e18fcc6808",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 3096,
+          "source_sha256": "28c3f5ce291f2497a9e7f417da1a3549c84a9e9b099dd52b99f8a7f9849a6380"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:35:43",
+          "files": {
+            "SM_Tripo_DesertBeaconParapet_v001.blend": {
+              "path": "03_work/SM_Tripo_DesertBeaconParapet_v001.blend",
+              "sha256": "9a219e1fb2c46661f1306c7fe8d3da029b99ce3d1cfac03355ac4f04e96a7a1d"
+            },
+            "SM_Tripo_DesertBeaconParapet_v001.glb": {
+              "path": "04_export/SM_Tripo_DesertBeaconParapet_v001.glb",
+              "sha256": "c993d95fe8293a5764e325b65eda30c48f25fd89cd74d81b3469f381cb9331dd"
+            },
+            "SM_Tripo_DesertBeaconParapet_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertBeaconParapet_v001_metrics.json",
+              "sha256": "5936ece21863aa914e7a6cf5599b37acd946f1a8930bd37eccd0317e93003101"
+            },
+            "T_Tripo_DesertBeaconParapet_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBeaconParapet_BC.png",
+              "sha256": "e6a8af5cdb63259acba0813b2bc02fe92b70dbb48bec2388cd6c96f9d6392af1"
+            },
+            "T_Tripo_DesertBeaconParapet_LOD1_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBeaconParapet_LOD1_BC.png",
+              "sha256": "c87be155a8fdebff9f5ad1e2db294384924884b3a6b8282108b67e5022501493"
+            },
+            "T_Tripo_DesertBeaconParapet_LOD1_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBeaconParapet_LOD1_N.png",
+              "sha256": "a2a8976b92fdbd081506de66d956f467495b39ca2f60af380fec9e2f5e4a4cbd"
+            },
+            "T_Tripo_DesertBeaconParapet_LOD1_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBeaconParapet_LOD1_ORM.png",
+              "sha256": "846baba94cd156030db940f6a7e7d046609ef35676f8980625a71234cb358eb8"
+            },
+            "T_Tripo_DesertBeaconParapet_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBeaconParapet_N.png",
+              "sha256": "b95c8a5b1e9481afbe4f42ec8eeaca5208a2af60b5ebe59b65a406a808517f99"
+            },
+            "T_Tripo_DesertBeaconParapet_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_DesertBeaconParapet_ORM.png",
+              "sha256": "cd4133392c9487d4a307278763fa70b95170d8c17625ec1981133581fdec1b07"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.843,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2984,
+              "verts": 1494
+            },
+            {
+              "tris": 994,
+              "verts": 499
+            }
+          ],
+          "export_kb": 236.6,
+          "seconds": 13.8,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:35:46",
+          "files": {
+            "SM_Tripo_DesertBeaconParapet_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_DesertBeaconParapet_v001_validation_v001.json",
+              "sha256": "87f1c7106e2074dbe8727ab0319600d51450c1bae542e46b81918a5050916041"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:35:52",
+          "files": {
+            "SM_Tripo_DesertBeaconParapet_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_DesertBeaconParapet_v001_review_v001.png",
+              "sha256": "5c287432c9e2d6ff3346ccaed48aa4ca72c1d164914dc451b3f20fb65273299b"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "成品审核通过（Tripo P2.0 + 纹理）：四视图与概念一致，LOD 远看轮廓不塌",
+            "time": "2026-10-20 21:52:27"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 21:52:28",
+          "files": {
+            "SM_Tripo_DesertBeaconParapet.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertBeaconParapet.glb",
+              "sha256": "c993d95fe8293a5764e325b65eda30c48f25fd89cd74d81b3469f381cb9331dd"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertBeaconParapet.glb"
+        }
+      ]
+    }
+  }
+}
