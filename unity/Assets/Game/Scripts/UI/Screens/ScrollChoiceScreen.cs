@@ -114,7 +114,9 @@ namespace Spiritfire.Game
             Root.AddToClassList("sf-choice--leaving");
             leaveAt = Time.unscaledTime;
             int gen = generation;
-            Root.schedule.Execute(() => LeaveStep(gen)).Every(16).Until(() => gen != generation || Root.parent == null || Root.parent == UIRoot.Instance.Layer(UILayer.Modal));
+            foreach (var c in cards) c.button.pickingMode = PickingMode.Ignore;
+            Root.schedule.Execute(() => LeaveStep(gen)).Every(16)
+                .Until(() => gen != generation || Root.parent == null || !UIRoot.Instance || Root.parent == UIRoot.Instance.Layer(UILayer.Modal));
         }
 
         void LeaveStep(int gen)

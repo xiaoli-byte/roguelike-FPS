@@ -5,7 +5,7 @@ namespace Spiritfire.Game
 {
     /// <summary>
     /// 主菜单场景的镜头（U5 / U6）：两个机位——远景（<see cref="Pose.Home"/>：城门、篝火、远处巨像，祭台在画面中间）和祭台特写
-    /// （<see cref="Pose.Heroes"/>：选英雄；机位由祭台 HeroStage 按自己的位置算好挂在它下面）。
+    /// （<see cref="Pose.Heroes"/>：选英雄；机位由祭台 <see cref="HeroStage"/> 按自己的位置算好挂在它下面）。
     /// 换机位用缓入缓出插值（位置、朝向、视野一起），远景机位上镜头缓慢漂移、随鼠标轻微偏转（Three.js 主菜单的视差在这里是真 3D 的）。
     /// 全部用不缩放时间。机位缺失时退回自己当前的位置。
     /// </summary>
