@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace Spiritfire.Game
 {
-    /// <summary>技能栏（右下，武器信息上方——左边会被第一人称枪模挡住）：Q / E 两格——按键、技能名、冷却遮罩与剩余秒数、充能点；放出时闪一下</summary>
+    /// <summary>技能栏（右下，武器信息上方——左边会被第一人称枪模挡住）：Q / E 两格——按键、技能名、冷却遮罩与剩余秒数、充能点；放出时闪一下，放不出来（<see cref="GameUI.SkillDenied"/>）时框闪红、左右抖一下</summary>
     public sealed class SkillHud : MonoBehaviour
     {
         public HeroSkills skills;
@@ -15,7 +15,8 @@ namespace Spiritfire.Game
             public Image frame, cover, flash;
             public Text secs, name, key;
             public Image[] pips;
-            public float flashUntil;
+            public float flashUntil, denyUntil;
+            public Vector2 basePos;
         }
 
         Slot q, e;
@@ -33,13 +34,24 @@ namespace Spiritfire.Game
                 var slot = s == skills.primary ? q : e;
                 if (slot != null) slot.flashUntil = Time.time + 0.25f;
             };
+            GameUI.SkillDeniedShown += OnDenied;
         }
+
+        void OnDestroy() => GameUI.SkillDeniedShown -= OnDenied;
+
+        void OnDenied(SkillSlot which)
+        {
+            var slot = which == SkillSlot.Primary ? q : e;
+            if (slot != null) slot.denyUntil = Time.unscaledTime + DenyFlash;
+        }
+
+        const float DenyFlash = 0.3f;
 
         Slot Build(Hud hud, RectTransform box, Skill skill, string key, int index)
         {
             float x = index * 118;
             var root = Hud.Rect(key, box, Vector2.zero, Vector2.zero, new Vector2(x, 30), new Vector2(x + 100, 130));
-            var s = new Slot { skill = skill, root = root };
+            var s = new Slot { skill = skill, root = root, basePos = root.anchoredPosition };
             s.frame = Hud.Img("Frame", root, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, new Color(1f, 0.6f, 0.25f, 0.9f));
             Hud.Img("Back", root, Vector2.zero, Vector2.one, new Vector2(3, 3), new Vector2(-3, -3), new Color(0.1f, 0.07f, 0.06f, 0.85f));
             var keyText = hud.Label("Key", root, Vector2.zero, Vector2.one, 50, TextAnchor.MiddleCenter, new Color(1f, 0.85f, 0.55f));
@@ -78,6 +90,10 @@ namespace Spiritfire.Game
                 for (int i = 0; i < s.pips.Length; i++)
                     s.pips[i].color = i < sk.charges ? new Color(1f, 0.8f, 0.4f) : new Color(1, 1, 1, 0.2f);
                 s.flash.color = new Color(1f, 0.8f, 0.4f, Mathf.Clamp01((s.flashUntil - Time.time) / 0.25f) * 0.6f);
+                // 拒绝：框闪红 + 左右抖
+                float deny = Mathf.Clamp01((s.denyUntil - Time.unscaledTime) / DenyFlash);
+                if (deny > 0) s.frame.color = Color.Lerp(s.frame.color, new Color(1f, 0.18f, 0.12f, 1f), deny);
+                s.root.anchoredPosition = s.basePos + new Vector2(Mathf.Sin(Time.unscaledTime * 70f) * 6f * deny, 0);
             }
         }
     }

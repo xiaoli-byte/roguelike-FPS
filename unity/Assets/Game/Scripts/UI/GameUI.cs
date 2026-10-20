@@ -43,6 +43,15 @@ namespace Spiritfire.Game
         /// <summary>全屏闪光（颜色含 alpha，按剩余时间平方淡出；不受暂停影响）</summary>
         public static void ScreenFlash(Color c, float seconds) => Hud?.ScreenFlash(c, seconds);
 
+        /// <summary>技能放不出来（冷却中 / 没有充能 / 正在持续）：技能栏对应的格子闪红。现在的后端是 SkillHud（订阅 <see cref="SkillDeniedShown"/>）</summary>
+        public static void SkillDenied(SkillSlot slot) => SkillDeniedShown?.Invoke(slot);
+
+        /// <summary>UI 后端订阅：哪个技能格要闪红</summary>
+        public static event System.Action<SkillSlot> SkillDeniedShown;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStatics() => SkillDeniedShown = null;
+
         /// <summary>全屏黑幕淡到 to（0 透明 → 1 全黑），可 await；没有 HUD 时立刻完成</summary>
         public static async Awaitable Fade(float to, float seconds)
         {

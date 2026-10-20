@@ -31,5 +31,6 @@ namespace Spiritfire.Game
 
         public override Skill CreatePrimary() => new LiaoNineTails();
         public override Skill CreateSecondary() => new LiaoBlazeGrenade();
+        public override IHeroPassive CreatePassive() => new LiaoEmber();
     }
 }

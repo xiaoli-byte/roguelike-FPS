@@ -7,7 +7,21 @@ namespace Spiritfire.Game
     /// <summary>技能槽：Q = 主技能，E = 副技能</summary>
     public enum SkillSlot { Primary, Secondary }
 
-    /// <summary>英雄技能（Three.js 版 src/player/skills/common.ts 的 HeroSkillDef）：充能制冷却，技能急速加快回充</summary>
+    /// <summary>技能放不出来的原因（拒绝反馈）</summary>
+    public enum SkillDeny
+    {
+        /// <summary>没有充能（冷却中）</summary>
+        Cooldown,
+        /// <summary>持续型技能正在生效</summary>
+        Busy,
+        /// <summary>技能自己拒绝（Activate 返回 false：没有落点、阵亡…）</summary>
+        Failed,
+    }
+
+    /// <summary>
+    /// 英雄技能（Three.js 版 src/player/skills/common.ts 的 HeroSkillDef）：充能制冷却，技能急速加快回充。
+    /// 一次性技能直接继承本类实现 <see cref="Activate"/>；有持续时间 / 要撤销加成的继承 <see cref="TimedSkill"/>。
+    /// </summary>
     public abstract class Skill
     {
         /// <summary>技能 id（同 Three.js，如 fox_nine_tails）：事件、秘卷按它认技能</summary>
@@ -23,73 +37,178 @@ namespace Spiritfire.Game
         internal int baseCharges;
 
         public string Id => string.IsNullOrEmpty(id) ? GetType().Name : id;
+        public HeroSkills Owner => owner;
+        /// <summary>装在哪个槽</summary>
+        public SkillSlot Slot { get; internal set; }
 
         public void Bind(HeroSkills o)
         {
             owner = o;
             baseCharges = maxCharges;
             charges = maxCharges;
+            recharge = 0;
         }
 
-        /// <summary>释放：返回 false 表示没放出去（不扣充能）</summary>
+        /// <summary>释放：返回 false 表示没放出去（不扣充能，给拒绝反馈）</summary>
         public abstract bool Activate();
+        /// <summary>每帧（玩家移动之后，LateUpdate）：持续效果、跟随玩家的特效</summary>
         public virtual void Tick(float dt) { }
+        /// <summary>持续型技能生效中：不能重复释放</summary>
         public virtual bool Busy => false;
+        /// <summary>立即终止持续效果并撤销全部修饰（换英雄、换关、开新局），不触发「自然结束」的效果</summary>
         public virtual void Reset() { }
         public float CooldownLeft => charges >= maxCharges ? 0 : Mathf.Max(0, cooldown - recharge);
     }
 
     /// <summary>
-    /// 玩家身上的技能槽：Q = 主技能，E = 副技能；被动在 Configure 时登记。测试用 testQ / testE 代替按键。
-    /// 副技能充能上限 = 技能自身 + 属性「副技能充能」（上限提高时立即得到新增的充能）。放出技能发 <see cref="GameEvents.SkillUsed"/>。
+    /// 玩家身上的技能槽（Three.js SkillController）：Q = 主技能，E = 副技能，被动在 <see cref="Configure(HeroDef)"/> 时装上。
+    /// 技能与被动全部来自 <see cref="HeroDef"/> 的工厂（CreatePrimary / CreateSecondary / CreatePassive）：加英雄只加 Heroes/Hero_&lt;Id&gt;.cs 与它的技能文件，这里不用改。
+    ///   · 充能：副技能上限 = 技能自身 + 属性「副技能充能」（上限提高时立即得到新增的充能）；技能急速加快回充；
+    ///   · 释放：没有充能 / 持续中 / 技能拒绝 → 拒绝反馈（ui_deny 音 + 技能格闪红，0.35 s 内只响一次）；放出去发 <see cref="GameEvents.SkillUsed"/>；
+    ///   · 持续：技能的 Tick 在 LateUpdate（玩家移动之后：环绕身体的特效不落后一帧）；
+    ///   · 兜底：换关 / 开新局时终止所有持续效果（TimedSkill 撤销栈逐条撤销）。
+    /// 测试用 testQ / testE 代替按键（<see cref="TestMode"/>）。
     /// </summary>
     public sealed class HeroSkills : MonoBehaviour
     {
         public static bool TestMode;
         public bool testQ, testE;
-        public string heroId = "fox";
+        public string heroId = HeroLibrary.DefaultHero;
         public string passiveName, passiveDescription;
 
         public Skill primary, secondary;
+        /// <summary>当前英雄（注册表里找不到时为 null）</summary>
+        public HeroDef Hero { get; private set; }
         public PlayerMotor Motor { get; private set; }
         public PlayerVitals Vitals { get; private set; }
         public Transform Eye { get; private set; }
+        /// <summary>玩家属性表（还没有 PlayerVitals 时为 null）</summary>
+        public StatSheet Stats => Vitals ? Vitals.stats : null;
+
+        /// <summary>放出了一个技能</summary>
         public event Action<Skill> Cast;
-        /// <summary>被动的输出修饰器句柄（换英雄 / 销毁时撤销）</summary>
+        /// <summary>按了技能但放不出来</summary>
+        public event Action<SkillSlot, SkillDeny> Denied;
+        /// <summary>换了英雄（技能对象都是新的）</summary>
+        public event Action Configured;
+
+        const float DenyInterval = 0.35f;
+
+        /// <summary>被动的撤销句柄（换英雄 / 销毁时 Dispose）</summary>
         IDisposable passive;
+        float lastDeny = -10;
 
         void Awake()
         {
             Motor = GetComponent<PlayerMotor>();
             Vitals = GetComponent<PlayerVitals>();
             var wc = GetComponent<WeaponController>();
-            Eye = wc && wc.eye ? wc.eye.transform : transform;
+            Eye = wc && wc.eye ? wc.eye.transform : Motor && Motor.eye ? Motor.eye : transform;
             Configure(heroId);
         }
 
-        void OnDestroy()
+        void OnEnable()
         {
-            passive?.Dispose();
-            passive = null;
+            GameEvents.StageLoaded += OnStageChanged;
+            GameEvents.RunStarted += OnRunStarted;
         }
 
+        void OnDisable()
+        {
+            GameEvents.StageLoaded -= OnStageChanged;
+            GameEvents.RunStarted -= OnRunStarted;
+        }
+
+        void OnDestroy() => Teardown();
+
+        void OnStageChanged(StageSpec _) => ResetSkills();
+
+        void OnRunStarted(RunState _) => ResetSkills();
+
+        /// <summary>按英雄 id 配置（注册表里没有时退回默认英雄）</summary>
         public void Configure(string id)
         {
-            heroId = id;
+            var hero = HeroLibrary.Get(id);
+            if (hero == null)
+            {
+                Debug.LogWarning($"[HeroSkills] 没有英雄 {id}（Skills/Heroes/Hero_*.cs），退回 {HeroLibrary.DefaultHero}");
+                hero = HeroLibrary.Get(HeroLibrary.DefaultHero);
+            }
+            if (hero == null)
+            {
+                Teardown();
+                heroId = id;
+                return;
+            }
+            Configure(hero);
+        }
+
+        /// <summary>按英雄定义装技能与被动：先终止旧英雄仍在持续的效果、撤销旧被动</summary>
+        public void Configure(HeroDef hero)
+        {
+            if (hero == null) throw new ArgumentNullException(nameof(hero));
+            Teardown();
+            Hero = hero;
+            heroId = hero.id;
+            var p = hero.CreatePassive();
+            passiveName = p?.Name ?? hero.passiveName;
+            passiveDescription = p?.Description ?? hero.passiveDescription;
+            primary = hero.CreatePrimary();
+            secondary = hero.CreateSecondary();
+            Bind(primary, SkillSlot.Primary);
+            Bind(secondary, SkillSlot.Secondary);
+            if (p != null)
+            {
+                try
+                {
+                    passive = p.Apply(this);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogException(e);
+                }
+            }
+            try
+            {
+                Configured?.Invoke();
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
+        }
+
+        void Bind(Skill s, SkillSlot slot)
+        {
+            if (s == null) return;
+            s.Slot = slot;
+            s.Bind(this);
+        }
+
+        /// <summary>终止持续效果、撤销被动、清空技能槽</summary>
+        void Teardown()
+        {
+            ResetSkills();
             passive?.Dispose();
             passive = null;
-            switch (id)
+            primary = secondary = null;
+        }
+
+        /// <summary>终止两个槽的持续效果（不扣充能、不触发自然结束）</summary>
+        public void ResetSkills()
+        {
+            foreach (var s in new[] { primary, secondary })
             {
-                default:
-                    primary = new LiaoNineTails();
-                    secondary = new LiaoBlazeGrenade();
-                    passiveName = "余烬";
-                    passiveDescription = $"对处于灼烧状态的敌人造成的所有伤害提高 {LiaoSkills.EmberBonus * 100:F0}%。";
-                    passive = Combat.Outgoing.Add((in HitContext c) => EnemyStatus.IsBurning(c.target) ? 1 + LiaoSkills.EmberBonus : 1f);
-                    break;
+                if (s == null) continue;
+                try
+                {
+                    s.Reset();
+                }
+                catch (Exception e)
+                {
+                    Debug.LogException(e);
+                }
             }
-            primary.Bind(this);
-            secondary.Bind(this);
         }
 
         public Skill Get(SkillSlot slot) => slot == SkillSlot.Primary ? primary : secondary;
@@ -138,8 +257,8 @@ namespace Spiritfire.Game
             }
         }
 
-        /// <summary>手边的出手点（side = 1 右手 / -1 左手）</summary>
-        public Vector3 HandOrigin(float side = 1) => Eye.position + Eye.right * 0.24f * side - Eye.up * 0.2f + Eye.forward * 0.45f;
+        /// <summary>手边的出手点（side = 1 右手 / −1 左手）：贴墙时退到墙前，半径 radius 的投射物不会生在墙里</summary>
+        public Vector3 HandOrigin(float side = 1, float radius = 0.2f) => SkillFx.SafeHandOrigin(Eye, side, radius);
 
         void Update()
         {
@@ -160,9 +279,9 @@ namespace Spiritfire.Game
                         if (s.charges >= s.maxCharges) s.recharge = 0;
                     }
                 }
-                s.Tick(dt);
             }
-            bool canAct = (TestMode || (Motor.inputEnabled && Cursor.lockState == CursorLockMode.Locked)) && Vitals && !Vitals.Dead;
+            bool canAct = (TestMode || (Motor && Motor.inputEnabled && Cursor.lockState == CursorLockMode.Locked)) && Vitals && !Vitals.Dead
+                          && !(Motor && (Motor.Frame.locks & MotorLock.Body) == MotorLock.Body); // 整个身体被锁住（下沉、硬直）时不能放技能
             bool q = TestMode ? testQ : GameInput.Pressed(GameAction.SkillQ);
             bool e = TestMode ? testE : GameInput.Pressed(GameAction.SkillE);
             testQ = testE = false;
@@ -171,15 +290,83 @@ namespace Spiritfire.Game
             if (e) TryCast(SkillSlot.Secondary);
         }
 
-        bool TryCast(SkillSlot slot)
+        void LateUpdate()
+        {
+            float dt = Time.deltaTime;
+            for (int i = 0; i < 2; i++)
+            {
+                var s = Get((SkillSlot)i);
+                if (s == null) continue;
+                try
+                {
+                    s.Tick(dt);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogException(ex);
+                }
+            }
+        }
+
+        /// <summary>按下技能键：能放就放（扣一层充能、发事件），放不出来给拒绝反馈。返回是否放出</summary>
+        public bool TryCast(SkillSlot slot)
         {
             var s = Get(slot);
-            if (s == null || s.charges <= 0 || s.Busy) return false;
-            if (!s.Activate()) return false;
+            if (s == null) return false;
+            if (s.charges <= 0)
+            {
+                Deny(slot, SkillDeny.Cooldown);
+                return false;
+            }
+            if (s.Busy)
+            {
+                Deny(slot, SkillDeny.Busy);
+                return false;
+            }
+            bool ok;
+            try
+            {
+                ok = s.Activate();
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+                ok = false;
+            }
+            if (!ok)
+            {
+                Deny(slot, SkillDeny.Failed);
+                return false;
+            }
             s.charges--;
-            Cast?.Invoke(s);
+            try
+            {
+                Cast?.Invoke(s);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
             GameEvents.RaiseSkillUsed(slot, s.Id);
             return true;
+        }
+
+        /// <summary>拒绝反馈：ui_deny 音 + 技能格闪红（经 GameUI），0.35 s 内只给一次</summary>
+        void Deny(SkillSlot slot, SkillDeny why)
+        {
+            float now = Time.unscaledTime;
+            if (now - lastDeny < DenyInterval) return;
+            lastDeny = now;
+            GameAudio.Play("ui_deny", 0.4f);
+            GameUI.SkillDenied(slot);
+            try
+            {
+                Denied?.Invoke(slot, why);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
         }
     }
 }

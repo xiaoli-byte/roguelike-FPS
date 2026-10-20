@@ -8,8 +8,9 @@ namespace Spiritfire.Game
     /// 基础属性、第一人称手臂、初始武器、技能工厂、被动说明、主题色，以及选英雄界面用的定位 / 难度 / 标签 / 心得。
     /// 每个英雄一个文件 Skills/Heroes/Hero_&lt;Id&gt;.cs：继承本类 + [Defs]，由 <see cref="Registry{T}"/> 收集。
     /// 解锁（D8）：三人默认全开，unlockCost 保留为 0。
-    /// TODO(H2)：HeroSkills.Configure 目前仍按 heroId 自己 switch，改成读这里的 CreatePrimary / CreateSecondary / 被动；
-    /// 现在由 PlayerRigBuilder 把 heroId 写进 HeroSkills，行为不变。
+    /// 技能槽：<see cref="HeroSkills.Configure(HeroDef)"/> 按这里的 <see cref="CreatePrimary"/> / <see cref="CreateSecondary"/> / <see cref="CreatePassive"/> 装上——
+    /// 加一个英雄 = 一个 Hero_&lt;Id&gt;.cs + 它的技能文件（&lt;Hero&gt;Skills.cs），HeroSkills 不用改。
+    /// 持续型技能继承 <see cref="TimedSkill"/>（撤销栈），被动实现 <see cref="IHeroPassive"/>（或继承 <see cref="HeroPassive"/>），共用工具在 <see cref="SkillFx"/>。
     /// </summary>
     public abstract class HeroDef : IDef
     {
@@ -38,6 +39,8 @@ namespace Spiritfire.Game
         public virtual Skill CreatePrimary() => null;
         /// <summary>E：副技能（通常是多充能的投掷物）</summary>
         public virtual Skill CreateSecondary() => null;
+        /// <summary>被动（每次配置英雄时新建；没有被动返回 null）。名字 / 说明以被动对象为准，passiveName / passiveDescription 是选英雄界面的后备</summary>
+        public virtual IHeroPassive CreatePassive() => null;
 
         public static readonly string[] DifficultyNames = { "", "简单", "中等", "进阶" };
     }
