@@ -1,0 +1,54 @@
+{
+  "schema": 1,
+  "about": "火麒麟 · 焚身的动画事件叠加表（同玄鳞，少了饮熔 drink）。at = 片段内归一化时刻；时刻取 Qilin.ts 的切换 / 判定时刻",
+  "clips": {
+    "rear": [
+      { "at": 0.0, "name": "fx:groundWarning" },
+      { "at": 0.0, "name": "sfx:boss_roar" }
+    ],
+    "scalesFire": [
+      { "at": 0.03, "name": "projectile" },
+      { "at": 0.03, "name": "fx:shake" },
+      { "at": 0.03, "name": "sfx:enemy_shot" },
+      { "at": 0.33, "name": "ring2" }
+    ],
+    "breath": [
+      { "at": 0.0, "name": "fx:sectorWarning" },
+      { "at": 0.0, "name": "sfx:enemy_charge" },
+      { "at": 0.333, "name": "breathStart" }
+    ],
+    "stun": [
+      { "at": 0.0, "name": "fx:shake" },
+      { "at": 0.0, "name": "sfx:boss_slam" }
+    ],
+    "pant": [
+      { "at": 0.03, "name": "hit" },
+      { "at": 0.03, "name": "fx:shake" },
+      { "at": 0.03, "name": "sfx:boss_slam" },
+      { "at": 0.857, "name": "fx:groundWarning" }
+    ],
+    "tuck": [
+      { "at": 0.0, "name": "fx:groundWarning" },
+      { "at": 0.0, "name": "sfx:telegraph" }
+    ],
+    "leap": [
+      { "at": 0.0, "name": "fx:groundWarning" },
+      { "at": 0.0, "name": "sfx:boss_roar" }
+    ],
+    "stomp": [
+      { "at": 0.0, "name": "sfx:boss_roar" },
+      { "at": 0.4, "name": "hit" },
+      { "at": 0.4, "name": "fx:explosion" },
+      { "at": 0.4, "name": "fx:shake" },
+      { "at": 0.4, "name": "sfx:boss_slam" }
+    ],
+    "roar": [
+      { "at": 0.0, "name": "sfx:boss_roar" },
+      { "at": 0.29, "name": "cast" }
+    ],
+    "paw": [
+      { "at": 0.0, "name": "fx:lineWarning" },
+      { "at": 0.0, "name": "sfx:telegraph" }
+    ]
+  }
+}

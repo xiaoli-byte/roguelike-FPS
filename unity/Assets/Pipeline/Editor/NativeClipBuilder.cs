@@ -21,12 +21,50 @@ namespace Spiritfire.Art.Editor
     /// 状态机 AC_&lt;资产&gt;：Idle ⇄ Move（Speed），任意状态 → 各招式（触发 act_&lt;状态&gt;），招式播完回 Idle。
     /// 受击（触发 Hit）在叠加层 Flinch 上播：同 Three.js 的 hurtKick 叠在当前动作上，不打断出招、移动中也不滑步；
     /// 底层的 Hit 状态只给眩晕用（玩法直接 CrossFade 过去）。
+    ///
+    /// 另外两个来源，和采样片段并进同一个 AC_：
+    /// - 事件叠加表 &lt;资产&gt;/Anim/&lt;资产&gt;.events.json（手写、入库）：按状态给命名事件（归一化时刻 0–1），写成 Mecanim 动画事件
+    ///   （OnAnimEvent(name)）。采样时游戏代码真实调用的伤害 / 弹体 / 音效时刻已经自动是事件；叠加表补采样记不到的
+    ///   （Boss 不跑 AI，片段没有事件；脚步、手工关键帧片段），也可以 replace 掉采样事件、改连段（next）和循环（loop）：
+    ///   <code>{ "clips": { "slam": { "events": [{ "at": 0.42, "name": "hit" }], "replace": false, "next": "recover", "loop": false },
+    ///            "roar": [{ "at": 0.3, "name": "sfx:boss_roar" }] } }</code>
+    /// - 手工关键帧 FBX &lt;资产&gt;/Anim/Keyframed/*.fbx（Blender 关键帧，如旱魃）：文件名 = 状态名（一个文件多个 take 时用 take 名），
+    ///   导入设置对齐本体（人形用本体的 Avatar，Generic 按骨骼名重定向曲线），复制成 &lt;资产&gt;_&lt;状态&gt;.anim 并进状态机；
+    ///   与采样片段同名时手工片段优先。没有采样数据、只有关键帧的资产也照样生成 AC_。
+    /// 持续型片段（loop 为真的招式：潜游、栖落、盘旋、空手追击）进状态后一直循环，由玩法 CrossFade 出去，不自动回 Idle。
     /// </summary>
     public static class NativeClipBuilder
     {
         public const string ActPrefix = "act_";
 
         public static string DataPath(ArtSidecar sc) => $"{sc.Dir}/Anim/{sc.Id}.native-anim.json";
+        public static string EventsPath(ArtSidecar sc) => $"{sc.Dir}/Anim/{sc.Id}.events.json";
+        public static string KeyframedDir(ArtSidecar sc) => $"{sc.Dir}/Anim/Keyframed";
+
+        /// <summary>手工关键帧 FBX（按路径排序）</summary>
+        public static string[] KeyframedFiles(ArtSidecar sc)
+        {
+            string dir = KeyframedDir(sc);
+            return Directory.Exists(dir)
+                ? Directory.GetFiles(dir, "*.fbx").Select(p => p.Replace('\\', '/')).OrderBy(p => p, System.StringComparer.Ordinal).ToArray()
+                : new string[0];
+        }
+
+        /// <summary>有动作片段来源：采样数据或手工关键帧</summary>
+        public static bool HasClips(ArtSidecar sc) => File.Exists(DataPath(sc)) || KeyframedFiles(sc).Length > 0;
+
+        /// <summary>事件叠加表的 clips 节点；没有文件时为空对象</summary>
+        static JObject LoadOverlay(ArtSidecar sc)
+        {
+            string p = EventsPath(sc);
+            if (!File.Exists(p)) return new JObject();
+            try { return JObject.Parse(File.ReadAllText(p))["clips"] as JObject ?? new JObject(); }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning($"[Anim] {sc.Id}: 事件叠加表读不了（{e.Message}），忽略");
+                return new JObject();
+            }
+        }
 
         static Quaternion Mir(Quaternion q) => new(q.x, -q.y, -q.z, q.w);
         static Vector3 Mir(Vector3 p) => new(-p.x, p.y, p.z);
@@ -40,7 +78,7 @@ namespace Spiritfire.Art.Editor
             var result = new Dictionary<string, RuntimeAnimatorController>();
             foreach (var sc in sidecars)
             {
-                if (!File.Exists(DataPath(sc))) continue;
+                if (!HasClips(sc)) continue;
                 var ac = Build(sc);
                 if (ac) result[sc.Id] = ac;
             }
@@ -70,9 +108,10 @@ namespace Spiritfire.Art.Editor
             return list;
         }
 
-        /// <summary>Move 片段录制时的移动速度（米 / 秒）；没有 Move 时为 0</summary>
+        /// <summary>Move 片段录制时的移动速度（米 / 秒）；叠加表里写了 Move.speed 时以它为准（手工关键帧的 Move）；没有 Move 时为 0</summary>
         public static float MoveSpeed(ArtSidecar sc)
         {
+            if ((float?)(LoadOverlay(sc)["Move"] as JObject)?["speed"] is float s) return s;
             if (!sc.HasNativeAnim) return 0f;
             var data = JObject.Parse(File.ReadAllText(DataPath(sc)));
             return (float?)data["clips"]?["Move"]?["speed"] ?? 0f;
@@ -91,7 +130,7 @@ namespace Spiritfire.Art.Editor
 
         public static AnimatorController Build(ArtSidecar sc)
         {
-            var data = JObject.Parse(File.ReadAllText(DataPath(sc)));
+            var data = File.Exists(DataPath(sc)) ? JObject.Parse(File.ReadAllText(DataPath(sc))) : null;
             var model = AssetDatabase.LoadAssetAtPath<GameObject>(sc.FbxPath);
             if (!model) return null;
             var inst = (GameObject)PrefabUtility.InstantiatePrefab(model);
@@ -100,10 +139,32 @@ namespace Spiritfire.Art.Editor
                 inst.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
                 var animator = inst.GetComponent<Animator>();
                 if (!animator) { Debug.LogWarning($"[Anim] {sc.Id}: 模型上没有 Animator"); return null; }
-                var all = inst.GetComponentsInChildren<Transform>(true);
                 var byName = new Dictionary<string, Transform>();
-                foreach (var t in all) byName.TryAdd(t.name, t);
+                foreach (var t in inst.GetComponentsInChildren<Transform>(true)) byName.TryAdd(t.name, t);
 
+                string dir = $"{sc.Dir}/Anim";
+                var overlay = LoadOverlay(sc);
+                var clips = new Dictionary<string, AnimationClip>();
+                // 每个片段的连段 / 循环 / 录制速度（采样数据的 clips 节点 → 手工关键帧补 → 叠加表覆盖）
+                var meta = new JObject();
+                if (data != null) BuildNative(sc, data, inst, animator, byName, dir, overlay, clips, meta);
+                MergeKeyframed(sc, animator, byName, dir, overlay, clips, meta);
+                ApplyOverlayMeta(sc, overlay, clips, meta);
+                if (clips.Count == 0) return null;
+                return BuildController(sc, dir, clips, meta);
+            }
+            finally
+            {
+                Object.DestroyImmediate(inst);
+            }
+        }
+
+        /// <summary>采样数据 → 片段（骨骼增量换算、人形肌肉曲线、Flinch 叠加片段、采样事件 + 叠加事件）</summary>
+        static void BuildNative(ArtSidecar sc, JObject data, GameObject inst, Animator animator, Dictionary<string, Transform> byName,
+            string dir, JObject overlay, Dictionary<string, AnimationClip> clips, JObject meta)
+        {
+            {
+                var all = inst.GetComponentsInChildren<Transform>(true);
                 var boneNames = data["bones"]!.ToObject<string[]>();
                 var rest = (JArray)data["rest"];
                 var maps = new List<BoneMap>();
@@ -156,9 +217,7 @@ namespace Spiritfire.Art.Editor
                 maps.Sort((a, b) => order[a.t].CompareTo(order[b.t]));
                 var restLocal = all.ToDictionary(t => t, t => (t.localPosition, t.localRotation));
 
-                string dir = $"{sc.Dir}/Anim";
                 float fps = (float)data["fps"];
-                var clips = new Dictionary<string, AnimationClip>();
                 HumanPoseHandler handler = sc.IsHumanoid && animator.avatar && animator.avatar.isHuman
                     ? new HumanPoseHandler(animator.avatar, inst.transform) : null;
                 var humanBones = new HashSet<Transform>();
@@ -232,28 +291,212 @@ namespace Spiritfire.Art.Editor
                     settings.keepOriginalOrientation = settings.keepOriginalPositionY = settings.keepOriginalPositionXZ = true;
                     settings.loopBlendOrientation = settings.loopBlendPositionY = settings.loopBlendPositionXZ = true;
                     AnimationUtility.SetAnimationClipSettings(clip, settings);
-                    // 动画事件：采样时游戏逻辑真实调用伤害 / 弹体 / 特效 / 音效的时刻（不用人工标帧），
+                    // 动画事件：采样时游戏逻辑真实调用伤害 / 弹体 / 特效 / 音效的时刻（不用人工标帧），再并上叠加表；
                     // 由 Animator 同物体上的 CreatureRig.OnAnimEvent(name) 接收、转发给玩法
-                    var evs = ((JArray)c["events"] ?? new JArray()).OfType<JObject>()
+                    float length = Mathf.Max(0, (frames.Count - 1) / fps);
+                    var sampled = ((JArray)c["events"] ?? new JArray()).OfType<JObject>()
                         .Select(ev => new AnimationEvent
                         {
-                            time = Mathf.Min((float)ev["t"], Mathf.Max(0, (frames.Count - 1) / fps)),
+                            time = Mathf.Min((float)ev["t"], length),
                             functionName = "OnAnimEvent",
                             stringParameter = (string)ev["name"],
-                        }).ToArray();
-                    AnimationUtility.SetAnimationEvents(clip, evs);
-                    string path = $"{dir}/{clip.name}.anim";
-                    var existing = AssetDatabase.LoadAssetAtPath<AnimationClip>(path);
-                    if (existing) { EditorUtility.CopySerialized(clip, existing); clip = existing; }
-                    else AssetDatabase.CreateAsset(clip, path);
-                    clips[name] = clip;
+                        });
+                    AnimationUtility.SetAnimationEvents(clip, MergeEvents(sc, name, sampled, overlay, length));
+                    clips[name] = SaveClip(clip, $"{dir}/{clip.name}.anim");
+                    var cm = new JObject { ["loop"] = loop };
+                    if (c["next"] != null) cm["next"] = c["next"];
+                    if (c["speed"] != null) cm["speed"] = c["speed"];
+                    meta[name] = cm;
                 }
                 handler?.Dispose();
-                return BuildController(sc, dir, clips, data);
             }
-            finally
+        }
+
+        /// <summary>写到 path：已有同名片段就原地覆盖（保住 GUID，状态机 / 预制体的引用不断）</summary>
+        static AnimationClip SaveClip(AnimationClip clip, string path)
+        {
+            var existing = AssetDatabase.LoadAssetAtPath<AnimationClip>(path);
+            if (existing) { EditorUtility.CopySerialized(clip, existing); return existing; }
+            AssetDatabase.CreateAsset(clip, path);
+            return clip;
+        }
+
+        // ───────────── 事件叠加表 ─────────────
+
+        /// <summary>
+        /// 叠加表里某个状态的条目：数组简写 = 只有事件；对象 = { events, replace, next, loop, speed }。
+        /// 事件 { "at": 0–1 归一化时刻, "name": 事件名, "float": 可选浮点参数 }
+        /// </summary>
+        static (JArray events, bool replace) OverlayEntry(JObject overlay, string clip)
+        {
+            var tok = overlay[clip];
+            if (tok is JArray arr) return (arr, false);
+            if (tok is JObject o) return (o["events"] as JArray ?? new JArray(), (bool?)o["replace"] ?? false);
+            return (new JArray(), false);
+        }
+
+        /// <summary>采样（或关键帧自带）事件 + 叠加事件（replace 时只留叠加的），按时刻排好</summary>
+        static AnimationEvent[] MergeEvents(ArtSidecar sc, string clip, IEnumerable<AnimationEvent> own, JObject overlay, float length)
+        {
+            var (extra, replace) = OverlayEntry(overlay, clip);
+            var list = replace ? new List<AnimationEvent>() : own.ToList();
+            foreach (var ev in extra.OfType<JObject>())
             {
-                Object.DestroyImmediate(inst);
+                string name = (string)ev["name"];
+                if (string.IsNullOrEmpty(name) || ev["at"] == null)
+                {
+                    Debug.LogWarning($"[Anim] {sc.Id}: 叠加表 {clip} 里有缺 name / at 的事件，跳过");
+                    continue;
+                }
+                list.Add(new AnimationEvent
+                {
+                    time = Mathf.Clamp01((float)ev["at"]) * length,
+                    functionName = "OnAnimEvent",
+                    stringParameter = name,
+                    floatParameter = (float?)ev["float"] ?? 0f,
+                });
+            }
+            return list.OrderBy(e => e.time).ToArray();
+        }
+
+        /// <summary>叠加表覆盖连段 / 循环 / 速度；叠加表里写了、AC_ 里却没有的状态给个提示（多半是拼错了）</summary>
+        static void ApplyOverlayMeta(ArtSidecar sc, JObject overlay, Dictionary<string, AnimationClip> clips, JObject meta)
+        {
+            foreach (var p in overlay.Properties())
+            {
+                if (!clips.ContainsKey(p.Name))
+                {
+                    Debug.LogWarning($"[Anim] {sc.Id}: 叠加表里的状态 {p.Name} 没有片段（采样 / 关键帧里都没有），忽略");
+                    continue;
+                }
+                if (p.Value is not JObject o) continue;
+                var m = meta[p.Name] as JObject ?? new JObject();
+                foreach (var key in new[] { "next", "loop", "speed" })
+                    if (o[key] != null) m[key] = o[key];
+                meta[p.Name] = m;
+                if (o["loop"] != null)
+                {
+                    var clip = clips[p.Name];
+                    var s = AnimationUtility.GetAnimationClipSettings(clip);
+                    if (s.loopTime != (bool)o["loop"])
+                    {
+                        s.loopTime = (bool)o["loop"];
+                        AnimationUtility.SetAnimationClipSettings(clip, s);
+                        EditorUtility.SetDirty(clip);
+                    }
+                }
+            }
+        }
+
+        // ───────────── 手工关键帧 FBX ─────────────
+
+        /// <summary>状态名：一个文件一个 take 用文件名，多个 take 用 take 名（去掉 Blender 的「骨架|」前缀）；下划线 / 空格转驼峰——
+        /// 片段名是 &lt;资产&gt;_&lt;状态&gt;，玩法按最后一个下划线拆状态名（EnemyAI.ClipLength）</summary>
+        static string StateName(string raw)
+        {
+            raw = raw[(raw.LastIndexOf('|') + 1)..];
+            var parts = Regex.Split(raw, @"[_\s\-.]+").Where(s => s.Length > 0).ToArray();
+            if (parts.Length == 0) return raw;
+            return parts[0] + string.Concat(parts.Skip(1).Select(s => char.ToUpperInvariant(s[0]) + s[1..]));
+        }
+
+        /// <summary>
+        /// 关键帧 FBX 的导入设置对齐本体：同样的缩放 / 轴向换算；人形用本体的 Avatar（Copy From Other，片段是肌肉曲线，能直接播），
+        /// 其余 Generic、不建 Avatar（曲线按骨骼名重定向到本体）。设置变了才重新导入
+        /// </summary>
+        static void PrepareKeyframedImporter(ArtSidecar sc, string path)
+        {
+            if (AssetImporter.GetAtPath(path) is not ModelImporter mi) return;
+            var body = AssetImporter.GetAtPath(sc.FbxPath) as ModelImporter;
+            bool dirty = false;
+            void Set<T>(T cur, T want, System.Action<T> apply)
+            {
+                if (EqualityComparer<T>.Default.Equals(cur, want)) return;
+                apply(want);
+                dirty = true;
+            }
+            Set(mi.importAnimation, true, v => mi.importAnimation = v);
+            Set(mi.materialImportMode, ModelImporterMaterialImportMode.None, v => mi.materialImportMode = v);
+            Set(mi.importBlendShapes, false, v => mi.importBlendShapes = v);
+            Set(mi.importCameras, false, v => mi.importCameras = v);
+            Set(mi.importLights, false, v => mi.importLights = v);
+            if (body)
+            {
+                Set(mi.globalScale, body.globalScale, v => mi.globalScale = v);
+                Set(mi.useFileScale, body.useFileScale, v => mi.useFileScale = v);
+                Set(mi.bakeAxisConversion, body.bakeAxisConversion, v => mi.bakeAxisConversion = v);
+            }
+            var avatar = sc.IsHumanoid ? AssetDatabase.LoadAllAssetsAtPath(sc.FbxPath).OfType<Avatar>().FirstOrDefault(a => a.isHuman) : null;
+            if (avatar)
+            {
+                Set(mi.animationType, ModelImporterAnimationType.Human, v => mi.animationType = v);
+                Set(mi.avatarSetup, ModelImporterAvatarSetup.CopyFromOther, v => mi.avatarSetup = v);
+                if (mi.sourceAvatar != avatar) { mi.sourceAvatar = avatar; dirty = true; }
+            }
+            else
+            {
+                if (sc.IsHumanoid) Debug.LogWarning($"[Anim] {sc.Id}: 人形本体没有可用的 Avatar，关键帧按 Generic 导入");
+                Set(mi.animationType, ModelImporterAnimationType.Generic, v => mi.animationType = v);
+                Set(mi.avatarSetup, ModelImporterAvatarSetup.NoAvatar, v => mi.avatarSetup = v);
+            }
+            if (dirty) mi.SaveAndReimport();
+        }
+
+        /// <summary>
+        /// 复制关键帧片段：Transform 曲线的路径在本体里找不到时按末级骨骼名重定向（Blender 导出的骨架根名与本体 FBX 不一定一样）；
+        /// 根节点自身的曲线丢掉（整体位移 / 转向是玩法的事）；人形肌肉曲线（Animator 上的属性）原样保留
+        /// </summary>
+        static AnimationClip CopyKeyframed(AnimationClip src, Transform root, Dictionary<string, Transform> byName, string name, out int moved, out int dropped)
+        {
+            moved = dropped = 0;
+            var dst = new AnimationClip { name = name, frameRate = src.frameRate };
+            foreach (var b in AnimationUtility.GetCurveBindings(src))
+            {
+                var nb = b;
+                if (b.type != typeof(Animator))
+                {
+                    if (b.path.Length == 0) { dropped++; continue; }
+                    if (!root.Find(b.path))
+                    {
+                        string leaf = b.path[(b.path.LastIndexOf('/') + 1)..];
+                        if (!byName.TryGetValue(leaf, out var t) || t == root) { dropped++; continue; }
+                        nb.path = AnimationUtility.CalculateTransformPath(t, root);
+                        moved++;
+                    }
+                }
+                AnimationUtility.SetEditorCurve(dst, nb, AnimationUtility.GetEditorCurve(src, b));
+            }
+            AnimationUtility.SetAnimationClipSettings(dst, AnimationUtility.GetAnimationClipSettings(src));
+            return dst;
+        }
+
+        /// <summary>Anim/Keyframed/*.fbx 并进片段表：与采样片段同名时手工片段优先；事件 = FBX 自带的 + 叠加表</summary>
+        static void MergeKeyframed(ArtSidecar sc, Animator animator, Dictionary<string, Transform> byName, string dir, JObject overlay,
+            Dictionary<string, AnimationClip> clips, JObject meta)
+        {
+            foreach (var path in KeyframedFiles(sc))
+            {
+                PrepareKeyframedImporter(sc, path);
+                var takes = AssetDatabase.LoadAllAssetsAtPath(path).OfType<AnimationClip>()
+                    .Where(c => !c.name.StartsWith("__preview__")).ToList();
+                if (takes.Count == 0) { Debug.LogWarning($"[Anim] {sc.Id}: {path} 里没有动画"); continue; }
+                foreach (var src in takes)
+                {
+                    string state = StateName(takes.Count == 1 ? Path.GetFileNameWithoutExtension(path) : src.name);
+                    var clip = CopyKeyframed(src, animator.transform, byName, $"{sc.Id}_{state}", out int moved, out int dropped);
+                    var s = AnimationUtility.GetAnimationClipSettings(clip);
+                    bool loop = state is "Idle" or "Walk" or "Move" || s.loopTime;
+                    s.loopTime = loop;
+                    s.keepOriginalOrientation = s.keepOriginalPositionY = s.keepOriginalPositionXZ = true;
+                    s.loopBlendOrientation = s.loopBlendPositionY = s.loopBlendPositionXZ = true;
+                    AnimationUtility.SetAnimationClipSettings(clip, s);
+                    AnimationUtility.SetAnimationEvents(clip, MergeEvents(sc, state, AnimationUtility.GetAnimationEvents(src), overlay, clip.length));
+                    if (clips.ContainsKey(state)) Debug.Log($"[Anim] {sc.Id}: 手工关键帧 {state} 替换采样片段");
+                    clips[state] = SaveClip(clip, $"{dir}/{clip.name}.anim");
+                    meta[state] = new JObject { ["loop"] = loop };
+                    Debug.Log($"[Anim] {sc.Id}: 关键帧 {Path.GetFileName(path)} → {state}（{clip.length:0.00}s{(loop ? "↻" : "")}" +
+                              $"{(moved > 0 ? $"，按骨骼名重定向 {moved} 条曲线" : "")}{(dropped > 0 ? $"，丢掉 {dropped} 条找不到骨骼 / 根节点的曲线" : "")}）");
+                }
             }
         }
 
@@ -362,7 +605,7 @@ namespace Spiritfire.Art.Editor
                 AnimationUtility.SetEditorCurve(clip, EditorCurveBinding.FloatCurve("", typeof(Animator), $"RootQ.{xyzw[k]}"), Reduce(rootQ[k], 0.0015f));
         }
 
-        static AnimatorController BuildController(ArtSidecar sc, string dir, Dictionary<string, AnimationClip> clips, JObject data)
+        static AnimatorController BuildController(ArtSidecar sc, string dir, Dictionary<string, AnimationClip> clips, JObject meta)
         {
             string path = $"{dir}/AC_{sc.Id}.controller";
             AssetDatabase.DeleteAsset(path);
@@ -379,7 +622,7 @@ namespace Spiritfire.Art.Editor
             tree.useAutomaticThresholds = false;
             if (clips.TryGetValue("Idle", out var idleClip)) tree.AddChild(idleClip, 0f);
             foreach (var n in new[] { "Walk", "Move" })
-                if (clips.TryGetValue(n, out var c)) tree.AddChild(c, (float?)data["clips"]?[n]?["speed"] ?? (n == "Walk" ? 1f : 2f));
+                if (clips.TryGetValue(n, out var c)) tree.AddChild(c, (float?)meta[n]?["speed"] ?? (n == "Walk" ? 1f : 2f));
             idle.speedParameterActive = true;
             idle.speedParameter = "MoveScale";
             sm.defaultState = idle;
@@ -434,12 +677,14 @@ namespace Spiritfire.Art.Editor
                 st.speedParameter = "ActScale";
                 states[name] = st;
             }
-            string Next(string n) => (string)data["clips"]?[n]?["next"];
+            string Next(string n) => (string)meta[n]?["next"];
+            // 持续型（loop 为真的招式：潜游、栖落、盘旋、空手追击）：进去后一直循环，由玩法 CrossFade 出去
+            bool Held(string n) => (bool?)meta[n]?["loop"] == true;
             var chained = new HashSet<string>(actions.Select(a => Next(a.Key)).Where(n => n != null && states.ContainsKey(n)));
             foreach (var (name, _) in actions)
             {
                 var st = states[name];
-                if (!chained.Contains(name))
+                if (!chained.Contains(name) || Held(name))
                 {
                     ac.AddParameter(ActPrefix + name, AnimatorControllerParameterType.Trigger);
                     var any = sm.AddAnyStateTransition(st);
@@ -447,6 +692,7 @@ namespace Spiritfire.Art.Editor
                     any.hasExitTime = false;
                     any.duration = 0.12f;
                 }
+                if (Held(name)) continue;
                 string next = Next(name);
                 var back = st.AddTransition(next != null && states.TryGetValue(next, out var ns) && ns != st ? ns : idle);
                 back.hasExitTime = true;

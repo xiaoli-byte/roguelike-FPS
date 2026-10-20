@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "about": "熔心魔将的动画事件叠加表（NativeClipBuilder 写成 OnAnimEvent）。at = 片段内归一化时刻；时刻取 Warlord.ts 的切换 / 判定时刻（一阶段数值），落地类判定对到采样姿势落定的那一帧。冲锋 charge 的撞人是整段的接触检测（hitOpen 起）",
+  "clips": {
+    "chargeReady": [
+      { "at": 0.0, "name": "fx:lineWarning" },
+      { "at": 0.0, "name": "sfx:telegraph" }
+    ],
+    "charge": [
+      { "at": 0.0, "name": "fx:shake" },
+      { "at": 0.05, "name": "hitOpen" }
+    ],
+    "crash": [
+      { "at": 0.05, "name": "fx:shake" },
+      { "at": 0.05, "name": "sfx:boss_slam" }
+    ],
+    "sweepReady": [
+      { "at": 0.0, "name": "fx:sectorWarning" },
+      { "at": 0.0, "name": "sfx:telegraph" }
+    ],
+    "sweep": [
+      { "at": 0.06, "name": "hit" },
+      { "at": 0.06, "name": "sfx:blade_swing" }
+    ],
+    "sweepReady2": [
+      { "at": 0.0, "name": "fx:sectorWarning" },
+      { "at": 0.0, "name": "sfx:telegraph" }
+    ],
+    "sweepBack": [
+      { "at": 0.06, "name": "hit" },
+      { "at": 0.06, "name": "sfx:blade_swing" }
+    ],
+    "raise": [
+      { "at": 0.0, "name": "sfx:boss_roar" },
+      { "at": 0.0, "name": "sfx:telegraph" },
+      { "at": 0.33, "name": "cast" }
+    ],
+    "crouch": [
+      { "at": 0.0, "name": "fx:groundWarning" },
+      { "at": 0.0, "name": "sfx:telegraph" }
+    ],
+    "leap": [
+      { "at": 0.0, "name": "sfx:jump" }
+    ],
+    "land": [
+      { "at": 0.05, "name": "hit" },
+      { "at": 0.05, "name": "fx:shake" },
+      { "at": 0.05, "name": "sfx:boss_slam" }
+    ],
+    "slashA": [
+      { "at": 0.0, "name": "fx:sectorWarning" },
+      { "at": 0.72, "name": "hit" },
+      { "at": 0.72, "name": "sfx:blade_swing" }
+    ],
+    "slashB": [
+      { "at": 0.0, "name": "fx:sectorWarning" },
+      { "at": 0.72, "name": "hit" },
+      { "at": 0.72, "name": "sfx:blade_swing" }
+    ],
+    "plant": [
+      { "at": 0.0, "name": "sfx:boss_roar" },
+      { "at": 0.35, "name": "hit" },
+      { "at": 0.35, "name": "fx:shake" },
+      { "at": 0.35, "name": "sfx:boss_slam" }
+    ],
+    "roar": [
+      { "at": 0.0, "name": "sfx:boss_roar" },
+      { "at": 0.0, "name": "fx:shake" }
+    ]
+  }
+}

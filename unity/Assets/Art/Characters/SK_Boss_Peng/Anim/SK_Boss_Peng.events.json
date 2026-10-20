@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "about": "鹏的动画事件叠加表（NativeClipBuilder 写成 OnAnimEvent）。at = 片段内归一化时刻；时刻取 KunPeng.ts 的切换 / 判定时刻。俯冲 dive 的擦中判定是整段的线段检测（hitOpen 起），不是单帧",
+  "clips": {
+    "swoopReady": [
+      { "at": 0.0, "name": "sfx:enemy_alert" },
+      { "at": 0.62, "name": "fx:lineWarning" },
+      { "at": 0.62, "name": "sfx:telegraph" }
+    ],
+    "dive": [
+      { "at": 0.0, "name": "sfx:boss_roar" },
+      { "at": 0.05, "name": "hitOpen" }
+    ],
+    "crash": [
+      { "at": 0.04, "name": "fx:shake" },
+      { "at": 0.04, "name": "sfx:boss_slam" }
+    ],
+    "perch": [
+      { "at": 0.04, "name": "hit" },
+      { "at": 0.04, "name": "fx:shake" },
+      { "at": 0.04, "name": "sfx:boss_slam" }
+    ],
+    "takeoff": [
+      { "at": 0.02, "name": "hit" },
+      { "at": 0.02, "name": "fx:ring" },
+      { "at": 0.02, "name": "sfx:boss_roar" }
+    ],
+    "gust": [
+      { "at": 0.42, "name": "fx:zoneWarning" },
+      { "at": 0.42, "name": "sfx:telegraph" },
+      { "at": 0.83, "name": "gustStart" }
+    ],
+    "spread": [
+      { "at": 0.0, "name": "sfx:telegraph" },
+      { "at": 0.375, "name": "projectile" },
+      { "at": 0.421, "name": "projectile" },
+      { "at": 0.467, "name": "projectile" },
+      { "at": 0.513, "name": "projectile" },
+      { "at": 0.558, "name": "projectile" },
+      { "at": 0.604, "name": "projectile" },
+      { "at": 0.65, "name": "projectile" },
+      { "at": 0.696, "name": "projectile" },
+      { "at": 0.742, "name": "projectile" },
+      { "at": 0.788, "name": "projectile" }
+    ],
+    "roar": [
+      { "at": 0.0, "name": "sfx:boss_roar" },
+      { "at": 0.0, "name": "fx:shake" }
+    ]
+  }
+}

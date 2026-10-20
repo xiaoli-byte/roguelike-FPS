@@ -11,7 +11,8 @@ namespace Spiritfire.Art.Editor
     /// 识别规则覆盖管线里的两套命名：Tripo 语义重绑（thigh_L / fhoof_R / leg2_foot_L / tail_3…）与 Mixamo（LeftUpLeg / LeftFoot…）。
     ///   腿：以 foot / paw / hoof 结尾的骨骼为脚，往上两节为大腿、小腿（2–4 节腿都按最后三节做两骨 IK，8 条腿的蟹也一样）
     ///   骨盆：所有腿根的最近公共祖先；头颈：neck* → head；脊柱：spine / chest / waist / body…
-    ///   弹簧链：tail / ribbon / robe / skirt / sleeve / banner / ear / bell / chain / mane…（按族给刚度、阻尼、重力）
+    ///   弹簧链：tail / ribbon / robe / skirt / sleeve / banner / ear / bell / chain / mane…（按族给刚度、阻尼、重力）；
+    ///          分叉的链（一根根骨下挂几条同族分支：狐巫九尾、青鸟三根尾羽）主干到分叉处为止，每条分支各成一链
     ///   布娃娃：骨盆、脊柱、头、腿的上两节、手臂、尾根两节；胶囊半径取该骨骼主导蒙皮顶点到骨段距离的 70% 分位数
     /// </summary>
     public static class CreatureRigBuilder
@@ -81,26 +82,37 @@ namespace Spiritfire.Art.Editor
             // 脊柱（受击推开）：按层级从根到梢
             rig.spineBones = bones.Where(b => SpineRe.IsMatch(b.name) && b != rig.pelvis).OrderBy(Depth).ToArray();
 
-            // 弹簧链：族内链头 = 父骨骼不属于同一族的骨骼，沿同族子骨骼往下
+            // 弹簧链：族内链头 = 父骨骼不属于同一族的骨骼，沿同族子骨骼往下。
+            // 分叉（同族子骨骼不止一根：狐巫九尾的 tail_root、三青鸟三根尾羽的 tail_0）：主干在分叉骨骼处收尾，每个分支各起一条链。
+            // 运行时按数组顺序逐条解算（CreatureRig.Springs），主干排在分支前面——分支追的是主干摆过之后的姿势，整扇尾巴先一起甩、
+            // 每条再各自甩；以前只顺着第一根子骨骼往下走，九条尾巴只有一条会弹
             var springs = new List<CreatureRig.SpringChain>();
+            var trunks = new HashSet<CreatureRig.SpringChain>();
+            void Grow(Transform head, (Regex re, string family, float stiff, float damp, float gravity) fam, bool branch)
+            {
+                var chain = new List<Transform> { head };
+                var t = head;
+                List<Transform> kids;
+                while ((kids = t.Cast<Transform>().Where(c => fam.re.IsMatch(c.name)).ToList()).Count == 1)
+                {
+                    t = kids[0];
+                    chain.Add(t);
+                }
+                var spring = new CreatureRig.SpringChain { family = fam.family, bones = chain.ToArray(), stiffness = fam.stiff, damping = fam.damp, gravity = fam.gravity };
+                springs.Add(spring);
+                if (!branch) trunks.Add(spring);
+                foreach (var k in kids) Grow(k, fam, true);
+            }
             foreach (var b in bones)
             {
                 var fam = Families.FirstOrDefault(f => f.re.IsMatch(b.name));
                 if (fam.re == null || (b.parent && fam.re.IsMatch(b.parent.name))) continue;
                 if (NoSprings.TryGetValue(sc.Id, out var skip) && skip.Contains(fam.family)) continue;
-                var chain = new List<Transform> { b };
-                for (var t = b; ;)
-                {
-                    var next = t.Cast<Transform>().FirstOrDefault(c => fam.re.IsMatch(c.name));
-                    if (!next) break;
-                    chain.Add(next);
-                    t = next;
-                }
-                springs.Add(new CreatureRig.SpringChain { family = fam.family, bones = chain.ToArray(), stiffness = fam.stiff, damping = fam.damp, gravity = fam.gravity });
+                Grow(b, fam, false);
             }
             rig.springs = springs.ToArray();
 
-            BuildRagdoll(root, animator, rig, bones);
+            BuildRagdoll(root, animator, rig, bones, trunks);
             Debug.Log($"[Rig] {sc.Id}: 腿 {legs.Count}、头颈 {rig.lookBones.Length}、脊柱 {rig.spineBones.Length}、弹簧链 {springs.Count}（{string.Join(",", springs.Select(s => $"{s.bones[0].name}×{s.bones.Length}"))}）");
         }
 
@@ -117,7 +129,7 @@ namespace Spiritfire.Art.Editor
         }
 
         // ───────────── 布娃娃 ─────────────
-        static void BuildRagdoll(GameObject root, Animator animator, CreatureRig rig, List<Transform> bones)
+        static void BuildRagdoll(GameObject root, Animator animator, CreatureRig rig, List<Transform> bones, HashSet<CreatureRig.SpringChain> trunks)
         {
             var set = new List<Transform>();
             void Add(Transform t) { if (t && !set.Contains(t)) set.Add(t); }
@@ -126,7 +138,8 @@ namespace Spiritfire.Art.Editor
             if (rig.lookBones.Length > 0) Add(rig.lookBones[^1]);
             foreach (var l in rig.legs) { Add(l.upper); Add(l.mid); }
             foreach (var a in bones.Where(b => ArmRe.IsMatch(b.name) && !b.name.StartsWith("shoulder", System.StringComparison.OrdinalIgnoreCase) && !b.name.EndsWith("Shoulder"))) Add(a);
-            foreach (var s in rig.springs.Where(s => s.family == "tail")) for (int i = 0; i < Mathf.Min(2, s.bones.Length); i++) Add(s.bones[i]);
+            // 尾根两节：只取主干链（分叉尾的各个分支不进布娃娃，九尾各加两节刚体太多）
+            foreach (var s in rig.springs.Where(s => s.family == "tail" && trunks.Contains(s))) for (int i = 0; i < Mathf.Min(2, s.bones.Length); i++) Add(s.bones[i]);
             set = set.Where(t => t).OrderBy(Depth).ToList();
             if (set.Count == 0) return;
 
