@@ -282,12 +282,15 @@ namespace Spiritfire.Game.Tests
             Assert.IsTrue(FoxWitchAI.PlanIceWall(new Vector3(0, 0, 10), new Vector3(0, 0, 24), out var c, out float yaw));
             Assert.AreEqual(10 + 14 * 0.4f, c.z, 1e-5f);
             Assert.AreEqual(0f, yaw, 1e-6f, "墙面朝玩家");
-            Assert.IsTrue(FoxWitchAI.PlanIceWall(Vector3.zero, new Vector3(0, 0, 7), out c, out _));
-            Assert.LessOrEqual(c.z, 7 - 3.5f + 1e-5f, "离玩家至少 3.5 m");
+            Assert.IsTrue(FoxWitchAI.PlanIceWall(Vector3.zero, new Vector3(0, 0, 7), out var near, out _));
+            Assert.AreEqual(2.8f, near.z, 1e-5f, "两者 7 m：40% = 2.8 m（夹在 2.5–6 之间）");
+            Assert.LessOrEqual(near.z, 7 - 3.5f + 1e-5f, "离玩家至少 3.5 m");
             Assert.IsFalse(FoxWitchAI.PlanIceWall(Vector3.zero, new Vector3(0, 0, 5), out _, out _), "太近站不下一道墙");
-            // 重试时沿连线往玩家挪
-            Assert.IsTrue(FoxWitchAI.PlanIceWall(new Vector3(0, 0, 10), new Vector3(0, 0, 24), out var c2, out _, 0.8f));
-            Assert.AreEqual(c.z + 0.8f, c2.z, 1e-4f);
+            // 重试时沿连线往玩家挪（同 TS planIceWall 的 shift：加在 40% 距离上，再受「离玩家 3.5 m」封顶）
+            Assert.IsTrue(FoxWitchAI.PlanIceWall(new Vector3(0, 0, 10), new Vector3(0, 0, 24), out var shifted, out _, 0.8f));
+            Assert.AreEqual(c.z + 0.8f, shifted.z, 1e-4f);
+            Assert.IsTrue(FoxWitchAI.PlanIceWall(Vector3.zero, new Vector3(0, 0, 7), out var capped, out _, 1.6f));
+            Assert.AreEqual(7 - 3.5f, capped.z, 1e-5f, "挪过头时停在离玩家 3.5 m 处");
             // 墙沿法线的垂直方向展开
             var u = FoxWitchAI.WallAxis(Mathf.PI / 4);
             Assert.AreEqual(0f, Vector3.Dot(u, new Vector3(Mathf.Sin(Mathf.PI / 4), 0, Mathf.Cos(Mathf.PI / 4))), 1e-6f);
