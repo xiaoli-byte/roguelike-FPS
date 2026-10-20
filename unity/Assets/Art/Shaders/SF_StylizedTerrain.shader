@@ -4,6 +4,7 @@
 //   - 宏观色斑：世界空间的大尺度噪声调亮 / 调暗，压掉近处一眼可见的平铺重复
 //   - 坡度描边：陡坡（崖面、沙丘背风面）按坡度压暗一点，地形起伏更好读
 // 地形关闭 drawInstanced（顶点直接带法线），basemapDistance 拉远（始终用本着色器，不用远处的 basemap）。
+// 地形洞（TerrainData.SetHoles，洞口 / 熔岩井）：Terrain 每次绘制都绑定 _TerrainHolesTexture（0 = 洞），各 pass 按地形 UV 裁掉；没有洞时是白图，不裁。
 Shader "Spiritfire/StylizedTerrain"
 {
     Properties
@@ -16,6 +17,7 @@ Shader "Spiritfire/StylizedTerrain"
         [NoScaleOffset] _Layer2("Layer 2 (B)", 2D) = "grey" {}
         [NoScaleOffset] _Layer3("Layer 3 (A, triplanar)", 2D) = "grey" {}
         _LayerTile("Layer Tile Size (m)", Vector) = (9, 5, 7, 8)
+        [HideInInspector] _TerrainHolesTexture("Holes Map (RGB)", 2D) = "white" {}
 
         [Header(Blending)]
         _HeightBlend("Height Blend Strength", Range(0, 2)) = 0.8
@@ -55,6 +57,8 @@ Shader "Spiritfire/StylizedTerrain"
         TEXTURE2D(_Layer2);
         TEXTURE2D(_Layer3);
         TEXTURE2D(_MacroTex);   SAMPLER(sampler_MacroTex);
+        TEXTURE2D(_TerrainHolesTexture); SAMPLER(sampler_TerrainHolesTexture);
+        void ClipTerrainHoles(float2 uv) { clip(SAMPLE_TEXTURE2D(_TerrainHolesTexture, sampler_TerrainHolesTexture, uv).r - 0.5); }
         ENDHLSL
 
         Pass
@@ -103,6 +107,7 @@ Shader "Spiritfire/StylizedTerrain"
 
             half4 Frag(Varyings i) : SV_Target
             {
+                ClipTerrainHoles(i.uv);
                 // 分层图用地形网格 UV（0–1 覆盖整块地形）；各层按世界坐标平铺（米 / 张），与地形尺寸无关
                 half4 ctrl = SAMPLE_TEXTURE2D(_ControlMap, sampler_ControlMap, i.uv);
                 float2 wuv = i.positionWS.xz;
@@ -153,8 +158,9 @@ Shader "Spiritfire/StylizedTerrain"
             #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
             float3 _LightDirection, _LightPosition;
-            struct Attributes { float4 positionOS : POSITION; float3 normalOS : NORMAL; };
-            float4 ShadowVert(Attributes v) : SV_POSITION
+            struct Attributes { float4 positionOS : POSITION; float3 normalOS : NORMAL; float2 uv : TEXCOORD0; };
+            struct Varyings { float4 positionCS : SV_POSITION; float2 uv : TEXCOORD0; };
+            Varyings ShadowVert(Attributes v)
             {
                 float3 p = TransformObjectToWorld(v.positionOS.xyz);
                 float3 n = TransformObjectToWorldNormal(v.normalOS);
@@ -163,9 +169,12 @@ Shader "Spiritfire/StylizedTerrain"
                 #else
                 float3 l = _LightDirection;
                 #endif
-                return ApplyShadowClamping(TransformWorldToHClip(ApplyShadowBias(p, n, l)));
+                Varyings o;
+                o.positionCS = ApplyShadowClamping(TransformWorldToHClip(ApplyShadowBias(p, n, l)));
+                o.uv = v.uv;
+                return o;
             }
-            half4 ShadowFrag() : SV_Target { return 0; }
+            half4 ShadowFrag(Varyings i) : SV_Target { ClipTerrainHoles(i.uv); return 0; }
             ENDHLSL
         }
 
@@ -178,8 +187,16 @@ Shader "Spiritfire/StylizedTerrain"
             #pragma target 3.5
             #pragma vertex DepthVert
             #pragma fragment DepthFrag
-            float4 DepthVert(float4 positionOS : POSITION) : SV_POSITION { return TransformObjectToHClip(positionOS.xyz); }
-            half DepthFrag(float4 positionCS : SV_POSITION) : SV_Target { return positionCS.z; }
+            struct DAttributes { float4 positionOS : POSITION; float2 uv : TEXCOORD0; };
+            struct DVaryings { float4 positionCS : SV_POSITION; float2 uv : TEXCOORD0; };
+            DVaryings DepthVert(DAttributes v)
+            {
+                DVaryings o;
+                o.positionCS = TransformObjectToHClip(v.positionOS.xyz);
+                o.uv = v.uv;
+                return o;
+            }
+            half DepthFrag(DVaryings i) : SV_Target { ClipTerrainHoles(i.uv); return i.positionCS.z; }
             ENDHLSL
         }
 
@@ -193,13 +210,14 @@ Shader "Spiritfire/StylizedTerrain"
             #pragma vertex DNVert
             #pragma fragment DNFrag
             #include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/RenderingLayers.hlsl"
-            struct Attributes { float4 positionOS : POSITION; float3 normalOS : NORMAL; };
-            struct Varyings { float4 positionCS : SV_POSITION; half3 normalWS : TEXCOORD0; };
+            struct Attributes { float4 positionOS : POSITION; float3 normalOS : NORMAL; float2 uv : TEXCOORD0; };
+            struct Varyings { float4 positionCS : SV_POSITION; half3 normalWS : TEXCOORD0; float2 uv : TEXCOORD1; };
             Varyings DNVert(Attributes v)
             {
                 Varyings o;
                 o.positionCS = TransformObjectToHClip(v.positionOS.xyz);
                 o.normalWS = TransformObjectToWorldNormal(v.normalOS);
+                o.uv = v.uv;
                 return o;
             }
             void DNFrag(Varyings i, out half4 outNormalWS : SV_Target0
@@ -208,6 +226,7 @@ Shader "Spiritfire/StylizedTerrain"
             #endif
             )
             {
+                ClipTerrainHoles(i.uv);
                 outNormalWS = half4(NormalizeNormalPerPixel(i.normalWS), 0);
                 #ifdef _WRITE_RENDERING_LAYERS
                 outRenderingLayers = EncodeMeshRenderingLayer();
