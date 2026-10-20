@@ -1,0 +1,202 @@
+{
+  "schema": 1,
+  "about": "旱魃的动画事件叠加表（NativeClipBuilder 写成 OnAnimEvent）。片段是手工关键帧，本文件和 FBX 都由 art/source/characters/SK_Boss_Hanba/anim/hanba_anims.py 生成，别手改；at = 片段内归一化时刻。hit = 出手 / 判定，summon = 召唤物出现，fx:*Warning = 画预警，beamStart / beamEnd = 日轮光束起止，eclipseStart / eclipseEnd = 日轮熄灭 / 复燃（泉珠暴露窗口），flare = 日蚀后强光爆发，roar = 登场长啸，collapse = 死亡倒下",
+  "clips": {
+    "Idle": {
+      "events": [],
+      "loop": true
+    },
+    "intro": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "sfx:telegraph"
+        },
+        {
+          "at": 0.5833,
+          "name": "roar"
+        },
+        {
+          "at": 0.5833,
+          "name": "sfx:boss_roar"
+        },
+        {
+          "at": 0.5833,
+          "name": "fx:shake"
+        }
+      ],
+      "loop": false
+    },
+    "sunSweep": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "fx:lineWarning"
+        },
+        {
+          "at": 0.0,
+          "name": "sfx:enemy_charge"
+        },
+        {
+          "at": 0.375,
+          "name": "hit"
+        },
+        {
+          "at": 0.375,
+          "name": "beamStart"
+        },
+        {
+          "at": 0.75,
+          "name": "beamEnd"
+        }
+      ],
+      "loop": false
+    },
+    "droughtGale": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "fx:sectorWarning"
+        },
+        {
+          "at": 0.0,
+          "name": "sfx:telegraph"
+        },
+        {
+          "at": 0.4167,
+          "name": "hit"
+        },
+        {
+          "at": 0.4167,
+          "name": "fx:shake"
+        },
+        {
+          "at": 0.4167,
+          "name": "sfx:boss_roar"
+        }
+      ],
+      "loop": false
+    },
+    "summonWraiths": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "fx:groundWarning"
+        },
+        {
+          "at": 0.0,
+          "name": "sfx:telegraph"
+        },
+        {
+          "at": 0.5714,
+          "name": "summon"
+        },
+        {
+          "at": 0.5714,
+          "name": "fx:shake"
+        }
+      ],
+      "loop": false
+    },
+    "crackPalm": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "fx:lineWarning"
+        },
+        {
+          "at": 0.0,
+          "name": "sfx:telegraph"
+        },
+        {
+          "at": 0.4286,
+          "name": "hit"
+        },
+        {
+          "at": 0.4286,
+          "name": "fx:shake"
+        },
+        {
+          "at": 0.4286,
+          "name": "sfx:boss_slam"
+        }
+      ],
+      "loop": false
+    },
+    "apsaraCall": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "sfx:telegraph"
+        },
+        {
+          "at": 0.6,
+          "name": "summon"
+        },
+        {
+          "at": 0.6,
+          "name": "fx:shake"
+        }
+      ],
+      "loop": false
+    },
+    "eclipse": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "sfx:telegraph"
+        },
+        {
+          "at": 0.1481,
+          "name": "eclipseStart"
+        },
+        {
+          "at": 0.8148,
+          "name": "eclipseEnd"
+        },
+        {
+          "at": 0.8741,
+          "name": "flare"
+        },
+        {
+          "at": 0.8741,
+          "name": "fx:shake"
+        },
+        {
+          "at": 0.8741,
+          "name": "sfx:boss_roar"
+        }
+      ],
+      "loop": false
+    },
+    "Hit": {
+      "events": [],
+      "loop": false
+    },
+    "death": {
+      "events": [
+        {
+          "at": 0.0,
+          "name": "sfx:boss_roar"
+        },
+        {
+          "at": 0.5,
+          "name": "collapse"
+        },
+        {
+          "at": 0.5,
+          "name": "fx:shake"
+        },
+        {
+          "at": 0.7917,
+          "name": "fx:shake"
+        },
+        {
+          "at": 0.7917,
+          "name": "sfx:boss_slam"
+        }
+      ],
+      "loop": false
+    }
+  }
+}
