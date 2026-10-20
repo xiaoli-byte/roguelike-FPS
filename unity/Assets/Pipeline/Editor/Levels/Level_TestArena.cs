@@ -154,6 +154,7 @@ namespace Spiritfire.Art.Editor.Levels
             EditorSceneManager.SaveScene(scene, ScenePath);
             ShowcaseSceneBuilder.BakeEnvironmentLighting(theme, Dir);
             LevelKit.BakeNavMesh(Dir, Name, env);
+            LevelKit.BakeLavaNavMesh(Dir, Name, env);
             EditorSceneManager.SaveScene(scene, ScenePath);
 
             var rep = Validate(rack);
@@ -213,6 +214,7 @@ namespace Spiritfire.Art.Editor.Levels
             else if (comps != profile.components.Count) rep.Fail($"{vp}：profile 有 {profile.components.Count} 个组件，资产里只存下 {comps} 个（重开工程会丢）");
             else rep.Line($"✓ 后处理 profile：{comps} 个组件已存为子资产（{string.Join("、", profile.components.Select(c => c.GetType().Name))}）");
             LevelValidator.Run(Spec(), rep);
+            LevelKit.ValidateLava(rep);
             rep.Line(rep.failures == 0 ? "全部通过" : $"不合格 {rep.failures} 项");
             return rep;
         }
@@ -386,6 +388,17 @@ namespace Spiritfire.Art.Editor.Levels
             root.SetParent(wb, false);
             foreach (var (tag, title, z) in Strips)
             {
+                if (tag == "Lava")
+                {
+                    // L7：正式熔岩（LavaVolume + Spiritfire/Lava + NavMesh Lava 区）。平地上的条带：熔岩面 y 0，岸边硬壳只按形状边缘
+                    var lava = LevelKit.PlaceLava(Dir, new LevelKit.LavaSpec
+                    {
+                        name = "Arena Strip", center = new Vector3(0, 0, z), size = new Vector2(StripLength, StripWidth), depth = 1f, depthShore = false,
+                    }, root);
+                    lava.gameObject.name = $"{tag} Strip · {title}";
+                    spawner.lavaStrip = lava.transform;
+                    continue;
+                }
                 var mat = tag switch
                 {
                     "Lava" => Glow(LevelKit.Mat(Dir, "LavaPlaceholder", new Color(0.95f, 0.36f, 0.1f)), new Color(2.6f, 0.85f, 0.2f)),
