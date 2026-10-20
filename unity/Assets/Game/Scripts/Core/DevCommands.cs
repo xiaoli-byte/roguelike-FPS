@@ -131,7 +131,7 @@ namespace Spiritfire.Game
         }
     }
 
-    /// <summary>F3 弹一次秘卷三选一</summary>
+    /// <summary>F3 弹一次秘卷三选一（走秘卷沙盒；按 id 授予 / 满层 / 清空见 <see cref="ScrollSandbox"/> 与 scroll_all / scroll_max / scroll_clear 命令）</summary>
     [Defs]
     public sealed class GrantScrollCommand : DevCommand
     {
@@ -141,7 +141,7 @@ namespace Spiritfire.Game
 
         public override void Execute()
         {
-            if (LootDirector.Instance) LootDirector.Instance.OfferScrolls(3);
+            if (!ScrollSandbox.Offer(3)) DevCommands.Say("没有掉落系统，无法弹出秘卷三选一");
         }
     }
 
