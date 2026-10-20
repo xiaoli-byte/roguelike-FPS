@@ -22,6 +22,7 @@ namespace Spiritfire.Art.Editor.Levels
     ///   西北三根栖落柱 5 / 8 / 11 m（柱顶有 PerchPoint 标记）
     ///   北侧熔岩 / 冰面 / 水面占位条带（带 Lava / Ice / Water 标签的色块，地表系统落地后换成正式组件）
     ///   中央首领场地：<see cref="BossArena"/> 锚点（圆心 (0, 0)、半径 16 m，不限首领），首领框架与各首领单元的冒烟在这里刷首领（BossSuite）
+    ///   东南 (40, −34) 一个 SupplyCamp 标记（正面朝出生点）：商店 / 补给营冒烟在这里开店（ShopSuite、BossEncounterSuite）
     ///   地面每 10 m 一条浅色网格线（量距离、看截图用，没有碰撞）
     ///   遭遇框架冒烟（EncounterSuite）的标记：平台区北面的场地中心 (30, 12) + 五个站位（含 4 m 台顶的高台站位）、出生点东侧三座灵火坛、
     ///   6 m 台北面一处藏宝点、西南一座出口——只是空物体，组件由套件运行时挂（测试场平时没有遭遇战）
@@ -61,6 +62,8 @@ namespace Spiritfire.Art.Editor.Levels
         /// <summary>首领场地（B0）：平地中央的圆，坡度台 / 高台 / 栖落柱 / 条带都在圈外</summary>
         static readonly Vector2 BossCenter = new(0, 0);
         const float BossRadius = 16f;
+        /// <summary>补给营 / 商店冒烟（ShopSuite、BossEncounterSuite）的标记：东南平地，正面朝出生点。只是空物体，商店与补给营由套件运行时开</summary>
+        public static readonly Vector2 SupplyCampAt = new(40, -34);
 
         /// <summary>
         /// 遭遇框架冒烟的标记（名字、位置、离地高）：玩家从西边 (23, 12) 进场；正面位在中心偏东、远端位在东头（冲锋型从这里来）、
@@ -136,6 +139,7 @@ namespace Spiritfire.Art.Editor.Levels
             BuildPerches(wb, markers, m, spawner);
             BuildStrips(wb, m, spawner);
             BuildBossArena(markers, spawner);
+            Marker(markers, "SupplyCamp", G(SupplyCampAt)).rotation = Quaternion.LookRotation(Flat(Spawn - SupplyCampAt));
             var encounter = new GameObject("Encounter Test (markers)").transform;
             encounter.SetParent(markers, false);
             foreach (var (name, p, y) in EncounterMarkers) Marker(encounter, name, G(p, y));
