@@ -24,10 +24,6 @@ namespace Spiritfire.Game
         Telegraph.LineHandle lane;
         bool enraged, chargeHit, recharge, alerted;
         Vector3 chargeDir;
-        // 踏地冲击波
-        bool waveActive, waveHit;
-        float waveStart;
-        Vector3 waveCenter;
 
         protected override string InitialState => "advance";
 
@@ -98,7 +94,6 @@ namespace Spiritfire.Game
                 ShotFx.Instance?.Impact(transform.position + Vector3.up * 1.5f * Size, Vector3.up, true, 6f);
                 CameraShake.Quake(transform.position, 0.35f, 28f, 0.5f);
             }
-            UpdateWave();
             float turn = TurnRate * (enraged ? 1.3f : 1f);
             Glow = state switch
             {
@@ -301,34 +296,24 @@ namespace Spiritfire.Game
             GameAudio.PlayAt("boss_slam", ground, 1f, 0.7f);
             GameAudio.PlayAt("explosion", ground, 0.5f, 0.6f);
             ShotFx.Instance?.Impact(transform.position, Vector3.up, false, 8f);
-            Telegraph.Wave(transform.position, WaveRadius, WaveSpeed, new Color(1f, 0.75f, 0.4f));
-            waveActive = true;
-            waveHit = false;
-            waveStart = Time.time;
-            waveCenter = transform.position;
+            GroundWave.Spawn(StompWave(transform.position, Size, Damage, this));
         }
 
-        /// <summary>冲击波：环经过玩家时，玩家贴地就吃 ×0.7（跳起来躲开）</summary>
-        void UpdateWave()
-        {
-            if (!waveActive) return;
-            float r = (Time.time - waveStart) * WaveSpeed;
-            if (r > WaveRadius + 1)
+        /// <summary>
+        /// 踏地冲击波（E4 起交给 <see cref="GroundWave"/>，数值同抽出之前）：波心在脚下，9 m、16 m/s，环带 ±0.7 m（前沿多走 1 m 才结束），
+        /// 爆心 1.6 × 体型以内不吃，玩家贴地、高差 ±1.2 m 才吃 ×0.7（跳起来躲开），不挡、不击退；出手者被嘲讽期间不伤玩家
+        /// </summary>
+        public static GroundWave.Spec StompWave(Vector3 center, float size, float damage, EnemyAI owner) =>
+            new(center, WaveRadius, WaveSpeed, damage * WaveMult)
             {
-                waveActive = false;
-                return;
-            }
-            if (waveHit || !player) return;
-            var to = PlayerPos - waveCenter;
-            float dy = to.y;
-            to.y = 0;
-            float dist = to.magnitude;
-            if (dist <= StompCore * Size || Mathf.Abs(dist - r) > 0.7f) return;
-            var motor = Taunted ? null : player.GetComponent<PlayerMotor>();
-            if (motor && !motor.Grounded) return;
-            if (Mathf.Abs(dy) > 1.2f) return;
-            waveHit = true;
-            HitTarget(Damage * WaveMult, waveCenter);
-        }
+                width = 1.4f,
+                overshoot = 1f,
+                innerRadius = StompCore * size,
+                minRise = -1.2f,
+                maxRise = 1.2f,
+                needGrounded = true,
+                color = new Color(1f, 0.75f, 0.4f),
+                owner = owner,
+            };
     }
 }
