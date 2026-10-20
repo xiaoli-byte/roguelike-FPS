@@ -561,7 +561,7 @@
 | 第一章敌人 6 | ✅ | — |
 | 第二章敌人 11 | ✅ | 缺约 25 段片段；4 个没有 GlowShell |
 | 第三章敌人 10 | ✅ | 缺招牌状态的片段 |
-| 旱魃 | 🟡 | ART1 已完成（2026-10-20）：本体 SK_Boss_Hanba + 日轮 SM_BossPart_HanbaSunRing 已发布进 Unity，ArtValidator 通过（[boss-hanba.md](art/boss-hanba.md)）；缺动作（ART2）和裂缝自发光 |
+| 旱魃 | 🟡 | ART1 / ART2 已完成：本体 + 日轮已进 Unity；10 段关键帧动作 + 事件表已并进 AC_SK_Boss_Hanba（[boss-hanba.md](art/boss-hanba.md)）；缺裂缝自发光，人形关键帧丢了非人形骨曲线（E5） |
 | 鲲鹏 / 火麒麟 | 🟡 | 片段没有事件；吊鼎和锁扣缺 |
 | 熔心魔将 | 🟡 | 没有片段 |
 | 第一章套件 / 地标 | ✅ | 1-1 剩几件白盒；1-2 / 1-3 / 1-4 的专用件缺 |
@@ -1007,7 +1007,7 @@ W0-5 把约 30 处 `Hud.Instance.*` 调用机械替换成 `GameUI.*`，先转发
 | 资产 | 现状 | 路线 | 阻塞 | 占位（代码先跑） |
 |---|---|---|---|---|
 | **旱魃本体 + 日轮 + 泉珠** | ✅ ART1（2026-10-20）：84 根骨（语义人形 + 衣 / 袖 / 发链），socket_core / socket_sunring，泉珠发光壳；见 [boss-hanba.md](art/boss-hanba.md) | 概念 → 四视图 → Tripo → 语义人形 + 发 / 衣链 | BS1 / BS2 演出、最终观感 | SK_Enemy_Apsara 放大 3.5 倍 + 白盒日轮环；ProceduralIdle |
-| **旱魃动作** | Three.js 没有可采样的源 | Blender 关键帧 + 运行时层（E5 的关键帧导入） | BS2 | 代码驱动姿态（悬浮 + 日轮旋转 + 手臂 IK） |
+| **旱魃动作** | ✅ ART2（2026-10-21）：10 段 Blender 关键帧 + 事件叠加表，见 [boss-hanba.md](art/boss-hanba.md) 第 8 节 | Blender 关键帧 + 运行时层（E5 的关键帧导入） | BS2 | 代码驱动姿态（悬浮 + 日轮旋转 + 手臂 IK） |
 | 沙魇 | 无 | 材质变体（Shader 参数） | BS1 | 第一章杂兵原色 |
 | 1-1 收尾件 | 驿站残墙、垛墙、积薪还是白盒；没有散布件；远景巨像题材不对 | Tripo | M11 | 现有白盒 |
 | 1-2 专用件 | 全缺 | Tripo + 雅丹高度场 | M12 | 高度场岩墙 + 沙漠套件下沉 |

@@ -113,3 +113,36 @@ Claude in Chrome 打开 Tripo Studio，**智能网格 · 多视图**（前 / 左
 - **泉珠发光**：`SK_Boss_Hanba_GlowShell`（材质 `M_Boss_Hanba_Glow`，叠加混合）只盖泉珠前半球，日蚀和施法后摇时由代码打开 / 调亮，其余时间关掉。裂缝的白金光还没做：要在 StylizedLit 上按底色（金色细线）做自发光遮罩，属于 FX / 着色器单元。
 - **悬浮高度**：模型的残衣下摆落在 z = 0，脚尖离地约 0 米。游戏里整体抬高约 0.5 米悬浮，下摆的弹簧骨会自然垂下。
 - **人形**：Unity 建 Humanoid（semantic 映射），绑定姿势是 A 字（非英雄不做 T-pose 修正），QA 会给「上臂与水平面夹角」一条警告，和举父一样；ART2 用 Blender 关键帧做动作时直接在这套骨架上做。
+
+## 8. 动作（ART2，2026-10-21）
+
+10 段手工关键帧，全部由 [`art/source/characters/SK_Boss_Hanba/anim/hanba_anims.py`](../../art/source/characters/SK_Boss_Hanba/anim/hanba_anims.py) 生成（Blender 无头，一条命令重出全部 FBX 和事件表）：
+
+```bash
+"D:/AI-Tools/Blender/blender-5.2.1-windows-x64/blender.exe" -b --factory-startup --python art/source/characters/SK_Boss_Hanba/anim/hanba_anims.py -- --review art/source/characters/SK_Boss_Hanba/_tmp/anim_keyposes.json
+```
+
+产出 `unity/Assets/Art/Characters/SK_Boss_Hanba/Anim/Keyframed/<状态>.fbx`（不入库）和 `Anim/SK_Boss_Hanba.events.json`（入库，脚本生成，别手改），再 `bash scripts/unity/bridge.sh sync`：NativeClipBuilder 用本体的 Avatar（Copy From Other）导成人形片段，并进 `AC_SK_Boss_Hanba`（Prefab 的 Animator 已换成它）。审核图 [boss-hanba-anim-v001.jpg](review/boss-hanba-anim-v001.jpg) 是 Unity 里重定向之后的 AnimReviewSheet（每段 5 个时间点）。
+
+| 状态 | 内容 | 时长 | 事件（秒） |
+|---|---|---|---|
+| Idle（循环） | 待机悬浮：呼吸、手臂起伏、头微转 | 3.0 s | — |
+| intro | 登场：低垂沉睡 → 舒展双臂、仰头长啸 → 落回待机 | 4.0 s | 0 `sfx:telegraph`；2.33 `roar` `sfx:boss_roar` `fx:shake` |
+| sunSweep | 日轮扫射：右手高举召日 → 指向身前地面放光束 → 上身从右扫到左 | 3.2 s | 0 `fx:lineWarning` `sfx:enemy_charge`；1.2 `hit` `beamStart`；2.4 `beamEnd` |
+| droughtGale | 旱风：双臂后收蓄力 → 向前推掌 | 2.4 s | 0 `fx:sectorWarning` `sfx:telegraph`；1.0 `hit` `fx:shake` `sfx:boss_roar` |
+| summonWraiths | 召唤沙魇：双臂高举 → 掌心向下压向地面 | 2.8 s | 0 `fx:groundWarning` `sfx:telegraph`；1.6 `summon` `fx:shake` |
+| crackPalm | 焦裂按地：右手扬起 → 俯冲按掌（整体前冲 0.25、下沉 0.55 米） | 2.8 s | 0 `fx:lineWarning` `sfx:telegraph`；1.2 `hit` `fx:shake` `sfx:boss_slam` |
+| apsaraCall | 飞天之殇：双手捧到心口 → 向两侧上方展开 | 3.0 s | 0 `sfx:telegraph`；1.8 `summon` `fx:shake` |
+| eclipse | 日蚀：双臂后展、挺胸露出泉珠，颤抖 3 秒 → 双臂上扬强光爆发 | 4.5 s | 0 `sfx:telegraph`；0.67 `eclipseStart`；3.67 `eclipseEnd`；3.93 `flare` `fx:shake` `sfx:boss_roar` |
+| Hit | 受击：上身后仰、双臂一扬（眩晕 / 重击用；轻受击是运行时受击弹簧） | 0.7 s | — |
+| death | 死亡：仰天挣扎、双手成爪 → 失力前倒 → 跪落（下沉 1.25 米） | 4.0 s | 0 `sfx:boss_roar`；2.0 `collapse` `fx:shake`；3.17 `fx:shake` `sfx:boss_slam` |
+
+事件名沿用火麒麟、魔将的写法：`hit` 出手 / 判定（BossMove 的 `Cue("hit", …)`），`summon` 召唤物出现，`fx:*Warning` 画预警，`beamStart / beamEnd` 光束起止，`eclipseStart / eclipseEnd` 是泉珠暴露窗口（正好 3 秒），`flare` 日蚀后的强光。各段都从同一个待机底姿起、回到它，状态之间过渡不跳；招式状态由 `act_<状态>` 触发，播完回 Idle。
+
+**写法**：四肢用「aim」直接给骨头在身体坐标里的朝向（最短弧旋转，不引入扭转），手指、腿用绕世界轴的细节旋转，躯干前倾 / 转身最后执行、统一带动手臂。这样手臂侧抬后再「向前」不会变成扭转。
+
+**审核**：每段的关键姿势（共 33 个）用 `review_native_creature.py` 算拉伸，p99 中位数 2.9、最高 4.45（死亡开头仰天、双臂高举那一帧；日蚀强光爆发 4.38），和 ART1 的静态审核同一水平。
+
+**长发回垂与 Unity 的缺口**：上身前倾时长发作为头的子骨会整片翻成水平、扯开压在背上的发根，所以脚本在前倾姿势里给三条发链根节加了回垂（回转 0.85 倍前倾角）。但 Unity 按人形导入关键帧 FBX 时**只保留肌肉曲线，长发、衣链这些非人形骨的曲线被丢掉了**（采样片段那条路是自己写变换曲线，不受影响），所以这个补偿目前在 Unity 里不生效，审核图里死亡后半段长发翻到了头顶。游戏里这些骨是弹簧骨、受重力会往下垂，影响有限；要根治，得在 `NativeClipBuilder.PrepareKeyframedImporter` 里给人形关键帧片段配上包含全部骨骼的 Transform 遮罩（或另按 Generic 导一份取非人形骨曲线），属于 E5 的文件。FBX 里一直带着这些曲线，修好后重新同步就会生效。
+
+**交给 BS1 / BS2**：悬浮升降、日轮旋转、残衣 / 长发 / 袖垂片的弹簧都在运行时层，片段里没有烘。整体平移（按地前冲、死亡下沉）走 hips，Unity 里是人形身体位置；根节点曲线按约定丢掉，位移由玩法负责。招式时长可以用 `ActScale` 按实际前摇拉伸。
