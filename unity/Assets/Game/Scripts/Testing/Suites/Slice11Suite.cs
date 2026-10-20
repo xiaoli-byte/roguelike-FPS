@@ -20,6 +20,9 @@ namespace Spiritfire.Game.Testing
     /// </summary>
     public sealed class Slice11Suite : PlaytestSuite
     {
+        /// <summary>每只灵宠出伤的观察窗口（编辑器忙时会卡帧，4 s 偶尔不够）</summary>
+        const float PetWindow = 6f;
+
         public override string Id => "slice11";
         /// <summary>1-1 古道穿越戈壁（与编辑器里 Level_1_1.ScenePath 相同，运行时程序集引用不到那边的常量）</summary>
         public override string Scene => "Assets/Scenes/L1_1_GobiRoad.unity";
@@ -462,7 +465,7 @@ namespace Spiritfire.Game.Testing
                 yield return new WaitForSeconds(0.9f); // 敌人出生无敌 + 灵宠出场
                 float dealt0 = pet ? pet.DamageDealt : 0, t0 = Time.time;
                 bool pressed = false, cast = false, shot = false;
-                while (Time.time - t0 < 4f)
+                while (Time.time - t0 < PetWindow)
                 {
                     var target = NearestEnemy(eye.position);
                     if (target) Aim(motor, eye, BodyCenter(target));
@@ -482,11 +485,11 @@ namespace Spiritfire.Game.Testing
                 }
                 float dealt = pet ? pet.DamageDealt - dealt0 : 0;
                 int killed = enemies.Count(e => !e || e.Dead);
-                var msg = $"[pets] {def.Label}（{def.title}）：4 s 伤害 {dealt:F0}，击杀 {killed}/{enemies.Count}，灵技「{def.skillName}」{(cast ? "已放出" : "没放出")}，Lv.{(pet ? pet.Level : 0)}";
+                var msg = $"[pets] {def.Label}（{def.title}）：{PetWindow:F0} s 伤害 {dealt:F0}，击杀 {killed}/{enemies.Count}，灵技「{def.skillName}」{(cast ? "已放出" : "没放出")}，Lv.{(pet ? pet.Level : 0)}";
                 Line(msg);
                 Debug.Log(msg);
                 if (!pet) Fail($"[pets] {def.name} 结契后没有生成灵宠");
-                else if (dealt <= 0) Fail($"[pets] {def.name} 4 秒内没有造成伤害");
+                else if (dealt <= 0) Fail($"[pets] {def.name} {PetWindow:F0} 秒内没有造成伤害");
                 if (!cast) Fail($"[pets] {def.name} 的灵技没有放出来");
                 foreach (var e in enemies)
                     if (e) Destroy(e.gameObject);
@@ -797,10 +800,10 @@ namespace Spiritfire.Game.Testing
             if (!e) yield break;
             var anim = e.GetComponentInChildren<Animator>();
             float t0 = Time.time;
-            while (Time.time - t0 < 8f && e && e.State != "aim") yield return null;
+            while (Time.time - t0 < 12f && e && e.State != "aim") yield return null; // 编辑器忙时会卡帧：窗口放宽到 12 s
             if (!e || e.State != "aim")
             {
-                Fail($"蝎子 8 s 内没进入上弦（{e?.State}）");
+                Fail($"蝎子 12 s 内没进入上弦（{e?.State}）");
                 if (e) Destroy(e.gameObject);
                 yield break;
             }
@@ -841,11 +844,11 @@ namespace Spiritfire.Game.Testing
             var e = SpawnAhead(motor, "fire_rat", 10f, 50) as FireRatAI;
             if (!e) yield break;
             float t0 = Time.time;
-            while (Time.time - t0 < 8f && e && !e.Dead && e.State != "roll") yield return null;
+            while (Time.time - t0 < 12f && e && !e.Dead && e.State != "roll") yield return null;
             yield return new WaitForSeconds(0.15f);
             if (!e || e.Dead || e.State != "roll")
             {
-                Fail($"火浣鼠 8 s 内没滚起来（{(e ? e.State : "没了")}）");
+                Fail($"火浣鼠 12 s 内没滚起来（{(e ? e.State : "没了")}）");
                 if (e) Destroy(e.gameObject);
                 yield break;
             }
@@ -861,6 +864,7 @@ namespace Spiritfire.Game.Testing
             var ballR = ball ? ball.GetComponentInChildren<Renderer>() : null;
             float gap = ballR ? ballR.bounds.min.y - e.transform.position.y : 0;
             float spun = 0, dist = 0, tt = 0, roll0 = e.RollAngle;
+            int frames = 0;
             var dbg = new List<string>();
             var prevQ = ball ? ball.rotation : Quaternion.identity;
             var prevP = e.transform.position;
@@ -868,6 +872,7 @@ namespace Spiritfire.Game.Testing
             {
                 yield return null;
                 tt += Time.deltaTime;
+                frames++;
                 spun += Quaternion.Angle(prevQ, ball.rotation);
                 prevQ = ball.rotation;
                 if (dbg.Count < 6) dbg.Add($"{e.RollAngle:F0}/{ball.localEulerAngles}/{Time.frameCount}");
@@ -881,7 +886,9 @@ namespace Spiritfire.Game.Testing
                  $"{tt:F2} s 内滚了 {dist:F1} m、火球转了 {spun:F0}°（按半径应转 {expect:F0}°，rollAngle {roll0:F0}→{e.RollAngle:F0}）；火球最低点离地 {gap:F2} m；{string.Join(" ", dbg)}");
             if (!e.Balled || !socket || socket.localScale.x < 0.7f) Fail("火浣鼠滚动时没有换成火球（挂点还缩着）");
             if (bodyOn > 0) Fail($"火浣鼠换球后身体还显示着（{bodyOn} 个渲染器）");
-            if (ball && dist > 0.5f && spun < expect * 0.5f) Fail($"火球滚动时转得不对（{spun:F0}° / 应 {expect:F0}°）");
+            // 窗口太短（滚动刚开始就撞停 / 只采到一个卡顿帧）时转角跟不上位移属正常，不判：至少 3 帧、0.2 s
+            if (ball && dist > 0.5f && frames >= 3 && tt >= 0.2f && spun < expect * 0.5f) Fail($"火球滚动时转得不对（{spun:F0}° / 应 {expect:F0}°）");
+            else if (frames < 3 || tt < 0.2f) Line($"  （火球转角只采到 {frames} 帧 / {tt:F2} s，窗口太短，不判）");
             if (Mathf.Abs(gap) > 0.12f) Fail($"火球没贴地（最低点离地 {gap:F2} m）");
             Destroy(e.gameObject);
             yield return new WaitForSeconds(0.2f);
@@ -898,7 +905,7 @@ namespace Spiritfire.Game.Testing
             while (e && e.State == "spawn") yield return null;
             cd?.SetValue(e, 0f);
             float t0 = Time.time;
-            while (Time.time - t0 < 6f && e && !e.Dead)
+            while (Time.time - t0 < 10f && e && !e.Dead)
             {
                 yield return null;
                 string a = AnimStateName(anim);

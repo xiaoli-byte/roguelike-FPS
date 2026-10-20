@@ -110,6 +110,9 @@ namespace Spiritfire.Game.Testing
 
         void OnPlayerDamaged(float amount, Vector3 from) => playerDamage += amount;
 
+        // 常驻：连关会卸载旧关卡，并把加载期间生成在 Core 里的物体挪进新关卡——测试驱动器不能跟着被卸掉
+        void Awake() => DontDestroyOnLoad(gameObject);
+
         void Start() => StartCoroutine(Run());
 
         /// <summary>取套件 → 逐步推进它的协程（套件 yield 出来的等待 / 子协程原样交给 Unity）→ 跑完后收尾</summary>
