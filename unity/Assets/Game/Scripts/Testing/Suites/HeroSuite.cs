@@ -390,7 +390,8 @@ namespace Spiritfire.Game.Testing
 
         /// <summary>
         /// 磐：天生减伤 10%；厚皮（护盾恢复延迟 3 → 2 s、破盾冲击波打到身边的靶子、8 s 内置冷却内不再放）；
-        /// E 裂地重击（站在 A 前 3 m 面朝它；先把两只靶子定身 0.8 s，免得赶上它们自己的跳扑）：砸中、A 被掀起离地 ≥ 0.3 m、砸完 0.9 s 后仍在眩晕（定身早过了）；
+        /// E 裂地重击（先把两只靶子定身 0.8 s，免得赶上它们自己的跳扑；站到 A 前 3 m、离 B ≥ 1.6 m 处站稳、面朝 A）：按地面起跳（不是空中下砸）、砸中、
+        /// 靶子被掀起离地 ≥ 0.3 m（读 EnemyAI 记下的 LastLaunch*，不靠逐帧采样）、砸完 0.9 s 后仍在眩晕（定身早过了）；
         /// Q 磐石壁垒：护盾回满、减伤叠到 ×0.45、挡弹罩挡下正前方 10 m 直奔胸口的敌方弹丸、8 s 后收尾冲击波打到靶子、减伤 / 加成 / 挡弹罩全部撤掉
         /// </summary>
         IEnumerator BearCase(EnemyAI a, EnemyAI b)
@@ -408,9 +409,11 @@ namespace Spiritfire.Game.Testing
             Stand(a, 2f);
             yield return null;
             int hits0 = skillHits;
+            float hideAt = Time.time;
             BreakShield();
             yield return new WaitForSeconds(0.3f);
             int wave = skillHits - hits0;
+            Line($"厚皮冲击波击飞（只记录，不判：靶子正在自己的跳扑里时本来就不掀）：A {LaunchText(a, hideAt)}，B {LaunchText(b, hideAt)}");
             BreakShield();
             yield return new WaitForSeconds(0.3f);
             int again = skillHits - hits0 - wave;
@@ -427,23 +430,27 @@ namespace Spiritfire.Game.Testing
                 yield break;
             }
             yield return WaitGrounded(m, 2f);
-            Stand(a, 3f);
-            yield return null;
             foreach (var e in new[] { a, b })
                 if (e && e.Health) EnemyStatus.Stun(e.Health, 0.8f);
             yield return null;
-            Stand(a, 3f);
+            // 站到 A 前 3 m、离 B 至少 1.6 m 处：贴着靶子站，角色控制器会被它的胶囊顶得踩不实地
+            StandClear(a, 3f, b);
             yield return null;
+            yield return WaitGrounded(m, 1f);
+            bool steady = m.Grounded;
+            float castAt = Time.time;
             yield return Cast(SkillSlot.Secondary, a);
+            // 逐帧采样一直跟到砸完后 0.7 s：空中释放下一帧就砸完，以前「砸完才开始采样」的写法会整段漏掉
             float t0 = Time.time, rise = 0, landedAt = -1;
-            bool launched = false;
-            while (Time.time - t0 < 3f && (slam.Active || Time.time - landedAt < 0.6f))
+            bool seen = false;
+            while (Time.time - t0 < 3f)
             {
-                if (!slam.Active && landedAt < 0) landedAt = Time.time;
+                if (landedAt < 0 && !slam.Active) landedAt = Time.time;
+                if (landedAt >= 0 && Time.time - landedAt > 0.7f) break;
                 foreach (var e in new[] { a, b })
                 {
                     if (!e) continue;
-                    launched |= e.LaunchedUp;
+                    seen |= e.LaunchedUp;
                     if (e == a) rise = Mathf.Max(rise, HeightAboveGround(e.transform.position));
                 }
                 yield return null;
@@ -452,11 +459,16 @@ namespace Spiritfire.Game.Testing
             while (Time.time - landedAt < 0.9f) yield return null;
             var status = a ? a.GetComponent<EnemyStatus>() : null;
             bool stunned = status && status.Stunned;
-            Line($"裂地重击：砸中 {slam.LastHits} 个，A 离地最高 {rise:F2} m，{(launched ? "有" : "没有")}靶子被掀起，砸完 0.9 s 后 A {(stunned ? "仍在眩晕" : "没在眩晕")}");
+            bool upA = a && a.LastLaunchTime >= castAt, upB = b && b.LastLaunchTime >= castAt;
+            float peak = Mathf.Max(upA ? a.LastLaunchPeak : 0, upB ? b.LastLaunchPeak : 0);
+            Line($"裂地重击：{(steady ? "站稳后" : "没站稳就")}放出，{(slam.LastFromAir ? "按空中释放直接下砸" : "跃起后砸地")}，砸中 {slam.LastHits} 个；" +
+                 $"A {LaunchText(a, castAt)}，B {LaunchText(b, castAt)}；逐帧采样 {(seen ? "看到" : "没看到")}击飞、A 离地最高 {rise:F2} m；" +
+                 $"砸完 0.9 s 后 A {(stunned ? "仍在眩晕" : "没在眩晕")}");
             if (slam.Active) Fail("裂地重击 3 s 内没有落地砸下");
+            if (slam.LastFromAir) Fail("站在地上放的裂地重击被当成了空中释放（原地下砸，没有跃起）");
             if (slam.LastHits <= 0) Fail("裂地重击没砸到 6 m 内的靶子");
-            if (!launched) Fail("裂地重击没把靶子掀起来（EnemyAI.LaunchUp）");
-            else if (rise < 0.3f) Fail($"靶子只离地 {rise:F2} m（上抛 7 m/s 应 ≈ 0.9 m）");
+            if (!upA && !upB) Fail($"裂地重击没把靶子掀起来（EnemyAI.LaunchUp：A {a?.LastLaunchRefusal ?? "—"}，B {b?.LastLaunchRefusal ?? "—"}）");
+            else if (peak < 0.3f) Fail($"靶子只离地 {peak:F2} m（上抛 7 m/s 应 ≈ 0.9 m）");
             if (!stunned) Fail("裂地重击没有眩晕靶子（1.2 s）");
 
             // ── Q：磐石壁垒 ──
@@ -549,6 +561,38 @@ namespace Spiritfire.Game.Testing
             v.shield = 1;
             v.TakeDamage(5, v.transform.position + v.transform.forward * 3);
             v.invulnerableUntil = until;
+        }
+
+        /// <summary>某只靶子在 since 之后有没有被掀起、掀多高；没掀起时给出 LaunchUp 拒绝的原因</summary>
+        static string LaunchText(EnemyAI e, float since)
+        {
+            if (!e) return "已不在";
+            if (e.LastLaunchTime >= since) return $"被掀起（初速 {e.LastLaunchSpeed:F1} m/s，最高 {e.LastLaunchPeak:F2} m）";
+            return $"没掀起（{(e.LastLaunchRefusal != null ? "LaunchUp 拒绝：" + e.LastLaunchRefusal : "没调到 LaunchUp")}）";
+        }
+
+        /// <summary>站到 a 的 distance 米外、离 other 至少 1.6 m 的地方（从出生点那一侧起每 45° 试一个），面朝 a；都不行就按 <see cref="Stand"/></summary>
+        void StandClear(EnemyAI a, float distance, EnemyAI other)
+        {
+            if (!a) return;
+            var away = spawnPos - a.transform.position;
+            away.y = 0;
+            away = away.sqrMagnitude > 1e-4f ? away.normalized : Vector3.back;
+            for (int i = 0; i < 8; i++)
+            {
+                var dir = Quaternion.AngleAxis(45f * ((i + 1) / 2) * (i % 2 == 0 ? 1 : -1), Vector3.up) * away;
+                var spot = a.transform.position + dir * distance;
+                if (other)
+                {
+                    var d = other.transform.position - spot;
+                    d.y = 0;
+                    if (d.magnitude < 1.6f) continue;
+                }
+                Place(spot);
+                if (a.Health) Aim(rig.motor, rig.cam.transform, BodyCenter(a.Health));
+                return;
+            }
+            Stand(a, distance);
         }
 
         static float HeightAboveGround(Vector3 p) =>

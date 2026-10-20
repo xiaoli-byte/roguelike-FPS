@@ -164,6 +164,8 @@ namespace Spiritfire.Game
     /// 下落段额外 +20 m/s² 重力（砸得更有分量），期间锁冲刺（冲刺会托住下落、吞掉砸地）。
     /// 落地（地面起跳要先离地 0.12 s，防止起跳当帧误判）或 1.8 s 兜底时以脚底为圆心砸出冲击波：6 m（× 爆炸范围）内 150 点伤害（边缘 35%）、
     /// 击退 15、上抛 7（敌人被震上半空）、眩晕 1.2 s。2 次充能，每次 9 s。
+    /// 地面 / 空中按「脚下 0.35 m 内有地面、竖直速度在 −2…0.5 m/s 之间」也算站在地上：贴着敌人站时角色控制器会被敌人胶囊顶得这一帧没踩实地，
+    /// 以前会被当成空中释放——原地 −22 m/s 下砸、下一帧就砸完，没有跃起（真正从空中落下时竖直速度早就低于 −2，照旧立即下砸）。
     /// 持续型技能：跃起期间不能再放；阵亡 / 换关时撤掉修饰器、不砸。
     /// </summary>
     public sealed class BearEarthSplitter : TimedSkill
@@ -171,10 +173,15 @@ namespace Spiritfire.Game
         public const float Radius = 6, Damage = 150, Stun = 1.2f, Knockback = 15, Lift = 7, Falloff = 0.35f;
         public const float LeapForward = 8, LeapUp = 7, DownSpeed = 22, ExtraGravity = 20, MinAir = 0.12f, MaxLeap = 1.8f, AirKeep = 0.4f;
 
+        /// <summary>脚下这么近有地面且几乎没有竖直速度，就按地面起跳</summary>
+        public const float GroundSnap = 0.35f;
+
         bool fromAir;
 
         /// <summary>上一次砸地命中的敌人数（测试读取）；-1 = 还没砸过</summary>
         public int LastHits { get; private set; } = -1;
+        /// <summary>上一次是按空中释放（直接下砸）放的（测试读取）</summary>
+        public bool LastFromAir => fromAir;
 
         public BearEarthSplitter()
         {
@@ -191,7 +198,7 @@ namespace Spiritfire.Game
         {
             var m = owner.Motor;
             if (!m) return false;
-            fromAir = !m.Grounded;
+            fromAir = !OnGround(m);
             if (!fromAir)
             {
                 var f = owner.transform.forward;
@@ -214,6 +221,15 @@ namespace Spiritfire.Game
                 if (fr.velocity.y < 0) fr.gravityScale *= 1 + ExtraGravity / g;
             }));
             return true;
+        }
+
+        /// <summary>按地面起跳：踩着地面，或者脚下 <see cref="GroundSnap"/> 内就是地面、竖直速度在 −2…0.5 m/s（被敌人胶囊顶起一点、下台阶的那一帧）</summary>
+        static bool OnGround(PlayerMotor m)
+        {
+            if (m.Grounded) return true;
+            float vy = m.Velocity.y;
+            if (vy > 0.5f || vy < -2f) return false;
+            return Physics.Raycast(m.transform.position + Vector3.up * 0.1f, Vector3.down, GroundSnap + 0.1f, Layers.WorldMask, QueryTriggerInteraction.Ignore);
         }
 
         protected override void OnTick(float dt)

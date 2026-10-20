@@ -174,6 +174,7 @@ namespace Spiritfire.Game
                 sees = !Combat.Blocked(transform.position + Vector3.up * Mathf.Max(0.6f, hp.GetComponent<Collider>() ? hp.GetComponent<Collider>().bounds.extents.y : 0.8f), PlayerEye, null);
             }
             if (manual) StepManual(dt);
+            if (launched) LastLaunchPeak = Mathf.Max(LastLaunchPeak, transform.position.y - launchY);
             // 被掀上半空（LaunchUp）：落地交还导航（被别的脚本位移接管 / 被托回时直接收尾）
             if (launched && (!manual || ManualGrounded))
             {
@@ -577,6 +578,15 @@ namespace Spiritfire.Game
         /// <summary>正被 <see cref="LaunchUp"/> 掀在半空（落地前）</summary>
         public bool LaunchedUp => launched;
 
+        float launchY;
+
+        /// <summary>最近一次被 <see cref="LaunchUp"/> 掀起的时刻（Time.time；没被掀过为 −1）、竖直初速、这一趟离起飞点的最高高度——冒烟测试与调试读取，不靠逐帧采样</summary>
+        public float LastLaunchTime { get; private set; } = -1;
+        public float LastLaunchSpeed { get; private set; }
+        public float LastLaunchPeak { get; private set; }
+        /// <summary>最近一次 <see cref="LaunchUp"/> 没掀起来的原因（dead / manual / spawn / no-navmesh / agent / velocity / resist）；掀起来了为 null</summary>
+        public string LastLaunchRefusal { get; private set; }
+
         /// <summary>
         /// 击飞上抛（Three.js EnemyBase.knockback 的竖直分量；裂地重击、磐石壁垒、厚皮的冲击波用）：上抛速度 × (1 − 击退抗性)，
         /// 连同还没推完的水平击退（<see cref="Knockback"/> 先调）一起交给脚本位移，重力 26，落地交还导航。
@@ -584,14 +594,25 @@ namespace Spiritfire.Game
         /// </summary>
         public bool LaunchUp(float velocity)
         {
-            if (Dead || manual || state == "spawn" || !UsesNavMesh || !agent || !agent.enabled || !(velocity > 0)) return false;
             float vy = velocity * (1 - knockbackResist);
-            if (vy < 0.5f) return false;
+            LastLaunchRefusal = Dead ? "dead"
+                : manual ? "manual"
+                : state == "spawn" ? "spawn"
+                : !UsesNavMesh ? "no-navmesh"
+                : !agent || !agent.enabled ? "agent"
+                : !(velocity > 0) ? "velocity"
+                : vy < 0.5f ? "resist"
+                : null;
+            if (LastLaunchRefusal != null) return false;
             var v = push;
             v.y = vy;
             push = Vector3.zero;
             BeginManualMotion(v, LaunchGravity);
             launched = true;
+            launchY = transform.position.y;
+            LastLaunchTime = Time.time;
+            LastLaunchSpeed = vy;
+            LastLaunchPeak = 0;
             return true;
         }
 
