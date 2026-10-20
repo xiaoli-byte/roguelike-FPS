@@ -409,6 +409,8 @@ namespace Spiritfire.Game.Tests
             rig.Hurt(1000);
             Assert.IsTrue(p.Dead, "本关已经用过");
 
+            // 换关要花时间：秘卷时钟往前走（触发弹字 ScrollScope.Proc 有 0.1 s 节流，时钟不动时第二次弹字会被吞掉）
+            Rig.Step(1f);
             p.Revive();
             GameEvents.RaiseStageLoaded(null);
             p.shield = 0;
@@ -416,7 +418,7 @@ namespace Spiritfire.Game.Tests
             rig.Hurt(1000);
             Assert.IsFalse(p.Dead, "进新关重新可用");
             Assert.AreEqual(45, p.health, Eps);
-            Assert.AreEqual(2, rig.Procs("second_wind"));
+            Assert.AreEqual(2, rig.Procs("second_wind"), "第二关的免死同样弹字");
         }
 
         [Test]
