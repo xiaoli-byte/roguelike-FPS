@@ -175,7 +175,7 @@ const RIDE_GRIP = new THREE.Vector3(0, 1.2, 0.52);
  * ③ 上背（应龙）的时间轴（秒）：arrive 前龙兜一圈、低低地悬停到燎身旁 side 米处，座位离地 seatH；crouch → takeoff 燎下蹲蓄力，
  * 再 push 秒蹬地离地，走一道高 arc 米的弧，seat 时坐到背上；lift 起龙往前上方飞，rise 秒后交给滑翔。
  */
-const MOUNT = { arrive: 1.0, crouch: 0.6, takeoff: 0.95, push: 0.1, seat: 1.55, lift: 1.85, rise: 1.0, side: 2.3, seatH: 1.75, arc: 0.85 };
+const MOUNT = { arrive: 1.0, crouch: 0.6, takeoff: 0.95, push: 0.1, seat: 1.55, lift: 1.85, rise: 1.3, side: 2.3, seatH: 1.75, arc: 0.85 };
 /** 0..1..0 的平滑小包（a 到 b 之间） */
 const bump = (t: number, a: number, b: number): number => { const u = (t - a) / (b - a); return u <= 0 || u >= 1 ? 0 : Math.sin(u * Math.PI) ** 2; };
 const clamp01 = (k: number): number => Math.min(1, Math.max(0, k));
@@ -308,14 +308,26 @@ class Trail {
     this.mesh.renderOrder = 5;
   }
   reset(): void { this.hist.length = 0; this.col.fill(0); (this.mesh.geometry.getAttribute('color') as THREE.BufferAttribute).needsUpdate = true; }
-  push(p: THREE.Vector3, strength: number, width: number): void {
+  /**
+   * eye：镜头位置。条带的宽度方向垂直于轨迹和视线（一直侧对着镜头的细条）；
+   * 以前固定沿竖直方向，翅膀上下扇的时候一节节叠成一大片竖着的半透明面。
+   */
+  push(p: THREE.Vector3, strength: number, width: number, eye: THREE.Vector3): void {
     this.hist.unshift(p.clone());
     if (this.hist.length > this.N) this.hist.pop();
+    const along = new THREE.Vector3(), view = new THREE.Vector3(), n = new THREE.Vector3();
     for (let i = 0; i < this.N; i++) {
       const h = this.hist[Math.min(i, this.hist.length - 1)] ?? p;
+      const a = this.hist[Math.max(0, Math.min(i - 1, this.hist.length - 1))] ?? h, b = this.hist[Math.min(i + 1, this.hist.length - 1)] ?? h;
+      along.subVectors(a, b);
+      view.subVectors(eye, h);
+      n.crossVectors(along, view);
+      if (n.lengthSq() < 1e-8) n.set(0, 1, 0);
       const w = width * (1 - i / this.N);
-      this.pos.set([h.x, h.y + w, h.z, h.x, h.y - w, h.z], i * 6);
-      const k = i < this.hist.length ? strength * (1 - i / this.N) ** 1.5 : 0;
+      n.setLength(w);
+      this.pos.set([h.x + n.x, h.y + n.y, h.z + n.z, h.x - n.x, h.y - n.y, h.z - n.z], i * 6);
+      // 尾巴淡得快一些（扇翅膀时翅尖在画圈，拖得太长会绕成一个个环）
+      const k = i < this.hist.length ? strength * (1 - i / this.N) ** 2.4 : 0;
       this.col.set([this.color.r * k, this.color.g * k, this.color.b * k, this.color.r * k, this.color.g * k, this.color.b * k], i * 6);
     }
     const g = this.mesh.geometry;
@@ -388,6 +400,8 @@ export class PetFlight {
   /** 骑龙：燎的脚（模型根）在哪（由龙背上的座位推出来）、龙停在燎的哪一侧、燎的腰离脚多高、下背时从哪跳到哪 */
   private readonly riderPos = new THREE.Vector3();
   private mountSide = 1;
+  /** 应龙背上坐着燎（从落座到落地放人）：翅膀扇得低一些 */
+  private riderOn = false;
   private hipH = 0.95;
   private readonly seatFrom = new THREE.Vector3();
   private readonly landAt = new THREE.Vector3();
@@ -510,7 +524,7 @@ export class PetFlight {
     if (!this.pet || !this.loadedId || !this.hero) return false;
     this.phase = 'rise';
     this.t = 0;
-    this.heading = yaw;
+    this.heading = this.openHeading(feet, yaw);
     this.pos.copy(feet);
     this.start0.copy(feet);
     this.eye0.copy(eye);
@@ -520,11 +534,33 @@ export class PetFlight {
     this.cam.copy(eye);
     this.look.copy(this.lookFrom);
     this.catchReady = false;
+    this.riderOn = false;
     this.flare = 0;
     for (const t of this.trails) t.reset();
     this.turnHead(0);
     this.thirdPerson = true;
     return true;
+  }
+
+  /**
+   * 起飞方向：玩家朝的方向如果按滑翔的坡度（每飞 1 m 降 0.12 m）飞不出 60 m 就撞坡（对着上坡起飞），
+   * 飞不了几秒就落地——改成离它最近、前面开阔（地面往下掉、朝峡谷）的方向；本来就开阔就不改。
+   */
+  private openHeading(feet: THREE.Vector3, yaw: number): number {
+    const blocked = (h: number): number => {
+      const fx = -Math.sin(h), fz = -Math.cos(h);
+      let worst = -Infinity;
+      for (let d = 8; d <= 60; d += 4) worst = Math.max(worst, this.terrainAt(feet.x + fx * d, feet.z + fz * d) - (feet.y + 2 - d * 0.12));
+      return worst;
+    };
+    let best = yaw, bestScore = blocked(yaw);
+    if (bestScore <= 0) return yaw;
+    for (let k = 1; k <= 12; k++) for (const sg of [1, -1]) {
+      const h = yaw + sg * k * Math.PI / 12, sc = blocked(h);
+      if (sc <= 0) return h;
+      if (sc < bestScore) { bestScore = sc; best = h; }
+    }
+    return best;
   }
 
   // ─────────── 姿势 ───────────
@@ -541,9 +577,11 @@ export class PetFlight {
     // 翅膀绕身体长轴上下扇：鸟静止时身体立着，长轴 = 模型 Y（俯成水平后就是绕飞行方向扇）；
     // 龙是四足站姿，长轴 = 模型 Z，静止时翅膀往上收着，扇的时候先压到接近水平
     const dragon = S.kind === 'dragon';
-    const ax = dragon ? new THREE.Vector3(0, 0, 1) : new THREE.Vector3(0, 1, 0), bias = dragon ? -0.55 : 0.12;
+    // （背上骑着燎时扇得低一些、幅度小一点：往上最多扇到 30° 左右，不然从侧面看翅膀正好挡住背上的人）
+    const ax = dragon ? new THREE.Vector3(0, 0, 1) : new THREE.Vector3(0, 1, 0);
+    const bias = dragon ? (this.riderOn ? -0.8 : -0.55) : 0.12, a1 = dragon && this.riderOn ? amp * 0.75 : amp;
     for (const [side, sgn] of [['L', 1], ['R', -1]] as const) {
-      turn(p, `wing_1_${side}`, ax, sgn * (bias + amp * Math.sin(ph)));
+      turn(p, `wing_1_${side}`, ax, sgn * (bias + a1 * Math.sin(ph)));
       turn(p, `wing_2_${side}`, ax, sgn * amp * 0.45 * Math.sin(ph - 0.6));
       turn(p, `wing_3_${side}`, ax, sgn * amp * 0.3 * Math.sin(ph - 1.1));
     }
@@ -896,11 +934,11 @@ export class PetFlight {
   private keepCamAbove(): void { this.cam.y = Math.max(this.cam.y, this.terrainAt(this.cam.x, this.cam.z) + 0.9); }
 
   /** 燎的模型只在镜头离头超过 1.4 m 时显示（拉近到眼睛时藏起来，不会看到脑袋里面） */
-  private heroVisibility(): void {
+  private heroVisibility(minDist = 1.4): void {
     const h = this.hero;
     if (!h) return;
     const head = h.root.position.clone().add(new THREE.Vector3(0, EYE, 0));
-    h.root.visible = this.cam.distanceTo(head) > 1.4;
+    h.root.visible = this.cam.distanceTo(head) > minDist;
   }
 
   // ─────────── 特效 ───────────
@@ -1230,6 +1268,7 @@ export class PetFlight {
       // 空中把腿分开，跨坐到龙背上（龙往下一沉，燎的身子也压一下），抓住两翼之间的背鬃；龙猛扇翅膀往前上方冲，镜头从侧面绕到身后上方
       const M = MOUNT, tau = this.t, g0 = this.start0.y, Y = new THREE.Vector3(0, 1, 0);
       const scale = p.root.scale.x, face = Math.atan2(fwd.x, fwd.z);
+      this.riderOn = tau >= M.seat;
       if (!this.catchReady) {
         // 龙停哪一边：两边都量，挑空旷的一边（不是上坡、中间不隔东西）；镜头放在燎的另一边，隔着燎看龙
         let best = -1e9;
@@ -1323,11 +1362,14 @@ export class PetFlight {
       const want = this.lockedSide(subj, fwd, 6.8 - 1.0 * rise, 1.2 + 2.8 * rise, 0.8 + 4.0 * rise, new THREE.Vector3());
       const kc = ease(clamp01((tau - M.lift) / M.rise));
       if (kc > 0) want.lerp(this.shot(seat.clone().add(new THREE.Vector3(0, 1.2, 0)), fwd, 10, 1.6, 3.0, new THREE.Vector3(), true), kc);
-      dampVec(this.grabOff, want.sub(this.riderPos), this.grabOffV, 0.3, dt, 30);
+      // （起飞后弹簧快一点：镜头落后于机位太多的话，往前看时燎会掉到画面下面）
+      dampVec(this.grabOff, want.sub(this.riderPos), this.grabOffV, kc > 0 ? 0.15 : 0.3, dt, 30);
       this.cam.copy(this.riderPos).add(this.grabOff);
       this.look.lerpVectors(this.lookFrom, subj, ease(clamp01(tau / 0.75)));
-      // 看的点等镜头绕到身后了才往前移（镜头还在龙前面时就往前看，龙会跑到画面边上）
-      if (kc > 0) this.look.lerp(seat.clone().add(new THREE.Vector3(0, 1.2, 0)).addScaledVector(fwd, 6), kc * kc);
+      // 镜头往身后绕的时候一直盯着燎，绕到最后 30% 才把看的点移到前方
+      // （量过：边绕边往前看的话，燎会掉到画面下沿附近、龙尾巴整个出画）
+      const kl = clamp01((kc - 0.7) / 0.3);
+      if (kl > 0) this.look.lerp(seat.clone().add(new THREE.Vector3(0, 1.2, 0)).addScaledVector(fwd, 6), kl * kl);
       this.fov += (72 - 4 * bump(tau, M.seat - 0.3, M.seat + 0.3) - this.fov) * Math.min(1, dt * 8);
       this.keepCamAbove();
       this.heroVisibility();
@@ -1524,6 +1566,7 @@ export class PetFlight {
       this.agl = this.pos.y - g2;
       if (this.agl < 0.3) this.pos.y = g2 + 0.3;
       const flap = 0.65 + 0.4 * Math.min(1, this.speed / 20) + this.flare * 0.8, flapAmp = 0.55 + this.flare * 0.3;
+      this.riderOn = riding;
       if (riding) {
         // 应龙：龙在 pos（脚下），燎坐在背上、上身随速度更前倾
         p.root.position.copy(this.pos);
@@ -1563,6 +1606,7 @@ export class PetFlight {
       // 龙再飞起来缩回原样、回到跟随位；镜头弧线回到燎的眼睛
       const D1 = 0.8, J = 0.65, D2 = 1.9;
       const f = new THREE.Vector3(-Math.sin(this.heading), 0, -Math.cos(this.heading)), sv = new THREE.Vector3(-f.z, 0, f.x);
+      this.riderOn = this.t < D1 + 0.15;
       const g = this.ground(this.pos.x, this.pos.z, this.pos.y + 0.5);
       const gripAt = this.ridingGrip(new THREE.Vector3());
       if (this.t < D1) {
@@ -1630,7 +1674,8 @@ export class PetFlight {
       }
       this.fov += (72 - this.fov) * Math.min(1, dt * 3);
       this.wingTrails(0);
-      this.heroVisibility();
+      // 镜头往眼睛里收的时候离头 2.2 m 就藏起来（再近就是后脑勺占满画面底部）
+      this.heroVisibility(kc > 0 ? 2.2 : 1.4);
       if (tt >= D2) { this.pos.copy(this.landAt); this.finish(); }
       return this.riderPos.clone();
     }
@@ -1677,7 +1722,8 @@ export class PetFlight {
         if (k < 0.85) this.keepCamAbove();
         this.look.lerpVectors(this.lookFrom, eyeNow.clone().addScaledVector(f, 10), e);
         this.fov += (72 - this.fov) * Math.min(1, dt * 3);
-        this.heroVisibility();
+        // 镜头往眼睛里收的时候离头 2.2 m 就藏起来（再近就是后脑勺占满画面底部）
+        this.heroVisibility(2.2);
         if (k >= 1) this.finish();
       }
       this.wingTrails(0);
@@ -1708,12 +1754,13 @@ export class PetFlight {
     p.root.updateMatrixWorld(true);
     ['wing_3_L', 'wing_3_R'].forEach((n, i) => {
       const b = p.bones.get(n);
-      if (b) this.trails[i].push(b.getWorldPosition(new THREE.Vector3()), strength, 0.12 * this.scale);
+      if (b) this.trails[i].push(b.getWorldPosition(new THREE.Vector3()), strength, 0.05 * this.scale, this.cam);
     });
   }
 
   private finish(): void {
     this.phase = 'idle';
+    this.riderOn = false;
     this.thirdPerson = false;
     if (this.hero) this.hero.root.visible = false;
     this.aura.visible = false;

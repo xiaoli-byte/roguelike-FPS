@@ -188,7 +188,11 @@ function tryFlight(): void {
   if (flight.active || ride.zip >= 0 || walker.fly) return;
   if (!flight.petId) { showHint('要有会飞的灵宠（精卫、重明鸟、应龙）才能飞渡'); return; }
   if (!flight.canStart(walker.feet, walker.grounded)) { showHint('走到风马旗台（高处的风马旗杆旁）再按 F'); return; }
-  if (flight.start(walker.feet, walker.yaw, camera.position, camera.getWorldDirection(new THREE.Vector3()))) showHint(flight.petId && FLYING_PETS[flight.petId].kind === 'dragon' ? `${flight.petName}化形——跳上它的背！` : `${flight.petName}化形——抓住它的爪子！`);
+  if (flight.start(walker.feet, walker.yaw, camera.position, camera.getWorldDirection(new THREE.Vector3()))) {
+    // 对着上坡起飞时飞渡会转向开阔的方向：第一人称的朝向跟过去，滑翔时鼠标从这个方向接着转
+    walker.yaw = flight.heading;
+    showHint(flight.petId && FLYING_PETS[flight.petId].kind === 'dragon' ? `${flight.petName}化形——跳上它的背！` : `${flight.petName}化形——抓住它的爪子！`);
+  }
 }
 $<HTMLInputElement>('opt-double').onchange = e => { walker.doubleJump = (e.target as HTMLInputElement).checked; };
 
