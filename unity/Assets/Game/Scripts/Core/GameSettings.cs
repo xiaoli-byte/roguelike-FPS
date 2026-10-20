@@ -63,7 +63,8 @@ namespace Spiritfire.Game
 
     /// <summary>
     /// 玩家设置（同 Three.js src/core/settings.ts）：灵敏度、反转 Y、视野（默认 80°）、画质、震屏、伤害数字、主 / 音乐 / 音效音量。
-    /// 存 PlayerPrefs（一段 JSON，键 spiritfire.settings；SaveService 落地后搬进去），改了立刻保存并发 <see cref="Changed"/>。
+    /// 存在 <see cref="SaveService.Shared"/>（settings.json，正式档和调试档共用）的「settings」段；以前存在 PlayerPrefs 的键 spiritfire.settings，
+    /// 第一次读时导入。改了立刻发 <see cref="Changed"/>，稍后写盘（拖滑条合并成一次）。
     /// 消费方自己订阅 Changed 或在用的时候读：WeaponController（视野、震屏）、GameAudio（音量）、Hud（伤害数字）；
     /// PlayerMotor 在美术运行时程序集里认识不到这张表，灵敏度 / 反转 Y 由这里写进它的静态字段。
     /// 音量默认 1：Three.js 的 0.8 / 0.9 / 0.5 是总线比例，Unity 已经烘进 audio-manifest 的 mix 里，这里是再乘的玩家音量。
@@ -188,7 +189,7 @@ namespace Spiritfire.Game
                 catch (Exception e) { Debug.LogException(e); }
         }
 
-        // ───────────── 存档（PlayerPrefs JSON）─────────────
+        // ───────────── 存档（SaveService 共享文件 settings.json 的「settings」段）─────────────
 
         [Serializable]
         struct Entry
@@ -204,35 +205,62 @@ namespace Spiritfire.Game
             public List<Entry> entries = new();
         }
 
+        /// <summary>读进来的那个文件（测试换存档根目录后会换成新的，到时重新读）</summary>
+        static SaveFile file;
+
         static void EnsureLoaded()
         {
-            if (loaded) return;
+            if (loaded && file == SaveService.Shared) return;
             loaded = true;
-            values.Clear();
-            var json = PlayerPrefs.GetString(PrefsKey, "");
-            if (string.IsNullOrEmpty(json)) return;
-            try
-            {
-                var s = JsonUtility.FromJson<Saved>(json);
-                if (s?.entries == null) return;
-                foreach (var e in s.entries)
-                {
-                    var d = Find(e.key);
-                    if (d != null && d.read == null && !float.IsNaN(e.value)) values[d.key] = Clean(d, e.value);
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.LogWarning($"[Settings] 设置存档读不了，用默认值：{e.Message}");
-            }
+            file = SaveService.Shared;
+            file.Section<SettingsSection>();
         }
 
-        static void Save()
+        /// <summary>改了就稍后写盘（拖滑条时合并成一次）</summary>
+        static void Save() => file?.SaveSoon();
+
+        /// <summary>
+        /// 设置在存档里的一段：数据就是以前 PlayerPrefs 里那段 JSON（{version, entries:[{key, value}]}）。
+        /// 文件里还没有这一段时，从旧的 PlayerPrefs 键 <see cref="PrefsKey"/> 导入一次（PlayerPrefs 不删，装回旧版本还能用）。
+        /// </summary>
+        sealed class SettingsSection : ISaveSection
         {
-            var s = new Saved();
-            foreach (var (k, v) in values) s.entries.Add(new Entry { key = k, value = v });
-            PlayerPrefs.SetString(PrefsKey, JsonUtility.ToJson(s));
-            PlayerPrefs.Save();
+            public string Key => "settings";
+            public int Version => 1;
+
+            public string Capture()
+            {
+                var s = new Saved();
+                foreach (var (k, v) in values) s.entries.Add(new Entry { key = k, value = v });
+                return JsonUtility.ToJson(s);
+            }
+
+            public void Restore(string json, int version)
+            {
+                values.Clear();
+                bool imported = false;
+                if (json == null)
+                {
+                    json = PlayerPrefs.GetString(PrefsKey, "");
+                    imported = !string.IsNullOrEmpty(json);
+                }
+                if (string.IsNullOrEmpty(json)) return;
+                try
+                {
+                    var s = JsonUtility.FromJson<Saved>(json);
+                    if (s?.entries == null) return;
+                    foreach (var e in s.entries)
+                    {
+                        var d = Find(e.key);
+                        if (d != null && d.read == null && !float.IsNaN(e.value)) values[d.key] = Clean(d, e.value);
+                    }
+                    if (imported) file?.SaveSoon();
+                }
+                catch (Exception e)
+                {
+                    Debug.LogWarning($"[Settings] 设置存档读不了，用默认值：{e.Message}");
+                }
+            }
         }
     }
 }
