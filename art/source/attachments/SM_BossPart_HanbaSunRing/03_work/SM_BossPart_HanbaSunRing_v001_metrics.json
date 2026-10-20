@@ -1,0 +1,139 @@
+{
+  "source": {
+    "tris": 6083,
+    "verts": 3186
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 2.16904,
+    "iou": 0.162,
+    "iou_per_view": {
+      "front": 0.129,
+      "left": 0.203,
+      "back": 0.129,
+      "right": 0.204
+    },
+    "size_m": [
+      2.06,
+      0.448,
+      2.168
+    ],
+    "reference_m": [
+      6.0,
+      0.4,
+      6.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.789,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_BossPart_HanbaSunRing_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "rebaked",
+      "texture": 1024,
+      "cage_m": 0.0325,
+      "uv": {
+        "smart_islands": 454,
+        "charts": 66,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "merged",
+        "density_smart": 0.2475,
+        "density_merged": 0.2806,
+        "coverage": 0.573
+      },
+      "collapse": {
+        "samples": 23472,
+        "matched_ratio": 0.978,
+        "mean_delta": 0.0111,
+        "p90_delta": 0.0253,
+        "smeared_ratio": 0.0001,
+        "stretched_ratio": 0.0357,
+        "dist_p99_m": 0.0083
+      },
+      "final": {
+        "samples": 23472,
+        "matched_ratio": 0.978,
+        "mean_delta": 0.0069,
+        "p90_delta": 0.0188,
+        "smeared_ratio": 0.0,
+        "stretched_ratio": 0.0071,
+        "dist_p99_m": 0.0083
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_BossPart_HanbaSunRing_LOD0",
+      "tris": 5969,
+      "verts": 3129,
+      "uv_min": [
+        0.001220703125,
+        0.001220703125
+      ],
+      "uv_max": [
+        0.998779296875,
+        0.99658203125
+      ],
+      "uv_utilization": 0.595,
+      "bbox_min": [
+        -1.0299,
+        -0.224,
+        -3.0
+      ],
+      "bbox_max": [
+        1.03,
+        0.224,
+        -0.832
+      ]
+    },
+    {
+      "name": "SM_BossPart_HanbaSunRing_LOD1",
+      "tris": 1988,
+      "verts": 1099,
+      "uv_min": [
+        0.002911654766649008,
+        0.0029115229845046997
+      ],
+      "uv_max": [
+        0.9934360980987549,
+        0.9970884919166565
+      ],
+      "uv_utilization": 0.513,
+      "bbox_min": [
+        -1.0284,
+        -0.226,
+        -3.0015
+      ],
+      "bbox_max": [
+        1.0316,
+        0.2246,
+        -0.8587
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/attachments/SM_BossPart_HanbaSunRing/04_export/SM_BossPart_HanbaSunRing_v001.glb",
+    "bytes": 880880
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 36.1,
+  "_seconds": 37.6
+}

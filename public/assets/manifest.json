@@ -10678,6 +10678,94 @@
       "source_task": "https://studio.tripo3d.ai/zh/workspace/generate/922be511-a71d-4292-9da6-127928c557bb",
       "hiUrl": "assets/characters/SK_Boss_Huashe@hi.glb",
       "hiBytes": 4467820
+    },
+    "SK_Boss_Hanba": {
+      "url": "assets/characters/SK_Boss_Hanba.glb",
+      "kind": "skeletal",
+      "class": "boss",
+      "bind": {
+        "source": "enemy",
+        "id": "boss_hanba"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        25,
+        60
+      ],
+      "skeleton": {
+        "mode": "native",
+        "convention": "creature",
+        "joints": 84
+      },
+      "bounds": {
+        "min": [
+          -1.342247724533081,
+          0,
+          -0.9200050234794617
+        ],
+        "max": [
+          1.3423478603363037,
+          4.5,
+          0.9200050234794617
+        ]
+      },
+      "version": {
+        "native_build": 2
+      },
+      "sha256": "f7eac102010e17c7690b1a08aafc5844480dda863f11ec3d90afc719364617c1",
+      "bytes": 2052252,
+      "published": "2026-10-20 21:43:21",
+      "generator": {
+        "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+        "mode": "tripo_native",
+        "checkpoint": "P2.0"
+      },
+      "source_task": "https://studio.tripo3d.ai/zh/workspace/generate/b2da5c15-e1e2-46f9-937b-72fdaf1de851",
+      "hiUrl": "assets/characters/SK_Boss_Hanba@hi.glb",
+      "hiBytes": 4346056
+    },
+    "SM_BossPart_HanbaSunRing": {
+      "url": "assets/attachments/SM_BossPart_HanbaSunRing.glb",
+      "kind": "static",
+      "class": "boss_attachment",
+      "bind": {
+        "source": "enemy",
+        "id": "boss_hanba",
+        "attachment": "sunring"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        25
+      ],
+      "bounds": {
+        "min": [
+          -2.8502259254455566,
+          -3,
+          -0.6199317574501038
+        ],
+        "max": [
+          2.850513219833374,
+          3,
+          0.6199317574501038
+        ]
+      },
+      "version": {
+        "blockout": 2,
+        "concept": 2,
+        "highpoly": 2,
+        "build": 2
+      },
+      "sha256": "fac9df6544379951e4d7f0ff5bc35ce80f8adb10a444d4590b876d5aeeb33755",
+      "bytes": 882700,
+      "published": "2026-10-20 21:20:51",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
     }
   },
   "updated": "2026-10-19 21:58:45"

@@ -315,6 +315,48 @@ def repack_uv_and_transfer() -> None:
 
 # ───────────────────────────── 2. Bones: keep / merge / add ─────────────────────────────
 
+def color_bias_factors(cb: dict, names: list, col: dict) -> np.ndarray:
+    """Per-vertex, per-bone score factor for "color_bias" (segments weights only).
+
+    Each vertex is classed by the provider base colour: "dark" (hair / skin: saturation below `sat_split`) or "cloth"
+    (saturated robe), as the share of dark vertices among its `k` nearest neighbours, so thin painted lines (gold cracks
+    on the skin) keep their surface's class. Bones listed with a class get factor `ramp`-mapped from that share, never
+    below `floor` (soft: connected skin / cloth / hair still blend at their border); other bones keep 1.
+    """
+    from mathutils.kdtree import KDTree
+    me = mesh.data
+    bsdf = next(n for n in me.materials[0].node_tree.nodes if n.type == "BSDF_PRINCIPLED")
+    img = bsdf.inputs["Base Color"].links[0].from_node.image
+    w, h = img.size
+    px = np.empty(w * h * 4, np.float32)
+    img.pixels.foreach_get(px)
+    px = px.reshape(h, w, 4)
+    uv = np.empty(len(me.loops) * 2, np.float32)
+    me.uv_layers.active.data.foreach_get("uv", uv)
+    vi = np.empty(len(me.loops), np.int64)
+    me.loops.foreach_get("vertex_index", vi)
+    vuv = np.zeros((len(me.vertices), 2), np.float32)
+    vuv[vi] = uv.reshape(-1, 2)
+    c = px[np.clip((vuv[:, 1] % 1) * h, 0, h - 1).astype(int), np.clip((vuv[:, 0] % 1) * w, 0, w - 1).astype(int), :3]
+    sat = (c.max(1) - c.min(1)) / np.maximum(c.max(1), 1e-6)
+    dark = sat < cb.get("sat_split", 0.42)
+    tree = KDTree(len(V))
+    for i, p in enumerate(V):
+        tree.insert(p, i)
+    tree.balance()
+    k = cb.get("k", 24)
+    share = np.array([dark[[j for _, j, _ in tree.find_n(p, k)]].mean() for p in V])
+    lo, hi = cb.get("ramp", [0.2, 0.8])
+    floor = cb.get("floor", 0.05)
+    by_class = {"dark": np.clip((share - lo) / (hi - lo), floor, 1), "cloth": np.clip((hi - share) / (hi - lo), floor, 1)}
+    fac = np.ones((len(V), len(names)))
+    for grp in cb["bones"]:
+        for n in grp["bones"]:
+            fac[:, col[n]] = by_class[grp["class"]]
+    RESULT["color_bias"] = {"dark_share_mean": round(float(share.mean()), 3), "image": img.name, "size": [w, h]}
+    return fac
+
+
 def build_custom_skeleton() -> None:
     """Skeleton from the rig JSON ("bones": name → head / tail in the scaled, grounded frame, metres; Blender axes:
     front = -Y, the creature's left = +X, up = +Z), weights by Blender's bone heat diffusion, then rigid overrides
@@ -375,12 +417,21 @@ def build_custom_skeleton() -> None:
             u = np.clip(((V - a) @ ab) / max(float(ab @ ab), 1e-9), 0, 1)
             D[:, col[n]] = np.linalg.norm(V - (a + u[:, None] * ab), axis=1)
         D[~allowed] = np.inf
-        order = np.argsort(D, axis=1)[:, :3]
         W = np.zeros_like(W)
         rows = np.arange(len(V))[:, None]
-        d = D[rows, order]
-        w = np.where(np.isfinite(d), 1.0 / np.maximum(d, 1e-3) ** 4, 0.0)
-        W[rows, order] = w
+        if RIG.get("color_bias"):
+            # Tripo fuses cloth, hair and skin into one connected surface (旱魃: the robe touches the legs, the hair
+            # lies on the back), so distance alone hands robe to the thighs and hair to the skirt. The provider
+            # texture tells them apart: bones prefer their own texture class, softly (connected parts still blend).
+            S = np.where(np.isfinite(D), color_bias_factors(RIG["color_bias"], names, col) / np.maximum(D, 1e-3) ** 4, 0.0)
+            order = np.argsort(-S, axis=1)[:, :3]
+            W[rows, order] = S[rows, order]
+            reg["color_bias"] = True
+        else:
+            order = np.argsort(D, axis=1)[:, :3]
+            d = D[rows, order]
+            w = np.where(np.isfinite(d), 1.0 / np.maximum(d, 1e-3) ** 4, 0.0)
+            W[rows, order] = w
         # 1/d^4 runs into the hundreds of thousands: normalise each vertex now, or the soft parts of the rigid / ground
         # overrides below (sphere blend, fade_z) are drowned and only their w = 1 cores take effect
         W /= np.maximum(W.sum(1, keepdims=True), 1e-9)

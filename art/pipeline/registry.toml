@@ -485,6 +485,51 @@ a rounded dark wooden back, four strings, a bent-back head with four chunky gold
 ornament with a flame crest on the head, a gold medallion and red tassel hanging below.
 """
 
+# ───────────── 第一章首领 · 旱魃（ART1，docs/unity-parity.md 第 5 节）─────────────
+# registry.d 拆分（W0-9）时整节搬到 registry.d/boss_hanba.toml。设计见 docs/level-design/unity-maps-v1.md 第 3 节，
+# 建模 / 绑骨记录见 docs/art/boss-hanba.md。
+[assets.SK_Boss_Hanba]
+# 旱魃（1-4 干涸月牙泉首领）。设计稿 / 四视图 art/source/characters/_design/desert/desert_hanba/（四视图是特效分离的底态）
+# 原生骨架：python art/pipeline/build_tripo_creature.py SK_Boss_Hanba（creature_rigs/SK_Boss_Hanba.json），不走 assetctl build 的部件骨架。
+# 语义人形命名（Unity 建 Humanoid）+ 长发链 + 残衣链；泉珠 pearl 骨 + 发光壳（日蚀时由代码点亮），
+# 挂点 socket_core（泉珠中心，弱点）、socket_sunring（背后日轮中心，挂 SM_BossPart_HanbaSunRing）
+source_provider = "tripo"
+matid_hint = "Skin, hair, robes and the water pearl are NON-METAL (blue). Only the gold diadem and the gold sun clasp are METAL (red)."
+display = "旱魃"
+kind = "skeletal"
+class = "boss"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "boss_hanba" }
+material = { roughness = 0.8, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+Ba (旱魃), the drought goddess: a towering gaunt goddess about 4.5 m tall floating above the ground, very long thin
+limbs, huge hands, dark charcoal-brown skin split by bold cracks, white-gold eyes, a scorched-gold sun-ray diadem, long
+charcoal-black hair down her back, tattered scorched-yellow robes with charred ragged edges that drag on the ground,
+and a round aqua-blue water pearl set in her chest (the weak spot). Her sun wheel is a separate model.
+"""
+
+[assets.SM_BossPart_HanbaSunRing]
+# 旱魃背后的白金日轮（单独建模，直径 6 米，原点 = 轮心，轮面朝前），挂在 SK_Boss_Hanba 的 socket_sunring 上；
+# 四视图 _design/desert/desert_hanba_sunring/（平涂底态，不发光；发光、聚焦光束、日蚀熄灭都是运行时着色器 / 特效）
+source_provider = "tripo"
+display = "旱魃·日轮"
+kind = "static"
+class = "boss_attachment"
+presentation = false
+blockout = { source = "enemy", id = "boss_hanba", attachment = "sunring" }
+reference_mode = "bounds_only"
+reference_dimensions = [6.0, 6.0, 1.3]  # 厚度按 Tripo 网格实测（轮毂两面凸起，厚 ≈ 直径 × 0.21）；0.4 会让对齐按厚度把轮子压成 2 米
+reference_origin = "center"
+material = { roughness = 0.55, metallic = 0.0 }
+keep_glow = "none"
+matid_hint = "The whole sun wheel is painted white-gold stone-like material: NON-METAL (blue)."
+brief = """
+Ba's colossal white-gold sun wheel standing on its edge: a thick outer ring with chunky triangular flame rays around
+the rim, eight spokes and a domed central hub, a simple Dunhuang flame-and-cloud relief, matte flat paint.
+"""
+
 [assets.SK_Enemy_ScorpionArcher]
 # 第一章 · 赤沙古道新阵容（docs/art/enemy-roster-v2.md）。设计稿 / 四视图在 art/source/characters/_design/desert/desert_scorpion/
 source_provider = "tripo"

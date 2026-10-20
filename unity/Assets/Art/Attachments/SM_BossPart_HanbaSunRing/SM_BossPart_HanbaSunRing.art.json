@@ -1,0 +1,141 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_BossPart_HanbaSunRing",
+  "kind": "static",
+  "class": "boss_attachment",
+  "category": "attachments",
+  "bind": {
+    "source": "enemy",
+    "id": "boss_hanba",
+    "attachment": "sunring"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    25
+  ],
+  "budget": {
+    "lodTris": [
+      6000,
+      2000
+    ],
+    "texture": 2048,
+    "maxFileKb": 1500
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -2.850513219833374,
+      -3,
+      -0.6199317574501038
+    ],
+    "max": [
+      2.8502259254455566,
+      3,
+      0.6199317574501038
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_BossPart_HanbaSunRing_LOD0",
+      "lod": 0,
+      "tris": 5969,
+      "verts": 8000,
+      "materials": [
+        "M_BossPart_HanbaSunRing"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_BossPart_HanbaSunRing_LOD1",
+      "lod": 1,
+      "tris": 1988,
+      "verts": 1510,
+      "materials": [
+        "M_BossPart_HanbaSunRing_LOD1"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_BossPart_HanbaSunRing",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_BossPart_HanbaSunRing_BC.png",
+        "N": "Textures/T_BossPart_HanbaSunRing_N.png",
+        "ORM": "Textures/T_BossPart_HanbaSunRing_ORM.png"
+      }
+    },
+    {
+      "name": "M_BossPart_HanbaSunRing_LOD1",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_BossPart_HanbaSunRing_LOD1_BC.png",
+        "N": "Textures/T_BossPart_HanbaSunRing_LOD1_N.png",
+        "ORM": "Textures/T_BossPart_HanbaSunRing_LOD1_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/attachments/SM_BossPart_HanbaSunRing.glb",
+    "sha256": "fac9df6544379951e4d7f0ff5bc35ce80f8adb10a444d4590b876d5aeeb33755",
+    "hiRes": false,
+    "version": {
+      "blockout": 2,
+      "concept": 2,
+      "highpoly": 2,
+      "build": 2
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-20 21:38:11"
+}

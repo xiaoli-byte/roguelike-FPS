@@ -100,7 +100,41 @@
       "height_m": 5.0,
       "brief": "Chapter boss Ba the drought goddess (旱魃), who 'wears green clothes' in the Shan Hai Jing: a towering, gaunt, unsettlingly graceful goddess with very long limbs, ash-grey sun-cracked skin, long white hair floating upward in the heat, a calm terrifying face with eyes of blazing white-gold sun fire. Tattered layered robes of faded jade-green and teal (青衣) with old gold Dunhuang borders, cracked jade ornaments, a huge burning sun ring (日轮) floating behind her back, a glowing sun core in her chest (weak spot). Bare feet with five toes standing on cracked dry earth that splits around her. Long hands with a clearly separate thumb and four long fingers.",
       "weapon": "no weapon; one hand raised calling down the sun",
-      "style_note": "Stylization: a cartoon game boss in the same stylized language as the jerboa soldier and fire rat — oversized head with a simple mask-like face and big glowing eyes, very long chunky simplified limbs, huge hands, hair as a few big solid sculpted flame-like locks floating upward, robes as thick simple layered shapes fully covering the torso (high collar, wrapped chest), cracks as a few bold painted lines. Eerie and iconic, not a realistic emaciated body."
+      "style_note": "Stylization: a cartoon game boss in the same stylized language as the jerboa soldier and fire rat — oversized head with a simple mask-like face and big glowing eyes, very long chunky simplified limbs, huge hands, hair as a few big solid sculpted flame-like locks floating upward, robes as thick simple layered shapes fully covering the torso (high collar, wrapped chest), cracks as a few bold painted lines. Eerie and iconic, not a realistic emaciated body.",
+      "status": "superseded",
+      "status_note": "2026-10-20 按 docs/level-design/unity-maps-v1.md 第 3 节重新设计为 desert_hanba（悬浮、焦黄残衣、炭黑龟裂皮肤、白金日轮、泉珠）；这一条的青衣版不再使用"
+    },
+    {
+      "key": "desert_hanba",
+      "chapter": "desert",
+      "name": "旱魃",
+      "layout": "humanoid",
+      "height_m": 4.5,
+      "role": "第一章首领（1-4 干涸月牙泉）；Unity 资产 SK_Boss_Hanba，日轮另建 SM_BossPart_HanbaSunRing",
+      "brief": "Chapter 1 boss Ba (旱魃), the drought goddess of the Shan Hai Jing and daughter of the Yellow Emperor: wherever she passes the land dries up for a thousand li. A towering, gaunt, eerily graceful goddess about 4.5 m tall who never touches the ground: she floats a little above it. Very long thin limbs, a slender wrapped torso, huge elegant hands with a clearly separate thumb and four long fingers. Her skin is like sun-baked cracked earth: dark charcoal-brown, split by a network of a few bold cracks that shine white-gold sunlight from inside. A calm, terrible mask-like face with high cheekbones, closed thin lips and eyes of blazing white-gold sun fire; a scorched-gold diadem of short sun rays on her brow; long heavy charcoal-black hair with ash-grey streaks falling straight down her back to her knees in a few big sculpted locks. She wears tattered robes of scorched yellow and burnt ochre cloth (焦黄残衣) with blackened, charred, ragged edges: a high-collared wrapped top with a round gold sun clasp, wide ragged shoulder drapes, and a long skirt-robe split open at the front showing her thin legs and bare feet, its sides and back hanging in long ragged strips that drag on the ground below her floating feet. In the middle of her chest the wrapped robe and the cracked skin open around a round pearl of water as big as her hand: the last drop of the dried Crescent Spring (泉珠, her weak spot), cool clear aqua-blue, the only cool colour on her. Behind her back floats a colossal white-gold sun wheel 6 m across (日轮): a thick ring with chunky triangular flame rays around its rim, eight spokes and a round central hub. Palette: scorched yellow, charcoal black and white-gold sunlight; only the skin cracks, the eyes and the sun wheel glow.",
+      "weapon": "no weapon: one long arm raised high calling down the sun, the other huge hand open toward the viewer, the sun wheel blazing behind her",
+      "style_note": "Stylization: a cartoon game boss in the same stylized language as the attached approved models: smooth sculpted forms with clean bevelled edges, a simple mask-like face with big glowing eyes, very long chunky simplified limbs, huge hands, hair as a few big solid sculpted locks, cloth as thick simple layered shapes with big ragged notches (no thin threads or loose strings), cracks as a few bold painted lines. Eerie, elegant and iconic, not a realistic emaciated body; the torso fully covered by the wrapped robe.",
+      "style_ref_images": [
+        "art/source/characters/_design/pets/_style_anchor/STYLE_ANCHOR_desert_v001.png"
+      ],
+      "turnaround_lead": "SYMMETRIC floating bind pose for rigging (her sun wheel is a separate model that floats behind her and is NOT drawn):",
+      "turnaround_pose": " floating upright, BOTH ARMS IN EXACTLY THE SAME MIRRORED POSE in every view: arms held out to the sides in a relaxed A-pose about 40 degrees away from the body with a clear gap of air between the arms and the robe, elbows slightly bent, both huge hands EMPTY and open with the palms facing forward and the fingers slightly spread; legs hanging straight down and slightly apart, bare feet with the toes pointing gently downward; the skirt-robe hanging straight down under gravity, open at the front, its ragged strips hanging straight down at the sides and back to below the feet; the long hair hanging straight down her back in a few big locks, not floating; head facing straight ahead with the mouth closed. MODELLING BASE STATE WITH EFFECTS SEPARATED: nothing glows and nothing emits light, no bloom, no halo, no light spill, no light rays, no heat haze, no sparks, no fire, no dust: the skin cracks are thin flat pale yellow painted lines, the eyes are flat pale gold paint, the chest pearl is a MATTE, flat, opaque aqua-blue sphere, no sun wheel",
+      "turnaround_digits": "both hands with a separate thumb and four long fingers clearly visible and countable, five toes on each foot; every ragged robe strip and the whole hair fully inside the frame.",
+      "note": "2026-10-20 ART1：按 unity-maps-v1 第 3 节重设计（旧条目 desert_boss_hanba 是青衣版，已作废）"
+    },
+    {
+      "key": "desert_hanba_sunring",
+      "chapter": "desert",
+      "name": "旱魃·日轮",
+      "layout": "prop",
+      "reference_key": "desert_hanba",
+      "height_m": 6.0,
+      "role": "部件；Unity 资产 SM_BossPart_HanbaSunRing，挂 socket_sunring",
+      "brief": "Ba's colossal sun wheel, modelled separately: it floats behind her back and swings in front of her as a shield.",
+      "turnaround_lead": "the drought goddess's colossal white-gold sun wheel (日轮) on its own",
+      "turnaround_pose": ", standing upright on its edge with its front face toward the viewer: a big flat round wheel, a thick outer ring band carved with a simple Dunhuang flame-and-cloud relief, 24 chunky triangular flame-ray points around the outer rim, eight straight spokes to a round domed central hub, open gaps between the spokes; white-gold and pale gold with warm amber shading in the recesses, the same colours and stylization as the sun wheel on the design sheet, chunky simplified game-art forms with clean bevelled edges; the back face is the same wheel with a plainer relief. MODELLING BASE STATE WITH EFFECTS SEPARATED: nothing glows and nothing emits light, no bloom, no halo, no light spill, no light rays, no heat haze, no sparks, no fire, no dust: matte flat opaque paint only",
+      "turnaround_digits": "The wheel is a PERFECT CIRCLE in the front and back views: exactly as wide as it is tall, never an ellipse, never squeezed; draw it small enough to fit inside its quarter as a true circle with margin on both sides (leave the extra height above and below empty), and draw the side views at exactly the same height as that circle. The whole wheel, every ray point and the hub fully inside the frame; in the side views the thin edge profile (about one fifteenth of the diameter) with the domed hub sticking out on both faces must be clearly readable.",
+      "note": "2026-10-20 ART1；v001 正 / 背视图被画成竖椭圆（宽 / 高 ≈ 0.68），v002 要求正圆"
     },
     {
       "key": "desert_tomb_beast",
