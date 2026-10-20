@@ -330,5 +330,137 @@ namespace Spiritfire.Game.Tests
             Run(s, ref now, 1f);
             Assert.IsTrue(s.AllHome());
         }
+
+        // ───────────── 数值与规则（WC6） ─────────────
+
+        static WeaponDef Blade()
+        {
+            var d = WeaponLibrary.Get(DemonBladeDef.WeaponId);
+            Assert.IsNotNull(d, "武器表里没有 demon_blade");
+            return d;
+        }
+
+        [Test]
+        public void DemonBladeNumbersStayInsideTheDesignBaseline()
+        {
+            var d = Blade();
+            Assert.AreEqual(WeaponKind.Blade, d.kind);
+            Assert.IsTrue(d.IsBlade, "有 v2 玩法参数");
+            Assert.AreEqual("碎刃", d.name);
+            Assert.AreEqual(BladeModel.PrefabId, d.prefab);
+            Assert.AreEqual(0.6f, d.dropWeight, 1e-6f, "D7：掉落权重 0.6");
+            var b = d.blade;
+            float slashDps = DemonBladeDef.SlashDps(d);
+            Assert.IsTrue(slashDps >= 95 && slashDps <= 112, $"斩击秒伤 {slashDps}");
+            float swarmDps = DemonBladeDef.SwarmDps(d);
+            Assert.IsTrue(swarmDps >= 55 && swarmDps <= 70, $"刃群秒伤 {swarmDps}");
+            Assert.AreEqual(swarmDps, d.damage * d.fireRate, 1e-4f, "根字段描述刃群的一次结算");
+            Assert.AreEqual(2.2f, b.combo[2].stretch, "第三段伸刃");
+            Assert.Greater(b.combo[2].range, b.combo[0].range * 1.6f, "伸刃斩得更远");
+            Assert.AreEqual(0, d.reserve);
+            Assert.AreEqual(5f, b.qi.max / b.swarm.drain, 1e-6f, "满刃气出窍 5 秒");
+            Assert.IsTrue(b.burst.cooldown >= 12 && b.burst.radius >= 5);
+            Assert.AreEqual(8f, b.union.duration);
+            Assert.AreEqual(1.1f, d.ComboCycleTime, 1e-5f, "一轮 1.1 秒");
+            // 解析后的秒伤（普通品质、无加成）：斩 ≈ 109，刃群 60
+            var r = WeaponStatsResolver.Resolve(new WeaponInstance(d), null);
+            Assert.AreEqual(120f / 1.1f, r.meleeDps, 1e-3f);
+            Assert.AreEqual(60f, r.dps, 1e-3f);
+            Assert.AreEqual(1, r.magCap, "碎刃弹匣不吃加成");
+        }
+
+        [Test]
+        public void GunOnlyAffixesAndLegendariesNeverRollOnTheDemonBlade()
+        {
+            var d = Blade();
+            var banned = new HashSet<string>
+            {
+                AffixIds.Mag, AffixIds.Reload, AffixIds.Spread, AffixIds.Recoil, AffixIds.Pierce, "headBlast", "killRefill", AffixIds.Reserve, AffixIds.ProjSpeed,
+                "lg_last", "lg_endless",
+            };
+            var rng = new System.Random(4242);
+            for (int i = 0; i < 400; i++)
+                foreach (var el in new[] { Element.None, Element.Fire, Element.Shock, Element.Corrode })
+                    foreach (var a in AffixRoll.Roll(d, Rarity.Legendary, el, rng))
+                        Assert.IsFalse(banned.Contains(a.id), $"抽到了 {a.id}");
+        }
+
+        [Test]
+        public void SwarmDamageBypassesEnemyShields()
+        {
+            var host = new GameObject("DemonBladeTests Target") { hideFlags = HideFlags.HideAndDontSave };
+            try
+            {
+                var d = host.AddComponent<Damageable>();
+                void Reset()
+                {
+                    d.maxHealth = 100;
+                    d.ResetVitals();
+                    d.health = 100;
+                    d.shield = 50;
+                    d.armor = 0;
+                }
+                Reset();
+                d.ApplyLayers(new DamageInfo { amount = 30, source = DamageSource.Weapon }, 30, false);
+                Assert.AreEqual(20f, d.shield, 1e-4f);
+                Assert.AreEqual(100f, d.health, 1e-4f);
+                Reset();
+                var r = d.ApplyLayers(new DamageInfo { amount = 30, source = DamageSource.Weapon, bypassShield = true }, 30, false);
+                Assert.AreEqual(50f, d.shield, 1e-4f, "护盾不动");
+                Assert.AreEqual(70f, d.health, 1e-4f);
+                Assert.AreEqual(DamageLayer.Health, r.firstLayer);
+            }
+            finally
+            {
+                Object.DestroyImmediate(host);
+            }
+        }
+
+        [Test]
+        public void SlashesCountAsMeleeWeaponHits()
+        {
+            // 斩击：来源武器 + 近战标签——吃「武器伤害」、算武器直接命中（词条 / 秘卷 / 吸血），词条按斩击做 meleeHitScale 归一
+            var slash = new DamageInfo { amount = 30, source = DamageSource.Weapon, tags = DamageTag.Melee, weaponUid = 7 };
+            Assert.IsTrue(AffixEffects.IsWeaponHit(in slash));
+            Assert.IsTrue(AffixEffects.IsSlash(in slash));
+            var tags = DamageCalc.EffectiveTags(in slash);
+            Assert.IsTrue((tags & DamageTag.Weapon) != 0 && (tags & DamageTag.Melee) != 0);
+            // 刃群：武器直接命中，但不是斩击
+            var swarm = new DamageInfo { amount = 6, source = DamageSource.Weapon, bypassShield = true, weaponUid = 7 };
+            Assert.IsTrue(AffixEffects.IsWeaponHit(in swarm));
+            Assert.IsFalse(AffixEffects.IsSlash(in swarm));
+        }
+
+        [Test]
+        public void SectorHitsTheFrontArcByBodySurface()
+        {
+            var feet = Vector3.zero;
+            var fwd = Vector3.forward;
+            const float range = 3.2f, half = 0.9599f;
+            bool In(Vector3 p, float r = 0.4f, float h = 1.8f) => DemonBladeDef.InSector(feet, fwd, 1.8f, range, half, 0.3f, 0.6f, p, r, h);
+            Assert.IsTrue(In(new Vector3(0, 0, 3)), "正前方 3 米");
+            Assert.IsTrue(In(new Vector3(0, 0, 3.5f)), "按胶囊表面算距离（3.5 − 0.4 ≤ 3.2）");
+            Assert.IsFalse(In(new Vector3(0, 0, 3.7f)), "表面超出 3.2 米");
+            Assert.IsTrue(In(new Vector3(2, 0, 1.6f)), "55° 扇形内");
+            Assert.IsFalse(In(new Vector3(2.5f, 0, 0.3f)), "侧面超出扇形");
+            Assert.IsFalse(In(new Vector3(0, 0, -2)), "身后");
+            Assert.IsTrue(In(new Vector3(0.5f, 0, -0.1f)), "贴身时只排除正后方");
+            Assert.IsFalse(In(new Vector3(0, 0, -0.6f)), "贴身但在正后方");
+            Assert.IsFalse(In(new Vector3(0, 3, 2)), "头顶以上 0.6 米之外");
+            Assert.IsFalse(In(new Vector3(0, -2.5f, 2)), "脚下 0.3 米之外");
+            Assert.IsTrue(In(new Vector3(0, -1, 2)), "矮一截但身体跨进高度带");
+        }
+
+        [Test]
+        public void BurstCooldownScalesWithSkillHaste()
+        {
+            var b = Blade().blade;
+            Assert.AreEqual(15f, DemonBladeDef.CooldownTotal(b, 0), 1e-5f);
+            Assert.AreEqual(10f, DemonBladeDef.CooldownTotal(b, 0.5f), 1e-5f);
+            Assert.AreEqual(75f, DemonBladeDef.CooldownTotal(b, -0.9f), 1e-4f, "急速为负时按 0.2 封底");
+            Assert.AreEqual("杀气爆发", DemonBladeDef.SkillName(false));
+            Assert.AreEqual("人刀合一", DemonBladeDef.SkillName(true));
+            Assert.AreEqual("blade", DemonBladeDef.ModeId(BladeMode.Hand), "在手里时准星是近战括号");
+        }
     }
 }

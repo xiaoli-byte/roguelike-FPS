@@ -60,7 +60,9 @@ namespace Spiritfire.Game
         public float HomeWorld(int i, out Vector3 pos, out Quaternion rot)
         {
             var f = frame ? frame : transform;
-            pos = f.TransformPoint(HomeLocal(i));
+            // 骨骼位置含伸刃；骨骼本身没有旋转，朝向就是刀身的
+            var b = bones != null && i >= 0 && i < bones.Length ? bones[i] : null;
+            pos = b ? b.position : f.TransformPoint(HomeLocal(i));
             rot = f.rotation;
             return f.lossyScale.x;
         }
