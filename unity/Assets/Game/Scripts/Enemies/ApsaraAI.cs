@@ -6,24 +6,36 @@ namespace Spiritfire.Game
     /// <summary>
     /// 邪飞天（Three.js 版 src/enemies/types/Apsara.ts + SupportBuffs.ts）：悬浮的辅助，自己不打人。
     ///   站位：同伴的重心后方 4 m，离玩家 14–20 m（没有同伴时就保持这个距离）；悬浮 0.9 m
-    ///   光环：16 m 内的同伴 伤害 / 攻速 ×1.35、移速 ×1.2、承伤 ×0.75（在 EnemyAI.RefreshBuffs 里结算）
+    ///   光环：16 m 内的其他敌人（含别的邪飞天）伤害 / 攻速 ×1.35、移速 ×1.2、承伤 ×0.75，多只不叠加：
+    ///         每 0.25 s 登记 / 续期到对方的 <see cref="EnemyBuffs"/>（通道 <see cref="EnemyBuffs.ApsaraAura"/>），离开范围即撤；她死亡 / 被沉默时立刻失效
     ///   和弦（7–9 s，前摇 1.1 s）：光环内同伴获得 50% 最大生命的护盾，8 s
     ///   花开（9–11 s，前摇 1.5 s）：同伴回复 25% 生命（有人掉血才放）
-    ///   赐福（14–18 s，前摇 1.3 s）：生命最高的同伴 伤害 ×1.6、承伤 ×0.5，10 s
+    ///   赐福（14–18 s，前摇 1.3 s）：生命最高的同伴 伤害 ×1.6、攻速 ×1.5、移速 ×1.15、承伤 ×0.5，10 s（通道 <see cref="EnemyBuffs.ApsaraBless"/>，与光环相乘）
     ///   琵琶：打琵琶（弱点）累计到她最大生命的 30% → 琴碎、沉默 20 s（光环与施法全停）——玩家的优先目标
     ///   提示：琵琶到光环内同伴的金丝、同伴脚下的光圈、被赐福者的金莲与头顶光环由 <see cref="SupportFx"/> 画
     /// </summary>
-    public sealed class ApsaraAI : EnemyAI
+    public sealed class ApsaraAI : EnemyAI, IBuffSource
     {
         public static readonly List<ApsaraAI> Active = new();
         public const float AuraRange = 16f;
         const float Hover = 0.9f, PipaBreak = 0.3f, PipaReform = 20f;
+        /// <summary>光环每隔多久登记一次、每次续多久（续期比间隔长，中途不会断档）</summary>
+        const float AuraTick = 0.25f, AuraHold = 0.6f, BlessTime = 10f;
 
-        float chordCd, bloomCd, blessCd, castTime, pipaDamage, silencedUntil = -1, strafeTimer, strafeSign = 1;
+        /// <summary>光环：伤害 / 攻速 ×1.35、移速 ×1.2、承伤 ×0.75</summary>
+        public static readonly BuffMods AuraMods = new(1.35f, 1.35f, 1.2f, 0.75f);
+        /// <summary>赐福：伤害 ×1.6、攻速 ×1.5、移速 ×1.15、承伤 ×0.5</summary>
+        public static readonly BuffMods BlessMods = new(1.6f, 1.5f, 1.15f, 0.5f);
+
+        float chordCd, bloomCd, blessCd, castTime, pipaDamage, silencedUntil = -1, strafeTimer, strafeSign = 1, auraTimer;
         string casting;
         Transform pipa;
+        List<EnemyAI> auraNow = new(), auraPrev = new();
+        readonly List<EnemyAI> scratch = new();
 
         public bool Silenced => Time.time < silencedUntil;
+        /// <summary>还能给加成：活着、没被沉默（<see cref="IBuffSource"/>）</summary>
+        public bool BuffActive => this && !Dead && !Silenced;
         /// <summary>光环内的同伴（0.3 s 缓存）</summary>
         public List<Damageable> AuraAllies => Allies();
         /// <summary>金丝的起点：琵琶（琴碎时退到胸前）</summary>
@@ -45,7 +57,42 @@ namespace Spiritfire.Game
             Active.Add(this);
             SupportFx.Ensure();
         }
-        void OnDisable() => Active.Remove(this);
+
+        void OnDisable()
+        {
+            Active.Remove(this);
+            DropAura();
+        }
+
+        /// <summary>
+        /// 光环登记：每 0.25 s 把 16 m 内的其他敌人（根节点距离，含出生中的）登记 / 续期一次，离开范围的撤掉。
+        /// 出生中、眩晕中、玩家阵亡时照样给（同原来按距离轮询的语义）；死亡 / 沉默时停，已登记的由对方按 <see cref="BuffActive"/> 立刻撤掉
+        /// </summary>
+        void LateUpdate()
+        {
+            if (!BuffActive)
+            {
+                if (auraPrev.Count > 0) DropAura();
+                return;
+            }
+            auraTimer -= Time.deltaTime;
+            if (auraTimer > 0) return;
+            auraTimer = AuraTick;
+            EnemyRegistry.InRadius(transform.position, AuraRange, auraNow, EnemyQuery.Alive, this);
+            foreach (var e in auraNow) e.Buffs.Set(EnemyBuffs.ApsaraAura, this, AuraMods, AuraHold);
+            foreach (var e in auraPrev)
+                if (e && !auraNow.Contains(e)) e.Buffs.Remove(EnemyBuffs.ApsaraAura, this);
+            (auraPrev, auraNow) = (auraNow, auraPrev);
+            auraNow.Clear();
+        }
+
+        void DropAura()
+        {
+            foreach (var e in auraPrev)
+                if (e) e.Buffs.Remove(EnemyBuffs.ApsaraAura, this);
+            auraPrev.Clear();
+            auraTimer = 0;
+        }
 
         protected override void Start()
         {
@@ -176,12 +223,10 @@ namespace Spiritfire.Game
             allyCacheTime = Time.time;
             var list = allyCache;
             list.Clear();
-            foreach (var e in FindObjectsByType<EnemyAI>())
-            {
-                if (e == this || e.Dead || e is ApsaraAI) continue;
-                if ((e.transform.position - transform.position).sqrMagnitude > AuraRange * AuraRange) continue;
-                list.Add(e.GetComponent<Damageable>());
-            }
+            EnemyRegistry.InRadius(transform.position, AuraRange, scratch, EnemyQuery.Alive, this);
+            foreach (var e in scratch)
+                if (e is not ApsaraAI) list.Add(e.Health);
+            scratch.Clear();
             return list;
         }
 
@@ -215,17 +260,17 @@ namespace Spiritfire.Game
                     GameAudio.PlayAt("pipa_bless", TetherOrigin, 0.9f);
                     EnemyAI best = null;
                     float bestHp = -1;
-                    foreach (var e in FindObjectsByType<EnemyAI>())
+                    EnemyRegistry.InRadius(transform.position, AuraRange, scratch, EnemyQuery.Alive, this);
+                    foreach (var e in scratch)
                     {
-                        if (e == this || e.Dead || e is ApsaraAI || e.Blessed) continue;
-                        if ((e.transform.position - transform.position).sqrMagnitude > AuraRange * AuraRange) continue;
-                        var h = e.GetComponent<Damageable>();
+                        if (e is ApsaraAI || e.Blessed) continue;
+                        var h = e.Health;
                         if (h.maxHealth > bestHp) { bestHp = h.maxHealth; best = e; }
                     }
+                    scratch.Clear();
                     if (best)
                     {
-                        best.blessedBy = this;
-                        best.blessedUntil = Time.time + 10f;
+                        best.Buffs.Set(EnemyBuffs.ApsaraBless, this, BlessMods, BlessTime);
                         ShotFx.Instance?.Impact(best.transform.position + Vector3.up * 1.5f, Vector3.up, true, 5f);
                     }
                     blessCd = Random.Range(14f, 18f);

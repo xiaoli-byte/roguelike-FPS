@@ -13,9 +13,15 @@ namespace Spiritfire.Game
     ///   跳跃 / 冲锋这类离开导航网格的位移：<see cref="BeginManualMotion"/> 接管位置，落地后 <see cref="EndManualMotion"/> 交还 agent。
     ///   感知：到玩家眼睛的视线（缓存 0.25 s）、水平距离。
     ///   状态：字符串状态 + 计时；动作动画直接按状态名 CrossFade（烘焙的动作链用 next 自动接续）。
-    ///   等级：生命 × 等级，伤害 × (1 + (等级 − 1) × 0.55)；精英生命 × 2.6、伤害 × 1.25。
+    ///   等级：生命 × 等级（取整，同 TS Math.round），伤害 × (1 + (等级 − 1) × 0.55)；精英生命 × 2.6、伤害 × 1.25。等级 = 局难度（浮点）。
     /// 出生 0.7 s 内不可选中（地面预警在生成器那边先播 0.8 s）。
     /// 嘲讽（灵宠讙）：<see cref="Taunt"/> 期间 <see cref="Target"/> 换成诱饵，瞄准、走位、近战都对着它；打到诱饵无效，玩家不吃这只敌人的伤害。
+    /// 打断（Three.js StandardEnemy.cancelAttack）：眩晕、死亡、玩家阵亡、坠落回收时统一走 <see cref="InterruptAttack"/>——归还出手名额，
+    ///   再调子类的 <see cref="CancelAttack"/> 收起预警物、恢复移动参数。
+    /// 玩家阵亡：停下、熄灭前摇发光、进入 idle（空中的落地后再交还导航）；玩家复活后从初始状态重新开始。
+    /// 加成：辅助怪给的光环 / 赐福登记在 <see cref="Buffs"/>（多通道，见 <see cref="EnemyBuffs"/>），每帧结算到 aura* 与承伤倍率。
+    /// 坠落回收：掉到最后站过的导航网格点以下 12 m（同 TS 掉出世界保护），或离开导航网格超过 2.5 s（不在跳跃 / 冲锋这类脚本位移里），
+    ///   就传回最近的导航网格点；掉出世界又找不到网格的，静默处决（不给奖励，场地照常推进）。
     /// </summary>
     [RequireComponent(typeof(EnemyBody), typeof(NavMeshAgent))]
     public abstract class EnemyAI : MonoBehaviour
@@ -27,15 +33,16 @@ namespace Spiritfire.Game
         public bool elite;
         [Tooltip("击退抗性 0–1")] public float knockbackResist;
 
-        /// <summary>辅助类敌人（邪飞天）给的加成，每帧由光环写入，默认 1</summary>
+        /// <summary>辅助类敌人（邪飞天…）给的加成合计（<see cref="Buffs"/> 结算后写入），默认 1</summary>
         [NonSerialized] public float auraSpeed = 1, auraAttackRate = 1, auraDamage = 1;
         public event Action<EnemyAI> Removed;
 
         protected EnemyBody body;
         protected Damageable hp;
-        /// <summary>场上所有敌人（反应、弹射、追踪找目标用）；死亡 / 销毁时移出</summary>
-        public static readonly List<EnemyAI> All = new();
+        /// <summary>场上所有活着的敌人（= <see cref="EnemyRegistry.Live"/> 同一张表；旧代码照常遍历）。新代码用 EnemyRegistry 的查询</summary>
+        public static List<EnemyAI> All => EnemyRegistry.LiveList;
         public Damageable Health => hp;
+        public EnemyBody Body => body;
         EnemyStatus status;
         bool wasStunned;
         protected NavMeshAgent agent;
@@ -46,11 +53,13 @@ namespace Spiritfire.Game
         protected float stateTime, cooldown, age;
         protected bool sees;
 
-        float seeTimer, repathTimer, buffTimer;
-        /// <summary>邪飞天的赐福：谁给的、到期时间</summary>
-        [NonSerialized] public ApsaraAI blessedBy;
-        [NonSerialized] public float blessedUntil;
-        public bool Blessed => blessedBy && !blessedBy.Dead && !blessedBy.Silenced && Time.time < blessedUntil;
+        float seeTimer, repathTimer;
+        /// <summary>身上的加成登记（光环、赐福、霜甲…）：来源按通道合并，限时、来源失效即撤</summary>
+        public readonly EnemyBuffs Buffs = new();
+        /// <summary>被邪飞天赐福中</summary>
+        public bool Blessed => Buffs.Has(EnemyBuffs.ApsaraBless);
+        /// <summary>玩家阵亡时的待机状态名</summary>
+        public const string IdleState = "idle";
         Vector3 lastDest;
         Transform taunt, playerLook;
         float tauntUntil, tauntEye;
@@ -91,32 +100,44 @@ namespace Spiritfire.Game
             agent.autoBraking = true;
             agent.stoppingDistance = 0.3f;
             hp.Died += OnDied;
-            All.Add(this);
+            Buffs.Changed += ApplyBuffs;
+            lastOnMesh = transform.position;
+            EnemyRegistry.Register(this);
         }
 
-        void OnDestroy() => All.Remove(this);
+        void OnDestroy() => EnemyRegistry.Unregister(this);
 
-        /// <summary>生成器调用：强度倍率（局难度）与精英决定生命，出生无敌 0.7 s</summary>
+        /// <summary>
+        /// 生成器调用：强度倍率（局难度，浮点；非法时 1）与精英决定生命（三层都 × 难度 × 精英 2.6，取整），出生无敌 0.7 s。
+        /// 级别：生成器先按定义写好 <see cref="Damageable.rank"/>（首领），这里精英把普通升成精英；首领免疫击退。
+        /// </summary>
         public virtual void Spawn(float lvl, bool isElite)
         {
-            level = Mathf.Max(0.5f, lvl);
+            level = Mathf.Max(0.5f, float.IsFinite(lvl) && lvl > 0 ? lvl : 1f);
             elite = isElite;
             float mult = level * (elite ? 2.6f : 1f);
-            hp.maxHealth *= mult;
-            hp.maxArmor *= mult;
-            hp.maxShield *= mult;
-            hp.elite = elite;
+            hp.maxHealth = RoundHp(hp.maxHealth * mult);
+            hp.maxArmor = RoundHp(hp.maxArmor * mult);
+            hp.maxShield = RoundHp(hp.maxShield * mult);
+            if (elite && hp.rank == Rank.Normal) hp.rank = Rank.Elite;
             hp.ResetVitals();
             if (elite)
             {
                 transform.localScale *= 1.25f;
                 knockbackResist = Mathf.Min(1, knockbackResist + 0.3f);
             }
+            if (hp.IsBoss) knockbackResist = 1;
             hp.untargetable = true;
+            lastOnMesh = transform.position;
+            hasOnMesh = false;
+            offMeshTime = 0;
             SetState("spawn");
             GameAudio.PlayAt("enemy_spawn", transform.position, 0.5f);
             GameEvents.RaiseEnemySpawned(this);
         }
+
+        /// <summary>生命取整（同 TS Math.round：.5 进位）</summary>
+        public static float RoundHp(float v) => float.IsFinite(v) ? Mathf.Floor(v + 0.5f) : 0;
 
         protected virtual void Start()
         {
@@ -129,8 +150,9 @@ namespace Spiritfire.Game
 
         void OnDied(DamageInfo info)
         {
-            All.Remove(this);
-            AttackTokens.Release(this);
+            EnemyRegistry.Unregister(this);
+            InterruptAttack();
+            Buffs.Clear();
             if (agent && agent.enabled) agent.enabled = false;
             Removed?.Invoke(this);
             enabled = false;
@@ -153,12 +175,8 @@ namespace Spiritfire.Game
             }
             if (manual) StepManual(dt);
             StepPush(dt);
-            buffTimer -= dt;
-            if (buffTimer <= 0)
-            {
-                buffTimer = 0.25f;
-                RefreshBuffs();
-            }
+            Buffs.Tick(Time.time);
+            if (StepFallRecovery(dt)) return;
             if (state == "spawn")
             {
                 if (stateTime >= 0.7f)
@@ -178,10 +196,12 @@ namespace Spiritfire.Game
                     wasStunned = true;
                     if (manual) EndManualMotion();
                     Stop();
-                    AttackTokens.Release(this);
+                    InterruptAttack();
                     OnStunned();
                     Play("Hit", 0.05f);
                 }
+                // 同 TS：眩晕中前摇发光熄灭
+                body.SetGlow(0, 0);
                 return;
             }
             if (wasStunned)
@@ -190,7 +210,138 @@ namespace Spiritfire.Game
                 PlayLocomotion();
                 SetState(InitialState);
             }
+            // 玩家阵亡：待机（同 TS StandardEnemy.think 的 !player.alive 分支）；复活后从初始状态重新开始
+            if (vitals && vitals.Dead)
+            {
+                StepIdle();
+                return;
+            }
+            if (state == IdleState)
+            {
+                PlayLocomotion();
+                SetState(InitialState);
+            }
             Think(dt);
+        }
+
+        /// <summary>
+        /// 打断正在做的招式（眩晕、死亡、玩家阵亡、坠落回收、清场，外部的打断效果也可以调）：归还出手名额，再调子类的 <see cref="CancelAttack"/>。
+        /// 不改状态：调用方决定回到哪个状态。
+        /// </summary>
+        public void InterruptAttack()
+        {
+            ReleaseAttack();
+            try
+            {
+                CancelAttack();
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
+        }
+
+        /// <summary>
+        /// 招式被打断（同 Three.js StandardEnemy.cancelAttack）：收起预警物、撤掉临时的减伤 / 移动参数。
+        /// 基类在眩晕、死亡、玩家阵亡、坠落回收时调用（名额已经归还）；死亡时身体可能还在空中，不要在这里交还导航。
+        /// </summary>
+        protected virtual void CancelAttack() { }
+
+        /// <summary>玩家阵亡时的待机：打断招式、停下、熄灭前摇发光；空中的（跳跃 / 冲锋）水平速度清零，落地后交还导航</summary>
+        void StepIdle()
+        {
+            if (state != IdleState)
+            {
+                InterruptAttack();
+                if (manual) manualVelocity.x = manualVelocity.z = 0;
+                PlayLocomotion();
+                SetState(IdleState);
+            }
+            if (manual && ManualGrounded) EndManualMotion();
+            Stop();
+            body.SetGlow(0, 0);
+        }
+
+        // ───────────── 坠落回收 ─────────────
+        /// <summary>掉到最后站过的导航网格点以下多深算掉出世界（同 TS floorY − 12）</summary>
+        public const float FallDepth = 12f;
+        /// <summary>不在脚本位移里却离开导航网格多久就拉回（秒）</summary>
+        public const float OffMeshGrace = 2.5f;
+
+        Vector3 lastOnMesh;
+        bool hasOnMesh;
+        float offMeshTime;
+
+        /// <summary>走导航网格（飞行基类 E3 覆盖成 false：不做离网回收）</summary>
+        protected virtual bool UsesNavMesh => true;
+
+        /// <summary>坠落 / 离网检查；返回 true 表示这一帧被传送或处决了（本帧不再思考）</summary>
+        bool StepFallRecovery(float dt)
+        {
+            if (!UsesNavMesh || !agent || !agent.enabled) return false;
+            var p = transform.position;
+            bool finite = float.IsFinite(p.x) && float.IsFinite(p.y) && float.IsFinite(p.z);
+            if (finite && !manual && agent.isOnNavMesh)
+            {
+                lastOnMesh = p;
+                hasOnMesh = true;
+                offMeshTime = 0;
+                return false;
+            }
+            bool fell = !finite || p.y < lastOnMesh.y - FallDepth;
+            // 只是落到了更低的地面上（跳下高台、冲下陡坡）：脚下 3 m 内就有导航网格，参考点跟着下来，不算掉出世界
+            if (fell && finite && NavMesh.SamplePosition(p, out var below, 3f, NavMesh.AllAreas))
+            {
+                lastOnMesh = below.position;
+                hasOnMesh = true;
+                fell = false;
+            }
+            if (!fell)
+            {
+                offMeshTime = manual ? 0 : offMeshTime + dt;
+                if (offMeshTime < OffMeshGrace) return false;
+                offMeshTime = 0;
+            }
+            return Recover(fell);
+        }
+
+        /// <summary>
+        /// 传回最近的导航网格点：离网的先在当前位置附近 6 m 找；掉出世界的在最后站过的点附近 4 m 找（再试正上方那一层）。
+        /// 掉出世界又找不到网格的静默处决（不给奖励）；只是离网而找不到的不处理，过一会儿再试
+        /// </summary>
+        bool Recover(bool fell)
+        {
+            var p = transform.position;
+            bool finite = float.IsFinite(p.x) && float.IsFinite(p.y) && float.IsFinite(p.z);
+            NavMeshHit hit = default;
+            bool found = (finite && !fell && NavMesh.SamplePosition(p, out hit, 6f, NavMesh.AllAreas))
+                         || ((fell || hasOnMesh) && NavMesh.SamplePosition(lastOnMesh, out hit, 4f, NavMesh.AllAreas))
+                         || (finite && fell && NavMesh.SamplePosition(new Vector3(p.x, lastOnMesh.y, p.z), out hit, 6f, NavMesh.AllAreas));
+            if (!found)
+            {
+                if (!fell) return false;
+                Debug.LogWarning($"[Enemy] {name} 掉出世界且附近没有导航网格：静默处决");
+                hp.noReward = true;
+                Combat.Execute(hp, true);
+                return true;
+            }
+            InterruptAttack();
+            manual = false;
+            manualVelocity = Vector3.zero;
+            push = Vector3.zero;
+            agent.updatePosition = true;
+            transform.position = hit.position;
+            agent.Warp(hit.position);
+            lastOnMesh = transform.position;
+            hasOnMesh = true;
+            var loco = GetComponent<CreatureLocomotion>();
+            if (loco) loco.Teleported();
+            if (state != "spawn")
+            {
+                PlayLocomotion();
+                SetState(InitialState);
+            }
+            return true;
         }
 
         /// <summary>子类自己的晕眩状态（镇墓兽撞墙撞晕）：打开 CreatureRig 的晕眩叠加</summary>
@@ -217,23 +368,15 @@ namespace Spiritfire.Game
         protected float Size => transform.localScale.x;
 
         /// <summary>
-        /// 邪飞天加成：16 m 内有一只没被沉默的邪飞天就吃光环（多只不叠加）；赐福另算、相乘。
-        /// 光环：伤害 / 攻速 ×1.35、移速 ×1.2、承伤 ×0.75；赐福：伤害 ×1.6、攻速 ×1.5、移速 ×1.15、承伤 ×0.5
+        /// 加成合计写回（<see cref="Buffs"/> 变化时）：伤害 / 攻速 / 移速进 aura*，承伤进 <see cref="Damageable.damageTakenMult"/>。
+        /// 邪飞天的光环（16 m，多只不叠加）与赐福（10 s）由她自己登记，数值见 <see cref="ApsaraAI.AuraMods"/> / <see cref="ApsaraAI.BlessMods"/>
         /// </summary>
-        void RefreshBuffs()
+        void ApplyBuffs(BuffMods t)
         {
-            bool aura = false;
-            foreach (var a in ApsaraAI.Active)
-                if (a && a != this && !a.Dead && !a.Silenced && (a.transform.position - transform.position).sqrMagnitude < ApsaraAI.AuraRange * ApsaraAI.AuraRange)
-                {
-                    aura = true;
-                    break;
-                }
-            bool blessed = Blessed;
-            auraDamage = (aura ? 1.35f : 1f) * (blessed ? 1.6f : 1f);
-            auraAttackRate = (aura ? 1.35f : 1f) * (blessed ? 1.5f : 1f);
-            auraSpeed = (aura ? 1.2f : 1f) * (blessed ? 1.15f : 1f);
-            hp.damageTakenMult = (aura ? 0.75f : 1f) * (blessed ? 0.5f : 1f);
+            auraDamage = t.damage;
+            auraAttackRate = t.rate;
+            auraSpeed = t.speed;
+            if (hp) hp.damageTakenMult = t.taken;
         }
 
         protected virtual string InitialState => "chase";
@@ -302,8 +445,11 @@ namespace Spiritfire.Game
         /// <summary>敌人身上出声（音效 id 见 GameAudio；有敌方音色时自动换）</summary>
         protected void Sfx(string id, float volume = 1, float pitch = 1) => GameAudio.PlayAt(id, transform.position + Vector3.up * 0.6f * Size, volume, pitch);
 
-        /// <summary>弱点发光壳的亮度目标（0..1，见 EnemyBody.glow）：各敌人按状态每帧写</summary>
-        protected float Glow { set => body.glow = value; }
+        /// <summary>弱点发光壳的亮度目标（0..1，发光通道 0，见 <see cref="EnemyBody.glow"/>）：各敌人按状态每帧写</summary>
+        protected float Glow { set => body.SetGlow(0, value); }
+
+        /// <summary>某个发光通道的亮度目标（0 = 主前摇；1、2 给子类区分不同招式，同 TS glowTarget[ch]）</summary>
+        protected void SetGlow(int channel, float value) => body.SetGlow(channel, value);
 
         /// <summary>发光壳的亮度换算（Three.js 各敌人 glowShell.opacity 的公式）</summary>
         protected void GlowStyle(float baseline, float breath, float rate, float gain, bool squared = true)
@@ -586,41 +732,5 @@ namespace Spiritfire.Game
             if (all.Count > 0) all.RemoveAll(e => !e.t || Time.time >= e.until);
             return all;
         }
-    }
-
-    /// <summary>
-    /// 出手名额（Three.js 版 AttackTokens）：同一时刻最多 4 个近战 / 2 个远程 / 1 个重击在出手，两次发放之间有最小间隔，
-    /// 避免一群怪同一帧一起扑上来——玩家能读出谁要打、什么时候躲。
-    /// </summary>
-    public static class AttackTokens
-    {
-        public enum Kind { Melee, Ranged, Heavy }
-
-        static readonly int[] Max = { 4, 2, 1 };
-        static readonly float[] Gap = { 0.12f, 0.32f, 0.7f };
-        static readonly float[] lastGrant = { -10, -10, -10 };
-        static readonly System.Collections.Generic.Dictionary<EnemyAI, (Kind kind, float until)> holders = new();
-
-        public static bool Request(Kind kind, EnemyAI who, float hold)
-        {
-            float now = Time.time;
-            int k = (int)kind;
-            if (holders.ContainsKey(who)) return true;
-            if (now - lastGrant[k] < Gap[k]) return false;
-            int n = 0;
-            var expired = new System.Collections.Generic.List<EnemyAI>();
-            foreach (var (e, v) in holders)
-            {
-                if (!e || e.Dead || now > v.until) { expired.Add(e); continue; }
-                if (v.kind == kind) n++;
-            }
-            foreach (var e in expired) holders.Remove(e);
-            if (n >= Max[k]) return false;
-            holders[who] = (kind, now + hold);
-            lastGrant[k] = now;
-            return true;
-        }
-
-        public static void Release(EnemyAI who) => holders.Remove(who);
     }
 }

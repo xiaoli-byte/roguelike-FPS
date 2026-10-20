@@ -205,6 +205,8 @@ namespace Spiritfire.Game
 
         void OnKilledByPlayer(DamageInfo info)
         {
+            // 静默清场（EnemyRegistry.PurgeAll）：不留余火、不炸（同 TS attackDirector.purging）
+            if (EnemyRegistry.Purging || info.Has(DamageTag.Purge)) return;
             var c = Center;
             FireZone.Spawn(transform.position, BurnRadius * (elite ? 1.25f : 1f), BurnTime, Damage * BurnRatio);
             if (detonated) return;

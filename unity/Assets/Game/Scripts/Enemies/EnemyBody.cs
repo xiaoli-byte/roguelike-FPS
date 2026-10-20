@@ -31,18 +31,64 @@ namespace Spiritfire.Game
 
         CreatureRagdoll ragdoll;
         Renderer[] renderers, glowShells;
-        float glowLevel;
+        int[] shellChannel;
+
+        /// <summary>发光通道数（同 TS GLOW_CHANNELS）：0 = 主前摇发光；1、2 给子类区分不同招式</summary>
+        public const int GlowChannels = 3;
+        readonly float[] glowTarget = new float[GlowChannels], glowLevel = new float[GlowChannels];
 
         /// <summary>
-        /// 弱点发光壳（美术的 *_GlowShell：喉囊、铜铃、弩匣、裂纹日火…）的亮度通道，同 Three.js 的 glowTarget / glowShell.opacity：
+        /// 弱点发光壳（美术的 *_GlowShell：喉囊、铜铃、弩匣、裂纹日火…）的亮度，通道 0，同 Three.js 的 glowTarget[0] / glowShell.opacity：
         /// AI 每帧按状态写目标 0..1（前摇时随蓄力升到 1——玩家看得见「要出招了」），这里按 14/s 阻尼过渡，
-        /// 换算成不透明度 = base + breath·sin(t·rate) + gain·level（squared 时 level²），写进发光材质的 _Tint.a
+        /// 换算成不透明度 = base + breath·sin(t·rate) + gain·level（squared 时 level²），写进发光材质的 _Tint.a。
+        /// 名字是 *_GlowShell1 / *_GlowShell2 的发光壳走通道 1 / 2；程序化发光件用 <see cref="AddGlowPart"/> 指定通道。
         /// </summary>
-        [System.NonSerialized] public float glow;
+        public float glow
+        {
+            get => glowTarget[0];
+            set => glowTarget[0] = value;
+        }
+
         [System.NonSerialized] public float glowBase = 0.08f, glowBreath = 0.03f, glowRate = 2.6f, glowGain = 0.6f;
         [System.NonSerialized] public bool glowSquared = true;
-        /// <summary>当前发光壳不透明度（测试用；没有发光壳时 -1）</summary>
+        /// <summary>当前发光壳（通道 0 的公式）不透明度（测试用；没有发光壳时 -1）</summary>
         public float GlowOpacity { get; private set; } = -1;
+
+        struct GlowPart
+        {
+            public Renderer r;
+            public int channel;
+            public Color cold, hot;
+        }
+
+        readonly System.Collections.Generic.List<GlowPart> glowParts = new();
+        static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
+
+        /// <summary>设某个发光通道的亮度目标（0..1；通道越界时夹到 0..2）</summary>
+        public void SetGlow(int channel, float target) => glowTarget[Mathf.Clamp(channel, 0, GlowChannels - 1)] = target;
+
+        /// <summary>某个发光通道当前（阻尼过渡后）的亮度 0..1</summary>
+        public float GlowLevel(int channel) => glowLevel[Mathf.Clamp(channel, 0, GlowChannels - 1)];
+
+        /// <summary>
+        /// 程序化发光件（同 TS glowPart）：颜色随通道亮度在 cold 与 hot 之间插值，写进 _BaseColor（不受光的纯色 / 加色材质）。
+        /// cold 设成黑色 + 加色材质 = 平时不可见、前摇时叠加发光
+        /// </summary>
+        public void AddGlowPart(Renderer r, int channel, Color cold, Color hot)
+        {
+            if (!r) return;
+            glowParts.Add(new GlowPart { r = r, channel = Mathf.Clamp(channel, 0, GlowChannels - 1), cold = cold, hot = hot });
+        }
+
+        /// <summary>发光壳的通道：名字里 GlowShell 后面紧跟 1 / 2 的走那个通道，其余为 0</summary>
+        static int ShellChannel(string name)
+        {
+            int i = name.IndexOf("GlowShell", System.StringComparison.Ordinal);
+            if (i < 0) return 0;
+            int j = i + "GlowShell".Length;
+            if (j < name.Length && name[j] >= '1' && name[j] < '0' + GlowChannels) return name[j] - '0';
+            return 0;
+        }
         MaterialPropertyBlock block;
         float flash, deadTime = -1;
         bool hasHitTrigger;
@@ -57,6 +103,7 @@ namespace Spiritfire.Game
             ragdoll = GetComponent<CreatureRagdoll>();
             renderers = GetComponentsInChildren<Renderer>(true);
             glowShells = System.Array.FindAll(renderers, r => r.name.Contains("GlowShell"));
+            shellChannel = System.Array.ConvertAll(glowShells, r => ShellChannel(r.name));
             block = new MaterialPropertyBlock();
             home = transform.position;
             homeRot = transform.rotation;
@@ -136,18 +183,28 @@ namespace Spiritfire.Game
 
         void Update()
         {
-            if (glowShells.Length > 0)
+            if (glowShells.Length > 0 || glowParts.Count > 0)
             {
-                glowLevel = Mathf.Lerp(glowLevel, Health.Dead ? 0 : Mathf.Clamp01(glow), 1 - Mathf.Exp(-14f * Time.deltaTime));
-                float g = glowSquared ? glowLevel * glowLevel : glowLevel;
-                GlowOpacity = Mathf.Clamp01(glowBase + glowBreath * Mathf.Sin(Time.time * glowRate) + g * glowGain);
-                var tint = new Color(1, 1, 1, GlowOpacity);
-                foreach (var r in glowShells)
+                float k = 1 - Mathf.Exp(-14f * Time.deltaTime);
+                for (int c = 0; c < GlowChannels; c++)
+                    glowLevel[c] = Mathf.Lerp(glowLevel[c], Health.Dead ? 0 : Mathf.Clamp01(glowTarget[c]), k);
+                float breath = glowBase + glowBreath * Mathf.Sin(Time.time * glowRate);
+                if (glowShells.Length > 0) GlowOpacity = ShellOpacity(0, breath);
+                for (int i = 0; i < glowShells.Length; i++)
                 {
+                    var r = glowShells[i];
                     if (!r) continue;
+                    int c = shellChannel[i];
                     r.GetPropertyBlock(block);
-                    block.SetColor(TintId, tint);
+                    block.SetColor(TintId, new Color(1, 1, 1, c == 0 ? GlowOpacity : ShellOpacity(c, breath)));
                     r.SetPropertyBlock(block);
+                }
+                foreach (var p in glowParts)
+                {
+                    if (!p.r) continue;
+                    p.r.GetPropertyBlock(block);
+                    block.SetColor(BaseColorId, Color.Lerp(p.cold, p.hot, glowLevel[p.channel]));
+                    p.r.SetPropertyBlock(block);
                 }
             }
             if (flash > 0)
@@ -165,6 +222,14 @@ namespace Spiritfire.Game
             float since = Time.time - deadTime;
             if (respawnAfter > 0 && since > respawnAfter) Respawn();
             else if (respawnAfter <= 0 && since > despawnAfter) Destroy(gameObject);
+        }
+
+        /// <summary>发光壳不透明度：breath = base + 呼吸项，再加 gain × 亮度（squared 时平方）</summary>
+        float ShellOpacity(int channel, float breath)
+        {
+            float l = glowLevel[channel];
+            float g = glowSquared ? l * l : l;
+            return Mathf.Clamp01(breath + g * glowGain);
         }
 
         public void Respawn()

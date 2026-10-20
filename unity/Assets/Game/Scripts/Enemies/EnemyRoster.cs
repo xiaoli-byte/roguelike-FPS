@@ -32,7 +32,9 @@ namespace Spiritfire.Game
 
         /// <summary>
         /// 生成一只敌人（贴到导航网格上），返回 AI；名册里没有这个 id 时返回 null。
-        /// difficulty = 强度倍率（局难度，D1：1 + 0.8 × 章 + 0.16 × 关序）：生命 × difficulty，伤害 × (1 + (difficulty − 1) × 0.55)。
+        /// difficulty = 强度倍率（局难度，D1：1 + 0.8 × (章 − 1) + 0.16 × 关序，浮点）：生命 × difficulty（取整），伤害 × (1 + (difficulty − 1) × 0.55)。
+        /// 缺省 / 非法（≤ 0、NaN）时用本局当前关的难度（<see cref="RunState.Current"/>），再没有就是 1（同 TS EnemyManager.spawn）。
+        /// 级别：<see cref="Damageable.rank"/> 先取定义的 <see cref="EnemyDef.rank"/>（首领），elite 时普通升成精英。
         /// </summary>
         public static EnemyAI Spawn(string id, Vector3 position, Quaternion rotation, float difficulty, bool elite, SpawnOptions options = null)
         {
@@ -41,6 +43,12 @@ namespace Spiritfire.Game
             {
                 Debug.LogWarning($"[Enemy] 名册里没有 {id}");
                 return null;
+            }
+            difficulty = ResolveDifficulty(difficulty);
+            if (!float.IsFinite(position.x) || !float.IsFinite(position.y) || !float.IsFinite(position.z))
+            {
+                Debug.LogWarning($"[Enemy] 生成 {id} 的位置非法（{position}），改到原点");
+                position = Vector3.zero;
             }
             var parent = options?.parent;
             var prefab = EnemyCatalog.Prefab(def.prefab);
@@ -67,6 +75,7 @@ namespace Spiritfire.Game
             dmg.maxArmor = def.armor;
             dmg.maxShield = def.shield;
             dmg.displayName = def.name;
+            dmg.rank = def.rank;
             var body = go.AddComponent<EnemyBody>();
             body.weakBone = placeholder ? PlaceholderBody.WeakBoneName(def) : def.weakBone;
             body.weakRadius = def.weakRadius;
@@ -87,6 +96,14 @@ namespace Spiritfire.Game
             var loco = go.GetComponent<CreatureLocomotion>();
             if (loco) loco.Teleported();
             return ai;
+        }
+
+        /// <summary>生成用的难度：有限且 &gt; 0 的原样用；否则取本局当前关的难度，再没有就是 1</summary>
+        public static float ResolveDifficulty(float difficulty)
+        {
+            if (float.IsFinite(difficulty) && difficulty > 0) return difficulty;
+            float run = RunState.Current?.difficulty ?? 1f;
+            return float.IsFinite(run) && run > 0 ? run : 1f;
         }
 
         /// <summary>挂件：同一 bind（来源 + id）的挂件实例化到同名挂点下，去掉碰撞体（命中判定走本体）</summary>
