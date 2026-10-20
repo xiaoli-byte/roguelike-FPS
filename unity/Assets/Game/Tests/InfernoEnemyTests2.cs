@@ -151,7 +151,10 @@ namespace Spiritfire.Game.Tests
             HazardClock.Step(0.5f);
             Assert.AreEqual(6, HazardClock.Pending, "0.5 s：上升外观都发了，剩下落外观（落地前 0.32 s）和落地结算");
             HazardClock.Step(1.5f);
-            Assert.AreEqual(0, HazardClock.Pending, "全部落地；顺带伤敌的结算也跑完了（没有玩家 / 敌人时不出错）");
+            // 落地结算里排的顺带伤敌（0.02 s 后）按「排队那一刻的时钟」算：一步跨到 2.0 s 时它们排在 2.02 s，下一步才跑
+            Assert.AreEqual(3, HazardClock.Pending, "全部落地；每支火箭的顺带伤敌结算排在落地之后 0.02 s");
+            HazardClock.Step(0.05f);
+            Assert.AreEqual(0, HazardClock.Pending, "顺带伤敌的结算也跑完了（没有玩家 / 敌人时不出错）");
         }
 
         [Test]
