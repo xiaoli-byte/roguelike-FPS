@@ -13,7 +13,7 @@ namespace Spiritfire.Game
         static Telegraph instance;
         Material circleMat, lineMat, waveMat;
 
-        internal sealed class Item
+        internal sealed class Item : FxSlot
         {
             public Transform t;
             public Renderer r;
@@ -21,8 +21,13 @@ namespace Spiritfire.Game
             public Color color;
             public bool line, wave;
             public float waveSpeed, waveMax;
-            /// <summary>对象池复用计数：句柄只控制自己拿到的那一次</summary>
-            public int gen;
+
+            public override void CancelFx()
+            {
+                life = 0;
+                active = false;
+                if (t) t.gameObject.SetActive(false);
+            }
         }
 
         /// <summary>预警线句柄：蓄力期间跟着朝向更新（镇墓兽冲锋方向在前 60% 还能调整）</summary>
@@ -32,6 +37,9 @@ namespace Spiritfire.Game
             internal int gen;
             public bool Alive => it != null && it.gen == gen && it.life > 0;
 
+            /// <summary>通用特效句柄（可交给 WarnScope / Fx 统一取消）</summary>
+            public FxHandle Handle => Alive ? new FxHandle(it) : FxHandle.None;
+
             public void Move(Vector3 from, Vector3 to, float width)
             {
                 if (Alive) Place(it, from, to, width);
@@ -39,9 +47,7 @@ namespace Spiritfire.Game
 
             public void End()
             {
-                if (!Alive) return;
-                it.life = 0;
-                it.t.gameObject.SetActive(false);
+                if (Alive) it.CancelFx();
             }
         }
 
@@ -55,6 +61,14 @@ namespace Spiritfire.Game
             return instance;
         }
 
+        /// <summary>全部收起（换关清场）</summary>
+        internal static void ClearAll()
+        {
+            if (!instance) return;
+            foreach (var it in instance.items)
+                if (it.life > 0) it.CancelFx();
+        }
+
         void Awake()
         {
             block = new MaterialPropertyBlock();
@@ -65,14 +79,7 @@ namespace Spiritfire.Game
 
         static Material MakeMat(Texture2D tex)
         {
-            var m = new Material(Shader.Find("Universal Render Pipeline/Particles/Unlit"));
-            m.SetTexture("_BaseMap", tex);
-            m.SetFloat("_Surface", 1);
-            m.SetFloat("_Blend", 0);
-            m.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
-            m.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
-            m.SetFloat("_ZWrite", 0);
-            m.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+            var m = FxMaterials.MakeAlpha(tex);
             m.renderQueue = (int)RenderQueue.Transparent - 10;
             return m;
         }
@@ -108,6 +115,12 @@ namespace Spiritfire.Game
             return tex;
         }
 
+        /// <summary>缓出扩散的冲击环（Fx.Ring 用）：duration 秒扩到 radius</summary>
+        public static FxHandle Ring(Vector3 center, float radius, float duration, Color color)
+        {
+            return new FxHandle(WaveItem(center, radius, radius / Mathf.Max(0.05f, duration), color));
+        }
+
         public static void Circle(Vector3 center, float radius, float duration, Color color)
         {
             var g = Get();
@@ -120,7 +133,9 @@ namespace Spiritfire.Game
         }
 
         /// <summary>向外扩散的冲击波环（镇墓兽踏地）：半径以 speed 增长到 maxRadius</summary>
-        public static void Wave(Vector3 center, float maxRadius, float speed, Color color)
+        public static void Wave(Vector3 center, float maxRadius, float speed, Color color) => WaveItem(center, maxRadius, speed, color);
+
+        static Item WaveItem(Vector3 center, float maxRadius, float speed, Color color)
         {
             var g = Get();
             var it = g.Take(false, true);
@@ -131,6 +146,7 @@ namespace Spiritfire.Game
             it.waveMax = maxRadius;
             it.life = it.max = maxRadius / speed;
             it.color = color;
+            return it;
         }
 
         public static LineHandle Line(Vector3 from, Vector3 to, float width, float duration, Color color)
@@ -162,7 +178,7 @@ namespace Spiritfire.Game
                 if (x.life <= 0 && x.line == line && x.wave == wave)
                 {
                     x.t.gameObject.SetActive(true);
-                    x.gen++;
+                    x.Claim();
                     return x;
                 }
             var go = GameObject.CreatePrimitive(PrimitiveType.Quad);
@@ -173,6 +189,7 @@ namespace Spiritfire.Game
             r.sharedMaterial = line ? lineMat : wave ? waveMat : circleMat;
             r.shadowCastingMode = ShadowCastingMode.Off;
             var it = new Item { t = go.transform, r = r, line = line, wave = wave };
+            it.Claim();
             items.Add(it);
             return it;
         }
@@ -185,6 +202,7 @@ namespace Spiritfire.Game
                 it.life -= Time.deltaTime;
                 if (it.life <= 0)
                 {
+                    it.active = false;
                     it.t.gameObject.SetActive(false);
                     continue;
                 }

@@ -1,41 +1,235 @@
+using System;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 namespace Spiritfire.Game
 {
+    /// <summary>运行时特效共用的材质种类（每种一个 Resources/Fx/Materials/M_Fx_*.mat）</summary>
+    public enum FxMaterialKind
+    {
+        /// <summary>不透明纯色（热核、宝石）：URP Unlit</summary>
+        Unlit,
+        /// <summary>加色、读顶点色、无贴图（拖尾、轨迹线）</summary>
+        Additive,
+        /// <summary>普通透明、读顶点色、无贴图</summary>
+        AlphaBlend,
+        /// <summary>径向衰减光晕片</summary>
+        Glow,
+        /// <summary>自下而上淡出的光柱（两片十字交叉）</summary>
+        Beam,
+        /// <summary>冲击环的竖直光墙（圆柱面，底亮上淡）</summary>
+        Band,
+        /// <summary>线状特效（曳光、光束、闪电）：柔和横截面，HDR 偏亮让 Bloom 吃到</summary>
+        Line,
+        /// <summary>加法粒子（贴图集，Shuriken 按帧选格）</summary>
+        ParticleAdd,
+        /// <summary>普通透明粒子（烟、尘、碎屑；贴图集）</summary>
+        ParticleAlpha,
+    }
+
     /// <summary>
-    /// 运行时特效共用的材质与贴图（弹丸、掉落物、宝箱光柱…）：全部惰性创建一次，按 MaterialPropertyBlock 改色。
-    ///   Unlit：不透明纯色（热核、宝石）；Additive：加色、读顶点色（拖尾）；Glow：径向衰减光晕；Beam：自下而上淡出的光柱
+    /// 运行时特效共用的材质（弹丸、掉落物、宝箱光柱、拖尾、粒子…）。
+    /// 材质来自 FxBuilder 生成的资产（Assets/Game/Resources/Fx/Materials/M_Fx_*.mat，贴图在 Assets/Art/Fx/），
+    /// 打包时随 Resources 带上着色器和用到的变体，运行时不再 Shader.Find（3.0 P0：打包可能被剥离 → 粉色）。
+    /// 资产缺失或着色器不可用时的兜底：编辑器里按同一份设置现场建；打包后只用 UI 默认材质（永远存在、永远不是粉色）。
+    /// 改色一律走 MaterialPropertyBlock（<see cref="Tint"/>），不复制材质。
     /// </summary>
     public static class FxMaterials
     {
-        static Material unlit, additive, glow, beam;
+        public const string ResourcesDir = "Fx/Materials";
+        public const string ShaderUnlit = "Universal Render Pipeline/Unlit";
+        public const string ShaderParticles = "Universal Render Pipeline/Particles/Unlit";
 
-        public static Material Unlit => unlit ? unlit : unlit = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
-        public static Material Additive => additive ? additive : additive = MakeAdditive(null);
-        public static Material Glow => glow ? glow : glow = MakeAdditive(RadialTexture());
-        public static Material Beam => beam ? beam : beam = MakeAdditive(VerticalFadeTexture());
+        static readonly int BaseMapId = Shader.PropertyToID("_BaseMap");
+        static readonly int MainTexId = Shader.PropertyToID("_MainTex");
+        static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
+        static readonly int ColorId = Shader.PropertyToID("_Color");
 
-        public static Material MakeAdditive(Texture2D tex)
+        static readonly Material[] cache = new Material[Enum.GetValues(typeof(FxMaterialKind)).Length];
+        static readonly Texture2D[] fallbackTex = new Texture2D[FxTextures.All.Length];
+        static MaterialPropertyBlock block;
+        static bool warned;
+
+        public static Material Unlit => Get(FxMaterialKind.Unlit);
+        public static Material Additive => Get(FxMaterialKind.Additive);
+        public static Material AlphaBlend => Get(FxMaterialKind.AlphaBlend);
+        public static Material Glow => Get(FxMaterialKind.Glow);
+        public static Material Beam => Get(FxMaterialKind.Beam);
+        public static Material Band => Get(FxMaterialKind.Band);
+        public static Material Line => Get(FxMaterialKind.Line);
+        public static Material ParticleAdd => Get(FxMaterialKind.ParticleAdd);
+        public static Material ParticleAlpha => Get(FxMaterialKind.ParticleAlpha);
+
+        /// <summary>资产名（不含扩展名）：M_Fx_Unlit、M_Fx_ParticleAdd…</summary>
+        public static string AssetName(FxMaterialKind kind) => "M_Fx_" + kind;
+
+        /// <summary>这种材质用的着色器名（FxBuilder 建材质用；运行时只在编辑器兜底时用）</summary>
+        public static string ShaderName(FxMaterialKind kind) => kind == FxMaterialKind.Unlit ? ShaderUnlit : ShaderParticles;
+
+        /// <summary>这种材质用的贴图（<see cref="FxTextures"/> 的名字；null = 不用贴图）</summary>
+        public static string TextureName(FxMaterialKind kind) => kind switch
         {
-            var m = new Material(Shader.Find("Universal Render Pipeline/Particles/Unlit"));
-            m.SetFloat("_Surface", 1);
-            m.SetFloat("_Blend", 2);
-            m.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
-            m.SetFloat("_DstBlend", (float)BlendMode.One);
-            m.SetFloat("_ZWrite", 0);
-            m.SetFloat("_Cull", 0);
-            m.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-            m.renderQueue = 3000;
-            if (tex) m.SetTexture("_BaseMap", tex);
+            FxMaterialKind.Glow => FxTextures.Glow,
+            FxMaterialKind.Beam => FxTextures.BeamFade,
+            FxMaterialKind.Band => FxTextures.Band,
+            FxMaterialKind.Line => FxTextures.Line,
+            FxMaterialKind.ParticleAdd or FxMaterialKind.ParticleAlpha => FxTextures.Atlas,
+            _ => null,
+        };
+
+        public static Material Get(FxMaterialKind kind)
+        {
+            int i = (int)kind;
+            var m = cache[i];
+            if (m) return m;
+            m = Resources.Load<Material>($"{ResourcesDir}/{AssetName(kind)}");
+            if (!Usable(m)) m = Fallback(kind);
+            cache[i] = m;
             return m;
         }
 
-        /// <summary>给一个渲染器上色（不复制材质）</summary>
+        /// <summary>材质能用：存在、着色器没被剥离（被剥离时 Unity 换成粉色的 InternalErrorShader）、当前平台支持</summary>
+        public static bool Usable(Material m) =>
+            m && m.shader && m.shader.isSupported && m.shader.name != "Hidden/InternalErrorShader";
+
+        /// <summary>
+        /// 按种类设置一份材质（FxBuilder 建 .mat 与编辑器兜底共用，保证两条路径一样）。
+        /// 粒子着色器的透明设置照 URP BaseShaderGUI / ParticleGUI 的做法手写（编辑器程序集不引用 URP Editor）。
+        /// </summary>
+        public static void Setup(Material m, FxMaterialKind kind, Texture tex)
+        {
+            switch (kind)
+            {
+                case FxMaterialKind.Unlit:
+                    m.SetColor(BaseColorId, Color.white);
+                    m.renderQueue = (int)RenderQueue.Geometry;
+                    return;
+                case FxMaterialKind.Additive:
+                    SetupParticle(m, true, null, 0, 1f, false);
+                    return;
+                case FxMaterialKind.AlphaBlend:
+                    SetupParticle(m, false, null, 0, 1f, false);
+                    return;
+                case FxMaterialKind.Glow:
+                case FxMaterialKind.Beam:
+                    SetupParticle(m, true, tex, 0, 1f, false);
+                    return;
+                case FxMaterialKind.Band:
+                    SetupParticle(m, true, tex, 2, 1.25f, false);
+                    return;
+                case FxMaterialKind.Line:
+                    SetupParticle(m, true, tex, 6, 1.5f, false);
+                    return;
+                case FxMaterialKind.ParticleAdd:
+                    // 加法粒子排在透明粒子之后（烟先画，发光的叠在上面），HDR 偏亮一点让火花 / 闪光吃到 Bloom
+                    SetupParticle(m, true, tex, 4, 1.35f, true);
+                    return;
+                case FxMaterialKind.ParticleAlpha:
+                    SetupParticle(m, false, tex, 2, 1f, true);
+                    return;
+            }
+        }
+
+        /// <summary>URP Particles/Unlit 的透明设置：加法 / 普通混合、不写深度、双面、可选贴脸淡出</summary>
+        public static void SetupParticle(Material m, bool additive, Texture tex, int queueOffset, float brightness, bool cameraFade)
+        {
+            m.SetFloat("_Surface", 1);
+            m.SetFloat("_Blend", additive ? 2 : 0);
+            m.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
+            m.SetFloat("_DstBlend", (float)(additive ? BlendMode.One : BlendMode.OneMinusSrcAlpha));
+            m.SetFloat("_SrcBlendAlpha", (float)BlendMode.One);
+            m.SetFloat("_DstBlendAlpha", (float)(additive ? BlendMode.One : BlendMode.OneMinusSrcAlpha));
+            m.SetFloat("_ZWrite", 0);
+            m.SetFloat("_Cull", (float)CullMode.Off);
+            m.SetFloat("_ColorMode", 0);
+            m.SetFloat("_QueueOffset", queueOffset);
+            m.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+            m.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+            m.DisableKeyword("_ALPHAMODULATE_ON");
+            m.DisableKeyword("_COLOROVERLAY_ON");
+            m.DisableKeyword("_COLORCOLOR_ON");
+            m.DisableKeyword("_COLORADDSUBDIFF_ON");
+            m.SetOverrideTag("RenderType", "Transparent");
+            m.SetShaderPassEnabled("DepthOnly", false);
+            m.renderQueue = (int)RenderQueue.Transparent + queueOffset;
+            m.SetColor(BaseColorId, new Color(brightness, brightness, brightness, 1));
+            if (tex) m.SetTexture(BaseMapId, tex);
+            // 贴脸淡出（Three.js 粒子：smoothstep(0.12, 0.9, 深度)），避免满屏大光斑；只用相机深度，不需要深度图
+            m.SetFloat("_CameraFadingEnabled", cameraFade ? 1 : 0);
+            m.SetFloat("_CameraNearFadeDistance", 0.12f);
+            m.SetFloat("_CameraFarFadeDistance", 0.9f);
+            m.SetVector("_CameraFadeParams", cameraFade ? new Vector4(0.12f, 1f / (0.9f - 0.12f), 0, 0) : new Vector4(0, float.PositiveInfinity, 0, 0));
+            if (cameraFade) m.EnableKeyword("_FADING_ON");
+            else m.DisableKeyword("_FADING_ON");
+        }
+
+        static Material Fallback(FxMaterialKind kind)
+        {
+            if (!warned)
+            {
+                warned = true;
+                Debug.LogWarning("[Fx] 特效材质资产缺失（还没跑 FxBuilder：bridge.sh fx 或菜单 Spiritfire/特效/生成特效资产），先用临时材质");
+            }
+            var tex = FallbackTexture(TextureName(kind));
+            Material m = null;
+#if UNITY_EDITOR
+            // 只在编辑器里按名字找着色器；打包后找不到的着色器会被剥离，Shader.Find 只会拿到 null
+            var shader = Shader.Find(ShaderName(kind));
+            if (shader && shader.isSupported)
+            {
+                m = new Material(shader);
+                Setup(m, kind, tex);
+            }
+#endif
+            if (!m)
+            {
+                // UI 默认材质永远在包里（顶点色 × 贴图，普通透明）：颜色可能不完全对，但绝不是粉色
+                m = new Material(Canvas.GetDefaultCanvasMaterial());
+                if (tex) m.SetTexture(MainTexId, tex);
+            }
+            m.name = AssetName(kind) + " (fallback)";
+            m.hideFlags = HideFlags.DontSave;
+            return m;
+        }
+
+        static Texture2D FallbackTexture(string name)
+        {
+            if (name == null) return null;
+            int i = Array.IndexOf(FxTextures.All, name);
+            if (i < 0) return null;
+            if (!fallbackTex[i])
+            {
+                fallbackTex[i] = FxTextures.Create(name);
+                fallbackTex[i].hideFlags = HideFlags.DontSave;
+            }
+            return fallbackTex[i];
+        }
+
+        /// <summary>复制加色材质并换一张贴图（每种用途建一次，别每帧调）</summary>
+        public static Material MakeAdditive(Texture2D tex) => Derive(Additive, tex);
+
+        /// <summary>复制普通透明材质并换一张贴图（每种用途建一次，别每帧调）</summary>
+        public static Material MakeAlpha(Texture2D tex) => Derive(AlphaBlend, tex);
+
+        static Material Derive(Material template, Texture2D tex)
+        {
+            var m = new Material(template);
+            if (tex)
+            {
+                if (m.HasProperty(BaseMapId)) m.SetTexture(BaseMapId, tex);
+                if (m.HasProperty(MainTexId)) m.SetTexture(MainTexId, tex);
+            }
+            return m;
+        }
+
+        /// <summary>给一个渲染器上色（不复制材质；共用一个 MaterialPropertyBlock，不产生垃圾）</summary>
         public static void Tint(Renderer r, Color c)
         {
-            var block = new MaterialPropertyBlock();
-            block.SetColor("_BaseColor", c);
+            if (!r) return;
+            block ??= new MaterialPropertyBlock();
+            block.Clear();
+            block.SetColor(BaseColorId, c);
+            block.SetColor(ColorId, c);
             r.SetPropertyBlock(block);
             r.shadowCastingMode = ShadowCastingMode.Off;
         }
@@ -44,7 +238,7 @@ namespace Spiritfire.Game
         public static Transform GlowSprite(Transform parent, float size, Color c)
         {
             var q = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            Object.Destroy(q.GetComponent<Collider>());
+            UnityEngine.Object.Destroy(q.GetComponent<Collider>());
             q.name = "Glow";
             q.transform.SetParent(parent, false);
             q.transform.localScale = Vector3.one * size;
@@ -55,20 +249,6 @@ namespace Spiritfire.Game
             return q.transform;
         }
 
-        static Texture2D RadialTexture()
-        {
-            const int n = 64;
-            var tex = new Texture2D(n, n, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp };
-            for (int y = 0; y < n; y++)
-            for (int x = 0; x < n; x++)
-            {
-                float d = new Vector2(x - n / 2 + 0.5f, y - n / 2 + 0.5f).magnitude / (n / 2);
-                tex.SetPixel(x, y, new Color(1, 1, 1, Mathf.Pow(Mathf.Clamp01(1 - d), 2.2f)));
-            }
-            tex.Apply();
-            return tex;
-        }
-
         /// <summary>光柱：两片十字交叉的竖直面片（底部在 parent 原点），横向中间亮、纵向自下而上淡出</summary>
         public static Transform BeamSprite(Transform parent, float width, float height, Color c)
         {
@@ -77,7 +257,7 @@ namespace Spiritfire.Game
             for (int i = 0; i < 2; i++)
             {
                 var q = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                Object.Destroy(q.GetComponent<Collider>());
+                UnityEngine.Object.Destroy(q.GetComponent<Collider>());
                 q.transform.SetParent(root, false);
                 q.transform.localPosition = Vector3.up * height * 0.5f;
                 q.transform.localRotation = Quaternion.Euler(0, i * 90, 0);
@@ -87,21 +267,6 @@ namespace Spiritfire.Game
                 Tint(r, c);
             }
             return root;
-        }
-
-        static Texture2D VerticalFadeTexture()
-        {
-            const int w = 32, h = 64;
-            var tex = new Texture2D(w, h, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp };
-            for (int y = 0; y < h; y++)
-            for (int x = 0; x < w; x++)
-            {
-                float u = Mathf.Abs((x + 0.5f) / w * 2 - 1), v = y / (h - 1f);
-                float a = Mathf.Pow(1 - u, 2.2f) * Mathf.Pow(1 - v, 1.4f) * Mathf.SmoothStep(0, 1, v * 12);
-                tex.SetPixel(x, y, new Color(1, 1, 1, a));
-            }
-            tex.Apply();
-            return tex;
         }
     }
 }

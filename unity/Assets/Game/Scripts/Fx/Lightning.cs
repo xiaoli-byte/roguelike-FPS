@@ -1,70 +1,239 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Spiritfire.Game
 {
-    /// <summary>闪电弧（雷殛弹射、焚雷、封脉导流、归墟天雷）：折线 LineRenderer，加色，0.2 s 内闪两次折线后淡出</summary>
+    /// <summary>
+    /// 闪电弧（雷殛弹射、焚雷、封脉导流、归墟天雷、灵宠雷击；Three.js src/fx/Trails.ts 的 lightning）：
+    /// 主干折线 + 一条斜伸的分叉，每 0.035 s 重新抖一次折线，寿命约 0.15–0.19 s，亮度 (1 − k²) × 随机闪烁；
+    /// 每条线画两遍（外层光晕 + 白热细芯）。两端溅电火花和光团，落点闪一下灯。
+    /// 池化（上限 40 道，满了复用最老的）：每道闪电 4 条 LineRenderer，常驻在 Fx 根物体下，不再每道 new 一个 GameObject。
+    /// 兼容旧接口 <see cref="Spawn"/>（现在返回句柄，旧的语句调用不受影响）。
+    /// </summary>
     public sealed class Lightning : MonoBehaviour
     {
-        const int Segments = 9;
-        const float Life = 0.22f;
+        const int MaxBolts = 40, Segments = 16, BranchSegments = 5;
+        const float DefaultWidth = 0.07f;
 
-        LineRenderer line;
-        Vector3 from, to;
-        Color color;
-        float age, jitter, nextJag;
-
-        public static void Spawn(Vector3 from, Vector3 to, Color color, float width = 0.07f)
+        sealed class Bolt : FxSlot
         {
-            var go = new GameObject("Lightning");
-            var l = go.AddComponent<Lightning>();
-            l.from = from;
-            l.to = to;
-            l.color = color;
-            l.jitter = Mathf.Clamp(Vector3.Distance(from, to) * 0.08f, 0.12f, 0.6f);
-            l.line = go.AddComponent<LineRenderer>();
-            l.line.positionCount = Segments + 1;
-            l.line.sharedMaterial = FxMaterials.Additive;
-            l.line.widthMultiplier = width;
-            l.line.numCapVertices = 2;
-            l.line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            l.Jag();
-            ShotFx.Instance?.MuzzleFlash(to, 1.2f);
-        }
+            public LineRenderer glow, core, branchGlow, branchCore;
+            public Vector3 a, b;
+            public Color color;
+            public float age, life, rejitter, flicker, widthK;
+            public int n, bn;
+            public readonly Vector3[] pts = new Vector3[Segments + 1];
+            public readonly Vector3[] bpts = new Vector3[BranchSegments + 1];
 
-        void Jag()
-        {
-            var dir = to - from;
-            var side = Vector3.Cross(dir, Vector3.up);
-            if (side.sqrMagnitude < 1e-4f) side = Vector3.Cross(dir, Vector3.right);
-            side.Normalize();
-            var up = Vector3.Cross(side, dir).normalized;
-            for (int i = 0; i <= Segments; i++)
+            public override void CancelFx() => life = Mathf.Min(life, age + 0.05f);
+
+            public override void RetargetFx(Vector3 from, Vector3 to)
             {
-                float t = i / (float)Segments;
-                var p = Vector3.Lerp(from, to, t);
-                if (i > 0 && i < Segments)
-                {
-                    float k = Mathf.Sin(t * Mathf.PI) * jitter;
-                    p += side * Random.Range(-k, k) + up * Random.Range(-k, k);
-                }
-                line.SetPosition(i, p);
+                a = from;
+                b = to;
             }
-            nextJag = age + 0.07f;
         }
 
-        void Update()
+        static Lightning instance;
+        readonly List<Bolt> bolts = new();
+
+        /// <summary>从 from 到 to 劈一道闪电（width 是旧接口的线宽，0.07 = 标准粗细，按比例缩放光晕和细芯）</summary>
+        public static FxHandle Spawn(Vector3 from, Vector3 to, Color color, float width = DefaultWidth)
         {
-            age += Time.deltaTime;
-            if (age >= Life)
+            if (!Fx.Finite(from) || !Fx.Finite(to)) return FxHandle.None;
+            var rt = FxRuntime.Ensure();
+            if (!rt) return FxHandle.None;
+            if (!instance) instance = rt.gameObject.AddComponent<Lightning>();
+            return instance.Take(from, to, color, width);
+        }
+
+        /// <summary>全部收起（换关清场）</summary>
+        internal static void ClearAll()
+        {
+            if (!instance) return;
+            foreach (var bo in instance.bolts) instance.Hide(bo);
+        }
+
+        void OnDestroy()
+        {
+            if (instance == this) instance = null;
+        }
+
+        FxHandle Take(Vector3 from, Vector3 to, Color color, float width)
+        {
+            Bolt bo = null, oldest = null;
+            foreach (var x in bolts)
             {
-                Destroy(gameObject);
+                if (!x.active)
+                {
+                    bo = x;
+                    break;
+                }
+                if (oldest == null || x.age / x.life > oldest.age / oldest.life) oldest = x;
+            }
+            if (bo == null)
+            {
+                if (bolts.Count < MaxBolts)
+                {
+                    bo = new Bolt
+                    {
+                        glow = Line("Bolt Glow", Segments + 1), core = Line("Bolt Core", Segments + 1),
+                        branchGlow = Line("Bolt Branch Glow", BranchSegments + 1), branchCore = Line("Bolt Branch Core", BranchSegments + 1),
+                    };
+                    bolts.Add(bo);
+                }
+                else bo = oldest;
+            }
+            bo.Claim();
+            bo.a = from;
+            bo.b = to;
+            bo.color = color;
+            bo.age = 0;
+            bo.life = 0.15f + Random.value * 0.04f;
+            bo.rejitter = 0.035f;
+            bo.widthK = Mathf.Clamp(width / DefaultWidth, 0.3f, 4f);
+            Jag(bo);
+            Draw(bo, 1);
+
+            // 两端的电火花 + 光团，落点闪一下灯
+            var rt = FxRuntime.Ensure();
+            if (rt)
+            {
+                var sparks = rt.GetEmitter("StreakLight");
+                if (sparks != null)
+                    for (int i = 0; i < 5; i++)
+                    {
+                        var v = new Vector3(Random.Range(-6f, 6f), Random.Range(-1f, 5f), Random.Range(-6f, 6f));
+                        rt.EmitOne(sparks, to, v, 0.036f, Random.Range(0.12f, 0.28f), color, 0);
+                    }
+                var glow = rt.GetEmitter("Glow");
+                if (glow != null)
+                {
+                    var bright = new Color(Mathf.Min(1, color.r * 1.6f), Mathf.Min(1, color.g * 1.6f), Mathf.Min(1, color.b * 1.6f), 1);
+                    rt.EmitOne(glow, to, Vector3.zero, 0.9f * Mathf.Sqrt(bo.widthK), 0.12f, bright, 0);
+                    rt.EmitOne(glow, from, Vector3.zero, 0.5f * Mathf.Sqrt(bo.widthK), 0.1f, color, 0);
+                }
+            }
+            FxLightPool.Flash(to, Color.Lerp(color, Color.white, 0.3f), 7.2f, 6f, 0.1f);
+            return new FxHandle(bo);
+        }
+
+        LineRenderer Line(string name, int points)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(transform, false);
+            var lr = go.AddComponent<LineRenderer>();
+            FxLines.ConfigureLine(lr, points);
+            lr.numCapVertices = 1;
+            lr.enabled = false;
+            return lr;
+        }
+
+        /// <summary>重新生成闪电折线（主干随机游走 + 正弦包络，端点固定；八成概率带一条分叉）</summary>
+        static void Jag(Bolt bo)
+        {
+            var d = bo.b - bo.a;
+            float dist = d.magnitude;
+            if (dist < 1e-4f)
+            {
+                bo.n = 0;
+                bo.bn = 0;
                 return;
             }
-            if (age >= nextJag) Jag();
-            float a = 1 - age / Life;
-            var c = new Color(Mathf.Lerp(1, color.r, 0.6f), Mathf.Lerp(1, color.g, 0.6f), Mathf.Lerp(1, color.b, 0.6f), a);
-            line.startColor = c;
-            line.endColor = new Color(color.r, color.g, color.b, a);
+            d /= dist;
+            var reference = Mathf.Abs(d.y) < 0.95f ? Vector3.up : Vector3.right;
+            var u = Vector3.Cross(d, reference).normalized;
+            var w = Vector3.Cross(d, u).normalized;
+            int n = Mathf.Clamp(Mathf.RoundToInt(dist / 0.65f), 5, Segments);
+            float amp = Mathf.Min(1.1f, 0.12f + dist * 0.08f);
+            bo.n = n;
+            float ou = 0, ow = 0;
+            for (int i = 0; i <= n; i++)
+            {
+                float t = i / (float)n;
+                ou = ou * 0.45f + Random.Range(-amp, amp);
+                ow = ow * 0.45f + Random.Range(-amp, amp);
+                float k = i == 0 || i == n ? 0 : Mathf.Sin(Mathf.PI * t);
+                bo.pts[i] = bo.a + d * (dist * t) + (u * ou + w * ow) * k;
+            }
+            if (n >= 6 && Random.value < 0.8f)
+            {
+                int from = Mathf.FloorToInt(n * Random.Range(0.25f, 0.7f));
+                bo.bn = BranchSegments;
+                float bl = dist * Random.Range(0.18f, 0.32f);
+                float su = Random.Range(-1f, 1f), sw = Random.Range(-1f, 1f);
+                var p = bo.pts[from];
+                bo.bpts[0] = p;
+                float step = bl / BranchSegments;
+                var f = d * 0.6f + (u * su + w * sw) * 0.8f;
+                for (int i = 1; i <= BranchSegments; i++)
+                {
+                    p += f * step + Random.insideUnitSphere * (step * 0.5f);
+                    bo.bpts[i] = p;
+                }
+            }
+            else bo.bn = 0;
+            bo.flicker = Random.Range(0.55f, 1f);
+        }
+
+        void Draw(Bolt bo, float alpha)
+        {
+            var c = bo.color;
+            var coreC = new Color(Mathf.Min(1, 0.75f + c.r * 0.5f), Mathf.Min(1, 0.75f + c.g * 0.5f), Mathf.Min(1, 0.75f + c.b * 0.5f), alpha);
+            var glowC = new Color(c.r, c.g, c.b, alpha * 0.55f);
+            Poly(bo.glow, bo.pts, bo.n, 0.09f * bo.widthK, glowC);
+            Poly(bo.core, bo.pts, bo.n, 0.02f * bo.widthK, coreC);
+            if (bo.bn > 0)
+            {
+                Poly(bo.branchGlow, bo.bpts, bo.bn, 0.055f * bo.widthK, new Color(glowC.r, glowC.g, glowC.b, glowC.a * 0.7f));
+                Poly(bo.branchCore, bo.bpts, bo.bn, 0.012f * bo.widthK, new Color(coreC.r, coreC.g, coreC.b, coreC.a * 0.7f));
+            }
+            else bo.branchGlow.enabled = bo.branchCore.enabled = false;
+        }
+
+        static void Poly(LineRenderer lr, Vector3[] pts, int n, float width, Color c)
+        {
+            if (n <= 0)
+            {
+                lr.enabled = false;
+                return;
+            }
+            lr.enabled = true;
+            lr.positionCount = n + 1;
+            lr.SetPositions(pts);
+            lr.widthMultiplier = width;
+            lr.startColor = c;
+            lr.endColor = c;
+        }
+
+        void Hide(Bolt bo)
+        {
+            bo.active = false;
+            bo.glow.enabled = bo.core.enabled = bo.branchGlow.enabled = bo.branchCore.enabled = false;
+        }
+
+        void LateUpdate()
+        {
+            float dt = Time.deltaTime;
+            if (dt <= 0) return;
+            foreach (var bo in bolts)
+            {
+                if (!bo.active) continue;
+                bo.age += dt;
+                if (bo.age >= bo.life)
+                {
+                    Hide(bo);
+                    continue;
+                }
+                bo.rejitter -= dt;
+                if (bo.rejitter <= 0)
+                {
+                    bo.rejitter = 0.035f;
+                    Jag(bo);
+                }
+                float k = bo.age / bo.life;
+                Draw(bo, (1 - k * k) * bo.flicker);
+            }
         }
     }
 }

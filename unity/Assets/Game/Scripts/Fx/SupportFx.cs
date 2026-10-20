@@ -50,16 +50,10 @@ namespace Spiritfire.Game
             if (instance == this) instance = null;
         }
 
+        /// <summary>从 FxMaterials 的模板材质派生（不再运行时 Shader.Find，打包后不会因着色器被剥离变粉）</summary>
         static Material MakeMat(Texture2D tex, bool additive)
         {
-            var m = new Material(Shader.Find("Universal Render Pipeline/Particles/Unlit"));
-            m.SetTexture("_BaseMap", tex);
-            m.SetFloat("_Surface", 1);
-            m.SetFloat("_Blend", additive ? 2 : 0);
-            m.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
-            m.SetFloat("_DstBlend", (float)(additive ? BlendMode.One : BlendMode.OneMinusSrcAlpha));
-            m.SetFloat("_ZWrite", 0);
-            m.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+            var m = additive ? FxMaterials.MakeAdditive(tex) : FxMaterials.MakeAlpha(tex);
             m.renderQueue = (int)RenderQueue.Transparent;
             return m;
         }

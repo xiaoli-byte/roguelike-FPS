@@ -27,7 +27,8 @@ namespace Spiritfire.Art.Editor
     /// tests [过滤]（EditMode 测试，过滤 = 测试全名的正则；汇总写进回应的 tests 字段，明细 Assets/Art/_Review/tests_report.txt）/
     /// playtest [套件] [场景]（Play 模式冒烟测试，默认 slice11，见 Playtest.cs）/
     /// pets（导入 Assets/Art/Pets 下的灵宠模型，生成 Resources/Pets 预制体）/ petcompare（灵宠与现有角色同场景画风对比截图）/ fur（毛发画质 低 / 中 / 高 对比截图）/ furbench（毛发三档帧耗时）/
-    /// ui（UI Toolkit 基座资产：SDF 字体、分层 PanelSettings、文本设置，见 UIBuilder.cs）。
+    /// ui（UI Toolkit 基座资产：SDF 字体、分层 PanelSettings、文本设置，见 UIBuilder.cs）/
+    /// fx（FxBuilder：特效程序贴图、材质、粒子风格预制体、着色器变体集、URP 贴花渲染特性）。
     /// 安全：Play 模式中、或当前场景有未保存的修改时拒绝执行（不替用户丢弃修改）；执行完重新打开用户原来的场景。
     /// 编辑器没开时 bridge.sh 用 -batchmode -executeMethod <see cref="BatchRun"/> 跑 level / levels（命令和参数走命令行）。
     /// </summary>
@@ -172,6 +173,7 @@ namespace Spiritfire.Art.Editor
                 if (command == "fur") FurReview.Run();
                 if (command == "furbench") FurBench.Run();
                 if (command == "ui") errors += UIBuilder.Build();
+                if (command == "fx") errors += FxBuilder.BuildAll();
                 // 临时诊断：调用 Spiritfire.Art.Editor.Diag.Run()（存在时），排查问题用，用完删掉那个类
                 if (command == "diag")
                     Type.GetType("Spiritfire.Art.Editor.Diag, Spiritfire.Art.Editor")?.GetMethod("Run")?.Invoke(null, null);

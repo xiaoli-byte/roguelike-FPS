@@ -7,6 +7,7 @@
 # 最后一个参数是纯数字就当超时，所以关卡 id、套件名、测试过滤都不要写成纯数字。
 # 命令：
 #   refresh / sync / scenes / capture / sheets / motion / all / pets / petcompare / fur（毛发画质对比截图）/ furbench（毛发三档帧耗时）
+#   fx                      FxBuilder：特效程序贴图、材质、粒子风格预制体、着色器变体集、URP 贴花渲染特性（改了 G/Fx/Presets 后重跑）
 #   level <id>              按 [LevelBuilder] 登记生成一张关卡 + 验收 + 截图（level 1-1 = 1-1 古道穿越戈壁；旧名 level11 仍可用）
 #   levels                  生成全部登记的关卡，构建设置里的关卡场景按登记顺序排
 #   tests [过滤]            EditMode 测试（过滤 = 测试全名的正则，如 StatSheet）；汇总在回应的 tests 字段，明细 unity/Assets/Art/_Review/tests_report.txt
@@ -77,7 +78,7 @@ case "$cmd" in
   petcompare) method=Spiritfire.Art.Editor.PetStyleCompare.BatchRun ;;
   fur) method=Spiritfire.Art.Editor.FurReview.BatchRun ;;
   furbench) method=Spiritfire.Art.Editor.FurBench.BatchRun ;;
-  level|levels|ui)
+  level|levels|ui|fx)
     # 和编辑器里走同一套命令分发（PipelineBridge.BatchRun），回应写 response-batch-<命令>.json
     batch=(-bridgeCommand "$cmd")
     for a in ${args[@]+"${args[@]}"}; do batch+=(-bridgeArg "$a"); done
