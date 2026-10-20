@@ -1,0 +1,396 @@
+/*
+ * 灵火破晓 · UI Toolkit 主题（docs/unity-parity.md D18 / U1；移植自 Three.js src/ui/css/base.css）。
+ * 东方奇幻：墨黑底、朱砂与鎏金点缀、细描边。像素值都是 1920×1080 下的设计像素（与 Three.js 的 CSS 一致），
+ * 运行时由 UIRoot 按屏幕缩放（UILayers.Scale）。UIRoot 把本表加到每一层的根元素上，:root 即各层根。
+ * 字体：正文是各层根上的默认字体（Noto Sans SC 子集）；.sf-title 用标题字体（霞鹜文楷子集 WenKai SF），.sf-num 用数字字体（Barlow Condensed）。
+ * UI Toolkit 没有 em / line-height / 渐变：行高在字体资产里设（UIFonts.SpecOf），渐变用 UITheme 的程序贴图。
+ * 改颜色时同步 UITheme.cs 的调色板（代码里拼颜色用）。
+ */
+
+:root {
+    --ink-0: #07060a;
+    --ink-1: #0f0d12;
+    --ink-2: #18151c;
+    --ink-3: #251f29;
+    --paper: #efe4cc;
+    --paper-2: #c8b999;
+    --paper-3: #8a7f6d;
+    --cinnabar: #c9372a;
+    --cinnabar-hi: #ff5a3c;
+    --cinnabar-lo: #6b1b13;
+    --gold: #d4a955;
+    --gold-hi: #f4d893;
+    --gold-lo: #6f5626;
+    --jade: #52b6ec;
+    --jade-hi: #b8eaff;
+    --hp: #d33a2c;
+    --hp-hi: #ff7a5a;
+    --armor: #e0b23c;
+    --good: #86dc8f;
+    --bad: #ff6a4d;
+    --line: rgba(212, 169, 85, 0.42);
+    --line-soft: rgba(212, 169, 85, 0.16);
+    /* 稀有度（= G/Core/Rarity.cs，Three.js RARITY_COLORS） */
+    --rarity-0: #cfd3da;
+    --rarity-1: #62d36a;
+    --rarity-2: #4aa3ff;
+    --rarity-3: #b45cff;
+    --rarity-4: #ffa726;
+    /* 元素（= DamageTable.ElementColor） */
+    --el-fire: #ff8c33;
+    --el-shock: #8cbfff;
+    --el-corrode: #99e64d;
+
+    color: var(--paper);
+    font-size: 15px;
+    -unity-paragraph-spacing: 4px;
+}
+
+/* ───────────────────────── 字体 ───────────────────────── */
+
+.sf-title {
+    -unity-font-definition: resource("UI/Fonts/SDF/Title");
+}
+
+.sf-num {
+    -unity-font-definition: resource("UI/Fonts/SDF/Number");
+}
+
+.sf-body {
+    -unity-font-definition: resource("UI/Fonts/SDF/Body");
+    white-space: normal;
+}
+
+/* ───────────────────────── 层 / 界面 ───────────────────────── */
+
+.sf-layer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+/* 路由界面：铺满全屏，自己接指针 */
+.sf-screen {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    align-items: center;
+    justify-content: center;
+}
+
+.sf-backdrop {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(7, 6, 10, 0.62);
+}
+
+/* ───────────────────────── 图标 ───────────────────────── */
+
+.sf-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    -unity-background-image-tint-color: var(--paper);
+}
+
+.sf-icon--coin {
+    -unity-background-image-tint-color: #e8b64a;
+}
+
+.sf-icon--essence {
+    -unity-background-image-tint-color: #9fd6ff;
+}
+
+.sf-icon--cloud {
+    width: 76px;
+    height: 30px;
+    -unity-background-image-tint-color: var(--gold);
+}
+
+/* ───────────────────────── 按钮 ───────────────────────── */
+
+.sf-btn {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    min-width: 128px;
+    margin: 0;
+    padding: 11px 24px;
+    font-size: 15px;
+    letter-spacing: 2px;
+    -unity-text-align: middle-center;
+    color: var(--paper);
+    background-color: var(--ink-2);
+    border-width: 1px;
+    border-color: var(--line);
+    border-radius: 2px;
+    transition-property: background-color, border-color, color, scale;
+    transition-duration: 0.2s, 0.2s, 0.2s, 0.12s;
+}
+
+.sf-btn:hover {
+    color: var(--gold-hi);
+    border-color: var(--gold);
+    background-color: rgb(52, 26, 26);
+}
+
+/* 手柄 / 键盘焦点：亮金边 + 暖底（UI Toolkit 没有 outline） */
+.sf-btn:focus {
+    color: var(--gold-hi);
+    border-color: var(--gold-hi);
+    background-color: rgb(60, 30, 28);
+}
+
+.sf-btn:active {
+    scale: 0.985 0.985;
+    translate: 0 1px;
+}
+
+.sf-btn:disabled {
+    opacity: 0.42;
+}
+
+.sf-btn--primary {
+    color: #fff4e2;
+    border-color: rgba(244, 216, 147, 0.7);
+    background-color: var(--cinnabar);
+}
+
+.sf-btn--primary:hover,
+.sf-btn--primary:focus {
+    color: #fffaf0;
+    border-color: var(--gold-hi);
+    background-color: #d8412f;
+}
+
+.sf-btn--ghost {
+    background-color: rgba(0, 0, 0, 0);
+    border-color: var(--line-soft);
+    color: var(--paper-2);
+}
+
+.sf-btn--danger {
+    border-color: rgba(201, 55, 42, 0.55);
+    color: #f1b3a4;
+}
+
+.sf-btn--sm {
+    min-width: 0;
+    padding: 7px 14px;
+    font-size: 13px;
+    letter-spacing: 1px;
+}
+
+/* ───────────────────────── 面板 ───────────────────────── */
+
+.sf-frame {
+    padding: 28px 32px;
+    background-color: rgba(18, 15, 21, 0.97);
+    border-width: 1px;
+    border-color: var(--line-soft);
+}
+
+.sf-panel__title {
+    -unity-font-definition: resource("UI/Fonts/SDF/Title");
+    font-size: 34px;
+    letter-spacing: 11px;
+    color: var(--paper);
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+    margin-bottom: 22px;
+}
+
+.sf-panel__sub {
+    margin-top: 6px;
+    color: var(--paper-3);
+    font-size: 13px;
+}
+
+/* 印章（朱砂底、米色字、微斜） */
+.sf-seal {
+    -unity-font-definition: resource("UI/Fonts/SDF/Title");
+    padding: 6px 5px;
+    font-size: 22px;
+    color: #f8e9d2;
+    background-color: var(--cinnabar);
+    border-width: 2px;
+    border-color: rgba(248, 233, 210, 0.85);
+    border-radius: 3px;
+    rotate: -5deg;
+}
+
+/* 键帽 */
+.sf-key {
+    -unity-font-definition: resource("UI/Fonts/SDF/Number");
+    min-width: 26px;
+    height: 26px;
+    padding: 0 7px;
+    font-size: 13px;
+    -unity-text-align: middle-center;
+    -unity-font-style: bold;
+    color: var(--gold-hi);
+    background-color: var(--ink-3);
+    border-width: 1px;
+    border-bottom-width: 3px;
+    border-color: var(--gold-lo);
+    border-radius: 4px;
+}
+
+/* 标签（按稀有度上色：再加 .sf-rarity-N） */
+.sf-chip {
+    flex-direction: row;
+    align-items: center;
+    padding: 3px 10px;
+    font-size: 13px;
+    color: var(--paper-2);
+    border-width: 1px;
+    border-color: var(--line-soft);
+    background-color: rgba(7, 6, 10, 0.6);
+}
+
+.sf-rarity-0 { color: var(--rarity-0); border-color: rgba(207, 211, 218, 0.45); }
+.sf-rarity-1 { color: var(--rarity-1); border-color: rgba(98, 211, 106, 0.45); }
+.sf-rarity-2 { color: var(--rarity-2); border-color: rgba(74, 163, 255, 0.45); }
+.sf-rarity-3 { color: var(--rarity-3); border-color: rgba(180, 92, 255, 0.45); }
+.sf-rarity-4 { color: var(--rarity-4); border-color: rgba(255, 167, 38, 0.45); }
+
+.sf-el-fire { color: var(--el-fire); }
+.sf-el-shock { color: var(--el-shock); }
+.sf-el-corrode { color: var(--el-corrode); }
+
+.sf-good { color: var(--good); }
+.sf-bad { color: var(--bad); }
+
+/* ───────────────────────── 提示（toast） ───────────────────────── */
+
+.sf-toasts {
+    position: absolute;
+    left: 28px;
+    top: 38%;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.sf-toast {
+    flex-direction: row;
+    align-items: center;
+    max-width: 460px;
+    margin-bottom: 6px;
+    padding: 8px 16px 8px 12px;
+    border-left-width: 2px;
+    border-left-color: var(--gold-hi);
+    transform-origin: left;
+}
+
+.sf-toast__mark {
+    width: 7px;
+    height: 7px;
+    margin-right: 10px;
+    flex-shrink: 0;
+    rotate: 45deg;
+    background-color: var(--gold-hi);
+}
+
+.sf-toast__text {
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    white-space: normal;
+    flex-shrink: 1;
+    color: var(--paper);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.sf-toast__count {
+    margin-left: 10px;
+    font-size: 15px;
+    -unity-font-style: bold;
+    color: var(--gold-hi);
+}
+
+/* ───────────────────────── 横幅 ───────────────────────── */
+
+.sf-banner {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 17%;
+    align-items: center;
+}
+
+/* 淡墨衬底：比横幅本体四周各宽出一圈 */
+.sf-banner__backdrop {
+    position: absolute;
+    left: 50%;
+    top: -26px;
+    width: 1040px;
+    height: 210px;
+    translate: -520px 0;
+}
+
+.sf-banner__row {
+    flex-direction: row;
+    align-items: center;
+}
+
+.sf-banner__title {
+    font-size: 66px;
+    letter-spacing: 20px;
+    padding-left: 20px;
+    -unity-text-align: middle-center;
+    color: var(--gold-hi);
+    text-shadow: 0 3px 10px rgba(0, 0, 0, 0.75);
+    -unity-text-outline-width: 1px;
+    -unity-text-outline-color: rgba(60, 40, 10, 0.7);
+}
+
+.sf-banner__cloud {
+    width: 76px;
+    height: 30px;
+    margin: 0 18px;
+    opacity: 0.8;
+}
+
+.sf-banner__cloud--r {
+    scale: -1 1;
+}
+
+.sf-banner__rule {
+    width: 560px;
+    height: 1px;
+    margin-top: 8px;
+    margin-bottom: 10px;
+}
+
+.sf-banner__sub {
+    font-size: 17px;
+    letter-spacing: 8px;
+    padding-left: 8px;
+    -unity-text-align: middle-center;
+    color: var(--paper);
+    text-shadow: 0 1px 3px rgb(0, 0, 0);
+}
+
+/* ───────────────────────── 黑幕 / 闪光 ───────────────────────── */
+
+.sf-curtain {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #07060a;
+}
+
+.sf-flash {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}

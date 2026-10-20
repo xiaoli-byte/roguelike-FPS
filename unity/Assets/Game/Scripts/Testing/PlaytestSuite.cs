@@ -32,7 +32,21 @@ namespace Spiritfire.Game.Testing
 
         protected void Line(string s) => Runner.Line(s);
         protected void Fail(string s) => Runner.Fail(s);
-        protected void Shot(Camera cam, string name) => Runner.Shot(cam, name);
+
+        /// <summary>
+        /// 用相机拍一张（宿主的 1600×900 渲染）；这台相机画在屏幕上、又有看得见的 UI Toolkit 叠层（提示 / 横幅 / 黑幕 / 界面）时，
+        /// 本帧末尾再抓一次屏覆盖同一个文件，截图里才有 UI Toolkit（相机渲染到贴图拍不到它，见 <see cref="UICapture"/>）
+        /// </summary>
+        protected void Shot(Camera cam, string name)
+        {
+            Runner.Shot(cam, name);
+            if (string.IsNullOrEmpty(ShotDir) || !UICapture.WantsScreen(cam)) return;
+            // 宿主已经写完结论（Done）就不再记行：Line 会把结论头改回「进行中」
+            Runner.StartCoroutine(UICapture.UpgradeAtEndOfFrame(cam, System.IO.Path.Combine(ShotDir, $"playtest_{name}.png"), s =>
+            {
+                if (!PlaytestRunner.Done) Line(s);
+            }));
+        }
 
         // ───────────── 通用操控 ─────────────
         protected EnemyAI SpawnAhead(PlayerMotor motor, string id, float distance, float hpMult, float sideOffset = 0)

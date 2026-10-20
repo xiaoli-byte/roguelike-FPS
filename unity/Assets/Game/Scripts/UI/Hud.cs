@@ -65,7 +65,9 @@ namespace Spiritfire.Game
         void Awake()
         {
             Instance = this;
-            font = Font.CreateDynamicFontFromOSFont(new[] { "Microsoft YaHei UI", "Microsoft YaHei", "SimHei", "Arial" }, 32);
+            // 打包的正文字体（Noto Sans SC 子集，导入设置里带余量做回退，D18）；没有时才退回系统字体（Deck / Linux 上会是豆腐块）
+            font = UIFonts.Legacy;
+            if (!font) font = Font.CreateDynamicFontFromOSFont(new[] { "Microsoft YaHei UI", "Microsoft YaHei", "SimHei", "Arial" }, 32);
             Build();
         }
 
