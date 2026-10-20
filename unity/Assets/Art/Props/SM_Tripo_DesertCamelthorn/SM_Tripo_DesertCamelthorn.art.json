@@ -3,7 +3,7 @@
   "exporterVersion": 5,
   "id": "SM_Tripo_DesertCamelthorn",
   "kind": "static",
-  "class": "tripo_scatter",
+  "class": "scatter_plant",
   "category": "props",
   "bind": {
     "source": "scene",
@@ -12,27 +12,30 @@
   "keepGlow": "none",
   "lodDistance": [
     0,
-    16
+    20
   ],
   "budget": {
     "lodTris": [
-      1200,
-      600
+      1500,
+      500
     ],
-    "texture": 512,
-    "maxFileKb": 300
+    "texture": 1024,
+    "maxFileKb": 900
   },
-  "qaWaivers": {},
+  "qaWaivers": {
+    "LOD1 贴图色差": "植物的 LOD1 是按更少的叶卡重新摆放的（bl_proc_desert.py），不是 LOD0 的减面，逐点对比 LOD0 的贴图不适用",
+    "LOD1 贴图拉伸": "同上：LOD1 叶卡与 LOD0 位置不同，拉伸量比较不适用；叶卡 UV 与 LOD0 用同一张图集"
+  },
   "bounds": {
     "min": [
-      -0.5084812641143799,
+      -0.6786825656890869,
       0,
-      -0.5045068264007568
+      -0.6197474002838135
     ],
     "max": [
-      0.5084812641143799,
-      0.699999988079071,
-      0.5045068264007568
+      0.6786825656890869,
+      0.7395498156547546,
+      0.6197474002838135
     ]
   },
   "rig": {
@@ -47,8 +50,8 @@
     {
       "name": "SM_Tripo_DesertCamelthorn_LOD0",
       "lod": 0,
-      "tris": 1194,
-      "verts": 2175,
+      "tris": 1459,
+      "verts": 3057,
       "materials": [
         "M_Tripo_DesertCamelthorn"
       ],
@@ -57,10 +60,10 @@
     {
       "name": "SM_Tripo_DesertCamelthorn_LOD1",
       "lod": 1,
-      "tris": 596,
-      "verts": 1137,
+      "tris": 443,
+      "verts": 981,
       "materials": [
-        "M_Tripo_DesertCamelthorn_LOD1"
+        "M_Tripo_DesertCamelthorn"
       ],
       "skinned": false
     }
@@ -81,8 +84,8 @@
         0,
         0
       ],
-      "doubleSided": true,
-      "alphaMode": "OPAQUE",
+      "doubleSided": false,
+      "alphaMode": "MASK",
       "alphaCutoff": 0.5,
       "hasOcclusion": true,
       "occlusionSeparate": false,
@@ -91,50 +94,24 @@
         "N": "Textures/T_Tripo_DesertCamelthorn_N.png",
         "ORM": "Textures/T_Tripo_DesertCamelthorn_ORM.png"
       }
-    },
-    {
-      "name": "M_Tripo_DesertCamelthorn_LOD1",
-      "baseColor": [
-        1,
-        1,
-        1,
-        1
-      ],
-      "metallic": 1.0,
-      "roughness": 1.0,
-      "emissive": [
-        0,
-        0,
-        0
-      ],
-      "doubleSided": true,
-      "alphaMode": "OPAQUE",
-      "alphaCutoff": 0.5,
-      "hasOcclusion": true,
-      "occlusionSeparate": false,
-      "textures": {
-        "BC": "Textures/T_Tripo_DesertCamelthorn_LOD1_BC.png",
-        "N": "Textures/T_Tripo_DesertCamelthorn_LOD1_N.png",
-        "ORM": "Textures/T_Tripo_DesertCamelthorn_LOD1_ORM.png"
-      }
     }
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_DesertCamelthorn.glb",
-    "sha256": "45cdbd2b5f40ef170512530892fdb2f7230b1fb9323432b3786e4fc188e9d7a9",
+    "sha256": "a270718386643aff4f6886eb71e10f034ec5360812c10fc560471c33d7ecff89",
     "hiRes": false,
     "version": {
-      "blockout": 1,
-      "concept": 2,
-      "highpoly": 2,
-      "build": 3
+      "blockout": 10,
+      "concept": 12,
+      "highpoly": 12,
+      "build": 13
     },
     "generator": {
-      "tool": "Tripo Studio",
-      "mode": "tripo",
-      "checkpoint": "P2.0"
+      "tool": "Blender 5.2 bpy",
+      "mode": "procedural",
+      "checkpoint": "camelthorn@3"
     },
-    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    "license": "project-original procedural model (art/pipeline/blender/bl_proc_desert.py)"
   },
-  "exported": "2026-10-20 22:35:42"
+  "exported": "2026-10-20 23:23:58"
 }

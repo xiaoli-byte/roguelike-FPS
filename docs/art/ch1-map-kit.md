@@ -4,6 +4,28 @@
 
 清单里每一件都有 Unity Prefab（`unity/Assets/Art/Props/<ID>/`），并且通过了 ArtValidator（`bridge.sh sync`）。摆放不在这里做，由地图单元 M11–M14 负责：`LevelKit.PlaceOrBox` 按下表的 ID 找 Prefab。
 
+## 0. 2026-10-20 晚：骆驼刺改用本机 Blender 建模
+
+用户点名了两张截图：Tripo 骆驼刺 v001（沙丘上竖着几片叶子的薄片）和 v002（"bush cluster on sandy hillside"，1239 面）。
+用户的意思是概念图没问题，是 Tripo 建出来的模型和概念图差别太大，没法用。只有这一件改用本机 Blender 建模，
+套件里其余的件保持 Tripo 版（2026-10-20 用户澄清："我只是说这两个质量不行，没说其他都不行"）。
+
+| 件 | 做法 | 状态 |
+|---|---|---|
+| SM_Tripo_DesertCamelthorn 骆驼刺 | 同 ID 替换。照已批概念图 v001 建模：七个圆叶团、扭曲短枝、沙丘底座、粉色花苞 | ✅ 已发布，ArtValidator 通过；Tripo v001 / v002 退役 |
+| SM_Env_DesertTamarisk 红柳 | 新增的高灌木散布件，没有概念图；不需要可以不摆 | ✅ 已发布，ArtValidator 通过 |
+
+- 脚本：`art/pipeline/blender/bl_proc_desert.py` 建模并用 numpy 画图集；`art/pipeline/proc_assets.py build <ID>` 登记白模参考、概念视图、源模型和 build 版本。
+  之后照常 `assetctl validate / review / approve / publish` → `unity_export.py` → `bridge.sh sync`。
+- registry 写法：`source_provider = "blender"`，配方写在 `[assets.<ID>.proc] recipe / seed`。
+- 植物的做法：
+  - 枝干：平行移动标架的锥形管。
+  - 叶子：画在镂空叶卡上的分叉小枝，带花苞或花。
+  - 叶卡背靠背两面，材质 alphaMode MASK、开背面剔除。
+  - 骆驼刺的叶卡像鳞片一样贴在每个叶团球面上并向外翘，里面有一个低面内核挡住透视，法线从团心向外，所以每团读成一个实心圆块。
+  - 每级 LOD 直接建模，LOD1 用更少、更大的叶卡。
+- 审核图：`docs/art/review/desert-camelthorn-v013.jpg`、`desert-tamarisk-v003.jpg`。对比图（概念 / Tripo / Blender）：`desert-plants-blender-v001.jpg`。
+
 ## 1. 生产路线
 
 1. 登记：`art/pipeline/registry.toml` 的「第一章地图件 A / B」两节，`style_theme = "silkroad"`。
@@ -30,7 +52,8 @@
 | SM_Tripo_DesertBeaconParapet | 烽燧台垛墙（两垛一口，垛口 0.6 m 可蹲射） | tripo_prop | 1.89 × 1.1 × 0.38 | 2984 / 994 | 白盒是 3.5 m 一段，这里每段 1.9 m，沿台边连排 |
 | SM_Tripo_DesertBrushwoodPile | 烽燧积薪 | tripo_prop | 1.2 × 1.3 × 1.19 | 2837 / 994 | 白盒 2.2 m 见方，可放大 1.5–1.8 倍 |
 | SM_Tripo_DesertHanWallCorner | 汉长城转角（派生件，见第 3 节） | tripo_architecture_kit | 4.69 × 3.5 × 4.69 | 5652 / 2486 / 796 | 中线交点在原点，臂 A 沿 +X、臂 B 沿 −Z，各长 4 m，端面与直段对接 |
-| SM_Tripo_DesertCamelthorn | 骆驼刺散布件 | tripo_scatter | 约 1.1 × 0.7 × 1.0 | 1194 / 596 | 随机偏航 + 0.8–1.3 倍缩放，GPU instancing |
+| SM_Tripo_DesertCamelthorn | 骆驼刺散布件（**已换成 Blender 版**，见第 0 节） | scatter_plant | 1.36 × 0.74 × 1.24 | 1459 / 443 | 随机偏航 + 0.8–1.3 倍缩放，GPU instancing |
+| SM_Env_DesertTamarisk | 红柳散布件（Blender，新增） | scatter_plant | 1.72 × 2.27 × 2.02 | 1323 / 320 | 戈壁 / 古道边成丛点缀，随机偏航 + 0.8–1.2 倍缩放 |
 | SM_Tripo_DesertGravelScatter | 黑戈壁砾石散布件 | tripo_scatter | 1.05 × 0.45 × 1.04 | 1194 / 398 | 同上；砾石滩可放大到 1.5 倍 |
 | SM_Decal_DesertCartRuts | 古道车辙贴花（程序绘制） | ground_decal | 2.4 × 0 × 8 | 128 / 4 | 离地 2 cm，沿 Z 平铺（贴图 Z 向循环），沿古道样条首尾相接 |
 | SM_Tripo_DesertSeatedColossus | 敦煌坐像（1-1 远景地标；1-3 寺院前庭巨像） | tripo_architecture | 11.97 × 20 × 9.76 | 7960 / 2486 / 795 | 远景可放大 1.5–2 倍；1-3 放在 4 m 底座上 |

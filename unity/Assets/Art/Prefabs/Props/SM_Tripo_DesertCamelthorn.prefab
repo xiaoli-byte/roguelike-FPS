@@ -157,7 +157,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 45700f0ea1eaee641a60b13356c0afd1, type: 2}
+  - {fileID: 2100000, guid: 04ff8c36bbce72e4e98a5c177912ed4d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -278,17 +278,17 @@ LODGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8401109093011067080}
   serializedVersion: 3
-  m_LocalReferencePoint: {x: -0.0011091828, y: 0.35062164, z: 0.003466487}
-  m_Size: 1.019181
+  m_LocalReferencePoint: {x: 0.010554612, y: 0.39735, z: -0.000014066696}
+  m_Size: 1.4131739
   m_FadeMode: 1
   m_AnimateCrossFading: 1
   m_LastLODIsBillboard: 0
   m_LODs:
-  - screenRelativeHeight: 0.045386657
+  - screenRelativeHeight: 0.048462957
     fadeTransitionWidth: 0
     renderers:
     - renderer: {fileID: 3257611087134736342}
-  - screenRelativeHeight: 0.0075644427
+  - screenRelativeHeight: 0.0080771595
     fadeTransitionWidth: 0
     renderers:
     - renderer: {fileID: 7141129920583307909}
@@ -307,7 +307,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Spiritfire.Art.Runtime::Spiritfire.Art.ArtAssetInfo
   assetId: SM_Tripo_DesertCamelthorn
-  assetClass: tripo_scatter
+  assetClass: scatter_plant
   category: props
   rigType: none
   bindSource: scene
@@ -315,11 +315,11 @@ MonoBehaviour:
   bindAttachment: 
   lodDistance:
   - 0
-  - 16
+  - 20
   moveSpeed: 0
   designBounds:
-    m_Center: {x: 0, y: 0.35, z: 0}
-    m_Extent: {x: 0.50848126, y: 0.35, z: 0.5045068}
+    m_Center: {x: 0, y: 0.3697749, z: 0}
+    m_Extent: {x: 0.67868257, y: 0.3697749, z: 0.6197474}
   sourceGlb: public/assets/props/SM_Tripo_DesertCamelthorn.glb
-  sourceSha256: 45cdbd2b5f40ef170512530892fdb2f7230b1fb9323432b3786e4fc188e9d7a9
-  license: Tripo Studio paid-plan output (commercial use per Tripo terms)
+  sourceSha256: a270718386643aff4f6886eb71e10f034ec5360812c10fc560471c33d7ecff89
+  license: project-original procedural model (art/pipeline/blender/bl_proc_desert.py)

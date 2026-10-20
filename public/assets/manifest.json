@@ -11798,7 +11798,7 @@
     "SM_Tripo_DesertCamelthorn": {
       "url": "assets/props/SM_Tripo_DesertCamelthorn.glb",
       "kind": "static",
-      "class": "tripo_scatter",
+      "class": "scatter_plant",
       "bind": {
         "source": "scene",
         "id": "desert.silkroad.camelthorn"
@@ -11806,36 +11806,77 @@
       "keepGlow": "none",
       "lodDistance": [
         0,
-        16
+        20
       ],
       "bounds": {
         "min": [
-          -0.5084812641143799,
+          -0.6786825656890869,
           0,
-          -0.5045068264007568
+          -0.6197474002838135
         ],
         "max": [
-          0.5084812641143799,
-          0.699999988079071,
-          0.5045068264007568
+          0.6786825656890869,
+          0.7395498156547546,
+          0.6197474002838135
         ]
       },
       "version": {
-        "blockout": 1,
-        "concept": 2,
-        "highpoly": 2,
+        "blockout": 10,
+        "concept": 12,
+        "highpoly": 12,
+        "build": 13
+      },
+      "sha256": "a270718386643aff4f6886eb71e10f034ec5360812c10fc560471c33d7ecff89",
+      "bytes": 139324,
+      "published": "2026-10-20 23:23:55",
+      "generator": {
+        "tool": "Blender 5.2 bpy",
+        "mode": "procedural",
+        "checkpoint": "camelthorn@3"
+      },
+      "license": "project-original procedural model (art/pipeline/blender/bl_proc_desert.py)"
+    },
+    "SM_Env_DesertTamarisk": {
+      "url": "assets/props/SM_Env_DesertTamarisk.glb",
+      "kind": "static",
+      "class": "scatter_plant",
+      "bind": {
+        "source": "scene",
+        "id": "desert.silkroad.tamarisk"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -0.8614023923873901,
+          0,
+          -1.0106406211853027
+        ],
+        "max": [
+          0.8614023923873901,
+          2.2715859413146973,
+          1.0106406211853027
+        ]
+      },
+      "version": {
+        "blockout": 2,
+        "concept": 3,
+        "highpoly": 3,
         "build": 3
       },
-      "sha256": "45cdbd2b5f40ef170512530892fdb2f7230b1fb9323432b3786e4fc188e9d7a9",
-      "bytes": 146168,
-      "published": "2026-10-20 22:35:39",
+      "sha256": "9ba1aeed6321558c1ac8731deb1047b89cd6c9c0085095903d9aa5589236b33d",
+      "bytes": 149972,
+      "published": "2026-10-20 23:03:22",
       "generator": {
-        "tool": "Tripo Studio",
-        "mode": "tripo",
-        "checkpoint": "P2.0"
+        "tool": "Blender 5.2 bpy",
+        "mode": "procedural",
+        "checkpoint": "tamarisk@5"
       },
-      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+      "license": "project-original procedural model (art/pipeline/blender/bl_proc_desert.py)"
     }
   },
-  "updated": "2026-10-20 22:35:39"
+  "updated": "2026-10-20 23:23:55"
 }

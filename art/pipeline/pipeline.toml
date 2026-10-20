@@ -247,6 +247,16 @@ texture = 1024
 texel_density = 128
 max_file_kb = 1200
 
+# 程序化植物散布件（骆驼刺、红柳）：bl_proc_desert.py 建模的枝干 + 镂空叶卡，每级 LOD 直接建模；
+# 叶卡需要清晰的轮廓，贴图 1024²
+[classes.scatter_plant]
+category = "props"
+lod_tris = [1500, 500]
+lod_distance = [0, 20]
+texture = 1024
+texel_density = 256
+max_file_kb = 900
+
 # 地形散布件（骆驼刺、砾石）：GPU instancing 成百上千个，面数与贴图压到最低；Tripo 端按约 1500 面生成
 [classes.tripo_scatter]
 category = "props"

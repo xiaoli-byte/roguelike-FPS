@@ -1,0 +1,499 @@
+{
+  "id": "SM_Env_DesertTamarisk",
+  "display": "红柳（散布件，沙地灌木）",
+  "kind": "static",
+  "class": "scatter_plant",
+  "stages": {
+    "blockout": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 22:58:37",
+          "files": {
+            "BO_SM_Env_DesertTamarisk_v001.json": {
+              "path": "00_blockout/BO_SM_Env_DesertTamarisk_v001.json",
+              "sha256": "28df7d32bdb0feaf78ad86cb19a6a6798b6f8e10ffc0355488ac1e1c2489947d"
+            },
+            "BO_SM_Env_DesertTamarisk_v001_views.json": {
+              "path": "00_blockout/BO_SM_Env_DesertTamarisk_v001_views.json",
+              "sha256": "177291e6896d05293844436801ebade4e127672a987c9653ebd84f3b4dfe7a9c"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.tamarisk"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.74,
+              0.0,
+              -0.825
+            ],
+            "max": [
+              0.74,
+              2.23,
+              0.825
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        },
+        {
+          "version": 2,
+          "created": "2026-10-20 23:00:30",
+          "files": {
+            "BO_SM_Env_DesertTamarisk_v002.json": {
+              "path": "00_blockout/BO_SM_Env_DesertTamarisk_v002.json",
+              "sha256": "4d02520e4fade593ecf3c287c843ba0d1086ef78f57f018fa1e8be309854d54c"
+            },
+            "BO_SM_Env_DesertTamarisk_v002_views.json": {
+              "path": "00_blockout/BO_SM_Env_DesertTamarisk_v002_views.json",
+              "sha256": "b9efc4e67a95bd53fb89b59b936a4772a2ab13147a5c2b5a6234a81c8e5716cf"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "desert.silkroad.tamarisk"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.86,
+              0.0,
+              -1.01
+            ],
+            "max": [
+              0.86,
+              2.27,
+              1.01
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 22:58:38",
+          "files": {
+            "CN_SM_Env_DesertTamarisk_v001_front.png": {
+              "path": "01_concept/CN_SM_Env_DesertTamarisk_v001_front.png",
+              "sha256": "b47b881da6d9e7b80046ac2759acb57e3a54efceb50742c5cea43ec3280d6ef8"
+            },
+            "CN_SM_Env_DesertTamarisk_v001_left.png": {
+              "path": "01_concept/CN_SM_Env_DesertTamarisk_v001_left.png",
+              "sha256": "f01d8ae61bdb797b7712b324e7b6e33eb2c50baa4fba111c8fec78b1d83c20c2"
+            },
+            "CN_SM_Env_DesertTamarisk_v001_back.png": {
+              "path": "01_concept/CN_SM_Env_DesertTamarisk_v001_back.png",
+              "sha256": "5d8f2e65d47bf49e0c0162a80580f9b28ae507a4a8e962290ea8e093042d67bb"
+            },
+            "CN_SM_Env_DesertTamarisk_v001_right.png": {
+              "path": "01_concept/CN_SM_Env_DesertTamarisk_v001_right.png",
+              "sha256": "bee1ec4ad9c0dd10eb2837ef70f5b0caa6241477a0ecf8c37b2bb5f80da86f6b"
+            },
+            "CN_SM_Env_DesertTamarisk_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Env_DesertTamarisk_v001_sheet.png",
+              "sha256": "2712b8c4625b4f5cad092d99276a19aa31dee712e700d8feb88df17b39960010"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Blender procedural render",
+          "recipe": "tamarisk",
+          "seed": 5,
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "procedural",
+          "registration": {
+            "method": "rendered in the reference cameras"
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-20 23:00:30",
+          "files": {
+            "CN_SM_Env_DesertTamarisk_v002_front.png": {
+              "path": "01_concept/CN_SM_Env_DesertTamarisk_v002_front.png",
+              "sha256": "c19a57f8f37fc141a621ea0d4b2fae5f3abf8a46e97fd635b0b3701e08ab2236"
+            },
+            "CN_SM_Env_DesertTamarisk_v002_left.png": {
+              "path": "01_concept/CN_SM_Env_DesertTamarisk_v002_left.png",
+              "sha256": "27135097e119822ca575b7c3cbe13a4baa97a9f1d4cbce26fccf792ef119e430"
+            },
+            "CN_SM_Env_DesertTamarisk_v002_back.png": {
+              "path": "01_concept/CN_SM_Env_DesertTamarisk_v002_back.png",
+              "sha256": "e21ef309480c6bc6cb19be04722e8df3f5991e34338c0b3d07a38135732fcb7b"
+            },
+            "CN_SM_Env_DesertTamarisk_v002_right.png": {
+              "path": "01_concept/CN_SM_Env_DesertTamarisk_v002_right.png",
+              "sha256": "9d08d76059d2ad82da9dbcb80cb8e67054495b533271c6ec678b3881ee9e0dcb"
+            },
+            "CN_SM_Env_DesertTamarisk_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Env_DesertTamarisk_v002_sheet.png",
+              "sha256": "a479850aa804a52bd20b54918db1664a2dff1fb1c6b08e4b4e8eb98c0f5f3a69"
+            }
+          },
+          "from_blockout": 2,
+          "generator": "Blender procedural render",
+          "recipe": "tamarisk",
+          "seed": 5,
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "procedural",
+          "registration": {
+            "method": "rendered in the reference cameras"
+          }
+        },
+        {
+          "version": 3,
+          "created": "2026-10-20 23:02:13",
+          "files": {
+            "CN_SM_Env_DesertTamarisk_v003_front.png": {
+              "path": "01_concept/CN_SM_Env_DesertTamarisk_v003_front.png",
+              "sha256": "07ca27aaebb8e05f696bcd320de1dbda25a31e6709758e5b26caf0d4c76e839a"
+            },
+            "CN_SM_Env_DesertTamarisk_v003_left.png": {
+              "path": "01_concept/CN_SM_Env_DesertTamarisk_v003_left.png",
+              "sha256": "30e9d16527c7a19b44e59157012034dc96045c969e96c50bde6f65cfc210f5b7"
+            },
+            "CN_SM_Env_DesertTamarisk_v003_back.png": {
+              "path": "01_concept/CN_SM_Env_DesertTamarisk_v003_back.png",
+              "sha256": "5d9316f516f124fdd967081adc743a85c310291b7aeb630e625adb66afecf660"
+            },
+            "CN_SM_Env_DesertTamarisk_v003_right.png": {
+              "path": "01_concept/CN_SM_Env_DesertTamarisk_v003_right.png",
+              "sha256": "d93c4ea39e35efb65eaaa48efd1276cca3cbe854dd5e8ecc9564a4d1f77c941d"
+            },
+            "CN_SM_Env_DesertTamarisk_v003_sheet.png": {
+              "path": "01_concept/CN_SM_Env_DesertTamarisk_v003_sheet.png",
+              "sha256": "9f0f47e12950a4a873474a812b81389809dffe2a9b4334ca34a3daa293792c0c"
+            }
+          },
+          "from_blockout": 2,
+          "generator": "Blender procedural render",
+          "recipe": "tamarisk",
+          "seed": 5,
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "procedural",
+          "registration": {
+            "method": "rendered in the reference cameras"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 22:58:38",
+          "files": {
+            "HP_SM_Env_DesertTamarisk_v001.glb": {
+              "path": "02_highpoly/HP_SM_Env_DesertTamarisk_v001.glb",
+              "sha256": "e1ebd7bee9cd4b77043339f676611f86ff2feead548c7e7b8fd1602ca891d5bd"
+            }
+          },
+          "from_concept": 1,
+          "mode": "procedural",
+          "tool": "Blender 5.2 bpy",
+          "checkpoint": "tamarisk@5",
+          "license": "project-original procedural model (art/pipeline/blender/bl_proc_desert.py)",
+          "faces": 1282,
+          "source_sha256": "e1ebd7bee9cd4b77043339f676611f86ff2feead548c7e7b8fd1602ca891d5bd"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-20 23:00:31",
+          "files": {
+            "HP_SM_Env_DesertTamarisk_v002.glb": {
+              "path": "02_highpoly/HP_SM_Env_DesertTamarisk_v002.glb",
+              "sha256": "1528d488757dd039521bf9bacf5d25439e455935a666019702b280d0093e6f81"
+            }
+          },
+          "from_concept": 2,
+          "mode": "procedural",
+          "tool": "Blender 5.2 bpy",
+          "checkpoint": "tamarisk@5",
+          "license": "project-original procedural model (art/pipeline/blender/bl_proc_desert.py)",
+          "faces": 1323,
+          "source_sha256": "1528d488757dd039521bf9bacf5d25439e455935a666019702b280d0093e6f81"
+        },
+        {
+          "version": 3,
+          "created": "2026-10-20 23:02:13",
+          "files": {
+            "HP_SM_Env_DesertTamarisk_v003.glb": {
+              "path": "02_highpoly/HP_SM_Env_DesertTamarisk_v003.glb",
+              "sha256": "9ba1aeed6321558c1ac8731deb1047b89cd6c9c0085095903d9aa5589236b33d"
+            }
+          },
+          "from_concept": 3,
+          "mode": "procedural",
+          "tool": "Blender 5.2 bpy",
+          "checkpoint": "tamarisk@5",
+          "license": "project-original procedural model (art/pipeline/blender/bl_proc_desert.py)",
+          "faces": 1323,
+          "source_sha256": "9ba1aeed6321558c1ac8731deb1047b89cd6c9c0085095903d9aa5589236b33d"
+        }
+      ]
+    },
+    "build": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 22:58:38",
+          "files": {
+            "SM_Env_DesertTamarisk_v001.blend": {
+              "path": "03_work/SM_Env_DesertTamarisk_v001.blend",
+              "sha256": "02fa392e643a7bbf1e25a62f2853977b6a6d625ba267203faf1de381cfc5ebad"
+            },
+            "SM_Env_DesertTamarisk_v001.glb": {
+              "path": "04_export/SM_Env_DesertTamarisk_v001.glb",
+              "sha256": "e1ebd7bee9cd4b77043339f676611f86ff2feead548c7e7b8fd1602ca891d5bd"
+            },
+            "SM_Env_DesertTamarisk_v001_metrics.json": {
+              "path": "03_work/SM_Env_DesertTamarisk_v001_metrics.json",
+              "sha256": "ae3ddf8c5f107721d9ded6db6f3971d67ea78cae5cc271e982b904dde5ddc815"
+            },
+            "T_Env_DesertTamarisk_BC.png": {
+              "path": "03_work/textures_v001/T_Env_DesertTamarisk_BC.png",
+              "sha256": "472a8b920222613cdb9dce1aea09d86ac7f18c00888aa7ef8290d6c4a9cdd3af"
+            },
+            "T_Env_DesertTamarisk_N.png": {
+              "path": "03_work/textures_v001/T_Env_DesertTamarisk_N.png",
+              "sha256": "69f8d1c82f6fb076b6115777a0fbd392b15403af729eacd5a150e6284d65cc15"
+            },
+            "T_Env_DesertTamarisk_ORM.png": {
+              "path": "03_work/textures_v001/T_Env_DesertTamarisk_ORM.png",
+              "sha256": "b7ed606fcdd6cc6e231929084b797565c991f64bcf59d44bfb5217ac2dd4b642"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 1.0,
+          "uncovered_ratio": 0.0,
+          "procedural": {
+            "recipe": "tamarisk",
+            "seed": 5
+          },
+          "lods": [
+            {
+              "tris": 1282,
+              "verts": 1388
+            },
+            {
+              "tris": 354,
+              "verts": 402
+            }
+          ],
+          "export_kb": 140.1,
+          "seconds": 67.3,
+          "bake_device": "none (numpy painted)"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-20 23:00:31",
+          "files": {
+            "SM_Env_DesertTamarisk_v002.blend": {
+              "path": "03_work/SM_Env_DesertTamarisk_v002.blend",
+              "sha256": "40a7c8a961ac8842a5dc9e78610c507a4337d5fef3a57957ff3eb4ef06b293d0"
+            },
+            "SM_Env_DesertTamarisk_v002.glb": {
+              "path": "04_export/SM_Env_DesertTamarisk_v002.glb",
+              "sha256": "1528d488757dd039521bf9bacf5d25439e455935a666019702b280d0093e6f81"
+            },
+            "SM_Env_DesertTamarisk_v002_metrics.json": {
+              "path": "03_work/SM_Env_DesertTamarisk_v002_metrics.json",
+              "sha256": "595a54bbf2e9d4b73479ccbfc5edbbac3f34a2009c065d921c7e8d67da28bd33"
+            },
+            "T_Env_DesertTamarisk_BC.png": {
+              "path": "03_work/textures_v002/T_Env_DesertTamarisk_BC.png",
+              "sha256": "472a8b920222613cdb9dce1aea09d86ac7f18c00888aa7ef8290d6c4a9cdd3af"
+            },
+            "T_Env_DesertTamarisk_N.png": {
+              "path": "03_work/textures_v002/T_Env_DesertTamarisk_N.png",
+              "sha256": "69f8d1c82f6fb076b6115777a0fbd392b15403af729eacd5a150e6284d65cc15"
+            },
+            "T_Env_DesertTamarisk_ORM.png": {
+              "path": "03_work/textures_v002/T_Env_DesertTamarisk_ORM.png",
+              "sha256": "b7ed606fcdd6cc6e231929084b797565c991f64bcf59d44bfb5217ac2dd4b642"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 1.0,
+          "uncovered_ratio": 0.0,
+          "procedural": {
+            "recipe": "tamarisk",
+            "seed": 5
+          },
+          "lods": [
+            {
+              "tris": 1323,
+              "verts": 1869
+            },
+            {
+              "tris": 320,
+              "verts": 423
+            }
+          ],
+          "export_kb": 140.7,
+          "seconds": 87.9,
+          "bake_device": "none (numpy painted)"
+        },
+        {
+          "version": 3,
+          "created": "2026-10-20 23:02:13",
+          "files": {
+            "SM_Env_DesertTamarisk_v003.blend": {
+              "path": "03_work/SM_Env_DesertTamarisk_v003.blend",
+              "sha256": "39a48d13d2e8dde05dc0f252966da247d589bb4df608349d26264e04f2185fde"
+            },
+            "SM_Env_DesertTamarisk_v003.glb": {
+              "path": "04_export/SM_Env_DesertTamarisk_v003.glb",
+              "sha256": "9ba1aeed6321558c1ac8731deb1047b89cd6c9c0085095903d9aa5589236b33d"
+            },
+            "SM_Env_DesertTamarisk_v003_metrics.json": {
+              "path": "03_work/SM_Env_DesertTamarisk_v003_metrics.json",
+              "sha256": "9bdbe463490ef2b5060e35daa40e62adf76358ede25e08203006f5e462b3212e"
+            },
+            "T_Env_DesertTamarisk_BC.png": {
+              "path": "03_work/textures_v003/T_Env_DesertTamarisk_BC.png",
+              "sha256": "1b3f1cbd38c64c17ed8cabad3fb1253977f9721382d919b98454565a8a575375"
+            },
+            "T_Env_DesertTamarisk_N.png": {
+              "path": "03_work/textures_v003/T_Env_DesertTamarisk_N.png",
+              "sha256": "fc2ea7c4436d0309f0b55b8a35263416b6c41245350b2dd00a074e607fa95c65"
+            },
+            "T_Env_DesertTamarisk_ORM.png": {
+              "path": "03_work/textures_v003/T_Env_DesertTamarisk_ORM.png",
+              "sha256": "660de8f8d0de33382b33560b6e21037bd3f1b6a9e91c70ab18135c07727c24b7"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 3,
+            "highpoly": 3,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 1.0,
+          "uncovered_ratio": 0.0,
+          "procedural": {
+            "recipe": "tamarisk",
+            "seed": 5
+          },
+          "lods": [
+            {
+              "tris": 1323,
+              "verts": 1869
+            },
+            {
+              "tris": 320,
+              "verts": 423
+            }
+          ],
+          "export_kb": 146.5,
+          "seconds": 83.2,
+          "bake_device": "none (numpy painted)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 23:02:34",
+          "files": {
+            "SM_Env_DesertTamarisk_v003_validation_v001.json": {
+              "path": "05_review/SM_Env_DesertTamarisk_v003_validation_v001.json",
+              "sha256": "f9285bf99153fa15fb2007ee2684515a03465fdbaee1d885612361988e0b891f"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 2,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-20 23:02:57",
+          "files": {
+            "SM_Env_DesertTamarisk_v003_validation_v002.json": {
+              "path": "05_review/SM_Env_DesertTamarisk_v003_validation_v002.json",
+              "sha256": "7b723c3dab5c2e58399f3325ffbcb41581bd099dab125a3aafbcd723ad4a4f3f"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [
+            "LOD1 贴图拉伸",
+            "LOD1 贴图色差"
+          ],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 23:03:04",
+          "files": {
+            "SM_Env_DesertTamarisk_v003_review_v001.png": {
+              "path": "05_review/SM_Env_DesertTamarisk_v003_review_v001.png",
+              "sha256": "4b8e8e4c6ec4355309fec3c9f91a9a0d89a1cc6b7c7425a74f211a6b9569e99a"
+            }
+          },
+          "from_build": 3,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（用户 2026-10-19 授权免审，按推荐项推进）",
+            "note": "Blender 程序化 v003：七根红褐细茎成瓶形，羽状灰绿枝叶从膝高起，枝头粉色花穗",
+            "time": "2026-10-20 23:03:21"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-20 23:03:22",
+          "files": {
+            "SM_Env_DesertTamarisk.glb": {
+              "path": "@root/public/assets/props/SM_Env_DesertTamarisk.glb",
+              "sha256": "9ba1aeed6321558c1ac8731deb1047b89cd6c9c0085095903d9aa5589236b33d"
+            }
+          },
+          "from_build": 3,
+          "url": "assets/props/SM_Env_DesertTamarisk.glb"
+        }
+      ]
+    }
+  }
+}
