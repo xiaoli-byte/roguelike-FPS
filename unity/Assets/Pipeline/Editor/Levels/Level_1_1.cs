@@ -19,6 +19,8 @@ namespace Spiritfire.Art.Editor.Levels
     ///   → ④ 驼队残骸营地 (220,74)：沙丘围合的盆地 → 出口 (250,58)
     ///
     /// 主风向从东北吹向西南：雅丹长轴、沙丘脊线、狼烟的偏斜都按它排，地貌读起来是同一场风塑造的。
+    /// 场景只放环境和标记（D17 / L1）：PlayerSpawn、场地与刷怪标记、遭遇战、出口、测试武器架、自举标记 <see cref="Spiritfire.Game.LevelBootstrap"/>；
+    /// 玩家、HUD、各系统在常驻的 Core 场景（CoreSceneBuilder），敌人 / 武器 Prefab 在 GameDatabase。直接打开本场景按 Play 时自举标记把 Core 叠加进来。
     /// 生成：Spiritfire ▸ Levels ▸ Build 1-1 古道穿越戈壁（或 bridge.sh level 1-1，旧名 level11）。
     /// </summary>
     [LevelBuilder("1-1", Level_1_1.ScenePath)]
@@ -302,10 +304,14 @@ namespace Spiritfire.Art.Editor.Levels
             }
             BuildMarkers(terrain, markers);
 
-            // 可玩玩家：燎，冲锋枪起手（第一人称 rig、血量护盾、武器、HUD、会话）
-            var player = PlayerRigBuilder.Build(theme, PlayerRigBuilder.Liao, LevelKit.OnGround(terrain, Spawn.x, Spawn.y, 0.05f),
-                Quaternion.LookRotation(new Vector3(Gravel.x - Spawn.x, 0, Gravel.y - Spawn.y)), "1-1 · 古道穿越戈壁", out var cam);
-            var fpRig = player.GetComponentInChildren<FirstPersonViewmodel>(true).gameObject;
+            // 玩家、HUD、各系统都在常驻的 Core 场景（L1）：这里只放出生标记（SceneFlow 在这里组装玩家，燎、冲锋枪起手）
+            // + 自举标记（直接打开本场景按 Play 时把 Core 叠加进来）
+            var spawnAt = LevelKit.OnGround(terrain, Spawn.x, Spawn.y, 0.05f);
+            var spawnRot = Quaternion.LookRotation(new Vector3(Gravel.x - Spawn.x, 0, Gravel.y - Spawn.y));
+            var playerSpawn = new GameObject("PlayerSpawn").AddComponent<Spiritfire.Game.PlayerSpawn>();
+            playerSpawn.transform.SetParent(markers, false);
+            playerSpawn.transform.SetPositionAndRotation(spawnAt, spawnRot);
+            new GameObject("Level Bootstrap").AddComponent<Spiritfire.Game.LevelBootstrap>();
             var sites = BuildEncounters(markers);
             // 武器架（测试便利，做完随机掉落后撤掉）：出生点前方 4.5 m 横排左轮 / 霰弹 / 榴弹
             var fwd = new Vector3(Gravel.x - Spawn.x, 0, Gravel.y - Spawn.y).normalized;
@@ -349,31 +355,69 @@ namespace Spiritfire.Art.Editor.Levels
             LevelKit.CheckSight(rep, "③ 台顶 → ④ 营地", G(new Vector2(188, 136), 1.62f), G(Camp, 1.5f), 6);
             LevelKit.CheckSight(rep, "③ 台顶 → 远景雅丹群", G(new Vector2(182, 150), 1.62f), G(Mesas[5].c, Mesas[5].h * 0.8f), 14, "SM_Tripo_DesertYardangFleet");
             LevelKit.CheckSight(rep, "④ 入口 → 出口祭坛", G(new Vector2(212, 96), 1.62f), G(Exit, 2.5f), 6);
+            CheckSceneContents(rep, scene);
             rep.Line(rep.failures == 0 ? "全部通过" : $"不合格 {rep.failures} 项");
             rep.Save($"{LevelKit.ReviewDir}/level_1-1_report.txt");
 
             if (review)
             {
                 Vector3 E(Vector2 q, float dy = 1.62f) => G(q, dy);
-                LevelKit.Capture(cam, fpRig, "level_1-1", new[]
+                // 审核截图用临时机位（与玩家同一套相机 + 冲锋枪第一人称 rig），截完删掉，不留在关卡场景里
+                var preview = PlayerRigBuilder.BuildPreview(PlayerRigBuilder.Liao, spawnAt, spawnRot, out var cam, out var fpRig);
+                try
                 {
-                    ("Aerial", new Vector3(40, 95, -60), new Vector3(150, 0, 110), false),
-                    ("Map", new Vector3(130, 330, 99), new Vector3(130, 0, 100), false),
-                    ("Spawn", E(Spawn), smokeAt + Vector3.up * 4, true),
-                    ("GravelField", E(new Vector2(58, 50)), G(new Vector2(100, 66), 1), false),
-                    ("WallBreach", E(WallBreach().at + new Vector2(-14, -6)), G(WallBreach().at, 1.2f), false),
-                    ("Riverbed", E(new Vector2(92, 40), 2.2f), G(new Vector2(98, 72), 0), false),
-                    ("Yardang", E(new Vector2(106, 80)), G(new Vector2(126, 116), 4), false),
-                    ("LowMesaTop", E(Mesas[0].c), G(new Vector2(136, 92), 2), false),
-                    ("BeaconApproach", E(new Vector2(146, 120)), smokeAt - Vector3.up * 6, false),
-                    ("BeaconTop", E(new Vector2(186, 138)), G(Camp, 0), false),
-                    ("BeaconClose", E(new Vector2(173, 132), 2), G(BeaconTower, 7), false),
-                    ("Camp", E(new Vector2(206, 94)), G(new Vector2(234, 64), 1), false),
-                    ("NorthView", E(new Vector2(180, 150)), G(new Vector2(150, 220), 10), false),
-                });
+                    LevelKit.Capture(cam, fpRig, "level_1-1", new[]
+                    {
+                        ("Aerial", new Vector3(40, 95, -60), new Vector3(150, 0, 110), false),
+                        ("Map", new Vector3(130, 330, 99), new Vector3(130, 0, 100), false),
+                        ("Spawn", E(Spawn), smokeAt + Vector3.up * 4, true),
+                        ("GravelField", E(new Vector2(58, 50)), G(new Vector2(100, 66), 1), false),
+                        ("WallBreach", E(WallBreach().at + new Vector2(-14, -6)), G(WallBreach().at, 1.2f), false),
+                        ("Riverbed", E(new Vector2(92, 40), 2.2f), G(new Vector2(98, 72), 0), false),
+                        ("Yardang", E(new Vector2(106, 80)), G(new Vector2(126, 116), 4), false),
+                        ("LowMesaTop", E(Mesas[0].c), G(new Vector2(136, 92), 2), false),
+                        ("BeaconApproach", E(new Vector2(146, 120)), smokeAt - Vector3.up * 6, false),
+                        ("BeaconTop", E(new Vector2(186, 138)), G(Camp, 0), false),
+                        ("BeaconClose", E(new Vector2(173, 132), 2), G(BeaconTower, 7), false),
+                        ("Camp", E(new Vector2(206, 94)), G(new Vector2(234, 64), 1), false),
+                        ("NorthView", E(new Vector2(180, 150)), G(new Vector2(150, 220), 10), false),
+                    });
+                }
+                finally
+                {
+                    Object.DestroyImmediate(preview);
+                }
             }
             EditorSceneManager.SaveScene(scene, ScenePath);
             return rep.failures;
+        }
+
+        /// <summary>
+        /// L1 规则：关卡场景只有环境和标记——一个 PlayerSpawn、一个自举标记，没有玩家 / 相机 / HUD / 会话 / 敌人目录（这些在 Core 场景和 GameDatabase）；
+        /// 顺带重新生成 GameDatabase，报告里列出敌人 / 武器 Prefab 是否齐全
+        /// </summary>
+        static void CheckSceneContents(LevelKit.Report rep, UnityEngine.SceneManagement.Scene scene)
+        {
+            rep.Line("— 场景内容（L1：只有环境和标记，玩家在 Core 场景）—");
+            int Count<T>() where T : Component =>
+                Object.FindObjectsByType<T>(FindObjectsInactive.Include).Count(c => c.gameObject.scene == scene);
+            int spawns = Count<Spiritfire.Game.PlayerSpawn>();
+            int boots = Count<Spiritfire.Game.LevelBootstrap>();
+            if (spawns != 1) rep.Fail($"PlayerSpawn 有 {spawns} 个（应为 1）");
+            if (boots != 1) rep.Fail($"LevelBootstrap 有 {boots} 个（应为 1）");
+            void None<T>(string what) where T : Component
+            {
+                int n = Count<T>();
+                if (n > 0) rep.Fail($"场景里有 {n} 个 {what}（应在 Core 场景）");
+            }
+            None<Spiritfire.Game.PlayerVitals>("玩家");
+            None<Camera>("相机");
+            None<AudioListener>("音频监听");
+            None<Spiritfire.Game.Hud>("HUD");
+            None<Spiritfire.Game.GameSession>("会话");
+            None<Spiritfire.Game.EnemyCatalog>("敌人目录（改由 GameDatabase 提供）");
+            if (spawns == 1 && boots == 1) rep.Line("✓ PlayerSpawn ×1、LevelBootstrap ×1，没有玩家 / 相机 / HUD / 会话");
+            CoreSceneBuilder.BuildDatabase(rep);
         }
 
         sealed class Materials
@@ -607,24 +651,10 @@ namespace Spiritfire.Art.Editor.Levels
         ///   ② 雅丹石阵：蜃楼蟾在岩丘后吊射 + 跳鼠绕岩伏击
         ///   ③ 烽燧台地：镇墓兽冲锋上坡 + 邪飞天在台顶支援（先打琵琶）
         ///   ④ 驼队残骸营地：混编精英波——火浣鼠滚进来逼走位，精英蝎卫压制
-        /// 出生锚点用 BuildMarkers 摆的 Enemy_N_* 标记；场景里放一份敌人 Prefab / 挂件目录供运行时生成。
+        /// 出生锚点用 BuildMarkers 摆的 Enemy_N_* 标记；敌人 Prefab / 挂件运行时从 GameDatabase 取（L1 起场景里不再放敌人目录）。
         /// </summary>
         static Spiritfire.Game.EncounterSite[] BuildEncounters(Transform markers)
         {
-            var catalog = new GameObject("Enemy Catalog").AddComponent<Spiritfire.Game.EnemyCatalog>();
-            var prefabs = new List<GameObject>();
-            foreach (var def in Spiritfire.Game.EnemyRoster.All)
-            {
-                var prefab = ShowcaseSceneBuilder.Prefab(def.prefab);
-                if (!prefab) Debug.LogWarning($"[Level] 缺少敌人 Prefab {def.prefab}");
-                else if (!prefabs.Contains(prefab)) prefabs.Add(prefab);
-            }
-            catalog.prefabs = prefabs.ToArray();
-            catalog.attachments = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/Art/Prefabs/Attachments" })
-                .Select(g => AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(g)))
-                .Where(g => g && g.GetComponent<ArtAssetInfo>() && !string.IsNullOrEmpty(g.GetComponent<ArtAssetInfo>().bindAttachment))
-                .ToArray();
-
             var root = new GameObject("Encounters").transform;
             Spiritfire.Game.EncounterSite Site(int index, string marker, string title, float trigger, float arena,
                 Spiritfire.Game.EncounterSite prev, params Spiritfire.Game.EncounterSite.Squad[] squads)

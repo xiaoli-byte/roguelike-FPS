@@ -1,139 +1,77 @@
 using System.Collections.Generic;
 using Spiritfire.Game;
+using UnityEditor;
 using UnityEngine;
-using UnityEngine.Rendering;
-using Object = UnityEngine.Object;
 
 namespace Spiritfire.Art.Editor.Levels
 {
     /// <summary>
-    /// 关卡里的可玩玩家：角色控制器 + PlayerMotor + PlayerVitals + WeaponController + HUD + 会话，
-    /// 第一人称每把枪一套 rig（枪模 + 英雄手臂，握点按 Three.js 版 WeaponHandling），切枪时只切换显示。
+    /// 编辑器里的玩家搭建：组装逻辑本身在运行时代码 <see cref="PlayerFactory"/>（Core 场景每进一关运行时组装一次，与这里同一份实现），
+    /// 这里只把 Prefab 来源换成 AssetDatabase（<see cref="EditorPlace"/>：烘进场景的物体保留 Prefab 连接）。两种用法：
+    ///   · <see cref="Build"/>：旧式「玩家 + Game Systems 烘进关卡场景」（测试场还在用）；
+    ///   · <see cref="BuildPreview"/>：关卡审核截图用的机位（相机 + 初始武器的第一人称 rig），截完删掉——
+    ///     L1 起关卡场景只放环境和标记（PlayerSpawn…），玩家、HUD、各系统在常驻的 Core 场景（<see cref="CoreSceneBuilder"/>）。
     /// 英雄与武器都从注册表读（<see cref="Registry{T}"/>：Skills/Heroes/Hero_*.cs、Weapons/Defs/Weapon_*.cs）。
-    /// rig 与掉落模型的顺序：初始武器在前，其余按武器表顺序（关卡截图取第一个 rig 当第一人称画面）。
     /// </summary>
     public static class PlayerRigBuilder
     {
         /// <summary>燎（爆竹游侠）：Three.js 版 heroes fox，红熊猫美术</summary>
-        public static HeroDef Liao => Hero("fox");
+        public static HeroDef Liao => Hero(HeroLibrary.DefaultHero);
 
         /// <summary>按 id 取英雄；没有则报错</summary>
         public static HeroDef Hero(string id) =>
             Registry<HeroDef>.Get(id) ?? throw new System.ArgumentException($"[PlayerRig] 没有英雄 {id}（Skills/Heroes/Hero_*.cs）");
 
+        /// <summary>编辑器的 <see cref="PrefabPlacer"/>：按美术 id 找 Assets/Art/Prefabs 下的 Prefab，实例化时保留 Prefab 连接；没有则警告并返回 null</summary>
+        public static GameObject EditorPlace(string id, Transform parent)
+        {
+            var prefab = ShowcaseSceneBuilder.Prefab(id);
+            if (!prefab)
+            {
+                Debug.LogWarning($"[PlayerRig] 缺少 Prefab {id}（先 unity_export.py 导出，再 Spiritfire ▸ Art ▸ Sync All）");
+                return null;
+            }
+            return (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+        }
+
         public static GameObject Build(ShowcaseTheme theme, string heroId, Vector3 position, Quaternion rotation, string stageTitle, out Camera cam) =>
             Build(theme, Hero(heroId), position, rotation, stageTitle, out cam);
 
+        /// <summary>
+        /// 旧式：可玩玩家 + Game Systems（HUD、会话、掉落、射击特效、技能栏）烘进当前场景，另带一份掉落用的武器模型目录。
+        /// theme 保留给旧调用方（相机不再随主题变化）。
+        /// </summary>
         public static GameObject Build(ShowcaseTheme theme, HeroDef hero, Vector3 position, Quaternion rotation, string stageTitle, out Camera cam)
         {
-            cam = ShowcaseSceneBuilder.BuildCameras(theme, out var showcaseRig);
-            Object.DestroyImmediate(showcaseRig);
-            cam.farClipPlane = 1500;
-
-            var player = new GameObject("Player");
-            player.transform.SetPositionAndRotation(position, rotation);
-            var cc = player.AddComponent<CharacterController>();
-            cc.height = 1.8f;
-            cc.radius = 0.35f;
-            cc.center = new Vector3(0, 0.9f, 0);
-            cc.stepOffset = 0.45f;
-            cc.slopeLimit = 45;
-            cc.skinWidth = 0.04f;
-            var motor = player.AddComponent<PlayerMotor>();
-            cam.transform.SetParent(player.transform, false);
-            cam.transform.localPosition = new Vector3(0, 1.62f, 0);
-            cam.transform.localRotation = Quaternion.identity;
-            motor.eye = cam.transform;
-            ShowcaseSceneBuilder.SetLayer(player, Layers.Character);
-            cam.gameObject.layer = 0;
-            foreach (Transform c in cam.transform) c.gameObject.layer = 0;
-
-            var vitals = player.AddComponent<PlayerVitals>();
-            var weapons = player.AddComponent<WeaponController>();
-            weapons.eye = cam;
-            weapons.baseFov = cam.fieldOfView;
-            weapons.startWeapon = hero.startWeapon;
-            var weaponDefs = WeaponOrder(hero);
-            var rigs = new List<WeaponController.Rig>();
-            foreach (var def in weaponDefs)
-            {
-                var view = BuildWeaponRig(def, hero, cam.transform);
-                if (view) rigs.Add(new WeaponController.Rig { weaponId = def.id, view = view });
-            }
-            weapons.rigs = rigs.ToArray();
-            player.AddComponent<HeroStats>().Configure(hero.id, hero.maxHp, hero.maxShield, hero.moveSpeed);
-            player.AddComponent<Interactor>();
-            var skills = player.AddComponent<HeroSkills>();
-            skills.heroId = hero.id;
-
-            var systems = new GameObject("Game Systems");
-            systems.AddComponent<ShotFx>();
-            var hud = systems.AddComponent<Hud>();
-            hud.cam = cam;
-            hud.vitals = vitals;
-            hud.weapons = weapons;
-            hud.motor = motor;
-            var session = systems.AddComponent<GameSession>();
-            session.player = vitals;
-            session.motor = motor;
-            session.hud = hud;
-            session.stageTitle = stageTitle;
-            systems.AddComponent<SkillHud>().skills = skills;
-            systems.AddComponent<LootDirector>();
-            // 地上的枪的世界模型（运行时拿不到 AssetDatabase）
+            var rig = PlayerFactory.Create(hero, position, rotation, EditorPlace);
+            cam = rig.cam;
+            var systems = PlayerFactory.CreateSystems(false);
+            systems.GetComponent<GameSession>().stageTitle = stageTitle;
+            PlayerFactory.Bind(systems, rig);
+            // 地上的枪的世界模型：旧式场景自带目录（Core 流程用 GameDatabase）
             var models = new List<GameObject>();
-            foreach (var def in weaponDefs)
+            foreach (var def in PlayerFactory.WeaponOrder(hero))
             {
                 var prefab = ShowcaseSceneBuilder.Prefab(def.prefab);
-                if (prefab) models.Add(prefab);
+                if (prefab && !models.Contains(prefab)) models.Add(prefab);
             }
             systems.AddComponent<LootCatalog>().weaponModels = models.ToArray();
-            return player;
+            return rig.root;
         }
 
-        /// <summary>初始武器在前，其余按武器表顺序</summary>
-        static List<WeaponDef> WeaponOrder(HeroDef hero)
+        /// <summary>
+        /// 审核截图机位：脚底在 position、朝 rotation 的相机（与玩家同一套主相机 + 枪模相机）+ 初始武器的第一人称 rig，没有任何玩法组件。
+        /// 返回根物体，截完由调用方 DestroyImmediate，不留在关卡场景里。
+        /// </summary>
+        public static GameObject BuildPreview(HeroDef hero, Vector3 position, Quaternion rotation, out Camera cam, out GameObject fpRig)
         {
-            var list = new List<WeaponDef>();
+            var root = new GameObject("Review Camera (temp)");
+            root.transform.SetPositionAndRotation(position, Quaternion.Euler(0, rotation.eulerAngles.y, 0));
+            cam = PlayerFactory.CreateCamera(root.transform);
             var start = WeaponLibrary.Get(hero.startWeapon);
-            if (start != null) list.Add(start);
-            foreach (var def in WeaponLibrary.All)
-                if (def != start) list.Add(def);
-            return list;
-        }
-
-        static FirstPersonViewmodel BuildWeaponRig(WeaponDef def, HeroDef hero, Transform cam)
-        {
-            if (!ShowcaseSceneBuilder.Prefab(def.prefab)) return null;
-            var rig = new GameObject($"FP Rig {def.id}");
-            rig.transform.SetParent(cam, false);
-            var vm = rig.AddComponent<FirstPersonViewmodel>();
-            // Three.js：腰射 = viewOffset + HIP_SHIFT(0.024, −0.02)，开镜 = aimOffset × VM_SCALE
-            vm.hipOffset = def.viewHip + new Vector3(0.024f, -0.02f, 0);
-            vm.aimOffset = def.viewAim * 0.76f;
-            rig.transform.localPosition = vm.hipOffset;
-            rig.transform.localRotation = Quaternion.Euler(0, 180, 0);
-
-            var gun = ShowcaseSceneBuilder.Place(def.prefab, rig.transform, Vector3.zero, 0, 0.76f);
-            if (gun)
-            {
-                var r = ShowcaseSceneBuilder.Place(hero.armR, gun.transform, def.rightHand);
-                if (r) r.transform.localRotation = Quaternion.Euler(def.rightPitch * Mathf.Rad2Deg, 0, 0);
-                var l = ShowcaseSceneBuilder.Place(hero.armL, gun.transform, def.leftHand);
-                if (l) l.transform.localRotation = Quaternion.Euler(0, 0, -def.leftRoll * Mathf.Rad2Deg);
-            }
-            foreach (var lg in rig.GetComponentsInChildren<LODGroup>(true))
-            {
-                var lods = lg.GetLODs();
-                for (int i = 1; i < lods.Length; i++)
-                    foreach (var rr in lods[i].renderers) if (rr) rr.enabled = false;
-                Object.DestroyImmediate(lg);
-            }
-            foreach (var c in rig.GetComponentsInChildren<Collider>(true)) Object.DestroyImmediate(c);
-            foreach (var rr in rig.GetComponentsInChildren<Renderer>(true)) rr.shadowCastingMode = ShadowCastingMode.Off;
-            ShowcaseSceneBuilder.SetLayer(rig, Layers.FirstPerson);
-            rig.SetActive(def.id == hero.startWeapon);
-            return vm;
+            var vm = start != null ? PlayerFactory.BuildWeaponRig(start, hero, cam.transform, EditorPlace) : null;
+            fpRig = vm ? vm.gameObject : null;
+            return root;
         }
     }
 }

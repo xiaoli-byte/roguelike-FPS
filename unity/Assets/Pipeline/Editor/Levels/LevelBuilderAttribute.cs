@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEditor;
@@ -75,17 +76,33 @@ namespace Spiritfire.Art.Editor.Levels
             All.FirstOrDefault(e => string.Equals(e.Id, id?.Trim(), StringComparison.OrdinalIgnoreCase));
 
         /// <summary>
-        /// 构建设置里的关卡场景排成登记顺序，排在非关卡场景（展示场景等，原顺序不动）后面；只重排已经在构建设置里的，顺序没变就不写。
-        /// RunPlan（W0-5）落地后改成按 RunPlan 的关卡顺序。
+        /// 构建设置的场景顺序（L1）：Core 常驻场景排第 0（打包后从它启动，SceneFlow 再叠加加载关卡）→ RunPlan 的关卡按关卡顺序 →
+        /// 其余已登记的关卡（测试场等）按登记顺序 → 其它场景（展示场景等）原顺序。
+        /// Core 和 RunPlan 里磁盘上已经有的关卡场景不在构建设置里时补进来（SceneFlow 打包后只能加载构建设置里的场景）；其余只重排已有的。顺序没变就不写。
         /// </summary>
         public static void SyncBuildSettings()
         {
-            var order = All.Select(e => e.ScenePath).ToList();
-            var scenes = EditorBuildSettings.scenes;
-            var sorted = scenes.Where(s => !order.Contains(s.path))
-                .Concat(scenes.Where(s => order.Contains(s.path)).OrderBy(s => order.IndexOf(s.path)))
-                .ToArray();
-            if (!sorted.Select(s => s.path).SequenceEqual(scenes.Select(s => s.path))) EditorBuildSettings.scenes = sorted;
+            var scenes = EditorBuildSettings.scenes.ToList();
+            var before = scenes.Select(s => s.path).ToList();
+            void Ensure(string path)
+            {
+                if (File.Exists(path) && !scenes.Any(s => s.path == path)) scenes.Add(new EditorBuildSettingsScene(path, true));
+            }
+            Ensure(Spiritfire.Game.SceneFlow.CorePath);
+            var plan = Spiritfire.Game.RunPlan.Stages.Select(s => s.scene).ToList();
+            foreach (var p in plan) Ensure(p);
+            var registered = All.Select(e => e.ScenePath).ToList();
+            int Rank(string path, int original)
+            {
+                if (path == Spiritfire.Game.SceneFlow.CorePath) return 0;
+                int i = plan.IndexOf(path);
+                if (i >= 0) return 1 + i;
+                i = registered.IndexOf(path);
+                if (i >= 0) return 1000 + i;
+                return 100000 + original;
+            }
+            var sorted = scenes.Select((s, i) => (s, i)).OrderBy(x => Rank(x.s.path, x.i)).Select(x => x.s).ToArray();
+            if (!sorted.Select(s => s.path).SequenceEqual(before)) EditorBuildSettings.scenes = sorted;
         }
 
         /// <summary>"1-2" &lt; "1-10" &lt; "2-1" &lt; 其它名字（按字母）</summary>

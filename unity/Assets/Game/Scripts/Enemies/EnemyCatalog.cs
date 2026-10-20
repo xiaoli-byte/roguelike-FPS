@@ -3,7 +3,10 @@ using UnityEngine;
 
 namespace Spiritfire.Game
 {
-    /// <summary>场景里的敌人 Prefab 目录（运行时拿不到 AssetDatabase，由关卡生成器把用到的 Prefab 填进来）</summary>
+    /// <summary>
+    /// 敌人 Prefab 目录（运行时拿不到 AssetDatabase）。查找顺序：场景里的 EnemyCatalog 组件（测试场还在用：<see cref="ArenaSpawner"/> 临时从这里
+    /// 拿掉某个 Prefab 来强制占位体）→ 没有场景组件时回落到 <see cref="GameDatabase"/>（L1 起关卡场景不再各放一份目录）。
+    /// </summary>
     public sealed class EnemyCatalog : MonoBehaviour
     {
         static EnemyCatalog instance;
@@ -11,22 +14,39 @@ namespace Spiritfire.Game
         /// <summary>挂件（琵琶、火球…）：ArtAssetInfo.bindSource / bindId 对上敌人本体时挂到 socket_&lt;bindAttachment&gt;</summary>
         public GameObject[] attachments = Array.Empty<GameObject>();
 
-        public static GameObject[] Attachments
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStatics() => instance = null;
+
+        static EnemyCatalog InScene
         {
             get
             {
                 if (!instance) instance = FindFirstObjectByType<EnemyCatalog>();
-                return instance ? instance.attachments : Array.Empty<GameObject>();
+                return instance;
+            }
+        }
+
+        public static GameObject[] Attachments
+        {
+            get
+            {
+                var c = InScene;
+                return c ? c.attachments : GameDatabase.Attachments;
             }
         }
 
         void Awake() => instance = this;
 
+        void OnDestroy()
+        {
+            if (instance == this) instance = null;
+        }
+
         public static GameObject Prefab(string name)
         {
-            if (!instance) instance = FindFirstObjectByType<EnemyCatalog>();
-            if (!instance) return null;
-            foreach (var p in instance.prefabs)
+            var c = InScene;
+            if (!c) return GameDatabase.Enemy(name);
+            foreach (var p in c.prefabs)
                 if (p && p.name == name) return p;
             return null;
         }
