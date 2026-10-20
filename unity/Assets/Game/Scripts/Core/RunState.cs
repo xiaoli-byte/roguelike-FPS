@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Spiritfire.Game
 {
-    /// <summary>一把枪的快照（跨关 / 存档）：定义 id、品质、强化、元素、弹药</summary>
+    /// <summary>一把枪的快照（跨关 / 存档）：定义 id、品质、强化、元素、弹药、词条</summary>
     [Serializable]
     public struct WeaponSave
     {
@@ -13,6 +13,8 @@ namespace Spiritfire.Game
         public Element element;
         /// <summary>手上那把（当前槽）</summary>
         public bool active;
+        /// <summary>词条（固有 → 抽到的 → 传说特性，见 <see cref="AffixSave"/>）；null / 空 = 只有定义的固有词条</summary>
+        public AffixSave[] affixes;
     }
 
     /// <summary>灵宠快照：定义 id、灵契等级 / 经验、灵技冷却剩余（秒）</summary>

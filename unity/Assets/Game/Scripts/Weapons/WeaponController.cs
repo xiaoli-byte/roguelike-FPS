@@ -172,7 +172,7 @@ namespace Spiritfire.Game
 
         // ───────────── 跨关 / 拾取 / 弹药 ─────────────
 
-        /// <summary>跨关快照：两个槽的枪（定义、品质、强化、元素、弹药）和当前槽。词条由 AF 单元补进 WeaponSave</summary>
+        /// <summary>跨关快照：两个槽的枪（定义、品质、强化、元素、弹药、词条）和当前槽</summary>
         public void Capture(RunState s)
         {
             s.weapons ??= new List<WeaponSave>();
@@ -181,7 +181,7 @@ namespace Spiritfire.Game
             {
                 var w = slots[i];
                 if (w == null) continue;
-                s.weapons.Add(new WeaponSave { id = w.def.id, rarity = w.rarity, level = w.level, element = w.element, mag = w.mag, reserve = w.reserve, active = i == ActiveSlot });
+                s.weapons.Add(new WeaponSave { id = w.def.id, rarity = w.rarity, level = w.level, element = w.element, mag = w.mag, reserve = w.reserve, active = i == ActiveSlot, affixes = AffixSave.Capture(w) });
             }
         }
 
@@ -196,6 +196,7 @@ namespace Spiritfire.Game
                 var def = WeaponLibrary.Get(save.id);
                 if (def == null || n >= slots.Length) continue;
                 slots[n] = new WeaponInstance(def, save.rarity) { level = save.level, element = save.element, mag = save.mag, reserve = save.reserve };
+                AffixSave.Restore(slots[n], save.affixes);
                 if (save.active) active = n;
                 n++;
             }
@@ -423,7 +424,7 @@ namespace Spiritfire.Game
         ShotContext Context(WeaponInstance w, ResolvedWeapon R, Element el, in ShotMods mods) => new()
         {
             weapon = w, stats = R, element = el, damage = R.damage * mods.mult, pierce = R.pierce + mods.pierceBonus,
-            full = mods.full, detonate = mods.full && w.def.chargeDetonate,
+            full = mods.full, detonate = mods.full && w.def.chargeDetonate, forceCrit = mods.forceCrit,
         };
 
         /// <summary>一次射击：连射计数、散布累积、弹道（命中扫描逐弹丸 / 投射物 / 光束一跳；齐射开始时不发）、反馈、事件</summary>
@@ -478,7 +479,7 @@ namespace Spiritfire.Game
             var R = Resolved(w);
             var camT = Aim;
             var muzzle = Muzzle();
-            var ctx = Context(w, R, w.element, in ShotMods.Volley);
+            var ctx = Context(w, R, w.element, in WeaponRuntime.Of(w).volley);
             var dir = Ballistics.Scatter(camT.forward, camT, spreadNow);
             if (p.fanFixed)
             {

@@ -112,15 +112,18 @@ namespace Spiritfire.Game
     }
 
     /// <summary>
-    /// 词条效果的挂点（AF2 触发词条、AF3 传说特性实现；AF1 只有「猎首」用 Modifier）。派发规则（AF2 的 AffixEffects 落地）：
-    ///   OnFire —— 每次扣扳机 / 每跳（天命计数、无尽、终焉）；
-    ///   OnHit / OnKill / OnReaction —— 本武器（weaponUid）的直接命中 / 击杀 / 引发的反应，排队到下一帧执行、同帧对同一敌人的伤害合并；
+    /// 词条效果的挂点（AF2 触发词条、AF3 传说特性实现；AF1 只有「猎首」用 Modifier）。同一把枪上同 id 的词条只派发一次，值取合计。
+    ///   OnFire —— 每次扣扳机 / 每跳，扣弹之前（天命计数、无尽、终焉），由 <see cref="WeaponRuntime.BeginShot"/> 同步派发；
+    ///   FireRate —— 射速倍率（疾化、狂热），状态机每帧乘在实际射速上（<see cref="WeaponRuntime.RateMult"/>），1 = 不变；
+    ///   OnHit / OnKill / OnReaction —— 本武器（weaponUid）的直接命中（深度 0）/ 击杀 / 引发的反应，由 <see cref="AffixEffects"/> 派发：
+    ///     这里只做判定、记状态，要再造成伤害 / 挂状态的一律调 h.effects.Queue*（下一帧执行，避开伤害结算的重入），同帧对同一敌人的伤害合并成附着强度；
     ///   Modifier —— <see cref="Combat.Outgoing"/> 输出倍率（暴击掷骰之后），由 <see cref="AffixRuntime"/> 对带 weaponUid 的伤害派发，1 = 不变。
     /// 实现时继承 <see cref="AffixEffect"/>，只覆盖用得到的。
     /// </summary>
     public interface IAffixEffect
     {
-        void OnFire(in AffixHook h);
+        void OnFire(in AffixHook h, ref FireShot s);
+        float FireRate(in AffixHook h);
         void OnHit(in AffixHook h, in HitEvent e);
         void OnKill(in AffixHook h, in KillEvent e);
         void OnReaction(in AffixHook h, in ReactionEvent e);
@@ -130,26 +133,62 @@ namespace Spiritfire.Game
     /// <summary><see cref="IAffixEffect"/> 的空实现基类</summary>
     public abstract class AffixEffect : IAffixEffect
     {
-        public virtual void OnFire(in AffixHook h) { }
+        public virtual void OnFire(in AffixHook h, ref FireShot s) { }
+        public virtual float FireRate(in AffixHook h) => 1;
         public virtual void OnHit(in AffixHook h, in HitEvent e) { }
         public virtual void OnKill(in AffixHook h, in KillEvent e) { }
         public virtual void OnReaction(in AffixHook h, in ReactionEvent e) { }
         public virtual float Modifier(in AffixHook h, in HitContext c) => 1;
     }
 
-    /// <summary>派发给词条效果的那把枪：实例、实际数值、这条词条在这把枪上的合计值（传说为特性数值）</summary>
+    /// <summary>
+    /// 一次射击在扣弹之前的判定（<see cref="IAffixEffect.OnFire"/> 读写）：无限弹药、免耗、扣弹前的弹匣、累计发数（含本发）、强制暴击、伤害倍率。
+    /// 光束每跳、点射每发、齐射每轮各算一次（同 TS shoot）。
+    /// </summary>
+    public struct FireShot
+    {
+        /// <summary>无限弹药：本发本来就不扣</summary>
+        public bool infinite;
+        /// <summary>本发不消耗弹药（「无尽」掷中）</summary>
+        public bool free;
+        /// <summary>扣弹之前的弹匣</summary>
+        public int magBefore;
+        /// <summary>这把枪累计射击次数（含本发；「天命」按它数第 N 发）</summary>
+        public int shots;
+        public bool forceCrit;
+        /// <summary>本发伤害倍率（乘在开火模式给的倍率上），初始 1</summary>
+        public float mult;
+
+        /// <summary>本发会扣一发弹药</summary>
+        public readonly bool Consumed => !infinite && !free;
+        /// <summary>弹匣最后一发（会扣弹、扣之前只剩 1 发）：同一把枪先结算的效果判了免耗时就不算</summary>
+        public readonly bool Last => Consumed && magBefore == 1;
+    }
+
+    /// <summary>
+    /// 派发给词条效果的那把枪：实例、实际数值、这条词条在这把枪上的合计值（传说为特性数值）、派发器与当前时间。
+    /// effects 在命中 / 击杀 / 反应时非空（排队触发、读环境）；开火 / 射速 / 输出修饰时可能为 null。
+    /// </summary>
     public readonly struct AffixHook
     {
         public readonly WeaponInstance weapon;
         public readonly ResolvedWeapon stats;
         public readonly float value;
+        public readonly AffixEffects effects;
+        /// <summary>派发时刻（游戏时间，秒）</summary>
+        public readonly float now;
 
-        public AffixHook(WeaponInstance weapon, ResolvedWeapon stats, float value)
+        public AffixHook(WeaponInstance weapon, ResolvedWeapon stats, float value, AffixEffects effects = null, float now = 0)
         {
             this.weapon = weapon;
             this.stats = stats;
             this.value = value;
+            this.effects = effects;
+            this.now = now;
         }
+
+        /// <summary>这把枪的运行时状态（内置冷却、层数）</summary>
+        public WeaponRuntime Runtime => WeaponRuntime.Of(weapon);
     }
 
     /// <summary>

@@ -16,6 +16,8 @@ namespace Spiritfire.Game
         public int pierce;
         /// <summary>满蓄一击；命中引爆元素状态（满蓄且武器 chargeDetonate）</summary>
         public bool full, detonate;
+        /// <summary>本发必定暴击（传说「天命」，<see cref="ShotMods.forceCrit"/>）</summary>
+        public bool forceCrit;
 
         public readonly WeaponDef Def => stats != null ? stats.def : weapon?.def;
     }
@@ -82,7 +84,8 @@ namespace Spiritfire.Game
         }
 
         /// <summary>
-        /// 伤害模板：实例数值（随机元素、暴伤 / 元素率词条）；词条暴击率在这里掷，掷中 forceCrit（同 TS Firing.rollCrit）
+        /// 伤害模板：实例数值（随机元素、暴伤 / 元素率词条）；词条暴击率在这里掷，掷中 forceCrit（同 TS Firing.rollCrit），传说「天命」直接 forceCrit。
+        /// 副元素（青冥雷蛊的固有「副·雷」）由词条派发（<see cref="AffixEffects"/>，同 TS innate），这里不再带 def.subElement，免得掷两次
         /// </summary>
         public DamageInfo HitInfo(in ShotContext s, float amount, Vector3 point, Vector3 dir)
         {
@@ -92,8 +95,8 @@ namespace Spiritfire.Game
             {
                 amount = amount, source = DamageSource.Weapon, tags = DamageTag.Weapon, weaponUid = s.weapon?.uid ?? 0,
                 critMult = R?.critMult ?? def.critMult, point = point, direction = dir, knockback = def.knockback, element = s.element, instigator = instigator,
-                statusChance = R?.elementChance ?? (def.element != Element.None ? def.elementChance : 0), subElement = def.subElement, subChance = def.subChance,
-                forceCrit = R != null && R.critChance > 0 && Random.value < R.critChance,
+                statusChance = R?.elementChance ?? (def.element != Element.None ? def.elementChance : 0),
+                forceCrit = s.forceCrit || (R != null && R.critChance > 0 && Random.value < R.critChance),
             };
         }
 

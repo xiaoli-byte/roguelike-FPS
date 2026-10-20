@@ -27,7 +27,7 @@ namespace Spiritfire.Game
     }
 
     /// <summary>
-    /// 单次射击的修饰（同 TS ShotMods）：蓄力倍率、满蓄穿透、满蓄引爆、反馈强度。
+    /// 单次射击的修饰（同 TS ShotMods）：蓄力倍率、满蓄穿透、满蓄引爆、反馈强度；开火钩子再乘上传说倍率、加上强制暴击。
     /// deferred = 齐射的「扣扳机」：只扣弹、计数、发事件，弹体由 <see cref="IFireHost.VolleyProjectile"/> 逐枚发出。
     /// </summary>
     public struct ShotMods
@@ -38,6 +38,8 @@ namespace Spiritfire.Game
         /// <summary>反馈强度 0..1：后坐、屏震、曳光</summary>
         public float strength;
         public bool deferred;
+        /// <summary>本发必定暴击（传说「天命」，由 <see cref="WeaponRuntime.BeginShot"/> 填）</summary>
+        public bool forceCrit;
 
         public static readonly ShotMods None = new() { mult = 1, strength = 1 };
         public static readonly ShotMods Volley = new() { mult = 1, strength = 1, deferred = true };

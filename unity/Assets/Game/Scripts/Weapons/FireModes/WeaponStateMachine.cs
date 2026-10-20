@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace Spiritfire.Game
@@ -56,16 +55,6 @@ namespace Spiritfire.Game
         public bool testAuto;
     }
 
-    /// <summary>每把枪的运行时状态（按实例弱引用挂着，切走再切回还在；同 TS WeaponRuntime 的一部分）</summary>
-    public sealed class WeaponRuntime
-    {
-        public IFireMode mode;
-        /// <summary>切走时剩余冷却折算成的绝对时间：切回来 cooldown = readyAt − now（切枪不能刷掉冷却）</summary>
-        public float readyAt = -99;
-        /// <summary>这把枪打过的发数（传说「第 N 发」用）</summary>
-        public int shots;
-    }
-
     /// <summary>
     /// 武器状态机（同 TS WeaponSystem.update 的非表现部分）：两个槽、切枪（先收后出，0.35 s）、每把枪的 readyAt、开火缓冲、
     /// 开火模式（<see cref="IFireMode"/>）、换弹（整匣 / 逐发 + 0.3 s 上膛）、打空自动换弹与空仓、无限弹药、应急补给、按比例补备弹、换关清理。
@@ -78,7 +67,6 @@ namespace Spiritfire.Game
         readonly IWeaponEffects fx;
         readonly Func<float> clock;
         readonly Func<WeaponInstance, ResolvedWeapon> resolve;
-        readonly ConditionalWeakTable<WeaponInstance, WeaponRuntime> runtimes = new();
 
         /// <summary>开火缓冲与「按住只算一次」</summary>
         public readonly TriggerState trigger = new();
@@ -113,14 +101,11 @@ namespace Spiritfire.Game
             this.resolve = resolve ?? (w => WeaponStatsResolver.Resolve(w, null));
         }
 
+        /// <summary>这把枪的运行时状态（<see cref="WeaponRuntime.Of"/>），开火模式第一次用到时按定义建</summary>
         public WeaponRuntime Runtime(WeaponInstance w)
         {
-            if (w == null) return null;
-            if (!runtimes.TryGetValue(w, out var rt))
-            {
-                rt = new WeaponRuntime { mode = FireModes.Create(w.def) };
-                runtimes.Add(w, rt);
-            }
+            var rt = WeaponRuntime.Of(w);
+            if (rt != null) rt.mode ??= FireModes.Create(w.def);
             return rt;
         }
 
@@ -169,8 +154,8 @@ namespace Spiritfire.Game
         {
             var w = Active;
             if (w == null) return;
-            if (!Infinite) w.mag = Mathf.Max(0, w.mag - 1);
-            Runtime(w).shots++;
+            // 开火钩子：累计发数、传说特性（天命 / 终焉 / 无尽）、扣弹
+            var shot = Runtime(w).BeginShot(w, resolve(w), Infinite, in mods, clock());
             // 元素轮转（三才转轮）：本发取弹巢当前位置，随后推进一格；换弹归零
             var el = w.element;
             var cycle = w.def.cycle;
@@ -181,7 +166,7 @@ namespace Spiritfire.Game
             }
             // 改造前：任何一发打出后都要松开扳机，半自动才会再响应「按住」
             trigger.held = true;
-            fx.Shoot(w, in mods, el);
+            fx.Shoot(w, in shot, el);
         }
 
         public void VolleyProjectile(int index, int count, bool feedback)
@@ -240,11 +225,13 @@ namespace Spiritfire.Game
                 else UpdateReload(dt, w, R);
             }
 
+            // 词条射速（疾化、狂热）：点射间隔、预热、蓄力随之加快
+            float haste = WeaponRuntime.RateMult(w, R, clock());
             var input = new FireInput
             {
                 dt = dt, down = f.fireDown, pulled = trigger.Pulled(f.fireDown),
                 ready = SwitchTimer <= 0 && !Reloading && f.alive, blocked = f.blocked, inputOk = f.canAct,
-                rate = R.fireRate, rateMult = R.fireRateMult, testAuto = f.testAuto,
+                rate = R.fireRate * haste, rateMult = R.fireRateMult * haste, testAuto = f.testAuto,
             };
             mode.Tick(in input, this);
             if (Cooldown < 0) Cooldown = 0;
