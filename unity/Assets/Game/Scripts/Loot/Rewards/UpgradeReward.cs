@@ -4,7 +4,7 @@ namespace Spiritfire.Game
 {
     /// <summary>
     /// "upgrade"：当前武器免费强化一级（同 TS LootSystem.grant('upgrade')）。
-    /// 手上没有枪或已满级（+5）时改为灵石：round(80 × (1 + 0.35 × 章) × 灵石获取)。
+    /// 手上没有枪或已满级（+5）时改为灵石：round(80 × (1 + 0.35 × 章))，灵石获取在捡起入账时乘（<see cref="EconomyConfig.CreditCoins"/>）。
     /// </summary>
     [Defs]
     public sealed class UpgradeReward : RewardHandler
@@ -28,9 +28,9 @@ namespace Spiritfire.Game
                 return;
             }
             Hud.Instance?.Toast(w != null ? "当前武器已满级，改为灵石" : "没有可强化的武器，改为灵石");
-            float gain = pv ? pv.stats.Mult(Stat.CoinGainPct) : 1;
-            int amount = WeaponStatsResolver.RoundHalfUp(FallbackCoins * (1 + ChapterCoinStep * WeaponRoller.CurrentChapter) * gain);
-            LootDirector.DropCoins(ctx.position, amount, 1.5f);
+            // 灵石获取加成在入账时乘（EconomyConfig.CreditCoins），这里只给基数
+            int amount = WeaponStatsResolver.RoundHalfUp(FallbackCoins * (1 + ChapterCoinStep * WeaponRoller.CurrentChapter));
+            LootDirector.DropCoins(ctx.position, amount, 1.5f, true);
         }
 
         public override string Hint(string[] args) => "当前武器免费强化一级";

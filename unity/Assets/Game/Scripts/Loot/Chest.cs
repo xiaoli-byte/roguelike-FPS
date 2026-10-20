@@ -6,13 +6,20 @@ namespace Spiritfire.Game
     /// <summary>
     /// 奖励宝箱（Three.js 版 src/progression/loot/Chests.ts）：从空中落下 → 待机（宝石脉动、盖子偶尔轻颤、奖励色光柱）
     /// → 按 F 开启（开盖 0.5 s，0.32 s 时发放奖励）→ 光柱淡出，空箱留在原地。
-    /// 奖励 reward："weapon:&lt;id&gt;[:稀有度]" / "scroll" / "coins" / "heal" / "pet[:…]"（灵兽封印）。模型先用程序化体块（漆木箱 + 铜边 + 宝石），之后换美术资产。
+    /// 奖励 reward："weapon[:&lt;id&gt;][:稀有度]" / "scroll" / "coins" / "heal" / "upgrade" / "pet[:…]"（灵兽封印）。
+    /// 档位 <see cref="tier"/>（普通 / 精英 / 首领）在发放和提示时写进奖励串（<see cref="EconomyConfig.ApplyTier"/>）：
+    /// 精英 / 首领的秘卷保底精良，随机武器保底精良 / 史诗 / 传说，精英灵石 ×1.4；<see cref="reward"/> 本身保持关卡写的原样。
+    /// 交互提示卡：标题「宝箱 · 秘卷」、副标题「开启」、说明行（同 TS hint：「从三个精良及以上的秘卷中选择一个」…）、奖励色。
+    /// 模型先用程序化体块（漆木箱 + 铜边 + 宝石），之后换美术资产（ART7）。
     /// </summary>
     public sealed class Chest : MonoBehaviour, IInteractable
     {
         const float DropTime = 0.42f, SettleTime = 0.62f, OpenTime = 0.5f, GrantAt = 0.32f;
 
+        /// <summary>关卡 / 场地写的奖励串（原样，不含档位）</summary>
         public string reward = "scroll";
+        /// <summary>宝箱档位</summary>
+        public ChestTier tier;
         enum State { Spawn, Idle, Open, Done }
         State state;
         float t, phase;
@@ -22,7 +29,9 @@ namespace Spiritfire.Game
         Renderer gem;
         Color color;
 
-        public static Chest Spawn(Vector3 pos, string reward, Vector3 face)
+        public static Chest Spawn(Vector3 pos, string reward, Vector3 face) => Spawn(pos, reward, face, ChestTier.Normal);
+
+        public static Chest Spawn(Vector3 pos, string reward, Vector3 face, ChestTier tier)
         {
             var go = new GameObject($"Chest · {reward}");
             if (Physics.Raycast(pos + Vector3.up * 4, Vector3.down, out var hit, 12, Layers.WorldMask, QueryTriggerInteraction.Ignore)) pos.y = hit.point.y;
@@ -32,6 +41,7 @@ namespace Spiritfire.Game
             if (to.sqrMagnitude > 0.01f) go.transform.rotation = Quaternion.LookRotation(to);
             var c = go.AddComponent<Chest>();
             c.reward = reward;
+            c.tier = tier;
             c.basePos = pos;
             c.Build();
             return c;
@@ -39,6 +49,38 @@ namespace Spiritfire.Game
 
         /// <summary>宝石 / 光柱颜色：由奖励处理器（Loot/Rewards）决定</summary>
         public static Color RewardColor(string reward) => RewardRegistry.Color(reward);
+
+        /// <summary>实际发放的奖励串：档位写进去之后的（提示与发放共用，保证一致）</summary>
+        public string EffectiveReward => EconomyConfig.ApplyTier(reward, tier, EconomyConfig.Chapter);
+
+        /// <summary>标题里的奖励名（同 TS runPlan.rewardLabel）</summary>
+        public static string Label(string reward)
+        {
+            switch (RewardRegistry.KeyOf(reward))
+            {
+                case "weapon": return "武器";
+                case "scroll": return "秘卷";
+                case "coins": return "灵石";
+                case "heal": return "生命";
+                case "upgrade": return "强化";
+                case "pet": return "灵宠";
+                default: return RewardRegistry.Hint(reward);
+            }
+        }
+
+        /// <summary>说明行（同 TS ChestManager.hint）：秘卷 / 灵石 / 生命用各自处理器的整句，武器 / 强化的 Hint 本来就是整句，其余用处理器的 Hint</summary>
+        public static string Line(string reward)
+        {
+            var args = RewardRegistry.Split(reward);
+            return args[0] switch
+            {
+                "scroll" => ScrollReward.Line(args),
+                "coins" => CoinsReward.Line(args),
+                "heal" => HealReward.Line,
+                "pet" => "灵兽封印：结契一只灵宠",
+                _ => RewardRegistry.Hint(reward),
+            };
+        }
 
         void Build()
         {
@@ -100,7 +142,27 @@ namespace Spiritfire.Game
         public Vector3 Focus => basePos + Vector3.up * 0.6f;
         public float Radius => 2.6f;
         public bool CanInteract => state == State.Idle;
-        public string Prompt => "打开宝箱 · " + RewardRegistry.Hint(reward);
+        public string Prompt => "打开宝箱 · " + Label(reward);
+
+        InteractPrompt? card;
+
+        /// <summary>提示卡（第一次读时生成后缓存：档位和章节在一关里不变）</summary>
+        public InteractPrompt PromptCard
+        {
+            get
+            {
+                if (card.HasValue) return card.Value;
+                var r = EffectiveReward;
+                card = new InteractPrompt
+                {
+                    title = string.IsNullOrEmpty(reward) ? "宝箱" : "宝箱 · " + Label(r),
+                    subtitle = "开启",
+                    lines = new[] { Line(r) },
+                    color = color,
+                };
+                return card.Value;
+            }
+        }
 
         public void Interact()
         {
@@ -165,7 +227,8 @@ namespace Spiritfire.Game
                     if (!granted && t >= GrantAt)
                     {
                         granted = true;
-                        LootDirector.Instance?.Grant(reward, Focus + transform.forward * 0.8f);
+                        var loot = LootDirector.Instance;
+                        if (loot) loot.Grant(EffectiveReward, Focus + transform.forward * 0.8f);
                     }
                     if (t >= 2f)
                     {

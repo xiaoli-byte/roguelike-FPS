@@ -530,4 +530,110 @@ namespace Spiritfire.Game.Tests
             inv2.Clear();
         }
     }
+
+    /// <summary>
+    /// 经济（R1）：击杀 / 宝箱 / 一次性奖励的章节系数与 Three.js Loot.ts 一致；宝箱档位写进奖励串（保底品质、精英灵石）；
+    /// 灵石获取只在入账时乘一次且小数不丢；每章收入投影覆盖 RunPlan 的 3 章 × (3 + 1) 关。
+    /// </summary>
+    public sealed class EconomyConfigTests
+    {
+        StatSheet savedStats;
+        RunState savedRun;
+
+        [SetUp]
+        public void SetUp()
+        {
+            savedStats = Combat.playerStats;
+            savedRun = RunState.Current;
+            RunState.Current = null;
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            Combat.playerStats = savedStats;
+            RunState.Current = savedRun;
+        }
+
+        [Test]
+        public void ChapterFactorsMatchTs()
+        {
+            Assert.AreEqual(1f, EconomyConfig.KillChapterMult(0), 1e-5f);
+            Assert.AreEqual(1.3f, EconomyConfig.KillChapterMult(2), 1e-5f);
+            Assert.AreEqual(1.7f, EconomyConfig.RewardChapterMult(2), 1e-5f);
+            Assert.AreEqual(1.5f, EconomyConfig.ShopChapterMult(2), 1e-5f);
+            Assert.AreEqual(136, EconomyConfig.RewardCoins(80, 2));
+        }
+
+        [Test]
+        public void KillCoinsRollWithinRangeWithEliteAndChapter()
+        {
+            var rng = new RunRng(1);
+            for (int i = 0; i < 500; i++)
+            {
+                int normal = EconomyConfig.KillCoins(new Vector2Int(2, 4), Rank.Normal, 0, rng);
+                Assert.That(normal, Is.InRange(2, 4));
+                int elite = EconomyConfig.KillCoins(new Vector2Int(2, 4), Rank.Elite, 2, rng);
+                Assert.That(elite, Is.InRange(Mathf.RoundToInt(6 * 1.3f), Mathf.RoundToInt(12 * 1.3f)));
+                int boss = EconomyConfig.KillCoins(Vector2Int.zero, Rank.Boss, 0, rng);
+                Assert.That(boss, Is.InRange(60, 100), "首领没写时 60–100");
+            }
+            Assert.AreEqual(0, EconomyConfig.KillCoins(Vector2Int.zero, Rank.Normal, 0, rng), "没写灵石的普通敌人不掉");
+        }
+
+        [Test]
+        public void ChestCoinsAndTierStrings()
+        {
+            var rng = new RunRng(2);
+            for (int i = 0; i < 200; i++)
+            {
+                Assert.That(EconomyConfig.ChestCoins(ChestTier.Normal, 0, rng), Is.InRange(60, 120));
+                Assert.That(EconomyConfig.ChestCoins(ChestTier.Elite, 1, rng), Is.InRange(Mathf.RoundToInt(60 * 1.35f * 1.4f), Mathf.RoundToInt(120 * 1.35f * 1.4f)));
+            }
+            Assert.AreEqual("scroll", EconomyConfig.ApplyTier("scroll", ChestTier.Normal, 0));
+            Assert.AreEqual("scroll:min=1", EconomyConfig.ApplyTier("scroll", ChestTier.Elite, 0));
+            Assert.AreEqual("scroll:min=2", EconomyConfig.ApplyTier("scroll:min=2", ChestTier.Boss, 0), "写死的保底不覆盖");
+            Assert.AreEqual("weapon:min=1", EconomyConfig.ApplyTier("weapon", ChestTier.Elite, 0));
+            Assert.AreEqual("weapon:min=3", EconomyConfig.ApplyTier("weapon", ChestTier.Boss, 0), "第一章首领保底史诗");
+            Assert.AreEqual("weapon:min=4", EconomyConfig.ApplyTier("weapon", ChestTier.Boss, 1), "第二章起保底传说");
+            Assert.AreEqual("weapon:smg", EconomyConfig.ApplyTier("weapon:smg", ChestTier.Elite, 0), "关卡写死的武器原样");
+            Assert.AreEqual("coins:tier=elite", EconomyConfig.ApplyTier("coins", ChestTier.Elite, 0));
+            Assert.AreEqual(ChestTier.Elite, EconomyConfig.TierOf(RewardRegistry.Split("coins:tier=elite")));
+            Assert.AreEqual("从三个精良及以上的秘卷中选择一个", ScrollReward.Line(RewardRegistry.Split("scroll:min=1")));
+            Assert.AreEqual("从三个秘卷中选择一个", ScrollReward.Line(RewardRegistry.Split("scroll")));
+            Assert.AreEqual(1, ScrollReward.MinRarity(RewardRegistry.Split("scroll:min=1")));
+            Assert.AreEqual(3, ScrollReward.Count(RewardRegistry.Split("scroll")));
+        }
+
+        [Test]
+        public void CoinGainIsAppliedOnceAtCreditWithoutRoundingLoss()
+        {
+            var sheet = StatSheet.Default();
+            sheet.Add("test", Stat.CoinGainPct, 0.08f);
+            Combat.playerStats = sheet;
+            var run = RunState.Ensure();
+            int start = run.coins;
+            for (int i = 0; i < 25; i++) EconomyConfig.CreditCoins(1);
+            Assert.AreEqual(start + 27, run.coins, "25 × 1.08 = 27，逐颗取整不能丢");
+            Combat.playerStats = StatSheet.Default();
+            Assert.AreEqual(10, EconomyConfig.CreditCoins(10));
+            Assert.AreEqual(0, EconomyConfig.CreditCoins(0));
+        }
+
+        [Test]
+        public void ProjectionCoversEveryChapter()
+        {
+            var rows = EconomyConfig.Project();
+            Assert.AreEqual(RunPlan.Chapters, rows.Count);
+            foreach (var r in rows)
+            {
+                Assert.AreEqual(RunPlan.StagesPerChapter - 1, r.fieldStages);
+                Assert.AreEqual(1, r.bossStages);
+                Assert.Greater(r.Total, 0);
+            }
+            for (int i = 1; i < rows.Count; i++) Assert.Greater(rows[i].Total, rows[i - 1].Total, "后面的章收入更高");
+            var text = EconomyConfig.FormatProjection(rows, EconomyConfig.ProjectionInputs.Default);
+            StringAssert.Contains("每章收入投影", text);
+        }
+    }
 }
