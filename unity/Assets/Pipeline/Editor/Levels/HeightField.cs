@@ -367,7 +367,7 @@ namespace Spiritfire.Art.Editor.Levels
         }
 
         /// <summary>
-        /// 雅丹场：按风向对齐的格子里各放一条岩脊——迎风端钝圆、最高，背风端收尖、变矮（鲸背）；相邻列纵向错开，不成棋盘。
+        /// 雅丹场：按风向对齐的格子里各放一条岩脊——迎风端钝圆、最高，背风端收尖、尾部稍矮（鲸背）；相邻列纵向错开，不成棋盘。
         /// 脊与脊重叠处取较高者；密度高时连成长岩墙，墙间留出 2–3 条平行的干河道与横向缺口（1-2 的开放化改写）。
         /// 返回 0–height；body = 岩体遮罩（0–1，侧壁到顶），top = 平顶遮罩。分层：侧壁岩、顶面砾石 / 夯土、走廊沙。
         /// </summary>
@@ -380,7 +380,8 @@ namespace Spiritfire.Art.Editor.Levels
             float cellL = y.length * 1.45f, cellW = y.spacing;
             // 只与位置有关的扰动先算好（各候选格子共用）：足迹边缘的风蚀缺口、顶面起伏、侧壁凹槽相位
             float wobble = Fbm(p, 9f, 3, y.seed + 3) * 0.25f;
-            float topN = 1 + Fbm(p, 10f, 2, y.seed + 5) * 0.03f;
+            // 顶面只留很轻的起伏（±0.6%，14 m 尺度）：12–25 m 高的岩墙上，3% 的噪声已经把台面揉成 5–10° 的缓坡
+            float topN = 1 + Fbm(p, 14f, 2, y.seed + 5) * 0.012f;
             float fluteN = Fbm(p, 4f, 2, y.seed + 6) * 2;
             int cj = Mathf.FloorToInt(across / cellW);
             float best = 0, bestBody = 0;
@@ -408,7 +409,8 @@ namespace Spiritfire.Art.Editor.Levels
                     // 剖面同 Mesa：顶沿锐利、坡脚拖出碎屑裙
                     float k = 1 - Mathf.Pow(Smooth(-y.edge, 0.3f * y.edge, outside), 0.55f);
                     if (k <= 0) continue;
-                    float tail = 1 - 0.5f * Smooth(0.15f, 1f, u);
+                    // 背风尾：只在后 60% 收低 30%（台面大半是平的，尾端才像鲸背那样落下去）
+                    float tail = 1 - 0.3f * Smooth(0.4f, 1f, u);
                     float flute = 1 - 0.07f * Mathf.Abs(Mathf.Sin(v * 1.6f + fluteN)) * Smooth(-0.7f * y.edge, 0, outside);
                     float val = k * hgt * tail * topN * flute;
                     if (val > best)

@@ -123,11 +123,13 @@ namespace Spiritfire.Art.Editor.Levels
                 view = (new Vector2(-96, -96), 1.62f, new Vector2(10, 4), 7f),
                 check = (sp, log) =>
                 {
-                    // 顶平侧陡：撒点，按岩体遮罩分侧壁 / 顶面统计地形坡度
+                    // 顶平侧陡：撒点，按岩体遮罩分侧壁 / 顶面统计地形坡度。只在样例边缘回落带（外圈 EdgeFade 米）以内取样——
+                    // 回落带是画廊把样例压回地面的展示手段，那里的岩脊顶被斜着拉低，量的是回落坡不是雅丹
+                    const float win = Tile * 0.5f - EdgeFade - 2;
                     float side = 0, topS = 0;
                     int sideN = 0, topN = 0, cells = 0, ridge = 0;
-                    for (float x = -112; x <= 112; x += 2)
-                    for (float z = -112; z <= 112; z += 2)
+                    for (float x = -win; x <= win; x += 2)
+                    for (float z = -win; z <= win; z += 2)
                     {
                         var q = new Vector2(x, z);
                         Yardangs(q, y, out float body, out float top);
