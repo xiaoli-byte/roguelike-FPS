@@ -23,6 +23,8 @@ namespace Spiritfire.Art.Editor.Levels
     ///   北侧熔岩 / 冰面 / 水面占位条带（带 Lava / Ice / Water 标签的色块，地表系统落地后换成正式组件）
     ///   中央首领场地：<see cref="BossArena"/> 锚点（圆心 (0, 0)、半径 16 m，不限首领），首领框架与各首领单元的冒烟在这里刷首领（BossSuite）
     ///   地面每 10 m 一条浅色网格线（量距离、看截图用，没有碰撞）
+    ///   遭遇框架冒烟（EncounterSuite）的标记：平台区北面的场地中心 (30, 12) + 五个站位（含 4 m 台顶的高台站位）、出生点东侧三座灵火坛、
+    ///   6 m 台北面一处藏宝点、西南一座出口——只是空物体，组件由套件运行时挂（测试场平时没有遭遇战）
     ///
     /// 玩家、系统、敌人目录与 1-1 相同（PlayerRigBuilder + 燎）；没有遭遇战和出口，敌人全靠刷怪台按需生成。
     /// 生成：Spiritfire ▸ Levels ▸ Build Test Arena，或 bridge.sh level arena。冒烟套件 Testing/Suites/ArenaSuite.cs（bridge.sh playtest arena）。
@@ -59,6 +61,27 @@ namespace Spiritfire.Art.Editor.Levels
         /// <summary>首领场地（B0）：平地中央的圆，坡度台 / 高台 / 栖落柱 / 条带都在圈外</summary>
         static readonly Vector2 BossCenter = new(0, 0);
         const float BossRadius = 16f;
+
+        /// <summary>
+        /// 遭遇框架冒烟的标记（名字、位置、离地高）：玩家从西边 (23, 12) 进场；正面位在中心偏东、远端位在东头（冲锋型从这里来）、
+        /// 两个侧翼位南北各一（lane 1 北、lane 2 南，与「玩家 → 中心」轴线的左右一致）、高台位在 4 m 台顶。
+        /// EncounterSuite 按同名标记取位置（场景没重建时用同样的坐标）
+        /// </summary>
+        public static readonly (string name, Vector2 p, float y)[] EncounterMarkers =
+        {
+            ("Encounter_Site", new Vector2(30, 12), 0),
+            ("Encounter_Anchor_Assault", new Vector2(34, 10), 0),
+            ("Encounter_Anchor_FlankN", new Vector2(32, 22), 0),
+            ("Encounter_Anchor_FlankS", new Vector2(32, 4), 0),
+            ("Encounter_Anchor_FarSide", new Vector2(44, 12), 0),
+            ("Encounter_Anchor_HighDeck", new Vector2(34, -4), 4f),
+            ("Encounter_SiteOptional", new Vector2(-40, 44), 0),
+            ("Encounter_Altar_1", new Vector2(12, -40), 0),
+            ("Encounter_Altar_2", new Vector2(18, -40), 0),
+            ("Encounter_Altar_3", new Vector2(24, -40), 0),
+            ("Encounter_Cache", new Vector2(46, 4), 0),
+            ("Encounter_Portal", new Vector2(-24, -40), 0),
+        };
 
         // ───────────── 地貌 ─────────────
         /// <summary>平地 + 外圈围堤（平地外 1 m 起 8 m 内升 9 m，最陡处约 59°，玩家和 NavMesh 都上不去）</summary>
@@ -113,6 +136,9 @@ namespace Spiritfire.Art.Editor.Levels
             BuildPerches(wb, markers, m, spawner);
             BuildStrips(wb, m, spawner);
             BuildBossArena(markers, spawner);
+            var encounter = new GameObject("Encounter Test (markers)").transform;
+            encounter.SetParent(markers, false);
+            foreach (var (name, p, y) in EncounterMarkers) Marker(encounter, name, G(p, y));
 
             // 可玩玩家：燎（第一人称 rig、血量护盾、全部武器的 rig、HUD、会话、掉落）
             var player = PlayerRigBuilder.Build(theme, PlayerRigBuilder.Liao, G(Spawn, 0.05f), Quaternion.LookRotation(Flat(Pad - Spawn)), "测试场", out var cam);
@@ -205,6 +231,16 @@ namespace Spiritfire.Art.Editor.Levels
                 sites = { new SiteSpec { name = "东侧高台区", center = G(new Vector2(34, -10)), size = 40, minCover = 2, minLayers = 2, overlook = true } },
                 placeholders = PlaceholderPolicy.Warn,
             };
+            // 遭遇冒烟的站位：地面位按套件编制里贴地的三种查净空 / 有路，台顶高台位只给不贴地的（邪飞天）
+            foreach (var (name, p, y) in EncounterMarkers)
+            {
+                if (!name.StartsWith("Encounter_Anchor_")) continue;
+                spec.anchors.Add(new AnchorSpec
+                {
+                    name = $"{name}（遭遇冒烟）", pos = G(p, y),
+                    enemies = y > 0 ? new[] { "apsara" } : new[] { "jerboa_blade", "tomb_beast", "scorpion_archer" },
+                });
+            }
             spec.Route("出生点", G(Spawn)).Route("刷怪台", G(Pad)).Route("坡度台面", G(DeckCenter, DeckHeight));
             foreach (var (c, h) in Platforms) spec.Route($"{h} m 台顶", G(c, h));
             return spec;

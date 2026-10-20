@@ -312,20 +312,20 @@ namespace Spiritfire.Art.Editor.Levels
             playerSpawn.transform.SetParent(markers, false);
             playerSpawn.transform.SetPositionAndRotation(spawnAt, spawnRot);
             new GameObject("Level Bootstrap").AddComponent<Spiritfire.Game.LevelBootstrap>();
-            var sites = BuildEncounters(markers);
+            var objective = BuildEncounters(markers);
             // 武器架（测试便利，做完随机掉落后撤掉）：出生点前方 4.5 m 横排左轮 / 霰弹 / 榴弹
             var fwd = new Vector3(Gravel.x - Spawn.x, 0, Gravel.y - Spawn.y).normalized;
             var rack = new GameObject("Weapon Rack (test)").AddComponent<Spiritfire.Game.WeaponRack>();
             var rackAt = Spawn + new Vector2(fwd.x, fwd.z) * 4.5f;
             rack.transform.SetPositionAndRotation(LevelKit.OnGround(terrain, rackAt.x, rackAt.y, 0), Quaternion.LookRotation(-fwd));
-            // 出口传送门：嵌在出口祭坛正面，四个场地肃清后开启
+            // 出口传送门：嵌在出口祭坛正面，关卡目标（四个场地肃清）完成后升起
             if (exit)
             {
                 var portal = new GameObject("Exit Portal").AddComponent<Spiritfire.Game.ExitPortal>();
                 var face = exit.transform.forward;
                 portal.transform.SetPositionAndRotation(LevelKit.OnGround(terrain, Exit.x + face.x * ExitDoorOffset, Exit.y + face.z * ExitDoorOffset, 0),
                     Quaternion.LookRotation(-face));
-                portal.requires = sites;
+                portal.objective = objective;
             }
 
             EditorSceneManager.SaveScene(scene, ScenePath);
@@ -632,18 +632,22 @@ namespace Spiritfire.Art.Editor.Levels
         }
 
         /// <summary>
-        /// 遭遇战（docs/level-design/unity-maps-v1.md 1-1 的四个场地，按顺序解锁）：
+        /// 遭遇战（docs/level-design/unity-maps-v1.md 1-1 的四个场地，按顺序解锁；遭遇框架 v2，docs/unity-parity.md L2）：
         ///   ① 黑戈壁砾石滩：跳鼠群 + 蝎尾弩卫远程压制（玩家从长城缺口进来就开打）
         ///   ② 雅丹石阵：蜃楼蟾在岩丘后吊射 + 跳鼠绕岩伏击
         ///   ③ 烽燧台地：镇墓兽冲锋上坡 + 邪飞天在台顶支援（先打琵琶）
         ///   ④ 驼队残骸营地：混编精英波——火浣鼠滚进来逼走位，精英蝎卫压制
-        /// 出生锚点用 BuildMarkers 摆的 Enemy_N_* 标记；敌人 Prefab / 挂件运行时从 GameDatabase 取（L1 起场景里不再放敌人目录）。
+        /// 编制、到场时间、锚点、奖励与 v1 相同：每个场地一波（<see cref="Spiritfire.Game.EncounterSpec"/>），条目写死到场延迟、不集结、不升格，
+        /// slice11 冒烟照旧。出生锚点用 BuildMarkers 摆的 Enemy_N_* 标记，这里给它们挂 <see cref="Spiritfire.Game.SpawnAnchor"/>（<see cref="AnchorRoles"/>）：
+        /// 运行时按角色挑站位（跳鼠站侧翼位、蝎卫站河岸远程位、飞天站台顶），不再随机挑锚点。
+        /// 关卡目标 <see cref="Spiritfire.Game.LevelObjective"/>：四个场地必清，完成后出口传送门升起、落清关宝箱。
+        /// 敌人 Prefab / 挂件运行时从 GameDatabase 取（L1 起场景里不再放敌人目录）。
         /// </summary>
-        static Spiritfire.Game.EncounterSite[] BuildEncounters(Transform markers)
+        static Spiritfire.Game.LevelObjective BuildEncounters(Transform markers)
         {
             var root = new GameObject("Encounters").transform;
             Spiritfire.Game.EncounterSite Site(int index, string marker, string title, float trigger, float arena,
-                Spiritfire.Game.EncounterSite prev, params Spiritfire.Game.EncounterSite.Squad[] squads)
+                Spiritfire.Game.EncounterSite prev, Spiritfire.Game.EncounterSpec spec)
             {
                 var site = new GameObject($"Site {index} · {title}").AddComponent<Spiritfire.Game.EncounterSite>();
                 site.transform.SetParent(root, false);
@@ -651,33 +655,69 @@ namespace Spiritfire.Art.Editor.Levels
                 site.title = title;
                 site.triggerRadius = trigger;
                 site.arenaRadius = arena;
-                site.squads = squads;
+                site.spec = spec;
                 site.requires = prev ? new[] { prev } : System.Array.Empty<Spiritfire.Game.EncounterSite>();
                 var anchors = new List<Transform>();
                 foreach (Transform m in markers)
-                    if (m.name.StartsWith($"Enemy_{index}_")) anchors.Add(m);
+                    if (m.name.StartsWith($"Enemy_{index}_"))
+                    {
+                        Anchor(m);
+                        anchors.Add(m);
+                    }
                 site.anchors = anchors.ToArray();
                 return site;
             }
-            Spiritfire.Game.EncounterSite.Squad Sq(string enemy, int count, float delay = 0, bool elite = false) =>
-                new() { enemy = enemy, count = count, delay = delay, elite = elite };
+            // 一个场地一波：条目的到场延迟写死（0 = 开战即到），首波不集结，出生点离玩家 10–28 m——出场时间与距离带同 v1 的 Squad 编制
+            Spiritfire.Game.WaveEntry E(string enemy, int count, float delay = 0) => Spiritfire.Game.EncounterSpec.E(enemy, count, delay);
+            Spiritfire.Game.EncounterSpec One(string label, params Spiritfire.Game.WaveEntry[] entries) =>
+                Spiritfire.Game.EncounterSpec.Of(Spiritfire.Game.EncounterSpec.Wave(label, entries).After(0, 0)).Gather(0).Distance(10, 28);
 
             // 奖励节奏：① 雷弧发射器（雷，配燎的火技能出焚雷），② 灵兽封印（按品阶权重抽一只灵宠，docs/pet-system.md），
             //          ③ 青冥雷蛊（精良，蚀 + 雷：封脉 / 熔金 / 归墟），④ 秘卷
             var s1 = Site(1, "Site_1_GravelField", "黑戈壁砾石滩", 17, 28, null,
-                Sq("jerboa_blade", 4), Sq("scorpion_archer", 2, 1.2f));
+                One("黑戈壁砾石滩", E("jerboa_blade", 4), E("scorpion_archer", 2, 1.2f)));
             s1.reward = "weapon:beam";
             var s2 = Site(2, "Site_2_Yardang", "雅丹石阵", 18, 30, s1,
-                Sq("mirage_toad", 2), Sq("jerboa_blade", 3, 0.6f), Sq("jerboa_blade", 3, 6f));
+                One("雅丹石阵", E("mirage_toad", 2), E("jerboa_blade", 3, 0.6f), E("jerboa_blade", 3, 6f)));
             s2.reward = "pet"; // 旧场景没重建时由 PetBootstrap 在运行时把 ② 的 scroll 换成 pet
             var s3 = Site(3, "Site_3_BeaconPlateau", "烽燧台地", 20, 30, s2,
-                Sq("tomb_beast", 1), Sq("apsara", 1, 1.5f), Sq("jerboa_blade", 3, 4f), Sq("scorpion_archer", 1, 8f));
+                One("烽燧台地", E("tomb_beast", 1), E("apsara", 1, 1.5f), E("jerboa_blade", 3, 4f), E("scorpion_archer", 1, 8f)));
             s3.reward = "weapon:stormpod:1";
             var s4 = Site(4, "Site_4_CaravanCamp", "驼队残骸营地", 18, 30, s3,
-                Sq("fire_rat", 3), Sq("jerboa_blade", 3, 1f), Sq("scorpion_archer", 1, 2f, true),
-                Sq("mirage_toad", 1, 6f), Sq("fire_rat", 3, 9f), Sq("tomb_beast", 1, 12f, true));
+                One("驼队残骸营地", E("fire_rat", 3), E("jerboa_blade", 3, 1f), E("scorpion_archer", 1, 2f).Elite(),
+                    E("mirage_toad", 1, 6f), E("fire_rat", 3, 9f), E("tomb_beast", 1, 12f).Elite()));
             s4.reward = "scroll";
-            return new[] { s1, s2, s3, s4 };
+
+            var objective = new GameObject("Level Objective").AddComponent<Spiritfire.Game.LevelObjective>();
+            objective.transform.SetParent(root, false);
+            objective.title = "穿越古道";
+            objective.required = new[] { s1, s2, s3, s4 };
+            objective.autoCollect = false;
+            return objective;
+        }
+
+        /// <summary>
+        /// 锚点标记的站位（标记名 → 角色、lane、高台）：跳鼠两处侧翼位分两条 lane，蝎卫站东岸远程位，蜃楼蟾站岩丘后的炮击位，
+        /// 镇墓兽站西坡道脚的正面位（冲上坡），飞天站台顶（高台）；④ 的两个混编位不限角色。没列出的标记不限角色、lane 0、地面。
+        /// </summary>
+        static readonly Dictionary<string, (Spiritfire.Game.StationRole role, int lane, bool elevated)> AnchorRoles = new()
+        {
+            ["Enemy_1_Jerboa_A"] = (Spiritfire.Game.StationRole.Flank, 0, false),
+            ["Enemy_1_Jerboa_B"] = (Spiritfire.Game.StationRole.Flank, 1, false),
+            ["Enemy_1_ScorpionArcher_EastBank"] = (Spiritfire.Game.StationRole.Ranged, 0, false),
+            ["Enemy_2_MirageToad_A"] = (Spiritfire.Game.StationRole.Artillery, 0, false),
+            ["Enemy_2_Jerboa_Flank"] = (Spiritfire.Game.StationRole.Flank, 1, false),
+            ["Enemy_3_TombBeast_RampW"] = (Spiritfire.Game.StationRole.Assault, 0, false),
+            ["Enemy_3_Apsara_Top"] = (Spiritfire.Game.StationRole.Support, 0, true),
+            ["Enemy_4_EliteWave_A"] = (Spiritfire.Game.StationRole.Auto, 0, false),
+            ["Enemy_4_EliteWave_B"] = (Spiritfire.Game.StationRole.Auto, 1, false),
+        };
+
+        static void Anchor(Transform marker)
+        {
+            var a = marker.GetComponent<Spiritfire.Game.SpawnAnchor>();
+            if (!a) a = marker.gameObject.AddComponent<Spiritfire.Game.SpawnAnchor>();
+            if (AnchorRoles.TryGetValue(marker.name, out var r)) (a.role, a.lane, a.elevated) = r;
         }
 
         static void BuildMarkers(Terrain t, Transform root)

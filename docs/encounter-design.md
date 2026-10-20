@@ -64,3 +64,16 @@ NavGrid 返回一个通往最近可达格的部分路径，不视为该候选点
 tests/encounters.test.mjs 检查全部 12 个战斗序号的总量与不同阵容、解锁顺序、精英替换与不修改共享模板、八类敌人的角色映射、角色/lane/延迟传递、粗时间步和玩家抢占出生点时的完整预警、不可达点等待恢复、旧点池兼容与 10 只存活上限。使用真实 CollisionWorld 检查八类普通/精英体型的墙边余量、盾卫的顶棚净空、随机备用点和实际出生时的重新检查。区域触发、完成后的奖励与撤军由 StageDirector 的独立 flow 测试覆盖。
 
 另外使用 seed 20261004 的真实生成地图、CollisionWorld、NavGrid、Waves 和 WaveRunner，在每个实际遭遇中心、祭坛通道内可站立的互动点、精英分支祭坛点以及精英盾卫专门探针执行 63 次固定站位模拟。玩家不移动，不绕过安全检查，只在出生 2.5 秒后模拟击杀以推进后续波次；63 次均刷齐，没有待出生队列卡死，实际包含 9 只精英盾卫。按 0.1 秒步进测得开波至首只到达 0.8–1.1 秒、开波至末只到达 0.8–3.1 秒；祭坛首波另保留 2 秒集结时间，沿路遭遇首波保留 0.4 秒集结时间。
+
+## Unity 遭遇框架 v2（L2，2026-10-21）
+
+上面是 Three.js 版的规则。Unity 版把它移植进 `unity/Assets/Game/Scripts/Encounters/`，地图单元按下面的写法在 `Level_<c>_<n>.cs` 里编排（1-1 的写法见 `Level_1_1.BuildEncounters`）。
+
+- **编排** `EncounterSpec`：`Of(Wave(...), Wave(...).After(剩几只, 隔几秒).Hint("提示"))`，链式 `.Gather(集结秒)`、`.Elites(升格只数, 小队词缀)`。条目 `E(id, 只数, 到场延迟)`，延迟 < 0 时按角色取默认值（正面 0、远程 0.2、辅助 0.6、侧翼 0.85、精确 0.9、炮击 1.2）；`.Elite(词缀)`、`.As(角色, lane)`、`.NoHoldBack()`。近战成群（≥ 3 只）默认留一只晚 2.5 s 走侧翼。开战时先复制再升格，模板不变，总数不变。
+- **站位** `SpawnAnchor{role, lane, elevated, spread}`：挂在场地 `anchors` 引用的标记上。角色对上 +8、对不上 −3，lane 对上 +2；高台站位不给贴地的敌人（`EnemyDef.groundOnly`），远程 / 精确 / 炮击 +3；冲锋型（`EnemyDef.charger`）距离带 16–26 m，偏向场地远端。其余打分、出生安全（距离带、NavMesh、按体型的出生净空、有路）、预警结束复检换点与 TS 相同，见 `SpawnStations`。
+- **触发**：站进触发圈 `entryDepth` 米，并且看得见场地中心或任一站位；深入到半径一半以内，或在圈里待满 2 s，就不再要求视线。同一时间只打一处。`autoTrigger = false` 的场地只能由脚本或藏宝点开战。
+- **目标图** `LevelObjective`：必清场地任意顺序（要强制先后就写场地的 `requires`），可选场地不影响出口；灵火坛 `SpiritAltar` 是 M 座里点亮 N 座（`altarsNeeded`），有守卫的坛要先肃清守卫，领主据点可以设成打败守卫直接点亮。点亮回满生命和护盾。
+- **藏宝点** `CachePOI`：走到发现半径内、并且看得见时提示「按 F 调查」。调查时，有守军的先惊动守军开战，肃清后出宝箱；没有守军就直接出宝箱。只给一次。
+- **出口** `ExitPortal`：读 `LevelObjective`（旧场景读 `requires`）。目标完成时传送门升起；没有出口祭坛模型时用 `buildFrame`，半埋的石门框会一起升起。升起后在门旁落清关宝箱，奖励取 RunPlan 本关的 `clearReward`。
+- **精英词缀**：只认 `IEliteAffixSource` 接口（EN4 实现后设到 `SquadAffixes.Source`）。取词顺序：条目 → 小队词缀 → 随机。结果放进 `SpawnOptions.affix`。
+- **验收**：`bridge.sh playtest encounter`（TestArena，标记见 `Level_TestArena.EncounterMarkers`）；EditMode 测试 `EncounterTests`；`playtest slice11` 不回退。
