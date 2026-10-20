@@ -51,8 +51,9 @@ namespace Spiritfire.Game
         {
             get
             {
+                // 首领倒下后血条还要播一小段收起动画，但对旧 API 来说首领已经没了
                 var b = Widget<BossBar>()?.Source?.BarHealth;
-                return b ? b : null;
+                return b && !b.Dead ? b : null;
             }
         }
 

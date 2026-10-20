@@ -210,7 +210,7 @@ namespace Spiritfire.Game.Tests
             var (r, h) = SpawnStations.BodySize(def, false);
             var (re, he) = SpawnStations.BodySize(def, true);
             Assert.AreEqual(def.radius * def.scale + 0.15f, r, 1e-4f);
-            Assert.AreEqual(def.height * def.scale + 0.1f, h, 1e-4f);
+            Assert.AreEqual(Mathf.Max(def.height * def.scale + 0.1f, r * 2), h, 1e-4f, "高度至少是两倍半径（宽身体，如镇墓兽）");
             Assert.AreEqual(def.radius * def.scale * 1.25f + 0.15f, re, 1e-4f, "精英 ×1.25");
             Assert.Greater(he, h);
         }
