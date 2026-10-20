@@ -21,6 +21,7 @@ namespace Spiritfire.Art.Editor.Levels
     ///   东侧三座高台 2.5 / 4 / 6 m，南面各一条 20° 坡道
     ///   西北三根栖落柱 5 / 8 / 11 m（柱顶有 PerchPoint 标记）
     ///   北侧熔岩 / 冰面 / 水面占位条带（带 Lava / Ice / Water 标签的色块，地表系统落地后换成正式组件）
+    ///   中央首领场地：<see cref="BossArena"/> 锚点（圆心 (0, 0)、半径 16 m，不限首领），首领框架与各首领单元的冒烟在这里刷首领（BossSuite）
     ///   地面每 10 m 一条浅色网格线（量距离、看截图用，没有碰撞）
     ///
     /// 玩家、系统、敌人目录与 1-1 相同（PlayerRigBuilder + 燎）；没有遭遇战和出口，敌人全靠刷怪台按需生成。
@@ -55,6 +56,9 @@ namespace Spiritfire.Art.Editor.Levels
         /// <summary>占位条带（标签、中心 z）：沿 X 24 m 长、6 m 宽</summary>
         static readonly (string tag, string title, float z)[] Strips = { ("Lava", "熔岩", 24), ("Ice", "冰面", 34), ("Water", "水面", 44) };
         const float StripLength = 24f, StripWidth = 6f, StripHeight = 0.06f;
+        /// <summary>首领场地（B0）：平地中央的圆，坡度台 / 高台 / 栖落柱 / 条带都在圈外</summary>
+        static readonly Vector2 BossCenter = new(0, 0);
+        const float BossRadius = 16f;
 
         // ───────────── 地貌 ─────────────
         /// <summary>平地 + 外圈围堤（平地外 1 m 起 8 m 内升 9 m，最陡处约 59°，玩家和 NavMesh 都上不去）</summary>
@@ -108,6 +112,7 @@ namespace Spiritfire.Art.Editor.Levels
             BuildPlatforms(wb, m, spawner);
             BuildPerches(wb, markers, m, spawner);
             BuildStrips(wb, m, spawner);
+            BuildBossArena(markers, spawner);
 
             // 可玩玩家：燎（第一人称 rig、血量护盾、全部武器的 rig、HUD、会话、掉落）
             var player = PlayerRigBuilder.Build(theme, PlayerRigBuilder.Liao, G(Spawn, 0.05f), Quaternion.LookRotation(Flat(Pad - Spawn)), "测试场", out var cam);
@@ -358,6 +363,35 @@ namespace Spiritfire.Art.Editor.Levels
                 else if (tag == "Ice") spawner.iceStrip = go.transform;
                 else spawner.waterStrip = go.transform;
             }
+        }
+
+        /// <summary>
+        /// 首领场地锚点（<see cref="BossArena"/>，不限首领）：中心 (0, 0)、半径 16 m。首领出生点在北侧 6 m、面朝南，玩家入场点在南侧 12 m、面朝北，
+        /// 四个召唤点在 45° 方向 9 m，八个边缘点在圈上；栖落点借用西北的三根栖落柱（圈外，飞行首领落台用）。测试场不为它加几何，掩体点留空
+        /// </summary>
+        static void BuildBossArena(Transform markers, ArenaSpawner spawner)
+        {
+            var root = Marker(markers, "BossArena", G(BossCenter));
+            var arena = root.gameObject.AddComponent<BossArena>();
+            arena.shape = BossArenaShape.Circle;
+            arena.radius = BossRadius;
+            Transform Point(string name, Vector2 offset, Vector2 facing)
+            {
+                var t = Marker(root, name, G(BossCenter + offset));
+                t.rotation = Quaternion.LookRotation(Flat(facing));
+                return t;
+            }
+            arena.bossSpawn = Point("BossSpawn", new Vector2(0, 6), new Vector2(0, -1));
+            arena.playerEntry = Point("PlayerEntry", new Vector2(0, -12), new Vector2(0, 1));
+            Transform[] Ring(string prefix, int n, float r, float startDeg) => Enumerable.Range(0, n).Select(i =>
+            {
+                float a = (startDeg + 360f * i / n) * Mathf.Deg2Rad;
+                var off = new Vector2(Mathf.Sin(a), Mathf.Cos(a)) * r;
+                return Point($"{prefix}_{i + 1}", off, -off);
+            }).ToArray();
+            arena.summonPoints = Ring("Summon", 4, 9f, 45f);
+            arena.edgePoints = Ring("Edge", 8, BossRadius, 0f);
+            arena.perchPoints = spawner.perches;
         }
 
         static Material Glow(Material mat, Color emission)
