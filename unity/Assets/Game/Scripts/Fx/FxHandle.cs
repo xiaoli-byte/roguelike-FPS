@@ -54,6 +54,13 @@ namespace Spiritfire.Game
             gen = slot?.Generation ?? 0;
         }
 
+        /// <summary>指定世代号（从别的句柄转换过来时用：槽位可能已经被复用，不能取它当前的世代号）</summary>
+        internal FxHandle(IFxSlot slot, int gen)
+        {
+            this.slot = slot;
+            this.gen = gen;
+        }
+
         /// <summary>什么都没生成（参数非法、编辑器非 Play、特效被画质关掉）时返回的句柄</summary>
         public static FxHandle None => default;
 

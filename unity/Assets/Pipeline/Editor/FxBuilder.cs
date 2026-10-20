@@ -6,6 +6,7 @@ using Spiritfire.Game;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 namespace Spiritfire.Art.Editor
 {
@@ -15,7 +16,10 @@ namespace Spiritfire.Art.Editor
     ///   2. 材质 → Assets/Game/Resources/Fx/Materials/M_Fx_*.mat（<see cref="FxMaterials.Setup"/>，运行时从 Resources 取，不再 Shader.Find）
     ///   3. 粒子风格预制体 → Assets/Game/Resources/Fx/Presets/&lt;Id&gt;.prefab（Registry&lt;FxPreset&gt; 里带 Particle 的每一条，<see cref="FxSetup.Configure"/>）；
     ///      已经没有对应预设的旧预制体删掉
-    ///   4. 着色器变体集 → Assets/Game/Resources/Fx/FxShaderVariants.shadervariants（上面材质的变体 × 雾 / SSAO 组合，运行时 WarmUp）
+    ///   4. 预警贴花材质 → M_Fx_Telegraph.mat（Assets/Art/Shaders/SF_Telegraph.shader，F2）
+    ///   5. URP 贴花渲染特性 → Assets/Settings 下每个 UniversalRendererData（PC / Mobile）各加一个 DecalRendererFeature（Screen Space 技术），
+    ///      已有就只校正设置；和编辑器里点「Add Renderer Feature」一样登记进 m_RendererFeatures / m_RendererFeatureMap
+    ///   6. 着色器变体集 → Assets/Game/Resources/Fx/FxShaderVariants.shadervariants（上面材质的变体 × 雾 / SSAO 组合，运行时 WarmUp）
     /// 入口：菜单 Spiritfire/Fx/Build Fx Assets；bridge.sh fx；-batchmode -executeMethod Spiritfire.Art.Editor.FxBuilder.BatchBuild。
     /// 返回错误数（找不到着色器等），错误写 Console（[FxBuilder] 开头）。
     /// </summary>
@@ -26,6 +30,8 @@ namespace Spiritfire.Art.Editor
         public const string MaterialDir = ResourcesDir + "/Materials";
         public const string PresetDir = ResourcesDir + "/Presets";
         public const string VariantsPath = ResourcesDir + "/FxShaderVariants.shadervariants";
+        public const string TelegraphMaterialPath = MaterialDir + "/M_Fx_Telegraph.mat";
+        public const string SettingsDir = "Assets/Settings";
 
         [MenuItem("Spiritfire/Fx/Build Fx Assets", priority = 100)]
         static void Menu()
@@ -52,8 +58,10 @@ namespace Spiritfire.Art.Editor
             var textures = BuildTextures(log);
             var materials = BuildMaterials(textures, log, ref errors);
             BuildPresetPrefabs(materials, log, ref errors);
+            var telegraph = BuildTelegraphMaterial(log, ref errors);
+            EnsureDecalFeatures(log, ref errors);
             AssetDatabase.SaveAssets();
-            BuildVariants(materials.Values, log);
+            BuildVariants(telegraph ? materials.Values.Append(telegraph) : materials.Values, log);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             foreach (var l in log) Debug.Log("[FxBuilder] " + l);
@@ -265,10 +273,125 @@ namespace Spiritfire.Art.Editor
             if (tagged) yield return PassType.ScriptableRenderPipeline;
         }
 
-        /// <summary>F2 起贴花材质等也收进变体集</summary>
+        /// <summary>其它单元的特效材质以后也收进来（FX2 的熔池贴花等）</summary>
         static IEnumerable<Material> ExtraVariantMaterials()
         {
             yield break;
+        }
+
+        // ───────────── F2：预警贴花材质 ─────────────
+
+        static Material BuildTelegraphMaterial(List<string> log, ref int errors)
+        {
+            var shader = Shader.Find(Telegraph.ShaderName);
+            if (!shader)
+            {
+                Debug.LogError($"[FxBuilder] 找不到着色器 {Telegraph.ShaderName}（Assets/Art/Shaders/SF_Telegraph.shader 编译失败？）");
+                errors++;
+                return null;
+            }
+            if (!shader.isSupported) Debug.LogWarning($"[FxBuilder] {Telegraph.ShaderName} 在当前图形 API 上不受支持（看 Console 里的着色器报错）");
+            var m = SaveMaterial(TelegraphMaterialPath, shader, mat =>
+            {
+                mat.SetColor("_Color", new Color(1f, 0.19f, 0.19f, 1f));
+                mat.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
+                mat.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
+                mat.SetFloat("_DrawOrder", 0);
+                // 贴花通道按不透明队列过滤：2000 + 绘制顺序
+                mat.renderQueue = 2010;
+            });
+            log.Add($"预警贴花材质 → {TelegraphMaterialPath}");
+            return m;
+        }
+
+        // ───────────── F2：URP 贴花渲染特性 ─────────────
+
+        /// <summary>
+        /// 给 Assets/Settings 下每个 UniversalRendererData 加上 DecalRendererFeature（已有就只校正设置）。
+        /// Screen Space 技术：在不透明物体之后按深度图投射，不需要 DBuffer 预通道，Forward / Forward+ / 移动端都能用；
+        /// 不开贴花图层（不需要渲染图层贴图），最远绘制 250 m。
+        /// </summary>
+        static void EnsureDecalFeatures(List<string> log, ref int errors)
+        {
+            int added = 0, total = 0;
+            foreach (var guid in AssetDatabase.FindAssets("t:UniversalRendererData", new[] { SettingsDir }))
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                var data = AssetDatabase.LoadAssetAtPath<UniversalRendererData>(path);
+                if (!data) continue;
+                total++;
+                var feature = data.rendererFeatures.OfType<DecalRendererFeature>().FirstOrDefault();
+                if (!feature)
+                {
+                    feature = ScriptableObject.CreateInstance<DecalRendererFeature>();
+                    feature.name = "Decal";
+                    AssetDatabase.AddObjectToAsset(feature, data);
+                    AssetDatabase.TryGetGUIDAndLocalFileIdentifier(feature, out _, out long localId);
+                    // 同 URP ScriptableRendererDataEditor.AddComponent：特性列表与本地 id 映射一起加
+                    var so = new SerializedObject(data);
+                    var list = so.FindProperty("m_RendererFeatures");
+                    var map = so.FindProperty("m_RendererFeatureMap");
+                    if (list == null || map == null)
+                    {
+                        Debug.LogError($"[FxBuilder] {path}：找不到 m_RendererFeatures / m_RendererFeatureMap（URP 版本变了？）");
+                        errors++;
+                        continue;
+                    }
+                    list.arraySize++;
+                    list.GetArrayElementAtIndex(list.arraySize - 1).objectReferenceValue = feature;
+                    map.arraySize++;
+                    map.GetArrayElementAtIndex(map.arraySize - 1).longValue = localId;
+                    so.ApplyModifiedPropertiesWithoutUndo();
+                    added++;
+                }
+                var fso = new SerializedObject(feature);
+                bool ok = SetEnum(fso, "m_Settings.technique", "ScreenSpace")
+                          & SetFloat(fso, "m_Settings.maxDrawDistance", 250f)
+                          & SetBool(fso, "m_Settings.decalLayers", false)
+                          & SetEnum(fso, "m_Settings.screenSpaceSettings.normalBlend", "Low");
+                if (!ok)
+                {
+                    Debug.LogError($"[FxBuilder] {path}：DecalRendererFeature 的设置字段找不到（URP 版本变了？），贴花技术可能不是 Screen Space");
+                    errors++;
+                }
+                fso.ApplyModifiedPropertiesWithoutUndo();
+                feature.SetActive(true);
+                data.SetDirty();
+                EditorUtility.SetDirty(feature);
+                EditorUtility.SetDirty(data);
+            }
+            if (total == 0)
+            {
+                Debug.LogError($"[FxBuilder] {SettingsDir} 下没有 UniversalRendererData");
+                errors++;
+            }
+            log.Add($"贴花渲染特性：{total} 个渲染器（新加 {added} 个，Screen Space）");
+        }
+
+        static bool SetEnum(SerializedObject so, string path, string name)
+        {
+            var p = so.FindProperty(path);
+            if (p == null || p.propertyType != SerializedPropertyType.Enum) return false;
+            int i = Array.IndexOf(p.enumNames, name);
+            if (i < 0) return false;
+            p.enumValueIndex = i;
+            return true;
+        }
+
+        static bool SetFloat(SerializedObject so, string path, float v)
+        {
+            var p = so.FindProperty(path);
+            if (p == null) return false;
+            p.floatValue = v;
+            return true;
+        }
+
+        static bool SetBool(SerializedObject so, string path, bool v)
+        {
+            var p = so.FindProperty(path);
+            if (p == null) return false;
+            p.boolValue = v;
+            return true;
         }
     }
 }

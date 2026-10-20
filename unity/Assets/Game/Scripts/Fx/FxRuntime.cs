@@ -746,9 +746,12 @@ namespace Spiritfire.Game
             {
                 variantsWarmed = true;
                 var svc = Resources.Load<ShaderVariantCollection>(VariantsResourcePath);
+                // DX12 / Vulkan / Metal 上 SVC.WarmUp 只能编着色器、编不了管线状态（顶点格式未知），那里靠下面的「透明粒子画一帧」
+                var api = SystemInfo.graphicsDeviceType;
+                bool classic = api is GraphicsDeviceType.Direct3D11 or GraphicsDeviceType.OpenGLCore or GraphicsDeviceType.OpenGLES3;
                 try
                 {
-                    if (svc && !svc.isWarmedUp) svc.WarmUp();
+                    if (svc && classic && !svc.isWarmedUp) svc.WarmUp();
                 }
                 catch (System.Exception ex)
                 {
@@ -767,6 +770,7 @@ namespace Spiritfire.Game
                 if (e != null) EmitOne(e, at, Vector3.zero, 0.01f, 0.05f, clear, 0);
             }
             Lines?.WarmUp(at);
+            Telegraph.WarmUp(at);
         }
     }
 }
