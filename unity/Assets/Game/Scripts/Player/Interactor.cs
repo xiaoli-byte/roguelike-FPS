@@ -25,7 +25,7 @@ namespace Spiritfire.Game
 
         void Update()
         {
-            var eye = weapons && weapons.eye ? weapons.eye.transform : transform;
+            var eye = weapons ? weapons.Aim : transform; // 不抖的瞄准节点
             bool canAct = (TestMode || (motor && motor.inputEnabled)) && (!vitals || !vitals.Dead) && Time.timeScale > 0;
             Current = canAct ? Interaction.Pick(eye) : null;
             InteractPrompt? card = Current != null ? Current.PromptCard : null;

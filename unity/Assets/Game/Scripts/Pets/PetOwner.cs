@@ -44,7 +44,7 @@ namespace Spiritfire.Game
             Vitals = GetComponent<PlayerVitals>();
             Motor = GetComponent<PlayerMotor>();
             var wc = GetComponent<WeaponController>();
-            Eye = wc && wc.eye ? wc.eye.transform : Motor && Motor.eye ? Motor.eye : transform;
+            Eye = wc ? wc.Aim : Motor && Motor.eye ? Motor.eye : transform; // 不抖的瞄准节点（相机节点会随震屏晃动）
         }
 
         void OnEnable()
