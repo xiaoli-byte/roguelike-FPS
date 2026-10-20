@@ -13,7 +13,7 @@ namespace Spiritfire.Game
     ///   换球：蜷身过半（前 55% 人立）身体换成美术火球（挂点 socket_fire_ball，平时缩到 0.01），换的一瞬间爆一团火盖住；
     ///         滚动时火球按实际速度滚（同 Three.js 的 rollAngle），被打断 / 撞晕 / 死亡时换回身体
     /// </summary>
-    public sealed class FireRatAI : EnemyAI
+    public sealed class FireRatAI : EnemyAI, ISelfDestruct
     {
         const float RollRange = 14, CurlTime = 0.65f, RollSpeed = 11, RollStart = 5, RollRamp = 18, RollTurn = 126f, RollMaxTime = 3f;
         const float ObstacleBlastRange = 3.5f, DizzyTime = 0.8f, WallArmTime = 0.3f, TriggerRange = 1.6f, BlastRadius = 3.2f;

@@ -135,16 +135,18 @@ namespace Spiritfire.Game
     public static class InfernoKit
     {
         static ILavaQuery lava;
+        /// <summary>没有显式设 <see cref="Lava"/> 时的来源（L7：<see cref="LavaFieldQuery"/>，场景里有熔岩体才返回非空）</summary>
+        public static System.Func<ILavaQuery> LavaProvider;
 
         /// <summary>当前关卡的熔岩（熔岩系统启用时赋值、停用时赋 null；永远不为 null）</summary>
         public static ILavaQuery Lava
         {
-            get => lava ?? NoLava.Instance;
+            get => lava ?? LavaProvider?.Invoke() ?? NoLava.Instance;
             set => lava = value;
         }
 
         /// <summary>接上了真正的熔岩（不是兜底）</summary>
-        public static bool HasLava => lava != null && !(lava is NoLava);
+        public static bool HasLava => !(Lava is NoLava);
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics() => lava = null;

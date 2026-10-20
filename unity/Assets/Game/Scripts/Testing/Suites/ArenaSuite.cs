@@ -256,8 +256,8 @@ namespace Spiritfire.Game.Testing
                  $"状态 {string.Join("→", states.Take(14))}{(states.Count > 14 ? "…" : "")}");
             if (attack == null) Fail($"{label}：{MaxWaitAttack:F0} s 内没进入出招状态（{string.Join("→", states)}）");
             if (!died) Fail($"{label}：开火 {KillTimeout:F0} s 没打死");
-            // 火浣鼠滚到身边自爆：同 Three.js 不算击杀（没有击杀事件、不给奖励），不判失败
-            else if (!killedBy.HasValue && !(ai is FireRatAI { Detonated: true })) Fail($"{label}：死了但没有经伤害管线派发击杀事件");
+            // 自爆型敌人（火浣鼠、冰河豚、冰棘豪彘、神火飞鸦…）自爆身亡：同 Three.js 不算击杀（没有击杀事件、不给奖励），不判失败
+            else if (!killedBy.HasValue && !(ai is ISelfDestruct { Detonated: true })) Fail($"{label}：死了但没有经伤害管线派发击杀事件");
             arena.Clear();
             yield return new WaitForSeconds(0.4f);
         }

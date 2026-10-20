@@ -288,6 +288,7 @@ namespace Spiritfire.Game
             if (!ai) return true;
             if (ai.Health && ai.Health.IsBoss) return true;
             if (ai is FlyingEnemyAI || swimmers.Contains(ai)) return true;
+            if (ai is ILavaDweller d && d.SwimsInLava) return true; // 火鼍等熔岩生物（EN3b，见 InfernoKit）
             var type = SwimmerAgentType;
             if (type.HasValue && agent && agent.agentTypeID == type.Value) return true;
             if (Immunity == null) return false;

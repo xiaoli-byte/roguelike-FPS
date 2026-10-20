@@ -14,7 +14,7 @@ namespace Spiritfire.Game
     /// 弱点：整个身体（body 骨 + 模型空间 (0, 0.47, 0.05)，半径 0.34），鼓气时半径 ×2。
     /// 状态：drift → dive → inflate →（自爆）；dive →（落空）recover → drift
     /// </summary>
-    public sealed class IcePufferAI : FlyingEnemyAI
+    public sealed class IcePufferAI : FlyingEnemyAI, ISelfDestruct
     {
         public const float HoverMin = 2.2f, HoverMax = 3f, DiveRange = 8, DiveStart = 6, DiveSpeed = 11, DiveRamp = 14, DiveTurn = 2f, DiveMaxTime = 1.6f;
         public const float InflateRange = 2.4f, InflateTime = 0.8f, InflateTimeMin = 0.6f, InflateScale = 2f, BurstRadius = 3f, BurstEdge = 0.55f, BurstKnock = 4f;
