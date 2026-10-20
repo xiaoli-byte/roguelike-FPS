@@ -11,7 +11,7 @@ namespace Spiritfire.Game
     ///   护盾被打空时响一声并轻震屏（0.25 / 0.2 s）；不受伤 shieldRegenDelay（3 s）后以 shieldRegenRate（30/s）回盾；
     ///   生命按 HpRegen（每秒）持续回复（不发 PlayerHealed，同 Three.js）；生命归零死亡。
     /// 属性来自 <see cref="StatSheet"/>（英雄基础值 + 卷轴），变化时上限同步、当前值按比例保持。
-    /// 减益（寒意、日晒、点燃）在 <see cref="PlayerStatus"/>：走路速度 = 移速属性 × 减益的移速倍率（不改属性表）。
+    /// 减益（寒意、日晒、点燃）在 <see cref="PlayerStatus"/>：走路速度 = 移速属性（walkSpeed）× 运动修饰器栈里的减益移速倍率（不改属性表）。
     /// PlayerMotor 在 Art.Runtime 程序集里，它的起跳 / 落地 / 冲刺由这里转发进 <see cref="GameEvents"/>。
     /// </summary>
     [RequireComponent(typeof(PlayerMotor))]
@@ -45,6 +45,7 @@ namespace Spiritfire.Game
 
         PlayerMotor motor;
         PlayerStatus status;
+        IDisposable statusSpeed;
         float lastDamage = -10;
         float lastMaxHp, lastMaxShield;
 
@@ -58,6 +59,12 @@ namespace Spiritfire.Game
             // 旧场景（编辑期烘好的玩家）没有减益组件：运行时补上
             status = GetComponent<PlayerStatus>();
             if (!status) status = gameObject.AddComponent<PlayerStatus>();
+            // 安全落脚点 / 坠落回收、移动特效（H1）：同样运行时补上
+            if (!GetComponent<SafeGround>()) gameObject.AddComponent<SafeGround>();
+            if (!GetComponent<MovementFx>()) gameObject.AddComponent<MovementFx>();
+            // 减益的移速倍率（寒意）走运动修饰器栈，每帧读 PlayerStatus.SpeedMult；不再改写 walkSpeed
+            // TODO(W1)：机炮预热的移速倍率由 WeaponController 暴露后同样登记一条 MotorMods.Speed(() => …)
+            if (motor) statusSpeed = motor.AddModifier(MotorMods.Speed(() => status ? status.SpeedMult : 1f));
             stats ??= StatSheet.Default();
             Combat.playerStats = stats;
             health = lastMaxHp = MaxHealth;
@@ -89,6 +96,8 @@ namespace Spiritfire.Game
         void OnDestroy()
         {
             if (Instance == this) Instance = null;
+            statusSpeed?.Dispose();
+            statusSpeed = null;
         }
 
         void OnStatsChanged()
@@ -102,15 +111,17 @@ namespace Spiritfire.Game
             ApplyMotorStats();
         }
 
-        /// <summary>走路速度 = 移速属性 × 减益的移速倍率（寒意）。减益变化时由 PlayerStatus 调用</summary>
+        /// <summary>走路速度 = 移速属性；减益（寒意）的倍率在运动修饰器栈里每帧乘上。减益变化时 PlayerStatus 仍会调用（无副作用）</summary>
         internal void RefreshMotorSpeed()
         {
-            if (motor && stats != null) motor.walkSpeed = stats.Get(Stat.MoveSpeed) * (status ? status.SpeedMult : 1f);
+            if (motor && stats != null) motor.walkSpeed = stats.Get(Stat.MoveSpeed);
         }
 
         void ApplyMotorStats()
         {
             RefreshMotorSpeed();
+            float jv = stats.Get(Stat.JumpVelocity);
+            if (jv > 0) motor.jumpVelocity = jv;
             motor.dashCooldown = stats.Get(Stat.DashCooldown);
             motor.dashCharges = Mathf.Max(1, Mathf.RoundToInt(stats.Get(Stat.DashCharges)));
             // 额外跳跃（二段跳）：以前 airJumps 没有任何地方赋值，秘卷给的 ExtraJumps 在这里生效
