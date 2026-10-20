@@ -319,7 +319,8 @@ def build_custom_skeleton() -> None:
     """Skeleton from the rig JSON ("bones": name → head / tail in the scaled, grounded frame, metres; Blender axes:
     front = -Y, the creature's left = +X, up = +Z), weights by Blender's bone heat diffusion, then rigid overrides
     ("rigid": a sphere or box of vertices fully on one bone, for hard parts such as a weak-spot sac or a weapon),
-    then each "limit" keeps a bone's weights inside a region (e.g. arm bones never reach the pincers)."""
+    then each "limit" keeps a bone's weights inside a region (e.g. arm bones never reach the pincers); "soft_limits" do
+    the same with a linear edge and hand the removed weight to a body bone (legs off a thin torso's belly)."""
     global arm
     t = time.time()
     data = bpy.data.armatures.new(f"{ASSET}_Rig")
@@ -392,6 +393,25 @@ def build_custom_skeleton() -> None:
         outside = ~m
         for n in lim["bones"]:
             W[outside, col[n]] = 0.0
+    for lim in RIG.get("soft_limits", []):
+        # A limit box with a soft edge: the bones keep their weight `soft` metres (per axis; 0 = hard on that axis) inside
+        # the box, fading linearly to zero at its faces, and what they lose goes to `to` (their body parent) instead of
+        # being renormalised away, so the fade stays linear. Segments weights blend the 3 nearest bones, and on a thin
+        # torso the belly sits as close to a leg bone as to the spine (应龙: chest / belly bottom 0.15 m from both), so
+        # every leg swing dragged the whole underside; a hard box would tear at its face. "exclude": a keep-out box.
+        lo, hi = np.array(lim["box"][0], float), np.array(lim["box"][1], float)
+        soft = np.array(lim.get("soft", [0, 0, 0]), float)
+        depth = np.minimum(V - lo, hi - V)
+        f = np.where(soft > 0, np.clip(depth / np.where(soft > 0, soft, 1), 0, 1), depth >= 0).min(1)
+        if lim.get("exclude"):
+            f = 1 - f
+        moved = 0.0
+        for n in lim["bones"]:
+            lost = W[:, col[n]] * (1 - f)
+            W[:, col[n]] -= lost
+            W[:, col[lim["to"]]] += lost
+            moved += float(lost.sum())
+        reg.setdefault("soft_limits_moved", []).append(round(moved, 1))
     for r in RIG.get("ground", []):
         # ground contact: vertices below fade_z go to the NEAREST of the listed foot bones (by segment distance),
         # so no sole / pad vertex keeps thigh or shin weight and gets dragged into the floor when the leg bends
