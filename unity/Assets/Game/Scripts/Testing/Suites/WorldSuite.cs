@@ -9,14 +9,18 @@ using static UnityEngine.Object;
 namespace Spiritfire.Game.Testing
 {
     /// <summary>
-    /// 世界系统冒烟（bridge.sh playtest world；场景 1-1 古道穿越戈壁；docs/unity-parity.md L3）：
+    /// 世界系统冒烟（bridge.sh playtest world；场景 1-1 古道穿越戈壁，也能带 TestArena 跑；docs/unity-parity.md L3 / L8）：
     ///   · 软边界：场景里没有空气墙（Ignore Raycast 层上的实体碰撞体只在兜底环上，离等值线 ≥ failsafe − 3 m）；
     ///     把玩家放到起风线外 7 m（风力一半），不给输入：被推回到起风线以内，推回速度 ≈ (4 + 18 × 风力) m/s，期间有白化；
     ///     放到兜底环外：托回安全点；
     ///   · 拴绳：一只跳鼠被放到导航边缘外 8 m（模拟被击飞出界）：1.2 s 后被拴回界内的网格上；
     ///   · 天气：④ 的沙暴强制进入风暴期，玩家站在营地中心——远程锁定上限 ≤ 25 m、雾终点 ≤ 40 m、全局风力 ≥ 0.8、远幕盖上；
-    ///     回到出生点：锁定不限、雾回到基础值；预警期在烽燧台上能看到天边的沙墙（截图）。
-    /// 玩家全程无敌；结束时把玩家送回出生点、风暴回到未计时。
+    ///     回到出生点：锁定不限、雾回到基础值；预警期从营地西北能看到天边的沙墙（截图）。
+    ///   · 冰面：出生点附近找一条平的 4 × 24 m 走廊铺冰，同一处用 9.9 m/s（冲刺余速）抛出去、不给输入：冰上滑的距离 ≥ 平地的 4 倍且 ≥ 5 m；
+    ///     站在冰上时运动帧的地面牵引 ≈ 冰面预设；冰上的跳鼠加速度降到 ×0.2，冰撤掉后恢复；
+    ///   · 流沙：放在离圆心 4.5 m 处、不给输入：被拖向圆心、走路变慢、芯里锁跳，下沉度涨满后被吞并托回安全点；冰上 / 流沙里的跳鼠吃到减速；
+    ///   · 水：0.8 m 深的水里走路速度 ≈ 涉水倍率；2 m 深的水里托回；水里的跳鼠吃到减速。测试场还要查冰 / 水条带挂上了组件。
+    /// 玩家全程无敌；结束时把玩家送回出生点、风暴回到未计时，测试放的冰 / 流沙 / 水都撤掉。
     /// </summary>
     public sealed class WorldSuite : PlaytestSuite
     {
@@ -59,6 +63,12 @@ namespace Spiritfire.Game.Testing
                 else Line("场景里没有软边界（BoundaryZone）：跳过边界检查（TestArena 的围堤是地形边界）");
                 if (WeatherDirector.Instance && WeatherDirector.Instance.regions.Length > 0) yield return Sandstorm();
                 else Line("场景里没有区域风暴：跳过沙暴检查");
+                motor.Teleport(home + Vector3.up * 0.05f);
+                yield return new WaitForSeconds(0.3f);
+                ArenaStrips();
+                yield return IceCase();
+                yield return QuicksandCase();
+                yield return WaterCase();
             }
             finally
             {
@@ -66,6 +76,11 @@ namespace Spiritfire.Game.Testing
                 if (d)
                     foreach (var r in d.regions)
                         r?.Force(StormPhase.Idle);
+                foreach (var go in temp)
+                    if (go)
+                        Destroy(go);
+                temp.Clear();
+                EnemyRegistry.PurgeAll();
                 if (motor) motor.Teleport(home + Vector3.up * 0.05f);
             }
         }
@@ -263,6 +278,249 @@ namespace Spiritfire.Game.Testing
             Line($"预警：沙墙 {(wallUp ? "已升起" : "没有")}，风暴强度 {r.Intensity:F2}");
             Shot(eye, "world_sandwall");
             if (!wallUp) Fail("预警期没有沙墙");
+        }
+
+        // ───────────── 地表（L8） ─────────────
+
+        readonly List<GameObject> temp = new();
+
+        /// <summary>测试场：冰 / 水条带挂上了地表组件</summary>
+        void ArenaStrips()
+        {
+            var arena = FindAnyObjectByType<ArenaSpawner>();
+            if (!arena) return;
+            var ice = arena.iceStrip ? arena.iceStrip.GetComponent<SurfaceZone>() : null;
+            var water = arena.waterStrip ? arena.waterStrip.GetComponent<WaterVolume>() : null;
+            Line($"测试场条带：冰面 {(ice ? "SurfaceZone ✓" : "没有组件")}，水面 {(water ? $"WaterVolume ✓（水面 y {water.Surface:F2}）" : "没有组件")}");
+            if (!ice) Fail("测试场的冰面条带没有 SurfaceZone（重新生成测试场：bridge.sh level arena）");
+            if (!water) Fail("测试场的水面条带没有 WaterVolume（重新生成测试场：bridge.sh level arena）");
+        }
+
+        /// <summary>
+        /// 出生点附近找一块平地：中心离出生点 6–42 m、离等值线 ≥ 10 m、离各场地触发圈够远、不压着前面测试放的东西；
+        /// 半尺寸 (hx, hz)，每 22.5° 试一个朝向；地形起伏 ≤ maxRise，上方 0.4–2.2 m 没有墙和道具
+        /// </summary>
+        bool FlatSpot(float hx, float hz, float maxRise, out Vector3 center, out float yaw)
+        {
+            var sites = FindObjectsByType<EncounterSite>();
+            float reach = Mathf.Max(hx, hz);
+            for (float r = 6; r <= 42; r += 3)
+            for (int k = 0; k < 24; k++)
+            {
+                float a = k * Mathf.PI * 2 / 24;
+                var c = Ground(home + new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a)) * r);
+                if (BoundaryZone.Distance(c) > -10) continue;
+                if (sites.Any(s => s && Flat(s.transform.position - c) < s.triggerRadius + reach + 4)) continue;
+                if (temp.Any(g => g && Flat(g.transform.position - c) < reach * 2 + 8)) continue;
+                for (float y = 0; y < 180f; y += 22.5f)
+                {
+                    if (!Level(c, hx, hz, y, maxRise) || Blocked(c, hx, hz, y)) continue;
+                    center = c;
+                    yaw = y;
+                    return true;
+                }
+            }
+            center = default;
+            yaw = 0;
+            return false;
+        }
+
+        static bool Level(Vector3 c, float hx, float hz, float yaw, float maxRise)
+        {
+            var rot = Quaternion.Euler(0, yaw, 0);
+            float lo = float.MaxValue, hi = float.MinValue;
+            for (int i = -2; i <= 2; i++)
+            for (int j = -4; j <= 4; j++)
+            {
+                float y = Ground(c + rot * new Vector3(hx * i / 2f, 0, hz * j / 4f)).y;
+                lo = Mathf.Min(lo, y);
+                hi = Mathf.Max(hi, y);
+            }
+            return hi - lo <= maxRise;
+        }
+
+        static bool Blocked(Vector3 c, float hx, float hz, float yaw)
+        {
+            var hits = Physics.OverlapBox(c + Vector3.up * 1.3f, new Vector3(hx + 0.5f, 0.9f, hz + 0.5f), Quaternion.Euler(0, yaw, 0), Layers.WorldMask,
+                QueryTriggerInteraction.Ignore);
+            return hits.Any(h => !(h is TerrainCollider));
+        }
+
+        /// <summary>站到 start、面朝 dir 停稳，再以 9.9 m/s（冲刺余速）沿 dir 抛出去、不给输入，量滑到停下的水平距离</summary>
+        IEnumerator SlideRun(Vector3 start, Vector3 dir, System.Action<float> result, System.Action each = null)
+        {
+            motor.Teleport(start + Vector3.up * 0.05f, Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg);
+            yield return new WaitForSeconds(0.35f);
+            var p0 = motor.transform.position;
+            motor.Launch(dir * 9.9f);
+            float t = 0;
+            while (t < 4f)
+            {
+                yield return null;
+                t += Time.deltaTime;
+                each?.Invoke();
+                if (t > 0.1f && MotorCore.Flat(motor.Velocity).magnitude < 0.05f) break;
+            }
+            result(Flat(motor.transform.position - p0));
+        }
+
+        IEnumerator IceCase()
+        {
+            Line("── 冰面 ──");
+            if (!FlatSpot(2.5f, 12.5f, 0.6f, out var c, out float yaw))
+            {
+                Fail("出生点附近找不到 5 × 25 m 的平地铺冰");
+                yield break;
+            }
+            var dir = Quaternion.Euler(0, yaw, 0) * Vector3.forward;
+            var a = c - dir * 12f;
+            var zone = SurfaceZone.SpawnStrip(a, c + dir * 12f, 2f, 0, SurfaceProfile.Ice);
+            temp.Add(zone.gameObject);
+
+            // 同一处先撤掉冰量平地，再铺上冰量冰面
+            zone.enabled = false;
+            float normal = 0;
+            var slideFrom = Ground(a + dir * 2f);
+            yield return SlideRun(slideFrom, dir, v => normal = v);
+            zone.enabled = true;
+            float ice = 0, accel = 1, friction = 1;
+            bool onIce = false;
+            yield return SlideRun(slideFrom, dir, v => ice = v, () =>
+            {
+                if (!SurfaceZone.PlayerOnSurface) return;
+                onIce = true;
+                accel = motor.Frame.groundAccelMult;
+                friction = motor.Frame.groundFrictionMult;
+            });
+            Line($"9.9 m/s 抛出、不给输入：平地滑 {normal:F2} m，冰面滑 {ice:F2} m；冰上运动帧的地面牵引 加速 ×{accel:F2}、刹车 ×{friction:F2}");
+            if (!onIce) Fail("站在冰面上，SurfaceZone.PlayerOnSurface 一直是 false（牵引修饰器没挂上？）");
+            else if (Mathf.Abs(accel - SurfaceProfile.Ice.accel) > 0.02f || Mathf.Abs(friction - SurfaceProfile.Ice.friction) > 0.02f)
+                Fail($"冰上的地面牵引 ×{accel:F2} / ×{friction:F2}，应为 ×{SurfaceProfile.Ice.accel} / ×{SurfaceProfile.Ice.friction}");
+            if (ice < 5f || ice < normal * 4f) Fail($"冰面滑行 {ice:F2} m 不够（平地 {normal:F2} m；应 ≥ 5 m 且 ≥ 4 倍）");
+            else Line("✓ 冰面：冲刺余速滑得远");
+            motor.Teleport(Ground(a + dir * 1f) + Vector3.up * 0.05f, Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg);
+            yield return new WaitForSeconds(0.3f);
+            Shot(eye, "world_ice");
+
+            // 冰上的敌人：加速度 ×0.2，冰撤掉后恢复
+            var ai = EnemyRoster.Spawn("jerboa_blade", c, Quaternion.LookRotation(-dir), 1, false);
+            if (!ai) Fail("刷不出跳鼠刀客（冰面敌人检查）");
+            else
+            {
+                ai.Health.maxHealth *= 50;
+                ai.Health.ResetVitals();
+                var agent = ai.GetComponent<NavMeshAgent>();
+                yield return new WaitForSeconds(0.5f);
+                float onIceAccel = agent.acceleration;
+                Destroy(zone.gameObject);
+                yield return new WaitForSeconds(0.25f);
+                float restored = agent.acceleration;
+                Line($"冰上的跳鼠：加速度 {onIceAccel:F1}，冰撤掉后 {restored:F1}");
+                if (Mathf.Abs(onIceAccel - restored * SurfaceProfile.Ice.enemyAccel) > 0.5f)
+                    Fail($"冰上的敌人加速度 {onIceAccel:F1}，应为 {restored:F1} × {SurfaceProfile.Ice.enemyAccel}");
+                EnemyRegistry.PurgeAll();
+            }
+            if (zone) Destroy(zone.gameObject);
+        }
+
+        IEnumerator QuicksandCase()
+        {
+            Line("── 流沙 ──");
+            if (!FlatSpot(7.5f, 7.5f, 0.6f, out var c, out _))
+            {
+                Fail("出生点附近找不到 15 × 15 m 的平地放流沙");
+                yield break;
+            }
+            var q = Quicksand.Create(c, 6f);
+            temp.Add(q.gameObject);
+            yield return null;
+            int swallowed0 = Quicksand.Swallowed;
+            var start = Ground(c + Vector3.right * 4.5f);
+            motor.Teleport(start + Vector3.up * 0.05f, -90f);
+            yield return new WaitForSeconds(0.6f);
+            float d1 = Flat(motor.transform.position - c);
+            float slow = motor.Frame.speedMult;
+            Line($"放在离圆心 4.5 m：0.6 s 后 {d1:F2} m（被拖向圆心），走路速度 ×{slow:F2}，下沉度 {Quicksand.PlayerSink:F2}");
+            Shot(eye, "world_quicksand");
+            if (d1 > 4.5f - 0.6f) Fail($"流沙没把人往圆心拖：0.6 s 后还在 {d1:F2} m");
+            if (slow > 0.85f) Fail($"流沙里走路速度 ×{slow:F2}（应明显变慢）");
+
+            float maxSink = 0, waited = 0;
+            bool jumpLocked = false;
+            while (Quicksand.Swallowed == swallowed0 && waited < 8f)
+            {
+                yield return null;
+                waited += Time.deltaTime;
+                maxSink = Mathf.Max(maxSink, Quicksand.PlayerSink);
+                if (motor.Frame.Locked(MotorLock.Jump)) jumpLocked = true;
+            }
+            Line($"芯里：跳跃{(jumpLocked ? "被锁" : "没锁")}，下沉度最高 {maxSink:F2}，{(Quicksand.Swallowed > swallowed0 ? $"{waited:F1} s 后被吞" : "8 s 没被吞")}");
+            if (!jumpLocked) Fail("流沙芯里没锁跳");
+            if (Quicksand.Swallowed == swallowed0) Fail("在流沙芯里 8 s 没被吞");
+            yield return new WaitForSeconds(1.3f);
+            var after = motor.transform.position;
+            if (Quicksand.At(after, out _)) Fail($"被吞后没托出流沙（{after}）");
+            else Line($"✓ 被吞后托回安全点（离圆心 {Flat(after - c):F1} m）");
+
+            var ai = EnemyRoster.Spawn("jerboa_blade", Ground(c + Vector3.forward * 3f), Quaternion.identity, 1, false);
+            if (ai)
+            {
+                ai.Health.maxHealth *= 50;
+                ai.Health.ResetVitals();
+                yield return new WaitForSeconds(0.5f);
+                float sp = ai.Buffs.Total.speed;
+                Line($"流沙里的跳鼠：移速 ×{sp:F2}");
+                if (sp > 0.95f) Fail("流沙里的敌人没减速");
+                EnemyRegistry.PurgeAll();
+            }
+            Destroy(q.gameObject);
+            yield return null;
+        }
+
+        IEnumerator WaterCase()
+        {
+            Line("── 水 ──");
+            if (!FlatSpot(5.5f, 5.5f, 0.4f, out var c, out _))
+            {
+                Fail("出生点附近找不到 11 × 11 m 的平地放水");
+                yield break;
+            }
+            // 水底压到地面下 0.5 m（地形有起伏），水面在地面上 0.8 m
+            var w = WaterVolume.Create(c - Vector3.up * 0.5f, new Vector3(10, 1.3f, 10));
+            temp.Add(w.gameObject);
+            motor.Teleport(Ground(c + Vector3.back * 3f) + Vector3.up * 0.05f, 0);
+            yield return new WaitForSeconds(0.5f);
+            float depth = WaterVolume.PlayerDepth, mult = motor.Frame.speedMult, expect = w.SlowAt(depth);
+            Line($"0.8 m 深的水：脚下水深 {depth:F2} m，走路速度 ×{mult:F2}（涉水倍率 ×{expect:F2}）");
+            Shot(eye, "world_water");
+            if (depth < 0.3f || depth > 1.25f) Fail($"水深读数 {depth:F2} m 不对（应约 0.8）");
+            if (Mathf.Abs(mult - expect) > 0.03f || mult > 0.9f) Fail($"涉水减速 ×{mult:F2}，应为 ×{expect:F2}");
+
+            var ai = EnemyRoster.Spawn("jerboa_blade", Ground(c + Vector3.right * 2f), Quaternion.identity, 1, false);
+            if (ai)
+            {
+                ai.Health.maxHealth *= 50;
+                ai.Health.ResetVitals();
+                yield return new WaitForSeconds(0.5f);
+                float sp = ai.Buffs.Total.speed;
+                Line($"水里的跳鼠：移速 ×{sp:F2}");
+                if (sp > 0.95f) Fail("水里的敌人没减速");
+                EnemyRegistry.PurgeAll();
+            }
+            Destroy(w.gameObject);
+            yield return null;
+
+            // 深水：没有游泳，托回
+            int drowned = WaterVolume.Drowned;
+            var deep = WaterVolume.Create(c - Vector3.up * 0.5f, new Vector3(8, 2.5f, 8));
+            temp.Add(deep.gameObject);
+            motor.Teleport(c + Vector3.up * 0.05f);
+            yield return new WaitForSeconds(0.4f);
+            bool back = !WaterVolume.InWater(motor.transform.position);
+            Line($"2 m 深的水：{(WaterVolume.Drowned > drowned ? "托回" : "没托回")}，现在{(back ? "不在水里" : "还在水里")}");
+            if (WaterVolume.Drowned == drowned || !back) Fail("掉进深水没托回安全点");
+            Destroy(deep.gameObject);
+            yield return null;
         }
 
         static float Flat(Vector3 v) => new Vector2(v.x, v.z).magnitude;

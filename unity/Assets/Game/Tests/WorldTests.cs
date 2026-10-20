@@ -5,7 +5,8 @@ using UnityEngine;
 namespace Spiritfire.Game.Tests
 {
     /// <summary>
-    /// 世界系统（docs/unity-parity.md L3）：软边界的推回公式与尺度（走路顶到 +2.7 m、冲刺过不了 +14 m）、有符号距离场采样、区域风暴周期与远近、天气插值。
+    /// 世界系统（docs/unity-parity.md L3 / L8）：软边界的推回公式与尺度（走路顶到 +2.7 m、冲刺过不了 +14 m）、有符号距离场采样、区域风暴周期与远近、天气插值；
+    /// 冰面牵引（平地逐帧模拟：冲刺余速在冰上滑约 8 m、平地 0.8 m，起步慢）、区域几何、流沙拉力 / 陷足（走不出芯、冲刺能脱身）、涉水减速。
     /// </summary>
     public sealed class WorldTests
     {
@@ -180,6 +181,166 @@ namespace Spiritfire.Game.Tests
             Assert.AreEqual(p.fogEnd, full.fogEnd, 1e-4f);
             Assert.AreEqual(1f, full.wind, 1e-4f);
             Assert.AreEqual(b.fogEnd, WeatherState.Lerp(b, p, 0).fogEnd, 1e-5f, "强度 0 不变");
+        }
+
+        // ───────────── 冰面（L8） ─────────────
+
+        /// <summary>平地逐帧模拟（同 MotorTests）：可选地表，返回从速度 v0 不给输入滑到停下的距离</summary>
+        static float Slide(float v0, SurfaceProfile? surface, float fps = 60)
+        {
+            var core = new MotorCore { t = MotorTuning.Default };
+            core.ResetMotion(true);
+            core.Launch(new Vector3(v0, 0, 0));
+            float dt = 1f / fps, x = 0;
+            for (float time = 0; time < 10; time += dt)
+            {
+                var f = MotorFrame.Neutral(core.t);
+                f.grounded = core.grounded;
+                if (surface.HasValue) SurfaceZone.Apply(ref f, surface.Value);
+                f.Sanitize(core.t);
+                var r = core.Step(new MotorInput { facing = Vector3.right }, f, dt);
+                x += r.delta.x;
+                core.AfterMove(new MotorFeedback { touching = true, groundNormal = Vector3.up, intended = r.delta, actual = new Vector3(r.delta.x, 0, r.delta.z) }, dt, out _);
+                if (Mathf.Abs(core.velocity.x) < 1e-3f) break;
+            }
+            return x;
+        }
+
+        /// <summary>从静止按住前进，多久到 90% 走路速度</summary>
+        static float TimeTo90(SurfaceProfile? surface)
+        {
+            var core = new MotorCore { t = MotorTuning.Default };
+            core.ResetMotion(true);
+            const float dt = 1f / 60f;
+            for (float time = 0; time < 10; time += dt)
+            {
+                var f = MotorFrame.Neutral(core.t);
+                f.grounded = core.grounded;
+                if (surface.HasValue) SurfaceZone.Apply(ref f, surface.Value);
+                f.Sanitize(core.t);
+                var r = core.Step(new MotorInput { wish = Vector3.right, facing = Vector3.right }, f, dt);
+                core.AfterMove(new MotorFeedback { touching = true, groundNormal = Vector3.up, intended = r.delta, actual = new Vector3(r.delta.x, 0, r.delta.z) }, dt, out _);
+                if (core.velocity.x >= core.t.walkSpeed * 0.9f) return time + dt;
+            }
+            return float.PositiveInfinity;
+        }
+
+        [Test]
+        public void IceDashSlidesFurther()
+        {
+            var t = MotorTuning.Default;
+            float exit = t.dashSpeed * t.dashExitKeep;
+            float normal = Slide(exit, null), ice = Slide(exit, SurfaceProfile.Ice);
+            Assert.AreEqual(exit * exit / (2 * t.groundFriction), normal, 0.08f, "平地：冲刺余速 9.9 m/s 滑 0.82 m（尺度表）");
+            Assert.AreEqual(exit * exit / (2 * t.groundFriction * SurfaceProfile.Ice.friction), ice, 0.4f, "冰面：刹车 ×0.1，滑约 8 m");
+            Assert.Greater(ice, normal * 6, "冲刺在冰上滑得远得多");
+            foreach (var fps in new[] { 30f, 144f })
+                Assert.AreEqual(ice, Slide(exit, SurfaceProfile.Ice, fps), 0.25f, $"{fps} fps 冰面滑行距离一致");
+            float frost = Slide(exit, SurfaceProfile.Frost);
+            Assert.Greater(frost, normal * 3);
+            Assert.Less(frost, ice, "冻带比冰面稍好走");
+        }
+
+        [Test]
+        public void IceAccelerationIsSlow()
+        {
+            float normal = TimeTo90(null), ice = TimeTo90(SurfaceProfile.Ice);
+            Assert.Less(normal, 0.15f, "平地 0.1 s 跑起来");
+            Assert.Greater(ice, normal * 4, "冰面起步拖");
+            Assert.Less(ice, 1.2f, "也不至于原地打转");
+        }
+
+        [Test]
+        public void TractionDefaultsToOne()
+        {
+            Assert.AreEqual(1f, MotorFrame.Traction(0), "没设的牵引按 1");
+            Assert.AreEqual(1f, MotorFrame.Traction(float.NaN));
+            Assert.AreEqual(0.02f, MotorFrame.Traction(0.001f), 1e-6f, "不让地面完全失控");
+            var f = default(MotorFrame);
+            SurfaceZone.Apply(ref f, SurfaceProfile.Ice);
+            Assert.AreEqual(SurfaceProfile.Ice.accel, f.groundAccelMult, 1e-5f, "没设过的帧按 1 再乘");
+            var half = SurfaceProfile.Ice.Scaled(0.5f);
+            Assert.AreEqual((1 + SurfaceProfile.Ice.accel) * 0.5f, half.accel, 1e-5f, "淡出一半");
+            Assert.AreEqual(SurfaceProfile.Ice.stumble * 0.5f, half.stumble, 1e-5f);
+        }
+
+        [Test]
+        public void ZoneAreaShapes()
+        {
+            var go = new GameObject("Zone");
+            try
+            {
+                var t = go.transform;
+                t.SetPositionAndRotation(new Vector3(10, 0.03f, 0), Quaternion.Euler(0, 90, 0));
+                t.localScale = new Vector3(24, 0.06f, 6); // 测试场的条带：转了 90° 后沿世界 Z 24 m、沿 X 宽 6 m
+                var box = ZoneArea.Box();
+                Assert.AreEqual(0.06f, box.Top(t), 1e-4f, "单位立方体顶面");
+                Assert.IsTrue(box.Contains(t, new Vector3(10, 0.06f, 11)), "沿长边 11 m 在里面");
+                Assert.IsFalse(box.Contains(t, new Vector3(14, 0.06f, 0)), "沿短边 4 m 在外面");
+                Assert.IsFalse(box.Contains(t, new Vector3(10, 2f, 0)), "跳起来 2 m 不算");
+                var disc = ZoneArea.Disc(3);
+                Assert.IsTrue(disc.Contains(t, new Vector3(12, 0.03f, 0)));
+                Assert.AreEqual(1f / 3f, disc.Horizontal(t, new Vector3(12, 0, 0)), 1e-4f);
+                Assert.AreEqual(-1f, disc.Horizontal(t, new Vector3(14, 0, 0)));
+            }
+            finally
+            {
+                Object.DestroyImmediate(go);
+            }
+        }
+
+        // ───────────── 流沙、水 ─────────────
+
+        [Test]
+        public void QuicksandTrapsWalkersButNotDashers()
+        {
+            var go = new GameObject("Quicksand");
+            try
+            {
+                var q = go.AddComponent<Quicksand>();
+                var m = MotorTuning.Default;
+                Assert.AreEqual(q.pullEdge, q.PullAt(1), 1e-5f);
+                Assert.AreEqual(q.pullCore, q.PullAt(0), 1e-5f);
+                Assert.AreEqual(0f, q.PullAt(1.2f), 1e-5f, "圈外不拉");
+                Assert.AreEqual(q.slowCore, q.SlowAt(q.coreRadius / q.radius * 0.5f), 1e-5f, "芯里最慢");
+                Assert.AreEqual(q.slowEdge, q.SlowAt(1), 1e-5f);
+                float atCore = q.coreRadius / q.radius;
+                Assert.Less(m.walkSpeed * q.SlowAt(atCore), q.PullAt(atCore), "芯边上走路也走不过拉力：只能冲刺");
+                Assert.Greater(m.walkSpeed * q.SlowAt(1), q.PullAt(1) + 2, "刚踩进边上能走出来");
+                Assert.Greater((m.dashSpeed - q.pullCore) * m.dashTime, q.coreRadius, "一次冲刺能从圆心冲出芯");
+                Assert.IsTrue(q.Contains(new Vector3(3, 0.2f, 0)));
+                Assert.IsTrue(q.InCore(new Vector3(1, 0, 1)));
+                Assert.IsFalse(q.InCore(new Vector3(4, 0, 0)));
+                Assert.IsFalse(q.Contains(new Vector3(7, 0, 0)));
+            }
+            finally
+            {
+                Object.DestroyImmediate(go);
+            }
+        }
+
+        [Test]
+        public void WadingSlowsWithDepth()
+        {
+            var go = new GameObject("Water");
+            try
+            {
+                go.transform.position = new Vector3(0, 0.45f, 0);
+                go.transform.localScale = new Vector3(10, 0.9f, 10); // 水底 y 0、水面 0.9
+                var w = go.AddComponent<WaterVolume>();
+                Assert.AreEqual(0.9f, w.Surface, 1e-4f);
+                Assert.AreEqual(0.9f, w.DepthAt(new Vector3(1, 0, 1)), 1e-4f, "站在水底：水深 0.9 m");
+                Assert.AreEqual(0f, w.DepthAt(new Vector3(1, 1.5f, 1)), 1e-5f, "水面之上");
+                Assert.AreEqual(0f, w.DepthAt(new Vector3(6, 0, 0)), 1e-5f, "范围外");
+                Assert.AreEqual(1f, w.SlowAt(0.1f), 1e-5f, "脚背深不减速");
+                Assert.AreEqual(w.wadeSlow, w.SlowAt(w.deep), 1e-4f);
+                Assert.Less(w.SlowAt(0.9f), 0.8f, "齐腰深明显变慢");
+                Assert.Greater(w.SlowAt(0.9f), w.wadeSlow);
+            }
+            finally
+            {
+                Object.DestroyImmediate(go);
+            }
         }
     }
 }

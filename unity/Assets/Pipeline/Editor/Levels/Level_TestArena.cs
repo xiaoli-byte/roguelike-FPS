@@ -138,6 +138,7 @@ namespace Spiritfire.Art.Editor.Levels
             BuildPlatforms(wb, m, spawner);
             BuildPerches(wb, markers, m, spawner);
             BuildStrips(wb, m, spawner);
+            LevelKit.SurfaceStrips(spawner.iceStrip, spawner.waterStrip); // L8：冰面条带挂牵引区，水面条带变成 0.7 m 深的水
             BuildBossArena(markers, spawner);
             Marker(markers, "SupplyCamp", G(SupplyCampAt)).rotation = Quaternion.LookRotation(Flat(Spawn - SupplyCampAt));
             var encounter = new GameObject("Encounter Test (markers)").transform;

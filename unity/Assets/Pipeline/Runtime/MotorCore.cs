@@ -158,6 +158,13 @@ namespace Spiritfire.Art
             float maxSpeed = Mathf.Max(0, t.walkSpeed * f.speedMult);
             // 帧初站在地上：决定这一帧用地面还是空中手感（与 Three.js 同：起跳那一帧仍按地面算）
             bool onG = grounded && !forceAirborne;
+            // 地面牵引（冰面等，修饰器写 MotorFrame.groundAccelMult / groundFrictionMult）：只改地面的加速、刹车、超速回落、击退摩擦
+            var ht = t;
+            float ga = MotorFrame.Traction(f.groundAccelMult), gf = MotorFrame.Traction(f.groundFrictionMult);
+            ht.groundAccel *= ga;
+            ht.groundFriction *= gf;
+            ht.overspeedGround *= gf;
+            ht.knockbackFriction *= gf;
 
             bool lunging = lungeLeft > 0, hard = lunging && !lungeSoft;
             float lungeStep = hard ? Mathf.Min(dt, lungeLeft) : 0;
@@ -208,7 +215,7 @@ namespace Spiritfire.Art
                     EndDash();
                     float rest = dt - inDash;
                     var exit = Flat(velocity);
-                    vh = rest > 0 ? ApplyHorizontal(exit, wishDir, wishMag, maxSpeed, onG, knock > 0, f.airAccel, t, rest) : exit;
+                    vh = rest > 0 ? ApplyHorizontal(exit, wishDir, wishMag, maxSpeed, onG, knock > 0, f.airAccel, ht, rest) : exit;
                     dh += (exit + vh) * (0.5f * rest);
                     r.events |= MotorEvents.DashEnded;
                 }
@@ -221,7 +228,7 @@ namespace Spiritfire.Art
             else
             {
                 var vh0 = vh;
-                vh = ApplyHorizontal(vh, wishDir, wishMag, maxSpeed, onG, knock > 0, f.airAccel, t, dt);
+                vh = ApplyHorizontal(vh, wishDir, wishMag, maxSpeed, onG, knock > 0, f.airAccel, ht, dt);
                 if (lunging)
                 {
                     // 软突进：沿方向的速度不低于突进速度（已经更快时不变），侧向保留

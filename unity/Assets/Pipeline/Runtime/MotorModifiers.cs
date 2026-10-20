@@ -42,12 +42,17 @@ namespace Spiritfire.Art
         public float fallBrake;
         /// <summary>空中控制加速度（m/s²，缺省 20；滑翔 26）</summary>
         public float airAccel;
+        /// <summary>地面牵引（相乘，缺省 1；冰面 0.15 左右）：地面加速度倍率。≤ 0 视为没设（按 1）</summary>
+        public float groundAccelMult;
+        /// <summary>地面牵引（相乘，缺省 1；冰面 0.1 左右）：地面刹车、超速回落、击退摩擦的倍率——越小冲刺余速滑得越远。≤ 0 视为没设（按 1）</summary>
+        public float groundFrictionMult;
         public MotorLock locks;
 
         /// <summary>缺省参数（不含上下文）</summary>
         public static MotorFrame Neutral(in MotorTuning t) => new()
         {
-            speedMult = 1, gravityScale = 1, maxFallSpeed = t.maxFallSpeed, fallBrake = 0, airAccel = t.airAccel, locks = MotorLock.None,
+            speedMult = 1, gravityScale = 1, maxFallSpeed = t.maxFallSpeed, fallBrake = 0, airAccel = t.airAccel,
+            groundAccelMult = 1, groundFrictionMult = 1, locks = MotorLock.None,
         };
 
         public bool Locked(MotorLock l) => (locks & l) != 0;
@@ -60,7 +65,12 @@ namespace Spiritfire.Art
             maxFallSpeed = float.IsFinite(maxFallSpeed) && maxFallSpeed > 0.1f ? maxFallSpeed : t.maxFallSpeed;
             fallBrake = float.IsFinite(fallBrake) ? Mathf.Max(0, fallBrake) : 0;
             airAccel = float.IsFinite(airAccel) ? Mathf.Max(0, airAccel) : t.airAccel;
+            groundAccelMult = Traction(groundAccelMult);
+            groundFrictionMult = Traction(groundFrictionMult);
         }
+
+        /// <summary>牵引倍率兜底：没设 / 非法 → 1，其余夹到 [0.02, 10]（不让地面完全失去控制）</summary>
+        public static float Traction(float m) => float.IsFinite(m) && m > 0 ? Mathf.Clamp(m, 0.02f, 10f) : 1f;
     }
 
     /// <summary>运动修饰器：每帧改写一次 <see cref="MotorFrame"/>（读上下文决定生不生效，例如滑翔只在下落且按住跳时）</summary>
