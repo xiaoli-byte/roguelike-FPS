@@ -35,6 +35,8 @@ namespace Spiritfire.Art.Editor.Levels
         static readonly Vector2 Origin = new(-70, -70), Size = new(400, 340);
         static readonly Vector2 Wind = new Vector2(-0.82f, -0.57f).normalized;
         static readonly Vector2 WindAxis = new(0.82f, 0.57f); // 雅丹长轴（35°）
+        /// <summary>软边界（L3，D14：没有空气墙）：等值线外起风推回、白化，26 m 外兜底碰撞；越界验收按兜底环算</summary>
+        static readonly LevelKit.BoundarySpec Bounds = LevelKit.BoundarySpec.Default;
 
         // ── 场地 ──
         static readonly Vector2 Spawn = new(26, 38), Gravel = new(80, 58), Yardang = new(120, 100), Beacon = new(180, 142),
@@ -286,7 +288,12 @@ namespace Spiritfire.Art.Editor.Levels
             }, env, out _);
 
             BuildFarGround(env);
-            LevelKit.Boundary(Dir, Name, env, p => Playable(p, Polyline(p, Road).dist), new Rect(Origin, Size));
+            LevelKit.Boundary(Dir, Name, env, p => Playable(p, Polyline(p, Road).dist), new Rect(Origin, Size), Bounds);
+            // 天气：东北盛行风；④ 驼队营地的周期沙暴从东侧涌入，能见度 25 m（unity-maps-v1 1-1「动态环境：沙暴」）
+            LevelKit.Weather(env, theme, Wind, 0.25f, new Spiritfire.Game.WeatherDirector.Region
+            {
+                name = "④ 驼队营地沙暴", center = LevelKit.OnGround(terrain, Camp.x, Camp.y), radius = 30, fade = 22, from = Vector2.right,
+            });
             var m = new Materials();
             BuildStation(terrain, wb, props, m);
             BuildHanWall(terrain, wb, m);
@@ -748,7 +755,8 @@ namespace Spiritfire.Art.Editor.Levels
 
         /// <summary>
         /// 交给验收规则集（<see cref="LevelValidator"/>，docs/unity-parity.md L5）的声明：主线、古道坡度、6 条地标视线沿用白盒验收；
-        /// 可玩区遮罩与 LevelKit.Boundary 同一个；场地尺寸取 unity-maps-v1.md 1-1 表。掩体 / 层数阈值只防退化，实测数字看报告。
+        /// 可玩区遮罩与 LevelKit.Boundary 同一个；软边界没有空气墙，越界按远处的兜底环算（escapeMargin = 兜底距离 + 2 m），
+        /// 撤掉兜底环后能走出去的地方由 L5 列成提醒（那一带靠风沙推回）。场地尺寸取 unity-maps-v1.md 1-1 表。掩体 / 层数阈值只防退化，实测数字看报告。
         /// 锚点、宝箱落点、出口传送门、占位件、渲染器由检查项自己从场景里找。
         /// </summary>
         static LevelSpec Spec(Terrain terrain, Vector3 smokeAt)
@@ -759,7 +767,7 @@ namespace Spiritfire.Art.Editor.Levels
             return new LevelSpec
                 {
                     id = "1-1", title = "古道穿越戈壁", playerSpawn = G(Spawn), bounds = new Rect(Origin, Size),
-                    playable = p => Playable(p, Polyline(p, Road).dist),
+                    playable = p => Playable(p, Polyline(p, Road).dist), escapeMargin = Bounds.EscapeMargin,
                     slopePaths = { new SlopePath { name = "古道", points = Road } },
                     sites =
                     {
