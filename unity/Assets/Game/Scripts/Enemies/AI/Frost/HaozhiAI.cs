@@ -13,9 +13,11 @@ namespace Spiritfire.Game
     ///         爆点留下残刺阵 4 s（半径 2.4、精英 ×1.2），每 0.5 s 扎一下站在里面的玩家（冰刺伤害 × 0.3）
     ///   冲空：冲满 2.4 s 还没到 6 m 内、或撞墙 → 甩头愣 0.8 s，冷却 1.4–2.4 s 再追
     ///   提前打死（新星之前）：只射出一半（8 根，错开 22.5°）、伤害减半，不留残刺；清场（静默处决）时什么都不放
+    /// 新星身亡是自爆（<see cref="ISelfDestruct"/>，<see cref="Detonated"/> = true）：同 TS 不经过伤害结算，没有击杀事件、不掉落；
+    /// 被玩家打死（含新星之前打死放半圈）照常走伤害管线、派发击杀事件。
     /// 冲锋用 NavMeshAgent.Move 贴着导航网格推进（不会冲下悬崖），实际位移明显小于应走的距离 = 撞墙。
     /// </summary>
-    public sealed class HaozhiAI : EnemyAI
+    public sealed class HaozhiAI : EnemyAI, ISelfDestruct
     {
         public const float ChargeRange = 16, ScrapeTime = 0.45f, ChargeSpeed = 10.5f, ChargeStart = 5, ChargeRamp = 16, ChargeTurn = 1.1f, ChargeMaxTime = 2.4f;
         public const float NovaRange = 6, BristleTime = 0.7f, StaggerTime = 0.8f, ApproachStop = 2.5f;
@@ -30,7 +32,10 @@ namespace Spiritfire.Game
         const string BristleOverlay = "haozhi.bristle";
 
         float scrapeTime = ScrapeTime, bristleTime = BristleTime, clearTimer, novaYaw, steamAcc;
-        bool pathClear, detonated;
+        bool pathClear, detonated, novaFired;
+
+        /// <summary>死于自己的冰刺新星（自爆：不算玩家击杀）；被打死的为 false</summary>
+        public bool Detonated => novaFired;
         Vector3 chargeDir, lastPos;
         TelegraphHandle spokes;
 
@@ -248,6 +253,7 @@ namespace Spiritfire.Game
         {
             if (detonated || Dead) return;
             detonated = true;
+            novaFired = true;
             spokes.End();
             body.ClearOverlay(BristleOverlay);
             SprayQuills(transform.position, Size, Quills, Damage, novaYaw, this, Taunted);
