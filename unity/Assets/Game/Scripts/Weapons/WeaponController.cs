@@ -11,11 +11,13 @@ namespace Spiritfire.Game
     ///     开火模式（<see cref="IFireMode"/>：半自动 / 全自动 / 点射 / 光束 / 预热 / 蓄力 / 齐射，见 Weapons/FireModes）、
     ///     换弹（整匣 / 逐发 + 0.3 s 上膛）、打空自动换弹与空仓、无限弹药、应急补给、换关清理；
     ///   · <see cref="Ballistics"/>：命中扫描（穿透、弱点、贴脸）、投射物、光束一跳；
-    ///   · 这里：读输入（<see cref="GameInput"/>，手柄同样可用；TestMode 读 testFire / testAim / testReload / testSwitch）、开镜与 FOV、散布、
+    ///   · 这里：读输入（<see cref="GameInput"/>，手柄同样可用；TestMode 读 testFire / testAim / testReload / testSwitch）、开镜（FOV 层）、散布、
     ///     后坐与反馈、音效与事件、第一人称 rig（每把枪一个，由 PlayerRigBuilder / PlayerFactory 生成，这里只切显示、写开镜 / 下沉 / 后坐）、
     ///     武器接管（<see cref="IWeaponTakeover"/>，碎刃）、HUD 数据源（<see cref="IWeaponHudSource"/>）。
     /// 散布 = (腰射 / 开镜基础 × 移动 × 空中 + 连射累积) × 散布倍率 的半角。
     /// 后坐：抬枪量 = pitch × (1 + 连发数 × climb) × 开镜减半 × 后坐倍率 × RecoilScale，交给 <see cref="PlayerMotor.AddRecoil"/> 记成回正债。
+    /// 镜头（F3）：弹道从 <see cref="Aim"/>（motor.eye，不抖）出发；渲染相机的姿态和 FOV 只由 <see cref="CameraFeel"/> 写——
+    /// 这里只给开镜层 <see cref="FovKick"/>，开枪的震屏 / 向后一顿交给 <see cref="CameraFeel.FireKick"/>。
     /// 跨关：<see cref="IRunPersistent"/> 把两个槽存进 <see cref="RunState.weapons"/>；关卡就绪（<see cref="GameEvents.StageLoaded"/>）时 <see cref="ClearForStage"/>，
     /// 补 35% 备弹由 LootDirector 在同一事件上调 <see cref="RefillReserve"/>。
     /// </summary>
@@ -31,7 +33,7 @@ namespace Spiritfire.Game
         public Camera eye;
         public Rig[] rigs = Array.Empty<Rig>();
         public string startWeapon = "smg";
-        /// <summary>腰射 FOV：运行时由设置「视野」覆盖（默认 80°，见 <see cref="GameSettings.Fov"/>）</summary>
+        /// <summary>腰射 FOV：运行时由设置「视野」覆盖（默认 80°，见 <see cref="GameSettings.Fov"/>）；只用来按开镜缩放视角灵敏度，相机 FOV 由 CameraFeel 写</summary>
         public float baseFov = 70f;
 
         public readonly WeaponInstance[] slots = new WeaponInstance[2];
@@ -45,6 +47,10 @@ namespace Spiritfire.Game
         /// <summary>当前散布半角（弧度，含霰弹锥），准星读取</summary>
         public float HudSpread { get; private set; }
         public float AimT => aimT;
+        /// <summary>开镜层（度，负数 = 放大）= 武器 aimFov × 开镜程度；<see cref="CameraFeel"/> 叠到设置视野上</summary>
+        public float FovKick { get; private set; }
+        /// <summary>瞄准 / 弹道的基准：motor.eye（不带晃动、震屏、冲击）；没有 motor.eye 时退回相机</summary>
+        public Transform Aim => motor && motor.eye ? motor.eye : eye ? eye.transform : transform;
         /// <summary>当前武器的开火模式</summary>
         public IFireMode ActiveMode => Machine.Mode;
         /// <summary>切枪剩余时间（秒）；收枪阶段显示的旧枪</summary>
@@ -93,8 +99,7 @@ namespace Spiritfire.Game
         WeaponInstance engaged;
         float bloom, lastShot = -10, aimT, spreadNow, appliedSlow;
         int consecutive, infiniteStacks;
-        float shakeAmp, shakeTime;
-        Vector3 shakeSeed;
+        CameraFeel feel;
         string shownRig = "\0";
         /// <summary>
         /// 后坐整体缩放。这不是硬核 FPS：目标是「射得爽」，后坐只做手感、不做惩罚——镜头只轻轻上跳（0.3）且会完全回正，
@@ -115,6 +120,8 @@ namespace Spiritfire.Game
             slots[0] = new WeaponInstance(def);
             ApplyRigs(Active?.def.id);
             OnSetting(null);
+            // 镜头手感（F3）：PlayerFactory 已经挂好；旧场景烘好的玩家在这里补（同时插入 Head 节点）
+            feel = CameraFeel.Ensure(gameObject);
         }
 
         /// <summary>运行时 PlayerFactory 在 AddComponent（Awake）之后才填 rigs：第一帧按最终的 rigs 重新显示一次</summary>
@@ -236,7 +243,7 @@ namespace Spiritfire.Game
             consecutive = 0;
             beam.Hide();
             ApplySlow(0);
-            if (eye) eye.fieldOfView = baseFov;
+            FovKick = 0;
             if (motor) motor.lookScale = 1;
         }
 
@@ -259,6 +266,7 @@ namespace Spiritfire.Game
             return null;
         }
 
+        /// <summary>枪口（曳光、投射物的出生点）：跟着渲染相机（看得见的枪模）走；方向仍由 <see cref="Aim"/> 决定</summary>
         Vector3 Muzzle() => eye.transform.TransformPoint(Vector3.Lerp(MuzzleHip, MuzzleAim, aimT));
 
         // ───────────── 每帧 ─────────────
@@ -307,8 +315,9 @@ namespace Spiritfire.Game
             // ── 开镜（换弹 / 切枪 / 冲刺 / 被接管时不开镜）──
             bool aiming = aimInput && tk == null && !sm.Reloading && sm.SwitchTimer <= 0 && !motor.Dashing;
             aimT = Mathf.MoveTowards(aimT, aiming ? 1 : 0, dt * 7f);
-            float fov = baseFov + w.def.aimFov * aimT;
-            eye.fieldOfView = fov;
+            FovKick = w.def.aimFov * aimT;
+            float fov = baseFov + FovKick;
+            if (!feel) eye.fieldOfView = fov;
             motor.lookScale = Mathf.Tan(fov * 0.5f * Mathf.Deg2Rad) / Mathf.Tan(baseFov * 0.5f * Mathf.Deg2Rad);
 
             // ── 状态机：换弹 → 开火模式 → 空匣 / 补给 ──
@@ -343,16 +352,6 @@ namespace Spiritfire.Game
             var w = Active;
             if (eye && w != null) beam.Draw(Muzzle(), DamageTable.ElementColor(w.element));
             else beam.Hide();
-            // 屏震：在 PlayerMotor 写完视角之后叠一个小的随机转角（开枪的抖动和敌人的震动取较强的那个）
-            if (!eye) return;
-            if (shakeTime > 0) shakeTime -= Time.deltaTime;
-            float a = Mathf.Max(shakeTime > 0 ? shakeAmp * Mathf.Clamp01(shakeTime / 0.12f) : 0, CameraShake.Current);
-            if (a <= 0) return;
-            a *= GameSettings.ScreenShake.Value;
-            if (a <= 0) return;
-            float t = Time.time * 40f;
-            eye.transform.localRotation *= Quaternion.Euler(
-                (Mathf.PerlinNoise(t, shakeSeed.x) - 0.5f) * a * 6f, (Mathf.PerlinNoise(shakeSeed.y, t) - 0.5f) * a * 6f, 0);
         }
 
         /// <summary>先收后出：收枪阶段显示旧枪下沉，之后新枪抬起；换弹时下沉 sin(进度 × π) × 0.6；接管渲染时不显示 rig</summary>
@@ -437,7 +436,7 @@ namespace Spiritfire.Game
             consecutive = now - lastShot < gap * 1.6f + 0.05f ? consecutive + 1 : 0;
             lastShot = now;
 
-            var camT = eye.transform;
+            var camT = Aim;
             var origin = camT.position;
             var muzzle = Muzzle();
             var ctx = Context(w, R, element, in mods);
@@ -477,7 +476,7 @@ namespace Spiritfire.Game
             var p = w.def.projectile;
             if (p == null || !eye) return;
             var R = Resolved(w);
-            var camT = eye.transform;
+            var camT = Aim;
             var muzzle = Muzzle();
             var ctx = Context(w, R, w.element, in ShotMods.Volley);
             var dir = Ballistics.Scatter(camT.forward, camT, spreadNow);
@@ -490,7 +489,7 @@ namespace Spiritfire.Game
             if (feedback) Feedback(w, R, 1, muzzle);
         }
 
-        /// <summary>后坐、第一人称后坐、枪口火焰、枪声（光束是持续音）、屏震；strength = 蓄力强度</summary>
+        /// <summary>后坐、第一人称后坐、枪口火焰、枪声（光束是持续音）、镜头（震屏 + 向后一顿，走 CameraFeel）；strength = 蓄力强度</summary>
         void Feedback(WeaponInstance w, ResolvedWeapon R, float strength, Vector3 muzzle)
         {
             var def = w.def;
@@ -504,9 +503,7 @@ namespace Spiritfire.Game
             ShotFx.Instance?.MuzzleFlash(muzzle, def.flash / 0.12f);
             if (def.mode == FireMode.Beam) GameAudio.HoldBeam(def.sfxVolume);
             else GameAudio.Play(def.sfx, def.sfxVolume, 0.94f + UnityEngine.Random.value * 0.12f);
-            shakeAmp = def.shake * strength;
-            shakeTime = def.shake > 0.15f ? 0.16f : 0.08f;
-            shakeSeed = new Vector3(UnityEngine.Random.value * 10, UnityEngine.Random.value * 10, 0);
+            if (feel) feel.FireKick(def.shake * strength, def.shake > 0.15f ? 0.16f : 0.08f, def.kickBack * strength);
         }
 
         void IWeaponEffects.Cue(WeaponInstance w, FireCue cue)

@@ -18,7 +18,11 @@ namespace Spiritfire.Game
     public sealed class PlayerRig
     {
         public GameObject root;
+        /// <summary>渲染相机（Head，CameraFeel 写它的姿态与 FOV）</summary>
         public Camera cam;
+        /// <summary>眼睛（= motor.eye，瞄准 / 射线用，不抖）</summary>
+        public Transform eye;
+        public CameraFeel feel;
         public PlayerMotor motor;
         public PlayerVitals vitals;
         public WeaponController weapons;
@@ -33,6 +37,8 @@ namespace Spiritfire.Game
     /// 运行时（<see cref="SceneFlow"/> 每进一关组装一次）和编辑器（PlayerRigBuilder 给测试场烘玩家、给关卡审核截图搭预览机位）共用这一份实现，
     /// 区别只在 Prefab 从哪来（<see cref="PrefabPlacer"/>）。
     /// 组件先在停用的物体上挂好、字段填好再激活：Awake 读得到 startWeapon / rigs / eye；HeroStats 挂在 PlayerVitals 前面（它要先建属性表）。
+    /// 镜头层级（F3）：Player → Eye（motor.eye，眼高处，PlayerMotor 写俯仰；瞄准 / 射线用，不抖）→ Main Camera（Head：<see cref="CameraFeel"/> 写晃动、震屏、冲击、FOV）
+    /// → 枪模相机 + 各把枪的第一人称 rig。
     /// 灵宠（PetOwner / PetHud）由 <see cref="PetBootstrap.Setup"/> 补挂，[GameSystem] 系统由 <see cref="SystemsBootstrap"/> 补挂。
     /// 运行时组装完立刻按当前局套天赋（<see cref="MetaSave.ApplyTalents"/>），所以调用方随后读回的生命 / 护盾不会被上限天赋「补满」。
     /// </summary>
@@ -55,7 +61,10 @@ namespace Spiritfire.Game
             player.SetActive(false);
             player.transform.SetPositionAndRotation(position, Quaternion.Euler(0, rotation.eulerAngles.y, 0));
 
-            var cam = CreateCamera(player.transform);
+            var eye = new GameObject("Eye").transform;
+            eye.SetParent(player.transform, false);
+            eye.localPosition = new Vector3(0, EyeHeight, 0);
+            var cam = CreateCamera(eye, 0);
             var cc = player.AddComponent<CharacterController>();
             cc.height = 1.8f;
             cc.radius = 0.35f;
@@ -64,8 +73,9 @@ namespace Spiritfire.Game
             cc.slopeLimit = 45;
             cc.skinWidth = 0.04f;
             var motor = player.AddComponent<PlayerMotor>();
-            motor.eye = cam.transform;
+            motor.eye = eye;
             SetLayer(player, Layers.Character);
+            eye.gameObject.layer = 0;
             cam.gameObject.layer = 0;
             foreach (Transform c in cam.transform) c.gameObject.layer = 0;
 
@@ -77,6 +87,8 @@ namespace Spiritfire.Game
             weapons.baseFov = cam.fieldOfView;
             weapons.startWeapon = hero.startWeapon;
             weapons.rigs = BuildWeaponRigs(hero, cam.transform, place);
+            var feel = player.AddComponent<CameraFeel>();
+            feel.cam = cam;
             var interactor = player.AddComponent<Interactor>();
             var skills = player.AddComponent<HeroSkills>();
             skills.heroId = hero.id;
@@ -90,20 +102,21 @@ namespace Spiritfire.Game
 
             return new PlayerRig
             {
-                root = player, cam = cam, motor = motor, vitals = vitals, weapons = weapons, skills = skills, interactor = interactor, hero = hero,
+                root = player, cam = cam, eye = eye, feel = feel, motor = motor, vitals = vitals, weapons = weapons, skills = skills, interactor = interactor, hero = hero,
             };
         }
 
         /// <summary>
         /// 主相机（竖直视角 70°、SMAA、后处理、音频监听）+ 叠加的枪模相机（60°，只渲染 FirstPerson 层，与 Three.js 版 viewCamera 一致），
-        /// 挂在 parent 下眼高处（parent 是停用的玩家时，音频监听不会先在场景根上启用一下、和别的监听撞车）。
+        /// 挂在 parent 下 height 米处（缺省眼高；玩家的相机挂在 Eye 节点下，height = 0）。
+        /// parent 是停用的玩家时，音频监听不会先在场景根上启用一下、和别的监听撞车。玩家的 FOV 运行时由 CameraFeel 按设置覆盖。
         /// </summary>
-        public static Camera CreateCamera(Transform parent)
+        public static Camera CreateCamera(Transform parent, float height = EyeHeight)
         {
             int fpLayer = Layers.FirstPerson;
             var camGo = new GameObject("Main Camera") { tag = "MainCamera" };
             camGo.transform.SetParent(parent, false);
-            camGo.transform.SetLocalPositionAndRotation(new Vector3(0, EyeHeight, 0), Quaternion.identity);
+            camGo.transform.SetLocalPositionAndRotation(new Vector3(0, height, 0), Quaternion.identity);
             var cam = camGo.AddComponent<Camera>();
             cam.fieldOfView = 70f;
             cam.nearClipPlane = 0.05f;
