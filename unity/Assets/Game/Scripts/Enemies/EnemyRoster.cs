@@ -79,6 +79,7 @@ namespace Spiritfire.Game
             var body = go.AddComponent<EnemyBody>();
             body.weakBone = placeholder ? PlaceholderBody.WeakBoneName(def) : def.weakBone;
             body.weakRadius = def.weakRadius;
+            body.hitboxMode = def.hitboxes;
             var col = go.GetComponent<CapsuleCollider>();
             var agent = go.AddComponent<NavMeshAgent>();
             agent.radius = col ? Mathf.Clamp(col.radius, 0.25f, 1.2f) : 0.4f;

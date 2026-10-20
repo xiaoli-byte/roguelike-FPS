@@ -23,6 +23,11 @@ namespace Spiritfire.Game
         /// <summary>弱点挂的骨骼名（包含匹配）与半径（设计尺寸）</summary>
         public string weakBone;
         public float weakRadius = 0.2f;
+        /// <summary>
+        /// 命中区的生成方式（<see cref="HitboxMode"/>）：默认角色胶囊 + 弱点球；长尾巴 / 翅膀 / 分区甲的敌人用 Ragdoll（存活时布娃娃胶囊做命中盒）。
+        /// 具体的分区倍率、朝向门、计数由各敌人的 AI 在 <see cref="EnemyBody.Zones"/> 上设
+        /// </summary>
+        public HitboxMode hitboxes = HitboxMode.Capsule;
         /// <summary>行为组件（EnemyAI 子类）</summary>
         public Type ai;
         /// <summary>出手名额类别（AttackTokens）</summary>

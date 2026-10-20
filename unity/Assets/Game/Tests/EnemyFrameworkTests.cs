@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
@@ -6,17 +7,25 @@ namespace Spiritfire.Game.Tests
 {
     /// <summary>
     /// 敌人框架（docs/unity-parity.md 3.7，E1 / E2）：出手名额按章节的上限、续期、合计上限、Reset；加成登记的通道合并与失效
-    /// （邪飞天光环 × 赐福与迁移前的公式逐位一致）；生成难度的兜底与生命取整。
+    /// （邪飞天光环 × 赐福与迁移前的公式逐位一致）；生成难度的兜底与生命取整；
+    /// 命中区按命中点分区、弱点优先、朝向门、倍率、半径缩放、计数触发，Hitbox.weakpoint 跟着命中区走，blocksSight 挡视线。
     /// </summary>
     public sealed class EnemyFrameworkTests
     {
         const float T0 = 1000f;
+        readonly List<GameObject> spawned = new();
 
         [SetUp]
         public void SetUp() => AttackTokens.Reset();
 
         [TearDown]
-        public void TearDown() => AttackTokens.Reset();
+        public void TearDown()
+        {
+            AttackTokens.Reset();
+            foreach (var go in spawned)
+                if (go) Object.DestroyImmediate(go);
+            spawned.Clear();
+        }
 
         // ───────────── 出手名额 ─────────────
 
@@ -181,6 +190,171 @@ namespace Spiritfire.Game.Tests
             Assert.AreEqual(3f, EnemyAI.RoundHp(2.5f), "JS Math.round：.5 进位（不是银行家舍入）");
             Assert.AreEqual(252f, EnemyAI.RoundHp(170 * 1.48f));
             Assert.AreEqual(0f, EnemyAI.RoundHp(float.NaN));
+        }
+
+        // ───────────── 命中区（E2）─────────────
+
+        /// <summary>远离原点的测试场位置（不和别的测试的物理物体重叠）</summary>
+        static readonly Vector3 Far = new(-4000, 500, 4000);
+
+        GameObject New(string name, Transform parent = null)
+        {
+            var go = new GameObject(name);
+            if (!parent) spawned.Add(go);
+            go.transform.SetParent(parent, false);
+            return go;
+        }
+
+        /// <summary>
+        /// 测试敌人（没跑 Awake 的 EnemyBody，只拿来登记命中区）：身体胶囊 0–2 m 半径 0.4（区 body）、
+        /// 包在胶囊顶部的弱点球 1.75 m 半径 0.25（区 weak）、正面一块甲 1 m 高、贴着胶囊前面（区 plate，×0.2，只挡正面）
+        /// </summary>
+        (EnemyBody body, HitZone bodyZone, HitZone weak, HitZone plate) Enemy()
+        {
+            var go = New("TestEnemy");
+            go.transform.position = Far;
+            var cap = go.AddComponent<CapsuleCollider>();
+            cap.center = Vector3.up;
+            cap.height = 2;
+            cap.radius = 0.4f;
+            var d = go.AddComponent<Damageable>();
+            var body = go.AddComponent<EnemyBody>();
+            var bz = HitZone.Create(cap, d, body, "body");
+            var head = New("Weak", go.transform);
+            head.transform.localPosition = new Vector3(0, 1.75f, 0);
+            var sphere = head.AddComponent<SphereCollider>();
+            sphere.radius = 0.25f;
+            var wz = HitZone.Create(sphere, d, body, "weak", 1f, true, 10);
+            var plateGo = New("Plate", go.transform);
+            plateGo.transform.localPosition = new Vector3(0, 1f, 0.5f);
+            var box = plateGo.AddComponent<BoxCollider>();
+            box.size = new Vector3(0.6f, 0.6f, 0.2f);
+            var pz = HitZone.Create(box, d, body, "plate", 0.2f, false, 5);
+            pz.facing = ZoneFacing.Front;
+            Physics.SyncTransforms();
+            return (body, bz, wz, pz);
+        }
+
+        static DamageInfo Hit(Vector3 point, Vector3 dir, bool weak = false, DamageSource source = DamageSource.Weapon)
+        {
+            var i = DamageInfo.Simple(10, source, point, dir);
+            i.weakpoint = weak;
+            return i;
+        }
+
+        [Test]
+        public void ZoneAtPicksByHitPoint()
+        {
+            var (body, bz, wz, pz) = Enemy();
+            Assert.AreEqual(3, body.Zones.Count);
+            Assert.AreSame(wz, body.ZoneAt(Hit(Far + new Vector3(0, 2.0f, 0), Vector3.down, true)), "弱点命中落在弱点区");
+            Assert.AreSame(bz, body.ZoneAt(Hit(Far + new Vector3(0, 1.75f, -0.4f), Vector3.forward)),
+                "非弱点命中不落在弱点区（命中点在胶囊表面，也在弱点球附近）");
+            Assert.AreSame(bz, body.ZoneAt(Hit(Far + new Vector3(0.4f, 0.5f, 0), Vector3.left)));
+            Assert.AreSame(pz, body.ZoneAt(Hit(Far + new Vector3(0, 1f, 0.6f), Vector3.back)), "甲片在胶囊外的部分：甲片");
+            Assert.AreSame(pz, body.ZoneAt(Hit(Far + new Vector3(0, 1f, 0.42f), Vector3.back)), "甲片和胶囊重叠处：优先级高的甲片");
+            Assert.AreSame(bz, body.ZoneAt(Hit(Far + new Vector3(0, 0.5f, 0.4f), Vector3.back, true)), "标了弱点却不在弱点区：按普通部位");
+            Assert.IsNull(body.ZoneAt(Hit(Far + new Vector3(0, 1f, 0), Vector3.back, false, DamageSource.Status)), "持续伤害不算区");
+            Assert.AreSame(bz, body.ZoneAt(Hit(Far + new Vector3(0.7f, 0.5f, 0), Vector3.left)), "容差外 0.5 m 内退而取最近的普通区");
+            Assert.IsNull(body.ZoneAt(Hit(Far + new Vector3(3f, 0.5f, 0), Vector3.left)));
+        }
+
+        [Test]
+        public void FacingGateLimitsArmourToTheFront()
+        {
+            var (_, _, _, pz) = Enemy();
+            var front = Far + new Vector3(0, 1f, 0.6f);
+            Assert.AreEqual(0.2f, pz.MultiplierFor(Hit(front, Vector3.back)), "从正面打来（飞行方向 −z）：甲片 ×0.2");
+            Assert.AreEqual(1f, pz.MultiplierFor(Hit(front, Vector3.forward)), "从背后打来：门外按普通部位");
+            Assert.AreEqual(1f, pz.MultiplierFor(Hit(front, Vector3.left)), "正侧面（cos 0 < 0.34）不算正面");
+            Assert.AreEqual(1f, pz.MultiplierFor(Hit(front, Vector3.zero)), "方向退化：有门的不生效");
+            pz.facing = ZoneFacing.Back;
+            Assert.AreEqual(0.2f, pz.MultiplierFor(Hit(front, Vector3.forward)));
+            pz.facing = ZoneFacing.Any;
+            Assert.AreEqual(0.2f, pz.MultiplierFor(Hit(front, Vector3.left)));
+        }
+
+        [Test]
+        public void HitboxWeakpointFollowsTheZone()
+        {
+            var (_, bz, wz, _) = Enemy();
+            Assert.IsTrue(wz.Hitbox.weakpoint);
+            Assert.IsFalse(bz.Hitbox.weakpoint);
+            wz.SetWeakPoint(false);
+            Assert.IsFalse(wz.Hitbox.weakpoint, "运行时关掉弱点");
+            wz.Hitbox.weakpoint = true;
+            Assert.IsTrue(wz.weakpoint, "旧写法（写 Hitbox.weakpoint）转给命中区");
+            wz.SetActive(false);
+            Assert.IsFalse(wz.Hitbox.weakpoint, "停用的区不算弱点");
+            Assert.IsFalse(wz.Collider.enabled);
+            wz.SetActive(true);
+            Assert.IsTrue(wz.Hitbox.weakpoint);
+        }
+
+        [Test]
+        public void RadiusScaleIsRelativeToCreation()
+        {
+            var (_, bz, wz, pz) = Enemy();
+            wz.SetRadiusScale(2f);
+            Assert.AreEqual(0.5f, ((SphereCollider)wz.Collider).radius, 1e-6f);
+            wz.SetRadiusScale(0.5f);
+            Assert.AreEqual(0.125f, ((SphereCollider)wz.Collider).radius, 1e-6f, "按创建时的尺寸，不累乘");
+            bz.SetRadiusScale(1.5f);
+            Assert.AreEqual(0.6f, ((CapsuleCollider)bz.Collider).radius, 1e-6f);
+            Assert.AreEqual(3f, ((CapsuleCollider)bz.Collider).height, 1e-6f);
+            pz.SetRadiusScale(2f);
+            Assert.AreEqual(new Vector3(1.2f, 1.2f, 0.4f), ((BoxCollider)pz.Collider).size);
+        }
+
+        [Test]
+        public void ZoneCountBreaksOnceAndRaisesEvents()
+        {
+            var (_, _, wz, _) = Enemy();
+            wz.breakAt = 30;
+            int broke = 0, hits = 0, global = 0;
+            wz.Broke += _ => broke++;
+            wz.Damaged += (_, _, _) => hits++;
+            InAction<ZoneHitEvent> onZone = (in ZoneHitEvent e) =>
+            {
+                if (e.zone == wz) global++;
+            };
+            HitZone.ZoneDamaged += onZone;
+            try
+            {
+                var info = Hit(Far + new Vector3(0, 2f, 0), Vector3.down, true);
+                wz.Record(info, new DamageResult { total = 20 });
+                Assert.AreEqual(0, broke);
+                wz.Record(info, new DamageResult { total = 15 });
+                Assert.AreEqual(1, broke, "累计 35 ≥ 30：碎一次");
+                wz.Record(info, new DamageResult { total = 15 });
+                Assert.AreEqual(1, broke, "碎过之后不再发，直到 ResetCount");
+                Assert.AreEqual(50f, wz.damageTaken);
+                Assert.AreEqual(3, hits);
+                Assert.AreEqual(3, global, "全局 ZoneDamaged");
+                wz.ResetCount();
+                Assert.IsFalse(wz.Broken);
+                Assert.AreEqual(0f, wz.damageTaken);
+            }
+            finally
+            {
+                HitZone.ZoneDamaged -= onZone;
+            }
+        }
+
+        [Test]
+        public void HitboxesBlockSightOnlyWhenMarked()
+        {
+            var wall = New("Wall");
+            wall.transform.position = Far + new Vector3(10, 1, 0);
+            wall.AddComponent<BoxCollider>().size = new Vector3(0.5f, 3, 3);
+            var hb = wall.AddComponent<Hitbox>();
+            Physics.SyncTransforms();
+            var a = Far + new Vector3(5, 1, 0);
+            var b = Far + new Vector3(15, 1, 0);
+            Assert.IsFalse(Combat.Blocked(a, b, null), "命中盒默认不挡视线");
+            hb.blocksSight = true;
+            Assert.IsTrue(Combat.Blocked(a, b, null), "冰壁之类：挡视线");
+            Assert.IsFalse(Combat.Blocked(a, b, wall.GetComponent<Collider>()), "目标自身不算遮挡");
         }
     }
 }

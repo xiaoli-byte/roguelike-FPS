@@ -32,7 +32,6 @@ namespace Spiritfire.Game
         CreatureLocomotion loco;
         readonly List<MirageToadAI> decoys = new();
         Renderer[] ghost;
-        MaterialPropertyBlock ghostBlock;
         float flickerSeed;
 
         /// <summary>腾空程度 0..1（动画里身体离地）</summary>
@@ -86,7 +85,6 @@ namespace Spiritfire.Game
         void MakeGhost()
         {
             ghost = System.Array.FindAll(GetComponentsInChildren<Renderer>(), r => !r.name.Contains("GlowShell"));
-            ghostBlock = new MaterialPropertyBlock();
             flickerSeed = Random.value * 10f;
             foreach (var r in ghost)
             {
@@ -105,19 +103,12 @@ namespace Spiritfire.Game
             Flicker();
         }
 
-        /// <summary>半透明闪烁：0.42 ± 0.16 的慢呼吸，偶尔一下猛地变淡（同 Three.js）</summary>
+        /// <summary>半透明闪烁：0.42 ± 0.16 的慢呼吸，偶尔一下猛地变淡（同 Three.js）。走身体的着色通道「ghost」（和其他着色来源相乘，不互相覆盖）</summary>
         void Flicker()
         {
             if (ghost == null) return;
             float a = 0.42f + 0.16f * Mathf.Sin(age * 9 + flickerSeed) + (Mathf.Sin(age * 31) > 0.85f ? -0.2f : 0);
-            var tint = new Color(0.75f, 0.93f, 1.1f, Mathf.Clamp01(a));
-            foreach (var r in ghost)
-            {
-                if (!r) continue;
-                r.GetPropertyBlock(ghostBlock);
-                ghostBlock.SetColor("_Tint", tint);
-                r.SetPropertyBlock(ghostBlock);
-            }
+            body.SetTint("ghost", new Color(0.75f, 0.93f, 1.1f, Mathf.Clamp01(a)));
         }
 
         protected override void Think(float dt)

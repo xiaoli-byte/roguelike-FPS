@@ -6,6 +6,8 @@ namespace Spiritfire.Art
     /// <summary>
     /// 死亡布娃娃：编辑器 CreatureRigBuilder 按每根骨骼实际蒙皮的网格厚度生成胶囊碰撞体、刚体与 CharacterJoint，平时全部关闭。
     /// Activate 时关掉 Animator 与 CreatureRig，刚体接管，并在受击点附近的部件上加冲量；Restore 恢复动画（重生 / 对象池复用）。
+    /// 存活命中盒（<see cref="SetAliveHitboxes"/>，游戏侧的多段命中区用）：活着时胶囊碰撞体开着、跟着动画走，
+    ///   刚体保持运动学且不参与碰撞（不推别的物体）——只给射线 / 扫掠查询用；Activate 时照常变成真实物理。
     /// （Three.js 版的死亡是程序化瘫倒；这里是真实物理，会顺着坡滚、挂在台阶边上。）
     /// </summary>
     public sealed class CreatureRagdoll : MonoBehaviour
@@ -19,8 +21,17 @@ namespace Spiritfire.Art
 
         public Part[] parts = Array.Empty<Part>();
         public bool Active { get; private set; }
+        /// <summary>存活时胶囊碰撞体当命中盒用（见类说明）</summary>
+        public bool AliveHitboxes { get; private set; }
 
         void Awake() => SetPhysics(false);
+
+        /// <summary>存活时开 / 关胶囊命中盒（布娃娃激活中只记下来，Restore 之后生效）</summary>
+        public void SetAliveHitboxes(bool on)
+        {
+            AliveHitboxes = on;
+            if (!Active) SetPhysics(false);
+        }
 
         void SetPhysics(bool on)
         {
@@ -32,7 +43,8 @@ namespace Spiritfire.Art
                     p.body.detectCollisions = on;
                     p.body.interpolation = on ? RigidbodyInterpolation.Interpolate : RigidbodyInterpolation.None;
                 }
-                if (p.collider) p.collider.enabled = on;
+                // 存活命中盒：碰撞体开着给查询用（运动学 + 不参与碰撞，不推任何东西）
+                if (p.collider) p.collider.enabled = on || AliveHitboxes;
             }
         }
 

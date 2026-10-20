@@ -520,7 +520,7 @@ namespace Spiritfire.Game
 
         static RaycastHit[] rayBuf = new RaycastHit[16];
 
-        /// <summary>两点之间被地形 / 建筑挡住（忽略角色层与目标自身）</summary>
+        /// <summary>两点之间被地形 / 建筑挡住（忽略角色层与目标自身；命中盒不挡，除非它标了 <see cref="Hitbox.blocksSight"/>，如冰壁）</summary>
         public static bool Blocked(Vector3 a, Vector3 b, Collider target)
         {
             var dir = b - a;
@@ -532,7 +532,9 @@ namespace Spiritfire.Game
             for (int i = 0; i < n; i++)
             {
                 var c = rayBuf[i].collider;
-                if (c != target && !c.GetComponent<Hitbox>()) return true;
+                if (c == target) continue;
+                var hb = c.GetComponent<Hitbox>();
+                if (!hb || hb.blocksSight) return true;
             }
             return false;
         }
