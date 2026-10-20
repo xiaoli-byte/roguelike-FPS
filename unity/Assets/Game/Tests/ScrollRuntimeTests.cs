@@ -462,10 +462,11 @@ namespace Spiritfire.Game.Tests
         [Test]
         public void RegistryRollUsesTsWeights()
         {
-            // 现有 16 卷（稀有度 0–2）、没有幸运 / 章节 / 持有：普通单卷 100、精良 52、稀有 26
+            // 登记的全部秘卷、没有幸运 / 章节 / 持有 / 元素来源：基础权重 [100, 52, 26, 11, 4]，燎的专属卷 ×1.5，非专属反应卷 ×0.5（同 TS weight）
             var c = new ScrollRoll.Context { heroId = "fox" };
             var p = ScrollRoll.Probabilities(Registry<ScrollDef>.All, c);
-            double total = Registry<ScrollDef>.All.Where(d => d.heroOnly == null || d.heroOnly == "fox").Sum(d => (double)ScrollRoll.RarityWeight[d.rarity]);
+            double total = Registry<ScrollDef>.All.Where(d => d.heroOnly == null || d.heroOnly == "fox").Sum(d =>
+                ScrollRoll.RarityWeight[d.rarity] * (d.heroOnly != null ? 1.5 : 1) * (d.heroOnly == null && d.HasTag("反应") ? 0.5 : 1));
             var keen = ScrollLibrary.Get("keen_blade");
             Assert.AreEqual(100 / total, p[keen], 1e-9);
         }

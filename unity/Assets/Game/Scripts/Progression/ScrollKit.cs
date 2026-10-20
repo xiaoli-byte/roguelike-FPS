@@ -11,7 +11,7 @@ namespace Spiritfire.Game
     ///   独立冷却（<see cref="Cooldown"/> / <see cref="TargetCooldown"/>）、衍生伤害请求（<see cref="ProcInfo"/>）。
     /// 都是纯函数或只读全局状态；作用域相关的（属性、订阅、内置冷却）在 <see cref="ScrollScope"/> 上。
     /// </summary>
-    public static class ScrollKit
+    public static partial class ScrollKit
     {
         /// <summary>固定数值类秘卷伤害随关卡强度成长：每 1 点难度 +85%</summary>
         public const float ProcScalePerDifficulty = 0.85f;
