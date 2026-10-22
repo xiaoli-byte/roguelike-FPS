@@ -173,9 +173,13 @@ namespace Spiritfire.Art.Editor.Levels
             // ── 分层（冰原：0 雪 / 1 冻土 / 2 冰 / 3 岩）──
             float rim = Smooth(LipOuter + 1f, LipOuter - 1f, r) * ringFloor;
             s.fluid = Mathf.Max(rim, Smooth(HoleR + 0.5f, HoleR - 0.5f, r));
-            s.packed = Mathf.Max(Mathf.Max(passMask * 0.85f, altarTop * 0.9f), ringFloor * (1 - apron * 0.3f) * 0.55f * (0.7f + 0.3f * Fbm(p, 9, 2, 12)));
+            // 环台是压实的雪面，只在风刮秃的几片露出冻土碎石（整圈都铺冻土时碎石点满地，像豹纹）
+            float scoured = Smooth(0.15f, 0.6f, Fbm(p, 9, 2, 12));
+            s.packed = Mathf.Max(Mathf.Max(passMask * 0.85f, altarTop * 0.9f), ringFloor * (1 - apron * 0.3f) * 0.5f * scoured);
             float drift = Smooth(Outer - 9, Outer - 1, r) * ringFloor * (0.6f + 0.4f * (Fbm(p, 7, 2, 13) * 0.5f + 0.5f));
-            s.sand = Mathf.Max(Mathf.Max(drift, inCamp ? campFloor * 0.8f : 0), apron * 0.6f) * (1 - passMask);
+            // 祭台的侧壁和台面不铺（侧壁留岩、台面是冻土）
+            float ringSnow = ringFloor * (1 - Smooth(0.02f, 0.2f, altars)) * (0.85f - 0.25f * scoured);
+            s.sand = Mathf.Max(Mathf.Max(Mathf.Max(drift, ringSnow), inCamp ? campFloor * 0.8f : 0), apron * 0.6f) * (1 - passMask);
             s.rock = Mathf.Max(wallA, wallB) * (1 - passMask) * (1 - apron);
             return s;
         }
