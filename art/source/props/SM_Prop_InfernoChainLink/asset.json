@@ -1,0 +1,232 @@
+{
+  "id": "SM_Prop_InfernoChainLink",
+  "display": "巨链链环（悬炉吊链、吊鼎四链、链桥；运行时实例化成链）",
+  "kind": "static",
+  "class": "prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:52:00",
+          "files": {
+            "BO_SM_Prop_InfernoChainLink_v001.json": {
+              "path": "00_blockout/BO_SM_Prop_InfernoChainLink_v001.json",
+              "sha256": "2be111ac587141f6dd5f1642bad8bdd2af6517e4b24b54f319731b84e2e1de3e"
+            },
+            "BO_SM_Prop_InfernoChainLink_v001_views.json": {
+              "path": "00_blockout/BO_SM_Prop_InfernoChainLink_v001_views.json",
+              "sha256": "410e2684daf3e66b2d73aa389c34e018ff24cbee0ba140573db3237a236c13cc"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.chain.link"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.325,
+              0.0,
+              -0.095
+            ],
+            "max": [
+              0.325,
+              0.99,
+              0.095
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:52:01",
+          "files": {
+            "CN_SM_Prop_InfernoChainLink_v001_front.png": {
+              "path": "01_concept/CN_SM_Prop_InfernoChainLink_v001_front.png",
+              "sha256": "1cbb3484985ff5c0ee8bb1d4ce2f9d1e7e3b2b16eedd9d5b6e6767107751a1f6"
+            },
+            "CN_SM_Prop_InfernoChainLink_v001_left.png": {
+              "path": "01_concept/CN_SM_Prop_InfernoChainLink_v001_left.png",
+              "sha256": "9a99a305977c8bab1db0e3a06bbb234c097d4c1f08d74d6d328c7241bfdd7897"
+            },
+            "CN_SM_Prop_InfernoChainLink_v001_back.png": {
+              "path": "01_concept/CN_SM_Prop_InfernoChainLink_v001_back.png",
+              "sha256": "6d26536247d3ee5798202eb5be88d72ef93ad44f2e9dd859b9a1ec3450417139"
+            },
+            "CN_SM_Prop_InfernoChainLink_v001_right.png": {
+              "path": "01_concept/CN_SM_Prop_InfernoChainLink_v001_right.png",
+              "sha256": "aafbcbfab1c5faf8b3bcd613e9d08661ebf6355916bdad32180f2f1471cad156"
+            },
+            "CN_SM_Prop_InfernoChainLink_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Prop_InfernoChainLink_v001_sheet.png",
+              "sha256": "662c910b98fbf4a5978f7ec7b930ca5ccd78b5176d68e0a259a3f43012292ed0"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "Blender procedural render",
+          "recipe": "chain_link",
+          "seed": 3,
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "procedural",
+          "registration": {
+            "method": "rendered in the reference cameras"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:52:01",
+          "files": {
+            "HP_SM_Prop_InfernoChainLink_v001.glb": {
+              "path": "02_highpoly/HP_SM_Prop_InfernoChainLink_v001.glb",
+              "sha256": "3b8cb399ded5763c6b5f3f348fab95782e8e721f97924ac56d168f9a99bfc784"
+            }
+          },
+          "from_concept": 1,
+          "mode": "procedural",
+          "tool": "Blender 5.2 bpy",
+          "checkpoint": "chain_link@3",
+          "license": "project-original procedural model (art/pipeline/blender/bl_proc_chain.py)",
+          "faces": 320,
+          "source_sha256": "3b8cb399ded5763c6b5f3f348fab95782e8e721f97924ac56d168f9a99bfc784"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:52:01",
+          "files": {
+            "SM_Prop_InfernoChainLink_v001.blend": {
+              "path": "03_work/SM_Prop_InfernoChainLink_v001.blend",
+              "sha256": "7f52a3c1d66f17d3f65a005de0e32a4f7c5d986ae28c35824c5e83fa41321493"
+            },
+            "SM_Prop_InfernoChainLink_v001.glb": {
+              "path": "04_export/SM_Prop_InfernoChainLink_v001.glb",
+              "sha256": "3b8cb399ded5763c6b5f3f348fab95782e8e721f97924ac56d168f9a99bfc784"
+            },
+            "SM_Prop_InfernoChainLink_v001_metrics.json": {
+              "path": "03_work/SM_Prop_InfernoChainLink_v001_metrics.json",
+              "sha256": "94afbb262c4ca8bc6716e104e79f1f804843b26378af8122ecaf70671a2b684e"
+            },
+            "T_Prop_InfernoChainLink_BC.png": {
+              "path": "03_work/textures_v001/T_Prop_InfernoChainLink_BC.png",
+              "sha256": "4b45bd03a00632bb681dbb3c57656006194c8755be026e6577966bbe9c8c6bcc"
+            },
+            "T_Prop_InfernoChainLink_N.png": {
+              "path": "03_work/textures_v001/T_Prop_InfernoChainLink_N.png",
+              "sha256": "ad8abd5606d255fe3bd556bb53486c6d686e39d99838121df98daf3752b5652c"
+            },
+            "T_Prop_InfernoChainLink_ORM.png": {
+              "path": "03_work/textures_v001/T_Prop_InfernoChainLink_ORM.png",
+              "sha256": "dafc2247d040e6feec952572edcd91a8dbd2a51580ed6a4ba5976615acd2e20e"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 1.0,
+          "uncovered_ratio": 0.0,
+          "procedural": {
+            "recipe": "chain_link",
+            "seed": 3
+          },
+          "lods": [
+            {
+              "tris": 320,
+              "verts": 164
+            },
+            {
+              "tris": 80,
+              "verts": 40
+            }
+          ],
+          "export_kb": 20.2,
+          "seconds": 40.2,
+          "bake_device": "none (numpy painted)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:52:04",
+          "files": {
+            "SM_Prop_InfernoChainLink_v001_validation_v001.json": {
+              "path": "05_review/SM_Prop_InfernoChainLink_v001_validation_v001.json",
+              "sha256": "4129c2ecf3fb637ce7581e74d9505984361ac4533048321206ab78320f69ae57"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:52:12",
+          "files": {
+            "SM_Prop_InfernoChainLink_v001_review_v001.png": {
+              "path": "05_review/SM_Prop_InfernoChainLink_v001_review_v001.png",
+              "sha256": "13021775244c304c4fb7af133592714b629e0ba8481dc7926e81629f56c5a06e"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-21 ART6 链环：Blender 程序化，审核图 docs/art/review/inferno-chain-link-v001.jpg",
+            "time": "2026-10-21 06:52:20"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:52:20",
+          "files": {
+            "SM_Prop_InfernoChainLink.glb": {
+              "path": "@root/public/assets/props/SM_Prop_InfernoChainLink.glb",
+              "sha256": "3b8cb399ded5763c6b5f3f348fab95782e8e721f97924ac56d168f9a99bfc784"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Prop_InfernoChainLink.glb"
+        }
+      ]
+    }
+  }
+}

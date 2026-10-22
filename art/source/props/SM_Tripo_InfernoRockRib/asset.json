@@ -1,0 +1,169 @@
+{
+  "id": "SM_Tripo_InfernoRockRib",
+  "display": "岩肋（3-2 井壁伸出的关口岩肋）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:17:31",
+          "files": {
+            "BO_SM_Tripo_InfernoRockRib_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoRockRib_v001.json",
+              "sha256": "d6b5c423c413d2220699ceb4e81a086c0ef6d0fe9c7c91ca664dffd77884eb4b"
+            },
+            "BO_SM_Tripo_InfernoRockRib_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoRockRib_v001_views.json",
+              "sha256": "a31a547e0f14319794a44e10585394fce6f4f5a6ceded443f82124c9d495b977"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.forgeWell.rockRib"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -4.5,
+              0.0,
+              -6.0
+            ],
+            "max": [
+              4.5,
+              16.0,
+              6.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:18:17",
+          "files": {
+            "CN_SM_Tripo_InfernoRockRib_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRockRib_v001_source.png",
+              "sha256": "a35f39a1bbc86887c805b3ca72e5fb3a053e93a31501b0fbed2222139781769a"
+            },
+            "CN_SM_Tripo_InfernoRockRib_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRockRib_v001_front.png",
+              "sha256": "5c116458b0c69055aa1ed58b5c73fbc7c94b859c780c5480d11dddef213a543d"
+            },
+            "CN_SM_Tripo_InfernoRockRib_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRockRib_v001_left.png",
+              "sha256": "cb248fea2cdf74beff48c4f1ce4358b3f34f20b3d1fa3b6ec070fb444d600b3e"
+            },
+            "CN_SM_Tripo_InfernoRockRib_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRockRib_v001_back.png",
+              "sha256": "364bc3ee71156bba5b1aa255b97d1b7932572c77aee86393b0bef62e35e96a8a"
+            },
+            "CN_SM_Tripo_InfernoRockRib_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRockRib_v001_right.png",
+              "sha256": "5697571728695b165bfc4a37e62c7af7066436d6588ab2b7bbfb371a5726bfb7"
+            },
+            "CN_SM_Tripo_InfernoRockRib_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRockRib_v001_sheet.png",
+              "sha256": "7831b1a6fb22367fcac02c77d06259d147d79207abfbdc992a1749518cf6ba5c"
+            },
+            "CN_SM_Tripo_InfernoRockRib_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRockRib_v001_prompt.txt",
+              "sha256": "15489d3a520fcbed0b47e5546cfd4a937c20decfef5c73e28266a5fba6566b10"
+            },
+            "CN_SM_Tripo_InfernoRockRib_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRockRib_v001_registration.json",
+              "sha256": "f76ae0663f9d3aafbe97c4f3d55e3c8a6556d02682b1cfb3da90e7ff78252bf8"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              1881,
+              836
+            ],
+            "references": [],
+            "codex_session": "01a15b64-242b-7623-a621-ad4a3ad2c8d4",
+            "attempt": 1,
+            "seconds": 43.4
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian underground forge-palace fantasy of Zhurong, the Chinese god of fire: massive black iron (xuan tie) with heavy rivets, dark charcoal basalt blocks, deep vermilion lacquer, warm aged bronze ding cauldrons, chunky thick iron chains always attached flat to the surfaces, soot-darkened edges, and a few channels and cracks of molten lava. Lava, embers and fire are painted as opaque flat bright orange-yellow surfaces, never as smoke, loose sparks or transparent effects. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (9m wide x 16m tall x 12m deep): A massive rock rib that juts out of the wall of a lava shaft and narrows a spiral ramp into a gate, 9m wide, 16m tall and 12m deep: a huge buttress of tall fused hexagonal basalt columns, broad at the foot and leaning back toward its top, its sharp outer edge facing the FRONT; one big rectangular black iron plate riveted on its face carries a cast vermilion fire-sun emblem, and two thick black iron chains are bolted flat against the columns; a few deep cracks glow with molten lava painted as opaque bright orange-yellow near the foot. The BACK is a flat rough cut face that merges into the shaft wall. PROPORTIONS: the FRONT and BACK views are drawn about 0.56 times as wide as tall; the LEFT and RIGHT views about 0.75 times as wide as tall, a tapering wedge. Broad faceted planes, no smoke. One solid connected piece on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "a35f39a1bbc86887c805b3ca72e5fb3a053e93a31501b0fbed2222139781769a",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.6498121636714387,
+              "offset": [
+                81,
+                207
+              ],
+              "size": [
+                350,
+                610
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6463667121143261,
+              "offset": [
+                131,
+                207
+              ],
+              "size": [
+                250,
+                610
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6463667121143261,
+              "offset": [
+                73,
+                207
+              ],
+              "size": [
+                365,
+                610
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.645682001614205,
+              "offset": [
+                126,
+                207
+              ],
+              "size": [
+                260,
+                610
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-21 ART5/ART6：四视图一致、比例与登记相符（用户 2026-10-19 授权免审）",
+            "time": "2026-10-21 06:38:29"
+          }
+        }
+      ]
+    }
+  }
+}

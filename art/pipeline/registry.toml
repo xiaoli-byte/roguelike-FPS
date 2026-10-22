@@ -2182,6 +2182,210 @@ keep_glow = "none"
 material = { roughness = 0.5, metallic = 0.0 }
 brief = """One segment of the jagged rim around a huge round hole broken through thick polar sea ice, 6m long, 2.2m tall and 4m deep; sixteen segments join into a ring. Along the FRONT side (it faces the hole) the ice is broken into big jagged upturned ice plates and chunky tilted blocks rising up to 2.2m, their broken faces showing thick horizontal layers of faceted glacier ice with dark ink-blue bands and a faint cold aqua glow in the deepest cracks; toward the BACK the slab slopes down to a flat low ice floor edge 0.3m thick with drifted snow. Both LEFT and RIGHT ends are flat cut faces so the segments join into a continuous ring. Opaque solid ice. PROPORTIONS: the FRONT and BACK views are drawn about 2.7 times as wide as tall (a long low ridge); the LEFT and RIGHT views about 1.8 times as wide as tall, a wedge high at the front and low at the back. Chunky broad facets, no tiny splinters, no water, no mist. One solid connected piece."""
 
+# ───────────── 第三章地图件（ART6，docs/unity-parity.md 第 5 节）：3-1 熔湖堤道 / 3-2 铸神井 / 3-3 铸范大坊·鼓风正殿 / 3-4 祝融炉心 ─────────────
+# 设计依据 docs/level-design/plans-v2/inferno.json（3-3 合并了 V2 的铸范大坊和鼓风正殿）。风格 zhurong；熔岩 / 熔铜画成不透明的亮橙黄平面，
+# 自发光交给 Unity 的熔岩着色器（L7）。链条不走 Tripo：SM_Prop_InfernoChainLink 是 Blender 程序化的单个链环，运行时实例化成链。
+
+[assets.SM_Tripo_InfernoCausewaySegment]
+display = "玄武岩堤道段（3-1，12 m 宽，可连排）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "inferno.causeway.segment" }
+reference_mode = "bounds_only"
+reference_dimensions = [12.0, 5.0, 12.0]
+architecture_role = "walkway"
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.05 }
+brief = """A tileable straight section of a massive basalt causeway crossing a lava lake, 12m long, 12m wide and 5m tall: a FLAT walkable top paved with big dark charcoal basalt slabs and a low kerb of square black iron-capped stones along both long edges; the two long sides are steep walls of chunky hexagonal basalt columns rising out of the lava, with a few thick black iron tie plates and rivets; along the bottom edge the columns are cracked and lit by a band of molten lava painted as opaque bright orange-yellow. The LEFT and RIGHT ends are flat cut faces showing the column cross-section so identical sections join seamlessly in a row. PROPORTIONS: all four views are drawn about 2.4 times as wide as tall; the FRONT and BACK views show a long side, the LEFT and RIGHT views show the end cut face. Broad faceted planes, no loose rubble, no smoke. One solid connected piece."""
+
+[assets.SM_Tripo_InfernoCausewayPier]
+display = "堤墩（3-1 税关墩 / 锚链墩的岛台）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "inferno.causeway.pier" }
+reference_mode = "bounds_only"
+reference_dimensions = [20.0, 6.0, 20.0]
+architecture_role = "platform"
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.05 }
+brief = """A big octagonal basalt island pier standing in a lava lake where causeways meet, 20m across and 6m tall: a FLAT walkable octagonal top paved with big dark charcoal basalt slabs in a radial pattern, a low kerb of square black iron-capped stones around the edge with four 12m-wide gaps on the front, back, left and right sides where causeways join, and four short squat black iron mooring bollards; the sides are steep walls of chunky hexagonal basalt columns with thick black iron bands, cracked at the foot and lit by a band of molten lava painted as opaque bright orange-yellow. PROPORTIONS: all four views are drawn about 3.3 times as wide as tall and look the same. Broad faceted planes, no buildings on top, no smoke. One solid connected piece."""
+
+[assets.SM_Tripo_InfernoSpiralLedge]
+display = "螺旋岩台段（3-2 井沿，内缘临熔岩）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "inferno.forgeWell.spiralLedge" }
+reference_mode = "bounds_only"
+reference_dimensions = [14.0, 7.0, 8.0]
+architecture_role = "walkway"
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.05 }
+brief = """One segment of the inner edge of a wide spiral ramp carved into the wall of a lava shaft, 14m long, 7m tall and 8m deep: the TOP is a flat walkable basalt shelf worn smooth, gently sloping down from the LEFT end to the RIGHT end by about 1m; the FRONT face is the broken inner edge of the ramp, a sheer drop of chunky stepped hexagonal basalt columns and fractured blocks, cracked and lit from below by molten lava seams painted as opaque bright orange-yellow, with a few short black iron mooring rings hammered into the lip; the BACK is a flat rough cut face (it joins the shaft wall terrain). The LEFT and RIGHT ends are flat cut faces so segments join along the spiral. PROPORTIONS: the FRONT and BACK views are drawn about 2 times as wide as tall; the LEFT and RIGHT views about 1.15 times as wide as tall. Broad faceted planes, no loose rubble, no smoke. One solid connected piece."""
+
+[assets.SM_Tripo_InfernoRockRib]
+display = "岩肋（3-2 井壁伸出的关口岩肋）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "inferno.forgeWell.rockRib" }
+reference_mode = "bounds_only"
+reference_dimensions = [9.0, 16.0, 12.0]
+architecture_role = "cliff"
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.05 }
+brief = """A massive rock rib that juts out of the wall of a lava shaft and narrows a spiral ramp into a gate, 9m wide, 16m tall and 12m deep: a huge buttress of tall fused hexagonal basalt columns, broad at the foot and leaning back toward its top, its sharp outer edge facing the FRONT; one big rectangular black iron plate riveted on its face carries a cast vermilion fire-sun emblem, and two thick black iron chains are bolted flat against the columns; a few deep cracks glow with molten lava painted as opaque bright orange-yellow near the foot. The BACK is a flat rough cut face that merges into the shaft wall. PROPORTIONS: the FRONT and BACK views are drawn about 0.56 times as wide as tall; the LEFT and RIGHT views about 0.75 times as wide as tall, a tapering wedge. Broad faceted planes, no smoke. One solid connected piece on a flat base."""
+
+[assets.SM_Tripo_InfernoCastingMould]
+display = "铸范（3-3 成排的范，可作掩体）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "inferno.foundry.castingMould" }
+reference_mode = "bounds_only"
+reference_dimensions = [3.2, 2.8, 2.2]
+architecture_role = "cover"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.2 }
+brief = """A giant two-part casting mould for a divine bronze weapon, 3.2m wide, 2.8m tall and 2.2m deep, standing upright as chest-high cover in a foundry: a thick block of baked reddish-brown fire clay split horizontally into an upper and a lower half, clamped together by four heavy black iron bands with big wedge bolts, a funnel-shaped pouring cup on top crusted with cooled dark bronze, and on the FRONT face the raised outline of a ding cauldron pattern pressed into the clay; soot-darkened edges, a thin seam of still-hot bronze glowing between the two halves painted as opaque bright orange-yellow. PROPORTIONS: the FRONT and BACK views are drawn about 1.15 times as wide as tall; the LEFT and RIGHT views about 0.8 times as wide as tall. Chunky readable forms, no smoke. One solid connected piece on a flat base."""
+
+[assets.SM_Tripo_InfernoCastingBed]
+display = "铸床（3-3 浇铸台，矮掩体）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "inferno.foundry.castingBed" }
+reference_mode = "bounds_only"
+reference_dimensions = [8.0, 1.4, 5.0]
+architecture_role = "cover"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.3 }
+brief = """A low casting bed in a giant foundry, 8m long, 1.4m tall and 5m deep: a rectangular table of dark charcoal basalt blocks framed by thick black iron edge beams with big rivets; its flat top is sunk with three open mould cavities in the shapes of a long sword, a spear head and a small ding cauldron, all three filled with molten bronze painted as opaque bright orange-yellow, linked by a narrow feeder groove that runs to a pouring basin at the LEFT end; the cooled rims are crusted with dark bronze and soot. PROPORTIONS: the FRONT and BACK views are drawn about 5.7 times as wide as tall, a long low block; the LEFT and RIGHT views about 3.6 times as wide as tall. Chunky readable forms, no smoke, no flames. One solid connected piece on a flat base."""
+
+[assets.SM_Tripo_InfernoBellows]
+display = "巨型风箱（3-3 鼓风正殿，18 × 8 m）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "inferno.foundry.bellows" }
+reference_mode = "bounds_only"
+reference_dimensions = [18.0, 5.0, 8.0]
+architecture_role = "landmark"
+keep_glow = "none"
+material = { roughness = 0.75, metallic = 0.25 }
+brief = """A colossal forge bellows lying on the floor of a blast hall, 18m long, 5m tall and 8m deep: a huge accordion bag of thick dark oxblood-red leather with big rounded pleats running across its length, stretched between a heavy flat black iron top board and a black iron base frame on squat beast-paw feet; at the RIGHT end it narrows into a massive cast bronze nozzle shaped like a roaring beast head that points into the furnace; a thick black iron pumping beam with a chain lies along the top board; rows of big rivets, soot on the edges, a faint orange glow inside the beast's mouth painted as an opaque bright orange-yellow surface. PROPORTIONS: the FRONT and BACK views are drawn about 3.6 times as wide as tall, a long low machine; the LEFT and RIGHT views about 1.6 times as wide as tall. Chunky readable forms, no smoke, no fire. One solid connected piece on a flat base."""
+
+[assets.SM_Tripo_InfernoHangingForge]
+display = "悬炉锻台（3-3 熔渊上的吊台，四根 6 m 吊链柱）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "inferno.foundry.hangingForge" }
+reference_mode = "bounds_only"
+reference_dimensions = [16.0, 8.0, 16.0]
+architecture_role = "platform"
+keep_glow = "none"
+material = { roughness = 0.7, metallic = 0.4 }
+brief = """A square forge platform that hangs over a lava abyss, 16m wide, 8m tall and 16m deep: a thick slab of riveted black iron plates 1.5m thick with a FLAT walkable top, its underside braced by heavy iron girders; at each of the four corners a squat black iron pillar 6m tall with a big iron ring on top (where the hanging chains attach, the chains themselves not shown); in the middle of the deck a raised square stone forge hearth with glowing coals painted as opaque bright orange-yellow and a huge black iron anvil beside it; a low iron kerb along the deck edges with 4m-wide gaps in the middle of the LEFT and RIGHT sides where chain bridges join. PROPORTIONS: all four views are drawn about 2 times as wide as tall and look nearly the same. Chunky readable forms, no smoke, no chains, no fire tongues. One solid connected piece."""
+
+[assets.SM_Prop_QilinCauldron]
+display = "火麒麟吊鼎（3-4 炉心殿，8 m 青铜方鼎，四角链挂点）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "boss.qilin.cauldron" }
+reference_mode = "bounds_only"
+reference_dimensions = [6.4, 8.0, 6.4]
+architecture_role = "landmark"
+keep_glow = "none"
+material = { roughness = 0.5, metallic = 0.65 }
+brief = """A colossal square bronze ding ritual cauldron 8m tall and 6.4m wide that hangs on chains over a lava pool: a square body 5.2m wide and 3.6m tall slightly narrower at the bottom, made of warm aged bronze with patches of dark verdigris, a thick dark rim band, a raised taotie beast-mask relief in the middle of each of the four faces and flanged vertical ridges at the corners; two big upright loop handles stand on the rim on the LEFT and RIGHT sides; four thick columnar legs 2.4m long at the four corners ending in paw-like feet; at each of the four top corners of the rim a massive black iron shackle ring for a giant chain (the chains themselves not shown); the mouth is filled with molten lava painted as an opaque bright orange-yellow surface. PROPORTIONS: all four views are drawn about 0.8 times as wide as tall and look the same apart from the handles. Chunky readable forms, no smoke, no fire tongues. One solid connected piece."""
+
+[assets.SM_Prop_QilinChainLock]
+display = "火麒麟锁扣（3-4 外墙上的发光锁扣，可射击）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "boss.qilin.chainLock" }
+reference_mode = "bounds_only"
+reference_dimensions = [2.0, 2.4, 1.2]
+architecture_role = "target"
+keep_glow = "none"
+material = { roughness = 0.55, metallic = 0.6 }
+brief = """A giant chain lock clasp mounted on a basalt wall, 2m wide, 2.4m tall and 1.2m deep, the shootable weak point that holds one chain of a hanging cauldron: a heavy square black iron back plate with big rivets (its BACK is flat against the wall), on it a massive padlock-shaped iron clasp cast like a crouching qilin head biting a thick iron shackle loop that sticks out at the top front; in the middle of the clasp a round glowing core of molten vermilion-orange fire crystal painted as an opaque bright orange-yellow surface, framed by an aged bronze ring with flame patterns. PROPORTIONS: the FRONT view is drawn about 0.83 times as wide as tall; the LEFT and RIGHT views about 0.5 times as wide as tall, showing the clasp standing out from the flat back plate. Chunky readable forms, no chain, no smoke. One solid connected piece."""
+
+[assets.SM_Prop_InfernoChainLink]
+display = "巨链链环（悬炉吊链、吊鼎四链、链桥；运行时实例化成链）"
+kind = "static"
+class = "prop"
+source_provider = "blender"  # 链条程序生成（unity-parity.md 第 6 节）：只出一个链环，长度和垂度由运行时决定
+blockout = { source = "scene", id = "inferno.chain.link" }
+reference_mode = "bounds_only"
+reference_dimensions = [0.65, 0.99, 0.19]
+architecture_role = "chain"
+keep_glow = "none"
+material = { roughness = 0.55, metallic = 0.8 }
+brief = """One giant blackened iron chain link 1m long: a stadium-shaped loop of thick rounded-square iron bar with a riveted collar on each straight side."""
+
+[assets.SM_Prop_InfernoChainLink.proc]
+script = "bl_proc_chain.py"
+recipe = "chain_link"
+seed = 3
+
+[assets.SM_Tripo_InfernoMoltenGate]
+display = "熔铁闸门（3-4 炉心殿入口，落下封门）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "inferno.zhurong.moltenGate" }
+reference_mode = "bounds_only"
+reference_dimensions = [10.0, 9.0, 1.4]
+architecture_role = "gate"
+keep_glow = "none"
+material = { roughness = 0.6, metallic = 0.6 }
+brief = """A massive drop gate that seals the entrance of a fire god's forge hall, 10m wide, 9m tall and 1.4m thick: one solid slab of black iron (no openings, nothing see-through) built as a grid of thick vertical bars and three heavy horizontal crossbars fused together with riveted plates filling every gap, a row of sharp iron spikes along the bottom edge, a big cast vermilion fire-sun disc in the centre, and the seams between the bars glowing with half-cooled molten iron painted as opaque bright orange-yellow lines; soot-darkened edges. The FRONT and BACK faces are the same. PROPORTIONS: the FRONT and BACK views are drawn about 1.1 times as wide as tall; the LEFT and RIGHT views are a thin slab about 0.16 times as wide as tall. Chunky readable forms, no smoke. One solid connected piece."""
+
+[assets.SM_Tripo_InfernoRoundHallWall]
+display = "圆殿外壳墙段（3-4 炉心殿，直径 48 m 的八分之一，带高排烟口）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "inferno.zhurong.roundHallWall" }
+reference_mode = "bounds_only"
+reference_dimensions = [18.0, 22.0, 5.0]
+architecture_role = "wall"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.15 }
+brief = """One curved segment, one eighth of the circular outer wall of a fire god's round forge hall, 18m wide, 22m tall and 5m deep, seen from INSIDE the hall: the FRONT face is gently concave, built of huge dark charcoal basalt blocks in horizontal courses, with a thick black iron pilaster with rivets at each end, a deep vermilion lacquered frieze band at 4m with a row of cast bronze fire-sun discs, a second iron band at 14m, and high up in the middle one square smoke vent opening 3m wide framed in black iron and glowing faintly orange inside (painted as an opaque bright orange-yellow surface). The BACK is plain convex basalt. The LEFT and RIGHT ends are flat cut faces so eight segments join into a full ring. PROPORTIONS: the FRONT and BACK views are drawn about 0.82 times as wide as tall; the LEFT and RIGHT views are a tall thick wall about 0.23 times as wide as tall. Broad faceted blocks, no smoke. One solid connected piece."""
+
+[assets.SM_Tripo_InfernoRoundHallFurnace]
+display = "圆殿炉口墙段（3-4 炉心殿，带炉口，炭童从这里钻出）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "zhurong"
+blockout = { source = "scene", id = "inferno.zhurong.roundHallFurnace" }
+reference_mode = "bounds_only"
+reference_dimensions = [18.0, 22.0, 5.0]
+architecture_role = "wall"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.15 }
+brief = """One curved segment, one eighth of the circular outer wall of a fire god's round forge hall, 18m wide, 22m tall and 5m deep, seen from INSIDE the hall, the companion of the plain wall segment with the same courses and bands: the FRONT face is gently concave, built of huge dark charcoal basalt blocks in horizontal courses, with a thick black iron pilaster with rivets at each end, a deep vermilion lacquered frieze band at 4m and a second iron band at 14m; at floor level in the middle a big round-arched furnace mouth 4m wide and 4m tall framed by a cast bronze beast face whose open jaws form the arch, the inside of the mouth filled with glowing coals and molten fire painted as opaque bright orange-yellow surfaces. The BACK is plain convex basalt. The LEFT and RIGHT ends are flat cut faces so the segments join into a full ring. PROPORTIONS: the FRONT and BACK views are drawn about 0.82 times as wide as tall; the LEFT and RIGHT views about 0.23 times as wide as tall. Broad faceted blocks, no smoke, no flames outside the mouth. One solid connected piece."""
+
 # ───────────── Playable heroes · Tripo P2.0 native-rig builds ─────────────
 # Runtime GLBs for SK_Hero_* are produced by art/pipeline/build_tripo_heroes.py from these
 # rigged Tripo models (Mixamo skeleton kept). Do not republish them with `assetctl.py build`.

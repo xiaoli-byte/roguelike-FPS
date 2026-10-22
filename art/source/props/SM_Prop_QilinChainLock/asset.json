@@ -1,0 +1,283 @@
+{
+  "id": "SM_Prop_QilinChainLock",
+  "display": "火麒麟锁扣（3-4 外墙上的发光锁扣，可射击）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:19:43",
+          "files": {
+            "BO_SM_Prop_QilinChainLock_v001.json": {
+              "path": "00_blockout/BO_SM_Prop_QilinChainLock_v001.json",
+              "sha256": "4cdd2556954ad66d276e5a89db932a92da04377bdcc9e66a947aa2ee26d1b77c"
+            },
+            "BO_SM_Prop_QilinChainLock_v001_views.json": {
+              "path": "00_blockout/BO_SM_Prop_QilinChainLock_v001_views.json",
+              "sha256": "8888e86b1bf3bf47f5b7281e68418e7f620fbf622f863cc47cbcf2c0c93676f1"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "boss.qilin.chainLock"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -1.0,
+              0.0,
+              -0.6
+            ],
+            "max": [
+              1.0,
+              2.4,
+              0.6
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:20:23",
+          "files": {
+            "CN_SM_Prop_QilinChainLock_v001_source.png": {
+              "path": "01_concept/CN_SM_Prop_QilinChainLock_v001_source.png",
+              "sha256": "ec5e38e68a06bc9f9034e0d087131f89b9bcd81f30462110fe86c371cfd81686"
+            },
+            "CN_SM_Prop_QilinChainLock_v001_front.png": {
+              "path": "01_concept/CN_SM_Prop_QilinChainLock_v001_front.png",
+              "sha256": "eec91c83388fd0f989857078d33b99e3df05b4c948e33ad65c00b5610e033154"
+            },
+            "CN_SM_Prop_QilinChainLock_v001_left.png": {
+              "path": "01_concept/CN_SM_Prop_QilinChainLock_v001_left.png",
+              "sha256": "5a4a0fa4f2cf2dedb18012a0764065ac3861edc7c3a127f582d9d9d234606707"
+            },
+            "CN_SM_Prop_QilinChainLock_v001_back.png": {
+              "path": "01_concept/CN_SM_Prop_QilinChainLock_v001_back.png",
+              "sha256": "34b380aef3ceb42c59ff875605be8848a97185e85d91a821dc997ca12e450d02"
+            },
+            "CN_SM_Prop_QilinChainLock_v001_right.png": {
+              "path": "01_concept/CN_SM_Prop_QilinChainLock_v001_right.png",
+              "sha256": "f231efeb4ad2c64f784f4bc4edf075828816901f7078c700dd4a8de37d7701ba"
+            },
+            "CN_SM_Prop_QilinChainLock_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Prop_QilinChainLock_v001_sheet.png",
+              "sha256": "9963c7bfc859c60ab62ec802d6c5a8a9cfe54c926fe2aa8db604861aa725633c"
+            },
+            "CN_SM_Prop_QilinChainLock_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Prop_QilinChainLock_v001_prompt.txt",
+              "sha256": "ad08102a9e754fe1ad3051bb4ef4d824815fbc0c2df7284a363f389109b50694"
+            },
+            "CN_SM_Prop_QilinChainLock_v001_registration.json": {
+              "path": "01_concept/CN_SM_Prop_QilinChainLock_v001_registration.json",
+              "sha256": "c0d9db8769b6e8a51dc9edccae722382b4d193ea4686b72673e394f4a618c435"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a15b66-2539-7d53-96f4-a0c4c597f0bb",
+            "attempt": 1,
+            "seconds": 38.6
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian underground forge-palace fantasy of Zhurong, the Chinese god of fire: massive black iron (xuan tie) with heavy rivets, dark charcoal basalt blocks, deep vermilion lacquer, warm aged bronze ding cauldrons, chunky thick iron chains always attached flat to the surfaces, soot-darkened edges, and a few channels and cracks of molten lava. Lava, embers and fire are painted as opaque flat bright orange-yellow surfaces, never as smoke, loose sparks or transparent effects. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (2m wide x 2.4m tall x 1.2m deep): A giant chain lock clasp mounted on a basalt wall, 2m wide, 2.4m tall and 1.2m deep, the shootable weak point that holds one chain of a hanging cauldron: a heavy square black iron back plate with big rivets (its BACK is flat against the wall), on it a massive padlock-shaped iron clasp cast like a crouching qilin head biting a thick iron shackle loop that sticks out at the top front; in the middle of the clasp a round glowing core of molten vermilion-orange fire crystal painted as an opaque bright orange-yellow surface, framed by an aged bronze ring with flame patterns. PROPORTIONS: the FRONT view is drawn about 0.83 times as wide as tall; the LEFT and RIGHT views about 0.5 times as wide as tall, showing the clasp standing out from the flat back plate. Chunky readable forms, no chain, no smoke. One solid connected piece.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "ec5e38e68a06bc9f9034e0d087131f89b9bcd81f30462110fe86c371cfd81686",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.6276560967636482,
+              "offset": [
+                110,
+                237
+              ],
+              "size": [
+                291,
+                549
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.610201811536628,
+              "offset": [
+                178,
+                237
+              ],
+              "size": [
+                156,
+                549
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6874328678839957,
+              "offset": [
+                95,
+                237
+              ],
+              "size": [
+                322,
+                549
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.6108813235762011,
+              "offset": [
+                178,
+                237
+              ],
+              "size": [
+                155,
+                549
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-21 06:38:19",
+          "files": {
+            "CN_SM_Prop_QilinChainLock_v002_source.png": {
+              "path": "01_concept/CN_SM_Prop_QilinChainLock_v002_source.png",
+              "sha256": "df9c4632b6d6c165f66b318a45df4cbdf8091dbf27d6826da5fa33be649f6185"
+            },
+            "CN_SM_Prop_QilinChainLock_v002_front.png": {
+              "path": "01_concept/CN_SM_Prop_QilinChainLock_v002_front.png",
+              "sha256": "eec91c83388fd0f989857078d33b99e3df05b4c948e33ad65c00b5610e033154"
+            },
+            "CN_SM_Prop_QilinChainLock_v002_left.png": {
+              "path": "01_concept/CN_SM_Prop_QilinChainLock_v002_left.png",
+              "sha256": "5a4a0fa4f2cf2dedb18012a0764065ac3861edc7c3a127f582d9d9d234606707"
+            },
+            "CN_SM_Prop_QilinChainLock_v002_back.png": {
+              "path": "01_concept/CN_SM_Prop_QilinChainLock_v002_back.png",
+              "sha256": "34b380aef3ceb42c59ff875605be8848a97185e85d91a821dc997ca12e450d02"
+            },
+            "CN_SM_Prop_QilinChainLock_v002_right.png": {
+              "path": "01_concept/CN_SM_Prop_QilinChainLock_v002_right.png",
+              "sha256": "5dd921b7e64dcbc8220a87cc9d75a165838cf7b76d4fb47ad4eae8dff35fa4c0"
+            },
+            "CN_SM_Prop_QilinChainLock_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Prop_QilinChainLock_v002_sheet.png",
+              "sha256": "6973f3a6cf4507eb30b6335b8487023b6656f2601e2b0e44a9a66fed587e1d2e"
+            },
+            "CN_SM_Prop_QilinChainLock_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Prop_QilinChainLock_v002_prompt.txt",
+              "sha256": "ad08102a9e754fe1ad3051bb4ef4d824815fbc0c2df7284a363f389109b50694"
+            },
+            "CN_SM_Prop_QilinChainLock_v002_registration.json": {
+              "path": "01_concept/CN_SM_Prop_QilinChainLock_v002_registration.json",
+              "sha256": "c0d9db8769b6e8a51dc9edccae722382b4d193ea4686b72673e394f4a618c435"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a15b66-2539-7d53-96f4-a0c4c597f0bb",
+            "attempt": 1,
+            "seconds": 38.6,
+            "rekeyed_from": 1,
+            "fix": "right mirrored"
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian underground forge-palace fantasy of Zhurong, the Chinese god of fire: massive black iron (xuan tie) with heavy rivets, dark charcoal basalt blocks, deep vermilion lacquer, warm aged bronze ding cauldrons, chunky thick iron chains always attached flat to the surfaces, soot-darkened edges, and a few channels and cracks of molten lava. Lava, embers and fire are painted as opaque flat bright orange-yellow surfaces, never as smoke, loose sparks or transparent effects. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (2m wide x 2.4m tall x 1.2m deep): A giant chain lock clasp mounted on a basalt wall, 2m wide, 2.4m tall and 1.2m deep, the shootable weak point that holds one chain of a hanging cauldron: a heavy square black iron back plate with big rivets (its BACK is flat against the wall), on it a massive padlock-shaped iron clasp cast like a crouching qilin head biting a thick iron shackle loop that sticks out at the top front; in the middle of the clasp a round glowing core of molten vermilion-orange fire crystal painted as an opaque bright orange-yellow surface, framed by an aged bronze ring with flame patterns. PROPORTIONS: the FRONT view is drawn about 0.83 times as wide as tall; the LEFT and RIGHT views about 0.5 times as wide as tall, showing the clasp standing out from the flat back plate. Chunky readable forms, no chain, no smoke. One solid connected piece.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "df9c4632b6d6c165f66b318a45df4cbdf8091dbf27d6826da5fa33be649f6185",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.6276560967636482,
+              "offset": [
+                110,
+                237
+              ],
+              "size": [
+                291,
+                549
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.610201811536628,
+              "offset": [
+                178,
+                237
+              ],
+              "size": [
+                156,
+                549
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6874328678839957,
+              "offset": [
+                95,
+                237
+              ],
+              "size": [
+                322,
+                549
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.6108813235762011,
+              "offset": [
+                178,
+                237
+              ],
+              "size": [
+                155,
+                549
+              ],
+              "physical_height_m": 2.4,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-21 ART5/ART6：四视图一致、比例与登记相符（用户 2026-10-19 授权免审）",
+            "time": "2026-10-21 06:38:31"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,169 @@
+{
+  "id": "SM_Tripo_InfernoCausewayPier",
+  "display": "堤墩（3-1 税关墩 / 锚链墩的岛台）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:16:45",
+          "files": {
+            "BO_SM_Tripo_InfernoCausewayPier_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoCausewayPier_v001.json",
+              "sha256": "158a1273ef5fb5e716078432c66143c1dcd718f3697ccbbc16315cefb66bab00"
+            },
+            "BO_SM_Tripo_InfernoCausewayPier_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoCausewayPier_v001_views.json",
+              "sha256": "8ea0ecb4bca04f481e654039b980214385395741033e71cbe0c682eca8784ff3"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.causeway.pier"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -10.0,
+              0.0,
+              -10.0
+            ],
+            "max": [
+              10.0,
+              6.0,
+              10.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:17:30",
+          "files": {
+            "CN_SM_Tripo_InfernoCausewayPier_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCausewayPier_v001_source.png",
+              "sha256": "ee60d04739a31ed06b138a0e584dc0d460a7137fcaf255bd8019b3c005543a22"
+            },
+            "CN_SM_Tripo_InfernoCausewayPier_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCausewayPier_v001_front.png",
+              "sha256": "dcd413202534a920ad95606787183f78492d088a40e811de32f851e412aae527"
+            },
+            "CN_SM_Tripo_InfernoCausewayPier_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCausewayPier_v001_left.png",
+              "sha256": "7dac6a3bafe03bd4225cf02f46621d5f71c9ef1658ba18e8a2eb5f6064563ebd"
+            },
+            "CN_SM_Tripo_InfernoCausewayPier_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCausewayPier_v001_back.png",
+              "sha256": "77e4e00e424010cc8d48158733c9922daea35752834a91885496047137d0967b"
+            },
+            "CN_SM_Tripo_InfernoCausewayPier_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCausewayPier_v001_right.png",
+              "sha256": "50652ac165aeeee6dc95c2ef15056dfb2ab589e1626d3a92db565a91f936b015"
+            },
+            "CN_SM_Tripo_InfernoCausewayPier_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCausewayPier_v001_sheet.png",
+              "sha256": "eddc49739adda29dad9075dd1c5036d8f1d8bf72928a1a3980540e112238e768"
+            },
+            "CN_SM_Tripo_InfernoCausewayPier_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCausewayPier_v001_prompt.txt",
+              "sha256": "92180ac4e8a4ad41b9456116929de96a93d921a051ce1bf4dedacf84d2082984"
+            },
+            "CN_SM_Tripo_InfernoCausewayPier_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCausewayPier_v001_registration.json",
+              "sha256": "bcc66e4851cd63b3f0b839ce710f4cc3b65dacd9ce356ea28baa957375dd254d"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a15b63-6eee-7cc1-a1bc-8ae9832af00b",
+            "attempt": 1,
+            "seconds": 42.2
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian underground forge-palace fantasy of Zhurong, the Chinese god of fire: massive black iron (xuan tie) with heavy rivets, dark charcoal basalt blocks, deep vermilion lacquer, warm aged bronze ding cauldrons, chunky thick iron chains always attached flat to the surfaces, soot-darkened edges, and a few channels and cracks of molten lava. Lava, embers and fire are painted as opaque flat bright orange-yellow surfaces, never as smoke, loose sparks or transparent effects. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (20m wide x 6m tall x 20m deep): A big octagonal basalt island pier standing in a lava lake where causeways meet, 20m across and 6m tall: a FLAT walkable octagonal top paved with big dark charcoal basalt slabs in a radial pattern, a low kerb of square black iron-capped stones around the edge with four 12m-wide gaps on the front, back, left and right sides where causeways join, and four short squat black iron mooring bollards; the sides are steep walls of chunky hexagonal basalt columns with thick black iron bands, cracked at the foot and lit by a band of molten lava painted as opaque bright orange-yellow. PROPORTIONS: all four views are drawn about 3.3 times as wide as tall and look the same. Broad faceted planes, no buildings on top, no smoke. One solid connected piece.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "ee60d04739a31ed06b138a0e584dc0d460a7137fcaf255bd8019b3c005543a22",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.2981366459627329,
+              "offset": [
+                184,
+                443
+              ],
+              "size": [
+                143,
+                137
+              ],
+              "physical_height_m": 6.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.3116883116883117,
+              "offset": [
+                181,
+                443
+              ],
+              "size": [
+                149,
+                137
+              ],
+              "physical_height_m": 6.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.29748992872637126,
+              "offset": [
+                184,
+                443
+              ],
+              "size": [
+                143,
+                137
+              ],
+              "physical_height_m": 6.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.3116883116883117,
+              "offset": [
+                181,
+                443
+              ],
+              "size": [
+                149,
+                137
+              ],
+              "physical_height_m": 6.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-21 ART5/ART6：四视图一致、比例与登记相符（用户 2026-10-19 授权免审）",
+            "time": "2026-10-21 06:38:26"
+          }
+        }
+      ]
+    }
+  }
+}

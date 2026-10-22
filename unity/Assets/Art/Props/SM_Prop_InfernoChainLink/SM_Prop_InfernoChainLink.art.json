@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Prop_InfernoChainLink",
+  "kind": "static",
+  "class": "prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "inferno.chain.link"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    20
+  ],
+  "budget": {
+    "lodTris": [
+      2500,
+      900
+    ],
+    "texture": 512,
+    "maxFileKb": 600
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -0.32700735330581665,
+      0,
+      -0.09700734913349152
+    ],
+    "max": [
+      0.32700735330581665,
+      0.9907194375991821,
+      0.09700734913349152
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Prop_InfernoChainLink_LOD0",
+      "lod": 0,
+      "tris": 320,
+      "verts": 564,
+      "materials": [
+        "M_Prop_InfernoChainLink"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Prop_InfernoChainLink_LOD1",
+      "lod": 1,
+      "tris": 80,
+      "verts": 160,
+      "materials": [
+        "M_Prop_InfernoChainLink"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Prop_InfernoChainLink",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": false,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Prop_InfernoChainLink_BC.png",
+        "N": "Textures/T_Prop_InfernoChainLink_N.png",
+        "ORM": "Textures/T_Prop_InfernoChainLink_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Prop_InfernoChainLink.glb",
+    "sha256": "3b8cb399ded5763c6b5f3f348fab95782e8e721f97924ac56d168f9a99bfc784",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Blender 5.2 bpy",
+      "mode": "procedural",
+      "checkpoint": "chain_link@3"
+    },
+    "license": "project-original procedural model (art/pipeline/blender/bl_proc_chain.py)"
+  },
+  "exported": "2026-10-22 22:13:52"
+}

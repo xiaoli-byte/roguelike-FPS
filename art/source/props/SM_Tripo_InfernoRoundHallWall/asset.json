@@ -1,0 +1,169 @@
+{
+  "id": "SM_Tripo_InfernoRoundHallWall",
+  "display": "圆殿外壳墙段（3-4 炉心殿，直径 48 m 的八分之一，带高排烟口）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:20:24",
+          "files": {
+            "BO_SM_Tripo_InfernoRoundHallWall_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoRoundHallWall_v001.json",
+              "sha256": "3e19a88e37f7e173ad77d0f1ea2e014953fc60aca8a9971c8dffddc9e4a12719"
+            },
+            "BO_SM_Tripo_InfernoRoundHallWall_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoRoundHallWall_v001_views.json",
+              "sha256": "b7c604590420b496b33aa86ff50b8893dc2370fbd50beac9569deb0dfe52d538"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.zhurong.roundHallWall"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -9.0,
+              0.0,
+              -2.5
+            ],
+            "max": [
+              9.0,
+              22.0,
+              2.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:21:10",
+          "files": {
+            "CN_SM_Tripo_InfernoRoundHallWall_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallWall_v001_source.png",
+              "sha256": "0bf8761b5442ff7ad7c3fe2f16d6376606971f19e00f54bb7cb83cf701e8b2b2"
+            },
+            "CN_SM_Tripo_InfernoRoundHallWall_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallWall_v001_front.png",
+              "sha256": "5e4fb30a59360ae49e373357f2530986b6c63521cdb403ea5b1bb55432f342da"
+            },
+            "CN_SM_Tripo_InfernoRoundHallWall_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallWall_v001_left.png",
+              "sha256": "1aef5e1eb1c83aca020065757facece4e1afec11c5f6730bd6bf64b2c3c5ae38"
+            },
+            "CN_SM_Tripo_InfernoRoundHallWall_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallWall_v001_back.png",
+              "sha256": "e1e0f6dba9f578588d124dff83da3eb21123eb778739cbb29afe4ef30ac58978"
+            },
+            "CN_SM_Tripo_InfernoRoundHallWall_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallWall_v001_right.png",
+              "sha256": "35cd83f127a03b2fd9f192280b9ada4c043b7c1b1f5e2b850632b6016e64a36a"
+            },
+            "CN_SM_Tripo_InfernoRoundHallWall_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallWall_v001_sheet.png",
+              "sha256": "7c17c9db68942bb83926da47082cfc54c5b2e340db38ddece8ee7acb77c9edc0"
+            },
+            "CN_SM_Tripo_InfernoRoundHallWall_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallWall_v001_prompt.txt",
+              "sha256": "cb59d331990ad8720e8de3be9a0d6c0ee9ced0873677cb7c688b83d8093f32c8"
+            },
+            "CN_SM_Tripo_InfernoRoundHallWall_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallWall_v001_registration.json",
+              "sha256": "58f57ac2bcfc3e786762584663f973233b38bad039795753805e792b25aeb4fd"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a15b66-c63f-7bb3-9622-64cf24e0e14f",
+            "attempt": 1,
+            "seconds": 41.5
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian underground forge-palace fantasy of Zhurong, the Chinese god of fire: massive black iron (xuan tie) with heavy rivets, dark charcoal basalt blocks, deep vermilion lacquer, warm aged bronze ding cauldrons, chunky thick iron chains always attached flat to the surfaces, soot-darkened edges, and a few channels and cracks of molten lava. Lava, embers and fire are painted as opaque flat bright orange-yellow surfaces, never as smoke, loose sparks or transparent effects. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (18m wide x 22m tall x 5m deep): One curved segment, one eighth of the circular outer wall of a fire god's round forge hall, 18m wide, 22m tall and 5m deep, seen from INSIDE the hall: the FRONT face is gently concave, built of huge dark charcoal basalt blocks in horizontal courses, with a thick black iron pilaster with rivets at each end, a deep vermilion lacquered frieze band at 4m with a row of cast bronze fire-sun discs, a second iron band at 14m, and high up in the middle one square smoke vent opening 3m wide framed in black iron and glowing faintly orange inside (painted as an opaque bright orange-yellow surface). The BACK is plain convex basalt. The LEFT and RIGHT ends are flat cut faces so eight segments join into a full ring. PROPORTIONS: the FRONT and BACK views are drawn about 0.82 times as wide as tall; the LEFT and RIGHT views are a tall thick wall about 0.23 times as wide as tall. Broad faceted blocks, no smoke. One solid connected piece.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "0bf8761b5442ff7ad7c3fe2f16d6376606971f19e00f54bb7cb83cf701e8b2b2",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.681378242353852,
+              "offset": [
+                38,
+                232
+              ],
+              "size": [
+                436,
+                559
+              ],
+              "physical_height_m": 22.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6683375104427736,
+              "offset": [
+                209,
+                232
+              ],
+              "size": [
+                93,
+                559
+              ],
+              "physical_height_m": 22.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.657329598506069,
+              "offset": [
+                44,
+                232
+              ],
+              "size": [
+                424,
+                559
+              ],
+              "physical_height_m": 22.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.6683375104427736,
+              "offset": [
+                210,
+                232
+              ],
+              "size": [
+                92,
+                559
+              ],
+              "physical_height_m": 22.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-21 ART5/ART6：四视图一致、比例与登记相符（用户 2026-10-19 授权免审）",
+            "time": "2026-10-21 06:38:32"
+          }
+        }
+      ]
+    }
+  }
+}

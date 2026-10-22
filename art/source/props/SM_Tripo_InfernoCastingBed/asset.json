@@ -1,0 +1,169 @@
+{
+  "id": "SM_Tripo_InfernoCastingBed",
+  "display": "铸床（3-3 浇铸台，矮掩体）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:18:17",
+          "files": {
+            "BO_SM_Tripo_InfernoCastingBed_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoCastingBed_v001.json",
+              "sha256": "f2e982ac73543a92a2305da4a365a49c1966e4998e610fe3481e7fba9533c8c7"
+            },
+            "BO_SM_Tripo_InfernoCastingBed_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoCastingBed_v001_views.json",
+              "sha256": "f2e811c7992d6ec23d50f1935addc17f0e2cf28cb402da95c19ed7121f59e941"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.foundry.castingBed"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -4.0,
+              0.0,
+              -2.5
+            ],
+            "max": [
+              4.0,
+              1.4,
+              2.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:18:57",
+          "files": {
+            "CN_SM_Tripo_InfernoCastingBed_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCastingBed_v001_source.png",
+              "sha256": "9686ca41d6a3d57f2358003882d42568bb47bc0faf9d38933d962bd518f57a2d"
+            },
+            "CN_SM_Tripo_InfernoCastingBed_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCastingBed_v001_front.png",
+              "sha256": "b211e1b5a32e04ca21511405f470d1138ed977e1929ded8ebf6f35b866682b8d"
+            },
+            "CN_SM_Tripo_InfernoCastingBed_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCastingBed_v001_left.png",
+              "sha256": "401ad8cc15cca3c14f3b2abf322b9f71a8efdcda566f3a57722f7be75a63a012"
+            },
+            "CN_SM_Tripo_InfernoCastingBed_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCastingBed_v001_back.png",
+              "sha256": "268b24d0a7c7cba748b6b6604d1bd0ddb6e8871afb7576e840dcdd12755f7159"
+            },
+            "CN_SM_Tripo_InfernoCastingBed_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCastingBed_v001_right.png",
+              "sha256": "5c4208709b847e9d01835b5c37f93e6504ab163245312ee46fd35fb37ae56dc3"
+            },
+            "CN_SM_Tripo_InfernoCastingBed_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCastingBed_v001_sheet.png",
+              "sha256": "2e51a005221add6a88eacfe1d2005392537257805e6382156c90947837f4e0a5"
+            },
+            "CN_SM_Tripo_InfernoCastingBed_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCastingBed_v001_prompt.txt",
+              "sha256": "d1c65aa5fe0371dc12d4d191e897438eb27ec74063f94386e3e0623e6b07865a"
+            },
+            "CN_SM_Tripo_InfernoCastingBed_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoCastingBed_v001_registration.json",
+              "sha256": "f197c87c65d2eeb83fbd0d86f759d72e862129a248f60947ce20495160dd670e"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a15b64-d70d-7c40-8c27-ca81ca9e9ad1",
+            "attempt": 1,
+            "seconds": 36.1
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian underground forge-palace fantasy of Zhurong, the Chinese god of fire: massive black iron (xuan tie) with heavy rivets, dark charcoal basalt blocks, deep vermilion lacquer, warm aged bronze ding cauldrons, chunky thick iron chains always attached flat to the surfaces, soot-darkened edges, and a few channels and cracks of molten lava. Lava, embers and fire are painted as opaque flat bright orange-yellow surfaces, never as smoke, loose sparks or transparent effects. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (8m wide x 1.4m tall x 5m deep): A low casting bed in a giant foundry, 8m long, 1.4m tall and 5m deep: a rectangular table of dark charcoal basalt blocks framed by thick black iron edge beams with big rivets; its flat top is sunk with three open mould cavities in the shapes of a long sword, a spear head and a small ding cauldron, all three filled with molten bronze painted as opaque bright orange-yellow, linked by a narrow feeder groove that runs to a pouring basin at the LEFT end; the cooled rims are crusted with dark bronze and soot. PROPORTIONS: the FRONT and BACK views are drawn about 5.7 times as wide as tall, a long low block; the LEFT and RIGHT views about 3.6 times as wide as tall. Chunky readable forms, no smoke, no flames. One solid connected piece on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "9686ca41d6a3d57f2358003882d42568bb47bc0faf9d38933d962bd518f57a2d",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.32258064516129026,
+              "offset": [
+                151,
+                472
+              ],
+              "size": [
+                209,
+                80
+              ],
+              "physical_height_m": 1.4,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.3100775193798449,
+              "offset": [
+                216,
+                472
+              ],
+              "size": [
+                79,
+                80
+              ],
+              "physical_height_m": 1.4,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.34632034632034625,
+              "offset": [
+                142,
+                472
+              ],
+              "size": [
+                228,
+                80
+              ],
+              "physical_height_m": 1.4,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.30769230769230765,
+              "offset": [
+                217,
+                472
+              ],
+              "size": [
+                78,
+                80
+              ],
+              "physical_height_m": 1.4,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-21 ART5/ART6：四视图一致、比例与登记相符（用户 2026-10-19 授权免审）",
+            "time": "2026-10-21 06:38:30"
+          }
+        }
+      ]
+    }
+  }
+}

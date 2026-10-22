@@ -1,0 +1,283 @@
+{
+  "id": "SM_Tripo_InfernoRoundHallFurnace",
+  "display": "圆殿炉口墙段（3-4 炉心殿，带炉口，炭童从这里钻出）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:21:59",
+          "files": {
+            "BO_SM_Tripo_InfernoRoundHallFurnace_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoRoundHallFurnace_v001.json",
+              "sha256": "285867cb4c8549056c50f4326ea6e4433af59da5bb0eb868cda34b550c542fa1"
+            },
+            "BO_SM_Tripo_InfernoRoundHallFurnace_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoRoundHallFurnace_v001_views.json",
+              "sha256": "b7c604590420b496b33aa86ff50b8893dc2370fbd50beac9569deb0dfe52d538"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.zhurong.roundHallFurnace"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -9.0,
+              0.0,
+              -2.5
+            ],
+            "max": [
+              9.0,
+              22.0,
+              2.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:22:44",
+          "files": {
+            "CN_SM_Tripo_InfernoRoundHallFurnace_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallFurnace_v001_source.png",
+              "sha256": "9c120b87fea9fb1e0445fb9e166a9246a530600fed428d9633d18a2c00e64c6d"
+            },
+            "CN_SM_Tripo_InfernoRoundHallFurnace_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallFurnace_v001_front.png",
+              "sha256": "e501fb45afa6c180b084c7629809a64ae06ddc8c5c014fd37580732b3ce4fc05"
+            },
+            "CN_SM_Tripo_InfernoRoundHallFurnace_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallFurnace_v001_left.png",
+              "sha256": "4f9621b9d21d8cb9053b837f982c46699de4105e005e2644372ca12de3f86c6a"
+            },
+            "CN_SM_Tripo_InfernoRoundHallFurnace_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallFurnace_v001_back.png",
+              "sha256": "de816f6caecf3efdc07ec457af5b1d7c961aa3fabdb4159ca10cfba312fefc97"
+            },
+            "CN_SM_Tripo_InfernoRoundHallFurnace_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallFurnace_v001_right.png",
+              "sha256": "5eca25074289c06666e7b61dfb6308fe6b27d445b081b7cc5cd2386982208dd8"
+            },
+            "CN_SM_Tripo_InfernoRoundHallFurnace_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallFurnace_v001_sheet.png",
+              "sha256": "2474bc9aba144d8711eea174086847299b47f91a7391e4a485e307ddcebe0aa9"
+            },
+            "CN_SM_Tripo_InfernoRoundHallFurnace_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallFurnace_v001_prompt.txt",
+              "sha256": "d68abe162387ada11fd5b20ecd33297d59fcc551e0fb422a1b29996de9b8ae11"
+            },
+            "CN_SM_Tripo_InfernoRoundHallFurnace_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallFurnace_v001_registration.json",
+              "sha256": "0f08110e86f14fad61e92089373ba3972abf60214b53c9b9c342d300009bb46d"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a15b68-39de-71e3-9b54-cab7e3a58fc3",
+            "attempt": 1,
+            "seconds": 42.9
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian underground forge-palace fantasy of Zhurong, the Chinese god of fire: massive black iron (xuan tie) with heavy rivets, dark charcoal basalt blocks, deep vermilion lacquer, warm aged bronze ding cauldrons, chunky thick iron chains always attached flat to the surfaces, soot-darkened edges, and a few channels and cracks of molten lava. Lava, embers and fire are painted as opaque flat bright orange-yellow surfaces, never as smoke, loose sparks or transparent effects. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (18m wide x 22m tall x 5m deep): One curved segment, one eighth of the circular outer wall of a fire god's round forge hall, 18m wide, 22m tall and 5m deep, seen from INSIDE the hall, the companion of the plain wall segment with the same courses and bands: the FRONT face is gently concave, built of huge dark charcoal basalt blocks in horizontal courses, with a thick black iron pilaster with rivets at each end, a deep vermilion lacquered frieze band at 4m and a second iron band at 14m; at floor level in the middle a big round-arched furnace mouth 4m wide and 4m tall framed by a cast bronze beast face whose open jaws form the arch, the inside of the mouth filled with glowing coals and molten fire painted as opaque bright orange-yellow surfaces. The BACK is plain convex basalt. The LEFT and RIGHT ends are flat cut faces so the segments join into a full ring. PROPORTIONS: the FRONT and BACK views are drawn about 0.82 times as wide as tall; the LEFT and RIGHT views about 0.23 times as wide as tall. Broad faceted blocks, no smoke, no flames outside the mouth. One solid connected piece.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "9c120b87fea9fb1e0445fb9e166a9246a530600fed428d9633d18a2c00e64c6d",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.6378198159020076,
+              "offset": [
+                46,
+                232
+              ],
+              "size": [
+                419,
+                559
+              ],
+              "physical_height_m": 22.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6256776693506816,
+              "offset": [
+                203,
+                232
+              ],
+              "size": [
+                105,
+                559
+              ],
+              "physical_height_m": 22.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6327634866706214,
+              "offset": [
+                48,
+                232
+              ],
+              "size": [
+                416,
+                559
+              ],
+              "physical_height_m": 22.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.6228875794093185,
+              "offset": [
+                206,
+                232
+              ],
+              "size": [
+                100,
+                559
+              ],
+              "physical_height_m": 22.0,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-21 06:38:25",
+          "files": {
+            "CN_SM_Tripo_InfernoRoundHallFurnace_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallFurnace_v002_source.png",
+              "sha256": "5d672deb7e606a9e66ed06e46eae14b6d12534110381a62556cec8467b280bcb"
+            },
+            "CN_SM_Tripo_InfernoRoundHallFurnace_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallFurnace_v002_front.png",
+              "sha256": "e501fb45afa6c180b084c7629809a64ae06ddc8c5c014fd37580732b3ce4fc05"
+            },
+            "CN_SM_Tripo_InfernoRoundHallFurnace_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallFurnace_v002_left.png",
+              "sha256": "5eca25074289c06666e7b61dfb6308fe6b27d445b081b7cc5cd2386982208dd8"
+            },
+            "CN_SM_Tripo_InfernoRoundHallFurnace_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallFurnace_v002_back.png",
+              "sha256": "de816f6caecf3efdc07ec457af5b1d7c961aa3fabdb4159ca10cfba312fefc97"
+            },
+            "CN_SM_Tripo_InfernoRoundHallFurnace_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallFurnace_v002_right.png",
+              "sha256": "4f9621b9d21d8cb9053b837f982c46699de4105e005e2644372ca12de3f86c6a"
+            },
+            "CN_SM_Tripo_InfernoRoundHallFurnace_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallFurnace_v002_sheet.png",
+              "sha256": "939e03db44fd6c9fab10e856f5d709721bf05b6dd856255c83a3db3bd71bb4f0"
+            },
+            "CN_SM_Tripo_InfernoRoundHallFurnace_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallFurnace_v002_prompt.txt",
+              "sha256": "d68abe162387ada11fd5b20ecd33297d59fcc551e0fb422a1b29996de9b8ae11"
+            },
+            "CN_SM_Tripo_InfernoRoundHallFurnace_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoRoundHallFurnace_v002_registration.json",
+              "sha256": "e3354ccee3dfee90b55a9c4d7e4026c5575fdda52bf9a29762cb2b14ddf0f4a9"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a15b68-39de-71e3-9b54-cab7e3a58fc3",
+            "attempt": 1,
+            "seconds": 42.9,
+            "rekeyed_from": 1,
+            "fix": "left/right figures swapped"
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian underground forge-palace fantasy of Zhurong, the Chinese god of fire: massive black iron (xuan tie) with heavy rivets, dark charcoal basalt blocks, deep vermilion lacquer, warm aged bronze ding cauldrons, chunky thick iron chains always attached flat to the surfaces, soot-darkened edges, and a few channels and cracks of molten lava. Lava, embers and fire are painted as opaque flat bright orange-yellow surfaces, never as smoke, loose sparks or transparent effects. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (18m wide x 22m tall x 5m deep): One curved segment, one eighth of the circular outer wall of a fire god's round forge hall, 18m wide, 22m tall and 5m deep, seen from INSIDE the hall, the companion of the plain wall segment with the same courses and bands: the FRONT face is gently concave, built of huge dark charcoal basalt blocks in horizontal courses, with a thick black iron pilaster with rivets at each end, a deep vermilion lacquered frieze band at 4m and a second iron band at 14m; at floor level in the middle a big round-arched furnace mouth 4m wide and 4m tall framed by a cast bronze beast face whose open jaws form the arch, the inside of the mouth filled with glowing coals and molten fire painted as opaque bright orange-yellow surfaces. The BACK is plain convex basalt. The LEFT and RIGHT ends are flat cut faces so the segments join into a full ring. PROPORTIONS: the FRONT and BACK views are drawn about 0.82 times as wide as tall; the LEFT and RIGHT views about 0.23 times as wide as tall. Broad faceted blocks, no smoke, no flames outside the mouth. One solid connected piece.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "5d672deb7e606a9e66ed06e46eae14b6d12534110381a62556cec8467b280bcb",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.6378198159020076,
+              "offset": [
+                46,
+                232
+              ],
+              "size": [
+                419,
+                559
+              ],
+              "physical_height_m": 22.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6228875794093185,
+              "offset": [
+                206,
+                232
+              ],
+              "size": [
+                100,
+                559
+              ],
+              "physical_height_m": 22.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6327634866706214,
+              "offset": [
+                48,
+                232
+              ],
+              "size": [
+                416,
+                559
+              ],
+              "physical_height_m": 22.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.6256776693506816,
+              "offset": [
+                203,
+                232
+              ],
+              "size": [
+                105,
+                559
+              ],
+              "physical_height_m": 22.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-21 ART5/ART6：四视图一致、比例与登记相符（用户 2026-10-19 授权免审）",
+            "time": "2026-10-21 06:38:33"
+          }
+        }
+      ]
+    }
+  }
+}

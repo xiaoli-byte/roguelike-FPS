@@ -1,0 +1,169 @@
+{
+  "id": "SM_Tripo_InfernoMoltenGate",
+  "display": "熔铁闸门（3-4 炉心殿入口，落下封门）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:21:14",
+          "files": {
+            "BO_SM_Tripo_InfernoMoltenGate_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoMoltenGate_v001.json",
+              "sha256": "8e9f6e500dc00b678da6a5eb78c05ffac943c1ed83687e19053ecf8b54165d0f"
+            },
+            "BO_SM_Tripo_InfernoMoltenGate_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_InfernoMoltenGate_v001_views.json",
+              "sha256": "f749a94bd8ba4c1a12f33f17ef450064186fc28a98f6a54f13dab95829bb1306"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "inferno.zhurong.moltenGate"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -5.0,
+              0.0,
+              -0.7
+            ],
+            "max": [
+              5.0,
+              9.0,
+              0.7
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:21:58",
+          "files": {
+            "CN_SM_Tripo_InfernoMoltenGate_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoMoltenGate_v001_source.png",
+              "sha256": "61c8774fab0bd9e90b4ff1dfebe9da0fade42e4d54970d563d4f6c0cf3eb7de6"
+            },
+            "CN_SM_Tripo_InfernoMoltenGate_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoMoltenGate_v001_front.png",
+              "sha256": "42a903c07f6a99cf257f31446910016c8df8f53ec836c212eafe73a8ffcc1ea1"
+            },
+            "CN_SM_Tripo_InfernoMoltenGate_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoMoltenGate_v001_left.png",
+              "sha256": "f4555cf4d348e27191e15c8eb8fdc560c68beaa8dcadd3353d57da445abded8d"
+            },
+            "CN_SM_Tripo_InfernoMoltenGate_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoMoltenGate_v001_back.png",
+              "sha256": "bdee49a3be3ba8a12f113083124f7c1050cdf1b225800f6e63d442a299eb3585"
+            },
+            "CN_SM_Tripo_InfernoMoltenGate_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoMoltenGate_v001_right.png",
+              "sha256": "e9a89ba39d5d30365dcad8571eb678b4b27146e1db7f7473a14f656551515f26"
+            },
+            "CN_SM_Tripo_InfernoMoltenGate_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_InfernoMoltenGate_v001_sheet.png",
+              "sha256": "ce41b8ac6ab0a3b91c635949a0ec5ca13d0317af4f24f3e51b30c3d385befdb0"
+            },
+            "CN_SM_Tripo_InfernoMoltenGate_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_InfernoMoltenGate_v001_prompt.txt",
+              "sha256": "61496533c35d97affb064da20364660620cfefc9b16e9b6252d9012ce7071055"
+            },
+            "CN_SM_Tripo_InfernoMoltenGate_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_InfernoMoltenGate_v001_registration.json",
+              "sha256": "6b42d16e89490b0da058e1fd3989310833cfa0ce65d56bed2b4d094ea2681937"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a15b67-9071-7313-a443-ca66e58a4702",
+            "attempt": 1,
+            "seconds": 42.1
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian underground forge-palace fantasy of Zhurong, the Chinese god of fire: massive black iron (xuan tie) with heavy rivets, dark charcoal basalt blocks, deep vermilion lacquer, warm aged bronze ding cauldrons, chunky thick iron chains always attached flat to the surfaces, soot-darkened edges, and a few channels and cracks of molten lava. Lava, embers and fire are painted as opaque flat bright orange-yellow surfaces, never as smoke, loose sparks or transparent effects. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (10m wide x 9m tall x 1.4m deep): A massive drop gate that seals the entrance of a fire god's forge hall, 10m wide, 9m tall and 1.4m thick: one solid slab of black iron (no openings, nothing see-through) built as a grid of thick vertical bars and three heavy horizontal crossbars fused together with riveted plates filling every gap, a row of sharp iron spikes along the bottom edge, a big cast vermilion fire-sun disc in the centre, and the seams between the bars glowing with half-cooled molten iron painted as opaque bright orange-yellow lines; soot-darkened edges. The FRONT and BACK faces are the same. PROPORTIONS: the FRONT and BACK views are drawn about 1.1 times as wide as tall; the LEFT and RIGHT views are a thin slab about 0.16 times as wide as tall. Chunky readable forms, no smoke. One solid connected piece.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "61c8774fab0bd9e90b4ff1dfebe9da0fade42e4d54970d563d4f6c0cf3eb7de6",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.45867176301958906,
+              "offset": [
+                99,
+                306
+              ],
+              "size": [
+                313,
+                411
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.4531151667715544,
+              "offset": [
+                236,
+                306
+              ],
+              "size": [
+                39,
+                411
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.45867176301958906,
+              "offset": [
+                98,
+                306
+              ],
+              "size": [
+                316,
+                411
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.4531151667715544,
+              "offset": [
+                236,
+                306
+              ],
+              "size": [
+                40,
+                411
+              ],
+              "physical_height_m": 9.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-21 ART5/ART6：四视图一致、比例与登记相符（用户 2026-10-19 授权免审）",
+            "time": "2026-10-21 06:38:32"
+          }
+        }
+      ]
+    }
+  }
+}
