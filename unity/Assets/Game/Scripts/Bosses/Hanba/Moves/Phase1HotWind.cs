@@ -6,7 +6,7 @@ namespace Spiritfire.Game
     /// 旱魃 · 旱风（一阶段「烈日」，unity-maps-v1 第 3 节：扇形热浪推开玩家并扬沙）。
     ///   前摇（1.1 s ÷ 阶段节奏）：双臂后收蓄力（ART2 droughtGale，hit 事件落在前摇结束），前半段还跟着玩家转；地面亮一片 22 m、半角 38° 的沙色扇区。
     ///   出手：向前推掌，掀起一道扇形热浪（<see cref="BossHazards.Wave"/>：26 m/s 扩到 22 m，环带 3 m 厚、4.5 m 高——跳不过去，只能躲到掩体后或出扇区），
-    ///     打中：灼伤 + 水平 15 m/s 推开 + 扬沙（沙色闪屏）+ 热浪烤身（额外叠 2 层日晒）。二阶段起（节奏 &gt; 1，BS2 之前的占位）0.35 s 后补一道余波（半伤、推力减半）。
+    ///     打中：灼伤 + 水平 15 m/s 推开 + 扬沙（沙色闪屏）+ 热浪烤身（额外叠 2 层日晒）。二阶段起（节奏 &gt; 1）0.35 s 后补一道余波（半伤、推力减半）。
     ///   收招 0.9 s：泉珠露出。
     /// 被推进光柱里正好被晒：配合日晒机制逼走位。
     /// </summary>
@@ -43,6 +43,9 @@ namespace Spiritfire.Game
         }
 
         public override float Weight(BossBrain b) => b.DistanceToPlayer < Range - 2f ? weight : weight * 0.25f;
+
+        /// <summary>出手 = 热浪扩到 22 m（二阶段起多一道余波）</summary>
+        public override HanbaMovePlan Plan(float pace) => new(Mathf.Max(0.25f, windup / Mathf.Max(0.5f, pace)), Range / Speed + (pace > 1.01f ? 0.45f : 0.25f), recover);
 
         protected override void Prepare()
         {

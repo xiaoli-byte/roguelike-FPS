@@ -2,6 +2,23 @@ using UnityEngine;
 
 namespace Spiritfire.Game
 {
+    /// <summary>一招的时间轴（秒）：前摇 / 出手 / 收招。击杀用时模拟和测试报告用</summary>
+    public readonly struct HanbaMovePlan
+    {
+        public readonly float windup, active, recover;
+
+        public HanbaMovePlan(float windup, float active, float recover)
+        {
+            this.windup = windup;
+            this.active = active;
+            this.recover = recover;
+        }
+
+        public float Total => windup + active + recover;
+
+        public override string ToString() => $"{windup:F2} + {active:F2} + {recover:F2} s";
+    }
+
     /// <summary>
     /// 旱魃招式的基类：危险物集合（<see cref="BossHazards"/>）、日轮、日晒、阶段节奏、动作触发和几样朝向 / 地面工具（同 B1 参考招式的写法）。
     /// 动作：<see cref="Act"/> 触发 ART2 的 act_&lt;状态&gt;，按「出手事件在片段里的位置」把整段拉伸到实际前摇——出手事件正好落在前摇结束，
@@ -23,7 +40,7 @@ namespace Spiritfire.Game
         public int ExtraWarnings { get; private set; }
         /// <summary>预警合计</summary>
         public int Warned => TelegraphCount + ExtraWarnings;
-        /// <summary>本次出招的阶段节奏（出招第一帧取，二、三阶段 &gt; 1：BS2 之前的占位「一阶段的招式更快」）</summary>
+        /// <summary>本次出招的阶段节奏（出招第一帧取；二、三阶段 &gt; 1：前摇更短、扫得更快，见 <see cref="HanbaDef.pace"/>）</summary>
         protected float PaceNow { get; private set; } = 1f;
 
         /// <summary>记一个经 BossHazards 画的预警（同时让首领派发 MoveTelegraphed）</summary>
@@ -55,6 +72,15 @@ namespace Spiritfire.Game
 
         /// <summary>前摇时长 = 定义前摇 ÷ 阶段节奏 × 狂怒前摇倍率（同时记进 <see cref="WindNow"/>）</summary>
         protected float Windup(float baseSeconds) => WindNow = Mathf.Max(0.25f, baseSeconds / Mathf.Max(0.5f, PaceNow) * Brain.WindupScale);
+
+        /// <summary>不随节奏 / 狂怒变的前摇（日蚀：片段原速播，3 s 窗口要对得上 eclipseStart / eclipseEnd），同样记进 <see cref="WindNow"/></summary>
+        protected float FixedWindup(float seconds) => WindNow = Mathf.Max(0.05f, seconds);
+
+        /// <summary>
+        /// 某个阶段节奏下这一招的时间轴（前摇 / 出手 / 收招，秒；不含招式之间的喘息）：击杀用时模拟（<see cref="HanbaBalance"/>）按它排招。
+        /// 缺省 = 定义前摇 ÷ 节奏、定义出手、定义收招；出手时长由运动决定的招式（扫射、热浪、裂缝蔓延）自己覆盖
+        /// </summary>
+        public virtual HanbaMovePlan Plan(float pace) => new(Mathf.Max(0.25f, windup / Mathf.Max(0.5f, pace)), active, recover);
 
         protected float Floor => Brain.Arena ? Brain.Arena.FloorY : GroundY(Brain.transform.position);
         protected float Facing => Brain.transform.eulerAngles.y;

@@ -49,6 +49,9 @@ namespace Spiritfire.Game
 
         public override float Weight(BossBrain b) => b.DistanceToPlayer > 6f ? weight : weight * 0.4f;
 
+        /// <summary>出手 = 扫满 110° 的时长（角速度 × 节奏）</summary>
+        public override HanbaMovePlan Plan(float pace) => new(Mathf.Max(0.25f, windup / Mathf.Max(0.5f, pace)), Arc / (Speed * Mathf.Max(0.5f, pace)), recover);
+
         protected override void Prepare()
         {
             Range = Mathf.Clamp(Brain.DistanceToPlayer, MinRange, MaxRange);

@@ -6,7 +6,7 @@ namespace Spiritfire.Game
     /// <summary>
     /// 旱魃 · 召沙魇（一阶段「烈日」，unity-maps-v1 第 3 节：召唤 3–4 个沙魇——第一章杂兵的沙化版）。
     ///   前摇（1.6 s ÷ 阶段节奏）：双臂高举 → 掌心下压（ART2 summonWraiths，summon 事件落在前摇结束）；脚下亮一圈沙色预警。
-    ///   出手：按 <see cref="HanbaDef.wraithRoster"/> 顺序取前 3 只（二阶段起 4 只，BS2 之前的占位）：跳鼠刀兵 ×2 + 蝎尾弩卫（+ 跳鼠刀兵），
+    ///   出手：按 <see cref="HanbaDef.wraithRoster"/> 顺序取前 3 只（二阶段起 4 只）：跳鼠刀兵 ×2 + 蝎尾弩卫（+ 跳鼠刀兵），
     ///     先在场地召唤点亮落点预警，0.9 s 后破沙而出（<see cref="Summons"/>：受首领召唤上限约束，首领倒下时全部崩解）。
     ///   召唤物由 <see cref="HanbaBrain"/> 染成沙魇（<see cref="SandWraith"/>）。
     /// 场上沙魇（在场 + 预警中）加上这次要召的会超过上限时权重为 0。

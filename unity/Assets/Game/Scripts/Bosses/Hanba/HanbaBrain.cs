@@ -5,16 +5,19 @@ using UnityEngine;
 namespace Spiritfire.Game
 {
     /// <summary>
-    /// 旱魃的行为（<see cref="HanbaDef"/>；首领框架 <see cref="BossBrain"/> 的子类，招式在 Hanba/Moves/）。在框架之上加四层：
+    /// 旱魃的行为（<see cref="HanbaDef"/>；首领框架 <see cref="BossBrain"/> 的子类，招式在 Hanba/Moves/）。在框架之上加这几层：
     ///   · 运行时姿态层：整体悬浮 <see cref="HanbaDef.hover"/> + 上下起伏（模型根节点抬高，角色胶囊跟着抬），关掉脚步 IK（悬浮着不踩地）；
     ///     日轮（<see cref="SunRing"/>）旋转、炽度；残衣 / 长发 / 袖垂片是 CreatureRig 的弹簧骨（ART2 的人形片段丢了这些骨的曲线，全靠这层）。
     ///   · 日晒（<see cref="SunExposure"/>）：登场后每 0.1 s 判定一次玩家，光柱 + 日轮直射，参数取自定义。
-    ///   · 泉珠弱点：只在招式后摇（收招段 + <see cref="HanbaDef.weakGrace"/>）和硬直时露出——开弱点球、点亮泉珠发光壳（SK_Boss_Hanba_GlowShell）；
-    ///     其余时间弱点球关着，只能打身体。
+    ///   · 泉珠弱点：只在招式后摇（收招段 + <see cref="HanbaDef.weakGrace"/>）、硬直和日蚀窗口（<see cref="OpenEclipse"/>）露出——开弱点球、点亮泉珠发光壳
+    ///     （SK_Boss_Hanba_GlowShell）；其余时间弱点球关着，只能打身体。日蚀窗口里打在泉珠上的伤害再 × <see cref="HanbaDef.eclipseWeakMult"/>。
     ///   · 沙魇：召唤物出现后染成沙魇（<see cref="SandWraith"/>），倒下时散成沙。
+    ///   · 太阳：露天场地（1-4 鸣沙山月牙泉）的主光仰角高过 <see cref="HanbaDef.lowSunMax"/> 时，登场演出里压成午后的低太阳（长影子 = 荫蔽，<see cref="HanbaSunDriver"/>）。
+    ///   · 阶段的场地变化（<see cref="OnPhase"/>）：进二阶段吸干泉水、泉床龟裂、之后喷气（<see cref="Phase2Scorch"/>）；进三阶段日轮升到头顶、太阳推到约 85°（<see cref="Phase3SunRise"/>）。
+    ///   · 飞天之殇：<see cref="SummonApsara"/> 召出的邪飞天不走召唤上限，由琵琶护体（<see cref="ApsaraWard"/>）盯着；她倒下时一起崩解。
+    ///   · 演出（<see cref="HanbaCinematics"/>）：登场长啸（intro 片段 58%，或 roar 事件）、转阶段名卡 / 慢动作、倒下后的落地 / 日轮坠落 / 泉眼复涌 / 太阳回到午后。
     /// 动作：<see cref="Act"/> 优先走 ART2 的 act_&lt;状态&gt; 触发器（先按片段时长设 ActScale，让出手事件落在实际前摇结束），
     /// 模型没有这个触发器（代理 / 占位）时退回框架的 <see cref="BossBrain.PlayAct"/>（按状态名，缺了只警告一次）。出手时刻由招式的 Cue 跟动画事件走。
-    /// 二、三阶段（BS2）的钩子：<see cref="OnPhase"/> 现在只让日轮闪一下、招式按 <see cref="Pace"/> 变快（占位）；吸干泉水、日轮升顶、日蚀接在这里。
     /// </summary>
     public class HanbaBrain : BossBrain
     {
@@ -37,8 +40,36 @@ namespace Spiritfire.Game
         public string LastActPath { get; private set; }
         public int ActsFired { get; private set; }
 
-        /// <summary>出招节奏（一阶段 = 1；二、三阶段更快，BS2 之前的占位）</summary>
+        /// <summary>出招节奏（一阶段 = 1；二、三阶段更快，见 <see cref="HanbaDef.pace"/>）</summary>
         public float Pace => HDef != null ? HDef.PaceAt(Phase) : 1f;
+
+        /// <summary>二阶段的场地变化（吸干、龟裂、喷气）、三阶段的日轮升顶、琵琶护体、演出层</summary>
+        public Phase2Scorch Scorch { get; private set; }
+        public Phase3SunRise SunRise { get; private set; }
+        public ApsaraWard Ward { get; private set; }
+        public HanbaCinematics Cinematics { get; private set; }
+        /// <summary>这片场地的泉水（进二阶段时找到；没有泉水的场地为 null）</summary>
+        public HanbaSpring Spring => Scorch?.Spring;
+        /// <summary>琵琶护体着</summary>
+        public bool WardUp => Ward && Ward.Up;
+        /// <summary>召出来、还活着的邪飞天（没有为 null）</summary>
+        public ApsaraAI Apsara => apsara && !apsara.Dead ? apsara : null;
+        /// <summary>累计召出几只邪飞天</summary>
+        public int ApsarasSummoned { get; private set; }
+
+        /// <summary>日蚀窗口开着（泉珠露出、伤害 × 倍率）</summary>
+        public bool EclipseOpen { get; private set; }
+        /// <summary>当前 / 最近一次日蚀窗口的泉珠倍率</summary>
+        public float EclipseMult { get; private set; } = 1f;
+        /// <summary>累计：日蚀窗口次数、窗口里打中泉珠的次数</summary>
+        public int EclipseWindows { get; private set; }
+        public int EclipseWeakHits { get; private set; }
+        /// <summary>登场长啸放过了（震屏 + 慢动作）</summary>
+        public bool IntroRoared { get; private set; }
+        /// <summary>喷气裂缝画过的预警个数（经 <see cref="NotifyVent"/> 记，测试用）</summary>
+        public int VentWarnings { get; private set; }
+        /// <summary>登场时把露天场地的太阳压成了午后低太阳（关卡本来就低时为 false）</summary>
+        public bool LoweredSun { get; private set; }
 
         readonly List<EnemyAI> wraiths = new();
         readonly List<Renderer> pearlShells = new();
@@ -46,6 +77,8 @@ namespace Spiritfire.Game
         float weakGrace, bobT;
         Vector3 capsuleBase;
         bool rigged;
+        ApsaraAI apsara;
+        IDisposable eclipseMod;
 
         // ───────────── 生成 ─────────────
 
@@ -56,7 +89,7 @@ namespace Spiritfire.Game
             SetupRuntimeLayer();
         }
 
-        /// <summary>悬浮、日轮、日晒、泉珠（生成后模型已就位时调一次）</summary>
+        /// <summary>悬浮、日轮、日晒、泉珠、场地变化、护体、演出（生成后模型已就位时调一次）</summary>
         void SetupRuntimeLayer()
         {
             var d = HDef;
@@ -85,6 +118,12 @@ namespace Spiritfire.Game
                 Exposure.waterFactor = d.waterFactor;
                 Exposure.damagePerStack = d.sunDamagePerStack;
             }
+            Ward = GetComponent<ApsaraWard>();
+            if (!Ward) Ward = gameObject.AddComponent<ApsaraWard>();
+            Cinematics = GetComponent<HanbaCinematics>();
+            if (!Cinematics) Cinematics = gameObject.AddComponent<HanbaCinematics>();
+            Scorch = new Phase2Scorch(this);
+            SunRise = new Phase3SunRise(this);
             pearlShells.Clear();
             if (Model?.root)
                 foreach (var r in Model.root.GetComponentsInChildren<Renderer>(true))
@@ -92,8 +131,24 @@ namespace Spiritfire.Game
                         pearlShells.Add(r);
             MoveEnded -= OnOwnMoveEnded;
             MoveEnded += OnOwnMoveEnded;
+            hp.Damaged -= OnOwnDamaged;
+            hp.Damaged += OnOwnDamaged;
+            IntroRoared = false;
+            LowerSun();
             rigged = true;
             SetWeak(false, true);
+        }
+
+        /// <summary>一阶段要午后的低太阳：露天场地（没有穴顶开口标记）的主光高过 lowSunMax 时，在登场演出里压到 lowSunElevation</summary>
+        void LowerSun()
+        {
+            LoweredSun = false;
+            var d = HDef;
+            if (d == null || !SunExposure.OpenSky) return;
+            var sky = HanbaSunDriver.Find();
+            if (!sky || sky.Elevation <= d.lowSunMax + 0.5f) return;
+            sky.DriveTo(d.lowSunElevation, Mathf.Max(0.5f, d.intro.seconds * 0.8f));
+            LoweredSun = true;
         }
 
         // ───────────── 每帧 ─────────────
@@ -109,7 +164,7 @@ namespace Spiritfire.Game
             TrackWraiths();
         }
 
-        /// <summary>悬浮：模型根节点抬到 hover + 起伏；倒下后慢慢落地</summary>
+        /// <summary>悬浮：模型根节点抬到 hover + 起伏（倒下后的落地由演出层接手）</summary>
         void Hover(float dt)
         {
             var d = HDef;
@@ -121,12 +176,12 @@ namespace Spiritfire.Game
             Model.root.transform.localPosition = Vector3.up * (HoverNow / s);
         }
 
-        /// <summary>泉珠：收招段 → 露出（再留 weakGrace 秒）；硬直中也露着</summary>
+        /// <summary>泉珠：收招段 → 露出（再留 weakGrace 秒）；硬直、日蚀窗口中也露着</summary>
         void Weakpoint(float dt)
         {
             if (Current != null && Current.Stage == MoveStage.Recover) weakGrace = HDef?.weakGrace ?? 0.6f;
             else weakGrace -= dt;
-            bool open = IntroDone && !Transitioning && (weakGrace > 0 || Staggered);
+            bool open = IntroDone && !Transitioning && (weakGrace > 0 || Staggered || EclipseOpen);
             if (open != WeakExposed) SetWeak(open);
         }
 
@@ -164,6 +219,74 @@ namespace Spiritfire.Game
 
         /// <summary>这只召唤物被染成了沙魇（测试用）</summary>
         public bool IsWraith(EnemyAI e) => e && wraiths.Contains(e);
+
+        // ───────────── 日蚀窗口 ─────────────
+
+        /// <summary>开日蚀窗口：泉珠露出，打在泉珠上的伤害（DamageInfo.weakpoint）× weakMult（弱点必暴之外再乘）。可重复调用</summary>
+        public void OpenEclipse(float weakMult)
+        {
+            if (Dead) return;
+            EclipseMult = Mathf.Max(1f, weakMult);
+            if (!EclipseOpen) EclipseWindows++;
+            EclipseOpen = true;
+            eclipseMod?.Dispose();
+            float k = EclipseMult;
+            eclipseMod = hp.Incoming.Add((in IncomingHit h) => h.info.weakpoint ? k : 1f);
+            SetWeak(true);
+        }
+
+        /// <summary>关日蚀窗口（泉珠回到「只在后摇露出」）</summary>
+        public void CloseEclipse()
+        {
+            EclipseOpen = false;
+            eclipseMod?.Dispose();
+            eclipseMod = null;
+        }
+
+        void OnOwnDamaged(DamageInfo info, DamageResult r)
+        {
+            if (EclipseOpen && info.weakpoint && r.total > 0) EclipseWeakHits++;
+        }
+
+        // ───────────── 飞天之殇 ─────────────
+
+        /// <summary>
+        /// 在 at 召出被腐化的邪飞天（同首领难度；不走召唤上限，不染沙魇），名字「日灼·邪飞天」、一层暗赤金，立刻给自己套上琵琶护体。
+        /// 已经有一只活着时不再召（只把护体续上）；返回召出 / 现有的那只（失败为 null）
+        /// </summary>
+        public ApsaraAI SummonApsara(Vector3 at)
+        {
+            if (Dead) return null;
+            var d = HDef;
+            if (!Apsara)
+            {
+                var face = PlayerPosition - at;
+                face.y = 0;
+                var rot = face.sqrMagnitude > 1e-4f ? Quaternion.LookRotation(face) : transform.rotation;
+                EnemyAI ai;
+                try
+                {
+                    ai = EnemyRoster.Spawn(d?.apsaraId ?? "apsara", at, rot, level, false, new SpawnOptions { parent = transform.parent });
+                }
+                catch (Exception e)
+                {
+                    Debug.LogException(e);
+                    return null;
+                }
+                apsara = ai as ApsaraAI;
+                if (!apsara)
+                {
+                    if (ai) Combat.Execute(ai.Health, true);
+                    Debug.LogWarning($"[Boss] {Def?.id} 召出的 {d?.apsaraId} 不是邪飞天（ApsaraAI）");
+                    return null;
+                }
+                ApsarasSummoned++;
+                if (apsara.Body) apsara.Body.SetOverlay("hanbaSorrow", d?.apsaraOverlay ?? new Color(0.85f, 0.32f, 0.12f), d?.apsaraOverlayAmount ?? 0.35f);
+                if (apsara.Health) apsara.Health.displayName = d?.apsaraName ?? "日灼·邪飞天";
+            }
+            Ward.Raise(this, apsara);
+            return apsara;
+        }
 
         // ───────────── 动作 ─────────────
 
@@ -233,32 +356,72 @@ namespace Spiritfire.Game
             foreach (var t in AnimInfo(anim).triggers) anim.ResetTrigger(t);
         }
 
+        /// <summary>喷气裂缝画了一个预警（<see cref="Phase2Scorch"/> 调，计数后照常派发 MoveTelegraphed 以外的统计）</summary>
+        internal void NotifyVent() => VentWarnings++;
+
         // ───────────── 框架钩子 ─────────────
 
         protected override void IntroTick(float t, float dt)
         {
-            // 登场：日轮从暗处慢慢燃起
+            // 登场：日轮从暗处慢慢燃起；长啸那一下（intro 片段 70 / 120 帧）震屏、炸亮、短慢动作
             if (Ring) Ring.SetBlaze(Mathf.Lerp(0.05f, Ring.idleBlaze, t), Mathf.Lerp(0.2f, 1f, t));
+            if (!IntroRoared && t >= (HDef?.roarAt ?? 0.5833f)) IntroRoar();
+        }
+
+        /// <summary>登场长啸：震屏、日轮炸亮、脚下一圈沙浪、暖色闪屏、短慢动作（只一次）</summary>
+        void IntroRoar()
+        {
+            if (IntroRoared) return;
+            IntroRoared = true;
+            var d = HDef;
+            Shake(0.75f, 0.7f, 80f);
+            if (Ring)
+            {
+                Ring.Flash(1f);
+                Ring.SetBlaze(1f, 3f);
+            }
+            var feet = transform.position + Vector3.up * 0.1f;
+            Fx.Ring(feet, 10f, HanbaDef.Sand, 0.8f);
+            SkillFx.Ring(transform.position, 16f, HanbaDef.Sun, 0.7f);
+            Fx.Burst(BodyCenter, HanbaDef.Sun, 30, 8f, 1f, 0.35f, 2f);
+            GameUI.ScreenFlash(new Color(1f, 0.85f, 0.5f, 0.3f), 0.5f);
+            if (Cinematics) Cinematics.SlowMo(d?.introSlowMo ?? 0.45f, d?.introSlowMoSeconds ?? 0.35f);
         }
 
         protected override void OnIntroEnd()
         {
+            if (!IntroRoared) IntroRoar();
             if (Ring) Ring.Idle();
         }
 
+        protected override void OnAnimEvent(string evt)
+        {
+            if (evt == "roar" && !IntroDone) IntroRoar();
+        }
+
         /// <summary>
-        /// 进入新阶段（BS2 的接入点）：吸干泉水 + 喷气裂缝（二阶段）、日轮升入穴顶裂缝（三阶段）都接在这里。
-        /// BS1 的占位：日轮炸亮一下、转快，之后招式按 <see cref="Pace"/> 变快（前摇缩短、扫得更快、沙魇 4 只、旱风补余波）
+        /// 进入新阶段：阶段名卡 + 慢动作 + 日轮炸亮；进二阶段吸干泉水、泉床龟裂（之后喷气）；进三阶段日轮升进穴顶裂缝。
+        /// 一阶段的招式照常留着、按 <see cref="Pace"/> 变快
         /// </summary>
         protected override void OnPhase(int phase)
         {
             ClearActTriggers();
-            if (Ring)
+            CloseEclipse();
+            if (Ring && !Ring.Eclipsed)
             {
                 Ring.Flash(1f);
                 Ring.SetBlaze(1f, 2.5f);
             }
             SkillFx.Burst(BodyCenter + Vector3.up, HanbaDef.Sun, 36, 9f, 1.1f, 0.4f, 3f);
+            var d = HDef;
+            float seconds = d != null && phase - 1 < d.phases.Count && phase >= 1 ? d.phases[phase - 1].seconds : 3f;
+            if (Cinematics && d != null)
+            {
+                Cinematics.Card(d.CardTitle(phase), d.CardSub(phase), Mathf.Clamp(seconds, 2f, 3.2f));
+                Cinematics.SlowMo(d.phaseSlowMo, d.phaseSlowMoSeconds);
+            }
+            if (phase >= 1) Scorch?.Begin(seconds);
+            if (phase >= 2) SunRise?.Begin(seconds);
         }
 
         protected override void TransitionTick(float t, float dt) => Glow(0, Mathf.PingPong(t * 1.6f, 1f));
@@ -267,6 +430,12 @@ namespace Spiritfire.Game
         {
             Glow(0, 0);
             if (Ring) Ring.Idle();
+        }
+
+        /// <summary>招式间隙和出招中每帧：二阶段起裂缝喷气</summary>
+        protected override void Passive(float dt)
+        {
+            if (Phase >= 1) Scorch?.Tick(dt);
         }
 
         protected override void OnEnrage(string reason)
@@ -284,7 +453,9 @@ namespace Spiritfire.Game
         protected override void OnDefeated(DamageInfo info)
         {
             ClearActTriggers();
+            CloseEclipse();
             if (Exposure) Exposure.active = false;
+            if (Cinematics) Cinematics.Defeat(this);
             if (Ring) Ring.Extinguish();
             SetWeak(true, true);
             PlayAct("death", Def != null ? Def.defeat.seconds : 4f);
@@ -292,6 +463,16 @@ namespace Spiritfire.Game
                 if (e)
                     SandWraith.Crumble(e.transform.position);
             wraiths.Clear();
+            if (Ward) Ward.Drop(false);
+            // 邪飞天随她崩解（静默处决：不掉落）
+            var a = Apsara;
+            if (a && a.Health)
+            {
+                Fx.Burst(a.transform.position + Vector3.up * 1.4f, HanbaDef.Sun, 20, 4f, 1.2f, 0.25f, -1f);
+                Combat.Execute(a.Health, true);
+            }
+            Scorch?.End();
         }
+        // 注意：这里不写 OnDestroy——EnemyAI 自己的 OnDestroy（从敌人登记里移除）会被子类的同名消息挡掉
     }
 }
