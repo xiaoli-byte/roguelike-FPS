@@ -35,8 +35,8 @@ namespace Spiritfire.Art.Editor.Levels
         const string Name = "L2_1";
 
         // ───────────── 尺度 ─────────────
-        /// <summary>高度场里 Base 米 = 世界 y 0（冰河）；山原最高约 90 m；地形外缘落回 FarY（远景地面）</summary>
-        const float Base = 8f, HeightRange = 100f, FarY = 64f;
+        /// <summary>高度场里 Base 米 = 世界 y 0（冰河）；崖顶 34–72 m ± 6 m，岩脊再高 26 m，山原最高约 104 m；地形外缘落回 FarY（远景地面）</summary>
+        const float Base = 8f, HeightRange = 120f, FarY = 64f;
         static readonly Vector2 Origin = new(-256, -128), Size = new(512, 512);
         /// <summary>雾（主题默认 25 / 210 m）：调远，出生点看 222 m 外的冰瀑还剩轮廓</summary>
         const float FogStart = 70f, FogEnd = 380f;
@@ -53,8 +53,10 @@ namespace Spiritfire.Art.Editor.Levels
         }
 
         // ───────────── 高度（世界 y）─────────────
-        /// <summary>陡坎坡率（3.5 ≈ 74°：10 m 的坎水平 2.9 m）；瀑口用 12（≈ 85°，冰瀑贴着几乎竖直的壁）</summary>
-        const float CliffSlope = 3.5f, HeadSlope = 12f;
+        /// <summary>
+        /// 陡坎坡率（3.5 ≈ 74°：10 m 的坎水平 2.9 m）是基准，实际按 <see cref="CliffSlopeAt"/> 在 2.5–4.5（68°–77°）之间缓变；瀑口用 12（≈ 85°，冰瀑贴着几乎竖直的壁）
+        /// </summary>
+        const float CliffSlope = 3.5f, CliffSlopeMin = 2.5f, CliffSlopeMax = 4.5f, HeadSlope = 12f;
         const float RiverY = 0, BankY = 0.4f, WtY = 3.5f, E1Y = 10f, BenchY = 20f, W3Y = 33f, E3Y = 34f, NicheY = 13.2f;
         const float PoolY = 45f, RingY = 47.6f, IslandY = 46.2f, DaisY = 37f;
 
@@ -117,7 +119,8 @@ namespace Spiritfire.Art.Editor.Levels
 
         // ── ③ 冰桥 + 冰拱 + 冰棱 ──
         const float BridgeZ = 158, BridgeHalfLen = 18, BridgeWidth = 8, BridgeThick = 2.5f;
-        const float ArchTop = 31.5f, ArchHalfSpan = 25f, ArchWidth = 5.4f;
+        /// <summary>冰拱：中点顶 31.5 m（再高就挡住出生点看冰瀑的视线），两半各往岸边压低 ArchTilt 度——中间高、两端低，不是一根横杆</summary>
+        const float ArchTop = 31.5f, ArchHalfSpan = 25f, ArchWidth = 5.4f, ArchTilt = 5f, ArchThick = 0.8f;
         static readonly Vector2 SpireW = new(-24, BridgeZ), SpireE = new(24, BridgeZ);
         static readonly float[] IcicleX = { -11, -5.5f, 0.5f, 6, 11.5f };
 
@@ -146,14 +149,6 @@ namespace Spiritfire.Art.Editor.Levels
 
         /// <summary>崖顶高度（按 z 分段，世界 y）：下游 34 → 72（冰潭）；任何能站的面离旁边崖顶 ≥ 24 m</summary>
         static readonly Vector2[] RimKeys = { new(20, 34), new(100, 44), new(160, 58), new(215, 72) };
-
-        /// <summary>台面边线不摆动的地方：桥头、栈道两端、石龛、冰台（桥面 / 栈道面要和台面齐平）</summary>
-        static readonly (Vector2 c, float r)[] CalmZones =
-        {
-            (new Vector2(-16, BridgeZ), 12), (new Vector2(16, BridgeZ), 12), (new Vector2(-18, BrokenZ), 10), (new Vector2(18, BrokenZ), 10),
-            (new Vector2(64, 98.5f), 7), (new Vector2(64, 140.5f), 9), (new Vector2(64, 146), 7), (new Vector2(64, 188.5f), 9),
-            (new Vector2(-60, 145.5f), 7), (new Vector2(-60, 188.5f), 9), (new Vector2(57, 77), 16), (new Vector2(27, 208), 10),
-        };
 
         // ── 资产 ID 与设计尺寸（白盒用，米，宽 × 高 × 深）──
         const string IcefallBaseId = "SM_Tripo_FrostIcefallBase", IcefallMidId = "SM_Tripo_FrostIcefallMid", IcefallTopId = "SM_Tripo_FrostIcefallTop",
@@ -212,7 +207,7 @@ namespace Spiritfire.Art.Editor.Levels
             ("Enemy_4_Dais", 4, new Vector2(27, 208), SG.StationRole.Support, 0, false, 1f),
             ("Enemy_4_Landing", 4, new Vector2(22, 199), SG.StationRole.Assault, 2, false, 1.5f),
             ("Enemy_4_East", 4, new Vector2(50, 197), SG.StationRole.Flank, 1, false, 2f),
-            ("Enemy_4_North", 4, new Vector2(34, 223), SG.StationRole.Assault, 0, false, 2f),
+            ("Enemy_4_North", 4, new Vector2(30, 216), SG.StationRole.Assault, 0, false, 2f),
             ("Enemy_4_Sky", 4, new Vector2(38, 196), SG.StationRole.Ranged, 0, true, 1.5f),
             ("Enemy_4_Ring", 4, new Vector2(26, 236), SG.StationRole.Ranged, 0, false, 1.5f),
             ("Enemy_5_Ring_N", 5, new Vector2(-12, 276), SG.StationRole.Artillery, 0, false, 1.5f),
@@ -226,6 +221,37 @@ namespace Spiritfire.Art.Editor.Levels
             ("Enemy_6_B", 6, new Vector2(-34, 104), SG.StationRole.Auto, 1, false, 1.5f),
             ("Enemy_6_C", 6, new Vector2(-27, 113), SG.StationRole.Auto, 2, false, 1.2f),
         };
+
+        /// <summary>
+        /// 平静区（台面边线不摆、陡坎坡率回到 3.5、外壁走线不摆）：桥头、断桥两头、栈道两端、石龛、冰台、藏宝 B 的驿亭（贴着中台陡坎）、
+        /// 出口祭坛与环台北侧冰灯（贴着冰潭崖壁）、全部站位（半径 7 m）、坡道两端；三条栈道沿线另见 <see cref="PlankCalm"/>。
+        /// 声明在 <see cref="Anchors"/> 之后（静态字段按书写顺序初始化）。
+        /// </summary>
+        static readonly (Vector2 c, float r)[] CalmZones = BuildCalmZones();
+        /// <summary>栈道沿线的平静带半径（中线两侧，米）：栈道贴着绝壁走，外壁和陡坎都不能摆进栈道</summary>
+        const float PlankCalm = 7f;
+
+        static (Vector2 c, float r)[] BuildCalmZones()
+        {
+            var list = new List<(Vector2 c, float r)>
+            {
+                (new Vector2(-16, BridgeZ), 12), (new Vector2(16, BridgeZ), 12), (new Vector2(-18, BrokenZ), 10), (new Vector2(18, BrokenZ), 10),
+                (new Vector2(64, 98.5f), 7), (new Vector2(64, 140.5f), 9), (new Vector2(64, 146), 7), (new Vector2(64, 188.5f), 9),
+                (new Vector2(-60, 145.5f), 7), (new Vector2(-60, 188.5f), 9), (new Vector2(57, 77), 16), (new Vector2(27, 208), 10),
+                (new Vector2(66, 70), 9), (new Vector2(66, 84), 9), (new Vector2(-30, 129), 12), (ExitAt, 10),
+                // 贴着台边的摆件：④ 冰柱林南缘两根冰柱、② 西缘的石掩墙
+                (new Vector2(38, 190), 9), (new Vector2(34, 96), 7),
+            };
+            foreach (float a in new[] { 35f, 145f })
+                list.Add((PoolC + 33f * new Vector2(Mathf.Cos(a * Mathf.Deg2Rad), Mathf.Sin(a * Mathf.Deg2Rad)), 6));
+            foreach (var a in Anchors) list.Add((a.at, 7));
+            foreach (var r in Ramps)
+            {
+                list.Add((r.foot, r.width + 1));
+                list.Add((r.top, r.width + 1));
+            }
+            return list.ToArray();
+        }
 
         /// <summary>主线（世界 XZ）：散布避让用（断桥不在主线上，主线绕环台）</summary>
         static readonly Vector2[] RouteLine =
@@ -248,8 +274,11 @@ namespace Spiritfire.Art.Editor.Levels
             return RimKeys[^1].y;
         }
 
-        /// <summary>离游玩区边界的有符号距离（界内为正，米）</summary>
-        static float Inside(Vector2 p) => LevelKit.PolygonSigned(p, Envelope);
+        /// <summary>
+        /// 离游玩区边界的有符号距离（界内为正，米）：多边形 + 走线摆动（约 ±3 m，两层频率），绝壁脚不再是一条条直线；
+        /// 平静区（站位、栈道、石龛、出口）不摆。崖壁、软边界、L5 共用这一个（摆动后的）距离
+        /// </summary>
+        static float Inside(Vector2 p) => LevelKit.PolygonSigned(p, Envelope) + (Fbm(p, 30, 3, 31) * 4f + Fbm(p, 9, 2, 32)) * (1 - Calm(p));
 
         /// <summary>可玩区遮罩（世界 XZ，软边界与 L5 共用）：等值线 0.2 落在崖壁面上（界外约 1.7 m）</summary>
         static float Playable(Vector2 p) => Smooth(-4, 4, Inside(p));
@@ -258,7 +287,60 @@ namespace Spiritfire.Art.Editor.Levels
         {
             float c = 0;
             foreach (var (cc, r) in CalmZones) c = Mathf.Max(c, 1 - Smooth(r * 0.6f, r, Vector2.Distance(p, cc)));
+            foreach (var r in PlankRoads) c = Mathf.Max(c, 1 - Smooth(PlankCalm * 0.6f, PlankCalm, SegDist(p, r.foot, r.top)));
             return c;
+        }
+
+        /// <summary>点到线段的距离（不分配，地形求值的热路径用）</summary>
+        static float SegDist(Vector2 p, Vector2 a, Vector2 b)
+        {
+            var ab = b - a;
+            float t = Mathf.Clamp01(Vector2.Dot(p - a, ab) / Mathf.Max(1e-6f, ab.sqrMagnitude));
+            return Vector2.Distance(p, a + ab * t);
+        }
+
+        /// <summary>
+        /// 峡谷河槽遮罩（z 126–228、|x| ≲ 13）：两岸陡坎面朝河槽的这一段只许往里收、只许变陡——
+        /// 河槽（藏宝 A 那条路、冰面）不会被摆动和缓坡挤窄（W3 / E3 的 33 m 坎按 2.5 的坡率能一直伸到河槽中线）
+        /// </summary>
+        static float Gorge(Vector2 p) => (1 - Smooth(11, 16, Mathf.Abs(p.x))) * Smooth(122, 130, p.y) * (1 - Smooth(224, 232, p.y));
+
+        /// <summary>
+        /// 台面边线摆动（米，正 = 台面变大）：低频（约 64 m 一个起伏，让 100 m 长的台边弯起来）+ 中频 + 细碎三层，常见 ±2.5 m、峰值约 ±5 m；
+        /// 只摆 ±1–2 m 的话从远处看还是一块块直边的采石坑。平静区不摆；河槽里只往里收
+        /// </summary>
+        static float Wobble(Vector2 p, float calm, float gorge)
+        {
+            float w = (Fbm(p, 64, 2, 11) * 5.5f + Fbm(p, 20, 2, 12) * 2f + Fbm(p, 7, 2, 14) * 0.7f) * (1 - calm);
+            return Mathf.Lerp(w, Mathf.Min(w, 0), gorge);
+        }
+
+        /// <summary>台面转角的圆角半径（米）：大台面 10 m（直角转角是采石坑最显眼的特征）；石龛这种窄条不圆</summary>
+        static float CornerRadius(in LevelKit.Shelf s)
+        {
+            var size = s.max - s.min;
+            float m = Mathf.Min(size.x, size.y);
+            return m < 20 ? 0 : Mathf.Min(10, 0.3f * m);
+        }
+
+        /// <summary>圆角矩形台面的高度贡献（同 <see cref="LevelKit.ShelfHeight"/>，矩形换成圆角矩形）</summary>
+        static float ShelfRounded(Vector2 p, in LevelKit.Shelf s, float slope, float wobble)
+        {
+            float r = CornerRadius(s);
+            if (r <= 0) return LevelKit.ShelfHeight(p, s, slope, wobble);
+            float inside = r - LevelKit.BoxSdf(p, s.min + Vector2.one * r, s.max - Vector2.one * r);
+            return s.height - slope * Mathf.Max(0, -(inside + wobble));
+        }
+
+        /// <summary>
+        /// 陡坎坡率：低频噪声在 2.5–4.5 之间缓变（同一道坎有的段陡、有的段缓，坎脚线跟着进出）；平静区回到 3.5；河槽里只陡不缓。
+        /// 噪声尺度取大（55 m）：坡率沿法向的变化 × 坎宽要小于坡率本身，坎面上才不会鼓出反坡
+        /// </summary>
+        static float CliffSlopeAt(Vector2 p, float calm, float gorge)
+        {
+            float s = Mathf.Clamp(CliffSlope + Fbm(p, 55, 2, 13) * 1.9f, CliffSlopeMin, CliffSlopeMax);
+            s = Mathf.Lerp(s, CliffSlope, calm);
+            return Mathf.Lerp(s, Mathf.Max(s, CliffSlope), gorge);
         }
 
         static float Ellipse(Vector2 q, Vector2 c, Vector2 r)
@@ -279,22 +361,23 @@ namespace Spiritfire.Art.Editor.Levels
             Mathf.Max(1 - Smooth(PoolR - 0.3f, PoolR + 0.3f, Vector2.Distance(p, PoolC)), 1 - Smooth(-0.3f, 0.3f, LevelKit.BoxSdf(p, SpillMin, SpillMax)));
 
         /// <summary>台面 + 环台 + 瀑口（不含坡道、冰潭、崖壁）：坡道两端的高度、摆件贴地从这里取也行</summary>
-        static float Terraces(Vector2 p, float wobble)
+        static float Terraces(Vector2 p, float wobble, float slope)
         {
             float h = float.NegativeInfinity;
-            foreach (var s in Shelves) h = Mathf.Max(h, LevelKit.ShelfHeight(p, s, CliffSlope, wobble));
+            foreach (var s in Shelves) h = Mathf.Max(h, ShelfRounded(p, s, slope, wobble));
             h = Mathf.Max(h, LevelKit.ShelfHeight(p, Crest, HeadSlope));
             // 环台：圆台挖掉瀑口那一块（|x| < 17、z < 240 是冰瀑和溢口）
             float sdRing = Mathf.Min(RingR - Vector2.Distance(p, PoolC), LevelKit.BoxSdf(p, GorgeHeadMin, GorgeHeadMax));
-            h = Mathf.Max(h, RingY - CliffSlope * Mathf.Max(0, -(sdRing + wobble)));
+            h = Mathf.Max(h, RingY - slope * Mathf.Max(0, -(sdRing + wobble)));
             return h;
         }
 
         static LevelKit.Sample Eval(Vector2 p)
         {
             var s = new LevelKit.Sample();
-            float calm = Calm(p);
-            float wob = Fbm(p, 16, 2, 11) * 1.2f * (1 - calm);
+            float calm = Calm(p), gorge = Gorge(p);
+            float wob = Wobble(p, calm, gorge);
+            float slope = CliffSlopeAt(p, calm, gorge);
 
             // ── 谷底：砾石滩 0.4、冰河 0、出生碛丘、河心砾石洲 ──
             float ice = IceBand(p);
@@ -305,7 +388,7 @@ namespace Spiritfire.Art.Editor.Levels
             h += 1.4f * bar;
 
             // ── 台面 + 陡坎 ──
-            h = Mathf.Max(h, Terraces(p, wob));
+            h = Mathf.Max(h, Terraces(p, wob, slope));
             // ② 东岸低台上的碎石堆（+1.3，只在 E1 台面里）
             float mound = (1 - Smooth(0, 3, LevelKit.BoxSdf(p, MoundMin, MoundMax))) * Smooth(0, 1, Shelves[3].Inside(p));
             h += 1.3f * mound;
@@ -330,9 +413,10 @@ namespace Spiritfire.Art.Editor.Levels
             float flat = Mathf.Max(Mathf.Max(ice, pool), Mathf.Max(rampMask, calm));
             h += Fbm(p, 9, 2, 5) * 0.12f * (1 - flat);
 
-            // ── 崖壁 + 山原：界外 6 m 内陡升到崖顶，崖顶外起岩脊 ──
+            // ── 崖壁 + 山原：界外 6 m 内陡升到崖顶（崖顶高度 ±6 m 起伏），岩脊从崖顶就起（约 26 m），崖顶线不再是一条水平的切边 ──
             float ins = Inside(p);
-            float rim = RimH(p.y) + 18f * Ridged(p, 70, 3, 21) * Smooth(-6, -50, ins);
+            float rimY = RimH(p.y) + Mathf.Clamp(Fbm(p, 46, 3, 33) * 9f, -6, 6);
+            float rim = rimY + 26f * Ridged(p, 70, 3, 21) * Smooth(-4, -30, ins);
             h = h + 0.6f * Smooth(3, 0, ins) + Mathf.Max(0, rim - h - 0.6f) * Smooth(0, -6, ins);
 
             // ── 地形外缘 36 m 内落回远景地面 ──
@@ -365,6 +449,9 @@ namespace Spiritfire.Art.Editor.Levels
         static LevelKit.TerrainSet ts;
         /// <summary>构建期量到的地标点（视线目标、冒烟测试的标记）</summary>
         static Vector3 icefallAim, archAim, archEastAim, kaimingAim, shrineAim;
+        /// <summary>构建期按碰撞体探出来的朝向（冰棱根在哪头、栈道栏杆在哪侧），写进验收报告</summary>
+        static readonly List<string> buildNotes = new();
+        static readonly List<float> spireHeights = new();
 
         static Vector3 OnGround(Vector2 q, float dy = 0) => ts.OnGround(q.x, q.y, dy);
         static Vector3 At(Vector2 q, float y) => new(q.x, y, q.y);
@@ -376,6 +463,9 @@ namespace Spiritfire.Art.Editor.Levels
             ShowcaseSceneBuilder.ConfigureProject();
             Directory.CreateDirectory(Dir);
             LevelKit.ResetCache();
+            buildNotes.Clear();
+            spireHeights.Clear();
+            railOk = railFixed = railUnknown = 0;
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             var env = new GameObject("Environment").transform;
             var kit = new GameObject("Kit").transform;
@@ -413,7 +503,7 @@ namespace Spiritfire.Art.Editor.Levels
                 BuildForest(kit);
                 BuildRiver(props);
                 BuildTerraceProps(props);
-                BuildCliffs(kit);
+                // 崖壁片（SM_Tripo_FrostCanyonCliff）不再摆：岩面整块埋进地形绝壁，只剩一串冰溜子漂在崖面上。绝壁就是地形本身
                 BuildIceZones(world);
                 BuildScatter(props, theme);
                 BuildMarkers(markers);
@@ -445,6 +535,9 @@ namespace Spiritfire.Art.Editor.Levels
                 foreach (var r in Ramps) rep.Line($"坡道「{r.name}」纵断面 {LevelKit.RampGrade(r.foot, r.footY, r.top, r.topY):F1}°");
                 foreach (var r in PlankRoads) rep.Line($"栈道「{r.name}」{LevelKit.RampGrade(r.foot, r.footY, r.top, r.topY):F1}°（碰撞盒）");
                 rep.Line($"断桥：断口 {GapX1 - GapX0:F1} m，对岸高 {E3Y - W3Y:F1} m（跳 + 冲刺）");
+                rep.Line($"冰拱：两半各倾斜 {ArchTilt:F0}°（中间高、两端低），中点顶 {ArchTop:F1} m，拱脚冰柱 {string.Join(" / ", spireHeights.Select(h => $"{h:F1} m"))}");
+                foreach (var note in buildNotes) rep.Line(note);
+                rep.Line($"栈道 / 断桥栏杆（按世界方向复核）：{railOk} 段本来就朝外，{railFixed} 段翻过来才朝外，{railUnknown} 段两侧一样高（没探出栏杆）");
                 LevelValidator.Run(Spec(), rep);
                 CheckSceneContents(rep, scene);
                 rep.Line(rep.failures == 0 ? "全部通过" : $"不合格 {rep.failures} 项");
@@ -476,8 +569,10 @@ namespace Spiritfire.Art.Editor.Levels
                     ("River", E(new Vector2(-6, 52)), archAim, false),
                     ("EastTerrace", E(new Vector2(42, 80)), new Vector3(64, 16, 120), false),
                     ("PlankRoad", At(new Vector2(64, 120), 15.2f + 1.62f), new Vector3(30, 22, 160), false),
-                    ("BridgeEast", E(new Vector2(24, 152)), new Vector3(-24, 24, 160), false),
-                    ("UnderArch", At(new Vector2(4, BridgeZ), BenchY + 1.62f), archAim, false),
+                    // 东桥头（掩墙和拱脚冰柱之间）往西看过桥
+                    ("BridgeEast", E(new Vector2(20, 154)), new Vector3(-24, 24, 160), false),
+                    // 冰拱侧面（桥南边 12 m、桥面眼高）：冰棱尖朝下、拱两端压低、拱脚冰柱
+                    ("UnderArch", At(new Vector2(-4, BridgeZ - 12), BenchY + 1.62f), new Vector3(2, 26.5f, BridgeZ), false),
                     ("BrokenGap", At(new Vector2(0, BrokenZ), W3Y + 1.62f), At(DashEast, E3Y + 1), false),
                     ("Forest", E(new Vector2(50, 196)), kaimingAim, false),
                     ("Pool", E(new Vector2(-14, 236)), shrineAim, false),
@@ -568,12 +663,16 @@ namespace Spiritfire.Art.Editor.Levels
             icefallAim = top ? TopOf(top, 1.5f) : new Vector3(0, PoolY - 1.5f, 220);
         }
 
-        /// <summary>冰桥的一半（厚头朝岸）：side = −1 西半 / +1 东半，顶面 top，跨度 span（中心到岸）、宽 width。厚头朝向按碰撞体量底面判断</summary>
-        static GameObject IceHalf(Transform parent, string name, int side, float top, float span, float width)
+        /// <summary>
+        /// 冰桥的一半（厚头朝岸）：side = −1 西半 / +1 东半，顶面 top，跨度 span（中心到岸）、宽 width。厚头朝向按碰撞体量底面判断。
+        /// tilt（度）= 绕中点顶（x = 0、y = top）往岸边压低：两半拼起来中间高、两端低
+        /// </summary>
+        static GameObject IceHalf(Transform parent, string name, int side, float top, float span, float width, float tilt = 0, float sy = 1, float overlap = 0)
         {
             var d = SizeOf(IceBridgeId);
-            var scale = new Vector3(span / d.x, 1, width / d.z);
-            var go = Kit(IceBridgeId, parent, new Vector3(side * span * 0.5f, top - d.y, BridgeZ), 0, scale);
+            var scale = new Vector3(span / d.x, sy, width / d.z);
+            // overlap：两半各往中间多伸一点（细头是圆的，正好对上会在中点露出一道 V 形缺口）
+            var go = Kit(IceBridgeId, parent, new Vector3(side * (span * 0.5f - overlap), top - d.y * sy, BridgeZ), 0, scale);
             if (!go) return null;
             go.name = IsPlaceholder(go) ? go.name : $"{IceBridgeId} ({name})";
             if (!IsPlaceholder(go))
@@ -583,7 +682,46 @@ namespace Spiritfire.Art.Editor.Levels
                 bool thickPlus = !float.IsNaN(plus) && (float.IsNaN(minus) || plus < minus);
                 if (thickPlus != side > 0) go.transform.rotation = Quaternion.Euler(0, 180, 0);
             }
+            if (tilt != 0)
+            {
+                // 绕 Z 转：西半（side −1）+tilt 让 −X 那头往下，东半 −tilt 让 +X 那头往下；支点是中点顶，中点高度不变
+                var pivot = new Vector3(0, top, BridgeZ);
+                var q = Quaternion.Euler(0, 0, -side * tilt);
+                go.transform.SetPositionAndRotation(pivot + q * (go.transform.position - pivot), q * go.transform.rotation);
+            }
             return go;
+        }
+
+        /// <summary>
+        /// 冰棱模型的根（粗的一头）是不是在模型底部：在 0.15h、0.85h 两处从 8 个方向打水平射线（只认这件的碰撞体）量平均半径，粗的那头是根。
+        /// 量不到（没有碰撞体）按根在上算（不翻）
+        /// </summary>
+        static bool RootAtBottom(GameObject go, float height, out float low, out float high)
+        {
+            Physics.SyncTransforms();
+            var cols = go.GetComponentsInChildren<Collider>(true);
+            float Radius(float localY)
+            {
+                var c = go.transform.TransformPoint(new Vector3(0, localY, 0));
+                float sum = 0;
+                int n = 0;
+                for (int k = 0; k < 8; k++)
+                {
+                    float a = k * Mathf.PI / 4;
+                    var dir = new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a));
+                    var ray = new Ray(c + dir * 10f, -dir);
+                    float best = float.PositiveInfinity;
+                    foreach (var col in cols)
+                        if (col.enabled && col.Raycast(ray, out var hit, 20f)) best = Mathf.Min(best, hit.distance);
+                    if (float.IsPositiveInfinity(best)) continue;
+                    sum += 10f - best;
+                    n++;
+                }
+                return n > 0 ? sum / n : 0;
+            }
+            low = Radius(height * 0.15f);
+            high = Radius(height * 0.85f);
+            return low > high;
         }
 
         /// <summary>
@@ -595,18 +733,28 @@ namespace Spiritfire.Art.Editor.Levels
             var root = new GameObject("③ 冰桥").transform;
             root.SetParent(kit, false);
             LevelKit.DeckX("冰桥桥面 Collision", root, -BridgeHalfLen, BridgeHalfLen, BridgeZ, BenchY, BridgeWidth, BridgeThick);
-            LevelKit.VisualOnly(IceHalf(root, "西半", -1, BenchY, BridgeHalfLen, BridgeWidth));
-            LevelKit.VisualOnly(IceHalf(root, "东半", 1, BenchY, BridgeHalfLen, BridgeWidth));
+            LevelKit.VisualOnly(IceHalf(root, "西半", -1, BenchY, BridgeHalfLen, BridgeWidth, overlap: 0.6f));
+            LevelKit.VisualOnly(IceHalf(root, "东半", 1, BenchY, BridgeHalfLen, BridgeWidth, overlap: 0.6f));
 
-            // 冰拱两脚：冰柱顶埋进拱脚 0.8 m
-            float footBottom = ArchTop - SizeOf(IceBridgeId).y;
-            float spireH = footBottom + 0.8f - (BenchY - 0.2f);
-            foreach (var c in new[] { SpireW, SpireE })
-                Kit(PillarId, root, At(c, BenchY - 0.2f), c.x < 0 ? 20 : 200, new Vector3(1.4f, spireH / SizeOf(PillarId).y, 1.4f));
-            IceHalf(root, "冰拱西半", -1, ArchTop, ArchHalfSpan, ArchWidth);
-            IceHalf(root, "冰拱东半", 1, ArchTop, ArchHalfSpan, ArchWidth);
+            // 冰拱：两半各压低 ArchTilt 度（中点顶 31.5 m 不变）；竖向收到 ArchThick，岸边厚头的底仍离中台约 3.8 m（桥头走过去、跳起来不顶头）
+            IceHalf(root, "冰拱西半", -1, ArchTop, ArchHalfSpan, ArchWidth, ArchTilt, ArchThick, 0.8f);
+            IceHalf(root, "冰拱东半", 1, ArchTop, ArchHalfSpan, ArchWidth, ArchTilt, ArchThick, 0.8f);
+            float tan = Mathf.Tan(ArchTilt * Mathf.Deg2Rad);
             archAim = new Vector3(0, ArchTop - 0.5f, BridgeZ);
-            archEastAim = new Vector3(12, ArchTop - 0.5f, BridgeZ);
+            archEastAim = new Vector3(12, ArchTop - 0.5f - 12 * tan, BridgeZ);
+
+            // 冰拱两脚：从中台往上打射线量拱脚底面，冰柱顶埋进去 0.8 m
+            Physics.SyncTransforms();
+            foreach (var c in new[] { SpireW, SpireE })
+            {
+                float footBottom = Physics.Raycast(At(c, BenchY + 0.5f), Vector3.up, out var foot, 30f, SG.Layers.WorldMask, QueryTriggerInteraction.Ignore)
+                    ? foot.point.y
+                    : ArchTop - Mathf.Abs(c.x) * tan - SizeOf(IceBridgeId).y * ArchThick;
+                float spireH = footBottom + 0.8f - (BenchY - 0.2f);
+                spireHeights.Add(spireH);
+                Kit(PillarId, root, At(c, BenchY - 0.2f), c.x < 0 ? 20 : 200, new Vector3(1.4f, spireH / SizeOf(PillarId).y, 1.4f));
+            }
+            float footFallback = ArchTop - SizeOf(IceBridgeId).y * ArchThick;
 
             // 冰棱：挂点 = 拱底（从桥面往上打射线量），尖离桥面 ≥ 3.4 m（跳起来碰不到头）
             Physics.SyncTransforms();
@@ -618,7 +766,7 @@ namespace Spiritfire.Art.Editor.Levels
                 float x = IcicleX[i], z = BridgeZ + (i % 2 == 0 ? -1.2f : 1.2f);
                 float under = Physics.Raycast(new Vector3(x, BenchY + 0.5f, z), Vector3.up, out var up, 20f, SG.Layers.WorldMask, QueryTriggerInteraction.Ignore)
                     ? up.point.y
-                    : footBottom + (ArchTop - 2.5f - footBottom) * (1 - Mathf.Abs(x) / ArchHalfSpan);
+                    : footFallback + (ArchTop - 2.5f - footFallback) * (1 - Mathf.Abs(x) / ArchHalfSpan);
                 float rootY = under + 0.3f;
                 float s = Mathf.Clamp((rootY - (BenchY + 3.4f)) / d.y, 0.6f, 1f);
                 float tip = d.y * s;
@@ -632,8 +780,18 @@ namespace Spiritfire.Art.Editor.Levels
                 dmg.noReward = true;
                 var ic = go.AddComponent<SG.IcefallIcicle>();
 
-                // 挂着的冰棱：外观 + 胶囊碰撞（子弹打得中）
-                var hang = Kit(IcicleId, go.transform, new Vector3(x, rootY - tip, z), i * 67f, s);
+                // 挂着的冰棱：外观 + 胶囊碰撞（子弹打得中）。模型的根（粗头）在下就倒过来挂：挂件原点放在挂点 rootY，绕 X 翻 180°，
+                // 胶囊碰撞体是局部坐标、跟着翻；原点在根上，IcefallIcicle.tipDepth（尖离原点多深）= 整根长
+                float yaw = i * 67f;
+                var hang = Kit(IcicleId, go.transform, new Vector3(x, rootY - tip, z), yaw, s);
+                bool flipped = false;
+                if (hang && !IsPlaceholder(hang))
+                {
+                    flipped = RootAtBottom(hang, d.y, out float low, out float high);
+                    if (flipped) hang.transform.SetPositionAndRotation(new Vector3(x, rootY, z), Quaternion.Euler(180, yaw, 0));
+                    if (i == 0)
+                        buildNotes.Add($"冰棱朝向：模型 0.15h 处半径 {low:F2} m、0.85h 处 {high:F2} m → 根在{(flipped ? "下，倒过来挂（尖朝下）" : "上，原样挂")}");
+                }
                 LevelKit.VisualOnly(hang);
                 if (hang && !IsPlaceholder(hang))
                 {
@@ -659,7 +817,8 @@ namespace Spiritfire.Art.Editor.Levels
                 ic.hanging = hang ? hang.transform : null;
                 ic.fallen = fallen;
                 ic.groundY = ground;
-                ic.tipDepth = tip;
+                // 原点在根上（倒挂）时尖在原点下方整根长；原样挂时原点就在尖上
+                ic.tipDepth = flipped || !hang || IsPlaceholder(hang) ? tip : 0f;
                 NonStatic(go);
                 fallen.SetActive(false);
             }
@@ -675,14 +834,19 @@ namespace Spiritfire.Art.Editor.Levels
             root.SetParent(kit, false);
             LevelKit.DeckX("断桥西段桥面 Collision", root, BrokenX0, GapX0, BrokenZ, W3Y, BrokenWidth, 1.2f);
             LevelKit.DeckX("断桥东段残桥面 Collision", root, GapX1, BrokenX1, BrokenZ, E3Y, BrokenWidth, 1.2f);
-            var front = Vector3.forward; // 栏杆朝北（冰瀑那边）
+            // 栏杆一律朝北（冰瀑那边）。断头件要同时管「断口朝哪头」和「栏杆在哪侧」，偏航转 180° 两样一起翻，
+            // 所以断头件在定好断口之后按世界方向再探一次栏杆，反了就沿桥轴镜像（局部 Z 取负），断口方向不变
+            var front = Vector3.forward;
             PlankStraight(root, new Vector3(-16, W3Y, BrokenZ), Vector3.right, front, 8f);
             PlankStraight(root, new Vector3(-8, W3Y, BrokenZ), Vector3.right, front, 8f);
             PlankStraight(root, new Vector3(-1.5f, W3Y, BrokenZ), Vector3.right, front, 5f);
-            PlankBroken(root, new Vector3(GapX0 - 2.5f, W3Y, BrokenZ), 1);
-            PlankBroken(root, new Vector3(GapX1 + 2.5f, E3Y, BrokenZ), -1);
+            PlankBroken(root, new Vector3(GapX0 - 2.5f, W3Y, BrokenZ), 1, front);
+            PlankBroken(root, new Vector3(GapX1 + 2.5f, E3Y, BrokenZ), -1, front);
             PlankStraight(root, new Vector3(17.5f, E3Y, BrokenZ), Vector3.right, front, 5f);
         }
+
+        /// <summary>栏杆朝向的统计（写进报告）：在要的一侧 / 翻过来才对 / 两侧一样高探不出</summary>
+        static int railOk, railFixed, railUnknown;
 
         /// <summary>一段栈道直段（外观）：center = 桥面中心（世界，顶面高度），axis = 沿路方向，front = 栏杆朝向，length = 长（米）</summary>
         static GameObject PlankStraight(Transform parent, Vector3 center, Vector3 axis, Vector3 front, float length)
@@ -698,12 +862,29 @@ namespace Spiritfire.Art.Editor.Levels
             if (!IsPlaceholder(go) && !RailingOnPlusZ(go, d)) rot = Quaternion.AngleAxis(180, up) * rot;
             Orient(go, center - up * (IsPlaceholder(go) ? d.y * 0.5f : PlankDeckLocal), rot, d.y);
             AlignTop(go, Vector3.zero, center.y + 0.03f);
+            if (!IsPlaceholder(go))
+            {
+                // 摆好之后按世界方向复核一次：栏杆不在 front 那侧就绕桥面法线转 180°
+                int side = RailingSide(go, center, axis.normalized, z, length * 0.5f);
+                if (side < 0) go.transform.RotateAround(center, up, 180);
+                Tally(side);
+            }
             LevelKit.VisualOnly(go);
             return go;
         }
 
-        /// <summary>栈道断头（外观）：snap = 断口朝 +X（1）还是 −X（−1）；断头朝向按碰撞体探（两头各打 5 根，打到桥面的根数少的那头是断口）</summary>
-        static void PlankBroken(Transform parent, Vector3 center, int snap)
+        static void Tally(int side)
+        {
+            if (side > 0) railOk++;
+            else if (side < 0) railFixed++;
+            else railUnknown++;
+        }
+
+        /// <summary>
+        /// 栈道断头（外观）：snap = 断口朝 +X（1）还是 −X（−1）；断头朝向按碰撞体探（两头各打 5 根，打到桥面的根数少的那头是断口）。
+        /// front = 栏杆要在的一侧（世界水平方向）：定好断口后再探栏杆，反了就镜像局部 Z
+        /// </summary>
+        static void PlankBroken(Transform parent, Vector3 center, int snap, Vector3 front)
         {
             var d = SizeOf(BrokenId);
             var go = Kit(BrokenId, parent, center - Vector3.up * PlankDeckLocal, 0, new Vector3(1, 1, PlankWidth / d.z));
@@ -724,8 +905,46 @@ namespace Spiritfire.Art.Editor.Levels
                 bool snapPlus = Hits(d.x * 0.42f) <= Hits(-d.x * 0.42f);
                 if (snapPlus != snap > 0) go.transform.rotation = Quaternion.Euler(0, 180, 0);
                 AlignTop(go, Vector3.zero, center.y + 0.03f);
+                int side = RailingSide(go, center, Vector3.right, front, d.x * 0.5f);
+                if (side < 0)
+                {
+                    var s = go.transform.localScale;
+                    s.z = -s.z;
+                    go.transform.localScale = s;
+                }
+                Tally(side);
             }
             LevelKit.VisualOnly(go);
+        }
+
+        /// <summary>
+        /// 栏杆在不在 side（世界方向，垂直于桥轴）这一侧：桥面中心 center 两侧 2.2–3.05 m、沿桥轴前后 5 处往下探（只认这件的碰撞体），
+        /// 比桥面中线高得多的那侧是栏杆。返回 +1 在 side 侧、−1 在对侧、0 两侧差不到 0.3 m（探不出）
+        /// </summary>
+        static int RailingSide(GameObject go, Vector3 center, Vector3 axis, Vector3 side, float halfLen)
+        {
+            Physics.SyncTransforms();
+            var cols = go.GetComponentsInChildren<Collider>(true);
+            float Top(Vector3 p)
+            {
+                var ray = new Ray(p + Vector3.up * 30f, Vector3.down);
+                float best = float.NegativeInfinity;
+                foreach (var c in cols)
+                    if (c.enabled && c.Raycast(ray, out var hit, 60f)) best = Mathf.Max(best, hit.point.y - p.y);
+                return best;
+            }
+            float Side(float sgn)
+            {
+                float best = float.NegativeInfinity;
+                foreach (float f in new[] { -0.7f, -0.35f, 0f, 0.35f, 0.7f })
+                foreach (float o in new[] { 2.2f, 2.5f, 2.8f, 3.05f })
+                    best = Mathf.Max(best, Top(center + axis * (f * halfLen) + side * (sgn * o)));
+                return best;
+            }
+            float plus = Side(1), minus = Side(-1);
+            if (float.IsNegativeInfinity(plus) && float.IsNegativeInfinity(minus)) return 0;
+            if (Mathf.Abs(plus - minus) < 0.3f) return 0;
+            return plus > minus ? 1 : -1;
         }
 
         /// <summary>栈道直段的栏杆在 +Z 一侧（沿长边两侧各探 4 处顶面，高的那侧是栏杆）</summary>
@@ -854,28 +1073,6 @@ namespace Spiritfire.Art.Editor.Levels
             Kit(OfferingsId, props, OnGround(new Vector2(-36, 120), -0.05f), 120);
         }
 
-        /// <summary>崖壁片：只做外观（去掉碰撞，不给人搭出落脚点），正面朝里贴在绝壁脚</summary>
-        static void BuildCliffs(Transform kit)
-        {
-            var root = new GameObject("崖壁片").transform;
-            root.SetParent(kit, false);
-            var d = SizeOf(CliffId);
-            const float s = 1.2f;
-            var panels = new[]
-            {
-                (new Vector2(69, 60), -90f, E1Y), (new Vector2(70.5f, 128), -90f, E1Y), (new Vector2(70.5f, 172), -90f, BenchY), (new Vector2(70.5f, 206), -90f, E3Y),
-                (new Vector2(-48, 70), 90f, WtY), (new Vector2(-66.5f, 166), 90f, BenchY), (new Vector2(-66.5f, 204), 90f, W3Y),
-                (new Vector2(-24.5f, 275), Yaw(PoolC - new Vector2(-24.5f, 275)), RingY), (new Vector2(24.5f, 275), Yaw(PoolC - new Vector2(24.5f, 275)), RingY),
-            };
-            foreach (var (q, yaw, y) in panels)
-            {
-                var fwd = Quaternion.Euler(0, yaw, 0) * Vector3.forward;
-                var pos = At(q, y - 0.5f) - fwd * (d.z * s * 0.5f);
-                var go = Kit(CliffId, root, pos, yaw, s);
-                LevelKit.VisualOnly(go);
-            }
-        }
-
         /// <summary>冰面（L8 SurfaceZone 冰面预设）：① 冰河、z 118–140 收窄段、河槽、冰潭（圆）+ 溢口</summary>
         static void BuildIceZones(Transform world)
         {
@@ -911,8 +1108,23 @@ namespace Spiritfire.Art.Editor.Levels
         static void BuildScatter(Transform props, ShowcaseTheme theme)
         {
             float RouteDist(Vector2 p) => Polyline(p, RouteLine).dist;
+            // 高度直接取高度场（细节散布是多线程求值的，不能碰 Terrain API）
+            var hf = ts.hf;
+            var origin = ts.spec.origin;
+            float H(Vector2 q) => hf.Sample(q - origin);
+            // 周围 ±r 米内有一处坡度超过 maxDeg：陡坎 / 绝壁面上（含噪声摆出来的小平点）不撒，免得一串碎冰漂在崖面上
+            bool Steep(Vector2 p, float r, float maxDeg)
+            {
+                float c = H(p), rise = Mathf.Tan(maxDeg * Mathf.Deg2Rad) * r, diag = rise * 1.4142f;
+                return Mathf.Abs(H(p + new Vector2(r, 0)) - c) > rise || Mathf.Abs(H(p - new Vector2(r, 0)) - c) > rise ||
+                       Mathf.Abs(H(p + new Vector2(0, r)) - c) > rise || Mathf.Abs(H(p - new Vector2(0, r)) - c) > rise ||
+                       Mathf.Abs(H(p + new Vector2(r, r)) - c) > diag || Mathf.Abs(H(p - new Vector2(r, r)) - c) > diag ||
+                       Mathf.Abs(H(p + new Vector2(r, -r)) - c) > diag || Mathf.Abs(H(p - new Vector2(r, -r)) - c) > diag;
+            }
             float Keep(Vector2 p)
             {
+                // 离游玩区边界 3 m 以内（绝壁脚、绝壁面）不撒
+                if (Inside(p) < 3 || Steep(p, 1.5f, 30)) return 0;
                 float k = Mathf.Max(PoolMask(p), Calm(p));
                 foreach (var r in Ramps) k = Mathf.Max(k, 1 - Smooth(r.width * 0.5f, r.width * 0.5f + 3, Polyline(p, new[] { r.foot, r.top }).dist));
                 foreach (var r in PlankRoads) k = Mathf.Max(k, 1 - Smooth(PlankWidth * 0.5f, PlankWidth * 0.5f + 3, Polyline(p, new[] { r.foot, r.top }).dist));
@@ -944,8 +1156,8 @@ namespace Spiritfire.Art.Editor.Levels
             {
                 var q = pt.p;
                 if (Inside(q) < 8) return 0;
-                // 只在台面中间：离本级台面边 ≥ 4 m（不长在陡坎边上，也不长在冰河里）
-                if (IceBand(q) > 0.01f) return 0;
+                // 只在台面中间：离本级台面边 ≥ 4 m（不长在陡坎边上，也不长在冰河里）；边线摆动 / 坡率变化之后再按实际地面复核一次坡度
+                if (IceBand(q) > 0.01f || Steep(q, 3f, 28)) return 0;
                 bool onShelf = Shelves.Any(s => s.Inside(q) > 4) && !Shelves.Any(s => s.Inside(q) > -4 && s.Inside(q) < 4);
                 if (!onShelf) return 0;
                 foreach (var (c, r) in avoid)

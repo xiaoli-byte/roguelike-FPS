@@ -395,7 +395,9 @@ namespace Spiritfire.Game.Testing
             yield return Travel(stand, 1.5f, false);
             Place(stand);
             yield return new WaitForSeconds(0.3f);
-            var center = icicle.hanging.position + Vector3.up * (icicle.tipDepth * 0.5f);
+            // 瞄冰棱碰撞体的中心（挂件原点可能在根上、也可能在尖上，看模型朝向）
+            var col = icicle.hanging.GetComponentInChildren<Collider>();
+            var center = col ? col.bounds.center : icicle.hanging.position + Vector3.down * (icicle.tipDepth * 0.5f);
             float t0 = Time.time;
             while (!icicle.Falling && !icicle.Landed && Time.time - t0 < 4f)
             {
