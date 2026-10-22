@@ -13,8 +13,9 @@ namespace Spiritfire.Game
     /// 玩家：着地时脚底踩到熔岩（或这一帧贴地滑过熔岩——冲刺不能偷渡；或脚底已经低于熔岩面——从洞口掉进熔岩井）→ <see cref="SafeGround.Sink"/>(<see cref="HazardSpec.Lava"/>)：
     ///   立刻扣最大生命 12% + 下沉中两跳灼烧（各 1.5%）、闪屏、嘶响，0.5 s 后托回最近的安全落脚点并给 1 s 无敌。熔岩伤害无视冲刺 / 托回的短无敌，
     ///   但尊重调试无敌（&gt; 5 s）。每次重新踩进都会再扣。跳过窄渠（离地）不受伤。安全落脚点不记在离熔岩 1 m 以内（向 SafeGround 登记危险区）。
-    /// 敌人：导航网格上熔岩是 Lava 区（代价很高，地面敌人绕路走）；自己走进熔岩的被拉回上一个岸上位置。被击退（伤害带击退、被掀飞、
-    ///   被推着滑）0.6 s 内落进熔岩的非首领地面敌人直接烧死（计击杀、正常掉落，掉进熔岩的掉落物随后吸向玩家）。
+    /// 敌人：导航网格上熔岩是 Lava 区（代价很高，地面敌人绕路走）；自己走进熔岩的被拉回上一个岸上位置。被击退（失控滑行
+    ///   <see cref="EnemyAI.KnockedBack"/>、被掀飞、<see cref="NoteKnocked"/>）0.6 s 内落进熔岩的非首领地面敌人直接烧死（计击杀、正常掉落，
+    ///   掉进熔岩的掉落物随后吸向玩家）。同 TS 只认明确的击退信号：传送、落地吸附、坠落回收这类瞬移不算击退。
     ///   首领、飞行敌人、熔岩生物（火鼍：<see cref="MakeSwimmer"/> / LavaSwimmer 代理类型）不受影响。
     /// 涨落：<see cref="LavaVolume"/> 的熔岩面会涨会退；淹到的玩家照样下沉托回，淹到的地面敌人挪到最近的岸上（同 TS addLavaArea）。
     /// 表现：熔岩面是 Spiritfire/Lava 着色器（每片熔岩一个 draw call），这里管一盏跟着玩家附近熔岩的橙色点光、附近熔岩上升的火星。
@@ -303,7 +304,7 @@ namespace Spiritfire.Game
             }
         }
 
-        /// <summary>其它系统不经伤害管线直接推开敌人（技能冲击波、拉拽）时调用：之后 <see cref="LavaTuning.KnockWindow"/> 秒内落进熔岩算被打进去</summary>
+        /// <summary>其它系统不经 <see cref="EnemyAI.Knockback"/> 直接把敌人挪开（脚本拉拽、甩飞）时调用：之后 <see cref="LavaTuning.KnockWindow"/> 秒内落进熔岩算被打进去</summary>
         public static void NoteKnocked(EnemyAI ai)
         {
             if (Instance && ai) Instance.TrackOf(ai).knockAt = Time.time;
@@ -328,8 +329,8 @@ namespace Spiritfire.Game
 
         sealed class Track
         {
-            public Vector3 bank, prev;
-            public bool hasBank, hasPrev;
+            public Vector3 bank;
+            public bool hasBank;
             public float knockAt = float.NegativeInfinity;
             public NavMeshAgent agent;
         }
@@ -338,7 +339,6 @@ namespace Spiritfire.Game
         readonly List<EnemyAI> scratch = new();
         readonly List<EnemyAI> stale = new();
         readonly LavaContactTracker tracker = new();
-        InAction<HitEvent> onHit;
         PlayerVitals boundVitals;
         PlayerMotor motor;
         SafeGround safe;
@@ -357,17 +357,6 @@ namespace Spiritfire.Game
                 return;
             }
             Instance = this;
-            onHit = OnEnemyHit;
-        }
-
-        void OnEnable()
-        {
-            if (onHit != null) GameEvents.EnemyDamaged += onHit;
-        }
-
-        void OnDisable()
-        {
-            if (onHit != null) GameEvents.EnemyDamaged -= onHit;
         }
 
         void OnDestroy()
@@ -386,7 +375,7 @@ namespace Spiritfire.Game
             }
             float now = Time.time;
             UpdatePlayer();
-            UpdateEnemies(now, dt);
+            UpdateEnemies(now);
             UpdateAmbience(dt, now);
         }
 
@@ -461,14 +450,7 @@ namespace Spiritfire.Game
             return t;
         }
 
-        /// <summary>带击退的伤害（武器、爆炸、反应）：记下击退时刻</summary>
-        void OnEnemyHit(in HitEvent e)
-        {
-            if (!(e.info.knockback > 0) || e.result.killed || !e.enemy || e.enemy.Dead) return;
-            if (e.enemy.TryGetComponent<EnemyAI>(out var ai)) TrackOf(ai).knockAt = Time.time;
-        }
-
-        void UpdateEnemies(float now, float dt)
+        void UpdateEnemies(float now)
         {
             scratch.Clear();
             var live = EnemyRegistry.Live;
@@ -479,15 +461,9 @@ namespace Spiritfire.Game
                 var tr = TrackOf(ai);
                 if (IsImmune(ai, tr.agent)) continue;
                 var pos = ai.transform.position;
-                // 被掀飞、被推着滑（导航自己走不了这么快）都算击退
-                if (ai.LaunchedUp) tr.knockAt = now;
-                else if (tr.hasPrev && Walking(tr))
-                {
-                    float step = new Vector2(pos.x - tr.prev.x, pos.z - tr.prev.z).magnitude;
-                    if (step < LavaTuning.TeleportStep && step / dt > tr.agent.speed + LavaTuning.KnockSlide) tr.knockAt = now;
-                }
-                tr.prev = pos;
-                tr.hasPrev = true;
+                // 击退只认明确的信号（同 TS knockedBack）：失控滑行（伤害 / 技能的击退冲量）、被掀飞。
+                // 不按「这一帧挪得比导航快」推断——传送、落地吸附、坠落回收、测试里的 Warp 都会被误当成击退，走进熔岩就被烧死
+                if (LavaEnemyRule.Knocked(ai.LaunchedUp, ai.KnockedBack)) tr.knockAt = now;
                 bool inLava = LavaGeometry.Touches(bodies, pos);
                 switch (LavaEnemyRule.Decide(false, inLava, now, tr.knockAt))
                 {
@@ -565,7 +541,6 @@ namespace Spiritfire.Game
                 if (agent.isOnNavMesh) agent.velocity = Vector3.zero;
             }
             else ai.transform.position = p;
-            tr.prev = p;
             if (far && ai.TryGetComponent<CreatureLocomotion>(out var loco)) loco.Teleported();
         }
 

@@ -283,6 +283,13 @@ namespace Spiritfire.Game
         /// <summary>走导航网格（飞行基类 E3 覆盖成 false：不做离网回收）</summary>
         protected virtual bool UsesNavMesh => true;
 
+        /// <summary>最后站过的导航网格点（离网之前的位置；软边界的拴绳在界内找不到落点时退回这里）。出生后还没上过网格时返回 false</summary>
+        public bool TryLastOnMesh(out Vector3 p)
+        {
+            p = lastOnMesh;
+            return hasOnMesh;
+        }
+
         /// <summary>坠落 / 离网检查；返回 true 表示这一帧被传送或处决了（本帧不再思考）</summary>
         bool StepFallRecovery(float dt)
         {
@@ -550,9 +557,29 @@ namespace Spiritfire.Game
 
         Vector3 push;
 
+        /// <summary>击退冲量（水平，m/s）超过这么多才算失控（同 TS EnemyBase.knockback：impulse.lengthSq() &gt; 4）</summary>
+        public const float ControlLossImpulse = 2f;
+        /// <summary>失控时长（秒，再 × (1 − 击退抗性)；同 TS 0.25 × k）</summary>
+        public const float ControlLossTime = 0.25f;
+        float controlLossUntil = float.NegativeInfinity;
+
         /// <summary>
-        /// 击退（Three.js EnemyBase.knockback）：水平冲量 × (1 − 击退抗性) 叠到一个推力上，沿导航网格推开、按 8/s 衰减。
-        /// 跳跃 / 冲锋这类脚本位移期间不推（不打断招式的轨迹）
+        /// 正被击退（失控滑行中；同 TS EnemyBase.knockedBack = controlLoss &gt; 0）：熔岩据此判「被打进去」（<see cref="LavaField"/>）。
+        /// 只有 <see cref="Knockback"/> 给的够大的冲量算；导航自己走、传送（Warp）、落地吸附、坠落回收都不算
+        /// </summary>
+        public bool KnockedBack => !Dead && Time.time < controlLossUntil;
+
+        /// <summary>一次击退冲量造成的失控秒数（只看水平分量）：冲量 ≤ <see cref="ControlLossImpulse"/> 或被抗性全挡时为 0</summary>
+        public static float ControlLoss(Vector3 impulse, float resist)
+        {
+            float k = 1 - resist;
+            impulse.y = 0;
+            return k > 0 && impulse.sqrMagnitude > ControlLossImpulse * ControlLossImpulse ? ControlLossTime * k : 0;
+        }
+
+        /// <summary>
+        /// 击退（Three.js EnemyBase.knockback）：水平冲量 × (1 − 击退抗性) 叠到一个推力上，沿导航网格推开、按 8/s 衰减；
+        /// 冲量够大时失控 <see cref="ControlLoss"/> 秒（<see cref="KnockedBack"/>）。跳跃 / 冲锋这类脚本位移期间不推（不打断招式的轨迹）
         /// </summary>
         public void Knockback(Vector3 impulse)
         {
@@ -562,6 +589,8 @@ namespace Spiritfire.Game
             impulse.y = 0;
             push += impulse * k;
             if (push.sqrMagnitude > 81) push = push.normalized * 9;
+            float loss = ControlLoss(impulse, knockbackResist);
+            if (loss > 0) controlLossUntil = Mathf.Max(controlLossUntil, Time.time + loss);
         }
 
         void StepPush(float dt)

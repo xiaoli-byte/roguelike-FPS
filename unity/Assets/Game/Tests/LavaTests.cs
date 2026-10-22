@@ -196,6 +196,40 @@ namespace Spiritfire.Game.Tests
             Assert.AreEqual(LavaEnemyAction.Burn, LavaEnemyRule.Decide(false, LavaGeometry.Touches(lava, At(0, 0.1f)), now + 0.4f, now), "落下来还在窗口里：烧死");
         }
 
+        /// <summary>
+        /// 击退窗口只由明确的击退信号打开（同 TS knockedBack）：失控滑行（冲量 &gt; 2 m/s，0.25 s × (1 − 抗性)）、被掀飞。
+        /// 回归 playtest lava「自己走进熔岩的敌人死了」：旧版把「这一帧挪得比导航快、又不到 4 m」当成被推着滑——冒烟测试把敌人 Warp 回岸边（1–2 m）
+        /// 两帧后再挪进熔岩，就落在 0.6 s 的击退窗口里被烧死；落地吸附、坠落回收这类短距瞬移也一样
+        /// </summary>
+        [Test]
+        public void OnlyRealKnockbackOpensTheBurnWindowNotTeleports()
+        {
+            Assert.AreEqual(0.25f, EnemyAI.ControlLoss(new Vector3(9, 0, 0), 0), 1e-6f, "TS controlLoss = 0.25 × k");
+            Assert.AreEqual(0.15f, EnemyAI.ControlLoss(new Vector3(0, 0, -9), 0.4f), 1e-5f, "抗性 0.4");
+            Assert.AreEqual(0f, EnemyAI.ControlLoss(new Vector3(1.5f, 0, 1f), 0), "轻推（≤ 2 m/s）不失控");
+            Assert.AreEqual(0f, EnemyAI.ControlLoss(new Vector3(9, 0, 0), 1), "抗性满（首领）不失控");
+            Assert.AreEqual(0f, EnemyAI.ControlLoss(new Vector3(0, 9, 0), 0), "只看水平分量（往上掀是 LaunchUp）");
+            Assert.IsTrue(LavaEnemyRule.Knocked(true, false), "被掀飞");
+            Assert.IsTrue(LavaEnemyRule.Knocked(false, true), "失控滑行");
+            Assert.IsFalse(LavaEnemyRule.Knocked(false, false), "传送 / 吸附 / 回收：没有击退信号");
+
+            // 逐帧：第 0 帧被 Warp 1.5 m 回岸边（没有击退信号），第 2 帧挪进熔岩 → 拉回岸上
+            var lava = Channel();
+            float knockAt = float.NegativeInfinity, t = 10f;
+            const float dt = 1f / 60f;
+            var path = new[] { At(-4.5f), At(-3), At(-3), At(0) };
+            var action = LavaEnemyAction.None;
+            foreach (var p in path)
+            {
+                if (LavaEnemyRule.Knocked(false, false)) knockAt = t;
+                action = LavaEnemyRule.Decide(false, LavaGeometry.Touches(lava, p), t, knockAt);
+                t += dt;
+            }
+            Assert.IsFalse(LavaGeometry.Touches(lava, path[2]), "Warp 之后还在岸上");
+            Assert.IsTrue(LavaGeometry.Touches(lava, path[^1]), "最后一帧在熔岩里");
+            Assert.AreEqual(LavaEnemyAction.PushBack, action, "自己走进去：拉回，不烧死");
+        }
+
         // ───────────── 涨落 ─────────────
 
         [Test]

@@ -171,11 +171,62 @@ namespace Spiritfire.Game
     }
 
     /// <summary>
+    /// 拴绳的落点（纯逻辑：地面高度、导航采样由调用方注入——运行时 <see cref="BoundaryZone"/> 用地形 / 物理射线 + NavMesh.SamplePosition，EditMode 测试用函数）。
+    /// 沿距离场梯度退回导航边缘内 <see cref="Depths"/> 米，先在那一点的<b>地面</b>附近找导航点，再按敌人自己的高度找；都找不到时退回敌人最后站过的导航点
+    /// （离网之前的位置）。不能只按敌人的高度找：界外是抬高几米到十几米的沙海 / 大沙丘，按界外的高度在界内上空采 8 m 球会整片落空——
+    /// 1-1 的跳鼠放到 +10 m 的沙丘上离网 2.7 s 没被拴回（playtest world），旧版只按敌人高度采样、找不到就每 0.25 s 原样重试。落点必须在导航边缘以内（不能拴回到风里）。
+    /// </summary>
+    public static class BoundaryTether
+    {
+        /// <summary>(x, z) 处的地面高度；没有地面返回 false</summary>
+        public delegate bool GroundProbe(float x, float z, out float y);
+        /// <summary>near 附近 radius 米内最近的导航网格点；没有返回 false</summary>
+        public delegate bool NavSample(Vector3 near, float radius, out Vector3 hit);
+
+        /// <summary>往界内退的深度（米，相对导航边缘 navInset；由浅到深）</summary>
+        public static readonly float[] Depths = { 3f, 6f, 10f, 16f };
+        /// <summary>在地面点附近找导航点的半径（米）</summary>
+        public const float GroundRadius = 4f;
+        /// <summary>按敌人自己的高度找导航点的半径（米；没有地面探测或地面附近没有网格时）</summary>
+        public const float WideRadius = 8f;
+
+        /// <summary>
+        /// 从界外 from 拴回的落点 to（导航网格上、离等值线不超过 navInset）。hasLast / last = 敌人最后站过的导航点（兜底，离等值线不超过 navInset + tetherSlack 才用）
+        /// </summary>
+        public static bool FindPoint(BoundaryField field, in SoftBoundaryTuning t, Vector3 from, GroundProbe ground, NavSample nav, bool hasLast, Vector3 last,
+            out Vector3 to)
+        {
+            to = from;
+            if (field == null || nav == null) return false;
+            float edge = t.navInset;
+            foreach (float depth in Depths)
+            {
+                var back = field.MoveToDistance(from.x, from.z, edge - depth);
+                if (!(field.Sample(back.x, back.y) <= edge)) continue; // 梯度平坦处走不回来
+                float gy = from.y;
+                if (ground != null && ground(back.x, back.y, out gy) && float.IsFinite(gy) && Try(field, edge, nav, new Vector3(back.x, gy, back.y), GroundRadius, out to))
+                    return true;
+                if (Try(field, edge, nav, new Vector3(back.x, from.y, back.y), WideRadius, out to)) return true;
+            }
+            if (hasLast && float.IsFinite(last.x) && Try(field, edge + t.tetherSlack, nav, last, GroundRadius, out to)) return true;
+            to = from;
+            return false;
+        }
+
+        static bool Try(BoundaryField field, float limit, NavSample nav, Vector3 near, float radius, out Vector3 hit)
+        {
+            if (nav(near, radius, out hit) && float.IsFinite(hit.x) && float.IsFinite(hit.y) && float.IsFinite(hit.z) && field.Sample(hit.x, hit.z) <= limit) return true;
+            hit = near;
+            return false;
+        }
+    }
+
+    /// <summary>
     /// 软边界（docs/unity-parity.md D14 / L3，替代 1-1 的空气墙）：读关卡烘好的有符号距离场（<see cref="BoundaryField"/>），每帧
     ///   · 玩家：过了起风线就沿梯度把人往回推 (4 + 18 × 风力) m/s（直接移动角色控制器，照常被地形挡），并给 <see cref="WeatherDirector"/> 白化强度；
     ///     越过兜底环（离等值线 <see cref="SoftBoundaryTuning.failsafe"/> + 3 m）直接托回安全点（不扣血）；
     ///   · 敌人：导航网格只铺到 navInset（构建器用 NavMeshModifierVolume 把界外标成不可走，寻路自然绕开）；被击飞 / 冲锋带出网格的，
-    ///     离开超过 tetherGrace 秒就沿梯度拉回界内最近的网格点（拴绳）。
+    ///     离开超过 tetherGrace 秒就沿梯度拉回界内最近的网格点（拴绳；落点在那里的地面上找，见 <see cref="BoundaryTether"/>）。
     /// 场景里只有一个（关卡构建器 LevelKit.Boundary 放）；其他系统用静态查询：<see cref="Distance"/>、<see cref="InsideArea"/>、<see cref="PlayerWind"/>。
     /// 远处兜底碰撞环由构建器另外立在 Ignore Raycast 层（子弹、视线穿过），这里不管。
     /// </summary>
@@ -369,23 +420,66 @@ namespace Spiritfire.Game
             }
         }
 
-        /// <summary>沿梯度回到导航边缘内 3 m，在那附近找网格点传过去</summary>
+        static readonly BoundaryTether.GroundProbe groundProbe = ProbeGround;
+        static readonly BoundaryTether.NavSample navSample = SampleNav;
+        static readonly Color DustColor = new(0.86f, 0.74f, 0.55f);
+
+        /// <summary>沿梯度回到导航边缘以内，在那里的地面附近找网格点传过去（见 <see cref="BoundaryTether"/>）；找不到时下次再试</summary>
         bool Tether(EnemyAI ai, NavMeshAgent agent, Vector3 p)
         {
-            var back = field.MoveToDistance(p.x, p.z, tuning.navInset - 3f);
-            var target = new Vector3(back.x, p.y, back.y);
-            if (!NavMesh.SamplePosition(target, out var hit, 8f, NavMesh.AllAreas) &&
-                !NavMesh.SamplePosition(target + Vector3.up * 6f, out hit, 14f, NavMesh.AllAreas)) return false;
-            Fx.Burst(p + Vector3.up * 0.6f, new Color(0.86f, 0.74f, 0.55f), 10, 3, 0.6f, 0.3f);
-            ai.transform.position = hit.position;
-            agent.Warp(hit.position);
+            bool hasLast = ai.TryLastOnMesh(out var last);
+            if (!BoundaryTether.FindPoint(field, tuning, p, groundProbe, navSample, hasLast, last, out var to)) return false;
+            ai.transform.position = to;
+            if (!agent.Warp(to))
+            {
+                // 离网时启用的 agent 没建起来（Unity 只给一条警告、不进网格）：关掉在新位置重开
+                agent.enabled = false;
+                ai.transform.position = to;
+                agent.enabled = true;
+                if (!agent.isOnNavMesh) return false;
+            }
+            Fx.Burst(p + Vector3.up * 0.6f, DustColor, 10, 3, 0.6f, 0.3f);
             // 先回到网格上再打断（打断时子类可能要停 agent，离网时调会报错）
             ai.InterruptAttack();
             var loco = ai.GetComponent<CreatureLocomotion>();
             if (loco) loco.Teleported();
-            Fx.Burst(hit.position + Vector3.up * 0.6f, new Color(0.86f, 0.74f, 0.55f), 10, 3, 0.6f, 0.3f);
+            Fx.Burst(to + Vector3.up * 0.6f, DustColor, 10, 3, 0.6f, 0.3f);
             Tethered++;
             return true;
+        }
+
+        static bool SampleNav(Vector3 near, float radius, out Vector3 hit)
+        {
+            if (NavMesh.SamplePosition(near, out var h, radius, NavMesh.AllAreas))
+            {
+                hit = h.position;
+                return true;
+            }
+            hit = near;
+            return false;
+        }
+
+        /// <summary>地面高度：地形（不落在道具顶上）；不在地形范围里就从高处往下打射线</summary>
+        static bool ProbeGround(float x, float z, out float y)
+        {
+            var t = Terrain.activeTerrain;
+            if (t && t.terrainData)
+            {
+                var o = t.transform.position;
+                var size = t.terrainData.size;
+                if (x >= o.x && x <= o.x + size.x && z >= o.z && z <= o.z + size.z)
+                {
+                    y = t.SampleHeight(new Vector3(x, 0, z)) + o.y;
+                    return true;
+                }
+            }
+            if (Physics.Raycast(new Vector3(x, 500f, z), Vector3.down, out var hit, 1000f, Layers.WorldMask, QueryTriggerInteraction.Ignore))
+            {
+                y = hit.point.y;
+                return true;
+            }
+            y = 0;
+            return false;
         }
     }
 }

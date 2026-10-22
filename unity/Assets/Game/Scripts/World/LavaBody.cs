@@ -25,8 +25,6 @@ namespace Spiritfire.Game
         public const float TeleportStep = 4f;
         /// <summary>扫掠判定（贴地高速冲刺不能跨过熔岩）的采样间距（米；TS 是 1/4 格 = 0.25 m）</summary>
         public const float SweepStep = 0.25f;
-        /// <summary>敌人这一帧的水平速度比导航速度快这么多（m/s）算被推着滑（技能冲击波这类不经伤害管线的击退）</summary>
-        public const float KnockSlide = 3f;
         /// <summary>熔岩面画在判定高度上方多少（防止和平地 z-fight；TS SURFACE_LIFT）</summary>
         public const float SurfaceLift = 0.04f;
         /// <summary>涨潮高出基准面多少时，整片熔岩盖住的地面从导航网格上挖掉（地面敌人绕开）</summary>
@@ -544,6 +542,12 @@ namespace Spiritfire.Game
     /// </summary>
     public static class LavaEnemyRule
     {
+        /// <summary>
+        /// 这一帧算不算「正被击退」（记下击退时刻）：只认明确的信号——被掀飞（<see cref="EnemyAI.LaunchedUp"/>）、失控滑行（<see cref="EnemyAI.KnockedBack"/>）。
+        /// 同 TS 只看 knockedBack，不按位移速度推断：传送（Warp）、落地吸附、坠落回收这类瞬移不是击退，之后自己走进熔岩照样拉回
+        /// </summary>
+        public static bool Knocked(bool launchedUp, bool knockedBack) => launchedUp || knockedBack;
+
         public static LavaEnemyAction Decide(bool immune, bool inLava, float now, float knockAt)
         {
             if (immune || !inLava) return LavaEnemyAction.None;

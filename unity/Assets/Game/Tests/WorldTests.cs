@@ -123,6 +123,104 @@ namespace Spiritfire.Game.Tests
             Assert.AreEqual(-3f, f.Sample(q.x, q.y), 0.1f, "拴绳的回拉点");
         }
 
+        // ───────────── 拴绳 ─────────────
+
+        /// <summary>直线边界 x = 0（界外 +x）：d = x，范围 ±60 m、纹素 2 m</summary>
+        static BoundaryField Straight()
+        {
+            const int n = 61;
+            var data = new float[n * n];
+            for (int j = 0; j < n; j++)
+            for (int i = 0; i < n; i++)
+                data[j * n + i] = -60 + i * 2;
+            return new BoundaryField(data, n, n, new Vector2(-60, -60), 2);
+        }
+
+        /// <summary>界内平地 y 0；界外是抬高的沙海：8 m 内缓缓抬到 12 m（同 1-1：+3 m 沙海 + 大沙丘）</summary>
+        static float Dune(float x)
+        {
+            float u = Mathf.Clamp01(x / 8f);
+            return 12f * u * u * (3 - 2 * u);
+        }
+
+        /// <summary>导航网格贴着地面、只铺到 navInset：near 的 radius 球内最近的网格点（沿 x 逐 5 cm 找）</summary>
+        static BoundaryTether.NavSample DuneNav(float navInset) => (Vector3 near, float radius, out Vector3 hit) =>
+        {
+            hit = near;
+            float best = radius;
+            bool found = false;
+            for (float x = near.x - radius; x <= near.x + radius; x += 0.05f)
+            {
+                if (x > navInset) break;
+                var q = new Vector3(x, Dune(x), near.z);
+                float d = Vector3.Distance(q, near);
+                if (d > best) continue;
+                best = d;
+                hit = q;
+                found = true;
+            }
+            return found;
+        };
+
+        /// <summary>
+        /// 1-1 回归：跳鼠被放到界外 +10 m 的沙丘上（比界内高 12 m）。旧拴绳按敌人自己的高度在界内上空采样（8 m 球、再抬 6 m 采 14 m 球）整片落空，
+        /// 每 0.25 s 重试都失败 → 永远拴不回；现在先找回拉点那里的地面，在地面附近找网格
+        /// </summary>
+        [Test]
+        public void TetherSamplesNavAtTheGroundInsideNotAtTheDuneHeight()
+        {
+            var f = Straight();
+            var t = SoftBoundaryTuning.Default;
+            var nav = DuneNav(t.navInset);
+            BoundaryTether.GroundProbe ground = (float x, float z, out float y) =>
+            {
+                y = Dune(x);
+                return true;
+            };
+            var from = new Vector3(t.navInset + t.tetherSlack + 6f, 0, 3);
+            from.y = Dune(from.x);
+            var back = f.MoveToDistance(from.x, from.z, t.navInset - 3f);
+            Assert.IsFalse(nav(new Vector3(back.x, from.y, back.y), 8f, out _), "旧做法：按沙丘高度在界内上空采 8 m 球，落空");
+            Assert.IsFalse(nav(new Vector3(back.x, from.y + 6f, back.y), 14f, out _), "旧做法的第二次（抬 6 m、14 m 球）也落空");
+
+            Assert.IsTrue(BoundaryTether.FindPoint(f, t, from, ground, nav, false, default, out var to), "按地面高度找得到");
+            Assert.LessOrEqual(f.Sample(to.x, to.z), t.navInset, "拴回导航边缘以内");
+            Assert.AreEqual(t.navInset - 3f, f.Sample(to.x, to.z), 0.1f, "就在回拉点（导航边缘内 3 m）");
+            Assert.AreEqual(Dune(to.x), to.y, 0.05f, "落在地面上");
+        }
+
+        [Test]
+        public void TetherFallsBackToTheLastNavPointAndGivesUpCleanly()
+        {
+            var f = Straight();
+            var t = SoftBoundaryTuning.Default;
+            var nav = DuneNav(t.navInset);
+            var from = new Vector3(10, Dune(10), 3);
+            // 没有地面探测（按敌人高度都找不到）：退回最后站过的导航点
+            var last = new Vector3(-6, 0, 3);
+            Assert.IsTrue(BoundaryTether.FindPoint(f, t, from, null, nav, true, last, out var to));
+            Assert.AreEqual(last.x, to.x, 0.06f, "退回离网之前的位置");
+            Assert.AreEqual(last.y, to.y, 0.05f);
+            // 最后站过的点附近 4 m 也没有网格（被冲锋带上了沙丘）：不动，下次再试
+            Assert.IsFalse(BoundaryTether.FindPoint(f, t, from, null, nav, true, new Vector3(6, Dune(6), 3), out to));
+            Assert.AreEqual(from, to, "找不到时不动，下次再试");
+            // 退回点附近找到的网格点在风里（离等值线超过 navInset + tetherSlack）也不用
+            BoundaryTether.NavSample windy = (Vector3 near, float radius, out Vector3 hit) =>
+            {
+                hit = new Vector3(t.navInset + t.tetherSlack + 0.5f, 0, near.z);
+                return true;
+            };
+            Assert.IsFalse(BoundaryTether.FindPoint(f, t, from, null, windy, true, last, out to), "落点必须在界内");
+            // 附近根本没有导航网格
+            BoundaryTether.NavSample none = (Vector3 near, float radius, out Vector3 hit) =>
+            {
+                hit = near;
+                return false;
+            };
+            Assert.IsFalse(BoundaryTether.FindPoint(f, t, from, (float x, float z, out float y) => { y = 0; return true; }, none, true, last, out to));
+            Assert.AreEqual(from, to);
+        }
+
         // ───────────── 区域风暴 ─────────────
 
         static WeatherDirector.Region Storm() => new()
