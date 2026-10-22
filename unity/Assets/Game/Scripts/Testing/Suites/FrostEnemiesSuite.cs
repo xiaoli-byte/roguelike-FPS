@@ -441,7 +441,7 @@ namespace Spiritfire.Game.Testing
             var spot = arena.Center + away * 7f;
             Teleport(motor, spot);
             bool dodged = false, popped = false;
-            int respawns = 0;
+            int respawns = 0, dodges = 0;
             float t0 = Time.time;
             while (Time.time - t0 < CaseSeconds - 2f)
             {
@@ -458,12 +458,15 @@ namespace Spiritfire.Game.Testing
                     // 第一次俯冲：玩家横向闪到它够不着的地方 → 落空收势。俯冲 1.6 s 最多飞 ≈ 16.7 m（6 → 11 m/s），转向 2 rad/s：
                     // 横跳 14 m 还在射程里（转过来照样贴上去鼓气，永远等不到 recover），要离俯冲中的那只水平超过「整段俯冲 + 精英鼓气距离」
                     dodged = true;
+                    dodges++;
                     var side = Vector3.Cross(Vector3.up, away);
                     float reach = IcePufferAI.DiveReach(IcePufferAI.DiveMaxTime) + IcePufferAI.InflateRange * 1.25f + 3f;
                     var from = diving.transform.position;
                     Teleport(motor, new Vector3(from.x, spot.y, from.z) + side * reach);
                     yield return Until(() => Seen("recover"), 4f);
                     Teleport(motor, spot);
+                    // 这一下没落空（闪避落点被地形托高 / 俯冲的那只中途被打断）：下一次俯冲再闪一次，最多三次
+                    if (!Seen("recover") && dodges < 3) dodged = false;
                 }
                 var inflating = Live().FirstOrDefault(e => e.State == "inflate");
                 bool othersCalm = Live().Count(e => e.State == "inflate") == 1;
@@ -482,7 +485,7 @@ namespace Spiritfire.Game.Testing
                 if (Seen("recover") && Seen("inflate") && popped && respawns > 0) break;
                 yield return null;
             }
-            notes.Add($"补刷 {respawns} 只");
+            notes.Add($"补刷 {respawns} 只，横闪 {dodges} 次");
         }
     }
 }

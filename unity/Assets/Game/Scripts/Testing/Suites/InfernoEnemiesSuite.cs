@@ -287,35 +287,59 @@ namespace Spiritfire.Game.Testing
 
         // ───────────── 剧本 ─────────────
 
-        /// <summary>炭童：抛炭（10 m）→ 扑抓（贴身）→ 打死留炭堆 → 复燃半血；再两只：一只死了另一只去吹火</summary>
+        /// <summary>
+        /// 炭童：抛炭（10 m）→ 扑抓（贴身）→ 打死留炭堆 → 复燃半血；再两只：一只死了另一只去吹火。
+        /// 直接刷出来的复燃体（tantong_reborn）走同一个剧本，但它再死碎成灰、不留炭堆（同 TS：只复燃一次）
+        /// </summary>
         IEnumerator TantongScript(TantongAI t)
         {
+            // 抛炭要 6–14 m、冷却好（开局 0.6–1.8 s）、看得见：它一路小跑过来，冷却没好就已经进了 6 m，接着就是扑抓、再也拉不开。
+            // 所以它还在追、离玩家不到 6.5 m 时把玩家退回 10 m 外，直到出手抛炭（最多 8 s）
             PlaceAt(t, 10f);
-            yield return Run(t, 8f, () => seen.Contains("throwWindup"));
+            float t0 = Time.time;
+            while (t && !t.Dead && Time.time - t0 < 8f && !seen.Contains("throwWindup"))
+            {
+                Track(t);
+                Heal();
+                var gap = motor.transform.position - t.transform.position;
+                gap.y = 0;
+                if (t.State == "chase" && gap.magnitude < TantongAI.ThrowMin + 0.5f) PlaceAt(t, 10f);
+                yield return null;
+            }
+            if (t) Track(t);
             PlaceAt(t, 1.8f);
             yield return Run(t, 8f, () => seen.Contains("flail"));
             // 打死：留炭堆，4 s 后复燃半血。乱抓时它就在玩家脚边（扑跳停在 1 m 内、常常更近）：炭堆落在玩家 0.75 m 内，
             // 成形 0.25 s 后就被「走上去」踩散了（算玩家击杀、不复燃）——所以先让玩家走开再打死它（同 TS 测试：玩家站在 25 m 外）
             var at = t.transform.position;
+            bool wasReborn = t.Reborn;
             TeleportPlayerAway(at, 25f);
             Combat.Execute(t.Health, false);
             yield return new WaitForSeconds(0.3f);
             var pile = FindNear<TantongEmberAI>(at, 2f);
-            Line($"  炭堆：{(pile ? "✓" : "✗")}{(pile && FireFeed.Find(pile.transform.position, 1f, this) != null ? "，登记为祸斗能吃的火" : "")}");
-            if (!pile) Fail("炭童死后没有留下余烬炭堆");
-            float w0 = Time.time;
-            TantongAI reborn = null;
-            while (Time.time - w0 < TantongEmberAI.RekindleAfter + 1.5f && !(reborn = FindNear<TantongAI>(at, 3f, x => x.Reborn))) yield return null;
-            if (!reborn) Fail($"炭堆 {TantongEmberAI.RekindleAfter + 1.5f:F2} s 内没有复燃");
+            if (wasReborn)
+            {
+                Line($"  复燃体再死：{(pile ? "✗ 留了炭堆" : "✓ 碎成灰，没有炭堆")}");
+                if (pile) Fail("复燃体（tantong_reborn）死后还留了炭堆");
+            }
             else
             {
-                float frac = reborn.Health.health / Mathf.Max(1, reborn.Health.maxHealth);
-                Line($"  复燃：{Time.time - w0:F1} s，生命 {frac:P0}");
-                if (Mathf.Abs(frac - 0.5f) > 0.05f) Fail($"复燃的炭童生命 {frac:P0}（应 50%）");
-                var rAt = reborn.transform.position;
-                Combat.Execute(reborn.Health, false);
-                yield return new WaitForSeconds(0.5f);
-                if (FindNear<TantongEmberAI>(rAt, 2f)) Fail("复燃过的炭童再死还留了炭堆");
+                Line($"  炭堆：{(pile ? "✓" : "✗")}{(pile && FireFeed.Find(pile.transform.position, 1f, this) != null ? "，登记为祸斗能吃的火" : "")}");
+                if (!pile) Fail("炭童死后没有留下余烬炭堆");
+                float w0 = Time.time;
+                TantongAI reborn = null;
+                while (Time.time - w0 < TantongEmberAI.RekindleAfter + 1.5f && !(reborn = FindNear<TantongAI>(at, 3f, x => x.Reborn))) yield return null;
+                if (!reborn) Fail($"炭堆 {TantongEmberAI.RekindleAfter + 1.5f:F2} s 内没有复燃");
+                else
+                {
+                    float frac = reborn.Health.health / Mathf.Max(1, reborn.Health.maxHealth);
+                    Line($"  复燃：{Time.time - w0:F1} s，生命 {frac:P0}");
+                    if (Mathf.Abs(frac - 0.5f) > 0.05f) Fail($"复燃的炭童生命 {frac:P0}（应 50%）");
+                    var rAt = reborn.transform.position;
+                    Combat.Execute(reborn.Health, false);
+                    yield return new WaitForSeconds(0.5f);
+                    if (FindNear<TantongEmberAI>(rAt, 2f)) Fail("复燃过的炭童再死还留了炭堆");
+                }
             }
             // 吹火：两只挨着，打死一只，另一只蹲下吹
             arena.Clear();
@@ -406,9 +430,23 @@ namespace Spiritfire.Game.Testing
                 Line($"  长甲：碎甲剩 {t.BrokenCount} 块");
             }
             else yield return Run(t, 3f, () => t.State == "land");
-            // 鼍鸣：打到 40% 以下（在岸上）
-            TeleportPlayerAway(t.transform.position, 8f);
-            yield return Run(t, 12f, () => t.State == "land");
+            // 鼍鸣 / 甩尾都在岸上。有熔岩时它长完甲接着潜游，游到离玩家最近的熔岩边等着：玩家离熔岩 7–11 m 时既不伏击（7 m）也不上岸
+            // （躲着 11 m 外才累计，同 TS EMERGE_DIST），它就一直泡在熔岩里。所以玩家退到离任何熔岩都超过 EmergeDist + 2.5 m 的实地上躲着——
+            // EmergeAfter 秒后它自己冲上岸来找人（同 TS：躲着岸边超过 8 s 它也爬上岸），上岸后停 12 s，够打完鼍鸣和甩尾
+            if (InfernoKit.HasLava && arena.lavaStrip && t.State != "land")
+            {
+                var dry = DryGround(t.transform.position, TuoAI.EmergeDist + 2.5f);
+                Teleport(motor, dry);
+                yield return Run(t, TuoAI.EmergeAfter + 6f, () => t.State == "land");
+                InfernoKit.Lava.NearestLava(dry, 40f, out var lavaNear);
+                Line($"  上岸：{(t.State == "land" ? "✓" : "✗")}（玩家躲在离熔岩 {Vector3.Distance(new Vector3(dry.x, 0, dry.z), new Vector3(lavaNear.x, 0, lavaNear.z)):F0} m 的实地上）");
+            }
+            else
+            {
+                // 鼍鸣：打到 40% 以下（在岸上）
+                TeleportPlayerAway(t.transform.position, 8f);
+                yield return Run(t, 12f, () => t.State == "land");
+            }
             t.Health.health = t.Health.maxHealth * 0.35f;
             yield return Run(t, 4f, () => seen.Contains("roar"));
             // 甩尾：站在它侧后 3 m
@@ -565,6 +603,36 @@ namespace Spiritfire.Game.Testing
         {
             Teleport(motor, ai.transform.position + ai.transform.forward * distance);
             Aim(motor, eye, BodyCenter(ai.Health));
+        }
+
+        /// <summary>
+        /// 离任何熔岩至少 clear 米、和刷怪台同一层的导航网格点：从 from 出发先朝刷怪台中心找（北边是冰 / 水条带），再往两侧扫；
+        /// 找不到就退回刷怪台中心外 14 m
+        /// </summary>
+        Vector3 DryGround(Vector3 from, float clear)
+        {
+            var lava = InfernoKit.Lava;
+            var toCenter = arena.Center - from;
+            toCenter.y = 0;
+            float yaw0 = toCenter.sqrMagnitude > 1e-4f ? Mathf.Atan2(toCenter.x, toCenter.z) * Mathf.Rad2Deg : 180f;
+            for (int k = 0; k < 16; k++)
+            {
+                float yaw = yaw0 + (k + 1) / 2 * 22.5f * (k % 2 == 0 ? 1 : -1);
+                var dir = Quaternion.Euler(0, yaw, 0) * Vector3.forward;
+                for (float r = clear; r <= clear + 20f; r += 2f)
+                {
+                    var c = from + dir * r;
+                    c.y = arena.Center.y;
+                    if (!UnityEngine.AI.NavMesh.SamplePosition(c, out var hit, 1.5f, UnityEngine.AI.NavMesh.AllAreas)) continue;
+                    var q = hit.position;
+                    if (Mathf.Abs(q.y - arena.Center.y) > 1f) continue;
+                    if (lava.IsLava(q) || lava.NearestLava(q, clear, out _)) continue;
+                    return q;
+                }
+            }
+            var away = arena.playerSpawn ? arena.playerSpawn.position - arena.Center : Vector3.back;
+            away.y = 0;
+            return arena.Center + (away.sqrMagnitude > 1e-4f ? away.normalized : Vector3.back) * 14f;
         }
 
         void TeleportPlayerAway(Vector3 from, float distance)
