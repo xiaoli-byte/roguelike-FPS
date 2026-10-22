@@ -1,0 +1,136 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Prop_ChestRareLid",
+  "kind": "static",
+  "class": "tripo_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "loot.chest.rare",
+    "part": "lid"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    20
+  ],
+  "budget": {
+    "lodTris": [
+      3000,
+      1000
+    ],
+    "texture": 1024,
+    "maxFileKb": 700
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -0.47683244943618774,
+      0,
+      0
+    ],
+    "max": [
+      0.4768323302268982,
+      0.39998722076416016,
+      0.569732666015625
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Prop_ChestRareLid_LOD0",
+      "lod": 0,
+      "tris": 816,
+      "verts": 1089,
+      "materials": [
+        "M_Prop_ChestRare"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Prop_ChestRareLid_LOD1",
+      "lod": 1,
+      "tris": 312,
+      "verts": 499,
+      "materials": [
+        "M_Prop_ChestRare_LOD1"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Prop_ChestRare",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Prop_ChestRare_BC.png",
+        "N": "Textures/T_Prop_ChestRare_N.png",
+        "ORM": "Textures/T_Prop_ChestRare_ORM.png"
+      }
+    },
+    {
+      "name": "M_Prop_ChestRare_LOD1",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Prop_ChestRare_LOD1_BC.png",
+        "N": "Textures/T_Prop_ChestRare_LOD1_N.png",
+        "ORM": "Textures/T_Prop_ChestRare_LOD1_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Prop_ChestRareLid.glb",
+    "sha256": "09a04db8095c53e25b97e2a16aae7fdd9109be1352a312aebce18b9c986a54ea",
+    "hiRes": false,
+    "version": null,
+    "generator": {
+      "tool": "derived",
+      "mode": "chest_lid",
+      "checkpoint": "SM_Prop_ChestRare"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-22 22:13:19"
+}

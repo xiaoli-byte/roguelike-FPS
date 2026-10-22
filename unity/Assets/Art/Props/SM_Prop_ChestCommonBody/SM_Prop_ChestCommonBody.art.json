@@ -1,0 +1,110 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Prop_ChestCommonBody",
+  "kind": "static",
+  "class": "tripo_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "loot.chest.common",
+    "part": "body"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    20
+  ],
+  "budget": {
+    "lodTris": [
+      3000,
+      1000
+    ],
+    "texture": 1024,
+    "maxFileKb": 700
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -0.42627811431884766,
+      0,
+      -0.3276522755622864
+    ],
+    "max": [
+      0.42625802755355835,
+      0.5579999685287476,
+      0.2868577837944031
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Prop_ChestCommonBody_LOD0",
+      "lod": 0,
+      "tris": 1987,
+      "verts": 3081,
+      "materials": [
+        "M_Prop_ChestCommon"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Prop_ChestCommonBody_LOD1",
+      "lod": 1,
+      "tris": 821,
+      "verts": 1605,
+      "materials": [
+        "M_Prop_ChestCommon"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Prop_ChestCommon",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Prop_ChestCommon_BC.png",
+        "N": "Textures/T_Prop_ChestCommon_N.png",
+        "ORM": "Textures/T_Prop_ChestCommon_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Prop_ChestCommonBody.glb",
+    "sha256": "f18bc492d14dfa995119f5dcd0a18c3093ab2fa988f8a494246c24d7fb552d52",
+    "hiRes": false,
+    "version": null,
+    "generator": {
+      "tool": "derived",
+      "mode": "chest_body",
+      "checkpoint": "SM_Prop_ChestCommon"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-22 22:13:12"
+}

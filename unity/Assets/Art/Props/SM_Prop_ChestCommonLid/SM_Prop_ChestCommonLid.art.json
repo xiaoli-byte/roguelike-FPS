@@ -1,0 +1,110 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Prop_ChestCommonLid",
+  "kind": "static",
+  "class": "tripo_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "loot.chest.common",
+    "part": "lid"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    20
+  ],
+  "budget": {
+    "lodTris": [
+      3000,
+      1000
+    ],
+    "texture": 1024,
+    "maxFileKb": 700
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -0.42627811431884766,
+      0,
+      0
+    ],
+    "max": [
+      0.42625802755355835,
+      0.34200000762939453,
+      0.5447031259536743
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Prop_ChestCommonLid_LOD0",
+      "lod": 0,
+      "tris": 1254,
+      "verts": 1844,
+      "materials": [
+        "M_Prop_ChestCommon"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Prop_ChestCommonLid_LOD1",
+      "lod": 1,
+      "tris": 582,
+      "verts": 986,
+      "materials": [
+        "M_Prop_ChestCommon"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Prop_ChestCommon",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Prop_ChestCommon_BC.png",
+        "N": "Textures/T_Prop_ChestCommon_N.png",
+        "ORM": "Textures/T_Prop_ChestCommon_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Prop_ChestCommonLid.glb",
+    "sha256": "38740cb77e9f49a73e2651a74755623b1f8b3cb8f62a5e0c64985bca046ca114",
+    "hiRes": false,
+    "version": null,
+    "generator": {
+      "tool": "derived",
+      "mode": "chest_lid",
+      "checkpoint": "SM_Prop_ChestCommon"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-22 22:13:14"
+}

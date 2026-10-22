@@ -1,0 +1,110 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Prop_ChestLegendaryBody",
+  "kind": "static",
+  "class": "tripo_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "loot.chest.legendary",
+    "part": "body"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    20
+  ],
+  "budget": {
+    "lodTris": [
+      3000,
+      1000
+    ],
+    "texture": 1024,
+    "maxFileKb": 700
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -0.4232970178127289,
+      0,
+      -0.231179878115654
+    ],
+    "max": [
+      0.4233214259147644,
+      0.6669999957084656,
+      0.2311926931142807
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Prop_ChestLegendaryBody_LOD0",
+      "lod": 0,
+      "tris": 1257,
+      "verts": 1804,
+      "materials": [
+        "M_Prop_ChestLegendary"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Prop_ChestLegendaryBody_LOD1",
+      "lod": 1,
+      "tris": 510,
+      "verts": 942,
+      "materials": [
+        "M_Prop_ChestLegendary"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Prop_ChestLegendary",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Prop_ChestLegendary_BC.png",
+        "N": "Textures/T_Prop_ChestLegendary_N.png",
+        "ORM": "Textures/T_Prop_ChestLegendary_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Prop_ChestLegendaryBody.glb",
+    "sha256": "848e4e05ec879f7d787c9bb6fe59f7c2270b6edd134f663c91b33e8af4f93754",
+    "hiRes": false,
+    "version": null,
+    "generator": {
+      "tool": "derived",
+      "mode": "chest_body",
+      "checkpoint": "SM_Prop_ChestLegendary"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-22 22:13:21"
+}
