@@ -151,6 +151,20 @@ namespace Spiritfire.Game.Tests
             Assert.AreEqual(0.5f, TantongAI.RekindleHp, "复燃半血");
         }
 
+        [Test]
+        public void EmberPileSettlesBeforeItCanBeSteppedOnAndLeavesSilently()
+        {
+            // 同 TS spawnDuration 0.25：成形前不判踩散、复燃不计时——死在玩家脚边的炭童照样先留下炭堆
+            Assert.AreEqual(0.25f, TantongEmberAI.SettleTime);
+            Assert.IsFalse(TantongEmberAI.Settled(0f));
+            Assert.IsFalse(TantongEmberAI.Settled(0.2f));
+            Assert.IsTrue(TantongEmberAI.Settled(0.25f));
+            Assert.AreEqual(4.25f, TantongEmberAI.RekindleAfter, 1e-5f, "落地 4.25 s 复燃（成形 + 4 s）");
+            // 复燃 / 被吃掉是自己退场（不经伤害结算、不算击杀）：冒烟套件按 ISelfDestruct 区分
+            Assert.IsTrue(typeof(ISelfDestruct).IsAssignableFrom(typeof(TantongEmberAI)));
+            Assert.IsFalse(typeof(ISelfDestruct).IsAssignableFrom(typeof(TantongAI)), "炭童本体被打死就是击杀");
+        }
+
         // ───────────── 祸斗 ─────────────
 
         [Test]

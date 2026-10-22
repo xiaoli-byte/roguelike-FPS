@@ -6,13 +6,17 @@ namespace Spiritfire.Game
     /// <summary>
     /// 炭童的余烬炭堆（TS TantongEmber）：一堆冒烟的炭块，炭缝的光越闪越快（1.5 → 9 Hz），4 s 后炭块飞回去、原地站起一只半血的炭童。
     /// 一枪就散（不暴击），范围伤害照样打得到；玩家走进 0.75 m 踩散（按一次近战击杀结算，算玩家击杀）。
-    /// 同伴蹲着吹 1.2 s 会让它当场复燃；祸斗吃掉它（<see cref="IFireSource"/>，炭童彻底死）。复燃 / 被吃掉不算击杀、不掉落（静默处决）。
+    /// 落地的头 0.25 s（TS spawnDuration）只是成形：打得到，但还不会被踩散、复燃计时也还没开始——死在玩家脚边的炭童照样先留下一堆炭。
+    /// 同伴蹲着吹 1.2 s 会让它当场复燃；祸斗吃掉它（<see cref="IFireSource"/>，炭童彻底死）。复燃 / 被吃掉不算击杀、不掉落（静默处决）：
+    /// 这两种退场同 TS 不经过伤害结算，按 <see cref="ISelfDestruct"/> 记成 <see cref="Detonated"/>（冒烟套件据此区分「自己退场」与「被打死却没派发击杀事件」）。
     /// 没有美术：生成器给的占位胶囊换成程序化的 5 块炭（发光件随复燃进度闪），不挡玩家（好踩上去）。
     /// </summary>
-    public sealed class TantongEmberAI : InfernoEnemyAI, IFireSource
+    public sealed class TantongEmberAI : InfernoEnemyAI, IFireSource, ISelfDestruct
     {
         /// <summary>走进炭堆这么近（水平，米；高差 0.7 m 内）就踩散</summary>
         public const float StompRange = 0.75f;
+        /// <summary>成形时间（秒，TS spawnDuration 0.25）：这段时间里不判踩散、复燃不计时</summary>
+        public const float SettleTime = 0.25f;
 
         static readonly Vector3[] ChunkAt =
         {
@@ -28,10 +32,12 @@ namespace Spiritfire.Game
         public float Remaining => Mathf.Max(0, TantongAI.RekindleTime - life);
         /// <summary>已经复燃 / 被吃 / 被打散</summary>
         public bool Done => done;
+        /// <summary>自己退场的（复燃、被祸斗吃掉、伤害被免疫没死而直接消失）：不是玩家击杀，没有击杀事件 / 奖励（同 TS vanish）</summary>
+        public bool Detonated => vanished;
 
-        float life, srcLevel = 1, flicker, smokeAcc;
+        float life, settle, srcLevel = 1, flicker, smokeAcc;
         string srcAffix;
-        bool srcElite, done, registered;
+        bool srcElite, done, registered, vanished;
         readonly List<Renderer> glows = new();
         readonly List<Transform> chunks = new();
         Renderer tongue;
@@ -106,6 +112,8 @@ namespace Spiritfire.Game
         {
             Stop();
             if (done) return;
+            // 成形中（TS 出生阶段不跑 ai）：不判踩散、复燃不计时
+            if (!Settled(settle += dt)) return;
             life += dt;
             // 踩散
             if (vitals && !vitals.Dead && !Taunted && ShouldStomp(player.position, transform.position))
@@ -115,6 +123,12 @@ namespace Spiritfire.Game
             }
             if (life >= TantongAI.RekindleTime) Rekindle();
         }
+
+        /// <summary>落地这么久（秒）之后才算成形：开始判踩散、复燃计时</summary>
+        public static bool Settled(float sinceSpawn) => sinceSpawn >= SettleTime;
+
+        /// <summary>落地后多久复燃（秒）：成形 0.25 s + 复燃 4 s（同 TS：出生阶段之后 ai 才开始累计）</summary>
+        public static float RekindleAfter => SettleTime + TantongAI.RekindleTime;
 
         /// <summary>玩家脚底 feet 离炭堆 pile 水平 0.75 m 内、高差 0.7 m 内：踩散</summary>
         public static bool ShouldStomp(Vector3 feet, Vector3 pile)
@@ -205,13 +219,15 @@ namespace Spiritfire.Game
             if (e is TantongAI t) t.RekindledFrom(at);
         }
 
-        /// <summary>消失：静默处决（复燃、被吃掉），不算击杀、不掉落</summary>
+        /// <summary>消失：静默处决（复燃、被吃掉），不算击杀、不掉落；记成自己退场（<see cref="Detonated"/>）</summary>
         void Vanish()
         {
             if (done) return;
             done = true;
             Unregister();
-            if (!Dead) Combat.Execute(hp, true);
+            if (Dead) return;
+            vanished = true;
+            Combat.Execute(hp, true);
         }
 
         void Unregister()

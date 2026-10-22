@@ -144,6 +144,18 @@ namespace Spiritfire.Game
         /// <summary>俯冲速度：6 m/s 起每秒 +14，封顶 11</summary>
         public static float DiveSpeedAt(float t) => Mathf.Min(DiveSpeed, DiveStart + t * DiveRamp);
 
+        /// <summary>
+        /// 俯冲 t 秒最多飞多远（米，按 <see cref="DiveSpeedAt"/> 积分、不算转向）：整段 1.6 s ≈ 16.7 m。
+        /// 水平离玩家超过「这段路 + 鼓气距离」才一定落空——横跳 14 m 还在它够得着的范围里（2 rad/s 转过来照样贴上去鼓气）
+        /// </summary>
+        public static float DiveReach(float t)
+        {
+            t = Mathf.Max(0, t);
+            float ramp = (DiveSpeed - DiveStart) / DiveRamp;
+            if (t <= ramp) return DiveStart * t + 0.5f * DiveRamp * t * t;
+            return DiveStart * ramp + 0.5f * DiveRamp * ramp * ramp + DiveSpeed * (t - ramp);
+        }
+
         /// <summary>鼓气中被打爆时对其他敌人的冰爆基础伤害：30 × 等级（精英 ×1.5）</summary>
         public static float DeathBlastDamage(float level, bool elite) => DeathBlastBase * level * (elite ? 1.5f : 1f);
 

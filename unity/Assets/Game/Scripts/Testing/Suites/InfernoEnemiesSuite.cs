@@ -294,18 +294,19 @@ namespace Spiritfire.Game.Testing
             yield return Run(t, 8f, () => seen.Contains("throwWindup"));
             PlaceAt(t, 1.8f);
             yield return Run(t, 8f, () => seen.Contains("flail"));
-            // 打死：留炭堆，4 s 后复燃半血
+            // 打死：留炭堆，4 s 后复燃半血。乱抓时它就在玩家脚边（扑跳停在 1 m 内、常常更近）：炭堆落在玩家 0.75 m 内，
+            // 成形 0.25 s 后就被「走上去」踩散了（算玩家击杀、不复燃）——所以先让玩家走开再打死它（同 TS 测试：玩家站在 25 m 外）
             var at = t.transform.position;
+            TeleportPlayerAway(at, 25f);
             Combat.Execute(t.Health, false);
             yield return new WaitForSeconds(0.3f);
             var pile = FindNear<TantongEmberAI>(at, 2f);
             Line($"  炭堆：{(pile ? "✓" : "✗")}{(pile && FireFeed.Find(pile.transform.position, 1f, this) != null ? "，登记为祸斗能吃的火" : "")}");
             if (!pile) Fail("炭童死后没有留下余烬炭堆");
-            TeleportPlayerAway(at, 25f);
             float w0 = Time.time;
             TantongAI reborn = null;
-            while (Time.time - w0 < TantongAI.RekindleTime + 1.5f && !(reborn = FindNear<TantongAI>(at, 3f, x => x.Reborn))) yield return null;
-            if (!reborn) Fail("炭堆 5.5 s 内没有复燃");
+            while (Time.time - w0 < TantongEmberAI.RekindleAfter + 1.5f && !(reborn = FindNear<TantongAI>(at, 3f, x => x.Reborn))) yield return null;
+            if (!reborn) Fail($"炭堆 {TantongEmberAI.RekindleAfter + 1.5f:F2} s 内没有复燃");
             else
             {
                 float frac = reborn.Health.health / Mathf.Max(1, reborn.Health.maxHealth);
@@ -325,7 +326,7 @@ namespace Spiritfire.Game.Testing
             // 趁另一只还在出生（不会跑开）时打死这一只：炭堆就在它身边 2.3 m
             yield return null;
             if (a) Combat.Execute(a.Health, false);
-            yield return Run(b, TantongAI.RekindleTime + 0.5f, () => seen.Contains("blow"));
+            yield return Run(b, TantongEmberAI.RekindleAfter + 0.5f, () => seen.Contains("blow"));
         }
 
         /// <summary>余烬：玩家走上去踩散（算玩家击杀）</summary>

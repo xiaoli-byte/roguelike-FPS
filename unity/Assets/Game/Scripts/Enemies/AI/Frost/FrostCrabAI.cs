@@ -23,6 +23,8 @@ namespace Spiritfire.Game
         public const float SweepRange = 5.5f, SweepWindup = 0.5f, SweepWindupMin = 0.35f, SweepInner = 1.4f, SweepRadius = 6.5f, SweepSpeed = 18;
         public const float SweepMult = 0.75f, SweepKnock = 7, SweepKnockUp = 4, SweepJumpClear = 0.6f;
         public const float BreakAt = 0.35f, BreakSpeed = 1.35f, BreakTurn = 1.4f, BreakTime = 0.9f, WeakRadius = 0.36f, StepShakeRange = 18;
+        /// <summary>侧移换向的间隔（秒，同 TS SIDE_SWITCH）；撞墙提前换向要离上次换向至少过了一阵（计时 &lt; SideSwitchMin − 0.6）</summary>
+        public const float SideSwitchMin = 1.6f, SideSwitchMax = 2.8f;
         static readonly Vector3 VentPoint = new(0, 1.0f, -0.95f);
 
         float windTime = GrabWindup, grabCd, sweepCd, sideTimer, sideSign = 1, blockFxAt, blindTime;
@@ -66,6 +68,28 @@ namespace Spiritfire.Game
                 ? new GuardProfile(broken ? BrokenGuard : GuardFactor, ZoneFacing.Front, GuardCos)
                 : GuardProfile.Open;
         }
+
+        /// <summary>贴近距离（TS 2.6 × 体型 × 0.8）：比它远就斜着逼近，比它的 0.8 倍还近就略后退，中间只横移</summary>
+        public static float NearDistance(float size) => 2.6f * size * 0.8f;
+
+        /// <summary>侧移推进里「往前」的分量（纯计算，测试用；同 TS scuttle 的 fwd）：远处 0.45、贴近带内 0、太近 −0.25</summary>
+        public static float ScuttleForward(float d, float size)
+        {
+            float near = NearDistance(size);
+            return d > near ? ForwardShare : d < near * 0.8f ? -0.25f : 0f;
+        }
+
+        /// <summary>
+        /// 看得到玩家时横着走、逼近玩家的速度（米/秒）：方向 = 侧向 ± 0.45 × 前方（归一化），前进分量只有 0.45 / √(1 + 0.45²) ≈ 41%。
+        /// 移速 2.4 时约 0.98 m/s——14 m 外要 ≈ 10 s 才进夹击距离（同 TS 的「钳墙慢慢压上来」；冒烟套件按它决定站多远）
+        /// </summary>
+        public static float ClosingSpeed(float speed) => speed * ForwardShare / Mathf.Sqrt(1f + ForwardShare * ForwardShare);
+
+        /// <summary>
+        /// 该不该换侧移方向（纯计算，测试用）：计时到点，或前方导航网格到头（撞墙）且离上次换向至少过了一阵（计时 &lt; SideSwitchMin − 0.6）。
+        /// 撞墙但刚换过向时不换、计时照走——TS 版每帧撞墙都重抽计时，贴着墙时计时永远到不了，巨蟹会一直顶在墙 / 台沿上不换向
+        /// </summary>
+        public static bool ShouldSwitchSide(float timer, bool wall) => timer <= 0 || (wall && timer < SideSwitchMin - 0.6f);
 
         /// <summary>夹中时把玩家甩出去的冲量：甩向巨钳那一侧（生物右侧）11 + 往前 3 + 上抛 6</summary>
         public static Vector3 FlingImpulse(Transform crab) => crab.right * GrabFling + crab.forward * 3f + Vector3.up * 6f;
@@ -223,27 +247,27 @@ namespace Spiritfire.Game
 
         /// <summary>
         /// 横着走：身体（巨钳）对着玩家，移动方向以身体侧向为主、带一点前进，一阵往左一阵往右；贴近后只横移（钳墙堵脸）、太近略后退；
-        /// 前面的导航网格到头（撞墙）就换方向
+        /// 前面的导航网格到头（撞墙）就换方向（<see cref="ShouldSwitchSide"/>）。换向计时同 TS 在看不到玩家时也照走
         /// </summary>
         void Scuttle(float dt, float d)
         {
-            float near = 2.6f * Size * 0.8f;
-            if (!sees || blindTime > 0.5f)
-            {
-                // 看不到玩家：走导航绕过来
-                if (d > near) MoveTo(PlayerPos, Speed);
-                else Stop();
-                return;
-            }
-            float fwd = d > near ? ForwardShare : d < near * 0.8f ? -0.25f : 0f;
+            bool blind = !sees || blindTime > 0.5f;
+            float fwd = ScuttleForward(d, Size);
             var move = (transform.right * sideSign + transform.forward * fwd).normalized;
             sideTimer -= dt;
-            bool wall = FrostKit.NavBlocked(agent, move, 1.2f);
-            if (sideTimer <= 0 || wall)
+            bool wall = !blind && FrostKit.NavBlocked(agent, move, 1.2f);
+            if (ShouldSwitchSide(sideTimer, wall))
             {
-                if (sideTimer <= 0 || sideTimer < 1.6f - 0.6f) sideSign = -sideSign;
-                sideTimer = Random.Range(1.6f, 2.8f);
+                sideSign = -sideSign;
+                sideTimer = Random.Range(SideSwitchMin, SideSwitchMax);
                 move = (transform.right * sideSign + transform.forward * fwd).normalized;
+            }
+            if (blind)
+            {
+                // 看不到玩家：走导航绕过来
+                if (d > NearDistance(Size)) MoveTo(PlayerPos, Speed);
+                else Stop();
+                return;
             }
             MoveTo(transform.position + move * 2.5f, Speed);
         }

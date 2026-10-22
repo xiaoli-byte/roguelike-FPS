@@ -12,10 +12,12 @@ namespace Spiritfire.Game.Testing
     /// <summary>
     /// 测试场冒烟（bridge.sh playtest arena；场景 TestArena，由 Pipeline/Editor/Levels/Level_TestArena.cs 生成）：
     ///   · 场地件齐全（出生点、武器架、坡度台、三座高台、三根栖落柱、熔岩 / 冰 / 水占位条带及其标签），武器架摆出了全部已登记的武器；
-    ///   · 名册里的每种敌人（现在是第一章 7 种）+ 一个未登记的 id（<see cref="UnknownId"/>，必须生成占位体）依次在刷怪台上生成：
-    ///     先让它活 5 s（玩家站在 14 m 外、看着它、不还手），没出过招就再等到 10 s；然后用武器把它打死（最多开火 40 s）；
+    ///   · 名册里的每种敌人 + 一个未登记的 id（<see cref="UnknownId"/>，必须生成占位体）依次在刷怪台上生成：
+    ///     先让它活 5 s（玩家站在 14 m 外、看着它、不还手；慢速贴身型站近些，见 <see cref="StandOffFor"/>），没出过招就再等到 10 s；
+    ///     然后用武器把它打死（最多开火 40 s）；
     ///     每只记一行：生成（美术 / 占位体）、进入攻击状态（哪个状态、第几秒）、死亡（致死来源、开火用时）、期间的运行时报错数、状态序列；
     ///   · 精英：生命 ×2.6、体型 ×1.25；强制占位体之后场景的敌人目录要还原。
+    /// 不单独上场的死亡产物（<see cref="Skipped"/>，如炭童余烬）不在这里跑：它们不出招、没奖励，生命周期由各自章节的套件验收。
     /// 辅助类敌人（站位 Support，如邪飞天）有友军才出手：给它配一只护卫，只看它自己的状态，开火前把护卫撤掉。
     /// 运行时报错由宿主记不合格（PlaytestRunner），这里只按敌人归账。
     /// 聚焦：Library/SpiritfireBridge/playtest-focus.txt 写敌人 id（逗号 / 空格分隔）→ 只跑这几种（读完即删），后续单元验收新敌人用。
@@ -51,6 +53,29 @@ namespace Spiritfire.Game.Testing
             "tunnel", "dive", "emerge", "flee", "strafe", "reposition", "perch", "land", "takeoff", "dead",
         };
 
+        /// <summary>
+        /// 名册里有、但不单独上场的死亡产物（id → 原因）：测试场的三项检查对它们都没有意义，跳过（聚焦文件点名也跳过）。
+        ///   炭童余烬：炭童死后留下的炭堆，伤害 0、不出招（原来的「出招 ✓ pile」只是因为 pile 不在 <see cref="NonAttack"/> 里）；
+        ///   4.25 s 就复燃成 tantong_reborn 静默退场（同 TS：不经过伤害结算、不算击杀），活 5 s 的观察期里必然已经没了，开火阶段打不到它。
+        ///   它的生命周期（死后留堆、踩散算玩家击杀、复燃半血、同伴吹火）由 inferno 套件（InfernoEnemiesSuite）验收。
+        /// </summary>
+        static readonly Dictionary<string, string> Skipped = new()
+        {
+            [TantongAI.EmberId] = "炭童死后的炭堆：不出招、不掉落，4.25 s 复燃静默退场；留堆 / 踩散 / 复燃由 inferno 套件验收",
+        };
+
+        /// <summary>
+        /// 玩家站多远（米）：默认 14 m。玄冰巨蟹只有贴身招（夹击 4 m、横扫 5.5 m 且只打侧后），看得到玩家时横着走，
+        /// 逼近速度只有移速的 ≈41%（<see cref="FrostCrabAI.ClosingSpeed"/>：2.4 → 0.98 m/s，同 TS），14 m 外要 ≈ 10.9 s 才进夹击距离——
+        /// 超过 10 s 的观察期是设计如此，不是 AI 卡住；所以站在「夹击距离 + 观察期 5 s 能走完的路」处（≈ 8.9 m，约 6 s 出招）
+        /// </summary>
+        static float StandOffFor(EnemyDef def)
+        {
+            if (def != null && def.ai == typeof(FrostCrabAI))
+                return Mathf.Min(StandOff, FrostCrabAI.GrabRange + FrostCrabAI.ClosingSpeed(def.speed) * LiveSeconds);
+            return StandOff;
+        }
+
         int logErrors;
         string lastError;
 
@@ -83,6 +108,11 @@ namespace Spiritfire.Game.Testing
             {
                 ids = EnemyRoster.All.Select(d => d.id).ToList();
                 ids.Add(UnknownId);
+            }
+            foreach (var id in ids.Where(Skipped.ContainsKey).ToList())
+            {
+                Line($"跳过 {EnemyRoster.Get(id)?.name}（{id}）：{Skipped[id]}");
+                ids.Remove(id);
             }
             Line($"敌人：{string.Join("、", ids)}");
             vitals.stats.Add("playtest_arena", Stat.MaxHp, 5000);
@@ -152,16 +182,18 @@ namespace Spiritfire.Game.Testing
         {
             if (vitals.Dead) vitals.Revive();
             vitals.Heal(99999);
+            bool registered = ArenaSpawner.IsRegistered(id);
+            var def = EnemyRoster.Get(registered ? id : arena.placeholderTemplate);
             var away = arena.playerSpawn ? arena.playerSpawn.position - arena.Center : -arena.transform.forward;
             away.y = 0;
             away = away.sqrMagnitude > 1e-4f ? away.normalized : Vector3.back;
-            Teleport(motor, arena.Center + away * StandOff);
+            float standOff = StandOffFor(def);
+            Teleport(motor, arena.Center + away * standOff);
             Aim(motor, eye, arena.Center + Vector3.up);
             yield return null;
 
-            bool registered = ArenaSpawner.IsRegistered(id);
-            var def = EnemyRoster.Get(registered ? id : arena.placeholderTemplate);
             string label = registered ? $"{def?.name}（{id}）" : $"未登记 {id}（占位模板 {arena.placeholderTemplate}）";
+            if (standOff < StandOff) label += $"〔站 {standOff:F1} m〕";
             int err0 = logErrors;
             var ai = arena.Spawn(id, false, Vector3.zero);
             if (!ai || def == null)

@@ -272,6 +272,35 @@ namespace Spiritfire.Game.Tests
         }
 
         [Test]
+        public void CrabSidlesInSlowlyAndFlipsOffWalls()
+        {
+            float size = 1.5f, near = FrostCrabAI.NearDistance(size);
+            Assert.AreEqual(3.12f, near, 1e-4f, "贴近距离 2.6 × 体型 × 0.8（同 TS）");
+            Assert.Less(near, FrostCrabAI.GrabRange, "贴近带在夹击距离以内：一路斜着压过来就能夹");
+            Assert.AreEqual(0.45f, FrostCrabAI.ScuttleForward(14f, size), "远处带 45% 前进");
+            Assert.AreEqual(0f, FrostCrabAI.ScuttleForward(3f, size), "贴近带内只横移");
+            Assert.AreEqual(-0.25f, FrostCrabAI.ScuttleForward(2f, size), "太近略后退");
+            // 侧移为主：逼近速度只有移速的 ≈ 41%，14 m 外进夹击距离要 ≈ 10 s（测试场据此让玩家站近些）
+            float closing = FrostCrabAI.ClosingSpeed(2.4f);
+            Assert.AreEqual(0.98f, closing, 0.01f);
+            Assert.Greater((14f - FrostCrabAI.GrabRange) / closing, 10f, "14 m 外 10 s 内进不了夹击距离：设计如此");
+            Assert.Less((9f - FrostCrabAI.GrabRange) / closing + 0.7f, 6.5f, "9 m 外 ≈ 6 s 就能夹");
+            // 换向：计时到点换；撞墙且离上次换向够久（计时 < 1.0）提前换；刚换过向撞墙不换、计时照走（不重抽，免得贴墙永远不换向）
+            Assert.IsTrue(FrostCrabAI.ShouldSwitchSide(0f, false));
+            Assert.IsFalse(FrostCrabAI.ShouldSwitchSide(0.5f, false));
+            Assert.IsTrue(FrostCrabAI.ShouldSwitchSide(0.9f, true), "撞墙提前换向");
+            Assert.IsFalse(FrostCrabAI.ShouldSwitchSide(2.2f, true), "刚换过向：撞墙先不换");
+            float timer = 2.2f;
+            int frames = 0;
+            while (!FrostCrabAI.ShouldSwitchSide(timer, true) && frames < 600)
+            {
+                timer -= 1 / 60f;
+                frames++;
+            }
+            Assert.Less(frames / 60f, 1.25f, "一直顶着墙：计时走到 1.0 s 以下就换向，不会卡死在墙上");
+        }
+
+        [Test]
         public void CrabGrabFlingsAndTheSweepWaveIsJumpable()
         {
             var go = new GameObject("Crab");
@@ -355,6 +384,43 @@ namespace Spiritfire.Game.Tests
             Assert.IsTrue(FrostFog.Inside(c, 3, new Vector3(0, 2.3f, 0)));
             Assert.IsFalse(FrostFog.Inside(c, 3, new Vector3(0, 2.5f, 0)), "雾顶 2.4 m");
             Assert.IsFalse(FrostFog.Inside(c, 3, new Vector3(0, -1.3f, 0)));
+        }
+
+        [Test]
+        public void PufferDiveReachDecidesWhatADodgeIs()
+        {
+            Assert.AreEqual(0f, IcePufferAI.DiveReach(0), 1e-5f);
+            Assert.AreEqual(6f * 0.25f + 7f * 0.0625f, IcePufferAI.DiveReach(0.25f), 1e-4f, "加速段：6t + 7t²");
+            float ramp = (IcePufferAI.DiveSpeed - IcePufferAI.DiveStart) / IcePufferAI.DiveRamp;
+            Assert.AreEqual(IcePufferAI.DiveReach(ramp) + 11f, IcePufferAI.DiveReach(ramp + 1f), 1e-4f, "封顶后每秒 11 m");
+            float whole = IcePufferAI.DiveReach(IcePufferAI.DiveMaxTime);
+            Assert.AreEqual(16.71f, whole, 0.02f, "整段俯冲 1.6 s ≈ 16.7 m");
+            // 横跳 14 m 还在它够得着的范围里（转向 2 rad/s 转过来照样贴上去），躲开要离得比整段俯冲 + 鼓气距离还远
+            Assert.Greater(whole + IcePufferAI.InflateRange, 14f, "14 m 的横跳躲不开俯冲");
+            // 逐帧模拟（冰霜套件的站位）：玩家从它前方 7 m 横跳 14 m（偏 76°）——转过来追上、进鼓气距离；
+            // 横闪到离它 23 m（整段俯冲 + 精英鼓气距离 + 3 m）——落空（精英转得更快也一样）
+            Assert.IsTrue(DiveCatches(new Vector2(-12, -7), 2f), "横跳 14 m：照样追上");
+            float dodge = whole + IcePufferAI.InflateRange * 1.25f + 3f;
+            Assert.IsFalse(DiveCatches(new Vector2(-dodge, 0), 2f), "横闪到整段俯冲够不着的地方：落空");
+            Assert.IsFalse(DiveCatches(new Vector2(-dodge, 0), 2.5f), "精英（转向 ×1.25）也落空");
+        }
+
+        /// <summary>同 IcePufferAI 的俯冲：朝向按 turn rad/s 转向玩家、速度 6 → 11、加速度 40；1.6 s 内水平进 2.4 m 算追上（起点朝 (2, −7) 方向、带 4.5 m/s 飘行速度）</summary>
+        static bool DiveCatches(Vector2 player, float turn)
+        {
+            Vector2 p = Vector2.zero, heading = new Vector2(2, -7).normalized, v = heading * 4.5f;
+            float yaw = Mathf.Atan2(heading.x, heading.y);
+            for (float t = 0; t < IcePufferAI.DiveMaxTime; t += 1 / 60f)
+            {
+                var to = player - p;
+                float want = Mathf.Atan2(to.x, to.y);
+                yaw += Mathf.Clamp(Mathf.DeltaAngle(yaw * Mathf.Rad2Deg, want * Mathf.Rad2Deg) * Mathf.Deg2Rad, -turn / 60f, turn / 60f);
+                var desired = new Vector2(Mathf.Sin(yaw), Mathf.Cos(yaw)) * IcePufferAI.DiveSpeedAt(t);
+                v = Vector2.MoveTowards(v, desired, 40f / 60f);
+                p += v / 60f;
+                if (Vector2.Distance(p, player) <= IcePufferAI.InflateRange) return true;
+            }
+            return false;
         }
 
         // ───────────── 通用 ─────────────

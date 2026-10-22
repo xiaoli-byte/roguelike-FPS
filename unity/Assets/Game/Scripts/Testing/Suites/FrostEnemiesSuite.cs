@@ -16,7 +16,8 @@ namespace Spiritfire.Game.Testing
     ///   · 冰甲旋龟：14 m 外开场旋壳（缩壳 → 旋转 → 过热 → 翻身）→ 贴着鸟喙站（猛啄两次后后退再转）→ 绕到身后（蛇尾反咬）；
     ///   · 玄冰巨蟹：正面 3.2 m（夹击）→ 侧面 4 m（横扫）→ 血量压到 30%（断钳）；
     ///   · 三青鸟：18 m 外（冰羽扇射）→ 各打掉 34% 血（尖啸俯冲换位）→ 玩家站到 5 m 栖落柱 13 m 外（歇脚、起飞）；
-    ///   · 冰河豚：7 m 外（飘近、俯冲、鼓气自爆）→ 第一次俯冲时玩家闪开（落空收势）→ 鼓气中打爆一只（只伤别的敌人、留小冻雾）；炸掉的随时补刷。
+    ///   · 冰河豚：7 m 外（飘近、俯冲、鼓气自爆）→ 第一次俯冲时玩家横闪到俯冲够不着的 ≈ 23 m 外（落空收势）→ 鼓气中打爆一只（只伤别的敌人、留小冻雾）；
+    ///     炸掉的随时补刷。
     /// 每种记一行：生成（美术 / 占位体）、普通 / 精英各自到过的状态、缺的状态、数值（定义与 Three.js DEF 一致；运行时生命 = 定义 × 难度 × 精英 2.6，
     /// 伤害倍率 = 1 + (难度 − 1) × 0.55，精英 ×1.25、体型 ×1.25）、AC_ 里每个招式状态都在（占位体跳过）、期间的运行时报错数。
     /// 不合格：缺状态、数值不符、缺片段、有报错（宿主也会记）。
@@ -454,10 +455,13 @@ namespace Spiritfire.Game.Testing
                 var diving = Live().FirstOrDefault(e => e.State == "dive");
                 if (!dodged && diving)
                 {
-                    // 第一次俯冲：玩家横向闪开 14 m → 落空收势
+                    // 第一次俯冲：玩家横向闪到它够不着的地方 → 落空收势。俯冲 1.6 s 最多飞 ≈ 16.7 m（6 → 11 m/s），转向 2 rad/s：
+                    // 横跳 14 m 还在射程里（转过来照样贴上去鼓气，永远等不到 recover），要离俯冲中的那只水平超过「整段俯冲 + 精英鼓气距离」
                     dodged = true;
                     var side = Vector3.Cross(Vector3.up, away);
-                    Teleport(motor, spot + side * 14f);
+                    float reach = IcePufferAI.DiveReach(IcePufferAI.DiveMaxTime) + IcePufferAI.InflateRange * 1.25f + 3f;
+                    var from = diving.transform.position;
+                    Teleport(motor, new Vector3(from.x, spot.y, from.z) + side * reach);
                     yield return Until(() => Seen("recover"), 4f);
                     Teleport(motor, spot);
                 }
