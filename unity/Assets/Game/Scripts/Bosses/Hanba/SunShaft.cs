@@ -101,13 +101,19 @@ namespace Spiritfire.Game
         /// 从 p 沿 toSun 方向看不看得到天：没有开口标记 = 露天（只看物理遮挡由调用方做）；有开口时射线在穴顶高度必须落进某个开口。
         /// distance = 射线要查物理遮挡的长度（到穴顶为止；露天时 <see cref="MaxRay"/>）。太阳在地平线下返回 false
         /// </summary>
-        public static bool SkyOpen(Vector3 p, Vector3 toSun, out float distance)
+        public static bool SkyOpen(Vector3 p, Vector3 toSun, out float distance) => SkyOpen(all, p, toSun, out distance);
+
+        /// <summary>
+        /// 同 <see cref="SkyOpen(Vector3, Vector3, out float)"/>，但只看给定的开口（关卡构建器的白盒自查用：编辑器里不进 Play 模式，
+        /// 开口不会登记到 <see cref="All"/>，直接把场景里的标记传进来，判定和运行时一模一样）
+        /// </summary>
+        public static bool SkyOpen(IReadOnlyList<SunShaft> shafts, Vector3 p, Vector3 toSun, out float distance)
         {
             distance = MaxRay;
             if (toSun.y <= 0.02f) return false;
-            if (all.Count == 0) return true;
+            if (shafts == null || shafts.Count == 0) return true;
             bool any = false;
-            foreach (var s in all)
+            foreach (var s in shafts)
             {
                 if (!s) continue;
                 float dy = s.CeilingY - p.y;

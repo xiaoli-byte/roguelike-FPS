@@ -4,7 +4,7 @@ namespace Spiritfire.Game
 {
     /// <summary>
     /// 首领前的补给营（docs/unity-parity.md 3.10 / 4.6 关卡场景标记「SupplyCamp」；Three.js StageDirector.setupBossSupply + boss-supply 测试）：
-    /// 关卡构建器在首领场门槛外摆一个这个标记（1-3 寺院前庭、1-4 月牙泉入口、2-4 雪岭营地…），物体位置 = 营地中心（地面），朝向 = 商店正面（玩家走来的方向）。
+    /// 关卡构建器在首领场门槛外摆一个这个标记（1-3 寺院塔院、2-4 雪岭营地…；1-4 月牙泉入口只是安全起步台，不摆这个），物体位置 = 营地中心（地面），朝向 = 商店正面（玩家走来的方向）。
     /// 开局时：
     ///   · 开一家完整的店（<see cref="Shop"/>：武器 ×2、秘卷、强化台、战备药剂、弹药箱）——回血回盾是付费服务（战备药剂），到达补给营不白给（同 TS：arrival does not freely restore health）；
     ///   · 立一块安全区（<see cref="SafeZone"/>）：敌人进不来，首领关的门槛在营地里不会触发（<see cref="BossEncounter"/>）；

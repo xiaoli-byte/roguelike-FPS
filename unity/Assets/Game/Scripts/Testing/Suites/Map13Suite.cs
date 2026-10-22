@@ -390,15 +390,21 @@ namespace Spiritfire.Game.Testing
             EnemyRegistry.PurgeAll();
             vitals.health = vitals.MaxHealth * 0.5f;
             float arrive = vitals.health;
+            // 路上会顺手吸到前庭战斗掉的血球（每个 15%）：那是掉落不是营地给的，单独记账、不算「白给」
+            float orbHeal = 0;
+            System.Action<Pickup.Kind, float> onPick = (k, got) => { if (k == Pickup.Kind.Health) orbHeal += got; };
+            GameEvents.PickedUp += onPick;
             // 走上台基、绕过寺塔到营地门口（安全区在网格上挖了洞），再直走进营地
             var gate = CampFront(camp, zone);
             yield return Travel(gate, 1.5f, false);
             var inside = camp.transform.position + camp.transform.forward * 3f;
             yield return Walk(inside, 0.6f);
             yield return new WaitForSeconds(0.5f);
+            GameEvents.PickedUp -= onPick;
             bool zoneIn = zone.PlayerInside;
-            bool notRestored = vitals.health <= arrive + 0.5f;
-            Line($"走进补给营：安全区报告玩家在内 {(zoneIn ? "✓" : "✗")}，到达不白给回复 {(notRestored ? "✓" : "✗")}（生命 {arrive:F0} → {vitals.health:F0}）");
+            bool notRestored = vitals.health <= arrive + orbHeal + 0.5f;
+            Line($"走进补给营：安全区报告玩家在内 {(zoneIn ? "✓" : "✗")}，到达不白给回复 {(notRestored ? "✓" : "✗")}（生命 {arrive:F0} → {vitals.health:F0}" +
+                 (orbHeal > 0 ? $"，其中路上捡血球 +{orbHeal:F0}" : "") + "）");
             if (!zoneIn) Fail("走进补给营，安全区没有报告玩家在内");
             if (!notRestored) Fail("到达补给营白给了回复（回复应当是付费的战备药剂）");
             Aim(motor, eye, camp.transform.position + Vector3.up * 1.2f - camp.transform.forward * 6f);

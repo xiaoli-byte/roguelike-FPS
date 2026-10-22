@@ -14,7 +14,8 @@ namespace Spiritfire.Art.Editor.Levels
     /// 1-4 干涸月牙泉 · 旱魃（docs/level-design/maps/1-4.md；unity-maps-v1.md 第 1 节 1-4、第 3 节场地）的首领场：沉沙古城之下的地下巨穴。
     /// 关卡坐标 = 世界 XZ（米），穴底 y = 0。地形 176 × 176 m，穴外岩层顶面 y ≈ 36（玩家看不到，只是让穴壁一直高过穴顶）。
     ///
-    ///   出生 · 月牙泉入口补给营：穴东侧 8 m 高的岩台（Shelf），台沿是俯瞰泉床的眺台（直落 8 m，可以跳下去当捷径）
+    ///   出生 · 月牙泉入口岩台：穴东侧 8 m 高的岩台（Shelf），只是一块安全的起步台（安全区，不开店——补给营在上一关 1-3 的寺院塔院，
+    ///   不让玩家连着撞见两家店）；台沿是俯瞰泉床的眺台（直落 8 m，可以跳下去当捷径）
     ///   → 转一次弯的下行坡（从岩台西南角起，贴着穴壁切出的坡槽绕到穴底，约 33 m、13°）
     ///   → 地下巨穴：80 × 70 m 椭圆碗底，穴壁 12 m 宽内陡升（60–70°，爬不上去，也不立空气墙）；
     ///     月牙泉床下沉 1.5 m（凸侧朝南、两角朝北），南半圈的泉床底还剩一圈 0.4 m 浅水；泉床内侧一块 3.2 m 岩岛（东北侧坡道可上，俯射层）；
@@ -26,7 +27,7 @@ namespace Spiritfire.Art.Editor.Levels
     ///   · 主光照不进来（投影照常，体块是闭合的，不靠双面投影）；
     ///   · 俯视地图相机（L5 / U7）不拍 Character 层，全图能看到穴底；
     ///   · 没有碰撞，不影响子弹、导航、可达性栅格——日晒判定由 <see cref="SunShaft"/> 标记声明开口（旱魃的 SunExposure 用）。
-    /// 场景只放环境和标记（D17 / L1）：PlayerSpawn、自举标记、补给营（<see cref="SupplyCamp"/>）、首领场地（<see cref="BossArena"/>）、
+    /// 场景只放环境和标记（D17 / L1）：PlayerSpawn、自举标记、起步台安全区（<see cref="SafeZone"/>，没有 SupplyCamp / 商店）、首领场地（<see cref="BossArena"/>）、
     /// 首领关流程（<see cref="BossEncounter"/>，首领 boss_hanba；出口在打完后由它升起）、日光裂缝（<see cref="SunShaft"/>）。
     /// 生成：Spiritfire ▸ Levels ▸ Build 1-4 干涸月牙泉（或 bridge.sh level 1-4）。
     /// </summary>
@@ -221,7 +222,7 @@ namespace Spiritfire.Art.Editor.Levels
             var pavilion = LevelKit.PlaceOrBox(PavilionId, props, terrain, Pavilion.x, Pavilion.y, PavilionYaw, PavilionSize);
             if (pavilion && pavilion.name.StartsWith(PavilionId)) pavilion.transform.localScale = Vector3.one * PavilionScale;
             BuildArenaProps(terrain, props);
-            var camp = BuildShelf(terrain, props, markers);
+            var start = BuildShelf(terrain, props, markers);
             var arena = BuildArena(terrain, markers, out var exitPoint, out var rewardPoint);
             BuildEncounter(markers, arena, exitPoint, rewardPoint);
 
@@ -243,7 +244,7 @@ namespace Spiritfire.Art.Editor.Levels
             var rep = new LevelKit.Report();
             rep.Line("1-4 干涸月牙泉 · 白盒验收");
             Vector3 G(Vector2 q, float dy = 0) => LevelKit.OnGround(terrain, q.x, q.y, dy);
-            CheckGeometry(rep, set, sun, shaft, waters, pavilion, camp);
+            CheckGeometry(rep, set, sun, shaft, ceiling, waters, pavilion, start);
             LevelValidator.Run(Spec(terrain), rep); // 主线、坡度、视线 + L5 规则集（含防越界：没有空气墙，穴壁本身是边界）
             CheckSceneContents(rep, scene);
             rep.Line(rep.failures == 0 ? "全部通过" : $"不合格 {rep.failures} 项");
@@ -445,22 +446,23 @@ namespace Spiritfire.Art.Editor.Levels
             LevelKit.Prop("SM_Prop_DesertStele", props, t, 7, -32, 200);
         }
 
-        /// <summary>月牙泉入口补给营：岩台中央（商店正面朝出生点），两只火盆、货堆、陶罐、半截残墙；营火上一盏不投影的暖色点光</summary>
-        static SupplyCamp BuildShelf(Terrain t, Transform props, Transform markers)
+        /// <summary>
+        /// 月牙泉入口岩台：一块安全的起步台——只有安全区（<see cref="SafeZone"/>，半径 11 m：敌人进不来，首领关门槛在台上不触发），
+        /// 不开店（补给营在 1-3 寺院塔院，刚买完补给，不再连着来一家店）。两只火盆、陶罐、半截残墙；火盆间一盏不投影的暖色点光
+        /// </summary>
+        static SafeZone BuildShelf(Terrain t, Transform props, Transform markers)
         {
             var at = LevelKit.OnGround(t, CampAt.x, CampAt.y);
-            var go = new GameObject("SupplyCamp");
+            var go = new GameObject("Start Platform");
             go.transform.SetParent(markers, false);
             go.transform.SetPositionAndRotation(at, Quaternion.LookRotation(new Vector3(PlayerSpawnAt.x - CampAt.x, 0, PlayerSpawnAt.y - CampAt.y)));
-            var camp = go.AddComponent<SupplyCamp>();
-            camp.label = "月牙泉入口补给营";
-            camp.safeRadius = 11f;
+            var zone = go.AddComponent<SafeZone>();
+            zone.radius = 11f;
             LevelKit.Prop("SM_Tripo_DesertBrazier", props, t, 58, -6, 0);
             LevelKit.Prop("SM_Tripo_DesertBrazier", props, t, 58, -22, 0);
-            LevelKit.Prop("SM_Tripo_DesertGoodsPile", props, t, 63, -20, 130);
             LevelKit.Prop("SM_Prop_DesertUrns", props, t, 64, -7, 40);
             LevelKit.Prop("SM_Env_DesertRuin", props, t, 66, -15, 95);
-            var light = new GameObject("Camp Light").AddComponent<Light>();
+            var light = new GameObject("Brazier Light").AddComponent<Light>();
             light.transform.SetParent(props, false);
             light.transform.position = at + Vector3.up * 3f;
             light.type = LightType.Point;
@@ -468,7 +470,7 @@ namespace Spiritfire.Art.Editor.Levels
             light.intensity = 3f;
             light.range = 16f;
             light.shadows = LightShadows.None;
-            return camp;
+            return zone;
         }
 
         /// <summary>
@@ -539,7 +541,8 @@ namespace Spiritfire.Art.Editor.Levels
         }
 
         /// <summary>白盒自查：关键点高度、裂缝光柱真的落在设计的位置（从落点朝太阳打射线：落点进光、偏出缝外一侧进影）、浅水段数、月牙阁、补给营</summary>
-        static void CheckGeometry(LevelKit.Report rep, LevelKit.TerrainSet set, Light sun, SunShaft shaft, List<WaterVolume> waters, GameObject pavilion, SupplyCamp camp)
+        static void CheckGeometry(LevelKit.Report rep, LevelKit.TerrainSet set, Light sun, SunShaft shaft, Transform ceiling, List<WaterVolume> waters, GameObject pavilion,
+                                  SafeZone start)
         {
             rep.Section("地形与光柱");
             Physics.SyncTransforms();
@@ -550,7 +553,7 @@ namespace Spiritfire.Art.Editor.Levels
                 else rep.Line($"✓ {what}：y = {got:F2}");
             }
             Near("穴底中心", Y(Bowl + new Vector2(-6, -4)), 0, 0.5f);
-            Near("岩台（补给营）", Y(CampAt), ShelfFloor, 0.5f);
+            Near("岩台（起步台）", Y(CampAt), ShelfFloor, 0.5f);
             Near("泉床南段", Y(Spring + new Vector2(0, -12.6f)), -SpringDepth, 0.4f);
             Near("岩岛顶", Y(Island), IslandHeight, 0.5f);
             Near("下行坡脚", Y(RampCtrl[^1]), 0, 0.6f);
@@ -566,16 +569,47 @@ namespace Spiritfire.Art.Editor.Levels
             if (rampWorst > 24f) rep.Fail($"下行坡最陡 {rampWorst:F0}°（> 24°），纵断面 {RampPath.MaxGrade():F0}°");
             else rep.Line($"✓ 下行坡长 {RampPath.length:F0} m、落差 {ShelfFloor:F0} m，最陡 {rampWorst:F0}°（纵断面 {RampPath.MaxGrade():F0}°）");
 
-            // 光柱：落点中心朝太阳的射线穿过裂缝（没被岩体挡住），落点往南 9 m（缝外）被挡
+            // 光柱：落点中心朝太阳的射线穿过裂缝（没被岩体挡住），落点往南 9 m（缝外）被挡。
+            // 日晒判定走运行时同一条 SunShaft.SkyOpen，但开口直接用场景里这个标记——编辑器不进 Play 模式，标记不会登记到 SunShaft.All，
+            // 用静态登记表会当成「没有穴顶 = 露天」，岩岛就被判成晒得到（穴顶面片没有碰撞，物理射线挡不住它）
             if (!sun) rep.Fail("场景里没有主方向光（RenderSettings.sun）");
             var toSun = sun ? -sun.transform.forward : ToSun;
+            var shafts = shaft ? new[] { shaft } : new SunShaft[0];
+            var slabs = ceiling ? ceiling.GetComponentsInChildren<MeshRenderer>().Where(r => r.name.StartsWith("Ceiling Slab")).ToArray() : new MeshRenderer[0];
+            // 穴顶面片（单位立方体缩放）在穴顶高度盖住 q：真实投影会挡住
+            bool SlabCovers(Vector3 q) => slabs.Any(r =>
+            {
+                var l = r.transform.InverseTransformPoint(new Vector3(q.x, r.transform.position.y, q.z));
+                return Mathf.Abs(l.x) <= 0.5f && Mathf.Abs(l.z) <= 0.5f;
+            });
+            int mismatch = 0;
+            string firstMismatch = null;
             bool Lit(Vector2 q)
             {
                 var p = set.OnGround(q.x, q.y, 1.2f);
-                if (!SunShaft.SkyOpen(p, toSun, out float dist)) return false;
+                bool open = SunShaft.SkyOpen(shafts, p, toSun, out float dist);
+                // 声明和真几何要一致：判定说开着的，射线在穴顶高度不能落在面片上；判定说挡着的，那里得真有面片（否则真实光照会漏进来）
+                if (shaft && toSun.y > 0.02f && p.y < shaft.CeilingY)
+                {
+                    var cross = p + toSun * ((shaft.CeilingY - p.y) / toSun.y);
+                    bool covered = SlabCovers(cross);
+                    if (covered == open)
+                    {
+                        mismatch++;
+                        firstMismatch ??= $"{q}：判定{(open ? "开" : "挡")}、面片{(covered ? "有" : "无")}（穴顶落点 {cross.x:F1}, {cross.z:F1}）";
+                    }
+                }
+                if (!open) return false;
                 return !Physics.Raycast(p, toSun, dist, Layers.WorldMask, QueryTriggerInteraction.Ignore);
             }
             bool litCenter = Lit(ShaftPatch), litOff = Lit(ShaftPatch + new Vector2(0, -9)), litIsland = Lit(Island);
+            // 再沿穴底撒一圈点核对「声明的开口 = 穴顶面片留的洞」
+            for (float x = -36; x <= 36; x += 6)
+            for (float z = -32; z <= 32; z += 4)
+                Lit(new Vector2(x, z));
+            if (!shaft || slabs.Length == 0) rep.Fail($"没有日光裂缝标记或穴顶面片（标记 {(shaft ? 1 : 0)}、面片 {slabs.Length}）");
+            else if (mismatch > 0) rep.Fail($"穴顶开口声明和面片留的洞对不上：{mismatch} 处（例 {firstMismatch}）");
+            else rep.Line($"✓ 穴顶开口声明（{ApertureHalf.x * 2:F0} × {ApertureHalf.y * 2:F0} m）与面片留的洞一致（穴底 {13 * 17} 个采样点）");
             if (!litCenter) rep.Fail($"光柱落点 {ShaftPatch} 照不到太阳（裂缝 / 太阳方向没对上）");
             if (litOff || litIsland) rep.Fail($"缝外也照得到太阳（落点南 9 m {litOff}、岩岛 {litIsland}）——穴顶开口声明比实际大？");
             if (litCenter && !litOff && !litIsland) rep.Line($"✓ 日光只从裂缝进来：落点 {ShaftPatch} 进光，缝外与岩岛在影子里（太阳俯角 {SunPitch}°、方位 {SunYaw}°，裂缝中心 {Aperture}）");
@@ -584,11 +618,11 @@ namespace Spiritfire.Art.Editor.Levels
             if (waters.Count < 6) rep.Fail($"浅水只有 {waters.Count} 段（泉床南半圈应有一圈）");
             if (!shaft) rep.Fail("没有日光裂缝标记（SunShaft）");
 
-            rep.Section("月牙阁 / 补给营");
+            rep.Section("月牙阁 / 起步台");
             if (!pavilion) rep.Fail("月牙阁没有摆出来");
-            else rep.Line($"{(pavilion.CompareTag(LevelKit.PlaceholderTag) ? "⚠ 白盒" : "✓ 正式件")} 月牙阁 {pavilion.name} × {pavilion.transform.localScale.x:F1}，二层台设计 {PavilionTerrace} m");
-            if (!camp) rep.Fail("没有补给营标记");
-            else rep.Line($"✓ 补给营「{camp.label}」安全区 {camp.safeRadius} m，开局开店（商店运行时生成）");
+            else rep.Line($"{(pavilion.tag == LevelKit.PlaceholderTag ? "⚠ 白盒" : "✓ 正式件")} 月牙阁 {pavilion.name} × {pavilion.transform.localScale.x:F1}，二层台设计 {PavilionTerrace} m");
+            if (!start) rep.Fail("岩台上没有起步安全区");
+            else rep.Line($"✓ 起步台安全区 {start.radius} m，不开店（补给营在 1-3 寺院塔院）");
         }
 
         /// <summary>L1 规则（同 1-1）：关卡场景只有环境和标记，没有玩家 / 相机 / HUD / 会话 / 敌人目录；顺带重新生成 GameDatabase</summary>
@@ -598,10 +632,12 @@ namespace Spiritfire.Art.Editor.Levels
             int Count<T>() where T : Component =>
                 Object.FindObjectsByType<T>(FindObjectsInactive.Include).Count(c => c.gameObject.scene == scene);
             int spawns = Count<PlayerSpawn>(), boots = Count<LevelBootstrap>(), arenas = Count<BossArena>(), encounters = Count<BossEncounter>(),
-                camps = Count<SupplyCamp>(), portals = Count<ExitPortal>();
+                camps = Count<SupplyCamp>(), zones = Count<SafeZone>(), portals = Count<ExitPortal>();
             if (spawns != 1) rep.Fail($"PlayerSpawn 有 {spawns} 个（应为 1）");
             if (boots != 1) rep.Fail($"LevelBootstrap 有 {boots} 个（应为 1）");
-            if (arenas != 1 || encounters != 1 || camps != 1) rep.Fail($"BossArena {arenas} / BossEncounter {encounters} / SupplyCamp {camps}（各应为 1）");
+            if (arenas != 1 || encounters != 1 || zones != 1) rep.Fail($"BossArena {arenas} / BossEncounter {encounters} / SafeZone {zones}（各应为 1）");
+            // 补给营在 1-3 结尾（寺院塔院）：1-4 不再摆店，免得连着两家
+            if (camps != 0) rep.Fail($"场景里有 {camps} 个 SupplyCamp（1-4 起步台不开店，补给营在 1-3）");
             // 场景里不放 ExitPortal：没有目标的出口开局就会自己开着，首领关的出口由 BossEncounter 打完后立
             if (portals != 0) rep.Fail($"场景里有 {portals} 个 ExitPortal（首领关的出口由 BossEncounter 结算后立）");
             void None<T>(string what) where T : Component
@@ -615,13 +651,13 @@ namespace Spiritfire.Art.Editor.Levels
             None<Hud>("HUD");
             None<GameSession>("会话");
             None<EnemyCatalog>("敌人目录（改由 GameDatabase 提供）");
-            if (spawns == 1 && boots == 1) rep.Line("✓ PlayerSpawn ×1、LevelBootstrap ×1、BossArena / BossEncounter / SupplyCamp 各 1，没有玩家 / 相机 / HUD / 会话");
+            if (spawns == 1 && boots == 1) rep.Line("✓ PlayerSpawn ×1、LevelBootstrap ×1、BossArena / BossEncounter / 起步台 SafeZone 各 1、没有 SupplyCamp，没有玩家 / 相机 / HUD / 会话");
             CoreSceneBuilder.BuildDatabase(rep);
         }
 
         /// <summary>
-        /// 交给 L5 规则集的声明：主线 出生 → 补给营 → 下行坡 → 入场点 → 岩岛顶 → 泉床 → 月牙阁前 → 首领出生点；坡度（下行坡、岩岛坡道）；
-        /// 地标视线（眺台看月牙阁、坡脚看岩岛、入场点看光柱与首领出生点）；场地：补给营（缓冲）、月牙泉擂台（≥ 3 处掩体、两层以上、要有坡道上得去的俯射层）；
+        /// 交给 L5 规则集的声明：主线 出生 → 起步台 → 下行坡 → 入场点 → 岩岛顶 → 泉床 → 月牙阁前 → 首领出生点；坡度（下行坡、岩岛坡道）；
+        /// 地标视线（眺台看月牙阁、坡脚看岩岛、入场点看光柱与首领出生点）；场地：起步台（缓冲）、月牙泉擂台（≥ 3 处掩体、两层以上、要有坡道上得去的俯射层）；
         /// 召唤点当刷怪锚点查净空 / 有路（跳鼠刀兵、蝎尾弩卫）。可玩区遮罩 = 碗底 + 岩台 + 坡槽，穴壁 60–70° 爬不上去，没有空气墙（escapeMargin 3 m）
         /// </summary>
         static LevelSpec Spec(Terrain terrain)
@@ -639,11 +675,11 @@ namespace Spiritfire.Art.Editor.Levels
                     },
                     sites =
                     {
-                        new SiteSpec { name = "月牙泉入口补给营（缓冲）", center = G(CampAt), size = 22, combat = false },
+                        new SiteSpec { name = "月牙泉入口岩台（缓冲）", center = G(CampAt), size = 22, combat = false },
                         new SiteSpec { name = "干涸月牙泉（首领场）", center = G(Bowl), size = 70, minCover = 3, minLayers = 2, overlook = true },
                     },
                 }
-                .Route("出生 · 补给营", G(PlayerSpawnAt)).Route("补给营", G(CampAt)).Route("下行坡顶", G(RampCtrl[0]))
+                .Route("出生 · 岩台", G(PlayerSpawnAt)).Route("起步台", G(CampAt)).Route("下行坡顶", G(RampCtrl[0]))
                 .Route("下行坡弯", G(RampCtrl[2])).Route("坡脚", G(RampCtrl[^1])).Route("入场点", G(PlayerEntry))
                 .Route("岩岛顶", G(Island)).Route("泉床", G(Spring + new Vector2(-6, -12))).Route("月牙阁前", G(Pavilion + new Vector2(0, 6)))
                 .Route("首领出生点", G(BossSpawn))
