@@ -221,6 +221,27 @@ namespace Spiritfire.Game.Tests
             Assert.AreEqual(from, to);
         }
 
+        /// <summary>
+        /// 回归 playtest world「跳鼠在界外 +10 m 没被拴回、拴绳没被调用、agent 在网格上」：1-1 的导航体块是 4 m 格子，网格铺到界外 +6.8 m；
+        /// 关掉 agent 挪到 +10 m 再开，Unity 把它就近放到 +5.9 m 的网格边上，旧规则「在网格上就放宽到 navInset + 2 × tetherSlack = +6 m」不算出界。
+        /// 现在拴绳线外（+4 m）就算出界，不管在不在网格上；导航体块改成 1 m，网格只铺到拴绳线以内
+        /// </summary>
+        [Test]
+        public void TetherLineIgnoresTheNavMeshFringeAndNavBlocksStayInsideIt()
+        {
+            var t = SoftBoundaryTuning.Default;
+            Assert.IsTrue(t.TetherOut(5.9f), "被放到界外网格边上 +5.9 m：出界");
+            Assert.IsTrue(t.TetherOut(10f));
+            Assert.IsFalse(t.TetherOut(t.navInset + t.tetherSlack - 0.1f), "拴绳线以内不拴");
+            Assert.IsFalse(t.TetherOut(t.HoldDepth(7.5f) + 0.5f), "玩家走路顶到的地方（+2.7 m）附近追过来的敌人不拴");
+
+            Assert.AreEqual(t.navInset + 4 * 0.7072f, t.NavBlockMargin(4), 1e-4f, "格心判定线：navInset + 半条对角线");
+            Assert.Greater(t.NavReach(4), t.navInset + t.tetherSlack, "旧的 4 m 体块：网格铺出拴绳线（+7.7 m）");
+            Assert.LessOrEqual(t.NavReach(SoftBoundaryTuning.NavCell), t.navInset + t.tetherSlack, "1 m 体块：网格最远 +3.4 m，在拴绳线以内");
+            Assert.GreaterOrEqual(t.NavBlockMargin(SoftBoundaryTuning.NavCell) - SoftBoundaryTuning.NavCell * 0.7072f, t.navInset - 1e-4f,
+                "被挡的格子整个在 navInset 外：导航边缘以内照样能走");
+        }
+
         // ───────────── 区域风暴 ─────────────
 
         static WeatherDirector.Region Storm() => new()

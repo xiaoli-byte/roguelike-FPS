@@ -191,7 +191,10 @@ namespace Spiritfire.Game.Testing
             yield return new WaitForSeconds(0.6f);
         }
 
-        /// <summary>敌人被送出导航边缘：AI 先停（不让子类在离网时调 agent），1.2 s 后被拴回网格</summary>
+        /// <summary>
+        /// 敌人被送出导航边缘：AI 先停（不让子类在离网时调 agent），1.2 s 后被拴回网格。
+        /// 关掉 agent 挪到 +10 m 再开时，附近有网格的话 Unity 会把它就近放到网格边上（4 m 导航体块的旧关卡：界外 +5.9 m）——拴绳线外照样要拴回
+        /// </summary>
         IEnumerator TetherCase()
         {
             var zone = BoundaryZone.Active;
@@ -214,18 +217,26 @@ namespace Spiritfire.Game.Testing
             ai.transform.position = outside;
             agent.enabled = true;
             float d0 = BoundaryZone.Distance(ai.transform.position);
-            float waited = 0;
+            bool placedOnMesh = agent.isOnNavMesh;
+            int ticks0 = BoundaryZone.TetherTicks, marked0 = BoundaryZone.TetherMarkedOut;
+            float waited = 0, dPlaced = float.NaN;
             while (BoundaryZone.Tethered == before && waited < t.tetherGrace + 1.5f)
             {
                 waited += Time.deltaTime;
                 yield return null;
+                // 放下一帧后：离网时启用的 agent 可能被 Unity 就近放到了网格边上（transform 跟过去）
+                if (float.IsNaN(dPlaced)) dPlaced = BoundaryZone.Distance(ai.transform.position);
             }
             float d1 = BoundaryZone.Distance(ai.transform.position);
             if (BoundaryZone.Tethered == before)
-                Fail($"跳鼠在界外 +{d0:F1} m、离网 {waited:F1} s 没被拴回（agent 启用 {agent.enabled}、在网格上 {agent.isOnNavMesh}、updatePosition {agent.updatePosition}；" +
-                     $"最近失败：{BoundaryZone.LastTetherFailure ?? "无（拴绳没被调用）"}）");
+                Fail($"跳鼠放到界外 +{d0:F1} m（启用 agent 时在网格上 {placedOnMesh}，一帧后在 {dPlaced:+0.0;-0.0} m）、{waited:F1} s 没被拴回，现在在 {d1:+0.0;-0.0} m" +
+                     $"（agent 启用 {agent.enabled}、在网格上 {agent.isOnNavMesh}、updatePosition {agent.updatePosition}）；" +
+                     $"拴绳检查 {BoundaryZone.TetherTicks - ticks0} 轮、判出界 {BoundaryZone.TetherMarkedOut - marked0} 次；" +
+                     $"最近看到：{BoundaryZone.LastTetherSeen ?? "无"}；最近失败：{BoundaryZone.LastTetherFailure ?? "无（拴绳没被调用）"}");
             else if (d1 > t.navInset + 0.5f || !agent.isOnNavMesh) Fail($"拴回后在 {d1:+0.0;-0.0} m、在网格上 {agent.isOnNavMesh}");
             else Line($"✓ 拴绳：跳鼠从 +{d0:F1} m 拴回 {d1:F1} m（{waited:F1} s），回到导航网格上");
+            if (!float.IsNaN(dPlaced) && dPlaced < d0 - 1f)
+                Line($"  （启用 agent 时被 Unity 就近放到了界外的网格边上：+{d0:F1} → {dPlaced:+0.0;-0.0} m；导航体块按 {SoftBoundaryTuning.NavCell} m 重建关卡后网格只到 +{t.NavReach(SoftBoundaryTuning.NavCell):F1} m）");
             ai.enabled = true;
             yield return new WaitForSeconds(0.3f);
             EnemyRegistry.PurgeAll();

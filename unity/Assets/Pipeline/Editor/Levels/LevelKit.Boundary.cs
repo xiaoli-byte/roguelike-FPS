@@ -23,7 +23,7 @@ namespace Spiritfire.Art.Editor.Levels
             public float cell;
             /// <summary>遮罩 ≥ threshold 算界内（与 LevelSpec.playableThreshold 一致）</summary>
             public float threshold;
-            /// <summary>界外「不可走」导航体块的格子（米）</summary>
+            /// <summary>界外「不可走」导航体块的格子（米）：导航网格最远铺到 tuning.NavReach(navCell)，要在拴绳线 navInset + tetherSlack 以内</summary>
             public float navCell;
             /// <summary>兜底碰撞环的上下沿（世界 y）</summary>
             public float wallBottom, wallTop;
@@ -32,7 +32,7 @@ namespace Spiritfire.Art.Editor.Levels
 
             public static BoundarySpec Default => new()
             {
-                tuning = SoftBoundaryTuning.Default, cell = 2f, threshold = 0.2f, navCell = 4f, wallBottom = -30f, wallTop = 80f, theme = "Desert",
+                tuning = SoftBoundaryTuning.Default, cell = 2f, threshold = 0.2f, navCell = SoftBoundaryTuning.NavCell, wallBottom = -30f, wallTop = 80f, theme = "Desert",
             };
 
             /// <summary>交给 L5 防越界检查的越界距离（落到兜底环外才算出去）</summary>
@@ -87,7 +87,9 @@ namespace Spiritfire.Art.Editor.Levels
             fs.AddComponent<MeshCollider>().sharedMesh = wall;
 
             // 3. 界外不可走
-            int blocks = NavBlockers(root.transform, data, w, h, area.min, spec.cell, t.navInset, spec.navCell);
+            int blocks = NavBlockers(root.transform, data, w, h, area.min, spec.cell, t, spec.navCell);
+            if (t.NavReach(spec.navCell) > t.navInset + t.tetherSlack)
+                Debug.LogWarning($"[Level] 软边界：导航体块 {spec.navCell} m 太粗，网格会铺到界外 +{t.NavReach(spec.navCell):F1} m（拴绳线 +{t.navInset + t.tetherSlack} m）");
 
             float len = segs.Sum(s => Vector2.Distance(s.a, s.b)), ringLen = ring.Sum(s => Vector2.Distance(s.a, s.b));
             Debug.Log($"[Level] 软边界：等值线 {segs.Count} 段约 {len:F0} m；距离场 {w} × {h}（{spec.cell} m）；兜底环离线 {t.failsafe} m、约 {ringLen:F0} m；" +
@@ -209,15 +211,17 @@ namespace Spiritfire.Art.Editor.Levels
         }
 
         /// <summary>
-        /// 界外「不可走」：navCell 米的格子，格子整个在 navInset 之外（格心距离 &gt; navInset + 半对角）就标记；按行取连续段、上下相同的段合并成矩形，
-        /// 每个矩形一个 NavMeshModifierVolume（Not Walkable，高 1000 m）。返回体块数
+        /// 界外「不可走」：navCell 米的格子，格子整个在 navInset 之外（格心距离 &gt; navInset + 半对角，<see cref="SoftBoundaryTuning.NavBlockMargin"/>）就标记；
+        /// 按行取连续段、上下相同的段合并成矩形，每个矩形一个 NavMeshModifierVolume（Not Walkable，高 1000 m）。返回体块数。
+        /// 没挡的格子最远的角离等值线 navInset + 整条对角线：1 m 格子 +3.4 m（1-1 约 300 块），以前的 4 m 格子 +7.7 m，界外的敌人会被放到网格边上、拴不回来
         /// </summary>
-        static int NavBlockers(Transform root, float[] sdf, int w, int h, Vector2 origin, float cell, float navInset, float navCell)
+        static int NavBlockers(Transform root, float[] sdf, int w, int h, Vector2 origin, float cell, in SoftBoundaryTuning t, float navCell)
         {
             var field = new BoundaryField(sdf, w, h, origin, cell);
             var area = field.Area;
+            navCell = Mathf.Max(0.25f, navCell);
             int nx = Mathf.CeilToInt(area.width / navCell), nz = Mathf.CeilToInt(area.height / navCell);
-            float margin = navInset + navCell * 0.7072f;
+            float margin = t.NavBlockMargin(navCell);
             var blocked = new bool[nx * nz];
             for (int z = 0; z < nz; z++)
             for (int x = 0; x < nx; x++)

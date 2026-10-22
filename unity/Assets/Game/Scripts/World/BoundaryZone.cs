@@ -13,7 +13,8 @@ namespace Spiritfire.Game
     ///     走路 7.5 m/s 只能顶到 softStart + 2.7 m，连续冲刺也过不了 softStart + 14 m（风力满时推回速度 = 冲刺速度）；
     ///   · 画面白化比推回早 <see cref="hazeLead"/> 米开始，人还没被推就先看到风沙；
     ///   · 再往外 <see cref="failsafe"/> 米才有一圈兜底碰撞（只防技能位移、击飞把人送出去），越过它直接托回安全点；
-    ///   · 敌人的导航网格只铺到 <see cref="navInset"/> 米，被击飞 / 冲锋带出去、离开网格的敌人 <see cref="tetherGrace"/> 秒后被拴回来。
+    ///   · 敌人的导航网格只铺到 <see cref="navInset"/> 米（构建器按 <see cref="NavCell"/> 米的格子挡界外，最远铺到 <see cref="NavReach"/>），
+    ///     被击飞 / 冲锋带出去、站到拴绳线 navInset + <see cref="tetherSlack"/> 外的敌人 <see cref="tetherGrace"/> 秒后被拴回来。
     /// </summary>
     [Serializable]
     public struct SoftBoundaryTuning
@@ -30,8 +31,26 @@ namespace Spiritfire.Game
         public float failsafe;
         /// <summary>敌人导航网格铺到等值线外多少米</summary>
         public float navInset;
-        /// <summary>敌人离开网格、又在导航边缘外 tetherSlack 米以上，持续 tetherGrace 秒就拴回界内</summary>
+        /// <summary>敌人在导航边缘外 tetherSlack 米以上（拴绳线），持续 tetherGrace 秒就拴回界内</summary>
         public float tetherSlack, tetherGrace;
+
+        /// <summary>
+        /// 界外「不可走」导航体块的格子（米；关卡构建器 LevelKit.Boundary 用）。1 m 时导航网格最远铺到 navInset + 1.4 m，在拴绳线以内；
+        /// 以前的 4 m 格子会铺到 navInset + 5.7 m（1-1 界外 +6.8 m 还有网格）
+        /// </summary>
+        public const float NavCell = 1f;
+
+        /// <summary>挡界外的判定线：格心离等值线超过它的格子标成不可走（= 格子整个在 navInset 外：navInset + 半条对角线）</summary>
+        public readonly float NavBlockMargin(float navCell) => navInset + navCell * 0.7072f;
+
+        /// <summary>按 navCell 米的格子挡界外时，导航网格最远铺到离等值线多远（没挡的格子最远的角：判定线 + 半条对角线）</summary>
+        public readonly float NavReach(float navCell) => NavBlockMargin(navCell) + navCell * 0.7072f;
+
+        /// <summary>
+        /// 离等值线 d 米的敌人在拴绳线外（navInset + tetherSlack），该拴回了——不管脚下有没有导航网格：离网时启用的 NavMeshAgent 会被 Unity
+        /// 就近放到网格边上，旧版「在网格上就放宽到 navInset + 2 × tetherSlack」让这样的敌人一直站在风里
+        /// </summary>
+        public readonly bool TetherOut(float d) => d > navInset + tetherSlack;
 
         public static SoftBoundaryTuning Default => new()
         {
@@ -260,6 +279,12 @@ namespace Spiritfire.Game
         public static int Tethered { get; private set; }
         /// <summary>最近一次拴绳失败的原因（成功后清空；冒烟套件失败时打印）</summary>
         public static string LastTetherFailure { get; private set; }
+        /// <summary>拴绳诊断（冒烟套件失败时打印）：检查了几轮、累计看过几只敌人、累计判了几次出界</summary>
+        public static int TetherTicks { get; private set; }
+        public static int TetherExamined { get; private set; }
+        public static int TetherMarkedOut { get; private set; }
+        /// <summary>最近一只站在导航边缘外（离等值线 &gt; navInset）的敌人在拴绳检查里的样子（跳过的原因、距离、在不在网格上、出界多久）</summary>
+        public static string LastTetherSeen { get; private set; }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics()
@@ -268,6 +293,13 @@ namespace Spiritfire.Game
             PlayerWind = PlayerWhiteout = 0;
             PlayerDistance = float.NegativeInfinity;
             FailsafeRecoveries = Tethered = 0;
+            ResetTetherStats();
+        }
+
+        static void ResetTetherStats()
+        {
+            LastTetherFailure = LastTetherSeen = null;
+            TetherTicks = TetherExamined = TetherMarkedOut = 0;
         }
 
         BoundaryField field;
@@ -300,6 +332,7 @@ namespace Spiritfire.Game
             if (Active && Active != this) Debug.LogWarning($"[Boundary] 场景里有两个软边界（{Active.name} / {name}），用后一个");
             Active = this;
             FailsafeRecoveries = Tethered = 0;
+            ResetTetherStats();
             // 起风线外不记安全落脚点：托回（坠落、熔岩、兜底）永远落在界内，不会一落地又被风推
             hazard ??= SafeGround.RegisterHazard(feet => Field != null && Field.Sample(feet.x, feet.z) > tuning.softStart);
             if (Field == null) Debug.LogError("[Boundary] 没有距离场贴图：软边界不生效（重新生成关卡）");
@@ -400,21 +433,32 @@ namespace Spiritfire.Game
                 if (!kv.Key || kv.Key.Dead)
                     drop.Add(kv.Key);
             foreach (var e in drop) outside.Remove(e);
+            TetherTicks++;
             for (int i = 0; i < live.Count; i++)
             {
                 var ai = live[i];
                 if (!ai || ai.Dead) continue;
                 var agent = ai.GetComponent<NavMeshAgent>();
-                // 飞行敌人不走网格；脚本位移（跳跃、冲锋、被掀飞）期间 updatePosition 关着，落地后再看
-                if (!agent || !agent.enabled || !agent.updatePosition) continue;
+                if (!agent) continue;
+                TetherExamined++;
                 var p = ai.transform.position;
                 float d = field.Sample(p.x, p.z);
-                bool off = d > tuning.navInset + tuning.tetherSlack && (!agent.isOnNavMesh || d > tuning.navInset + tuning.tetherSlack * 2);
+                // 飞行敌人不走网格；脚本位移（跳跃、冲锋、被掀飞）期间 updatePosition 关着，落地后再看
+                bool skip = !agent.enabled || !agent.updatePosition;
+                // 拴绳线外就算出界，在不在网格上都一样（离网时启用的 agent 会被 Unity 就近放到界外的网格边上，见 TetherOut）
+                bool off = !skip && tuning.TetherOut(d);
+                if (d > tuning.navInset)
+                {
+                    outside.TryGetValue(ai, out float was);
+                    LastTetherSeen = $"{ai.enemyId} 在 {d:+0.0;-0.0} m（{p}）：agent 启用 {agent.enabled}、updatePosition {agent.updatePosition}、" +
+                                     $"在网格上 {agent.isOnNavMesh}、{(skip ? "跳过（脚本位移中）" : off ? $"出界 {was + dt:F2} s" : "在拴绳线以内")}";
+                }
                 if (!off)
                 {
-                    outside.Remove(ai);
+                    if (!skip) outside.Remove(ai);
                     continue;
                 }
+                TetherMarkedOut++;
                 outside.TryGetValue(ai, out float t);
                 t += dt;
                 outside[ai] = t;
