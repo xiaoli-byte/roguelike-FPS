@@ -20,7 +20,7 @@ namespace Spiritfire.Art.Editor.Levels
     ///   → 冰崖通道：营地东门出，宽 10 m，在 (−32, −49) 转一次弯折向北，约 27 m 爬 8 m（≤ 18°），两侧是切开的冰崖
     ///   → 北冥冰台：内径 15、外径 44 的环形冰台绕中央冰窟一整圈；外缘 12 m 内冰崖陡升到 18 m（60–70°，爬不上去，也不立空气墙）。
     ///     冰窟是地形洞（碰撞与渲染都开口），里面一块 L8 深水（落水 = 扣 10% 生命、托回安全落脚点），水底兜底碰撞；
-    ///     冰窟一圈 16 段冰窟边缘（SM_Tripo_FrostIceHoleRim，正面朝圆心）；冰沿外四段 L8 冰面（吞吸时打滑）；
+    ///     冰窟一圈 20 段冰窟边缘（SM_Tripo_FrostIceHoleRim，正面朝圆心，前后沿都互相插进去）；冰沿外四段 L8 冰面（吞吸时打滑）；
     ///     r 29 四根冰柱（SM_Tripo_FrostIcePillar × 6 m）；东西两座 2.5 m 祭台（朝冰窟一侧 4 m 宽的阶梯坡，台上鲸骨灯）；两道 1.2 m 矮墙；
     ///     南缘挖出一个门洞平台，北冥冰门（SM_Tripo_FrostSeaGateway）背靠冰崖，结算后 BossEncounter 在门前立出口。
     /// 场景只放环境和标记（D17 / L1）：PlayerSpawn、自举标记、补给营、首领场地（<see cref="BossArena"/>）、首领关流程（<see cref="BossEncounter"/>，首领 boss_kunpeng）、
@@ -52,9 +52,12 @@ namespace Spiritfire.Art.Editor.Levels
         /// <summary>水面（相对环台地面，同 Three.js 海面 +0.06）、水深、水底兜底碰撞的顶面</summary>
         const float WaterLevel = IceHole.DefaultWaterLevel, WaterDepth = 6f, SeabedTop = -7f;
 
-        // ── 冰窟边缘段（ART5：正面朝冰窟中心，16 段一圈，X 放大约 1.55 倍）──
+        // ── 冰窟边缘段（ART5：正面朝冰窟中心）──
+        // 段是直的，一圈围成多边形。ART5 建议的 16 段 × 1.55 只按前沿（r 15）的弦长放大，后沿（r 17.8）每处接缝都留 1 m 上下的楔形缺口。
+        // 改成 20 段、按后沿弦长再放大一成（约 1.63 倍）：前后沿都互相插进去，段与段之间再交替偏航 ±4°、隔段镜像，接缝不成一条直线
         const string RimId = "SM_Tripo_FrostIceHoleRim";
-        const int RimSegments = 16;
+        const int RimSegments = 20;
+        const float RimOverlap = 1.1f, RimJitter = 4f;
         static readonly Vector3 RimSize = new(3.79f, 2.2f, 2.76f);
 
         // ── 冰柱（r 29，四个斜角）──
@@ -284,7 +287,7 @@ namespace Spiritfire.Art.Editor.Levels
 
         /// <summary>
         /// 冰窟：标记（<see cref="IceHole"/>：半径、外缘、水面）+ L8 深水（32 × 32 m 方块，顶面 = 水面；四角藏在冰沿下面；深水按坠落处理，扣 10% 托回）
-        /// + 水底兜底碰撞 + 冰窟上空的 Not Walkable 条带 + 一圈 16 段冰窟边缘（正面朝圆心）。返回标记；rimArt = 摆成正式件的段数
+        /// + 水底兜底碰撞 + 冰窟上空的 Not Walkable 条带 + 一圈 20 段冰窟边缘（正面朝圆心）。返回标记；rimArt = 摆成正式件的段数
         /// </summary>
         static IceHole BuildIceHole(LevelKit.TerrainSet set, Transform env, Transform markers, out WaterVolume water, out int rimArt)
         {
@@ -324,10 +327,10 @@ namespace Spiritfire.Art.Editor.Levels
                 v.area = notWalkable;
             }
 
-            // 冰窟边缘：16 段，段心在 r = HoleR + 进深 / 2，正面（+Z）朝圆心，X 放大到弦长
+            // 冰窟边缘：RimSegments 段，段心在 r = HoleR + 进深 / 2，正面（+Z）朝圆心，X 放大到后沿弦长 × RimOverlap（见常量的说明）
             var rim = new GameObject("Ice Hole Rim").transform;
             rim.SetParent(root, false);
-            float chord = 2f * HoleR * Mathf.Tan(Mathf.PI / RimSegments);
+            float chord = 2f * (HoleR + RimSize.z) * Mathf.Tan(Mathf.PI / RimSegments) * RimOverlap;
             float sx = chord / RimSize.x;
             rimArt = 0;
             for (int i = 0; i < RimSegments; i++)
@@ -335,11 +338,13 @@ namespace Spiritfire.Art.Editor.Levels
                 float az = (i + 0.5f) * 360f / RimSegments;
                 var c = Polar(az, HoleR + RimSize.z * 0.5f);
                 var at = new Vector3(c.x, LipHeight - 0.2f, c.y);
-                var piece = LevelKit.PlaceOrBox(RimId, rim, at, new Vector3(chord, RimSize.y, RimSize.z), az + 180f);
+                float jitter = (i % 2 == 0 ? 1 : -1) * RimJitter;
+                var piece = LevelKit.PlaceOrBox(RimId, rim, at, new Vector3(chord, RimSize.y, RimSize.z), az + 180f + jitter);
                 if (!piece) continue;
                 if (piece.name.StartsWith(RimId))
                 {
-                    piece.transform.localScale = new Vector3(sx, 1f, 1f);
+                    // 隔段镜像（X 取反）：同一块网格不连着重复
+                    piece.transform.localScale = new Vector3(i % 2 == 0 ? sx : -sx, 1f, 1f);
                     rimArt++;
                 }
                 piece.name = $"{(piece.name.StartsWith(RimId) ? "Rim" : piece.name)} {i + 1:00}";
