@@ -1,0 +1,117 @@
+{
+  "source": {
+    "tris": 2887,
+    "verts": 1671
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 1.15056,
+    "iou": 0.913,
+    "iou_per_view": {
+      "front": 0.927,
+      "left": 0.882,
+      "back": 0.951,
+      "right": 0.884
+    },
+    "size_m": [
+      0.878,
+      0.462,
+      1.15
+    ],
+    "reference_m": [
+      1.5,
+      0.95,
+      1.15
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.741,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Prop_ChestLegendary_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "provider",
+      "collapse": {
+        "samples": 23665,
+        "matched_ratio": 0.986,
+        "mean_delta": 0.0091,
+        "p90_delta": 0.0288,
+        "smeared_ratio": 0.0025,
+        "stretched_ratio": 0.003,
+        "dist_p99_m": 0.0055
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Prop_ChestLegendary_LOD0",
+      "tris": 2887,
+      "verts": 1671,
+      "uv_min": [
+        0.000732421875,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.996337890625,
+        0.999267578125
+      ],
+      "uv_utilization": 0.833,
+      "bbox_min": [
+        -0.439,
+        -0.2312,
+        0.0
+      ],
+      "bbox_max": [
+        0.439,
+        0.2312,
+        1.15
+      ]
+    },
+    {
+      "name": "SM_Prop_ChestLegendary_LOD1",
+      "tris": 994,
+      "verts": 670,
+      "uv_min": [
+        0.001220703125,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.9951171875,
+        0.9989044666290283
+      ],
+      "uv_utilization": 0.785,
+      "bbox_min": [
+        -0.4361,
+        -0.2329,
+        -0.001
+      ],
+      "bbox_max": [
+        0.4351,
+        0.2291,
+        1.1501
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Prop_ChestLegendary/04_export/SM_Prop_ChestLegendary_v001.glb",
+    "bytes": 328972
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 11.5,
+  "_seconds": 12.9
+}

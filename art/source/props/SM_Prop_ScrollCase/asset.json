@@ -1,0 +1,332 @@
+{
+  "id": "SM_Prop_ScrollCase",
+  "display": "秘卷匣（秘卷奖励 / 商店秘卷）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:43:33",
+          "files": {
+            "BO_SM_Prop_ScrollCase_v001.json": {
+              "path": "00_blockout/BO_SM_Prop_ScrollCase_v001.json",
+              "sha256": "0f31cdce041aa35b97f9be37757b2274c02f065794fd3a50495ab9a45a8d5431"
+            },
+            "BO_SM_Prop_ScrollCase_v001_views.json": {
+              "path": "00_blockout/BO_SM_Prop_ScrollCase_v001_views.json",
+              "sha256": "ed19467fa9874d0dde793e1543a43b0b0ffdd94873ff6b53ffaf456114504035"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "loot.shop.scrollCase"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.45,
+              0.0,
+              -0.275
+            ],
+            "max": [
+              0.45,
+              0.8,
+              0.275
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:44:14",
+          "files": {
+            "CN_SM_Prop_ScrollCase_v001_source.png": {
+              "path": "01_concept/CN_SM_Prop_ScrollCase_v001_source.png",
+              "sha256": "f51f3601826789dbfe70a1e6b4e66942810c97a468cfdbc84e4413ecfde45a9e"
+            },
+            "CN_SM_Prop_ScrollCase_v001_front.png": {
+              "path": "01_concept/CN_SM_Prop_ScrollCase_v001_front.png",
+              "sha256": "358f25afd682da6680595375fe6dd59d9cbece7b2908760b6345d90822978918"
+            },
+            "CN_SM_Prop_ScrollCase_v001_left.png": {
+              "path": "01_concept/CN_SM_Prop_ScrollCase_v001_left.png",
+              "sha256": "f0b44acacd49bd1d871e82017d0c1f64fbe5542f4aa56107d47b5202038e9bbc"
+            },
+            "CN_SM_Prop_ScrollCase_v001_back.png": {
+              "path": "01_concept/CN_SM_Prop_ScrollCase_v001_back.png",
+              "sha256": "bdd24a137269d6f84ad00e3c68d98aafcfaf9c9dd806b2a121f333d287e183a4"
+            },
+            "CN_SM_Prop_ScrollCase_v001_right.png": {
+              "path": "01_concept/CN_SM_Prop_ScrollCase_v001_right.png",
+              "sha256": "e4fec1f51054ec5dc6c092c8a3b0ef34735a8927d177c327167eda27342b525c"
+            },
+            "CN_SM_Prop_ScrollCase_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Prop_ScrollCase_v001_sheet.png",
+              "sha256": "de2c7b93efd413b3b3646604945826ccffa9b4a1c1af4ed4a2c8873093408188"
+            },
+            "CN_SM_Prop_ScrollCase_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Prop_ScrollCase_v001_prompt.txt",
+              "sha256": "ca114d94f89e1f55b039dde03f958f763cb1d05a3aa4d2ffd21abb86b1180dc1"
+            },
+            "CN_SM_Prop_ScrollCase_v001_registration.json": {
+              "path": "01_concept/CN_SM_Prop_ScrollCase_v001_registration.json",
+              "sha256": "0898ea0e9be685e530efcc3eb2ba2234d99e3844a9c05d326b39ca96fa767eb7"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2048,
+              768
+            ],
+            "references": [],
+            "codex_session": "01a15b7b-fab0-7c40-97f6-6e82bb36561c",
+            "attempt": 1,
+            "seconds": 37.4
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian mythological treasure and trade props for a fantasy roguelite: lacquered wood, aged bronze, polished gold, white and green jade and sturdy iron, warm saturated accents, readable as loot from across a room. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (0.9m wide x 0.8m tall x 0.55m deep): A sacred scroll casket 0.9m wide, 0.8m tall and 0.55m deep: a small open-fronted stand of dark rosewood lacquer with bronze corner fittings on four short cabriole feet, its top is a curved cradle holding ONE big rolled scroll lying horizontally: a thick roll of pale gold silk paper with jade-green wooden end knobs and a red silk tie, the paper faintly glowing with spirit-fire gold runes (painted as opaque bright pale-gold strokes); two small bronze cloud-scroll brackets hold the ends. PROPORTIONS: the FRONT and BACK views are drawn about 1.1 times as wide as tall; the LEFT and RIGHT views about 0.7 times as wide as tall. Chunky readable shapes, no loose paper, no text. One solid connected piece on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "f51f3601826789dbfe70a1e6b4e66942810c97a468cfdbc84e4413ecfde45a9e",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.7374758735920259,
+              "offset": [
+                30,
+                309
+              ],
+              "size": [
+                451,
+                406
+              ],
+              "physical_height_m": 0.8,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7154035323049406,
+              "offset": [
+                168,
+                309
+              ],
+              "size": [
+                175,
+                406
+              ],
+              "physical_height_m": 0.8,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.736139866574649,
+              "offset": [
+                29,
+                309
+              ],
+              "size": [
+                453,
+                406
+              ],
+              "physical_height_m": 0.8,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7154035323049406,
+              "offset": [
+                168,
+                309
+              ],
+              "size": [
+                175,
+                406
+              ],
+              "physical_height_m": 0.8,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-21 ART7：四视图一致、比例与登记相符（用户 2026-10-19 授权免审）",
+            "time": "2026-10-21 06:46:55"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:54:16",
+          "files": {
+            "HP_SM_Prop_ScrollCase_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Prop_ScrollCase_v001_source.glb",
+              "sha256": "4d0f092a8e267181451cff3e746d4884435616832a26cfb025e42effd44213c0"
+            },
+            "HP_SM_Prop_ScrollCase_v001.glb": {
+              "path": "02_highpoly/HP_SM_Prop_ScrollCase_v001.glb",
+              "sha256": "02e3e9a52ac3dff4408528f0ecfbc68569648148314935bdcfd8f650040fd7c5"
+            },
+            "HP_SM_Prop_ScrollCase_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Prop_ScrollCase_v001_graph.json",
+              "sha256": "2f3646aac98042d2edfccf8bb67e9e446c6e12861673b3b75f1a77d0c02e675e"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/6f37c57a-1304-4830-a496-009a10434234",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 3076,
+          "source_sha256": "4d0f092a8e267181451cff3e746d4884435616832a26cfb025e42effd44213c0"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:54:35",
+          "files": {
+            "SM_Prop_ScrollCase_v001.blend": {
+              "path": "03_work/SM_Prop_ScrollCase_v001.blend",
+              "sha256": "bf344c247b4a1755be0340df3146f855a9d7ba04bcc607355fcd79007989aed6"
+            },
+            "SM_Prop_ScrollCase_v001.glb": {
+              "path": "04_export/SM_Prop_ScrollCase_v001.glb",
+              "sha256": "f3923e503c2b51ee7e613e28f85d50cf6954fa8037ff1c214cf22898f76ae1bf"
+            },
+            "SM_Prop_ScrollCase_v001_metrics.json": {
+              "path": "03_work/SM_Prop_ScrollCase_v001_metrics.json",
+              "sha256": "b0338bef3a60027057a501ff2aa98ee7da1b2feb542a120f47e98ca1e0b2696d"
+            },
+            "T_Prop_ScrollCase_BC.png": {
+              "path": "03_work/textures_v001/T_Prop_ScrollCase_BC.png",
+              "sha256": "3b877a4fb81bb549b8aa882f7fe586d7ef51c5f1e617e133df7c6c36d46e0d15"
+            },
+            "T_Prop_ScrollCase_LOD1_BC.png": {
+              "path": "03_work/textures_v001/T_Prop_ScrollCase_LOD1_BC.png",
+              "sha256": "7333eda50a92f98a10e84a8e300f9377cbd9c00eb08f80a3983055c079791684"
+            },
+            "T_Prop_ScrollCase_LOD1_N.png": {
+              "path": "03_work/textures_v001/T_Prop_ScrollCase_LOD1_N.png",
+              "sha256": "1d29d7ab02a4719e02312fe004fc1564ebaf18294c07a67b31202e9f64f36278"
+            },
+            "T_Prop_ScrollCase_LOD1_ORM.png": {
+              "path": "03_work/textures_v001/T_Prop_ScrollCase_LOD1_ORM.png",
+              "sha256": "f266dd66c6b582f409bd2d68ae2eed5f63943bdb83b6889dad47d050a4a83d7b"
+            },
+            "T_Prop_ScrollCase_N.png": {
+              "path": "03_work/textures_v001/T_Prop_ScrollCase_N.png",
+              "sha256": "d45b98a97cd55e19c9f4596e506cdf65f52cff8d20d0cadc61c5a4b1298ce2a2"
+            },
+            "T_Prop_ScrollCase_ORM.png": {
+              "path": "03_work/textures_v001/T_Prop_ScrollCase_ORM.png",
+              "sha256": "4151069fd58b1afa376e78e2a4026b2a74f8e90c9081eeca91f48d821af633f3"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.841,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2985,
+              "verts": 1571
+            },
+            {
+              "tris": 994,
+              "verts": 549
+            }
+          ],
+          "export_kb": 316.7,
+          "seconds": 17.2,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:54:38",
+          "files": {
+            "SM_Prop_ScrollCase_v001_validation_v001.json": {
+              "path": "05_review/SM_Prop_ScrollCase_v001_validation_v001.json",
+              "sha256": "931c60ca194e5681a960ed02122134f698ba849e95c90c643ee4cfe604b8a3da"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:54:44",
+          "files": {
+            "SM_Prop_ScrollCase_v001_review_v001.png": {
+              "path": "05_review/SM_Prop_ScrollCase_v001_review_v001.png",
+              "sha256": "a38a5b82ade57bfde3cbd89a715bbe8cd310a432146b92c2539976f603e1d6a8"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-22 ART7：审核图四视图与概念一致（用户 2026-10-19 授权免审）",
+            "time": "2026-10-22 22:11:12"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 22:11:12",
+          "files": {
+            "SM_Prop_ScrollCase.glb": {
+              "path": "@root/public/assets/props/SM_Prop_ScrollCase.glb",
+              "sha256": "f3923e503c2b51ee7e613e28f85d50cf6954fa8037ff1c214cf22898f76ae1bf"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Prop_ScrollCase.glb"
+        }
+      ]
+    }
+  }
+}

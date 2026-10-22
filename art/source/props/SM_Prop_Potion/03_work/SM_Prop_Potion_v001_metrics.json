@@ -1,0 +1,139 @@
+{
+  "source": {
+    "tris": 3258,
+    "verts": 1696
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 0.55027,
+    "iou": 0.876,
+    "iou_per_view": {
+      "front": 0.882,
+      "left": 0.877,
+      "back": 0.874,
+      "right": 0.868
+    },
+    "size_m": [
+      0.297,
+      0.271,
+      0.55
+    ],
+    "reference_m": [
+      0.36,
+      0.36,
+      0.55
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.649,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Prop_Potion_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "rebaked",
+      "texture": 512,
+      "cage_m": 0.0083,
+      "uv": {
+        "smart_islands": 168,
+        "charts": 44,
+        "fallback_charts": 1,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "smart",
+        "density_smart": 1.1799,
+        "density_merged": 1.1618,
+        "coverage": 0.781
+      },
+      "collapse": {
+        "samples": 23344,
+        "matched_ratio": 0.973,
+        "mean_delta": 0.0154,
+        "p90_delta": 0.0355,
+        "smeared_ratio": 0.0109,
+        "stretched_ratio": 0.0281,
+        "dist_p99_m": 0.0028
+      },
+      "final": {
+        "samples": 23344,
+        "matched_ratio": 0.973,
+        "mean_delta": 0.0149,
+        "p90_delta": 0.022,
+        "smeared_ratio": 0.0274,
+        "stretched_ratio": 0.0039,
+        "dist_p99_m": 0.0028
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Prop_Potion_LOD0",
+      "tris": 2984,
+      "verts": 1557,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0000176429748535,
+        1.0
+      ],
+      "uv_utilization": 0.607,
+      "bbox_min": [
+        -0.1487,
+        -0.1357,
+        -0.0
+      ],
+      "bbox_max": [
+        0.1487,
+        0.1357,
+        0.55
+      ]
+    },
+    {
+      "name": "SM_Prop_Potion_LOD1",
+      "tris": 994,
+      "verts": 551,
+      "uv_min": [
+        0.003666879143565893,
+        0.0036238515749573708
+      ],
+      "uv_max": [
+        0.9844284653663635,
+        0.996433675289154
+      ],
+      "uv_utilization": 0.643,
+      "bbox_min": [
+        -0.148,
+        -0.1332,
+        0.0003
+      ],
+      "bbox_max": [
+        0.1491,
+        0.1357,
+        0.549
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Prop_Potion/04_export/SM_Prop_Potion_v001.glb",
+    "bytes": 256992
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 15.5,
+  "_seconds": 16.7
+}

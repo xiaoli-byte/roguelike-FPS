@@ -1,0 +1,411 @@
+{
+  "id": "SM_Prop_HeroAltar",
+  "display": "选人祭台（英雄展示台，直径 5 m）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:44:24",
+          "files": {
+            "BO_SM_Prop_HeroAltar_v001.json": {
+              "path": "00_blockout/BO_SM_Prop_HeroAltar_v001.json",
+              "sha256": "5d3d061d140013896f185aacd1bc66550a5afa6a51e765289e786f4886572620"
+            },
+            "BO_SM_Prop_HeroAltar_v001_views.json": {
+              "path": "00_blockout/BO_SM_Prop_HeroAltar_v001_views.json",
+              "sha256": "e2e7ca9cb256f63dcf04cecdf1250ed98b00ef1c4e1eff6187d5b506dccd57f7"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "ui.heroSelect.altar"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.5,
+              0.0,
+              -2.5
+            ],
+            "max": [
+              2.5,
+              0.9,
+              2.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:45:01",
+          "files": {
+            "CN_SM_Prop_HeroAltar_v001_source.png": {
+              "path": "01_concept/CN_SM_Prop_HeroAltar_v001_source.png",
+              "sha256": "55cbc642ea287deb320bb92f81a40f1dcde9c5a118b8c3c0b513a270dada01fa"
+            },
+            "CN_SM_Prop_HeroAltar_v001_front.png": {
+              "path": "01_concept/CN_SM_Prop_HeroAltar_v001_front.png",
+              "sha256": "348bd2750c6d3649e8c5bacc5f9209be92ceaef2d3d9a444383b58994d479d88"
+            },
+            "CN_SM_Prop_HeroAltar_v001_left.png": {
+              "path": "01_concept/CN_SM_Prop_HeroAltar_v001_left.png",
+              "sha256": "f6bc9b07aa75d49cea38feb4a971ac386bc666d8878812357e1db182f1e56537"
+            },
+            "CN_SM_Prop_HeroAltar_v001_back.png": {
+              "path": "01_concept/CN_SM_Prop_HeroAltar_v001_back.png",
+              "sha256": "af3af3ffb547967133a0e832b4d4f01be9129504987b038737a8092d0b35cbdc"
+            },
+            "CN_SM_Prop_HeroAltar_v001_right.png": {
+              "path": "01_concept/CN_SM_Prop_HeroAltar_v001_right.png",
+              "sha256": "0c21a4c792cb4199bdda6c671663e2237a7a03a04359032da8f9c713a635fa20"
+            },
+            "CN_SM_Prop_HeroAltar_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Prop_HeroAltar_v001_sheet.png",
+              "sha256": "3ddd4e07c3acc258d183f3b42c0cd0bdf93f50a5792b8489017cf7bae3163dca"
+            },
+            "CN_SM_Prop_HeroAltar_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Prop_HeroAltar_v001_prompt.txt",
+              "sha256": "75840c454081b1e3986fb5cf14063f31f1cfa3f879a53192b98587230fb4ac30"
+            },
+            "CN_SM_Prop_HeroAltar_v001_registration.json": {
+              "path": "01_concept/CN_SM_Prop_HeroAltar_v001_registration.json",
+              "sha256": "57116f5b72703ca036ec99ee57cf72cc2452e145f152bae9f84b1f4d0ccce5ff"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2079,
+              756
+            ],
+            "references": [],
+            "codex_session": "01a15b7c-bee6-7ff1-98e0-1f9d778a084e",
+            "attempt": 1,
+            "seconds": 32.9
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian mythological treasure and trade props for a fantasy roguelite: lacquered wood, aged bronze, polished gold, white and green jade and sturdy iron, warm saturated accents, readable as loot from across a room. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (5m wide x 0.9m tall x 5m deep): A round hero-selection altar dais 5m across and 0.9m tall where the chosen hero stands: two stacked round tiers of dark grey-blue carved stone, the lower tier 5m wide and the upper 4m wide, each edge wrapped in a band of aged bronze with simple cloud-scroll reliefs; the flat top is a smooth stone disc with a carved ring of eight trigram (bagua) symbols around a central yin-yang-free plain round boss, the ring groove filled with glowing spirit-fire gold-cyan (painted as opaque bright pale-cyan strokes); one short broad flight of three steps cut into the FRONT of both tiers. PROPORTIONS: all four views drawn about 5.5 times as wide as tall, a low disc; only the FRONT view shows the steps head on. Chunky readable shapes, no text, no light beams. One solid connected piece on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "55cbc642ea287deb320bb92f81a40f1dcde9c5a118b8c3c0b513a270dada01fa",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.30703624733475476,
+              "offset": [
+                185,
+                471
+              ],
+              "size": [
+                141,
+                82
+              ],
+              "physical_height_m": 0.9,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.3331405436668594,
+              "offset": [
+                177,
+                471
+              ],
+              "size": [
+                157,
+                82
+              ],
+              "physical_height_m": 0.9,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.32523997741389044,
+              "offset": [
+                182,
+                471
+              ],
+              "size": [
+                147,
+                82
+              ],
+              "physical_height_m": 0.9,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.3317972350230414,
+              "offset": [
+                177,
+                471
+              ],
+              "size": [
+                157,
+                82
+              ],
+              "physical_height_m": 0.9,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-21 ART7：四视图一致、比例与登记相符（用户 2026-10-19 授权免审）",
+            "time": "2026-10-21 06:46:56"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:55:56",
+          "files": {
+            "HP_SM_Prop_HeroAltar_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Prop_HeroAltar_v001_source.glb",
+              "sha256": "56f431423c6b9cf2be9950f1a1eb2712ff771f7c0231f3e922ea2c2b466fc8c8"
+            },
+            "HP_SM_Prop_HeroAltar_v001.glb": {
+              "path": "02_highpoly/HP_SM_Prop_HeroAltar_v001.glb",
+              "sha256": "f431d0d7fb580824e7a94d09b5704d8663f909e72c3ea16a027453b0ff8c9355"
+            },
+            "HP_SM_Prop_HeroAltar_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Prop_HeroAltar_v001_graph.json",
+              "sha256": "7581fcbd022600d9bf6ed6b712cb19122d17bbfbbfd25aeda7aeccf159cda8e1"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/e78311fd-ee98-4b8e-9c02-23061066792d",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 7174,
+          "source_sha256": "56f431423c6b9cf2be9950f1a1eb2712ff771f7c0231f3e922ea2c2b466fc8c8"
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:56:51",
+          "files": {
+            "SM_Prop_HeroAltar_v001.blend": {
+              "path": "03_work/SM_Prop_HeroAltar_v001.blend",
+              "sha256": "cc221db41bdf6959f085f26e2d233564d8d5faf6add173588d5ee9e9d33b43f8"
+            },
+            "SM_Prop_HeroAltar_v001.glb": {
+              "path": "04_export/SM_Prop_HeroAltar_v001.glb",
+              "sha256": "e39244fd53ae3c673a2fb6b2bc2963b8f6df3a90ab841ac9c27c90db4452b28c"
+            },
+            "SM_Prop_HeroAltar_v001_metrics.json": {
+              "path": "03_work/SM_Prop_HeroAltar_v001_metrics.json",
+              "sha256": "3bf92e9eee0feb70acc5eb79606c301355579ce06a726499d29bddd08581d60d"
+            },
+            "T_Prop_HeroAltar_BC.png": {
+              "path": "03_work/textures_v001/T_Prop_HeroAltar_BC.png",
+              "sha256": "591106db4bc64955172a40edeb92754781959b32d7a8a4ef2124fade5d6efd0a"
+            },
+            "T_Prop_HeroAltar_LOD2_BC.png": {
+              "path": "03_work/textures_v001/T_Prop_HeroAltar_LOD2_BC.png",
+              "sha256": "31187d9a12d6abf998ba6630dcde73c137703e4a99edf50ce021fc29517344ee"
+            },
+            "T_Prop_HeroAltar_LOD2_N.png": {
+              "path": "03_work/textures_v001/T_Prop_HeroAltar_LOD2_N.png",
+              "sha256": "cbd5afb6e77069da647dff11e122930ff14d70a02bf356287319e24f19fe94be"
+            },
+            "T_Prop_HeroAltar_LOD2_ORM.png": {
+              "path": "03_work/textures_v001/T_Prop_HeroAltar_LOD2_ORM.png",
+              "sha256": "6e0374fc5b673c2d8d2104c1ad886e3d6b321d2042a81291b634e4bfa8226370"
+            },
+            "T_Prop_HeroAltar_N.png": {
+              "path": "03_work/textures_v001/T_Prop_HeroAltar_N.png",
+              "sha256": "b16510f6761228585de6ae17a457f0c9e86f0735763daa6cfd817f91892b19a2"
+            },
+            "T_Prop_HeroAltar_ORM.png": {
+              "path": "03_work/textures_v001/T_Prop_HeroAltar_ORM.png",
+              "sha256": "87b3b0a670f6a545d95bd756a1e3cb81acefe31825e4ea41bc423c36c4ec51b5"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.354,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7174,
+              "verts": 4188
+            },
+            {
+              "tris": 2486,
+              "verts": 1522
+            },
+            {
+              "tris": 796,
+              "verts": 494
+            }
+          ],
+          "export_kb": 910.6,
+          "seconds": 53.5,
+          "bake_device": "none (provider textures)",
+          "quality_status": "failed",
+          "quality_errors": [
+            "LOD2 贴图色差"
+          ]
+        },
+        {
+          "version": 2,
+          "created": "2026-10-22 22:06:55",
+          "files": {
+            "SM_Prop_HeroAltar_v002.blend": {
+              "path": "03_work/SM_Prop_HeroAltar_v002.blend",
+              "sha256": "3c5326d87df1a956c9ace5e41136e1aa5c06b88fae909483f7cb10effc82d731"
+            },
+            "SM_Prop_HeroAltar_v002.glb": {
+              "path": "04_export/SM_Prop_HeroAltar_v002.glb",
+              "sha256": "3cda4afb18973de494a6a8d301c057b665f938b1379f28b18038447aae538e84"
+            },
+            "SM_Prop_HeroAltar_v002_metrics.json": {
+              "path": "03_work/SM_Prop_HeroAltar_v002_metrics.json",
+              "sha256": "0d572b3bbd8193d628d3c79b98ff70ecfa601058c6bc788442681d5815686918"
+            },
+            "T_Prop_HeroAltar_BC.png": {
+              "path": "03_work/textures_v002/T_Prop_HeroAltar_BC.png",
+              "sha256": "591106db4bc64955172a40edeb92754781959b32d7a8a4ef2124fade5d6efd0a"
+            },
+            "T_Prop_HeroAltar_N.png": {
+              "path": "03_work/textures_v002/T_Prop_HeroAltar_N.png",
+              "sha256": "b16510f6761228585de6ae17a457f0c9e86f0735763daa6cfd817f91892b19a2"
+            },
+            "T_Prop_HeroAltar_ORM.png": {
+              "path": "03_work/textures_v002/T_Prop_HeroAltar_ORM.png",
+              "sha256": "87b3b0a670f6a545d95bd756a1e3cb81acefe31825e4ea41bc423c36c4ec51b5"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.354,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7174,
+              "verts": 4188
+            },
+            {
+              "tris": 2486,
+              "verts": 1522
+            },
+            {
+              "tris": 1491,
+              "verts": 943
+            }
+          ],
+          "export_kb": 843.0,
+          "seconds": 43.0,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:56:58",
+          "files": {
+            "SM_Prop_HeroAltar_v001_validation_v001.json": {
+              "path": "05_review/SM_Prop_HeroAltar_v001_validation_v001.json",
+              "sha256": "9e5c1dd4e830af4118587181f03a860763d13db6d667ecf0e5ea050ba1ccc104"
+            }
+          },
+          "from_build": 1,
+          "errors": 1,
+          "warnings": 1,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 2,
+          "created": "2026-10-22 22:07:00",
+          "files": {
+            "SM_Prop_HeroAltar_v002_validation_v002.json": {
+              "path": "05_review/SM_Prop_HeroAltar_v002_validation_v002.json",
+              "sha256": "ab42d05c20e7b0092013b6ac3bc4967184176a78d2648e4b1f9d7c8ac03b2497"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 22:07:09",
+          "files": {
+            "SM_Prop_HeroAltar_v002_review_v001.png": {
+              "path": "05_review/SM_Prop_HeroAltar_v002_review_v001.png",
+              "sha256": "eab4d64d683453a4d5c17ed567e7fc83be223cb78421715aba966c214d437727"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-22 ART7：审核图四视图与概念一致（用户 2026-10-19 授权免审）",
+            "time": "2026-10-22 22:11:14"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 22:11:14",
+          "files": {
+            "SM_Prop_HeroAltar.glb": {
+              "path": "@root/public/assets/props/SM_Prop_HeroAltar.glb",
+              "sha256": "3cda4afb18973de494a6a8d301c057b665f938b1379f28b18038447aae538e84"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Prop_HeroAltar.glb"
+        }
+      ]
+    }
+  }
+}

@@ -2386,6 +2386,161 @@ keep_glow = "none"
 material = { roughness = 0.8, metallic = 0.15 }
 brief = """One curved segment, one eighth of the circular outer wall of a fire god's round forge hall, 18m wide, 22m tall and 5m deep, seen from INSIDE the hall, the companion of the plain wall segment with the same courses and bands: the FRONT face is gently concave, built of huge dark charcoal basalt blocks in horizontal courses, with a thick black iron pilaster with rivets at each end, a deep vermilion lacquered frieze band at 4m and a second iron band at 14m; at floor level in the middle a big round-arched furnace mouth 4m wide and 4m tall framed by a cast bronze beast face whose open jaws form the arch, the inside of the mouth filled with glowing coals and molten fire painted as opaque bright orange-yellow surfaces. The BACK is plain convex basalt. The LEFT and RIGHT ends are flat cut faces so the segments join into a full ring. PROPORTIONS: the FRONT and BACK views are drawn about 0.82 times as wide as tall; the LEFT and RIGHT views about 0.23 times as wide as tall. Broad faceted blocks, no smoke, no flames outside the mouth. One solid connected piece."""
 
+# ───────────── 宝箱 / 商店 / 祭台道具（ART7，docs/unity-parity.md 第 5 节）─────────────
+# 跨章节通用道具用 style_theme = "loot"；霜山商摊随第二章（kunlun）。宝箱盖子要能开：Tripo 出整只合着的箱子，
+# derive_chest_parts.py 按盖缝切成箱体 <ID>Body 和盖子 <ID>Lid（盖子原点 = 后沿铰链），只写进 manifest。
+# 商人 SK_Npc_Merchant 走角色路线（npc_designs_v1.json 设计稿 → 四视图 → Tripo → build_tripo_creature.py），见 docs/art/props-loot.md。
+
+[assets.SM_Prop_ChestCommon]
+display = "普通宝箱（木箱铁箍）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+style_theme = "loot"
+blockout = { source = "scene", id = "loot.chest.common" }
+reference_mode = "bounds_only"
+reference_dimensions = [1.2, 0.9, 0.8]
+architecture_role = "loot"
+keep_glow = "none"
+lid_split = 0.62   # 盖缝高度（占总高）：derive_chest_parts.py 在这里切开箱体与盖子
+material = { roughness = 0.8, metallic = 0.15 }
+brief = """A closed common treasure chest 1.2m wide, 0.9m tall and 0.8m deep: a sturdy box of thick weathered honey-brown wooden planks bound by broad dark iron bands with big round rivets, iron corner caps, a simple iron hasp and a chunky round padlock on the FRONT, two iron ring handles on the LEFT and RIGHT sides. The lid is a separate gently domed lid making up the top 38% of the height, with a clearly visible straight horizontal seam all the way round between lid and box, and two iron hinges on the BACK at the seam. PROPORTIONS: the FRONT and BACK views are drawn about 1.33 times as wide as tall; the LEFT and RIGHT views about 0.9 times as wide as tall. Chunky readable shapes, no text. One solid closed piece on a flat base."""
+
+[assets.SM_Prop_ChestRare]
+display = "稀有宝箱（朱漆铜饰）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+style_theme = "loot"
+blockout = { source = "scene", id = "loot.chest.rare" }
+reference_mode = "bounds_only"
+reference_dimensions = [1.3, 1.0, 0.85]
+architecture_role = "loot"
+keep_glow = "none"
+lid_split = 0.6
+material = { roughness = 0.6, metallic = 0.3 }
+brief = """A closed rare treasure chest 1.3m wide, 1.0m tall and 0.85m deep: a box of glossy deep vermilion-red lacquered wood with polished aged-bronze corner guards, bronze edge strips and a big round bronze lock plate shaped like a cloud-scroll on the FRONT, a jade-green inlaid disc in the middle of the lock plate, two bronze lion-head ring handles on the LEFT and RIGHT sides, four short bronze paw feet. The lid is a separate rounded barrel lid making up the top 40% of the height, with a clearly visible straight horizontal seam all the way round between lid and box and two bronze hinges on the BACK at the seam; the lid top carries a simple raised bronze cloud pattern. PROPORTIONS: the FRONT and BACK views are drawn about 1.3 times as wide as tall; the LEFT and RIGHT views about 0.85 times as wide as tall. Chunky readable shapes, no text. One solid closed piece."""
+
+[assets.SM_Prop_ChestLegendary]
+display = "传说宝箱（金玉神匣）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+style_theme = "loot"
+blockout = { source = "scene", id = "loot.chest.legendary" }
+reference_mode = "bounds_only"
+reference_dimensions = [1.5, 1.15, 0.95]
+architecture_role = "loot"
+keep_glow = "none"
+lid_split = 0.58
+material = { roughness = 0.45, metallic = 0.55 }
+brief = """A closed legendary treasure chest 1.5m wide, 1.15m tall and 0.95m deep, a divine relic casket: a box of dark night-blue lacquer framed by thick polished gold edges and gold corner guards shaped like small dragon heads, white jade panels carved with a simple coiling dragon on the FRONT and BACK, a big round gold lock plate with a glowing amber spirit-fire gem (painted as an opaque bright amber surface) in the middle of the FRONT, gold ring handles on the LEFT and RIGHT sides, four gold cloud-scroll feet. The lid is a separate stepped pagoda-like lid making up the top 42% of the height, with a clearly visible straight horizontal seam all the way round between lid and box, two gold hinges on the BACK at the seam, and a small gold flaming-pearl finial on top. PROPORTIONS: the FRONT and BACK views are drawn about 1.3 times as wide as tall; the LEFT and RIGHT views about 0.83 times as wide as tall. Chunky readable shapes, no text. One solid closed piece."""
+
+[assets.SM_Prop_Anvil]
+display = "铁砧（强化台）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+style_theme = "loot"
+blockout = { source = "scene", id = "loot.shop.anvil" }
+reference_mode = "bounds_only"
+reference_dimensions = [1.5, 1.2, 0.9]
+architecture_role = "shop"
+keep_glow = "none"
+material = { roughness = 0.6, metallic = 0.5 }
+brief = """A weapon-upgrade forge anvil 1.5m wide, 1.2m tall and 0.9m deep: a big chunky black iron anvil with a long horn pointing to the RIGHT, a flat polished steel face with a few faint glowing orange heat lines (painted as opaque bright orange strokes), standing on a squat thick stump of dark wood bound with two iron bands; a heavy forging hammer lies across the anvil face and a pair of long tongs leans against the stump on the LEFT; a small bronze plaque with a flame emblem on the stump FRONT. PROPORTIONS: the FRONT and BACK views are drawn about 1.25 times as wide as tall; the LEFT and RIGHT views about 0.75 times as wide as tall. Chunky readable shapes, no sparks, no smoke, no text. One solid connected piece on a flat base."""
+
+[assets.SM_Prop_ScrollCase]
+display = "秘卷匣（秘卷奖励 / 商店秘卷）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+style_theme = "loot"
+blockout = { source = "scene", id = "loot.shop.scrollCase" }
+reference_mode = "bounds_only"
+reference_dimensions = [0.9, 0.8, 0.55]
+architecture_role = "loot"
+keep_glow = "none"
+material = { roughness = 0.55, metallic = 0.3 }
+brief = """A sacred scroll casket 0.9m wide, 0.8m tall and 0.55m deep: a small open-fronted stand of dark rosewood lacquer with bronze corner fittings on four short cabriole feet, its top is a curved cradle holding ONE big rolled scroll lying horizontally: a thick roll of pale gold silk paper with jade-green wooden end knobs and a red silk tie, the paper faintly glowing with spirit-fire gold runes (painted as opaque bright pale-gold strokes); two small bronze cloud-scroll brackets hold the ends. PROPORTIONS: the FRONT and BACK views are drawn about 1.1 times as wide as tall; the LEFT and RIGHT views about 0.7 times as wide as tall. Chunky readable shapes, no loose paper, no text. One solid connected piece on a flat base."""
+
+[assets.SM_Prop_Potion]
+display = "药壶（战备药剂，回复拾取物）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+style_theme = "loot"
+blockout = { source = "scene", id = "loot.pickup.potion" }
+reference_mode = "bounds_only"
+reference_dimensions = [0.36, 0.55, 0.36]
+architecture_role = "pickup"
+keep_glow = "none"
+material = { roughness = 0.35, metallic = 0.0 }
+brief = """A chubby healing elixir gourd bottle 0.36m wide and 0.55m tall: a glossy celadon-green glazed ceramic gourd (葫芦) with two bulbs, the lower bulb bigger, a red silk cord tied around its waist with a dangling knot and a small jade bead, a cork stopper sealed with red wax, and a yellow paper talisman label with a simple red swirl symbol on the FRONT; through a round clear window on the lower bulb shows a glowing jade-green elixir (painted as an opaque bright jade-green surface). PROPORTIONS: all four views drawn about 0.65 times as wide as tall. Chunky readable shapes, no text. One solid connected piece on a flat base."""
+
+[assets.SM_Prop_AmmoCrate]
+display = "弹药箱（补满备弹）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+style_theme = "loot"
+blockout = { source = "scene", id = "loot.shop.ammoCrate" }
+reference_mode = "bounds_only"
+reference_dimensions = [1.0, 0.65, 0.65]
+architecture_role = "pickup"
+keep_glow = "none"
+material = { roughness = 0.7, metallic = 0.3 }
+brief = """A sturdy ammunition crate 1.0m wide, 0.65m tall and 0.65m deep: a box of olive-brown painted wooden planks with brass corner plates and rivets, thick rope handles on the LEFT and RIGHT ends, the lid slid half open toward the BACK showing rows of chunky brass cartridges and a few red shotgun shells standing packed inside, a stencilled spirit-fire flame emblem in pale yellow paint on the FRONT. PROPORTIONS: the FRONT and BACK views are drawn about 1.55 times as wide as tall; the LEFT and RIGHT views about 1 times as wide as tall. Chunky readable shapes, no text or letters. One solid connected piece on a flat base."""
+
+[assets.SM_Prop_HeroAltar]
+display = "选人祭台（英雄展示台，直径 5 m）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "loot"
+blockout = { source = "scene", id = "ui.heroSelect.altar" }
+reference_mode = "bounds_only"
+reference_dimensions = [5.0, 0.9, 5.0]
+lod_tris = [8000, 2500, 1500]  # 800 面的 LOD2 与 LOD0 色差超限（同第一章半埋殿顶）
+lod_rebake_stretch = 0.10
+architecture_role = "stage"
+keep_glow = "none"
+material = { roughness = 0.6, metallic = 0.25 }
+brief = """A round hero-selection altar dais 5m across and 0.9m tall where the chosen hero stands: two stacked round tiers of dark grey-blue carved stone, the lower tier 5m wide and the upper 4m wide, each edge wrapped in a band of aged bronze with simple cloud-scroll reliefs; the flat top is a smooth stone disc with a carved ring of eight trigram (bagua) symbols around a central yin-yang-free plain round boss, the ring groove filled with glowing spirit-fire gold-cyan (painted as opaque bright pale-cyan strokes); one short broad flight of three steps cut into the FRONT of both tiers. PROPORTIONS: all four views drawn about 5.5 times as wide as tall, a low disc; only the FRONT view shows the steps head on. Chunky readable shapes, no text, no light beams. One solid connected piece on a flat base."""
+
+[assets.SM_Tripo_FrostMarketStall]
+display = "霜山商摊（第二章商人摊位）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+style_theme = "kunlun"
+blockout = { source = "scene", id = "frost.shop.marketStall" }
+reference_mode = "bounds_only"
+reference_dimensions = [4.0, 3.2, 2.6]
+architecture_role = "shop"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.1 }
+brief = """A snowy mountain peddler's market stall 4m wide, 3.2m tall and 2.6m deep where a travelling merchant sells weapons and elixirs: a sturdy timber booth with four thick dark posts, a slanted plank roof under a thick cap of soft snow with a faded vermilion cloth valance and two hanging paper lanterns along its front edge, a long wooden counter across the FRONT loaded with chunky goods (a row of glazed jars, two bundled scrolls, a small bronze sword on a stand, a stack of red boxes), a fur pelt draped over the LEFT end of the counter, a rack of wrapped spears leaning on the RIGHT side, verdigris bronze fittings, the BACK closed by a felt curtain. PROPORTIONS: the FRONT and BACK views are drawn about 1.25 times as wide as tall; the LEFT and RIGHT views about 0.8 times as wide as tall. Chunky readable shapes, no text, no people. One solid connected piece on a flat base."""
+
+[assets.SK_Npc_Merchant]
+# 狸猫行商（ART7 商人）。设计稿 / 四视图 art/source/characters/_design/npc/npc_merchant/（npc_designs_v1.json）
+# 原生骨架：python art/pipeline/build_tripo_creature.py SK_Npc_Merchant（creature_rigs/SK_Npc_Merchant.json），不走 assetctl build。
+# 语义人形命名（Unity 建 Humanoid）+ 尾巴弹簧链 + 背篓 pack 骨；动作 Idle / Talk 是 Blender 关键帧
+# （art/source/characters/SK_Npc_Merchant/anim/merchant_anims.py → Anim/Keyframed/*.fbx），见 docs/art/props-loot.md
+source_provider = "tripo"
+display = "狸猫行商"
+kind = "skeletal"
+class = "npc"
+rig = "parts"
+blockout = { source = "npc", id = "merchant" }
+material = { roughness = 0.8, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+A plump cheerful anthropomorphic tabby cat travelling merchant about 1.5 m tall: round spectacles, a conical bamboo hat,
+a deep teal robe with gold coin trim, a mustard sash, a brown apron, an abacus and a coin string on the hips and a bamboo
+frame backpack loaded with jars, scrolls and a small glowing brass lantern.
+"""
+
 # ───────────── Playable heroes · Tripo P2.0 native-rig builds ─────────────
 # Runtime GLBs for SK_Hero_* are produced by art/pipeline/build_tripo_heroes.py from these
 # rigged Tripo models (Mixamo skeleton kept). Do not republish them with `assetctl.py build`.

@@ -1,0 +1,117 @@
+{
+  "source": {
+    "tris": 2980,
+    "verts": 1590
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 1.20059,
+    "iou": 0.823,
+    "iou_per_view": {
+      "front": 0.906,
+      "left": 0.726,
+      "back": 0.868,
+      "right": 0.75
+    },
+    "size_m": [
+      1.041,
+      0.657,
+      1.2
+    ],
+    "reference_m": [
+      1.5,
+      0.9,
+      1.2
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.822,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Prop_Anvil_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "provider",
+      "collapse": {
+        "samples": 23002,
+        "matched_ratio": 0.958,
+        "mean_delta": 0.0172,
+        "p90_delta": 0.0445,
+        "smeared_ratio": 0.009,
+        "stretched_ratio": 0.0091,
+        "dist_p99_m": 0.0114
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Prop_Anvil_LOD0",
+      "tris": 2980,
+      "verts": 1590,
+      "uv_min": [
+        0.0009765625,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.99609375,
+        0.9990234375
+      ],
+      "uv_utilization": 0.704,
+      "bbox_min": [
+        -0.5203,
+        -0.3286,
+        0.0
+      ],
+      "bbox_max": [
+        0.5203,
+        0.3286,
+        1.2
+      ]
+    },
+    {
+      "name": "SM_Prop_Anvil_LOD1",
+      "tris": 995,
+      "verts": 577,
+      "uv_min": [
+        0.001220703125,
+        0.0009613812435418367
+      ],
+      "uv_max": [
+        0.99609375,
+        0.998046875
+      ],
+      "uv_utilization": 0.599,
+      "bbox_min": [
+        -0.5189,
+        -0.3276,
+        -0.0001
+      ],
+      "bbox_max": [
+        0.5235,
+        0.3197,
+        1.1966
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Prop_Anvil/04_export/SM_Prop_Anvil_v001.glb",
+    "bytes": 299592
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 10.0,
+  "_seconds": 11.3
+}

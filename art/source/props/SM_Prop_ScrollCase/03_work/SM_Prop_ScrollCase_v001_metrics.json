@@ -1,0 +1,139 @@
+{
+  "source": {
+    "tris": 3076,
+    "verts": 1617
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 0.9027,
+    "iou": 0.841,
+    "iou_per_view": {
+      "front": 0.935,
+      "left": 0.715,
+      "back": 0.94,
+      "right": 0.726
+    },
+    "size_m": [
+      0.902,
+      0.438,
+      0.8
+    ],
+    "reference_m": [
+      0.9,
+      0.55,
+      0.8
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.634,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Prop_ScrollCase_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "rebaked",
+      "texture": 512,
+      "cage_m": 0.016,
+      "uv": {
+        "smart_islands": 223,
+        "charts": 39,
+        "fallback_charts": 1,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "merged",
+        "density_smart": 0.4549,
+        "density_merged": 0.4666,
+        "coverage": 0.707
+      },
+      "collapse": {
+        "samples": 23154,
+        "matched_ratio": 0.965,
+        "mean_delta": 0.0277,
+        "p90_delta": 0.0714,
+        "smeared_ratio": 0.0256,
+        "stretched_ratio": 0.0526,
+        "dist_p99_m": 0.008
+      },
+      "final": {
+        "samples": 23154,
+        "matched_ratio": 0.965,
+        "mean_delta": 0.02,
+        "p90_delta": 0.0414,
+        "smeared_ratio": 0.0265,
+        "stretched_ratio": 0.0406,
+        "dist_p99_m": 0.008
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Prop_ScrollCase_LOD0",
+      "tris": 2985,
+      "verts": 1571,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.493,
+      "bbox_min": [
+        -0.4511,
+        -0.2188,
+        0.0
+      ],
+      "bbox_max": [
+        0.4511,
+        0.2188,
+        0.8
+      ]
+    },
+    {
+      "name": "SM_Prop_ScrollCase_LOD1",
+      "tris": 994,
+      "verts": 549,
+      "uv_min": [
+        0.002162198768928647,
+        0.0021622306667268276
+      ],
+      "uv_max": [
+        0.992836058139801,
+        0.9978377819061279
+      ],
+      "uv_utilization": 0.626,
+      "bbox_min": [
+        -0.4509,
+        -0.2094,
+        0.0007
+      ],
+      "bbox_max": [
+        0.4503,
+        0.2189,
+        0.8029
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Prop_ScrollCase/04_export/SM_Prop_ScrollCase_v001.glb",
+    "bytes": 324328
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 15.7,
+  "_seconds": 17.2
+}

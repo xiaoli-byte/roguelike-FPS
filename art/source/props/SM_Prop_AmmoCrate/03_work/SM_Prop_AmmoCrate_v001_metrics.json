@@ -1,0 +1,117 @@
+{
+  "source": {
+    "tris": 2594,
+    "verts": 1603
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 0.96674,
+    "iou": 0.748,
+    "iou_per_view": {
+      "front": 0.816,
+      "left": 0.667,
+      "back": 0.811,
+      "right": 0.665
+    },
+    "size_m": [
+      0.966,
+      0.5,
+      0.65
+    ],
+    "reference_m": [
+      1.0,
+      0.65,
+      0.65
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.759,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Prop_AmmoCrate_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "provider",
+      "collapse": {
+        "samples": 23661,
+        "matched_ratio": 0.986,
+        "mean_delta": 0.0118,
+        "p90_delta": 0.0335,
+        "smeared_ratio": 0.0066,
+        "stretched_ratio": 0.0027,
+        "dist_p99_m": 0.0061
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Prop_AmmoCrate_LOD0",
+      "tris": 2594,
+      "verts": 1603,
+      "uv_min": [
+        0.000732421875,
+        0.000732421875
+      ],
+      "uv_max": [
+        0.9970703125,
+        0.999267578125
+      ],
+      "uv_utilization": 0.827,
+      "bbox_min": [
+        -0.4831,
+        -0.2499,
+        0.0
+      ],
+      "bbox_max": [
+        0.4831,
+        0.2499,
+        0.65
+      ]
+    },
+    {
+      "name": "SM_Prop_AmmoCrate_LOD1",
+      "tris": 994,
+      "verts": 762,
+      "uv_min": [
+        0.000732421875,
+        0.000732421875
+      ],
+      "uv_max": [
+        0.9969499111175537,
+        0.9970703125
+      ],
+      "uv_utilization": 0.783,
+      "bbox_min": [
+        -0.4821,
+        -0.2513,
+        0.0016
+      ],
+      "bbox_max": [
+        0.4821,
+        0.2503,
+        0.6502
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Prop_AmmoCrate/04_export/SM_Prop_AmmoCrate_v001.glb",
+    "bytes": 239572
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 14.6,
+  "_seconds": 16.2
+}

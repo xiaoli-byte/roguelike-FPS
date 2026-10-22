@@ -1,0 +1,320 @@
+{
+  "id": "SM_Prop_ChestLegendary",
+  "display": "传说宝箱（金玉神匣）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:42:51",
+          "files": {
+            "BO_SM_Prop_ChestLegendary_v001.json": {
+              "path": "00_blockout/BO_SM_Prop_ChestLegendary_v001.json",
+              "sha256": "618f92b56ca2fa3171594f568d4d226f7e9fd5ddc52d35e466c9498f935b0255"
+            },
+            "BO_SM_Prop_ChestLegendary_v001_views.json": {
+              "path": "00_blockout/BO_SM_Prop_ChestLegendary_v001_views.json",
+              "sha256": "63fe720fd799aa3642f6c798d9f83fa8f65c87f1bdab28a2fd0999eee41345d5"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "loot.chest.legendary"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.75,
+              0.0,
+              -0.475
+            ],
+            "max": [
+              0.75,
+              1.15,
+              0.475
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:43:33",
+          "files": {
+            "CN_SM_Prop_ChestLegendary_v001_source.png": {
+              "path": "01_concept/CN_SM_Prop_ChestLegendary_v001_source.png",
+              "sha256": "a2f974448e2684daf229fc0184a3fdf17249b4f1f15f5c3ab29b114cb361f749"
+            },
+            "CN_SM_Prop_ChestLegendary_v001_front.png": {
+              "path": "01_concept/CN_SM_Prop_ChestLegendary_v001_front.png",
+              "sha256": "9b60a4f72f5c60113edac4ff09537223820686a146a0d9e25c7621c6a150ef98"
+            },
+            "CN_SM_Prop_ChestLegendary_v001_left.png": {
+              "path": "01_concept/CN_SM_Prop_ChestLegendary_v001_left.png",
+              "sha256": "657a8b8163e51de8a3ae61a95f269566db4e3ea9ee7a53312cf2cde788cad496"
+            },
+            "CN_SM_Prop_ChestLegendary_v001_back.png": {
+              "path": "01_concept/CN_SM_Prop_ChestLegendary_v001_back.png",
+              "sha256": "3be948c60f63f0ad371eddc66f2ec5c12cf66ac9acf5aa5663cdfe12140d1e47"
+            },
+            "CN_SM_Prop_ChestLegendary_v001_right.png": {
+              "path": "01_concept/CN_SM_Prop_ChestLegendary_v001_right.png",
+              "sha256": "43ac56da9c323b13246e904667f9639154afd929a734d0cb66b50692d4520929"
+            },
+            "CN_SM_Prop_ChestLegendary_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Prop_ChestLegendary_v001_sheet.png",
+              "sha256": "48de373aca0e3f02ef4f6833dc2f6f28fa9d53b131d49ac1e1105be0858ac84d"
+            },
+            "CN_SM_Prop_ChestLegendary_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Prop_ChestLegendary_v001_prompt.txt",
+              "sha256": "380c141f951ce9cec87ffb2a9bbfd4461832e78474d28682656ac65d85647ec7"
+            },
+            "CN_SM_Prop_ChestLegendary_v001_registration.json": {
+              "path": "01_concept/CN_SM_Prop_ChestLegendary_v001_registration.json",
+              "sha256": "9205c8e427fa033356f852a380c0c1fc8f713e75f4b0b6b8e617241fff78bfc4"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a15b7b-56d8-77e2-a62c-def7375feba5",
+            "attempt": 1,
+            "seconds": 39.1
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian mythological treasure and trade props for a fantasy roguelite: lacquered wood, aged bronze, polished gold, white and green jade and sturdy iron, warm saturated accents, readable as loot from across a room. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (1.5m wide x 1.15m tall x 0.95m deep): A closed legendary treasure chest 1.5m wide, 1.15m tall and 0.95m deep, a divine relic casket: a box of dark night-blue lacquer framed by thick polished gold edges and gold corner guards shaped like small dragon heads, white jade panels carved with a simple coiling dragon on the FRONT and BACK, a big round gold lock plate with a glowing amber spirit-fire gem (painted as an opaque bright amber surface) in the middle of the FRONT, gold ring handles on the LEFT and RIGHT sides, four gold cloud-scroll feet. The lid is a separate stepped pagoda-like lid making up the top 42% of the height, with a clearly visible straight horizontal seam all the way round between lid and box, two gold hinges on the BACK at the seam, and a small gold flaming-pearl finial on top. PROPORTIONS: the FRONT and BACK views are drawn about 1.3 times as wide as tall; the LEFT and RIGHT views about 0.83 times as wide as tall. Chunky readable shapes, no text. One solid closed piece.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "a2f974448e2684daf229fc0184a3fdf17249b4f1f15f5c3ab29b114cb361f749",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.47107014848950324,
+              "offset": [
+                120,
+                337
+              ],
+              "size": [
+                272,
+                350
+              ],
+              "physical_height_m": 1.15,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.47107014848950324,
+              "offset": [
+                185,
+                337
+              ],
+              "size": [
+                142,
+                350
+              ],
+              "physical_height_m": 1.15,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.47107014848950324,
+              "offset": [
+                117,
+                337
+              ],
+              "size": [
+                277,
+                350
+              ],
+              "physical_height_m": 1.15,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.47107014848950324,
+              "offset": [
+                184,
+                337
+              ],
+              "size": [
+                143,
+                350
+              ],
+              "physical_height_m": 1.15,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-21 ART7：四视图一致、比例与登记相符（用户 2026-10-19 授权免审）",
+            "time": "2026-10-21 06:46:54"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:53:22",
+          "files": {
+            "HP_SM_Prop_ChestLegendary_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Prop_ChestLegendary_v001_source.glb",
+              "sha256": "c5683dbefad0623ebd8bc01b0fa2283a48ef34ec749066032ffc3516fc0db737"
+            },
+            "HP_SM_Prop_ChestLegendary_v001.glb": {
+              "path": "02_highpoly/HP_SM_Prop_ChestLegendary_v001.glb",
+              "sha256": "bb432d38b39f6c8e88c6c283d993a04321bba2cee8f2ad1de6984e186ecf48d2"
+            },
+            "HP_SM_Prop_ChestLegendary_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Prop_ChestLegendary_v001_graph.json",
+              "sha256": "e36ce4076d345bccc65db4cb04d9f730418927ab26409cbedb680d708b8bd3a6"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/3131ea78-ed99-472e-8476-919903e5d806",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 2887,
+          "source_sha256": "c5683dbefad0623ebd8bc01b0fa2283a48ef34ec749066032ffc3516fc0db737"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:53:37",
+          "files": {
+            "SM_Prop_ChestLegendary_v001.blend": {
+              "path": "03_work/SM_Prop_ChestLegendary_v001.blend",
+              "sha256": "227d560011da580783da59278138f01a6853e2b3c157065b018d0cd8503dcb93"
+            },
+            "SM_Prop_ChestLegendary_v001.glb": {
+              "path": "04_export/SM_Prop_ChestLegendary_v001.glb",
+              "sha256": "1f742fab53e7879ce67b45bf06171e91403c870fab15a1b65d01d1ed46030c9c"
+            },
+            "SM_Prop_ChestLegendary_v001_metrics.json": {
+              "path": "03_work/SM_Prop_ChestLegendary_v001_metrics.json",
+              "sha256": "b26e8783cb539fac319de46b1e8127125385f9a9268e041054361c3db52b8379"
+            },
+            "T_Prop_ChestLegendary_BC.png": {
+              "path": "03_work/textures_v001/T_Prop_ChestLegendary_BC.png",
+              "sha256": "1d52ca530a49b5c8f0dc2e82c6e8c54db59e488d8a108b9a34d469feab6ec44d"
+            },
+            "T_Prop_ChestLegendary_N.png": {
+              "path": "03_work/textures_v001/T_Prop_ChestLegendary_N.png",
+              "sha256": "19a7e9e55897425f4e81987faf923c4a34469c2b249af2cdb3f859a0cb50f3cf"
+            },
+            "T_Prop_ChestLegendary_ORM.png": {
+              "path": "03_work/textures_v001/T_Prop_ChestLegendary_ORM.png",
+              "sha256": "aff5d7410c4368c6fb65e1d7c4aff71c2e8ef2e210d0414285db0f8b803fa6ac"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.913,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2887,
+              "verts": 1671
+            },
+            {
+              "tris": 994,
+              "verts": 670
+            }
+          ],
+          "export_kb": 321.3,
+          "seconds": 12.9,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:53:40",
+          "files": {
+            "SM_Prop_ChestLegendary_v001_validation_v001.json": {
+              "path": "05_review/SM_Prop_ChestLegendary_v001_validation_v001.json",
+              "sha256": "bee1376ddddfbcea2c86bf8ade5e696f03217dbdd944ad9a7a23b9455729f50d"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:53:47",
+          "files": {
+            "SM_Prop_ChestLegendary_v001_review_v001.png": {
+              "path": "05_review/SM_Prop_ChestLegendary_v001_review_v001.png",
+              "sha256": "54608d3d4dc4c3199cd1628b5c2a61f030f68ef32ad7712c9361dc8c5f341b75"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-22 ART7：审核图四视图与概念一致（用户 2026-10-19 授权免审）",
+            "time": "2026-10-22 22:11:11"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 22:11:11",
+          "files": {
+            "SM_Prop_ChestLegendary.glb": {
+              "path": "@root/public/assets/props/SM_Prop_ChestLegendary.glb",
+              "sha256": "1f742fab53e7879ce67b45bf06171e91403c870fab15a1b65d01d1ed46030c9c"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Prop_ChestLegendary.glb"
+        }
+      ]
+    }
+  }
+}

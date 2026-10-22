@@ -1,0 +1,140 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Prop_Potion",
+  "kind": "static",
+  "class": "tripo_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "loot.pickup.potion"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    20
+  ],
+  "budget": {
+    "lodTris": [
+      3000,
+      1000
+    ],
+    "texture": 1024,
+    "maxFileKb": 700
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -0.14871764183044434,
+      -1.0348374416935258e-05,
+      -0.13568639755249023
+    ],
+    "max": [
+      0.14871764183044434,
+      0.550000011920929,
+      0.13568639755249023
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Prop_Potion_LOD0",
+      "lod": 0,
+      "tris": 2984,
+      "verts": 2206,
+      "materials": [
+        "M_Prop_Potion"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Prop_Potion_LOD1",
+      "lod": 1,
+      "tris": 994,
+      "verts": 1251,
+      "materials": [
+        "M_Prop_Potion_LOD1"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Prop_Potion",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Prop_Potion_BC.png",
+        "N": "Textures/T_Prop_Potion_N.png",
+        "ORM": "Textures/T_Prop_Potion_ORM.png"
+      }
+    },
+    {
+      "name": "M_Prop_Potion_LOD1",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Prop_Potion_LOD1_BC.png",
+        "N": "Textures/T_Prop_Potion_LOD1_N.png",
+        "ORM": "Textures/T_Prop_Potion_LOD1_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Prop_Potion.glb",
+    "sha256": "91867eb3e9ee2f09329a594eb6d2293e3902db799b8b3fe1b116708c96e94a6c",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-22 22:13:30"
+}

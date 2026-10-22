@@ -1,0 +1,320 @@
+{
+  "id": "SM_Prop_Anvil",
+  "display": "铁砧（强化台）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:42:56",
+          "files": {
+            "BO_SM_Prop_Anvil_v001.json": {
+              "path": "00_blockout/BO_SM_Prop_Anvil_v001.json",
+              "sha256": "cd11158cddc679c37b7534e1464cb540afff919e70806f6363c2f2c23e1fb447"
+            },
+            "BO_SM_Prop_Anvil_v001_views.json": {
+              "path": "00_blockout/BO_SM_Prop_Anvil_v001_views.json",
+              "sha256": "f24a01df389fa6854ab702891e0256d2002f2e2225c2df0911cefa7d4d61eb4d"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "loot.shop.anvil"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.75,
+              0.0,
+              -0.45
+            ],
+            "max": [
+              0.75,
+              1.2,
+              0.45
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:43:43",
+          "files": {
+            "CN_SM_Prop_Anvil_v001_source.png": {
+              "path": "01_concept/CN_SM_Prop_Anvil_v001_source.png",
+              "sha256": "b2bf6dfe1d858ebfc555f3d09f4135bce1ead6419c59c30946eb50a24c8c255c"
+            },
+            "CN_SM_Prop_Anvil_v001_front.png": {
+              "path": "01_concept/CN_SM_Prop_Anvil_v001_front.png",
+              "sha256": "68ca7b84435b27d6dc1dce7d4dab24823f6e48f32b2f7454bed73eb34afd0bc8"
+            },
+            "CN_SM_Prop_Anvil_v001_left.png": {
+              "path": "01_concept/CN_SM_Prop_Anvil_v001_left.png",
+              "sha256": "e8ecdbfd63e2d640ddc6a03a81fa687a532517ef6bf33a888be998cf41ecc2f4"
+            },
+            "CN_SM_Prop_Anvil_v001_back.png": {
+              "path": "01_concept/CN_SM_Prop_Anvil_v001_back.png",
+              "sha256": "a3b2c78c26958f3955ced80625a7166cf76608b50a87dd2e1c58bc41024fd346"
+            },
+            "CN_SM_Prop_Anvil_v001_right.png": {
+              "path": "01_concept/CN_SM_Prop_Anvil_v001_right.png",
+              "sha256": "9ed846269dbe129c2da4c989105cf889a3c4a86392aa57295e95c2d96f0ef796"
+            },
+            "CN_SM_Prop_Anvil_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Prop_Anvil_v001_sheet.png",
+              "sha256": "5559f447ad384a6f94edd20321cd2acc71a51c7b53c3b632143f143fe11c56dc"
+            },
+            "CN_SM_Prop_Anvil_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Prop_Anvil_v001_prompt.txt",
+              "sha256": "5716c8665aa2175a4fab480a23d5bea8b4b7c82e7253308852ebbdd883546a78"
+            },
+            "CN_SM_Prop_Anvil_v001_registration.json": {
+              "path": "01_concept/CN_SM_Prop_Anvil_v001_registration.json",
+              "sha256": "cbfe40bd9ad337d050d0b348f704989c1a376ba5eacb7ba41437e79a69447516"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a15b7b-69f8-7280-a70d-4cff776f6f1b",
+            "attempt": 1,
+            "seconds": 43.4
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian mythological treasure and trade props for a fantasy roguelite: lacquered wood, aged bronze, polished gold, white and green jade and sturdy iron, warm saturated accents, readable as loot from across a room. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (1.5m wide x 1.2m tall x 0.9m deep): A weapon-upgrade forge anvil 1.5m wide, 1.2m tall and 0.9m deep: a big chunky black iron anvil with a long horn pointing to the RIGHT, a flat polished steel face with a few faint glowing orange heat lines (painted as opaque bright orange strokes), standing on a squat thick stump of dark wood bound with two iron bands; a heavy forging hammer lies across the anvil face and a pair of long tongs leans against the stump on the LEFT; a small bronze plaque with a flame emblem on the stump FRONT. PROPORTIONS: the FRONT and BACK views are drawn about 1.25 times as wide as tall; the LEFT and RIGHT views about 0.75 times as wide as tall. Chunky readable shapes, no sparks, no smoke, no text. One solid connected piece on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "b2bf6dfe1d858ebfc555f3d09f4135bce1ead6419c59c30946eb50a24c8c255c",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.5058288875716261,
+              "offset": [
+                103,
+                329
+              ],
+              "size": [
+                305,
+                366
+              ],
+              "physical_height_m": 1.2,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5079365079365079,
+              "offset": [
+                180,
+                329
+              ],
+              "size": [
+                151,
+                366
+              ],
+              "physical_height_m": 1.2,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5072320190212006,
+              "offset": [
+                106,
+                329
+              ],
+              "size": [
+                300,
+                366
+              ],
+              "physical_height_m": 1.2,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5136436597110754,
+              "offset": [
+                177,
+                329
+              ],
+              "size": [
+                158,
+                366
+              ],
+              "physical_height_m": 1.2,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-21 ART7：四视图一致、比例与登记相符（用户 2026-10-19 授权免审）",
+            "time": "2026-10-21 06:46:54"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:53:51",
+          "files": {
+            "HP_SM_Prop_Anvil_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Prop_Anvil_v001_source.glb",
+              "sha256": "f1e3e9030154ff8c86cc9b22d589b8695a51266324e9c397dc82394081257a8c"
+            },
+            "HP_SM_Prop_Anvil_v001.glb": {
+              "path": "02_highpoly/HP_SM_Prop_Anvil_v001.glb",
+              "sha256": "f5bfa1638f1210a4638e4fcf616c00f66bd53189fe1b1bd6dbf94e95a79a35e2"
+            },
+            "HP_SM_Prop_Anvil_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Prop_Anvil_v001_graph.json",
+              "sha256": "b69c791c2540128318abd190a88658c97a670a6eb45261f921a49cdf38675b4b"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/adcf0cef-2c12-4dfe-b4cb-4caed8b2c66b",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 2980,
+          "source_sha256": "f1e3e9030154ff8c86cc9b22d589b8695a51266324e9c397dc82394081257a8c"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:54:04",
+          "files": {
+            "SM_Prop_Anvil_v001.blend": {
+              "path": "03_work/SM_Prop_Anvil_v001.blend",
+              "sha256": "da2a0152a575d7bd3d4796ba9e6fe2d897d9c3d98302cc5f51eb8f7457dd885b"
+            },
+            "SM_Prop_Anvil_v001.glb": {
+              "path": "04_export/SM_Prop_Anvil_v001.glb",
+              "sha256": "d7f1d0349072d014e40e68fb1911f9a27b508a80aea6c6cce23f92573abb3f54"
+            },
+            "SM_Prop_Anvil_v001_metrics.json": {
+              "path": "03_work/SM_Prop_Anvil_v001_metrics.json",
+              "sha256": "f831fb76cebcc49ad0ad02893ea71fde76c55213c1081c08a7387fe8ac0cc4e0"
+            },
+            "T_Prop_Anvil_BC.png": {
+              "path": "03_work/textures_v001/T_Prop_Anvil_BC.png",
+              "sha256": "a69dbb75f389cdc4a0323779bc62b243df3f485f37c988cf33ba5b00baae7d7e"
+            },
+            "T_Prop_Anvil_N.png": {
+              "path": "03_work/textures_v001/T_Prop_Anvil_N.png",
+              "sha256": "feea64bf2d0386cdcb81e3ac6b32cbf56e468358b6e5b5b12db84addc526d27e"
+            },
+            "T_Prop_Anvil_ORM.png": {
+              "path": "03_work/textures_v001/T_Prop_Anvil_ORM.png",
+              "sha256": "5911e93286776989b7b557c684f26f04bc1869ecca83d55173c9a271b5fb6751"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.823,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2980,
+              "verts": 1590
+            },
+            {
+              "tris": 995,
+              "verts": 577
+            }
+          ],
+          "export_kb": 292.6,
+          "seconds": 11.3,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:54:07",
+          "files": {
+            "SM_Prop_Anvil_v001_validation_v001.json": {
+              "path": "05_review/SM_Prop_Anvil_v001_validation_v001.json",
+              "sha256": "b51db82564087026d4ccd48a948c102821338361f8f4b950dfefa84a27a77c65"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:54:12",
+          "files": {
+            "SM_Prop_Anvil_v001_review_v001.png": {
+              "path": "05_review/SM_Prop_Anvil_v001_review_v001.png",
+              "sha256": "66082225c7aad476e99fd973a56d64e6cfa4ada57360c226fbf5f9f9010723a6"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-22 ART7：审核图四视图与概念一致（用户 2026-10-19 授权免审）",
+            "time": "2026-10-22 22:11:11"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 22:11:12",
+          "files": {
+            "SM_Prop_Anvil.glb": {
+              "path": "@root/public/assets/props/SM_Prop_Anvil.glb",
+              "sha256": "d7f1d0349072d014e40e68fb1911f9a27b508a80aea6c6cce23f92573abb3f54"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Prop_Anvil.glb"
+        }
+      ]
+    }
+  }
+}

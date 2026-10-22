@@ -1,0 +1,117 @@
+{
+  "source": {
+    "tris": 2543,
+    "verts": 1667
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 3.20156,
+    "iou": 0.849,
+    "iou_per_view": {
+      "front": 0.903,
+      "left": 0.81,
+      "back": 0.854,
+      "right": 0.805
+    },
+    "size_m": [
+      3.084,
+      1.559,
+      3.2
+    ],
+    "reference_m": [
+      4.0,
+      2.6,
+      3.2
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.669,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Tripo_FrostMarketStall_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "provider",
+      "collapse": {
+        "samples": 22426,
+        "matched_ratio": 0.934,
+        "mean_delta": 0.0197,
+        "p90_delta": 0.0535,
+        "smeared_ratio": 0.021,
+        "stretched_ratio": 0.0114,
+        "dist_p99_m": 0.0385
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostMarketStall_LOD0",
+      "tris": 2543,
+      "verts": 1667,
+      "uv_min": [
+        0.0009765625,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.9990234375,
+        0.9990234375
+      ],
+      "uv_utilization": 0.719,
+      "bbox_min": [
+        -1.5422,
+        -0.7793,
+        0.0
+      ],
+      "bbox_max": [
+        1.5422,
+        0.7793,
+        3.2
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostMarketStall_LOD1",
+      "tris": 994,
+      "verts": 821,
+      "uv_min": [
+        0.0009765625,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.9990234375,
+        0.9990234375
+      ],
+      "uv_utilization": 0.631,
+      "bbox_min": [
+        -1.5375,
+        -0.7716,
+        0.0
+      ],
+      "bbox_max": [
+        1.5422,
+        0.7407,
+        3.2213
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostMarketStall/04_export/SM_Tripo_FrostMarketStall_v001.glb",
+    "bytes": 355052
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 13.1,
+  "_seconds": 15.1
+}

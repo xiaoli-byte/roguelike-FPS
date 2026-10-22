@@ -1,0 +1,332 @@
+{
+  "id": "SM_Prop_Potion",
+  "display": "药壶（战备药剂，回复拾取物）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:43:43",
+          "files": {
+            "BO_SM_Prop_Potion_v001.json": {
+              "path": "00_blockout/BO_SM_Prop_Potion_v001.json",
+              "sha256": "0778d4c8b4d36b6417bd37d3bfbf1f68a8a8fa690551ec59b4a8cf5ef0fb38e6"
+            },
+            "BO_SM_Prop_Potion_v001_views.json": {
+              "path": "00_blockout/BO_SM_Prop_Potion_v001_views.json",
+              "sha256": "242679e06f7f8fdf7bdb934d0c038ae4d93f21edd84062cb539dde105b846e87"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "loot.pickup.potion"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.18,
+              0.0,
+              -0.18
+            ],
+            "max": [
+              0.18,
+              0.55,
+              0.18
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:44:23",
+          "files": {
+            "CN_SM_Prop_Potion_v001_source.png": {
+              "path": "01_concept/CN_SM_Prop_Potion_v001_source.png",
+              "sha256": "adc157ac9517055ff8f6afbbb225c1b4433a040e9a72942eec86e8098a242ec8"
+            },
+            "CN_SM_Prop_Potion_v001_front.png": {
+              "path": "01_concept/CN_SM_Prop_Potion_v001_front.png",
+              "sha256": "c4be0683d491fab348b536cd9bfaac94a026883d563aa60421863d46dd95c857"
+            },
+            "CN_SM_Prop_Potion_v001_left.png": {
+              "path": "01_concept/CN_SM_Prop_Potion_v001_left.png",
+              "sha256": "195d688d77f8341c30b1df8929d748553111e4d5f74840c5131f72fa2f51d869"
+            },
+            "CN_SM_Prop_Potion_v001_back.png": {
+              "path": "01_concept/CN_SM_Prop_Potion_v001_back.png",
+              "sha256": "5262285a86ab572d050cf8c0b150713960c582e0201d41e80a97be444afc19da"
+            },
+            "CN_SM_Prop_Potion_v001_right.png": {
+              "path": "01_concept/CN_SM_Prop_Potion_v001_right.png",
+              "sha256": "a8eaa926fc7b1ee0da17b73ecc14094c9f0c8f60c6744e065cf92d99b2a61e15"
+            },
+            "CN_SM_Prop_Potion_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Prop_Potion_v001_sheet.png",
+              "sha256": "3bdba619abab768c782c08addfd63a3bd40601f6f3ce5e9074afae4f70087d5f"
+            },
+            "CN_SM_Prop_Potion_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Prop_Potion_v001_prompt.txt",
+              "sha256": "ef61d9cb5987db66a65b21dce971d6108f1f9f40d6dcb1d6e4d3385b8e810972"
+            },
+            "CN_SM_Prop_Potion_v001_registration.json": {
+              "path": "01_concept/CN_SM_Prop_Potion_v001_registration.json",
+              "sha256": "b8cbe243507c19351ec10ac01b89c44ae4801b917fbdd4adaa6a1ecc7f84f7b3"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              1954,
+              805
+            ],
+            "references": [],
+            "codex_session": "01a15b7c-2044-7d11-96bc-e98869f17900",
+            "attempt": 1,
+            "seconds": 38.1
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian mythological treasure and trade props for a fantasy roguelite: lacquered wood, aged bronze, polished gold, white and green jade and sturdy iron, warm saturated accents, readable as loot from across a room. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (0.36m wide x 0.55m tall x 0.36m deep): A chubby healing elixir gourd bottle 0.36m wide and 0.55m tall: a glossy celadon-green glazed ceramic gourd (葫芦) with two bulbs, the lower bulb bigger, a red silk cord tied around its waist with a dangling knot and a small jade bead, a cork stopper sealed with red wax, and a yellow paper talisman label with a simple red swirl symbol on the FRONT; through a round clear window on the lower bulb shows a glowing jade-green elixir (painted as an opaque bright jade-green surface). PROPORTIONS: all four views drawn about 0.65 times as wide as tall. Chunky readable shapes, no text. One solid connected piece on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "adc157ac9517055ff8f6afbbb225c1b4433a040e9a72942eec86e8098a242ec8",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.7786094742616482,
+              "offset": [
+                80,
+                163
+              ],
+              "size": [
+                352,
+                698
+              ],
+              "physical_height_m": 0.55,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7794784580498867,
+              "offset": [
+                100,
+                163
+              ],
+              "size": [
+                311,
+                698
+              ],
+              "physical_height_m": 0.55,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7786094742616482,
+              "offset": [
+                75,
+                163
+              ],
+              "size": [
+                362,
+                698
+              ],
+              "physical_height_m": 0.55,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7786094742616482,
+              "offset": [
+                94,
+                163
+              ],
+              "size": [
+                323,
+                698
+              ],
+              "physical_height_m": 0.55,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-21 ART7：四视图一致、比例与登记相符（用户 2026-10-19 授权免审）",
+            "time": "2026-10-21 06:46:55"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:54:48",
+          "files": {
+            "HP_SM_Prop_Potion_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Prop_Potion_v001_source.glb",
+              "sha256": "1b9df4ab80b882d3147f7fc703457706969d85667d9f47acf0e5a5ae17e1cb53"
+            },
+            "HP_SM_Prop_Potion_v001.glb": {
+              "path": "02_highpoly/HP_SM_Prop_Potion_v001.glb",
+              "sha256": "aa741b07ebc7390ed31490e50fb63470bb0899fd260f4151935cf78e6054db2a"
+            },
+            "HP_SM_Prop_Potion_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Prop_Potion_v001_graph.json",
+              "sha256": "651fac4770150c00105a39950ebce741aace4a0f2c34afd1dc597136225d499b"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/91bb6a16-04b9-41da-845e-63b2acf7bc53",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 3258,
+          "source_sha256": "1b9df4ab80b882d3147f7fc703457706969d85667d9f47acf0e5a5ae17e1cb53"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:55:06",
+          "files": {
+            "SM_Prop_Potion_v001.blend": {
+              "path": "03_work/SM_Prop_Potion_v001.blend",
+              "sha256": "1da8663ab9a46c3855e9f34493f20480522ca83c8d478e0a3754cf7c8b6ab1d7"
+            },
+            "SM_Prop_Potion_v001.glb": {
+              "path": "04_export/SM_Prop_Potion_v001.glb",
+              "sha256": "91867eb3e9ee2f09329a594eb6d2293e3902db799b8b3fe1b116708c96e94a6c"
+            },
+            "SM_Prop_Potion_v001_metrics.json": {
+              "path": "03_work/SM_Prop_Potion_v001_metrics.json",
+              "sha256": "ee1cdb11cb5b613fa1eeafa06f5cd639e5df2ddea3e612d5f0c1ed2510cdb079"
+            },
+            "T_Prop_Potion_BC.png": {
+              "path": "03_work/textures_v001/T_Prop_Potion_BC.png",
+              "sha256": "3a2b899d26c269115b20aca71a6cfcdd00b171e0c90633050a49576e25d0ca73"
+            },
+            "T_Prop_Potion_LOD1_BC.png": {
+              "path": "03_work/textures_v001/T_Prop_Potion_LOD1_BC.png",
+              "sha256": "e9c5fa7eb902a50023360004090663236d5ff8283617426170a5a1cec56011d5"
+            },
+            "T_Prop_Potion_LOD1_N.png": {
+              "path": "03_work/textures_v001/T_Prop_Potion_LOD1_N.png",
+              "sha256": "fec0732b22881d428144f0f7376e2918cf7e520cb6c4d0fd3aa291876bc4f166"
+            },
+            "T_Prop_Potion_LOD1_ORM.png": {
+              "path": "03_work/textures_v001/T_Prop_Potion_LOD1_ORM.png",
+              "sha256": "3a7902e603197fe990a409c7c494262c11bccee4dde6aec8e86e485033ca751b"
+            },
+            "T_Prop_Potion_N.png": {
+              "path": "03_work/textures_v001/T_Prop_Potion_N.png",
+              "sha256": "f47fc5b539cc2ae5caa5703cc17cb9f6cc61a828675d728d82e94789e0b1cbc8"
+            },
+            "T_Prop_Potion_ORM.png": {
+              "path": "03_work/textures_v001/T_Prop_Potion_ORM.png",
+              "sha256": "898ef794856737a169efaa3e468a2445dc8340c3c89ee16ebee06baef2f33e27"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.876,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2984,
+              "verts": 1557
+            },
+            {
+              "tris": 994,
+              "verts": 551
+            }
+          ],
+          "export_kb": 251.0,
+          "seconds": 16.7,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:55:09",
+          "files": {
+            "SM_Prop_Potion_v001_validation_v001.json": {
+              "path": "05_review/SM_Prop_Potion_v001_validation_v001.json",
+              "sha256": "de009df6c23b4fa071c74c2b1e6975169e323ed584bd303eef8f662e960c9873"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:55:15",
+          "files": {
+            "SM_Prop_Potion_v001_review_v001.png": {
+              "path": "05_review/SM_Prop_Potion_v001_review_v001.png",
+              "sha256": "10405b7e8d561b3ea649805d6221b7ba956443bc8d0861bd93e9e1d3830d81dc"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-22 ART7：审核图四视图与概念一致（用户 2026-10-19 授权免审）",
+            "time": "2026-10-22 22:11:13"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 22:11:13",
+          "files": {
+            "SM_Prop_Potion.glb": {
+              "path": "@root/public/assets/props/SM_Prop_Potion.glb",
+              "sha256": "91867eb3e9ee2f09329a594eb6d2293e3902db799b8b3fe1b116708c96e94a6c"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Prop_Potion.glb"
+        }
+      ]
+    }
+  }
+}

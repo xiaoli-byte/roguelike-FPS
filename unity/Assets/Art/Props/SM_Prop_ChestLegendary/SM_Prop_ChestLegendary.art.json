@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Prop_ChestLegendary",
+  "kind": "static",
+  "class": "tripo_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "loot.chest.legendary"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    20
+  ],
+  "budget": {
+    "lodTris": [
+      3000,
+      1000
+    ],
+    "texture": 1024,
+    "maxFileKb": 700
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -0.4390450417995453,
+      0,
+      -0.231179878115654
+    ],
+    "max": [
+      0.4390450417995453,
+      1.149999976158142,
+      0.231179878115654
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Prop_ChestLegendary_LOD0",
+      "lod": 0,
+      "tris": 2887,
+      "verts": 4311,
+      "materials": [
+        "M_Prop_ChestLegendary"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Prop_ChestLegendary_LOD1",
+      "lod": 1,
+      "tris": 994,
+      "verts": 1921,
+      "materials": [
+        "M_Prop_ChestLegendary"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Prop_ChestLegendary",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Prop_ChestLegendary_BC.png",
+        "N": "Textures/T_Prop_ChestLegendary_N.png",
+        "ORM": "Textures/T_Prop_ChestLegendary_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Prop_ChestLegendary.glb",
+    "sha256": "1f742fab53e7879ce67b45bf06171e91403c870fab15a1b65d01d1ed46030c9c",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-22 22:13:09"
+}

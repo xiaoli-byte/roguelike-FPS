@@ -1,0 +1,117 @@
+{
+  "source": {
+    "tris": 2533,
+    "verts": 1590
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 0.90044,
+    "iou": 0.923,
+    "iou_per_view": {
+      "front": 0.944,
+      "left": 0.884,
+      "back": 0.952,
+      "right": 0.903
+    },
+    "size_m": [
+      0.853,
+      0.574,
+      0.9
+    ],
+    "reference_m": [
+      1.2,
+      0.8,
+      0.9
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.601,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Prop_ChestCommon_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "provider",
+      "collapse": {
+        "samples": 23135,
+        "matched_ratio": 0.964,
+        "mean_delta": 0.0104,
+        "p90_delta": 0.0337,
+        "smeared_ratio": 0.0045,
+        "stretched_ratio": 0.0025,
+        "dist_p99_m": 0.0116
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Prop_ChestCommon_LOD0",
+      "tris": 2533,
+      "verts": 1590,
+      "uv_min": [
+        0.0009765625,
+        0.000732421875
+      ],
+      "uv_max": [
+        0.999267578125,
+        0.992431640625
+      ],
+      "uv_utilization": 0.825,
+      "bbox_min": [
+        -0.4263,
+        -0.2869,
+        0.0
+      ],
+      "bbox_max": [
+        0.4263,
+        0.2869,
+        0.9
+      ]
+    },
+    {
+      "name": "SM_Prop_ChestCommon_LOD1",
+      "tris": 995,
+      "verts": 738,
+      "uv_min": [
+        0.0009765625,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.999267578125,
+        0.992431640625
+      ],
+      "uv_utilization": 0.767,
+      "bbox_min": [
+        -0.4243,
+        -0.2843,
+        0.0042
+      ],
+      "bbox_max": [
+        0.4239,
+        0.2868,
+        0.9021
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Prop_ChestCommon/04_export/SM_Prop_ChestCommon_v001.glb",
+    "bytes": 265956
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 10.8,
+  "_seconds": 12.0
+}

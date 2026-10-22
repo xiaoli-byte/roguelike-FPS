@@ -1,0 +1,153 @@
+{
+  "source": {
+    "tris": 7174,
+    "verts": 4188
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 3.69379,
+    "iou": 0.354,
+    "iou_per_view": {
+      "front": 0.344,
+      "left": 0.359,
+      "back": 0.357,
+      "right": 0.361
+    },
+    "size_m": [
+      3.497,
+      3.692,
+      0.9
+    ],
+    "reference_m": [
+      5.0,
+      5.0,
+      0.9
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.667,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Prop_HeroAltar_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "provider",
+      "collapse": {
+        "samples": 23605,
+        "matched_ratio": 0.984,
+        "mean_delta": 0.0093,
+        "p90_delta": 0.0268,
+        "smeared_ratio": 0.0004,
+        "stretched_ratio": 0.0076,
+        "dist_p99_m": 0.0089
+      }
+    },
+    "LOD2": {
+      "method": "provider",
+      "collapse": {
+        "samples": 23339,
+        "matched_ratio": 0.972,
+        "mean_delta": 0.0212,
+        "p90_delta": 0.0599,
+        "smeared_ratio": 0.0149,
+        "stretched_ratio": 0.0197,
+        "dist_p99_m": 0.0159
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Prop_HeroAltar_LOD0",
+      "tris": 7174,
+      "verts": 4188,
+      "uv_min": [
+        0.0009765625,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.998779296875,
+        0.9990234375
+      ],
+      "uv_utilization": 0.694,
+      "bbox_min": [
+        -1.7486,
+        -1.846,
+        0.0
+      ],
+      "bbox_max": [
+        1.7486,
+        1.846,
+        0.9
+      ]
+    },
+    {
+      "name": "SM_Prop_HeroAltar_LOD1",
+      "tris": 2486,
+      "verts": 1522,
+      "uv_min": [
+        0.0009765625,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.99853515625,
+        0.9990234375
+      ],
+      "uv_utilization": 0.657,
+      "bbox_min": [
+        -1.7451,
+        -1.8428,
+        -0.0
+      ],
+      "bbox_max": [
+        1.7446,
+        1.846,
+        0.9
+      ]
+    },
+    {
+      "name": "SM_Prop_HeroAltar_LOD2",
+      "tris": 1491,
+      "verts": 943,
+      "uv_min": [
+        0.0009765625,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.99853515625,
+        0.9987103343009949
+      ],
+      "uv_utilization": 0.619,
+      "bbox_min": [
+        -1.7451,
+        -1.8428,
+        -0.0004
+      ],
+      "bbox_max": [
+        1.7446,
+        1.846,
+        0.8958
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Prop_HeroAltar/04_export/SM_Prop_HeroAltar_v002.glb",
+    "bytes": 863240
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 41.2,
+  "_seconds": 43.0
+}

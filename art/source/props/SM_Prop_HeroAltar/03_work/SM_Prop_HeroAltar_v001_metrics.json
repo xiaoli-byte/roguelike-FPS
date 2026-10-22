@@ -1,0 +1,175 @@
+{
+  "source": {
+    "tris": 7174,
+    "verts": 4188
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 3.69379,
+    "iou": 0.354,
+    "iou_per_view": {
+      "front": 0.344,
+      "left": 0.359,
+      "back": 0.357,
+      "right": 0.361
+    },
+    "size_m": [
+      3.497,
+      3.692,
+      0.9
+    ],
+    "reference_m": [
+      5.0,
+      5.0,
+      0.9
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.667,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Prop_HeroAltar_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "provider",
+      "collapse": {
+        "samples": 23605,
+        "matched_ratio": 0.984,
+        "mean_delta": 0.0093,
+        "p90_delta": 0.0268,
+        "smeared_ratio": 0.0004,
+        "stretched_ratio": 0.0076,
+        "dist_p99_m": 0.0089
+      }
+    },
+    "LOD2": {
+      "method": "rebaked",
+      "texture": 512,
+      "cage_m": 0.215,
+      "uv": {
+        "smart_islands": 288,
+        "charts": 133,
+        "fallback_charts": 23,
+        "flipped_faces": 5,
+        "flipped_ratio": 0.0063,
+        "method": "smart",
+        "density_smart": 0.1395,
+        "density_merged": 0.1364,
+        "coverage": 0.783
+      },
+      "collapse": {
+        "samples": 21061,
+        "matched_ratio": 0.878,
+        "mean_delta": 0.034,
+        "p90_delta": 0.0993,
+        "smeared_ratio": 0.0374,
+        "stretched_ratio": 0.0898,
+        "dist_p99_m": 0.1075
+      },
+      "final": {
+        "samples": 21061,
+        "matched_ratio": 0.878,
+        "mean_delta": 0.0508,
+        "p90_delta": 0.1565,
+        "smeared_ratio": 0.0963,
+        "stretched_ratio": 0.0,
+        "dist_p99_m": 0.1075
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Prop_HeroAltar_LOD0",
+      "tris": 7174,
+      "verts": 4188,
+      "uv_min": [
+        0.0009765625,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.998779296875,
+        0.9990234375
+      ],
+      "uv_utilization": 0.694,
+      "bbox_min": [
+        -1.7486,
+        -1.846,
+        0.0
+      ],
+      "bbox_max": [
+        1.7486,
+        1.846,
+        0.9
+      ]
+    },
+    {
+      "name": "SM_Prop_HeroAltar_LOD1",
+      "tris": 2486,
+      "verts": 1522,
+      "uv_min": [
+        0.0009765625,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.99853515625,
+        0.9990234375
+      ],
+      "uv_utilization": 0.657,
+      "bbox_min": [
+        -1.7451,
+        -1.8428,
+        -0.0
+      ],
+      "bbox_max": [
+        1.7446,
+        1.846,
+        0.9
+      ]
+    },
+    {
+      "name": "SM_Prop_HeroAltar_LOD2",
+      "tris": 796,
+      "verts": 494,
+      "uv_min": [
+        0.003450476797297597,
+        0.003257056698203087
+      ],
+      "uv_max": [
+        0.9818965196609497,
+        0.9967737197875977
+      ],
+      "uv_utilization": 0.656,
+      "bbox_min": [
+        -1.7178,
+        -1.8434,
+        -0.0007
+      ],
+      "bbox_max": [
+        1.7222,
+        1.89,
+        0.8936
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Prop_HeroAltar/04_export/SM_Prop_HeroAltar_v001.glb",
+    "bytes": 932404
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 50.7,
+  "_seconds": 53.5
+}

@@ -1,0 +1,320 @@
+{
+  "id": "SM_Prop_AmmoCrate",
+  "display": "弹药箱（补满备弹）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:44:14",
+          "files": {
+            "BO_SM_Prop_AmmoCrate_v001.json": {
+              "path": "00_blockout/BO_SM_Prop_AmmoCrate_v001.json",
+              "sha256": "ac01bb5cac819b5224146a61602aa153d551a8f3826782246db010fa9619c9af"
+            },
+            "BO_SM_Prop_AmmoCrate_v001_views.json": {
+              "path": "00_blockout/BO_SM_Prop_AmmoCrate_v001_views.json",
+              "sha256": "eb6f28873f6408048f9e62fa63f2d5b72380b3b26dde8dc354dbccb81ad1b42d"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "loot.shop.ammoCrate"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.5,
+              0.0,
+              -0.325
+            ],
+            "max": [
+              0.5,
+              0.65,
+              0.325
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:44:55",
+          "files": {
+            "CN_SM_Prop_AmmoCrate_v001_source.png": {
+              "path": "01_concept/CN_SM_Prop_AmmoCrate_v001_source.png",
+              "sha256": "b8a585f4d6057db87a2948d635d1688285fe89683f6faac2558847f0dabb9244"
+            },
+            "CN_SM_Prop_AmmoCrate_v001_front.png": {
+              "path": "01_concept/CN_SM_Prop_AmmoCrate_v001_front.png",
+              "sha256": "22a58a4055070dd8869c423c9784ec808cd9822b949879907405a34c8e8eee08"
+            },
+            "CN_SM_Prop_AmmoCrate_v001_left.png": {
+              "path": "01_concept/CN_SM_Prop_AmmoCrate_v001_left.png",
+              "sha256": "169e7ba9abcc8503bcaa0f382ec48f4b443873a826700c7f71fbd1802625ee9a"
+            },
+            "CN_SM_Prop_AmmoCrate_v001_back.png": {
+              "path": "01_concept/CN_SM_Prop_AmmoCrate_v001_back.png",
+              "sha256": "0361809a8575596b08c630df6e6da8db56f97eca7a497b3783d5078decc666f7"
+            },
+            "CN_SM_Prop_AmmoCrate_v001_right.png": {
+              "path": "01_concept/CN_SM_Prop_AmmoCrate_v001_right.png",
+              "sha256": "95d157cf529cecdbc7f108051ab53ef334b3a8250efa9f358e4572a778853f9c"
+            },
+            "CN_SM_Prop_AmmoCrate_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Prop_AmmoCrate_v001_sheet.png",
+              "sha256": "957a0eb719c70e4c081a616db1a3c42a5d0ce4b899e178da457a77186db398e0"
+            },
+            "CN_SM_Prop_AmmoCrate_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Prop_AmmoCrate_v001_prompt.txt",
+              "sha256": "4a11ab8138b8b4eb2df171b92af02ad6c2987d669e264c5dfc657d9f21f13ceb"
+            },
+            "CN_SM_Prop_AmmoCrate_v001_registration.json": {
+              "path": "01_concept/CN_SM_Prop_AmmoCrate_v001_registration.json",
+              "sha256": "0eb8189973fa72e8b81be2d4f2a9eb5c8a3c8a4c78b0e26e6ea1dc5717f29010"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a15b7c-99f6-7110-b4aa-3783d37a28af",
+            "attempt": 1,
+            "seconds": 38.2
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian mythological treasure and trade props for a fantasy roguelite: lacquered wood, aged bronze, polished gold, white and green jade and sturdy iron, warm saturated accents, readable as loot from across a room. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (1m wide x 0.65m tall x 0.65m deep): A sturdy ammunition crate 1.0m wide, 0.65m tall and 0.65m deep: a box of olive-brown painted wooden planks with brass corner plates and rivets, thick rope handles on the LEFT and RIGHT ends, the lid slid half open toward the BACK showing rows of chunky brass cartridges and a few red shotgun shells standing packed inside, a stencilled spirit-fire flame emblem in pale yellow paint on the FRONT. PROPORTIONS: the FRONT and BACK views are drawn about 1.55 times as wide as tall; the LEFT and RIGHT views about 1 times as wide as tall. Chunky readable shapes, no text or letters. One solid connected piece on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "b8a585f4d6057db87a2948d635d1688285fe89683f6faac2558847f0dabb9244",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.6152026027802424,
+              "offset": [
+                63,
+                363
+              ],
+              "size": [
+                386,
+                297
+              ],
+              "physical_height_m": 0.65,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.6164789567279193,
+              "offset": [
+                170,
+                363
+              ],
+              "size": [
+                171,
+                297
+              ],
+              "physical_height_m": 0.65,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.6268836648583483,
+              "offset": [
+                64,
+                363
+              ],
+              "size": [
+                384,
+                297
+              ],
+              "physical_height_m": 0.65,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.613931523022432,
+              "offset": [
+                170,
+                363
+              ],
+              "size": [
+                171,
+                297
+              ],
+              "physical_height_m": 0.65,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-21 ART7：四视图一致、比例与登记相符（用户 2026-10-19 授权免审）",
+            "time": "2026-10-21 06:46:56"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:55:20",
+          "files": {
+            "HP_SM_Prop_AmmoCrate_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Prop_AmmoCrate_v001_source.glb",
+              "sha256": "50d4da2283e5cc7b838ac6157ae066ff2d1c5a5844b636f7d3be79476d2ac1e1"
+            },
+            "HP_SM_Prop_AmmoCrate_v001.glb": {
+              "path": "02_highpoly/HP_SM_Prop_AmmoCrate_v001.glb",
+              "sha256": "012da35d0b1ef8748deff45b8559803fd6128ab4cd54593b2a7b6beb8830482b"
+            },
+            "HP_SM_Prop_AmmoCrate_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Prop_AmmoCrate_v001_graph.json",
+              "sha256": "fc13dbc97fe50d02d2209d24e963cb5536544addeedaf01f87bb368856c2b7ee"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/49a0dcdd-197f-48a7-b893-0584f8113e76",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 2594,
+          "source_sha256": "50d4da2283e5cc7b838ac6157ae066ff2d1c5a5844b636f7d3be79476d2ac1e1"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:55:37",
+          "files": {
+            "SM_Prop_AmmoCrate_v001.blend": {
+              "path": "03_work/SM_Prop_AmmoCrate_v001.blend",
+              "sha256": "c288d3d623d2a6c81efff5a1534fba175a2f2070e507f2aa000ab4b20dcd5114"
+            },
+            "SM_Prop_AmmoCrate_v001.glb": {
+              "path": "04_export/SM_Prop_AmmoCrate_v001.glb",
+              "sha256": "e337e219c2cba5ce28445c6338845d523815e06bc31dea66df5efd095833c261"
+            },
+            "SM_Prop_AmmoCrate_v001_metrics.json": {
+              "path": "03_work/SM_Prop_AmmoCrate_v001_metrics.json",
+              "sha256": "f6fbb7da7e0f03e922323820b1e8cadd1d208a7a0c338b7810560758bd9698f4"
+            },
+            "T_Prop_AmmoCrate_BC.png": {
+              "path": "03_work/textures_v001/T_Prop_AmmoCrate_BC.png",
+              "sha256": "3300fbc46ea5171f6ba9a4acf17c1ffabf4848a5c2412b9911dddc9d7c36067d"
+            },
+            "T_Prop_AmmoCrate_N.png": {
+              "path": "03_work/textures_v001/T_Prop_AmmoCrate_N.png",
+              "sha256": "24725faba3a816a2f6f799b2cfc720cb8a2b32c118375920219c64ca39532062"
+            },
+            "T_Prop_AmmoCrate_ORM.png": {
+              "path": "03_work/textures_v001/T_Prop_AmmoCrate_ORM.png",
+              "sha256": "ce96eb280daaded1e238ab5d09c081e089101e7f05f782cf363105b6fc890ba6"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.748,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2594,
+              "verts": 1603
+            },
+            {
+              "tris": 994,
+              "verts": 762
+            }
+          ],
+          "export_kb": 234.0,
+          "seconds": 16.2,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:55:41",
+          "files": {
+            "SM_Prop_AmmoCrate_v001_validation_v001.json": {
+              "path": "05_review/SM_Prop_AmmoCrate_v001_validation_v001.json",
+              "sha256": "a91ddf1de682ab1684e56c578fe9c8c0b054deff1a4899663d7d8ac552e99947"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:55:49",
+          "files": {
+            "SM_Prop_AmmoCrate_v001_review_v001.png": {
+              "path": "05_review/SM_Prop_AmmoCrate_v001_review_v001.png",
+              "sha256": "04972cf3956e8d9167181398d174cdf2d52d8953f9a2860c8dc637cebbb730d3"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-22 ART7：审核图四视图与概念一致（用户 2026-10-19 授权免审）",
+            "time": "2026-10-22 22:11:13"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 22:11:14",
+          "files": {
+            "SM_Prop_AmmoCrate.glb": {
+              "path": "@root/public/assets/props/SM_Prop_AmmoCrate.glb",
+              "sha256": "e337e219c2cba5ce28445c6338845d523815e06bc31dea66df5efd095833c261"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Prop_AmmoCrate.glb"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Prop_Anvil",
+  "kind": "static",
+  "class": "tripo_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "loot.shop.anvil"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    20
+  ],
+  "budget": {
+    "lodTris": [
+      3000,
+      1000
+    ],
+    "texture": 1024,
+    "maxFileKb": 700
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -0.5202736854553223,
+      0,
+      -0.3285784125328064
+    ],
+    "max": [
+      0.5202736854553223,
+      1.2000000476837158,
+      0.3285784125328064
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Prop_Anvil_LOD0",
+      "lod": 0,
+      "tris": 2980,
+      "verts": 4290,
+      "materials": [
+        "M_Prop_Anvil"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Prop_Anvil_LOD1",
+      "lod": 1,
+      "tris": 995,
+      "verts": 1785,
+      "materials": [
+        "M_Prop_Anvil"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Prop_Anvil",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Prop_Anvil_BC.png",
+        "N": "Textures/T_Prop_Anvil_N.png",
+        "ORM": "Textures/T_Prop_Anvil_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Prop_Anvil.glb",
+    "sha256": "d7f1d0349072d014e40e68fb1911f9a27b508a80aea6c6cce23f92573abb3f54",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-22 22:13:25"
+}

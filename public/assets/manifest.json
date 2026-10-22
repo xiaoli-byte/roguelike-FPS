@@ -12623,6 +12623,696 @@
         "checkpoint": "chain_link@3"
       },
       "license": "project-original procedural model (art/pipeline/blender/bl_proc_chain.py)"
+    },
+    "SM_Prop_ChestCommon": {
+      "url": "assets/props/SM_Prop_ChestCommon.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "loot.chest.common"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -0.42625802755355835,
+          0,
+          -0.28688329458236694
+        ],
+        "max": [
+          0.42625802755355835,
+          0.8999999761581421,
+          0.28688329458236694
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "e514b914fe62cce0c29353159fa18c92f83e858bf6bdf0290d09b8d1a6185c53",
+      "bytes": 265956,
+      "published": "2026-10-22 22:11:10",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Prop_ChestRare": {
+      "url": "assets/props/SM_Prop_ChestRare.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "loot.chest.rare"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -0.53953617811203,
+          0,
+          -0.31497105956077576
+        ],
+        "max": [
+          0.53953617811203,
+          1,
+          0.31497105956077576
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "985701976325f3e74c3b4aa6c315c0dcd110bb8afdfe4537b8e156c74781c691",
+      "bytes": 327512,
+      "published": "2026-10-22 22:11:10",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Prop_ChestLegendary": {
+      "url": "assets/props/SM_Prop_ChestLegendary.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "loot.chest.legendary"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -0.4390450417995453,
+          0,
+          -0.231179878115654
+        ],
+        "max": [
+          0.4390450417995453,
+          1.149999976158142,
+          0.231179878115654
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "1f742fab53e7879ce67b45bf06171e91403c870fab15a1b65d01d1ed46030c9c",
+      "bytes": 328972,
+      "published": "2026-10-22 22:11:11",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Prop_ChestCommonBody": {
+      "url": "assets/props/SM_Prop_ChestCommonBody.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "loot.chest.common",
+        "part": "body"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -0.42625802755355835,
+          0,
+          -0.3276522755622864
+        ],
+        "max": [
+          0.42627811431884766,
+          0.5579999685287476,
+          0.2868577837944031
+        ]
+      },
+      "lidHinge": [
+        0.0,
+        0.558,
+        -0.286
+      ],
+      "sha256": "f18bc492d14dfa995119f5dcd0a18c3093ab2fa988f8a494246c24d7fb552d52",
+      "bytes": 240888,
+      "published": "2026-10-22 22:11:17",
+      "generator": {
+        "tool": "derived",
+        "mode": "chest_body",
+        "checkpoint": "SM_Prop_ChestCommon"
+      },
+      "derivedFrom": {
+        "id": "SM_Prop_ChestCommon",
+        "sha256": "e514b914fe62cce0c29353159fa18c92f83e858bf6bdf0290d09b8d1a6185c53",
+        "seam": 0.558
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Prop_ChestCommonLid": {
+      "url": "assets/props/SM_Prop_ChestCommonLid.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "loot.chest.common",
+        "part": "lid"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -0.42625802755355835,
+          0,
+          0
+        ],
+        "max": [
+          0.42627811431884766,
+          0.34200000762939453,
+          0.5447031259536743
+        ]
+      },
+      "lidHinge": [
+        0.0,
+        0.558,
+        -0.286
+      ],
+      "sha256": "38740cb77e9f49a73e2651a74755623b1f8b3cb8f62a5e0c64985bca046ca114",
+      "bytes": 223256,
+      "published": "2026-10-22 22:11:17",
+      "generator": {
+        "tool": "derived",
+        "mode": "chest_lid",
+        "checkpoint": "SM_Prop_ChestCommon"
+      },
+      "derivedFrom": {
+        "id": "SM_Prop_ChestCommon",
+        "sha256": "e514b914fe62cce0c29353159fa18c92f83e858bf6bdf0290d09b8d1a6185c53",
+        "seam": 0.558
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Prop_ChestRareBody": {
+      "url": "assets/props/SM_Prop_ChestRareBody.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "loot.chest.rare",
+        "part": "body"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -0.53953617811203,
+          0,
+          -0.31497105956077576
+        ],
+        "max": [
+          0.53953617811203,
+          0.599980890750885,
+          0.3384760022163391
+        ]
+      },
+      "lidHinge": [
+        0.0,
+        0.6,
+        -0.2697
+      ],
+      "sha256": "39254785e38026559650cf5147ddaef4a00236bbc4249fb46551f246043ba60d",
+      "bytes": 338792,
+      "published": "2026-10-22 22:11:19",
+      "generator": {
+        "tool": "derived",
+        "mode": "chest_body",
+        "checkpoint": "SM_Prop_ChestRare"
+      },
+      "derivedFrom": {
+        "id": "SM_Prop_ChestRare",
+        "sha256": "985701976325f3e74c3b4aa6c315c0dcd110bb8afdfe4537b8e156c74781c691",
+        "seam": 0.6
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Prop_ChestRareLid": {
+      "url": "assets/props/SM_Prop_ChestRareLid.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "loot.chest.rare",
+        "part": "lid"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -0.4768323302268982,
+          0,
+          0
+        ],
+        "max": [
+          0.47683244943618774,
+          0.39998722076416016,
+          0.569732666015625
+        ]
+      },
+      "lidHinge": [
+        0.0,
+        0.6,
+        -0.2697
+      ],
+      "sha256": "09a04db8095c53e25b97e2a16aae7fdd9109be1352a312aebce18b9c986a54ea",
+      "bytes": 309904,
+      "published": "2026-10-22 22:11:19",
+      "generator": {
+        "tool": "derived",
+        "mode": "chest_lid",
+        "checkpoint": "SM_Prop_ChestRare"
+      },
+      "derivedFrom": {
+        "id": "SM_Prop_ChestRare",
+        "sha256": "985701976325f3e74c3b4aa6c315c0dcd110bb8afdfe4537b8e156c74781c691",
+        "seam": 0.6
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Prop_ChestLegendaryBody": {
+      "url": "assets/props/SM_Prop_ChestLegendaryBody.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "loot.chest.legendary",
+        "part": "body"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -0.4233214259147644,
+          0,
+          -0.231179878115654
+        ],
+        "max": [
+          0.4232970178127289,
+          0.6669999957084656,
+          0.2311926931142807
+        ]
+      },
+      "lidHinge": [
+        0.0,
+        0.667,
+        -0.2042
+      ],
+      "sha256": "848e4e05ec879f7d787c9bb6fe59f7c2270b6edd134f663c91b33e8af4f93754",
+      "bytes": 276052,
+      "published": "2026-10-22 22:11:20",
+      "generator": {
+        "tool": "derived",
+        "mode": "chest_body",
+        "checkpoint": "SM_Prop_ChestLegendary"
+      },
+      "derivedFrom": {
+        "id": "SM_Prop_ChestLegendary",
+        "sha256": "1f742fab53e7879ce67b45bf06171e91403c870fab15a1b65d01d1ed46030c9c",
+        "seam": 0.667
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Prop_ChestLegendaryLid": {
+      "url": "assets/props/SM_Prop_ChestLegendaryLid.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "loot.chest.legendary",
+        "part": "lid"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -0.4390450417995453,
+          0,
+          -0.02414698898792267
+        ],
+        "max": [
+          0.4390206038951874,
+          0.4829999804496765,
+          0.4354178011417389
+        ]
+      },
+      "lidHinge": [
+        0.0,
+        0.667,
+        -0.2042
+      ],
+      "sha256": "fbecde13d17338becef2bfbf9e7ce2b31717a1e35ac315a2ba47d8e88e15a46f",
+      "bytes": 297952,
+      "published": "2026-10-22 22:11:20",
+      "generator": {
+        "tool": "derived",
+        "mode": "chest_lid",
+        "checkpoint": "SM_Prop_ChestLegendary"
+      },
+      "derivedFrom": {
+        "id": "SM_Prop_ChestLegendary",
+        "sha256": "1f742fab53e7879ce67b45bf06171e91403c870fab15a1b65d01d1ed46030c9c",
+        "seam": 0.667
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Prop_Anvil": {
+      "url": "assets/props/SM_Prop_Anvil.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "loot.shop.anvil"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -0.5202736854553223,
+          0,
+          -0.3285784125328064
+        ],
+        "max": [
+          0.5202736854553223,
+          1.2000000476837158,
+          0.3285784125328064
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "d7f1d0349072d014e40e68fb1911f9a27b508a80aea6c6cce23f92573abb3f54",
+      "bytes": 299592,
+      "published": "2026-10-22 22:11:12",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Prop_ScrollCase": {
+      "url": "assets/props/SM_Prop_ScrollCase.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "loot.shop.scrollCase"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -0.4511295258998871,
+          0,
+          -0.2188430279493332
+        ],
+        "max": [
+          0.4511295258998871,
+          0.800000011920929,
+          0.2188430279493332
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "f3923e503c2b51ee7e613e28f85d50cf6954fa8037ff1c214cf22898f76ae1bf",
+      "bytes": 324328,
+      "published": "2026-10-22 22:11:12",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Prop_Potion": {
+      "url": "assets/props/SM_Prop_Potion.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "loot.pickup.potion"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -0.14871764183044434,
+          -1.0348374416935258e-05,
+          -0.13568639755249023
+        ],
+        "max": [
+          0.14871764183044434,
+          0.550000011920929,
+          0.13568639755249023
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "91867eb3e9ee2f09329a594eb6d2293e3902db799b8b3fe1b116708c96e94a6c",
+      "bytes": 256992,
+      "published": "2026-10-22 22:11:13",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Prop_AmmoCrate": {
+      "url": "assets/props/SM_Prop_AmmoCrate.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "loot.shop.ammoCrate"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -0.4831337034702301,
+          0,
+          -0.24994562566280365
+        ],
+        "max": [
+          0.4831337034702301,
+          0.6499999761581421,
+          0.24994562566280365
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "e337e219c2cba5ce28445c6338845d523815e06bc31dea66df5efd095833c261",
+      "bytes": 239572,
+      "published": "2026-10-22 22:11:14",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Prop_HeroAltar": {
+      "url": "assets/props/SM_Prop_HeroAltar.glb",
+      "kind": "static",
+      "class": "tripo_architecture",
+      "bind": {
+        "source": "scene",
+        "id": "ui.heroSelect.altar"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        24,
+        60
+      ],
+      "bounds": {
+        "min": [
+          -1.7485973834991455,
+          0,
+          -1.8459923267364502
+        ],
+        "max": [
+          1.7485973834991455,
+          0.8999999761581421,
+          1.8459923267364502
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 2
+      },
+      "sha256": "3cda4afb18973de494a6a8d301c057b665f938b1379f28b18038447aae538e84",
+      "bytes": 863240,
+      "published": "2026-10-22 22:11:14",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SM_Tripo_FrostMarketStall": {
+      "url": "assets/props/SM_Tripo_FrostMarketStall.glb",
+      "kind": "static",
+      "class": "tripo_prop",
+      "bind": {
+        "source": "scene",
+        "id": "frost.shop.marketStall"
+      },
+      "keepGlow": "none",
+      "lodDistance": [
+        0,
+        20
+      ],
+      "bounds": {
+        "min": [
+          -1.5421594381332397,
+          0,
+          -0.7792870402336121
+        ],
+        "max": [
+          1.5421594381332397,
+          3.200000047683716,
+          0.7792870402336121
+        ]
+      },
+      "version": {
+        "blockout": 1,
+        "concept": 1,
+        "highpoly": 1,
+        "build": 1
+      },
+      "sha256": "74e45c1e5218b7a6eec5de6a08022e4a26b82879597b4b992a38965b2c6059e4",
+      "bytes": 355052,
+      "published": "2026-10-22 22:11:15",
+      "generator": {
+        "tool": "Tripo Studio",
+        "mode": "tripo",
+        "checkpoint": "P2.0"
+      },
+      "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+    },
+    "SK_Npc_Merchant": {
+      "url": "assets/characters/SK_Npc_Merchant.glb",
+      "kind": "skeletal",
+      "class": "npc",
+      "bind": {
+        "source": "npc",
+        "id": "merchant"
+      },
+      "keepGlow": "all",
+      "lodDistance": [
+        0,
+        12,
+        30
+      ],
+      "skeleton": {
+        "mode": "native",
+        "convention": "creature",
+        "joints": 26
+      },
+      "bounds": {
+        "min": [
+          -0.48326823115348816,
+          -0.00041303763282485306,
+          -0.41731807589530945
+        ],
+        "max": [
+          0.48326823115348816,
+          1.5,
+          0.41682934761047363
+        ]
+      },
+      "version": {
+        "native_build": 3
+      },
+      "sha256": "7b8bbe4b740c1054ad8d2d7bf939f87c64eb63e617e88953792a2d61b59ee182",
+      "bytes": 1681852,
+      "published": "2026-10-22 22:03:48",
+      "generator": {
+        "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
+        "mode": "tripo_native",
+        "checkpoint": "P2.0"
+      },
+      "source_task": "https://studio.tripo3d.ai/zh/workspace/generate/b53b14e6-4079-4b62-bed2-c14971ceec0f"
     }
   },
   "updated": "2026-10-22 22:11:20"

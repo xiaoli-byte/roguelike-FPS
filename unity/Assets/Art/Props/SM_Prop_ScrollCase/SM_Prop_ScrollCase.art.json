@@ -1,0 +1,140 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Prop_ScrollCase",
+  "kind": "static",
+  "class": "tripo_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "loot.shop.scrollCase"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    20
+  ],
+  "budget": {
+    "lodTris": [
+      3000,
+      1000
+    ],
+    "texture": 1024,
+    "maxFileKb": 700
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -0.4511295258998871,
+      0,
+      -0.2188430279493332
+    ],
+    "max": [
+      0.4511295258998871,
+      0.800000011920929,
+      0.2188430279493332
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Prop_ScrollCase_LOD0",
+      "lod": 0,
+      "tris": 2985,
+      "verts": 2335,
+      "materials": [
+        "M_Prop_ScrollCase"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Prop_ScrollCase_LOD1",
+      "lod": 1,
+      "tris": 994,
+      "verts": 759,
+      "materials": [
+        "M_Prop_ScrollCase_LOD1"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Prop_ScrollCase",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Prop_ScrollCase_BC.png",
+        "N": "Textures/T_Prop_ScrollCase_N.png",
+        "ORM": "Textures/T_Prop_ScrollCase_ORM.png"
+      }
+    },
+    {
+      "name": "M_Prop_ScrollCase_LOD1",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Prop_ScrollCase_LOD1_BC.png",
+        "N": "Textures/T_Prop_ScrollCase_LOD1_N.png",
+        "ORM": "Textures/T_Prop_ScrollCase_LOD1_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Prop_ScrollCase.glb",
+    "sha256": "f3923e503c2b51ee7e613e28f85d50cf6954fa8037ff1c214cf22898f76ae1bf",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-22 22:13:27"
+}
