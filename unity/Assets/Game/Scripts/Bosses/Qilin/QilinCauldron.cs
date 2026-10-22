@@ -356,6 +356,13 @@ namespace Spiritfire.Game
             return true;
         }
 
+        /// <summary>晃一下（登场演出：熔池涌动时吊鼎晃动）：摆幅至少 amount 倍（平时 0.12，落定余摆 1），之后照常慢慢回落。坠落中 / 落定后无效</summary>
+        public void Rattle(float amount)
+        {
+            if (State is CauldronState.Falling or CauldronState.Fallen || !(amount > 0) || !float.IsFinite(amount)) return;
+            sway = Mathf.Max(sway, Mathf.Min(amount, 4f));
+        }
+
         /// <summary>剩下的链全断，鼎整个砸进熔池（翻倒、半露），<see cref="FallDrop"/> 秒后落定成为掩体。已经在坠 / 落定时不重复</summary>
         public void Fall()
         {

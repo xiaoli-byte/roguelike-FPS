@@ -162,7 +162,7 @@ namespace Spiritfire.Game
             // 有模态界面 / 暂停：HUD 层淡出（0.15 s）；进场 0.45 s 淡入
             if (containers.TryGetValue(UILayer.Hud, out var hud))
             {
-                float target = playing && vitals ? 1 : 0;
+                float target = playing && vitals && !GameUI.HudHidden ? 1 : 0;
                 hudAlpha = hudAlpha < 0 ? 0 : Mathf.MoveTowards(hudAlpha, target, f.unscaledDt / (target > hudAlpha ? 0.45f : 0.15f));
                 float q = Mathf.Round(hudAlpha * 100) / 100;
                 if (!Mathf.Approximately(hud.style.opacity.value, q)) hud.style.opacity = q;

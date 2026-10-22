@@ -218,8 +218,8 @@ namespace Spiritfire.Game
                 PlayLocomotion();
                 SetState(InitialState);
             }
-            // 玩家阵亡：待机（同 TS StandardEnemy.think 的 !player.alive 分支）；复活后从初始状态重新开始
-            if (vitals && vitals.Dead)
+            // 玩家阵亡：待机（同 TS StandardEnemy.think 的 !player.alive 分支）；复活后从初始状态重新开始。首领登场演出期间同样待机（登场中的首领除外）
+            if ((vitals && vitals.Dead) || BossIntroDirector.HoldsEnemy(this))
             {
                 StepIdle();
                 return;

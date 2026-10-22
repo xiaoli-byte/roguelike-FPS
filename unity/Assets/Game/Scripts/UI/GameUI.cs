@@ -32,6 +32,9 @@ namespace Spiritfire.Game
         public static string StageText { get; private set; } = "";
         public static string ObjectiveText { get; private set; } = "";
 
+        /// <summary>电影模式：HUD 层整体淡出（首领登场演出 <see cref="BossIntroDirector"/> 期间；演出结束 / 被打断时设回 false）</summary>
+        public static bool HudHidden { get; set; }
+
         /// <summary>提示（屏幕左侧往下叠，最多 4 条，和上一条相同就合并 ×N）；color = 强调色，缺省鎏金</summary>
         public static void Toast(string text, Color? color = null, float seconds = 2.8f) => UIRoot.Ensure()?.Toasts.Push(text, color, seconds);
 
@@ -110,6 +113,7 @@ namespace Spiritfire.Game
         {
             SkillDeniedShown = null;
             StageText = ObjectiveText = "";
+            HudHidden = false;
         }
 
         /// <summary>全屏黑幕淡到 to（0 透明 → 1 全黑），可 await；新的淡入淡出打断旧的（旧的 await 立刻返回）。没有 UI（编辑模式）时立刻完成</summary>

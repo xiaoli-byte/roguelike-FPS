@@ -58,6 +58,8 @@ namespace Spiritfire.Game.Testing
             }
             eye = weapons.eye.transform;
             WeaponController.TestMode = true;
+            // 首领登场演出（BossIntroDirector）的测试开关：本套件测战斗，不放演出（演出由 boss-intro 套件测）
+            BossIntroDirector.Policy = BossIntroPolicy.Never;
             Interactor.TestMode = true;
             HeroSkills.TestMode = true;
             PetOwner.TestMode = true;

@@ -256,7 +256,8 @@ namespace Spiritfire.Game
             PlayAct(intro.anim, intro.seconds);
             if (!string.IsNullOrEmpty(intro.sfx)) GameAudio.PlayAt(intro.sfx, transform.position + Vector3.up * 2f, 1f);
             if (intro.shake > 0) CameraShake.Quake(transform.position, intro.shake, 60f, 0.9f);
-            if (intro.banner) GameUI.Banner(def.name, def.title, Mathf.Clamp(intro.seconds, 1.6f, 3.2f));
+            // 登场演出（BossIntroDirector）接管时名字卡由演出打
+            if (intro.banner && !BossIntroDirector.Directs(this)) GameUI.Banner(def.name, def.title, Mathf.Clamp(intro.seconds, 1.6f, 3.2f));
             SetState(IntroState);
             RefreshBossBar();
             GameEvents.RaiseBossSpawned(this);
@@ -367,7 +368,8 @@ namespace Spiritfire.Game
             {
                 Debug.LogException(e);
             }
-            if (age < def.intro.seconds) return;
+            // 登场动作播完了，但演出镜头还没交还玩家：继续待在登场里（不可选中、不出招）
+            if (age < def.intro.seconds || BossIntroDirector.HoldsIntro(this, age - def.intro.seconds)) return;
             IntroDone = true;
             FightTime = 0;
             float now = Time.time;

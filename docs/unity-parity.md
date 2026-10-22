@@ -81,7 +81,7 @@
 | D17 | **场景**：常驻 Core 场景（玩家、HUD、各系统）+ 叠加加载关卡场景。关卡场景只放环境和标记（PlayerSpawn、站位、出口…）。 | 现在每个关卡场景各自烘一份玩家，跨关什么都带不走。 |
 | D18 | **UI 迁到 UI Toolkit**，打包 OFL 字体：正文 Noto Sans SC、标题霞鹜文楷、数字 Barlow Condensed。 | 现有 UI 只有约 950 行，越早迁越便宜。现在用的系统字体在 Steam Deck 上会显示成豆腐块，这会挡住 demo。 |
 | D19 | **输入**：Input System 的动作写在代码里（`GameInput`），支持改键和手柄，放在 Art.Runtime 程序集。 | PlayerMotor 在 Art.Runtime 里；代码定义的动作不需要编辑器生成包装类。 |
-| D20 | **包**：加 Animation Rigging。不装 VFX Graph（Shuriken + 贴花够用，也不依赖 compute shader）；不装 Cinemachine（第一人称镜头自写 CameraFeel，登场镜头用 Timeline）。 | 少一个依赖，`manifest.json` 也少一处冲突。 |
+| D20 | **包**：加 Animation Rigging。不装 VFX Graph（Shuriken + 贴花够用，也不依赖 compute shader）；不装 Cinemachine（第一人称镜头自写 CameraFeel，登场镜头用 Timeline——首领登场演出最后改成代码驱动的镜头表，见 [boss-intros.md](level-design/boss-intros.md)）。 | 少一个依赖，`manifest.json` 也少一处冲突。 |
 | D21 | **特效**：池化的 Shuriken 预设 + URP Decal。贴图先程序生成，以后再换手绘。 | 资产库里一张特效贴图都没有。 |
 | D22 | **存档**：存在 `persistentDataPath` 下的 JSON，原子写 + `.bak` + 版本迁移。测试和作弊用独立的 dev 档。 | — |
 | D23 | 首领血条的刻度和阶段阈值都从 `BossDef` 读。 | Three.js 写死了一张表，鲲鹏和火麒麟的刻度是错的。 |
@@ -400,6 +400,7 @@
 | 危险物：冲击环、持续区 / 环带、抛物线落石、地刺、光束、预警撤回 | 🟡 | `BossHazards` + `WarnScope` | B1 |
 | 首领血条 | ❌ | 刻度来自 BossDef | U3 |
 | 首领关流程：补给营、门槛触发、登场、溃散、结算、拴绳 | ❌ | `BossEncounter` + `SafeZone` | B2 |
+| 首领登场演出：电影运镜 → 连续落回第一人称开打（接管输入 / HUD / 武器、黑边、名字卡、镜头表、按住交互键跳过、交接零误差、打断复原） | 🟡 | `Bosses/Intro/`：`BossIntroDirector` + 各首领的 `<Id>Intro.cs` 镜头表（代码驱动，不用 Timeline），设计与四段镜头表见 [boss-intros.md](level-design/boss-intros.md)；冒烟 `boss-intro`、EditMode `BossIntroTests`。编辑器里的验收待做 | BS-intro |
 | 首领规则（isBoss 分支） | ❌ | `Damageable.rank` + `IStunPolicy` | W0-1 / C2 |
 | 场地锚点 | ❌ | `BossArena` | B0 |
 | 测试与 soak | ❌ | 每个招式放一次、强制越阈值、90 s soak、击杀用时 | B0 + 各 BS 单元 |

@@ -15,6 +15,7 @@ namespace Spiritfire.Game
     ///   封门（可选）：<see cref="gates"/> 从地下升起（0.8 s），首领倒下结算后落回去。
     ///   登场预警：首领出生点亮 <see cref="warnSeconds"/> 秒的圆形预警 + 震屏 + 提示「……」，切 boss 配乐，然后生成首领（<see cref="Bosses.Spawn(string, BossArena, float, Transform)"/>，
     ///     名字卡由首领自己的登场横幅打——定义关掉横幅时这里补一张「首领名 / 称号」），目标栏「击败 首领名」。
+    ///     有登场演出（<see cref="BossIntroDirector"/>，docs/level-design/boss-intros.md）时由演出接管镜头：不画预警圈、不弹提示，演出到生成时刻再刷首领，名字卡由演出打。
     ///   拴绳：首领被打 / 推 / 冲出场地 <see cref="tetherSlack"/> 米以上、掉到场地地面 8 m 以下、或位置非法 → 拉回首领出生点（场地内的走位由 BossBrain 自己夹）。
     ///   溃散：首领倒下（<see cref="GameEvents.BossDefeated"/>，溃散演出由 BossDefeatSequence 播）→ 1.2 s 时场上残余的敌人一起溃散（静默处决、不掉落），
     ///   结算（2.6 s，溃散演出最后一下大爆炸前后）：回满生命与护盾、本关魂晶（<see cref="EconomyConfig.EssencePerStage"/>）、保底武器宝箱（首领档：第一章史诗起、第二章起传说，
@@ -59,6 +60,11 @@ namespace Spiritfire.Game
         bool gatesUp, cleaned, essenceGiven;
         Vector3[] gateRest;
         TelegraphHandle warn;
+        /// <summary>登场演出（docs/level-design/boss-intros.md）：有的话由它决定何时刷首领，预警圈 / 提示不画</summary>
+        BossIntroDirector intro;
+
+        /// <summary>这一场的登场演出（没有 / 已结束为 null）</summary>
+        public BossIntroDirector Intro => intro ? intro : null;
 
         public Phase State { get; private set; }
         public BossBrain Boss { get; private set; }
@@ -113,7 +119,8 @@ namespace Spiritfire.Game
                     break;
                 }
                 case Phase.Warning:
-                    if (now - phaseAt >= warnSeconds) SpawnBoss();
+                    // 有登场演出时按演出的生成时刻；演出没了（被打断）退回预警计时
+                    if (intro ? intro.SpawnDue : now - phaseAt >= warnSeconds) SpawnBoss();
                     break;
                 case Phase.Fighting:
                     Tether();
@@ -140,13 +147,15 @@ namespace Spiritfire.Game
             phaseAt = Time.time;
             SealGates(true);
             var at = arena ? arena.BossSpawnPoint : transform.position;
-            warn = Telegraph.Circle(at, Mathf.Max(3f, def.radius * 3f), Mathf.Max(0.2f, warnSeconds), def.WarnColor);
+            // 登场演出接管镜头（测试开关关着 / 没有玩家镜头时为 null，照旧预警）：演出里不画预警圈、不弹提示
+            intro = BossIntroDirector.Play(this);
+            if (!intro) warn = Telegraph.Circle(at, Mathf.Max(3f, def.radius * 3f), Mathf.Max(0.2f, warnSeconds), def.WarnColor);
             CameraShake.Quake(at, 0.35f, 80f, Mathf.Max(0.6f, warnSeconds * 0.8f));
             GameAudio.PlayAt("boss_roar", at + Vector3.up * 2f, 0.6f, 0.7f);
             GameAudio.SetMusic("boss");
-            if (!string.IsNullOrEmpty(warnText)) GameUI.Toast(warnText, def.color, Mathf.Max(2f, warnSeconds));
+            if (!intro && !string.IsNullOrEmpty(warnText)) GameUI.Toast(warnText, def.color, Mathf.Max(2f, warnSeconds));
             Raise(Started);
-            if (warnSeconds <= 0) SpawnBoss();
+            if (!intro && warnSeconds <= 0) SpawnBoss();
         }
 
         void SpawnBoss()
@@ -163,7 +172,7 @@ namespace Spiritfire.Game
             }
             State = Phase.Fighting;
             phaseAt = Time.time;
-            if (def != null && !def.intro.banner) GameUI.Banner(def.name, def.title ?? "首领", 3f);
+            if (def != null && !def.intro.banner && !intro) GameUI.Banner(def.name, def.title ?? "首领", 3f);
             if (def != null) GameUI.SetObjective($"击败 {def.name}");
             Raise(Spawned);
         }
