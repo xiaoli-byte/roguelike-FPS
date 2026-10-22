@@ -324,6 +324,31 @@ namespace Spiritfire.Game
             SetWeakPoint(FindBone(boneName), offset, radius);
         }
 
+        /// <summary>
+        /// 换了模型之后重新绑定（首领换形：鲲 → 鹏，两份模型是首领根节点下的两个子物体，只有当前形态的那份激活）：
+        /// Awake 只缓存了当时激活的那份模型的 Animator / CreatureRig，这里改成 model 下的；「Hit」触发器按新 Animator 重查；
+        /// 渲染器 / 发光壳重新收集（含未激活的，受击闪白两份都写），着色通道的渲染器清掉、下一帧按当时激活的重新收集并重写一遍。
+        /// 弱点骨骼由调用方另行 <see cref="SetWeakPoint(Transform, Vector3, float)"/>（BossBrain 换形时已经做了）
+        /// </summary>
+        public void Rebind(GameObject model)
+        {
+            var root = model ? model.transform : transform;
+            var a = root.GetComponentInChildren<Animator>(true);
+            if (a) Animator = a;
+            var rig = root.GetComponentInChildren<CreatureRig>(true);
+            if (rig) Rig = rig;
+            hasHitTrigger = false;
+            if (Animator && Animator.isActiveAndEnabled && Animator.runtimeAnimatorController)
+                foreach (var p in Animator.parameters)
+                    if (p.nameHash == HitId) hasHitTrigger = true;
+            renderers = GetComponentsInChildren<Renderer>(true);
+            glowShells = Array.FindAll(renderers, r => r.name.Contains("GlowShell"));
+            shellChannel = Array.ConvertAll(glowShells, r => ShellChannel(r.name));
+            tintRenderers = null;
+            tintWritten = true;
+            flashDirty = true;
+        }
+
         /// <summary>开 / 关弱点球（琴碎、遁地；关掉后打不到、也不挡子弹）。切换「是不是弱点」用 WeakZone.SetWeakPoint</summary>
         public void SetWeakPointActive(bool on)
         {
