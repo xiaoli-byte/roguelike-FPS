@@ -255,7 +255,12 @@ namespace Spiritfire.Game
                     mr.localRotation = Quaternion.Euler(pitchNow * Mathf.Rad2Deg, 0, rollNow * Mathf.Rad2Deg);
                 }
                 mr.localPosition = new Vector3(0, y / s, 0);
-                if (capsuleCol) capsuleCol.center = info.capsuleBase + Vector3.up * (drop / s);
+                if (capsuleCol)
+                {
+                    // 胶囊只包躯干，额头的鲛珠在弱点窗口里（见 KunPengDef.kunBodyRadius）；跟着沉浮往下挪
+                    capsuleCol.center = info.capsuleBase + Vector3.up * (drop / s);
+                    capsuleCol.radius = (KDef != null ? KDef.kunBodyRadius : 1.8f) / s;
+                }
                 // 平切口一圈最高点（相对水面）
                 var basis = info.rootBone ? info.rootBone : mr;
                 float top = float.NegativeInfinity;

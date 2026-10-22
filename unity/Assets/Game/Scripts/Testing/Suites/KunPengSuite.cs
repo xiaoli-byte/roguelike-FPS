@@ -230,13 +230,26 @@ namespace Spiritfire.Game.Testing
             Aim(motor, eye, pearl.position);
             yield return null;
             var dir = (pearl.position - eye.position).normalized;
+            // 与武器的命中扫描同一条规则（Ballistics / WeakpointRule）：先打到的命中盒是弱点，或进身体之后 1.5 m 内穿过同一单位的弱点
             bool weak = false;
             string what = "（什么都没打到）";
-            if (Physics.Raycast(eye.position, dir, out var hit, 120f, Layers.ShotMask, QueryTriggerInteraction.Ignore))
+            var hits = new RaycastHit[32];
+            int n = Physics.RaycastNonAlloc(eye.position, dir, hits, 120f, Layers.ShotMask, QueryTriggerInteraction.Ignore);
+            WeakpointRule.SortByDistance(hits, n);
+            for (int i = 0; i < n; i++)
             {
-                var z = hit.collider.GetComponent<HitZone>();
-                weak = z && z.weakpoint;
-                what = z ? $"{z.id}{(z.weakpoint ? "（弱点）" : "")}" : hit.collider.name;
+                var c = hits[i].collider;
+                if (!c || c.transform.IsChildOf(motor.transform)) continue;
+                var hb = c.GetComponent<Hitbox>();
+                var z = c.GetComponent<HitZone>();
+                if (!hb || hb.owner != boss.Health)
+                {
+                    what = $"{c.name}（挡在前面）";
+                    break;
+                }
+                weak = hb.weakpoint || WeakpointRule.FindWeakpoint(hits, n, i, boss.Health) >= 0;
+                what = $"{(z ? z.id : c.name)}{(hb.weakpoint ? "（弱点）" : weak ? " → 1.5 m 内穿过弱点" : "")}";
+                break;
             }
             float height = pearl.position.y - h.FloorY;
             Line($"鲛珠：离环台 {height:F1} m，从玩家眼睛瞄过去打到 {what} {(weak ? "✓" : "✗")}");

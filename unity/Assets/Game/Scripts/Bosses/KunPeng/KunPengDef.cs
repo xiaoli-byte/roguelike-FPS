@@ -51,6 +51,13 @@ namespace Spiritfire.Game
 
         /// <summary>鲲身体中心离冰沿多远（往冰窟里收：头部刚好探到冰沿上方）</summary>
         public float kunInset = 4.6f;
+        /// <summary>
+        /// 鲲的角色胶囊半径（世界米）。Prefab 的胶囊按整个包围盒做（半径约 4 m）：待机时鲲仰着头、额头的鲛珠离身体轴心不到 1 m，
+        /// 从正面瞄过去要先穿过约 3 m 的胶囊才碰到鲛珠，超出命中扫描「进身体胶囊后 1.5 m 内穿过弱点才算弱点」的窗口，只打得到身体
+        /// （2-4 冒烟第一轮的不合格项）。收到 1.8 m 只包躯干，进胶囊到穿过鲛珠不到 1 m；猛砸趴台时鲛珠在胶囊外。
+        /// 躯干以外由命中区补：头（kun_head，2 m）、颈（kun_neck，2.2 m），都在鲛珠后下方（同 Three.js「额珠露在受击球外」）
+        /// </summary>
+        public float kunBodyRadius = 1.8f;
         /// <summary>平时绕到玩家那一侧的角速度、转头角速度（度/秒）、朝向偏离冰窟外法线的上限（度）</summary>
         public float kunCircleRate = 6.875f, kunTurnRate = 68.75f, kunAimLimit = 51.57f;
 
@@ -111,6 +118,7 @@ namespace Spiritfire.Game
             marks.Add(new BossMark { at = RageAt, id = RageMark, tick = true });
             // 额外命中区（设计尺寸，随体型放大；Three.js hitShapes 的世界半径 ÷ 体型）：鲲猛砸时头伸到冰沿外、超出根节点的角色胶囊；鹏的两翼
             hitZones.Add(new BossHitZoneDef { id = "kun_head", bone = "head", radius = 2f / KunScale, form = KunForm });
+            hitZones.Add(new BossHitZoneDef { id = "kun_neck", bone = "spine_3", radius = 2.2f / KunScale, form = KunForm });
             hitZones.Add(new BossHitZoneDef { id = "peng_wing_l", bone = "wing_L_2", radius = 1.6f / PengScale, form = PengForm });
             hitZones.Add(new BossHitZoneDef { id = "peng_wing_r", bone = "wing_R_2", radius = 1.6f / PengScale, form = PengForm });
 
