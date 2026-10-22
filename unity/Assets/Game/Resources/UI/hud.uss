@@ -1122,6 +1122,15 @@
     justify-content: center;
 }
 
+/* 血条上的字都单行：Label 按测得的宽度收缩，缩放后（非 1080p）测得略窄会把最后一个字挤到第二行（「鲲鹏 · 鲲」「护盾」） */
+.sf-boss__name,
+.sf-boss__sub,
+.sf-boss__layer,
+.sf-boss__num {
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
 .sf-boss__name {
     margin: 0 14px;
     padding-left: 11px;
