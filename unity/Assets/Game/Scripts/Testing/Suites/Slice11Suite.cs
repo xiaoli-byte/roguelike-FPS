@@ -149,6 +149,8 @@ namespace Spiritfire.Game.Testing
 
             // ── 2. 四个遭遇战，按解锁顺序逐个打 ──
             var sites = new List<EncounterSite>(FindObjectsByType<EncounterSite>());
+            // 藏宝点守军（可选、autoTrigger 关掉，只由调查藏宝点开战）不在这里打；①–④ 按名字排，② ③ 先后不限、④ 要 ② ③，这个顺序都满足
+            sites.RemoveAll(s => s.optional || !s.autoTrigger);
             sites.Sort((x, y) => string.CompareOrdinal(x.name, y.name));
             if (sites.Count == 0)
             {

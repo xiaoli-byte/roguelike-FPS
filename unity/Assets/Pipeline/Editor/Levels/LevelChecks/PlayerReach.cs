@@ -416,40 +416,75 @@ namespace Spiritfire.Art.Editor.Levels
                 int n = g.nx * g.nz;
                 inside = new bool[n];
                 dist = new float[n];
-                for (int c = 0; c < n; c++)
-                {
-                    inside[c] = playable(g.ColumnCenter(c)) >= threshold;
-                    dist[c] = inside[c] ? 0 : float.MaxValue;
-                }
-                // 两遍倒角距离变换：界外每列到最近界内列的距离
-                float d1 = cell, d2 = cell * 1.41421f;
-                for (int z = 0; z < g.nz; z++)
-                for (int x = 0; x < g.nx; x++)
-                {
-                    int c = z * g.nx + x;
-                    if (x > 0) dist[c] = Mathf.Min(dist[c], dist[c - 1] + d1);
-                    if (z > 0)
-                    {
-                        dist[c] = Mathf.Min(dist[c], dist[c - g.nx] + d1);
-                        if (x > 0) dist[c] = Mathf.Min(dist[c], dist[c - g.nx - 1] + d2);
-                        if (x < g.nx - 1) dist[c] = Mathf.Min(dist[c], dist[c - g.nx + 1] + d2);
-                    }
-                }
-                for (int z = g.nz - 1; z >= 0; z--)
-                for (int x = g.nx - 1; x >= 0; x--)
-                {
-                    int c = z * g.nx + x;
-                    if (x < g.nx - 1) dist[c] = Mathf.Min(dist[c], dist[c + 1] + d1);
-                    if (z < g.nz - 1)
-                    {
-                        dist[c] = Mathf.Min(dist[c], dist[c + g.nx] + d1);
-                        if (x < g.nx - 1) dist[c] = Mathf.Min(dist[c], dist[c + g.nx + 1] + d2);
-                        if (x > 0) dist[c] = Mathf.Min(dist[c], dist[c + g.nx - 1] + d2);
-                    }
-                }
+                for (int c = 0; c < n; c++) inside[c] = playable(g.ColumnCenter(c)) >= threshold;
+                // 界外每列到最近界内列的精确欧氏距离（以前的 (1, √2) 两遍倒角距离在斜向会多算最多约 8%：
+                // 1-1 兜底环在 +26 m，贴着环内侧站的面倒角距离算成 27.7–29.6 m，越过 escapeMargin = 28 m 被误报成越界）
+                ExactDistance(inside, g.nx, g.nz, cell, dist);
             }
             return new ReachGrid(g, ys, nys, cols, inside, dist);
         }
+
+        /// <summary>
+        /// 二值栅格的精确欧氏距离变换（Felzenszwalb–Huttenlocher：先逐列、再逐行做一维下包络）：dist = 每列到最近 inside 列的距离（米，inside 列为 0）；
+        /// 一列 inside 都没有时为 float.MaxValue
+        /// </summary>
+        static void ExactDistance(bool[] inside, int nx, int nz, float cell, float[] dist)
+        {
+            const double Inf = 1e18;
+            var sq = new double[nx * nz];
+            for (int c = 0; c < sq.Length; c++) sq[c] = inside[c] ? 0 : Inf;
+            int m = Mathf.Max(nx, nz);
+            var f = new double[m];
+            var d = new double[m];
+            var v = new int[m];
+            var zb = new double[m + 1];
+            for (int x = 0; x < nx; x++)
+            {
+                for (int z = 0; z < nz; z++) f[z] = sq[z * nx + x];
+                Envelope(f, nz, d, v, zb);
+                for (int z = 0; z < nz; z++) sq[z * nx + x] = d[z];
+            }
+            for (int z = 0; z < nz; z++)
+            {
+                for (int x = 0; x < nx; x++) f[x] = sq[z * nx + x];
+                Envelope(f, nx, d, v, zb);
+                for (int x = 0; x < nx; x++) sq[z * nx + x] = d[x];
+            }
+            for (int c = 0; c < sq.Length; c++) dist[c] = sq[c] >= Inf * 0.5 ? float.MaxValue : (float)(System.Math.Sqrt(sq[c]) * cell);
+        }
+
+        /// <summary>一维平方距离：d[q] = min_p (q − p)² + f[p]（抛物线下包络）</summary>
+        static void Envelope(double[] f, int n, double[] d, int[] v, double[] zb)
+        {
+            int k = 0;
+            v[0] = 0;
+            zb[0] = double.NegativeInfinity;
+            zb[1] = double.PositiveInfinity;
+            for (int q = 1; q < n; q++)
+            {
+                double s = Cross(f, q, v[k]);
+                // zb[0] = −∞：k 不会退到 0 以下
+                while (s <= zb[k])
+                {
+                    k--;
+                    s = Cross(f, q, v[k]);
+                }
+                k++;
+                v[k] = q;
+                zb[k] = s;
+                zb[k + 1] = double.PositiveInfinity;
+            }
+            k = 0;
+            for (int q = 0; q < n; q++)
+            {
+                while (zb[k + 1] < q) k++;
+                double dq = q - v[k];
+                d[q] = dq * dq + f[v[k]];
+            }
+        }
+
+        /// <summary>抛物线 q、p 的交点横坐标</summary>
+        static double Cross(double[] f, int q, int p) => (f[q] + (double)q * q - (f[p] + (double)p * p)) / (2.0 * (q - p));
     }
 
     /// <summary>
