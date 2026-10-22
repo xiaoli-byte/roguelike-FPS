@@ -107,8 +107,8 @@ namespace Spiritfire.Art.Editor.Levels
         /// <summary>① 挡墙月台（+3.0 m：雪狌狌翻得上来，攀爬上限 3.5 m）</summary>
         static readonly Vector2 StageMin = new(-20, 40), StageMax = new(16, 47);
         const float StageY = L1Y + 3f;
-        /// <summary>④ 东西殿前月台（+3.0 m）</summary>
-        static readonly (Vector2 min, Vector2 max)[] HallPlatforms = { (new Vector2(-52, 288), new Vector2(-28, 298)), (new Vector2(28, 288), new Vector2(52, 298)) };
+        /// <summary>④ 东西殿前月台（+3.0 m，夹着出口祭坛；离殿前中心 ≤ 26 m，是殿前场地的俯射层）</summary>
+        static readonly (Vector2 min, Vector2 max)[] HallPlatforms = { (new Vector2(-36, 286), new Vector2(-16, 296)), (new Vector2(16, 286), new Vector2(36, 296)) };
         const float PlatformY = HallY + 3f;
 
         // ── 九门：三道开着的门（天阶 x、宽）与门阙；六道封门 ──
@@ -147,8 +147,8 @@ namespace Spiritfire.Art.Editor.Levels
                 Abs("月台西坡道", new Vector2(-31.2f, 43.5f), new Vector2(-19.2f, 43.5f), L1Y, StageY, 6),
                 Abs("月台东坡道", new Vector2(27.2f, 43.5f), new Vector2(15.2f, 43.5f), L1Y, StageY, 6),
                 // ④ 殿前月台坡道
-                Abs("西殿前月台坡道", new Vector2(-40, 276.4f), new Vector2(-40, 288.9f), HallY, PlatformY, 6),
-                Abs("东殿前月台坡道", new Vector2(40, 276.4f), new Vector2(40, 288.9f), HallY, PlatformY, 6),
+                Abs("西殿前月台坡道", new Vector2(-23, 274.4f), new Vector2(-23, 286.9f), HallY, PlatformY, 6),
+                Abs("东殿前月台坡道", new Vector2(23, 274.4f), new Vector2(23, 286.9f), HallY, PlatformY, 6),
             };
         }
 
@@ -204,10 +204,10 @@ namespace Spiritfire.Art.Editor.Levels
             ("Enemy_3_SE_Bastion", 3, new Vector2(32, 182), SG.StationRole.Precision, 2, false, 2f),
             ("Enemy_3_SW_Bastion", 3, new Vector2(-32, 182), SG.StationRole.Ranged, 1, true, 1.5f),
             ("Enemy_3_Support", 3, new Vector2(-8, 244), SG.StationRole.Support, 0, false, 2f),
-            ("Enemy_4_Assault_W", 4, new Vector2(-18, 290), SG.StationRole.Assault, 1, false, 2.2f),
-            ("Enemy_4_Assault_E", 4, new Vector2(18, 288), SG.StationRole.Assault, 2, false, 2.2f),
-            ("Enemy_4_Platform_W", 4, new Vector2(-40, 294), SG.StationRole.Ranged, 1, true, 1.5f),
-            ("Enemy_4_Platform_E", 4, new Vector2(40, 294), SG.StationRole.Precision, 2, false, 1.5f),
+            ("Enemy_4_Assault_W", 4, new Vector2(-8, 287), SG.StationRole.Assault, 1, false, 2.2f),
+            ("Enemy_4_Assault_E", 4, new Vector2(10, 285), SG.StationRole.Assault, 2, false, 2.2f),
+            ("Enemy_4_Platform_W", 4, new Vector2(-28, 292), SG.StationRole.Ranged, 1, true, 1.5f),
+            ("Enemy_4_Platform_E", 4, new Vector2(28, 292), SG.StationRole.Precision, 2, false, 1.5f),
             ("Enemy_4_Support", 4, new Vector2(-11, 295), SG.StationRole.Support, 0, false, 1.5f),
             ("Enemy_4_FlankW", 4, new Vector2(-66, 276), SG.StationRole.Flank, 1, false, 2.2f),
             ("Enemy_4_FlankE", 4, new Vector2(66, 276), SG.StationRole.Flank, 2, false, 2.2f),
@@ -244,6 +244,24 @@ namespace Spiritfire.Art.Editor.Levels
         /// <summary>台地本身（两段阶梯坡 + 殿前一级，不含墩台、台阶）：绝壁跟着它一级级往上走</summary>
         static float Level(Vector2 q) =>
             SteppedSlope(q, S1, out _, out _, out _, out _) + SteppedSlope(q, S2, out _, out _, out _, out _) + HallStep(q);
+
+        /// <summary>
+        /// 台地的上包络（只随 z 变）：每道墙最早可能到顶的位置（墙线弯曲按最大幅度算）连到下一级，线性插值——处处 ≥ <see cref="Level"/>。
+        /// 绝壁顶往外换成它当基准：阶梯坡在横向是无限延伸的，直接用 Level 会在外面的雪岭上留下一道道笔直的台阶线。
+        /// </summary>
+        static readonly Vector2[] TrendKnots = BuildTrend();
+
+        static Vector2[] BuildTrend()
+        {
+            var k = new List<Vector2> { new(S1.origin.y - Mathf.Abs(S1.bend) - 4, 0) };
+            foreach (var (s, baseY) in new[] { (S1, 0f), (S2, CourtY) })
+                for (int i = 0; i < s.steps; i++)
+                    k.Add(new Vector2(s.origin.y + i * (s.shelfDepth + s.wallRun) - Mathf.Abs(s.bend) + s.wallRun, baseY + (i + 1) * s.stepHeight));
+            k.Add(new Vector2(HallZ + WallRun * 0.5f, HallY));
+            return k.ToArray();
+        }
+
+        static float Trend(float z) => LevelKit.Piecewise(z, TrendKnots);
 
         /// <summary>矩形台（墩台、基座、月台）的遮罩：边线居中、edge 米宽的陡坎</summary>
         static float BoxMask(Vector2 q, Vector2 min, Vector2 max, float edge) => 1 - Smooth(-edge * 0.5f, edge * 0.5f, LevelKit.BoxSdf(q, min, max));
@@ -326,9 +344,12 @@ namespace Spiritfire.Art.Editor.Levels
             if (ins < 3f)
             {
                 float high = 16f + 8f * (Fbm(p, 55, 2, 31) * 0.5f + 0.5f);
-                // 天阙背后的绝壁至少 27 m：门阙顶（殿前 + 24.5 m）不能高过崖顶，不然站上门顶就能走出图
-                high = Mathf.Max(high, 27f * Disc(p, GatewayC, 24, 12));
-                h = Mathf.Max(h, Level(p) + LevelKit.RimProfile(ins, 0.9f, 3f, high, 4.5f));
+                // 天阙背后的绝壁至少 27 m：门阙顶（殿前 + 24.5 m）不能高过崖顶，不然站上门顶就能走出图（外圈 24 m 慢慢落回，不成方块）
+                high = Mathf.Max(high, 27f * Disc(p, GatewayC, 24, 24));
+                // 崖面（界外 4.5 m 内）贴着台地一级级走；崖顶往外 4.5–12 m 换成台地的上包络，台阶线不延伸进外面的雪岭
+                float lvl = Level(p);
+                float rimBase = Mathf.Lerp(lvl, Mathf.Max(lvl, Trend(p.y)), Smooth(-4.5f, -12f, ins));
+                h = Mathf.Max(h, rimBase + LevelKit.RimProfile(ins, 0.9f, 3f, high, 4.5f));
                 if (ins < -5f)
                 {
                     float ridge = Ridged(p, 70, 3, 9);
@@ -438,7 +459,7 @@ namespace Spiritfire.Art.Editor.Levels
                 rep.Line("2-2 昆仑天阙 · 开明九门 · 验收");
                 rep.Line($"高度：雪坳 {OnGround(Spawn).y:F1}，L1 {OnGround(new Vector2(-30, 44)).y:F1}，L2 {OnGround(new Vector2(-20, 68)).y:F1}，外庭 {OnGround(Site2).y:F1}，" +
                          $"U1 {OnGround(new Vector2(-30, 133)).y:F1}，U2 {OnGround(new Vector2(-30, 152)).y:F1}，兽庭 {OnGround(new Vector2(-38, 214)).y:F1}，" +
-                         $"墩台 {OnGround(new Vector2(-32, 182)).y:F1}，基座 {OnGround(new Vector2(8, 214)).y:F1}，殿前 {OnGround(Site4).y:F1}，殿前月台 {OnGround(new Vector2(-40, 294)).y:F1}");
+                         $"墩台 {OnGround(new Vector2(-32, 182)).y:F1}，基座 {OnGround(new Vector2(8, 214)).y:F1}，殿前 {OnGround(Site4).y:F1}，殿前月台 {OnGround(new Vector2(-28, 292)).y:F1}");
                 rep.Line($"挡土墙段 {walls} 段；台阶 {Flights.Length} 段，最陡（剖面）{Flights.Max(f => f.MaxGrade):F1}°");
                 foreach (var g in Gates)
                 {
@@ -662,11 +683,11 @@ namespace Spiritfire.Art.Editor.Levels
                 Kit(TowerId, kit, new Vector2(side * 66, 298), OnGround(new Vector2(side * 66, 298)).y - 0.3f, 180, TowerScale);
             }
             KitOnGround("SM_Tripo_FrostBarricade", props, new Vector2(-6, 276), 0);
-            KitOnGround("SM_Tripo_FrostBarricade", props, new Vector2(24, 274), 20);
+            KitOnGround("SM_Tripo_FrostBarricade", props, new Vector2(8, 272), 20);
             KitOnGround("SM_Tripo_FrostCoverWall", props, new Vector2(-54, 280), 90);
             KitOnGround("SM_Tripo_FrostCoverWall", props, new Vector2(56, 272), 90);
-            KitOnGround(PillarId, props, new Vector2(-20, 268), 40, 1.1f, 0.2f);
-            KitOnGround(PillarId, props, new Vector2(20, 268), 160, 1.1f, 0.2f);
+            KitOnGround(PillarId, props, new Vector2(-40, 268), 40, 1.1f, 0.2f);
+            KitOnGround(PillarId, props, new Vector2(40, 268), 160, 1.1f, 0.2f);
             KitOnGround(LanternId, props, new Vector2(-7.5f, 299), 0);
             KitOnGround(LanternId, props, new Vector2(7.5f, 299), 0);
             return shrine;
@@ -768,8 +789,8 @@ namespace Spiritfire.Art.Editor.Levels
             // 青鸟落脚点（PerchPoint 前缀自动认）：墩台角、殿前月台角、月台两端
             var perches = new[]
             {
-                new Vector2(-19, 195), new Vector2(19, 195), new Vector2(-45, 195), new Vector2(45, 195), new Vector2(-49, 291), new Vector2(49, 291),
-                new Vector2(-31, 291), new Vector2(31, 291), new Vector2(-17, 43.5f), new Vector2(13, 43.5f),
+                new Vector2(-19, 195), new Vector2(19, 195), new Vector2(-45, 195), new Vector2(45, 195), new Vector2(-33, 293), new Vector2(33, 293),
+                new Vector2(-19, 293), new Vector2(19, 293), new Vector2(-17, 43.5f), new Vector2(13, 43.5f),
             };
             for (int i = 0; i < perches.Length; i++) Mk($"PerchPoint_{i + 1}", OnGround(perches[i], 0.05f));
         }
@@ -927,7 +948,7 @@ namespace Spiritfire.Art.Editor.Levels
                 .Route("西门天阶顶", G(new Vector2(-66, 170))).Route("东门天阶顶", G(new Vector2(66, 170))).Route("中门天阶顶（南翼）", G(new Vector2(0, 176)))
                 .Route("SW 墩台", G(new Vector2(-32, 182))).Route("SE 墩台", G(new Vector2(32, 182))).Route("基座顶", G(new Vector2(8, 214)))
                 .Route("西翼", G(new Vector2(-38, 214))).Route("③ 开明兽庭（北翼神道）", G(new Vector2(0, 246))).Route("④ 玉京殿前", G(Site4))
-                .Route("西殿前月台", G(new Vector2(-40, 294))).Route("东殿前月台", G(new Vector2(40, 294))).Route("出口祭坛前", G(ShrineC + new Vector2(0, -4.5f)))
+                .Route("西殿前月台", G(new Vector2(-28, 292))).Route("东殿前月台", G(new Vector2(28, 292))).Route("出口祭坛前", G(ShrineC + new Vector2(0, -4.5f)))
                 .Route("藏宝 A · 钟亭", G(CacheA)).Route("藏宝 B · 玉库", G(CacheB))
                 .Sight("出生 → 巨像", G(Spawn, 1.62f), KaimingHead, 6, KaimingId)
                 .Sight("① 挡墙月台 → 巨像", G(new Vector2(-2, 43.5f), 1.62f), KaimingHead, 6, KaimingId)
