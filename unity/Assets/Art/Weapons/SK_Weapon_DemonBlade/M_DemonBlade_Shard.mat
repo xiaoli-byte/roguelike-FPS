@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: M_DemonBlade_Shard
+  m_Shader: {fileID: 4800000, guid: 4ec9183538ebb2645a6459a47051fa3b, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords:
+  - _EMISSION
+  m_InvalidKeywords: []
+  m_LightmapFlags: 0
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 2800000, guid: be1cc5109a26dd543906748082799226, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 2800000, guid: f80828823ae8aa84986a94267d0eaefc, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ORMMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _AmbientStrength: 1
+    - _BumpScale: 1
+    - _Cull: 2
+    - _Cutoff: 0.5
+    - _DstBlend: 0
+    - _FlashAmount: 0
+    - _Fur: 0
+    - _FurDensity: 200
+    - _FurDetailStrength: 0.6
+    - _FurFuzz: 0.5
+    - _FurSheen: 0.25
+    - _Metallic: 0.18
+    - _OcclusionStrength: 1
+    - _RampSoftness: 0.18
+    - _RampThreshold: 0.05
+    - _RimPower: 3.5
+    - _RimStrength: 0.55
+    - _Roughness: 0.42
+    - _ShadowLift: 0.32
+    - _SpecSize: 0.12
+    - _SpecStrength: 0.9
+    - _SrcBlend: 1
+    - _ZWrite: 1
+    m_Colors:
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _EmissionColor: {r: 2, g: 2, b: 2, a: 1}
+    - _FlashColor: {r: 1, g: 1, b: 1, a: 1}
+    - _RimColor: {r: 0.7882353, g: 0.65882355, b: 1, a: 1}
+    - _ShadowTint: {r: 0.5411765, g: 0.5254902, b: 0.84705883, a: 1}
+    - _Tint: {r: 1, g: 1, b: 1, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
