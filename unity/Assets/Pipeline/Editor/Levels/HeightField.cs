@@ -458,7 +458,7 @@ namespace Spiritfire.Art.Editor.Levels
             return Mathf.Lerp(lee, up, windward) * ripple;
         }
 
-        // ═════════════ 洞穴碗（1-4 干涸月牙泉）═════════════
+        // ═════════════ 洞穴碗（1-3 下行坑、2-4 营地；旧版 1-4 穴顶场也用过）═════════════
 
         /// <summary>
         /// 洞穴碗：椭圆碗底（radius，边缘被噪声啃得不规则）压低 depth；碗壁 wall 米宽内陡升回地面（中段可达 60° 以上，是崖不是坡）；

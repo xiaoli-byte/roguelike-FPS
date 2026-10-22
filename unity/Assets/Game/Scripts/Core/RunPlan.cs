@@ -117,7 +117,7 @@ namespace Spiritfire.Game
             Add(1, "古道穿越戈壁", Ch1, "L1_1_GobiRoad");
             Add(1, "雅丹迷城", Ch1, "L1_2_Yardang");
             Add(1, "沉沙古城", Ch1, "L1_3_SunkenCity");
-            Add(1, "干涸月牙泉 · 旱魃", Ch1, "L1_4_Crescent", StageKind.Boss);
+            Add(1, "鸣沙山月牙泉 · 旱魃", Ch1, "L1_4_Crescent", StageKind.Boss);
             // 第二章（D3）
             Add(2, "冰瀑栈道", Ch2, "L2_1_Icefall");
             Add(2, "昆仑天阙 · 开明九门", Ch2, "L2_2_Kunlun");

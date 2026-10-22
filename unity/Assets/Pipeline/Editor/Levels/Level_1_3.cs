@@ -102,7 +102,7 @@ namespace Spiritfire.Art.Editor.Levels
         static readonly Vector2 MerchantTerrace = new(188, 106), MerchantHalf = new(5, 9);
         const float MerchantH = 2.2f;
         static readonly (Vector2 foot, Vector2 top) MerchantRamp = (new Vector2(188, 124.8f), new Vector2(188, 115.3f));
-        /// <summary>下行坑（通往城下 · 1-4）：椭圆坑底 15 × 13 m、深 10 m，坑壁 6 m</summary>
+        /// <summary>下行坑（坑底古暗渠出城，通往鸣沙山月牙泉 · 1-4）：椭圆坑底 15 × 13 m、深 10 m，坑壁 6 m</summary>
         static readonly Vector2 Sink = new(164, 22), SinkR = new(15, 13);
         const float SinkDepth = 10f, SinkWall = 6f;
         static readonly Vector2 ShrineAt = new(154, 22);
@@ -328,7 +328,7 @@ namespace Spiritfire.Art.Editor.Levels
                 if (m > 0) h = Mathf.Max(h, Mathf.Lerp(h, Mathf.Lerp(g, cBase + ColossusBaseH, t), m));
             }
 
-            // ── 9. 下行坑（通往城下 · 1-4）+ 贴壁坡道 ──
+            // ── 9. 下行坑（坑底古暗渠出城，通往鸣沙山月牙泉 · 1-4）+ 贴壁坡道 ──
             var sd = p - Sink;
             float rn = Mathf.Sqrt(sd.x * sd.x / (SinkR.x * SinkR.x) + sd.y * sd.y / (SinkR.y * SinkR.y));
             float sinkFloor = 0, sinkWall = 0, sinkRampMask = 0;
