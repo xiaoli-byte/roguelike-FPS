@@ -487,15 +487,25 @@ namespace Spiritfire.Art.Editor.Levels
             {
                 name = "神范熔池", center = new Vector3(Basin.x, ArenaLava, Basin.y), shape = LavaShape.Disc, size = new Vector2(BasinR + BankStrip, 0), depth = 1f, depthShore = false,
             }, root));
-            // 桥下的静止熔岩
+            // 桥下的静止熔岩。铸坊的桥：整段垫在桥下（桥底离渠底 1.6 m，桥下的渠底也有导航网格）；
+            // 神范台的浅渠桥底离渠底只有 0.25 m，桥下没有导航网格——整段垫在桥下时中心采不到 Lava 区 / 熔岩生物网格，
+            // 改成桥两侧各一小段（从桥面下 0.5 m 接到涨落段的端头）
             foreach (var b in Bridges)
             {
-                var c = b.Center;
-                set.still.Add(LevelKit.PlaceLava(Dir, new LevelKit.LavaSpec
+                var spans = b.ch.arena
+                    ? new[] { (-b.width * 0.5f - 1f, -b.width * 0.5f + 0.5f, "侧"), (b.width * 0.5f - 0.5f, b.width * 0.5f + 1f, "侧") }
+                    : new[] { (-b.width * 0.5f - 1f, b.width * 0.5f + 1f, "") };
+                int k = 0;
+                foreach (var (s0, s1, tag) in spans)
                 {
-                    name = $"桥下 · {b.name}", center = new Vector3(c.x, b.ch.lava, c.y), shape = LavaShape.Box, size = new Vector2(b.ch.half * 2f, b.width + 2f), yaw = b.ch.Yaw,
-                    depth = b.ch.arena ? 1f : 1.6f, depthShore = !b.ch.arena, flow = new Vector2(0, 0.3f * b.ch.flow),
-                }, root));
+                    var c = b.ch.At(b.at + (s0 + s1) * 0.5f);
+                    set.still.Add(LevelKit.PlaceLava(Dir, new LevelKit.LavaSpec
+                    {
+                        name = $"桥下 · {b.name}{(tag.Length > 0 ? $" {tag}{++k}" : "")}", center = new Vector3(c.x, b.ch.lava, c.y), shape = LavaShape.Box,
+                        size = new Vector2(b.ch.half * 2f, s1 - s0), yaw = b.ch.Yaw,
+                        depth = b.ch.arena ? 1f : 1.6f, depthShore = !b.ch.arena, flow = new Vector2(0, 0.3f * b.ch.flow),
+                    }, root));
+                }
             }
             return set;
         }
@@ -713,6 +723,7 @@ namespace Spiritfire.Art.Editor.Levels
             var mould = LevelKit.PlaceOrBox(MouldId, root, set.OnGround(MouldAt.x, MouldAt.y, -0.1f), MouldSize * MouldScale, MouldYaw, MouldScale);
             if (mould) mould.isStatic = true;
             Label(mould, MouldId, "神范");
+            MouldGlow(mould, props);
             var covers = new List<Vector2>();
             void Cover(string id, Vector2 at, float yaw, Vector3 size, string what)
             {
@@ -733,9 +744,52 @@ namespace Spiritfire.Art.Editor.Levels
                 Put(ColumnId, root, set, c, 0, 1f, 0.05f, ColumnSize);
                 covers.Add(c);
             }
-            Put(AltarId, props, set, new Vector2(178, 190), 0, 1.3f, 0.05f, AltarSize);
-            Put(AltarId, props, set, new Vector2(196, 186), 0, 1.3f, 0.05f, AltarSize);
+            // 两只火坛夹着神范台坡道的坡脚（原来一只塞在台壁和坡道之间的夹角里，从台上看像埋进了台子）
+            Put(AltarId, props, set, new Vector2(178.5f, 182.5f), 0, 1.3f, 0.05f, AltarSize);
+            Put(AltarId, props, set, new Vector2(189.5f, 182.5f), 0, 1.3f, 0.05f, AltarSize);
             return covers;
+        }
+
+        /// <summary>
+        /// 神范是全图地标兼出口，可白盒是一块暗铁，在热雾里贴着同色的火山口壁根本读不出来（雾 18–170 m；出生点离它 220 m，雾外什么都看不见）：
+        /// 白盒时在顶上加一口发亮的浇口熔铜、腰上一道发亮的合范缝（子物体，没有碰撞，不算占位件；正式件到了就不加），
+        /// 再在神范前挂一盏不投影的熔铜光（正式件也留着）
+        /// </summary>
+        static void MouldGlow(GameObject mould, Transform props)
+        {
+            if (!mould) return;
+            var at = mould.transform.position;
+            if (IsPlaceholder(mould))
+            {
+                var hot = LevelKit.GlowMat(Dir, "MouldGlow", new Color(1f, 0.5f, 0.2f), new Color(4f, 1.4f, 0.35f));
+                // 白盒是单位立方体按尺寸缩放（局部 y ∈ [−0.5, 0.5]）
+                foreach (var (name, pos, scale) in new[]
+                         {
+                             ("神范 · 浇口熔铜", new Vector3(0, 0.58f, 0), new Vector3(0.42f, 0.2f, 0.42f)),
+                             ("神范 · 合范缝", new Vector3(0, 0.08f, 0), new Vector3(1.02f, 0.05f, 1.02f)),
+                         })
+                {
+                    var g = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    g.name = name;
+                    Object.DestroyImmediate(g.GetComponent<Collider>());
+                    g.transform.SetParent(mould.transform, false);
+                    g.transform.localPosition = pos;
+                    g.transform.localRotation = Quaternion.identity;
+                    g.transform.localScale = scale;
+                    var r = g.GetComponent<MeshRenderer>();
+                    r.sharedMaterial = hot;
+                    r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                    g.isStatic = true;
+                }
+            }
+            var l = new GameObject("Mould Light").AddComponent<Light>();
+            l.transform.SetParent(props, false);
+            l.transform.position = at + new Vector3(-5f, 4f, -5f);
+            l.type = LightType.Point;
+            l.color = new Color(1f, 0.55f, 0.2f);
+            l.intensity = 4f;
+            l.range = 22f;
+            l.shadows = LightShadows.None;
         }
 
         static void BuildScatter(LevelKit.TerrainSet set, Transform env)
