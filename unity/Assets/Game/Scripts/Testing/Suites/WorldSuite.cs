@@ -221,7 +221,9 @@ namespace Spiritfire.Game.Testing
                 yield return null;
             }
             float d1 = BoundaryZone.Distance(ai.transform.position);
-            if (BoundaryZone.Tethered == before) Fail($"跳鼠在界外 +{d0:F1} m、离网 {waited:F1} s 没被拴回");
+            if (BoundaryZone.Tethered == before)
+                Fail($"跳鼠在界外 +{d0:F1} m、离网 {waited:F1} s 没被拴回（agent 启用 {agent.enabled}、在网格上 {agent.isOnNavMesh}、updatePosition {agent.updatePosition}；" +
+                     $"最近失败：{BoundaryZone.LastTetherFailure ?? "无（拴绳没被调用）"}）");
             else if (d1 > t.navInset + 0.5f || !agent.isOnNavMesh) Fail($"拴回后在 {d1:+0.0;-0.0} m、在网格上 {agent.isOnNavMesh}");
             else Line($"✓ 拴绳：跳鼠从 +{d0:F1} m 拴回 {d1:F1} m（{waited:F1} s），回到导航网格上");
             ai.enabled = true;

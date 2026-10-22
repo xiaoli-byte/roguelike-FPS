@@ -258,6 +258,8 @@ namespace Spiritfire.Game
         public static int FailsafeRecoveries { get; private set; }
         /// <summary>本关被拴回界内的敌人次数（测试用）</summary>
         public static int Tethered { get; private set; }
+        /// <summary>最近一次拴绳失败的原因（成功后清空；冒烟套件失败时打印）</summary>
+        public static string LastTetherFailure { get; private set; }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics()
@@ -428,7 +430,11 @@ namespace Spiritfire.Game
         bool Tether(EnemyAI ai, NavMeshAgent agent, Vector3 p)
         {
             bool hasLast = ai.TryLastOnMesh(out var last);
-            if (!BoundaryTether.FindPoint(field, tuning, p, groundProbe, navSample, hasLast, last, out var to)) return false;
+            if (!BoundaryTether.FindPoint(field, tuning, p, groundProbe, navSample, hasLast, last, out var to))
+            {
+                LastTetherFailure = $"{ai.enemyId}：界内找不到落点（从 {p}，最后在网格上 {(hasLast ? last.ToString() : "无")}）";
+                return false;
+            }
             ai.transform.position = to;
             if (!agent.Warp(to))
             {
@@ -436,8 +442,13 @@ namespace Spiritfire.Game
                 agent.enabled = false;
                 ai.transform.position = to;
                 agent.enabled = true;
-                if (!agent.isOnNavMesh) return false;
+                if (!agent.isOnNavMesh)
+                {
+                    LastTetherFailure = $"{ai.enemyId}：落点 {to} 传送失败、重开 agent 也没进网格（距边界 {field.Sample(to.x, to.z):+0.0;-0.0} m）";
+                    return false;
+                }
             }
+            LastTetherFailure = null;
             Fx.Burst(p + Vector3.up * 0.6f, DustColor, 10, 3, 0.6f, 0.3f);
             // 先回到网格上再打断（打断时子类可能要停 agent，离网时调会报错）
             ai.InterruptAttack();
