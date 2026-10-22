@@ -401,7 +401,8 @@ namespace Spiritfire.Art.Editor
         }
 
         /// <summary>
-        /// 关键帧 FBX 的导入设置对齐本体：同样的缩放 / 轴向换算；人形用本体的 Avatar（Copy From Other，片段是肌肉曲线，能直接播），
+        /// 关键帧 FBX 的导入设置对齐本体：同样的缩放 / 轴向换算；人形用本体的 Avatar（Copy From Other，片段是肌肉曲线，能直接播；
+        /// 非人形骨靠 Transform 遮罩留下变换曲线，见 KeepNonHumanCurves），
         /// 其余 Generic、不建 Avatar（曲线按骨骼名重定向到本体）。设置变了才重新导入
         /// </summary>
         static void PrepareKeyframedImporter(ArtSidecar sc, string path)
