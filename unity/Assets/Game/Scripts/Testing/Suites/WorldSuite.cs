@@ -13,7 +13,7 @@ namespace Spiritfire.Game.Testing
     ///   · 软边界：场景里没有空气墙（Ignore Raycast 层上的实体碰撞体只在兜底环上，离等值线 ≥ failsafe − 3 m）；
     ///     把玩家放到起风线外 7 m（风力一半），不给输入：被推回到起风线以内，推回速度 ≈ (4 + 18 × 风力) m/s，期间有白化；
     ///     放到兜底环外：托回安全点；
-    ///   · 拴绳：一只跳鼠被放到导航边缘外 8 m（模拟被击飞出界）：1.2 s 后被拴回界内的网格上；
+    ///   · 拴绳：一只跳鼠被放到拴绳线外 6 m 的一块临时导航岛上（模拟界外的网格碎片 / 被击飞出界）：tetherGrace 秒后被拴回界内的主网格上；
     ///   · 天气：④ 的沙暴强制进入风暴期，玩家站在营地中心——远程锁定上限 ≤ 25 m、雾终点 ≤ 40 m、全局风力 ≥ 0.8、远幕盖上；
     ///     回到出生点：锁定不限、雾回到基础值；预警期从营地西北能看到天边的沙墙（截图）。
     ///   · 冰面：出生点附近找一条平的 4 × 24 m 走廊铺冰，同一处用 9.9 m/s（冲刺余速）抛出去、不给输入：冰上滑的距离 ≥ 平地的 4 倍且 ≥ 5 m；
@@ -192,8 +192,12 @@ namespace Spiritfire.Game.Testing
         }
 
         /// <summary>
-        /// 敌人被送出导航边缘：AI 先停（不让子类在离网时调 agent），1.2 s 后被拴回网格。
-        /// 关掉 agent 挪到 +10 m 再开时，附近有网格的话 Unity 会把它就近放到网格边上（4 m 导航体块的旧关卡：界外 +5.9 m）——拴绳线外照样要拴回
+        /// 敌人站在拴绳线外的导航网格上（旧关卡 4 m 导航体块的网格伸到界外 +5.9 m、被冲撞 / 击飞后落在界外的网格碎片上），
+        /// tetherGrace 秒后要被拴回界内的主网格。
+        /// 现在的关卡网格只到界外 +2.5 m（拴绳线 navInset + tetherSlack 以内）：直接把 agent 关掉挪到 +10 m 再开，Unity 会把它就近吸回 +2.5 m 的网格边，
+        /// 拴绳根本用不上、测不到。所以在 +10 m 处临时铺一块独立的导航岛（运行时 NavMeshBuilder，只有这一块平板）：agent Warp 上去之后
+        /// 启用、updatePosition 开着、在网格上、离等值线 +10 m——正是拴绳要管的情形。拴绳坏了它就一直站在岛上，测试失败。
+        /// AI 关着（不让它自己走 / 自己做离网恢复），只看 BoundaryZone 的拴绳
         /// </summary>
         IEnumerator TetherCase()
         {
@@ -209,37 +213,63 @@ namespace Spiritfire.Game.Testing
             ai.Health.maxHealth *= 50;
             ai.Health.ResetVitals();
             yield return new WaitForSeconds(1f);
-            int before = BoundaryZone.Tethered;
             var agent = ai.GetComponent<NavMeshAgent>();
-            var outside = PointAt(home, t.navInset + t.tetherSlack + 6f);
-            ai.enabled = false;
-            agent.enabled = false;
-            ai.transform.position = outside;
-            agent.enabled = true;
-            float d0 = BoundaryZone.Distance(ai.transform.position);
-            bool placedOnMesh = agent.isOnNavMesh;
-            int ticks0 = BoundaryZone.TetherTicks, marked0 = BoundaryZone.TetherMarkedOut;
-            float waited = 0, dPlaced = float.NaN;
-            while (BoundaryZone.Tethered == before && waited < t.tetherGrace + 1.5f)
+            float line = t.navInset + t.tetherSlack;
+            var outside = PointAt(home, line + 6f);
+            var island = NavIsland(agent.agentTypeID, outside, 8f);
+            try
             {
-                waited += Time.deltaTime;
+                ai.enabled = false;
+                if (agent.isOnNavMesh) agent.isStopped = true;
+                bool warped = agent.Warp(outside);
                 yield return null;
-                // 放下一帧后：离网时启用的 agent 可能被 Unity 就近放到了网格边上（transform 跟过去）
-                if (float.IsNaN(dPlaced)) dPlaced = BoundaryZone.Distance(ai.transform.position);
+                float d0 = BoundaryZone.Distance(ai.transform.position);
+                if (!warped || !agent.isOnNavMesh || !t.TetherOut(d0))
+                {
+                    Fail($"拴绳检查没摆好：Warp 到界外导航岛 {warped}、在网格上 {agent.isOnNavMesh}、离等值线 {d0:+0.0;-0.0} m（拴绳线 +{line:F1} m）");
+                    yield break;
+                }
+                int before = BoundaryZone.Tethered;
+                int ticks0 = BoundaryZone.TetherTicks, marked0 = BoundaryZone.TetherMarkedOut;
+                float waited = 0;
+                while (BoundaryZone.Tethered == before && waited < t.tetherGrace + 1.5f)
+                {
+                    waited += Time.deltaTime;
+                    yield return null;
+                }
+                float d1 = BoundaryZone.Distance(ai.transform.position);
+                if (BoundaryZone.Tethered == before)
+                    Fail($"跳鼠站在界外 +{d0:F1} m 的导航岛上（拴绳线 +{line:F1} m）、{waited:F1} s 没被拴回，现在在 {d1:+0.0;-0.0} m" +
+                         $"（agent 启用 {agent.enabled}、在网格上 {agent.isOnNavMesh}、updatePosition {agent.updatePosition}）；" +
+                         $"拴绳检查 {BoundaryZone.TetherTicks - ticks0} 轮、判出界 {BoundaryZone.TetherMarkedOut - marked0} 次；" +
+                         $"最近看到：{BoundaryZone.LastTetherSeen ?? "无"}；最近失败：{BoundaryZone.LastTetherFailure ?? "无（拴绳没被调用）"}");
+                else if (d1 > t.navInset + 0.5f || !agent.isOnNavMesh) Fail($"拴回后在 {d1:+0.0;-0.0} m、在网格上 {agent.isOnNavMesh}（应在 +{t.navInset:F1} m 以内的网格上）");
+                else if (waited < t.tetherGrace - 0.3f) Fail($"拴得太早：{waited:F1} s（宽限 {t.tetherGrace:F1} s）");
+                else Line($"✓ 拴绳：跳鼠站在界外 +{d0:F1} m 的导航岛上（拴绳线 +{line:F1} m），{waited:F1} s 后拴回 {d1:+0.0;-0.0} m 的网格上");
             }
-            float d1 = BoundaryZone.Distance(ai.transform.position);
-            if (BoundaryZone.Tethered == before)
-                Fail($"跳鼠放到界外 +{d0:F1} m（启用 agent 时在网格上 {placedOnMesh}，一帧后在 {dPlaced:+0.0;-0.0} m）、{waited:F1} s 没被拴回，现在在 {d1:+0.0;-0.0} m" +
-                     $"（agent 启用 {agent.enabled}、在网格上 {agent.isOnNavMesh}、updatePosition {agent.updatePosition}）；" +
-                     $"拴绳检查 {BoundaryZone.TetherTicks - ticks0} 轮、判出界 {BoundaryZone.TetherMarkedOut - marked0} 次；" +
-                     $"最近看到：{BoundaryZone.LastTetherSeen ?? "无"}；最近失败：{BoundaryZone.LastTetherFailure ?? "无（拴绳没被调用）"}");
-            else if (d1 > t.navInset + 0.5f || !agent.isOnNavMesh) Fail($"拴回后在 {d1:+0.0;-0.0} m、在网格上 {agent.isOnNavMesh}");
-            else Line($"✓ 拴绳：跳鼠从 +{d0:F1} m 拴回 {d1:F1} m（{waited:F1} s），回到导航网格上");
-            if (!float.IsNaN(dPlaced) && dPlaced < d0 - 1f)
-                Line($"  （启用 agent 时被 Unity 就近放到了界外的网格边上：+{d0:F1} → {dPlaced:+0.0;-0.0} m；导航体块按 {SoftBoundaryTuning.NavCell} m 重建关卡后网格只到 +{t.NavReach(SoftBoundaryTuning.NavCell):F1} m）");
-            ai.enabled = true;
+            finally
+            {
+                island.Remove();
+                if (ai) ai.enabled = true;
+            }
             yield return new WaitForSeconds(0.3f);
             EnemyRegistry.PurgeAll();
+        }
+
+        /// <summary>在 at 处临时铺一块 size × size 的平板导航网格（独立的一块，不连主网格）；用完 Remove</summary>
+        static NavMeshDataInstance NavIsland(int agentTypeId, Vector3 at, float size)
+        {
+            var settings = NavMesh.GetSettingsByID(agentTypeId);
+            var src = new NavMeshBuildSource
+            {
+                shape = NavMeshBuildSourceShape.Box,
+                size = new Vector3(size, 0.2f, size),
+                transform = Matrix4x4.TRS(at - Vector3.up * 0.1f, Quaternion.identity, Vector3.one),
+                area = 0,
+            };
+            var bounds = new Bounds(at, new Vector3(size + 4f, 8f, size + 4f));
+            var data = NavMeshBuilder.BuildNavMeshData(settings, new List<NavMeshBuildSource> { src }, bounds, Vector3.zero, Quaternion.identity);
+            return NavMesh.AddNavMeshData(data);
         }
 
         // ───────────── 天气 ─────────────

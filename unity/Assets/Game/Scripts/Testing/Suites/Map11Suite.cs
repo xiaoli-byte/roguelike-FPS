@@ -497,8 +497,17 @@ namespace Spiritfire.Game.Testing
             from.y = 0;
             var stand = p + (from.sqrMagnitude > 0.01f ? from.normalized : Vector3.back) * 1.8f;
             float dist = Flat(motor.transform.position - p);
-            if (dist > 4f) yield return WalkTo(stand, label, null, 0.6f);
-            else if (dist > 1.9f) Teleport(motor, stand); // 最后一两步挪近
+            if (dist > 4f)
+            {
+                yield return WalkTo(stand, label, null, 0.6f);
+                // 走到站位的容差是 0.6 m：可能停在离宝箱 2.4 m 处——宝箱交互半径 2.6 m 是眼睛（1.62 m）到焦点（离地 0.6 m）的直线距离，
+                // 折成水平只有约 2.4 m（同 TS 的 2.3 m 水平半径），停在那里本来就没有提示。从停下的方向补最后一步
+                from = motor.transform.position - p;
+                from.y = 0;
+                if (from.sqrMagnitude > 0.01f) stand = p + from.normalized * 1.8f;
+                dist = Flat(motor.transform.position - p);
+            }
+            if (dist > 1.9f) Teleport(motor, stand); // 最后一两步挪近
             else if (dist < 1.2f) Teleport(motor, stand); // 贴得太近（宝箱从脚下冒出来）退半步
             yield return new WaitForSeconds(0.6f); // 宝箱冒出 / 落地的动画
             Aim(motor, eye, chest.Focus);
