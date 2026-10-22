@@ -180,6 +180,53 @@ namespace Spiritfire.Game.Tests
             }
         }
 
+        [Test]
+        public void SwoopSide_ComesFromTheBirdsEnd_SoAPillarBetweenThemLiesOnTheLineBeforeThePlayer()
+        {
+            var h = new IceHoleInfo(Vector3.zero, 15f, 44f, 0.06f, true);
+            foreach (float yaw in new[] { 0f, 75f, 190f, 300f })
+            foreach (float sign in new[] { -1f, 1f })
+            {
+                var player = h.Point(yaw, 28f);
+                var bird = h.Point(yaw + sign * 40f, h.MidRing) + Vector3.up * 13.5f;
+                int side = KunPengMath.SwoopSide(h, player, bird, 1);
+                var (from, lineYaw, len) = KunPengMath.SwoopLine(h, player, side);
+                var dir = KunPengMath.Dir(lineYaw);
+                var to = from + dir * len;
+                Assert.Less(Flat(from - bird).magnitude, Flat(to - bird).magnitude, "从鹏那一头进场");
+                // 鹏和玩家之间的冰柱（玩家方位往鹏那边 10°、正好在玩家的切线上）：在线上、在玩家之前
+                var pillar = h.Point(yaw + sign * 10f, 28f / Mathf.Cos(10f * Mathf.Deg2Rad));
+                Assert.AreEqual(0f, Vector3.Dot(pillar - from, new Vector3(dir.z, 0, -dir.x)), 0.05f, "柱心在线上");
+                Assert.Less(Vector3.Dot(pillar - from, dir), Vector3.Dot(player - from, dir), "柱子在玩家之前");
+            }
+            // 鹏在玩家正上方：按 fallback
+            var p = h.Point(30f, 28f);
+            Assert.AreEqual(1, KunPengMath.SwoopSide(h, p, p + Vector3.up * 13f, 1));
+            Assert.AreEqual(-1, KunPengMath.SwoopSide(h, p, p + Vector3.up * 13f, -1));
+        }
+
+        [Test]
+        public void TrimSwoop_KeepsLures_PullsUpBeforeWallsBehindThePlayer()
+        {
+            const float inf = float.PositiveInfinity;
+            // 线上没有陡面：不改、不是引撞
+            Assert.AreEqual(32f, KunPengMath.TrimSwoop(32f, 16f, inf, 8f, 3f), 1e-4f);
+            Assert.IsFalse(KunPengMath.SwoopLured(32f, 16f, inf));
+            // 陡面在玩家之前（柱子夹在鹏和玩家之间）：不截，是引撞
+            Assert.AreEqual(32f, KunPengMath.TrimSwoop(32f, 16f, 10f, 8f, 3f), 1e-4f);
+            Assert.IsTrue(KunPengMath.SwoopLured(32f, 16f, 10f));
+            // 陡面在玩家之后：截到陡面前 8 m，不是引撞
+            Assert.AreEqual(22f, KunPengMath.TrimSwoop(32f, 16f, 30f, 8f, 3f), 1e-4f);
+            Assert.IsFalse(KunPengMath.SwoopLured(32f, 16f, 30f));
+            // 紧贴在玩家身后：至少过玩家 3 m
+            Assert.AreEqual(19f, KunPengMath.TrimSwoop(32f, 16f, 20f, 8f, 3f), 1e-4f);
+            // 线外（≥ 全长）的陡面不算
+            Assert.AreEqual(32f, KunPengMath.TrimSwoop(32f, 16f, 32f, 8f, 3f), 1e-4f);
+            Assert.IsFalse(KunPengMath.SwoopLured(32f, 16f, 40f));
+        }
+
+        static Vector3 Flat(Vector3 v) => new(v.x, 0, v.z);
+
         // ───────────── EnemyBody.Rebind ─────────────
 
         [Test]

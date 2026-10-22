@@ -205,6 +205,36 @@ namespace Spiritfire.Game
             var from = mid - Dir(tangent) * half;
             return (from, tangent, half * 2f);
         }
+
+        /// <summary>
+        /// 俯冲从哪一头进场（<see cref="SwoopLine"/> 的 side）：鹏在玩家切线的哪一头，就从哪一头掠过来。
+        /// 玩家把冰柱夹在自己和鹏之间，俯冲线就先穿过柱子（引撞）；鹏几乎在玩家正上方（沿切线不到 3 m）时用 fallback
+        /// </summary>
+        public static int SwoopSide(in IceHoleInfo hole, Vector3 player, Vector3 bird, int fallback)
+        {
+            float ra = hole.Distance(player) > 0.5f ? hole.Angle(player) : 0;
+            var t = Dir(ra + 90f);
+            float along = (bird.x - player.x) * t.x + (bird.z - player.z) * t.z;
+            if (Mathf.Abs(along) < 3f) return fallback >= 0 ? 1 : -1;
+            // side = +1 时起点在 −切线那一头
+            return along < 0 ? 1 : -1;
+        }
+
+        /// <summary>
+        /// 俯冲线上离起点 wallAt 米有一处陡面（冰柱、祭台侧壁、冰崖）时，线该多长。
+        ///   · 陡面在玩家之前（wallAt ≤ playerAt）：不改。玩家躲在柱子后面，鹏会一头撞上去（引撞，硬直）。
+        ///   · 陡面在玩家之后：截到陡面前 pullUp 米，鹏掠过玩家后提前拉起，不去撞玩家身后的柱子。
+        ///     线至少要过玩家 past 米；离得太近截不出来时不截，交给撞柱判定。
+        /// 没有陡面（wallAt ≥ length）时不改
+        /// </summary>
+        public static float TrimSwoop(float length, float playerAt, float wallAt, float pullUp, float past)
+        {
+            if (!(wallAt < length) || wallAt <= playerAt) return length;
+            return Mathf.Min(length, Mathf.Max(wallAt - pullUp, playerAt + past));
+        }
+
+        /// <summary>这一趟是引撞：线上玩家之前就有陡面，鹏会先撞上它</summary>
+        public static bool SwoopLured(float length, float playerAt, float wallAt) => wallAt < length && wallAt <= playerAt;
     }
 
     /// <summary>

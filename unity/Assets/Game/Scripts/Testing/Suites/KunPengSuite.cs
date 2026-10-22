@@ -5,6 +5,7 @@ using System.Linq;
 using Spiritfire.Art;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UIElements;
 using static UnityEngine.Object;
 
 namespace Spiritfire.Game.Testing
@@ -20,7 +21,9 @@ namespace Spiritfire.Game.Testing
     ///   · 75%：鲲怒，猛砸连掀四道冰浪；
     ///   · 50%：转换（不可选中、冰雾爆闪），鲲在雾最浓时换成鹏：鹏的模型显示、鲲的收起，受伤体的 Animator 换到鹏上（EnemyBody.Rebind），
     ///     弱点挂在鹏的模型上，血条名「鲲鹏 · 鹏」，护盾 ≥ 六成，转换后在冰窟上空 10 m 以上，第一招扇翼狂风把玩家往外推；
-    ///   · 鹏的四招各强制出一次：狂风（上面）、俯冲掠台（贴地掠过或撞柱硬直）、羽刃雨（每枚都有落点预警）、落台歇翼（落在环台上）；
+    ///   · 血条标题单行（登场后、化鹏后），登记过的首领里最长的名字 / 副标题也放得下；
+    ///   · 鹏的四招各强制出一次：狂风（上面）、俯冲掠台（玩家站在开阔处：贴地掠过、不撞柱；躲在冰柱正后方：算成引撞、撞柱硬直、不挨打）、
+    ///     羽刃雨（每枚都有落点预警）、落台歇翼（落在环台上）；
     ///   · 25%：鹏狂怒，俯冲连掠两次、羽刃 14 枚；
     ///   · 90 s 浸泡（首领不掉血）：不出场地、数值有限、招式不卡死、至少出过两种招；
     ///   · 击杀 → 溃散 → 结算：首领宝箱（首领档）、回满、出口升起（2-4 不是最后一关 → 下一章）；
@@ -207,9 +210,58 @@ namespace Spiritfire.Game.Testing
                  $"片段带宿主运动 {(boss.BakedHost ? "✓" : "否（代理 / 缺片段：按状态表俯仰）")}，平切口最高点 {boss.CutTop:F2} m（相对水面）");
             Aim(motor, eye, boss.BodyCenter);
             Shot(weapons.eye, "kunpeng_intro");
+            CheckBarTitle("登场后");
             if (!boss.IntroDone) Fail("登场演出没有结束");
             if (hp.untargetable) Fail("登场结束后仍不可选中");
             if (!(boss.CutTop < CutTolerance)) Fail($"鲲的平切口露出水面（最高点 {boss.CutTop:F2} m）");
+        }
+
+        /// <summary>
+        /// 血条标题单行（hud.uss 的 .sf-boss__name 不换行），并且登记过的首领里最长的名字（含形态，如「火麒麟 · 玄鳞」）、最长的副标题也放得下：
+        /// 标题按自身字号 / 字距测宽，和标题区（面板宽 − 两侧祥云与边距）比
+        /// </summary>
+        void CheckBarTitle(string when)
+        {
+            var root = Hud.Instance ? Hud.Instance.Widget<BossBar>()?.Root : null;
+            var name = root?.Q<Label>(className: "sf-boss__name");
+            var sub = root?.Q<Label>(className: "sf-boss__sub");
+            var head = root?.Q(className: "sf-boss__head");
+            var panel = root?.Q(className: "sf-boss__panel");
+            if (name == null || head == null || panel == null || !(name.layout.height > 0) || !(panel.layout.width > 0))
+            {
+                Line($"血条标题（{when}）：没有首领血条或还没排版，跳过");
+                return;
+            }
+            float fs = name.resolvedStyle.fontSize;
+            bool oneLine = name.layout.height < fs * 1.9f;
+            float pad = name.resolvedStyle.paddingLeft + name.resolvedStyle.paddingRight;
+            float room = panel.layout.width - (head.layout.width - name.layout.width);
+            string longest = null, longestSub = null;
+            float widest = 0, widestSub = 0;
+            foreach (var d in Bosses.All)
+            {
+                if (d == null) continue;
+                var titles = new List<string> { d.name };
+                foreach (var f in d.forms)
+                    if (f != null && !string.IsNullOrEmpty(f.name))
+                        titles.Add($"{d.name} · {f.name}");
+                foreach (var t in titles)
+                {
+                    float w = name.MeasureTextSize(t, 0, VisualElement.MeasureMode.Undefined, 0, VisualElement.MeasureMode.Undefined).x + pad;
+                    if (w > widest) (widest, longest) = (w, t);
+                }
+                if (sub != null && !string.IsNullOrEmpty(d.title))
+                {
+                    float w = sub.MeasureTextSize(d.title, 0, VisualElement.MeasureMode.Undefined, 0, VisualElement.MeasureMode.Undefined).x;
+                    if (w > widestSub) (widestSub, longestSub) = (w, d.title);
+                }
+            }
+            bool fits = widest <= room + 0.5f, subFits = widestSub <= panel.layout.width + 0.5f;
+            Line($"血条标题（{when}）：「{name.text}」{name.layout.width:F0} × {name.layout.height:F0}（字号 {fs:F0}）{(oneLine ? "✓ 单行" : "✗ 折行")}；" +
+                 $"最长的首领名「{longest}」{widest:F0} / 标题区 {room:F0} {(fits ? "✓" : "✗")}，最长的副标题「{longestSub}」{widestSub:F0} / {panel.layout.width:F0} {(subFits ? "✓" : "✗")}");
+            if (!oneLine) Fail($"血条标题「{name.text}」折成了 {name.layout.height / fs:F1} 行高");
+            if (!fits) Fail($"最长的首领名「{longest}」放不下血条标题区（{widest:F0} > {room:F0}）");
+            if (!subFits) Fail($"最长的副标题「{longestSub}」放不下血条（{widestSub:F0} > {panel.layout.width:F0}）");
         }
 
         // ───────────── 弱点 ─────────────
@@ -427,6 +479,7 @@ namespace Spiritfire.Game.Testing
             if (hp.untargetable) Fail("转换结束后仍不可选中");
             if (!(alt > 10f)) Fail($"鹏转换后只离环台 {alt:F1} m（应在冰窟上空 10 m 以上）");
             Shot(weapons.eye, "kunpeng_peng");
+            CheckBarTitle("化鹏后");
 
             // 第一招：扇翼狂风，把环台上的玩家往外推
             float g0 = Time.time;
@@ -458,16 +511,21 @@ namespace Spiritfire.Game.Testing
         IEnumerator PengMoves()
         {
             var h = boss.Hole;
+            // 俯冲掠台 · 开阔处：玩家站在两柱正中间（正北 / 正南，离圆心 24 m：切线离最近的冰柱、矮墙都在 4 m 以上），线上没有陡面——不撞柱、贴地掠过
             yield return WaitIdle();
-            Place(Ring(Mathf.Abs(Mathf.DeltaAngle(h.Angle(boss.transform.position), 20f)) > 90f ? 20f : 200f, h.MidRing));
+            Place(Ring(Mathf.Abs(Mathf.DeltaAngle(h.Angle(boss.transform.position), 0f)) > 90f ? 0f : 180f, h.radius + 9f));
             var swoop = boss.MoveById(PengSwoop.MoveId) as PengSwoop;
             yield return OneMove(swoop, null, true);
             if (swoop != null)
             {
-                Line($"  俯冲掠台：{swoop.Dives} 趟，线长 {swoop.Length:F1} m，最低离地 {swoop.LowestAlt:F1} m，打中 {swoop.Hits} 下，撞柱 {(swoop.Crashed ? "是（硬直）" : "否")}");
+                Line($"  俯冲掠台 · 开阔处：{swoop.Dives} 趟，线长 {swoop.Length:F1} m{(swoop.Trimmed ? "（为玩家身后的陡面截短）" : "")}，线上陡面 {Meters(swoop.WallAt)}，" +
+                     $"最低离地 {swoop.LowestAlt:F1} m，打中 {swoop.Hits} 下，撞柱 {(swoop.Crashed ? "✗ 是（硬直）" : "✓ 否")}");
                 if (swoop.Dives < 1) Fail("俯冲掠台没有俯冲");
-                else if (!swoop.Crashed && !(swoop.LowestAlt < 2.5f)) Fail($"俯冲掠台没贴地（最低 {swoop.LowestAlt:F1} m）");
+                if (swoop.Crashed) Fail("玩家站在开阔处，俯冲却撞柱硬直（撞柱只该在玩家躲到柱子后面时发生）");
+                else if (!(swoop.LowestAlt < 2.5f)) Fail($"俯冲掠台没贴地（最低 {swoop.LowestAlt:F1} m）");
+                if (swoop.Lured) Fail("玩家站在开阔处，瞄线时却算成了引撞（线上玩家之前有陡面）");
             }
+            yield return PillarLureCase(h);
             yield return WaitIdle();
 
             var rain = boss.MoveById(PengFeatherRain.MoveId) as PengFeatherRain;
@@ -497,6 +555,43 @@ namespace Spiritfire.Game.Testing
                 if (boss.MovesSincePerch != 0) Fail("落台歇翼后计数没清零");
             }
         }
+
+        /// <summary>
+        /// 俯冲掠台 · 柱后：玩家躲在离鹏最近的那根冰柱正后方（沿切线 5 m，柱子夹在玩家和鹏之间）——瞄线算成引撞，鹏照着玩家俯冲、先一头撞上柱子硬直，玩家不挨打。
+        /// 鹏先摆到柱子那一侧的盘旋高度上（不然它此刻盘旋到哪一侧全凭运气）
+        /// </summary>
+        IEnumerator PillarLureCase(IceHoleInfo h)
+        {
+            yield return WaitIdle();
+            var pillars = FindObjectsByType<Transform>(FindObjectsSortMode.None).Where(t => t && t.name.StartsWith("Ice Pillar", StringComparison.Ordinal)).ToList();
+            if (pillars.Count == 0)
+            {
+                Line("场景里没有冰柱（Ice Pillar *）：跳过柱后引撞");
+                yield break;
+            }
+            float birdAz = h.Angle(boss.transform.position);
+            var pillar = pillars.OrderBy(t => Mathf.Abs(Mathf.DeltaAngle(h.Angle(t.position), birdAz))).First();
+            float pAz = h.Angle(pillar.position), pR = h.Distance(pillar.position);
+            float s = Mathf.DeltaAngle(pAz, birdAz) >= 0 ? 1f : -1f;
+            const float behind = 10f;
+            // 玩家方位 = 柱子背着鹏的一侧 10°，离圆心 pR·cos 10°：玩家的切线正好穿过柱心，柱子在玩家前方约 5 m
+            Place(Ring(pAz - s * behind, pR * Mathf.Cos(behind * Mathf.Deg2Rad)));
+            var bird = h.Point(pAz + s * 25f, h.MidRing);
+            bird.y = h.FloorY + (boss.KDef != null ? boss.KDef.pengHover : 13.5f);
+            boss.transform.position = bird;
+            boss.SetFlyVelocity(Vector3.zero);
+            var swoop = boss.MoveById(PengSwoop.MoveId) as PengSwoop;
+            yield return OneMove(swoop, null, true);
+            if (swoop == null) yield break;
+            float gap = Vector3.Distance(Flat(pillar.position), Flat(motor.transform.position));
+            Line($"  俯冲掠台 · 柱后（{pillar.name}，玩家离柱心 {gap:F1} m）：引撞 {(swoop.Lured ? "✓" : "✗")}，线上陡面 {Meters(swoop.WallAt)}，" +
+                 $"撞柱 {(swoop.Crashed ? "✓ 硬直" : "✗ 没撞")}，打中 {swoop.Hits} 下");
+            if (!swoop.Lured) Fail("玩家躲在冰柱正后方，瞄线时没算成引撞（俯冲线没穿过柱子）");
+            if (!swoop.Crashed) Fail("玩家躲在冰柱正后方，鹏俯冲没有撞柱硬直");
+            if (swoop.Hits > 0) Fail($"躲在柱后还被俯冲打中（{swoop.Hits} 下）");
+        }
+
+        static string Meters(float v) => float.IsFinite(v) ? $"{v:F1} m" : "无";
 
         // ───────────── 25%：鹏狂怒 ─────────────
 
