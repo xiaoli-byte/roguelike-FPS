@@ -24,6 +24,11 @@ namespace Spiritfire.Game.Testing
     /// </summary>
     public sealed class WarlordSuite : PlaytestSuite
     {
+        /// <summary>
+        /// 只查人形代理的导航网格：3-3 的熔岩生物网格（LavaSwimmer）铺满了整张图，不带代理类型的查询会采到它，路径就成了「不完整」
+        /// </summary>
+        static NavMeshQueryFilter Humanoid => new() { agentTypeID = NavMesh.GetSettingsByIndex(0).agentTypeID, areaMask = NavMesh.AllAreas };
+
         public override string Id => "boss-warlord";
         /// <summary>3-3 铸范大坊（与编辑器里 Level_3_3.ScenePath 相同）</summary>
         public override string Scene => "Assets/Scenes/L3_3_Foundry.unity";
@@ -453,7 +458,7 @@ namespace Spiritfire.Game.Testing
                 {
                     nextMoveAt = Time.time + 6f;
                     var q = arena.RandomPoint(4f);
-                    if (NavMesh.SamplePosition(q, out var qh, 3f, NavMesh.AllAreas) && !LavaField.IsLava(qh.position)) Place(qh.position);
+                    if (NavMesh.SamplePosition(q, out var qh, 3f, Humanoid) && !LavaField.IsLava(qh.position)) Place(qh.position);
                 }
                 Aim(motor, eye, boss.BodyCenter);
                 var p = boss.transform.position;
@@ -589,7 +594,7 @@ namespace Spiritfire.Game.Testing
             {
                 var dir = Quaternion.Euler(0, yaw, 0) * fwd;
                 var spot = arena.Clamp(boss.transform.position + dir * distance, 2f);
-                if (!NavMesh.SamplePosition(spot, out var hit, 3f, NavMesh.AllAreas) || LavaField.IsLava(hit.position)) continue;
+                if (!NavMesh.SamplePosition(spot, out var hit, 3f, Humanoid) || LavaField.IsLava(hit.position)) continue;
                 best = hit.position;
                 break;
             }

@@ -141,17 +141,17 @@ namespace Spiritfire.Art.Editor.Levels
             public Vector2 Half => (max - min) * 0.5f;
         }
 
-        static readonly Platform GateTerrace = new() { name = "南闸门", min = new(86, 0), max = new(114, 16), h = 2.5f, ramps = new[] { (new Vector2(100, 27), new Vector2(100, 15.7f), 8f) } };
+        static readonly Platform GateTerrace = new() { name = "南闸门", min = new(86, 0), max = new(114, 16), h = 2.5f, ramps = new[] { (new Vector2(100, 27), new Vector2(100, 16.2f), 8f) } };
         static readonly Platform Ladle = new()
         {
             name = "浇包吊台", min = new(94, 60), max = new(106, 72), h = 3f,
-            ramps = new[] { (new Vector2(100, 81), new Vector2(100, 71.7f), 5f), (new Vector2(100, 51), new Vector2(100, 60.3f), 5f) },
+            ramps = new[] { (new Vector2(100, 81.5f), new Vector2(100, 72.2f), 5f), (new Vector2(100, 50.5f), new Vector2(100, 59.8f), 5f) },
         };
-        static readonly Platform WallTerrace = new() { name = "铸铁墙台", min = new(186, 40), max = new(198, 84), h = 3.5f, ramps = new[] { (new Vector2(192, 93.5f), new Vector2(192, 83.7f), 5f) } };
-        static readonly Platform Altar = new() { name = "炉坛", min = new(12, 140), max = new(20, 164), h = 3.5f, ramps = new[] { (new Vector2(16, 130.3f), new Vector2(16, 140.3f), 5f) } };
-        static readonly Platform Service = new() { name = "检修台", min = new(78, 144), max = new(86, 160), h = 3f, ramps = new[] { (new Vector2(82, 168.5f), new Vector2(82, 159.7f), 5f) } };
-        static readonly Platform WindTerrace = new() { name = "风闸台", min = new(60, 190), max = new(92, 212), h = 2f, ramps = new[] { (new Vector2(64, 181), new Vector2(64, 190.3f), 6f) } };
-        static readonly Platform Dais = new() { name = "神范台", min = new(176, 192), max = new(198, 212), h = 3.5f, ramps = new[] { (new Vector2(184, 182.5f), new Vector2(184, 192.3f), 6f) } };
+        static readonly Platform WallTerrace = new() { name = "铸铁墙台", min = new(186, 40), max = new(198, 84), h = 3.5f, ramps = new[] { (new Vector2(192, 94.5f), new Vector2(192, 84.2f), 5f) } };
+        static readonly Platform Altar = new() { name = "炉坛", min = new(12, 140), max = new(20, 164), h = 3.5f, ramps = new[] { (new Vector2(16, 129.5f), new Vector2(16, 139.8f), 5f) } };
+        static readonly Platform Service = new() { name = "检修台", min = new(78, 144), max = new(86, 160), h = 3f, ramps = new[] { (new Vector2(82, 169f), new Vector2(82, 160.2f), 5f) } };
+        static readonly Platform WindTerrace = new() { name = "风闸台", min = new(60, 190), max = new(92, 212), h = 2f, ramps = new[] { (new Vector2(64, 180.5f), new Vector2(64, 189.8f), 6f) } };
+        static readonly Platform Dais = new() { name = "神范台", min = new(176, 192), max = new(198, 212), h = 3.5f, ramps = new[] { (new Vector2(184, 181f), new Vector2(184, 191.8f), 6f) } };
         static readonly Platform[] Platforms = { GateTerrace, Ladle, WallTerrace, Altar, Service, WindTerrace, Dais };
 
         // ───────────── 场地 / 标记 ─────────────
@@ -426,7 +426,13 @@ namespace Spiritfire.Art.Editor.Levels
         /// <summary>占位白盒改名「id · 用途 (Placeholder)」：地标视线按名字前缀认（白盒默认叫「Placeholder · id」认不出来），占位检查仍按标签和名字列出来</summary>
         static void Label(GameObject go, string id, string what)
         {
-            if (go && go.CompareTag(LevelKit.PlaceholderTag)) go.name = $"{id} · {what} (Placeholder)";
+            if (go && go.CompareTag(LevelKit.PlaceholderTag))
+            {
+                go.name = $"{id} · {what} (Placeholder)";
+                // 第三章白盒换成暗铁色：默认的白色占位材质在火狱的 Bloom 下一片刺眼，读不出场景
+                var r = go.GetComponent<MeshRenderer>();
+                if (r) r.sharedMaterial = LevelKit.Mat(Dir, "Ch3Placeholder", new Color(0.36f, 0.3f, 0.27f), 0.85f);
+            }
             else if (go) go.name = $"{go.name} · {what}";
         }
 
@@ -465,7 +471,7 @@ namespace Spiritfire.Art.Editor.Levels
                     var spec = new LevelKit.LavaSpec
                     {
                         name = $"{c.name} {++n}", center = new Vector3(mid.x, c.lava, mid.y), shape = LavaShape.Box, size = new Vector2(width, s1 - s0), yaw = c.Yaw,
-                        depth = c.arena ? 1f : 1.6f, depthShore = true, flow = new Vector2(0, (c.arena ? 0.25f : 0.45f) * sign),
+                        depth = c.arena ? 1f : 1.6f, depthShore = !c.arena, flow = new Vector2(0, (c.arena ? 0.25f : 0.45f) * sign),
                     };
                     if (!c.arena)
                         spec.tide = new LavaTide
@@ -479,7 +485,7 @@ namespace Spiritfire.Art.Editor.Levels
             // 中央熔池（漫溢圈 10 m）
             set.surge.Add(LevelKit.PlaceLava(Dir, new LevelKit.LavaSpec
             {
-                name = "神范熔池", center = new Vector3(Basin.x, ArenaLava, Basin.y), shape = LavaShape.Disc, size = new Vector2(BasinR + BankStrip, 0), depth = 1f, depthShore = true,
+                name = "神范熔池", center = new Vector3(Basin.x, ArenaLava, Basin.y), shape = LavaShape.Disc, size = new Vector2(BasinR + BankStrip, 0), depth = 1f, depthShore = false,
             }, root));
             // 桥下的静止熔岩
             foreach (var b in Bridges)
@@ -488,7 +494,7 @@ namespace Spiritfire.Art.Editor.Levels
                 set.still.Add(LevelKit.PlaceLava(Dir, new LevelKit.LavaSpec
                 {
                     name = $"桥下 · {b.name}", center = new Vector3(c.x, b.ch.lava, c.y), shape = LavaShape.Box, size = new Vector2(b.ch.half * 2f, b.width + 2f), yaw = b.ch.Yaw,
-                    depth = b.ch.arena ? 1f : 1.6f, depthShore = true, flow = new Vector2(0, 0.3f * b.ch.flow),
+                    depth = b.ch.arena ? 1f : 1.6f, depthShore = !b.ch.arena, flow = new Vector2(0, 0.3f * b.ch.flow),
                 }, root));
             }
             return set;
@@ -1168,6 +1174,12 @@ namespace Spiritfire.Art.Editor.Levels
         static LevelSpec Spec(LevelKit.TerrainSet set)
         {
             Vector3 G(Vector2 q, float dy = 0) => set.OnGround(q.x, q.y, dy);
+            // 桥上的路点取桥面（地形在桥下是渠底：按地形贴地会落进渠里，采到渠底的熔岩导航区）
+            Vector3 Deck(string id)
+            {
+                var c = BridgeById(id).Center;
+                return new Vector3(c.x, DeckTop, c.y);
+            }
             SiteSpec S(string name, Vector2 c, float size, int cover = -1, int layers = -1, bool overlook = false, bool combat = true) =>
                 new() { name = name, center = G(c), size = size, minCover = cover, minLayers = layers, overlook = overlook, combat = combat };
             var mouldTop = G(MouldAt, 6.5f);
@@ -1189,15 +1201,15 @@ namespace Spiritfire.Art.Editor.Levels
                 }
                 .Route("出生 · 南闸门", G(Spawn)).Route("闸台坡脚", G(GateTerrace.ramps[0].foot + new Vector2(0, 2)))
                 .Route("① 浇包吊台顶", G(Ladle.Center + new Vector2(-3, -3))).Route("① 东侧", G(new Vector2(126, 52)))
-                .Route("东桥", G(BridgeById("B1").Center, DeckTop)).Route("③ 范列", G(new Vector2(162, 56)))
+                .Route("东桥", Deck("B1")).Route("③ 范列", G(new Vector2(162, 56)))
                 .Route("③ 铸铁墙台", G(new Vector2(192, 66))).Route("③ 北侧", G(new Vector2(170, 90)))
-                .Route("东桥（回）", G(BridgeById("B1").Center, DeckTop)).Route("殿前桥", G(BridgeById("B3").Center, DeckTop))
+                .Route("东桥（回）", Deck("B1")).Route("殿前桥", Deck("B3"))
                 .Route("② 南风箱道", G(new Vector2(60, 141))).Route("② 十字口", G(HallSite)).Route("② 炉坛", G(Altar.Center))
                 .Route("② 北风箱道", G(new Vector2(40, 166))).Route("风闸台", G(WindGateAt + new Vector2(-4, -3)))
-                .Route("闸前桥", G(BridgeById("B5").Center, DeckTop)).Route("⑤ 西北象限", G(new Vector2(126, 186)))
-                .Route("⑤ 神范北桥", G(BridgeById("AN").Center, DeckTop)).Route("⑤ 东北象限", G(new Vector2(170, 186)))
-                .Route("⑤ 神范台顶（出口）", G(ExitAt)).Route("⑤ 神范东桥", G(BridgeById("AE").Center, DeckTop))
-                .Route("⑤ 东南象限", G(new Vector2(176, 140))).Route("东铸北桥", G(BridgeById("B6").Center, DeckTop))
+                .Route("闸前桥", Deck("B5")).Route("⑤ 西北象限", G(new Vector2(126, 186)))
+                .Route("⑤ 神范北桥", Deck("AN")).Route("⑤ 东北象限", G(new Vector2(170, 186)))
+                .Route("⑤ 神范台顶（出口）", G(ExitAt)).Route("⑤ 神范东桥", Deck("AE"))
+                .Route("⑤ 东南象限", G(new Vector2(176, 140))).Route("东铸北桥", Deck("B6"))
                 .Route("③ 东铸床北头", G(new Vector2(178, 100)))
                 .Sight("南闸门 → 浇包吊台", G(Spawn, 1.62f), G(new Vector2(103, 68), Ladle.h + 2.2f), 6, CrucibleId)
                 .Sight("南闸门 → 神范", G(Spawn, 1.62f), mouldTop, 8, MouldId)
