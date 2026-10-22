@@ -1,0 +1,320 @@
+{
+  "id": "SM_Tripo_FrostIcicleShards",
+  "display": "冰棱碎块（射落后的掩体 / 冰柱碎后）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:10:30",
+          "files": {
+            "BO_SM_Tripo_FrostIcicleShards_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostIcicleShards_v001.json",
+              "sha256": "b7caf52628845d2d76dd40527eff62802482e04322f4f5e287451c8744a488f7"
+            },
+            "BO_SM_Tripo_FrostIcicleShards_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostIcicleShards_v001_views.json",
+              "sha256": "fbad9ed309c022489448e9c334f13d5a2483e991ee805e8a610e89d3af40e153"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost.icefall.icicleShards"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -1.6,
+              0.0,
+              -1.2
+            ],
+            "max": [
+              1.6,
+              1.0,
+              1.2
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:11:08",
+          "files": {
+            "CN_SM_Tripo_FrostIcicleShards_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIcicleShards_v001_source.png",
+              "sha256": "7892e9125fe20aa8b9baa23e4a86ff8e6aae721a95103918dddfe2304ff81f43"
+            },
+            "CN_SM_Tripo_FrostIcicleShards_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIcicleShards_v001_front.png",
+              "sha256": "caa210fa09b6c19ec43ee0fa66e63bd8ee65cd521c501d2e02bba122511d9e3d"
+            },
+            "CN_SM_Tripo_FrostIcicleShards_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIcicleShards_v001_left.png",
+              "sha256": "de48e741ce36e7abaabd7ce56c9dbb8cf96f374926b6bfaeb2ea6967beee1879"
+            },
+            "CN_SM_Tripo_FrostIcicleShards_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIcicleShards_v001_back.png",
+              "sha256": "b867d2e612d28942d97e03a98fc314a301d517ad7ff1e05c03219d5669cfb5dd"
+            },
+            "CN_SM_Tripo_FrostIcicleShards_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIcicleShards_v001_right.png",
+              "sha256": "c26f64a5b45cfa4a14222b8ed321da57105c4aefd5815010cdf89b4df94ec4aa"
+            },
+            "CN_SM_Tripo_FrostIcicleShards_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIcicleShards_v001_sheet.png",
+              "sha256": "32c06b9105e171e26ef0a7e4f2e53d71aa31937aeb9d42891a12c43288eb6190"
+            },
+            "CN_SM_Tripo_FrostIcicleShards_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostIcicleShards_v001_prompt.txt",
+              "sha256": "07d973f456834e5c4f25fdb3ea99fe85208f01c7dffdc46a7b3f1d236439fd45"
+            },
+            "CN_SM_Tripo_FrostIcicleShards_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostIcicleShards_v001_registration.json",
+              "sha256": "a0d1088765e57c8bd760bb6f2e2fb6295c9738d33d314cb7ccfa89f2fc088caf"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a15b5d-b601-7630-a940-3beedfdb216b",
+            "attempt": 1,
+            "seconds": 34.6
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (3.2m wide x 1m tall x 2.4m deep): The wreck of a big icicle that fell and shattered on the ground, 3.2m wide, 1m tall and 2.4m deep: four or five big chunky faceted ice chunks lying in a low heap, the largest a broken thick icicle shaft lying on its side with its blunt tip pointing away, smaller angular broken blocks leaning against it with fresh flat fracture faces, a little scattered snow at the base. Opaque solid glacier ice painted pale sky blue, the fracture faces brighter and whiter, deeper turquoise in the grooves. PROPORTIONS: a low heap, the FRONT and BACK views about 3.2 times as wide as tall, the LEFT and RIGHT views about 2.4 times as wide as tall. Chunky broad facets, no tiny splinters, no transparent ice. One solid connected group resting on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "7892e9125fe20aa8b9baa23e4a86ff8e6aae721a95103918dddfe2304ff81f43",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.4342162396873642,
+              "offset": [
+                136,
+                440
+              ],
+              "size": [
+                239,
+                143
+              ],
+              "physical_height_m": 1.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.404694455685957,
+              "offset": [
+                187,
+                440
+              ],
+              "size": [
+                138,
+                143
+              ],
+              "physical_height_m": 1.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.4382120946538124,
+              "offset": [
+                133,
+                440
+              ],
+              "size": [
+                245,
+                143
+              ],
+              "physical_height_m": 1.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.39354584809130255,
+              "offset": [
+                185,
+                440
+              ],
+              "size": [
+                141,
+                143
+              ],
+              "physical_height_m": 1.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-21 ART5：四视图一致、比例与登记相符（用户 2026-10-19 授权免审）",
+            "time": "2026-10-21 06:17:24"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:57:51",
+          "files": {
+            "HP_SM_Tripo_FrostIcicleShards_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostIcicleShards_v001_source.glb",
+              "sha256": "99fb800fb37d6058179047e27e99339033bad58549549d8a0af8a042ec944f9a"
+            },
+            "HP_SM_Tripo_FrostIcicleShards_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostIcicleShards_v001.glb",
+              "sha256": "71b38cf0e2315a56df2d8718433d0662c42b71db2faa2eac5f2e83c95960659d"
+            },
+            "HP_SM_Tripo_FrostIcicleShards_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostIcicleShards_v001_graph.json",
+              "sha256": "522b09eb8b145bbca270ba494f525fd0ffa24a12ef64f3fac67cc19e9f54d11b"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/47ce2d74-2a8a-4d10-8797-d59b9a317840",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 2408,
+          "source_sha256": "99fb800fb37d6058179047e27e99339033bad58549549d8a0af8a042ec944f9a"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:58:08",
+          "files": {
+            "SM_Tripo_FrostIcicleShards_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostIcicleShards_v001.blend",
+              "sha256": "e3a9f22c5410e0505e0e42cc0e29a0560a62e45a941a9b1f597a776f4e420898"
+            },
+            "SM_Tripo_FrostIcicleShards_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostIcicleShards_v001.glb",
+              "sha256": "1ad7455251afc9029e0417fd7f4e5860b6aa82ee19eb94dbed95d9bfc954b897"
+            },
+            "SM_Tripo_FrostIcicleShards_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostIcicleShards_v001_metrics.json",
+              "sha256": "298ddeb3f94673e6747a6862c269a88f433eef0ba3960a78b595903d711b6b4e"
+            },
+            "T_Tripo_FrostIcicleShards_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostIcicleShards_BC.png",
+              "sha256": "a61fa17819b2448f96d415e989c4553045f922e8894d899a62fd72d50b54fe62"
+            },
+            "T_Tripo_FrostIcicleShards_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostIcicleShards_N.png",
+              "sha256": "42c7c21d9eccaf70ed567bfa7fd383f13c18c1f31360be0436a073a70b35ccd1"
+            },
+            "T_Tripo_FrostIcicleShards_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostIcicleShards_ORM.png",
+              "sha256": "d11cee9df489e678f72223d2c69a2361183743539f7a7af08e4dd3d08035da24"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.79,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2408,
+              "verts": 1590
+            },
+            {
+              "tris": 995,
+              "verts": 775
+            }
+          ],
+          "export_kb": 260.1,
+          "seconds": 15.1,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:58:12",
+          "files": {
+            "SM_Tripo_FrostIcicleShards_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostIcicleShards_v001_validation_v001.json",
+              "sha256": "e7177169d23833a127e860bfbb06900ddee43a98d70e2f8c4c552387a4c0742c"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:58:20",
+          "files": {
+            "SM_Tripo_FrostIcicleShards_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostIcicleShards_v001_review_v001.png",
+              "sha256": "c6807673bda70d5e56193bf3826d1b19d8350c5038da6ae6f6c21b808fe72e66"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-22 ART5：审核图四视图与概念一致（用户 2026-10-19 授权免审）",
+            "time": "2026-10-22 22:10:50"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 22:10:50",
+          "files": {
+            "SM_Tripo_FrostIcicleShards.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostIcicleShards.glb",
+              "sha256": "1ad7455251afc9029e0417fd7f4e5860b6aa82ee19eb94dbed95d9bfc954b897"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_FrostIcicleShards.glb"
+        }
+      ]
+    }
+  }
+}

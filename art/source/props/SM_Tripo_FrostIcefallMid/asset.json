@@ -1,0 +1,348 @@
+{
+  "id": "SM_Tripo_FrostIcefallMid",
+  "display": "冰瀑中段（冰柱帘）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:09:00",
+          "files": {
+            "BO_SM_Tripo_FrostIcefallMid_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostIcefallMid_v001.json",
+              "sha256": "e76b26e09845fdb778de645a5fe5247ae7a702aa58c080b9c4ec1a18ef0f132e"
+            },
+            "BO_SM_Tripo_FrostIcefallMid_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostIcefallMid_v001_views.json",
+              "sha256": "8245a756d7347f23ff52a1821cf78ffd1e42db7e2a64b9e477a716d93ff5bfe2"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost.icefall.mid"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -10.0,
+              0.0,
+              -4.0
+            ],
+            "max": [
+              10.0,
+              16.0,
+              4.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:09:41",
+          "files": {
+            "CN_SM_Tripo_FrostIcefallMid_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIcefallMid_v001_source.png",
+              "sha256": "565dfcd14bc106666dddc1a8530d17ef776278ffc484646070a320bd23894b99"
+            },
+            "CN_SM_Tripo_FrostIcefallMid_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIcefallMid_v001_front.png",
+              "sha256": "934c534bad8334d215c42b36edf074184c47b96cf79b7d44003203611dff5e09"
+            },
+            "CN_SM_Tripo_FrostIcefallMid_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIcefallMid_v001_left.png",
+              "sha256": "bcb5ddf3b31b1276a025fea0caa97ebada38b317a5f24183aa17844000af19c1"
+            },
+            "CN_SM_Tripo_FrostIcefallMid_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIcefallMid_v001_back.png",
+              "sha256": "bd0eb0a6fbc78488a3881b11a07473a1b2f2bac6b37bfc11225b5e6780fce3fc"
+            },
+            "CN_SM_Tripo_FrostIcefallMid_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIcefallMid_v001_right.png",
+              "sha256": "22b1384b2e4f54b04a52a4eed7136cd84a57b50264de4caeef598515528f71eb"
+            },
+            "CN_SM_Tripo_FrostIcefallMid_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIcefallMid_v001_sheet.png",
+              "sha256": "48febb1aace58105b761f76fe2a8a294adf09bf669fa294797043ad6735481e5"
+            },
+            "CN_SM_Tripo_FrostIcefallMid_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostIcefallMid_v001_prompt.txt",
+              "sha256": "9cc665c95da9ffa3a05b27f7d9af97a71596d015a182d9f4cc2b1362dc53ee21"
+            },
+            "CN_SM_Tripo_FrostIcefallMid_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostIcefallMid_v001_registration.json",
+              "sha256": "82ea0b54507b735676b1937b5ab7eb7a304fe597b1b658ee31db3d635fd36baf"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a15b5c-5da8-76d1-bebb-0e1540cea025",
+            "attempt": 1,
+            "seconds": 38.6
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (20m wide x 16m tall x 8m deep): The MIDDLE segment of a colossal frozen waterfall, 20m wide, 16m tall and 8m deep, one of three stacked segments: a tall continuous curtain of thick frozen ice falling straight down, made of fat vertical fluted ice columns of different thickness fused side by side, some bulging forward in rounded lobes, two or three big hanging ice daggers in front, a few dark blue-grey granite ribs showing through the ice near both side edges. Opaque solid glacier ice painted pale sky blue with whiter frosted crests and deeper turquoise in the grooves. The TOP edge and the BOTTOM edge are both straight horizontal cuts across the full width so the other segments stack above and below it. The BACK is a flat rough granite face that sits against the cliff. PROPORTIONS: the FRONT and BACK views are drawn about 1.25 times as wide as tall; the LEFT and RIGHT views are about 0.5 times as wide as tall. Broad chunky readable forms, no water spray, no mist, no transparent ice, no particles. One solid connected piece.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "565dfcd14bc106666dddc1a8530d17ef776278ffc484646070a320bd23894b99",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.5262076053442959,
+              "offset": [
+                79,
+                329
+              ],
+              "size": [
+                353,
+                366
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5262076053442959,
+              "offset": [
+                211,
+                329
+              ],
+              "size": [
+                89,
+                366
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5246976839516294,
+              "offset": [
+                75,
+                329
+              ],
+              "size": [
+                361,
+                366
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.5254515599343185,
+              "offset": [
+                207,
+                329
+              ],
+              "size": [
+                97,
+                366
+              ],
+              "physical_height_m": 16.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-21 ART5：四视图一致、比例与登记相符（用户 2026-10-19 授权免审）",
+            "time": "2026-10-21 06:17:23"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:45:27",
+          "files": {
+            "HP_SM_Tripo_FrostIcefallMid_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostIcefallMid_v001_source.glb",
+              "sha256": "b0ccabf834c9910224afc37a9391e26ba9881e3150468134229e75895d58410e"
+            },
+            "HP_SM_Tripo_FrostIcefallMid_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostIcefallMid_v001.glb",
+              "sha256": "732fbb021c427f3f29df6f4fb0d642fa574832afc1f64457a6a3275e260a753f"
+            },
+            "HP_SM_Tripo_FrostIcefallMid_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostIcefallMid_v001_graph.json",
+              "sha256": "28fba582dfb907bd32cbfab56191cf8af14f0cbc3da6d06242daa9a06e4ecb42"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/dc630864-8cdd-4de8-b5d7-162ea761ddc7",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 8481,
+          "source_sha256": "b0ccabf834c9910224afc37a9391e26ba9881e3150468134229e75895d58410e"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:46:27",
+          "files": {
+            "SM_Tripo_FrostIcefallMid_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostIcefallMid_v001.blend",
+              "sha256": "cf9b3ec2795651a8be67a2ec2b767595221c69991213a4a8b8c159ac1fa0d51f"
+            },
+            "SM_Tripo_FrostIcefallMid_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostIcefallMid_v001.glb",
+              "sha256": "c5749f5d7185cb98ee6bf3b111060bbce0ed43a45cd22ad54634b595c2dde2ea"
+            },
+            "SM_Tripo_FrostIcefallMid_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostIcefallMid_v001_metrics.json",
+              "sha256": "10cd8c8345bb23144ac74e992b705f174f4952dcc1f0b53ee6216935a6326ce2"
+            },
+            "T_Tripo_FrostIcefallMid_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostIcefallMid_BC.png",
+              "sha256": "300bf36f7703c44f1bd7b971cf381cd494d968fb7b0c765592dee8a0e3ef6ad0"
+            },
+            "T_Tripo_FrostIcefallMid_LOD1_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostIcefallMid_LOD1_BC.png",
+              "sha256": "51d20b8e1eda63678d0f52114916a972a16c1fb38c656526467d7415c4a9c084"
+            },
+            "T_Tripo_FrostIcefallMid_LOD1_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostIcefallMid_LOD1_N.png",
+              "sha256": "e8ecde7a18e74f8153ce79aaf41b2492c491b14fdef8c51cc4eb35b9be1d2699"
+            },
+            "T_Tripo_FrostIcefallMid_LOD1_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostIcefallMid_LOD1_ORM.png",
+              "sha256": "1d3c9f3deb2b7f2c1d2435b08cc6f4227b2db8e17d583a86eea8150afec93d43"
+            },
+            "T_Tripo_FrostIcefallMid_LOD2_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostIcefallMid_LOD2_BC.png",
+              "sha256": "cbd06f9c3a296ebadfc2ab1070ec31e1eb6ea301224242fa0c2ae7a7e116c711"
+            },
+            "T_Tripo_FrostIcefallMid_LOD2_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostIcefallMid_LOD2_N.png",
+              "sha256": "064e8cbb03d72bfd106a6b78cab3877f3a6381ee56362f16122d6398a998f1e5"
+            },
+            "T_Tripo_FrostIcefallMid_LOD2_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostIcefallMid_LOD2_ORM.png",
+              "sha256": "d12b5f4ca217e6ed9eb189110c45d7e1c5b2131ea14dd6585f8b5e3db6fb7763"
+            },
+            "T_Tripo_FrostIcefallMid_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostIcefallMid_N.png",
+              "sha256": "dccb11658b3d805489f6f439b6f765044dabb2a6957c9d7ec2f1c49f56599fd2"
+            },
+            "T_Tripo_FrostIcefallMid_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostIcefallMid_ORM.png",
+              "sha256": "9b8d58e984f29479e035a46e632bfa21b70c8d210f0d451c79d220e88e390027"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.834,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7959,
+              "verts": 4377
+            },
+            {
+              "tris": 2486,
+              "verts": 1537
+            },
+            {
+              "tris": 795,
+              "verts": 585
+            }
+          ],
+          "export_kb": 1010.8,
+          "seconds": 59.2,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:46:34",
+          "files": {
+            "SM_Tripo_FrostIcefallMid_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostIcefallMid_v001_validation_v001.json",
+              "sha256": "cfe0d19a6a8d0173b98c9da7935139c562e149df267eb49f47b5006492b535fa"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:46:43",
+          "files": {
+            "SM_Tripo_FrostIcefallMid_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostIcefallMid_v001_review_v001.png",
+              "sha256": "1ba69d0bdb951036bb54279c3f479b5e213a7cfc6b7a5f36ee816f3b570a4deb"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-22 ART5：审核图四视图与概念一致（用户 2026-10-19 授权免审）",
+            "time": "2026-10-22 22:10:47"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 22:10:47",
+          "files": {
+            "SM_Tripo_FrostIcefallMid.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostIcefallMid.glb",
+              "sha256": "c5749f5d7185cb98ee6bf3b111060bbce0ed43a45cd22ad54634b595c2dde2ea"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_FrostIcefallMid.glb"
+        }
+      ]
+    }
+  }
+}

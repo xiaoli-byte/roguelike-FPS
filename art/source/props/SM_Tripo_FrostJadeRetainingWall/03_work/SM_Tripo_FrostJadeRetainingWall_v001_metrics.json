@@ -1,0 +1,197 @@
+{
+  "source": {
+    "tris": 5962,
+    "verts": 3186
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 7.0248,
+    "iou": 0.851,
+    "iou_per_view": {
+      "front": 0.918,
+      "left": 0.767,
+      "back": 0.929,
+      "right": 0.756
+    },
+    "size_m": [
+      7.021,
+      2.26,
+      6.5
+    ],
+    "reference_m": [
+      8.0,
+      2.5,
+      6.5
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.673,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_FrostJadeRetainingWall_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "rebaked",
+      "texture": 1024,
+      "cage_m": 0.0975,
+      "uv": {
+        "smart_islands": 390,
+        "charts": 38,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "merged",
+        "density_smart": 0.0769,
+        "density_merged": 0.0846,
+        "coverage": 0.773
+      },
+      "collapse": {
+        "samples": 23828,
+        "matched_ratio": 0.993,
+        "mean_delta": 0.0191,
+        "p90_delta": 0.0497,
+        "smeared_ratio": 0.0086,
+        "stretched_ratio": 0.0815,
+        "dist_p99_m": 0.0147
+      },
+      "final": {
+        "samples": 23828,
+        "matched_ratio": 0.993,
+        "mean_delta": 0.0065,
+        "p90_delta": 0.0123,
+        "smeared_ratio": 0.0033,
+        "stretched_ratio": 0.0431,
+        "dist_p99_m": 0.0147
+      }
+    },
+    "LOD2": {
+      "method": "rebaked",
+      "texture": 512,
+      "cage_m": 0.0975,
+      "uv": {
+        "smart_islands": 164,
+        "charts": 40,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "smart",
+        "density_smart": 0.0866,
+        "density_merged": 0.0865,
+        "coverage": 0.872
+      },
+      "collapse": {
+        "samples": 23213,
+        "matched_ratio": 0.967,
+        "mean_delta": 0.0311,
+        "p90_delta": 0.082,
+        "smeared_ratio": 0.0257,
+        "stretched_ratio": 0.1422,
+        "dist_p99_m": 0.0472
+      },
+      "final": {
+        "samples": 23213,
+        "matched_ratio": 0.967,
+        "mean_delta": 0.0115,
+        "p90_delta": 0.0296,
+        "smeared_ratio": 0.0066,
+        "stretched_ratio": 0.0002,
+        "dist_p99_m": 0.0472
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostJadeRetainingWall_LOD0",
+      "tris": 5962,
+      "verts": 3186,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.555,
+      "bbox_min": [
+        -3.5107,
+        -1.1302,
+        0.0
+      ],
+      "bbox_max": [
+        3.5107,
+        1.1302,
+        6.5
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostJadeRetainingWall_LOD1",
+      "tris": 2487,
+      "verts": 1385,
+      "uv_min": [
+        0.00191440898925066,
+        0.00206181057728827
+      ],
+      "uv_max": [
+        0.9981353878974915,
+        0.987075686454773
+      ],
+      "uv_utilization": 0.738,
+      "bbox_min": [
+        -3.5091,
+        -1.1302,
+        -0.0093
+      ],
+      "bbox_max": [
+        3.5213,
+        1.1302,
+        6.4999
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostJadeRetainingWall_LOD2",
+      "tris": 796,
+      "verts": 489,
+      "uv_min": [
+        0.0037368228659033775,
+        0.003125159302726388
+      ],
+      "uv_max": [
+        0.9950304627418518,
+        0.9969186186790466
+      ],
+      "uv_utilization": 0.742,
+      "bbox_min": [
+        -3.4898,
+        -1.1411,
+        -0.0259
+      ],
+      "bbox_max": [
+        3.513,
+        1.144,
+        6.5215
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostJadeRetainingWall/04_export/SM_Tripo_FrostJadeRetainingWall_v001.glb",
+    "bytes": 954708
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 48.6,
+  "_seconds": 50.4
+}

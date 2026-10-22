@@ -1,0 +1,197 @@
+{
+  "source": {
+    "tris": 8481,
+    "verts": 4642
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 16.00782,
+    "iou": 0.834,
+    "iou_per_view": {
+      "front": 0.945,
+      "left": 0.659,
+      "back": 0.958,
+      "right": 0.719
+    },
+    "size_m": [
+      15.875,
+      5.167,
+      16.0
+    ],
+    "reference_m": [
+      20.0,
+      8.0,
+      16.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.748,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_FrostIcefallMid_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "rebaked",
+      "texture": 1024,
+      "cage_m": 0.24,
+      "uv": {
+        "smart_islands": 314,
+        "charts": 48,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "merged",
+        "density_smart": 0.0257,
+        "density_merged": 0.0265,
+        "coverage": 0.612
+      },
+      "collapse": {
+        "samples": 23732,
+        "matched_ratio": 0.989,
+        "mean_delta": 0.0117,
+        "p90_delta": 0.0273,
+        "smeared_ratio": 0.0058,
+        "stretched_ratio": 0.0424,
+        "dist_p99_m": 0.0514
+      },
+      "final": {
+        "samples": 23732,
+        "matched_ratio": 0.989,
+        "mean_delta": 0.0063,
+        "p90_delta": 0.0128,
+        "smeared_ratio": 0.0034,
+        "stretched_ratio": 0.0075,
+        "dist_p99_m": 0.0514
+      }
+    },
+    "LOD2": {
+      "method": "rebaked",
+      "texture": 512,
+      "cage_m": 0.3834,
+      "uv": {
+        "smart_islands": 225,
+        "charts": 50,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "merged",
+        "density_smart": 0.0267,
+        "density_merged": 0.0284,
+        "coverage": 0.727
+      },
+      "collapse": {
+        "samples": 22888,
+        "matched_ratio": 0.954,
+        "mean_delta": 0.0337,
+        "p90_delta": 0.0892,
+        "smeared_ratio": 0.04,
+        "stretched_ratio": 0.1546,
+        "dist_p99_m": 0.1917
+      },
+      "final": {
+        "samples": 22888,
+        "matched_ratio": 0.954,
+        "mean_delta": 0.0124,
+        "p90_delta": 0.0287,
+        "smeared_ratio": 0.0089,
+        "stretched_ratio": 0.0214,
+        "dist_p99_m": 0.1917
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostIcefallMid_LOD0",
+      "tris": 7959,
+      "verts": 4377,
+      "uv_min": [
+        0.0009765625,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.9970703125,
+        0.9990234375
+      ],
+      "uv_utilization": 0.643,
+      "bbox_min": [
+        -7.9375,
+        -2.5833,
+        0.0
+      ],
+      "bbox_max": [
+        7.9375,
+        2.5833,
+        16.0
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostIcefallMid_LOD1",
+      "tris": 2486,
+      "verts": 1537,
+      "uv_min": [
+        0.002521366812288761,
+        0.0026451468002051115
+      ],
+      "uv_max": [
+        0.9976462125778198,
+        0.9912305474281311
+      ],
+      "uv_utilization": 0.565,
+      "bbox_min": [
+        -7.9432,
+        -2.5856,
+        -0.0029
+      ],
+      "bbox_max": [
+        7.9104,
+        2.5737,
+        16.0069
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostIcefallMid_LOD2",
+      "tris": 795,
+      "verts": 585,
+      "uv_min": [
+        0.0024954488035291433,
+        0.002423391444608569
+      ],
+      "uv_max": [
+        0.9879093170166016,
+        0.9975947141647339
+      ],
+      "uv_utilization": 0.633,
+      "bbox_min": [
+        -7.9319,
+        -2.5163,
+        -0.0143
+      ],
+      "bbox_max": [
+        7.9797,
+        2.5473,
+        16.033
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostIcefallMid/04_export/SM_Tripo_FrostIcefallMid_v001.glb",
+    "bytes": 1035024
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 57.3,
+  "_seconds": 59.2
+}

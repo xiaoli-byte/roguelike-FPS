@@ -1,0 +1,197 @@
+{
+  "source": {
+    "tris": 9021,
+    "verts": 4577
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 19.74947,
+    "iou": 0.71,
+    "iou_per_view": {
+      "front": 0.704,
+      "left": 0.671,
+      "back": 0.71,
+      "right": 0.757
+    },
+    "size_m": [
+      14.166,
+      7.84,
+      19.74
+    ],
+    "reference_m": [
+      16.0,
+      7.0,
+      24.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.893,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_FrostCanyonCliff_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "rebaked",
+      "texture": 1024,
+      "cage_m": 0.2961,
+      "uv": {
+        "smart_islands": 484,
+        "charts": 43,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "merged",
+        "density_smart": 0.0265,
+        "density_merged": 0.0311,
+        "coverage": 0.629
+      },
+      "collapse": {
+        "samples": 23836,
+        "matched_ratio": 0.993,
+        "mean_delta": 0.0084,
+        "p90_delta": 0.0207,
+        "smeared_ratio": 0.0006,
+        "stretched_ratio": 0.0362,
+        "dist_p99_m": 0.0691
+      },
+      "final": {
+        "samples": 23836,
+        "matched_ratio": 0.993,
+        "mean_delta": 0.0025,
+        "p90_delta": 0.0055,
+        "smeared_ratio": 0.0,
+        "stretched_ratio": 0.0003,
+        "dist_p99_m": 0.0691
+      }
+    },
+    "LOD2": {
+      "method": "rebaked",
+      "texture": 512,
+      "cage_m": 0.3514,
+      "uv": {
+        "smart_islands": 197,
+        "charts": 40,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "merged",
+        "density_smart": 0.0309,
+        "density_merged": 0.0336,
+        "coverage": 0.743
+      },
+      "collapse": {
+        "samples": 23499,
+        "matched_ratio": 0.979,
+        "mean_delta": 0.0198,
+        "p90_delta": 0.0487,
+        "smeared_ratio": 0.0055,
+        "stretched_ratio": 0.1297,
+        "dist_p99_m": 0.1757
+      },
+      "final": {
+        "samples": 23499,
+        "matched_ratio": 0.979,
+        "mean_delta": 0.0061,
+        "p90_delta": 0.014,
+        "smeared_ratio": 0.0004,
+        "stretched_ratio": 0.0014,
+        "dist_p99_m": 0.1757
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostCanyonCliff_LOD0",
+      "tris": 7960,
+      "verts": 4045,
+      "uv_min": [
+        0.001220703125,
+        0.001220703125
+      ],
+      "uv_max": [
+        0.998779296875,
+        0.997802734375
+      ],
+      "uv_utilization": 0.621,
+      "bbox_min": [
+        -7.083,
+        -3.92,
+        0.0
+      ],
+      "bbox_max": [
+        7.083,
+        3.92,
+        19.7398
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostCanyonCliff_LOD1",
+      "tris": 2487,
+      "verts": 1287,
+      "uv_min": [
+        0.002278443891555071,
+        0.0022784522734582424
+      ],
+      "uv_max": [
+        0.9977215528488159,
+        0.9853658676147461
+      ],
+      "uv_utilization": 0.586,
+      "bbox_min": [
+        -7.0858,
+        -3.907,
+        -0.0263
+      ],
+      "bbox_max": [
+        7.0934,
+        3.9209,
+        19.7179
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostCanyonCliff_LOD2",
+      "tris": 795,
+      "verts": 421,
+      "uv_min": [
+        0.002218669280409813,
+        0.0022587329149246216
+      ],
+      "uv_max": [
+        0.9977889657020569,
+        0.9917048215866089
+      ],
+      "uv_utilization": 0.664,
+      "bbox_min": [
+        -7.1678,
+        -3.8788,
+        -0.1245
+      ],
+      "bbox_max": [
+        7.0326,
+        3.9209,
+        19.8
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostCanyonCliff/04_export/SM_Tripo_FrostCanyonCliff_v002.glb",
+    "bytes": 856708
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 50.1,
+  "_seconds": 51.8
+}

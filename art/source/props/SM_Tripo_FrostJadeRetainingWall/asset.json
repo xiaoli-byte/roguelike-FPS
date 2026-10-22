@@ -1,0 +1,462 @@
+{
+  "id": "SM_Tripo_FrostJadeRetainingWall",
+  "display": "白玉挡土墙段（2-2 台地，带栏板）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:14:49",
+          "files": {
+            "BO_SM_Tripo_FrostJadeRetainingWall_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostJadeRetainingWall_v001.json",
+              "sha256": "dc1163750a4b373efadded7e68ce6f648c1ccf708a03872143ce4a7decef997c"
+            },
+            "BO_SM_Tripo_FrostJadeRetainingWall_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostJadeRetainingWall_v001_views.json",
+              "sha256": "b51ca4a59202b335d6197239203c905b51482851c00cc4dcaeb27f632e0224a8"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost.kunlun.retainingWall"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -4.0,
+              0.0,
+              -1.25
+            ],
+            "max": [
+              4.0,
+              6.5,
+              1.25
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:15:30",
+          "files": {
+            "CN_SM_Tripo_FrostJadeRetainingWall_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeRetainingWall_v001_source.png",
+              "sha256": "ba1e05e6e06636eafdc8178077ca8706f2609e29a0cfcd7784e86b7eac583667"
+            },
+            "CN_SM_Tripo_FrostJadeRetainingWall_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeRetainingWall_v001_front.png",
+              "sha256": "3202c806de5611c0496b9bd391f254045ea89f84a46e65253fa4cf0800b5ea93"
+            },
+            "CN_SM_Tripo_FrostJadeRetainingWall_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeRetainingWall_v001_left.png",
+              "sha256": "1d8585337ed2eb22b2abae051f729cf51de84d04813f9289648d61c4c6be3668"
+            },
+            "CN_SM_Tripo_FrostJadeRetainingWall_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeRetainingWall_v001_back.png",
+              "sha256": "fcbc18d674efdf4152f91ba0d68a78de34484092b8396a60f0622b137abd0b19"
+            },
+            "CN_SM_Tripo_FrostJadeRetainingWall_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeRetainingWall_v001_right.png",
+              "sha256": "224a446ed157b977be061c56836289bd24fa6e20782829ac01d7b11383e257a3"
+            },
+            "CN_SM_Tripo_FrostJadeRetainingWall_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeRetainingWall_v001_sheet.png",
+              "sha256": "327728d4391939a510eb8ae70a56228b168c0359c6aeea992d0f99c895af415b"
+            },
+            "CN_SM_Tripo_FrostJadeRetainingWall_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeRetainingWall_v001_prompt.txt",
+              "sha256": "48931c29185390f8152ad664356c5757b0089792db3174f6ec011154f7693627"
+            },
+            "CN_SM_Tripo_FrostJadeRetainingWall_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeRetainingWall_v001_registration.json",
+              "sha256": "8592e57845ebd65ffad2d2c6d6e28aeb66948fba01418cbf330e8b0fd9181ce2"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a15b61-ab84-7081-a196-ed2a47a80332",
+            "attempt": 1,
+            "seconds": 37.9
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (8m wide x 6.5m tall x 2.5m deep): A tileable terrace retaining wall section of a Kunlun mountain palace, 8m wide, 6.5m tall and 2.5m deep: a slightly battered wall face 5.4m tall of big pale grey-white granite ashlar blocks, a carved white jade lotus-petal moulding band along the top edge, and on top a white jade balustrade 1.1m tall: square posts with round cloud-scroll caps and SOLID carved panels between them (no openings). Thick soft snow on the balustrade top, on the moulding and drifted against the wall foot; one thin verdigris bronze drain spout in the middle with a short chunky icicle. Both LEFT and RIGHT ends are flat cut faces so identical sections join seamlessly in a row; the BACK is a flat face (it holds back the upper terrace). PROPORTIONS: the FRONT and BACK views are drawn about 1.25 times as wide as tall; the LEFT and RIGHT views about 0.4 times as wide as tall. Broad clean blocks, no tiny cracks. One solid connected piece.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "ba1e05e6e06636eafdc8178077ca8706f2609e29a0cfcd7784e86b7eac583667",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.5535448158398978,
+              "offset": [
+                61,
+                326
+              ],
+              "size": [
+                389,
+                371
+              ],
+              "physical_height_m": 6.5,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.552721088435374,
+              "offset": [
+                202,
+                326
+              ],
+              "size": [
+                107,
+                371
+              ],
+              "physical_height_m": 6.5,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5551996583386717,
+              "offset": [
+                59,
+                326
+              ],
+              "size": [
+                393,
+                371
+              ],
+              "physical_height_m": 6.5,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.552721088435374,
+              "offset": [
+                202,
+                326
+              ],
+              "size": [
+                108,
+                371
+              ],
+              "physical_height_m": 6.5,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-21 06:17:09",
+          "files": {
+            "CN_SM_Tripo_FrostJadeRetainingWall_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeRetainingWall_v002_source.png",
+              "sha256": "06d36b937a3c757d091b95fe4a832ebf21ca2c383d01da0f3824b5fe3e8246aa"
+            },
+            "CN_SM_Tripo_FrostJadeRetainingWall_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeRetainingWall_v002_front.png",
+              "sha256": "3202c806de5611c0496b9bd391f254045ea89f84a46e65253fa4cf0800b5ea93"
+            },
+            "CN_SM_Tripo_FrostJadeRetainingWall_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeRetainingWall_v002_left.png",
+              "sha256": "224a446ed157b977be061c56836289bd24fa6e20782829ac01d7b11383e257a3"
+            },
+            "CN_SM_Tripo_FrostJadeRetainingWall_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeRetainingWall_v002_back.png",
+              "sha256": "fcbc18d674efdf4152f91ba0d68a78de34484092b8396a60f0622b137abd0b19"
+            },
+            "CN_SM_Tripo_FrostJadeRetainingWall_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeRetainingWall_v002_right.png",
+              "sha256": "1d8585337ed2eb22b2abae051f729cf51de84d04813f9289648d61c4c6be3668"
+            },
+            "CN_SM_Tripo_FrostJadeRetainingWall_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeRetainingWall_v002_sheet.png",
+              "sha256": "ab595011f71667505cdf791461287cddf694e1a50ebb8e84371f68dc40e72a5d"
+            },
+            "CN_SM_Tripo_FrostJadeRetainingWall_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeRetainingWall_v002_prompt.txt",
+              "sha256": "48931c29185390f8152ad664356c5757b0089792db3174f6ec011154f7693627"
+            },
+            "CN_SM_Tripo_FrostJadeRetainingWall_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostJadeRetainingWall_v002_registration.json",
+              "sha256": "424ff88c2109415c5be2799100339e2ef6047ea5bd7b8515130b9a60502c936e"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a15b61-ab84-7081-a196-ed2a47a80332",
+            "attempt": 1,
+            "seconds": 37.9,
+            "rekeyed_from": 1,
+            "fix": "left/right figures swapped"
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (8m wide x 6.5m tall x 2.5m deep): A tileable terrace retaining wall section of a Kunlun mountain palace, 8m wide, 6.5m tall and 2.5m deep: a slightly battered wall face 5.4m tall of big pale grey-white granite ashlar blocks, a carved white jade lotus-petal moulding band along the top edge, and on top a white jade balustrade 1.1m tall: square posts with round cloud-scroll caps and SOLID carved panels between them (no openings). Thick soft snow on the balustrade top, on the moulding and drifted against the wall foot; one thin verdigris bronze drain spout in the middle with a short chunky icicle. Both LEFT and RIGHT ends are flat cut faces so identical sections join seamlessly in a row; the BACK is a flat face (it holds back the upper terrace). PROPORTIONS: the FRONT and BACK views are drawn about 1.25 times as wide as tall; the LEFT and RIGHT views about 0.4 times as wide as tall. Broad clean blocks, no tiny cracks. One solid connected piece.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "06d36b937a3c757d091b95fe4a832ebf21ca2c383d01da0f3824b5fe3e8246aa",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.5535448158398978,
+              "offset": [
+                61,
+                326
+              ],
+              "size": [
+                389,
+                371
+              ],
+              "physical_height_m": 6.5,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.552721088435374,
+              "offset": [
+                202,
+                326
+              ],
+              "size": [
+                108,
+                371
+              ],
+              "physical_height_m": 6.5,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5551996583386717,
+              "offset": [
+                59,
+                326
+              ],
+              "size": [
+                393,
+                371
+              ],
+              "physical_height_m": 6.5,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.552721088435374,
+              "offset": [
+                202,
+                326
+              ],
+              "size": [
+                107,
+                371
+              ],
+              "physical_height_m": 6.5,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-21 ART5：四视图一致、比例与登记相符（用户 2026-10-19 授权免审）",
+            "time": "2026-10-21 06:17:25"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:59:44",
+          "files": {
+            "HP_SM_Tripo_FrostJadeRetainingWall_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostJadeRetainingWall_v001_source.glb",
+              "sha256": "0d18d1af58846c75652445875336303bcbae6eff82d601ad5b71841b1391497f"
+            },
+            "HP_SM_Tripo_FrostJadeRetainingWall_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostJadeRetainingWall_v001.glb",
+              "sha256": "5a6061a7b1de8edb3e5a4a6c9f77fc506b98a4d4903a005e95ce702c1cfc0cad"
+            },
+            "HP_SM_Tripo_FrostJadeRetainingWall_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostJadeRetainingWall_v001_graph.json",
+              "sha256": "6d0df730dadea2983708a3cd8d05d720792a984d41ef12c04efbd3e46c65e7be"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/85ec261d-6151-4590-8515-200c4c813067",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 5962,
+          "source_sha256": "0d18d1af58846c75652445875336303bcbae6eff82d601ad5b71841b1391497f"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 22:00:36",
+          "files": {
+            "SM_Tripo_FrostJadeRetainingWall_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostJadeRetainingWall_v001.blend",
+              "sha256": "508c311a268abb1ee5ff20abc76759edc03da7871d298faa9fbfcd18efe40454"
+            },
+            "SM_Tripo_FrostJadeRetainingWall_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostJadeRetainingWall_v001.glb",
+              "sha256": "0faccec41970b42c9b7eae4b70656487942991b349444eb0dba1b541d7ba4ba9"
+            },
+            "SM_Tripo_FrostJadeRetainingWall_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostJadeRetainingWall_v001_metrics.json",
+              "sha256": "bc5cc6c44782571fbf6872e328187eef8f3dbec550f7b4de40320369c8177630"
+            },
+            "T_Tripo_FrostJadeRetainingWall_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostJadeRetainingWall_BC.png",
+              "sha256": "73940266bb1d7aafc068f1c6c0c2d5b5325611b027fcd06d43e3fde0102e8a6f"
+            },
+            "T_Tripo_FrostJadeRetainingWall_LOD1_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostJadeRetainingWall_LOD1_BC.png",
+              "sha256": "f227e1f556a5324c8eaefcbd04c1e843ec92741fc15157619bf8570b966c7a39"
+            },
+            "T_Tripo_FrostJadeRetainingWall_LOD1_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostJadeRetainingWall_LOD1_N.png",
+              "sha256": "cae035a352483167f2b65a269d2e523b6d6b5b5732c9f7e543105d6c6648f312"
+            },
+            "T_Tripo_FrostJadeRetainingWall_LOD1_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostJadeRetainingWall_LOD1_ORM.png",
+              "sha256": "f15a02d03780d94ac77ad6e3d1ab1de9fb8c0406fce314d92969bfecc27926b2"
+            },
+            "T_Tripo_FrostJadeRetainingWall_LOD2_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostJadeRetainingWall_LOD2_BC.png",
+              "sha256": "3ba83b6f0c9feed2cd6d8be6099ac300b29ea5c51b1527840614bb3e951dfc4e"
+            },
+            "T_Tripo_FrostJadeRetainingWall_LOD2_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostJadeRetainingWall_LOD2_N.png",
+              "sha256": "dcb31a17a87b311dfc32e9689820ab01afa6c50e8e3fc32deaaa9cb2ec81df2b"
+            },
+            "T_Tripo_FrostJadeRetainingWall_LOD2_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostJadeRetainingWall_LOD2_ORM.png",
+              "sha256": "cda1dedf95baf85ad4d5e722791e95be9980cb7480b6eafb9a41546f114fd9a0"
+            },
+            "T_Tripo_FrostJadeRetainingWall_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostJadeRetainingWall_N.png",
+              "sha256": "f9ae32ed2897c4c0d7d38658e35cc4d2bb7edf8ebd8ef0b4ccbf37e7a8ddad70"
+            },
+            "T_Tripo_FrostJadeRetainingWall_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostJadeRetainingWall_ORM.png",
+              "sha256": "9ec6c1e04c865132ba9cef9ed6ea452a4856403a265925ad72f51e19c8c25b4c"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.851,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 5962,
+              "verts": 3186
+            },
+            {
+              "tris": 2487,
+              "verts": 1385
+            },
+            {
+              "tris": 796,
+              "verts": 489
+            }
+          ],
+          "export_kb": 932.3,
+          "seconds": 50.4,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 22:00:41",
+          "files": {
+            "SM_Tripo_FrostJadeRetainingWall_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostJadeRetainingWall_v001_validation_v001.json",
+              "sha256": "ca80bb999bf0c9dcd096d34657228d42f6ecdae06f2d11af6a4cea42ea7bbc97"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 22:00:50",
+          "files": {
+            "SM_Tripo_FrostJadeRetainingWall_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostJadeRetainingWall_v001_review_v001.png",
+              "sha256": "6590603144cbe1cd9d0dfb00c25c9fdd06d1f93b38aab9466e22924f755a0638"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-22 ART5：审核图四视图与概念一致（用户 2026-10-19 授权免审）",
+            "time": "2026-10-22 22:10:53"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 22:10:53",
+          "files": {
+            "SM_Tripo_FrostJadeRetainingWall.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostJadeRetainingWall.glb",
+              "sha256": "0faccec41970b42c9b7eae4b70656487942991b349444eb0dba1b541d7ba4ba9"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_FrostJadeRetainingWall.glb"
+        }
+      ]
+    }
+  }
+}

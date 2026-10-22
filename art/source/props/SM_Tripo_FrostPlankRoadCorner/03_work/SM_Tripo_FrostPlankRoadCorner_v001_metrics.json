@@ -1,0 +1,82 @@
+{
+  "alpha_coverage": 0.828,
+  "dims_m": [
+    6.2,
+    6.08,
+    3.49
+  ],
+  "reference_dimensions": [
+    6.2,
+    3.49,
+    6.08
+  ],
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostPlankRoadCorner_LOD0",
+      "tris": 2922,
+      "verts": 1622,
+      "uv_min": [
+        0.0,
+        0.003
+      ],
+      "uv_max": [
+        0.9995,
+        0.8125
+      ],
+      "uv_utilization": 0.4,
+      "bbox_min": [
+        -3.0,
+        -3.08,
+        0.0
+      ],
+      "bbox_max": [
+        3.2,
+        3.0,
+        3.49
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostPlankRoadCorner_LOD1",
+      "tris": 552,
+      "verts": 1104,
+      "uv_min": [
+        0.0004,
+        0.0006
+      ],
+      "uv_max": [
+        0.9995,
+        0.7497
+      ],
+      "uv_utilization": 0.455,
+      "bbox_min": [
+        -3.0,
+        -3.08,
+        0.0
+      ],
+      "bbox_max": [
+        3.2,
+        3.0,
+        3.49
+      ]
+    }
+  ],
+  "export": {
+    "bytes": 119956
+  },
+  "align": {
+    "iou": 1.0,
+    "iou_per_view": {
+      "front": 1.0,
+      "left": 1.0,
+      "back": 1.0,
+      "right": 1.0
+    },
+    "method": "procedural (no fit)"
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "procedural painted atlas"
+  },
+  "bake_device": "none (numpy painted)",
+  "_seconds": 41.5
+}

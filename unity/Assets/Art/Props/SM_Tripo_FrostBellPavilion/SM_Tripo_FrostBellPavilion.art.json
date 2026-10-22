@@ -1,0 +1,126 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_FrostBellPavilion",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "frost.kunlun.bellPavilion"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    24,
+    60
+  ],
+  "budget": {
+    "lodTris": [
+      8000,
+      2500,
+      1500
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -2.5682711601257324,
+      0,
+      -2.547508955001831
+    ],
+    "max": [
+      2.5682711601257324,
+      8.5,
+      2.547508955001831
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_FrostBellPavilion_LOD0",
+      "lod": 0,
+      "tris": 7646,
+      "verts": 11547,
+      "materials": [
+        "M_Tripo_FrostBellPavilion"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_FrostBellPavilion_LOD1",
+      "lod": 1,
+      "tris": 2477,
+      "verts": 4793,
+      "materials": [
+        "M_Tripo_FrostBellPavilion"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_FrostBellPavilion_LOD2",
+      "lod": 2,
+      "tris": 1480,
+      "verts": 3090,
+      "materials": [
+        "M_Tripo_FrostBellPavilion"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_FrostBellPavilion",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_FrostBellPavilion_BC.png",
+        "N": "Textures/T_Tripo_FrostBellPavilion_N.png",
+        "ORM": "Textures/T_Tripo_FrostBellPavilion_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_FrostBellPavilion.glb",
+    "sha256": "dd597be6cae108ba1e67daa96565d230e536bee11c7d665f253934a113f45f4a",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 2
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-22 22:12:53"
+}

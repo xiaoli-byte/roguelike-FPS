@@ -1,0 +1,464 @@
+{
+  "id": "SM_Tripo_FrostCanyonCliff",
+  "display": "峡谷崖壁片（可拼接的绝壁）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:13:20",
+          "files": {
+            "BO_SM_Tripo_FrostCanyonCliff_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostCanyonCliff_v001.json",
+              "sha256": "e5eb99db1cb099b9b9109375be4266ed8acbac3d72527eeac08ca63dab7ffc97"
+            },
+            "BO_SM_Tripo_FrostCanyonCliff_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostCanyonCliff_v001_views.json",
+              "sha256": "da3ae0de05123e9a1343d27dc023e25717dfdfaf14a40142978af7750c6a40a1"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost.icefall.canyonCliff"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -8.0,
+              0.0,
+              -3.5
+            ],
+            "max": [
+              8.0,
+              24.0,
+              3.5
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:14:01",
+          "files": {
+            "CN_SM_Tripo_FrostCanyonCliff_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostCanyonCliff_v001_source.png",
+              "sha256": "7d1df04a7f0f4d191a1c3941e9e071bbdc3c54d776c624e7ad95dd2b68fe17c4"
+            },
+            "CN_SM_Tripo_FrostCanyonCliff_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostCanyonCliff_v001_front.png",
+              "sha256": "3dfc7921e64753a1f2c332ccb0019d5f7fa71dc98e44aa4ca709be2e423d9a46"
+            },
+            "CN_SM_Tripo_FrostCanyonCliff_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostCanyonCliff_v001_left.png",
+              "sha256": "5ff04e0a1201d2459cf05fe1d6efee9628fd8a517786c7482b48069f00f8604d"
+            },
+            "CN_SM_Tripo_FrostCanyonCliff_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostCanyonCliff_v001_back.png",
+              "sha256": "c0ae352f9c719c90265345c9b0403ccbcab73e1a81ac9b693dfc94445f960556"
+            },
+            "CN_SM_Tripo_FrostCanyonCliff_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostCanyonCliff_v001_right.png",
+              "sha256": "eac825a3db124f3a5f881d96d6fd58df921ff6b5a017750608bb8dda0582cce4"
+            },
+            "CN_SM_Tripo_FrostCanyonCliff_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostCanyonCliff_v001_sheet.png",
+              "sha256": "2581059414b2d156c90415f885d6fb902456c686129c0d1a302ec8fd8b82897f"
+            },
+            "CN_SM_Tripo_FrostCanyonCliff_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostCanyonCliff_v001_prompt.txt",
+              "sha256": "2c5086b51901657c7f18f393e6109fb4ee7640a8a88189791e7ad8bf0f98cb91"
+            },
+            "CN_SM_Tripo_FrostCanyonCliff_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostCanyonCliff_v001_registration.json",
+              "sha256": "411088b4eb1508880118ccb76052132daf1e8036304905513bfa5d74a4273c01"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              1881,
+              836
+            ],
+            "references": [],
+            "codex_session": "01a15b60-4ea9-7050-8384-9d8b68605497",
+            "attempt": 1,
+            "seconds": 38.8
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (16m wide x 24m tall x 7m deep): A tileable panel of a sheer mountain canyon wall, 16m wide, 24m tall and 7m deep: a near-vertical cliff face of blue-grey granite built from a few big angular rock planes and tall vertical columns, three uneven horizontal ledges with thick soft snow lying on them, two long vertical streaks of frozen seepage ice running down the face (opaque pale glacier blue), the foot slightly flared into a sloping rock apron. The LEFT and RIGHT edges are irregular rock buttresses so neighbouring panels overlap; the BACK is a flat rough face. PROPORTIONS: the FRONT and BACK views are drawn about 0.67 times as wide as tall; the LEFT and RIGHT views about 0.3 times as wide as tall, showing the ledges stepping out. Broad faceted planes, two or three dominant colour blocks, no trees, no buildings, no caves, no tiny cracks. One solid connected piece.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "7d1df04a7f0f4d191a1c3941e9e071bbdc3c54d776c624e7ad95dd2b68fe17c4",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.7535321821036106,
+              "offset": [
+                14,
+                169
+              ],
+              "size": [
+                484,
+                686
+              ],
+              "physical_height_m": 24.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.7518796992481203,
+              "offset": [
+                158,
+                169
+              ],
+              "size": [
+                195,
+                686
+              ],
+              "physical_height_m": 24.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7518796992481203,
+              "offset": [
+                21,
+                169
+              ],
+              "size": [
+                470,
+                686
+              ],
+              "physical_height_m": 24.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.7510561727429197,
+              "offset": [
+                143,
+                169
+              ],
+              "size": [
+                226,
+                686
+              ],
+              "physical_height_m": 24.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-21 ART5：四视图一致、比例与登记相符（用户 2026-10-19 授权免审）",
+            "time": "2026-10-21 06:17:25"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:58:25",
+          "files": {
+            "HP_SM_Tripo_FrostCanyonCliff_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostCanyonCliff_v001_source.glb",
+              "sha256": "2a1d22d8638e9dd78353c6cc302adfc57f30b531fc50bdcce629d6b4c4cd6d82"
+            },
+            "HP_SM_Tripo_FrostCanyonCliff_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostCanyonCliff_v001.glb",
+              "sha256": "d4cc7378a952a19e6f061ada05c7218cb5ebd90ef7a42aa42bce1a6f664cf544"
+            },
+            "HP_SM_Tripo_FrostCanyonCliff_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostCanyonCliff_v001_graph.json",
+              "sha256": "cd68481b051a694ab5bc55fae8a77fb58013f024b6804e282f7901c66b44f276"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/ca0f9d36-d748-431d-875a-5814ec08e72c",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 9021,
+          "source_sha256": "2a1d22d8638e9dd78353c6cc302adfc57f30b531fc50bdcce629d6b4c4cd6d82"
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:59:32",
+          "files": {
+            "SM_Tripo_FrostCanyonCliff_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostCanyonCliff_v001.blend",
+              "sha256": "da2563d4ad7fa52bc50a4ef35627e3d84f9277ff76387c78cc5c8d98c7b1d785"
+            },
+            "SM_Tripo_FrostCanyonCliff_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostCanyonCliff_v001.glb",
+              "sha256": "36681b02b29d4f83dc6e8f38a9a3aedcac5acf3f157fd41a562749d164a03871"
+            },
+            "SM_Tripo_FrostCanyonCliff_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostCanyonCliff_v001_metrics.json",
+              "sha256": "593c89adb45111f3f252ce84f7763500e5f4eac05d90334620f8cc4d525360b7"
+            },
+            "T_Tripo_FrostCanyonCliff_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostCanyonCliff_BC.png",
+              "sha256": "73097f60d995054f489d314f127224f493dc45f6ea9c10ae1bb6f11797c63eeb"
+            },
+            "T_Tripo_FrostCanyonCliff_LOD1_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostCanyonCliff_LOD1_BC.png",
+              "sha256": "ad6530d382733820e30cd0064a2d09534b19f1cc3feb15410c623d928828e3d7"
+            },
+            "T_Tripo_FrostCanyonCliff_LOD1_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostCanyonCliff_LOD1_N.png",
+              "sha256": "e4f61e5a75588a3b370c1d84b68246b2bf51a9d91a67c33fd2c62573f558b47e"
+            },
+            "T_Tripo_FrostCanyonCliff_LOD1_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostCanyonCliff_LOD1_ORM.png",
+              "sha256": "47d1082338d485cb9d3f1a47591101a7ab28162dd8522f9b256bf326489d3156"
+            },
+            "T_Tripo_FrostCanyonCliff_LOD2_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostCanyonCliff_LOD2_BC.png",
+              "sha256": "14f59aa5159e416c8c3d65a2b8bd24824f6a7f6c35abb7069ef43a4de67895d2"
+            },
+            "T_Tripo_FrostCanyonCliff_LOD2_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostCanyonCliff_LOD2_N.png",
+              "sha256": "ab55728e79c0fbcdedb7a3564c6454713f6fff63d45551e1813c176fd5e98d5a"
+            },
+            "T_Tripo_FrostCanyonCliff_LOD2_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostCanyonCliff_LOD2_ORM.png",
+              "sha256": "ed6af3856e60165bb42d89286e0ac68502648bc75368bf62afb6bdf8876f74af"
+            },
+            "T_Tripo_FrostCanyonCliff_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostCanyonCliff_N.png",
+              "sha256": "207df2bfb16a5d3fc29a80ad913a4f179d9c1a2ca205cb9b5146bd190a20a2e4"
+            },
+            "T_Tripo_FrostCanyonCliff_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostCanyonCliff_ORM.png",
+              "sha256": "4cf947bdd9f6121087f2cea4a5f2fac02e4a4323a6976f2cfd8137f8af488216"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.71,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7960,
+              "verts": 4045
+            },
+            {
+              "tris": 2487,
+              "verts": 1287
+            },
+            {
+              "tris": 795,
+              "verts": 421
+            }
+          ],
+          "export_kb": 836.6,
+          "seconds": 66.1,
+          "bake_device": "none (provider textures)",
+          "quality_status": "failed",
+          "quality_errors": [
+            "场景高度"
+          ]
+        },
+        {
+          "version": 2,
+          "created": "2026-10-22 22:09:48",
+          "files": {
+            "SM_Tripo_FrostCanyonCliff_v002.blend": {
+              "path": "03_work/SM_Tripo_FrostCanyonCliff_v002.blend",
+              "sha256": "5e41a8e36b5a53caf28e2dfe9fc4222c72b6f528632e36b1a68bc75d963670a8"
+            },
+            "SM_Tripo_FrostCanyonCliff_v002.glb": {
+              "path": "04_export/SM_Tripo_FrostCanyonCliff_v002.glb",
+              "sha256": "36681b02b29d4f83dc6e8f38a9a3aedcac5acf3f157fd41a562749d164a03871"
+            },
+            "SM_Tripo_FrostCanyonCliff_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostCanyonCliff_v002_metrics.json",
+              "sha256": "3eb4d166e8aefc5b19da88f1ded731b3dc2a7cfc10c28142ef7539641ea00d62"
+            },
+            "T_Tripo_FrostCanyonCliff_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostCanyonCliff_BC.png",
+              "sha256": "73097f60d995054f489d314f127224f493dc45f6ea9c10ae1bb6f11797c63eeb"
+            },
+            "T_Tripo_FrostCanyonCliff_LOD1_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostCanyonCliff_LOD1_BC.png",
+              "sha256": "ad6530d382733820e30cd0064a2d09534b19f1cc3feb15410c623d928828e3d7"
+            },
+            "T_Tripo_FrostCanyonCliff_LOD1_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostCanyonCliff_LOD1_N.png",
+              "sha256": "e4f61e5a75588a3b370c1d84b68246b2bf51a9d91a67c33fd2c62573f558b47e"
+            },
+            "T_Tripo_FrostCanyonCliff_LOD1_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostCanyonCliff_LOD1_ORM.png",
+              "sha256": "47d1082338d485cb9d3f1a47591101a7ab28162dd8522f9b256bf326489d3156"
+            },
+            "T_Tripo_FrostCanyonCliff_LOD2_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostCanyonCliff_LOD2_BC.png",
+              "sha256": "14f59aa5159e416c8c3d65a2b8bd24824f6a7f6c35abb7069ef43a4de67895d2"
+            },
+            "T_Tripo_FrostCanyonCliff_LOD2_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostCanyonCliff_LOD2_N.png",
+              "sha256": "ab55728e79c0fbcdedb7a3564c6454713f6fff63d45551e1813c176fd5e98d5a"
+            },
+            "T_Tripo_FrostCanyonCliff_LOD2_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostCanyonCliff_LOD2_ORM.png",
+              "sha256": "ed6af3856e60165bb42d89286e0ac68502648bc75368bf62afb6bdf8876f74af"
+            },
+            "T_Tripo_FrostCanyonCliff_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostCanyonCliff_N.png",
+              "sha256": "207df2bfb16a5d3fc29a80ad913a4f179d9c1a2ca205cb9b5146bd190a20a2e4"
+            },
+            "T_Tripo_FrostCanyonCliff_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostCanyonCliff_ORM.png",
+              "sha256": "4cf947bdd9f6121087f2cea4a5f2fac02e4a4323a6976f2cfd8137f8af488216"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.71,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7960,
+              "verts": 4045
+            },
+            {
+              "tris": 2487,
+              "verts": 1287
+            },
+            {
+              "tris": 795,
+              "verts": 421
+            }
+          ],
+          "export_kb": 836.6,
+          "seconds": 51.8,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 3,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:59:39",
+          "files": {
+            "SM_Tripo_FrostCanyonCliff_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostCanyonCliff_v001_validation_v001.json",
+              "sha256": "06a4ec22486c8403e5e9a87005daa8cff73344210056aeed1cd7c57dfb6d3d7f"
+            }
+          },
+          "from_build": 1,
+          "errors": 1,
+          "warnings": 1,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 2,
+          "created": "2026-10-22 22:09:54",
+          "files": {
+            "SM_Tripo_FrostCanyonCliff_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_FrostCanyonCliff_v002_validation_v002.json",
+              "sha256": "06a4ec22486c8403e5e9a87005daa8cff73344210056aeed1cd7c57dfb6d3d7f"
+            }
+          },
+          "from_build": 2,
+          "errors": 1,
+          "warnings": 1,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 3,
+          "created": "2026-10-22 22:10:10",
+          "files": {
+            "SM_Tripo_FrostCanyonCliff_v002_validation_v003.json": {
+              "path": "05_review/SM_Tripo_FrostCanyonCliff_v002_validation_v003.json",
+              "sha256": "ab5b064cfcd51638db54a895e2bbb2cd901b76aa355576a3c55b47f21a64e8a8"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [
+            "场景高度"
+          ],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 22:10:19",
+          "files": {
+            "SM_Tripo_FrostCanyonCliff_v002_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostCanyonCliff_v002_review_v001.png",
+              "sha256": "9853efd592387e59333205d0cd368fa40c8580881c3bc89f1bf3ce115b3b6df0"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-22 ART5：审核图四视图与概念一致（用户 2026-10-19 授权免审）",
+            "time": "2026-10-22 22:10:52"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 22:10:52",
+          "files": {
+            "SM_Tripo_FrostCanyonCliff.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostCanyonCliff.glb",
+              "sha256": "36681b02b29d4f83dc6e8f38a9a3aedcac5acf3f157fd41a562749d164a03871"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_FrostCanyonCliff.glb"
+        }
+      ]
+    }
+  }
+}

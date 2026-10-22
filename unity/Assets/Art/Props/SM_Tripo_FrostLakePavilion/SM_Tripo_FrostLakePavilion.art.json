@@ -1,0 +1,126 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_FrostLakePavilion",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "frost.kunlun.lakePavilion"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    24,
+    60
+  ],
+  "budget": {
+    "lodTris": [
+      8000,
+      2500,
+      1500
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -4.21030855178833,
+      0,
+      -4.05984354019165
+    ],
+    "max": [
+      4.21030855178833,
+      11,
+      4.05984354019165
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_FrostLakePavilion_LOD0",
+      "lod": 0,
+      "tris": 6699,
+      "verts": 10735,
+      "materials": [
+        "M_Tripo_FrostLakePavilion"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_FrostLakePavilion_LOD1",
+      "lod": 1,
+      "tris": 2487,
+      "verts": 5054,
+      "materials": [
+        "M_Tripo_FrostLakePavilion"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_FrostLakePavilion_LOD2",
+      "lod": 2,
+      "tris": 1483,
+      "verts": 3153,
+      "materials": [
+        "M_Tripo_FrostLakePavilion"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_FrostLakePavilion",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_FrostLakePavilion_BC.png",
+        "N": "Textures/T_Tripo_FrostLakePavilion_N.png",
+        "ORM": "Textures/T_Tripo_FrostLakePavilion_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_FrostLakePavilion.glb",
+    "sha256": "6af6dabad9092b26115102227df3ca5730ed982de119697ae7ba763b65ad38df",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 2
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-22 22:12:58"
+}

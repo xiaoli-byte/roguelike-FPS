@@ -1,0 +1,411 @@
+{
+  "id": "SM_Tripo_FrostLakePavilion",
+  "display": "湖心亭（2-3 瑶池冰湖，台高 3 m，东西两道台阶）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:15:31",
+          "files": {
+            "BO_SM_Tripo_FrostLakePavilion_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostLakePavilion_v001.json",
+              "sha256": "981963d1bb8c8378c27d76c24ad55f6c67f7edaac74045f972e0f157b3ba757f"
+            },
+            "BO_SM_Tripo_FrostLakePavilion_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostLakePavilion_v001_views.json",
+              "sha256": "d05c311a1f940e7f0534cb66cefb152ce53e0f133a354131d3af699258ac9cca"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost.kunlun.lakePavilion"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -8.0,
+              0.0,
+              -8.0
+            ],
+            "max": [
+              8.0,
+              11.0,
+              8.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:16:27",
+          "files": {
+            "CN_SM_Tripo_FrostLakePavilion_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostLakePavilion_v001_source.png",
+              "sha256": "daedc26360750207f78998db2ef86bb4f4fe7c92918731795546fe81a96eb2fb"
+            },
+            "CN_SM_Tripo_FrostLakePavilion_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostLakePavilion_v001_front.png",
+              "sha256": "660c9b7ad5de3e4851685b271f9e5a827b5c7d7e721ab1d0c38770ad9cc222fe"
+            },
+            "CN_SM_Tripo_FrostLakePavilion_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostLakePavilion_v001_left.png",
+              "sha256": "87215daa50675e2378f880e712b491ca91acbd2be4e4ddc62a63c3e15cd482aa"
+            },
+            "CN_SM_Tripo_FrostLakePavilion_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostLakePavilion_v001_back.png",
+              "sha256": "89d291a5dc5e8779aff389531a3d3ad2d35b853b1b8e14bcd7cdbb9c5d549e96"
+            },
+            "CN_SM_Tripo_FrostLakePavilion_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostLakePavilion_v001_right.png",
+              "sha256": "f1aad945f8538ae8e742bb53c32d97e0bff5aa289d69c821b079835fd88a5af6"
+            },
+            "CN_SM_Tripo_FrostLakePavilion_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostLakePavilion_v001_sheet.png",
+              "sha256": "6877be1f91fee50f5ece554f0d5995522c371a6efded70f7f5e6ded8061f783b"
+            },
+            "CN_SM_Tripo_FrostLakePavilion_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostLakePavilion_v001_prompt.txt",
+              "sha256": "b6247e4942494f076de3e33716169c1ea565fdca06c1b05f440e5ed214299aa3"
+            },
+            "CN_SM_Tripo_FrostLakePavilion_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostLakePavilion_v001_registration.json",
+              "sha256": "3362d5416a5e41701f7319f35899dcc910f6f8165f44ef40ef69e166d2210d6f"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2135,
+              736
+            ],
+            "references": [],
+            "codex_session": "01a15b62-607e-7d42-859a-6c66216ab545",
+            "attempt": 1,
+            "seconds": 52.9
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (16m wide x 11m tall x 16m deep): A lake pavilion on a frozen palace lake, 16m wide, 11m tall and 16m deep: a square white jade island podium 16m wide and 3m tall with a carved white jade balustrade around its top edge (solid panels, no openings), the podium foot frozen into a ring of thick pale blue lake ice; one broad straight stair flight 4m wide climbs the LEFT side and an identical one climbs the RIGHT side, both cut into the podium. On top in the middle stands an octagonal double-eave pavilion 8m wide: eight faded vermilion lacquer columns, painted bracket sets, two tiers of verdigris bronze tiled roofs with upturned eaves under thick soft snow, a round bronze finial, chunky icicles on the eaves; the pavilion is open between the columns. PROPORTIONS: all four views drawn about 1.45 times as wide as tall; the FRONT and BACK views show the balustrade face without stairs, the LEFT and RIGHT views show a stair flight head on. Chunky readable forms. One solid connected piece on a flat base.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "daedc26360750207f78998db2ef86bb4f4fe7c92918731795546fe81a96eb2fb",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.48129512141763287,
+              "offset": [
+                137,
+                355
+              ],
+              "size": [
+                237,
+                314
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.47909407665505227,
+              "offset": [
+                148,
+                355
+              ],
+              "size": [
+                215,
+                314
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.47909407665505227,
+              "offset": [
+                138,
+                355
+              ],
+              "size": [
+                236,
+                314
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.47909407665505227,
+              "offset": [
+                148,
+                355
+              ],
+              "size": [
+                215,
+                314
+              ],
+              "physical_height_m": 11.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-21 ART5：四视图一致、比例与登记相符（用户 2026-10-19 授权免审）",
+            "time": "2026-10-21 06:17:26"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 22:01:50",
+          "files": {
+            "HP_SM_Tripo_FrostLakePavilion_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostLakePavilion_v001_source.glb",
+              "sha256": "b7d38529958edfde832b2351342af43327eaa41b94933051d3e46d392be8fade"
+            },
+            "HP_SM_Tripo_FrostLakePavilion_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostLakePavilion_v001.glb",
+              "sha256": "6a4b520e29e7d584f4087a2ffb79ea0a2214e749976414a381c7baa90dadd2d9"
+            },
+            "HP_SM_Tripo_FrostLakePavilion_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostLakePavilion_v001_graph.json",
+              "sha256": "315492e111d2268ba91d4ad85cc10aa1fb0eee7dce8ee82699193c7b31dc6dd7"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/cce7d9a8-f79e-40b5-bff4-31f44fa8f4e2",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 6699,
+          "source_sha256": "b7d38529958edfde832b2351342af43327eaa41b94933051d3e46d392be8fade"
+        }
+      ]
+    },
+    "build": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 22:02:32",
+          "files": {
+            "SM_Tripo_FrostLakePavilion_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostLakePavilion_v001.blend",
+              "sha256": "956c32a48eb6ec7af0e0ab905f25705cad6061bafb460130f55919306da2dbf4"
+            },
+            "SM_Tripo_FrostLakePavilion_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostLakePavilion_v001.glb",
+              "sha256": "41c0d7bda2bf509b63518377220307e5137ac266545c4a5cd9a0c3cd3ea6c6ed"
+            },
+            "SM_Tripo_FrostLakePavilion_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostLakePavilion_v001_metrics.json",
+              "sha256": "b39a43766c6cd19766cbe6ce4999a98b0190072279cbc16b8d6440c921455851"
+            },
+            "T_Tripo_FrostLakePavilion_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostLakePavilion_BC.png",
+              "sha256": "1ea48582322a4ffde164c5694ecc4f862b8be5e7ce7990ad628f2bd34632cdb1"
+            },
+            "T_Tripo_FrostLakePavilion_LOD2_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostLakePavilion_LOD2_BC.png",
+              "sha256": "b4847d20b07b68931744ad27e40d8286c27cdb0b4465fdab79b3c56c7d33213b"
+            },
+            "T_Tripo_FrostLakePavilion_LOD2_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostLakePavilion_LOD2_N.png",
+              "sha256": "681d2562a9c295d545756607f948290754079ba4f9bd6a405ac4ececf9458d96"
+            },
+            "T_Tripo_FrostLakePavilion_LOD2_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostLakePavilion_LOD2_ORM.png",
+              "sha256": "d1772836c362d179b1e566813d9e9d318612e074e7ab75b7205ed5af10e7bd3c"
+            },
+            "T_Tripo_FrostLakePavilion_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostLakePavilion_N.png",
+              "sha256": "62e53ea40f1e89e0e1212c2e3304f1e11165c92874a06f48418339bc1f838bfa"
+            },
+            "T_Tripo_FrostLakePavilion_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostLakePavilion_ORM.png",
+              "sha256": "5f0322927a250f9736ac64e3a7f2507a6c1d4faee21c47aba25fd1aa56d9beb5"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.862,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 6699,
+              "verts": 4259
+            },
+            {
+              "tris": 2487,
+              "verts": 1918
+            },
+            {
+              "tris": 787,
+              "verts": 863
+            }
+          ],
+          "export_kb": 1452.0,
+          "seconds": 40.2,
+          "bake_device": "none (provider textures)",
+          "quality_status": "failed",
+          "quality_errors": [
+            "LOD2 贴图色差"
+          ]
+        },
+        {
+          "version": 2,
+          "created": "2026-10-22 22:08:45",
+          "files": {
+            "SM_Tripo_FrostLakePavilion_v002.blend": {
+              "path": "03_work/SM_Tripo_FrostLakePavilion_v002.blend",
+              "sha256": "c8450e7338e35de7969e62e6388f41440adff5b2fd643299d7c1e67e065c05ad"
+            },
+            "SM_Tripo_FrostLakePavilion_v002.glb": {
+              "path": "04_export/SM_Tripo_FrostLakePavilion_v002.glb",
+              "sha256": "6af6dabad9092b26115102227df3ca5730ed982de119697ae7ba763b65ad38df"
+            },
+            "SM_Tripo_FrostLakePavilion_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostLakePavilion_v002_metrics.json",
+              "sha256": "8c24a157bb81e489769d9b0365bb8a7685902b60fed932b13e98e7887ee9c15b"
+            },
+            "T_Tripo_FrostLakePavilion_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostLakePavilion_BC.png",
+              "sha256": "1ea48582322a4ffde164c5694ecc4f862b8be5e7ce7990ad628f2bd34632cdb1"
+            },
+            "T_Tripo_FrostLakePavilion_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostLakePavilion_N.png",
+              "sha256": "62e53ea40f1e89e0e1212c2e3304f1e11165c92874a06f48418339bc1f838bfa"
+            },
+            "T_Tripo_FrostLakePavilion_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostLakePavilion_ORM.png",
+              "sha256": "5f0322927a250f9736ac64e3a7f2507a6c1d4faee21c47aba25fd1aa56d9beb5"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.862,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 6699,
+              "verts": 4259
+            },
+            {
+              "tris": 2487,
+              "verts": 1918
+            },
+            {
+              "tris": 1483,
+              "verts": 1331
+            }
+          ],
+          "export_kb": 1338.1,
+          "seconds": 37.6,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 22:02:36",
+          "files": {
+            "SM_Tripo_FrostLakePavilion_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostLakePavilion_v001_validation_v001.json",
+              "sha256": "f3b3e05a5002cfaa5334034f128c9c7b5b26ba07acca455f74f814e810b783aa"
+            }
+          },
+          "from_build": 1,
+          "errors": 1,
+          "warnings": 0,
+          "waived": [],
+          "passed": false
+        },
+        {
+          "version": 2,
+          "created": "2026-10-22 22:08:49",
+          "files": {
+            "SM_Tripo_FrostLakePavilion_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_FrostLakePavilion_v002_validation_v002.json",
+              "sha256": "88e2ace4c44092f2ab813822f37f21f13b4e9d1d71997d9a8612104c9205ce98"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 22:08:56",
+          "files": {
+            "SM_Tripo_FrostLakePavilion_v002_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostLakePavilion_v002_review_v001.png",
+              "sha256": "208a6ae349673c1bc70b92db6bc568a98d33774c84a2e4d3830152a4e4d9f0bb"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-22 ART5：审核图四视图与概念一致（用户 2026-10-19 授权免审）",
+            "time": "2026-10-22 22:10:54"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 22:10:55",
+          "files": {
+            "SM_Tripo_FrostLakePavilion.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostLakePavilion.glb",
+              "sha256": "6af6dabad9092b26115102227df3ca5730ed982de119697ae7ba763b65ad38df"
+            }
+          },
+          "from_build": 2,
+          "url": "assets/props/SM_Tripo_FrostLakePavilion.glb"
+        }
+      ]
+    }
+  }
+}

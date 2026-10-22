@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_FrostIcicleShards",
+  "kind": "static",
+  "class": "tripo_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "frost.icefall.icicleShards"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    20
+  ],
+  "budget": {
+    "lodTris": [
+      3000,
+      1000
+    ],
+    "texture": 1024,
+    "maxFileKb": 700
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -0.8382474780082703,
+      0,
+      -0.6171172261238098
+    ],
+    "max": [
+      0.8382474780082703,
+      1,
+      0.6171172261238098
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_FrostIcicleShards_LOD0",
+      "lod": 0,
+      "tris": 2408,
+      "verts": 3466,
+      "materials": [
+        "M_Tripo_FrostIcicleShards"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_FrostIcicleShards_LOD1",
+      "lod": 1,
+      "tris": 995,
+      "verts": 1883,
+      "materials": [
+        "M_Tripo_FrostIcicleShards"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_FrostIcicleShards",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_FrostIcicleShards_BC.png",
+        "N": "Textures/T_Tripo_FrostIcicleShards_N.png",
+        "ORM": "Textures/T_Tripo_FrostIcicleShards_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_FrostIcicleShards.glb",
+    "sha256": "1ad7455251afc9029e0417fd7f4e5860b6aa82ee19eb94dbed95d9bfc954b897",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-22 22:12:33"
+}

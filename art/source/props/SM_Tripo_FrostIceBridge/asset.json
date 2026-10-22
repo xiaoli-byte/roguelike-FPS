@@ -1,0 +1,460 @@
+{
+  "id": "SM_Tripo_FrostIceBridge",
+  "display": "冰桥半跨（2-1 跨峡谷；两件镜像对接成 8 × 30 m）",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:09:49",
+          "files": {
+            "BO_SM_Tripo_FrostIceBridge_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostIceBridge_v001.json",
+              "sha256": "ba8c203314703bf1f5c1205df7623490003dd41416f3cac59c49ee951bfd6037"
+            },
+            "BO_SM_Tripo_FrostIceBridge_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostIceBridge_v001_views.json",
+              "sha256": "fcdac67aade5e0aabb05c54eff69d8e40f607faffae72f295f6d0212b5b441a4"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost.icefall.iceBridge"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -7.5,
+              0.0,
+              -4.0
+            ],
+            "max": [
+              7.5,
+              7.0,
+              4.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:10:29",
+          "files": {
+            "CN_SM_Tripo_FrostIceBridge_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceBridge_v001_source.png",
+              "sha256": "a0efcbbbf7a00cf4ab99d81de2bf6a0b106afa0e17594ecef5bc45bc2b5515b0"
+            },
+            "CN_SM_Tripo_FrostIceBridge_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceBridge_v001_front.png",
+              "sha256": "661102f92c279f568f8a56bbc2b922b8cdb634f8471a7e2e1897b9684d1ec764"
+            },
+            "CN_SM_Tripo_FrostIceBridge_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceBridge_v001_left.png",
+              "sha256": "b68507aa40a735386b9b546f4e1988a6f887320f5534cdec3ff4c48002081219"
+            },
+            "CN_SM_Tripo_FrostIceBridge_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceBridge_v001_back.png",
+              "sha256": "aa5523fe43162b1a28def9224d17fddd238a888be17d2fc124dd0abda79606f5"
+            },
+            "CN_SM_Tripo_FrostIceBridge_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceBridge_v001_right.png",
+              "sha256": "619a7a4d244f8d57f730406abdbbdee141dcb6fb561545c65d6c3276c07cecc9"
+            },
+            "CN_SM_Tripo_FrostIceBridge_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceBridge_v001_sheet.png",
+              "sha256": "7b7a652dac848f5de945418ff2baf1160076c8569c2d12cf9f206db4c347b711"
+            },
+            "CN_SM_Tripo_FrostIceBridge_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceBridge_v001_prompt.txt",
+              "sha256": "f52d84a28f58b5dc6a6b2ab3fdf12083f10d9df836bb50f3a7f72a0d1327ec79"
+            },
+            "CN_SM_Tripo_FrostIceBridge_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceBridge_v001_registration.json",
+              "sha256": "b55309630528a550a46db4eabf79087dc98ec5b2bfaf51dacd7c1800ed40f912"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a15b5d-156f-73a3-a257-8f9ddfa324f8",
+            "attempt": 1,
+            "seconds": 36.4
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (15m wide x 7m tall x 8m deep): One half span of a natural ice bridge, 15m long, 8m wide and 7m tall; two copies mirrored end to end make a 30m bridge across a canyon. It is a branch of a frozen waterfall that froze in mid air: one massive slab of glacier ice with a FLAT walkable top 8m wide covered by a thin even layer of snow. Its LEFT end is thick and blocky, a flat vertical cut face 7m tall that butts against the canyon ledge; its underside is one smooth curve rising from that end toward the RIGHT end, where the slab is only 2.5m thick and ends in a flat vertical cut face (the mirrored half joins there). Along the underside hang a few short fat fused ice drips; the long sides show horizontal frozen flow bands and rounded bulges. Opaque solid glacier ice painted pale sky blue with whiter frosted edges and deeper turquoise in the hollows. The FRONT view looks at the long side. PROPORTIONS: the FRONT and BACK views are drawn about 2.15 times as wide as tall, tall at one end and thin at the other; the LEFT view shows the 7m blocky end face about 1.15 times as wide as tall, the RIGHT view shows the thin end face. No railing, no transparent ice, no mist. One solid connected piece.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "a0efcbbbf7a00cf4ab99d81de2bf6a0b106afa0e17594ecef5bc45bc2b5515b0",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.549828178694158,
+              "offset": [
+                65,
+                405
+              ],
+              "size": [
+                382,
+                213
+              ],
+              "physical_height_m": 7.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5734767025089605,
+              "offset": [
+                209,
+                405
+              ],
+              "size": [
+                93,
+                213
+              ],
+              "physical_height_m": 7.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.5512489233419465,
+              "offset": [
+                64,
+                405
+              ],
+              "size": [
+                383,
+                213
+              ],
+              "physical_height_m": 7.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.6077872744539411,
+              "offset": [
+                215,
+                405
+              ],
+              "size": [
+                81,
+                213
+              ],
+              "physical_height_m": 7.0,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-21 06:17:26",
+          "files": {
+            "CN_SM_Tripo_FrostIceBridge_v002_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceBridge_v002_source.png",
+              "sha256": "80d038471f33248c8d1490803fb5cd9d4b62cf2cdc727fc3f6685c55741339fe"
+            },
+            "CN_SM_Tripo_FrostIceBridge_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceBridge_v002_front.png",
+              "sha256": "007a937b6ae015fc3965c331d5adbb8c40efdc84c0a4b07f44ca1ae4cf88c96a"
+            },
+            "CN_SM_Tripo_FrostIceBridge_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceBridge_v002_left.png",
+              "sha256": "58623b36ce8f0521cb85f7018e24c835dcbedfd3faf74420b02ce31e899b4144"
+            },
+            "CN_SM_Tripo_FrostIceBridge_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceBridge_v002_back.png",
+              "sha256": "cd905eac28e8064903d6aed4dc154027d12884e90decc026f37dafa082f3a646"
+            },
+            "CN_SM_Tripo_FrostIceBridge_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceBridge_v002_right.png",
+              "sha256": "adf9d7b1b2b994b2962f0ace2e66afcc3c7b1ab9efb2b37deac97f5d8752dda7"
+            },
+            "CN_SM_Tripo_FrostIceBridge_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceBridge_v002_sheet.png",
+              "sha256": "175f7878d40f340fda5f59736b3bff814c258b936df09e647dd1a78581caffff"
+            },
+            "CN_SM_Tripo_FrostIceBridge_v002_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceBridge_v002_prompt.txt",
+              "sha256": "31bae8939a518b1b61c2d7a8c481dabf0328d72f252f963d45416d716c639fab"
+            },
+            "CN_SM_Tripo_FrostIceBridge_v002_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostIceBridge_v002_registration.json",
+              "sha256": "818e1db3cf54985d66eb2a3e8ccd1bf1254851a4bf355c142612e447062a43b0"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a15b63-6ed7-75c0-bcd9-4221bf0640a4",
+            "attempt": 1,
+            "seconds": 38.4
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (15m wide x 7m tall x 8m deep): One half span of a natural ice bridge, 15m long, 8m wide and 7m tall; two copies mirrored end to end make a 30m bridge across a canyon. It is a branch of a frozen waterfall that froze in mid air: one massive slab of glacier ice with a FLAT walkable top 8m wide covered by a thin even layer of snow. Its LEFT end is thick and blocky, a flat vertical cut face 7m tall that butts against the canyon ledge; its underside is one smooth curve rising from that end toward the RIGHT end, where the slab is only 2.5m thick and ends in a flat vertical cut face (the mirrored half joins there). Along the underside hang a few short fat fused ice drips; the long sides show horizontal frozen flow bands and rounded bulges. Opaque solid glacier ice painted pale sky blue with whiter frosted edges and deeper turquoise in the hollows. The FRONT view looks at the long side. The bridge is WIDE: its deck is 8m wide, more than half of its 15m length, so in the LEFT and RIGHT views the end faces are drawn 8m wide, broader than they are tall, at the same scale as the front. PROPORTIONS: the FRONT and BACK views are drawn about 2.15 times as wide as tall, tall at one end and thin at the other; the LEFT view shows the 7m blocky end face about 1.15 times as wide as tall (a broad block, not a slim pillar), the RIGHT view shows the thin end face about 3 times as wide as tall. No railing, no transparent ice, no mist. One solid connected piece.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "80d038471f33248c8d1490803fb5cd9d4b62cf2cdc727fc3f6685c55741339fe",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.528052805280528,
+              "offset": [
+                83,
+                405
+              ],
+              "size": [
+                346,
+                213
+              ],
+              "physical_height_m": 7.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.5526770293609672,
+              "offset": [
+                188,
+                405
+              ],
+              "size": [
+                136,
+                213
+              ],
+              "physical_height_m": 7.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.528052805280528,
+              "offset": [
+                89,
+                405
+              ],
+              "size": [
+                334,
+                213
+              ],
+              "physical_height_m": 7.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 1.0666666666666667,
+              "offset": [
+                96,
+                405
+              ],
+              "size": [
+                319,
+                213
+              ],
+              "physical_height_m": 7.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-21 ART5/ART6：四视图一致、比例与登记相符（用户 2026-10-19 授权免审）",
+            "time": "2026-10-21 06:38:25"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:48:26",
+          "files": {
+            "HP_SM_Tripo_FrostIceBridge_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostIceBridge_v001_source.glb",
+              "sha256": "ad4284a9f16466c373a284fbd6f39027ac64da7b35e02683b2b9ff627d771c11"
+            },
+            "HP_SM_Tripo_FrostIceBridge_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostIceBridge_v001.glb",
+              "sha256": "3692d66a8fbd44a84e2309c12a7f9ccec9063f3a46b4c488dd3d1772a067b791"
+            },
+            "HP_SM_Tripo_FrostIceBridge_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostIceBridge_v001_graph.json",
+              "sha256": "bd5f37975a91cb043ddaf11b87b674239e90203a145c4cc29a99d230f2b9c22b"
+            }
+          },
+          "from_concept": 2,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/9210120d-1637-4a2a-a8e5-3e3b12a9951f",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 8702,
+          "source_sha256": "ad4284a9f16466c373a284fbd6f39027ac64da7b35e02683b2b9ff627d771c11"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:49:20",
+          "files": {
+            "SM_Tripo_FrostIceBridge_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostIceBridge_v001.blend",
+              "sha256": "66ea5d0b930b4afd09860349b4c244be53f7be56f6ab68334b520bd3eaedb049"
+            },
+            "SM_Tripo_FrostIceBridge_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostIceBridge_v001.glb",
+              "sha256": "d00f44848e22025b8ab180756d174f9910f8a14a70639dbbdeaa4d8ed216ce41"
+            },
+            "SM_Tripo_FrostIceBridge_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostIceBridge_v001_metrics.json",
+              "sha256": "7b9f02679b528d0fea9d0a38bc0aabe28022af7b9daebdab9873d371cf93f81c"
+            },
+            "T_Tripo_FrostIceBridge_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostIceBridge_BC.png",
+              "sha256": "29222261867180d71434a55526d15f7735ceb6b9689e967f5cb94cbf2bf5e1fc"
+            },
+            "T_Tripo_FrostIceBridge_LOD1_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostIceBridge_LOD1_BC.png",
+              "sha256": "c10a8097e57c2fa4ca9d9b3307b9902adc1310ab2afff3d4fdefc1ccb0684099"
+            },
+            "T_Tripo_FrostIceBridge_LOD1_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostIceBridge_LOD1_N.png",
+              "sha256": "d65a8c8a776e35b2805636d9f2827a23047593dc977d2c90d53e89c298d0c465"
+            },
+            "T_Tripo_FrostIceBridge_LOD1_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostIceBridge_LOD1_ORM.png",
+              "sha256": "ea91f43ef40dc9769840115c8f1ee2185453d105e521e52da293b712a98301f9"
+            },
+            "T_Tripo_FrostIceBridge_LOD2_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostIceBridge_LOD2_BC.png",
+              "sha256": "65c820597f8d2df51e4390069a0e7fa2162bca1ef27b82a8851164cd00be9ffa"
+            },
+            "T_Tripo_FrostIceBridge_LOD2_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostIceBridge_LOD2_N.png",
+              "sha256": "c04350dc83ac74883a8ab07b5a0d47def1271bfdb5583464552c2ccbfed0f435"
+            },
+            "T_Tripo_FrostIceBridge_LOD2_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostIceBridge_LOD2_ORM.png",
+              "sha256": "8628018c2eb8ea6939857594ca5a831d5748318ccd59fae43799ce2a0c31f2cb"
+            },
+            "T_Tripo_FrostIceBridge_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostIceBridge_N.png",
+              "sha256": "5d452b897de470f7fd50ddaa49cf6275167aca11f8882c26182ff5a8f6f556b5"
+            },
+            "T_Tripo_FrostIceBridge_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostIceBridge_ORM.png",
+              "sha256": "f4efc7df9b9c14c69c0bdb4d10824a8864770e5bd0c98ab16ec897044367b1e4"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.704,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 7960,
+              "verts": 4002
+            },
+            {
+              "tris": 2486,
+              "verts": 1259
+            },
+            {
+              "tris": 796,
+              "verts": 413
+            }
+          ],
+          "export_kb": 504.4,
+          "seconds": 52.0,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:49:26",
+          "files": {
+            "SM_Tripo_FrostIceBridge_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostIceBridge_v001_validation_v001.json",
+              "sha256": "11fd27d5f3bfe57520ee5de8998a228adeaf5320bdb2a2df34a9fad3ab6a3431"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:49:34",
+          "files": {
+            "SM_Tripo_FrostIceBridge_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostIceBridge_v001_review_v001.png",
+              "sha256": "cbb69c3a210267eb2bcd5590e71ca2fdd020cde89e2b5da289012e96e9328de3"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-22 ART5：审核图四视图与概念一致（用户 2026-10-19 授权免审）",
+            "time": "2026-10-22 22:10:48"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 22:10:49",
+          "files": {
+            "SM_Tripo_FrostIceBridge.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostIceBridge.glb",
+              "sha256": "d00f44848e22025b8ab180756d174f9910f8a14a70639dbbdeaa4d8ed216ce41"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_FrostIceBridge.glb"
+        }
+      ]
+    }
+  }
+}

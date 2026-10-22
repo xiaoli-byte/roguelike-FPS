@@ -1,0 +1,139 @@
+{
+  "source": {
+    "tris": 3209,
+    "verts": 1634
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 5.46676,
+    "iou": 0.848,
+    "iou_per_view": {
+      "front": 0.834,
+      "left": 0.861,
+      "back": 0.838,
+      "right": 0.865
+    },
+    "size_m": [
+      2.523,
+      2.688,
+      5.464
+    ],
+    "reference_m": [
+      2.4,
+      2.4,
+      6.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.784,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Tripo_FrostIcePillar_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "rebaked",
+      "texture": 512,
+      "cage_m": 0.082,
+      "uv": {
+        "smart_islands": 182,
+        "charts": 26,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "merged",
+        "density_smart": 0.1474,
+        "density_merged": 0.154,
+        "coverage": 0.689
+      },
+      "collapse": {
+        "samples": 23916,
+        "matched_ratio": 0.997,
+        "mean_delta": 0.0098,
+        "p90_delta": 0.0219,
+        "smeared_ratio": 0.0009,
+        "stretched_ratio": 0.0835,
+        "dist_p99_m": 0.0228
+      },
+      "final": {
+        "samples": 23916,
+        "matched_ratio": 0.997,
+        "mean_delta": 0.002,
+        "p90_delta": 0.0045,
+        "smeared_ratio": 0.0,
+        "stretched_ratio": 0.0,
+        "dist_p99_m": 0.0228
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostIcePillar_LOD0",
+      "tris": 2984,
+      "verts": 1521,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.59,
+      "bbox_min": [
+        -1.2613,
+        -1.344,
+        0.0
+      ],
+      "bbox_max": [
+        1.2613,
+        1.344,
+        5.4641
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostIcePillar_LOD1",
+      "tris": 994,
+      "verts": 519,
+      "uv_min": [
+        0.0018637639004737139,
+        0.0018637882312759757
+      ],
+      "uv_max": [
+        0.9907752275466919,
+        0.9981361627578735
+      ],
+      "uv_utilization": 0.617,
+      "bbox_min": [
+        -1.2522,
+        -1.3401,
+        -0.0065
+      ],
+      "bbox_max": [
+        1.2595,
+        1.347,
+        5.4577
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostIcePillar/04_export/SM_Tripo_FrostIcePillar_v001.glb",
+    "bytes": 165560
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 18.1,
+  "_seconds": 19.7
+}

@@ -2,9 +2,11 @@
 
   python proc_assets.py build <ID> [<ID> ...]
 
-The user turned down the Tripo chapter-1 kit (2026-10-20: mushy blobs, broken leaf patches, a lump of sand for a
-base) and asked for local Blender modelling. blender/bl_proc_desert.py builds every LOD from a code recipe and paints
-its own atlas; this script records the result in the normal asset state so the rest of the route is unchanged:
+The user turned down the Tripo camelthorn (2026-10-20: the mesh did not match its approved concept) and asked for local
+Blender modelling; modular kit pieces that must tile exactly (the chapter-2 plank road) are modelled the same way. The
+Blender script named by [assets.<ID>.proc] script (default blender/bl_proc_desert.py; bl_proc_timber.py for the timber
+kit) builds every LOD from a code recipe and paints its own atlas; this script records the result in the normal asset
+state so the rest of the route is unchanged:
 
   blockout  bounds-only reference sized from the model itself (the recipe decides the size; a mismatch with the
             registry's reference_dimensions is reported so the registry can be updated)
@@ -22,7 +24,6 @@ import json
 import re
 import shutil
 import sys
-from pathlib import Path
 
 from PIL import Image
 
@@ -63,7 +64,8 @@ def build(asset_id: str) -> None:
               "out_glb": str(export_dir / f"{tag}.glb"), "out_blend": str(work / f"{tag}.blend"),
               "render_dir": str(tmp / "views"), "beauty_png": str(beauty)}
     print(f"→ Blender 建模 {tag}（{proc['recipe']} @ seed {params['seed']}，LOD {spec.lod_tris}，贴图 {spec.texture}²）…", flush=True)
-    res = blender.run("bl_proc_desert.py", params, tmp, "proc")
+    script = proc.get("script", "bl_proc_desert.py")
+    res = blender.run(script, params, tmp, "proc")
 
     # blockout: the reference is the model's own size
     dims = res["reference_dimensions"]
@@ -98,7 +100,7 @@ def build(asset_id: str) -> None:
     st.add_version("highpoly", {"version": hv, "from_concept": cv, "mode": "procedural",
                                 "tool": f"Blender {CFG.tools.get('blender_version', '5.2')} bpy",
                                 "checkpoint": f"{proc['recipe']}@{params['seed']}",
-                                "license": "project-original procedural model (art/pipeline/blender/bl_proc_desert.py)",
+                                "license": f"project-original procedural model (art/pipeline/blender/{script})",
                                 "faces": res["lods"][0]["tris"], "source_sha256": sha256(hp)}, [hp])
 
     metrics = work / f"{tag}_metrics.json"

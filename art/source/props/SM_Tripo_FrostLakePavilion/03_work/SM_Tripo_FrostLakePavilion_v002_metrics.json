@@ -1,0 +1,153 @@
+{
+  "source": {
+    "tris": 6699,
+    "verts": 4259
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 11.00537,
+    "iou": 0.862,
+    "iou_per_view": {
+      "front": 0.894,
+      "left": 0.832,
+      "back": 0.875,
+      "right": 0.833
+    },
+    "size_m": [
+      8.421,
+      8.12,
+      11.0
+    ],
+    "reference_m": [
+      16.0,
+      16.0,
+      11.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.627,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_FrostLakePavilion_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "provider",
+      "collapse": {
+        "samples": 21913,
+        "matched_ratio": 0.913,
+        "mean_delta": 0.0248,
+        "p90_delta": 0.0613,
+        "smeared_ratio": 0.0209,
+        "stretched_ratio": 0.0089,
+        "dist_p99_m": 0.0654
+      }
+    },
+    "LOD2": {
+      "method": "provider",
+      "collapse": {
+        "samples": 21419,
+        "matched_ratio": 0.892,
+        "mean_delta": 0.0414,
+        "p90_delta": 0.1047,
+        "smeared_ratio": 0.0473,
+        "stretched_ratio": 0.0206,
+        "dist_p99_m": 0.0942
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostLakePavilion_LOD0",
+      "tris": 6699,
+      "verts": 4259,
+      "uv_min": [
+        0.001220703125,
+        0.001220703125
+      ],
+      "uv_max": [
+        0.992919921875,
+        0.998779296875
+      ],
+      "uv_utilization": 0.592,
+      "bbox_min": [
+        -4.2103,
+        -4.0598,
+        0.0
+      ],
+      "bbox_max": [
+        4.2103,
+        4.0598,
+        11.0
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostLakePavilion_LOD1",
+      "tris": 2487,
+      "verts": 1918,
+      "uv_min": [
+        0.001220703125,
+        0.001220703125
+      ],
+      "uv_max": [
+        0.992919921875,
+        0.99853515625
+      ],
+      "uv_utilization": 0.49,
+      "bbox_min": [
+        -4.2103,
+        -4.0725,
+        -0.0226
+      ],
+      "bbox_max": [
+        4.2103,
+        4.0698,
+        10.9855
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostLakePavilion_LOD2",
+      "tris": 1483,
+      "verts": 1331,
+      "uv_min": [
+        0.001407284289598465,
+        0.001220703125
+      ],
+      "uv_max": [
+        0.99267578125,
+        0.99853515625
+      ],
+      "uv_utilization": 0.431,
+      "bbox_min": [
+        -4.2078,
+        -4.0437,
+        -0.0226
+      ],
+      "bbox_max": [
+        4.2103,
+        4.0545,
+        10.9855
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostLakePavilion/04_export/SM_Tripo_FrostLakePavilion_v002.glb",
+    "bytes": 1370172
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 35.9,
+  "_seconds": 37.6
+}

@@ -1,0 +1,197 @@
+{
+  "source": {
+    "tris": 8702,
+    "verts": 4373
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 10.03285,
+    "iou": 0.704,
+    "iou_per_view": {
+      "front": 0.77,
+      "left": 0.456,
+      "back": 0.793,
+      "right": 0.766
+    },
+    "size_m": [
+      10.028,
+      8.96,
+      6.922
+    ],
+    "reference_m": [
+      15.0,
+      8.0,
+      7.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.699,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_FrostIceBridge_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "rebaked",
+      "texture": 1024,
+      "cage_m": 0.1038,
+      "uv": {
+        "smart_islands": 244,
+        "charts": 28,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "merged",
+        "density_smart": 0.0545,
+        "density_merged": 0.0574,
+        "coverage": 0.715
+      },
+      "collapse": {
+        "samples": 23959,
+        "matched_ratio": 0.998,
+        "mean_delta": 0.0059,
+        "p90_delta": 0.0133,
+        "smeared_ratio": 0.001,
+        "stretched_ratio": 0.0571,
+        "dist_p99_m": 0.0209
+      },
+      "final": {
+        "samples": 23959,
+        "matched_ratio": 0.998,
+        "mean_delta": 0.0008,
+        "p90_delta": 0.0015,
+        "smeared_ratio": 0.0,
+        "stretched_ratio": 0.018,
+        "dist_p99_m": 0.0209
+      }
+    },
+    "LOD2": {
+      "method": "rebaked",
+      "texture": 512,
+      "cage_m": 0.1278,
+      "uv": {
+        "smart_islands": 158,
+        "charts": 28,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "smart",
+        "density_smart": 0.0554,
+        "density_merged": 0.0525,
+        "coverage": 0.768
+      },
+      "collapse": {
+        "samples": 23870,
+        "matched_ratio": 0.995,
+        "mean_delta": 0.0137,
+        "p90_delta": 0.0295,
+        "smeared_ratio": 0.0071,
+        "stretched_ratio": 0.1096,
+        "dist_p99_m": 0.0639
+      },
+      "final": {
+        "samples": 23870,
+        "matched_ratio": 0.995,
+        "mean_delta": 0.0021,
+        "p90_delta": 0.0043,
+        "smeared_ratio": 0.0,
+        "stretched_ratio": 0.0003,
+        "dist_p99_m": 0.0639
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostIceBridge_LOD0",
+      "tris": 7960,
+      "verts": 4002,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.579,
+      "bbox_min": [
+        -5.014,
+        -4.48,
+        0.0
+      ],
+      "bbox_max": [
+        5.014,
+        4.4802,
+        6.9225
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostIceBridge_LOD1",
+      "tris": 2486,
+      "verts": 1259,
+      "uv_min": [
+        0.001956816529855132,
+        0.002056676894426346
+      ],
+      "uv_max": [
+        0.9981458187103271,
+        0.9879159331321716
+      ],
+      "uv_utilization": 0.681,
+      "bbox_min": [
+        -5.0098,
+        -4.4736,
+        0.0036
+      ],
+      "bbox_max": [
+        5.0208,
+        4.4836,
+        6.9179
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostIceBridge_LOD2",
+      "tris": 796,
+      "verts": 413,
+      "uv_min": [
+        0.0036004178691655397,
+        0.0036005552392452955
+      ],
+      "uv_max": [
+        0.9943062663078308,
+        0.996399462223053
+      ],
+      "uv_utilization": 0.625,
+      "bbox_min": [
+        -5.0143,
+        -4.4874,
+        0.0288
+      ],
+      "bbox_max": [
+        5.0057,
+        4.4487,
+        6.9108
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostIceBridge/04_export/SM_Tripo_FrostIceBridge_v001.glb",
+    "bytes": 516472
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 50.0,
+  "_seconds": 52.0
+}

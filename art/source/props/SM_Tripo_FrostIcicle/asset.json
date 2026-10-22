@@ -1,0 +1,320 @@
+{
+  "id": "SM_Tripo_FrostIcicle",
+  "display": "冰棱（可射落；挂在冰桥 / 崖檐下）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:10:26",
+          "files": {
+            "BO_SM_Tripo_FrostIcicle_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostIcicle_v001.json",
+              "sha256": "c39aea1632901e73f80352b7646299c1d42efda25333b1c521df6bcf9615696c"
+            },
+            "BO_SM_Tripo_FrostIcicle_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostIcicle_v001_views.json",
+              "sha256": "025a4d62e9265303953ac0c3270b8066786c7c5ebf31511b8b4d7724b28e0fad"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost.icefall.icicle"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -0.9,
+              0.0,
+              -0.9
+            ],
+            "max": [
+              0.9,
+              5.0,
+              0.9
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:11:09",
+          "files": {
+            "CN_SM_Tripo_FrostIcicle_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIcicle_v001_source.png",
+              "sha256": "1c1b5823dd37d84c7a266240dd1531ab14497b9ff7119229ab96eb5c409ab77c"
+            },
+            "CN_SM_Tripo_FrostIcicle_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIcicle_v001_front.png",
+              "sha256": "2a7e74e4b728f32134101e773b07d6a8744afcc89685253731a310a57fb2b79a"
+            },
+            "CN_SM_Tripo_FrostIcicle_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIcicle_v001_left.png",
+              "sha256": "d033c73ea00ca43c1fb8a401bb5a14c72726f536c6cd16d53605dd91cd8de782"
+            },
+            "CN_SM_Tripo_FrostIcicle_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIcicle_v001_back.png",
+              "sha256": "ed1cbf8a046d05129da4ab6f7b24cfc837f65978e26838833d996d9057c7c4e7"
+            },
+            "CN_SM_Tripo_FrostIcicle_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIcicle_v001_right.png",
+              "sha256": "89dd7783c5172e5826601d383f03a5886ae11a98fc11d02bf6cd7c33f621d54e"
+            },
+            "CN_SM_Tripo_FrostIcicle_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostIcicle_v001_sheet.png",
+              "sha256": "083e84e2073dea2649bddb438bd12203022e57ba188bd6e021402cdcf7c0941b"
+            },
+            "CN_SM_Tripo_FrostIcicle_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostIcicle_v001_prompt.txt",
+              "sha256": "c9f672233c6fddb54606df56194a00b87e2ed82811f173d459fecb61a1d5ad2b"
+            },
+            "CN_SM_Tripo_FrostIcicle_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostIcicle_v001_registration.json",
+              "sha256": "a0ba711d0f8352cfe7956bf16c8247adfa805aa097c84fd33df4bb9e44b7620d"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2089,
+              753
+            ],
+            "references": [],
+            "codex_session": "01a15b5d-a5b8-77b0-acdf-f223b919ced9",
+            "attempt": 1,
+            "seconds": 39.2
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (1.8m wide x 5m tall x 1.8m deep): A big hanging icicle cluster 5m long and 1.8m wide that can be shot down: one thick main icicle hanging straight down from a flat top root, tapering from 1.3m thick to a blunt rounded point, with three or four shorter fat icicles fused around its upper half, gentle frozen drip rings around the shafts. The top is a flat horizontal cut where it hangs from a ledge. Opaque solid glacier ice painted pale sky blue with whiter frosted ridges and deeper turquoise in the grooves. PROPORTIONS: all four views drawn about 0.36 times as wide as tall, all four nearly the same. Chunky simplified shapes, no thin needles, no transparent ice. One solid connected piece.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "1c1b5823dd37d84c7a266240dd1531ab14497b9ff7119229ab96eb5c409ab77c",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.9992193598750975,
+              "offset": [
+                68,
+                55
+              ],
+              "size": [
+                376,
+                914
+              ],
+              "physical_height_m": 5.0,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.9959539371304077,
+              "offset": [
+                121,
+                55
+              ],
+              "size": [
+                269,
+                914
+              ],
+              "physical_height_m": 5.0,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.9959539371304077,
+              "offset": [
+                65,
+                55
+              ],
+              "size": [
+                381,
+                914
+              ],
+              "physical_height_m": 5.0,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.9981285090455395,
+              "offset": [
+                116,
+                55
+              ],
+              "size": [
+                279,
+                914
+              ],
+              "physical_height_m": 5.0,
+              "method": "uniform_height_and_center"
+            }
+          },
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-21 ART5：四视图一致、比例与登记相符（用户 2026-10-19 授权免审）",
+            "time": "2026-10-21 06:17:24"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:49:39",
+          "files": {
+            "HP_SM_Tripo_FrostIcicle_v001_source.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostIcicle_v001_source.glb",
+              "sha256": "c38ce384cf2c4ab86e8bf98a82d259a33a39e68d391d5a877a98a9cc0ca57f77"
+            },
+            "HP_SM_Tripo_FrostIcicle_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostIcicle_v001.glb",
+              "sha256": "380e74e919da3d662b27f4604bb2703f1469e4f2dba257877da70dcb6a4c88ee"
+            },
+            "HP_SM_Tripo_FrostIcicle_v001_graph.json": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostIcicle_v001_graph.json",
+              "sha256": "a23fa69ed22696242f86cff168a264f4c020c4bc2b159d60fdd44b63983fdf5c"
+            }
+          },
+          "from_concept": 1,
+          "mode": "tripo",
+          "tool": "Tripo Studio",
+          "checkpoint": "P2.0",
+          "task_url": "https://studio.tripo3d.ai/zh/workspace/generate/a8d3e733-cbbd-4599-97a6-16cd03fb0f89",
+          "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)",
+          "faces": 3186,
+          "source_sha256": "c38ce384cf2c4ab86e8bf98a82d259a33a39e68d391d5a877a98a9cc0ca57f77"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:49:55",
+          "files": {
+            "SM_Tripo_FrostIcicle_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostIcicle_v001.blend",
+              "sha256": "c83d893553f2064b7f321ca3cf7b5a93f10bd5c773e2dffaa7044f085b5b9736"
+            },
+            "SM_Tripo_FrostIcicle_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostIcicle_v001.glb",
+              "sha256": "ee05fee307873e2293a495dffbd545e6a2b366adaf8874ec6100545ccef22afa"
+            },
+            "SM_Tripo_FrostIcicle_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostIcicle_v001_metrics.json",
+              "sha256": "c4cedde1a2c85bb0e1fdb0a59262ef744a8d34d5bad280f3db6d61b1b131268c"
+            },
+            "T_Tripo_FrostIcicle_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostIcicle_BC.png",
+              "sha256": "2cdcfb6379c3718069dd8225b6d1f1e22e79ca19484a102db3e261fde1c35bee"
+            },
+            "T_Tripo_FrostIcicle_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostIcicle_N.png",
+              "sha256": "c115eedabb36a488303772eed3dca94af9a712fdc102a4aaf8c95710b8e1c88f"
+            },
+            "T_Tripo_FrostIcicle_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostIcicle_ORM.png",
+              "sha256": "18e3b05b326e2e7feb00e827103b8ad8ef516ef67c342feb26bc51a90bdfde5e"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.749,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 2984,
+              "verts": 1494
+            },
+            {
+              "tris": 994,
+              "verts": 499
+            }
+          ],
+          "export_kb": 180.5,
+          "seconds": 14.1,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:49:58",
+          "files": {
+            "SM_Tripo_FrostIcicle_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostIcicle_v001_validation_v001.json",
+              "sha256": "93711546dc5bb39594a3df0c5c54e50d832deec7cf87bbd92c0851688dbf909e"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 21:50:08",
+          "files": {
+            "SM_Tripo_FrostIcicle_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostIcicle_v001_review_v001.png",
+              "sha256": "21c51d9ceeb73fc50793827789df80cd4dfaabcc8b0e7cf0a117aaca2ce623a9"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-22 ART5：审核图四视图与概念一致（用户 2026-10-19 授权免审）",
+            "time": "2026-10-22 22:10:49"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-22 22:10:49",
+          "files": {
+            "SM_Tripo_FrostIcicle.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostIcicle.glb",
+              "sha256": "ee05fee307873e2293a495dffbd545e6a2b366adaf8874ec6100545ccef22afa"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_FrostIcicle.glb"
+        }
+      ]
+    }
+  }
+}

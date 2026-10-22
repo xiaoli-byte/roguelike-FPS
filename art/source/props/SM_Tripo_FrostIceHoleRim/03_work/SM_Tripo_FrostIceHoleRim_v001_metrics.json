@@ -1,0 +1,117 @@
+{
+  "source": {
+    "tris": 2550,
+    "verts": 1666
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 3.7894,
+    "iou": 0.698,
+    "iou_per_view": {
+      "front": 0.897,
+      "left": 0.487,
+      "back": 0.814,
+      "right": 0.496
+    },
+    "size_m": [
+      3.788,
+      2.755,
+      2.2
+    ],
+    "reference_m": [
+      6.0,
+      4.0,
+      2.2
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.721,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Tripo_FrostIceHoleRim_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "provider",
+      "collapse": {
+        "samples": 23574,
+        "matched_ratio": 0.982,
+        "mean_delta": 0.0122,
+        "p90_delta": 0.0323,
+        "smeared_ratio": 0.0073,
+        "stretched_ratio": 0.0159,
+        "dist_p99_m": 0.0289
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostIceHoleRim_LOD0",
+      "tris": 2550,
+      "verts": 1666,
+      "uv_min": [
+        0.000732421875,
+        0.000732421875
+      ],
+      "uv_max": [
+        0.99560546875,
+        0.999267578125
+      ],
+      "uv_utilization": 0.772,
+      "bbox_min": [
+        -1.8938,
+        -1.3775,
+        0.0
+      ],
+      "bbox_max": [
+        1.8938,
+        1.3775,
+        2.2
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostIceHoleRim_LOD1",
+      "tris": 994,
+      "verts": 768,
+      "uv_min": [
+        0.0009765625,
+        0.0005512447096407413
+      ],
+      "uv_max": [
+        0.99560546875,
+        0.999267578125
+      ],
+      "uv_utilization": 0.707,
+      "bbox_min": [
+        -1.8938,
+        -1.3809,
+        0.0
+      ],
+      "bbox_max": [
+        1.8938,
+        1.3775,
+        2.2015
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostIceHoleRim/04_export/SM_Tripo_FrostIceHoleRim_v001.glb",
+    "bytes": 234664
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 12.9,
+  "_seconds": 15.1
+}

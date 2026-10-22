@@ -266,3 +266,13 @@ texture = 512
 texel_density = 256
 max_file_kb = 300
 lod_rebake_stretch = 0.02
+
+# 程序化模块件（第二章栈道）：bl_proc_timber.py 用倒角方木拼出、每级 LOD 直接建模，尺寸精确可首尾拼接；
+# LOD1 去掉倒角、铜箍、钉子和冰棱
+[classes.proc_kit]
+category = "props"
+lod_tris = [3000, 1000]
+lod_distance = [0, 24]
+texture = 1024
+texel_density = 128
+max_file_kb = 900

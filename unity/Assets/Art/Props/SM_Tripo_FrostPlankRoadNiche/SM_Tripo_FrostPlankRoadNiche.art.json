@@ -1,0 +1,152 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_FrostPlankRoadNiche",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "frost.plankRoad.niche"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    24,
+    60
+  ],
+  "budget": {
+    "lodTris": [
+      8000,
+      2500,
+      800
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -3.7420623302459717,
+      0,
+      -1.9794824123382568
+    ],
+    "max": [
+      3.7420623302459717,
+      8,
+      1.9794824123382568
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_FrostPlankRoadNiche_LOD0",
+      "lod": 0,
+      "tris": 7673,
+      "verts": 10109,
+      "materials": [
+        "M_Tripo_FrostPlankRoadNiche"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_FrostPlankRoadNiche_LOD1",
+      "lod": 1,
+      "tris": 2485,
+      "verts": 4375,
+      "materials": [
+        "M_Tripo_FrostPlankRoadNiche"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_FrostPlankRoadNiche_LOD2",
+      "lod": 2,
+      "tris": 792,
+      "verts": 765,
+      "materials": [
+        "M_Tripo_FrostPlankRoadNiche_LOD2"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_FrostPlankRoadNiche",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_FrostPlankRoadNiche_BC.png",
+        "N": "Textures/T_Tripo_FrostPlankRoadNiche_N.png",
+        "ORM": "Textures/T_Tripo_FrostPlankRoadNiche_ORM.png"
+      }
+    },
+    {
+      "name": "M_Tripo_FrostPlankRoadNiche_LOD2",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_FrostPlankRoadNiche_LOD2_BC.png",
+        "N": "Textures/T_Tripo_FrostPlankRoadNiche_LOD2_N.png",
+        "ORM": "Textures/T_Tripo_FrostPlankRoadNiche_LOD2_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_FrostPlankRoadNiche.glb",
+    "sha256": "f880edec8041e03df94e353cd4cceaffb3a71f024c1028a578df9a09ae261d90",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-22 22:12:44"
+}

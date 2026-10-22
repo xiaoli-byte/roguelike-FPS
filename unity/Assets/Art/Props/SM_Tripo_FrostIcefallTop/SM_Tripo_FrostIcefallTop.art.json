@@ -1,0 +1,178 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_FrostIcefallTop",
+  "kind": "static",
+  "class": "tripo_architecture",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "frost.icefall.top"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    24,
+    60
+  ],
+  "budget": {
+    "lodTris": [
+      8000,
+      2500,
+      800
+    ],
+    "texture": 2048,
+    "maxFileKb": 1600
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -6.508745193481445,
+      0,
+      -2.1208271980285645
+    ],
+    "max": [
+      6.508745193481445,
+      12,
+      2.1208271980285645
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_FrostIcefallTop_LOD0",
+      "lod": 0,
+      "tris": 7963,
+      "verts": 10026,
+      "materials": [
+        "M_Tripo_FrostIcefallTop"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_FrostIcefallTop_LOD1",
+      "lod": 1,
+      "tris": 2487,
+      "verts": 1946,
+      "materials": [
+        "M_Tripo_FrostIcefallTop_LOD1"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_FrostIcefallTop_LOD2",
+      "lod": 2,
+      "tris": 796,
+      "verts": 833,
+      "materials": [
+        "M_Tripo_FrostIcefallTop_LOD2"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_FrostIcefallTop",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_FrostIcefallTop_BC.png",
+        "N": "Textures/T_Tripo_FrostIcefallTop_N.png",
+        "ORM": "Textures/T_Tripo_FrostIcefallTop_ORM.png"
+      }
+    },
+    {
+      "name": "M_Tripo_FrostIcefallTop_LOD1",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_FrostIcefallTop_LOD1_BC.png",
+        "N": "Textures/T_Tripo_FrostIcefallTop_LOD1_N.png",
+        "ORM": "Textures/T_Tripo_FrostIcefallTop_LOD1_ORM.png"
+      }
+    },
+    {
+      "name": "M_Tripo_FrostIcefallTop_LOD2",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_FrostIcefallTop_LOD2_BC.png",
+        "N": "Textures/T_Tripo_FrostIcefallTop_LOD2_N.png",
+        "ORM": "Textures/T_Tripo_FrostIcefallTop_LOD2_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_FrostIcefallTop.glb",
+    "sha256": "f7b16316dfa9698322fa9ca610dfb8653d37aeb4c188282a34ba191d19db84f9",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 2,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-22 22:12:20"
+}

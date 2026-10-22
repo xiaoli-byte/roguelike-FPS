@@ -1,0 +1,118 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_FrostPlankRoadStraight",
+  "kind": "static",
+  "class": "proc_kit",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "frost.plankRoad.straight"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    24
+  ],
+  "budget": {
+    "lodTris": [
+      3000,
+      1000
+    ],
+    "texture": 1024,
+    "maxFileKb": 900
+  },
+  "qaWaivers": {
+    "场景轴心居中": "模块件的原点是拼接点（桥面中心、最低点着地），由 bl_proc_timber.py 固定，不按包围盒居中",
+    "LOD1 贴图色差": "LOD1 去掉铜箍、钉帽和冰棱（24 m 外看不见），色差来自这些小件",
+    "UV 利用率": "整套共用一张手绘图集（木板条 / 方木 / 漆 / 铜 / 雪 / 冰 / 石），每件只用到其中一部分"
+  },
+  "bounds": {
+    "min": [
+      -4,
+      0,
+      -3
+    ],
+    "max": [
+      4,
+      3.490000009536743,
+      3.2118828296661377
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_FrostPlankRoadStraight_LOD0",
+      "lod": 0,
+      "tris": 2732,
+      "verts": 4920,
+      "materials": [
+        "M_Tripo_FrostPlankRoadStraight"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_FrostPlankRoadStraight_LOD1",
+      "lod": 1,
+      "tris": 504,
+      "verts": 1008,
+      "materials": [
+        "M_Tripo_FrostPlankRoadStraight"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_FrostPlankRoadStraight",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": false,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_FrostPlankRoadStraight_BC.png",
+        "N": "Textures/T_Tripo_FrostPlankRoadStraight_N.png",
+        "ORM": "Textures/T_Tripo_FrostPlankRoadStraight_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_FrostPlankRoadStraight.glb",
+    "sha256": "1d2fecd6c2106e02daa60469c83f594371f1e3743830a85aa2374fb6016c8b07",
+    "hiRes": false,
+    "version": {
+      "blockout": 2,
+      "concept": 2,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Blender 5.2 bpy",
+      "mode": "procedural",
+      "checkpoint": "plank_straight@7"
+    },
+    "license": "project-original procedural model (art/pipeline/blender/bl_proc_timber.py)"
+  },
+  "exported": "2026-10-22 22:12:36"
+}

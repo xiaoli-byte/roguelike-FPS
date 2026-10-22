@@ -1910,6 +1910,278 @@ material = { roughness = 0.95, metallic = 0.0 }
 brief = """A huge overhanging slab of layered ochre-red and sand-yellow sandstone forming one lip of a sunlit fissure in the roof of a giant desert cave, 26m long, 14m deep and 9m thick, meant to hang high overhead (two of these face each other with a gap between them to form the crack of daylight). The flat top is a gently uneven rock surface dusted with pale sand. The FRONT long side is the broken lip of the fissure: a steep jagged overhanging edge that juts outward toward the viewer at the top and steps back in big blocky strata ledges toward the bottom, with two or three large chunky blocks hanging lower than the rest. The underside bulges down in broad heavy rounded rock masses with horizontal strata bands, like the ceiling of a cave seen from below. The BACK long side and both short ends are rough vertical rock faces where the slab continues into the cave dome. Bold, perfectly horizontal sediment strata in alternating ochre-red and sand-yellow bands wrap around every side at the same heights. PROPORTIONS: FRONT and BACK views drawn almost three times as wide as tall, a long thick slab; the side views show its 14m-deep wedge profile with the overhanging lip on the front side, drawn about 1.5 times as wide as tall. Broad faceted hand-painted planes, chunky forms, no stalactites, thin spikes, vegetation or man-made parts. One solid rock mass; draw it resting on a flat base line."""
 
 
+# ───────────── 第二章地图件（ART5，docs/unity-parity.md 第 5 节）：2-1 冰瀑栈道 + 2-2 钟亭 / 挡土墙 + 2-3 湖心亭 + 2-5 冰窟边缘 ─────────────
+# 设计依据 docs/level-design/unity-maps-v1.md 第 2 节、plans-v2/frost.json。昆仑定稿风格（kunlun），冰窟边缘随北冥冰台（beiming）。
+# 冰一律画成不透明的冰川蓝实体（Tripo 不出透明），半透明交给 Unity 的冰着色器（L8）。
+# FrostTao（备选 B 寒山道观）不做：2026-10-10 用户定稿 A + C，B 只作存档（docs/art/enemy-roster-v2.md 第二章）。
+
+[assets.SM_Tripo_FrostIcefallTop]
+display = "冰瀑上段（瀑顶唇口，2-1 地标）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "kunlun"
+blockout = { source = "scene", id = "frost.icefall.top" }
+reference_mode = "bounds_only"
+reference_dimensions = [20.0, 12.0, 8.0]
+architecture_role = "landmark"
+keep_glow = "none"
+material = { roughness = 0.45, metallic = 0.0 }
+brief = """The TOP segment of a colossal frozen waterfall, 20m wide, 12m tall and 8m deep, one of three stacked segments: at the top a broad flat lip of dark blue-grey granite whose top edge is level and capped with thick soft snow, and over it the frozen water bulges out and pours straight down as one wide continuous curtain of thick rounded glacier ice: fat vertical fluted ice columns side by side like giant frozen organ pipes, bulging rounded lobes where the flow thickened, a few short chunky ice daggers along the lower edge. Opaque solid glacier ice painted pale sky blue with whiter frosted crests and deeper turquoise in the grooves between the columns. The BOTTOM edge is a straight horizontal cut across the full width so the middle segment joins under it. The BACK is a flat rough granite face that sits against the cliff. PROPORTIONS: the FRONT and BACK views are drawn about 1.7 times as wide as tall; the LEFT and RIGHT views show the ice bulging forward from the rock, about 0.65 times as wide as tall. Broad chunky readable forms, no water spray, no mist, no transparent ice, no particles. One solid connected piece."""
+
+[assets.SM_Tripo_FrostIcefallMid]
+display = "冰瀑中段（冰柱帘）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "kunlun"
+blockout = { source = "scene", id = "frost.icefall.mid" }
+reference_mode = "bounds_only"
+reference_dimensions = [20.0, 16.0, 8.0]
+architecture_role = "landmark"
+keep_glow = "none"
+material = { roughness = 0.45, metallic = 0.0 }
+brief = """The MIDDLE segment of a colossal frozen waterfall, 20m wide, 16m tall and 8m deep, one of three stacked segments: a tall continuous curtain of thick frozen ice falling straight down, made of fat vertical fluted ice columns of different thickness fused side by side, some bulging forward in rounded lobes, two or three big hanging ice daggers in front, a few dark blue-grey granite ribs showing through the ice near both side edges. Opaque solid glacier ice painted pale sky blue with whiter frosted crests and deeper turquoise in the grooves. The TOP edge and the BOTTOM edge are both straight horizontal cuts across the full width so the other segments stack above and below it. The BACK is a flat rough granite face that sits against the cliff. PROPORTIONS: the FRONT and BACK views are drawn about 1.25 times as wide as tall; the LEFT and RIGHT views are about 0.5 times as wide as tall. Broad chunky readable forms, no water spray, no mist, no transparent ice, no particles. One solid connected piece."""
+
+[assets.SM_Tripo_FrostIcefallBase]
+display = "冰瀑下段（瀑脚冰锥）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "kunlun"
+blockout = { source = "scene", id = "frost.icefall.base" }
+reference_mode = "bounds_only"
+reference_dimensions = [26.0, 12.0, 14.0]
+architecture_role = "landmark"
+keep_glow = "none"
+material = { roughness = 0.45, metallic = 0.0 }
+brief = """The BASE segment of a colossal frozen waterfall, 26m wide, 12m tall and 14m deep, one of three stacked segments: thick fluted ice columns plunge down and splay out into a huge frozen splash mound, a broad pile of rounded fused ice lobes and big tilted ice blocks that flares out wide at the bottom into a low flat frozen pool shelf 1m high, with soft snow drifted in the hollows and a few blue-grey granite boulders frozen into the foot. Opaque solid glacier ice painted pale sky blue with whiter frosted crests and deeper turquoise in the grooves. The TOP of the piece is a straight horizontal cut about 20m wide where the middle segment joins. The BACK is a flat rough granite face. PROPORTIONS: the FRONT and BACK views are drawn about 2.2 times as wide as tall, a broad cone wider at the bottom; the LEFT and RIGHT views about 1.15 times as wide as tall. Broad chunky readable forms, no water spray, no mist, no transparent ice. One solid connected piece on a flat base."""
+
+[assets.SM_Tripo_FrostIceBridge]
+display = "冰桥半跨（2-1 跨峡谷；两件镜像对接成 8 × 30 m）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "kunlun"
+blockout = { source = "scene", id = "frost.icefall.iceBridge" }
+reference_mode = "bounds_only"
+reference_dimensions = [15.0, 7.0, 8.0]
+architecture_role = "bridge"
+keep_glow = "none"
+material = { roughness = 0.5, metallic = 0.0 }
+brief = """One half span of a natural ice bridge, 15m long, 8m wide and 7m tall; two copies mirrored end to end make a 30m bridge across a canyon. It is a branch of a frozen waterfall that froze in mid air: one massive slab of glacier ice with a FLAT walkable top 8m wide covered by a thin even layer of snow. Its LEFT end is thick and blocky, a flat vertical cut face 7m tall that butts against the canyon ledge; its underside is one smooth curve rising from that end toward the RIGHT end, where the slab is only 2.5m thick and ends in a flat vertical cut face (the mirrored half joins there). Along the underside hang a few short fat fused ice drips; the long sides show horizontal frozen flow bands and rounded bulges. Opaque solid glacier ice painted pale sky blue with whiter frosted edges and deeper turquoise in the hollows. The FRONT view looks at the long side. The bridge is WIDE: its deck is 8m wide, more than half of its 15m length, so in the LEFT and RIGHT views the end faces are drawn 8m wide, broader than they are tall, at the same scale as the front. PROPORTIONS: the FRONT and BACK views are drawn about 2.15 times as wide as tall, tall at one end and thin at the other; the LEFT view shows the 7m blocky end face about 1.15 times as wide as tall (a broad block, not a slim pillar), the RIGHT view shows the thin end face about 3 times as wide as tall. No railing, no transparent ice, no mist. One solid connected piece."""
+
+[assets.SM_Tripo_FrostIcicle]
+display = "冰棱（可射落；挂在冰桥 / 崖檐下）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+style_theme = "kunlun"
+blockout = { source = "scene", id = "frost.icefall.icicle" }
+reference_mode = "bounds_only"
+reference_dimensions = [1.8, 5.0, 1.8]
+architecture_role = "destructible"
+keep_glow = "none"
+material = { roughness = 0.4, metallic = 0.0 }
+brief = """A big hanging icicle cluster 5m long and 1.8m wide that can be shot down: one thick main icicle hanging straight down from a flat top root, tapering from 1.3m thick to a blunt rounded point, with three or four shorter fat icicles fused around its upper half, gentle frozen drip rings around the shafts. The top is a flat horizontal cut where it hangs from a ledge. Opaque solid glacier ice painted pale sky blue with whiter frosted ridges and deeper turquoise in the grooves. PROPORTIONS: all four views drawn about 0.36 times as wide as tall, all four nearly the same. Chunky simplified shapes, no thin needles, no transparent ice. One solid connected piece."""
+
+[assets.SM_Tripo_FrostIcicleShards]
+display = "冰棱碎块（射落后的掩体 / 冰柱碎后）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+style_theme = "kunlun"
+blockout = { source = "scene", id = "frost.icefall.icicleShards" }
+reference_mode = "bounds_only"
+reference_dimensions = [3.2, 1.0, 2.4]
+architecture_role = "cover"
+keep_glow = "none"
+material = { roughness = 0.45, metallic = 0.0 }
+brief = """The wreck of a big icicle that fell and shattered on the ground, 3.2m wide, 1m tall and 2.4m deep: four or five big chunky faceted ice chunks lying in a low heap, the largest a broken thick icicle shaft lying on its side with its blunt tip pointing away, smaller angular broken blocks leaning against it with fresh flat fracture faces, a little scattered snow at the base. Opaque solid glacier ice painted pale sky blue, the fracture faces brighter and whiter, deeper turquoise in the grooves. PROPORTIONS: a low heap, the FRONT and BACK views about 3.2 times as wide as tall, the LEFT and RIGHT views about 2.4 times as wide as tall. Chunky broad facets, no tiny splinters, no transparent ice. One solid connected group resting on a flat base."""
+
+[assets.SM_Tripo_FrostIcePillar]
+display = "冰柱（2-1 冰柱林，可破坏）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+style_theme = "kunlun"
+blockout = { source = "scene", id = "frost.icefall.icePillar" }
+reference_mode = "bounds_only"
+reference_dimensions = [2.4, 6.0, 2.4]
+architecture_role = "destructible"
+keep_glow = "none"
+material = { roughness = 0.45, metallic = 0.0 }
+brief = """A free-standing thick ice column 6m tall and 2.4m wide for an ice-pillar forest, where dripping water froze from the ground up: a fat slightly irregular column of fused glacier ice, wider at the foot where it spreads into a frozen puddle mound, with rounded drip bulges and vertical flutes up its sides, a blunt rounded top with a cap of soft snow, a little snow drifted against the foot. Opaque solid glacier ice painted pale sky blue with whiter frosted ridges and deeper turquoise in the grooves. PROPORTIONS: all four views drawn about 0.4 times as wide as tall, all four nearly the same. Chunky simplified shapes, no thin needles, no transparent ice. One solid connected piece on a flat base."""
+
+[assets.SM_Tripo_FrostPlankRoadStraight]
+display = "栈道直段（贴崖，6 m 宽 × 8 m 长）"
+kind = "static"
+class = "proc_kit"
+source_provider = "blender"  # 2026-10-21：四视图互相矛盾、进深画窄，Tripo 出不了能精确拼接的模块件 → bl_proc_timber.py
+qa_waivers = { "场景轴心居中" = "模块件的原点是拼接点（桥面中心、最低点着地），由 bl_proc_timber.py 固定，不按包围盒居中", "LOD1 贴图色差" = "LOD1 去掉铜箍、钉帽和冰棱（24 m 外看不见），色差来自这些小件", "UV 利用率" = "整套共用一张手绘图集（木板条 / 方木 / 漆 / 铜 / 雪 / 冰 / 石），每件只用到其中一部分" }
+style_theme = "kunlun"
+blockout = { source = "scene", id = "frost.plankRoad.straight" }
+reference_mode = "bounds_only"
+reference_dimensions = [8.0, 3.49, 6.21]
+architecture_role = "walkway"
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.05 }
+brief = """A tileable straight section of an ancient cliff-side plank road (zhandao), 8m long, 6m wide and 3.4m tall, built out from a sheer cliff: a FLAT walkable deck of broad thick dark weathered timber planks laid across the width, 0.4m thick, its top at 2.4m, with a thin layer of snow; under the deck four thick square timber cantilever beams run from the back edge to the front edge with chunky diagonal timber struts angling down and back to the back plane, verdigris bronze straps at the joints. Along the FRONT edge only, a sturdy low railing 1m tall: thick square posts every 2m capped with snow and one heavy top rail painted faded vermilion. The BACK edge has no railing and is flat (it sits against the cliff). Both LEFT and RIGHT ends are flat cut faces so identical sections join seamlessly in a row. The deck is WIDE: 6m from the front edge to the back edge, three quarters of its 8m length, so in the LEFT and RIGHT views the deck is drawn 6m wide at the same scale as the front, with the railing post at the front end and the cantilever beam and diagonal strut running back to the cliff side; in the BACK view the railing is still visible standing behind the deck. PROPORTIONS: the FRONT and BACK views are drawn about 2.35 times as wide as tall; the LEFT and RIGHT views about 1.75 times as wide as tall (wide, not narrow). Chunky readable timber, no thin rope, no loose planks. One solid connected piece."""
+
+[assets.SM_Tripo_FrostPlankRoadStraight.proc]
+script = "bl_proc_timber.py"
+recipe = "plank_straight"
+seed = 7
+
+[assets.SM_Tripo_FrostPlankRoadCorner]
+display = "栈道转角（绕崖角 90°）"
+kind = "static"
+class = "proc_kit"
+source_provider = "blender"  # 2026-10-21：四视图互相矛盾、进深画窄，Tripo 出不了能精确拼接的模块件 → bl_proc_timber.py
+qa_waivers = { "场景轴心居中" = "模块件的原点是拼接点（桥面中心、最低点着地），由 bl_proc_timber.py 固定，不按包围盒居中", "LOD1 贴图色差" = "LOD1 去掉铜箍、钉帽和冰棱（24 m 外看不见），色差来自这些小件", "UV 利用率" = "整套共用一张手绘图集（木板条 / 方木 / 漆 / 铜 / 雪 / 冰 / 石），每件只用到其中一部分" }
+style_theme = "kunlun"
+blockout = { source = "scene", id = "frost.plankRoad.corner" }
+reference_mode = "bounds_only"
+reference_dimensions = [6.2, 3.49, 6.08]
+architecture_role = "walkway"
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.05 }
+brief = """A square corner landing of an ancient cliff-side plank road (zhandao), 6m by 6m and 3.4m tall, where the road turns 90 degrees around an outside corner of a cliff: a FLAT walkable square deck of broad thick dark weathered timber planks, 0.4m thick, its top at 2.4m, with a thin layer of snow; under it a grid of thick square timber beams with chunky diagonal struts angling down toward the back-left corner, verdigris bronze straps at the joints. A sturdy low railing 1m tall (thick square posts capped with snow, one heavy faded vermilion top rail) runs along the FRONT edge and the RIGHT edge, meeting at a thicker corner post. The LEFT edge and the BACK edge have NO railing and are flat cut faces where straight sections join. PROPORTIONS: all four views drawn about 1.75 times as wide as tall; the FRONT and RIGHT views show the railing, the BACK and LEFT views show the open deck edge. Chunky readable timber, no thin rope. One solid connected piece."""
+
+[assets.SM_Tripo_FrostPlankRoadCorner.proc]
+script = "bl_proc_timber.py"
+recipe = "plank_corner"
+seed = 7
+
+[assets.SM_Tripo_FrostPlankRoadBroken]
+display = "栈道断口（4 m 缺口两端各放一件）"
+kind = "static"
+class = "proc_kit"
+source_provider = "blender"  # 2026-10-21：四视图互相矛盾、进深画窄，Tripo 出不了能精确拼接的模块件 → bl_proc_timber.py
+qa_waivers = { "场景轴心居中" = "模块件的原点是拼接点（桥面中心、最低点着地），由 bl_proc_timber.py 固定，不按包围盒居中", "LOD1 贴图色差" = "LOD1 去掉铜箍、钉帽和冰棱（24 m 外看不见），色差来自这些小件", "UV 利用率" = "整套共用一张手绘图集（木板条 / 方木 / 漆 / 铜 / 雪 / 冰 / 石），每件只用到其中一部分" }
+style_theme = "kunlun"
+blockout = { source = "scene", id = "frost.plankRoad.broken" }
+reference_mode = "bounds_only"
+reference_dimensions = [5.0, 3.49, 6.2]
+architecture_role = "walkway"
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.05 }
+brief = """The broken end of an ancient cliff-side plank road (zhandao), 5m long, 6m wide and 4.2m tall: the same flat walkable deck of broad thick dark weathered timber planks, 0.4m thick with its top at 3m and a thin layer of snow, on thick square cantilever beams with diagonal struts, and a low faded vermilion railing along the FRONT edge; at the RIGHT end the road is snapped off: jagged splintered plank ends of uneven length, one broken beam sticking out further, two loose planks hanging down at a steep angle still nailed at one end, the railing snapped with its top rail dangling, a few icicles on the broken edge. The LEFT end is a flat clean cut face where it joins a straight section; the BACK edge is flat (against the cliff). PROPORTIONS: the FRONT and BACK views are drawn about 1.2 times as wide as tall; the LEFT and RIGHT views about 1.45 times as wide as tall. Chunky readable timber, no thin rope. One solid connected piece."""
+
+[assets.SM_Tripo_FrostPlankRoadBroken.proc]
+script = "bl_proc_timber.py"
+recipe = "plank_broken"
+seed = 7
+
+[assets.SM_Tripo_FrostPlankRoadNiche]
+display = "栈道龛平台（凿进山体的平台）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "kunlun"
+blockout = { source = "scene", id = "frost.plankRoad.niche" }
+reference_mode = "bounds_only"
+reference_dimensions = [10.0, 8.0, 6.0]
+architecture_role = "shrine"
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.05 }
+brief = """A wide rest platform of a cliff-side plank road carved into the mountain, 10m wide, 8m tall and 6m deep, one solid piece: a big rectangular alcove hewn into blue-grey granite with a flat smooth stone floor 6m deep at 2.4m height, a rough rock back wall, thick rock side walls and a heavy overhanging rock roof 5m above the floor whose front lip carries thick snow and a row of short chunky icicles. In the back wall a small carved shrine niche with a seated stone immortal figure and a verdigris bronze plaque; at the front edge of the floor a strip of thick dark timber planks with a short faded vermilion railing on each side, leaving the middle 5m open; under the floor front a few timber beam ends and a rock buttress. The BACK is a flat rough rock face that sits inside the cliff; LEFT and RIGHT sides are rough rock faces. PROPORTIONS: the FRONT and BACK views are drawn about 1.25 times as wide as tall; the LEFT and RIGHT views about 0.75 times as wide as tall. The alcove is open at the front and empty inside except the shrine niche. Chunky readable forms."""
+
+[assets.SM_Tripo_FrostPlankRoadPost]
+display = "栈道木柱支撑（排架）"
+kind = "static"
+class = "proc_kit"
+source_provider = "blender"  # 2026-10-21：四视图互相矛盾、进深画窄，Tripo 出不了能精确拼接的模块件 → bl_proc_timber.py
+qa_waivers = { "场景轴心居中" = "模块件的原点是拼接点（桥面中心、最低点着地），由 bl_proc_timber.py 固定，不按包围盒居中", "LOD1 贴图色差" = "LOD1 去掉铜箍、钉帽和冰棱（24 m 外看不见），色差来自这些小件", "UV 利用率" = "整套共用一张手绘图集（木板条 / 方木 / 漆 / 铜 / 雪 / 冰 / 石），每件只用到其中一部分" }
+style_theme = "kunlun"
+blockout = { source = "scene", id = "frost.plankRoad.post" }
+reference_mode = "bounds_only"
+reference_dimensions = [6.24, 9.0, 1.24]
+architecture_role = "support"
+keep_glow = "none"
+material = { roughness = 0.85, metallic = 0.05 }
+brief = """A tall timber support trestle that holds up a cliff-side plank road over a gap, 6m wide, 9m tall and 1.4m deep: two thick square dark weathered timber posts 0.6m thick standing on chunky grey granite footing blocks, joined by a heavy flat top beam that carries the deck, a second horizontal beam halfway down, and one big X of thick diagonal braces between them, verdigris bronze straps and big iron nails at every joint, snow lying on the top beam and the middle beam, a few short icicles. PROPORTIONS: the FRONT and BACK views are drawn about 0.67 times as wide as tall and look the same; the LEFT and RIGHT views show a single post, about 0.16 times as wide as tall. Chunky readable timber, no thin rope. One solid connected piece on a flat base."""
+
+[assets.SM_Tripo_FrostPlankRoadPost.proc]
+script = "bl_proc_timber.py"
+recipe = "plank_post"
+seed = 7
+
+[assets.SM_Tripo_FrostCanyonCliff]
+display = "峡谷崖壁片（可拼接的绝壁）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "kunlun"
+blockout = { source = "scene", id = "frost.icefall.canyonCliff" }
+reference_mode = "bounds_only"
+reference_dimensions = [16.0, 24.0, 7.0]
+qa_waivers = { "场景高度" = "Tripo 网格比概念厚，等比对齐被进深卡住：实得 14.2 × 19.74 × 7.84 m；崖壁片在关卡里按需整体放大（2026-10-22）" }
+architecture_role = "cliff"
+keep_glow = "none"
+material = { roughness = 0.9, metallic = 0.0 }
+brief = """A tileable panel of a sheer mountain canyon wall, 16m wide, 24m tall and 7m deep: a near-vertical cliff face of blue-grey granite built from a few big angular rock planes and tall vertical columns, three uneven horizontal ledges with thick soft snow lying on them, two long vertical streaks of frozen seepage ice running down the face (opaque pale glacier blue), the foot slightly flared into a sloping rock apron. The LEFT and RIGHT edges are irregular rock buttresses so neighbouring panels overlap; the BACK is a flat rough face. PROPORTIONS: the FRONT and BACK views are drawn about 0.67 times as wide as tall; the LEFT and RIGHT views about 0.3 times as wide as tall, showing the ledges stepping out. Broad faceted planes, two or three dominant colour blocks, no trees, no buildings, no caves, no tiny cracks. One solid connected piece."""
+
+[assets.SM_Tripo_FrostJadeRetainingWall]
+display = "白玉挡土墙段（2-2 台地，带栏板）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "kunlun"
+blockout = { source = "scene", id = "frost.kunlun.retainingWall" }
+reference_mode = "bounds_only"
+reference_dimensions = [8.0, 6.5, 2.5]
+architecture_role = "wall"
+keep_glow = "none"
+material = { roughness = 0.8, metallic = 0.05 }
+brief = """A tileable terrace retaining wall section of a Kunlun mountain palace, 8m wide, 6.5m tall and 2.5m deep: a slightly battered wall face 5.4m tall of big pale grey-white granite ashlar blocks, a carved white jade lotus-petal moulding band along the top edge, and on top a white jade balustrade 1.1m tall: square posts with round cloud-scroll caps and SOLID carved panels between them (no openings). Thick soft snow on the balustrade top, on the moulding and drifted against the wall foot; one thin verdigris bronze drain spout in the middle with a short chunky icicle. Both LEFT and RIGHT ends are flat cut faces so identical sections join seamlessly in a row; the BACK is a flat face (it holds back the upper terrace). PROPORTIONS: the FRONT and BACK views are drawn about 1.25 times as wide as tall; the LEFT and RIGHT views about 0.4 times as wide as tall. Broad clean blocks, no tiny cracks. One solid connected piece."""
+
+[assets.SM_Tripo_FrostBellPavilion]
+display = "钟亭（2-2 东崖钟亭藏宝点）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "kunlun"
+blockout = { source = "scene", id = "frost.kunlun.bellPavilion" }
+reference_mode = "bounds_only"
+reference_dimensions = [7.0, 8.5, 7.0]
+lod_tris = [8000, 2500, 1500]  # 800 面的 LOD2 与 LOD0 色差超限（同第一章半埋殿顶）
+lod_rebake_stretch = 0.10
+architecture_role = "pavilion"
+keep_glow = "none"
+material = { roughness = 0.75, metallic = 0.15 }
+brief = """A square open bell pavilion of a Kunlun mountain palace, 7m wide, 8.5m tall and 7m deep: a white jade plinth 0.8m tall with three broad steps on the FRONT side, four thick faded vermilion lacquer columns at the corners, painted bracket sets, and a pyramidal roof of verdigris bronze tiles with strongly upturned eave corners and a small round bronze finial, the roof under thick soft snow with chunky icicles along the eaves. Under the roof a big verdigris bronze temple bell 1.8m tall hangs from the central beam, with a thick wooden striker log hung beside it on two ropes. The four sides are open between the columns. PROPORTIONS: all four views drawn about 0.82 times as wide as tall; only the FRONT has the steps. Chunky readable forms, no tiny carvings. One solid connected piece."""
+
+[assets.SM_Tripo_FrostLakePavilion]
+display = "湖心亭（2-3 瑶池冰湖，台高 3 m，东西两道台阶）"
+kind = "static"
+class = "tripo_architecture"
+source_provider = "tripo"
+style_theme = "kunlun"
+blockout = { source = "scene", id = "frost.kunlun.lakePavilion" }
+reference_mode = "bounds_only"
+reference_dimensions = [16.0, 11.0, 16.0]
+lod_tris = [8000, 2500, 1500]  # 800 面的 LOD2 与 LOD0 色差超限（同第一章半埋殿顶）
+lod_rebake_stretch = 0.10
+architecture_role = "landmark"
+keep_glow = "none"
+material = { roughness = 0.75, metallic = 0.1 }
+brief = """A lake pavilion on a frozen palace lake, 16m wide, 11m tall and 16m deep: a square white jade island podium 16m wide and 3m tall with a carved white jade balustrade around its top edge (solid panels, no openings), the podium foot frozen into a ring of thick pale blue lake ice; one broad straight stair flight 4m wide climbs the LEFT side and an identical one climbs the RIGHT side, both cut into the podium. On top in the middle stands an octagonal double-eave pavilion 8m wide: eight faded vermilion lacquer columns, painted bracket sets, two tiers of verdigris bronze tiled roofs with upturned eaves under thick soft snow, a round bronze finial, chunky icicles on the eaves; the pavilion is open between the columns. PROPORTIONS: all four views drawn about 1.45 times as wide as tall; the FRONT and BACK views show the balustrade face without stairs, the LEFT and RIGHT views show a stair flight head on. Chunky readable forms. One solid connected piece on a flat base."""
+
+[assets.SM_Tripo_FrostIceHoleRim]
+display = "北冥冰窟边缘段（2-5 环台内缘，16 段合一圈，半径 15 m）"
+kind = "static"
+class = "tripo_prop"
+source_provider = "tripo"
+style_theme = "beiming"
+blockout = { source = "scene", id = "frost.beiming.iceHoleRim" }
+reference_mode = "bounds_only"
+reference_dimensions = [6.0, 2.2, 4.0]
+architecture_role = "cover"
+keep_glow = "none"
+material = { roughness = 0.5, metallic = 0.0 }
+brief = """One segment of the jagged rim around a huge round hole broken through thick polar sea ice, 6m long, 2.2m tall and 4m deep; sixteen segments join into a ring. Along the FRONT side (it faces the hole) the ice is broken into big jagged upturned ice plates and chunky tilted blocks rising up to 2.2m, their broken faces showing thick horizontal layers of faceted glacier ice with dark ink-blue bands and a faint cold aqua glow in the deepest cracks; toward the BACK the slab slopes down to a flat low ice floor edge 0.3m thick with drifted snow. Both LEFT and RIGHT ends are flat cut faces so the segments join into a continuous ring. Opaque solid ice. PROPORTIONS: the FRONT and BACK views are drawn about 2.7 times as wide as tall (a long low ridge); the LEFT and RIGHT views about 1.8 times as wide as tall, a wedge high at the front and low at the back. Chunky broad facets, no tiny splinters, no water, no mist. One solid connected piece."""
+
 # ───────────── Playable heroes · Tripo P2.0 native-rig builds ─────────────
 # Runtime GLBs for SK_Hero_* are produced by art/pipeline/build_tripo_heroes.py from these
 # rigged Tripo models (Mixamo skeleton kept). Do not republish them with `assetctl.py build`.

@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "exporterVersion": 5,
+  "id": "SM_Tripo_FrostIceHoleRim",
+  "kind": "static",
+  "class": "tripo_prop",
+  "category": "props",
+  "bind": {
+    "source": "scene",
+    "id": "frost.beiming.iceHoleRim"
+  },
+  "keepGlow": "none",
+  "lodDistance": [
+    0,
+    20
+  ],
+  "budget": {
+    "lodTris": [
+      3000,
+      1000
+    ],
+    "texture": 1024,
+    "maxFileKb": 700
+  },
+  "qaWaivers": {},
+  "bounds": {
+    "min": [
+      -1.8937766551971436,
+      0,
+      -1.3775442838668823
+    ],
+    "max": [
+      1.8937766551971436,
+      2.200000047683716,
+      1.3775442838668823
+    ]
+  },
+  "rig": {
+    "type": "none",
+    "profile": null,
+    "partsMode": null,
+    "human": {},
+    "tpose": null,
+    "bones": []
+  },
+  "meshes": [
+    {
+      "name": "SM_Tripo_FrostIceHoleRim_LOD0",
+      "lod": 0,
+      "tris": 2550,
+      "verts": 3111,
+      "materials": [
+        "M_Tripo_FrostIceHoleRim"
+      ],
+      "skinned": false
+    },
+    {
+      "name": "SM_Tripo_FrostIceHoleRim_LOD1",
+      "lod": 1,
+      "tris": 994,
+      "verts": 1647,
+      "materials": [
+        "M_Tripo_FrostIceHoleRim"
+      ],
+      "skinned": false
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Tripo_FrostIceHoleRim",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "doubleSided": true,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "hasOcclusion": true,
+      "occlusionSeparate": false,
+      "textures": {
+        "BC": "Textures/T_Tripo_FrostIceHoleRim_BC.png",
+        "N": "Textures/T_Tripo_FrostIceHoleRim_N.png",
+        "ORM": "Textures/T_Tripo_FrostIceHoleRim_ORM.png"
+      }
+    }
+  ],
+  "source": {
+    "glb": "public/assets/props/SM_Tripo_FrostIceHoleRim.glb",
+    "sha256": "a52f6d58e40fc64a8a14c8289a36222779267d4459d5a159dfbeb42266aa2cff",
+    "hiRes": false,
+    "version": {
+      "blockout": 1,
+      "concept": 1,
+      "highpoly": 1,
+      "build": 1
+    },
+    "generator": {
+      "tool": "Tripo Studio",
+      "mode": "tripo",
+      "checkpoint": "P2.0"
+    },
+    "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
+  },
+  "exported": "2026-10-22 22:13:00"
+}

@@ -1,0 +1,175 @@
+{
+  "source": {
+    "tris": 7646,
+    "verts": 4260
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 8.50415,
+    "iou": 0.718,
+    "iou_per_view": {
+      "front": 0.821,
+      "left": 0.684,
+      "back": 0.679,
+      "right": 0.635
+    },
+    "size_m": [
+      5.137,
+      5.095,
+      8.5
+    ],
+    "reference_m": [
+      7.0,
+      7.0,
+      8.5
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.645,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_FrostBellPavilion_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "provider",
+      "collapse": {
+        "samples": 22228,
+        "matched_ratio": 0.926,
+        "mean_delta": 0.0235,
+        "p90_delta": 0.0628,
+        "smeared_ratio": 0.0124,
+        "stretched_ratio": 0.0087,
+        "dist_p99_m": 0.0497
+      }
+    },
+    "LOD2": {
+      "method": "rebaked",
+      "texture": 512,
+      "cage_m": 0.2442,
+      "uv": {
+        "smart_islands": 376,
+        "charts": 147,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "merged",
+        "density_smart": 0.0577,
+        "density_merged": 0.0641,
+        "coverage": 0.708
+      },
+      "collapse": {
+        "samples": 21017,
+        "matched_ratio": 0.876,
+        "mean_delta": 0.063,
+        "p90_delta": 0.1678,
+        "smeared_ratio": 0.1098,
+        "stretched_ratio": 0.0984,
+        "dist_p99_m": 0.1221
+      },
+      "final": {
+        "samples": 21017,
+        "matched_ratio": 0.876,
+        "mean_delta": 0.0475,
+        "p90_delta": 0.1377,
+        "smeared_ratio": 0.0774,
+        "stretched_ratio": 0.0465,
+        "dist_p99_m": 0.1221
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostBellPavilion_LOD0",
+      "tris": 7646,
+      "verts": 4260,
+      "uv_min": [
+        0.001220703125,
+        0.001220703125
+      ],
+      "uv_max": [
+        0.998779296875,
+        0.996826171875
+      ],
+      "uv_utilization": 0.546,
+      "bbox_min": [
+        -2.5683,
+        -2.5475,
+        0.0
+      ],
+      "bbox_max": [
+        2.5683,
+        2.5475,
+        8.5
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostBellPavilion_LOD1",
+      "tris": 2477,
+      "verts": 1622,
+      "uv_min": [
+        0.001220703125,
+        0.001220703125
+      ],
+      "uv_max": [
+        0.998779296875,
+        0.99658203125
+      ],
+      "uv_utilization": 0.458,
+      "bbox_min": [
+        -2.5596,
+        -2.5321,
+        -0.0002
+      ],
+      "bbox_max": [
+        2.5699,
+        2.5366,
+        8.4815
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostBellPavilion_LOD2",
+      "tris": 766,
+      "verts": 724,
+      "uv_min": [
+        0.0036083939485251904,
+        0.0036083608865737915
+      ],
+      "uv_max": [
+        0.9841408729553223,
+        0.9963915944099426
+      ],
+      "uv_utilization": 0.565,
+      "bbox_min": [
+        -2.4867,
+        -2.4529,
+        0.0
+      ],
+      "bbox_max": [
+        2.5788,
+        2.4568,
+        8.4741
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostBellPavilion/04_export/SM_Tripo_FrostBellPavilion_v001.glb",
+    "bytes": 1439440
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 43.7,
+  "_seconds": 45.2
+}

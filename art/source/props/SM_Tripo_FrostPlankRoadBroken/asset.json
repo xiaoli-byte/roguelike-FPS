@@ -1,0 +1,395 @@
+{
+  "id": "SM_Tripo_FrostPlankRoadBroken",
+  "display": "栈道断口（4 m 缺口两端各放一件）",
+  "kind": "static",
+  "class": "tripo_prop",
+  "stages": {
+    "blockout": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:11:53",
+          "files": {
+            "BO_SM_Tripo_FrostPlankRoadBroken_v001.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostPlankRoadBroken_v001.json",
+              "sha256": "4dfba01b557512495f84aed36ce19db42807d4a1b5f8c21498d43097b98bee99"
+            },
+            "BO_SM_Tripo_FrostPlankRoadBroken_v001_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostPlankRoadBroken_v001_views.json",
+              "sha256": "4b2413e4b37aa3733cc02e9c36d27ebe70c87e82c1b2084017483c1c48d8a4d9"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost.plankRoad.broken"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.5,
+              0.0,
+              -3.0
+            ],
+            "max": [
+              2.5,
+              4.2,
+              3.0
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        },
+        {
+          "version": 2,
+          "created": "2026-10-21 06:34:57",
+          "files": {
+            "BO_SM_Tripo_FrostPlankRoadBroken_v002.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostPlankRoadBroken_v002.json",
+              "sha256": "79b056d28c7a03af2716ec0f0e15a6f1df8f83dbca9879148d34015d7e94b59f"
+            },
+            "BO_SM_Tripo_FrostPlankRoadBroken_v002_views.json": {
+              "path": "00_blockout/BO_SM_Tripo_FrostPlankRoadBroken_v002_views.json",
+              "sha256": "c237f2ce483426c2bc199ecbdab20182377d09ab18d7d3e17b555e325fe4d156"
+            }
+          },
+          "source": {
+            "kind": "scene",
+            "id": "frost.plankRoad.broken"
+          },
+          "joints": 0,
+          "bounds": {
+            "min": [
+              -2.5,
+              0.0,
+              -3.1
+            ],
+            "max": [
+              2.5,
+              3.49,
+              3.1
+            ]
+          },
+          "reference_mode": "bounds_only",
+          "geometry_created": false
+        }
+      ]
+    },
+    "concept": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:12:37",
+          "files": {
+            "CN_SM_Tripo_FrostPlankRoadBroken_v001_source.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPlankRoadBroken_v001_source.png",
+              "sha256": "c01a766fbaa9f7a2cadc8ef4410825558b516d0c5f53795b9ed030619ecc24d5"
+            },
+            "CN_SM_Tripo_FrostPlankRoadBroken_v001_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPlankRoadBroken_v001_front.png",
+              "sha256": "2dd713b3b43bd3fa457fdd14e67aa53166dd623e002f1ed4d38cc02bad29e564"
+            },
+            "CN_SM_Tripo_FrostPlankRoadBroken_v001_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPlankRoadBroken_v001_left.png",
+              "sha256": "b2ec2759b0163e9ede6e14b615fb77a1f7f5e6b4712df669335b3a27fb07c2ea"
+            },
+            "CN_SM_Tripo_FrostPlankRoadBroken_v001_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPlankRoadBroken_v001_back.png",
+              "sha256": "fc93d116bbb537caac989d51755e677024eaca9a66f2755e5fda46f1d1e4dfc7"
+            },
+            "CN_SM_Tripo_FrostPlankRoadBroken_v001_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPlankRoadBroken_v001_right.png",
+              "sha256": "7f8e19ee314c298d5ff5b67e4fb9c4baff2b07f2487fb587369e4dcc05e45bea"
+            },
+            "CN_SM_Tripo_FrostPlankRoadBroken_v001_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPlankRoadBroken_v001_sheet.png",
+              "sha256": "2ecd69b9bfaada4bc0d15f134787541ad9594c3ade23936435a45f268990f3a2"
+            },
+            "CN_SM_Tripo_FrostPlankRoadBroken_v001_prompt.txt": {
+              "path": "01_concept/CN_SM_Tripo_FrostPlankRoadBroken_v001_prompt.txt",
+              "sha256": "655136ecc7b9fefc8e8505ccfd84033e7b0a3ca0e0114123545d0e04aa40793c"
+            },
+            "CN_SM_Tripo_FrostPlankRoadBroken_v001_registration.json": {
+              "path": "01_concept/CN_SM_Tripo_FrostPlankRoadBroken_v001_registration.json",
+              "sha256": "be3ef6fb30d24bd09bdfe4f47048a98dc30426dc53bfde1302d5f815b9941f9d"
+            }
+          },
+          "from_blockout": 1,
+          "generator": "gpt-6.1-sol",
+          "generation": {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "size": "2048x1024",
+            "generated_size": [
+              2172,
+              724
+            ],
+            "references": [],
+            "codex_session": "01a15b5e-fb4d-7052-9364-dfbe131406d0",
+            "attempt": 1,
+            "seconds": 39.6
+          },
+          "prompt": "Stylized hand-painted 3D game environment art for a fast first-person roguelite shooter, matching the\nreadable visual direction of Gunfire Reborn: bold chunky silhouettes, broad clean faceted planes, two or three dominant\ncolour blocks, soft painted gradients and a few restrained edge accents. East-Asian snowy Kunlun mountain palace fantasy from the Shan Hai Jing: white jade stone, verdigris bronze, faded vermilion lacquer, thick soft snow caps and a few chunky glacier-blue ice shapes. Matte stone,\nwood and cloth, restrained highlights on metal, sparse painted wear. No photorealism, micro-grain, dense tiny cracks,\nelaborate miniature carvings, harsh specular highlights or baked cast shadows. Even neutral lighting.\n\nAsset (5m wide x 4.2m tall x 6m deep): The broken end of an ancient cliff-side plank road (zhandao), 5m long, 6m wide and 4.2m tall: the same flat walkable deck of broad thick dark weathered timber planks, 0.4m thick with its top at 3m and a thin layer of snow, on thick square cantilever beams with diagonal struts, and a low faded vermilion railing along the FRONT edge; at the RIGHT end the road is snapped off: jagged splintered plank ends of uneven length, one broken beam sticking out further, two loose planks hanging down at a steep angle still nailed at one end, the railing snapped with its top rail dangling, a few icicles on the broken edge. The LEFT end is a flat clean cut face where it joins a straight section; the BACK edge is flat (against the cliff). PROPORTIONS: the FRONT and BACK views are drawn about 1.2 times as wide as tall; the LEFT and RIGHT views about 1.45 times as wide as tall. Chunky readable timber, no thin rope. One solid connected piece.\n\nOutput: one orthographic model turnaround sheet for 3D reconstruction. Exactly four separate complete views\nof the SAME object in one row, left to right:\n1. FRONT view: the object's front faces the viewer.\n2. LEFT side view: the object turned 90 degrees so its front points to the LEFT edge of the image (camera at the\n   object's right-hand side).\n3. BACK view: the object's back faces the viewer.\n4. RIGHT side view: the object turned 90 degrees so its front points to the RIGHT edge of the image.\nSame scale and same ground line in all four, each centred in its quarter with generous empty margin, never touching or\noverlapping; the whole object fits inside its quarter, nothing cropped.\nPlain flat light neutral grey background (#D6D6D6). No floor, no ground shadow, no text, no labels, no frames, no\nperspective.",
+          "source_sha256": "c01a766fbaa9f7a2cadc8ef4410825558b516d0c5f53795b9ed030619ecc24d5",
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "tripo",
+          "registration_version": 1,
+          "registration": {
+            "front": {
+              "scale": 0.7424593967517401,
+              "offset": [
+                34,
+                352
+              ],
+              "size": [
+                443,
+                320
+              ],
+              "physical_height_m": 4.2,
+              "method": "uniform_height_and_center"
+            },
+            "left": {
+              "scale": 0.700218818380744,
+              "offset": [
+                146,
+                352
+              ],
+              "size": [
+                219,
+                320
+              ],
+              "physical_height_m": 4.2,
+              "method": "uniform_height_and_center"
+            },
+            "back": {
+              "scale": 0.7191011235955056,
+              "offset": [
+                76,
+                352
+              ],
+              "size": [
+                360,
+                320
+              ],
+              "physical_height_m": 4.2,
+              "method": "uniform_height_and_center"
+            },
+            "right": {
+              "scale": 0.6911447084233261,
+              "offset": [
+                139,
+                352
+              ],
+              "size": [
+                233,
+                320
+              ],
+              "physical_height_m": 4.2,
+              "method": "uniform_height_and_center"
+            }
+          }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-21 06:34:57",
+          "files": {
+            "CN_SM_Tripo_FrostPlankRoadBroken_v002_front.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPlankRoadBroken_v002_front.png",
+              "sha256": "929885bf00c9f1a8ba346956f3912e6a55437a37899589c30753291d0d455683"
+            },
+            "CN_SM_Tripo_FrostPlankRoadBroken_v002_left.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPlankRoadBroken_v002_left.png",
+              "sha256": "13b11274b4e2b3692eadb3a484ea0c10b3b286769e8cb492dd2a09526fb06101"
+            },
+            "CN_SM_Tripo_FrostPlankRoadBroken_v002_back.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPlankRoadBroken_v002_back.png",
+              "sha256": "27eb5cf3bd8e97a11fc2c551746737c01958463567f9a342323215b283d62af2"
+            },
+            "CN_SM_Tripo_FrostPlankRoadBroken_v002_right.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPlankRoadBroken_v002_right.png",
+              "sha256": "1ad0c2d7ccf60d1613419be525b41100eefa7c952ffaae5161d705d5c9eb7cd6"
+            },
+            "CN_SM_Tripo_FrostPlankRoadBroken_v002_sheet.png": {
+              "path": "01_concept/CN_SM_Tripo_FrostPlankRoadBroken_v002_sheet.png",
+              "sha256": "883eccc530bc66098539c055e12d21bbc369401de7b638102661c271e4984c43"
+            }
+          },
+          "from_blockout": 2,
+          "generator": "Blender procedural render",
+          "recipe": "plank_broken",
+          "seed": 7,
+          "reference_mode": "bounds_only",
+          "highpoly_mode": "procedural",
+          "registration": {
+            "method": "rendered in the reference cameras"
+          }
+        }
+      ]
+    },
+    "highpoly": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:34:57",
+          "files": {
+            "HP_SM_Tripo_FrostPlankRoadBroken_v001.glb": {
+              "path": "02_highpoly/HP_SM_Tripo_FrostPlankRoadBroken_v001.glb",
+              "sha256": "c1f0b9ccb77754395d1a547db3a6adeb4e2f65596dadc1a99b7b3b27992842a3"
+            }
+          },
+          "from_concept": 2,
+          "mode": "procedural",
+          "tool": "Blender 5.2 bpy",
+          "checkpoint": "plank_broken@7",
+          "license": "project-original procedural model (art/pipeline/blender/bl_proc_timber.py)",
+          "faces": 2511,
+          "source_sha256": "c1f0b9ccb77754395d1a547db3a6adeb4e2f65596dadc1a99b7b3b27992842a3"
+        }
+      ]
+    },
+    "build": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:34:57",
+          "files": {
+            "SM_Tripo_FrostPlankRoadBroken_v001.blend": {
+              "path": "03_work/SM_Tripo_FrostPlankRoadBroken_v001.blend",
+              "sha256": "c3693f2da022b3cbedede7aa4d8df522db1b484d37a2b3eaa704c84064dd3340"
+            },
+            "SM_Tripo_FrostPlankRoadBroken_v001.glb": {
+              "path": "04_export/SM_Tripo_FrostPlankRoadBroken_v001.glb",
+              "sha256": "c1f0b9ccb77754395d1a547db3a6adeb4e2f65596dadc1a99b7b3b27992842a3"
+            },
+            "SM_Tripo_FrostPlankRoadBroken_v001_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostPlankRoadBroken_v001_metrics.json",
+              "sha256": "d102b112cb2226d665b985efc93783de0d04cf8e7ffb93724587b0a46f0760a9"
+            },
+            "T_Tripo_FrostPlankRoadBroken_BC.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostPlankRoadBroken_BC.png",
+              "sha256": "0f65b7dc578ef3609a400b004312ada6ae49b00ff51d1029cf51f8609f11dba4"
+            },
+            "T_Tripo_FrostPlankRoadBroken_N.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostPlankRoadBroken_N.png",
+              "sha256": "c02753875279cf8420cb7576f05f57af88b32b0401f7b52642ebdb312b8ec454"
+            },
+            "T_Tripo_FrostPlankRoadBroken_ORM.png": {
+              "path": "03_work/textures_v001/T_Tripo_FrostPlankRoadBroken_ORM.png",
+              "sha256": "c60ff076a8ea31020f8740ecebba32cdb8c5d21fc7da652a83cd46b560d36352"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 1.0,
+          "uncovered_ratio": 0.0,
+          "procedural": {
+            "recipe": "plank_broken",
+            "seed": 7
+          },
+          "lods": [
+            {
+              "tris": 2511,
+              "verts": 1395
+            },
+            {
+              "tris": 420,
+              "verts": 840
+            }
+          ],
+          "export_kb": 113.1,
+          "seconds": 49.9,
+          "bake_device": "none (numpy painted)",
+          "quality_status": "passed",
+          "quality_errors": []
+        }
+      ]
+    },
+    "validate": {
+      "current": 2,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:35:57",
+          "files": {
+            "SM_Tripo_FrostPlankRoadBroken_v001_validation_v001.json": {
+              "path": "05_review/SM_Tripo_FrostPlankRoadBroken_v001_validation_v001.json",
+              "sha256": "3a31083d9f632a37f5579edf90915d6d4cf4e9dd0e96ff483bf187f5dece777f"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 2,
+          "waived": [],
+          "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-21 06:36:52",
+          "files": {
+            "SM_Tripo_FrostPlankRoadBroken_v001_validation_v002.json": {
+              "path": "05_review/SM_Tripo_FrostPlankRoadBroken_v001_validation_v002.json",
+              "sha256": "4cc34813b1d41605c37a75f2725315ac807d1c3d0b2aebc72fe77757bf3c20c9"
+            }
+          },
+          "from_build": 1,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [
+            "场景轴心居中",
+            "UV 利用率"
+          ],
+          "passed": true
+        }
+      ]
+    },
+    "review": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:36:59",
+          "files": {
+            "SM_Tripo_FrostPlankRoadBroken_v001_review_v001.png": {
+              "path": "05_review/SM_Tripo_FrostPlankRoadBroken_v001_review_v001.png",
+              "sha256": "dce165b67f27d8fe2fc1400d7f72e0690b26597e4c7ef4de7f976fd54ef6ffb3"
+            }
+          },
+          "from_build": 1,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review",
+            "note": "2026-10-21 ART5 栈道件：Blender 程序化，尺寸按拼接网格，审核图 docs/art/review/frost-plank-road-*-v001.jpg",
+            "time": "2026-10-21 06:37:18"
+          }
+        }
+      ]
+    },
+    "publish": {
+      "current": 1,
+      "versions": [
+        {
+          "version": 1,
+          "created": "2026-10-21 06:37:18",
+          "files": {
+            "SM_Tripo_FrostPlankRoadBroken.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostPlankRoadBroken.glb",
+              "sha256": "c1f0b9ccb77754395d1a547db3a6adeb4e2f65596dadc1a99b7b3b27992842a3"
+            }
+          },
+          "from_build": 1,
+          "url": "assets/props/SM_Tripo_FrostPlankRoadBroken.glb"
+        }
+      ]
+    }
+  }
+}

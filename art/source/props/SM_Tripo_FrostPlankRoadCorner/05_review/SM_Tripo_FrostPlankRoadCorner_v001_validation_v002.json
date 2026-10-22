@@ -1,0 +1,177 @@
+[
+  {
+    "level": "pass",
+    "check": "文件大小",
+    "detail": "117 KB / 上限 900 KB"
+  },
+  {
+    "level": "pass",
+    "check": "扩展可用",
+    "detail": "必需扩展 ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+  },
+  {
+    "level": "pass",
+    "check": "LOD 数量",
+    "detail": "['SM_Tripo_FrostPlankRoadCorner_LOD0', 'SM_Tripo_FrostPlankRoadCorner_LOD1']，规格 2 级"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 面数",
+    "detail": "2922 / 预算 3000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 切换距离",
+    "detail": "extras.lod_distance=0"
+  },
+  {
+    "level": "pass",
+    "check": "场景参考占地 X 轴",
+    "detail": "6.200 m / 参考 7.130 m；超出时引擎按碰撞体等比适配"
+  },
+  {
+    "level": "pass",
+    "check": "场景有效尺寸 X 轴",
+    "detail": "6.200 m / 极限 18.600 m"
+  },
+  {
+    "level": "pass",
+    "check": "场景参考占地 Z 轴",
+    "detail": "6.080 m / 参考 6.992 m；超出时引擎按碰撞体等比适配"
+  },
+  {
+    "level": "pass",
+    "check": "场景有效尺寸 Z 轴",
+    "detail": "6.080 m / 极限 18.240 m"
+  },
+  {
+    "level": "pass",
+    "check": "场景高度",
+    "detail": "3.490 m / 参考 3.490 m"
+  },
+  {
+    "level": "pass",
+    "check": "场景脚底落地",
+    "detail": "最低点 y=0.0000"
+  },
+  {
+    "level": "waived",
+    "check": "场景轴心居中",
+    "detail": "中心 x=0.100 z=0.040  —— 豁免：模块件的原点是拼接点（桥面中心、最低点着地），由 bl_proc_timber.py 固定，不按包围盒居中"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 面数",
+    "detail": "552 / 预算 1000"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 递减",
+    "detail": "2922 → 552"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 切换距离",
+    "detail": "extras.lod_distance=24"
+  },
+  {
+    "level": "pass",
+    "check": "材质数量",
+    "detail": "['M_Tripo_FrostPlankRoadCorner']（一个资产一个材质，便于合批；重烘的远景 LOD 另有 M_*_LOD<i>）"
+  },
+  {
+    "level": "pass",
+    "check": "材质命名",
+    "detail": "['M_Tripo_FrostPlankRoadCorner']"
+  },
+  {
+    "level": "pass",
+    "check": "LOD0 材质",
+    "detail": "['M_Tripo_FrostPlankRoadCorner']（M_*_LOD<i> 只能给第 i 级 LOD 用）"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 材质",
+    "detail": "['M_Tripo_FrostPlankRoadCorner']（M_*_LOD<i> 只能给第 i 级 LOD 用）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Tripo_FrostPlankRoadCorner_N",
+    "detail": "1024×1024 webp（规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Tripo_FrostPlankRoadCorner_N",
+    "detail": "T_<类>_<名>[_LOD<i>]_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Tripo_FrostPlankRoadCorner_ORM",
+    "detail": "1024×1024 webp（规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Tripo_FrostPlankRoadCorner_ORM",
+    "detail": "T_<类>_<名>[_LOD<i>]_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "贴图 T_Tripo_FrostPlankRoadCorner_BC",
+    "detail": "1024×1024 webp（规格 1024²）"
+  },
+  {
+    "level": "pass",
+    "check": "贴图命名 T_Tripo_FrostPlankRoadCorner_BC",
+    "detail": "T_<类>_<名>[_LOD<i>]_BC|N|ORM|E"
+  },
+  {
+    "level": "pass",
+    "check": "BaseColor 贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "法线贴图",
+    "detail": ""
+  },
+  {
+    "level": "pass",
+    "check": "ORM 贴图",
+    "detail": "AO / 粗糙度 / 金属度"
+  },
+  {
+    "level": "pass",
+    "check": "LOD1 贴图拉伸",
+    "detail": "UV 拉伸面积 0.2% / 上限 2%（减面跨 UV 岛，贴图拉成斜条纹）"
+  },
+  {
+    "level": "waived",
+    "check": "LOD1 贴图色差",
+    "detail": "与 LOD0 色差面积 7.9% / 上限 6%，平均色差 0.0691  —— 豁免：LOD1 去掉铜箍、钉帽和冰棱（24 m 外看不见），色差来自这些小件"
+  },
+  {
+    "level": "pass",
+    "check": "SM_Tripo_FrostPlankRoadCorner_LOD0 UV 范围",
+    "detail": "[0.0, 0.003]..[0.9995, 0.8125]"
+  },
+  {
+    "level": "pass",
+    "check": "SM_Tripo_FrostPlankRoadCorner_LOD1 UV 范围",
+    "detail": "[0.0004, 0.0006]..[0.9995, 0.7497]"
+  },
+  {
+    "level": "waived",
+    "check": "UV 利用率",
+    "detail": "40%  —— 豁免：整套共用一张手绘图集（木板条 / 方木 / 漆 / 铜 / 雪 / 冰 / 石），每件只用到其中一部分"
+  },
+  {
+    "level": "pass",
+    "check": "高模对齐",
+    "detail": "剪影 IoU 1.0（{'front': 1.0, 'left': 1.0, 'back': 1.0, 'right': 1.0}）"
+  },
+  {
+    "level": "pass",
+    "check": "投影覆盖",
+    "detail": "未覆盖顶点 0%（扩散补色）"
+  }
+]

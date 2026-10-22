@@ -1,0 +1,117 @@
+{
+  "source": {
+    "tris": 2408,
+    "verts": 1590
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 1.67731,
+    "iou": 0.79,
+    "iou_per_view": {
+      "front": 0.89,
+      "left": 0.661,
+      "back": 0.881,
+      "right": 0.677
+    },
+    "size_m": [
+      1.676,
+      1.234,
+      1.0
+    ],
+    "reference_m": [
+      3.2,
+      2.4,
+      1.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.663,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Tripo_FrostIcicleShards_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "provider",
+      "collapse": {
+        "samples": 23596,
+        "matched_ratio": 0.983,
+        "mean_delta": 0.0108,
+        "p90_delta": 0.0303,
+        "smeared_ratio": 0.0031,
+        "stretched_ratio": 0.0148,
+        "dist_p99_m": 0.0114
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostIcicleShards_LOD0",
+      "tris": 2408,
+      "verts": 1590,
+      "uv_min": [
+        0.0009765625,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.993408203125,
+        0.9990234375
+      ],
+      "uv_utilization": 0.714,
+      "bbox_min": [
+        -0.8382,
+        -0.6171,
+        0.0
+      ],
+      "bbox_max": [
+        0.8382,
+        0.6171,
+        1.0
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostIcicleShards_LOD1",
+      "tris": 995,
+      "verts": 775,
+      "uv_min": [
+        0.0009765625,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.993408203125,
+        0.9935681223869324
+      ],
+      "uv_utilization": 0.642,
+      "bbox_min": [
+        -0.8382,
+        -0.6171,
+        -0.0027
+      ],
+      "bbox_max": [
+        0.8406,
+        0.6183,
+        1.0041
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostIcicleShards/04_export/SM_Tripo_FrostIcicleShards_v001.glb",
+    "bytes": 266372
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 13.2,
+  "_seconds": 15.1
+}

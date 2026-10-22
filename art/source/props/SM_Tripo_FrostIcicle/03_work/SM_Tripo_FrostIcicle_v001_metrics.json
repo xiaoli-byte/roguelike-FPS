@@ -1,0 +1,117 @@
+{
+  "source": {
+    "tris": 3186,
+    "verts": 1595
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 4.5421,
+    "iou": 0.749,
+    "iou_per_view": {
+      "front": 0.766,
+      "left": 0.733,
+      "back": 0.751,
+      "right": 0.736
+    },
+    "size_m": [
+      2.016,
+      1.626,
+      4.54
+    ],
+    "reference_m": [
+      1.8,
+      1.8,
+      5.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.878,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Tripo_FrostIcicle_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "provider",
+      "collapse": {
+        "samples": 23897,
+        "matched_ratio": 0.996,
+        "mean_delta": 0.0083,
+        "p90_delta": 0.0204,
+        "smeared_ratio": 0.0,
+        "stretched_ratio": 0.0146,
+        "dist_p99_m": 0.0132
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostIcicle_LOD0",
+      "tris": 2984,
+      "verts": 1494,
+      "uv_min": [
+        0.000732421875,
+        0.000732421875
+      ],
+      "uv_max": [
+        0.990478515625,
+        0.999267578125
+      ],
+      "uv_utilization": 0.694,
+      "bbox_min": [
+        -1.008,
+        -0.8128,
+        0.0
+      ],
+      "bbox_max": [
+        1.008,
+        0.8128,
+        4.5399
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostIcicle_LOD1",
+      "tris": 994,
+      "verts": 499,
+      "uv_min": [
+        0.000732421875,
+        0.000732421875
+      ],
+      "uv_max": [
+        0.990478515625,
+        0.999267578125
+      ],
+      "uv_utilization": 0.613,
+      "bbox_min": [
+        -1.0056,
+        -0.8126,
+        -0.0037
+      ],
+      "bbox_max": [
+        1.0132,
+        0.813,
+        4.5399
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostIcicle/04_export/SM_Tripo_FrostIcicle_v001.glb",
+    "bytes": 184812
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 12.5,
+  "_seconds": 14.1
+}

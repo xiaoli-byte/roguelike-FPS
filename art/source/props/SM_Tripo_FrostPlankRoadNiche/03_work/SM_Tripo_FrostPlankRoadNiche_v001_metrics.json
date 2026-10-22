@@ -1,0 +1,175 @@
+{
+  "source": {
+    "tris": 7673,
+    "verts": 4273
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 8.00391,
+    "iou": 0.794,
+    "iou_per_view": {
+      "front": 0.81,
+      "left": 0.733,
+      "back": 0.864,
+      "right": 0.759
+    },
+    "size_m": [
+      7.484,
+      3.959,
+      8.0
+    ],
+    "reference_m": [
+      10.0,
+      6.0,
+      8.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.792,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_FrostPlankRoadNiche_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lod_textures": {
+    "LOD1": {
+      "method": "provider",
+      "collapse": {
+        "samples": 23582,
+        "matched_ratio": 0.983,
+        "mean_delta": 0.0139,
+        "p90_delta": 0.0318,
+        "smeared_ratio": 0.0106,
+        "stretched_ratio": 0.0161,
+        "dist_p99_m": 0.0278
+      }
+    },
+    "LOD2": {
+      "method": "rebaked",
+      "texture": 512,
+      "cage_m": 0.2052,
+      "uv": {
+        "smart_islands": 292,
+        "charts": 77,
+        "fallback_charts": 0,
+        "flipped_faces": 0,
+        "flipped_ratio": 0.0,
+        "method": "merged",
+        "density_smart": 0.054,
+        "density_merged": 0.0583,
+        "coverage": 0.783
+      },
+      "collapse": {
+        "samples": 22751,
+        "matched_ratio": 0.948,
+        "mean_delta": 0.0313,
+        "p90_delta": 0.0811,
+        "smeared_ratio": 0.0347,
+        "stretched_ratio": 0.0633,
+        "dist_p99_m": 0.1026
+      },
+      "final": {
+        "samples": 22751,
+        "matched_ratio": 0.948,
+        "mean_delta": 0.0169,
+        "p90_delta": 0.0392,
+        "smeared_ratio": 0.0161,
+        "stretched_ratio": 0.0485,
+        "dist_p99_m": 0.1026
+      }
+    }
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostPlankRoadNiche_LOD0",
+      "tris": 7673,
+      "verts": 4273,
+      "uv_min": [
+        0.0009765625,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.9990234375,
+        0.99560546875
+      ],
+      "uv_utilization": 0.689,
+      "bbox_min": [
+        -3.7421,
+        -1.9795,
+        0.0
+      ],
+      "bbox_max": [
+        3.7421,
+        1.9795,
+        8.0
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostPlankRoadNiche_LOD1",
+      "tris": 2485,
+      "verts": 1562,
+      "uv_min": [
+        0.000901512976270169,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.994384765625,
+        0.995361328125
+      ],
+      "uv_utilization": 0.625,
+      "bbox_min": [
+        -3.7444,
+        -1.9905,
+        -0.0047
+      ],
+      "bbox_max": [
+        3.7301,
+        1.9678,
+        8.0103
+      ]
+    },
+    {
+      "name": "SM_Tripo_FrostPlankRoadNiche_LOD2",
+      "tris": 792,
+      "verts": 639,
+      "uv_min": [
+        0.002684470498934388,
+        0.002684470731765032
+      ],
+      "uv_max": [
+        0.9939911961555481,
+        0.997315526008606
+      ],
+      "uv_utilization": 0.685,
+      "bbox_min": [
+        -3.7397,
+        -2.0022,
+        -0.0142
+      ],
+      "bbox_max": [
+        3.7394,
+        1.9858,
+        7.9679
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostPlankRoadNiche/04_export/SM_Tripo_FrostPlankRoadNiche_v001.glb",
+    "bytes": 1014176
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 50.9,
+  "_seconds": 52.7
+}
