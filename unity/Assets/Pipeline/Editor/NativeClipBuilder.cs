@@ -440,6 +440,55 @@ namespace Spiritfire.Art.Editor
                 Set(mi.avatarSetup, ModelImporterAvatarSetup.NoAvatar, v => mi.avatarSetup = v);
             }
             if (dirty) mi.SaveAndReimport();
+            if (avatar) KeepNonHumanCurves(path, mi);
+        }
+
+        /// <summary>
+        /// 人形片段不配遮罩时只导肌肉曲线，非人形骨（长发、残衣、袖垂片、宝珠等）的变换曲线全被丢掉：每个 take 配
+        /// 「本模型建遮罩、全部骨骼启用」的 Transform 遮罩，这些骨的曲线才留在片段里。片段表按 FBX 当前的 take 重排
+        /// （重新导出改了帧范围也跟着走），其余片段设置用导入默认值；设置变了才重新导入
+        /// </summary>
+        static void KeepNonHumanCurves(string path, ModelImporter mi)
+        {
+            var model = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            if (!model) return;
+            var paths = model.GetComponentsInChildren<Transform>(true).Select(t => AnimationUtility.CalculateTransformPath(t, model.transform)).ToArray();
+            var cur = mi.clipAnimations;
+            var want = mi.defaultClipAnimations;
+            var probe = new AvatarMask();
+            try
+            {
+                bool Same(ModelImporterClipAnimation a, ModelImporterClipAnimation b)
+                {
+                    if (a.name != b.name || a.takeName != b.takeName || a.firstFrame != b.firstFrame || a.lastFrame != b.lastFrame) return false;
+                    if (a.maskType != ClipAnimationMaskType.CreateFromThisModel) return false;
+                    a.ConfigureMaskFromClip(ref probe);
+                    if (probe.transformCount != paths.Length) return false;
+                    for (int i = 0; i < paths.Length; i++)
+                        if (probe.GetTransformPath(i) != paths[i] || !probe.GetTransformActive(i)) return false;
+                    return true;
+                }
+                if (cur.Length == want.Length && cur.Zip(want, Same).All(x => x)) return;
+
+                var mask = new AvatarMask { transformCount = paths.Length };
+                for (int i = 0; i < paths.Length; i++)
+                {
+                    mask.SetTransformPath(i, paths[i]);
+                    mask.SetTransformActive(i, true);
+                }
+                foreach (var c in want)
+                {
+                    c.ConfigureClipFromMask(mask);
+                    c.maskType = ClipAnimationMaskType.CreateFromThisModel;
+                }
+                Object.DestroyImmediate(mask);
+                mi.clipAnimations = want;
+                mi.SaveAndReimport();
+            }
+            finally
+            {
+                Object.DestroyImmediate(probe);
+            }
         }
 
         /// <summary>
