@@ -56,7 +56,7 @@ namespace Spiritfire.Game
                 Quadrant = Qilin.PickDrinkQuadrant();
                 float qy = f.QuadrantYaw(Quadrant);
                 var spot = f.Point(qy, f.poolRadius + (QDef?.drinkSpotOut ?? 3.1f));
-                if (UnityEngine.AI.NavMesh.SamplePosition(spot, out var hit, 2.5f, UnityEngine.AI.NavMesh.AllAreas)) spot = hit.position;
+                Qilin.SampleNav(spot, 2.5f, out spot);
                 Spot = spot;
                 faceYaw = qy + 180f;
             }

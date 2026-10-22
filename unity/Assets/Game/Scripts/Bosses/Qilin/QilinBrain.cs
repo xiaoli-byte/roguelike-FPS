@@ -13,7 +13,8 @@ namespace Spiritfire.Game
     ///   · 锁扣砸鼎：锁扣碎了 → 鼎那一角坠下（<see cref="QilinCauldron.DropCorner"/>）。正在饮熔、打的正是它身后那个锁扣 → 鼎角砸下那一刻
     ///     <see cref="CornerHit"/>：护甲清零、硬直 4 s（受伤 × 2，<see cref="BossBrain.Stagger"/>）、鳞甲崩裂（身体和五个受击球全算弱点），饮熔被打断；否则砸空，提示白费了一个。
     ///   · 转换（55%，5.2 s）：剩下的链全断、锁扣静默移除、巨鼎坠池（落定后是池中掩体，冲出一圈火浪）；麒麟跳进熔池沉下去，
-    ///     1.9 s 在熔岩柱里换成焚身（框架换形；角色胶囊瞬移到熔池另一侧的落点），2.2 s 起从熔岩里冲出、跃回岸上；鳞甲炸飞（护甲清零）。
+    ///     1.9 s 在熔岩柱里换成焚身（框架换形），2.2 s 起从熔岩里冲出、跃回熔池另一侧的岸上；鳞甲炸飞（护甲清零）。
+    ///     角色胶囊跟着模型落脚的地方瞬移（扎进熔池时到池里、落地时到上岸点），演出中不会在原地 / 上岸点留一根看不见的柱子。
     ///   · 走位：玄鳞在外环跑道上小跑、绕到玩家那一侧（TS idle）；焚身先用框架默认的保持距离（BS5 换成踏云绕殿）。
     /// 动作：E5 的 AC_SK_Boss_Qilin(Burn) 按状态名交叉淡入、拉伸到实际时长（框架 PlayAct；缺状态只警告一次，代理 / 占位体照常出招）。
     /// </summary>
@@ -56,7 +57,7 @@ namespace Spiritfire.Game
         readonly Transform[] hooves = new Transform[4];
         Transform jaw, head, chest, hips;
         int pendingCorner = -1;
-        bool wastedPending, introRoared, landWarped, wired;
+        bool wastedPending, introRoared, diveWarped, landWarped, wired;
         float pearlGlow = 0.3f, transPrev = -1;
         Vector3 leapFrom, diveAt, landAt;
 
@@ -206,10 +207,26 @@ namespace Spiritfire.Game
             GameUI.Toast(text, color ?? Hex.Rgb(0xffb070), 3.2f);
         }
 
+        /// <summary>
+        /// 贴首领自己的导航网格：按 agent 的代理类型过滤（熔池、护城渠里另有一张火鼍的 LavaSwimmer 网格，不带过滤会落到那张上，agent 瞬移不过去）。
+        /// 采不到时 at = p，返回 false
+        /// </summary>
+        public bool SampleNav(Vector3 p, float radius, out Vector3 at)
+        {
+            var filter = agent ? new NavMeshQueryFilter { agentTypeID = agent.agentTypeID, areaMask = NavMesh.AllAreas } : LavaField.WalkerFilter();
+            if (NavMesh.SamplePosition(p, out var hit, radius, filter))
+            {
+                at = hit.position;
+                return true;
+            }
+            at = p;
+            return false;
+        }
+
         /// <summary>瞬移到 p（贴导航网格；招式间的走位，不经过脚本位移）</summary>
         public void WarpTo(Vector3 p)
         {
-            if (NavMesh.SamplePosition(p, out var hit, 4f, NavMesh.AllAreas)) p = hit.position;
+            SampleNav(p, 4f, out p);
             if (agent && agent.enabled && agent.isOnNavMesh) agent.Warp(p);
             else transform.position = p;
             var loco = Model?.locomotion;
@@ -460,15 +477,20 @@ namespace Spiritfire.Game
             diveAt = c + away.normalized * Mathf.Min(3f, (f ? f.poolRadius : 7f) * 0.45f);
             var toPlayer = Flat(PlayerPosition - c);
             if (toPlayer.sqrMagnitude < 1e-4f) toPlayer = -away;
-            landAt = c + toPlayer.normalized * ((f ? f.poolRadius : 7f) + 4.5f);
+            float landR = (f ? f.poolRadius : 7f) + 4.5f;
+            landAt = c + toPlayer.normalized * landR;
+            // 玩家正好站在上岸点上：往旁边让 40°，别落在玩家身上（角色胶囊落地会和玩家叠在一起）
+            if (Flat(PlayerPosition - landAt).sqrMagnitude < 4.5f * 4.5f)
+                landAt = c + Quaternion.Euler(0, 40f, 0) * toPlayer.normalized * landR;
             landAt.y = FloorY;
-            landWarped = false;
+            diveWarped = landWarped = false;
             transPrev = -1;
         }
 
         /// <summary>
         /// 化焚身（TS transitionTick）：0.2–1.1 s 跃向池心、1.1–1.9 s 沉下去；熔岩柱 1.0 → 1.6 s 冲满、保持到 3.4 s、4.6 s 落下；
-        /// 1.9 s 框架换形时角色胶囊瞬移到上岸点；2.2–3.6 s 从熔岩里冲出、3.6–4.6 s 跃回岸上
+        /// 2.2–3.6 s 从熔岩里冲出、3.6–4.6 s 跃回岸上。模型走根节点偏移；角色胶囊跟着模型「落脚」的地方走：
+        /// 1.1 s 扎进熔池时瞬移到池里的落点（熔池里没人站，演出中不会有一根看不见的柱子挡在原地 / 上岸点），4.6 s 落地时再瞬移到上岸点
         /// </summary>
         protected override void TransitionTick(float t, float dt)
         {
@@ -478,6 +500,11 @@ namespace Spiritfire.Game
             var f = Furnace;
             float col = t < 1f ? 0 : t < 1.6f ? (t - 1f) / 0.6f : t < 3.4f ? 1f : Mathf.Max(0, 1f - (t - 3.4f) / 1.2f);
             if (Effects) Effects.Eruption(col, true);
+            if (t >= 1.1f && !diveWarped)
+            {
+                diveWarped = true;
+                WarpTo(diveAt);
+            }
             if (t < 1.9f)
             {
                 float k = EaseInOut(Span(t, 0.2f, 1.1f));
@@ -492,16 +519,12 @@ namespace Spiritfire.Game
                 }
                 return;
             }
-            if (!landWarped)
-            {
-                landWarped = true;
-                WarpTo(landAt);
-            }
             float rise = EaseOutCubic(Span(t, 2.2f, 3.6f)), hop = EaseInOut(Span(t, 3.6f, 4.6f));
+            if (hop >= 1f) LandWarp();
             var risen = diveAt;
             risen.y = FloorY - 9f + 13f * rise;
-            var p = Vector3.Lerp(risen, transform.position, hop);
-            p.y = Mathf.Lerp(risen.y, transform.position.y, hop) + Mathf.Sin(Mathf.PI * hop) * 3f;
+            var p = Vector3.Lerp(risen, landAt, hop);
+            p.y = Mathf.Lerp(risen.y, landAt.y, hop) + Mathf.Sin(Mathf.PI * hop) * 3f;
             ApplyOffset(p - transform.position);
             if (Crossed(2.4f))
             {
@@ -514,8 +537,18 @@ namespace Spiritfire.Game
             if (Crossed(3.8f)) PlaySfx("boss_roar", 1f, 1.2f);
         }
 
+        /// <summary>跃回岸上落地：角色胶囊瞬移到上岸点（贴导航网格后的点记回 landAt，模型偏移跟着归零）</summary>
+        void LandWarp()
+        {
+            if (landWarped) return;
+            landWarped = true;
+            WarpTo(landAt);
+            landAt = transform.position;
+        }
+
         protected override void OnTransitionEnd(BossPhaseDef phase)
         {
+            if (phase != null && phase.form == QilinDef.BurnForm) LandWarp();
             ApplyOffset(Vector3.zero);
             if (Effects) Effects.Eruption(0);
         }

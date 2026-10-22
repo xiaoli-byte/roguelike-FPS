@@ -8,8 +8,9 @@ namespace Spiritfire.Game
     ///   左右蹄交替落下燃烧的蹄印：4 s、半径 0.95 m、贴地踩到每 0.4 s 烧 7；撞到跑道上的人 24 + 掀开，1 s 一次）；
     ///   玩家落在前方 28–75° 时（或跑够了）停步转身、刨蹄：地上亮出一条 4 m 宽的冲撞线（1 s），过玩家（预判 0.35 s）一直冲到对面跑道（10 m ≤ 线长 ≤ 跑道直径）；
     ///   30 m/s 冲过去（≤ 2.4 s），胸—臀线段扫到玩家撞一下 34 + 侧向掀飞（每次冲撞一下）；冲撞也落蹄印。
-    ///   撞上石柱 / 墙：晕 1.6 s（一个小输出窗口，火珠大亮）；没撞上：收步 0.5 s。
+    ///   撞上石柱（殿里的东西）：晕 1.6 s（一个小输出窗口，火珠大亮）；没撞上、或头冲到殿墙跟前：收步 0.5 s。
     /// 位移全程走脚本位移（BeginDash：跨过齐地的熔岩渠、撞墙就停），收招交还导航。
+    /// 撞墙判定从头的前沿往前扫（<see cref="WallAhead"/>）：麒麟身子长，只从角色胶囊中心探的话头会先扎进柱子 / 墙里；奔驰中碰到石柱顺着柱面滑过去。
     /// </summary>
     public sealed class ScaleGallop : QilinMove
     {
@@ -135,9 +136,13 @@ namespace Spiritfire.Game
                     lastPos = p;
                     DropPrints(dt, 0.1f);
                     if (!hitDone) ChargeHit();
-                    bool crashed = Brain.DashHitWall && legT > 0.15f;
+                    // 脚本位移只从角色胶囊中心往前探 0.4 m：长身子要等头扎进柱子 3 m 才算撞上，所以这里从头的前沿再探一步。
+                    // 殿里的东西（石柱、坠池的鼎）撞上就晕；殿墙一圈只是冲到头了（收步，不晕，头也不扎进墙里）
+                    bool ahead = WallAhead(chargeDir, speed * dt + 0.2f, out _, out bool obstacle);
+                    bool crashed = (Brain.DashHitWall || (ahead && obstacle)) && legT > 0.1f;
+                    bool atWall = ahead && !obstacle;
                     bool outside = Brain.Arena && !Brain.Arena.Contains(p, Brain.BodyRadius * 0.5f);
-                    if (travel < ChargeLength && !crashed && !outside && legT <= 2.4f) break;
+                    if (travel < ChargeLength && !crashed && !atWall && !outside && legT <= 2.4f) break;
                     Brain.SetDashVelocity(Vector3.zero);
                     Brain.EndDash();
                     if (crashed)
@@ -169,15 +174,50 @@ namespace Spiritfire.Game
             legT = 0;
         }
 
-        /// <summary>朝 target 以 speed 推进（脚本位移，保留竖直速度），朝向跟着速度转</summary>
+        /// <summary>朝 target 以 speed 推进（脚本位移，保留竖直速度），朝向跟着速度转；头前面是石柱就顺着它的表面滑过去（不一头扎进去）</summary>
         void Steer(Vector3 target, float speed, float dt)
         {
             var d = target - Brain.transform.position;
             d.y = 0;
             if (d.sqrMagnitude < 0.01f) return;
             var v = d.normalized * speed;
+            if (WallAhead(v / speed, speed * 0.12f, out var wall, out bool obstacle) && obstacle)
+            {
+                var n = new Vector3(wall.x, 0, wall.z);
+                if (n.sqrMagnitude > 1e-4f)
+                {
+                    n.Normalize();
+                    var slide = v - Vector3.Dot(v, n) * n;
+                    if (slide.sqrMagnitude < speed * speed * 0.04f) slide = Vector3.Cross(Vector3.up, n) * dirSign;
+                    v = slide.normalized * speed;
+                }
+            }
             Brain.SetDashVelocity(new Vector3(v.x, Brain.DashVelocity.y, v.z));
             TurnToward(Mathf.Atan2(v.x, v.z) * Mathf.Rad2Deg, 360f, dt);
+        }
+
+        /// <summary>
+        /// 沿 dir 头的前沿再往前 lead 米有没有石柱 / 墙（世界层、近乎竖直的面；离地 2 m、半径 0.7 m 的球，熔池浅碟的缓坡不算）。
+        /// wallNormal = 撞到的面朝向；obstacle = 撞到的是殿里的东西（石柱、坠池的鼎），不是殿墙那一圈（墙板、扶壁、炉口、门楼）
+        /// </summary>
+        bool WallAhead(Vector3 dir, float lead, out Vector3 wallNormal, out bool obstacle)
+        {
+            wallNormal = Vector3.zero;
+            obstacle = false;
+            dir.y = 0;
+            if (dir.sqrMagnitude < 1e-4f) return false;
+            dir.Normalize();
+            var p = Brain.transform.position;
+            float reach = Brain.BodyRadius;
+            if (Qilin) reach = Mathf.Max(reach, Vector3.Dot(Qilin.HeadPoint - p, dir));
+            reach = Mathf.Clamp(reach, 0.5f, 6f);
+            var from = new Vector3(p.x, Floor + 2f, p.z);
+            if (!Physics.SphereCast(from, 0.7f, dir, out var hit, reach + Mathf.Max(0.05f, lead), Layers.WorldMask, QueryTriggerInteraction.Ignore)) return false;
+            if (hit.normal.y >= 0.5f) return false;
+            wallNormal = hit.normal;
+            var f = Furnace;
+            obstacle = !f || f.RadiusOf(hit.point) < f.wallRadius - 0.8f;
+            return true;
         }
 
         /// <summary>横穿冲撞：从当前位置过玩家（预判 0.35 s）一直冲到对面跑道（直线与跑道圆的远交点，10 m ≤ 长 ≤ 跑道直径）</summary>

@@ -34,7 +34,8 @@ namespace Spiritfire.Game
         {
             from = Brain.transform.position;
             at = OnFloor(Brain.ClampToArena(Brain.Predict(0.5f)));
-            if (UnityEngine.AI.NavMesh.SamplePosition(at, out var hit, 3f, UnityEngine.AI.NavMesh.AllAreas)) at = hit.position;
+            if (Qilin) Qilin.SampleNav(at, 3f, out at);
+            else if (UnityEngine.AI.NavMesh.SamplePosition(at, out var hit, 3f, LavaField.WalkerFilter())) at = hit.position;
             Brain.Halt();
             Brain.BeginDash(Vector3.zero, 0);
         }
