@@ -5,6 +5,7 @@ using Spiritfire.Game;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.Rendering;
 using static Spiritfire.Art.Editor.Levels.Landform;
 
 namespace Spiritfire.Art.Editor.Levels
@@ -105,8 +106,10 @@ namespace Spiritfire.Art.Editor.Levels
         /// 凸顶处宽 13 m，往两头收尖——长宽比约 5 : 1，像实景那弯细长的月牙。
         /// </summary>
         static readonly LevelKit.CrescentArc Spring = new(new Vector2(0, -36), 44f, 90f, 50f, 6.5f, 0.6f);
-        /// <summary>水面（世界 y）、泉床最深处（东深西浅，实景「泉水东深西浅」）、每段水覆盖的角度</summary>
-        const float WaterY = -0.85f, BedDepthEast = 1.55f, BedDepthWest = 1.3f, SpringStepDeg = 7.5f;
+        /// <summary>水面（世界 y）、泉床最深处（东深西浅，实景「泉水东深西浅」）</summary>
+        const float WaterY = -0.85f, BedDepthEast = 1.55f, BedDepthWest = 1.3f;
+        /// <summary>水体竖条宽（米，沿 x）</summary>
+        const float WaterStrip = 3f;
         static Vector2 SpringApex => Spring.At(0);
 
         // ───────────── 盆底的新月形沙丘 ─────────────
@@ -115,8 +118,11 @@ namespace Spiritfire.Art.Editor.Levels
         /// 太阳 31° 时落沙坡只比日光陡 5°，影子是一道薄楔：坡脚 2 m 内胸口在影子里、头露在外（半份灼烧）——沙丘主要是挡日轮直射的掩体
         /// </summary>
         static readonly LevelKit.Barchan DuneA = new(new Vector2(-30, 27), Wind, 7f, 15f, 26f, 9f, 36f, 31);
-        /// <summary>东侧小沙丘：脊高 6 m、迎风背 20 m（≤ 22°），东半场挡日轮直射的地方</summary>
-        static readonly LevelKit.Barchan DuneB = new(new Vector2(30, 19), Wind, 6f, 12f, 20f, 7f, 36f, 32);
+        /// <summary>
+        /// 东沙丘：泉凸顶东北、梯脚西南，脊高 5.5 m、迎风背 18 m（≤ 22°）。迎风背的坡脚离泉边湿沙带还有 7 m 以上——
+        /// 湿沙带里沙丘被压平，坡脚伸进去的话迎风背会在那里断成 30° 的陡坎（旧位置 (30, 19) 验收报 31°）
+        /// </summary>
+        static readonly LevelKit.Barchan DuneB = new(new Vector2(26, 30), Wind, 5.5f, 11f, 18f, 6f, 36f, 32);
 
         // ───────────── 观景台、支脊、木梯、驼道 ─────────────
         /// <summary>观景台（出生、安全区）：支脊上半径 10 m 的平台，台面 16 m，四周 31° 沙坡</summary>
@@ -158,7 +164,7 @@ namespace Spiritfire.Art.Editor.Levels
         /// <summary>庭院（月牙阁背后、回廊前）：出口升起的地方</summary>
         static readonly Vector2 Courtyard = new(0, -17.5f);
         static readonly Vector2 TempleMin = new(-15, -28), TempleMax = new(15, -2);
-        /// <summary>白杨（还没有资产：占位白盒 3.2 m 见方，带碰撞，挡日晒）：月泉阁两侧与南岸</summary>
+        /// <summary>白杨（还没有资产：占位轮廓 = 细干 + 柱状冠，带碰撞，挡日晒，见 PoplarSilhouette）：月泉阁两侧与南岸</summary>
         const string PoplarId = "SM_Tripo_DesertPoplar";
         static readonly (Vector2 at, float h)[] Poplars =
         {
@@ -174,17 +180,21 @@ namespace Spiritfire.Art.Editor.Levels
         /// <summary>盆底的风蚀砂岩（掩体）</summary>
         static readonly (Vector2 at, float h)[] Boulders =
         {
-            (new Vector2(-8, 30), 1.8f), (new Vector2(14, 28), 1.6f), (new Vector2(-44, 12), 2.2f), (new Vector2(46, -6), 2.0f),
+            (new Vector2(-8, 30), 1.8f), (new Vector2(44, 18), 1.6f), (new Vector2(-44, 12), 2.2f), (new Vector2(46, -6), 2.0f),
             (new Vector2(-40, -26), 1.8f), (new Vector2(40, -28), 2.1f),
         };
 
         // ───────────── 标记 ─────────────
-        static readonly Vector2 PlayerSpawnAt = Platform + new Vector2(1, 3);
+        /// <summary>
+        /// 出生点站在观景台前沿（离台沿 3.5 m，正对木梯口）：台面是平的，站在台心时 10 m 宽的台面会挡住往下 15° 的视线，泉心正好在这个俯角上。
+        /// 站到前沿，视线越过台沿顺着木梯落下去，整弯泉水都在眼前（这张图的招牌镜头）
+        /// </summary>
+        static readonly Vector2 PlayerSpawnAt = Platform + (StairFoot - Platform).normalized * (PlatformR - 3.5f);
         static readonly Vector2 ArenaCenter = new(-2, 4);
         const float ArenaRadius = 44f;
         /// <summary>旱魃从泉心（凸顶）升起；玩家从木梯脚往前几步进圈</summary>
         static readonly Vector2 BossSpawn = new(0, 8), PlayerEntry = new(6, 36), RewardAt = new(8, 22);
-        static readonly Vector2[] SummonPoints = { new(-36, 4), new(-6, 36), new(20, 34), new(30, -24) };
+        static readonly Vector2[] SummonPoints = { new(-36, 4), new(-6, 36), new(40, 12), new(30, -24) };
 
         // ───────────── 地貌 ─────────────
 
@@ -238,10 +248,11 @@ namespace Spiritfire.Art.Editor.Levels
             // 支脊（刀刃脊：脊线高 − 离脊顶的距离 × tan 31°）
             var (sd, st) = SpurPath.Nearest(p, 70);
             if (sd < float.MaxValue) h = Mathf.Max(h, SpurPath.HeightAt(st) - Mathf.Max(0, sd - SpurTopHalf) * Mathf.Tan(SpurFlank * Mathf.Deg2Rad));
-            // 观景台：半径 10 m 的平台，外沿 5 m 内线性接回沙坡（北沿背靠沙山，往上是 1–2 m 的缓沙坡；smoothstep 会在中段陡过 45°）
+            // 观景台：半径 10 m 的平台。往下的一侧台沿利落地落成 31° 沙坡（不留缓坎，台沿外就看得见坡下的泉）；
+            // 往上的一侧（北沿背靠沙山）外沿 5 m 内线性接回沙坡（1–2 m 的缓沙坡；smoothstep 会在中段陡过 45°）
             float dp = Vector2.Distance(p, Platform);
             float around = Mathf.Max(h, PlatformY - Mathf.Max(0, dp - PlatformR) * Mathf.Tan(SpurFlank * Mathf.Deg2Rad));
-            h = Mathf.Lerp(PlatformY, around, Mathf.Clamp01((dp - PlatformR) / 5f));
+            h = dp <= PlatformR ? PlatformY : around > PlatformY ? Mathf.Lerp(PlatformY, around, Mathf.Clamp01((dp - PlatformR) / 5f)) : around;
             float raised = h - floorY - bed;
             // 木梯、驼道：沿纵断面压平（又挖又填）
             h = StairPath.Flatten(p, h, StairHalf, StairShoulder, PathSpline.Mode.Both, out float stairMask);
@@ -360,7 +371,7 @@ namespace Spiritfire.Art.Editor.Levels
                     {
                         ("Aerial", new Vector3(95, 120, 135), new Vector3(0, 0, -2), false),
                         ("Map", new Vector3(6, 420, 2), new Vector3(6, 0, 3), false),
-                        ("Spawn", E(PlayerSpawnAt), pavilionTop, true),
+                        ("Spawn", E(PlayerSpawnAt), new Vector3(0, 2, -1), true),
                         ("StairTop", E(StairTop + (StairFoot - StairTop).normalized * 2f), G(SpringApex, 1f), false),
                         ("Trail", E(new Vector2(-12, 68)), G(DuneA.crest, 3f), false),
                         ("Entry", E(PlayerEntry), G(BossSpawn, 3f), true),
@@ -419,31 +430,60 @@ namespace Spiritfire.Art.Editor.Levels
         }
 
         /// <summary>
-        /// 月牙泉：沿中线每 7.5° 一段水（L8 WaterVolume，水面 y −0.85，东段深约 0.7 m、西段约 0.45 m；尖角处泉床比水面浅，是干的）。
-        /// 每段是一块转到切线方向的水体，宽 = 泉宽 + 1.6 m，比岸线宽出的部分埋在岸坡下面，看得见的水边就是地形和水面的交线。
-        /// 根节点与每段的名字都带 CrescentSpring（BS2 二阶段按名字找泉水吸干；不给标签：工程里没定义这个标签）。泉床沿中线铺龟裂贴花（吸干后露出来）。
+        /// 月牙泉的水（L8 WaterVolume，水面 y −0.85，东段深约 0.7 m、西段约 0.45 m；尖角处泉床比水面浅，是干的）。
+        /// 沿 x 每 3 m 切一条竖条，条与条首尾相接、互不重叠：每条的 z 范围 = 这一条里泉床低于水面的范围外扩 0.7 m（外扩的部分埋在岸坡下），
+        /// 底面 = 这一条泉床的最低处。水体本身不画，只在顶面挂一块水面片（内置 Quad，不投影）——
+        /// 以前沿弧线转着摆、互相重叠的水块，透明叠加会画出一道道深浅条纹，水块的侧面也会透过水面露出来。
+        /// 水面片是水体的子物体：BS2 吸干时把水体的 y 缩放降到 0（底面不动），水面跟着一起落下去；相邻两条底面差不多高，吸干时的高低差只有几厘米。
+        /// 根节点与每条的名字都带 CrescentSpring（BS2 二阶段按名字找泉水；不给标签：工程里没定义这个标签）。泉床沿中线铺龟裂贴花（吸干后露出来）。
         /// </summary>
         static List<WaterVolume> BuildSpring(LevelKit.TerrainSet set, Transform env, Transform props)
         {
+            LevelKit.EnsureWorldMaterials();
+            var waterMat = AssetDatabase.LoadAssetAtPath<Material>($"{LevelKit.WorldMaterialDir}/{WorldMaterials.AssetName(WorldMaterialKind.Water)}.mat");
             var root = new GameObject(SpringName).transform;
             root.SetParent(env, false);
             var waters = new List<WaterVolume>();
-            float step = SpringStepDeg / Spring.halfSpan, len = Spring.radius * SpringStepDeg * Mathf.Deg2Rad * 1.15f;
+            float xFrom = Mathf.Floor((Spring.center.x - Spring.radius - Spring.halfWidth) / WaterStrip) * WaterStrip;
+            float xTo = Spring.center.x + Spring.radius + Spring.halfWidth;
+            float zFrom = Spring.center.y, zTo = Spring.center.y + Spring.radius + Spring.halfWidth + 1f;
             int seg = 0;
-            for (float a = -1 + step * 0.5f; a < 1; a += step)
+            for (float xa = xFrom; xa < xTo; xa += WaterStrip)
             {
-                float hw = Spring.HalfWidthAt(a);
-                if (BedDepth(a, hw) < -WaterY + 0.15f) continue;
-                var c = Spring.At(a);
-                float yaw = YawOf(Spring.Tangent(a));
-                float bottom = Mathf.Min(set.GroundY(c.x, c.y) - 0.03f, WaterY - 0.1f);
-                seg++;
-                // 相邻两段错开 2 mm，重叠处的水面不打架
-                float depth = WaterY - bottom + (seg % 2) * 0.002f;
-                var block = LevelKit.Box($"{SpringName} Water {seg:00}", root, new Vector3(c.x, bottom, c.y), new Vector3(2 * hw + 1.6f, depth, len), yaw, null, 0);
-                var w = LevelKit.WaterBody(block, bottom, depth);
+                float zMin = float.MaxValue, zMax = float.MinValue, bottom = float.MaxValue;
+                for (float x = xa; x <= xa + WaterStrip + 1e-3f; x += 0.5f)
+                for (float z = zFrom; z <= zTo; z += 0.25f)
+                {
+                    LevelKit.CrescentLocal(new Vector2(x, z), Spring, out float along, out float across, out float hw);
+                    if (Mathf.Abs(along) >= 1 || Mathf.Abs(across) > hw + 0.5f) continue;
+                    float y = set.GroundY(x, z);
+                    if (y >= WaterY - 0.02f) continue;
+                    zMin = Mathf.Min(zMin, z);
+                    zMax = Mathf.Max(zMax, z);
+                    bottom = Mathf.Min(bottom, y);
+                }
+                if (zMin > zMax) continue;
+                zMin -= 0.7f;
+                zMax += 0.7f;
+                bottom -= 0.03f;
+                float depth = WaterY - bottom;
+                var go = new GameObject($"{SpringName} Water {++seg:00}");
+                go.transform.SetParent(root, false);
+                go.transform.position = new Vector3(xa + WaterStrip * 0.5f, bottom + depth * 0.5f, (zMin + zMax) * 0.5f);
+                go.transform.localScale = new Vector3(WaterStrip, depth, zMax - zMin);
+                var w = go.AddComponent<WaterVolume>();
                 w.shallow = 0.15f;
                 w.deep = 1.3f;
+                var surface = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                surface.name = "Water Surface";
+                Object.DestroyImmediate(surface.GetComponent<Collider>());
+                surface.transform.SetParent(go.transform, false);
+                surface.transform.localPosition = new Vector3(0, 0.5f, 0);
+                surface.transform.localRotation = Quaternion.Euler(90, 0, 0); // 内置 Quad 朝 −Z，转 90° 朝上
+                var r = surface.GetComponent<MeshRenderer>();
+                r.sharedMaterial = waterMat;
+                r.shadowCastingMode = ShadowCastingMode.Off;
+                r.receiveShadows = false;
                 waters.Add(w);
             }
             var rng = new System.Random(14);
@@ -483,7 +523,7 @@ namespace Spiritfire.Art.Editor.Levels
         }
 
         /// <summary>
-        /// 树和石：白杨（占位，带碰撞）围着月泉阁与南岸，树影朝东北偏东拖 10–16 m；红柳大丛（带碰撞）在泉两角与南岸；盆底六块风蚀砂岩当掩体；
+        /// 树和石：白杨（有正式件用正式件，没有就是细干 + 柱状冠的占位轮廓，带碰撞）围着月泉阁与南岸，树影朝东北偏东拖 15–19 m；红柳大丛（带碰撞）在泉两角与南岸；盆底六块风蚀砂岩当掩体；
         /// 北坡脚一辆半埋的驼队残车（来路的故事）。返回白杨与红柳（验收查碰撞体）
         /// </summary>
         static List<GameObject> BuildGroves(LevelKit.TerrainSet set, Transform props)
@@ -492,9 +532,11 @@ namespace Spiritfire.Art.Editor.Levels
             var grove = new GameObject("Groves").transform;
             grove.SetParent(props, false);
             var rng = new System.Random(24);
+            bool poplarAsset = ShowcaseSceneBuilder.Prefab(PoplarId);
             foreach (var (at, h) in Poplars)
             {
-                var go = Put(PoplarId, grove, set, at, (float)rng.NextDouble() * 360f, new Vector3(3.2f, h, 3.2f), h, 0.2f);
+                float yaw = (float)rng.NextDouble() * 360f;
+                var go = poplarAsset ? Put(PoplarId, grove, set, at, yaw, new Vector3(3.2f, h, 3.2f), h, 0.2f) : PoplarSilhouette(grove, set, at, h);
                 if (go) trees.Add(go);
             }
             foreach (var (at, h) in Tamarisks)
@@ -505,6 +547,38 @@ namespace Spiritfire.Art.Editor.Levels
             foreach (var (at, h) in Boulders) Put("SM_Env_DesertSandstone", props, set, at, (float)rng.NextDouble() * 360f, new Vector3(2.2f, h, 2.2f), h, 0.3f);
             Put("SM_Tripo_DesertCaravanWreck", props, set, new Vector2(-32, 52), 115, new Vector3(3.8f, 1.8f, 4f), 0, 0.5f);
             return trees;
+        }
+
+        /// <summary>
+        /// 白杨的占位轮廓（还没有 SM_Tripo_DesertPoplar）：灰褐细干（半径 0.22 m、到 1/3 树高）+ 灰绿柱状树冠（胶囊，半径 1.6 m，从 1/4 树高到树顶），
+        /// 新疆杨那种窄高的样子；干、冠都带碰撞（冠挡日晒射线，树影才算数）。根物体名字带 Placeholder、打 Placeholder 标签——验收照样列进占位清单
+        /// </summary>
+        static GameObject PoplarSilhouette(Transform parent, LevelKit.TerrainSet set, Vector2 at, float h)
+        {
+            LevelKit.EnsureTag(LevelKit.PlaceholderTag);
+            var root = new GameObject($"Placeholder · {PoplarId}");
+            root.transform.SetParent(parent, false);
+            root.transform.position = set.OnGround(at.x, at.y, -0.2f);
+            root.tag = LevelKit.PlaceholderTag;
+            root.isStatic = true;
+            var bark = LevelKit.Mat(Dir, "PoplarBark", new Color(0.42f, 0.38f, 0.33f));
+            var leaf = LevelKit.Mat(Dir, "PoplarCrown", new Color(0.44f, 0.5f, 0.3f), 0.95f);
+            var trunk = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            trunk.name = "Trunk";
+            trunk.transform.SetParent(root.transform, false);
+            trunk.transform.localPosition = new Vector3(0, h / 6f, 0);
+            trunk.transform.localScale = new Vector3(0.44f, h / 6f, 0.44f);
+            trunk.GetComponent<MeshRenderer>().sharedMaterial = bark;
+            trunk.isStatic = true;
+            float crownBottom = h * 0.25f, crownHeight = h - crownBottom;
+            var crown = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            crown.name = "Crown";
+            crown.transform.SetParent(root.transform, false);
+            crown.transform.localPosition = new Vector3(0, crownBottom + crownHeight * 0.5f, 0);
+            crown.transform.localScale = new Vector3(3.2f, crownHeight * 0.5f, 3.2f);
+            crown.GetComponent<MeshRenderer>().sharedMaterial = leaf;
+            crown.isStatic = true;
+            return root;
         }
 
         /// <summary>
@@ -590,7 +664,7 @@ namespace Spiritfire.Art.Editor.Levels
             var dir = (StairFoot - Platform).normalized;
             var side = new Vector2(dir.y, -dir.x);
             foreach (int k in new[] { -1, 1 })
-                Put("SM_Tripo_DesertBrazier", root, set, Platform + dir * 7.5f + side * (k * 2.6f), 0, new Vector3(1.3f, 2.4f, 1.2f), 0, 0.05f);
+                Put("SM_Tripo_DesertBrazier", root, set, Platform + dir * 8.8f + side * (k * 3f), 0, new Vector3(1.3f, 2.4f, 1.2f), 0, 0.05f);
             Put("SM_Prop_DesertStele", root, set, Platform + new Vector2(7.5f, 2.7f), YawOf(-dir), new Vector3(1.7f, 3.8f, 2.1f), 0, 0.05f);
             Put("SM_Tripo_DesertGoodsPile", root, set, Platform + new Vector2(4f, 7f), 20, new Vector3(1.7f, 1.6f, 1.3f), 0, 0.1f);
             Put("SM_Prop_DesertUrns", root, set, Platform + new Vector2(-0.5f, 8f), 0, new Vector3(0.8f, 0.8f, 0.8f), 0, 0.05f);
