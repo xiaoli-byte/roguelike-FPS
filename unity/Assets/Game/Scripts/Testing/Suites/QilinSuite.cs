@@ -710,7 +710,18 @@ namespace Spiritfire.Game.Testing
             var fwd = boss.transform.forward;
             fwd.y = 0;
             fwd = fwd.sqrMagnitude > 1e-4f ? fwd.normalized : Vector3.forward;
-            var spot = arena.Clamp(boss.transform.position + fwd * distance, 2f);
+            // 首领面朝殿墙时「正前方 distance 米」夹回场地会落到它身上（玩家被角色胶囊顶到背上）：依次试正前方、朝殿心、身后、两侧，取第一个夹完还离得够远的
+            var b = boss.transform.position;
+            var toCenter = Flat(arena.Center - b);
+            var spot = arena.Clamp(b + fwd * distance, 2f);
+            foreach (var dir in new[] { fwd, toCenter.sqrMagnitude > 1e-4f ? toCenter.normalized : -fwd, -fwd, boss.transform.right, -boss.transform.right })
+            {
+                var d = Flat(dir).normalized;
+                var s = arena.Clamp(b + d * distance, 2f);
+                if (Flat(s - b).magnitude < Mathf.Min(distance * 0.7f, boss.BodyRadius + 6f)) continue;
+                spot = s;
+                break;
+            }
             if (NavMesh.SamplePosition(spot, out var hit, 4f, LavaField.WalkerFilter())) spot = hit.position;
             Place(spot);
             Aim(motor, eye, boss.BodyCenter);
