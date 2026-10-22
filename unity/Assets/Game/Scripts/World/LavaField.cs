@@ -253,6 +253,15 @@ namespace Spiritfire.Game
             areaMask = LavaAreaMask != 0 ? LavaAreaMask : NavMesh.AllAreas,
         };
 
+        /// <summary>地面敌人 / 玩家可达性用的人形代理类型 id（NavMeshAreas.asset 第一个代理类型，Unity 默认的 Humanoid = 0）</summary>
+        public static int WalkerAgentType => NavMesh.GetSettingsCount() > 0 ? NavMesh.GetSettingsByIndex(0).agentTypeID : 0;
+
+        /// <summary>
+        /// 人形代理的导航查询过滤：有 LavaSwimmer 网格的场景里，不带过滤的 SamplePosition / CalculatePath 可能落到火鼍的网格上
+        /// （起点在人形网格、终点在火鼍网格 → PathPartial），站位、可达性、验收这类「地面敌人走不走得到」的查询都用这个
+        /// </summary>
+        public static NavMeshQueryFilter WalkerFilter(int areaMask = NavMesh.AllAreas) => new() { agentTypeID = WalkerAgentType, areaMask = areaMask };
+
         /// <summary>
         /// 把一只敌人设成熔岩生物（火鼍，EN3b）：从此不受熔岩影响（不烧、不拉回）；有 LavaSwimmer 代理类型且附近烘了它的网格时，
         /// 把 NavMeshAgent 切过去、只走 Lava 区，并放到最近的熔岩导航点上。返回是否切到了 LavaSwimmer 导航网格

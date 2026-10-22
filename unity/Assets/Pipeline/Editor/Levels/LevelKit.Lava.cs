@@ -191,6 +191,9 @@ namespace Spiritfire.Art.Editor.Levels
         /// 熔岩生物（火鼍，EN3b）的导航网格：LavaSwimmer 代理类型（半径 0.9 m），只收集场上熔岩的范围（外扩 4 m），
         /// 默认区域 Walkable，熔岩由 PlaceLava 放的 NavMeshModifierVolume 标成 Lava——火鼍的 agent 只开 Lava 区（<see cref="LavaField.MakeSwimmer"/>），
         /// 所以只在熔岩里游，岸就是它的边界。存成 {dir}/NavMesh_{name}_LavaSwimmer.asset。
+        /// 最高的 Lava 区顶（熔岩面 + <see cref="LavaTuning.StandRise"/>）往上 0.2 m 起烘焙时临时盖一层 Not Walkable：墩顶、堤面、湖岸这些干地不进这张网格——
+        /// 它们对只走 Lava 区的火鼍没用，烘进去反而和人形网格叠在一起，让不带过滤的导航查询落错网格（同一高度的平地熔岩条带仍会带一圈岸，
+        /// 所以验收 / 站位的查询另外都带人形过滤 <see cref="LavaField.WalkerFilter"/>）。
         /// 场上没有熔岩 / 工程里没有 LavaSwimmer 代理类型时跳过，返回 null。要在 <see cref="BakeNavMesh"/> 之后调用
         /// </summary>
         public static NavMeshSurface BakeLavaNavMesh(string dir, string name, Transform parent)
@@ -205,17 +208,33 @@ namespace Spiritfire.Art.Editor.Levels
             }
             bool first = true;
             var bounds = new Bounds();
+            float lavaTop = float.MinValue;
             foreach (var v in vols)
             {
                 var b = v.Body;
                 var rect = b.WorldRect;
-                float lo = b.level - b.depth - 1f, hi = b.level + 2f + Mathf.Max(0, v.tide.enabled ? v.tide.height : 0);
+                float lo = b.level - b.depth - 2f, hi = b.level + LavaTuning.StandRise + 1f;
+                lavaTop = Mathf.Max(lavaTop, b.level + LavaTuning.StandRise);
                 var vb = new Bounds(new Vector3(rect.center.x, (lo + hi) * 0.5f, rect.center.y), new Vector3(rect.width, hi - lo, rect.height));
                 if (first) bounds = vb;
                 else bounds.Encapsulate(vb);
                 first = false;
             }
-            bounds.Expand(new Vector3(8, 2, 8));
+            bounds.Expand(new Vector3(8, 0, 8));
+            // 干地封顶：最高的 Lava 区顶上 0.2 m 起整层标 Not Walkable（临时体，只在这次烘焙里；人形网格已经烘好了，不受影响）。
+            // 烘焙范围在 Lava 区顶上再留 1 m，碰到范围顶被截平的地面 / 体块也落在这一层里，不会在顶上拼出一片假平地
+            int notWalkable = NavMesh.GetAreaFromName("Not Walkable");
+            GameObject cap = null;
+            if (notWalkable >= 0)
+            {
+                float capLo = lavaTop + 0.2f, capHi = bounds.max.y + 2f;
+                cap = new GameObject("Swimmer Dry Cap (bake only)");
+                cap.transform.position = new Vector3(bounds.center.x, (capLo + capHi) * 0.5f, bounds.center.z);
+                var mod = cap.AddComponent<NavMeshModifierVolume>();
+                mod.area = notWalkable;
+                mod.center = Vector3.zero;
+                mod.size = new Vector3(bounds.size.x + 4f, capHi - capLo, bounds.size.z + 4f);
+            }
             var go = new GameObject("NavMesh (LavaSwimmer)");
             go.transform.SetParent(parent, false);
             go.transform.position = bounds.center;
@@ -228,7 +247,14 @@ namespace Spiritfire.Art.Editor.Levels
             int fp = LayerMask.NameToLayer(ShowcaseSceneBuilder.FirstPersonLayer), ch = LayerMask.NameToLayer(ShowcaseSceneBuilder.CharacterLayer);
             nav.layerMask = ~((fp >= 0 ? 1 << fp : 0) | (ch >= 0 ? 1 << ch : 0));
             nav.defaultArea = 0;
-            nav.BuildNavMesh();
+            try
+            {
+                nav.BuildNavMesh();
+            }
+            finally
+            {
+                if (cap) Object.DestroyImmediate(cap);
+            }
             if (nav.navMeshData) SaveAsset(nav.navMeshData, $"{dir}/NavMesh_{name}_LavaSwimmer.asset");
             return nav;
         }

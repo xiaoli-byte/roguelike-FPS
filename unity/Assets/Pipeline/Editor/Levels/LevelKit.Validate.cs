@@ -54,13 +54,15 @@ namespace Spiritfire.Art.Editor.Levels
             {
                 var (an, a) = waypoints[i];
                 var (bn, b) = waypoints[i + 1];
-                if (!NavMesh.SamplePosition(a, out var ha, 4, NavMesh.AllAreas) || !NavMesh.SamplePosition(b, out var hb, 4, NavMesh.AllAreas))
+                // 只看人形代理的网格（LevelContext.Walker）：熔岩图里火鼍的网格叠在上面
+                var walker = LevelContext.Walker;
+                if (!NavMesh.SamplePosition(a, out var ha, 4, walker) || !NavMesh.SamplePosition(b, out var hb, 4, walker))
                 {
                     rep.Fail($"路点不在 NavMesh 上：{an} 或 {bn}");
                     continue;
                 }
                 var path = new NavMeshPath();
-                NavMesh.CalculatePath(ha.position, hb.position, NavMesh.AllAreas, path);
+                NavMesh.CalculatePath(ha.position, hb.position, walker, path);
                 float len = 0;
                 for (int k = 0; k + 1 < path.corners.Length; k++) len += Vector3.Distance(path.corners[k], path.corners[k + 1]);
                 float straight = Vector3.Distance(ha.position, hb.position);

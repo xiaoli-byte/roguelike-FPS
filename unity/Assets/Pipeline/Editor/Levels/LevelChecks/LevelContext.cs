@@ -228,19 +228,25 @@ namespace Spiritfire.Art.Editor.Levels
             }
         }
 
+        /// <summary>
+        /// 验收的导航查询只看人形代理的网格（地面敌人、玩家可达性）：熔岩图里另有火鼍（LavaSwimmer）的网格叠在湖和岸上，
+        /// 不带过滤的查询可能一头落在人形网格、一头落在火鼍网格，得到 PathPartial
+        /// </summary>
+        public static NavMeshQueryFilter Walker => LavaField.WalkerFilter();
+
         public static bool NavPoint(Vector3 p, float radius, out Vector3 onNav)
         {
             onNav = p;
-            if (!NavMesh.SamplePosition(p, out var hit, radius, NavMesh.AllAreas)) return false;
+            if (!NavMesh.SamplePosition(p, out var hit, radius, Walker)) return false;
             onNav = hit.position;
             return true;
         }
 
-        /// <summary>NavMesh 路径：返回状态与长度</summary>
+        /// <summary>NavMesh 路径（人形代理）：返回状态与长度</summary>
         public static NavMeshPathStatus NavPath(Vector3 from, Vector3 to, out float length)
         {
             var path = new NavMeshPath();
-            NavMesh.CalculatePath(from, to, NavMesh.AllAreas, path);
+            NavMesh.CalculatePath(from, to, Walker, path);
             length = 0;
             for (int k = 0; k + 1 < path.corners.Length; k++) length += Vector3.Distance(path.corners[k], path.corners[k + 1]);
             return path.status;

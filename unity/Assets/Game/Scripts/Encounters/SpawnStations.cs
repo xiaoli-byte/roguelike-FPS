@@ -281,7 +281,7 @@ namespace Spiritfire.Game
             if (!float.IsFinite(p.x) || !float.IsFinite(p.y) || !float.IsFinite(p.z)) return false;
             float d0 = Flat(p - q.player).magnitude;
             if (d0 < q.minDist - 2.5f || d0 > q.maxDist + 2.5f) return false;
-            if (!NavMesh.SamplePosition(p, out var hit, elevated ? 1.5f : 2.5f, NavMesh.AllAreas)) return false;
+            if (!NavMesh.SamplePosition(p, out var hit, elevated ? 1.5f : 2.5f, LavaField.WalkerFilter())) return false;
             snapped = hit.position;
             if (elevated && Mathf.Abs(snapped.y - p.y) > 1.2f) return false;
             float d = Flat(snapped - q.player).magnitude;
@@ -290,12 +290,16 @@ namespace Spiritfire.Game
             return Reachable(snapped, q.player, q.partialOk);
         }
 
-        /// <summary>从出生点有路走到玩家（玩家可能站在网格外的箱子 / 台顶上：终点取离他最近的网格点）</summary>
+        /// <summary>
+        /// 从出生点有路走到玩家（玩家可能站在网格外的箱子 / 台顶上：终点取离他最近的网格点）。
+        /// 只查人形代理的网格（<see cref="LavaField.WalkerFilter"/>）：熔岩图里火鼍的网格和它叠在一起，不过滤会两头落在不同的网格上
+        /// </summary>
         public static bool Reachable(Vector3 from, Vector3 player, bool partialOk)
         {
             pathBudget--;
-            var goal = NavMesh.SamplePosition(player, out var near, 6f, NavMesh.AllAreas) ? near.position : player;
-            if (!NavMesh.CalculatePath(from, goal, NavMesh.AllAreas, path)) return false;
+            var filter = LavaField.WalkerFilter();
+            var goal = NavMesh.SamplePosition(player, out var near, 6f, filter) ? near.position : player;
+            if (!NavMesh.CalculatePath(from, goal, filter, path)) return false;
             return path.status == NavMeshPathStatus.PathComplete || (partialOk && path.status == NavMeshPathStatus.PathPartial);
         }
 

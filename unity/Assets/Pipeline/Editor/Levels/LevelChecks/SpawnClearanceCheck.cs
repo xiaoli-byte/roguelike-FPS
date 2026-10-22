@@ -44,7 +44,7 @@ namespace Spiritfire.Art.Editor.Levels
                     continue;
                 }
                 ok++;
-                if (onNav && NavMesh.FindClosestEdge(p, out var edge, NavMesh.AllAreas) && edge.distance < r * 0.6f)
+                if (onNav && NavMesh.FindClosestEdge(p, out var edge, LevelContext.Walker) && edge.distance < r * 0.6f)
                     rep.Warn($"{label}：离 NavMesh 边缘只有 {edge.distance:F1} m（{a.largest} 半径 {r:F2} m，容易卡边）");
             }
             if (ok == anchors.Count)
