@@ -180,7 +180,7 @@ export class CombatFx {
   bolt(x: number, z: number, color: THREE.ColorRepresentation = '#ffd6fb', y?: number): void {
     const gy = y ?? this.ground(x, z);
     const g = new THREE.Group();
-    const core = this.additive('#ffffff'), glow = this.additive(color, 0.45);
+    const core = this.additive('#fff6ff', 0.95), glow = this.additive('#ff6ae0', 0.38);
     const seg = (a: THREE.Vector3, b: THREE.Vector3, r: number): void => {
       const len = a.distanceTo(b);
       for (const [m, rr] of [[core, r], [glow, r * 3.5]] as const) {
@@ -201,7 +201,7 @@ export class CombatFx {
       if (i > 0 && i < n) p.add(new THREE.Vector3((Math.random() - 0.5) * j, 0, (Math.random() - 0.5) * j));
       pts.push(p);
     }
-    for (let i = 0; i < n; i++) seg(pts[i], pts[i + 1], 0.13);
+    for (let i = 0; i < n; i++) seg(pts[i], pts[i + 1], 0.1);
     for (const from of [3, 7]) {
       let a = pts[from];
       for (let k = 0; k < 3; k++) { const b = a.clone().add(new THREE.Vector3((Math.random() - 0.5) * 8, -5 - Math.random() * 4, (Math.random() - 0.5) * 8)); seg(a, b, 0.07); a = b; }
@@ -241,7 +241,10 @@ export class CombatFx {
 
   /** 爆闪：一个迅速长大、淡出的发光球 */
   burst(at: THREE.Vector3, r: number, color: THREE.ColorRepresentation = '#ffd2f3'): void {
-    const m = new THREE.Mesh(this.sphereGeo, this.additive(color, 0.8));
+    // 只画正面：镜头在爆闪球里面时不会整屏发白
+    const mat = this.additive(color, 0.8);
+    mat.side = THREE.FrontSide;
+    const m = new THREE.Mesh(this.sphereGeo, mat);
     m.position.copy(at);
     this.add(m, 0.35, (k) => { m.scale.setScalar(r * (0.3 + 0.7 * k)); (m.material as THREE.MeshBasicMaterial).opacity = 0.8 * (1 - k); }, () => (m.material as THREE.Material).dispose());
   }
@@ -320,12 +323,18 @@ export class CombatFx {
       T.t += dt;
       T.tick(Math.min(1, T.t / T.life), dt);
     }
+    // 先摘掉过期的，再调回调：回调里新加的特效（预警填满 → 落雷）要进新的列表，不能被这次过滤吞掉
+    const expired: Timed[] = [];
     this.timed = this.timed.filter(T => {
       if (!T.dead && T.t < T.life) return true;
-      this.group.remove(T.obj);
-      if (!T.dead) T.done?.();
+      expired.push(T);
       return false;
     });
+    for (const T of expired) {
+      this.group.remove(T.obj);
+      if (!T.dead) T.done?.();
+    }
+    const landed: [Projectile, THREE.Vector3, boolean][] = [];
     this.shots = this.shots.filter(S => {
       S.life -= dt;
       S.vel.y -= S.gravity * dt;
@@ -341,9 +350,10 @@ export class CombatFx {
       } else if (S.pos.y <= this.ground(S.pos.x, S.pos.z) || this.world.solidAt(S.pos.x, S.pos.y, S.pos.z) || S.life <= 0) hit = false;
       if (hit === null) return true;
       this.group.remove(S.mesh);
-      S.onHit(S.pos.clone(), hit);
+      landed.push([S, S.pos.clone(), hit]);
       return false;
     });
+    for (const [S, at, hit] of landed) S.onHit(at, hit);
     // 粒子
     for (let i = 0; i < MAX_PARTICLES; i++) {
       if (this.pLife[i] <= 0) continue;

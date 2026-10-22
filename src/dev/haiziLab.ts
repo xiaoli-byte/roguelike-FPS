@@ -14,6 +14,7 @@ import { Weather } from '../world/plateau/weather';
 import { buildHaizi } from '../world/haizi/scene';
 import { COIL, ISLAND, LAKE, MAP, PILLARS, PLACEMENTS, SPAWN, VIEWPOINTS, type Viewpoint } from '../world/haizi/spec';
 import { HaiziTerrain } from '../world/haizi/terrain';
+import { LeizePlay } from '../world/haizi/play';
 
 const $ = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T;
 const canvas = $<HTMLCanvasElement>('view');
@@ -108,7 +109,11 @@ VIEWPOINTS.forEach((vp, i) => {
 
 // ───────────────────────────── 首领战挂点 ─────────────────────────────
 
-export interface HaiziPlayInput { firing: boolean; interact: boolean; reload: boolean; keys: ReadonlySet<string> }
+export interface HaiziPlayInput {
+  firing: boolean; interact: boolean; reload: boolean; keys: ReadonlySet<string>;
+  /** 燎的技能（这一帧按下）、秘卷三选一（1–3）、任意键（跳过演出） */
+  skillQ?: boolean; skillE?: boolean; pick?: number; anyKey?: boolean;
+}
 /** 首领战：每帧在镜头按第一人称摆好之后调（可以改 camera 接管镜头）；inputLocked = true 时人不动（演出） */
 export interface HaiziPlay { update(dt: number, input: HaiziPlayInput): void; inputLocked?: boolean }
 let play: HaiziPlay | null = null;
@@ -117,6 +122,7 @@ let play: HaiziPlay | null = null;
 
 const keys = new Set<string>();
 let jumpPressed = false, dashPressed = false, reloadPressed = false, firing = false, bigMap = false;
+let skillQ = false, skillE = false, anyKey = false, pick = 0;
 addEventListener('mousedown', e => { if (e.button === 0 && document.pointerLockElement === canvas) firing = true; });
 addEventListener('mouseup', e => { if (e.button === 0) firing = false; });
 addEventListener('keydown', e => {
@@ -125,6 +131,10 @@ addEventListener('keydown', e => {
   if (e.code === 'Space') { e.preventDefault(); if (!e.repeat) jumpPressed = true; }
   if ((e.code === 'ShiftLeft' || e.code === 'ShiftRight') && !e.repeat) dashPressed = true;
   if (e.code === 'KeyR' && !e.repeat) reloadPressed = true;
+  if (e.code === 'KeyQ' && !e.repeat) skillQ = true;
+  if (e.code === 'KeyE' && !e.repeat) skillE = true;
+  if (!e.repeat) anyKey = true;
+  if (play && /^Digit[1-3]$/.test(e.code)) pick = Number(e.code.slice(5));
   if (e.code === 'KeyG' && !e.repeat && !play) {
     walker.fly = !walker.fly;
     if (walker.fly) walker.feet.y += EYE; else walker.place(walker.feet.x, walker.feet.z);
@@ -334,8 +344,9 @@ function tick(dt: number, render: boolean): void {
   walker.eye(camera.position);
   camera.rotation.set(walker.pitch, walker.yaw, 0, 'YXZ');
   // 首领战（可以接管镜头）
-  play?.update(dt, { firing: firing && !locked, interact: keys.has('KeyE') && !locked, reload: reloadPressed && !locked, keys });
-  reloadPressed = false;
+  play?.update(dt, { firing: firing && !locked, interact: keys.has('KeyF') && !locked, reload: reloadPressed && !locked, keys, skillQ, skillE, pick, anyKey });
+  reloadPressed = skillQ = skillE = anyKey = false;
+  pick = 0;
   sky.position.copy(camera.position);
   // 阴影中心取镜头前方 60 m，按 8 m 吸附，避免阴影边缘闪烁
   const fwd = camera.getWorldDirection(ahead).setY(0);
@@ -357,6 +368,17 @@ function tick(dt: number, render: boolean): void {
 }
 requestAnimationFrame(frame);
 
+/** 进入游玩模式：雷泽雷神（终局首领战） */
+async function startPlay(): Promise<void> {
+  if (play) return;
+  walker.fly = false;
+  const mode = new LeizePlay(scene, camera, terrain, world, walker, weather, arena, boundAt);
+  play = mode;
+  await mode.start();
+  showHint('左键射击 · Q 尾焰火灵 · E 燃爆雷 · 空格跳 · Shift 冲刺（无敌）');
+}
+if (params.has('play')) void startPlay();
+
 /** 调试：按固定步长推进 seconds 秒（检视面板隐藏时浏览器不给 rAF）；render = true 时每步都渲染 */
 function simulate(seconds: number, step = 1 / 30, render = false): void {
   for (let t = 0; t < seconds - 1e-9; t += step) tick(step, render);
@@ -370,6 +392,9 @@ Object.assign(window, {
     get play() { return play; },
     setPlay: (p: HaiziPlay | null) => { play = p; },
     setFiring: (v: boolean) => { firing = v; },
+    startPlay,
+    press: (k: string) => { if (k === 'q') skillQ = true; else if (k === 'e') skillE = true; else if (k === 'jump') jumpPressed = true; else if (k === 'dash') dashPressed = true; else if (k === 'any') anyKey = true; else if (/^[123]$/.test(k)) pick = +k; },
+    hold: (code: string, on: boolean) => { if (on) keys.add(code); else keys.delete(code); },
     jump: () => { jumpPressed = true; },
     dash: () => { dashPressed = true; },
     render: () => { renderer.render(scene, camera); drawMap(); updateHud(0.3); },

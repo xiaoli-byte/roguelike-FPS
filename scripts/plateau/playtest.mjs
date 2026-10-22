@@ -159,7 +159,7 @@ const LORDS = {
   feilian: { map: '4-1', site: 's5', stand: [48, -204], look: [40, -228], cam: [15, 5, 2.4], fp: ['gust', 'charge', 'stormburst', 'tornado'] },
   huashe: { map: '4-1', site: 's4', stand: [-96, -142], look: [-140, -150], cam: [16, 6, 1.6], fp: ['lunge', 'spit', 'wingslap', 'roar'] },
   dae: { map: '4-2', stand: [-30, 70], look: [-1, -58], cam: [24, 6, 0], fp: ['dive', 'feathers'] },
-  leize: { map: '4-4', stand: [0, 64], look: [0, -16], cam: [30, 8, 6], fp: ['bellyDrum', 'breath', 'clawSlam'] },
+  leize: { map: '4-4', stand: [-10, 59], look: [0, -16], cam: [34, 4, 6], fp: ['bellyDrum', 'breath', 'clawSlam'] },
 };
 const SHOW_ONLY = ['roar', 'rise', 'kneel', 'down', 'choke', 'fall', 'grab', 'flyTo'];
 
