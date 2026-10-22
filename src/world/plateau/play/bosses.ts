@@ -102,36 +102,41 @@ export class KuiBoss extends Boss {
     this.host.visible = false;
     this.pos.copy(this.home);
     this.host.scale.setScalar(0.25);
+    this.yaw = Math.atan2(ctx.feet.x - this.home.x, ctx.feet.z - this.home.z);
     const drum = this.home.clone().setY(this.home.y + 1);
-    // 机位：玩家这一侧、离鼓 14 m、略高，慢慢推近、抬头
-    const side = Math.atan2(ctx.feet.x - this.home.x, ctx.feet.z - this.home.z);
+    // 以「鼓 → 玩家」为基准方向摆机位：a 是绕竖直轴的偏角
+    const base = this.yaw;
+    const at = (a: number, r: number, h: number, out: THREE.Vector3): THREE.Vector3 => out.set(drum.x + Math.sin(base + a) * r, drum.y + h, drum.z + Math.cos(base + a) * r);
+    const head = new THREE.Vector3();
     let struck = 0;
     return {
-      name: '夔 · 登场', dur: 7, bars: true, skippable: true,
-      cam: (t, out) => {
-        const k = smooth(t / 7);
-        const r = 15 - 5 * k, a = side + 0.5 - 0.35 * k;
-        out.pos.set(drum.x + Math.sin(a) * r, drum.y + 2.5 + 2.5 * k, drum.z + Math.cos(a) * r);
-        out.look.set(drum.x, drum.y + 1 + 3 * smooth((t - 2) / 3), drum.z);
-        out.fov = 52;
-      },
-      card: { title: '夔', sub: '一足之雷', quote: '《大荒东经》：其声如雷。黄帝得之，以其皮为鼓', at: 4.4, dur: 2.6 },
+      name: '夔 · 登场', dur: 8, landDur: 1.4, handoff: 0.6, skipKey: 'intro.kui', bars: true,
+      shots: [
+        // 建立全景：经幡山头、拉则一圈经幡杆，雷暴压下来，三道雷劈在残鼓上
+        { id: 'establish', dur: 2.3, note: '山头全景，慢慢环绕；0.9 / 1.4 / 1.9 秒三道雷劈残鼓', cam: (t, out) => { at(1.05 - 0.2 * smooth(t / 2.3), 40, 17, out.pos); out.look.copy(drum).setY(drum.y + 2); out.fov = 50; } },
+        // 首领现身：贴地仰拍残鼓，夔从鼓里一节节长出来、一足落地掀尘
+        { id: 'reveal', dur: 2.6, blend: 0, note: '低机位仰拍；2.3–4.5 秒从鼓里长出来，4.5 秒落地冲击', cam: (t, out) => { at(0.35, 11 - 1.5 * smooth(t / 2.6), 1.3, out.pos); out.look.copy(drum).setY(drum.y + 0.5 + 3.8 * smooth(t / 2.2)); out.fov = 48; } },
+        // 特写 + 名字卡：正面略低，仰头吼、头顶引雷
+        { id: 'closeup', dur: 1.7, blend: 0.5, note: '正面特写，仰头吼；名字卡 5.0 秒起', cam: (t, out) => { this.boneWorld('head', head); at(0.12, 7.5 - 0.6 * smooth(t / 1.7), 2.6, out.pos); out.look.copy(head).setY(head.y - 0.4); out.fov = 44; } },
+        this.landShot(1.4),
+      ],
+      card: { title: '夔', sub: '一足之雷', quote: '《大荒东经》：其声如雷。黄帝得之，以其皮为鼓', at: 5.0, dur: 2.6 },
       tick: (t) => {
         // 三道雷接连劈在残鼓上
-        for (const at of [0.9, 1.4, 1.9]) if (t >= at && struck < [0.9, 1.4, 1.9].indexOf(at) + 1) { struck++; ctx.fx.bolt(this.home.x, this.home.z); ctx.shake(0.2); }
-        // 从鼓里长出来
-        const rise = smooth((t - 2) / 2.2);
-        this.host.visible = t >= 2;
+        for (const [i, s] of [0.9, 1.4, 1.9].entries()) if (t >= s && struck <= i) { struck++; ctx.fx.bolt(this.home.x, this.home.z); ctx.shake(0.2); }
+        // 从鼓里长出来（2.3–4.5 秒）
+        const rise = smooth((t - 2.3) / 2.2);
+        this.host.visible = t >= 2.3;
         this.host.scale.setScalar(0.25 + 0.75 * rise);
         this.drum.visible = rise < 0.55;
-        this.show = t < 4.2 ? { id: 'rise', stage: 'windup', k: rise } : { id: 'roar', stage: t < 4.7 ? 'windup' : t < 6.2 ? 'active' : 'recover', k: t < 4.7 ? (t - 4.2) / 0.5 : t < 6.2 ? (t - 4.7) / 1.5 : (t - 6.2) / 0.8 };
-        if (t >= 4.2 && !this.mem.landed) {
+        this.show = t < 4.5 ? { id: 'rise', stage: 'windup', k: rise } : { id: 'roar', stage: t < 5.0 ? 'windup' : t < 6.6 ? 'active' : 'recover', k: t < 5.0 ? (t - 4.5) / 0.5 : t < 6.6 ? (t - 5.0) / 1.6 : Math.min(1, (t - 6.6) / 1.0) };
+        if (t >= 4.5 && !this.mem.landed) {
           this.mem.landed = 1;
           ctx.fx.shockwave(this.pos.x, this.pos.z, 10, 0.5, undefined, '#ffc6f4');
           ctx.fx.spray(this.pos, ['#8a7a60', '#c8b898'], 40, 7, 3, 10, 0.8);
           ctx.shake(0.5);
         }
-        if (t > 4.7 && t < 6.2 && Math.random() < 0.15) ctx.fx.arc(this.boneWorld('head', _v).clone(), this.boneWorld('head', _w).clone().add(new THREE.Vector3((Math.random() - 0.5) * 6, 8, (Math.random() - 0.5) * 6)), '#ffd6fb', 0.15, 1);
+        if (t > 5.0 && t < 6.6 && Math.random() < 0.15) ctx.fx.arc(this.boneWorld('head', _v).clone(), this.boneWorld('head', _w).clone().add(new THREE.Vector3((Math.random() - 0.5) * 6, 8, (Math.random() - 0.5) * 6)), '#ffd6fb', 0.15, 1);
       },
     };
   }
@@ -153,8 +158,8 @@ export class KuiBoss extends Boss {
       // 召鼓：跳到拉则旁、仰头吼，两只连鼓灵从擂台边飞来护驾；经幡杆开始通电
       let spawned = false;
       return {
-        name: '夔 · 召鼓', dur: 3.2, bars: true, skippable: true,
-        cam: orbitCam(to, 16, 6, Math.atan2(ctx.feet.x - to.x, ctx.feet.z - to.z) - 0.4, Math.atan2(ctx.feet.x - to.x, ctx.feet.z - to.z) + 0.2, 3.2, 3.5, 55),
+        name: '夔 · 召鼓', dur: 3.2, bars: true, landDur: 1.0, handoff: 0.3, skipKey: `phase.${this.id}.${n}`,
+        shots: [{ id: 'show', dur: 3.2 - 1.0, cam: orbitCam(to, 16, 6, Math.atan2(ctx.feet.x - to.x, ctx.feet.z - to.z) - 0.4, Math.atan2(ctx.feet.x - to.x, ctx.feet.z - to.z) + 0.2, 3.2, 3.5, 55) }, this.landShot(1.0)],
         banner: { text: '二 · 雷鼓', at: 0.4, dur: 2.6 },
         tick: (t) => {
           const k = smooth(t / 1.1);
@@ -204,9 +209,9 @@ export class KuiBoss extends Boss {
     const c = this.pos.clone();
     const a0 = Math.atan2(ctx.feet.x - c.x, ctx.feet.z - c.z);
     return {
-      name: '夔 · 雷息', dur: 6, bars: true, skippable: true,
+      name: '夔 · 雷息', dur: 6, bars: true, landDur: 1.2, handoff: 0.5, skippable: true,
       slow: (t) => (t < 1.2 ? 0.3 : 1),
-      cam: orbitCam(c, 13, 4, a0 - 0.3, a0 + 0.9, 6, 3, 55),
+      shots: [{ id: 'show', dur: 6 - 1.2, cam: orbitCam(c, 13, 4, a0 - 0.3, a0 + 0.9, 6, 3, 55) }, this.landShot(1.2)],
       card: { title: '夔 · 平息', sub: '雷暴退去', at: 3, dur: 2.8 },
       tick: (t) => {
         this.show = { id: 'kneel', stage: t < 1 ? 'windup' : 'active', k: Math.min(1, t) };
@@ -441,31 +446,37 @@ export class FeilianBoss extends Boss {
   protected introShot(): Shot {
     const ctx = this.ctx;
     const land = this.home.clone();
-    const side = Math.atan2(ctx.feet.x - land.x, ctx.feet.z - land.z);
+    const base = Math.atan2(ctx.feet.x - land.x, ctx.feet.z - land.z);
+    const at = (a: number, r: number, h: number, out: THREE.Vector3): THREE.Vector3 => out.set(land.x + Math.sin(base + a) * r, land.y + h, land.z + Math.cos(base + a) * r);
+    const head = new THREE.Vector3();
     this.pos.set(land.x, land.y + 40, land.z);
     return {
-      name: '飞廉 · 登场', dur: 6.5, bars: true, skippable: true,
-      cam: (t, out) => {
-        // 先仰拍风涡柱，再跟着飞廉落下来
-        const k = smooth((t - 0.8) / 3);
-        const r = 22 - 6 * smooth(t / 6.5), a = side + 0.4;
-        out.pos.set(land.x + Math.sin(a) * r, land.y + 3 + 2 * (1 - k), land.z + Math.cos(a) * r);
-        out.look.set(land.x, land.y + 3 + 30 * (1 - k), land.z);
-        out.fov = 55;
-      },
-      card: { title: '飞廉', sub: '风伯', quote: '鹿身雀头，有角，蛇尾豹文——整片盆地的风都吹向它', at: 3.9, dur: 2.5 },
+      name: '飞廉 · 登场', dur: 7.8, landDur: 1.4, handoff: 0.6, skipKey: 'intro.feilian', bars: true,
+      shots: [
+        // 建立全景：冰舌下方仰拍风涡柱，风声骤起、风涡收紧
+        { id: 'establish', dur: 2.2, note: '冰舌下方仰拍风涡柱；飞廉在 40 m 高的风涡里盘旋', cam: (t, out) => { at(0.55 - 0.15 * smooth(t / 2.2), 34, 5, out.pos); out.look.copy(land).setY(land.y + 30 - 4 * smooth(t / 2.2)); out.fov = 56; } },
+        // 首领现身：跟着它盘旋落下，4.0 秒落地炸开一圈雪
+        { id: 'reveal', dur: 2.2, blend: 0.5, note: '跟拍盘旋落下；4.0 秒落地炸雪', cam: (t, out) => { at(0.3, 18, 4, out.pos); out.look.copy(this.pos).setY(this.pos.y + 2); out.fov = 50; } },
+        // 特写 + 名字卡：正面 3/4，人立长嘶
+        { id: 'closeup', dur: 2.0, blend: 0.45, note: '正面 3/4 特写，人立长嘶；名字卡 4.6 秒起', cam: (t, out) => { this.boneWorld('head', head); at(0.25, 9 - 0.8 * smooth(t / 2), 3.2, out.pos); out.look.copy(head); out.fov = 45; } },
+        this.landShot(1.4),
+      ],
+      card: { title: '飞廉', sub: '风伯', quote: '鹿身雀头，有角，蛇尾豹文——整片盆地的风都吹向它', at: 4.6, dur: 2.6 },
       tick: (t, dt) => {
-        // 从 40 m 高的风涡里盘旋落下
-        const k = smooth(t / 3.4);
+        // 1.0–4.0 秒从 40 m 高的风涡里盘旋落下
+        const k = smooth((t - 1.0) / 3.0);
         const spin = (1 - k) * 8;
-        this.pos.set(land.x + Math.sin(spin) * 6 * (1 - k), land.y + 40 * (1 - k), land.z + Math.cos(spin) * 6 * (1 - k));
-        this.yaw = spin + Math.PI / 2;
-        if (t < 3.4) { this.show = { id: 'sidestep', stage: 'active', k: 0.5 }; if (Math.random() < 0.5) ctx.fx.spray(this.pos, ['#ffffff', '#d8f4ff'], 2, 3, 0, -2, 0.6); }
-        else {
+        if (t < 4.0) {
+          this.pos.set(land.x + Math.sin(spin) * 6 * (1 - k), land.y + 40 * (1 - k), land.z + Math.cos(spin) * 6 * (1 - k));
+          this.yaw = spin + Math.PI / 2;
+          this.show = { id: 'sidestep', stage: 'active', k: 0.5 };
+          if (Math.random() < 0.5) ctx.fx.spray(this.pos, ['#ffffff', '#d8f4ff'], 2, 3, 0, -2, 0.6);
+        } else {
+          this.pos.copy(land);
           if (!this.mem.landed) { this.mem.landed = 1; ctx.fx.shockwave(land.x, land.z, 14, 0.5, undefined, '#e8f6ff'); ctx.fx.spray(land, ['#ffffff', '#e0f0ff'], 70, 10, 4, 8, 1); ctx.shake(0.4); }
-          this.faceTo(ctx.feet.x, ctx.feet.z, dt, 3);
-          const tt = t - 3.4;
-          this.show = { id: 'roar', stage: tt < 0.5 ? 'windup' : tt < 2.2 ? 'active' : 'recover', k: tt < 0.5 ? tt / 0.5 : tt < 2.2 ? (tt - 0.5) / 1.7 : (tt - 2.2) / 0.9 };
+          this.faceTo(ctx.feet.x, ctx.feet.z, dt, 4);
+          const tt = t - 4.0;
+          this.show = { id: 'roar', stage: tt < 0.5 ? 'windup' : tt < 2.6 ? 'active' : 'recover', k: tt < 0.5 ? tt / 0.5 : tt < 2.6 ? (tt - 0.5) / 2.1 : Math.min(1, (tt - 2.6) / 1.0) };
         }
       },
     };
@@ -483,8 +494,8 @@ export class FeilianBoss extends Boss {
     if (n === 2) {
       const c = this.home.clone();
       return {
-        name: '飞廉 · 龙卷', dur: 3, bars: true, skippable: true,
-        cam: orbitCam(c, 20, 6, Math.atan2(ctx.feet.x - c.x, ctx.feet.z - c.z) - 0.3, Math.atan2(ctx.feet.x - c.x, ctx.feet.z - c.z) + 0.3, 3, 5, 55),
+        name: '飞廉 · 龙卷', dur: 3, bars: true, landDur: 1.0, handoff: 0.3, skipKey: `phase.${this.id}.${n}`,
+        shots: [{ id: 'show', dur: 3 - 1.0, cam: orbitCam(c, 20, 6, Math.atan2(ctx.feet.x - c.x, ctx.feet.z - c.z) - 0.3, Math.atan2(ctx.feet.x - c.x, ctx.feet.z - c.z) + 0.3, 3, 5, 55) }, this.landShot(1.0)],
         banner: { text: '二 · 龙卷', at: 0.3, dur: 2.6 },
         tick: (t) => {
           // 跃上风涡、悬停仰头嘶鸣，风涡分出两根龙卷落下
@@ -510,9 +521,9 @@ export class FeilianBoss extends Boss {
     const a0 = Math.atan2(ctx.feet.x - c.x, ctx.feet.z - c.z);
     const z0 = WORLD_UNIFORMS.uWindLair.value.z;
     return {
-      name: '飞廉 · 风止', dur: 6, bars: true, skippable: true,
+      name: '飞廉 · 风止', dur: 6, bars: true, landDur: 1.2, handoff: 0.5, skippable: true,
       slow: (t) => (t < 1.2 ? 0.3 : 1),
-      cam: orbitCam(c, 14, 5, a0 - 0.4, a0 + 0.8, 6, 2, 55),
+      shots: [{ id: 'show', dur: 6 - 1.2, cam: orbitCam(c, 14, 5, a0 - 0.4, a0 + 0.8, 6, 2, 55) }, this.landShot(1.2)],
       card: { title: '飞廉 · 风止', sub: '盆地的风停了', at: 3, dur: 2.8 },
       tick: (t) => {
         this.show = { id: 'down', stage: t < 0.6 ? 'windup' : 'active', k: Math.min(1, t / 0.6) };
@@ -839,28 +850,33 @@ export class HuasheBoss extends Boss {
     const ctx = this.ctx;
     const L = this.lake;
     const a0 = this.playerAngle();
-    this.swimA = a0;
-    this.swimPos(a0, -3);
+    this.swimA = a0 - 0.5;
+    this.swimPos(this.swimA, -3);
+    const lake = new THREE.Vector3(L.x, this.level, L.z);
     const head = new THREE.Vector3();
+    // 冒出来的地方：朝玩家那一侧的游线上
+    const rise = new THREE.Vector3();
+    { const sa = this.swimA; this.swimA = a0; this.swimPos(a0, 0); rise.copy(this.pos); this.swimA = sa; this.swimPos(sa, -3); }
+    const toP = new THREE.Vector3(ctx.feet.x - rise.x, 0, ctx.feet.z - rise.z).normalize();
+    const behind = new THREE.Vector3(ctx.feet.x, ctx.feet.y, ctx.feet.z).addScaledVector(toP, 10);
     return {
-      name: '化蛇 · 登场', dur: 6.5, bars: true, skippable: true,
-      cam: (t, out) => {
-        // 贴着水面看湖，黑影游过来，破水而出时抬头
-        this.boneWorld('head', head);
-        const k = smooth((t - 2.3) / 1.5);
-        const lx = this.pos.x, lz = this.pos.z;
-        const dx = ctx.feet.x - lx, dz = ctx.feet.z - lz, d = Math.hypot(dx, dz) || 1;
-        out.pos.set(lx + dx / d * 14 + dz / d * 4, this.level + 1.2 + 2.5 * k, lz + dz / d * 14 - dx / d * 4);
-        out.look.set(lx, this.level + 0.3 + (head.y - this.level) * k, lz);
-        out.fov = 55;
-      },
-      card: { title: '化蛇', sub: '人面豺身 · 鸟翼蛇行', quote: '《中山经》：其音如叱呼，见则其邑大水', at: 3.6, dur: 2.6 },
-      tick: (t) => {
-        if (t < 2.3) {
-          // 水下的黑影 S 形游过来
-          this.swimA += 0.006;
-          this.swimPos(this.swimA, -3 + 1.5 * smooth(t / 2.3));
-          this.host.visible = t > 1.4;
+      name: '化蛇 · 登场', dur: 7.8, landDur: 1.4, handoff: 0.6, skipKey: 'intro.huashe', bars: true,
+      shots: [
+        // 建立全景：从玩家身后高处看整面圣湖，一道长长的黑影在水下游
+        { id: 'establish', dur: 2.0, note: '玩家身后高处俯瞰湖面；水下黑影 S 形游向岸边', cam: (t, out) => { out.pos.copy(behind).setY(behind.y + 12 - 2 * smooth(t / 2)); out.look.lerpVectors(lake, rise, smooth(t / 2)); out.fov = 55; } },
+        // 首领现身：贴着水面，破水而出（2.6 秒）、张翼
+        { id: 'reveal', dur: 2.2, blend: 0, note: '贴水面低机位；2.6 秒破水而出、张翼', cam: (t, out) => { out.pos.copy(rise).addScaledVector(toP, 15).setY(this.level + 1.0); out.pos.x += -toP.z * 4; out.pos.z += toP.x * 4; this.boneWorld('head', head); out.look.lerpVectors(rise.clone().setY(this.level + 0.5), head, smooth((t - 0.5) / 1.4)); out.fov = 50; } },
+        // 特写 + 名字卡：人面、张嘴吼（嘴里紫红光）
+        { id: 'closeup', dur: 2.2, blend: 0.4, note: '人面特写，张嘴吼；名字卡 4.4 秒起', cam: (t, out) => { this.boneWorld('head', head); out.pos.copy(head).addScaledVector(toP, 6.5 - 0.7 * smooth(t / 2.2)).setY(head.y + 0.4); out.look.copy(head); out.fov = 44; } },
+        this.landShot(1.4),
+      ],
+      card: { title: '化蛇', sub: '人面豺身 · 鸟翼蛇行', quote: '《中山经》：其音如叱呼，见则其邑大水', at: 4.4, dur: 2.6 },
+      tick: (t, dt) => {
+        if (t < 2.6) {
+          // 水下的黑影游向冒头的地方
+          this.swimA += (a0 - this.swimA) * Math.min(1, dt * 1.2);
+          this.swimPos(this.swimA, -3 + 1.2 * smooth(t / 2.6));
+          this.host.visible = t > 1.8;
           (this.shadow.material as THREE.MeshBasicMaterial).opacity = 0.5 * Math.min(1, t);
           this.shadow.position.set(this.pos.x, this.level + 0.05, this.pos.z);
           this.shadow.rotation.y = this.yaw;
@@ -875,10 +891,10 @@ export class HuasheBoss extends Boss {
             ctx.fx.burst(_v.clone().setY(this.level + 2), 5, '#bff4ff');
             ctx.shake(0.4);
           }
-          this.swimPos(this.swimA, -1.5 + 1.2 * smooth((t - 2.3) / 0.8));
-          this.faceTo(ctx.feet.x, ctx.feet.z, 1 / 30, 2);
-          const tt = t - 2.3;
-          this.show = { id: 'rise', stage: tt < 1 ? 'windup' : tt < 2.5 ? 'active' : 'recover', k: tt < 1 ? tt : tt < 2.5 ? (tt - 1) / 1.5 : (tt - 2.5) / 1.7 };
+          this.swimPos(this.swimA, -1.5 + 1.2 * smooth((t - 2.6) / 0.8));
+          this.faceTo(ctx.feet.x, ctx.feet.z, dt, 2);
+          const tt = t - 2.6;
+          this.show = { id: 'rise', stage: tt < 1 ? 'windup' : tt < 3.4 ? 'active' : 'recover', k: tt < 1 ? tt : tt < 3.4 ? (tt - 1) / 2.4 : Math.min(1, (tt - 3.4) / 1.8) };
         }
       },
     };
@@ -896,8 +912,8 @@ export class HuasheBoss extends Boss {
       const f0 = this.flood;
       const c = new THREE.Vector3(this.lake.x, this.level, this.lake.z);
       return {
-        name: '化蛇 · 涨水', dur: 3.2, bars: true, skippable: true,
-        cam: orbitCam(c, 46, 14, Math.atan2(ctx.feet.x - c.x, ctx.feet.z - c.z) - 0.2, Math.atan2(ctx.feet.x - c.x, ctx.feet.z - c.z) + 0.25, 3.2, 0, 55),
+        name: '化蛇 · 涨水', dur: 3.2, bars: true, landDur: 1.0, handoff: 0.3, skipKey: `phase.${this.id}.${n}`,
+        shots: [{ id: 'show', dur: 3.2 - 1.0, cam: orbitCam(c, 46, 14, Math.atan2(ctx.feet.x - c.x, ctx.feet.z - c.z) - 0.2, Math.atan2(ctx.feet.x - c.x, ctx.feet.z - c.z) + 0.25, 3.2, 0, 55) }, this.landShot(1.0)],
         banner: { text: '二 · 涨水', at: 0.3, dur: 2.6 },
         tick: (t) => {
           this.show = { id: 'roar', stage: t < 0.6 ? 'windup' : 'active', k: Math.min(1, t / 2) };
@@ -921,9 +937,9 @@ export class HuasheBoss extends Boss {
     const a0 = Math.atan2(ctx.feet.x - c.x, ctx.feet.z - c.z);
     const f0 = this.flood, s0 = this.surge;
     return {
-      name: '化蛇 · 水退', dur: 6, bars: true, skippable: true,
+      name: '化蛇 · 水退', dur: 6, bars: true, landDur: 1.2, handoff: 0.5, skippable: true,
       slow: (t) => (t < 1.2 ? 0.3 : 1),
-      cam: orbitCam(c, 16, 6, a0 - 0.3, a0 + 0.7, 6, 1, 55),
+      shots: [{ id: 'show', dur: 6 - 1.2, cam: orbitCam(c, 16, 6, a0 - 0.3, a0 + 0.7, 6, 1, 55) }, this.landShot(1.2)],
       card: { title: '化蛇 · 水退', sub: '湖面平了', at: 3, dur: 2.8 },
       tick: (t) => {
         this.show = { id: 'choke', stage: t < 0.6 ? 'windup' : 'active', k: Math.min(1, t / 0.6) };

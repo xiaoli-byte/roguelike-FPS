@@ -2,7 +2,7 @@
  * 追人用的寻路场：2 m 网格，开局算一次哪些格子能走（深水、陡坡、碰撞体周围 1 m 不能走），
  * 每 0.4 秒以玩家为源点在 140 m 内做一次 Dijkstra（8 邻接）。追人的怪往距离更小的相邻格走，就能绕开玛尼墙、民居这些障碍。
  */
-import type { Terrain } from '../terrain';
+import type { HeightGrid } from '../grid';
 import type { CollisionWorld } from '../walker';
 
 const CELL = 2;
@@ -23,7 +23,7 @@ export class NavField {
   private age = 99;
   private readonly heap: number[] = [];
 
-  constructor(private readonly terrain: Terrain, world: CollisionWorld) {
+  constructor(private readonly terrain: HeightGrid, world: CollisionWorld) {
     this.x0 = terrain.minX; this.z0 = terrain.minZ;
     this.nx = Math.ceil((terrain.maxX - terrain.minX) / CELL);
     this.nz = Math.ceil((terrain.maxZ - terrain.minZ) / CELL);

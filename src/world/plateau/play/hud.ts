@@ -109,6 +109,8 @@ export class Hud {
 
   /** 截图时隐藏 / 显示整个 HUD */
   set visible(v: boolean) { this.root.style.display = v ? '' : 'none'; }
+  /** 演出时淡出、落回第一人称后淡入 */
+  set alpha(v: number) { const s = v >= 0.999 ? '' : String(v); if (this.root.style.opacity !== s) this.root.style.opacity = s; }
 
   loading(text: string): void {
     this.el.loading.textContent = text;

@@ -14,7 +14,7 @@ import { StatusBag } from './elements';
 import type { Foe } from './foe';
 import type { WarnHandle } from './fx';
 import { MoveRunner, movesOf, type MoveDef } from './moves';
-import type { Shot } from './cinema';
+import type { CamShot, Shot } from './cinema';
 import type { BossBar } from './hud';
 
 export interface BossSphere { bone: string; r: number; mult: number; part?: string }
@@ -249,7 +249,37 @@ export abstract class Boss implements Actor, BossBar {
     this.pendingPhase = 0;
     this.breakAcc = 0; this.breaks = 0; this.brokenT = 0; this.stunT = 0;
     this.cd = 1.5;
-    this.ctx.cinema.play({ ...this.introShot(), onEnd: () => { this.inShow = false; this.afterIntro(); } });
+    const shot = this.introShot();
+    const tick = shot.tick;
+    let faced = false;
+    this.ctx.cinema.play({
+      ...shot,
+      // 第一镜里（镜头已完全接管、看不到第一人称）把玩家转向首领：落回眼睛时正对着它
+      tick: (t, dt) => { tick?.(t, dt); if (!faced && t >= 0.6) { faced = true; this.facePlayer(); } },
+      onEnd: () => { this.inShow = false; this.afterIntro(); },
+    });
+  }
+
+  /** 让玩家看向首领（胸口） */
+  protected facePlayer(): void { this.ctx.walker.lookAt(this.center(new THREE.Vector3())); }
+
+  /**
+   * 落回第一人称的最后一镜：切到玩家身后的过肩机位（后 3.2 m、上 0.9 m、右 0.9 m）看着首领，
+   * Cinema 在这一镜里用平滑曲线把镜头推进玩家的眼睛（位置、朝向、视角零误差）。距离只有 3 m 多，不会一帧飞很远。
+   */
+  protected landShot(dur: number, note = '切到过肩机位，平滑推进玩家的眼睛（零误差交还）'): CamShot {
+    const eye = new THREE.Vector3(), c = new THREE.Vector3();
+    return {
+      id: 'land', dur, blend: 0, note,
+      cam: (_t, out) => {
+        this.ctx.walker.eye(eye);
+        this.center(c);
+        const fx = c.x - eye.x, fz = c.z - eye.z, d = Math.hypot(fx, fz) || 1;
+        out.pos.set(eye.x - fx / d * 3.2 - fz / d * 0.9, eye.y + 0.9, eye.z - fz / d * 3.2 + fx / d * 0.9);
+        out.look.copy(c);
+        out.fov = 60;
+      },
+    };
   }
 
   protected abstract introShot(): Shot;

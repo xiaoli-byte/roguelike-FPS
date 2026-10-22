@@ -29,6 +29,7 @@ import {
 import { GorgeTerrain, PATHS, fordWeight, macroAt, nearest } from '../world/gorge/terrain';
 import { GorgeWater } from '../world/gorge/water';
 import { FLYING_PETS, PetFlight, type FlyingPetId } from '../world/gorge/petFlight';
+import { GorgePlay } from '../world/gorge/play';
 
 const $ = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T;
 const canvas = $<HTMLCanvasElement>('view');
@@ -279,14 +280,29 @@ VIEWPOINTS.forEach((vp, i) => {
 
 const keys = new Set<string>();
 let jumpPressed = false, dashPressed = false, releasePressed = false, bigMap = false;
+/** 游玩模式（大鹗领主战，chuanzang-combat-v1.md 4.4）；null = 检视模式 */
+let play: GorgePlay | null = null;
+let firing = false, skillQ = false, skillE = false, anyKey = false, pick = 0;
+addEventListener('mousedown', e => { if (e.button === 0 && document.pointerLockElement === canvas && play) firing = true; });
+addEventListener('mouseup', e => { if (e.button === 0) firing = false; });
 addEventListener('keydown', e => {
   if ((e.target as HTMLElement)?.tagName === 'INPUT') return;
   keys.add(e.code);
   if (e.code === 'Space') { e.preventDefault(); if (!e.repeat) { if (flight.phase === 'glide') releasePressed = true; else if (ride.zip >= 0) dropZip(); else jumpPressed = true; } }
   if ((e.code === 'ShiftLeft' || e.code === 'ShiftRight') && !e.repeat) dashPressed = true;
-  if (e.code === 'KeyE' && !e.repeat) tryZip();
-  if (e.code === 'KeyF' && !e.repeat) tryFlight();
-  if (e.code === 'KeyG' && !e.repeat) {
+  if (!e.repeat) anyKey = true;
+  if (play) {
+    // 游玩：E / Q 是燎的技能，F 挂溜索 / 飞渡（同正式游戏的交互键）
+    if (e.code === 'KeyE' && !e.repeat) skillE = true;
+    if (e.code === 'KeyQ' && !e.repeat) skillQ = true;
+    if (e.code === 'KeyF' && !e.repeat) { const before = ride.zip; tryZip(); if (ride.zip < 0 && before < 0) tryFlight(); }
+    const d = /^Digit([1-3])$/.exec(e.code);
+    if (d) pick = +d[1];
+  } else {
+    if (e.code === 'KeyE' && !e.repeat) tryZip();
+    if (e.code === 'KeyF' && !e.repeat) tryFlight();
+  }
+  if (e.code === 'KeyG' && !e.repeat && !play) {
     if (ride.zip >= 0) dropZip();
     walker.fly = !walker.fly;
     if (walker.fly) walker.feet.y += EYE; else walker.place(walker.feet.x, walker.feet.z);
@@ -294,7 +310,7 @@ addEventListener('keydown', e => {
   }
   if (e.code === 'KeyM' && !e.repeat) toggleMap();
   const digit = /^Digit([1-9])$/.exec(e.code);
-  if (digit && VIEWPOINTS[+digit[1] - 1]) goTo(VIEWPOINTS[+digit[1] - 1]);
+  if (digit && VIEWPOINTS[+digit[1] - 1] && !play) goTo(VIEWPOINTS[+digit[1] - 1]);
 });
 addEventListener('keyup', e => keys.delete(e.code));
 addEventListener('blur', () => keys.clear());
@@ -809,12 +825,14 @@ function tick(dt: number, render: boolean): void {
   else if (ride.zip >= 0) updateRide(dt);
   else {
     const fly = walker.fly;
+    // 游玩模式的演出 / 秘卷三选一：人不动
+    const held = play?.inputLocked ? new Set<string>() : keys;
     walker.update(dt, {
-      forward: (keys.has('KeyW') ? 1 : 0) - (keys.has('KeyS') ? 1 : 0),
-      right: (keys.has('KeyD') ? 1 : 0) - (keys.has('KeyA') ? 1 : 0),
-      up: fly ? (keys.has('Space') ? 1 : 0) - (keys.has('KeyC') ? 1 : 0) : 0,
-      jump: jumpPressed && !fly, dash: dashPressed && !fly,
-      fast: keys.has('ShiftLeft') || keys.has('ShiftRight'),
+      forward: (held.has('KeyW') ? 1 : 0) - (held.has('KeyS') ? 1 : 0),
+      right: (held.has('KeyD') ? 1 : 0) - (held.has('KeyA') ? 1 : 0),
+      up: fly ? (held.has('Space') ? 1 : 0) - (held.has('KeyC') ? 1 : 0) : 0,
+      jump: jumpPressed && !fly && !play?.inputLocked, dash: dashPressed && !fly && !play?.inputLocked,
+      fast: held.has('ShiftLeft') || held.has('ShiftRight'),
     });
     // 阵风：人在空中会被吹偏
     if (!fly && !walker.grounded && hazards.gust > 0.1) {
@@ -850,8 +868,11 @@ function tick(dt: number, render: boolean): void {
   monsters.update(time, dt);
   beaconSmoke.length = 0;
   for (const b of props.beacons) if (b.lit) beaconSmoke.push(b.pos.clone().add(new THREE.Vector3(6, 20, 0)));
-  if (dae.group.visible) dae.update(time, dt, { bridgeCharge: crossings.charge, smoke: beaconSmoke });
+  if (dae.group.visible && !play) dae.update(time, dt, { bridgeCharge: crossings.charge, smoke: beaconSmoke });
   weather.update(dt, camera.position);
+  if (play) play.update(dt, { firing, interact: keys.has('KeyF'), reload: keys.has('KeyR'), skillQ, skillE, pick, anyKey });
+  skillQ = skillE = anyKey = false;
+  pick = 0;
   if (!render) return;
   adaptResolution(dt);
   renderer.render(scene, camera);
@@ -876,6 +897,19 @@ if (flyAt > 0) {
     frozen = params.get('freeze') === '1';
   }, 300);
 }
+/** 进入游玩模式：大鹗领主战（加载正式模型做江嘴的守卫；大鹗是白模） */
+async function startPlay(): Promise<void> {
+  if (play) return;
+  dae.group.visible = false;
+  monsters.group.visible = false;
+  walker.fly = false;
+  const mode = new GorgePlay(scene, camera, terrain, world, walker, weather, crossings, props,
+    [...conductors, ...crossings.ironConductors, ...crossings.conductors, ...props.thunderPosts.map(p => p.pos)], boundAt);
+  play = mode;
+  await mode.start();
+  showHint('左键射击 · Q 尾焰火灵 · E 燃爆雷 · F 挂溜索 · 空格跳 · Shift 冲刺（无敌）');
+}
+if (params.has('play')) void startPlay();
 const daeAt = params.get('dae');
 if (daeAt) { for (let n = 0; n < 400 && !dae.state.startsWith(daeAt); n++) simulate(0.5); simulate(1); }
 requestAnimationFrame(frame);
@@ -888,4 +922,13 @@ function simulate(seconds: number, hold: string[] = [], dt = 1 / 60): void {
 }
 
 // 调试入口（检视用）
-Object.assign(window, { gorge: { scene, camera, renderer, terrain, world, walker, goTo, VIEWPOINTS, crossings, hazards, weather, dae, props, monsters, macroAt, PATHS, runChecks, buildMs, ride, tryZip, dropZip, simulate, swept, flight, tryFlight, jump: () => { jumpPressed = true; }, render: () => { renderer.render(scene, camera); drawMap(); updateHud(0.3); } } });
+Object.assign(window, { gorge: {
+  scene, camera, renderer, terrain, world, walker, goTo, VIEWPOINTS, crossings, hazards, weather, dae, props, monsters, macroAt, PATHS, runChecks, buildMs, ride, tryZip, dropZip, simulate, swept, flight, tryFlight,
+  jump: () => { jumpPressed = true; }, render: () => { renderer.render(scene, camera); drawMap(); updateHud(0.3); },
+  get play() { return play; }, startPlay,
+  setFiring: (v: boolean) => { firing = v; },
+  press: (k: string) => { if (k === 'q') skillQ = true; else if (k === 'e') skillE = true; else if (k === 'jump') jumpPressed = true; else if (k === 'dash') dashPressed = true; else if (k === 'any') anyKey = true; else if (/^[123]$/.test(k)) pick = +k; },
+  hold: (code: string, on: boolean) => { if (on) keys.add(code); else keys.delete(code); },
+  /** 脚本化试玩：按固定步长推进（render = 最后渲染一帧），和 plateau.simulate 同一个签名 */
+  sim: (seconds: number, step = 1 / 30, render = false) => { for (let t = 0; t < seconds - 1e-6; t += step) tick(step, false); if (render) { renderer.render(scene, camera); } },
+} });

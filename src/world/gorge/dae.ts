@@ -59,11 +59,17 @@ export interface Dae {
 
 interface Leg { name: string; dur: number; kind: 'circle' | 'fly' | 'perch' | 'stun'; to?: THREE.Vector3; perch?: string }
 
-export function buildDae(terrain: GorgeTerrain): Dae {
-  const group = new THREE.Group();
-  group.name = 'lord-dae';
+/** 大鹗的白模：身体组 bird（原点在身体中心、面朝 +Z）、头、两条虎腿、两侧三节翅膀；领主战（gorge/play.ts）和演示循环共用 */
+export interface DaeModel {
+  bird: THREE.Group;
+  head: THREE.Group;
+  legs: THREE.Group[];
+  wings: { root: THREE.Group; joints: THREE.Group[] }[];
+}
+
+export function buildDaeModel(): DaeModel {
   const bird = new THREE.Group();
-  group.add(bird);
+  bird.name = 'dae-bird';
   const S = 1.0;
   // 身体：胸背黑褐带横纹，胸口雷光（弱点）
   bird.add(part(b => {
@@ -106,7 +112,15 @@ export function buildDae(terrain: GorgeTerrain): Dae {
   wings[1].root.position.set(0.8, 0.35, 0.4);
   bird.add(wings[0].root, wings[1].root);
   bird.scale.setScalar(S);
-  group.traverse(o => { if ((o as THREE.Mesh).isMesh) o.castShadow = true; });
+  bird.traverse(o => { if ((o as THREE.Mesh).isMesh) o.castShadow = true; });
+  return { bird, head, legs, wings };
+}
+
+export function buildDae(terrain: GorgeTerrain): Dae {
+  const group = new THREE.Group();
+  group.name = 'lord-dae';
+  const { bird, head, legs, wings } = buildDaeModel();
+  group.add(bird);
 
   // 地上的影子（俯冲预警）
   const shadow = new THREE.Mesh(new THREE.CircleGeometry(1, 24), new THREE.MeshBasicMaterial({ color: '#000', transparent: true, opacity: 0.35, depthWrite: false }));
