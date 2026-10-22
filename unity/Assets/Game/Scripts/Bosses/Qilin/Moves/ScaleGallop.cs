@@ -11,6 +11,7 @@ namespace Spiritfire.Game
     ///   撞上石柱（殿里的东西）：晕 1.6 s（一个小输出窗口，火珠大亮）；没撞上、或头冲到殿墙跟前：收步 0.5 s。
     /// 位移全程走脚本位移（BeginDash：跨过齐地的熔岩渠、撞墙就停），收招交还导航。
     /// 撞墙判定从头的前沿往前扫（<see cref="WallAhead"/>）：麒麟身子长，只从角色胶囊中心探的话头会先扎进柱子 / 墙里；奔驰中碰到石柱顺着柱面滑过去。
+    /// 吊着 / 斜挂的巨鼎没有碰撞体，冲撞线穿过它时在头碰上鼎之前刹住（<see cref="ClearOfCauldron"/>），预警线也画到那里为止。
     /// </summary>
     public sealed class ScaleGallop : QilinMove
     {
@@ -239,6 +240,7 @@ namespace Spiritfire.Game
             }
             ChargeLength = Mathf.Clamp(len, 10f, 2f * R);
             if (Brain.Arena) ChargeLength = Mathf.Min(ChargeLength, Mathf.Max(6f, Brain.Arena.DistanceToEdge(p, chargeDir, 1f)));
+            ChargeLength = ClearOfCauldron(p, chargeDir, ChargeLength);
             Next(Leg.Aim);
             Brain.SetDashVelocity(Vector3.zero);
             var from = OnFloor(p);
@@ -246,6 +248,36 @@ namespace Spiritfire.Game
             Brain.PlayAct("paw", 1f);
             Sfx("telegraph");
             Qilin?.Tell("charge", "地上亮线——火麒麟要横穿象限冲撞，侧移躲开！");
+        }
+
+        /// <summary>
+        /// 吊着 / 斜挂的巨鼎挡在冲撞线上（鼎足离地 3 m 起，麒麟头高 4–5 m；斜挂时一角落到池沿）：它没有碰撞体，冲过去会一头穿过鼎足，
+        /// 所以头、胸、膝三个高度沿线每 0.5 m 查一次落没落进鼎（鼎的局部盒：鼎身 + 足，外扩 0.4 m），碰上之前 0.6 m 就刹住。返回能冲的最远距离
+        /// </summary>
+        float ClearOfCauldron(Vector3 p, Vector3 dir, float len)
+        {
+            var cd = Qilin ? Qilin.Cauldron : null;
+            if (!cd || !cd.Ding || cd.State is CauldronState.Falling or CauldronState.Fallen) return len;
+            var ding = cd.Ding;
+            float fwd = Brain.BodyRadius, headY = 4f, chestY = 2.6f;
+            if (Qilin)
+            {
+                var head = Qilin.HeadPoint - p;
+                fwd = Mathf.Max(fwd, Vector3.Dot(new Vector3(head.x, 0, head.z), Brain.transform.forward));
+                headY = Mathf.Max(1.5f, head.y);
+                chestY = Mathf.Max(1f, Qilin.ChestPoint.y - p.y);
+            }
+            const float pad = 0.4f;
+            float halfXZ = QilinCauldron.Half + pad, top = QilinCauldron.HalfY + 0.6f, bottom = -(QilinCauldron.HalfY + QilinCauldron.Leg) - pad;
+            for (float t = 0; t <= len; t += 0.5f)
+            {
+                foreach (float y in new[] { headY, chestY, 1.2f })
+                {
+                    var lp = ding.InverseTransformPoint(p + dir * (t + fwd) + Vector3.up * y);
+                    if (Mathf.Abs(lp.x) < halfXZ && Mathf.Abs(lp.z) < halfXZ && lp.y > bottom && lp.y < top) return Mathf.Max(0.5f, t - 0.6f);
+                }
+            }
+            return len;
         }
 
         /// <summary>左右蹄交替落下燃烧的蹄印</summary>
