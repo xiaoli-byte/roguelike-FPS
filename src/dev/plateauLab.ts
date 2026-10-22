@@ -127,7 +127,7 @@ const keys = new Set<string>();
 let jumpPressed = false, dashPressed = false, bigMap = false;
 /** 游玩模式（射击、雷魅、灵火、领主战）；null = 检视模式 */
 let play: PlayMode | null = null;
-let firing = false, reloadPressed = false;
+let firing = false, reloadPressed = false, skillQ = false, skillE = false, anyKey = false, pick = 0;
 addEventListener('mousedown', e => { if (e.button === 0 && document.pointerLockElement === canvas) firing = true; });
 addEventListener('mouseup', e => { if (e.button === 0) firing = false; });
 addEventListener('keydown', e => {
@@ -136,6 +136,9 @@ addEventListener('keydown', e => {
   if (e.code === 'Space') { e.preventDefault(); if (!e.repeat) jumpPressed = true; }
   if ((e.code === 'ShiftLeft' || e.code === 'ShiftRight') && !e.repeat) dashPressed = true;
   if (e.code === 'KeyR' && !e.repeat) reloadPressed = true;
+  if (e.code === 'KeyQ' && !e.repeat) skillQ = true;
+  if (e.code === 'KeyE' && !e.repeat) skillE = true;
+  if (!e.repeat) anyKey = true;
   if (e.code === 'KeyG' && !e.repeat && !play) {
     walker.fly = !walker.fly;
     if (walker.fly) walker.feet.y += EYE;
@@ -145,6 +148,7 @@ addEventListener('keydown', e => {
   if (e.code === 'KeyM' && !e.repeat) toggleMap();
   const digit = /^Digit([1-9])$/.exec(e.code);
   if (digit && VIEWPOINTS[+digit[1] - 1] && !play) goTo(VIEWPOINTS[+digit[1] - 1]);
+  if (digit && play && +digit[1] <= 3) pick = +digit[1];
 });
 addEventListener('keyup', e => keys.delete(e.code));
 addEventListener('blur', () => keys.clear());
@@ -594,10 +598,10 @@ async function startPlay(): Promise<void> {
   for (const id of ['opt-fire', 'opt-weather', 'opt-kui', 'opt-monsters']) $<HTMLInputElement>(id).disabled = true;
   weather.stormy = false;
   walker.fly = false;
-  const mode = new PlayMode(scene, camera, terrain, world, walker, weather);
+  const mode = new PlayMode(scene, camera, terrain, world, walker, weather, conductors);
   play = mode;
   await mode.start();
-  showHint('左键射击 · R 换弹 · E 点亮灵火 · 空格跳 · Shift 冲刺 · M 地图');
+  showHint('左键射击 · Q 尾焰火灵 · E 燃爆雷 · R 换弹 · F 点亮灵火 · 空格跳 · Shift 冲刺（无敌） · M 地图');
 }
 
 // 开局选择：游玩 / 检视；网址带 ?play 直接进游玩
@@ -626,13 +630,15 @@ function frame(now: number, manual = false, render = true): void {
   const settled = lookFilter.flush(performance.now());
   look(settled.x, settled.y);
   const fly = walker.fly;
+  // 游玩模式的演出 / 秘卷三选一：人不动（鼠标视角照转，演出结束后接得上）
+  const held = play?.inputLocked ? new Set<string>() : keys;
   walker.update(dt, {
-    forward: (keys.has('KeyW') ? 1 : 0) - (keys.has('KeyS') ? 1 : 0),
-    right: (keys.has('KeyD') ? 1 : 0) - (keys.has('KeyA') ? 1 : 0),
-    up: fly ? (keys.has('Space') ? 1 : 0) - (keys.has('KeyC') ? 1 : 0) : 0,
-    jump: jumpPressed && !fly,
-    dash: dashPressed && !fly,
-    fast: keys.has('ShiftLeft') || keys.has('ShiftRight'),
+    forward: (held.has('KeyW') ? 1 : 0) - (held.has('KeyS') ? 1 : 0),
+    right: (held.has('KeyD') ? 1 : 0) - (held.has('KeyA') ? 1 : 0),
+    up: fly ? (held.has('Space') ? 1 : 0) - (held.has('KeyC') ? 1 : 0) : 0,
+    jump: jumpPressed && !fly && !play?.inputLocked,
+    dash: dashPressed && !fly && !play?.inputLocked,
+    fast: held.has('ShiftLeft') || held.has('ShiftRight'),
   });
   jumpPressed = dashPressed = false;
   walker.eye(camera.position);
@@ -648,9 +654,10 @@ function frame(now: number, manual = false, render = true): void {
   for (const a of anim) a.update(time, dt);
   monsters.update(time, dt);
   weather.update(dt, camera.position);
-  if (play) play.update(dt, { firing, interact: keys.has('KeyE'), reload: reloadPressed });
+  if (play) play.update(dt, { firing, interact: keys.has('KeyF'), reload: reloadPressed, skillQ, skillE, pick, anyKey });
   else lords.update(time, dt, weather.level);
-  reloadPressed = false;
+  reloadPressed = skillQ = skillE = anyKey = false;
+  pick = 0;
   windMarks.update(time);
   windStreaks.update(dt, camera.position);
   adaptResolution(dt);
@@ -670,4 +677,12 @@ function simulate(seconds: number, step = 1 / 30, render = false): void {
 }
 
 // 调试入口（检视用）
-Object.assign(window, { plateau: { scene, camera, renderer, terrain, world, walker, goTo, VIEWPOINTS, grass, FIRE_STATE, weather, monsters, lords, windAt, get play() { return play; }, startPlay, simulate, setFiring: (v: boolean) => { firing = v; } } });
+Object.assign(window, { plateau: {
+  scene, camera, renderer, terrain, world, walker, goTo, VIEWPOINTS, grass, FIRE_STATE, weather, monsters, lords, windAt, get play() { return play; }, startPlay, simulate,
+  setFiring: (v: boolean) => { firing = v; },
+  /** 脚本按键：q / e 技能、jump、dash、1–3 选秘卷、any 跳过演出；hold(code, on) 按住 / 松开 WASD 之类 */
+  press: (k: string) => { if (k === 'q') skillQ = true; else if (k === 'e') skillE = true; else if (k === 'jump') jumpPressed = true; else if (k === 'dash') dashPressed = true; else if (k === 'any') anyKey = true; else if (/^[123]$/.test(k)) pick = +k; },
+  hold: (code: string, on: boolean) => { if (on) keys.add(code); else keys.delete(code); },
+  /** 渲染一帧（截图前） */
+  render: () => { renderer.render(scene, camera); },
+} });

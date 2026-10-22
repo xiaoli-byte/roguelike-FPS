@@ -3,7 +3,7 @@
  * 连射扩散、后坐、枪口火光、弹道光迹。手里的枪是程序化的简模（正式武器在 Unity 版里）。
  */
 import * as THREE from 'three';
-import type { PlayCtx, Target } from './core';
+import type { HitSphere, PlayCtx, Target } from './core';
 
 export const GUN = { damage: 16, rate: 9, mag: 30, reload: 1.5, range: 260 };
 
@@ -104,9 +104,11 @@ export class Gun {
       if (_p.y < ctx.terrain.heightAt(_p.x, _p.z) || ctx.world.solidAt(_p.x, _p.y, _p.z)) { tMax = Math.max(0.5, t - 0.5); break; }
     }
     let best: Target | null = null, bestT = tMax, bestKey = tMax, bestMult = 1;
+    let bestS: HitSphere | undefined;
     for (const T of targets) {
       if (!T.alive) continue;
       for (const s of T.spheres()) {
+        if (s.r <= 0) continue;
         // 射线与球：|o + t d - c| = r
         _m.subVectors(_o, s.c);
         const b = _m.dot(_d), c = _m.lengthSq() - s.r * s.r;
@@ -115,7 +117,7 @@ export class Gun {
         const t = -b - Math.sqrt(disc);
         // 弱点和身体球重叠时弱点优先（弱点球多半嵌在身体球里）
         const key = t - (s.mult > 1 ? 0.35 : 0);
-        if (t > 0 && t < tMax && key < bestKey) { best = T; bestT = t; bestKey = key; bestMult = s.mult; }
+        if (t > 0 && t < tMax && key < bestKey) { best = T; bestT = t; bestKey = key; bestMult = s.mult; bestS = s; }
       }
     }
     const point = _o.clone().addScaledVector(_d, bestT);
@@ -125,10 +127,14 @@ export class Gun {
     let dealt = 0, killed = false;
     if (best) {
       const wasAlive = best.alive;
-      dealt = best.hit(GUN.damage * ctx.player.dmgMul, bestMult, point);
+      const dmg = ctx.kit.bulletDamage(GUN.damage * ctx.player.dmgMul, best);
+      dealt = best.hit(dmg, bestMult, point, { kind: 'bullet', sphere: bestS, from: _o.clone(), poise: bestMult > 1 ? 2 : 1 });
       killed = wasAlive && !best.alive;
+      if (dealt > 0) ctx.kit.afterBullet(best, point, dealt);
+      ctx.fx.spray(point, bestMult > 1 ? ['#ffe08a', '#ffffff'] : ['#ffd2a0'], bestMult > 1 ? 5 : 2, 2.5, 1, 8, 0.2);
     } else if (bestT < GUN.range) {
       ctx.fx.burst(point, 0.35, '#ffe6b0');
+      ctx.fx.spray(point, ['#c8b89a', '#8a7a60'], 3, 2, 2, 12, 0.35);
     }
     return { target: best, mult: bestMult, dealt, point, killed };
   }

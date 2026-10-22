@@ -167,7 +167,7 @@ export class Weather {
     const seg = (a: THREE.Vector3, b: THREE.Vector3, r: number): void => {
       const len = a.distanceTo(b);
       const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), b.clone().sub(a).normalize());
-      for (const [mat, rr] of [[this.boltCore, r], [this.boltGlow, r * 3.5]] as const) {
+      for (const [mat, rr] of [[this.boltCore, r], [this.boltGlow, r * 2.6]] as const) {
         const geo = new THREE.CylinderGeometry(rr, rr, len, 5, 1, true);
         geo.translate(0, len / 2, 0);
         const m = new THREE.Mesh(geo, mat);
@@ -175,12 +175,12 @@ export class Weather {
         g.add(m);
       }
     };
-    for (let i = 0; i < n; i++) seg(pts[i], pts[i + 1], 0.35);
+    for (let i = 0; i < n; i++) seg(pts[i], pts[i + 1], 0.16);
     for (const from of [4, 8]) {
       let a = pts[from];
       for (let k = 0; k < 4; k++) {
         const b = a.clone().add(new THREE.Vector3((this.rand() - 0.5) * 16, -12 - this.rand() * 10, (this.rand() - 0.5) * 16));
-        seg(a, b, 0.18);
+        seg(a, b, 0.08);
         a = b;
       }
     }

@@ -1,42 +1,66 @@
 /**
- * 4-1 游玩模式：把正式模型的雷魅和三个领主放进开放盆地，加上射击、受伤、灵火点亮、出口和通关。
- * 规则（chuanzang-v1.md 2.6）：
- * - 6 个据点任意顺序。普通据点：清掉那片的雷魅，在灵火坛按住 E 点亮。领主据点（④ 圣湖 化蛇、⑤ 冰川口 飞廉、⑥ 经幡山头 夔）：
- *   打败领主直接点亮，另给伤害 +20%、血上限 +25。
+ * 4-1 游玩模式：把正式模型的雷魅和三个领主放进开放盆地，加上射击、燎的技能、秘卷、元素反应、演出、灵火点亮、出口和通关。
+ * 规则（chuanzang-v1.md 2.6，战斗设计见 chuanzang-combat-v1.md）：
+ * - 6 个据点任意顺序。普通据点：清掉那片的雷魅，在灵火坛按住 F 点亮。领主据点（④ 圣湖 化蛇、⑤ 冰川口 飞廉、⑥ 经幡山头 夔）：
+ *   打败领主直接点亮，另给伤害 +20%、血上限 +25。每点亮一处灵火、每打败一个领主，秘卷三选一。
  * - 点亮任意 3 处，⑦ 垭口的经幡门打开；走进门里通关。点亮灵火 = 回满血 + 存档点。
  * - 倒下：回到最后点亮的灵火（没有就回出生点）；正在打的那片雷魅回家回血，领主战重置；打死的不复活。
+ * - 领主难度梯度：第几个打的领主血量 ×(1 + 0.15 n)、收招更短。
  */
 import * as THREE from 'three';
 import { FIRE_STATE } from '../landmarks';
 import { ALERT_RADIUS, ENCOUNTERS, FIRES_TO_UNLOCK, LORDS, MONSTER_NAMES, PLACEMENTS, ROAMER, SITES } from '../spec';
-import type { Terrain } from '../terrain';
+import { basinDistance, type Terrain } from '../terrain';
 import type { CollisionWorld, Walker } from '../walker';
 import type { Weather } from '../weather';
 import { loadPlateauModels } from './assets';
-import { Boss, FeilianBoss, HuasheBoss, KuiBoss } from './bosses';
-import { PLAYER_R, type KnockBack, type PlayCtx, type PlayerState, type Target } from './core';
-import { Foe, Roamer, type EncounterState } from './foes';
+import type { Boss } from './boss';
+import { createLords } from './bosses';
+import { Cinema } from './cinema';
+import { PLAYER_R, type Actor, type BoltOpts, type Conductor, type DamageInfo, type Elem, type KnockBack, type PlayCtx, type PlayerState, type Target } from './core';
+import { ElementSystem } from './elements';
+import type { EncounterState, Foe } from './foe';
+import { MarmotNet, Manman, Marmot, Roamer, Tiangou, createFoe } from './foes';
 import { CombatFx } from './fx';
 import { GUN, Gun, type ShotResult } from './gun';
+import { Hud } from './hud';
+import { KIT_NUMBERS, Kit } from './kit';
+import { moveTable } from './moves';
 import { NavField } from './nav';
 
-export interface PlayInput { firing: boolean; interact: boolean; reload: boolean }
+export interface PlayInput {
+  firing: boolean; interact: boolean; reload: boolean;
+  skillQ?: boolean; skillE?: boolean;
+  /** 秘卷三选一：1 / 2 / 3（0 = 没按） */
+  pick?: number;
+  /** 这一帧按了任意键（跳过演出） */
+  anyKey?: boolean;
+}
 
 interface SiteState { id: string; name: string; altar: THREE.Vector3; index: number; lit: boolean; enc: EncounterState | null; boss: Boss | null }
 
 const LORD_SITE: Record<string, string> = { kui: 's6', feilian: 's5', huashe: 's4' };
+const _v = new THREE.Vector3();
 
 export class PlayMode implements PlayCtx {
   readonly fx: CombatFx;
+  readonly elements: ElementSystem;
+  readonly kit: Kit;
+  readonly cinema = new Cinema();
+  readonly hud: Hud;
   nav: NavField | null = null;
   readonly player: PlayerState = { hp: 100, maxHp: 100, shield: 50, maxShield: 50, dmgMul: 1, alive: true, lastHurt: -99 };
   time = 0;
   readonly feet = new THREE.Vector3();
   readonly center = new THREE.Vector3();
+  readonly pvel = new THREE.Vector2();
   readonly encounters: EncounterState[] = [];
   readonly foes: Foe[] = [];
   readonly bosses: Boss[] = [];
   readonly sites: SiteState[] = [];
+  readonly nets: MarmotNet[] = [];
+  readonly conductors: Conductor[];
+  private readonly condGlow: THREE.Sprite[] = [];
   private roamer!: Roamer;
   private gun!: Gun;
   private checkpoint: THREE.Vector3;
@@ -46,10 +70,13 @@ export class PlayMode implements PlayCtx {
   private holdE = 0;
   private deadT = 0;
   private won = false;
+  private trauma = 0;
+  private actorCache: Actor[] = [];
+  private readonly mem: Record<string, number> = {};
   private readonly lastFeet = new THREE.Vector3();
-  private readonly pvel = new THREE.Vector2();
   private readonly gate: THREE.Vector2;
-  private readonly hud: Hud;
+  /** 无头试玩：自动选第一张秘卷 */
+  autoPick = false;
   ready = false;
 
   constructor(
@@ -59,14 +86,34 @@ export class PlayMode implements PlayCtx {
     readonly world: CollisionWorld,
     readonly walker: Walker,
     readonly weather: Weather,
+    conductors: THREE.Vector3[] = [],
   ) {
     this.fx = new CombatFx(scene, terrain, world);
+    this.elements = new ElementSystem(this);
+    this.kit = new Kit(this, camera);
+    this.hud = new Hud();
+    this.elements.onLabel = (at, text, color) => this.hud.label(at, text, color);
+    this.conductors = conductors.map((p, i) => ({ pos: p, top: p.y, charge: 0, name: `导体${i}` }));
     const spawn = SITES.find(s => s.kind === 'spawn')!;
     this.checkpoint = new THREE.Vector3(spawn.x, 0, spawn.z);
     const g = PLACEMENTS.find(p => p.kind === 'flagGate')!;
     this.gate = new THREE.Vector2(g.x, g.z);
-    this.hud = new Hud();
+    this.cinema.clip = (look, pos) => {
+      // 从看的点往镜头走，碰到碰撞体 / 地形就停在前面 0.4 m
+      const d = pos.distanceTo(look), n = Math.ceil(d / 0.4);
+      for (let i = 1; i <= n; i++) {
+        _v.lerpVectors(look, pos, i / n);
+        if (world.solidAt(_v.x, _v.y, _v.z) || _v.y < terrain.heightAt(_v.x, _v.z) + 0.4) {
+          pos.lerpVectors(look, pos, Math.max(0.15, (i - 1.5) / n));
+          return;
+        }
+      }
+    };
+    weather.onStrike = (at, c) => this.strikeEffects(at, c ? this.conductors.find(k => k.pos === c) ?? null : null, 3, 12, '雷暴');
   }
+
+  get yaw(): number { return this.walker.yaw; }
+  get inputLocked(): boolean { return this.cinema.locked || !!this.kit.offering; }
 
   /** 加载模型、摆怪、开局（出生点） */
   async start(): Promise<void> {
@@ -76,23 +123,32 @@ export class PlayMode implements PlayCtx {
     this.nav = new NavField(this.terrain, this.world);
     const T = this.terrain;
     for (const E of ENCOUNTERS) {
-      const enc: EncounterState = { id: E.id, site: E.site, x: E.x, z: E.z, r: E.r, foes: [], alerted: false, cleared: false };
+      const enc: EncounterState = {
+        id: E.id, site: E.site, x: E.x, z: E.z, r: E.r, foes: [], alerted: false, cleared: false,
+        burrows: (E.burrows ?? []).map(([x, z]) => new THREE.Vector3(x, T.heightAt(x, z), z)),
+        tokens: { melee: 0, pounce: 0, ranged: 0, howl: 0 },
+      };
+      let lastMan: Manman | null = null;
       for (const u of E.units) {
         const ground = T.heightAt(u.at[0], u.at[2]);
-        const f = new Foe(u.kind, this.scene, new THREE.Vector3(u.at[0], ground + u.at[1], u.at[2]), u.at[1], MONSTER_NAMES);
+        const f = createFoe(u.kind, this, new THREE.Vector3(u.at[0], ground + u.at[1], u.at[2]), u.at[1], MONSTER_NAMES);
         f.enc = enc;
         f.sentinel = !!u.sentinel;
         // 蛮蛮成对：第二只是镜像（只有右翼）
-        if (u.kind === 'manman' && enc.foes.some(o => o.kind === 'manman') && enc.foes.filter(o => o.kind === 'manman').length % 2 === 1) f.host.scale.x *= -1;
+        if (f instanceof Manman) {
+          if (lastMan) { f.host.scale.x *= -1; lastMan.pair(f, true); f.pair(lastMan, false); lastMan = null; } else lastMan = f;
+        }
         enc.foes.push(f);
         this.foes.push(f);
       }
+      const marmots = enc.foes.filter((f): f is Marmot => f instanceof Marmot);
+      if (marmots.length >= 3) this.nets.push(new MarmotNet(this, marmots));
       this.encounters.push(enc);
     }
     const [rx, rz] = ROAMER.path[0];
-    this.roamer = new Roamer(this.scene, new THREE.Vector3(rx, T.heightAt(rx, rz), rz), MONSTER_NAMES, ROAMER.path as [number, number][], ROAMER.lair as [number, number]);
+    this.roamer = new Roamer(this, new THREE.Vector3(rx, T.heightAt(rx, rz), rz), MONSTER_NAMES, ROAMER.path as [number, number][], ROAMER.lair as [number, number]);
     this.foes.push(this.roamer);
-    this.bosses.push(new KuiBoss(this.scene, this), new FeilianBoss(this.scene, this), new HuasheBoss(this.scene, this));
+    this.bosses.push(...createLords(this));
     let index = 0;
     for (const s of SITES) {
       if (!s.altar) continue;
@@ -101,13 +157,23 @@ export class PlayMode implements PlayCtx {
         id: s.id, name: s.name, index: index++, lit: false,
         altar: new THREE.Vector3(s.altar[0], T.heightAt(s.altar[0], s.altar[1]), s.altar[1]),
         enc: this.encounters.find(e => e.site === s.id) ?? null,
-        boss: lord ? this.bosses.find(b => b.lord.id === lord.id) ?? null : null,
+        boss: lord ? this.bosses.find(b => b.id === lord.id) ?? null : null,
       });
     }
     FIRE_STATE.mask = this.sites.map(() => false);
     FIRE_STATE.lit = 0;
+    for (const c of this.conductors) {
+      const sp = new THREE.Sprite(new THREE.SpriteMaterial({ color: '#ff6ae0', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0 }));
+      sp.position.copy(c.pos);
+      sp.scale.setScalar(2.2);
+      sp.visible = false;
+      this.scene.add(sp);
+      this.condGlow.push(sp);
+    }
     this.gun = new Gun(this.camera);
     this.scene.add(this.camera);
+    this.kit.applyPassives();
+    this.walker.dashGrace = 0.2;
     this.respawn(true);
     this.ready = true;
     this.say('折多垭口：点亮任意 3 处灵火，打开 ⑦ 垭口的经幡门', 5);
@@ -115,15 +181,35 @@ export class PlayMode implements PlayCtx {
 
   // ─────────────── PlayCtx ───────────────
 
-  hurt(dmg: number, source: string, knock?: KnockBack): void {
+  bound(x: number, z: number): number { return basinDistance(x, z); }
+
+  actors(): readonly Actor[] { return this.actorCache; }
+
+  private collectActors(): void {
+    const out: Actor[] = [];
+    const F = this.feet;
+    for (const f of this.foes) if (f.alive && f.host.visible && f.pos.distanceToSquared(F) < 150 * 150) out.push(f);
+    for (const b of this.bosses) {
+      if (b.active && !b.defeated && b.host.visible) out.push(b);
+      for (const a of b.adds) if (a.alive && a.host.visible) out.push(a);
+    }
+    this.actorCache = out;
+  }
+
+  invulnerable(): boolean { return this.walker.dodging || this.cinema.locked || !this.player.alive || this.won; }
+
+  hurt(dmg: number, source: string, knock?: KnockBack, elem?: Elem): void {
     const P = this.player;
-    if (!P.alive || this.won) return;
+    if (!P.alive || this.won || this.cinema.locked || this.mem.god) return;
+    if (this.walker.dodging) { this.hud.dodged(); return; }
     P.lastHurt = this.time;
     const s = Math.min(P.shield, dmg);
     P.shield -= s;
     P.hp -= dmg - s;
     if (knock) this.walker.knock(knock.x, knock.z, knock.up ?? 0);
-    this.hud.hurt(dmg, s >= dmg);
+    this.hud.hurt(dmg, s >= dmg, elem === 'shock');
+    this.shake(Math.min(0.5, dmg / 40));
+    if (elem === 'shock') { this.walker.speedMul = 0.8; this.mem.shockT = 1; }
     if (P.hp <= 0) {
       P.hp = 0; P.alive = false; this.deadT = 0; this.deaths++;
       this.hud.center(`你倒下了——${source}`, '回到最近点亮的灵火…');
@@ -132,17 +218,91 @@ export class PlayMode implements PlayCtx {
 
   say(text: string, seconds = 3): void { this.hud.say(text, seconds); }
 
+  wake(x: number, z: number, r: number): void {
+    for (const e of this.encounters) {
+      if (e.cleared || e.alerted || Math.hypot(e.x - x, e.z - z) > r) continue;
+      e.alerted = true;
+      for (const f of e.foes) if (f.alive && f.state === 'idle') f.notice();
+    }
+  }
+
+  shake(a: number): void { this.trauma = Math.min(1, this.trauma + a); }
+
+  onFire(at: THREE.Vector3, r: number): void { for (const b of this.bosses) if (b.active && !b.defeated) b.fireAt(at, r); }
+
+  dealt(at: THREE.Vector3, d: number, weak: boolean, info: DamageInfo): void {
+    if (info.kind === 'dot') { this.hud.damageNumber(at, d, false, 'fire'); return; }
+    this.hud.damageNumber(at, d, weak, info.kind === 'reaction' ? undefined : info.elem);
+  }
+
+  /** 一道落雷：5 m 内有导体（更高的）就劈导体，导体底下 2 m 溅电；预警圈画在实际要劈的地方 */
+  bolt(x: number, z: number, o: BoltOpts): void {
+    const r = o.r ?? 3.2, delay = o.delay ?? 1.2, dmg = o.dmg ?? 18;
+    let cond: Conductor | null = null;
+    if (o.conduct !== false) {
+      let best = 5;
+      for (const c of this.conductors) { const d = Math.hypot(c.pos.x - x, c.pos.z - z); if (d < best) { best = d; cond = c; } }
+    }
+    if (cond) {
+      // 被引走：预警画在导体底下（2 m），再拉一道细线提示「雷被杆子引走了」
+      const bx = cond.pos.x, bz = cond.pos.z;
+      this.fx.telegraph(bx, bz, 2, delay, () => this.strike(new THREE.Vector3(bx, cond!.pos.y, bz), cond, 2, 12, o), '#ff5ad8');
+      this.fx.lineWarn(x, z, bx, bz, 0.4, delay, '#ff5ad8');
+    } else {
+      this.fx.telegraph(x, z, r, delay, () => this.strike(new THREE.Vector3(x, this.fx.ground(x, z), z), null, r, dmg, o));
+    }
+  }
+
+  private strike(at: THREE.Vector3, cond: Conductor | null, r: number, dmg: number, o: BoltOpts): void {
+    if (cond) {
+      this.fx.bolt(cond.pos.x, cond.pos.z, '#ffd6fb', this.terrain.heightAt(cond.pos.x, cond.pos.z));
+      this.fx.arc(cond.pos, new THREE.Vector3(cond.pos.x, this.terrain.heightAt(cond.pos.x, cond.pos.z), cond.pos.z), '#ffffff', 0.25, 0.2);
+    } else this.fx.bolt(at.x, at.z);
+    this.strikeEffects(at, cond, r, dmg, o.source);
+    o.onStrike?.(at, cond);
+  }
+
+  /** 落雷劈下来的那一刻：打玩家、给导体充电、天狗衔雷、穷奇吞雷、领主知道 */
+  private strikeEffects(at: THREE.Vector3, cond: Conductor | null, r: number, dmg: number, source: string): void {
+    const F = this.feet;
+    const bx = cond ? cond.pos.x : at.x, bz = cond ? cond.pos.z : at.z;
+    if (Math.hypot(F.x - bx, F.z - bz) < r && F.y < this.terrain.heightAt(bx, bz) + 3 && !this.invulnerable()) this.hurt(dmg, cond ? `${source}（导体溅电）` : source, undefined, 'shock');
+    if (cond) cond.charge = 10;
+    const ground = new THREE.Vector3(bx, this.terrain.heightAt(bx, bz), bz);
+    this.shake(Math.max(0, 0.35 - this.center.distanceTo(ground) * 0.01));
+    for (const a of this.actorCache) {
+      const d = Math.hypot(a.pos.x - bx, a.pos.z - bz);
+      if (a instanceof Tiangou && d < 3) a.absorbBolt();
+      if (a instanceof Roamer && d < 12) a.absorbBolt(ground);
+    }
+    for (const b of this.bosses) if (b.active && !b.defeated) b.onBolt(ground);
+  }
+
   // ─────────────── 每帧 ───────────────
 
-  update(dt: number, input: PlayInput): void {
+  update(realDt: number, input: PlayInput): void {
     if (!this.ready) return;
+    const { gameDt } = this.cinema.update(realDt, this.camera);
+    // 秘卷三选一：游戏暂停
+    if (this.kit.offering) {
+      if (input.pick) this.kit.pick(input.pick - 1);
+      else if (this.autoPick) this.kit.pick(0);
+      this.hud.update(0, this.player, this.gun.ammo, GUN.mag, this.gun.reloading > 0, this.firesText(), this.bossBar(), this.objective(), this.skillsHud(), this.kit.list());
+      this.cinema.apply(this.camera);
+      return;
+    }
+    if (input.anyKey && this.cinema.active) this.cinema.skip();
+    const dt = gameDt;
     this.time += dt;
     const W = this.walker;
     this.feet.copy(W.feet);
     this.center.copy(W.feet).setY(W.feet.y + 0.95);
-    this.pvel.set((this.feet.x - this.lastFeet.x) / Math.max(dt, 1e-3), (this.feet.z - this.lastFeet.z) / Math.max(dt, 1e-3));
+    this.pvel.set((this.feet.x - this.lastFeet.x) / Math.max(realDt, 1e-3), (this.feet.z - this.lastFeet.z) / Math.max(realDt, 1e-3));
     this.lastFeet.copy(this.feet);
+    this.collectActors();
     const P = this.player;
+    this.mem.shockT = (this.mem.shockT ?? 0) - dt;
+    if (this.mem.shockT <= 0) W.speedMul = 1;
     // 倒下 → 2.5 秒后在存档点重来
     if (!P.alive) {
       this.deadT += dt;
@@ -151,46 +311,72 @@ export class PlayMode implements PlayCtx {
     // 护盾：4 秒没挨打开始回
     if (P.alive && this.time - P.lastHurt > 4) P.shield = Math.min(P.maxShield, P.shield + 30 * dt);
     this.nav?.update(dt, this.feet.x, this.feet.z);
-    // 射击
-    const targets: Target[] = [...this.foes.filter(f => f.alive && f.pos.distanceToSquared(this.feet) < 300 * 300), ...this.bosses];
-    if (input.reload) this.gun.startReload();
-    const shots = this.gun.update(dt, input.firing && P.alive && !this.won, this, targets);
+    // 射击、技能
+    const locked = this.inputLocked;
+    const targets: Target[] = this.actorCache;
+    if (input.reload && !locked) this.gun.startReload();
+    const shots = this.gun.update(dt, input.firing && P.alive && !this.won && !locked, this, targets);
     for (const s of shots) this.onShot(s);
+    this.kit.update(dt, { skillE: !!input.skillE, skillQ: !!input.skillQ }, locked || this.won);
     // 怪
     for (const f of this.foes) {
-      const d2 = f.pos.distanceToSquared(this.feet);
       if (!f.alive && !f.host.visible) continue;
+      const d2 = f.pos.distanceToSquared(this.feet);
       if (f === this.roamer || d2 < 220 * 220 || f.state === 'alert') {
         f.notePlayerVel(this.pvel.x, this.pvel.y);
-        f.update(dt, this, d2 < 170 * 170);
+        f.update(dt, d2 < 170 * 170);
       }
     }
+    for (const n of this.nets) n.update(dt);
     this.updateEncounters();
     // 领主
     for (const b of this.bosses) {
       const d = Math.hypot(this.feet.x - b.arena.x, this.feet.z - b.arena.y);
-      if (!b.active && !b.defeated && P.alive && b.shouldStart(this)) b.start(this);
-      if (b.active && !b.defeated && (d > b.arenaR + 30 || !P.alive)) {
-        b.reset(this);
+      if (!b.active && !b.defeated && P.alive && b.shouldStart()) { b.setTier(this.lordsDown); b.start(); }
+      if (b.active && !b.defeated && !b.inShow && (d > b.arenaR + 30 || !P.alive)) {
+        b.reset();
         if (P.alive) this.say(`${b.label}的战斗重置了——离擂台太远`, 2.5);
       }
-      b.update(dt, this);
-      if (b.defeated && !b.rewarded) this.onLordDown(b);
+      b.update(dt);
+      for (const a of b.adds) { a.notePlayerVel(this.pvel.x, this.pvel.y); a.update(dt, true); }
+      if (b.defeated && !b.rewarded && !b.inShow) this.onLordDown(b);
     }
+    this.elements.update(dt);
+    // 导体：带电时杆顶发紫光
+    this.conductors.forEach((c, i) => {
+      c.charge = Math.max(0, c.charge - dt);
+      const g = this.condGlow[i];
+      g.visible = c.charge > 0;
+      if (g.visible) { g.material.opacity = Math.min(1, c.charge / 3) * (0.6 + 0.4 * Math.sin(this.time * 25 + i)); if (Math.random() < 0.08) this.fx.arc(c.pos, c.pos.clone().add(new THREE.Vector3((Math.random() - 0.5) * 2, -1.5 - Math.random() * 2, (Math.random() - 0.5) * 2)), '#ff7ae6', 0.1); }
+    });
     this.fx.update(dt, this.center, PLAYER_R);
-    this.interact(dt, input.interact);
+    this.interact(dt, input.interact && !locked);
     // 通关：灵火够了、走进垭口经幡门
     if (!this.won && FIRE_STATE.lit >= FIRES_TO_UNLOCK && Math.hypot(this.feet.x - this.gate.x, this.feet.z - this.gate.y) < 9) this.victory();
-    const active = this.bosses.find(b => b.active && !b.defeated) ?? null;
-    this.hud.update(dt, this.player, this.gun.ammo, GUN.mag, this.gun.reloading > 0, FIRE_STATE.lit, active, this.objective());
-    this.hud.numbers(this.camera, dt);
+    this.hud.update(realDt, this.player, this.gun.ammo, GUN.mag, this.gun.reloading > 0, this.firesText(), this.bossBar(), this.objective(), this.skillsHud(), this.kit.list());
+    // 镜头：演出接管 → 震屏
+    this.gun.view.visible = !(this.cinema.active && this.cinema.shot?.cam);
+    this.cinema.apply(this.camera);
+    if (this.trauma > 0) {
+      const k = this.trauma * this.trauma;
+      this.camera.position.add(_v.set((Math.random() - 0.5) * 0.25 * k, (Math.random() - 0.5) * 0.25 * k, (Math.random() - 0.5) * 0.25 * k));
+      this.camera.rotateZ((Math.random() - 0.5) * 0.04 * k);
+      this.trauma = Math.max(0, this.trauma - realDt * 1.8);
+    }
+    this.hud.numbers(this.camera, realDt);
   }
+
+  private skillsHud(): { q: number; e: number; qMax: number; eMax: number } {
+    return { q: this.kit.cdQ, e: this.kit.cdE, qMax: KIT_NUMBERS.FOXFIRE.cd, eMax: KIT_NUMBERS.GRENADE.cd };
+  }
+
+  private bossBar(): Boss | null { return this.bosses.find(b => b.active && !b.defeated && !this.cinema.locked) ?? null; }
+  private firesText(): string { return `灵火 ${FIRE_STATE.lit} / ${FIRES_TO_UNLOCK}`; }
 
   private onShot(s: ShotResult): void {
     if (!s.target) return;
     this.hud.hitmark(s.mult > 1, s.killed);
-    this.hud.damageNumber(s.point, s.dealt, s.mult > 1);
-    if (s.killed && s.target instanceof Foe) {
+    if (s.killed && (s.target as Foe).enc !== undefined) {
       this.kills++;
       if (s.target === this.roamer) this.say('穷奇倒下了', 3);
     }
@@ -202,25 +388,17 @@ export class PlayMode implements PlayCtx {
       // 走进领地就整片醒
       if (!e.alerted && this.player.alive && Math.hypot(this.feet.x - e.x, this.feet.z - e.z) < e.r * 0.75) {
         e.alerted = true;
-        for (const f of e.foes) if (f.alive && f.state === 'idle') f.notice(this);
-      }
-      // 啸獭哨兵叫醒附近 60 m 内的别的遇敌
-      const sentinel = e.foes.find(f => f.sentinel && f.state === 'alert');
-      if (sentinel) for (const o of this.encounters) {
-        if (o !== e && !o.alerted && Math.hypot(o.x - sentinel.pos.x, o.z - sentinel.pos.z) < ALERT_RADIUS) {
-          o.alerted = true;
-          for (const f of o.foes) if (f.alive) f.state = 'alert';
-        }
+        for (const f of e.foes) if (f.alive && f.state === 'idle') f.notice();
       }
       // 玩家跑远了：脱战回家
       if (e.alerted && Math.hypot(this.feet.x - e.x, this.feet.z - e.z) > e.r + 80) {
         e.alerted = false;
-        for (const f of e.foes) if (f.alive) f.state = 'idle';
+        for (const f of e.foes) if (f.alive) { f.state = 'idle'; f.interrupt(); }
       }
       if (e.foes.every(f => !f.alive)) {
         e.cleared = true;
         const site = this.sites.find(s => s.id === e.site);
-        if (site && !site.lit) this.say(`${site.name}：雷魅清空${site.boss && !site.boss.defeated ? `，但领主${site.boss.label}还守着灵火` : '——去灵火坛点亮灵火'}`, 4);
+        if (site && !site.lit) this.say(`${site.name}：雷魅清空${site.boss && !site.boss.defeated ? `，但领主${site.boss.label}还守着灵火` : '——去灵火坛按住 F 点亮灵火'}`, 4);
         else if (e.site === 'pass') this.say('垭口的守卫清掉了', 3);
       }
     }
@@ -230,7 +408,6 @@ export class PlayMode implements PlayCtx {
     b.rewarded = true;
     b.active = false;
     this.lordsDown++;
-    if (b instanceof KuiBoss) this.weather.stormy = false;
     const P = this.player;
     P.dmgMul += 0.2;
     P.maxHp += 25;
@@ -238,9 +415,10 @@ export class PlayMode implements PlayCtx {
     const site = this.sites.find(s => s.boss === b);
     if (site) this.light(site, false);
     this.say(`${b.label}被打败了——灵火点亮，伤害 +20%，血上限 +25`, 5);
+    this.kit.offer(3);
   }
 
-  /** 灵火坛交互：按住 E 1.2 秒点亮 */
+  /** 灵火坛交互：按住 F 1.2 秒点亮 */
   private interact(dt: number, holding: boolean): void {
     let prompt = '';
     const near = this.sites.find(s => Math.hypot(this.feet.x - s.altar.x, this.feet.z - s.altar.z) < 3.8);
@@ -250,7 +428,7 @@ export class PlayMode implements PlayCtx {
       else if (near.boss && !near.boss.defeated) prompt = `领主${near.boss.label}守着这处灵火——打败它就会点亮`;
       else if (left > 0) prompt = `还有 ${left} 只雷魅守着灵火`;
       else {
-        prompt = '按住 E 点亮灵火';
+        prompt = '按住 F 点亮灵火';
         this.holdE = holding ? this.holdE + dt : 0;
         if (this.holdE >= 1.2) { this.holdE = 0; this.light(near, true); }
       }
@@ -272,12 +450,15 @@ export class PlayMode implements PlayCtx {
         ? `灵火 ${FIRE_STATE.lit}/${FIRES_TO_UNLOCK}——⑦ 垭口的经幡门打开了！`
         : `灵火点亮 ${FIRE_STATE.lit}/${FIRES_TO_UNLOCK}（血已回满，这里是新的复活点）`, 4);
     }
+    if (announce) this.kit.offer(3);
   }
 
   private respawn(first: boolean): void {
     const P = this.player;
     P.hp = P.maxHp; P.shield = P.maxShield; P.alive = true;
     this.fx.clear();
+    this.kit.clear();
+    this.elements.clear();
     const c = this.checkpoint;
     // 灵火坛旁边一点，别站在坛子上
     this.walker.fly = false;
@@ -288,7 +469,7 @@ export class PlayMode implements PlayCtx {
       e.alerted = false;
       for (const f of e.foes) f.reset();
     }
-    for (const b of this.bosses) if (b.active && !b.defeated) b.reset(this);
+    for (const b of this.bosses) if (b.active && !b.defeated) b.reset();
     if (!first) this.hud.center('', '');
   }
 
@@ -296,168 +477,64 @@ export class PlayMode implements PlayCtx {
     const lit = FIRE_STATE.lit;
     if (this.won) return '';
     if (lit >= FIRES_TO_UNLOCK) return '经幡门已开：去 ⑦ 垭口（东北的盘山天路顶上）';
-    return `点亮灵火 ${lit}/${FIRES_TO_UNLOCK} · 清掉据点的雷魅后在灵火坛按住 E；领主据点打败领主直接点亮`;
+    return `点亮灵火 ${lit}/${FIRES_TO_UNLOCK} · 清掉据点的雷魅后在灵火坛按住 F；领主据点打败领主直接点亮`;
   }
 
   private victory(): void {
     this.won = true;
     const m = Math.floor(this.time / 60), s = Math.floor(this.time % 60);
-    this.hud.victory([
+    this.hud.victory('通关 · 折多垭口', [
       `用时 ${m} 分 ${String(s).padStart(2, '0')} 秒`,
       `点亮灵火 ${FIRE_STATE.lit} 处 · 打败领主 ${this.lordsDown}/3`,
       `击杀雷魅 ${this.kills} · 倒下 ${this.deaths} 次`,
+      `秘卷：${this.kit.list().join('、') || '无'}`,
     ]);
   }
-}
 
-// ───────────────────────────── HUD ─────────────────────────────
+  // ─────────────── 调试 / 脚本化试玩 ───────────────
 
-const CSS = `
-#play-hud{position:fixed;inset:0;pointer-events:none;font-family:"Microsoft YaHei",sans-serif;color:#fff;z-index:20}
-#play-hud .bars{position:absolute;left:50%;transform:translateX(-50%);bottom:54px;width:340px;text-align:center}
-#play-hud .bar{height:12px;background:#0008;border:1px solid #fff4;border-radius:3px;margin-top:6px;overflow:hidden}
-#play-hud .bar i{display:block;height:100%}
-#play-hud .shield i{background:linear-gradient(90deg,#6ad6ff,#b8f0ff)}
-#play-hud .hp i{background:linear-gradient(90deg,#e8434a,#ff8a6a)}
-#play-hud .num{font-size:13px;text-shadow:0 1px 2px #000}
-#play-hud .ammo{position:absolute;right:28px;bottom:24px;font-size:34px;font-weight:bold;text-shadow:0 2px 4px #000}
-#play-hud .ammo small{font-size:16px;opacity:.75}
-#play-hud .obj{position:absolute;left:50%;top:14px;transform:translateX(-50%);font-size:14px;background:#0007;padding:6px 14px;border-radius:4px;white-space:nowrap}
-#play-hud .fires{display:none;position:absolute;left:16px;top:78px;font-size:16px;font-weight:bold;color:#9ff0ff;text-shadow:0 1px 3px #000}
-#play-hud .boss{position:absolute;left:50%;top:48px;transform:translateX(-50%);width:520px;display:none;text-align:center}
-#play-hud .boss .bar{height:14px}
-#play-hud .boss i{background:linear-gradient(90deg,#b2186f,#ff4fd8)}
-#play-hud .boss b{font-size:17px;text-shadow:0 1px 3px #000}
-#play-hud .say{position:absolute;left:50%;top:22%;transform:translateX(-50%);font-size:20px;font-weight:bold;text-shadow:0 2px 6px #000;transition:opacity .4s;white-space:nowrap}
-#play-hud .prompt{position:absolute;left:50%;top:60%;transform:translateX(-50%);font-size:16px;text-shadow:0 1px 3px #000;text-align:center}
-#play-hud .prompt .bar{width:180px;margin:6px auto 0}
-#play-hud .prompt i{background:#9ff0ff}
-#play-hud .vig{position:absolute;inset:0;box-shadow:inset 0 0 160px #e00;opacity:0;transition:opacity .25s}
-#play-hud .hitm{position:absolute;left:50%;top:50%;width:22px;height:22px;margin:-11px 0 0 -11px;opacity:0;
-  background:linear-gradient(45deg,transparent 45%,#fff 45%,#fff 55%,transparent 55%),linear-gradient(-45deg,transparent 45%,#fff 45%,#fff 55%,transparent 55%)}
-#play-hud .center{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);text-align:center;text-shadow:0 2px 8px #000}
-#play-hud .center b{font-size:34px;display:block}
-#play-hud .center span{font-size:16px;opacity:.85}
-#play-hud .dmg{position:absolute;font-weight:bold;font-size:15px;text-shadow:0 1px 2px #000;transform:translate(-50%,-50%)}
-#play-hud .loading{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:18px;background:#000a;padding:12px 20px;border-radius:6px}
-#play-hud .win{position:absolute;inset:0;background:#000b;display:none;align-items:center;justify-content:center;flex-direction:column;pointer-events:auto}
-#play-hud .win h2{font-size:40px;margin:0 0 10px;color:#ffe08a}
-#play-hud .win p{margin:4px;font-size:17px}
-#play-hud .win button{margin-top:18px;font-size:16px;padding:8px 22px;cursor:pointer}
-`;
-
-class Hud {
-  private readonly root: HTMLDivElement;
-  private readonly el: Record<string, HTMLElement> = {};
-  private sayT = 0;
-  private vig = 0;
-  private hitT = 0;
-  private readonly nums: { el: HTMLDivElement; pos: THREE.Vector3; t: number }[] = [];
-  private readonly _p = new THREE.Vector3();
-
-  constructor() {
-    const style = document.createElement('style');
-    style.textContent = CSS;
-    document.head.appendChild(style);
-    this.root = document.createElement('div');
-    this.root.id = 'play-hud';
-    this.root.innerHTML = `
-      <div class="vig"></div>
-      <div class="fires"></div>
-      <div class="obj"></div>
-      <div class="boss"><b></b><div class="bar"><i></i></div></div>
-      <div class="say"></div>
-      <div class="hitm"></div>
-      <div class="prompt"><span></span><div class="bar"><i></i></div></div>
-      <div class="center"><b></b><span></span></div>
-      <div class="bars"><div class="num"></div><div class="bar shield"><i></i></div><div class="bar hp"><i></i></div></div>
-      <div class="ammo"></div>
-      <div class="loading"></div>
-      <div class="win"><h2>通关 · 折多垭口</h2><div class="stats"></div><button>再打一遍</button></div>`;
-    document.body.appendChild(this.root);
-    for (const k of ['vig', 'fires', 'obj', 'boss', 'say', 'hitm', 'prompt', 'center', 'bars', 'ammo', 'loading', 'win']) this.el[k] = this.root.querySelector(`.${k}`)!;
-    (this.root.querySelector('.win button') as HTMLButtonElement).onclick = () => location.reload();
-  }
-
-  loading(text: string): void {
-    this.el.loading.textContent = text;
-    this.el.loading.style.display = text ? '' : 'none';
-  }
-
-  say(text: string, seconds: number): void {
-    this.el.say.textContent = text;
-    this.el.say.style.opacity = '1';
-    this.sayT = seconds;
-  }
-
-  center(title: string, sub: string): void {
-    (this.el.center.querySelector('b') as HTMLElement).textContent = title;
-    (this.el.center.querySelector('span') as HTMLElement).textContent = sub;
-  }
-
-  hurt(_dmg: number, shieldOnly: boolean): void { this.vig = shieldOnly ? 0.35 : 0.8; }
-
-  hitmark(weak: boolean, killed: boolean): void {
-    this.hitT = 0.12;
-    this.el.hitm.style.filter = killed ? 'drop-shadow(0 0 4px #f44) brightness(1.2) sepia(1) hue-rotate(-50deg) saturate(6)' : weak ? 'sepia(1) saturate(8) hue-rotate(10deg)' : '';
-  }
-
-  damageNumber(at: THREE.Vector3, dealt: number, weak: boolean): void {
-    if (dealt <= 0) return;
-    const el = document.createElement('div');
-    el.className = 'dmg';
-    el.textContent = String(Math.round(dealt));
-    el.style.color = weak ? '#ffd24a' : '#ffffff';
-    if (weak) el.style.fontSize = '19px';
-    this.root.appendChild(el);
-    this.nums.push({ el, pos: at.clone(), t: 0 });
-    if (this.nums.length > 30) { const n = this.nums.shift()!; n.el.remove(); }
-  }
-
-  numbers(camera: THREE.Camera, dt: number): void {
-    for (const n of this.nums) {
-      n.t += dt;
-      this._p.copy(n.pos).setY(n.pos.y + n.t * 1.2).project(camera);
-      const vis = this._p.z < 1 && n.t < 0.8;
-      n.el.style.display = vis ? '' : 'none';
-      n.el.style.left = `${(this._p.x * 0.5 + 0.5) * innerWidth}px`;
-      n.el.style.top = `${(-this._p.y * 0.5 + 0.5) * innerHeight}px`;
-      n.el.style.opacity = String(1 - n.t / 0.8);
-    }
-    for (let i = this.nums.length - 1; i >= 0; i--) if (this.nums[i].t >= 0.8) { this.nums[i].el.remove(); this.nums.splice(i, 1); }
-  }
-
-  prompt(text: string, progress: number): void {
-    (this.el.prompt.querySelector('span') as HTMLElement).textContent = text;
-    const bar = this.el.prompt.querySelector('.bar') as HTMLElement;
-    bar.style.display = progress > 0 ? '' : 'none';
-    (bar.querySelector('i') as HTMLElement).style.width = `${progress * 100}%`;
-  }
-
-  update(dt: number, P: PlayerState, ammo: number, mag: number, reloading: boolean, lit: number, boss: Boss | null, objective: string): void {
-    this.sayT -= dt;
-    if (this.sayT <= 0) this.el.say.style.opacity = '0';
-    this.vig = Math.max(0, this.vig - dt * 1.5);
-    this.el.vig.style.opacity = String(this.vig);
-    this.hitT -= dt;
-    this.el.hitm.style.opacity = this.hitT > 0 ? '1' : '0';
-    (this.el.bars.querySelector('.num') as HTMLElement).textContent = `护盾 ${Math.ceil(P.shield)} / ${P.maxShield}　生命 ${Math.ceil(P.hp)} / ${P.maxHp}${P.dmgMul > 1 ? `　伤害 ×${P.dmgMul.toFixed(1)}` : ''}`;
-    (this.el.bars.querySelector('.shield i') as HTMLElement).style.width = `${(P.shield / P.maxShield) * 100}%`;
-    (this.el.bars.querySelector('.hp i') as HTMLElement).style.width = `${(P.hp / P.maxHp) * 100}%`;
-    this.el.ammo.innerHTML = reloading ? '换弹…' : `${ammo}<small> / ${mag}</small>`;
-    this.el.fires.textContent = `灵火 ${lit} / 3`;
-    this.el.obj.textContent = objective;
-    this.el.obj.style.display = objective ? '' : 'none';
-    this.el.boss.style.display = boss ? 'block' : 'none';
-    if (boss) {
-      (this.el.boss.querySelector('b') as HTMLElement).textContent = `${boss.label} · 第 ${boss.phase} 阶段`;
-      (this.el.boss.querySelector('i') as HTMLElement).style.width = `${(boss.hp / boss.maxHp) * 100}%`;
-    }
-  }
-
-  victory(lines: string[]): void {
-    this.el.win.style.display = 'flex';
-    (this.el.win.querySelector('.stats') as HTMLElement).innerHTML = lines.map(l => `<p>${l}</p>`).join('');
-    document.exitPointerLock();
+  /** 控制台 / 试玩脚本用（plateau.play.dev） */
+  get dev(): Record<string, unknown> {
+    const self = this;
+    return {
+      moveTable,
+      /** 在玩家前方 dist 米刷一只（不属于任何遇敌：自己一群） */
+      spawn(kind: string, dist = 12, angle = 0): Foe {
+        const a = self.walker.yaw + Math.PI + angle;
+        const F = self.walker.feet;
+        const x = F.x + Math.sin(a) * dist, z = F.z + Math.cos(a) * dist;
+        const enc: EncounterState = { id: `dev-${kind}`, site: '', x, z, r: 30, foes: [], alerted: true, cleared: false, burrows: [], tokens: { melee: 0, pounce: 0, ranged: 0, howl: 0 } };
+        const f = createFoe(kind as never, self, new THREE.Vector3(x, self.terrain.heightAt(x, z) + (kind === 'manman' ? 7 : kind === 'liangu' ? 3 : 0), z), kind === 'manman' ? 7 : kind === 'liangu' ? 3 : 0, MONSTER_NAMES);
+        f.enc = enc;
+        enc.foes.push(f);
+        self.foes.push(f);
+        self.encounters.push(enc);
+        f.notice();
+        return f;
+      },
+      /** 观察机位：跟拍 target()（每帧取），从它的侧面 side 弧度、dist 米、高 h 米看过去 */
+      watch(target: () => { pos: THREE.Vector3; yaw: number; h?: number }, side = Math.PI / 2, dist = 7, h = 2, fov = 55): void {
+        self.cinema.play({ name: 'observe', dur: 1e6, bars: false, lock: false, skippable: false, cam: (_t, out) => {
+          const T = target(), a = T.yaw + side;
+          out.look.set(T.pos.x, T.pos.y + (T.h ?? 1), T.pos.z);
+          out.pos.set(T.pos.x + Math.sin(a) * dist, T.pos.y + h, T.pos.z + Math.cos(a) * dist);
+          const g = self.terrain.heightAt(out.pos.x, out.pos.z) + 0.6;
+          if (out.pos.y < g) out.pos.y = g;
+          out.fov = fov;
+        } });
+        // 跳过融合：直接到位
+        self.cinema.t = 0.6;
+      },
+      stopWatch(): void { if (self.cinema.shot?.name === 'observe') self.cinema.shot = null; },
+      stopObserve(): void { if (self.cinema.shot?.name === 'observe') self.cinema.shot = null; },
+      god(on = true): void { self.mem.god = on ? 1 : 0; },
+      heal(): void { self.player.hp = self.player.maxHp; self.player.shield = self.player.maxShield; self.player.alive = true; },
+      scroll(id: string): void { self.kit.add(id); },
+      reactions: () => ({ ...self.elements.counts }),
+      kit: self.kit,
+      hud: self.hud,
+      fx: self.fx,
+      cinema: self.cinema,
+    };
   }
 }

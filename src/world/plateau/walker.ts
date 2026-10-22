@@ -111,9 +111,16 @@ export class Walker {
   doubleJump = false;
   /** 风雪强度 0..1（软边界），给画面做白雾 */
   wind = 0;
+  /** 冲刺冷却（秒；秘卷「踏风」会缩短） */
+  dashCooldown = 0.9;
+  /** 冲刺开始后多久之内无敌（游玩模式的闪避用；0 = 检视页不需要） */
+  dashGrace = 0;
+  /** 外部加的移速倍率（飞廉的顺风 / 逆风、涨水） */
+  speedMul = 1;
   private jumps = 0;
   private dashT = 0;
   private dashCd = 0;
+  private dashAge = 99;
   private dashDir = new THREE.Vector2();
   private carry = new THREE.Vector2();
 
@@ -133,6 +140,9 @@ export class Walker {
     this.carry.set(0, 0);
     this.grounded = true;
   }
+
+  /** 正在冲刺的无敌时间内 */
+  get dodging(): boolean { return this.dashAge < this.dashGrace; }
 
   eye(out: THREE.Vector3): THREE.Vector3 { return out.copy(this.feet).setY(this.feet.y + (this.fly ? 0 : EYE)); }
 
@@ -172,8 +182,9 @@ export class Walker {
     }
     // 冲刺：固定 0.18 s，结束保留 45% 速度
     this.dashCd = Math.max(0, this.dashCd - dt);
+    this.dashAge += dt;
     if (inp.dash && this.dashCd <= 0) {
-      this.dashT = 0.18; this.dashCd = 0.9;
+      this.dashT = 0.18; this.dashCd = this.dashCooldown; this.dashAge = 0;
       this.dashDir.copy(wish.lengthSq() > 0.01 ? wish : fwd).normalize();
     }
     let vx: number, vz: number;
@@ -183,7 +194,7 @@ export class Walker {
       if (this.dashT <= 0) this.carry.set(vx * 0.45, vz * 0.45);
     } else {
       this.carry.multiplyScalar(Math.max(0, 1 - dt * 6));
-      vx = wish.x * 7.5 + this.carry.x; vz = wish.y * 7.5 + this.carry.y;
+      vx = wish.x * 7.5 * this.speedMul + this.carry.x; vz = wish.y * 7.5 * this.speedMul + this.carry.y;
     }
     // 跳跃
     if (inp.jump) {
