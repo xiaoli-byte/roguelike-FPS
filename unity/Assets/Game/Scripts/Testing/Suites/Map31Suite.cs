@@ -301,7 +301,7 @@ namespace Spiritfire.Game.Testing
                 if (!LavaField.IsLavaAt(lava.x, lava.z)) Fail("C3 堤肩外 2.5 m 不是熔岩");
             }
             if (LavaField.LavaArea < 0) Fail("NavMesh 没有 Lava 区域：重启编辑器让 NavMeshAreas.asset 生效后重建 3-1");
-            else if (!NavMesh.SamplePosition(c, out var hit, 2f, LavaField.LavaAreaMask)) Fail("湖心附近的导航网格不是 Lava 区");
+            else if (!NavMesh.SamplePosition(c, out var hit, 2f, LavaField.WalkerFilter(LavaField.LavaAreaMask))) Fail("湖心附近的导航网格不是 Lava 区");
             else Line($"✓ 导航：湖心是 Lava 区（y {hit.position.y:F2}，代价 {NavMesh.GetAreaCost(LavaField.LavaArea)}）");
             if (!LavaField.SwimmerAgentType.HasValue) Fail($"NavMesh 没有代理类型 {LavaField.SwimmerAgentName}");
             else if (!NavMesh.SamplePosition(c, out _, 3f, LavaField.SwimmerFilter)) Fail("火鼍（LavaSwimmer）的导航网格在湖心采不到：重建 3-1（BakeLavaNavMesh）");
@@ -415,7 +415,7 @@ namespace Spiritfire.Game.Testing
             {
                 float a = k * Mathf.PI / 6;
                 var p = c + new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a)) * (ring * 5f);
-                if (!NavMesh.SamplePosition(p, out var hit, 2f, LavaField.DryAreaMask) || LavaField.IsLava(hit.position)) continue;
+                if (!NavMesh.SamplePosition(p, out var hit, 2f, Dry) || LavaField.IsLava(hit.position)) continue;
                 float d = LavaField.NearestLava(hit.position, 30f, out var lava, out _) ? Flat(lava - hit.position) : 30f;
                 if (d > bestD)
                 {
@@ -434,7 +434,7 @@ namespace Spiritfire.Game.Testing
             {
                 float a = i * Mathf.PI * 2 / 16 + Random.value * 0.3f;
                 var p = target.transform.position + new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a)) * Random.Range(8f, 12f);
-                if (!NavMesh.SamplePosition(p, out var hit, 3f, LavaField.DryAreaMask)) continue;
+                if (!NavMesh.SamplePosition(p, out var hit, 3f, Dry)) continue;
                 if (LavaField.IsLava(hit.position) || LavaField.NearLava(hit.position, 1.5f)) continue;
                 if (Combat.Blocked(hit.position + Vector3.up * 1.62f, aim, null)) continue;
                 spot = hit.position;
@@ -482,7 +482,7 @@ namespace Spiritfire.Game.Testing
             EnemyStatus.Stun(e.Health, 4f);
             yield return null;
             var agent = e.GetComponent<NavMeshAgent>();
-            if (agent && agent.enabled && NavMesh.SamplePosition(spot, out var hit, 1f, LavaField.DryAreaMask)) agent.Warp(hit.position);
+            if (agent && agent.enabled && NavMesh.SamplePosition(spot, out var hit, 1f, Dry)) agent.Warp(hit.position);
             else e.transform.position = spot;
             yield return null;
             yield return null;
@@ -634,12 +634,15 @@ namespace Spiritfire.Game.Testing
             yield return null;
         }
 
-        /// <summary>只走非熔岩区（LavaField.DryAreaMask）的导航路径；没有 Lava 区时就是全部区域</summary>
+        /// <summary>人形代理、只走非熔岩区（LavaField.DryAreaMask）的导航查询过滤：火鼍的网格也在湖上，不带代理类型会落错网格</summary>
+        static NavMeshQueryFilter Dry => LavaField.WalkerFilter(LavaField.DryAreaMask);
+
+        /// <summary>只走非熔岩区（<see cref="Dry"/>）的导航路径；没有 Lava 区时就是全部区域</summary>
         static List<Vector3> PathCorners(Vector3 from, Vector3 to, out bool complete)
         {
             complete = false;
             var list = new List<Vector3>();
-            int mask = LavaField.DryAreaMask;
+            var mask = Dry;
             if (!NavMesh.SamplePosition(from, out var a, 4f, mask) || !NavMesh.SamplePosition(to, out var b, 4f, mask)) return list;
             var path = new NavMeshPath();
             NavMesh.CalculatePath(a.position, b.position, mask, path);

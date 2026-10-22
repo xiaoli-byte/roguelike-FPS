@@ -242,22 +242,22 @@ namespace Spiritfire.Art.Editor.Levels
         {
             // ① 税关墩：三个堤头方向的炭童 / 祸斗，税亭台上的马面
             ("Enemy_1_North", 1, new Vector2(-56, -8), StationRole.Assault, 0, false, 2f),
-            ("Enemy_1_South", 1, new Vector2(-61, -36), StationRole.Assault, 1, false, 2f),
-            ("Enemy_1_FlankW", 1, new Vector2(-71, -30), StationRole.Flank, 1, false, 2f),
+            ("Enemy_1_South", 1, new Vector2(-64, -36), StationRole.Assault, 1, false, 2f),
+            ("Enemy_1_FlankW", 1, new Vector2(-73, -16), StationRole.Flank, 1, false, 2f),
             ("Enemy_1_FlankE", 1, new Vector2(-44, -27), StationRole.Flank, 2, false, 2f),
             ("Enemy_1_Terrace", 1, new Vector2(-61, -15), StationRole.Ranged, 0, false, 1.2f),
             ("Enemy_1_Center", 1, new Vector2(-58, -27), StationRole.Auto, 0, false, 1.5f),
             // ② 锚链墩：绞盘台上的毕方（起飞找桩），墩北 / 墩南正面，西 / 东侧翼，东北炮位
             ("Enemy_2_Terrace", 2, new Vector2(63, -14), StationRole.Precision, 0, true, 1.2f),
             ("Enemy_2_North", 2, new Vector2(62, 1), StationRole.Assault, 0, false, 2f),
-            ("Enemy_2_South", 2, new Vector2(67, -28), StationRole.Assault, 1, false, 2f),
+            ("Enemy_2_South", 2, new Vector2(70, -31), StationRole.Assault, 1, false, 2f),
             ("Enemy_2_FlankW", 2, new Vector2(48, -9), StationRole.Flank, 1, false, 1.5f),
             ("Enemy_2_FlankE", 2, new Vector2(76, -19), StationRole.Flank, 2, false, 1.5f),
             ("Enemy_2_Artillery", 2, new Vector2(70, 0), StationRole.Artillery, 0, false, 1.5f),
             // ③ 镇湖鼎台：鼎台上的马面 / 飞鸦，北堤头正面，西 / 东侧翼，南面炮位
             ("Enemy_3_Terrace", 3, new Vector2(-4, 34), StationRole.Ranged, 0, false, 1.2f),
             ("Enemy_3_TerraceAir", 3, new Vector2(0, 35), StationRole.Flank, 0, true, 1f),
-            ("Enemy_3_North", 3, new Vector2(-7.4f, 42.6f), StationRole.Assault, 0, false, 2f),
+            ("Enemy_3_North", 3, new Vector2(-4, 43), StationRole.Assault, 0, false, 2f),
             ("Enemy_3_West", 3, new Vector2(-15.3f, 36.5f), StationRole.Flank, 1, false, 1.5f),
             ("Enemy_3_East", 3, new Vector2(8.8f, 32.3f), StationRole.Flank, 2, false, 1.5f),
             ("Enemy_3_South", 3, new Vector2(2.5f, 18.7f), StationRole.Artillery, 1, false, 1.5f),
@@ -471,7 +471,7 @@ namespace Spiritfire.Art.Editor.Levels
                 BuildFerry(props, markers);
                 BuildToll(arch, props, markers);
                 BuildAnchorPier(arch, props, markers);
-                BuildHub(arch, props);
+                BuildHub(arch, props, markers);
                 var shrine = BuildQuay(arch, props, markers);
                 BuildIslet(arch, props);
                 BuildShores(props, markers);
@@ -562,7 +562,8 @@ namespace Spiritfire.Art.Editor.Levels
         {
             var size = (DesignSize.TryGetValue(id, out var d) ? d : Vector3.one * 2) * scale;
             var p = baseY.HasValue ? At(at, baseY.Value) : G(at, -sink * scale);
-            var go = LevelKit.PlaceOrBox(id, parent, p, size, yaw, scale);
+            // 白盒用暗玄武岩色（默认的白在火狱的泛光下刺眼，同 3-3）
+            var go = LevelKit.PlaceOrBox(id, parent, p, size, yaw, scale, LevelKit.Mat(Dir, "Ch3Placeholder", new Color(0.36f, 0.3f, 0.27f), 0.85f));
             if (go) go.isStatic = true;
             return go;
         }
@@ -663,22 +664,25 @@ namespace Spiritfire.Art.Editor.Levels
             PerchPillar("FerryE", root, markers, new Vector2(46, -92), -15);
         }
 
-        /// <summary>① 税关墩：税亭（税亭台上）、税卡拒马、残墙、铁锭堆（扣下的货）、火坛、一根锚链桩</summary>
+        /// <summary>
+        /// ① 税关墩：税亭（税亭台上）、税亭台顶坡道口两侧的火坛；墩南半圈离墩心 12 m 的残墙 / 税卡拒马 / 锚链桩（相隔约 10 m，
+        /// L5 掩体检查把 2 m 内的掩体旁站位并成一处，三件各算一处）、北面一堆铁锭（扣下的货）
+        /// </summary>
         static void BuildToll(Transform arch, Transform props, Transform markers)
         {
             var root = new GameObject("① 税关墩").transform;
             root.SetParent(arch, false);
             Put(StallId, root, new Vector2(-66, -16), 90, 1.3f);
-            Put(AltarId, root, new Vector2(-53, -21), 90);
-            Put(AltarId, root, new Vector2(-53, -11), 90);
+            Put(AltarId, root, new Vector2(-58.5f, -19.5f), 90, 1, 0, TollTerrace.TopY - 0.05f);
+            Put(AltarId, root, new Vector2(-58.5f, -12.5f), 90, 1, 0, TollTerrace.TopY - 0.05f);
             var p = new GameObject("① 掩体").transform;
             p.SetParent(props, false);
-            Put(BarricadeId, p, new Vector2(-53, -30), 20, 1.2f);
-            Put(BarricadeId, p, new Vector2(-67, -33), -25, 1.2f);
-            Put(CoverWallId, p, new Vector2(-60, -30), 0, 1.2f);
-            Put(IngotId, p, new Vector2(-50, -24), 10);
+            var wall = new Vector2(-67.8f, -28.9f);
+            var barricade = new Vector2(-58, -34);
+            Put(CoverWallId, p, wall, YawZ(Toll.c - wall), 1.2f);
+            Put(BarricadeId, p, barricade, YawZ(Toll.c - barricade), 1.2f);
             Put(IngotId, p, new Vector2(-63, -8), 60);
-            PerchPillar("Toll", root, markers, new Vector2(-47, -32), 0);
+            PerchPillar("Toll", root, markers, new Vector2(-48.2f, -28.9f), 0);
         }
 
         /// <summary>② 锚链墩：4 根锚链桩（毕方栖点）、锁魂碑、残墙、倾覆小鼎、绞盘台火坛；每根桩顶拖一条巨链没入熔岩</summary>
@@ -686,15 +690,16 @@ namespace Spiritfire.Art.Editor.Levels
         {
             var root = new GameObject("② 锚链墩").transform;
             root.SetParent(arch, false);
-            // 桩在半径 12 m 的 45° 方位；链尾避开堤头（C7 5°、C4 146°、C8 208°、C2 246°）
-            (float pillar, float chain)[] posts = { (45, 60), (135, 100), (225, 178), (315, 300) };
+            // 桩在半径 16 m 的 45° / 125° / 225° / 315° 方位（125° 让开 C4 堤头），锁魂碑在桩外 2.5 m；桩与桩、桩与绞盘台隔得够远，
+            // L5 掩体检查里各算一处。链尾避开堤头（C7 5°、C4 146°、C8 208°、C2 246°）
+            (float pillar, float chain)[] posts = { (45, 60), (125, 100), (225, 178), (315, 300) };
             int links = 0;
             foreach (var (pa, ca) in posts)
             {
                 var dir = new Vector2(Mathf.Cos(pa * Mathf.Deg2Rad), Mathf.Sin(pa * Mathf.Deg2Rad));
-                var at = Anchor.c + dir * 12f;
+                var at = Anchor.c + dir * 16f;
                 var top = PerchPillar($"Anchor{pa:0}", root, markers, at, pa);
-                Put(ObeliskId, root, Anchor.c + dir * 14.5f, pa + 90);
+                Put(ObeliskId, root, Anchor.c + dir * 18.5f, pa + 90);
                 var cdir = new Vector2(Mathf.Cos(ca * Mathf.Deg2Rad), Mathf.Sin(ca * Mathf.Deg2Rad));
                 var from = top + new Vector3(cdir.x, 0, cdir.y) * 0.6f - Vector3.up * 0.4f;
                 var to = At(Anchor.c + cdir * ChainReach, LavaY - 0.6f);
@@ -705,22 +710,27 @@ namespace Spiritfire.Art.Editor.Levels
             Put(AltarId, root, new Vector2(67.5f, -18.5f), 0, 1, 0, WinchTerrace.TopY - 0.05f);
             var p = new GameObject("② 掩体").transform;
             p.SetParent(props, false);
-            Put(CoverWallId, p, new Vector2(59, -29), 0, 1.2f);
+            Put(CoverWallId, p, new Vector2(65, -30), 0, 1.2f);
             Put(CauldronId, p, new Vector2(75.5f, -13), 90, 1.6f);
         }
 
-        /// <summary>③ 镇湖鼎台：倾覆巨鼎（×2.4，3.7 m 高的全遮掩体）、拒马、铁锭堆、鼎台火坛</summary>
-        static void BuildHub(Transform arch, Transform props)
+        /// <summary>
+        /// ③ 镇湖鼎台：倾覆巨鼎（×2.4，3.7 m 高的全遮掩体）、鼎台火坛；C5 堤头两侧的拒马与残墙、东缘的铁锭堆、C3 堤头南侧一根栖柱
+        /// （和鼎台侧壁、巨鼎都隔开 5.5 m 以上，L5 掩体检查里各算一处）
+        /// </summary>
+        static void BuildHub(Transform arch, Transform props, Transform markers)
         {
             var root = new GameObject("③ 镇湖鼎台").transform;
             root.SetParent(arch, false);
             Put(CauldronId, root, new Vector2(-14, 30), 90, 2.4f, 0.2f);
             Put(AltarId, root, new Vector2(-9.5f, 30), 180, 1, 0, CauldronTerrace.TopY - 0.05f);
             Put(AltarId, root, new Vector2(1.5f, 30), 180, 1, 0, CauldronTerrace.TopY - 0.05f);
+            PerchPillar("Hub", root, markers, new Vector2(-10, 17), 20);
             var p = new GameObject("③ 掩体").transform;
             p.SetParent(props, false);
-            Put(BarricadeId, p, new Vector2(4, 41), 0, 1.2f);
-            Put(IngotId, p, new Vector2(5.2f, 37.7f), 40);
+            Put(BarricadeId, p, new Vector2(5, 43), 0, 1.2f);
+            Put(CoverWallId, p, new Vector2(-11, 43.5f), 0, 1.2f);
+            Put(IngotId, p, new Vector2(11, 28), 40);
         }
 
         /// <summary>④ 宫门码头：出口神龛（贴北崖，正面朝南）、宫墙 ×6、角楼 ×2、码头拒马（夹着 C5 登岸口）、倾覆鼎、货堆、火坛；鼓楼台外角放栖落点。返回神龛</summary>
@@ -1052,10 +1062,25 @@ namespace Spiritfire.Art.Editor.Levels
                 else rep.Line($"✓ {isle.name} 墩顶 y {y:F2}，高出熔岩 {y - LavaY:F1} m");
             }
 
-            // 只走非熔岩区：堤道是通的，不用蹚熔岩
+            // 只走非熔岩区：堤道是通的，不用蹚熔岩（人形代理的网格：火鼍的网格也在湖上，不过滤会落错网格）
             int area = LevelKit.LavaNavArea;
-            int dry = area >= 0 ? NavMesh.AllAreas & ~(1 << area) : NavMesh.AllAreas;
+            var dry = LavaField.WalkerFilter(area >= 0 ? NavMesh.AllAreas & ~(1 << area) : NavMesh.AllAreas);
             if (area < 0) rep.Warn("NavMesh 没有 Lava 区域：非熔岩路径与击退检查按全部区域算（重启编辑器让 NavMeshAreas.asset 生效后重建）");
+
+            // 火鼍的网格只铺在熔岩里：墩顶、码头、渡口这些干地上采不到（LevelKit.BakeLavaNavMesh 的干地封顶）
+            var swim = LevelKit.LavaSwimmerAgentType();
+            if (swim.HasValue)
+            {
+                var swimAll = new NavMeshQueryFilter { agentTypeID = swim.Value, areaMask = NavMesh.AllAreas };
+                var dryProbes = new (string name, Vector3 at)[]
+                {
+                    ("① 墩顶", G(Toll.c + new Vector2(4, -6))), ("② 墩顶", G(Anchor.c + new Vector2(0, 12))), ("③ 墩顶", G(Hub.c + new Vector2(8, -6))),
+                    ("④ 码头", G(QuaySite)), ("C3 堤面", G(Causeways[2].path.At(0.5f))), ("西渡口", G(FerryW)),
+                };
+                var wet = dryProbes.Where(d => NavMesh.SamplePosition(d.at, out _, 1.5f, swimAll)).Select(d => d.name).ToList();
+                if (wet.Count > 0) rep.Fail($"火鼍（LavaSwimmer）的导航网格铺到了干地上：{string.Join("、", wet)}（不带过滤的导航查询会落错网格）");
+                else rep.Line($"✓ 火鼍的导航网格只在熔岩里（{dryProbes.Length} 处干地 1.5 m 内都采不到）");
+            }
             if (!NavMesh.SamplePosition(G(Spawn), out var sh, 4, dry)) rep.Fail("出生点 4 m 内没有非熔岩的导航网格");
             else
             {
@@ -1094,9 +1119,9 @@ namespace Spiritfire.Art.Editor.Levels
             else
             {
                 var path = new NavMeshPath();
-                bool from = NavMesh.SamplePosition(kp, out var kh, 1.5f, NavMesh.AllAreas);
-                bool to = NavMesh.SamplePosition(outside + Vector3.up * 0.3f, out var lh, 2f, 1 << area);
-                bool linked = from && to && NavMesh.CalculatePath(kh.position, lh.position, NavMesh.AllAreas, path) && path.status == NavMeshPathStatus.PathComplete;
+                bool from = NavMesh.SamplePosition(kp, out var kh, 1.5f, LavaField.WalkerFilter());
+                bool to = NavMesh.SamplePosition(outside + Vector3.up * 0.3f, out var lh, 2f, LavaField.WalkerFilter(1 << area));
+                bool linked = from && to && NavMesh.CalculatePath(kh.position, lh.position, LavaField.WalkerFilter(), path) && path.status == NavMeshPathStatus.PathComplete;
                 if (linked) rep.Line($"✓ {where}：堤肩的导航网格连到 Lava 区（击退推得下去）");
                 else rep.Fail($"{where}：堤肩的导航网格连不到 Lava 区（起点 {from}、熔岩点 {to}、路径 {path.status}）——堤肩太陡，击退推不下去");
             }
@@ -1159,8 +1184,9 @@ namespace Spiritfire.Art.Editor.Levels
                     {
                         Site("出生·渡口台（缓冲）", G(Spawn), 24, combat: false),
                         Site("① 税关墩", G(Toll.c), 48, cover: 4, layers: 3, overlook: true),
-                        Site("② 锚链墩", G(Anchor.c + new Vector2(0, 10)), 50, cover: 4, layers: 3, overlook: true),
-                        Site("③ 镇湖鼎台", G(Hub.c + new Vector2(6, -8)), 44, cover: 4, layers: 3, overlook: true),
+                        // 场地圆盘取墩心（掩体、层数按整座墩算；遭遇的场地中心另取台下的墩顶，见 BuildEncounters）
+                        Site("② 锚链墩", G(Anchor.c), 50, cover: 4, layers: 3, overlook: true),
+                        Site("③ 镇湖鼎台", G(Hub.c), 44, cover: 4, layers: 3, overlook: true),
                         Site("④ 宫门码头", G(QuaySite), 60, cover: 4, layers: 2, overlook: true),
                     },
                 }
