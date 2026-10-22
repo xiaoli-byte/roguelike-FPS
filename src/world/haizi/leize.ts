@@ -480,7 +480,15 @@ export class LeizeBoss extends Boss {
     const eye = ctx.walker.eye(new THREE.Vector3());
     const base = new THREE.Vector3(Math.cos(this.ang) * this.rad, this.lake.level, Math.sin(this.ang) * this.rad);
     const toP = new THREE.Vector3(eye.x - base.x, 0, eye.z - base.z).normalize();
-    const lowAt = base.clone().addScaledVector(toP, 20).setY(this.lake.level + 1.2);
+    // 贴水面的机位：朝玩家那边 20 m，挡在中间的湖心岛（灵火神龛）绕开——往两侧转到视线不擦岛为止
+    const lowAt = new THREE.Vector3();
+    for (const turn of [0, 0.35, -0.35, 0.7, -0.7, 1.05, -1.05]) {
+      const c = Math.cos(turn), s = Math.sin(turn);
+      lowAt.set(base.x + (toP.x * c - toP.z * s) * 20, this.lake.level + 1.2, base.z + (toP.x * s + toP.z * c) * 20);
+      const dx = lowAt.x - base.x, dz = lowAt.z - base.z;
+      const k = THREE.MathUtils.clamp(((ISLAND.x - base.x) * dx + (ISLAND.z - base.z) * dz) / (dx * dx + dz * dz), 0, 1);
+      if (Math.hypot(base.x + dx * k - ISLAND.x, base.z + dz * k - ISLAND.z) > ISLAND.r + 3) break;
+    }
     const head = new THREE.Vector3();
     let rose = 0;
     return {

@@ -9,8 +9,9 @@
 //   poses --who kui --list "roar:active:0.5,…"   定格姿势逐张截图（--tmp 目录）
 //   eval --js "…" [--shot 路径] [--map 4-1]        在页面里跑一段代码
 //   findflat                 找一块平、干、远离遇敌的空地
+//   export                   三张图的招式表 → docs/art/ch4-move-events.json；raw/intro-*.json（先跑领主场景）→ docs/art/ch4-boss-intros.json
 // 先开 dev 服务器（npm run dev -- --port 5199）。页面在后台不给 rAF：一律用页面自己的 simulate 按固定步长推进，截图前手动渲染一帧。
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { launch } from './cdp.mjs';
 
@@ -107,9 +108,9 @@ const SCENES = {
   },
 };
 
-const KIND_MODEL = { marmot: 'SK_Enemy_Marmot', tiangou: 'SK_Enemy_Tiangou', aoyin: 'SK_Enemy_Aoyin', leiyak: 'SK_Enemy_Aoyin', jufu: 'SK_Enemy_Jufu', manman: 'SK_Enemy_Manman', liangu: 'SM_EnemyPart_LianguCore', dijiang: 'SK_Enemy_Dijiang' };
+const KIND_MODEL = { marmot: 'SK_Enemy_Marmot', tiangou: 'SK_Enemy_Tiangou', aoyin: 'SK_Enemy_Aoyin', leiyak: 'SK_Enemy_Aoyin', jufu: 'SK_Enemy_Jufu', manman: 'SK_Enemy_Manman', liangu: 'SM_EnemyPart_LianguCore', dijiang: 'SK_Enemy_Dijiang', qiongqi: 'SK_Enemy_Qiongqi' };
 /** 各怪截图的机位：侧面多远、多高、看向多高 */
-const CAM = { marmot: [3, 0.9, 0.45], tiangou: [3.8, 1.2, 0.6], aoyin: [7.5, 2.2, 1.4], leiyak: [5.5, 1.6, 1], jufu: [4.6, 1.6, 1.1], manman: [7, 2.5, 0.4], liangu: [5.5, 2, 0.5], dijiang: [3.6, 1.2, 0.6] };
+const CAM = { marmot: [3, 0.9, 0.45], tiangou: [3.8, 1.2, 0.6], aoyin: [7.5, 2.2, 1.4], leiyak: [5.5, 1.6, 1], jufu: [4.6, 1.6, 1.1], manman: [7, 2.5, 0.4], liangu: [5.5, 2, 0.5], dijiang: [3.6, 1.2, 0.6], qiongqi: [6, 2, 1] };
 
 async function foes(b, only) {
   const out = [];
@@ -121,13 +122,15 @@ async function foes(b, only) {
       if (kind === 'leiyak' && id === 'slam') continue;
       const [dist, h, lookH] = CAM[kind];
       await b.eval(`(() => { T.reset(); G.play.dev.god(true); G.play.dev.hud.visible = false; T.clean();
-        window.F = G.play.dev.spawn('${kind}', ${kind === 'jufu' ? 14 : 9}, 0);
+        window.F = G.play.dev.spawn('${kind}', ${kind === 'jufu' ? 14 : kind === 'qiongqi' && id === 'glide' ? 20 : 9}, 0);
         if ('${kind}' === 'manman') { window.F2 = G.play.dev.spawn('manman', 12, 0.4); F.pair(F2, true); F2.pair(F, false); F2.host.scale.x *= -1; F2.enc = F.enc; F.enc.foes.push(F2); }
         T.run(0.4);
         G.play.dev.watch(() => ({ pos: F.pos, yaw: F.yaw, h: ${lookH} }), Math.PI / 2 - 0.45, ${dist}, ${h}, 50);
         return F.force('${id}'); })()`);
+      const fdef = await b.eval(`G.play.dev.moveTable()['${KIND_MODEL[kind]}'].moves['${id}']`);
       for (const stage of ['windup', 'active', 'recover']) {
-        const k = stage === 'windup' ? 0.75 : 0.45;
+        if (!(fdef[stage] > 0)) continue;
+        const k = fdef[stage] < 0.25 ? 0 : stage === 'windup' ? 0.75 : 0.45;
         const t = await b.eval(`T.until(() => !F.move.busy || (F.move.id === '${id}' && F.move.stage === '${stage}' && F.move.stageK >= ${k}), 8)`);
         if (t < 0) { out.push(`${kind}/${id}/${stage}: 没等到`); continue; }
         const st = await b.eval(`F.move.id + '/' + F.move.stage`);
@@ -156,12 +159,13 @@ async function foes(b, only) {
 // 领主：在哪张图、玩家站哪 / 看哪、机位（侧面距离、高度、看向高度）、哪几招要拍玩家视角、清掉哪个据点的遇敌
 const LORDS = {
   kui: { map: '4-1', site: 's6', stand: [100, -52], look: [115, -61], cam: [17, 6, 3.2], fp: ['leap', 'drum', 'clap'] },
-  feilian: { map: '4-1', site: 's5', stand: [48, -204], look: [40, -228], cam: [15, 5, 2.4], fp: ['gust', 'charge', 'stormburst', 'tornado'] },
-  huashe: { map: '4-1', site: 's4', stand: [-96, -142], look: [-140, -150], cam: [16, 6, 1.6], fp: ['lunge', 'spit', 'wingslap', 'roar'] },
+  feilian: { map: '4-1', site: 's5', stand: [48, -204], look: [40, -228], cam: [15, 5, 2.4], fp: ['gust', 'charge', 'stormburst', 'tornado'], recenter: ['charge', 'sidestep', 'wheel'], early: ['charge', 'wheel'] },
+  huashe: { map: '4-1', site: 's4', stand: [-96, -132], look: [-140, -150], cam: [16, 6, 1.6], fp: ['lunge', 'spit', 'wingslap', 'roar'] },
   dae: { map: '4-2', stand: [-30, 70], look: [-1, -58], cam: [24, 6, 0], fp: ['dive', 'feathers'] },
   leize: { map: '4-4', stand: [-10, 59], look: [0, -16], cam: [34, 4, 6], fp: ['bellyDrum', 'breath', 'clawSlam'] },
 };
-const SHOW_ONLY = ['roar', 'rise', 'kneel', 'down', 'choke', 'fall', 'grab', 'flyTo'];
+/** 不单独拍的：演出姿势（名字带「演出」）、破防 / 倒地姿势（破防一节拍）、被动触发的（大鹗抓到人才有擒拿、飞向落脚点） */
+const SHOW_ONLY = ['kneel', 'down', 'choke', 'fall', 'grab', 'flyTo'];
 
 /**
  * 登场演出：逐镜截图；逐帧量镜头和玩家眼睛的位姿，交还那一刻（handoff 开始）的误差、落回段每帧最大位移 / 转角；
@@ -230,12 +234,12 @@ async function lord(b, id) {
   const [cd, ch, cl] = L.cam;
   const defs = await b.eval(`G.play.dev.moveTable()[B.model].moves`);
   for (const m of moves) {
-    if (SHOW_ONLY.includes(m)) continue;
-    await b.eval(`(() => { G.play.dev.heal(); B.hp = Math.max(B.hp, B.maxHp * 0.7); B.force('${m}');
+    if (SHOW_ONLY.includes(m) || defs[m].name.includes('演出')) continue;
+    await b.eval(`(() => { G.play.dev.heal(); B.hp = Math.max(B.hp, B.maxHp * 0.7); ${(L.recenter ?? []).includes(m) ? 'B.pos.copy(B.home);' : ''} B.force('${m}');
       G.play.dev.watch(() => ({ pos: B.pos, yaw: B.yaw, h: ${cl} }), Math.PI / 2 - 0.5, ${cd}, ${ch}, 55); })()`);
     for (const stage of ['windup', 'active', 'recover']) {
       if (!(defs[m][stage] > 0)) continue;
-      const k = stage === 'windup' ? 0.8 : 0.45;
+      const k = defs[m][stage] < 0.25 ? 0 : stage === 'windup' ? 0.8 : stage === 'active' && (L.early ?? []).includes(m) ? 0.15 : 0.45;
       const w = await b.eval(`T.until(() => !B.move.busy || (B.move.id === '${m}' && B.move.stage === '${stage}' && B.move.stageK >= ${k}), 10)`);
       const st = await b.eval(`B.move.id + '/' + B.move.stage`);
       if (w < 0 || !st.startsWith(m)) { out.push(`  ${m}/${stage}: ${st}`); break; }
@@ -271,7 +275,7 @@ async function lord(b, id) {
   const log = await b.eval(`JSON.stringify({ defeated: B.defeated, used: [...B.used].map(([k, v]) => k + '×' + v).join(' '), shows: [...new Set(G.play.dev.cinema.played)].filter(n => n !== 'observe').join(' / '), offering: !!G.play.kit.offering, scrolls: G.play.kit.list() })`);
   out.push(log);
   // 镜头表（给 Unity 的 BossIntroDirector）
-  const tables = await b.eval(`JSON.stringify([...G.play.dev.cinema.tables.values()])`);
+  const tables = await b.eval(`JSON.stringify([...G.play.dev.cinema.tables.values()].filter(t => t.name.startsWith(B.label + ' ·')))`);
   writeFileSync(`${OUT}/intro-${id}.json`, tables);
   sheet(`lord-${id}-show`, files.filter(f => /-(intro|phase|break|death)/.test(f)));
   sheet(`lord-${id}-moves`, files.filter(f => !/-(intro|phase|break|death)/.test(f)), 5);
@@ -315,6 +319,37 @@ async function main() {
         if (r !== undefined) console.log(typeof r === 'string' ? r : JSON.stringify(r, null, 1));
         const sh = opt('--shot', '');
         if (sh) { await b.eval('T.frame()'); await b.shot(sh, 85); console.log(sh); }
+        continue;
+      }
+      if (name === 'export') {
+        // 招式时间点：Unity 烘焙动作时的 <资产>.events.json 叠加表（at = 片段内归一化时刻）
+        const assets = {};
+        for (const m of ['4-1', '4-2', '4-4']) { await need(m); Object.assign(assets, await b.eval('G.play.dev.moveTable()')); }
+        writeFileSync('docs/art/ch4-move-events.json', JSON.stringify({
+          schema: 1,
+          about: '第四章雷魅、领主的招式时间轴（src/world/plateau/play/moves.ts 的 moveTable() 导出）。clips 按资产拆成 <资产>.events.json 即可交给 bake-native-anims；'
+            + 'at = 这一招（前摇 + 出手 + 收招）里的归一化时刻；moves 是秒数（windup / active / recover）、冷却、最早出现的阶段、是否霸体。',
+          assets,
+        }, null, 1) + '\n');
+        console.log(`招式表：${Object.keys(assets).length} 个资产、${Object.values(assets).reduce((n, a) => n + Object.keys(a.moves).length, 0)} 招 → docs/art/ch4-move-events.json`);
+        // 演出镜头表：Unity 的 BossIntroDirector 照这个排镜头
+        const lords = {};
+        for (const id of Object.keys(LORDS)) { const f = `${OUT}/intro-${id}.json`; if (existsSync(f)) lords[id] = JSON.parse(readFileSync(f, 'utf-8')); }
+        writeFileSync('docs/art/ch4-boss-intros.json', JSON.stringify({
+          schema: 1,
+          about: '第四章领主的登场 / 转阶段 / 死亡镜头表（src/world/plateau/play/cinema.ts，试玩脚本跑完每个领主后从 Cinema.tables 导出）。规则见 docs/level-design/chuanzang-combat-v1.md 4.0。',
+          rules: {
+            time: 'dur = 整段秒数；shots[].t0 / t1 = 这一镜在整段里的起止秒；card.at / card.dur = 名字卡出现时刻和时长',
+            blend: 'blend = 从上一镜平滑过渡的秒数（0 = 硬切到这一镜）；第一镜从玩家眼睛位姿过渡 0.5 秒',
+            land: "最后一镜 id = 'land'：玩家身后过肩机位（后 3.2 m、上 0.9 m、右 0.9 m）看着首领；最后 landDur 秒用 smootherstep 把位置、朝向、视角推到玩家眼睛（零误差交还）",
+            facePlayer: '登场开演 0.6 秒时（镜头已完全接管）把玩家视角转向首领胸口，落回时正对首领',
+            handoff: 'handoff = 落回后武器和 HUD 淡入的秒数（武器从下方 0.35 m 升起），淡入完才开打；整段期间首领无敌、玩家不受伤、输入锁定',
+            skip: '登场第二次起可按任意键跳过（localStorage ch4.introSeen 记 intro.<id>），跳过 = 从当前机位滑回眼睛 0.8–1.6 秒（0.6 + 距离 / 40，夹在 0.8–1.6）+ 同样的淡入；转阶段演出看过一次后能跳过（phase.<id>.<阶段>），死亡演出一直能跳过',
+            letterbox: '演出期间上下黑边；死亡演出开头 1.2 秒（雷泽雷神 1.4 秒）0.3 倍慢放',
+          },
+          lords,
+        }, null, 1) + '\n');
+        console.log(`镜头表：${Object.keys(lords).join(' / ')} → docs/art/ch4-boss-intros.json`);
         continue;
       }
       if (LORDS[name]) {

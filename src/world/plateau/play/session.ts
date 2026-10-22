@@ -340,7 +340,9 @@ export abstract class PlaySession implements PlayCtx {
         const x = F.x + Math.sin(a) * dist, z = F.z + Math.cos(a) * dist;
         const enc: EncounterState = { id: `dev-${kind}`, site: '', x, z, r: 30, foes: [], alerted: true, cleared: false, burrows: [], tokens: { melee: 0, pounce: 0, ranged: 0, howl: 0 } };
         const hover = kind === 'manman' ? 7 : kind === 'liangu' ? 3 : 0;
-        const f = createFoe(kind, self, new THREE.Vector3(x, self.terrain.heightAt(x, z) + hover, z), hover, MONSTER_NAMES);
+        const at = new THREE.Vector3(x, self.terrain.heightAt(x, z) + hover, z);
+        // 穷奇平时是游猎（PlayMode 里只有一只）；这里刷一只原地巡逻的，巢穴就在脚下
+        const f = kind === 'qiongqi' ? new Roamer(self, at, MONSTER_NAMES, [[x, z]], [x, z]) : createFoe(kind, self, at, hover, MONSTER_NAMES);
         f.enc = enc;
         enc.foes.push(f);
         self.foes.push(f);

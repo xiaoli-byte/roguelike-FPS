@@ -1,0 +1,1585 @@
+{
+ "schema": 1,
+ "about": "第四章雷魅、领主的招式时间轴（src/world/plateau/play/moves.ts 的 moveTable() 导出）。clips 按资产拆成 <资产>.events.json 即可交给 bake-native-anims；at = 这一招（前摇 + 出手 + 收招）里的归一化时刻；moves 是秒数（windup / active / recover）、冷却、最早出现的阶段、是否霸体。",
+ "assets": {
+  "SK_Boss_Feilian": {
+   "clips": {
+    "gust": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.312,
+      "name": "glint"
+     },
+     {
+      "at": 0.417,
+      "name": "hit"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "charge": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.172,
+      "name": "glint"
+     },
+     {
+      "at": 0.25,
+      "name": "hit"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "blades": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.462,
+      "name": "release"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "sidestep": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "tornado": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.556,
+      "name": "release"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "wheel": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.131,
+      "name": "glint"
+     },
+     {
+      "at": 0.19,
+      "name": "hit"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "stormburst": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.647,
+      "name": "glint"
+     },
+     {
+      "at": 0.69,
+      "name": "hit"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "roar": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "down": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ]
+   },
+   "moves": {
+    "gust": {
+     "name": "蓄风狂风",
+     "windup": 1,
+     "active": 0.6,
+     "recover": 0.8,
+     "cooldown": 4
+    },
+    "charge": {
+     "name": "低头冲撞",
+     "windup": 0.8,
+     "active": 1.4,
+     "recover": 1,
+     "cooldown": 3
+    },
+    "blades": {
+     "name": "风刃",
+     "windup": 0.6,
+     "active": 0.1,
+     "recover": 0.6,
+     "cooldown": 2.5
+    },
+    "sidestep": {
+     "name": "侧跃",
+     "windup": 0.1,
+     "active": 0.6,
+     "recover": 0.2,
+     "cooldown": 4
+    },
+    "tornado": {
+     "name": "龙卷风柱",
+     "windup": 1,
+     "active": 0.2,
+     "recover": 0.6,
+     "cooldown": 9,
+     "minPhase": 2
+    },
+    "wheel": {
+     "name": "回旋冲撞",
+     "windup": 0.8,
+     "active": 2.2,
+     "recover": 1.2,
+     "cooldown": 6,
+     "minPhase": 2
+    },
+    "stormburst": {
+     "name": "风雷爆",
+     "windup": 4,
+     "active": 0.3,
+     "recover": 1.5,
+     "cooldown": 14,
+     "minPhase": 3,
+     "armored": true
+    },
+    "roar": {
+     "name": "人立长嘶（演出）",
+     "windup": 0.5,
+     "active": 1.5,
+     "recover": 0.5
+    },
+    "down": {
+     "name": "珠碎 / 撞晕（侧倒）",
+     "windup": 0.4,
+     "active": 3.2,
+     "recover": 0.4
+    }
+   }
+  },
+  "SK_Boss_Huashe": {
+   "clips": {
+    "spit": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.235,
+      "name": "release"
+     },
+     {
+      "at": 0.412,
+      "name": "release"
+     },
+     {
+      "at": 0.588,
+      "name": "release"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "lunge": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.2,
+      "name": "glint"
+     },
+     {
+      "at": 0.311,
+      "name": "hit"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "wingslap": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.444,
+      "name": "hit"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "roar": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "dive": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.41,
+      "name": "glint"
+     },
+     {
+      "at": 0.492,
+      "name": "hit"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "tailsweep": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.35,
+      "name": "hit"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "rise": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "choke": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ]
+   },
+   "moves": {
+    "spit": {
+     "name": "吐水弹",
+     "windup": 0.6,
+     "active": 1.35,
+     "recover": 0.6,
+     "cooldown": 3
+    },
+    "lunge": {
+     "name": "扑岸",
+     "windup": 0.7,
+     "active": 0.35,
+     "recover": 1.2,
+     "cooldown": 4
+    },
+    "wingslap": {
+     "name": "翼拍浪",
+     "windup": 0.8,
+     "active": 0.4,
+     "recover": 0.6,
+     "cooldown": 5
+    },
+    "roar": {
+     "name": "吼叫涨水",
+     "windup": 0.6,
+     "active": 2.4,
+     "recover": 0.8,
+     "cooldown": 12,
+     "minPhase": 2,
+     "armored": true
+    },
+    "dive": {
+     "name": "潜游突袭",
+     "windup": 1.5,
+     "active": 0.35,
+     "recover": 1.2,
+     "cooldown": 7,
+     "minPhase": 2
+    },
+    "tailsweep": {
+     "name": "尾扫",
+     "windup": 0.7,
+     "active": 0.5,
+     "recover": 0.8,
+     "cooldown": 5,
+     "minPhase": 3
+    },
+    "rise": {
+     "name": "破水而出（演出）",
+     "windup": 1,
+     "active": 1.5,
+     "recover": 0.5
+    },
+    "choke": {
+     "name": "噎住（翻肚子）",
+     "windup": 0.4,
+     "active": 3.2,
+     "recover": 0.4
+    }
+   }
+  },
+  "SK_Boss_Kui": {
+   "clips": {
+    "hop": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.773,
+      "name": "land"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "leap": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.192,
+      "name": "glint"
+     },
+     {
+      "at": 0.692,
+      "name": "land"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "leapChain": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.8,
+      "name": "land"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "turnLeap": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.727,
+      "name": "land"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "knuckle": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.333,
+      "name": "step"
+     },
+     {
+      "at": 0.667,
+      "name": "step"
+     },
+     {
+      "at": 1,
+      "name": "step"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "clap": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.25,
+      "name": "glint"
+     },
+     {
+      "at": 0.429,
+      "name": "hit"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "drum": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.222,
+      "name": "beat"
+     },
+     {
+      "at": 0.389,
+      "name": "beat"
+     },
+     {
+      "at": 0.556,
+      "name": "beat"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "drum5": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.167,
+      "name": "beat"
+     },
+     {
+      "at": 0.292,
+      "name": "beat"
+     },
+     {
+      "at": 0.417,
+      "name": "beat"
+     },
+     {
+      "at": 0.542,
+      "name": "beat"
+     },
+     {
+      "at": 0.667,
+      "name": "beat"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "roar": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "rise": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "kneel": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ]
+   },
+   "moves": {
+    "hop": {
+     "name": "小跳",
+     "windup": 0.3,
+     "active": 0.55,
+     "recover": 0.25
+    },
+    "leap": {
+     "name": "大跳",
+     "windup": 0.75,
+     "active": 1.05,
+     "recover": 0.8
+    },
+    "leapChain": {
+     "name": "连环大跳",
+     "windup": 0.5,
+     "active": 0.9,
+     "recover": 0.35,
+     "minPhase": 3
+    },
+    "turnLeap": {
+     "name": "转身跳",
+     "windup": 0.3,
+     "active": 0.5,
+     "recover": 0.3
+    },
+    "knuckle": {
+     "name": "拄拳",
+     "windup": 0,
+     "active": 3.9,
+     "recover": 0
+    },
+    "clap": {
+     "name": "雷掌",
+     "windup": 0.6,
+     "active": 0.2,
+     "recover": 0.6,
+     "cooldown": 4
+    },
+    "drum": {
+     "name": "捶胸引雷",
+     "windup": 0.8,
+     "active": 1.8,
+     "recover": 1,
+     "minPhase": 2,
+     "armored": true
+    },
+    "drum5": {
+     "name": "捶胸引雷（五下）",
+     "windup": 0.8,
+     "active": 3,
+     "recover": 1,
+     "minPhase": 3,
+     "armored": true
+    },
+    "roar": {
+     "name": "吼（演出）",
+     "windup": 0.5,
+     "active": 1.5,
+     "recover": 0.5
+    },
+    "rise": {
+     "name": "从残鼓里长出来（演出）",
+     "windup": 2.2,
+     "active": 0.5,
+     "recover": 0.5
+    },
+    "kneel": {
+     "name": "破鼓（单膝跪地）",
+     "windup": 0.4,
+     "active": 3.2,
+     "recover": 0.4
+    }
+   }
+  },
+  "SK_Enemy_Aoyin": {
+   "clips": {
+    "stampede": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.144,
+      "name": "glint"
+     },
+     {
+      "at": 0.192,
+      "name": "hit"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "gore": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.367,
+      "name": "hit"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "slam": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.426,
+      "name": "glint"
+     },
+     {
+      "at": 0.519,
+      "name": "hit"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ]
+   },
+   "moves": {
+    "stampede": {
+     "name": "刨地 → 领群踩踏",
+     "windup": 1,
+     "active": 3,
+     "recover": 1.2,
+     "cooldown": 5
+    },
+    "gore": {
+     "name": "四角挑",
+     "windup": 0.55,
+     "active": 0.25,
+     "recover": 0.7,
+     "cooldown": 1.6
+    },
+    "slam": {
+     "name": "雷球砸地",
+     "windup": 1.4,
+     "active": 0.3,
+     "recover": 1
+    }
+   }
+  },
+  "SK_Enemy_Dijiang": {
+   "clips": {
+    "swell": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.611,
+      "name": "glint"
+     },
+     {
+      "at": 0.889,
+      "name": "hit"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ]
+   },
+   "moves": {
+    "swell": {
+     "name": "球雷",
+     "windup": 0.8,
+     "active": 0.1,
+     "recover": 0
+    }
+   }
+  },
+  "SK_Enemy_Jufu": {
+   "clips": {
+    "climb": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.75,
+      "name": "land"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "throw": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.526,
+      "name": "release"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "shove": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.36,
+      "name": "hit"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "fall": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.348,
+      "name": "land"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ]
+   },
+   "moves": {
+    "climb": {
+     "name": "抢高",
+     "windup": 0.5,
+     "active": 1,
+     "recover": 0.5
+    },
+    "throw": {
+     "name": "远投",
+     "windup": 1,
+     "active": 0.1,
+     "recover": 0.8,
+     "cooldown": 3
+    },
+    "shove": {
+     "name": "推开",
+     "windup": 0.45,
+     "active": 0.2,
+     "recover": 0.6,
+     "cooldown": 2
+    },
+    "fall": {
+     "name": "摔下高处",
+     "windup": 0,
+     "active": 0.8,
+     "recover": 1.5
+    }
+   }
+  },
+  "SK_Enemy_Manman": {
+   "clips": {
+    "sweep": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.267,
+      "name": "hit"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "bolt": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.5,
+      "name": "release"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ]
+   },
+   "moves": {
+    "sweep": {
+     "name": "电弧横扫",
+     "windup": 0.8,
+     "active": 1.2,
+     "recover": 1,
+     "cooldown": 6
+    },
+    "bolt": {
+     "name": "电弹",
+     "windup": 0.4,
+     "active": 0.1,
+     "recover": 0.3,
+     "cooldown": 3
+    }
+   }
+  },
+  "SK_Enemy_Marmot": {
+   "clips": {
+    "scream": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.571,
+      "name": "shout"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "bite": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.304,
+      "name": "hit"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "burrow": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.135,
+      "name": "hide"
+     },
+     {
+      "at": 0.784,
+      "name": "emerge"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ]
+   },
+   "moves": {
+    "scream": {
+     "name": "尖啸",
+     "windup": 1.2,
+     "active": 0.3,
+     "recover": 0.6
+    },
+    "bite": {
+     "name": "扑咬",
+     "windup": 0.35,
+     "active": 0.2,
+     "recover": 0.6,
+     "cooldown": 1.2
+    },
+    "burrow": {
+     "name": "钻洞",
+     "windup": 0.25,
+     "active": 1.2,
+     "recover": 0.4,
+     "cooldown": 6
+    }
+   }
+  },
+  "SK_Enemy_Qiongqi": {
+   "clips": {
+    "glide": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.145,
+      "name": "glint"
+     },
+     {
+      "at": 0.226,
+      "name": "hit"
+     },
+     {
+      "at": 0.742,
+      "name": "land"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "spin": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.294,
+      "name": "hit"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "claw": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.31,
+      "name": "hit1"
+     },
+     {
+      "at": 0.483,
+      "name": "hit2"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "absorb": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.444,
+      "name": "eat"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ]
+   },
+   "moves": {
+    "glide": {
+     "name": "掠空扑杀",
+     "windup": 0.7,
+     "active": 1.6,
+     "recover": 0.8,
+     "cooldown": 4
+    },
+    "spin": {
+     "name": "翼刃雷旋",
+     "windup": 0.5,
+     "active": 0.4,
+     "recover": 0.8,
+     "cooldown": 3
+    },
+    "claw": {
+     "name": "爪击",
+     "windup": 0.35,
+     "active": 0.5,
+     "recover": 0.6,
+     "cooldown": 1.2
+    },
+    "absorb": {
+     "name": "吞雷",
+     "windup": 0.8,
+     "active": 0.6,
+     "recover": 0.4
+    }
+   }
+  },
+  "SK_Enemy_Tiangou": {
+   "clips": {
+    "howl": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.5,
+      "name": "lock"
+     },
+     {
+      "at": 0.75,
+      "name": "strike"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "pounce": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.214,
+      "name": "hit"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ]
+   },
+   "moves": {
+    "howl": {
+     "name": "雷吠",
+     "windup": 1.2,
+     "active": 0.6,
+     "recover": 0.6,
+     "cooldown": 7
+    },
+    "pounce": {
+     "name": "扑咬",
+     "windup": 0.3,
+     "active": 0.4,
+     "recover": 0.7,
+     "cooldown": 2.5
+    }
+   }
+  },
+  "SM_EnemyPart_LianguCore": {
+   "clips": {
+    "beat": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.208,
+      "name": "beat"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "clap": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.4,
+      "name": "hit"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "orb": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.222,
+      "name": "release"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ]
+   },
+   "moves": {
+    "beat": {
+     "name": "鼓点",
+     "windup": 0.25,
+     "active": 0.1,
+     "recover": 0.85
+    },
+    "clap": {
+     "name": "惊雷",
+     "windup": 0.8,
+     "active": 0.2,
+     "recover": 1,
+     "cooldown": 3
+    },
+    "orb": {
+     "name": "雷心弹",
+     "windup": 0.4,
+     "active": 0.1,
+     "recover": 1.3
+    }
+   }
+  },
+  "SK_Boss_Dae": {
+   "clips": {
+    "dive": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.298,
+      "name": "glint"
+     },
+     {
+      "at": 0.619,
+      "name": "grab"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "diveChain": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.288,
+      "name": "glint"
+     },
+     {
+      "at": 0.731,
+      "name": "grab"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "feathers": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.7,
+      "name": "land"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "flyTo": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "perch": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.09,
+      "name": "volley"
+     },
+     {
+      "at": 0.388,
+      "name": "volley"
+     },
+     {
+      "at": 0.687,
+      "name": "volley"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "shake": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.2,
+      "name": "jolt"
+     },
+     {
+      "at": 0.333,
+      "name": "jolt"
+     },
+     {
+      "at": 0.467,
+      "name": "jolt"
+     },
+     {
+      "at": 0.6,
+      "name": "jolt"
+     },
+     {
+      "at": 0.733,
+      "name": "jolt"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "nestGust": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "grab": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.769,
+      "name": "drop"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "fall": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ]
+   },
+   "moves": {
+    "dive": {
+     "name": "俯冲抓人",
+     "windup": 1.5,
+     "active": 1.2,
+     "recover": 1.5,
+     "cooldown": 3
+    },
+    "diveChain": {
+     "name": "连环俯冲",
+     "windup": 1,
+     "active": 1,
+     "recover": 0.6,
+     "minPhase": 3
+    },
+    "feathers": {
+     "name": "羽刃雨",
+     "windup": 0.8,
+     "active": 0.6,
+     "recover": 0.6,
+     "cooldown": 4
+    },
+    "flyTo": {
+     "name": "飞向落脚点",
+     "windup": 0,
+     "active": 6,
+     "recover": 0
+    },
+    "perch": {
+     "name": "停碉楼俯瞰（放羽刃）",
+     "windup": 0.3,
+     "active": 6,
+     "recover": 0.4,
+     "cooldown": 14
+    },
+    "shake": {
+     "name": "落桥摇链",
+     "windup": 1,
+     "active": 4,
+     "recover": 1,
+     "cooldown": 10,
+     "minPhase": 2
+    },
+    "nestGust": {
+     "name": "巢中扇风",
+     "windup": 1,
+     "active": 1.5,
+     "recover": 0.8,
+     "cooldown": 12,
+     "minPhase": 3
+    },
+    "grab": {
+     "name": "擒拿（带上天再扔下）",
+     "windup": 0,
+     "active": 2,
+     "recover": 0.6
+    },
+    "fall": {
+     "name": "坠江 / 缠翼坠地（扑腾）",
+     "windup": 0.8,
+     "active": 3.6,
+     "recover": 0.6
+    }
+   }
+  },
+  "SK_Boss_Leize": {
+   "clips": {
+    "bellyDrum": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.279,
+      "name": "glint"
+     },
+     {
+      "at": 0.353,
+      "name": "beat"
+     },
+     {
+      "at": 0.529,
+      "name": "beat"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "clawSlam": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.278,
+      "name": "glint"
+     },
+     {
+      "at": 0.37,
+      "name": "hit"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "breath": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.278,
+      "name": "glint"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "sweep": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.36,
+      "name": "hit"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "tripleDrum": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 0.188,
+      "name": "glint"
+     },
+     {
+      "at": 0.25,
+      "name": "beat"
+     },
+     {
+      "at": 0.4,
+      "name": "beat"
+     },
+     {
+      "at": 0.55,
+      "name": "beat"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "skyArray": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "rise": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ],
+    "slump": [
+     {
+      "at": 0,
+      "name": "warn"
+     },
+     {
+      "at": 1,
+      "name": "end"
+     }
+    ]
+   },
+   "moves": {
+    "bellyDrum": {
+     "name": "拍腹雷鸣",
+     "windup": 1.2,
+     "active": 1.2,
+     "recover": 1,
+     "cooldown": 6
+    },
+    "clawSlam": {
+     "name": "龙爪拍击",
+     "windup": 1,
+     "active": 0.3,
+     "recover": 1.4,
+     "cooldown": 4
+    },
+    "breath": {
+     "name": "雷息",
+     "windup": 1.5,
+     "active": 2,
+     "recover": 1,
+     "cooldown": 9,
+     "armored": true
+    },
+    "sweep": {
+     "name": "双爪横扫",
+     "windup": 0.9,
+     "active": 0.6,
+     "recover": 1,
+     "cooldown": 6,
+     "minPhase": 2
+    },
+    "tripleDrum": {
+     "name": "连环拍腹",
+     "windup": 1,
+     "active": 1.8,
+     "recover": 1.2,
+     "cooldown": 10,
+     "minPhase": 3,
+     "armored": true
+    },
+    "skyArray": {
+     "name": "天雷阵",
+     "windup": 2,
+     "active": 4,
+     "recover": 1,
+     "cooldown": 16,
+     "minPhase": 3,
+     "armored": true
+    },
+    "rise": {
+     "name": "从漩涡里升起（演出）",
+     "windup": 2.4,
+     "active": 1,
+     "recover": 0.5
+    },
+    "slump": {
+     "name": "神颓（神面磕在湖岸上）",
+     "windup": 0.6,
+     "active": 4,
+     "recover": 0.6
+    }
+   }
+  }
+ }
+}
