@@ -333,6 +333,21 @@ namespace Spiritfire.Game.Testing
             Combat.DamageEnemy(l.Health, info);
         }
 
+        /// <summary>从 eye 往 target 打一枪（子弹层）：第一个碰到的不是锁扣、也不是玩家自己时返回它的名字，打得到锁扣返回 null</summary>
+        string ShotBlocker(Vector3 eyePos, Vector3 target, QilinLock l)
+        {
+            var d = target - eyePos;
+            var hits = Physics.RaycastAll(eyePos, d.normalized, d.magnitude + 0.5f, Layers.ShotMask, QueryTriggerInteraction.Ignore);
+            System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+            foreach (var h in hits)
+            {
+                if (!h.collider || h.collider.transform.IsChildOf(motor.transform)) continue;
+                if (l && h.collider.transform.IsChildOf(l.transform)) return null;
+                return $"{h.collider.name}（{h.distance:F1} m）";
+            }
+            return "什么都没打到";
+        }
+
         IEnumerator WastedLock()
         {
             yield return WaitIdle();
@@ -381,7 +396,7 @@ namespace Spiritfire.Game.Testing
                 {
                     nextMoveAt = Time.time + 6f;
                     var q = arena.RandomPoint(3f);
-                    if (NavMesh.SamplePosition(q, out var qh, 3f, NavMesh.AllAreas)) Place(qh.position);
+                    if (NavMesh.SamplePosition(q, out var qh, 3f, LavaField.WalkerFilter())) Place(qh.position);
                 }
                 Aim(motor, eye, boss.BodyCenter);
                 var p = boss.transform.position;
@@ -451,7 +466,41 @@ namespace Spiritfire.Game.Testing
             if (boss.Summons.TotalSpawned - sum0 + boss.Summons.PendingCount < 1) Fail("饮熔时炉口没有钻出炭童");
             Shot(weapons.eye, "qilin_drink");
             if (!l || !l.Alive) yield break;
-            Break(l);
+            // 机器人真打锁扣：站到那个象限的跑道内沿（象限中线偏 35°、离圆心 17 m，隔开饮熔的麒麟和柱子），抬头瞄锁芯按住开火；
+            // 2.6 s 没打碎就经伤害管线补一下（饮熔窗口 4 s，鼎角还要 0.55 s 才砸下来）
+            var core = l.CoreTransform ? l.CoreTransform : l.transform;
+            if (f)
+            {
+                var stand = f.Point(f.QuadrantYaw(q) + 35f, 17f);
+                if (NavMesh.SamplePosition(stand, out var sh, 3f, LavaField.WalkerFilter())) stand = sh.position;
+                Place(stand);
+            }
+            yield return null;
+            Aim(motor, eye, core.position);
+            float lock0 = l.Health.health, shoot0 = Time.time;
+            string blocker = ShotBlocker(eye.position, core.position, l);
+            bool shotTaken = false;
+            while (l.Alive && Time.time - shoot0 < 2.6f)
+            {
+                // 一帧按一帧松：连发枪照样按射速打，半自动的也一下一下扣得动
+                weapons.testFire = !weapons.testFire;
+                Aim(motor, eye, core.position);
+                KeepPlayerAlive();
+                if (!shotTaken && Time.time - shoot0 > 0.3f)
+                {
+                    shotTaken = true;
+                    Shot(weapons.eye, "qilin_lock_shoot");
+                }
+                yield return null;
+            }
+            weapons.testFire = false;
+            bool shotDown = !l.Alive;
+            float dealt = lock0 - (l.Alive ? l.Health.health : 0);
+            var toCore = core.position - eye.position;
+            Line($"机器人打锁扣 {q}：离地 {core.position.y - (f ? f.FloorY : 0):F1} m、距离 {toCore.magnitude:F1} m、仰角 {Mathf.Asin(toCore.y / Mathf.Max(0.01f, toCore.magnitude)) * Mathf.Rad2Deg:F0}°，" +
+                 $"视线 {blocker ?? "通"}，{(shotDown ? $"✓ {Time.time - shoot0:F2} s 打碎（{lock0:F0} 血）" : $"2.6 s 打掉 {dealt:F0} / {lock0:F0}，经伤害管线补碎")}");
+            if (!shotDown && dealt <= 0) Fail($"机器人打不到 12 m 高的锁扣（视线：{blocker ?? "通"}）");
+            if (!shotDown) Break(l);
             float s0 = Time.time;
             while (!boss.Staggered && Time.time - s0 < QilinCauldron.CornerDrop + 1.5f) yield return null;
             bool weakBody = boss.ZoneWeak("body"), weakChest = boss.ZoneWeak("chest");
@@ -660,7 +709,7 @@ namespace Spiritfire.Game.Testing
             fwd.y = 0;
             fwd = fwd.sqrMagnitude > 1e-4f ? fwd.normalized : Vector3.forward;
             var spot = arena.Clamp(boss.transform.position + fwd * distance, 2f);
-            if (NavMesh.SamplePosition(spot, out var hit, 4f, NavMesh.AllAreas)) spot = hit.position;
+            if (NavMesh.SamplePosition(spot, out var hit, 4f, LavaField.WalkerFilter())) spot = hit.position;
             Place(spot);
             Aim(motor, eye, boss.BodyCenter);
         }
