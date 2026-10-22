@@ -18,7 +18,8 @@ namespace Spiritfire.Art.Editor
     public static class Playtest
     {
         const string Key = "Spiritfire.Playtest.Id", StartKey = "Spiritfire.Playtest.Start", BgKey = "Spiritfire.Playtest.RunInBackground",
-            EnteredKey = "Spiritfire.Playtest.Entered", SuiteKey = "Spiritfire.Playtest.Suite", SceneKey = "Spiritfire.Playtest.Scene";
+            EnteredKey = "Spiritfire.Playtest.Entered", SuiteKey = "Spiritfire.Playtest.Suite", SceneKey = "Spiritfire.Playtest.Scene",
+            LockedKey = "Spiritfire.Playtest.ReloadLocked";
         static readonly string Dir = Path.Combine(Directory.GetCurrentDirectory(), "Library", "SpiritfireBridge");
         static string ResultPath => Path.Combine(Dir, "playtest-result.txt");
 
@@ -78,6 +79,13 @@ namespace Spiritfire.Art.Editor
                 SessionState.SetBool(EnteredKey, true);
                 SessionState.SetBool(BgKey, PlayerSettings.runInBackground);
                 Application.runInBackground = true;
+                // 别的会话 / 代理在测试期间改了脚本也不导入、不重载程序集（重载会杀掉 PlaytestRunner）：退出 Play 后再放开
+                if (!SessionState.GetBool(LockedKey, false))
+                {
+                    AssetDatabase.DisallowAutoRefresh();
+                    EditorApplication.LockReloadAssemblies();
+                    SessionState.SetBool(LockedKey, true);
+                }
                 PlaytestRunner.Done = false;
                 var go = new GameObject("Playtest Runner");
                 var runner = go.AddComponent<PlaytestRunner>();
@@ -88,12 +96,22 @@ namespace Spiritfire.Art.Editor
             else if (state == PlayModeStateChange.EnteredEditMode)
             {
                 PlayerSettings.runInBackground = SessionState.GetBool(BgKey, false);
+                Unlock();
                 SessionState.EraseString(Key);
                 var lines = File.Exists(ResultPath) ? new List<string>(File.ReadAllLines(ResultPath)) : new List<string> { "没有结果（超时或 Play 模式被中断）" };
                 string status = lines.Count > 0 && lines[0] == "全部通过" ? "ok" : "playtest-failed";
                 double secs = EditorApplication.timeSinceStartup - SessionState.GetFloat(StartKey, 0);
                 PipelineBridge.Respond(id, "playtest", status, null, lines, secs, Extra());
             }
+        }
+
+        /// <summary>放开测试期间锁住的自动刷新和程序集重载（攒下的脚本改动这时才导入、重编译）</summary>
+        static void Unlock()
+        {
+            if (!SessionState.GetBool(LockedKey, false)) return;
+            SessionState.SetBool(LockedKey, false);
+            EditorApplication.UnlockReloadAssemblies();
+            AssetDatabase.AllowAutoRefresh();
         }
 
         static JObject Extra() => new()
