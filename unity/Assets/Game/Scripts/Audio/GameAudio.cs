@@ -84,7 +84,10 @@ namespace Spiritfire.Game
 
         static GameAudio Get()
         {
-            if (instance || failed || !Application.isPlaying) return instance;
+            if (instance) return instance;
+            // 不在 Play 模式（EditMode 测试）：返回真 null。Play 模式退出后静态字段还指着已销毁的对象（关了进 Play 模式的域重载时），
+            // 原样返回它的话 Get()?.X 会绕过 Unity 的判空、在销毁的对象上调用，抛 MissingReferenceException
+            if (failed || !Application.isPlaying) return null;
             var go = new GameObject("Game Audio");
             DontDestroyOnLoad(go);
             instance = go.AddComponent<GameAudio>();
