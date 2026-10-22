@@ -108,7 +108,7 @@ namespace Spiritfire.Game
             if (clearChestPoint) p = clearChestPoint.position;
             else if (encounter && encounter.rewardPoint) p = encounter.rewardPoint.position + encounter.rewardPoint.right * 3f;
             else p = transform.position;
-            if (NavMesh.SamplePosition(p, out var hit, 4f, NavMesh.AllAreas)) p = hit.position;
+            if (NavMesh.SamplePosition(p, out var hit, 4f, LavaField.WalkerFilter())) p = hit.position;
             var pv = PlayerVitals.Instance;
             var face = pv ? pv.transform.position : p + Vector3.back;
             ClearChest = Chest.Spawn(p, reward, face, ChestTier.Normal);

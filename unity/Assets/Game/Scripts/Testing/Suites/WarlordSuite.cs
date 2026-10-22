@@ -25,9 +25,9 @@ namespace Spiritfire.Game.Testing
     public sealed class WarlordSuite : PlaytestSuite
     {
         /// <summary>
-        /// 只查人形代理的导航网格：3-3 的熔岩生物网格（LavaSwimmer）铺满了整张图，不带代理类型的查询会采到它，路径就成了「不完整」
+        /// 只查人形代理的导航网格（LavaField.WalkerFilter）：3-3 还有火鼍的 LavaSwimmer 网格，不带代理类型的查询会采到它，路径就成了「不完整」
         /// </summary>
-        static NavMeshQueryFilter Humanoid => new() { agentTypeID = NavMesh.GetSettingsByIndex(0).agentTypeID, areaMask = NavMesh.AllAreas };
+        static NavMeshQueryFilter Humanoid => LavaField.WalkerFilter();
 
         public override string Id => "boss-warlord";
         /// <summary>3-3 铸范大坊（与编辑器里 Level_3_3.ScenePath 相同）</summary>
@@ -348,6 +348,13 @@ namespace Spiritfire.Game.Testing
             if (entries < 1) Fail("站在被淹的渠岸上没有被熔岩托回");
             float r0 = Time.time;
             while (channels.Flooding && Time.time - r0 < s.LastHold + channels.fallTime + 4f)
+            {
+                KeepPlayerAlive();
+                yield return null;
+            }
+            // Flooding 在熔岩面落回「基准面 + 挖洞阈值」时就为 false，熔岩面还要再落一段（fallTime）才回到基准面、渠岸才干
+            float f0 = Time.time;
+            while (channels.surge.Any(v => v && v.Level > v.BaseLevel + 0.02f) && Time.time - f0 < channels.fallTime + 1f)
             {
                 KeepPlayerAlive();
                 yield return null;
