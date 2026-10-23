@@ -747,24 +747,38 @@ namespace Spiritfire.Game.Testing
                 yield break;
             }
             var h = marker.Info;
+            var water = marker.water;
             if (vitals.Dead) vitals.Revive();
             vitals.Heal(99999);
             var stand = Ring(30f, h.MidRing);
             Place(stand);
             yield return new WaitForSeconds(0.8f);
             int drowned0 = WaterVolume.Drowned, rec0 = safe.Recoveries;
-            float hp0 = vitals.health;
+            float hp0 = vitals.health, sh0 = vitals.shield;
+            // 扣血按受击事件记（护盾 + 生命一起算）；顺带记下落水前玩家身上的无敌 / 减伤 / 受伤修饰器，扣不到血时好查
+            float taken = 0;
+            int hitEvents = 0;
+            void OnHit(in PlayerHitEvent e)
+            {
+                taken += e.toShield + e.toHp;
+                hitEvents++;
+            }
+            string state = $"落水前：无敌 {(vitals.Invulnerable ? $"是（还剩 {vitals.invulnerableUntil - Time.time:F1} s）" : "否")}，减伤 {vitals.stats.Get(Stat.DamageReduction):P0}，受伤修饰器 {PlayerVitals.Incoming.Count} 个";
+            GameEvents.PlayerHit += OnHit;
             var over = h.Point(30f, h.radius * 0.5f);
             over.y = h.waterY + 0.4f;
             Place(over);
             float t0 = Time.time;
             while (WaterVolume.Drowned == drowned0 && Time.time - t0 < 3f) yield return null;
             yield return new WaitForSeconds(0.3f);
+            GameEvents.PlayerHit -= OnHit;
             var after = motor.transform.position;
             bool back = h.Distance(after) > h.radius;
-            Line($"冰窟落水：托回 {(WaterVolume.Drowned > drowned0 ? "✓" : "✗")}（SafeGround +{safe.Recoveries - rec0}），扣血 {hp0 - vitals.health:F0}，回到 {At(after)}（{(back ? "环台上 ✓" : "还在冰窟上 ✗")}）");
+            float lost = hp0 + sh0 - vitals.health - vitals.shield;
+            Line($"冰窟落水：托回 {(WaterVolume.Drowned > drowned0 ? "✓" : "✗")}（SafeGround +{safe.Recoveries - rec0}），受击 {hitEvents} 次共 {taken:F0}（生命 + 护盾少了 {lost:F0}，" +
+                 $"应为最大生命的 {(water ? water.drownBurst : 0):P0} = {vitals.MaxHealth * (water ? water.drownBurst : 0):F0}），回到 {At(after)}（{(back ? "环台上 ✓" : "还在冰窟上 ✗")}）；{state}");
             if (WaterVolume.Drowned == drowned0) Fail("掉进冰窟的深水没有托回");
-            if (!(vitals.health < hp0)) Fail("掉进冰窟没有扣血");
+            if (!(taken > 0) && !(lost > 0.5f)) Fail($"掉进冰窟没有扣血（{state}）");
             if (!back) Fail("托回点还在冰窟上空");
         }
 
