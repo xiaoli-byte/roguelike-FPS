@@ -188,13 +188,17 @@ namespace Spiritfire.Art.Editor.Levels
         }
 
         /// <summary>
-        /// 熔岩生物（火鼍，EN3b）的导航网格：LavaSwimmer 代理类型（半径 0.9 m），只收集场上熔岩的范围（外扩 4 m），
+        /// 熔岩生物（火鼍，EN3b）的导航网格：LavaSwimmer 代理类型（半径 0.9 m），只收集场上熔岩的范围（外扩 4 m，熔岩面下 depth + 2 m 到上 3 m），
         /// 默认区域 Walkable，熔岩由 PlaceLava 放的 NavMeshModifierVolume 标成 Lava——火鼍的 agent 只开 Lava 区（<see cref="LavaField.MakeSwimmer"/>），
-        /// 所以只在熔岩里游，岸就是它的边界。存成 {dir}/NavMesh_{name}_LavaSwimmer.asset。
-        /// 最高的 Lava 区顶（熔岩面 + <see cref="LavaTuning.StandRise"/>）往上 0.2 m 起烘焙时临时盖一层 Not Walkable：墩顶、堤面、湖岸这些干地不进这张网格——
-        /// 它们对只走 Lava 区的火鼍没用，烘进去反而和人形网格叠在一起，让不带过滤的导航查询落错网格（同一高度的平地熔岩条带仍会带一圈岸，
-        /// 所以验收 / 站位的查询另外都带人形过滤 <see cref="LavaField.WalkerFilter"/>）。
-        /// 场上没有熔岩 / 工程里没有 LavaSwimmer 代理类型时跳过，返回 null。要在 <see cref="BakeNavMesh"/> 之后调用
+        /// 所以只在熔岩里游，岸就是它的边界。存成 {dir}/NavMesh_{name}_LavaSwimmer.asset，挂在一个 NavMeshSurface 上随场景加载。
+        /// <para>
+        /// 干地：墩顶、堤面、湖岸对只走 Lava 区的火鼍没用，烘进去反而和人形网格叠在一起，让不带过滤的导航查询落错网格
+        /// （验收 / 站位的查询都带人形过滤 <see cref="LavaField.WalkerFilter"/>，这里是第二道）。Unity 对「封顶」的处理随场景不同
+        /// （Not Walkable 修改体积按代理的站立空间判；压低范围顶会连熔岩面高度的平地一起丢），所以几种封法都烘一遍，
+        /// 挑「熔岩覆盖不比不封顶少、留在网格上的干地探针最少」的那种（见 <see cref="SwimmerCandidates"/>），结果写一行到 Console。
+        /// </para>
+        /// 数据用 NavMeshBuilder 直接烘（<see cref="BuildSwimmerData"/>；NavMeshSurface.BuildNavMesh 在 3-4 上烘出过整张空网格）。
+        /// 场上没有熔岩 / 工程里没有 LavaSwimmer 代理类型时跳过，返回 null。要在 <see cref="BakeNavMesh"/> 之后调用（干地探针取自人形网格）
         /// </summary>
         public static NavMeshSurface BakeLavaNavMesh(string dir, string name, Transform parent)
         {
@@ -206,57 +210,183 @@ namespace Spiritfire.Art.Editor.Levels
                 Debug.LogWarning($"[Level] 没有 NavMesh 代理类型「{LavaField.SwimmerAgentName}」（ProjectSettings/NavMeshAreas.asset 改了要重启编辑器）：不烘熔岩生物的导航网格");
                 return null;
             }
+            Bounds full = default;
             bool first = true;
-            var bounds = new Bounds();
             float lavaTop = float.MinValue;
             foreach (var v in vols)
             {
                 var b = v.Body;
                 var rect = b.WorldRect;
-                float lo = b.level - b.depth - 2f, hi = b.level + LavaTuning.StandRise + 1f;
+                float lo = b.level - b.depth - 2f, hi = b.level + 3f + Mathf.Max(0, v.tide.enabled ? v.tide.height : 0);
                 lavaTop = Mathf.Max(lavaTop, b.level + LavaTuning.StandRise);
                 var vb = new Bounds(new Vector3(rect.center.x, (lo + hi) * 0.5f, rect.center.y), new Vector3(rect.width, hi - lo, rect.height));
-                if (first) bounds = vb;
-                else bounds.Encapsulate(vb);
+                if (first) full = vb;
+                else full.Encapsulate(vb);
                 first = false;
             }
-            bounds.Expand(new Vector3(8, 0, 8));
-            // 干地封顶：最高的 Lava 区顶上 0.2 m 起整层标 Not Walkable（临时体，只在这次烘焙里；人形网格已经烘好了，不受影响）。
-            // 烘焙范围在 Lava 区顶上再留 1 m，碰到范围顶被截平的地面 / 体块也落在这一层里，不会在顶上拼出一片假平地
-            int notWalkable = NavMesh.GetAreaFromName("Not Walkable");
-            GameObject cap = null;
-            if (notWalkable >= 0)
-            {
-                float capLo = lavaTop + 0.2f, capHi = bounds.max.y + 2f;
-                cap = new GameObject("Swimmer Dry Cap (bake only)");
-                cap.transform.position = new Vector3(bounds.center.x, (capLo + capHi) * 0.5f, bounds.center.z);
-                var mod = cap.AddComponent<NavMeshModifierVolume>();
-                mod.area = notWalkable;
-                mod.center = Vector3.zero;
-                mod.size = new Vector3(bounds.size.x + 4f, capHi - capLo, bounds.size.z + 4f);
-            }
+            full.Expand(new Vector3(8, 0, 8));
+
             var go = new GameObject("NavMesh (LavaSwimmer)");
             go.transform.SetParent(parent, false);
-            go.transform.position = bounds.center;
             var nav = go.AddComponent<NavMeshSurface>();
             nav.agentTypeID = type.Value;
             nav.collectObjects = CollectObjects.Volume;
-            nav.center = Vector3.zero;
-            nav.size = bounds.size;
             nav.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
             int fp = LayerMask.NameToLayer(ShowcaseSceneBuilder.FirstPersonLayer), ch = LayerMask.NameToLayer(ShowcaseSceneBuilder.CharacterLayer);
             nav.layerMask = ~((fp >= 0 ? 1 << fp : 0) | (ch >= 0 ? 1 << ch : 0));
             nav.defaultArea = 0;
-            try
+
+            var dry = DryProbes(full, lavaTop);
+            void Bake(SwimmerBake c)
             {
-                nav.BuildNavMesh();
+                go.transform.position = c.bounds.center;
+                nav.center = Vector3.zero;
+                nav.size = c.bounds.size;
+                var data = BuildSwimmerData(type.Value, c.bounds, nav.layerMask, c.capFrom);
+                if (!data) return;
+                data.name = go.name;
+                nav.RemoveData();
+                nav.navMeshData = data;
+                if (nav.isActiveAndEnabled) nav.AddData();
             }
-            finally
+            (int lava, int dry) Score() => (SwimmerCovered(vols, type.Value), SwimmerOnDry(dry, type.Value));
+
+            var cands = SwimmerCandidates(full, lavaTop, NavMesh.GetSettingsByID(type.Value).agentHeight);
+            var best = cands[0];
+            Bake(best);
+            var bestScore = Score();
+            var log = new List<string> { $"{best.label} {bestScore.lava}/{vols.Length}·{bestScore.dry}" };
+            for (int i = 1; i < cands.Count; i++)
             {
-                if (cap) Object.DestroyImmediate(cap);
+                Bake(cands[i]);
+                var sc = Score();
+                log.Add($"{cands[i].label} {sc.lava}/{vols.Length}·{sc.dry}");
+                if (sc.lava >= bestScore.lava && (sc.lava > bestScore.lava || sc.dry < bestScore.dry))
+                {
+                    best = cands[i];
+                    bestScore = sc;
+                }
             }
+            if (best.label != cands[cands.Count - 1].label) Bake(best);
+            string summary = $"[Level] {name} 火鼍网格：用「{best.label}」——熔岩 {bestScore.lava}/{vols.Length} 片采得到，干地探针 {bestScore.dry}/{dry.Count} 处还在网格上" +
+                             $"（各种封法 熔岩·干地：{string.Join("；", log)}）";
+            if (bestScore.lava < vols.Length || bestScore.dry > 0) Debug.LogWarning(summary);
+            else Debug.Log(summary);
             if (nav.navMeshData) SaveAsset(nav.navMeshData, $"{dir}/NavMesh_{name}_LavaSwimmer.asset");
             return nav;
+        }
+
+        /// <summary>一种火鼍网格的烘法：范围 + 从哪个高度起整层 Not Walkable（NaN = 不封）</summary>
+        readonly struct SwimmerBake
+        {
+            public readonly string label;
+            public readonly Bounds bounds;
+            public readonly float capFrom;
+
+            public SwimmerBake(string label, Bounds bounds, float capFrom)
+            {
+                this.label = label;
+                this.bounds = bounds;
+                this.capFrom = capFrom;
+            }
+        }
+
+        /// <summary>
+        /// 候选烘法，第一种是不封顶（基准：熔岩覆盖不能比它少）；另外三种：站立空间封顶（Lava 区顶 + 身高 + 0.1 m 起 Not Walkable）、
+        /// 脚下封顶（Lava 区顶 + 0.2 m 起）、压低范围顶（范围顶 = Lava 区顶 + 0.05 m）
+        /// </summary>
+        static List<SwimmerBake> SwimmerCandidates(Bounds full, float lavaTop, float agentH)
+        {
+            var wet = new Bounds();
+            wet.SetMinMax(full.min, new Vector3(full.max.x, lavaTop + 0.05f, full.max.z));
+            return new List<SwimmerBake>
+            {
+                new("不封顶", full, float.NaN),
+                new("站立空间封顶", full, lavaTop + agentH + 0.1f),
+                new("脚下封顶", full, lavaTop + 0.2f),
+                new("压低范围顶", wet, float.NaN),
+            };
+        }
+
+        /// <summary>
+        /// 熔岩生物网格的数据：范围 world（世界坐标、不转）里的物理碰撞体（defaultArea Walkable）+ 场上作用于这个代理的 NavMeshModifierVolume
+        /// （PlaceLava 放的 Lava 区；同 NavMeshSurface.AppendModifierVolumes）+ 可选的封顶（capFrom 起到范围顶上 2 m 整层 Not Walkable），按代理类型自己的设置烘
+        /// </summary>
+        static NavMeshData BuildSwimmerData(int agentType, Bounds world, int layerMask, float capFrom)
+        {
+            var settings = NavMesh.GetSettingsByID(agentType);
+            var sources = new List<NavMeshBuildSource>();
+            UnityEngine.AI.NavMeshBuilder.CollectSources(world, layerMask, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>(), sources);
+            foreach (var m in NavMeshModifierVolume.activeModifiers)
+            {
+                if (!m || (layerMask & (1 << m.gameObject.layer)) == 0 || !m.AffectsAgentType(agentType)) continue;
+                var scale = m.transform.lossyScale;
+                sources.Add(new NavMeshBuildSource
+                {
+                    shape = NavMeshBuildSourceShape.ModifierBox,
+                    transform = Matrix4x4.TRS(m.transform.TransformPoint(m.center), m.transform.rotation, Vector3.one),
+                    size = new Vector3(m.size.x * Mathf.Abs(scale.x), m.size.y * Mathf.Abs(scale.y), m.size.z * Mathf.Abs(scale.z)),
+                    area = m.area,
+                });
+            }
+            int notWalkable = NavMesh.GetAreaFromName("Not Walkable");
+            if (!float.IsNaN(capFrom) && notWalkable >= 0)
+            {
+                float top = world.max.y + 2f;
+                sources.Add(new NavMeshBuildSource
+                {
+                    shape = NavMeshBuildSourceShape.ModifierBox,
+                    transform = Matrix4x4.TRS(new Vector3(world.center.x, (capFrom + top) * 0.5f, world.center.z), Quaternion.identity, Vector3.one),
+                    size = new Vector3(world.size.x + 4f, top - capFrom, world.size.z + 4f),
+                    area = notWalkable,
+                });
+            }
+            return UnityEngine.AI.NavMeshBuilder.BuildNavMeshData(settings, sources, new Bounds(Vector3.zero, world.size), world.center, Quaternion.identity);
+        }
+
+        /// <summary>干地探针：人形网格（这时场上只有它）在火鼍网格范围里、比 Lava 区顶高 0.4 m 以上的非熔岩三角形中心，均匀抽最多 400 个</summary>
+        static List<Vector3> DryProbes(Bounds full, float lavaTop)
+        {
+            var tri = NavMesh.CalculateTriangulation();
+            int lava = LavaNavArea;
+            var all = new List<Vector3>();
+            for (int t = 0; t + 2 < tri.indices.Length; t += 3)
+            {
+                if (tri.areas[t / 3] == lava) continue;
+                var c = (tri.vertices[tri.indices[t]] + tri.vertices[tri.indices[t + 1]] + tri.vertices[tri.indices[t + 2]]) / 3f;
+                if (c.y < lavaTop + 0.4f || c.y > full.max.y) continue;
+                if (c.x < full.min.x || c.x > full.max.x || c.z < full.min.z || c.z > full.max.z) continue;
+                all.Add(c);
+            }
+            if (all.Count <= 400) return all;
+            var pick = new List<Vector3>(400);
+            for (int i = 0; i < 400; i++) pick.Add(all[(int)((long)i * all.Count / 400)]);
+            return pick;
+        }
+
+        /// <summary>干地探针里有几处 0.6 m 内（高差 0.5 m 内）踩得到火鼍网格（任何区域）</summary>
+        static int SwimmerOnDry(List<Vector3> probes, int swimmerType)
+        {
+            var filter = new NavMeshQueryFilter { agentTypeID = swimmerType, areaMask = NavMesh.AllAreas };
+            int n = 0;
+            foreach (var p in probes)
+                if (NavMesh.SamplePosition(p, out var hit, 0.6f, filter) && Mathf.Abs(hit.position.y - p.y) < 0.5f) n++;
+            return n;
+        }
+
+        /// <summary>熔岩生物网格（只走 Lava 区）在几片熔岩的中心附近采得到（同 <see cref="ValidateLava"/> 的判法）</summary>
+        static int SwimmerCovered(LavaVolume[] vols, int swimmerType)
+        {
+            int area = LavaNavArea;
+            if (area < 0) return vols.Length;
+            var filter = new NavMeshQueryFilter { agentTypeID = swimmerType, areaMask = 1 << area };
+            int ok = 0;
+            foreach (var v in vols)
+            {
+                var b = v.Body;
+                if (NavMesh.SamplePosition(new Vector3(b.center.x, b.level, b.center.z), out _, Mathf.Max(3f, Mathf.Min(b.HalfExtents.x, b.HalfExtents.y)), filter)) ok++;
+            }
+            return ok;
         }
 
         /// <summary>
