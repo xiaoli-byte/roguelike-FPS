@@ -393,7 +393,7 @@ namespace Spiritfire.Art.Editor.Levels
             // ── 横坡（只填，按弧长线性）──
             // 贴陡坎那一侧的坡肩不往下落：全高一直填到 6.5 m 外（再 2.5 m 淡出），直到陡坎面高过坡面为止——
             // 不然坡肩先落下去、陡坎再慢慢抬起来，坡和陡坎之间夹出一道 0.5 m 深的沟，沟口正对着熔瀑池岸坡
-            float ramp = 0;
+            float ramp = 0, rampToe = 0;
             for (int i = 0; i < Ramps.Length; i++)
             {
                 var (_, path, footY, topY, half) = Ramps[i];
@@ -403,11 +403,17 @@ namespace Spiritfire.Art.Editor.Levels
                 float u = Mathf.InverseLerp(phiFoot, phiTop, phi);
                 bool wallSide = phi >= phiFoot && u < 0.85f && r > Inner(phi) - RampOffset(u);
                 float shoulder = wallSide ? 3f : 0f;
-                if (d > half + shoulder + 2.5f) continue;
-                float m = 1 - Smooth(half + shoulder, half + shoulder + 2.5f, d);
+                // 靠井心那一侧：坡脚那一段（坡面刚高出地面 1–3 m）放成 6 m 宽的缓坡趾，往上收回 2.5 m——原来一出坡脚就是 2.5 m 宽、50° 以上的陡肩，
+                // 从坡上往下看是一块三角形的暗面，像在坡脚挖了个槽；中段以上的陡侧壁是 ③ 的掩体，保持不动
+                float fade = wallSide ? 2.5f : 2.5f + 3.5f * (1 - Smooth(0.08f, 0.4f, t));
+                if (d > half + shoulder + fade) continue;
+                float m = 1 - Smooth(half + shoulder, half + shoulder + fade, d);
                 float target = Mathf.Lerp(footY, topY + RampOvershoot, t);
                 h = Mathf.Max(h, Mathf.Lerp(h, target, m));
                 ramp = Mathf.Max(ramp, m);
+                // 坡下段靠井心那侧的坡肩（高出地面 1–4 m）：铺成和坡面一样的灰，不让坡度规则刷成柱状玄武岩——
+                // 从坡顶往回看那是一块斜着看的暗色竖纹三角，读成坡脚挖了一道槽
+                if (!wallSide && d > half - 0.5f) rampToe = Mathf.Max(rampToe, Smooth(0f, 0.15f, m) * (1 - Smooth(0.3f, 0.5f, t)));
             }
 
             // ── ③ 熔岩池（挖到熔岩面下 1.4 m，2 m 宽的岸坡）──
@@ -448,6 +454,7 @@ namespace Spiritfire.Art.Editor.Levels
             // 崖顶：成片的落灰和裸露的冷却熔岩交替（40 m 一块），不是一整片同一层
             s.sand = Mathf.Max(s.sand, crestTop * Smooth(-0.2f, 0.5f, Fbm(p, 45f, 3, 49)) * 0.7f);
             s.rock = Mathf.Max(o.riser * inside * 0.55f, wall * 0.6f * (1 - crestTop));
+            s.sand = Mathf.Max(s.sand, rampToe);
             s.fluid = Mathf.Max(pool, s.hole);
             float wellShore = (1 - Smooth(WellR, WellR + 6f, r)) * (1 - s.hole);
             s.shore = Mathf.Max(wellShore, poolShore * (1 - pool));
