@@ -101,6 +101,7 @@ namespace Spiritfire.Game
         void Gust(float damage, float knock)
         {
             var o = OnGround(Brain.transform.position) + Dir(Yaw) * (Brain.BodyRadius * 0.5f);
+            o.y = LipY(o, Yaw);
             Hazards.Wave(new BossWaveSpec(o, Speed, Range, damage, HeatColor)
             {
                 startRadius = Brain.BodyRadius + 0.5f, width = Width, height = Height, arcYaw = Yaw, arcHalf = HalfAngle, knockback = knock,
@@ -113,6 +114,20 @@ namespace Spiritfire.Game
                 var p = o + Dir(Yaw + Rng.Range(-HalfAngle, HalfAngle)) * Rng.Range(3f, Range * 0.7f);
                 Fx.Burst(OnGround(p) + Vector3.up * 0.5f, HanbaDef.Sand, 5, 5f, 0.8f, 0.3f, -0.3f);
             }
+        }
+
+        /// <summary>
+        /// 热浪贴地铺开的高度：她悬在低洼里（月牙泉的泉床、吸干后的泉底，比岸上低 1.4 m）时，正前方 8 m 内地面比脚下高，热浪按那道岸坎的高度铺出去——
+        /// 不然整道热浪埋在岸坡下面画不出来，挡波判定的那条线（离地 0.45 m）也撞在岸坡上，岸上的人永远打不到。顺着泉床朝前放时前方一样低，照旧贴着泉底走。
+        /// 最多抬 2 m（不爬上沙丘、楼阁台基）
+        /// </summary>
+        float LipY(Vector3 o, float yaw)
+        {
+            float y = o.y;
+            var dir = Dir(yaw);
+            for (float d = 1f; d <= 8f; d += 1f)
+                y = Mathf.Max(y, GroundY(new Vector3(o.x, o.y, o.z) + dir * d));
+            return Mathf.Min(y, o.y + 2f);
         }
 
         protected override void OnActive(float dt)

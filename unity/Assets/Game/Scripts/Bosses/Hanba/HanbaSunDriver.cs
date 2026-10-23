@@ -9,6 +9,8 @@ namespace Spiritfire.Game
     ///     关卡本身就是低太阳时不动它；露天场地的太阳高过 <see cref="HanbaDef.lowSunMax"/> 时，登场演出里压到 <see cref="HanbaDef.lowSunElevation"/>。
     ///     三阶段「赤地千里」推到约 85°（<see cref="HanbaDef.risenElevation"/>）：影子缩到脚下，只剩楼阁里、沙丘檐下的深影。
     ///   · 亮度（<see cref="SetDim"/> / <see cref="Flash"/>）：日蚀时压到一成多（天暗下来），复燃时猛地一亮再落回。都是相对原亮度的倍率。
+    ///     压暗（倍率 &lt; 1）时环境一起暗：环境光、反射、雾色、天空盒曝光按 <see cref="EnvAt"/> 缩（只压暗主光的话，晴空的环境光还是把场地照得亮堂堂的，看不出日蚀）；
+    ///     天空盒用一份运行时副本改曝光（不碰材质资产），组件销毁时把原来的天空盒和环境光还回去。复燃的强光只亮主光。
     ///   · 复原（<see cref="Restore"/>）：回到第一次接手时的仰角和亮度（旱魃倒下后影子慢慢回来）。
     /// 日晒判定（<see cref="SunExposure"/>）每次都读主光的当前朝向（<see cref="SunShaft.ToSun"/>），这里改了朝向，判定和真实阴影同时跟上。
     /// </summary>
@@ -22,6 +24,16 @@ namespace Spiritfire.Game
         float dim = 1f, dimFrom = 1f, dimTo = 1f, dimT, dimSeconds, flashBack = -1f, flashHold;
         bool moving, dimming;
 
+        /// <summary>主光压到最暗（倍率 0）时环境亮度留几成</summary>
+        public const float EnvFloor = 0.3f;
+        static readonly int ExposureId = Shader.PropertyToID("_Exposure");
+        bool envCaptured;
+        float envNow = 1f, origReflection, origExposure;
+        Color origSkyCol, origEquator, origGround, origAmbient, origFog;
+        UnityEngine.Rendering.SphericalHarmonicsL2 origProbe;
+        UnityEngine.Rendering.AmbientMode origMode;
+        Material origSky, skyCopy;
+
         /// <summary>接手的主光</summary>
         public Light Sun => sun;
         /// <summary>太阳当前的仰角（度，0 = 地平线，90 = 头顶）与方位角（度，0 = +Z）</summary>
@@ -31,6 +43,11 @@ namespace Spiritfire.Game
         public float OriginalElevation => originalElevation;
         /// <summary>当前的亮度倍率（相对原亮度）</summary>
         public float Dim => dim;
+        /// <summary>当前的环境亮度倍率（环境光 / 反射 / 雾 / 天空，1 = 原样）</summary>
+        public float Env => envNow;
+
+        /// <summary>主光倍率 → 环境倍率：压暗时按 <see cref="EnvFloor"/> 到 1 插值，亮过原亮度（复燃强光）时环境不跟着亮</summary>
+        public static float EnvAt(float dim) => dim >= 1f ? 1f : Mathf.Lerp(EnvFloor, 1f, Mathf.Clamp01(dim));
         /// <summary>正在推仰角 / 已经推到目标</summary>
         public bool Moving => moving;
         public float TargetElevation => toElev;
@@ -154,6 +171,74 @@ namespace Spiritfire.Game
         void Apply()
         {
             if (sun) sun.intensity = originalIntensity * dim;
+            ApplyEnv(EnvAt(dim));
         }
+
+        /// <summary>环境跟着主光暗下去 / 亮回来（第一次压暗时才记原值）</summary>
+        void ApplyEnv(float k)
+        {
+            if (Mathf.Abs(k - envNow) < 1e-3f) return;
+            if (!envCaptured) CaptureEnv();
+            envNow = k;
+            switch (origMode)
+            {
+                case UnityEngine.Rendering.AmbientMode.Trilight:
+                    RenderSettings.ambientSkyColor = origSkyCol * k;
+                    RenderSettings.ambientEquatorColor = origEquator * k;
+                    RenderSettings.ambientGroundColor = origGround * k;
+                    break;
+                case UnityEngine.Rendering.AmbientMode.Flat:
+                    RenderSettings.ambientLight = origAmbient * k;
+                    break;
+            }
+            // 渐变 / 单色环境光改颜色后引擎会重算球谐；直接再给一份缩过的球谐，两条路都盖住（天空盒环境光只有这一条路）
+            RenderSettings.ambientProbe = origProbe * k;
+            RenderSettings.reflectionIntensity = origReflection * k;
+            var fog = origFog * k;
+            fog.a = origFog.a;
+            RenderSettings.fogColor = fog;
+            if (skyCopy) skyCopy.SetFloat(ExposureId, origExposure * k);
+        }
+
+        void CaptureEnv()
+        {
+            envCaptured = true;
+            origMode = RenderSettings.ambientMode;
+            origSkyCol = RenderSettings.ambientSkyColor;
+            origEquator = RenderSettings.ambientEquatorColor;
+            origGround = RenderSettings.ambientGroundColor;
+            origAmbient = RenderSettings.ambientLight;
+            origProbe = RenderSettings.ambientProbe;
+            origReflection = RenderSettings.reflectionIntensity;
+            origFog = RenderSettings.fogColor;
+            origSky = RenderSettings.skybox;
+            if (origSky && origSky.HasProperty(ExposureId))
+            {
+                origExposure = origSky.GetFloat(ExposureId);
+                skyCopy = new Material(origSky) { name = origSky.name + " (Hanba)" };
+                RenderSettings.skybox = skyCopy;
+            }
+        }
+
+        /// <summary>
+        /// 把环境还原（原天空盒、环境光、反射、雾色），丢掉天空盒副本。RenderSettings 跟着当前活动场景走：
+        /// 关卡已经切走（活动场景的天空盒不是这份副本 / 活动场景不是主光所在的场景）时不去改别的场景的环境
+        /// </summary>
+        void RestoreEnv()
+        {
+            if (!envCaptured) return;
+            bool ours = skyCopy ? RenderSettings.skybox == skyCopy : UnityEngine.SceneManagement.SceneManager.GetActiveScene() == gameObject.scene;
+            if (ours)
+            {
+                ApplyEnv(1f);
+                if (skyCopy) RenderSettings.skybox = origSky;
+            }
+            if (skyCopy) Destroy(skyCopy);
+            skyCopy = null;
+            envCaptured = false;
+            envNow = 1f;
+        }
+
+        void OnDestroy() => RestoreEnv();
     }
 }

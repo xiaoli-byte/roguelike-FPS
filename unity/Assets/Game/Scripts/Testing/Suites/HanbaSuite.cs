@@ -63,6 +63,8 @@ namespace Spiritfire.Game.Testing
             }
             eye = weapons.eye.transform;
             WeaponController.TestMode = true;
+            // 首领登场演出（BossIntroDirector）的测试开关：本套件测战斗，不放演出（演出由 boss-intro 套件测）
+            BossIntroDirector.Policy = BossIntroPolicy.Never;
             Interactor.TestMode = true;
             HeroSkills.TestMode = true;
             PetOwner.TestMode = true;
@@ -361,6 +363,9 @@ namespace Spiritfire.Game.Testing
             away.Normalize();
             var bossAt = c - away * 6.5f;
             if (NavMesh.SamplePosition(bossAt, out var bh, 3f, NavMesh.AllAreas)) bossAt = bh.position;
+            // 测完挪回原处：后面的招式用例要在场地上（不然她站在沙丘背上，热浪、扫射全被沙丘挡住，测的是地形不是招式）
+            var home = boss.transform.position;
+            var homeFace = boss.transform.position + boss.transform.forward;
             boss.Stagger(6f, "Hit");
             WarpBoss(bossAt, cover.position);
             yield return null;
@@ -368,15 +373,19 @@ namespace Spiritfire.Game.Testing
             // 这一段只看遮挡：直射距离临时放宽到够得着掩体点，免得「太远」冒充「被挡住」
             float range0 = ex.ringRange;
             ex.ringRange = Mathf.Max(range0, dist + 6f);
-            // 空地：同样距离、站到首领侧面（中间没有岩岛）
+            // 空地：同样距离、站到首领侧面或身后（中间没有岩岛；新月丘两侧是丘角，侧面可能还被迎风背挡着，所以也试身后的上风向）
             var side = Vector3.Cross(Vector3.up, away);
             Vector3? open = null;
-            foreach (float s in new[] { 1f, -1f })
+            var tries = new List<string>();
+            foreach (var dir in new[] { side, -side, -away, (-away + side).normalized, (-away - side).normalized })
             {
-                var q = bossAt + side * s * dist;
+                var q = bossAt + dir * dist;
+                // 她站在沙丘背上（离地几米），同距离的空地在丘外的盆底：先落到地面再贴导航网格
+                if (Physics.Raycast(q + Vector3.up * 20f, Vector3.down, out var gh, 60f, Layers.WorldMask, QueryTriggerInteraction.Ignore)) q = gh.point;
                 if (!NavMesh.SamplePosition(q, out var oh, 2f, NavMesh.AllAreas) || !arena.Contains(oh.position, 1f)) continue;
                 Place(oh.position);
                 yield return new WaitForSeconds(0.3f);
+                tries.Add($"{At(oh.position)} {ex.LastRing:F1}");
                 if (ex.LastRing > 0.9f)
                 {
                     open = oh.position;
@@ -389,10 +398,13 @@ namespace Spiritfire.Game.Testing
             float ringCovered = ex.LastRing;
             Line($"日轮直射（首领挪到 {At(bossAt)}，离掩体点 {dist:F1} m，直射距离临时放宽到 {ex.RingRange:F1} m）：空地{(open.HasValue ? $" {At(open.Value)}" : "")} 日轮份额 {ringOpen:F1}，" +
                  $"岩岛背后 {At(cover.position)} {ringCovered:F1}");
-            ex.ringRange = range0;
             if (ringCovered >= 0.99f) Fail("躲在岩岛背后（日轮—岩岛—玩家一线）仍被日轮整份直射：岩岛没挡住");
-            if (!open.HasValue) Line("⚠ 同距离的空地也没被日轮整份照到（距离 / 地形问题），日轮荫蔽只能看岩岛那一侧");
+            if (!open.HasValue)
+                Line($"⚠ 同距离的空地也没被日轮整份照到（距离 / 地形问题），日轮荫蔽只能看岩岛那一侧：轮心 {At(boss.Ring ? boss.Ring.Center : bossAt)}、" +
+                     $"日蚀 {(boss.Ring && boss.Ring.Eclipsed)}、直射 {ex.RingRange:F1} m，试过 {(tries.Count > 0 ? string.Join("；", tries) : "（没有场地内的空地）")}");
             Shot(weapons.eye, "hanba_ring_cover");
+            ex.ringRange = range0;
+            WarpBoss(home, homeFace);
         }
 
         void WarpBoss(Vector3 p, Vector3 face)
@@ -589,6 +601,10 @@ namespace Spiritfire.Game.Testing
                 case Phase1HotWind w when w.Waves < 1:
                     Fail("旱风没有放出热浪");
                     break;
+                // 一阶段强制出的那一次：玩家就站在她正前方 12 m 的扇区里，热浪应打中（她悬在泉床里时热浪要从岸坎上铺出去，不能埋在岸坡下面）
+                case Phase1HotWind w when record && !w.HitThisCast:
+                    Fail("一阶段旱风没打中正前方 12 m 的玩家（热浪被岸坡 / 地形挡住？）");
+                    break;
                 case Phase1SandWraiths sw:
                 {
                     int want = sw.CountFor(boss);
@@ -669,8 +685,10 @@ namespace Spiritfire.Game.Testing
                 float water = 1f;
                 if (boss.Exposure && spring.Beds.Count > 0)
                     boss.Exposure.GainAt(bed + Vector3.up * 0.05f, bed + Vector3.up, bed + Vector3.up * 1.6f, out _, out _, out water);
-                Line($"吸干泉水（{spring.Origin}，{spring.Count} 段）：水位 {spring.Level:F2}，还启用 {spring.ActiveWaters} 段，WaterVolume 里还剩 {ownedLeft} 段，原水面处日晒倍率 {water:F2}");
+                Line($"吸干泉水（{spring.Origin}，{spring.Count} 段）：水位 {spring.Level:F2}，还启用 {spring.ActiveWaters} 段，WaterVolume 里还剩 {ownedLeft} 段，原水面处日晒倍率 {water:F2}，" +
+                     $"共用水面 {spring.Surfaces} 张、还显示 {spring.SurfacesShown} 张，龟裂贴花 {(spring.BedRevealed ? "露出" : "没露")}");
                 if (!spring.Drained || spring.ActiveWaters > 0 || ownedLeft > 0) Fail("二阶段月牙泉没有吸干（还有启用的泉水段）");
+                if (spring.SurfacesShown > 0) Fail("泉水吸干了，水面还画着（共用水面没跟着落下去 / 停用）");
                 if (water < 0.999f) Fail($"吸干后原水面处日晒还在减半（倍率 {water}）");
             }
             else Line("场景里没有标出月牙泉的泉水（HanbaSpring / 标签 CrescentSpring / 名字 Crescent Spring），跳过吸干");
@@ -762,23 +780,35 @@ namespace Spiritfire.Game.Testing
             yield return WaitIdle();
             var near = scorch.Vents.OrderBy(v => (v - boss.transform.position).sqrMagnitude).Skip(Mathf.Min(1, scorch.Vents.Count - 1)).First();
             if (NavMesh.SamplePosition(near, out var nh, 2f, NavMesh.AllAreas)) near = nh.position;
-            int hits0 = scorch.PlayerHits, warned0 = scorch.Warned, e0 = scorch.Erupted, bursts0 = scorch.Bursts;
+            // 等一轮在站上裂口之后才开始的喷发：之前排好的那一轮（预警在站过来之前就画了，挑的也不是脚下这口）不算
+            int bursts0 = scorch.Bursts, warnedPrev = scorch.Warned;
             float t0 = Time.time, every = boss.HDef.VentEveryAt(boss.Phase) + boss.HDef.ventWarn + 2f;
-            while (Time.time - t0 < every && scorch.Erupted == e0)
+            while (Time.time - t0 < every && scorch.Bursts == bursts0)
+            {
+                warnedPrev = scorch.Warned;
+                Place(near);
+                KeepPlayerAlive();
+                yield return null;
+            }
+            if (scorch.Bursts == bursts0)
+            {
+                Fail($"站在裂口上 {every:F0} s 都没轮到一次喷发");
+                yield break;
+            }
+            // 这一轮的预警在开始那一帧就画了；喷发在预警之后 ventWarn 秒
+            int warnedRound = scorch.Warned - warnedPrev, e0 = scorch.Erupted, hits0 = scorch.PlayerHits;
+            float r0 = Time.time;
+            while (Time.time - r0 < boss.HDef.ventWarn + 0.4f)
             {
                 Place(near);
                 KeepPlayerAlive();
                 yield return null;
             }
-            float h0 = Time.time;
-            while (Time.time - h0 < 0.3f)
-            {
-                Place(near);
-                yield return null;
-            }
-            Line($"喷气裂缝（站在 {At(near)}）：{Time.time - t0:F1} s 内喷了 {scorch.Bursts - bursts0} 轮、{scorch.Erupted - e0} 口（预警 {scorch.Warned - warned0} 个），打中玩家 {scorch.PlayerHits - hits0} 次；二阶段以来累计喷 {scorch.Erupted - erupted0} 口");
-            if (scorch.Erupted == e0) Fail($"站在裂口上 {every:F0} s 都没喷气");
-            else if (scorch.Warned - warned0 < scorch.Erupted - e0) Fail("喷气裂缝有没先画地面预警就喷的");
+            int eruptedRound = scorch.Erupted - e0;
+            Line($"喷气裂缝（站在 {At(near)}）：等了 {r0 - t0:F1} s 轮到一次喷发——预警 {warnedRound} 个、{boss.HDef.ventWarn:F1} s 后喷了 {eruptedRound} 口，打中玩家 {scorch.PlayerHits - hits0} 次；" +
+                 $"二阶段以来累计喷 {scorch.Erupted - erupted0} 口");
+            if (eruptedRound == 0) Fail("这一轮画了预警却没喷气");
+            else if (warnedRound < eruptedRound) Fail("喷气裂缝有没先画地面预警就喷的");
             else if (scorch.PlayerHits == hits0) Fail("站在最近的裂口上，喷气没打中玩家");
         }
 
@@ -865,7 +895,7 @@ namespace Spiritfire.Game.Testing
             yield return new WaitForSeconds(0.25f);
             bool inWindow = boss.Current == ecl && ecl.Stage == MoveStage.Active;
             bool weakOpen = boss.WeakExposed && boss.EclipseOpen, ringDark = boss.Ring && boss.Ring.Eclipsed;
-            float sunShare = ex.LastShaft, dim = sky ? sky.Dim : 1f;
+            float sunShare = ex.LastShaft, dim = sky ? sky.Dim : 1f, env = sky ? sky.Env : 1f;
             Aim(motor, eye, boss.BodyCenter);
             Shot(weapons.eye, "hanba_eclipse");
             var hp = boss.Health;
@@ -903,13 +933,13 @@ namespace Spiritfire.Game.Testing
             float ratio = after.total > 0 ? inWin.total / after.total : 0;
             float mult = boss.HDef.eclipseWeakMult;
             Line($"日蚀（{(natural ? "三阶段第一招，自己出" : "强制")}）：窗口 {ecl.LastWindow:F2} s，窗口里 {(inWindow ? "✓" : "✗")}——泉珠露出 {(weakOpen ? "✓" : "✗")}、日轮熄灭 {(ringDark ? "✓" : "✗")}、" +
-                 $"日光份额 {sunShare:F1}{(sky ? $"、主光 × {dim:F2}" : "")}；泉珠一击 窗口里 {inWin.total:F0} / 窗口后 {after.total:F0} = × {ratio:F2}（应 × {mult:F0}），窗口里打中泉珠 {boss.EclipseWeakHits - weak0} 次；" +
-                 $"窗口后关上 {(closed ? "✓" : "✗")}，强光 {(ecl.Flared ? "✓" : "✗")}：打中 {ecl.FlareHits - hits0}、影子里 {ecl.FlareShaded - shaded0}{(sky ? $"，主光回到 × {sky.Dim:F2}" : "")}");
+                 $"日光份额 {sunShare:F1}{(sky ? $"、主光 × {dim:F2}、环境 × {env:F2}" : "")}；泉珠一击 窗口里 {inWin.total:F0} / 窗口后 {after.total:F0} = × {ratio:F2}（应 × {mult:F0}），窗口里打中泉珠 {boss.EclipseWeakHits - weak0} 次；" +
+                 $"窗口后关上 {(closed ? "✓" : "✗")}，强光 {(ecl.Flared ? "✓" : "✗")}：打中 {ecl.FlareHits - hits0}、影子里 {ecl.FlareShaded - shaded0}{(sky ? $"，主光回到 × {sky.Dim:F2}、环境 × {sky.Env:F2}" : "")}");
             if (ecl.Windows == windows0) Fail("日蚀没有开窗口");
             if (Mathf.Abs(ecl.LastWindow - boss.HDef.eclipseSeconds) > 0.2f) Fail($"日蚀窗口 {ecl.LastWindow:F2} s（应 {boss.HDef.eclipseSeconds:F0} s）");
             if (!inWindow || !weakOpen) Fail("日蚀窗口里泉珠没有露出");
             if (!ringDark) Fail("日蚀窗口里日轮没有熄灭");
-            if (sky && SunExposure.OpenSky && (sunShare > 0 || dim > 0.3f)) Fail($"露天日蚀时天没暗（日光份额 {sunShare}，主光 × {dim:F2}）");
+            if (sky && SunExposure.OpenSky && (sunShare > 0 || dim > 0.3f || env > 0.6f)) Fail($"露天日蚀时天没暗（日光份额 {sunShare}，主光 × {dim:F2}，环境 × {env:F2}）");
             if (!closed) Fail("日蚀窗口结束后没有关上（泉珠倍率还在）");
             if (after.total <= 0) Fail("日蚀收招段泉珠没露着（没法比对 ×3）");
             else if (Mathf.Abs(ratio - mult) > mult * 0.05f) Fail($"日蚀窗口里的泉珠伤害是窗口外的 × {ratio:F2}（应 × {mult:F0}）");
@@ -918,6 +948,7 @@ namespace Spiritfire.Game.Testing
             else if (ecl.FlareHits - hits0 + ecl.FlareShaded - shaded0 != 1) Fail("日蚀强光没有对玩家做判定");
             else if (spot.HasValue && ecl.FlareHits == hits0) Fail("站在日光里，日蚀的强光没打中");
             if (sky && sky.Dim < 0.9f) Fail($"强光之后主光没回到原亮度（× {sky.Dim:F2}）");
+            if (sky && sky.Env < 0.99f) Fail($"强光之后环境光没回到原样（× {sky.Env:F2}）");
 
             DamageInfo WeakHit()
             {
@@ -1025,7 +1056,11 @@ namespace Spiritfire.Game.Testing
                 yield break;
             }
             float deadAt = Time.time;
+            // 日轮坠落碎裂在倒下后约 1.1 s；之后首领物体会被回收（日轮跟着没了），所以边等边记
+            bool shattered = false;
+            void Watch() => shattered |= ring && ring.Shattered;
             yield return null;
+            Watch();
             Line($"击杀：BossDefeated +{defeatedEvents - defeated0}，阶段 {boss.Phase + 1}，日晒判定停了 {(ex && !ex.Running ? "✓" : "✗")}，日轮炽度目标 {ring?.BlazeTarget:F2}，" +
                  $"死亡演出 {(boss.Cinematics && boss.Cinematics.DefeatStarted ? "✓" : "✗")}，邪飞天 {(boss.Apsara ? "✗ 还在" : "✓ 不在")}");
             if (defeatedEvents - defeated0 != 1) Fail($"BossDefeated 派发了 {defeatedEvents - defeated0} 次（应 1 次）");
@@ -1036,7 +1071,11 @@ namespace Spiritfire.Game.Testing
             {
                 vitals.health = Mathf.Min(vitals.health, vitals.MaxHealth * 0.3f);
                 float s0 = Time.time;
-                while (enc.State != BossEncounter.Phase.Settled && Time.time - s0 < BossEncounter.SettleDelay + 3f) yield return null;
+                while (enc.State != BossEncounter.Phase.Settled && Time.time - s0 < BossEncounter.SettleDelay + 3f)
+                {
+                    Watch();
+                    yield return null;
+                }
                 yield return null;
                 bool healed = vitals.health >= vitals.MaxHealth - 0.5f;
                 var chest = enc.RewardChest;
@@ -1047,7 +1086,11 @@ namespace Spiritfire.Game.Testing
                 else if (chest.tier != ChestTier.Boss) Fail($"首领宝箱档位 {chest.tier}（应为 Boss）");
                 if (enc.Result != BossEncounter.Outcome.NextStage) Fail($"1-4 打完的去向是 {enc.Result}（应为下一关）");
                 float o0 = Time.time;
-                while (!enc.OpenedExit && Time.time - o0 < BossEncounter.PortalDelay + 2f) yield return null;
+                while (!enc.OpenedExit && Time.time - o0 < BossEncounter.PortalDelay + 2f)
+                {
+                    Watch();
+                    yield return null;
+                }
                 Line($"出口：{(enc.OpenedExit ? $"✓ {enc.OpenedExit.name} @ {At(enc.OpenedExit.transform.position)}" : "✗ 没有升起")}");
                 if (!enc.OpenedExit) Fail("结算后出口没有升起");
                 else Aim(motor, eye, enc.OpenedExit.Focus);
@@ -1058,16 +1101,22 @@ namespace Spiritfire.Game.Testing
 
             // ── 死亡演出的收尾：泉眼复涌、日轮碎、太阳回到午后、时间回到 1 ──
             float wait = HanbaCinematics.RefillAt + HanbaCinematics.RefillSeconds + 0.6f - (Time.time - deadAt);
-            if (wait > 0) yield return new WaitForSeconds(wait);
+            for (float w0 = Time.time; Time.time - w0 < wait;)
+            {
+                Watch();
+                yield return null;
+            }
+            Watch();
             if (sky)
             {
                 float r0 = Time.time;
                 while (sky.Moving && Time.time - r0 < HanbaCinematics.SunRestoreSeconds + 1f) yield return null;
             }
             Line($"死亡演出：泉眼复涌 {(spring ? $"{(spring.Level >= 0.99f && spring.ActiveWaters == spring.Count ? "✓" : "✗")}（水位 {spring.Level:F2}，启用 {spring.ActiveWaters}/{spring.Count} 段）" : "（没有泉水）")}，" +
-                 $"日轮 {(risen ? ring && ring.Shattered ? "坠落碎裂 ✓" : "✗ 没碎" : "原地熄灭")}，太阳 {(sky ? $"{sky.Elevation:F0}°（原 {sky.OriginalElevation:F0}°），亮度 × {sky.Dim:F2}" : "（穴顶版 / 没有主光）")}，时间 × {TimeScaleArbiter.Current:F2}");
+                 $"日轮 {(risen ? shattered ? "坠落碎裂 ✓" : "✗ 没碎" : "原地熄灭")}，太阳 {(sky ? $"{sky.Elevation:F0}°（原 {sky.OriginalElevation:F0}°），亮度 × {sky.Dim:F2}" : "（穴顶版 / 没有主光）")}，时间 × {TimeScaleArbiter.Current:F2}");
             if (spring && (spring.Level < 0.99f || spring.ActiveWaters < spring.Count)) Fail("旱魃倒下后泉眼没有复涌");
-            if (risen && ring && !ring.Shattered) Fail("升顶的日轮在旱魃倒下后没有坠落碎裂");
+            if (spring && spring.SurfacesShown < spring.Surfaces) Fail("泉眼复涌了，水面没回来（共用水面还停用着）");
+            if (risen && !shattered) Fail("升顶的日轮在旱魃倒下后没有坠落碎裂");
             if (sky && (Mathf.Abs(sky.Elevation - sky.OriginalElevation) > 1.5f || sky.Dim < 0.95f)) Fail("旱魃倒下后太阳没回到原来的高度 / 亮度");
             if (TimeScaleArbiter.Current < 0.99f) Fail($"死亡演出之后时间没回到 1（× {TimeScaleArbiter.Current:F2}）");
         }

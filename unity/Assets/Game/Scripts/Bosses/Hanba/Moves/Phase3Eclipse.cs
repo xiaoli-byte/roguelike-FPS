@@ -6,7 +6,8 @@ namespace Spiritfire.Game
     /// 旱魃 · 日蚀（三阶段「赤地千里」，unity-maps-v1 第 3 节、D26：日轮短暂熄灭 3 秒，心口露出最后一滴泉水——弱点，伤害 ×3，这是输出窗口；
     /// 之后日轮爆发强光，覆盖全场）。三阶段演出结束后的第一招就是它（<see cref="BossPhaseDef.firstMove"/>）。
     /// 时间轴跟 ART2 的 eclipse 片段走、片段原速播（4.5 s；不随阶段节奏 / 狂怒缩短，3 s 窗口要对得上 eclipseStart / eclipseEnd）：
-    ///   前摇 <see cref="Lead"/>（0.67 s）：双臂后展、挺胸，日轮迅速暗下去；全场亮起一张大圆预警，<see cref="Lead"/> + 3 s 填满——填满那一刻就是强光。
+    ///   前摇 <see cref="Lead"/>（0.67 s）：双臂后展、挺胸，日轮迅速暗下去；她脚下亮起一圈 <see cref="WarnRadius"/> 米的预警，<see cref="Lead"/> + 3 s 填满——填满那一刻就是强光。
+    ///     （不铺满全场：露天场地起伏大，整片场地的贴花投影盒高好几米，会把地面、楼阁台基连同她自己一起刷成白色，天暗下来反倒看不出来。强光覆盖全场由提示和天色交代）
     ///   出手 = 日蚀窗口 <see cref="HanbaDef.eclipseSeconds"/>（3 s，eclipseStart → eclipseEnd）：日轮熄灭（<see cref="SunRing.SetEclipse"/>：黑盘月影、不直射）；
     ///     露天场地里升到头顶的日轮就是太阳——主光压到 <see cref="HanbaDef.eclipseDim"/>，天暗下来，这 3 s 没有日晒（<see cref="SunExposure.SunOut"/>）；
     ///     泉珠露出，打在泉珠上的伤害再 × <see cref="HanbaDef.eclipseWeakMult"/>（在弱点必暴之外，<see cref="HanbaBrain.OpenEclipse"/>）；她原地颤抖、不动。
@@ -21,6 +22,8 @@ namespace Spiritfire.Game
         public const string MoveId = "eclipse";
         /// <summary>片段原速：eclipseStart 在 0.667 s，eclipseEnd 在 3.667 s，flare 在 3.933 s，全长 4.5 s</summary>
         public const float Lead = 0.667f, FlareAfter = 0.267f, ClipSeconds = 4.5f;
+        /// <summary>强光预警（倒计时）的半径：她脚下一圈</summary>
+        public const float WarnRadius = 7f;
         static readonly Color FlareColor = Hex.Rgb(0xfff2c8), DarkColor = new(0.05f, 0.03f, 0.02f, 0.35f);
 
         public override string Id => MoveId;
@@ -64,11 +67,8 @@ namespace Spiritfire.Game
 
         protected override void OnTelegraph()
         {
-            var arena = Brain.Arena;
-            var c = arena ? arena.Center : OnGround(Brain.transform.position);
-            float r = arena ? arena.Extent + 2f : 30f;
-            // 强光预警：整片场地，前摇 + 窗口 + 强光前的那一小段填满（招式组：被打断就不放强光，预警随招式撤回）
-            Hazards.GroundWarning(c, r, Lead + window + FlareAfter, FlareColor);
+            // 强光预警（倒计时）：她脚下一圈，前摇 + 窗口 + 强光前的那一小段填满（招式组：被打断就不放强光，预警随招式撤回）
+            Hazards.GroundWarning(OnGround(Brain.transform.position), WarnRadius, Lead + window + FlareAfter, FlareColor);
             CountWarning();
             // 片段原速（4.5 s）：ActScale = 1，eclipseStart / eclipseEnd 正好隔 3 s
             Act("eclipse", ClipSeconds);
