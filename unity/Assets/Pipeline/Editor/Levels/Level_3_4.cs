@@ -56,6 +56,11 @@ namespace Spiritfire.Art.Editor.Levels
         static readonly Vector2 ApseC = new(0, 30), ApseHalf = new(10, 9);
         const float PlatH = 2.6f;
         static readonly Vector2 PlatC = new(8.3f, 32f), PlatHalf = new(1.7f, 4.5f);
+        /// <summary>
+        /// 祭台前端往里伸出的观台（同高）：祭台本身藏在北口扶壁背后，从祭台上望殿心被扶壁挡住；观台的内沿伸到北口里（x ±4.6），
+        /// 站在观台上隔着北口看得到熔池、巨鼎和对面半个殿（俯射层名副其实）。观台在坡道（z 30–33）南边，不挡坡道
+        /// </summary>
+        static readonly Vector2 BalconyC = new(5.7f, 28f), BalconyHalf = new(1.1f, 1.4f);
         static readonly Vector2 RampFoot = new(0.3f, 31.5f), RampTop = new(6.9f, 31.5f);
         const float RampWidth = 3f;
         static readonly Vector2 ShrineAt = new(0, 37.6f);
@@ -127,6 +132,21 @@ namespace Spiritfire.Art.Editor.Levels
             return best;
         }
 
+        /// <summary>两座祭台（含观台）的台面高度；shrink = 往岩壁里的距离（岩壁从贴着它的台面起坡时用）</summary>
+        static float PlatRaise(Vector2 p, float shrink)
+        {
+            float best = 0;
+            foreach (float sx in new[] { -1f, 1f })
+            {
+                float sdf = Mathf.Min(BoxSdf(p, new Vector2(PlatC.x * sx, PlatC.y), PlatHalf), BoxSdf(p, new Vector2(BalconyC.x * sx, BalconyC.y), BalconyHalf));
+                best = Mathf.Max(best, PlatH * (1 - Smooth(0, 0.3f, sdf - shrink)));
+            }
+            return best;
+        }
+
+        /// <summary>祝融像祭台（1 m，四周 4.5 m 缓坡）的抬高；shrink 同上</summary>
+        static float DaisRaise(Vector2 p, float shrink) => DaisH * (1 - Smooth(0, DaisSkirt, BoxSdf(p, DaisC, DaisHalf) - shrink));
+
         static LevelKit.Sample Eval(Vector2 p)
         {
             var s = new LevelKit.Sample();
@@ -135,10 +155,12 @@ namespace Spiritfire.Art.Editor.Levels
             float h;
             if (d > 0)
             {
-                // 岩壁：靠殿的一侧 3 m 内陡升（殿墙背后的岩体），前殿一侧 6 m（崖），壁顶有起伏
+                // 岩壁：靠殿的一侧 3 m 内陡升（殿墙背后的岩体），前殿一侧 4 m（崖），壁顶有起伏。
+                // 从贴着岩壁的台面高度起坡（祭台贴着凹室侧墙、祝融像祭台贴着南崖）：从 0 起的话台子和崖脚之间会夹出一道缝
                 float w = Mathf.Lerp(4f, 3f, Smooth(-60f, -38f, p.y));
                 float top = RockTop + Fbm(p, 30, 3, 5) * 4f;
-                h = top * Mathf.Pow(Smooth(0, w, d), 0.7f);
+                float foot = Mathf.Max(PlatRaise(p, d), DaisRaise(p, d));
+                h = foot + (top - foot) * Mathf.Pow(Smooth(0, w, d), 0.7f);
                 s.rock = Smooth(0.2f, 1.2f, d);
             }
             else
@@ -158,18 +180,17 @@ namespace Spiritfire.Art.Editor.Levels
                     moat *= 1 - bridge;
                     h -= MoatBed * moat;
                 }
-                // 神龛两侧的祭台（2.6 m，靠凹室侧墙）+ 从中间走道横着上去的坡道（21°）
+                // 神龛两侧的祭台（2.6 m，靠凹室侧墙，前端伸出观台）+ 从中间走道横着上去的坡道（21°）
+                float raise = PlatRaise(p, 0);
                 foreach (float sx in new[] { -1f, 1f })
                 {
-                    var c = new Vector2(PlatC.x * sx, PlatC.y);
-                    float plat = PlatH * (1 - Smooth(0, 0.3f, BoxSdf(p, c, PlatHalf)));
                     var (t, mask) = Ramp(p, new Vector2(RampFoot.x * sx, RampFoot.y), new Vector2(RampTop.x * sx, RampTop.y), RampWidth, 0.4f);
-                    // 只在祭台 / 坡道上抬高（Max 到 0 会把熔池、护城渠挖下去的坑全部填平）
-                    float raise = Mathf.Max(plat, PlatH * t * mask);
-                    if (raise > 1e-3f) h = Mathf.Max(h, raise);
+                    raise = Mathf.Max(raise, PlatH * t * mask);
                 }
+                // 只在祭台 / 坡道上抬高（Max 到 0 会把熔池、护城渠挖下去的坑全部填平）
+                if (raise > 1e-3f) h = Mathf.Max(h, raise);
                 // 祝融像祭台（1 m，四周缓坡）
-                h += DaisH * (1 - Smooth(0, DaisSkirt, BoxSdf(p, DaisC, DaisHalf)));
+                h += DaisRaise(p, 0);
                 float channel = r < HallR + 1f ? ChannelMask(p) : 0;
                 s.fluid = Mathf.Max(Mathf.Max(Smooth(0.5f, 1f, pool), moat), channel);
                 s.shore = Mathf.Max(Smooth(PoolR + 1.2f, PoolR, r) * (1 - pool), 0);
@@ -264,13 +285,14 @@ namespace Spiritfire.Art.Editor.Levels
                         ("Map", new Vector3(0, 260, -34), new Vector3(0, 0, -33.9f), false),
                         ("Spawn", E(Spawn), new Vector3(0, 6, -26), true),
                         ("Camp", E(new Vector2(4, -64)), G(Camp, 1), false),
+                        ("Statue", E(new Vector2(-9, -79)), G(new Vector2(0, DaisC.y - 2f), 6f), false),
                         ("Bridge", E(new Vector2(0, -50)), new Vector3(0, 6, -25), false),
                         ("Entry", E(PlayerEntry), ding, true),
                         ("Track", E(new Vector2(-14, -14)), G(new Vector2(14, 14), 2), false),
                         ("Pillars", E(new Vector2(17, 4)), G(new Vector2(-12, 0), 2), false),
                         ("LockWest", E(new Vector2(17, -8.5f)), new Vector3(-LockR, LockHeight, 0), false),
                         ("Apse", E(new Vector2(0, 14)), G(ShrineAt, 5), false),
-                        ("Overlook", E(PlatC, PlatH + 1.62f), ding, false),
+                        ("Overlook", E(BalconyC + new Vector2(-0.6f, -0.6f)), ding, false),
                     });
                 }
                 finally
@@ -286,11 +308,18 @@ namespace Spiritfire.Art.Editor.Levels
 
         sealed class LavaSet
         {
-            public LavaVolume pool, moat;
-            public readonly List<LavaVolume> channels = new();
+            public LavaVolume pool;
+            public readonly List<LavaVolume> moat = new(), channels = new();
         }
 
-        /// <summary>熔池（浅碟里的圆）、八段熔岩渠（与地面齐平的熔岩带，流向殿墙）、护城渠（东西横贯，桥高出熔岩面 0.6 m 不算熔岩）</summary>
+        /// <summary>熔岩渠的熔岩面材质：渠只有 1.6 m 宽，共用熔岩材质的岸边硬壳（形状边缘往里 1.5 m）会把整条渠盖成黑壳，这里收窄到 0.3 m</summary>
+        const string ChannelLavaMat = Dir + "/M_Lava_Channel.mat";
+        const float ChannelShoreWidth = 0.3f;
+
+        /// <summary>
+        /// 熔池（浅碟里的圆）、八段熔岩渠（与地面齐平的熔岩带，流向殿墙）、护城渠（东西横贯，桥两侧各一片：桥高出熔岩面 0.6 m，不算熔岩，
+        /// 熔岩体也不跨过桥——否则桥面在熔岩体的形状里、它的中心落在桥上）
+        /// </summary>
         static LavaSet BuildLava(Transform env)
         {
             var root = new GameObject("Lava").transform;
@@ -301,12 +330,14 @@ namespace Spiritfire.Art.Editor.Levels
                 {
                     name = "Molten Pool", center = new Vector3(0, PoolLava, 0), shape = LavaShape.Disc, size = new Vector2(PoolR, PoolR), depth = PoolBed + 0.5f,
                 }, root),
-                moat = LevelKit.PlaceLava(Dir, new LevelKit.LavaSpec
-                {
-                    name = "Molten Moat", center = new Vector3(0, MoatLava, (MoatZ0 + MoatZ1) * 0.5f), size = new Vector2(SouthHalf.x * 2 + 4, MoatZ1 - MoatZ0 + 1f),
-                    depth = MoatBed + 0.3f, flow = new Vector2(0.25f, 0),
-                }, root),
             };
+            float moatOut = SouthHalf.x + 2f, moatW = moatOut - BridgeHalfW;
+            foreach (float sx in new[] { -1f, 1f })
+                l.moat.Add(LevelKit.PlaceLava(Dir, new LevelKit.LavaSpec
+                {
+                    name = $"Molten Moat {(sx < 0 ? "W" : "E")}", center = new Vector3(sx * (BridgeHalfW + moatW * 0.5f), MoatLava, (MoatZ0 + MoatZ1) * 0.5f),
+                    size = new Vector2(moatW, MoatZ1 - MoatZ0 + 1f), depth = MoatBed + 0.3f, flow = new Vector2(0.25f * sx, 0),
+                }, root));
             int i = 0;
             foreach (float yaw in ChannelYaws)
             {
@@ -321,7 +352,33 @@ namespace Spiritfire.Art.Editor.Levels
                 }
                 i++;
             }
+            var mat = ChannelMaterial();
+            if (mat)
+                foreach (var v in l.channels)
+                    if (v && v.surface)
+                        v.surface.sharedMaterial = mat;
             return l;
+        }
+
+        /// <summary>熔岩渠材质：共用熔岩材质的副本（每次构建同步一遍），只把岸边硬壳收窄</summary>
+        static Material ChannelMaterial()
+        {
+            var src = LevelKit.LavaMaterial();
+            if (!src) return null;
+            var mat = AssetDatabase.LoadAssetAtPath<Material>(ChannelLavaMat);
+            if (!mat)
+            {
+                mat = new Material(src) { name = "M_Lava_Channel" };
+                AssetDatabase.CreateAsset(mat, ChannelLavaMat);
+            }
+            else
+            {
+                mat.shader = src.shader;
+                mat.CopyPropertiesFromMaterial(src);
+            }
+            if (mat.HasProperty("_ShoreWidth")) mat.SetFloat("_ShoreWidth", ChannelShoreWidth);
+            EditorUtility.SetDirty(mat);
+            return mat;
         }
 
         // ───────────── 圆殿 ─────────────
@@ -373,10 +430,13 @@ namespace Spiritfire.Art.Editor.Levels
             // 南门楼（正面朝殿外，开战后熔铁闸在它里面升起）
             h.gateway = LevelKit.PlaceOrBox(GatewayId, root, new Vector3(0, 0, -24.9f), GatewaySize, 180f);
             // 门楣：两扶壁之间、门楼 / 神龛口之上，到 22 m（圆殿外壳 SM_Tripo_InfernoRoundHallWall 暂缓：白盒）
+            // 门楣的正面贴着锁扣的背板（锁身中心 LockR、背板背面再往外 0.63 m）：南北两个锁扣挂在门楣上，不是悬在门楣前面半米的空中
             float span = 2f * RingR * Mathf.Sin(step * Mathf.Deg2Rad) - 0.4f;
-            foreach (var (z, y0, label) in new[] { (-RingR, GatewaySize.y, "南门楼"), (RingR, 10.5f, "北神龛口") })
+            const float lintelDepth = 2.5f;
+            float lintelR = LockR + 0.63f + lintelDepth * 0.5f;
+            foreach (var (z, y0, label) in new[] { (-lintelR, GatewaySize.y, "南门楼"), (lintelR, 10.5f, "北神龛口") })
             {
-                var box = LevelKit.Box($"Placeholder · {RoundHallId}（{label}门楣）", root, new Vector3(0, y0, z), new Vector3(span, 22f - y0, 2.5f), 0,
+                var box = LevelKit.Box($"Placeholder · {RoundHallId}（{label}门楣）", root, new Vector3(0, y0, z), new Vector3(span, 22f - y0, lintelDepth), 0,
                     LevelKit.Mat(LevelKit.PlaceholderDir, "Placeholder", new Color(0.93f, 0.93f, 0.9f)), 0f);
                 LevelKit.EnsureTag(LevelKit.PlaceholderTag);
                 box.tag = LevelKit.PlaceholderTag;
@@ -502,7 +562,8 @@ namespace Spiritfire.Art.Editor.Levels
             }
             arena.perchPoints = new[]
             {
-                Point(root, "Perch_AltarW", G(new Vector2(-PlatC.x, PlatC.y)), Vector3.back), Point(root, "Perch_AltarE", G(PlatC), Vector3.back), vents[0], vents[1],
+                // 栖落点在两座祭台伸进北口的观台上（隔着北口看得到殿心）
+                Point(root, "Perch_AltarW", G(new Vector2(-BalconyC.x, BalconyC.y)), Vector3.back), Point(root, "Perch_AltarE", G(BalconyC), Vector3.back), vents[0], vents[1],
             };
             arena.edgePoints = Enumerable.Range(0, 8).Select(i =>
             {
@@ -664,7 +725,12 @@ namespace Spiritfire.Art.Editor.Levels
             float rockE = Y(new Vector2(30, 0)), rockS = Y(new Vector2(-20, -105));
             if (rockE < 15f || rockS < 15f) rep.Fail($"岩壁不够高：殿外（30, 0）y = {rockE:F1}，前殿南崖线外 6 m（−20, −105）y = {rockS:F1}（应 ≥ 15，地形本身是边界）");
             else rep.Line($"✓ 岩壁：殿外 y = {rockE:F1}，前殿南 y = {rockS:F1}");
-            rep.Line($"熔岩：熔池 r {PoolR}（熔岩面 {PoolLava}）、护城渠 {lava.moat.size.x:F0} × {lava.moat.size.y:F1} m（熔岩面 {MoatLava}）、熔岩渠 {lava.channels.Count} 段（宽 {ChannelHalf * 2} m，齐地）");
+            rep.Line($"熔岩：熔池 r {PoolR}（熔岩面 {PoolLava}）、护城渠桥两侧 {lava.moat.Count} 片 {(lava.moat.Count > 0 && lava.moat[0] ? $"{lava.moat[0].size.x:F0} × {lava.moat[0].size.y:F1}" : "?")} m（熔岩面 {MoatLava}）、" +
+                     $"熔岩渠 {lava.channels.Count} 段（宽 {ChannelHalf * 2} m，齐地，岸壳 {ChannelShoreWidth} m）");
+            if (lava.moat.Count != 2) rep.Fail($"护城渠应为桥两侧 2 片熔岩，现在 {lava.moat.Count}");
+            foreach (var m in lava.moat)
+                if (m && m.Body.Contains(0, (MoatZ0 + MoatZ1) * 0.5f))
+                    rep.Fail($"{m.name} 盖到了桥面上");
             if (lava.channels.Count != 8) rep.Fail($"熔岩渠应为 8 段（4 条 × 内外两段），现在 {lava.channels.Count}");
             // 窄桥（半径 12 m）上没有熔岩、渠上有
             int bridgeLava = 0, channelDry = 0;
@@ -801,7 +867,9 @@ namespace Spiritfire.Art.Editor.Levels
                 .Sight("前殿 → 门楼", G(ForecourtN + new Vector2(0, -4), 1.62f), new Vector3(0, 6f, -24.9f), 4, GatewayId)
                 .Sight("入场点 → 巨鼎", G(PlayerEntry, 1.62f), new Vector3(0, HangHeight, 0), 3)
                 .Sight("入场点 → 神龛", G(PlayerEntry, 1.62f), G(ShrineAt, 6f), 5, ShrineId)
-                .Sight("东南象限 → 西锁扣（隔着熔池、从巨鼎旁边）", G(new Vector2(17, -8.5f), 1.62f), new Vector3(-LockR + 0.8f, LockHeight, 0), 3);
+                .Sight("东南象限 → 西锁扣（隔着熔池、从巨鼎旁边）", G(new Vector2(17, -8.5f), 1.62f), new Vector3(-LockR + 0.8f, LockHeight, 0), 3)
+                .Sight("东祭台观台 → 熔池（隔着北口）", G(BalconyC + new Vector2(-0.6f, -0.6f), 1.62f), new Vector3(0, 0.5f, PoolR - 1f), 2)
+                .Sight("西祭台观台 → 熔池（隔着北口）", G(new Vector2(-BalconyC.x + 0.6f, BalconyC.y - 0.6f), 1.62f), new Vector3(0, 0.5f, PoolR - 1f), 2);
             for (int i = 0; i < 2; i++)
             {
                 var m = Ring((i == 0 ? -1 : 1) * FurnaceYaw, MouthR);

@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: M_Terrain_L3_4_0_0
+  m_Shader: {fileID: 4800000, guid: 88d3cf9a54377ad49b1fe0fd645f09c2, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _ControlMap:
+        m_Texture: {fileID: -7807319495698098540, guid: 456c31aa0c652d94298935dfa2fdaaf6, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Layer0:
+        m_Texture: {fileID: 2800000, guid: 6c781c03cd2b09e49a37bd0f974c0ff0, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Layer1:
+        m_Texture: {fileID: 2800000, guid: 25e0734f017530c42964fef11cfc480a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Layer2:
+        m_Texture: {fileID: 2800000, guid: 6b0447301548d424a96db5160343ff03, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Layer3:
+        m_Texture: {fileID: 2800000, guid: 45f2fd2d0b634d945a3cc29affc6a1f8, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MacroTex:
+        m_Texture: {fileID: 2800000, guid: 0633fcf32a969b34993310107aa04d72, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TerrainHolesTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _AmbientStrength: 1
+    - _HeightBlend: 0.8
+    - _HeightBlendDepth: 0.2
+    - _MacroScale: 70
+    - _MacroStrength: 0.24
+    - _RampSoftness: 0.3
+    - _RampThreshold: 0
+    - _RimPower: 5
+    - _RimStrength: 0.05
+    - _RockScale: 8
+    - _ShadowLift: 0.22
+    - _SlopeDarken: 0.25
+    m_Colors:
+    - _LayerTile: {r: 9, g: 7, b: 6, a: 7}
+    - _RimColor: {r: 1, g: 0.92, b: 0.8, a: 1}
+    - _ShadowTint: {r: 0.5, g: 0.3, b: 0.55, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
