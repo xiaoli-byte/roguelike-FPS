@@ -25,7 +25,7 @@ namespace Spiritfire.Art.Editor.Levels
     ///
     /// 台阶全部是 <see cref="LevelKit.TerraceFlight"/>（贴墙斜填的直台阶，只填不挖）；挡土墙在地形里是 1.2 m 宽的陡坎，
     /// 上面沿墙线连排 SM_Tripo_FrostJadeRetainingWall（<see cref="LevelKit.TerraceWallRuns"/>，台阶处自动断开）。
-    /// 边界（D14，没有空气墙）：游玩区闭合多边形 + 两条岔道，线外 4.5 m 内陡升成比该处台面高 16–24 m 的雪岭绝壁，防越界由地形保证；软边界（主题 Frost）只做兜底。
+    /// 边界（D14，没有空气墙）：游玩区闭合多边形 + 两条岔道，线外 4.5 m 内陡升成比该处台面高 16–27 m 的雪岭绝壁，防越界由地形保证；软边界（主题 Frost）只做兜底。
     /// 场景只放环境和标记（D17 / L1）。生成：Spiritfire ▸ Levels ▸ Build 2-2 昆仑天阙（或 bridge.sh level 2-2）。冒烟：bridge.sh playtest map-2-2（Map22Suite）。
     /// </summary>
     [LevelBuilder("2-2", ScenePath)]
@@ -343,12 +343,15 @@ namespace Spiritfire.Art.Editor.Levels
             float crest = 0;
             if (ins < 3f)
             {
-                float high = 16f + 8f * (Fbm(p, 55, 2, 31) * 0.5f + 0.5f);
-                // 天阙背后的绝壁至少 27 m：门阙顶（殿前 + 24.5 m）不能高过崖顶，不然站上门顶就能走出图（外圈 24 m 慢慢落回，不成方块）
-                high = Mathf.Max(high, 27f * Disc(p, GatewayC, 24, 24));
-                // 崖面（界外 4.5 m 内）贴着台地一级级走；崖顶往外 4.5–12 m 换成台地的上包络，台阶线不延伸进外面的雪岭
+                // 崖高 16 m 起：55 m 的大起伏 + 17 m 的小起伏，崖顶轮廓不是一条长直线
+                float high = 16f + 8f * (Fbm(p, 55, 2, 31) * 0.5f + 0.5f) + 3f * (Fbm(p, 17, 2, 33) * 0.5f + 0.5f);
+                // 天阙背后的绝壁至少 27 m：门阙顶（殿前 + 24.5 m）不能高过崖顶，不然站上门顶就能走出图。
+                // 门阙正后方是一座山头：中间最高（约 37 m）、往两侧斜着落，门阙两侧 16 m 内不低于 27 m，再往外 28 m 渐落回——不是平顶的方台
+                float peak = 27f + 8f * Disc(p, GatewayC, 0, 40) + 4f * (Fbm(p, 15, 2, 37) * 0.5f + 0.5f);
+                high = Mathf.Max(high, peak * Disc(p, GatewayC, 16, 28));
+                // 崖脚贴着台地一级级走；崖面往上换成台地的上包络（崖顶就是一条连续的斜线），台阶线既不在崖顶上留方块、也不延伸进外面的雪岭
                 float lvl = Level(p);
-                float rimBase = Mathf.Lerp(lvl, Mathf.Max(lvl, Trend(p.y)), Smooth(-4.5f, -12f, ins));
+                float rimBase = Mathf.Lerp(lvl, Mathf.Max(lvl, Trend(p.y)), Smooth(-0.5f, -4.5f, ins));
                 h = Mathf.Max(h, rimBase + LevelKit.RimProfile(ins, 0.9f, 3f, high, 4.5f));
                 if (ins < -5f)
                 {
