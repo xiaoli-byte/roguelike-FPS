@@ -512,6 +512,23 @@
     color: #ffb4a0;
 }
 
+/* 关卡名 / 目标单行（同首领血条：缩放后测得略窄会把最后一个字挤到第二行，如「3-3 · 铸范大坊」）；过长时省略号截断 */
+.sf-info__stage,
+.sf-info__objective {
+    flex-shrink: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sf-info__stage {
+    max-width: 560px;
+}
+
+.sf-info__objective {
+    max-width: 420px;
+}
+
 .sf-info__row {
     flex-direction: row;
     align-items: center;

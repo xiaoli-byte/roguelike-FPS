@@ -264,6 +264,17 @@ namespace Spiritfire.Game.Testing
             if (!oneLine) Fail($"血条标题「{name.text}」折成了 {name.layout.height / fs:F1} 行高");
             if (!fits) Fail($"最长的首领名「{longest}」放不下血条标题区（{widest:F0} > {room:F0}）");
             if (!subFits) Fail($"最长的副标题「{longestSub}」放不下血条（{widestSub:F0} > {panel.layout.width:F0}）");
+            // 右上角信息角的关卡名 / 目标也单行（「2-4 · 北冥冰台 · 鲲鹏」「击败 鲲鹏」）
+            var info = Hud.Instance.Widget<InfoWidget>()?.Root;
+            foreach (var cls in new[] { "sf-info__stage", "sf-info__objective" })
+            {
+                var l = info?.Q<Label>(className: cls);
+                if (l == null || !(l.layout.height > 0) || string.IsNullOrEmpty(l.text)) continue;
+                float lfs = l.resolvedStyle.fontSize;
+                bool single = l.layout.height < lfs * 1.9f;
+                Line($"  信息角 {cls}：「{l.text}」{l.layout.width:F0} × {l.layout.height:F0}（字号 {lfs:F0}）{(single ? "✓ 单行" : "✗ 折行")}");
+                if (!single) Fail($"信息角「{l.text}」折成了 {l.layout.height / lfs:F1} 行高");
+            }
         }
 
         // ───────────── 弱点 ─────────────
