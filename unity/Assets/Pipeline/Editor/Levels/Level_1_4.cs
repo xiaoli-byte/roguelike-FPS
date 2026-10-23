@@ -431,11 +431,13 @@ namespace Spiritfire.Art.Editor.Levels
 
         /// <summary>
         /// 月牙泉的水（L8 WaterVolume，水面 y −0.85，东段深约 0.7 m、西段约 0.45 m；尖角处泉床比水面浅，是干的）。
-        /// 沿 x 每 3 m 切一条竖条，条与条首尾相接、互不重叠：每条的 z 范围 = 这一条里泉床低于水面的范围外扩 0.7 m（外扩的部分埋在岸坡下），
-        /// 底面 = 这一条泉床的最低处。水体本身不画，只在顶面挂一块水面片（内置 Quad，不投影）——
-        /// 以前沿弧线转着摆、互相重叠的水块，透明叠加会画出一道道深浅条纹，水块的侧面也会透过水面露出来。
-        /// 水面片是水体的子物体：BS2 吸干时把水体的 y 缩放降到 0（底面不动），水面跟着一起落下去；相邻两条底面差不多高，吸干时的高低差只有几厘米。
-        /// 根节点与每条的名字都带 CrescentSpring（BS2 二阶段按名字找泉水；不给标签：工程里没定义这个标签）。泉床沿中线铺龟裂贴花（吸干后露出来）。
+        /// 判定：沿 x 每 3 m 切一条竖条，条与条首尾相接、互不重叠：每条的 z 范围 = 这一条里泉床低于水面的范围外扩 0.7 m（外扩的部分埋在岸坡下），
+        /// 底面 = 这一条泉床的最低处。水体本身不画。
+        /// 画面：整弯泉只有一张水面网格（<see cref="SpringSurface"/>，1 m 网格、顶点共用，名字「CrescentSpring Surface」）——
+        /// 以前沿弧线转着摆、互相重叠的水块透明叠加出深浅条纹；每条竖条各挂一块水面片又在条与条的接缝上留下 T 形接点，漏出一串亮点虚线。
+        /// BS2 吸干时 <see cref="HanbaSpring"/> 把各条水体的 y 缩放降到 0（底面不动），水面网格从水面落到泉床最低处再停用（浅的西段先露底）。
+        /// 根节点与每条的名字都带 CrescentSpring（BS2 二阶段按名字找泉水；不给标签：工程里没定义这个标签）。
+        /// 泉床沿中线铺龟裂贴花，收在「Cracked Bed」组里、平时停用（水里看得见龟裂不对），二阶段吸干时由 HanbaSpring 打开，复涌后再收起。
         /// </summary>
         static List<WaterVolume> BuildSpring(LevelKit.TerrainSet set, Transform env, Transform props)
         {
@@ -474,26 +476,92 @@ namespace Spiritfire.Art.Editor.Levels
                 var w = go.AddComponent<WaterVolume>();
                 w.shallow = 0.15f;
                 w.deep = 1.3f;
-                var surface = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                surface.name = "Water Surface";
-                Object.DestroyImmediate(surface.GetComponent<Collider>());
-                surface.transform.SetParent(go.transform, false);
-                surface.transform.localPosition = new Vector3(0, 0.5f, 0);
-                surface.transform.localRotation = Quaternion.Euler(90, 0, 0); // 内置 Quad 朝 −Z，转 90° 朝上
-                var r = surface.GetComponent<MeshRenderer>();
-                r.sharedMaterial = waterMat;
-                r.shadowCastingMode = ShadowCastingMode.Off;
-                r.receiveShadows = false;
                 waters.Add(w);
             }
+            SpringSurface(set, root, waterMat, xFrom, xTo, zFrom, zTo);
+            // 龟裂贴花：二阶段吸干后才露出来（HanbaSpring.CrackedBedName 组，平时停用）
+            var cracked = new GameObject(HanbaSpring.CrackedBedName).transform;
+            cracked.SetParent(root, false);
             var rng = new System.Random(14);
             for (float a = -0.8f; a <= 0.81f; a += 0.2f)
             {
                 var c = Spring.At(a);
-                var go = ShowcaseSceneBuilder.Place("SM_Decal_DesertCrackedBed", props, set.OnGround(c.x, c.y, 0.02f), (float)rng.NextDouble() * 360f);
+                var go = ShowcaseSceneBuilder.Place("SM_Decal_DesertCrackedBed", cracked, set.OnGround(c.x, c.y, 0.02f), (float)rng.NextDouble() * 360f);
                 if (go) go.isStatic = true;
             }
+            cracked.gameObject.SetActive(false);
             return waters;
+        }
+
+        /// <summary>
+        /// 整弯泉的水面：y = 水面的一张平网格（1 m 一格、顶点共用，没有 T 形接点），盖住泉床低于水面的每一格再外扩一格（外扩的部分埋在岸坡下，
+        /// 岸线由地形深度遮挡切出来，和格子大小无关）。UV = 世界 XZ（Spiritfire/Water 的涟漪本来就按世界坐标走）。不投影、不收影、没有碰撞。
+        /// 网格存成 Dir 下的资产（场景引用它）；名字带 Surface，<see cref="HanbaSpring"/> 吸干 / 复涌时按水位升降它
+        /// </summary>
+        static void SpringSurface(LevelKit.TerrainSet set, Transform root, Material waterMat, float xFrom, float xTo, float zFrom, float zTo)
+        {
+            const float cell = 1f;
+            int nx = Mathf.CeilToInt((xTo - xFrom) / cell), nz = Mathf.CeilToInt((zTo - zFrom) / cell);
+            var wet = new bool[nx, nz];
+            for (int i = 0; i < nx; i++)
+            for (int j = 0; j < nz; j++)
+            {
+                float x0 = xFrom + i * cell, z0 = zFrom + j * cell;
+                bool any = false;
+                for (int k = 0; k <= 2 && !any; k++)
+                for (int l = 0; l <= 2 && !any; l++)
+                    any = set.GroundY(x0 + k * cell * 0.5f, z0 + l * cell * 0.5f) < WaterY - 0.01f;
+                wet[i, j] = any;
+            }
+            var cover = new bool[nx, nz];
+            for (int i = 0; i < nx; i++)
+            for (int j = 0; j < nz; j++)
+            {
+                if (!wet[i, j]) continue;
+                for (int di = -1; di <= 1; di++)
+                for (int dj = -1; dj <= 1; dj++)
+                {
+                    int a = i + di, b = j + dj;
+                    if (a >= 0 && b >= 0 && a < nx && b < nz) cover[a, b] = true;
+                }
+            }
+            var index = new Dictionary<int, int>();
+            var verts = new List<Vector3>();
+            var uvs = new List<Vector2>();
+            var tris = new List<int>();
+            int V(int i, int j)
+            {
+                int key = j * (nx + 1) + i;
+                if (index.TryGetValue(key, out int v)) return v;
+                v = verts.Count;
+                float x = xFrom + i * cell, z = zFrom + j * cell;
+                verts.Add(new Vector3(x, 0, z));
+                uvs.Add(new Vector2(x, z));
+                index[key] = v;
+                return v;
+            }
+            for (int i = 0; i < nx; i++)
+            for (int j = 0; j < nz; j++)
+            {
+                if (!cover[i, j]) continue;
+                int a = V(i, j), b = V(i + 1, j), c = V(i + 1, j + 1), d = V(i, j + 1);
+                tris.AddRange(new[] { a, d, c, a, c, b }); // 顺时针（从上往下看）= 朝上
+            }
+            var mesh = new Mesh { name = $"Water_{Name}" };
+            mesh.SetVertices(verts);
+            mesh.SetUVs(0, uvs);
+            mesh.SetTriangles(tris, 0);
+            mesh.SetNormals(verts.Select(_ => Vector3.up).ToList());
+            mesh.RecalculateBounds();
+            LevelKit.SaveAsset(mesh, $"{Dir}/Water_{Name}.asset");
+            var go = new GameObject($"{SpringName} Surface");
+            go.transform.SetParent(root, false);
+            go.transform.position = new Vector3(0, WaterY, 0);
+            go.AddComponent<MeshFilter>().sharedMesh = mesh;
+            var r = go.AddComponent<MeshRenderer>();
+            r.sharedMaterial = waterMat;
+            r.shadowCastingMode = ShadowCastingMode.Off;
+            r.receiveShadows = false;
         }
 
         /// <summary>
@@ -536,7 +604,7 @@ namespace Spiritfire.Art.Editor.Levels
             foreach (var (at, h) in Poplars)
             {
                 float yaw = (float)rng.NextDouble() * 360f;
-                var go = poplarAsset ? Put(PoplarId, grove, set, at, yaw, new Vector3(3.2f, h, 3.2f), h, 0.2f) : PoplarSilhouette(grove, set, at, h);
+                var go = poplarAsset ? Put(PoplarId, grove, set, at, yaw, new Vector3(3.2f, h, 3.2f), h, 0.2f) : PoplarSilhouette(grove, set, at, h, rng);
                 if (go) trees.Add(go);
             }
             foreach (var (at, h) in Tamarisks)
@@ -550,34 +618,56 @@ namespace Spiritfire.Art.Editor.Levels
         }
 
         /// <summary>
-        /// 白杨的占位轮廓（还没有 SM_Tripo_DesertPoplar）：灰褐细干（半径 0.22 m、到 1/3 树高）+ 灰绿柱状树冠（胶囊，半径 1.6 m，从 1/4 树高到树顶），
-        /// 新疆杨那种窄高的样子；干、冠都带碰撞（冠挡日晒射线，树影才算数）。根物体名字带 Placeholder、打 Placeholder 标签——验收照样列进占位清单
+        /// 白杨树冠的叶团（相对树高）：中心高、半径（米）、半高（树高的比例）、横向偏移（米）、用深 / 浅哪种叶色。
+        /// 从 1/5 树高起，下面两团最胖（深色）、往上一团比一团瘦、最上面一团收成尖（浅色）——新疆杨窄高、上尖的火苗形，不是一根胶囊
         /// </summary>
-        static GameObject PoplarSilhouette(Transform parent, LevelKit.TerrainSet set, Vector2 at, float h)
+        static readonly (float y, float r, float half, float dx, bool light)[] PoplarLobes =
+        {
+            (0.33f, 1.55f, 0.14f, -0.15f, false), (0.47f, 1.7f, 0.15f, 0.2f, false), (0.61f, 1.45f, 0.14f, -0.12f, false),
+            (0.74f, 1.15f, 0.13f, 0.14f, true), (0.86f, 0.8f, 0.12f, -0.05f, true),
+        };
+
+        /// <summary>
+        /// 白杨的占位轮廓（还没有 SM_Tripo_DesertPoplar）：灰白树干（半径 0.18 m，伸进树冠到 3/4 树高）+ 五团叠起来的椭球叶团（<see cref="PoplarLobes"/>，
+        /// 每棵按种子转一下、叶团左右错开一点，两种绿：下深上浅读得出体积），新疆杨那种窄高上尖的样子。
+        /// 干、叶团都带碰撞（叶团用自己的网格碰撞，影子和看到的树冠一致；冠挡日晒射线，树影才算数）。根物体名字带 Placeholder、打 Placeholder 标签——验收照样列进占位清单
+        /// </summary>
+        static GameObject PoplarSilhouette(Transform parent, LevelKit.TerrainSet set, Vector2 at, float h, System.Random rng)
         {
             LevelKit.EnsureTag(LevelKit.PlaceholderTag);
             var root = new GameObject($"Placeholder · {PoplarId}");
             root.transform.SetParent(parent, false);
-            root.transform.position = set.OnGround(at.x, at.y, -0.2f);
+            root.transform.SetPositionAndRotation(set.OnGround(at.x, at.y, -0.2f), Quaternion.Euler(0, (float)rng.NextDouble() * 360f, 0));
             root.tag = LevelKit.PlaceholderTag;
             root.isStatic = true;
-            var bark = LevelKit.Mat(Dir, "PoplarBark", new Color(0.42f, 0.38f, 0.33f));
-            var leaf = LevelKit.Mat(Dir, "PoplarCrown", new Color(0.44f, 0.5f, 0.3f), 0.95f);
+            var bark = LevelKit.Mat(Dir, "PoplarBark", new Color(0.62f, 0.6f, 0.53f));
+            var leafDark = LevelKit.Mat(Dir, "PoplarCrown", new Color(0.33f, 0.43f, 0.22f), 0.95f);
+            var leafLight = LevelKit.Mat(Dir, "PoplarCrownLight", new Color(0.47f, 0.56f, 0.29f), 0.95f);
             var trunk = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             trunk.name = "Trunk";
             trunk.transform.SetParent(root.transform, false);
-            trunk.transform.localPosition = new Vector3(0, h / 6f, 0);
-            trunk.transform.localScale = new Vector3(0.44f, h / 6f, 0.44f);
+            float trunkTop = h * 0.75f;
+            trunk.transform.localPosition = new Vector3(0, trunkTop * 0.5f, 0);
+            trunk.transform.localScale = new Vector3(0.36f, trunkTop * 0.5f, 0.36f);
             trunk.GetComponent<MeshRenderer>().sharedMaterial = bark;
             trunk.isStatic = true;
-            float crownBottom = h * 0.25f, crownHeight = h - crownBottom;
-            var crown = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-            crown.name = "Crown";
-            crown.transform.SetParent(root.transform, false);
-            crown.transform.localPosition = new Vector3(0, crownBottom + crownHeight * 0.5f, 0);
-            crown.transform.localScale = new Vector3(3.2f, crownHeight * 0.5f, 3.2f);
-            crown.GetComponent<MeshRenderer>().sharedMaterial = leaf;
-            crown.isStatic = true;
+            float jitter = 0.85f + 0.3f * (float)rng.NextDouble();
+            for (int i = 0; i < PoplarLobes.Length; i++)
+            {
+                var (y, r, half, dx, light) = PoplarLobes[i];
+                var lobe = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                lobe.name = $"Crown {i + 1}";
+                lobe.transform.SetParent(root.transform, false);
+                float rr = r * (i == 1 ? jitter : 1f);
+                lobe.transform.localPosition = new Vector3(dx, h * y, dx * 0.6f);
+                lobe.transform.localRotation = Quaternion.Euler(0, i * 37f, 0);
+                lobe.transform.localScale = new Vector3(rr * 2f, h * half * 2f, rr * 1.8f);
+                lobe.GetComponent<MeshRenderer>().sharedMaterial = light ? leafLight : leafDark;
+                // 球碰撞按最大轴算会比看到的胖：换成网格碰撞
+                Object.DestroyImmediate(lobe.GetComponent<Collider>());
+                lobe.AddComponent<MeshCollider>().sharedMesh = lobe.GetComponent<MeshFilter>().sharedMesh;
+                lobe.isStatic = true;
+            }
             return root;
         }
 

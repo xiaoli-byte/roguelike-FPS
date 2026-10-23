@@ -14,6 +14,8 @@ namespace Spiritfire.Game
     /// 吸干：每段水的高度（Transform 的 y 缩放）从原来的水深降到 0、底面不动，降到底后整段停用——停用的 WaterVolume 退出 <see cref="WaterVolume.All"/>，
     /// 日晒判定（<see cref="SunExposure"/>）随之认不出浅水，踩水减半就没了；涉水减速、深水托回也一并消失。吸的过程中各段水面朝 sink（旱魃心口）飘水珠。
     /// 复涌：反过来，先启用、再从 0 涨回原水深。<see cref="Beds"/> = 泉底上均匀取的点（每段水按面积每约 6 m 一个，泉床最低处），二阶段的喷气裂缝沿它们排。
+    /// 画面：水段自己的子物体水面片跟着缩放一起落；关卡给整弯泉一张共用水面（泉水根节点下名字带 <see cref="SurfaceName"/>、不在水段里面的渲染器，1-4 是这样）时，
+    /// 它从原高度按水位落到泉床最低处、水位 0 时停用（浅的地方先露底）。根节点下的 <see cref="CrackedBedName"/> 组（龟裂贴花）平时停用，吸干时打开、复涌完再收起。
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class HanbaSpring : MonoBehaviour
@@ -23,6 +25,8 @@ namespace Spiritfire.Game
         public static readonly string[] Names = { "CrescentSpring", "Crescent Spring" };
         /// <summary>泉底取点的间距（米）</summary>
         public const float BedStep = 6f;
+        /// <summary>整弯泉共用水面的名字标记、吸干后才露出来的龟裂贴花组的名字（都在泉水根节点下）</summary>
+        public const string SurfaceName = "Surface", CrackedBedName = "Cracked Bed";
         static readonly Color Droplet = new(0.6f, 0.86f, 1f);
 
         sealed class Body
@@ -35,6 +39,10 @@ namespace Spiritfire.Game
 
         readonly List<Body> bodies = new();
         readonly List<Vector3> beds = new();
+        /// <summary>共用水面（原高度）与吸干后露出来的组</summary>
+        readonly List<(Transform t, float y)> surfaces = new();
+        readonly List<GameObject> reveals = new();
+        float lowest;
         float level = 1f, from = 1f, to = 1f, t, seconds, dropAcc;
         bool animating;
         Vector3 sink;
@@ -164,7 +172,43 @@ namespace Spiritfire.Game
                     beds.Add(p);
                 }
             }
+            CollectVisuals();
         }
+
+        /// <summary>泉水根节点下的共用水面（名字带 Surface、不在水段里面的渲染器）与龟裂贴花组；lowest = 各段水底面的最低处</summary>
+        void CollectVisuals()
+        {
+            surfaces.Clear();
+            reveals.Clear();
+            lowest = float.PositiveInfinity;
+            foreach (var b in bodies) lowest = Mathf.Min(lowest, b.bottom);
+            foreach (var r in GetComponentsInChildren<Renderer>(true))
+            {
+                if (!r || r.name.IndexOf(SurfaceName, System.StringComparison.OrdinalIgnoreCase) < 0 || r.GetComponentInParent<WaterVolume>(true)) continue;
+                surfaces.Add((r.transform, r.transform.position.y));
+            }
+            foreach (var tr in GetComponentsInChildren<Transform>(true))
+                if (tr && tr != transform && tr.name == CrackedBedName)
+                    reveals.Add(tr.gameObject);
+        }
+
+        /// <summary>共用水面此刻的高度（世界 y；没有共用水面为 NaN，测试用）</summary>
+        public float SurfaceY => surfaces.Count > 0 && surfaces[0].t ? surfaces[0].t.position.y : float.NaN;
+        /// <summary>共用水面的个数、此刻还显示着的个数（测试用）</summary>
+        public int Surfaces => surfaces.Count;
+        public int SurfacesShown
+        {
+            get
+            {
+                int n = 0;
+                foreach (var (st, _) in surfaces)
+                    if (st && st.gameObject.activeInHierarchy)
+                        n++;
+                return n;
+            }
+        }
+        /// <summary>龟裂贴花露着（测试用）</summary>
+        public bool BedRevealed => reveals.Count > 0 && reveals[0] && reveals[0].activeSelf;
 
         Vector3 CenterOfBeds()
         {
@@ -182,6 +226,9 @@ namespace Spiritfire.Game
             if (bodies.Count == 0) return;
             sink = sinkAt;
             Drains++;
+            foreach (var g in reveals)
+                if (g)
+                    g.SetActive(true);
             Begin(0f, seconds);
         }
 
@@ -222,7 +269,15 @@ namespace Spiritfire.Game
             float u = Mathf.Clamp01(t / seconds);
             level = Mathf.Lerp(from, to, u * u * (3 - 2 * u));
             if (to < from) Droplets(dt);
-            if (u >= 1f) animating = false;
+            if (u >= 1f)
+            {
+                animating = false;
+                // 复涌到满：龟裂贴花收回去（水里看得见龟裂不对）
+                if (level >= 0.999f)
+                    foreach (var g in reveals)
+                        if (g)
+                            g.SetActive(false);
+            }
             Apply();
         }
 
@@ -239,6 +294,17 @@ namespace Spiritfire.Game
                 b.t.localScale = new Vector3(b.scale.x, b.scale.y * k, b.scale.z);
                 var p = b.t.position;
                 b.t.position = new Vector3(p.x, b.bottom + b.depth * k * 0.5f, p.z);
+            }
+            // 共用水面：从原高度按水位落到泉床最低处（浅的地方先露底），水位 0 时停用
+            bool show = level > 0.001f || animating && to > from;
+            foreach (var (st, y0) in surfaces)
+            {
+                if (!st) continue;
+                if (st.gameObject.activeSelf != show) st.gameObject.SetActive(show);
+                if (!show) continue;
+                float floor = float.IsFinite(lowest) ? Mathf.Min(lowest, y0) : y0;
+                var p = st.position;
+                st.position = new Vector3(p.x, Mathf.Lerp(floor, y0, level), p.z);
             }
         }
 
