@@ -410,8 +410,12 @@ namespace Spiritfire.Game.Testing
         {
             EnemyRegistry.PurgeAll();
             vitals.Heal(99999);
-            // 走到井底下站（台面在上站时站在台口等它下来接）
-            yield return Travel(lift.lowPosition, 1.5f, false);
+            // 走到井底下站的台口等（台面在上站时站在台口叫它下来接）：台口在台面靠井心那条边外 1.5 m——
+            // 站在台面投影里，下来的台面会停在头顶上方等人站开（不压人），像玩家一样站在旁边
+            var fwd = lift.deck ? Flat3(lift.deck.forward).normalized : Vector3.forward;
+            var landing = lift.lowPosition - fwd * (lift.deckSize.y * 0.5f + 1.5f);
+            yield return Travel(landing, 1f, false);
+            Line($"升降台：到了下站台口（离井道 {Flat(motor.transform.position - lift.lowPosition):F1} m），台面{(lift.AtLow ? "停在下站" : lift.AtHigh ? "停在上站" : "在走")}");
             float w0 = Time.time;
             while (!lift.AtLow && Time.time - w0 < LiftTimeout) yield return null;
             if (!lift.AtLow)

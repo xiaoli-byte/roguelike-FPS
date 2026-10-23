@@ -10,7 +10,9 @@ namespace Spiritfire.Game
     /// 一块竖直往返的铁台，两站——下站在井底炉坛旁，上站在上环岩台沿的栈桥头（出口铸门前）。
     ///   · 通电：<see cref="powerSite"/>（井底炉坛）肃清后才动；没设 = 一直通电。通电时亮灯、提示一次。
     ///   · 乘坐：站上台面 <see cref="departDelay"/> 秒后开往另一站；到站后乘客要先下来再上去才会再开（不会把站着发呆的人送回去）。
-    ///     台面空着、玩家在另一站 <see cref="callRadius"/> 米内等着时，自己开过去接人。
+    ///     台面空着、玩家在另一站 <see cref="callRadius"/> 米内等着时，自己开过去接人（半径只罩住台口：上站是栈桥前半段，
+    ///     沿上环岩台内沿路过的人离井道 8.5 m，不会把台面空叫上去）。
+    ///     下行时台面投影里站着玩家，台面停在他头顶上方等，并提示一次「站开」——站开以后接着落下来。
     ///   · 角色控制器安全：本组件排在 PlayerMotor 之前更新；往上走先用 CharacterController.Move 把乘客抬起、再挪台面，
     ///     往下走先挪台面、再把乘客按同样的位移放下——乘客始终贴着台面，PlayerMotor 这一帧照常走、照常判落地，台面的位移不进它的速度
     ///     （到站不会被甩出去）。下行时台面下方有角色就停住等（不压人）。
@@ -32,8 +34,8 @@ namespace Spiritfire.Game
         public Vector3 lowPosition, highPosition;
         [Tooltip("最高速度（m/s）、加减速度（m/s²）")]
         public float speed = 4f, accel = 2.5f;
-        [Tooltip("站上去多少秒后开、玩家在另一站等多少秒后来接、接人的半径（米，水平）")]
-        public float departDelay = 0.8f, callDelay = 0.6f, callRadius = 9f;
+        [Tooltip("站上去多少秒后开、玩家在另一站等多少秒后来接、接人的半径（米，水平；只罩住台口，别伸到旁边的路上）")]
+        public float departDelay = 0.8f, callDelay = 0.6f, callRadius = 6.5f;
         [Tooltip("这个场地肃清后才通电（空 = 一直通电）")]
         public EncounterSite powerSite;
         [Tooltip("通电后才显示的（灯、炉口光）/ 断电时才显示的")]
@@ -44,6 +46,8 @@ namespace Spiritfire.Game
         public Vector3[] cableTops = Array.Empty<Vector3>();
         public Vector3[] cableAnchors = Array.Empty<Vector3>();
         public string poweredToast = "炉坛升降台通电了 · 站上台面就走";
+        [Tooltip("下行时被台面投影里的玩家挡住（停在头顶上方）时提示一次")]
+        public string blockedToast = "升降台要落下来了 · 先从台面底下站开";
 
         /// <summary>场景里的升降台（3-2 只有一座）</summary>
         public static ForgeWellLift Active { get; private set; }
@@ -66,9 +70,9 @@ namespace Spiritfire.Game
         public event Action<ForgeWellLift, Stop> Arrived;
 
         Rigidbody body;
-        bool moving, holdUntilClear;
+        bool moving, holdUntilClear, blockedHinted;
         Stop at = Stop.Low, target = Stop.Low;
-        float velocity, standTime, callTime, nextFind;
+        float velocity, standTime, callTime, nextFind, blockedTime;
         PlayerMotor player;
         readonly List<CharacterController> riders = new();
         static readonly Collider[] hits = new Collider[16];
@@ -167,7 +171,8 @@ namespace Spiritfire.Game
             moving = true;
             target = to;
             velocity = 0;
-            standTime = callTime = 0;
+            standTime = callTime = blockedTime = 0;
+            blockedHinted = false;
         }
 
         void Travel(float dt)
@@ -187,13 +192,20 @@ namespace Spiritfire.Game
             if (velocity > cap) velocity = cap;
             float stepLen = Mathf.Min(dist, Mathf.Max(velocity, 0.15f) * dt);
             var delta = to / dist * stepLen;
-            if (delta.y < 0 && SomethingBelow(-delta.y))
+            if (delta.y < 0 && SomethingBelow(-delta.y, out bool playerBelow))
             {
                 velocity = 0;
                 Blocked = true;
+                blockedTime += dt;
+                if (playerBelow && !blockedHinted && blockedTime > 0.4f && Application.isPlaying && !string.IsNullOrEmpty(blockedToast))
+                {
+                    blockedHinted = true;
+                    GameUI.Toast(blockedToast, new Color(1f, 0.62f, 0.3f));
+                }
                 return;
             }
             Blocked = false;
+            blockedTime = 0;
             if (delta.y >= 0)
             {
                 MoveRiders(delta);
@@ -244,12 +256,16 @@ namespace Spiritfire.Game
                     riders.Add(cc);
         }
 
-        /// <summary>下行这一步扫过的空间（台面底下）里有没有角色</summary>
-        bool SomethingBelow(float drop)
+        /// <summary>下行这一步扫过的空间（台面底下）里有没有角色；playerBelow = 其中有玩家</summary>
+        bool SomethingBelow(float drop, out bool playerBelow)
         {
             var half = new Vector3(Mathf.Max(0.1f, deckSize.x * 0.5f - 0.05f), drop * 0.5f + 0.06f, Mathf.Max(0.1f, deckSize.y * 0.5f - 0.05f));
             var c = deck.position + Vector3.down * (deckThickness + drop * 0.5f + 0.06f);
-            return Physics.OverlapBoxNonAlloc(c, half, hits, deck.rotation, 1 << Layers.Character, QueryTriggerInteraction.Ignore) > 0;
+            int n = Physics.OverlapBoxNonAlloc(c, half, hits, deck.rotation, 1 << Layers.Character, QueryTriggerInteraction.Ignore);
+            playerBelow = false;
+            for (int i = 0; i < n && !playerBelow; i++)
+                playerBelow = hits[i] && hits[i].GetComponentInParent<PlayerMotor>();
+            return n > 0;
         }
 
         /// <summary>玩家站在另一站的台口（水平 callRadius 内、高差 2.5 m 内）、没在台面上</summary>
