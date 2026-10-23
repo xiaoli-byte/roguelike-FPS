@@ -356,9 +356,12 @@ namespace Spiritfire.Art.Editor.Levels
             return (1 - Smooth(hw - 1.5f, hw, Mathf.Abs(p.x))) * Smooth(RiverZ0 - 4, RiverZ0, p.y) * (1 - Smooth(RiverZ1 - 2, RiverZ1 + 2, p.y));
         }
 
-        /// <summary>冰潭遮罩（圆潭 + 南边溢口）</summary>
+        /// <summary>
+        /// 冰潭遮罩（圆潭 + 南边溢口）：潭岸 2.6 m 的落差摊在 2 m 宽的带里（0.5 m 的高度格上，0.6 m 宽的岸会斜着锯出一排齿），
+        /// 岸坡仍陡于 45°，上环台还是走三道石阶
+        /// </summary>
         static float PoolMask(Vector2 p) =>
-            Mathf.Max(1 - Smooth(PoolR - 0.3f, PoolR + 0.3f, Vector2.Distance(p, PoolC)), 1 - Smooth(-0.3f, 0.3f, LevelKit.BoxSdf(p, SpillMin, SpillMax)));
+            Mathf.Max(1 - Smooth(PoolR - 1f, PoolR + 1f, Vector2.Distance(p, PoolC)), 1 - Smooth(-0.3f, 0.3f, LevelKit.BoxSdf(p, SpillMin, SpillMax)));
 
         /// <summary>台面 + 环台 + 瀑口（不含坡道、冰潭、崖壁）：坡道两端的高度、摆件贴地从这里取也行</summary>
         static float Terraces(Vector2 p, float wobble, float slope)
@@ -398,7 +401,7 @@ namespace Spiritfire.Art.Editor.Levels
             // ── ⑤ 冰潭 + 潭心冰岛 ──
             float pool = PoolMask(p);
             h = Mathf.Lerp(h, PoolY, pool);
-            float isl = 1 - Smooth(IslandR - 0.6f, IslandR + 0.6f, Vector2.Distance(p, PoolC));
+            float isl = 1 - Smooth(IslandR - 1f, IslandR + 1f, Vector2.Distance(p, PoolC));
             if (isl > 0) h = Mathf.Max(h, Mathf.Lerp(h, IslandY, isl));
 
             // ── 坡道（挖填都做，坡度处处一样）──
@@ -407,6 +410,21 @@ namespace Spiritfire.Art.Editor.Levels
             {
                 h = LevelKit.CutRamp(p, h, r.foot, r.footY, r.top, r.topY, r.width, 2.5f, out float m);
                 rampMask = Mathf.Max(rampMask, m);
+            }
+
+            // ── 栈道坡脚两侧垫一道楔形雪坡：栈道面离地 1 m 以内那段，两侧 3.5 m 内的地面垫到栈道面高度，往外 2.5 m 渐回原地面；
+            //    离地 1–1.6 m 渐收。从侧面走上栈道不会被 0.5–0.8 m 的板沿绊住（导航网格的台阶比角色控制器高，机器人会从侧面抄近路）──
+            foreach (var r in PlankRoads)
+            {
+                var ab = r.top - r.foot;
+                float t = Vector2.Dot(p - r.foot, ab) / ab.sqrMagnitude;
+                if (t < 0 || t > 1) continue;
+                float roadY = Mathf.Lerp(r.footY, r.topY, t), lip = roadY - h;
+                if (lip <= 0 || lip >= 1.6f) continue;
+                float side = Vector2.Distance(p, r.foot + ab * t);
+                float k = (1 - Smooth(PlankWidth * 0.5f + 0.5f, PlankWidth * 0.5f + 3f, side)) * (1 - Smooth(1f, 1.6f, lip));
+                h = Mathf.Lerp(h, roadY - 0.05f, k);
+                rampMask = Mathf.Max(rampMask, k);
             }
 
             // ── 台面细起伏（冰面、冰潭、坡道、桥头不加）──

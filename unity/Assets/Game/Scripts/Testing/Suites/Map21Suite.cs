@@ -15,7 +15,8 @@ namespace Spiritfire.Game.Testing
     ///      没有空气墙（Ignore Raycast 层只有兜底环）；出生点看得见冰瀑（地标标记 Landmark_IcefallTop）。
     ///   2. 冰面：从出生碛丘走下冰河，脚下是冰面预设（SurfaceZone.PlayerSurface = ice）。
     ///   3. 机器人清场：每次挑 NavMesh 路程最近的未清必清场地（寻路不走攀爬连线：区域 29 只给雪狌狌），用角色控制器沿导航路径真走过去
-    ///      （坡道、栈道、冰桥都是真的），路上被别的场地触发就先打那个；交战时自动瞄最近的敌人（冰棱不算敌人）射击、隔 4 s 放技能，被挡住就绕到看得见的地方。
+    ///      （坡道、栈道、冰桥都是真的），路上被别的场地触发就先打那个；交战时自动瞄最近的敌人（冰棱不算敌人）射击、隔 4 s 放技能，被挡住就绕到看得见的地方，
+    ///      玄冰巨蟹 / 冰甲旋龟正面格挡就绕到背后打。
     ///      玩家临时 +5000 生命。每处 160 s 内肃清，肃清后场地宝箱要出现（不开）。
     ///   4. 必清全部肃清 → 目标完成 → 出口升起 → 门旁清关宝箱。
     ///   5. 冰棱：站上冰桥，朝一根还挂着的冰棱开火 → 松脱、砸到桥面、换成碎冰堆（带碰撞的掩体）。
@@ -304,6 +305,14 @@ namespace Spiritfire.Game.Testing
                     continue;
                 }
                 var body = target.GetComponent<EnemyBody>();
+                var ai = target.GetComponent<EnemyAI>();
+                if ((ai is FrostCrabAI || ai is XuanGuiAI) && Time.time >= flankAt)
+                {
+                    // 巨蟹的巨钳、旋龟的冰壳挡在正面（正面伤害 ×0.15）：像玩家一样绕到背后打鳃缝 / 蛇头（同 Map23Suite）
+                    flankAt = Time.time + 2.5f;
+                    var behind = target.transform.position - target.transform.forward * 9f;
+                    if (NavMesh.SamplePosition(behind, out var hit, 3f, NavMesh.AllAreas) && Mathf.Abs(hit.position.y - target.transform.position.y) < 2.5f) Place(hit.position);
+                }
                 var aim = body && body.WeakPoint && body.WeakPoint.gameObject.activeInHierarchy && Random.value < 0.4f ? body.WeakPoint.position : BodyCenter(target);
                 Aim(motor, eye, aim);
                 if (Vector3.Distance(eye.position, aim) > 22f) yield return Step(target.transform.position, 6f);
