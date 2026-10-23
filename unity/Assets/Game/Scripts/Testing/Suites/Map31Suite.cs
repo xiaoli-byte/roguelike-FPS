@@ -571,12 +571,59 @@ namespace Spiritfire.Game.Testing
                 Place(goal);
                 yield break;
             }
+            corners = OffTheShoulder(corners);
+            // 死了的玩家触发不了场地、发现不了藏宝：路上先补满（掉进熔岩一次扣 15% 最大生命）
+            if (vitals.Dead)
+            {
+                Line("  ⚠ 出发时玩家已经死了：复活");
+                vitals.Revive();
+            }
+            vitals.Heal(99999);
+            var field = LavaField.Instance;
+            int entries0 = field ? field.Entries : 0;
             for (int i = 1; i < corners.Count; i++)
             {
-                if (breakOnCombat && EncounterSite.ActiveSites.Count > 0) yield break;
-                if (Flat(motor.transform.position - goal) <= stopAt) yield break;
+                if (breakOnCombat && EncounterSite.ActiveSites.Count > 0) break;
+                if (Flat(motor.transform.position - goal) <= stopAt) break;
                 yield return WalkTo(corners[i], goal, stopAt, breakOnCombat);
             }
+            if (field && field.Entries > entries0) Line($"  ⚠ 走路时掉进熔岩 {field.Entries - entries0} 次（到 {goal} 的路上）");
+        }
+
+        /// <summary>沿路脚底至少高出熔岩面这么多（堤面 +0.9；熔岩判定到 +0.3）：导航路径在弯道内侧会贴着堤肩切过去，那里离熔岩只差一个身位</summary>
+        const float KeepRise = 0.65f;
+
+        /// <summary>
+        /// 把路径按 ≤ 2 m 一段加密，贴着堤肩（脚底离熔岩面不到 <see cref="KeepRise"/>）的点挪回堤面：4 m 内找最近的、
+        /// 在非熔岩导航网格上、够高的点。只改机器人怎么走，不改场地（导航网格的 Lava 区只标到 +0.3，地面敌人本来就可以走到堤肩上）
+        /// </summary>
+        static List<Vector3> OffTheShoulder(List<Vector3> corners)
+        {
+            if (corners.Count < 2 || !LavaField.Any) return corners;
+            var list = new List<Vector3> { corners[0] };
+            for (int i = 1; i < corners.Count; i++)
+            {
+                var a = corners[i - 1];
+                var b = corners[i];
+                int n = Mathf.Max(1, Mathf.CeilToInt(Flat(b - a) / 2f));
+                for (int k = 1; k <= n; k++) list.Add(AwayFromLava(Vector3.Lerp(a, b, k / (float)n)));
+            }
+            return list;
+        }
+
+        static Vector3 AwayFromLava(Vector3 p)
+        {
+            // 两个拐点之间插出来的点先贴回导航网格（插值的高度不一定是地面高度）
+            if (NavMesh.SamplePosition(p, out var on, 1f, Dry)) p = on.position;
+            if (!LavaField.IsLava(p, KeepRise)) return p;
+            for (float r = 0.5f; r <= 4f; r += 0.5f)
+            for (int k = 0; k < 16; k++)
+            {
+                float a = k * Mathf.PI / 8;
+                var q = p + new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a)) * r;
+                if (NavMesh.SamplePosition(q, out var hit, 1f, Dry) && !LavaField.IsLava(hit.position, KeepRise)) return hit.position;
+            }
+            return p;
         }
 
         IEnumerator WalkTo(Vector3 target, Vector3 goal, float stopAt, bool breakOnCombat)
@@ -587,6 +634,8 @@ namespace Spiritfire.Game.Testing
             {
                 if (breakOnCombat && EncounterSite.ActiveSites.Count > 0) yield break;
                 if (Flat(motor.transform.position - goal) <= stopAt) yield break;
+                // 玩家阵亡会结束本局（后面的场地、藏宝、出口都测不了）：路上被追打 / 掉进熔岩时同交战一样补血
+                if (!vitals.Dead && vitals.health < vitals.MaxHealth * 0.4f) vitals.Heal(99999);
                 var d = target - motor.transform.position;
                 d.y = 0;
                 var dir = d.normalized;
@@ -630,7 +679,7 @@ namespace Spiritfire.Game.Testing
                     left = 0;
                 }
             }
-            Place(p);
+            Place(AwayFromLava(p));
             yield return null;
         }
 
