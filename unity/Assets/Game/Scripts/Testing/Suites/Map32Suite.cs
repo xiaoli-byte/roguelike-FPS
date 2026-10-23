@@ -325,7 +325,7 @@ namespace Spiritfire.Game.Testing
                     {
                         flankAt = Time.time + 3f;
                         var ahead = target.transform.position + target.transform.forward * 10f;
-                        if (NavMesh.SamplePosition(ahead, out var hit, 3f, NavMesh.AllAreas) && Mathf.Abs(hit.position.y - target.transform.position.y) < 2.5f) Place(hit.position);
+                        if (NavMesh.SamplePosition(ahead, out var hit, 3f, LavaField.WalkerFilter()) && Mathf.Abs(hit.position.y - target.transform.position.y) < 2.5f) Place(hit.position);
                     }
                 }
                 Aim(motor, eye, aim);
@@ -576,9 +576,10 @@ namespace Spiritfire.Game.Testing
         {
             complete = false;
             var list = new List<Vector3>();
-            if (!NavMesh.SamplePosition(from, out var a, 4f, NavMesh.AllAreas) || !NavMesh.SamplePosition(to, out var b, 4f, NavMesh.AllAreas)) return list;
+            var walker = LavaField.WalkerFilter();
+            if (!NavMesh.SamplePosition(from, out var a, 4f, walker) || !NavMesh.SamplePosition(to, out var b, 4f, walker)) return list;
             var path = new NavMeshPath();
-            NavMesh.CalculatePath(a.position, b.position, NavMesh.AllAreas, path);
+            NavMesh.CalculatePath(a.position, b.position, walker, path);
             complete = path.status == NavMeshPathStatus.PathComplete;
             list.AddRange(path.corners);
             return list;

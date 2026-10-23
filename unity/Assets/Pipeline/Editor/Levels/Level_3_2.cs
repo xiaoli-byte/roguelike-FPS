@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.AI;
 using static Spiritfire.Art.Editor.Levels.Landform;
 using Object = UnityEngine.Object;
 using SG = Spiritfire.Game;
@@ -104,17 +105,27 @@ namespace Spiritfire.Art.Editor.Levels
         const float ZhurongScale = 1.6f;
 
         // ── 熔瀑（③）：井壁裂缝泻下的熔岩落进陡坎脚的熔岩池 ──
-        const float PoolPhi = 0.125f, PoolOffset = 3.2f, PoolHalfR = 3f, PoolHalfT = 8f, PoolBed = 1.4f, FallWidth = 7f;
+        const float PoolPhi = 0.125f, PoolOffset = 3.2f, PoolHalfR = 3f, PoolHalfT = 8f, PoolBed = 1.4f;
+        /// <summary>
+        /// 熔瀑：三条错开的窄带（沿池子长边的横移 m、顶端在上环岩台沿下多深 m、顶 / 底全宽 m、比主带往岩壁里缩多少 m（边上交叠时不闪）、相位种子）——主带从沿下 2.5 m 的裂缝泻下，
+        /// 两条副带从更低的裂缝渗出；上窄下宽，都落进熔瀑池（池子半长 8 m）
+        /// </summary>
+        static readonly (float offset, float drop, float wTop, float wBottom, float back, int seed)[] FallBands =
+        {
+            (0.3f, 2.5f, 1.0f, 3.4f, 0f, 11), (-3.1f, 5.5f, 0.6f, 2.0f, 0.15f, 23), (3.4f, 4f, 0.7f, 2.2f, 0.15f, 37),
+        };
         static readonly Vector2 PoolC = P(PoolPhi, Inner(PoolPhi) - 4f - PoolOffset);
         /// <summary>熔岩池面：池子下行端（最低）的下环岩台高 − 0.35 m</summary>
         static readonly float PoolLevel = Lv(1 + PoolPhi + PoolHalfT / (2 * Mathf.PI * (Inner(PoolPhi) - 4f - PoolOffset))) - 0.35f;
 
         // ── 横坡（沿陡坎脚斜着上下一圈，脚 → 顶）──
+        /// <summary>两条横坡脚 / 顶的方位 φ（东、西）</summary>
+        static readonly (float foot, float top)[] RampPhis = { (0.165f, 0.307f), (0.595f, 0.717f) };
         /// <summary>横坡：名字、折线（世界 XZ，脚 → 顶，沿陡坎脚、最后一段跨过陡坎爬上岩台沿）、两端高、半宽</summary>
         static readonly (string name, Vector2[] path, float footY, float topY, float half)[] Ramps =
         {
-            ("东横坡（③ 下环 ↔ ① 上环）", RampPath(0.165f, 0.307f), Lv(1.165f), Lv(0.307f), 3.5f),
-            ("西横坡（井底 ↔ ② 上环）", RampPath(0.595f, 0.717f), 0f, Lv(0.717f), 3.5f),
+            ("东横坡（③ 下环 ↔ ① 上环）", RampPath(RampPhis[0].foot, RampPhis[0].top), Lv(1 + RampPhis[0].foot), Lv(RampPhis[0].top), 3.5f),
+            ("西横坡（井底 ↔ ② 上环）", RampPath(RampPhis[1].foot, RampPhis[1].top), 0f, Lv(RampPhis[1].top), 3.5f),
         };
 
         /// <summary>横坡顶端比岩台沿多填 0.3 m：坡面在跨过陡坎时一直高过陡坎上沿的圆角，不在沿口出一道坎（只填不挖，顶上那 0.3 m 在 2.5 m 宽的坡肩里落回岩台面）</summary>
@@ -138,7 +149,7 @@ namespace Spiritfire.Art.Editor.Levels
         /// <summary>横坡上 φ 处的中线点（站位用）</summary>
         static Vector2 OnRamp(int i, float phi)
         {
-            var (phiFoot, phiTop) = i == 0 ? (0.165f, 0.307f) : (0.595f, 0.717f);
+            var (phiFoot, phiTop) = RampPhis[i];
             float u = Mathf.InverseLerp(phiFoot, phiTop, phi);
             return P(phi, Inner(phi) - RampOffset(u));
         }
@@ -285,9 +296,17 @@ namespace Spiritfire.Art.Editor.Levels
             return Mathf.Abs(across) < PierHalf && along > PierTip;
         }
 
-        /// <summary>崖顶：40 m 上下起伏的山脊，125 m 外往外落到熔岩台地</summary>
-        static float CrestHeight(Vector2 p, float r) =>
-            Mathf.Lerp(Crest + (Ridged(p, 30f, 3, 7) - 0.4f) * 6f, PlainY + Fbm(p, 60f, 2, 9) * 2f, Smooth(125f, 200f, r));
+        /// <summary>
+        /// 崖顶：40 m 上下起伏的山脊，125 m 外往外落到熔岩台地。dout = 离游玩区边界多远（米）：井沿那 10 m 不动（防越界的 19 m 高差、
+        /// 吊链铁柱、祝融像都落在这一圈），往外叠两层低频起伏（150 m 波长的丘 ±9 m、55 m 的坡 ±3 m），台地也起伏 ±5 m——不再是一大片平地
+        /// </summary>
+        static float CrestHeight(Vector2 p, float r, float dout)
+        {
+            float swell = (Fbm(p, 150f, 3, 41) * 9f + Fbm(p, 55f, 2, 43) * 3f) * Smooth(10f, 40f, dout);
+            float ridge = Crest + (Ridged(p, 30f, 3, 7) - 0.4f) * 6f + swell;
+            float plain = PlainY + Fbm(p, 60f, 2, 9) * 2f + Fbm(p, 120f, 2, 45) * 5f;
+            return Mathf.Lerp(ridge, plain, Smooth(125f, 200f, r));
+        }
 
         static LevelKit.Sample Eval(Vector2 p)
         {
@@ -298,7 +317,7 @@ namespace Spiritfire.Art.Editor.Levels
             float h = LevelKit.SpiralWell(p, Well, out var o, calm);
             float insN = NicheInside(p, out float nicheLv);
             float ins = Mathf.Max(o.inside, insN);
-            float wall = 0;
+            float wall = 0, crestTop = 0;
 
             // ── 内壁 / 龛 ──
             if (o.inside < 0)
@@ -307,21 +326,25 @@ namespace Spiritfire.Art.Editor.Levels
                 else
                 {
                     float dout = -ins;
-                    float crest = CrestHeight(p, r);
-                    float baseLv, k;
+                    float crest = CrestHeight(p, r, dout);
+                    float baseLv, k, face;
                     if (insN > o.inside)
                     {
                         baseLv = nicheLv;
+                        face = NicheFace;
                         k = Smooth(0, NicheFace, dout);
                     }
                     else
                     {
                         // 接缝一侧（绕了一圈回来那边）直接是整壁：井口栈台背后是一道竖直的崖
                         baseLv = Lv(phi);
+                        face = Face;
                         k = Mathf.Max(Smooth(0, Face, dout), Smooth(1 - SeamBand, 1, phi));
                     }
                     h = baseLv + (crest - baseLv) * k;
                     wall = k;
+                    // 翻过崖沿就是崖顶的地面：不再强制柱状玄武岩（三平面投影在平地上是一片竖条纹），交给坡度规则
+                    crestTop = Smooth(face + 1f, face + 7f, dout);
                 }
             }
 
@@ -368,12 +391,20 @@ namespace Spiritfire.Art.Editor.Levels
             }
 
             // ── 横坡（只填，按弧长线性）──
+            // 贴陡坎那一侧的坡肩不往下落：全高一直填到 6.5 m 外（再 2.5 m 淡出），直到陡坎面高过坡面为止——
+            // 不然坡肩先落下去、陡坎再慢慢抬起来，坡和陡坎之间夹出一道 0.5 m 深的沟，沟口正对着熔瀑池岸坡
             float ramp = 0;
-            foreach (var (_, path, footY, topY, half) in Ramps)
+            for (int i = 0; i < Ramps.Length; i++)
             {
+                var (_, path, footY, topY, half) = Ramps[i];
                 var (d, t) = Polyline(p, path);
-                if (d > half + 2.5f) continue;
-                float m = 1 - Smooth(half, half + 2.5f, d);
+                var (phiFoot, phiTop) = RampPhis[i];
+                // 只在贴着陡坎爬的那 85%（跨过陡坎爬上岩台沿那一段两侧照常落下）；陡坎线有 ±0.8 m 摆动，全高填到中线外 6.5 m
+                float u = Mathf.InverseLerp(phiFoot, phiTop, phi);
+                bool wallSide = phi >= phiFoot && u < 0.85f && r > Inner(phi) - RampOffset(u);
+                float shoulder = wallSide ? 3f : 0f;
+                if (d > half + shoulder + 2.5f) continue;
+                float m = 1 - Smooth(half + shoulder, half + shoulder + 2.5f, d);
                 float target = Mathf.Lerp(footY, topY + RampOvershoot, t);
                 h = Mathf.Max(h, Mathf.Lerp(h, target, m));
                 ramp = Mathf.Max(ramp, m);
@@ -414,7 +445,9 @@ namespace Spiritfire.Art.Editor.Levels
             s.packed = Mathf.Max(ledgeTop * 0.5f, Mathf.Max(deck * 0.85f, ramp * 0.8f));
             s.sand = Mathf.Max((1 - inside) * 0.55f * (1 - wall * 0.5f), slag * 0.9f);
             s.sand = Mathf.Max(s.sand, ledgeTop * Smooth(0.15f, 0.55f, Fbm(p, 22f, 3, 37)) * 0.6f);
-            s.rock = Mathf.Max(o.riser * inside * 0.55f, wall * 0.6f);
+            // 崖顶：成片的落灰和裸露的冷却熔岩交替（40 m 一块），不是一整片同一层
+            s.sand = Mathf.Max(s.sand, crestTop * Smooth(-0.2f, 0.5f, Fbm(p, 45f, 3, 49)) * 0.7f);
+            s.rock = Mathf.Max(o.riser * inside * 0.55f, wall * 0.6f * (1 - crestTop));
             s.fluid = Mathf.Max(pool, s.hole);
             float wellShore = (1 - Smooth(WellR, WellR + 6f, r)) * (1 - s.hole);
             s.shore = Mathf.Max(wellShore, poolShore * (1 - pool));
@@ -508,6 +541,7 @@ namespace Spiritfire.Art.Editor.Levels
                          $"② 风口 {GroundY(Site2):F1}，③ 熔瀑 {GroundY(Site3):F1}（熔岩池面 {PoolLevel:F2}），④ 炉坛 {GroundY(Site4):F1}（熔岩井面 {LavaY:F1}），" +
                          $"升降台 {lift.lowPosition.y:F2} → {lift.highPosition.y:F2}，出口铸门 {GroundY(ExitFront):F1}，崖顶 {GroundY(ZhurongAt):F1}");
                 LevelValidator.Run(Spec(zhurongTop), rep);
+                DiagnoseAnchors(rep);
                 LevelKit.ValidateLava(rep);
                 CheckLift(rep, lift);
                 CheckSceneContents(rep, scene);
@@ -575,6 +609,9 @@ namespace Spiritfire.Art.Editor.Levels
                     ("LiftTop", lift.highPosition + Vector3.up * 1.62f + new Vector3(0, 0, 9f), forge, false),
                     ("WindVent", E(P(0.60f, 60f)), OnGround(P(0.68f, 66f), 2), false),
                     ("Exit", E(P(0.5f, 62f)), zhurongTop, false),
+                    // 东横坡坡脚（贴陡坎那侧不夹沟）和熔瀑池；崖顶外面的起伏
+                    ("RampFoot", E(P(0.215f, 45f)), OnGround(P(0.17f, 53f), 0.5f), false),
+                    ("Crest", At(P(0.30f, Outer(0.30f) + 12f), Lv(0f) + 26f), OnGround(P(0.25f, Outer(0.25f) + 70f)), false),
                 });
             }
             finally
@@ -682,10 +719,9 @@ namespace Spiritfire.Art.Editor.Levels
             return o;
         }
 
-        /// <summary>③ 熔瀑：陡坎脚的熔岩池（LavaVolume 盒，按岸坡深度算硬壳）+ 从井壁裂缝斜着泻下来的熔岩面（只是画，没有判定）</summary>
+        /// <summary>③ 熔瀑：陡坎脚的熔岩池（LavaVolume 盒，按岸坡深度算硬壳）+ 从井壁裂缝贴着陡坎泻下来的三条熔岩窄带（只是画，没有判定）</summary>
         static void BuildLavaFall(Transform world)
         {
-            var rd = Rad(PoolPhi);
             var tg = Tan(PoolPhi);
             var lava = LevelKit.PlaceLava(Dir, new LevelKit.LavaSpec
             {
@@ -695,25 +731,98 @@ namespace Spiritfire.Art.Editor.Levels
             }, world);
             lava.gameObject.name = "Lava · 熔瀑池";
 
-            // 熔瀑：从上环岩台沿下 2.5 m 的裂缝，贴着陡坎（离坡面 ≥ 1 m）斜落进池子
-            float foot = Inner(PoolPhi) - Well.riser;
-            var bottom = At(P(PoolPhi, foot - 1.2f), PoolLevel - 0.1f);
-            var top = At(P(PoolPhi, foot + 2.4f), Lv(PoolPhi) - 2.5f);
-            var axis = top - bottom;
+            // 熔瀑：三条窄带贴着陡坎落进池子（旧版是一整块 7 m 宽的硬边矩形）
             var mat = LevelKit.LavaMaterial();
             if (!mat) return;
-            var mesh = SG.LavaVolume.BuildMesh(SG.LavaShape.Box, new Vector2(FallWidth, axis.magnitude), false, new Vector2(0, -2.2f));
-            mesh.name = "Mesh_LavaFall";
-            LevelKit.SaveAsset(mesh, $"{Dir}/Lava/Mesh_LavaFall.asset");
-            var fall = new GameObject("Lava Fall");
-            fall.transform.SetParent(world, false);
-            var inward = new Vector3(-rd.x, 0, -rd.y);
-            fall.transform.SetPositionAndRotation((top + bottom) * 0.5f, Quaternion.LookRotation(axis.normalized, inward));
-            fall.AddComponent<MeshFilter>().sharedMesh = mesh;
-            var mr = fall.AddComponent<MeshRenderer>();
-            mr.sharedMaterial = mat;
-            mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            fall.isStatic = true;
+            AssetDatabase.DeleteAsset($"{Dir}/Lava/Mesh_LavaFall.asset");
+            var fall = new GameObject("Lava Fall").transform;
+            fall.SetParent(world, false);
+            for (int i = 0; i < FallBands.Length; i++)
+            {
+                var mesh = FallBandMesh(FallBands[i]);
+                mesh.name = $"Mesh_LavaFall_{i + 1}";
+                LevelKit.SaveAsset(mesh, $"{Dir}/Lava/Mesh_LavaFall_{i + 1}.asset");
+                var band = new GameObject($"Lava Fall Band {i + 1}");
+                band.transform.SetParent(fall, false);
+                band.AddComponent<MeshFilter>().sharedMesh = mesh;
+                var mr = band.AddComponent<MeshRenderer>();
+                mr.sharedMaterial = mat;
+                mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                band.isStatic = true;
+            }
+        }
+
+        /// <summary>smoothstep 的反函数：s = 3x² − 2x³ → x（0–1）</summary>
+        static float InvSmooth(float s) => 0.5f - Mathf.Sin(Mathf.Asin(1f - 2f * Mathf.Clamp01(s)) / 3f);
+
+        /// <summary>
+        /// 一条熔瀑窄带（世界坐标网格，挂在原点的物体上）：从熔岩池面下 0.3 m 贴着陡坎一直爬到裂缝口——每一行按陡坎的 smoothstep 剖面反算坡面在哪、
+        /// 往井心让 0.9 → 0.45 m；上窄下宽（顶端收成一道缝），左右两条边线各自带噪声摆动，中线轻微蛇行。
+        /// 着色器数据同 <see cref="SG.LavaVolume.BuildMesh"/>：uv0 = 带内局部坐标（横向放大 3 倍：结壳板块竖着拉长，形状边缘的硬壳只剩约 0.5 m），
+        /// uv1 = (这一行的半宽, 很长——上下两端不结壳, 盒, 不按深度)，uv2 = 往下流 3 m/s。两条边各有一道暗色硬壳往里熔开、和陡坎的暗色岩面接上，
+        /// 读成岩缝里渗出、越流越宽的熔岩，不是一块硬边的发光矩形
+        /// </summary>
+        static Mesh FallBandMesh((float offset, float drop, float wTop, float wBottom, float back, int seed) b)
+        {
+            const int Rows = 30, Cols = 6;
+            const float Stretch = 3f, Flow = 3f;
+            var tg = Tan(PoolPhi);
+            float yBottom = PoolLevel - 0.3f, yTop = Lv(PoolPhi + b.offset / (2 * Mathf.PI * 62f)) - b.drop;
+            var verts = new List<Vector3>();
+            var uv0 = new List<Vector2>();
+            var uv1 = new List<Vector4>();
+            var uv2 = new List<Vector4>();
+            float along = 0;
+            var prevCenter = Vector3.zero;
+            for (int j = 0; j <= Rows; j++)
+            {
+                float v = j / (float)Rows, y = Mathf.Lerp(yBottom, yTop, v);
+                float half = 0.5f * Mathf.Lerp(b.wBottom, b.wTop, Mathf.Pow(v, 0.8f)) * Mathf.Lerp(1f, 0.3f, Smooth(0.9f, 1f, v));
+                float wl = half * (1 + 0.25f * (Mathf.PerlinNoise(v * 5f + b.seed, 3.1f) * 2 - 1));
+                float wr = half * (1 + 0.25f * (Mathf.PerlinNoise(v * 5f + b.seed, 7.7f) * 2 - 1));
+                float c = b.offset + 0.3f * Mathf.Sin(v * Mathf.PI * 1.4f + b.seed);
+                float gap = Mathf.Lerp(0.9f, 0.45f, v) - b.back;
+                // 横移 x 处这一行贴着的坡面点（陡坎剖面反算），再往井心让 gap 米
+                Vector3 Surface(float x)
+                {
+                    float phi = PoolPhi + x / (2 * Mathf.PI * 62f);
+                    float upper = Lv(phi), rIn = Inner(phi);
+                    float k = y <= upper - Well.step ? 1f : InvSmooth((upper - y) / Well.step);
+                    var q = P(PoolPhi, rIn - Well.riser * k - gap) + tg * x;
+                    return new Vector3(q.x, y, q.y);
+                }
+                var center = Surface(c);
+                if (j > 0) along += Vector3.Distance(prevCenter, center);
+                prevCenter = center;
+                for (int i = 0; i <= Cols; i++)
+                {
+                    float u = -1f + 2f * i / Cols;
+                    float w = u < 0 ? wl : u > 0 ? wr : (wl + wr) * 0.5f;
+                    float x = c + u * w;
+                    verts.Add(Surface(x));
+                    uv0.Add(new Vector2(u * w * Stretch, along));
+                    uv1.Add(new Vector4(w * Stretch, 1000f, 0, 0));
+                    uv2.Add(new Vector4(0, -Flow, b.seed * 0.37f, 0));
+                }
+            }
+            var tris = new List<int>();
+            for (int j = 0; j < Rows; j++)
+            for (int i = 0; i < Cols; i++)
+            {
+                int a = j * (Cols + 1) + i, bb = a + 1, cc = a + Cols + 1, d = cc + 1;
+                // 正面朝井心：(横向 +tg) × (往上) = −径向
+                tris.Add(a); tris.Add(bb); tris.Add(cc);
+                tris.Add(bb); tris.Add(d); tris.Add(cc);
+            }
+            var mesh = new Mesh();
+            mesh.SetVertices(verts);
+            mesh.SetTriangles(tris, 0);
+            mesh.SetUVs(0, uv0);
+            mesh.SetUVs(1, uv1);
+            mesh.SetUVs(2, uv2);
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
+            return mesh;
         }
 
         /// <summary>岩台上的件：三道岩肋（白盒）、岩台沿件（白盒）、② 巨型风箱（白盒）、各场地的掩体 / 火坛 / 锭堆、井口栈台的铸炉摊</summary>
@@ -1109,6 +1218,31 @@ namespace Spiritfire.Art.Editor.Levels
             var gangwayTop = LevelContext.GroundY(At(P(0.5f, GangwayFrom + 1f), deckTopHigh + 0.5f), 1.5f);
             if (Mathf.Abs(gangwayTop - deckTopHigh) > 0.1f) rep.Fail($"上站台面 y {deckTopHigh:F2} 和栈桥 y {gangwayTop:F2} 没对齐");
             else rep.Line($"✓ 上站台面与栈桥齐平（差 {Mathf.Abs(gangwayTop - deckTopHigh):F2} m）");
+        }
+
+        /// <summary>
+        /// 锚点走不到时的诊断（只对走不到的锚点出一行）：出生点 → 锚点的路径停在哪个拐点、离锚点多远；锚点附近最近的导航网格边；
+        /// 反向（锚点 → 出生点）和分两段（出生 → 场地中心 → 锚点）是否完整——反向 / 分段都通 = A* 节点池在长路上耗尽，反向也停在锚点旁 = 锚点在一块断开的导航碎片上
+        /// </summary>
+        static void DiagnoseAnchors(LevelKit.Report rep)
+        {
+            if (!LevelContext.NavPoint(OnGround(Spawn), 4f, out var spawn)) return;
+            var sites = new[] { Site1, Site2, Site3, Site4, Site5 };
+            foreach (var a in Anchors)
+            {
+                if (!LevelContext.NavPoint(OnGround(a.at), 2.5f, out var at)) continue;
+                var path = new NavMeshPath();
+                NavMesh.CalculatePath(spawn, at, LevelContext.Walker, path);
+                if (path.status == NavMeshPathStatus.PathComplete) continue;
+                var last = path.corners.Length > 0 ? path.corners[path.corners.Length - 1] : spawn;
+                var back = LevelContext.NavPath(at, spawn, out _);
+                string viaSite = "—";
+                if (LevelContext.NavPoint(OnGround(sites[a.site - 1]), 4f, out var mid))
+                    viaSite = $"{LevelContext.NavPath(spawn, mid, out _)} + {LevelContext.NavPath(mid, at, out _)}";
+                string edge = NavMesh.FindClosestEdge(at, out var e, LevelContext.Walker) ? $"{LevelContext.At(e.position)}（{e.distance:F1} m）" : "无";
+                rep.Line($"  诊断 {a.name}：路径 {path.corners.Length} 个拐点，停在 {LevelContext.At(last)}（离锚点 {Vector3.Distance(last, at):F1} m）；" +
+                         $"反向 {back}；经场地中心 {viaSite}；最近的导航网格边 {edge}");
+            }
         }
 
         /// <summary>L1 规则：关卡场景只有环境和标记；顺带重新生成 GameDatabase（同 1-x）</summary>
