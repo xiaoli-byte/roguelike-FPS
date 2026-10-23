@@ -61,7 +61,8 @@ namespace Spiritfire.Art.Editor.Levels
         // ───────────── 熔铜渠 ─────────────
         /// <summary>
         /// 一条渠：中线两端（地形沿它挖槽，两端伸进火山口壁）、半宽、熔岩基准面、渠底、熔岩沿轴的范围、渠岸（领主战的漫溢带）。
-        /// 铸坊的渠（field）：8 m 宽、陡壁、熔岩面低于床面 1.4 m——只能走桥；神范台的十字浅渠（arena）：8 m 宽、缓坡（魔将冲锋能冲过去）、
+        /// 铸坊的渠（field）：8 m 宽、约 54° 的斜壁（2.6 m 内从渠底升到床面：人走不上来，火鼍扑岸爬得上来）、熔岩面低于床面 1 m——只能走桥；
+        /// 神范台的十字浅渠（arena）：8 m 宽、缓坡（魔将冲锋能冲过去）、
         /// 熔岩面低于床面 0.45 m，两侧各 3 m 渠岸会被魔将引得漫上来
         /// </summary>
         sealed class Channel
@@ -77,12 +78,17 @@ namespace Spiritfire.Art.Editor.Levels
             public Vector2 At(float t) => NS ? new Vector2(a.x, t) : new Vector2(t, a.y);
         }
 
-        const float FieldHalf = 4f, FieldLava = -1.4f, FieldFloor = -2.4f, FieldWall = 0.8f;
+        /// <summary>
+        /// 铸坊渠的截面。熔岩面、壁宽按火鼍（TuoAI）定：它潜在熔岩面下 1.0 × 体型 1.3 m，伏击要求和岸上玩家的高差 ≤ 2.5 m（熔岩面 −1.0 → 潜着 −2.3）；
+        /// 扑岸时把法线 y &lt; 0.5（陡过 60°）的面当墙停下——原来 0.8 m 的陡壁（最陡 77°）、−1.4 的熔岩面让它既伏击不了、也爬不上岸，
+        /// 只能泡在渠里贴着渠壁挨打。壁宽 2.6 m：smoothstep 最陡处约 54°（人和地面敌人的 45° 走不上来，火鼍爬得上来）
+        /// </summary>
+        const float FieldHalf = 4f, FieldLava = -1.0f, FieldFloor = -2.4f, FieldWall = 2.6f;
         const float ArenaHalf = 4f, ArenaLava = -0.45f, ArenaFloor = -0.6f, ArenaBank = 2f, BankStrip = 3f;
         /// <summary>领主战漫溢：比基准面高 0.75 m（熔岩面 +0.3，渠岸床面上的人站进熔岩）</summary>
         const float SurgeRise = 0.75f;
-        /// <summary>铸坊渠的自动涨落（风闸拉开后才开）：只在渠里涨 0.8 m，漫不上铸床</summary>
-        const float TideHeight = 0.8f;
+        /// <summary>铸坊渠的自动涨落（风闸拉开后才开）：只在渠里涨 0.6 m（高位 −0.4，加站立判定 0.3 仍低于床面），漫不上铸床</summary>
+        const float TideHeight = 0.6f;
 
         static readonly Channel Cross = new() { name = "横渠", a = new(-8, 110), b = new(208, 110), half = FieldHalf, lava = FieldLava, floor = FieldFloor, lo = -3, hi = 203, flow = 1 };
         static readonly Channel Trunk = new() { name = "主渠", a = new(100, 110), b = new(100, 222), half = FieldHalf, lava = FieldLava, floor = FieldFloor, lo = 114, hi = 217, flow = -1 };
@@ -246,7 +252,7 @@ namespace Spiritfire.Art.Editor.Levels
                 }
             }
 
-            // ── 熔铜渠：铸坊的渠陡壁深槽，神范台的十字浅渠缓坡 ──
+            // ── 熔铜渠：铸坊的渠斜壁深槽，神范台的十字浅渠缓坡 ──
             float trench = 0;
             foreach (var c in Channels)
             {
@@ -1126,10 +1132,14 @@ namespace Spiritfire.Art.Editor.Levels
                 Near($"{c.name}渠底", Y(mid), c.floor, 0.3f);
             }
             Near("神范熔池池底", Y(Basin), ArenaFloor, 0.2f);
-            // 渠边：铸坊的渠离渠边 1 m 处已在床面（陡壁），神范浅渠离渠边 1 m 处在半坡
+            // 渠壁：渠边外 1 m 已在床面；最陡处 45–58°——人和地面敌人走不上来（45°），火鼍扑岸爬得上来（TuoAI 把陡过 60° 的面当墙）
             float wallTop = Y(new Vector2(EastC.a.x + EastC.half + 1f, 30));
-            if (wallTop < -0.3f) rep.Fail($"东渠渠边外 1 m 还在坡上（y = {wallTop:F2}）：陡壁不够陡，铸床边会是一道斜坡");
-            else rep.Line($"✓ 铸坊渠是陡壁：渠边外 1 m 已在床面（y = {wallTop:F2}）");
+            float steep = 0;
+            for (float x = EastC.a.x + 0.5f; x < EastC.a.x + EastC.half + 0.5f; x += 0.1f)
+                steep = Mathf.Max(steep, Mathf.Atan2(Mathf.Abs(Y(new Vector2(x + 0.1f, 30)) - Y(new Vector2(x, 30))), 0.1f) * Mathf.Rad2Deg);
+            if (wallTop < -0.3f) rep.Fail($"东渠渠边外 1 m 还在坡上（y = {wallTop:F2}）：铸床边会是一道斜坡");
+            else if (steep < 45f || steep > 58f) rep.Fail($"东渠渠壁最陡 {steep:F0}°（应在 45–58°：再缓人能走下渠，再陡火鼍爬不上岸）");
+            else rep.Line($"✓ 铸坊渠壁最陡 {steep:F0}°（人走不上来、火鼍爬得上岸），渠边外 1 m 已在床面（y = {wallTop:F2}）");
 
             // 编辑器里 LavaVolume 不登记进 LavaField（OnEnable 不跑）：自己收一份判定体
             var bodies = lava.tides.Concat(lava.surge).Concat(lava.still).Where(v => v).Select(v => v.Body).ToList();

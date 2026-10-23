@@ -29,15 +29,17 @@ namespace Spiritfire.Game.Testing
     public sealed class Map33Suite : PlaytestSuite
     {
         /// <summary>
-        /// 只查人形代理的导航网格：3-3 的熔岩生物网格（LavaSwimmer）铺满了整张图，不带代理类型的查询会采到它，路径就成了「不完整」
+        /// 机器人走路的导航查询：只查人形代理（LavaField.WalkerFilter——3-3 还有火鼍的 LavaSwimmer 网格，不带代理类型会采到它，路径就成了「不完整」），
+        /// 且只走干地：神范台的浅渠是 Lava 区但走得下去，不排除时路径会抄近路直穿浅渠，角色控制器一进熔岩就被托回岸上、卡住跳点
         /// </summary>
-        static NavMeshQueryFilter Humanoid => new() { agentTypeID = NavMesh.GetSettingsByIndex(0).agentTypeID, areaMask = NavMesh.AllAreas };
+        static NavMeshQueryFilter Dry => LavaField.WalkerFilter(LavaField.DryAreaMask);
 
         public override string Id => "map-3-3";
         /// <summary>3-3 铸范大坊（与编辑器里 Level_3_3.ScenePath 相同，运行时程序集引用不到那边的常量）</summary>
         public override string Scene => "Assets/Scenes/L3_3_Foundry.unity";
 
-        const float ReadyTimeout = 90f, SiteTimeout = 150f, ClearAllTimeout = 1100f, BotSpeed = 11f;
+        /// <summary>有火鼍的场地多给的时间（它潜在渠里时 ×0.5，要引它上岸）、只剩潜着的火鼍多久后去引</summary>
+        const float ReadyTimeout = 90f, SiteTimeout = 150f, TuoExtra = 60f, LureAfter = 8f, ClearAllTimeout = 1100f, BotSpeed = 11f;
         /// <summary>神范的白盒 / 正式件名字前缀（构建器把占位白盒改名成「id · 神范 (Placeholder)」）</summary>
         const string MouldId = "SM_Tripo_InfernoCastingMould";
 
@@ -49,7 +51,7 @@ namespace Spiritfire.Game.Testing
         Transform eye;
         Camera cam;
         readonly List<EncounterSite.SpawnRecord> spawned = new();
-        int partialPaths, skillCasts, stalls;
+        int partialPaths, skillCasts, stalls, lures;
 
         protected override IEnumerator Steps()
         {
@@ -279,7 +281,7 @@ namespace Spiritfire.Game.Testing
             Line($"合计：武器命中 {Runner.hits}，伤害 {Runner.damage:F0}，击杀 {Runner.kills}，敌人对玩家伤害 {Runner.playerDamage:F0}，技能 {skillCasts} 次，踩进熔岩 {(LavaField.Instance ? LavaField.Instance.Entries : 0)} 次、敌人烧死 {(LavaField.Instance ? LavaField.Instance.Burned : 0)} 只");
             if (Runner.kills == 0) Fail("整关一只敌人都没打死");
             if (partialPaths > 0) Fail($"机器人走的 NavMesh 路径有 {partialPaths} 次不完整（桥断了？）");
-            Line($"走路卡住跳点 {stalls} 次");
+            Line($"走路卡住跳点 {stalls} 次，引火鼍上岸 {lures} 次");
             if (stalls >= 8) Fail($"机器人沿 NavMesh 走时卡住 {stalls} 次（角色控制器和导航网格对不上：桥头 / 坡道？看上面的位置）");
         }
 
@@ -353,13 +355,14 @@ namespace Spiritfire.Game.Testing
 
         IEnumerator Fight(EncounterSite site, FoundryWindGate wind)
         {
-            float start = Time.time, flankAt = 0, skillAt = Time.time + 1f;
+            float limit = SiteTimeout + (HasTuo(site) ? TuoExtra : 0);
+            float start = Time.time, flankAt = 0, skillAt = Time.time + 1f, lureAt = 0, lureHold = 0, tuoOnly = 0;
             bool shotMid = false;
             int kills0 = Runner.kills, fires0 = wind ? wind.FiresSpawned : 0;
             float dmg0 = Runner.playerDamage;
             Runner.killsById.Clear();
             Line($"遭遇「{site.title}」开始：{site.Total} 只，{site.WaveCount} 波，升格精英 {site.Promoted}");
-            while (site.phase != EncounterSite.Phase.Cleared && Time.time - start < SiteTimeout)
+            while (site.phase != EncounterSite.Phase.Cleared && Time.time - start < limit)
             {
                 if (vitals.Dead) vitals.Revive();
                 if (vitals.health < vitals.MaxHealth * 0.4f) vitals.Heal(99999);
@@ -373,14 +376,27 @@ namespace Spiritfire.Game.Testing
                     yield return null;
                     continue;
                 }
+                // 只剩潜在渠里的火鼍（×0.5、贴着渠壁难打）：退到场地里离熔岩最远的地方，它躲岸 8 s 后会扑上岸来
+                var tuo = target.GetComponentInParent<TuoAI>();
+                bool sunk = tuo && tuo.Submerged;
+                tuoOnly = sunk && site.PendingCount == 0 ? tuoOnly + Time.deltaTime : 0;
+                if (tuoOnly >= LureAfter && Time.time >= lureAt)
+                {
+                    lureAt = Time.time + 16f;
+                    lureHold = Time.time + 10f;
+                    lures++;
+                    weapons.testFire = false;
+                    yield return Travel(LureSpot(site), 1.5f, false);
+                    continue;
+                }
                 var body = target.GetComponent<EnemyBody>();
                 var aim = body && body.WeakPoint && body.WeakPoint.gameObject.activeInHierarchy && Random.value < 0.4f ? body.WeakPoint.position : BodyCenter(target);
                 Aim(motor, eye, aim);
-                if (Vector3.Distance(eye.position, aim) > 22f) yield return Step(target.transform.position, 6f);
+                if (Vector3.Distance(eye.position, aim) > 22f && !(sunk && Time.time < lureHold)) yield return Step(target.transform.position, 6f);
                 else if (Time.time >= flankAt && Combat.Blocked(eye.position, aim, target.GetComponent<Collider>()))
                 {
                     flankAt = Time.time + 1.5f;
-                    if (SightSpot(target, aim, out var spot)) Place(spot);
+                    if (DrySightSpot(target, aim, out var spot)) Place(spot);
                 }
                 weapons.testFire = weapons.Active != null && (weapons.Active.def.mode != FireMode.Semi || !weapons.testFire);
                 if (skills && Time.time >= skillAt)
@@ -407,9 +423,10 @@ namespace Spiritfire.Game.Testing
                     if (e && !e.Dead)
                     {
                         var ag = e.GetComponent<NavMeshAgent>();
-                        Line($"  残敌 {e.enemyId}：状态 {e.State}，位置 {e.transform.position}，离玩家 {Vector3.Distance(e.transform.position, motor.transform.position):F1} m，导航网格上 {(ag && ag.isOnNavMesh)}");
+                        Line($"  残敌 {e.enemyId}：状态 {e.State}，位置 {e.transform.position}，离玩家 {Vector3.Distance(e.transform.position, motor.transform.position):F1} m，" +
+                             $"导航网格上 {(ag && ag.isOnNavMesh)}，在熔岩里 {LavaField.IsLava(e.transform.position)}");
                     }
-                Fail($"{SiteTimeout:F0} s 内没有肃清「{site.title}」（剩 {site.Remaining}）");
+                Fail($"{limit:F0} s 内没有肃清「{site.title}」（剩 {site.Remaining}）");
                 EnemyRegistry.PurgeAll();
                 float p0 = Time.time;
                 while (site.phase != EncounterSite.Phase.Cleared && Time.time - p0 < 3f) yield return null;
@@ -428,6 +445,49 @@ namespace Spiritfire.Game.Testing
                 Line($"  场地宝箱（{site.reward}）：{(chest ? $"出现在 {chest.transform.position}" : "没有出现")}");
                 if (!chest) Fail($"「{site.title}」肃清后没有出现宝箱（{site.reward}）");
             }
+        }
+
+        static bool HasTuo(EncounterSite site) =>
+            site.spec?.waves != null && site.spec.waves.Any(w => w?.entries != null && w.entries.Any(e => e != null && e.enemy == "tuo"));
+
+        /// <summary>场地里离熔岩最远的干地导航点（中心 + 5 / 10 / 15 / 20 m 四圈各 12 个方向；同 Map31Suite）</summary>
+        static Vector3 LureSpot(EncounterSite site)
+        {
+            var c = site.transform.position;
+            var best = c;
+            float bestD = -1;
+            for (int ring = 0; ring <= 4; ring++)
+            for (int k = 0; k < 12; k++)
+            {
+                float a = k * Mathf.PI / 6;
+                var p = c + new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a)) * (ring * 5f);
+                if (!NavMesh.SamplePosition(p, out var hit, 2f, Dry) || LavaField.IsLava(hit.position)) continue;
+                float d = LavaField.NearestLava(hit.position, 30f, out var lava, out _) ? Flat(lava - hit.position) : 30f;
+                if (d > bestD)
+                {
+                    bestD = d;
+                    best = hit.position;
+                }
+                if (ring == 0) break;
+            }
+            return best;
+        }
+
+        /// <summary>目标周围 8–12 m、干地导航网格上、离熔岩 ≥ 1.5 m、眼高能直接看到瞄准点的位置（基类的 SightSpot 不带代理过滤，会落到渠底）</summary>
+        static bool DrySightSpot(Damageable target, Vector3 aim, out Vector3 spot)
+        {
+            for (int i = 0; i < 16; i++)
+            {
+                float a = i * Mathf.PI * 2 / 16 + Random.value * 0.3f;
+                var p = target.transform.position + new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a)) * Random.Range(8f, 12f);
+                if (!NavMesh.SamplePosition(p, out var hit, 3f, Dry)) continue;
+                if (LavaField.IsLava(hit.position) || LavaField.NearLava(hit.position, 1.5f)) continue;
+                if (Combat.Blocked(hit.position + Vector3.up * 1.62f, aim, null)) continue;
+                spot = hit.position;
+                return true;
+            }
+            spot = default;
+            return false;
         }
 
         // ───────────── 藏宝 ─────────────
@@ -609,9 +669,9 @@ namespace Spiritfire.Game.Testing
         {
             complete = false;
             var list = new List<Vector3>();
-            if (!NavMesh.SamplePosition(from, out var a, 4f, Humanoid) || !NavMesh.SamplePosition(to, out var b, 4f, Humanoid)) return list;
+            if (!NavMesh.SamplePosition(from, out var a, 4f, Dry) || !NavMesh.SamplePosition(to, out var b, 4f, Dry)) return list;
             var path = new NavMeshPath();
-            NavMesh.CalculatePath(a.position, b.position, Humanoid, path);
+            NavMesh.CalculatePath(a.position, b.position, Dry, path);
             complete = path.status == NavMeshPathStatus.PathComplete;
             list.AddRange(path.corners);
             return list;
