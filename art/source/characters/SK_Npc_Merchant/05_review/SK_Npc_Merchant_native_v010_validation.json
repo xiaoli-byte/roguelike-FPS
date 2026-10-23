@@ -1,0 +1,304 @@
+{
+  "asset": "SK_Npc_Merchant",
+  "version": 10,
+  "glb": "art/source/characters/SK_Npc_Merchant/04_export/SK_Npc_Merchant_native_v010.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.3,
+      "自定义骨架：26 根骨骼（热扩散权重，21418 个顶点未覆盖）": 0.4,
+      "贴图（BC + AO/ORM）": 22.0,
+      "LOD 与蒙皮上限 14960 / 5910 / 2364": 0.6,
+      "导出 1657 KB": 2.8
+    },
+    "source": {
+      "verts": 21418,
+      "tris": 14960,
+      "scale": 1.500732779677577
+    },
+    "regions": {
+      "heat_unweighted_verts": 21418,
+      "weights": "segments",
+      "head_verts": 2181,
+      "fallback_verts": 0,
+      "per_bone": {
+        "hips": 63,
+        "spine": 2,
+        "chest": 82,
+        "neck": 0,
+        "head": 3438,
+        "pack": 6663,
+        "tail_1": 32,
+        "tail_2": 12,
+        "tail_3": 208,
+        "shoulder_L": 325,
+        "shoulder_R": 344,
+        "arm_L": 239,
+        "arm_R": 236,
+        "forearm_L": 84,
+        "forearm_R": 82,
+        "hand_L": 603,
+        "hand_R": 632,
+        "thigh_L": 314,
+        "thigh_R": 466,
+        "shin_L": 373,
+        "shin_R": 343,
+        "foot_L": 281,
+        "foot_R": 296,
+        "toe_L": 122,
+        "toe_R": 117
+      }
+    },
+    "bones": [
+      "arm_L",
+      "arm_R",
+      "chest",
+      "foot_L",
+      "foot_R",
+      "forearm_L",
+      "forearm_R",
+      "hand_L",
+      "hand_R",
+      "head",
+      "hips",
+      "neck",
+      "pack",
+      "root",
+      "shin_L",
+      "shin_R",
+      "shoulder_L",
+      "shoulder_R",
+      "spine",
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "thigh_L",
+      "thigh_R",
+      "toe_L",
+      "toe_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.893,
+      "shade_mean": 0.902
+    },
+    "textures": {
+      "size": 2048,
+      "ao_mean": 0.614,
+      "provider_pbr": [],
+      "roughness_mean": 0.8,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Npc_Merchant_LOD0": {
+          "max_influences": 3,
+          "unweighted_verts": 0
+        },
+        "SK_Npc_Merchant_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Npc_Merchant_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Npc_Merchant_LOD0",
+        "tris": 14960,
+        "uv_min": [
+          0.001708984375,
+          0.001708984375
+        ],
+        "uv_max": [
+          0.9983033537864685,
+          0.99267578125
+        ]
+      },
+      {
+        "name": "SK_Npc_Merchant_LOD1",
+        "tris": 5910,
+        "uv_min": [
+          0.001708984375,
+          0.0015899199061095715
+        ],
+        "uv_max": [
+          0.992431640625,
+          0.992431640625
+        ]
+      },
+      {
+        "name": "SK_Npc_Merchant_LOD2",
+        "tris": 2364,
+        "uv_min": [
+          0.001708984375,
+          0.001708984375
+        ],
+        "uv_max": [
+          0.968505859375,
+          0.96875
+        ]
+      }
+    ],
+    "glb_kb": 1657,
+    "_seconds": 27.8
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "1657 KB / 3200 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Npc_Merchant_LOD0', 'SK_Npc_Merchant_LOD1', 'SK_Npc_Merchant_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "14960 / 15000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "5910 / 6000"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "2364 / 2400"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "1.500 m (design 1.5 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Npc_Merchant']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "texture T_Npc_Merchant_ORM",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "texture T_Npc_Merchant_BC",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "26 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Npc_Merchant_LOD0 influences",
+      "max 3"
+    ],
+    [
+      "pass",
+      "SK_Npc_Merchant_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Npc_Merchant_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Npc_Merchant_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Npc_Merchant_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Npc_Merchant_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Npc_Merchant_LOD0 UV range",
+      "[0.002, 0.002]..[0.998, 0.993]"
+    ],
+    [
+      "pass",
+      "SK_Npc_Merchant_LOD1 UV range",
+      "[0.002, 0.002]..[0.992, 0.992]"
+    ],
+    [
+      "pass",
+      "SK_Npc_Merchant_LOD2 UV range",
+      "[0.002, 0.002]..[0.969, 0.969]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "21418 verts"
+    ],
+    [
+      "pass",
+      "region head",
+      "2181 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "0 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}
