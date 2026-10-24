@@ -8,16 +8,18 @@ namespace Spiritfire.Game
     ///   一阶段 · 玄鳞（100–55%，玄铁鳞甲 = 护甲层，BS4）：踏火奔驰（绕外环跑道、蹄印留火、横穿象限冲撞）、张鳞（一圈鳞刃，柱子挡得住）、
     ///     麟火（近身扇形吐火）、饮熔（85% / 70% 血量线：跳到熔池边低头饮熔，炉口钻出炭童，饮完鳞甲回满、伤害 × 1.08）；
     ///     饮熔时打碎它身后那面墙上的锁扣 → 鼎角坠下砸中它：硬直 4 秒、鳞甲崩裂（护甲清零、全身都算弱点、受伤 × 2）。
-    ///   转换（55%，5.2 s）：剩下的链全断、巨鼎坠池；麒麟跳进熔池沉下去，1.9 s 时在熔岩柱里换成焚身跃出。
-    ///   二阶段 · 焚身（55–0%，BS5）：踏云俯冲火环、吐息扫象限、熔流轮转、火云雨 + 神火飞鸦、15% 狂怒。
-    ///     BS5 落地之前先占位：<see cref="BurnPlaceholderStomp"/>（单次跃击 + 火环）和 <see cref="BurnPlaceholderBreath"/>（麟火换个 id），
-    ///     焚身先当地面形态（BS5 决定踏云高度和 flying），换形时鳞甲炸飞（护甲清零）。
+    ///   转换（55%，5.2 s）：剩下的链全断、巨鼎坠池（池中掩体）；麒麟跳进熔池沉下去，1.9 s 时在熔岩柱里换成焚身跃出，换形时鳞甲炸飞（护甲清零）。
+    ///   二阶段 · 焚身（55–0%，BS5，飞行形态：踏云 4.5 m 绕殿，见 <see cref="QilinBrain"/>）：
+    ///     熔流轮转（<see cref="BurnFlood"/>，换形后第一招）、踏云俯冲三连 + 火环（<see cref="BurnDives"/>）→ 落地喘息（<see cref="BurnPant"/>，主要输出窗口）、
+    ///     吐息扫象限（<see cref="BurnSweep"/>，躲柱子 / 倒鼎后面）、火云雨 + 神火飞鸦（<see cref="BurnRain"/>）；15% 狂怒（<see cref="BurnRage"/>：长啸、火浪、熔流重开且更快）。
     ///   弱点：角根的火珠（pearl 骨，半径 0.3 × 1.25）；焚身另有胸口火心（命中区 heart，只在焚身启用）。命中区：头、颈、胸、背、臀五个球（长身子不是一根竖胶囊能盖住的）。
     /// 数值（D23 血条刻度 = 85% / 70% 饮熔线 + 55% 换形）：Three.js 是 5000 生命 + 1500 护甲 × 难度（3-4 难度 3.08 时 15400 + 4620）。
-    /// 按模拟秒伤定档（<see cref="ReferenceDps"/>、<see cref="EstimateKillSeconds"/>）：饮熔回满鳞甲两次都不打断时 Three.js 的数值要将近 3 分钟，
-    /// 所以 3.08 定档 12500 生命 + 2400 护甲：两次都砸中约 75 s、砸中一次约 95 s、一次都不打约 115 s，都落在 60–120 s（QilinTests 守着）。
+    /// 按模拟秒伤定档（<see cref="ReferenceDps"/>、<see cref="EstimateKillSeconds"/>：一阶段 + 5.2 s 换形演出 + 二阶段按 <see cref="BurnDpsFactor"/> 折算）：
+    /// 饮熔回满鳞甲两次都不打断时 Three.js 的数值要 3 分钟以上，所以 3.08 定档 10500 生命 + 2400 护甲：
+    /// 两次都砸中约 75 s、砸中一次约 95 s、一次都不打约 115 s，都落在 60–120 s（QilinTests 守着）。
     /// 动作：E5 的 AC_SK_Boss_Qilin(Burn)（招式状态 rear / scalesFire / breath / drink / stun / pant / tuck / leap / stomp / roar / paw），
     /// 招式按状态名交叉淡入并拉伸到实际时长（框架 PlayAct），出手跟 events.json 的事件走，没有就按时间兜底。
+    /// 焚身缺的动作（踏云奔跑、俯冲、起飞、空中吐息）先用 Locomotion 的奔跑步态 + tuck / stomp / breath 代替，位移由代码驱动（见 docs/unity-parity.md BS5）。
     /// </summary>
     [Defs(30)]
     public sealed class QilinDef : BossDef
@@ -55,6 +57,15 @@ namespace Spiritfire.Game
         /// <summary>奔驰速度、上跑道速度、冲撞速度（米 / 秒）；冲撞判定半径（胸—臀线段到玩家）</summary>
         public float gallopSpeed = 18f, toTrackSpeed = 15f, chargeSpeed = 30f, chargeRadius = 1.6f;
 
+        // ───────────── 焚身（BS5）─────────────
+
+        /// <summary>火云雨召的神火飞鸦（第三章阵容；名册里没有就不召）与每次召几只</summary>
+        public string crowId = "fire_crow";
+        public int rainCrows = 4;
+
+        /// <summary>换形演出时长（秒）：定档模型也按它算不可选中的时间</summary>
+        public const float TransitionSeconds = 5.2f;
+
         public QilinDef()
         {
             id = Id;
@@ -62,8 +73,8 @@ namespace Spiritfire.Game
             title = "祝融炉心 · 守炉神兽";
             brain = typeof(QilinBrain);
             // 难度 1 的参考值 = 定档 ÷ 3.08（定档表优先，见 VitalsAt）；Three.js 原值 5000 + 1500 护甲
-            vitals = new BossVitals(4060, 0, 780);
-            tiers.Add(new BossVitalsTier(StageDifficulty, new BossVitals(12500, 0, 2400)));
+            vitals = new BossVitals(3410, 0, 780);
+            tiers.Add(new BossVitalsTier(StageDifficulty, new BossVitals(10500, 0, 2400)));
             damage = 16f;
             speed = 6.5f;
             element = Element.Fire;
@@ -85,11 +96,11 @@ namespace Spiritfire.Game
             forms.Add(new BossFormDef
             {
                 id = BurnForm, name = "焚身", prefab = BurnPrefab, scale = ModelScale, proxyPrefab = ProxyPrefab, proxyScale = 2.2f,
-                weakBone = "pearl", weakRadius = 0.3f, overlay = Fire, overlayAmount = 0.18f, firstMove = BurnPlaceholderStomp.MoveId,
+                weakBone = "pearl", weakRadius = 0.3f, overlay = Fire, overlayAmount = 0.18f, firstMove = BurnFlood.MoveId, flying = true,
             });
             phases.Add(new BossPhaseDef
             {
-                at = TransformAt, form = BurnForm, seconds = 5.2f, formSwapAt = 1.9f, anim = "tuck", sfx = "boss_roar", shake = 0.6f,
+                at = TransformAt, form = BurnForm, seconds = TransitionSeconds, formSwapAt = 1.9f, anim = "tuck", sfx = "boss_roar", shake = 0.6f,
                 toast = "剩下的铁链全断了——巨鼎坠入熔池！", restScale = 0.9f,
             });
             marks.Add(new BossMark { at = DrinkAt[0], id = DrinkMarkA, tick = true });
@@ -107,12 +118,17 @@ namespace Spiritfire.Game
             moves.Add(() => new ScaleBlades());
             moves.Add(() => new ScaleBreath());
             moves.Add(() => new ScaleDrink());
-            // BS5 之前的焚身占位
-            moves.Add(() => new BurnPlaceholderStomp());
-            moves.Add(() => new BurnPlaceholderBreath());
+            moves.Add(() => new BurnFlood());
+            moves.Add(() => new BurnDives());
+            moves.Add(() => new BurnPant());
+            moves.Add(() => new BurnSweep());
+            moves.Add(() => new BurnRain());
+            moves.Add(() => new BurnRage());
 
             summonCap = 6;
+            // 狂怒（TS restFactor：焚身 0.9、狂怒 × 0.72 ≈ 0.65）：喘息、前摇缩短，伤害 × 1.15；熔流轮转 / 俯冲蓄势 / 火云雨另有狂怒数值
             enrageBelow = 0.15f;
+            enrageRestScale = 0.72f;
             enrageToast = "火麒麟狂怒——焚身之火愈烈！";
             intro.seconds = 3.2f;
             intro.anim = "tuck";
@@ -139,17 +155,61 @@ namespace Spiritfire.Game
         public static float ReferenceDps(float difficulty) => BaseDps * (1 + DpsGrowth * (Mathf.Max(1f, difficulty) - 1)) * Uptime;
 
         /// <summary>
-        /// 模拟击杀用时（秒）：生命 + 护甲 ÷ 0.75（无属性）为基础量；两次饮熔里没打断的那几次各回满一次鳞甲；
-        /// 每次砸中给 4 s × 秒伤 ×（受伤倍率 − 1）的额外输出（崩裂时护甲本来就打光了，清零不算收益）
+        /// 模拟击杀用时（秒，登场结束到倒下）= 一阶段 + 换形演出（<see cref="TransitionSeconds"/>，不可选中）+ 二阶段：
+        ///   一阶段：45% 生命 + 护甲 ÷ 0.75（无属性）为基础量；两次饮熔里没打断的那几次各回满一次鳞甲；
+        ///     每次砸中给 4 s × 秒伤 ×（受伤倍率 − 1）的额外输出（崩裂时护甲本来就打光了，清零不算收益）；
+        ///   二阶段：55% 生命（鳞甲炸飞，没有护甲）÷（秒伤 × <see cref="BurnDpsFactor"/>：踏云时难打、喘息时贴地火心大亮、要分火打飞鸦）
         /// </summary>
         public static float EstimateKillSeconds(BossVitals v, float dps, int cauldronHits, int drinks = 2)
         {
             if (!(dps > 0)) return float.PositiveInfinity;
             cauldronHits = Mathf.Clamp(cauldronHits, 0, drinks);
             float armorRaw = v.armor / ArmorMult;
-            float pool = v.hp + v.shield + armorRaw + armorRaw * (drinks - cauldronHits);
+            float pool1 = v.hp * (1f - TransformAt) + v.shield + armorRaw + armorRaw * (drinks - cauldronHits);
             float bonus = cauldronHits * StunSeconds * dps * (CrackTakenMult - 1f);
-            return Mathf.Max(0, pool - bonus) / dps;
+            float phase1 = Mathf.Max(0, pool1 - bonus) / dps;
+            float phase2 = v.hp * TransformAt / (dps * BurnDpsFactor);
+            return phase1 + TransitionSeconds + phase2;
+        }
+
+        // ───────────── 焚身的输出折算 ─────────────
+
+        /// <summary>焚身在空中时打得到的比例（身子在 4.5–10 m 高绕殿飞、俯冲，弱点难瞄）、落地喘息时的输出倍率（贴地、胸口火心大亮）</summary>
+        public const float AirHitRate = 0.85f, PantDpsMult = 1.5f;
+        /// <summary>俯冲时飞到玩家头顶的典型用时、吐息落到对岸的典型用时（秒；招式里的上限是 1.4 / 2.2）、打一只神火飞鸦要几秒</summary>
+        public const float TypicalRise = 1f, TypicalApproach = 1.5f, CrowSeconds = 0.5f;
+
+        /// <summary>
+        /// 焚身一轮（俯冲三连 + 喘息 + 吐息 + 火云雨各一次，含招式间喘息 × 焚身 0.9）的秒数、其中落地喘息的秒数、分火打飞鸦的秒数——按招式本身的时间轴算，改了招式定档跟着变
+        /// </summary>
+        public static void BurnRotation(out float seconds, out float pantSeconds, out float crowSeconds)
+        {
+            const float rest = 0.9f;
+            var dives = new BurnDives();
+            var pant = new BurnPant();
+            var sweep = new BurnSweep();
+            var rain = new BurnRain();
+            float d = dives.windup + BurnDives.Count * (TypicalRise + BurnDives.Tele + BurnDives.DiveTime + BurnDives.LandRecover) + dives.recovery * rest;
+            float p = pant.windup + pant.active + pant.recover + pant.recovery * rest;
+            float s = TypicalApproach + sweep.active + sweep.recover + sweep.recovery * rest;
+            float r = rain.windup + rain.active + rain.recover + rain.recovery * rest;
+            seconds = d + p + s + r;
+            pantSeconds = pant.active;
+            crowSeconds = new QilinDef().rainCrows * CrowSeconds;
+        }
+
+        /// <summary>
+        /// 二阶段相对模拟秒伤的输出倍率：一轮里空中的时间（扣掉打飞鸦的）× 0.85 + 喘息 × 1.5，按一轮的时长平均（约 0.87）
+        /// </summary>
+        public static float BurnDpsFactor
+        {
+            get
+            {
+                BurnRotation(out float t, out float pant, out float crows);
+                if (!(t > 0)) return 1f;
+                float air = Mathf.Max(0, t - pant - crows);
+                return (air * AirHitRate + pant * PantDpsMult) / t;
+            }
         }
     }
 }

@@ -6,7 +6,7 @@ namespace Spiritfire.Game
     /// 火麒麟 · 玄鳞 · 麟火（TS Qilin 'breath'）：玩家在 15 m 以内才出。
     ///   前摇 0.8 s：转向玩家、张口，面前扇形预警（半角 24°、14 m）；
     ///   出手 1.6 s：短距离吐火，口部朝玩家慢慢转（28.6°/s），每 0.15 s 判一次：在扇形里、口到玩家胸口不被挡（石柱挡得住）→ 6（火）。
-    /// 焚身的占位吐息（<see cref="BurnPlaceholderBreath"/>）继承它，只改 id / 形态 / 距离。
+    /// 焚身的吐息是另一招（<see cref="BurnSweep"/>：落到熔池对岸扫一个象限）。
     /// </summary>
     public class ScaleBreath : QilinMove
     {

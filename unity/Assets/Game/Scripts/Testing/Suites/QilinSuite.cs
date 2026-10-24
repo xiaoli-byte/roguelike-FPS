@@ -9,7 +9,7 @@ using static UnityEngine.Object;
 namespace Spiritfire.Game.Testing
 {
     /// <summary>
-    /// 火麒麟冒烟（BS4，bridge.sh playtest boss-qilin；场景 3-4 祝融炉心）：
+    /// 火麒麟冒烟（BS4 + BS5，bridge.sh playtest boss-qilin；场景 3-4 祝融炉心）：
     ///   · 定义：自检、血条刻度 = 85% / 70% 饮熔线 + 55% 换形、3-4 难度下的定档与模拟击杀用时；
     ///   · 开战：玩家走到入场点 → 熔铁闸升起封门 → 登场预警 → 火麒麟从熔池跃出（不可选中、锁扣还没上膛）→ 登场结束：四个锁扣上膛（110 × 难度）、吊鼎吊着；
     ///     场景没重建（没有 BossEncounter）时在场地上直接刷一只（炉心殿几何、吊鼎、锁扣由首领自己补），记一行提示；
@@ -20,8 +20,11 @@ namespace Spiritfire.Game.Testing
     ///     受伤 × 2（和崩裂结束后同样一击比）；4 s 后恢复；
     ///   · 饮熔 70%：不打锁扣 → 喝完鳞甲回满、伤害变高；
     ///   · 换形 55%：BossPhase(1)、转换中不可选中、锁扣静默移除、巨鼎坠池成掩体（横穿熔池的视线被挡）、换成焚身、护甲清零、胸口火心是弱点、演出结束可选中；
-    ///   · 焚身占位招式（BS5 之前）各出一次；
-    ///   · 击杀 → 溃散 → 结算：3-4 是最后一关 → 胜利链（不立出口）。
+    ///   · 焚身（BS5）：换形后第一招熔流轮转——从玩家所在的象限开闸、顺时针，涨着时熔流带是熔岩（踩进去下沉托回）、导航网格被挖掉，退了恢复；
+    ///     踏云俯冲三踏（落点预警、火环、落点在殿内）→ 自动接落地喘息（落在能站的地面、火心大亮、起飞）；吐息扫象限（从对岸扫满整个象限）；
+    ///     火云雨 + 神火飞鸦（火球落满、飞鸦从高处出）；焚身浸泡 40 s（踏云不出殿、不钻地、不插柱子、招式不卡死）；
+    ///     15% 狂怒：狂怒长啸（火浪）、熔流以狂怒数值重开、喘息倍率 0.65；
+    ///   · 击杀 → 溃散 → 结算：3-4 是最后一关 → 胜利链（不立出口）；熔流退回、半空倒下的落到地上。
     /// 运行时报错由宿主记不合格（PlaytestRunner）。
     /// </summary>
     public sealed class QilinSuite : PlaytestSuite
@@ -30,7 +33,7 @@ namespace Spiritfire.Game.Testing
         /// <summary>3-4 祝融炉心（与编辑器里 Level_3_4.ScenePath 相同）</summary>
         public override string Scene => "Assets/Scenes/L3_4_Zhurong.unity";
 
-        const float SoakSeconds = 90f, MoveTimeout = 16f;
+        const float SoakSeconds = 90f, BurnSoakSeconds = 40f, MoveTimeout = 16f;
 
         WeaponController weapons;
         PlayerMotor motor;
@@ -241,17 +244,20 @@ namespace Spiritfire.Game.Testing
             }
         }
 
-        IEnumerator OneMove(BossMove move, float distance)
+        IEnumerator OneMove(BossMove move, float distance, bool keepPlayer = false)
         {
             yield return WaitIdle();
-            ReadyPlayer(distance);
+            if (!keepPlayer) ReadyPlayer(distance);
             PlayerStatus.Instance?.ClearAll();
             yield return null;
             var qm = move as QilinMove;
             int warn0 = qm != null ? qm.Warned : move.TelegraphCount, act0 = move.TimesActive, prints0 = boss.PrintsDropped;
             int rings0 = move is ScaleBlades b0 ? b0.Rings : 0, blades0 = move is ScaleBlades b1 ? b1.BladesFired : 0;
             int charges0 = move is ScaleGallop g0 ? g0.Charges : 0, ticks0 = move is ScaleBreath br0 ? br0.Ticks : 0;
-            int stomps0 = move is BurnPlaceholderStomp s0 ? s0.Stomps : 0;
+            int lands0 = move is BurnDives d0 ? d0.Landings : 0, waves0 = boss.Hazards ? boss.Hazards.WavesSpawned : 0;
+            int sweepTicks0 = move is BurnSweep sw0 ? sw0.Ticks : 0, meteors0 = move is BurnRain rn0 ? rn0.MeteorsFired : 0, crows0 = boss.CrowsSummoned;
+            int lobs0 = boss.Hazards ? boss.Hazards.LobsSpawned : 0;
+            float minAlt = float.PositiveInfinity, maxAlt = float.NegativeInfinity, sweepR = -1;
             float t0 = Time.time;
             bool forced = false;
             while (!(forced = boss.ForceMove(move.Id)) && Time.time - t0 < 5f) yield return null;
@@ -268,6 +274,9 @@ namespace Spiritfire.Game.Testing
                 if (stages.Count == 0 || stages[^1] != move.Stage) stages.Add(move.Stage);
                 if (!move.stunnable && !boss.StunImmune) immune = false;
                 maxOut = Mathf.Max(maxOut, OutOfHall(boss.transform.position));
+                minAlt = Mathf.Min(minAlt, boss.Altitude);
+                maxAlt = Mathf.Max(maxAlt, boss.Altitude);
+                if (move is BurnSweep && move.Stage == MoveStage.Active && boss.Furnace) sweepR = boss.Furnace.RadiusOf(boss.transform.position);
                 KeepPlayerAlive();
                 Aim(motor, eye, boss.BodyCenter);
                 if (!shot && move.Stage == MoveStage.Active && Time.time - t0 > 1.2f)
@@ -279,12 +288,17 @@ namespace Spiritfire.Game.Testing
                 yield return null;
             }
             bool ended = boss.Current != move;
+            // 火云雨的火球在危险物时钟上排开、坠落 1.25 s：收招后再等一下数落地
+            if (move is BurnRain) yield return new WaitForSeconds(BurnRain.FallTime + 0.3f);
             int warned = (qm != null ? qm.Warned : move.TelegraphCount) - warn0;
+            int waves = (boss.Hazards ? boss.Hazards.WavesSpawned : 0) - waves0, lobs = (boss.Hazards ? boss.Hazards.LobsSpawned : 0) - lobs0;
             string extra = move switch
             {
                 ScaleGallop g => $"，蹄印 {boss.PrintsDropped - prints0} 个（在烧 {boss.LivePrints}）、冲撞 {g.Charges - charges0} 次（线长 {g.ChargeLength:F1} m，撞到玩家 {g.ChargeHits}、撞柱 {g.Crashes}）、践踏 {g.Tramples}",
                 ScaleBlades b => $"，{b.Rings - rings0} 圈 {b.BladesFired - blades0} 片鳞刃（两圈 {b.TwoRings}），打中玩家累计 {b.BladeHits}",
-                BurnPlaceholderStomp s => $"，跃击 {s.Stomps - stomps0} 次",
+                BurnDives d => $"，落地 {d.Landings - lands0} 次（砸中玩家累计 {d.BlastHits}）、火环 {waves} 道，高度 {minAlt:F1}–{maxAlt:F1} m",
+                BurnSweep sw => $"，象限 {sw.Quadrant}、落点离圆心 {sweepR:F1} m、扫过 {sw.Swept:F0}°（射程 {sw.Range:F0} m），判定 {sw.Ticks - sweepTicks0} 次、烧到 {sw.Hits}、被挡 {sw.Blocked}",
+                BurnRain rn => $"，火球 {rn.MeteorsFired - meteors0} 颗（落地 {lobs}）、神火飞鸦 {boss.CrowsSummoned - crows0} 只，高度 {minAlt:F1}–{maxAlt:F1} m",
                 ScaleBreath br => $"，判定 {br.Ticks - ticks0} 次、烧到 {br.Hits}、被挡 {br.Blocked}",
                 _ => "",
             };
@@ -305,8 +319,23 @@ namespace Spiritfire.Game.Testing
                 case ScaleBlades b when b.BladesFired - blades0 < ScaleBlades.Count:
                     Fail($"张鳞只射出 {b.BladesFired - blades0} 片鳞刃（应 ≥ {ScaleBlades.Count}）");
                     break;
-                case BurnPlaceholderStomp s when s.Stomps - stomps0 < 1:
-                    Fail("焚身跃击（占位）没有落地");
+                case BurnDives d:
+                    if (d.Landings - lands0 != BurnDives.Count) Fail($"踏云俯冲落地 {d.Landings - lands0} 次（应 {BurnDives.Count}）");
+                    if (waves < BurnDives.Count) Fail($"踏云俯冲只炸出 {waves} 道火环");
+                    if (warned < BurnDives.Count) Fail($"踏云俯冲只画了 {warned} 个落点预警");
+                    if (maxAlt < QilinBrain.HighAlt - 1.5f) Fail($"踏云俯冲蓄势时最高只有 {maxAlt:F1} m（应约 {QilinBrain.HighAlt} m）");
+                    if (minAlt > 0.4f) Fail($"踏云俯冲没有砸到地上（最低 {minAlt:F1} m）");
+                    break;
+                case BurnSweep sw:
+                    if (sw.Ticks - sweepTicks0 < 12) Fail($"吐息只判定了 {sw.Ticks - sweepTicks0} 次");
+                    if (sw.Hits + sw.Blocked < 1) Fail("吐息扫过玩家所在的位置却一次都没判到（没烧到、也没被挡）");
+                    if (sw.Swept < 40f) Fail($"吐息只扫过 {sw.Swept:F0}°（应扫满一个象限）");
+                    if (boss.Furnace && (sweepR < boss.Furnace.poolRadius || sweepR > boss.Furnace.poolRadius + 5f)) Fail($"吐息没落在熔池对岸（离圆心 {sweepR:F1} m）");
+                    break;
+                case BurnRain rn:
+                    if (rn.MeteorsFired - meteors0 < BurnRain.Meteors) Fail($"火云雨只落了 {rn.MeteorsFired - meteors0} 颗火球");
+                    if (lobs < BurnRain.Meteors) Fail($"火云雨的火球只有 {lobs} 颗进了危险物");
+                    if (EnemyRoster.Get("fire_crow") != null && boss.CrowsSummoned - crows0 < 1) Fail("火云雨没有召出神火飞鸦");
                     break;
                 case ScaleBreath br when br.Ticks - ticks0 < 5:
                     Fail($"麟火只判定了 {br.Ticks - ticks0} 次");
@@ -624,23 +653,332 @@ namespace Spiritfire.Game.Testing
 
         IEnumerator BurnMoves()
         {
-            foreach (var id in new[] { BurnPlaceholderStomp.MoveId, BurnPlaceholderBreath.BurnMoveId })
+            if (!boss || boss.Dead || !boss.IsBurn)
+            {
+                Fail("没有进入焚身，跳过焚身招式");
+                yield break;
+            }
+            yield return FloodCase();
+            yield return DivesAndPant();
+            foreach (var id in new[] { BurnSweep.MoveId, BurnRain.MoveId })
             {
                 if (!boss || boss.Dead) yield break;
                 var m = boss.MoveById(id);
                 if (m == null)
                 {
-                    Fail($"焚身没有占位招式 {id}");
+                    Fail($"焚身没有招式 {id}");
                     continue;
                 }
-                yield return OneMove(m, id == BurnPlaceholderBreath.BurnMoveId ? 10f : 14f);
+                // 吐息：玩家站在象限里偏到一侧（不躲在倒鼎、石柱后面），火扫过来能烧到
+                if (id == BurnSweep.MoveId) PlaceInQuadrant(2, 38f);
+                yield return OneMove(m, 12f, id == BurnSweep.MoveId);
+                if (id == BurnRain.MoveId) CheckCrows();
+                boss.Summons.DespawnAll();
             }
+            yield return BurnSoak();
+            yield return RageCase();
+        }
+
+        /// <summary>玩家站到象限 q 中线偏 off 度、离圆心 18 m 的地面上（熔流带在渠边，中线上是干地）</summary>
+        void PlaceInQuadrant(int q, float off = 0)
+        {
+            var f = boss ? boss.Furnace : null;
+            if (!f) return;
+            var p = f.Point(f.QuadrantYaw(q) + off, 18f);
+            if (NavMesh.SamplePosition(p, out var hit, 3f, LavaField.WalkerFilter(LavaField.DryAreaMask))) p = hit.position;
+            Place(p);
+            Aim(motor, eye, boss.BodyCenter);
+        }
+
+        /// <summary>
+        /// 熔流轮转（换形后第一招，已经排上）：玩家在东象限 → 从东象限开闸、顺时针；涨着时熔流带是熔岩、导航网格被挖掉、踩进去下沉托回；退了恢复；
+        /// 下一个象限是顺时针的下一个。看完两段就停掉，免得后面的招式一直踩在熔流里
+        /// </summary>
+        IEnumerator FloodCase()
+        {
+            var f = boss.Furnace;
+            var flood = boss.Flood;
+            if (!f || flood == null)
+            {
+                Fail($"焚身没有熔流（炉心殿 {f}，熔流 {flood}）");
+                yield break;
+            }
+            int q = 2;
+            PlaceInQuadrant(q);
+            float t0 = Time.time;
+            var move = boss.MoveById(BurnFlood.MoveId) as BurnFlood;
+            int opened0 = move != null ? move.Opened : 0, cycles0 = flood.Cycles;
+            bool first = false;
+            while (Time.time - t0 < 3f && !(boss.Current is BurnFlood))
+            {
+                KeepPlayerAlive();
+                yield return null;
+            }
+            first = boss.Current is BurnFlood;
+            if (!first)
+            {
+                Line("换形后第一招不是熔流轮转（可能已经出完），强制出一次");
+                PlaceInQuadrant(q);
+                boss.ForceMove(BurnFlood.MoveId);
+            }
+            float a0 = Time.time;
+            while (flood.Cycles == cycles0 && Time.time - a0 < 4f)
+            {
+                PlaceInQuadrant(q);
+                yield return null;
+            }
+            if (flood.Cycles == cycles0)
+            {
+                Fail("熔流轮转没有开闸");
+                yield break;
+            }
+            var order = flood.Order.ToArray();
+            Line($"熔流轮转：{(first ? "换形后第一招 ✓" : "✗ 不是第一招")}，开闸 {(move != null ? move.Opened - opened0 : 0)} 次，顺序 {string.Join(" → ", order)}（玩家在象限 {q}，熔流 {flood.VolumeCount} 片）");
+            if (order.Length != 4 || order[0] != q || order[1] != f.ClockwiseNext(q) || order[2] != f.ClockwiseNext(order[1])) Fail($"熔流轮转的顺序 {string.Join(" → ", order)}（应从象限 {q} 起顺时针）");
+            var strips = new List<QilinFlood.Strip>();
+            QilinFlood.Strips(f, q, strips);
+            bool dryBefore = strips.All(s => !LavaField.IsLavaAt(s.center));
+            float w0 = Time.time;
+            while (flood.FloodingQuadrant != q && Time.time - w0 < QilinFlood.WarnSeconds + 1.5f)
+            {
+                KeepPlayerAlive();
+                yield return null;
+            }
+            yield return new WaitForSeconds(QilinFlood.RiseSeconds + 0.3f);
+            Physics.SyncTransforms();
+            bool lava = strips.All(s => LavaField.IsLavaAt(s.center));
+            bool carved = strips.All(s => !QilinBrain.OnWalkable(new Vector3(s.center.x, f.FloorY, s.center.z), 0.5f));
+            bool midDry = !LavaField.IsLavaAt(f.Point(f.QuadrantYaw(q), 18f)) && QilinBrain.OnWalkable(f.Point(f.QuadrantYaw(q), 18f), 1f);
+            // 玩家踩进去：下沉托回
+            int entries0 = LavaField.Instance ? LavaField.Instance.Entries : 0;
+            var s0 = strips[0];
+            Place(new Vector3(s0.center.x, f.FloorY, s0.center.z));
+            Aim(motor, eye, f.Point(f.QuadrantYaw(q), 22f) + Vector3.up * 1.5f);
+            yield return new WaitForSeconds(0.6f);
+            int entries = (LavaField.Instance ? LavaField.Instance.Entries : 0) - entries0;
+            KeepPlayerAlive();
+            PlaceInQuadrant(q, -18f);
+            Aim(motor, eye, new Vector3(s0.center.x, f.FloorY, s0.center.z));
+            yield return null;
+            Shot(weapons.eye, "qilin_burn_flood");
+            Line($"熔流涨起（象限 {q}）：预警前是干地 {(dryBefore ? "✓" : "✗")}，两条熔流带是熔岩 {(lava ? "✓" : "✗")}、导航网格挖掉 {(carved ? "✓" : "✗")}，象限中线还是干地 {(midDry ? "✓" : "✗")}，" +
+                 $"玩家踩进去 {(entries > 0 ? "✓ 下沉托回" : "✗ 没反应")}，涨 {flood.CurrentOnSeconds:F0} s");
+            if (!dryBefore) Fail("熔流预警前熔流带就已经是熔岩了");
+            if (!lava) Fail("熔流涨起后熔流带不是熔岩");
+            if (!carved) Fail("熔流涨起后导航网格没有挖掉熔流带");
+            if (!midDry) Fail("熔流把象限中线也淹了（应只淹渠边）");
+            if (entries <= 0) Fail("玩家踩进涨起的熔流没有下沉托回");
+            if (Mathf.Abs(flood.CurrentOnSeconds - QilinFlood.OnSeconds) > 0.01f) Fail($"熔流涨 {flood.CurrentOnSeconds} s（应 {QilinFlood.OnSeconds} s）");
+            float r0 = Time.time;
+            while (flood.FloodingQuadrant == q && Time.time - r0 < QilinFlood.OnSeconds + 1f)
+            {
+                KeepPlayerAlive();
+                yield return null;
+            }
+            yield return new WaitForSeconds(QilinFlood.RecedeSeconds + 0.3f);
+            Physics.SyncTransforms();
+            bool dryAfter = strips.All(s => !LavaField.IsLavaAt(s.center));
+            bool navBack = strips.All(s => QilinBrain.OnWalkable(new Vector3(s.center.x, f.FloorY, s.center.z), 0.6f));
+            int next = flood.Active ? flood.Order[flood.Index] : -1;
+            Line($"熔流退去（{Time.time - r0:F1} s）：熔流带回到干地 {(dryAfter ? "✓" : "✗")}、导航网格恢复 {(navBack ? "✓" : "✗")}，下一个象限 {next}（顺时针应 {f.ClockwiseNext(q)}）");
+            if (!dryAfter) Fail("熔流退了熔流带还是熔岩");
+            if (!navBack) Fail("熔流退了导航网格没有恢复");
+            if (next != f.ClockwiseNext(q)) Fail($"熔流下一个象限 {next}（应 {f.ClockwiseNext(q)}）");
+            flood.Stop();
+        }
+
+        /// <summary>踏云俯冲三踏 → 自动接落地喘息（落在能站的地面上、火心大亮、喘完起飞回到踏云高度）</summary>
+        IEnumerator DivesAndPant()
+        {
+            var dives = boss.MoveById(BurnDives.MoveId);
+            var pant = boss.MoveById(BurnPant.MoveId) as BurnPant;
+            if (dives == null || pant == null)
+            {
+                Fail("焚身没有踏云俯冲 / 落地喘息");
+                yield break;
+            }
+            PlaceInQuadrant(1);
+            yield return OneMove(dives, 14f, true);
+            int landed0 = pant.Landed, take0 = pant.Takeoffs;
+            float t0 = Time.time;
+            while (!(boss.Current is BurnPant) && Time.time - t0 < 2f)
+            {
+                KeepPlayerAlive();
+                yield return null;
+            }
+            if (!(boss.Current is BurnPant))
+            {
+                Fail($"俯冲三踏之后没有接落地喘息（现在 {boss.Current?.Id ?? "间隙"}）");
+                yield break;
+            }
+            float waitStart = Time.time, connect = Time.time - t0;
+            while (boss.Current == pant && pant.Stage != MoveStage.Active && Time.time - waitStart < 2f) yield return null;
+            yield return new WaitForSeconds(0.4f);
+            var f = boss.Furnace;
+            var feet = boss.transform.position;
+            float alt = boss.Altitude;
+            bool walk = QilinBrain.OnWalkable(pant.Spot, 1.2f) && !LavaField.IsLavaAt(pant.Spot);
+            bool clear = boss.BodyFits(feet);
+            float r = f ? f.RadiusOf(feet) : 0;
+            bool heart = boss.HeartBright;
+            var hz = boss.Zone("heart");
+            Aim(motor, eye, hz ? hz.transform.position : boss.ChestPoint);
+            yield return null;
+            Shot(weapons.eye, "qilin_burn_pant");
+            float glow = boss.HeartGlow;
+            while (boss.Current == pant && Time.time - waitStart < BurnPant.Rest + 3f)
+            {
+                KeepPlayerAlive();
+                yield return null;
+            }
+            float up0 = Time.time, maxAlt = boss.Altitude;
+            while (Time.time - up0 < 1.6f)
+            {
+                maxAlt = Mathf.Max(maxAlt, boss.Altitude);
+                yield return null;
+            }
+            Line($"落地喘息：俯冲收招 {connect:F2} s 后接上 ✓，落点离地 {alt:F2} m、离圆心 {r:F1} m、能站的干地 {(walk ? "✓" : "✗")}、没插进石柱 {(clear ? "✓" : "✗")}，" +
+                 $"火心大亮 {(heart ? "✓" : "✗")}（亮度 {glow:F2}），落地 {pant.Landed - landed0} 次 / 起飞 {pant.Takeoffs - take0} 次，起飞后 1.6 s 内升到 {maxAlt:F1} m");
+            if (alt > 0.4f) Fail($"落地喘息时还离地 {alt:F2} m");
+            if (!walk) Fail("落地喘息落在了熔岩 / 不能站的地方");
+            if (!clear) Fail("落地喘息时身子插进了石柱 / 墙");
+            if (f && r < f.poolRadius) Fail($"落地喘息落进了熔池（离圆心 {r:F1} m）");
+            if (!heart || glow < 0.8f) Fail("落地喘息时胸口火心没有大亮");
+            if (pant.Landed - landed0 != 1 || pant.Takeoffs - take0 != 1) Fail("落地喘息没有走完落地 → 起飞");
+            if (maxAlt < 2.5f) Fail($"喘完没有飞回踏云高度（1.6 s 内最高 {maxAlt:F1} m）");
+            if (boss.HeartBright) Fail("起飞后火心还在大亮");
+        }
+
+        /// <summary>火云雨召出的神火飞鸦在高处（排烟口）出生</summary>
+        void CheckCrows()
+        {
+            if (boss.CrowsSummoned == 0) return;
+            float minY = boss.LastCrowAltitude;
+            int alive = boss.Summons.Live.Count(e => e && e.enemyId == "fire_crow");
+            Line($"神火飞鸦：累计 {boss.CrowsSummoned} 只、现在在场 {alive} 只，这一批出生时最低离地 {minY:F1} m（排烟口 {boss.Furnace?.vents?.Length ?? 0} 个）");
+            if (!(minY >= 6f)) Fail($"神火飞鸦出生太低（离地 {minY:F1} m，应从高处排烟口出）");
+        }
+
+        /// <summary>焚身浸泡：踏云不出殿、不钻地、不飞上天、落地时不插柱子，招式不卡死、出过至少三种招</summary>
+        IEnumerator BurnSoak()
+        {
+            yield return WaitIdle();
+            var hp = boss.Health;
+            SetHealthFraction(0.4f);
+            var counts = new Dictionary<string, int>();
+            void Count(BossBrain b, BossMove m) => counts[m.Id] = counts.TryGetValue(m.Id, out var n) ? n + 1 : 1;
+            boss.MoveStarted += Count;
+            int badFrames = 0, revives = 0, stuckBody = 0, maxAlive = 0;
+            float maxOut = 0, stuck = 0, longest = 0, t0 = Time.time, nextMoveAt = 0, minAlt = float.PositiveInfinity, maxAlt = float.NegativeInfinity, air = 0, total = 0;
+            BossMove last = null;
+            string badWhat = null;
+            var f = boss.Furnace;
+            while (Time.time - t0 < BurnSoakSeconds && boss && !boss.Dead)
+            {
+                if (vitals.Dead)
+                {
+                    vitals.Revive();
+                    revives++;
+                }
+                KeepPlayerAlive();
+                if (Time.time >= nextMoveAt)
+                {
+                    nextMoveAt = Time.time + 6f;
+                    var q = arena.RandomPoint(3f);
+                    if (NavMesh.SamplePosition(q, out var qh, 3f, LavaField.WalkerFilter(LavaField.DryAreaMask))) Place(qh.position);
+                }
+                Aim(motor, eye, boss.BodyCenter);
+                var p = boss.transform.position;
+                float alt = boss.Altitude;
+                if (!Finite(p) || !Finite(hp.health) || alt < -1.3f || alt > 16f)
+                {
+                    badFrames++;
+                    badWhat ??= $"位置 {p}，离地 {alt:F1} m";
+                }
+                if (Finite(p)) maxOut = Mathf.Max(maxOut, OutOfHall(p));
+                minAlt = Mathf.Min(minAlt, alt);
+                maxAlt = Mathf.Max(maxAlt, alt);
+                total += Time.deltaTime;
+                if (alt > 1f) air += Time.deltaTime;
+                if (alt < 0.3f && f && f.RadiusOf(p) > f.poolRadius && !boss.BodyFits(p)) stuckBody++;
+                maxAlive = Mathf.Max(maxAlive, boss.Summons.Alive + boss.Summons.PendingCount);
+                if (boss.Current != null && boss.Current == last) stuck += Time.deltaTime;
+                else stuck = 0;
+                longest = Mathf.Max(longest, stuck);
+                last = boss.Current;
+                yield return null;
+            }
+            boss.MoveStarted -= Count;
+            boss.Summons.DespawnAll();
+            Line($"浸泡 {Time.time - t0:F0} s（焚身）：出招 {string.Join("、", counts.Select(kv => $"{kv.Key}×{kv.Value}"))}，最远出殿 {maxOut:F1} m，高度 {minAlt:F1}–{maxAlt:F1} m（在空中 {air / Mathf.Max(0.01f, total):P0}），" +
+                 $"落地插进石柱 {stuckBody} 帧，单招最长 {longest:F1} s，召唤同时最多 {maxAlive}，数值异常 {badFrames} 帧，玩家倒下 {revives} 次，熔流 {(boss.Flood != null && boss.Flood.Active ? "在轮" : "没在轮")}");
+            if (!boss || boss.Dead) Fail("焚身浸泡期间首领死了 / 没了");
+            if (badFrames > 0) Fail($"焚身浸泡期间位置 / 高度非法 {badFrames} 帧（第一次：{badWhat}）");
+            if (maxOut > 1.5f) Fail($"焚身浸泡期间首领飞出殿墙 {maxOut:F1} m");
+            if (longest > MoveTimeout) Fail($"焚身浸泡期间有一招持续了 {longest:F1} s（卡住）");
+            if (stuckBody > 10) Fail($"焚身落地时插进石柱 / 墙 {stuckBody} 帧");
+            if (maxAlive > boss.Summons.Cap) Fail($"焚身浸泡期间召唤物同时 {maxAlive} 只，超过上限 {boss.Summons.Cap}");
+            if (counts.Count < 3) Fail($"焚身浸泡 {BurnSoakSeconds:F0} s 只出过 {counts.Count} 种招（{string.Join("、", counts.Keys)}）");
+            if (counts.Keys.Any(k => !k.StartsWith("burn_"))) Fail($"焚身出了玄鳞的招（{string.Join("、", counts.Keys)}）");
+            if (counts.ContainsKey(BurnRage.MoveId)) Fail("没到 15% 就出了狂怒长啸");
+            if (air / Mathf.Max(0.01f, total) < 0.4f) Fail($"焚身在空中的时间只有 {air / Mathf.Max(0.01f, total):P0}（应以踏云为主）");
+        }
+
+        /// <summary>15% 狂怒：进入狂怒、狂怒长啸（火浪）、熔流以狂怒数值重开（涨 4 s）、喘息倍率 ≈ 0.65</summary>
+        IEnumerator RageCase()
+        {
+            yield return WaitIdle();
+            var rage = boss.MoveById(BurnRage.MoveId) as BurnRage;
+            var flood = boss.Flood;
+            if (rage == null || flood == null)
+            {
+                Fail("焚身没有狂怒长啸 / 熔流");
+                yield break;
+            }
+            int waves0 = rage.Waves, roars0 = boss.RageRoars, cycles0 = flood.Cycles, hzWaves0 = boss.Hazards ? boss.Hazards.WavesSpawned : 0;
+            PlaceInQuadrant(3);
+            SetHealthFraction(0.14f);
+            float t0 = Time.time;
+            while (!boss.Enraged && Time.time - t0 < 1f) yield return null;
+            bool enraged = boss.Enraged;
+            while (!(boss.Current is BurnRage) && Time.time - t0 < 6f)
+            {
+                KeepPlayerAlive();
+                yield return null;
+            }
+            bool started = boss.Current is BurnRage;
+            if (started)
+            {
+                yield return new WaitForSeconds(0.6f);
+                Aim(motor, eye, boss.BodyCenter);
+                yield return null;
+                Shot(weapons.eye, "qilin_burn_rage");
+            }
+            while (boss.Current is BurnRage && Time.time - t0 < 10f) yield return null;
+            float w0 = Time.time;
+            while (flood.FloodingQuadrant < 0 && Time.time - w0 < QilinFlood.WarnSeconds + 1.5f)
+            {
+                KeepPlayerAlive();
+                yield return null;
+            }
+            float rest = boss.RestScale;
+            Line($"狂怒（生命 14%）：进入狂怒 {(enraged ? $"✓（{boss.EnrageReason}）" : "✗")}，狂怒长啸 {(started ? "✓" : "✗")}，火浪 {rage.Waves - waves0} 道（危险物 +{(boss.Hazards ? boss.Hazards.WavesSpawned : 0) - hzWaves0}），" +
+                 $"熔流重开 {flood.Cycles - cycles0} 轮、这一段涨 {flood.CurrentOnSeconds:F0} s，喘息倍率 {rest:F2}、前摇倍率 {boss.WindupScale:F2}");
+            if (!enraged || boss.EnrageReason != "health") Fail($"生命 14% 没有进入狂怒（{boss.EnrageReason}）");
+            if (!started) Fail("狂怒后没有出狂怒长啸");
+            if (rage.Waves - waves0 != 1 || boss.RageRoars - roars0 != 1) Fail("狂怒长啸没有放出火浪");
+            if (flood.Cycles - cycles0 < 1) Fail("狂怒长啸没有让熔流重开");
+            else if (flood.FloodingQuadrant >= 0 && Mathf.Abs(flood.CurrentOnSeconds - QilinFlood.OnSecondsRage) > 0.01f) Fail($"狂怒时熔流涨 {flood.CurrentOnSeconds} s（应 {QilinFlood.OnSecondsRage} s）");
+            if (Mathf.Abs(rest - 0.65f) > 0.02f) Fail($"狂怒的喘息倍率 {rest:F2}（TS 0.65）");
         }
 
         // ───────────── 击杀 → 结算 ─────────────
 
         IEnumerator KillCase()
         {
+            // 半空倒下：等它飞回踏云高度再打死
+            float a0 = Time.time;
+            while (boss && !boss.Dead && boss.Altitude < 2f && Time.time - a0 < 6f) yield return null;
             Guard(false);
             boss.Summons.DespawnAll();
             var hp = boss.Health;
@@ -664,8 +1002,22 @@ namespace Spiritfire.Game.Testing
                 Fail("火麒麟没被打死");
                 yield break;
             }
-            yield return null;
-            Line($"击杀：BossDefeated +{defeatedEvents - defeated0}，阶段 {boss.Phase}，形态 {boss.Form?.id}");
+            yield return new WaitForSeconds(1.2f);
+            var ff = boss.Furnace;
+            bool floodGone = boss.Flood == null || !boss.Flood.Active;
+            bool dry = true;
+            if (ff)
+            {
+                var strips = new List<QilinFlood.Strip>();
+                for (int q = 0; q < ff.QuadrantCount; q++)
+                {
+                    QilinFlood.Strips(ff, q, strips);
+                    if (strips.Any(s => LavaField.IsLavaAt(s.center))) dry = false;
+                }
+            }
+            Line($"击杀：BossDefeated +{defeatedEvents - defeated0}，阶段 {boss.Phase}，形态 {boss.Form?.id}；熔流停了 {(floodGone ? "✓" : "✗")}、退回地下 {(dry ? "✓" : "✗")}，尸身离地 {boss.Altitude:F1} m");
+            if (!floodGone || !dry) Fail("火麒麟倒下后熔流没有退");
+            if (boss.Altitude > 0.6f) Fail($"火麒麟在半空倒下没有落到地上（离地 {boss.Altitude:F1} m）");
             if (defeatedEvents - defeated0 != 1) Fail($"BossDefeated 派发了 {defeatedEvents - defeated0} 次（应 1 次）");
             var stage = RunPlan.ForScene(Scene);
             bool final = stage != null && RunPlan.IsFinal(stage);

@@ -35,6 +35,8 @@ namespace Spiritfire.Game
         {
             if (baseRecovery < 0) baseRecovery = recovery;
             recovery = baseRecovery * (Brain.Phase == 0 && Brain.PhaseFraction <= 0.7f ? 0.85f : 1f);
+            // 俯冲三踏之后「待在地上等喘息」只管到下一招开始
+            if (Qilin) Qilin.HoldGround = false;
             Prepare();
         }
 

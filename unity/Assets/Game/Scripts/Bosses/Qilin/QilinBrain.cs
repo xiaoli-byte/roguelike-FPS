@@ -15,7 +15,14 @@ namespace Spiritfire.Game
     ///   · 转换（55%，5.2 s）：剩下的链全断、锁扣静默移除、巨鼎坠池（落定后是池中掩体，冲出一圈火浪）；麒麟跳进熔池沉下去，
     ///     1.9 s 在熔岩柱里换成焚身（框架换形），2.2 s 起从熔岩里冲出、跃回熔池另一侧的岸上；鳞甲炸飞（护甲清零）。
     ///     角色胶囊跟着模型落脚的地方瞬移（扎进熔池时到池里、落地时到上岸点），演出中不会在原地 / 上岸点留一根看不见的柱子。
-    ///   · 走位：玄鳞在外环跑道上小跑、绕到玩家那一侧（TS idle）；焚身先用框架默认的保持距离（BS5 换成踏云绕殿）。
+    ///   · 走位：玄鳞在外环跑道上小跑、绕到玩家那一侧（TS idle）。
+    ///   · 焚身踏云（BS5，同鹏的写法）：换形时停用导航代理，位置由这里积分——水平按 30 m/s² 追招式给的期望速度（这一帧没人给就悬停），
+    ///     竖直追 <see cref="SkyTarget"/>（招式间隙 4.5 m、俯冲蓄势 / 火云雨 7.5 m、喘息 / 吐息落地 0），身下有石柱、倒鼎时自动抬过去；夹在殿墙以内。
+    ///     招式间隙沿外环跑道上空绕殿弧线奔跑（半径 = 窄桥外端与殿墙的中点 − 1 m），5–9 s 掉一次头；在空中时蹄下冒火云、动画按奔跑速度播。
+    ///     俯冲落地 / 喘息降落这类直接驱动位置的段落用 <see cref="SkyPlace"/>。
+    ///   · 熔流轮转（<see cref="QilinFlood"/>）由这里推进；狂怒（15%）时排上 <see cref="BurnRage"/>（长啸、火浪、熔流重开且更快）。
+    ///   · 胸口火心：焚身胸前一团光晕 + 点光，喘息时大亮（<see cref="HeartBright"/>，二阶段主要的输出窗口）。
+    ///   · 倒下时还在空中就落到地上（溃散演出在地面炸）。
     /// 动作：E5 的 AC_SK_Boss_Qilin(Burn) 按状态名交叉淡入、拉伸到实际时长（框架 PlayAct；缺状态只警告一次，代理 / 占位体照常出招）。
     /// </summary>
     public class QilinBrain : BossBrain
@@ -47,6 +54,45 @@ namespace Spiritfire.Game
         public float ManeHeat { get; internal set; }
         /// <summary>蹄印（燃烧的持续区）累计数</summary>
         public int PrintsDropped { get; private set; }
+
+        // ───── 焚身（BS5）─────
+
+        /// <summary>焚身踏云的离地高度（米，蹄下；TS SKY_ALT）、俯冲蓄势 / 火云雨的高度、竖直速度上限、水平加速度、绕殿速度</summary>
+        public const float SkyAlt = 4.5f, HighAlt = 7.5f, Climb = 12f, SkyAccel = 30f, OrbitSpeed = 11f;
+        /// <summary>踏云时身下离石柱顶、倒鼎顶至少多高（米）</summary>
+        public const float Clearance = 0.7f;
+
+        /// <summary>焚身形态（二阶段）</summary>
+        public bool IsBurn => Form != null && Form.id == QilinDef.BurnForm;
+        /// <summary>熔流轮转（焚身才有）</summary>
+        public QilinFlood Flood { get; private set; }
+        /// <summary>踏云的目标高度（离殿内地面，蹄下）：招式间隙 4.5，俯冲蓄势 / 火云雨 7.5，喘息 / 吐息落地 0</summary>
+        public float SkyTarget { get; set; } = SkyAlt;
+        /// <summary>离殿内地面多高（蹄下）</summary>
+        public float Altitude => transform.position.y - FloorY;
+        /// <summary>焚身正在半空</summary>
+        public bool Airborne => IsBurn && Altitude > 1f;
+        /// <summary>踏云的当前速度</summary>
+        public Vector3 SkyVelocity => skyVel;
+        /// <summary>胸口火心的亮度（0.3 平时，喘息时 1）与「大亮」开关（喘息招式写）</summary>
+        public float HeartGlow { get; private set; } = 0.3f;
+        public bool HeartBright { get; set; }
+        /// <summary>踏云的水平加速度（米/秒²；俯冲时 40，TS accel）</summary>
+        public float Accel { get; set; } = SkyAccel;
+        /// <summary>招式间隙也待在地上（俯冲三踏之后、喘息之前那一下喘息）</summary>
+        public bool HoldGround { get; set; }
+        /// <summary>焚身累计：狂怒长啸次数、召出的神火飞鸦</summary>
+        public int RageRoars { get; internal set; }
+        public int CrowsSummoned { get; private set; }
+        /// <summary>最近一批神火飞鸦出生时最低离地多高（测试用）</summary>
+        public float LastCrowAltitude { get; private set; } = float.NaN;
+
+        Vector3 skyVel, desiredVel;
+        bool hasDesired, skyPlaced;
+        float orbit, orbitTimer, orbitDir = 1, cloudAcc;
+        Transform heartFx;
+        Light heartLight;
+        Renderer heartSprite;
 
         static readonly string[] CrackZones = { "head", "neck", "chest", "back", "hips" };
         static readonly string[] HoofBones = { "fhoof_L", "hhoof_R", "fhoof_R", "hhoof_L" };
@@ -122,6 +168,8 @@ namespace Spiritfire.Game
         {
             Wire(false);
             if (Effects) Destroy(Effects.gameObject);
+            Flood?.Dispose();
+            if (heartFx) Destroy(heartFx.gameObject);
         }
 
         /// <summary>当前模型的骨骼：四蹄（蹄印）、下颌（吐息）、头、胸、臀（冲撞判定）。代理 / 占位体找不到时为 null，招式退回按身体估算</summary>
@@ -407,12 +455,377 @@ namespace Spiritfire.Game
                 CrackLeft -= dt;
                 if (CrackLeft <= 0) EndCrack();
             }
-            // 火珠：平时微光；人立、被砸晕、鳞甲崩裂时大亮
-            bool bright = Staggered || Cracked || (Current is ScaleBlades && Current.Stage == MoveStage.Windup);
+            // 火珠：平时微光；人立、被砸晕、鳞甲崩裂、喘息时大亮
+            bool bright = Staggered || Cracked || HeartBright || (Current is ScaleBlades && Current.Stage == MoveStage.Windup);
             pearlGlow += ((bright ? 1f : 0.35f) - pearlGlow) * Mathf.Min(1f, dt * 4f);
             Glow(0, pearlGlow * (0.75f + 0.25f * Mathf.Sin(Time.time * 5f)));
             ManeHeat = Mathf.Max(0, ManeHeat - dt * 0.02f);
+            if (IsBurn && IntroDone && !Transitioning) StepSky(dt);
+            Flood?.Tick(dt);
+            HeartGlow += ((HeartBright ? 1f : 0.3f) - HeartGlow) * Mathf.Min(1f, dt * 4f);
+            if (IsBurn) HoofClouds(dt);
         }
+
+        void LateUpdate()
+        {
+            if (Def == null || Dead) return;
+            UpdateHeartFx();
+        }
+
+        // ───────────── 焚身：踏云 ─────────────
+
+        /// <summary>这一帧想往 target 飞（水平，speed 米/秒，arrive 米内减速）；返回是否已到</summary>
+        public bool FlyTo(Vector3 target, float speed, float arrive)
+        {
+            var d = target - transform.position;
+            d.y = 0;
+            float dist = d.magnitude;
+            if (dist < 1e-3f)
+            {
+                Hover();
+                return true;
+            }
+            float v = speed * Mathf.Clamp01(dist / Mathf.Max(0.5f, arrive * 2f));
+            desiredVel = d / dist * Mathf.Max(v, Mathf.Min(speed, 2f));
+            hasDesired = true;
+            return dist <= arrive;
+        }
+
+        /// <summary>这一帧悬停（水平速度收向 0）</summary>
+        public void Hover()
+        {
+            desiredVel = Vector3.zero;
+            hasDesired = true;
+        }
+
+        /// <summary>立刻收住水平速度（蓄势悬停时不往前滑）</summary>
+        public void Brake(float keep = 0.2f)
+        {
+            skyVel.x *= keep;
+            skyVel.z *= keep;
+        }
+
+        /// <summary>这一帧直接把位置放到 p（俯冲、降落这类脚本轨迹）：踏云积分跳过这一帧，速度清零</summary>
+        public void SkyPlace(Vector3 p)
+        {
+            if (!float.IsFinite(p.x) || !float.IsFinite(p.y) || !float.IsFinite(p.z)) return;
+            transform.position = p;
+            skyVel = Vector3.zero;
+            skyPlaced = true;
+            hasDesired = false;
+        }
+
+        /// <summary>踏云积分：水平追期望速度、竖直追目标高度（身下有石柱 / 倒鼎时抬过去），夹在殿墙以内；动画按奔跑速度播</summary>
+        void StepSky(float dt)
+        {
+            if (!(dt > 0)) return;
+            var loco = Model?.locomotion;
+            if (skyPlaced)
+            {
+                skyPlaced = false;
+                if (loco) loco.speedOverride = Airborne ? loco.maxClipSpeed * 0.9f : -1f;
+                return;
+            }
+            var want = hasDesired ? desiredVel : Vector3.zero;
+            hasDesired = false;
+            var flat = Vector3.MoveTowards(new Vector3(skyVel.x, 0, skyVel.z), new Vector3(want.x, 0, want.z), Mathf.Max(1f, Accel) * dt);
+            var p = transform.position;
+            float floor = FloorY;
+            float alt = Mathf.Max(0, SkyTarget);
+            float bob = alt > 1f ? Mathf.Sin(age * 1.6f) * 0.9f : 0;
+            float targetY = floor + alt + bob;
+            if (alt > 0.5f)
+            {
+                // 身下（含前方 0.4 s 的落点）有石柱、倒鼎：抬过去
+                float under = Mathf.Max(GroundUnder(p), GroundUnder(p + flat * 0.4f));
+                targetY = Mathf.Max(targetY, under + Clearance);
+            }
+            float vy = Mathf.Clamp((targetY - p.y) * 3f, -Climb, Climb);
+            skyVel = new Vector3(flat.x, Mathf.MoveTowards(skyVel.y, vy, 40f * dt), flat.z);
+            p += skyVel * dt;
+            float ground = GroundUnder(p);
+            if (p.y < ground)
+            {
+                p.y = ground;
+                if (skyVel.y < 0) skyVel.y = 0;
+            }
+            p = KeepInHall(p);
+            if (float.IsFinite(p.x) && float.IsFinite(p.y) && float.IsFinite(p.z)) transform.position = p;
+            else skyVel = Vector3.zero;
+            if (loco) loco.speedOverride = Airborne ? loco.maxClipSpeed * 0.9f : -1f;
+        }
+
+        /// <summary>夹在殿墙以内（身体半径 + 0.5 m）</summary>
+        public Vector3 KeepInHall(Vector3 p)
+        {
+            var f = Furnace;
+            if (f)
+            {
+                float max = Mathf.Max(2f, f.wallRadius - BodyRadius - 0.5f);
+                var d = p - f.Center;
+                d.y = 0;
+                if (d.sqrMagnitude > max * max)
+                {
+                    var q = f.Center + d.normalized * max;
+                    p.x = q.x;
+                    p.z = q.z;
+                }
+            }
+            else if (arena) p = arena.Clamp(p, ArenaMargin);
+            return p;
+        }
+
+        static readonly RaycastHit[] groundHits = new RaycastHit[12];
+
+        /// <summary>
+        /// p 正下方（身体半径的六成以内）最高的朝上表面：石柱顶、倒鼎、地面；打不到时殿内地面。熔池里取池面（不钻进熔岩）
+        /// </summary>
+        public float GroundUnder(Vector3 p)
+        {
+            float floor = FloorY;
+            float top = Mathf.Max(p.y, floor) + 12f;
+            float r = Mathf.Clamp(BodyRadius * 0.6f, 0.4f, 2f);
+            int n = Physics.SphereCastNonAlloc(new Vector3(p.x, top, p.z), r, Vector3.down, groundHits, top - floor + 3f, Layers.WorldMask, QueryTriggerInteraction.Ignore);
+            float best = float.NegativeInfinity;
+            for (int i = 0; i < n; i++)
+            {
+                var h = groundHits[i];
+                if (h.collider && h.collider.transform.IsChildOf(transform)) continue;
+                // 起点就在碰撞体里的（distance 0）点没有意义
+                if (h.distance <= 0 || h.normal.y < 0.3f) continue;
+                best = Mathf.Max(best, h.point.y);
+            }
+            if (LavaField.TrySurfaceHeight(p, out float lava)) best = Mathf.Max(best, lava);
+            return float.IsNegativeInfinity(best) ? floor : Mathf.Max(best, floor - 1.2f);
+        }
+
+        /// <summary>招式间隙（焚身）：沿外环跑道上空绕殿弧线奔跑，隔 5–9 s 掉头；面朝奔跑方向（头由骨骼看向盯着玩家）</summary>
+        void SkyIdle(float dt)
+        {
+            var f = Furnace;
+            if (HoldGround)
+            {
+                SkyTarget = 0;
+                Hover();
+                Face(PlayerPosition, 90f, dt);
+                return;
+            }
+            SkyTarget = SkyAlt;
+            orbitTimer -= dt;
+            if (orbitTimer <= 0)
+            {
+                orbitDir = -orbitDir;
+                orbitTimer = Random.Range(5f, 9f);
+            }
+            orbit += orbitDir * 31.5f * dt;
+            var target = f ? f.Point(orbit, (f.bridgeOuter + f.wallRadius) * 0.5f - 1f) : PlayerPosition;
+            FlyTo(target, OrbitSpeed, 1f);
+            var v = skyVel;
+            v.y = 0;
+            if (v.sqrMagnitude > 0.25f) transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(v), 172f * dt);
+            else Face(PlayerPosition, 115f, dt);
+        }
+
+        /// <summary>
+        /// 焚身找落脚点（喘息、吐息）：贴人形导航网格、只取非熔岩区（涨着的熔流已经从网格上挖掉），不落进熔池 / 倒鼎、不压石柱。找不到返回 near 的地面点
+        /// </summary>
+        public Vector3 LandingSpot(Vector3 near)
+        {
+            var p = OnFloor(near);
+            var f = Furnace;
+            if (f)
+            {
+                float r = f.RadiusOf(p);
+                float minR = f.poolRadius + BodyRadius * 0.7f + 0.6f;
+                float maxR = f.wallRadius - BodyRadius - 0.6f;
+                float yaw = r > 0.5f ? f.YawOf(p) : f.YawOf(PlayerPosition);
+                if (r < minR) p = f.Point(yaw, minR);
+                else if (r > maxR) p = f.Point(yaw, maxR);
+            }
+            var filter = LavaField.WalkerFilter(LavaField.DryAreaMask);
+            foreach (float radius in new[] { 1.5f, 3f, 5f, 8f })
+            {
+                if (!NavMesh.SamplePosition(p, out var hit, radius, filter)) continue;
+                var at = hit.position;
+                if (LavaField.IsLavaAt(at) || (Flood != null && Flood.Flooded(at)) || !BodyFits(at)) continue;
+                if (f && f.RadiusOf(at) < f.poolRadius + 0.5f) continue;
+                return at;
+            }
+            return p;
+        }
+
+        /// <summary>身子放在 feet 这里会不会插进石柱 / 墙（离地 0.6 m 以上、半径 = 身体半径的七成）</summary>
+        public bool BodyFits(Vector3 feet)
+        {
+            float r = Mathf.Clamp(BodyRadius * 0.7f, 0.4f, 2.2f);
+            var a = feet + Vector3.up * (r + 0.6f);
+            var b = feet + Vector3.up * Mathf.Max(r + 0.7f, 4f);
+            int n = Physics.OverlapCapsuleNonAlloc(a, b, r, overlapBuf, Layers.WorldMask, QueryTriggerInteraction.Ignore);
+            for (int i = 0; i < n; i++)
+                if (overlapBuf[i] && !overlapBuf[i].transform.IsChildOf(transform))
+                    return false;
+            return true;
+        }
+
+        static readonly Collider[] overlapBuf = new Collider[8];
+
+        /// <summary>把落点从石柱 / 墙里推出来（最多推 4 m；推不出来原样返回）</summary>
+        public Vector3 PushClear(Vector3 feet)
+        {
+            if (BodyFits(feet)) return feet;
+            var f = Furnace;
+            var c = f ? f.Center : transform.position;
+            for (int ring = 1; ring <= 8; ring++)
+            {
+                float step = ring * 0.5f;
+                for (int k = 0; k < 8; k++)
+                {
+                    float a = k * 45f + ring * 17f;
+                    var q = feet + Quaternion.Euler(0, a, 0) * Vector3.forward * step;
+                    if (f && f.RadiusOf(q) > f.wallRadius - BodyRadius - 0.5f) continue;
+                    if (BodyFits(q)) return q;
+                }
+            }
+            return feet;
+        }
+
+        /// <summary>焚身在空中时蹄下冒火云</summary>
+        void HoofClouds(float dt)
+        {
+            if (!Airborne) return;
+            cloudAcc += dt;
+            if (cloudAcc < 0.08f) return;
+            cloudAcc = 0;
+            for (int i = 0; i < 4; i++)
+            {
+                if (Random.value < 0.4f) continue;
+                var h = hooves[i];
+                var at = h ? h.position : transform.position + Vector3.up * 0.4f;
+                Fx.Burst(at, Random.value < 0.35f ? QilinDef.Hot : QilinDef.Fire, 2, 1.2f, 0.55f, 0.35f + Random.value * 0.3f, 1.2f);
+            }
+        }
+
+        /// <summary>胸口火心：焚身胸前的光晕 + 点光（喘息时大亮）。没有胸骨时取身体中心往前</summary>
+        void UpdateHeartFx()
+        {
+            if (!IsBurn)
+            {
+                if (heartFx) heartFx.gameObject.SetActive(false);
+                return;
+            }
+            if (!heartFx)
+            {
+                var go = new GameObject("Qilin Heart Glow");
+                go.transform.SetParent(transform.parent, false);
+                heartFx = go.transform;
+                var sprite = FxMaterials.GlowSprite(heartFx, 1f, new Color(1f, 0.55f, 0.15f, 0.8f));
+                heartSprite = sprite ? sprite.GetComponent<Renderer>() : null;
+                var lgo = new GameObject("Heart Light");
+                lgo.transform.SetParent(heartFx, false);
+                heartLight = lgo.AddComponent<Light>();
+                heartLight.type = LightType.Point;
+                heartLight.color = new Color(1f, 0.55f, 0.2f);
+                heartLight.shadows = LightShadows.None;
+                heartLight.range = 9f;
+            }
+            heartFx.gameObject.SetActive(true);
+            float g = HeartGlow * (0.85f + 0.15f * Mathf.Sin(Time.time * 7f));
+            heartFx.position = ChestPoint + transform.forward * 1.1f + Vector3.up * 0.15f;
+            var s = heartSprite ? heartSprite.transform : null;
+            if (s) s.localScale = Vector3.one * (1.2f + 2.2f * g);
+            if (heartSprite) FxMaterials.Tint(heartSprite, new Color(1f, 0.5f + 0.25f * g, 0.15f, 0.35f + 0.6f * g));
+            if (heartLight) heartLight.intensity = 1.5f + 6f * g;
+        }
+
+        // ───────────── 焚身：神火飞鸦 ─────────────
+
+        /// <summary>
+        /// 火云雨时高处排烟口飞出神火飞鸦（TS summonCrows）：关卡的排烟口（3-4 西南偏南 / 东南偏南、离地 12 m）各分一半；没有就在玩家对面两侧的殿墙边 10 m 高处。
+        /// 受首领召唤上限（6，含还没收掉的炭童）约束；出生后放回排烟口的高度。返回召出的个数
+        /// </summary>
+        public int SummonCrows(int count)
+        {
+            var d = QDef;
+            string id = d?.crowId ?? "fire_crow";
+            if (count <= 0 || Dead || EnemyRoster.Get(id) == null) return 0;
+            var pts = CrowPoints();
+            if (pts.Count == 0) return 0;
+            var f = Furnace;
+            var o = SummonOptions.Default;
+            o.warn = 0;
+            o.usePoints = false;
+            o.minRadius = 2f;
+            o.maxRadius = 4f;
+            int before = Summons.TotalSpawned;
+            Summons.Spawn(id, count, o);
+            int made = Summons.TotalSpawned - before;
+            var live = Summons.Live;
+            float low = float.PositiveInfinity;
+            for (int k = 0; k < made && k < live.Count; k++)
+            {
+                var ai = live[live.Count - 1 - k];
+                // 同一个排烟口第二只往旁边错开 1.8 m（沿殿墙切向）
+                var at = pts[k % pts.Count];
+                int slot = k / pts.Count;
+                if (slot > 0 && f)
+                {
+                    var radial = at - f.Center;
+                    radial.y = 0;
+                    at += Vector3.Cross(Vector3.up, radial.normalized) * (1.8f * slot);
+                }
+                if (ai is FlyingEnemyAI fly) fly.PlaceInAir(at);
+                else if (ai) ai.transform.position = at;
+                if (ai) low = Mathf.Min(low, ai.transform.position.y - FloorY);
+                Fx.Burst(at, QilinDef.Ember, 18, 6f, 0.6f, 0.25f, 3f);
+            }
+            LastCrowAltitude = float.IsPositiveInfinity(low) ? float.NaN : low;
+            CrowsSummoned += made;
+            if (made > 0) Tell("crows", "高处排烟口飞出神火飞鸦——在空中打爆它们", Hex.Rgb(0xffb070));
+            return made;
+        }
+
+        readonly List<Vector3> crowPts = new();
+
+        List<Vector3> CrowPoints()
+        {
+            crowPts.Clear();
+            var f = Furnace;
+            if (f && f.vents != null)
+                foreach (var v in f.vents)
+                {
+                    if (!v) continue;
+                    // 排烟口的标记贴着殿墙：往殿里挪 2.5 m，飞鸦不卡在墙里
+                    var radial = f.Center - v.position;
+                    radial.y = 0;
+                    crowPts.Add(v.position + (radial.sqrMagnitude > 1e-4f ? radial.normalized * 2.5f : Vector3.zero));
+                }
+            if (crowPts.Count > 0) return crowPts;
+            float pa = f ? f.YawOf(PlayerPosition) : transform.eulerAngles.y;
+            foreach (float side in new[] { -1f, 1f })
+            {
+                var p = f ? f.Point(pa + 180f + side * 34.4f, f.wallRadius - 1f) : transform.position + Quaternion.Euler(0, side * 60f, 0) * -transform.forward * 12f;
+                p.y = FloorY + 10f;
+                crowPts.Add(p);
+            }
+            return crowPts;
+        }
+
+        /// <summary>熔池上空朝 p 那一侧的悬停点（离圆心 = 熔池半径 × 0.75）：熔流开闸、狂怒长啸时悬在这里，不钻进池心的熔岩柱里</summary>
+        public Vector3 PoolEdgeToward(Vector3 p)
+        {
+            var f = Furnace;
+            if (!f) return transform.position;
+            var d = p - f.Center;
+            d.y = 0;
+            if (d.sqrMagnitude < 1e-4f) d = transform.position - f.Center;
+            d.y = 0;
+            if (d.sqrMagnitude < 1e-4f) d = Vector3.forward;
+            return f.Center + d.normalized * (f.poolRadius * 0.75f);
+        }
+
+        /// <summary>某一点在不在玩家可走的地面上（测试用：人形导航网格、非熔岩区）</summary>
+        public static bool OnWalkable(Vector3 p, float radius = 0.6f) =>
+            NavMesh.SamplePosition(p, out var hit, radius, LavaField.WalkerFilter(LavaField.DryAreaMask)) && Mathf.Abs(hit.position.y - p.y) < 1.5f;
 
         // ───────────── 框架钩子 ─────────────
 
@@ -551,6 +964,13 @@ namespace Spiritfire.Game
             if (phase != null && phase.form == QilinDef.BurnForm) LandWarp();
             ApplyOffset(Vector3.zero);
             if (Effects) Effects.Eruption(0);
+            if (!IsBurn) return;
+            // 落在岸上之后踏云升空（第一招熔流轮转飞向池心上空）
+            skyVel = Vector3.zero;
+            SkyTarget = SkyAlt;
+            var f = Furnace;
+            orbit = f ? f.YawOf(transform.position) : 0;
+            orbitTimer = Random.Range(5f, 9f);
         }
 
         protected override void OnFormChanged(BossFormDef previous, BossFormDef next)
@@ -572,16 +992,34 @@ namespace Spiritfire.Game
             // 玄铁鳞甲炸飞
             hp.armor = 0;
             EndCrack();
-            GameUI.Toast("火麒麟化为焚身——角根火珠与胸口火心是弱点", Hex.Rgb(0xffb070), 3.5f);
+            // 踏云：不走导航（位置由 StepSky 积分；演出里还是根节点偏移 + 瞬移）
+            if (agent) agent.enabled = false;
+            skyVel = desiredVel = Vector3.zero;
+            hasDesired = skyPlaced = false;
+            SkyTarget = 0;
+            Flood ??= new QilinFlood(this);
+            GameUI.Toast("火麒麟化为焚身——它会在半空踏云奔跑；三次俯冲后落地喘息，胸口火心和角根火珠是弱点", Hex.Rgb(0xffb070), 3.5f);
+        }
+
+        /// <summary>狂怒（15%）：焚身排上狂怒长啸（火浪、熔流重开且更快）；熔流轮转、俯冲蓄势、火云雨在狂怒里本来就按狂怒的数值走</summary>
+        protected override void OnEnrage(string reason)
+        {
+            if (!IsBurn) return;
+            QueueMove(BurnRage.MoveId);
         }
 
         /// <summary>
         /// 招式间隙：玄鳞沿外环跑道小跑，绕到玩家那一侧（玩家方位 ± 34°，每步最多 20°），到位了就停下盯着玩家；
-        /// 焚身（BS5 之前）用框架默认的保持距离
+        /// 焚身在外环跑道上空绕殿弧线奔跑（<see cref="SkyIdle"/>）
         /// </summary>
         protected override void Idle(float dt)
         {
             var f = Furnace;
+            if (IsBurn)
+            {
+                SkyIdle(dt);
+                return;
+            }
             if (!IsXuan || !f)
             {
                 base.Idle(dt);
@@ -613,6 +1051,33 @@ namespace Spiritfire.Game
                     l.Purge();
             if (Effects) Effects.Burst(0.5f);
             PlayAct("stun", Def != null ? Def.defeat.seconds : 3.4f);
+            // 焚身：熔流退回地下、火心熄灭；还在半空就落到地上（本组件已停用，协程照跑）
+            Flood?.Stop();
+            HeartBright = false;
+            if (heartFx) heartFx.gameObject.SetActive(false);
+            var loco = Model?.locomotion;
+            if (loco) loco.speedOverride = -1f;
+            if (IsBurn && Altitude > 0.3f && gameObject.activeInHierarchy) StartCoroutine(FallToFloor());
+        }
+
+        /// <summary>倒下时从半空落到地上（0.55 s 加速下落，落地震一下）</summary>
+        System.Collections.IEnumerator FallToFloor()
+        {
+            var from = transform.position;
+            var to = LandingSpot(from);
+            if (Mathf.Abs(to.y - FloorY) > 1.5f) to = OnFloor(from);
+            const float dur = 0.55f;
+            for (float t = 0; t < dur; t += Time.deltaTime)
+            {
+                float k = t / dur;
+                var p = Vector3.Lerp(from, to, k);
+                p.y = Mathf.Lerp(from.y, to.y, k * k);
+                transform.position = p;
+                yield return null;
+            }
+            transform.position = to;
+            CameraShake.Quake(to, 0.5f, 50f, 0.4f);
+            Fx.Burst(to + Vector3.up * 0.4f, QilinDef.Ember, 30, 8f, 0.8f, 0.3f, 10f);
         }
 
         // ───────────── 工具 ─────────────
