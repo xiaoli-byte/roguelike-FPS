@@ -258,6 +258,8 @@ namespace Spiritfire.Art.Editor.Levels
             // 熔铁闸门开战才升起：烘导航时不能挡着门洞（BossEncounter.Start 也会把它收起）
             if (gate) gate.SetActive(false);
             LevelKit.BakeNavMesh(Dir, Name, env);
+            // 火鼍网格按体积收集碰撞体（走物理场景）：这一帧刚摆好的地形块、殿墙还没同步进物理场景时收不到地面，烘出来是空的
+            Physics.SyncTransforms();
             LevelKit.BakeLavaNavMesh(Dir, Name, env);
             EditorSceneManager.SaveScene(scene, ScenePath);
             LevelBuilders.SyncBuildSettings();
