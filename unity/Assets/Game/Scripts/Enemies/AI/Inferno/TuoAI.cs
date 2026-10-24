@@ -30,8 +30,9 @@ namespace Spiritfire.Game
         public const int Plates = 8, RetreatBroken = 3;
         /// <summary>陆上：转身角速度（弧度/秒）、停步距离</summary>
         public const float TurnRate = 1.3f, StopDist = 2.6f;
-        /// <summary>熔岩里：游速、转身、重选航向间隔、伏击距离、躲岸多久自己上岸、算「躲着」的距离</summary>
-        public const float SwimSpeed = 7, SwimTurn = 3.2f, Replan = 0.25f, AmbushRange = 7, EmergeAfter = 8, EmergeDist = 11;
+        /// <summary>熔岩里：游速、转身、重选航向间隔、伏击距离、扑不到人多久自己上岸
+        /// （TS 只在玩家躲到 11 m 外才累计，7–11 m 之间它既不扑也不上岸、一直潜着吃半伤；这里只要扑不到就累计，且等得更短）</summary>
+        public const float SwimSpeed = 7, SwimTurn = 3.2f, Replan = 0.25f, AmbushRange = 7, EmergeAfter = 5;
         /// <summary>伏击：鼓泡前摇、扑击速度与最长时间、命中距离、倍率</summary>
         public const float SurgeTime = 0.6f, LungeSpeed = 14, LungeMax = 0.55f, AmbushReach = 3.4f, AmbushMult = 1.5f;
         /// <summary>陆上扑咬：触发距离、命中距离、前摇</summary>
@@ -385,7 +386,7 @@ namespace Spiritfire.Game
             }
         }
 
-        /// <summary>熔岩里：朝离玩家最近的熔岩游（走不通就左右偏开）；玩家在岸边够近就伏击，躲着岸太久就自己上岸</summary>
+        /// <summary>熔岩里：朝离玩家最近的熔岩游（走不通就左右偏开）；玩家在岸边够近就伏击，扑不到人太久就自己上岸</summary>
         void SwimStep(float dt, float d)
         {
             var lava = InfernoKit.Lava;
@@ -393,13 +394,15 @@ namespace Spiritfire.Game
             ActLoop("swim");
             Ripple();
             bool playerOnLava = lava.IsLava(PlayerPos);
-            if (ambushCd <= 0 && vitals && !vitals.Dead && !playerOnLava && d <= AmbushRange && VerticalReach(2.5f)
+            bool canAmbush = !playerOnLava && d <= AmbushRange && VerticalReach(2.5f);
+            if (ambushCd <= 0 && vitals && !vitals.Dead && canAmbush
                 && RequestAttack(AttackTokens.Kind.Heavy, SurgeTime + LungeMax + 1))
             {
                 BeginSurge(false);
                 return;
             }
-            shoreWait = d > EmergeDist ? shoreWait + dt : Mathf.Max(0, shoreWait - dt * 0.5f);
+            // 扑不到（伏击距离外、高差太大、玩家站在熔岩上）就累计；够得着时慢慢回落
+            shoreWait = canAmbush ? Mathf.Max(0, shoreWait - dt * 0.5f) : shoreWait + dt;
             if (shoreWait >= EmergeAfter && RequestAttack(AttackTokens.Kind.Heavy, SurgeTime + LungeMax + 1))
             {
                 BeginSurge(true);

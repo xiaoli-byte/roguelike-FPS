@@ -430,12 +430,11 @@ namespace Spiritfire.Game.Testing
                 Line($"  长甲：碎甲剩 {t.BrokenCount} 块");
             }
             else yield return Run(t, 3f, () => t.State == "land");
-            // 鼍鸣 / 甩尾都在岸上。有熔岩时它长完甲接着潜游，游到离玩家最近的熔岩边等着：玩家离熔岩 7–11 m 时既不伏击（7 m）也不上岸
-            // （躲着 11 m 外才累计，同 TS EMERGE_DIST），它就一直泡在熔岩里。所以玩家退到离任何熔岩都超过 EmergeDist + 2.5 m 的实地上躲着——
-            // EmergeAfter 秒后它自己冲上岸来找人（同 TS：躲着岸边超过 8 s 它也爬上岸），上岸后停 12 s，够打完鼍鸣和甩尾
+            // 鼍鸣 / 甩尾都在岸上。有熔岩时它长完甲接着潜游，游到离玩家最近的熔岩边等着：玩家退到伏击距离外的实地上躲着，
+            // 它扑不到人，EmergeAfter 秒后自己冲上岸来找人（不再有 TS 那段 7–11 m 既不扑也不上岸的死区），上岸后停 12 s，够打完鼍鸣和甩尾
             if (InfernoKit.HasLava && arena.lavaStrip && t.State != "land")
             {
-                var dry = DryGround(t.transform.position, TuoAI.EmergeDist + 2.5f);
+                var dry = DryGround(t.transform.position, TuoAI.AmbushRange + 2.5f);
                 Teleport(motor, dry);
                 yield return Run(t, TuoAI.EmergeAfter + 6f, () => t.State == "land");
                 InfernoKit.Lava.NearestLava(dry, 40f, out var lavaNear);
