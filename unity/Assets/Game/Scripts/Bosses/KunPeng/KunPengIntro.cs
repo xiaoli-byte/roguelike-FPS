@@ -36,14 +36,16 @@ namespace Spiritfire.Game
                 .Move(IntroPoint.At(Hole, -14f, 22f, -26f), IntroPoint.At(Hole, -4f, 17f, -24f))
                 .Look(IntroPoint.At(Hole), IntroPoint.At(Hole, 0, 0, 2f))
                 .Fov(56f, 50f).Orbit().BlendIn(0.8f).Handheld(0.12f));
+            // 鲲 8 m 高、吼的时候仰头：机位退远一点、视角放宽，整条鲲连同仰起的头都在画里。
+            // 鲲出水时头朝玩家左手偏（AimKunAtPlayer 只转一半）：机位放在决斗线左边，拍到的是侧脸而不是背鳍，也和下一镜特写同在轴线一侧
             shots.Add(IntroShot.Make("breach", 2.0f)
-                .Move(IntroPoint.At(Breach, 7f, 1.2f, -12f), IntroPoint.At(Breach, 5.5f, 1.6f, -10f))
+                .Move(IntroPoint.At(Breach, -8f, 1.5f, -15f), IntroPoint.At(Breach, -6.5f, 2.0f, -12.5f))
                 .Look(IntroPoint.At(Breach, 0, 1f, 0), IntroPoint.At(IntroAnchors.Head, 0, 0.5f, 0))
-                .Fov(50f, 44f).Ease(IntroEase.Out).Handheld(0.4f));
+                .Fov(52f, 46f).Ease(IntroEase.Out).Handheld(0.4f));
             shots.Add(IntroShot.Make("pearl", 1.9f)
-                // 鲲的头离水面只有 4 m 上下：机位压得不深（体型大时乘出来也不至于钻进水里）
-                .Move(IntroPoint.Sized(IntroAnchors.Head, -2.2f, -0.7f, -7.5f), IntroPoint.Sized(IntroAnchors.Head, -1.4f, -0.45f, -5.6f))
-                .Look(IntroPoint.At(IntroAnchors.Head, 0, 0.6f, 0))
+                // 鲲的头离水面只有 4 m 上下：机位只比头略低（体型大时乘出来也不至于钻进水里），额前的鲛珠露在头顶轮廓上
+                .Move(IntroPoint.Sized(IntroAnchors.Head, -2.2f, -0.35f, -7.5f), IntroPoint.Sized(IntroAnchors.Head, -1.4f, -0.15f, -5.6f))
+                .Look(IntroPoint.At(IntroAnchors.Head, 0, 0.5f, 0))
                 .Fov(40f, 34f).Handheld(0.35f));
 
             // 水面翻涌：冰窟里到处冒水花，隔一会儿一圈涟漪

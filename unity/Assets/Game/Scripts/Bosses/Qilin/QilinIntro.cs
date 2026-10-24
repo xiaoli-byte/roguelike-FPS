@@ -35,9 +35,11 @@ namespace Spiritfire.Game
                 return ding ? ding.position : c.Anchor(Pool) + Vector3.up * 7.2f;
             };
 
+            // 殿内中景、正对熔池、比柱头略高：熔池在下半、整只吊鼎连同链子在上半，玩家身前那两根饕餮柱在画面两边当框，
+            // 镜头从池面慢慢仰到鼎腹（原来机位太近太低，钻到鼎底下；偏到一边时又有一根柱子挡掉三分之一画面）
             shots.Add(IntroShot.Make("furnace", 2.4f)
-                .Move(IntroPoint.At(Pool, -8f, 2.2f, -13f), IntroPoint.At(Pool, -5.5f, 3.2f, -10.5f))
-                .Look(IntroPoint.At(Pool, 0, 0.5f, 0), IntroPoint.At(Cauldron, 0, -0.5f, 0))
+                .Move(IntroPoint.At(Pool, 0.5f, 5.2f, -17.5f), IntroPoint.At(Pool, -1f, 5.8f, -15.5f))
+                .Look(IntroPoint.At(Pool, 0, 2f, 0), IntroPoint.At(Cauldron, 0, -2f, 0))
                 .Fov(56f, 50f).BlendIn(0.7f).Handheld(0.2f));
             shots.Add(IntroShot.Make("leap", 1.4f)
                 .Move(IntroPoint.At(Pool, 12f, 1.6f, -3f), IntroPoint.At(Pool, 11f, 2.2f, -1.5f))
