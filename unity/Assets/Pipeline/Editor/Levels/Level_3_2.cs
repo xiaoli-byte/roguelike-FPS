@@ -162,6 +162,8 @@ namespace Spiritfire.Art.Editor.Levels
             ("② 风口检修台", 0.675f, Outer(0.675f) - 5f, 4f, 8f, 3.5f, 12f),
             ("④ 炉坛吊臂台", 0.40f, 47f, 4f, 7f, 3f, 12f),
         };
+        /// <summary>俯射台背后（朝井外那一侧）多填多宽：填到岩壁 / 陡坎长到台面高为止</summary>
+        const float PlatformBack = 3f;
         static readonly float[] PlatformBase = Platforms.Select(pl => LevelKit.SpiralWell(P(pl.phi, pl.r), Well, out _, 1f)).ToArray();
         static readonly (Vector2 foot, Vector2 top, float footY)[][] PlatformRamps = Platforms.Select(pl =>
         {
@@ -370,7 +372,9 @@ namespace Spiritfire.Art.Editor.Levels
                 var pl = Platforms[i];
                 var q = p - P(pl.phi, pl.r);
                 float lr = Vector2.Dot(q, Rad(pl.phi)), lt = Vector2.Dot(q, Tan(pl.phi));
-                float ox = Mathf.Max(0, Mathf.Abs(lr) - pl.halfR), oz = Mathf.Max(0, Mathf.Abs(lt) - pl.halfT);
+                // 背后（朝井外：① ② 贴着火山口内壁、④ 贴着上环的陡坎）多填 3 m，台面一直顶到岩壁 / 陡坎长到台面那么高的地方——
+                // 原来台沿先落下去、岩壁再抬起来，台子背后夹着一道 2–3 m 深的 V 形沟（机器人在 ④ 背后卡过），只填不挖，岩壁本身不动
+                float ox = lr > 0 ? Mathf.Max(0, lr - pl.halfR - PlatformBack) : Mathf.Max(0, -lr - pl.halfR), oz = Mathf.Max(0, Mathf.Abs(lt) - pl.halfT);
                 float outside = Mathf.Sqrt(ox * ox + oz * oz);
                 float top = PlatformBase[i] + pl.rise;
                 if (outside < 1f)
