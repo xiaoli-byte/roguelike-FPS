@@ -1,0 +1,348 @@
+{
+  "asset": "SK_Enemy_Aoyin",
+  "version": 3,
+  "glb": "art/source/characters/SK_Enemy_Aoyin/04_export/SK_Enemy_Aoyin_native_v003.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.2,
+      "自定义骨架：28 根骨骼（热扩散权重，18665 个顶点未覆盖）": 0.3,
+      "贴图（BC + AO/ORM）": 14.7,
+      "LOD 与蒙皮上限 11819 / 4925 / 1970": 1.3,
+      "导出 1509 KB": 2.0
+    },
+    "source": {
+      "verts": 18665,
+      "tris": 13329,
+      "scale": 3.001465559355154
+    },
+    "regions": {
+      "heat_unweighted_verts": 18665,
+      "weights": "segments",
+      "ground_verts": 830,
+      "head_verts": 753,
+      "fallback_verts": 0,
+      "per_bone": {
+        "hips": 69,
+        "spine": 154,
+        "chest": 125,
+        "neck": 73,
+        "head": 1886,
+        "horn_L": 1778,
+        "horn_R": 1744,
+        "scapula_L": 433,
+        "upperarm_L": 414,
+        "forearm_L": 753,
+        "fhoof_L": 405,
+        "haunch_L": 576,
+        "thigh_L": 380,
+        "shin_L": 750,
+        "hhoof_L": 424,
+        "scapula_R": 469,
+        "upperarm_R": 390,
+        "forearm_R": 744,
+        "fhoof_R": 415,
+        "haunch_R": 568,
+        "thigh_R": 361,
+        "shin_R": 778,
+        "hhoof_R": 423,
+        "tail_1": 359,
+        "tail_2": 180,
+        "tail_3": 320
+      }
+    },
+    "bones": [
+      "chest",
+      "fhoof_L",
+      "fhoof_R",
+      "forearm_L",
+      "forearm_R",
+      "haunch_L",
+      "haunch_R",
+      "head",
+      "hhoof_L",
+      "hhoof_R",
+      "hips",
+      "horn_L",
+      "horn_R",
+      "neck",
+      "orb",
+      "root",
+      "scapula_L",
+      "scapula_R",
+      "shin_L",
+      "shin_R",
+      "spine",
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "thigh_L",
+      "thigh_R",
+      "upperarm_L",
+      "upperarm_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.898,
+      "shade_mean": 0.92
+    },
+    "textures": {
+      "size": 2048,
+      "ao_mean": 0.765,
+      "provider_pbr": [],
+      "roughness_mean": 0.75,
+      "metal_frac": 0.0
+    },
+    "weld": {
+      "verts": [
+        18665,
+        6740
+      ],
+      "boundary_edges": [
+        17986,
+        161
+      ],
+      "parts": 12,
+      "weight_spread": 0.0,
+      "normals_other_side": [
+        65,
+        159,
+        113
+      ]
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Enemy_Aoyin_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_Aoyin_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_Aoyin_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Enemy_Aoyin_LOD0",
+        "tris": 11819,
+        "uv_min": [
+          0.001708984375,
+          0.001708984375
+        ],
+        "uv_max": [
+          0.99267578125,
+          0.998291015625
+        ],
+        "boundary_edges": 161
+      },
+      {
+        "name": "SK_Enemy_Aoyin_LOD1",
+        "tris": 4925,
+        "uv_min": [
+          0.001708984375,
+          0.0015035588294267654
+        ],
+        "uv_max": [
+          0.99267578125,
+          0.997802734375
+        ],
+        "boundary_edges": 133
+      },
+      {
+        "name": "SK_Enemy_Aoyin_LOD2",
+        "tris": 1970,
+        "uv_min": [
+          0.001708984375,
+          0.001708984375
+        ],
+        "uv_max": [
+          0.992431640625,
+          0.99169921875
+        ],
+        "boundary_edges": 86
+      }
+    ],
+    "glb_kb": 1509,
+    "_seconds": 19.8
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "1509 KB / 3000 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Enemy_Aoyin_LOD0', 'SK_Enemy_Aoyin_LOD1', 'SK_Enemy_Aoyin_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "11819 / 12000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "4925 / 5000"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "1970 / 2000"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "3.001 m (design 3.0 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=-0.0009"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Enemy_Aoyin']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Aoyin_ORM",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Aoyin_BC",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "28 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Aoyin_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Aoyin_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Aoyin_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Aoyin_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Aoyin_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Aoyin_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Aoyin_LOD0 UV range",
+      "[0.002, 0.002]..[0.993, 0.998]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Aoyin_LOD0 seams",
+      "161 open edges (source 161)"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Aoyin_LOD1 UV range",
+      "[0.002, 0.002]..[0.993, 0.998]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Aoyin_LOD1 seams",
+      "133 open edges (source 161)"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Aoyin_LOD2 UV range",
+      "[0.002, 0.002]..[0.992, 0.992]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Aoyin_LOD2 seams",
+      "86 open edges (source 161)"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "18665 verts"
+    ],
+    [
+      "pass",
+      "region ground",
+      "830 verts"
+    ],
+    [
+      "pass",
+      "region head",
+      "753 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "0 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

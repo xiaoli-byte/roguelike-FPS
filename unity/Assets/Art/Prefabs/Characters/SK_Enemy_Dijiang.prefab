@@ -147,8 +147,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.07205922
-  m_Height: 0.27650076
+  m_Radius: 0.07203431
+  m_Height: 0.27645093
   m_Direction: 1
   m_Center: {x: 0.0000000037253005, y: 0.066191025, z: -0.0000000016298145}
 --- !u!54 &3024250160638297098
@@ -159,7 +159,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2262200067650979663}
   serializedVersion: 5
-  m_Mass: 1.9435606
+  m_Mass: 1.9422169
   m_LinearDamping: 0.1
   m_AngularDamping: 0.6
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -278,8 +278,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.06526532
-  m_Height: 0.2609146
+  m_Radius: 0.06399971
+  m_Height: 0.25838336
   m_Direction: 1
   m_Center: {x: 0.000000007450578, y: 0.065192014, z: -0.000000007450454}
 --- !u!54 &8618101597988234076
@@ -290,7 +290,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2649747859593644503}
   serializedVersion: 5
-  m_Mass: 1.5702969
+  m_Mass: 1.5099859
   m_LinearDamping: 0.1
   m_AngularDamping: 0.6
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -440,8 +440,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.07136069
-  m_Height: 0.27310532
+  m_Radius: 0.07134244
+  m_Height: 0.27306882
   m_Direction: 1
   m_Center: {x: -0.000000007450584, y: 0.06519203, z: -0.000000016297868}
 --- !u!54 &6051267603922890459
@@ -452,7 +452,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3332573642117029917}
   serializedVersion: 5
-  m_Mass: 1.8773054
+  m_Mass: 1.8763452
   m_LinearDamping: 0.1
   m_AngularDamping: 0.6
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -593,21 +593,21 @@ LODGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3817031282097574860}
   serializedVersion: 3
-  m_LocalReferencePoint: {x: -0.019845396, y: 0.5604791, z: -0.04354006}
-  m_Size: 1.2662218
+  m_LocalReferencePoint: {x: 0.000315845, y: 0.5598671, z: -0.044812948}
+  m_Size: 1.2328396
   m_FadeMode: 1
   m_AnimateCrossFading: 1
   m_LastLODIsBillboard: 0
   m_LODs:
-  - screenRelativeHeight: 0.05953609
+  - screenRelativeHeight: 0.059534285
     fadeTransitionWidth: 0
     renderers:
     - renderer: {fileID: 4636022589278602099}
-  - screenRelativeHeight: 0.027478194
+  - screenRelativeHeight: 0.027477363
     fadeTransitionWidth: 0
     renderers:
     - renderer: {fileID: 8880500026088071472}
-  - screenRelativeHeight: 0.010991278
+  - screenRelativeHeight: 0.010990946
     fadeTransitionWidth: 0
     renderers:
     - renderer: {fileID: 6397210628848694312}
@@ -679,9 +679,9 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.33603498
-  m_Height: 1.0005028
+  m_Height: 1.0004725
   m_Direction: 1
-  m_Center: {x: 0, y: 0.4997486, z: 0}
+  m_Center: {x: 0, y: 0.49973342, z: 0}
 --- !u!114 &7396391458127066077
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -707,10 +707,10 @@ MonoBehaviour:
   - 26
   moveSpeed: 0
   designBounds:
-    m_Center: {x: 0.000078469515, y: 0.4997486, z: 0.00031095743}
-    m_Extent: {x: 0.4822726, y: 0.5002514, z: 0.33603498}
+    m_Center: {x: 0.000078469515, y: 0.49973342, z: 0.00031095743}
+    m_Extent: {x: 0.4822726, y: 0.5002363, z: 0.33603498}
   sourceGlb: public/assets/characters/SK_Enemy_Dijiang@hi.glb
-  sourceSha256: 887afb533d279b221b80d80894b48d8b32b16f70062905fee43bc33568e8421a
+  sourceSha256: 641fcdf6a012016506ef0ce5612e99734291a9325a298253455d5d846e9e0298
   license: 
 --- !u!1 &4064179136042855291
 GameObject:
@@ -828,8 +828,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.07090707
-  m_Height: 0.29214713
+  m_Radius: 0.070869274
+  m_Height: 0.29207152
   m_Direction: 1
   m_Center: {x: 0.000000014901159, y: 0.07516653, z: 0.0000000172293}
 --- !u!54 &8376066024894396503
@@ -840,7 +840,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5009112161769277316}
   serializedVersion: 5
-  m_Mass: 2.1371045
+  m_Mass: 2.134827
   m_LinearDamping: 0.1
   m_AngularDamping: 0.6
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -990,8 +990,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.06601001
-  m_Height: 0.2644024
+  m_Radius: 0.06603206
+  m_Height: 0.26444647
   m_Direction: 1
   m_Center: {x: 0.000000008381927, y: 0.06619103, z: 0.000000003259629}
 --- !u!54 &5883547801192179446
@@ -1002,7 +1002,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5510401856616429200}
   serializedVersion: 5
-  m_Mass: 1.6309431
+  m_Mass: 1.6320326
   m_LinearDamping: 0.1
   m_AngularDamping: 0.6
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -1316,8 +1316,8 @@ SkinnedMeshRenderer:
   m_BlendShapeWeights: []
   m_RootBone: {fileID: 7168165380176188601}
   m_AABB:
-    m_Center: {x: -0.0015876889, y: 0.5426074, z: 0.044971526}
-    m_Extent: {x: 0.61167777, y: 0.5488957, z: 0.38131815}
+    m_Center: {x: -0.0016920567, y: 0.5426061, z: 0.044988006}
+    m_Extent: {x: 0.61172533, y: 0.54889417, z: 0.3813143}
   m_DirtyAABB: 0
 --- !u!1 &5780696012653984569
 GameObject:
@@ -1458,8 +1458,8 @@ SkinnedMeshRenderer:
   m_BlendShapeWeights: []
   m_RootBone: {fileID: 7168165380176188601}
   m_AABB:
-    m_Center: {x: 0.03453687, y: 0.56047916, z: 0.043540224}
-    m_Extent: {x: 0.6184194, y: 0.5710585, z: 0.38760984}
+    m_Center: {x: -0.000315845, y: 0.55986714, z: 0.042733774}
+    m_Extent: {x: 0.61641973, y: 0.5763798, z: 0.38074303}
   m_DirtyAABB: 0
 --- !u!1 &7188675006192055603
 GameObject:
@@ -1826,8 +1826,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.06580456
-  m_Height: 0.28194207
+  m_Radius: 0.06579867
+  m_Height: 0.28193027
   m_Direction: 1
   m_Center: {x: -0.0000000074505797, y: 0.0751665, z: 0.000000015366673}
 --- !u!54 &259496538802355070
@@ -1838,7 +1838,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8194408952862514353}
   serializedVersion: 5
-  m_Mass: 1.8405962
+  m_Mass: 1.8402666
   m_LinearDamping: 0.1
   m_AngularDamping: 0.6
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -2011,6 +2011,6 @@ SkinnedMeshRenderer:
   m_BlendShapeWeights: []
   m_RootBone: {fileID: 7168165380176188601}
   m_AABB:
-    m_Center: {x: 0.0046343505, y: 0.55438346, z: 0.04429175}
-    m_Extent: {x: 0.5966842, y: 0.5623738, z: 0.38355666}
+    m_Center: {x: -0.00753054, y: 0.55459774, z: 0.046147645}
+    m_Extent: {x: 0.59543836, y: 0.5621332, z: 0.38148785}
   m_DirtyAABB: 0

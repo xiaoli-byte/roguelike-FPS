@@ -21,7 +21,9 @@ keeps the mesh, UVs, provider texture and the good part of the skeleton, and tur
     "texture_cleanup": erase provider texture mistakes in a body region (e.g. a bell print the provider painted on the
     back of an ear): texels of faces inside the region that deviate from the region's own smooth colour are refilled
     with that colour (two passes, so the print itself doesn't leak into the reference).
- 5. LOD0..2 by collapse decimation (vertex groups kept), ≤ 4 normalised influences, one shared skeleton.
+ 5. LOD0..2 by collapse decimation (vertex groups kept) of the mesh welded along its UV-seam splits, so the LODs don't
+    crack open along the seams; small loose parts the decimation would mangle are locked, Tripo's normals restored.
+    ≤ 4 normalised influences, one shared skeleton.
  6. Export one GLB (Draco + WebP), save the .blend and a metrics JSON.
 """
 import json
@@ -1196,7 +1198,196 @@ elif high_mat is not None:
     high.name = f"{ASSET}_HighBake"
     high.data.materials.clear()
     high.data.materials.append(high_mat)
+
+
+def tris(o) -> int:
+    return sum(len(p.vertices) - 2 for p in o.data.polygons)
+
+
+def boundary_edges(me) -> int:
+    ei = np.empty(len(me.loops), np.int64)
+    me.loops.foreach_get("edge_index", ei)
+    return int((np.bincount(ei, minlength=len(me.edges)) == 1).sum())
+
+
+def weld_seams() -> dict:
+    """glTF import splits every vertex on a UV seam, so each UV island is a loose shell (蜃楼蟾 / 夔 / 白泽: thousands of
+    them). Collapse decimation then reduces the shared border of two islands independently and tears a crack along
+    every seam (商人 v003..v007: nose, mouth corners; 夔 LOD1: 17 000 open edges). Weld exactly coincident vertices
+    first: the decimator treats UV-discontinuous edges like borders, so UVs never cross islands (商人: largest UV span
+    of a triangle 351 → 368 texels), and the exporter splits them again. The copies of a welded vertex had their
+    weights computed apart (texture-biased or heat weights can differ): the welded vertex takes their average.
+    Also keeps what restore_normals / decimate_locks need: Tripo's own vertex normals on the unwelded source surface
+    (the weld scrambles Blender's custom normals, the decimation too), and the loose parts of the welded mesh."""
+    global NSRC, WELD
+    import bmesh
+    from mathutils.bvhtree import BVHTree
+    me = mesh.data
+    co = np.empty(len(me.vertices) * 3)
+    me.vertices.foreach_get("co", co)
+    tri = np.empty(len(me.loop_triangles) * 3, np.int64)
+    me.loop_triangles.foreach_get("vertices", tri)
+    cn = np.empty(len(me.loops) * 3)
+    me.corner_normals.foreach_get("vector", cn)
+    lv = np.empty(len(me.loops), np.int64)
+    me.loops.foreach_get("vertex_index", lv)
+    vn = np.zeros((len(me.vertices), 3))
+    np.add.at(vn, lv, cn.reshape(-1, 3))
+    vn /= np.linalg.norm(vn, axis=1, keepdims=True) + 1e-12
+    co, tri = co.reshape(-1, 3), tri.reshape(-1, 3)
+    fn = np.cross(co[tri[:, 1]] - co[tri[:, 0]], co[tri[:, 2]] - co[tri[:, 0]])
+    fn /= np.linalg.norm(fn, axis=1, keepdims=True) + 1e-12
+    NSRC = {"co": co, "tri": tri, "vn": vn, "fn": fn, "bvh": BVHTree.FromPolygons(co.tolist(), tri.tolist())}
+    b0 = boundary_edges(me)
+    bm = bmesh.new()
+    bm.from_mesh(me)
+    n0 = len(bm.verts)
+    tm = bmesh.ops.find_doubles(bm, verts=bm.verts, dist=1e-6)["targetmap"]
+    dl = bm.verts.layers.deform.active
+    spread = 0.0
+    if dl is not None:
+        same = {}
+        for v, tv in tm.items():
+            same.setdefault(tv, [tv]).append(v)
+        for tv, vs in same.items():
+            avg = {}
+            for v in vs:
+                for g, w in v[dl].items():
+                    avg[g] = avg.get(g, 0.0) + w / len(vs)
+            spread = max(spread, max((abs(v[dl].get(g, 0.0) - w) for v in vs for g, w in avg.items()), default=0.0))
+            tv[dl].clear()
+            for g, w in avg.items():
+                tv[dl][g] = w
+    bmesh.ops.weld_verts(bm, targetmap=tm)
+    bm.to_mesh(me)
+    bm.free()
+    # loose parts of the welded mesh (union-find over edges)
+    ev = np.empty(len(me.edges) * 2, np.int64)
+    me.edges.foreach_get("vertices", ev)
+    parent = np.arange(len(me.vertices))
+
+    def find(i):
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+    for a, b in ev.reshape(-1, 2):
+        ra, rb = find(a), find(b)
+        if ra != rb:
+            parent[ra] = rb
+    _, part = np.unique([find(i) for i in range(len(me.vertices))], return_inverse=True)
+    wco = np.empty(len(me.vertices) * 3)
+    me.vertices.foreach_get("co", wco)
+    WELD = {"co": wco.reshape(-1, 3), "part": part, "main": int(np.bincount(part).argmax()),
+            "part_tris": np.bincount([part[p.vertices[0]] for p in me.polygons], [len(p.vertices) - 2 for p in me.polygons],
+                                     minlength=int(part.max()) + 1)}
+    return {"verts": [n0, len(me.vertices)], "boundary_edges": [b0, boundary_edges(me)], "parts": int(part.max()) + 1,
+            "weight_spread": round(spread, 4)}
+
+
+def decimate_locks(o, ratio: float, want: int) -> list:
+    """Collapse decimation removes small features first (its cost is a squared distance, so a 3 mm whisker costs next
+    to nothing). Split along its UV seams, every loose part kept its borders; welded, a whisker or tendril collapses
+    lengthwise (商人 LOD1: two 27-triangle tufts lost 5.7 cm, 8.6 × the mesh's p99 error; nothing on 商人 / 白泽 / 夔 /
+    讙 above 2.7 × otherwise). Trial-decimate a copy and lock the loose parts (never the body) whose worst vertex moved
+    more than 3 × the mesh's p99 error and 0.2 % of the height: weight 0 in the decimate vertex group adds 1000 × edge
+    length to their collapses, so they go last. Repeat with the locks until no new part stands out (3 trials at most);
+    locked parts take at most 10 % of the LOD budget. "decimate_lock" boxes in the rig JSON (scaled frame, metres) lock
+    every loose part that lies fully inside one, always. Returns the locked parts (indices into WELD["part_tris"])."""
+    from mathutils.bvhtree import BVHTree
+    part, main, ptris = WELD["part"], WELD["main"], WELD["part_tris"]
+    locked = []
+    for lo_b, hi_b in RIG.get("decimate_lock", []):
+        for c in range(len(ptris)):
+            m = WELD["co"][part == c]
+            if c != main and c not in locked and (m >= np.array(lo_b)).all() and (m <= np.array(hi_b)).all():
+                locked.append(c)
+    for _ in range(3):
+        tmp = o.copy()
+        tmp.data = o.data.copy()
+        bpy.context.scene.collection.objects.link(tmp)
+        for m in list(tmp.modifiers):
+            tmp.modifiers.remove(m)
+        decimate(tmp, ratio, locked)
+        me = tmp.data
+        vco = np.empty(len(me.vertices) * 3)
+        me.vertices.foreach_get("co", vco)
+        bvh = BVHTree.FromPolygons(vco.reshape(-1, 3).tolist(), [tuple(p.vertices) for p in me.polygons])
+        err = np.array([bvh.find_nearest(Vector(p))[3] for p in WELD["co"]])
+        bpy.data.objects.remove(tmp)
+        bpy.data.meshes.remove(me)
+        worst = np.zeros(len(ptris))
+        np.maximum.at(worst, part, err)
+        tol = max(3 * float(np.percentile(err, 99)), 0.002 * P["height"])
+        new = []
+        for c in np.argsort(-worst):
+            if worst[c] <= tol:
+                break
+            if c != main and c not in locked and ptris[locked + new + [int(c)]].sum() <= 0.1 * want:
+                new.append(int(c))
+        if not new:
+            break
+        locked += new
+        RESULT.setdefault("decimate_locks", []).append(
+            {"lod_tris": want, "parts": [{"tris": int(ptris[c]), "err_mm": round(float(worst[c]) * 1000, 1),
+                                          "centre": WELD["co"][part == c].mean(0).round(3).tolist()} for c in new]})
+    return locked
+
+
+def decimate(o, ratio: float, locked=()) -> None:
+    dec = o.modifiers.new("decimate", "DECIMATE")
+    dec.ratio = ratio
+    dec.use_collapse_triangulate = True
+    if len(locked):
+        g = o.vertex_groups.new(name="decimate_lock")
+        g.add([int(i) for i in np.nonzero(np.isin(WELD["part"], list(locked)))[0]], 1.0, "REPLACE")
+        dec.vertex_group = g.name
+        dec.invert_vertex_group = True
+        dec.vertex_group_factor = 1000.0
+    activate(o)
+    bpy.ops.object.modifier_move_to_index(modifier=dec.name, index=0)
+    bpy.ops.object.modifier_apply(modifier=dec.name)
+    if len(locked):
+        o.vertex_groups.remove(o.vertex_groups["decimate_lock"])
+
+
+def restore_normals(o) -> int:
+    """Tripo's own vertex normals (no hard edges), interpolated at the nearest point of the unwelded source surface, so
+    welding and decimation leave the shading as it was. A vertex the decimation moved can end up as near to the other
+    side of a thin shell (ear, sleeve, fin): then the nearest face that faces the same way wins. Returns how many."""
+    me = o.data
+    co = np.empty(len(me.vertices) * 3)
+    me.vertices.foreach_get("co", co)
+    geo = np.empty(len(me.vertices) * 3)
+    me.vertex_normals.foreach_get("vector", geo)
+    co, geo = co.reshape(-1, 3), geo.reshape(-1, 3)
+    bvh, sco, stri, svn, sfn = NSRC["bvh"], NSRC["co"], NSRC["tri"], NSRC["vn"], NSRC["fn"]
+    out = np.empty_like(co)
+    flipped = 0
+    for k, p in enumerate(co):
+        loc, _, fi, d = bvh.find_nearest(Vector(p))
+        if d > 1e-6 and sfn[fi] @ geo[k] < 0:
+            near = [h for h in bvh.find_nearest_range(Vector(p), 2 * d + 1e-3 * P["height"]) if sfn[h[2]] @ geo[k] > 0]
+            if near:
+                loc, _, fi, d = min(near, key=lambda h: h[3])
+                flipped += 1
+        a, b, c = sco[stri[fi]]
+        v0, v1, v2 = b - a, c - a, np.array(loc[:]) - a
+        d00, d01, d11, d20, d21 = v0 @ v0, v0 @ v1, v1 @ v1, v2 @ v0, v2 @ v1
+        den = d00 * d11 - d01 * d01
+        if abs(den) < 1e-20:
+            mu = np.array([1.0, 0.0, 0.0])
+        else:
+            u, w = (d11 * d20 - d01 * d21) / den, (d00 * d21 - d01 * d20) / den
+            mu = np.clip([1 - u - w, u, w], 0, 1)
+        n = (mu / mu.sum()) @ svn[stri[fi]]
+        out[k] = n / (np.linalg.norm(n) + 1e-12)
+    me.normals_split_custom_set_from_vertices(out.tolist())
+    return flipped
+
+
 mesh.name = f"{ASSET}_LOD0"
+RESULT["weld"] = weld_seams()             # before the LOD copies: every LOD decimates the welded mesh
 lods = [mesh]
 for i in range(1, len(P["lod_tris"])):
     activate(mesh)
@@ -1205,34 +1396,29 @@ for i in range(1, len(P["lod_tris"])):
     d.name = f"{ASSET}_LOD{i}"
     lods.append(d)
 
-
-def tris(o) -> int:
-    return sum(len(p.vertices) - 2 for p in o.data.polygons)
-
-
+flipped = []
 for i, o in enumerate(lods):
-    activate(o)
     have = tris(o)
     want = P["lod_tris"][i]
     if have > want:
-        dec = o.modifiers.new("decimate", "DECIMATE")
-        dec.ratio = want / have * 0.985
-        dec.use_collapse_triangulate = True
-        bpy.ops.object.modifier_move_to_index(modifier=dec.name, index=0)
-        bpy.ops.object.modifier_apply(modifier=dec.name)
+        decimate(o, want / have * 0.985, decimate_locks(o, want / have * 0.985, want))
+    activate(o)
     bpy.ops.object.mode_set(mode="EDIT")
     bpy.ops.mesh.select_all(action="SELECT")
     bpy.ops.mesh.quads_convert_to_tris()
     bpy.ops.object.mode_set(mode="OBJECT")
+    flipped.append(restore_normals(o))
     bpy.ops.object.vertex_group_limit_total(group_select_mode="ALL", limit=4)
     bpy.ops.object.vertex_group_normalize_all(group_select_mode="ALL", lock_active=False)
     o["lod_distance"] = P["lod_distance"][i]
+RESULT["weld"]["normals_other_side"] = flipped
 per_lod, lod_metrics = {}, []
 for o in lods:
     infl = [sum(1 for g in v.groups if g.weight > 1e-4) for v in o.data.vertices]
     per_lod[o.name] = {"max_influences": max(infl), "unweighted_verts": sum(1 for n in infl if n == 0)}
     uvs = np.array([d.uv[:] for d in o.data.uv_layers.active.data])
-    lod_metrics.append({"name": o.name, "tris": tris(o), "uv_min": uvs.min(0).tolist(), "uv_max": uvs.max(0).tolist()})
+    lod_metrics.append({"name": o.name, "tris": tris(o), "uv_min": uvs.min(0).tolist(), "uv_max": uvs.max(0).tolist(),
+                        "boundary_edges": boundary_edges(o.data)})
 RESULT["skin"] = {"per_lod": per_lod}
 RESULT["lods"] = lod_metrics
 step("LOD 与蒙皮上限 " + " / ".join(str(m["tris"]) for m in lod_metrics), t)

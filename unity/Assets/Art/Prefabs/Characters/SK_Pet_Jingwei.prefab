@@ -54,8 +54,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.08286139
-  m_Height: 0.3071441
+  m_Radius: 0.08115766
+  m_Height: 0.30373663
   m_Direction: 1
   m_Center: {x: 2.4424907e-15, y: 0.07071067, z: 0.000000033527623}
 --- !u!54 &7170625890645820837
@@ -66,7 +66,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 181500858457344276}
   serializedVersion: 5
-  m_Mass: 2.7454383
+  m_Mass: 2.6337
   m_LinearDamping: 0.1
   m_AngularDamping: 0.6
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -241,8 +241,8 @@ SkinnedMeshRenderer:
   m_BlendShapeWeights: []
   m_RootBone: {fileID: 2451210261175198169}
   m_AABB:
-    m_Center: {x: -0.00006107986, y: 0.36974964, z: -0.018871203}
-    m_Extent: {x: 0.46634585, y: 0.38152775, z: 0.2795148}
+    m_Center: {x: 0.00002720952, y: 0.36970082, z: -0.018889084}
+    m_Extent: {x: 0.46626398, y: 0.38147256, z: 0.27950692}
   m_DirtyAABB: 0
 --- !u!1 &661538325438834673
 GameObject:
@@ -354,8 +354,8 @@ SkinnedMeshRenderer:
   m_BlendShapeWeights: []
   m_RootBone: {fileID: 2451210261175198169}
   m_AABB:
-    m_Center: {x: -0.00017975271, y: 0.3734627, z: -0.01795654}
-    m_Extent: {x: 0.46555626, y: 0.37819567, z: 0.28085083}
+    m_Center: {x: 0.0004772693, y: 0.37087527, z: -0.019461751}
+    m_Extent: {x: 0.4673648, y: 0.3802633, z: 0.28067538}
   m_DirtyAABB: 0
 --- !u!1 &816951511990537006
 GameObject:
@@ -1166,8 +1166,8 @@ SkinnedMeshRenderer:
   m_BlendShapeWeights: []
   m_RootBone: {fileID: 2451210261175198169}
   m_AABB:
-    m_Center: {x: -0.00040195882, y: 0.36998975, z: -0.019505233}
-    m_Extent: {x: 0.46713346, y: 0.3816787, z: 0.27956203}
+    m_Center: {x: -0.0001949817, y: 0.36966085, z: -0.019502431}
+    m_Extent: {x: 0.4664234, y: 0.381539, z: 0.27881715}
   m_DirtyAABB: 0
 --- !u!1 &5506076656884151113
 GameObject:
@@ -1637,21 +1637,21 @@ LODGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8801749890324638884}
   serializedVersion: 3
-  m_LocalReferencePoint: {x: 0.00040197372, y: 0.36994514, z: 0.018086612}
-  m_Size: 0.93426704
+  m_LocalReferencePoint: {x: -0.0004772544, y: 0.36966082, z: 0.01946187}
+  m_Size: 0.9347297
   m_FadeMode: 1
   m_AnimateCrossFading: 1
   m_LastLODIsBillboard: 0
   m_LODs:
-  - screenRelativeHeight: 0.04591681
+  - screenRelativeHeight: 0.04587339
     fadeTransitionWidth: 0
     renderers:
     - renderer: {fileID: 3806476765591244630}
-  - screenRelativeHeight: 0.021427846
+  - screenRelativeHeight: 0.021407582
     fadeTransitionWidth: 0
     renderers:
     - renderer: {fileID: 6048551190034819221}
-  - screenRelativeHeight: 0.008571138
+  - screenRelativeHeight: 0.008563032
     fadeTransitionWidth: 0
     renderers:
     - renderer: {fileID: 6423411899196868332}
@@ -1717,9 +1717,9 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.23615997
-  m_Height: 0.7503011
+  m_Height: 0.75
   m_Direction: 1
-  m_Center: {x: 0, y: 0.37488067, z: 0}
+  m_Center: {x: 0, y: 0.375, z: 0}
 --- !u!114 &8593172193633719379
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1745,8 +1745,8 @@ MonoBehaviour:
   - 30
   moveSpeed: 13
   designBounds:
-    m_Center: {x: -0.00004646182, y: 0.37488067, z: 0}
-    m_Extent: {x: 0.45011815, y: 0.37515056, z: 0.23615997}
+    m_Center: {x: 0, y: 0.375, z: 0}
+    m_Extent: {x: 0.4496925, y: 0.375, z: 0.23615997}
   sourceGlb: public/assets/characters/SK_Pet_Jingwei@hi.glb
-  sourceSha256: a25ba9b417b905791e7d75d989cd1e30f8c40ddccc230abf7b2692598dcf053f
+  sourceSha256: c09bddbc7c723429d8e53bf9411414874376da0f2f05cd5e61f58016fdd3023b
   license: 

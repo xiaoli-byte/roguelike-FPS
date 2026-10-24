@@ -77,6 +77,9 @@ def validate(glb_path: Path, metrics: dict, asset: str, cls: dict, height: float
     for lod in metrics["lods"]:
         ok(f"{lod['name']} UV range", min(lod["uv_min"]) >= -1e-3 and max(lod["uv_max"]) <= 1 + 1e-3,
            f"{[round(x, 3) for x in lod['uv_min']]}..{[round(x, 3) for x in lod['uv_max']]}")
+        # decimation never opens new borders on the welded mesh: more open edges than the source means seam cracks
+        src_open = metrics["weld"]["boundary_edges"][1]
+        ok(f"{lod['name']} seams", lod["boundary_edges"] <= src_open, f"{lod['boundary_edges']} open edges (source {src_open})")
     reg = metrics["regions"]
     for key, n in reg.items():
         if key.endswith("_verts") and key not in ("fallback_verts",):

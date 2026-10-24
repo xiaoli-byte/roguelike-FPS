@@ -1,0 +1,318 @@
+{
+  "asset": "SK_Enemy_Dijiang",
+  "version": 3,
+  "glb": "art/source/characters/SK_Enemy_Dijiang/04_export/SK_Enemy_Dijiang_native_v003.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.1,
+      "自定义骨架：19 根骨骼（热扩散权重，18 个顶点未覆盖）": 0.1,
+      "贴图（BC + AO/ORM）": 4.8,
+      "LOD 与蒙皮上限 5910 / 2462 / 984": 0.6,
+      "导出 293 KB": 0.5
+    },
+    "source": {
+      "verts": 4523,
+      "tris": 6826,
+      "scale": 1.0004885197850513
+    },
+    "regions": {
+      "heat_unweighted_verts": 18,
+      "weights": "segments",
+      "fallback_verts": 0,
+      "per_bone": {
+        "body": 493,
+        "leg1_thigh_L": 109,
+        "leg1_foot_L": 119,
+        "leg2_thigh_L": 148,
+        "leg2_foot_L": 109,
+        "leg3_thigh_L": 88,
+        "leg3_foot_L": 128,
+        "wing_upper_L": 695,
+        "wing_lower_L": 598,
+        "leg1_thigh_R": 98,
+        "leg1_foot_R": 122,
+        "leg2_thigh_R": 135,
+        "leg2_foot_R": 123,
+        "leg3_thigh_R": 94,
+        "leg3_foot_R": 120,
+        "wing_upper_R": 713,
+        "wing_lower_R": 597
+      }
+    },
+    "bones": [
+      "body",
+      "core",
+      "leg1_foot_L",
+      "leg1_foot_R",
+      "leg1_thigh_L",
+      "leg1_thigh_R",
+      "leg2_foot_L",
+      "leg2_foot_R",
+      "leg2_thigh_L",
+      "leg2_thigh_R",
+      "leg3_foot_L",
+      "leg3_foot_R",
+      "leg3_thigh_L",
+      "leg3_thigh_R",
+      "root",
+      "wing_lower_L",
+      "wing_lower_R",
+      "wing_upper_L",
+      "wing_upper_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.855,
+      "shade_mean": 0.928
+    },
+    "textures": {
+      "size": 1024,
+      "ao_mean": 0.791,
+      "provider_pbr": [],
+      "roughness_mean": 0.75,
+      "metal_frac": 0.0
+    },
+    "weld": {
+      "verts": [
+        4523,
+        3415
+      ],
+      "boundary_edges": [
+        2046,
+        0
+      ],
+      "parts": 1,
+      "weight_spread": 0.0,
+      "normals_other_side": [
+        5,
+        11,
+        27
+      ]
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Enemy_Dijiang_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_Dijiang_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Enemy_Dijiang_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Enemy_Dijiang_LOD0",
+        "tris": 5910,
+        "uv_min": [
+          0.0,
+          0.0
+        ],
+        "uv_max": [
+          1.0,
+          1.0
+        ],
+        "boundary_edges": 0
+      },
+      {
+        "name": "SK_Enemy_Dijiang_LOD1",
+        "tris": 2462,
+        "uv_min": [
+          0.0,
+          0.0
+        ],
+        "uv_max": [
+          0.9988099932670593,
+          1.0
+        ],
+        "boundary_edges": 0
+      },
+      {
+        "name": "SK_Enemy_Dijiang_LOD2",
+        "tris": 984,
+        "uv_min": [
+          0.000244140625,
+          0.000244140625
+        ],
+        "uv_max": [
+          0.995849609375,
+          1.0
+        ],
+        "boundary_edges": 0
+      }
+    ],
+    "glb_kb": 293,
+    "_seconds": 7.5
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "293 KB / 1600 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Enemy_Dijiang_LOD0', 'SK_Enemy_Dijiang_LOD1', 'SK_Enemy_Dijiang_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "5910 / 6000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "2462 / 2500"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "984 / 1000"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "1.000 m (design 1.0 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=-0.0005"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Enemy_Dijiang']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Dijiang_ORM",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Dijiang_BC",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "19 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Dijiang_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Dijiang_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Dijiang_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Dijiang_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Dijiang_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Dijiang_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Dijiang_LOD0 UV range",
+      "[0.0, 0.0]..[1.0, 1.0]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Dijiang_LOD0 seams",
+      "0 open edges (source 0)"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Dijiang_LOD1 UV range",
+      "[0.0, 0.0]..[0.999, 1.0]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Dijiang_LOD1 seams",
+      "0 open edges (source 0)"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Dijiang_LOD2 UV range",
+      "[0.0, 0.0]..[0.996, 1.0]"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Dijiang_LOD2 seams",
+      "0 open edges (source 0)"
+    ],
+    [
+      "warn",
+      "region heat_unweighted",
+      "18 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "0 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}
