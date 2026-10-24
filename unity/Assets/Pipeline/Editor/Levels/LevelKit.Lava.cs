@@ -316,6 +316,8 @@ namespace Spiritfire.Art.Editor.Levels
         {
             var settings = NavMesh.GetSettingsByID(agentType);
             var sources = new List<NavMeshBuildSource>();
+            // CollectSources 走物理场景：构建器刚摆好的地形块 / 墙还没同步进去时收不到地面，烘出空网格（3-4）
+            Physics.SyncTransforms();
             UnityEngine.AI.NavMeshBuilder.CollectSources(world, layerMask, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>(), sources);
             foreach (var m in NavMeshModifierVolume.activeModifiers)
             {
