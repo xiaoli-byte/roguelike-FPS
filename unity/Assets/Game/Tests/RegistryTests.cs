@@ -16,7 +16,7 @@ namespace Spiritfire.Game.Tests
         static readonly Dictionary<Type, int> Expected = new()
         {
             [typeof(WeaponDef)] = 18, // 原 6 + WC1/WC2 6 + WC3/WC4 5 + 碎刃（= TS 18）
-            [typeof(EnemyDef)] = 30, // 第一章 7 + 冰 11 + 火 12（含炭童复燃 / 余烬两条变体）
+            [typeof(EnemyDef)] = 31, // 第一章 7 + 沙魇（EN1）+ 冰 11 + 火 12（含炭童复燃 / 余烬两条变体）
             [typeof(ScrollDef)] = 119, // 16 + S1 攻击 18 + S2 元素 10 + S3/S4 功能 · 传说 · 英雄 31 + S5 反应 24 + S6 战术 20（TS 118 + 破绽）
             [typeof(HeroDef)] = 3,
         };

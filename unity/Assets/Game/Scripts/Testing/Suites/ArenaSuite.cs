@@ -44,6 +44,7 @@ namespace Spiritfire.Game.Testing
             ["tomb_beast"] = new[] { "chargeWindup", "charge", "stompWindup", "stomp" },
             ["apsara"] = new[] { "cast" },
             ["fire_rat"] = new[] { "curl", "roll" },
+            [Enemy_SandWraith.Id] = new[] { "sink", "burrow", "surface", "erupt", "slashWindup", "slash" },
         };
 
         /// <summary>移动、待机、收招、受控类状态（不算出招）</summary>

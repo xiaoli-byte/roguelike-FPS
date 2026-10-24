@@ -61,11 +61,11 @@ namespace Spiritfire.Game
         /// </summary>
         public readonly float[] pace = { 1f, 1.2f, 1.4f };
 
-        // ───────────── 沙魇（EN1 的沙魇变体还没做：第一章杂兵 + 沙色材质变体）─────────────
+        // ───────────── 沙魇（EN1：沙魇本体 sand_wraith + 换了沙魇皮的蝎尾弩卫）─────────────
 
-        /// <summary>每次召唤按顺序取前 n 只（一阶段 3、之后 4）</summary>
-        public readonly string[] wraithRoster = { "jerboa_blade", "jerboa_blade", "scorpion_archer", "jerboa_blade" };
-        /// <summary>沙魇着色：反照率乘色（MaterialPropertyBlock 的 _Tint 通道）与覆盖色</summary>
+        /// <summary>每次召唤按顺序取前 n 只（一阶段 3、之后 4）：沙魇 ×2 + 蝎尾弩卫（沙魇·），二阶段起再加一只沙魇</summary>
+        public readonly string[] wraithRoster = { Enemy_SandWraith.Id, Enemy_SandWraith.Id, "scorpion_archer", Enemy_SandWraith.Id };
+        /// <summary>沙魇着色（叠在 EnemyVariant 的皮上）：反照率乘色（MaterialPropertyBlock 的 _Tint 通道）与覆盖色</summary>
         public Color wraithTint = new(0.95f, 0.8f, 0.55f), wraithOverlay = new(0.85f, 0.66f, 0.4f);
         public float wraithOverlayAmount = 0.38f;
 

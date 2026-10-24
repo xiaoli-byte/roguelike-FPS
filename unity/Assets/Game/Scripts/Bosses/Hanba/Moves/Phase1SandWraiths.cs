@@ -6,7 +6,7 @@ namespace Spiritfire.Game
     /// <summary>
     /// 旱魃 · 召沙魇（一阶段「烈日」，unity-maps-v1 第 3 节：召唤 3–4 个沙魇——第一章杂兵的沙化版）。
     ///   前摇（1.6 s ÷ 阶段节奏）：双臂高举 → 掌心下压（ART2 summonWraiths，summon 事件落在前摇结束）；脚下亮一圈沙色预警。
-    ///   出手：按 <see cref="HanbaDef.wraithRoster"/> 顺序取前 3 只（二阶段起 4 只）：跳鼠刀兵 ×2 + 蝎尾弩卫（+ 跳鼠刀兵），
+    ///   出手：按 <see cref="HanbaDef.wraithRoster"/> 顺序取前 3 只（二阶段起 4 只）：沙魇 ×2 + 蝎尾弩卫（+ 沙魇），
     ///     先在场地召唤点亮落点预警，0.9 s 后破沙而出（<see cref="Summons"/>：受首领召唤上限约束，首领倒下时全部崩解）。
     ///   召唤物由 <see cref="HanbaBrain"/> 染成沙魇（<see cref="SandWraith"/>）。
     /// 场上沙魇（在场 + 预警中）加上这次要召的会超过上限时权重为 0。
@@ -72,7 +72,7 @@ namespace Spiritfire.Game
         protected override void OnActiveBegin()
         {
             var def = HDef;
-            var roster = def != null ? def.wraithRoster : new[] { "jerboa_blade", "jerboa_blade", "scorpion_archer", "jerboa_blade" };
+            var roster = def != null ? def.wraithRoster : new[] { Enemy_SandWraith.Id, Enemy_SandWraith.Id, "scorpion_archer", Enemy_SandWraith.Id };
             int want = Mathf.Min(CountFor(Brain), roster.Length);
             // 同种合并成一次召唤（召唤点轮流用）
             var groups = new Dictionary<string, int>();
@@ -103,37 +103,39 @@ namespace Spiritfire.Game
     }
 
     /// <summary>
-    /// 沙魇：旱魃召出的第一章杂兵的沙化版（EN1 的沙魇变体没做，先用材质变体顶上，docs/unity-parity.md 第 6 节「沙魇：材质变体（Shader 参数）」）。
-    /// 身体渲染器走 EnemyBody 的着色通道（MaterialPropertyBlock：_Tint 乘色 + _FlashColor 覆盖色），名字前缀「沙魇·」；出现和崩解时扬一团沙。
-    /// 等 EN1 的沙魇 Prefab / 着色器参数落地后只改这里。
+    /// 沙魇：旱魃召出的召唤物换上沙魇的皮（EN1）。沙魇本体（<see cref="SandWraithAI"/>，id sand_wraith）自带 <see cref="EnemyVariant.Wraith"/> 的皮、名字就叫「沙魇」；
+    /// 其余第一章杂兵（蝎尾弩卫…）换 <see cref="EnemyVariant.Sand"/>（着色器的沙化 + 日火裂纹、暖边光，受击扬沙、倒下崩沙），名字前缀「沙魇·」。
+    /// HanbaDef 的 wraithTint / wraithOverlay 叠在 EnemyBody 的着色通道上（占位体、没有 Variant 段的材质也看得出来）。
     /// </summary>
     public static class SandWraith
     {
         public const string Channel = "sandWraith";
         public const string Prefix = "沙魇·";
 
-        /// <summary>染成沙魇（可重复调用）；返回是否染上</summary>
+        /// <summary>换上沙魇的皮（可重复调用）；返回是否换上</summary>
         public static bool Apply(EnemyAI e, Color tint, Color overlay, float amount)
         {
             if (!e || e.Dead) return false;
+            if (e is SandWraithAI)
+            {
+                // 本体：皮在它自己 Start 里换（这里补一次，召出的同一帧也算数），不改名
+                EnemyVariant.Apply(e, EnemyVariant.Wraith, false);
+                return true;
+            }
+            EnemyVariant.Apply(e, EnemyVariant.Sand);
             var body = e.GetComponent<EnemyBody>();
             if (body)
             {
                 body.SetTint(Channel, tint);
-                body.SetOverlay(Channel, overlay, Mathf.Clamp01(amount));
+                body.SetOverlay(Channel, overlay, Mathf.Clamp01(amount) * 0.5f);
             }
-            var hp = e.Health;
-            if (hp && (string.IsNullOrEmpty(hp.displayName) || !hp.displayName.StartsWith(Prefix)))
-            {
-                var def = EnemyRoster.Get(e.enemyId);
-                hp.displayName = Prefix + (def != null ? def.name : string.IsNullOrEmpty(hp.displayName) ? e.enemyId : hp.displayName);
-            }
-            Fx.Burst(e.transform.position + Vector3.up * 0.6f, HanbaDef.Sand, 14, 3.5f, 0.8f, 0.3f, 2f);
             return true;
         }
 
-        /// <summary>是不是沙魇（染过色）</summary>
-        public static bool Is(EnemyAI e) => e && e.Health && !string.IsNullOrEmpty(e.Health.displayName) && e.Health.displayName.StartsWith(Prefix);
+        /// <summary>是不是沙魇（沙魇本体，或换了沙魇皮的杂兵）</summary>
+        public static bool Is(EnemyAI e) =>
+            e && (e is SandWraithAI || EnemyVariant.Is(e, EnemyVariant.SandId)
+                  || (e.Health && !string.IsNullOrEmpty(e.Health.displayName) && e.Health.displayName.StartsWith(Prefix)));
 
         /// <summary>沙魇倒下：散成一团沙</summary>
         public static void Crumble(Vector3 at) => Fx.Burst(at + Vector3.up * 0.5f, HanbaDef.Sand, 22, 4.5f, 1.1f, 0.35f, 4f);

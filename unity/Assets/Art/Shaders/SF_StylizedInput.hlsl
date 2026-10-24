@@ -34,6 +34,10 @@ CBUFFER_START(UnityPerMaterial)
     half   _FurDetailStrength;
     half   _FurSheen;
     half   _FurFuzz;
+    // 材质变体（EnemyVariant，沙魇的沙化 + 裂纹发光；MaterialPropertyBlock 覆盖，x = y = 0 时整段跳过、输出不变）
+    half4  _VariantParams;     // x = 沙化 0..1，y = 裂纹 0..1，z = 裂纹密度（每 UV 单位的格数），w = 裂纹脉动角频率
+    half4  _VariantSandColor;
+    half4  _VariantCrackColor; // HDR：裂缝里透出的光
 CBUFFER_END
 
 TEXTURE2D(_ORMMap);     SAMPLER(sampler_ORMMap);

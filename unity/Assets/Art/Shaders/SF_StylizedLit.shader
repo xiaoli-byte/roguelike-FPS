@@ -44,6 +44,11 @@ Shader "Spiritfire/StylizedLit"
         _FlashColor("Flash Color", Color) = (1,1,1,1)
         _FlashAmount("Flash Amount", Range(0,1)) = 0
 
+        [Header(Variant)]
+        _VariantParams("Variant (x Sand, y Crack, z Density, w Pulse)", Vector) = (0, 0, 14, 3)
+        _VariantSandColor("Variant Sand Color", Color) = (0.85, 0.7, 0.48, 1)
+        [HDR] _VariantCrackColor("Variant Crack Color", Color) = (0, 0, 0, 1)
+
         [Header(Surface)]
         _Cutoff("Alpha Cutoff", Range(0,1)) = 0.5
         [Enum(UnityEngine.Rendering.CullMode)] _Cull("Cull", Float) = 2
@@ -133,6 +138,50 @@ Shader "Spiritfire/StylizedLit"
                 UNITY_VERTEX_OUTPUT_STEREO
             };
 
+            // 材质变体（EnemyVariant）：沙化 = 去饱和后染成沙色 + 细颗粒；裂纹 = UV 空间的 Voronoi 裂缝（F2 − F1 小的地方），
+            // 裂缝压暗反照率、透出 _VariantCrackColor 并按格子错开缓慢脉动。用 UV 而不是位置：蒙皮网格上裂纹跟着身体走，不会游动
+            float2 SFVariantHash2(float2 p)
+            {
+                p = float2(dot(p, float2(127.1, 311.7)), dot(p, float2(269.5, 183.3)));
+                return frac(sin(p) * 43758.5453);
+            }
+
+            half3 SFVariantSurface(half3 albedo, float2 uv, out half crack)
+            {
+                half sand = saturate(_VariantParams.x);
+                half lum = dot(albedo, half3(0.3, 0.59, 0.11));
+                half grain = (half)SFVariantHash2(floor(uv * 512.0)).x;
+                half3 sandy = _VariantSandColor.rgb * (0.45 + 1.1 * lum) * (0.9 + 0.2 * grain);
+                albedo = lerp(albedo, sandy, sand);
+                float2 g = uv * max(1.0, (float)_VariantParams.z);
+                float2 cell = floor(g);
+                float2 f = frac(g);
+                float d1 = 8.0;
+                float d2 = 8.0;
+                float2 n1 = cell;
+                float2 n2 = cell;
+                [unroll] for (int cy = -1; cy <= 1; cy++)
+                {
+                    [unroll] for (int cx = -1; cx <= 1; cx++)
+                    {
+                        float2 o = float2(cx, cy);
+                        float2 r = o + SFVariantHash2(cell + o) - f;
+                        float d = dot(r, r);
+                        if (d < d1) { d2 = d1; n2 = n1; d1 = d; n1 = cell + o; }
+                        else if (d < d2) { d2 = d; n2 = cell + o; }
+                    }
+                }
+                float edge = sqrt(d2) - sqrt(d1);
+                // 只有一部分格边是裂缝（按两侧格子的对称哈希挑），裂纹断断续续、不成整张网
+                half open = step(0.42, SFVariantHash2(n1 + n2).y);
+                half pulse = 0.7 + 0.3 * sin(_Time.y * _VariantParams.w + n1.x * 1.7 + n1.y * 2.3);
+                crack = saturate(_VariantParams.y) * open * (half)(1.0 - smoothstep(0.012, 0.055, edge)) * pulse;
+                // 裂缝两侧烧焦一圈（比裂缝宽一点的暗边）
+                half char_ = saturate(_VariantParams.y) * open * (half)(1.0 - smoothstep(0.03, 0.12, edge));
+                albedo *= 1.0 - 0.55 * char_;
+                return albedo;
+            }
+
             Varyings Vert(Attributes input)
             {
                 Varyings o = (Varyings)0;
@@ -172,6 +221,9 @@ Shader "Spiritfire/StylizedLit"
                 LODFadeCrossFade(i.positionCS);
                 #endif
                 half3 albedo = base.rgb * _Tint.rgb;
+                half variantCrack = 0;
+                [branch] if (_VariantParams.x + _VariantParams.y > 0.001)
+                    albedo = SFVariantSurface(albedo, i.uv, variantCrack);
 
                 half ao = 1.0, roughness = _Roughness, metallic = _Metallic;
                 #if defined(_ORMMAP)
@@ -234,6 +286,7 @@ Shader "Spiritfire/StylizedLit"
                 #if defined(_EMISSION)
                 color += SAMPLE_TEXTURE2D(_EmissionMap, sampler_EmissionMap, i.uv).rgb * _EmissionColor.rgb;
                 #endif
+                color += _VariantCrackColor.rgb * variantCrack;
 
                 color = lerp(color, _FlashColor.rgb, _FlashAmount);
                 color = MixFog(color, i.fogAndVertexLight.x);
