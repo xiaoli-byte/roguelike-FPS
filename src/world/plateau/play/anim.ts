@@ -15,7 +15,7 @@ export const AX = new THREE.Vector3(1, 0, 0);
 export const AY = new THREE.Vector3(0, 1, 0);
 export const AZ = new THREE.Vector3(0, 0, 1);
 
-export type Gait = 'quad' | 'upright' | 'biped' | 'bird' | 'hexa' | 'serpent' | 'kui';
+export type Gait = 'quad' | 'upright' | 'biped' | 'bird' | 'hexa' | 'serpent' | 'kui' | 'raptor' | 'titan';
 export type DeathKind = 'normal' | 'weak' | 'blast' | 'pop' | 'fall';
 export type Stage = 'windup' | 'active' | 'recover' | '';
 
@@ -30,6 +30,9 @@ export interface AnimState {
   look: number;
   /** 扇翅强度 0..1（落地收翅为 0） */
   flap: number;
+  /** 收翅 0..1、收腿 0..1（大鹗：停着收翅、飞的时候腿收到身后；腿和翅膀全交给它的姿势表） */
+  fold: number;
+  tuck: number;
   /** 蹲伏 0..1（蓄跳、落地缓冲） */
   crouch: number;
   /** 受击抖动 0..1，自己衰减；hurtX / hurtZ 是挨打的方向（模型空间，打哪边往另一边歪） */
@@ -57,7 +60,7 @@ export interface AnimState {
 
 export function newAnimState(): AnimState {
   return {
-    move: 0, phase: 0, attack: 0, look: 0, flap: 0, crouch: 0, hurt: 0, hurtX: 0, hurtZ: -1, jaw: 0, stagger: 0, stun: 0,
+    move: 0, phase: 0, attack: 0, look: 0, flap: 0, fold: 0, tuck: 0, crouch: 0, hurt: 0, hurtX: 0, hurtZ: -1, jaw: 0, stagger: 0, stun: 0,
     dead: 0, deathKind: 'normal', deathSide: 1, side: 1, pose: '', stage: '', k: 0,
   };
 }
@@ -143,6 +146,8 @@ export class CreatureAnimator {
     // 腿：大腿前后摆，小腿在抬起段向后收
     const swing = g === 'kui' ? 0 : g === 'hexa' ? 0.5 : g === 'upright' ? 0.6 : 0.55;
     for (const L of this.legs) {
+      // 大鹗（raptor）的腿和翅膀全在姿势表里摆；雷泽雷神（titan）没有腿
+      if (g === 'raptor') break;
       const ph = p + L.off;
       let up = -Math.sin(ph) * swing * m;
       let lo = Math.max(0, Math.cos(ph)) * 0.7 * m;
@@ -181,6 +186,7 @@ export class CreatureAnimator {
     }
     // 翅膀：扇动（左 +Z 转是往上抬）；落地时半收
     for (const W of this.wings) {
+      if (g === 'raptor') break;
       const beat = Math.sin(t * (g === 'bird' ? 14 : g === 'hexa' ? 22 : 7));
       const a = s.flap > 0 ? beat * 0.65 * s.flap : -0.25;
       W.bones.forEach((b, k) => P.rotate(b, AZ, W.side * (k === 0 ? a : a * 0.4)));

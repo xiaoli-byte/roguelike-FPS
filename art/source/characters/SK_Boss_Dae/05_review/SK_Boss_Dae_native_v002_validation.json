@@ -1,0 +1,337 @@
+{
+  "asset": "SK_Boss_Dae",
+  "version": 2,
+  "glb": "art/source/characters/SK_Boss_Dae/04_export/SK_Boss_Dae_native_v002.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 1.0,
+      "自定义骨架：23 根骨骼（热扩散权重，41431 个顶点未覆盖）": 1.4,
+      "贴图（BC + AO/ORM）": 29.4,
+      "LOD 与蒙皮上限 29550 / 11820 / 4925": 5.4,
+      "发光壳 SK_Boss_Dae_GlowShell 1199 面": 0.3,
+      "导出 1781 KB": 7.4
+    },
+    "source": {
+      "verts": 41431,
+      "tris": 34863,
+      "scale": 10.004885197850513
+    },
+    "regions": {
+      "heat_unweighted_verts": 41431,
+      "weights": "segments",
+      "soft_limits_moved": [
+        609.8,
+        577.6,
+        233.1
+      ],
+      "head_verts": 4653,
+      "core_verts": 282,
+      "talon_L_verts": 1630,
+      "talon_R_verts": 1654,
+      "fallback_verts": 0,
+      "per_bone": {
+        "hips": 1187,
+        "chest": 1855,
+        "neck": 108,
+        "head": 6756,
+        "core": 1841,
+        "tail_1": 836,
+        "tail_2": 47,
+        "tail_3": 318,
+        "wing_1_L": 1771,
+        "wing_2_L": 672,
+        "wing_3_L": 379,
+        "thigh_L": 1115,
+        "shin_L": 249,
+        "talon_L": 2025,
+        "wing_1_R": 1826,
+        "wing_2_R": 711,
+        "wing_3_R": 351,
+        "thigh_R": 1103,
+        "shin_R": 276,
+        "talon_R": 2042,
+        "wing_low_L": 4873,
+        "wing_low_R": 4723
+      }
+    },
+    "bones": [
+      "chest",
+      "core",
+      "head",
+      "hips",
+      "neck",
+      "root",
+      "shin_L",
+      "shin_R",
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "talon_L",
+      "talon_R",
+      "thigh_L",
+      "thigh_R",
+      "wing_1_L",
+      "wing_1_R",
+      "wing_2_L",
+      "wing_2_R",
+      "wing_3_L",
+      "wing_3_R",
+      "wing_low_L",
+      "wing_low_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.918,
+      "shade_mean": 0.935
+    },
+    "textures": {
+      "size": 2048,
+      "ao_mean": 0.825,
+      "provider_pbr": [],
+      "roughness_mean": 0.75,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Boss_Dae_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Boss_Dae_LOD1": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        },
+        "SK_Boss_Dae_LOD2": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Boss_Dae_LOD0",
+        "tris": 29550,
+        "uv_min": [
+          0.001708984375,
+          0.001708984375
+        ],
+        "uv_max": [
+          0.998291015625,
+          0.994384765625
+        ]
+      },
+      {
+        "name": "SK_Boss_Dae_LOD1",
+        "tris": 11820,
+        "uv_min": [
+          0.0009963472839444876,
+          0.0016870343824848533
+        ],
+        "uv_max": [
+          0.99365234375,
+          0.994140625
+        ]
+      },
+      {
+        "name": "SK_Boss_Dae_LOD2",
+        "tris": 4925,
+        "uv_min": [
+          0.0009963472839444876,
+          0.0014732282143086195
+        ],
+        "uv_max": [
+          0.974853515625,
+          0.9741297960281372
+        ]
+      }
+    ],
+    "glow_shells": {
+      "SK_Boss_Dae_GlowShell": {
+        "group": "core",
+        "tris": 1199
+      }
+    },
+    "glow_shell": {
+      "group": "core",
+      "tris": 1199
+    },
+    "glb_kb": 1781,
+    "_seconds": 48.1
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "1781 KB / 6000 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Boss_Dae_LOD0', 'SK_Boss_Dae_LOD1', 'SK_Boss_Dae_LOD2']"
+    ],
+    [
+      "pass",
+      "LOD0 tris",
+      "29550 / 30000"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD1 tris",
+      "11820 / 12000"
+    ],
+    [
+      "pass",
+      "LOD1 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "LOD2 tris",
+      "4925 / 5000"
+    ],
+    [
+      "pass",
+      "LOD2 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "10.002 m (design 10.0 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Boss_Dae_Glow', 'M_Boss_Dae']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "glow shell GlowShell",
+      "1199 tris on 'core'"
+    ],
+    [
+      "pass",
+      "texture T_Boss_Dae_BC",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "texture T_Boss_Dae_ORM",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "23 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Boss_Dae_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Boss_Dae_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Boss_Dae_LOD1 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Boss_Dae_LOD1 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Boss_Dae_LOD2 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Boss_Dae_LOD2 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Boss_Dae_LOD0 UV range",
+      "[0.002, 0.002]..[0.998, 0.994]"
+    ],
+    [
+      "pass",
+      "SK_Boss_Dae_LOD1 UV range",
+      "[0.001, 0.002]..[0.994, 0.994]"
+    ],
+    [
+      "pass",
+      "SK_Boss_Dae_LOD2 UV range",
+      "[0.001, 0.001]..[0.975, 0.974]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "41431 verts"
+    ],
+    [
+      "pass",
+      "region head",
+      "4653 verts"
+    ],
+    [
+      "pass",
+      "region core",
+      "282 verts"
+    ],
+    [
+      "pass",
+      "region talon_L",
+      "1630 verts"
+    ],
+    [
+      "pass",
+      "region talon_R",
+      "1654 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "0 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

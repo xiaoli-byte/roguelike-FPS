@@ -506,6 +506,135 @@ const huashe: PoseFn = (A, name, w, stage, k, s, t) => {
   }
 };
 
+// ───────────────────────────── 大鹗（4-2） ─────────────────────────────
+
+/**
+ * 大鹗的底层（每个招式都先摆它）：绑定姿势就是四视图里双翼上举的 V 形站姿，也是停在落脚点的姿势。
+ * 飞的时候（s.tuck → 1）DaeBoss 的 tilt 组把整只鸟往前扳约 66°：翼面从正面转成接近水平，这里再把翅膀在体轴的正面里压到和脊柱垂直，
+ * 头颈抬回来看前方，虎腿顺势拖在身后。扇翼同鹏（KunPeng.animatePeng）：上半扇（wing_*_1..3）外下压为负，
+ * 下半扇（wing_*_low）反向外张、补满翼面，整扇像折扇；s.flap 扇翅强度。
+ */
+function daeBase(A: CreatureAnimator, w: number, s: AnimState, t: number): void {
+  const R = rotator(A, w);
+  const air = s.tuck, amp = s.flap, ph = t * (2.4 + 2.2 * amp);
+  const beat = Math.sin(ph);
+  const w1 = air * -(0.95 + 0.4 * amp * beat) - (1 - air) * (0.12 + 0.06 * amp * beat) * (1 - s.fold * 0.5);
+  const w2 = air * -(0.1 + 0.14 * amp * Math.sin(ph - 0.4));
+  const w3 = air * -(0.05 + 0.12 * amp * Math.sin(ph - 0.8));
+  const wl = air * (0.85 - 0.3 * amp * beat) + (1 - air) * 0.05;
+  for (const s2 of ['L', 'R'] as const) {
+    const sd = s2 === 'L' ? 1 : -1;
+    R(`wing_1_${s2}`, AZ, sd * w1);
+    R(`wing_2_${s2}`, AZ, sd * w2);
+    R(`wing_3_${s2}`, AZ, sd * w3);
+    R(`wing_low_${s2}`, AZ, sd * wl);
+    // 虎腿：飞的时候再往后收一点、爪子攥起来
+    R(`thigh_${s2}`, AX, 0.3 * air);
+    R(`shin_${s2}`, AX, 0.2 * air);
+    R(`talon_${s2}`, AX, 0.4 * air);
+  }
+  // 身子前扳了，头颈抬回来看前方
+  R('neck', AX, -0.5 * air);
+  R('head', AX, -0.55 * air);
+  R('tail_1', AX, -0.15 * air);
+}
+
+const dae: PoseFn = (A, name, w, stage, k, s, t) => {
+  const R = rotator(A, w);
+  daeBase(A, w, s, t);
+  const both2 = (bone: string, axis: typeof AX, a: number, mirror = false): void => both(R, bone, axis, a, mirror);
+  if (name === 'dive' || name === 'diveChain') {
+    // 前摇：翅膀高举、头往下盯；出手：收翼俯冲（翅膀往上收、往后掠），虎爪往前探；收招：贴地拉起，翅膀大开
+    const up = stage === 'windup' ? ease(k) : 0;
+    const stoop = stage === 'active' ? 1 : 0;
+    const pull = stage === 'recover' ? 1 - ease(k) : 0;
+    both2('wing_1', AZ, 0.3 * up + 0.35 * stoop, true);
+    both2('wing_1', AX, -0.45 * stoop);
+    both2('wing_low', AX, -0.25 * stoop);
+    R('neck', AX, 0.3 * up + 0.15 * stoop);
+    R('head', AX, 0.2 * up);
+    both2('thigh', AX, -1.0 * stoop - 0.6 * pull);
+    both2('talon', AX, -0.6 * stoop);
+  } else if (name === 'grab') {
+    // 擒拿：虎爪攥在身下、大力扇翅
+    both2('thigh', AX, -1.0);
+    both2('shin', AX, 0.6);
+    both2('talon', AX, 0.5);
+    R('neck', AX, 0.35);
+  } else if (name === 'feathers' || name === 'perch') {
+    // 抖翅放羽刃：前摇翅膀往后蓄、抖；出手往前一甩
+    const wind = stage === 'windup' ? ease(k) : 0, fling = strike(stage, k);
+    const shiver = 0.08 * Math.sin(t * 38) * (stage === 'windup' ? 1 : 0);
+    both2('wing_1', AY, (-0.4 * wind + 0.5 * fling) * (name === 'perch' ? 0.4 : 1), true);
+    both2('wing_1', AZ, 0.25 * wind + shiver, true);
+    R('chest', AX, -0.15 * wind + 0.15 * fling);
+    R('head', AX, 0.2 * fling);
+  } else if (name === 'shake') {
+    // 落桥摇链：虎爪抓着铁链往下拽、身子一起一伏、翅膀半张着扇
+    const pump = stage === 'active' ? Math.abs(Math.sin(k * Math.PI * 5)) : hold(stage, k) * 0.5;
+    A.P.translate('hips', 0, -0.35 * pump * w, 0);
+    R('hips', AX, 0.25 * pump);
+    both2('thigh', AX, -0.6 * pump);
+    both2('shin', AX, 0.9 * pump);
+    R('neck', AX, 0.3 * pump);
+  } else if (name === 'nestGust') {
+    // 巢中扇风：人立、双翼往前大扇
+    const h = hold(stage, k), fan = stage === 'active' ? Math.sin(t * 9) : 0;
+    R('hips', AX, -0.25 * h);
+    both2('wing_1', AZ, 0.3 * h + 0.25 * fan, true);
+    both2('wing_1', AY, 0.5 * h + 0.35 * fan, true);
+    R('neck', AX, -0.2 * h);
+    R('head', AX, -0.15 * h);
+  } else if (name === 'fall') {
+    // 坠江 / 缠翼：一侧翅膀缠住、另一侧乱扑，腿乱蹬
+    const h = hold(stage, k);
+    R('wing_1_L', AZ, -1.0 * h);
+    R('wing_2_L', AY, -1.2 * h);
+    R('wing_1_R', AZ, -(0.6 + 0.5 * Math.sin(t * 11)) * h);
+    both2('thigh', AX, (-0.6 + 0.5 * Math.sin(t * 9)) * h);
+    R('neck', AX, -0.4 * h);
+    R('head', AY, 0.4 * Math.sin(t * 5) * h);
+  } else if (name === 'cry') {
+    // 长唳：仰头、翅膀半张
+    const h = hold(stage, k);
+    R('neck', AX, -0.45 * h);
+    R('head', AX, -0.35 * h + 0.04 * Math.sin(t * 30) * h);
+  }
+};
+
+// ───────────────────────────── 雷泽雷神（4-4） ─────────────────────────────
+
+/**
+ * 雷泽雷神的招式姿势只管头颈和腹鼓：上身的前倾 / 低头和双爪的落点由 leize.ts 按招式状态算（前倾分到脊柱、双爪两骨 IK），
+ * 这里在它之前叠上表情性的部分——拍腹时昂首、鼓面一下下鼓起，雷息低头往两边扫，天雷阵仰天，神颓垂头。
+ */
+const leize: PoseFn = (A, name, w, stage, k, s, t) => {
+  const R = rotator(A, w), P = A.P;
+  if (name === 'bellyDrum' || name === 'tripleDrum') {
+    const h = hold(stage, k);
+    R('neck', AX, -0.12 * h);
+    R('head', AX, -0.18 * h);
+    if (stage === 'active') P.scale('drum', 1 + 0.1 * w * Math.abs(Math.sin(k * Math.PI * (name === 'tripleDrum' ? 3 : 2))));
+    else if (stage === 'windup') P.scale('drum', 1 + 0.05 * w * ease(k));
+  } else if (name === 'breath') {
+    const h = hold(stage, k);
+    R('head', AX, 0.18 * h);
+    if (stage === 'active') R('head', AY, 0.35 * Math.sin(k * Math.PI - Math.PI / 2));
+  } else if (name === 'clawSlam' || name === 'sweep') {
+    const h = hold(stage, k);
+    R('head', AX, 0.12 * h);
+    R('chest', AY, (name === 'sweep' ? 0.25 : 0.1) * (stage === 'windup' ? -ease(k) : stage === 'active' ? -1 + 2 * ease(k) : 1 - ease(k)));
+  } else if (name === 'skyArray' || name === 'rise') {
+    const h = name === 'rise' && stage === 'windup' ? 0.5 * k : hold(stage, k);
+    R('neck', AX, -0.25 * h);
+    R('head', AX, -0.35 * h + 0.03 * Math.sin(t * 30) * (stage === 'active' ? h : 0));
+  } else if (name === 'slump') {
+    const h = hold(stage, k);
+    R('neck', AX, 0.25 * h);
+    R('head', AY, 0.2 * h * Math.sin(t * 2.2));
+  }
+};
+
 export const POSES: Record<string, PoseFn> = {
   SK_Enemy_Marmot: marmot,
   SK_Enemy_Tiangou: tiangou,
@@ -517,5 +646,7 @@ export const POSES: Record<string, PoseFn> = {
   SK_Boss_Kui: kui,
   SK_Boss_Feilian: feilian,
   SK_Boss_Huashe: huashe,
+  SK_Boss_Dae: dae,
+  SK_Boss_Leize: leize,
 };
 

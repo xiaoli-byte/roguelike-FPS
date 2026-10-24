@@ -4459,6 +4459,41 @@ brief = """
 Huashe (化蛇) of the Shan Hai Jing's Central Mountains ('a human face and a jackal's body, a bird's wings, it moves like a snake, its cry is like scolding; wherever it appears there are great floods'). A long sinuous creature about 9 m long with a wingspan of about 9 m that slithers low on its belly like a snake: a lean jackal-like body, a pair of large bird wings with slate-blue and sea-green feathers, a long eel-like tail, wet glossy fur and scales with strands of water weed, and a stern stylized mask-like face (not a realistic person) with a wide shouting mouth. ANATOMY, identical in every view: exactly FOUR short jackal legs, two front legs under the chest and two hind legs under the hips just before the body tapers into the long eel tail, all four legs short, splayed sideways and bent like a lizard's so the belly almost touches the ground; exactly two wings and one tail. The FRONT, SIDE and BACK views and the main pose must all show the same four legs (in the side view both near legs are clearly visible, front and hind). Magenta-violet thunder veins run along the spine; the open shouting mouth glows magenta (weak spot). Unsettling, fast, bringer of floods.
 """
 
+[assets.SK_Boss_Dae]
+# 大鹗（4-2 大渡河铁索桥峡谷 · 江嘴鹗巢领主）。设计稿 / 四视图 art/source/characters/_design/plateau/plateau_boss_dae/（Tripo Studio 的 GPT Image 2.5 出图）；Tripo 原件 art/source/_tripo_inbox/<UTC>_SK_Boss_Dae.glb
+# 原生骨架：python art/pipeline/build_tripo_creature.py SK_Boss_Dae（creature_rigs/SK_Boss_Dae.json），不走 assetctl build 的部件骨架。
+source_provider = "tripo"
+matid_hint = "Feathers, beak, tiger fur, claws and eyes are NON-METAL (blue). Nothing on it is metal."
+display = "大鹗"
+kind = "skeletal"
+class = "boss"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "boss_dae" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+Da'e (大鹗), the Great Osprey of the Shan Hai Jing's Western Mountains ('shaped like an eagle with black markings and a white head, a red beak and tiger claws'): a colossal stylized raptor about 5 m from beak to tail tip with a 16 m wingspan; snow-white head, huge hooked crimson beak, soot-black and umber feathers with cream-white bars, black-and-white barred wings and fan tail, orange tiger-striped tiger legs ending in tiger paws. Weak spots: the chest core and both wing roots (magenta-violet thunder).
+"""
+
+[assets.SK_Boss_Leize]
+# 雷泽雷神（4-4 神山海子 · 章节终局）：按「学烛阴」只建头、上身和双爪（出水线截平），长龙身在引擎里程序化（src/world/haizi/leize.ts 沿样条生成鳞片带）。
+# 设计稿 DS v001（Codex）/ 四视图 TV v001（Tripo Studio 的 GPT Image 2.5）art/source/characters/_design/plateau/plateau_boss_leize/；Tripo 原件 art/source/_tripo_inbox/<UTC>_SK_Boss_Leize.glb
+# 原生骨架：python art/pipeline/build_tripo_creature.py SK_Boss_Leize（creature_rigs/SK_Boss_Leize.json）；神面、腹鼓各一个发光壳（材质槽 M_Boss_Leize_Face_Glow / M_Boss_Leize_Drum_Glow）。
+source_provider = "tripo"
+matid_hint = "Scales, skin, beard, drum belly, claws and eyes are NON-METAL (blue). Only the crown and the bronze bands on the forearms are METAL (red)."
+display = "雷泽雷神"
+kind = "skeletal"
+class = "boss"
+rig = "parts"
+rig_sigma = 0.02
+blockout = { source = "enemy", id = "boss_leize" }
+material = { roughness = 0.75, metallic = 0.0 }
+keep_glow = "all"
+brief = """
+The Thunder God of Thunder Marsh (雷泽雷神, Shan Hai Jing: 'a dragon's body and a human head; when it drums on its belly there is thunder'). Upper body only, about 10 m from the water line to the crown: slate-blue scaled dragon upper body with a pale cream belly stretched like a drum skin with painted thunder spirals, a calm stern mask-like divine face with long earlobes and a braided whisker-beard, a crown of jagged bronze and slate spikes, two long scaled dragon arms with bronze bands and four-taloned claws. Weak spots: the face and the belly drum.
+"""
+
 [assets.SM_EnemyPart_LianguDrum]
 # 连鼓灵·鼓（单独建模的部件）。六面鼓共用这一面（运行时复用 6 次，红鼓在引擎里换材质），原点 = 鼓心（绕雷心转的挂点）。
 # 四视图 art/source/characters/_design/plateau/plateau_liangu_drum/；Tripo 原件 art/source/_tripo_inbox/20261019T000318_SM_EnemyPart_LianguDrum.glb

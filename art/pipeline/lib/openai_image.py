@@ -19,11 +19,12 @@ from .config import PipelineError
 
 def _codex_model() -> str | None:
     """pipeline.toml [concept] provider = "codex" routes every image call through the local Codex CLI (ChatGPT sign-in).
-    ART_CODEX_MODEL overrides codex_model for one run (an older local codex-cli may not accept the configured model)."""
+    ART_CODEX_MODEL overrides codex_model for one run (an older local codex-cli may not accept the configured model);
+    ART_CONCEPT_PROVIDER = "openai" sends one run to the API instead (2026-10-23: Codex image generation answers 403)."""
     import os
     from .config import CFG
     cfg = CFG.section("concept")
-    if cfg.get("provider") != "codex":
+    if os.environ.get("ART_CONCEPT_PROVIDER", cfg.get("provider")) != "codex":
         return None
     return os.environ.get("ART_CODEX_MODEL") or cfg.get("codex_model", "gpt-6.1-sol")
 

@@ -1,6 +1,7 @@
 /**
- * 游玩模式用到的第四章正式模型（public/assets，清单 manifest.json）：只加载这一章的 14 个，
- * 不经过 AssetLibrary（它一导入就会在后台加载全部两百多个资产）。
+ * 游玩模式用到的第四章正式模型（public/assets，清单 manifest.json）：只加载这一章的，
+ * 不经过 AssetLibrary（它一导入就会在后台加载全部两百多个资产）。4-1 加载 PLATEAU_MODELS 的 14 个，
+ * 4-2 另加大鹗、4-4 只加载雷泽雷神（各图的 start() 传自己的列表）。
  * 生物走原生骨架（attachNativeBody → NativePose），部件 / 道具只取 LOD0 静态网格。
  */
 import * as THREE from 'three';
@@ -14,18 +15,21 @@ export const PLATEAU_MODELS = [
   'SK_Boss_Kui', 'SK_Boss_Feilian', 'SK_Boss_Huashe',
   'SM_EnemyPart_LianguDrum', 'SM_EnemyPart_LianguCore', 'SM_EnemyPart_LianguMallet', 'SM_Prop_KuiBrokenDrum',
 ] as const;
-export type PlateauModel = typeof PLATEAU_MODELS[number];
+/** 4-2、4-4 的首领 */
+export const LORD_MODELS = ['SK_Boss_Dae', 'SK_Boss_Leize'] as const;
+export type PlateauModel = typeof PLATEAU_MODELS[number] | typeof LORD_MODELS[number];
 
 const loaded = new Map<string, LoadedAsset>();
 
-/** 读清单并加载这一章的模型；onProgress(已完成, 总数) */
-export async function loadPlateauModels(onProgress?: (done: number, total: number) => void): Promise<void> {
+/** 读清单并加载这些模型（默认 4-1 的 14 个，已加载的跳过）；onProgress(已完成, 总数) */
+export async function loadPlateauModels(onProgress?: (done: number, total: number) => void, ids: readonly PlateauModel[] = PLATEAU_MODELS): Promise<void> {
   const base = import.meta.env.BASE_URL;
   const manifest = (await (await fetch(`${base}assets/manifest.json`, { cache: 'no-cache' })).json()) as { assets: Record<string, AssetEntry> };
   const draco = new DRACOLoader();
   const loader = new GLTFLoader().setDRACOLoader(draco);
+  const todo = ids.filter(id => !loaded.has(id));
   let done = 0;
-  await Promise.all(PLATEAU_MODELS.map(async (id) => {
+  await Promise.all(todo.map(async (id) => {
     const entry = manifest.assets[id];
     if (!entry) throw new Error(`清单里没有 ${id}`);
     const gltf = await loader.loadAsync(`${base}${entry.url}`);
@@ -36,7 +40,7 @@ export async function loadPlateauModels(onProgress?: (done: number, total: numbe
       if (match) lods[Number(match[1])] = m;
     });
     loaded.set(id, { id, entry, gltf, lods });
-    onProgress?.(++done, PLATEAU_MODELS.length);
+    onProgress?.(++done, todo.length);
   }));
   draco.dispose();
 }

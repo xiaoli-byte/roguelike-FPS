@@ -11,7 +11,7 @@ import * as THREE from 'three';
 import type { Walker, CollisionWorld } from '../plateau/walker';
 import type { Weather } from '../plateau/weather';
 import { MONSTER_NAMES } from '../plateau/spec';
-import { loadPlateauModels } from '../plateau/play/assets';
+import { PLATEAU_MODELS, loadPlateauModels, spawnCreature } from '../plateau/play/assets';
 import { Boss } from '../plateau/play/boss';
 import { orbitCam, type Shot } from '../plateau/play/cinema';
 import type { DamageInfo, HitSphere, Target } from '../plateau/play/core';
@@ -21,7 +21,6 @@ import { defineMoves } from '../plateau/play/moves';
 import { NavField } from '../plateau/play/nav';
 import { PlaySession, type PlayInput } from '../plateau/play/session';
 import type { CrossingField, Zip } from './crossings';
-import { buildDaeModel, type DaeModel } from './dae';
 import type { GorgeProps } from './landmarks';
 import { ENCOUNTERS, LORD, SITES } from './spec';
 import type { GorgeTerrain } from './terrain';
@@ -48,7 +47,10 @@ export class DaeBoss extends Boss {
   readonly phaseNames = ['一 · 盘空', '二 · 撕桥', '三 · 狂怒'];
   protected readonly breakTime = 4.5;
   protected override downPose = 'fall';
-  readonly rig: DaeModel;
+  /** 俯仰 / 侧倾（飞行时朝速度方向抬低头、盘旋往里倾）：模型挂在它下面，枢轴在髋部 */
+  readonly tilt: THREE.Group;
+  /** 髋部离脚底多高（落脚点按它摆，脚踩在台面上） */
+  private readonly hang: number;
   private readonly shadow: THREE.Mesh;
   private readonly perchAt: Record<PerchId, THREE.Vector3>;
   private readonly perchFace: Record<PerchId, THREE.Vector3>;
@@ -68,20 +70,28 @@ export class DaeBoss extends Boss {
   private crashing = '';
 
   constructor(ctx: GorgePlay, terrain: GorgeTerrain) {
-    const model = buildDaeModel();
+    // 正式模型（SK_Boss_Dae，原生骨架）：脚底原点；挂在 tilt 下面、往下挪 hang，让 tilt 的枢轴（= this.pos）落在髋部
+    const c = spawnCreature('SK_Boss_Dae');
+    const hang = c.body.pose.restPosition('hips')?.y ?? 1.9;
     const host = new THREE.Group();
     host.name = 'boss-dae';
-    host.add(model.bird);
-    super('dae', '大鹗', 16000, 1200, host, null, 'bird', 'SK_Boss_Dae', [
+    const tilt = new THREE.Group();
+    // 先俯仰、再绕前进方向侧倾（盘旋往里倾、坠江打旋）
+    tilt.rotation.order = 'ZXY';
+    tilt.add(c.host);
+    c.host.position.y = -hang;
+    host.add(tilt);
+    super('dae', '大鹗', 16000, 1200, host, c.body, 'raptor', 'SK_Boss_Dae', [
       { bone: 'body', r: 1.5, mult: 1 }, { bone: 'chest', r: 1.0, mult: 2.5 }, { bone: 'head', r: 0.75, mult: 1.5 },
       { bone: 'wingL', r: 0.75, mult: 2, part: 'wing' }, { bone: 'wingR', r: 0.75, mult: 2, part: 'wing' }, { bone: 'talons', r: 0.9, mult: 1, part: 'talon' },
     ], ctx, { x: LORD.at[0], z: LORD.at[2], r: LORD.r });
-    this.rig = model;
+    this.tilt = tilt;
+    this.hang = hang;
     const perch = (id: PerchId): THREE.Vector3 => {
       const p = LORD.perches.find(q => q.id === id)!;
       const v = new THREE.Vector3(...p.at);
       if (id === 'tower') v.y = terrain.footprintMin(v.x, v.z, 3.2, 3.2, 0) - 0.3 + 25.4;
-      return v.add(new THREE.Vector3(0, 1.9, 0));
+      return v.add(new THREE.Vector3(0, hang, 0));
     };
     this.perchAt = { nest: perch('nest'), bridge: perch('bridge'), tower: perch('tower') };
     this.perchFace = Object.fromEntries(LORD.perches.map(p => [p.id, new THREE.Vector3(p.face[0], 0, p.face[1])])) as Record<PerchId, THREE.Vector3>;
@@ -100,17 +110,16 @@ export class DaeBoss extends Boss {
     return Math.hypot(P.x - mid.x, P.z - mid.z) < 30 || Math.hypot(P.x - 0, P.z + 100) < 50;
   }
 
+  /** 命中球、特效挂点 → 骨骼：胸口雷光 = core、翼根 = wing_1、虎爪 = 两只 talon 的中点 */
   protected override boneWorld(name: string, out: THREE.Vector3): THREE.Vector3 {
-    const M = this.rig;
     switch (name) {
-      case 'chest': return M.bird.localToWorld(out.set(0, -0.35, 1.1));
-      case 'body': return M.bird.localToWorld(out.set(0, 0, 0));
-      case 'head': return M.head.localToWorld(out.set(0, 0, 0.3));
-      case 'wingL': return M.wings[0].joints[0].localToWorld(out.set(-0.5, 0.05, 0.1));
-      case 'wingR': return M.wings[1].joints[0].localToWorld(out.set(0.5, 0.05, 0.1));
-      case 'talons': { M.legs[0].localToWorld(out.set(0, -1.3, 0.2)); M.legs[1].localToWorld(_w.set(0, -1.3, 0.2)); return out.add(_w).multiplyScalar(0.5); }
+      case 'chest': return super.boneWorld('core', out);
+      case 'body': return super.boneWorld('hips', out);
+      case 'wingL': return super.boneWorld('wing_1_L', out);
+      case 'wingR': return super.boneWorld('wing_1_R', out);
+      case 'talons': { super.boneWorld('talon_L', out); super.boneWorld('talon_R', _w); return out.add(_w).multiplyScalar(0.5); }
     }
-    return out.copy(this.pos);
+    return super.boneWorld(name, out);
   }
 
   override center(out: THREE.Vector3): THREE.Vector3 { return this.boneWorld('body', out); }
@@ -217,13 +226,13 @@ export class DaeBoss extends Boss {
           // 翅膀一收，打着旋坠进汇口
           const k = smooth(t / 2.6);
           this.pos.lerpVectors(from, water, k);
-          this.rig.bird.rotation.z = t * 5;
+          this.tilt.rotation.z = t * 5;
           if (k >= 0.98 && !this.mem.splash) { this.mem.splash = 1; ctx.fx.spray(water, ['#e8fbff', '#9fe8ff', '#ffffff'], 120, 9, 9, 14, 1.4); ctx.shake(0.4); }
         } else {
           // 被冲到下游卵石滩，最后扑腾一下
           const k = smooth((t - 2.6) / 3.5);
           this.pos.lerpVectors(water, down, k);
-          this.rig.bird.rotation.z = 2.6 * 5 + Math.sin(t * 3) * 0.2;
+          this.tilt.rotation.z = 2.6 * 5 + Math.sin(t * 3) * 0.2;
           if (t > 5.8 && t < 6.2) this.flap = 0.8;
         }
       },
@@ -284,7 +293,7 @@ export class DaeBoss extends Boss {
     this.perched = 'nest';
     this.plan = [];
     this.crashing = '';
-    this.rig.bird.rotation.set(0, 0, 0);
+    this.tilt.rotation.set(0, 0, 0);
   }
 
   override update(dt: number): void {
@@ -482,8 +491,19 @@ export class DaeBoss extends Boss {
 
   protected override showing(): void {}
 
+  /** 扇翅 / 收翅 / 收腿交给姿势表（poses.ts 的 dae）：flap 0 = 平展滑翔、1 = 大力扇；停着收翅；擒拿 / 停下 / 俯冲出手时腿放下 */
+  protected override render(dt: number): void {
+    const a = this.anim, id = this.move.id;
+    const folded = !!this.perched && this.flap < 0.1 && !this.crashing;
+    const legsDown = !!this.perched || id === 'grab' || (id === 'dive' || id === 'diveChain') && this.move.stage === 'active';
+    a.flap = folded ? 0 : this.flap;
+    a.fold += ((folded ? 1 : 0) - a.fold) * Math.min(1, dt * 4);
+    a.tuck += ((legsDown ? 0 : 1) - a.tuck) * Math.min(1, dt * 5);
+    super.render(dt);
+  }
+
   protected override after(dt: number): void {
-    const ctx = this.ctx, M = this.rig;
+    const ctx = this.ctx, T = this.tilt;
     // 朝向：飞行时朝速度方向、按爬升俯冲抬低头、盘旋时往里侧倾；停着时朝落脚点的「正面」
     const dx = this.pos.x - this.prev.x, dz = this.pos.z - this.prev.z, dy = this.pos.y - this.prev.y;
     const sp = Math.hypot(dx, dz);
@@ -491,30 +511,18 @@ export class DaeBoss extends Boss {
       const f = this.perchFace[this.perched];
       const want = this.move.id === 'perch' || this.move.id === 'nestGust' ? Math.atan2(ctx.feet.x - this.pos.x, ctx.feet.z - this.pos.z) : Math.atan2(f.x - this.pos.x, f.z - this.pos.z);
       this.faceTo(this.pos.x + Math.sin(want), this.pos.z + Math.cos(want), dt, 3);
-      M.bird.rotation.x = 0;
-      if (!this.inShow) M.bird.rotation.z = 0;
+      T.rotation.x = 0;
+      if (!this.inShow) T.rotation.z = 0;
     } else if (!this.crashing && sp > 1e-3 && !this.defeated) {
+      // 飞的时候整只鸟往前扳（翼面转成接近水平，见 poses.ts 的 daeBase）：平飞 1.15、俯冲出手 1.35，再按爬升 / 俯冲抬低头
+      const diving = (this.move.id === 'dive' || this.move.id === 'diveChain') && this.move.stage === 'active';
       this.faceTo(this.pos.x + dx, this.pos.z + dz, dt, 4);
-      M.bird.rotation.x = -Math.atan2(dy, sp + 1e-3) * 0.7;
-      M.bird.rotation.z = this.move.busy ? 0 : -0.35;
+      T.rotation.x = THREE.MathUtils.clamp((diving ? 1.35 : 1.15) * this.anim.tuck - Math.atan2(dy, sp + 1e-3) * 0.7, 0, 1.6);
+      T.rotation.z = this.move.busy ? 0 : -0.35;
     } else if (this.crashing && !this.defeated) {
-      M.bird.rotation.z = Math.sin(ctx.time * 4) * 0.5 + 1.2;
+      T.rotation.z = Math.sin(ctx.time * 4) * 0.5 + 1.2;
     }
     this.prev.copy(this.pos);
-    // 扇翅：flap 0 = 收拢，1 = 大力扇；擒拿 / 停下时腿放下
-    const folded = !!this.perched && this.flap < 0.1;
-    const t = ctx.time;
-    M.wings.forEach((w, i) => {
-      const s = i ? 1 : -1;
-      const beat = Math.sin(t * (3 + this.flap * 5)) * (0.15 + this.flap * 0.65);
-      w.joints[0].rotation.z = folded ? s * -1.2 : s * beat;
-      w.joints[1].rotation.z = folded ? s * 2.4 : s * beat * 0.5;
-      w.joints[2].rotation.z = folded ? s * 0.4 : s * beat * 0.3;
-      w.root.rotation.y = folded ? -s * 0.5 : 0;
-    });
-    const legsDown = !!this.perched || this.move.id === 'grab' || (this.move.id === 'dive' || this.move.id === 'diveChain') && this.move.stage === 'active';
-    for (const lg of M.legs) lg.rotation.x = legsDown ? (this.move.stage === 'active' && this.move.id !== 'grab' ? 0.6 : 0) : -1.1;
-    M.head.rotation.y = this.perched ? Math.sin(t * 0.8) * 0.6 : 0;
     // 地上的影子：投在正下方，越低越黑越小；俯冲前摇时变大变黑（预警）
     const g = ctx.terrain.heightAt(this.pos.x, this.pos.z), hgt = this.pos.y - g;
     const diving = (this.move.id === 'dive' || this.move.id === 'diveChain') && this.move.stage !== 'recover';
@@ -547,19 +555,18 @@ class PropTarget implements Target {
 }
 
 export class GorgePlay extends PlaySession {
-  readonly dae: DaeBoss;
+  /** 模型加载完（start）才建 */
+  dae!: DaeBoss;
   readonly encounter: EncounterState;
   rockDropped = false;
   private beaconT: number[] = [];
   private readonly smoke: THREE.Vector3[] = [];
 
   constructor(
-    scene: THREE.Scene, camera: THREE.PerspectiveCamera, terrain: GorgeTerrain, world: CollisionWorld, walker: Walker, weather: Weather,
+    scene: THREE.Scene, camera: THREE.PerspectiveCamera, readonly gorge: GorgeTerrain, world: CollisionWorld, walker: Walker, weather: Weather,
     readonly crossings: CrossingField, readonly gp: GorgeProps, conductors: THREE.Vector3[], bound: (x: number, z: number) => number,
   ) {
-    super(scene, camera, terrain, world, walker, weather, conductors, bound);
-    this.dae = new DaeBoss(this, terrain);
-    this.bosses.push(this.dae);
+    super(scene, camera, gorge, world, walker, weather, conductors, bound);
     const s2 = SITES.find(s => s.id === 's2')!;
     this.checkpoint.set(s2.altar![0], 0, s2.altar![1]);
     const E = ENCOUNTERS.find(e => e.site === 's3')!;
@@ -578,8 +585,10 @@ export class GorgePlay extends PlaySession {
 
   async start(): Promise<void> {
     this.hud.loading('正在加载第四章的模型…');
-    await loadPlateauModels((d, n) => this.hud.loading(`正在加载第四章的模型… ${d}/${n}`));
+    await loadPlateauModels((d, n) => this.hud.loading(`正在加载第四章的模型… ${d}/${n}`), [...PLATEAU_MODELS, 'SK_Boss_Dae']);
     this.hud.loading('');
+    this.dae = new DaeBoss(this, this.gorge);
+    this.bosses.push(this.dae);
     this.nav = new NavField(this.terrain, this.world);
     // 江嘴台地的守卫：天狗 ×3、举父
     const E = ENCOUNTERS.find(e => e.site === 's3')!;

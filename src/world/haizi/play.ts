@@ -13,6 +13,7 @@ import type { HitSphere, Target, Conductor, KnockBack } from '../plateau/play/co
 import { PlaySession, type PlayInput } from '../plateau/play/session';
 import type { CollisionWorld, Walker } from '../plateau/walker';
 import type { Weather } from '../plateau/weather';
+import { loadPlateauModels } from '../plateau/play/assets';
 import { LeizeBoss } from './leize';
 import type { HaiziScene, Pillar } from './scene';
 import { SPAWN } from './spec';
@@ -32,7 +33,8 @@ class CrystalTarget implements Target {
 }
 
 export class LeizePlay extends PlaySession {
-  readonly leize: LeizeBoss;
+  /** 模型加载完（start）才建 */
+  leize!: LeizeBoss;
   private soak = 0;
 
   constructor(
@@ -40,14 +42,17 @@ export class LeizePlay extends PlaySession {
     readonly arena: HaiziScene, bound: (x: number, z: number) => number,
   ) {
     super(scene, camera, haizi, world, walker, weather, arena.conductors, bound);
-    this.leize = new LeizeBoss(this, haizi, world, arena.lake, arena.pillars);
-    this.bosses.push(this.leize);
     this.checkpoint.set(SPAWN.x, 0, SPAWN.z);
     for (const p of arena.pillars) this.props.push(new CrystalTarget(p, q => this.discharge(q)));
     weather.onStrike = (at, c) => this.strikeEffects(at, c ? this.conductors.find(k => k.pos === c) ?? null : null, 3, 12, '雷暴');
   }
 
   async start(): Promise<void> {
+    this.hud.loading('正在加载雷泽雷神…');
+    await loadPlateauModels((d, n) => this.hud.loading(`正在加载雷泽雷神… ${d}/${n}`), ['SK_Boss_Leize']);
+    this.hud.loading('');
+    this.leize = new LeizeBoss(this, this.haizi, this.world, this.arena.lake, this.arena.pillars);
+    this.bosses.push(this.leize);
     this.setup();
     this.respawn(true);
     this.ready = true;

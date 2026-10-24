@@ -2,13 +2,16 @@
  * 4-4 神山海子 · 章节终局首领：雷泽雷神（docs/level-design/chuanzang-combat-v1.md 4.5）。
  * 《海内东经》：雷泽中有雷神，龙身而人头，鼓其腹则雷。全游戏最大的首领：上身约 10 m（三阶段站到 12 m），龙身盘在湖里。
  *
- * 还没有正式模型（按设计是「头、上身、双爪进 Tripo，龙身程序化」，设计稿、四视图都还没做），这里是程序化白模：
- * - 龙身：从南岸浅滩（尾尖）往湖心岛北侧螺旋盘进去的一条管子，5 段身子轮流拱出水面——拱起来的身段能站人、挡雷息，是从湖岸到湖心岛的路；
- * - 上身：从湖心岛北侧的漩涡里升起，沿湖里一圈慢慢挪向玩家那一侧；人头戴金色神面（弱点），胸前腹鼓（拍腹前摇时发亮，弱点）；两条长臂带爪。
+ * 按 enemy-roster-v2 的定稿「学烛阴」：头、上身和双爪是正式模型（SK_Boss_Leize，原生骨架，出水线截平），长龙身程序化：
+ * - 龙身：从南岸浅滩（尾尖）往湖心岛北侧螺旋盘进去的一条管子，沿螺旋贴鳞片带；5 段身子轮流拱出水面——拱起来的身段能站人、挡雷息，是从湖岸到湖心岛的路；
+ * - 上身：从湖心岛北侧的漩涡里升起，沿湖里一圈慢慢挪向玩家那一侧；神面（弱点）、腹鼓（拍腹前摇时发亮，弱点）各有一个发光壳；
+ *   前倾 / 低头分到脊柱各节，双爪用两骨 IK 够到招式给的落点（手的目标照旧由招式算）。
  * 招式：拍腹雷鸣（两圈落雷，圈在玩家所在的半径上——要沿径向走开）、龙爪拍击、雷息（低头沿湖岸扫 90°，拱起的身段和玛尼堆挡得住）、
  * 二阶段起双爪横扫、湖水通电；三阶段连环拍腹、天雷阵。导雷石柱：雷劈中充电，满电时打柱顶雷晶，一道雷劈向它的神面。破防「神颓」：神面磕在湖岸上。
  */
 import * as THREE from 'three';
+import { AX, AY, AZ } from '../plateau/play/anim';
+import { spawnCreature } from '../plateau/play/assets';
 import { Boss } from '../plateau/play/boss';
 import { orbitCam, type Shot } from '../plateau/play/cinema';
 import type { DamageInfo, HitSphere } from '../plateau/play/core';
@@ -32,25 +35,33 @@ class Tube {
   readonly mesh: THREE.Mesh;
   private readonly geo: THREE.BufferGeometry;
   private readonly pos: Float32Array;
+  /** 一圈 m + 1 个点（首尾重合，贴图的接缝） */
+  private readonly ring: number;
 
-  constructor(private readonly n: number, private readonly m: number, back: THREE.Color, belly: THREE.Color, mat: THREE.Material) {
+  /** u(i)：第 i 圈的贴图 u（龙身按弧长，鳞片带沿身子走）；不给就用顶点色分背和肚子 */
+  constructor(private readonly n: number, private readonly m: number, back: THREE.Color, belly: THREE.Color, mat: THREE.Material, u?: (i: number) => number) {
     this.geo = new THREE.BufferGeometry();
-    this.pos = new Float32Array(n * m * 3);
-    const col = new Float32Array(n * m * 3);
-    for (let i = 0; i < n; i++) for (let j = 0; j < m; j++) {
+    const R = this.ring = m + 1;
+    this.pos = new Float32Array(n * R * 3);
+    const col = new Float32Array(n * R * 3);
+    const uv = new Float32Array(n * R * 2);
+    for (let i = 0; i < n; i++) for (let j = 0; j < R; j++) {
       // j 一圈：sin 正的一侧是背（上），负的一侧是肚子
       const k = (Math.sin((j / m) * Math.PI * 2) + 1) / 2;
-      const c = belly.clone().lerp(back, smooth(k * 1.4 - 0.2));
-      const o = (i * m + j) * 3;
+      const c = u ? new THREE.Color(1, 1, 1) : belly.clone().lerp(back, smooth(k * 1.4 - 0.2));
+      const o = (i * R + j) * 3;
       col[o] = c.r; col[o + 1] = c.g; col[o + 2] = c.b;
+      uv[(i * R + j) * 2] = u ? u(i) : 0;
+      uv[(i * R + j) * 2 + 1] = j / m;
     }
     const idx: number[] = [];
     for (let i = 0; i < n - 1; i++) for (let j = 0; j < m; j++) {
-      const a = i * m + j, b = i * m + (j + 1) % m, c = (i + 1) * m + j, d = (i + 1) * m + (j + 1) % m;
+      const a = i * R + j, b = i * R + j + 1, c = (i + 1) * R + j, d = (i + 1) * R + j + 1;
       idx.push(a, c, b, b, c, d);
     }
     this.geo.setAttribute('position', new THREE.BufferAttribute(this.pos, 3));
     this.geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    this.geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
     this.geo.setIndex(idx);
     this.mesh = new THREE.Mesh(this.geo, mat);
     this.mesh.frustumCulled = false;
@@ -59,7 +70,7 @@ class Tube {
 
   /** pts：n 个中心点；radius(i)；ref：参考方向（不能和切线平行：龙身用竖直，上身用它朝向的水平方向） */
   update(pts: THREE.Vector3[], radius: (i: number) => number, ref: THREE.Vector3): void {
-    const n = this.n, m = this.m;
+    const n = this.n, m = this.m, R = this.ring;
     const T = new THREE.Vector3(), S = new THREE.Vector3(), N = new THREE.Vector3();
     for (let i = 0; i < n; i++) {
       T.subVectors(pts[Math.min(n - 1, i + 1)], pts[Math.max(0, i - 1)]).normalize();
@@ -68,8 +79,8 @@ class Tube {
       S.normalize();
       N.crossVectors(S, T).normalize();
       const r = radius(i);
-      for (let j = 0; j < m; j++) {
-        const a = (j / m) * Math.PI * 2, o = (i * m + j) * 3;
+      for (let j = 0; j < R; j++) {
+        const a = (j / m) * Math.PI * 2, o = (i * R + j) * 3;
         const cx = Math.cos(a) * r, sy = Math.sin(a) * r;
         this.pos[o] = pts[i].x + S.x * cx + N.x * sy;
         this.pos[o + 1] = pts[i].y + S.y * cx + N.y * sy;
@@ -79,6 +90,61 @@ class Tube {
     (this.geo.getAttribute('position') as THREE.BufferAttribute).needsUpdate = true;
     this.geo.computeVertexNormals();
   }
+}
+
+/**
+ * 龙身的鳞片带贴图（u 沿身子一格 SCALE_TILE 米，v 绕一圈：0–0.5 是背、0.5–1 是肚子）：
+ * 背上一排排朝尾巴叠着的圆鳞、正中一道平涂的紫红雷纹（自发光贴图只亮这一道），肚子是一节节横着的腹甲。
+ * 颜色取正式模型（SK_Boss_Leize）上身的贴图色，接在一起不跳色。
+ */
+const SCALE_TILE = 2.4;
+const COIL_COLORS = { back: '#3b4a74', edge: '#1d2640', belly: '#dcd2b8', seam: '#9c8d6e', vein: '#d94fc0' };
+function scaleBands(c: { back: string; edge: string; belly: string; seam: string; vein: string }): { map: THREE.Texture; bump: THREE.Texture; glow: THREE.Texture } {
+  const W = 256, H = 512;
+  const mk = (): [HTMLCanvasElement, CanvasRenderingContext2D] => { const cv = document.createElement('canvas'); cv.width = W; cv.height = H; return [cv, cv.getContext('2d')!]; };
+  const [cm, g] = mk(), [cb, b] = mk(), [cg, e] = mk();
+  e.fillStyle = '#000'; e.fillRect(0, 0, W, H);
+  // 肚子：横着的腹甲，每格 4 节
+  g.fillStyle = c.belly; g.fillRect(0, H / 2, W, H / 2);
+  b.fillStyle = '#909090'; b.fillRect(0, 0, W, H);
+  for (let k = 0; k < 4; k++) {
+    const x = (k / 4) * W;
+    const grad = b.createLinearGradient(x, 0, x + W / 4, 0);
+    grad.addColorStop(0, '#5a5a5a'); grad.addColorStop(0.25, '#c8c8c8'); grad.addColorStop(1, '#8a8a8a');
+    b.fillStyle = grad; b.fillRect(x, H * 0.53, W / 4, H * 0.44);
+    g.fillStyle = c.seam; g.fillRect(x, H * 0.5, 5, H * 0.5);
+  }
+  // 背和两侧：圆鳞，一行 6 片、每格 3 行，错开半片；圆边朝尾（s = 0 是尾尖，u 往小走是往尾巴）
+  g.fillStyle = c.back; g.fillRect(0, 0, W, H * 0.53);
+  const rows = 3, per = 7, sw = W / rows, sh = (H * 0.56) / per;
+  for (let r = 0; r <= rows; r++) for (let q = -1; q <= per; q++) {
+    const x = r * sw, y = q * sh + (r % 2 ? sh / 2 : 0);
+    for (const [ctx, fill, edge] of [[g, c.back, c.edge], [b, '#d0d0d0', '#404040']] as const) {
+      ctx.beginPath();
+      ctx.ellipse(x, y + sh / 2, sw * 0.62, sh * 0.62, 0, Math.PI / 2, Math.PI * 1.5);
+      ctx.closePath();
+      const gr = ctx.createRadialGradient(x + sw * 0.2, y + sh / 2, 1, x, y + sh / 2, sw * 0.62);
+      gr.addColorStop(0, fill); gr.addColorStop(0.75, fill); gr.addColorStop(1, edge);
+      ctx.fillStyle = gr; ctx.fill();
+      ctx.lineWidth = 3; ctx.strokeStyle = edge; ctx.stroke();
+    }
+  }
+  // 背脊正中（v = 0.25）一道平涂雷纹
+  for (const [ctx, col] of [[g, c.vein], [e, c.vein]] as const) {
+    ctx.fillStyle = col;
+    ctx.beginPath();
+    for (let x = 0; x <= W; x += 16) { const y = H * 0.25 + (x / 16 % 2 ? 7 : -7); if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y); }
+    for (let x = W; x >= 0; x -= 16) { const y = H * 0.25 + (x / 16 % 2 ? 7 : -7) + 6; ctx.lineTo(x, y); }
+    ctx.closePath(); ctx.fill();
+  }
+  const tex = (cv: HTMLCanvasElement, srgb: boolean): THREE.Texture => {
+    const t = new THREE.CanvasTexture(cv);
+    t.wrapS = THREE.RepeatWrapping; t.wrapT = THREE.ClampToEdgeWrapping;
+    t.anisotropy = 4;
+    if (srgb) t.colorSpace = THREE.SRGBColorSpace;
+    return t;
+  };
+  return { map: tex(cm, true), bump: tex(cb, false), glow: tex(cg, true) };
 }
 
 // ───────────────────────────── 螺旋龙身与拱起的身段 ─────────────────────────────
@@ -115,15 +181,12 @@ export class LeizeBoss extends Boss {
   protected readonly breakTime = 5;
   protected override downPose = 'slump';
   private readonly coil: Tube;
-  private readonly torso: Tube;
-  private readonly head = new THREE.Group();
-  private readonly mask: THREE.Mesh;
-  private readonly eyeMat: THREE.MeshBasicMaterial;
-  private readonly drum: THREE.Mesh;
-  private readonly drumGlow: THREE.Mesh;
-  private readonly chestMesh: THREE.Mesh;
-  private readonly shoulders: THREE.Mesh;
-  private readonly arms: { upper: THREE.Mesh; fore: THREE.Mesh; claw: THREE.Group; hand: THREE.Vector3; elbow: THREE.Vector3; side: number }[] = [];
+  /** 正式模型（头、上身、双爪）：脚底原点 = 出水线截面中心，面朝 +Z */
+  private readonly upper: THREE.Group;
+  /** 腹鼓的位置（每帧跟 drum 骨骼走；落雷、粒子、拍腹的手都按它） */
+  private readonly drum = new THREE.Object3D();
+  /** 双爪：hand = 招式给的手的目标（世界坐标），IK 把腕拉过去；side +1 = 左（模型 +X） */
+  private readonly arms: { hand: THREE.Vector3; side: number; s2: 'L' | 'R' }[] = [];
   private readonly vortex: THREE.Group;
   private readonly spikes: THREE.InstancedMesh;
   readonly arches: Arch[] = [];
@@ -151,14 +214,14 @@ export class LeizeBoss extends Boss {
   constructor(private readonly g: LeizePlay, private readonly terrain: HaiziTerrain, world: CollisionWorld, readonly lake: LakeSurface, readonly pillars: Pillar[]) {
     const root = new THREE.Group();
     root.name = 'boss-leize';
-    super('leize', '雷泽雷神', 30000, 1500, root, null, 'serpent', 'SK_Boss_Leize', [
+    const c = spawnCreature('SK_Boss_Leize');
+    super('leize', '雷泽雷神', 30000, 1500, root, c.body, 'titan', 'SK_Boss_Leize', [
       { bone: 'chest', r: 2.3, mult: 1 }, { bone: 'face', r: 1.1, mult: 1.2, part: 'face' }, { bone: 'belly', r: 1.6, mult: 1, part: 'belly' },
       { bone: 'torso', r: 2.0, mult: 1 }, { bone: 'clawL', r: 1.2, mult: 1 }, { bone: 'clawR', r: 1.2, mult: 1 },
     ], g, { x: 0, z: 0, r: 62 });
-    const skin = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.55, metalness: 0.15 });
-    this.coil = new Tube(SPIRAL.samples, 12, new THREE.Color('#1f3a45'), new THREE.Color('#c8b58a'), skin);
-    this.torso = new Tube(28, 14, new THREE.Color('#244452'), new THREE.Color('#d4c49a'), skin);
-    root.add(this.coil.mesh, this.torso.mesh);
+    this.upper = c.host;
+    root.add(this.upper, this.drum);
+    for (const [name, color] of [['Face', 0xffc46a], ['Drum', 0xff5ad8]] as const) c.body.glowShells[name]?.color.setHex(color);
     // 螺旋：预先算好平面位置和弧长
     let acc = 0;
     for (let i = 0; i < SPIRAL.samples; i++) {
@@ -167,6 +230,14 @@ export class LeizeBoss extends Boss {
       this.spiralXZ.push(p); this.spiralLen.push(acc); this.sPts.push(new THREE.Vector3());
     }
     this.S = acc;
+    // 长龙身：程序化管子 + 沿螺旋的鳞片带
+    const bands = scaleBands(COIL_COLORS);
+    const coilMat = new THREE.MeshStandardMaterial({
+      map: bands.map, bumpMap: bands.bump, bumpScale: 3, emissiveMap: bands.glow, emissive: '#ffffff', emissiveIntensity: 0.55,
+      roughness: 0.6, metalness: 0.05,
+    });
+    this.coil = new Tube(SPIRAL.samples, 16, new THREE.Color(COIL_COLORS.back), new THREE.Color(COIL_COLORS.belly), coilMat, i => this.spiralLen[i] / SCALE_TILE);
+    root.add(this.coil.mesh);
     // 5 段身子：每段占 72% 的格、轮流拱起
     const cell = this.S / ARCHES;
     for (let k = 0; k < ARCHES; k++) {
@@ -185,69 +256,10 @@ export class LeizeBoss extends Boss {
     }
     // 背上的棘：沿龙身每 2.2 m 一根
     const nSpike = Math.floor(this.S / 2.2);
-    this.spikes = new THREE.InstancedMesh(new THREE.ConeGeometry(0.28, 1.0, 5).translate(0, 0.5, 0), new THREE.MeshStandardMaterial({ color: '#2a2440', roughness: 0.5, emissive: '#3a0a30' }), nSpike);
+    this.spikes = new THREE.InstancedMesh(new THREE.ConeGeometry(0.28, 1.0, 5).translate(0, 0.5, 0), new THREE.MeshStandardMaterial({ color: COIL_COLORS.edge, roughness: 0.55, emissive: '#2a0824' }), nSpike);
     this.spikes.frustumCulled = false;
     root.add(this.spikes);
-    // 头：人头 + 金色神面 + 鬃 + 冠
-    const headSkin = new THREE.Mesh(new THREE.SphereGeometry(1, 20, 16), new THREE.MeshStandardMaterial({ color: '#c9a98a', roughness: 0.6 }));
-    headSkin.scale.set(1.25, 1.5, 1.3);
-    // 神面：头的正脸（+Z，球面参数 φ = π/2 在 +Z）上一片金面具
-    this.mask = new THREE.Mesh(new THREE.SphereGeometry(1.32, 24, 16, Math.PI * 0.2, Math.PI * 0.6, Math.PI * 0.2, Math.PI * 0.6), new THREE.MeshStandardMaterial({ color: '#d9a441', metalness: 0.75, roughness: 0.3, emissive: '#3a2400', side: THREE.DoubleSide }));
-    this.mask.scale.set(1.0, 1.25, 1.05);
-    this.mask.rotation.y = 0;
-    this.eyeMat = new THREE.MeshBasicMaterial({ color: '#ff6ae0' });
-    for (const s of [-1, 1]) {
-      const eye = new THREE.Mesh(new THREE.SphereGeometry(0.17, 10, 8), this.eyeMat);
-      eye.position.set(s * 0.45, 0.25, 1.28);
-      this.head.add(eye);
-    }
-    const crown = new THREE.Mesh(new THREE.TorusGeometry(1.15, 0.12, 6, 24), new THREE.MeshStandardMaterial({ color: '#d9a441', metalness: 0.8, roughness: 0.3 }));
-    crown.rotation.x = Math.PI / 2 - 0.25;
-    crown.position.y = 1.15;
-    const maneMat = new THREE.MeshStandardMaterial({ color: '#1d2a33', roughness: 0.8 });
-    for (let k = 0; k < 9; k++) {
-      const c = new THREE.Mesh(new THREE.ConeGeometry(0.35, 3.2, 6).translate(0, 1.6, 0), maneMat);
-      const a = -1.2 + (k / 8) * 2.4;
-      c.position.set(Math.sin(a) * 0.9, 0.6, -0.6 - Math.cos(a) * 0.3);
-      c.rotation.set(-2.2, a * 0.4, 0);
-      this.head.add(c);
-    }
-    this.head.add(headSkin, this.mask, crown);
-    root.add(this.head);
-    // 腹鼓
-    this.drum = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.5, 0.35, 28).rotateX(Math.PI / 2), new THREE.MeshStandardMaterial({ color: '#8a2a22', roughness: 0.5, metalness: 0.2, emissive: '#2a0606' }));
-    const rim = new THREE.Mesh(new THREE.TorusGeometry(1.5, 0.12, 6, 28), new THREE.MeshStandardMaterial({ color: '#d9a441', metalness: 0.8, roughness: 0.3 }));
-    this.drum.add(rim);
-    this.drumGlow = new THREE.Mesh(new THREE.CircleGeometry(1.45, 28), new THREE.MeshBasicMaterial({ color: '#ff6ae0', transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false }));
-    this.drumGlow.position.z = 0.19;
-    this.drum.add(this.drumGlow);
-    root.add(this.drum);
-    // 胸廓和肩：让上身读起来是人身（管子之外的两块体积）
-    this.chestMesh = new THREE.Mesh(new THREE.SphereGeometry(1, 18, 14), new THREE.MeshStandardMaterial({ color: '#2a4a57', roughness: 0.5 }));
-    this.chestMesh.scale.set(3.1, 2.6, 2.3);
-    this.shoulders = new THREE.Mesh(new THREE.CylinderGeometry(1.05, 1.05, 6.2, 12).rotateZ(Math.PI / 2), new THREE.MeshStandardMaterial({ color: '#244452', roughness: 0.5 }));
-    this.chestMesh.castShadow = this.shoulders.castShadow = true;
-    root.add(this.chestMesh, this.shoulders);
-    // 两条长臂 + 三爪
-    const armMat = new THREE.MeshStandardMaterial({ color: '#2a4a55', roughness: 0.55 });
-    const clawMat = new THREE.MeshStandardMaterial({ color: '#e8dcc0', roughness: 0.4 });
-    for (const side of [1, -1]) {
-      const upper = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.9, 1, 10).translate(0, 0.5, 0).rotateX(Math.PI / 2), armMat);
-      const fore = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.75, 1, 10).translate(0, 0.5, 0).rotateX(Math.PI / 2), armMat);
-      const claw = new THREE.Group();
-      const palm = new THREE.Mesh(new THREE.SphereGeometry(0.9, 12, 10), armMat);
-      palm.scale.set(1, 0.6, 1.2);
-      claw.add(palm);
-      for (let f = 0; f < 3; f++) {
-        const c = new THREE.Mesh(new THREE.ConeGeometry(0.22, 1.6, 6).translate(0, 0.8, 0).rotateX(Math.PI / 2), clawMat);
-        c.position.set((f - 1) * 0.55, -0.1, 0.8);
-        c.rotation.x = 0.4;
-        claw.add(c);
-      }
-      upper.castShadow = fore.castShadow = true;
-      root.add(upper, fore, claw);
-      this.arms.push({ upper, fore, claw, hand: new THREE.Vector3(), elbow: new THREE.Vector3(), side });
-    }
+    for (const side of [1, -1]) this.arms.push({ hand: new THREE.Vector3(), side, s2: side > 0 ? 'L' : 'R' });
     // 漩涡：上身出水处的一圈圈水纹
     this.vortex = new THREE.Group();
     for (let k = 0; k < 4; k++) {
@@ -286,11 +298,11 @@ export class LeizeBoss extends Boss {
   protected override boneWorld(name: string, out: THREE.Vector3): THREE.Vector3 {
     switch (name) {
       case 'chest': return out.copy(this.chest);
-      case 'face': return out.copy(this.headPos).addScaledVector(_u.copy(this.fwd), 1.1).setY(this.headPos.y + 0.1);
+      case 'face': return this.body!.pose.bone('mask')!.getWorldPosition(out).addScaledVector(this.fwd, 0.5 * this.height);
       case 'belly': return this.drum.getWorldPosition(out);
-      case 'torso': return out.lerpVectors(this.base, this.chest, 0.4);
-      case 'clawL': return out.copy(this.arms[0].hand);
-      case 'clawR': return out.copy(this.arms[1].hand);
+      case 'torso': return this.body!.pose.bone('spine2')!.getWorldPosition(out);
+      case 'clawL': return this.body!.pose.bone('claw_L')!.getWorldPosition(out);
+      case 'clawR': return this.body!.pose.bone('claw_R')!.getWorldPosition(out);
     }
     return out.copy(this.pos);
   }
@@ -330,75 +342,45 @@ export class LeizeBoss extends Boss {
 
   // ─── 姿态：上身、头、手臂、龙身 ───
 
-  /** 按上身角度、身高、前倾摆好各部位（每帧） */
-  private layout(dt: number): void {
+  /**
+   * 按上身角度、身高、前倾摆好各部位（每帧）。pose = true 只在 render 里（姿势表刚把骨骼复位、摆好招式姿势之后）：
+   * 加前倾和双爪 IK；演出 tick / 待机里调用时只挪位置、取回各部位，不在没复位的骨骼上重复叠加。
+   */
+  private layout(dt: number, pose = false): void {
     const t = this.ctx.time;
-    const H = 10 * this.height * this.emerge;
     this.base.set(Math.cos(this.ang) * this.rad, this.lake.level - 2 + 2 * this.emerge, Math.sin(this.ang) * this.rad);
     this.pos.copy(this.base).setY(this.lake.level);
     this.fwd.set(Math.sin(this.yaw), 0, Math.cos(this.yaw));
-    const side = _w.set(this.fwd.z, 0, -this.fwd.x);
-    const lean = this.lean;
-    const sway = Math.sin(t * 0.7) * 0.25;
-    // 上身：底 → 腰 → 胸 → 颈；前倾时往前弯、头放低
-    const pts: THREE.Vector3[] = [];
-    const n = 28;
-    const bend = (k: number): THREE.Vector3 => {
-      const y = this.base.y - 3 + (H + 3) * k;
-      const f = lean * lean * 6 * k * k + lean * 2.5 * k + sway * k;
-      return new THREE.Vector3(this.base.x + this.fwd.x * f + side.x * sway * 0.5 * k, y - lean * 3.5 * k * k, this.base.z + this.fwd.z * f + side.z * sway * 0.5 * k);
-    };
-    for (let i = 0; i < n; i++) pts.push(bend(i / (n - 1) * 0.86));
-    this.torso.update(pts, i => (i < 4 ? 2.5 : 2.5 - 1.2 * ((i - 4) / (n - 4)) ** 1.5) * (0.4 + 0.6 * this.emerge), this.fwd);
-    this.chest.copy(bend(0.66));
-    const em = 0.4 + 0.6 * this.emerge;
-    this.chestMesh.position.copy(this.chest).addScaledVector(this.fwd, 0.5);
-    this.chestMesh.rotation.set(0, this.yaw, 0);
-    this.chestMesh.rotateX(lean * 0.7);
-    this.chestMesh.scale.set(3.1 * em, 2.6 * em, 2.3 * em);
-    this.shoulders.position.copy(this.chest).add(_u.set(0, 1.0 * em, 0));
-    this.shoulders.rotation.set(0, this.yaw, 0);
-    this.shoulders.scale.setScalar(em);
-    this.chestMesh.visible = this.shoulders.visible = this.emerge > 0.05;
-    const neck = bend(0.86);
-    this.headPos.copy(neck).addScaledVector(this.fwd, 0.6 + lean * 1.2).add(_u.set(0, 1.4 - lean * 0.8, 0));
-    this.head.position.copy(this.headPos);
-    this.head.rotation.set(0, this.yaw, 0);
-    this.head.rotateX(lean * 0.8 - 0.1 + (this.brokenT > 0 ? 0.3 : 0));
-    this.head.scale.setScalar(0.4 + 0.6 * this.emerge);
-    this.head.visible = this.emerge > 0.05;
-    // 腹鼓
-    const belly = bend(0.48);
-    this.drum.position.copy(belly).addScaledVector(this.fwd, 1.75 - lean * 0.2);
+    // 上身：截面沉在水下 0.7 m（接龙身的地方看不见），登场时从 11 m 深的漩涡里升起；三阶段站到 12 m（整体放大）
+    const U = this.upper;
+    U.position.set(this.base.x, this.lake.level - 0.7 - 11 * (1 - this.emerge), this.base.z);
+    U.rotation.set(0, this.yaw, 0);
+    U.scale.setScalar(this.height);
+    U.visible = this.emerge > 0.02;
+    U.updateMatrixWorld(true);
+    const P = this.body!.pose, lean = this.lean, sway = Math.sin(t * 0.7) * 0.25;
+    if (pose) {
+      // 前倾 / 低头分到脊柱各节（lean 1 ≈ 腰弯 60°、脸埋到胸前），一点左右晃；神颓时头再垂
+      P.rotate('spine1', AX, 0.22 * lean); P.rotate('spine2', AX, 0.32 * lean); P.rotate('chest', AX, 0.3 * lean);
+      P.rotate('neck', AX, 0.12 * lean); P.rotate('head', AX, 0.25 * lean - 0.08 + (this.brokenT > 0 ? 0.3 : 0));
+      P.rotate('spine2', AZ, 0.06 * sway); P.rotate('chest', AY, 0.08 * sway);
+      // 双爪：两骨 IK（肩 → 肘 → 腕），先把前臂往里弯一点定下肘的弯曲平面（肘朝外后）
+      for (const A of this.arms) {
+        P.rotate(`forearm_${A.s2}`, AX, -0.25);
+        P.twoBoneIK(`arm_${A.s2}`, `forearm_${A.s2}`, `claw_${A.s2}`, U.worldToLocal(_v.copy(A.hand)), 0.5);
+      }
+      U.updateMatrixWorld(true);
+    }
+    // 姿势定了，取回各部位（招式、命中球、镜头都用这些）
+    const bone = (n: string, out: THREE.Vector3): THREE.Vector3 => P.bone(n)!.getWorldPosition(out);
+    bone('chest', this.chest).lerp(bone('neck', _u), 0.45);
+    bone('head', this.headPos).lerp(bone('mask', _u), 0.35).y += 0.4 * this.height;
+    bone('drum', _u);
+    this.drum.position.copy(_u).addScaledVector(this.fwd, 0.4 * this.height);
     this.drum.rotation.set(0, this.yaw, 0);
-    this.drum.rotateX(-lean * 0.5);
-    this.drum.scale.setScalar(0.4 + 0.6 * this.emerge);
-    this.drum.visible = this.emerge > 0.2;
     // 漩涡
     this.vortex.position.set(this.base.x, this.lake.level + 0.08, this.base.z);
     this.vortex.children.forEach((c, k) => { c.rotation.y = -t * (1.2 + k * 0.4); ((c as THREE.Mesh).material as THREE.MeshBasicMaterial).opacity = (0.25 + 0.35 * (this.phase === 3 ? 1 : 0.4)) * (1 - k * 0.15); });
-    // 手臂（两骨 IK：肩 → 肘 → 手），手的目标由招式定
-    for (const A of this.arms) {
-      const S = _v.copy(this.chest).addScaledVector(side, A.side * 2.4).add(_u.set(0, 1.0, 0));
-      const T = A.hand;
-      const L1 = 8 * this.emerge + 0.5, L2 = 8 * this.emerge + 0.5;
-      const d = THREE.MathUtils.clamp(S.distanceTo(T), 0.5, L1 + L2 - 0.05);
-      const dir = _u.subVectors(T, S).normalize();
-      const reach = S.clone().addScaledVector(dir, d);
-      T.copy(reach);
-      const ca = (L1 * L1 + d * d - L2 * L2) / (2 * L1 * d), sa = Math.sqrt(Math.max(0, 1 - ca * ca));
-      // 肘朝外、略朝后上
-      const pole = side.clone().multiplyScalar(A.side).addScaledVector(this.fwd, -0.4).add(new THREE.Vector3(0, 0.5, 0));
-      const perp = pole.sub(dir.clone().multiplyScalar(pole.dot(dir))).normalize();
-      A.elbow.copy(S).addScaledVector(dir, L1 * ca).addScaledVector(perp, L1 * sa);
-      const place = (m: THREE.Mesh, a: THREE.Vector3, b: THREE.Vector3): void => { m.position.copy(a); m.lookAt(b); m.scale.set(1, 1, a.distanceTo(b)); m.visible = this.emerge > 0.1; };
-      place(A.upper, S, A.elbow);
-      place(A.fore, A.elbow, T);
-      A.claw.position.copy(T);
-      A.claw.lookAt(T.clone().add(_w.subVectors(T, A.elbow)));
-      A.claw.scale.setScalar(0.5 + 0.5 * this.emerge);
-      A.claw.visible = this.emerge > 0.1;
-    }
     // 龙身：沿螺旋，拱起的身段按各自高度，其余沉在水下；接到上身底下
     const lv = this.lake.level;
     for (let i = 0; i < SPIRAL.samples; i++) {
@@ -794,16 +776,32 @@ export class LeizeBoss extends Boss {
     if (this.move.id !== 'breath' || this.move.stage !== 'active') this.beam.core.visible = this.beam.glow.visible = false;
     // 腹鼓：拍腹前摇发亮
     const drumK = (this.move.id === 'bellyDrum' || this.move.id === 'tripleDrum') ? (this.move.stage === 'windup' ? this.move.stageK : this.move.stage === 'active' ? 0.8 : 0) : 0;
-    (this.drumGlow.material as THREE.MeshBasicMaterial).opacity = 0.9 * drumK * (0.8 + 0.2 * Math.sin(ctx.time * 30));
-    this.eyeMat.color.setRGB(1, 0.42 + 0.5 * (this.lean > 0.7 ? 1 : 0), 0.88);
-    (this.mask.material as THREE.MeshStandardMaterial).emissive.setRGB(0.23 + this.flash * 0.6 + (this.brokenT > 0 ? 0.3 : 0), 0.14 + this.flash * 0.5, this.flash * 0.3);
-    if (!this.inShow) { this.updateArches(dt); this.layout(dt); }
+    // 两个发光壳（各自的材质槽）：腹鼓拍腹前摇亮起；神面平时微亮、低头（神面窗口）和神颓时亮、挨打闪
+    const shells = this.body!.glowShells;
+    if (shells.Drum) shells.Drum.opacity = 0.9 * drumK * (0.8 + 0.2 * Math.sin(ctx.time * 30));
+    if (shells.Face) shells.Face.opacity = 0.18 + 0.35 * (this.lean > 0.7 ? 1 : 0) + (this.brokenT > 0 ? 0.35 + 0.15 * Math.sin(ctx.time * 12) : 0) + this.flash * 0.5;
+    if (!this.inShow) this.updateArches(dt);
   }
 
-  /** 白模：不走骨骼动画，自己摆（Boss.render 的骨骼部分跳过） */
+  /**
+   * 不用 Boss.render 的整体摆放（根组留在原点：龙身、漩涡、雷息都是世界坐标）：姿势表（poses.ts 的 leize：头颈、下颌的招式姿势）
+   * 摆完以后，layout 再把上身放到漩涡上、加前倾和双爪 IK。演出里也每帧走这里，演出的 tick 只改状态。
+   */
   protected override render(dt: number): void {
+    const ctx = this.ctx;
     this.host.position.set(0, 0, 0);
     this.host.rotation.set(0, 0, 0);
+    if (this.show) { this.anim.pose = this.show.id; this.anim.stage = this.show.stage; this.anim.k = this.show.k; }
+    else {
+      this.anim.pose = this.brokenT > 0 ? this.downPose : this.move.id;
+      this.anim.stage = this.brokenT > 0 ? 'active' : this.move.stage ?? '';
+      this.anim.k = this.brokenT > 0 ? 1 : this.move.stageK;
+    }
+    this.anim.look = 0;
+    this.animator?.apply(this.anim, ctx.time);
+    const m = this.body!.materials[0] as THREE.MeshStandardMaterial;
+    m.emissive.setRGB(this.flash * 0.6, this.flash * 0.6, this.flash * 0.6);
+    this.layout(dt, true);
     this.host.updateMatrixWorld(true);
     this.after(dt);
   }

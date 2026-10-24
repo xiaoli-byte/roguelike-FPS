@@ -54,14 +54,15 @@ def validate(glb_path: Path, metrics: dict, asset: str, cls: dict, height: float
     ok("feet on ground", abs(lo[1]) <= 0.02, f"min y={lo[1]:.4f}")
     mats = J.get("materials", [])
     body = [m for m in mats if not m.get("name", "").endswith("_Glow")]
-    ok("material count", len(body) == 1 and len(mats) - len(body) <= 1, f"{[m.get('name') for m in mats]}")
+    shells = metrics.get("glow_shells") or {}
+    ok("material count", len(body) == 1 and len(mats) - len(body) <= max(1, len(shells)), f"{[m.get('name') for m in mats]}")
     if body:
         pbr = body[0].get("pbrMetallicRoughness", {})
         ok("base colour texture", "baseColorTexture" in pbr, "")
         ok("ORM texture", "metallicRoughnessTexture" in pbr and "occlusionTexture" in body[0], "AO / roughness / metallic")
-    if metrics.get("glow_shell"):
-        ok("glow shell", f"{asset}_GlowShell" in nodes and "skin" in nodes[f"{asset}_GlowShell"],
-           f"{metrics['glow_shell']['tris']} tris on '{metrics['glow_shell']['group']}'")
+    for name, info in (metrics.get("glow_shells") or {}).items():
+        ok(f"glow shell {name[len(asset) + 1:]}", name in nodes and "skin" in nodes[name] and info["tris"] > 0,
+           f"{info['tris']} tris on '{info['group']}'")
     for i, img in enumerate(J.get("images", [])):
         w, h, fmt = g.image_size(i)
         ok(f"texture {img.get('name')}", w == h == cls["texture"] and fmt == "webp", f"{w}x{h} {fmt}")

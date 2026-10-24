@@ -17,6 +17,11 @@ export interface NativeBody extends SkinnedBody {
    * 跟着骨骼一起鼓起；敌人每帧设 opacity。没有时为 null。
    */
   readonly glowShell: THREE.MeshBasicMaterial | null;
+  /**
+   * 有几块分开的发光区域时（雷泽雷神的神面、腹鼓），每块一个发光壳 <asset>_GlowShell_<名字>，按名字取（各自一个材质槽）；
+   * 只有一块不带名字的 <asset>_GlowShell 时为空，用 glowShell。
+   */
+  readonly glowShells: Readonly<Record<string, THREE.MeshBasicMaterial>>;
 }
 
 const _q = new THREE.Quaternion();
@@ -362,14 +367,18 @@ export function attachNativeBody(host: THREE.Object3D, asset: LoadedAsset, lodSc
   });
   // 弱点发光壳：与本体同一套骨骼，加法混合、用本体贴图，平时透明度为 0
   let glowShell: THREE.MeshBasicMaterial | null = null;
+  const glowShells: Record<string, THREE.MeshBasicMaterial> = {};
   model.traverse((o) => {
     const m = o as THREE.SkinnedMesh;
-    if (!m.isSkinnedMesh || !/_GlowShell$/.test(m.name)) return;
-    glowShell = new THREE.MeshBasicMaterial({
+    const named = m.isSkinnedMesh ? /_GlowShell(?:_(\w+))?$/.exec(m.name) : null;
+    if (!named) return;
+    const mat = new THREE.MeshBasicMaterial({
       map: material.map, color: 0xffa64a, transparent: true, opacity: 0, depthWrite: false,
       blending: THREE.AdditiveBlending, toneMapped: false,
     });
-    m.material = glowShell;
+    if (named[1]) glowShells[named[1]] = mat;
+    glowShell ??= mat;
+    m.material = mat;
     m.castShadow = false;
     m.boundingSphere = sphere;
     m.renderOrder = 2;
@@ -379,10 +388,12 @@ export function attachNativeBody(host: THREE.Object3D, asset: LoadedAsset, lodSc
     lod,
     pose,
     glowShell,
+    glowShells,
     materials: [material],
     dispose: () => {
       for (const m of meshes) m.skeleton.dispose();
       (glowShell as THREE.MeshBasicMaterial | null)?.dispose();
+      for (const m of Object.values(glowShells)) m.dispose();
     },
   };
 }

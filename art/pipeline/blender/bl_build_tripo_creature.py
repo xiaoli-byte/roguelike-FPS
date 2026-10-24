@@ -1266,14 +1266,17 @@ if high is not None:
 # ───────────────────────────── 4b. Glow shell ─────────────────────────────
 # The weak-spot glow is a thin additive shell over the art's own sac (faces whose sac weight ≥ 0.5, pushed out 1 cm),
 # skinned to the same bones: it inflates with the sac and keeps the painted pattern; the runtime drives its opacity.
+# "glow_shell": "<group>" makes one <asset>_GlowShell (material M_<short>_Glow); a mapping {"Face": "mask", "Drum": "drum"}
+# makes one shell per region, <asset>_GlowShell_<Name> with its own material slot M_<short>_<Name>_Glow, so the runtime
+# lights each weak spot on its own (雷泽雷神: the god's face and the belly drum).
 t = time.time()
-shell = None
-if RIG.get("glow_shell"):
-    gname = RIG["glow_shell"]
+shells = []
+GLOW = RIG.get("glow_shell")
+for label, gname in ([("", GLOW)] if isinstance(GLOW, str) else list((GLOW or {}).items())):
     activate(lods[0])
     bpy.ops.object.duplicate()
     shell = bpy.context.object
-    shell.name = f"{ASSET}_GlowShell"
+    shell.name = f"{ASSET}_GlowShell" + (f"_{label}" if label else "")
     import bmesh
     bm = bmesh.new()
     bm.from_mesh(shell.data)
@@ -1287,7 +1290,7 @@ if RIG.get("glow_shell"):
         v.co += v.normal * 0.012
     bm.to_mesh(shell.data)
     bm.free()
-    glow_mat = bpy.data.materials.new(f"M_{SHORT}_Glow")
+    glow_mat = bpy.data.materials.new(f"M_{SHORT}_{label}_Glow" if label else f"M_{SHORT}_Glow")
     glow_mat.use_nodes = True
     gb = next(n for n in glow_mat.node_tree.nodes if n.type == "BSDF_PRINCIPLED")
     gt = glow_mat.node_tree.nodes.new("ShaderNodeTexImage")
@@ -1298,14 +1301,18 @@ if RIG.get("glow_shell"):
     shell.data.materials.append(glow_mat)
     if "lod_distance" in shell:
         del shell["lod_distance"]
-    RESULT["glow_shell"] = {"group": gname, "tris": tris(shell)}
-    step(f"发光壳 {tris(shell)} 面", t)
+    shells.append(shell)
+    RESULT.setdefault("glow_shells", {})[shell.name] = {"group": gname, "tris": tris(shell)}
+    if not label:
+        RESULT["glow_shell"] = {"group": gname, "tris": tris(shell)}
+    step(f"发光壳 {shell.name} {tris(shell)} 面", t)
+    t = time.time()
 
 # ───────────────────────────── 5. Export ─────────────────────────────
 t = time.time()
 arm.name = f"{ASSET}_Rig"
 for o in bpy.data.objects:
-    o.select_set(o in lods or o is arm or o is shell)
+    o.select_set(o in lods or o is arm or o in shells)
 bpy.context.view_layer.objects.active = arm
 bpy.ops.wm.save_as_mainfile(filepath=P["out_blend"])
 bpy.ops.export_scene.gltf(
