@@ -110,6 +110,7 @@ Claude in Chrome 打开 Tripo Studio，**智能网格 · 多视图**（前 / 左
 
 - **Prefab 名固定**：`SK_Boss_Hanba`、`SM_BossPart_HanbaSunRing`，代码里的代理（SK_Enemy_Apsara 放大 3.5 倍）可以直接换成正式模型。
 - **挂点**：`socket_core` 在泉珠中心（弱点命中盒，半径约 0.12 米，离地 3.25 米），`socket_sunring` 在背后轮心（离地 3.45 米，身后 1.4 米）。日轮 Prefab 的 `ArtAssetInfo.bind = enemy / boss_hanba / sunring`：关卡生成器把它放进 `EnemyCatalog.attachments` 后，`EnemyRoster` 会按 `socket_sunring` 挂上（和邪飞天的琵琶同一套）。日轮旋转、升顶、挡在身前都由代码移动这个挂点或日轮本身。
+- **日轮不跟骨骼走（2026-10-23）**：`socket_sunring` 挂在 chest 上，弯腰、扭身、受击后仰、转头转腰都会带着 6 米的轮子扫进长发和身体，而且这根挂点骨进 Unity 后的朝向让轮面是水平的——旧挂法下日轮平躺着套在脖子上，每个动作都插进身体约 0.6 米。所以运行时 `SunRing.Bind` 把挂件从挂点上摘下来，换到首领根节点下的跟随支点「Sun Ring Follow」：轮心在模型根节点之上 4.0 米（头顶附近）、原点身后 1.8 米（长发背面之后再留约 0.6 米），位置滞后约 0.25 秒、只跟偏航（滞后约 0.35 秒），自己上下浮动 ±0.12 米、前后轻摆 ±1.2°，按地前冲、倒地时跟着骨盆的位移挪。每帧把身体骨骼（含衣 / 袖 / 发链的弹簧骨，按部位留皮肉余量）换到日轮坐标里，轮面范围内的点都必须在轮子前面，不够就把日轮往后推。挂点骨仍留在骨架里（Bind 用它定日轮的世界缩放）。验收：`bridge.sh playtest hanba-ring`（逐个状态 + 受击 / 急转身 / 后撤 / 实战 / 死亡，每帧烘焙身体网格量到日轮的距离），审核图 [boss-hanba-sunring-v001.jpg](review/boss-hanba-sunring-v001.jpg)（单张在 [review/boss-hanba-sunring/](review/boss-hanba-sunring/)，标 old 的是改之前的挂法对照）。
 - **泉珠发光**：`SK_Boss_Hanba_GlowShell`（材质 `M_Boss_Hanba_Glow`，叠加混合）只盖泉珠前半球，日蚀和施法后摇时由代码打开 / 调亮，其余时间关掉。裂缝的白金光还没做：要在 StylizedLit 上按底色（金色细线）做自发光遮罩，属于 FX / 着色器单元。
 - **悬浮高度**：模型的残衣下摆落在 z = 0，脚尖离地约 0 米。游戏里整体抬高约 0.5 米悬浮，下摆的弹簧骨会自然垂下。
 - **人形**：Unity 建 Humanoid（semantic 映射），绑定姿势是 A 字（非英雄不做 T-pose 修正），QA 会给「上臂与水平面夹角」一条警告，和举父一样；ART2 用 Blender 关键帧做动作时直接在这套骨架上做。
