@@ -1003,10 +1003,11 @@ namespace Spiritfire.Art.Editor.Levels
             foreach (int side in new[] { -1, 1 })
                 Prop(AltarId, kit, P(0.5f, Outer(0.5f) + 1.5f) + Tan(0.5f) * (side * 5.6f), FaceIn(0.5f));
 
+            // 锭堆靠在宝堆旁边的龛角里（原来摆在龛口和藏宝之间，正挡在走进去的路上）
             Prop(HoardId, kit, P(0.40f, Outer(0.40f) + 9.5f), FaceIn(0.40f));
-            Prop(IngotsId, kit, P(0.403f, Outer(0.40f) + 4.5f), 50f);
+            Prop(IngotsId, kit, P(0.40f, Outer(0.40f) + 9.6f) - Tan(0.40f) * 2.9f, 50f);
             Prop(HoardId, kit, P(0.875f, Outer(0.875f) + 10.5f), FaceIn(0.875f));
-            Prop(IngotsId, kit, P(0.879f, Outer(0.875f) + 6f), 140f);
+            Prop(IngotsId, kit, P(0.875f, Outer(0.875f) + 10.6f) + Tan(0.875f) * 2.9f, 140f);
 
             float gy = GroundY(ZhurongAt);
             var statue = Kit(ZhurongId, kit, ZhurongAt, gy - 0.6f, FaceIn(0.5f), ZhurongScale);

@@ -390,7 +390,10 @@ namespace Spiritfire.Game.Testing
             EnemyRegistry.PurgeAll();
             vitals.Heal(99999);
             var c = pool.transform.position;
-            yield return Travel(c, 6f, false);
+            // 池底在导航上是 Lava 区、四周是挖下去的陡岸（只能掉进去 / 被打进去），走路只走到靠井心那边的岸上，再一步跨进池子正中
+            // （池子的 +X 朝井外：构建器按螺旋切向摆长边）
+            var shore = c - pool.transform.right * (pool.size.x * 0.5f + 2.5f);
+            yield return Travel(shore, 1.5f, false);
             int entries0 = lavaEntries;
             float hp0 = vitals.health;
             Place(c + Vector3.up * 0.5f);
