@@ -1452,17 +1452,18 @@ if high is not None:
 # ───────────────────────────── 4b. Glow shell ─────────────────────────────
 # The weak-spot glow is a thin additive shell over the art's own sac (faces whose sac weight ≥ 0.5, pushed out 1 cm),
 # skinned to the same bones: it inflates with the sac and keeps the painted pattern; the runtime drives its opacity.
-# "glow_shell": "<group>" makes one <asset>_GlowShell (material M_<short>_Glow); a mapping {"Face": "mask", "Drum": "drum"}
-# makes one shell per region, <asset>_GlowShell_<Name> with its own material slot M_<short>_<Name>_Glow, so the runtime
-# lights each weak spot on its own (雷泽雷神: the god's face and the belly drum).
+# "glow_shell": "<group>" makes one <asset>_GlowShell (material M_<short>_Glow); a mapping {"Drum": "drum", "Face": "mask"}
+# makes one shell per region, <asset>_GlowShell<n>_<Name> (n = 1, 2 … in mapping order) with its own material slot
+# M_<short>_<Name>_Glow, so the runtime lights each weak spot on its own (雷泽雷神: the belly drum and the god's face).
+# The digit is Unity's glow channel (EnemyBody.ShellChannel); the web keys the shell by <Name> (NativeRig.glowShells).
 t = time.time()
 shells = []
 GLOW = RIG.get("glow_shell")
-for label, gname in ([("", GLOW)] if isinstance(GLOW, str) else list((GLOW or {}).items())):
+for n, (label, gname) in enumerate([("", GLOW)] if isinstance(GLOW, str) else list((GLOW or {}).items()), 1):
     activate(lods[0])
     bpy.ops.object.duplicate()
     shell = bpy.context.object
-    shell.name = f"{ASSET}_GlowShell" + (f"_{label}" if label else "")
+    shell.name = f"{ASSET}_GlowShell" + (f"{n}_{label}" if label else "")
     import bmesh
     bm = bmesh.new()
     bm.from_mesh(shell.data)

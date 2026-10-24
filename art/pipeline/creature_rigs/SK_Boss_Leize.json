@@ -1,5 +1,5 @@
 {
-  "doc": "雷泽雷神（第四章 4-4 神山海子 · 章节终局）：按「学烛阴」只建头、上身和双爪，长龙身在引擎里程序化（leize.ts 沿螺旋生成鳞片带）。Tripo 智能网格 P2.0（30000 档，实得 34479 三角面，自带 UV 与 4K 底色图，未绑骨），四视图 TV_plateau_boss_leize_v001（Tripo Studio 的 GPT Image 2.5 出图：本机 Codex 出图 403）。高 10.0 米（出水线截平的底面到冠顶），按设计「抬起的上身约 10 米」。自定义骨架按缩放落地后的切片实测（米制：front = -Y，生物的左 = +X，up = +Z）：spine1（截面 → 腹）→ spine2 → chest → neck → head（冠顶 9.8）；神面一根变形骨 mask（挂 head，脸前 x ±1.05 / z 7.0–8.75 整块刚性，发光壳 Face）；腹鼓一根变形骨 drum（挂 spine1，鼓心 y -1.7 / z 2.75 的渐变球、只取腹前，发光壳 Drum，拍腹时可缩放鼓面）；双臂 shoulder（锁骨）→ arm（肩 ±1.55 / z 5.9 → 肘 ±3.05 / 3.8）→ forearm（→ 腕 ±3.6 / 2.2，铜箍处）→ claw（四爪，爪尖 ±4.0 / 0.25）。权重用骨段距离：臂只在 |x| > 1.5、z < 5.95；从脸颊卷到肩上的两根长须整根刚性跟头（三个盒子，避开肩顶）；辫子胡须按距离跟胸 / 颈走（不跟头转）。",
+  "doc": "雷泽雷神（第四章 4-4 神山海子 · 章节终局）：按「学烛阴」只建头、上身和双爪，长龙身在引擎里程序化（leize.ts 沿螺旋生成鳞片带）。Tripo 智能网格 P2.0（30000 档，实得 34479 三角面，自带 UV 与 4K 底色图，未绑骨），四视图 TV_plateau_boss_leize_v001（Tripo Studio 的 GPT Image 2.5 出图：本机 Codex 出图 403）。高 10.0 米（出水线截平的底面到冠顶），按设计「抬起的上身约 10 米」。自定义骨架按缩放落地后的切片实测（米制：front = -Y，生物的左 = +X，up = +Z）：spine1（截面 → 腹）→ spine2 → chest → neck → head（冠顶 9.8）；神面一根变形骨 mask（挂 head，脸前 x ±1.05 / z 7.0–8.75 整块刚性，发光壳 2 号 Face）；腹鼓一根变形骨 drum（挂 spine1，鼓心 y -1.7 / z 2.75 的渐变球、只取腹前，发光壳 1 号 Drum，拍腹时可缩放鼓面）；双臂 shoulder（锁骨）→ arm（肩 ±1.55 / z 5.9 → 肘 ±3.05 / 3.8）→ forearm（→ 腕 ±3.6 / 2.2，铜箍处）→ claw（四爪，爪尖 ±4.0 / 0.25）。权重用骨段距离：臂只在 |x| > 1.5、z < 5.95；从脸颊卷到肩上的两根长须整根刚性跟头（三个盒子，避开肩顶）；辫子胡须按距离跟胸 / 颈走（不跟头转）。",
   "source": "art/source/_tripo_inbox/20261023T142313_SK_Boss_Leize.glb",
   "task": "https://studio.tripo3d.ai/zh/workspace/generate/31ec43d2-60fb-4976-9439-45464fd4e2d9",
   "height_m": 10.0,
@@ -506,8 +506,8 @@
     }
   ],
   "glow_shell": {
-    "Face": "mask",
-    "Drum": "drum"
+    "Drum": "drum",
+    "Face": "mask"
   },
   "provider_pbr": true,
   "bake_normal": false,

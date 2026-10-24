@@ -18,7 +18,8 @@ export interface NativeBody extends SkinnedBody {
    */
   readonly glowShell: THREE.MeshBasicMaterial | null;
   /**
-   * 有几块分开的发光区域时（雷泽雷神的神面、腹鼓），每块一个发光壳 <asset>_GlowShell_<名字>，按名字取（各自一个材质槽）；
+   * 有几块分开的发光区域时（雷泽雷神的腹鼓、神面），每块一个发光壳 <asset>_GlowShell<序号>_<名字>，按名字取（各自一个材质槽；
+   * 序号是 Unity EnemyBody 的发光通道）；
    * 只有一块不带名字的 <asset>_GlowShell 时为空，用 glowShell。
    */
   readonly glowShells: Readonly<Record<string, THREE.MeshBasicMaterial>>;
@@ -370,7 +371,7 @@ export function attachNativeBody(host: THREE.Object3D, asset: LoadedAsset, lodSc
   const glowShells: Record<string, THREE.MeshBasicMaterial> = {};
   model.traverse((o) => {
     const m = o as THREE.SkinnedMesh;
-    const named = m.isSkinnedMesh ? /_GlowShell(?:_(\w+))?$/.exec(m.name) : null;
+    const named = m.isSkinnedMesh ? /_GlowShell(?:\d?_(\w+))?$/.exec(m.name) : null;
     if (!named) return;
     const mat = new THREE.MeshBasicMaterial({
       map: material.map, color: 0xffa64a, transparent: true, opacity: 0, depthWrite: false,

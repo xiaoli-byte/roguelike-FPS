@@ -518,7 +518,7 @@ node scripts/plateau/playtest.mjs export
 
 **模型**
 - ~~大鹗、雷泽雷神~~：2026-10-23 已做正式模型并换进可玩版（SK_Boss_Dae、SK_Boss_Leize；出图、Tripo、骨架、体型取舍见 enemy-roster-v2「第四章补做的两个首领」）。
-  雷泽雷神按「学烛阴」只建头、上身和双爪，长龙身程序化沿螺旋贴鳞片带；神面、腹鼓各一个发光壳（单独材质槽）。还没导进 Unity。
+  雷泽雷神按「学烛阴」只建头、上身和双爪，长龙身程序化沿螺旋贴鳞片带；神面、腹鼓各一个发光壳（单独材质槽，Unity 发光通道 2 / 1）。2026-10-24 已导进 Unity（Prefab + Art QA 通过），Unity 里还没有它们的玩法代码。
 - 4-4 神山（冈仁波齐式的山尖）现在用程序化远山（`plateau/backdrop` 的 `buildMountains`）拼出来，终局背景要一个正式的远景模型或绘景。
 
 **手工关键帧**（现在全是程序化姿势函数，烘焙进 Unity 时用 `bake-native-anims.mjs` + `docs/art/ch4-move-events.json` 的时间点，但下面这些要手修）
@@ -574,4 +574,4 @@ node scripts/plateau/playtest.mjs export
 **2026-10-23 · 大鹗、雷泽雷神换正式模型**后重跑 `playtest.mjs dae leize`（`lord-dae-*.jpg`、`lord-leize-*.jpg` 已更新）：登场交还误差仍是位置 0.0000 m、朝向 0.000°、视角 0.000°
 （落回段每帧最大位移大鹗 0.120 m、雷泽雷神 0.095 m），第二次登场 0.83 / 1.03 秒滑回眼睛、误差 0；两个首领都能打完全部招式、转阶段、破防和死亡演出。招式时间点没改。
 
-**之后**：两个新模型导进 Unity；第 7 节的关键帧、特效、音效；移植 Unity 时照 `ch4-move-events.json` 和 `ch4-boss-intros.json`。
+**之后**：两个新首领的 Unity 玩法（模型已导入）；第 7 节的关键帧、特效、音效；移植 Unity 时照 `ch4-move-events.json` 和 `ch4-boss-intros.json`。

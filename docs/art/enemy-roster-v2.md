@@ -1023,7 +1023,7 @@ Tripo 智能网格（三角面 1.2 万档，实得 13636），自定义四足骨
 | 雷泽雷神 | SK_Boss_Leize | 10.0 米（截面到冠顶） | 截面半宽约 1.5（接程序化龙身）、肩高 5.9、双臂垂到 0.25 | 16：spine1 → spine2 → chest → neck → head；神面 mask、腹鼓 drum；双臂 shoulder / arm / forearm / claw | mask → M_Boss_Leize_Face_Glow、drum → M_Boss_Leize_Drum_Glow | 前倾 1.6、后仰 1.3、扭腰 1.5、低头 3.1、转头 3.3、双臂前伸 5.5、抬臂 70° 6.7、拍腹 4.6、攥爪 1.2 |
 
 **绑骨要点**
-- 发光壳支持多块（`creature_rigs` 里 `"glow_shell": {"Face": "mask", "Drum": "drum"}` → `<资产>_GlowShell_<名字>`，各自材质 `M_<短名>_<名字>_Glow`）；网页 `NativeBody.glowShells[名字]`，旧的单壳 `glowShell` 不变。
+- 发光壳支持多块（`creature_rigs` 里 `"glow_shell": {"Drum": "drum", "Face": "mask"}` → `<资产>_GlowShell<序号>_<名字>`，各自材质 `M_<短名>_<名字>_Glow`）；序号按映射顺序从 1 起，正好是 Unity `EnemyBody` 的发光通道（雷泽雷神：1 = 腹鼓、2 = 神面）；网页按名字取 `NativeBody.glowShells[名字]`，旧的单壳 `glowShell` 不变。
 - 大鹗：翅膀和身子侧面粘在一起，翼骨用 soft_limits 在 x 0.75 → 1.3 渐入、交给 chest；虎掌用刚性盒（不用 ground：尾扇尖贴地会被分给虎掌），盒子要宽到 |x| 1.8，
   否则掌外侧的爪子被切开（收腿拉伸 21 → 3.6）。
 - 雷泽雷神：两根长须从脸颊卷到肩上，整根用三个盒子刚性跟头（避开肩顶）；双臂限在 |x| > 1.3、z < 5.95，并用 soft_limits 的 exclude 把腋下以下的身侧让给躯干（抬臂拉伸 11 → 6）。
@@ -1034,6 +1034,7 @@ Tripo 智能网格（三角面 1.2 万档，实得 13636），自定义四足骨
   翅膀在体轴正面里压到和脊柱垂直再扇，头颈抬回来看前方（poses.ts 的 `daeBase`）；停着就是绑定的 V 形站姿。gait `raptor`：腿和翅膀全交给姿势表。
 - 雷泽雷神：上身放在漩涡上（截面沉在水下 0.7 米），前倾 / 低头分到脊柱各节，双爪两骨 IK 到招式给的手的目标（落点、时间点都没改）；
   姿势表 `leize` 只管头颈和鼓面。gait `titan`。两个首领都在模型加载完（start）才建。
+- 2026-10-24：用 a85a2eab 的 LOD 接缝修复（减面前焊接、锁细小部件、还原法线）重建发布，各级 LOD 开放边不多于源网格；导进 Unity（`unity_export.py` + Spiritfire ▸ Art ▸ Sync，Prefab `Art/Prefabs/Characters/SK_Boss_Dae`、`SK_Boss_Leize`，Art QA 287/287 通过、两只无警告）。Unity 侧还没有这两个首领的玩法代码和动作片段。
 
 ## 流程
 
