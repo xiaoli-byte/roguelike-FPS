@@ -15,7 +15,7 @@ namespace Spiritfire.Game
         public const float BarPercent = 11f, BarTime = 0.5f;
         const float TitleIn = 0.7f, SubDelay = 0.3f, SubIn = 0.6f, OutTime = 0.45f;
 
-        readonly VisualElement root, top, bottom, caption, rule, hint, hintTrack, hintFill;
+        readonly VisualElement root, top, bottom, scrim, caption, rule, hint, hintTrack, hintFill;
         readonly Label epithet, title, sub, hintLabel;
         float bars, barsTarget, captionAt = -1, captionUntil, captionOutAt = -1;
 
@@ -41,12 +41,23 @@ namespace Spiritfire.Game
             root.Add(top);
             root.Add(bottom);
 
+            // 名字卡底下一团淡墨（径向，边缘透明）：亮背景（1-4 的沙山、雪地）上鎏金字和小字也读得清，暗背景上几乎看不出
+            scrim = new VisualElement { name = "cinematic-caption-scrim", pickingMode = PickingMode.Ignore };
+            scrim.style.position = Position.Absolute;
+            scrim.style.left = Length.Percent(-8);
+            scrim.style.bottom = Length.Percent(BarPercent - 2);
+            scrim.style.width = Length.Percent(58);
+            scrim.style.height = Length.Percent(40);
+            UITheme.Paint(scrim, UITheme.RadialSoft, Color.black);
+            scrim.style.display = DisplayStyle.None;
+            root.Add(scrim);
+
             caption = new VisualElement { name = "cinematic-caption", pickingMode = PickingMode.Ignore };
             caption.style.position = Position.Absolute;
             caption.style.left = Length.Percent(7);
             caption.style.bottom = Length.Percent(BarPercent + 4);
             caption.style.alignItems = Align.FlexStart;
-            epithet = Text(22, UITheme.Paper2, 6);
+            epithet = Text(22, UITheme.Paper, 6);
             title = Text(92, UITheme.GoldHi, 12);
             title.AddToClassList(UITheme.TitleFont);
             if (UIFonts.Title) title.style.unityFontDefinition = FontDefinition.FromSDFFont(UIFonts.Title);
@@ -147,6 +158,7 @@ namespace Spiritfire.Game
             sub.style.display = string.IsNullOrEmpty(subText) ? DisplayStyle.None : DisplayStyle.Flex;
             epithet.style.display = string.IsNullOrEmpty(epithetText) ? DisplayStyle.None : DisplayStyle.Flex;
             caption.style.display = DisplayStyle.Flex;
+            scrim.style.display = DisplayStyle.Flex;
             captionAt = Time.unscaledTime;
             captionUntil = captionAt + Mathf.Max(0.8f, seconds);
             captionOutAt = -1;
@@ -171,6 +183,9 @@ namespace Spiritfire.Game
 
         public void Tick(float unscaledDt)
         {
+            // 同层的全屏闪光（UIFlash）每次播放都会 BringToFront：黑边 / 名字卡要压在它上面，黑边不被染色
+            var parent = root.parent;
+            if (parent != null && parent.IndexOf(root) != parent.childCount - 1) root.BringToFront();
             bars = Mathf.MoveTowards(bars, barsTarget, Mathf.Max(0, unscaledDt) / BarTime);
             Apply();
         }
@@ -196,11 +211,13 @@ namespace Spiritfire.Game
             sub.style.translate = new Translate(0, 8f * (1 - ks));
             float ko = captionOutAt >= 0 ? Mathf.Clamp01((now - captionOutAt) / OutTime) : 0;
             caption.style.opacity = 1 - ko;
+            scrim.style.opacity = Mathf.Min(kt, 1 - ko);
             if (ko >= 1)
             {
                 captionAt = -1;
                 captionOutAt = -1;
                 caption.style.display = DisplayStyle.None;
+                scrim.style.display = DisplayStyle.None;
             }
         }
 

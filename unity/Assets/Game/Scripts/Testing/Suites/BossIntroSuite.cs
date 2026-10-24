@@ -169,8 +169,10 @@ namespace Spiritfire.Game.Testing
                 var side = Vector3.Cross(Vector3.up, Flat(arena.BossSpawnPoint - arena.PlayerEntryPoint));
                 minion = EnemyRoster.Spawn("jerboa_blade", arena.PlayerEntryPoint + side * 6f, Quaternion.identity, 1, false);
             }
-            // 小怪出生的 0.7 s 先过去（出生中本来就不可选中）
+            // 小怪出生（0.7 s，出生中本来就不可选中）先走完，开演时它已经是可选中的普通状态
             yield return new WaitForSeconds(mode == Mode.Full ? 1.0f : 0.2f);
+            float s0 = Time.time;
+            while (minion && !minion.Dead && (minion.State == "spawn" || minion.Health.untargetable) && Time.time - s0 < 3f) yield return null;
             yield return RunIntro(enc, tag, mode, minion);
             if (minion) Destroy(minion.gameObject);
             Cleanup(root);
@@ -186,13 +188,15 @@ namespace Spiritfire.Game.Testing
             var lordGate = FindAnyObjectByType<FoundryLordGate>();
             if (lordGate && lordGate.encounter == enc) lordGate.Unlock(false);
             if (!enc.gameObject.activeInHierarchy) enc.gameObject.SetActive(true);
-            enc.enabled = true;
+            // 同测试场：套件开战之前停着，免得玩家一传送到入场点就被门槛触发
+            enc.enabled = false;
             var arena = enc.arena ? enc.arena : BossArena.Find(enc.bossId, enc.transform.position);
             if (!arena)
             {
                 Fail($"{enc.bossId}：场景里的首领战没有场地");
                 yield break;
             }
+            enc.arena = arena;
             Place(arena);
             BossIntroLog.Current.Forget(enc.bossId);
             yield return new WaitForSeconds(0.3f);
@@ -212,7 +216,16 @@ namespace Spiritfire.Game.Testing
             enc.arena = arena;
             enc.difficulty = 1f;
             enc.warnSeconds = 2.5f;
+            // 先停着：玩家一传送进场地，首领关自己的 Update 就会在门槛上开战，演出会在套件开始盯之前就跑起来（关键帧、计时全错位）
+            enc.enabled = false;
             return enc;
+        }
+
+        /// <summary>由套件开战（首领关在这之前一直停用，不会被门槛提前触发）</summary>
+        static void BeginEncounter(BossEncounter enc)
+        {
+            enc.enabled = true;
+            enc.Begin();
         }
 
         void Place(BossArena arena)
@@ -241,7 +254,12 @@ namespace Spiritfire.Game.Testing
             string id = enc.bossId;
             var rec = new Rec { damage0 = Runner.playerDamage, fired0 = fired };
             movesBeforeIntro = movesAfterIntro = 0;
-            enc.Begin();
+            if (enc.State != BossEncounter.Phase.Waiting)
+            {
+                Fail($"{id}：套件开战之前首领关已经是 {enc.State}（被门槛提前触发？）");
+                yield break;
+            }
+            BeginEncounter(enc);
             var d = enc.Intro;
             if (!d)
             {
@@ -253,12 +271,14 @@ namespace Spiritfire.Game.Testing
             if (script.Id != id) Fail($"{id} 用的是演出「{script.Id}」，不是专属的");
             BossBrain boss = null;
             var shotTaken = new HashSet<int>();
+            int lastShot = -1;
             bool skipTried = false;
             float t0 = Time.time;
-            while (d && !d.Released && Time.time - t0 < script.Seconds + 8f)
+            // 交还后收尾动画已经播完的话，导演在交还的下一帧就自毁了：这里只认 Released / EndReason（托管字段，物体销毁后照样能读），不拿「d 还在不在」当交还
+            while (!d.Released && Time.time - t0 < script.Seconds + 8f)
             {
                 yield return null;
-                if (!d || d.Released) break;
+                if (d.Released) break;
                 rec.frames++;
                 if (motor.inputEnabled || !motor.Frame.Locked(MotorLock.All)) rec.unlockedFrames++;
                 if (GameUI.HudHidden) rec.hudHidden = true;
@@ -281,6 +301,11 @@ namespace Spiritfire.Game.Testing
                 {
                     if (minion.State != EnemyAI.IdleState) rec.minionActive++;
                     if (!minion.Health.untargetable) rec.minionTargetable++;
+                }
+                if (d.ShotIndex != lastShot)
+                {
+                    if (mode == Mode.Full) Line($"  {d.Elapsed:F2}s 第 {d.ShotIndex + 1} 镜 {d.ShotName}（{d.Phase}）");
+                    lastShot = d.ShotIndex;
                 }
                 // 关键帧：每镜 60% 处
                 if (mode == Mode.Full && d.Phase == BossIntroDirector.Stage.Shots && d.ShotIndex >= 0 && !shotTaken.Contains(d.ShotIndex))
@@ -314,9 +339,10 @@ namespace Spiritfire.Game.Testing
                     }
                 }
             }
-            if (!d || !d.Released)
+            bool handedBack = d.Released && d.EndReason is "done" or "skipped";
+            if (!handedBack)
             {
-                Fail($"{id}：演出 {Time.time - t0:F1}s 内没有交还镜头（{(d ? $"{d.Phase} {d.ShotName}" : $"被打断：{enc.Intro}")}）");
+                Fail($"{id}：演出 {Time.time - t0:F1}s 内没有正常交还镜头（{(d.Released ? "被打断" : "还在播")}：{d.EndReason ?? "-"}，演出第 {d.Elapsed:F2}s，{d.Phase} {d.ShotName}）");
                 yield break;
             }
             float relAt = Time.time;
@@ -429,7 +455,7 @@ namespace Spiritfire.Game.Testing
             var enc = MakeEncounter(id, arena, root.transform);
             Place(arena);
             yield return new WaitForSeconds(0.2f);
-            enc.Begin();
+            BeginEncounter(enc);
             var d = enc.Intro;
             if (!d)
             {

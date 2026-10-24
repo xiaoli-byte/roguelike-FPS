@@ -111,6 +111,38 @@ namespace Spiritfire.Game.Tests
             }
         }
 
+        [Test]
+        public void LandArcAndStretch_KeepHandoffExact()
+        {
+            Assert.AreEqual(0f, IntroMath.LandLift(3f, 0f), "起点不抬（接上一镜）");
+            Assert.AreEqual(0f, IntroMath.LandLift(3f, 1f), "终点不抬（交接零误差）");
+            Assert.AreEqual(0f, IntroMath.LandLift(3f, 1.2f));
+            Assert.AreEqual(3f, IntroMath.LandLift(3f, 0.5f), 1e-5f, "中点抬满");
+            Assert.AreEqual(0f, IntroMath.LandLift(float.NaN, 0.5f), "坏输入不抬");
+            Assert.AreEqual(0f, IntroMath.LandLiftFor(1f), "太近不抬");
+            Assert.AreEqual(4f, IntroMath.LandLiftFor(200f), "最多 4 m");
+            Assert.AreEqual(1f, IntroMath.LandStretch(10f), "近的照脚本时长");
+            Assert.AreEqual(1.45f, IntroMath.LandStretch(500f), 1e-5f, "最多 1.45 倍");
+            Assert.AreEqual(1f, IntroMath.LandStretch(float.NaN));
+            float prev = 0;
+            for (float m = 0; m < 120; m += 2.5f)
+            {
+                float s = IntroMath.LandStretch(m);
+                Assert.GreaterOrEqual(s, prev, "越远越长（不回头）");
+                prev = s;
+            }
+            // 带抬升的落地：最后一帧仍然原样等于眼睛
+            var from = CamPose.Look(new Vector3(4, 3, 50), new Vector3(0, 3, 60), 36f);
+            var eye = EyeAt(0);
+            float seconds = 1.3f * IntroMath.LandStretch(50f), lift = IntroMath.LandLiftFor(50f);
+            var end = IntroMath.Land(from, eye, seconds, seconds);
+            end.position += Vector3.up * IntroMath.LandLift(lift, IntroMath.LandWeight(seconds, seconds));
+            IntroMath.Error(end, eye, out float m0, out float d0, out float f0);
+            Assert.AreEqual(0f, m0, "抬升 + 拉长后最后一帧位置误差 0");
+            Assert.AreEqual(0f, d0, 1e-3f);
+            Assert.AreEqual(0f, f0);
+        }
+
         static System.Func<int, float> Fixed(float dt) => _ => dt;
 
         static System.Func<int, float> Jittery()

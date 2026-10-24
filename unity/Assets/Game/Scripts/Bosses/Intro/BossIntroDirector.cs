@@ -231,8 +231,9 @@ namespace Spiritfire.Game
             stage = Stage.Shots;
             LockInput();
             holdEnemies = true;
-            HoldTargets();
             if (feel) feel.Calm();
+            heldTargets.Clear();
+            HoldTargets();
             GameUI.HudHidden = true;
             overlay = CinematicOverlay.Create();
             if (overlay != null) overlay.BarsTarget = 1;
@@ -273,6 +274,7 @@ namespace Spiritfire.Game
             }
             UndoModelPose();
             LockInput();
+            if (holdEnemies) HoldTargets();
             bool running = Time.timeScale > 0 && !GameStateMachine.Blocked;
             if (running) realT += udt;
             if (slow != null && Time.unscaledTime >= slowUntil) ReleaseSlow();
@@ -296,6 +298,8 @@ namespace Spiritfire.Game
         void LateUpdate()
         {
             if (stage is Stage.Done or Stage.Outro || !head || !cam) return;
+            // 小怪自己的 Update（出生走完、钻地出来）在导演之后，可能把自己改回可选中：帧末再收一次
+            if (holdEnemies) HoldTargets();
             ApplyModelPose();
             var fp = FirstPersonPose();
             CamPose pose;
@@ -304,16 +308,20 @@ namespace Spiritfire.Game
             else
             {
                 var from = skipped ? skipFrom : EvalShot(script.shots.Count - 1, script.shots[^1].seconds, true);
-                w = IntroMath.LandWeight(landT, landSeconds);
-                u = Mathf.Clamp01(landT / Mathf.Max(0.01f, landSeconds));
                 if (!hasLandStart)
                 {
                     hasLandStart = true;
                     IntroMath.Error(from, fp, out float d0, out float a0, out _);
                     LandDistance = d0;
                     LandAngle = a0;
+                    // 回程远就放慢一点；路上有矮掩体就抬着越过去（挑一条不穿东西的弧）
+                    landSeconds *= IntroMath.LandStretch(d0);
+                    landLift = PickLift(from.position, fp.position, d0);
                 }
+                w = IntroMath.LandWeight(landT, landSeconds);
+                u = Mathf.Clamp01(landT / Mathf.Max(0.01f, landSeconds));
                 pose = IntroMath.Land(from, fp, landT, landSeconds);
+                pose.position += Vector3.up * IntroMath.LandLift(landLift, w);
             }
             if (w < 1) pose = Perturb(pose, 1 - w, stage == Stage.Shots ? CurrentHandheld() : script.shots.Count > 0 ? script.shots[^1].handheld : 0);
             if (!pose.Finite) pose = fp;
@@ -333,6 +341,41 @@ namespace Spiritfire.Game
         }
 
         bool hasLandStart;
+        float landLift;
+        static readonly float[] LiftChoices = { 1f, 0f, 2f };
+
+        /// <summary>回程实际抬的高度（米，测试 / 调试读）</summary>
+        public float LandLiftMeters => landLift;
+
+        /// <summary>
+        /// 回程弧线的抬升：默认路程的 8%（<see cref="IntroMath.LandLiftFor"/>）；沿途取 9 个点查一下（0.25 m 的球碰世界几何），
+        /// 有东西挡着就换不抬 / 抬两倍，都挡着就挑挡得最少的。只在落地开始时挑一次（玩家站着不动，眼睛只转不走）
+        /// </summary>
+        float PickLift(Vector3 a, Vector3 b, float meters)
+        {
+            float lift0 = IntroMath.LandLiftFor(meters);
+            if (!(lift0 > 0.2f)) return 0f;
+            float best = lift0;
+            int fewest = int.MaxValue;
+            foreach (float m in LiftChoices)
+            {
+                float lift = lift0 * m;
+                int blocked = 0;
+                for (int i = 1; i < 10; i++)
+                {
+                    float w = i / 10f;
+                    var p = Vector3.LerpUnclamped(a, b, w) + Vector3.up * IntroMath.LandLift(lift, w);
+                    if (Physics.CheckSphere(p, 0.25f, Layers.WorldMask, QueryTriggerInteraction.Ignore)) blocked++;
+                }
+                if (blocked == 0) return lift;
+                if (blocked < fewest)
+                {
+                    fewest = blocked;
+                    best = lift;
+                }
+            }
+            return best;
+        }
 
         CamPose FirstPersonPose() => new(eye.position, eye.rotation, feel && feel.isActiveAndEnabled ? feel.Fov : startFov);
 
@@ -561,9 +604,11 @@ namespace Spiritfire.Game
             motor.SetLook(aimYaw, aimPitch);
         }
 
+        /// <summary>
+        /// 场上小怪设为不可选中（交还时复原）。每帧都扫一遍：开演时还在出生 / 钻地的小怪、演出里新刷的小怪，变回可选中的那一帧就被收进来
+        /// </summary>
         void HoldTargets()
         {
-            heldTargets.Clear();
             foreach (var e in EnemyRegistry.Live)
             {
                 if (!e || e is BossBrain || !e.Health || e.Health.Dead || e.Health.untargetable) continue;

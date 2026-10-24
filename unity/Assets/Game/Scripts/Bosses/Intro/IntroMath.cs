@@ -62,6 +62,19 @@ namespace Spiritfire.Game
         /// <summary>落回第一人称：落地第 u 秒（共 seconds 秒）从 from 到 eye 的姿态；u ≥ seconds 时原样等于 eye</summary>
         public static CamPose Land(in CamPose from, in CamPose eye, float u, float seconds) => Blend(from, eye, LandWeight(u, seconds));
 
+        /// <summary>
+        /// 落地用时按回程拉长：25 m 以内照脚本的时长，越远越长，最多 1.45 倍——3-3 那种 55 m 的回程不会 1.3 s 一闪而过（峰值速度压到原来的七成）
+        /// </summary>
+        public static float LandStretch(float meters) => float.IsFinite(meters) ? Mathf.Clamp(1f + (meters - 25f) / 65f, 1f, 1.45f) : 1f;
+
+        /// <summary>回程默认抬多高（米）：路程的 8%，最多 4 m；太近不抬</summary>
+        public static float LandLiftFor(float meters) => float.IsFinite(meters) && meters > 2.5f ? Mathf.Min(meters * 0.08f, 4f) : 0f;
+
+        /// <summary>
+        /// 回程中段的抬升（摇臂式拉回：先抬起越过路上的矮掩体，再落进眼睛）：lift × 4w(1 − w)，w ≤ 0 / ≥ 1 时正好是 0——起点接上一镜、终点交接零误差都不受影响
+        /// </summary>
+        public static float LandLift(float lift, float w) => !(w > 0) || w >= 1 || !float.IsFinite(lift) ? 0f : lift * 4f * w * (1 - w);
+
         /// <summary>两个姿态按 w 混合（位置线性、朝向球面、视角线性）。w ≤ 0 原样返回 a，w ≥ 1 原样返回 b（交接零误差靠这一条）</summary>
         public static CamPose Blend(in CamPose a, in CamPose b, float w)
         {
