@@ -143,7 +143,7 @@ namespace Spiritfire.Game.Testing
         sealed class Rec
         {
             public int frames, unlockedFrames, bossTargetable, minionActive, minionTargetable, shots;
-            public bool hudHidden, bars, weaponHidden, introDoneEarly, bossActing, skipAccepted, lockRefused, lateAccepted;
+            public bool hudHidden, toastsHidden, bars, weaponHidden, introDoneEarly, bossActing, skipAccepted, lockRefused, lateAccepted;
             public float maxAway, damage0;
             public string caption;
             public int fired0;
@@ -282,6 +282,8 @@ namespace Spiritfire.Game.Testing
                 rec.frames++;
                 if (motor.inputEnabled || !motor.Frame.Locked(MotorLock.All)) rec.unlockedFrames++;
                 if (GameUI.HudHidden) rec.hudHidden = true;
+                // 提示条层跟 HUD 一起淡出（淡出 0.15 s，开演 0.4 s 后应该已经看不见）
+                if (d.Elapsed > 0.4f && d.Phase == BossIntroDirector.Stage.Shots && ToastOpacity() is >= 0f and < 0.05f) rec.toastsHidden = true;
                 if (d.Overlay != null && d.Overlay.Bars > 0.9f) rec.bars = true;
                 if (d.Overlay != null && d.Overlay.CaptionVisible) rec.caption = d.Overlay.CaptionTitle;
                 if (d.ViewmodelCamera && d.Elapsed > 0.4f && !d.ViewmodelCamera.enabled) rec.weaponHidden = true;
@@ -351,12 +353,13 @@ namespace Spiritfire.Game.Testing
             // ── 演出期间 ──
             float dmg = Runner.playerDamage - rec.damage0;
             Line($"  演出期间：{rec.frames} 帧，输入锁着 {(rec.unlockedFrames == 0 ? "✓" : $"✗ {rec.unlockedFrames} 帧没锁")}，开枪 {fired - rec.fired0} 次，掉血 {dmg:F0}，" +
-                 $"HUD 隐藏 {(rec.hudHidden ? "✓" : "✗")}，黑边 {(rec.bars || mode != Mode.Full ? "✓" : "✗")}，武器收起 {(rec.weaponHidden || !d.ViewmodelCamera ? "✓" : "✗")}，" +
+                 $"HUD 隐藏 {(rec.hudHidden ? "✓" : "✗")}，提示条隐藏 {(rec.toastsHidden || mode != Mode.Full ? "✓" : "✗")}，黑边 {(rec.bars || mode != Mode.Full ? "✓" : "✗")}，武器收起 {(rec.weaponHidden || !d.ViewmodelCamera ? "✓" : "✗")}，" +
                  $"镜头最远离开眼睛 {rec.maxAway:F1} m，名字卡「{rec.caption}」，切镜 {d.Cuts} 次，关键帧 {rec.shots} 张");
             if (rec.unlockedFrames > 0) Fail($"{id}：演出期间有 {rec.unlockedFrames} 帧输入没锁");
             if (fired != rec.fired0) Fail($"{id}：演出期间开了枪");
             if (dmg > 0.01f) Fail($"{id}：演出期间玩家掉了 {dmg:F0} 血");
             if (!rec.hudHidden) Fail($"{id}：演出期间 HUD 没隐藏");
+            if (mode == Mode.Full && !rec.toastsHidden) Fail($"{id}：演出期间提示条（toast）层没隐藏");
             if (mode == Mode.Full)
             {
                 if (!rec.bars) Fail($"{id}：没有拉出上下黑边");
@@ -423,13 +426,14 @@ namespace Spiritfire.Game.Testing
             var vm = d ? d.ViewmodelCamera : FindViewmodelCamera();
             bool vmOk = !vm || (vm.enabled && vm.transform.localRotation == Quaternion.identity && vm.transform.localPosition == Vector3.zero);
             yield return new WaitForSecondsRealtime(0.5f);
-            float hud = HudOpacity();
+            float hud = HudOpacity(), toasts = ToastOpacity();
             bool overlayGone = !HasCinematicLayer();
-            Line($"  收尾：导演退场 {(!d ? "✓" : "✗")}，枪模相机复位 {(vmOk ? "✓" : "✗")}，HUD 不透明度 {hud:F2}，黑边 / 名字卡移除 {(overlayGone ? "✓" : "✗")}，" +
+            Line($"  收尾：导演退场 {(!d ? "✓" : "✗")}，枪模相机复位 {(vmOk ? "✓" : "✗")}，HUD 不透明度 {hud:F2}，提示条 {toasts:F2}，黑边 / 名字卡移除 {(overlayGone ? "✓" : "✗")}，" +
                  $"存档记「看过」{(BossIntroLog.Current.Seen(id) ? "✓" : "✗")}");
             if (d) Fail($"{id}：收尾动画 2.5 s 后导演还在");
             if (!vmOk) Fail($"{id}：第一人称武器没抬回来（枪模相机没复位）");
             if (hud >= 0 && hud < 0.9f) Fail($"{id}：HUD 没淡回来（{hud:F2}）");
+            if (toasts >= 0 && toasts < 0.9f) Fail($"{id}：提示条层没淡回来（{toasts:F2}）");
             if (!overlayGone) Fail($"{id}：黑边 / 名字卡没移除");
             if (GameUI.HudHidden) Fail($"{id}：HudHidden 还开着");
             if (!BossIntroLog.Current.Seen(id)) Fail($"{id}：看完没记进存档");
@@ -519,6 +523,13 @@ namespace Spiritfire.Game.Testing
                 if (c != cam && (c.cullingMask & (1 << Layers.FirstPerson)) != 0)
                     return c;
             return null;
+        }
+
+        static float ToastOpacity()
+        {
+            var ui = UIRoot.Instance;
+            var c = ui ? ui.Layer(UILayer.Toast)?.Q("toasts") : null;
+            return c != null ? c.resolvedStyle.opacity : -1f;
         }
 
         static float HudOpacity()

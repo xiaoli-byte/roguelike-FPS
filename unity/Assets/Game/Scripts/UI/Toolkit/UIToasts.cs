@@ -28,6 +28,7 @@ namespace Spiritfire.Game
         readonly VisualElement root;
         readonly List<Item> items = new();
         readonly List<Item> leaving = new();
+        float shown = 1, lastTick = -1;
 
         public UIToasts(VisualElement parent)
         {
@@ -110,6 +111,14 @@ namespace Spiritfire.Game
         /// <summary>每帧（UIRoot，不缩放时间）</summary>
         public void Tick(float now)
         {
+            // 电影模式（GameUI.HudHidden：首领登场演出）整层淡出、结束后淡回，同 HUD 层（出 0.15 s、进 0.45 s）；计时照走
+            float target = GameUI.HudHidden ? 0 : 1, dt = lastTick < 0 ? 0 : Mathf.Max(0, now - lastTick);
+            lastTick = now;
+            if (shown != target)
+            {
+                shown = Mathf.MoveTowards(shown, target, dt / (target > shown ? 0.45f : 0.15f));
+                root.style.opacity = shown;
+            }
             for (int i = items.Count - 1; i >= 0; i--)
                 if (now >= items[i].until) Dismiss(items[i], false, now);
             foreach (var it in items)

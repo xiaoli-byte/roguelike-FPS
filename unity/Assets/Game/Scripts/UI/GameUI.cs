@@ -32,7 +32,7 @@ namespace Spiritfire.Game
         public static string StageText { get; private set; } = "";
         public static string ObjectiveText { get; private set; } = "";
 
-        /// <summary>电影模式：HUD 层整体淡出（首领登场演出 <see cref="BossIntroDirector"/> 期间；演出结束 / 被打断时设回 false）</summary>
+        /// <summary>电影模式：HUD 层和提示条（<see cref="UIToasts"/>）整体淡出（首领登场演出 <see cref="BossIntroDirector"/> 期间；演出结束 / 被打断时设回 false）</summary>
         public static bool HudHidden { get; set; }
 
         /// <summary>提示（屏幕左侧往下叠，最多 4 条，和上一条相同就合并 ×N）；color = 强调色，缺省鎏金</summary>
