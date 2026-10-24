@@ -22,7 +22,8 @@ namespace Spiritfire.Art.Editor.Levels
     ///
     /// 动态环境是冰面（L8）：整片湖按行切成长条 SurfaceZone（<see cref="LevelKit.IceSheet"/>），冲刺余速在冰上滑出约 8 m；
     /// 两处冰窟窿和三个冰钓窟窿是开放水面（WaterVolume，涉水减速，能拿来刹车），大冰窟窿围一圈冰窟边缘段（掩体 + 预警）。
-    /// 边界（D14，没有空气墙）：游玩区是一个椭圆，界外 5 m 内陡升成 18–25 m 的雪崖，崖顶外是雪峰——比任何能站的面高 10 m 以上，L5 防越界由地形保证；
+    /// 边界（D14，没有空气墙）：游玩区是一个起伏的椭圆，界外 8–13 m 内陡升成 16–30 m 的雪崖（崖面切几级够不着的窄雪台），边界外 2 m 起就叠雪峰——
+    /// 比任何能站的面高 10 m 以上，L5 防越界由地形保证；
     /// 软边界（风雪推回、白化）沿同一个遮罩只做兜底。场景只放环境和标记（D17 / L1）。
     /// 生成：Spiritfire ▸ Levels ▸ Build 2-3 瑶池冰湖（或 bridge.sh level 2-3）。冒烟：bridge.sh playtest map-2-3（Map23Suite）。
     /// </summary>
@@ -33,8 +34,8 @@ namespace Spiritfire.Art.Editor.Levels
         public const string ScenePath = "Assets/Scenes/L2_3_Yaochi.unity";
         const string Name = "L2_3";
 
-        // 高度场里 Base 米 = 世界 y 0（冰面）；地形外缘落到远景地面 FarY
-        const float Base = 14f, HeightRange = 72f, FarY = -3f;
+        // 高度场里 Base 米 = 世界 y 0（冰面）；地形外缘落到远景地面 FarY。最高处 ≈ 岸 5 + 崖 30 + 雪峰 36 + Base 14 = 85 m，留余量不削峰顶
+        const float Base = 14f, HeightRange = 100f, FarY = -3f;
         static readonly Vector2 Origin = new(-256, -256), Size = new(512, 512);
         /// <summary>雾（主题默认 25 / 210 m）：调远，出生点看 190 m 外的瑶台还剩轮廓</summary>
         const float FogStart = 50f, FogEnd = 340f;
@@ -55,9 +56,26 @@ namespace Spiritfire.Art.Editor.Levels
         const float LakeY = 0f, LakeShoreWidth = 12f, LakeIrregular = 0.06f;
         const int LakeSeed = 23;
         static readonly Vector2 LakeC = new(0, 0), LakeR = new(84, 58);
-        /// <summary>游玩区椭圆（外面是连续雪崖）</summary>
-        static readonly Vector2 EnvC = new(0, 4), EnvR = new(142, 106);
+        /// <summary>游玩区椭圆（外面是连续雪崖），半径起伏 ±4%（不是一圈圆规画的看台）</summary>
+        static readonly Vector2 EnvC = new(0, 4), EnvR = new(146, 108);
+        const float EnvIrregular = 0.04f;
         static readonly Vector2[] Envelope = BuildEnvelope();
+
+        // ── 雪岭（界外）：坡脚碎石坡 → 崖面 → 窄雪台 → 雪峰 ──
+        /// <summary>坡脚内侧碎石坡：高、宽（米，能走）</summary>
+        const float RimApron = 0.9f, RimApronWidth = 3f;
+        /// <summary>崖高（坡脚以上）与崖面宽（界外米数）的范围：低频噪声在两端之间变</summary>
+        const float CliffMin = 16f, CliffMax = 30f, FaceMin = 8f, FaceMax = 13f;
+        /// <summary>崖面的沟：崖面宽按中频噪声最多放宽 FaceGully（坡脚不动，崖面上部往后退；只放宽不收窄，陡坎不会窄过高度格）</summary>
+        const float FaceGully = 0.45f;
+        /// <summary>
+        /// 窄雪台：坡脚以上 LedgeFirst 米起每 LedgeStep 米一级（都比二段跳 2.7 m 高得多），陡坎占一级的比例在两值之间变（台面宽窄不一）。
+        /// 陡坎水平宽要 ≥ 1 m（两个 0.5 m 高度格），不然网格在斜着走的坎上会锯齿成一排尖刺。
+        /// 第一级的高度沿边界在 LedgeFirst … LedgeFirst + LedgePhase 之间慢慢漂，雪台只出现在约一半的崖段（不是一圈圈同心的看台）
+        /// </summary>
+        const float LedgeFirst = 6f, LedgePhase = 2f, LedgeStep = 5.5f, LedgeRiserMin = 0.55f, LedgeRiserMax = 0.7f;
+        /// <summary>雪峰：边界外 PeakStart 米起、PeakRun 米内升满，再高 PeakMin–PeakMax 米（山脊噪声）</summary>
+        const float PeakStart = 2f, PeakRun = 40f, PeakMin = 6f, PeakMax = 36f;
 
         // ───────────── 场地 ─────────────
         static readonly Vector2 Spawn = new(0, -88), SiteA = new(0, -10), SiteB = new(-104, 4), SiteC = new(96, -6), SiteD = new(0, 78), SiteG = new(-44, 18);
@@ -73,6 +91,8 @@ namespace Spiritfire.Art.Editor.Levels
         static readonly Vector2 PavC = new(0, 8);
         /// <summary>白玉台半径、侧壁宽、台面高；湖心亭 ×1.4（ch2-kit 建议），底在冰面下 0.2 m，自带台基被白玉台包住</summary>
         const float PavR = 11f, PavEdge = 1.2f, PavY = 3.2f, PavScale = 1.4f, PavBase = -0.2f, PavHeight = 11f;
+        /// <summary>白玉台台沿的挡土墙：墙心半径、每段的方位间隔（度，东西两道坡处留口）、横 / 纵缩放（栏板高出台面约 1 m）、底埋进冰面的米数</summary>
+        const float PavWallR = 11.8f, PavWallStep = 30f, PavWallSx = 0.9f, PavWallSy = 0.69f, PavWallSink = 0.3f;
         /// <summary>小岛：中心、半径、高出冰面、噪声种子（北小岛、南小岛）</summary>
         static readonly (Vector2 c, float r, float h, int seed)[] Islets = { (new Vector2(24, 26), 6f, 1.7f, 31), (new Vector2(-26, -14), 5.5f, 1.5f, 32) };
 
@@ -92,6 +112,8 @@ namespace Spiritfire.Art.Editor.Levels
         // ── C 船屋台 ──
         static readonly Vector2 BoatC = new(124, 6), BoatHalf = new(7, 6);
         const float BoatRise = 2.8f, BoatEdge = 0.9f;
+        /// <summary>东岸灯塔（离崖 ≥ 8 m，椭圆起伏加大后往里挪）</summary>
+        static readonly Vector2 LighthouseAt = new(118, -28);
 
         // ── D 瑶台：半圆台（平边朝南、对着湖）+ 两层玉阶 ──
         static readonly Vector2 YaoC = new(0, 68);
@@ -222,12 +244,20 @@ namespace Spiritfire.Art.Editor.Levels
 
         static Vector2[] BuildEnvelope()
         {
+            // 角向噪声归一到 ±1 再乘起伏比例：起伏真的到 ±4%（噪声本身很少超过 ±0.5）
             const int n = 72;
+            var wob = new float[n];
+            float peak = 1e-4f;
+            for (int i = 0; i < n; i++)
+            {
+                wob[i] = Loop(i * 2 * Mathf.PI / n, 7, 3, 19);
+                peak = Mathf.Max(peak, Mathf.Abs(wob[i]));
+            }
             var pts = new Vector2[n];
             for (int i = 0; i < n; i++)
             {
                 float a = i * 2 * Mathf.PI / n;
-                float k = 1 + 0.018f * Loop(a, 7, 2, 19);
+                float k = 1 + EnvIrregular * wob[i] / peak;
                 pts[i] = EnvC + new Vector2(Mathf.Cos(a) * EnvR.x, Mathf.Sin(a) * EnvR.y) * k;
             }
             return pts;
@@ -255,6 +285,51 @@ namespace Spiritfire.Art.Editor.Levels
 
         /// <summary>可玩区遮罩（世界 XZ，软边界与 L5 共用）：等值线 0.2 落在崖面上（界外约 1.7 m）</summary>
         static float Playable(Vector2 p) => Smooth(-4, 4, Inside(p));
+
+        /// <summary>
+        /// 界外的雪岭，相对岸上地面（ins = 离边界的有符号距离，界内为正）：坡脚内侧 3 m 碎石坡（0.9 m，能走）→ 界外 8–13 m 内陡升 16–30 m 的崖
+        /// （崖高、崖面宽是同一个低频噪声，宽跟着高走，崖面始终陡）→ 边界外 2 m 起就叠雪峰（再高 6–36 m，山脊噪声），崖顶不留一圈平台。
+        /// 坡脚以上 6–8 m 起按 5.5 m 一级切窄雪台（台面平、陡坎是岩，约一半崖段有）：最低一级比坡脚高 6 m 以上，二段跳（2.7 m）够不着，级与级之间也跳不上去；
+        /// 只切崖高以内，崖顶以上的雪峰不切——远景没有削平的台面。崖面宽再按中频噪声放宽（沟），雪台跟着前后错动，不是一圈圈同心的看台。
+        /// </summary>
+        static float Rim(Vector2 p, float ins) => Rim(p, ins, out _);
+
+        /// <summary>
+        /// 同上，另给 lip = 雪台台沿的积雪带（0–1）：台面前段 + 下面那道陡坎的上半截。台沿是 0.5 m 高度格上斜着走的锐边，网格会锯齿成一排小三角，
+        /// 坡度规则会把其中平的几片涂成雪、陡的涂成岩（一排白牙）；这一带统一给雪，台沿从下面看是一条连续的雪线
+        /// </summary>
+        static float Rim(Vector2 p, float ins, out float lip)
+        {
+            var (cliffH, _) = CliffAt(p);
+            float faceW = FaceWidth(p);
+            // 崖面剖面近乎直线（直线 65% + S 形 35%）：每级雪台的水平宽差不多，坡脚一离开碎石坡就陡
+            float t = Mathf.Clamp01(-ins / faceW);
+            float face = cliffH * Mathf.Lerp(t, t * t * (3 - 2 * t), 0.35f);
+            float peakH = Mathf.Lerp(PeakMin, PeakMax, Ridged(p, 90, 4, 37));
+            float rel = face + peakH * Smooth(-PeakStart, -PeakStart - PeakRun, ins);
+            // 雪台只在一部分崖段出现，第一级高度沿边界漂；离下一道台沿还差多少（未切台的高度，米）：台沿之上 above、之下 below
+            float first = LedgeFirst + LedgePhase * Smooth(-0.4f, 0.4f, Fbm(p, 55, 2, 51));
+            float keep = Smooth(-0.2f, 0.1f, Fbm(p, 70, 2, 49)) * (1 - Smooth(cliffH - 2, cliffH + 2, rel)), above = 99, below = first - rel;
+            if (rel > first)
+            {
+                float riser = Mathf.Lerp(LedgeRiserMin, LedgeRiserMax, Smooth(-0.4f, 0.4f, Fbm(p, 35, 2, 47)));
+                float q = (rel - first) / LedgeStep, frac = q - Mathf.Floor(q);
+                (above, below) = (frac * LedgeStep, (1 - frac) * LedgeStep);
+                rel = Mathf.Lerp(rel, first + Terrace(rel - first, LedgeStep, riser), keep);
+            }
+            lip = keep * Mathf.Max(1 - Smooth(1.6f, 3f, above), 1 - Smooth(0.6f, 2f, below)) * Smooth(0, -1.5f, ins);
+            return RimApron * Smooth(RimApronWidth, 0, ins) + rel;
+        }
+
+        /// <summary>崖高（坡脚以上 16–30 m）与崖面宽（8–13 m）：同一个低频噪声沿边界慢慢变，宽跟着高走——崖面坡度处处差不多（约 63–66°，含雪峰更陡）</summary>
+        static (float height, float face) CliffAt(Vector2 p)
+        {
+            float n = Smooth(-0.4f, 0.4f, Fbm(p, 80, 2, 31));
+            return (Mathf.Lerp(CliffMin, CliffMax, n), Mathf.Lerp(FaceMin, FaceMax, n));
+        }
+
+        /// <summary>崖面实际的水平宽：CliffAt 的宽再按中频噪声放宽（沟）</summary>
+        static float FaceWidth(Vector2 p) => CliffAt(p).face * (1 + FaceGully * Smooth(-0.1f, 0.45f, Fbm(p, 22, 3, 45)));
 
         /// <summary>矩形台的遮罩（台面 1、侧壁 edge 米内落到 0）</summary>
         static float RectMask(Vector2 p, Vector2 c, Vector2 half, float edge) =>
@@ -358,13 +433,8 @@ namespace Spiritfire.Art.Editor.Levels
             }
 
             // ── 雪崖 + 雪峰（界外）──
-            float ins = Inside(p);
-            if (ins < 3f)
-            {
-                float rimH = 18f + 7f * (Fbm(p, 50, 2, 31) * 0.5f + 0.5f);
-                h = Mathf.Max(h, land + LevelKit.RimProfile(ins, 0.9f, 3f, rimH, 5f));
-                if (ins < -6f) h += (4f + 20f * Ridged(p, 90, 4, 37)) * Smooth(-6, -34, ins);
-            }
+            float ins = Inside(p), lip = 0;
+            if (ins < RimApronWidth) h = Mathf.Max(h, land + Rim(p, ins, out lip));
 
             // ── 地形外缘 36 m 内落回远景地面 ──
             var local = p - Origin;
@@ -376,12 +446,15 @@ namespace Spiritfire.Art.Editor.Levels
             float plat = Mathf.Max(Mathf.Max(Mathf.Max(pav, stage), Mathf.Max(boat, yao)), Mathf.Max(Mathf.Max(dais1, dais2), jetty));
             float tops = Mathf.Max(Mathf.Max(Smooth(0.85f, 0.99f, pav), Smooth(0.85f, 0.99f, Mathf.Max(stage, boat))),
                 Mathf.Max(Smooth(0.85f, 0.99f, Mathf.Max(dais1, dais2)), Smooth(0.85f, 0.99f, jetty)));
+            // 冻土（带圆点）只留一点份额读路：岸带 0.45、台面 0.5、坡道 0.45、瑶台 0.35，多出来的给雪（这些面上雪的倾向拉满）；出生平台是开场第一眼，雪 0.8
+            float yaoTop = Smooth(0.85f, 0.99f, yao), shoreBand = shoreMask * (1 - plat);
             s.fluid = lake * (1 - Mathf.Max(plat, isleBody)) * (1 - hole) * (1 - rampAny);
-            s.shore = Mathf.Max(shoreMask * 0.8f * (1 - plat), hole);
-            s.packed = Mathf.Max(Mathf.Max(tops * 0.85f, rampAny * 0.7f), Smooth(0.85f, 0.99f, yao) * 0.6f);
-            s.sand = Mathf.Max(isleTop * 0.85f, pad * 0.4f);
-            float cliffBand = Smooth(0.5f, -1.5f, ins) * (1 - Smooth(-7, -10, ins));
-            s.rock = Mathf.Max(cliffBand, isleBody * (1 - isleTop) * 0.9f);
+            s.shore = Mathf.Max(shoreBand * 0.45f, hole);
+            s.packed = Mathf.Max(Mathf.Max(tops * 0.5f, rampAny * 0.45f), yaoTop * 0.35f);
+            float snowFill = Mathf.Max(Mathf.Max(shoreBand, tops), Mathf.Max(rampAny, yaoTop));
+            s.sand = Mathf.Max(Mathf.Max(isleTop * 0.85f, pad * 0.8f), Mathf.Max(snowFill, lip));
+            // 雪岭不再强制岩带：交给章节的坡度规则（陡坎是岩、缓处积雪）；窄雪台的台沿一带直接给雪（见 Rim）
+            s.rock = isleBody * (1 - isleTop) * 0.9f;
             return s;
         }
 
@@ -476,6 +549,7 @@ namespace Spiritfire.Art.Editor.Levels
                 rep.Line($"高度：祭坛台 {OnGround(StageC).y:F1}（岸 {OnGround(SiteB).y:F1}），船屋台 {OnGround(BoatC + new Vector2(-2, -2)).y:F1}（岸 {OnGround(SiteC).y:F1}），" +
                          $"码头头 {OnGround(Jetties[0].tip + new Vector2(1, 0)).y:F1} / {OnGround(Jetties[1].tip + new Vector2(1, 0)).y:F1}，" +
                          $"瑶台 {OnGround(SiteD).y:F1}，一层 / 二层玉阶 {OnGround(new Vector2(-12, 90)).y:F1} / {OnGround(new Vector2(-5, 92)).y:F1}");
+                ReportRim(rep);
                 LevelValidator.Run(Spec(pavTop, wayshrineTop, lighthouseTop, exitTop, mastTop), rep);
                 CheckSceneContents(rep, scene, ice, waters, portal);
                 rep.Line(rep.failures == 0 ? "全部通过" : $"不合格 {rep.failures} 项");
@@ -489,6 +563,42 @@ namespace Spiritfire.Art.Editor.Levels
             {
                 ts = null;
             }
+        }
+
+        /// <summary>
+        /// 雪岭实测（报告用）：边界半径的起伏、沿边界一圈的崖高（坡脚 → 崖面顶，含已经叠上的雪峰）、最低雪台离坡脚的高度；
+        /// 高的件离边界（坡脚）的距离——角楼、灯塔要 ≥ 8 m（上不去也不贴崖）
+        /// </summary>
+        static void ReportRim(LevelKit.Report rep)
+        {
+            float wMin = float.MaxValue, wMax = float.MinValue, hMin = float.MaxValue, hMax = float.MinValue;
+            foreach (var q in Envelope)
+            {
+                var d = q - EnvC;
+                float k = Mathf.Sqrt(d.x * d.x / (EnvR.x * EnvR.x) + d.y * d.y / (EnvR.y * EnvR.y)) - 1;
+                (wMin, wMax) = (Mathf.Min(wMin, k), Mathf.Max(wMax, k));
+                // 沿径向往外走到离边界一个崖面宽处（椭圆斜边上径向不是法向，按 Inside 量）
+                float w = FaceWidth(q), s = 0;
+                while (s < 40 && Inside(q + d.normalized * s) > -w) s += 0.5f;
+                float rise = OnGround(q + d.normalized * s).y - OnGround(q).y;
+                (hMin, hMax) = (Mathf.Min(hMin, rise), Mathf.Max(hMax, rise));
+            }
+            rep.Line($"雪岭：边界半径 {EnvR.x:F0} × {EnvR.y:F0}，起伏 {wMin * 100:+0.0;-0.0}% … {wMax * 100:+0.0;-0.0}%；坡脚 → 崖面顶 {hMin:F0}–{hMax:F0} m；" +
+                     $"窄雪台从坡脚以上 {LedgeFirst:F0}–{LedgeFirst + LedgePhase:F0} m 起每级 {LedgeStep:F1} m（二段跳 2.7 m 够不着）");
+            var tall = new (string name, Vector2 at, float r, float min)[]
+            {
+                ("灯塔", LighthouseAt, 3.2f, 8), ("西角楼", TowerAt[0], 3.5f, 8), ("东角楼", TowerAt[1], 3.5f, 8),
+                ("出口祭坛", ShrineAt, 5.3f, 4), ("船屋台", BoatC + new Vector2(BoatHalf.x + BoatEdge, 0), 0, 4),
+                ("祭坛台", StageC - new Vector2(StageHalf.x + StageEdge, 0), 0, 4), ("出生平台", Spawn - new Vector2(0, SpawnPadR), 0, 4),
+            };
+            var parts = new List<string>();
+            foreach (var (name, at, r, min) in tall)
+            {
+                float gap = Inside(at) - r;
+                parts.Add($"{name} {gap:F1} m");
+                if (gap < min) rep.Fail($"{name}离边界（坡脚）只有 {gap:F1} m（应 ≥ {min:F0} m）");
+            }
+            rep.Line($"离边界（坡脚）：{string.Join("，", parts)}");
         }
 
         static void Review(Vector3 spawnAt, Quaternion spawnRot, Vector3 pavTop, Vector3 wayshrineTop, Vector3 lighthouseTop, Vector3 exitTop, Vector3 mastTop)
@@ -573,11 +683,21 @@ namespace Spiritfire.Art.Editor.Levels
             return waters;
         }
 
-        /// <summary>A 湖心：湖心亭（×1.4，台阶朝东西）、白玉台上的冰灯、两座小岛上的雪松、冰面上冻住的小船、冰棱碎块、桅杆残段；返回亭顶（地标视线目标）</summary>
+        /// <summary>
+        /// A 湖心：湖心亭（×1.4，台阶朝东西）、白玉台台沿一圈白玉挡土墙（10 段，坡道处留口）、台上的冰灯、两座小岛上的雪松、冰面上冻住的小船、冰棱碎块、桅杆残段；
+        /// 返回亭顶（地标视线目标）
+        /// </summary>
         static Vector3 BuildLakeCentre(Transform kit, Transform props)
         {
             var pav = PutAt(PavilionId, kit, PavC, LakeY + PavBase, 0, PavScale);
             if (pav && !IsPlaceholder(pav)) pav.name = $"{PavilionId} (Lake Pavilion)";
+            // 白玉台台沿：每 30° 一段白玉挡土墙，东（0°）西（180°）两道坡处留口，共 10 段；正面朝外，底埋进冰面
+            for (float a = 0; a < 360f - 1f; a += PavWallStep)
+            {
+                if (Mathf.Abs(Mathf.DeltaAngle(a, 0)) < 1f || Mathf.Abs(Mathf.DeltaAngle(a, 180)) < 1f) continue;
+                var dir = new Vector2(Mathf.Cos(a * Mathf.Deg2Rad), Mathf.Sin(a * Mathf.Deg2Rad));
+                PutAt(JadeWallId, kit, PavC + dir * PavWallR, LakeY - PavWallSink, 90f - a, new Vector3(PavWallSx, PavWallSy, 1));
+            }
             foreach (float x in new[] { -9.2f, 9.2f })
             foreach (float dz in new[] { -3.6f, 3.6f })
                 PutAt(LanternId, props, new Vector2(x, PavC.y + dz), PavY - 0.05f, x < 0 ? 90 : -90);
@@ -654,7 +774,7 @@ namespace Spiritfire.Art.Editor.Levels
             PutAt(BoneLanternId, props, new Vector2(76.5f, 17.7f), JettyTop(1, 76.5f) - 0.05f, 0);
             foreach (var (q, yaw) in new[] { (new Vector2(74, -13), 90f), (new Vector2(76, 7), 80f), (new Vector2(72, -29), 95f), (new Vector2(75, 22), 85f) })
                 PutAt(SkiffId, props, q, LakeY - 0.35f, yaw, 1.4f);
-            var lighthouseAt = new Vector2(124, -30);
+            var lighthouseAt = LighthouseAt;
             var lh = Put(LighthouseId, kit, lighthouseAt, -50, 1, 0.2f);
             Put(YurtId, props, new Vector2(112, 22), -120, 1, 0.1f);
             Put(FishRackId, props, new Vector2(104, -30), 15, 1, 0.05f);
@@ -718,7 +838,8 @@ namespace Spiritfire.Art.Editor.Levels
                 float k = Mathf.Max(1 - Smooth(PavR, PavR + 3, Vector2.Distance(p, PavC)), RectMask(p, StageC, StageHalf + Vector2.one * 2, 2));
                 k = Mathf.Max(k, Mathf.Max(RectMask(p, BoatC, BoatHalf + Vector2.one * 2, 2), YaoMask(p)));
                 foreach (var (c, r, _) in Holes) k = Mathf.Max(k, 1 - Smooth(r, r + 3, Vector2.Distance(p, c)));
-                return 1 - k;
+                // 界外不撒：崖面的窄雪台是平的，撒上去会排成一行行冰棱
+                return (1 - k) * Smooth(-1, 1, Inside(p));
             }
             var details = LevelKit.ScatterPresets.Details(theme.key);
             foreach (var r in details)
@@ -733,12 +854,12 @@ namespace Spiritfire.Art.Editor.Levels
             var avoid = new List<(Vector2 c, float r)>
             {
                 (Spawn, 16), (SiteB, 18), (SiteC, 18), (StageC, 16), (BoatC, 15), (SiteD, 30), (Dais2C, 22), (SiteG, 10),
-                (CampPoi, 16), (JunkPoi, 8), (new Vector2(124, -30), 9), (new Vector2(112, 22), 6), (TowerAt[0], 7), (TowerAt[1], 7),
+                (CampPoi, 16), (JunkPoi, 8), (LighthouseAt, 9), (new Vector2(112, 22), 6), (TowerAt[0], 7), (TowerAt[1], 7),
             };
             foreach (var a in Anchors) avoid.Add((a.at, 6));
             var sight = new List<(Vector2 a, Vector2 b)>
             {
-                (PavC, new Vector2(-124.5f, 4)), (PavC, new Vector2(124, -30)), (new Vector2(0, 46), ShrineAt),
+                (PavC, new Vector2(-124.5f, 4)), (PavC, LighthouseAt), (new Vector2(0, 46), ShrineAt),
             };
             foreach (var (a, b) in extraSight) sight.Add((new Vector2(a.x, a.z), new Vector2(b.x, b.z)));
             pines.where = pt =>
