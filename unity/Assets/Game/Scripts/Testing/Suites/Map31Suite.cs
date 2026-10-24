@@ -326,7 +326,9 @@ namespace Spiritfire.Game.Testing
                 if (vitals.Dead) vitals.Revive();
                 if (vitals.health < vitals.MaxHealth * 0.4f) vitals.Heal(99999);
                 if (weapons.Active != null) weapons.Active.reserve = weapons.Active.def.reserve;
-                var target = NearestEnemy(eye.position);
+                // 潜在熔岩里的火鼍不当目标：打不到，凑过去（绕视线的落点离它 8–12 m）正好落在它既不扑（≤ 7 m）也不上岸（> 11 m 躲 8 s）的距离上，
+                // 会一直耗到超时——当作场上没有能打的，走下面的引怪分支
+                var target = NearestFightable(eye.position);
                 if (!target)
                 {
                     weapons.testFire = false;
@@ -403,6 +405,28 @@ namespace Spiritfire.Game.Testing
                 if (!chest) Fail($"「{site.title}」肃清后没有出现宝箱（{site.reward}）");
             }
         }
+
+        /// <summary>最近的能打的敌人：同 <see cref="PlaytestSuite.NearestEnemy"/>，但跳过潜在熔岩里的熔岩生物（火鼍）</summary>
+        static Damageable NearestFightable(Vector3 from)
+        {
+            Damageable best = null;
+            float bestD = float.MaxValue;
+            foreach (var d in FindObjectsByType<Damageable>())
+            {
+                if (d.Dead || d.untargetable || LurksInLava(d)) continue;
+                float dist = Vector3.Distance(from, d.transform.position);
+                if (dist < bestD)
+                {
+                    bestD = dist;
+                    best = d;
+                }
+            }
+            return best;
+        }
+
+        /// <summary>熔岩生物（<see cref="ILavaDweller"/>）此刻泡在熔岩里</summary>
+        static bool LurksInLava(Damageable d) =>
+            d.GetComponent<EnemyAI>() is ILavaDweller w && w.SwimsInLava && LavaField.IsLava(d.transform.position);
 
         /// <summary>场地里离熔岩最远的非熔岩导航点（中心 + 5 / 10 / 15 / 20 m 四圈各 12 个方向）</summary>
         static Vector3 LureSpot(EncounterSite site)
