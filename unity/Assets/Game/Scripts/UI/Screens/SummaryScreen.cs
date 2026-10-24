@@ -108,7 +108,9 @@ namespace Spiritfire.Game
             glow.style.unityBackgroundImageTintColor = s.victory ? ScreenKit.A(UITheme.Gold, 0.32f) : ScreenKit.A(UITheme.Cinnabar, 0.36f);
             string word = s.victory ? "胜利" : "败北";
             for (int i = 0; i < titleChars.Count; i++) titleChars[i].text = i < word.Length ? word[i].ToString() : "";
-            epitaph.text = s.victory ? "三章尽破，烈焰长明" : "魂火未熄，再入轮回";
+            // 试玩版（RunPlan.DemoEnd）打完的胜利：止步关不是完整版的最后一关
+            bool demoWin = s.victory && RunPlan.Get(s.stageCode) is { } at && !RunPlan.IsLast(at);
+            epitaph.text = !s.victory ? "魂火未熄，再入轮回" : demoWin ? "首章已破，余火待燃" : "三章尽破，烈焰长明";
 
             ScreenKit.SetCrest(crest, hero);
             heroName.text = hero != null ? $"{hero.name} · {hero.title}" : "无名侠客";
@@ -169,8 +171,8 @@ namespace Spiritfire.Game
         /// <summary>止步处：「止步于 第一章 · 第 2 关」/ 首领关 / 胜利「已击败全部首领」</summary>
         public static string Reach(RunSummary s)
         {
-            if (s.victory) return "已击败全部首领";
             var spec = RunPlan.Get(s.stageCode);
+            if (s.victory) return spec == null || RunPlan.IsLast(spec) ? "已击败全部首领" : $"试玩通关 · {spec.Label}";
             string stageNo = spec != null && spec.IsBoss ? "首领关" : $"第 {s.stage + 1} 关";
             string where = $"第{ScreenKit.Cn(Mathf.Max(1, s.chapter))}章 · {stageNo}";
             return $"止步于 {where}{(spec != null ? $"（{spec.title}）" : "")}";

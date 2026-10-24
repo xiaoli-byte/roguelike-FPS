@@ -163,7 +163,9 @@ namespace Spiritfire.Game
             var c = CareerStats.Current;
             if (c == null || c.Runs <= 0)
             {
-                ScreenKit.Text("sf-menu__stat sf-menu__stat--first", stats, $"尚无出征记录。三章 {RunPlan.Stages.Count} 关，击败三位首领即可通关。");
+                ScreenKit.Text("sf-menu__stat sf-menu__stat--first", stats, RunPlan.IsDemo
+                    ? $"尚无出征记录。试玩版共 {RunPlan.Playable.Count} 关，到 {RunPlan.Final.Label} 为止。"
+                    : $"尚无出征记录。三章 {RunPlan.Stages.Count} 关，击败三位首领即可通关。");
                 return;
             }
             var items = new (string k, string v)[]

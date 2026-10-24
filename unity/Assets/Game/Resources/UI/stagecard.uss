@@ -1,0 +1,165 @@
+/*
+ * 关间结算卡（I1，G/UI/Screens/StageCardScreen.cs）：一关打完、进下一关之前的那张卡。
+ * 半透明墨底压在关卡画面上（看得见身后的出口），中间一张窄卡：本关完成 → 四格数值 → 下一关预告（难度、清关奖励、首领 / 补给营 / 换章标签）→ 继续 / 重来。
+ */
+
+.sf-stagecard {
+    align-items: center;
+    justify-content: center;
+}
+
+.sf-stagecard__bg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(6, 5, 8, 0.72);
+}
+
+.sf-stagecard__glow {
+    position: absolute;
+    left: 25%;
+    right: 25%;
+    top: 4%;
+    height: 60%;
+}
+
+.sf-stagecard__panel {
+    width: 820px;
+    align-items: center;
+    padding: 26px 34px 24px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-color: var(--line);
+    background-color: rgba(10, 8, 12, 0.86);
+}
+
+.sf-stagecard__chapter {
+    font-size: 14px;
+    letter-spacing: 6px;
+    color: var(--paper-3);
+}
+
+.sf-stagecard__title {
+    margin-top: 6px;
+    font-size: 44px;
+    letter-spacing: 4px;
+    color: #f3dcae;
+    text-shadow: 0 3px 12px rgba(0, 0, 0, 0.85);
+}
+
+.sf-stagecard__done {
+    margin-top: 2px;
+    font-size: 16px;
+    letter-spacing: 12px;
+    padding-left: 12px;
+    color: var(--gold-hi);
+}
+
+.sf-stagecard__stats {
+    flex-direction: row;
+    width: 100%;
+    margin-top: 20px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-color: var(--line-soft);
+}
+
+.sf-stagecard__stat {
+    flex-grow: 1;
+    flex-basis: 0;
+    align-items: center;
+    padding: 12px 6px;
+    border-left-width: 1px;
+    border-color: var(--line-soft);
+}
+
+.sf-stagecard__stat > .sf-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.sf-stagecard__slabel {
+    margin-top: 4px;
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: var(--paper-3);
+}
+
+.sf-stagecard__sval {
+    margin-top: 2px;
+    font-size: 24px;
+    color: var(--paper);
+}
+
+.sf-stagecard__ssub {
+    font-size: 11px;
+    color: var(--paper-3);
+}
+
+.sf-stagecard__next {
+    width: 100%;
+    align-items: center;
+    margin-top: 18px;
+}
+
+.sf-stagecard__nextlabel {
+    font-size: 13px;
+    letter-spacing: 8px;
+    padding-left: 8px;
+    color: var(--paper-3);
+}
+
+.sf-stagecard__nexttitle {
+    margin-top: 4px;
+    font-size: 28px;
+    letter-spacing: 3px;
+    color: var(--paper);
+}
+
+.sf-stagecard--boss .sf-stagecard__nexttitle {
+    color: #ff9a7a;
+}
+
+.sf-stagecard__tags {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.sf-stagecard__tags > .sf-chip {
+    margin: 0 4px 6px;
+}
+
+.sf-stagecard__tag--boss {
+    color: #ffb59c;
+    border-color: rgba(255, 106, 77, 0.55);
+}
+
+.sf-stagecard__tag--camp {
+    color: var(--good);
+    border-color: rgba(134, 220, 143, 0.45);
+}
+
+.sf-stagecard__tag--chapter {
+    color: var(--jade-hi);
+    border-color: rgba(82, 182, 236, 0.5);
+}
+
+.sf-stagecard__foot {
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.sf-stagecard__foot > .sf-btn {
+    margin: 0 8px;
+}
+
+.sf-stagecard__hint {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--paper-3);
+}

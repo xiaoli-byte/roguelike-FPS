@@ -127,6 +127,7 @@ namespace Spiritfire.Game
             deathSlowMo?.Dispose();
             deathSlowMo = null;
             if (Paused) PauseMenu.Hide();
+            UIRouter.Close(StageCardScreen.ScreenId);
             GameStateMachine.Clear();
             complete = false;
             GameUI.ClearMessages();
@@ -300,6 +301,23 @@ namespace Spiritfire.Game
             GameUI.ClearMessages();
             GameUI.SetPrompt(null);
             var nextStage = RunPlan.Next(Stage);
+            // 常驻会话、不是最后一关：弹关间结算卡（I1，StageCardScreen；最后一关由 RunEnd 弹整局结算）。界面没登记时退回下面的中央文字
+            if (Managed && !final && UIRouter.Get(StageCardScreen.ScreenId) != null)
+            {
+                var entry = flow.EntrySnapshot;
+                int entryScrolls = 0;
+                if (entry?.scrolls != null)
+                    foreach (var v in entry.scrolls.Values) entryScrolls += v;
+                var card = new StageCardInfo
+                {
+                    stage = Stage, next = nextStage, title = StageTitle, time = t, kills = Kills,
+                    coins = run?.coins ?? 0, coinsDelta = (run?.coins ?? 0) - (entry?.coins ?? run?.coins ?? 0),
+                    scrolls = scrolls, scrollsGained = Mathf.Max(0, scrolls - entryScrolls),
+                    nextReady = nextStage != null && SceneFlow.CanLoad(nextStage),
+                };
+                GameUI.SetCenterText(null);
+                if (UIRouter.Open(StageCardScreen.ScreenId, card)) return;
+            }
             string nextText = nextStage != null ? nextStage.Label : next;
             string tail;
             if (Managed)
