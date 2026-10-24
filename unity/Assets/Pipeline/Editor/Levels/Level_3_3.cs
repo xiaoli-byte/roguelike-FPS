@@ -1174,6 +1174,7 @@ namespace Spiritfire.Art.Editor.Levels
             foreach (var (b, l) in saved) b.level = l;
             if (!dryLow || !wetHigh) rep.Fail($"神范台渠岸：基准面时干燥 {dryLow}、漫溢后算熔岩 {wetHigh}（应为 true / true）");
             else rep.Line($"✓ 神范台渠岸 ({strip.x:F1}, {strip.z:F0})：基准面时干燥，漫溢 +{SurgeRise} m 后算熔岩");
+            SwimmerOnDryLand(rep, bodies, Y);
 
             rep.Section("鼓风正殿 · 风闸 · 领主战");
             rep.Line($"风箱 {hall.bellows.Length} 台（瘪着 × {BellowsRest}），风闸接线：第一次 {gate.firstVisit?.title}、第二次 {gate.secondVisit?.title}（autoTrigger {gate.secondVisit?.autoTrigger}），" +
@@ -1193,6 +1194,35 @@ namespace Spiritfire.Art.Editor.Levels
             rep.Line(missing.Count == 0
                 ? "✓ 第三章专用件都有 Prefab"
                 : $"⚠ 缺 {missing.Count} 件第三章专用件的 Prefab：{string.Join("、", missing)}——摆成 PlaceOrBox 白盒 {boxes} 个（铁桥 {placeholderDecks} 座），占位检查只列清单；到齐后自动收紧成不合格");
+        }
+
+        /// <summary>
+        /// 火鼍网格（LavaSwimmer）在干地上的残留，按 1 m 网格扫整个火山口底（含壁脚 4 m）：人形干地网格上比熔岩顶（基准面 + 站立判定）高 0.4 m 以上、
+        /// 0.6 m 内（高差 0.5 m 内）又采得到火鼍网格的点——同 LevelKit.BakeLavaNavMesh 的干地探针，但列出位置（按 8 m 格归并），好定位是哪段渠头 / 哪块岸
+        /// </summary>
+        static void SwimmerOnDryLand(LevelKit.Report rep, List<LavaBody> bodies, Func<Vector2, float> groundY)
+        {
+            var swim = LevelKit.LavaSwimmerAgentType();
+            if (!swim.HasValue || bodies.Count == 0) return;
+            float lavaTop = bodies.Max(b => b.level) + LavaTuning.StandRise;
+            var dryF = LavaField.WalkerFilter(LavaField.DryAreaMask);
+            var swimF = new UnityEngine.AI.NavMeshQueryFilter { agentTypeID = swim.Value, areaMask = UnityEngine.AI.NavMesh.AllAreas };
+            var cells = new Dictionary<Vector2Int, (int n, Vector3 at)>();
+            int total = 0;
+            for (float x = FloorMin.x - 4f; x <= FloorMax.x + 4f; x += 1f)
+            for (float z = FloorMin.y - 4f; z <= FloorMax.y + 4f; z += 1f)
+            {
+                var p = new Vector3(x, groundY(new Vector2(x, z)), z);
+                if (!UnityEngine.AI.NavMesh.SamplePosition(p, out var h, 0.5f, dryF) || h.position.y < lavaTop + 0.4f) continue;
+                if (!UnityEngine.AI.NavMesh.SamplePosition(h.position, out var s, 0.6f, swimF) || Mathf.Abs(s.position.y - h.position.y) >= 0.5f) continue;
+                total++;
+                var key = new Vector2Int(Mathf.FloorToInt(x / 8f), Mathf.FloorToInt(z / 8f));
+                cells[key] = cells.TryGetValue(key, out var c) ? (c.n + 1, c.at) : (1, h.position);
+            }
+            if (total == 0) rep.Line("✓ 火鼍网格在干地上没有残留（1 m 网格扫火山口底，人形干地网格旁 0.6 m 内采不到火鼍网格）");
+            else
+                rep.Line($"· 火鼍网格在干地上还有 {total} 处（1 m 网格）：" +
+                         string.Join("、", cells.OrderByDescending(kv => kv.Value.n).Take(10).Select(kv => $"({kv.Value.at.x:F0}, {kv.Value.at.y:F2}, {kv.Value.at.z:F0}) ×{kv.Value.n}")));
         }
 
         /// <summary>L1 规则：关卡场景只有环境和标记；另查 3-3 自己的件（目标图、风闸、领主战、藏宝，没有场景出口）。顺带重新生成 GameDatabase</summary>
