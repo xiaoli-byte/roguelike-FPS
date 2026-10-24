@@ -37,7 +37,7 @@
 | `Encounters/BossEncounter.cs` | `Begin()` 里 `BossIntroDirector.Play(this)`。有演出时不画预警圈、不弹提示；`Warning` 阶段按 `intro.SpawnDue` 刷首领，演出没了退回 `warnSeconds` 计时；有演出时不补横幅 |
 | `Bosses/BossBrain.cs` | 生成时 `Directs(this)` 为真就不打登场横幅（名字卡由演出打）；`StepIntro` 里 `HoldsIntro(this, overtime)` 为真时，登场动作播完也继续待在登场里（不可选中、不出招），保险上限 25 s |
 | `Enemies/EnemyAI.cs` | 「玩家阵亡 → 待机」的分支加上 `BossIntroDirector.HoldsEnemy(this)`：演出期间所有敌人待机，正在登场的首领除外 |
-| `UI/GameUI.cs` + `UI/Hud.cs` | `GameUI.HudHidden`：HUD 层的目标不透明度多一个条件 |
+| `UI/GameUI.cs` + `UI/Hud.cs` + `UI/Toolkit/UIToasts.cs` | `GameUI.HudHidden`：HUD 层的目标不透明度多一个条件；提示条（toast）层同样整层淡出（出 0.15 s、进 0.45 s），计时照走 |
 | `Bosses/Qilin/QilinCauldron.cs` | `Rattle(amount)`：把吊鼎现有的摆动幅度抬到 amount 倍，之后照常回落 |
 | 五个首领套件 | 开头一行 `BossIntroDirector.Policy = BossIntroPolicy.Never`（测试开关） |
 
@@ -49,7 +49,7 @@ CameraFeel、WeaponController、PlayerMotor 都没改：
 ## 3. 时间轴
 
 ```
-0 ─ BossEncounter.Begin：接管（锁输入、无敌、小怪待机且不可选中、HUD 淡出 0.15 s、收枪 0.25 s、黑边 0.5 s 拉出）
+0 ─ BossEncounter.Begin：接管（锁输入、无敌、小怪待机且不可选中、HUD 和提示条淡出 0.15 s、收枪 0.25 s、黑边 0.5 s 拉出）
 │   第一镜 blendIn：从玩家第一人称的画面平滑拔起（玩家看不见的时候，视线已经转向首领出生点）
 ├ spawnAt ─ SpawnDue → BossEncounter 刷首领；首领自己的登场（BossIntroDef：动作、吼声、HanbaBrain/KunPengBrain/... 的 IntroTick）从这一刻起跑
 ├ 镜头表逐镜播；事件按时刻触发（重复事件在 [at, until) 里每 every 秒一次）
@@ -157,8 +157,8 @@ CameraFeel、WeaponController、PlayerMotor 都没改：
 | 镜头 | 时段 | 机位 → 看点 | 视角 | 内容 |
 |---|---|---|---|---|
 | basin | 0–2.6 | 出生点后上方 (−16, 30, −52) → (−7, 20, −38)，从眼中拔起 0.9 s；看泉南 (0, 1, 8) → 泉心 (0, 2, 0) | 52→46 | 俯拍沙山盆地：月牙泉、泉南的月牙阁都在画里。0.5–2.2 s 泉心冒泡；1.2 s 沙山闷吼；0.7 / 1.8 s 震屏 |
-| emerge | 2.6–4.5 | 泉边贴水面 (6.5, 1, −11.5) 摇臂升到 (5, 4.2, −10)，跟着她一起升；看泉心 → 头下方 head(0, −0.4, 0)（机位一直在环下面的话，日轮云环会挡住脸） | 48→42 | 2.2 s 泉心炸开（水 / 沙爆、沙浪环、砸地声）。旱魃从泉下 6 m 用 1.6 s 升起（代码驱动），水线一圈飞溅，身上金光褪去 |
-| roar | 4.5–6.5 | 头部特写 Sized(2.2, 0.45, −6.4) → (1.3, 0.3, −4.7)，和脸平、略高于日轮云环（环贴着脖子，机位在环下面时正好挡住脸），月牙阁在身后 | 40→34 | 4.53 s 首领自己长啸：日轮炸亮、震屏、暖色闪屏、慢动作 ×0.45。4.8 s 名字卡「第一章 · 鸣沙山月牙泉 / 旱魃 / 称号」 |
+| emerge | 2.6–4.5 | 泉边贴水面的低机位 (6.5, 0.8, −11.5) 微微抬到 (5, 2, −10)，仰拍；看泉心 → 头下方 head(0, −0.6, 0)。日轮（SunRing 跟随支点，竖悬在头顶后方 1.8 m）跟着她一起升出水面 | 48→44 | 2.2 s 泉心炸开（水 / 沙爆、沙浪环、砸地声）。旱魃从泉下 6 m 用 1.6 s 升起（代码驱动），水线一圈飞溅，身上金光褪去 |
+| roar | 4.5–6.5 | 光环构图的特写 Sized(1.6, 0, −6.6) → (0.7, 0, −5)，机位和头差不多高、推近时收回决斗线：竖悬的日轮衬在头后，头冠落在轮毂上、轮辐从头后放射（偏得多了轮毂会因为 1.8 m 的视差滑到一边）；月牙阁在更远处 | 42→36 | 4.53 s 首领自己长啸：日轮炸亮、震屏、暖色闪屏、慢动作 ×0.45。4.8 s 名字卡「第一章 · 鸣沙山月牙泉 / 旱魃 / 称号」 |
 | 落地 | 6.5–7.9 | 沿决斗线拉回玩家眼睛 | → 设置视野 | |
 
 首领自己的登场动作 4 s，在 6.2 s 播完，等到 7.9 s 交还。跳过时，升起和褪光按落地进度赶在交还前做完。

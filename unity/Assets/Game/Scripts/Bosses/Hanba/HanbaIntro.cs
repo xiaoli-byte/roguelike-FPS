@@ -6,8 +6,9 @@ namespace Spiritfire.Game
     /// 旱魃登场（1-4 鸣沙山月牙泉，docs/level-design/boss-intros.md「旱魃」）：约 7.9 s。
     ///   0.0–2.6 basin   从玩家眼中拔起，摇臂下压俯拍沙山盆地：月牙泉、泉南的月牙阁都在画里，泉心开始冒泡、沙山闷响
     ///   2.2             生成旱魃（它自己的 intro 片段：蜷起 → 舒展长啸，4 s；HanbaBrain 的长啸在片段 58% = 4.5 s，日轮炸亮 + 慢动作）
-    ///   2.6–4.5 emerge  泉边贴水面起、跟着她升到头的高度：泉心炸开，旱魃从水下 6 m 缓缓升起（代码驱动模型位移，没有专用破水片段），水沙飞溅、身上金光褪去
-    ///   4.5–6.5 roar    和脸平的特写推近（日轮云环贴着脖子，机位低了会挡脸），月牙阁在身后；长啸（震屏、闪屏、慢动作由 HanbaBrain 自己放），名字卡
+    ///   2.6–4.5 emerge  泉边贴水面的低机位微微抬起、仰拍：泉心炸开，旱魃从水下 6 m 缓缓升起（代码驱动模型位移，没有专用破水片段），身后的日轮跟着升起，水沙飞溅、身上金光褪去
+    ///   4.5–6.5 roar    正面略偏的特写推近，机位和头差不多高：竖悬在头顶后方的日轮（SunRing 跟随支点，身后 1.8 m）正好衬在头后、头冠落在轮毂上，
+    ///                   月牙阁在更远处；长啸（日轮炸亮、震屏、闪屏、慢动作由 HanbaBrain 自己放），名字卡
     ///   6.5–7.9         沿着决斗线拉回玩家眼睛
     /// 首领出生点就是月牙泉凸顶（关卡构建器 BossSpawn = 泉心），所以「泉」锚点 = 出生点；泉水组件（HanbaSpring）只用来判断有没有水花可放。
     /// </summary>
@@ -29,16 +30,17 @@ namespace Spiritfire.Game
                 .Move(IntroPoint.At(IntroAnchors.Spawn, -16f, 30f, -52f), IntroPoint.At(IntroAnchors.Spawn, -7f, 20f, -38f))
                 .Look(IntroPoint.At(IntroAnchors.Spawn, 0, 1f, 8f), IntroPoint.At(IntroAnchors.Spawn, 0, 2f, 0))
                 .Fov(52f, 46f).BlendIn(0.9f).Handheld(0.12f));
-            // 贴着水面起，跟着她一起升（摇臂）：升到头一样高时日轮云环在脸下面，不再从下往上挡住脸
+            // 贴着水面的低机位微微抬起、仰拍她和身后的日轮一起升出水面（日轮竖悬在身后，不挡脸，机位不用再躲）
             shots.Add(IntroShot.Make("emerge", 1.9f)
-                .Move(IntroPoint.At(IntroAnchors.Spawn, 6.5f, 1.0f, -11.5f), IntroPoint.At(IntroAnchors.Spawn, 5f, 4.2f, -10f))
-                .Look(IntroPoint.At(IntroAnchors.Spawn, 0, 1.5f, 0), IntroPoint.At(IntroAnchors.Head, 0, -0.4f, 0))
-                .Fov(48f, 42f).Ease(IntroEase.Out).Handheld(0.3f));
-            // 日轮云环贴着脖子绕一圈：机位压在环下面时环正好挡住脸，所以和脸差不多平、略高于环
+                .Move(IntroPoint.At(IntroAnchors.Spawn, 6.5f, 0.8f, -11.5f), IntroPoint.At(IntroAnchors.Spawn, 5f, 2.0f, -10f))
+                .Look(IntroPoint.At(IntroAnchors.Spawn, 0, 1.5f, 0), IntroPoint.At(IntroAnchors.Head, 0, -0.6f, 0))
+                .Fov(48f, 44f).Ease(IntroEase.Out).Handheld(0.3f));
+            // 光环构图：日轮竖悬在头顶后方 1.8 m、轮心略高于脸。机位和头差不多高、只偏一点点，轮毂正好落在头冠后面，轮辐从头后放射出去；
+            // 偏得多了轮毂会因为视差滑到一边（身后 1.8 m），所以推近时一路收回到决斗线上
             shots.Add(IntroShot.Make("roar", 2.0f)
-                .Move(IntroPoint.Sized(IntroAnchors.Head, 2.2f, 0.45f, -6.4f), IntroPoint.Sized(IntroAnchors.Head, 1.3f, 0.3f, -4.7f))
-                .Look(IntroPoint.At(IntroAnchors.Head, 0, 0.2f, 0))
-                .Fov(40f, 34f).Handheld(0.35f));
+                .Move(IntroPoint.Sized(IntroAnchors.Head, 1.6f, 0f, -6.6f), IntroPoint.Sized(IntroAnchors.Head, 0.7f, 0f, -5.0f))
+                .Look(IntroPoint.At(IntroAnchors.Head, 0, 0.3f, 0))
+                .Fov(42f, 36f).Handheld(0.3f));
 
             // 泉心冒泡、沙山闷响
             cues.Add(IntroCue.Every(0.5f, 2.2f, 0.14f, "spring bubbles", c =>
