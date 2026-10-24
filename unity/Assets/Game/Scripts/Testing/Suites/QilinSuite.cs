@@ -267,7 +267,7 @@ namespace Spiritfire.Game.Testing
                 yield break;
             }
             var stages = new List<MoveStage>();
-            bool immune = true, shot = false;
+            bool immune = true, shot = false, fireShot = false;
             float maxOut = 0;
             while (boss && !boss.Dead && boss.Current == move && Time.time - t0 < MoveTimeout)
             {
@@ -284,6 +284,12 @@ namespace Spiritfire.Game.Testing
                     shot = true;
                     yield return null;
                     Shot(weapons.eye, $"qilin_move_{move.Id}");
+                }
+                // 吐息扫到一半再拍一张（看火）
+                if (!fireShot && move is BurnSweep && move.Stage == MoveStage.Active && move.StageT > BurnSweep.Tele + 1f)
+                {
+                    fireShot = true;
+                    Shot(weapons.eye, "qilin_burn_sweep_fire");
                 }
                 yield return null;
             }
@@ -873,8 +879,16 @@ namespace Spiritfire.Game.Testing
             BossMove last = null;
             string badWhat = null;
             var f = boss.Furnace;
+            bool skyShot = false;
             while (Time.time - t0 < BurnSoakSeconds && boss && !boss.Dead)
             {
+                // 招式间隙踏云绕殿时拍一张
+                if (!skyShot && boss.Current == null && boss.Altitude > 3f && Time.time - t0 > 2f)
+                {
+                    skyShot = true;
+                    Aim(motor, eye, boss.BodyCenter);
+                    Shot(weapons.eye, "qilin_burn_sky");
+                }
                 if (vitals.Dead)
                 {
                     vitals.Revive();

@@ -751,11 +751,10 @@ namespace Spiritfire.Game
             var pts = CrowPoints();
             if (pts.Count == 0) return 0;
             var f = Furnace;
+            // 先在场地的召唤点（炉口，地面上有导航网格）生成，再放回排烟口的高度：直接在半空生成的话，飞鸦的导航代理会报「离导航网格太远」
             var o = SummonOptions.Default;
             o.warn = 0;
-            o.usePoints = false;
-            o.minRadius = 2f;
-            o.maxRadius = 4f;
+            o.usePoints = true;
             int before = Summons.TotalSpawned;
             Summons.Spawn(id, count, o);
             int made = Summons.TotalSpawned - before;

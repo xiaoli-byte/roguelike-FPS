@@ -35,6 +35,7 @@ namespace Spiritfire.Game
 
         float acc, fxAcc, lastYaw;
         bool arrived, firing;
+        BossBeam beam;
 
         public BurnSweep()
         {
@@ -160,13 +161,37 @@ namespace Spiritfire.Game
             lastYaw = yaw;
             SetFacing(yaw);
             if (k < 1f) BreatheAlong(yaw, dt);
+            else EndBeam();
         }
 
-        /// <summary>沿 yaw 吐一道窄火：火焰粒子铺满射程 + 每 0.15 s 判定一次（半角 8.6°、射程、口到玩家胸口不被挡）</summary>
+        void EndBeam()
+        {
+            beam?.Release();
+            beam = null;
+        }
+
+        /// <summary>
+        /// 沿 yaw 吐一道窄火：一条火柱（光束，碰到石柱 / 倒鼎就截断、在挡住的地方迸火星——看得出掩体挡住了）+ 沿线的火焰粒子；
+        /// 每 0.15 s 判定一次（半角 8.6°、射程、口到玩家胸口不被挡）
+        /// </summary>
         void BreatheAlong(float yawDeg, float dt)
         {
             var mouth = Qilin ? Qilin.MouthPoint : Brain.BodyCenter + Brain.transform.forward * 2f;
             var d = Dir(yawDeg);
+            // 火柱：从口往前斜着落到离地 0.9 m，碰到东西截断
+            var end = mouth + d * Range;
+            end.y = Floor + 0.9f;
+            var seg = end - mouth;
+            float len = seg.magnitude;
+            bool blockedFx = false;
+            if (len > 0.1f && Physics.Raycast(mouth, seg / len, out var wall, len, Layers.WorldMask, QueryTriggerInteraction.Ignore))
+            {
+                end = wall.point;
+                len = wall.distance;
+                blockedFx = true;
+            }
+            beam ??= Hazards.Beam(QilinDef.Fire);
+            beam.Set(mouth, end, 0.55f);
             fxAcc += dt;
             if (fxAcc >= 0.05f)
             {
@@ -175,10 +200,10 @@ namespace Spiritfire.Game
                 for (int i = 1; i <= n; i++)
                 {
                     float u = i / (float)n;
-                    var p = mouth + d * (Range * 0.95f * u);
-                    p.y = Mathf.Lerp(mouth.y, Floor + 0.9f, Mathf.Min(1f, u * 1.6f));
-                    Fx.Burst(p, i <= 2 ? QilinDef.Hot : QilinDef.Fire, 3, 2.2f + u * 2f, 0.32f, 0.3f + 0.35f * u, 1.2f);
+                    var p = Vector3.Lerp(mouth, end, u);
+                    Fx.Burst(p, i <= 2 ? QilinDef.Hot : QilinDef.Fire, 3, 2.2f + u * 2f, 0.35f, 0.45f + 0.5f * u, 1.2f);
                 }
+                if (blockedFx) Fx.Burst(end, QilinDef.Hot, 8, 6f, 0.4f, 0.3f, 4f);
             }
             acc += dt;
             if (acc < TickEvery) return;
@@ -200,6 +225,7 @@ namespace Spiritfire.Game
 
         protected override void OnEnd(bool cancelled)
         {
+            EndBeam();
             if (Qilin) Qilin.SkyTarget = QilinBrain.SkyAlt;
         }
     }
