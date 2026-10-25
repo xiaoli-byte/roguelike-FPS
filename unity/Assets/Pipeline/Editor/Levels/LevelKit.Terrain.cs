@@ -51,6 +51,21 @@ namespace Spiritfire.Art.Editor.Levels
             public SplatRule rule;
             public Color shadowTint;
             public float macroStrength = 0.2f;
+            /// <summary>第 4 层（岩）侧面三平面投影的尺寸（米 / 张）</summary>
+            public float rockScale = 8f;
+            /// <summary>
+            /// 四层与宏观色斑都按法线三平面投影 + 崖面岩层去重复（着色器的 _STEEP_TRIPLANAR）。不开 = 只有第 4 层三平面（戈壁、火狱原样）。
+            /// rockWarp = 扭曲噪声推岩层 UV 的幅度（单位：一张岩层贴图），rockDetile = 第二个尺度的岩块调明暗的强度
+            /// </summary>
+            public bool steepTriplanar;
+            public float rockWarp, rockDetile;
+            /// <summary>
+            /// 崖面光照用平滑法线（米，0 = 不用）：整张高度场按这个半径模糊后求法线，烘成每块地形一张法线图，陡坡上光照改用它。
+            /// 近乎竖直的崖壁上，地图给崖线加的水平扰动（几米一个波）在高度场里是一道道上下贯通的竖褶，
+            /// 卡通光照一照就成了一根根亮 / 暗竖条；平滑法线把几米的竖褶从光照里抹掉，几十米的大起伏留着（轮廓不变）。
+            /// lightNormalBlend = 陡坡上换成平滑法线的比例
+            /// </summary>
+            public float lightNormalRadius, lightNormalBlend;
 
             public static readonly Ground Desert = new()
             {
@@ -60,6 +75,9 @@ namespace Spiritfire.Art.Editor.Levels
             public static readonly Ground Frost = new()
             {
                 key = "Frost", layers = TerrainTextureGen.Frost, rule = Splat.Frost, shadowTint = ShowcaseTheme.Frost.groundShadowTint, macroStrength = 0.14f,
+                // 冰原的崖面又高又连成圈：岩层一张 16 m（与 FrostRock 的 tileSize 一致），四层三平面投影（雪 / 冻土挂在陡坡上不拉成竖条），岩层去重复
+                rockScale = 16f, steepTriplanar = true, rockWarp = 0.3f, rockDetile = 0.45f,
+                lightNormalRadius = 3f, lightNormalBlend = 0.75f,
             };
 
             public static readonly Ground Inferno = new()
@@ -197,6 +215,8 @@ namespace Spiritfire.Art.Editor.Levels
             float span = Mathf.Max(0.01f, hi - lo);
             int kc = Mathf.Max(1, Mathf.RoundToInt(s.curvatureRadius / hf.Cell.x));
             var tileSize = new Vector2(s.size.x / tx, s.size.y / tz);
+            float lightR = s.ground?.lightNormalRadius ?? 0;
+            var smoothH = lightR > 0 ? BlurHeights(hf.h, Mathf.Max(1, Mathf.RoundToInt(lightR / hf.Cell.x))) : null;
 
             Directory.CreateDirectory(s.dir);
             var tiles = new Terrain[tx * tz];
@@ -246,7 +266,8 @@ namespace Spiritfire.Art.Editor.Levels
                 EditorUtility.SetDirty(td);
                 AssetDatabase.SaveAssets();
 
-                var material = TerrainMaterial(s.dir, s.name + suffix, tint, td, layers, s.ground);
+                var lightNormals = smoothH != null ? LightNormalTexture($"{s.dir}/TN_{s.name}{suffix}.png", smoothH, hf.Cell, ox, oz, res) : null;
+                var material = TerrainMaterial(s.dir, s.name + suffix, tint, td, layers, s.ground, lightNormals);
                 var go = Terrain.CreateTerrainGameObject(td);
                 go.name = $"Terrain_{s.name}{suffix}";
                 go.transform.SetParent(parent, false);
@@ -377,10 +398,79 @@ namespace Spiritfire.Art.Editor.Levels
             }
         }
 
-        static Texture2D macroTex;
+        /// <summary>高度场的两遍可分离盒式模糊（≈ 高斯，σ ≈ 0.8 r 格），边缘夹取</summary>
+        static float[,] BlurHeights(float[,] src, int r)
+        {
+            int nz = src.GetLength(0), nx = src.GetLength(1);
+            var a = (float[,])src.Clone();
+            var b = new float[nz, nx];
+            for (int pass = 0; pass < 2; pass++)
+            {
+                Parallel.For(0, nz, z =>
+                {
+                    float sum = 0;
+                    for (int k = -r; k <= r; k++) sum += a[z, Mathf.Clamp(k, 0, nx - 1)];
+                    for (int x = 0; x < nx; x++)
+                    {
+                        b[z, x] = sum / (2 * r + 1);
+                        sum += a[z, Mathf.Min(x + r + 1, nx - 1)] - a[z, Mathf.Max(x - r, 0)];
+                    }
+                });
+                Parallel.For(0, nx, x =>
+                {
+                    float sum = 0;
+                    for (int k = -r; k <= r; k++) sum += b[Mathf.Clamp(k, 0, nz - 1), x];
+                    for (int z = 0; z < nz; z++)
+                    {
+                        a[z, x] = sum / (2 * r + 1);
+                        sum += b[Mathf.Min(z + r + 1, nz - 1), x] - b[Mathf.Max(z - r, 0), x];
+                    }
+                });
+            }
+            return a;
+        }
+
+        /// <summary>
+        /// 一块地形的光照法线图（res × res，与高度格点一一对应，xyz × 0.5 + 0.5）：从模糊过的整张高度场中心差分，跨地块连续。
+        /// 存 PNG（平滑数据压得小），线性、夹取、带 mip
+        /// </summary>
+        static Texture2D LightNormalTexture(string path, float[,] sh, Vector2 cell, int ox, int oz, int res)
+        {
+            int nz = sh.GetLength(0), nx = sh.GetLength(1);
+            var px = new Color[res * res];
+            Parallel.For(0, res, z =>
+            {
+                int gz = oz + z;
+                for (int x = 0; x < res; x++)
+                {
+                    int gx = ox + x;
+                    float dx = (sh[gz, Mathf.Min(gx + 1, nx - 1)] - sh[gz, Mathf.Max(gx - 1, 0)]) / (2 * cell.x);
+                    float dz = (sh[Mathf.Min(gz + 1, nz - 1), gx] - sh[Mathf.Max(gz - 1, 0), gx]) / (2 * cell.y);
+                    var n = new Vector3(-dx, 1, -dz).normalized;
+                    px[z * res + x] = new Color(n.x * 0.5f + 0.5f, n.y * 0.5f + 0.5f, n.z * 0.5f + 0.5f, 1);
+                }
+            });
+            var tex = new Texture2D(res, res, TextureFormat.RGBA32, true, true);
+            tex.SetPixels(px);
+            File.WriteAllBytes(path, tex.EncodeToPNG());
+            UnityEngine.Object.DestroyImmediate(tex);
+            AssetDatabase.ImportAsset(path);
+            var ti = (TextureImporter)AssetImporter.GetAtPath(path);
+            ti.sRGBTexture = false;
+            ti.alphaSource = TextureImporterAlphaSource.None;
+            ti.wrapMode = TextureWrapMode.Clamp;
+            ti.mipmapEnabled = true;
+            ti.filterMode = FilterMode.Bilinear;
+            ti.npotScale = TextureImporterNPOTScale.None;
+            ti.textureCompression = TextureImporterCompression.CompressedHQ;
+            ti.SaveAndReimport();
+            return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+        }
+
+        static Texture2D macroTex, warpTex;
 
         /// <summary>地形材质：显式绑定 TerrainData 的分层图（alphamap 纹理）与各层贴图、平铺尺寸</summary>
-        static Material TerrainMaterial(string dir, string name, Color shadowTint, TerrainData td, TerrainLayer[] layers, Ground ground)
+        static Material TerrainMaterial(string dir, string name, Color shadowTint, TerrainData td, TerrainLayer[] layers, Ground ground, Texture2D lightNormals = null)
         {
             var m = new Material(Shader.Find("Spiritfire/StylizedTerrain")) { name = $"M_Terrain_{name}" };
             m.SetTexture("_ControlMap", td.alphamapTextures[0]);
@@ -396,7 +486,22 @@ namespace Spiritfire.Art.Editor.Levels
             m.SetTexture("_MacroTex", macroTex);
             m.SetFloat("_MacroScale", 70);
             m.SetFloat("_MacroStrength", ground?.macroStrength ?? 0.2f);
-            m.SetFloat("_RockScale", 8);
+            m.SetFloat("_RockScale", ground?.rockScale ?? 8f);
+            if (ground is { steepTriplanar: true })
+            {
+                if (!warpTex) warpTex = TerrainTextureGen.Warp(9);
+                m.EnableKeyword("_STEEP_TRIPLANAR");
+                m.SetFloat("_SteepTriplanar", 1);
+                m.SetTexture("_WarpTex", warpTex);
+                m.SetFloat("_WarpScale", 17);
+                m.SetFloat("_RockWarp", ground.rockWarp);
+                m.SetFloat("_RockDetile", ground.rockDetile);
+                if (lightNormals)
+                {
+                    m.SetTexture("_LightNormalTex", lightNormals);
+                    m.SetFloat("_LightNormalBlend", ground.lightNormalBlend);
+                }
+            }
             m.SetColor("_ShadowTint", shadowTint);
             SaveAsset(m, $"{dir}/M_Terrain_{name}.mat");
             return m;

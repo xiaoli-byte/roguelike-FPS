@@ -11,7 +11,8 @@ Material:
   m_Shader: {fileID: 4800000, guid: 88d3cf9a54377ad49b1fe0fd645f09c2, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - _STEEP_TRIPLANAR
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -24,7 +25,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _ControlMap:
-        m_Texture: {fileID: 4952202627861578553, guid: a699dadc07199db4e81655de7a01cfa2, type: 2}
+        m_Texture: {fileID: 6057437273149540108, guid: a699dadc07199db4e81655de7a01cfa2, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Layer0:
@@ -43,6 +44,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: bd937355ae8f77f4d99b848c68d97b64, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _LightNormalTex:
+        m_Texture: {fileID: 2800000, guid: 53ac61dc31429d544bd67130a8fe53e5, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MacroTex:
         m_Texture: {fileID: 2800000, guid: 0633fcf32a969b34993310107aa04d72, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -51,23 +56,33 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _WarpTex:
+        m_Texture: {fileID: 2800000, guid: d994236f23c639240adeefc98849ad26, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _AmbientStrength: 1
     - _HeightBlend: 0.8
     - _HeightBlendDepth: 0.2
+    - _LightNormalBlend: 0.75
     - _MacroScale: 70
     - _MacroStrength: 0.14
     - _RampSoftness: 0.3
     - _RampThreshold: 0
     - _RimPower: 5
     - _RimStrength: 0.05
-    - _RockScale: 8
+    - _RockDetile: 0.45
+    - _RockScale: 16
+    - _RockWarp: 0.3
     - _ShadowLift: 0.22
     - _SlopeDarken: 0.25
+    - _SteepTriplanar: 1
+    - _WarpScale: 17
     m_Colors:
-    - _LayerTile: {r: 10, g: 6, b: 12, a: 9}
+    - _LayerTile: {r: 10, g: 6, b: 12, a: 16}
     - _RimColor: {r: 1, g: 0.92, b: 0.8, a: 1}
     - _ShadowTint: {r: 0.55, g: 0.64, b: 0.9, a: 1}
+    - _SteepFade: {r: 0.43, g: 0.62, b: 0.58, a: 0.79}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

@@ -1,4 +1,5 @@
 using System.IO;
+using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 
@@ -12,6 +13,7 @@ namespace Spiritfire.Art.Editor.Levels
     public static class TerrainTextureGen
     {
         public const string Dir = "Assets/Levels/Terrain";
+        /// <summary>默认边长（像素）；崖面岩层覆盖的米数大，用 1024（见 <see cref="Frost"/>）</summary>
         const int N = 512;
 
         public enum Kind { Sand, Gravel, Packed, Rock, Snow, Ice, FrozenSoil, DarkRock, Ash, CooledLava, EmberCrust, Basalt }
@@ -80,6 +82,38 @@ namespace Spiritfire.Art.Editor.Levels
             return new Vector2(d1, d2 - d1);
         }
 
+        /// <summary>
+        /// 各向异性的周期 Voronoi：u 向 cu 格、v 向 cv 格（cu &gt; cv 时块高于宽）。距离以 u 向格宽为单位；
+        /// 返回 (到最近点的距离, 最近与次近的差 = 块缝)，id = 最近点所在（折回后的）格子 wy * cu + wx，
+        /// local = 当前点相对最近点的偏移（同一单位，y 向上），用来在块内画明暗梯度
+        /// </summary>
+        static Vector2 Voronoi(float u, float v, int cu, int cv, int seed, out int id, out Vector2 local)
+        {
+            id = 0;
+            local = Vector2.zero;
+            float asp = cu / (float)cv;
+            float x = u * cu, y = v * cv;
+            int cx = Mathf.FloorToInt(x), cy = Mathf.FloorToInt(y);
+            float d1 = 9, d2 = 9;
+            for (int j = -1; j <= 1; j++)
+            for (int i = -1; i <= 1; i++)
+            {
+                int gx = cx + i, gy = cy + j;
+                int wx = ((gx % cu) + cu) % cu, wy = ((gy % cv) + cv) % cv;
+                float dx = gx + Hash(wx, wy, seed) - x, dy = (gy + Hash(wx, wy, seed + 91) - y) * asp;
+                float d = Mathf.Sqrt(dx * dx + dy * dy);
+                if (d < d1)
+                {
+                    d2 = d1;
+                    d1 = d;
+                    id = wy * cu + wx;
+                    local = new Vector2(-dx, -dy);
+                }
+                else if (d < d2) d2 = d;
+            }
+            return new Vector2(d1, d2 - d1);
+        }
+
         static float Smooth(float e0, float e1, float x)
         {
             float k = Mathf.Clamp01((x - e0) / (e1 - e0));
@@ -87,13 +121,21 @@ namespace Spiritfire.Art.Editor.Levels
         }
 
         // ───────────── 各层 ─────────────
-        public static Color[] Generate(Kind kind, Palette p, int seed)
+        public static Color[] Generate(Kind kind, Palette p, int seed, int n = N)
         {
-            var px = new Color[N * N];
-            for (int y = 0; y < N; y++)
-            for (int x = 0; x < N; x++)
+            var px = new Color[n * n];
+            // 逐行并行（各像素互不依赖、噪声函数无状态），结果与串行逐位相同
+            Parallel.For(0, n, y =>
             {
-                float u = x / (float)N, v = y / (float)N;
+                for (int x = 0; x < n; x++)
+                    px[y * n + x] = Pixel(kind, p, seed, x / (float)n, y / (float)n);
+            });
+            return px;
+        }
+
+        static Color Pixel(Kind kind, Palette p, int seed, float u, float v)
+        {
+            {
                 Color c;
                 float h;
                 switch (kind)
@@ -153,8 +195,39 @@ namespace Spiritfire.Art.Editor.Levels
                         h = 0.45f - crack * 0.25f + blot * 0.1f + pebble * 0.2f;
                         break;
                     }
-                    case Kind.Rock:
                     case Kind.DarkRock:
+                    {
+                        // 冰原崖面（第 4 层，三平面投影后 v = 高度）：成块的冻裂岩体，不画层理——
+                        // 层理条纹沿高度周期重复，绕着整圈崖面连成一道道水平线，远看像看台墙 / 分层蛋糕。
+                        // 一块块棱角岩面（各向异性 Voronoi，6 × 4 格，块略高于宽 = 以竖向节理为主），块缘先做域扭曲（不是直线）；
+                        // 每块一个明暗 + 随机朝向的明暗梯度（像朝向各异的岩面），再叠小一号的块调明暗（多尺度，不显格子）；
+                        // 块缝细而暗、沿缝长断续出现（不是封闭的砌石缝）；块上缘受光挂霜，下缘一线压暗。
+                        float wu = u + (Fbm(u, v, 3, seed + 1) - 0.5f) * 0.08f + (Fbm(u, v, 12, seed + 3) - 0.5f) * 0.015f;
+                        float wv = v + (Fbm(u, v, 3, seed + 2) - 0.5f) * 0.08f + (Fbm(u, v, 12, seed + 4) - 0.5f) * 0.015f;
+                        var vo = Voronoi(wu, wv, 6, 4, seed, out int id, out var lp);
+                        float tone = Hash(id % 6, id / 6, seed + 5);
+                        float ang = Hash(id % 6, id / 6, seed + 6) * Mathf.PI * 2;
+                        float tilt = Mathf.Cos(ang) * lp.x + Mathf.Sin(ang) * lp.y;
+                        var vb = Voronoi(wu, wv, 13, 9, seed + 11, out int idb, out _);
+                        // 小块的明暗在块缘附近淡回中间值：只做大块里的深浅起伏，不出一圈圈硬边的碎玻璃
+                        float toneB = Mathf.Lerp(0.5f, Hash(idb % 13, idb / 13, seed + 12), Smooth(0, 0.15f, vb.y));
+                        float face = 0.5f + (tone - 0.5f) * 0.45f + tilt * 0.25f + (toneB - 0.5f) * 0.22f;
+                        float fine = Fbm(u, v, 24, seed + 7), mott = Fbm(u, v, 8, seed + 8);
+                        c = Color.Lerp(p.a, p.b, Smooth(0.05f, 0.95f, face * 0.7f + fine * 0.1f + mott * 0.2f));
+                        float brk = Smooth(0.35f, 0.55f, Fbm(u, v, 6, seed + 20));
+                        float crack = (1 - Smooth(0, 0.05f, vo.y)) * brk;
+                        float under = (1 - Smooth(0, 0.2f, vo.y)) * Smooth(0, -0.4f, lp.y) * brk;
+                        float top = (1 - Smooth(0.02f, 0.18f, vo.y)) * Smooth(0.05f, 0.4f, lp.y) * brk;
+                        float sub = (1 - Smooth(0, 0.035f, vb.y)) * Smooth(0.55f, 0.7f, Fbm(u, v, 12, seed + 21)) * (1 - crack);
+                        float frost = Smooth(0.4f, 0.7f, Fbm(u, v, 14, seed + 13));
+                        c = Color.Lerp(c, p.dark, under * 0.3f);
+                        c = Color.Lerp(c, p.accent, top * (0.22f + frost * 0.33f));
+                        c = Color.Lerp(c, p.dark, crack * 0.7f);
+                        c = Color.Lerp(c, p.dark, sub * 0.22f);
+                        h = 0.45f + (face - 0.5f) * 0.3f + fine * 0.08f - crack * 0.3f - sub * 0.1f + top * 0.08f;
+                        break;
+                    }
+                    case Kind.Rock:
                     {
                         // 层理岩：v 方向的水平条带（三平面投影后 = 沿高度的层理），条带宽度不均，带少量风蚀凹槽
                         float warp = Fbm(u, v, 3, seed) * 0.15f;
@@ -173,7 +246,8 @@ namespace Spiritfire.Art.Editor.Levels
                         float drift = Fbm(u, v, 6, seed + 7);
                         c = Color.Lerp(p.a, p.b, Smooth(0.3f, 0.75f, blot));
                         c = Color.Lerp(c, p.accent, Smooth(0.65f, 0.85f, drift) * 0.3f);
-                        h = 0.4f + blot * 0.35f;
+                        // 雪是盖在冻土碎石上的一层：高度整体高于冻土（含石块顶），高度混合时雪先填石缝、再盖住石头，只露石尖
+                        h = 0.45f + blot * 0.3f + drift * 0.1f;
                         break;
                     }
                     case Kind.Ice:
@@ -256,19 +330,40 @@ namespace Spiritfire.Art.Editor.Levels
                     }
                     default: // FrozenSoil
                     {
+                        // 冻土碎石：冻硬的土面上撒不规则的小石块 / 冻土块。以前每个 Voronoi 格都有一颗同样大的深色圆点（规则、高反差，像豹纹），
+                        // 而且圆点的高度比雪还高，高度混合时总是从雪里顶出来。现在：
+                        // 石块是格子内缩出来的多边形（块缝距离，不是到格点的圆），域扭曲后不规则；大小不一、只留一部分格子、稀密成片；
+                        // 石与土只差一档明度，上沿受光、下沿一线暗；土面上一点白霜。
+                        // 高度：土面 0.18–0.28、石顶最高约 0.48，都低于雪（0.5–0.8）——雪的份额过半就盖住，三成左右时雪填在石缝里
                         float blot = Fbm(u, v, 4, seed);
-                        var vo = Voronoi(u, v, 16, seed);
-                        float pebble = 1 - Smooth(0.2f, 0.32f, vo.x);
+                        float patch = Smooth(0.4f, 0.7f, Fbm(u, v, 3, seed + 21));
                         c = Color.Lerp(p.a, p.b, Smooth(0.3f, 0.7f, blot));
-                        c = Color.Lerp(c, p.dark, pebble * 0.5f);
-                        h = 0.3f + pebble * 0.4f;
+                        h = 0.18f + blot * 0.1f;
+                        float wu = u + (Fbm(u, v, 8, seed + 1) - 0.5f) * 0.035f, wv = v + (Fbm(u, v, 8, seed + 2) - 0.5f) * 0.035f;
+                        for (int layer = 0; layer < 2; layer++)
+                        {
+                            int cells = layer == 0 ? 18 : 34;
+                            var vo = Voronoi(wu, wv, cells, cells, seed + layer * 57, out int id, out var lp);
+                            int ix = id % cells, iy = id / cells;
+                            if (Hash(ix, iy, seed + 40 + layer) >= (layer == 0 ? 0.3f : 0.22f) + patch * 0.35f) continue;
+                            float size = 0.18f + Hash(ix, iy, seed + 3 + layer) * 0.22f;
+                            float stone = Smooth(size, size + 0.06f, vo.y);
+                            if (stone <= 0) continue;
+                            float tone = Hash(ix, iy, seed + 9 + layer);
+                            float lit = Mathf.Clamp01(0.5f + lp.y * 0.8f - lp.x * 0.4f);
+                            var sc = Color.Lerp(Color.Lerp(p.a, p.b, 0.35f + tone * 0.5f), p.accent, lit * 0.35f);
+                            sc = Color.Lerp(sc, p.dark, (1 - lit) * 0.25f);
+                            c = Color.Lerp(c, sc, stone);
+                            h = Mathf.Max(h, (0.32f + lit * 0.12f + tone * 0.04f) * stone);
+                        }
+                        float frost = h < 0.3f ? Smooth(0.62f, 0.78f, Fbm(u, v, 24, seed + 31)) : 0;
+                        c = Color.Lerp(c, p.accent, frost * 0.5f);
                         break;
                     }
                 }
                 c.a = Mathf.Clamp01(h);
-                px[y * N + x] = c;
+                return c;
             }
-            return px;
         }
 
         /// <summary>宏观色斑（低频，世界空间采样）</summary>
@@ -285,10 +380,30 @@ namespace Spiritfire.Art.Editor.Levels
             return Write(path, px, true);
         }
 
+        /// <summary>
+        /// 扭曲噪声（R、G 两路互不相关的中频噪声，世界空间采样）：冰原地形材质拿它扭曲崖面岩层的 UV，打散平铺的格子感。
+        /// 单独一张，不往 T_Terrain_Macro 的 G、B 里塞（那张三章共用，压缩时会牵动 R，戈壁 / 火狱的色斑就变了）
+        /// </summary>
+        public static Texture2D Warp(int seed)
+        {
+            string path = $"{Dir}/T_Terrain_Warp.png";
+            var px = new Color[N * N];
+            Parallel.For(0, N, y =>
+            {
+                for (int x = 0; x < N; x++)
+                {
+                    float u = x / (float)N, v = y / (float)N;
+                    px[y * N + x] = new Color(Fbm(u, v, 4, seed, 4), Fbm(u, v, 4, seed + 100, 4), 0.5f, 1);
+                }
+            });
+            return Write(path, px, true);
+        }
+
         static Texture2D Write(string path, Color[] px, bool linear)
         {
             Directory.CreateDirectory(Dir);
-            var tex = new Texture2D(N, N, TextureFormat.RGBA32, true);
+            int n = Mathf.RoundToInt(Mathf.Sqrt(px.Length));
+            var tex = new Texture2D(n, n, TextureFormat.RGBA32, true);
             tex.SetPixels(px);
             File.WriteAllBytes(path, tex.EncodeToPNG());
             Object.DestroyImmediate(tex);
@@ -303,10 +418,10 @@ namespace Spiritfire.Art.Editor.Levels
             return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
         }
 
-        /// <summary>生成（覆盖）一层贴图与它的 TerrainLayer；tileSize = 一张贴图覆盖的米数</summary>
-        public static TerrainLayer Layer(string name, Kind kind, Palette p, float tileSize, int seed)
+        /// <summary>生成（覆盖）一层贴图与它的 TerrainLayer；tileSize = 一张贴图覆盖的米数，size = 贴图边长（像素）</summary>
+        public static TerrainLayer Layer(string name, Kind kind, Palette p, float tileSize, int seed, int size = N)
         {
-            var tex = Write($"{Dir}/T_Terrain_{name}.png", Generate(kind, p, seed), false);
+            var tex = Write($"{Dir}/T_Terrain_{name}.png", Generate(kind, p, seed, size), false);
             string path = $"{Dir}/TL_{name}.terrainlayer";
             var layer = AssetDatabase.LoadAssetAtPath<TerrainLayer>(path);
             if (!layer)
@@ -333,15 +448,16 @@ namespace Spiritfire.Art.Editor.Levels
         };
 
         // 三章的层序一致（LevelKit.Splat 的规则按这个序号写）：0 软覆盖（沙 / 雪 / 灰）· 1 底面（砾石 / 冻土 / 冷熔岩）·
-        // 2 路面或流体边（夯土 / 冰 / 结壳熔岩）· 3 岩（三平面投影：层理岩 / 暗岩 / 柱状玄武岩）
+        // 2 路面或流体边（夯土 / 冰 / 结壳熔岩）· 3 岩（三平面投影：层理岩 / 冻裂岩块 / 柱状玄武岩）
 
-        /// <summary>第二章冰原的四层：雪、冻土碎石、冰、暗色岩</summary>
+        /// <summary>第二章冰原的四层：雪、冻土碎石、冰、冻裂岩块</summary>
         public static TerrainLayer[] Frost() => new[]
         {
             Layer("FrostSnow", Kind.Snow, new Palette { a = C(0.80f, 0.85f, 0.92f), b = C(0.92f, 0.95f, 0.99f), accent = C(0.7f, 0.78f, 0.9f), dark = C(0.55f, 0.6f, 0.7f) }, 10f, 51),
             Layer("FrostSoil", Kind.FrozenSoil, new Palette { a = C(0.42f, 0.44f, 0.48f), b = C(0.52f, 0.54f, 0.58f), accent = C(0.6f, 0.62f, 0.68f), dark = C(0.25f, 0.26f, 0.3f) }, 6f, 61),
             Layer("FrostIce", Kind.Ice, new Palette { a = C(0.48f, 0.66f, 0.80f), b = C(0.62f, 0.80f, 0.90f), accent = C(0.86f, 0.94f, 1f), dark = C(0.3f, 0.4f, 0.55f) }, 12f, 57),
-            Layer("FrostRock", Kind.DarkRock, new Palette { a = C(0.34f, 0.37f, 0.44f), b = C(0.46f, 0.50f, 0.58f), accent = C(0.7f, 0.78f, 0.86f), dark = C(0.2f, 0.22f, 0.28f) }, 9f, 67),
+            // 崖面岩块：一张覆盖 16 m（崖高几十米，8 m 一张时平铺的格子一眼可见），1024 像素保住近看的精度；侧面的投影尺寸见 Ground.Frost.rockScale
+            Layer("FrostRock", Kind.DarkRock, new Palette { a = C(0.34f, 0.37f, 0.44f), b = C(0.46f, 0.50f, 0.58f), accent = C(0.7f, 0.78f, 0.86f), dark = C(0.2f, 0.22f, 0.28f) }, 16f, 67, 1024),
         };
 
         /// <summary>第三章火狱的四层：火山灰、冷却熔岩（绳状）、结壳熔岩（缝里透红）、柱状玄武岩。暗紫玄武岩 + 铜橙，与 art/README.md 的熔火方向一致</summary>

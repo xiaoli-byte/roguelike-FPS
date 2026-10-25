@@ -5,6 +5,14 @@
 //   - 坡度描边：陡坡（崖面、沙丘背风面）按坡度压暗一点，地形起伏更好读
 // 地形关闭 drawInstanced（顶点直接带法线），basemapDistance 拉远（始终用本着色器，不用远处的 basemap）。
 // 地形洞（TerrainData.SetHoles，洞口 / 熔岩井）：Terrain 每次绘制都绑定 _TerrainHolesTexture（0 = 洞），各 pass 按地形 UV 裁掉；没有洞时是白图，不裁。
+// _STEEP_TRIPLANAR（冰原开，戈壁 / 火狱不开 = 原样）：
+//   - 四层和宏观色斑都按法线三平面投影。只有第 4 层三平面时，雪 / 冻土 / 冰和宏观色斑按 XZ 平面投影，
+//     一挂到崖面上（崖顶雪沿、崖脚、被分层规则留在陡坡上的雪）就沿坡被拉成一道道竖条
+//   - 崖面岩层去重复：扭曲噪声（_WarpTex）推 UV + 第二个尺度（×2.7、转 17°）的岩块按高度调明暗，几十米高的崖面上看不出平铺的格子
+//   - 陡坡挂不住雪：按像素法线把雪（再陡一些连冻土）的份额让给岩（_SteepFade）。分层图按 XZ 平面铺，分辨率有限，
+//     雪台、崖顶雪沿的边在近乎竖直的崖面上会拉成一根根竖向的白齿；按法线在像素里退掉，跟分层图的格子无关
+//   - 陡坡光照用平滑法线（_LightNormalTex，LevelKit 从模糊过的高度场烘的，每块地形一张）：崖线的水平扰动在高度场里是上下贯通的竖褶，
+//     顶点法线照出来是一根根亮 / 暗竖条；陡坡上按 _LightNormalBlend 换成平滑法线（只影响光照，三平面权重、陡坡退雪仍用顶点法线）
 Shader "Spiritfire/StylizedTerrain"
 {
     Properties
@@ -28,6 +36,16 @@ Shader "Spiritfire/StylizedTerrain"
         _SlopeDarken("Slope Darken", Range(0, 1)) = 0.25
         _RockScale("Rock Layer Triplanar Size (m)", Float) = 8
 
+        [Header(Steep Triplanar (Frost))]
+        [Toggle(_STEEP_TRIPLANAR)] _SteepTriplanar("All Layers Triplanar + Rock De-tiling", Float) = 0
+        [NoScaleOffset] _WarpTex("Warp Noise (RG)", 2D) = "grey" {}
+        _WarpScale("Warp Noise Size (m)", Float) = 17
+        _RockWarp("Rock UV Warp (tiles)", Range(0, 1)) = 0
+        _RockDetile("Rock 2nd Scale Strength", Range(0, 1)) = 0
+        _SteepFade("Steep Fade (1 - N.y): snow from/to, soil from/to", Vector) = (0.43, 0.62, 0.58, 0.79)
+        [NoScaleOffset] _LightNormalTex("Light Normal (smoothed heightfield, per tile)", 2D) = "grey" {}
+        _LightNormalBlend("Light Normal Blend on Steep", Range(0, 1)) = 0
+
         [Header(Stylized Lighting)]
         _ShadowTint("Shadow Tint", Color) = (0.66, 0.62, 0.82, 1)
         _RampThreshold("Ramp Threshold", Range(-1,1)) = 0.0
@@ -48,6 +66,10 @@ Shader "Spiritfire/StylizedTerrain"
         CBUFFER_START(UnityPerMaterial)
             float4 _LayerTile;
             half _HeightBlend, _HeightBlendDepth, _MacroScale, _MacroStrength, _SlopeDarken, _RockScale;
+            half _WarpScale, _RockWarp, _RockDetile;
+            half4 _SteepFade;
+            float4 _LightNormalTex_TexelSize;
+            half _LightNormalBlend;
             half4 _ShadowTint, _RimColor;
             half _RampThreshold, _RampSoftness, _ShadowLift, _AmbientStrength, _RimPower, _RimStrength;
         CBUFFER_END
@@ -57,6 +79,8 @@ Shader "Spiritfire/StylizedTerrain"
         TEXTURE2D(_Layer2);
         TEXTURE2D(_Layer3);
         TEXTURE2D(_MacroTex);   SAMPLER(sampler_MacroTex);
+        TEXTURE2D(_WarpTex);
+        TEXTURE2D(_LightNormalTex); SAMPLER(sampler_LightNormalTex);
         TEXTURE2D(_TerrainHolesTexture); SAMPLER(sampler_TerrainHolesTexture);
         void ClipTerrainHoles(float2 uv) { clip(SAMPLE_TEXTURE2D(_TerrainHolesTexture, sampler_TerrainHolesTexture, uv).r - 0.5); }
         ENDHLSL
@@ -79,6 +103,7 @@ Shader "Spiritfire/StylizedTerrain"
             #pragma multi_compile _ _CLUSTER_LIGHT_LOOP
             #include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/RenderingLayers.hlsl"
             #pragma multi_compile_fog
+            #pragma shader_feature_local_fragment _ _STEEP_TRIPLANAR
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
             #include "SF_StylizedShading.hlsl"
@@ -111,16 +136,48 @@ Shader "Spiritfire/StylizedTerrain"
                 // 分层图用地形网格 UV（0–1 覆盖整块地形）；各层按世界坐标平铺（米 / 张），与地形尺寸无关
                 half4 ctrl = SAMPLE_TEXTURE2D(_ControlMap, sampler_ControlMap, i.uv);
                 float2 wuv = i.positionWS.xz;
+                half3 nAbs = abs(normalize(i.normalWS));
+                half3 tw = pow(nAbs, 4); tw /= (tw.x + tw.y + tw.z);
+            #if defined(_STEEP_TRIPLANAR)
+                // 四层都三平面投影：侧面 X 向投影用 (z, y)、Z 向用 (x, y)，顶面 (x, z)；平地上 tw.y ≈ 1，与平面投影相同
+                float2 px = i.positionWS.zy, pz = i.positionWS.xy;
+                #define TRI(tex, s) (SAMPLE_TEXTURE2D(tex, sampler_Layer0, px / (s)) * tw.x + SAMPLE_TEXTURE2D(tex, sampler_Layer0, wuv / (s)) * tw.y + SAMPLE_TEXTURE2D(tex, sampler_Layer0, pz / (s)) * tw.z)
+                half4 c0 = TRI(_Layer0, _LayerTile.x);
+                half4 c1 = TRI(_Layer1, _LayerTile.y);
+                half4 c2 = TRI(_Layer2, _LayerTile.z);
+                // 崖面岩层：扭曲噪声推 UV（单位 = 一张岩层贴图），三个投影面各取各的噪声
+                half2 wx = SAMPLE_TEXTURE2D(_WarpTex, sampler_MacroTex, px / _WarpScale).rg - 0.5;
+                half2 wy = SAMPLE_TEXTURE2D(_WarpTex, sampler_MacroTex, wuv / _WarpScale).rg - 0.5;
+                half2 wz = SAMPLE_TEXTURE2D(_WarpTex, sampler_MacroTex, pz / _WarpScale).rg - 0.5;
+                half4 c3 = SAMPLE_TEXTURE2D(_Layer3, sampler_Layer0, px / _RockScale + wx * _RockWarp) * tw.x
+                         + SAMPLE_TEXTURE2D(_Layer3, sampler_Layer0, wuv / _LayerTile.w + wy * _RockWarp) * tw.y
+                         + SAMPLE_TEXTURE2D(_Layer3, sampler_Layer0, pz / _RockScale + wz * _RockWarp) * tw.z;
+                // 第二个尺度：大 2.7 倍、转 17°、错开，按它的高度（块面高、块缝低）调明暗——大块岩体的起伏压在小块岩面上，
+                // 两个尺度的格子对不齐，平铺重复就看不出来。平均高度取最小一级 mip（= 整张贴图的平均）
+                const float2x2 rot = float2x2(0.956, -0.292, 0.292, 0.956);
+                float big = _RockScale * 2.7;
+                half4 b3 = SAMPLE_TEXTURE2D(_Layer3, sampler_Layer0, mul(rot, px) / big + float2(0.37, 0.11)) * tw.x
+                         + SAMPLE_TEXTURE2D(_Layer3, sampler_Layer0, mul(rot, wuv) / big + float2(0.37, 0.11)) * tw.y
+                         + SAMPLE_TEXTURE2D(_Layer3, sampler_Layer0, mul(rot, pz) / big + float2(0.37, 0.11)) * tw.z;
+                half meanH = SAMPLE_TEXTURE2D_LOD(_Layer3, sampler_Layer0, float2(0.5, 0.5), 12).a;
+                c3.rgb *= 1.0 + (b3.a - meanH) * 2.0 * _RockDetile;
+            #else
                 half4 c0 = SAMPLE_TEXTURE2D(_Layer0, sampler_Layer0, wuv / _LayerTile.x);
                 half4 c1 = SAMPLE_TEXTURE2D(_Layer1, sampler_Layer0, wuv / _LayerTile.y);
                 half4 c2 = SAMPLE_TEXTURE2D(_Layer2, sampler_Layer0, wuv / _LayerTile.z);
                 // 第 4 层（岩石 / 崖面）三平面投影：地形 UV 在陡坡上会被拉成长条，侧面改用世界坐标投影，层理沿高度方向保持水平
-                half3 nAbs = abs(normalize(i.normalWS));
-                half3 tw = pow(nAbs, 4); tw /= (tw.x + tw.y + tw.z);
                 float2 rx = float2(i.positionWS.z, i.positionWS.y) / _RockScale, rz = float2(i.positionWS.x, i.positionWS.y) / _RockScale;
                 half4 c3 = SAMPLE_TEXTURE2D(_Layer3, sampler_Layer0, rx) * tw.x + SAMPLE_TEXTURE2D(_Layer3, sampler_Layer0, rz) * tw.z
                          + SAMPLE_TEXTURE2D(_Layer3, sampler_Layer0, wuv / _LayerTile.w) * tw.y;
+            #endif
 
+            #if defined(_STEEP_TRIPLANAR)
+                // 陡坡挂不住雪：55° 起雪渐退、68° 退尽；冻土碎石 65°–78° 退。退掉的份额给岩
+                half steep = 1.0 - normalize(i.normalWS).y;
+                half snowOff = smoothstep(_SteepFade.x, _SteepFade.y, steep) * ctrl.r;
+                half soilOff = smoothstep(_SteepFade.z, _SteepFade.w, steep) * ctrl.g;
+                ctrl.r -= snowOff; ctrl.g -= soilOff; ctrl.a += snowOff + soilOff;
+            #endif
                 // 高度混合：权重 + 高度，只保留最高的一段（深度 _HeightBlendDepth 内）
                 half4 hw = ctrl + half4(c0.a, c1.a, c2.a, c3.a) * _HeightBlend * step(0.001, ctrl);
                 half top = max(max(hw.x, hw.y), max(hw.z, hw.w)) - _HeightBlendDepth;
@@ -129,10 +186,23 @@ Shader "Spiritfire/StylizedTerrain"
                 half3 albedo = c0.rgb * b.x + c1.rgb * b.y + c2.rgb * b.z + c3.rgb * b.w;
 
                 // 宏观色斑 + 坡度压暗
+            #if defined(_STEEP_TRIPLANAR)
+                half macro = SAMPLE_TEXTURE2D(_MacroTex, sampler_MacroTex, px / _MacroScale).r * tw.x
+                           + SAMPLE_TEXTURE2D(_MacroTex, sampler_MacroTex, wuv / _MacroScale).r * tw.y
+                           + SAMPLE_TEXTURE2D(_MacroTex, sampler_MacroTex, pz / _MacroScale).r * tw.z;
+            #else
                 half macro = SAMPLE_TEXTURE2D(_MacroTex, sampler_MacroTex, i.positionWS.xz / _MacroScale).r;
+            #endif
                 albedo *= 1.0 + (macro - 0.5) * 2.0 * _MacroStrength;
                 half3 N = normalize(i.normalWS);
                 albedo *= 1.0 - _SlopeDarken * smoothstep(0.55, 0.9, 1.0 - N.y);
+            #if defined(_STEEP_TRIPLANAR)
+                // 法线图与高度格点一一对应：地形 UV 0–1 落在首末格点的纹素中心上
+                float2 nuv = (i.uv * (_LightNormalTex_TexelSize.z - 1.0) + 0.5) * _LightNormalTex_TexelSize.x;
+                half3 Ns = SAMPLE_TEXTURE2D(_LightNormalTex, sampler_LightNormalTex, nuv).xyz * 2.0 - 1.0;
+                half nk = _LightNormalBlend * smoothstep(0.25, 0.55, 1.0 - N.y);
+                N = normalize(lerp(N, Ns, nk));
+            #endif
 
                 StylizedStyle st;
                 st.shadowTint = _ShadowTint.rgb; st.rampThreshold = _RampThreshold; st.rampSoftness = _RampSoftness;
