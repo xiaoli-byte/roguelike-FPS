@@ -128,7 +128,7 @@
 | 事件总线 | 🟡 | 只有零散的 C# 事件 | `GameEvents`（见 4.5） | M | W0-2 |
 | 种子随机 | ❌ | 全用 `UnityEngine.Random` | `RunRng.Fork(流)` | S | W0-5 |
 | 存档 | ❌ | 只有画质存在 PlayerPrefs | `SaveService`（D22） | M | R2 |
-| 设置 | 🟡 | 只有画质 | `GameSettings` + 设置面板 | M | W0-6 / U4 |
+| 设置 | ✅ | —（操作 / 画面 / 声音 / 按键四页，控件按 GameSettings 自动生成；F4 加显示模式、分辨率、垂直同步、帧率上限、屏幕特效，F5 加环境音、界面音） | `GameSettings` + 设置面板 | M | W0-6 / U4 |
 | 输入 | 🟡 | 6 个以上组件直接读 Keyboard | `GameInput`（D19） | M | W0-6 |
 | 失焦暂停 | ❌ | — | `OnApplicationFocus` | S | W0-5 |
 | 调试作弊 | ❌ | 只有自动冒烟测试 | `DevCommands` 注册表 | M | W0-5 |
@@ -543,11 +543,11 @@
 | 阵亡镜头 / 顿帧 | ❌ | — | 倒地 + `HitStop` | S | F3 |
 | 后坐 | ✅ | 完全回正，比 Three.js 好 | — | — | — |
 | 音效核心 / 命中音 / 配乐 | ✅ | 75 个 id、201 个 ogg、4 首曲子 | — | — | — |
-| 音效覆盖 | 🟡 | ui_* / buy / 部分枪声没接 | 跟着各单元接 | S | F5 + 各单元 |
-| 压低 / 混音 / 限幅 | ❌ | 暂停时满音量；没有 Mixer | AudioMixer + 快照 | M | F5 |
+| 音效覆盖 | ✅ | —（清单 75 个 id 都有调用点；按钮音由 UISound 挂在每层根上、走 UI 总线） | 跟着各单元接 | S | F5 + 各单元 |
+| 压低 / 混音 / 限幅 | ✅ | —（`Resources/Audio/Spiritfire.mixer`，bridge.sh audio 生成：Master 限幅 → World（快照：暂停 / 模态 0.45 + 6 kHz 低通、结算 0.8）→ SFX / Music / Ambience / Reverb，UI 直挂 Master；玩家音量 = 暴露参数；跳伤 / 雷弧同时 ≤ 3 声、叠声衰减） | AudioMixer + 快照 | M | F5 |
 | 空间音频 / 环境音（超越） | ❌ | — | 遮挡低通、混响区、环境声床 | M | I6 |
-| 画质档 | 🟡 | 只有 3 档毛发 | `QualityProfile` | M | F4 |
-| 后处理 | 🟡 | 丢失（P0） | 修复 + 玩法屏效 Volume | M | W0-8 / F4 |
+| 画质档 | ✅ | —（`QualityProfile` 三档：渲染比例 + FSR 1.0、MSAA、阴影距离 / 级联 / 分辨率 / 软硬、附加光投影、SSAO、闪光灯数、粒子预算、毛发、lodBias、mip、地形细节；「高」= 工程原值；三档都用 PC 级，运行时改资产、编辑器退出 Play 还原。STP 不用：URP 的 TAA / STP 不支持叠加相机） | `QualityProfile` | M | F4 |
+| 后处理 | ✅ | —（关卡 VP 已修好；`GameplayVolumes`：低血量去饱和、受击色差、冲刺色差 + 暗角、慢动作，乘设置「屏幕特效」；低档 Bloom 降到 1/4） | 修复 + 玩法屏效 Volume | M | W0-8 / F4 |
 | LOD / 剔除 | 🟡 | GPU Resident Drawer 没开 | 开启 + 遮挡烘焙 | M | I4 |
 | 运行时分配 | 🟡 | 每次都 new GameObject / MPB | 池化 | S | F1 / C4 |
 | 性能叠层 | 🟡 | 只打印一行 fps | `PerfOverlay` | S | L5 |
