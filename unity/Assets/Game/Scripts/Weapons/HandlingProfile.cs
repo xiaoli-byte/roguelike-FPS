@@ -63,7 +63,8 @@ namespace Spiritfire.Game
             var p = new HandlingProfile { weaponId = weaponId, action = action };
             switch (style)
             {
-                case ReloadStyle.Magazine: p.tiltRot = new Vector3(0.12f, 0, 0.45f); p.tiltPos = new Vector3(-0.03f, 0.01f, 0); break;
+                // 弹匣：TS 只右翻 + 左移 3 cm，腰射时弹匣口在画面下沿外；再抬 5 cm、往镜头拉 2 cm，换弹匣的手看得见
+                case ReloadStyle.Magazine: p.tiltRot = new Vector3(0.12f, 0, 0.45f); p.tiltPos = new Vector3(-0.045f, 0.05f, 0.02f); break;
                 case ReloadStyle.Cylinder: p.tiltRot = new Vector3(0.1f, 0, 0.75f); p.tiltPos = new Vector3(-0.04f, 0, 0); break;
                 case ReloadStyle.Tube: p.tiltRot = new Vector3(0.5f, 0, 0.15f); p.tiltPos = new Vector3(0, -0.04f, 0.04f); break;
                 case ReloadStyle.Cell: p.tiltRot = new Vector3(0.12f, 0, 0.3f); p.tiltPos = new Vector3(-0.02f, 0, 0); break;

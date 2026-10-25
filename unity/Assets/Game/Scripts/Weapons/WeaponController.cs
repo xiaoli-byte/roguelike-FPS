@@ -550,8 +550,15 @@ namespace Spiritfire.Game
             float yaw = (def.recoilBias + UnityEngine.Random.Range(-1f, 1f) * def.recoilYaw) * k;
             motor.AddRecoil(pitch * RecoilScale * Mathf.Rad2Deg, yaw * RecoilScale * Mathf.Rad2Deg);
             ViewFor(shownRig)?.Kick(def.kickBack * 0.76f * ViewKickScale * strength, def.kickRot * ViewKickScale * strength);
-            // 枪口火焰（未满蓄的蓄力射击按 TS 0.5 + 0.5 × 强度减弱）；位置 = muzzle 挂点投到主相机的枪口，挂点本身见 MuzzleSocket
-            if (def.flash > 0) ShotFx.Instance?.MuzzleFlash(muzzle, def.flash / 0.12f * (0.5f + 0.5f * Mathf.Clamp01(strength)));
+            // 枪口火焰挂在第一人称枪模的 muzzle 挂点下（W3 / W4 提供挂点，火焰预设归 FX1）；没有 rig 时放在投到主相机的枪口位置。
+            // 未满蓄的蓄力射击按 TS 0.5 + 0.5 × 强度减弱
+            if (def.flash > 0)
+            {
+                var socket = MuzzleSocket;
+                var sockets = socket ? socket.GetComponentInParent<WeaponSockets>() : null;
+                Fx.MuzzleFlash(socket, muzzle, sockets ? sockets.Forward : Aim.forward, Fx.ElementColor(w.element),
+                    def.flash / 0.12f * (0.5f + 0.5f * Mathf.Clamp01(strength)));
+            }
             if (def.mode == FireMode.Beam) GameAudio.HoldBeam(def.sfxVolume);
             else GameAudio.Play(def.sfx, def.sfxVolume, 0.94f + UnityEngine.Random.value * 0.12f);
             if (feel) feel.FireKick(def.shake * strength, def.shake > 0.15f ? 0.16f : 0.08f, def.kickBack * strength);
