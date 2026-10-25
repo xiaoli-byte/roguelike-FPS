@@ -25,7 +25,7 @@ namespace Spiritfire.Art.Editor.Levels
 
     /// <summary>
     /// 关卡验收规则集：任何 [LevelBuilder] 关卡在生成、烘焙之后调 <see cref="Run"/>，依次跑全部 <see cref="ILevelCheck"/>，
-    /// 再出俯视地图（Assets/Art/_Review/level_&lt;id&gt;_map.png + .json，U7 全图也用它）。返回本次新增的不合格项数。
+    /// 再出俯视地图（Assets/Art/_Review/level_&lt;id&gt;_map.png + .json），并由 <see cref="LevelMetaWriter"/> 写运行时行旅图与场景里的 LevelMeta（U7）。返回本次新增的不合格项数。
     /// 规则：主线连通、坡度、地标视线、锚点有路、出生净空、交互净空、防越界、主线不靠二段跳、场地尺寸、掩体数、高差层数、占位清单、面数 / 批次预算。
     /// </summary>
     public static class LevelValidator
@@ -82,6 +82,12 @@ namespace Spiritfire.Art.Editor.Levels
                     var area = ctx.MapArea;
                     var png = LevelKit.CaptureMap(spec.id, area, spec.mapPixels);
                     rep.Line($"✓ {png}（世界 XZ {area.xMin:F0}…{area.xMax:F0} × {area.yMin:F0}…{area.yMax:F0}，坐标映射见同名 .json）");
+                    try { LevelMetaWriter.Write(spec, area, png, rep); } // U7：运行时行旅图（入库的 JPG）+ 场景里的 LevelMeta
+                    catch (Exception e)
+                    {
+                        rep.Warn($"行旅图元数据没写成：{e.Message}");
+                        Debug.LogException(e);
+                    }
                 }
                 catch (Exception e)
                 {
