@@ -253,6 +253,13 @@
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
 }
 
+/* 武器名单行（同首领血条：缩放后测得略窄会把最后一个字挤到第二行，如「蜂鸣冲锋枪」） */
+.sf-weapon__name,
+.sf-weapon__secname {
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
 .sf-weapon__lvl {
     margin-left: 8px;
     padding: 1px 5px;
