@@ -72,6 +72,38 @@ namespace Spiritfire.Art.Editor
             return b;
         }
 
+        static void ValidateWeapon(ArtSidecar sc, GameObject inst, Result res)
+        {
+            var sockets = inst.GetComponent<WeaponSockets>();
+            if (!sockets)
+            {
+                res.errors.Add("武器 Prefab 没有 WeaponSockets（零件 / 挂点没生成）");
+                return;
+            }
+            var parts = sc.Weapon["parts"] as Newtonsoft.Json.Linq.JObject;
+            foreach (var p in parts?.Properties() ?? Enumerable.Empty<Newtonsoft.Json.Linq.JProperty>())
+                if (!sockets.Part(p.Name)) res.errors.Add($"语义零件 {p.Name}（骨骼 {(string)p.Value}）不在 Prefab 里");
+            var design = sc.DesignBounds;
+            var slack = design.HasValue ? new Bounds(design.Value.center, design.Value.size + Vector3.one * 0.12f) : (Bounds?)null;
+            int found = 0;
+            foreach (var name in WeaponSockets.SocketNames)
+            {
+                var t = sockets.Socket(name);
+                if (!t)
+                {
+                    res.errors.Add($"缺挂点 {name}");
+                    continue;
+                }
+                found++;
+                var local = inst.transform.InverseTransformPoint(t.position);
+                // 瞄准点在视线上，偏右开镜的枪（榴弹、机炮……）会在枪身左边一点；其余挂点都应贴着枪身
+                if (slack.HasValue && name != WeaponSockets.Sight && !slack.Value.Contains(local))
+                    res.warnings.Add($"挂点 {name} {local} 离枪身太远（设计包围盒外 6 cm 以上）");
+            }
+            res.metrics["sockets"] = found;
+            res.metrics["parts"] = sockets.partNames;
+        }
+
         public static Result Validate(ArtSidecar sc)
         {
             var res = new Result { id = sc.Id };
@@ -148,6 +180,9 @@ namespace Spiritfire.Art.Editor
                                 res.errors.Add($"{"XYZ"[a]} 向中心 {b.center[a]:F2} 与设计 {d.center[a]:F2} 不一致（左右 / 前后翻转？）");
                         }
                 }
+
+                // 第一人称武器（W3）：语义零件骨骼都在、六个挂点齐全且在设计包围盒附近
+                if (sc.Weapon != null) ValidateWeapon(sc, inst, res);
 
                 // 人形：Avatar 有效；左手在 −X、脚尖在脚跟前方（朝 +Z）；T-pose 下上臂水平
                 if (sc.IsHumanoid)

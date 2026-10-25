@@ -46,6 +46,8 @@ namespace Spiritfire.Art.Editor
         /// <summary>毛发 / 羽毛配置（registry.toml 的 [assets.&lt;ID&gt;.fur]）；没有时为 null，见 <see cref="FurSettings"/></summary>
         public JObject Fur => raw["fur"] as JObject;
         public JArray Materials => (JArray)raw["materials"] ?? new JArray();
+        /// <summary>第一人称武器的语义零件与挂点（unity_export.weapon_parts 写：id / parts / bindPose / sockets）；不是武器为 null</summary>
+        public JObject Weapon => raw["weapon"] as JObject;
 
         public float[] LodDistance => raw["lodDistance"]?.ToObject<float[]>() ?? new[] { 0f };
 

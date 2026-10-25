@@ -18,6 +18,81 @@
     "maxFileKb": 3000
   },
   "qaWaivers": {},
+  "weapon": {
+    "id": "revolver",
+    "parts": {
+      "muzzle": "muzzle",
+      "cylinder": "cylinder",
+      "mag": "cylinder"
+    },
+    "bindPose": {
+      "j_r": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "muzzle": [
+        0.0,
+        0.056,
+        -0.255
+      ],
+      "cylinder": [
+        0.0,
+        0.038,
+        -0.05
+      ]
+    },
+    "sockets": {
+      "muzzle": {
+        "bone": "muzzle"
+      },
+      "sight": {
+        "parent": "j_r",
+        "pos": [
+          0.0,
+          0.089,
+          -0.24
+        ]
+      },
+      "leftGrip": {
+        "parent": "j_r",
+        "pos": [
+          0.034,
+          -0.04,
+          0.035
+        ]
+      },
+      "load": {
+        "parent": "cylinder",
+        "pos": [
+          0.045,
+          0.038,
+          -0.006
+        ]
+      },
+      "finish": {
+        "parent": "j_r",
+        "pos": [
+          0.025,
+          0.038,
+          -0.05
+        ]
+      },
+      "eject": {
+        "parent": "j_r",
+        "pos": [
+          -0.03,
+          0.038,
+          -0.05
+        ],
+        "dir": [
+          -1.0,
+          0.4,
+          0.0
+        ]
+      }
+    }
+  },
   "bounds": {
     "min": [
       -0.030940935015678406,
@@ -38,8 +113,8 @@
     "tpose": null,
     "bones": [
       "j_r",
-      "j_0",
-      "j_8"
+      "muzzle",
+      "cylinder"
     ]
   },
   "meshes": [
@@ -96,5 +171,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-25 11:54:19"
+  "exported": "2026-10-25 13:23:52"
 }

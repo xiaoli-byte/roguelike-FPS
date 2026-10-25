@@ -18,6 +18,80 @@
     "maxFileKb": 3000
   },
   "qaWaivers": {},
+  "weapon": {
+    "id": "magmashot",
+    "parts": {
+      "muzzle": "muzzle",
+      "barrels": "barrels"
+    },
+    "bindPose": {
+      "j_r": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "muzzle": [
+        0.0,
+        0.04,
+        -0.39
+      ],
+      "barrels": [
+        0.0,
+        0.004,
+        -0.035
+      ]
+    },
+    "sockets": {
+      "muzzle": {
+        "bone": "muzzle"
+      },
+      "sight": {
+        "parent": "barrels",
+        "pos": [
+          0.0,
+          0.075,
+          -0.365
+        ]
+      },
+      "leftGrip": {
+        "parent": "barrels",
+        "pos": [
+          0.0,
+          -0.02,
+          -0.16
+        ]
+      },
+      "load": {
+        "parent": "j_r",
+        "pos": [
+          0.0,
+          0.045,
+          -0.04
+        ]
+      },
+      "finish": {
+        "parent": "barrels",
+        "pos": [
+          0.0,
+          -0.02,
+          -0.16
+        ]
+      },
+      "eject": {
+        "parent": "barrels",
+        "pos": [
+          0.0,
+          0.04,
+          -0.065
+        ],
+        "dir": [
+          0.0,
+          0.6,
+          1.0
+        ]
+      }
+    }
+  },
   "bounds": {
     "min": [
       -0.040403228253126144,
@@ -38,7 +112,8 @@
     "tpose": null,
     "bones": [
       "j_r",
-      "j_0"
+      "barrels",
+      "muzzle"
     ]
   },
   "meshes": [
@@ -46,7 +121,7 @@
       "name": "SK_Weapon_Magmashot_LOD0",
       "lod": 0,
       "tris": 12000,
-      "verts": 8367,
+      "verts": 8480,
       "materials": [
         "M_Weapon_Magmashot"
       ],
@@ -99,5 +174,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-25 11:54:12"
+  "exported": "2026-10-25 13:23:33"
 }

@@ -54,11 +54,16 @@ namespace Spiritfire.Game
             }
         }
 
-        static bool IsWeaponRenderer(Renderer r)
+        /// <summary>W3 烘进枪模 Prefab 的程序化零件（瞄具、弩弦、弩箭）的材质名前缀：它们自己管颜色（稀有度 / 元素），元素着色不碰</summary>
+        public const string ProceduralMaterialPrefix = "M_WeaponProc_";
+
+        /// <summary>美术枪模的纹路发光渲染器：开了 _EMISSION 的材质，粒子 / 拖尾 / 线和 W3 的程序化零件不算</summary>
+        public static bool IsWeaponRenderer(Renderer r)
         {
-            if (r is ParticleSystemRenderer || r is TrailRenderer || r is LineRenderer) return false;
+            if (!r || r is ParticleSystemRenderer || r is TrailRenderer || r is LineRenderer) return false;
             var m = r.sharedMaterial;
-            return m && m.HasProperty(EmissionColor) && m.IsKeywordEnabled("_EMISSION");
+            return m && m.HasProperty(EmissionColor) && m.IsKeywordEnabled("_EMISSION")
+                   && !m.name.StartsWith(ProceduralMaterialPrefix, System.StringComparison.Ordinal);
         }
     }
 }

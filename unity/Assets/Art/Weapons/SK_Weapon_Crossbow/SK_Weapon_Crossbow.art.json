@@ -18,6 +18,86 @@
     "maxFileKb": 3000
   },
   "qaWaivers": {},
+  "weapon": {
+    "id": "crossbow",
+    "parts": {
+      "muzzle": "muzzle",
+      "bolt": "bolt",
+      "mag": "mag"
+    },
+    "bindPose": {
+      "j_r": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "muzzle": [
+        0.0,
+        0.074,
+        -0.4
+      ],
+      "bolt": [
+        0.0,
+        0.074,
+        -0.24
+      ],
+      "mag": [
+        0.0,
+        0.11,
+        -0.12
+      ]
+    },
+    "sockets": {
+      "muzzle": {
+        "bone": "muzzle"
+      },
+      "sight": {
+        "parent": "j_r",
+        "pos": [
+          0.0,
+          0.16,
+          -0.08
+        ]
+      },
+      "leftGrip": {
+        "parent": "j_r",
+        "pos": [
+          0.0,
+          0.01,
+          -0.25
+        ]
+      },
+      "load": {
+        "parent": "mag",
+        "pos": [
+          0.015,
+          0.075,
+          -0.13
+        ]
+      },
+      "finish": {
+        "parent": "j_r",
+        "pos": [
+          0.0,
+          0.08,
+          -0.1
+        ]
+      },
+      "eject": {
+        "parent": "j_r",
+        "pos": [
+          -0.025,
+          0.074,
+          -0.1
+        ],
+        "dir": [
+          -1.0,
+          0.6,
+          0.0
+        ]
+      }
+    }
+  },
   "bounds": {
     "min": [
       -0.19258758425712585,
@@ -38,9 +118,9 @@
     "tpose": null,
     "bones": [
       "j_r",
-      "j_0",
-      "j_10",
-      "j_11"
+      "muzzle",
+      "bolt",
+      "mag"
     ]
   },
   "meshes": [
@@ -97,5 +177,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-25 11:53:54"
+  "exported": "2026-10-25 13:24:15"
 }

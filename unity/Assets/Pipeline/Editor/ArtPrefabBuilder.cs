@@ -399,6 +399,11 @@ namespace Spiritfire.Art.Editor
                         StaticEditorFlags.OccludeeStatic | StaticEditorFlags.ReflectionProbeStatic);
             }
 
+            // 第一人称武器：语义零件、挂点、程序化零件（瞄具 / 弩弦 / 弩箭），见 WeaponPrefabParts
+            if (sc.Weapon != null)
+                foreach (var w in WeaponPrefabParts.Build(sc, root, inst))
+                    Debug.LogWarning($"[Art] {sc.Id}: {w}");
+
             var infoComp = root.AddComponent<ArtAssetInfo>();
             infoComp.assetId = sc.Id;
             infoComp.assetClass = sc.Class;

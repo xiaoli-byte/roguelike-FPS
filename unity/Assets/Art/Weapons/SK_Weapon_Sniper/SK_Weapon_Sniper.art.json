@@ -18,6 +18,80 @@
     "maxFileKb": 3000
   },
   "qaWaivers": {},
+  "weapon": {
+    "id": "sniper",
+    "parts": {
+      "muzzle": "muzzle",
+      "mag": "mag"
+    },
+    "bindPose": {
+      "j_r": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "muzzle": [
+        0.0,
+        0.045,
+        -0.700594
+      ],
+      "mag": [
+        0.0,
+        0.002,
+        -0.1
+      ]
+    },
+    "sockets": {
+      "muzzle": {
+        "bone": "muzzle"
+      },
+      "sight": {
+        "parent": "j_r",
+        "pos": [
+          0.0,
+          0.12,
+          -0.17
+        ]
+      },
+      "leftGrip": {
+        "parent": "j_r",
+        "pos": [
+          0.0,
+          0.004,
+          -0.3
+        ]
+      },
+      "load": {
+        "parent": "mag",
+        "pos": [
+          0.018,
+          -0.06,
+          -0.06
+        ]
+      },
+      "finish": {
+        "parent": "j_r",
+        "pos": [
+          -0.038,
+          0.056,
+          0.03
+        ]
+      },
+      "eject": {
+        "parent": "j_r",
+        "pos": [
+          -0.03,
+          0.05,
+          0.0
+        ],
+        "dir": [
+          -1.0,
+          0.6,
+          0.0
+        ]
+      }
+    }
+  },
   "bounds": {
     "min": [
       -0.08758987486362457,
@@ -38,8 +112,8 @@
     "tpose": null,
     "bones": [
       "j_r",
-      "j_0",
-      "j_17"
+      "muzzle",
+      "mag"
     ]
   },
   "meshes": [
@@ -96,5 +170,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-25 11:54:39"
+  "exported": "2026-10-25 13:52:28"
 }

@@ -18,6 +18,80 @@
     "maxFileKb": 3000
   },
   "qaWaivers": {},
+  "weapon": {
+    "id": "shotgun",
+    "parts": {
+      "muzzle": "muzzle",
+      "pump": "pump"
+    },
+    "bindPose": {
+      "j_r": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "muzzle": [
+        0.0,
+        0.062,
+        -0.56
+      ],
+      "pump": [
+        0.0,
+        0.022,
+        -0.3
+      ]
+    },
+    "sockets": {
+      "muzzle": {
+        "bone": "muzzle"
+      },
+      "sight": {
+        "parent": "j_r",
+        "pos": [
+          0.0,
+          0.096,
+          -0.53
+        ]
+      },
+      "leftGrip": {
+        "parent": "pump",
+        "pos": [
+          0.0,
+          -0.002,
+          -0.3
+        ]
+      },
+      "load": {
+        "parent": "j_r",
+        "pos": [
+          0.018,
+          -0.03,
+          -0.08
+        ]
+      },
+      "finish": {
+        "parent": "pump",
+        "pos": [
+          0.0,
+          -0.002,
+          -0.3
+        ]
+      },
+      "eject": {
+        "parent": "j_r",
+        "pos": [
+          -0.03,
+          0.055,
+          -0.04
+        ],
+        "dir": [
+          -1.0,
+          0.5,
+          0.1
+        ]
+      }
+    }
+  },
   "bounds": {
     "min": [
       -0.05461890995502472,
@@ -38,8 +112,8 @@
     "tpose": null,
     "bones": [
       "j_r",
-      "j_0",
-      "j_7"
+      "muzzle",
+      "pump"
     ]
   },
   "meshes": [
@@ -96,5 +170,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-25 11:54:28"
+  "exported": "2026-10-25 13:24:04"
 }

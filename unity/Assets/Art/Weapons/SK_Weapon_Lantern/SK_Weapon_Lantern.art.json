@@ -18,6 +18,86 @@
     "maxFileKb": 3000
   },
   "qaWaivers": {},
+  "weapon": {
+    "id": "lantern",
+    "parts": {
+      "muzzle": "muzzle",
+      "mag": "mag",
+      "lamp": "lamp"
+    },
+    "bindPose": {
+      "j_r": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "muzzle": [
+        0.0,
+        -0.03,
+        -0.33
+      ],
+      "lamp": [
+        0.0,
+        -0.03,
+        -0.26
+      ],
+      "mag": [
+        0.0,
+        -0.03,
+        -0.26
+      ]
+    },
+    "sockets": {
+      "muzzle": {
+        "bone": "muzzle"
+      },
+      "sight": {
+        "parent": "j_r",
+        "pos": [
+          0.06,
+          0.15,
+          -0.23
+        ]
+      },
+      "leftGrip": {
+        "parent": "j_r",
+        "pos": [
+          0.0,
+          -0.02,
+          -0.12
+        ]
+      },
+      "load": {
+        "parent": "mag",
+        "pos": [
+          0.025,
+          -0.03,
+          -0.29
+        ]
+      },
+      "finish": {
+        "parent": "j_r",
+        "pos": [
+          0.024,
+          0.02,
+          -0.23
+        ]
+      },
+      "eject": {
+        "parent": "lamp",
+        "pos": [
+          0.0,
+          0.03,
+          -0.26
+        ],
+        "dir": [
+          0.0,
+          1.0,
+          0.0
+        ]
+      }
+    }
+  },
   "bounds": {
     "min": [
       -0.05636250227689743,
@@ -38,9 +118,9 @@
     "tpose": null,
     "bones": [
       "j_r",
-      "j_0",
-      "j_12",
-      "j_12_12"
+      "muzzle",
+      "lamp",
+      "mag"
     ]
   },
   "meshes": [
@@ -101,5 +181,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-25 11:54:06"
+  "exported": "2026-10-25 13:24:43"
 }

@@ -94,6 +94,8 @@ namespace Spiritfire.Game
     {
         /// <summary>占位瞄具根节点名（测试 / 重复挂载检查用）</summary>
         public const string NodeName = "Sight (WC1 placeholder)";
+        /// <summary>W3 烘进 Prefab 的瞄具网格根节点名（ArtPrefabBuilder 生成，零件命名与占位网格一致）；有它就不再补占位网格</summary>
+        public const string BakedName = "sightParts";
         const int TubeSegments = 16;
 
         static Mesh box, tube;
@@ -106,8 +108,12 @@ namespace Spiritfire.Game
             tube = null;
         }
 
-        /// <summary>root（rig 或枪模）下已有的占位瞄具（没有为 null）</summary>
-        public static Transform Find(Transform root) => WeaponRigPart.FindDeep(root, NodeName);
+        /// <summary>root（rig 或枪模）下已有的瞄具网格：Prefab 里烘好的（W3）优先，其次运行时补的占位网格；都没有为 null</summary>
+        public static Transform Find(Transform root)
+        {
+            var baked = WeaponRigPart.FindDeep(root, BakedName);
+            return baked ? baked : WeaponRigPart.FindDeep(root, NodeName);
+        }
 
         /// <summary>给枪模根挂占位瞄具（已挂过 / 没有零件时什么都不做）；返回瞄具根节点</summary>
         public static Transform Attach(Transform gun, WeaponSight sight)
@@ -164,15 +170,33 @@ namespace Spiritfire.Game
             block.Clear();
             block.SetColor("_BaseColor", c);
             block.SetColor("_Color", c);
+            // Prefab 里烘好的零件是受光材质（StylizedLit），发光走自发光色
+            var m = r.sharedMaterial;
+            if (m && m.IsKeywordEnabled("_EMISSION")) block.SetColor("_EmissionColor", c);
             r.SetPropertyBlock(block);
         }
 
         // ───────────── 共享网格 ─────────────
 
-        /// <summary>中心在原点的单位方块（24 顶点，带法线）</summary>
         static Mesh BoxMesh()
         {
             if (box) return box;
+            box = NewBoxMesh();
+            box.hideFlags = HideFlags.DontSave;
+            return box;
+        }
+
+        static Mesh TubeMesh()
+        {
+            if (tube) return tube;
+            tube = NewTubeMesh();
+            tube.hideFlags = HideFlags.DontSave;
+            return tube;
+        }
+
+        /// <summary>新建一个中心在原点的单位方块（24 顶点，带法线）；W3 的 Prefab 生成器也用它存成网格资产</summary>
+        public static Mesh NewBoxMesh()
+        {
             var v = new List<Vector3>(24);
             var n = new List<Vector3>(24);
             var tris = new List<int>(36);
@@ -194,18 +218,17 @@ namespace Spiritfire.Game
             Face(Vector3.down, Vector3.right, Vector3.back);
             Face(Vector3.forward, Vector3.left, Vector3.up);
             Face(Vector3.back, Vector3.right, Vector3.up);
-            box = new Mesh { name = "SightBox", hideFlags = HideFlags.DontSave };
-            box.SetVertices(v);
-            box.SetNormals(n);
-            box.SetTriangles(tris, 0);
-            box.RecalculateBounds();
-            return box;
+            var m = new Mesh { name = "SightBox" };
+            m.SetVertices(v);
+            m.SetNormals(n);
+            m.SetTriangles(tris, 0);
+            m.RecalculateBounds();
+            return m;
         }
 
-        /// <summary>单位开口圆筒：半径 1、长 1、轴沿 z、中心在原点；外壁 + 内壁（法线朝内，绕序相反），从筒里看也看得见</summary>
-        static Mesh TubeMesh()
+        /// <summary>新建一个单位开口圆筒：半径 1、长 1、轴沿 z、中心在原点；外壁 + 内壁（法线朝内，绕序相反），从筒里看也看得见</summary>
+        public static Mesh NewTubeMesh()
         {
-            if (tube) return tube;
             int seg = TubeSegments, ring = seg + 1;
             var v = new List<Vector3>(ring * 4);
             var n = new List<Vector3>(ring * 4);
@@ -239,12 +262,12 @@ namespace Spiritfire.Game
                     }
                 }
             }
-            tube = new Mesh { name = "SightTube", hideFlags = HideFlags.DontSave };
-            tube.SetVertices(v);
-            tube.SetNormals(n);
-            tube.SetTriangles(tris, 0);
-            tube.RecalculateBounds();
-            return tube;
+            var m = new Mesh { name = "SightTube" };
+            m.SetVertices(v);
+            m.SetNormals(n);
+            m.SetTriangles(tris, 0);
+            m.RecalculateBounds();
+            return m;
         }
     }
 }

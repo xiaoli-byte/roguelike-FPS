@@ -18,6 +18,86 @@
     "maxFileKb": 3000
   },
   "qaWaivers": {},
+  "weapon": {
+    "id": "minigun",
+    "parts": {
+      "muzzle": "muzzle",
+      "spinner": "spinner",
+      "mag": "mag"
+    },
+    "bindPose": {
+      "j_r": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "muzzle": [
+        0.0,
+        0.045,
+        -0.557871
+      ],
+      "spinner": [
+        0.0,
+        0.045,
+        -0.17
+      ],
+      "mag": [
+        0.1,
+        0.0,
+        -0.04
+      ]
+    },
+    "sockets": {
+      "muzzle": {
+        "bone": "muzzle"
+      },
+      "sight": {
+        "parent": "j_r",
+        "pos": [
+          0.14,
+          0.22,
+          -0.07
+        ]
+      },
+      "leftGrip": {
+        "parent": "j_r",
+        "pos": [
+          0.085,
+          0.03,
+          -0.2
+        ]
+      },
+      "load": {
+        "parent": "mag",
+        "pos": [
+          0.08,
+          -0.065,
+          -0.02
+        ]
+      },
+      "finish": {
+        "parent": "j_r",
+        "pos": [
+          0.065,
+          0.06,
+          -0.11
+        ]
+      },
+      "eject": {
+        "parent": "j_r",
+        "pos": [
+          -0.057,
+          0.03,
+          -0.02
+        ],
+        "dir": [
+          -1.0,
+          -0.3,
+          0.2
+        ]
+      }
+    }
+  },
   "bounds": {
     "min": [
       -0.05820842832326889,
@@ -38,9 +118,9 @@
     "tpose": null,
     "bones": [
       "j_r",
-      "j_0",
-      "j_4",
-      "j_8"
+      "muzzle",
+      "spinner",
+      "mag"
     ]
   },
   "meshes": [
@@ -97,5 +177,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-25 11:54:14"
+  "exported": "2026-10-25 13:52:34"
 }

@@ -18,6 +18,81 @@
     "maxFileKb": 3000
   },
   "qaWaivers": {},
+  "weapon": {
+    "id": "stormpod",
+    "parts": {
+      "muzzle": "muzzle",
+      "cylinder": "cylinder",
+      "mag": "cylinder"
+    },
+    "bindPose": {
+      "j_r": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "muzzle": [
+        0.0,
+        0.04,
+        -0.31
+      ],
+      "cylinder": [
+        0.0,
+        0.03,
+        -0.03
+      ]
+    },
+    "sockets": {
+      "muzzle": {
+        "bone": "muzzle"
+      },
+      "sight": {
+        "parent": "j_r",
+        "pos": [
+          0.08,
+          0.17,
+          -0.225
+        ]
+      },
+      "leftGrip": {
+        "parent": "j_r",
+        "pos": [
+          0.0,
+          -0.02,
+          -0.2
+        ]
+      },
+      "load": {
+        "parent": "cylinder",
+        "pos": [
+          0.06,
+          0.03,
+          -0.005
+        ]
+      },
+      "finish": {
+        "parent": "j_r",
+        "pos": [
+          0.025,
+          0.03,
+          -0.03
+        ]
+      },
+      "eject": {
+        "parent": "j_r",
+        "pos": [
+          -0.055,
+          0.03,
+          -0.03
+        ],
+        "dir": [
+          -1.0,
+          0.3,
+          0.0
+        ]
+      }
+    }
+  },
   "bounds": {
     "min": [
       -0.061108484864234924,
@@ -38,8 +113,8 @@
     "tpose": null,
     "bones": [
       "j_r",
-      "j_0",
-      "j_7"
+      "muzzle",
+      "cylinder"
     ]
   },
   "meshes": [
@@ -100,5 +175,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-25 11:54:42"
+  "exported": "2026-10-25 13:24:33"
 }

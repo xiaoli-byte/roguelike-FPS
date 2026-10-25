@@ -18,6 +18,86 @@
     "maxFileKb": 3000
   },
   "qaWaivers": {},
+  "weapon": {
+    "id": "burst",
+    "parts": {
+      "muzzle": "muzzle",
+      "mag": "mag",
+      "sightGroup": "sightGroup"
+    },
+    "bindPose": {
+      "j_r": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "muzzle": [
+        0.0,
+        0.045,
+        -0.44
+      ],
+      "sightGroup": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mag": [
+        0.0,
+        -0.005,
+        0.1
+      ]
+    },
+    "sockets": {
+      "muzzle": {
+        "bone": "muzzle"
+      },
+      "sight": {
+        "parent": "j_r",
+        "pos": [
+          0.0,
+          0.132,
+          -0.128
+        ]
+      },
+      "leftGrip": {
+        "parent": "j_r",
+        "pos": [
+          0.0,
+          -0.005,
+          -0.24
+        ]
+      },
+      "load": {
+        "parent": "mag",
+        "pos": [
+          0.015,
+          -0.06,
+          0.1
+        ]
+      },
+      "finish": {
+        "parent": "j_r",
+        "pos": [
+          0.035,
+          0.055,
+          -0.035
+        ]
+      },
+      "eject": {
+        "parent": "j_r",
+        "pos": [
+          -0.034,
+          0.07,
+          0.05
+        ],
+        "dir": [
+          -1.0,
+          0.4,
+          0.3
+        ]
+      }
+    }
+  },
   "bounds": {
     "min": [
       -0.034849151968955994,
@@ -38,9 +118,9 @@
     "tpose": null,
     "bones": [
       "j_r",
-      "j_0",
-      "j_3",
-      "j_12"
+      "muzzle",
+      "sightGroup",
+      "mag"
     ]
   },
   "meshes": [
@@ -97,5 +177,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-25 11:53:49"
+  "exported": "2026-10-25 13:24:01"
 }

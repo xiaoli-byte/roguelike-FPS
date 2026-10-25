@@ -32,7 +32,7 @@ namespace Spiritfire.Game
         {
             spec = WeaponSpinner.For(weaponId);
             if (spec == null) return;
-            bone = Bone(spec.bone);
+            bone = Bone(spec.bone, "spinner");
             if (!bone)
             {
                 Debug.LogWarning($"[BarrelSpinner] {weaponId} 的枪模里没有转管骨骼 {spec.bone}（重导后编号变了？）");

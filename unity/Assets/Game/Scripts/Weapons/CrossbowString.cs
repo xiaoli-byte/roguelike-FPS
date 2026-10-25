@@ -21,9 +21,11 @@ namespace Spiritfire.Game
         public const float BoltShowAt = 0.98f;
         /// <summary>弩箭组位置（TS bolt 组 (0, 0.074, −0.24)）</summary>
         public static readonly Vector3 BoltPos = new(0, 0.074f, -0.24f);
+        /// <summary>W3 烘进 Prefab 的弩箭组节点名（挂在 bolt 骨骼下）；运行时补建的弩箭组叫 bolt</summary>
+        public const string BoltPartsName = "boltParts";
 
-        static readonly Color StringColor = Hex.Rgb(0xe8e0d0);
-        static readonly Color ShaftColor = Hex.Rgb(0x2a2622);
+        public static readonly Color StringColor = Hex.Rgb(0xe8e0d0);
+        public static readonly Color ShaftColor = Hex.Rgb(0x2a2622);
 
         Transform left, right, bolt;
         Renderer head, fletch;
@@ -38,6 +40,20 @@ namespace Spiritfire.Game
 
         protected override void Build()
         {
+            // W3：Prefab 里已经烘好弦和箭（挂在枪模根 / bolt 骨骼下）就接着用，否则（旧 Prefab、测试的假 rig）补建
+            var bakedLeft = Bone("string_l");
+            var bakedRight = Bone("string_r");
+            var bakedBolt = Bone(BoltPartsName);
+            if (bakedLeft && bakedRight && bakedBolt)
+            {
+                left = bakedLeft;
+                right = bakedRight;
+                bolt = bakedBolt;
+                head = FindDeep(bolt, "head") is { } h ? h.GetComponent<Renderer>() : null;
+                fletch = FindDeep(bolt, "fletch") is { } f ? f.GetComponent<Renderer>() : null;
+                Pose(1);
+                return;
+            }
             var parent = gun;
             left = Piece(parent, "string_l", ProjectileMeshes.Box, Lit, StringColor, Vector3.zero, Vector3.one * Thickness).transform;
             right = Piece(parent, "string_r", ProjectileMeshes.Box, Lit, StringColor, Vector3.zero, Vector3.one * Thickness).transform;
@@ -121,8 +137,23 @@ namespace Spiritfire.Game
             tintedVersion = w.Version;
             var e = WeaponTint.ElementColor(w.element) * (1.2f + 0.5f * RarityGlow(w.rarity));
             e.a = 1;
-            FxMaterials.Tint(head, e);
-            FxMaterials.Tint(fletch, Rarity.Color(w.rarity));
+            TintGlow(head, e);
+            TintGlow(fletch, Rarity.Color(w.rarity));
+        }
+
+        static MaterialPropertyBlock glowBlock;
+
+        /// <summary>上色：占位材质（无光照）写底色；Prefab 里烘好的受光材质另写自发光色</summary>
+        static void TintGlow(Renderer r, Color c)
+        {
+            if (!r) return;
+            FxMaterials.Tint(r, c);
+            var m = r.sharedMaterial;
+            if (!m || !m.IsKeywordEnabled("_EMISSION")) return;
+            glowBlock ??= new MaterialPropertyBlock();
+            r.GetPropertyBlock(glowBlock);
+            glowBlock.SetColor("_EmissionColor", c);
+            r.SetPropertyBlock(glowBlock);
         }
     }
 }

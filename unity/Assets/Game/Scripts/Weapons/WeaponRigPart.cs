@@ -157,11 +157,7 @@ namespace Spiritfire.Game
             into.Clear();
             if (!root) return;
             foreach (var r in root.GetComponentsInChildren<Renderer>(true))
-            {
-                if (r is ParticleSystemRenderer || r is TrailRenderer || r is LineRenderer) continue;
-                var m = r.sharedMaterial;
-                if (m && m.HasProperty(EmissionColorId) && m.IsKeywordEnabled("_EMISSION")) into.Add(r);
-            }
+                if (WeaponTint.IsWeaponRenderer(r)) into.Add(r);
         }
 
         /// <summary>给灵纹写 HDR 发光色（属性块，不复制材质；覆盖 <see cref="WeaponTint"/> 的静态着色）</summary>
