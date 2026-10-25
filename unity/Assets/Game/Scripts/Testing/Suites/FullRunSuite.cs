@@ -16,7 +16,7 @@ namespace Spiritfire.Game.Testing
     ///   关间结算卡（<see cref="StageCardScreen"/>：内容对得上 RunPlan 的下一关）→「继续」→ 下一关 → … → 3-4 火麒麟倒下 → 胜利链 →
     ///   整局结算（胜利、魂晶入账、生涯 +1 局 +1 胜）→「主菜单」→ 回到主菜单、局已清空。
     /// 每关检查：进的是 RunPlan 的下一关、局难度 = RunPlan 的难度、补给营与 RunPlan 一致、跨关状态原样带过去（武器 id / 品质 / 强化 / 元素、
-    ///   秘卷层数、灵石、灵宠种类 / 等级、生命护盾；备弹只许因进关补给变多）、运行时没有报错（宿主记）。占位件 / 占位体敌人 / 首领代理模型只记不判。
+    ///   秘卷层数、灵石、灵宠种类 / 等级、生命护盾；备弹只许因进关补给变多）、续玩档已写入（I5：run.dev.json 是这一关的进关快照）、运行时没有报错（宿主记）。占位件 / 占位体敌人 / 首领代理模型只记不判。
     /// 每关输出：真实耗时 / 游戏耗时 / 换关载入、倒下次数、灵石进账 / 花费 / 余额、击杀 / 补刀、宝箱、秘卷层数、首领用时、帧时 P95、手上的枪；
     ///   结尾打整局汇总，并写 Assets/Art/_Review/fullrun_report.txt。
     ///
@@ -128,6 +128,7 @@ namespace Spiritfire.Game.Testing
                 if (run == null || Mathf.Abs(run.difficulty - stage.difficulty) > 1e-4f) Fail($"{stage.code} 局难度 {run?.difficulty}，RunPlan 是 {stage.difficulty}");
                 if (run != null && run.stageCode != stage.code) Fail($"RunState.stageCode = {run.stageCode}，当前关是 {stage.code}");
                 if (carry != null) CheckCarry(carry, flow.EntrySnapshot, stage);
+                CheckSuspend(stage, run);
                 var rec = bot.Begin(stage, load);
                 records.Add(rec);
                 yield return bot.PlayStage(stage);
@@ -223,6 +224,8 @@ namespace Spiritfire.Game.Testing
                 yield break;
             }
             RunRelay.Delete();
+            // 上一次没跑完留下的续玩档（I5）：出征会先弹「放弃当前征程」的确认框，这里直接清掉
+            RunSuspend.Discard(RunSuspend.MenuDev);
             main.StartGame();
             float t0 = Time.realtimeSinceStartup;
             HeroSelectScreen select = null;
@@ -412,6 +415,18 @@ namespace Spiritfire.Game.Testing
             else
                 Line($"  ✓ 跨关状态带过来：武器 {want.weapons.Count} 把、秘卷 {want.scrolls.Values.Sum()} 层、灵石 {want.coins}、灵宠 {want.pet ?? "无"}" +
                      $"{(want.pet != null ? $" Lv{want.petLevel}" : "")}、生命 {got.hp:F0} 护盾 {got.shield:F0}");
+        }
+
+        /// <summary>每关断言「存档已写入」（7.5，I5）：续玩档 run.dev.json 是这一局、这一关的进关快照</summary>
+        void CheckSuspend(StageSpec stage, RunState run)
+        {
+            if (run == null) return;
+            bool dev = RunSuspend.DevFor(run);
+            var st = RunSuspend.Read(dev, out var s, out var error);
+            if (st != SuspendStatus.Ok) Fail($"{stage.code}：续玩档没写好（{st}{(error != null ? $"，{error}" : "")}，{RunSuspend.PathFor(dev)}）");
+            else if (s.run.stageCode != stage.code || s.run.seed != run.seed || s.run.heroId != run.heroId)
+                Fail($"{stage.code}：续玩档是 {s.run.stageCode}（种子 {s.run.seed}、英雄 {s.run.heroId}），应为这一局的 {stage.code}");
+            else Line($"  ✓ 存档已写入：{System.IO.Path.GetFileName(RunSuspend.PathFor(dev))} → {s.run.stageCode}（灵石 {s.run.coins}、武器 {s.run.weapons.Count} 把、秘卷 {s.run.scrolls.Values.Sum()} 层）");
         }
 
         string Weapons()

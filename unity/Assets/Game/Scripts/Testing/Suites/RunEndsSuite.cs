@@ -7,7 +7,9 @@ namespace Spiritfire.Game.Testing
 {
     /// <summary>
     /// 一局的三种结束都能回主菜单（I1；bridge.sh playtest run-ends，场景 MainMenu）：
-    ///   1. 阵亡：主菜单出征 → 1-1 → 致命伤害 → 阵亡（结算一次，生涯 +1 局）→ 慢动作后自动弹整局结算（败北）→「主菜单」→ 回到主菜单、局已清空；
+    ///   0. 暂离与开新局确认（I5）：出征 → 1-1（续玩档已写入）→ 暂停「返回主菜单」= 暂离（不结算、生涯局数不变）→ 主菜单出现「继续征程」→
+    ///      再出征先弹确认框（写着当前征程的关卡）→ 取消：什么都不变 → 再出征、确认：旧局按败北结算（生涯 +1 局）、开新局进 1-1、续玩档换成新局的；
+    ///   1. 阵亡：（接着第 0 步的新局）1-1 → 致命伤害 → 阵亡（结算一次，生涯 +1 局）→ 慢动作后自动弹整局结算（败北）→「主菜单」→ 回到主菜单、局已清空、续玩档已删；
     ///   2. 放弃：再出征 → 1-1 → 暂停 →「放弃本局」按两次（第一次待确认）→ 结算（败北）→「主菜单」→ 主菜单；
     ///   3. 试玩开关（demoEnd = 1-4）：再出征 → 直接换到 1-4 → 开战、打死旱魃（一刀，招式由 boss-hanba 验）→ 结算后不立出口、走胜利链 →
     ///      整局结算是胜利、止步处写「试玩通关 · 1-4 …」→「主菜单」→ 主菜单。
@@ -45,8 +47,10 @@ namespace Spiritfire.Game.Testing
             yield return WaitMenu("启动");
             if (!MenuDirector.Instance) yield break;
 
-            // ── 1. 阵亡 ──
-            yield return Start("阵亡");
+            // ── 0. 暂离 → 继续征程 → 开新局要先确认 ──
+            yield return SuspendAndConfirm();
+
+            // ── 1. 阵亡（第 0 步确认后开的新局）──
             var flow = SceneFlow.Instance;
             if (!flow || flow.Player == null) yield break;
             int runs0 = CareerStats.Current.Runs;
@@ -62,6 +66,7 @@ namespace Spiritfire.Game.Testing
             if (CareerStats.Current.Runs != runs0 + 1) Fail("阵亡后生涯局数没有 +1");
             if (sum != null) Shot(p.cam, "runends_death");
             yield return ToMenu(sum, "阵亡");
+            if (RunSuspend.Exists(RunSuspend.MenuDev)) Fail("阵亡结算后续玩档还在");
 
             // ── 2. 放弃 ──
             yield return Start("放弃");
@@ -174,10 +179,108 @@ namespace Spiritfire.Game.Testing
             Line($"── {what}：出征 ──");
             if (!MenuFlow.StartRun(HeroLibrary.DefaultHero))
             {
-                Fail("出征失败");
-                yield break;
+                // 有未完成的征程（不该有：上一局都结算过）时会先弹确认框
+                if (UIRouter.Find(ConfirmScreen.ScreenId) is ConfirmScreen c)
+                {
+                    Fail($"{what}：出征时还有未完成的征程（{c.Message}）");
+                    c.Confirm();
+                }
+                else
+                {
+                    Fail("出征失败");
+                    yield break;
+                }
             }
             yield return WaitReady($"{what}：出征进 1-1", -1);
+        }
+
+        /// <summary>主菜单这边的截图：菜单镜头一直在缓动，用帧末抓屏（含 UI Toolkit 界面）</summary>
+        IEnumerator MenuShot(Camera cam, string name)
+        {
+            if (string.IsNullOrEmpty(ShotDir))
+            {
+                Shot(cam, name);
+                yield break;
+            }
+            yield return UICapture.CaptureScreen(System.IO.Path.Combine(ShotDir, $"playtest_{name}.png"), Line);
+        }
+
+        /// <summary>第 0 步：暂离不结算 →「继续征程」出现 → 出征先确认（取消不变；确认后旧局按败北结算、开新局）</summary>
+        IEnumerator SuspendAndConfirm()
+        {
+            bool dev = RunSuspend.MenuDev;
+            RunSuspend.Discard(dev);
+            yield return Start("暂离");
+            var flow = SceneFlow.Instance;
+            if (!flow || flow.Player == null) yield break;
+            int seed0 = RunState.Current?.seed ?? 0;
+            bool written = RunSuspend.Read(dev, out var saved, out var error) == SuspendStatus.Ok;
+            Line($"暂离：进 1-1 后续玩档 {(written ? $"已写入（{saved.run.stageCode}，种子 {saved.run.seed}）" : $"没有（{error}）")}");
+            if (!written || saved.run.seed != seed0 || saved.run.stageCode != "1-1") Fail("进 1-1 后续玩档没写对");
+            int runs0 = CareerStats.Current.Runs;
+            GameSession.Instance.SetPaused(true);
+            yield return null;
+            var pause = UIRouter.Find(PauseScreen.ScreenId) as PauseScreen;
+            if (pause == null)
+            {
+                Fail("暂停后没有暂停菜单");
+                yield break;
+            }
+            if (!PauseScreen.CanSuspend) Fail("这一局有续玩档，暂停里「返回主菜单」却不是暂离");
+            pause.Press("menu");
+            yield return WaitMenu("暂离 → 主菜单");
+            var main = UIRouter.Find(MainMenuScreen.ScreenId) as MainMenuScreen;
+            var cam = MenuCamera.Instance ? MenuCamera.Instance.Camera : Camera.main;
+            Line($"暂离 → 主菜单：{SceneManager.GetActiveScene().name}，局 {(RunState.Current == null ? "已清空" : "还在")}，生涯 {runs0} → {CareerStats.Current.Runs} 局，" +
+                 $"「继续征程」{(main?.Suspended != null ? $"有（{main.Suspended.run.stageCode}）" : "没有")}");
+            if (!MenuFlow.InMenu) Fail("暂离后没有回到主菜单");
+            if (RunState.Current != null) Fail("暂离后局状态没有清空");
+            if (CareerStats.Current.Runs != runs0) Fail("暂离结算了这一局（生涯局数变了）");
+            if (main?.Suspended == null) Fail("暂离回主菜单后没有「继续征程」");
+            yield return new WaitForSecondsRealtime(1.2f);
+            yield return MenuShot(cam, "runends_suspended_menu");
+
+            // 有未完成的征程时出征：先弹确认框
+            bool started = MenuFlow.StartRun(HeroLibrary.DefaultHero);
+            yield return null;
+            var confirm = UIRouter.Find(ConfirmScreen.ScreenId) as ConfirmScreen;
+            Line($"有未完成的征程时出征：{(started ? "直接开了新局" : "没有直接开局")}，确认框 {(confirm != null ? $"「{confirm.Message}」" : "没有")}");
+            if (started) Fail("有未完成的征程时出征没有先确认");
+            if (confirm == null)
+            {
+                Fail("有未完成的征程时出征没有弹确认框");
+                yield break;
+            }
+            if (confirm.Message == null || !confirm.Message.Contains("1-1")) Fail("确认框里没写当前征程的关卡");
+            yield return new WaitForSecondsRealtime(0.5f);
+            yield return MenuShot(cam, "runends_confirm_newrun");
+            confirm.Cancel();
+            yield return null;
+            yield return null;
+            Line($"取消：确认框 {(UIRouter.IsOpen(ConfirmScreen.ScreenId) ? "还开着" : "已关")}，续玩档 {(RunSuspend.Exists(dev) ? "还在" : "没了")}，生涯 {CareerStats.Current.Runs} 局，局 {(RunState.Current == null ? "没开" : "开了")}");
+            if (UIRouter.IsOpen(ConfirmScreen.ScreenId)) Fail("取消后确认框还开着");
+            if (!RunSuspend.Exists(dev)) Fail("取消后续玩档没了");
+            if (CareerStats.Current.Runs != runs0) Fail("取消也结算了旧局");
+            if (MenuFlow.Busy || RunState.Current != null || !MenuFlow.InMenu) Fail("取消后还是开了新局");
+
+            // 再出征 → 确认：旧局按败北结算、开新局
+            MenuFlow.StartRun(HeroLibrary.DefaultHero);
+            yield return null;
+            confirm = UIRouter.Find(ConfirmScreen.ScreenId) as ConfirmScreen;
+            if (confirm == null)
+            {
+                Fail("第二次出征没有弹确认框");
+                yield break;
+            }
+            confirm.Confirm();
+            yield return WaitReady("确认放弃后出征进 1-1", -1);
+            var run = RunState.Current;
+            bool rewritten = RunSuspend.Read(dev, out saved, out _) == SuspendStatus.Ok;
+            Line($"确认放弃：生涯 {runs0} → {CareerStats.Current.Runs} 局，新局种子 {seed0} → {run?.seed}，" +
+                 $"续玩档 {(rewritten ? $"是新局的（{saved.run.seed}）" : "没有")}");
+            if (CareerStats.Current.Runs != runs0 + 1) Fail("确认放弃后旧局没有按败北结算（生涯局数没 +1）");
+            if (run == null || run.seed == seed0) Fail("确认放弃后没有开新局");
+            if (!rewritten || run == null || saved.run.seed != run.seed) Fail("新局进 1-1 后续玩档没换成新局的");
         }
 
         IEnumerator WaitReady(string what, int transitionsBefore)

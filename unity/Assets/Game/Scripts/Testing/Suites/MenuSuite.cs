@@ -32,6 +32,8 @@ namespace Spiritfire.Game.Testing
         {
             bool forceDev = SaveService.ForceDev;
             SaveService.ForceDev = true;
+            // 别的套件留下的续玩档（I5）：主菜单会多一项「继续征程」、出征前还要确认，这里先清掉
+            RunSuspend.Discard(RunSuspend.MenuDev);
             try
             {
                 yield return Run();
@@ -54,6 +56,7 @@ namespace Spiritfire.Game.Testing
             }
             yield return new WaitForSecondsRealtime(1.6f);
             var main = UIRouter.Find(MainMenuScreen.ScreenId) as MainMenuScreen;
+            main?.Refresh();
             Line($"主菜单：界面 {(main != null ? "已打开" : "没有")}，状态 {GameStateMachine.Current}，时间 ×{Time.timeScale}，" +
                  $"构建设置里{(SceneUtility.GetBuildIndexByScenePath(MenuFlow.MenuScenePath) >= 0 ? "有" : "没有")}主菜单（Core 第 {SceneUtility.GetBuildIndexByScenePath(SceneFlow.CorePath)} 个）");
             if (main == null) Fail("主菜单界面没有打开");
