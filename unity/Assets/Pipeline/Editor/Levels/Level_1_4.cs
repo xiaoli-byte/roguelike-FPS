@@ -1011,13 +1011,14 @@ namespace Spiritfire.Art.Editor.Levels
         /// <summary>
         /// 交给 L5 规则集的声明：主线 出生 → 观景台 → 驼道（顶 / 弯 / 脚）→ 入场点 → 沙丘岛顶 → 泉心 → 月牙阁前 → 庭院 → 东沙丘顶 → 首领出生点；
         /// 坡度：驼道（≤ 24°）、木梯（有踏板，放宽到 30°）、两座新月丘的迎风背；地标视线（观景台看月牙阁与泉心、驼道脚看沙丘岛、入场点看首领出生点）；
-        /// 场地：观景台（缓冲）、月牙泉首领场（≥ 3 处掩体、两层以上、走得上去的俯射层 = 沙丘岛）；召唤点当刷怪锚点查净空 / 有路（跳鼠刀兵、蝎尾弩卫）。
+        /// 场地：观景台（缓冲）、月牙泉首领场（≥ 3 处掩体、两层以上、走得上去的俯射层 = 沙丘岛）；召唤点当刷怪锚点查净空 / 有路（沙魇、蝎尾弩卫）。
         /// 软边界没有空气墙：越界按远处的兜底环算（escapeMargin = 兜底距离 + 2 m）。白杨、芦苇还没有资产：占位只列清单（Warn）
         /// </summary>
         static LevelSpec Spec(LevelKit.TerrainSet set)
         {
             Vector3 G(Vector2 q, float dy = 0) => set.OnGround(q.x, q.y, dy);
-            var summonEnemies = new[] { "jerboa_blade", "scorpion_archer" };
+            // 召唤点按旱魃真正会召的种类查（= HanbaDef.wraithRoster 去重：沙魇 + 沙魇皮的蝎尾弩卫）；最大体型仍是蝎卫（半径 1.53 m），沙魇 0.48 m 余量足
+            var summonEnemies = new[] { "sand_wraith", "scorpion_archer" };
             var spec = new LevelSpec
                 {
                     id = "1-4", title = "鸣沙山月牙泉", playerSpawn = G(PlayerSpawnAt), bounds = new Rect(Origin, Size),
