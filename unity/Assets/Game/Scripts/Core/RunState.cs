@@ -96,6 +96,11 @@ namespace Spiritfire.Game
         public PetSave pet;
         /// <summary>离开上一关时的生命 / 护盾（&lt; 0 = 满）</summary>
         public float hp = -1, shield = -1;
+        /// <summary>
+        /// 开局时锁定的天赋（天赋 id → 等级，只记 &gt; 0 的）：开局（<see cref="GameEvents.RunStarted"/>）由 <see cref="TalentHooks"/> 从这一局的档里拍下来，
+        /// 之后整局（含暂离后继续征程）都按它生效，主菜单里新买的天赋下一局才生效。null = 没有快照（测试拼的局），按档里当前的天赋
+        /// </summary>
+        public Dictionary<string, int> talents;
 
         [NonSerialized] Dictionary<string, RunRng> streams;
 

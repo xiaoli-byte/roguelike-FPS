@@ -22,6 +22,9 @@ namespace Spiritfire.Game.Testing
     ///      秘卷及顺序、两把枪的品质 / 强化 / 元素 / 弹药 / 词条 / 传说、灵宠等级 / 经验 / 冷却、生命护盾），手上的枪 / 秘卷 / 灵宠与暂离前一致，随机流接着同一串；
     ///   7. 放弃这一局（暂停「放弃本局」两次）→ 结算 → 主菜单：续玩档已删、没有「继续征程」；
     ///   8. 坏档：往 run.dev.json 写半截 JSON →「继续征程」提示损坏并丢弃（挪成 .corrupt），不崩、不进局。
+    /// 天赋开局锁定（穿插在上面几步里）：出征前把调试档的天赋定成「生命 1 级、护盾 0 级」；第 4 步暂离后在天赋页买生命、护盾各一级（元进度照常涨），
+    ///   第 6 步继续征程后玩家身上的天赋修正、生命 / 护盾上限和暂离前一模一样（续玩档里是开局快照）；
+    ///   第 7 步放弃后再出征一局：新局的快照和玩家身上都是新买的等级，然后放弃回主菜单。调试档的天赋结束时还原。
     /// 全程调试档（SaveService.ForceDev），结束时还原。
     /// </summary>
     public sealed class SuspendSuite : PlaytestSuite
@@ -31,6 +34,10 @@ namespace Spiritfire.Game.Testing
 
         const float LoadTimeout = 90f;
         const string ProbeStream = "suspend-suite-probe";
+        const string VitalityId = "vitality", BarrierId = "barrier";
+
+        /// <summary>调试档原来的天赋等级（结束时还原）</summary>
+        Dictionary<string, int> talentRestore;
 
         protected override IEnumerator Steps()
         {
@@ -42,9 +49,19 @@ namespace Spiritfire.Game.Testing
             }
             finally
             {
+                RestoreTalents();
                 SaveService.ForceDev = forceDev;
                 WeaponController.TestMode = false;
             }
+        }
+
+        void RestoreTalents()
+        {
+            if (talentRestore == null) return;
+            var meta = SaveService.Dev.Section<MetaSave>();
+            foreach (var kv in talentRestore) meta.SetTalentLevel(kv.Key, kv.Value, false);
+            SaveService.Dev.Save();
+            talentRestore = null;
         }
 
         static Camera MenuCam => MenuCamera.Instance ? MenuCamera.Instance.Camera : Camera.main;
@@ -57,6 +74,11 @@ namespace Spiritfire.Game.Testing
             RunSuspend.Discard(dev);
             var book = Codex.Current;
             book.Clear();
+            // 天赋：先定成「生命 1 级、护盾 0 级」，这一局开局锁定的就是它（结束时还原调试档原来的等级）
+            var meta = SaveService.Dev.Section<MetaSave>();
+            talentRestore = TalentLibrary.All.ToDictionary(t => t.id, t => meta.TalentLevel(t.id));
+            meta.SetTalentLevel(VitalityId, 1, false);
+            meta.SetTalentLevel(BarrierId, 0, false);
             SaveService.Dev.Save();
             var main = UIRouter.Find(MainMenuScreen.ScreenId) as MainMenuScreen;
             main?.Refresh();
@@ -76,6 +98,10 @@ namespace Spiritfire.Game.Testing
             if (!flow || flow.Player == null) yield break;
             var run = RunState.Current;
             CheckFile(dev, "1-1", run);
+            var lockedTalents = Join(run?.talents);
+            Line($"开局天赋快照：{lockedTalents}");
+            if (run?.talents == null || run.talents.GetValueOrDefault(VitalityId) != 1 || run.talents.ContainsKey(BarrierId))
+                Fail($"开局天赋快照应为「{VitalityId}=1」，实际「{lockedTalents}」");
             yield return Stock(flow, run);
             CodexTracker.Poll();
 
@@ -98,6 +124,7 @@ namespace Spiritfire.Game.Testing
             CheckFile(dev, "1-2", run);
             var expect = SceneFlow.CloneRun(flow.EntrySnapshot);
             var liveBefore = Live();
+            var talentsBefore = LiveTalents();
             var probe = Probe(run);
             Line($"1-2 开头：{Describe(expect)}；随机流探针 {string.Join(" ", probe)}");
             yield return MenuShot("suspend_12_before");
@@ -139,6 +166,9 @@ namespace Spiritfire.Game.Testing
             yield return new WaitForSecondsRealtime(1.4f);
             yield return MenuShot("suspend_menu_continue");
 
+            // 暂离期间买天赋：进元进度，但这一局（续玩档里的开局快照）不变
+            yield return BuyTalents();
+
             // ── 5. 图鉴 ──
             yield return CheckCodex(got);
 
@@ -171,6 +201,9 @@ namespace Spiritfire.Game.Testing
             else Line($"  ✓ 手上的枪 / 秘卷 / 灵宠与暂离前一致：{liveAfter.weapons}｜{liveAfter.scrolls}｜{liveAfter.pet}");
             if (!probe.SequenceEqual(probe2)) Fail($"随机流没有接着同一串：{string.Join(" ", probe)} → {string.Join(" ", probe2)}");
             else Line("  ✓ 随机流接着同一串（种子 + 关卡 + 流名）");
+            var talentsAfter = LiveTalents();
+            if (talentsAfter != talentsBefore) Fail($"暂离期间买的天赋带进了续玩：{talentsBefore} → {talentsAfter}");
+            else Line($"  ✓ 天赋效果不变（开局快照 {Join(run?.talents)}；档里现在 {Join(MetaSave.For(run).TalentSnapshot())}）：{talentsAfter}");
             if (run == null || run.Flag(MetaSave.BankedFlag) != 0) Fail("继续的局被标成了已结算");
             CheckFile(dev, "1-2", run);
             yield return new WaitForSecondsRealtime(0.6f);
@@ -202,6 +235,9 @@ namespace Spiritfire.Game.Testing
             yield return WaitMenu("放弃 → 主菜单");
             main = UIRouter.Find(MainMenuScreen.ScreenId) as MainMenuScreen;
             if (main?.Suspended != null) Fail("放弃后主菜单还有「继续征程」");
+
+            // 放弃后开新局：新买的天赋生效
+            yield return NewRunTalents();
 
             // ── 8. 坏档 ──
             yield return CorruptFile(dev);
@@ -365,6 +401,102 @@ namespace Spiritfire.Game.Testing
             yield return null;
         }
 
+        // ───────────── 天赋开局锁定 ─────────────
+
+        /// <summary>玩家身上的天赋修正 + 生命 / 护盾上限（真实属性表上的）</summary>
+        static string LiveTalents()
+        {
+            var v = SceneFlow.Instance ? SceneFlow.Instance.Player?.vitals : null;
+            if (!v || v.stats == null) return "（没有玩家）";
+            var mods = v.stats.ModsFrom(MetaSave.TalentSource);
+            return $"[{string.Join(",", mods.Select(m => $"{m.stat}+{m.value.ToString("0.###", CultureInfo.InvariantCulture)}"))}] 生命上限 {v.MaxHealth:F1} 护盾上限 {v.MaxShield:F1}";
+        }
+
+        /// <summary>暂离期间（主菜单）在天赋页买生命、护盾各一级：元进度照常涨，续玩档里的开局快照不变</summary>
+        IEnumerator BuyTalents()
+        {
+            bool dev = RunSuspend.MenuDev;
+            var meta = MetaSave.Current;
+            if (meta.File != SaveService.Dev) Fail("主菜单的元进度不是调试档");
+            string locked = RunSuspend.Read(dev, out var before, out _) == SuspendStatus.Ok ? Join(before.run.talents) : "（读不到续玩档）";
+            meta.AddEssence(2000);
+            if (!UIRouter.Open(TalentScreen.ScreenId))
+            {
+                Fail("天赋页打不开");
+                yield break;
+            }
+            yield return new WaitForSecondsRealtime(0.4f);
+            var screen = UIRouter.Find(TalentScreen.ScreenId) as TalentScreen;
+            if (screen == null)
+            {
+                Fail("天赋页没有打开");
+                yield break;
+            }
+            int v0 = meta.TalentLevel(VitalityId), b0 = meta.TalentLevel(BarrierId);
+            bool okV = screen.Buy(TalentLibrary.Get(VitalityId));
+            bool okB = screen.Buy(TalentLibrary.Get(BarrierId));
+            yield return new WaitForSecondsRealtime(0.3f);
+            var st = RunSuspend.Read(dev, out var after, out _);
+            string now = st == SuspendStatus.Ok ? Join(after.run.talents) : $"（{st}）";
+            Line($"暂离期间买天赋：生命 {v0} → {meta.TalentLevel(VitalityId)} 级、护盾 {b0} → {meta.TalentLevel(BarrierId)} 级（档里现在 {Join(meta.TalentSnapshot())}），" +
+                 $"续玩档里的开局快照 {locked} → {now}");
+            if (!okV || !okB || meta.TalentLevel(VitalityId) != v0 + 1 || meta.TalentLevel(BarrierId) != b0 + 1) Fail("暂离期间买天赋没有升级");
+            if (now != locked) Fail($"买天赋改了续玩档里的开局快照：{locked} → {now}");
+            yield return MenuShot("suspend_menu_talents");
+            UIRouter.Back();
+            yield return new WaitForSecondsRealtime(0.3f);
+            if (UIRouter.IsOpen(TalentScreen.ScreenId)) Fail("返回后天赋页还开着");
+        }
+
+        /// <summary>放弃后再出征一局：新局的开局快照 = 现在档里的天赋（含暂离期间买的），玩家身上也是；然后放弃回主菜单</summary>
+        IEnumerator NewRunTalents()
+        {
+            bool dev = RunSuspend.MenuDev;
+            var meta = SaveService.Dev.Section<MetaSave>();
+            var want = meta.TalentSnapshot();
+            if (!MenuFlow.StartRun(HeroLibrary.DefaultHero))
+            {
+                Fail("放弃后再出征失败（还有续玩档？）");
+                yield break;
+            }
+            yield return WaitReady("再出征进 1-1", -1);
+            var flow = SceneFlow.Instance;
+            var run = RunState.Current;
+            if (!flow || flow.Player == null || run == null)
+            {
+                Fail("再出征后没有进到关卡");
+                yield break;
+            }
+            var mods = flow.Player.vitals.stats.ModsFrom(MetaSave.TalentSource).ToList();
+            var expectMods = MetaSave.TalentMods(want);
+            bool same = mods.Count == expectMods.Count && mods.Zip(expectMods, (a, b) => a.stat == b.stat && Mathf.Abs(a.value - b.value) < 1e-4f).All(x => x);
+            Line($"放弃后再出征：开局快照 {Join(run.talents)}（档里 {Join(want)}），身上 {LiveTalents()}");
+            if (Join(run.talents) != Join(want)) Fail($"新局的开局快照 {Join(run.talents)} 不是现在档里的 {Join(want)}");
+            if (run.talents == null || run.talents.GetValueOrDefault(VitalityId) != 2 || run.talents.GetValueOrDefault(BarrierId) != 1)
+                Fail("新局没有带上暂离期间买的天赋（应为生命 2 级、护盾 1 级）");
+            if (!same) Fail("新局玩家身上的天赋修正和新买的等级对不上");
+            else Line("  ✓ 新买的天赋在新局生效");
+
+            GameSession.Instance.SetPaused(true);
+            yield return null;
+            var pause = UIRouter.Find(PauseScreen.ScreenId) as PauseScreen;
+            if (pause != null)
+            {
+                pause.Press("abandon");
+                yield return null;
+                pause.Press("abandon");
+            }
+            else Fail("再出征后暂停没有暂停菜单");
+            float t0 = Time.realtimeSinceStartup;
+            SummaryScreen sum = null;
+            while (Time.realtimeSinceStartup - t0 < 4f && (sum = UIRouter.Find(MenuFlow.SummaryScreenId) as SummaryScreen) == null) yield return null;
+            if (sum != null) sum.ToMenu();
+            else MenuFlow.ToMenu();
+            yield return WaitMenu("再出征放弃 → 主菜单");
+            if (RunSuspend.Exists(dev)) Fail("再出征放弃后续玩档还在");
+            if (!MenuFlow.InMenu) Fail("再出征放弃后没有回到主菜单");
+        }
+
         // ───────────── 坏档 ─────────────
 
         IEnumerator CorruptFile(bool dev)
@@ -439,6 +571,7 @@ namespace Spiritfire.Game.Testing
             }
             Near("生命", a.hp, b.hp);
             Near("护盾", a.shield, b.shield);
+            Eq("开局天赋", Join(a.talents), Join(b.talents));
             return d;
         }
 

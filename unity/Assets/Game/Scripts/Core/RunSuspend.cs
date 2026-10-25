@@ -84,7 +84,8 @@ namespace Spiritfire.Game
     ///
     /// 写：<see cref="GameEvents.StageLoaded"/>（SceneFlow 组装好玩家、读回局状态、记下进关快照之后发）时把 <see cref="SceneFlow.EntrySnapshot"/> 写盘——
     ///   和「重来本关」回到的是同一份快照：关卡序号、英雄、种子、武器（品质 / 强化 / 元素 / 弹药 / 词条与传说特性）、秘卷层数（按获得顺序）、
-    ///   灵石、魂晶、灵宠（灵契等级 / 经验 / 灵技冷却）、生命护盾、用时 / 伤害 / 击杀 / 清关数、剧情标记。
+    ///   灵石、魂晶、灵宠（灵契等级 / 经验 / 灵技冷却）、生命护盾、用时 / 伤害 / 击杀 / 清关数、剧情标记、开局锁定的天赋（<see cref="RunState.talents"/>）。
+    ///   天赋按开局快照生效：暂离期间在主菜单买的天赋照常进元进度，继续征程仍按快照，下一局开局才生效（<see cref="TalentHooks"/>）。
     ///   随机流不用另存：<see cref="RunState.Stream"/> 只由「种子 + 关卡编号 + 流名」决定，进关时这一关的流都在起点，
     ///   读回来同样从起点开始（和重来本关一致）。秘卷的跨叠层计数（ScrollInventory 的 memory）跟重来本关一样回到零。
     ///   已经结算过的局（阵亡后按 R 练习）不写；调试局（直接打开关卡场景）只在调试档开着时（SaveService.ForceDev / -devprofile）写 run.dev.json。
@@ -94,13 +95,17 @@ namespace Spiritfire.Game
     ///   读的时候任何一步不对（空文件、不是 JSON、缺字段、英雄 / 关卡不存在、已经结算过）都当坏档：挪成 .corrupt 留作排查，
     ///   记下原因给主菜单提示一次（<see cref="TakeProblem"/>），不崩溃。版本比本程序新的档原样留着。
     /// <code>
-    /// { "version": 1, "game": "spiritfire", "kind": "run", "build": "0.1", "savedAt": "2026-10-25T…Z",
-    ///   "stage": "1-2", "label": "1-2 · …", "hero": "fox", "run": { RunState 的全部公有字段 } }
+    /// { "version": 2, "game": "spiritfire", "kind": "run", "build": "0.1", "savedAt": "2026-10-25T…Z",
+    ///   "stage": "1-2", "label": "1-2 · …", "hero": "fox", "run": { RunState 的全部公有字段（含 talents） } }
     /// </code>
+    /// 版本：v2 起 run 里有开局天赋快照 talents；读到 v1 的档（没有快照）时按读档那一刻档里的天赋补上，从继续征程起锁定。
     /// </summary>
     public static class RunSuspend
     {
-        public const int Version = 1;
+        /// <summary>续玩档格式版本：1 = I5 首版；2 = run 里带开局天赋快照（<see cref="RunState.talents"/>）</summary>
+        public const int Version = 2;
+        /// <summary>从这个版本起续玩档里带天赋快照</summary>
+        public const int TalentSnapshotVersion = 2;
         public const string MainName = "run", DevName = "run.dev";
 
         static string problem;
@@ -257,6 +262,8 @@ namespace Spiritfire.Game
                 var run = RunStateJson.FromJson(runJson) ?? throw new InvalidDataException("run 是空的");
                 Validate(run);
                 run.dev = run.dev || dev;
+                // v1 的档没有开局天赋快照：按现在档里的天赋补上（从继续征程起锁定）
+                if (version < TalentSnapshotVersion && run.talents == null) run.talents = MetaSave.For(run).TalentSnapshot();
                 result = new SuspendedRun { run = run, savedAt = (string)o["savedAt"], dev = dev };
                 return SuspendStatus.Ok;
             }
@@ -328,6 +335,9 @@ namespace Spiritfire.Game
             }
             if (run.pet != null && (run.pet.level < 0 || !float.IsFinite(run.pet.xp) || !float.IsFinite(run.pet.cooldownLeft)))
                 throw new InvalidDataException("灵宠数值不合法");
+            if (run.talents != null)
+                foreach (var kv in run.talents)
+                    if (string.IsNullOrEmpty(kv.Key) || kv.Value < 0) throw new InvalidDataException($"天赋快照 {kv.Key ?? "（空）"} = {kv.Value} 不合法");
             // 章 / 关序 / 难度以 RunPlan 为准（档里的只是冗余）
             run.EnterStage(stage);
         }

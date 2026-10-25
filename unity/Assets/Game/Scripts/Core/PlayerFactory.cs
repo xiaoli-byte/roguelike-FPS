@@ -40,7 +40,7 @@ namespace Spiritfire.Game
     /// 镜头层级（F3）：Player → Eye（motor.eye，眼高处，PlayerMotor 写俯仰；瞄准 / 射线用，不抖）→ Main Camera（Head：<see cref="CameraFeel"/> 写晃动、震屏、冲击、FOV）
     /// → 枪模相机 + 各把枪的第一人称 rig。
     /// 灵宠（PetOwner / PetHud）由 <see cref="PetBootstrap.Setup"/> 补挂，[GameSystem] 系统由 <see cref="SystemsBootstrap"/> 补挂。
-    /// 运行时组装完立刻按当前局套天赋（<see cref="MetaSave.ApplyTalents"/>），所以调用方随后读回的生命 / 护盾不会被上限天赋「补满」。
+    /// 运行时组装完立刻按当前局（开局锁定的快照）套天赋（<see cref="MetaSave.ApplyTalents(StatSheet, RunState)"/>），所以调用方随后读回的生命 / 护盾不会被上限天赋「补满」。
     /// </summary>
     public static class PlayerFactory
     {
@@ -95,9 +95,9 @@ namespace Spiritfire.Game
             player.AddComponent<PlayerCarry>();
             player.SetActive(true);
             // 天赋（R2）在读回生命 / 护盾之前套上：之后才套的话，生命上限的天赋每进一关都会把差值当治疗补满一次。
-            // 之后 StageLoaded / TalentSystem 再套一次是幂等的（属性表里已经一样就不动）。调试局用调试档（没有天赋）
+            // 之后 StageLoaded / TalentSystem 再套一次是幂等的（属性表里已经一样就不动）。按开局锁定的快照（RunState.talents）；调试局用调试档（没有天赋）
             if (Application.isPlaying && RunState.Current != null)
-                try { MetaSave.For(RunState.Current).ApplyTalents(vitals.stats); }
+                try { MetaSave.ApplyTalents(vitals.stats, RunState.Current); }
                 catch (Exception e) { Debug.LogException(e); }
 
             return new PlayerRig

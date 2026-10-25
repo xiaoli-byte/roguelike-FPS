@@ -134,14 +134,46 @@ namespace Spiritfire.Game
             return mods;
         }
 
+        /// <summary>当前全部天赋等级的快照（id → 等级，只记 &gt; 0 的，按注册顺序）：开局锁定天赋用（<see cref="RunState.talents"/>）</summary>
+        public Dictionary<string, int> TalentSnapshot()
+        {
+            var snap = new Dictionary<string, int>();
+            foreach (var t in TalentLibrary.All)
+            {
+                int lv = TalentLevel(t.id);
+                if (lv > 0) snap[t.id] = lv;
+            }
+            return snap;
+        }
+
+        /// <summary>一组天赋等级（快照）下的属性修正（按注册顺序；等级夹在 0..满级，不认识的 id 不算）</summary>
+        public static List<(Stat stat, float value)> TalentMods(IReadOnlyDictionary<string, int> levels)
+        {
+            var mods = new List<(Stat, float)>();
+            if (levels == null) return mods;
+            foreach (var t in TalentLibrary.All)
+                if (levels.TryGetValue(t.id, out var lv))
+                    t.Collect(mods, Mathf.Clamp(lv, 0, t.maxLevel));
+            return mods;
+        }
+
+        /// <summary>某一局该用的天赋修正：开局锁定的快照（<see cref="RunState.talents"/>）；没有快照时用这一局的档（<see cref="For"/>）里当前的天赋</summary>
+        public static List<(Stat stat, float value)> TalentModsFor(RunState run) =>
+            run?.talents != null ? TalentMods(run.talents) : For(run).TalentMods();
+
         /// <summary>
         /// 把天赋写进属性表（来源 <see cref="TalentSource"/>，先整体撤掉旧的再加；同 TS applyTalents）。
         /// 和属性表里现有的完全一样时什么都不做，返回 false：重复调用不会触发 Changed（PlayerVitals 撤上限再加回会白送生命）。
+        /// 这里用的是档里当前的天赋；给一局的玩家套用 <see cref="ApplyTalents(StatSheet, RunState)"/>（按开局快照）。
         /// </summary>
-        public bool ApplyTalents(StatSheet stats)
+        public bool ApplyTalents(StatSheet stats) => ApplyMods(stats, TalentMods());
+
+        /// <summary>给某一局的玩家套天赋：按开局锁定的快照（没有快照时按这一局的档里当前的天赋）；幂等，同 <see cref="ApplyTalents(StatSheet)"/></summary>
+        public static bool ApplyTalents(StatSheet stats, RunState run) => stats != null && ApplyMods(stats, TalentModsFor(run));
+
+        static bool ApplyMods(StatSheet stats, List<(Stat stat, float value)> want)
         {
             if (stats == null) return false;
-            var want = TalentMods();
             if (Same(stats.ModsFrom(TalentSource), want) && (want.Count > 0) == stats.HasSource(TalentSource)) return false;
             stats.BeginBatch();
             try

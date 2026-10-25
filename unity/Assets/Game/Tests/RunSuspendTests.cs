@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 
 namespace Spiritfire.Game.Tests
@@ -11,7 +12,8 @@ namespace Spiritfire.Game.Tests
     ///   续玩档 run.json 往返逐项一致（含词条 / 传说、秘卷顺序、灵宠、随机流）、原子写不留临时文件；
     ///   坏档（不是 JSON、截断、空文件、缺字段、英雄 / 关卡不存在、已结算、数值离谱）读不了时丢弃成 .corrupt 并给出提示、不抛异常；新版本的档原样留着；
     ///   一局结算（阵亡 / 放弃 / 胜利）删档、开新局前放弃旧局按败北结算；暂离判定；
-    ///   图鉴收录写进存档的 codex 段、重读还在、不随一局结算清掉、调试档隔离、「新」标记、坏段宽容读取；条目清单（附属单位不单列、测试首领不进）。
+    ///   图鉴收录写进存档的 codex 段、重读还在、不随一局结算清掉、调试档隔离、「新」标记、坏段宽容读取；条目清单（附属单位不单列、测试首领不进）；
+    ///   天赋开局锁定：快照随续玩档往返，暂离期间买的天赋继续征程不生效、放弃后新开的局才生效，v1 旧档（没有快照）按读档时的天赋补上。
     /// 每个测试把存档根目录指到独立的临时目录，不碰真实存档。
     /// </summary>
     public sealed class RunSuspendTests
@@ -77,6 +79,7 @@ namespace Spiritfire.Game.Tests
             run.pet = new PetSave { id = PetLibrary.All[0].id, level = 3, xp = 7.5f, cooldownLeft = 4.25f };
             run.hp = 63.5f;
             run.shield = 12f;
+            run.talents = new Dictionary<string, int> { ["vitality"] = 2, ["mastery"] = 1 };
             return run;
         }
 
@@ -125,6 +128,7 @@ namespace Spiritfire.Game.Tests
             Assert.AreEqual(4.25f, got.pet.cooldownLeft);
             Assert.AreEqual(63.5f, got.hp);
             Assert.AreEqual(12f, got.shield);
+            CollectionAssert.AreEquivalent(run.talents, got.talents, "开局天赋快照");
             Assert.IsFalse(got.dev);
             Assert.IsNotNull(s.savedAt);
             Assert.AreEqual(RunPlan.Get("1-2"), s.Stage);
@@ -194,6 +198,8 @@ namespace Spiritfire.Game.Tests
             "{\"version\": 1, \"game\": \"spiritfire\", \"kind\": \"run\", \"run\": {\"heroId\": \"fox\", \"stageCode\": \"1-2\", \"flags\": {\"meta.banked\": 1}}}",
             "{\"version\": 1, \"game\": \"spiritfire\", \"kind\": \"run\", \"run\": {\"heroId\": \"fox\", \"stageCode\": \"1-2\", \"weapons\": [{\"id\": \"smg\", \"rarity\": 9}]}}",
             "{\"version\": 1, \"game\": \"spiritfire\", \"kind\": \"run\", \"run\": {\"heroId\": \"fox\", \"stageCode\": \"1-2\"}} trailing",
+            "{\"version\": 2, \"game\": \"spiritfire\", \"kind\": \"run\", \"run\": {\"heroId\": \"fox\", \"stageCode\": \"1-2\", \"talents\": {\"vitality\": -1}}}",
+            "{\"version\": 2, \"game\": \"spiritfire\", \"kind\": \"run\", \"run\": {\"heroId\": \"fox\", \"stageCode\": \"1-2\", \"talents\": {\"vitality\": \"max\"}}}",
         };
 
         [Test]
@@ -296,6 +302,136 @@ namespace Spiritfire.Game.Tests
             Assert.IsFalse(RunSuspend.CanSuspend(run));
             RunSuspend.Enabled = false;
             Assert.IsFalse(RunSuspend.ShouldWrite(run));
+        }
+
+        // ───────────── 天赋开局锁定 ─────────────
+
+        static float MaxHpWith(RunState run)
+        {
+            var s = StatSheet.Default(); // 生命 100
+            MetaSave.ApplyTalents(s, run);
+            return s.Get(Stat.MaxHp);
+        }
+
+        static void ClearTalents(MetaSave meta)
+        {
+            foreach (var t in TalentLibrary.All) meta.SetTalentLevel(t.id, 0, false);
+        }
+
+        [Test]
+        public void TalentsAreLockedAtRunStartThroughSuspendAndResume()
+        {
+            TalentHooks.EnsureInstalled();
+            var meta = SaveService.Main.Section<MetaSave>();
+            ClearTalents(meta);
+            meta.SetTalentLevel("vitality", 2, false);
+
+            // 开局：拍下天赋快照（RunStarted → TalentHooks.Lock）
+            var run = RunState.Begin("fox", 2468, RunPlan.First, false);
+            Assert.AreSame(run, RunState.Current);
+            Assert.IsNotNull(run.talents, "开局拍下天赋快照");
+            CollectionAssert.AreEquivalent(new Dictionary<string, int> { ["vitality"] = 2 }, run.talents);
+            Assert.AreEqual(116f, MaxHpWith(run), 1e-4f, "生命 +8 × 2");
+
+            // 进到 1-2 开头写续玩档，然后暂离（局清空）
+            run.EnterStage(RunPlan.Get("1-2"));
+            Assert.IsTrue(RunSuspend.Write(SceneFlow.CloneRun(run), false));
+            var text = File.ReadAllText(MainPath);
+            StringAssert.Contains($"\"version\": {RunSuspend.Version}", text);
+            StringAssert.Contains("\"talents\"", text);
+            RunState.Current = null;
+
+            // 暂离期间在主菜单买天赋：照常进元进度
+            meta.AddEssence(10000);
+            Assert.IsTrue(meta.BuyTalent("vitality"));
+            Assert.IsTrue(meta.BuyTalent("barrier"));
+            Assert.AreEqual(3, meta.TalentLevel("vitality"));
+            Assert.AreEqual(1, meta.TalentLevel("barrier"));
+
+            // 继续征程：按开局快照，不按现在档里的
+            Assert.AreEqual(SuspendStatus.Ok, RunSuspend.Read(false, out var s, out var error), error);
+            var resumed = s.run;
+            CollectionAssert.AreEquivalent(new Dictionary<string, int> { ["vitality"] = 2 }, resumed.talents, "快照不受暂离期间买的天赋影响");
+            Assert.AreEqual(116f, MaxHpWith(resumed), 1e-4f, "继续征程后生命上限不变");
+            var sheet = StatSheet.Default();
+            Assert.IsTrue(MetaSave.ApplyTalents(sheet, resumed));
+            Assert.AreEqual(50f, sheet.Get(Stat.MaxShield), 1e-4f, "暂离期间买的护盾天赋不生效");
+            Assert.IsFalse(MetaSave.ApplyTalents(sheet, resumed), "再套一次不动（元进度变化时重新套用也不变）");
+            CollectionAssert.AreEqual(MetaSave.TalentMods(resumed.talents), sheet.ModsFrom(MetaSave.TalentSource).ToList());
+            Assert.AreEqual(2, meta.TalentMods().Count, "档里现在是两项天赋");
+            Assert.AreEqual(1, sheet.ModsFrom(MetaSave.TalentSource).Count, "玩家身上仍是快照里的一项");
+
+            // 跨关 / 重来本关：快照跟着局走
+            var clone = SceneFlow.CloneRun(resumed);
+            Assert.AreNotSame(resumed.talents, clone.talents);
+            CollectionAssert.AreEquivalent(resumed.talents, clone.talents);
+            Assert.AreSame(resumed.talents, TalentHooks.Lock(resumed), "已经有快照时不重拍");
+
+            // 放弃这一局，开新局：新天赋生效
+            Assert.IsNotNull(RunSuspend.Forfeit(false));
+            var next = RunState.Begin("fox", 1357, RunPlan.First, false);
+            CollectionAssert.AreEquivalent(new Dictionary<string, int> { ["vitality"] = 3, ["barrier"] = 1 }, next.talents, "新开的局按现在的天赋");
+            Assert.AreEqual(124f, MaxHpWith(next), 1e-4f);
+            var sheet2 = StatSheet.Default();
+            MetaSave.ApplyTalents(sheet2, next);
+            Assert.AreEqual(56f, sheet2.Get(Stat.MaxShield), 1e-4f, "新局护盾天赋生效（+6）");
+        }
+
+        [Test]
+        public void OldVersionFileWithoutSnapshotUsesTalentsAtResume()
+        {
+            var meta = SaveService.Main.Section<MetaSave>();
+            ClearTalents(meta);
+            meta.SetTalentLevel("vitality", 1, false);
+            meta.SetTalentLevel("swift", 3, false);
+
+            // v1 的档：信封版本 1，run 里没有 talents
+            var run = SampleRun();
+            run.talents = null;
+            var body = Regex.Replace(RunStateJson.Serialize(run), "\\s*,\\s*\"talents\"\\s*:\\s*null", "");
+            StringAssert.DoesNotContain("talents", body);
+            File.WriteAllText(MainPath, "{\"version\": 1, \"game\": \"spiritfire\", \"kind\": \"run\", \"stage\": \"1-2\", \"run\": " + body + "}");
+
+            meta.SetTalentLevel("vitality", 4, false);
+            Assert.AreEqual(SuspendStatus.Ok, RunSuspend.Read(false, out var s, out var error), error);
+            CollectionAssert.AreEquivalent(new Dictionary<string, int> { ["vitality"] = 4, ["swift"] = 3 }, s.run.talents, "按读档时档里的天赋补上快照");
+            Assert.AreEqual(132f, MaxHpWith(s.run), 1e-4f);
+
+            // 补上以后就锁定了：之后再买不影响这一局；下一关写的档是新版本、带快照
+            meta.SetTalentLevel("vitality", 5, false);
+            Assert.AreEqual(132f, MaxHpWith(s.run), 1e-4f);
+            Assert.IsTrue(RunSuspend.Write(s.run, false));
+            StringAssert.Contains($"\"version\": {RunSuspend.Version}", File.ReadAllText(MainPath));
+            Assert.AreEqual(SuspendStatus.Ok, RunSuspend.Read(false, out var s2, out _));
+            CollectionAssert.AreEquivalent(s.run.talents, s2.run.talents);
+
+            // 没有快照的局（测试拼的）按档里当前的天赋
+            var bare = SampleRun();
+            bare.talents = null;
+            Assert.AreEqual(140f, MaxHpWith(bare), 1e-4f);
+        }
+
+        [Test]
+        public void SnapshotSkipsUnknownTalentsAndClampsLevels()
+        {
+            var levels = new Dictionary<string, int> { ["vitality"] = 99, ["future_talent"] = 3, ["mastery"] = 0 };
+            var mods = MetaSave.TalentMods(levels);
+            Assert.AreEqual(1, mods.Count, "不认识的天赋、0 级都不出修正");
+            Assert.AreEqual(Stat.MaxHp, mods[0].stat);
+            Assert.AreEqual(40f, mods[0].value, 1e-4f, "等级夹到满级（5 × 8）");
+            Assert.AreEqual(0, MetaSave.TalentMods(null).Count);
+
+            var run = SampleRun();
+            run.talents = levels;
+            Assert.IsTrue(RunSuspend.Write(run, false));
+            Assert.AreEqual(SuspendStatus.Ok, RunSuspend.Read(false, out var s, out var error), error);
+            Assert.AreEqual(3, s.run.talents["future_talent"], "新版本的天赋原样保留");
+            Assert.AreEqual(140f, MaxHpWith(s.run), 1e-4f);
+
+            var meta = SaveService.Main.Section<MetaSave>();
+            ClearTalents(meta);
+            meta.SetTalentLevel("reload", 2, false);
+            CollectionAssert.AreEquivalent(new Dictionary<string, int> { ["reload"] = 2 }, meta.TalentSnapshot(), "快照只记 > 0 的");
         }
 
         // ───────────── 图鉴 ─────────────
