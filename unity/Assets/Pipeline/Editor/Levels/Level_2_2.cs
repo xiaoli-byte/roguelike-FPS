@@ -20,6 +20,7 @@ namespace Spiritfire.Art.Editor.Levels
     ///   → ② 九门外庭 (6, 104) y 10.8：北缘是九门挡土墙（S2 第一道墙），开三道门（西 / 中 / 东），封六道
     ///   → 上坡 S2（U1 14.4 / U2 18.0）：每道门接三段天阶（G0 / G1 / G2），U1、U2 上可以横着换路
     ///   → ③ 开明兽庭 (0, 214) y 21.6：十字四角是 +3.6 m 的墩台，中央 2.6 m 基座上坐着开明兽巨像；中门进南翼、西门进西翼、东门进东翼
+    ///     （遭遇 / L5 的场地圆心在基座南坡道 (0, 202)：巨像脚下的导航网格是孤岛）
     ///   → 北翼神道（21.6 → 25.2）→ ④ 玉京殿前 (0, 282) y 25.2：两座殿前月台，北崖下天阙（青铜门阙）框住出口祭坛 (0, 300)。
     ///   藏宝：东路 U2 东端崖边小径尽头的钟亭（A，无守军）；西台地西缘凿进崖里的玉库（B，惊动 ⑤ 守军）。
     ///
@@ -78,6 +79,11 @@ namespace Spiritfire.Art.Editor.Levels
         // ───────────── 场地（世界 XZ）─────────────
         static readonly Vector2 Spawn = new(-4, 4), Site1 = new(2, 50), Site2 = new(6, 104), Site3 = new(0, 214), Site4 = new(0, 282), Site5 = new(-74, 220),
             ShrineC = new(0, 300), GatewayC = new(0, 307.5f), CacheA = new(108.7f, 152), CacheB = new(-101, 220), BellC = new(113, 152);
+        /// <summary>
+        /// ③ 开明兽庭的场地中心（遭遇触发圈 / 刷怪兜底圈的圆心、L5 场地圆心）：基座南坡道上、基座南沿前 2 m（地形，和出生点连通）。
+        /// 不用 <see cref="Site3"/>：那是巨像的位置，脚下的导航网格被巨像围成孤岛（整局冒烟：从出生点没有完整路径，传送到中心刷不出怪）
+        /// </summary>
+        static readonly Vector2 CourtCenter = Site3 + new Vector2(0, -12);
 
         /// <summary>游玩区多边形（南缘自西向东，东缘往北，北缘往西，西缘往南）：线外是连续的雪岭绝壁</summary>
         static readonly Vector2[] Envelope =
@@ -545,6 +551,7 @@ namespace Spiritfire.Art.Editor.Levels
                     rep.Line($"  {g.name}：天阶脚 ({f0.foot.x:F0}, {f0.foot.y:F1}) → 顶 ({f0.top.x:F0}, {f0.top.y:F1})，宽 {g.width:F0} m");
                 }
                 LevelValidator.Run(Spec(), rep);
+                CheckSiteCenters(rep, scene);
                 CheckSceneContents(rep, scene);
                 rep.Line(rep.failures == 0 ? "全部通过" : $"不合格 {rep.failures} 项");
                 rep.Save($"{LevelKit.ReviewDir}/level_2-2_report.txt");
@@ -855,7 +862,7 @@ namespace Spiritfire.Art.Editor.Levels
             Mk("Site_Spawn", OnGround(Spawn));
             Mk("Site_1_JadeStage", OnGround(Site1));
             Mk("Site_2_NineGates", OnGround(Site2));
-            Mk("Site_3_KaimingCourt", OnGround(Site3 + new Vector2(0, -12)));
+            Mk("Site_3_KaimingCourt", OnGround(CourtCenter));
             Mk("Site_4_JadeHall", OnGround(Site4));
             Mk("Site_5_TreasuryGuard", OnGround(Site5));
             Mk("Site_Exit", OnGround(ShrineC + new Vector2(0, -4)));
@@ -916,10 +923,11 @@ namespace Spiritfire.Art.Editor.Levels
                     Wave("九门混战", E(Xingxing, 3), E(Qingniao, 1), E(Haozhi, 2)).Hint("抢门阙下的高处——豪彘冲过来会炸冰刺"),
                     Wave("门上冷箭", E(Fuzhu, 1), E(Xingxing, 2), E(Haozhi, 1)).After(1, 2f).Hint("夫诸在台上蓄力冰光——躲到门阙后断开视线"))
                 .Gather(0.6f).Distance(10, 40), "scroll");
-            var s3 = Site(3, "开明兽庭", Site3, 30, 36, SG.EncounterSpec.Of(
+            // 圆心在基座南坡道（CourtCenter），宝箱仍落在 (−8, 184)：南翼西侧
+            var s3 = Site(3, "开明兽庭", CourtCenter, 30, 36, SG.EncounterSpec.Of(
                     Wave("巨像旋壳", E(XuanGui, 1), E(Fuzhu, 1), E(Xingxing, 2)).Hint("旋龟正面打不动——绕到身后打蛇头，翻倒时打散热孔"),
                     Wave("兽庭合围", E(FoxWitch, 1), E(Xingxing, 2), E(Haozhi, 2), E(Qingniao, 1)).After(1, 2f).Hint("狐巫立冰壁护着同伴——先打碎她的铜镜"))
-                .Gather(1.5f).Distance(10, 44).Elites(1, "frenzied"), "weapon:min=1", new Vector2(-8, -30));
+                .Gather(1.5f).Distance(10, 44).Elites(1, "frenzied"), "weapon:min=1", Site3 + new Vector2(-8, -30) - CourtCenter);
             var s4 = Site(4, "玉京殿前", Site4, 26, 32, SG.EncounterSpec.Of(
                     Wave("玉京禁卫", E(XuanGui, 1).Elite("shielded"), E(FoxWitch, 1), E(Qingniao, 2), E(Haozhi, 2)).Hint("先碎铜镜，再等旋龟翻倒"),
                     Wave("殿前援军", E(Xingxing, 3), E(Fuzhu, 1)).After(1, 2f).Hint("援军从两侧殿前月台上下来"))
@@ -966,6 +974,43 @@ namespace Spiritfire.Art.Editor.Levels
             portal.transform.SetPositionAndRotation(ts.OnGround(at.x, at.y), Quaternion.LookRotation(-face));
             portal.objective = objective;
             portal.buildFrame = !shrine || IsPlaceholder(shrine);
+        }
+
+        /// <summary>
+        /// 遭遇场地的中心都在和出生点连通的导航网格上（整局冒烟发现 ③ 的中心原来声明在巨像脚下：那里吸附到的是巨像基座上被巨像围住的一小块孤岛，
+        /// 从出生点没有完整路径，传送到中心的机器人在孤岛上刷不出怪）。吸附半径同 RunBot（8 m），只查人形代理的网格。
+        /// </summary>
+        static void CheckSiteCenters(LevelKit.Report rep, UnityEngine.SceneManagement.Scene scene)
+        {
+            rep.Line("— 场地中心连通（NavMesh，从出生点） —");
+            var filter = SG.LavaField.WalkerFilter();
+            if (!UnityEngine.AI.NavMesh.SamplePosition(OnGround(Spawn), out var start, 4f, filter))
+            {
+                rep.Fail("出生点附近没有导航网格");
+                return;
+            }
+            var path = new UnityEngine.AI.NavMeshPath();
+            bool Connected(Vector3 p, out Vector3 at)
+            {
+                at = p;
+                if (!UnityEngine.AI.NavMesh.SamplePosition(p, out var hit, 8f, filter)) return false;
+                at = hit.position;
+                return UnityEngine.AI.NavMesh.CalculatePath(start.position, at, filter, path) && path.status == UnityEngine.AI.NavMeshPathStatus.PathComplete;
+            }
+            static string F(Vector3 v) => $"({v.x:F0}, {v.y:F1}, {v.z:F0})";
+            var sites = Object.FindObjectsByType<SG.EncounterSite>(FindObjectsInactive.Include).Where(s => s.gameObject.scene == scene).OrderBy(s => s.name);
+            foreach (var site in sites)
+            {
+                var c = site.transform.position;
+                bool ok = Connected(c, out var at);
+                string msg = $"{site.title}：中心 {F(c)} → 网格 {F(at)}";
+                if (ok) rep.Line($"✓ {msg}，和出生点连通");
+                else rep.Fail($"{msg}，和出生点不连通（孤岛 / 附近没有网格）");
+            }
+            // 参考（不判）：巨像脚下（③ 原来声明的中心）
+            var statue = OnGround(Site3);
+            bool island = !Connected(statue, out var statueAt);
+            rep.Line($"· 巨像脚下 {F(statue)} → 网格 {F(statueAt)}：{(island ? "不连通（被巨像围住的孤岛），场地中心不能放这里" : "连通")}");
         }
 
         /// <summary>L1 规则：关卡场景只有环境和标记；顺带重新生成 GameDatabase（同 1-1）</summary>
@@ -1017,14 +1062,15 @@ namespace Spiritfire.Art.Editor.Levels
                         Site("出生·山门（缓冲）", Spawn, 30, combat: false),
                         Site("① 玉阶月台", Site1, 52, cover: 4, layers: 3, overlook: true),
                         Site("② 九门外庭", Site2, 52, cover: 4, layers: 3, overlook: true),
-                        Site("③ 开明兽庭", Site3, 64, cover: 4, layers: 3, overlook: true),
+                        Site("③ 开明兽庭", CourtCenter, 64, cover: 4, layers: 3, overlook: true),
                         Site("④ 玉京殿前", Site4, 52, cover: 3, layers: 3, overlook: true),
                     },
                 }
                 .Route("出生·山门", G(Spawn)).Route("F0 顶（L1）", G(new Vector2(-6, 34))).Route("① 玉阶月台", G(Site1)).Route("① 挡墙月台顶", G(new Vector2(-2, 43.5f)))
                 .Route("L2（F1W 顶）", G(new Vector2(-44, 62))).Route("② 九门外庭", G(Site2)).Route("U1", G(new Vector2(-30, 133)))
                 .Route("西门天阶顶", G(new Vector2(-66, 170))).Route("东门天阶顶", G(new Vector2(66, 170))).Route("中门天阶顶（南翼）", G(new Vector2(0, 176)))
-                .Route("SW 墩台", G(new Vector2(-32, 182))).Route("SE 墩台", G(new Vector2(32, 182))).Route("基座顶", G(new Vector2(8, 214)))
+                .Route("SW 墩台", G(new Vector2(-32, 182))).Route("SE 墩台", G(new Vector2(32, 182)))
+                .Route("③ 开明兽庭（场地中心）", G(CourtCenter)).Route("基座顶", G(new Vector2(8, 214)))
                 .Route("西翼", G(new Vector2(-38, 214))).Route("③ 开明兽庭（北翼神道）", G(new Vector2(0, 246))).Route("④ 玉京殿前", G(Site4))
                 .Route("西殿前月台", G(new Vector2(-28, 292))).Route("东殿前月台", G(new Vector2(28, 292))).Route("出口祭坛前", G(ShrineC + new Vector2(0, -4.5f)))
                 .Route("藏宝 A · 钟亭", G(CacheA)).Route("藏宝 B · 玉库", G(CacheB))
