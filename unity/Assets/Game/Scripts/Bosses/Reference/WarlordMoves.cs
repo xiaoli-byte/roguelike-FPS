@@ -570,7 +570,7 @@ namespace Spiritfire.Game
             else Sfx("enemy_melee", 0.8f, 0.75f);
             var c = OnGround(p);
             for (int i = -1; i <= 1; i++) Fx.Burst(c + Dir(Facing + i * 31.5f) * 2.8f + Vector3.up * 1.1f, WarlordRef.Fire, 6, 5f, 0.4f, 0.16f, -2f);
-            Fx.Slash(Brain.BodyCenter, yaw, WarlordRef.ComboRange * 0.8f, WarlordRef.ComboHalf * 2f * Mathf.Deg2Rad, struck % 2 == 0 ? 1 : -1, 0, 0.5f, 0.25f, WarlordRef.Fire);
+            Fx.Slash(Brain.BodyCenter, yaw, WarlordRef.ComboRange * 0.8f, WarlordRef.ComboHalf * 2f * Mathf.Deg2Rad, struck % 2 == 0 ? 1 : -1, 0, 0.5f, 0.25f, WarlordRef.Fire, true);
             Brain.Glow(0, 0);
         }
 

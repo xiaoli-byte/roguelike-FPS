@@ -111,7 +111,7 @@ namespace Spiritfire.Game
                     {
                         Stop();
                         Melee(SwipeRange, Damage * SwipeMult, 0.15f);
-                        Fx.Slash(transform.position + Vector3.up * 0.75f * Size, transform.eulerAngles.y, 1.1f * Size, 1.9f, 1, 0.35f, 0.32f * Size, 0.22f, Hex.Rgb(0xbfeaff));
+                        Fx.Slash(transform.position + Vector3.up * 0.75f * Size, transform.eulerAngles.y, 1.1f * Size, 1.9f, 1, 0.35f, 0.32f * Size, 0.22f, Hex.Rgb(0xbfeaff), true);
                         Act("swipe", 0, 0.04f);
                         SetState("swipe");
                     }

@@ -300,7 +300,8 @@ namespace Spiritfire.Game
                 if (dir.sqrMagnitude < 1e-6f) dir = transform.forward;
                 EnemyProjectile.Spawn(new EnemyProjectileSpec(lastOrigins[i], dir.normalized * FeatherSpeed, Damage, 0.2f, 3.2f)
                 {
-                    color = Hex.Rgb(0xbfeeff), visual = "feather", scale = 1.6f, source = this, spirit = Taunted,
+                    // 饱和冰蓝（原来的 0xbfeeff 加上核心提亮后几乎是白的，像纸片）
+                    color = Hex.Rgb(0x58c8ff), visual = "feather", scale = 1.6f, source = this, spirit = Taunted,
                 });
             }
             Volleys++;

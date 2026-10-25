@@ -252,7 +252,7 @@ namespace Spiritfire.Game
             float k = Size;
             var c = transform.position + Vector3.up * 0.55f * k;
             foreach (int s in new[] { 1, -1 })
-                SlashArc.Spawn(c, transform.eulerAngles.y, 1.1f * k, 1.7f, s, s * 0.75f, 0.3f * k, 0.2f, new Color(1f, 0.77f, 0.42f));
+                SlashArc.Spawn(c, transform.eulerAngles.y, 1.1f * k, 1.7f, s, s * 0.75f, 0.3f * k, 0.2f, new Color(1f, 0.77f, 0.42f), true);
         }
 
         void Spin()
@@ -269,7 +269,7 @@ namespace Spiritfire.Game
             }
             // 落地旋斩：一圈刀光 + 地面扬尘环（伤害范围不随体型放大，同 Three.js；刀光随体型）
             float k = Size;
-            SlashArc.Spawn(transform.position + Vector3.up * 0.42f * k, transform.eulerAngles.y, SpinRange * 0.85f * k, Mathf.PI * 1.9f, 1, 0, 0.5f * k, 0.26f, new Color(1f, 0.71f, 0.29f));
+            SlashArc.Spawn(transform.position + Vector3.up * 0.42f * k, transform.eulerAngles.y, SpinRange * 0.85f * k, Mathf.PI * 1.9f, 1, 0, 0.5f * k, 0.26f, new Color(1f, 0.71f, 0.29f), true);
             Telegraph.Wave(transform.position, SpinRange * k, 9f, new Color(0.85f, 0.69f, 0.47f));
             ShotFx.Instance?.Impact(transform.position, Vector3.up, false, 2.4f);
         }

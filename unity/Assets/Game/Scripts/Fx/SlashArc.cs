@@ -9,6 +9,8 @@ namespace Spiritfire.Game
     /// 纯视觉，不做伤害判定。弧在「刀光平面」里展开：默认水平（绕世界 Y 扫），tilt 绕前方轴倾斜（斜劈 / X 字斩）。
     /// 前 55% 刀头从起点扫到终点（缓出），之后整体淡出并略向外扩。网格是 40 段 × 4 圈（内 → 刃口 → 外缘），颜色写顶点色。
     /// 池化（上限 24 道）：网格顶点数固定，复用时只重写顶点位置 / 颜色，不再每刀 new 一个 GameObject + Mesh。
+    /// 敌方刀光（hostile）：刃口 HDR 提亮让 Bloom 吃到、多留 25% 时长，并在下面垫一层普通混合的暗边（同一网格放大 10%）——
+    /// 纯加法的刀光在亮沙 / 雪地上几乎加不出亮度，暗边把亮刃托出来（审阅图集问题清单：交叉斩刀光太淡）。
     /// </summary>
     public sealed class SlashArc : MonoBehaviour, IFxSlot
     {
@@ -20,7 +22,13 @@ namespace Spiritfire.Game
 
         static readonly List<SlashArc> pool = new();
 
+        static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
+        /// <summary>敌方刀光的刃口亮度倍率、暗边颜色（乘顶点色；alpha = 暗边浓度）</summary>
+        static readonly Color HostileBoost = new(1.7f, 1.7f, 1.7f, 1f), Underlay = new(0.16f, 0.06f, 0.03f, 0.85f);
+
         Mesh mesh;
+        MeshRenderer main, under;
+        static MaterialPropertyBlock block;
         Vector3[] positions;
         Color[] colors;
         Color tint;
@@ -38,7 +46,9 @@ namespace Spiritfire.Game
         /// <param name="arc">弧长（弧度）</param>
         /// <param name="dir">1 = 从右往左扫（俯视逆时针），-1 = 从左往右</param>
         /// <param name="tilt">绕前方轴的倾斜（弧度）</param>
-        public static FxHandle Spawn(Vector3 center, float yawDeg, float radius, float arc, int dir, float tilt, float width, float duration, Color color)
+        /// <param name="hostile">敌方刀光：刃口提亮、垫暗边、多留 25%</param>
+        public static FxHandle Spawn(Vector3 center, float yawDeg, float radius, float arc, int dir, float tilt, float width, float duration, Color color,
+            bool hostile = false)
         {
             if (!Fx.Finite(center)) return FxHandle.None;
             var rt = FxRuntime.Ensure();
@@ -47,8 +57,9 @@ namespace Spiritfire.Game
             s.gen++;
             s.active = true;
             s.age = 0;
-            s.duration = Mathf.Max(0.05f, duration);
+            s.duration = Mathf.Max(0.05f, duration) * (hostile ? 1.25f : 1f);
             s.tint = color;
+            s.SetHostile(hostile);
             s.transform.SetPositionAndRotation(center, Quaternion.Euler(0, yawDeg, 0) * Quaternion.AngleAxis(-tilt * Mathf.Rad2Deg, Vector3.forward));
             s.transform.localScale = Vector3.one;
             s.Build(radius, arc, Mathf.Max(0.02f, width), dir);
@@ -77,15 +88,40 @@ namespace Spiritfire.Game
             go.SetActive(false);
             var s = go.AddComponent<SlashArc>();
             s.Init();
+            s.main = AddRenderer(go, s.mesh, FxMaterials.Additive, 0);
+            // 暗边：同一网格放大 10%，普通混合，排在刀光前面画
+            var u = new GameObject("Slash Underlay");
+            u.transform.SetParent(go.transform, false);
+            u.transform.localScale = new Vector3(1.1f, 1f, 1.1f);
+            s.under = AddRenderer(u, s.mesh, FxMaterials.AlphaBlend, -1);
+            pool.Add(s);
+            return s;
+        }
+
+        static MeshRenderer AddRenderer(GameObject go, Mesh mesh, Material mat, int order)
+        {
             var r = go.AddComponent<MeshRenderer>();
-            r.sharedMaterial = FxMaterials.Additive;
+            r.sharedMaterial = mat;
+            r.sortingOrder = order;
             r.shadowCastingMode = ShadowCastingMode.Off;
             r.receiveShadows = false;
             r.lightProbeUsage = LightProbeUsage.Off;
             r.reflectionProbeUsage = ReflectionProbeUsage.Off;
-            go.AddComponent<MeshFilter>().sharedMesh = s.mesh;
-            pool.Add(s);
-            return s;
+            go.AddComponent<MeshFilter>().sharedMesh = mesh;
+            return r;
+        }
+
+        void SetHostile(bool on)
+        {
+            block ??= new MaterialPropertyBlock();
+            block.Clear();
+            block.SetColor(BaseColor, on ? HostileBoost : Color.white);
+            main.SetPropertyBlock(block);
+            under.enabled = on;
+            if (!on) return;
+            block.Clear();
+            block.SetColor(BaseColor, Underlay);
+            under.SetPropertyBlock(block);
         }
 
         /// <summary>全部收起（换关清场）</summary>

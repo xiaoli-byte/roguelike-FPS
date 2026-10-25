@@ -276,18 +276,30 @@ namespace Spiritfire.Game.Testing
             else Fail("场地里找不到日光照得到、又离日轮够远的落脚点（太阳方向 / 遮挡不对？）");
 
             // ── 浅水：增益减半 ──
-            var water = WaterVolume.All.Where(w => w).Select(w => w.transform.position).ToList();
-            Vector3? wet = null;
-            foreach (var w in water)
+            // 落脚点直接取泉床：每段水在水面上取几处往下打到床面，水深 > 0.15 m 才算（原来取水体中心再贴导航网格 2 m 内，
+            // 泉床不在导航网格上时会贴到岸上——站在干地上测「浅水」）
+            Vector3? wet = null, anyWet = null;
+            float wetDepth = 0;
+            foreach (var w in WaterVolume.All.Where(w => w))
             {
-                if (!NavMesh.SamplePosition(w, out var hit, 2f, NavMesh.AllAreas)) continue;
-                if (!Lit(hit.position) || !FarFromRing(hit.position, far)) continue;
-                wet = hit.position;
-                break;
+                foreach (var u in new[] { 0f, -0.3f, 0.3f })
+                {
+                    var top = w.transform.TransformPoint(0, 0.5f, u);
+                    if (!Physics.Raycast(top + Vector3.up * 3f, Vector3.down, out var bed, 12f, Layers.WorldMask, QueryTriggerInteraction.Ignore)) continue;
+                    if (!WaterVolume.At(bed.point + Vector3.up * 0.02f, out float d) || d < 0.15f || d > w.deep * 0.9f) continue;
+                    anyWet ??= bed.point;
+                    if (!Lit(bed.point) || !FarFromRing(bed.point, far)) continue;
+                    wet = bed.point;
+                    wetDepth = d;
+                    break;
+                }
+                if (wet.HasValue) break;
             }
-            if (!wet.HasValue && water.Count > 0 && NavMesh.SamplePosition(water[0], out var any, 2f, NavMesh.AllAreas)) wet = any.position;
+            wet ??= anyWet;
             if (wet.HasValue)
             {
+                bool onNav = NavMesh.SamplePosition(wet.Value, out var navHit, 0.6f, NavMesh.AllAreas);
+                Line($"浅水落脚点 {At(wet.Value)}：水深 {wetDepth:F2} m，泉床{(onNav ? "在导航网格上" : "不在导航网格上（敌人走不进水里）")}");
                 Place(wet.Value);
                 PlayerStatus.Instance?.ClearAll();
                 yield return new WaitForSeconds(2f);

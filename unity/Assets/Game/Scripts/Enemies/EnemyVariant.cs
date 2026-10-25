@@ -52,14 +52,18 @@ namespace Spiritfire.Game
         static readonly int RimColorId = Shader.PropertyToID("_RimColor");
         static readonly int RimStrengthId = Shader.PropertyToID("_RimStrength");
 
-        /// <summary>沙魇·：沙化 0.85、日火裂纹（橙金）、暖边光，受击扬沙、倒下崩沙</summary>
+        /// <summary>
+        /// 沙魇·：沙化 0.85、日火裂纹（橙金）、暖边光，受击扬沙、倒下崩沙。
+        /// 沙色是「被日火烧焦的沙」——比地上的沙暗一截、偏赭：原来的沙色和沙地一模一样，远处找不到它（审阅图集问题清单）；
+        /// 边光拉强，剪影在亮沙上有一圈暖边
+        /// </summary>
         public static readonly EnemyVariantSpec Sand = new()
         {
             id = SandId, name = "沙魇", prefix = "沙魇·",
-            sand = 0.85f, sandColor = new Color(0.8f, 0.68f, 0.52f),
-            crack = 0.85f, crackDensity = 13f, crackPulse = 2.6f, crackColor = new Color(2.2f, 0.8f, 0.22f),
-            rimColor = new Color(1f, 0.62f, 0.35f), rimStrength = 0.5f,
-            tint = Color.white, overlay = new Color(0.85f, 0.66f, 0.4f), overlayAmount = 0.12f,
+            sand = 0.85f, sandColor = new Color(0.52f, 0.38f, 0.27f),
+            crack = 0.85f, crackDensity = 13f, crackPulse = 2.6f, crackColor = new Color(2.8f, 0.95f, 0.26f),
+            rimColor = new Color(1f, 0.58f, 0.3f), rimStrength = 0.8f,
+            tint = Color.white, overlay = new Color(0.5f, 0.34f, 0.22f), overlayAmount = 0.12f,
             dust = Hex.Rgb(0xd9b27a), hitPuff = true, crumble = true,
         };
 
@@ -67,10 +71,10 @@ namespace Spiritfire.Game
         public static readonly EnemyVariantSpec Wraith = new()
         {
             id = WraithId, name = "沙魇",
-            sand = 0.95f, sandColor = new Color(0.78f, 0.66f, 0.5f),
-            crack = 1f, crackDensity = 15f, crackPulse = 3.4f, crackColor = new Color(2.6f, 0.9f, 0.25f),
-            rimColor = new Color(1f, 0.6f, 0.32f), rimStrength = 0.6f,
-            tint = Color.white, overlay = new Color(0.85f, 0.66f, 0.4f), overlayAmount = 0.1f,
+            sand = 0.95f, sandColor = new Color(0.46f, 0.33f, 0.23f),
+            crack = 1f, crackDensity = 15f, crackPulse = 3.4f, crackColor = new Color(3.2f, 1.05f, 0.28f),
+            rimColor = new Color(1f, 0.55f, 0.28f), rimStrength = 0.9f,
+            tint = Color.white, overlay = new Color(0.46f, 0.31f, 0.2f), overlayAmount = 0.12f,
             dust = Hex.Rgb(0xd9b27a), hitPuff = true, crumble = true, crumbleDelay = 0.2f,
         };
 

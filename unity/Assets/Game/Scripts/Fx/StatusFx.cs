@@ -9,7 +9,7 @@ namespace Spiritfire.Game
     ///   感电：一闪一闪的蓝白（随机频闪）；骨骼上噼啪的电弧碎纹 + 轻拉丝电火花，偶尔在两根骨头之间劈一道小闪电（全场限流）；
     ///   蚀化：身体泛绿、缓慢起伏；骨骼上往下滴蚀液 + 冒绿泡；
     ///   眩晕：淡黄；头顶三颗绕圈的小金星；
-    ///   减速（冻）：冷蓝，往下飘冰晶光点。
+    ///   减速（冻）：冰白（不是雷蓝：两者原来几乎同色相，远处分不开），身上闪冰晶星芒、往下飘冰晶光点和细雪；
     /// 着色走 EnemyBody 的覆盖色通道「status」（多个状态按强度混色，受击闪白更强时盖过它）；粒子发进共享发射器，
     /// 全场每帧上限 <see cref="FxBudget.StatusEmitPerFrame"/>，再乘画质密度。死亡 / 状态全部结束时清掉着色、停发。
     /// 颜色全部是 Three.js 的元素色（<see cref="Fx.ElementColor"/>）。
@@ -18,9 +18,10 @@ namespace Spiritfire.Game
     public sealed class StatusFx : MonoBehaviour
     {
         const string Channel = "status";
-        static readonly Color StunColor = Hex.Rgb(0xffe27a), FrostColor = Hex.Rgb(0x9fdcff);
+        /// <summary>减速的冰白：比雷元素的天蓝（6fd8ff）白得多，靠明度和冰晶星芒区分</summary>
+        static readonly Color StunColor = Hex.Rgb(0xffe27a), FrostColor = Hex.Rgb(0xdff5ff);
         /// <summary>小闪电（两根骨头之间）全场每秒最多几道</summary>
-        const float ArcsPerSecond = 6f;
+        const float ArcsPerSecond = 8f;
 
         static int budgetFrame = -1, budgetLeft;
         static float arcTokens;
@@ -32,7 +33,7 @@ namespace Spiritfire.Game
         Transform[] bones;
         Transform head;
         Collider col;
-        float flameAcc, sparkAcc, crackAcc, dropAcc, frostAcc, arcAcc, flicker, flickerT, starPhase;
+        float flameAcc, sparkAcc, crackAcc, dropAcc, frostAcc, glintAcc, snowAcc, arcAcc, flicker, flickerT, starPhase;
         bool tinted;
         float phaseSeed;
 
@@ -164,13 +165,14 @@ namespace Spiritfire.Game
                 if (flickerT <= 0)
                 {
                     flickerT = Random.Range(0.05f, 0.12f);
-                    flicker = Random.value < 0.35f ? Random.Range(0.35f, 0.55f) : Random.Range(0.08f, 0.18f);
+                    // 频闪拉开明暗：亮的那一下接近满色，暗的时候几乎不染——「一闪一闪」本身就是感电的识别特征
+                    flicker = Random.value < 0.4f ? Random.Range(0.5f, 0.75f) : Random.Range(0.05f, 0.14f);
                 }
                 Add(Fx.ElementColor(Element.Shock), flicker);
             }
             if (corrode) Add(Fx.ElementColor(Element.Corrode), 0.22f + 0.06f * Mathf.Sin(t * 4f));
             if (stun) Add(StunColor, 0.14f + 0.06f * Mathf.Sin(t * 9f));
-            if (frost) Add(FrostColor, 0.28f);
+            if (frost) Add(FrostColor, 0.34f);
             if (w <= 0)
             {
                 Clear();
@@ -228,12 +230,12 @@ namespace Spiritfire.Game
             for (int i = 0; i < n; i++)
             {
                 var p = RandomPoint();
-                if (crack != null) rt.EmitOne(crack, p, Vector3.zero, Random.Range(0.3f, 0.5f), Random.Range(0.07f, 0.13f), Color.Lerp(blue, Color.white, 0.35f), 0);
-                if (streak != null && Random.value < 0.5f)
-                    rt.EmitOne(streak, p, Random.onUnitSphere * Random.Range(2f, 4.5f), 0.03f, Random.Range(0.08f, 0.16f), blue, 0);
+                if (crack != null) rt.EmitOne(crack, p, Vector3.zero, Random.Range(0.4f, 0.65f), Random.Range(0.09f, 0.16f), Color.Lerp(blue, Color.white, 0.5f), 0);
+                if (streak != null && Random.value < 0.6f)
+                    rt.EmitOne(streak, p, Random.onUnitSphere * Random.Range(2f, 4.5f), 0.035f, Random.Range(0.08f, 0.16f), blue, 0);
             }
-            // 两根骨头之间偶尔劈一道小闪电（全场限流：闪电池只有 40 道）
-            arcAcc += dt * (0.8f + 0.5f * stacks);
+            // 两根骨头之间劈小闪电（全场限流：闪电池只有 40 道）——一秒一两道才认得出是「电」
+            arcAcc += dt * (1.4f + 0.7f * stacks);
             if (arcAcc < 1 || bones == null || bones.Length < 2) return;
             arcAcc = 0;
             if (Time.frameCount != arcFrame)
@@ -246,7 +248,7 @@ namespace Spiritfire.Game
             var a = RandomPoint();
             var b = RandomPoint();
             if ((a - b).sqrMagnitude < 0.09f) b = a + Random.onUnitSphere * 0.5f;
-            Lightning.Spawn(a, b, blue, 0.03f);
+            Lightning.Spawn(a, b, Color.Lerp(blue, Color.white, 0.25f), 0.045f);
         }
 
         void Corrode(FxRuntime rt, float dt, float density)
@@ -289,13 +291,28 @@ namespace Spiritfire.Game
 
         void Frost(FxRuntime rt, float dt, float density)
         {
-            frostAcc += dt * 6f * density;
+            frostAcc += dt * 10f * density;
             int n = Take((int)frostAcc);
             frostAcc -= (int)frostAcc;
             var glow = n > 0 ? rt.GetEmitter("GlowFall") : null;
             for (int i = 0; i < n && glow != null; i++)
                 rt.EmitOne(glow, RandomPoint(), new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.4f), Random.Range(-0.2f, 0.2f)),
-                    Random.Range(0.05f, 0.09f), Random.Range(0.4f, 0.7f), FrostColor, 0);
+                    Random.Range(0.06f, 0.11f), Random.Range(0.4f, 0.7f), FrostColor, 0);
+            // 冰晶星芒（FX3 Twinkle）：贴在身上一闪一闪的白点，远处也读得出「结霜」
+            glintAcc += dt * 5f * density;
+            int g = Take((int)glintAcc);
+            glintAcc -= (int)glintAcc;
+            var tw = g > 0 ? rt.GetEmitter("Twinkle") : null;
+            for (int i = 0; i < g && tw != null; i++)
+                rt.EmitOne(tw, RandomPoint(), Vector3.zero, Random.Range(0.14f, 0.22f), Random.Range(0.25f, 0.4f), Color.white, 0);
+            // 细雪（FX3 Snow）：从身上往下飘
+            snowAcc += dt * 3f * density;
+            int sn = Take((int)snowAcc);
+            snowAcc -= (int)snowAcc;
+            var snow = sn > 0 ? rt.GetEmitter("Snow") : null;
+            for (int i = 0; i < sn && snow != null; i++)
+                rt.EmitOne(snow, RandomPoint(), new Vector3(Random.Range(-0.15f, 0.15f), -0.35f, Random.Range(-0.15f, 0.15f)),
+                    Random.Range(0.05f, 0.08f), Random.Range(0.8f, 1.2f), FrostColor, 0);
         }
     }
 }

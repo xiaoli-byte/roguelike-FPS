@@ -145,7 +145,9 @@ namespace Spiritfire.Game
             intro.sfx = null; // 吼声在升到一半时（KunPengBrain.IntroTick）
             intro.shake = 0;
             intro.firstRest = 1.2f;
-            defeat.seconds = 3.2f;
+            // 倒下演出放长到 4.4 s：鹏 55% 时砸到冰面、趴着挣两下再炸开；鲲沉到冰窟底才炸。之后冰面上留冻雾 / 霜斑几秒（KunPengDeath）
+            defeat.seconds = 4.4f;
+            defeat.despawnAfter = 2.5f;
             defeat.toast = null; // 按倒下时的形态说（KunPengBrain.OnDefeated）
         }
     }

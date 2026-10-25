@@ -266,8 +266,9 @@ namespace Spiritfire.Game
         }
 
         /// <summary>刀光弧（见 <see cref="SlashArc.Spawn"/>）</summary>
-        public static FxHandle Slash(Vector3 center, float yawDeg, float radius, float arc, int dir, float tilt, float width, float duration, Color color) =>
-            SlashArc.Spawn(center, yawDeg, radius, arc, dir, tilt, width, duration, color);
+        public static FxHandle Slash(Vector3 center, float yawDeg, float radius, float arc, int dir, float tilt, float width, float duration, Color color,
+            bool hostile = false) =>
+            SlashArc.Spawn(center, yawDeg, radius, arc, dir, tilt, width, duration, color, hostile);
 
         /// <summary>闪光灯（池化点光源，起亮极快、二次衰减）：intensity = URP 灯光强度，range = 半径（米），life = 秒</summary>
         public static FxHandle Flash(Vector3 position, Color color, float intensity = 6, float range = 6, float life = 0.12f, Transform follow = null) =>

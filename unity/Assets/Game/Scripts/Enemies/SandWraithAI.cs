@@ -325,7 +325,7 @@ namespace Spiritfire.Game
             Fx.Burst(eruptAt + Vector3.up * 0.4f, DesertKit.SandLight, 10, 2f, 0.9f, 0.45f * k, -3f);
             Fx.Burst(eruptAt + Vector3.up * 0.6f, DesertKit.Spark, 10, 4f, 0.5f, 0.06f, 2f);
             Fx.Ring(eruptAt + Vector3.up * 0.08f, EruptRange, DesertKit.SandLight, 0.4f);
-            SlashArc.Spawn(eruptAt + Vector3.up * 0.42f * k, transform.eulerAngles.y, EruptRange * 0.85f, Mathf.PI * 1.9f, 1, 0, 0.5f * k, 0.26f, new Color(1f, 0.72f, 0.36f));
+            SlashArc.Spawn(eruptAt + Vector3.up * 0.42f * k, transform.eulerAngles.y, EruptRange * 0.85f, Mathf.PI * 1.9f, 1, 0, 0.5f * k, 0.26f, new Color(1f, 0.72f, 0.36f), true);
             DesertKit.Furrow(eruptAt, EruptRange * 0.7f, 4f);
         }
 
@@ -335,7 +335,7 @@ namespace Spiritfire.Game
             float k = Size;
             var c = transform.position + Vector3.up * 0.55f * k;
             foreach (int s in new[] { 1, -1 })
-                SlashArc.Spawn(c, transform.eulerAngles.y, 1.1f * k, 1.7f, s, s * 0.75f, 0.3f * k, 0.2f, new Color(1f, 0.74f, 0.42f));
+                SlashArc.Spawn(c, transform.eulerAngles.y, 1.1f * k, 1.7f, s, s * 0.75f, 0.3f * k, 0.2f, new Color(1f, 0.74f, 0.42f), true);
             Fx.Burst(c + transform.forward * 0.6f * k, DesertKit.Sand, 6, 2.5f, 0.4f, 0.12f * k, 4f);
         }
 

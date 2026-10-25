@@ -776,16 +776,21 @@ namespace Spiritfire.Game
 
     /// <summary>
     /// 鲲鹏的倒下演出（行为组件倒下后就停用了，模型动画交给它；Three.js animateDeath）：
-    ///   鲲：仰头长啸后沉回冰窟（0.25 → 1 的比例里沉到底）；鹏：收翼坠落（模型往下掉到地面高度、往前栽），逻辑位置钉住。
-    /// 最后 18% 由 <see cref="BossDefeatSequence"/> 炸开并隐去模型。
+    ///   鲲：仰头长啸后沉回冰窟（0.25 → 0.8 的比例里沉到底），没顶时冰窟里涌一圈冰浪；
+    ///   鹏：收翼坠落（模型往下掉到地面高度、往前栽，55% 时砸到冰面：碎冰 + 冰环 + 震屏），之后趴着抽两下，逻辑位置钉住。
+    /// 最后 12% 由 <see cref="BossDefeatSequence"/> 炸开并隐去模型；炸开那一刻在落点留一片冻雾 + 霜斑（6 s，余韵——原来 3.5 s 后场上什么都不剩）。
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class KunPengDeath : MonoBehaviour
     {
         BossModel model;
-        bool kun;
+        BossDefeatSequence sequence;
+        bool kun, landed, lingered;
         float seconds, t, drop, startY, startPitch;
         IceHoleInfo hole;
+
+        /// <summary>鹏砸到冰面 / 鲲没顶的比例；之后趴着 / 沉在底</summary>
+        const float LandAt = 0.55f, SunkAt = 0.8f;
 
         public bool Running => model != null && t < seconds;
 
@@ -795,6 +800,7 @@ namespace Spiritfire.Game
             kun = isKun;
             seconds = Mathf.Max(0.2f, duration);
             hole = h;
+            sequence = b.GetComponent<BossDefeatSequence>();
             if (m == null || !m.root) return;
             float s = Mathf.Max(0.01f, m.scale);
             startY = m.root.transform.localPosition.y * s;
@@ -812,15 +818,53 @@ namespace Spiritfire.Game
             float s = Mathf.Max(0.01f, model.scale);
             if (kun)
             {
-                float sink = KunPengMath.EaseInOut(KunPengMath.Span(k, 0.25f, 1f));
+                float sink = KunPengMath.EaseInOut(KunPengMath.Span(k, 0.25f, SunkAt));
                 mr.localPosition = new Vector3(0, (startY + (KunPengDef.KunSunkY - KunPengDef.KunBaseY) * sink) / s, 0);
+                if (!landed && k >= SunkAt)
+                {
+                    landed = true;
+                    Impact(hole.center, 1.6f);
+                }
             }
             else
             {
-                float e = k * k;
-                mr.localPosition = new Vector3(0, -drop * Mathf.Min(1f, e * 1.2f) / s, 0);
-                mr.localRotation = Quaternion.Euler(startPitch + k * Mathf.Rad2Deg, 0, Mathf.Sin(k * 9f) * 0.2f * (1 - k) * Mathf.Rad2Deg);
+                float f = KunPengMath.Span(k, 0f, LandAt);
+                mr.localPosition = new Vector3(0, -drop * f * f / s, 0);
+                // 坠落时往前栽；落地后趴着，头一抬一落地抽两下
+                float twitch = landed ? Mathf.Sin((k - LandAt) * 22f) * 4f * (1 - KunPengMath.Span(k, LandAt, 0.85f)) : 0;
+                mr.localRotation = Quaternion.Euler(startPitch + Mathf.Min(k, LandAt) / LandAt * Mathf.Rad2Deg + twitch, 0,
+                    Mathf.Sin(k * 9f) * 0.2f * (1 - f) * Mathf.Rad2Deg);
+                if (!landed && k >= LandAt)
+                {
+                    landed = true;
+                    Impact(new Vector3(transform.position.x, hole.FloorY, transform.position.z), 1f);
+                }
             }
+            if (!lingered && sequence && sequence.Finished)
+            {
+                lingered = true;
+                Linger(kun ? hole.center : new Vector3(transform.position.x, hole.FloorY, transform.position.z));
+            }
+        }
+
+        /// <summary>鹏砸上冰面 / 鲲没顶：碎冰、冰环、震屏、闷响</summary>
+        void Impact(Vector3 ground, float k)
+        {
+            Fx.FrostShatter(ground + Vector3.up * 0.5f, 2.2f * k);
+            Fx.FrostNova(ground + Vector3.up * 0.1f, 6f * k);
+            Fx.IceRing(ground, 4.5f * k, 14);
+            CameraShake.Quake(ground, 0.7f, 70f, 0.6f);
+            GameAudio.PlayAt("boss_slam", ground, 1f, 0.8f);
+        }
+
+        /// <summary>炸开之后的余韵：落点一片冻雾 + 霜斑（挂在单独的物体上，首领回收了也照样淡完）</summary>
+        static void Linger(Vector3 ground)
+        {
+            var host = new GameObject("KunPeng Death Frost");
+            host.transform.position = ground;
+            Fx.FrostFogLook(host, ground, 7f, 6f);
+            Fx.FrostGlint(ground + Vector3.up * 1.2f, 2.5f);
+            Destroy(host, 7.5f);
         }
     }
 }

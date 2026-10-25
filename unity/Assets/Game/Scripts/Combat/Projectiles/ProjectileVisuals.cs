@@ -245,15 +245,18 @@ namespace Spiritfire.Game
             });
             Register(new ProjectileVisualRecipe
             {
-                // Unity 新增：羽（鹍鹏的羽刃、青鸟）：羽杆 + 压扁的羽片，沿飞行轴摆动
+                // Unity 新增：冰羽（青鸟）：羽杆 + 两片带夹角的羽面（不再是一张压扁的白片，侧面看也有厚度）+ 羽尖冰晶亮点 + 一层冷光，
+                // 羽面保留发射方的冰蓝（不往白里混，白片在亮沙 / 雪地上像纸），沿飞行轴摆动
                 id = "feather", motion = ProjectileMotion.Feather, refRadius = 0.12f, minK = 0.6f, maxK = 2.5f, tailOffset = 0.3f,
-                coreWhiten = 0.2f, glowOpacity = 0.45f, haloScale = 0.5f,
+                coreWhiten = 0f, glowOpacity = 0.55f, haloScale = 0.8f, accentTint = AccentTint.White,
                 build = v =>
                 {
                     v.AddShaft(ProjectileMeshes.CylZThin, V(0.012f, 0.012f, 0.62f));
-                    v.AddCore(ProjectileMeshes.Octa, V(0.11f, 0.012f, 0.3f), V(0, 0, 0.05f));
-                    v.AddGlow(ProjectileMeshes.Octa, V(0.14f, 0.02f, 0.36f), V(0, 0, 0.05f));
-                    v.AddHalo(0.1f);
+                    v.AddCore(ProjectileMeshes.Octa, V(0.06f, 0.022f, 0.3f), V(-0.03f, 0.008f, 0.04f), V(0, 0, -22));
+                    v.AddCore(ProjectileMeshes.Octa, V(0.06f, 0.022f, 0.3f), V(0.03f, 0.008f, 0.04f), V(0, 0, 22));
+                    v.AddAccent(ProjectileMeshes.Octa, V(0.035f, 0.035f, 0.11f), V(0, 0, 0.27f));
+                    v.AddGlow(ProjectileMeshes.Octa, V(0.17f, 0.06f, 0.4f), V(0, 0, 0.05f));
+                    v.AddHalo(0.25f);
                 },
             });
             Register(new ProjectileVisualRecipe
