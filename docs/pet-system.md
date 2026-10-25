@@ -30,7 +30,9 @@
 - 来源：
   - 1-1 场地 ② 清场宝箱改为「灵兽封印」奖励（按权重抽品阶，再在该品阶里抽一只）。
   - 精英怪死亡 6% 掉一个灵兽封印。
-  - 试玩期间出生点旁有「灵兽台」（测试用，和武器架同理）：8 只全部摆出来，方便体验。
+  - 藏宝点（如 2-2 玉库秘藏）给灵兽封印。
+  - 开发 / 测试专用：「灵兽台」（和武器架同理），8 只全部摆出来，方便体验。只在调试局（编辑器 / Development Build 里直接打开关卡场景）
+    由 `PetBootstrap` 在出生点旁自动摆，冒烟套件要用时调 `PetBootstrap.PlaceTestAltar` 自己摆；正式流程（主菜单出征、换关、重来本关）里没有。
 - 每局只带 **1 只**（FPS 视野里多只会乱，也让「换不换」成为选择）。
 - 神兽出现时：全屏横幅「神兽现世」+ 金色光柱冲天 + 封印环绕金光，确保"抽到神兽"是这一局的高光时刻。
 
@@ -200,7 +202,7 @@
 | `PetSeal.cs` | 灵兽封印（可交互）、灵兽台（测试） |
 | `PetHud.cs` | HUD 灵宠面板 |
 | `PetVisuals.cs` | 模型加载（`Resources/Pets/<ID>`，骨骼动画模型 + 挂点；没有时退回静态模型 / 程序化占位体）、发光件挂接与呼吸光（`PetPartGlow`） |
-| `PetBootstrap.cs` | 场景加载后自动挂上 PetOwner / PetHud / 灵兽台（不用重建场景） |
+| `PetBootstrap.cs` | 场景加载后自动挂上 PetOwner / PetHud（不用重建场景）；调试局里再摆测试灵兽台（`AutoAltar` / `PlaceTestAltar`） |
 
 编辑器（`unity/Assets/Pipeline/Editor/`）：`PetArtImport.cs`（Sync 时把 `Prefabs/Characters/SK_Pet_*` 与 `Prefabs/Attachments/SM_PetPart_*`
 包成 `Resources/Pets/<ID>.prefab` / `Resources/Pets/Parts/<ID>.prefab`）、`PetStyleCompare.cs`（`bridge.sh petcompare`：灵宠放进沙寺样板场景和燎、
@@ -263,7 +265,8 @@
 |---|---|---|---|---|---|---|---|
 | 154 | 42 | 37 | 301 | 101 | 374 | 258（另有玩家必暴击） | 344 |
 
-**怎么玩到**：Unity 打开 `L1_1_GobiRoad` → Play → 出生点附近找 8 道光柱（灵兽台）→ 对封印按 F 结契 → G 放灵技。
+**怎么玩到**：Unity 直接打开 `L1_1_GobiRoad` → Play（调试局）→ 出生点附近找 8 道光柱（灵兽台）→ 对封印按 F 结契 → G 放灵技。
+从主菜单出征的正式流程里没有灵兽台，灵宠靠 1-1 场地 ② 的宝箱、精英掉落和藏宝点。
 
 **已知问题 / 下一步**
 - 凡灵（讙、精卫）伤害偏低，灵兽的灵技爆发偏高，等手玩后一起调。

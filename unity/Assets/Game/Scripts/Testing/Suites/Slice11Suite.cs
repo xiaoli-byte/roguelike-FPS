@@ -430,7 +430,12 @@ namespace Spiritfire.Game.Testing
                 Fail("[pets] 玩家身上没有 PetOwner（PetBootstrap 没有运行）");
                 yield break;
             }
-            if (!FindAnyObjectByType<PetAltar>()) Fail("[pets] 场景里没有灵兽台");
+            // 灵兽台只在调试局里自动摆（PetBootstrap.AutoAltar）；不是调试局（或被别的流程收掉了）就自己摆一个
+            if (!FindAnyObjectByType<PetAltar>())
+            {
+                Line($"[pets] 场景里没有灵兽台（自动摆 {(PetBootstrap.AutoAltar ? "开" : "关")}）：套件自己摆一个");
+                if (!PetBootstrap.PlaceTestAltar(motor.transform)) Fail("[pets] 摆不出测试灵兽台");
+            }
             if (!FindAnyObjectByType<PetHud>()) Fail("[pets] HUD 上没有灵宠面板");
             vitals.stats.Add("playtest_pets", Stat.MaxHp, 5000);
             var home = motor.transform.position;

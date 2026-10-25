@@ -53,6 +53,9 @@ namespace Spiritfire.Game.Testing
             var p = flow.Player;
             var run = RunState.Current;
             Line($"开局：{flow.Current?.Label ?? flow.CurrentScene.path}，英雄 {p.hero.id}，局 seed {run?.seed}（调试局 {run?.dev}），换关 {flow.Transitions} 次");
+            // 从 Core 开局走的是正式流程（换关协程）：不摆测试灵兽台（只在直接打开关卡的调试局里自动摆）
+            int startAltars = FindObjectsByType<PetAltar>().Length;
+            if (startAltars > 0) Fail($"从 Core 开局（正式流程）场景里有 {startAltars} 个测试灵兽台");
             if (run == null)
             {
                 Fail("没有 RunState");
@@ -181,7 +184,8 @@ namespace Spiritfire.Game.Testing
             Line($"关卡物件：场地 {sites0} → {sites1}，出口 {portals}，灵兽台 {altars}");
             if (sites1 != sites0) Fail($"场地数 {sites0} → {sites1}（旧关卡没卸干净或新关卡没加载全）");
             if (portals != 1) Fail($"出口有 {portals} 个");
-            if (altars > 1) Fail($"灵兽台有 {altars} 个（旧关卡的没清掉）");
+            // 测试灵兽台只在直接打开的关卡（调试局）里自动摆，换关走的是正式流程：旧关卡的随场景卸掉，新关卡不摆
+            if (altars > 0) Fail($"换关后还有 {altars} 个测试灵兽台（旧关卡的没清掉，或换关后又摆了一个）");
             foreach (var go in flow.gameObject.scene.GetRootGameObjects())
                 if (go.GetComponentInChildren<EncounterSite>(true) || go.GetComponentInChildren<Pickup>(true) || go.GetComponentInChildren<Chest>(true))
                     Fail($"Core 场景里混进了关卡物件 {go.name}");

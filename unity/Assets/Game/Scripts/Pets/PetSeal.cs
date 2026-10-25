@@ -231,6 +231,7 @@ namespace Spiritfire.Game
 
     /// <summary>
     /// 灵兽台（测试便利，和武器架同理）：开局把八只灵宠的封印摆成一个朝玩家敞开的半圆，按 F 结契随便试。
+    /// 只在调试局（编辑器里直接打开关卡场景）由 <see cref="PetBootstrap"/> 自动摆，冒烟套件用 <see cref="PetBootstrap.PlaceTestAltar"/> 自己摆；正式流程里没有。
     /// 半圆从本物体位置开始向右展开（本物体的 forward 朝向玩家）。
     /// </summary>
     public sealed class PetAltar : MonoBehaviour
