@@ -1,0 +1,398 @@
+/*
+ * 灵火破晓 · 罗盘条与 M 键全图（docs/unity-parity.md U7；G/UI/Widgets/CompassStrip.cs、G/UI/Screens/MapScreen.cs）。
+ * 设计像素按 1920×1080；颜色变量来自 theme.uss（挂在层根上）。徽记的描边 / 字色按地点状态由代码写（MapMarkers.Color）。
+ */
+
+/* ───────────────────────── 罗盘条（HUD 顶部正中）───────────────────────── */
+
+.sf-compass {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 12px;
+    align-items: center;
+}
+
+.sf-compass__strip {
+    width: 560px;
+    height: 28px;
+}
+
+.sf-compass__rule {
+    position: absolute;
+    left: 40px;
+    right: 40px;
+    bottom: 0;
+    height: 1px;
+    background-color: rgba(212, 169, 85, 0.3);
+}
+
+.sf-compass__layer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+/* 刻度：宽度 0 的容器落在方位上，竖线与方位字以它为中心 */
+.sf-compass__tick {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 0;
+}
+
+.sf-compass__line {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 1px;
+    height: 4px;
+    background-color: rgba(200, 185, 153, 0.55);
+}
+
+.sf-compass__tick.is-major .sf-compass__line {
+    height: 6px;
+    background-color: rgba(200, 185, 153, 0.8);
+}
+
+.sf-compass__tick.is-cardinal .sf-compass__line {
+    width: 2px;
+    left: -1px;
+    height: 8px;
+    background-color: #d4a955;
+}
+
+.sf-compass__dir {
+    position: absolute;
+    left: -24px;
+    width: 48px;
+    top: 5px;
+    font-size: 11px;
+    color: #8a7f6d;
+    -unity-text-align: middle-center;
+    white-space: nowrap;
+    text-shadow: 0 1px 2px #000000;
+}
+
+.sf-compass__tick.is-cardinal .sf-compass__dir {
+    top: 1px;
+    font-size: 16px;
+    color: #f4d893;
+}
+
+/* 正中的准心朝向 */
+.sf-compass__notch {
+    position: absolute;
+    left: 279px;
+    top: -4px;
+    width: 2px;
+    height: 7px;
+    background-color: #f4d893;
+}
+
+/* 地点徽记 */
+.sf-compass__mark {
+    position: absolute;
+    top: 4px;
+    width: 20px;
+    height: 20px;
+}
+
+.sf-compass__badge {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    border-width: 1.5px;
+    border-color: #efe4cc;
+    background-color: rgba(7, 6, 10, 0.78);
+    align-items: center;
+    justify-content: center;
+}
+
+.sf-compass__glyph {
+    font-size: 11px;
+    color: #efe4cc;
+    -unity-text-align: middle-center;
+}
+
+/* 目标：鎏金菱框 + 距离 */
+.sf-compass__diamond {
+    position: absolute;
+    left: -2px;
+    top: -2px;
+    width: 24px;
+    height: 24px;
+    rotate: 45deg;
+    border-width: 1.5px;
+    border-color: #f4d893;
+    background-color: rgba(244, 216, 147, 0.16);
+    display: none;
+}
+
+.sf-compass__mark.is-target .sf-compass__diamond {
+    display: flex;
+}
+
+.sf-compass__mark.is-target .sf-compass__badge {
+    background-color: rgba(30, 22, 8, 0.9);
+}
+
+.sf-compass__arrow {
+    position: absolute;
+    left: -13px;
+    top: 1px;
+    font-size: 14px;
+    color: #f4d893;
+    text-shadow: 0 1px 2px #000000;
+}
+
+.sf-compass__arrow.is-right {
+    left: 23px;
+}
+
+.sf-compass__dist {
+    position: absolute;
+    left: -30px;
+    width: 80px;
+    top: 25px;
+    font-size: 14px;
+    color: #f4d893;
+    -unity-text-align: middle-center;
+    white-space: nowrap;
+    text-shadow: 0 1px 3px #000000;
+}
+
+.sf-compass__caption {
+    margin-top: 20px;
+    font-size: 15px;
+    letter-spacing: 3px;
+    color: #f4d893;
+    white-space: nowrap;
+    text-shadow: 0 1px 4px #000000;
+}
+
+/* ───────────────────────── M 键全图 ───────────────────────── */
+
+.sf-map__backdrop {
+    background-color: rgba(7, 6, 10, 0.84);
+}
+
+.sf-map__frame {
+    min-width: 760px;
+    padding: 18px 24px 16px 24px;
+    background-color: rgba(18, 15, 21, 0.96);
+    border-width: 1px;
+    border-color: rgba(212, 169, 85, 0.16);
+}
+
+.sf-map__head {
+    flex-direction: row;
+    align-items: flex-end;
+    margin-bottom: 12px;
+}
+
+.sf-map__title {
+    font-size: 28px;
+    letter-spacing: 9px;
+    color: #f4d893;
+    white-space: nowrap;
+}
+
+.sf-map__sub {
+    margin-left: 18px;
+    margin-bottom: 4px;
+    font-size: 13px;
+    letter-spacing: 1px;
+    color: #c8b999;
+    white-space: nowrap;
+}
+
+.sf-map__box {
+    align-self: center;
+    border-width: 1px;
+    border-color: rgba(212, 169, 85, 0.42);
+    background-color: #0d0c10;
+    overflow: hidden;
+}
+
+.sf-map__image {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.sf-map__empty {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 46%;
+    font-size: 15px;
+    letter-spacing: 3px;
+    color: #8a7f6d;
+    -unity-text-align: middle-center;
+}
+
+.sf-map__marks {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+/* 地点：宽高 0 的容器落在图上，徽记以它为中心、名字在右侧 */
+.sf-map__mark {
+    position: absolute;
+    width: 0;
+    height: 0;
+}
+
+.sf-map__mark.is-done {
+    opacity: 0.72;
+}
+
+.sf-map__badge {
+    position: absolute;
+    left: -12px;
+    top: -12px;
+    width: 24px;
+    height: 24px;
+    border-radius: 12px;
+    border-width: 1.5px;
+    border-color: #efe4cc;
+    background-color: rgba(7, 6, 10, 0.84);
+    align-items: center;
+    justify-content: center;
+}
+
+.sf-map__badge--sm {
+    position: relative;
+    left: 0;
+    top: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+}
+
+.sf-map__glyph {
+    font-size: 13px;
+    color: #efe4cc;
+    -unity-text-align: middle-center;
+}
+
+.sf-map__badge--sm .sf-map__glyph {
+    font-size: 11px;
+}
+
+.sf-map__name {
+    position: absolute;
+    left: 15px;
+    top: -11px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    background-color: rgba(7, 6, 10, 0.7);
+    font-size: 13px;
+    letter-spacing: 1px;
+    color: #efe4cc;
+    white-space: nowrap;
+    -unity-text-outline-width: 0.6px;
+    -unity-text-outline-color: rgba(7, 6, 10, 0.9);
+    text-shadow: 0 1px 3px #000000;
+}
+
+.sf-map__mark.is-target .sf-map__name {
+    font-size: 15px;
+}
+
+.sf-map__ring {
+    position: absolute;
+    width: 46px;
+    height: 46px;
+    translate: -50% -50%;
+    border-radius: 23px;
+    border-width: 2px;
+    border-color: #f4d893;
+}
+
+.sf-map__player {
+    position: absolute;
+    width: 0;
+    height: 0;
+}
+
+/* 玩家标记：64 × 64 的矢量图，中心落在玩家位置，绕中心随视线旋转 */
+.sf-map__playericon {
+    position: absolute;
+    left: -32px;
+    top: -32px;
+    width: 64px;
+    height: 64px;
+}
+
+.sf-map__arrow {
+    position: absolute;
+    left: 20px;
+    top: 18px;
+    width: 24px;
+    height: 26px;
+    font-size: 22px;
+    color: #b8eaff;
+    -unity-text-align: middle-center;
+}
+
+.sf-map__north {
+    position: absolute;
+    right: 14px;
+    top: 10px;
+    align-items: center;
+}
+
+.sf-map__northglyph {
+    font-size: 16px;
+    color: #f4d893;
+    text-shadow: 0 1px 3px #000000;
+}
+
+.sf-map__northarrow {
+    font-size: 11px;
+    color: #f4d893;
+    margin-top: -2px;
+}
+
+.sf-map__foot {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 12px;
+}
+
+.sf-map__target {
+    font-size: 17px;
+    letter-spacing: 3px;
+    color: #f4d893;
+    white-space: nowrap;
+}
+
+.sf-map__legend {
+    flex-direction: row;
+    align-items: center;
+}
+
+.sf-map__legenditem {
+    flex-direction: row;
+    align-items: center;
+    margin-left: 14px;
+}
+
+.sf-map__legendtext {
+    margin-left: 5px;
+    font-size: 12px;
+    color: #c8b999;
+    white-space: nowrap;
+}

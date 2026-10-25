@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Spiritfire.Game
 {
     /// <summary>
-    /// 局内开界面的热键（U4）：Tab / 手柄 Back 开行囊面板（<see cref="InventoryPanel"/>）。
+    /// 局内开界面的热键（U4 / U7）：Tab / 手柄 Back 开行囊面板（<see cref="InventoryPanel"/>），M / 手柄左摇杆按下开全图（<see cref="MapScreen"/>）。
     /// 只在正常游玩时响应（没有暂停 / 模态 / 换关，玩家活着）；关掉由面板自己处理（Gameplay 表关着时它直接读按键）。
     /// Esc 暂停仍由 GameSession 处理。[GameSystem]：自动挂到 Core 的 Game Systems 上。
     /// </summary>
@@ -25,6 +25,7 @@ namespace Spiritfire.Game
             var pv = PlayerVitals.Instance;
             if (!pv || pv.Dead) return;
             if (GameInput.Pressed(GameAction.Inventory)) UIRouter.Open(InventoryPanel.ScreenId);
+            else if (GameInput.Pressed(GameAction.Map)) UIRouter.Open(MapScreen.ScreenId);
         }
     }
 }

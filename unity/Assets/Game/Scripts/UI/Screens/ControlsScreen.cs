@@ -35,6 +35,7 @@ namespace Spiritfire.Game
             (GameAction.PetSkill, "灵技（结契灵宠后）", null, null),
             (GameAction.Interact, "交互：拾取武器、开宝箱、购买、结契、进入出口", null, null),
             (GameAction.Inventory, "行囊：秘卷、属性、武器、灵宠", null, null),
+            (GameAction.Map, "行旅图：全图、已发现的地点与目标", null, null),
             (GameAction.Pause, "暂停", null, null),
         };
 
