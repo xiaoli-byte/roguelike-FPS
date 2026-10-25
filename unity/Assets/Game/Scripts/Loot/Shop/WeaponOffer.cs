@@ -6,7 +6,8 @@ namespace Spiritfire.Game
     /// <summary>
     /// 武器摊：一把已经掷好的枪（品质、元素、词条都定了），标价按稀有度 × 章节系数。有限：买一次就售罄、展示的枪收起；
     /// 两个槽都满时替换手上那把，被换下的枪落在摊位前（可以再捡回来）。
-    /// 提示卡：枪名 + 「购买 · 稀有度 · 元素」，说明行是伤害 / 秒伤和词条（最多 3 条），槽满时注明替换哪把
+    /// 提示卡：玩家来买时同地上的枪（<see cref="WeaponDescriber.Prompt"/>：逐项 ▲▼ 对比手上那把 + 特性 + 替换说明）；
+    /// 测试顾客（没有武器控制器）退回简版：枪名 + 「购买 · 稀有度 · 元素」，伤害 / 秒伤和词条（最多 3 条），槽满时注明替换哪把
     /// </summary>
     public sealed class WeaponOffer : ShopOffer
     {
@@ -27,6 +28,18 @@ namespace Spiritfire.Game
         public override InteractPrompt Prompt(IShopCustomer c)
         {
             if (weapon == null) return InteractPrompt.Of("武器");
+            // 玩家来买：同地上的枪，逐项对比手上那把（WC8，TS 商店也走 weaponPrompt）
+            if (c is PlayerShopCustomer)
+            {
+                var wc = PlayerVitals.Instance ? PlayerVitals.Instance.GetComponent<WeaponController>() : null;
+                if (wc)
+                {
+                    var p = WeaponDescriber.Prompt(weapon, "购买", 0, wc);
+                    p.cost = Mathf.Max(0, price);
+                    p.canAfford = price <= 0 || c.Coins >= price;
+                    return p;
+                }
+            }
             var lines = new List<string>();
             var (dmg, dps) = c != null ? c.WeaponNumbers(weapon) : (0f, 0f);
             if (dmg > 0) lines.Add($"伤害 {dmg:0.#}　秒伤 {dps:0}");

@@ -91,6 +91,9 @@ namespace Spiritfire.Game
             }
         }
 
+        /// <summary>提示卡（WC8）：名称 / 品质 / 类别 / 元素 + 逐项对比手上那把（▲ 更好 / ▼ 更差）+ 特性，见 <see cref="WeaponDescriber.Prompt"/></summary>
+        public InteractPrompt PromptCard => WeaponDescriber.Prompt(weapon, "拾取");
+
         public void Interact()
         {
             var wc = PlayerVitals.Instance ? PlayerVitals.Instance.GetComponent<WeaponController>() : null;
