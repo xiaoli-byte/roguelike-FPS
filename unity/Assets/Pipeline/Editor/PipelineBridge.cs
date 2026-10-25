@@ -183,6 +183,8 @@ namespace Spiritfire.Art.Editor
                 if (command == "furbench") FurBench.Run();
                 if (command == "ui") errors += UIBuilder.Build();
                 if (command == "fx") errors += FxBuilder.BuildAll();
+                // audio：混音台 Resources/Audio/Spiritfire.mixer（缺了才生成，audio force 重建）+ 检查
+                if (command == "audio") errors += AudioMixerBuilder.Build(args.Contains("force"));
                 if (command == "blade") errors += BladeMeshBaker.Bake();
                 // 临时诊断：调用 Spiritfire.Art.Editor.Diag.Run()（存在时），排查问题用，用完删掉那个类
                 if (command == "diag")

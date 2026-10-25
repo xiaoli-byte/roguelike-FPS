@@ -628,9 +628,10 @@ namespace Spiritfire.Game
                 windSrc.spatialBlend = 0;
                 windSrc.playOnAwake = false;
                 windSrc.volume = 0;
+                windSrc.outputAudioMixerGroup = AudioMix.Group(AudioBus.Ambience);
                 windSrc.Play();
             }
-            float target = Mathf.Clamp01(level) * 0.55f * GameAudio.MasterVolume * GameAudio.SfxVolume;
+            float target = Mathf.Clamp01(level) * 0.55f * GameAudio.UnroutedGain(AudioBus.Ambience);
             windSrc.volume = Mathf.MoveTowards(windSrc.volume, target, Time.unscaledDeltaTime * 0.6f);
             windSrc.pitch = 0.85f + 0.3f * Mathf.Clamp01(level);
         }

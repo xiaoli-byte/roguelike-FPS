@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace Spiritfire.Game
 {
@@ -13,6 +14,10 @@ namespace Spiritfire.Game
     ///   光束：<see cref="HoldBeam"/> 每次开火刷新，0.24 s 没刷新就淡出（无缝循环片段 shot_beam_loop）
     ///   配乐：<see cref="SetMusic"/> 交叉淡化（旧曲淡出 1.6 s、新曲淡入 1.3 s），曲目是无缝循环的 ogg
     /// 基础音量（meta.gain）与混响已经烘进片段，这里只乘调用方的 volume 与总线比例（音效 0.9 / 音乐 0.3，主音量 0.8）。
+    /// 混音（F5，<see cref="AudioMix"/>）：每个声道按 id 接到 Mixer 的组（ui_* → UI，其余 → SFX；配乐 → Music），玩家音量、暂停压低、限幅都在 Mixer 上；
+    ///   没有 .mixer 时退回老办法（玩家音量直接乘在 AudioSource 上）。
+    /// 密集音（跳伤 burn_tick / corrode_tick、雷弧 shock_zap）：除了同 id 节流，再限同时最多 3 声、最小间隔加长，已有 k 声在响时这一声 × 1 / (1 + 0.35k)，
+    ///   一群敌人同时着火 / 被连锁闪电打中时不会叠成一堵墙（Master 上的限幅器兜底）。
     /// 第一次调用时自动创建（不用摆进场景）。
     /// </summary>
     public sealed class GameAudio : MonoBehaviour
@@ -35,6 +40,7 @@ namespace Spiritfire.Game
         {
             public AudioSource src;
             public AudioLowPassFilter lp;
+            public string id;
             public int prio;
             public float start, end;
         }
@@ -49,8 +55,46 @@ namespace Spiritfire.Game
         static GameAudio instance;
         static bool failed;
 
-        /// <summary>设置里的音量（0..1），跟着 <see cref="GameSettings"/> 走</summary>
-        public static float MasterVolume = 1, SfxVolume = 1, MusicVolume = 1;
+        /// <summary>设置里的音量（0..1），跟着 <see cref="GameSettings"/> 走（有 Mixer 时由 Mixer 的暴露参数执行，见 <see cref="UnroutedGain"/>）</summary>
+        public static float MasterVolume = 1, SfxVolume = 1, MusicVolume = 1, AmbienceVolume = 1, UiVolume = 1;
+
+        /// <summary>
+        /// 自己建 AudioSource 的系统（风声…）要乘的玩家音量：接到 <see cref="AudioMix.Group"/> 的组上时 = 1（Mixer 负责），
+        /// 没有 Mixer 时 = 主音量 × 该总线音量
+        /// </summary>
+        public static float UnroutedGain(AudioBus bus)
+        {
+            if (AudioMix.Active) return 1;
+            float v = bus switch
+            {
+                AudioBus.Music => MusicVolume,
+                AudioBus.Ui => UiVolume * SfxVolume,
+                AudioBus.Ambience => AmbienceVolume,
+                _ => SfxVolume,
+            };
+            return MasterVolume * v;
+        }
+
+        // ── 密集音（跳伤、雷弧）：同时声数上限、最小间隔、叠声衰减 ──
+        static readonly Dictionary<string, (int maxVoices, float gap)> Dense = new()
+        {
+            ["burn_tick"] = (3, 0.09f),
+            ["corrode_tick"] = (3, 0.1f),
+            ["shock_zap"] = (3, 0.07f),
+        };
+
+        /// <summary>
+        /// 密集音放行规则（纯函数）：live = 这个 id 正在响的声数，sinceLast = 距上一声的秒数。
+        /// 不在表里的 id 一律放行、增益 1；在表里的：满了或间隔不够就不放，否则增益 1 / (1 + 0.35 × live)
+        /// </summary>
+        public static bool DenseAllow(string id, int live, float sinceLast, out float gain)
+        {
+            gain = 1;
+            if (id == null || !Dense.TryGetValue(id, out var rule)) return true;
+            if (live >= rule.maxVoices || sinceLast < rule.gap) return false;
+            gain = 1f / (1f + 0.35f * live);
+            return true;
+        }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void BindSettings()
@@ -62,10 +106,14 @@ namespace Spiritfire.Game
 
         static void OnSetting(SettingDef d)
         {
-            if (d != null && d != GameSettings.MasterVolume && d != GameSettings.MusicVolume && d != GameSettings.SfxVolume) return;
+            if (d != null && d != GameSettings.MasterVolume && d != GameSettings.MusicVolume && d != GameSettings.SfxVolume
+                && d != GameSettings.AmbienceVolume && d != GameSettings.UiVolume) return;
             MasterVolume = GameSettings.MasterVolume.Value;
             MusicVolume = GameSettings.MusicVolume.Value;
             SfxVolume = GameSettings.SfxVolume.Value;
+            AmbienceVolume = GameSettings.AmbienceVolume.Value;
+            UiVolume = GameSettings.UiVolume.Value;
+            if (instance) instance.volumesPending = true;
         }
 
         readonly Dictionary<string, Def> defs = new();
@@ -78,6 +126,8 @@ namespace Spiritfire.Game
         float beamHeld = -1, beamTarget;
         string musicId = "none";
         Transform listener;
+        bool routed, volumesPending = true;
+        AudioMixerGroup sfxGroup, uiGroup, musicGroup;
 
         /// <summary>当前配乐 id（"none" = 无）</summary>
         public static string CurrentMusic => instance ? instance.musicId : "none";
@@ -147,6 +197,12 @@ namespace Spiritfire.Game
             foreach (var e in m.sfx ?? Array.Empty<SfxEntry>())
                 defs[e.id] = new Def { meta = e, clips = Collect(e.id, e.variants), enemy = Collect(e.id + "@enemy", e.enemyVariants) };
 
+            sfxGroup = AudioMix.Group(AudioBus.Sfx);
+            uiGroup = AudioMix.Group(AudioBus.Ui);
+            musicGroup = AudioMix.Group(AudioBus.Music);
+            routed = sfxGroup && uiGroup && musicGroup;
+            if (AudioMix.Active && !routed) Debug.LogWarning("[Audio] Spiritfire.mixer 里缺 SFX / UI / Music 组，退回直出（重跑 bridge.sh audio）");
+
             for (int i = 0; i < MaxVoices; i++)
             {
                 var go = new GameObject($"Voice {i}");
@@ -161,6 +217,7 @@ namespace Spiritfire.Game
             beam = gameObject.AddComponent<AudioSource>();
             Setup(beam);
             beam.loop = true;
+            if (routed) beam.outputAudioMixerGroup = sfxGroup;
             if (!string.IsNullOrEmpty(m.beamLoop) && clips.TryGetValue(m.beamLoop, out var bc)) beam.clip = bc;
         }
 
@@ -184,7 +241,29 @@ namespace Spiritfire.Game
             return listener;
         }
 
-        float SfxBus => mix.sfx * mix.master * SfxVolume * MasterVolume;
+        void Start() => volumesPending = true;
+
+        /// <summary>音效总线电平：清单里的比例；没接 Mixer 时再乘玩家音量</summary>
+        float SfxBus => mix.sfx * mix.master * (routed ? 1 : SfxVolume * MasterVolume);
+
+        /// <summary>界面音另乘界面音量（没接 Mixer 时；接了由 UI 组的推子管）</summary>
+        float BusFor(bool ui) => ui && !routed ? SfxBus * UiVolume : SfxBus;
+
+        static bool IsUi(string id) => id.StartsWith("ui_", StringComparison.Ordinal);
+
+        int LiveVoices(string id)
+        {
+            int n = 0;
+            foreach (var v in voices)
+                if (v.id == id && v.src.isPlaying) n++;
+            return n;
+        }
+
+        /// <summary>某个 id 正在响的声数（测试用）</summary>
+        public static int VoicesOf(string id) => instance ? instance.LiveVoices(id) : 0;
+
+        /// <summary>声道是否接在 Mixer 上（测试用）</summary>
+        public static bool Routed => instance && instance.routed;
 
         void PlayInternal(string id, bool positional, Vector3 at, float volume, float pitch)
         {
@@ -199,7 +278,14 @@ namespace Spiritfire.Game
             float now = Time.unscaledTime;
             if (d.meta.throttle > 0 && lastMap.TryGetValue(id, out var last) && now - last < d.meta.throttle) return;
             if (!(volume >= 0) || float.IsInfinity(volume)) volume = 1;
-            float gain = Mathf.Min(4, volume) * SfxBus;
+            bool ui = IsUi(id);
+            float gain = Mathf.Min(4, volume) * BusFor(ui);
+            if (Dense.ContainsKey(id))
+            {
+                float since = lastMap.TryGetValue(id, out var prev) ? now - prev : 999f;
+                if (!DenseAllow(id, LiveVoices(id), since, out float stack)) return;
+                gain *= stack;
+            }
             float lowpass = 0, blend = 0;
             if (positional)
             {
@@ -244,6 +330,8 @@ namespace Spiritfire.Game
             var s = v.src;
             s.Stop();
             s.clip = clip;
+            if (routed) s.outputAudioMixerGroup = ui ? uiGroup : sfxGroup;
+            v.id = id;
             s.pitch = p;
             s.volume = Mathf.Min(1, gain);
             s.spatialBlend = blend;
@@ -305,6 +393,7 @@ namespace Spiritfire.Game
             src.clip = clip;
             src.loop = true;
             src.priority = 0;
+            if (routed) src.outputAudioMixerGroup = musicGroup;
             src.volume = 0;
             src.Play();
             tracks.Add(new Track { src = src, id = id, vol = 0, target = 1, rate = 1 / FadeIn });
@@ -321,8 +410,10 @@ namespace Spiritfire.Game
                 beam.volume = Mathf.MoveTowards(beam.volume, want, dt / (held ? 0.05f : 0.12f) * Mathf.Max(0.2f, beamTarget));
                 if (!held && beam.volume <= 0.001f) beam.Stop();
             }
+            // Mixer 的暴露参数（玩家音量）：混音台刚激活时 SetFloat 可能不生效，没写进去就下一帧再写
+            if (volumesPending && AudioMix.Active) volumesPending = !AudioMix.ApplyVolumes();
             // 配乐交叉淡化
-            float musicBus = mix.music * mix.master * MusicVolume * MasterVolume;
+            float musicBus = mix.music * mix.master * (routed ? 1 : MusicVolume * MasterVolume);
             for (int i = tracks.Count - 1; i >= 0; i--)
             {
                 var t = tracks[i];

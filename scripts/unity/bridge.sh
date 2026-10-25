@@ -14,6 +14,7 @@
 #   menu                    主菜单场景 Assets/Scenes/MainMenu.unity：展示场景做远景 + 选英雄祭台（MenuSceneBuilder.cs）
 #   tests [过滤]            EditMode 测试（过滤 = 测试全名的正则，如 StatSheet）；汇总在回应的 tests 字段，明细 unity/Assets/Art/_Review/tests_report.txt
 #   playtest [套件] [场景]  Play 模式冒烟测试（默认 slice11 = 1-1 切片）；场景可写 Assets/… .unity、关卡 id 或 Assets/Scenes 下的场景名
+#   audio [force]           混音台 Resources/Audio/Spiritfire.mixer（AudioMixerBuilder.cs：缺了才生成，force 删掉重建）+ 结构检查
 #   ui                      UI Toolkit 基座资产：Resources/UI 下的 SDF 字体、分层 PanelSettings、文本设置（UIBuilder.cs；字体子集先跑 scripts/unity/subset_fonts.py）
 set -euo pipefail
 timeout="${BRIDGE_TIMEOUT:-3600}"
@@ -80,7 +81,7 @@ case "$cmd" in
   petcompare) method=Spiritfire.Art.Editor.PetStyleCompare.BatchRun ;;
   fur) method=Spiritfire.Art.Editor.FurReview.BatchRun ;;
   furbench) method=Spiritfire.Art.Editor.FurBench.BatchRun ;;
-  level|levels|ui|fx|blade|menu)
+  level|levels|ui|fx|blade|menu|audio)
     # 和编辑器里走同一套命令分发（PipelineBridge.BatchRun），回应写 response-batch-<命令>.json
     batch=(-bridgeCommand "$cmd")
     for a in ${args[@]+"${args[@]}"}; do batch+=(-bridgeArg "$a"); done
