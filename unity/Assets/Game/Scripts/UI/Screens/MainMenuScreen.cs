@@ -25,12 +25,16 @@ namespace Spiritfire.Game
         readonly List<Label> chars = new();
         readonly List<Button> navItems = new();
         VisualElement home, brand, seal, stats;
-        Label sub, essence;
-        Button startBtn;
+        Label sub, essence, continueHint, startHint, codexHint;
+        Button startBtn, continueBtn;
+        SuspendedRun suspended;
         float openedAt;
         bool covered;
 
-        public override VisualElement DefaultFocus => startBtn;
+        public override VisualElement DefaultFocus => suspended != null ? continueBtn : startBtn;
+
+        /// <summary>有未完成的征程（「继续征程」显示着，I5）</summary>
+        public SuspendedRun Suspended => suspended;
 
         /// <summary>被别的页盖住（选英雄、天赋…）</summary>
         public bool Covered => covered;
@@ -59,8 +63,13 @@ namespace Spiritfire.Game
             ScreenKit.Text("sf-menu__latin", top, "SPIRITFIRE · DAWN", UIFontRole.Number);
 
             var nav = ScreenKit.El("sf-menu__nav", home);
+            continueBtn = NavItem(nav, "继续征程", "", ContinueRun, true);
+            continueHint = continueBtn.Q<Label>(className: "sf-nav__hint");
             startBtn = NavItem(nav, "开始游戏", "选择英雄，踏入第一章", StartGame, true);
+            startHint = startBtn.Q<Label>(className: "sf-nav__hint");
             NavItem(nav, "天赋", "用魂晶强化之后的每一局", () => UIRouter.Open(TalentScreen.ScreenId));
+            var codexBtn = NavItem(nav, "图鉴", "武器、秘卷、敌人与灵宠", () => UIRouter.Open(CodexScreen.ScreenId));
+            codexHint = codexBtn.Q<Label>(className: "sf-nav__hint");
             NavItem(nav, "设置", "画面、声音、按键与手柄", () => UIRouter.Open(SettingsScreen.ScreenId));
             NavItem(nav, "操作说明", "按键一览", () => UIRouter.Open(ControlsScreen.ScreenId));
             NavItem(nav, "退出游戏", "下次再会", Quit);
@@ -90,11 +99,17 @@ namespace Spiritfire.Game
             return b;
         }
 
-        /// <summary>「开始游戏」：选英雄页（没有选英雄页时直接用上次的英雄出征）</summary>
+        /// <summary>「开始游戏」：选英雄页（没有选英雄页时直接用上次的英雄出征）。有未完成的征程时出征前会弹确认框（MenuFlow.StartRun）</summary>
         public void StartGame()
         {
             if (UIRouter.Get(HeroSelectId) != null) UIRouter.Open(HeroSelectId);
             else MenuFlow.StartRun(MenuFlow.LastHero);
+        }
+
+        /// <summary>「继续征程」（I5）：读续玩档，从那一关开头接着打</summary>
+        public void ContinueRun()
+        {
+            if (!MenuFlow.ResumeRun()) Refresh();
         }
 
         static void Quit()
@@ -117,8 +132,11 @@ namespace Spiritfire.Game
             UIRouter.Closed += OnClosed;
             GameEvents.MetaChanged -= OnMeta;
             GameEvents.MetaChanged += OnMeta;
-            UIFonts.Warmup("灵火破晓不熄烈焰为弹破此轮回开始游戏天赋设置操作说明退出", UIFontRole.Title);
+            UIFonts.Warmup("灵火破晓不熄烈焰为弹破此轮回继续征程开始游戏天赋图鉴设置操作说明退出", UIFontRole.Title);
             Tick(0);
+            // 续玩档坏了（Refresh 里读档时已丢弃）：提示一次
+            var problem = RunSuspend.TakeProblem();
+            if (problem != null) GameUI.Toast(problem, UITheme.Bad, 4f);
         }
 
         public override void OnClose()
@@ -155,10 +173,24 @@ namespace Spiritfire.Game
             if (MenuDirector.Instance) MenuDirector.Instance.Home();
         }
 
-        /// <summary>刷新魂晶余额与生涯统计</summary>
+        /// <summary>刷新魂晶余额、未完成的征程、图鉴收录数与生涯统计</summary>
         public void Refresh()
         {
             essence.text = ScreenKit.Num(MetaSave.Current.Essence);
+            suspended = MenuFlow.Suspended;
+            ScreenKit.Show(continueBtn, suspended != null);
+            continueBtn.pickingMode = covered || suspended == null ? PickingMode.Ignore : PickingMode.Position;
+            startBtn.EnableInClassList("sf-nav--primary", suspended == null);
+            if (suspended != null)
+            {
+                var r = suspended.run;
+                var hero = HeroLibrary.Get(r.heroId);
+                continueHint.text = $"{suspended.Stage?.Label ?? r.stageCode} · {hero?.name ?? r.heroId} · 用时 {ScreenKit.Clock(r.time)} · 灵石 {ScreenKit.Num(r.coins)}";
+                startHint.text = "放弃未完成的征程，重新选择英雄";
+            }
+            else startHint.text = "选择英雄，踏入第一章";
+            var codex = Codex.Current;
+            codexHint.text = $"武器、秘卷、敌人与灵宠 · 已收录 {codex.TotalCount} / {CodexCatalog.Total}";
             stats.Clear();
             var c = CareerStats.Current;
             if (c == null || c.Runs <= 0)

@@ -1,0 +1,309 @@
+/*
+ * 图鉴（I5，G/UI/Screens/CodexScreen.cs）：主菜单里的子页。
+ * 页签（武器 / 秘卷 / 敌人 / 灵宠）→ 左边 4 × 3 的格子（模型缩略图 / 单字签 + 名字），右边选中条目的详情。
+ * 未收录：缩略图由代码染黑成剪影、名字「？？？」；新收录的格子角上一枚朱印「新」。
+ * 设计像素按 1920×1080；颜色变量来自 theme.uss，通用件（页头、页脚、印章、标签）在 theme.uss / screens.uss / menu.uss。
+ */
+
+.sf-codex {
+    width: 1540px;
+    height: 900px;
+}
+
+.sf-codex__total {
+    font-size: 20px;
+    color: var(--gold-hi);
+    margin-bottom: 4px;
+}
+
+/* ───────────── 页签 ───────────── */
+
+.sf-codex__tabs {
+    flex-direction: row;
+    margin-bottom: 14px;
+}
+
+.sf-codex__tab {
+    flex-direction: row;
+    flex-shrink: 0;
+    align-items: flex-end;
+    margin: 0 10px 0 0;
+    padding: 8px 20px 9px;
+    background-color: rgba(24, 20, 27, 0.7);
+    border-width: 1px;
+    border-color: var(--line-soft);
+    border-radius: 0;
+    transition-property: background-color, border-color;
+    transition-duration: 0.18s;
+}
+
+.sf-codex__tab:hover,
+.sf-codex__tab:focus {
+    border-color: var(--gold);
+}
+
+.sf-codex__tab--on {
+    background-color: rgba(107, 27, 19, 0.75);
+    border-color: var(--gold-hi);
+}
+
+.sf-codex__tabname {
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-size: 20px;
+    letter-spacing: 4px;
+    color: var(--paper);
+}
+
+.sf-codex__tabcount {
+    flex-shrink: 0;
+    white-space: nowrap;
+    margin-left: 10px;
+    font-size: 15px;
+    color: var(--paper-3);
+}
+
+.sf-codex__tab--on .sf-codex__tabcount {
+    color: var(--gold-hi);
+}
+
+.sf-codex__dot {
+    position: absolute;
+    top: 5px;
+    right: 6px;
+    width: 7px;
+    height: 7px;
+    border-radius: 4px;
+    background-color: var(--cinnabar-hi);
+}
+
+/* ───────────── 主体 ───────────── */
+
+.sf-codex__body {
+    flex-direction: row;
+    flex-grow: 1;
+}
+
+.sf-codex__grid {
+    width: 848px;
+    flex-shrink: 0;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
+}
+
+.sf-codex__cell {
+    width: 196px;
+    height: 194px;
+    margin: 0 10px 10px 0;
+    padding: 8px 8px 6px;
+    align-items: center;
+    background-color: rgba(24, 20, 27, 0.85);
+    border-width: 1px;
+    border-color: var(--line-soft);
+    border-radius: 0;
+    transition-property: background-color, border-color, scale;
+    transition-duration: 0.16s;
+}
+
+.sf-codex__cell:hover,
+.sf-codex__cell:focus {
+    border-color: var(--gold);
+    background-color: rgba(44, 30, 30, 0.9);
+}
+
+.sf-codex__cell--on,
+.sf-codex__cell--on:hover,
+.sf-codex__cell--on:focus {
+    border-color: var(--gold-hi);
+    background-color: rgba(60, 30, 28, 0.92);
+}
+
+.sf-codex__cell--boss {
+    border-color: rgba(201, 55, 42, 0.45);
+}
+
+.sf-codex__cell--locked {
+    background-color: rgba(14, 12, 16, 0.85);
+}
+
+.sf-codex__cell--empty {
+    opacity: 0;
+}
+
+.sf-codex__thumbframe {
+    width: 144px;
+    height: 144px;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(7, 6, 10, 0.55);
+    border-width: 1px;
+    border-color: rgba(212, 169, 85, 0.1);
+}
+
+.sf-codex__cell--locked .sf-codex__thumbframe {
+    background-color: rgba(30, 26, 34, 0.55);
+}
+
+.sf-codex__thumb {
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    right: 2px;
+    bottom: 2px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.sf-codex__glyph {
+    font-size: 64px;
+    -unity-text-align: middle-center;
+    color: var(--paper-2);
+}
+
+.sf-codex__name {
+    margin-top: 7px;
+    font-size: 17px;
+    letter-spacing: 2px;
+    color: var(--paper);
+    white-space: nowrap;
+    overflow: hidden;
+    -unity-text-align: middle-center;
+}
+
+.sf-codex__new {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    padding: 3px 4px;
+    font-size: 15px;
+}
+
+/* ───────────── 详情 ───────────── */
+
+.sf-codex__detail {
+    flex-grow: 1;
+    flex-shrink: 1;
+    padding: 4px 4px 0 22px;
+    border-left-width: 1px;
+    border-color: var(--line-soft);
+}
+
+.sf-codex__heroframe {
+    height: 236px;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(7, 6, 10, 0.5);
+    border-width: 1px;
+    border-color: rgba(212, 169, 85, 0.12);
+    margin-bottom: 12px;
+}
+
+.sf-codex__herothumb {
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    right: 6px;
+    bottom: 6px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.sf-codex__heroglyph {
+    font-size: 120px;
+    -unity-text-align: middle-center;
+}
+
+.sf-codex__dname {
+    font-size: 30px;
+    letter-spacing: 6px;
+    color: var(--paper);
+}
+
+.sf-codex__dsub {
+    margin-top: 2px;
+    font-size: 14px;
+    letter-spacing: 1px;
+    color: var(--paper-2);
+}
+
+.sf-codex__chips {
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.sf-codex__chip {
+    margin: 0 6px 6px 0;
+}
+
+.sf-codex__dscroll {
+    flex-grow: 1;
+    flex-shrink: 1;
+    margin-top: 4px;
+}
+
+.sf-codex__ddesc {
+    font-size: 15px;
+    color: var(--paper);
+    white-space: normal;
+    margin-bottom: 10px;
+}
+
+.sf-codex__stats {
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.sf-codex__stat {
+    width: 50%;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 4px 14px 4px 0;
+    border-bottom-width: 1px;
+    border-color: rgba(212, 169, 85, 0.08);
+}
+
+.sf-codex__statk {
+    font-size: 13.5px;
+    color: var(--paper-3);
+}
+
+.sf-codex__statv {
+    font-size: 16px;
+    color: var(--paper);
+}
+
+.sf-codex__trait {
+    margin-bottom: 8px;
+    padding-left: 10px;
+    border-left-width: 2px;
+    border-color: var(--gold-lo);
+}
+
+.sf-codex__traithead {
+    font-size: 15px;
+    letter-spacing: 2px;
+    color: var(--gold-hi);
+    margin-bottom: 2px;
+}
+
+.sf-codex__traittext {
+    font-size: 14px;
+    color: var(--paper-2);
+    white-space: normal;
+}
+
+.sf-codex__dfoot {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--paper-3);
+    white-space: normal;
+}
+
+/* ───────────── 页脚 ───────────── */
+
+.sf-codex__page {
+    margin: 0 12px;
+    font-size: 16px;
+    color: var(--paper-2);
+}

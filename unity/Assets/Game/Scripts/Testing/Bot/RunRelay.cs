@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace Spiritfire.Game.Testing
@@ -33,26 +30,8 @@ namespace Spiritfire.Game.Testing
 
         public static string FilePath => Path.Combine(Directory.GetCurrentDirectory(), "Library", "SpiritfireBridge", "fullrun_relay.json");
 
-        sealed class FieldsOnly : DefaultContractResolver
-        {
-            protected override List<MemberInfo> GetSerializableMembers(Type objectType) =>
-                objectType.GetFields(BindingFlags.Instance | BindingFlags.Public).Where(f => !f.IsNotSerialized).Cast<MemberInfo>().ToList();
-
-            protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
-            {
-                var p = base.CreateProperty(member, memberSerialization);
-                p.Readable = p.Writable = true;
-                return p;
-            }
-        }
-
-        static JsonSerializerSettings Settings => new()
-        {
-            ContractResolver = new FieldsOnly(),
-            Formatting = Formatting.Indented,
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-            FloatFormatHandling = FloatFormatHandling.DefaultValue,
-        };
+        /// <summary>序列化设置：和中途续玩的 run.json 同一套（<see cref="RunStateJson"/>：只写公有字段、字典照常写）</summary>
+        static JsonSerializerSettings Settings => RunStateJson.Settings;
 
         public void Save()
         {

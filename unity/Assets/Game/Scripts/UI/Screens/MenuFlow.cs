@@ -12,6 +12,8 @@ namespace Spiritfire.Game
     ///   · <see cref="ToMenu"/>：回主菜单——没结算过的局先按失败结算（Three.js 的「返回主菜单不结算」会白丢本局魂晶，这里不跟），整场景切到 MainMenu。
     ///     主菜单场景还没生成（没跑 bridge.sh menu）时退回「新开一局」，不会卡死。
     ///   · <see cref="Retry"/>：结算「再来一局」——同一位英雄新开一局（常驻 Core 时不换场景）。
+    ///   · 中途续玩（I5，<see cref="RunSuspend"/>）：<see cref="ResumeRun"/> 主菜单「继续征程」读续玩档从那一关开头接着打；
+    ///     <see cref="Suspend"/> 暂停里「返回主菜单」不结算、续玩档留着；有续玩档时 <see cref="StartRun(string)"/> 先弹确认框，确认后旧局按放弃结算。
     /// 启动（打包后）：构建设置第 0 个是 Core；Core 第一次加载、还没有局时改去主菜单（<see cref="Boot"/>）。编辑器里直接开 Core / 关卡照旧进调试局。
     /// </summary>
     public static class MenuFlow
@@ -49,8 +51,14 @@ namespace Spiritfire.Game
 
         // ───────────── 开局 ─────────────
 
-        /// <summary>出征：新开一局（选中的英雄），切到 Core 场景。场景不在时返回 false</summary>
-        public static bool StartRun(string heroId)
+        /// <summary>
+        /// 出征：新开一局（选中的英雄），切到 Core 场景。场景不在时返回 false。
+        /// 有未完成的征程（续玩档，I5）时先弹确认框（不可撤销：旧局按放弃结算），确认后才结算旧局、开新局；这次调用返回 false
+        /// </summary>
+        public static bool StartRun(string heroId) => StartRun(heroId, false);
+
+        /// <summary>同上；forfeitSuspended = 已经确认过放弃未完成的征程（确认框的回调、测试）</summary>
+        public static bool StartRun(string heroId, bool forfeitSuspended)
         {
             if (busy) return false;
             if (!SceneFlow.CanLoad(SceneFlow.CorePath))
@@ -63,10 +71,78 @@ namespace Spiritfire.Game
             RunState.Current = null;
             // 主菜单开的局是正式局（记正式档）；调试档开关 / -devprofile 开着时记调试档，菜单显示的也是调试档，两边一致
             bool dev = SaveService.DevActive;
+            var suspended = RunSuspend.Peek(dev);
+            if (suspended != null)
+            {
+                if (!forfeitSuspended)
+                {
+                    string hero = heroId;
+                    ConfirmScreen.Ask(new ConfirmRequest
+                    {
+                        title = "开始新征程",
+                        message = $"开始新征程会放弃当前的征程（第 {suspended.run.stageCode} 关），确定吗？",
+                        detail = "放弃的征程按败北结算：已收集的魂晶照常入账，此操作不能撤销。",
+                        confirmText = "放弃并出征",
+                        cancelText = "取消",
+                        onConfirm = () => StartRun(hero, true),
+                    });
+                    return false;
+                }
+                RunSuspend.Forfeit(dev);
+            }
             RunState.Begin(heroId, Environment.TickCount, RunPlan.First, dev);
             Remember(heroId);
             Go(SceneFlow.CorePath);
             return true;
+        }
+
+        /// <summary>主菜单当前档里未完成的征程（续玩档；没有 / 坏了为 null，坏档顺带丢弃并记下提示）</summary>
+        public static SuspendedRun Suspended => RunSuspend.Peek(SaveService.DevActive);
+
+        /// <summary>
+        /// 继续征程（I5）：读续玩档设成当前局，切到 Core，SceneFlow 从那一关开头接着走（不发 RunStarted：不是新开一局）。
+        /// 没有档 / 坏档 / 关卡场景加载不了时提示并返回 false
+        /// </summary>
+        public static bool ResumeRun()
+        {
+            if (busy) return false;
+            if (!SceneFlow.CanLoad(SceneFlow.CorePath))
+            {
+                Debug.LogError($"[MenuFlow] 加载不了 {SceneFlow.CorePath}（先跑 bridge.sh core）");
+                GameUI.Toast("Core 场景还没生成", UITheme.Bad);
+                return false;
+            }
+            var s = Suspended;
+            if (s == null)
+            {
+                GameUI.Toast(RunSuspend.TakeProblem() ?? "没有可以继续的征程", UITheme.Bad);
+                return false;
+            }
+            if (!SceneFlow.CanLoad(s.Stage))
+            {
+                Debug.LogError($"[MenuFlow] 续玩档的关卡 {s.Stage?.Label} 场景加载不了（{s.Stage?.scene}）");
+                GameUI.Toast($"{s.Stage?.Label} 的关卡场景加载不了", UITheme.Bad);
+                return false;
+            }
+            RunState.Current = s.run;
+            Remember(s.run.heroId);
+            Go(SceneFlow.CorePath);
+            return true;
+        }
+
+        /// <summary>
+        /// 暂离（暂停菜单「返回主菜单」，I5）：不结算，续玩档留着，下次主菜单「继续征程」从本关开头接着打（本关里的进度不保留）。
+        /// 这一局没有续玩档（调试局、已经结算过）时退回 <see cref="ToMenu"/>（结算）
+        /// </summary>
+        public static void Suspend()
+        {
+            if (busy) return;
+            if (!RunSuspend.CanSuspend(RunState.Current) || !MenuAvailable)
+            {
+                ToMenu();
+                return;
+            }
+            Go(MenuScenePath, clearRun: true);
         }
 
         /// <summary>结算「再来一局」：同英雄新开一局（常驻 Core 里直接换关，旧式关卡重载场景）</summary>

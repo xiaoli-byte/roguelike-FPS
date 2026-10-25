@@ -7,7 +7,9 @@ namespace Spiritfire.Game
 {
     /// <summary>
     /// 暂停菜单（U4；Three.js src/ui/PauseMenu.ts + css/overlays.css .gf-pause）：
-    ///   左列：继续 / 设置 / 放弃本局 / 返回主菜单——后两个要二次确认（第一次按变成「再按一次确认」，2.6 s 内再按才生效）；
+    ///   左列：继续 / 设置 / 放弃本局 / 返回主菜单——「放弃本局」要二次确认（第一次按变成「再按一次确认」，2.6 s 内再按才生效）；
+    ///     「返回主菜单」（I5）：这一局有续玩档时是暂离（<see cref="MenuFlow.Suspend"/>，不结算，下次从本关开头「继续征程」），一按就走；
+    ///     没有续玩档（调试局）时照旧结算后回主菜单，同样要二次确认；
     ///   右列：本局概况（英雄徽记、关卡、用时 / 击杀 / 灵石 / 魂晶）、已获得秘卷（小签）、精简属性网格。
     /// 关闭 = 继续游戏：Esc / 手柄 B（路由的返回）、Esc / P / 手柄 Start（暂停键）、「继续」按钮，都回调 GameSession 给的 onResume。
     /// 「设置」把 <see cref="SettingsScreen"/> 叠在上面，返回回到这里。挡游戏：Paused + 停时间。
@@ -24,7 +26,7 @@ namespace Spiritfire.Game
         Action onResume;
         Button resumeBtn, abandonBtn, menuBtn;
         VisualElement frame, crest, scrolls, stats;
-        Label stageLabel, heroName, timeVal, killsVal, coinsVal, essenceVal, scrollCount;
+        Label hintLabel, stageLabel, heroName, timeVal, killsVal, coinsVal, essenceVal, scrollCount;
         string armed;
         float armedAt, openedAt;
         int openedFrame;
@@ -59,7 +61,7 @@ namespace Spiritfire.Game
             });
             abandonBtn = ScreenKit.Btn("放弃本局", "sf-btn--block sf-btn--danger", nav, () => Press("abandon"));
             menuBtn = ScreenKit.Btn("返回主菜单", "sf-btn--block sf-btn--ghost", nav, () => Press("menu"));
-            ScreenKit.Text("sf-pause__hint", nav, "放弃本局：结算已获得的魂晶并显示结算。\n返回主菜单：同样结算，直接回到主菜单。");
+            hintLabel = ScreenKit.Text("sf-pause__hint", nav, "");
 
             var info = ScreenKit.El("sf-pause__info", cols);
             var hero = ScreenKit.El("sf-pause__hero", info);
@@ -129,6 +131,9 @@ namespace Spiritfire.Game
         public void Refresh()
         {
             var run = RunState.Current;
+            hintLabel.text = CanSuspend
+                ? "放弃本局：结算已获得的魂晶并显示结算。\n返回主菜单：本局保留，下次从本关开头「继续征程」（本关内的进度不保留）。"
+                : "放弃本局：结算已获得的魂晶并显示结算。\n返回主菜单：同样结算，直接回到主菜单。";
             var hero = ScreenKit.RunHero;
             ScreenKit.SetCrest(crest, hero);
             heroName.text = hero != null ? $"{hero.name} · {hero.title}" : "无名侠客";
@@ -172,9 +177,21 @@ namespace Spiritfire.Game
             menuBtn.RemoveFromClassList("sf-btn--armed");
         }
 
-        /// <summary>按一次「放弃本局」/「返回主菜单」（key = abandon / menu）：按钮和测试都走这里（含二次确认）</summary>
+        /// <summary>这一局有续玩档：「返回主菜单」= 暂离，不结算（I5）</summary>
+        public static bool CanSuspend => RunSuspend.CanSuspend(RunState.Current);
+
+        /// <summary>
+        /// 按一次「放弃本局」/「返回主菜单」（key = abandon / menu）：按钮和测试都走这里。
+        /// 放弃要二次确认；返回主菜单在能暂离时一按就走（不结算、不丢东西），否则（会结算）同样二次确认
+        /// </summary>
         public void Press(string key)
         {
+            if (key == "menu" && CanSuspend)
+            {
+                Disarm();
+                MenuFlow.Suspend();
+                return;
+            }
             if (!Arm(key)) return;
             if (key == "abandon") MenuFlow.Abandon();
             else if (key == "menu") MenuFlow.ToMenu();

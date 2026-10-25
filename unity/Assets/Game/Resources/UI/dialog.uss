@@ -1,0 +1,66 @@
+/*
+ * 通用确认框（I5，G/UI/Screens/ConfirmScreen.cs）：有未完成的征程时「出征」先确认放弃它。
+ * 一张窄卡压在当前界面上：标题、正文、补充说明（灰）、取消 / 确认。设计像素按 1920×1080；颜色变量来自 theme.uss。
+ */
+
+.sf-dialog-screen {
+    align-items: center;
+    justify-content: center;
+}
+
+.sf-dialog__backdrop {
+    background-color: rgba(6, 5, 8, 0.7);
+}
+
+.sf-dialog {
+    width: 640px;
+    padding: 30px 36px 26px;
+    border-color: var(--line);
+    border-top-width: 2px;
+    border-top-color: var(--cinnabar);
+}
+
+.sf-dialog__title {
+    font-size: 28px;
+    letter-spacing: 8px;
+    color: var(--paper);
+    margin-bottom: 16px;
+}
+
+.sf-dialog__message {
+    font-size: 18px;
+    color: var(--paper);
+    white-space: normal;
+    margin-bottom: 10px;
+}
+
+.sf-dialog__detail {
+    font-size: 13.5px;
+    color: var(--paper-3);
+    white-space: normal;
+}
+
+.sf-dialog__foot {
+    flex-direction: row;
+    justify-content: flex-end;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top-width: 1px;
+    border-color: var(--line-soft);
+}
+
+.sf-dialog__foot > .sf-btn {
+    margin-left: 12px;
+}
+
+/* 不可撤销的确认：朱砂实底 */
+.sf-btn--danger-solid {
+    background-color: var(--cinnabar-lo);
+    border-color: var(--cinnabar-hi);
+}
+
+.sf-btn--danger-solid:hover,
+.sf-btn--danger-solid:focus {
+    background-color: var(--cinnabar);
+    border-color: var(--gold-hi);
+}
