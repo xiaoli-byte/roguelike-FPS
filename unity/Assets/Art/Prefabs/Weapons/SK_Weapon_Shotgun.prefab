@@ -63,7 +63,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 164818428406513640}
-  - {fileID: 6235157848356497625}
   - {fileID: 3397753093662372112}
   m_Father: {fileID: 9045124449343160562}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -193,7 +192,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9045124449343160562}
-  - component: {fileID: 200968151996908152}
   - component: {fileID: 7375070733909394600}
   m_Layer: 0
   m_Name: SK_Weapon_Shotgun
@@ -218,30 +216,6 @@ Transform:
   - {fileID: 4285186945317724369}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!205 &200968151996908152
-LODGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6243549603874672116}
-  serializedVersion: 3
-  m_LocalReferencePoint: {x: -0.0049650967, y: -0.004368633, z: -0.11455542}
-  m_Size: 0.8514477
-  m_FadeMode: 1
-  m_AnimateCrossFading: 1
-  m_LastLODIsBillboard: 0
-  m_LODs:
-  - screenRelativeHeight: 0.10131587
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 6077775377233306124}
-  - screenRelativeHeight: 0.040526345
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 8840420043419358885}
-  m_Enabled: 1
-  m_GlobalIlluminationLOD: 0
 --- !u!114 &7375070733909394600
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -263,110 +237,14 @@ MonoBehaviour:
   bindAttachment: 
   lodDistance:
   - 0
-  - 6
   moveSpeed: 0
   designBounds:
     m_Center: {x: -0.005020175, y: -0.0043633915, z: -0.114484355}
     m_Extent: {x: 0.049598735, y: 0.10452832, z: 0.4256528}
   sourceGlb: public/assets/weapons/SK_Weapon_Shotgun.glb
-  sourceSha256: 5c381b89c6f2b8dabc6bd0bec972a7a0ba6bd24cd8a5647e355d134cd45af1eb
+  sourceSha256: 53186bbfb35f2c323746b72c944e7b96d5fd4410c81ffaade648031452c01463
   license: "Hunyuan3D 2.1 \u751F\u6210\uFF1ATencent Hunyuan 3D Community License\uFF0C\u4E0D\u5F97\u5728\u6B27\u76DF
     / \u82F1\u56FD / \u97E9\u56FD\u4F7F\u7528\u6216\u5206\u53D1"
---- !u!1 &6806961102292496343
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6235157848356497625}
-  - component: {fileID: 8840420043419358885}
-  m_Layer: 0
-  m_Name: SK_Weapon_Shotgun_LOD1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &6235157848356497625
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6806961102292496343}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.000000053385076, y: 0.7071068, z: -0.70710677, w: -0.00000005338508}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 4285186945317724369}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!137 &8840420043419358885
-SkinnedMeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6806961102292496343}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 3
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 323d2970b7b0b7044831dbc76b97f3bc, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  serializedVersion: 2
-  m_Quality: 0
-  m_UpdateWhenOffscreen: 0
-  m_SkinnedMotionVectors: 1
-  m_Mesh: {fileID: -3657168906799084563, guid: 0c1e5d1ddf0affa428b23799304bb718, type: 3}
-  m_Bones:
-  - {fileID: 6868429961417607203}
-  - {fileID: 8617895053164479588}
-  - {fileID: 3799987526425064018}
-  m_BlendShapeWeights: []
-  m_RootBone: {fileID: 6868429961417607203}
-  m_AABB:
-    m_Center: {x: 0.004965082, y: -0.0043288693, z: 0.11455831}
-    m_Extent: {x: 0.049658358, y: 0.10435792, z: 0.42572096}
-  m_DirtyAABB: 0
 --- !u!1 &6869968378805307955
 GameObject:
   m_ObjectHideFlags: 0

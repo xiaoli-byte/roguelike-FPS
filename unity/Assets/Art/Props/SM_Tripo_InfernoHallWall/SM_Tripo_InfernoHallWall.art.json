@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_InfernoHallWall",
   "kind": "static",
   "class": "tripo_architecture",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    24,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2500,
-      800
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -4.08875846862793,
@@ -50,26 +44,6 @@
       "lod": 0,
       "tris": 8000,
       "verts": 6191,
-      "materials": [
-        "M_Tripo_InfernoHallWall"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_InfernoHallWall_LOD1",
-      "lod": 1,
-      "tris": 2500,
-      "verts": 2544,
-      "materials": [
-        "M_Tripo_InfernoHallWall"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_InfernoHallWall_LOD2",
-      "lod": 2,
-      "tris": 800,
-      "verts": 1002,
       "materials": [
         "M_Tripo_InfernoHallWall"
       ],
@@ -107,7 +81,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_InfernoHallWall.glb",
-    "sha256": "c3c8e7b578d1f16d64c32c012af54dbb5292980c0422edf00f60857c8e6b185e",
+    "sha256": "0c03169a3bb221afbaa442fe105ae7770156c0791ee906b1cd178deda98671e0",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -122,5 +96,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:24:02"
+  "exported": "2026-10-25 12:04:22"
 }

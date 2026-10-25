@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Enemy_Tuo",
   "kind": "skeletal",
   "class": "enemy_large",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    18,
-    40
+    0
   ],
   "budget": {
-    "lodTris": [
-      12000,
-      5000,
-      2000
-    ],
     "texture": 2048,
     "maxFileKb": 3000
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.908379077911377,
@@ -80,26 +74,6 @@
         "M_Enemy_Tuo"
       ],
       "skinned": true
-    },
-    {
-      "name": "SK_Enemy_Tuo_LOD1",
-      "lod": 1,
-      "tris": 4925,
-      "verts": 9276,
-      "materials": [
-        "M_Enemy_Tuo"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Enemy_Tuo_LOD2",
-      "lod": 2,
-      "tris": 1969,
-      "verts": 4601,
-      "materials": [
-        "M_Enemy_Tuo"
-      ],
-      "skinned": true
     }
   ],
   "materials": [
@@ -131,7 +105,7 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Enemy_Tuo.glb",
-    "sha256": "c50c6dfd416de3cf6635b6b74ec18a8460946d56350155837ccb634f2220cbed",
+    "sha256": "10ff26b09009f934fe9fe19b428ee3182edcceeffafd3903e6ec4f52d6a01787",
     "hiRes": false,
     "version": {
       "native_build": 2
@@ -143,5 +117,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-17 11:23:49"
+  "exported": "2026-10-25 11:53:24"
 }

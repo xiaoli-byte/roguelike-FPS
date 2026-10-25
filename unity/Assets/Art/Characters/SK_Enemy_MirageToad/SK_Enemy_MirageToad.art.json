@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Enemy_MirageToad",
   "kind": "skeletal",
   "class": "enemy_large",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    18,
-    40
+    0
   ],
   "budget": {
-    "lodTris": [
-      12000,
-      5000,
-      2000
-    ],
     "texture": 2048,
     "maxFileKb": 3000
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -1.182303547859192,
@@ -90,26 +84,6 @@
         "M_Enemy_MirageToad"
       ],
       "skinned": true
-    },
-    {
-      "name": "SK_Enemy_MirageToad_LOD1",
-      "lod": 1,
-      "tris": 4905,
-      "verts": 8669,
-      "materials": [
-        "M_Enemy_MirageToad"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Enemy_MirageToad_LOD2",
-      "lod": 2,
-      "tris": 1942,
-      "verts": 4004,
-      "materials": [
-        "M_Enemy_MirageToad"
-      ],
-      "skinned": true
     }
   ],
   "materials": [
@@ -165,7 +139,7 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Enemy_MirageToad.glb",
-    "sha256": "8ce13c211bf88af1968bbafb771e66f72f38d22dde315fb211afe78a4a152ff6",
+    "sha256": "1956171c89b5de4c16e4b1154830818b108b540739031674e6e9654ddd11ba33",
     "hiRes": false,
     "version": {
       "native_build": 16
@@ -177,5 +151,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-17 00:29:38"
+  "exported": "2026-10-25 11:52:54"
 }

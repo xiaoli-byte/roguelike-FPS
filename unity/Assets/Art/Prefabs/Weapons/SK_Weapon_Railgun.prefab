@@ -34,102 +34,6 @@ Transform:
   - {fileID: 2823158423541951714}
   m_Father: {fileID: 7710027223190116884}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1769722033681648222
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2420933275720414508}
-  - component: {fileID: 3915658512054980101}
-  m_Layer: 0
-  m_Name: SK_Weapon_Railgun_LOD1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2420933275720414508
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1769722033681648222}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.000000053385076, y: 0.7071068, z: -0.70710677, w: -0.00000005338508}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 6660114204195421610}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!137 &3915658512054980101
-SkinnedMeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1769722033681648222}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 3
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 01dfc64cc1aae5242b9e420c5375d8de, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  serializedVersion: 2
-  m_Quality: 0
-  m_UpdateWhenOffscreen: 0
-  m_SkinnedMotionVectors: 1
-  m_Mesh: {fileID: -6672626226269242392, guid: 4d0f2d938ca7fc84c8bac4d3c4392b00, type: 3}
-  m_Bones:
-  - {fileID: 7164665462203756804}
-  - {fileID: 6712281249382430858}
-  - {fileID: 7623026183549249655}
-  - {fileID: 2823158423541951714}
-  m_BlendShapeWeights: []
-  m_RootBone: {fileID: 7164665462203756804}
-  m_AABB:
-    m_Center: {x: 0.0001758337, y: 0.011421606, z: 0.18029141}
-    m_Extent: {x: 0.051139574, y: 0.13499306, z: 0.4518984}
-  m_DirtyAABB: 0
 --- !u!1 &2089605146194222679
 GameObject:
   m_ObjectHideFlags: 0
@@ -382,7 +286,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1739216109567131751}
-  - {fileID: 2420933275720414508}
   - {fileID: 7710027223190116884}
   m_Father: {fileID: 2599967833551332561}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -417,7 +320,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2599967833551332561}
-  - component: {fileID: 3588895110534273528}
   - component: {fileID: 1448092829656528127}
   m_Layer: 0
   m_Name: SK_Weapon_Railgun
@@ -442,30 +344,6 @@ Transform:
   - {fileID: 6660114204195421610}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!205 &3588895110534273528
-LODGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6744370440134162153}
-  serializedVersion: 3
-  m_LocalReferencePoint: {x: -0.00017585605, y: 0.0113057345, z: -0.18024957}
-  m_Size: 0.90420747
-  m_FadeMode: 1
-  m_AnimateCrossFading: 1
-  m_LastLODIsBillboard: 0
-  m_LODs:
-  - screenRelativeHeight: 0.10761183
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 6654528973413568930}
-  - screenRelativeHeight: 0.04304473
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 3915658512054980101}
-  m_Enabled: 1
-  m_GlobalIlluminationLOD: 0
 --- !u!114 &1448092829656528127
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -487,12 +365,11 @@ MonoBehaviour:
   bindAttachment: 
   lodDistance:
   - 0
-  - 6
   moveSpeed: 0
   designBounds:
     m_Center: {x: -0.00009649992, y: 0.011241578, z: -0.18024957}
     m_Extent: {x: 0.05086859, y: 0.13504478, z: 0.45210367}
   sourceGlb: public/assets/weapons/SK_Weapon_Railgun.glb
-  sourceSha256: b7403d9b44143f43f70644049b6dfb662128ed5fe8346faa0bcd991d65c17f6e
+  sourceSha256: 66f3981c159b6632752526ec94c316913e411a4874cabfc742958e9a1d1076e6
   license: "Tencent Hunyuan 3D 2.0 Community License\uFF1A\u4E0D\u5F97\u5728\u6B27\u76DF
     / \u82F1\u56FD / \u97E9\u56FD\u5883\u5185\u4F7F\u7528\u6216\u5206\u53D1"

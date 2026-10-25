@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Env_MarketStall",
   "kind": "static",
   "class": "nature_prop",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    18,
-    42
+    0
   ],
   "budget": {
-    "lodTris": [
-      5000,
-      1600,
-      500
-    ],
     "texture": 1024,
     "maxFileKb": 900
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -1.7655044794082642,
@@ -50,26 +44,6 @@
       "lod": 0,
       "tris": 5000,
       "verts": 3240,
-      "materials": [
-        "M_Env_MarketStall"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Env_MarketStall_LOD1",
-      "lod": 1,
-      "tris": 1600,
-      "verts": 1342,
-      "materials": [
-        "M_Env_MarketStall"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Env_MarketStall_LOD2",
-      "lod": 2,
-      "tris": 500,
-      "verts": 577,
       "materials": [
         "M_Env_MarketStall"
       ],
@@ -106,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Env_MarketStall.glb",
-    "sha256": "da4b1e4d929551d77af18a2ddd6bb5a0d19daa21b8c291357003802489106bab",
+    "sha256": "34ae0e59cccf4df6494f1a1c7cd90d08bfe8bef1748ab1541787b203169bb5fc",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -121,5 +95,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:19:51"
+  "exported": "2026-10-25 11:56:43"
 }

@@ -10,9 +10,7 @@
    GLASSES["tube"]）套在瞳孔上，环面朝向取脸的法线和正前方的中间，离脸的距离按环上每一点到脸面的实测深度定（留 CLEAR 的空隙），
    中间一道略向上拱的鼻梁连起来。没有镜腿（四视图侧面也看不到）。新网格用同一个材质，UV 落在底色图里一块没被占用的空白区域，
    那里画一块竖向渐变的金色（环朝外的一侧亮、贴脸的一侧暗）。
-   构建时 LOD0 超过 classes.npc 的 lod_tris[0] 就整体塌陷减面，细环的分段边最便宜，会先被减成八边形；所以这里先把主体按构建同样的
-   塌陷减面减到「预算 − 新眼镜面数」，构建时 LOD0 不再减面，环保持 GLASSES["segments"] 段（LOD1 / LOD2 照常减）。减面前按位置
-   焊接 UV 接缝（直接对断开的网格减面，接缝会裂成细缝），FACE_BOX 里的胡须等小部件锁住不减，减面后法线按 Tripo 原网格还原。
+   主体不减面（2026-10-25 起所有模型都不减面，构建也只出一级 LOD），环保持 GLASSES["segments"] 段；原有部分的法线按 Tripo 原网格还原。
 2. 左眼贴图：去掉镜片后，脸上的左眼（生物的左 = +X）下半有一道斜的浅色条，是 Tripo 把镜片反光投到了皮肤上，两只眼也画得不一样。
    右眼是干净的，所以把右眼镜像到左眼：左眼框里的每个纹素，按它在模型上的点做 x 取反，找右眼那一侧的表面点，取那里的颜色。
    只改主体网格（胡须、眼镜是别的连通块）朝前的面，眼框边缘 1 cm 渐变过渡。
@@ -22,13 +20,11 @@
    抬完后帽檐沿口从侧面到前面是一条单调上升的平滑曲线（原来在眼睛那一段下垂得最厉害）。
 
 坐标一律先按 bl_build_tripo_creature 的规则缩放到 1.5 米、落地、包围盒居中后再算（米制：front = -Y，生物的左 = +X，up = +Z）。
-写回时网格用原始坐标，原有面的 UV、材质原样保留；减面后的包围盒之后不再变（构建时的缩放、居中和这里一致）。
+写回时网格用原始坐标，原有面的 UV、材质原样保留；包围盒不变（构建时的缩放、居中和这里一致）。
 """
 import json
 import math
 import sys
-import tomllib
-from pathlib import Path
 
 import bmesh
 import bpy
@@ -46,11 +42,6 @@ EYE_X, EYE_Z, FEATHER = (0.022, 0.13), (1.145, 1.25), 0.01
 # 新眼镜：环半径（到管中心）、管半径、环面离脸的最小空隙、环 / 管的分段
 GLASSES = {"radius": 0.027, "tube": 0.0028, "segments": 28, "sides": 6, "bridge_segments": 10}
 CLEAR = 0.005
-# LOD0 三角面预算（classes.npc）；主体减到预算减去新眼镜的三角面数，再留一点余量
-LOD0_TRIS = tomllib.loads((Path(__file__).resolve().parents[3] / "pipeline/pipeline.toml").read_text(encoding="utf-8"))["classes"]["npc"]["lod_tris"][0]
-GLASSES_TRIS = 2 * GLASSES["sides"] * (2 * GLASSES["segments"] + GLASSES["bridge_segments"])
-# 减面时不动的脸前小部件（胡须、额前的毛）：主体以外、整个落在这个盒子里的连通块
-FACE_BOX = (np.array([-0.45, -0.45, 1.0]), np.array([0.45, -0.12, 1.32]))
 # 帽檐：帽轴（xy）、两眼方位（相对正前方 -90° 的偏角）、包络半宽、抬高起止半径、外沿抬高量、只动帽檐沿口往下这么多以内的点
 BRIM = {"axis": (0.0, -0.13), "center": 55.0, "half": 35.0, "r0": 0.20, "r1": 0.27, "lift": 0.03, "band": 0.045}
 # 金色（sRGB）：环朝外一侧 → 贴脸一侧
@@ -116,57 +107,16 @@ bmesh.ops.delete(bm, geom=[bm.faces[i] for i in kill], context="FACES")
 bm.to_mesh(me)
 bm.free()
 
-# ───────────── 1b. 主体减到 LOD0 预算以内（同构建：塌陷 + 三角化） ─────────────
-# 导入的网格在 UV 接缝处是断开的（每个 UV 岛是一个松散块）：直接减面会把相邻两个岛的公共边各减各的，接缝裂成细缝（v003..v007
-# 的鼻子、嘴角都有）。先把位置完全重合的点焊起来再减：塌陷减面把 UV 不连续的边当边界保护，UV 不会跨岛（实测减面前后单个三角形的
-# UV 最大跨度 351 → 368 纹素）；导出时再按 UV 拆开。阈值只合并完全重合的点，不把挨得近的不同部件焊到一起
-# Tripo 自带的顶点法线（没有硬边：UV 接缝两侧的法线一致）先记下来，减面后按最近点插值还原，减面不改明暗
+# ───────────── 1b. Tripo 原网格的顶点法线 ─────────────
+# 主体不减面（2026-10-25，用户：「不要减面了，所有的模型都不需要减少面数」；构建也不减面，只有一级 LOD）。
+# Tripo 自带的顶点法线（没有硬边：UV 接缝两侧的法线一致）先记下来，最后按最近点插值还原（删眼镜、抬帽檐后自定义法线会乱）
 src_co = [v.co.copy() for v in me.vertices]
 src_tris = [tuple(p.vertices) for p in me.polygons]
 src_vn = np.zeros((len(me.vertices), 3))
 np.add.at(src_vn, [l.vertex_index for l in me.loops], np.array([c.vector[:] for c in me.corner_normals]))
 src_vn /= np.linalg.norm(src_vn, axis=1, keepdims=True) + 1e-12
 src_bvh = BVHTree.FromPolygons(src_co, src_tris)
-bm = bmesh.new()
-bm.from_mesh(me)
-bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-6)
-bm.to_mesh(me)
-bm.free()
-# 胡须这些脸前的细小部件不减（细管的边塌起来最便宜，焊上之后会被减得发灰起棱）：权重 0 的点塌陷代价极高
-norm, roots = welded_components()
-main = np.bincount(roots).argmax()
-keep = np.zeros(len(me.vertices), bool)
-for r in np.unique(roots):
-    if r == main:
-        continue
-    fs = np.nonzero(roots == r)[0]
-    vs = [v for i in fs for v in me.polygons[int(i)].vertices]
-    a, b = norm[vs].min(0), norm[vs].max(0)
-    if (a >= FACE_BOX[0]).all() and (b <= FACE_BOX[1]).all():
-        keep[vs] = True
-grp = o.vertex_groups.new(name="decimate")
-grp.add([int(i) for i in np.nonzero(~keep)[0]], 1.0, "REPLACE")
-grp.add([int(i) for i in np.nonzero(keep)[0]], 0.0, "REPLACE")
-have = sum(len(p.vertices) - 2 for p in me.polygons)
-want = LOD0_TRIS - GLASSES_TRIS - 40
-bpy.context.view_layer.objects.active = o
-dec = o.modifiers.new("decimate", "DECIMATE")
-dec.ratio = want / have
-dec.use_collapse_triangulate = True
-dec.vertex_group = grp.name
-dec.vertex_group_factor = 1000.0
-bpy.ops.object.modifier_apply(modifier=dec.name)
-if o.vertex_groups.get("decimate"):
-    o.vertex_groups.remove(o.vertex_groups["decimate"])
-kept_verts = int(keep.sum())
 body_tris = sum(len(p.vertices) - 2 for p in me.polygons)
-assert body_tris + GLASSES_TRIS <= LOD0_TRIS, body_tris
-# 减面会挪动顶点，包围盒按减面后的重算（之后的步骤和构建都以它为准）
-co = np.array([(mw @ v.co)[:] for v in me.vertices])
-lo, hi = co.min(0), co.max(0)
-scale = HEIGHT / (hi[2] - lo[2])
-shift = np.array([-(lo[0] + hi[0]) / 2, -(lo[1] + hi[1]) / 2, -lo[2]])
-bbox0 = (lo.copy(), hi.copy())
 
 # ───────────── 2. 左眼贴图 ← 右眼镜像 ─────────────
 norm, roots = welded_components()
@@ -493,5 +443,5 @@ print("EYES_FIX " + json.dumps({
     "glasses_deleted_faces": len(kill), "left_eye_texels": written, "texture": [W, H],
     "pupils": [e["pupil"].round(4).tolist() for e in eyes], "rim_center": [r["center"].round(4).tolist() for r in rims],
     "rim_gap": round(gap, 4), "rim_normal": [r["n"].round(3).tolist() for r in rims], "gold_patch": [X0, Y0, SZ],
-    "body_tris": [have, body_tris], "decimate_kept_verts": kept_verts, "glasses_new_faces": new_faces, "lod0_tris": body_tris + 2 * new_faces, "brim_moved_verts": moved, "brim_edge_before": edge_before,
+    "body_tris": body_tris, "glasses_new_faces": new_faces, "lod0_tris": body_tris + 2 * new_faces, "brim_moved_verts": moved, "brim_edge_before": edge_before,
     "faces_left": len(me.polygons)}))

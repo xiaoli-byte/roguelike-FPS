@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Weapon_Lantern",
   "kind": "skeletal",
   "class": "weapon_fp",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    6
+    0
   ],
   "budget": {
-    "lodTris": [
-      12000,
-      3000
-    ],
     "texture": 2048,
     "maxFileKb": 3000
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.05636250227689743,
@@ -53,16 +49,6 @@
       "lod": 0,
       "tris": 11996,
       "verts": 7448,
-      "materials": [
-        "M_Weapon_Lantern"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Weapon_Lantern_LOD1",
-      "lod": 1,
-      "tris": 2996,
-      "verts": 2331,
       "materials": [
         "M_Weapon_Lantern"
       ],
@@ -100,7 +86,7 @@
   ],
   "source": {
     "glb": "public/assets/weapons/SK_Weapon_Lantern.glb",
-    "sha256": "300c92fd6d16e4662cf385e2120cb7e3692e9ce9dc53cfc3c0a78692c84693b5",
+    "sha256": "35688a95d6bd8e66781431b3c0d137a6e4a3edc0fb674a39d8f768df9cb1bbd5",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -115,5 +101,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:20:12"
+  "exported": "2026-10-25 11:54:06"
 }

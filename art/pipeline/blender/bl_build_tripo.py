@@ -2,10 +2,8 @@
 
 Unlike bl_build.py (Hunyuan shape + concept projection), this keeps the provider's UVs and textures:
   1. import + join, uniform fit to the bounds-only reference, yaw chosen by concept silhouettes, feet on ground;
-  2. LOD chain by collapse decimation from the provider mesh (UVs interpolate with the surface);
+  2. one LOD: the provider mesh as it is (triangulated, no decimation; 2026-10-25 the user: 「不要减面了」);
   3. provider base colour / normal / metal-roughness repacked to T_<name>_BC / _N / _ORM at the class budget;
-     a LOD whose collapse smeared the provider's fragmented atlas (bl_lod_texcheck vs LOD0) gets its own UVs and
-     T_<name>_LOD<i>_BC / _N / _ORM baked from LOD0, in its own material M_<name>_LOD<i>;
   4. GLB export (Draco + WebP) with the same node names, extras and metrics as bl_build.py.
 """
 import json
@@ -19,8 +17,6 @@ import numpy as np
 import sys as _sys
 _sys.path.insert(0, str(Path(__file__).parent))
 from bl_common import args, clear_scene, finish, import_glb, log
-import bl_lod_texcheck as texcheck
-from bl_uv import unwrap_best
 
 P = args()
 RESULT: dict = {}
@@ -162,32 +158,15 @@ RESULT["align"] = {"yaw_deg": yaw_k * 90, "scale": round(float(scale), 5), "iou"
 RESULT["projection"] = {"uncovered_ratio": 0.0, "method": "provider textures (Tripo), no concept projection"}
 log(f"对齐：朝向 {yaw_k * 90}°，缩放 {scale:.4f}，尺寸 {np.round(dims, 2)}（参考 {np.round(ref, 2)}），IoU {iou:.3f}")
 
-# ── 3. LODs ──
-def decimate_copy(source, lod_name: str, tris: int):
-    me = source.data.copy()
-    obj = bpy.data.objects.new(lod_name, me)
-    bpy.context.scene.collection.objects.link(obj)
-    activate(obj)
-    tri = obj.modifiers.new("tri", "TRIANGULATE")
-    bpy.ops.object.modifier_apply(modifier=tri.name)
-    cur = len(obj.data.polygons)
-    if cur > tris:
-        # Collapse interpolates UVs with the surface but cannot keep UV island borders (Decimate's `delimit` only
-        # applies to Planar): on the provider's fragmented atlas a deep reduction smears the texture, and such LODs
-        # are re-unwrapped and baked from LOD0 below (step 4b).
-        dec = obj.modifiers.new("dec", "DECIMATE")
-        dec.decimate_type = "COLLAPSE"
-        dec.ratio = tris / cur * 0.995
-        dec.use_collapse_triangulate = True
-        bpy.ops.object.modifier_apply(modifier=dec.name)
-    obj.data.validate(clean_customdata=False)
-    return obj
-
-
-lods = []
-for i, budget in enumerate(P["lod_tris"]):
-    lods.append(decimate_copy(src if i == 0 else lods[-1], f"{name}_LOD{i}", budget))
-    log(f"LOD{i}：{len(lods[-1].data.polygons)} 三角面（预算 {budget}）")
+# ── 3. LOD0: the provider mesh, triangulated, no decimation ──
+lod0 = bpy.data.objects.new(f"{name}_LOD0", src.data.copy())
+bpy.context.scene.collection.objects.link(lod0)
+activate(lod0)
+tri = lod0.modifiers.new("tri", "TRIANGULATE")
+bpy.ops.object.modifier_apply(modifier=tri.name)
+lod0.data.validate(clean_customdata=False)
+lods = [lod0]
+log(f"LOD0：{len(lod0.data.polygons)} 三角面（不减面，参考 {P['lod_tris'][0]}）")
 
 # ── 4. textures ──
 mat = materials[0]
@@ -325,127 +304,10 @@ for lod in lods:
     lod.data.materials.clear()
     lod.data.materials.append(game)
 
-# ── 4b. LOD texture fidelity: re-unwrap and bake the LODs whose collapse smeared the provider atlas ──
-# Every collapsed LOD is compared with LOD0 through its own UVs (bl_lod_texcheck). A LOD that fails gets its own
-# unwrap (bl_uv.unwrap_best) and BC / N / ORM baked from LOD0 (selected-to-active) at a size scaled to its share of LOD0's
-# triangles, in its own material M_<name>_LOD<i>. Its geometry stays the collapse result (welded, crack-free).
-stretch_limit = float(P.get("lod_rebake_stretch", 0.02))
-lod0_tris = len(lods[0].data.polygons)
-tex0 = texcheck.rgb(img_bc)
-lod_images = []
-RESULT["lod_textures"] = {}
-
-
-def emission_material(name: str, img=None):
-    """Emission of an image (constant white without one) for bake("EMIT") transfers."""
-    m = bpy.data.materials.new(name)
-    m.use_nodes = True
-    nt = m.node_tree
-    em = nt.nodes.new("ShaderNodeEmission")
-    em.inputs["Color"].default_value = (1, 1, 1, 1)
-    if img is not None:
-        t = nt.nodes.new("ShaderNodeTexImage")
-        t.image = img
-        nt.links.new(t.outputs["Color"], em.inputs["Color"])
-    out_node = next(n for n in nt.nodes if n.type == "OUTPUT_MATERIAL")
-    nt.links.new(em.outputs[0], out_node.inputs["Surface"])
-    return m
-
-
-def fill_gutter(px: np.ndarray, m: np.ndarray) -> None:
-    """Push-pull fill of the texels no island covers (m = 0), in place: lower mips of a small far-LOD texture
-    average across the gutter, so black gutters would darken and fringe the LOD at distance."""
-    levels = [(px[..., :3] * m[..., None], m)]
-    while levels[-1][1].shape[0] > 1:
-        c, w = levels[-1]
-        h = w.shape[0] // 2
-        levels.append((c.reshape(h, 2, h, 2, 3).sum((1, 3)), w.reshape(h, 2, h, 2).sum((1, 3))))
-    fill = levels[-1][0] / max(float(levels[-1][1].max()), 1e-6)
-    for c, w in reversed(levels[:-1]):
-        up = np.repeat(np.repeat(fill, 2, 0), 2, 1)
-        fill = np.where(w[..., None] > 0, c / np.maximum(w, 1e-6)[..., None], up)
-    px[..., :3] = fill
-    px[..., 3] = 1.0
-
-
-def rebake(lod, i: int, cage: float) -> tuple[int, object, dict]:
-    tsize = max(256, min(size, 2 ** int(math.log2(size * math.sqrt(len(lod.data.polygons) / lod0_tris)))))
-    uv_info = unwrap_best(lod, tsize)
-    activate(lod)
-    target = bpy.data.materials.new(f"bake_lod{i}")
-    target.use_nodes = True
-    node = target.node_tree.nodes.new("ShaderNodeTexImage")
-    target.node_tree.nodes.active = node
-    lod.data.materials.clear(); lod.data.materials.append(target)
-    lod0_mats = list(lods[0].data.materials)
-    baked = {}
-    cover = None
-    # MASK first: constant white emission marks the texels the bake reaches (Cycles writes the whole buffer).
-    for role, cs, kind, source in (("MASK", "Non-Color", "EMIT", None), ("BC", "sRGB", "EMIT", img_bc),
-                                   ("ORM", "Non-Color", "EMIT", img_orm), ("N", "Non-Color", "NORMAL", None)):
-        img = bpy.data.images.new(f"T_{P['texture_name']}_LOD{i}_{role}", tsize, tsize, alpha=False)
-        img.colorspace_settings.name = cs
-        node.image = img
-        lods[0].data.materials.clear()
-        tmp = emission_material("emit_tmp", source) if kind == "EMIT" else None
-        for m in ([tmp] if tmp else lod0_mats):  # normals: LOD0's own game material (geometry + normal map)
-            lods[0].data.materials.append(m)
-        activate(lod, [lods[0]])
-        bpy.ops.object.bake(type=kind, use_selected_to_active=True, cage_extrusion=cage, max_ray_distance=cage * 4,
-                            margin=2, margin_type="EXTEND",
-                            target="IMAGE_TEXTURES", **({"normal_space": "TANGENT"} if kind == "NORMAL" else {}))
-        px = np.empty(tsize * tsize * 4, np.float32)
-        img.pixels.foreach_get(px)
-        px = px.reshape(tsize, tsize, 4)
-        if role == "MASK":
-            cover = (px[..., 0] > 0.5).astype(np.float32)
-            uv_info["coverage"] = round(float(cover.mean()), 3)
-            bpy.data.materials.remove(tmp)
-            bpy.data.images.remove(img)
-            continue
-        fill_gutter(px, cover)
-        img.pixels.foreach_set(px.ravel())
-        if tmp:
-            bpy.data.materials.remove(tmp)
-        img.file_format = "PNG"
-        img.filepath_raw = str(Path(P["texture_dir"]) / f"{img.name}.png")
-        img.save()
-        img.pack()
-        baked[role] = img
-    lods[0].data.materials.clear()
-    for m in lod0_mats:
-        lods[0].data.materials.append(m)
-    mat_l = game.copy()
-    mat_l.name = f"M_{P['texture_name']}_LOD{i}"
-    for n in mat_l.node_tree.nodes:
-        if n.type == "TEX_IMAGE":
-            n.image = {img_bc: baked["BC"], img_n: baked["N"], img_orm: baked["ORM"]}[n.image]
-    lod.data.materials.clear(); lod.data.materials.append(mat_l)
-    bpy.data.materials.remove(target)
-    lod_images.extend(baked.values())
-    return tsize, baked["BC"], uv_info
-
-
-scene.cycles.samples = 1
-for i, lod in enumerate(lods[1:], start=1):
-    before = texcheck.fidelity(lods[0], tex0, lod, tex0)
-    entry = {"method": "provider", "collapse": before}
-    if before["stretched_ratio"] is not None and before["stretched_ratio"] > stretch_limit:
-        cage = max(P.get("cage_extrusion", 0.015) * float(dims[2]), 2.0 * (before["dist_p99_m"] or 0.0))
-        tsize, bc_l, uv_info = rebake(lod, i, cage)
-        after = texcheck.fidelity(lods[0], tex0, lod, texcheck.rgb(bc_l))
-        entry = {"method": "rebaked", "texture": tsize, "cage_m": round(cage, 4), "uv": uv_info,
-                 "collapse": before, "final": after}
-        log(f"LOD{i} 贴图：减面后 UV 拉伸 {before['stretched_ratio']:.1%} > {stretch_limit:.0%}，重展 UV 烘焙 {tsize}² → "
-            f"拉伸 {after['stretched_ratio']:.1%}，色差 {before['smeared_ratio']:.1%} → {after['smeared_ratio']:.1%}")
-    else:
-        log(f"LOD{i} 贴图：沿用供应方 UV（UV 拉伸 {before['stretched_ratio']:.1%}，色差 {before['smeared_ratio']:.1%}）")
-    RESULT["lod_textures"][f"LOD{i}"] = entry
-
 # ── 5. export ──
 bpy.data.objects.remove(src)
 for img in list(bpy.data.images):
-    if img not in (img_bc, img_n, img_orm, *lod_images):
+    if img not in (img_bc, img_n, img_orm):
         bpy.data.images.remove(img)  # provider originals and the AO scratch image
 lod_metrics = []
 for i, lod in enumerate(lods):

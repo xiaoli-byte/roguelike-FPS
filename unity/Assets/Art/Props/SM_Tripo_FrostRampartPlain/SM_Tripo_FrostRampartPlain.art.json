@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_FrostRampartPlain",
   "kind": "static",
   "class": "tripo_architecture",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    24,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2500,
-      800
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -4.324970245361328,
@@ -50,26 +44,6 @@
       "lod": 0,
       "tris": 8000,
       "verts": 5906,
-      "materials": [
-        "M_Tripo_FrostRampartPlain"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostRampartPlain_LOD1",
-      "lod": 1,
-      "tris": 2500,
-      "verts": 2470,
-      "materials": [
-        "M_Tripo_FrostRampartPlain"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostRampartPlain_LOD2",
-      "lod": 2,
-      "tris": 800,
-      "verts": 957,
       "materials": [
         "M_Tripo_FrostRampartPlain"
       ],
@@ -106,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_FrostRampartPlain.glb",
-    "sha256": "25fd236d8379014effbabcc506d0c9bb7f4f163e07757e9f56aba6ae96f78232",
+    "sha256": "ddf99a462db9575d7e980b06c6b3cbcace4b2ae849eb9ad07a54e14b979ca832",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -121,5 +95,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:20:40"
+  "exported": "2026-10-25 12:02:28"
 }

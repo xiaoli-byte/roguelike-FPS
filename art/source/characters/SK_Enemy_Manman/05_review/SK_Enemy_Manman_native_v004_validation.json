@@ -1,0 +1,209 @@
+{
+  "asset": "SK_Enemy_Manman",
+  "version": 4,
+  "glb": "art/source/characters/SK_Enemy_Manman/04_export/SK_Enemy_Manman_native_v004.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.2,
+      "自定义骨架：17 根骨骼（热扩散权重，10153 个顶点未覆盖）": 0.2,
+      "贴图（BC + AO/ORM）": 5.5,
+      "LOD0 6897 面（不减面）与蒙皮上限": 0.1,
+      "导出 407 KB": 0.7
+    },
+    "source": {
+      "verts": 10153,
+      "tris": 6897,
+      "scale": 0.9004396678065462
+    },
+    "regions": {
+      "heat_unweighted_verts": 10153,
+      "weights": "segments",
+      "ground_verts": 375,
+      "head_verts": 1322,
+      "fallback_verts": 0,
+      "per_bone": {
+        "hips": 132,
+        "chest": 10,
+        "neck": 150,
+        "head": 2445,
+        "wing_1_L": 1032,
+        "wing_2_L": 329,
+        "wing_3_L": 397,
+        "thigh_L": 343,
+        "shin_L": 177,
+        "foot_L": 228,
+        "thigh_R": 335,
+        "shin_R": 166,
+        "foot_R": 215,
+        "tail_1": 249,
+        "tail_2": 164
+      }
+    },
+    "bones": [
+      "chest",
+      "eye",
+      "foot_L",
+      "foot_R",
+      "head",
+      "hips",
+      "neck",
+      "root",
+      "shin_L",
+      "shin_R",
+      "tail_1",
+      "tail_2",
+      "thigh_L",
+      "thigh_R",
+      "wing_1_L",
+      "wing_2_L",
+      "wing_3_L"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.957,
+      "shade_mean": 0.96
+    },
+    "textures": {
+      "size": 1024,
+      "ao_mean": 0.848,
+      "provider_pbr": [],
+      "roughness_mean": 0.75,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Enemy_Manman_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Enemy_Manman_LOD0",
+        "tris": 6897,
+        "uv_min": [
+          0.00146484375,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.9951171875,
+          0.99853515625
+        ]
+      }
+    ],
+    "glb_kb": 407,
+    "_seconds": 8.1
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "407 KB / 1600 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Enemy_Manman_LOD0']"
+    ],
+    [
+      "note",
+      "LOD0 tris",
+      "6897 (class reference 6000)"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "0.900 m (design 0.9 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Enemy_Manman']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Manman_ORM",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Manman_BC",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "17 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Manman_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Manman_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Manman_LOD0 UV range",
+      "[0.001, 0.001]..[0.995, 0.999]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "10153 verts"
+    ],
+    [
+      "pass",
+      "region ground",
+      "375 verts"
+    ],
+    [
+      "pass",
+      "region head",
+      "1322 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "0 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

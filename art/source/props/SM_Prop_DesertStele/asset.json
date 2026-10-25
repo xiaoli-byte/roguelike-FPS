@@ -197,7 +197,7 @@
       ]
     },
     "build": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -252,11 +252,61 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:51:20",
+          "files": {
+            "SM_Prop_DesertStele_v002.blend": {
+              "path": "03_work/SM_Prop_DesertStele_v002.blend",
+              "sha256": "185a972cf83ff6118833cde258148f13e7c620c1fed89f32b10ec527a4ae7974"
+            },
+            "SM_Prop_DesertStele_v002.glb": {
+              "path": "04_export/SM_Prop_DesertStele_v002.glb",
+              "sha256": "065fb62cb6dda957d28451f663fc6bbe3d1aa0d4688753b6320772485c87af82"
+            },
+            "SM_Prop_DesertStele_v002_metrics.json": {
+              "path": "03_work/SM_Prop_DesertStele_v002_metrics.json",
+              "sha256": "59c9c250be04c0904b895e3a7d21086858e514ed1c5b4d451c6e48380e9a2364"
+            },
+            "T_Prop_DesertStele_BC.png": {
+              "path": "03_work/textures_v002/T_Prop_DesertStele_BC.png",
+              "sha256": "6ab6259ee3316498970127856aa55c9d6441dd208baeb87890515e3cf92b42d0"
+            },
+            "T_Prop_DesertStele_N.png": {
+              "path": "03_work/textures_v002/T_Prop_DesertStele_N.png",
+              "sha256": "fd70e224479e6f0099eddede68679dc6ff34711b4defa1ac3246da8719d158d8"
+            },
+            "T_Prop_DesertStele_ORM.png": {
+              "path": "03_work/textures_v002/T_Prop_DesertStele_ORM.png",
+              "sha256": "d19e2667836fac61d1170b8af5c80afa612c9bbec5bd3fae76a4afebc4c004a7"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.909,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 3150,
+              "verts": 1582
+            }
+          ],
+          "export_kb": 178.7,
+          "seconds": 9.0,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -272,11 +322,26 @@
           "warnings": 0,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:51:20",
+          "files": {
+            "SM_Prop_DesertStele_v002_validation_v002.json": {
+              "path": "05_review/SM_Prop_DesertStele_v002_validation_v002.json",
+              "sha256": "ba04cca5eb1b85a39850b91dbdbbd2b700951c4218e9de1d366ca87ff7b040a4"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -296,11 +361,30 @@
             "note": "成品审核通过（Tripo P2.0 + 纹理）：四视图与概念一致，LOD 远看轮廓不塌、无斜条纹",
             "time": "2026-10-20 21:51:37"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:51:25",
+          "files": {
+            "SM_Prop_DesertStele_v002_review_v002.png": {
+              "path": "05_review/SM_Prop_DesertStele_v002_review_v002.png",
+              "sha256": "7a9ea8a628c628f6e48c9e8fc71af708f7da2f8003f47477c768682d7926d868"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（2026-10-25 不减面重建，用户授权免审）",
+            "note": "",
+            "time": "2026-10-25 11:58:29"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -312,6 +396,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/props/SM_Prop_DesertStele.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:58:29",
+          "files": {
+            "SM_Prop_DesertStele.glb": {
+              "path": "@root/public/assets/props/SM_Prop_DesertStele.glb",
+              "sha256": "065fb62cb6dda957d28451f663fc6bbe3d1aa0d4688753b6320772485c87af82"
+            }
+          },
+          "from_build": 2,
           "url": "assets/props/SM_Prop_DesertStele.glb"
         }
       ]

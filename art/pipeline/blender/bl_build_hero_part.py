@@ -3,7 +3,7 @@
 The part has no blockout in the game, so it is fitted to a design size instead of a bounds reference:
   1. import the provider FBX, apply transforms (front = -Y, Z up), origin at the bounding-box centre, uniform scale so the
      largest dimension equals P["size"] metres;
-  2. LOD chain by collapse decimation (UVs follow the surface), node names <asset>_LOD<n>;
+  2. one LOD, the provider mesh as it is (no decimation), node name <asset>_LOD0;
   3. the provider base colour is resized to the class texture size; flat roughness, no metal;
   4. GLB export (Draco + WebP) + metrics JSON.
 """
@@ -67,25 +67,10 @@ for l in list(bsdf.inputs["Normal"].links):
 for i in range(len(mesh.data.materials) - 1, 0, -1):
     mesh.data.materials.pop(index=i)
 
-lods = [mesh]
+lods = [mesh]  # one LOD, the source mesh as it is: no decimation (2026-10-25)
 src_tris = sum(len(p.vertices) - 2 for p in mesh.data.polygons)
-for i, budget in enumerate(P["lod_tris"]):
-    o = mesh if i == 0 else mesh.copy()
-    if i:
-        o.data = mesh.data.copy()
-        bpy.context.scene.collection.objects.link(o)
-        o.name = f"{name}_LOD{i}"
-        lods.append(o)
-    tris = sum(len(p.vertices) - 2 for p in o.data.polygons)
-    if tris > budget:
-        d = o.modifiers.new("dec", "DECIMATE")
-        d.ratio = budget / tris * 0.98
-        bpy.ops.object.select_all(action="DESELECT")
-        o.select_set(True)
-        bpy.context.view_layer.objects.active = o
-        bpy.ops.object.modifier_apply(modifier="dec")
-    o["lod"] = i
-    o["lod_distance"] = P["lod_distance"][i]
+mesh["lod"] = 0
+mesh["lod_distance"] = P["lod_distance"][0]
 lod_tris = [sum(len(p.vertices) - 2 for p in o.data.polygons) for o in lods]
 log(f"LOD {lod_tris}（源 {src_tris}）")
 

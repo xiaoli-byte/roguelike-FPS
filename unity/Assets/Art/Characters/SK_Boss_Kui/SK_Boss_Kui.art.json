@@ -11,16 +11,9 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    25,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      30000,
-      12000,
-      5000
-    ],
     "texture": 4096,
     "maxFileKb": 6000
   },
@@ -29,11 +22,11 @@
     "min": [
       -1.6047877073287964,
       0,
-      -1.1391597986221313
+      -1.138739824295044
     ],
     "max": [
       1.6047877073287964,
-      6.000210285186768,
+      6,
       1.138739824295044
     ]
   },
@@ -69,28 +62,8 @@
     {
       "name": "SK_Boss_Kui_LOD0",
       "lod": 0,
-      "tris": 29549,
-      "verts": 38221,
-      "materials": [
-        "M_Boss_Kui"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Boss_Kui_LOD1",
-      "lod": 1,
-      "tris": 11819,
-      "verts": 19503,
-      "materials": [
-        "M_Boss_Kui"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Boss_Kui_LOD2",
-      "lod": 2,
-      "tris": 4925,
-      "verts": 10151,
+      "tris": 32675,
+      "verts": 41111,
       "materials": [
         "M_Boss_Kui"
       ],
@@ -126,10 +99,10 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Boss_Kui@hi.glb",
-    "sha256": "599bfa7d25de7a527e2e467a7e948bea77b954f4681689d430f299e6d9b1ebc2",
+    "sha256": "43e9a2cd679300e23a257510b136100c1e06917c25d0f700d9eee2efb8e4e41e",
     "hiRes": true,
     "version": {
-      "native_build": 4
+      "native_build": 5
     },
     "generator": {
       "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
@@ -138,5 +111,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-24 20:50:00"
+  "exported": "2026-10-25 12:18:39"
 }

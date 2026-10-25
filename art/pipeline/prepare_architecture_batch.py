@@ -56,7 +56,7 @@ def check_spec(asset_id: str) -> dict:
     dimensions = DIMENSION_OVERRIDES.get(asset_id, DIMENSIONS[role])
     if list(spec.raw["reference_dimensions"]) != dimensions:
         raise PipelineError(f"{asset_id}: unexpected width/height/depth reference")
-    if (spec.cls != "nature_prop" or spec.lod_tris != [5000, 1600, 500]
+    if (spec.cls != "nature_prop" or spec.lod_tris != [5000]
             or spec.texture != 1024 or spec.max_file_kb != 900):
         raise PipelineError(f"{asset_id}: preserve the existing nature_prop LOD/texture/file budget")
     if spec.raw.get("highpoly_mode") != "multiview":

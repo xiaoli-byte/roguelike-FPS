@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Enemy_Grunt",
   "kind": "skeletal",
   "class": "enemy_standard",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    14,
-    30
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      3500,
-      1500
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.5830768346786499,
@@ -68,26 +62,6 @@
         "M_Enemy_Grunt"
       ],
       "skinned": true
-    },
-    {
-      "name": "SK_Enemy_Grunt_LOD1",
-      "lod": 1,
-      "tris": 3500,
-      "verts": 2760,
-      "materials": [
-        "M_Enemy_Grunt"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Enemy_Grunt_LOD2",
-      "lod": 2,
-      "tris": 1499,
-      "verts": 1446,
-      "materials": [
-        "M_Enemy_Grunt"
-      ],
-      "skinned": true
     }
   ],
   "materials": [
@@ -120,7 +94,7 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Enemy_Grunt.glb",
-    "sha256": "f9c89257e00992346f71d6994b25d60ec57364df7d83c1d388627c5dea8ddaa0",
+    "sha256": "3167bb4a80da658a7a66220ddd8632006586b78f984c81628f144c591b204772",
     "hiRes": false,
     "version": {
       "blockout": 3,
@@ -135,5 +109,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-17 11:18:13"
+  "exported": "2026-10-25 11:52:19"
 }

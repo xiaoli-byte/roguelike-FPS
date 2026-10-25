@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2927824299718434207}
   - component: {fileID: 2136043741450902572}
   - component: {fileID: 1486687712102315062}
+  - component: {fileID: 5600779421666361719}
   m_Layer: 0
   m_Name: SM_Tripo_FrostRampartEndR_LOD0
   m_TagString: Untagged
@@ -90,104 +91,13 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &5439607419697333555
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8547880318803577786}
-  - component: {fileID: 2448491307005139663}
-  - component: {fileID: 767142925830660184}
-  - component: {fileID: 4995806991297407930}
-  m_Layer: 0
-  m_Name: SM_Tripo_FrostRampartEndR_LOD2
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 86
-  m_IsActive: 1
---- !u!4 &8547880318803577786
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5439607419697333555}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.000000053385076, y: 0.7071068, z: -0.70710677, w: -0.00000005338508}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 3855301777996764446}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &2448491307005139663
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5439607419697333555}
-  m_Mesh: {fileID: -5189999580746348602, guid: 6ba2546b008313d48b7bd8ff7dcfc627, type: 3}
---- !u!23 &767142925830660184
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5439607419697333555}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 8879fec18ca42b14e9dba7fd99ba1615, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &4995806991297407930
+--- !u!64 &5600779421666361719
 MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5439607419697333555}
+  m_GameObject: {fileID: 703729401926711256}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -202,97 +112,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: -5189999580746348602, guid: 6ba2546b008313d48b7bd8ff7dcfc627, type: 3}
---- !u!1 &5789155498362392986
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 9217846614229675815}
-  - component: {fileID: 2503637694344224763}
-  - component: {fileID: 4912938428812580749}
-  m_Layer: 0
-  m_Name: SM_Tripo_FrostRampartEndR_LOD1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 86
-  m_IsActive: 1
---- !u!4 &9217846614229675815
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5789155498362392986}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.000000053385076, y: 0.7071068, z: -0.70710677, w: -0.00000005338508}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 3855301777996764446}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &2503637694344224763
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5789155498362392986}
-  m_Mesh: {fileID: 6438183973652290663, guid: 6ba2546b008313d48b7bd8ff7dcfc627, type: 3}
---- !u!23 &4912938428812580749
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5789155498362392986}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 8879fec18ca42b14e9dba7fd99ba1615, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
+  m_Mesh: {fileID: -148862197227906114, guid: 6ba2546b008313d48b7bd8ff7dcfc627, type: 3}
 --- !u!1 &8915012603116959306
 GameObject:
   m_ObjectHideFlags: 0
@@ -302,7 +122,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 329039115682848186}
-  - component: {fileID: 3394005769665139980}
   - component: {fileID: 7587810396831678468}
   m_Layer: 0
   m_Name: SM_Tripo_FrostRampartEndR
@@ -327,34 +146,6 @@ Transform:
   - {fileID: 3855301777996764446}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!205 &3394005769665139980
-LODGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8915012603116959306}
-  serializedVersion: 3
-  m_LocalReferencePoint: {x: -3.3622377, y: 4.3888574, z: -0.019294858}
-  m_Size: 8.760646
-  m_FadeMode: 1
-  m_AnimateCrossFading: 1
-  m_LastLODIsBillboard: 0
-  m_LODs:
-  - screenRelativeHeight: 0.26051497
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 1486687712102315062}
-  - screenRelativeHeight: 0.104205996
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 4912938428812580749}
-  - screenRelativeHeight: 0.017367665
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 767142925830660184}
-  m_Enabled: 1
-  m_GlobalIlluminationLOD: 0
 --- !u!114 &7587810396831678468
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -376,14 +167,12 @@ MonoBehaviour:
   bindAttachment: 
   lodDistance:
   - 0
-  - 24
-  - 60
   moveSpeed: 0
   designBounds:
     m_Center: {x: -3.3637733, y: 4.3864837, z: -0.019554973}
     m_Extent: {x: 0.5137733, y: 4.377949, z: 1.2717874}
   sourceGlb: public/assets/props/SM_Tripo_FrostRampartEndR.glb
-  sourceSha256: f1bd2f4f50179c972e7ba256409cdfdbab8a0e612a20a88ffdc29042ee8c334c
+  sourceSha256: 1c487b7c408beaba0075653f2ec2356e9448c9501dc68b9520f3b6b9bf989bdc
   license: "Tencent Hunyuan 3D 2.0 Community License\uFF1A\u4E0D\u5F97\u5728\u6B27\u76DF
     / \u82F1\u56FD / \u97E9\u56FD\u5883\u5185\u4F7F\u7528\u6216\u5206\u53D1"
 --- !u!1 &9124449476977924249
@@ -416,7 +205,5 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2927824299718434207}
-  - {fileID: 9217846614229675815}
-  - {fileID: 8547880318803577786}
   m_Father: {fileID: 329039115682848186}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

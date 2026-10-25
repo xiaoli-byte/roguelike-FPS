@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Env_CargoHoist",
   "kind": "static",
   "class": "nature_prop",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    18,
-    42
+    0
   ],
   "budget": {
-    "lodTris": [
-      5000,
-      1600,
-      500
-    ],
     "texture": 1024,
     "maxFileKb": 900
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -1.8063292503356934,
@@ -50,26 +44,6 @@
       "lod": 0,
       "tris": 5000,
       "verts": 3302,
-      "materials": [
-        "M_Env_CargoHoist"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Env_CargoHoist_LOD1",
-      "lod": 1,
-      "tris": 1600,
-      "verts": 1317,
-      "materials": [
-        "M_Env_CargoHoist"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Env_CargoHoist_LOD2",
-      "lod": 2,
-      "tris": 500,
-      "verts": 589,
       "materials": [
         "M_Env_CargoHoist"
       ],
@@ -106,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Env_CargoHoist.glb",
-    "sha256": "5da09bcfda9847d4ec5d2ff16960bb7a886d7ce167fb1c88d79346702bae3326",
+    "sha256": "ed54743ea58972f8a6204622853e241de1066e78469c2f17cd2c6b8c00fd0f06",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -121,5 +95,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:19:49"
+  "exported": "2026-10-25 11:55:54"
 }

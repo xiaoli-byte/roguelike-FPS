@@ -197,7 +197,7 @@
       ]
     },
     "build": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -280,11 +280,61 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:54:43",
+          "files": {
+            "SM_Tripo_DesertYardangSphinx_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertYardangSphinx_v002.blend",
+              "sha256": "7fbfafa8665d350ca7a3edefd72b0c6383d314b166366167c5255facbb43efbc"
+            },
+            "SM_Tripo_DesertYardangSphinx_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertYardangSphinx_v002.glb",
+              "sha256": "2009db82896fede29b6a0d66ab896d87075d53dfaf802a895677e3a8148bb4dd"
+            },
+            "SM_Tripo_DesertYardangSphinx_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertYardangSphinx_v002_metrics.json",
+              "sha256": "15aeae33518dc497d1e01c5d5fc2db2c213c7cb24c5756b9a20509170086a094"
+            },
+            "T_Tripo_DesertYardangSphinx_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertYardangSphinx_BC.png",
+              "sha256": "27015b39f3dc5310bceb74962095b59c6a08c2fcea4a3a377694cf778bf4ea64"
+            },
+            "T_Tripo_DesertYardangSphinx_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertYardangSphinx_N.png",
+              "sha256": "dea5a927af6580f43e7703b6307fb34792d81e6b2a95325fddc525ad25afe04f"
+            },
+            "T_Tripo_DesertYardangSphinx_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertYardangSphinx_ORM.png",
+              "sha256": "530f884ca9325d96c3c53e12c3c9313524c217b8d8417813953bd89f4a705615"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.895,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 8378,
+              "verts": 4214
+            }
+          ],
+          "export_kb": 364.1,
+          "seconds": 27.1,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -300,11 +350,26 @@
           "warnings": 0,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:54:43",
+          "files": {
+            "SM_Tripo_DesertYardangSphinx_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertYardangSphinx_v002_validation_v002.json",
+              "sha256": "27c1ecb2705659b59d899b7d961e00a64ecb54a8a8e343d16bc14f8596218458"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -324,11 +389,30 @@
             "note": "成品通过：狮脸 + 前爪 + 平背 + 后臀，层理水平；网格量得头部在正面（高度后→前 6.8→13 m）；长度 17.5 m（参考 26 m）",
             "time": "2026-10-20 21:53:44"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:54:49",
+          "files": {
+            "SM_Tripo_DesertYardangSphinx_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_DesertYardangSphinx_v002_review_v002.png",
+              "sha256": "adc9a190237742dd3b09e18481f83c342d83c7114d92ffe86234df0e1d3d4937"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（2026-10-25 不减面重建，用户授权免审）",
+            "note": "",
+            "time": "2026-10-25 11:58:39"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -340,6 +424,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertYardangSphinx.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:58:40",
+          "files": {
+            "SM_Tripo_DesertYardangSphinx.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertYardangSphinx.glb",
+              "sha256": "2009db82896fede29b6a0d66ab896d87075d53dfaf802a895677e3a8148bb4dd"
+            }
+          },
+          "from_build": 2,
           "url": "assets/props/SM_Tripo_DesertYardangSphinx.glb"
         }
       ]

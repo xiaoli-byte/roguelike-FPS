@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_FrostCornerTower",
   "kind": "static",
   "class": "tripo_architecture",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    24,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2500,
-      800
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -3.344289779663086,
@@ -50,26 +44,6 @@
       "lod": 0,
       "tris": 8000,
       "verts": 5162,
-      "materials": [
-        "M_Tripo_FrostCornerTower"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostCornerTower_LOD1",
-      "lod": 1,
-      "tris": 2500,
-      "verts": 2095,
-      "materials": [
-        "M_Tripo_FrostCornerTower"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostCornerTower_LOD2",
-      "lod": 2,
-      "tris": 800,
-      "verts": 888,
       "materials": [
         "M_Tripo_FrostCornerTower"
       ],
@@ -106,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_FrostCornerTower.glb",
-    "sha256": "51f980525588a095314616d4c721156249698feb9f7259ad53c787927501b547",
+    "sha256": "184e0e8be065c8c65388880c2947198c5891b61fc2874c6073dc4ea510b9b081",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -121,5 +95,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:21:47"
+  "exported": "2026-10-25 12:00:51"
 }

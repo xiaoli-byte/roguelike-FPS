@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3361119480224964883}
   - component: {fileID: 8432454584851492932}
   - component: {fileID: 1463183389248701161}
+  - component: {fileID: 7272393358565840817}
   m_Layer: 0
   m_Name: SM_Prop_AmmoCrate_LOD0
   m_TagString: Untagged
@@ -90,104 +91,13 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &607479866814553889
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 264203895587557917}
-  - component: {fileID: 7624400994302676353}
-  - component: {fileID: 3195202950573612554}
-  - component: {fileID: 425064201508422491}
-  m_Layer: 0
-  m_Name: SM_Prop_AmmoCrate_LOD1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 86
-  m_IsActive: 1
---- !u!4 &264203895587557917
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 607479866814553889}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.000000053385076, y: 0.7071068, z: -0.70710677, w: -0.00000005338508}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 9000549086940512629}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &7624400994302676353
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 607479866814553889}
-  m_Mesh: {fileID: 4294905058367418142, guid: 99ae1a5b57cf7354fb79fa91193999a6, type: 3}
---- !u!23 &3195202950573612554
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 607479866814553889}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 0b11371c19e27294194f76a20be3d9b5, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &425064201508422491
+--- !u!64 &7272393358565840817
 MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 607479866814553889}
+  m_GameObject: {fileID: 513704485740017688}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -202,7 +112,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 4294905058367418142, guid: 99ae1a5b57cf7354fb79fa91193999a6, type: 3}
+  m_Mesh: {fileID: -4943686358383409312, guid: 99ae1a5b57cf7354fb79fa91193999a6, type: 3}
 --- !u!1 &4949180219216370161
 GameObject:
   m_ObjectHideFlags: 0
@@ -212,7 +122,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6952291495336413895}
-  - component: {fileID: 452021164718256242}
   - component: {fileID: 376233853516496352}
   m_Layer: 0
   m_Name: SM_Prop_AmmoCrate
@@ -237,30 +146,6 @@ Transform:
   - {fileID: 9000549086940512629}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!205 &452021164718256242
-LODGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4949180219216370161}
-  serializedVersion: 3
-  m_LocalReferencePoint: {x: 0, y: 0.32508248, z: 0.00051629543}
-  m_Size: 0.96626747
-  m_FadeMode: 1
-  m_AnimateCrossFading: 1
-  m_LastLODIsBillboard: 0
-  m_LODs:
-  - screenRelativeHeight: 0.03449932
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 1463183389248701161}
-  - screenRelativeHeight: 0.005749887
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 3195202950573612554}
-  m_Enabled: 1
-  m_GlobalIlluminationLOD: 0
 --- !u!114 &376233853516496352
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -282,13 +167,12 @@ MonoBehaviour:
   bindAttachment: 
   lodDistance:
   - 0
-  - 20
   moveSpeed: 0
   designBounds:
     m_Center: {x: 0, y: 0.325, z: 0}
     m_Extent: {x: 0.4831337, y: 0.325, z: 0.24994563}
   sourceGlb: public/assets/props/SM_Prop_AmmoCrate.glb
-  sourceSha256: e337e219c2cba5ce28445c6338845d523815e06bc31dea66df5efd095833c261
+  sourceSha256: 6ff00ab0bc5b8b8e8bbfae2bb208ee517a063bbac4c049927028aa7b4c7beea5
   license: Tripo Studio paid-plan output (commercial use per Tripo terms)
 --- !u!1 &7929133490604696501
 GameObject:
@@ -320,6 +204,5 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3361119480224964883}
-  - {fileID: 264203895587557917}
   m_Father: {fileID: 6952291495336413895}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

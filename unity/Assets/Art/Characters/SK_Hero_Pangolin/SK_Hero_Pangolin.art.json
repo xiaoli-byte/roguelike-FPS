@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Hero_Pangolin",
   "kind": "skeletal",
   "class": "hero_display",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    10,
-    24
+    0
   ],
   "budget": {
-    "lodTris": [
-      16000,
-      6000,
-      2400
-    ],
     "texture": 2048,
     "maxFileKb": 3200
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.6187490820884705,
@@ -191,26 +185,6 @@
         "M_Hero_Pangolin"
       ],
       "skinned": true
-    },
-    {
-      "name": "SK_Hero_Pangolin_LOD1",
-      "lod": 1,
-      "tris": 5909,
-      "verts": 10900,
-      "materials": [
-        "M_Hero_Pangolin"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Hero_Pangolin_LOD2",
-      "lod": 2,
-      "tris": 2361,
-      "verts": 5275,
-      "materials": [
-        "M_Hero_Pangolin"
-      ],
-      "skinned": true
     }
   ],
   "materials": [
@@ -243,7 +217,7 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Hero_Pangolin.glb",
-    "sha256": "492d74ed80c05feb7cf4e7d897e2de0785b9884b4f5a1483eecf543ae04f173f",
+    "sha256": "dbe6163bf2a619a0d3e97677e38cdb34136b52a99fbb29e46a99759b23dc8023",
     "hiRes": false,
     "version": {
       "native_build": 3
@@ -255,5 +229,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-17 11:20:26"
+  "exported": "2026-10-25 11:53:40"
 }

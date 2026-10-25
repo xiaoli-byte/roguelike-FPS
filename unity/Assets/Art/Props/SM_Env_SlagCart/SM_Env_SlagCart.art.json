@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Env_SlagCart",
   "kind": "static",
   "class": "nature_prop",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    18,
-    42
+    0
   ],
   "budget": {
-    "lodTris": [
-      5000,
-      1600,
-      500
-    ],
     "texture": 1024,
     "maxFileKb": 900
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -1.2462295293807983,
@@ -50,26 +44,6 @@
       "lod": 0,
       "tris": 5000,
       "verts": 3480,
-      "materials": [
-        "M_Env_SlagCart"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Env_SlagCart_LOD1",
-      "lod": 1,
-      "tris": 1600,
-      "verts": 1473,
-      "materials": [
-        "M_Env_SlagCart"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Env_SlagCart_LOD2",
-      "lod": 2,
-      "tris": 500,
-      "verts": 670,
       "materials": [
         "M_Env_SlagCart"
       ],
@@ -106,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Env_SlagCart.glb",
-    "sha256": "72ee5f23fdc085fac363e84012dc533b5aa16adbc95cd8d63133e18b0e670df4",
+    "sha256": "280df7cafe5bc4e9bce08d30c05c657543a4a1c947d73aa8698290c157e6594e",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -121,5 +95,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:19:54"
+  "exported": "2026-10-25 11:56:45"
 }

@@ -99,7 +99,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1776778150145593632}
-  - component: {fileID: 4638322005538401565}
   - component: {fileID: 6782197910404349026}
   m_Layer: 0
   m_Name: SM_EnemyPart_LianguCore
@@ -124,30 +123,6 @@ Transform:
   - {fileID: 4223688059655113204}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!205 &4638322005538401565
-LODGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4018462675354700157}
-  serializedVersion: 3
-  m_LocalReferencePoint: {x: 0.00025491416, y: -0.0002577603, z: -0.00038945675}
-  m_Size: 0.9007968
-  m_FadeMode: 1
-  m_AnimateCrossFading: 1
-  m_LastLODIsBillboard: 0
-  m_LODs:
-  - screenRelativeHeight: 0.025708001
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 55981702831776252}
-  - screenRelativeHeight: 0.010283201
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 8639275599541374503}
-  m_Enabled: 1
-  m_GlobalIlluminationLOD: 0
 --- !u!114 &6782197910404349026
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -169,13 +144,12 @@ MonoBehaviour:
   bindAttachment: core
   lodDistance:
   - 0
-  - 25
   moveSpeed: 0
   designBounds:
-    m_Center: {x: -0.00004003942, y: -0.0000018328428, z: 0}
-    m_Extent: {x: 0.31174165, y: 0.4500234, z: 0.2987543}
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0.31194434, y: 0.45, z: 0.2987543}
   sourceGlb: public/assets/attachments/SM_EnemyPart_LianguCore.glb
-  sourceSha256: 6cffbe1979ab310ff5acfbefc533b63e6bbb6322a8462ca453d9273aa51c9346
+  sourceSha256: 1d447503e719ac3b8bd5c27433750a5e3fa141dfe6fa00da7d8e04aa61eacf24
   license: Tripo Studio paid-plan output (commercial use per Tripo terms)
 --- !u!1 &7777015173772844285
 GameObject:
@@ -207,96 +181,5 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2704641929473535533}
-  - {fileID: 3612167598609830579}
   m_Father: {fileID: 1776778150145593632}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &8039960095645874807
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3612167598609830579}
-  - component: {fileID: 745693082041426646}
-  - component: {fileID: 8639275599541374503}
-  m_Layer: 0
-  m_Name: SM_EnemyPart_LianguCore_LOD1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3612167598609830579
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8039960095645874807}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.000000053385076, y: 0.7071068, z: -0.70710677, w: -0.00000005338508}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 4223688059655113204}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &745693082041426646
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8039960095645874807}
-  m_Mesh: {fileID: -1016542419233970192, guid: 66faba80abc3787459d088c904854d61, type: 3}
---- !u!23 &8639275599541374503
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8039960095645874807}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: d1d387c65550e7049a58cdee9ff77cb1, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}

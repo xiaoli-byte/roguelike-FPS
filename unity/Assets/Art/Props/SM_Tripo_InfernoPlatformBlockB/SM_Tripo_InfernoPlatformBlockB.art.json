@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_InfernoPlatformBlockB",
   "kind": "static",
   "class": "tripo_prop",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -1.4334596395492554,
@@ -48,16 +44,6 @@
       "lod": 0,
       "tris": 3000,
       "verts": 2759,
-      "materials": [
-        "M_Tripo_InfernoPlatformBlockB"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_InfernoPlatformBlockB_LOD1",
-      "lod": 1,
-      "tris": 1000,
-      "verts": 1220,
       "materials": [
         "M_Tripo_InfernoPlatformBlockB"
       ],
@@ -94,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_InfernoPlatformBlockB.glb",
-    "sha256": "662770a63d98f2e83501ed3171716a81d18269dd18edf6864d9a1112f5c8de7f",
+    "sha256": "f83be986097345cd516d04e1956669346f42ec50ca5e8d3b0629214a2b801fa2",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -109,5 +95,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:24:06"
+  "exported": "2026-10-25 12:04:35"
 }

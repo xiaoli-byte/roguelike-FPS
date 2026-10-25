@@ -31,101 +31,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4395793568027660828}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1188081523473877221
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 9063980117375943742}
-  - component: {fileID: 4332619704515732331}
-  m_Layer: 0
-  m_Name: SK_Weapon_Launcher_LOD1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &9063980117375943742
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1188081523473877221}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.000000053385076, y: 0.7071068, z: -0.70710677, w: -0.00000005338508}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1310209757568975708}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!137 &4332619704515732331
-SkinnedMeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1188081523473877221}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 3
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 122d58fd1fed1754494eb89961b0a63a, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  serializedVersion: 2
-  m_Quality: 0
-  m_UpdateWhenOffscreen: 0
-  m_SkinnedMotionVectors: 1
-  m_Mesh: {fileID: -4857148485305092991, guid: 858581518fde6634f8e3de224ee4c2b6, type: 3}
-  m_Bones:
-  - {fileID: 4395793568027660828}
-  - {fileID: 4855840905229074257}
-  - {fileID: 1237936658690861654}
-  m_BlendShapeWeights: []
-  m_RootBone: {fileID: 4395793568027660828}
-  m_AABB:
-    m_Center: {x: 0.008891873, y: 0.027766753, z: 0.1002839}
-    m_Extent: {x: 0.08765923, y: 0.14817421, z: 0.33336142}
-  m_DirtyAABB: 0
 --- !u!1 &2939372346559352072
 GameObject:
   m_ObjectHideFlags: 0
@@ -157,7 +62,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4932618857382054051}
-  - {fileID: 9063980117375943742}
   - {fileID: 7925362878931333795}
   m_Father: {fileID: 7432498602171286266}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -255,7 +159,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7432498602171286266}
-  - component: {fileID: 1433446120394207394}
   - component: {fileID: 1295942271117822582}
   m_Layer: 0
   m_Name: SK_Weapon_Launcher
@@ -280,30 +183,6 @@ Transform:
   - {fileID: 1310209757568975708}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!205 &1433446120394207394
-LODGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6911200133979472554}
-  serializedVersion: 3
-  m_LocalReferencePoint: {x: -0.008799553, y: 0.027862672, z: -0.10027546}
-  m_Size: 0.6671238
-  m_FadeMode: 1
-  m_AnimateCrossFading: 1
-  m_LastLODIsBillboard: 0
-  m_LODs:
-  - screenRelativeHeight: 0.07939596
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 4737154358852481099}
-  - screenRelativeHeight: 0.031758383
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 4332619704515732331}
-  m_Enabled: 1
-  m_GlobalIlluminationLOD: 0
 --- !u!114 &1295942271117822582
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -325,13 +204,12 @@ MonoBehaviour:
   bindAttachment: 
   lodDistance:
   - 0
-  - 6
   moveSpeed: 0
   designBounds:
     m_Center: {x: -0.008768678, y: 0.027864754, z: -0.10027548}
     m_Extent: {x: 0.0877207, y: 0.1483672, z: 0.3335619}
   sourceGlb: public/assets/weapons/SK_Weapon_Launcher.glb
-  sourceSha256: edcc977853f59c72a8e6e37378b99a73d2b753145763e80e7005edfe33dba0da
+  sourceSha256: 9bed5fbe9c71558932549d04be8fdb1e3c8630b934e79c5feb4a45db668abb5b
   license: "Hunyuan3D 2.1 \u751F\u6210\uFF1ATencent Hunyuan 3D Community License\uFF0C\u4E0D\u5F97\u5728\u6B27\u76DF
     / \u82F1\u56FD / \u97E9\u56FD\u4F7F\u7528\u6216\u5206\u53D1"
 --- !u!1 &7042172792478454047

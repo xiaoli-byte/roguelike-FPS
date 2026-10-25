@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_FrostSeaPearlHoard",
   "kind": "static",
   "class": "tripo_prop",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.9142370223999023,
@@ -48,16 +44,6 @@
       "lod": 0,
       "tris": 2998,
       "verts": 2688,
-      "materials": [
-        "M_Tripo_FrostSeaPearlHoard"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostSeaPearlHoard_LOD1",
-      "lod": 1,
-      "tris": 1000,
-      "verts": 1352,
       "materials": [
         "M_Tripo_FrostSeaPearlHoard"
       ],
@@ -94,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_FrostSeaPearlHoard.glb",
-    "sha256": "ad15722df22c1f90916bad22fe65d90a05a428c8d7ef941afa393ffd835e4bb5",
+    "sha256": "a91447a2b3e89202b031ccedd97bd891037c67a8dd6264ac2181d6a510d01c77",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -109,5 +95,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:22:36"
+  "exported": "2026-10-25 12:03:03"
 }

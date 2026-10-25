@@ -11,21 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      1500,
-      500
-    ],
     "texture": 1024,
     "maxFileKb": 900
   },
-  "qaWaivers": {
-    "LOD1 贴图色差": "植物的 LOD1 是按更少的叶卡重新摆放的（bl_proc_desert.py），不是 LOD0 的减面，逐点对比 LOD0 的贴图不适用",
-    "LOD1 贴图拉伸": "同上：LOD1 叶卡与 LOD0 位置不同，拉伸量比较不适用；叶卡 UV 与 LOD0 用同一张图集"
-  },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.6786825656890869,
@@ -52,16 +44,6 @@
       "lod": 0,
       "tris": 1459,
       "verts": 3057,
-      "materials": [
-        "M_Tripo_DesertCamelthorn"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertCamelthorn_LOD1",
-      "lod": 1,
-      "tris": 443,
-      "verts": 981,
       "materials": [
         "M_Tripo_DesertCamelthorn"
       ],
@@ -98,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_DesertCamelthorn.glb",
-    "sha256": "a270718386643aff4f6886eb71e10f034ec5360812c10fc560471c33d7ecff89",
+    "sha256": "ed44a6aa3dcf27cf58e9798062022d64193f7178b1d321ea7067d77771e5a35c",
     "hiRes": false,
     "version": {
       "blockout": 10,
@@ -113,5 +95,5 @@
     },
     "license": "project-original procedural model (art/pipeline/blender/bl_proc_desert.py)"
   },
-  "exported": "2026-10-20 23:23:58"
+  "exported": "2026-10-25 11:58:24"
 }

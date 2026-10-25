@@ -11,16 +11,9 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    24,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2500,
-      800
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
@@ -55,26 +48,6 @@
         "M_Tripo_FrostPlankRoadNiche"
       ],
       "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostPlankRoadNiche_LOD1",
-      "lod": 1,
-      "tris": 2485,
-      "verts": 4375,
-      "materials": [
-        "M_Tripo_FrostPlankRoadNiche"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostPlankRoadNiche_LOD2",
-      "lod": 2,
-      "tris": 792,
-      "verts": 765,
-      "materials": [
-        "M_Tripo_FrostPlankRoadNiche_LOD2"
-      ],
-      "skinned": false
     }
   ],
   "materials": [
@@ -103,37 +76,11 @@
         "N": "Textures/T_Tripo_FrostPlankRoadNiche_N.png",
         "ORM": "Textures/T_Tripo_FrostPlankRoadNiche_ORM.png"
       }
-    },
-    {
-      "name": "M_Tripo_FrostPlankRoadNiche_LOD2",
-      "baseColor": [
-        1,
-        1,
-        1,
-        1
-      ],
-      "metallic": 1.0,
-      "roughness": 1.0,
-      "emissive": [
-        0,
-        0,
-        0
-      ],
-      "doubleSided": true,
-      "alphaMode": "OPAQUE",
-      "alphaCutoff": 0.5,
-      "hasOcclusion": true,
-      "occlusionSeparate": false,
-      "textures": {
-        "BC": "Textures/T_Tripo_FrostPlankRoadNiche_LOD2_BC.png",
-        "N": "Textures/T_Tripo_FrostPlankRoadNiche_LOD2_N.png",
-        "ORM": "Textures/T_Tripo_FrostPlankRoadNiche_LOD2_ORM.png"
-      }
     }
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_FrostPlankRoadNiche.glb",
-    "sha256": "f880edec8041e03df94e353cd4cceaffb3a71f024c1028a578df9a09ae261d90",
+    "sha256": "634fbf6da5c61ebcd4f0c96ebd42c8376e4fdba6cb748a0897d5e02a00e0c381",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -148,5 +95,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-22 22:12:44"
+  "exported": "2026-10-25 12:01:47"
 }

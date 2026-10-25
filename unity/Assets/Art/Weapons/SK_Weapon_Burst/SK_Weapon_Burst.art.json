@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Weapon_Burst",
   "kind": "skeletal",
   "class": "weapon_fp",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    6
+    0
   ],
   "budget": {
-    "lodTris": [
-      12000,
-      3000
-    ],
     "texture": 2048,
     "maxFileKb": 3000
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.034849151968955994,
@@ -53,16 +49,6 @@
       "lod": 0,
       "tris": 11996,
       "verts": 7903,
-      "materials": [
-        "M_Weapon_Burst"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Weapon_Burst_LOD1",
-      "lod": 1,
-      "tris": 2996,
-      "verts": 2487,
       "materials": [
         "M_Weapon_Burst"
       ],
@@ -100,7 +86,7 @@
   ],
   "source": {
     "glb": "public/assets/weapons/SK_Weapon_Burst.glb",
-    "sha256": "ac9f53ad697dc52ebcd39fecb76bdedab51177ab3bbd94d1e9ee7bce95500ea3",
+    "sha256": "04c70bed3f79f0f7cb23fb77793eeb83f139bd5e5830eb366d20f789e655b815",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -111,5 +97,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-17 11:19:00"
+  "exported": "2026-10-25 11:53:49"
 }

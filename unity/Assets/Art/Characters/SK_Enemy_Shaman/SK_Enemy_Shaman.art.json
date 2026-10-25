@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Enemy_Shaman",
   "kind": "skeletal",
   "class": "enemy_standard",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    14,
-    30
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      3500,
-      1500
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.6112481951713562,
@@ -68,26 +62,6 @@
         "M_Enemy_Shaman"
       ],
       "skinned": true
-    },
-    {
-      "name": "SK_Enemy_Shaman_LOD1",
-      "lod": 1,
-      "tris": 3500,
-      "verts": 2506,
-      "materials": [
-        "M_Enemy_Shaman"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Enemy_Shaman_LOD2",
-      "lod": 2,
-      "tris": 1500,
-      "verts": 1315,
-      "materials": [
-        "M_Enemy_Shaman"
-      ],
-      "skinned": true
     }
   ],
   "materials": [
@@ -120,7 +94,7 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Enemy_Shaman.glb",
-    "sha256": "2d860919d5caa2ae1ef58768926a6dd252acc4b0abe3354adfc208661b8c1590",
+    "sha256": "c7d10920138cfccb2a66bf63b9e82c9fdda0d54ce5d768c99073db2f2ca84d89",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -131,5 +105,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-17 11:18:21"
+  "exported": "2026-10-25 11:53:08"
 }

@@ -14,7 +14,7 @@ namespace Spiritfire.Art.Editor
     /// </summary>
     public sealed class ArtImportPostprocessor : AssetPostprocessor
     {
-        public const int Version = 4;
+        public const int Version = 5;
         public override uint GetVersion() => Version;
 
         // 灵宠模型（Assets/Art/Pets）不走 sidecar，导入设置由 PetArtImport 管
@@ -101,6 +101,9 @@ namespace Spiritfire.Art.Editor
                     break;
                 default:
                     mi.animationType = ModelImporterAnimationType.None;
+                    // 2026-10-25 起只有一级 LOD：静态件的 FBX 只剩一个顶层网格，不保留层级时 Unity 把它并进模型根节点，
+                    // <ID>_LOD0 这个渲染器名字就没了（sidecar 对不上材质、QA 报缺网格）
+                    mi.preserveHierarchy = true;
                     break;
             }
         }

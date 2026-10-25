@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_DesertPlatformBlock",
   "kind": "static",
   "class": "tripo_prop",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -2.240000009536743,
@@ -48,16 +44,6 @@
       "lod": 0,
       "tris": 2775,
       "verts": 2418,
-      "materials": [
-        "M_Tripo_DesertPlatformBlock"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertPlatformBlock_LOD1",
-      "lod": 1,
-      "tris": 995,
-      "verts": 1070,
       "materials": [
         "M_Tripo_DesertPlatformBlock"
       ],
@@ -94,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_DesertPlatformBlock.glb",
-    "sha256": "4c89cc33bbe2b5595e169c29d1aaeda1d7945c774f788d72f0056f82f2e08aa8",
+    "sha256": "b0d791c248214990fc9c8a3db6f4221b90b8fb6b14b4cf900a8b3c4b0d56dab2",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -109,5 +95,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-17 00:30:15"
+  "exported": "2026-10-25 11:59:27"
 }

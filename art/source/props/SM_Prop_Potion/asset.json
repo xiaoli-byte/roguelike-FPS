@@ -197,7 +197,7 @@
       ]
     },
     "build": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -264,11 +264,61 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:47:55",
+          "files": {
+            "SM_Prop_Potion_v002.blend": {
+              "path": "03_work/SM_Prop_Potion_v002.blend",
+              "sha256": "fc546ee5c60f5030eaee1f90e76b366386ecd31db5dc91069229f2825d4fc1cc"
+            },
+            "SM_Prop_Potion_v002.glb": {
+              "path": "04_export/SM_Prop_Potion_v002.glb",
+              "sha256": "4ba876a90126ec41a25aa44f70f10ae20d73f663ad4c6d62528d18874e652740"
+            },
+            "SM_Prop_Potion_v002_metrics.json": {
+              "path": "03_work/SM_Prop_Potion_v002_metrics.json",
+              "sha256": "07639bcae958c4855eb8c5b4b29f99650f21862e96b71fb541af31033d75deb1"
+            },
+            "T_Prop_Potion_BC.png": {
+              "path": "03_work/textures_v002/T_Prop_Potion_BC.png",
+              "sha256": "3a2b899d26c269115b20aca71a6cfcdd00b171e0c90633050a49576e25d0ca73"
+            },
+            "T_Prop_Potion_N.png": {
+              "path": "03_work/textures_v002/T_Prop_Potion_N.png",
+              "sha256": "f47fc5b539cc2ae5caa5703cc17cb9f6cc61a828675d728d82e94789e0b1cbc8"
+            },
+            "T_Prop_Potion_ORM.png": {
+              "path": "03_work/textures_v002/T_Prop_Potion_ORM.png",
+              "sha256": "fb630cad3959fdd9ebe5a11c248d49d772cb29bba648b02a32fe66453693af20"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.876,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 3258,
+              "verts": 1696
+            }
+          ],
+          "export_kb": 171.9,
+          "seconds": 11.5,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -284,11 +334,26 @@
           "warnings": 0,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:48:02",
+          "files": {
+            "SM_Prop_Potion_v002_validation_v002.json": {
+              "path": "05_review/SM_Prop_Potion_v002_validation_v002.json",
+              "sha256": "e5b2150acaca24c5f3bd05e0e25b735096f359981eaf7e25c93fa48c0c2170c2"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -308,11 +373,30 @@
             "note": "2026-10-22 ART7：审核图四视图与概念一致（用户 2026-10-19 授权免审）",
             "time": "2026-10-22 22:11:13"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:48:10",
+          "files": {
+            "SM_Prop_Potion_v002_review_v002.png": {
+              "path": "05_review/SM_Prop_Potion_v002_review_v002.png",
+              "sha256": "a09674190c42affd7f0a48be6452c661f373570e0fd58c064cf3c67a44ea8c26"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（2026-10-25 不减面重建，用户授权免审）",
+            "note": "",
+            "time": "2026-10-25 11:48:24"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -324,6 +408,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/props/SM_Prop_Potion.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:48:25",
+          "files": {
+            "SM_Prop_Potion.glb": {
+              "path": "@root/public/assets/props/SM_Prop_Potion.glb",
+              "sha256": "4ba876a90126ec41a25aa44f70f10ae20d73f663ad4c6d62528d18874e652740"
+            }
+          },
+          "from_build": 2,
           "url": "assets/props/SM_Prop_Potion.glb"
         }
       ]

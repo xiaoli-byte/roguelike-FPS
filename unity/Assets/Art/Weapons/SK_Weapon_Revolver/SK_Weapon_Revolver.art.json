@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Weapon_Revolver",
   "kind": "skeletal",
   "class": "weapon_fp",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    6
+    0
   ],
   "budget": {
-    "lodTris": [
-      12000,
-      3000
-    ],
     "texture": 2048,
     "maxFileKb": 3000
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.030940935015678406,
@@ -52,16 +48,6 @@
       "lod": 0,
       "tris": 11996,
       "verts": 8134,
-      "materials": [
-        "M_Weapon_Revolver"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Weapon_Revolver_LOD1",
-      "lod": 1,
-      "tris": 2996,
-      "verts": 2635,
       "materials": [
         "M_Weapon_Revolver"
       ],
@@ -99,7 +85,7 @@
   ],
   "source": {
     "glb": "public/assets/weapons/SK_Weapon_Revolver.glb",
-    "sha256": "c6b409ee0486856c929bad790197eff4b65842d7eb48cbe352f8f62b55d336f0",
+    "sha256": "c13d3ef952eb510eb47f34791e74994a6b7e0c33be4e80b1de98a9ca2cd694a5",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -110,5 +96,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-17 00:29:44"
+  "exported": "2026-10-25 11:54:19"
 }

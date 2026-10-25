@@ -1,14 +1,13 @@
 """Split a published wall section into a modular kit (run by derive_wall_kit.py inside Blender).
 
 Each piece is the source cut by up to two planes x = lo / x = hi (Blender world metres, after the node
-transforms), on every LOD, with the cut capped so the shell is closed: neighbouring pieces then meet face
+transforms), one LOD (no decimation), with the cut capped so the shell is closed: neighbouring pieces then meet face
 to face and nothing can be seen through a joint. Cap faces take the UVs of the cut edge they close, so
 they carry the surrounding sandstone colour. Material and textures are the source's own.
 
 Params (JSON file passed after --): {"source": glb, "pieces": [{"id", "lo", "hi", "out"}], "image_format", "draco", "result_path"}
 """
 import json
-import math
 import sys
 
 import bmesh
@@ -93,37 +92,9 @@ for ob in lods:
     ob.matrix_world.identity()
     ob.parent = None
 
-def decimated(source: bpy.types.Mesh, ratio: float, name: str) -> bpy.types.Object:
-    """A lower LOD from the cut LOD0: weld first, then collapse with UV islands kept.
-
-    Tripo meshes are split into UV islands. Decimating them unwelded (as the build's LODs were) simplifies
-    each island's border on its own and opens hairline cracks between blocks that show the sky; welding
-    first keeps the surface continuous, and the UV delimit keeps island borders (texture seams) in place.
-    """
-    mesh = source.copy()
-    bm = bmesh.new()
-    bm.from_mesh(mesh)
-    bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-4)
-    bm.to_mesh(mesh)
-    bm.free()
-    ob = bpy.data.objects.new(name, mesh)
-    bpy.context.scene.collection.objects.link(ob)
-    mod = ob.modifiers.new("decimate", "DECIMATE")
-    mod.decimate_type, mod.ratio, mod.use_collapse_triangulate, mod.delimit = "COLLAPSE", ratio, True, {"UV"}
-    with bpy.context.temp_override(object=ob, active_object=ob, selected_objects=[ob], selected_editable_objects=[ob]):
-        bpy.ops.object.modifier_apply(modifier=mod.name)
-        if mesh.has_custom_normals:
-            bpy.ops.mesh.customdata_custom_splitnormals_clear()
-        bpy.ops.object.shade_smooth_by_angle(angle=math.radians(35))
-    return ob
-
-
-# The build's LOD ratios (triangles relative to LOD0), kept for the kit's own LODs.
-lod_ratio = [1.0] + [len(ob.data.polygons) / max(1, len(lods[0].data.polygons)) for ob in lods[1:]]
-
 for piece in P["pieces"]:
     made = []
-    # LOD0 is cut from the source's LOD0 (Tripo's own surface, crack-free); lower LODs are re-derived from it.
+    # One LOD, cut from the source's LOD0 (Tripo's own surface, crack-free); no decimation (2026-10-25).
     mesh = lods[0].data.copy()
     bm = bmesh.new()
     bm.from_mesh(mesh)
@@ -139,8 +110,6 @@ for piece in P["pieces"]:
     lod0 = bpy.data.objects.new(f"{piece['id']}_LOD0", mesh)
     bpy.context.scene.collection.objects.link(lod0)
     made.append(lod0)
-    for n, ratio in enumerate(lod_ratio[1:], start=1):
-        made.append(decimated(mesh, ratio, f"{piece['id']}_LOD{n}"))
     for n, ob in enumerate(made):
         RESULT["pieces"].append({"id": piece["id"], "lod": n, "tris": len(ob.data.polygons), "caps": caps if n == 0 else None})
     bpy.ops.object.select_all(action="DESELECT")

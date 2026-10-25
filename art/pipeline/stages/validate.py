@@ -58,8 +58,9 @@ def run(spec: AssetSpec, a) -> None:
     for i, name in enumerate(lod_nodes):
         n = nodes[name]
         tris = g.mesh_tris(n["mesh"])
+        # 不减面（2026-10-25）：面数是来源网格自己的，只记录不设闸门；lod_tris[0] 只是参考
         budget = spec.lod_tris[i] if i < len(spec.lod_tris) else 0
-        ok(f"LOD{i} 面数", tris <= budget * 1.02, f"{tris} / 预算 {budget}")
+        checks.append(("note", f"LOD{i} 面数", f"{tris}（参考 {budget}）"))
         if i > 0:
             prev = g.mesh_tris(nodes[lod_nodes[i - 1]]["mesh"])
             ok(f"LOD{i} 递减", tris < prev, f"{prev} → {tris}", "warn")
@@ -211,7 +212,7 @@ def run(spec: AssetSpec, a) -> None:
     errors = [c for c in checks if c[0] == "error"]
     waived = [c for c in checks if c[0] == "waived"]
     warns = [c for c in checks if c[0] == "warn"]
-    icon = {"pass": "✔", "warn": "⚠", "error": "✘", "waived": "◇"}
+    icon = {"pass": "✔", "warn": "⚠", "error": "✘", "waived": "◇", "note": "·"}
     for lvl, name, detail in checks:
         print(f"  {icon[lvl]} {name:22} {detail}")
     # Bounds-only generation retries keep every QA verdict and its original file hash.

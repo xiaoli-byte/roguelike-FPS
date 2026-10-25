@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_FrostSeaPlatformBlock",
   "kind": "static",
   "class": "tripo_prop",
@@ -11,16 +11,14 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
+  },
+  "qaWaivers": {
+    "场景脚底落地": "单视图高模减到 LOD0 后最低点离地 2.9 cm；台基四面落在台面石板下，看不出悬空（2026-10-11）"
   },
   "bounds": {
     "min": [
@@ -48,16 +46,6 @@
       "lod": 0,
       "tris": 2995,
       "verts": 4346,
-      "materials": [
-        "M_Tripo_FrostSeaPlatformBlock"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostSeaPlatformBlock_LOD1",
-      "lod": 1,
-      "tris": 1000,
-      "verts": 1972,
       "materials": [
         "M_Tripo_FrostSeaPlatformBlock"
       ],
@@ -94,7 +82,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_FrostSeaPlatformBlock.glb",
-    "sha256": "2f4b28c65a240a0c58e81d04e5e196efede3a78039977254fd354bc4358da4dc",
+    "sha256": "7838623d4a36737a76e65ce4c0c44bcbeeea99fff85f170fcac47a18290b5614",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -109,5 +97,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:22:41"
+  "exported": "2026-10-25 12:03:06"
 }

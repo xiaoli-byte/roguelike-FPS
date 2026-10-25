@@ -12,14 +12,9 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    14
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
@@ -27,7 +22,7 @@
   "bounds": {
     "min": [
       -0.14159747958183289,
-      0.00010395403660368174,
+      0,
       -0.12601369619369507
     ],
     "max": [
@@ -48,20 +43,10 @@
     {
       "name": "SM_EnemyPart_LianguMallet_LOD0",
       "lod": 0,
-      "tris": 2984,
-      "verts": 2114,
+      "tris": 3250,
+      "verts": 2261,
       "materials": [
         "M_EnemyPart_LianguMallet"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_EnemyPart_LianguMallet_LOD1",
-      "lod": 1,
-      "tris": 994,
-      "verts": 868,
-      "materials": [
-        "M_EnemyPart_LianguMallet_LOD1"
       ],
       "skinned": false
     }
@@ -92,43 +77,17 @@
         "N": "Textures/T_EnemyPart_LianguMallet_N.png",
         "ORM": "Textures/T_EnemyPart_LianguMallet_ORM.png"
       }
-    },
-    {
-      "name": "M_EnemyPart_LianguMallet_LOD1",
-      "baseColor": [
-        1,
-        1,
-        1,
-        1
-      ],
-      "metallic": 1.0,
-      "roughness": 1.0,
-      "emissive": [
-        0,
-        0,
-        0
-      ],
-      "doubleSided": true,
-      "alphaMode": "OPAQUE",
-      "alphaCutoff": 0.5,
-      "hasOcclusion": true,
-      "occlusionSeparate": false,
-      "textures": {
-        "BC": "Textures/T_EnemyPart_LianguMallet_LOD1_BC.png",
-        "N": "Textures/T_EnemyPart_LianguMallet_LOD1_N.png",
-        "ORM": "Textures/T_EnemyPart_LianguMallet_LOD1_ORM.png"
-      }
     }
   ],
   "source": {
     "glb": "public/assets/attachments/SM_EnemyPart_LianguMallet.glb",
-    "sha256": "0ceef298872fb4adffb5e35c8ad6587423b743f8bea28dc8334e318532079b14",
+    "sha256": "5961bdcb8a16becac4bc32c3e32e88a59b5c79a18e24a9431819c1d72e54fb08",
     "hiRes": false,
     "version": {
       "blockout": 1,
       "concept": 1,
       "highpoly": 1,
-      "build": 1
+      "build": 2
     },
     "generator": {
       "tool": "Tripo Studio",
@@ -137,5 +96,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-19 20:07:50"
+  "exported": "2026-10-25 12:17:46"
 }

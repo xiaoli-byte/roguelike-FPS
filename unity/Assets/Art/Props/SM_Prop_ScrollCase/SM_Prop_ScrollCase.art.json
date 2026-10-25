@@ -11,14 +11,9 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
@@ -47,20 +42,10 @@
     {
       "name": "SM_Prop_ScrollCase_LOD0",
       "lod": 0,
-      "tris": 2985,
-      "verts": 2335,
+      "tris": 3076,
+      "verts": 2398,
       "materials": [
         "M_Prop_ScrollCase"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Prop_ScrollCase_LOD1",
-      "lod": 1,
-      "tris": 994,
-      "verts": 759,
-      "materials": [
-        "M_Prop_ScrollCase_LOD1"
       ],
       "skinned": false
     }
@@ -91,43 +76,17 @@
         "N": "Textures/T_Prop_ScrollCase_N.png",
         "ORM": "Textures/T_Prop_ScrollCase_ORM.png"
       }
-    },
-    {
-      "name": "M_Prop_ScrollCase_LOD1",
-      "baseColor": [
-        1,
-        1,
-        1,
-        1
-      ],
-      "metallic": 1.0,
-      "roughness": 1.0,
-      "emissive": [
-        0,
-        0,
-        0
-      ],
-      "doubleSided": true,
-      "alphaMode": "OPAQUE",
-      "alphaCutoff": 0.5,
-      "hasOcclusion": true,
-      "occlusionSeparate": false,
-      "textures": {
-        "BC": "Textures/T_Prop_ScrollCase_LOD1_BC.png",
-        "N": "Textures/T_Prop_ScrollCase_LOD1_N.png",
-        "ORM": "Textures/T_Prop_ScrollCase_LOD1_ORM.png"
-      }
     }
   ],
   "source": {
     "glb": "public/assets/props/SM_Prop_ScrollCase.glb",
-    "sha256": "f3923e503c2b51ee7e613e28f85d50cf6954fa8037ff1c214cf22898f76ae1bf",
+    "sha256": "3b7761d8319f94114794db826e6312e83e5877e2b99c19fbe164335ff9698842",
     "hiRes": false,
     "version": {
       "blockout": 1,
       "concept": 1,
       "highpoly": 1,
-      "build": 1
+      "build": 2
     },
     "generator": {
       "tool": "Tripo Studio",
@@ -136,5 +95,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-22 22:13:27"
+  "exported": "2026-10-25 12:17:56"
 }

@@ -197,7 +197,7 @@
       ]
     },
     "build": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -252,11 +252,61 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:52:20",
+          "files": {
+            "SM_Tripo_DesertFinial_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertFinial_v002.blend",
+              "sha256": "bb82494a60cbf06030cb7175375c26c7740f2c26222804e71d2cf66f9ccd6837"
+            },
+            "SM_Tripo_DesertFinial_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertFinial_v002.glb",
+              "sha256": "e379cd862890512bff923aa242fcdf5c23860b217c8ecafba7ff99e8b1388664"
+            },
+            "SM_Tripo_DesertFinial_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertFinial_v002_metrics.json",
+              "sha256": "4915ee927ccfee8e18007782aca6d54acbeacde2246a19ba89400673a7a32c84"
+            },
+            "T_Tripo_DesertFinial_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertFinial_BC.png",
+              "sha256": "32a1a22d2a33bc2edad3981ca5633236d9994121bbc1d4368376b9bbc237c754"
+            },
+            "T_Tripo_DesertFinial_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertFinial_N.png",
+              "sha256": "ca78f78b9a30d3a441746cfa1c1d4782efbca7e2bb0f7dedc5676700930744fd"
+            },
+            "T_Tripo_DesertFinial_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertFinial_ORM.png",
+              "sha256": "3e05b3b0cfc67b8b9fcf206627146f0c4b0b76c4835c71c7fc9e907af0ec2e46"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.915,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 3036,
+              "verts": 1621
+            }
+          ],
+          "export_kb": 234.6,
+          "seconds": 9.2,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -272,11 +322,26 @@
           "warnings": 0,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:52:20",
+          "files": {
+            "SM_Tripo_DesertFinial_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertFinial_v002_validation_v002.json",
+              "sha256": "8bace8371ccc58880b99379599bf8bc0185571e19381c59902dbad7b97eb048e"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -296,11 +361,30 @@
             "note": "成品审核通过（Tripo P2.0 + 纹理）：四视图与概念一致，LOD 远看轮廓不塌、无斜条纹",
             "time": "2026-10-20 21:51:35"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:52:25",
+          "files": {
+            "SM_Tripo_DesertFinial_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_DesertFinial_v002_review_v002.png",
+              "sha256": "893905eef65a1ecb871da7ee2bc889e64005bcefca7755ad245510523154760b"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（2026-10-25 不减面重建，用户授权免审）",
+            "note": "",
+            "time": "2026-10-25 11:58:33"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -312,6 +396,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertFinial.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:58:33",
+          "files": {
+            "SM_Tripo_DesertFinial.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertFinial.glb",
+              "sha256": "e379cd862890512bff923aa242fcdf5c23860b217c8ecafba7ff99e8b1388664"
+            }
+          },
+          "from_build": 2,
           "url": "assets/props/SM_Tripo_DesertFinial.glb"
         }
       ]

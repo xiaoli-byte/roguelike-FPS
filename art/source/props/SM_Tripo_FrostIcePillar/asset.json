@@ -197,7 +197,7 @@
       ]
     },
     "build": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -264,11 +264,61 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:56:06",
+          "files": {
+            "SM_Tripo_FrostIcePillar_v002.blend": {
+              "path": "03_work/SM_Tripo_FrostIcePillar_v002.blend",
+              "sha256": "f0ff1bc6aac497c96c5044a646e280b9f2464c44b16025b2bee0fde3157546d0"
+            },
+            "SM_Tripo_FrostIcePillar_v002.glb": {
+              "path": "04_export/SM_Tripo_FrostIcePillar_v002.glb",
+              "sha256": "68804e15738eb54db7f7c458e7cc995277f7e10514962b4199efbef1e73d9f5b"
+            },
+            "SM_Tripo_FrostIcePillar_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostIcePillar_v002_metrics.json",
+              "sha256": "2c2e442a9cbe40e2cc5a9ec2cbe3bc8b0a93f1017cb02f1a15832c5b1c9e1dd1"
+            },
+            "T_Tripo_FrostIcePillar_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostIcePillar_BC.png",
+              "sha256": "9628b37092f6dd5abd4bb960981359be9503ab1969214999e204931ae9f9efce"
+            },
+            "T_Tripo_FrostIcePillar_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostIcePillar_N.png",
+              "sha256": "1601a9fe9a63e71cade95b9d99aa9a2d81cfa8ed0b66ee97678dfa144276e9cf"
+            },
+            "T_Tripo_FrostIcePillar_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostIcePillar_ORM.png",
+              "sha256": "68a986d1038ff3c3a80002e39dc3317faf7e3d5d1f869eac9d4c27cce013e51d"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.848,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 3209,
+              "verts": 1634
+            }
+          ],
+          "export_kb": 118.3,
+          "seconds": 8.9,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -284,11 +334,26 @@
           "warnings": 0,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:56:07",
+          "files": {
+            "SM_Tripo_FrostIcePillar_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_FrostIcePillar_v002_validation_v002.json",
+              "sha256": "b7020083dad5accfab3b07845f465e0936dade0fa119fe057afab8afc063ac80"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -308,11 +373,30 @@
             "note": "2026-10-22 ART5：审核图四视图与概念一致（用户 2026-10-19 授权免审）",
             "time": "2026-10-22 22:10:51"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:56:11",
+          "files": {
+            "SM_Tripo_FrostIcePillar_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_FrostIcePillar_v002_review_v002.png",
+              "sha256": "2e7597444ea31cdb639af0be500bdaebacf63e8fcb649d1e5b06e2bd341c422b"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（2026-10-25 不减面重建，用户授权免审）",
+            "note": "",
+            "time": "2026-10-25 11:58:42"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -324,6 +408,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/props/SM_Tripo_FrostIcePillar.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:58:42",
+          "files": {
+            "SM_Tripo_FrostIcePillar.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostIcePillar.glb",
+              "sha256": "68804e15738eb54db7f7c458e7cc995277f7e10514962b4199efbef1e73d9f5b"
+            }
+          },
+          "from_build": 2,
           "url": "assets/props/SM_Tripo_FrostIcePillar.glb"
         }
       ]

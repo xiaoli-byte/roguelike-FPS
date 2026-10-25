@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Enemy_Wisp",
   "kind": "skeletal",
   "class": "enemy_standard",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    14,
-    30
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      3500,
-      1500
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.32382118701934814,
@@ -60,26 +54,6 @@
         "M_Enemy_Wisp"
       ],
       "skinned": true
-    },
-    {
-      "name": "SK_Enemy_Wisp_LOD1",
-      "lod": 1,
-      "tris": 3496,
-      "verts": 2678,
-      "materials": [
-        "M_Enemy_Wisp"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Enemy_Wisp_LOD2",
-      "lod": 2,
-      "tris": 1495,
-      "verts": 1376,
-      "materials": [
-        "M_Enemy_Wisp"
-      ],
-      "skinned": true
     }
   ],
   "materials": [
@@ -112,7 +86,7 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Enemy_Wisp.glb",
-    "sha256": "4ef5673f479a147e37707bfe8a93bfb688a3546a9c0e75a62a92bb5d2ecd254e",
+    "sha256": "99154b1425cdf94e3638efd6fbd0119c34d99fea2ed5920daac84491138f3da8",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -123,5 +97,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-17 11:18:47"
+  "exported": "2026-10-25 11:53:29"
 }

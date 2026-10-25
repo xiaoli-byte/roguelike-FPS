@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_FrostIceLantern",
   "kind": "static",
   "class": "tripo_prop",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.4644368588924408,
@@ -48,16 +44,6 @@
       "lod": 0,
       "tris": 3000,
       "verts": 2119,
-      "materials": [
-        "M_Tripo_FrostIceLantern"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostIceLantern_LOD1",
-      "lod": 1,
-      "tris": 1000,
-      "verts": 953,
       "materials": [
         "M_Tripo_FrostIceLantern"
       ],
@@ -94,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_FrostIceLantern.glb",
-    "sha256": "397a7f1eb5242325575b31c88c5de4f84e3cd350ae67a39d0bdafc5f8cbc7b44",
+    "sha256": "fea7320bd3cb7e4f211056265ceb5fc3814e3d5d878c3976a99034b5a08b3a92",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -109,5 +95,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:22:01"
+  "exported": "2026-10-25 12:01:04"
 }

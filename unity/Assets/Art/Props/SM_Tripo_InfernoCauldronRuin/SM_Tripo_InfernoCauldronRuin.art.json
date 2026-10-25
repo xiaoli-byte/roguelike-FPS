@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_InfernoCauldronRuin",
   "kind": "static",
   "class": "tripo_prop",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -1.5185251235961914,
@@ -48,16 +44,6 @@
       "lod": 0,
       "tris": 2998,
       "verts": 2691,
-      "materials": [
-        "M_Tripo_InfernoCauldronRuin"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_InfernoCauldronRuin_LOD1",
-      "lod": 1,
-      "tris": 999,
-      "verts": 1317,
       "materials": [
         "M_Tripo_InfernoCauldronRuin"
       ],
@@ -95,7 +81,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_InfernoCauldronRuin.glb",
-    "sha256": "c5c0e61df1e3c8999c21ec57b727806c9519084c5743ee5159897dd4b1f2c79c",
+    "sha256": "c06de9ae46558a4e1c088484aea0dfaaaefe1e11ad21411fe6819ec18a0c7de7",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -110,5 +96,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:23:26"
+  "exported": "2026-10-25 12:03:52"
 }

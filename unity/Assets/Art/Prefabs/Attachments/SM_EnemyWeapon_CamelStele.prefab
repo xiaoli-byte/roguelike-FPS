@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7853374826977770950}
-  - component: {fileID: 8413485859821183684}
   - component: {fileID: 1678111137637148946}
   m_Layer: 0
   m_Name: SM_EnemyWeapon_CamelStele
@@ -34,30 +33,6 @@ Transform:
   - {fileID: 2777628414211561001}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!205 &8413485859821183684
-LODGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 384061749530606214}
-  serializedVersion: 3
-  m_LocalReferencePoint: {x: -0.0020002425, y: 0, z: -0.02700901}
-  m_Size: 1.75
-  m_FadeMode: 1
-  m_AnimateCrossFading: 1
-  m_LastLODIsBillboard: 0
-  m_LODs:
-  - screenRelativeHeight: 0.08925925
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 4321321094776810147}
-  - screenRelativeHeight: 0.0357037
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 7971313538790442568}
-  m_Enabled: 1
-  m_GlobalIlluminationLOD: 0
 --- !u!114 &1678111137637148946
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -79,104 +54,13 @@ MonoBehaviour:
   bindAttachment: stele
   lodDistance:
   - 0
-  - 14
   moveSpeed: 0
   designBounds:
     m_Center: {x: 0, y: 0, z: -0.027008608}
     m_Extent: {x: 0.43130195, y: 0.875, z: 0.1504002}
   sourceGlb: public/assets/attachments/SM_EnemyWeapon_CamelStele.glb
-  sourceSha256: 181ad66bae9dd889e599027b7c6df63504d30194b8b2567f06087d49b955f209
+  sourceSha256: ab8b26ce000b9fd923ff77e27ace7f15eeab52ff3a45f3fa8eb9dc84f94e3cc2
   license: Tripo Studio paid-plan output (commercial use per Tripo terms)
---- !u!1 &978855673886740947
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6967311678309332041}
-  - component: {fileID: 4105676046469246937}
-  - component: {fileID: 7971313538790442568}
-  m_Layer: 0
-  m_Name: SM_EnemyWeapon_CamelStele_LOD1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &6967311678309332041
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 978855673886740947}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.000000053385076, y: 0.7071068, z: -0.70710677, w: -0.00000005338508}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2777628414211561001}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &4105676046469246937
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 978855673886740947}
-  m_Mesh: {fileID: -1610593232216396966, guid: 7a04088c8c8ede743932f69a584ed4b4, type: 3}
---- !u!23 &7971313538790442568
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 978855673886740947}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: b79b5d5c0e996744a9699d9d8334aa9a, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &3312521195216558272
 GameObject:
   m_ObjectHideFlags: 0
@@ -207,7 +91,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8823532909483331799}
-  - {fileID: 6967311678309332041}
   m_Father: {fileID: 7853374826977770950}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7856887491386381106

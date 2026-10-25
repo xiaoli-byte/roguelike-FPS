@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3455404862081656758}
   - component: {fileID: 3048577495335658319}
   - component: {fileID: 8665869693798492027}
+  - component: {fileID: 192389792559430536}
   m_Layer: 0
   m_Name: SM_Tripo_InfernoColumn_LOD0
   m_TagString: Untagged
@@ -90,6 +91,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &192389792559430536
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1712571814092431205}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 217677282696282190, guid: 654e4aa436496344bb8162a0dd612977, type: 3}
 --- !u!1 &2772593143195955721
 GameObject:
   m_ObjectHideFlags: 0
@@ -99,7 +122,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3522381636638311842}
-  - component: {fileID: 5833348490874185510}
   - component: {fileID: 7621352816142837262}
   m_Layer: 0
   m_Name: SM_Tripo_InfernoColumn
@@ -124,30 +146,6 @@ Transform:
   - {fileID: 3443266888614305436}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!205 &5833348490874185510
-LODGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2772593143195955721}
-  serializedVersion: 3
-  m_LocalReferencePoint: {x: -0.000017225742, y: 2.4659545, z: -0.03173828}
-  m_Size: 4.9334607
-  m_FadeMode: 1
-  m_AnimateCrossFading: 1
-  m_LastLODIsBillboard: 0
-  m_LODs:
-  - screenRelativeHeight: 0.1761428
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 8665869693798492027}
-  - screenRelativeHeight: 0.029357133
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 7681237965080433625}
-  m_Enabled: 1
-  m_GlobalIlluminationLOD: 0
 --- !u!114 &7621352816142837262
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -169,13 +167,12 @@ MonoBehaviour:
   bindAttachment: 
   lodDistance:
   - 0
-  - 20
   moveSpeed: 0
   designBounds:
     m_Center: {x: -0.000052779913, y: 2.4659545, z: -0.031713545}
     m_Extent: {x: 0.98443913, y: 2.4667304, z: 0.9029723}
   sourceGlb: public/assets/props/SM_Tripo_InfernoColumn.glb
-  sourceSha256: 9ed4cbc7cd3d7abefddb3c7c4cd2648ec416e642998acb9ef6e838a9fde575c8
+  sourceSha256: 86925fdd4907f0578df8045e7d9015346480608e99cbceb01c6975909254dcab
   license: "Tencent Hunyuan 3D 2.0 Community License\uFF1A\u4E0D\u5F97\u5728\u6B27\u76DF
     / \u82F1\u56FD / \u97E9\u56FD\u5883\u5185\u4F7F\u7528\u6216\u5206\u53D1"
 --- !u!1 &4838229024405109820
@@ -208,119 +205,5 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3455404862081656758}
-  - {fileID: 3535289347975619275}
   m_Father: {fileID: 3522381636638311842}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &9184858770159339993
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3535289347975619275}
-  - component: {fileID: 2458136457750937550}
-  - component: {fileID: 7681237965080433625}
-  - component: {fileID: 4430089103542623999}
-  m_Layer: 0
-  m_Name: SM_Tripo_InfernoColumn_LOD1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 86
-  m_IsActive: 1
---- !u!4 &3535289347975619275
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9184858770159339993}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.000000053385076, y: 0.7071068, z: -0.70710677, w: -0.00000005338508}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 3443266888614305436}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &2458136457750937550
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9184858770159339993}
-  m_Mesh: {fileID: 262176790888685108, guid: 654e4aa436496344bb8162a0dd612977, type: 3}
---- !u!23 &7681237965080433625
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9184858770159339993}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: d8f6eb81b3d9b5e4d9eca8268cb1aad8, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &4430089103542623999
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9184858770159339993}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 262176790888685108, guid: 654e4aa436496344bb8162a0dd612977, type: 3}

@@ -9,9 +9,8 @@ painted here in numpy, so no provider credits and no concept stage. Level code l
   SM_Decal_DesertCartRuts    8 m strip of two cart ruts (1.6 m gauge) with low sand berms, tiles along Z
   SM_Decal_DesertCrackedBed  8 x 8 m patch of curled dry-mud plates whose outline follows the cracks
 
-Material is alphaMode MASK (StylizedLit cut-out in Unity). The GLB is written directly (WebP textures). Two LODs:
-the subdivided grid and a 1 x 2 quad strip past LOD_DISTANCE (a single-mesh FBX collapses onto the prefab root in
-Unity and the LODGroup / QA then find no `_LOD0` renderer); the manifest entry carries generator.tool = "procedural" and the paint parameters. Deterministic: the
+Material is alphaMode MASK (StylizedLit cut-out in Unity). The GLB is written directly (WebP textures). One LOD, the
+subdivided grid (no far LOD since 2026-10-25; Unity keeps a static FBX's single `_LOD0` node via preserveHierarchy); the manifest entry carries generator.tool = "procedural" and the paint parameters. Deterministic: the
 same parameters give the same bytes. Then `unity_export.py <ID>` and `bridge.sh sync`.
 """
 from __future__ import annotations
@@ -33,7 +32,7 @@ if hasattr(sys.stdout, "reconfigure"):
 RUNTIME = ROOT / CFG.paths["runtime"] / "props"
 MANIFEST = ROOT / CFG.paths["manifest"]
 LIFT = 0.02  # metres above the origin, so the decal sits on flattened terrain without z-fighting
-LOD_DISTANCE = [0, 30]  # the flat far LOD only drops the grid's subdivisions
+LOD_DISTANCE = [0]
 
 
 def srgb(hex_: str) -> np.ndarray:
@@ -244,7 +243,7 @@ def write_glb(path, asset_id: str, cfg: dict, images: dict) -> None:
                                "TEXCOORD_0": add_acc(uv, 5126, "VEC2", 34962)},
                 "indices": add_acc(np.array(idx, np.uint16), 5123, "SCALAR", 34963), "material": 0}
 
-    prims = [grid(*cfg["grid"]), grid(1, 2)]
+    prims = [grid(*cfg["grid"])]
     imgs = []
     for role in ("BC", "N", "ORM"):
         imgs.append({"bufferView": add_view(images[role]), "mimeType": "image/webp", "name": f"T_{name}_{role}"})

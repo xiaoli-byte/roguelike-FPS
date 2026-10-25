@@ -11,16 +11,9 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    24,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2500,
-      800
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
@@ -55,26 +48,6 @@
         "M_Tripo_DesertYardangSmall"
       ],
       "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertYardangSmall_LOD1",
-      "lod": 1,
-      "tris": 2487,
-      "verts": 2584,
-      "materials": [
-        "M_Tripo_DesertYardangSmall_LOD1"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertYardangSmall_LOD2",
-      "lod": 2,
-      "tris": 796,
-      "verts": 612,
-      "materials": [
-        "M_Tripo_DesertYardangSmall_LOD2"
-      ],
-      "skinned": false
     }
   ],
   "materials": [
@@ -103,63 +76,11 @@
         "N": "Textures/T_Tripo_DesertYardangSmall_N.png",
         "ORM": "Textures/T_Tripo_DesertYardangSmall_ORM.png"
       }
-    },
-    {
-      "name": "M_Tripo_DesertYardangSmall_LOD1",
-      "baseColor": [
-        1,
-        1,
-        1,
-        1
-      ],
-      "metallic": 1.0,
-      "roughness": 1.0,
-      "emissive": [
-        0,
-        0,
-        0
-      ],
-      "doubleSided": true,
-      "alphaMode": "OPAQUE",
-      "alphaCutoff": 0.5,
-      "hasOcclusion": true,
-      "occlusionSeparate": false,
-      "textures": {
-        "BC": "Textures/T_Tripo_DesertYardangSmall_LOD1_BC.png",
-        "N": "Textures/T_Tripo_DesertYardangSmall_LOD1_N.png",
-        "ORM": "Textures/T_Tripo_DesertYardangSmall_LOD1_ORM.png"
-      }
-    },
-    {
-      "name": "M_Tripo_DesertYardangSmall_LOD2",
-      "baseColor": [
-        1,
-        1,
-        1,
-        1
-      ],
-      "metallic": 1.0,
-      "roughness": 1.0,
-      "emissive": [
-        0,
-        0,
-        0
-      ],
-      "doubleSided": true,
-      "alphaMode": "OPAQUE",
-      "alphaCutoff": 0.5,
-      "hasOcclusion": true,
-      "occlusionSeparate": false,
-      "textures": {
-        "BC": "Textures/T_Tripo_DesertYardangSmall_LOD2_BC.png",
-        "N": "Textures/T_Tripo_DesertYardangSmall_LOD2_N.png",
-        "ORM": "Textures/T_Tripo_DesertYardangSmall_LOD2_ORM.png"
-      }
     }
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_DesertYardangSmall.glb",
-    "sha256": "6c9c098cb8d9a073c9e96c1888b1d8693fc383540fb21930d56a916dd410aa13",
+    "sha256": "a87c008d8ea3406fd7b422af6314b01bfcc585409696313fc0e865879ac4a611",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -174,5 +95,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-20 21:54:28"
+  "exported": "2026-10-25 12:00:36"
 }

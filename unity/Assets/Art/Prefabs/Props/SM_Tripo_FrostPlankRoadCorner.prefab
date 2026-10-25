@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4573118947731975814}
   - component: {fileID: 7432183488209714011}
   - component: {fileID: 6405956487210126072}
+  - component: {fileID: 3527410017896571291}
   m_Layer: 0
   m_Name: SM_Tripo_FrostPlankRoadCorner_LOD0
   m_TagString: Untagged
@@ -90,6 +91,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &3527410017896571291
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5325139668926454898}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 2646772431810470397, guid: a831b8eda045136498911144ee80fef7, type: 3}
 --- !u!1 &5866132836102419148
 GameObject:
   m_ObjectHideFlags: 0
@@ -120,7 +143,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4573118947731975814}
-  - {fileID: 4727474330681527578}
   m_Father: {fileID: 3774339506495953791}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7198231030053929269
@@ -132,7 +154,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3774339506495953791}
-  - component: {fileID: 7188154373629429685}
   - component: {fileID: 4875255189405382698}
   m_Layer: 0
   m_Name: SM_Tripo_FrostPlankRoadCorner
@@ -157,30 +178,6 @@ Transform:
   - {fileID: 9051507174015974432}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!205 &7188154373629429685
-LODGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7198231030053929269}
-  serializedVersion: 3
-  m_LocalReferencePoint: {x: -0.099999905, y: 1.7449918, z: 0.040017366}
-  m_Size: 6.200001
-  m_FadeMode: 1
-  m_AnimateCrossFading: 1
-  m_LastLODIsBillboard: 0
-  m_LODs:
-  - screenRelativeHeight: 0.18446912
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 6405956487210126072}
-  - screenRelativeHeight: 0.030744852
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 311696720903022345}
-  m_Enabled: 1
-  m_GlobalIlluminationLOD: 0
 --- !u!114 &4875255189405382698
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -202,124 +199,10 @@ MonoBehaviour:
   bindAttachment: 
   lodDistance:
   - 0
-  - 24
   moveSpeed: 0
   designBounds:
     m_Center: {x: -0.100000024, y: 1.745, z: 0.03999996}
     m_Extent: {x: 3.1, y: 1.745, z: 3.04}
   sourceGlb: public/assets/props/SM_Tripo_FrostPlankRoadCorner.glb
-  sourceSha256: 716036e138dfe873a6973f8873f87876350ee2b451bf1b3d8c013035fc993bef
+  sourceSha256: 5fce7fdf7262e7f4fa0412fda705802c3c710a14ca8b738551f281e00d5c1055
   license: project-original procedural model (art/pipeline/blender/bl_proc_timber.py)
---- !u!1 &7419914866295235429
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4727474330681527578}
-  - component: {fileID: 7349402062246229037}
-  - component: {fileID: 311696720903022345}
-  - component: {fileID: 3489443521088860313}
-  m_Layer: 0
-  m_Name: SM_Tripo_FrostPlankRoadCorner_LOD1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 86
-  m_IsActive: 1
---- !u!4 &4727474330681527578
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7419914866295235429}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.000000053385076, y: 0.7071068, z: -0.70710677, w: -0.00000005338508}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 9051507174015974432}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &7349402062246229037
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7419914866295235429}
-  m_Mesh: {fileID: 5906935450422788195, guid: a831b8eda045136498911144ee80fef7, type: 3}
---- !u!23 &311696720903022345
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7419914866295235429}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 7060b8200037b6144a953768cdd10bc7, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &3489443521088860313
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7419914866295235429}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 5906935450422788195, guid: a831b8eda045136498911144ee80fef7, type: 3}

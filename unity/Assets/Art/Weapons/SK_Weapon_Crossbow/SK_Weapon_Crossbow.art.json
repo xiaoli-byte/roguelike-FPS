@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Weapon_Crossbow",
   "kind": "skeletal",
   "class": "weapon_fp",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    6
+    0
   ],
   "budget": {
-    "lodTris": [
-      12000,
-      3000
-    ],
     "texture": 2048,
     "maxFileKb": 3000
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.19258758425712585,
@@ -53,16 +49,6 @@
       "lod": 0,
       "tris": 11996,
       "verts": 8373,
-      "materials": [
-        "M_Weapon_Crossbow"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Weapon_Crossbow_LOD1",
-      "lod": 1,
-      "tris": 2995,
-      "verts": 2771,
       "materials": [
         "M_Weapon_Crossbow"
       ],
@@ -100,7 +86,7 @@
   ],
   "source": {
     "glb": "public/assets/weapons/SK_Weapon_Crossbow.glb",
-    "sha256": "6b35cdfeb4e04e68f2c5f4c08ff9c6e89466ffe540f9a08e12185c00e6408a85",
+    "sha256": "325ca37822869096a8d6d045b5fd58dac98ba68a88b5ee7bdcc7c54e54dd2e2b",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -111,5 +97,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-17 11:19:07"
+  "exported": "2026-10-25 11:53:54"
 }

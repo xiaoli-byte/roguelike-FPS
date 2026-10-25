@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Arms_PangolinL",
   "kind": "static",
   "class": "fp_arm",
@@ -12,17 +12,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    6
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2000
-    ],
     "texture": 2048,
     "maxFileKb": 1500
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.10330894589424133,
@@ -47,16 +43,6 @@
     {
       "name": "SM_Arms_PangolinL_LOD0",
       "lod": 0,
-      "tris": 1229,
-      "verts": 1739,
-      "materials": [
-        "M_Arms_PangolinL"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Arms_PangolinL_LOD1",
-      "lod": 1,
       "tris": 1229,
       "verts": 1739,
       "materials": [
@@ -94,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/weapons/SM_Arms_PangolinL.glb",
-    "sha256": "22d234313a987ffb1e1e9d675396cf935d134c56727c6ce09dddfd1e1175ae95",
+    "sha256": "0869dfb4a62ce39cb527b41078b16b11d118e132d0c96d271b2e894276a64cd7",
     "hiRes": false,
     "version": {
       "build": 8
@@ -105,5 +91,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-17 11:21:21"
+  "exported": "2026-10-25 11:54:54"
 }

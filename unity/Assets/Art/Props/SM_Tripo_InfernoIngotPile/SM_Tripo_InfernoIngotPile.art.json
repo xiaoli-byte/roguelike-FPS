@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_InfernoIngotPile",
   "kind": "static",
   "class": "tripo_prop",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -1.0095289945602417,
@@ -48,16 +44,6 @@
       "lod": 0,
       "tris": 3000,
       "verts": 2701,
-      "materials": [
-        "M_Tripo_InfernoIngotPile"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_InfernoIngotPile_LOD1",
-      "lod": 1,
-      "tris": 1000,
-      "verts": 1384,
       "materials": [
         "M_Tripo_InfernoIngotPile"
       ],
@@ -95,7 +81,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_InfernoIngotPile.glb",
-    "sha256": "6ccab8e20815be99df03a781bae5af892d1aada7ef10171d05847a64c37986b0",
+    "sha256": "e2f0075508d2e7ac81a852c7b130e817b393696d9f73ffd7913cde0ebb5d2f96",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -110,5 +96,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:23:24"
+  "exported": "2026-10-25 12:04:27"
 }

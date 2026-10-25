@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Boss_Kun",
   "kind": "skeletal",
   "class": "boss",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    25,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      30000,
-      12000,
-      5000
-    ],
-    "texture": 2048,
+    "texture": 4096,
     "maxFileKb": 6000
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -3.124537467956543,
@@ -75,26 +69,6 @@
       "lod": 0,
       "tris": 29548,
       "verts": 36736,
-      "materials": [
-        "M_Boss_Kun"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Boss_Kun_LOD1",
-      "lod": 1,
-      "tris": 11818,
-      "verts": 18231,
-      "materials": [
-        "M_Boss_Kun"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Boss_Kun_LOD2",
-      "lod": 2,
-      "tris": 4924,
-      "verts": 9298,
       "materials": [
         "M_Boss_Kun"
       ],
@@ -154,7 +128,7 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Boss_Kun.glb",
-    "sha256": "535036cd6ae6a3b8a678ef9a2c7c0058fa7d3c738923de7341533272c53b7258",
+    "sha256": "36a3fd305dc317f2e24870b2a7a9497ba3a38a8ba71e85c965a7b02e93184871",
     "hiRes": false,
     "version": {
       "native_build": 3
@@ -166,5 +140,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-17 11:21:14"
+  "exported": "2026-10-25 11:51:19"
 }

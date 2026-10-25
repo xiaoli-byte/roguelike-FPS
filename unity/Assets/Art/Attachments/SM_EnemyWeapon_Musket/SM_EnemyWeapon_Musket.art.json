@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_EnemyWeapon_Musket",
   "kind": "static",
   "class": "enemy_attachment",
@@ -12,16 +12,14 @@
   },
   "keepGlow": "attachments",
   "lodDistance": [
-    0,
-    14
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
+  },
+  "qaWaivers": {
+    "尺寸 Y 轴": "美术细化：概念把枪托与瞄准镜画得比白模高约 20%；枪长与枪口位置与白模一致，射击判定用程序化枪口"
   },
   "bounds": {
     "min": [
@@ -49,16 +47,6 @@
       "lod": 0,
       "tris": 3000,
       "verts": 2077,
-      "materials": [
-        "M_EnemyWeapon_Musket"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_EnemyWeapon_Musket_LOD1",
-      "lod": 1,
-      "tris": 1000,
-      "verts": 909,
       "materials": [
         "M_EnemyWeapon_Musket"
       ],
@@ -95,7 +83,7 @@
   ],
   "source": {
     "glb": "public/assets/attachments/SM_EnemyWeapon_Musket.glb",
-    "sha256": "8f09dc8e931fcf7e79d5fc4a49672eb757f4f6431146a7156dbb955f0f8994d1",
+    "sha256": "3e64af9f198604afe11cd8b7d48104f4c351c71df536acbdfe3f5cc73949d710",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -106,5 +94,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-17 11:18:32"
+  "exported": "2026-10-25 11:55:45"
 }

@@ -66,12 +66,15 @@ image_format = "WEBP"
 tangents = true
 
 # ───────────── 规格档（按资产类别）─────────────
-# lod_tris：各级 LOD 三角面上限；lod_distance：切换距离（米，LOD0 从 0 开始）
+# lod_tris / lod_distance：只有一级 LOD（2026-10-25 用户：「不要减面了，所有的模型都不需要减少面数」）。成品网格（Tripo 供应方网格、
+#   从它切出的套件 / 宝箱件、英雄部件、第一人称手臂）原样发布，不减面、不出远景低模；lod_tris[0] 只是参考面数：
+#   Tripo 生成时选档位、程序化配方的上限、Hunyuan 体素重建后重拓扑的目标（那一步是从扫描式高模做出游戏网格）。
+#   面数不再是校验闸门，只记录
 # texture：贴图边长；texel_density：目标像素/米（只做提示）
 [classes.enemy_standard]
 category = "characters"
-lod_tris = [8000, 3500, 1500]
-lod_distance = [0, 14, 30]
+lod_tris = [8000]
+lod_distance = [0]
 texture = 1024
 texture_hi = 2048                  # 画质「高」时加载的高清贴图版本（<资产>@hi.glb）
 texel_density = 512
@@ -80,8 +83,8 @@ max_file_kb = 1600
 # 群怪（3–5 只同屏、体型小）：面数比普通敌人低一档，细节靠贴图
 [classes.enemy_swarm]
 category = "characters"
-lod_tris = [6000, 2500, 1000]
-lod_distance = [0, 12, 26]
+lod_tris = [6000]
+lod_distance = [0]
 texture = 1024
 texture_hi = 2048                  # 画质「高」时加载的高清贴图版本（<资产>@hi.glb）
 texel_density = 512
@@ -90,8 +93,8 @@ max_file_kb = 1600
 # 灵宠（docs/pet-system.md）：一直跟在玩家身边、离镜头近，比同体型的小怪多给面数
 [classes.pet]
 category = "characters"
-lod_tris = [8000, 3500, 1500]
-lod_distance = [0, 14, 30]
+lod_tris = [8000]
+lod_distance = [0]
 texture = 1024
 texture_hi = 2048                  # 画质「高」时加载的高清贴图版本（<资产>@hi.glb）
 texel_density = 512
@@ -100,8 +103,8 @@ max_file_kb = 1600
 # 灵宠的独立部件（精卫嘴里的火石：玩法里会被投出 / 隐藏，所以不和身体熔成一块）：静态网格，原点 = 包围盒中心
 [classes.pet_attachment]
 category = "attachments"
-lod_tris = [1200, 400]
-lod_distance = [0, 14]
+lod_tris = [1200]
+lod_distance = [0]
 texture = 512
 texel_density = 1024
 max_file_kb = 400
@@ -109,8 +112,8 @@ max_file_kb = 400
 # 神兽（白泽、应龙）：体型大、是一局的高光，给到大型敌人的规格
 [classes.pet_mythic]
 category = "characters"
-lod_tris = [12000, 5000, 2000]
-lod_distance = [0, 18, 40]
+lod_tris = [12000]
+lod_distance = [0]
 texture = 2048
 texel_density = 512
 max_file_kb = 3000
@@ -118,8 +121,8 @@ max_file_kb = 3000
 # 商人等非战斗 NPC（ART7）：商店里离镜头 2–4 米，比普通敌人多给面数，贴图 2048
 [classes.npc]
 category = "characters"
-lod_tris = [15000, 6000, 2400]
-lod_distance = [0, 12, 30]
+lod_tris = [15000]
+lod_distance = [0]
 texture = 2048
 texel_density = 512
 max_file_kb = 3200
@@ -127,24 +130,24 @@ max_file_kb = 3200
 # A single hero fills the selection stage, including broad tails / wings.
 [classes.hero_display]
 category = "characters"
-lod_tris = [16000, 6000, 2400]
-lod_distance = [0, 10, 24]
+lod_tris = [16000]
+lod_distance = [0]
 texture = 2048
 texel_density = 1024
 max_file_kb = 3200
 
 [classes.enemy_large]
 category = "characters"
-lod_tris = [12000, 5000, 2000]
-lod_distance = [0, 18, 40]
+lod_tris = [12000]
+lod_distance = [0]
 texture = 2048
 texel_density = 512
 max_file_kb = 3000
 
 [classes.boss]
 category = "characters"
-lod_tris = [30000, 12000, 5000]
-lod_distance = [0, 25, 60]
+lod_tris = [30000]
+lod_distance = [0]
 texture = 2048
 # 画质「高」时加载的 4096 高清贴图版本（<资产>@hi.glb，build_tripo_creature.py 生成）：6 米的夔用 2048 近看会糊
 # （docs/art/enemy-roster-v2.md「领主的体型与建模规格」）。前几章的原生骨架 Boss 重建时自动带上
@@ -155,48 +158,48 @@ max_file_kb = 6000
 # 英雄选人演出用的形态挂件（磐的鳞球）：近距离展示，单独模型，原点 = 包围盒中心
 [classes.hero_attachment]
 category = "attachments"
-lod_tris = [6000, 2000]
-lod_distance = [0, 14]
+lod_tris = [6000]
+lod_distance = [0]
 texture = 1024
 texel_density = 1024
 max_file_kb = 900
 
 [classes.enemy_attachment]
 category = "attachments"           # 敌人挂点上的武器 / 盾 / 法器（静态网格，原点 = 挂点）
-lod_tris = [3000, 1000]
-lod_distance = [0, 14]
+lod_tris = [3000]
+lod_distance = [0]
 texture = 1024
 texel_density = 1024
 max_file_kb = 700
 
 [classes.boss_attachment]
 category = "attachments"           # Boss 挂点上的大型武器（静态网格，原点 = 挂点）：体量大、Boss 战里离镜头近，预算高于普通挂件
-lod_tris = [6000, 2000]
-lod_distance = [0, 25]
+lod_tris = [6000]
+lod_distance = [0]
 texture = 2048
 texel_density = 1024
 max_file_kb = 1500
 
 [classes.fp_arm]
 category = "weapons"               # 第一人称手臂（每位英雄一套左右手，静态网格挂在 Viewmodel 的 arm_r / arm_l 挂点）
-lod_tris = [8000, 2000]
-lod_distance = [0, 6]
+lod_tris = [8000]
+lod_distance = [0]
 texture = 2048
 texel_density = 2048
 max_file_kb = 1500
 
 [classes.weapon_fp]
 category = "weapons"
-lod_tris = [12000, 3000]
-lod_distance = [0, 6]
+lod_tris = [12000]
+lod_distance = [0]
 texture = 2048
 texel_density = 2048
 max_file_kb = 3000
 
 [classes.prop]
 category = "props"
-lod_tris = [2500, 900]
-lod_distance = [0, 20]
+lod_tris = [2500]
+lod_distance = [0]
 texture = 512
 texel_density = 256
 max_file_kb = 600
@@ -204,8 +207,8 @@ max_file_kb = 600
 # Hunyuan 自然环境件：bounds-only 尺寸参考，不创建白模网格。
 [classes.nature_prop]
 category = "props"
-lod_tris = [5000, 1600, 500]
-lod_distance = [0, 18, 42]
+lod_tris = [5000]
+lod_distance = [0]
 texture = 1024
 texel_density = 256
 max_file_kb = 900
@@ -213,55 +216,50 @@ bake_device = "CPU"                # 不与 Hunyuan 推理抢显存
 min_component_fraction = 0.002     # 保留生成的较小枝叶和积雪块
 remesh_voxel = 0.0018              # 只修整 Hunyuan 网格，避免吞掉细枝
 min_reference_span_fraction = 0.25 # 拒绝只有正面轮廓、几乎无三维厚度的失败生成
-far_lod_budget_weld_max_fraction = 0.015 # 仅最远 LOD 小拓扑环阻塞减面时，最多焊接高度的 1.5%
 
 # ───────────── Tripo Studio 资产（P2.0 智能网格：游戏级低模 + 供应方 PBR 贴图）─────────────
-# 来源模型已是低模并自带贴图，构建只做对齐、减面出 LOD、贴图降到预算与压缩，不再从概念投影上色。
-# Tripo 的 UV 碎成很多小岛，深度减面会跨岛把贴图拉成斜条纹：减面后 UV 拉伸面积超过 lod_rebake_stretch 的 LOD
-# 自动重展 UV，从 LOD0 烘焙自己的 BC / N / ORM（边长按面数占比缩小，如 800 面 → 512²），材质 M_<名>_LOD<i>。
+# 来源模型已是低模并自带贴图，构建只做对齐、贴图降到预算与压缩，网格原样发布（不减面、只有一级 LOD），不再从概念投影上色。
 [classes.tripo_architecture]
 category = "props"
-lod_tris = [8000, 2500, 800]
-lod_distance = [0, 24, 60]
+lod_tris = [8000]
+lod_distance = [0]
 texture = 2048
 texel_density = 128
 max_file_kb = 1600
-lod_rebake_stretch = 0.02          # 1% 时 2500 面的 LOD1 也会重烘（1024²），烽燧 GLB 会到 1.8 MB，超出 max_file_kb
 
 # derive_wall_kit.py 从整段城墙切出的墙板 / 端头（只写进 manifest，不在 registry 登记）：
 # 每块都是母件的一部分，预算沿用母件 tripo_architecture，供 Unity 侧 QA 检查。
 [classes.tripo_architecture_kit]
 category = "props"
-lod_tris = [8000, 2500, 800]
-lod_distance = [0, 24, 60]
+lod_tris = [8000]
+lod_distance = [0]
 texture = 2048
 texel_density = 128
 max_file_kb = 1600
 
 [classes.tripo_prop]
 category = "props"
-lod_tris = [3000, 1000]
-lod_distance = [0, 20]
+lod_tris = [3000]
+lod_distance = [0]
 texture = 1024
 texel_density = 256
 max_file_kb = 700
-lod_rebake_stretch = 0.02
 
-# 地面贴花（车辙、龟裂泉床）：build_ground_decals.py 程序绘制的镂空网格；LOD1 只是去掉细分的 1×2 面片
+# 地面贴花（车辙、龟裂泉床）：build_ground_decals.py 程序绘制的镂空网格
 [classes.ground_decal]
 category = "props"
-lod_tris = [256, 8]
-lod_distance = [0, 30]
+lod_tris = [256]
+lod_distance = [0]
 texture = 1024
 texel_density = 128
 max_file_kb = 1200
 
-# 程序化植物散布件（骆驼刺、红柳）：bl_proc_desert.py 建模的枝干 + 镂空叶卡，每级 LOD 直接建模；
+# 程序化植物散布件（骆驼刺、红柳）：bl_proc_desert.py 建模的枝干 + 镂空叶卡；
 # 叶卡需要清晰的轮廓，贴图 1024²
 [classes.scatter_plant]
 category = "props"
-lod_tris = [1500, 500]
-lod_distance = [0, 20]
+lod_tris = [1500]
+lod_distance = [0]
 texture = 1024
 texel_density = 256
 max_file_kb = 900
@@ -269,19 +267,17 @@ max_file_kb = 900
 # 地形散布件（骆驼刺、砾石）：GPU instancing 成百上千个，面数与贴图压到最低；Tripo 端按约 1500 面生成
 [classes.tripo_scatter]
 category = "props"
-lod_tris = [1200, 400]
-lod_distance = [0, 16]
+lod_tris = [1200]
+lod_distance = [0]
 texture = 512
 texel_density = 256
 max_file_kb = 300
-lod_rebake_stretch = 0.02
 
-# 程序化模块件（第二章栈道）：bl_proc_timber.py 用倒角方木拼出、每级 LOD 直接建模，尺寸精确可首尾拼接；
-# LOD1 去掉倒角、铜箍、钉子和冰棱
+# 程序化模块件（第二章栈道）：bl_proc_timber.py 用倒角方木拼出，尺寸精确可首尾拼接
 [classes.proc_kit]
 category = "props"
-lod_tris = [3000, 1000]
-lod_distance = [0, 24]
+lod_tris = [3000]
+lod_distance = [0]
 texture = 1024
 texel_density = 128
 max_file_kb = 900

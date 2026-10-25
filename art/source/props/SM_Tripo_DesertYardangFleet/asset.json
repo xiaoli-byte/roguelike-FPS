@@ -197,7 +197,7 @@
       ]
     },
     "build": {
-      "current": 3,
+      "current": 4,
       "versions": [
         {
           "version": 1,
@@ -396,11 +396,61 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 4,
+          "created": "2026-10-25 11:54:11",
+          "files": {
+            "SM_Tripo_DesertYardangFleet_v004.blend": {
+              "path": "03_work/SM_Tripo_DesertYardangFleet_v004.blend",
+              "sha256": "df094be99acf60966cab73256ef77780ea9c57a680381ac30a881fca0d55eb8c"
+            },
+            "SM_Tripo_DesertYardangFleet_v004.glb": {
+              "path": "04_export/SM_Tripo_DesertYardangFleet_v004.glb",
+              "sha256": "caaa857aec7e5ed0f516d5d03f92c8f7711a283fa413e552bac0a1739ff523b4"
+            },
+            "SM_Tripo_DesertYardangFleet_v004_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertYardangFleet_v004_metrics.json",
+              "sha256": "35824e9e58c8feb11d0ae8848b48c4191266f6435b19b3ad158bfde5e31e5540"
+            },
+            "T_Tripo_DesertYardangFleet_BC.png": {
+              "path": "03_work/textures_v004/T_Tripo_DesertYardangFleet_BC.png",
+              "sha256": "d7e0403d5885db61748a585b9721dbbbb1592788c28d249fc3ddf8b33b5a7af8"
+            },
+            "T_Tripo_DesertYardangFleet_N.png": {
+              "path": "03_work/textures_v004/T_Tripo_DesertYardangFleet_N.png",
+              "sha256": "a4040a41ff4aee1abd78f5d44703677839fcbdce89b4bd7733a36e595e4fdea7"
+            },
+            "T_Tripo_DesertYardangFleet_ORM.png": {
+              "path": "03_work/textures_v004/T_Tripo_DesertYardangFleet_ORM.png",
+              "sha256": "44a028d9866020b93991996c4d2034516229017164f9c5122785bc0aaad3d0e5"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.853,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 9022,
+              "verts": 4513
+            }
+          ],
+          "export_kb": 430.4,
+          "seconds": 27.9,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 5,
+      "current": 6,
       "versions": [
         {
           "version": 1,
@@ -478,11 +528,26 @@
           "warnings": 0,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 6,
+          "created": "2026-10-25 11:54:11",
+          "files": {
+            "SM_Tripo_DesertYardangFleet_v004_validation_v006.json": {
+              "path": "05_review/SM_Tripo_DesertYardangFleet_v004_validation_v006.json",
+              "sha256": "25e8d8f1194ba1c189fc47dcf7ff3a37363a7623a8cb26c9263d52efeb9b298b"
+            }
+          },
+          "from_build": 4,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": null,
+      "current": 5,
       "versions": [
         {
           "version": 1,
@@ -547,11 +612,30 @@
           "from_build": 3,
           "deformation": {},
           "auto_flags": []
+        },
+        {
+          "version": 5,
+          "created": "2026-10-25 11:54:16",
+          "files": {
+            "SM_Tripo_DesertYardangFleet_v004_review_v005.png": {
+              "path": "05_review/SM_Tripo_DesertYardangFleet_v004_review_v005.png",
+              "sha256": "0b511e06bdd819a2981e1888576a10c879e4b896c06b61b5eb874ef899cef608"
+            }
+          },
+          "from_build": 4,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（2026-10-25 不减面重建，用户授权免审）",
+            "note": "",
+            "time": "2026-10-25 11:58:38"
+          }
         }
       ]
     },
     "publish": {
-      "current": null,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -575,6 +659,18 @@
             }
           },
           "from_build": 2,
+          "url": "assets/props/SM_Tripo_DesertYardangFleet.glb"
+        },
+        {
+          "version": 3,
+          "created": "2026-10-25 11:58:39",
+          "files": {
+            "SM_Tripo_DesertYardangFleet.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertYardangFleet.glb",
+              "sha256": "caaa857aec7e5ed0f516d5d03f92c8f7711a283fa413e552bac0a1739ff523b4"
+            }
+          },
+          "from_build": 4,
           "url": "assets/props/SM_Tripo_DesertYardangFleet.glb"
         }
       ]

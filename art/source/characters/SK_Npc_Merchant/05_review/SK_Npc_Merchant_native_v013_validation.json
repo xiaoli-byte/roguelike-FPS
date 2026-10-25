@@ -1,0 +1,222 @@
+{
+  "asset": "SK_Npc_Merchant",
+  "version": 13,
+  "glb": "art/source/characters/SK_Npc_Merchant/04_export/SK_Npc_Merchant_native_v013.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.2,
+      "自定义骨架：26 根骨骼（热扩散权重，22992 个顶点未覆盖）": 0.4,
+      "贴图（BC + AO/ORM）": 15.1,
+      "LOD0 16499 面（不减面）与蒙皮上限": 0.2,
+      "导出 1443 KB": 2.1
+    },
+    "source": {
+      "verts": 22992,
+      "tris": 16499,
+      "scale": 1.500732779677577
+    },
+    "regions": {
+      "heat_unweighted_verts": 22992,
+      "weights": "segments",
+      "head_verts": 2329,
+      "fallback_verts": 0,
+      "per_bone": {
+        "hips": 82,
+        "spine": 2,
+        "chest": 81,
+        "neck": 0,
+        "head": 3658,
+        "pack": 7059,
+        "tail_1": 35,
+        "tail_2": 12,
+        "tail_3": 208,
+        "shoulder_L": 360,
+        "shoulder_R": 379,
+        "arm_L": 265,
+        "arm_R": 257,
+        "forearm_L": 99,
+        "forearm_R": 94,
+        "hand_L": 664,
+        "hand_R": 687,
+        "thigh_L": 362,
+        "thigh_R": 496,
+        "shin_L": 377,
+        "shin_R": 356,
+        "foot_L": 294,
+        "foot_R": 306,
+        "toe_L": 124,
+        "toe_R": 122
+      }
+    },
+    "bones": [
+      "arm_L",
+      "arm_R",
+      "chest",
+      "foot_L",
+      "foot_R",
+      "forearm_L",
+      "forearm_R",
+      "hand_L",
+      "hand_R",
+      "head",
+      "hips",
+      "neck",
+      "pack",
+      "root",
+      "shin_L",
+      "shin_R",
+      "shoulder_L",
+      "shoulder_R",
+      "spine",
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "thigh_L",
+      "thigh_R",
+      "toe_L",
+      "toe_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.894,
+      "shade_mean": 0.901
+    },
+    "textures": {
+      "size": 2048,
+      "ao_mean": 0.613,
+      "provider_pbr": [],
+      "roughness_mean": 0.8,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Npc_Merchant_LOD0": {
+          "max_influences": 3,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Npc_Merchant_LOD0",
+        "tris": 16499,
+        "uv_min": [
+          0.001708984375,
+          0.001708984375
+        ],
+        "uv_max": [
+          0.998291015625,
+          0.99267578125
+        ]
+      }
+    ],
+    "glb_kb": 1443,
+    "_seconds": 19.3
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "1443 KB / 3200 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Npc_Merchant_LOD0']"
+    ],
+    [
+      "note",
+      "LOD0 tris",
+      "16499 (class reference 15000)"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "1.500 m (design 1.5 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Npc_Merchant']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "texture T_Npc_Merchant_ORM",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "texture T_Npc_Merchant_BC",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "26 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Npc_Merchant_LOD0 influences",
+      "max 3"
+    ],
+    [
+      "pass",
+      "SK_Npc_Merchant_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Npc_Merchant_LOD0 UV range",
+      "[0.002, 0.002]..[0.998, 0.993]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "22992 verts"
+    ],
+    [
+      "pass",
+      "region head",
+      "2329 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "0 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

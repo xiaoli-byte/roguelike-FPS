@@ -11,16 +11,9 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    25,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      30000,
-      12000,
-      5000
-    ],
     "texture": 4096,
     "maxFileKb": 6000
   },
@@ -69,7 +62,7 @@
   "bounds": {
     "min": [
       -0.7081339955329895,
-      -2.1812294193068738e-09,
+      0,
       -2.5283098220825195
     ],
     "max": [
@@ -127,28 +120,8 @@
     {
       "name": "SK_Boss_Feilian_LOD0",
       "lod": 0,
-      "tris": 29549,
-      "verts": 35380,
-      "materials": [
-        "M_Boss_Feilian"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Boss_Feilian_LOD1",
-      "lod": 1,
-      "tris": 11819,
-      "verts": 17229,
-      "materials": [
-        "M_Boss_Feilian"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Boss_Feilian_LOD2",
-      "lod": 2,
-      "tris": 4925,
-      "verts": 8944,
+      "tris": 30137,
+      "verts": 35849,
       "materials": [
         "M_Boss_Feilian"
       ],
@@ -184,10 +157,10 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Boss_Feilian@hi.glb",
-    "sha256": "dfe13d928324f36561e3ef65362a015d0d7a335ba9745f984d21c39c14f0f241",
+    "sha256": "887c8f608978becc6b3c1499759ebc7140d0858719438c43c9218d72ee04f1e1",
     "hiRes": true,
     "version": {
-      "native_build": 4
+      "native_build": 5
     },
     "generator": {
       "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
@@ -196,5 +169,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-24 20:50:12"
+  "exported": "2026-10-25 12:18:53"
 }

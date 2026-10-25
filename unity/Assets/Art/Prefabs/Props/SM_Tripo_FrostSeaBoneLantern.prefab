@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8730064276899642905}
   - component: {fileID: 5291497490362774796}
   - component: {fileID: 5786301633090089035}
+  - component: {fileID: 3756993801671788107}
   m_Layer: 0
   m_Name: SM_Tripo_FrostSeaBoneLantern_LOD0
   m_TagString: Untagged
@@ -90,6 +91,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &3756993801671788107
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1696906934158689562}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -3301368290735771139, guid: 533b0f75f44008e40a6a2f9995acac5b, type: 3}
 --- !u!1 &2774653098324861292
 GameObject:
   m_ObjectHideFlags: 0
@@ -99,7 +122,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8194571968927784368}
-  - component: {fileID: 6060013226738887234}
   - component: {fileID: 1711393191913158047}
   m_Layer: 0
   m_Name: SM_Tripo_FrostSeaBoneLantern
@@ -124,30 +146,6 @@ Transform:
   - {fileID: 5116546827600824521}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!205 &6060013226738887234
-LODGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2774653098324861292}
-  serializedVersion: 3
-  m_LocalReferencePoint: {x: 0.00015294552, y: 1.179838, z: -0.008953631}
-  m_Size: 2.3582907
-  m_FadeMode: 1
-  m_AnimateCrossFading: 1
-  m_LastLODIsBillboard: 0
-  m_LODs:
-  - screenRelativeHeight: 0.08416588
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 5786301633090089035}
-  - screenRelativeHeight: 0.014027646
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 4867659401648187216}
-  m_Enabled: 1
-  m_GlobalIlluminationLOD: 0
 --- !u!114 &1711393191913158047
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -169,128 +167,14 @@ MonoBehaviour:
   bindAttachment: 
   lodDistance:
   - 0
-  - 20
   moveSpeed: 0
   designBounds:
     m_Center: {x: 0.00014477968, y: 1.1793642, z: -0.009916753}
     m_Extent: {x: 0.501967, y: 1.1786716, z: 0.3599078}
   sourceGlb: public/assets/props/SM_Tripo_FrostSeaBoneLantern.glb
-  sourceSha256: b0fe49bf7179a781ae8849187304dfb332e84cfdb776b8bf205c8e505c8b1b37
+  sourceSha256: 9d92095d05108ff7add1d05d3283ba9c644ffabe68ae21abee9f43452ac56e22
   license: "Tencent Hunyuan 3D 2.0 Community License\uFF1A\u4E0D\u5F97\u5728\u6B27\u76DF
     / \u82F1\u56FD / \u97E9\u56FD\u5883\u5185\u4F7F\u7528\u6216\u5206\u53D1"
---- !u!1 &3143714346272960039
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 866549770456414479}
-  - component: {fileID: 9147611747146815109}
-  - component: {fileID: 4867659401648187216}
-  - component: {fileID: 8794699840104704338}
-  m_Layer: 0
-  m_Name: SM_Tripo_FrostSeaBoneLantern_LOD1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 86
-  m_IsActive: 1
---- !u!4 &866549770456414479
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3143714346272960039}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.000000053385076, y: 0.7071068, z: -0.70710677, w: -0.00000005338508}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 5116546827600824521}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &9147611747146815109
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3143714346272960039}
-  m_Mesh: {fileID: -4613674093467316427, guid: 533b0f75f44008e40a6a2f9995acac5b, type: 3}
---- !u!23 &4867659401648187216
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3143714346272960039}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 03bcdd01c0a26944e832c232e9a75d52, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &8794699840104704338
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3143714346272960039}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -4613674093467316427, guid: 533b0f75f44008e40a6a2f9995acac5b, type: 3}
 --- !u!1 &8388115995665798523
 GameObject:
   m_ObjectHideFlags: 0
@@ -321,6 +205,5 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8730064276899642905}
-  - {fileID: 866549770456414479}
   m_Father: {fileID: 8194571968927784368}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

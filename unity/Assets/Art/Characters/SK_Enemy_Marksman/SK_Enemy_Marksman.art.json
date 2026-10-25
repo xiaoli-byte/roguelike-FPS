@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Enemy_Marksman",
   "kind": "skeletal",
   "class": "enemy_standard",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    14,
-    30
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      3500,
-      1500
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.5802897810935974,
@@ -68,26 +62,6 @@
         "M_Enemy_Marksman"
       ],
       "skinned": true
-    },
-    {
-      "name": "SK_Enemy_Marksman_LOD1",
-      "lod": 1,
-      "tris": 3500,
-      "verts": 2600,
-      "materials": [
-        "M_Enemy_Marksman"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Enemy_Marksman_LOD2",
-      "lod": 2,
-      "tris": 1500,
-      "verts": 1360,
-      "materials": [
-        "M_Enemy_Marksman"
-      ],
-      "skinned": true
     }
   ],
   "materials": [
@@ -120,7 +94,7 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Enemy_Marksman.glb",
-    "sha256": "34fe6fb39514dfaee1bf393c4010ccaf9917e6aa113d99049537ae83f53c4cd7",
+    "sha256": "45f1efb0c369a9f3bc08d383b48a0e85f631661e20bc2e181a08e1a9c93033f5",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -131,5 +105,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-17 11:18:19"
+  "exported": "2026-10-25 11:52:48"
 }

@@ -11,16 +11,9 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    24,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2500,
-      800
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
@@ -29,11 +22,11 @@
     "min": [
       -5.013974666595459,
       0,
-      -4.480169773101807
+      -4.480000019073486
     ],
     "max": [
       5.013974666595459,
-      6.922482490539551,
+      6.92207670211792,
       4.480000019073486
     ]
   },
@@ -49,30 +42,10 @@
     {
       "name": "SM_Tripo_FrostIceBridge_LOD0",
       "lod": 0,
-      "tris": 7960,
-      "verts": 5163,
+      "tris": 8702,
+      "verts": 5585,
       "materials": [
         "M_Tripo_FrostIceBridge"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostIceBridge_LOD1",
-      "lod": 1,
-      "tris": 2486,
-      "verts": 1606,
-      "materials": [
-        "M_Tripo_FrostIceBridge_LOD1"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostIceBridge_LOD2",
-      "lod": 2,
-      "tris": 796,
-      "verts": 1038,
-      "materials": [
-        "M_Tripo_FrostIceBridge_LOD2"
       ],
       "skinned": false
     }
@@ -103,69 +76,17 @@
         "N": "Textures/T_Tripo_FrostIceBridge_N.png",
         "ORM": "Textures/T_Tripo_FrostIceBridge_ORM.png"
       }
-    },
-    {
-      "name": "M_Tripo_FrostIceBridge_LOD1",
-      "baseColor": [
-        1,
-        1,
-        1,
-        1
-      ],
-      "metallic": 1.0,
-      "roughness": 1.0,
-      "emissive": [
-        0,
-        0,
-        0
-      ],
-      "doubleSided": true,
-      "alphaMode": "OPAQUE",
-      "alphaCutoff": 0.5,
-      "hasOcclusion": true,
-      "occlusionSeparate": false,
-      "textures": {
-        "BC": "Textures/T_Tripo_FrostIceBridge_LOD1_BC.png",
-        "N": "Textures/T_Tripo_FrostIceBridge_LOD1_N.png",
-        "ORM": "Textures/T_Tripo_FrostIceBridge_LOD1_ORM.png"
-      }
-    },
-    {
-      "name": "M_Tripo_FrostIceBridge_LOD2",
-      "baseColor": [
-        1,
-        1,
-        1,
-        1
-      ],
-      "metallic": 1.0,
-      "roughness": 1.0,
-      "emissive": [
-        0,
-        0,
-        0
-      ],
-      "doubleSided": true,
-      "alphaMode": "OPAQUE",
-      "alphaCutoff": 0.5,
-      "hasOcclusion": true,
-      "occlusionSeparate": false,
-      "textures": {
-        "BC": "Textures/T_Tripo_FrostIceBridge_LOD2_BC.png",
-        "N": "Textures/T_Tripo_FrostIceBridge_LOD2_N.png",
-        "ORM": "Textures/T_Tripo_FrostIceBridge_LOD2_ORM.png"
-      }
     }
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_FrostIceBridge.glb",
-    "sha256": "d00f44848e22025b8ab180756d174f9910f8a14a70639dbbdeaa4d8ed216ce41",
+    "sha256": "671afc5b48c731e26753fa69bbeb93396a5aff647ed1c8069e399bf7dd6650fd",
     "hiRes": false,
     "version": {
       "blockout": 1,
       "concept": 2,
       "highpoly": 1,
-      "build": 1
+      "build": 2
     },
     "generator": {
       "tool": "Tripo Studio",
@@ -174,5 +95,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-22 22:12:29"
+  "exported": "2026-10-25 12:18:17"
 }

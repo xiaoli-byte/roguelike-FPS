@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_FrostStairs",
   "kind": "static",
   "class": "tripo_prop",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -1.8154042959213257,
@@ -48,16 +44,6 @@
       "lod": 0,
       "tris": 2999,
       "verts": 2266,
-      "materials": [
-        "M_Tripo_FrostStairs"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostStairs_LOD1",
-      "lod": 1,
-      "tris": 1000,
-      "verts": 1056,
       "materials": [
         "M_Tripo_FrostStairs"
       ],
@@ -94,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_FrostStairs.glb",
-    "sha256": "ad1ff4690cff9d48f595f5895857b88f1638bf1d1e4ed9046ead2965c7b4166b",
+    "sha256": "07e7b5c14da19b2f98dd714d2f5dce64383083dfc3e44590b13881280b9df823",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -109,5 +95,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:21:27"
+  "exported": "2026-10-25 12:03:45"
 }

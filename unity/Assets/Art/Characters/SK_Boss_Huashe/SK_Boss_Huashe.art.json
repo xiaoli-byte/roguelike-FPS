@@ -11,16 +11,9 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    25,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      30000,
-      12000,
-      5000
-    ],
     "texture": 4096,
     "maxFileKb": 6000
   },
@@ -90,28 +83,8 @@
     {
       "name": "SK_Boss_Huashe_LOD0",
       "lod": 0,
-      "tris": 29550,
-      "verts": 40035,
-      "materials": [
-        "M_Boss_Huashe"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Boss_Huashe_LOD1",
-      "lod": 1,
-      "tris": 11819,
-      "verts": 19810,
-      "materials": [
-        "M_Boss_Huashe"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Boss_Huashe_LOD2",
-      "lod": 2,
-      "tris": 4924,
-      "verts": 9514,
+      "tris": 30006,
+      "verts": 40517,
       "materials": [
         "M_Boss_Huashe"
       ],
@@ -147,10 +120,10 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Boss_Huashe@hi.glb",
-    "sha256": "288a8e67c7cb39f549024c758857df6097d31b1d02834dc6b2a8f4fc754297a9",
+    "sha256": "a9df10e0f2a49093658b806f6e96447389f39d690b3bfe3ba412f9d433cf93fd",
     "hiRes": true,
     "version": {
-      "native_build": 4
+      "native_build": 5
     },
     "generator": {
       "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
@@ -159,5 +132,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-24 20:50:06"
+  "exported": "2026-10-25 12:18:45"
 }

@@ -188,15 +188,12 @@ def gltf_to_unity_bounds(b: dict | None) -> dict | None:
     return {"min": [-hi[0], lo[1], lo[2]], "max": [-lo[0], hi[1], hi[2]]}
 
 
-def budget(cls_name: str | None, asset_id: str = "") -> dict | None:
-    """pipeline.toml 的规格档，Unity 校验按它检查每级 LOD 面数与贴图边长（registry.toml 的资产级 lod_tris 覆盖优先，
-    与 assetctl validate 一致）。"""
+def budget(cls_name: str | None) -> dict | None:
+    """pipeline.toml 的规格档，Unity 校验按它检查贴图边长。面数不再是预算：2026-10-25 起不减面，只有一级 LOD。"""
     cls = CFG.data["classes"].get(cls_name or "")
     if not cls:
         return None
-    lod_tris = CFG.registry.get(asset_id, {}).get("lod_tris", cls.get("lod_tris"))
-    return {"lodTris": lod_tris, "texture": cls.get("texture_hi") or cls.get("texture"),
-            "maxFileKb": cls.get("max_file_kb")}
+    return {"texture": cls.get("texture_hi") or cls.get("texture"), "maxFileKb": cls.get("max_file_kb")}
 
 
 def sha256(p: Path) -> str:
@@ -252,7 +249,7 @@ def export_one(asset_id: str, entry: dict, force: bool) -> str:
         "bind": entry.get("bind"),
         "keepGlow": entry.get("keepGlow"),
         "lodDistance": entry.get("lodDistance") or [0],
-        "budget": budget(entry.get("class"), asset_id),
+        "budget": budget(entry.get("class")),
         # registry.toml 的 qa_waivers（检查项名 → 理由）：Unity 侧 QA 同名检查记为「已豁免」，不阻塞
         "qaWaivers": CFG.registry.get(asset_id, {}).get("qa_waivers", {}),
         **({"fur": fur} if fur else {}),

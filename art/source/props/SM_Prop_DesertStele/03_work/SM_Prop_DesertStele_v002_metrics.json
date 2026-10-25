@@ -1,0 +1,79 @@
+{
+  "source": {
+    "tris": 3150,
+    "verts": 1582
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 3.80186,
+    "iou": 0.909,
+    "iou_per_view": {
+      "front": 0.977,
+      "left": 0.822,
+      "back": 0.966,
+      "right": 0.839
+    },
+    "size_m": [
+      1.68,
+      2.14,
+      3.8
+    ],
+    "reference_m": [
+      1.6,
+      2.6,
+      3.8
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.794,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Prop_DesertStele_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Prop_DesertStele_LOD0",
+      "tris": 3150,
+      "verts": 1582,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.567,
+      "bbox_min": [
+        -0.84,
+        -1.0702,
+        0.0
+      ],
+      "bbox_max": [
+        0.84,
+        1.0702,
+        3.8
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Prop_DesertStele/04_export/SM_Prop_DesertStele_v002.glb",
+    "bytes": 182980
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 7.7,
+  "_seconds": 9.0
+}

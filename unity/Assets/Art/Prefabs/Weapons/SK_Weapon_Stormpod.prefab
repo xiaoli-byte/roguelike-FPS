@@ -31,7 +31,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6210747014743897657}
-  - {fileID: 8195082148333372329}
   - {fileID: 3596418880609941797}
   m_Father: {fileID: 6520962084241541672}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -99,7 +98,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6520962084241541672}
-  - component: {fileID: 4325657098204797712}
   - component: {fileID: 4943526425296170726}
   m_Layer: 0
   m_Name: SK_Weapon_Stormpod
@@ -124,30 +122,6 @@ Transform:
   - {fileID: 6075795768922127293}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!205 &4325657098204797712
-LODGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3258382938660106177}
-  serializedVersion: 3
-  m_LocalReferencePoint: {x: -0.0045396835, y: -0.007543847, z: -0.05504304}
-  m_Size: 0.4704811
-  m_FadeMode: 1
-  m_AnimateCrossFading: 1
-  m_LastLODIsBillboard: 0
-  m_LODs:
-  - screenRelativeHeight: 0.05598977
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 5138947898477534206}
-  - screenRelativeHeight: 0.022395907
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 3953586024602879439}
-  m_Enabled: 1
-  m_GlobalIlluminationLOD: 0
 --- !u!114 &4943526425296170726
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -169,110 +143,14 @@ MonoBehaviour:
   bindAttachment: 
   lodDistance:
   - 0
-  - 6
   moveSpeed: 0
   designBounds:
     m_Center: {x: -0.0045380685, y: -0.0075402185, z: -0.055029273}
     m_Extent: {x: 0.05657042, y: 0.11961994, z: 0.23522675}
   sourceGlb: public/assets/weapons/SK_Weapon_Stormpod.glb
-  sourceSha256: 91995faf97d7eafaa962da198cfddc041029648cc99967ff8c2f59623265a299
+  sourceSha256: bdec0e69c47357cb2ed4b39e0c56b4dcef817a3fc7d87c8bceb08f13881a0a6d
   license: "Tencent Hunyuan 3D 2.0 Community License\uFF1A\u4E0D\u5F97\u5728\u6B27\u76DF
     / \u82F1\u56FD / \u97E9\u56FD\u5883\u5185\u4F7F\u7528\u6216\u5206\u53D1"
---- !u!1 &4115572667791842285
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8195082148333372329}
-  - component: {fileID: 3953586024602879439}
-  m_Layer: 0
-  m_Name: SK_Weapon_Stormpod_LOD1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8195082148333372329
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4115572667791842285}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.000000053385076, y: 0.7071068, z: -0.70710677, w: -0.00000005338508}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 6075795768922127293}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!137 &3953586024602879439
-SkinnedMeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4115572667791842285}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 3
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 7363e0102c0fc2744ad031183fabae3d, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  serializedVersion: 2
-  m_Quality: 0
-  m_UpdateWhenOffscreen: 0
-  m_SkinnedMotionVectors: 1
-  m_Mesh: {fileID: -3337497978716130819, guid: 63ff342b024375342bf012b06986a49c, type: 3}
-  m_Bones:
-  - {fileID: 1263395722876400370}
-  - {fileID: 7453968773816034085}
-  - {fileID: 17638602412920990}
-  m_BlendShapeWeights: []
-  m_RootBone: {fileID: 1263395722876400370}
-  m_AABB:
-    m_Center: {x: 0.004567541, y: -0.0077757686, z: 0.05510637}
-    m_Extent: {x: 0.056544155, y: 0.11936143, z: 0.23517716}
-  m_DirtyAABB: 0
 --- !u!1 &7006960020847219153
 GameObject:
   m_ObjectHideFlags: 0

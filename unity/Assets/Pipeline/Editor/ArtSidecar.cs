@@ -69,8 +69,7 @@ namespace Spiritfire.Art.Editor
         }
 
         JObject Budget => raw["budget"] as JObject;
-        public int[] BudgetLodTris => Budget?["lodTris"]?.ToObject<int[]>();
-        /// <summary>registry.toml 里登记的 QA 豁免理由；没有豁免时为 null。检查项名与 assetctl validate 一致（如「LOD2 面数」）。</summary>
+        /// <summary>registry.toml 里登记的 QA 豁免理由；没有豁免时为 null。检查项名与 assetctl validate 一致（如「场景脚底落地」）。</summary>
         public string Waiver(string check) => (raw["qaWaivers"] as JObject)?[check]?.ToString();
 
         public int BudgetTexture => (int?)Budget?["texture"] ?? 2048;

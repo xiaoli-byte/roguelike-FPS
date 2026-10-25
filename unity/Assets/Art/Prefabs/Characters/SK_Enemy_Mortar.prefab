@@ -772,8 +772,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2124645993947438142}
-  - {fileID: 9156473786759333274}
-  - {fileID: 1587919782142714593}
   - {fileID: 8377987346399451674}
   m_Father: {fileID: 1326615758412571391}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -849,111 +847,6 @@ MonoBehaviour:
   lean: 0
   daze: 0
   autoTick: 1
---- !u!1 &6981137362380044642
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1587919782142714593}
-  - component: {fileID: 2106547382364625602}
-  m_Layer: 7
-  m_Name: SK_Enemy_Mortar_LOD2
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1587919782142714593
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6981137362380044642}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.000000053385076, y: 0.7071068, z: -0.70710677, w: -0.00000005338508}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 7869603738538921409}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!137 &2106547382364625602
-SkinnedMeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6981137362380044642}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 3
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 24a4733287d0485418cea9b7aa839730, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  serializedVersion: 2
-  m_Quality: 0
-  m_UpdateWhenOffscreen: 0
-  m_SkinnedMotionVectors: 1
-  m_Mesh: {fileID: 5359830593497967053, guid: dcf1d561910ba6140b0ff382e43b2030, type: 3}
-  m_Bones:
-  - {fileID: 4887491681179423267}
-  - {fileID: 4383472333178635311}
-  - {fileID: 4516563116816537919}
-  - {fileID: 8605854812649782888}
-  - {fileID: 7671028502773605599}
-  - {fileID: 6855385354875629263}
-  - {fileID: 400979139323799180}
-  - {fileID: 7882693144529121344}
-  - {fileID: 3810320347889589831}
-  - {fileID: 8394822318957922906}
-  - {fileID: 807197796327302648}
-  - {fileID: 7740878950991361556}
-  - {fileID: 8713387931395389175}
-  m_BlendShapeWeights: []
-  m_RootBone: {fileID: 4887491681179423267}
-  m_AABB:
-    m_Center: {x: 0.002906531, y: -0.1421845, z: 0.0064131618}
-    m_Extent: {x: 0.79233277, y: 1.177037, z: 0.6060915}
-  m_DirtyAABB: 0
 --- !u!1 &7436716847042969688
 GameObject:
   m_ObjectHideFlags: 0
@@ -985,111 +878,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4383472333178635311}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &7586292377377426883
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 9156473786759333274}
-  - component: {fileID: 577385274300774351}
-  m_Layer: 7
-  m_Name: SK_Enemy_Mortar_LOD1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &9156473786759333274
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7586292377377426883}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.000000053385076, y: 0.7071068, z: -0.70710677, w: -0.00000005338508}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 7869603738538921409}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!137 &577385274300774351
-SkinnedMeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7586292377377426883}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 3
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 24a4733287d0485418cea9b7aa839730, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  serializedVersion: 2
-  m_Quality: 0
-  m_UpdateWhenOffscreen: 0
-  m_SkinnedMotionVectors: 1
-  m_Mesh: {fileID: -6616474369485628786, guid: dcf1d561910ba6140b0ff382e43b2030, type: 3}
-  m_Bones:
-  - {fileID: 4887491681179423267}
-  - {fileID: 4383472333178635311}
-  - {fileID: 4516563116816537919}
-  - {fileID: 8605854812649782888}
-  - {fileID: 7671028502773605599}
-  - {fileID: 6855385354875629263}
-  - {fileID: 400979139323799180}
-  - {fileID: 7882693144529121344}
-  - {fileID: 3810320347889589831}
-  - {fileID: 8394822318957922906}
-  - {fileID: 807197796327302648}
-  - {fileID: 7740878950991361556}
-  - {fileID: 8713387931395389175}
-  m_BlendShapeWeights: []
-  m_RootBone: {fileID: 4887491681179423267}
-  m_AABB:
-    m_Center: {x: -0.00046491623, y: -0.14101005, z: 0.008581519}
-    m_Extent: {x: 0.7954067, y: 1.1745074, z: 0.60586905}
-  m_DirtyAABB: 0
 --- !u!1 &8095444842159539905
 GameObject:
   m_ObjectHideFlags: 0
@@ -1131,7 +919,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1326615758412571391}
-  - component: {fileID: 1642893378350172947}
   - component: {fileID: 5118965125888963186}
   - component: {fileID: 6709161039555151711}
   - component: {fileID: 7378184307785338784}
@@ -1159,34 +946,6 @@ Transform:
   - {fileID: 7869603738538921409}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!205 &1642893378350172947
-LODGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8480634293382980330}
-  serializedVersion: 3
-  m_LocalReferencePoint: {x: 0.000035643578, y: 1.0421845, z: 0.007601857}
-  m_Size: 2.3540742
-  m_FadeMode: 1
-  m_AnimateCrossFading: 1
-  m_LastLODIsBillboard: 0
-  m_LODs:
-  - screenRelativeHeight: 0.112950064
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 2065207549758992983}
-  - screenRelativeHeight: 0.05271003
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 577385274300774351}
-  - screenRelativeHeight: 0.02108401
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 2106547382364625602}
-  m_Enabled: 1
-  m_GlobalIlluminationLOD: 0
 --- !u!114 &5118965125888963186
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1267,13 +1026,11 @@ MonoBehaviour:
   bindAttachment: 
   lodDistance:
   - 0
-  - 14
-  - 30
   moveSpeed: 0
   designBounds:
     m_Center: {x: -0.00035962462, y: 1.1072345, z: 0.008774221}
     m_Extent: {x: 0.75133824, y: 1.1072388, z: 0.60609037}
   sourceGlb: public/assets/characters/SK_Enemy_Mortar.glb
-  sourceSha256: 7885de89df04575686ceb59e50d1b8dd43c4538beb731b7a67f7ed6e92de0f12
+  sourceSha256: 920b4b919f21afaffecc9601c684d146aa341939d548bc1615d9b5f2536b2e2d
   license: "Hunyuan3D 2.1 \u751F\u6210\uFF1ATencent Hunyuan 3D Community License\uFF0C\u4E0D\u5F97\u5728\u6B27\u76DF
     / \u82F1\u56FD / \u97E9\u56FD\u4F7F\u7528\u6216\u5206\u53D1"

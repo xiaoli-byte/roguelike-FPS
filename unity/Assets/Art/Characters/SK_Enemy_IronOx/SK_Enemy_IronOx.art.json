@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Enemy_IronOx",
   "kind": "skeletal",
   "class": "enemy_large",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    18,
-    40
+    0
   ],
   "budget": {
-    "lodTris": [
-      12000,
-      5000,
-      2000
-    ],
     "texture": 2048,
     "maxFileKb": 3000
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.6534507870674133,
@@ -89,26 +83,6 @@
         "M_Enemy_IronOx"
       ],
       "skinned": true
-    },
-    {
-      "name": "SK_Enemy_IronOx_LOD1",
-      "lod": 1,
-      "tris": 4925,
-      "verts": 4198,
-      "materials": [
-        "M_Enemy_IronOx"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Enemy_IronOx_LOD2",
-      "lod": 2,
-      "tris": 1966,
-      "verts": 2108,
-      "materials": [
-        "M_Enemy_IronOx"
-      ],
-      "skinned": true
     }
   ],
   "materials": [
@@ -164,7 +138,7 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Enemy_IronOx.glb",
-    "sha256": "d532c9d933e26b63719c418387bc7d7b4e0bf0262a41ada8b15947e5cf8c62e1",
+    "sha256": "e3ae83a1885df61392fc84d806d3bf8a58512cd8c33e306e108193493292056f",
     "hiRes": false,
     "version": {
       "native_build": 4
@@ -176,5 +150,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-17 11:23:44"
+  "exported": "2026-10-25 11:52:32"
 }

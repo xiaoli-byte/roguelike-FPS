@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Weapon_Swarm",
   "kind": "skeletal",
   "class": "weapon_fp",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    6
+    0
   ],
   "budget": {
-    "lodTris": [
-      12000,
-      3000
-    ],
     "texture": 2048,
     "maxFileKb": 3000
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.07406449317932129,
@@ -52,16 +48,6 @@
       "lod": 0,
       "tris": 12000,
       "verts": 7216,
-      "materials": [
-        "M_Weapon_Swarm"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Weapon_Swarm_LOD1",
-      "lod": 1,
-      "tris": 3000,
-      "verts": 2329,
       "materials": [
         "M_Weapon_Swarm"
       ],
@@ -99,7 +85,7 @@
   ],
   "source": {
     "glb": "public/assets/weapons/SK_Weapon_Swarm.glb",
-    "sha256": "9ba38f0210c968143f676d6b72561c6bc17824e9cc54e70c2bac0e5de43ff585",
+    "sha256": "bc1e83d9fa09215da92ac7c0a25d8dc3235b27a9382f764407b78c45d4aec49b",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -110,5 +96,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-17 11:19:15"
+  "exported": "2026-10-25 11:54:45"
 }

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_EnemyPart_ApsaraPipa",
   "kind": "static",
   "class": "enemy_attachment",
@@ -12,17 +12,13 @@
   },
   "keepGlow": "attachments",
   "lodDistance": [
-    0,
-    14
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.146598219871521,
@@ -49,16 +45,6 @@
       "lod": 0,
       "tris": 2984,
       "verts": 4008,
-      "materials": [
-        "M_EnemyPart_ApsaraPipa"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_EnemyPart_ApsaraPipa_LOD1",
-      "lod": 1,
-      "tris": 988,
-      "verts": 1824,
       "materials": [
         "M_EnemyPart_ApsaraPipa"
       ],
@@ -95,7 +81,7 @@
   ],
   "source": {
     "glb": "public/assets/attachments/SM_EnemyPart_ApsaraPipa.glb",
-    "sha256": "bc5f3adf19c09ba937f440b73ea809ac206fb5219d45a71d227e03af8e3affc4",
+    "sha256": "40ce36ae278ab7f3d5ffb9b3ad55e7e422f0e98d7c8106a92508659a2ec59e8f",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -110,5 +96,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-17 00:29:35"
+  "exported": "2026-10-25 11:55:19"
 }

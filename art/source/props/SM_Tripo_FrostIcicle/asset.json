@@ -197,7 +197,7 @@
       ]
     },
     "build": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -252,11 +252,61 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:57:42",
+          "files": {
+            "SM_Tripo_FrostIcicle_v002.blend": {
+              "path": "03_work/SM_Tripo_FrostIcicle_v002.blend",
+              "sha256": "4dc5c58cfb440e669dff49c123582e27f570bf94f81b6eec06f63d80686cc7f4"
+            },
+            "SM_Tripo_FrostIcicle_v002.glb": {
+              "path": "04_export/SM_Tripo_FrostIcicle_v002.glb",
+              "sha256": "38ce40aa6910a4630754112e2e95f189e9b5a2dcd5a5846d7995626dcf5ea862"
+            },
+            "SM_Tripo_FrostIcicle_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostIcicle_v002_metrics.json",
+              "sha256": "e074fe83390cc293c8276aca23070774641aae06275fae3d4a2e064058b060ed"
+            },
+            "T_Tripo_FrostIcicle_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostIcicle_BC.png",
+              "sha256": "2cdcfb6379c3718069dd8225b6d1f1e22e79ca19484a102db3e261fde1c35bee"
+            },
+            "T_Tripo_FrostIcicle_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostIcicle_N.png",
+              "sha256": "c115eedabb36a488303772eed3dca94af9a712fdc102a4aaf8c95710b8e1c88f"
+            },
+            "T_Tripo_FrostIcicle_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostIcicle_ORM.png",
+              "sha256": "e8b8855bc8ed5d549bd4703d249900dac70463c76861b8a359fc9eafa3d588a6"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.749,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 3186,
+              "verts": 1595
+            }
+          ],
+          "export_kb": 158.6,
+          "seconds": 12.4,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -272,11 +322,26 @@
           "warnings": 1,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:57:42",
+          "files": {
+            "SM_Tripo_FrostIcicle_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_FrostIcicle_v002_validation_v002.json",
+              "sha256": "944ac5ba251da68234c2292ff5730ec06d4f9885a7283a3fbd881fa0f99829a2"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -296,11 +361,30 @@
             "note": "2026-10-22 ART5：审核图四视图与概念一致（用户 2026-10-19 授权免审）",
             "time": "2026-10-22 22:10:49"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:57:50",
+          "files": {
+            "SM_Tripo_FrostIcicle_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_FrostIcicle_v002_review_v002.png",
+              "sha256": "2efcf79d4bf0a6342f0446feddf97ad3f522107b41eff773b88de3d74e759414"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（2026-10-25 不减面重建，用户授权免审）",
+            "note": "",
+            "time": "2026-10-25 11:58:45"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -312,6 +396,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/props/SM_Tripo_FrostIcicle.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:58:45",
+          "files": {
+            "SM_Tripo_FrostIcicle.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostIcicle.glb",
+              "sha256": "38ce40aa6910a4630754112e2e95f189e9b5a2dcd5a5846d7995626dcf5ea862"
+            }
+          },
+          "from_build": 2,
           "url": "assets/props/SM_Tripo_FrostIcicle.glb"
         }
       ]

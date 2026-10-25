@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Env_DesertCliff",
   "kind": "static",
   "class": "nature_prop",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    18,
-    42
+    0
   ],
   "budget": {
-    "lodTris": [
-      5000,
-      1600,
-      500
-    ],
     "texture": 1024,
     "maxFileKb": 900
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -7.758747577667236,
@@ -50,26 +44,6 @@
       "lod": 0,
       "tris": 5000,
       "verts": 3796,
-      "materials": [
-        "M_Env_DesertCliff"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Env_DesertCliff_LOD1",
-      "lod": 1,
-      "tris": 1600,
-      "verts": 1530,
-      "materials": [
-        "M_Env_DesertCliff"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Env_DesertCliff_LOD2",
-      "lod": 2,
-      "tris": 500,
-      "verts": 605,
       "materials": [
         "M_Env_DesertCliff"
       ],
@@ -106,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Env_DesertCliff.glb",
-    "sha256": "754f3b25f54bf87e5e94b3b1acaa33e826026f45f237200d1e34564e7abc38d9",
+    "sha256": "2586e332c0fc142f7135a31f22b5ab34cf8b50eaa99ea2a34347c6662ab1411d",
     "hiRes": false,
     "version": {
       "blockout": 2,
@@ -121,5 +95,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 00:30:36"
+  "exported": "2026-10-25 11:55:56"
 }

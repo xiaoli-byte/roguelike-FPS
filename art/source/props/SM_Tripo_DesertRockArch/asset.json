@@ -197,7 +197,7 @@
       ]
     },
     "build": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -268,11 +268,61 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:53:02",
+          "files": {
+            "SM_Tripo_DesertRockArch_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertRockArch_v002.blend",
+              "sha256": "37b59f025971c8d2421ef88a44a2803ed307299e192cf43cc76ff6ab1d4b2b3f"
+            },
+            "SM_Tripo_DesertRockArch_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertRockArch_v002.glb",
+              "sha256": "d0ef4371f777547d2a385a94a21faf56c6ee2dceb1418829eeda1fd388f50b75"
+            },
+            "SM_Tripo_DesertRockArch_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertRockArch_v002_metrics.json",
+              "sha256": "5e087a513776dc6c5a17a06a6a52fbdbb7a231e0ebd89752f1d68c65c856ef7a"
+            },
+            "T_Tripo_DesertRockArch_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertRockArch_BC.png",
+              "sha256": "75cc08dbe6f68ea281817148958922906e004288fd07c151882990870e191a65"
+            },
+            "T_Tripo_DesertRockArch_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertRockArch_N.png",
+              "sha256": "c97d57d57567a9c4902aa6df3cf40a80fbac7f1b7614812825a0bbfae1d3ded9"
+            },
+            "T_Tripo_DesertRockArch_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertRockArch_ORM.png",
+              "sha256": "aeddcbbd9b1017f751ca61f4203c40f3b383c07c5b475a46c3e2cc81bb381911"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.874,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 8164,
+              "verts": 4128
+            }
+          ],
+          "export_kb": 388.6,
+          "seconds": 27.4,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -288,11 +338,26 @@
           "warnings": 0,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:53:03",
+          "files": {
+            "SM_Tripo_DesertRockArch_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertRockArch_v002_validation_v002.json",
+              "sha256": "f8b18fdf77a49cfa818ba11db2075b866bc05c89b97f1b09aeeeffd8c63232b5"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -312,11 +377,30 @@
             "note": "成品审核通过（Tripo P2.0 + 纹理）：四视图与概念一致，LOD 远看轮廓不塌、无斜条纹",
             "time": "2026-10-20 21:51:03"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:53:07",
+          "files": {
+            "SM_Tripo_DesertRockArch_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_DesertRockArch_v002_review_v002.png",
+              "sha256": "536e0b9bb9fe7f1495cef3b6bf51db94a56e3c9e4c2192e5d55cd768068298ce"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（2026-10-25 不减面重建，用户授权免审）",
+            "note": "",
+            "time": "2026-10-25 11:58:35"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -328,6 +412,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertRockArch.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:58:36",
+          "files": {
+            "SM_Tripo_DesertRockArch.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertRockArch.glb",
+              "sha256": "d0ef4371f777547d2a385a94a21faf56c6ee2dceb1418829eeda1fd388f50b75"
+            }
+          },
+          "from_build": 2,
           "url": "assets/props/SM_Tripo_DesertRockArch.glb"
         }
       ]

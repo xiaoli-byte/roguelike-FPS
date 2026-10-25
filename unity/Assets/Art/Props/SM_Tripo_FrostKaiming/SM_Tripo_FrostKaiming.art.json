@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_FrostKaiming",
   "kind": "static",
   "class": "tripo_architecture",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    24,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2500,
-      800
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -4.0618414878845215,
@@ -50,26 +44,6 @@
       "lod": 0,
       "tris": 7999,
       "verts": 5818,
-      "materials": [
-        "M_Tripo_FrostKaiming"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostKaiming_LOD1",
-      "lod": 1,
-      "tris": 2500,
-      "verts": 2440,
-      "materials": [
-        "M_Tripo_FrostKaiming"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostKaiming_LOD2",
-      "lod": 2,
-      "tris": 800,
-      "verts": 1132,
       "materials": [
         "M_Tripo_FrostKaiming"
       ],
@@ -106,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_FrostKaiming.glb",
-    "sha256": "08dc35956201b4871467881d681ccaf25277e2ab8c9ec5ed7d0e2054c931393b",
+    "sha256": "4e26cde8f7fae787f4bd929e4bf4e8e9160268e6bb55f8b5b7734071fb1ebd71",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -121,5 +95,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:21:50"
+  "exported": "2026-10-25 12:01:22"
 }

@@ -11,16 +11,9 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    24,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2500,
-      800
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
@@ -28,7 +21,7 @@
   "bounds": {
     "min": [
       -10.045257568359375,
-      -0.0014857969945296645,
+      0,
       -4.519629955291748
     ],
     "max": [
@@ -49,30 +42,10 @@
     {
       "name": "SM_Env_DesertCaveCeilingRift_LOD0",
       "lod": 0,
-      "tris": 7960,
-      "verts": 4860,
+      "tris": 8894,
+      "verts": 5344,
       "materials": [
         "M_Env_DesertCaveCeilingRift"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Env_DesertCaveCeilingRift_LOD1",
-      "lod": 1,
-      "tris": 2487,
-      "verts": 1747,
-      "materials": [
-        "M_Env_DesertCaveCeilingRift_LOD1"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Env_DesertCaveCeilingRift_LOD2",
-      "lod": 2,
-      "tris": 795,
-      "verts": 683,
-      "materials": [
-        "M_Env_DesertCaveCeilingRift_LOD2"
       ],
       "skinned": false
     }
@@ -103,69 +76,17 @@
         "N": "Textures/T_Env_DesertCaveCeilingRift_N.png",
         "ORM": "Textures/T_Env_DesertCaveCeilingRift_ORM.png"
       }
-    },
-    {
-      "name": "M_Env_DesertCaveCeilingRift_LOD1",
-      "baseColor": [
-        1,
-        1,
-        1,
-        1
-      ],
-      "metallic": 1.0,
-      "roughness": 1.0,
-      "emissive": [
-        0,
-        0,
-        0
-      ],
-      "doubleSided": true,
-      "alphaMode": "OPAQUE",
-      "alphaCutoff": 0.5,
-      "hasOcclusion": true,
-      "occlusionSeparate": false,
-      "textures": {
-        "BC": "Textures/T_Env_DesertCaveCeilingRift_LOD1_BC.png",
-        "N": "Textures/T_Env_DesertCaveCeilingRift_LOD1_N.png",
-        "ORM": "Textures/T_Env_DesertCaveCeilingRift_LOD1_ORM.png"
-      }
-    },
-    {
-      "name": "M_Env_DesertCaveCeilingRift_LOD2",
-      "baseColor": [
-        1,
-        1,
-        1,
-        1
-      ],
-      "metallic": 1.0,
-      "roughness": 1.0,
-      "emissive": [
-        0,
-        0,
-        0
-      ],
-      "doubleSided": true,
-      "alphaMode": "OPAQUE",
-      "alphaCutoff": 0.5,
-      "hasOcclusion": true,
-      "occlusionSeparate": false,
-      "textures": {
-        "BC": "Textures/T_Env_DesertCaveCeilingRift_LOD2_BC.png",
-        "N": "Textures/T_Env_DesertCaveCeilingRift_LOD2_N.png",
-        "ORM": "Textures/T_Env_DesertCaveCeilingRift_LOD2_ORM.png"
-      }
     }
   ],
   "source": {
     "glb": "public/assets/props/SM_Env_DesertCaveCeilingRift.glb",
-    "sha256": "81e726f98a1287738e658a160d39ab54c93900ba1158b422b0e5a4023fa0afb9",
+    "sha256": "1c438e5be7fd53cf40806bd5034bb88fc2d1f8f4a3f1f7ca0ea035f366a11402",
     "hiRes": false,
     "version": {
       "blockout": 1,
       "concept": 1,
       "highpoly": 1,
-      "build": 1
+      "build": 2
     },
     "generator": {
       "tool": "Tripo Studio",
@@ -174,5 +95,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-20 21:54:51"
+  "exported": "2026-10-25 12:17:49"
 }

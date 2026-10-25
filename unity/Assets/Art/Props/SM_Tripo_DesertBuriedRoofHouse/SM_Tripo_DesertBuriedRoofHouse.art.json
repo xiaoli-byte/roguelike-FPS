@@ -11,16 +11,9 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    24,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2500,
-      800
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
@@ -55,26 +48,6 @@
         "M_Tripo_DesertBuriedRoofHouse"
       ],
       "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertBuriedRoofHouse_LOD1",
-      "lod": 1,
-      "tris": 2486,
-      "verts": 3690,
-      "materials": [
-        "M_Tripo_DesertBuriedRoofHouse"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertBuriedRoofHouse_LOD2",
-      "lod": 2,
-      "tris": 795,
-      "verts": 767,
-      "materials": [
-        "M_Tripo_DesertBuriedRoofHouse_LOD2"
-      ],
-      "skinned": false
     }
   ],
   "materials": [
@@ -103,37 +76,11 @@
         "N": "Textures/T_Tripo_DesertBuriedRoofHouse_N.png",
         "ORM": "Textures/T_Tripo_DesertBuriedRoofHouse_ORM.png"
       }
-    },
-    {
-      "name": "M_Tripo_DesertBuriedRoofHouse_LOD2",
-      "baseColor": [
-        1,
-        1,
-        1,
-        1
-      ],
-      "metallic": 1.0,
-      "roughness": 1.0,
-      "emissive": [
-        0,
-        0,
-        0
-      ],
-      "doubleSided": true,
-      "alphaMode": "OPAQUE",
-      "alphaCutoff": 0.5,
-      "hasOcclusion": true,
-      "occlusionSeparate": false,
-      "textures": {
-        "BC": "Textures/T_Tripo_DesertBuriedRoofHouse_LOD2_BC.png",
-        "N": "Textures/T_Tripo_DesertBuriedRoofHouse_LOD2_N.png",
-        "ORM": "Textures/T_Tripo_DesertBuriedRoofHouse_LOD2_ORM.png"
-      }
     }
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_DesertBuriedRoofHouse.glb",
-    "sha256": "593de50a2d53063afcc3bc147b03279b8a4982bb43b41b8ccd17c579e234269b",
+    "sha256": "b8d59356dc691a4dc079de2df9fa2ae0200a1732d63aed4a9e2bde48a1ee1712",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -148,5 +95,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-20 21:54:21"
+  "exported": "2026-10-25 11:58:22"
 }

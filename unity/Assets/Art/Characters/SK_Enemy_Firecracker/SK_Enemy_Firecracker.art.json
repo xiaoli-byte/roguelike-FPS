@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Enemy_Firecracker",
   "kind": "skeletal",
   "class": "enemy_standard",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    14,
-    30
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      3500,
-      1500
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.5740840435028076,
@@ -78,26 +72,6 @@
         "M_Enemy_Firecracker"
       ],
       "skinned": true
-    },
-    {
-      "name": "SK_Enemy_Firecracker_LOD1",
-      "lod": 1,
-      "tris": 3446,
-      "verts": 6846,
-      "materials": [
-        "M_Enemy_Firecracker"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Enemy_Firecracker_LOD2",
-      "lod": 2,
-      "tris": 1459,
-      "verts": 3369,
-      "materials": [
-        "M_Enemy_Firecracker"
-      ],
-      "skinned": true
     }
   ],
   "materials": [
@@ -129,7 +103,7 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Enemy_Firecracker@hi.glb",
-    "sha256": "727a03de8fc17001f98da70275d0037951e7f7832b0f32ae668adee5c2b3aff1",
+    "sha256": "29243a1c0cea5d358077584ac62110bed019be45891a54875fa5071c2ed94bec",
     "hiRes": true,
     "version": {
       "native_build": 3
@@ -141,5 +115,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-17 11:23:55"
+  "exported": "2026-10-25 11:52:05"
 }

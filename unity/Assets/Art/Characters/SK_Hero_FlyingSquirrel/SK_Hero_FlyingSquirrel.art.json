@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Hero_FlyingSquirrel",
   "kind": "skeletal",
   "class": "hero_display",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    10,
-    24
+    0
   ],
   "budget": {
-    "lodTris": [
-      16000,
-      6000,
-      2400
-    ],
     "texture": 2048,
     "maxFileKb": 3200
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.5936927199363708,
@@ -193,26 +187,6 @@
         "M_Hero_FlyingSquirrel"
       ],
       "skinned": true
-    },
-    {
-      "name": "SK_Hero_FlyingSquirrel_LOD1",
-      "lod": 1,
-      "tris": 5908,
-      "verts": 10419,
-      "materials": [
-        "M_Hero_FlyingSquirrel"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Hero_FlyingSquirrel_LOD2",
-      "lod": 2,
-      "tris": 2363,
-      "verts": 5090,
-      "materials": [
-        "M_Hero_FlyingSquirrel"
-      ],
-      "skinned": true
     }
   ],
   "materials": [
@@ -245,7 +219,7 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Hero_FlyingSquirrel.glb",
-    "sha256": "c38943d29ea52a042bed6beddd6656aa517be029a6dfee5864d6562aee25b775",
+    "sha256": "cc23fc166080896b182a84ec576637c346db704ac4f9a30697e6ad71b4e15cc5",
     "hiRes": false,
     "version": {
       "native_build": 5
@@ -257,5 +231,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-17 11:20:30"
+  "exported": "2026-10-25 11:53:37"
 }

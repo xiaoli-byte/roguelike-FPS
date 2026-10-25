@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Weapon_Rifle",
   "kind": "skeletal",
   "class": "weapon_fp",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    6
+    0
   ],
   "budget": {
-    "lodTris": [
-      12000,
-      3000
-    ],
     "texture": 2048,
     "maxFileKb": 3000
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.0501876063644886,
@@ -53,16 +49,6 @@
       "lod": 0,
       "tris": 11996,
       "verts": 7091,
-      "materials": [
-        "M_Weapon_Rifle"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Weapon_Rifle_LOD1",
-      "lod": 1,
-      "tris": 2996,
-      "verts": 2218,
       "materials": [
         "M_Weapon_Rifle"
       ],
@@ -100,7 +86,7 @@
   ],
   "source": {
     "glb": "public/assets/weapons/SK_Weapon_Rifle.glb",
-    "sha256": "f264fc6db9881e8c25dbcf4dc8bd14ede9c96345ef0e0dc53a85ce12c22105dd",
+    "sha256": "dfa305e1af59ecd08f6515672fb757d61d303311e2cefdb2b5be7015bf8906ed",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -111,5 +97,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-17 11:18:58"
+  "exported": "2026-10-25 11:54:23"
 }

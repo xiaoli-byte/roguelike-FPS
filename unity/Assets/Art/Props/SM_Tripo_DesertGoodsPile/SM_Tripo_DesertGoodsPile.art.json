@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_DesertGoodsPile",
   "kind": "static",
   "class": "tripo_prop",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.8419538140296936,
@@ -48,16 +44,6 @@
       "lod": 0,
       "tris": 2913,
       "verts": 4491,
-      "materials": [
-        "M_Tripo_DesertGoodsPile"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertGoodsPile_LOD1",
-      "lod": 1,
-      "tris": 995,
-      "verts": 1939,
       "materials": [
         "M_Tripo_DesertGoodsPile"
       ],
@@ -94,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_DesertGoodsPile.glb",
-    "sha256": "21c184cb660631cb5bdc4c965c982d3268f524017594e045a5bd99ad232f4fbc",
+    "sha256": "fbd7e3b5e06f2089daec06f61e716555bc1ed2e03da672d1560f468404aa9e86",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -109,5 +95,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-17 00:30:20"
+  "exported": "2026-10-25 11:59:04"
 }

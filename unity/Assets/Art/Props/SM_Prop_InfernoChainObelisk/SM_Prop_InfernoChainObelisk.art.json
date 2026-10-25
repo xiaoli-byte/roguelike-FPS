@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Prop_InfernoChainObelisk",
   "kind": "static",
   "class": "prop",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      2500,
-      900
-    ],
     "texture": 512,
     "maxFileKb": 600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.5415732860565186,
@@ -48,16 +44,6 @@
       "lod": 0,
       "tris": 2500,
       "verts": 2172,
-      "materials": [
-        "M_Prop_InfernoChainObelisk"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Prop_InfernoChainObelisk_LOD1",
-      "lod": 1,
-      "tris": 900,
-      "verts": 1146,
       "materials": [
         "M_Prop_InfernoChainObelisk"
       ],
@@ -94,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Prop_InfernoChainObelisk.glb",
-    "sha256": "f890c834794c39f02e0571fee05a51e8d69c057eef2f7af4bc0a3134684a6a6d",
+    "sha256": "3c3a7e3613058f637aa184d44ede929f522eb546f5a04722827145d53976b395",
     "hiRes": false,
     "version": {
       "blockout": 2,
@@ -105,5 +91,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-17 11:19:26"
+  "exported": "2026-10-25 11:57:50"
 }

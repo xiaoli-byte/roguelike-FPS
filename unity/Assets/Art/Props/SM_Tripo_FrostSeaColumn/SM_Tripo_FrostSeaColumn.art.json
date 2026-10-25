@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_FrostSeaColumn",
   "kind": "static",
   "class": "tripo_prop",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -1.0560522079467773,
@@ -48,16 +44,6 @@
       "lod": 0,
       "tris": 2997,
       "verts": 2548,
-      "materials": [
-        "M_Tripo_FrostSeaColumn"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostSeaColumn_LOD1",
-      "lod": 1,
-      "tris": 1000,
-      "verts": 1259,
       "materials": [
         "M_Tripo_FrostSeaColumn"
       ],
@@ -94,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_FrostSeaColumn.glb",
-    "sha256": "9d72681100b62c2e04f1ff3c2cfcb38d17e64061a53ce8c82bdd12b93b57542f",
+    "sha256": "bd0232fb8f6fbc57df8fd3900ca2512c312e66926941afe6df7016b70e7d8094",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -109,5 +95,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:22:22"
+  "exported": "2026-10-25 12:02:40"
 }

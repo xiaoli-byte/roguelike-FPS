@@ -1,0 +1,79 @@
+{
+  "source": {
+    "tris": 3258,
+    "verts": 1696
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 0.55027,
+    "iou": 0.876,
+    "iou_per_view": {
+      "front": 0.882,
+      "left": 0.877,
+      "back": 0.874,
+      "right": 0.868
+    },
+    "size_m": [
+      0.297,
+      0.271,
+      0.55
+    ],
+    "reference_m": [
+      0.36,
+      0.36,
+      0.55
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.652,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Prop_Potion_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Prop_Potion_LOD0",
+      "tris": 3258,
+      "verts": 1696,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.622,
+      "bbox_min": [
+        -0.1487,
+        -0.1357,
+        0.0
+      ],
+      "bbox_max": [
+        0.1487,
+        0.1357,
+        0.55
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Prop_Potion/04_export/SM_Prop_Potion_v002.glb",
+    "bytes": 176052
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 9.7,
+  "_seconds": 11.5
+}

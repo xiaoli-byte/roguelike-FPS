@@ -11,14 +11,9 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
@@ -53,16 +48,6 @@
         "M_Tripo_DesertWell"
       ],
       "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertWell_LOD1",
-      "lod": 1,
-      "tris": 995,
-      "verts": 895,
-      "materials": [
-        "M_Tripo_DesertWell_LOD1"
-      ],
-      "skinned": false
     }
   ],
   "materials": [
@@ -91,37 +76,11 @@
         "N": "Textures/T_Tripo_DesertWell_N.png",
         "ORM": "Textures/T_Tripo_DesertWell_ORM.png"
       }
-    },
-    {
-      "name": "M_Tripo_DesertWell_LOD1",
-      "baseColor": [
-        1,
-        1,
-        1,
-        1
-      ],
-      "metallic": 1.0,
-      "roughness": 1.0,
-      "emissive": [
-        0,
-        0,
-        0
-      ],
-      "doubleSided": true,
-      "alphaMode": "OPAQUE",
-      "alphaCutoff": 0.5,
-      "hasOcclusion": true,
-      "occlusionSeparate": false,
-      "textures": {
-        "BC": "Textures/T_Tripo_DesertWell_LOD1_BC.png",
-        "N": "Textures/T_Tripo_DesertWell_LOD1_N.png",
-        "ORM": "Textures/T_Tripo_DesertWell_LOD1_ORM.png"
-      }
     }
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_DesertWell.glb",
-    "sha256": "278eac764b9a329b1df47044809b3c38aba990cc0c39751e55e1b12ef21a62e4",
+    "sha256": "2f83830369adc8aecd8172d513441cc3e3b23d658daf6682517fed6885164ce6",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -136,5 +95,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-20 21:54:36"
+  "exported": "2026-10-25 12:00:29"
 }

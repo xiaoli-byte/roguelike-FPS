@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_DesertTreasureHoard",
   "kind": "static",
   "class": "tripo_prop",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -1.2983088493347168,
@@ -48,16 +44,6 @@
       "lod": 0,
       "tris": 2984,
       "verts": 4521,
-      "materials": [
-        "M_Tripo_DesertTreasureHoard"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertTreasureHoard_LOD1",
-      "lod": 1,
-      "tris": 995,
-      "verts": 1908,
       "materials": [
         "M_Tripo_DesertTreasureHoard"
       ],
@@ -94,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_DesertTreasureHoard.glb",
-    "sha256": "6b12ed2b1b58d656ac01067dd0e40ddf4241399a474370002e58c289fa9a2b06",
+    "sha256": "0028c298c69f6c0003cb13e699d8cf971bdecd8c28e7eb16d8946673e34e1fd5",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -109,5 +95,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-17 00:30:22"
+  "exported": "2026-10-25 12:00:25"
 }

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Boss_QilinBurn",
   "kind": "skeletal",
   "class": "boss",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    25,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      30000,
-      12000,
-      5000
-    ],
-    "texture": 2048,
+    "texture": 4096,
     "maxFileKb": 6000
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -1.0444550514221191,
@@ -93,26 +87,6 @@
         "M_Boss_QilinBurn"
       ],
       "skinned": true
-    },
-    {
-      "name": "SK_Boss_QilinBurn_LOD1",
-      "lod": 1,
-      "tris": 11820,
-      "verts": 21080,
-      "materials": [
-        "M_Boss_QilinBurn"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Boss_QilinBurn_LOD2",
-      "lod": 2,
-      "tris": 4924,
-      "verts": 10861,
-      "materials": [
-        "M_Boss_QilinBurn"
-      ],
-      "skinned": true
     }
   ],
   "materials": [
@@ -168,7 +142,7 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Boss_QilinBurn.glb",
-    "sha256": "46b6f88b257fc04d3c0f0e6c366d6d174428d81aed285b38b82040c325234754",
+    "sha256": "394146ff85a2b2c4f453cf1a449626845d1b43197c7a64fd71138b4db141f867",
     "hiRes": false,
     "version": {
       "native_build": 4
@@ -180,5 +154,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-17 11:23:39"
+  "exported": "2026-10-25 11:51:34"
 }

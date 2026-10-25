@@ -11,16 +11,9 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    12,
-    30
+    0
   ],
   "budget": {
-    "lodTris": [
-      15000,
-      6000,
-      2400
-    ],
     "texture": 2048,
     "maxFileKb": 3200
   },
@@ -98,28 +91,8 @@
     {
       "name": "SK_Npc_Merchant_LOD0",
       "lod": 0,
-      "tris": 14960,
-      "verts": 21455,
-      "materials": [
-        "M_Npc_Merchant"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Npc_Merchant_LOD1",
-      "lod": 1,
-      "tris": 5909,
-      "verts": 11029,
-      "materials": [
-        "M_Npc_Merchant"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Npc_Merchant_LOD2",
-      "lod": 2,
-      "tris": 2344,
-      "verts": 5003,
+      "tris": 16499,
+      "verts": 23007,
       "materials": [
         "M_Npc_Merchant"
       ],
@@ -155,10 +128,10 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Npc_Merchant.glb",
-    "sha256": "d02468f359857dd719e10276e738a3d386bd1eb2d75f74f79e55bfaf5c4ce6aa",
+    "sha256": "79856c76b3fedf745de38f57f0fde23f8f9020eca9296e3755b84ad0ba5f366b",
     "hiRes": false,
     "version": {
-      "native_build": 11
+      "native_build": 13
     },
     "generator": {
       "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
@@ -167,5 +140,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-24 20:49:52"
+  "exported": "2026-10-25 12:29:35"
 }

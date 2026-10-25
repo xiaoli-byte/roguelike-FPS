@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_EnemyWeapon_CamelStele",
   "kind": "static",
   "class": "enemy_attachment",
@@ -12,17 +12,13 @@
   },
   "keepGlow": "attachments",
   "lodDistance": [
-    0,
-    14
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.43130195140838623,
@@ -49,16 +45,6 @@
       "lod": 0,
       "tris": 2984,
       "verts": 2438,
-      "materials": [
-        "M_EnemyWeapon_CamelStele"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_EnemyWeapon_CamelStele_LOD1",
-      "lod": 1,
-      "tris": 995,
-      "verts": 1152,
       "materials": [
         "M_EnemyWeapon_CamelStele"
       ],
@@ -95,7 +81,7 @@
   ],
   "source": {
     "glb": "public/assets/attachments/SM_EnemyWeapon_CamelStele.glb",
-    "sha256": "181ad66bae9dd889e599027b7c6df63504d30194b8b2567f06087d49b955f209",
+    "sha256": "ab8b26ce000b9fd923ff77e27ace7f15eeab52ff3a45f3fa8eb9dc84f94e3cc2",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -110,5 +96,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-17 11:20:18"
+  "exported": "2026-10-25 11:55:28"
 }

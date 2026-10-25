@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Prop_FrostShrine",
   "kind": "static",
   "class": "prop",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      2500,
-      900
-    ],
     "texture": 512,
     "maxFileKb": 600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.4728756546974182,
@@ -48,16 +44,6 @@
       "lod": 0,
       "tris": 2500,
       "verts": 1826,
-      "materials": [
-        "M_Prop_FrostShrine"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Prop_FrostShrine_LOD1",
-      "lod": 1,
-      "tris": 900,
-      "verts": 854,
       "materials": [
         "M_Prop_FrostShrine"
       ],
@@ -94,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Prop_FrostShrine.glb",
-    "sha256": "208e932356fa1db6474339eb3cb465f6a1a7fbeaf24a88c18e3f2625124b83be",
+    "sha256": "50c0805989cf27eb511b4eb9d5ed3f4c009c4dea79d8ca2dea2e8801d2b2a02e",
     "hiRes": false,
     "version": {
       "blockout": 2,
@@ -105,5 +91,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-17 11:19:22"
+  "exported": "2026-10-25 11:57:41"
 }

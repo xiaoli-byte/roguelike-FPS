@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_InfernoRampartEndR",
   "kind": "static",
   "class": "tripo_architecture_kit",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    24,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2500,
-      800
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -3.7936339378356934,
@@ -50,26 +44,6 @@
       "lod": 0,
       "tris": 1636,
       "verts": 1388,
-      "materials": [
-        "M_Tripo_InfernoRampart"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_InfernoRampartEndR_LOD1",
-      "lod": 1,
-      "tris": 511,
-      "verts": 686,
-      "materials": [
-        "M_Tripo_InfernoRampart"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_InfernoRampartEndR_LOD2",
-      "lod": 2,
-      "tris": 163,
-      "verts": 233,
       "materials": [
         "M_Tripo_InfernoRampart"
       ],
@@ -107,7 +81,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_InfernoRampartEndR.glb",
-    "sha256": "c4bc1e801a7cf06bcffc2961e2ed2fdd184ab0d3b199eeebe5651605ad083713",
+    "sha256": "9c77db1c422195aa167db420fbd6e0f85476e32337626693c4bcdb2806baab8f",
     "hiRes": false,
     "version": null,
     "generator": {
@@ -117,5 +91,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:25:13"
+  "exported": "2026-10-25 12:04:55"
 }

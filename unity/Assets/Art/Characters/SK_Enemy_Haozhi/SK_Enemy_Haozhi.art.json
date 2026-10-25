@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Enemy_Haozhi",
   "kind": "skeletal",
   "class": "enemy_swarm",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    12,
-    26
+    0
   ],
   "budget": {
-    "lodTris": [
-      6000,
-      2500,
-      1000
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.3035227060317993,
@@ -79,26 +73,6 @@
         "M_Enemy_Haozhi"
       ],
       "skinned": true
-    },
-    {
-      "name": "SK_Enemy_Haozhi_LOD1",
-      "lod": 1,
-      "tris": 2462,
-      "verts": 4705,
-      "materials": [
-        "M_Enemy_Haozhi"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Enemy_Haozhi_LOD2",
-      "lod": 2,
-      "tris": 985,
-      "verts": 2295,
-      "materials": [
-        "M_Enemy_Haozhi"
-      ],
-      "skinned": true
     }
   ],
   "materials": [
@@ -130,7 +104,7 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Enemy_Haozhi@hi.glb",
-    "sha256": "bbad10b9608d21e12dca584fc3c0cd28eb1caf1bbd6cebe40993118cf0c83207",
+    "sha256": "2eec9c7f52df45db144b83f0530bf3e01802a1f64cfce8606f0505b47022a252",
     "hiRes": true,
     "version": {
       "native_build": 3
@@ -142,5 +116,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-17 11:20:42"
+  "exported": "2026-10-25 11:52:22"
 }

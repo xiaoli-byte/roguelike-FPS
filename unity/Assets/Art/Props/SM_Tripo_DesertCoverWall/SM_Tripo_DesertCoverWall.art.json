@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_DesertCoverWall",
   "kind": "static",
   "class": "tripo_prop",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -2.4571564197540283,
@@ -48,16 +44,6 @@
       "lod": 0,
       "tris": 2640,
       "verts": 2143,
-      "materials": [
-        "M_Tripo_DesertCoverWall"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertCoverWall_LOD1",
-      "lod": 1,
-      "tris": 995,
-      "verts": 1067,
       "materials": [
         "M_Tripo_DesertCoverWall"
       ],
@@ -94,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_DesertCoverWall.glb",
-    "sha256": "140c593d2be34f151c478219a421ec62a1f7d40a2417c2cac12adccfce04e8f1",
+    "sha256": "096b45d85b82e61ab1faaad58c1adf0088b8cc0c21c6d524bfe5aa9d9d9582d8",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -109,5 +95,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-17 00:30:12"
+  "exported": "2026-10-25 11:58:50"
 }

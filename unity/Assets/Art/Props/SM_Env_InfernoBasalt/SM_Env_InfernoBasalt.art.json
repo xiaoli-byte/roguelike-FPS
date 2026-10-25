@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Env_InfernoBasalt",
   "kind": "static",
   "class": "nature_prop",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    18,
-    42
+    0
   ],
   "budget": {
-    "lodTris": [
-      5000,
-      1600,
-      500
-    ],
     "texture": 1024,
     "maxFileKb": 900
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -1.3031460046768188,
@@ -50,26 +44,6 @@
       "lod": 0,
       "tris": 5000,
       "verts": 3239,
-      "materials": [
-        "M_Env_InfernoBasalt"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Env_InfernoBasalt_LOD1",
-      "lod": 1,
-      "tris": 1600,
-      "verts": 1305,
-      "materials": [
-        "M_Env_InfernoBasalt"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Env_InfernoBasalt_LOD2",
-      "lod": 2,
-      "tris": 500,
-      "verts": 537,
       "materials": [
         "M_Env_InfernoBasalt"
       ],
@@ -106,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Env_InfernoBasalt.glb",
-    "sha256": "1a622c0e52280756062c910a7cf383ebba0b9b078fae76700780e0295b4deece",
+    "sha256": "2be2fa5ca2cf9cd790e8e253a42e7d7dde2dcde9836ab414675313c6c7e1baed",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -121,5 +95,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:19:28"
+  "exported": "2026-10-25 11:56:23"
 }

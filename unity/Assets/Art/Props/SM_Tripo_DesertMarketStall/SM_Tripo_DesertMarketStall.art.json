@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_DesertMarketStall",
   "kind": "static",
   "class": "tripo_prop",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -1.8506280183792114,
@@ -48,16 +44,6 @@
       "lod": 0,
       "tris": 2899,
       "verts": 2575,
-      "materials": [
-        "M_Tripo_DesertMarketStall"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertMarketStall_LOD1",
-      "lod": 1,
-      "tris": 995,
-      "verts": 1206,
       "materials": [
         "M_Tripo_DesertMarketStall"
       ],
@@ -94,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_DesertMarketStall.glb",
-    "sha256": "7186f115300c1d9423811bf74dd0a52bf37134209ae869bd839961fb8e53dc2d",
+    "sha256": "2c7c820b74752d98fb80aaaebf56500264bcdd3b8b992d47f8ee4a0d22b22d66",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -109,5 +95,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-17 00:30:19"
+  "exported": "2026-10-25 11:59:25"
 }

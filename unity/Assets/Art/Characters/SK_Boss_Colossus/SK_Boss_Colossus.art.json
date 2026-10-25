@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Boss_Colossus",
   "kind": "skeletal",
   "class": "boss",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    25,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      30000,
-      12000,
-      5000
-    ],
-    "texture": 2048,
+    "texture": 4096,
     "maxFileKb": 6000
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -2.4867231845855713,
@@ -75,26 +69,6 @@
         "M_Boss_Colossus"
       ],
       "skinned": true
-    },
-    {
-      "name": "SK_Boss_Colossus_LOD1",
-      "lod": 1,
-      "tris": 11990,
-      "verts": 9365,
-      "materials": [
-        "M_Boss_Colossus"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Boss_Colossus_LOD2",
-      "lod": 2,
-      "tris": 4989,
-      "verts": 4690,
-      "materials": [
-        "M_Boss_Colossus"
-      ],
-      "skinned": true
     }
   ],
   "materials": [
@@ -127,7 +101,7 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Boss_Colossus.glb",
-    "sha256": "6e0db19f8e042b484c134fd418494d93c2a9ae4e2c2d0a48f09a69e41a237710",
+    "sha256": "0cf67fe4ea38db1d48f4704572c1496bc2873687e84ee8fc14fe070be4c53703",
     "hiRes": false,
     "version": {
       "blockout": 2,
@@ -138,5 +112,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-17 11:18:40"
+  "exported": "2026-10-25 11:51:13"
 }

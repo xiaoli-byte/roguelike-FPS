@@ -1,95 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1387807523418714254
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2313705281954313679}
-  - component: {fileID: 381293212413073615}
-  - component: {fileID: 7941827633949438115}
-  m_Layer: 0
-  m_Name: SM_BossPart_HanbaSunRing_LOD1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2313705281954313679
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1387807523418714254}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.000000053385076, y: 0.7071068, z: -0.70710677, w: -0.00000005338508}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2223600400846691008}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &381293212413073615
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1387807523418714254}
-  m_Mesh: {fileID: -3461721997367780474, guid: 8c21b7275ad041542a3b7ce8bea94d12, type: 3}
---- !u!23 &7941827633949438115
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1387807523418714254}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 71b16620d8d2a6d4d98b5e9a6a9b928f, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &6459605681439611918
 GameObject:
   m_ObjectHideFlags: 0
@@ -99,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8096520704330962998}
-  - component: {fileID: 171888116836920058}
   - component: {fileID: 8471747674669643955}
   m_Layer: 0
   m_Name: SM_BossPart_HanbaSunRing
@@ -124,30 +33,6 @@ Transform:
   - {fileID: 2223600400846691008}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!205 &171888116836920058
-LODGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6459605681439611918}
-  serializedVersion: 3
-  m_LocalReferencePoint: {x: -0.0023593903, y: -0.0020682812, z: 0.00007969141}
-  m_Size: 6.0041366
-  m_FadeMode: 1
-  m_AnimateCrossFading: 1
-  m_LastLODIsBillboard: 0
-  m_LODs:
-  - screenRelativeHeight: 0.17137776
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 6575641340258991387}
-  - screenRelativeHeight: 0.06855111
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 7941827633949438115}
-  m_Enabled: 1
-  m_GlobalIlluminationLOD: 0
 --- !u!114 &8471747674669643955
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -169,13 +54,12 @@ MonoBehaviour:
   bindAttachment: sunring
   lodDistance:
   - 0
-  - 25
   moveSpeed: 0
   designBounds:
-    m_Center: {x: -0.0001436472, y: 0, z: 0}
-    m_Extent: {x: 2.8503695, y: 3, z: 0.61993176}
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 2.8505132, y: 3, z: 0.61993176}
   sourceGlb: public/assets/attachments/SM_BossPart_HanbaSunRing.glb
-  sourceSha256: fac9df6544379951e4d7f0ff5bc35ce80f8adb10a444d4590b876d5aeeb33755
+  sourceSha256: 35371c7d8de83375da47e6ae0d7c801f4a4b8e11afd079c621a9a8d1d08c02a7
   license: Tripo Studio paid-plan output (commercial use per Tripo terms)
 --- !u!1 &6936622053076142281
 GameObject:
@@ -207,7 +91,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2450198838882529350}
-  - {fileID: 2313705281954313679}
   m_Father: {fileID: 8096520704330962998}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8140042750140419031

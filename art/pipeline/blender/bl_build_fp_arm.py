@@ -164,23 +164,7 @@ for slot in ("Base Color",):
 for key in ("Normal",):
     for l in list(bsdf.inputs[key].links):
         mat.node_tree.links.remove(l)
-lods = [part]
-for i, budget in enumerate(P["lod_tris"]):
-    o = part
-    if i:
-        o = part.copy()
-        o.data = part.data.copy()
-        o.name = f"{name}_LOD{i}"
-        bpy.context.scene.collection.objects.link(o)
-        lods.append(o)
-    tris = sum(len(p.vertices) - 2 for p in o.data.polygons)
-    if tris > budget:
-        d = o.modifiers.new("dec", "DECIMATE")
-        d.ratio = budget / tris * 0.98
-        bpy.ops.object.select_all(action="DESELECT")
-        o.select_set(True)
-        bpy.context.view_layer.objects.active = o
-        bpy.ops.object.modifier_apply(modifier="dec")
+lods = [part]  # one LOD, the cut-out arm as it is: no decimation (2026-10-25)
 lod_tris = [sum(len(p.vertices) - 2 for p in o.data.polygons) for o in lods]
 
 # ── 5. review render (hand close-up from the camera's side) + export

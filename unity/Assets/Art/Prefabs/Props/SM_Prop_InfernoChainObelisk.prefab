@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8346195307530173475}
   - component: {fileID: 3567494794701854316}
   - component: {fileID: 2764158908511669293}
+  - component: {fileID: 5266608886325164065}
   m_Layer: 0
   m_Name: SM_Prop_InfernoChainObelisk_LOD0
   m_TagString: Untagged
@@ -90,6 +91,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &5266608886325164065
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1239751441308891377}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -22751806405750393, guid: d1a61400898f29e4f9ed4198ac2ed856, type: 3}
 --- !u!1 &1710772213590261263
 GameObject:
   m_ObjectHideFlags: 0
@@ -120,7 +143,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8346195307530173475}
-  - {fileID: 7588702975153546373}
   m_Father: {fileID: 5904505941485753716}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4055537992972427600
@@ -132,7 +154,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5904505941485753716}
-  - component: {fileID: 2959629704889627034}
   - component: {fileID: 8335555862457198160}
   m_Layer: 0
   m_Name: SM_Prop_InfernoChainObelisk
@@ -157,30 +178,6 @@ Transform:
   - {fileID: 4550904229293929435}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!205 &2959629704889627034
-LODGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4055537992972427600}
-  serializedVersion: 3
-  m_LocalReferencePoint: {x: -0.00022441149, y: 1.0646441, z: 0.01384306}
-  m_Size: 2.130261
-  m_FadeMode: 1
-  m_AnimateCrossFading: 1
-  m_LastLODIsBillboard: 0
-  m_LODs:
-  - screenRelativeHeight: 0.0760582
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 2764158908511669293}
-  - screenRelativeHeight: 0.012676367
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 6722681399166831165}
-  m_Enabled: 1
-  m_GlobalIlluminationLOD: 0
 --- !u!114 &8335555862457198160
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -202,125 +199,11 @@ MonoBehaviour:
   bindAttachment: 
   lodDistance:
   - 0
-  - 20
   moveSpeed: 0
   designBounds:
     m_Center: {x: -0.00024402142, y: 1.0646441, z: 0.013841659}
     m_Extent: {x: 0.54132926, y: 1.0651305, z: 0.53987813}
   sourceGlb: public/assets/props/SM_Prop_InfernoChainObelisk.glb
-  sourceSha256: f890c834794c39f02e0571fee05a51e8d69c057eef2f7af4bc0a3134684a6a6d
+  sourceSha256: 3c3a7e3613058f637aa184d44ede929f522eb546f5a04722827145d53976b395
   license: "Hunyuan3D 2.1 \u751F\u6210\uFF1ATencent Hunyuan 3D Community License\uFF0C\u4E0D\u5F97\u5728\u6B27\u76DF
     / \u82F1\u56FD / \u97E9\u56FD\u4F7F\u7528\u6216\u5206\u53D1"
---- !u!1 &8645989357697069094
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 7588702975153546373}
-  - component: {fileID: 2402868142420799893}
-  - component: {fileID: 6722681399166831165}
-  - component: {fileID: 6617398055940898318}
-  m_Layer: 0
-  m_Name: SM_Prop_InfernoChainObelisk_LOD1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 86
-  m_IsActive: 1
---- !u!4 &7588702975153546373
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8645989357697069094}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.000000053385076, y: 0.7071068, z: -0.70710677, w: -0.00000005338508}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 4550904229293929435}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &2402868142420799893
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8645989357697069094}
-  m_Mesh: {fileID: 8273970592687402, guid: d1a61400898f29e4f9ed4198ac2ed856, type: 3}
---- !u!23 &6722681399166831165
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8645989357697069094}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 43a63028f9b8f5c4a9681f517c41cbdd, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &6617398055940898318
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8645989357697069094}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 8273970592687402, guid: d1a61400898f29e4f9ed4198ac2ed856, type: 3}

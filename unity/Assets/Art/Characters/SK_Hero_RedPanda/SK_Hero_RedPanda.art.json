@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Hero_RedPanda",
   "kind": "skeletal",
   "class": "hero_display",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    10,
-    24
+    0
   ],
   "budget": {
-    "lodTris": [
-      16000,
-      6000,
-      2400
-    ],
     "texture": 2048,
     "maxFileKb": 3200
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.5220932364463806,
@@ -193,26 +187,6 @@
         "M_Hero_RedPanda"
       ],
       "skinned": true
-    },
-    {
-      "name": "SK_Hero_RedPanda_LOD1",
-      "lod": 1,
-      "tris": 5909,
-      "verts": 10292,
-      "materials": [
-        "M_Hero_RedPanda"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Hero_RedPanda_LOD2",
-      "lod": 2,
-      "tris": 2361,
-      "verts": 5009,
-      "materials": [
-        "M_Hero_RedPanda"
-      ],
-      "skinned": true
     }
   ],
   "materials": [
@@ -245,7 +219,7 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Hero_RedPanda.glb",
-    "sha256": "65a9072ecbcfc428940c37f2920e488e6bf3aae5aa6d437df4fab02ffdf0351a",
+    "sha256": "b8a6ebf4fcea947cf3ddad65b208881f3a8cc2d06ce63082b175f057043f5329",
     "hiRes": false,
     "version": {
       "native_build": 8
@@ -257,5 +231,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-17 00:29:41"
+  "exported": "2026-10-25 11:53:43"
 }

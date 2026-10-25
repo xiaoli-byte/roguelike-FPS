@@ -1,0 +1,79 @@
+{
+  "source": {
+    "tris": 1359,
+    "verts": 796
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 1.04846,
+    "iou": 0.732,
+    "iou_per_view": {
+      "front": 0.725,
+      "left": 0.733,
+      "back": 0.752,
+      "right": 0.722
+    },
+    "size_m": [
+      1.048,
+      1.042,
+      0.45
+    ],
+    "reference_m": [
+      1.8,
+      1.5,
+      0.45
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.709,
+    "samples": 64
+  },
+  "textures": {
+    "size": 512,
+    "base": "SM_Tripo_DesertGravelScatter_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_DesertGravelScatter_LOD0",
+      "tris": 1359,
+      "verts": 796,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.62,
+      "bbox_min": [
+        -0.524,
+        -0.5209,
+        0.0
+      ],
+      "bbox_max": [
+        0.524,
+        0.5209,
+        0.45
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_DesertGravelScatter/04_export/SM_Tripo_DesertGravelScatter_v002.glb",
+    "bytes": 69328
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 3.2,
+  "_seconds": 4.5
+}

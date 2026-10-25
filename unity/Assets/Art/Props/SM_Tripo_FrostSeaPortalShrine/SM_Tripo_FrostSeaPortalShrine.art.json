@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_FrostSeaPortalShrine",
   "kind": "static",
   "class": "tripo_architecture",
@@ -11,23 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    24,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2500,
-      800
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
-  "qaWaivers": {
-    "LOD1 面数": "2mv 薄壳拓扑让边折叠减面停在约 3240 面（同昆仑神龛）；第二章计划目前没有 shrine 掩体，第一版先用（2026-10-11）",
-    "LOD2 面数": "同 LOD1：停在约 3240 面"
-  },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -3.8309290409088135,
@@ -54,26 +44,6 @@
       "lod": 0,
       "tris": 7982,
       "verts": 8729,
-      "materials": [
-        "M_Tripo_FrostSeaPortalShrine"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostSeaPortalShrine_LOD1",
-      "lod": 1,
-      "tris": 3238,
-      "verts": 5124,
-      "materials": [
-        "M_Tripo_FrostSeaPortalShrine"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostSeaPortalShrine_LOD2",
-      "lod": 2,
-      "tris": 3238,
-      "verts": 5124,
       "materials": [
         "M_Tripo_FrostSeaPortalShrine"
       ],
@@ -110,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_FrostSeaPortalShrine.glb",
-    "sha256": "5a0ffe712180f89bd425550373823808a72fafde5f002dc092f27a2ecb47da6a",
+    "sha256": "620add8dae747bbd9673c16b627a1ea0a9c805fb42ecec519c99600e5aa8498b",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -125,5 +95,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:34:35"
+  "exported": "2026-10-25 12:03:10"
 }

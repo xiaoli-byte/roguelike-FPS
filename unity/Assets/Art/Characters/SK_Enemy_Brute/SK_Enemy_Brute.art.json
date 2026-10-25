@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Enemy_Brute",
   "kind": "skeletal",
   "class": "enemy_large",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    18,
-    40
+    0
   ],
   "budget": {
-    "lodTris": [
-      12000,
-      5000,
-      2000
-    ],
     "texture": 2048,
     "maxFileKb": 3000
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.9841895699501038,
@@ -68,26 +62,6 @@
         "M_Enemy_Brute"
       ],
       "skinned": true
-    },
-    {
-      "name": "SK_Enemy_Brute_LOD1",
-      "lod": 1,
-      "tris": 4999,
-      "verts": 3754,
-      "materials": [
-        "M_Enemy_Brute"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Enemy_Brute_LOD2",
-      "lod": 2,
-      "tris": 2000,
-      "verts": 1839,
-      "materials": [
-        "M_Enemy_Brute"
-      ],
-      "skinned": true
     }
   ],
   "materials": [
@@ -120,7 +94,7 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Enemy_Brute.glb",
-    "sha256": "ea691a21216035209fc9004c80d2c02875ebb168b8f8da490cd1bca630ee00da",
+    "sha256": "127129008cf12b287b73b66eecb3a55095b254234319e219b847080ab7f39e56",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -131,5 +105,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-17 11:18:17"
+  "exported": "2026-10-25 11:51:52"
 }

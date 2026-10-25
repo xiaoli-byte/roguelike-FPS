@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Enemy_ScorpionArcher",
   "kind": "skeletal",
   "class": "enemy_large",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    18,
-    40
+    0
   ],
   "budget": {
-    "lodTris": [
-      12000,
-      5000,
-      2000
-    ],
     "texture": 2048,
     "maxFileKb": 3000
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.7039570808410645,
@@ -120,26 +114,6 @@
         "M_Enemy_ScorpionArcher"
       ],
       "skinned": true
-    },
-    {
-      "name": "SK_Enemy_ScorpionArcher_LOD1",
-      "lod": 1,
-      "tris": 4925,
-      "verts": 8933,
-      "materials": [
-        "M_Enemy_ScorpionArcher"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Enemy_ScorpionArcher_LOD2",
-      "lod": 2,
-      "tris": 1969,
-      "verts": 4226,
-      "materials": [
-        "M_Enemy_ScorpionArcher"
-      ],
-      "skinned": true
     }
   ],
   "materials": [
@@ -195,7 +169,7 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Enemy_ScorpionArcher.glb",
-    "sha256": "b31a1439cbbb54419d0a762c47a6143394707ff1fa5e3c3a659e813d2fa522c5",
+    "sha256": "3008ce5e306f976bd5aa8dc075eeade8eae8cce32db45025ccd0c6c77beb2d59",
     "hiRes": false,
     "version": {
       "native_build": 11
@@ -207,5 +181,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-17 11:19:57"
+  "exported": "2026-10-25 11:53:06"
 }

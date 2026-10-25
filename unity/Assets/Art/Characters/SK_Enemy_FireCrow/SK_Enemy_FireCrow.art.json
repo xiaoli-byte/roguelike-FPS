@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Enemy_FireCrow",
   "kind": "skeletal",
   "class": "enemy_swarm",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    12,
-    26
+    0
   ],
   "budget": {
-    "lodTris": [
-      6000,
-      2500,
-      1000
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.7989159822463989,
@@ -65,26 +59,6 @@
         "M_Enemy_FireCrow"
       ],
       "skinned": true
-    },
-    {
-      "name": "SK_Enemy_FireCrow_LOD1",
-      "lod": 1,
-      "tris": 2454,
-      "verts": 4578,
-      "materials": [
-        "M_Enemy_FireCrow"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Enemy_FireCrow_LOD2",
-      "lod": 2,
-      "tris": 970,
-      "verts": 2099,
-      "materials": [
-        "M_Enemy_FireCrow"
-      ],
-      "skinned": true
     }
   ],
   "materials": [
@@ -116,7 +90,7 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Enemy_FireCrow@hi.glb",
-    "sha256": "c813cfa0da8888bb990e397d3ca72f63db3e5f16a70228e2aed5d4f6fef1c2a1",
+    "sha256": "29cd2ecad121243a142af9a7d72353024b0d131c0493c9220b8dfd8ad67aa002",
     "hiRes": true,
     "version": {
       "native_build": 6
@@ -128,5 +102,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-17 11:24:00"
+  "exported": "2026-10-25 11:51:57"
 }

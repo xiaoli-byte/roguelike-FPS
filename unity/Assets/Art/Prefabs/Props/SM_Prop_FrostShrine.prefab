@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4988017410734614155}
-  - component: {fileID: 8967267614446073060}
   - component: {fileID: 9092002036815138398}
   m_Layer: 0
   m_Name: SM_Prop_FrostShrine
@@ -34,30 +33,6 @@ Transform:
   - {fileID: 3576047641308285046}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!205 &8967267614446073060
-LODGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3374282039349149583}
-  serializedVersion: 3
-  m_LocalReferencePoint: {x: -0.002453357, y: 0.9574228, z: -0.0021137595}
-  m_Size: 1.9146205
-  m_FadeMode: 1
-  m_AnimateCrossFading: 1
-  m_LastLODIsBillboard: 0
-  m_LODs:
-  - screenRelativeHeight: 0.06802943
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 2750856605096477533}
-  - screenRelativeHeight: 0.01133824
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 3244836144855588064}
-  m_Enabled: 1
-  m_GlobalIlluminationLOD: 0
 --- !u!114 &9092002036815138398
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -79,13 +54,12 @@ MonoBehaviour:
   bindAttachment: 
   lodDistance:
   - 0
-  - 20
   moveSpeed: 0
   designBounds:
     m_Center: {x: -0.0005042851, y: 0.952807, z: -0.0034922361}
     m_Extent: {x: 0.47237137, y: 0.9526945, z: 0.46706015}
   sourceGlb: public/assets/props/SM_Prop_FrostShrine.glb
-  sourceSha256: 208e932356fa1db6474339eb3cb465f6a1a7fbeaf24a88c18e3f2625124b83be
+  sourceSha256: 50c0805989cf27eb511b4eb9d5ed3f4c009c4dea79d8ca2dea2e8801d2b2a02e
   license: "Hunyuan3D 2.1 \u751F\u6210\uFF1ATencent Hunyuan 3D Community License\uFF0C\u4E0D\u5F97\u5728\u6B27\u76DF
     / \u82F1\u56FD / \u97E9\u56FD\u4F7F\u7528\u6216\u5206\u53D1"
 --- !u!1 &4103579299756678991
@@ -118,7 +92,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 847956855517133618}
-  - {fileID: 1738758614754880781}
   m_Father: {fileID: 4988017410734614155}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4498069125753726060
@@ -132,6 +105,7 @@ GameObject:
   - component: {fileID: 847956855517133618}
   - component: {fileID: 2960021190605015645}
   - component: {fileID: 2750856605096477533}
+  - component: {fileID: 1150012873990692315}
   m_Layer: 0
   m_Name: SM_Prop_FrostShrine_LOD0
   m_TagString: Untagged
@@ -211,104 +185,13 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &9192258827059097086
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1738758614754880781}
-  - component: {fileID: 1895358501019518377}
-  - component: {fileID: 3244836144855588064}
-  - component: {fileID: 6888733776559112392}
-  m_Layer: 0
-  m_Name: SM_Prop_FrostShrine_LOD1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 86
-  m_IsActive: 1
---- !u!4 &1738758614754880781
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9192258827059097086}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.000000053385076, y: 0.7071068, z: -0.70710677, w: -0.00000005338508}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 3576047641308285046}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &1895358501019518377
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9192258827059097086}
-  m_Mesh: {fileID: 6801520875221120787, guid: b747b21840570ee4a8ce97e573d33fcd, type: 3}
---- !u!23 &3244836144855588064
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9192258827059097086}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: a6513d41dcd661549bc5aa65fa355161, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &6888733776559112392
+--- !u!64 &1150012873990692315
 MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9192258827059097086}
+  m_GameObject: {fileID: 4498069125753726060}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -323,4 +206,4 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 6801520875221120787, guid: b747b21840570ee4a8ce97e573d33fcd, type: 3}
+  m_Mesh: {fileID: -2642395894375158318, guid: b747b21840570ee4a8ce97e573d33fcd, type: 3}

@@ -1,0 +1,213 @@
+{
+  "asset": "SK_Boss_Kui",
+  "version": 5,
+  "glb": "art/source/characters/SK_Boss_Kui/04_export/SK_Boss_Kui_native_v005.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.5,
+      "自定义骨架：19 根骨骼（热扩散权重，41014 个顶点未覆盖）": 0.8,
+      "贴图（BC + AO/ORM）": 22.5,
+      "LOD0 32675 面（不减面）与蒙皮上限": 0.6,
+      "导出 1610 KB": 3.3
+    },
+    "source": {
+      "verts": 41014,
+      "tris": 32675,
+      "scale": 6.002931118710308
+    },
+    "regions": {
+      "heat_unweighted_verts": 41014,
+      "weights": "segments",
+      "ground_verts": 597,
+      "head_verts": 2827,
+      "fallback_verts": 0,
+      "per_bone": {
+        "hips": 942,
+        "spine": 3,
+        "chest": 0,
+        "neck": 87,
+        "head": 4406,
+        "drum": 5057,
+        "thigh": 827,
+        "shin": 1076,
+        "hoof": 1449,
+        "shoulder_L": 1634,
+        "arm_L": 2622,
+        "forearm_L": 2109,
+        "fist_L": 2769,
+        "shoulder_R": 1505,
+        "arm_R": 2582,
+        "forearm_R": 2080,
+        "fist_R": 2809
+      }
+    },
+    "bones": [
+      "arm_L",
+      "arm_R",
+      "chest",
+      "drum",
+      "drum_core",
+      "fist_L",
+      "fist_R",
+      "forearm_L",
+      "forearm_R",
+      "head",
+      "hips",
+      "hoof",
+      "neck",
+      "root",
+      "shin",
+      "shoulder_L",
+      "shoulder_R",
+      "spine",
+      "thigh"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.897,
+      "shade_mean": 0.901
+    },
+    "textures": {
+      "size": 2048,
+      "ao_mean": 0.665,
+      "provider_pbr": [],
+      "roughness_mean": 0.75,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Boss_Kui_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Boss_Kui_LOD0",
+        "tris": 32675,
+        "uv_min": [
+          0.001708984375,
+          0.001708984375
+        ],
+        "uv_max": [
+          0.992919921875,
+          0.998291015625
+        ]
+      }
+    ],
+    "glb_kb": 1610,
+    "_seconds": 29.6
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "1610 KB / 6000 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Boss_Kui_LOD0']"
+    ],
+    [
+      "note",
+      "LOD0 tris",
+      "32675 (class reference 30000)"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "6.000 m (design 6.0 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Boss_Kui']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "texture T_Boss_Kui_ORM",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "texture T_Boss_Kui_BC",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "19 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Boss_Kui_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Boss_Kui_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Boss_Kui_LOD0 UV range",
+      "[0.002, 0.002]..[0.993, 0.998]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "41014 verts"
+    ],
+    [
+      "pass",
+      "region ground",
+      "597 verts"
+    ],
+    [
+      "pass",
+      "region head",
+      "2827 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "0 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

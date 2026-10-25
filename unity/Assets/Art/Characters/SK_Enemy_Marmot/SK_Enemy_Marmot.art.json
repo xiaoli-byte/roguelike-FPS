@@ -11,16 +11,9 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    12,
-    26
+    0
   ],
   "budget": {
-    "lodTris": [
-      6000,
-      2500,
-      1000
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
@@ -28,7 +21,7 @@
   "bounds": {
     "min": [
       -0.26215195655822754,
-      -0.0003483863256406039,
+      0,
       -0.3050195872783661
     ],
     "max": [
@@ -79,28 +72,8 @@
     {
       "name": "SK_Enemy_Marmot_LOD0",
       "lod": 0,
-      "tris": 5910,
-      "verts": 4341,
-      "materials": [
-        "M_Enemy_Marmot"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Enemy_Marmot_LOD1",
-      "lod": 1,
-      "tris": 2461,
-      "verts": 2266,
-      "materials": [
-        "M_Enemy_Marmot"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Enemy_Marmot_LOD2",
-      "lod": 2,
-      "tris": 985,
-      "verts": 1204,
+      "tris": 6953,
+      "verts": 4942,
       "materials": [
         "M_Enemy_Marmot"
       ],
@@ -136,10 +109,10 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Enemy_Marmot@hi.glb",
-    "sha256": "e052e121dd814e60be6ed5ba2ef8337a453c76a3180c7615abfd0292b5f530b0",
+    "sha256": "177440fad615ec98b780c14aa5c570dae901107567a6e18eba082520a686b6ac",
     "hiRes": true,
     "version": {
-      "native_build": 5
+      "native_build": 6
     },
     "generator": {
       "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
@@ -148,5 +121,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-24 20:50:28"
+  "exported": "2026-10-25 12:19:23"
 }

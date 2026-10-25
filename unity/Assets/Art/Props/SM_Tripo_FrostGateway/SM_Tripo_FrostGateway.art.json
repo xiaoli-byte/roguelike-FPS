@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_FrostGateway",
   "kind": "static",
   "class": "tripo_architecture",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    24,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2500,
-      800
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -6.003758430480957,
@@ -50,26 +44,6 @@
       "lod": 0,
       "tris": 7995,
       "verts": 5274,
-      "materials": [
-        "M_Tripo_FrostGateway"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostGateway_LOD1",
-      "lod": 1,
-      "tris": 2500,
-      "verts": 2161,
-      "materials": [
-        "M_Tripo_FrostGateway"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostGateway_LOD2",
-      "lod": 2,
-      "tris": 800,
-      "verts": 923,
       "materials": [
         "M_Tripo_FrostGateway"
       ],
@@ -106,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_FrostGateway.glb",
-    "sha256": "0863ab4de75e254f471373dcb8900a51a65f9d158bd56e600d974e5e00b513c1",
+    "sha256": "2e52211fcc82583a182da407aad9591358f3b22126e045168b26f06942e7c79b",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -121,5 +95,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:21:09"
+  "exported": "2026-10-25 12:00:58"
 }

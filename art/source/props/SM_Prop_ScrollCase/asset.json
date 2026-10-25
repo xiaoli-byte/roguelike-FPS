@@ -197,7 +197,7 @@
       ]
     },
     "build": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -264,11 +264,61 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:51:51",
+          "files": {
+            "SM_Prop_ScrollCase_v002.blend": {
+              "path": "03_work/SM_Prop_ScrollCase_v002.blend",
+              "sha256": "3088d651f852887d6481d34227032f5abc793850c0297471a0e8a22115e0aea9"
+            },
+            "SM_Prop_ScrollCase_v002.glb": {
+              "path": "04_export/SM_Prop_ScrollCase_v002.glb",
+              "sha256": "3b7761d8319f94114794db826e6312e83e5877e2b99c19fbe164335ff9698842"
+            },
+            "SM_Prop_ScrollCase_v002_metrics.json": {
+              "path": "03_work/SM_Prop_ScrollCase_v002_metrics.json",
+              "sha256": "49726db42c97836de94af363c17f7b27fcefdd528f67f19f9aac37ac2d39046b"
+            },
+            "T_Prop_ScrollCase_BC.png": {
+              "path": "03_work/textures_v002/T_Prop_ScrollCase_BC.png",
+              "sha256": "3b877a4fb81bb549b8aa882f7fe586d7ef51c5f1e617e133df7c6c36d46e0d15"
+            },
+            "T_Prop_ScrollCase_N.png": {
+              "path": "03_work/textures_v002/T_Prop_ScrollCase_N.png",
+              "sha256": "d45b98a97cd55e19c9f4596e506cdf65f52cff8d20d0cadc61c5a4b1298ce2a2"
+            },
+            "T_Prop_ScrollCase_ORM.png": {
+              "path": "03_work/textures_v002/T_Prop_ScrollCase_ORM.png",
+              "sha256": "de9b0664850a8faeb0660da36930f3475d2777014c2b6d9eb1cc36c60df0866f"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.841,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 3076,
+              "verts": 1617
+            }
+          ],
+          "export_kb": 236.3,
+          "seconds": 9.0,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -284,11 +334,26 @@
           "warnings": 1,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:51:51",
+          "files": {
+            "SM_Prop_ScrollCase_v002_validation_v002.json": {
+              "path": "05_review/SM_Prop_ScrollCase_v002_validation_v002.json",
+              "sha256": "222efd8b8a1b611b7a8f0963b1491a978074be0e8e4eb334a0a4b4da456d19c2"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -308,11 +373,30 @@
             "note": "2026-10-22 ART7：审核图四视图与概念一致（用户 2026-10-19 授权免审）",
             "time": "2026-10-22 22:11:12"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:51:56",
+          "files": {
+            "SM_Prop_ScrollCase_v002_review_v002.png": {
+              "path": "05_review/SM_Prop_ScrollCase_v002_review_v002.png",
+              "sha256": "6f22227e6023e5ba0666a8d072bda7cd57cb6641d43d00daaf9b2597af66a274"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（2026-10-25 不减面重建，用户授权免审）",
+            "note": "",
+            "time": "2026-10-25 11:58:31"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -324,6 +408,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/props/SM_Prop_ScrollCase.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:58:31",
+          "files": {
+            "SM_Prop_ScrollCase.glb": {
+              "path": "@root/public/assets/props/SM_Prop_ScrollCase.glb",
+              "sha256": "3b7761d8319f94114794db826e6312e83e5877e2b99c19fbe164335ff9698842"
+            }
+          },
+          "from_build": 2,
           "url": "assets/props/SM_Prop_ScrollCase.glb"
         }
       ]

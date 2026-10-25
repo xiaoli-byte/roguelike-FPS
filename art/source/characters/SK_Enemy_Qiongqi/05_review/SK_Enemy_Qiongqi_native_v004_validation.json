@@ -1,0 +1,247 @@
+{
+  "asset": "SK_Enemy_Qiongqi",
+  "version": 4,
+  "glb": "art/source/characters/SK_Enemy_Qiongqi/04_export/SK_Enemy_Qiongqi_native_v004.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.2,
+      "自定义骨架：36 根骨骼（热扩散权重，12749 个顶点未覆盖）": 0.3,
+      "贴图（BC + AO/ORM）": 5.7,
+      "LOD0 8872 面（不减面）与蒙皮上限": 0.1,
+      "导出 491 KB": 0.7
+    },
+    "source": {
+      "verts": 12749,
+      "tris": 8872,
+      "scale": 2.754539340954943
+    },
+    "regions": {
+      "heat_unweighted_verts": 12749,
+      "weights": "segments",
+      "ground_verts": 1228,
+      "head_verts": 243,
+      "fallback_verts": 46,
+      "per_bone": {
+        "hips": 170,
+        "spine": 62,
+        "chest": 17,
+        "neck": 219,
+        "head": 1647,
+        "scapula_L": 173,
+        "upperarm_L": 200,
+        "forearm_L": 278,
+        "paw_L": 543,
+        "haunch_L": 65,
+        "thigh_L": 106,
+        "shin_L": 129,
+        "foot_L": 132,
+        "toe_L": 413,
+        "wing_1_L": 627,
+        "wing_2_L": 249,
+        "wing_3_L": 527,
+        "scapula_R": 179,
+        "upperarm_R": 181,
+        "forearm_R": 266,
+        "paw_R": 516,
+        "haunch_R": 53,
+        "thigh_R": 98,
+        "shin_R": 117,
+        "foot_R": 151,
+        "toe_R": 425,
+        "wing_1_R": 615,
+        "wing_2_R": 248,
+        "wing_3_R": 513,
+        "tail_1": 197,
+        "tail_2": 112,
+        "tail_3": 127,
+        "tail_4": 75,
+        "tail_5": 148
+      }
+    },
+    "bones": [
+      "chest",
+      "crown",
+      "foot_L",
+      "foot_R",
+      "forearm_L",
+      "forearm_R",
+      "haunch_L",
+      "haunch_R",
+      "head",
+      "hips",
+      "neck",
+      "paw_L",
+      "paw_R",
+      "root",
+      "scapula_L",
+      "scapula_R",
+      "shin_L",
+      "shin_R",
+      "spine",
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "tail_4",
+      "tail_5",
+      "thigh_L",
+      "thigh_R",
+      "toe_L",
+      "toe_R",
+      "upperarm_L",
+      "upperarm_R",
+      "wing_1_L",
+      "wing_1_R",
+      "wing_2_L",
+      "wing_2_R",
+      "wing_3_L",
+      "wing_3_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.978,
+      "shade_mean": 0.97
+    },
+    "textures": {
+      "size": 1024,
+      "ao_mean": 0.877,
+      "provider_pbr": [],
+      "roughness_mean": 0.75,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Enemy_Qiongqi_LOD0": {
+          "max_influences": 3,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Enemy_Qiongqi_LOD0",
+        "tris": 8872,
+        "uv_min": [
+          0.00146484375,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.99853515625,
+          0.99609375
+        ]
+      }
+    ],
+    "glb_kb": 491,
+    "_seconds": 8.7
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "491 KB / 1600 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Enemy_Qiongqi_LOD0']"
+    ],
+    [
+      "note",
+      "LOD0 tris",
+      "8872 (class reference 8000)"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "2.000 m (design 2.0 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Enemy_Qiongqi']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Qiongqi_ORM",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Qiongqi_BC",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "36 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Qiongqi_LOD0 influences",
+      "max 3"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Qiongqi_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Qiongqi_LOD0 UV range",
+      "[0.001, 0.001]..[0.999, 0.996]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "12749 verts"
+    ],
+    [
+      "pass",
+      "region ground",
+      "1228 verts"
+    ],
+    [
+      "pass",
+      "region head",
+      "243 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "46 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

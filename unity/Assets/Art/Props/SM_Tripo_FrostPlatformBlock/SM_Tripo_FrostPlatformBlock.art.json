@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_FrostPlatformBlock",
   "kind": "static",
   "class": "tripo_prop",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -2.2861456871032715,
@@ -48,16 +44,6 @@
       "lod": 0,
       "tris": 3000,
       "verts": 1920,
-      "materials": [
-        "M_Tripo_FrostPlatformBlock"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostPlatformBlock_LOD1",
-      "lod": 1,
-      "tris": 1000,
-      "verts": 807,
       "materials": [
         "M_Tripo_FrostPlatformBlock"
       ],
@@ -94,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_FrostPlatformBlock.glb",
-    "sha256": "5b952c8fad901cde8162dabd0ffafd1beac3f211d0b619e1c14f7ffdb028efa1",
+    "sha256": "b3cc6189e87f02fc6c75aeaaec4fcbed1b6ca27a226199af9f19eb7294c05124",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -109,5 +95,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:21:51"
+  "exported": "2026-10-25 12:01:54"
 }

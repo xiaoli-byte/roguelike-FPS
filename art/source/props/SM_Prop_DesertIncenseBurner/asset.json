@@ -197,7 +197,7 @@
       ]
     },
     "build": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -264,11 +264,61 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:51:06",
+          "files": {
+            "SM_Prop_DesertIncenseBurner_v002.blend": {
+              "path": "03_work/SM_Prop_DesertIncenseBurner_v002.blend",
+              "sha256": "b07d9e27459c9c05359e8f69b40a047eaa7a1cebac0e4829543fc9a032ae9bc0"
+            },
+            "SM_Prop_DesertIncenseBurner_v002.glb": {
+              "path": "04_export/SM_Prop_DesertIncenseBurner_v002.glb",
+              "sha256": "609bf227a93fdf201de412ecadedb53863571ae337501226e805cf959516028b"
+            },
+            "SM_Prop_DesertIncenseBurner_v002_metrics.json": {
+              "path": "03_work/SM_Prop_DesertIncenseBurner_v002_metrics.json",
+              "sha256": "cf52ec9657d40819c3215baf8a0ee09042904ad381c8dd83749b1c538e0c98a5"
+            },
+            "T_Prop_DesertIncenseBurner_BC.png": {
+              "path": "03_work/textures_v002/T_Prop_DesertIncenseBurner_BC.png",
+              "sha256": "4a0c17248a73b1403940ae749aeda68b49940564a4114b8cc00f5bbd99b5cd88"
+            },
+            "T_Prop_DesertIncenseBurner_N.png": {
+              "path": "03_work/textures_v002/T_Prop_DesertIncenseBurner_N.png",
+              "sha256": "f098371ba8b2df9f430c14c5d5fa752858456a6145fe831a5e0a4f470a31c79d"
+            },
+            "T_Prop_DesertIncenseBurner_ORM.png": {
+              "path": "03_work/textures_v002/T_Prop_DesertIncenseBurner_ORM.png",
+              "sha256": "256c64ecd78c65b78a42bcd5949aad08f8d6539303a61c1440f67c2cc5931cf8"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.872,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 3008,
+              "verts": 1623
+            }
+          ],
+          "export_kb": 246.8,
+          "seconds": 8.2,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -284,11 +334,26 @@
           "warnings": 1,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:51:06",
+          "files": {
+            "SM_Prop_DesertIncenseBurner_v002_validation_v002.json": {
+              "path": "05_review/SM_Prop_DesertIncenseBurner_v002_validation_v002.json",
+              "sha256": "2935147a409cfca0868d983260d70c4898c28e743c5f401f85905268a525b00f"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -308,11 +373,30 @@
             "note": "成品审核通过（Tripo P2.0 + 纹理）：四视图与概念一致，LOD 远看轮廓不塌、无斜条纹",
             "time": "2026-10-20 21:51:36"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:51:10",
+          "files": {
+            "SM_Prop_DesertIncenseBurner_v002_review_v002.png": {
+              "path": "05_review/SM_Prop_DesertIncenseBurner_v002_review_v002.png",
+              "sha256": "df83093e18925aa9fa278e0e3118e015c9d2b60023208ec1f0d6054348a390b2"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（2026-10-25 不减面重建，用户授权免审）",
+            "note": "",
+            "time": "2026-10-25 11:58:26"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -324,6 +408,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/props/SM_Prop_DesertIncenseBurner.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:58:27",
+          "files": {
+            "SM_Prop_DesertIncenseBurner.glb": {
+              "path": "@root/public/assets/props/SM_Prop_DesertIncenseBurner.glb",
+              "sha256": "609bf227a93fdf201de412ecadedb53863571ae337501226e805cf959516028b"
+            }
+          },
+          "from_build": 2,
           "url": "assets/props/SM_Prop_DesertIncenseBurner.glb"
         }
       ]

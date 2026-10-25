@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_DesertRampartPlainPanel",
   "kind": "static",
   "class": "tripo_architecture_kit",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    24,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2500,
-      800
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -3.25,
@@ -50,26 +44,6 @@
       "lod": 0,
       "tris": 7092,
       "verts": 9230,
-      "materials": [
-        "M_Tripo_DesertRampartPlain"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertRampartPlainPanel_LOD1",
-      "lod": 1,
-      "tris": 2214,
-      "verts": 4079,
-      "materials": [
-        "M_Tripo_DesertRampartPlain"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertRampartPlainPanel_LOD2",
-      "lod": 2,
-      "tris": 708,
-      "verts": 1488,
       "materials": [
         "M_Tripo_DesertRampartPlain"
       ],
@@ -106,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_DesertRampartPlainPanel.glb",
-    "sha256": "1241306b289a1ed80c726dd9d4f191c75820b24b1e4bb5553383c388578c0a35",
+    "sha256": "3c5a7b57b0e82e848e83c19cb4341ca96b0a31950c0313fc535ffc51c5830725",
     "hiRes": false,
     "version": null,
     "generator": {
@@ -116,5 +90,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-17 11:24:45"
+  "exported": "2026-10-25 12:00:08"
 }

@@ -11,16 +11,9 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    25,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      30000,
-      12000,
-      5000
-    ],
     "texture": 4096,
     "maxFileKb": 6000
   },
@@ -28,7 +21,7 @@
   "bounds": {
     "min": [
       -4.750855922698975,
-      -0.00012589346442837268,
+      0,
       -2.0346853733062744
     ],
     "max": [
@@ -66,8 +59,8 @@
     {
       "name": "SK_Boss_Leize_GlowShell1_Drum",
       "lod": null,
-      "tris": 1093,
-      "verts": 760,
+      "tris": 1241,
+      "verts": 843,
       "materials": [
         "M_Boss_Leize_Drum_Glow"
       ],
@@ -76,8 +69,8 @@
     {
       "name": "SK_Boss_Leize_GlowShell2_Face",
       "lod": null,
-      "tris": 3696,
-      "verts": 2602,
+      "tris": 4958,
+      "verts": 3343,
       "materials": [
         "M_Boss_Leize_Face_Glow"
       ],
@@ -86,28 +79,8 @@
     {
       "name": "SK_Boss_Leize_LOD0",
       "lod": 0,
-      "tris": 29549,
-      "verts": 19115,
-      "materials": [
-        "M_Boss_Leize"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Boss_Leize_LOD1",
-      "lod": 1,
-      "tris": 11819,
-      "verts": 8914,
-      "materials": [
-        "M_Boss_Leize"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Boss_Leize_LOD2",
-      "lod": 2,
-      "tris": 4925,
-      "verts": 4513,
+      "tris": 34479,
+      "verts": 21900,
       "materials": [
         "M_Boss_Leize"
       ],
@@ -191,10 +164,10 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Boss_Leize@hi.glb",
-    "sha256": "f12d94f052eb838e7e21bae638391cf01944e8a0b9de2b95d1b87c44fced0fbd",
+    "sha256": "fb32d35754f3b8463d6348a63c191928b0ae65cc772b4332e95f348c0a717869",
     "hiRes": true,
     "version": {
-      "native_build": 4
+      "native_build": 5
     },
     "generator": {
       "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
@@ -203,5 +176,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-24 21:33:10"
+  "exported": "2026-10-25 12:19:09"
 }

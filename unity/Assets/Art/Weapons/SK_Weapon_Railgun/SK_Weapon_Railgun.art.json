@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Weapon_Railgun",
   "kind": "skeletal",
   "class": "weapon_fp",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    6
+    0
   ],
   "budget": {
-    "lodTris": [
-      12000,
-      3000
-    ],
     "texture": 2048,
     "maxFileKb": 3000
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.0509650893509388,
@@ -53,16 +49,6 @@
       "lod": 0,
       "tris": 11996,
       "verts": 8909,
-      "materials": [
-        "M_Weapon_Railgun"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Weapon_Railgun_LOD1",
-      "lod": 1,
-      "tris": 2996,
-      "verts": 2970,
       "materials": [
         "M_Weapon_Railgun"
       ],
@@ -100,7 +86,7 @@
   ],
   "source": {
     "glb": "public/assets/weapons/SK_Weapon_Railgun.glb",
-    "sha256": "b7403d9b44143f43f70644049b6dfb662128ed5fe8346faa0bcd991d65c17f6e",
+    "sha256": "66f3981c159b6632752526ec94c316913e411a4874cabfc742958e9a1d1076e6",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -115,5 +101,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:20:09"
+  "exported": "2026-10-25 11:54:17"
 }

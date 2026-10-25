@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_DesertStairs",
   "kind": "static",
   "class": "tripo_prop",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -1.8072397708892822,
@@ -48,16 +44,6 @@
       "lod": 0,
       "tris": 2985,
       "verts": 2295,
-      "materials": [
-        "M_Tripo_DesertStairs"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertStairs_LOD1",
-      "lod": 1,
-      "tris": 995,
-      "verts": 1021,
       "materials": [
         "M_Tripo_DesertStairs"
       ],
@@ -94,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_DesertStairs.glb",
-    "sha256": "d854ead8ede0edb5b7309a89e141cf711406013d4536bc7779408ffbd750c4a4",
+    "sha256": "7f726fc6147f721561640970ba755f6ec8fb853eab9e7f77429671f583ef1ae9",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -109,5 +95,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-17 00:30:17"
+  "exported": "2026-10-25 12:00:15"
 }

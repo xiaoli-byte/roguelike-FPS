@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_DesertRampartEndL",
   "kind": "static",
   "class": "tripo_architecture_kit",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    24,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2500,
-      800
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       2.25,
@@ -50,26 +44,6 @@
       "lod": 0,
       "tris": 2329,
       "verts": 3192,
-      "materials": [
-        "M_Tripo_DesertRampart"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertRampartEndL_LOD1",
-      "lod": 1,
-      "tris": 727,
-      "verts": 1365,
-      "materials": [
-        "M_Tripo_DesertRampart"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertRampartEndL_LOD2",
-      "lod": 2,
-      "tris": 231,
-      "verts": 468,
       "materials": [
         "M_Tripo_DesertRampart"
       ],
@@ -106,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_DesertRampartEndL.glb",
-    "sha256": "9b3bf8abfc1aac43b36d46a47068078eaa819a34592cfa5a2c0cc1cc1541a49b",
+    "sha256": "13da5f993646187ef2439dd8482400d76179959e25c04752a5eb5105b9de2dcf",
     "hiRes": false,
     "version": null,
     "generator": {
@@ -116,5 +90,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-17 11:24:40"
+  "exported": "2026-10-25 11:59:44"
 }

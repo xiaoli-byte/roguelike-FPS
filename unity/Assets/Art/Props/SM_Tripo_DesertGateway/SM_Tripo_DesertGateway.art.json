@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_DesertGateway",
   "kind": "static",
   "class": "tripo_architecture",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    24,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2500,
-      800
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -6.761862754821777,
@@ -50,26 +44,6 @@
       "lod": 0,
       "tris": 6668,
       "verts": 9984,
-      "materials": [
-        "M_Tripo_DesertGateway"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertGateway_LOD1",
-      "lod": 1,
-      "tris": 2486,
-      "verts": 4738,
-      "materials": [
-        "M_Tripo_DesertGateway"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertGateway_LOD2",
-      "lod": 2,
-      "tris": 795,
-      "verts": 1702,
       "materials": [
         "M_Tripo_DesertGateway"
       ],
@@ -106,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_DesertGateway.glb",
-    "sha256": "237f6b83e0734d4bea18ceed3a8e6152c5958af81e5e00515fb9087a25011f52",
+    "sha256": "992f2fd9dedb0e5b34ca0138e7a7c0d6ab2e53bbc3904b862019e1b11ff86fbd",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -121,5 +95,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-17 00:30:10"
+  "exported": "2026-10-25 11:59:00"
 }

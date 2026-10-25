@@ -11,16 +11,9 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    24,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2500,
-      800
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
@@ -55,26 +48,6 @@
         "M_Tripo_DesertYardangMedium"
       ],
       "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertYardangMedium_LOD1",
-      "lod": 1,
-      "tris": 2486,
-      "verts": 3302,
-      "materials": [
-        "M_Tripo_DesertYardangMedium"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertYardangMedium_LOD2",
-      "lod": 2,
-      "tris": 796,
-      "verts": 735,
-      "materials": [
-        "M_Tripo_DesertYardangMedium_LOD2"
-      ],
-      "skinned": false
     }
   ],
   "materials": [
@@ -103,37 +76,11 @@
         "N": "Textures/T_Tripo_DesertYardangMedium_N.png",
         "ORM": "Textures/T_Tripo_DesertYardangMedium_ORM.png"
       }
-    },
-    {
-      "name": "M_Tripo_DesertYardangMedium_LOD2",
-      "baseColor": [
-        1,
-        1,
-        1,
-        1
-      ],
-      "metallic": 1.0,
-      "roughness": 1.0,
-      "emissive": [
-        0,
-        0,
-        0
-      ],
-      "doubleSided": true,
-      "alphaMode": "OPAQUE",
-      "alphaCutoff": 0.5,
-      "hasOcclusion": true,
-      "occlusionSeparate": false,
-      "textures": {
-        "BC": "Textures/T_Tripo_DesertYardangMedium_LOD2_BC.png",
-        "N": "Textures/T_Tripo_DesertYardangMedium_LOD2_N.png",
-        "ORM": "Textures/T_Tripo_DesertYardangMedium_LOD2_ORM.png"
-      }
     }
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_DesertYardangMedium.glb",
-    "sha256": "89733bc44b231a01a7362a8160b12d4b19dd5c2e751d3eb91f7805cd509f37d3",
+    "sha256": "759ed980ed85d2bb15470c943b665707a77fafa8deb2cd7f1ce9d0a3ef4aba79",
     "hiRes": false,
     "version": {
       "blockout": 2,
@@ -148,5 +95,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-20 21:54:31"
+  "exported": "2026-10-25 12:00:32"
 }

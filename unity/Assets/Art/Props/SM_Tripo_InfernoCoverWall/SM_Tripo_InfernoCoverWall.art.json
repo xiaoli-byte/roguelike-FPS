@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_InfernoCoverWall",
   "kind": "static",
   "class": "tripo_prop",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -1.7118409872055054,
@@ -48,16 +44,6 @@
       "lod": 0,
       "tris": 3000,
       "verts": 2693,
-      "materials": [
-        "M_Tripo_InfernoCoverWall"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_InfernoCoverWall_LOD1",
-      "lod": 1,
-      "tris": 1000,
-      "verts": 1242,
       "materials": [
         "M_Tripo_InfernoCoverWall"
       ],
@@ -95,7 +81,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_InfernoCoverWall.glb",
-    "sha256": "28f2316cb7fd042d0060e6dd5639aa5bd1d9e8b7fa82541649aaccbda773e324",
+    "sha256": "189d458983e048623d4d608e9ac34951e0d3e910c5f30c142a50ca0accab9517",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -110,5 +96,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:23:19"
+  "exported": "2026-10-25 12:03:59"
 }

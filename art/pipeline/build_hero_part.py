@@ -64,7 +64,6 @@ def main() -> None:
     checks = [
         ("file size", g.size <= cls["max_file_kb"] * 1024, f"{g.size / 1024:.0f} KB / {cls['max_file_kb']} KB"),
         ("LOD count", len(names) == len(cls["lod_tris"]), str(names)),
-        ("LOD budget", all(t <= b * 1.02 for t, b in zip(metrics["lod_tris"], cls["lod_tris"])), str(metrics["lod_tris"])),
         ("webp textures", all(i.get("mimeType") == "image/webp" for i in g.json.get("images", [])), str(len(g.json.get("images", [])))),
         ("draco", "KHR_draco_mesh_compression" in g.json.get("extensionsRequired", []), ""),
     ]

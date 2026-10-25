@@ -37,14 +37,13 @@ def derive(src_id: str) -> None:
     spec = CFG.asset(src_id)
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     parent = manifest["assets"][src_id]
-    cls = CFG.data["classes"][spec.raw["class"]]
     body_id, lid_id = f"{src_id}Body", f"{src_id}Lid"
     out_body, out_lid = RUNTIME / f"{body_id}.glb", RUNTIME / f"{lid_id}.glb"
     work = ROOT / CFG.paths["source"] / "props" / src_id / "_tmp" / "chest_parts"
     res = blender.run("bl_chest_parts.py", {
         "source": str(ROOT / "public" / parent["url"]), "out_body": str(out_body), "out_lid": str(out_lid),
         "body_id": body_id, "lid_id": lid_id, "seam": spec.raw.get("lid_split", 0.6), "depth": TRAY_DEPTH, "lip": TRAY_LIP,
-        "budget": cls["lod_tris"], "lod_distance": parent["lodDistance"],
+        "lod_distance": parent["lodDistance"],
         "image_format": CFG.data["export"]["image_format"], "draco": CFG.data["export"]["draco"]}, work, "chest_parts")
     hx, hy, hz = res["hinge"]
     hinge = [hx, hz, -hy]  # Blender (x, y, z) → glTF (x, z, −y)

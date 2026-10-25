@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_HeroPart_PangolinBall",
   "kind": "static",
   "class": "hero_attachment",
@@ -12,17 +12,13 @@
   },
   "keepGlow": "attachments",
   "lodDistance": [
-    0,
-    14
+    0
   ],
   "budget": {
-    "lodTris": [
-      6000,
-      2000
-    ],
     "texture": 1024,
     "maxFileKb": 900
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.5813923478126526,
@@ -49,16 +45,6 @@
       "lod": 0,
       "tris": 5880,
       "verts": 7582,
-      "materials": [
-        "M_HeroPart_PangolinBall"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_HeroPart_PangolinBall_LOD1",
-      "lod": 1,
-      "tris": 1959,
-      "verts": 3434,
       "materials": [
         "M_HeroPart_PangolinBall"
       ],
@@ -93,7 +79,7 @@
   ],
   "source": {
     "glb": "public/assets/attachments/SM_HeroPart_PangolinBall.glb",
-    "sha256": "d26edf783548570674cd9f4babf9fe6fbc3475f81a60ec0c44db8aecb4375147",
+    "sha256": "132ed3fc54bab3333e910e4b258e05ea38a16ee610898809da34fe692b985b83",
     "hiRes": false,
     "version": {
       "build": 1
@@ -105,5 +91,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-17 11:20:32"
+  "exported": "2026-10-25 11:56:48"
 }

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_FrostSeaRampart",
   "kind": "static",
   "class": "tripo_architecture",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    24,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2500,
-      800
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -2.87561297416687,
@@ -50,26 +44,6 @@
       "lod": 0,
       "tris": 7999,
       "verts": 6698,
-      "materials": [
-        "M_Tripo_FrostSeaRampart"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostSeaRampart_LOD1",
-      "lod": 1,
-      "tris": 2500,
-      "verts": 2820,
-      "materials": [
-        "M_Tripo_FrostSeaRampart"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostSeaRampart_LOD2",
-      "lod": 2,
-      "tris": 800,
-      "verts": 1173,
       "materials": [
         "M_Tripo_FrostSeaRampart"
       ],
@@ -106,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_FrostSeaRampart.glb",
-    "sha256": "b65f3fdf432c09dc85884a76db5801f1ee00f8412f9f782c5fa63bb563598680",
+    "sha256": "57f9c10cdec49482cc41860e98f6f2333ab97a3cc993b9db1285e3d8abb7945c",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -121,5 +95,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:22:05"
+  "exported": "2026-10-25 12:03:15"
 }

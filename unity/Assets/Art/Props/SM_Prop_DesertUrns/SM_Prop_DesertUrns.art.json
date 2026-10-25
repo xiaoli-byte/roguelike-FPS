@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Prop_DesertUrns",
   "kind": "static",
   "class": "prop",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      2500,
-      900
-    ],
     "texture": 512,
     "maxFileKb": 600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.3580755591392517,
@@ -48,16 +44,6 @@
       "lod": 0,
       "tris": 2498,
       "verts": 1902,
-      "materials": [
-        "M_Prop_DesertUrns"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Prop_DesertUrns_LOD1",
-      "lod": 1,
-      "tris": 900,
-      "verts": 929,
       "materials": [
         "M_Prop_DesertUrns"
       ],
@@ -94,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Prop_DesertUrns.glb",
-    "sha256": "e39e9ae8270c72686c8a94f8cd84e785a92f3034f9be1f58d14b916d6eb93c3c",
+    "sha256": "e85abac6453e9f58f486173eeab73a0468df61c7482cfadbfcce83e486f3514d",
     "hiRes": false,
     "version": {
       "blockout": 2,
@@ -105,5 +91,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-17 11:19:20"
+  "exported": "2026-10-25 11:57:32"
 }

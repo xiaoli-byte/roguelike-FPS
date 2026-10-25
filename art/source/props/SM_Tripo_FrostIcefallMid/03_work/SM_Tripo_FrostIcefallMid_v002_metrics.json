@@ -1,0 +1,79 @@
+{
+  "source": {
+    "tris": 8481,
+    "verts": 4642
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 16.00782,
+    "iou": 0.834,
+    "iou_per_view": {
+      "front": 0.945,
+      "left": 0.659,
+      "back": 0.958,
+      "right": 0.719
+    },
+    "size_m": [
+      15.875,
+      5.167,
+      16.0
+    ],
+    "reference_m": [
+      20.0,
+      8.0,
+      16.0
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.748,
+    "samples": 64
+  },
+  "textures": {
+    "size": 2048,
+    "base": "SM_Tripo_FrostIcefallMid_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Tripo_FrostIcefallMid_LOD0",
+      "tris": 8481,
+      "verts": 4642,
+      "uv_min": [
+        0.0009765625,
+        0.0009765625
+      ],
+      "uv_max": [
+        0.9970703125,
+        0.9990234375
+      ],
+      "uv_utilization": 0.643,
+      "bbox_min": [
+        -7.9375,
+        -2.5833,
+        0.0
+      ],
+      "bbox_max": [
+        7.9375,
+        2.5833,
+        16.0
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Tripo_FrostIcefallMid/04_export/SM_Tripo_FrostIcefallMid_v002.glb",
+    "bytes": 763524
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 31.1,
+  "_seconds": 32.5
+}

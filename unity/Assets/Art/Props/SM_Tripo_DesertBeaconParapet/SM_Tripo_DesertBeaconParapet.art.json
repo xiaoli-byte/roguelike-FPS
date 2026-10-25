@@ -11,14 +11,9 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
@@ -47,20 +42,10 @@
     {
       "name": "SM_Tripo_DesertBeaconParapet_LOD0",
       "lod": 0,
-      "tris": 2984,
-      "verts": 2128,
+      "tris": 3096,
+      "verts": 2191,
       "materials": [
         "M_Tripo_DesertBeaconParapet"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertBeaconParapet_LOD1",
-      "lod": 1,
-      "tris": 994,
-      "verts": 799,
-      "materials": [
-        "M_Tripo_DesertBeaconParapet_LOD1"
       ],
       "skinned": false
     }
@@ -91,43 +76,17 @@
         "N": "Textures/T_Tripo_DesertBeaconParapet_N.png",
         "ORM": "Textures/T_Tripo_DesertBeaconParapet_ORM.png"
       }
-    },
-    {
-      "name": "M_Tripo_DesertBeaconParapet_LOD1",
-      "baseColor": [
-        1,
-        1,
-        1,
-        1
-      ],
-      "metallic": 1.0,
-      "roughness": 1.0,
-      "emissive": [
-        0,
-        0,
-        0
-      ],
-      "doubleSided": true,
-      "alphaMode": "OPAQUE",
-      "alphaCutoff": 0.5,
-      "hasOcclusion": true,
-      "occlusionSeparate": false,
-      "textures": {
-        "BC": "Textures/T_Tripo_DesertBeaconParapet_LOD1_BC.png",
-        "N": "Textures/T_Tripo_DesertBeaconParapet_LOD1_N.png",
-        "ORM": "Textures/T_Tripo_DesertBeaconParapet_LOD1_ORM.png"
-      }
     }
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_DesertBeaconParapet.glb",
-    "sha256": "c993d95fe8293a5764e325b65eda30c48f25fd89cd74d81b3469f381cb9331dd",
+    "sha256": "d07d6bb30ea7454cd6fd02c460d1dce586f68c8845c5dd173941cb4347a0c90d",
     "hiRes": false,
     "version": {
       "blockout": 1,
       "concept": 1,
       "highpoly": 1,
-      "build": 1
+      "build": 2
     },
     "generator": {
       "tool": "Tripo Studio",
@@ -136,5 +95,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-20 21:54:01"
+  "exported": "2026-10-25 12:17:57"
 }

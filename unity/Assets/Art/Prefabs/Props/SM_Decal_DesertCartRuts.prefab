@@ -30,122 +30,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2078862831226561450}
-  - {fileID: 268512709328287934}
   m_Father: {fileID: 8307239339191705811}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &3530955517657437826
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 268512709328287934}
-  - component: {fileID: 4848332930224286385}
-  - component: {fileID: 484770188214637259}
-  - component: {fileID: 8402997609204908173}
-  m_Layer: 0
-  m_Name: SM_Decal_DesertCartRuts_LOD1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 86
-  m_IsActive: 1
---- !u!4 &268512709328287934
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3530955517657437826}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.000000053385076, y: 0.7071068, z: -0.70710677, w: -0.00000005338508}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1714471729686087427}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &4848332930224286385
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3530955517657437826}
-  m_Mesh: {fileID: -3753383531243186709, guid: 3ea4ad94c61213f4687285223a163052, type: 3}
---- !u!23 &484770188214637259
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3530955517657437826}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 2438e5afed1be9e47a6872a0b86dcdf0, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &8402997609204908173
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3530955517657437826}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -3753383531243186709, guid: 3ea4ad94c61213f4687285223a163052, type: 3}
 --- !u!1 &4131622410637133614
 GameObject:
   m_ObjectHideFlags: 0
@@ -157,6 +43,7 @@ GameObject:
   - component: {fileID: 2078862831226561450}
   - component: {fileID: 1881593059453324849}
   - component: {fileID: 8093536813839806858}
+  - component: {fileID: 7221148446914177230}
   m_Layer: 0
   m_Name: SM_Decal_DesertCartRuts_LOD0
   m_TagString: Untagged
@@ -236,6 +123,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &7221148446914177230
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4131622410637133614}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -538749784590673657, guid: 3ea4ad94c61213f4687285223a163052, type: 3}
 --- !u!1 &7546829166929754365
 GameObject:
   m_ObjectHideFlags: 0
@@ -245,7 +154,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8307239339191705811}
-  - component: {fileID: 5061443088342575712}
   - component: {fileID: 7055946525642145131}
   m_Layer: 0
   m_Name: SM_Decal_DesertCartRuts
@@ -270,30 +178,6 @@ Transform:
   - {fileID: 1714471729686087427}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!205 &5061443088342575712
-LODGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7546829166929754365}
-  serializedVersion: 3
-  m_LocalReferencePoint: {x: 0, y: 0.02, z: 0}
-  m_Size: 8
-  m_FadeMode: 1
-  m_AnimateCrossFading: 1
-  m_LastLODIsBillboard: 0
-  m_LODs:
-  - screenRelativeHeight: 0.19041973
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 8093536813839806858}
-  - screenRelativeHeight: 0.031736623
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 484770188214637259}
-  m_Enabled: 1
-  m_GlobalIlluminationLOD: 0
 --- !u!114 &7055946525642145131
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -315,11 +199,10 @@ MonoBehaviour:
   bindAttachment: 
   lodDistance:
   - 0
-  - 30
   moveSpeed: 0
   designBounds:
     m_Center: {x: 0, y: 0.02, z: 0}
     m_Extent: {x: 1.2, y: 0, z: 4}
   sourceGlb: public/assets/props/SM_Decal_DesertCartRuts.glb
-  sourceSha256: c48393768ca596250f00102413bfc8b1c1146e2f9f5ec58dc60461576f3dd572
+  sourceSha256: f6eec2c8cf8e347a8b8627a6d241eb9d7a8eadfb722c0b43803af12b1aaf0145
   license: project-original procedural texture

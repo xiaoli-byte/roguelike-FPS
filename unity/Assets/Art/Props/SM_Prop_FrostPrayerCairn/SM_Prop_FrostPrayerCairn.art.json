@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Prop_FrostPrayerCairn",
   "kind": "static",
   "class": "prop",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      2500,
-      900
-    ],
     "texture": 512,
     "maxFileKb": 600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.5244295597076416,
@@ -48,16 +44,6 @@
       "lod": 0,
       "tris": 2497,
       "verts": 1743,
-      "materials": [
-        "M_Prop_FrostPrayerCairn"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Prop_FrostPrayerCairn_LOD1",
-      "lod": 1,
-      "tris": 898,
-      "verts": 864,
       "materials": [
         "M_Prop_FrostPrayerCairn"
       ],
@@ -94,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Prop_FrostPrayerCairn.glb",
-    "sha256": "44f95b232f3d98ee3b288e410ec75ee88c2188d67a64449730f8a20f36a25077",
+    "sha256": "3f8b8b9f60ce5b09c495ad82664a90123039279d387edacdfc1abdba16b7fa70",
     "hiRes": false,
     "version": {
       "blockout": 2,
@@ -105,5 +91,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-17 11:19:23"
+  "exported": "2026-10-25 11:57:38"
 }

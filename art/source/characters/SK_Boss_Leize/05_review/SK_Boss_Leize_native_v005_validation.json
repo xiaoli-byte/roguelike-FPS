@@ -1,0 +1,246 @@
+{
+  "asset": "SK_Boss_Leize",
+  "version": 5,
+  "glb": "art/source/characters/SK_Boss_Leize/04_export/SK_Boss_Leize_native_v005.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.3,
+      "自定义骨架：16 根骨骼（热扩散权重，575 个顶点未覆盖）": 0.7,
+      "贴图（BC + AO/ORM）": 20.7,
+      "LOD0 34479 面（不减面）与蒙皮上限": 0.4,
+      "发光壳 SK_Boss_Leize_GlowShell1_Drum 1241 面": 0.1,
+      "发光壳 SK_Boss_Leize_GlowShell2_Face 4958 面": 0.1,
+      "导出 1194 KB": 4.2
+    },
+    "source": {
+      "verts": 21900,
+      "tris": 34479,
+      "scale": 10.004885197850513
+    },
+    "regions": {
+      "heat_unweighted_verts": 575,
+      "weights": "segments",
+      "soft_limits_moved": [
+        284.5,
+        284.9,
+        434.9,
+        441.7,
+        142.5,
+        103.6,
+        137.6,
+        101.2
+      ],
+      "mask_verts": 2172,
+      "drum_verts": 301,
+      "head_verts": 0,
+      "fallback_verts": 0,
+      "per_bone": {
+        "spine1": 1738,
+        "spine2": 1221,
+        "chest": 1091,
+        "neck": 54,
+        "head": 3342,
+        "mask": 3394,
+        "drum": 849,
+        "shoulder_L": 458,
+        "arm_L": 661,
+        "forearm_L": 519,
+        "claw_L": 1721,
+        "shoulder_R": 461,
+        "arm_R": 668,
+        "forearm_R": 526,
+        "claw_R": 1695
+      }
+    },
+    "bones": [
+      "arm_L",
+      "arm_R",
+      "chest",
+      "claw_L",
+      "claw_R",
+      "drum",
+      "forearm_L",
+      "forearm_R",
+      "head",
+      "mask",
+      "neck",
+      "root",
+      "shoulder_L",
+      "shoulder_R",
+      "spine1",
+      "spine2"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.8,
+      "shade_mean": 0.879
+    },
+    "textures": {
+      "size": 2048,
+      "ao_mean": 0.673,
+      "provider_pbr": [],
+      "roughness_mean": 0.75,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Boss_Leize_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Boss_Leize_LOD0",
+        "tris": 34479,
+        "uv_min": [
+          0.0,
+          0.0
+        ],
+        "uv_max": [
+          1.0,
+          1.0
+        ]
+      }
+    ],
+    "glow_shells": {
+      "SK_Boss_Leize_GlowShell1_Drum": {
+        "group": "drum",
+        "tris": 1241
+      },
+      "SK_Boss_Leize_GlowShell2_Face": {
+        "group": "mask",
+        "tris": 4958
+      }
+    },
+    "glb_kb": 1194,
+    "_seconds": 28.3
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "1194 KB / 6000 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Boss_Leize_LOD0']"
+    ],
+    [
+      "note",
+      "LOD0 tris",
+      "34479 (class reference 30000)"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "10.000 m (design 10.0 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Boss_Leize_Drum_Glow', 'M_Boss_Leize_Face_Glow', 'M_Boss_Leize']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "glow shell GlowShell1_Drum",
+      "1241 tris on 'drum'"
+    ],
+    [
+      "pass",
+      "glow shell GlowShell2_Face",
+      "4958 tris on 'mask'"
+    ],
+    [
+      "pass",
+      "texture T_Boss_Leize_BC",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "texture T_Boss_Leize_ORM",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "16 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Boss_Leize_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Boss_Leize_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Boss_Leize_LOD0 UV range",
+      "[0.0, 0.0]..[1.0, 1.0]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "575 verts"
+    ],
+    [
+      "pass",
+      "region mask",
+      "2172 verts"
+    ],
+    [
+      "pass",
+      "region drum",
+      "301 verts"
+    ],
+    [
+      "warn",
+      "region head",
+      "0 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "0 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Weapon_Stormpod",
   "kind": "skeletal",
   "class": "weapon_fp",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    6
+    0
   ],
   "budget": {
-    "lodTris": [
-      12000,
-      3000
-    ],
     "texture": 2048,
     "maxFileKb": 3000
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.061108484864234924,
@@ -52,16 +48,6 @@
       "lod": 0,
       "tris": 11996,
       "verts": 9076,
-      "materials": [
-        "M_Weapon_Stormpod"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Weapon_Stormpod_LOD1",
-      "lod": 1,
-      "tris": 2996,
-      "verts": 3140,
       "materials": [
         "M_Weapon_Stormpod"
       ],
@@ -99,7 +85,7 @@
   ],
   "source": {
     "glb": "public/assets/weapons/SK_Weapon_Stormpod.glb",
-    "sha256": "91995faf97d7eafaa962da198cfddc041029648cc99967ff8c2f59623265a299",
+    "sha256": "bdec0e69c47357cb2ed4b39e0c56b4dcef817a3fc7d87c8bceb08f13881a0a6d",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -114,5 +100,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:20:02"
+  "exported": "2026-10-25 11:54:42"
 }

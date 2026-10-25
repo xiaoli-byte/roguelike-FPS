@@ -11,22 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    24,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2500,
-      2500
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
-  "qaWaivers": {
-    "LOD2 递减": "Tripo 碎 UV：LOD2 再减面会跨 UV 接缝糊成斜条纹，暂与 LOD1 同面数（2026-10-17，根治待做）"
-  },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -3.758183479309082,
@@ -53,26 +44,6 @@
       "lod": 0,
       "tris": 7524,
       "verts": 10974,
-      "materials": [
-        "M_Tripo_DesertBeaconTower"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertBeaconTower_LOD1",
-      "lod": 1,
-      "tris": 2487,
-      "verts": 4807,
-      "materials": [
-        "M_Tripo_DesertBeaconTower"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertBeaconTower_LOD2",
-      "lod": 2,
-      "tris": 2487,
-      "verts": 4807,
       "materials": [
         "M_Tripo_DesertBeaconTower"
       ],
@@ -109,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_DesertBeaconTower.glb",
-    "sha256": "89a50fb7782d6b3c049dee7cb7609ffb93249c23f45f3242b1861ea4e9788e89",
+    "sha256": "c814e8a97d6b076630c7cd91931a1b5a51ae01a2f668bc1be9aa862ddc74beba",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -124,5 +95,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-17 23:07:43"
+  "exported": "2026-10-25 11:58:02"
 }

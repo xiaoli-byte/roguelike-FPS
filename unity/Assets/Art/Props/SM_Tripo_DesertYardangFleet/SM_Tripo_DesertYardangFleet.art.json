@@ -11,30 +11,21 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    24,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2500,
-      2500
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
-  "qaWaivers": {
-    "LOD2 递减": "Tripo 碎 UV：LOD2 再减面会跨 UV 接缝糊成斜条纹，暂与 LOD1 同面数（2026-10-17，根治待做）"
-  },
+  "qaWaivers": {},
   "bounds": {
     "min": [
-      -2.2465624809265137,
+      -2.246474266052246,
       0,
       -6.746139049530029
     ],
     "max": [
-      2.2465624809265137,
+      2.246474266052246,
       10,
       6.746139049530029
     ]
@@ -51,28 +42,8 @@
     {
       "name": "SM_Tripo_DesertYardangFleet_LOD0",
       "lod": 0,
-      "tris": 7960,
-      "verts": 4807,
-      "materials": [
-        "M_Tripo_DesertYardangFleet"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertYardangFleet_LOD1",
-      "lod": 1,
-      "tris": 2486,
-      "verts": 1794,
-      "materials": [
-        "M_Tripo_DesertYardangFleet"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertYardangFleet_LOD2",
-      "lod": 2,
-      "tris": 2486,
-      "verts": 1794,
+      "tris": 9022,
+      "verts": 5368,
       "materials": [
         "M_Tripo_DesertYardangFleet"
       ],
@@ -109,13 +80,13 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_DesertYardangFleet.glb",
-    "sha256": "4ae6a881ae64d8ed818b9bca9c7806f3d597df7cec596b3cac7ad7ef656a90cf",
+    "sha256": "caaa857aec7e5ed0f516d5d03f92c8f7711a283fa413e552bac0a1739ff523b4",
     "hiRes": false,
     "version": {
       "blockout": 1,
       "concept": 1,
       "highpoly": 1,
-      "build": 2
+      "build": 4
     },
     "generator": {
       "tool": "Tripo Studio",
@@ -124,5 +95,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-17 23:07:45"
+  "exported": "2026-10-25 12:18:09"
 }

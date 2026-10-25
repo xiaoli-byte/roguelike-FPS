@@ -11,16 +11,9 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    24,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2500,
-      800
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
@@ -55,26 +48,6 @@
         "M_Tripo_DesertTemplePagoda"
       ],
       "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertTemplePagoda_LOD1",
-      "lod": 1,
-      "tris": 2487,
-      "verts": 4766,
-      "materials": [
-        "M_Tripo_DesertTemplePagoda"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertTemplePagoda_LOD2",
-      "lod": 2,
-      "tris": 795,
-      "verts": 1030,
-      "materials": [
-        "M_Tripo_DesertTemplePagoda_LOD2"
-      ],
-      "skinned": false
     }
   ],
   "materials": [
@@ -103,37 +76,11 @@
         "N": "Textures/T_Tripo_DesertTemplePagoda_N.png",
         "ORM": "Textures/T_Tripo_DesertTemplePagoda_ORM.png"
       }
-    },
-    {
-      "name": "M_Tripo_DesertTemplePagoda_LOD2",
-      "baseColor": [
-        1,
-        1,
-        1,
-        1
-      ],
-      "metallic": 1.0,
-      "roughness": 1.0,
-      "emissive": [
-        0,
-        0,
-        0
-      ],
-      "doubleSided": true,
-      "alphaMode": "OPAQUE",
-      "alphaCutoff": 0.5,
-      "hasOcclusion": true,
-      "occlusionSeparate": false,
-      "textures": {
-        "BC": "Textures/T_Tripo_DesertTemplePagoda_LOD2_BC.png",
-        "N": "Textures/T_Tripo_DesertTemplePagoda_LOD2_N.png",
-        "ORM": "Textures/T_Tripo_DesertTemplePagoda_LOD2_ORM.png"
-      }
     }
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_DesertTemplePagoda.glb",
-    "sha256": "e9635ab2ed3efd547aaaa4e95089590601601cd085c8ac6874b9d0f482ad0e17",
+    "sha256": "24b4b5f88e51cef6c068edd95eccce2e1210f31fcdd8531231961f06e6daeac3",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -148,5 +95,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-20 21:54:39"
+  "exported": "2026-10-25 12:00:23"
 }

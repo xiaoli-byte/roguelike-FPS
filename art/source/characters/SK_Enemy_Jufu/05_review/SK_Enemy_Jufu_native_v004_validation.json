@@ -1,0 +1,226 @@
+{
+  "asset": "SK_Enemy_Jufu",
+  "version": 4,
+  "glb": "art/source/characters/SK_Enemy_Jufu/04_export/SK_Enemy_Jufu_native_v004.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.2,
+      "自定义骨架：26 根骨骼（热扩散权重，6634 个顶点未覆盖）": 0.1,
+      "贴图（BC + AO/ORM）": 4.9,
+      "LOD0 8856 面（不减面）与蒙皮上限": 0.1,
+      "导出 358 KB": 0.6
+    },
+    "source": {
+      "verts": 6634,
+      "tris": 8856,
+      "scale": 1.9009281875915973
+    },
+    "regions": {
+      "heat_unweighted_verts": 6634,
+      "weights": "segments",
+      "ground_verts": 469,
+      "head_verts": 543,
+      "fallback_verts": 0,
+      "per_bone": {
+        "hips": 202,
+        "spine": 63,
+        "chest": 9,
+        "neck": 13,
+        "head": 1541,
+        "shoulder_L": 69,
+        "arm_L": 163,
+        "forearm_L": 177,
+        "hand_L": 232,
+        "fingers_L": 361,
+        "shoulder_R": 73,
+        "arm_R": 158,
+        "forearm_R": 180,
+        "hand_R": 227,
+        "fingers_R": 366,
+        "thigh_L": 219,
+        "shin_L": 140,
+        "foot_L": 209,
+        "toe_L": 145,
+        "thigh_R": 228,
+        "shin_R": 120,
+        "foot_R": 211,
+        "toe_R": 147
+      }
+    },
+    "bones": [
+      "arm_L",
+      "arm_R",
+      "chest",
+      "fingers_L",
+      "fingers_R",
+      "foot_L",
+      "foot_R",
+      "forearm_L",
+      "forearm_R",
+      "hand_L",
+      "hand_R",
+      "head",
+      "hips",
+      "neck",
+      "palm",
+      "rock",
+      "root",
+      "shin_L",
+      "shin_R",
+      "shoulder_L",
+      "shoulder_R",
+      "spine",
+      "thigh_L",
+      "thigh_R",
+      "toe_L",
+      "toe_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.885,
+      "shade_mean": 0.926
+    },
+    "textures": {
+      "size": 1024,
+      "ao_mean": 0.781,
+      "provider_pbr": [],
+      "roughness_mean": 0.75,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Enemy_Jufu_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Enemy_Jufu_LOD0",
+        "tris": 8856,
+        "uv_min": [
+          0.0,
+          0.0
+        ],
+        "uv_max": [
+          1.0,
+          1.0
+        ]
+      }
+    ],
+    "glb_kb": 358,
+    "_seconds": 7.0
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "358 KB / 1600 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Enemy_Jufu_LOD0']"
+    ],
+    [
+      "note",
+      "LOD0 tris",
+      "8856 (class reference 8000)"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "1.900 m (design 1.9 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Enemy_Jufu']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Jufu_ORM",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "texture T_Enemy_Jufu_BC",
+      "1024x1024 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "26 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Jufu_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Jufu_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Enemy_Jufu_LOD0 UV range",
+      "[0.0, 0.0]..[1.0, 1.0]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "6634 verts"
+    ],
+    [
+      "pass",
+      "region ground",
+      "469 verts"
+    ],
+    [
+      "pass",
+      "region head",
+      "543 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "0 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

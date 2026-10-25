@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Boss_Matriarch",
   "kind": "skeletal",
   "class": "boss",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    25,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      30000,
-      12000,
-      5000
-    ],
-    "texture": 2048,
+    "texture": 4096,
     "maxFileKb": 6000
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.8677263259887695,
@@ -97,26 +91,6 @@
         "M_Boss_Matriarch"
       ],
       "skinned": true
-    },
-    {
-      "name": "SK_Boss_Matriarch_LOD1",
-      "lod": 1,
-      "tris": 11996,
-      "verts": 8292,
-      "materials": [
-        "M_Boss_Matriarch"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Boss_Matriarch_LOD2",
-      "lod": 2,
-      "tris": 4994,
-      "verts": 4088,
-      "materials": [
-        "M_Boss_Matriarch"
-      ],
-      "skinned": true
     }
   ],
   "materials": [
@@ -149,7 +123,7 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Boss_Matriarch.glb",
-    "sha256": "14b1dbca28996bd3ff92c3831cf118b2d3c15cbc98c43553249da00dc11721ba",
+    "sha256": "08745f552e98a64ac4f2e2e09b330e6f6f88b32082c934771cdb02a987f25524",
     "hiRes": false,
     "version": {
       "blockout": 2,
@@ -160,5 +134,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-17 11:18:50"
+  "exported": "2026-10-25 11:51:22"
 }

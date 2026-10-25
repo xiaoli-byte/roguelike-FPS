@@ -168,7 +168,7 @@
       ]
     },
     "build": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -223,11 +223,61 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:51:37",
+          "files": {
+            "SM_Prop_KuiBrokenDrum_v002.blend": {
+              "path": "03_work/SM_Prop_KuiBrokenDrum_v002.blend",
+              "sha256": "d3e443c802948d8f063a350a5ca15539e09567b7d5c2874c10415762f306fcd4"
+            },
+            "SM_Prop_KuiBrokenDrum_v002.glb": {
+              "path": "04_export/SM_Prop_KuiBrokenDrum_v002.glb",
+              "sha256": "a5c895ca247cb76308163ccbfe3b5e8b6b450aec6d10d2541a3ab63ed0644e77"
+            },
+            "SM_Prop_KuiBrokenDrum_v002_metrics.json": {
+              "path": "03_work/SM_Prop_KuiBrokenDrum_v002_metrics.json",
+              "sha256": "61c49c3f445f01a0b00c141aa59f347f76a8a7383738a5f8e3fc3e2154a5aaad"
+            },
+            "T_Prop_KuiBrokenDrum_BC.png": {
+              "path": "03_work/textures_v002/T_Prop_KuiBrokenDrum_BC.png",
+              "sha256": "0940b3dae83098055a2a4eae2b8294a248fb54399bfe829a335b4950cc34d138"
+            },
+            "T_Prop_KuiBrokenDrum_N.png": {
+              "path": "03_work/textures_v002/T_Prop_KuiBrokenDrum_N.png",
+              "sha256": "a851a8554008e979080b3053478d6c06fb13e4aed817c580af892fde942c043e"
+            },
+            "T_Prop_KuiBrokenDrum_ORM.png": {
+              "path": "03_work/textures_v002/T_Prop_KuiBrokenDrum_ORM.png",
+              "sha256": "d87895a7e7c2ede982bb2fb5ebd9b019fa17430d03942e219132ae1f9361e283"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.767,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 3112,
+              "verts": 1613
+            }
+          ],
+          "export_kb": 372.8,
+          "seconds": 11.3,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -243,11 +293,26 @@
           "warnings": 0,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:51:37",
+          "files": {
+            "SM_Prop_KuiBrokenDrum_v002_validation_v002.json": {
+              "path": "05_review/SM_Prop_KuiBrokenDrum_v002_validation_v002.json",
+              "sha256": "6a95f74c096e650ced61fa07f1ae3300dece939079c4ee50694b6a49a3741283"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -267,11 +332,30 @@
             "note": "",
             "time": "2026-10-19 20:07:38"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:51:42",
+          "files": {
+            "SM_Prop_KuiBrokenDrum_v002_review_v002.png": {
+              "path": "05_review/SM_Prop_KuiBrokenDrum_v002_review_v002.png",
+              "sha256": "eeaf18133d3319a2163304c2fcd2fe6ae0d123fff0ff68f0cd1a9faab4e33c0d"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（2026-10-25 不减面重建，用户授权免审）",
+            "note": "",
+            "time": "2026-10-25 11:58:30"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -283,6 +367,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/props/SM_Prop_KuiBrokenDrum.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:58:30",
+          "files": {
+            "SM_Prop_KuiBrokenDrum.glb": {
+              "path": "@root/public/assets/props/SM_Prop_KuiBrokenDrum.glb",
+              "sha256": "a5c895ca247cb76308163ccbfe3b5e8b6b450aec6d10d2541a3ab63ed0644e77"
+            }
+          },
+          "from_build": 2,
           "url": "assets/props/SM_Prop_KuiBrokenDrum.glb"
         }
       ]

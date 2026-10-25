@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Env_InfernoCliff",
   "kind": "static",
   "class": "nature_prop",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    18,
-    42
+    0
   ],
   "budget": {
-    "lodTris": [
-      5000,
-      1600,
-      500
-    ],
     "texture": 1024,
     "maxFileKb": 900
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -7.149081707000732,
@@ -50,26 +44,6 @@
       "lod": 0,
       "tris": 5000,
       "verts": 3863,
-      "materials": [
-        "M_Env_InfernoCliff"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Env_InfernoCliff_LOD1",
-      "lod": 1,
-      "tris": 1600,
-      "verts": 1569,
-      "materials": [
-        "M_Env_InfernoCliff"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Env_InfernoCliff_LOD2",
-      "lod": 2,
-      "tris": 500,
-      "verts": 631,
       "materials": [
         "M_Env_InfernoCliff"
       ],
@@ -106,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Env_InfernoCliff.glb",
-    "sha256": "6bf0131a4fad2528345d6313f87e3d2334e6ae7956a21cf56486c26093b1e753",
+    "sha256": "4921dde9a12d9676db12fd24549be450f557d56a41181d23490d63160de43769",
     "hiRes": false,
     "version": {
       "blockout": 2,
@@ -121,5 +95,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:19:44"
+  "exported": "2026-10-25 11:56:28"
 }

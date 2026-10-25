@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Enemy_Mortar",
   "kind": "skeletal",
   "class": "enemy_standard",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    14,
-    30
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      3500,
-      1500
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.7516978979110718,
@@ -68,26 +62,6 @@
         "M_Enemy_Mortar"
       ],
       "skinned": true
-    },
-    {
-      "name": "SK_Enemy_Mortar_LOD1",
-      "lod": 1,
-      "tris": 3500,
-      "verts": 2529,
-      "materials": [
-        "M_Enemy_Mortar"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Enemy_Mortar_LOD2",
-      "lod": 2,
-      "tris": 1500,
-      "verts": 1299,
-      "materials": [
-        "M_Enemy_Mortar"
-      ],
-      "skinned": true
     }
   ],
   "materials": [
@@ -120,7 +94,7 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Enemy_Mortar.glb",
-    "sha256": "7885de89df04575686ceb59e50d1b8dd43c4538beb731b7a67f7ed6e92de0f12",
+    "sha256": "920b4b919f21afaffecc9601c684d146aa341939d548bc1615d9b5f2536b2e2d",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -131,5 +105,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-17 11:18:23"
+  "exported": "2026-10-25 11:52:59"
 }

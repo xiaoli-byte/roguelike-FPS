@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7030940722578786721}
   - component: {fileID: 2634081526133509692}
   - component: {fileID: 6675953649278891085}
+  - component: {fileID: 7772868692000111531}
   m_Layer: 0
   m_Name: SM_Tripo_FrostPlankRoadBroken_LOD0
   m_TagString: Untagged
@@ -90,6 +91,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &7772868692000111531
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6153025969101214334}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -5271205750590073846, guid: 0910e931ad2c92044b44e2b7638e0b90, type: 3}
 --- !u!1 &8101050158542226775
 GameObject:
   m_ObjectHideFlags: 0
@@ -99,7 +122,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6272799825549933535}
-  - component: {fileID: 8125017551107055000}
   - component: {fileID: 2525592002548442358}
   m_Layer: 0
   m_Name: SM_Tripo_FrostPlankRoadBroken
@@ -124,30 +146,6 @@ Transform:
   - {fileID: 5646437783506411542}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!205 &8125017551107055000
-LODGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8101050158542226775}
-  serializedVersion: 3
-  m_LocalReferencePoint: {x: 0.0020065308, y: 1.7449998, z: 0.10035062}
-  m_Size: 6.200702
-  m_FadeMode: 1
-  m_AnimateCrossFading: 1
-  m_LastLODIsBillboard: 0
-  m_LODs:
-  - screenRelativeHeight: 0.18448997
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 6675953649278891085}
-  - screenRelativeHeight: 0.030748328
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 7928120345955271913}
-  m_Enabled: 1
-  m_GlobalIlluminationLOD: 0
 --- !u!114 &2525592002548442358
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -169,13 +167,12 @@ MonoBehaviour:
   bindAttachment: 
   lodDistance:
   - 0
-  - 24
   moveSpeed: 0
   designBounds:
     m_Center: {x: 0.0020951033, y: 1.745, z: 0.10035026}
     m_Extent: {x: 2.4979048, y: 1.745, z: 3.1003504}
   sourceGlb: public/assets/props/SM_Tripo_FrostPlankRoadBroken.glb
-  sourceSha256: c1f0b9ccb77754395d1a547db3a6adeb4e2f65596dadc1a99b7b3b27992842a3
+  sourceSha256: 2f75554036bc17f2bcb402fa89bb34aea0d3d7f155fe8858dc7303750f72b6a9
   license: project-original procedural model (art/pipeline/blender/bl_proc_timber.py)
 --- !u!1 &8190671125184931918
 GameObject:
@@ -207,119 +204,5 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7030940722578786721}
-  - {fileID: 9021125051523081543}
   m_Father: {fileID: 6272799825549933535}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &9187217414732240621
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 9021125051523081543}
-  - component: {fileID: 4141407951993329643}
-  - component: {fileID: 7928120345955271913}
-  - component: {fileID: 7879925356304808211}
-  m_Layer: 0
-  m_Name: SM_Tripo_FrostPlankRoadBroken_LOD1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 86
-  m_IsActive: 1
---- !u!4 &9021125051523081543
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9187217414732240621}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.000000053385076, y: 0.7071068, z: -0.70710677, w: -0.00000005338508}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 5646437783506411542}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &4141407951993329643
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9187217414732240621}
-  m_Mesh: {fileID: 208956497765366199, guid: 0910e931ad2c92044b44e2b7638e0b90, type: 3}
---- !u!23 &7928120345955271913
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9187217414732240621}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 784b3c32944cff14499d64d92ec55ed9, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &7879925356304808211
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9187217414732240621}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 208956497765366199, guid: 0910e931ad2c92044b44e2b7638e0b90, type: 3}

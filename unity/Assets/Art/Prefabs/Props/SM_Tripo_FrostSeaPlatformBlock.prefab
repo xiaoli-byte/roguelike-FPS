@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6740848909579705854}
-  - component: {fileID: 6679572702754544441}
   - component: {fileID: 600611782676127202}
   m_Layer: 0
   m_Name: SM_Tripo_FrostSeaPlatformBlock
@@ -34,30 +33,6 @@ Transform:
   - {fileID: 1095104988744788006}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!205 &6679572702754544441
-LODGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 542670374764660354}
-  serializedVersion: 3
-  m_LocalReferencePoint: {x: 0.19389343, y: 1.4232755, z: 0.16536951}
-  m_Size: 3.8113298
-  m_FadeMode: 1
-  m_AnimateCrossFading: 1
-  m_LastLODIsBillboard: 0
-  m_LODs:
-  - screenRelativeHeight: 0.13607855
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 7212758112408149149}
-  - screenRelativeHeight: 0.022679757
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 4249176738163872212}
-  m_Enabled: 1
-  m_GlobalIlluminationLOD: 0
 --- !u!114 &600611782676127202
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -79,13 +54,12 @@ MonoBehaviour:
   bindAttachment: 
   lodDistance:
   - 0
-  - 20
   moveSpeed: 0
   designBounds:
     m_Center: {x: 0.19394135, y: 1.4331487, z: 0.16536927}
     m_Extent: {x: 1.8047675, y: 1.4041458, z: 1.9056644}
   sourceGlb: public/assets/props/SM_Tripo_FrostSeaPlatformBlock.glb
-  sourceSha256: 2f4b28c65a240a0c58e81d04e5e196efede3a78039977254fd354bc4358da4dc
+  sourceSha256: 7838623d4a36737a76e65ce4c0c44bcbeeea99fff85f170fcac47a18290b5614
   license: "Tencent Hunyuan 3D 2.1 Community License\uFF1A\u4E0D\u5F97\u5728\u6B27\u76DF
     / \u82F1\u56FD / \u97E9\u56FD\u5883\u5185\u4F7F\u7528\u6216\u5206\u53D1"
 --- !u!1 &4212604051040805940
@@ -118,122 +92,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1872393897651317333}
-  - {fileID: 1715190039977582928}
   m_Father: {fileID: 6740848909579705854}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &5865574343125099823
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1715190039977582928}
-  - component: {fileID: 1946331849390090323}
-  - component: {fileID: 4249176738163872212}
-  - component: {fileID: 9153447344405959199}
-  m_Layer: 0
-  m_Name: SM_Tripo_FrostSeaPlatformBlock_LOD1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 86
-  m_IsActive: 1
---- !u!4 &1715190039977582928
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5865574343125099823}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.000000053385076, y: 0.7071068, z: -0.70710677, w: -0.00000005338508}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1095104988744788006}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &1946331849390090323
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5865574343125099823}
-  m_Mesh: {fileID: 9107712112555790751, guid: ce22040de3745474fafe3d5c0e882cb6, type: 3}
---- !u!23 &4249176738163872212
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5865574343125099823}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 5783d41536b623341894dbfc115ebfe7, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &9153447344405959199
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5865574343125099823}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 9107712112555790751, guid: ce22040de3745474fafe3d5c0e882cb6, type: 3}
 --- !u!1 &7994337009509603273
 GameObject:
   m_ObjectHideFlags: 0
@@ -245,6 +105,7 @@ GameObject:
   - component: {fileID: 1872393897651317333}
   - component: {fileID: 4591215854753883166}
   - component: {fileID: 7212758112408149149}
+  - component: {fileID: 1986546128592569857}
   m_Layer: 0
   m_Name: SM_Tripo_FrostSeaPlatformBlock_LOD0
   m_TagString: Untagged
@@ -324,3 +185,25 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &1986546128592569857
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7994337009509603273}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -6203331769954129576, guid: ce22040de3745474fafe3d5c0e882cb6, type: 3}

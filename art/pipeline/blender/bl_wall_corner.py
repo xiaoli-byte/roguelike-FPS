@@ -5,10 +5,10 @@ the wall shifted so its right end lands at x = arm and its body reaches past the
 plane x = y (keeping x >= y). The other arm is that arm mirrored across the same plane, (x, y) -> (y, x), so the
 two cut outlines are identical and weld vertex for vertex: no caps, no seam, the same rammed-earth texture on both
 arms (mirrored on the second). Centre lines meet at the origin; arm A runs along +X, arm B along +Y (glTF -Z,
-behind the front face), so both front faces form the outside of the L. Every LOD is processed on its own and then
-collapsed to the kit budget with UV-island borders kept.
+behind the front face), so both front faces form the outside of the L. Every LOD of the source is processed on its own
+(published walls have one LOD); no decimation.
 
-Params (JSON after --): {"source", "out", "arm", "budget": [..], "image_format", "draco", "result_path"}
+Params (JSON after --): {"source", "out", "arm", "lod_distance": [..], "image_format", "draco", "result_path"}
 """
 import json
 import math
@@ -61,13 +61,6 @@ for n, src in enumerate(lods):
     bpy.context.scene.collection.objects.link(ob)
     ob["lod"] = n
     ob["lod_distance"] = P["lod_distance"][n]
-    budget = P["budget"][n]
-    tris = sum(len(p.vertices) - 2 for p in mesh.polygons)
-    if tris > budget:
-        mod = ob.modifiers.new("decimate", "DECIMATE")
-        mod.decimate_type, mod.ratio, mod.use_collapse_triangulate, mod.delimit = "COLLAPSE", budget / tris * 0.995, True, {"UV"}
-        with bpy.context.temp_override(object=ob, active_object=ob, selected_objects=[ob], selected_editable_objects=[ob]):
-            bpy.ops.object.modifier_apply(modifier=mod.name)
     tri = bpy.data.objects[ob.name].modifiers.new("tri", "TRIANGULATE")
     with bpy.context.temp_override(object=ob, active_object=ob, selected_objects=[ob], selected_editable_objects=[ob]):
         bpy.ops.object.modifier_apply(modifier=tri.name)

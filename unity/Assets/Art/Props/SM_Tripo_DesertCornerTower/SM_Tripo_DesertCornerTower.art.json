@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_DesertCornerTower",
   "kind": "static",
   "class": "tripo_architecture",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    24,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2500,
-      800
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -3.6929657459259033,
@@ -50,26 +44,6 @@
       "lod": 0,
       "tris": 7615,
       "verts": 5559,
-      "materials": [
-        "M_Tripo_DesertCornerTower"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertCornerTower_LOD1",
-      "lod": 1,
-      "tris": 2486,
-      "verts": 2381,
-      "materials": [
-        "M_Tripo_DesertCornerTower"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertCornerTower_LOD2",
-      "lod": 2,
-      "tris": 796,
-      "verts": 1085,
       "materials": [
         "M_Tripo_DesertCornerTower"
       ],
@@ -106,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_DesertCornerTower.glb",
-    "sha256": "2a7d73185ace8f21818e6773ecd3138fb7c2b3f28ab7f6b843e7aa1a287ac787",
+    "sha256": "99ef6ee4cc19715553591b7988e2d191fa04ff3c7663d8f99ddf308a5e8c9672",
     "hiRes": false,
     "version": {
       "blockout": 2,
@@ -121,5 +95,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-17 00:30:25"
+  "exported": "2026-10-25 11:58:48"
 }

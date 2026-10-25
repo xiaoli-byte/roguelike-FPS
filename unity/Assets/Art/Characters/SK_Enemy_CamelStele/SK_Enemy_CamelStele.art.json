@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Enemy_CamelStele",
   "kind": "skeletal",
   "class": "enemy_large",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    18,
-    40
+    0
   ],
   "budget": {
-    "lodTris": [
-      12000,
-      5000,
-      2000
-    ],
     "texture": 2048,
     "maxFileKb": 3000
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.8843181133270264,
@@ -63,19 +57,7 @@
       "RightFoot": "foot_R",
       "RightToes": "toe_R"
     },
-    "tpose": {
-      "L": {
-        "upper_drop_deg": 65.39,
-        "upper_rot_deg": 65.68,
-        "lower_rot_deg": 18.94
-      },
-      "R": {
-        "upper_drop_deg": 65.39,
-        "upper_rot_deg": 65.68,
-        "lower_rot_deg": 18.94
-      },
-      "applied": true
-    },
+    "tpose": null,
     "bones": [
       "root",
       "hips",
@@ -118,26 +100,6 @@
       "lod": 0,
       "tris": 11819,
       "verts": 18928,
-      "materials": [
-        "M_Enemy_CamelStele"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Enemy_CamelStele_LOD1",
-      "lod": 1,
-      "tris": 4924,
-      "verts": 9677,
-      "materials": [
-        "M_Enemy_CamelStele"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Enemy_CamelStele_LOD2",
-      "lod": 2,
-      "tris": 1970,
-      "verts": 4417,
       "materials": [
         "M_Enemy_CamelStele"
       ],
@@ -197,7 +159,7 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Enemy_CamelStele.glb",
-    "sha256": "3d31da915550453003a848481a2ea3fa959c4d2c4380a812b369acf3c3ff2460",
+    "sha256": "075d332657ac256106e4379554e3c715adf1230b9a8a0a4ae19d636fcb060abc",
     "hiRes": false,
     "version": {
       "native_build": 3
@@ -209,5 +171,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-17 11:20:21"
+  "exported": "2026-10-25 11:51:55"
 }

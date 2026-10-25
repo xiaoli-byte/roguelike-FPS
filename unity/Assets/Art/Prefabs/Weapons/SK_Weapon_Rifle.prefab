@@ -72,7 +72,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2712338801795602380}
-  - component: {fileID: 2990355226609923321}
   - component: {fileID: 3368651252572856091}
   m_Layer: 0
   m_Name: SK_Weapon_Rifle
@@ -97,30 +96,6 @@ Transform:
   - {fileID: 4937912654273748393}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!205 &2990355226609923321
-LODGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2603466712536665110}
-  serializedVersion: 3
-  m_LocalReferencePoint: {x: -0.005826583, y: -0.032789387, z: -0.14210594}
-  m_Size: 0.9477067
-  m_FadeMode: 1
-  m_AnimateCrossFading: 1
-  m_LastLODIsBillboard: 0
-  m_LODs:
-  - screenRelativeHeight: 0.112788804
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 6303373072681153781}
-  - screenRelativeHeight: 0.04511552
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 7500079924407482894}
-  m_Enabled: 1
-  m_GlobalIlluminationLOD: 0
 --- !u!114 &3368651252572856091
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -142,13 +117,12 @@ MonoBehaviour:
   bindAttachment: 
   lodDistance:
   - 0
-  - 6
   moveSpeed: 0
   designBounds:
     m_Center: {x: -0.005607214, y: -0.03263138, z: -0.14210592}
     m_Extent: {x: 0.044580393, y: 0.13431646, z: 0.4738534}
   sourceGlb: public/assets/weapons/SK_Weapon_Rifle.glb
-  sourceSha256: f264fc6db9881e8c25dbcf4dc8bd14ede9c96345ef0e0dc53a85ce12c22105dd
+  sourceSha256: dfa305e1af59ecd08f6515672fb757d61d303311e2cefdb2b5be7015bf8906ed
   license: "Hunyuan3D 2.1 \u751F\u6210\uFF1ATencent Hunyuan 3D Community License\uFF0C\u4E0D\u5F97\u5728\u6B27\u76DF
     / \u82F1\u56FD / \u97E9\u56FD\u4F7F\u7528\u6216\u5206\u53D1"
 --- !u!1 &3994672112240095735
@@ -182,7 +156,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5887788897311784374}
-  - {fileID: 8031802328056032046}
   - {fileID: 1787372115549377701}
   m_Father: {fileID: 2712338801795602380}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -273,102 +246,6 @@ Transform:
   - {fileID: 1248063978307334296}
   m_Father: {fileID: 1787372115549377701}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &5702473667437934985
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8031802328056032046}
-  - component: {fileID: 7500079924407482894}
-  m_Layer: 0
-  m_Name: SK_Weapon_Rifle_LOD1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8031802328056032046
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5702473667437934985}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.000000053385076, y: 0.7071068, z: -0.70710677, w: -0.00000005338508}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 4937912654273748393}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!137 &7500079924407482894
-SkinnedMeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5702473667437934985}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 3
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 13a573c2394d7d3438ccd23ac55b1a49, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  serializedVersion: 2
-  m_Quality: 0
-  m_UpdateWhenOffscreen: 0
-  m_SkinnedMotionVectors: 1
-  m_Mesh: {fileID: 3660277040769346157, guid: 26d82f54c91ac0a44923d48455811b62, type: 3}
-  m_Bones:
-  - {fileID: 3967276657523790881}
-  - {fileID: 525494731225543928}
-  - {fileID: 646110805772118472}
-  - {fileID: 1248063978307334296}
-  m_BlendShapeWeights: []
-  m_RootBone: {fileID: 3967276657523790881}
-  m_AABB:
-    m_Center: {x: 0.0058641545, y: -0.032812405, z: 0.14219248}
-    m_Extent: {x: 0.044762157, y: 0.13445994, z: 0.47373265}
-  m_DirtyAABB: 0
 --- !u!1 &7044686447285571771
 GameObject:
   m_ObjectHideFlags: 0

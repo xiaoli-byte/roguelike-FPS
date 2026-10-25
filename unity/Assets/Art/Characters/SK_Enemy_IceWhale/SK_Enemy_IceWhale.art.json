@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Enemy_IceWhale",
   "kind": "skeletal",
   "class": "enemy_large",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    18,
-    40
+    0
   ],
   "budget": {
-    "lodTris": [
-      12000,
-      5000,
-      2000
-    ],
     "texture": 2048,
     "maxFileKb": 3000
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -1.8465970754623413,
@@ -75,26 +69,6 @@
       "lod": 0,
       "tris": 11819,
       "verts": 17460,
-      "materials": [
-        "M_Enemy_IceWhale"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Enemy_IceWhale_LOD1",
-      "lod": 1,
-      "tris": 4925,
-      "verts": 9162,
-      "materials": [
-        "M_Enemy_IceWhale"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Enemy_IceWhale_LOD2",
-      "lod": 2,
-      "tris": 1970,
-      "verts": 4288,
       "materials": [
         "M_Enemy_IceWhale"
       ],
@@ -154,7 +128,7 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Enemy_IceWhale.glb",
-    "sha256": "45fb78de94147546aaedce91d67a20447d791779256cef05d71d09f453f36ac8",
+    "sha256": "8f922258df3373c9cb7ef3e3273e7fb859281724c270cd0015db3e74070ed176",
     "hiRes": false,
     "version": {
       "native_build": 2
@@ -166,5 +140,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-17 11:20:55"
+  "exported": "2026-10-25 11:52:29"
 }

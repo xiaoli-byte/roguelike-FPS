@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Prop_DesertReliquary",
   "kind": "static",
   "class": "prop",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      2500,
-      900
-    ],
     "texture": 512,
     "maxFileKb": 600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.7583547830581665,
@@ -48,16 +44,6 @@
       "lod": 0,
       "tris": 2500,
       "verts": 1833,
-      "materials": [
-        "M_Prop_DesertReliquary"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Prop_DesertReliquary_LOD1",
-      "lod": 1,
-      "tris": 900,
-      "verts": 878,
       "materials": [
         "M_Prop_DesertReliquary"
       ],
@@ -94,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Prop_DesertReliquary.glb",
-    "sha256": "a6f31a096ee690f656fc1c8e7e41767cf47353894803c933e5e84e5597c5c55f",
+    "sha256": "f354577fd833ab30df23ae44089eb172306b5e363b946c15eb6153a039cadfd2",
     "hiRes": false,
     "version": {
       "blockout": 2,
@@ -105,5 +91,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-17 11:19:19"
+  "exported": "2026-10-25 11:57:31"
 }

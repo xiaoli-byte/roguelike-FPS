@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Boss_Warlord",
   "kind": "skeletal",
   "class": "boss",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    25,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      30000,
-      12000,
-      5000
-    ],
-    "texture": 2048,
+    "texture": 4096,
     "maxFileKb": 6000
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -1.2717716693878174,
@@ -80,26 +74,6 @@
         "M_Boss_Warlord"
       ],
       "skinned": true
-    },
-    {
-      "name": "SK_Boss_Warlord_LOD1",
-      "lod": 1,
-      "tris": 11991,
-      "verts": 9587,
-      "materials": [
-        "M_Boss_Warlord"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Boss_Warlord_LOD2",
-      "lod": 2,
-      "tris": 4995,
-      "verts": 4772,
-      "materials": [
-        "M_Boss_Warlord"
-      ],
-      "skinned": true
     }
   ],
   "materials": [
@@ -132,7 +106,7 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Boss_Warlord.glb",
-    "sha256": "e566e4b7c99994c1cc64f299b82af9f0c5a1522775f6f937c1f0a7e30249c478",
+    "sha256": "77e2b562b23dc2ba142789305273cf42dcaa9ff44393f76c6f30f60a0f99afce",
     "hiRes": false,
     "version": {
       "blockout": 2,
@@ -143,5 +117,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-17 11:18:43"
+  "exported": "2026-10-25 11:51:38"
 }

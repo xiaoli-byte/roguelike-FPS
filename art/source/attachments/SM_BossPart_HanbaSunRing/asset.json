@@ -316,7 +316,7 @@
       ]
     },
     "build": {
-      "current": 2,
+      "current": 3,
       "versions": [
         {
           "version": 1,
@@ -447,11 +447,61 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 3,
+          "created": "2026-10-25 11:49:21",
+          "files": {
+            "SM_BossPart_HanbaSunRing_v003.blend": {
+              "path": "03_work/SM_BossPart_HanbaSunRing_v003.blend",
+              "sha256": "94a7acb62c65016f90ac6662c31259f00c218708a6073c43cd74f527781af059"
+            },
+            "SM_BossPart_HanbaSunRing_v003.glb": {
+              "path": "04_export/SM_BossPart_HanbaSunRing_v003.glb",
+              "sha256": "35371c7d8de83375da47e6ae0d7c801f4a4b8e11afd079c621a9a8d1d08c02a7"
+            },
+            "SM_BossPart_HanbaSunRing_v003_metrics.json": {
+              "path": "03_work/SM_BossPart_HanbaSunRing_v003_metrics.json",
+              "sha256": "95a60b6f78504f27f51e40fa4e07897c6b20f1ad03e1c8724a4060deafbce6eb"
+            },
+            "T_BossPart_HanbaSunRing_BC.png": {
+              "path": "03_work/textures_v003/T_BossPart_HanbaSunRing_BC.png",
+              "sha256": "cd2f736cc88198e4261b82e014dc3dfcf4b1d3c51ea999eaeb7733a1d31f85ed"
+            },
+            "T_BossPart_HanbaSunRing_N.png": {
+              "path": "03_work/textures_v003/T_BossPart_HanbaSunRing_N.png",
+              "sha256": "466014e533d6ca629f82e9e6d89247882f7d871965f282529a1b169945fbd8ab"
+            },
+            "T_BossPart_HanbaSunRing_ORM.png": {
+              "path": "03_work/textures_v003/T_BossPart_HanbaSunRing_ORM.png",
+              "sha256": "1f6bdb5494161466d3448c621d90a64327e12a73dbeed95a3fec22c15475029d"
+            }
+          },
+          "from": {
+            "blockout": 2,
+            "concept": 2,
+            "highpoly": 2,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.809,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 6083,
+              "verts": 3186
+            }
+          ],
+          "export_kb": 674.3,
+          "seconds": 31.0,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -467,11 +517,26 @@
           "warnings": 0,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:49:21",
+          "files": {
+            "SM_BossPart_HanbaSunRing_v003_validation_v002.json": {
+              "path": "05_review/SM_BossPart_HanbaSunRing_v003_validation_v002.json",
+              "sha256": "5c3b87aa83560a0405ef7a69fdaeb0937e775e70912d0d3cff1876f35b392e24"
+            }
+          },
+          "from_build": 3,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -491,11 +556,30 @@
             "note": "5969 / 1988 面、2048 贴图、862 KB；正圆八辐、火焰外缘完整，正背两面轮毂凸起；剪影 IoU 0.81；校验 0 警告",
             "time": "2026-10-20 21:20:51"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:49:26",
+          "files": {
+            "SM_BossPart_HanbaSunRing_v003_review_v002.png": {
+              "path": "05_review/SM_BossPart_HanbaSunRing_v003_review_v002.png",
+              "sha256": "94d22ff77f2caf42a0de7de16b01062f019243e88137f2779331a79a6f51b5e1"
+            }
+          },
+          "from_build": 3,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（2026-10-25 不减面重建，用户授权免审）",
+            "note": "",
+            "time": "2026-10-25 11:58:22"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -507,6 +591,18 @@
             }
           },
           "from_build": 2,
+          "url": "assets/attachments/SM_BossPart_HanbaSunRing.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:58:23",
+          "files": {
+            "SM_BossPart_HanbaSunRing.glb": {
+              "path": "@root/public/assets/attachments/SM_BossPart_HanbaSunRing.glb",
+              "sha256": "35371c7d8de83375da47e6ae0d7c801f4a4b8e11afd079c621a9a8d1d08c02a7"
+            }
+          },
+          "from_build": 3,
           "url": "assets/attachments/SM_BossPart_HanbaSunRing.glb"
         }
       ]

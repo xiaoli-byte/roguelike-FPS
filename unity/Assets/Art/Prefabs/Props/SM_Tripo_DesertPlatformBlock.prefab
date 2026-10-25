@@ -30,122 +30,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 9066450561945899356}
-  - {fileID: 622864477130897949}
   m_Father: {fileID: 8853966822588067}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1499592482858228875
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 622864477130897949}
-  - component: {fileID: 8522018180009175077}
-  - component: {fileID: 4182438999863332626}
-  - component: {fileID: 3844752577516390295}
-  m_Layer: 0
-  m_Name: SM_Tripo_DesertPlatformBlock_LOD1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 86
-  m_IsActive: 1
---- !u!4 &622864477130897949
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1499592482858228875}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.000000053385076, y: 0.7071068, z: -0.70710677, w: -0.00000005338508}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 9134347221102983931}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &8522018180009175077
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1499592482858228875}
-  m_Mesh: {fileID: 8612607879067123709, guid: 89a705b1698cff64c8436506e58ef2a3, type: 3}
---- !u!23 &4182438999863332626
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1499592482858228875}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 0e45b9bf7588a2a448c1eb986727b8cd, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &3844752577516390295
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1499592482858228875}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 8612607879067123709, guid: 89a705b1698cff64c8436506e58ef2a3, type: 3}
 --- !u!1 &7345693556383303875
 GameObject:
   m_ObjectHideFlags: 0
@@ -155,7 +41,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8853966822588067}
-  - component: {fileID: 2875312253307466029}
   - component: {fileID: 6915835213152416518}
   m_Layer: 0
   m_Name: SM_Tripo_DesertPlatformBlock
@@ -180,30 +65,6 @@ Transform:
   - {fileID: 9134347221102983931}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!205 &2875312253307466029
-LODGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7345693556383303875}
-  serializedVersion: 3
-  m_LocalReferencePoint: {x: 0, y: 1.4319032, z: 0.000023961067}
-  m_Size: 4.4800005
-  m_FadeMode: 1
-  m_AnimateCrossFading: 1
-  m_LastLODIsBillboard: 0
-  m_LODs:
-  - screenRelativeHeight: 0.15995258
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 6812476594116610594}
-  - screenRelativeHeight: 0.026658762
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 4182438999863332626}
-  m_Enabled: 1
-  m_GlobalIlluminationLOD: 0
 --- !u!114 &6915835213152416518
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -225,13 +86,12 @@ MonoBehaviour:
   bindAttachment: 
   lodDistance:
   - 0
-  - 20
   moveSpeed: 0
   designBounds:
     m_Center: {x: 0, y: 1.432418, z: 0}
     m_Extent: {x: 2.24, y: 1.432418, z: 1.9839377}
   sourceGlb: public/assets/props/SM_Tripo_DesertPlatformBlock.glb
-  sourceSha256: 4c89cc33bbe2b5595e169c29d1aaeda1d7945c774f788d72f0056f82f2e08aa8
+  sourceSha256: b0d791c248214990fc9c8a3db6f4221b90b8fb6b14b4cf900a8b3c4b0d56dab2
   license: Tripo Studio paid-plan output (commercial use per Tripo terms)
 --- !u!1 &8954412956136835975
 GameObject:
@@ -244,6 +104,7 @@ GameObject:
   - component: {fileID: 9066450561945899356}
   - component: {fileID: 2436347214934863471}
   - component: {fileID: 6812476594116610594}
+  - component: {fileID: 4900008017747795943}
   m_Layer: 0
   m_Name: SM_Tripo_DesertPlatformBlock_LOD0
   m_TagString: Untagged
@@ -323,3 +184,25 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &4900008017747795943
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8954412956136835975}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -1145523669166900266, guid: 89a705b1698cff64c8436506e58ef2a3, type: 3}

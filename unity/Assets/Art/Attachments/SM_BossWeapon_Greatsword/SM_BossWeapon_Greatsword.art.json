@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_BossWeapon_Greatsword",
   "kind": "static",
   "class": "boss_attachment",
@@ -12,17 +12,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    25
+    0
   ],
   "budget": {
-    "lodTris": [
-      6000,
-      2000
-    ],
     "texture": 2048,
     "maxFileKb": 1500
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.5655714273452759,
@@ -49,16 +45,6 @@
       "lod": 0,
       "tris": 6000,
       "verts": 3968,
-      "materials": [
-        "M_BossWeapon_Greatsword"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_BossWeapon_Greatsword_LOD1",
-      "lod": 1,
-      "tris": 2000,
-      "verts": 1546,
       "materials": [
         "M_BossWeapon_Greatsword"
       ],
@@ -95,7 +81,7 @@
   ],
   "source": {
     "glb": "public/assets/attachments/SM_BossWeapon_Greatsword.glb",
-    "sha256": "486f6a7c436c9bee287078e1a478c1fb1003a4fe294fe4c95be5d639385914f6",
+    "sha256": "cb2906289777ecca350abf834596ad71b5c0c563f3549a1a26d56c73c901d608",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -106,5 +92,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-17 11:18:53"
+  "exported": "2026-10-25 11:55:13"
 }

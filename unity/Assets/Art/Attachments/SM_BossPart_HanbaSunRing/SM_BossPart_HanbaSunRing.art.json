@@ -12,14 +12,9 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    25
+    0
   ],
   "budget": {
-    "lodTris": [
-      6000,
-      2000
-    ],
     "texture": 2048,
     "maxFileKb": 1500
   },
@@ -31,7 +26,7 @@
       -0.6199317574501038
     ],
     "max": [
-      2.8502259254455566,
+      2.850513219833374,
       3,
       0.6199317574501038
     ]
@@ -48,20 +43,10 @@
     {
       "name": "SM_BossPart_HanbaSunRing_LOD0",
       "lod": 0,
-      "tris": 5969,
-      "verts": 8000,
+      "tris": 6083,
+      "verts": 8083,
       "materials": [
         "M_BossPart_HanbaSunRing"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_BossPart_HanbaSunRing_LOD1",
-      "lod": 1,
-      "tris": 1988,
-      "verts": 1510,
-      "materials": [
-        "M_BossPart_HanbaSunRing_LOD1"
       ],
       "skinned": false
     }
@@ -92,43 +77,17 @@
         "N": "Textures/T_BossPart_HanbaSunRing_N.png",
         "ORM": "Textures/T_BossPart_HanbaSunRing_ORM.png"
       }
-    },
-    {
-      "name": "M_BossPart_HanbaSunRing_LOD1",
-      "baseColor": [
-        1,
-        1,
-        1,
-        1
-      ],
-      "metallic": 1.0,
-      "roughness": 1.0,
-      "emissive": [
-        0,
-        0,
-        0
-      ],
-      "doubleSided": true,
-      "alphaMode": "OPAQUE",
-      "alphaCutoff": 0.5,
-      "hasOcclusion": true,
-      "occlusionSeparate": false,
-      "textures": {
-        "BC": "Textures/T_BossPart_HanbaSunRing_LOD1_BC.png",
-        "N": "Textures/T_BossPart_HanbaSunRing_LOD1_N.png",
-        "ORM": "Textures/T_BossPart_HanbaSunRing_LOD1_ORM.png"
-      }
     }
   ],
   "source": {
     "glb": "public/assets/attachments/SM_BossPart_HanbaSunRing.glb",
-    "sha256": "fac9df6544379951e4d7f0ff5bc35ce80f8adb10a444d4590b876d5aeeb33755",
+    "sha256": "35371c7d8de83375da47e6ae0d7c801f4a4b8e11afd079c621a9a8d1d08c02a7",
     "hiRes": false,
     "version": {
       "blockout": 2,
       "concept": 2,
       "highpoly": 2,
-      "build": 2
+      "build": 3
     },
     "generator": {
       "tool": "Tripo Studio",
@@ -137,5 +96,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-20 21:38:11"
+  "exported": "2026-10-25 12:17:42"
 }

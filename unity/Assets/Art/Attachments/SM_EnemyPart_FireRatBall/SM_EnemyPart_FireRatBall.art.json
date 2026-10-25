@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_EnemyPart_FireRatBall",
   "kind": "static",
   "class": "enemy_attachment",
@@ -12,17 +12,13 @@
   },
   "keepGlow": "attachments",
   "lodDistance": [
-    0,
-    14
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.2528054714202881,
@@ -49,16 +45,6 @@
       "lod": 0,
       "tris": 2984,
       "verts": 4118,
-      "materials": [
-        "M_EnemyPart_FireRatBall"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_EnemyPart_FireRatBall_LOD1",
-      "lod": 1,
-      "tris": 995,
-      "verts": 1732,
       "materials": [
         "M_EnemyPart_FireRatBall"
       ],
@@ -95,7 +81,7 @@
   ],
   "source": {
     "glb": "public/assets/attachments/SM_EnemyPart_FireRatBall.glb",
-    "sha256": "88894899d1823a83ef864a2cb4c9677e53adbf10ef19ecae0d4eb3b6f969347a",
+    "sha256": "bb4f3765893e2b05a78930c16045463c100ccded7d6e38cf8d89369fc1a81b29",
     "hiRes": false,
     "version": {
       "blockout": 2,
@@ -110,5 +96,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-17 11:20:16"
+  "exported": "2026-10-25 11:55:21"
 }

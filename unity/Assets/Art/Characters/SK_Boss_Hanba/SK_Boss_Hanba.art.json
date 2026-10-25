@@ -11,28 +11,21 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    25,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      30000,
-      12000,
-      5000
-    ],
     "texture": 4096,
     "maxFileKb": 6000
   },
   "qaWaivers": {},
   "bounds": {
     "min": [
-      -1.3423478603363037,
+      -1.3420860767364502,
       0,
       -0.9200050234794617
     ],
     "max": [
-      1.342247724533081,
+      1.3420860767364502,
       4.5,
       0.9200050234794617
     ]
@@ -176,8 +169,8 @@
     {
       "name": "SK_Boss_Hanba_GlowShell",
       "lod": null,
-      "tris": 109,
-      "verts": 165,
+      "tris": 110,
+      "verts": 166,
       "materials": [
         "M_Boss_Hanba_Glow"
       ],
@@ -186,28 +179,8 @@
     {
       "name": "SK_Boss_Hanba_LOD0",
       "lod": 0,
-      "tris": 29550,
-      "verts": 38163,
-      "materials": [
-        "M_Boss_Hanba"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Boss_Hanba_LOD1",
-      "lod": 1,
-      "tris": 11820,
-      "verts": 19076,
-      "materials": [
-        "M_Boss_Hanba"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Boss_Hanba_LOD2",
-      "lod": 2,
-      "tris": 4925,
-      "verts": 7960,
+      "tris": 30791,
+      "verts": 38997,
       "materials": [
         "M_Boss_Hanba"
       ],
@@ -267,10 +240,10 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Boss_Hanba@hi.glb",
-    "sha256": "b857762232bb70ec3d75913b84e9585d9949db123f281724cb8385aa014e9e9b",
+    "sha256": "f614f561ebeb140df04bda63a2fbcb52720d848c74cbc944ad05df016f34b753",
     "hiRes": true,
     "version": {
-      "native_build": 2
+      "native_build": 3
     },
     "generator": {
       "tool": "Tripo Studio P2.0 multiview + Tripo auto-rig; semantic re-rig in Blender",
@@ -279,5 +252,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-20 21:43:46"
+  "exported": "2026-10-25 12:18:59"
 }

@@ -15,9 +15,8 @@ Tripo's mesh, skeleton and skin weights exactly and adds everything a runtime as
     confidently visible vertices, so the back of a body continues its front colour blocks
     instead of mirroring facial detail. Gutters are dilated for mip-safe seams.
  4. AO bake (Cycles) packed into ORM (R=AO, G=roughness, B=metallic).
- 5. LOD1/LOD2 by collapse decimation of LOD0 (UVs and vertex groups preserved), all LODs
-    limited to 4 normalized influences (Three.js skinning).
- 6. Export one GLB: <asset>_LOD0..2 skinned to one shared skeleton, Draco + WebP, with
+ 5. One LOD, the provider mesh as it is (no decimation), limited to 4 normalized influences (Three.js skinning).
+ 6. Export one GLB: <asset>_LOD0 skinned to the skeleton, Draco + WebP, with
     extras.lod_distance; save the .blend work file and a metrics JSON for validation.
 
 Run through art/pipeline/build_tripo_heroes.py (it prepares arguments, validates and publishes).
@@ -556,19 +555,7 @@ for m in list(bpy.data.materials):
 
 # ───────────────────────────── 5. LODs + skin limits ─────────────────────────────
 t = time.time()
-lods = [body]
-tris0 = tri_count(body)
-for i, budget in enumerate(P["lod_tris"][1:], start=1):
-    target = min(budget * 0.96, tris0 * (0.55 if i == 1 else 0.22))
-    dup = body.copy(); dup.data = body.data.copy()
-    dup.name = dup.data.name = f"{ASSET}_LOD{i}"
-    sc.collection.objects.link(dup)
-    mod = dup.modifiers.new("decimate", "DECIMATE")
-    mod.decimate_type = "COLLAPSE"; mod.ratio = target / tris0; mod.use_collapse_triangulate = True
-    activate(dup)
-    bpy.ops.object.modifier_move_to_index(modifier="decimate", index=0)
-    bpy.ops.object.modifier_apply(modifier="decimate")
-    lods.append(dup)
+lods = [body]  # one LOD, the provider mesh as it is: no decimation (2026-10-25)
 skin = {}
 for i, lod in enumerate(lods):
     activate(lod)

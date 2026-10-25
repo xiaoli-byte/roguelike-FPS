@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_FrostPortalShrine",
   "kind": "static",
   "class": "tripo_architecture",
@@ -11,22 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    24,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2500,
-      800
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
-  "qaWaivers": {
-    "LOD2 面数": "2mv 网格的龛内薄壁让边折叠减面停在约 2100 面（焊接 1.5% 高度也只到 1700）；远景 60 m 外多 1300 面可接受，第一版先用（2026-10-11）"
-  },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -5.23191499710083,
@@ -53,26 +44,6 @@
       "lod": 0,
       "tris": 7997,
       "verts": 7867,
-      "materials": [
-        "M_Tripo_FrostPortalShrine"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostPortalShrine_LOD1",
-      "lod": 1,
-      "tris": 2500,
-      "verts": 3915,
-      "materials": [
-        "M_Tripo_FrostPortalShrine"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostPortalShrine_LOD2",
-      "lod": 2,
-      "tris": 2096,
-      "verts": 3552,
       "materials": [
         "M_Tripo_FrostPortalShrine"
       ],
@@ -109,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_FrostPortalShrine.glb",
-    "sha256": "e90fa04817510a1b1cf002848d1288c994a3ea61c2ecaa13aadbadb180ecf9c3",
+    "sha256": "58efc846015bbaeba1e689d5698047f8a46980062cef939662d5bb46fa166fdd",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -124,5 +95,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:34:27"
+  "exported": "2026-10-25 12:01:59"
 }

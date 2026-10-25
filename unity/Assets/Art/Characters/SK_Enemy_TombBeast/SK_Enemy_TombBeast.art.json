@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Enemy_TombBeast",
   "kind": "skeletal",
   "class": "enemy_large",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    18,
-    40
+    0
   ],
   "budget": {
-    "lodTris": [
-      12000,
-      5000,
-      2000
-    ],
     "texture": 2048,
     "maxFileKb": 3000
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.7684770822525024,
@@ -89,26 +83,6 @@
         "M_Enemy_TombBeast"
       ],
       "skinned": true
-    },
-    {
-      "name": "SK_Enemy_TombBeast_LOD1",
-      "lod": 1,
-      "tris": 4924,
-      "verts": 3778,
-      "materials": [
-        "M_Enemy_TombBeast"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Enemy_TombBeast_LOD2",
-      "lod": 2,
-      "tris": 1969,
-      "verts": 1883,
-      "materials": [
-        "M_Enemy_TombBeast"
-      ],
-      "skinned": true
     }
   ],
   "materials": [
@@ -164,7 +138,7 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Enemy_TombBeast.glb",
-    "sha256": "168716001c665b00af11590da724bd112a56efe84fe0e22af221e72533ac7aaf",
+    "sha256": "c03b8d656ac8c3ebe9aa051716e56725ec539901e8f0948dc930aedc3e584fc4",
     "hiRes": false,
     "version": {
       "native_build": 2
@@ -176,5 +150,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-17 11:20:23"
+  "exported": "2026-10-25 11:53:18"
 }

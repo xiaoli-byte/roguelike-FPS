@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Weapon_Smg",
   "kind": "skeletal",
   "class": "weapon_fp",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    6
+    0
   ],
   "budget": {
-    "lodTris": [
-      12000,
-      3000
-    ],
     "texture": 2048,
     "maxFileKb": 3000
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.032126739621162415,
@@ -52,16 +48,6 @@
       "lod": 0,
       "tris": 11996,
       "verts": 8430,
-      "materials": [
-        "M_Weapon_Smg"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Weapon_Smg_LOD1",
-      "lod": 1,
-      "tris": 2996,
-      "verts": 2790,
       "materials": [
         "M_Weapon_Smg"
       ],
@@ -99,7 +85,7 @@
   ],
   "source": {
     "glb": "public/assets/weapons/SK_Weapon_Smg.glb",
-    "sha256": "1d111305ce8fc59d9f6b0c76d1b7621d515065766bd989a481a88052803e7e11",
+    "sha256": "42cffc28891c54bf10c1ce1d8ad8c12d669284b5d755247124a6ef5f7a93dd1b",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -110,5 +96,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-17 11:18:55"
+  "exported": "2026-10-25 11:54:34"
 }

@@ -76,7 +76,8 @@ def validate(glb_path: Path, metrics: dict, asset: str, cls: dict, height: float
     for i, name in enumerate(lods):
         n = nodes[name]
         tris = g.mesh_tris(n["mesh"])
-        ok(f"LOD{i} tris", tris <= cls["lod_tris"][i] * 1.02, f"{tris} / {cls['lod_tris'][i]}")
+        # no decimation: the provider mesh's own face count, recorded rather than gated
+        checks.append(("note", f"LOD{i} tris", f"{tris} (class reference {cls['lod_tris'][i]})"))
         if i:
             prev = g.mesh_tris(nodes[lods[i - 1]]["mesh"])
             ok(f"LOD{i} decreasing", tris < prev, f"{prev} -> {tris}")

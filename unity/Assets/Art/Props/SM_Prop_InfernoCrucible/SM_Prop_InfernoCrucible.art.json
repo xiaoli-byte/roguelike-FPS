@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Prop_InfernoCrucible",
   "kind": "static",
   "class": "prop",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      2500,
-      900
-    ],
     "texture": 512,
     "maxFileKb": 600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.6574373841285706,
@@ -48,16 +44,6 @@
       "lod": 0,
       "tris": 2498,
       "verts": 1912,
-      "materials": [
-        "M_Prop_InfernoCrucible"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Prop_InfernoCrucible_LOD1",
-      "lod": 1,
-      "tris": 900,
-      "verts": 965,
       "materials": [
         "M_Prop_InfernoCrucible"
       ],
@@ -94,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Prop_InfernoCrucible.glb",
-    "sha256": "615f698d2d4076d56da076d7e1140b8e8caf7dae87ba99e36b746fd706efbf98",
+    "sha256": "3cb51d91c4631954bf12963613fa462391b2631425487048d95d5d67d69e3623",
     "hiRes": false,
     "version": {
       "blockout": 2,
@@ -105,5 +91,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-17 11:19:24"
+  "exported": "2026-10-25 11:57:52"
 }

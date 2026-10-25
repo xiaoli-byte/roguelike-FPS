@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Env_InfernoGate",
   "kind": "static",
   "class": "nature_prop",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    18,
-    42
+    0
   ],
   "budget": {
-    "lodTris": [
-      5000,
-      1600,
-      500
-    ],
     "texture": 1024,
     "maxFileKb": 900
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -5.524467468261719,
@@ -50,26 +44,6 @@
       "lod": 0,
       "tris": 5000,
       "verts": 4469,
-      "materials": [
-        "M_Env_InfernoGate"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Env_InfernoGate_LOD1",
-      "lod": 1,
-      "tris": 1600,
-      "verts": 1860,
-      "materials": [
-        "M_Env_InfernoGate"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Env_InfernoGate_LOD2",
-      "lod": 2,
-      "tris": 500,
-      "verts": 676,
       "materials": [
         "M_Env_InfernoGate"
       ],
@@ -106,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Env_InfernoGate.glb",
-    "sha256": "4433acd5270b6432d86396b95a16732560c206a9c16185cc5b6d18cfdeade8da",
+    "sha256": "470c38f17a762a76b4661ed5b8ffc89566aa4076c2fa7b9dc3dccc4b0fcd1bc8",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -121,5 +95,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:19:42"
+  "exported": "2026-10-25 11:56:39"
 }

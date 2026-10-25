@@ -1,0 +1,79 @@
+{
+  "source": {
+    "tris": 3076,
+    "verts": 1617
+  },
+  "align": {
+    "yaw_deg": 0,
+    "scale": 0.9027,
+    "iou": 0.841,
+    "iou_per_view": {
+      "front": 0.935,
+      "left": 0.715,
+      "back": 0.94,
+      "right": 0.726
+    },
+    "size_m": [
+      0.902,
+      0.438,
+      0.8
+    ],
+    "reference_m": [
+      0.9,
+      0.55,
+      0.8
+    ]
+  },
+  "projection": {
+    "uncovered_ratio": 0.0,
+    "method": "provider textures (Tripo), no concept projection"
+  },
+  "normal_source": "derived from painted base colour",
+  "ao": {
+    "mean": 0.666,
+    "samples": 64
+  },
+  "textures": {
+    "size": 1024,
+    "base": "SM_Prop_ScrollCase_basecolor",
+    "normal": null,
+    "metal_rough": null,
+    "source_size": [
+      4096,
+      4096
+    ]
+  },
+  "lods": [
+    {
+      "name": "SM_Prop_ScrollCase_LOD0",
+      "tris": 3076,
+      "verts": 1617,
+      "uv_min": [
+        0.0,
+        0.0
+      ],
+      "uv_max": [
+        1.0,
+        1.0
+      ],
+      "uv_utilization": 0.529,
+      "bbox_min": [
+        -0.4511,
+        -0.2188,
+        0.0
+      ],
+      "bbox_max": [
+        0.4511,
+        0.2188,
+        0.8
+      ]
+    }
+  ],
+  "export": {
+    "path": "art/source/props/SM_Prop_ScrollCase/04_export/SM_Prop_ScrollCase_v002.glb",
+    "bytes": 242020
+  },
+  "bake_device": "none (provider textures)",
+  "total_seconds": 7.6,
+  "_seconds": 9.0
+}

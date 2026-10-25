@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5556766657525743183}
-  - component: {fileID: 4866608068895873719}
   - component: {fileID: 3919392410931168804}
   m_Layer: 0
   m_Name: SM_Tripo_DesertStairs
@@ -34,30 +33,6 @@ Transform:
   - {fileID: 8969993296981271533}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!205 &4866608068895873719
-LODGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2687788330297644020}
-  serializedVersion: 3
-  m_LocalReferencePoint: {x: -0.000103354454, y: 1.5001612, z: -0.00012516975}
-  m_Size: 3.6146867
-  m_FadeMode: 1
-  m_AnimateCrossFading: 1
-  m_LastLODIsBillboard: 0
-  m_LODs:
-  - screenRelativeHeight: 0.1290503
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 5556151353972804326}
-  - screenRelativeHeight: 0.021508383
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 2289046965100731401}
-  m_Enabled: 1
-  m_GlobalIlluminationLOD: 0
 --- !u!114 &3919392410931168804
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -79,13 +54,12 @@ MonoBehaviour:
   bindAttachment: 
   lodDistance:
   - 0
-  - 20
   moveSpeed: 0
   designBounds:
     m_Center: {x: 0, y: 1.5, z: -0.000107228756}
     m_Extent: {x: 1.8072398, y: 1.5, z: 1.5846486}
   sourceGlb: public/assets/props/SM_Tripo_DesertStairs.glb
-  sourceSha256: d854ead8ede0edb5b7309a89e141cf711406013d4536bc7779408ffbd750c4a4
+  sourceSha256: 7f726fc6147f721561640970ba755f6ec8fb853eab9e7f77429671f583ef1ae9
   license: Tripo Studio paid-plan output (commercial use per Tripo terms)
 --- !u!1 &5350108520360386440
 GameObject:
@@ -117,7 +91,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7701370139681406636}
-  - {fileID: 2771197884095608345}
   m_Father: {fileID: 5556766657525743183}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6413279827992964081
@@ -131,6 +104,7 @@ GameObject:
   - component: {fileID: 7701370139681406636}
   - component: {fileID: 9097119955472480051}
   - component: {fileID: 5556151353972804326}
+  - component: {fileID: 6411020459186383811}
   m_Layer: 0
   m_Name: SM_Tripo_DesertStairs_LOD0
   m_TagString: Untagged
@@ -210,104 +184,13 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &9138682968438065979
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2771197884095608345}
-  - component: {fileID: 7862702384639840418}
-  - component: {fileID: 2289046965100731401}
-  - component: {fileID: 4570328054784622697}
-  m_Layer: 0
-  m_Name: SM_Tripo_DesertStairs_LOD1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 86
-  m_IsActive: 1
---- !u!4 &2771197884095608345
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9138682968438065979}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.000000053385076, y: 0.7071068, z: -0.70710677, w: -0.00000005338508}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 8969993296981271533}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &7862702384639840418
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9138682968438065979}
-  m_Mesh: {fileID: 4620717200808279174, guid: 5acee023c25d15443bab2ce823e0152b, type: 3}
---- !u!23 &2289046965100731401
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9138682968438065979}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 74c13f63620d99140b7060f406b95a4b, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &4570328054784622697
+--- !u!64 &6411020459186383811
 MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9138682968438065979}
+  m_GameObject: {fileID: 6413279827992964081}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -322,4 +205,4 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 4620717200808279174, guid: 5acee023c25d15443bab2ce823e0152b, type: 3}
+  m_Mesh: {fileID: 833518953587589869, guid: 5acee023c25d15443bab2ce823e0152b, type: 3}

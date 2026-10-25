@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Env_FrostGate",
   "kind": "static",
   "class": "nature_prop",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    18,
-    42
+    0
   ],
   "budget": {
-    "lodTris": [
-      5000,
-      1600,
-      500
-    ],
     "texture": 1024,
     "maxFileKb": 900
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -5.458583831787109,
@@ -50,26 +44,6 @@
       "lod": 0,
       "tris": 5000,
       "verts": 3374,
-      "materials": [
-        "M_Env_FrostGate"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Env_FrostGate_LOD1",
-      "lod": 1,
-      "tris": 1600,
-      "verts": 1373,
-      "materials": [
-        "M_Env_FrostGate"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Env_FrostGate_LOD2",
-      "lod": 2,
-      "tris": 500,
-      "verts": 590,
       "materials": [
         "M_Env_FrostGate"
       ],
@@ -106,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Env_FrostGate.glb",
-    "sha256": "9aa58972578757cc9173ea77ad8162ddc08534991a4fb42ab683d9fc6b3e6495",
+    "sha256": "9e7d77dda36f0e96cdf29ac978f19ac83692a5fdf2a97e84b081297577b84826",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -121,5 +95,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:19:38"
+  "exported": "2026-10-25 11:56:11"
 }

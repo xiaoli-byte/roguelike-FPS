@@ -7,7 +7,7 @@ block), the lid a flat cap facing down. Cap UVs take the average UV of the rim t
 from the chest's own texture (one material, no new image). The lid's origin is moved to the hinge line: x = 0 (the
 chest's centre line), y = the back of the cut, z = seam, so rotating the lid about its local X opens it.
 
-Params (JSON after --): {"source", "out_body", "out_lid", "body_id", "lid_id", "seam", "depth", "lip", "budget": [..],
+Params (JSON after --): {"source", "out_body", "out_lid", "body_id", "lid_id", "seam", "depth", "lip",
 "lod_distance": [..], "image_format", "draco", "result_path"}
 Result: {"seam", "hinge" (Blender xyz of the lid origin in body space), "lods": [{part, lod, tris, bbox_min, bbox_max}]}
 """
@@ -94,13 +94,6 @@ def part(src, n: int, keep_top: bool, name: str):
     bpy.context.scene.collection.objects.link(ob)
     ob["lod"] = n
     ob["lod_distance"] = P["lod_distance"][n]
-    budget = P["budget"][n]
-    tris = sum(len(p.vertices) - 2 for p in mesh.polygons)
-    if tris > budget:
-        mod = ob.modifiers.new("decimate", "DECIMATE")
-        mod.decimate_type, mod.ratio, mod.use_collapse_triangulate, mod.delimit = "COLLAPSE", budget / tris * 0.995, True, {"UV"}
-        with bpy.context.temp_override(object=ob, active_object=ob, selected_objects=[ob], selected_editable_objects=[ob]):
-            bpy.ops.object.modifier_apply(modifier=mod.name)
     tri = ob.modifiers.new("tri", "TRIANGULATE")
     with bpy.context.temp_override(object=ob, active_object=ob, selected_objects=[ob], selected_editable_objects=[ob]):
         bpy.ops.object.modifier_apply(modifier=tri.name)

@@ -1,0 +1,250 @@
+{
+  "asset": "SK_Pet_Yinglong",
+  "version": 9,
+  "glb": "art/source/characters/SK_Pet_Yinglong/04_export/SK_Pet_Yinglong_native_v009.glb",
+  "metrics": {
+    "steps": {
+      "导入与单位": 0.2,
+      "自定义骨架：37 根骨骼（热扩散权重，17486 个顶点未覆盖）": 0.3,
+      "贴图（BC + AO/ORM）": 17.9,
+      "LOD0 13242 面（不减面）与蒙皮上限": 0.3,
+      "导出 1076 KB": 1.9
+    },
+    "source": {
+      "verts": 17486,
+      "tris": 13242,
+      "scale": 2.400457404230989
+    },
+    "regions": {
+      "heat_unweighted_verts": 17486,
+      "weights": "segments",
+      "soft_limits_moved": [
+        37.5,
+        37.9,
+        31.5,
+        34.8,
+        22.1,
+        20.1
+      ],
+      "head_verts": 0,
+      "fallback_verts": 0,
+      "per_bone": {
+        "hips": 323,
+        "spine1": 42,
+        "spine2": 29,
+        "chest": 64,
+        "neck_1": 20,
+        "neck_2": 107,
+        "head": 4044,
+        "mane_1": 584,
+        "mane_2": 74,
+        "mane_3": 246,
+        "tail_1": 74,
+        "tail_2": 121,
+        "tail_3": 120,
+        "tail_4": 238,
+        "tail_5": 357,
+        "tail_6": 986,
+        "wing_1_L": 552,
+        "wing_2_L": 193,
+        "wing_3_L": 215,
+        "upperarm_L": 271,
+        "forearm_L": 184,
+        "claw_L": 589,
+        "thigh_L": 261,
+        "shin_L": 294,
+        "hclaw_L": 740,
+        "wing_1_R": 515,
+        "wing_2_R": 173,
+        "wing_3_R": 227,
+        "upperarm_R": 272,
+        "forearm_R": 173,
+        "claw_R": 565,
+        "thigh_R": 270,
+        "shin_R": 290,
+        "hclaw_R": 769
+      }
+    },
+    "bones": [
+      "chest",
+      "claw_L",
+      "claw_R",
+      "forearm_L",
+      "forearm_R",
+      "hclaw_L",
+      "hclaw_R",
+      "head",
+      "hips",
+      "mane_1",
+      "mane_2",
+      "mane_3",
+      "mouth",
+      "neck_1",
+      "neck_2",
+      "pearl",
+      "root",
+      "shin_L",
+      "shin_R",
+      "spine1",
+      "spine2",
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "tail_4",
+      "tail_5",
+      "tail_6",
+      "thigh_L",
+      "thigh_R",
+      "upperarm_L",
+      "upperarm_R",
+      "wing_1_L",
+      "wing_1_R",
+      "wing_2_L",
+      "wing_2_R",
+      "wing_3_L",
+      "wing_3_R"
+    ],
+    "paint_shading": {
+      "cavity_mean": 0.918,
+      "shade_mean": 0.942
+    },
+    "textures": {
+      "size": 2048,
+      "ao_mean": 0.797,
+      "provider_pbr": [],
+      "roughness_mean": 0.6,
+      "metal_frac": 0.0
+    },
+    "skin": {
+      "per_lod": {
+        "SK_Pet_Yinglong_LOD0": {
+          "max_influences": 4,
+          "unweighted_verts": 0
+        }
+      }
+    },
+    "lods": [
+      {
+        "name": "SK_Pet_Yinglong_LOD0",
+        "tris": 13242,
+        "uv_min": [
+          0.00146484375,
+          0.00146484375
+        ],
+        "uv_max": [
+          0.997314453125,
+          0.99853515625
+        ]
+      }
+    ],
+    "glb_kb": 1076,
+    "_seconds": 22.0
+  },
+  "checks": [
+    [
+      "pass",
+      "file size",
+      "1076 KB / 3000 KB"
+    ],
+    [
+      "pass",
+      "extensions",
+      "required ['EXT_texture_webp', 'KHR_draco_mesh_compression']"
+    ],
+    [
+      "pass",
+      "LOD count",
+      "['SK_Pet_Yinglong_LOD0']"
+    ],
+    [
+      "note",
+      "LOD0 tris",
+      "13242 (class reference 12000)"
+    ],
+    [
+      "pass",
+      "LOD0 skinned",
+      "node.skin"
+    ],
+    [
+      "pass",
+      "height",
+      "2.050 m (design 2.05 m)"
+    ],
+    [
+      "pass",
+      "feet on ground",
+      "min y=0.0000"
+    ],
+    [
+      "pass",
+      "material count",
+      "['M_Pet_Yinglong']"
+    ],
+    [
+      "pass",
+      "base colour texture",
+      ""
+    ],
+    [
+      "pass",
+      "ORM texture",
+      "AO / roughness / metallic"
+    ],
+    [
+      "pass",
+      "texture T_Pet_Yinglong_ORM",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "texture T_Pet_Yinglong_BC",
+      "2048x2048 webp"
+    ],
+    [
+      "pass",
+      "one skin",
+      "1 skins"
+    ],
+    [
+      "pass",
+      "semantic joints",
+      "37 joints, missing []"
+    ],
+    [
+      "pass",
+      "SK_Pet_Yinglong_LOD0 influences",
+      "max 4"
+    ],
+    [
+      "pass",
+      "SK_Pet_Yinglong_LOD0 unweighted",
+      "0"
+    ],
+    [
+      "pass",
+      "SK_Pet_Yinglong_LOD0 UV range",
+      "[0.001, 0.001]..[0.997, 0.999]"
+    ],
+    [
+      "pass",
+      "region heat_unweighted",
+      "17486 verts"
+    ],
+    [
+      "warn",
+      "region head",
+      "0 verts"
+    ],
+    [
+      "pass",
+      "unweighted source verts",
+      "0 verts copied their nearest weighted neighbour"
+    ],
+    [
+      "note",
+      "normal map",
+      "not baked: the provider mesh carries its form in geometry"
+    ]
+  ]
+}

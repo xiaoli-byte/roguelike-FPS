@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Arms_RedPandaR",
   "kind": "static",
   "class": "fp_arm",
@@ -12,17 +12,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    6
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2000
-    ],
     "texture": 2048,
     "maxFileKb": 1500
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.32632285356521606,
@@ -47,16 +43,6 @@
     {
       "name": "SM_Arms_RedPandaR_LOD0",
       "lod": 0,
-      "tris": 1787,
-      "verts": 2560,
-      "materials": [
-        "M_Arms_RedPandaR"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Arms_RedPandaR_LOD1",
-      "lod": 1,
       "tris": 1787,
       "verts": 2560,
       "materials": [
@@ -94,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/weapons/SM_Arms_RedPandaR.glb",
-    "sha256": "f54bbf94e4fd1b86aae5daf7f525fdf0fba6befcaa67ec5d2514a680ae2d2ee1",
+    "sha256": "694ebb79b697f2affe22c9e288393bf9802f75e3937950df94641d4dd73de437",
     "hiRes": false,
     "version": {
       "build": 13
@@ -105,5 +91,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-17 00:29:46"
+  "exported": "2026-10-25 11:55:08"
 }

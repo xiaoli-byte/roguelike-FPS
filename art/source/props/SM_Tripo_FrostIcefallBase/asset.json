@@ -311,7 +311,7 @@
       ]
     },
     "build": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -394,11 +394,61 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:56:43",
+          "files": {
+            "SM_Tripo_FrostIcefallBase_v002.blend": {
+              "path": "03_work/SM_Tripo_FrostIcefallBase_v002.blend",
+              "sha256": "caca6837ad28341c7255250585e0330114b403dd7f348434bd720bd804a5e9f1"
+            },
+            "SM_Tripo_FrostIcefallBase_v002.glb": {
+              "path": "04_export/SM_Tripo_FrostIcefallBase_v002.glb",
+              "sha256": "23fe4bcd708dab663b80ea14cd6b2ba79536b9f79ddb3e1da6448de60cc23c95"
+            },
+            "SM_Tripo_FrostIcefallBase_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostIcefallBase_v002_metrics.json",
+              "sha256": "e4a9207da83fa55b16576bb94fa3cf5e555b43c95bb2154830ff1fd56c955473"
+            },
+            "T_Tripo_FrostIcefallBase_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostIcefallBase_BC.png",
+              "sha256": "456100c9e872140c9dc41de81422198f47f3d36d28f3a21bd0495f1a3d108004"
+            },
+            "T_Tripo_FrostIcefallBase_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostIcefallBase_N.png",
+              "sha256": "83fa0b99ef1edcfff03514265bd8e6df5f8c5b52de52ee0c0b5a441742ed4b6b"
+            },
+            "T_Tripo_FrostIcefallBase_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostIcefallBase_ORM.png",
+              "sha256": "e2d5f26357c461c006bc7f000da4f789d42d336f2aefe20fd653fc0b2ffe1972"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.743,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 8530,
+              "verts": 4426
+            }
+          ],
+          "export_kb": 854.0,
+          "seconds": 30.8,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -414,11 +464,26 @@
           "warnings": 1,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:56:43",
+          "files": {
+            "SM_Tripo_FrostIcefallBase_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_FrostIcefallBase_v002_validation_v002.json",
+              "sha256": "770828d60c9a3735ab7301037d10fdb557d498e533704c4fceb351e644f1bb91"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -438,11 +503,30 @@
             "note": "2026-10-22 ART5：审核图四视图与概念一致（用户 2026-10-19 授权免审）",
             "time": "2026-10-22 22:10:48"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:56:48",
+          "files": {
+            "SM_Tripo_FrostIcefallBase_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_FrostIcefallBase_v002_review_v002.png",
+              "sha256": "0ceced85f50cf10133d44b0a395ea7ef6035a26403c6fd24ecf00501d5af4310"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（2026-10-25 不减面重建，用户授权免审）",
+            "note": "",
+            "time": "2026-10-25 11:58:43"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -454,6 +538,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/props/SM_Tripo_FrostIcefallBase.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:58:43",
+          "files": {
+            "SM_Tripo_FrostIcefallBase.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostIcefallBase.glb",
+              "sha256": "23fe4bcd708dab663b80ea14cd6b2ba79536b9f79ddb3e1da6448de60cc23c95"
+            }
+          },
+          "from_build": 2,
           "url": "assets/props/SM_Tripo_FrostIcefallBase.glb"
         }
       ]

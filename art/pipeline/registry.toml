@@ -14,8 +14,7 @@
 #   keep_glow 运行时保留白模上哪些发光部件（"all" | "attachments" | "none"），默认 attachments。
 #             敌人一律用 all：眼睛 / 面甲缝是攻击前摇的发光提示（设计支柱「可读的敌人」），不能丢
 #   qa_waivers QA 豁免（可选）：{ "<检查项名>" = "<理由>" }，有意的设计偏差不阻塞流程，校验报告里记为「已豁免」
-#   lod_tris  覆盖规格档的各级 LOD 面数上限（可选，[LOD0, LOD1, …]）
-#   lod_rebake_stretch  Tripo 静态件：减面后 UV 拉伸面积超过它的 LOD 重展 UV 烘焙（可选，默认取规格档，见 pipeline.toml）
+#   lod_tris  覆盖规格档的参考面数（可选，[LOD0]；只有一级 LOD，不减面，见 pipeline.toml）
 #   rig       绑定方式（可选）："parts" = 通用部件骨架（非人形敌人 / Boss）：骨骼是程序化模型的每个节点，
 #             权重按离哪个白模部件最近生成；rig_sigma = 部件交界处的过渡带宽度（相对资产尺寸，默认 0.015，越小越刚性）
 #   rig_rigid  部件骨架的刚体分段（石像、甲壳、板甲、灯笼等硬表面角色）：每个部件 100% 跟随自己的骨骼，所有部件交界切开并封口，
@@ -1046,7 +1045,7 @@ keep_glow = "none"
 material = { roughness = 0.9, metallic = 0.0 }
 brief = """A coherent asymmetric cluster of fractured volcanic basalt, 3.0m tall, 3.1m wide and 2.2m deep. Uneven leaning column fragments, large angular chips, deep cooled fissures, dark violet-grey rock with a few restrained warm mineral stains. Broad stable broken-rock foot, sculpted bulky silhouette, stylized hand-painted wuxia fantasy. No lava pool, flame, chains, temple ornaments, disconnected rubble or razor-thin shards."""
 
-# Regional landmarks use the existing three-LOD environment budget. Bounds are
+# Regional landmarks use the nature_prop environment class. Bounds are
 # numeric size/pivot references; local Hunyuan3D provides every artistic mesh.
 [assets.SM_Env_DesertRuin]
 display = "沙寺风蚀残垣壁龛"
@@ -1618,7 +1617,6 @@ reference_mode = "bounds_only"
 reference_dimensions = [1.36, 0.74, 1.24]
 architecture_role = "dressing"
 keep_glow = "none"
-qa_waivers = { "LOD1 贴图色差" = "植物的 LOD1 是按更少的叶卡重新摆放的（bl_proc_desert.py），不是 LOD0 的减面，逐点对比 LOD0 的贴图不适用", "LOD1 贴图拉伸" = "同上：LOD1 叶卡与 LOD0 位置不同，拉伸量比较不适用；叶卡 UV 与 LOD0 用同一张图集" }
 material = { roughness = 0.85, metallic = 0.0 }
 brief = """Built in Blender to the approved concept (v001 sheet): a low dome of seven round clumps of pointed olive leaves lit yellow-green on top, pink-red buds on the clump tops, short dark twisted trunks showing between the clumps, on a low sand mound."""
 
@@ -1637,7 +1635,6 @@ reference_mode = "bounds_only"
 reference_dimensions = [1.72, 2.27, 2.02]
 architecture_role = "dressing"
 keep_glow = "none"
-qa_waivers = { "LOD1 贴图色差" = "植物的 LOD1 是按更少的叶卡重新摆放的（bl_proc_desert.py），不是 LOD0 的减面，逐点对比 LOD0 的贴图不适用", "LOD1 贴图拉伸" = "同上：LOD1 叶卡与 LOD0 位置不同，拉伸量比较不适用；叶卡 UV 与 LOD0 用同一张图集" }
 material = { roughness = 0.85, metallic = 0.0 }
 brief = """A Gobi tamarisk (red willow, Tamarix) shrub about 2.3m tall: seven slender reddish-brown stems rising in a vase shape with short side branches, feathery grey-green scale-leaf plumes and pink flower racemes on alpha-cut cards arching out along the upper part of the stems."""
 
@@ -1719,10 +1716,6 @@ brief = """A massive natural sandstone rock arch 16m wide, 13m tall and 7m deep,
 display = "半埋屋顶·殿堂歇山顶（1-2 屋脊之海）"
 kind = "static"
 class = "tripo_architecture"
-# 斗拱檐口碎岛多，重展 UV 烘焙在这件上不稳定（LOD1 拉伸 5.9% → 48.7%，LOD2 色差 4.5% → 14–18%）；
-# 两级远景 LOD 都沿用供应方 UV：LOD1 拉伸 5.9% / 色差 1.9%，LOD2 放到 1500 面后拉伸 9.5% / 色差 4.5%
-lod_rebake_stretch = 0.10
-lod_tris = [8000, 2500, 1500]
 source_provider = "tripo"
 style_theme = "silkroad"
 blockout = { source = "scene", id = "desert.silkroad.buriedRoofHall" }
@@ -1798,8 +1791,6 @@ brief = """A small wind-eroded yardang rock mound 10m long, 5m wide and 4m tall,
 display = "二层店铺楼（1-3 半埋长街）"
 kind = "static"
 class = "tripo_architecture"
-# 敞开的二层木构：800 面远景 LOD 把柱、栏、檐的颜色并成一片（色差 7.8% > 6%），LOD2 放到 1200 面
-lod_tris = [8000, 2500, 1200]
 source_provider = "tripo"
 style_theme = "silkroad"
 blockout = { source = "scene", id = "desert.silkroad.shopHouse" }
@@ -2018,7 +2009,7 @@ display = "栈道直段（贴崖，6 m 宽 × 8 m 长）"
 kind = "static"
 class = "proc_kit"
 source_provider = "blender"  # 2026-10-21：四视图互相矛盾、进深画窄，Tripo 出不了能精确拼接的模块件 → bl_proc_timber.py
-qa_waivers = { "场景轴心居中" = "模块件的原点是拼接点（桥面中心、最低点着地），由 bl_proc_timber.py 固定，不按包围盒居中", "LOD1 贴图色差" = "LOD1 去掉铜箍、钉帽和冰棱（24 m 外看不见），色差来自这些小件", "UV 利用率" = "整套共用一张手绘图集（木板条 / 方木 / 漆 / 铜 / 雪 / 冰 / 石），每件只用到其中一部分" }
+qa_waivers = { "场景轴心居中" = "模块件的原点是拼接点（桥面中心、最低点着地），由 bl_proc_timber.py 固定，不按包围盒居中", "UV 利用率" = "整套共用一张手绘图集（木板条 / 方木 / 漆 / 铜 / 雪 / 冰 / 石），每件只用到其中一部分" }
 style_theme = "kunlun"
 blockout = { source = "scene", id = "frost.plankRoad.straight" }
 reference_mode = "bounds_only"
@@ -2038,7 +2029,7 @@ display = "栈道转角（绕崖角 90°）"
 kind = "static"
 class = "proc_kit"
 source_provider = "blender"  # 2026-10-21：四视图互相矛盾、进深画窄，Tripo 出不了能精确拼接的模块件 → bl_proc_timber.py
-qa_waivers = { "场景轴心居中" = "模块件的原点是拼接点（桥面中心、最低点着地），由 bl_proc_timber.py 固定，不按包围盒居中", "LOD1 贴图色差" = "LOD1 去掉铜箍、钉帽和冰棱（24 m 外看不见），色差来自这些小件", "UV 利用率" = "整套共用一张手绘图集（木板条 / 方木 / 漆 / 铜 / 雪 / 冰 / 石），每件只用到其中一部分" }
+qa_waivers = { "场景轴心居中" = "模块件的原点是拼接点（桥面中心、最低点着地），由 bl_proc_timber.py 固定，不按包围盒居中", "UV 利用率" = "整套共用一张手绘图集（木板条 / 方木 / 漆 / 铜 / 雪 / 冰 / 石），每件只用到其中一部分" }
 style_theme = "kunlun"
 blockout = { source = "scene", id = "frost.plankRoad.corner" }
 reference_mode = "bounds_only"
@@ -2058,7 +2049,7 @@ display = "栈道断口（4 m 缺口两端各放一件）"
 kind = "static"
 class = "proc_kit"
 source_provider = "blender"  # 2026-10-21：四视图互相矛盾、进深画窄，Tripo 出不了能精确拼接的模块件 → bl_proc_timber.py
-qa_waivers = { "场景轴心居中" = "模块件的原点是拼接点（桥面中心、最低点着地），由 bl_proc_timber.py 固定，不按包围盒居中", "LOD1 贴图色差" = "LOD1 去掉铜箍、钉帽和冰棱（24 m 外看不见），色差来自这些小件", "UV 利用率" = "整套共用一张手绘图集（木板条 / 方木 / 漆 / 铜 / 雪 / 冰 / 石），每件只用到其中一部分" }
+qa_waivers = { "场景轴心居中" = "模块件的原点是拼接点（桥面中心、最低点着地），由 bl_proc_timber.py 固定，不按包围盒居中", "UV 利用率" = "整套共用一张手绘图集（木板条 / 方木 / 漆 / 铜 / 雪 / 冰 / 石），每件只用到其中一部分" }
 style_theme = "kunlun"
 blockout = { source = "scene", id = "frost.plankRoad.broken" }
 reference_mode = "bounds_only"
@@ -2092,7 +2083,7 @@ display = "栈道木柱支撑（排架）"
 kind = "static"
 class = "proc_kit"
 source_provider = "blender"  # 2026-10-21：四视图互相矛盾、进深画窄，Tripo 出不了能精确拼接的模块件 → bl_proc_timber.py
-qa_waivers = { "场景轴心居中" = "模块件的原点是拼接点（桥面中心、最低点着地），由 bl_proc_timber.py 固定，不按包围盒居中", "LOD1 贴图色差" = "LOD1 去掉铜箍、钉帽和冰棱（24 m 外看不见），色差来自这些小件", "UV 利用率" = "整套共用一张手绘图集（木板条 / 方木 / 漆 / 铜 / 雪 / 冰 / 石），每件只用到其中一部分" }
+qa_waivers = { "场景轴心居中" = "模块件的原点是拼接点（桥面中心、最低点着地），由 bl_proc_timber.py 固定，不按包围盒居中", "UV 利用率" = "整套共用一张手绘图集（木板条 / 方木 / 漆 / 铜 / 雪 / 冰 / 石），每件只用到其中一部分" }
 style_theme = "kunlun"
 blockout = { source = "scene", id = "frost.plankRoad.post" }
 reference_mode = "bounds_only"
@@ -2145,8 +2136,6 @@ style_theme = "kunlun"
 blockout = { source = "scene", id = "frost.kunlun.bellPavilion" }
 reference_mode = "bounds_only"
 reference_dimensions = [7.0, 8.5, 7.0]
-lod_tris = [8000, 2500, 1500]  # 800 面的 LOD2 与 LOD0 色差超限（同第一章半埋殿顶）
-lod_rebake_stretch = 0.10
 architecture_role = "pavilion"
 keep_glow = "none"
 material = { roughness = 0.75, metallic = 0.15 }
@@ -2161,8 +2150,6 @@ style_theme = "kunlun"
 blockout = { source = "scene", id = "frost.kunlun.lakePavilion" }
 reference_mode = "bounds_only"
 reference_dimensions = [16.0, 11.0, 16.0]
-lod_tris = [8000, 2500, 1500]  # 800 面的 LOD2 与 LOD0 色差超限（同第一章半埋殿顶）
-lod_rebake_stretch = 0.10
 architecture_role = "landmark"
 keep_glow = "none"
 material = { roughness = 0.75, metallic = 0.1 }
@@ -2501,8 +2488,6 @@ style_theme = "loot"
 blockout = { source = "scene", id = "ui.heroSelect.altar" }
 reference_mode = "bounds_only"
 reference_dimensions = [5.0, 0.9, 5.0]
-lod_tris = [8000, 2500, 1500]  # 800 面的 LOD2 与 LOD0 色差超限（同第一章半埋殿顶）
-lod_rebake_stretch = 0.10
 architecture_role = "stage"
 keep_glow = "none"
 material = { roughness = 0.6, metallic = 0.25 }
@@ -2836,7 +2821,6 @@ kind = "static"
 class = "tripo_prop"
 source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
 highpoly_mode = "single"  # 2mv 版屋顶糊成团、LOD1 卡在 2800 面；2.1 单视图结构清楚
-qa_waivers = { "LOD1 面数" = "单视图高模的薄毡顶与经幡让边折叠减面停在约 1380 面（焊接 1.5% 高度也只到 1170）；20 m 外多约 400 面可接受，第一版先用（2026-10-11）" }
 bake_device = "CPU"
 blockout = { source = "scene", id = "frost.v2.prayerTent" }
 reference_mode = "bounds_only"
@@ -2934,7 +2918,6 @@ class = "tripo_architecture"
 source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
 highpoly_mode = "multiview"
 bake_device = "CPU"
-qa_waivers = { "LOD2 面数" = "2mv 网格的龛内薄壁让边折叠减面停在约 2100 面（焊接 1.5% 高度也只到 1700）；远景 60 m 外多 1300 面可接受，第一版先用（2026-10-11）" }
 blockout = { source = "scene", id = "frost.v2.portalShrine" }
 reference_mode = "bounds_only"
 reference_dimensions = [10.0, 11.0, 5.0]
@@ -3376,7 +3359,6 @@ class = "tripo_architecture"
 source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
 highpoly_mode = "multiview"
 bake_device = "CPU"
-qa_waivers = { "LOD2 面数" = "UV 碎岛多，边折叠减面停在约 2060 面（同昆仑神龛）；60 m 外多约 1300 面可接受，第一版先用（2026-10-11）" }
 blockout = { source = "scene", id = "frost_c.v2.lighthouse" }
 reference_mode = "bounds_only"
 reference_dimensions = [7.2, 13.0, 7.2]
@@ -3425,7 +3407,6 @@ class = "tripo_architecture"
 source_provider = "hunyuan"  # 2026-10-11 用户决定：地图模型用本机 Hunyuan3D 2mv（不走 Tripo），id 沿用
 highpoly_mode = "multiview"
 bake_device = "CPU"
-qa_waivers = { "LOD1 面数" = "2mv 薄壳拓扑让边折叠减面停在约 3240 面（同昆仑神龛）；第二章计划目前没有 shrine 掩体，第一版先用（2026-10-11）", "LOD2 面数" = "同 LOD1：停在约 3240 面" }
 blockout = { source = "scene", id = "frost_c.v2.portalShrine" }
 reference_mode = "bounds_only"
 reference_dimensions = [10.0, 11.0, 5.0]

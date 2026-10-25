@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_FrostSeaLighthouse",
   "kind": "static",
   "class": "tripo_architecture",
@@ -11,22 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    24,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2500,
-      800
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
-  "qaWaivers": {
-    "LOD2 面数": "UV 碎岛多，边折叠减面停在约 2060 面（同昆仑神龛）；60 m 外多约 1300 面可接受，第一版先用（2026-10-11）"
-  },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -3.057697057723999,
@@ -53,26 +44,6 @@
       "lod": 0,
       "tris": 7999,
       "verts": 7049,
-      "materials": [
-        "M_Tripo_FrostSeaLighthouse"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostSeaLighthouse_LOD1",
-      "lod": 1,
-      "tris": 2500,
-      "verts": 3455,
-      "materials": [
-        "M_Tripo_FrostSeaLighthouse"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostSeaLighthouse_LOD2",
-      "lod": 2,
-      "tris": 2062,
-      "verts": 3130,
       "materials": [
         "M_Tripo_FrostSeaLighthouse"
       ],
@@ -109,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_FrostSeaLighthouse.glb",
-    "sha256": "3f667e8cd3be9f10b64ab8fefec8e961e352591454d3839bdbdeb66e0702de5f",
+    "sha256": "ed6f51bded153cea00a71e01375366def57287783c8f04b13597dbe6c1c7c83e",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -124,5 +95,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:34:32"
+  "exported": "2026-10-25 12:02:58"
 }

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_EnemyWeapon_Staff",
   "kind": "static",
   "class": "enemy_attachment",
@@ -12,16 +12,14 @@
   },
   "keepGlow": "attachments",
   "lodDistance": [
-    0,
-    14
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
+  },
+  "qaWaivers": {
+    "尺寸 X 轴": "美术细化：金环两侧挂的符纸与流苏向外展开，比白模宽；杖长、杖身与法珠位置与白模一致"
   },
   "bounds": {
     "min": [
@@ -49,16 +47,6 @@
       "lod": 0,
       "tris": 3000,
       "verts": 2972,
-      "materials": [
-        "M_EnemyWeapon_Staff"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_EnemyWeapon_Staff_LOD1",
-      "lod": 1,
-      "tris": 1000,
-      "verts": 1279,
       "materials": [
         "M_EnemyWeapon_Staff"
       ],
@@ -95,7 +83,7 @@
   ],
   "source": {
     "glb": "public/assets/attachments/SM_EnemyWeapon_Staff.glb",
-    "sha256": "4d4724b5884cc4193dba36f6407501ba2e3071c8fb3da4765ded426168a80486",
+    "sha256": "15ef6741bf8aa20b5f0c5ee4cee14d1f83d17c30ffe6ec14afd52103228cefb1",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -106,5 +94,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-17 11:18:36"
+  "exported": "2026-10-25 11:55:50"
 }

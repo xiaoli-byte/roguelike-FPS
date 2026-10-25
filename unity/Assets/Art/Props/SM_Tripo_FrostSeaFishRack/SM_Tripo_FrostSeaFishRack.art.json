@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_FrostSeaFishRack",
   "kind": "static",
   "class": "tripo_prop",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.6977651715278625,
@@ -48,16 +44,6 @@
       "lod": 0,
       "tris": 2999,
       "verts": 2866,
-      "materials": [
-        "M_Tripo_FrostSeaFishRack"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostSeaFishRack_LOD1",
-      "lod": 1,
-      "tris": 1000,
-      "verts": 1516,
       "materials": [
         "M_Tripo_FrostSeaFishRack"
       ],
@@ -94,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_FrostSeaFishRack.glb",
-    "sha256": "6bb3baaa7ba4193b2e67baadda09414eed21bd7bffda0b26d6c73bf44183c069",
+    "sha256": "55433442be5b229c3fc97fc8baf0fd1f5961abb3854e33c8071bada096d8a300",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -109,5 +95,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:22:34"
+  "exported": "2026-10-25 12:02:45"
 }

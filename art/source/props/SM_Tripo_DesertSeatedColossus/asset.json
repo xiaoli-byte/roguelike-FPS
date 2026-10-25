@@ -197,7 +197,7 @@
       ]
     },
     "build": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -280,11 +280,61 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:53:37",
+          "files": {
+            "SM_Tripo_DesertSeatedColossus_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertSeatedColossus_v002.blend",
+              "sha256": "802f7ea66b76e96845fc4cd0786beea890ada4334f32115f0f26fd8fdc9f9546"
+            },
+            "SM_Tripo_DesertSeatedColossus_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertSeatedColossus_v002.glb",
+              "sha256": "8d59788b6c9c175e774e534e14aaeb7f18383e672da0db7b484cf92a51b4b449"
+            },
+            "SM_Tripo_DesertSeatedColossus_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertSeatedColossus_v002_metrics.json",
+              "sha256": "4b5a953fa904597d88b6c8e36a6a699576ca60f7748f3c3e2986888fe3e65173"
+            },
+            "T_Tripo_DesertSeatedColossus_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertSeatedColossus_BC.png",
+              "sha256": "1b9134f241b561ac3a2729139c56985f241b159da25e8027f622a613133648c1"
+            },
+            "T_Tripo_DesertSeatedColossus_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertSeatedColossus_N.png",
+              "sha256": "4e889e48c91dbc8a75dbfd28650aace1884f177bd9dc0d575d34e7939c64442d"
+            },
+            "T_Tripo_DesertSeatedColossus_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertSeatedColossus_ORM.png",
+              "sha256": "d8740d3b0c19f8a095447e21fed978cba13dc1a6e3f8f78eceb106406ad27248"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.906,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 8549,
+              "verts": 4397
+            }
+          ],
+          "export_kb": 1083.2,
+          "seconds": 29.4,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -300,11 +350,26 @@
           "warnings": 0,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:53:37",
+          "files": {
+            "SM_Tripo_DesertSeatedColossus_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertSeatedColossus_v002_validation_v002.json",
+              "sha256": "cc0b978b1fcbafd0762e903a3fefee61fc1035bb20fb507791900e70fa05e303"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -324,11 +389,30 @@
             "note": "成品审核通过（Tripo P2.0 + 纹理）：四视图与概念一致，LOD1/2 无斜条纹",
             "time": "2026-10-20 21:23:28"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:53:42",
+          "files": {
+            "SM_Tripo_DesertSeatedColossus_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_DesertSeatedColossus_v002_review_v002.png",
+              "sha256": "9db3f90adc4de3ebb799faba09f9e2db7fe6e694cdad23a0c6279c2ca1bcbdb9"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（2026-10-25 不减面重建，用户授权免审）",
+            "note": "",
+            "time": "2026-10-25 11:58:37"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -340,6 +424,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertSeatedColossus.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:58:38",
+          "files": {
+            "SM_Tripo_DesertSeatedColossus.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertSeatedColossus.glb",
+              "sha256": "8d59788b6c9c175e774e534e14aaeb7f18383e672da0db7b484cf92a51b4b449"
+            }
+          },
+          "from_build": 2,
           "url": "assets/props/SM_Tripo_DesertSeatedColossus.glb"
         }
       ]

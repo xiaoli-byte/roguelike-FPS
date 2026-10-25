@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_InfernoZhurong",
   "kind": "static",
   "class": "tripo_architecture",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    24,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2500,
-      800
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -3.8961877822875977,
@@ -50,26 +44,6 @@
       "lod": 0,
       "tris": 7995,
       "verts": 5755,
-      "materials": [
-        "M_Tripo_InfernoZhurong"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_InfernoZhurong_LOD1",
-      "lod": 1,
-      "tris": 2500,
-      "verts": 2382,
-      "materials": [
-        "M_Tripo_InfernoZhurong"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_InfernoZhurong_LOD2",
-      "lod": 2,
-      "tris": 800,
-      "verts": 1093,
       "materials": [
         "M_Tripo_InfernoZhurong"
       ],
@@ -107,7 +81,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_InfernoZhurong.glb",
-    "sha256": "3bc72e7c5ed1e79dbc97d2a4b806402b01e448ca47f661b50f1eef218ee56b9c",
+    "sha256": "92166ea13ee286c712697a702ebe719504e0cdea5e14bcfdf92395318c4eebba",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -122,5 +96,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:22:59"
+  "exported": "2026-10-25 12:05:15"
 }

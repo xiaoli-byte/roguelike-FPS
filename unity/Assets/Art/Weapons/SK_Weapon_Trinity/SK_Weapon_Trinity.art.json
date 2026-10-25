@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Weapon_Trinity",
   "kind": "skeletal",
   "class": "weapon_fp",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    6
+    0
   ],
   "budget": {
-    "lodTris": [
-      12000,
-      3000
-    ],
     "texture": 2048,
     "maxFileKb": 3000
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.03440260514616966,
@@ -52,16 +48,6 @@
       "lod": 0,
       "tris": 11996,
       "verts": 8489,
-      "materials": [
-        "M_Weapon_Trinity"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Weapon_Trinity_LOD1",
-      "lod": 1,
-      "tris": 2996,
-      "verts": 2802,
       "materials": [
         "M_Weapon_Trinity"
       ],
@@ -99,7 +85,7 @@
   ],
   "source": {
     "glb": "public/assets/weapons/SK_Weapon_Trinity.glb",
-    "sha256": "28d19a132144ecb78b8138c4f59814c70e71dbe6547eab38fc23686cfc6c57f1",
+    "sha256": "5fdfe4015b1a0b2e280dbd7f115ea18c9b6fda24284ee0859455c0bb12cc2351",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -114,5 +100,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:20:07"
+  "exported": "2026-10-25 11:54:48"
 }

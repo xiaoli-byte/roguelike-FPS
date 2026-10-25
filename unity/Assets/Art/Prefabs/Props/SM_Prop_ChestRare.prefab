@@ -1,118 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &2197329660181688781
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6806097883551397117}
-  - component: {fileID: 1319778591528026492}
-  - component: {fileID: 924550059756952986}
-  - component: {fileID: 1511199567184171645}
-  m_Layer: 0
-  m_Name: SM_Prop_ChestRare_LOD1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 86
-  m_IsActive: 1
---- !u!4 &6806097883551397117
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2197329660181688781}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.000000053385076, y: 0.7071068, z: -0.70710677, w: -0.00000005338508}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 5109929167101216286}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &1319778591528026492
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2197329660181688781}
-  m_Mesh: {fileID: 3318132488491287031, guid: 26d97d0237c7c344d82918d94109c1f6, type: 3}
---- !u!23 &924550059756952986
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2197329660181688781}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: dcb4e95af8ab32946b3eb725c17e8d2e, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &1511199567184171645
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2197329660181688781}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 3318132488491287031, guid: 26d97d0237c7c344d82918d94109c1f6, type: 3}
 --- !u!1 &3121685376917753487
 GameObject:
   m_ObjectHideFlags: 0
@@ -124,6 +11,7 @@ GameObject:
   - component: {fileID: 82982263450611937}
   - component: {fileID: 8604502394522976130}
   - component: {fileID: 7054003817376930172}
+  - component: {fileID: 721644210149249587}
   m_Layer: 0
   m_Name: SM_Prop_ChestRare_LOD0
   m_TagString: Untagged
@@ -203,6 +91,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &721644210149249587
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3121685376917753487}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -8378427101488874661, guid: 26d97d0237c7c344d82918d94109c1f6, type: 3}
 --- !u!1 &3536260756362665949
 GameObject:
   m_ObjectHideFlags: 0
@@ -233,7 +143,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 82982263450611937}
-  - {fileID: 6806097883551397117}
   m_Father: {fileID: 3405041998182032946}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6823526087656774496
@@ -245,7 +154,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3405041998182032946}
-  - component: {fileID: 6077406647741212500}
   - component: {fileID: 3192007436011779796}
   m_Layer: 0
   m_Name: SM_Prop_ChestRare
@@ -270,30 +178,6 @@ Transform:
   - {fileID: 5109929167101216286}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!205 &6077406647741212500
-LODGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6823526087656774496}
-  serializedVersion: 3
-  m_LocalReferencePoint: {x: -0.000010788441, y: 0.50014746, z: -0.0000027418137}
-  m_Size: 1.0815624
-  m_FadeMode: 1
-  m_AnimateCrossFading: 1
-  m_LastLODIsBillboard: 0
-  m_LODs:
-  - screenRelativeHeight: 0.038526878
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 7054003817376930172}
-  - screenRelativeHeight: 0.006421146
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 924550059756952986}
-  m_Enabled: 1
-  m_GlobalIlluminationLOD: 0
 --- !u!114 &3192007436011779796
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -315,11 +199,10 @@ MonoBehaviour:
   bindAttachment: 
   lodDistance:
   - 0
-  - 20
   moveSpeed: 0
   designBounds:
     m_Center: {x: 0, y: 0.5, z: 0}
     m_Extent: {x: 0.5395362, y: 0.5, z: 0.31497106}
   sourceGlb: public/assets/props/SM_Prop_ChestRare.glb
-  sourceSha256: 985701976325f3e74c3b4aa6c315c0dcd110bb8afdfe4537b8e156c74781c691
+  sourceSha256: 35075e7c942218bc4db52119bb1c17c694034e1022455d75f4a60e75c9628783
   license: Tripo Studio paid-plan output (commercial use per Tripo terms)

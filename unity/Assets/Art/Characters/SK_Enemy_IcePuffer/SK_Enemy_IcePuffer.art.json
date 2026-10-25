@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Enemy_IcePuffer",
   "kind": "skeletal",
   "class": "enemy_swarm",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    12,
-    26
+    0
   ],
   "budget": {
-    "lodTris": [
-      6000,
-      2500,
-      1000
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.3798241913318634,
@@ -62,26 +56,6 @@
         "M_Enemy_IcePuffer"
       ],
       "skinned": true
-    },
-    {
-      "name": "SK_Enemy_IcePuffer_LOD1",
-      "lod": 1,
-      "tris": 2462,
-      "verts": 2075,
-      "materials": [
-        "M_Enemy_IcePuffer"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Enemy_IcePuffer_LOD2",
-      "lod": 2,
-      "tris": 985,
-      "verts": 1095,
-      "materials": [
-        "M_Enemy_IcePuffer"
-      ],
-      "skinned": true
     }
   ],
   "materials": [
@@ -113,7 +87,7 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Enemy_IcePuffer@hi.glb",
-    "sha256": "92d0826e705ec6a1f65ade40ba9ab50663e038598182dfacb919df4cf20c2023",
+    "sha256": "fae95fa1af2737d8588fc3f89a1f1ab6a33cebeaed60ec07eb80a50bad087b36",
     "hiRes": true,
     "version": {
       "native_build": 2
@@ -125,5 +99,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-17 11:20:57"
+  "exported": "2026-10-25 11:52:26"
 }

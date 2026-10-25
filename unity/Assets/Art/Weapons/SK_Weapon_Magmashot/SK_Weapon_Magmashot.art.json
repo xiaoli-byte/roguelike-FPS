@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Weapon_Magmashot",
   "kind": "skeletal",
   "class": "weapon_fp",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    6
+    0
   ],
   "budget": {
-    "lodTris": [
-      12000,
-      3000
-    ],
     "texture": 2048,
     "maxFileKb": 3000
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.040403228253126144,
@@ -51,16 +47,6 @@
       "lod": 0,
       "tris": 12000,
       "verts": 8367,
-      "materials": [
-        "M_Weapon_Magmashot"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Weapon_Magmashot_LOD1",
-      "lod": 1,
-      "tris": 3000,
-      "verts": 2781,
       "materials": [
         "M_Weapon_Magmashot"
       ],
@@ -98,7 +84,7 @@
   ],
   "source": {
     "glb": "public/assets/weapons/SK_Weapon_Magmashot.glb",
-    "sha256": "a51a49ef7f300253e9a38266cff97d43c4d54706812487728a1e470610ac9962",
+    "sha256": "132eaec6ba5bc6f8eb03d9abf072b429a931950401fe1675c5aaba21c6e15eee",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -113,5 +99,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:20:04"
+  "exported": "2026-10-25 11:54:12"
 }

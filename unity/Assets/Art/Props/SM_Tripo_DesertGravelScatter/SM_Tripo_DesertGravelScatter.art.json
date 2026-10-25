@@ -11,14 +11,9 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    16
+    0
   ],
   "budget": {
-    "lodTris": [
-      1200,
-      400
-    ],
     "texture": 512,
     "maxFileKb": 300
   },
@@ -30,7 +25,7 @@
       -0.5209044814109802
     ],
     "max": [
-      0.5239810347557068,
+      0.5239761471748352,
       0.44999998807907104,
       0.5209044814109802
     ]
@@ -47,20 +42,10 @@
     {
       "name": "SM_Tripo_DesertGravelScatter_LOD0",
       "lod": 0,
-      "tris": 1194,
-      "verts": 1075,
+      "tris": 1359,
+      "verts": 1183,
       "materials": [
         "M_Tripo_DesertGravelScatter"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertGravelScatter_LOD1",
-      "lod": 1,
-      "tris": 398,
-      "verts": 471,
-      "materials": [
-        "M_Tripo_DesertGravelScatter_LOD1"
       ],
       "skinned": false
     }
@@ -91,43 +76,17 @@
         "N": "Textures/T_Tripo_DesertGravelScatter_N.png",
         "ORM": "Textures/T_Tripo_DesertGravelScatter_ORM.png"
       }
-    },
-    {
-      "name": "M_Tripo_DesertGravelScatter_LOD1",
-      "baseColor": [
-        1,
-        1,
-        1,
-        1
-      ],
-      "metallic": 1.0,
-      "roughness": 1.0,
-      "emissive": [
-        0,
-        0,
-        0
-      ],
-      "doubleSided": true,
-      "alphaMode": "OPAQUE",
-      "alphaCutoff": 0.5,
-      "hasOcclusion": true,
-      "occlusionSeparate": false,
-      "textures": {
-        "BC": "Textures/T_Tripo_DesertGravelScatter_LOD1_BC.png",
-        "N": "Textures/T_Tripo_DesertGravelScatter_LOD1_N.png",
-        "ORM": "Textures/T_Tripo_DesertGravelScatter_LOD1_ORM.png"
-      }
     }
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_DesertGravelScatter.glb",
-    "sha256": "53715483094a8b1041e428770d4b50315d065df6776af50baa9e730f0f9f9813",
+    "sha256": "6bca43634ede8e19ae3586b34dbb1bba449c943218e1699cc61e078b66f6af88",
     "hiRes": false,
     "version": {
       "blockout": 1,
       "concept": 1,
       "highpoly": 1,
-      "build": 1
+      "build": 2
     },
     "generator": {
       "tool": "Tripo Studio",
@@ -136,5 +95,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-20 21:54:04"
+  "exported": "2026-10-25 12:18:01"
 }

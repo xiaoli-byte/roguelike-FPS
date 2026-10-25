@@ -168,7 +168,7 @@
       ]
     },
     "build": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -235,11 +235,61 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:50:15",
+          "files": {
+            "SM_EnemyPart_LianguMallet_v002.blend": {
+              "path": "03_work/SM_EnemyPart_LianguMallet_v002.blend",
+              "sha256": "a21fc35bcac2be598329ef217a575849202e92c436e536de3920cd0f0f20dbae"
+            },
+            "SM_EnemyPart_LianguMallet_v002.glb": {
+              "path": "04_export/SM_EnemyPart_LianguMallet_v002.glb",
+              "sha256": "5961bdcb8a16becac4bc32c3e32e88a59b5c79a18e24a9431819c1d72e54fb08"
+            },
+            "SM_EnemyPart_LianguMallet_v002_metrics.json": {
+              "path": "03_work/SM_EnemyPart_LianguMallet_v002_metrics.json",
+              "sha256": "1addbb4ec1e95bd6197bff9a8b8de1f1db52d67b98a678407acbcd183e0f4794"
+            },
+            "T_EnemyPart_LianguMallet_BC.png": {
+              "path": "03_work/textures_v002/T_EnemyPart_LianguMallet_BC.png",
+              "sha256": "5a3eb089662dc8b5644ea7959778651d13b8afec9572a2c4d773ef6c4b69133c"
+            },
+            "T_EnemyPart_LianguMallet_N.png": {
+              "path": "03_work/textures_v002/T_EnemyPart_LianguMallet_N.png",
+              "sha256": "e905ed043f66baf0a97deb814c3b7c301e0b22b3b56281be9a37f78af253f872"
+            },
+            "T_EnemyPart_LianguMallet_ORM.png": {
+              "path": "03_work/textures_v002/T_EnemyPart_LianguMallet_ORM.png",
+              "sha256": "71731e3682a31f75646ad2e7740f4212ddac76b5f2e2a6773ae94d924a432bc0"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.87,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 3250,
+              "verts": 1627
+            }
+          ],
+          "export_kb": 213.3,
+          "seconds": 9.3,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -255,11 +305,26 @@
           "warnings": 0,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:50:15",
+          "files": {
+            "SM_EnemyPart_LianguMallet_v002_validation_v002.json": {
+              "path": "05_review/SM_EnemyPart_LianguMallet_v002_validation_v002.json",
+              "sha256": "684d38a7d87a3b1d898f67c48041aa6cfc679d272a28ad3d45c967b470300ca1"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -279,11 +344,30 @@
             "note": "",
             "time": "2026-10-19 20:07:38"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:50:20",
+          "files": {
+            "SM_EnemyPart_LianguMallet_v002_review_v002.png": {
+              "path": "05_review/SM_EnemyPart_LianguMallet_v002_review_v002.png",
+              "sha256": "82b7c33c894649cec277f0bfcab674e7f409a2564bf6828deb39f3dc7f3d80ae"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（2026-10-25 不减面重建，用户授权免审）",
+            "note": "",
+            "time": "2026-10-25 11:58:24"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -295,6 +379,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/attachments/SM_EnemyPart_LianguMallet.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:58:24",
+          "files": {
+            "SM_EnemyPart_LianguMallet.glb": {
+              "path": "@root/public/assets/attachments/SM_EnemyPart_LianguMallet.glb",
+              "sha256": "5961bdcb8a16becac4bc32c3e32e88a59b5c79a18e24a9431819c1d72e54fb08"
+            }
+          },
+          "from_build": 2,
           "url": "assets/attachments/SM_EnemyPart_LianguMallet.glb"
         }
       ]

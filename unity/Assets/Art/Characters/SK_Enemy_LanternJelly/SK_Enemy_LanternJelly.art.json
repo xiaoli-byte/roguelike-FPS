@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Enemy_LanternJelly",
   "kind": "skeletal",
   "class": "enemy_standard",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    14,
-    30
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      3500,
-      1500
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.47967764735221863,
@@ -116,26 +110,6 @@
         "M_Enemy_LanternJelly"
       ],
       "skinned": true
-    },
-    {
-      "name": "SK_Enemy_LanternJelly_LOD1",
-      "lod": 1,
-      "tris": 3446,
-      "verts": 6356,
-      "materials": [
-        "M_Enemy_LanternJelly"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Enemy_LanternJelly_LOD2",
-      "lod": 2,
-      "tris": 1477,
-      "verts": 3252,
-      "materials": [
-        "M_Enemy_LanternJelly"
-      ],
-      "skinned": true
     }
   ],
   "materials": [
@@ -191,7 +165,7 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Enemy_LanternJelly@hi.glb",
-    "sha256": "6881931c3a5000f5a3cf593668632ae273ab34ec659a6d3e7c819f6f674e152f",
+    "sha256": "db55982d35ee89f6f4d32a6cd635de3046c6497a2cf24df1ba57e282070d12b4",
     "hiRes": true,
     "version": {
       "native_build": 2
@@ -203,5 +177,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-17 11:21:44"
+  "exported": "2026-10-25 11:52:40"
 }

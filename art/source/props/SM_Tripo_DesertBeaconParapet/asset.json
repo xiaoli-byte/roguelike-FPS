@@ -197,7 +197,7 @@
       ]
     },
     "build": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -264,11 +264,61 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:52:05",
+          "files": {
+            "SM_Tripo_DesertBeaconParapet_v002.blend": {
+              "path": "03_work/SM_Tripo_DesertBeaconParapet_v002.blend",
+              "sha256": "15a3fa8f22a58e291165476418a4efe11d1e3295d013d6a9eaa8275fc1766a4f"
+            },
+            "SM_Tripo_DesertBeaconParapet_v002.glb": {
+              "path": "04_export/SM_Tripo_DesertBeaconParapet_v002.glb",
+              "sha256": "d07d6bb30ea7454cd6fd02c460d1dce586f68c8845c5dd173941cb4347a0c90d"
+            },
+            "SM_Tripo_DesertBeaconParapet_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_DesertBeaconParapet_v002_metrics.json",
+              "sha256": "e17880e7438c1413e9981c06fc1b424fc12dff28bd8c7ddb6c524f181e1caa4d"
+            },
+            "T_Tripo_DesertBeaconParapet_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertBeaconParapet_BC.png",
+              "sha256": "e6a8af5cdb63259acba0813b2bc02fe92b70dbb48bec2388cd6c96f9d6392af1"
+            },
+            "T_Tripo_DesertBeaconParapet_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertBeaconParapet_N.png",
+              "sha256": "b95c8a5b1e9481afbe4f42ec8eeaca5208a2af60b5ebe59b65a406a808517f99"
+            },
+            "T_Tripo_DesertBeaconParapet_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_DesertBeaconParapet_ORM.png",
+              "sha256": "b296dd0ff3c5af4fd9431d7bd5141f08475b6a1a79f369f125af15114f3ef1ce"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.843,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 3096,
+              "verts": 1550
+            }
+          ],
+          "export_kb": 186.0,
+          "seconds": 8.6,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -284,11 +334,26 @@
           "warnings": 0,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:52:05",
+          "files": {
+            "SM_Tripo_DesertBeaconParapet_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_DesertBeaconParapet_v002_validation_v002.json",
+              "sha256": "69de4a263345fd61b3a1de3f97b4d9676cd23e729c9d638a81d7dff3bfd60fe1"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -308,11 +373,30 @@
             "note": "成品审核通过（Tripo P2.0 + 纹理）：四视图与概念一致，LOD 远看轮廓不塌",
             "time": "2026-10-20 21:52:27"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:52:10",
+          "files": {
+            "SM_Tripo_DesertBeaconParapet_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_DesertBeaconParapet_v002_review_v002.png",
+              "sha256": "c9f51b6f2f96edbe09ef4f147c856bcc6b4ed43fc0162d5681e56bf5de06ae0a"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（2026-10-25 不减面重建，用户授权免审）",
+            "note": "",
+            "time": "2026-10-25 11:58:32"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -324,6 +408,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/props/SM_Tripo_DesertBeaconParapet.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:58:32",
+          "files": {
+            "SM_Tripo_DesertBeaconParapet.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_DesertBeaconParapet.glb",
+              "sha256": "d07d6bb30ea7454cd6fd02c460d1dce586f68c8845c5dd173941cb4347a0c90d"
+            }
+          },
+          "from_build": 2,
           "url": "assets/props/SM_Tripo_DesertBeaconParapet.glb"
         }
       ]

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_InfernoFireAltar",
   "kind": "static",
   "class": "tripo_prop",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.5665155053138733,
@@ -48,16 +44,6 @@
       "lod": 0,
       "tris": 3000,
       "verts": 2547,
-      "materials": [
-        "M_Tripo_InfernoFireAltar"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_InfernoFireAltar_LOD1",
-      "lod": 1,
-      "tris": 1000,
-      "verts": 1245,
       "materials": [
         "M_Tripo_InfernoFireAltar"
       ],
@@ -95,7 +81,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_InfernoFireAltar.glb",
-    "sha256": "ecbac3fc3b1b911032b4fa081748e4dab14388981977bdedc619b1c0f240a0c9",
+    "sha256": "c84e201c7f8a4038955753261cb877bff93ca4d383c1e9bbf320d25556d260f8",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -110,5 +96,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:23:21"
+  "exported": "2026-10-25 12:04:03"
 }

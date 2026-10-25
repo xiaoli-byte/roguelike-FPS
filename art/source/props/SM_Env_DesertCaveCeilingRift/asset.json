@@ -197,7 +197,7 @@
       ]
     },
     "build": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -280,11 +280,61 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:50:52",
+          "files": {
+            "SM_Env_DesertCaveCeilingRift_v002.blend": {
+              "path": "03_work/SM_Env_DesertCaveCeilingRift_v002.blend",
+              "sha256": "0cfbe5bf7c3186fde8b0377fabfceacfc3ebf997523b7b4203430bca665051d3"
+            },
+            "SM_Env_DesertCaveCeilingRift_v002.glb": {
+              "path": "04_export/SM_Env_DesertCaveCeilingRift_v002.glb",
+              "sha256": "1c438e5be7fd53cf40806bd5034bb88fc2d1f8f4a3f1f7ca0ea035f366a11402"
+            },
+            "SM_Env_DesertCaveCeilingRift_v002_metrics.json": {
+              "path": "03_work/SM_Env_DesertCaveCeilingRift_v002_metrics.json",
+              "sha256": "58188be5071bce4868aa4e1c2b1b2ec29bdd0ac739440a028fc52954f675da1b"
+            },
+            "T_Env_DesertCaveCeilingRift_BC.png": {
+              "path": "03_work/textures_v002/T_Env_DesertCaveCeilingRift_BC.png",
+              "sha256": "8d83c8163322c31375e15c43cf656d6f3b735dabc4249488206dd3a029ae4ee0"
+            },
+            "T_Env_DesertCaveCeilingRift_N.png": {
+              "path": "03_work/textures_v002/T_Env_DesertCaveCeilingRift_N.png",
+              "sha256": "95e167bfbdb3457ad1f374c532ef01e1a0ff9de6e494be04c3acc3851f19dc68"
+            },
+            "T_Env_DesertCaveCeilingRift_ORM.png": {
+              "path": "03_work/textures_v002/T_Env_DesertCaveCeilingRift_ORM.png",
+              "sha256": "235043973fe3183427cde1602742e5f166b28266303dbc2b51944550b2de9af4"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.768,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 8894,
+              "verts": 4459
+            }
+          ],
+          "export_kb": 407.8,
+          "seconds": 31.6,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -300,11 +350,26 @@
           "warnings": 0,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:50:52",
+          "files": {
+            "SM_Env_DesertCaveCeilingRift_v002_validation_v002.json": {
+              "path": "05_review/SM_Env_DesertCaveCeilingRift_v002_validation_v002.json",
+              "sha256": "adfeebba0fa3e173c42a66f077ad2e2638dd2d967c94de4078010cb079fe8ee6"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -324,11 +389,30 @@
             "note": "成品审核通过（Tripo P2.0 + 纹理）：四视图与概念一致，LOD 远看轮廓不塌、无斜条纹",
             "time": "2026-10-20 21:51:04"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:50:57",
+          "files": {
+            "SM_Env_DesertCaveCeilingRift_v002_review_v002.png": {
+              "path": "05_review/SM_Env_DesertCaveCeilingRift_v002_review_v002.png",
+              "sha256": "6895b2ae651e66fd58ac26344f1d54a9fc417e73db9d93067956122594a88194"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（2026-10-25 不减面重建，用户授权免审）",
+            "note": "",
+            "time": "2026-10-25 11:58:25"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -340,6 +424,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/props/SM_Env_DesertCaveCeilingRift.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:58:25",
+          "files": {
+            "SM_Env_DesertCaveCeilingRift.glb": {
+              "path": "@root/public/assets/props/SM_Env_DesertCaveCeilingRift.glb",
+              "sha256": "1c438e5be7fd53cf40806bd5034bb88fc2d1f8f4a3f1f7ca0ea035f366a11402"
+            }
+          },
+          "from_build": 2,
           "url": "assets/props/SM_Env_DesertCaveCeilingRift.glb"
         }
       ]

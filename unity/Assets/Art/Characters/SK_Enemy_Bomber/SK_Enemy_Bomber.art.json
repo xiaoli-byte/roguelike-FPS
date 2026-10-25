@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Enemy_Bomber",
   "kind": "skeletal",
   "class": "enemy_standard",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    14,
-    30
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      3500,
-      1500
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.6325101256370544,
@@ -64,26 +58,6 @@
         "M_Enemy_Bomber"
       ],
       "skinned": true
-    },
-    {
-      "name": "SK_Enemy_Bomber_LOD1",
-      "lod": 1,
-      "tris": 3493,
-      "verts": 2594,
-      "materials": [
-        "M_Enemy_Bomber"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Enemy_Bomber_LOD2",
-      "lod": 2,
-      "tris": 1496,
-      "verts": 1304,
-      "materials": [
-        "M_Enemy_Bomber"
-      ],
-      "skinned": true
     }
   ],
   "materials": [
@@ -116,7 +90,7 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Enemy_Bomber.glb",
-    "sha256": "454556539ff7e651386ee8c835061dbd9265754fbfa0b5b7966a710c7b52262a",
+    "sha256": "58537056b5316c5095a7ccedb36eeccf9adff282cf69c3e48fb2731151de1d2e",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -127,5 +101,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-17 11:18:45"
+  "exported": "2026-10-25 11:51:48"
 }

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_DesertPortalShrine",
   "kind": "static",
   "class": "tripo_architecture",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    24,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2500,
-      800
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -4.839033603668213,
@@ -50,26 +44,6 @@
       "lod": 0,
       "tris": 7943,
       "verts": 11320,
-      "materials": [
-        "M_Tripo_DesertPortalShrine"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertPortalShrine_LOD1",
-      "lod": 1,
-      "tris": 2486,
-      "verts": 4320,
-      "materials": [
-        "M_Tripo_DesertPortalShrine"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertPortalShrine_LOD2",
-      "lod": 2,
-      "tris": 796,
-      "verts": 1698,
       "materials": [
         "M_Tripo_DesertPortalShrine"
       ],
@@ -106,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_DesertPortalShrine.glb",
-    "sha256": "2c4d396ae54841800973608f867ba00b76ecf2fb738cd6be82d7c6c197af97bf",
+    "sha256": "4d0303735f0f23ec0b9b4d77fb506fa157596c71c904e77b812804c2d36a8e38",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -121,5 +95,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-17 00:30:29"
+  "exported": "2026-10-25 11:59:32"
 }

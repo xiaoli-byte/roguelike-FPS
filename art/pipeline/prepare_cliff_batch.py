@@ -39,7 +39,7 @@ def check_spec(asset_id: str) -> dict:
     meta, _views = reference_data(spec)
     if list(spec.raw["reference_dimensions"]) != [REFERENCE_WIDTHS[asset_id], 9.0, 7.0]:
         raise PipelineError(f"{asset_id}: preserve the actual concept width and 9h / 7d metre reference")
-    if (spec.cls != "nature_prop" or spec.lod_tris != [5000, 1600, 500]
+    if (spec.cls != "nature_prop" or spec.lod_tris != [5000]
             or spec.texture != 1024 or spec.max_file_kb != 900):
         raise PipelineError(f"{asset_id}: preserve the existing nature_prop budgets")
     if spec.raw.get("highpoly_mode") != "multiview" or spec.raw.get("qa_waivers"):

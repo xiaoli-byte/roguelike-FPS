@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_FrostBarricade",
   "kind": "static",
   "class": "tripo_prop",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -2.2577028274536133,
@@ -48,16 +44,6 @@
       "lod": 0,
       "tris": 3000,
       "verts": 2060,
-      "materials": [
-        "M_Tripo_FrostBarricade"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostBarricade_LOD1",
-      "lod": 1,
-      "tris": 1000,
-      "verts": 896,
       "materials": [
         "M_Tripo_FrostBarricade"
       ],
@@ -94,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_FrostBarricade.glb",
-    "sha256": "a4437c34344ed1ffc6029d4a0b43e3518a2cec09a79b1491405e5278aa6ed5d7",
+    "sha256": "fa8fb8dc08199352e8ae432acaa76c3cf29ca0c51954f9e259d961b4146ff37e",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -109,5 +95,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:21:31"
+  "exported": "2026-10-25 12:00:38"
 }

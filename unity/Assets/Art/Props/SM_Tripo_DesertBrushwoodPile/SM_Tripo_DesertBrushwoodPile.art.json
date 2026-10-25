@@ -11,14 +11,9 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
@@ -53,16 +48,6 @@
         "M_Tripo_DesertBrushwoodPile"
       ],
       "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertBrushwoodPile_LOD1",
-      "lod": 1,
-      "tris": 994,
-      "verts": 1644,
-      "materials": [
-        "M_Tripo_DesertBrushwoodPile_LOD1"
-      ],
-      "skinned": false
     }
   ],
   "materials": [
@@ -91,37 +76,11 @@
         "N": "Textures/T_Tripo_DesertBrushwoodPile_N.png",
         "ORM": "Textures/T_Tripo_DesertBrushwoodPile_ORM.png"
       }
-    },
-    {
-      "name": "M_Tripo_DesertBrushwoodPile_LOD1",
-      "baseColor": [
-        1,
-        1,
-        1,
-        1
-      ],
-      "metallic": 1.0,
-      "roughness": 1.0,
-      "emissive": [
-        0,
-        0,
-        0
-      ],
-      "doubleSided": true,
-      "alphaMode": "OPAQUE",
-      "alphaCutoff": 0.5,
-      "hasOcclusion": true,
-      "occlusionSeparate": false,
-      "textures": {
-        "BC": "Textures/T_Tripo_DesertBrushwoodPile_LOD1_BC.png",
-        "N": "Textures/T_Tripo_DesertBrushwoodPile_LOD1_N.png",
-        "ORM": "Textures/T_Tripo_DesertBrushwoodPile_LOD1_ORM.png"
-      }
     }
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_DesertBrushwoodPile.glb",
-    "sha256": "9030290cab4273e276fa01e9f2bd95c36820d36b07457bd1acd088f0fef85168",
+    "sha256": "962499f9d725bae1d748fe1d6f60c3b6eb89a5c93297f8653b00eb78bd770f77",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -136,5 +95,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-20 21:54:03"
+  "exported": "2026-10-25 11:58:10"
 }

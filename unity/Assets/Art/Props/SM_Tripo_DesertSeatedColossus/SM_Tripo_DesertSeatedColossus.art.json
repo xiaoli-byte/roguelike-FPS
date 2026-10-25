@@ -11,16 +11,9 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    24,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2500,
-      800
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
@@ -28,7 +21,7 @@
   "bounds": {
     "min": [
       -5.984367847442627,
-      -0.0009029394132085145,
+      0,
       -4.880313396453857
     ],
     "max": [
@@ -49,30 +42,10 @@
     {
       "name": "SM_Tripo_DesertSeatedColossus_LOD0",
       "lod": 0,
-      "tris": 7960,
-      "verts": 10167,
+      "tris": 8549,
+      "verts": 10699,
       "materials": [
         "M_Tripo_DesertSeatedColossus"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertSeatedColossus_LOD1",
-      "lod": 1,
-      "tris": 2486,
-      "verts": 1750,
-      "materials": [
-        "M_Tripo_DesertSeatedColossus_LOD1"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertSeatedColossus_LOD2",
-      "lod": 2,
-      "tris": 795,
-      "verts": 697,
-      "materials": [
-        "M_Tripo_DesertSeatedColossus_LOD2"
       ],
       "skinned": false
     }
@@ -103,69 +76,17 @@
         "N": "Textures/T_Tripo_DesertSeatedColossus_N.png",
         "ORM": "Textures/T_Tripo_DesertSeatedColossus_ORM.png"
       }
-    },
-    {
-      "name": "M_Tripo_DesertSeatedColossus_LOD1",
-      "baseColor": [
-        1,
-        1,
-        1,
-        1
-      ],
-      "metallic": 1.0,
-      "roughness": 1.0,
-      "emissive": [
-        0,
-        0,
-        0
-      ],
-      "doubleSided": true,
-      "alphaMode": "OPAQUE",
-      "alphaCutoff": 0.5,
-      "hasOcclusion": true,
-      "occlusionSeparate": false,
-      "textures": {
-        "BC": "Textures/T_Tripo_DesertSeatedColossus_LOD1_BC.png",
-        "N": "Textures/T_Tripo_DesertSeatedColossus_LOD1_N.png",
-        "ORM": "Textures/T_Tripo_DesertSeatedColossus_LOD1_ORM.png"
-      }
-    },
-    {
-      "name": "M_Tripo_DesertSeatedColossus_LOD2",
-      "baseColor": [
-        1,
-        1,
-        1,
-        1
-      ],
-      "metallic": 1.0,
-      "roughness": 1.0,
-      "emissive": [
-        0,
-        0,
-        0
-      ],
-      "doubleSided": true,
-      "alphaMode": "OPAQUE",
-      "alphaCutoff": 0.5,
-      "hasOcclusion": true,
-      "occlusionSeparate": false,
-      "textures": {
-        "BC": "Textures/T_Tripo_DesertSeatedColossus_LOD2_BC.png",
-        "N": "Textures/T_Tripo_DesertSeatedColossus_LOD2_N.png",
-        "ORM": "Textures/T_Tripo_DesertSeatedColossus_LOD2_ORM.png"
-      }
     }
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_DesertSeatedColossus.glb",
-    "sha256": "b6f8d8388e953bfcff4f52827d582d4a0fb814aae56163e737b8439866f5cf73",
+    "sha256": "8d59788b6c9c175e774e534e14aaeb7f18383e672da0db7b484cf92a51b4b449",
     "hiRes": false,
     "version": {
       "blockout": 1,
       "concept": 1,
       "highpoly": 1,
-      "build": 1
+      "build": 2
     },
     "generator": {
       "tool": "Tripo Studio",
@@ -174,5 +95,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-20 21:54:07"
+  "exported": "2026-10-25 12:18:06"
 }

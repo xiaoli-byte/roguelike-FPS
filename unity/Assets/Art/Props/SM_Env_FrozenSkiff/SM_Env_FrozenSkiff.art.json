@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Env_FrozenSkiff",
   "kind": "static",
   "class": "nature_prop",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    18,
-    42
+    0
   ],
   "budget": {
-    "lodTris": [
-      5000,
-      1600,
-      500
-    ],
     "texture": 1024,
     "maxFileKb": 900
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -1.020757794380188,
@@ -50,26 +44,6 @@
       "lod": 0,
       "tris": 5000,
       "verts": 3117,
-      "materials": [
-        "M_Env_FrozenSkiff"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Env_FrozenSkiff_LOD1",
-      "lod": 1,
-      "tris": 1600,
-      "verts": 1216,
-      "materials": [
-        "M_Env_FrozenSkiff"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Env_FrozenSkiff_LOD2",
-      "lod": 2,
-      "tris": 500,
-      "verts": 487,
       "materials": [
         "M_Env_FrozenSkiff"
       ],
@@ -106,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Env_FrozenSkiff.glb",
-    "sha256": "90b2557b0bc2fe6eca99f2245e7ef6cc2a49cd6ac06e18fe7966fc7a5d62e91b",
+    "sha256": "ba9185475730bcef6df4be289fd3ce2fcc3f13bd1dd3156f533a35b5a96f620d",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -121,5 +95,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:19:52"
+  "exported": "2026-10-25 11:56:19"
 }

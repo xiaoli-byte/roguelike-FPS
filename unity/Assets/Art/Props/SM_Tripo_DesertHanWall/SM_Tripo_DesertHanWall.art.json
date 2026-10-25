@@ -11,22 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    24,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2500,
-      2500
-    ],
     "texture": 2048,
     "maxFileKb": 1600
   },
-  "qaWaivers": {
-    "LOD2 递减": "Tripo 碎 UV：LOD2 再减面会跨 UV 接缝糊成斜条纹，暂与 LOD1 同面数（2026-10-17，根治待做）"
-  },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -2.6673495769500732,
@@ -53,26 +44,6 @@
       "lod": 0,
       "tris": 4218,
       "verts": 2755,
-      "materials": [
-        "M_Tripo_DesertHanWall"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertHanWall_LOD1",
-      "lod": 1,
-      "tris": 2486,
-      "verts": 1813,
-      "materials": [
-        "M_Tripo_DesertHanWall"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertHanWall_LOD2",
-      "lod": 2,
-      "tris": 2486,
-      "verts": 1813,
       "materials": [
         "M_Tripo_DesertHanWall"
       ],
@@ -109,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_DesertHanWall.glb",
-    "sha256": "ae2d51f7f73be6394694c7b55c7b640fa3c55a4c27ccbb511f2068d35640b3ea",
+    "sha256": "60cb142e9385200ce356b14981d9bbf7adbe79fb737ae9d08548f55c0d7c1ad2",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -124,5 +95,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-17 23:07:48"
+  "exported": "2026-10-25 11:59:11"
 }

@@ -94,8 +94,7 @@ namespace Spiritfire.Art.Editor
                     res.warnings.Add($"{Path.GetFileName(path)} {tex.width}² 超过规格 {sc.BudgetTexture}²");
             }
 
-            // 面数预算（Unity 三角化后的实际面数，允许 2% 误差）
-            var budget = sc.BudgetLodTris;
+            // 面数（Unity 三角化后的实际面数）：只记录、不设预算——2026-10-25 起不减面，面数就是来源网格自己的
             var lodTris = new SortedDictionary<int, int>();
             foreach (var info in sc.Meshes)
             {
@@ -110,16 +109,6 @@ namespace Spiritfire.Art.Editor
                 lodTris[lod.Value] = Tris(mesh);
             }
             res.metrics["lodTris"] = lodTris.Values.ToArray();
-            if (budget == null) res.warnings.Add($"规格档 {sc.Class} 不在 pipeline.toml 里，未检查面数预算");
-            if (budget != null)
-                foreach (var (lod, tris) in lodTris)
-                    if (lod < budget.Length && tris > budget[lod] * 1.02f)
-                    {
-                        string msg = $"LOD{lod} {tris} 面，超过规格档 {sc.Class} 的 {budget[lod]}";
-                        string waiver = sc.Waiver($"LOD{lod} 面数");
-                        if (waiver != null) res.warnings.Add($"◇ 已豁免：{msg}——{waiver}");
-                        else res.errors.Add(msg);
-                    }
             var keys = lodTris.Keys.ToList();
             for (int i = 1; i < keys.Count; i++)
                 if (lodTris[keys[i]] > lodTris[keys[i - 1]]) res.errors.Add($"LOD{keys[i]} 面数没有逐级递减");

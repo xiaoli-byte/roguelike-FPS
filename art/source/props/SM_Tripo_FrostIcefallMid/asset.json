@@ -197,7 +197,7 @@
       ]
     },
     "build": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -280,11 +280,61 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:57:21",
+          "files": {
+            "SM_Tripo_FrostIcefallMid_v002.blend": {
+              "path": "03_work/SM_Tripo_FrostIcefallMid_v002.blend",
+              "sha256": "09b77cd903d2b0e05113413f668d7d5cbe65954f472dc8790f3e36a355c230e7"
+            },
+            "SM_Tripo_FrostIcefallMid_v002.glb": {
+              "path": "04_export/SM_Tripo_FrostIcefallMid_v002.glb",
+              "sha256": "1f5fa15c84b7e0a6e02cd634aae706ccae70813457ad705c6b9fc6aa8a3f2817"
+            },
+            "SM_Tripo_FrostIcefallMid_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostIcefallMid_v002_metrics.json",
+              "sha256": "5f6e3c3683feebc4b40d68e2230b57c4d0a1651a1d377ae1425722a3edd99255"
+            },
+            "T_Tripo_FrostIcefallMid_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostIcefallMid_BC.png",
+              "sha256": "300bf36f7703c44f1bd7b971cf381cd494d968fb7b0c765592dee8a0e3ef6ad0"
+            },
+            "T_Tripo_FrostIcefallMid_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostIcefallMid_N.png",
+              "sha256": "dccb11658b3d805489f6f439b6f765044dabb2a6957c9d7ec2f1c49f56599fd2"
+            },
+            "T_Tripo_FrostIcefallMid_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostIcefallMid_ORM.png",
+              "sha256": "659d092400313891ce1e0574a4127682986a650f8013492dec6aef7f42123f8a"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 1,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.834,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 8481,
+              "verts": 4642
+            }
+          ],
+          "export_kb": 745.6,
+          "seconds": 32.5,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -300,11 +350,26 @@
           "warnings": 0,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:57:21",
+          "files": {
+            "SM_Tripo_FrostIcefallMid_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_FrostIcefallMid_v002_validation_v002.json",
+              "sha256": "f84ac79573040df0bb9b453cebaf7deca6d16376963c045d96f8d6abe5476418"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 0,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -324,11 +389,30 @@
             "note": "2026-10-22 ART5：审核图四视图与概念一致（用户 2026-10-19 授权免审）",
             "time": "2026-10-22 22:10:47"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:57:28",
+          "files": {
+            "SM_Tripo_FrostIcefallMid_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_FrostIcefallMid_v002_review_v002.png",
+              "sha256": "ede9b97977129d02f4122d66e917b0e341a6caeece884b2b9ca7c4a974a3a448"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（2026-10-25 不减面重建，用户授权免审）",
+            "note": "",
+            "time": "2026-10-25 11:58:44"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -340,6 +424,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/props/SM_Tripo_FrostIcefallMid.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:58:44",
+          "files": {
+            "SM_Tripo_FrostIcefallMid.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostIcefallMid.glb",
+              "sha256": "1f5fa15c84b7e0a6e02cd634aae706ccae70813457ad705c6b9fc6aa8a3f2817"
+            }
+          },
+          "from_build": 2,
           "url": "assets/props/SM_Tripo_FrostIcefallMid.glb"
         }
       ]

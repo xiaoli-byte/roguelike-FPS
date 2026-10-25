@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Arms_FlyingSquirrelL",
   "kind": "static",
   "class": "fp_arm",
@@ -12,17 +12,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    6
+    0
   ],
   "budget": {
-    "lodTris": [
-      8000,
-      2000
-    ],
     "texture": 2048,
     "maxFileKb": 1500
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.08962766826152802,
@@ -47,16 +43,6 @@
     {
       "name": "SM_Arms_FlyingSquirrelL_LOD0",
       "lod": 0,
-      "tris": 767,
-      "verts": 1218,
-      "materials": [
-        "M_Arms_FlyingSquirrelL"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Arms_FlyingSquirrelL_LOD1",
-      "lod": 1,
       "tris": 767,
       "verts": 1218,
       "materials": [
@@ -94,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/weapons/SM_Arms_FlyingSquirrelL.glb",
-    "sha256": "eeca816964ced50f77ef0a149c33ae3426d5b9b2c85e01ae03d152bb7ff860fb",
+    "sha256": "d04e27862d0d5ff357b50148d376bdb856fcbe09cac5a4560ff720691a4ec5b7",
     "hiRes": false,
     "version": {
       "build": 6
@@ -105,5 +91,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-17 11:21:25"
+  "exported": "2026-10-25 11:54:50"
 }

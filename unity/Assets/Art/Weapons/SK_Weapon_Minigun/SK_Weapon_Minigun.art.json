@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Weapon_Minigun",
   "kind": "skeletal",
   "class": "weapon_fp",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    6
+    0
   ],
   "budget": {
-    "lodTris": [
-      12000,
-      3000
-    ],
     "texture": 2048,
     "maxFileKb": 3000
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.05820842832326889,
@@ -53,16 +49,6 @@
       "lod": 0,
       "tris": 11996,
       "verts": 7475,
-      "materials": [
-        "M_Weapon_Minigun"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Weapon_Minigun_LOD1",
-      "lod": 1,
-      "tris": 2996,
-      "verts": 2457,
       "materials": [
         "M_Weapon_Minigun"
       ],
@@ -100,7 +86,7 @@
   ],
   "source": {
     "glb": "public/assets/weapons/SK_Weapon_Minigun.glb",
-    "sha256": "19678635105959675016eeeccfd460712c20da7a4d94103ac80263056d204bdb",
+    "sha256": "d77c37a0db3f73343f650b5aeaad163dc69822615fdce84cf687b6b9d366c9a3",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -111,5 +97,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-17 11:19:13"
+  "exported": "2026-10-25 11:54:14"
 }

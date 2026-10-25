@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_EnemyWeapon_Mace",
   "kind": "static",
   "class": "enemy_attachment",
@@ -12,17 +12,13 @@
   },
   "keepGlow": "attachments",
   "lodDistance": [
-    0,
-    14
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.21015581488609314,
@@ -49,16 +45,6 @@
       "lod": 0,
       "tris": 3000,
       "verts": 1989,
-      "materials": [
-        "M_EnemyWeapon_Mace"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_EnemyWeapon_Mace_LOD1",
-      "lod": 1,
-      "tris": 1000,
-      "verts": 825,
       "materials": [
         "M_EnemyWeapon_Mace"
       ],
@@ -95,7 +81,7 @@
   ],
   "source": {
     "glb": "public/assets/attachments/SM_EnemyWeapon_Mace.glb",
-    "sha256": "1e0dfe8fd874250fd3036efc13d52e9b27bf58eef35f876c0a3a6fa9f47fde1a",
+    "sha256": "d0fd1d008c97a2f32ef900080f24ee3be5efc29896cb87afa15feef0a1d79849",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -106,5 +92,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-17 11:18:29"
+  "exported": "2026-10-25 11:55:41"
 }

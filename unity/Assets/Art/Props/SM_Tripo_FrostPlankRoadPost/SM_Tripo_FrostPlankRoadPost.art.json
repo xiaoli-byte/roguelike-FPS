@@ -11,20 +11,14 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    24
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 900
   },
   "qaWaivers": {
     "场景轴心居中": "模块件的原点是拼接点（桥面中心、最低点着地），由 bl_proc_timber.py 固定，不按包围盒居中",
-    "LOD1 贴图色差": "LOD1 去掉铜箍、钉帽和冰棱（24 m 外看不见），色差来自这些小件",
     "UV 利用率": "整套共用一张手绘图集（木板条 / 方木 / 漆 / 铜 / 雪 / 冰 / 石），每件只用到其中一部分"
   },
   "bounds": {
@@ -53,16 +47,6 @@
       "lod": 0,
       "tris": 912,
       "verts": 1624,
-      "materials": [
-        "M_Tripo_FrostPlankRoadPost"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostPlankRoadPost_LOD1",
-      "lod": 1,
-      "tris": 132,
-      "verts": 264,
       "materials": [
         "M_Tripo_FrostPlankRoadPost"
       ],
@@ -99,7 +83,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_FrostPlankRoadPost.glb",
-    "sha256": "ed227fadae75d436f34ae6a723ea74d222851aac3195be5b91236aa97263d98c",
+    "sha256": "f1f0ef03c1df2fa36e3de1e4354ed1f99fe43e58ed0d75b532ffdbc947a7949f",
     "hiRes": false,
     "version": {
       "blockout": 2,
@@ -114,5 +98,5 @@
     },
     "license": "project-original procedural model (art/pipeline/blender/bl_proc_timber.py)"
   },
-  "exported": "2026-10-22 22:12:41"
+  "exported": "2026-10-25 12:01:49"
 }

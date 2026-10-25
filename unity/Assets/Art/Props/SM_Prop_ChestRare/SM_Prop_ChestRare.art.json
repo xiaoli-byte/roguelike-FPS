@@ -11,14 +11,9 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
@@ -53,16 +48,6 @@
         "M_Prop_ChestRare"
       ],
       "skinned": false
-    },
-    {
-      "name": "SM_Prop_ChestRare_LOD1",
-      "lod": 1,
-      "tris": 994,
-      "verts": 663,
-      "materials": [
-        "M_Prop_ChestRare_LOD1"
-      ],
-      "skinned": false
     }
   ],
   "materials": [
@@ -91,37 +76,11 @@
         "N": "Textures/T_Prop_ChestRare_N.png",
         "ORM": "Textures/T_Prop_ChestRare_ORM.png"
       }
-    },
-    {
-      "name": "M_Prop_ChestRare_LOD1",
-      "baseColor": [
-        1,
-        1,
-        1,
-        1
-      ],
-      "metallic": 1.0,
-      "roughness": 1.0,
-      "emissive": [
-        0,
-        0,
-        0
-      ],
-      "doubleSided": true,
-      "alphaMode": "OPAQUE",
-      "alphaCutoff": 0.5,
-      "hasOcclusion": true,
-      "occlusionSeparate": false,
-      "textures": {
-        "BC": "Textures/T_Prop_ChestRare_LOD1_BC.png",
-        "N": "Textures/T_Prop_ChestRare_LOD1_N.png",
-        "ORM": "Textures/T_Prop_ChestRare_LOD1_ORM.png"
-      }
     }
   ],
   "source": {
     "glb": "public/assets/props/SM_Prop_ChestRare.glb",
-    "sha256": "985701976325f3e74c3b4aa6c315c0dcd110bb8afdfe4537b8e156c74781c691",
+    "sha256": "35075e7c942218bc4db52119bb1c17c694034e1022455d75f4a60e75c9628783",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -136,5 +95,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-22 22:13:06"
+  "exported": "2026-10-25 11:57:25"
 }

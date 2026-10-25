@@ -30,7 +30,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7728747291051945229}
-  - {fileID: 9006696692448381737}
   m_Father: {fileID: 2694194932185108823}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1359016942637882569
@@ -44,6 +43,7 @@ GameObject:
   - component: {fileID: 7728747291051945229}
   - component: {fileID: 1932944874378308056}
   - component: {fileID: 4951689302104924977}
+  - component: {fileID: 4338372580759819722}
   m_Layer: 0
   m_Name: SM_Tripo_DesertFinial_LOD0
   m_TagString: Untagged
@@ -123,6 +123,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &4338372580759819722
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1359016942637882569}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -67621871923368173, guid: 080b9fbf2c7459044a10386f260731df, type: 3}
 --- !u!1 &3151737433275185355
 GameObject:
   m_ObjectHideFlags: 0
@@ -132,7 +154,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2694194932185108823}
-  - component: {fileID: 8264573678594992644}
   - component: {fileID: 2614900345290511477}
   m_Layer: 0
   m_Name: SM_Tripo_DesertFinial
@@ -157,30 +178,6 @@ Transform:
   - {fileID: 7038820693736533916}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!205 &8264573678594992644
-LODGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3151737433275185355}
-  serializedVersion: 3
-  m_LocalReferencePoint: {x: 0.000037908554, y: 2.7494526, z: 0.000016450882}
-  m_Size: 5.509569
-  m_FadeMode: 1
-  m_AnimateCrossFading: 1
-  m_LastLODIsBillboard: 0
-  m_LODs:
-  - screenRelativeHeight: 0.19637035
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 4951689302104924977}
-  - screenRelativeHeight: 0.032728393
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 7654746587104238107}
-  m_Enabled: 1
-  m_GlobalIlluminationLOD: 0
 --- !u!114 &2614900345290511477
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -202,124 +199,10 @@ MonoBehaviour:
   bindAttachment: 
   lodDistance:
   - 0
-  - 20
   moveSpeed: 0
   designBounds:
     m_Center: {x: 0, y: 2.75, z: 0}
     m_Extent: {x: 1.2668542, y: 2.75, z: 1.1405718}
   sourceGlb: public/assets/props/SM_Tripo_DesertFinial.glb
-  sourceSha256: 7d60910fb13aec99cbc1168a81af47f781e86aeda7451b6bb9c79705e4649c57
+  sourceSha256: e379cd862890512bff923aa242fcdf5c23860b217c8ecafba7ff99e8b1388664
   license: Tripo Studio paid-plan output (commercial use per Tripo terms)
---- !u!1 &7050507979829505965
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 9006696692448381737}
-  - component: {fileID: 4293543408703573027}
-  - component: {fileID: 7654746587104238107}
-  - component: {fileID: 8588195980257419887}
-  m_Layer: 0
-  m_Name: SM_Tripo_DesertFinial_LOD1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 86
-  m_IsActive: 1
---- !u!4 &9006696692448381737
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7050507979829505965}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.000000053385076, y: 0.7071068, z: -0.70710677, w: -0.00000005338508}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 7038820693736533916}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &4293543408703573027
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7050507979829505965}
-  m_Mesh: {fileID: 7525557795172297811, guid: 080b9fbf2c7459044a10386f260731df, type: 3}
---- !u!23 &7654746587104238107
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7050507979829505965}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 1f63b9c07c6d96545b79fcd0021e4d49, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &8588195980257419887
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7050507979829505965}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 7525557795172297811, guid: 080b9fbf2c7459044a10386f260731df, type: 3}

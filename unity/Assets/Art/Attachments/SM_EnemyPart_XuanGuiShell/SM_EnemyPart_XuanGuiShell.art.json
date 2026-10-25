@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_EnemyPart_XuanGuiShell",
   "kind": "static",
   "class": "enemy_attachment",
@@ -12,17 +12,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    14
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -1.2612557411193848,
@@ -49,16 +45,6 @@
       "lod": 0,
       "tris": 2984,
       "verts": 2455,
-      "materials": [
-        "M_EnemyPart_XuanGuiShell"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_EnemyPart_XuanGuiShell_LOD1",
-      "lod": 1,
-      "tris": 995,
-      "verts": 1137,
       "materials": [
         "M_EnemyPart_XuanGuiShell"
       ],
@@ -95,7 +81,7 @@
   ],
   "source": {
     "glb": "public/assets/attachments/SM_EnemyPart_XuanGuiShell.glb",
-    "sha256": "23c4efec5f5556d6b4cd40826bfaa0135c629e30b8e0546af333128851d45d59",
+    "sha256": "3e980f85502821623e550e2865d1d0b6b3ebb2f70899c95e3407cb7942fcff23",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -110,5 +96,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-17 11:21:11"
+  "exported": "2026-10-25 11:55:26"
 }

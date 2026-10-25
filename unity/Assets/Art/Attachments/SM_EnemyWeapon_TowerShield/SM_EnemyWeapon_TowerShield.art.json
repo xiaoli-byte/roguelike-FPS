@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_EnemyWeapon_TowerShield",
   "kind": "static",
   "class": "enemy_attachment",
@@ -12,17 +12,13 @@
   },
   "keepGlow": "attachments",
   "lodDistance": [
-    0,
-    14
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.4008678197860718,
@@ -49,16 +45,6 @@
       "lod": 0,
       "tris": 3000,
       "verts": 2785,
-      "materials": [
-        "M_EnemyWeapon_TowerShield"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_EnemyWeapon_TowerShield_LOD1",
-      "lod": 1,
-      "tris": 1000,
-      "verts": 1286,
       "materials": [
         "M_EnemyWeapon_TowerShield"
       ],
@@ -95,7 +81,7 @@
   ],
   "source": {
     "glb": "public/assets/attachments/SM_EnemyWeapon_TowerShield.glb",
-    "sha256": "12b79450493d4510afd4e4826010c4028ba5e6c626222762f79c51940e77b173",
+    "sha256": "f5a5f7d08e30221c13f0d2c15d4243d1633e8a33204fd865e132d2632c4da538",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -106,5 +92,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-17 11:18:30"
+  "exported": "2026-10-25 11:55:52"
 }

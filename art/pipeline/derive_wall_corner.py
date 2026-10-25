@@ -37,11 +37,10 @@ ARM = 4.0  # metres from the corner's centre-line intersection to each arm's fla
 def main() -> None:
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     parent = manifest["assets"][SOURCE]
-    cls = CFG.data["classes"]["tripo_architecture_kit"]
     out = RUNTIME / f"{ID}.glb"
     work = ROOT / CFG.paths["source"] / "props" / "_wall_kit"
     result = blender.run("bl_wall_corner.py", {"source": str(ROOT / "public" / parent["url"]), "out": str(out), "id": ID,
-                                               "arm": ARM, "budget": cls["lod_tris"], "lod_distance": parent["lodDistance"],
+                                               "arm": ARM, "lod_distance": parent["lodDistance"],
                                                "image_format": CFG.data["export"]["image_format"],
                                                "draco": CFG.data["export"]["draco"]}, work, ID)
     for row in result["lods"]:

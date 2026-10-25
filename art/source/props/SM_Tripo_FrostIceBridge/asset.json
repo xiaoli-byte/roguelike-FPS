@@ -309,7 +309,7 @@
       ]
     },
     "build": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -392,11 +392,61 @@
           "bake_device": "none (provider textures)",
           "quality_status": "passed",
           "quality_errors": []
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:55:52",
+          "files": {
+            "SM_Tripo_FrostIceBridge_v002.blend": {
+              "path": "03_work/SM_Tripo_FrostIceBridge_v002.blend",
+              "sha256": "b8248a29765037c6a94166be860362af7dac16d5f1df0b991d34bb0023b7ffd2"
+            },
+            "SM_Tripo_FrostIceBridge_v002.glb": {
+              "path": "04_export/SM_Tripo_FrostIceBridge_v002.glb",
+              "sha256": "671afc5b48c731e26753fa69bbeb93396a5aff647ed1c8069e399bf7dd6650fd"
+            },
+            "SM_Tripo_FrostIceBridge_v002_metrics.json": {
+              "path": "03_work/SM_Tripo_FrostIceBridge_v002_metrics.json",
+              "sha256": "047b68b559a279a7c850d7faf7333268982a93a855eea72a9fc343016d2910b3"
+            },
+            "T_Tripo_FrostIceBridge_BC.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostIceBridge_BC.png",
+              "sha256": "29222261867180d71434a55526d15f7735ceb6b9689e967f5cb94cbf2bf5e1fc"
+            },
+            "T_Tripo_FrostIceBridge_N.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostIceBridge_N.png",
+              "sha256": "5d452b897de470f7fd50ddaa49cf6275167aca11f8882c26182ff5a8f6f556b5"
+            },
+            "T_Tripo_FrostIceBridge_ORM.png": {
+              "path": "03_work/textures_v002/T_Tripo_FrostIceBridge_ORM.png",
+              "sha256": "ce2297fe4b7379939be472d4953a223031c6a3ff135a7f796855395481f3cded"
+            }
+          },
+          "from": {
+            "blockout": 1,
+            "concept": 2,
+            "highpoly": 1,
+            "matid": null,
+            "emid": null
+          },
+          "align_iou": 0.704,
+          "uncovered_ratio": 0.0,
+          "lods": [
+            {
+              "tris": 8702,
+              "verts": 4373
+            }
+          ],
+          "export_kb": 354.1,
+          "seconds": 27.8,
+          "bake_device": "none (provider textures)",
+          "quality_status": "passed",
+          "quality_errors": []
         }
       ]
     },
     "validate": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -412,11 +462,26 @@
           "warnings": 1,
           "waived": [],
           "passed": true
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:55:52",
+          "files": {
+            "SM_Tripo_FrostIceBridge_v002_validation_v002.json": {
+              "path": "05_review/SM_Tripo_FrostIceBridge_v002_validation_v002.json",
+              "sha256": "c1511d73facc7b9073b438b528b13134cd30bf1e9e9d92c6473b2b705e317a8e"
+            }
+          },
+          "from_build": 2,
+          "errors": 0,
+          "warnings": 1,
+          "waived": [],
+          "passed": true
         }
       ]
     },
     "review": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -436,11 +501,30 @@
             "note": "2026-10-22 ART5：审核图四视图与概念一致（用户 2026-10-19 授权免审）",
             "time": "2026-10-22 22:10:48"
           }
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:55:57",
+          "files": {
+            "SM_Tripo_FrostIceBridge_v002_review_v002.png": {
+              "path": "05_review/SM_Tripo_FrostIceBridge_v002_review_v002.png",
+              "sha256": "d8b70e3d989b18d26a74bc48ef9f583f6b6c586ac3335f1ae6956a4d3cbaa63f"
+            }
+          },
+          "from_build": 2,
+          "deformation": {},
+          "auto_flags": [],
+          "review": {
+            "verdict": "approved",
+            "by": "Claude AI visual review（2026-10-25 不减面重建，用户授权免审）",
+            "note": "",
+            "time": "2026-10-25 11:58:41"
+          }
         }
       ]
     },
     "publish": {
-      "current": 1,
+      "current": 2,
       "versions": [
         {
           "version": 1,
@@ -452,6 +536,18 @@
             }
           },
           "from_build": 1,
+          "url": "assets/props/SM_Tripo_FrostIceBridge.glb"
+        },
+        {
+          "version": 2,
+          "created": "2026-10-25 11:58:41",
+          "files": {
+            "SM_Tripo_FrostIceBridge.glb": {
+              "path": "@root/public/assets/props/SM_Tripo_FrostIceBridge.glb",
+              "sha256": "671afc5b48c731e26753fa69bbeb93396a5aff647ed1c8069e399bf7dd6650fd"
+            }
+          },
+          "from_build": 2,
           "url": "assets/props/SM_Tripo_FrostIceBridge.glb"
         }
       ]

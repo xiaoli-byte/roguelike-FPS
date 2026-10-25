@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SK_Boss_Peng",
   "kind": "skeletal",
   "class": "boss",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "all",
   "lodDistance": [
-    0,
-    25,
-    60
+    0
   ],
   "budget": {
-    "lodTris": [
-      30000,
-      12000,
-      5000
-    ],
-    "texture": 2048,
+    "texture": 4096,
     "maxFileKb": 6000
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -3.1597464084625244,
@@ -92,26 +86,6 @@
         "M_Boss_Peng"
       ],
       "skinned": true
-    },
-    {
-      "name": "SK_Boss_Peng_LOD1",
-      "lod": 1,
-      "tris": 11819,
-      "verts": 21222,
-      "materials": [
-        "M_Boss_Peng"
-      ],
-      "skinned": true
-    },
-    {
-      "name": "SK_Boss_Peng_LOD2",
-      "lod": 2,
-      "tris": 4925,
-      "verts": 10973,
-      "materials": [
-        "M_Boss_Peng"
-      ],
-      "skinned": true
     }
   ],
   "materials": [
@@ -167,7 +141,7 @@
   ],
   "source": {
     "glb": "public/assets/characters/SK_Boss_Peng.glb",
-    "sha256": "f53bbec5ecc54cd597f59514dd732380919d67c5b332221466c750a2a61733bf",
+    "sha256": "694f28a9a4ec3f332fc99c8244cf3780357cccb8c87ec0acb47b904903ff3ab3",
     "hiRes": false,
     "version": {
       "native_build": 6
@@ -179,5 +153,5 @@
     },
     "license": null
   },
-  "exported": "2026-10-17 11:21:17"
+  "exported": "2026-10-25 11:51:25"
 }

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_EnemyWeapon_Cannon",
   "kind": "static",
   "class": "enemy_attachment",
@@ -12,17 +12,13 @@
   },
   "keepGlow": "attachments",
   "lodDistance": [
-    0,
-    14
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.2150842547416687,
@@ -49,16 +45,6 @@
       "lod": 0,
       "tris": 3000,
       "verts": 2045,
-      "materials": [
-        "M_EnemyWeapon_Cannon"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_EnemyWeapon_Cannon_LOD1",
-      "lod": 1,
-      "tris": 1000,
-      "verts": 885,
       "materials": [
         "M_EnemyWeapon_Cannon"
       ],
@@ -95,7 +81,7 @@
   ],
   "source": {
     "glb": "public/assets/attachments/SM_EnemyWeapon_Cannon.glb",
-    "sha256": "b9345fd8b9e98fd5f81793d62a59b2204c869b73c5ed10ed30491aae4c575239",
+    "sha256": "cb44ee447e93e6abb54ac13e2ed1cf2f1924c425b5b3ac8de7fdf89d6cc6e9a8",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -106,5 +92,5 @@
     "generator": null,
     "license": "Hunyuan3D 2.1 生成：Tencent Hunyuan 3D Community License，不得在欧盟 / 英国 / 韩国使用或分发"
   },
-  "exported": "2026-10-17 11:18:34"
+  "exported": "2026-10-25 11:55:31"
 }

@@ -11,21 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      1500,
-      500
-    ],
     "texture": 1024,
     "maxFileKb": 900
   },
-  "qaWaivers": {
-    "LOD1 贴图色差": "植物的 LOD1 是按更少的叶卡重新摆放的（bl_proc_desert.py），不是 LOD0 的减面，逐点对比 LOD0 的贴图不适用",
-    "LOD1 贴图拉伸": "同上：LOD1 叶卡与 LOD0 位置不同，拉伸量比较不适用；叶卡 UV 与 LOD0 用同一张图集"
-  },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.8614023923873901,
@@ -52,16 +44,6 @@
       "lod": 0,
       "tris": 1323,
       "verts": 2733,
-      "materials": [
-        "M_Env_DesertTamarisk"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Env_DesertTamarisk_LOD1",
-      "lod": 1,
-      "tris": 320,
-      "verts": 682,
       "materials": [
         "M_Env_DesertTamarisk"
       ],
@@ -98,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Env_DesertTamarisk.glb",
-    "sha256": "9ba1aeed6321558c1ac8731deb1047b89cd6c9c0085095903d9aa5589236b33d",
+    "sha256": "3a045cc039db1c5d1c1a57205a465725a1a61bf7afe47b633fac6cf47e977004",
     "hiRes": false,
     "version": {
       "blockout": 2,
@@ -113,5 +95,5 @@
     },
     "license": "project-original procedural model (art/pipeline/blender/bl_proc_desert.py)"
   },
-  "exported": "2026-10-20 23:03:26"
+  "exported": "2026-10-25 11:56:06"
 }

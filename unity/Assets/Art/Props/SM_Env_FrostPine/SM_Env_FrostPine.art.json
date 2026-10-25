@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Env_FrostPine",
   "kind": "static",
   "class": "nature_prop",
@@ -11,19 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    18,
-    42
+    0
   ],
   "budget": {
-    "lodTris": [
-      5000,
-      1600,
-      500
-    ],
     "texture": 1024,
     "maxFileKb": 900
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -1.344180941581726,
@@ -50,26 +44,6 @@
       "lod": 0,
       "tris": 5000,
       "verts": 3491,
-      "materials": [
-        "M_Env_FrostPine"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Env_FrostPine_LOD1",
-      "lod": 1,
-      "tris": 1600,
-      "verts": 1495,
-      "materials": [
-        "M_Env_FrostPine"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Env_FrostPine_LOD2",
-      "lod": 2,
-      "tris": 500,
-      "verts": 696,
       "materials": [
         "M_Env_FrostPine"
       ],
@@ -106,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Env_FrostPine.glb",
-    "sha256": "10c367e9df614f38a75714be0acc2695e5a2db65882e0e664d17ea210077a987",
+    "sha256": "b9d893ec1918edeb4367f32bc9386c0307d64fc53ed17ead8d74c1163d7bdad8",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -121,5 +95,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:19:29"
+  "exported": "2026-10-25 11:56:13"
 }

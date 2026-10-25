@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_DesertColumn",
   "kind": "static",
   "class": "tripo_prop",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -0.9416221380233765,
@@ -48,16 +44,6 @@
       "lod": 0,
       "tris": 2714,
       "verts": 2154,
-      "materials": [
-        "M_Tripo_DesertColumn"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_DesertColumn_LOD1",
-      "lod": 1,
-      "tris": 995,
-      "verts": 1047,
       "materials": [
         "M_Tripo_DesertColumn"
       ],
@@ -94,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_DesertColumn.glb",
-    "sha256": "dc6f206f889686f2506e0260effea861fe59d34d9b6b4d37b8459b0048eff4e8",
+    "sha256": "32c5e7aa31d39ff1fa8140105161230e369ab16d9249e01bce61e146dbaaa694",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -109,5 +95,5 @@
     },
     "license": "Tripo Studio paid-plan output (commercial use per Tripo terms)"
   },
-  "exported": "2026-10-17 00:29:49"
+  "exported": "2026-10-25 11:58:41"
 }

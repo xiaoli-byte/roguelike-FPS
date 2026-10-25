@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_FrostPrayerTent",
   "kind": "static",
   "class": "tripo_prop",
@@ -11,20 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
-  "qaWaivers": {
-    "LOD1 面数": "单视图高模的薄毡顶与经幡让边折叠减面停在约 1380 面（焊接 1.5% 高度也只到 1170）；20 m 外多约 400 面可接受，第一版先用（2026-10-11）"
-  },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -2.0065553188323975,
@@ -51,16 +44,6 @@
       "lod": 0,
       "tris": 2979,
       "verts": 3487,
-      "materials": [
-        "M_Tripo_FrostPrayerTent"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostPrayerTent_LOD1",
-      "lod": 1,
-      "tris": 1386,
-      "verts": 2169,
       "materials": [
         "M_Tripo_FrostPrayerTent"
       ],
@@ -97,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_FrostPrayerTent.glb",
-    "sha256": "4fa5f4fdc2c3a9ec7dd15ff71e2f3ec7c019caa0e757fa782411f2893cb21d8e",
+    "sha256": "1eb84f908c94feb72d9abd5291702ef9fab2d5110aa7fbf0bfde5eb5c0b4c286",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -112,5 +95,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.1 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:34:29"
+  "exported": "2026-10-25 12:02:02"
 }

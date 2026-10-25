@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "exporterVersion": 4,
+  "exporterVersion": 5,
   "id": "SM_Tripo_FrostCoverWall",
   "kind": "static",
   "class": "tripo_prop",
@@ -11,17 +11,13 @@
   },
   "keepGlow": "none",
   "lodDistance": [
-    0,
-    20
+    0
   ],
   "budget": {
-    "lodTris": [
-      3000,
-      1000
-    ],
     "texture": 1024,
     "maxFileKb": 700
   },
+  "qaWaivers": {},
   "bounds": {
     "min": [
       -2.822923421859741,
@@ -48,16 +44,6 @@
       "lod": 0,
       "tris": 3000,
       "verts": 3049,
-      "materials": [
-        "M_Tripo_FrostCoverWall"
-      ],
-      "skinned": false
-    },
-    {
-      "name": "SM_Tripo_FrostCoverWall_LOD1",
-      "lod": 1,
-      "tris": 1000,
-      "verts": 1265,
       "materials": [
         "M_Tripo_FrostCoverWall"
       ],
@@ -94,7 +80,7 @@
   ],
   "source": {
     "glb": "public/assets/props/SM_Tripo_FrostCoverWall.glb",
-    "sha256": "758de30d3d6da0e3ddd3a7df1a2c9f0a88cec83b4404bacda6eec3a674fbf26f",
+    "sha256": "f418562a24465d5fc59d494ca657148a102c175fb974d4b75bdbff92e58cbff6",
     "hiRes": false,
     "version": {
       "blockout": 1,
@@ -109,5 +95,5 @@
     },
     "license": "Tencent Hunyuan 3D 2.0 Community License：不得在欧盟 / 英国 / 韩国境内使用或分发"
   },
-  "exported": "2026-10-17 11:21:32"
+  "exported": "2026-10-25 12:00:54"
 }
