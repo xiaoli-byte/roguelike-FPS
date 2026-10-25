@@ -47,7 +47,8 @@ namespace Spiritfire.Game
         readonly List<Mark> marks = new();
         int builtVersion = -1;
         float lastYaw = float.NaN;
-        string captionText = "";
+        string captionText = "", capFull = "", capVerb;
+        MapMarker capFor;
 
         /// <summary>当前朝向（度，0 = 北；测试用）</summary>
         public float Heading { get; private set; }
@@ -120,6 +121,7 @@ namespace Spiritfire.Game
                 m.color = default;
                 m.arrowText = "";
                 m.arrow.text = "";
+                m.dist.text = "";
                 HudArt.Toggle(m.root, "is-target", false);
                 m.root.style.display = DisplayStyle.None;
                 if (m.marker != null) m.glyph.text = MapMarkers.Glyph(m.marker.kind);
@@ -205,7 +207,16 @@ namespace Spiritfire.Game
                         m.dist.text = meters + " 米";
                     }
                     if (Mathf.Abs(rel) <= CaptionCone)
-                        cap = string.IsNullOrEmpty(MapMarkers.TargetVerb) ? k.name : $"{MapMarkers.TargetVerb} · {k.name}";
+                    {
+                        // 目标或动词变了才重拼（不每帧分配）
+                        if (capFor != k || capVerb != MapMarkers.TargetVerb)
+                        {
+                            capFor = k;
+                            capVerb = MapMarkers.TargetVerb;
+                            capFull = string.IsNullOrEmpty(capVerb) ? k.name : $"{capVerb} · {k.name}";
+                        }
+                        cap = capFull;
+                    }
                 }
             }
             if (cap != captionText)

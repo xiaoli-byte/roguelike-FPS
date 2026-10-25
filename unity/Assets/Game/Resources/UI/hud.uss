@@ -812,6 +812,9 @@
     font-size: 12px;
     letter-spacing: 1px;
     color: #ff6a4d;
+    /* 单行（同武器名：缩放后测得略窄会挤成「灵石不 / 足」） */
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
 .sf-prompt__cost.is-short .sf-prompt__costnum {
