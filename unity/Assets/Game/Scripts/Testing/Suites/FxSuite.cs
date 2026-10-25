@@ -196,10 +196,21 @@ namespace Spiritfire.Game.Testing
                 w.element = el;
                 Aim(motor, eye, far + Vector3.right * Random.Range(-2f, 2f));
                 weapons.testFire = true;
-                // 开枪后第二帧：曳光的弹头已经飞出一段（第一帧弹头还贴在枪口）
+                // 开枪后第二帧：曳光的弹头已经飞出一段（第一帧弹头还贴在枪口）；第一人称看曳光是往屏幕里缩的一小段，
+                // 再从侧面 3 m 拍一张，看得清整条弹道的颜色和粗细
                 yield return null;
                 yield return null;
                 Shot(weapons.eye, $"fx_tracer_{el.ToString().ToLowerInvariant()}");
+                // 弹头这时在 15–20 m 外：侧面相机对准弹头那一段，3 m 外拍
+                var heads = FindObjectsByType<LineRenderer>().Where(l => l.enabled && l.name == "Tracer Head").ToArray();
+                var hd = heads.FirstOrDefault();
+                Line($"曳光 · {el}：画着的弹头 {heads.Length} 条" + (hd ? $"，长 {Vector3.Distance(hd.GetPosition(0), hd.GetPosition(1)):F1} m，宽 {hd.endWidth:F3} m，色 {hd.endColor}" : ""));
+                if (hd)
+                {
+                    var mid = (hd.GetPosition(0) + hd.GetPosition(1)) * 0.5f;
+                    SideShot(mid, eye.right * 3f + Vector3.up * 0.6f, $"fx_tracer_{el.ToString().ToLowerInvariant()}_side");
+                }
+                if (heads.Length == 0) Fail($"{el} 开枪后没有画出曳光");
                 weapons.testFire = false;
                 yield return new WaitForSeconds(0.25f);
             }
@@ -210,6 +221,20 @@ namespace Spiritfire.Game.Testing
             yield return null;
             Shot(weapons.eye, "fx_lightning");
             yield return new WaitForSeconds(0.3f);
+        }
+
+        /// <summary>临时相机从 at + offset 看向 at 拍一张（不带 HUD、不带第一人称枪模）</summary>
+        void SideShot(Vector3 at, Vector3 offset, string name)
+        {
+            var go = new GameObject("FX Side Camera");
+            var cam = go.AddComponent<Camera>();
+            cam.fieldOfView = 55;
+            cam.nearClipPlane = 0.05f;
+            cam.cullingMask = ~(1 << Layers.FirstPerson);
+            go.transform.position = at + offset;
+            go.transform.LookAt(at);
+            Shot(cam, name);
+            Destroy(go);
         }
 
         // ───────────── 命中 / 暴击 ─────────────

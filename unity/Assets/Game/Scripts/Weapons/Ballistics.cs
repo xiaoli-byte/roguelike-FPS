@@ -203,9 +203,9 @@ namespace Spiritfire.Game
             if (!stopped) end = origin + dir * range;
             if (tracer.a > 0)
             {
-                // FX1 曳光：粗细取武器表的 tracerWidth（同 Three.js；控制器传的是统一的 0.02 / 0.012），整体加粗 40% 读得清；
-                // 带元素的一发用 Three.js 元素色（火橙 / 雷蓝 / 蚀绿），再粗 25%
-                float shown = Mathf.Max(tracerWidth, def.tracerWidth) * 1.4f;
+                // FX1 曳光：粗细取武器表的 tracerWidth（同 Three.js；控制器传的是统一的 0.02 / 0.012），整体加粗到 2.2 倍
+                // （Unity 的线是柔边横截面，同样宽度看着比 Three.js 的发光带细一圈）；带元素的一发用 Three.js 元素色（火橙 / 雷蓝 / 蚀绿），再粗 25%
+                float shown = Mathf.Max(tracerWidth, def.tracerWidth) * 2.2f;
                 if (s.element != Element.None)
                 {
                     tracer = Fx.ElementColor(s.element);

@@ -126,8 +126,9 @@ namespace Spiritfire.Game
             t.trail.SetPosition(1, pHead);
             t.trail.startWidth = w * 0.15f;
             t.trail.endWidth = w * 0.45f;
-            t.trail.startColor = new Color(c.r, c.g, c.b, 0.05f * (1 - k) * c.a);
-            t.trail.endColor = new Color(c.r, c.g, c.b, 0.28f * (1 - k) * c.a);
+            // FX1：整段弹道比 Three.js 亮一些（0.05 / 0.28 → 0.1 / 0.4），第一人称往屏幕里缩的曳光也看得出从枪口连出去
+            t.trail.startColor = new Color(c.r, c.g, c.b, 0.1f * (1 - k) * c.a);
+            t.trail.endColor = new Color(c.r, c.g, c.b, 0.4f * (1 - k) * c.a);
             // 明亮的弹头拖尾
             t.head.SetPosition(0, t.a + t.dir * tail);
             t.head.SetPosition(1, pHead);
