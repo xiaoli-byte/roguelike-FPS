@@ -14,7 +14,9 @@ namespace Spiritfire.Game.Testing
     /// 武器冒烟 + 秒伤（bridge.sh playtest weapons；场景 TestArena）。场景里烘好的玩家撤掉，按默认英雄走 <see cref="PlayerFactory"/> 重新组装
     /// （第一人称 rig 按当前武器表生成），然后<b>遍历武器注册表</b>（以后加的武器自动纳入），每把：
     ///   · 发到 2 号槽并切上（<see cref="WeaponController.Give"/>），拍一张腰射第一人称图；有登记占位瞄具的（红点 / 筒式）要挂上，再拍一张开镜图；
-    ///   · 8 m 外一只定住的木桩（三彩镇墓兽：去掉护甲 / 护盾、生命 ×400、AI 停掉、不受击退；近战武器站 2.2 m），每帧瞄身体中心（等于完美压枪）、备弹无限；
+    ///   · 8 m 外一只定住的木桩（三彩镇墓兽当「大木桩」：去掉护甲 / 护盾、生命 ×400、AI 停掉、不受击退；近战武器站 2.2 m），每帧瞄身体中心（等于完美压枪）、备弹无限；
+    ///     木桩是中性的（同 TS「8 米大木桩、无头实测」）：撤掉它身上的承伤修饰（镇墓兽正面格挡只吃一成——AI 停掉后状态停在「推进」，一直举着挡）、
+    ///     关掉弱点球（否则从正面打身体中心也会穿到背上的裂缝，全部按弱点暴击算）；测量期间有一下被格挡 / 打成弱点就记出来，格挡算不合格；
     ///     全自动 / 光束 / 预热 / 点射 / 齐射 / 蓄力按住扳机，半自动隔帧点按，换弹中不扣（逐发装填不被打断）；狙击开镜打（TS 实测口径：必须开镜）；
     ///   · 计时从扣扳机起、到第 k 次换弹完成止（k 按一轮「打空一匣 + 换弹」的估算凑够约 6 s，最多 2 轮），即整轮持续秒伤；
     ///     伤害只算这把枪（weaponUid）打在木桩上的直接 / 爆炸伤害（不含灼烧 / 蚀化跳伤与反应），按暴击倍率另算「不含暴击」；
@@ -68,7 +70,7 @@ namespace Spiritfire.Game.Testing
         WeaponInstance current;
         readonly Dictionary<Damageable, float> dealtBy = new();
         float dealt, dealtNoCrit;
-        int hits, crits, fired, reloads, wantReloads;
+        int hits, crits, fired, reloads, wantReloads, blocked, weakHits;
         float windowEnd = -1;
 
         protected override IEnumerator Steps()
@@ -120,7 +122,7 @@ namespace Spiritfire.Game.Testing
 
                 var defs = WeaponLibrary.All.ToList();
                 Line($"武器 {defs.Count} 把（注册表顺序）：{string.Join("、", defs.Select(d => d.id))}；英雄 {hero.name}，木桩 {DummyId}（无甲、生命 ×{DummyHpMult}），{Distance} m");
-                csv.Add("id,name,mode,window_s,damage,dps,dps_nocrit,hits,crits,shots,ts_dps,ratio,in_band,errors");
+                csv.Add("id,name,mode,window_s,damage,dps,dps_nocrit,hits,crits,shots,ts_dps,ratio,in_band,errors,blocked,weak");
                 speed = TimeScaleArbiter.Request(this, 1, TimeScaleArbiter.Priority.HitStop - 50);
                 foreach (var def in defs) yield return WeaponCase(def, speed);
 
@@ -158,6 +160,8 @@ namespace Spiritfire.Game.Testing
             var w = current;
             if (w == null || e.info.weaponUid != w.uid || e.info.source != DamageSource.Weapon || e.info.reaction || !(e.result.total > 0)) return;
             if (!e.enemy) return;
+            if (e.result.blocked) blocked++;
+            if (e.info.weakpoint) weakHits++;
             float t = e.result.total;
             dealtBy.TryGetValue(e.enemy, out var sum);
             dealtBy[e.enemy] = sum + t;
@@ -189,7 +193,7 @@ namespace Spiritfire.Game.Testing
             current = w;
             dealtBy.Clear();
             dealt = dealtNoCrit = 0;
-            hits = crits = fired = reloads = 0;
+            hits = crits = fired = reloads = blocked = weakHits = 0;
             windowEnd = -1;
         }
 
@@ -303,14 +307,19 @@ namespace Spiritfire.Game.Testing
             speed.Scale = 1;
 
             float dps = dealt / window, dpsNoCrit = dealtNoCrit / window;
+            // 专项（火焰穿透）会重置计数：CSV 用这一刻的值
+            var row = string.Join(",", def.id, def.name, FireModes.Create(def).Id, F(window), F(dealt), F(dps), F(dpsNoCrit), hits, crits, fired);
+            int blocked0 = blocked, weak0 = weakHits;
             bool known = TsDps.TryGetValue(def.id, out float ts);
             float lo = known ? ts * (1 - BandTolerance) : 60, hi = known ? ts * (1 + BandTolerance) : 90;
             bool inBand = dpsNoCrit >= lo && dpsNoCrit <= hi;
             string band = known ? $"TS {ts:0.#}（±20%：{lo:0}–{hi:0}）" : $"通用带 {lo:0}–{hi:0}";
             Line($"秒伤：{dps:F1}（不含暴击 {dpsNoCrit:F1}），{band} {(inBand ? "✓" : "⚠ 带外")}；" +
-                 $"窗口 {window:F1} s（{reloads} 次换弹 / 估一轮 {cycle:F1} s），命中 {hits}（暴击 {crits}），开火 {fired}");
+                 $"窗口 {window:F1} s（{reloads} 次换弹 / 估一轮 {cycle:F1} s），命中 {hits}（暴击 {crits}），开火 {fired}" +
+                 (blocked > 0 || weakHits > 0 ? $"；⚠ 被格挡 {blocked}、弱点 {weakHits}" : ""));
             if (!inBand) outOfBand.Add($"{def.id} {dpsNoCrit:F0}");
             if (!(dealt > 0)) Fail($"{def.name}：{window:F1} s 里一点伤害都没打到木桩上（开火 {fired} 次）");
+            if (blocked > 0) Fail($"{def.name}：木桩格挡了 {blocked} / {hits} 下（承伤修饰没撤干净），秒伤不可信");
 
             // ── 专项 ──
             if (slowing)
@@ -344,8 +353,7 @@ namespace Spiritfire.Game.Testing
             int errs = logErrors - err0;
             Line($"{def.name}：报错 {errs}{(errs > 0 ? $"（最后一条：{lastError}）" : "")}");
             if (errs > 0) Fail($"{def.name}：期间有 {errs} 条运行时报错（最后一条：{lastError}）");
-            csv.Add(string.Join(",", def.id, def.name, FireModes.Create(def).Id, F(window), F(dealt), F(dps), F(dpsNoCrit), hits, crits, fired,
-                known ? F(ts) : "", known ? F(dpsNoCrit / ts) : "", inBand ? 1 : 0, errs));
+            csv.Add(string.Join(",", row, known ? F(ts) : "", known ? F(dpsNoCrit / ts) : "", inBand ? 1 : 0, errs, blocked0, weak0));
             current = null;
             arena.Clear();
             yield return new WaitForSeconds(0.2f);
@@ -570,13 +578,21 @@ namespace Spiritfire.Game.Testing
             return e;
         }
 
-        /// <summary>定住木桩：停导航、停 AI（镇墓兽本身不吃击退）</summary>
+        /// <summary>
+        /// 定住木桩并做成中性靶：停导航、停 AI（镇墓兽本身不吃击退）；撤掉敌人自带的全部承伤修饰（镇墓兽的正面格挡 ×0.1 / 弱点 ×0.05——
+        /// AI 停掉后状态停在「推进」，格挡一直举着）；关掉弱点球（同 TS 的无头实测：只打身体，暴击只剩基础暴击率）。
+        /// 出生 1 s 后才调（Awake / Start 里登记的修饰器都已经挂上了）
+        /// </summary>
         static void Freeze(EnemyAI ai)
         {
             if (!ai) return;
             var agent = ai.GetComponent<UnityEngine.AI.NavMeshAgent>();
             if (agent && agent.isOnNavMesh) agent.isStopped = true;
             ai.enabled = false;
+            var h = ai.Health;
+            if (h) h.Incoming.Clear();
+            var body = ai.GetComponent<EnemyBody>();
+            if (body) body.SetWeakPointActive(false);
         }
 
         /// <summary>站到 a 的 distance 米外（从它往出生点那一侧），面朝它</summary>
