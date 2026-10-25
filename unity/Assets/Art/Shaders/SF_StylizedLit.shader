@@ -3,6 +3,8 @@
 // 环境光取球谐，ORM 的 AO 与 SSAO 取小；金属 / 低粗糙度区域加一圈阶梯高光与环境反射；
 // 边缘光（菲涅尔）勾出剪影，受击闪白 / 词缀着色走 _FlashAmount / _Tint。
 // _Tint.a = 输出 alpha（默认 1；不透明材质的混合是 One Zero，不受影响）：幻影类实例把材质切到 SrcAlpha 混合后靠它淡化 / 闪烁。
+// 溶解（FX2）：_DissolveParams.x > 0 时按 UV 噪声 + 高度渐变裁掉像素、前沿发光（DeathDissolve 死亡化灰、SpawnMaterialize 出生显形），
+// 阴影 / 深度 Pass 一起裁；默认 0 时和沙魇的变体段一样整段跳过。
 // _FUR：带毛 / 羽的角色（sidecar 的 fur 配置）。画质「中」以上（全局 _SFFurDetail）加顺毛向的发丝明暗、各向异性光泽、
 // 剪影绒边，明暗交界更软；画质「高」再由 FurShells 叠 Spiritfire/FurShell 壳层（见 SF_Fur.hlsl）。
 Shader "Spiritfire/StylizedLit"
@@ -48,6 +50,11 @@ Shader "Spiritfire/StylizedLit"
         _VariantParams("Variant (x Sand, y Crack, z Density, w Pulse)", Vector) = (0, 0, 14, 3)
         _VariantSandColor("Variant Sand Color", Color) = (0.85, 0.7, 0.48, 1)
         [HDR] _VariantCrackColor("Variant Crack Color", Color) = (0, 0, 0, 1)
+
+        [Header(Dissolve)]
+        _DissolveParams("Dissolve (x Amount, y Edge, z Density, w Height Weight)", Vector) = (0, 0.08, 9, 0)
+        _DissolvePlane("Dissolve Plane (x Base Y, y Per Meter)", Vector) = (0, -0.5, 0, 0)
+        [HDR] _DissolveEdgeColor("Dissolve Edge Color", Color) = (2.4, 1.1, 0.4, 1)
 
         [Header(Surface)]
         _Cutoff("Alpha Cutoff", Range(0,1)) = 0.5
@@ -220,6 +227,14 @@ Shader "Spiritfire/StylizedLit"
                 #if defined(LOD_FADE_CROSSFADE)
                 LODFadeCrossFade(i.positionCS);
                 #endif
+                // 溶解（FX2）：默认 x = 0 整段跳过；溶掉的像素裁掉，前沿一圈发光
+                half dissolveEdge = 0;
+                [branch] if (_DissolveParams.x > 0.0001)
+                {
+                    half df = SFDissolveField(i.uv, i.positionWS);
+                    clip(df);
+                    dissolveEdge = 1.0 - smoothstep(0.0, max((half)_DissolveParams.y, 0.001), df);
+                }
                 half3 albedo = base.rgb * _Tint.rgb;
                 half variantCrack = 0;
                 [branch] if (_VariantParams.x + _VariantParams.y > 0.001)
@@ -289,6 +304,7 @@ Shader "Spiritfire/StylizedLit"
                 color += _VariantCrackColor.rgb * variantCrack;
 
                 color = lerp(color, _FlashColor.rgb, _FlashAmount);
+                color += _DissolveEdgeColor.rgb * dissolveEdge;
                 color = MixFog(color, i.fogAndVertexLight.x);
                 return half4(color, _Tint.a);
             }
@@ -322,7 +338,7 @@ Shader "Spiritfire/StylizedLit"
             float3 _LightPosition;
 
             struct Attributes { float4 positionOS : POSITION; float3 normalOS : NORMAL; float2 uv : TEXCOORD0; UNITY_VERTEX_INPUT_INSTANCE_ID };
-            struct Varyings { float4 positionCS : SV_POSITION; float2 uv : TEXCOORD0; UNITY_VERTEX_INPUT_INSTANCE_ID };
+            struct Varyings { float4 positionCS : SV_POSITION; float2 uv : TEXCOORD0; float3 positionWS : TEXCOORD1; UNITY_VERTEX_INPUT_INSTANCE_ID };
 
             Varyings ShadowVert(Attributes input)
             {
@@ -338,6 +354,7 @@ Shader "Spiritfire/StylizedLit"
                 #endif
                 o.positionCS = ApplyShadowClamping(TransformWorldToHClip(ApplyShadowBias(positionWS, normalWS, lightDir)));
                 o.uv = TRANSFORM_TEX(input.uv, _BaseMap);
+                o.positionWS = positionWS;
                 return o;
             }
 
@@ -347,6 +364,7 @@ Shader "Spiritfire/StylizedLit"
                 #if defined(_ALPHATEST_ON)
                 clip(SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, i.uv).a * _BaseColor.a - _Cutoff);
                 #endif
+                [branch] if (_DissolveParams.x > 0.0001) clip(SFDissolveField(i.uv, i.positionWS));
                 #if defined(LOD_FADE_CROSSFADE)
                 LODFadeCrossFade(i.positionCS);
                 #endif
@@ -376,7 +394,7 @@ Shader "Spiritfire/StylizedLit"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
 
             struct Attributes { float4 positionOS : POSITION; float2 uv : TEXCOORD0; UNITY_VERTEX_INPUT_INSTANCE_ID };
-            struct Varyings { float4 positionCS : SV_POSITION; float2 uv : TEXCOORD0; UNITY_VERTEX_INPUT_INSTANCE_ID UNITY_VERTEX_OUTPUT_STEREO };
+            struct Varyings { float4 positionCS : SV_POSITION; float2 uv : TEXCOORD0; float3 positionWS : TEXCOORD1; UNITY_VERTEX_INPUT_INSTANCE_ID UNITY_VERTEX_OUTPUT_STEREO };
 
             Varyings DepthVert(Attributes input)
             {
@@ -386,6 +404,7 @@ Shader "Spiritfire/StylizedLit"
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
                 o.positionCS = TransformObjectToHClip(input.positionOS.xyz);
                 o.uv = TRANSFORM_TEX(input.uv, _BaseMap);
+                o.positionWS = TransformObjectToWorld(input.positionOS.xyz);
                 return o;
             }
 
@@ -396,6 +415,7 @@ Shader "Spiritfire/StylizedLit"
                 #if defined(_ALPHATEST_ON)
                 clip(SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, i.uv).a * _BaseColor.a - _Cutoff);
                 #endif
+                [branch] if (_DissolveParams.x > 0.0001) clip(SFDissolveField(i.uv, i.positionWS));
                 #if defined(LOD_FADE_CROSSFADE)
                 LODFadeCrossFade(i.positionCS);
                 #endif
@@ -432,6 +452,7 @@ Shader "Spiritfire/StylizedLit"
                 float2 uv : TEXCOORD0;
                 half3 normalWS : TEXCOORD1;
                 half4 tangentWS : TEXCOORD2;
+                float3 positionWS : TEXCOORD3;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
                 UNITY_VERTEX_OUTPUT_STEREO
             };
@@ -447,6 +468,7 @@ Shader "Spiritfire/StylizedLit"
                 o.normalWS = nrm.normalWS;
                 o.tangentWS = half4(nrm.tangentWS, input.tangentOS.w * GetOddNegativeScale());
                 o.uv = TRANSFORM_TEX(input.uv, _BaseMap);
+                o.positionWS = TransformObjectToWorld(input.positionOS.xyz);
                 return o;
             }
 
@@ -461,6 +483,7 @@ Shader "Spiritfire/StylizedLit"
                 #if defined(_ALPHATEST_ON)
                 clip(SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, i.uv).a * _BaseColor.a - _Cutoff);
                 #endif
+                [branch] if (_DissolveParams.x > 0.0001) clip(SFDissolveField(i.uv, i.positionWS));
                 #if defined(LOD_FADE_CROSSFADE)
                 LODFadeCrossFade(i.positionCS);
                 #endif

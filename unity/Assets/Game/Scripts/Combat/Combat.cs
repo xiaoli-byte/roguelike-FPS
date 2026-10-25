@@ -42,7 +42,7 @@ namespace Spiritfire.Game
         public ICollection<Damageable> exclude;
         /// <summary>收集被炸到（造成了伤害）的敌人：画雷弧、计数</summary>
         public List<Damageable> hitList;
-        /// <summary>爆炸特效颜色（null = 按元素取色）；特效单元接入前不使用</summary>
+        /// <summary>爆炸特效颜色（null = 按元素取色，无元素默认橙 0xff8a3a）</summary>
         public Color? color;
 
         public ExplosionOptions(Vector3 center, float radius, DamageInfo info)
@@ -424,8 +424,12 @@ namespace Spiritfire.Game
         {
             var center = o.center;
             float radius = o.radius;
-            // 爆炸声：半径越大越响、越沉（同 Three.js Combat.explode）
-            if (!o.noFx) GameAudio.PlayAt("explosion", center, Mathf.Clamp(0.5f + radius * 0.09f, 0.5f, 1f), Mathf.Clamp(1.25f - radius * 0.06f, 0.75f, 1.2f));
+            // 爆炸特效 + 爆炸声（同 Three.js Combat.explode）：颜色 = 调用方给的 / 元素色 / 默认橙；声音半径越大越响、越沉
+            if (!o.noFx)
+            {
+                Fx.Explosion(center, radius, o.color ?? (o.info.element != Element.None ? Fx.ElementColor(o.info.element) : Fx.ExplosionColor));
+                GameAudio.PlayAt("explosion", center, Mathf.Clamp(0.5f + radius * 0.09f, 0.5f, 1f), Mathf.Clamp(1.25f - radius * 0.06f, 0.75f, 1.2f));
+            }
             int hits = 0;
             if (!o.noEnemies && depth < MaxExplodeDepth)
             {

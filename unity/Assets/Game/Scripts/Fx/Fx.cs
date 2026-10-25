@@ -5,7 +5,9 @@ namespace Spiritfire.Game
 {
     /// <summary>
     /// 特效门面（docs/unity-parity.md F1；对应 Three.js 的 IFx / src/fx/Fx.ts）。玩法代码只调这里：
-    ///   Play（按预设 id）、Burst、Ring、EnemyHit、Explosion、Impact、Beam、Lightning、Tracer、Flash、Slash。
+    ///   Play（按预设 id）、Burst、Ring、EnemyHit、Explosion、Impact、Beam、Lightning、Tracer、Flash、Slash；
+    ///   FX1 / FX2 追加：ImpactHit（按地表 + 弹孔）、ShieldShatter / ArmorBreak、Death、MuzzleFlash（挂点）、MeltdownPool、AbyssWindup / Abyss，
+    ///   元素色 ElementColor / ShotColor / LayerColor（与 Three.js 一致）。命中火花、出生 / 死亡、状态外观由 <see cref="FxDirector"/> 按战斗事件自动出。
     /// 每个入口都返回 <see cref="FxHandle"/>（可取消、可改端点 / 位置；不需要就丢掉）。
     /// 背后是池化的 Shuriken 共享发射器（每种粒子风格一个，预设在 G/Fx/Presets，FxBuilder 生成预制体和材质）、
     /// 池化的线（<see cref="FxLines"/>、<see cref="Spiritfire.Game.Lightning"/>）、闪光灯（<see cref="FxLightPool"/>）、贴地环（<see cref="Telegraph"/>）。
@@ -25,6 +27,33 @@ namespace Spiritfire.Game
         public static readonly Color BeamColor = Hex.Rgb(0x6fd8ff);
         public static readonly Color LightningColor = Hex.Rgb(0x8fe3ff);
         public static readonly Color EnemyColor = Hex.Rgb(0xff4455);
+
+        /// <summary>无元素的弹道 / 弹着点暖白（Three.js Firing.shotColor 的 0xffd9a0）</summary>
+        public static readonly Color ShotWarm = Hex.Rgb(0xffd9a0);
+        /// <summary>伤害层色（Three.js DamageCalc.LAYER_COLORS）：护盾 / 护甲 / 生命</summary>
+        public static readonly Color ShieldColor = Hex.Rgb(0x7cc8ff), ArmorColor = Hex.Rgb(0xffd060), HealthColor = Hex.Rgb(0xff5a44);
+
+        static readonly Color FireColor = Hex.Rgb(0xff6a1f), ShockColor = Hex.Rgb(0x6fd8ff), CorrodeColor = Hex.Rgb(0x9dff4a), NoneColor = Hex.Rgb(0xfff1d6);
+
+        /// <summary>元素色（与 Three.js core/types.ts 的 ELEMENT_COLORS 一致）：无 0xfff1d6、火 0xff6a1f、雷 0x6fd8ff、蚀 0x9dff4a。特效一律用这一套</summary>
+        public static Color ElementColor(Element e) => e switch
+        {
+            Element.Fire => FireColor,
+            Element.Shock => ShockColor,
+            Element.Corrode => CorrodeColor,
+            _ => NoneColor,
+        };
+
+        /// <summary>弹道色（曳光、弹着点）：无元素暖白，有元素用元素色（Three.js shotColor）</summary>
+        public static Color ShotColor(Element e) => e == Element.None ? ShotWarm : ElementColor(e);
+
+        /// <summary>命中火花的层色（没有元素时：打在盾上蓝、甲上金、血肉上用敌人自己的颜色）</summary>
+        public static Color LayerColor(DamageLayer layer) => layer switch
+        {
+            DamageLayer.Shield => ShieldColor,
+            DamageLayer.Armor => ArmorColor,
+            _ => HealthColor,
+        };
 
         /// <summary>冲击环的竖直光墙只给中小型环（2–8 m）：Boss 的 10–15 m 装饰大环若也立一圈光墙，会和真正要跳过的冲击波混淆</summary>
         public const float BandMinRadius = 2f, BandMaxRadius = 8f;
@@ -75,6 +104,91 @@ namespace Spiritfire.Game
             Play("Impact", point, normal, color, size);
 
         public static FxHandle Impact(Vector3 point, Vector3 normal, float size = 1) => Impact(point, normal, ImpactColor, size);
+
+        /// <summary>按地表材质的弹着点：石（默认）/ 沙 / 冰 / 金属各一个预设（Presets/Impact*.cs）</summary>
+        public static FxHandle Impact(Vector3 point, Vector3 normal, Color color, float size, SurfaceKind surface) =>
+            Play(ImpactId(surface), point, normal, color, size);
+
+        public static string ImpactId(SurfaceKind s) => s switch
+        {
+            SurfaceKind.Sand => "ImpactSand",
+            SurfaceKind.Ice => "ImpactIce",
+            SurfaceKind.Metal => "ImpactMetal",
+            _ => "Impact",
+        };
+
+        /// <summary>
+        /// 子弹打在几何表面上（射线命中）：按碰撞体判地表材质选弹着点预设，小型命中（size ≤ 1.6，同 Three.js）再留一个弹孔贴花
+        /// （<see cref="FxDecals.Hole"/>：石 / 沙 / 冰 / 金属各一种，11 s 后淡出）。角色、触发器上不留弹孔。
+        /// </summary>
+        public static FxHandle ImpactHit(in RaycastHit hit, Color color, float size = 1, bool hole = true)
+        {
+            var c = hit.collider;
+            if (!c) return Impact(hit.point, hit.normal, color, size);
+            var kind = Surfaces.Classify(in hit);
+            var h = Impact(hit.point, hit.normal, color, size, kind);
+            if (hole && size <= 1.6f && !c.isTrigger && c.gameObject.layer != Layers.Character && !c.GetComponent<Hitbox>())
+                FxDecals.Hole(hit.point, hit.normal, 0.28f * Mathf.Clamp(size, 0.3f, 1.6f) + 0.12f, kind, kind == SurfaceKind.Metal ? 1f : 0.8f);
+            return h;
+        }
+
+        /// <summary>
+        /// 打中敌人的伤害层变体：盾上（蓝色六边形涟漪、能量火花，没有碎肉）、甲上（金属火花、金色甲屑）、血肉（<see cref="EnemyHit"/>）。
+        /// 暴击一律走暴击预设（星芒 + 环），盾 / 甲再叠一层小号的层反馈。
+        /// </summary>
+        public static FxHandle EnemyHit(Vector3 point, Color color, bool crit, DamageLayer layer, float scale = 1)
+        {
+            if (crit)
+            {
+                var h = EnemyHit(point, color, true, scale);
+                if (layer != DamageLayer.Health) Play(layer == DamageLayer.Shield ? "EnemyHitShield" : "EnemyHitArmor", point, Vector3.up, color, scale * 0.7f);
+                return h;
+            }
+            return layer switch
+            {
+                DamageLayer.Shield => Play("EnemyHitShield", point, Vector3.up, color, scale),
+                DamageLayer.Armor => Play("EnemyHitArmor", point, Vector3.up, color, scale),
+                _ => EnemyHit(point, color, false, scale),
+            };
+        }
+
+        /// <summary>护盾被打穿：蓝色六边形碎片四散、一圈护盾格从身体表面崩开、冲击环、蓝白闪光（Presets/ShieldShatter.cs）。radius = 身体半径</summary>
+        public static FxHandle ShieldShatter(Vector3 center, float radius) => Play("ShieldShatter", center, Vector3.up, ShieldColor, radius);
+
+        /// <summary>护甲被打穿：金色甲片崩飞弹跳、金属火花、闪光（Presets/ArmorChip.cs）。radius = 身体半径</summary>
+        public static FxHandle ArmorBreak(Vector3 center, float radius) => Play("ArmorChip", center, Vector3.up, ArmorColor, radius);
+
+        /// <summary>死亡迸散（Three.js deathEffect）：闪光、敌人色碎块、发光碎屑、火花、烟、升起的魂火、贴地小环（Presets/Death.cs）。size = 身体直径</summary>
+        public static FxHandle Death(Vector3 center, Color color, float size) => Play("Death", center, Vector3.up, color, size);
+
+        /// <summary>
+        /// 枪口火焰（FX1）：socket 非空时第一人称火焰挂在这个挂点下（FirstPerson 层，跟着枪模走），否则放在 fallback（相机前的常数枪口位置，
+        /// 换算到第一人称相机里同一个屏幕位置）。同一帧里重复的请求合成一次（W3/W4 的挂点回调和 ShotFx 的旧调用同时到时只出一次火焰、一盏灯）。
+        /// dir = 枪管方向（世界），color = 元素色 / 暖黄，strength = 武器表的 flash / 0.12（1 ≈ 冲锋枪一发）。
+        /// </summary>
+        public static void MuzzleFlash(Transform socket, Vector3 fallback, Vector3 dir, Color color, float strength) =>
+            MuzzleFlashes.Request(socket, fallback, dir, color, strength, true);
+
+        /// <summary>熔金反应的熔池（FX2）：流动的熔铜贴花 + 蚀绿冒泡 + 余烬；句柄 Cancel 提前收掉</summary>
+        public static FxHandle MeltdownPool(Vector3 center, float radius, float duration)
+        {
+            var h = FxDecals.Pool(center, radius, duration);
+            // 没有贴花支持（或材质缺失）时退回预警系统的持续区域样式
+            return h.Alive ? h : Telegraph.Zone(center, radius, duration, new Color(1f, 0.48f, 0.1f, 0.55f));
+        }
+
+        /// <summary>归墟收束（FX2）：紫色预警圈 + 三色涡旋向中心收拢 + 越来越亮的紫黑核心，持续 seconds 秒</summary>
+        public static FxHandle AbyssWindup(Vector3 ground, float radius, float seconds)
+        {
+            Telegraph.Circle(ground, radius, seconds, AbyssColor);
+            return FxDecals.Vortex(ground + Vector3.up * 0.02f, radius, seconds + 0.1f);
+        }
+
+        /// <summary>归墟爆开（FX2）：紫黑核心坍缩再炸开、三色光点螺旋甩出、紫环（Presets/Abyss.cs）。radius = 余波半径</summary>
+        public static FxHandle Abyss(Vector3 center, float radius) => Play("Abyss", center, Vector3.up, AbyssColor, radius);
+
+        /// <summary>归墟色（Three.js REACTION_COLORS.abyss）</summary>
+        public static readonly Color AbyssColor = Hex.Rgb(0xc89bff);
 
         /// <summary>
         /// 打中敌人：闪光、带重力的能量溅射、敌人色碎块、火花；暴击再加金色星芒、白热核心、一圈水平拉丝（规模 ×1.7）。

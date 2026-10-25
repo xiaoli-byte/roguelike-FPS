@@ -81,7 +81,8 @@ namespace Spiritfire.Game
 
         public float DotStatMultiplier(Damageable d, Element e) => DamageCalc.DotStatMultiplier(d, e);
 
+        /// <summary>归墟收束：紫色预警圈 + 三色涡旋把光点卷进中心（FX2，<see cref="Fx.AbyssWindup"/>）</summary>
         public void Windup(Damageable d, Vector3 point, float seconds) =>
-            Telegraph.Circle(ReactionSystem.Ground(point), CombatTuning.Abyss.WarnRadius, seconds, CombatTuning.ReactionColors[(int)Reaction.Abyss]);
+            Fx.AbyssWindup(ReactionSystem.Ground(point), CombatTuning.Abyss.WarnRadius, seconds);
     }
 }

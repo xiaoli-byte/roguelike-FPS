@@ -17,6 +17,8 @@ namespace Spiritfire.Game
 
         sealed class Pool
         {
+            /// <summary>熔池贴花（FX2）：池子提前结束（被挤掉、清场）时一起收掉</summary>
+            public FxHandle fx;
             public Vector3 center;
             public float radius, b, age, next;
             public int ticks, depth, weaponUid;
@@ -40,8 +42,9 @@ namespace Spiritfire.Game
                 j.hits++;
             var foot = alive ? e.transform.position : ReactionSystem.Ground(c);
             Spawn(foot + Vector3.up * 0.05f, ReactionSystem.Radius(M.PoolRadius), b, j.depth, j.weaponUid);
-            var fx = ShotFx.Instance;
-            if (fx) fx.Impact(c, Vector3.up, true, 6f);
+            // 表现（同 Three.js runMeltdown）：熔金橙的下坠爆发 + 蚀绿爆发；脚下的熔池贴花在 Spawn 里
+            Fx.Burst(c, CombatTuning.ReactionColors[(int)Reaction.Meltdown], 14, 4f, 0.6f, 0.14f, 12f);
+            Fx.Burst(c, Fx.ElementColor(Element.Corrode), 8, 2.5f, 0.7f, 0.1f, 8f);
             GameAudio.PlayAt("skill_fire", c, 0.55f, 0.75f);
             GameAudio.PlayAt("corrode_tick", c, 0.7f);
         }
@@ -65,7 +68,7 @@ namespace Spiritfire.Game
             pool.touched.Clear();
             pools.Add(pool);
             ReactionSystem.Stats.pools = pools.Count;
-            Telegraph.Circle(center, radius, M.PoolTick * M.PoolTicks, M.PoolColor);
+            pool.fx = Fx.MeltdownPool(center, radius, M.PoolTick * M.PoolTicks);
         }
 
         public override void Tick(float dt)
@@ -108,17 +111,21 @@ namespace Spiritfire.Game
                 if (pool.touched.Add(d)) Combat.AttachFromReaction(d, Element.Corrode, pool.b * M.PoolCorrode, pool.depth + 1, pool.weaponUid);
             }
             snapshot.Clear();
-            var fx = ShotFx.Instance;
-            if (fx)
-                for (int k = 0; k < 2; k++)
-                {
-                    var off = Random.insideUnitCircle * pool.radius * 0.8f;
-                    fx.Impact(pool.center + new Vector3(off.x, 0.1f, off.y), Vector3.up, true, 0.8f);
-                }
+            // 每跳（同 Three.js tickPool）：熔池光环 + 两团上升的火星（熔池贴花自己也一直冒余烬）
+            Fx.Ring(pool.center, pool.radius, CombatTuning.ReactionColors[(int)Reaction.Meltdown], 0.5f, false);
+            for (int k = 0; k < 2; k++)
+            {
+                var off = Random.insideUnitCircle * pool.radius * 0.85f;
+                Fx.Burst(pool.center + new Vector3(off.x, 0.1f, off.y), PoolEmber, 4, 1.5f, 0.6f, 0.1f, -3f);
+            }
         }
+
+        static readonly Color PoolEmber = Hex.Rgb(0xffa040);
 
         void Recycle(Pool pool)
         {
+            pool.fx.Cancel();
+            pool.fx = FxHandle.None;
             pool.touched.Clear();
             spare.Push(pool);
         }

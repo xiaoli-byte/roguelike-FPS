@@ -142,20 +142,20 @@
 | 暴击 / 弱点 | 🟡 | 投射物打不出弱点；没有 canCrit | 投射物取同体弱点球；`noCrit` | S | C4 |
 | 属性乘区 | 🟡 | 缺 19 个属性键；只按来源算乘区 | 按标签算；Mult 下限 0.05 | S | W0-1 |
 | 护盾 → 护甲 → 生命 | 🟡 | 缺护盾 / 护甲%、skipShield、首层与主层区分、溢出量 | 照 TS 移植 `applyLayers` | S | W0-1 |
-| 破盾 / 破甲反馈 | 🟡 | 只有声音 | 事件 + 碎片特效 | S | W0-2 / FX1 |
+| 破盾 / 破甲反馈 | ✅ | —（FX1：`FxDirector` 订阅破盾 / 破甲事件 → `ShieldShatter` 六边形碎片 / `ArmorChip` 甲片；打在盾 / 甲上的每一下也有各自的火花变体） | 事件 + 碎片特效 | S | W0-2 / FX1 |
 | 灼烧 / 雷殛 / 蚀化 / 减速 | ✅ | 数值一致；只差 tick 对齐、音效节流 | 并进状态注册 | S | C2 |
 | 眩晕 | 🟡 | 缺首领规则（×0.35、≤ 0.35 s、6.1 s 免疫）和 stunImmune | `IStunPolicy` | S | C2 |
 | 状态查询与事件 | ❌ | 只有几个 bool | `StatusId` + `TryGet` + `GameEvents.StatusApplied` | S | W0-2 / C2 |
-| 状态外观 | 🟡 | 只有一张光晕面片 | 身体着色（MPB）+ 骨骼上挂粒子 | M | FX2 |
+| 状态外观 | ✅ | —（FX2：`StatusFx`，光晕面片已撤） | 身体着色（MPB）+ 骨骼上挂粒子 | M | FX2 |
 | 反应核心 | 🟡 | 事件缺深度 / 来源 / 标签 / 武器；没有大特效预算；每次反应都分配内存 | ReactionEvent 结构体 + 池化 + 每种反应一个处理器文件 | M | C1 |
-| 焚雷 / 熔金 / 封脉 / 归墟 | 🟡 | 数值都对；表现是凑出来的；封脉对首领的「脉滞」没做 | 处理器 + 特效预设 | S×4 | C1 / FX1 / FX2 |
+| 焚雷 / 熔金 / 封脉 / 归墟 | ✅ | —（表现按 Three.js 移植：焚雷金爆 / 熔池贴花 / 封脉双环 / 归墟收束涡旋 + 爆开预设，FX1 / FX2） | 处理器 + 特效预设 | S×4 | C1 / FX1 / FX2 |
 | 崩解 | ❌ | — | 并进 Detonate | S | C1 |
 | 引爆 Detonate | ❌ | 贯虹满蓄、点穴、破势都依赖它 | `ReactionSystem.Detonate` | M | C1 |
 | 强制反应 | ❌ | 涅槃、回响、劫火依赖它 | `ReactionSystem.Trigger` | S | C1 |
 | 施加元素的选项 | 🟡 | 缺 reactionScale、持续时间、归属 | `ApplyStatus(opts)` | S | C1 |
 | 反应浮字 / 首次遇到时的教学 | 🟡 | 没有预算，没有教学 | 预算 + `ReactionTips` | S | U3 |
 | 范围爆炸 | 🟡 | 没有嵌套保护；每次都分配；击退不按距离衰减 | `ExplosionOptions` + NonAlloc + 嵌套深度 ≤ 6 | S | W0-1 |
-| 爆炸特效 | ❌ | `Combat.Explode` 只播声音 | 预设：火球、烟、焦痕、灯、震屏 | M | FX1 |
+| 爆炸特效 | ✅ | —（`Combat.Explode` 默认播 `Fx.Explosion`，noFx 时不播；焦痕贴花） | 预设：火球、烟、焦痕、灯、震屏 | M | FX1 |
 | 爆炸波及玩家 | 🟡 | 只判一个点，没有冲量 | `Combat.BlastPlayer` | S | C3 |
 | 玩家受伤与修饰器 | 🟡 | 没有受伤修饰列表；伤害事件在死亡判定之后才发（不能免死） | `PlayerVitals.Incoming`；`PlayerHit` 先于死亡判定 | M | W0-2 / C3 |
 | 玩家减益 | ❌ | 寒意、日晒灼烧、点燃都没有 | `PlayerStatus` | M | C3 |
@@ -163,7 +163,7 @@
 | 吸血 | ❌ | — | 管线的奖励阶段处理 | S | C2 |
 | 伤害数字 | 🟡 | 暴击不合并、没有 DOT 道、没有开关 | 见 3.12 | M | U3 |
 | 命中标记 / 命中音 | ✅ | 只差时长曲线 | — | S | U2 |
-| 命中火花 | 🟡 | 颜色固定，没有暴击星芒 | `Fx.EnemyHit` | S | FX1 |
+| 命中火花 | ✅ | —（`FxDirector` 按伤害结果统一出：元素色 / 层色 / 敌人色，暴击星芒 + 金环，每帧 ≤ 10，同 Three.js） | `Fx.EnemyHit` | S | FX1 |
 | 受击闪白 / 硬直 / 布娃娃 | ✅ | Unity 比 Three.js 好 | 只补 KnockedBack 标志 | S | E1 |
 | 免疫 / 不可选中 | 🟡 | DOT 每跳都显示「免疫」；反应没有守卫 | 节流 + 守卫 | S | C2 |
 | 精英 / 首领战斗修正 | ❌ | Damageable 没有首领概念 | `Damageable.rank` | S | W0-1 / C2 |
@@ -184,7 +184,7 @@
 |---|---|---|---|---|---|
 | 定义与注册 | 🟡 | 6 把写死在静态构造里，缺约 20 个字段 | 每把一个 `[Defs]` 文件 | M | W0-3 |
 | 开火模式 | 🟡 | 只有 Semi / Auto / Beam | `IFireMode`：点射 / 预热 / 蓄力 / 齐射 | L | W1 |
-| 弹道 | 🟡 | 没有穿透；投射物瞄准封顶 60 m；曳光颜色固定 | 穿透循环（×0.85，最多 8 个）；元素色 HDR 曳光 | M | W1 / FX1 |
+| 弹道 | 🟡 | 没有穿透；投射物瞄准封顶 60 m（曳光已按元素着色、按武器表加粗，FX1） | 穿透循环（×0.85，最多 8 个）；元素色 HDR 曳光 | M | W1 / FX1 |
 | 数值合成 | 🟡 | 散在 WeaponController 内联；备弹和爆炸半径不吃属性 | `WeaponStatsResolver`（带缓存） | M | W2 |
 | 实例元素 | ❌ | 左轮、冲锋枪的元素率永远不触发 | 精良以上 35% 随机元素 + MPB 着色 | S | W2 |
 | 稀有度 | 🟡 | 颜色与 TS 不一致；没有章节权重和幸运 | `Rarity` 表 | S | W0-3 / W2 |
@@ -323,8 +323,8 @@
 | 精英 | 🟡 | 缺金环、名字前缀 | `EliteAura` | S | EN4 |
 | 词缀框架 | ❌ | — | `EliteAffix` 注册表 | S | EN4 |
 | 迅捷 / 坚盾 / 爆裂 / 狂暴 | ❌ | — | 每种词缀一个文件 | S×4 | EN4 |
-| 出生表现 | 🟡 | 有预警；没有显形 | 溶解显形 + 沙旋 | S | FX2 |
-| 死亡表现 / 清场 | 🟡 | 没有迸散，没有 PurgeAll | 迸散 + 溶解；`PurgeAll` | S | E1 / FX2 |
+| 出生表现 | ✅ | —（FX2：`SpawnMaterialize` 法阵贴花 + 溶解显形 + 按地表的沙旋 / 雪旋） | 溶解显形 + 沙旋 | S | FX2 |
+| 死亡表现 / 清场 | 🟡 | 没有 PurgeAll（迸散 + 尸体溶解已做，FX2 `DeathDissolve`） | 迸散 + 溶解；`PurgeAll` | S | E1 / FX2 |
 | 遭遇编排 | 🟡 | 不分站位角色，没有多波次 | 见 3.10 | L | L2 |
 | 动作补全 | 🟡 | 第二章缺约 25 段，第三章缺全部招牌状态；首领片段没有事件 | 强制状态采样 + 事件叠加 | M | E5 |
 | 圆盘影 | ➖ | URP 阴影已替代 | 只在飞行怪下加贴花 | — | — |
@@ -528,13 +528,13 @@
 | 项 | 状态 | 缺口 | Unity 做法 | 量 | 单元 |
 |---|---|---|---|---|---|
 | 特效门面与对象池 | 🟡 | 一个 `ShotFx` 单例，size 只放大粒子数 | `Fx` + `FxPreset` 注册 | L | F1 |
-| 弹着点 / 命中溅射 / 破层 | 🟡 | 没有拉丝、闪光、弹孔 | 预设 + 贴花 | M | FX1 |
-| 爆炸 | 🟡 | 视觉全缺（「炸起来不爽」的头号原因） | 闪光球、火球、烟、碎石、焦痕、灯、震屏 | M | FX1 |
-| 曳光 / 光束 / 闪电 | 🟡 | 太细、没有元素色；闪电每道一个 GameObject | 池化 + HDR | S | F1 / FX1 |
+| 弹着点 / 命中溅射 / 破层 | ✅ | —（按地表石 / 沙 / 冰 / 金属四套预设 + 弹孔贴花 SF_FxDecal；盾 / 甲 / 血肉三种命中变体） | 预设 + 贴花 | M | FX1 |
+| 爆炸 | ✅ | — | 闪光球、火球、烟、碎石、焦痕、灯、震屏 | M | FX1 |
+| 曳光 / 光束 / 闪电 | ✅ | — | 池化 + HDR | S | F1 / FX1 |
 | 预警圈 / 冲击环 | 🟡 | 平面 Quad 在坡上穿地，不能取消 | Decal 着色器（D21） | M | F2 |
-| 出生法阵 / 死亡迸散 | 🟡 | 没有 | 预设 + 溶解 | M | FX2 |
-| 枪口火焰 | 🟡 | 只有一盏共用灯，位置是常数 | 挂到 muzzle socket | S | W4 / FX1 |
-| 反应 / 状态视觉 | 🟡 | 熔池只是一个圈 | 熔池贴花着色器 + 身体着色 | M | FX2 |
+| 出生法阵 / 死亡迸散 | ✅ | — | 预设 + 溶解 | M | FX2 |
+| 枪口火焰 | ✅ | —（`Fx.MuzzleFlash(socket, …)`：第一人称星芒 + 火舌挂在 W3 的挂点下，没有挂点退回常数枪口；同帧请求合并） | 挂到 muzzle socket | S | W4 / FX1 |
+| 反应 / 状态视觉 | ✅ | — | 熔池贴花着色器 + 身体着色 | M | FX2 |
 | 光源池 | 🟡 | 全局只有 1 盏 | 6–8 盏 | S | F1 |
 | 着色器预热 | ❌ | 打包可能丢变体 | ShaderVariantCollection | S | F1 |
 | 镜头 rig（晃动、倾斜、弹簧、受击冲击） | ❌ | — | `CameraFeel`（唯一写入方） | M | F3 |
@@ -953,8 +953,8 @@ W0-5 把约 30 处 `Hud.Instance.*` 调用机械替换成 `GameUI.*`，先转发
 | EN3d 炮仗傀儡 + 神火飞鸦 | 一窝蜂齐射、哑火、地老鼠、死亡连环爆；鸦群盘旋、点燃俯冲、空爆连锁 | `…/Inferno/{Firecracker,FireCrow}*` `S/bake/SK_Enemy_{Firecracker,FireCrow}.mjs` | E2 E3 E4 E5 | 是 | M |
 | EN3e 熔铜匠 + 傩巫 | 浇铜衣（先 ×2 后 ×0.5）、坩埚裂；三面光环（FaceDef）、换脸、碎面、扫火 | `…/Inferno/{Founder,Nuo}*` `S/bake/SK_Enemy_{Founder,Nuo}.mjs` | E1 E2 E4 E5 FX4 | 是 | M |
 | EN4 精英词缀与外观 | 词缀注册 + 迅捷 / 坚盾 / 爆裂 / 狂暴 + 金环 + 名字前缀 + 排除表 | `G/Enemies/Affixes/*` `G/Enemies/EliteAura.cs` | E1 E4 F1 | 否 | M |
-| FX1 战斗特效一 | 爆炸、敌人命中（暴击星芒）、弹着点 + 弹孔、破盾 / 破甲、枪口、元素曳光、闪电；所有调用点接上 | `G/Fx/Presets/{Explosion,EnemyHit,Impact,ShieldShatter,ArmorChip,MuzzleFlash,Tracer,Lightning}.cs` | F1 F2 F3 | 是 | M |
-| FX2 战斗特效二 | 死亡迸散 + 溶解、出生法阵 + 显形、状态着色 / 状态粒子、熔池贴花、归墟 | `G/Fx/Presets/{Death,Spawn,Status*,MeltdownPool,Abyss}.cs` `A/Art/Shaders/SF_StylizedLit.shader` `G/Enemies/SpawnMaterialize.cs` | F1 F2 | 是 | M |
+| FX1 战斗特效一 ✅ | 爆炸、敌人命中（暴击星芒）、弹着点 + 弹孔、破盾 / 破甲、枪口、元素曳光、闪电；所有调用点接上。验收：`playtest fx`（TestArena 逐项截图 + 同屏粒子峰值） | `G/Fx/Presets/{Explosion,EnemyHit*,Impact*,ShieldShatter,ArmorChip}.cs` `G/Fx/{FxDirector,FxDecals,FxBudget,Surfaces,MuzzleFlashes}.cs` `A/Art/Shaders/SF_FxDecal.shader` `G/Testing/Suites/FxSuite.cs` | F1 F2 F3 | 是 | M |
+| FX2 战斗特效二 ✅ | 死亡迸散 + 溶解、出生法阵 + 显形、状态着色 / 状态粒子、熔池贴花、归墟 | `G/Fx/Presets/{Death,Spawn,Abyss}.cs` `G/Fx/{StatusFx,DeathDissolve}.cs` `A/Art/Shaders/SF_StylizedLit.shader`（溶解段，默认跳过） `G/Enemies/SpawnMaterialize.cs` | F1 F2 | 是 | M |
 | FX3 冰霜特效 + 发光遮罩 | 碎冰、冻雾、冰环、霜甲壳、星芒；按色键给青鸟 / 河豚 / 豪彘 / 狐巫 / 镜生成 _E 贴图 | `G/Fx/Presets/Frost*.cs` `art/pipeline/tools/emission_mask.py` | F1 | 是 | M |
 | FX4 火狱特效 + 火苗着色 + 分区遮罩 | 火药爆、熔铜流、链、火舌、地火变体；SF_StylizedLit 加 `_FLAMEKEY`；导入后处理烘焙分区（火鼍岩甲、傩面） | `G/Fx/Presets/Inferno*.cs` `P/Editor/RegionMaskPostprocessor.cs`（改 SF_StylizedLit 小块） | F1 FX2 | 是 | L |
 | R3 商店 / 强化台 | 7 个摊位、价格 ×(1+0.25ch) 取整到 5、拒绝提示、强化预览、售罄、按住 F 防误买、摊位贴地形 | `G/Loot/Shop/*` | R1 W2 U2 S0 | 是 | L |

@@ -299,21 +299,16 @@ namespace Spiritfire.Game
             info.depth = 1;
             info.tags = DamageTag.Dot;
             info.noCrit = true;
-            if (e == Element.Fire) ShotFx.Instance?.Impact(c + Random.insideUnitSphere * 0.3f, Vector3.up, true, 0.8f);
             Combat.DamageEnemy(hp, info);
             StatusAudio.DotTick(e, transform.position + Vector3.up);
         }
 
+        /// <summary>
+        /// 旧的状态光晕面片：FX2 起状态外观由 <see cref="StatusFx"/> 接管（身体着色 + 骨骼上的火舌 / 电弧 / 蚀液…，FxDirector 在 StatusApplied 时挂上），
+        /// 这里不再生成面片（glow 保持 null，各状态的 UpdateVisual 本来就判空）
+        /// </summary>
         internal void Glow(ref Transform glow, Color c, Vector3 offset)
         {
-            if (!glow)
-            {
-                var anchor = new GameObject("Status Glow").transform;
-                anchor.SetParent(transform, false);
-                anchor.position = Center + offset;
-                glow = FxMaterials.GlowSprite(anchor, 2.2f, c);
-            }
-            glow.gameObject.SetActive(true);
         }
 
         void Awake()

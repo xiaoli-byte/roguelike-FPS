@@ -54,6 +54,18 @@ namespace Spiritfire.Game
                     speed = new Vector2(9, 13), up = 1, upJitter = 3, size = new Vector2(0.045f, 0.045f), life = new Vector2(0.1f, 0.16f),
                     color = FxColor.Fixed, fixedColor = gold, mix = 0,
                 },
+                // Unity 追加（读得清）：一圈放大淡出的金环 + 两颗往外蹦的小金星
+                new FxLayer
+                {
+                    style = "RingPop", count = FxScale.Const(1), density = false, shape = FxShape.Point,
+                    size = new Vector2(0.42f, 0.42f), sizeScale = FxScale.Lin(0, 1 / 1.7f), life = new Vector2(0.16f, 0.16f), color = FxColor.Fixed, fixedColor = gold, mix = 0,
+                },
+                new FxLayer
+                {
+                    style = "Star", count = FxScale.Const(2), density = false, shape = FxShape.Sphere,
+                    speed = new Vector2(2.2f, 3.6f), up = 1.2f, size = new Vector2(0.13f, 0.18f), life = new Vector2(0.3f, 0.42f),
+                    color = FxColor.Fixed, fixedColor = Hex.Rgb(0xffe27a), mix = 0,
+                },
             };
         }
     }

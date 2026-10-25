@@ -11,8 +11,8 @@ namespace Spiritfire.Game
     }
 
     /// <summary>
-    /// 程序贴图集 T_FxAtlas 的格子（4 × 2，每格 256 px，第 0 格在左上角，与 Shuriken 的帧序一致）。
-    /// 贴图由 <see cref="FxTextures"/> 生成，FxBuilder 写成 Assets/Art/Fx/T_FxAtlas.png。
+    /// 程序贴图集 T_FxAtlas 的格子（4 × 4，每格 256 px，第 0 格在左上角，与 Shuriken 的帧序一致）。
+    /// 贴图由 <see cref="FxTextures"/> 生成，FxBuilder 写成 Assets/Art/Fx/T_FxAtlas.png。前 8 格是 F1 的，后 8 格是 FX1 / FX2 加的。
     /// </summary>
     public enum FxTexture
     {
@@ -32,6 +32,22 @@ namespace Spiritfire.Game
         Flare = 6,
         /// <summary>尘团：比烟更散更淡</summary>
         Dust = 7,
+        /// <summary>碎片：尖三角，一条边亮（护盾碎片、冰碴、玻璃）</summary>
+        Shard = 8,
+        /// <summary>六边形护盾格：亮边 + 淡芯</summary>
+        Hex = 9,
+        /// <summary>卡通五角星（眩晕绕头、暴击小星）</summary>
+        Star = 10,
+        /// <summary>水滴（蚀化滴落、液体飞溅；拉伸广告牌沿速度方向）</summary>
+        Drop = 11,
+        /// <summary>火舌：下宽上尖、边缘被噪声啃过（灼烧火苗，竖直不旋转）</summary>
+        Flame = 12,
+        /// <summary>电弧碎纹：一小段折线（感电噼啪）</summary>
+        Crackle = 13,
+        /// <summary>甲片：带一道高光边的四边形（破甲碎片）</summary>
+        Plate = 14,
+        /// <summary>符文：小篆式的方折笔画（出生法阵里升起的符点）</summary>
+        Glyph = 15,
     }
 
     /// <summary>粒子朝向：面向相机 / 沿速度拉伸（火花拉丝）/ 水平贴地</summary>
@@ -158,8 +174,10 @@ namespace Spiritfire.Game
         public float stretchVelocity = 0.02f, stretchLength = 1f;
         /// <summary>随机自转速度上限（度 / 秒，碎屑）；初始角度随机</summary>
         public float spin;
-        /// <summary>同屏上限（超出时新发射的丢弃）</summary>
+        /// <summary>同屏上限（超出时新发射的丢弃）；运行时再乘画质系数（<see cref="FxBudget.StyleCapScale"/>）</summary>
         public int maxParticles = 1000;
+        /// <summary>出生时随机转一个角度（火舌、符文这类有上下的贴图关掉，保持竖直）</summary>
+        public bool randomRotation = true;
         /// <summary>同一混合方式内的先后（大的后画、盖在上面）。贴脸淡出在共用材质上（0.12–0.9 m），不按风格分</summary>
         public int sortOrder;
     }
@@ -204,6 +222,8 @@ namespace Spiritfire.Game
         public FxScale spread = FxScale.Const(0);
         /// <summary>出生点竖直方向的散布倍率（爆炸余烬：横向 0.4r、竖向 0.3r）</summary>
         public float spreadY = 1;
+        /// <summary>散布的下限比例：出生点外移 [spreadMin, 1] × spread(s)（0.85 ≈ 贴在半径 spread 的球壳上：护盾格从身体表面崩开）</summary>
+        public float spreadMin;
 
         public FxColor color = FxColor.Tint;
         public Color fixedColor = Color.white;
@@ -243,6 +263,20 @@ namespace Spiritfire.Game
         public bool band;
     }
 
+    /// <summary>贴花（焦痕、弹孔）：离地太高的爆炸不画，见 <see cref="FxDecals"/></summary>
+    public sealed class FxDecalSpec
+    {
+        public FxDecalKind kind = FxDecalKind.Scorch;
+        /// <summary>直径（米）随规模变</summary>
+        public FxScale size = FxScale.Lin(0, 2.6f);
+        /// <summary>中心离地高度 &lt; heightFactor × s 才画</summary>
+        public float heightFactor = 0.9f;
+        /// <summary>初始余热 0..1（发光的灼痕，几秒内冷却）</summary>
+        public float heat = 1f;
+        /// <summary>存在时长（秒，最后 2 s 淡出）</summary>
+        public float life = 16f;
+    }
+
     /// <summary>按距离的震屏：k = 1 − 距离 / range(s)，强度 strength(s) · k²，时长 duration(s) + durationPerK · k</summary>
     public sealed class FxShakeSpec
     {
@@ -272,6 +306,8 @@ namespace Spiritfire.Game
         public FxLightSpec Light { get; protected set; }
         public FxRingSpec Ring { get; protected set; }
         public FxShakeSpec Shake { get; protected set; }
+        /// <summary>落地的贴花（爆炸焦痕）</summary>
+        public FxDecalSpec Decal { get; protected set; }
 
         /// <summary>调用方不给颜色时的默认色</summary>
         public Color DefaultColor { get; protected set; } = Color.white;

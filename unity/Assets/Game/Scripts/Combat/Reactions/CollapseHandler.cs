@@ -27,9 +27,9 @@ namespace Spiritfire.Game
             if (dmg > 0 && ReactionSystem.Hit(e, dmg, el, j.depth, c, DamageTag.Reaction | DamageTag.Collapse, null, j.weaponUid)) j.hits++;
             if (j.collapse == StatusId.Shock && j.pin > 0) EnemyStatus.ChainFrom(e, j.pin, j.depth);
 
-            var fx = ShotFx.Instance;
-            if (fx) fx.Impact(c, Vector3.up, true, 4f);
-            Telegraph.Wave(ReactionSystem.Ground(c), C.RingRadius, 6f, Color.white);
+            // 表现（同 Three.js runCollapse）：元素色爆发 + 白环
+            Fx.Burst(c, Fx.ElementColor(el), 14, 6f, 0.3f, 0.1f, 0);
+            Fx.Ring(ReactionSystem.Ground(c), C.RingRadius, Color.white, 0.25f, false);
             GameAudio.PlayAt("hit_crit", c, 0.8f, 0.8f);
             ReactionSystem.Label(e, c, "崩解", color, false);
         }

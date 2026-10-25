@@ -23,14 +23,14 @@ namespace Spiritfire.Game
                 new FxLayer
                 {
                     style = "Glow", count = FxScale.Const(1), density = false, shape = FxShape.Point,
-                    size = new Vector2(0.36f, 0.36f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.07f, 0.09f), color = FxColor.Hot, mix = 0.55f,
+                    size = new Vector2(0.48f, 0.48f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.08f, 0.1f), color = FxColor.Hot, mix = 0.55f,
                 },
                 // 能量溅射
                 new FxLayer
                 {
                     style = "Spark", count = FxScale.Lin(1, 3), shape = FxShape.Sphere,
                     speed = new Vector2(1.5f, 4.5f), speedScale = FxScale.Lin(0, 1), up = 1.5f,
-                    size = new Vector2(0.06f, 0.11f), life = new Vector2(0.2f, 0.4f),
+                    size = new Vector2(0.08f, 0.14f), life = new Vector2(0.2f, 0.4f),
                 },
                 // 碎块（敌人色压暗）
                 new FxLayer
@@ -42,7 +42,7 @@ namespace Spiritfire.Game
                 new FxLayer
                 {
                     style = "Streak", count = FxScale.Lin(1, 3), shape = FxShape.Sphere,
-                    speed = new Vector2(5, 11), speedScale = FxScale.Lin(0, 1), size = new Vector2(0.03f, 0.03f), life = new Vector2(0.08f, 0.2f),
+                    speed = new Vector2(5, 11), speedScale = FxScale.Lin(0, 1), size = new Vector2(0.04f, 0.04f), life = new Vector2(0.08f, 0.2f),
                 },
             };
         }

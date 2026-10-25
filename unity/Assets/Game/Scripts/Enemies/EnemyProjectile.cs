@@ -224,9 +224,8 @@ namespace Spiritfire.Game
             {
                 noEnemies = true, playerDamage = spirit ? 0 : damage, falloff = explosionFalloff, flatKnockback = true,
             };
+            // 爆炸特效（元素色）由 Combat.Explode 播（FX1）
             Combat.Explode(in o);
-            ShotFx.Instance?.Impact(at, Vector3.up, false, 3f);
-            ShotFx.Instance?.Impact(at, Vector3.up, true, 3f);
         }
 
         void Impact(Vector3 at, bool hitPlayer)

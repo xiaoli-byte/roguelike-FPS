@@ -12,8 +12,10 @@ namespace Spiritfire.Art.Editor
 {
     /// <summary>
     /// 特效资产生成器（docs/unity-parity.md F1 / F2）：按代码里的定义生成全部特效资产，重跑结果一致（贴图逐字节相同、材质 / 预制体原地覆盖，GUID 不变）。
-    ///   1. 程序贴图 → Assets/Art/Fx/T_FxAtlas.png（粒子贴图集 4×2）、T_Fx_Glow / BeamFade / Band / Line.png（<see cref="FxTextures"/>）
-    ///   2. 材质 → Assets/Game/Resources/Fx/Materials/M_Fx_*.mat（<see cref="FxMaterials.Setup"/>，运行时从 Resources 取，不再 Shader.Find）
+    ///   1. 程序贴图 → Assets/Art/Fx/T_FxAtlas.png（粒子贴图集 4×4）、T_Fx_Glow / BeamFade / Band / Line.png、
+    ///      T_Fx_DecalAtlas.png（FX1 弹孔 / 焦痕 / 溅痕贴花图集 4×2）、T_Fx_Muzzle.png（第一人称枪口火焰）（<see cref="FxTextures"/>）
+    ///   2. 材质 → Assets/Game/Resources/Fx/Materials/M_Fx_*.mat（<see cref="FxMaterials.Setup"/>，运行时从 Resources 取，不再 Shader.Find）；
+    ///      含 FX1 / FX2 的贴花材质 M_Fx_Decal*（Assets/Art/Shaders/SF_FxDecal.shader，开 GPU Instancing：每个投影器的参数走 _NormalToWorld）
     ///   3. 粒子风格预制体 → Assets/Game/Resources/Fx/Presets/&lt;Id&gt;.prefab（Registry&lt;FxPreset&gt; 里带 Particle 的每一条，<see cref="FxSetup.Configure"/>）；
     ///      已经没有对应预设的旧预制体删掉
     ///   4. 预警贴花材质 → M_Fx_Telegraph.mat（Assets/Art/Shaders/SF_Telegraph.shader，F2）
@@ -87,7 +89,7 @@ namespace Spiritfire.Art.Editor
             {
                 var tex = FxTextures.Create(name);
                 byte[] png = tex.EncodeToPNG();
-                bool atlas = name == FxTextures.Atlas;
+                bool atlas = name == FxTextures.Atlas || name == FxTextures.DecalAtlas;
                 UnityEngine.Object.DestroyImmediate(tex);
                 string path = $"{TextureDir}/{name}.png";
                 // 内容没变就不写（不碰时间戳，不触发重新导入）
@@ -149,7 +151,14 @@ namespace Spiritfire.Art.Editor
                     Debug.LogError($"[FxBuilder] 贴图 {tn} 没有生成（{kind}）");
                     errors++;
                 }
-                result[kind] = SaveMaterial($"{MaterialDir}/{FxMaterials.AssetName(kind)}.mat", shader, m => FxMaterials.Setup(m, kind, tex));
+                var mat = SaveMaterial($"{MaterialDir}/{FxMaterials.AssetName(kind)}.mat", shader, m => FxMaterials.Setup(m, kind, tex));
+                // 贴花：同一种贴花共用一份材质，靠 GPU Instancing 合批（SaveMaterial 默认关掉了）
+                if (FxMaterials.IsDecal(kind) && !mat.enableInstancing)
+                {
+                    mat.enableInstancing = true;
+                    EditorUtility.SetDirty(mat);
+                }
+                result[kind] = mat;
             }
             log.Add($"材质 {result.Count} 个 → {MaterialDir}");
             return result;

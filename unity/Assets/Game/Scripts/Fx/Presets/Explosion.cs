@@ -6,7 +6,7 @@ namespace Spiritfire.Game
     /// 爆炸（Three.js Fx.ts explosion，3.13「炸起来不爽」的头号缺口）。规模 s = 半径 r（0.4–12 m）：
     ///   闪光球（主色放大淡出 + 亮黄核心）+ 白色闪光、火团（亮黄 ↔ 主色）、火花（大多朝上）、余烬、烟（深灰掺主色）、碎石；
     ///   中心离地 &lt; 0.9r 时贴地冲击环（1.5r）；闪光灯（强度 / 范围随 r）；按距离震屏（平方衰减：贴脸有力、远处只轻颤）。
-    /// 焦痕贴花留给 FX1。
+    /// FX1：落地的焦痕贴花（直径 2.6r，带几秒内冷却的火星，16 s 后淡出）；Combat.Explode 默认播这个预设（noFx 时不播）。
     /// </summary>
     [Defs]
     public sealed class ExplosionPreset : FxPreset
@@ -35,7 +35,14 @@ namespace Spiritfire.Game
                 new FxLayer
                 {
                     style = "Glow", count = FxScale.Const(1), density = false, shape = FxShape.Point,
-                    size = new Vector2(1.8f, 1.8f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.1f, 0.1f), color = FxColor.White,
+                    size = new Vector2(1.3f, 1.3f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.08f, 0.08f), color = FxColor.White,
+                },
+                // Unity 追加：不透明的橙黄火团（加法层叠多了发白，这一层保住「卡通、颜色饱和」）
+                new FxLayer
+                {
+                    style = "Blaze", count = FxScale.Lin(6, 2.5f, 24), maxCount = 24, shape = FxShape.Sphere, spread = FxScale.Lin(0, 0.25f),
+                    speed = new Vector2(1f, 2.6f), speedScale = FxScale.Lin(0, 1), up = 1f,
+                    size = new Vector2(0.4f, 0.7f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.32f, 0.55f), color = FxColor.RandomMix, fixedColor = Hex.Rgb(0xffc23a),
                 },
                 // 火团
                 new FxLayer
@@ -43,6 +50,7 @@ namespace Spiritfire.Game
                     style = "Fireball", count = FxScale.Lin(12, 6, 60), maxCount = 60, shape = FxShape.Sphere, spread = FxScale.Lin(0, 0.3f),
                     speed = new Vector2(1.2f, 3.2f), speedScale = FxScale.Lin(0, 1), up = 1.2f,
                     size = new Vector2(0.35f, 0.65f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.3f, 0.6f), color = FxColor.RandomMix, fixedColor = hotYellow,
+                    alpha = 0.6f,
                 },
                 // 火花（大多朝上）
                 new FxLayer
@@ -74,6 +82,7 @@ namespace Spiritfire.Game
                 },
             };
             Ring = new FxRingSpec { radius = FxScale.Lin(0, 1.5f), duration = 0.42f, heightFactor = 0.9f, band = false };
+            Decal = new FxDecalSpec { kind = FxDecalKind.Scorch, size = FxScale.Lin(0, 2.6f), heightFactor = 0.9f, heat = 1f, life = FxDecals.ScorchLife };
             Light = new FxLightSpec
             {
                 intensity = FxScale.Lin(3, 1.5f, 16), range = FxScale.Lin(4, 5, 40), life = 0.38f, color = FxColor.Hot, mix = 0.25f, lift = 0.4f,

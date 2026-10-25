@@ -58,20 +58,31 @@ namespace Spiritfire.Game
             hitList.Clear();
             var o = new ExplosionOptions(c, ReactionSystem.Radius(A.Radius), after)
             {
-                excludeOne = e, falloff = A.Falloff, hitList = hitList, flatKnockback = true, noFx = !big, color = color,
+                // 归墟有自己的爆开特效（下面的 Fx.Abyss），不播通用爆炸
+                excludeOne = e, falloff = A.Falloff, hitList = hitList, flatKnockback = true, noFx = true, color = color,
             };
             Combat.Explode(in o);
             j.hits += hitList.Count;
             hitList.Clear();
 
+            // 表现（同 Three.js runAbyss）：三色天雷从头顶一圈劈下；大特效预算内播归墟爆开（紫色闪光 + 三色光粒甩出 + 紫环带光墙 + 灯 + 震屏），
+            // 预算用完时只出一团紫色爆发 + 一圈环
             for (int i = 0; i < Bolts.Length; i++)
-                Lightning.Spawn(c + Vector3.up * A.BoltHeight + new Vector3((i - 1) * 0.6f, 0, 0), c, DamageTable.ElementColor(Bolts[i]), 0.12f);
-            Telegraph.Wave(ReactionSystem.Ground(c), A.RingRadius, 12f, color);
-            var fx = ShotFx.Instance;
-            if (fx)
             {
-                fx.Impact(c, Vector3.up, false, big ? 10f : 4f);
-                if (big) fx.MuzzleFlash(c, 8f);
+                float a = i / (float)Bolts.Length * Mathf.PI * 2 + Random.value * 0.6f;
+                var top = c + new Vector3(Mathf.Cos(a) * 0.7f, A.BoltHeight, Mathf.Sin(a) * 0.7f);
+                Lightning.Spawn(top, c, Fx.ElementColor(Bolts[i]), 0.12f);
+            }
+            if (big)
+            {
+                Fx.Abyss(c, A.RingRadius);
+                GameAudio.PlayAt("explosion", c, 0.75f, 0.9f);
+            }
+            else
+            {
+                Fx.Ring(ReactionSystem.Ground(c), A.RingRadius, color, 0.5f);
+                Fx.Burst(c, color, 22, 6f, 0.5f, 0.14f, 0);
+                CameraShake.Add(0.3f, 0.25f);
             }
         }
     }

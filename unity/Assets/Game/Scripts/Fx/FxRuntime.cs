@@ -70,8 +70,12 @@ namespace Spiritfire.Game
             instance = this;
             Lights = gameObject.AddComponent<FxLightPool>();
             Lines = gameObject.AddComponent<FxLines>();
+            gameObject.AddComponent<FxDecals>();
+            gameObject.AddComponent<MuzzleFlashes>();
             SceneManager.sceneUnloaded += OnSceneUnloaded;
             SceneManager.sceneLoaded += OnSceneLoaded;
+            Spiritfire.Art.ArtQuality.Changed += OnQuality;
+            FxDirector.Install();
             StartCoroutine(WarmUpNextFrame());
         }
 
@@ -79,7 +83,28 @@ namespace Spiritfire.Game
         {
             SceneManager.sceneUnloaded -= OnSceneUnloaded;
             SceneManager.sceneLoaded -= OnSceneLoaded;
-            if (instance == this) instance = null;
+            Spiritfire.Art.ArtQuality.Changed -= OnQuality;
+            if (instance == this)
+            {
+                FxDirector.Uninstall();
+                instance = null;
+            }
+        }
+
+        /// <summary>画质变了：每种风格的上限按新倍率重设，弹孔超出新上限的收掉</summary>
+        void OnQuality(Spiritfire.Art.ArtQualityLevel _)
+        {
+            foreach (var e in emitters.Values)
+                if (e.ps) ApplyCap(e);
+            FxDecals.Trim();
+        }
+
+        static void ApplyCap(Emitter e)
+        {
+            var preset = Registry<FxPreset>.Get(e.id);
+            if (preset?.Particle == null) return;
+            var main = e.ps.main;
+            main.maxParticles = Mathf.Max(16, Mathf.RoundToInt(preset.Particle.maxParticles * FxBudget.StyleCapScale));
         }
 
         void OnSceneUnloaded(Scene _) => ClearAll();
@@ -103,6 +128,8 @@ namespace Spiritfire.Game
             public string id;
             public ParticleSystem ps;
             public ParticleSystem.Particle[] buffer;
+            /// <summary>出生时随机转角（火舌、符文这类有上下的不转）</summary>
+            public bool rotate = true;
         }
 
         readonly Dictionary<string, Emitter> emitters = new();
@@ -150,6 +177,8 @@ namespace Spiritfire.Game
             ps.Play(true);
             e.ps = ps;
             e.buffer = null;
+            e.rotate = preset.Particle.randomRotation;
+            ApplyCap(e);
             return e;
         }
 
@@ -166,7 +195,7 @@ namespace Spiritfire.Game
             ep.startSize = size;
             ep.startLifetime = life;
             ep.startColor = color;
-            ep.rotation = Random.value * 360f;
+            ep.rotation = e.rotate ? Random.value * 360f : 0f;
             ep.randomSeed = seed;
             e.ps.Emit(ep, 1);
         }
@@ -318,6 +347,13 @@ namespace Spiritfire.Game
                     j.ring = Fx.Ring(new Vector3(pos.x, gy, pos.z), spec.radius.Eval(s), tint, spec.duration, spec.band);
             }
             if (p.Shake != null) ShakeFrom(p.Shake, pos, s);
+            if (p.Decal != null)
+            {
+                var spec = p.Decal;
+                if (Physics.Raycast(pos + Vector3.up * 0.1f, Vector3.down, out var gh, spec.heightFactor * s + 0.1f, Layers.WorldMask, QueryTriggerInteraction.Ignore))
+                    FxDecals.Sprite(spec.kind, gh.point, gh.normal, spec.size.Eval(s), spec.heat, spec.life, spec.kind == FxDecalKind.Splat ? 2 : 0, 0,
+                        Mathf.Clamp(spec.size.Eval(s) * 0.45f, 0.8f, 5f), spec.kind == FxDecalKind.Scorch ? 0.8f : 1.5f);
+            }
             return new FxHandle(j);
         }
 
@@ -346,8 +382,10 @@ namespace Spiritfire.Game
             if (e == null) return;
             float baseCount = L.count.Eval(s);
             if (baseCount < 0.5f) return;
-            // 乘画质密度后至少留 1 颗（定义里写了要发的层不会在低画质整层消失）
+            // 乘画质密度后至少留 1 颗（定义里写了要发的层不会在低画质整层消失）；再过同屏总预算（单颗闪光核心总是放行）
             int count = Mathf.Clamp(Mathf.RoundToInt(baseCount * (L.density ? Fx.Density : 1f)), 1, Mathf.Max(1, L.maxCount));
+            count = FxBudget.Allow(count, !L.density);
+            if (count <= 0) return;
             j.Mark(e);
             float speedK = L.speedScale.Eval(s), sizeK = L.sizeScale.Eval(s), spread = L.spread.Eval(s);
             var basePos = pos + n * L.offset;
@@ -355,7 +393,7 @@ namespace Spiritfire.Game
             for (int i = 0; i < count; i++)
             {
                 var d = Direction(L, n, i, count);
-                var off = spread > 0 ? (d.sqrMagnitude > 0.01f ? d : Random.onUnitSphere) * (Random.value * spread) : Vector3.zero;
+                var off = spread > 0 ? (d.sqrMagnitude > 0.01f ? d : Random.onUnitSphere) * (Random.Range(L.spreadMin, 1f) * spread) : Vector3.zero;
                 off.y *= L.spreadY;
                 var vel = d * (Random.Range(L.speed.x, L.speed.y) * speedK);
                 vel.y += L.up;
@@ -434,7 +472,12 @@ namespace Spiritfire.Game
         internal FxHandle Burst(Vector3 pos, Color color, int count, float speed, float life, float size, float gravity)
         {
             var j = TakeJob();
-            int n = Mathf.Min(240, Mathf.Max(1, Mathf.RoundToInt(count * Fx.Density)));
+            int n = FxBudget.Allow(Mathf.Min(240, Mathf.Max(1, Mathf.RoundToInt(count * Fx.Density))), false);
+            if (n <= 0)
+            {
+                j.until = Time.time;
+                return new FxHandle(j);
+            }
             if (Fx.IsDustColor(color))
             {
                 var dust = GetEmitter("Dust");
@@ -685,6 +728,12 @@ namespace Spiritfire.Game
 
         void Update()
         {
+            // 同屏粒子统计（预算闸门用上一帧的存活数）
+            int live = 0;
+            foreach (var e in emitters.Values)
+                if (e.ps) live += e.ps.particleCount;
+            FxBudget.Live = live;
+            if (live > FxBudget.Peak) FxBudget.Peak = live;
             float dt = Time.deltaTime;
             if (dt <= 0) return;
             float now = Time.time;
@@ -732,7 +781,16 @@ namespace Spiritfire.Game
             Lightning.ClearAll();
             SlashArc.ClearAll();
             Telegraph.ClearAll();
+            FxDecals.ClearAll();
+            MuzzleFlashes.ClearAll();
+            Surfaces.ClearCache();
         }
+
+        /// <summary>当前有多少个共享发射器（统计用）</summary>
+        internal int EmitterCount => emitters.Count;
+
+        /// <summary>正在播的作业数（统计用）</summary>
+        internal int JobCount => jobs.Count;
 
         bool variantsWarmed;
 

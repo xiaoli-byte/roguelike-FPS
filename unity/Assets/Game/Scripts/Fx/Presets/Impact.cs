@@ -5,7 +5,7 @@ namespace Spiritfire.Game
     /// <summary>
     /// 弹着点（Three.js Fx.ts impact）：打在地形 / 建筑上。规模 s = size（0.2–4）：数量按 s、速度和火花粗细按 √s。
     ///   反射火花：法线一侧半球、朝法线偏 0.7，一半白热；命中闪光：白热大光斑 + 主色小光斑；尘土：沿法线扬起；小碎屑。
-    /// 弹孔贴花留给 FX1（D21 贴花）。
+    /// 这是石面（默认）的弹着点；沙 / 冰 / 金属见 ImpactSand / ImpactIce / ImpactMetal，按碰撞体判材质走 <see cref="Fx.ImpactHit"/>，弹孔贴花在那里。
     /// </summary>
     [Defs]
     public sealed class ImpactPreset : FxPreset
@@ -23,14 +23,20 @@ namespace Spiritfire.Game
                 new FxLayer
                 {
                     style = "Streak", count = FxScale.Lin(5, 4), shape = FxShape.Hemisphere, normalBias = 0.7f, offset = 0.03f,
-                    speed = new Vector2(4, 12), speedScale = FxScale.Pow(0.5f), size = new Vector2(0.035f, 0.035f), sizeScale = FxScale.Pow(0.5f),
+                    speed = new Vector2(4, 12), speedScale = FxScale.Pow(0.5f), size = new Vector2(0.045f, 0.045f), sizeScale = FxScale.Pow(0.5f),
                     life = new Vector2(0.12f, 0.34f), color = FxColor.Alternate, every = 2, mix = 0.45f,
                 },
-                // 命中闪光：白热大光斑 + 主色小光斑
+                // 命中闪光：白热大光斑 + 主色小光斑（Unity 比 Three.js 大三成：第一人称镜头下读得清）
                 new FxLayer
                 {
                     style = "Glow", count = FxScale.Const(1), density = false, shape = FxShape.Point, offset = 0.06f,
-                    size = new Vector2(0.42f, 0.42f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.07f, 0.07f), color = FxColor.Hot, mix = 0.45f,
+                    size = new Vector2(0.55f, 0.55f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.08f, 0.08f), color = FxColor.Hot, mix = 0.45f,
+                },
+                // Unity 追加（卡通、干脆）：一下四角星芒
+                new FxLayer
+                {
+                    style = "Flare", count = FxScale.Const(1), density = false, shape = FxShape.Point, offset = 0.08f,
+                    size = new Vector2(0.5f, 0.5f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.06f, 0.06f), color = FxColor.Hot, mix = 0.6f,
                 },
                 new FxLayer
                 {

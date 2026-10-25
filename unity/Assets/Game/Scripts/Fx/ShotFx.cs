@@ -6,7 +6,7 @@ namespace Spiritfire.Game
     /// 射击特效的兼容层（F1 之前的入口，几十处调用照旧可用）：全部转发到 <see cref="Fx"/>，自己不再持有粒子 / 灯。
     ///   Impact(flesh = false) → Fx.Impact（反射火花 + 闪光 + 尘土 + 碎屑）；size &gt; 4 的大冲击再加一团尘土爆发；
     ///   Impact(flesh = true)  → Fx.EnemyHit（打中敌人 / 火焰类的橙色溅射）；size &gt; 2.5 的再加一团下坠的火花爆发；
-    ///   MuzzleFlash → 池化闪光灯；Tracer → 池化曳光。
+    ///   MuzzleFlash → 池化闪光灯（开枪那一次另出第一人称火焰，见 <see cref="MuzzleFlashes"/>）；Tracer → 池化曳光。
     /// <see cref="Instance"/> 在 Play 中永远可用：场景里放了（PlayerRigBuilder 挂在 Game Systems 上）就用场景里的，
     /// 没放就挂到常驻的 Fx 根物体上。新代码直接用 <see cref="Fx"/>。
     /// </summary>
@@ -63,10 +63,20 @@ namespace Spiritfire.Game
             return hit;
         }
 
-        /// <summary>枪口 / 落点闪光灯：strength 1 ≈ 强度 6、半径 6 m</summary>
+        /// <summary>
+        /// 枪口 / 落点闪光灯：strength 1 ≈ 强度 6、半径 6 m。
+        /// at 正好是 WeaponController 的常数枪口位置时（就是开枪）改走 <see cref="Fx.MuzzleFlash"/>：第一人称火焰 + 灯，
+        /// 颜色按当前武器元素，和挂点回调同一帧到时合成一次（W3/W4 落地前，现有的开枪调用也有火焰）。其余调用（爆炸、技能落点）照旧只闪灯。
+        /// </summary>
         public FxHandle MuzzleFlash(Vector3 at, float strength)
         {
             if (!(strength > 0)) return FxHandle.None;
+            if (MuzzleFlashes.IsMuzzlePoint(at))
+            {
+                var cam = Camera.main;
+                MuzzleFlashes.Request(null, at, cam ? cam.transform.forward : Vector3.forward, FlashColor, strength, false);
+                return FxHandle.None;
+            }
             return FxLightPool.Flash(at, FlashColor, Mathf.Min(30f, 6f * strength), 6f * Mathf.Clamp(Mathf.Sqrt(strength), 1f, 2.5f), 0.07f);
         }
 

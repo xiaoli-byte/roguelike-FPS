@@ -46,14 +46,13 @@ namespace Spiritfire.Game
 
             for (int i = 0; i < hitList.Count && i < T.MaxArcs; i++)
                 if (hitList[i]) Lightning.Spawn(c, ReactionSystem.CenterOf(hitList[i]), T.ArcColor);
-            var fx = ShotFx.Instance;
-            if (fx)
+            // 表现（同 Three.js runThunderfire）：大特效预算内由 Combat.Explode 播金色爆炸；预算用完时只出一团爆发 + 一圈环
+            if (!big)
             {
-                fx.Impact(c, Vector3.up, true, big ? 9f : 3f);
-                if (big) fx.MuzzleFlash(c, 5f);
+                Fx.Burst(c, color, 18, 7f, 0.45f, 0.13f, 2f);
+                Fx.Ring(ReactionSystem.Ground(c), r, color, 0.4f);
             }
             GameAudio.PlayAt("shock_zap", c, 0.5f, 1.1f);
-            Telegraph.Wave(ReactionSystem.Ground(c), r, 18f, color);
             hitList.Clear();
             near.Clear();
         }

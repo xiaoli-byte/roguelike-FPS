@@ -167,7 +167,9 @@ namespace Spiritfire.Game
                 end = h.point;
                 if (!target)
                 {
-                    ShotFx.Instance?.Impact(h.point, h.normal, false, fxScale);
+                    // FX1：按地表材质的弹着点（石 / 沙 / 冰 / 金属）+ 弹孔贴花，颜色 = 弹道色（元素色 / 暖白）；
+                    // 光束（不画曳光的那种，每秒十几跳）不留弹孔，免得在墙上烧出一串
+                    Fx.ImpactHit(in h, Fx.ShotColor(s.element), fxScale * (def.impactSize > 0 ? def.impactSize : 1f), tracer.a > 0);
                     stopped = true;
                     break;
                 }
@@ -201,7 +203,15 @@ namespace Spiritfire.Game
             if (!stopped) end = origin + dir * range;
             if (tracer.a > 0)
             {
-                ShotFx.Instance?.Tracer(muzzle, end, tracer, tracerWidth);
+                // FX1 曳光：粗细取武器表的 tracerWidth（同 Three.js；控制器传的是统一的 0.02 / 0.012），整体加粗 40% 读得清；
+                // 带元素的一发用 Three.js 元素色（火橙 / 雷蓝 / 蚀绿），再粗 25%
+                float shown = Mathf.Max(tracerWidth, def.tracerWidth) * 1.4f;
+                if (s.element != Element.None)
+                {
+                    tracer = Fx.ElementColor(s.element);
+                    shown *= 1.25f;
+                }
+                ShotFx.Instance?.Tracer(muzzle, end, tracer, shown);
                 // 满蓄一击：沿弹道追加主光束 + 虹光（WC3 贯虹灵炮）
                 if (s.full) RailgunBeam.Spawn(muzzle, end, s.element, Mathf.Max(tracerWidth, def.tracerWidth));
             }
@@ -218,7 +228,9 @@ namespace Spiritfire.Game
             var res = Combat.DamageEnemy(target, info);
             if (s.detonate && !res.immune && !res.killed && !target.Dead)
                 Combat.Detonate(target, new DetonateOpts { power = Mathf.Min(res.total, target.maxHealth * 0.5f), weaponUid = s.weapon?.uid ?? 0, point = point });
-            ShotFx.Instance?.Impact(point, normal, !target.untargetable, fxScale);
+            // 命中火花由 FxDirector 按伤害结果统一出（暴击星芒、元素色、盾 / 甲变体，每帧限 10 个，同 Three.js）；
+            // 免疫（出生中 / 遁地中）没有伤害事件的火花，这里补一个弹着点，让玩家知道打中了
+            if (res.immune) ShotFx.Instance?.Impact(point, normal, false, fxScale);
         }
 
         // ───────────── 投射物 ─────────────
@@ -287,17 +299,7 @@ namespace Spiritfire.Game
                 explodeOnExpire = spec.explodeOnExpire, homing = spec.homing, pierce = s.pierce,
                 visual = spec.visual, color = spec.color, scale = spec.scale,
             };
-            if (blast > 0)
-            {
-                bool fire = info.element == Element.Fire;
-                var color = spec.color;
-                ps.onImpact = point =>
-                {
-                    ShotFx.Instance?.Impact(point, Vector3.up, fire, blast * 2.2f);
-                    ShotFx.Instance?.MuzzleFlash(point + Vector3.up * 0.4f, blast * 1.3f);
-                    Telegraph.Wave(point + Vector3.up * 0.05f, blast, 20f, color);
-                };
-            }
+            // 有爆炸半径的投射物：爆炸特效（火球、烟、焦痕、冲击环、灯、震屏）由 Combat.Explode 统一播（FX1），不再在这里拼凑
             return PlayerProjectile.Spawn(in ps);
         }
 

@@ -25,6 +25,16 @@ namespace Spiritfire.Game
         ParticleAdd,
         /// <summary>普通透明粒子（烟、尘、碎屑；贴图集）</summary>
         ParticleAlpha,
+        /// <summary>第一人称枪口火焰（FirstPerson 层的面片，加色、没有贴脸淡出，T_Fx_Muzzle）</summary>
+        Muzzle,
+        /// <summary>贴花：图集格（弹孔 / 焦痕 / 溅痕），每个投影器的格号 / 余热 / 发光色走 DecalProjector 的 uvScale / uvBias（SF_FxDecal 模式 0）</summary>
+        DecalSprite,
+        /// <summary>贴花：熔池（程序纹理，流动的熔铜 + 蚀绿冒泡，SF_FxDecal 模式 1）</summary>
+        DecalPool,
+        /// <summary>贴花：出生法阵（双环 + 刻度 + 转动的符段，敌人色，SF_FxDecal 模式 2）</summary>
+        DecalRune,
+        /// <summary>贴花：归墟涡旋（三色旋臂向中心收拢，SF_FxDecal 模式 3）</summary>
+        DecalVortex,
     }
 
     /// <summary>
@@ -39,6 +49,7 @@ namespace Spiritfire.Game
         public const string ResourcesDir = "Fx/Materials";
         public const string ShaderUnlit = "Universal Render Pipeline/Unlit";
         public const string ShaderParticles = "Universal Render Pipeline/Particles/Unlit";
+        public const string ShaderDecal = "Spiritfire/FxDecal";
 
         static readonly int BaseMapId = Shader.PropertyToID("_BaseMap");
         static readonly int MainTexId = Shader.PropertyToID("_MainTex");
@@ -59,12 +70,38 @@ namespace Spiritfire.Game
         public static Material Line => Get(FxMaterialKind.Line);
         public static Material ParticleAdd => Get(FxMaterialKind.ParticleAdd);
         public static Material ParticleAlpha => Get(FxMaterialKind.ParticleAlpha);
+        public static Material Muzzle => Get(FxMaterialKind.Muzzle);
+
+        /// <summary>贴花材质（SF_FxDecal）；资产缺失 / 着色器不可用时为 null（贴花是纯装饰，没有就不画）</summary>
+        public static Material Decal(FxMaterialKind kind)
+        {
+            if (!IsDecal(kind)) return null;
+            var m = Get(kind);
+            return m && m.shader && m.shader.name == ShaderDecal && m.shader.isSupported ? m : null;
+        }
 
         /// <summary>资产名（不含扩展名）：M_Fx_Unlit、M_Fx_ParticleAdd…</summary>
         public static string AssetName(FxMaterialKind kind) => "M_Fx_" + kind;
 
         /// <summary>这种材质用的着色器名（FxBuilder 建材质用；运行时只在编辑器兜底时用）</summary>
-        public static string ShaderName(FxMaterialKind kind) => kind == FxMaterialKind.Unlit ? ShaderUnlit : ShaderParticles;
+        public static string ShaderName(FxMaterialKind kind) => kind switch
+        {
+            FxMaterialKind.Unlit => ShaderUnlit,
+            _ when IsDecal(kind) => ShaderDecal,
+            _ => ShaderParticles,
+        };
+
+        /// <summary>SF_FxDecal 的几种材质（贴花投影，不走粒子 / 网格）</summary>
+        public static bool IsDecal(FxMaterialKind kind) => kind is FxMaterialKind.DecalSprite or FxMaterialKind.DecalPool or FxMaterialKind.DecalRune or FxMaterialKind.DecalVortex;
+
+        /// <summary>SF_FxDecal 的 _Mode</summary>
+        public static int DecalMode(FxMaterialKind kind) => kind switch
+        {
+            FxMaterialKind.DecalPool => 1,
+            FxMaterialKind.DecalRune => 2,
+            FxMaterialKind.DecalVortex => 3,
+            _ => 0,
+        };
 
         /// <summary>这种材质用的贴图（<see cref="FxTextures"/> 的名字；null = 不用贴图）</summary>
         public static string TextureName(FxMaterialKind kind) => kind switch
@@ -74,6 +111,8 @@ namespace Spiritfire.Game
             FxMaterialKind.Band => FxTextures.Band,
             FxMaterialKind.Line => FxTextures.Line,
             FxMaterialKind.ParticleAdd or FxMaterialKind.ParticleAlpha => FxTextures.Atlas,
+            FxMaterialKind.Muzzle => FxTextures.Muzzle,
+            FxMaterialKind.DecalSprite => FxTextures.DecalAtlas,
             _ => null,
         };
 
@@ -127,7 +166,37 @@ namespace Spiritfire.Game
                 case FxMaterialKind.ParticleAlpha:
                     SetupParticle(m, false, tex, 2, 1f, true);
                     return;
+                case FxMaterialKind.Muzzle:
+                    // 第一人称面片离镜头只有半米多：不能有贴脸淡出；HDR 偏亮让 Bloom 吃到
+                    SetupParticle(m, true, tex, 8, 2f, false);
+                    return;
+                case FxMaterialKind.DecalSprite:
+                case FxMaterialKind.DecalPool:
+                case FxMaterialKind.DecalRune:
+                case FxMaterialKind.DecalVortex:
+                    SetupDecal(m, kind, tex);
+                    return;
             }
+        }
+
+        static readonly int DecalModeId = Shader.PropertyToID("_Mode");
+        static readonly int DecalMapId = Shader.PropertyToID("_DecalMap");
+        static readonly int DrawOrderId = Shader.PropertyToID("_DrawOrder");
+
+        /// <summary>
+        /// SF_FxDecal：预乘 alpha（Blend One OneMinusSrcAlpha，压暗与发光一次画完）；贴花通道按不透明队列过滤（2000 + 绘制顺序），
+        /// 弹孔在最下面、法阵 / 涡旋在上面。每个投影器自己的参数走 _NormalToWorld（DecalProjector 的 fadeFactor / uvScale / uvBias），
+        /// 所以同一种贴花共用一份材质、可以合批。
+        /// </summary>
+        static void SetupDecal(Material m, FxMaterialKind kind, Texture tex)
+        {
+            int mode = DecalMode(kind);
+            m.SetFloat(DecalModeId, mode);
+            if (tex && m.HasProperty(DecalMapId)) m.SetTexture(DecalMapId, tex);
+            int order = mode switch { 0 => -2, 1 => 1, _ => 2 };
+            m.SetFloat(DrawOrderId, order);
+            m.renderQueue = 2010 + order;
+            m.enableInstancing = true;
         }
 
         /// <summary>URP Particles/Unlit 的透明设置：加法 / 普通混合、不写深度、双面、可选贴脸淡出</summary>

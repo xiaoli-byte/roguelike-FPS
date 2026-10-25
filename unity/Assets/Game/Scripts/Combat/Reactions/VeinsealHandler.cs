@@ -52,9 +52,11 @@ namespace Spiritfire.Game
             }
             near.Clear();
 
-            Telegraph.Wave(ReactionSystem.Ground(c), V.RingRadius, 8f, color);
-            var fx = ShotFx.Instance;
-            if (fx) fx.Impact(c + Vector3.up * 0.8f, Vector3.up, false, 3f);
+            // 表现（同 Three.js runVeinseal）：双层收紧的青环 + 头顶一团青光
+            var g = ReactionSystem.Ground(c);
+            Fx.Ring(g, V.RingRadius, color, 0.35f, false);
+            Fx.Ring(g, V.RingRadius * 0.75f, color, 0.45f, false);
+            Fx.Burst(c + Vector3.up * 0.8f, color, 10, 2f, 0.5f, 0.08f, 0);
             GameAudio.PlayAt("skill_shock", c, 0.5f, 0.8f);
             GameAudio.PlayAt("shock_zap", c, 0.6f, 0.7f);
         }
