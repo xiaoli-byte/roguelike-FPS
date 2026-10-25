@@ -20,7 +20,7 @@ namespace Spiritfire.Game.Testing
     /// 每关输出：真实耗时 / 游戏耗时 / 换关载入、倒下次数、灵石进账 / 花费 / 余额、击杀 / 补刀、宝箱、秘卷层数、首领用时、帧时 P95、手上的枪；
     ///   结尾打整局汇总，并写 Assets/Art/_Review/fullrun_report.txt。
     ///
-    /// 测试加速（见 <see cref="RunBot"/>）：玩家伤害 × 8、游戏时间 × 4、登场演出关掉、致命一击拦下回满（记「倒下」）、备弹补满、
+    /// 测试加速（见 <see cref="RunBot"/>）：玩家对小怪伤害 × 6（RunBot.DamageMult）、对首领 × 1 不加速（RunBot.BossDamageMult：阶段转换 / 不可选中窗口 / 招式按真实血量走完）、游戏时间 × 4、登场演出关掉、致命一击拦下回满（记「倒下」）、备弹补满、
     ///   场地 60 / 首领 150 游戏秒没打完补刀（记一条）、场地之间传送（路径完整性照算照记；走路可达性由各图 map-* 套件验）。
     /// 全程用调试档（SaveService.ForceDev），不碰正式存档；试玩开关强制关（完整版 12 关）。
     ///
@@ -426,7 +426,7 @@ namespace Spiritfire.Game.Testing
         static string Row(StageRecord r) =>
             $"  {r.code} {r.title}：{(r.completed ? "✓" : "✗")} 真实 {r.realSeconds:F0} s / 游戏 {r.gameSeconds:F0} s（载入 {r.loadSeconds:F1} s），倒下 {r.downs}，" +
             $"灵石 +{r.income} −{r.spent} = {r.coinsEnd}，魂晶 +{r.essence}，击杀 {r.kills}（补刀 {r.executed}），宝箱 {r.chests}，买 {r.bought}，秘卷 {r.scrolls} 层，" +
-            (r.sitesRequired > 0 ? $"必清 {r.sitesCleared}/{r.sitesRequired}，" : "") + (r.bossSeconds > 0 ? $"首领 {r.bossSeconds:F0} 游戏秒，" : "") +
+            (r.sitesRequired > 0 ? $"必清 {r.sitesCleared}/{r.sitesRequired}，" : "") + (r.bossSeconds > 0 ? $"首领 {r.bossSeconds:F0} 游戏秒（到第 {r.bossPhases} 阶段），" : "") +
             $"帧时 P95 {r.frameP95Ms:F0} ms，路程 {r.pathMeters:F0} m，枪 {r.Weapons}";
 
         IEnumerator Report(bool ok, bool segmentEnd = false)
@@ -437,10 +437,10 @@ namespace Spiritfire.Game.Testing
             sb.AppendLine($"整局冒烟报告 · {Id} · {DateTime.Now:yyyy-MM-dd HH:mm}{(segmentEnd ? "（分段，未到结尾）" : "")}{(chained ? "" : "（没有接上一段的接力档）")}");
             sb.AppendLine($"加速：伤害 ×{RunBot.DamageMult}（首领 ×{RunBot.BossDamageMult}），时间 ×{RunBot.TimeScale}，登场演出关，致命一击拦下记倒下，备弹补满，场地 {RunBot.FightLimit:F0} / 首领 {RunBot.BossLimit:F0} 游戏秒补刀，场地间传送");
             sb.AppendLine($"各段真实耗时：{string.Join(" + ", all.Select(x => $"{x:F0} s"))} = {all.Sum():F0} s");
-            sb.AppendLine("关   名称                真实s  游戏s  载入s  倒下  进账  花费  余额  魂晶  击杀  补刀  宝箱  秘卷  首领s  P95ms");
+            sb.AppendLine("关   名称                真实s  游戏s  载入s  倒下  进账  花费  余额  魂晶  击杀  补刀  宝箱  秘卷  首领s  阶段  P95ms");
             foreach (var r in records)
                 sb.AppendLine($"{r.code,-4} {Pad(r.title, 18)} {r.realSeconds,5:F0}  {r.gameSeconds,5:F0}  {r.loadSeconds,5:F1}  {r.downs,4}  {r.income,4}  {r.spent,4}  {r.coinsEnd,4}  " +
-                              $"{r.essence,4}  {r.kills,4}  {r.executed,4}  {r.chests,4}  {r.scrolls,4}  {r.bossSeconds,5:F0}  {r.frameP95Ms,5:F0}{(r.completed ? "" : "  ✗未完成")}");
+                              $"{r.essence,4}  {r.kills,4}  {r.executed,4}  {r.chests,4}  {r.scrolls,4}  {r.bossSeconds,5:F0}  {(r.bossPhases > 0 ? r.bossPhases.ToString() : "-"),4}  {r.frameP95Ms,5:F0}{(r.completed ? "" : "  ✗未完成")}");
             sb.AppendLine($"合计 {records.Count} 关：真实 {records.Sum(r => r.realSeconds):F0} s（+载入 {records.Sum(r => r.loadSeconds):F0} s），游戏 {records.Sum(r => r.gameSeconds):F0} s，" +
                           $"倒下 {records.Sum(r => r.downs)}，灵石进账 {records.Sum(r => r.income)} / 花费 {records.Sum(r => r.spent)}，魂晶 {records.Sum(r => r.essence)}，" +
                           $"击杀 {records.Sum(r => r.kills)}（补刀 {records.Sum(r => r.executed)}），宝箱 {records.Sum(r => r.chests)}");
@@ -479,6 +479,20 @@ namespace Spiritfire.Game.Testing
             int w = s.Sum(ch => ch > 0x2E80 ? 2 : 1);
             return w >= width ? s : s + new string(' ', width - w);
         }
+    }
+
+    /// <summary>整局冒烟 · 鼯（bridge.sh playtest full-run-falcon）：同 full-run，换英雄</summary>
+    public sealed class FullRunFalconSuite : FullRunSuite
+    {
+        public override string Id => "full-run-falcon";
+        protected override string Hero => "falcon";
+    }
+
+    /// <summary>整局冒烟 · 磐（bridge.sh playtest full-run-bear）：同 full-run，换英雄</summary>
+    public sealed class FullRunBearSuite : FullRunSuite
+    {
+        public override string Id => "full-run-bear";
+        protected override string Hero => "bear";
     }
 
     /// <summary>整局冒烟 · 第一段（bridge.sh playtest full-run-ch1）：主菜单选英雄出征 → 1-1 … 1-4 → 进到 2-1 就绪，写接力档</summary>

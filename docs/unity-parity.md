@@ -1095,4 +1095,10 @@ W0-5 把约 30 处 `Hud.Instance.*` 调用机械替换成 `GameUI.*`，先转发
 
 结尾断言：胜利结算出现，魂晶已结算，生涯统计已更新。报告写到 `Assets/Art/_Review/fullrun_report.txt`。
 
+落地（I1 / I2，2026-10-25）：
+- 命令是 `bridge.sh playtest full-run`（英雄 燎）、`full-run-falcon`、`full-run-bear`；一整局约 300 s（编辑器刚启动、资源还冷时约 450 s），在 600 s 上限内。分段套件 `full-run-ch1/ch2/ch3` 用接力档（`Library/SpiritfireBridge/fullrun_relay.json`）串起来，单独查某一章时用。
+- 测试加速写在 `RunBot` 和套件注释里：小怪伤害 × 6、首领 × 1（不加速，阶段全走）、时间 × 4、登场演出关、致命一击拦下记「倒下」、备弹补满、场地 60 / 首领 150 游戏秒补刀、场地之间按导航路径传送（只落在和出生点连通的地方）。
+- Placeholder、帧时 P95 只记进报告不判；「存档已写入」等 I5（每关写 run.json）落地后再加。
+- 一局的另外两种结束 + 试玩开关由 `playtest run-ends` 验：阵亡 / 放弃 → 结算 → 主菜单，demoEnd = 1-4 时打完旱魃 → 胜利结算 → 主菜单。
+
 这一项通过，就等于对齐完成。之后按第 2 节 D27 / D28 进入超越阶段。

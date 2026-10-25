@@ -24,7 +24,7 @@ namespace Spiritfire.Game.Testing
         public int downs;
         /// <summary>本关灵石：进账、花掉、结算时余额；本关魂晶进账</summary>
         public int income, spent, coinsEnd, essence;
-        public int kills, executed, chests, bought, scrolls, sitesCleared, sitesRequired, placeholders;
+        public int kills, executed, chests, bought, scrolls, sitesCleared, sitesRequired, placeholders, bossPhases;
         public float pathMeters;
         public List<string> weapons = new();
         public List<string> notes = new();
@@ -43,7 +43,7 @@ namespace Spiritfire.Game.Testing
     ///   补给营（RunPlan 标了的关）：在营地商店买一件（秘卷 → 强化 → 武器 → 药剂 → 弹药，买得起的第一样）。
     ///   出口：等升起、开清关宝箱、站到门前按 F → 本关结算。
     /// 测试加速（只在整局冒烟里装，<see cref="Install"/> / <see cref="Uninstall"/>）：
-    ///   · 玩家伤害 × <see cref="DamageMult"/>，打首领 × <see cref="BossDamageMult"/>（Combat.Outgoing 修饰器；首领倍率低一些，让阶段转换、不可选中窗口都走一遍）；
+    ///   · 玩家伤害 × <see cref="DamageMult"/>（Combat.Outgoing 修饰器）；打首领不加速（× <see cref="BossDamageMult"/>）：阶段转换、不可选中窗口、招式都按真实血量走一遍，首领用时有参考价值；
     ///   · 游戏时间 × <see cref="TimeScale"/>（TimeScaleArbiter 低优先级请求，暂停 / 模态 / 换关 / 顿帧都压过它）；
     ///   · 登场演出关掉（BossIntroDirector.Policy = Never）；
     ///   · 打不死兜底：致命一击被拦下、回满并记一次「倒下」（真实生命值照常扣，倒下次数如实报告；不拦的话这一局就结算了，后面的关测不到）；
@@ -51,7 +51,7 @@ namespace Spiritfire.Game.Testing
     /// </summary>
     public sealed class RunBot
     {
-        public const float DamageMult = 6f, BossDamageMult = 3f, TimeScale = 4f, FightLimit = 60f, BossLimit = 150f;
+        public const float DamageMult = 6f, BossDamageMult = 1f, TimeScale = 4f, FightLimit = 60f, BossLimit = 150f;
         const int SpeedPriority = 50;
         const float EyeHeight = 1.62f;
 
@@ -74,6 +74,7 @@ namespace Spiritfire.Game.Testing
         readonly List<float> frames = new();
         readonly HashSet<string> placeholderEnemies = new();
         readonly HashSet<EncounterSite> failedSites = new();
+        int maxPhase;
         float graceUntil;
 
         /// <summary>正在记的这一关</summary>
@@ -462,11 +463,13 @@ namespace Spiritfire.Game.Testing
             float leash = site ? Mathf.Max(8f, site.arenaRadius * 0.6f) : 30f;
             Damageable last = null;
             float lastHp = 0, lastHpAt = t0;
+            maxPhase = 0;
             bool shotTaken = false, overtime = false;
             while (!done())
             {
                 EnsureSpeed();
                 HandleModals();
+                if (boss && !boss.Dead) maxPhase = Mathf.Max(maxPhase, boss.Phase);
                 if (vitals.Dead)
                 {
                     fail($"{label}：玩家阵亡了（倒下兜底没拦住）");
@@ -682,7 +685,10 @@ namespace Spiritfire.Game.Testing
                 float f0 = Time.time;
                 yield return Fight(() => !boss || boss.Dead || enc.State >= BossEncounter.Phase.Collapsing, arena.Center, BossLimit, enc.Def?.name ?? "首领", boss);
                 if (Record != null) Record.bossSeconds = Time.time - f0;
-                line($"  首领倒下：{Time.time - f0:F0} 游戏秒，阶段 {(boss ? boss.Phase + 1 : 0)}，拴回 {enc.Tethers} 次");
+                if (Record != null) Record.bossPhases = maxPhase + 1;
+                int phases = boss && boss.Def != null ? boss.Def.PhaseCount : 0;
+                line($"  首领倒下：{Time.time - f0:F0} 游戏秒，打到第 {maxPhase + 1}{(phases > 0 ? $"/{phases}" : "")} 阶段，拴回 {enc.Tethers} 次，倒下 {Record?.downs ?? 0} 次");
+                if (phases > 0 && maxPhase + 1 < phases) Note($"首领 {boss.Def.name} 没走完全部阶段就倒下了（{maxPhase + 1}/{phases}）");
             }
             t0 = Time.time;
             while (enc.State != BossEncounter.Phase.Settled && Time.time - t0 < BossEncounter.SettleDelay + 4f)
