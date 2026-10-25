@@ -14,37 +14,19 @@ namespace Spiritfire.Game
     /// </summary>
     public static class FxBudget
     {
-        /// <summary>同屏粒子总上限（所有共享发射器的存活粒子之和）</summary>
-        public static int ParticleCap => ArtQuality.Level switch
-        {
-            ArtQualityLevel.Low => 1500,
-            ArtQualityLevel.Medium => 3000,
-            _ => 5000,
-        };
+        // 各档数值在 F4 画质表 QualityProfile 里（低 / 中 / 高同一行管渲染、粒子、毛发）
 
-        /// <summary>每种粒子风格自己的上限倍率</summary>
-        public static float StyleCapScale => ArtQuality.Level switch
-        {
-            ArtQualityLevel.Low => 0.5f,
-            ArtQualityLevel.Medium => 0.75f,
-            _ => 1f,
-        };
+        /// <summary>同屏粒子总上限（所有共享发射器的存活粒子之和）：低 1500 / 中 3000 / 高 5000</summary>
+        public static int ParticleCap => QualityProfile.Current.particleCap;
 
-        /// <summary>弹孔 / 焦痕同时存在的上限</summary>
-        public static int DecalCap => ArtQuality.Level switch
-        {
-            ArtQualityLevel.Low => 40,
-            ArtQualityLevel.Medium => 80,
-            _ => 140,
-        };
+        /// <summary>每种粒子风格自己的上限倍率：低 0.5 / 中 0.75 / 高 1</summary>
+        public static float StyleCapScale => QualityProfile.Current.styleCapScale;
 
-        /// <summary>状态外观（灼烧火舌、蚀液、电弧…）全场每帧最多发几颗</summary>
-        public static int StatusEmitPerFrame => ArtQuality.Level switch
-        {
-            ArtQualityLevel.Low => 24,
-            ArtQualityLevel.Medium => 48,
-            _ => 80,
-        };
+        /// <summary>弹孔 / 焦痕同时存在的上限：低 40 / 中 80 / 高 140</summary>
+        public static int DecalCap => QualityProfile.Current.decalCap;
+
+        /// <summary>状态外观（灼烧火舌、蚀液、电弧…）全场每帧最多发几颗：低 24 / 中 48 / 高 80</summary>
+        public static int StatusEmitPerFrame => QualityProfile.Current.statusEmitPerFrame;
 
         /// <summary>上一帧末尾所有共享发射器的存活粒子数</summary>
         public static int Live { get; internal set; }

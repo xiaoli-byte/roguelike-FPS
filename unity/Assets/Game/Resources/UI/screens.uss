@@ -257,6 +257,7 @@
 }
 
 .sf-tab {
+    flex-shrink: 0;
     margin: 0 4px -1px 0;
     padding: 8px 18px 10px;
     background-color: rgba(0, 0, 0, 0);
@@ -269,6 +270,8 @@
 }
 
 .sf-tab__label {
+    /* 字距 4px 不计入测宽，不加 nowrap 时两个字的页签会折成竖排 */
+    white-space: nowrap;
     font-size: 18px;
     letter-spacing: 4px;
     color: var(--paper-3);

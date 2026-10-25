@@ -58,13 +58,8 @@ namespace Spiritfire.Game
         /// <summary>冲击环的竖直光墙只给中小型环（2–8 m）：Boss 的 10–15 m 装饰大环若也立一圈光墙，会和真正要跳过的冲击波混淆</summary>
         public const float BandMinRadius = 2f, BandMaxRadius = 8f;
 
-        /// <summary>粒子密度（数量倍率）：画质低 0.45 / 中 0.75 / 高 1</summary>
-        public static float Density => ArtQuality.Level switch
-        {
-            ArtQualityLevel.Low => 0.45f,
-            ArtQualityLevel.Medium => 0.75f,
-            _ => 1f,
-        };
+        /// <summary>粒子密度（数量倍率）：画质低 0.45 / 中 0.75 / 高 1（F4 画质表 <see cref="QualityProfile.particleDensity"/>）</summary>
+        public static float Density => QualityProfile.Current.particleDensity;
 
         // ───────────── 按预设播放 ─────────────
 

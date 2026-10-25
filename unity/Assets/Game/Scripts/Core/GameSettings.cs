@@ -27,10 +27,13 @@ namespace Spiritfire.Game
         /// <summary>值存在别处（画质 → ArtQuality 自己的 PlayerPrefs 键），不进设置 JSON</summary>
         internal readonly Func<float> read;
         internal readonly Action<float> write;
+        /// <summary>不自动生成控件（分辨率：设置页上有手写的步进器），也不在 <see cref="GameSettings.All"/> 里</summary>
+        public readonly bool hidden;
 
         internal SettingDef(string key, string label, string group, SettingType type, float defaultValue, float min, float max, float step,
-            string[] options = null, Func<float> read = null, Action<float> write = null)
+            string[] options = null, Func<float> read = null, Action<float> write = null, bool hidden = false)
         {
+            this.hidden = hidden;
             this.key = key;
             this.label = label;
             this.group = group;
@@ -62,7 +65,9 @@ namespace Spiritfire.Game
     }
 
     /// <summary>
-    /// 玩家设置（同 Three.js src/core/settings.ts）：灵敏度、反转 Y、视野（默认 80°）、画质、震屏、伤害数字、主 / 音乐 / 音效音量。
+    /// 玩家设置（同 Three.js src/core/settings.ts）：灵敏度、反转 Y、视野（默认 80°）、画质、震屏、伤害数字、主 / 音乐 / 音效音量；
+    /// F4 加了显示模式 / 分辨率（隐藏项，设置页手写步进器）/ 垂直同步 / 帧率上限 / 屏幕特效强度，F5 加了环境音、界面音（由 <see cref="GraphicsQuality"/>、
+    /// <see cref="GameplayVolumes"/>、<see cref="GameAudio"/> 执行）。
     /// 存在 <see cref="SaveService.Shared"/>（settings.json，正式档和调试档共用）的「settings」段；以前存在 PlayerPrefs 的键 spiritfire.settings，
     /// 第一次读时导入。改了立刻发 <see cref="Changed"/>，稍后写盘（拖滑条合并成一次）。
     /// 消费方自己订阅 Changed 或在用的时候读：WeaponController（视野、震屏）、GameAudio（音量）、Hud（伤害数字）；
@@ -77,6 +82,7 @@ namespace Spiritfire.Game
 
         // 注意顺序：all / values 必须写在各设置项前面（静态字段按书写顺序初始化）
         static readonly List<SettingDef> all = new();
+        static readonly List<SettingDef> hiddenDefs = new();
         static readonly Dictionary<string, float> values = new();
         static bool loaded;
 
@@ -86,28 +92,44 @@ namespace Spiritfire.Game
         public static readonly SettingDef Quality = Add(new SettingDef("quality", "画质", GroupVideo, SettingType.Choice, (float)ArtQualityLevel.High, 0, 2, 1,
             new[] { ArtQuality.Label(ArtQualityLevel.Low), ArtQuality.Label(ArtQualityLevel.Medium), ArtQuality.Label(ArtQualityLevel.High) },
             () => (float)ArtQuality.Level, v => ArtQuality.Set((ArtQualityLevel)Mathf.Clamp(Mathf.RoundToInt(v), 0, 2))));
+        /// <summary>显示模式：全屏 / 无边框 / 窗口（下标对应 <see cref="GraphicsQuality.DisplayModes"/>），默认无边框</summary>
+        public static readonly SettingDef DisplayMode = Add(new SettingDef("displayMode", "显示模式", GroupVideo, SettingType.Choice, 1, 0, 2, 1,
+            new[] { "全屏", "无边框", "窗口" }));
+        /// <summary>分辨率宽 / 高（0 = 桌面分辨率）：隐藏项，设置页的分辨率步进器写它们</summary>
+        public static readonly SettingDef ResolutionWidth = Add(new SettingDef("resolutionWidth", "分辨率宽", GroupVideo, SettingType.Float, 0, 0, 16384, 1, hidden: true));
+        public static readonly SettingDef ResolutionHeight = Add(new SettingDef("resolutionHeight", "分辨率高", GroupVideo, SettingType.Float, 0, 0, 16384, 1, hidden: true));
+        public static readonly SettingDef VSync = Add(new SettingDef("vsync", "垂直同步", GroupVideo, SettingType.Bool, 1, 0, 1, 1));
+        /// <summary>帧率上限（下标对应 <see cref="GraphicsQuality.FrameCaps"/>；垂直同步开着时不生效），默认不限</summary>
+        public static readonly SettingDef FrameCap = Add(new SettingDef("frameCap", "帧率上限", GroupVideo, SettingType.Choice, 7, 0, 7, 1,
+            new[] { "30", "60", "90", "120", "144", "165", "240", "不限" }));
         public static readonly SettingDef ScreenShake = Add(new SettingDef("screenShake", "震屏强度", GroupVideo, SettingType.Float, 1f, 0f, 1.5f, 0.05f));
+        /// <summary>玩法屏效强度（低血量 / 受击 / 冲刺 / 慢动作的暗角、色差、去饱和；<see cref="GameplayVolumes"/>）</summary>
+        public static readonly SettingDef ScreenEffects = Add(new SettingDef("screenEffects", "屏幕特效", GroupVideo, SettingType.Float, 1f, 0f, 1f, 0.05f));
         public static readonly SettingDef DamageNumbers = Add(new SettingDef("damageNumbers", "伤害数字", GroupVideo, SettingType.Bool, 1, 0, 1, 1));
         public static readonly SettingDef MasterVolume = Add(new SettingDef("masterVolume", "主音量", GroupAudio, SettingType.Float, 1f, 0f, 1f, 0.05f));
         public static readonly SettingDef MusicVolume = Add(new SettingDef("musicVolume", "音乐", GroupAudio, SettingType.Float, 1f, 0f, 1f, 0.05f));
         public static readonly SettingDef SfxVolume = Add(new SettingDef("sfxVolume", "音效", GroupAudio, SettingType.Float, 1f, 0f, 1f, 0.05f));
+        public static readonly SettingDef AmbienceVolume = Add(new SettingDef("ambienceVolume", "环境音", GroupAudio, SettingType.Float, 1f, 0f, 1f, 0.05f));
+        public static readonly SettingDef UiVolume = Add(new SettingDef("uiVolume", "界面音", GroupAudio, SettingType.Float, 1f, 0f, 1f, 0.05f));
 
         /// <summary>某一项变了（设置面板、代码改的都发；画质被别处改了也发）</summary>
         public static event Action<SettingDef> Changed;
 
-        /// <summary>全部设置项（按分组、显示顺序）</summary>
+        /// <summary>全部可见设置项（按分组、显示顺序；设置页按它自动生成控件）。隐藏项（分辨率宽 / 高）不在里面</summary>
         public static IReadOnlyList<SettingDef> All => all;
 
         public static SettingDef Find(string key)
         {
             foreach (var d in all)
                 if (d.key == key) return d;
+            foreach (var d in hiddenDefs)
+                if (d.key == key) return d;
             return null;
         }
 
         static SettingDef Add(SettingDef d)
         {
-            all.Add(d);
+            (d.hidden ? hiddenDefs : all).Add(d);
             return d;
         }
 
@@ -170,6 +192,7 @@ namespace Spiritfire.Game
         public static void ResetAll()
         {
             foreach (var d in all) Set(d, d.defaultValue);
+            foreach (var d in hiddenDefs) Set(d, d.defaultValue);
         }
 
         static float Clean(SettingDef d, float v)

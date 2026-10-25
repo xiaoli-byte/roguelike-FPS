@@ -10,7 +10,7 @@ namespace Spiritfire.Game
     /// 设置（U4；Three.js src/ui/SettingsPanel.ts + css/overlays.css .gf-settings）。主菜单和暂停菜单共用，叠在它们上面，返回回去。
     /// 控件按 <see cref="GameSettings.All"/> 的元数据自动生成（加一项设置不用改界面）：
     ///   分组 → 页签（操作 / 画面 / 声音，按登记顺序），数值 → 滑条（手柄左右直接调）+ 读数，开关 → 拨钮，多选一 → 分段按钮。
-    /// 另有两块手写的：「画面」页顶上的显示模式 / 分辨率（Screen 自己存，不进设置文件），「按键」页的改键表（键鼠、手柄各一列，
+    /// 另有两块手写的：「画面」页「显示模式」下面的分辨率步进器（写 GameSettings 的隐藏项分辨率宽 / 高，GraphicsQuality 执行），「按键」页的改键表（键鼠、手柄各一列，
     /// <see cref="GameInput.StartRebind"/>，Esc 取消；移动 / 视角是组合绑定，只显示不改）。
     /// 页签：点击，或 Q / E（手柄 LB / RB）切换。改动即时生效、自动保存（GameSettings / GameInput 自己写盘）。
     /// 不挡游戏（叠在暂停菜单上时由暂停挡着；主菜单里不停时间）。
@@ -28,6 +28,7 @@ namespace Spiritfire.Game
         readonly List<(string name, Button tab, VisualElement page)> tabs = new();
         readonly List<System.Action> syncs = new();
         readonly List<(Button button, GameAction action, string scheme)> bindButtons = new();
+        readonly List<(Button button, SettingDef def)> steppers = new();
         VisualElement frame;
         ScrollView body;
         Button backBtn, resolutionBtn;
@@ -72,13 +73,15 @@ namespace Spiritfire.Game
             foreach (var g in groups)
             {
                 var page = AddTab(tabRow, g);
-                if (g == GameSettings.GroupVideo) BuildDisplay(page);
                 foreach (var d in GameSettings.All)
                     if (d.group == g)
                     {
                         BuildControl(page, d);
                         GeneratedControls++;
+                        if (d == GameSettings.DisplayMode) BuildResolution(page);
                     }
+                if (g == GameSettings.GroupVideo)
+                    ScreenKit.Text("sf-settings__note", page, "垂直同步开启时帧率上限不生效。画质：高 = 原生分辨率 + 全部效果；中 / 低降渲染比例（FSR 放大）、阴影和粒子。");
                 if (g == GameSettings.GroupControls)
                     ScreenKit.Text("sf-settings__note", page, "手柄：右摇杆转视角，灵敏度与鼠标共用；按键在「按键」页里改。");
             }
@@ -173,7 +176,21 @@ namespace Spiritfire.Game
                 StepResolution(direction.x > 0 ? 1 : -1);
                 return true;
             }
+            if (direction.x != 0)
+                foreach (var (button, d) in steppers)
+                    if (UIRouter.Focused == button)
+                    {
+                        StepChoice(d, direction.x > 0 ? 1 : -1);
+                        UISound.Hover(button);
+                        return true;
+                    }
             return false;
+        }
+
+        void StepChoice(SettingDef d, int dir)
+        {
+            int n = d.options.Length;
+            d.Set((d.Index + dir + n) % n);
         }
 
         public override void Tick(float dt)
@@ -230,6 +247,18 @@ namespace Spiritfire.Game
                     });
                     break;
                 }
+                case SettingType.Choice when d.options != null && d.options.Length > 4:
+                {
+                    // 选项多（帧率上限 8 档）：步进器，点一下 / 手柄左右切
+                    var step = ScreenKit.Card("sf-stepper", ctrl, () => StepChoice(d, 1));
+                    step.name = "setting-" + d.key;
+                    ScreenKit.Text("sf-stepper__arrow", step, "◀");
+                    var val = ScreenKit.Text("sf-stepper__val", step, "", UIFontRole.Number);
+                    ScreenKit.Text("sf-stepper__arrow", step, "▶");
+                    steppers.Add((step, d));
+                    syncs.Add(() => val.text = d.Display);
+                    break;
+                }
                 default:
                 {
                     var seg = ScreenKit.El("sf-seg", ctrl);
@@ -257,38 +286,14 @@ namespace Spiritfire.Game
         {
             "fov" => $"{d.Value:0}°",
             "sensitivity" => $"{d.Value:0.00}×",
+            "screenEffects" => d.Value <= 0.001f ? "关" : $"{d.Value * 100:0}%",
             _ => d.Display,
         };
 
-        // ───────────── 显示模式 / 分辨率 ─────────────
+        // ───────────── 分辨率（显示模式是自动生成的多选一）─────────────
 
-        static readonly (FullScreenMode mode, string label)[] Modes =
+        void BuildResolution(VisualElement page)
         {
-            (FullScreenMode.ExclusiveFullScreen, "全屏"), (FullScreenMode.FullScreenWindow, "无边框"), (FullScreenMode.Windowed, "窗口"),
-        };
-
-        void BuildDisplay(VisualElement page)
-        {
-            Row(page, "显示模式", out var ctrl);
-            var seg = ScreenKit.El("sf-seg", ctrl);
-            var buttons = new List<Button>();
-            foreach (var (mode, label) in Modes)
-            {
-                var m = mode;
-                var b = ScreenKit.Card("sf-seg__opt", seg, () =>
-                {
-                    Screen.fullScreenMode = m;
-                    SyncAll();
-                });
-                ScreenKit.Text("sf-seg__label", b, label);
-                buttons.Add(b);
-            }
-            syncs.Add(() =>
-            {
-                var now = Screen.fullScreenMode == FullScreenMode.MaximizedWindow ? FullScreenMode.Windowed : Screen.fullScreenMode;
-                for (int i = 0; i < buttons.Count; i++) buttons[i].EnableInClassList("sf-seg__opt--on", Modes[i].mode == now);
-            });
-
             Row(page, "分辨率", out var rctrl);
             resolutionBtn = ScreenKit.Card("sf-stepper", rctrl, () => StepResolution(1));
             resolutionBtn.name = "setting-resolution";
@@ -306,7 +311,7 @@ namespace Spiritfire.Game
                 var v = new Vector2Int(r.width, r.height);
                 if (v.x >= 800 && !resolutions.Contains(v)) resolutions.Add(v);
             }
-            var cur = new Vector2Int(Screen.width, Screen.height);
+            var cur = GraphicsQuality.SavedResolution;
             if (!resolutions.Contains(cur)) resolutions.Add(cur);
             resolutions.Sort((a, b) => a.x != b.x ? a.x.CompareTo(b.x) : a.y.CompareTo(b.y));
             resolutionIndex = resolutions.IndexOf(cur);
@@ -328,7 +333,9 @@ namespace Spiritfire.Game
             if (list.Count == 0) return;
             resolutionIndex = (resolutionIndex + dir + list.Count) % list.Count;
             var v = list[resolutionIndex];
-            Screen.SetResolution(v.x, v.y, Screen.fullScreenMode);
+            // 存进设置（GraphicsQuality 跟着 Changed 切分辨率；编辑器里只存不切）
+            GameSettings.ResolutionWidth.Set(v.x);
+            GameSettings.ResolutionHeight.Set(v.y);
             UISound.Hover(resolutionBtn);
             SyncResolution();
         }

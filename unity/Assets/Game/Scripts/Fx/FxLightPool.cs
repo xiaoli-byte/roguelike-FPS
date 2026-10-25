@@ -37,13 +37,8 @@ namespace Spiritfire.Game
         readonly Slot[] slots = new Slot[MaxLights];
         int count;
 
-        /// <summary>当前画质下同时亮着的上限</summary>
-        public static int Capacity => ArtQuality.Level switch
-        {
-            ArtQualityLevel.Low => 3,
-            ArtQualityLevel.Medium => 6,
-            _ => MaxLights,
-        };
+        /// <summary>当前画质下同时亮着的上限（F4 画质表 <see cref="QualityProfile.fxLights"/>：低 3 / 中 6 / 高 8）</summary>
+        public static int Capacity => Mathf.Min(MaxLights, QualityProfile.Current.fxLights);
 
         internal static FxLightPool Instance => instance;
 

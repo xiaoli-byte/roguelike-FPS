@@ -56,9 +56,12 @@ namespace Spiritfire.Game
         static readonly List<Handle> active = new();
         static int seq;
         static float applied = 1;
+        static int appliedPriority = -1;
 
         /// <summary>当前结算出的时间缩放（= Time.timeScale，除非有人绕过仲裁直接写）</summary>
         public static float Current => applied;
+        /// <summary>生效的那个请求的优先级（没有请求 = -1）：屏效据此区分慢动作和顿帧 / 暂停</summary>
+        public static int ActivePriority => appliedPriority;
         /// <summary>生效中的请求数</summary>
         public static int Count => active.Count;
 
@@ -68,6 +71,7 @@ namespace Spiritfire.Game
             active.Clear();
             seq = 0;
             applied = 1;
+            appliedPriority = -1;
             SceneManager.sceneLoaded -= OnSceneLoaded;
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
@@ -126,6 +130,7 @@ namespace Spiritfire.Game
                 if (best == null || h.priority > best.priority || (h.priority == best.priority && h.seq > best.seq)) best = h;
             }
             applied = best != null ? best.scale : 1f;
+            appliedPriority = best != null ? best.priority : -1;
             Time.timeScale = applied;
         }
     }

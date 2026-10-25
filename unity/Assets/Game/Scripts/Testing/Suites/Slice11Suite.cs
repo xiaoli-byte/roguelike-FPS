@@ -603,7 +603,7 @@ namespace Spiritfire.Game.Testing
         // ───────────── 音频 ─────────────
 
         /// <summary>
-        /// 暂停菜单的画质：Esc 暂停要弹出菜单、停时间；依次点 低 / 中 / 高，核对 Unity 渲染档（低 → Mobile，中高 → PC）、
+        /// 暂停菜单的画质：Esc 暂停要弹出菜单、停时间；依次点 低 / 中 / 高，核对 Unity 渲染档（F4 起三档都是 PC，渲染比例按 QualityProfile：0.7 / 0.85 / 1）、
         /// 着色器全局开关 _SFFurDetail（中高 = 1）、带毛灵宠（讙，临时摆在玩家前方）LOD0 上的壳层数（只有高档有）与轮廓发丝面片
         /// （中高打开），每档拍一张；继续后菜单关、时间恢复。
         /// 测完把玩家自己的画质（PlayerPrefs）原样还回去。
@@ -645,9 +645,13 @@ namespace Spiritfire.Game.Testing
                 string unity = names[QualitySettings.GetQualityLevel()];
                 float detail = Shader.GetGlobalFloat("_SFFurDetail");
                 int shells = fur ? fur.ActiveShells : 0, expectShells = fur && level == ArtQualityLevel.High ? fur.shellsHigh : 0;
-                Line($"画质「{ArtQuality.Label(level)}」：Unity 档 {unity}，_SFFurDetail {detail:0}，讙壳层 {shells}{(fur ? $" / 高档 {fur.shellsHigh}" : "")}");
+                var rp = GraphicsQuality.ActiveAsset;
+                float renderScale = rp ? rp.renderScale : -1;
+                Line($"画质「{ArtQuality.Label(level)}」：Unity 档 {unity}，渲染比例 {renderScale:0.##}，_SFFurDetail {detail:0}，讙壳层 {shells}{(fur ? $" / 高档 {fur.shellsHigh}" : "")}");
                 if (ArtQuality.Level != level) Fail($"点了「{ArtQuality.Label(level)}」，画质却是「{ArtQuality.Label(ArtQuality.Level)}」");
-                if (tiered && unity != (level == ArtQualityLevel.Low ? "Mobile" : "PC")) Fail($"画质「{ArtQuality.Label(level)}」时 Unity 渲染档是 {unity}");
+                if (tiered && unity != "PC") Fail($"画质「{ArtQuality.Label(level)}」时 Unity 渲染档是 {unity}（F4：三档都用 PC，靠画质表降参数）");
+                if (rp && !Mathf.Approximately(renderScale, QualityProfile.For(level).renderScale))
+                    Fail($"画质「{ArtQuality.Label(level)}」时渲染比例 {renderScale}，应为 {QualityProfile.For(level).renderScale}");
                 if (detail != (level >= ArtQualityLevel.Medium ? 1 : 0)) Fail($"画质「{ArtQuality.Label(level)}」时 _SFFurDetail = {detail}");
                 if (fur && shells != expectShells) Fail($"画质「{ArtQuality.Label(level)}」时讙壳层 {shells}，应为 {expectShells}");
                 bool fins = fur && fur.finRenderer && fur.finRenderer.enabled;
