@@ -10,7 +10,11 @@ namespace Spiritfire.Game
     ///   钻沙：玩家逼近到 7 m 内 → 钻入 0.55 s → 沙下潜行到玩家 13–20 m 外、看得见玩家的点（10 m/s）
     ///         → 钻出 0.5 s（1.5 m 内掀沙伤害 ×0.8）→ 伏击上弦 0.42 s（不占名额）。冷却 9–12 s
     ///         只有沉下去八成以上才不可选中（看得见的部分就打得到），完全在地下时碰撞体关闭
-    ///   钳击：1.8 m 内，前摇 0.35 s，伤害 ×1.4
+    ///   钳击：1.8 m 内，前摇 0.35 s（巨钳发光，通道 2），伤害 ×1.4
+    ///   寻视线（同 TS seekSight）：连续 0.4 s 看不见玩家就去玩家 10–22 m 环带里一个看得见的站位（<see cref="SightSeeker"/>）；上弦时看不见超过 0.35 s 就收弦
+    ///   读招：上弦最后 0.15 s 弩尖金光一闪（同 TS）；弩矢是「arrow」外观（金色箭杆 + 拖尾）
+    ///   遁沙：沉沙 / 钻出时扬沙，沙下潜行每 0.6 m 落一段沙痕（3 s 后抹平）+ 沙浪；钻出近处（8 m 内）震屏 0.18
+    ///   被打断（眩晕 / 玩家阵亡 / 清场）：立刻钻回地面（修掉了玩家阵亡时卡在沙下隐身的问题），冷却重摇 1.2–2 s
     /// </summary>
     public sealed class ScorpionArcherAI : EnemyAI
     {
@@ -18,8 +22,16 @@ namespace Spiritfire.Game
         const float BurrowTrigger = 7, DiveTime = 0.55f, TunnelSpeed = 10, TunnelMax = 2.6f, EmergeTime = 0.5f, EmergeRadius = 1.5f;
         const float SnapRange = 1.8f, SnapWindup = 0.35f, SnapMult = 1.4f, SinkDepth = 1.8f;
 
-        float burrowCd, aimTime, recoverTime, shotTimer, strafeTimer, strafeSign = 1;
+        float burrowCd, aimTime, recoverTime, shotTimer, strafeTimer, strafeSign = 1, blindTime, sprayAt;
         int shots;
+        bool flashed;
+        Vector3 lastFurrow;
+        readonly SightSeeker seeker = new();
+
+        /// <summary>累计：射出的弩矢、钻沙几次、寻视线挪过几次站位（测试用）</summary>
+        public int BoltsFired { get; private set; }
+        public int Burrows { get; private set; }
+        public int SightMoves { get; private set; }
         bool snapHit, emergeHit, ambush;
         Vector3 tunnelTarget;
         Transform model;
@@ -41,6 +53,7 @@ namespace Spiritfire.Game
         {
             float d = DistToPlayer;
             if (burrowCd > 0) burrowCd -= dt;
+            blindTime = sees ? 0 : blindTime + dt;
             strafeTimer -= dt;
             if (strafeTimer <= 0)
             {
@@ -68,6 +81,23 @@ namespace Spiritfire.Game
                         SetState("snapWindup");
                         break;
                     }
+                    // 寻视线：看不见玩家时去一个看得见的站位
+                    var q = new SightQuery(PlayerPos, PlayerEye, transform.position, MinRange - 2, MaxRange, 1.6f * Size);
+                    if (seeker.Tick(sees, dt, q))
+                    {
+                        if (seeker.HasSpot)
+                        {
+                            MoveTo(seeker.Spot, moveSpeed);
+                            if (seeker.Arrived(transform.position))
+                            {
+                                seeker.Reached();
+                                SightMoves++;
+                            }
+                        }
+                        else MoveTo(PlayerPos, moveSpeed);
+                        FaceMovement(290, dt);
+                        break;
+                    }
                     KeepRange(MinRange, MaxRange, d < MinRange ? moveSpeed * 1.3f : moveSpeed, strafeSign);
                     FaceAimTravel(200, dt);
                     if (cooldown <= 0 && sees && d <= MaxRange + 8) BeginAim(AimTime, false);
@@ -76,7 +106,15 @@ namespace Spiritfire.Game
                     Glow = 0.35f + 0.65f * Mathf.Clamp01(stateTime / Mathf.Max(0.05f, aimTime));
                     Stop();
                     FacePlayer(290, dt);
-                    if (!sees && stateTime > 0.35f && !ambush)
+                    // 弩尖金光一闪：还有 0.15 s 就放箭
+                    if (!flashed && stateTime >= aimTime - 0.15f)
+                    {
+                        flashed = true;
+                        var m = Muzzle();
+                        Fx.Burst(m, Hex.Rgb(0xfff2c0), 6, 1.2f, 0.2f, 0.09f * Size, 0);
+                        Fx.Flash(m, Hex.Rgb(0xffd27a), 3f, 3f, 0.12f);
+                    }
+                    if (!sees && blindTime > 0.35f)
                     {
                         ReleaseAttack();
                         RollCooldown(0.8f, 1.4f);
@@ -113,17 +151,30 @@ namespace Spiritfire.Game
                 }
                 case "dive":
                     sink = Smooth(stateTime / DiveTime);
+                    Spray(stateTime < 0.35f ? 0.04f : 0.1f, 3);
                     if (stateTime >= DiveTime)
                     {
                         sink = 1;
                         SetModelVisible(false);
+                        lastFurrow = transform.position;
+                        Burrows++;
                         SetState("tunnel");
                     }
                     break;
                 case "tunnel":
                     MoveTo(tunnelTarget, TunnelSpeed);
                     FaceMovement(570, dt);
-                    if (Random.value < dt * 14f) ShotFx.Instance?.Impact(transform.position + Vector3.up * 0.1f, Vector3.up, false, 1.2f);
+                    // 沙浪 + 沙痕（同 TS：每 0.07 s 一团沙；沙痕是 Unity 补的，地上看得出它往哪钻）
+                    if (Time.time >= sprayAt)
+                    {
+                        sprayAt = Time.time + 0.07f;
+                        Fx.Burst(transform.position + Vector3.up * 0.15f, DesertKit.Sand, 3, 1.6f, 0.5f, 0.32f * Size, -3f);
+                    }
+                    if ((transform.position - lastFurrow).sqrMagnitude > 0.36f)
+                    {
+                        lastFurrow = transform.position;
+                        DesertKit.Furrow(transform.position, 0.5f * Size, 3f);
+                    }
                     var flat = tunnelTarget - transform.position;
                     flat.y = 0;
                     if (flat.magnitude < 1f || stateTime >= TunnelMax)
@@ -133,6 +184,7 @@ namespace Spiritfire.Game
                         Sfx("telegraph", 0.7f, 0.5f);
                         Play("emerge", 0.05f);
                         Telegraph.Circle(transform.position, EmergeRadius * Size, EmergeTime, new Color(0.9f, 0.75f, 0.45f));
+                        Fx.Ring(transform.position + Vector3.up * 0.08f, EmergeRadius * Size, DesertKit.SandLight, 0.4f);
                         emergeHit = false;
                         SetState("emerge");
                     }
@@ -140,11 +192,13 @@ namespace Spiritfire.Game
                 case "emerge":
                     FacePlayer(460, dt);
                     sink = 1 - Smooth(stateTime / EmergeTime);
+                    if (stateTime < 0.3f) Spray(0.04f, 4);
                     if (!emergeHit && stateTime >= 0.18f)
                     {
                         emergeHit = true;
                         Burst(transform.position, EmergeRadius * Size, Damage * 0.8f);
                         ShotFx.Instance?.Impact(transform.position, Vector3.up, false, 4f);
+                        if (d < 8) CameraShake.Add(0.18f, 0.25f);
                     }
                     if (stateTime >= EmergeTime)
                     {
@@ -156,6 +210,7 @@ namespace Spiritfire.Game
                     break;
                 case "snapWindup":
                     FacePlayer(400, dt);
+                    SetGlow(2, Mathf.Clamp01(stateTime / SnapWindup));
                     if (stateTime >= Windup(SnapWindup, 0.2f))
                     {
                         Play("snap", 0.04f);
@@ -163,6 +218,7 @@ namespace Spiritfire.Game
                     }
                     break;
                 case "snap":
+                    SetGlow(2, 0);
                     if (!snapHit && stateTime >= 0.06f)
                     {
                         snapHit = true;
@@ -203,14 +259,32 @@ namespace Spiritfire.Game
             }
         }
 
-        protected override void OnStunned()
+        protected override void OnStunned() => Resurface();
+
+        /// <summary>钻沙途中被定住 / 打断：钻回地面上</summary>
+        void Resurface()
         {
-            // 钻沙途中被定住：钻回地面上
             sink = 0;
             if (model) model.localPosition = Vector3.zero;
             SetModelVisible(true);
             SetColliders(true);
             hp.untargetable = false;
+        }
+
+        /// <summary>同 TS cancelAttack：潜沙途中被打断（玩家阵亡、清场、坠落回收）立刻回到地面；冷却重摇</summary>
+        protected override void CancelAttack()
+        {
+            if (state is "dive" or "tunnel" or "emerge") Resurface();
+            SetGlow(2, 0);
+            ambush = false;
+            if (state is not "move" and not IdleState) RollCooldown(1.2f, 2f);
+        }
+
+        void Spray(float every, int count)
+        {
+            if (Time.time < sprayAt) return;
+            sprayAt = Time.time + every;
+            DesertKit.SandSpray(transform.position, count, Size);
         }
 
         void SetColliders(bool on)
@@ -227,6 +301,7 @@ namespace Spiritfire.Game
                 return;
             }
             aimTime = Windup(time, 0.3f);
+            flashed = false;
             Sfx("telegraph", 0.5f, 1.6f);
             Stop();
             PlayTimed("aim", aimTime, 0.08f);
@@ -260,7 +335,12 @@ namespace Spiritfire.Game
             else target = PredictPlayer(flight * 0.35f) + Vector3.up * 1.1f;
             var dir = (target - from).normalized;
             dir = Quaternion.Euler(Random.Range(-0.7f, 0.7f), Random.Range(-0.7f, 0.7f), 0) * dir;
-            EnemyProjectile.Spawn(from, dir * BoltSpeed, 0, Damage, 0.14f, 0, new Color(1f, 0.82f, 0.48f), 3f, spirit: Taunted);
+            // 金色弩矢（arrow 外观：箭杆 + 箭头 + 拖尾，同 TS visual: 'arrow'）
+            EnemyProjectile.Spawn(new EnemyProjectileSpec(from, dir * BoltSpeed, Damage, 0.14f, 3f)
+            {
+                color = Hex.Rgb(0xffd27a), visual = "arrow", scale = 1.3f, source = this, spirit = Taunted,
+            });
+            BoltsFired++;
         }
 
         /// <summary>钻出点：玩家 13–20 m 外、可走、从那里看得见玩家</summary>

@@ -15,6 +15,12 @@ namespace Spiritfire.Game
     ///         分身半透明闪烁（同 Three.js MirageToadDecoy）；吐的是幻影火球：没有落点预警、冷色半透明、飞到一半碎成热浪
     ///   跳着走：只在腾空段前进（同 Three.js 的 HOP_AIR_SPEED / HOP_GROUND_SPEED）。腾空与否直接看动画里 root 骨骼
     ///         抬起的高度，不另算相位——混合、过渡、加速播放时位移都和看到的跳跃对得上；落地前不起手吐火 / 施幻术
+    ///   寻视线（同 TS seekSight）：盲吐够不着（24 m 外又看不见）时去玩家 10–26 m 环带里一个看得见的站位
+    ///   喉囊鼓起（同 TS NATIVE_SAC_SWELL）：鼓囊前摇里喉囊（弱点）胀大到 ×1.32、往前下方鼓出、末段高频颤动；吐出时一缩
+    ///   蜃火珠（同 TS MirageFireball）：真火珠 flame 外观（白金芯 + 橙红火焰 + 拖尾），落点金色预警圈；
+    ///         落地爆炸（边缘剩一半、掀开玩家）+ 冲击环 + 「炽沙」余火 1.9 m、2.6 s、每 0.5 s 一跳 12% 伤害（地火，祸斗能吃）+ 焦痕；
+    ///         幻影火珠：冷白半透明 orb、没有预警圈、飞到 55% 碎成冷光
+    ///   被打断（眩晕 / 玩家阵亡）：已经吐出的火珠照样落地；冷却重摇 1.5–2.5 s（同 TS cancelAttack）
     /// </summary>
     public sealed class MirageToadAI : EnemyAI
     {
@@ -23,9 +29,21 @@ namespace Spiritfire.Game
         // 腾空判定：root 骨骼比站立高出 2–10 cm（设计尺寸）之间渐入；倍率按 Move 片段积分，整跳平均移速 = 1 倍
         const float HopLiftLo = 0.02f, HopLiftHi = 0.1f, HopAirSpeed = 2.8f, HopGroundSpeed = 0.2f;
 
+        /// <summary>鼓囊最大胀大量（同 TS NATIVE_SAC_SWELL）、余火半径 / 时长 / 每跳比例</summary>
+        public const float SacSwell = 0.32f, BurnRadius = 1.9f, BurnTime = 2.6f, BurnRatio = 0.12f;
+
         public bool isDecoy;
         public MirageToadAI caster;
-        float mirageCd, windTime, recoverTime, strafeTimer, strafeSign = 1;
+        float mirageCd, windTime, recoverTime, strafeTimer, strafeSign = 1, spitAge = 99;
+        Vector3 sacRest;
+        bool sacInit;
+        readonly SightSeeker seeker = new();
+
+        /// <summary>当前喉囊缩放（1 = 平时；测试用）、吐过几颗真火珠、炸过几次、寻视线挪过几次站位</summary>
+        public float SacScale { get; private set; } = 1;
+        public int Spits { get; private set; }
+        public int Blasts { get; private set; }
+        public int SightMoves { get; private set; }
         int shots;
         Transform sac, hopBone;
         float hopRest, hopAir;
@@ -149,6 +167,22 @@ namespace Spiritfire.Game
                         SetState("mirage");
                         break;
                     }
+                    // 寻视线：盲吐够不着时去一个看得见的站位（真身才找；分身只是虚张声势）
+                    if (!canLob && !isDecoy && seeker.Tick(sees, dt, new SightQuery(PlayerPos, PlayerEye, transform.position, MinRange - 3, MaxRange, 1.4f * Size)))
+                    {
+                        if (seeker.HasSpot)
+                        {
+                            MoveTo(seeker.Spot, moveSpeed);
+                            if (seeker.Arrived(transform.position))
+                            {
+                                seeker.Reached();
+                                SightMoves++;
+                            }
+                        }
+                        else MoveTo(PlayerPos, moveSpeed);
+                        FaceMovement(200, dt);
+                        break;
+                    }
                     KeepRange(MinRange, MaxRange, speed, strafeSign);
                     // 跳着横移：身体偏向跳的方向（蟾蜍横着蹦很怪），头继续盯着玩家
                     FaceAimTravel(170, dt, 0.6f);
@@ -226,6 +260,33 @@ namespace Spiritfire.Game
             if (loco) loco.speedOverride = 0;
         }
 
+        protected override void CancelAttack()
+        {
+            Glow = 0;
+            if (state is "puff" or "spit" or "mirage" or "recover") RollCooldown(1.5f, 2.5f);
+        }
+
+        /// <summary>
+        /// 喉囊鼓起（动画写完之后再改骨骼缩放：片段里没有缩放曲线）：鼓囊前摇 t 0..1 → ×(1 + 0.32 t)，竖直略扁、前后略鼓，
+        /// 末段叠高频颤动；吐出后 0.15 s 里一缩。弱点球挂在喉囊骨上，一起变大
+        /// </summary>
+        void LateUpdate()
+        {
+            if (!sac) return;
+            if (!sacInit)
+            {
+                sacInit = true;
+                sacRest = sac.localScale;
+            }
+            spitAge += Time.deltaTime;
+            float t = state == "puff" && !Dead ? Mathf.Clamp01(stateTime / Mathf.Max(0.05f, windTime)) : 0;
+            float kick = Mathf.Exp(-spitAge * 7f);
+            float k = 1 + 0.03f * Mathf.Sin(age * 2.2f) + t * SacSwell + t * 0.035f * Mathf.Sin(age * 30f) - kick * 0.25f;
+            k = Mathf.Max(0.65f, k);
+            SacScale = k;
+            sac.localScale = new Vector3(sacRest.x * k, sacRest.y * Mathf.Max(0.65f, k * (1 - 0.1f * t)), sacRest.z * Mathf.Max(0.65f, k * (1 + 0.06f * t)));
+        }
+
         Vector3 Mouth()
         {
             float k = transform.localScale.x;
@@ -248,14 +309,46 @@ namespace Spiritfire.Game
             }
             target.y = GroundY(target);
             var v = EnemyProjectile.Ballistic(from, target, T, BallGravity);
+            spitAge = 0;
+            float k = transform.localScale.x;
             if (isDecoy)
             {
-                // 幻影火球：不给落点预警（这就是分辨真假的线索），冷色，飞到 55% 就碎成一阵冷光
-                EnemyProjectile.Spawn(from, v, BallGravity, 0, 0.32f * transform.localScale.x, BallRadius, new Color(0.82f, 0.94f, 1f), T * 0.55f, Element.None, true);
+                // 幻影火球：不给落点预警（这就是分辨真假的线索），冷白半透明，飞到 55% 就碎成一阵冷光
+                EnemyProjectile.Spawn(new EnemyProjectileSpec(from, v, 0, 0.32f * k, T * 0.55f)
+                {
+                    gravity = BallGravity, explosionRadius = BallRadius, color = new Color(0.82f, 0.94f, 1f, 0.45f), visual = "orb", scale = 1.1f,
+                    fake = true, source = this, trail = ProjectileTrail.Off,
+                });
                 return;
             }
-            Telegraph.Circle(target, BallRadius, T, new Color(1f, 0.45f, 0.15f));
-            EnemyProjectile.Spawn(from, v, BallGravity, Damage, 0.32f * transform.localScale.x, BallRadius, new Color(1f, 0.55f, 0.18f), T + 1.5f, Element.Fire, false, Taunted);
+            Telegraph.Circle(target, BallRadius, T, new Color(1f, 0.69f, 0.19f));
+            float dmg = Damage;
+            float size = Size;
+            var self = this;
+            bool spirit = Taunted;
+            EnemyProjectile.Spawn(new EnemyProjectileSpec(from, v, dmg, 0.32f * k, T + 1.5f)
+            {
+                gravity = BallGravity, explosionRadius = BallRadius, explosionFalloff = 0.5f, element = Element.Fire,
+                color = new Color(1f, 0.55f, 0.18f), visual = "flame", scale = 1.6f, source = this, spirit = Taunted,
+                onImpact = (at, _) => FireballLanded(self, at, dmg, size, spirit),
+            });
+            Spits++;
+        }
+
+        /// <summary>真火珠落地（爆炸伤害由投射物结算）：火团、冲击环、按距离震屏、「炽沙」余火（地火）、焦痕</summary>
+        static void FireballLanded(MirageToadAI owner, Vector3 at, float damage, float size, bool spirit)
+        {
+            var ground = DesertKit.OnGround(at);
+            if (ground.y > at.y) ground.y = at.y;
+            Fx.Explosion(at, BallRadius, new Color(1f, 0.63f, 0.19f));
+            DesertKit.FireRing(ground, BallRadius * 1.15f);
+            Fx.Burst(ground + Vector3.up * 0.4f, Hex.Rgb(0xffc050), 16, 2.6f, 0.65f, 0.55f * size, -7f);
+            Fx.Burst(ground, DesertKit.Dust, 8, 4f, 0.6f, 0.1f * size, 15f);
+            CameraShake.Quake(at, 0.7f, BallRadius * 3.2f, 0.35f);
+            // 被嘲讽时吐向灵体诱饵：不留伤人的余火
+            if (!spirit) FireZone.Spawn(ground, BurnRadius * size, BurnTime, damage * BurnRatio);
+            DesertKit.Scorch(ground, BallRadius * 0.6f, 7f);
+            if (owner) owner.Blasts++;
         }
 
         /// <summary>投出分身补到上限（还活着的不重复投）：在身体两侧展开成扇形，4–7 m</summary>

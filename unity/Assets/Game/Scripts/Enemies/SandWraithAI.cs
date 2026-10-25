@@ -190,6 +190,7 @@ namespace Spiritfire.Game
                             break;
                         }
                         recoverTime = RecoverAfterErupt;
+                        burrowCd = Random.Range(5.5f, 7.5f);
                         Play("recover", 0.08f);
                         SetState("recover");
                     }
@@ -226,7 +227,6 @@ namespace Spiritfire.Game
                     {
                         ReleaseAttack();
                         RollCooldown(1.2f, 2.2f);
-                        if (burrowCd < 1.5f) burrowCd = Random.Range(5.5f, 7.5f);
                         PlayLocomotion();
                         SetState("stalk");
                     }
