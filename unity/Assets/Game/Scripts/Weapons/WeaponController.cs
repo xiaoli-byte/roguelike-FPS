@@ -79,6 +79,8 @@ namespace Spiritfire.Game
 
         public event Action<WeaponInstance> Fired;
         public event Action Changed;
+        /// <summary>状态机的每条通知（换弹开始 / 压弹 / 弹匣入位 / 上膛 / 空仓……），第一人称零件动画（<see cref="WeaponPartAnimator"/>）订阅</summary>
+        public event Action<WeaponNote, WeaponInstance> Noted;
 
         /// <summary>
         /// 自动化冒烟测试：绕过鼠标锁定与真实输入，由 testFire / testAim / testReload / testSwitch 驱动。
@@ -267,8 +269,44 @@ namespace Spiritfire.Game
             return null;
         }
 
-        /// <summary>枪口（曳光、投射物的出生点）：跟着渲染相机（看得见的枪模）走；方向仍由 <see cref="Aim"/> 决定</summary>
-        Vector3 Muzzle() => eye.transform.TransformPoint(Vector3.Lerp(MuzzleHip, MuzzleAim, aimT));
+        /// <summary>显示中的那把枪的枪口挂点（W3 的 muzzle 骨骼，FirstPerson 层）；没有第一人称 rig 时为 null。枪口火焰挂在它下面</summary>
+        public Transform MuzzleSocket
+        {
+            get
+            {
+                var view = ViewFor(shownRig);
+                if (!view) return null;
+                if (view != muzzleView)
+                {
+                    muzzleView = view;
+                    var def = WeaponLibrary.Get(shownRig);
+                    muzzleSocket = WeaponSockets.Find(WeaponRigParts.GunOf(view.transform, def?.prefab), WeaponSockets.Muzzle, "j_0");
+                }
+                return muzzleSocket;
+            }
+        }
+
+        FirstPersonViewmodel muzzleView;
+        Transform muzzleSocket;
+        /// <summary>枪模相机的竖直视角（PlayerFactory.CreateCamera 同值）：枪口挂点从枪模相机投到主相机前方时用</summary>
+        const float ViewmodelFov = 60f, MuzzleDepth = 0.9f;
+
+        /// <summary>
+        /// 枪口（曳光、投射物的出生点）：枪模的 muzzle 挂点在枪模相机里的屏幕位置，换算到主相机前方 0.9 m 处（两台相机 FOV 不同，
+        /// 同 TS getMuzzleWorld），看起来从枪口射出；没有挂点时退回相机空间常数。方向仍由 <see cref="Aim"/> 决定
+        /// </summary>
+        Vector3 Muzzle()
+        {
+            var socket = MuzzleSocket;
+            if (!socket || !socket.gameObject.activeInHierarchy) return eye.transform.TransformPoint(Vector3.Lerp(MuzzleHip, MuzzleAim, aimT));
+            var cam = eye.transform;
+            var local = cam.InverseTransformPoint(socket.position);
+            float z = Mathf.Max(0.05f, local.z);
+            float tanV = Mathf.Tan(ViewmodelFov * 0.5f * Mathf.Deg2Rad);
+            float tanM = Mathf.Tan(Mathf.Clamp(eye.fieldOfView, 10f, 170f) * 0.5f * Mathf.Deg2Rad);
+            float k = MuzzleDepth / z * (tanM / tanV);
+            return cam.TransformPoint(new Vector3(local.x * k, local.y * k, MuzzleDepth));
+        }
 
         // ───────────── 每帧 ─────────────
 
@@ -367,8 +405,15 @@ namespace Spiritfire.Game
             var view = ViewFor(id);
             if (!view) return;
             view.aim = showHolster ? 0 : aimT;
-            float reloadLower = !showHolster && sm.Reloading ? Mathf.Sin(Mathf.Clamp01(sm.ReloadProgress) * Mathf.PI) * 0.6f : 0;
-            view.lower = Mathf.Max(reloadLower, switchLower);
+            view.lower = switchLower;
+            // 换弹姿态与持续开火颤动（W4，FirstPersonViewmodel 按换弹风格摆）
+            bool reloading = !showHolster && sm.Reloading;
+            view.reloading = reloading;
+            view.shellReload = reloading && sm.ShellReload;
+            view.reloadProgress = !reloading ? 0 : sm.ShellReload ? sm.ShellProgress : sm.ReloadProgress;
+            var mode = showHolster ? null : sm.Mode;
+            view.firing = mode != null && mode.Firing && (mode is BeamMode || mode is SpinupMode || mode is ChargeMode);
+            view.jitter = mode is ChargeMode ? 0.0008f + 0.0026f * mode.Spin : 0.003f;
         }
 
         void UpdateSpread(float dt)
@@ -505,7 +550,8 @@ namespace Spiritfire.Game
             float yaw = (def.recoilBias + UnityEngine.Random.Range(-1f, 1f) * def.recoilYaw) * k;
             motor.AddRecoil(pitch * RecoilScale * Mathf.Rad2Deg, yaw * RecoilScale * Mathf.Rad2Deg);
             ViewFor(shownRig)?.Kick(def.kickBack * 0.76f * ViewKickScale * strength, def.kickRot * ViewKickScale * strength);
-            ShotFx.Instance?.MuzzleFlash(muzzle, def.flash / 0.12f);
+            // 枪口火焰（未满蓄的蓄力射击按 TS 0.5 + 0.5 × 强度减弱）；位置 = muzzle 挂点投到主相机的枪口，挂点本身见 MuzzleSocket
+            if (def.flash > 0) ShotFx.Instance?.MuzzleFlash(muzzle, def.flash / 0.12f * (0.5f + 0.5f * Mathf.Clamp01(strength)));
             if (def.mode == FireMode.Beam) GameAudio.HoldBeam(def.sfxVolume);
             else GameAudio.Play(def.sfx, def.sfxVolume, 0.94f + UnityEngine.Random.value * 0.12f);
             if (feel) feel.FireKick(def.shake * strength, def.shake > 0.15f ? 0.16f : 0.08f, def.kickBack * strength);
@@ -523,6 +569,7 @@ namespace Spiritfire.Game
 
         void IWeaponEffects.Notify(WeaponNote note, WeaponInstance w, WeaponInstance other)
         {
+            Noted?.Invoke(note, w);
             switch (note)
             {
                 case WeaponNote.Changed:
@@ -545,12 +592,20 @@ namespace Spiritfire.Game
                     GameEvents.RaiseReloadStarted(w);
                     break;
                 case WeaponNote.ShellInserted:
-                    // 逐发装填：每塞一发一声轻响
+                    // 逐发装填：每塞一发一声轻响，枪身往下一磕
                     GameAudio.Play("reload_end", 0.45f, 1.3f + UnityEngine.Random.value * 0.1f);
+                    ViewFor(shownRig)?.ShellBump();
+                    Changed?.Invoke();
+                    break;
+                case WeaponNote.Loaded:
+                    // 弹匣入位（第一人称动画事件）：咔哒一声、弹药数此刻跳上去
+                    GameAudio.Play("reload_end", 0.85f);
                     Changed?.Invoke();
                     break;
                 case WeaponNote.Reloaded:
-                    GameAudio.Play("reload_end", 0.85f);
+                    // 弹匣入位时已经响过：收尾（拉机柄 / 拍枪管）只给一声轻的
+                    if (Machine.LoadCommitted && !Machine.ShellReload && !WeaponStateMachine.IsShell(w?.def)) GameAudio.Play("weapon_switch", 0.45f, 1.25f);
+                    else GameAudio.Play("reload_end", 0.85f);
                     Changed?.Invoke();
                     GameEvents.RaiseReloaded(w);
                     break;
@@ -560,6 +615,7 @@ namespace Spiritfire.Game
                     break;
                 case WeaponNote.DryFire:
                     GameAudio.Play("dry_fire", 0.8f);
+                    ViewFor(shownRig)?.DryKick();
                     break;
                 case WeaponNote.Resupplied:
                     GameAudio.Play("pickup_ammo");

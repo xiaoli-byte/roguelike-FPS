@@ -168,59 +168,11 @@ namespace Spiritfire.Game
         }
 
         /// <summary>
-        /// 一把枪的第一人称 rig：枪管朝 Unity −Z（与 Three.js 相机前方一致），所以枪模绕 Y 转 180° 挂在相机下；
-        /// 腰射 = viewOffset + HIP_SHIFT(0.024, −0.02)，开镜 = aimOffset × VM_SCALE；手臂挂在枪模下（右手握把、左手托底，角度来自武器表）。
-        /// 只用 LOD0、不投影、去掉碰撞体，整套放 FirstPerson 层。没有枪模 Prefab 时返回 null（这把枪没有第一人称画面）。
+        /// 一把枪的第一人称 rig（W4 起由 <see cref="WeaponRigFactory.Build"/> 搭：枪模 + 英雄手臂 + 持握与换弹动画）。
+        /// 没有枪模 Prefab 时返回 null（这把枪没有第一人称画面）。
         /// </summary>
-        public static FirstPersonViewmodel BuildWeaponRig(WeaponDef def, HeroDef hero, Transform cam, PrefabPlacer place = null)
-        {
-            place ??= GameDatabase.Place;
-            var rig = new GameObject($"FP Rig {def.id}");
-            rig.transform.SetParent(cam, false);
-            var gun = Place(place, def.prefab, rig.transform, Vector3.zero, ViewmodelScale);
-            if (!gun)
-            {
-                Kill(rig);
-                return null;
-            }
-            var vm = rig.AddComponent<FirstPersonViewmodel>();
-            vm.hipOffset = def.viewHip + new Vector3(0.024f, -0.02f, 0);
-            vm.aimOffset = def.viewAim * ViewmodelScale;
-            rig.transform.SetLocalPositionAndRotation(vm.hipOffset, Quaternion.Euler(0, 180, 0));
-
-            var r = Place(place, hero.armR, gun.transform, def.rightHand, 1);
-            if (r) r.transform.localRotation = Quaternion.Euler(def.rightPitch * Mathf.Rad2Deg, 0, 0);
-            var l = Place(place, hero.armL, gun.transform, def.leftHand, 1);
-            if (l) l.transform.localRotation = Quaternion.Euler(0, 0, -def.leftRoll * Mathf.Rad2Deg);
-
-            foreach (var lg in rig.GetComponentsInChildren<LODGroup>(true))
-            {
-                var lods = lg.GetLODs();
-                for (int i = 1; i < lods.Length; i++)
-                    foreach (var rr in lods[i].renderers) if (rr) rr.enabled = false;
-                Kill(lg);
-            }
-            // 运行时 Destroy 要到帧末才生效：先停掉，免得这一帧挡住玩家自己的角色控制器
-            foreach (var c in rig.GetComponentsInChildren<Collider>(true))
-            {
-                c.enabled = false;
-                Kill(c);
-            }
-            foreach (var rr in rig.GetComponentsInChildren<Renderer>(true)) rr.shadowCastingMode = ShadowCastingMode.Off;
-            SetLayer(rig, Layers.FirstPerson);
-            rig.SetActive(def.id == hero.startWeapon);
-            return vm;
-        }
-
-        static GameObject Place(PrefabPlacer place, string id, Transform parent, Vector3 localPos, float scale)
-        {
-            if (string.IsNullOrEmpty(id)) return null;
-            var go = place(id, parent);
-            if (!go) return null;
-            go.transform.SetLocalPositionAndRotation(localPos, Quaternion.identity);
-            go.transform.localScale = Vector3.one * scale;
-            return go;
-        }
+        public static FirstPersonViewmodel BuildWeaponRig(WeaponDef def, HeroDef hero, Transform cam, PrefabPlacer place = null) =>
+            WeaponRigFactory.Build(def, hero, cam, place);
 
         public static void SetLayer(GameObject go, int layer)
         {

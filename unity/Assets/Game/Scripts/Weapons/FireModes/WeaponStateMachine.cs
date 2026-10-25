@@ -21,6 +21,8 @@ namespace Spiritfire.Game
         ReloadPartial,
         /// <summary>逐发装填结束后上膛（泵动动作，<see cref="WeaponTiming.ShellRack"/> 秒不能开火）</summary>
         Racked,
+        /// <summary>整匣换弹的弹匣入位（第一人称动画事件 <see cref="WeaponStateMachine.CommitLoad"/>）：弹药已经加上，换弹动作还在收尾</summary>
+        Loaded,
         /// <summary>弹匣和备弹都空了还扣扳机</summary>
         DryFire,
         /// <summary>应急补给：当前武器备弹 + 1 匣</summary>
@@ -92,6 +94,8 @@ namespace Spiritfire.Game
         WeaponInstance reloadWeapon;
         float autoReload, dryTimer, starved;
         bool wasAlive = true;
+        /// <summary>这次整匣换弹已经加过弹（弹匣入位的动画事件到了）</summary>
+        bool loadCommitted;
 
         public WeaponStateMachine(WeaponInstance[] slots, IWeaponEffects fx, Func<float> clock, Func<WeaponInstance, ResolvedWeapon> resolve)
         {
@@ -328,6 +332,7 @@ namespace Spiritfire.Game
             autoReload = 0;
             Reloading = true;
             reloadWeapon = w;
+            loadCommitted = false;
             if (IsShell(w.def))
             {
                 ShellReload = true;
@@ -370,11 +375,34 @@ namespace Spiritfire.Game
             }
             reloadElapsed += dt;
             if (reloadElapsed < reloadTotal) return;
+            if (!loadCommitted) Load(w, R);
+            FinishReload(w, false);
+        }
+
+        void Load(WeaponInstance w, ResolvedWeapon R)
+        {
             int take = Mathf.Min(Mathf.Max(0, R.magCap - w.mag), Mathf.Max(0, w.reserve));
             w.mag += take;
             w.reserve -= take;
-            FinishReload(w, false);
+            loadCommitted = true;
         }
+
+        /// <summary>
+        /// 加弹的动画事件（W4）：整匣换弹中弹匣入位时由第一人称左手（<see cref="WeaponHandRig"/>）调，弹药此刻加上（HUD 跟着跳），
+        /// 换弹动作照常收尾到换弹时间结束（总时长不变，秒伤不变）；之后被切枪打断也保留这一匣。没有调（没有第一人称 rig）时换弹结束才加，结果一样。
+        /// 逐发装填、没在换弹、已经加过时什么都不做；返回这次是否加了
+        /// </summary>
+        public bool CommitLoad()
+        {
+            var w = reloadWeapon;
+            if (!Reloading || ShellReload || loadCommitted || w == null) return false;
+            Load(w, resolve(w));
+            fx.Notify(WeaponNote.Loaded, w, null);
+            return true;
+        }
+
+        /// <summary>这次（或刚结束的那次）整匣换弹是不是由动画事件加的弹</summary>
+        public bool LoadCommitted => loadCommitted;
 
         void FinishReload(WeaponInstance w, bool rack)
         {
@@ -401,12 +429,14 @@ namespace Spiritfire.Game
         {
             if (!Reloading) return;
             var w = reloadWeapon ?? Active;
-            bool partial = ShellReload && ShellsInserted > 0;
+            // 逐发装填压进过弹，或整匣换弹的弹匣已经入位：都算一次（部分）换弹
+            bool committed = !ShellReload && loadCommitted;
+            bool partial = (ShellReload && ShellsInserted > 0) || committed;
             Reloading = false;
             ShellReload = false;
             reloadWeapon = null;
             if (!partial || w == null) return;
-            if (rack) Rack(w);
+            if (rack && !committed) Rack(w);
             fx.Notify(WeaponNote.ReloadPartial, w, null);
         }
 

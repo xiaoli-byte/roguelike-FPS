@@ -224,6 +224,9 @@ namespace Spiritfire.Game.Testing
                 if (!part || !attached) Fail($"{def.name}：登记了 {sight.kind} 瞄具，第一人称 rig 上没有挂（WeaponRigParts 没跑？）");
             }
 
+            // 握持 / 挂点 / 换弹手位（W3 / W4）
+            if (view && !def.IsBlade) yield return GripCase(def, inst, view);
+
             // 木桩
             bool melee = def.IsBlade || WeaponTakeovers.Find(inst) != null;
             var dummy = SpawnDummy(Vector3.zero);
@@ -416,6 +419,72 @@ namespace Spiritfire.Game.Testing
             if (!shown) Fail($"{def.name}：退镜后第一人称枪模没复原");
             if (xhair != null && xhair.Suppressed) Fail($"{def.name}：退镜后准星还收着");
             wc.testAim = false;
+            yield return WaitIdle(inst);
+        }
+
+        /// <summary>
+        /// 握持与换弹（W3 / W4）：枪模 Prefab 上六个挂点齐全（WeaponSockets）、左手在 leftGrip 上；按换弹，换到一半拍一张第一人称图（weapons_&lt;id&gt;_reload），
+        /// 左手应离开握点（伸到送弹口 / 弹药袋）；整匣换弹的弹药要在换弹结束之前由动画事件加上（弹匣入位），逐发装填每发照常压；换完左手回到握点
+        /// </summary>
+        IEnumerator GripCase(WeaponDef def, WeaponInstance inst, FirstPersonViewmodel view)
+        {
+            var wc = rig.weapons;
+            var gun = WeaponRigParts.GunOf(view.transform, def.prefab);
+            var sockets = WeaponSockets.Of(gun);
+            var missing = sockets ? WeaponSockets.SocketNames.Where(n => !sockets.Socket(n)).ToList() : WeaponSockets.SocketNames.ToList();
+            var hand = view.GetComponent<WeaponHandRig>();
+            var parts = view.GetComponent<WeaponPartAnimator>();
+            Line($"挂点：{(sockets ? $"零件 {string.Join("/", sockets.partNames)}，缺 {(missing.Count == 0 ? "无" : string.Join("、", missing))}" : "没有 WeaponSockets（Prefab 没重建？）")}；" +
+                 $"左手 {(hand ? "已接" : "没接")}，零件动画 {(parts ? "已接" : "没接")}");
+            if (!sockets || missing.Count > 0) Fail($"{def.name}：枪模挂点不全（{string.Join("、", missing)}）");
+            if (!hand) Fail($"{def.name}：rig 上没有 WeaponHandRig（左手不跟握点、换弹没有手位）");
+            var grip = sockets ? sockets.leftGrip : null;
+            float restGap = hand && hand.Arm && grip ? Vector3.Distance(hand.Arm.position, grip.position) : -1;
+            if (restGap > 0.01f) Fail($"{def.name}：静止时左手离握点 {restGap * 100:F1} cm");
+
+            var R = WeaponStatsResolver.Resolve(inst, rig.vitals.stats);
+            inst.mag = Mathf.Max(0, R.magCap - Mathf.Max(1, Mathf.Min(2, R.magCap - 1)));
+            inst.reserve = Mathf.Max(inst.reserve, R.reserveCap);
+            int mag0 = inst.mag;
+            wc.testReload = true;
+            yield return null;
+            if (!wc.Reloading)
+            {
+                Fail($"{def.name}：按换弹后没有开始换弹（弹匣 {inst.mag}/{R.magCap}）");
+                yield break;
+            }
+            bool shell = wc.Machine.ShellReload;
+            bool loadedEarly = false, shot = false;
+            float maxGap = 0, maxSwing = 0, maxOpen = 0, maxMag = 0, t0 = Time.time;
+            var breakAction = view.GetComponent<BreakAction>();
+            while (wc.Reloading && Time.time - t0 < 8f)
+            {
+                float p = shell ? wc.Machine.ShellProgress : wc.ReloadProgress;
+                if (hand && hand.Arm && grip) maxGap = Mathf.Max(maxGap, Vector3.Distance(hand.Arm.position, grip.position));
+                if (hand) maxSwing = Mathf.Max(maxSwing, hand.Swing);
+                if (breakAction) maxOpen = Mathf.Max(maxOpen, breakAction.Open);
+                if (parts) maxMag = Mathf.Max(maxMag, parts.MagOut);
+                if (!shell && inst.mag >= R.magCap) loadedEarly = true;
+                if (!shot && p >= 0.5f)
+                {
+                    shot = true;
+                    Shot(rig.cam, $"weapons_{def.id}_reload");
+                }
+                yield return null;
+            }
+            yield return new WaitForSeconds(0.3f);
+            float backGap = hand && hand.Arm && grip ? Vector3.Distance(hand.Arm.position, grip.position) : -1;
+            Line($"换弹（{(shell ? "逐发" : "整匣")}）：弹匣 {mag0} → {inst.mag}，左手最远离握点 {maxGap * 100:F1} cm（前臂最多摆 {maxSwing:F0}°），换完回到 {backGap * 100:F1} cm；" +
+                 (shell ? "逐发按每发压弹" : loadedEarly ? "弹匣入位时加弹（动画事件）" : "⚠ 换弹结束才加弹（动画事件没到）") +
+                 (parts && parts.Mag ? $"；弹匣离位最多 {maxMag:F2}" : "") +
+                 (breakAction ? $"；枪管关节 {(breakAction.HasHinge ? "有" : "没有（整枪低头代替）")}，最大折开 {maxOpen:F2}" : ""));
+            if (breakAction && !breakAction.HasHinge) Fail($"{def.name}：枪模里没有枪管关节 barrels（W3 拆骨没生效？）");
+            if (breakAction && maxOpen < 0.8f) Fail($"{def.name}：逐发装填时枪管没折开（最大 {maxOpen:F2}）");
+            if (parts && parts.Mag && !shell && maxMag < 0.8f) Fail($"{def.name}：整匣换弹时弹匣没离位（最大 {maxMag:F2}）");
+            if (hand && maxGap < 0.015f) Fail($"{def.name}：换弹时左手没离开握点（最远 {maxGap * 100:F1} cm）");
+            if (!shell && hand && !loadedEarly) Fail($"{def.name}：整匣换弹没有在弹匣入位时加弹");
+            if (hand && backGap > 0.012f) Fail($"{def.name}：换完弹左手没回到握点（差 {backGap * 100:F1} cm）");
+            if (inst.mag < R.magCap && !shell) Fail($"{def.name}：换完弹弹匣 {inst.mag}/{R.magCap}");
             yield return WaitIdle(inst);
         }
 
