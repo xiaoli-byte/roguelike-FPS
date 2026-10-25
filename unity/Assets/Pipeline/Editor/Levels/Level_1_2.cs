@@ -157,7 +157,8 @@ namespace Spiritfire.Art.Editor.Levels
         };
 
         // ── 第一章阵容 ──
-        const string Jerboa = "jerboa_blade", Scorpion = "scorpion_archer", Toad = "mirage_toad", TombBeast = "tomb_beast", Apsara = "apsara", FireRat = "fire_rat";
+        const string Jerboa = "jerboa_blade", Scorpion = "scorpion_archer", Toad = "mirage_toad", TombBeast = "tomb_beast", Apsara = "apsara", FireRat = "fire_rat",
+            Wraith = "sand_wraith";
 
         /// <summary>
         /// 刷怪站位（标记名、属于哪个场地、局部坐标、角色、lane、高台、散开半径）。高台只给邪飞天（第一章其余敌人都贴地）；
@@ -739,6 +740,8 @@ namespace Spiritfire.Art.Editor.Levels
         /// <summary>
         /// 遭遇（docs/level-design/maps/1-2.md §5，遭遇框架 v2）：四个必清场地任意顺序，⑤ 是藏宝 B 的守军（可选、不自动触发）。
         /// 难度由 RunPlan 给（1-2 = 1.16），场地不写死。站位标记挂 SpawnAnchor（<see cref="Anchors"/>）。
+        /// 沙魇（EN1）：② 屋脊之海首波的两只跳鼠换成沙魇（只数不变）——沙盆是流沙地，沙魇潜沙逼近；屋面比沙盆高 3.2 m，
+        /// 超过它潜沙突袭的 2.5 m 高差，上屋顶就是解法（同一句提示管流沙和沙魇）。1-1 ② 先见过一只，这里第一次成对。
         /// </summary>
         static SG.LevelObjective BuildEncounters(Transform markers)
         {
@@ -775,7 +778,7 @@ namespace Spiritfire.Art.Editor.Levels
                     Wave("侧河道包抄", E(Jerboa, 3), E(FireRat, 2)).After(1, 1.6f).Hint("火浣鼠滚过来会炸——上河心洲拉开距离"))
                 .Gather(0.4f), "weapon");
             var s2 = Site(2, "屋脊之海", Site2, 22, 30, SG.EncounterSpec.Of(
-                    Wave("沙下的街", E(FireRat, 3), E(Jerboa, 2), E(Apsara, 1)).Hint("流沙会把人往下拖——从积沙坡上屋顶走"),
+                    Wave("沙下的街", E(FireRat, 3), E(Wraith, 2), E(Apsara, 1)).Hint("流沙会往下拖，沙魇从沙里钻出来——从积沙坡上屋顶走"),
                     Wave("飞天降临", E(Apsara, 1), E(FireRat, 2), E(Scorpion, 2)).After(1, 2f).Hint("先打飞天的琵琶，她在给同伴加护"))
                 .Gather(0.6f), "scroll");
             var s3 = Site(3, "塔尖广场", Site3, 24, 30, SG.EncounterSpec.Of(
