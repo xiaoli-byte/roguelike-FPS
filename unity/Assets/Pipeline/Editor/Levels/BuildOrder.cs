@@ -13,7 +13,8 @@ namespace Spiritfire.Art.Editor.Levels
     ///   0. Core（常驻场景：打包后从它启动，MenuFlow.Boot 再转去主菜单；SceneFlow 叠加加载关卡）
     ///   1. MainMenu（主菜单 + 选英雄）
     ///   2… RunPlan 的 12 关，按主线顺序（试玩开关开着时 <see cref="RunPlan.DemoEnd"/> 之后的关卡留在表里但不打进包）
-    ///   之后：其余已登记的关卡（测试场等）按登记顺序 → 其它场景（展示场景等）原顺序，启用状态不动。
+    ///   之后：其余已登记的关卡（测试场等）按登记顺序 → 其它场景（展示场景、SampleScene 等）原顺序，一律停用——
+    ///   正式构建只打 Core、主菜单和 12 关。停用的场景留在表里（编辑器里照样能打开、冒烟测试照样能加载），场景文件不删。
     /// 磁盘上有、却不在构建设置里的 Core / 主菜单 / 关卡场景补进来（SceneFlow / MenuFlow 打包后只能加载构建设置里的场景）。
     /// 顺序和启用状态都没变就不写（不弄脏 EditorBuildSettings.asset）。
     /// 谁调：<see cref="LevelBuilders.SyncBuildSettings"/>（level / levels / core / menu 命令生成场景之后）；编辑器每次脚本重载后自动对一遍
@@ -33,7 +34,14 @@ namespace Spiritfire.Art.Editor.Levels
 
         static void AutoApply()
         {
-            if (EditorApplication.isPlayingOrWillChangePlaymode || BuildPipeline.isBuildingPlayer || EditorApplication.isCompiling) return;
+            if (EditorApplication.isPlayingOrWillChangePlaymode || BuildPipeline.isBuildingPlayer) return;
+            // 重载后紧接着还在编译 / 导入（别的会话又改了脚本）：下一帧再对，不能就此跳过
+            if (EditorApplication.isCompiling || EditorApplication.isUpdating)
+            {
+                EditorApplication.delayCall -= AutoApply;
+                EditorApplication.delayCall += AutoApply;
+                return;
+            }
             try
             {
                 Apply();
@@ -46,12 +54,34 @@ namespace Spiritfire.Art.Editor.Levels
 
         /// <summary>
         /// 把改过的构建设置写回 ProjectSettings/EditorBuildSettings.asset（只写这一个对象，不像 SaveAssets 那样顺带保存别人改到一半的资产）。
-        /// 没改过（不脏）什么都不做
+        /// 改 EditorBuildSettings.scenes 不会马上落盘（以前靠别的命令顺带 SaveAssets 才写进去）：内存里的场景表和磁盘上的对不上时，
+        /// 先标脏走 SaveAssetIfDirty，还对不上就把这个对象直接序列化写回；对得上、也不脏就什么都不做
         /// </summary>
         public static void Save()
         {
-            foreach (var o in AssetDatabase.LoadAllAssetsAtPath(SettingsPath))
-                if (o && EditorUtility.IsDirty(o)) AssetDatabase.SaveAssetIfDirty(o);
+            bool stale = DiskDiffers();
+            var objs = AssetDatabase.LoadAllAssetsAtPath(SettingsPath).Where(o => o).ToArray();
+            foreach (var o in objs)
+            {
+                if (stale) EditorUtility.SetDirty(o);
+                if (EditorUtility.IsDirty(o)) AssetDatabase.SaveAssetIfDirty(o);
+            }
+            if (stale && objs.Length > 0 && DiskDiffers())
+                UnityEditorInternal.InternalEditorUtility.SaveToSerializedFileAndForget(objs, SettingsPath, true);
+        }
+
+        /// <summary>磁盘上 EditorBuildSettings.asset 里的场景表（启用 + 路径，按顺序）和内存里的不一样</summary>
+        static bool DiskDiffers()
+        {
+            try
+            {
+                var text = File.ReadAllText(SettingsPath).Replace("\r", "");
+                var disk = System.Text.RegularExpressions.Regex.Matches(text, @"- enabled: (\d)\n\s+path: ([^\n]*)")
+                    .Cast<System.Text.RegularExpressions.Match>().Select(m => (m.Groups[1].Value == "1", m.Groups[2].Value.Trim())).ToList();
+                var mem = EditorBuildSettings.scenes.Select(s => (s.enabled, s.path)).ToList();
+                return !disk.SequenceEqual(mem);
+            }
+            catch (IOException) { return false; }
         }
 
         /// <summary>游戏本体的场景（按构建顺序）：Core → 主菜单 → RunPlan 的关卡</summary>
@@ -83,12 +113,12 @@ namespace Spiritfire.Art.Editor.Levels
                 return 100000 + original;
             }
             var sorted = scenes.Select((s, i) => (s, i)).OrderBy(x => Rank(x.s.path, x.i)).Select(x => x.s).ToList();
-            // 游戏场景：Core / 主菜单 / 路线上的关卡启用，试玩版终点之后的关卡不打进包
+            // 游戏场景：Core / 主菜单 / 路线上的关卡启用，试玩版终点之后的关卡不打进包；其余（测试场、展示场景、SampleScene）一律停用
             foreach (var s in sorted)
             {
                 var stage = RunPlan.ForScene(s.path);
                 if (stage != null) s.enabled = RunPlan.InPlay(stage);
-                else if (s.path == SceneFlow.CorePath || s.path == MenuFlow.MenuScenePath) s.enabled = true;
+                else s.enabled = IndexOf(game, s.path) >= 0;
             }
             return sorted;
         }
