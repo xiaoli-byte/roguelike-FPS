@@ -555,6 +555,7 @@ namespace Spiritfire.Art.Editor.Levels
                 DiagnoseAnchors(rep);
                 LevelKit.ValidateLava(rep);
                 CheckLift(rep, lift);
+                CheckSiteCenters(rep, scene);
                 CheckSceneContents(rep, scene);
                 rep.Line(rep.failures == 0 ? "全部通过" : $"不合格 {rep.failures} 项");
                 rep.Save($"{LevelKit.ReviewDir}/level_3-2_report.txt");
@@ -1255,6 +1256,85 @@ namespace Spiritfire.Art.Editor.Levels
                 rep.Line($"  诊断 {a.name}：路径 {path.corners.Length} 个拐点，停在 {LevelContext.At(last)}（离锚点 {Vector3.Distance(last, at):F1} m）；" +
                          $"反向 {back}；经场地中心 {viaSite}；最近的导航网格边 {edge}");
             }
+        }
+
+        /// <summary>
+        /// 遭遇场地的中心都在和出生点连通的导航网格上，必清场地两两之间也走得通（同 2-2 的 818ef840：整局冒烟传送到场地中心，中心落在孤岛上就刷不出怪；
+        /// 3-2 的场地顺序不固定，机器人打完一个场地直接去下一个）。只查人形代理、只走非熔岩区（<see cref="SG.LavaField.DryAreaMask"/>，同 RunBot），
+        /// 吸附半径同 RunBot（8 m）。参考：再用 RunBot 原来的写法（只给区域掩码、不带代理类型）查一遍，落点 / 路径和人形网格的不一样就记出来（火鼍的 LavaSwimmer 网格叠在熔岩边的干地上）。
+        /// </summary>
+        static void CheckSiteCenters(LevelKit.Report rep, UnityEngine.SceneManagement.Scene scene)
+        {
+            rep.Section("场地中心连通（NavMesh，人形代理，不蹚熔岩，从出生点 / 场地之间）");
+            var filter = SG.LavaField.WalkerFilter(SG.LavaField.DryAreaMask);
+            int botMask = SG.LavaField.DryAreaMask & ~(1 << 29);
+            if (!NavMesh.SamplePosition(OnGround(Spawn), out var start, 4f, filter))
+            {
+                rep.Fail("出生点附近没有导航网格");
+                return;
+            }
+            var path = new NavMeshPath();
+            static string F(Vector3 v) => $"({v.x:F0}, {v.y:F1}, {v.z:F0})";
+            NavMeshPathStatus Route(Vector3 a, Vector3 b, out Vector3 end)
+            {
+                NavMesh.CalculatePath(a, b, filter, path);
+                end = path.corners.Length > 0 ? path.corners[path.corners.Length - 1] : a;
+                return path.status;
+            }
+            var sites = Object.FindObjectsByType<SG.EncounterSite>(FindObjectsInactive.Include).Where(s => s.gameObject.scene == scene).OrderBy(s => s.name).ToArray();
+            var at = new Dictionary<SG.EncounterSite, Vector3>();
+            foreach (var site in sites)
+            {
+                var c = site.transform.position;
+                if (!NavMesh.SamplePosition(c, out var hit, 8f, filter))
+                {
+                    rep.Fail($"{site.title}：中心 {F(c)} 8 m 内没有人形导航网格");
+                    continue;
+                }
+                at[site] = hit.position;
+                var st = Route(start.position, hit.position, out var end);
+                string msg = $"{site.title}：中心 {F(c)} → 网格 {F(hit.position)}";
+                if (st == NavMeshPathStatus.PathComplete) rep.Line($"✓ {msg}，和出生点连通");
+                else rep.Fail($"{msg}，和出生点不连通（{st}，路径停在 {F(end)}，离中心 {Vector3.Distance(end, hit.position):F1} m）");
+                if (NavMesh.SamplePosition(c, out var raw, 8f, botMask) && Vector3.Distance(raw.position, hit.position) > 0.5f)
+                    rep.Line($"  · 只给区域掩码（RunBot 写法）采到 {F(raw.position)}，和人形网格的落点差 {Vector3.Distance(raw.position, hit.position):F1} m（别的代理类型的网格）");
+            }
+            // 必清场地两两（RunBot 打完一个直接去下一个，顺序不固定）
+            var required = sites.Where(s => !s.optional && at.ContainsKey(s)).ToArray();
+            int pairs = 0, broken = 0;
+            for (int i = 0; i < required.Length; i++)
+                for (int j = 0; j < required.Length; j++)
+                {
+                    if (i == j) continue;
+                    pairs++;
+                    var st = Route(at[required[i]], at[required[j]], out var end);
+                    if (st == NavMeshPathStatus.PathComplete) continue;
+                    broken++;
+                    rep.Fail($"{required[i].title} → {required[j].title}：{F(at[required[i]])} → {F(at[required[j]])} 不连通（{st}，停在 {F(end)}）");
+                }
+            if (broken == 0) rep.Line($"✓ 必清场地两两 {pairs} 条（双向）都走得通");
+            // 参考（不判）：不带代理类型、只给区域掩码的查询（RunBot 原来的写法）——下环 ③ 熔瀑一带的干地上叠着火鼍的 LavaSwimmer 网格
+            // （烘焙范围是熔岩井 + 熔瀑池的合包围盒），从叠着的地方出发的路径落在它上面，就成了「不完整」。导航查询都要带人形过滤（LavaField.WalkerFilter）
+            var swim = SG.LavaField.SwimmerAgentType;
+            if (!swim.HasValue) return;
+            var swimAll = new NavMeshQueryFilter { agentTypeID = swim.Value, areaMask = NavMesh.AllAreas };
+            var overlapped = required.Where(s => NavMesh.SamplePosition(at[s], out var sh, 0.6f, swimAll)).Select(s => s.title).ToList();
+            var rawBroken = new List<string>();
+            var rawPath = new NavMeshPath();
+            bool OnSwim(Vector3 p) => NavMesh.SamplePosition(p, out var sh, 0.6f, swimAll);
+            foreach (var a in required)
+                foreach (var b in required)
+                {
+                    if (a == b) continue;
+                    NavMesh.CalculatePath(at[a], at[b], botMask, rawPath);
+                    if (rawPath.status == NavMeshPathStatus.PathComplete) continue;
+                    var c = rawPath.corners;
+                    var stop = c.Length > 0 ? c[c.Length - 1] : at[a];
+                    rawBroken.Add($"{a.title} → {b.title}（{rawPath.status}，停在 {F(stop)}{(OnSwim(stop) ? "，火鼍网格上" : "")}）");
+                }
+            rep.Line($"· 参考：场地中心叠着火鼍 LavaSwimmer 网格的 {overlapped.Count} 个{(overlapped.Count > 0 ? "（" + string.Join("、", overlapped) + "）" : "")}；" +
+                     $"不带代理类型、只给区域掩码时两两路径不完整 {rawBroken.Count} 条{(rawBroken.Count > 0 ? "：" + string.Join("、", rawBroken.Take(4)) : "")}" +
+                     (rawBroken.Count > 0 ? "——机器人 / 运行时的导航查询都要带人形过滤（LavaField.WalkerFilter），上面的人形检查才算数" : ""));
         }
 
         /// <summary>L1 规则：关卡场景只有环境和标记；顺带重新生成 GameDatabase（同 1-x）</summary>

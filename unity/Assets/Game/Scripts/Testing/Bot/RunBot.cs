@@ -880,8 +880,11 @@ namespace Spiritfire.Game.Testing
 
         // ───────────── 移动 ─────────────
 
-        /// <summary>寻路用的区域：不走熔岩（3-x）、不走只给雪狌狌的攀爬连线（区域 29，2-1）</summary>
-        static int WalkMask => LavaField.DryAreaMask & ~(1 << 29);
+        /// <summary>
+        /// 寻路用的查询：只查人形代理的网格（熔岩图里火鼍的 LavaSwimmer 网格会叠在熔岩边的干地上——3-2 下环 ③ 熔瀑一带就叠着，只给区域掩码的查询
+        /// 可能落到它上面，路径就成了「不完整」），不走熔岩（3-x）、不走只给雪狌狌的攀爬连线（区域 29，2-1）
+        /// </summary>
+        static NavMeshQueryFilter WalkMask => LavaField.WalkerFilter(LavaField.DryAreaMask & ~(1 << 29));
 
         /// <summary>算好 NavMesh 路径（记路程、不完整记一条），然后传送过去</summary>
         IEnumerator Go(Vector3 goal, string label)
