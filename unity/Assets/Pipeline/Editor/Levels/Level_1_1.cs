@@ -845,7 +845,7 @@ namespace Spiritfire.Art.Editor.Levels
         /// <summary>
         /// 遭遇战（遭遇框架 v2，docs/encounter-design.md「Unity 遭遇框架 v2」；场地、波次、奖励见 maps/1-1.md §2）：
         ///   ① 黑戈壁砾石滩：跳鼠群 + 蝎尾弩卫远程压制（玩家从长城缺口进来就开打）——单波
-        ///   ② 雅丹石阵：蜃楼蟾在岩丘后吊射 + 跳鼠；第二波跳鼠绕岩伏击
+        ///   ② 雅丹石阵：蜃楼蟾在岩丘后吊射 + 跳鼠；第二波跳鼠绕岩伏击，其中一只换成沙魇（EN1，全游戏第一只：蟾大多倒下后才开波，单只、预警清楚）
         ///   ③ 烽燧台地：镇墓兽冲锋上坡 + 邪飞天在台顶支援；第二波台下援军
         ///   ④ 驼队残骸营地：沙暴前锋（火浣鼠滚进来逼走位，精英蝎卫压制）→ 风沙压境（精英镇墓兽）
         /// 目标图 <see cref="Spiritfire.Game.LevelObjective"/>：四个场地必清；② ③ 只要求 ①（先后不限），④ 要求 ② ③。
@@ -890,7 +890,7 @@ namespace Spiritfire.Art.Editor.Levels
             s1.reward = "weapon:beam";
             var s2 = Site("Site 2 · 雅丹石阵", "Site_2_Yardang", "Enemy_2_", "雅丹石阵", 18, 30,
                 Of(Wave("雅丹石阵", E("mirage_toad", 2), E("jerboa_blade", 3, 0.6f)).Hint("蜃楼蟾在岩丘后吊射：低丘顶能看到它们"),
-                    Wave("绕岩伏击", E("jerboa_blade", 3)).After(2, 1.2f).Hint("跳鼠从岩丘背后绕过来")), s1);
+                    Wave("绕岩伏击", E("jerboa_blade", 2), E("sand_wraith", 1)).After(2, 1.2f).Hint("跳鼠从岩丘背后绕过来，沙魇在沙下潜行——脚下亮圈就跑开")), s1);
             s2.reward = "pet"; // 旧场景没重建时由 PetBootstrap 在运行时把 ② 的 scroll 换成 pet
             var s3 = Site("Site 3 · 烽燧台地", "Site_3_BeaconPlateau", "Enemy_3_", "烽燧台地", 20, 30,
                 Of(Wave("冲坡", E("tomb_beast", 1), E("apsara", 1, 1.5f)).Hint("镇墓兽冲上坡：侧闪，打背后的裂缝；先打台顶的飞天"),
