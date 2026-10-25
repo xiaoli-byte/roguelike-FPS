@@ -1,10 +1,35 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
 
 namespace Spiritfire.Game.Tests
 {
+    /// <summary>
+    /// 清掉上一次 Play 模式留在静态里的订阅与修饰器。本项目进 Play 模式时重载域（静态由各类型 SubsystemRegistration 的重置方法清零），
+    /// <b>退出</b> Play 模式时不重载：试玩里装上的秘卷作用域（LootDirector 的持有表随场景销毁，但从不 Clear）在 GameEvents /
+    /// Combat.Outgoing / PlayerVitals.Incoming 上登记的回调一直挂到下一次编译。共用编辑器里试玩（机器人选卷、flow / menu / scrolls 套件授卷）
+    /// 和 EditMode 测试交替跑，这些残余会接到测试派发的事件：<see cref="TacticsKit.Host"/> 是静态的，残留的 1 层「换位掩护」照样往
+    /// 假接缝的护盾上加 8（16 → 24），残留的 1 层「双诀相生」多返还一次冷却（1.5 / 4.5）——结果取决于之前跑过哪个试玩、抽到了哪卷。
+    /// 这里照 Play 模式开始时的做法，调用这几个类型上标了 [RuntimeInitializeOnLoadMethod(SubsystemRegistration)] 的静态重置方法
+    /// （GameEvents 的各个 partial 各有一个，按特性找，新加的 partial 自动覆盖）。编辑模式下没有别的订阅者（编辑器程序集不订阅这些事件）。
+    /// </summary>
+    internal static class PlayModeLeftovers
+    {
+        static readonly System.Type[] Owners = { typeof(GameEvents), typeof(Combat), typeof(PlayerVitals) };
+
+        public static void Reset()
+        {
+            foreach (var t in Owners)
+                foreach (var m in t.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
+                {
+                    var a = m.GetCustomAttribute<RuntimeInitializeOnLoadMethodAttribute>();
+                    if (a != null && a.loadType == RuntimeInitializeLoadType.SubsystemRegistration && m.GetParameters().Length == 0) m.Invoke(null, null);
+                }
+        }
+    }
+
     /// <summary>
     /// 秘卷测试用的假接缝（<see cref="IScrollHost"/>）：玩家、武器、技能冷却、范围查询、概率、反应系统、爆炸与投射物都换成可观察的替身。
     /// 爆炸替身按身体中心距离判定范围、不做距离衰减（<see cref="walled"/> 里的敌人当作被墙挡住），对范围内的敌人走真实的 <see cref="Combat.DamageEnemy"/>。
@@ -133,6 +158,7 @@ namespace Spiritfire.Game.Tests
     /// 秘卷钩子测试的共用夹具：真实的 <see cref="ScrollInventory"/> / <see cref="StatSheet"/> / <see cref="GameEvents"/> / <see cref="Combat.DamageEnemy"/> /
     /// <see cref="PlayerVitals.Incoming"/>，秘卷时钟手动推进（<see cref="ScrollTicker.Step"/>，EditMode 下每次 Step 算新的一帧），外界换成 <see cref="FakeScrollHost"/>。
     /// 玩家受伤按 PlayerVitals.TakeDamage 的顺序模拟：无敌 → × (1 − 减伤) → 受伤修饰器（乘到 0 即停）。
+    /// 每个用例开始前先清掉 Play 模式留下的静态残余（<see cref="PlayModeLeftovers"/>），结果不取决于编辑器里之前跑过什么。
     /// </summary>
     public abstract class ScrollHostFixture
     {
@@ -150,6 +176,7 @@ namespace Spiritfire.Game.Tests
         [SetUp]
         public void SetUpHost()
         {
+            PlayModeLeftovers.Reset();
             ScrollTicker.ResetForTests();
             savedStats = Combat.playerStats;
             savedRun = RunState.Current;
@@ -363,6 +390,24 @@ namespace Spiritfire.Game.Tests
             Close(100, Hit(e).total, "换关清空");
             GameEvents.RaiseWeaponSwitched(null, a);
             Close(32, host.shield, "初始化 / 换关恢复（没有前一把）不算切枪");
+        }
+
+        [Test]
+        public void LeftoverScopesFromAnEarlierPlaySessionDoNotReachTheFixture()
+        {
+            // 模拟试玩留下的残余：另一份持有表里装着 1 层换位掩护，持有者销毁了却没卸载（LootDirector 退出 Play 模式时的样子）
+            var leaked = new ScrollInventory();
+            leaked.Gain(Def("tac_cover_change"), StatSheet.Default());
+            Gain("tac_cover_change", 2);
+            Switch(b);
+            Close(24, host.shield, "残余的 1 层也接到切枪事件（复现：16 + 8）");
+            PlayModeLeftovers.Reset();
+            inv.Clear();
+            Step(5);
+            host.shield = 0;
+            Gain("tac_cover_change", 2);
+            Switch(a);
+            Close(16, host.shield, "清掉残余后只剩本用例装的 2 层");
         }
 
         [Test]
