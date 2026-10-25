@@ -873,6 +873,8 @@ namespace Spiritfire.Art.Editor.Levels
         ///   ③ 集市井台 10：蜃楼蟾在北沿 / 商铺台吊射，跳鼠下井；第二波火浣鼠滚进井底；升格 1 只精英；
         ///   ④ 寺院前庭 14：三波，最后一波「沙王卫队」写死精英镇墓兽 + 精英蝎卫（Three.js 首章精英上限 0/0/1/1 是按关算的；Unity 一关四个场地，按场地放：③ 升格 1 只，④ 首领前最后一战 2 只，同 1-1 ④）；
         ///   ⑤ 埋屋守军 4（可选，调查藏宝点时惊动）。
+        /// 沙魇（EN1，旱魃把古城的人烧成的沙）：① 首波、④ 末波、⑤ 守军各把一只跳鼠换成沙魇（只数不变，必清 2 只 + 可选 1 只）——
+        /// 1-1 见过一只、1-2 屋脊之海成对，这里散进城里各处，1-4 旱魃再成群召。③ 集市井台已经有蜃楼蟾吊射 + 火浣鼠滚井底两种逼走位，不再叠破沙圈。
         /// 必清 40 只，可选 4 只。奖励：① 秘卷、② 武器、③ 秘卷、④ 武器（保底精良）、埋屋藏宝 武器（保底精良）、墙头藏宝 强化。
         /// 关卡目标：①–④ 必清、顺序不限；埋屋守军是可选场地。完成后出口传送门升起，落清关宝箱（RunPlan 1-3：秘卷）。
         /// </summary>
@@ -901,7 +903,7 @@ namespace Spiritfire.Art.Editor.Levels
             WaveEntry E(string enemy, int count, float delay = -1) => EncounterSpec.E(enemy, count, delay);
 
             var s1 = Site(1, "灌沙城门", GateSite, 20, 26, EncounterSpec.Of(
-                    EncounterSpec.Wave("灌沙伏击", E("jerboa_blade", 3), E("scorpion_archer", 1)).Hint("跳鼠从沙坡两翼扑上来，墙头有弩卫"),
+                    EncounterSpec.Wave("灌沙伏击", E("jerboa_blade", 2), E("sand_wraith", 1), E("scorpion_archer", 1)).Hint("跳鼠、沙魇从沙坡两翼扑上来，墙头有弩卫"),
                     EncounterSpec.Wave("沙坡滚火", E("fire_rat", 2), E("jerboa_blade", 1)).After(1, 1.6f).Hint("火浣鼠顺坡滚下，往高处让开"))
                 .Gather(0.4f).Distance(10, 30), "scroll");
             var s2 = Site(2, "三路长街", StreetSite, 22, 30, EncounterSpec.Of(
@@ -915,10 +917,10 @@ namespace Spiritfire.Art.Editor.Levels
             var s4 = Site(4, "寺院前庭", Court, 24, 30, EncounterSpec.Of(
                     EncounterSpec.Wave("前庭守卫", E("tomb_beast", 1), E("jerboa_blade", 2), E("scorpion_archer", 2)).Hint("镇墓兽正面格挡——绕到背后打裂缝"),
                     EncounterSpec.Wave("飞天赐福", E("apsara", 1), E("fire_rat", 3), E("mirage_toad", 1)).After(2, 1.6f).Hint("先打飞天的琵琶，再清火浣鼠"),
-                    EncounterSpec.Wave("沙王卫队", E("tomb_beast", 1).Elite(), E("scorpion_archer", 1).Elite(), E("jerboa_blade", 2)).After(1, 2f).Hint("精英卫队——巨像台上有俯射位"))
+                    EncounterSpec.Wave("沙王卫队", E("tomb_beast", 1).Elite(), E("scorpion_archer", 1).Elite(), E("jerboa_blade", 1), E("sand_wraith", 1)).After(1, 2f).Hint("精英卫队——巨像台上有俯射位"))
                 .Gather(0.6f).Distance(10, 34), "weapon:min=1");
             var guard = Site(5, "埋屋守军", BuriedCache, 16, 22, EncounterSpec.Of(
-                    EncounterSpec.Wave("埋屋守军", E("scorpion_archer", 1), E("jerboa_blade", 3)).Hint("守着藏宝的一小队"))
+                    EncounterSpec.Wave("埋屋守军", E("scorpion_archer", 1), E("jerboa_blade", 2), E("sand_wraith", 1)).Hint("守着藏宝的一小队，埋屋的沙里还伏着沙魇"))
                 .Gather(0.4f).Distance(8, 26), "");
             guard.autoTrigger = false;
             guard.optional = true;
