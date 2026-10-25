@@ -124,7 +124,13 @@ namespace Spiritfire.Game.Testing
             var enemy = SpawnAhead(motor, "jerboa_blade", 9f, 30f);
             if (enemy)
             {
-                yield return new WaitForSeconds(1.2f);
+                yield return new WaitForSeconds(1.2f); // 出生显形（期间不可选中）走完
+                // 定住当靶子：EN1 按 Three.js 对齐后跳鼠刀兵 2 s 内就扑到脸上（1 m 内，头顶在屏幕上沿外，血条按设计不画），
+                // 这一段测的是 HUD（准星变红、伤害数字合并、头顶血条），不是 AI，所以停导航、停 AI
+                var agent = enemy.GetComponent<UnityEngine.AI.NavMeshAgent>();
+                if (agent && agent.isOnNavMesh) agent.isStopped = true;
+                enemy.enabled = false;
+                Line($"靶子 {enemy.Health.displayName} 定在 {Vector3.Distance(motor.transform.position, enemy.transform.position):F1} m 处");
                 Aim(motor, eye, BodyCenter(enemy.Health));
                 yield return null;
                 yield return null;
@@ -144,7 +150,19 @@ namespace Spiritfire.Game.Testing
                      $"头顶血条 {bars?.Count} 条（这只{(bars != null && bars.Has(enemy) ? "有" : "没有")}）");
                 if (numbers == null || numbers.Spawned == 0) Fail("开火命中后没有出伤害数字");
                 else if (numbers.Merged == 0) Fail("连射同一个敌人没有合并伤害数字");
-                if (enemy.Health && !enemy.Health.Dead && (bars == null || !bars.Has(enemy))) Fail("受伤的敌人没有头顶血条");
+                if (enemy.Health && !enemy.Health.Dead && (bars == null || !bars.Has(enemy)))
+                {
+                    var h = enemy.Health;
+                    var col = enemy.GetComponent<Collider>();
+                    var head = col && col.enabled ? new Vector3(col.bounds.center.x, col.bounds.max.y + 0.35f, col.bounds.center.z) : enemy.transform.position + Vector3.up * 2.1f;
+                    var camT = hud.cam ? hud.cam.transform : eye;
+                    var rel = head - camT.position;
+                    bool proj = hud.Context.Project(head, out var pp, out var depth);
+                    Line($"  诊断：登记 {EnemyRegistry.Live.Contains(enemy)}，生命 {h.health:0}/{h.maxHealth:0} 护盾 {h.shield:0}/{h.maxShield:0} 护甲 {h.armor:0}/{h.maxArmor:0}，" +
+                         $"不可选 {h.untargetable}，首领 {h.IsBoss}，距离 {rel.magnitude:F1} m，正前 {Vector3.Dot(rel, camT.forward) / Mathf.Max(0.01f, rel.magnitude):F2}，" +
+                         $"投影 {proj} {pp} 深度 {depth:F1}，面板 {hud.Context.PanelSize}，碰撞体 {(col ? $"{col.GetType().Name} {(col.enabled ? "开" : "关")} {col.bounds.size}" : "无")}");
+                    Fail("受伤的敌人没有头顶血条");
+                }
                 Shot(weapons.eye, "hud_combat");
 
                 // 设置关掉伤害数字：清掉、不再出
