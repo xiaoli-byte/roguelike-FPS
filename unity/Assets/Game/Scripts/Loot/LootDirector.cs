@@ -47,6 +47,9 @@ namespace Spiritfire.Game
             if (Instance == this) Instance = null;
         }
 
+        // Core 常驻，只在退出 Play / 卸载 Core 时销毁：卸掉秘卷，免得它们挂在静态事件上的回调活到下一次编译（编辑器退出 Play 不重载域）
+        void OnDestroy() => scrolls.Clear();
+
         static RunRng Rng => RunState.Ensure().Stream("loot");
 
         void OnRunStarted(RunState s)

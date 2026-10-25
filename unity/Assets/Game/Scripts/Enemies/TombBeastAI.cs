@@ -28,6 +28,7 @@ namespace Spiritfire.Game
 
         float chargeCd = 2f, windTime, chargeDist, trailAt, blockFxAt, pawFxAt, dazeFxAt, brakeFxAt;
         int shards;
+        bool crackGated;
 
         /// <summary>累计：冲锋几趟、崩落几把陶片（测试用）</summary>
         public int Charges { get; private set; }
@@ -123,6 +124,13 @@ namespace Spiritfire.Game
 
         protected override void Think(float dt)
         {
+            // 背上的龟裂只算从背后打来的弹（同格挡锥 ±70°）：命中判定的「进身体 1.5 m 内穿过弱点」会让正面瞄身体中心的弹穿到背上，等于不用绕背
+            if (!crackGated && body.WeakZone)
+            {
+                body.WeakZone.facing = ZoneFacing.Back;
+                body.WeakZone.facingCos = GuardCos;
+                crackGated = true;
+            }
             float d = DistToPlayer;
             chargeCd -= dt * auraAttackRate * (enraged ? 2 : 1);
             CheckShards();
