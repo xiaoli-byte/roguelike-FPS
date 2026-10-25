@@ -1019,7 +1019,7 @@ Tripo 智能网格（三角面 1.2 万档，实得 13636），自定义四足骨
 
 | 模型 | 资产 ID | 取的高度 | 结果 | 骨骼 | 发光壳（材质槽） | 审核拉伸（p99） |
 |---|---|---|---|---|---|---|
-| 大鹗 | SK_Boss_Dae | 10.0 米（翼尖） | 体长约 5.3、站高约 7.6、髋部 3.3；翼展压平约 11 米（设计 16：网格翅膀短，先保体长） | 23：hips → chest → neck → head，胸口 core；双翼 wing_1..3 + 下半扇 wing_low（挂 chest，同鹏）；尾扇三节；虎腿 thigh / shin / talon | core → M_Boss_Dae_Glow | 平展 3.0、下压 3.8、上提 1.6、收翼 1.5、抬头 2.5、转头 2.6、收腿 3.6、探爪 3.5（尾扇上翘 17.9：尾扇贴着腿，飞行时只动 0.15 rad） |
+| 大鹗 | SK_Boss_Dae | 10.0 米（翼尖） | 体长约 5.3、站高约 7.6、髋部 3.3；网格翼展压平约 11 米（设计 16：网格翅膀短，先保体长），游玩时飞行中整扇翅膀等比放大 1.45 倍，翼展约 15 米 | 23：hips → chest → neck → head，胸口 core；双翼 wing_1..3 + 下半扇 wing_low（挂 chest，同鹏）；尾扇三节；虎腿 thigh / shin / talon | core → M_Boss_Dae_Glow | 平展 3.0、下压 3.8、上提 1.6、收翼 1.5、抬头 2.5、转头 2.6、收腿 3.6、探爪 3.5（尾扇上翘 17.9：尾扇贴着腿，飞行时只动 0.15 rad） |
 | 雷泽雷神 | SK_Boss_Leize | 10.0 米（截面到冠顶） | 截面半宽约 1.5（接程序化龙身）、肩高 5.9、双臂垂到 0.25 | 16：spine1 → spine2 → chest → neck → head；神面 mask、腹鼓 drum；双臂 shoulder / arm / forearm / claw | mask → M_Boss_Leize_Face_Glow、drum → M_Boss_Leize_Drum_Glow | 前倾 1.6、后仰 1.3、扭腰 1.5、低头 3.1、转头 3.3、双臂前伸 5.5、抬臂 70° 6.7、拍腹 4.6、攥爪 1.2 |
 
 **绑骨要点**
@@ -1031,7 +1031,7 @@ Tripo 智能网格（三角面 1.2 万档，实得 13636），自定义四足骨
 
 **网页可玩版**（`src/world/gorge/play.ts` 的 DaeBoss、`src/world/haizi/leize.ts`）
 - 大鹗：模型挂在 tilt 组下、往下挪髋部高度，tilt 的枢轴（= `pos`）在髋部，落脚点按髋高摆。飞的时候整只鸟往前扳约 66°（俯冲 77°），翼面从正面转成接近水平，
-  翅膀在体轴正面里压到和脊柱垂直再扇，头颈抬回来看前方（poses.ts 的 `daeBase`）；停着就是绑定的 V 形站姿。gait `raptor`：腿和翅膀全交给姿势表。
+  翅膀在体轴正面里压到和脊柱垂直再扇，头颈抬回来看前方（poses.ts 的 `daeBase`）；飞的时候 wing_1 / wing_low 整扇等比放大 1.45 倍补翼展，停着就是原大的 V 形站姿。gait `raptor`：腿和翅膀全交给姿势表；不出招时姿势名是 `glide`（姿势表只在有姿势名时才跑，没有它盘旋时翅膀会停在绑定姿势）。
 - 雷泽雷神：上身放在漩涡上（截面沉在水下 0.7 米），前倾 / 低头分到脊柱各节，双爪两骨 IK 到招式给的手的目标（落点、时间点都没改）；
   姿势表 `leize` 只管头颈和鼓面。gait `titan`。两个首领都在模型加载完（start）才建。
 - 2026-10-24：用 a85a2eab 的 LOD 接缝修复（减面前焊接、锁细小部件、还原法线）重建发布，各级 LOD 开放边不多于源网格；导进 Unity（`unity_export.py` + Spiritfire ▸ Art ▸ Sync，Prefab `Art/Prefabs/Characters/SK_Boss_Dae`、`SK_Boss_Leize`，Art QA 287/287 通过、两只无警告）。Unity 侧还没有这两个首领的玩法代码和动作片段。

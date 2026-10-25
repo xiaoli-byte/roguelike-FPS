@@ -528,6 +528,10 @@ function daeBase(A: CreatureAnimator, w: number, s: AnimState, t: number): void 
     R(`wing_2_${s2}`, AZ, sd * w2);
     R(`wing_3_${s2}`, AZ, sd * w3);
     R(`wing_low_${s2}`, AZ, sd * wl);
+    // 网格的翅膀比设计短（压平只有约 11 m）：飞的时候整扇翅膀等比放大 1.45 倍，翼展到约 15 m；停着收回原大
+    //（缩放不按权重叠加，所有招式槽给的都是同一个 air，取哪一次都一样）
+    A.P.scale(`wing_1_${s2}`, 1 + 0.45 * air);
+    A.P.scale(`wing_low_${s2}`, 1 + 0.45 * air);
     // 虎腿：飞的时候再往后收一点、爪子攥起来
     R(`thigh_${s2}`, AX, 0.3 * air);
     R(`shin_${s2}`, AX, 0.2 * air);

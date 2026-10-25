@@ -47,6 +47,8 @@ export class DaeBoss extends Boss {
   readonly phaseNames = ['一 · 盘空', '二 · 撕桥', '三 · 狂怒'];
   protected readonly breakTime = 4.5;
   protected override downPose = 'fall';
+  /** 不出招时也要摆底层（扇翅、收腿、飞行时压平翅膀）：姿势表只在有姿势名时才跑 */
+  protected override posture = 'glide';
   /** 俯仰 / 侧倾（飞行时朝速度方向抬低头、盘旋往里倾）：模型挂在它下面，枢轴在髋部 */
   readonly tilt: THREE.Group;
   /** 髋部离脚底多高（落脚点按它摆，脚踩在台面上） */
