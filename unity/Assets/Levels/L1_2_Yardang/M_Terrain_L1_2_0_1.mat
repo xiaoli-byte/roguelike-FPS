@@ -24,7 +24,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _ControlMap:
-        m_Texture: {fileID: -253823145056375882, guid: e117e83bc5e0cdb488ed23e0dda233ae, type: 2}
+        m_Texture: {fileID: -2709408272010190083, guid: e117e83bc5e0cdb488ed23e0dda233ae, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Layer0:
@@ -43,6 +43,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: c73ae6814204afd4e8d681e063de3b3c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _LightNormalTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MacroTex:
         m_Texture: {fileID: 2800000, guid: 0633fcf32a969b34993310107aa04d72, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -51,23 +55,33 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _WarpTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _AmbientStrength: 1
     - _HeightBlend: 0.8
     - _HeightBlendDepth: 0.2
+    - _LightNormalBlend: 0
     - _MacroScale: 70
     - _MacroStrength: 0.2
     - _RampSoftness: 0.3
     - _RampThreshold: 0
     - _RimPower: 5
     - _RimStrength: 0.05
+    - _RockDetile: 0
     - _RockScale: 8
+    - _RockWarp: 0
     - _ShadowLift: 0.22
     - _SlopeDarken: 0.25
+    - _SteepTriplanar: 0
+    - _WarpScale: 17
     m_Colors:
     - _LayerTile: {r: 9, g: 4, b: 7, a: 8}
     - _RimColor: {r: 1, g: 0.92, b: 0.8, a: 1}
     - _ShadowTint: {r: 0.7, g: 0.64, b: 0.82, a: 1}
+    - _SteepFade: {r: 0.43, g: 0.62, b: 0.58, a: 0.79}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
