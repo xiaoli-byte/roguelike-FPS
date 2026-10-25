@@ -177,7 +177,7 @@ namespace Spiritfire.Game
             Play("charge", 0.06f);
             SetState("charge");
             Sfx("enemy_charge", 0.8f, 1.3f);
-            Fx.Burst(transform.TransformPoint(new Vector3(0, 0.1f, 0.3f)), Hex.Rgb(0xe8f4ff), 10, 3, 0.45f, 0.1f, 4);
+            FrostKit.SnowPuff(transform.TransformPoint(new Vector3(0, 0.1f, 0.3f)), Size, 8);
         }
 
         void ChargeStep(float dt, float d, float dy)
@@ -212,7 +212,7 @@ namespace Spiritfire.Game
             Steam(dt, 2);
             // 冲锋扬雪
             if (v > 6 && Random.value < dt * 14f)
-                Fx.Burst(transform.TransformPoint(new Vector3((Random.value - 0.5f) * 0.4f, 0.05f, -0.3f)), SnowColor, 2, 1.4f, 0.45f, 0.08f, 3);
+                FrostKit.SnowPuff(transform.TransformPoint(new Vector3((Random.value - 0.5f) * 0.4f, 0.05f, -0.3f)), 0.5f * Size, 3);
         }
 
         void Steam(float dt, float rate)
@@ -232,7 +232,7 @@ namespace Spiritfire.Game
             spokes.Cancel();
             spokes = Telegraph.Spokes(transform.position, Quills, QuillRange, 0.24f, novaYaw * Mathf.Rad2Deg, bristleTime, SpokeColor, 0.3f * Size);
             Sfx("telegraph", 1f, 1.1f);
-            Fx.Burst(BodyCenter, RootColor, 10, 2.5f, 0.4f, 0.08f, 0);
+            Fx.FrostGlint(BodyCenter + Vector3.up * 0.3f * Size, 1.2f * Size, RootColor);
             PlayTimed("bristle", bristleTime, 0.06f);
             SetState("bristle");
         }
@@ -243,7 +243,7 @@ namespace Spiritfire.Game
             SetState("stagger");
             if (!wall) return;
             var at = transform.TransformPoint(new Vector3(0, 0.4f, 0.5f));
-            Fx.Burst(at, Hex.Rgb(0xdff6ff), 14, 4, 0.6f, 0.1f, 9);
+            FrostKit.Shatter(at, 0.8f * Size, Hex.Rgb(0xdff6ff), 14, 4);
             GameAudio.PlayAt("land", at, 0.7f, 0.8f);
             CameraShake.Quake(at, 0.2f, 14f, 0.2f);
         }
@@ -258,9 +258,9 @@ namespace Spiritfire.Game
             body.ClearOverlay(BristleOverlay);
             SprayQuills(transform.position, Size, Quills, Damage, novaYaw, this, Taunted);
             var c = BodyCenter;
-            Fx.Burst(c, RootColor, 26, 6, 0.7f, 0.1f * Size, 10);
-            Fx.Burst(c, Hex.Rgb(0xdff6ff), 18, 4, 0.8f, 0.12f * Size, 8);
-            Fx.Ring(transform.position, QuillRange * 0.5f, Hex.Rgb(0xc8bcff), 0.35f);
+            // FX3：冰刺新星——青紫冰爆 + 一圈冰刺冒出又缩回（真正扎人的残刺阵是下面的 SpikeField）
+            Fx.FrostNova(c, 1.6f * Size, RootColor);
+            Fx.IceRing(transform.position, QuillRange * 0.35f, 12);
             CameraShake.Quake(c, 0.35f, 22f, 0.25f);
             GameAudio.PlayAt("explosion", c, 0.7f, 1.5f);
             LeaveField(c);
@@ -297,7 +297,7 @@ namespace Spiritfire.Game
             var feet = transform.position;
             float size = Size;
             bool spirit = Taunted;
-            Fx.Burst(BodyCenter, RootColor, 14, 3, 0.6f, 0.08f * size, 6);
+            FrostKit.Shatter(BodyCenter, 0.9f * size, RootColor, 14, 3);
             HazardClock.Delay(0.05f, () => SprayQuills(feet, size, Quills / 2, dmg, yaw0, null, spirit));
         }
 

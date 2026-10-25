@@ -7,14 +7,15 @@
 //   [3][0..3] = uvScale.xy、uvBias.xy —— 这里不当 UV 用，当 4 个自定义参数 P（含义按模式，见 FxDecals.cs）。
 // 所以同一种贴花共用一份材质，能合批（材质开了 GPU Instancing）。
 //
-// 模式（材质的 _Mode）：0 图集格（P = 格号, 余热, 发光色号, 提亮色混沙）、1 熔池（P = 进度, 种子）、2 出生法阵（P = 进度, 颜色 rgb）、3 归墟涡旋（P = 进度）。
+// 模式（材质的 _Mode）：0 图集格（P = 格号, 余热, 发光色号, 提亮色混沙）、1 熔池（P = 进度, 种子）、2 出生法阵（P = 进度, 颜色 rgb）、3 归墟涡旋（P = 进度）、
+//   4 流动霜纹（FX3，P = 进度, 种子, 浓度）。
 // 预乘 alpha（Blend One OneMinusSrcAlpha）：压暗、提亮、HDR 发光一次画完；纯加色的部分 alpha 写 0。
 Shader "Spiritfire/FxDecal"
 {
     Properties
     {
         _DecalMap("Decal Atlas (R dark, G heat, B light)", 2D) = "black" {}
-        _Mode("Mode (0 sprite, 1 pool, 2 rune, 3 vortex)", Float) = 0
+        _Mode("Mode (0 sprite, 1 pool, 2 rune, 3 vortex, 4 frost)", Float) = 0
         // URP 贴花系统会读这些（缺了也能跑，留着与 Shader Graph 贴花一致）
         [HideInInspector] _DrawOrder("Draw Order", Range(-50, 50)) = 0
         [HideInInspector] _DecalMeshBiasType("DecalMesh BiasType", Float) = 0
@@ -202,6 +203,44 @@ Shader "Spiritfire/FxDecal"
             return float4(col * env, voidA * env);
         }
 
+        // ───────────── 模式 4：流动霜纹（FX3） ─────────────
+
+        // P.x 进度 0..1（0.07 内从中心冻开 → 停留 → 最后 15% 化掉），P.y 种子，P.z 浓度（0 按 1 算）。
+        // 羽状白霜（两层噪声脊线）+ 一层薄冰膜，霜纹慢慢漂、冰面上一道道反光扫过，零星冰晶一闪一闪（HDR、不压暗）
+        float4 ShadeFrost(float2 q, float4 P)
+        {
+            float t = saturate(P.x), seed = P.y, time = _Time.y;
+            float dens = P.z > 0.001 ? P.z : 1.0;
+            float d = length(q);
+            float ang = atan2(q.y, q.x);
+            float grow = 0.3 + 0.7 * saturate(t * 14.0);
+            float edgeN = SFFbm(float2(ang * 2.1 + seed * 5.0, seed * 3.0 + time * 0.05));
+            float R = (0.8 + 0.36 * (edgeN - 0.5)) * grow;
+            float inside = saturate((R - d) / 0.12);
+            float2 p = q * 3.6 + seed * 11.0 + float2(time * 0.04, -time * 0.03);
+            float n = SFFbm(p);
+            float ridge = pow(1.0 - abs(n * 2.0 - 1.0), 3.0);
+            float n2 = SFFbm(p * 2.3 + 4.1);
+            float ridge2 = pow(1.0 - abs(n2 * 2.0 - 1.0), 6.0);
+            // 斑驳的霜层（大块的白）+ 羽状脊线
+            float mottle = smoothstep(0.35, 0.75, SFFbm(q * 1.7 + seed * 3.3));
+            float rime = saturate(ridge * 0.6 + ridge2 * 0.5 + mottle * 0.45);
+            float sheen = 0.5 + 0.5 * sin((q.x * 2.3 + q.y * 1.7) * 3.0 - time * 1.6 + seed);
+            float3 col = lerp(float3(0.5, 0.78, 1.0), float3(0.93, 0.98, 1.0), rime);
+            float film = 0.22 + 0.16 * (1.0 - smoothstep(0.0, R, d));
+            float a = saturate((film + rime * 0.68) * dens) * inside;
+            float2 g = q * 9.0 + seed * 5.3;
+            float2 cell = floor(g);
+            float2 f = frac(g) - 0.5;
+            float h = SFHash12(cell + seed);
+            float2 off = (float2(SFHash12(cell + 1.7), SFHash12(cell + 9.1)) - 0.5) * 0.6;
+            float tw = pow(saturate(sin(time * (2.0 + 3.0 * h) + h * 40.0)), 8.0);
+            float spark = (1.0 - smoothstep(0.0, 0.07, length(f - off))) * step(0.72, h) * tw * inside;
+            float life = smoothstep(0.0, 0.03, t) * (1.0 - smoothstep(0.85, 1.0, t));
+            float3 rgb = col * a * (0.85 + 0.3 * sheen) + float3(0.8, 0.95, 1.0) * spark * 1.8;
+            return float4(rgb, a * 0.85) * life;
+        }
+
         // ───────────── 投影通道 ─────────────
 
         struct Attributes
@@ -257,7 +296,8 @@ Shader "Spiritfire/FxDecal"
             if (_Mode < 0.5) c = ShadeSprite(uv, P);
             else if (_Mode < 1.5) c = ShadePool(q, P);
             else if (_Mode < 2.5) c = ShadeRune(q, P);
-            else c = ShadeVortex(q, P);
+            else if (_Mode < 3.5) c = ShadeVortex(q, P);
+            else c = ShadeFrost(q, P);
             // 侧壁（与投影轴夹角大的面）淡掉，免得拉成长条；盒子两端 14% 渐隐
             float edge = smoothstep(0.3, 0.55, facing) * (1.0 - smoothstep(0.36, 0.5, abs(ds.y)));
             return c * (fade * edge);

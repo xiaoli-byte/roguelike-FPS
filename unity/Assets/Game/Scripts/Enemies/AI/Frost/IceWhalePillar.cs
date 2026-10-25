@@ -59,8 +59,9 @@ namespace Spiritfire.Game
             // 气柱：一眼就看得出「它喷了」
             Fx.Beam(from, from + Vector3.up * PlumeHeight * k, PlumeColor, PlumeRadius * k, PlumeTime);
             Fx.Burst(from, MistColor, 18, 6, 0.9f, 0.35f * k, -2);
-            Fx.Burst(from, ShardColor, 22, 9, 0.8f, 0.1f * k, 12);
-            Fx.Burst(from + Vector3.up * PlumeHeight * 0.8f * k, MistColor, 10, 2.5f, 0.9f, 0.45f * k, -1);
+            FrostKit.Shatter(from, 0.9f * k, ShardColor, 22, 9);
+            FrostKit.Vapour(from + Vector3.up * PlumeHeight * 0.8f * k, 1.4f * k, 8, MistColor);
+            Fx.FrostGlint(from + Vector3.up * 0.5f * k, 1.5f * k, SparkColor);
             int n = Mathf.Min(v.targets.Count, v.times.Count);
             for (int i = 0; i < n; i++)
             {
@@ -125,7 +126,7 @@ namespace Spiritfire.Game
                 if (Random.value < dt * 20f) Fx.Burst(transform.position, SparkColor, 1, 0.6f, 0.4f, 0.12f, -1);
                 if (t >= life)
                 {
-                    Fx.Burst(transform.position, MistColor, 3, 1.5f, 0.5f, 0.3f, 0);
+                    FrostKit.Vapour(transform.position, 0.6f, 3, MistColor);
                     Destroy(gameObject);
                 }
                 return;
@@ -159,9 +160,11 @@ namespace Spiritfire.Game
                 }
             }
             var at = c + Vector3.up * 0.4f;
-            Fx.Burst(at, ShardColor, 20, 7, 0.8f, 0.13f * scale, 16);
-            Fx.Burst(at, MistColor, 8, 2.5f, 0.9f, 0.45f * scale, -0.8f);
+            // FX3：冰柱砸碎——碎冰 + 霜气 + 冷环 + 霜斑（冰棱阵本体是下面的 SpikeField）
+            FrostKit.Shatter(at, 1.4f * scale, ShardColor, 20, 7);
+            FrostKit.Vapour(at, 1.2f * scale, 8, MistColor);
             Fx.Ring(c + Vector3.up * 0.05f, radius * 1.2f, IceColor, 0.45f);
+            Fx.FrostPatch(c + Vector3.up * 0.02f, radius * 1.1f, 4f, 1.2f);
             CameraShake.Quake(c, 0.3f, 22f, 0.25f);
             GameAudio.PlayAt("boss_slam", at, 0.55f, 1.35f);
             SpikeField.Spawn(new SpikeField.Spec(c, FieldRadius * scale, FieldTime, FieldHeight * scale));

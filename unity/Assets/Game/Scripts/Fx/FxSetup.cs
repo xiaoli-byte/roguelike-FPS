@@ -159,6 +159,9 @@ namespace Spiritfire.Game
                 case FxFade.Streak:
                     alphas = Keys(a0, t => (1 - t) * (1 - t * 0.4f), 0, 0.5f, 1);
                     break;
+                case FxFade.Linger:
+                    alphas = Keys(a0, t => Mathf.SmoothStep(0, 1, t / 0.25f) * Mathf.SmoothStep(0, 1, (1 - t) / 0.35f), 0, 0.12f, 0.25f, 0.45f, 0.65f, 0.82f, 1);
+                    break;
                 default:
                     alphas = new[] { new GradientAlphaKey(a0, 0), new GradientAlphaKey(0, 1) };
                     break;

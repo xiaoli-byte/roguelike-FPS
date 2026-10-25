@@ -35,6 +35,10 @@ namespace Spiritfire.Game
         DecalRune,
         /// <summary>贴花：归墟涡旋（三色旋臂向中心收拢，SF_FxDecal 模式 3）</summary>
         DecalVortex,
+        /// <summary>贴花：流动霜纹（FX3 冻雾 / 冰环 / 滑冰带：羽状白霜 + 冰晶闪点，SF_FxDecal 模式 4）</summary>
+        DecalFrost,
+        /// <summary>冰（FX3 霜甲壳、冰刺：半透明多面冰 + 棱边高光 + 菲涅尔，Assets/Art/Shaders/SF_FxIce.shader）</summary>
+        Ice,
     }
 
     /// <summary>
@@ -50,6 +54,7 @@ namespace Spiritfire.Game
         public const string ShaderUnlit = "Universal Render Pipeline/Unlit";
         public const string ShaderParticles = "Universal Render Pipeline/Particles/Unlit";
         public const string ShaderDecal = "Spiritfire/FxDecal";
+        public const string ShaderIce = "Spiritfire/FxIce";
 
         static readonly int BaseMapId = Shader.PropertyToID("_BaseMap");
         static readonly int MainTexId = Shader.PropertyToID("_MainTex");
@@ -88,11 +93,13 @@ namespace Spiritfire.Game
         {
             FxMaterialKind.Unlit => ShaderUnlit,
             _ when IsDecal(kind) => ShaderDecal,
+            FxMaterialKind.Ice => ShaderIce,
             _ => ShaderParticles,
         };
 
         /// <summary>SF_FxDecal 的几种材质（贴花投影，不走粒子 / 网格）</summary>
-        public static bool IsDecal(FxMaterialKind kind) => kind is FxMaterialKind.DecalSprite or FxMaterialKind.DecalPool or FxMaterialKind.DecalRune or FxMaterialKind.DecalVortex;
+        public static bool IsDecal(FxMaterialKind kind) =>
+            kind is FxMaterialKind.DecalSprite or FxMaterialKind.DecalPool or FxMaterialKind.DecalRune or FxMaterialKind.DecalVortex or FxMaterialKind.DecalFrost;
 
         /// <summary>SF_FxDecal 的 _Mode</summary>
         public static int DecalMode(FxMaterialKind kind) => kind switch
@@ -100,6 +107,7 @@ namespace Spiritfire.Game
             FxMaterialKind.DecalPool => 1,
             FxMaterialKind.DecalRune => 2,
             FxMaterialKind.DecalVortex => 3,
+            FxMaterialKind.DecalFrost => 4,
             _ => 0,
         };
 
@@ -174,7 +182,11 @@ namespace Spiritfire.Game
                 case FxMaterialKind.DecalPool:
                 case FxMaterialKind.DecalRune:
                 case FxMaterialKind.DecalVortex:
+                case FxMaterialKind.DecalFrost:
                     SetupDecal(m, kind, tex);
+                    return;
+                case FxMaterialKind.Ice:
+                    SetupIce(m);
                     return;
             }
         }
@@ -193,10 +205,20 @@ namespace Spiritfire.Game
             int mode = DecalMode(kind);
             m.SetFloat(DecalModeId, mode);
             if (tex && m.HasProperty(DecalMapId)) m.SetTexture(DecalMapId, tex);
-            int order = mode switch { 0 => -2, 1 => 1, _ => 2 };
+            // 弹孔最下；霜纹在弹孔之上、熔池 / 法阵之下
+            int order = mode switch { 0 => -2, 1 => 1, 4 => 0, _ => 2 };
             m.SetFloat(DrawOrderId, order);
             m.renderQueue = 2010 + order;
             m.enableInstancing = true;
+        }
+
+        /// <summary>SF_FxIce：透明队列（在粒子之前画）、不写深度，颜色 / 参数走 MaterialPropertyBlock</summary>
+        static void SetupIce(Material m)
+        {
+            m.SetColor(BaseColorId, new Color(0.62f, 0.86f, 1f, 1f));
+            m.SetOverrideTag("RenderType", "Transparent");
+            m.renderQueue = (int)RenderQueue.Transparent - 20;
+            m.enableInstancing = false;
         }
 
         /// <summary>URP Particles/Unlit 的透明设置：加法 / 普通混合、不写深度、双面、可选贴脸淡出</summary>

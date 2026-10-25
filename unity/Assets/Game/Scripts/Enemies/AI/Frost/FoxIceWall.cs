@@ -90,7 +90,14 @@ namespace Spiritfire.Game
             BuildSegments();
             var c = transform.position + Vector3.up * 0.1f;
             Fx.Ring(c, Width * 0.6f, FrostColor, 0.5f);
-            Fx.Burst(c, IceColor, 24, 4, 0.7f, 0.09f, 6);
+            // FX3：墙脚一溜扬雪 + 冰碴，墙头一记星芒
+            for (int i = -1; i <= 1; i++)
+            {
+                var p = c + transform.right * (i * Width * 0.35f);
+                Fx.Play("FrostSnowPuff", p, Vector3.up, FrostKit.Snow, 1.2f);
+                FrostKit.Shatter(p + Vector3.up * 0.3f, 0.6f, IceColor, 10, 4);
+            }
+            Fx.FrostGlint(c + Vector3.up * Height * 0.9f, 1.1f);
             CameraShake.Quake(c, 0.15f, 18f, 0.2f);
         }
 
@@ -204,7 +211,7 @@ namespace Spiritfire.Game
         void OnDamaged(DamageInfo info, DamageResult r)
         {
             if (Health.maxHealth > 0) crack = Mathf.Max(crack, 1 - Health.health / Health.maxHealth);
-            if (r.total > 0 && Random.value < 0.5f) Fx.Burst(info.point, IceColor, 4, 2.5f, 0.4f, 0.06f, 8);
+            if (r.total > 0 && Random.value < 0.5f) FrostKit.Shatter(info.point, 0.35f, IceColor, 6, 3);
         }
 
         /// <summary>到时 / 主人上限换墙：自己崩解（不经过伤害结算：没有击杀事件和掉落）</summary>
@@ -227,8 +234,9 @@ namespace Spiritfire.Game
             collapse = 0;
             if (EnemyRegistry.Purging) return;
             var c = transform.position + Vector3.up * Height * 0.5f;
-            Fx.Burst(c, IceColor, 36, 5, 0.9f, 0.1f, 12);
-            Fx.Burst(c, HotColor, 12, 3, 0.4f, 0.06f, 4);
+            // FX3：整面墙沿宽度碎成三蓬大冰块 + 霜气
+            for (int i = -1; i <= 1; i++) FrostKit.Shatter(c + transform.right * (i * Width * 0.33f), 1.3f, IceColor, 24, 6);
+            FrostKit.Vapour(c, 1.6f, 8, FrostKit.Mist);
             GameAudio.PlayAt("shield_break", c, 0.8f, 1.1f);
         }
 

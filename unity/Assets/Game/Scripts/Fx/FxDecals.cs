@@ -37,7 +37,7 @@ namespace Spiritfire.Game
     public sealed class FxDecals : MonoBehaviour
     {
         public const float HoleLife = 11f, ScorchLife = 16f, FadeOutTime = 2f;
-        const int MaxGround = 32;
+        const int MaxGround = 48;
 
         internal sealed class Slot : FxSlot
         {
@@ -109,6 +109,17 @@ namespace Spiritfire.Game
             int n = 0;
             foreach (var s in instance.sprites)
                 if (s.active && s.cell == (int)cell)
+                    n++;
+            return n;
+        }
+
+        /// <summary>此刻亮着的某种程序贴花数（测试用：霜纹、熔池…）</summary>
+        public static int ActiveOfKind(FxMaterialKind kind)
+        {
+            if (!instance) return 0;
+            int n = 0;
+            foreach (var s in instance.ground)
+                if (s.active && s.kind == kind)
                     n++;
             return n;
         }
@@ -189,6 +200,27 @@ namespace Spiritfire.Game
             s.radius = radius;
             s.color = color;
             Place(s, center, Vector3.up, new Vector3(radius * 2, radius * 2, 1.8f), Random.value * 360f);
+            self.Push(s);
+            return new FxHandle(s);
+        }
+
+        /// <summary>
+        /// 流动霜纹（FX3：冻雾、冰环、滑冰带）：半径 radius、持续 duration 秒（0.07 内从中心冻开、最后 15% 化掉）；density = 浓度（1 = 标准）。
+        /// 句柄 Cancel 提前化掉（0.15 s）
+        /// </summary>
+        public static FxHandle Frost(Vector3 center, float radius, float duration, float density = 1f)
+        {
+            if (!Fx.Finite(center) || !(radius > 0) || !Usable(FxMaterialKind.DecalFrost)) return FxHandle.None;
+            var self = Get();
+            if (!self) return FxHandle.None;
+            var s = self.Take(self.ground, FxMaterialKind.DecalFrost, MaxGround);
+            if (s == null) return FxHandle.None;
+            s.life = Mathf.Max(0.3f, duration);
+            s.fadeOut = 0.15f;
+            s.radius = radius;
+            s.seed = Random.value * 10f;
+            s.sandMix = Mathf.Clamp(density, 0.05f, 2f);
+            Place(s, center, Vector3.up, new Vector3(radius * 2.2f, radius * 2.2f, 2.4f), Random.value * 360f);
             self.Push(s);
             return new FxHandle(s);
         }
@@ -297,6 +329,11 @@ namespace Spiritfire.Game
                     break;
                 case FxMaterialKind.DecalRune:
                     P = new Vector4(t, s.color.r, s.color.g, s.color.b);
+                    fade = 1;
+                    break;
+                case FxMaterialKind.DecalFrost:
+                    // 取消时 life 截短：进度很快走到末段，霜纹在着色器里化掉
+                    P = new Vector4(t, s.seed, s.sandMix, 0);
                     fade = 1;
                     break;
                 default:

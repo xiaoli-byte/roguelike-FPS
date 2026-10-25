@@ -783,6 +783,8 @@ namespace Spiritfire.Game
             Telegraph.ClearAll();
             FxDecals.ClearAll();
             MuzzleFlashes.ClearAll();
+            FrostShell.ClearAll();
+            IceSpikes.ClearAll();
             Surfaces.ClearCache();
         }
 

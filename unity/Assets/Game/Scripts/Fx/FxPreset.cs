@@ -11,8 +11,9 @@ namespace Spiritfire.Game
     }
 
     /// <summary>
-    /// 程序贴图集 T_FxAtlas 的格子（4 × 4，每格 256 px，第 0 格在左上角，与 Shuriken 的帧序一致）。
-    /// 贴图由 <see cref="FxTextures"/> 生成，FxBuilder 写成 Assets/Art/Fx/T_FxAtlas.png。前 8 格是 F1 的，后 8 格是 FX1 / FX2 加的。
+    /// 程序贴图集 T_FxAtlas 的格子（4 × 8，每格 256 px，第 0 格在左上角，与 Shuriken 的帧序一致）。
+    /// 贴图由 <see cref="FxTextures"/> 生成，FxBuilder 写成 Assets/Art/Fx/T_FxAtlas.png。0–7 是 F1 的，8–15 是 FX1 / FX2 加的，
+    /// 16–22 是 FX3（冰霜）/ FX4（火狱）加的，23–31 留空。
     /// </summary>
     public enum FxTexture
     {
@@ -48,6 +49,20 @@ namespace Spiritfire.Game
         Plate = 14,
         /// <summary>符文：小篆式的方折笔画（出生法阵里升起的符点）</summary>
         Glyph = 15,
+        /// <summary>冰晶星芒：三道长光芒（六个尖）+ 三道短光芒 + 白热核心（FX3 星芒、霜晶一闪）</summary>
+        IceStar = 16,
+        /// <summary>雪花：六臂带分叉的雪晶 + 中心六边形（冻雾里飘的雪、霜甲碎开）</summary>
+        Snowflake = 17,
+        /// <summary>冰块：竖长的六棱柱剪影，左暗右亮、中间一道棱光（碎冰的大块）</summary>
+        Crystal = 18,
+        /// <summary>纸屑：卷起一角的长方纸片（FX4 火药爆的红纸屑）</summary>
+        Paper = 19,
+        /// <summary>炭渣：边缘不规则的小块，外壳暗、裂缝亮（加法：一颗发红的炭火 / 熔渣）</summary>
+        Cinder = 20,
+        /// <summary>链环：椭圆铁环（断链散落）</summary>
+        Link = 21,
+        /// <summary>液团：圆润的液滴，边缘稍暗、左上一点高光（熔铜流、熔铁飞溅）</summary>
+        Blob = 22,
     }
 
     /// <summary>粒子朝向：面向相机 / 沿速度拉伸（火花拉丝）/ 水平贴地</summary>
@@ -73,6 +88,8 @@ namespace Spiritfire.Game
         Flicker,
         /// <summary>拉丝：(1 − t)(1 − 0.4t)</summary>
         Streak,
+        /// <summary>慢慢浮现、停留、慢慢散（FX3 冷雾：前 25% 淡入，最后 35% 淡出）</summary>
+        Linger,
     }
 
     /// <summary>发射方向</summary>

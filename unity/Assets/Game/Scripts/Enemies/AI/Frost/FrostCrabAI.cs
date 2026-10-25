@@ -116,7 +116,9 @@ namespace Spiritfire.Game
             if (Time.time - blockFxAt < 0.07f) return;
             blockFxAt = Time.time;
             var p = Local(0.45f + (Random.value - 0.5f) * 0.8f, 0.7f + Random.value, 1.3f);
-            Fx.Burst(p, FrostKit.TankIce, 6, 5f, 0.3f, 0.07f * Size, 8f);
+            // FX3：钳墙格挡——冰碴 + 一记冷星芒
+            FrostKit.Shatter(p, 0.35f * Size, FrostKit.TankIce, 6, 5f);
+            Fx.FrostGlint(p, 0.5f * Size, FrostKit.TankIce);
             GameAudio.PlayAt("shield_break", p, 0.35f, 2f);
         }
 
@@ -330,11 +332,8 @@ namespace Spiritfire.Game
             GameAudio.PlayAt("enemy_melee", ground, 1f, 0.5f);
             FrostKit.Quake(transform.position, 0.35f, StepShakeRange, 0.25f);
             GroundWave.Spawn(SweepWave(ground, Damage * SweepMult, this));
-            for (int i = 0; i < 10; i++)
-            {
-                float a = i / 10f * Mathf.PI * 2;
-                Fx.Burst(ground + new Vector3(Mathf.Cos(a) * SweepInner, 0.15f, Mathf.Sin(a) * SweepInner), i % 2 == 0 ? FrostKit.TankIce : FrostKit.Snow, 2, 2.5f, 0.45f, 0.16f, 8f);
-            }
+            // FX3：横扫在内圈翻起一圈雪雾 / 冰碴 + 霜斑（不立冰刺：伤害是往外推的地波，别让人以为冰刺那圈才疼）
+            Fx.Play("FrostRingBurst", ground, Vector3.up, FrostKit.TankIce, SweepInner * 1.3f);
             sweepCd = Random.Range(4f, 5f);
         }
 
@@ -350,8 +349,8 @@ namespace Spiritfire.Game
             Act("shellBreak", BreakTime, 0.06f);
             SetState("shellBreak");
             var p = claw ? claw.position : Local(0.65f, 1.05f, 0.9f);
-            FrostKit.Shatter(p, Size, 30, 9f);
-            Fx.Burst(p, FrostKit.Shell, 16, 7f, 1f, 0.16f * Size, 18f);
+            FrostKit.Shatter(p, 1.4f * Size, FrostKit.TankIce, 30, 9f);
+            Fx.Play("ArmorChip", p, Vector3.up, FrostKit.Shell, 0.8f * Size);
             FrostKit.Vapour(p, Size, 8, FrostKit.Aqua);
             GameAudio.PlayAt("shield_break", p, 1f, 0.55f);
             GameAudio.PlayAt("boss_roar", transform.position, 0.7f, 1.3f);

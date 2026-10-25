@@ -11,7 +11,7 @@ namespace Spiritfire.Game
     /// </summary>
     public static class FxTextures
     {
-        /// <summary>粒子贴图集：4 × 4 格，每格 256 px，格序见 <see cref="FxTexture"/></summary>
+        /// <summary>粒子贴图集：4 × 8 格（1024 × 2048），每格 256 px，格序见 <see cref="FxTexture"/></summary>
         public const string Atlas = "T_FxAtlas";
         /// <summary>
         /// 贴花图集（弹孔 / 焦痕 / 溅痕）：4 × 2 格，每格 256 px，格序见 <see cref="FxDecalKind"/>。
@@ -29,7 +29,7 @@ namespace Spiritfire.Game
         /// <summary>线状特效（曳光、光束、闪电）的横截面：中间白热、两边柔和衰减</summary>
         public const string Line = "T_Fx_Line";
 
-        public const int AtlasColumns = 4, AtlasRows = 4, AtlasCell = 256;
+        public const int AtlasColumns = 4, AtlasRows = 8, AtlasCell = 256;
         public const int DecalColumns = 4, DecalRows = 2;
 
         public static readonly string[] All = { Atlas, Glow, BeamFade, Band, Line, DecalAtlas, Muzzle };
@@ -249,9 +249,108 @@ namespace Spiritfire.Game
                     float halo = Mathf.Exp(-best * best / 0.03f) * 0.3f;
                     return new Color(1, 1, 1, Mathf.Clamp01(core + halo));
                 }
+                case FxTexture.IceStar:
+                {
+                    // 冰晶星芒：三道贯穿的长光芒（0° / 60° / 120°，六个尖）+ 错开 30° 的三道短光芒，越往外越细；白热核心 + 一圈柔光
+                    float rays = 0;
+                    for (int k = 0; k < 6; k++)
+                    {
+                        float a0 = k * Mathf.PI / 6f;
+                        float ca = Mathf.Cos(a0), sa = Mathf.Sin(a0);
+                        float along = Mathf.Abs(ca * x + sa * y), perp = Mathf.Abs(-sa * x + ca * y);
+                        float len = k % 2 == 0 ? 1f : 0.48f;
+                        float u = Mathf.Clamp01(along / len);
+                        float w = 0.012f + 0.03f * (1 - u);
+                        rays = Mathf.Max(rays, Mathf.Exp(-perp * perp / (w * w)) * Mathf.Pow(1 - u, 1.6f) * (k % 2 == 0 ? 1f : 0.7f));
+                    }
+                    float core = Mathf.Exp(-d2 * 38f) + 0.3f * Mathf.Exp(-d2 * 7f);
+                    return new Color(1, 1, 1, Mathf.Clamp01((rays + core) * Smooth(1f, 0.82f, d)));
+                }
+                case FxTexture.Snowflake:
+                {
+                    // 雪花：极坐标折到 0°–30° 的半个扇区（六臂、左右对称），主臂沿 +x；臂上三对 60° 的分叉，中心一块六边形
+                    float ang = Mathf.Atan2(y, x);
+                    const float sector = Mathf.PI / 3f;
+                    float a = Mathf.Abs(Mathf.Repeat(ang + sector * 0.5f, sector) - sector * 0.5f);
+                    var q = new Vector2(d * Mathf.Cos(a), d * Mathf.Sin(a));
+                    var b60 = new Vector2(0.5f, 0.866f);
+                    float best = SegDist(q, Vector2.zero, new Vector2(0.86f, 0));
+                    best = Mathf.Min(best, SegDist(q, new Vector2(0.34f, 0), new Vector2(0.34f, 0) + b60 * 0.24f));
+                    best = Mathf.Min(best, SegDist(q, new Vector2(0.58f, 0), new Vector2(0.58f, 0) + b60 * 0.17f));
+                    best = Mathf.Min(best, SegDist(q, new Vector2(0.75f, 0), new Vector2(0.75f, 0) + b60 * 0.09f));
+                    float stroke = Smooth(0.05f, 0.028f, best);
+                    float hex = Mathf.Max(Mathf.Abs(x) * 0.866f + Mathf.Abs(y) * 0.5f, Mathf.Abs(y));
+                    float plate = Smooth(0.17f, 0.14f, hex) * 0.85f;
+                    float glow = Mathf.Exp(-best * best / 0.006f) * 0.25f;
+                    float lum = Mathf.Min(1, 0.85f + 0.15f * Mathf.Exp(-d2 * 12f));
+                    return new Color(lum, lum, lum, Mathf.Clamp01(Mathf.Max(stroke, plate) + glow) * Smooth(1f, 0.9f, d));
+                }
+                case FxTexture.Crystal:
+                {
+                    // 冰块：竖长的六棱柱剪影（上下收尖），中线左边是背光面、右边是受光面，中线一道亮棱，外轮廓一圈亮边
+                    var q = new Vector2(x, y);
+                    float inside = 9;
+                    for (int i = 0; i < CrystalPts.Length; i++) inside = Mathf.Min(inside, EdgeDist(q, CrystalPts[i], CrystalPts[(i + 1) % CrystalPts.Length]));
+                    float a = Mathf.Clamp01(inside / 0.025f + 0.5f);
+                    float ridge = Mathf.Exp(-x * x / 0.002f) * Smooth(0.95f, 0.5f, Mathf.Abs(y));
+                    float rim = Mathf.Exp(-inside * inside / 0.0015f);
+                    float face = x > 0 ? 0.92f - 0.2f * (y * 0.5f + 0.5f) : 0.55f + 0.15f * (y * 0.5f + 0.5f);
+                    float lum = Mathf.Min(1, face + 0.35f * ridge + 0.3f * rim);
+                    return new Color(lum, lum, lum, a * 0.96f);
+                }
+                case FxTexture.Paper:
+                {
+                    // 纸屑：略微扭过去的长方形（0.62 × 0.4 的半宽），右上角卷起一个暗三角，下长边稍亮
+                    float rx = x * 0.97f + y * 0.24f, ry = -x * 0.24f + y * 0.97f;
+                    float ex = 0.62f - Mathf.Abs(rx), ey = 0.4f - Mathf.Abs(ry);
+                    float curlLine = (rx + ry - 0.62f) * 0.7071f;
+                    float inside = Mathf.Min(ex, ey);
+                    float a = Mathf.Clamp01(inside / 0.02f + 0.5f);
+                    float curl = Smooth(-0.02f, 0.06f, curlLine);
+                    float lum = (0.8f + 0.2f * (ry * 0.5f + 0.5f)) * (1 - 0.45f * curl) + (ry < 0 ? 0.15f * Mathf.Exp(-ey * ey / 0.002f) : 0f);
+                    lum = Mathf.Min(1, lum * (0.9f + 0.1f * Fbm(x * 9f, y * 9f, 47)));
+                    return new Color(lum, lum, lum, a);
+                }
+                case FxTexture.Cinder:
+                {
+                    // 炭渣：噪声啃过的不规则块；外壳暗（0.3），裂缝 / 芯亮（1）——加法混合下读作一颗发红的炭火
+                    float ang = Mathf.Atan2(y, x);
+                    float edge = 0.62f + 0.12f * Mathf.Sin(ang * 5f + 0.8f) + 0.14f * (Fbm(x * 3.3f + 2f, y * 3.3f - 5f, 53) - 0.5f) * 2f;
+                    float a = Mathf.Clamp01((edge - d) / 0.04f + 0.5f);
+                    float n = Fbm(x * 5.5f + 7f, y * 5.5f + 1f, 59);
+                    float crack = 1 - Smooth(0.0f, 0.08f, Mathf.Abs(n - 0.5f));
+                    float core = Smooth(0.45f, 0f, d);
+                    float lum = Mathf.Clamp01(0.3f + 0.7f * Mathf.Max(crack * Smooth(edge, edge * 0.5f, d), core * 0.8f));
+                    return new Color(lum, lum, lum, a);
+                }
+                case FxTexture.Link:
+                {
+                    // 链环：椭圆环（中线半轴 0.4 × 0.78，环宽约 0.17），左上受光
+                    float ex = x / 0.4f, ey = y / 0.78f;
+                    float r = Mathf.Sqrt(ex * ex + ey * ey);
+                    float ring = Mathf.Abs(r - 1f) * 0.42f;
+                    float a = Mathf.Clamp01((0.085f - ring) / 0.02f + 0.5f);
+                    float lum = Mathf.Clamp01(0.45f + 0.35f * Mathf.Clamp01((-x + y) * 0.7f + 0.5f) + 0.35f * Mathf.Exp(-ring * ring / 0.0006f));
+                    return new Color(lum, lum, lum, a);
+                }
+                case FxTexture.Blob:
+                {
+                    // 液团：圆（半径 0.78），边缘稍暗、中间亮，左上一颗高光
+                    float a = Mathf.Clamp01((0.78f - d) / 0.03f + 0.5f);
+                    float hx = x + 0.28f, hy = y - 0.3f;
+                    float spec = Mathf.Exp(-(hx * hx + hy * hy) * 26f);
+                    float lum = Mathf.Clamp01(0.62f + 0.38f * Smooth(0.78f, 0.1f, d) + 0.6f * spec);
+                    return new Color(lum, lum, lum, a);
+                }
             }
             return new Color(1, 1, 1, 0);
         }
+
+        /// <summary>冰块（六棱柱剪影）的顶点，逆时针</summary>
+        static readonly Vector2[] CrystalPts =
+        {
+            new(0f, -0.95f), new(0.34f, -0.62f), new(0.34f, 0.58f), new(0f, 0.95f), new(-0.34f, 0.58f), new(-0.34f, -0.62f),
+        };
 
         static readonly Vector2 ShardA = new(-0.55f, -0.78f), ShardB = new(0.62f, -0.42f), ShardC = new(-0.08f, 0.92f);
 

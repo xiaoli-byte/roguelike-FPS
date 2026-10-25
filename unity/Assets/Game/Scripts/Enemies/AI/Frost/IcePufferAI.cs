@@ -178,7 +178,7 @@ namespace Spiritfire.Game
             Act("dive", 0, 0.08f);
             SetState("dive");
             GameAudio.PlayAt("telegraph", transform.position, 0.6f, 1.9f);
-            Fx.Burst(Center, Spine, 6, 1.6f, 0.35f, 0.05f, 0);
+            Fx.FrostGlint(Center, 0.8f * Size, Spine);
         }
 
         void StartInflate()
@@ -202,7 +202,7 @@ namespace Spiritfire.Game
             RollCooldown(1.5f, 2.6f);
             Act("recover", 0, 0.1f);
             SetState("recover");
-            Fx.Burst(Center, Spine, 8, 2.2f, 0.5f, 0.05f, 4f);
+            FrostKit.Shatter(Center, 0.4f * Size, Spine, 8, 2.2f);
         }
 
         void SetInflation(float k)
@@ -221,10 +221,10 @@ namespace Spiritfire.Game
             // 预警如期兑现：让它自然收尾，下面的死亡 → CancelAttack 不再撤销它
             warning = TelegraphHandle.None;
             var c = Center;
-            Fx.Explosion(c, BurstRadius, BurstColor);
+            // FX3：冷的爆炸（冰爆：粉雾、冷雾、冰块、冰碴、冷环、霜斑），不是火球
+            Fx.FrostNova(c, BurstRadius, BurstColor);
             GameAudio.PlayAt("explosion", c, 0.9f, 1.35f);
             FrostKit.Shatter(c, 1.3f * Size, 18, 6f);
-            Fx.Ring(c, BurstRadius, Hex.Rgb(0xcff4ff), 0.4f);
             // 被嘲讽时扑的是灵体诱饵：炸不到玩家
             if (Taunted) DecoyBlocked(Target);
             else Spiritfire.Game.Blast.Player(c, BurstRadius, Damage, Element.None, this, BurstEdge, 0.6f, BurstKnock);
@@ -250,7 +250,7 @@ namespace Spiritfire.Game
             // 鼓气中被打爆：冰爆照样炸开，只伤其他敌人（延后结算，避免在伤害结算里递归），留一小团冻雾
             float dmg = DeathBlastDamage(level, elite);
             FrostKit.Shatter(c, 1.2f * Size, 18, 6f);
-            Fx.Explosion(c, BurstRadius, BurstColor);
+            Fx.FrostNova(c, BurstRadius, BurstColor);
             FrostFog.Spawn(c, DeathFogRadius, DeathFogTime, DeathFogSlow);
             var self = hp;
             FrostKit.Delay(body, 0.06f, () => Spiritfire.Game.Blast.Enemies(c, BurstRadius, dmg, 5f, 0.5f, new[] { self }));

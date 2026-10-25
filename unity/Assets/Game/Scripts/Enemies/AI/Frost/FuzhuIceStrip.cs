@@ -7,7 +7,8 @@ namespace Spiritfire.Game
     /// 夫诸冰光扫过的冻地（Three.js 版 FrostRangedFx.spawnFrozenStrip）：a → b（地面点）一条半宽 halfWidth 的冰面，0.25 s 内沿光束方向「冻过去」，
     /// duration 秒后化掉（最后 0.6 s 淡出）。踩上去打滑：玩家这一帧想要的速度变化只保留一成（加速、刹车都很慢），滑行速度每秒衰减 0.6；
     /// 抵消用的是单帧 &lt; 2.8 m/s 的冲量（不触发击退硬直，见 MotorCore.AddImpulse）。冲刺 / 突进中、离地、高差超过 0.6 m 不打滑。
-    /// 多条冻地重叠时同一帧只结算一次（静态的滑行状态）。外观：Telegraph 的长条持续区域（冰蓝）+ 冻过去时沿途冒冰屑。
+    /// 多条冻地重叠时同一帧只结算一次（静态的滑行状态）。外观：Telegraph 的长条持续区域（冰蓝）+ 冻过去时沿途冒冰屑，
+    /// FX3 起再沿途铺一串流动霜纹（<see cref="Fx.FrostPatch"/>，跟着冻过去）。
     /// </summary>
     public sealed class FuzhuIceStrip : MonoBehaviour
     {
@@ -19,7 +20,7 @@ namespace Spiritfire.Game
         static Vector3 slipV;
 
         Vector3 a, fwd;
-        float len, halfWidth, duration, t, shardAt;
+        float len, halfWidth, duration, t, shardAt, patchAt;
         TelegraphHandle sheet;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -69,7 +70,14 @@ namespace Spiritfire.Game
                 shardAt = t;
                 float along = Mathf.Min(grow, len);
                 var side = new Vector3(fwd.z, 0, -fwd.x) * ((Random.value - 0.5f) * 2f * halfWidth);
-                Fx.Burst(a + fwd * along + side + Vector3.up * 0.1f, ShardColor, 2, 1.2f, 0.4f, 0.08f, 3);
+                FrostKit.Shatter(a + fwd * along + side + Vector3.up * 0.1f, 0.3f, ShardColor, 4, 2.5f);
+            }
+            // 霜纹：每隔 1.8 个半宽铺一块，跟着冻过去的前沿走
+            float step = Mathf.Max(1f, halfWidth * 1.8f);
+            while (patchAt <= Mathf.Min(grow, len) && t < duration - 0.3f)
+            {
+                Fx.FrostPatch(a + fwd * patchAt + Vector3.up * 0.02f, halfWidth * 1.3f, duration - t, 1.3f);
+                patchAt += step;
             }
             if (t < duration) SlipPlayer(Mathf.Min(grow, len), dt);
             if (t >= duration) Destroy(gameObject);

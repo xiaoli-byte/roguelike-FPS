@@ -17,9 +17,10 @@ namespace Spiritfire.Game.Testing
     ///   出生：显形中、收尾两张，0.8 s 内显形完成；死亡：迸散一张，尸体溶解中一张，回收前溶完；
     ///   状态：灼烧 / 感电 / 蚀化 / 眩晕 / 减速 五只靶子各一张近景，外观组件挂上并显示对应状态；
     ///   熔池（熔金）/ 归墟（收束 + 爆开）各一张；
-    ///   压力：8 只敌人全身着火感电 + 暴击连射 4 s + 3 次爆炸，记高 / 低画质下的同屏粒子峰值、被预算砍掉的数量、帧时间。
+    ///   压力：8 只敌人全身着火感电 + 暴击连射 4 s + 3 次爆炸，记高 / 低画质下的同屏粒子峰值、被预算砍掉的数量、帧时间；
+    ///   FX3 冰霜 / FX4 火狱逐项一张（见 FxSuite.Elements.cs；只跑这两段用 bridge.sh playtest fx-elements）。
     /// </summary>
-    public sealed class FxSuite : PlaytestSuite
+    public partial class FxSuite : PlaytestSuite
     {
         public override string Id => "fx";
         public override string Scene => "Assets/Scenes/TestArena.unity";
@@ -56,6 +57,16 @@ namespace Spiritfire.Game.Testing
             Line($"武器 {weapons.Active?.def.name}，画质 {ArtQuality.Label(ArtQuality.Level)}（原 {ArtQuality.Label(quality)}）");
 
             CheckAssets();
+            if (ElementsOnly)
+            {
+                yield return FrostCase();
+                yield return InfernoCase();
+                ArtQuality.Set(quality, false);
+                vitals.stats.Remove("playtest_fx");
+                weapons.testFire = false;
+                arena.Clear();
+                yield break;
+            }
             yield return Impacts();
             yield return MuzzleAndTracers();
             yield return Hits();
@@ -65,6 +76,8 @@ namespace Spiritfire.Game.Testing
             yield return DeathCase();
             yield return StatusCase();
             yield return Reactions();
+            yield return FrostCase();
+            yield return InfernoCase();
             yield return Stress();
 
             ArtQuality.Set(quality, false);

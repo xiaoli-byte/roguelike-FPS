@@ -15,7 +15,7 @@ namespace Spiritfire.Game
     /// 粒子数量乘画质密度（<see cref="Density"/>：低 0.45 / 中 0.75 / 高 1，同 Three.js）。
     /// 旧接口 ShotFx / Lightning.Spawn / SlashArc.Spawn / Telegraph.* 照常可用（ShotFx 是转发到这里的兼容层）。
     /// </summary>
-    public static class Fx
+    public static partial class Fx
     {
         // 默认颜色（Three.js Fx.ts）
         public static readonly Color ImpactColor = Hex.Rgb(0xffc98a);

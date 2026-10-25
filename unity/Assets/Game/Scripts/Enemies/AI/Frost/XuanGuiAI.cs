@@ -119,7 +119,9 @@ namespace Spiritfire.Game
             if (Time.time - blockFxAt < 0.07f) return;
             blockFxAt = Time.time;
             var p = transform.position + transform.forward * 1.3f * Size + Vector3.up * (0.6f + Random.value * 0.9f) * Size + transform.right * (Random.value - 0.5f) * 1.2f * Size;
-            Fx.Burst(p, FrostKit.TankIce, 6, 5f, 0.3f, 0.07f * Size, 8f);
+            // FX3：冰壳格挡——冰碴 + 一记冷星芒
+            FrostKit.Shatter(p, 0.35f * Size, FrostKit.TankIce, 6, 5f);
+            Fx.FrostGlint(p, 0.5f * Size, FrostKit.TankIce);
             GameAudio.PlayAt("shield_break", p, 0.35f, 2.4f);
         }
 
@@ -243,7 +245,7 @@ namespace Spiritfire.Game
                     if (Mathf.Floor(stateTime / 0.12f) != Mathf.Floor((stateTime - dt) / 0.12f))
                     {
                         float a = stateTime * 9;
-                        Fx.Burst(Local(Mathf.Sin(a) * 1.2f, 0.5f, Mathf.Cos(a) * 1.25f), FrostKit.Spike, 3, 3f, 0.35f, 0.08f * Size, 2f);
+                        Fx.FrostGlint(Local(Mathf.Sin(a) * 1.2f, 0.5f, Mathf.Cos(a) * 1.25f), 0.45f * Size, FrostKit.Spike);
                     }
                     if (stateTime >= windTime) StartSpin();
                     break;
@@ -271,7 +273,7 @@ namespace Spiritfire.Game
                     if (stateTime >= RightselfTime)
                     {
                         RestoreSnakeWeakPoint();
-                        Fx.Burst(transform.position + Vector3.up * 0.1f, FrostKit.Snow, 12, 3f, 0.6f, 0.2f * Size, 6f);
+                        FrostKit.SnowPuff(transform.position, Size * 1.3f, 9);
                         FrostKit.Quake(transform.position, 0.3f, StepShakeRange, 0.25f);
                         ToAdvance();
                         spinCd = Random.Range(6f, 8f);
@@ -308,7 +310,7 @@ namespace Spiritfire.Game
             SetState("peck");
             var p = Local(0, 0.9f, 2.1f);
             GameAudio.PlayAt("enemy_melee", p, 0.9f, 0.6f);
-            Fx.Burst(p, FrostKit.TankIce, 6, 4f, 0.3f, 0.08f * Size, 6f);
+            FrostKit.Shatter(p, 0.4f * Size, FrostKit.TankIce, 6, 4f);
             if (DistToPlayer <= PeckReach + 0.35f && FacingDot() > 0.5f && VerticalReach(2f) && HitTarget(Damage * PeckMult, p))
             {
                 struck = true;
@@ -353,7 +355,7 @@ namespace Spiritfire.Game
                 var away = PlayerPos - transform.position;
                 away.y = 0;
                 Push((away.sqrMagnitude > 1e-4f ? away.normalized : -transform.forward) * 6f + Vector3.up * 3f);
-                Fx.Burst(PlayerEye, FrostKit.Violet, 8, 3f, 0.4f, 0.1f, 2f);
+                FrostKit.Vapour(PlayerEye, 0.6f, 5, FrostKit.Violet);
             }
             biteCd = Random.Range(1.8f, 2.6f);
         }
@@ -423,7 +425,7 @@ namespace Spiritfire.Game
             }
             shellOut = on && shellRenderers.Length > 0;
             var c = transform.position + Vector3.up * 0.8f * Size;
-            FrostKit.Shatter(c, Size, 10, 4f);
+            FrostKit.Shatter(c, Size, FrostKit.TankIce, 10, 4f);
             FrostKit.Vapour(c, Size, 6, FrostKit.TankIce);
         }
 
@@ -485,7 +487,7 @@ namespace Spiritfire.Game
                 lastBounce = stateTime;
                 bounces++;
                 var p = Local(0, 0.6f, 1.2f);
-                FrostKit.Shatter(p, Size, 14, 7f);
+                FrostKit.Shatter(p, Size, FrostKit.TankIce, 14, 7f);
                 GameAudio.PlayAt("boss_slam", p, 0.8f, 1.1f);
                 FrostKit.Quake(transform.position, 0.45f, StepShakeRange, 0.25f);
                 if (SpinStopsAt(bounces, elite))
@@ -513,6 +515,7 @@ namespace Spiritfire.Game
             float gy = FrostKit.GroundAt(transform.position, transform.position.y, 0.5f, 3f);
             var ground = new Vector3(transform.position.x, float.IsFinite(gy) ? gy : transform.position.y, transform.position.z);
             Fx.Ring(ground + Vector3.up * 0.05f, 1.8f * Size, FrostKit.TankIce, 0.5f);
+            Fx.FrostPatch(ground + Vector3.up * 0.02f, 1.6f * Size, 3f, 1.2f);
             GameAudio.PlayAt("shield_break", transform.position, 0.8f, 0.6f);
             FrostKit.Quake(transform.position, 0.5f, StepShakeRange, 0.35f);
             Act("overheat", 0, 0.08f);

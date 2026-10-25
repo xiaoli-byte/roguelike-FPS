@@ -123,7 +123,8 @@ namespace Spiritfire.Art.Editor
             Set(ti.mipmapEnabled, true, v => ti.mipmapEnabled = v);
             Set(ti.wrapMode, TextureWrapMode.Clamp, v => ti.wrapMode = v);
             Set(ti.filterMode, atlas ? FilterMode.Trilinear : FilterMode.Bilinear, v => ti.filterMode = v);
-            Set(ti.maxTextureSize, 1024, v => ti.maxTextureSize = v);
+            // 粒子图集 FX3 起是 1024 × 2048：上限 1024 会被压成一半
+            Set(ti.maxTextureSize, atlas ? 2048 : 1024, v => ti.maxTextureSize = v);
             Set(ti.textureCompression, TextureImporterCompression.Compressed, v => ti.textureCompression = v);
             Set(ti.npotScale, TextureImporterNPOTScale.None, v => ti.npotScale = v);
             Set(ti.isReadable, false, v => ti.isReadable = v);

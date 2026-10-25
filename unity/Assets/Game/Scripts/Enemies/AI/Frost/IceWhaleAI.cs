@@ -209,6 +209,8 @@ namespace Spiritfire.Game
                     {
                         mistAcc = 0;
                         Fx.Burst(BlowholePos, t > 0.6f ? SparkColor : MistColor, 2, 0.8f + 1.5f * t, 0.5f, (0.15f + 0.2f * t) * Size, -2);
+                        // FX3：喷气孔聚满时冒冰晶星芒
+                        if (t > 0.6f && Random.value < 0.35f) Fx.FrostGlint(BlowholePos + Random.insideUnitSphere * 0.3f * Size, (0.5f + 0.6f * t) * Size, SparkColor);
                     }
                     if (stateTime >= swellTime)
                     {
@@ -394,8 +396,9 @@ namespace Spiritfire.Game
             float waveR = WaveRadius * (elite ? 1.2f : 1f);
             if (hit) Telegraph.Wave(c, waveR, WaveSpeed, IceColor);
             else GroundWave.Spawn(SlamWave(c, waveR, Damage, this));
-            Fx.Burst(c + Vector3.up * 0.3f, ShardColor, 26, 8, 0.8f, 0.15f * Size, 14);
-            Fx.Burst(c + Vector3.up * 0.3f, SnowColor, 12, 4, 0.9f, 0.5f * Size, -0.5f);
+            // FX3：鲸身砸地——冰爆（粉雾、冰块、冰碴、霜斑）+ 一圈冰刺冒出又缩回
+            Fx.FrostNova(c + Vector3.up * 0.3f, 2.2f * Size, ShardColor);
+            Fx.IceRing(c, 2.6f * Size, 14);
             CameraShake.Quake(c, 0.45f, 26f, 0.35f);
             GameAudio.PlayAt("boss_slam", c, 0.9f, 0.9f);
         }

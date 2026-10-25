@@ -38,7 +38,8 @@ namespace Spiritfire.Game
     ///   骨骼：按名字找骨骼、把「模型空间的设计点」换算成骨骼局部偏移（弱点球、出手点挂在骨骼上跟着动画走）；
     ///   贴地小位移：沿导航网格推一步，碰到网格边缘（墙、台沿）返回边缘法线（突刺、旋壳反弹）；
     ///   格挡：把 <see cref="GuardProfile"/> 写到敌人的命中区上（HitZone 朝向门，E2）；
-    ///   冰屑 / 霜气 / 冲击环这几样常用特效（走 F1 的 Fx 门面）；延时回调（挂在敌人身体上的协程，AI 组件死后停用也照样跑）。
+    ///   碎冰 / 霜气 / 扬雪 / 冰环这几样常用特效（FX3 预设：<see cref="Fx.FrostShatter"/>、<see cref="Fx.FrostVapour"/>、<see cref="Fx.IceRing"/>）；
+    ///   延时回调（挂在敌人身体上的协程，AI 组件死后停用也照样跑）。
     /// 冻雾见 <see cref="FrostFog"/>，滑冰带见 <see cref="IceFloor"/>。
     /// </summary>
     public static class FrostKit
@@ -203,31 +204,29 @@ namespace Spiritfire.Game
 
         // ───────────── 特效 ─────────────
 
-        /// <summary>冰屑四溅（TS iceShards / iceShatter）</summary>
-        public static void Shatter(Vector3 at, float size, int count = 12, float speed = 5f)
+        /// <summary>
+        /// 碎冰（TS iceShards / iceShatter → FX3 <see cref="Fx.FrostShatter"/>：冰块 + 冰碴 + 粉雾 + 闪粒 + 星芒）。
+        /// count / speed 是旧接口的粒子数 / 速度：折算成规模（多、快 = 碎得更大一蓬）
+        /// </summary>
+        public static void Shatter(Vector3 at, float size, int count = 12, float speed = 5f) => Shatter(at, size, Ice, count, speed);
+
+        /// <summary>碎冰（指定冰色：坦克的冰偏白、紫冰偏紫）</summary>
+        public static void Shatter(Vector3 at, float size, Color color, int count = 12, float speed = 5f)
         {
-            Fx.Burst(at, Ice, count, speed, 0.5f, 0.08f * Mathf.Max(0.3f, size), 8f);
-            Fx.Burst(at, Snow, Mathf.Max(3, count / 2), speed * 0.45f, 0.65f, 0.22f * Mathf.Max(0.3f, size), 0.5f);
+            float k = Mathf.Lerp(0.85f, 1.3f, Mathf.InverseLerp(8, 30, count)) * Mathf.Lerp(0.9f, 1.15f, Mathf.InverseLerp(3, 9, speed));
+            Fx.FrostShatter(at, Mathf.Max(0.3f, size) * k, color);
         }
 
-        /// <summary>一团霜气（TS frostVapour）</summary>
+        /// <summary>一团霜气（TS frostVapour → FX3 <see cref="Fx.FrostVapour"/>）；count 越多雾越大</summary>
         public static void Vapour(Vector3 at, float size, int count, Color color) =>
-            Fx.Burst(at, color, count, 1.2f, 0.7f, 0.25f * Mathf.Max(0.3f, size), -1.5f);
+            Fx.FrostVapour(at, Mathf.Max(0.3f, size) * Mathf.Lerp(0.8f, 1.3f, Mathf.InverseLerp(3, 8, count)), color);
 
-        /// <summary>落地扬雪（起跳、落地、刹车）</summary>
-        public static void SnowPuff(Vector3 at, float size, int count = 6) => Fx.Burst(at + Vector3.up * 0.05f, Snow, count, 1.4f, 0.45f, 0.18f * Mathf.Max(0.3f, size), 1f);
+        /// <summary>落地扬雪（起跳、落地、刹车；FX3 FrostSnowPuff）</summary>
+        public static void SnowPuff(Vector3 at, float size, int count = 6) =>
+            Fx.Play("FrostSnowPuff", at + Vector3.up * 0.05f, Vector3.up, Snow, Mathf.Max(0.3f, size) * Mathf.Lerp(0.8f, 1.25f, Mathf.InverseLerp(4, 9, count)));
 
-        /// <summary>贴地冰环：冲击环 + 一圈冰屑（TS spawnIceRing；纯视觉）</summary>
-        public static void IceRing(Vector3 ground, float radius)
-        {
-            Fx.Ring(ground + Vector3.up * 0.05f, radius, Ice, 0.35f);
-            for (int i = 0; i < 12; i++)
-            {
-                float a = i / 12f * Mathf.PI * 2;
-                Fx.Burst(ground + new Vector3(Mathf.Cos(a), 0.1f, Mathf.Sin(a)) * radius, Ice, 2, 2.2f, 0.45f, 0.1f, 6f);
-            }
-            Fx.Burst(ground + Vector3.up * 0.2f, Mist, 10, 2f, 0.7f, 0.3f, -0.5f);
-        }
+        /// <summary>贴地冰环（TS spawnIceRing → FX3 <see cref="Fx.IceRing"/>：一圈冰刺冒出又缩回 + 两道冲击环 + 雪雾 + 霜斑；纯视觉）</summary>
+        public static void IceRing(Vector3 ground, float radius) => Fx.IceRing(ground, radius);
 
         /// <summary>以 at 为中心按距离衰减的震屏（TS 坦克 quake：离玩家越远越弱，range 外没有）</summary>
         public static void Quake(Vector3 at, float strength, float range, float duration = 0.3f) => CameraShake.Quake(at, strength, range, duration);
@@ -302,14 +301,11 @@ namespace Spiritfire.Game
             {
                 interval = Tick, firstTick = 0, minRise = MinRise, maxRise = MaxRise, pad = Pad, color = FrostKit.Fog, telegraph = false,
             };
+            // 外观换成 FX3 的冻雾（流动霜纹 + 贴地翻滚的冷雾 + 闪粒 + 雪花），HazardZone 自己那块圆贴片不铺
+            s.decal = false;
             var f = Create<FrostFog>("Frost Fog", s);
             f.slow = Mathf.Clamp01(slow);
-            // 雾团：几团贴地缓慢翻滚的冷雾
-            for (int i = 0; i < 6; i++)
-            {
-                float a = i / 6f * Mathf.PI * 2;
-                Fx.Burst(ground + new Vector3(Mathf.Cos(a), 0.3f, Mathf.Sin(a)) * radius * 0.55f, FrostKit.Mist, 3, 0.5f, Mathf.Min(5, duration * 0.6f), radius * 0.35f, -0.2f);
-            }
+            Fx.FrostFogLook(f.gameObject, ground, radius, duration);
             return f;
         }
 
@@ -362,9 +358,12 @@ namespace Spiritfire.Game
             {
                 interval = 1f, firstTick = 99f, color = FrostKit.Band, telegraph = false, minRise = -0.6f, maxRise = 0.6f, pad = 0.175f,
             };
+            s.decal = false;
             var z = Create<IceFloor>("Ice Floor", s);
             live.Add(z);
-            Fx.Burst(ground + Vector3.up * 0.1f, FrostKit.Snow, 3, 2f, 0.45f, 0.14f * radius, 6f);
+            // FX3：滑过的地方结一块流动霜纹（比冻雾浓），落下时扬一点雪
+            Fx.FrostPatch(ground + Vector3.up * 0.02f, radius, duration, 1.5f);
+            Fx.Play("FrostSnowPuff", ground + Vector3.up * 0.05f, Vector3.up, FrostKit.Snow, Mathf.Clamp(radius, 0.4f, 2f));
             try
             {
                 Dropped?.Invoke(z);

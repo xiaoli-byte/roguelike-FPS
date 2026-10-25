@@ -448,16 +448,20 @@ namespace Spiritfire.Game
                 e.Buffs.Set(FrostArmor, this, ArmorMods, ArmorDuration);
                 var c = EnemyRegistry.Center(e);
                 Fx.Beam(from, c, ArmorColor, 0.04f, 0.4f);
-                Fx.Burst(c, ArmorColor, 12, 2, 0.6f, 0.07f, -1);
+                Fx.FrostGlint(c, 0.9f, ArmorColor);
                 AddShell(e);
             }
         }
 
-        /// <summary>冰壳：结了霜甲的同伴身上一层冰蓝覆盖色；霜甲没了（到期、来源碎镜 / 死亡）就碎掉收起</summary>
+        /// <summary>
+        /// 冰壳：结了霜甲的同伴罩一层 FX3 霜甲壳（<see cref="FrostShell"/>：从脚下往上冻的多面冰）+ 淡淡的冰蓝覆盖色；
+        /// 霜甲没了（到期、来源碎镜 / 死亡）就碎掉收起
+        /// </summary>
         static void AddShell(EnemyAI e)
         {
             if (!e || !e.Body) return;
-            e.Body.SetOverlay(FrostArmor, ArmorColor, 0.3f);
+            e.Body.SetOverlay(FrostArmor, ArmorColor, 0.15f);
+            FrostShell.Cover(e.Health);
             if (shells.ContainsKey(e)) return;
             Action<string, object> h = null;
             h = (channel, source) =>
@@ -467,11 +471,8 @@ namespace Spiritfire.Game
                 if (e)
                 {
                     e.Buffs.Ended -= h;
-                    if (e.Body)
-                    {
-                        e.Body.ClearOverlay(FrostArmor);
-                        if (!e.Dead) Fx.Burst(EnemyRegistry.Center(e), ArmorColor, 14, 3, 0.6f, 0.07f, 9);
-                    }
+                    if (e.Body) e.Body.ClearOverlay(FrostArmor);
+                    FrostShell.Shatter(e.Health, !e.Dead);
                 }
                 shells.Remove(e);
             };
@@ -506,12 +507,13 @@ namespace Spiritfire.Game
             bool hit = MirrorBeamHits(from, dir, reach, chest, pr) && !Combat.Blocked(from, chest, null);
             var end = from + dir * (hit ? Vector3.Dot(chest - from, dir) : reach);
             Fx.Beam(from, end, BeamColor, 0.14f, 0.3f);
-            Fx.Burst(end, FrostColor, 16, 3, 0.5f, 0.08f, 4);
+            Fx.FrostGlint(from, 1.2f, BeamColor);
+            FrostKit.Shatter(end, 0.5f, FrostColor, 12, 4);
             GameAudio.PlayAt("shot_beam", from, 0.75f, 1.4f);
             if (hit && HitTarget(Damage, from))
             {
                 PlayerStatus.Chill(MirrorSlow, MirrorSlowTime);
-                Fx.Burst(chest, ArmorColor, 20, 2.5f, 0.8f, 0.08f, -0.5f);
+                FrostKit.Vapour(chest, 0.8f, 6, ArmorColor);
             }
         }
 
@@ -563,8 +565,10 @@ namespace Spiritfire.Game
             if (mirror)
                 foreach (var rr in mirror.GetComponentsInChildren<Renderer>(true))
                     rr.enabled = false;
-            Fx.Burst(at, ShardColor, 22, 5, 0.9f, 0.07f, 14);
-            Fx.Burst(at, JadeHot, 12, 4, 0.5f, 0.06f, 6);
+            // 铜镜炸碎：铜片（甲片风格）+ 镜面冰晶碎片 + 一记星芒
+            Fx.Play("ArmorChip", at, Vector3.up, ShardColor, 0.5f);
+            FrostKit.Shatter(at, 0.8f, JadeHot, 16, 5);
+            Fx.FrostGlint(at, 1.6f, JadeHot);
             for (int i = 0; i < 3; i++)
                 Fx.Lightning(at, at + new Vector3(Random.Range(-1f, 1f), Random.Range(-0.45f, 1.05f), Random.Range(-1f, 1f)), FrostColor);
             GameAudio.PlayAt("shield_break", at, 1f, 0.8f);
@@ -583,9 +587,13 @@ namespace Spiritfire.Game
             wallWarn.Cancel();
             if (EnemyRegistry.Purging || info.Has(DamageTag.Purge)) return;
             var c = transform.position + Vector3.up * 0.9f * Size;
-            Fx.Burst(c, FrostColor, 26, 3.5f, 1.2f, 0.08f, 2);
+            FrostKit.Vapour(c, 1.2f, 8, FrostColor);
             Fx.Burst(c, FoxfireColor, 14, 2, 1.4f, 0.07f, -1);
-            if (mirror && mirror.gameObject.activeInHierarchy) Fx.Burst(mirror.position, ShardColor, 14, 3, 0.8f, 0.07f, 14);
+            if (mirror && mirror.gameObject.activeInHierarchy)
+            {
+                Fx.Play("ArmorChip", mirror.position, Vector3.up, ShardColor, 0.4f);
+                FrostKit.Shatter(mirror.position, 0.6f, JadeHot, 12, 4);
+            }
         }
 
         protected override void CancelAttack()

@@ -224,7 +224,7 @@ namespace Spiritfire.Game
                         Act("takeoff", TakeoffTime, 0.08f);
                         SetState("takeoff");
                         GameAudio.PlayAt("telegraph", transform.position, 0.4f, 2f);
-                        Fx.Burst(transform.position, Hex.Rgb(0xf4faff), 12, 3f, 0.5f, 0.1f, 3f);
+                        FrostKit.SnowPuff(transform.position, Size, 9);
                     }
                     break;
                 }
@@ -389,7 +389,7 @@ namespace Spiritfire.Game
             hurtWhilePerched = 0;
             Act("perched", 0, 0.12f);
             SetState("perched");
-            Fx.Burst(perch.position + Vector3.up * 0.05f, Hex.Rgb(0xf4faff), 10, 2.2f, 0.5f, 0.1f, 3f);
+            FrostKit.SnowPuff(perch.position, Size, 8);
         }
 
         protected override void OnLandingFailed()

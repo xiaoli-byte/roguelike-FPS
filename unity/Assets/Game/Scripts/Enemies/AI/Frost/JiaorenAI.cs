@@ -102,7 +102,11 @@ namespace Spiritfire.Game
                 {
                     hasSpear = true;
                     regrow = 0;
-                    if (spear) Fx.Burst(spear.position, FrostKit.Mist, 6, 1f, 0.4f, 0.08f * Size, -1f);
+                    if (spear)
+                    {
+                        FrostKit.Vapour(spear.position, 0.5f * Size, 4, FrostKit.Mist);
+                        Fx.FrostGlint(spear.position, 0.6f * Size);
+                    }
                 }
             }
             UpdateSpearVisual();
@@ -159,7 +163,7 @@ namespace Spiritfire.Game
                     if (!lungeHit && d <= LungeHit + 0.3f && VerticalReach(Reach))
                     {
                         lungeHit = Melee(LungeHit, Damage * LungeMult, 0.3f);
-                        if (lungeHit) Fx.Burst(PlayerPos + Vector3.up * 1.1f, FrostKit.Ice, 8, 3f, 0.3f, 0.06f, 4f);
+                        if (lungeHit) FrostKit.Shatter(PlayerPos + Vector3.up * 1.1f, 0.45f, 8, 3f);
                     }
                     if (stateTime >= LungeTime || lungeHit || (blocked && stateTime > 0.1f)) BeginRecover(LungeRecover);
                     break;

@@ -32,6 +32,9 @@ namespace Spiritfire.Game
         float chargeTime = ChargeTime, recoverTime = RecoverTime, leapCd, aimTimer, aimLen = 1, chargeAcc, strafeTimer, strafeSign = 1;
         Vector3 aimDir = Vector3.forward, leapTarget;
         TelegraphHandle aimLane;
+        /// <summary>角间的冰晶星芒（FX3，Three.js createFrostGlow）：蓄力时变大变亮，出手后 0.25 s 熄掉</summary>
+        FrostGlint focusGlint;
+        float glintLevel;
         readonly SightSeeker seeker = new();
         static RaycastHit[] rayBuf = new RaycastHit[16];
 
@@ -92,8 +95,17 @@ namespace Spiritfire.Game
 
         Vector3 Muzzle => transform.TransformPoint(Focus);
 
+        void UpdateGlint(float dt)
+        {
+            float want = state == "charge" && !Dead ? Mathf.Clamp01(stateTime / Mathf.Max(0.05f, chargeTime)) : 0;
+            glintLevel = want > glintLevel ? want : Mathf.MoveTowards(glintLevel, 0, dt * 4f);
+            if (!focusGlint && glintLevel > 0.01f) focusGlint = FrostGlint.Attach(transform, Focus, 0.9f * Size, CoreColor);
+            if (focusGlint) focusGlint.Set(glintLevel, 0.45f + 0.9f * glintLevel);
+        }
+
         protected override void Think(float dt)
         {
+            UpdateGlint(dt);
             float d = DistToPlayer;
             float dy = Mathf.Abs(PlayerPos.y - transform.position.y);
             if (leapCd > 0) leapCd -= dt;
@@ -212,7 +224,7 @@ namespace Spiritfire.Game
             Sfx("telegraph", 0.75f, 1.6f);
             PlayTimed("charge", chargeTime, 0.08f);
             // 前蹄一跺：蓄力开始
-            Fx.Burst(transform.TransformPoint(new Vector3(0.1f, 0.05f, 0.3f)), SnowColor, 6, 1.6f, 0.4f, 0.1f * Size, 4);
+            FrostKit.SnowPuff(transform.TransformPoint(new Vector3(0.1f, 0.05f, 0.3f)), 0.6f * Size, 5);
         }
 
         /// <summary>瞄准：跟踪段更新方向（玩家胸口 + 0.2 s 提前量）；每 0.1 s 重测射程，瞄准线沿冰光的地面投影铺到被挡住的地方</summary>
@@ -245,7 +257,8 @@ namespace Spiritfire.Game
             chargeAcc = 0;
             var m = Muzzle;
             Fx.Burst(m + Random.insideUnitSphere * 0.25f * Size, t > 0.7f ? CoreColor : SparkColor, 1, 0.5f + t, 0.3f, 0.05f * Size, -0.5f);
-            if (t > 0.5f) Fx.Burst(m, CoreColor, 1, 0.3f, 0.2f, (0.06f + t * 0.08f) * Size, 0);
+            // FX3：聚光时冰晶往角间收、闪粒一颗颗亮
+            if (t > 0.5f) Fx.Play("Twinkle", m + Random.insideUnitSphere * 0.35f * Size, Vector3.up, CoreColor, 0.15f + 0.15f * t);
         }
 
         /// <summary>射出冰光：终点停在第一个遮挡上；碰到目标胶囊伤害一次 + 小推力；光束下铺冻地</summary>
@@ -267,9 +280,10 @@ namespace Spiritfire.Game
             }
             Fx.Beam(from, end, BeamColor, 0.32f * k, 0.42f);
             int n = Mathf.Clamp(Mathf.FloorToInt(dist / 1.2f), 2, 24);
-            for (int i = 1; i <= n; i++) Fx.Burst(from + dir * (dist * i / (n + 1)), i % 3 == 0 ? CoreColor : SparkColor, 2, 1.4f, 0.45f, 0.07f * k, -1.5f);
-            Fx.Burst(end, ShardColor, 14, 5, 0.6f, 0.12f * k, 9);
-            Fx.Burst(from, CoreColor, 8, 2.2f, 0.3f, 0.12f * k, 0);
+            // FX3：光束沿线留下闪粒、终点碎冰、角间一记星芒
+            for (int i = 1; i <= n; i++) Fx.Play("Twinkle", from + dir * (dist * i / (n + 1)), Vector3.up, i % 3 == 0 ? CoreColor : SparkColor, 0.3f * k);
+            FrostKit.Shatter(end, 0.7f * k, ShardColor, 14, 5);
+            Fx.FrostGlint(from, 1.3f * k, CoreColor);
             GameAudio.PlayAt("shot_beam", from, 0.9f, 1.35f);
             // 冻地从前蹄处开始（冰光从头顶射出，脚下的地面不结冰），只铺在和起点差不多高的地面上
             var g0 = transform.TransformPoint(StripFrom);
@@ -322,7 +336,7 @@ namespace Spiritfire.Game
             Play("leap", 0.05f);
             SetState("leap");
             GameAudio.PlayAt("jump", transform.position, 0.6f, 0.8f);
-            Fx.Burst(transform.TransformPoint(new Vector3(0, 0.05f, -0.35f)), SnowColor, 12, 3, 0.5f, 0.14f * Size, 5);
+            FrostKit.SnowPuff(transform.TransformPoint(new Vector3(0, 0.05f, -0.35f)), Size, 8);
         }
 
         void Land()
@@ -330,7 +344,7 @@ namespace Spiritfire.Game
             EndManualMotion();
             Play("land", 0.05f);
             SetState("land");
-            foreach (float z in new[] { 0.3f, -0.35f }) Fx.Burst(transform.TransformPoint(new Vector3(0, 0.05f, z)), SnowColor, 8, 2.5f, 0.5f, 0.16f * Size, 4);
+            foreach (float z in new[] { 0.3f, -0.35f }) FrostKit.SnowPuff(transform.TransformPoint(new Vector3(0, 0.05f, z)), Size, 7);
             Fx.Ring(transform.position + Vector3.up * 0.05f, 2.2f * Size, IceColor, 0.4f);
             GameAudio.PlayAt("land", transform.position, 0.7f, 1.2f);
         }

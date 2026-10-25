@@ -131,8 +131,8 @@ namespace Spiritfire.Game
                     {
                         ripped = true;
                         var at = transform.position + transform.forward * 0.4f * Size + Vector3.up * 0.1f;
-                        Fx.Burst(at, FrostKit.Snow, 8, 2f, 0.5f, 0.18f, 2f);
-                        Fx.Burst(at, FrostKit.Ice, 6, 2.5f, 0.4f, 0.05f, 6f);
+                        FrostKit.SnowPuff(at, Size, 8);
+                        FrostKit.Shatter(at + Vector3.up * 0.2f, 0.5f, 8, 3f);
                         GameAudio.PlayAt("land", at, 0.45f, 1.8f);
                         if (chunk) chunk.gameObject.SetActive(true);
                     }
