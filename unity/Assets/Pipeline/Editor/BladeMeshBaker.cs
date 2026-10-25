@@ -20,7 +20,8 @@ namespace Spiritfire.Art.Editor
     ///      （Unity 不认 webp，调本机 python + Pillow；没有就退回程序色并报错），源头是 art/pipeline/demon_blade_textures.py 从设计图裁的；
     ///   4. 材质 → …/M_DemonBlade_{Shard,Hilt}.mat（Spiritfire/StylizedLit）；
     ///   5. Prefab → Assets/Art/Prefabs/Weapons/SK_Weapon_DemonBlade.prefab（<see cref="BladeModel"/>；GameDatabase 按武器表的 prefab 名收录，
-    ///      掉落物、第一人称 rig 都用它）。烘完要再跑一次 bridge.sh core 让 GameDatabase 收进来。
+    ///      掉落物、第一人称 rig 都用它）。烘完要再跑一次 bridge.sh core 让 GameDatabase 收进来；
+    ///   6. 第一人称三段斩剪辑 → …/Anim/AN_DemonBlade_Slash{1,2,3}.anim（WC7，<see cref="BladeAnimBaker"/>）。
     /// 幂等：已有资产原地覆盖内容（GUID 不变），贴图内容没变就不重写。返回错误数。
     /// </summary>
     public static class BladeMeshBaker
@@ -102,6 +103,10 @@ namespace Spiritfire.Art.Editor
             {
                 Object.DestroyImmediate(model.gameObject);
             }
+
+            // 6. 第一人称三段斩剪辑（WC7）
+            errors += BladeAnimBaker.Bake(out var animLog);
+            log.AddRange(animLog);
             AssetDatabase.SaveAssets();
             foreach (var l in log) Debug.Log("[Blade] " + l);
             Debug.Log(errors == 0 ? "[Blade] 完成（再跑 bridge.sh core 让 GameDatabase 收录 SK_Weapon_DemonBlade）" : $"[Blade] 完成，有 {errors} 个问题");

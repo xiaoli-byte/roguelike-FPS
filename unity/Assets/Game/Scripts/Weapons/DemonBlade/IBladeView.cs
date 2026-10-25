@@ -13,6 +13,10 @@ namespace Spiritfire.Game
         public float swingP, hitP;
         /// <summary>这一段的伸刃倍率（第三段 2.2；人刀合一时常态 1.3）</summary>
         public float stretch;
+        /// <summary>当前挥砍段的武器表条目（时长 / 判定帧 / 伸刃：第一人称按它生成三段斩剪辑）；不在挥砍时为 null</summary>
+        public BladeSlash slash;
+        /// <summary>人刀合一时刀身的常态伸长倍率（武器表 union.stretch，1.3）；乘 <see cref="union"/> 生效</summary>
+        public float unionStretch;
         public BladeGesture gesture;
         /// <summary>人刀合一强度 0..1、鬼眼 0..1、刃气 0..1</summary>
         public float union, eye, qi;

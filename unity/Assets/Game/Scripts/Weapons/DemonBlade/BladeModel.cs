@@ -9,7 +9,7 @@ namespace Spiritfire.Game
     ///   所以掉落物、第一人称 rig（PlayerFactory 把枪模绕 Y 转 180° 挂在相机下）都能直接用。
     ///   Shards = 128 片碎刃的蒙皮渲染器，骨骼 Frame/Bones/S000…S127 放在各自片心：缩放 0 = 这片不在手里（飞出去了）。
     ///   Root = 刀根鬼面厚板（_BaseMap_ST 偏移切睁眼贴图）、Hilt = 刀柄、Tip = 刀尖锚点。
-    /// 第一人称表现（WC7 的 BladeView 或 WC6 的占位视图）只通过这里的接口改碎片 / 鬼眼 / 光，不直接碰材质。
+    /// 第一人称表现（WC7 的 <see cref="BladeView"/> 或 WC6 的占位视图）只通过这里的接口改碎片 / 鬼眼 / 光，不直接碰材质。
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class BladeModel : MonoBehaviour
@@ -45,6 +45,19 @@ namespace Spiritfire.Game
             b.localPosition = home;
             b.localRotation = Quaternion.identity;
             b.localScale = shown ? Vector3.one : Vector3.zero;
+        }
+
+        /// <summary>
+        /// 第 i 片摆到刀身局部坐标 local（片心；WC7 的第一人称用：伸刃时刀根一截不动、其余沿刀线拉开并横向错动），
+        /// shown = false 时缩放 0（不在手里）；scale = 显示时的缩放（归位闪放大一下）
+        /// </summary>
+        public void SetShardLocal(int i, bool shown, Vector3 local, float scale = 1f)
+        {
+            if (bones == null || i < 0 || i >= bones.Length || !bones[i]) return;
+            var b = bones[i];
+            b.localPosition = local;
+            b.localRotation = Quaternion.identity;
+            b.localScale = shown ? Vector3.one * scale : Vector3.zero;
         }
 
         /// <summary>全部碎片回到刀身原位</summary>

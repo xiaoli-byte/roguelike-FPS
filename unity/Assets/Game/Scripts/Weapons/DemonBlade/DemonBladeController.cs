@@ -8,7 +8,7 @@ namespace Spiritfire.Game
     /// <summary>
     /// 碎刃 v2 的玩法控制器（docs/demon-blade-v2.md 第 2–8 节；Three.js DemonBlade.ts 的移植）。
     /// 作为 <see cref="IWeaponTakeover"/>：当前武器是碎刃时 <see cref="WeaponController"/> 不开镜、不换弹、不走开火模式，每帧把输入交给这里
-    /// （左键斩、右键千刃出窍、R 碎刃屏障、V / 中键杀气爆发），第一人称也由这里画（<see cref="IBladeView"/>，WC7 之前是占位视图）。
+    /// （左键斩、右键千刃出窍、R 碎刃屏障、V / 中键杀气爆发），第一人称也由这里画（<see cref="IBladeView"/>，WC7 起是 <see cref="BladeView"/>）。
     ///   斩：三段连斩（按住自动接段，缓冲 0.35 s，空闲 0.6 s 连段重置），判定帧扇形内所有看得见的敌人各命中一次；斩中回刃气 8、杀意 4；
     ///       每段算一次开火（<see cref="WeaponRuntime.BeginShot"/>：天命计数与必暴、weapon:fired），暴击走正常暴击率，没有爆头。
     ///   千刃出窍：刃群追着准星落点（敌人 &gt; 墙面 &gt; 最远 22 米），碎片到齐 35% 后每 0.1 s 绞杀半径内最多 8 个敌人，无视护盾；刃气 20 / s。
@@ -25,8 +25,8 @@ namespace Spiritfire.Game
     {
         public static DemonBladeController Instance { get; private set; }
 
-        /// <summary>第一人称视图的工厂（WC7 换成正式的 BladeView）</summary>
-        public static Func<WeaponController, IBladeView> ViewFactory = BladePlaceholderView.Create;
+        /// <summary>第一人称视图的工厂（WC7：<see cref="BladeView"/>；WC6 的占位视图 <see cref="BladePlaceholderView"/> 留作对照）</summary>
+        public static Func<WeaponController, IBladeView> ViewFactory = BladeView.Create;
 
         /// <summary>放出了杀气爆发 / 人刀合一（技能 id）；按下 V 但冷却中（HUD 闪红）</summary>
         public static event Action<string> SkillUsed;
@@ -36,7 +36,7 @@ namespace Spiritfire.Game
         static void ResetStatics()
         {
             Instance = null;
-            ViewFactory = BladePlaceholderView.Create;
+            ViewFactory = BladeView.Create;
             SkillUsed = null;
             SkillDenied = null;
         }
@@ -878,11 +878,12 @@ namespace Spiritfire.Game
 
         BladePose Pose()
         {
-            var pose = new BladePose { swing = -1, stretch = 1, lower = lower };
+            var pose = new BladePose { swing = -1, stretch = 1, lower = lower, unionStretch = P.union.stretch };
             if (swingIdx >= 0)
             {
                 var seg = P.combo[swingIdx];
                 pose.swing = swingIdx;
+                pose.slash = seg;
                 pose.swingP = Mathf.Clamp01(swingT / Mathf.Max(0.01f, seg.duration));
                 pose.hitP = Mathf.Clamp01(seg.windup / Mathf.Max(0.01f, seg.duration));
                 pose.stretch = Mathf.Max(seg.stretch, unionLeft > 0 ? P.union.stretch : 1);
