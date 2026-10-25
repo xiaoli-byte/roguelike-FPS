@@ -9,8 +9,8 @@ namespace Spiritfire.Game
     /// 纯视觉，不做伤害判定。弧在「刀光平面」里展开：默认水平（绕世界 Y 扫），tilt 绕前方轴倾斜（斜劈 / X 字斩）。
     /// 前 55% 刀头从起点扫到终点（缓出），之后整体淡出并略向外扩。网格是 40 段 × 4 圈（内 → 刃口 → 外缘），颜色写顶点色。
     /// 池化（上限 24 道）：网格顶点数固定，复用时只重写顶点位置 / 颜色，不再每刀 new 一个 GameObject + Mesh。
-    /// 敌方刀光（hostile）：刃口 HDR 提亮让 Bloom 吃到、多留 25% 时长，并在下面垫一层普通混合的暗边（同一网格放大 10%）——
-    /// 纯加法的刀光在亮沙 / 雪地上几乎加不出亮度，暗边把亮刃托出来（审阅图集问题清单：交叉斩刀光太淡）。
+    /// 敌方刀光（hostile）：刀带加宽 1.5 倍、刃口略提亮（仍是暖色，不冲成白）、多留 25% 时长，并在下面垫一道普通混合的暗月牙
+    /// （自己的一份顶点色：整条刀带都压暗，放大 12%）——纯加法的刀光在亮沙 / 雪地上几乎加不出亮度，暗月牙把亮刃托出来（审阅图集问题清单：交叉斩刀光太淡）。
     /// </summary>
     public sealed class SlashArc : MonoBehaviour, IFxSlot
     {
@@ -24,10 +24,14 @@ namespace Spiritfire.Game
 
         static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
         /// <summary>敌方刀光的刃口亮度倍率、暗边颜色（乘顶点色；alpha = 暗边浓度）</summary>
-        static readonly Color HostileBoost = new(1.7f, 1.7f, 1.7f, 1f), Underlay = new(0.16f, 0.06f, 0.03f, 0.85f);
+        static readonly Color HostileBoost = new(1.3f, 1.3f, 1.3f, 1f), UnderColor = new(0.11f, 0.035f, 0.015f);
+        /// <summary>暗月牙每一圈的浓度（内圈也压一点，外缘留一道暗边）</summary>
+        static readonly float[] UnderRow = { 0.35f, 0.85f, 1f, 0.7f };
 
-        Mesh mesh;
+        Mesh mesh, underMesh;
         MeshRenderer main, under;
+        Color[] underColors;
+        bool hostile;
         static MaterialPropertyBlock block;
         Vector3[] positions;
         Color[] colors;
@@ -62,7 +66,7 @@ namespace Spiritfire.Game
             s.SetHostile(hostile);
             s.transform.SetPositionAndRotation(center, Quaternion.Euler(0, yawDeg, 0) * Quaternion.AngleAxis(-tilt * Mathf.Rad2Deg, Vector3.forward));
             s.transform.localScale = Vector3.one;
-            s.Build(radius, arc, Mathf.Max(0.02f, width), dir);
+            s.Build(radius, arc, Mathf.Max(0.02f, width) * (hostile ? 1.5f : 1f), dir);
             s.Paint(0, 1);
             s.gameObject.SetActive(true);
             return new FxHandle(s);
@@ -92,8 +96,8 @@ namespace Spiritfire.Game
             // 暗边：同一网格放大 10%，普通混合，排在刀光前面画
             var u = new GameObject("Slash Underlay");
             u.transform.SetParent(go.transform, false);
-            u.transform.localScale = new Vector3(1.1f, 1f, 1.1f);
-            s.under = AddRenderer(u, s.mesh, FxMaterials.AlphaBlend, -1);
+            u.transform.localScale = new Vector3(1.12f, 1f, 1.12f);
+            s.under = AddRenderer(u, s.underMesh, FxMaterials.AlphaBlend, -1);
             pool.Add(s);
             return s;
         }
@@ -113,15 +117,12 @@ namespace Spiritfire.Game
 
         void SetHostile(bool on)
         {
+            hostile = on;
             block ??= new MaterialPropertyBlock();
             block.Clear();
             block.SetColor(BaseColor, on ? HostileBoost : Color.white);
             main.SetPropertyBlock(block);
             under.enabled = on;
-            if (!on) return;
-            block.Clear();
-            block.SetColor(BaseColor, Underlay);
-            under.SetPropertyBlock(block);
         }
 
         /// <summary>全部收起（换关清场）</summary>
@@ -155,6 +156,13 @@ namespace Spiritfire.Game
             mesh.uv = uv;
             mesh.colors = colors;
             mesh.triangles = idx;
+            underColors = new Color[n];
+            underMesh = new Mesh { name = "Slash Arc Underlay" };
+            underMesh.MarkDynamic();
+            underMesh.vertices = positions;
+            underMesh.uv = uv;
+            underMesh.colors = underColors;
+            underMesh.triangles = idx;
         }
 
         void Build(float radius, float arc, float width, int dir)
@@ -174,6 +182,8 @@ namespace Spiritfire.Game
             }
             mesh.vertices = positions;
             mesh.RecalculateBounds();
+            underMesh.vertices = positions;
+            underMesh.RecalculateBounds();
         }
 
         void Paint(float head, float fade)
@@ -191,9 +201,16 @@ namespace Spiritfire.Game
                     var c = Color.Lerp(tint, hot, RowHot[k] * heat);
                     c.a = Mathf.Clamp01(a * 1.3f);
                     colors[i * rows + k] = c;
+                    if (hostile)
+                    {
+                        var u = UnderColor;
+                        u.a = Mathf.Clamp01(tail * fade * UnderRow[k] * 0.8f);
+                        underColors[i * rows + k] = u;
+                    }
                 }
             }
             mesh.colors = colors;
+            if (hostile) underMesh.colors = underColors;
         }
 
         void Hide()
@@ -218,6 +235,7 @@ namespace Spiritfire.Game
         {
             pool.Remove(this);
             if (mesh) Destroy(mesh);
+            if (underMesh) Destroy(underMesh);
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]

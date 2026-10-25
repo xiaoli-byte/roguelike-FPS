@@ -40,7 +40,7 @@ PHASE_COLORS = {
     "前摇": (240, 180, 60), "出手": (245, 120, 50), "命中": (235, 70, 70), "收招": (140, 140, 150), "效果": (120, 200, 240), "第一人称": (90, 160, 245),
     "精英": (190, 120, 245), "迸散": (60, 200, 190), "溶解": (60, 200, 190), "出生法阵": (110, 210, 110), "显形": (110, 210, 110),
     "状态": (160, 160, 170), "转阶段·起": (240, 200, 90), "转阶段·中": (240, 200, 90), "化形·起": (200, 140, 250), "化形·成": (200, 140, 250),
-    "倒下": (200, 200, 210), "溃散": (200, 200, 210), "落幕": (200, 200, 210),
+    "倒下": (200, 200, 210), "溃散": (200, 200, 210), "落幕": (200, 200, 210), "余韵": (200, 200, 210),
 }
 
 GROUPS = {
@@ -355,12 +355,16 @@ background:#000c;color:var(--fg);font-size:14px}
     h.append("</table>")
     h.append("<h2 id='notes'>截图说明</h2><ul class='dim'>" + "".join(f"<li>{html.escape(n)}</li>" for n in NOTES) + "</ul>")
     # 问题清单
-    h.append("<h2 id='issues'>问题清单</h2><p class='dim'>截图时发现的明显问题，只记录不修。严重程度：高 = 影响读招 / 明显穿帮；中 = 看得出不对；低 = 打磨项。</p>")
-    h.append("<table><tr><th>#</th><th>严重</th><th>归属</th><th>对象</th><th>问题</th><th>见图</th></tr>")
+    h.append("<h2 id='issues'>问题清单</h2><p class='dim'>截图时发现的明显问题。严重程度：高 = 影响读招 / 明显穿帮；中 = 看得出不对；低 = 打磨项。"
+             "「状态」写的是修复进度和修法（已修的条目对应的拼图已重拍）。</p>")
+    h.append("<table><tr><th>#</th><th>严重</th><th>归属</th><th>对象</th><th>问题</th><th>状态</th><th>见图</th></tr>")
     for i, it in enumerate(issues, 1):
         refs = " ".join(f"<a href='#{html.escape(r)}'>{html.escape(r)}</a>" for r in it.get("refs", []))
+        st = it.get("status", "未修")
+        color = "#46a758" if st.startswith("已修") else "#f5a524" if "在修" in st else "#8b8d98"
         h.append(f"<tr><td>{i}</td><td><span class='sev' style='background:{SEV.get(it['severity'], '#888')}'>{it['severity']}</span></td>"
-                 f"<td>{html.escape(it['owner'])}</td><td>{html.escape(it['subject'])}</td><td>{html.escape(it['text'])}</td><td>{refs}</td></tr>")
+                 f"<td>{html.escape(it['owner'])}</td><td>{html.escape(it['subject'])}</td><td>{html.escape(it['text'])}</td>"
+                 f"<td style='color:{color}'>{html.escape(st)}</td><td>{refs}</td></tr>")
     h.append("</table>")
     if missing:
         h.append("<p class='dim'>招式表里有、这一轮没截到的招式（剧本没逼出来或被打断）：" +
@@ -391,10 +395,11 @@ addEventListener('keydown',e=>{if(k<0)return;if(e.key==='ArrowRight')show(k+1);e
          "重新生成：`bash scripts/unity/bridge.sh playtest gallery-<desert|frost|inferno|hanba|kunpeng|warlord|qilin>`、`playtest boss-intro`、`playtest fx`，"
          "然后 `python scripts/unity/combat_gallery.py`。", "",
          "## 截图说明", ""] + [f"- {n}" for n in NOTES] + ["",
-         "## 问题清单", "", "| # | 严重 | 归属 | 对象 | 问题 | 见图 |", "|---|---|---|---|---|---|"]
+         "## 问题清单", "", "| # | 严重 | 归属 | 对象 | 问题 | 状态 | 见图 |", "|---|---|---|---|---|---|---|"]
     for i, it in enumerate(issues, 1):
         refs = " ".join(f"[{r}]({r}.jpg)" for r in it.get("refs", []))
-        m.append(f"| {i} | {it['severity']} | {it['owner']} | {it['subject']} | {it['text'].replace('|', '/')} | {refs} |")
+        st = it.get("status", "未修").replace("|", "/")
+        m.append(f"| {i} | {it['severity']} | {it['owner']} | {it['subject']} | {it['text'].replace('|', '/')} | {'**' + st + '**' if st.startswith('已修') else st} | {refs} |")
     if missing:
         m += ["", "招式表里有、这一轮没截到的招式：" + "；".join(f"{GROUPS[g][0]} {n} · {l}" for g, n, l in missing)]
     for key, title, pred in sections:

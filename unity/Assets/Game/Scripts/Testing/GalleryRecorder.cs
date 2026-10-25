@@ -559,14 +559,18 @@ namespace Spiritfire.Game.Testing
 
         // ───────────── 死亡 ─────────────
 
-        /// <summary>首领倒下演出：0.3 / 1.5 / 3.5 s 各一张（首领一死就离开活跃列表，所以由击杀事件触发）</summary>
+        /// <summary>
+        /// 首领倒下演出：按它自己的溃散时长取三张——倒下 0.3 s、溃散过半（60%）、演出结束后 0.8 s 的余韵
+        /// （首领一死就离开活跃列表，所以由击杀事件触发）
+        /// </summary>
         void BossDeath(BossBrain b)
         {
             string sub = Sub(b);
             if (!taken.Add(sub + "|death")) return;
             TrackOf(b).dead = true;
-            foreach (var (d, ph, i) in new[] { (0.3f, "倒下", 0), (1.5f, "溃散", 1), (3.5f, "落幕", 2) })
-                ShootTimed(b, d, "boss-death", "倒下演出", ph, i, Focus.Subject, null, $"{sub}_death");
+            float secs = b.Def != null ? b.Def.defeat.seconds : 3.2f;
+            foreach (var (d, ph, i) in new[] { (0.3f, "倒下", 0), (secs * 0.6f, "溃散", 1), (secs + 0.8f, "余韵", 2) })
+                ShootTimed(b, d, "boss-death", "倒下演出", ph, i, Focus.Subject, $"倒下后 {d:F1} s", $"{sub}_death");
         }
 
         void OnKilled(Damageable d, DamageInfo info)
@@ -809,8 +813,10 @@ namespace Spiritfire.Game.Testing
         static void Measure(EnemyAI ai, Track tr)
         {
             if (!ai) return;
+            bool deadBoss = ai is BossBrain && ai.Dead;
             var col = ai is BossBrain ? ai.GetComponent<CapsuleCollider>() : ai.GetComponent<Collider>();
-            if (col && col.enabled)
+            // 倒下的首领：逻辑位置钉在原地（鹏钉在半空），看模型；模型炸没了就看它脚下的地面（余韵）
+            if (!deadBoss && col && col.enabled)
             {
                 var bc = col.bounds;
                 tr.center = bc.center;
@@ -829,6 +835,12 @@ namespace Spiritfire.Game.Testing
                     any = true;
                 }
                 else b.Encapsulate(r.bounds);
+            }
+            if (!any && deadBoss && Physics.Raycast(ai.transform.position + Vector3.up, Vector3.down, out var ground, 80f, Layers.WorldMask, QueryTriggerInteraction.Ignore))
+            {
+                tr.center = ground.point + Vector3.up * 1.5f;
+                tr.size = 6f;
+                return;
             }
             tr.center = any ? b.center : ai.transform.position + Vector3.up;
             tr.size = any ? Mathf.Clamp(Mathf.Max(b.size.x, b.size.y, b.size.z), 1f, 40f) : 1.5f;

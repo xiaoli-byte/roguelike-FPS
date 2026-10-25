@@ -13,11 +13,18 @@ namespace Spiritfire.Game
     ///   · 登场：从 <see cref="WarlordDef.dropHeight"/> 米高处砸进场地（模型根节点下落，落地爆炸 + 火环 + 震屏），70% 时仰天咆哮；结束提示「角盔是弱点」。
     ///   · 狂怒（20%，<see cref="BossDef.enrageBelow"/>）：陨石雨冷却缩到 7 s，三阶段起战斗中每 2.4 s 在玩家周围落一颗零星陨石（落点预警、落地留火）。
     ///   · 熔铜渠：场地上的 <see cref="FoundryChannels"/>（3-3 神范台），倒下时退回去；铠甲随阶段由暗红烧到赤红（覆盖色）。
+    ///   · 读招轮廓（<see cref="UpdateLook"/>）：暗红黑的铠甲在 3-3 暗红打光里远处只剩剪影（审阅图集问题清单）——
+    ///     平时一圈暖金边光 + 很淡的余烬自发光把轮廓托出来；每一招的前摇里边光转白热、自发光跟着一跳一跳地烧亮，前摇本身就是信号。
     /// 受击 / 倒下片段等 ART8；硬直时播 Hit 缺片段只警告一次。
     /// </summary>
     public class WarlordBrain : BossBrain
     {
         static readonly int ActScaleId = Animator.StringToHash("ActScale");
+        static readonly int RimColorId = Shader.PropertyToID("_RimColor"), RimStrengthId = Shader.PropertyToID("_RimStrength"),
+            EmissionId = Shader.PropertyToID("_EmissionColor");
+        /// <summary>读招轮廓：平时的边光色 / 强度、前摇时的白热边光、余烬自发光（前摇时 × 3.5）</summary>
+        static readonly Color RimRest = new(1f, 0.6f, 0.3f), RimHot = new(1f, 0.93f, 0.75f), Ember = new(0.16f, 0.045f, 0.01f);
+        const float RimRestStrength = 1.05f, RimHotStrength = 1.9f;
 
         public WarlordDef WDef => Def as WarlordDef;
         /// <summary>场地上的熔铜渠（没有为 null：熔铜渠涨落退回环带写法）</summary>
@@ -38,6 +45,10 @@ namespace Spiritfire.Game
         int dirStep;
         bool prevWall, roared, rigged;
         float ambientAcc, fxAcc;
+        Renderer[] lookRenderers;
+        MaterialPropertyBlock lookBlock;
+        /// <summary>前摇亮度（0..1，进前摇快升、出前摇慢落；测试 / 调试读）</summary>
+        public float WindupGlow { get; private set; }
 
         // ───────────── 生成 ─────────────
 
@@ -220,6 +231,44 @@ namespace Spiritfire.Game
                 Fury = Mathf.MoveTowards(Fury, target, Time.deltaTime * 0.8f);
                 if (Fury > 0.01f) body.SetOverlay("warlordFury", Color.Lerp(WarlordDef.Fire, WarlordDef.Rage, Mathf.Clamp01(Fury - 1f)), Mathf.Clamp01(Fury * 0.09f));
                 else body.ClearOverlay("warlordFury");
+            }
+            UpdateLook(Time.deltaTime);
+        }
+
+        /// <summary>
+        /// 读招轮廓：边光 / 自发光写进模型渲染器的属性块（先 Get 再 Set，和 EnemyBody 的闪白 / 着色共存）。
+        /// 前摇中：WindupGlow 0.25 s 升满，边光从暖金转白热、强度 1.05 → 1.9，余烬自发光按 18 rad/s 跳动烧亮；倒下后退回材质原值
+        /// </summary>
+        void UpdateLook(float dt)
+        {
+            if (Model?.root == null) return;
+            if (lookRenderers == null)
+            {
+                var list = new List<Renderer>();
+                foreach (var r in Model.root.GetComponentsInChildren<Renderer>(true))
+                    if (r is SkinnedMeshRenderer or MeshRenderer) list.Add(r);
+                lookRenderers = list.ToArray();
+            }
+            bool windup = !Dead && Current != null && Current.Stage == MoveStage.Windup;
+            WindupGlow = Mathf.MoveTowards(WindupGlow, windup ? 1f : 0f, dt * (windup ? 4f : 2.5f));
+            float pulse = WindupGlow * (0.75f + 0.25f * Mathf.Sin(Time.time * 18f));
+            lookBlock ??= new MaterialPropertyBlock();
+            foreach (var r in lookRenderers)
+            {
+                if (!r) continue;
+                r.GetPropertyBlock(lookBlock);
+                if (Dead)
+                {
+                    lookBlock.SetFloat(RimStrengthId, 0.45f);
+                    lookBlock.SetColor(EmissionId, Color.black);
+                }
+                else
+                {
+                    lookBlock.SetColor(RimColorId, Color.Lerp(RimRest, RimHot, pulse));
+                    lookBlock.SetFloat(RimStrengthId, Mathf.Lerp(RimRestStrength, RimHotStrength, pulse));
+                    lookBlock.SetColor(EmissionId, Ember * (1f + 2.5f * pulse));
+                }
+                r.SetPropertyBlock(lookBlock);
             }
         }
 
