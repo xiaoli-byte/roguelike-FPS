@@ -5,6 +5,8 @@
 // _Tint.a = 输出 alpha（默认 1；不透明材质的混合是 One Zero，不受影响）：幻影类实例把材质切到 SrcAlpha 混合后靠它淡化 / 闪烁。
 // 溶解（FX2）：_DissolveParams.x > 0 时按 UV 噪声 + 高度渐变裁掉像素、前沿发光（DeathDissolve 死亡化灰、SpawnMaterialize 出生显形），
 // 阴影 / 深度 Pass 一起裁；默认 0 时和沙魇的变体段一样整段跳过。
+// 发光遮罩（FX3）：_GlowMask（_E 贴图，R / G / B = 三层）× _GlowMaskColor0..2（GlowMask 每帧写「层色 × 强度」），按相对模型原点的位置叠一层流动的噪声闪烁；
+// 三个颜色默认全黑时整段跳过、输出不变（同变体段 / 溶解段）。
 // _FUR：带毛 / 羽的角色（sidecar 的 fur 配置）。画质「中」以上（全局 _SFFurDetail）加顺毛向的发丝明暗、各向异性光泽、
 // 剪影绒边，明暗交界更软；画质「高」再由 FurShells 叠 Spiritfire/FurShell 壳层（见 SF_Fur.hlsl）。
 Shader "Spiritfire/StylizedLit"
@@ -55,6 +57,13 @@ Shader "Spiritfire/StylizedLit"
         _DissolveParams("Dissolve (x Amount, y Edge, z Density, w Height Weight)", Vector) = (0, 0.08, 9, 0)
         _DissolvePlane("Dissolve Plane (x Base Y, y Per Meter)", Vector) = (0, -0.5, 0, 0)
         [HDR] _DissolveEdgeColor("Dissolve Edge Color", Color) = (2.4, 1.1, 0.4, 1)
+
+        [Header(Glow Mask)]
+        _GlowMask("Glow Mask (E: R/G/B = layer 0/1/2)", 2D) = "black" {}
+        [HDR] _GlowMaskColor0("Glow Layer 0", Color) = (0, 0, 0, 1)
+        [HDR] _GlowMaskColor1("Glow Layer 1", Color) = (0, 0, 0, 1)
+        [HDR] _GlowMaskColor2("Glow Layer 2", Color) = (0, 0, 0, 1)
+        _GlowMaskShimmer("Glow Shimmer (xyz Amp, w Freq)", Vector) = (0.4, 0.4, 0.4, 9)
 
         [Header(Surface)]
         _Cutoff("Alpha Cutoff", Range(0,1)) = 0.5
@@ -189,6 +198,34 @@ Shader "Spiritfire/StylizedLit"
                 return albedo;
             }
 
+            // 发光遮罩（FX3）：三层范围 × 层色，乘一层沿模型往上流的值噪声（同 Three.js applyFrostGlow 的 fgNoise(vFrostPos * 9 + 时间)）
+            float SFGlowHash(float3 p)
+            {
+                p = frac(p * 0.3183099 + 0.1);
+                p *= 17.0;
+                return frac(p.x * p.y * p.z * (p.x + p.y + p.z));
+            }
+
+            float SFGlowNoise(float3 x)
+            {
+                float3 i = floor(x);
+                float3 f = frac(x);
+                f = f * f * (3.0 - 2.0 * f);
+                return lerp(lerp(lerp(SFGlowHash(i), SFGlowHash(i + float3(1, 0, 0)), f.x), lerp(SFGlowHash(i + float3(0, 1, 0)), SFGlowHash(i + float3(1, 1, 0)), f.x), f.y),
+                            lerp(lerp(SFGlowHash(i + float3(0, 0, 1)), SFGlowHash(i + float3(1, 0, 1)), f.x), lerp(SFGlowHash(i + float3(0, 1, 1)), SFGlowHash(i + float3(1, 1, 1)), f.x), f.y), f.z);
+            }
+
+            half3 SFGlowMask(float2 uv, float3 positionWS)
+            {
+                half3 m = SAMPLE_TEXTURE2D(_GlowMask, sampler_GlowMask, uv).rgb;
+                float3 p = (positionWS - UNITY_MATRIX_M._m03_m13_m23) * max(1.0, (float)_GlowMaskShimmer.w);
+                float t = _Time.y;
+                half n = (half)SFGlowNoise(p + float3(0.0, t * 1.7, t * 0.6));
+                half3 amp = saturate(_GlowMaskShimmer.xyz);
+                half3 k = (1.0 - amp) + amp * 2.0 * n;
+                return m.r * k.x * _GlowMaskColor0.rgb + m.g * k.y * _GlowMaskColor1.rgb + m.b * k.z * _GlowMaskColor2.rgb;
+            }
+
             Varyings Vert(Attributes input)
             {
                 Varyings o = (Varyings)0;
@@ -302,6 +339,10 @@ Shader "Spiritfire/StylizedLit"
                 color += SAMPLE_TEXTURE2D(_EmissionMap, sampler_EmissionMap, i.uv).rgb * _EmissionColor.rgb;
                 #endif
                 color += _VariantCrackColor.rgb * variantCrack;
+                // 发光遮罩（FX3）：默认三色全黑 → 跳过
+                half3 gmSum = _GlowMaskColor0.rgb + _GlowMaskColor1.rgb + _GlowMaskColor2.rgb;
+                [branch] if (gmSum.r + gmSum.g + gmSum.b > 0.0001)
+                    color += SFGlowMask(i.uv, i.positionWS);
 
                 color = lerp(color, _FlashColor.rgb, _FlashAmount);
                 color += _DissolveEdgeColor.rgb * dissolveEdge;

@@ -44,6 +44,8 @@ namespace Spiritfire.Game
         protected override void Awake()
         {
             base.Awake();
+            // FX3：贴图上画好的冰 / 玉 / 狐火按发光通道亮起来（_E 发光遮罩）
+            GlowMask.Attach(this);
             GlowStyle(0.08f, 0.03f, 2.6f, 0.9f);
             hp.Died += OnDiedEarly;
         }

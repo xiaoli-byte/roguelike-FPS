@@ -41,6 +41,8 @@ namespace Spiritfire.Game
         protected override void Awake()
         {
             base.Awake();
+            // FX3：贴图上画好的冰 / 玉 / 狐火按发光通道亮起来（_E 发光遮罩）
+            GlowMask.Attach(this);
             baseHover = Random.Range(HoverMin, HoverMax);
             bobPhase = Random.Range(0f, Mathf.PI * 2);
             cooldown = Random.Range(0.4f, 1.4f);

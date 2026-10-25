@@ -450,11 +450,12 @@ namespace Spiritfire.Game
 
         void Update()
         {
+            // 亮度每帧都过渡：没有发光壳的敌人也有人读（FX3 的 _E 发光遮罩 GlowMask）
+            float gk = 1 - Mathf.Exp(-14f * Time.deltaTime);
+            for (int c = 0; c < GlowChannels; c++)
+                glowLevel[c] = Mathf.Lerp(glowLevel[c], Health.Dead ? 0 : Mathf.Clamp01(glowTarget[c]), gk);
             if (glowShells.Length > 0 || glowParts.Count > 0)
             {
-                float k = 1 - Mathf.Exp(-14f * Time.deltaTime);
-                for (int c = 0; c < GlowChannels; c++)
-                    glowLevel[c] = Mathf.Lerp(glowLevel[c], Health.Dead ? 0 : Mathf.Clamp01(glowTarget[c]), k);
                 float breath = glowBase + glowBreath * Mathf.Sin(Time.time * glowRate);
                 if (glowShells.Length > 0) GlowOpacity = ShellOpacity(0, breath);
                 for (int i = 0; i < glowShells.Length; i++)

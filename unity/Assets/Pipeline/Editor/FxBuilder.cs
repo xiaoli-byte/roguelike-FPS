@@ -22,6 +22,8 @@ namespace Spiritfire.Art.Editor
     ///   5. URP 贴花渲染特性 → Assets/Settings 下每个 UniversalRendererData（PC / Mobile）各加一个 DecalRendererFeature（Screen Space 技术），
     ///      已有就只校正设置；和编辑器里点「Add Renderer Feature」一样登记进 m_RendererFeatures / m_RendererFeatureMap
     ///   6. 着色器变体集 → Assets/Game/Resources/Fx/FxShaderVariants.shadervariants（上面材质的变体 × 雾 / SSAO 组合，运行时 WarmUp）
+    ///   7. FX3 / FX4 角色遮罩的导入设置 → Resources/Fx/GlowMasks（emission_mask.py 生成的 _E）、Resources/Fx/RegionMasks（RegionMaskPostprocessor 烘的分区）：
+    ///      线性、带 mip、不压成低质量格式（遮罩是数据不是颜色）
     /// 入口：菜单 Spiritfire/Fx/Build Fx Assets；bridge.sh fx；-batchmode -executeMethod Spiritfire.Art.Editor.FxBuilder.BatchBuild。
     /// 返回错误数（找不到着色器等），错误写 Console（[FxBuilder] 开头）。
     /// </summary>
@@ -62,6 +64,7 @@ namespace Spiritfire.Art.Editor
             BuildPresetPrefabs(materials, log, ref errors);
             var telegraph = BuildTelegraphMaterial(log, ref errors);
             EnsureDecalFeatures(log, ref errors);
+            ConfigureMaskTextures(log);
             AssetDatabase.SaveAssets();
             BuildVariants(telegraph ? materials.Values.Append(telegraph) : materials.Values, log);
             AssetDatabase.SaveAssets();
@@ -128,6 +131,38 @@ namespace Spiritfire.Art.Editor
             Set(ti.textureCompression, TextureImporterCompression.Compressed, v => ti.textureCompression = v);
             Set(ti.npotScale, TextureImporterNPOTScale.None, v => ti.npotScale = v);
             Set(ti.isReadable, false, v => ti.isReadable = v);
+            return changed;
+        }
+
+        /// <summary>角色遮罩贴图（_E 发光遮罩、分区遮罩）的导入设置：线性、mip、高质量压缩、重复寻址；返回改了几张</summary>
+        public static int ConfigureMaskTextures(List<string> log = null)
+        {
+            int n = 0, changed = 0;
+            foreach (var dir in new[] { ResourcesDir + "/GlowMasks", ResourcesDir + "/RegionMasks" })
+            {
+                if (!AssetDatabase.IsValidFolder(dir)) continue;
+                foreach (var guid in AssetDatabase.FindAssets("t:Texture2D", new[] { dir }))
+                {
+                    string path = AssetDatabase.GUIDToAssetPath(guid);
+                    if (AssetImporter.GetAtPath(path) is not TextureImporter ti) continue;
+                    n++;
+                    bool dirty = ti.sRGBTexture || !ti.mipmapEnabled || ti.textureCompression != TextureImporterCompression.CompressedHQ
+                                 || ti.alphaSource != TextureImporterAlphaSource.None || ti.maxTextureSize != 1024 || ti.isReadable;
+                    if (!dirty) continue;
+                    ti.textureType = TextureImporterType.Default;
+                    ti.sRGBTexture = false;
+                    ti.mipmapEnabled = true;
+                    ti.alphaSource = TextureImporterAlphaSource.None;
+                    ti.textureCompression = TextureImporterCompression.CompressedHQ;
+                    ti.maxTextureSize = 1024;
+                    ti.wrapMode = TextureWrapMode.Repeat;
+                    ti.filterMode = FilterMode.Bilinear;
+                    ti.isReadable = false;
+                    ti.SaveAndReimport();
+                    changed++;
+                }
+            }
+            log?.Add($"角色遮罩贴图 {n} 张（改导入设置 {changed} 张）→ {ResourcesDir}/GlowMasks、RegionMasks");
             return changed;
         }
 

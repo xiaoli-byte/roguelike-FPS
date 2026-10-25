@@ -955,7 +955,7 @@ W0-5 把约 30 处 `Hud.Instance.*` 调用机械替换成 `GameUI.*`，先转发
 | EN4 精英词缀与外观 | 词缀注册 + 迅捷 / 坚盾 / 爆裂 / 狂暴 + 金环 + 名字前缀 + 排除表 | `G/Enemies/Affixes/*` `G/Enemies/EliteAura.cs` | E1 E4 F1 | 否 | M |
 | FX1 战斗特效一 ✅ | 爆炸、敌人命中（暴击星芒）、弹着点 + 弹孔、破盾 / 破甲、枪口、元素曳光、闪电；所有调用点接上。验收：`playtest fx`（TestArena 逐项截图 + 同屏粒子峰值） | `G/Fx/Presets/{Explosion,EnemyHit*,Impact*,ShieldShatter,ArmorChip}.cs` `G/Fx/{FxDirector,FxDecals,FxBudget,Surfaces,MuzzleFlashes}.cs` `A/Art/Shaders/SF_FxDecal.shader` `G/Testing/Suites/FxSuite.cs` | F1 F2 F3 | 是 | M |
 | FX2 战斗特效二 ✅ | 死亡迸散 + 溶解、出生法阵 + 显形、状态着色 / 状态粒子、熔池贴花、归墟 | `G/Fx/Presets/{Death,Spawn,Abyss}.cs` `G/Fx/{StatusFx,DeathDissolve}.cs` `A/Art/Shaders/SF_StylizedLit.shader`（溶解段，默认跳过） `G/Enemies/SpawnMaterialize.cs` | F1 F2 | 是 | M |
-| FX3 冰霜特效 + 发光遮罩 | 碎冰、冻雾、冰环、霜甲壳、星芒；按色键给青鸟 / 河豚 / 豪彘 / 狐巫 / 镜生成 _E 贴图 | `G/Fx/Presets/Frost*.cs` `art/pipeline/tools/emission_mask.py` | F1 | 是 | M |
+| FX3 冰霜特效 + 发光遮罩 ✅ | 碎冰、冰爆、霜气、冻雾（流动霜纹贴花 + 续着的冷雾）、冰环（SF_FxIce 冰刺）、霜甲壳（SF_FxIce 多面冰，从脚下往上冻）、星芒（一次性 + 骨骼星芒）；按色键给青鸟 / 河豚 / 豪彘 / 狐巫 / 镜生成 _E 贴图（R/G/B = 三层，GlowMask 按发光通道 × Three.js 强度公式写 SF_StylizedLit 的遮罩段，默认跳过）；第二章 14 个敌人脚本的冰屑 / 冰环 / 冻雾 / 霜甲换成新预设。验收：`playtest fx`（只跑这段：`fx-elements`）、`frost`、`arena` | `G/Fx/Presets/Frost*.cs` `G/Fx/{Fx.Frost,FrostShell,IceSpikes,FrostGlints,FrostFogFx,FxIceMeshes,GlowMask}.cs` `A/Art/Shaders/SF_FxIce.shader` `art/pipeline/tools/emission_mask.py` `A/Game/Resources/Fx/GlowMasks/*_E.png` | F1 | 是 | M |
 | FX4 火狱特效 + 火苗着色 + 分区遮罩 | 火药爆、熔铜流、链、火舌、地火变体；SF_StylizedLit 加 `_FLAMEKEY`；导入后处理烘焙分区（火鼍岩甲、傩面） | `G/Fx/Presets/Inferno*.cs` `P/Editor/RegionMaskPostprocessor.cs`（改 SF_StylizedLit 小块） | F1 FX2 | 是 | L |
 | R3 商店 / 强化台 | 7 个摊位、价格 ×(1+0.25ch) 取整到 5、拒绝提示、强化预览、售罄、按住 F 防误买、摊位贴地形 | `G/Loot/Shop/*` | R1 W2 U2 S0 | 是 | L |
 | U4 暂停 / 设置 / Tab 面板 | 暂停（双击确认 + 本局概况）；设置自动生成（含分辨率、改键、手柄）；Tab（秘卷、属性网格、武器卡、灵宠页）；测试钩子保留 | `G/UI/Screens/{PauseScreen,SettingsScreen,InventoryPanel}.cs` `G/UI/Widgets/{StatGrid,ScrollList}.cs` `G/UI/PauseMenu.cs` | U1 WC8 S0 | 否 | L |
@@ -1027,7 +1027,7 @@ W0-5 把约 30 处 `Hud.Instance.*` 调用机械替换成 `GameUI.*`，先转发
 | 碎刃 | 程序化，管线导不了 | C# 烘焙网格 + 拷贝刀柄贴图 | WC5 | — |
 | 武器零件语义、瞄具、弩弦 | 缺 | 改导出管线 | W4 / WC* | 相机空间枪口常数 |
 | 宝箱 / 商店道具 / 商人 / 强化台 / 选人祭台 | 程序方块 | Tripo | R3 / U6 | 现有 MarketStall / ForgeStall / PrayerTent / 程序宝箱 |
-| 发光遮罩（青鸟 / 河豚 / 豪彘 / 狐巫 + 镜） | 没有 GlowShell | 按色键脚本生成 _E | EN2c–e | 不发光 |
+| 发光遮罩（青鸟 / 河豚 / 豪彘 / 狐巫 + 镜） | ✅ FX3：`emission_mask.py` 按色键 + 资产空间区域烘 _E（R/G/B 三层），`GlowMask` 运行时按发光通道点亮；狐巫本体（狐火 / 翠玉）和铜镜（青玉 / 镜面蓄光）的规则是 Unity 版新定的 | 按色键脚本生成 _E | — | — |
 | 特效贴图 | 全缺 | 先程序生成，再手绘 | FX* | 程序贴图 |
 | UI 字体 / 图标 / 缩略图 | 系统字体，没有图标 | OFL 字体；从 icons.ts 抽 SVG；RenderTexture 自动渲染缩略图 | U1 | — |
 | 环境音 / 分层枪声 / 旱魃主题 | 无 | 合成烘焙或授权素材 | I6 | 无 |

@@ -7,7 +7,7 @@ namespace Spiritfire.Game.Testing
     /// <summary>
     /// 战斗特效冒烟 · FX3 冰霜 / FX4 火狱（FxSuite 的一部分；bridge.sh playtest fx-elements 只跑这两段）：
     ///   FX3：碎冰（刚炸 / 散开）、冰爆（刚炸 / 余雾，落霜斑贴花）、冰环（冰刺冒出）、冻雾（霜纹 + 冷雾续上）、霜甲壳（冻到一半 / 冻满 / 近景 / 碎掉）、
-    ///        星芒（骨骼星芒 + 一次性的「叮」）；
+    ///        星芒（骨骼星芒 + 一次性的「叮」）；_E 发光遮罩（青鸟 / 河豚 / 豪彘 / 狐巫 + 镜：平时一张、发光通道拉满一张近景，核对挂上的遮罩数）；
     ///   FX4：见 <see cref="InfernoCase"/>。
     /// 每项排开在刷怪台中心两侧（互不叠），玩家站到 8 m 外对着拍；核对贴花 / 冰刺 / 冷雾 / 冰壳的数量。
     /// </summary>
@@ -124,6 +124,52 @@ namespace Spiritfire.Game.Testing
             }
             arena.Clear();
             yield return new WaitForSeconds(0.3f);
+            yield return GlowMaskCase();
+        }
+
+        /// <summary>_E 发光遮罩：四种敌人各刷一只站桩，平时一张、发光通道拉满一张近景</summary>
+        IEnumerator GlowMaskCase()
+        {
+            var cases = new (string id, int want)[] { ("qingniao", 1), ("ice_puffer", 1), ("haozhi", 1), ("fox_witch", 2) };
+            var away = AwayDir();
+            var side = Cross(away);
+            for (int i = 0; i < cases.Length; i++)
+            {
+                var (id, want) = cases[i];
+                var ai = arena.Spawn(id, false, side * ((i - 1.5f) * 4f) - away * 10f);
+                if (!ai)
+                {
+                    Fail($"生成 {id} 失败");
+                    continue;
+                }
+                ai.Health.maxHealth = 40000;
+                ai.Health.ResetVitals();
+                yield return new WaitForSeconds(1.2f);
+                Freeze(ai);
+                var gm = ai.GetComponent<GlowMask>();
+                var body = ai.Body;
+                if (body)
+                {
+                    body.SetGlow(0, 0.1f);
+                    body.SetGlow(1, 0);
+                }
+                yield return new WaitForSeconds(0.4f);
+                PoseShot(ai, side * 0.8f + away * 0.6f, $"fx3_glow_{id}_idle");
+                if (body)
+                {
+                    body.SetGlow(0, 1);
+                    body.SetGlow(1, 1);
+                    body.SetGlow(2, 1);
+                }
+                yield return new WaitForSeconds(0.5f);
+                PoseShot(ai, side * 0.8f + away * 0.6f, $"fx3_glow_{id}");
+                int n = gm ? gm.Masked : 0;
+                Line($"FX3 发光遮罩 · {id}：组件 {(gm ? "✓" : "✗")}，遮罩 {n}/{want} 张");
+                if (!gm) Fail($"{id} 没有挂 GlowMask");
+                else if (n < want) Fail($"{id} 只找到 {n} 张发光遮罩（要 {want}：先跑 emission_mask.py 和 bridge.sh fx）");
+                arena.Clear();
+                yield return new WaitForSeconds(0.2f);
+            }
         }
 
         static Vector3 Cross(Vector3 away) => Vector3.Cross(Vector3.up, away);

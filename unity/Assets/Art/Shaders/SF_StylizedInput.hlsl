@@ -42,9 +42,15 @@ CBUFFER_START(UnityPerMaterial)
     half4  _DissolveParams;    // x = 溶解量 0..1（0 完整、1 全没），y = 发光前沿宽度，z = 噪声密度（每 UV 单位的格数），w = 高度渐变的权重 0..1
     float4 _DissolvePlane;     // x = 渐变起点的世界高度，y = 每米的变化量（负 = 上面先溶 / 下面先显形），zw 未用
     half4  _DissolveEdgeColor; // HDR：溶解前沿的发光
+    // 发光遮罩（FX3 _E：R / G / B = 三个发光层的范围，GlowMask 用 MaterialPropertyBlock 写「层色 × 强度」；三个颜色全黑时整段跳过、输出不变）
+    half4  _GlowMaskColor0;    // HDR
+    half4  _GlowMaskColor1;
+    half4  _GlowMaskColor2;
+    half4  _GlowMaskShimmer;   // xyz = 三层的闪烁幅度 0..1（冰里流动的光），w = 噪声频率（每米）
 CBUFFER_END
 
 TEXTURE2D(_ORMMap);     SAMPLER(sampler_ORMMap);
+TEXTURE2D(_GlowMask);   SAMPLER(sampler_GlowMask);
 
 // 溶解场：返回到溶解前沿的「距离」（< 0 的像素被溶掉，调用方 clip）。UV 空间的两层值噪声（蒙皮网格上图案跟着身体走、不游动），
 // 再按权重混进世界高度渐变；溶解量 0 时恒为正（没有像素被裁），1 时恒为负。所有 Pass 共用，阴影 / 深度跟着一起溶。

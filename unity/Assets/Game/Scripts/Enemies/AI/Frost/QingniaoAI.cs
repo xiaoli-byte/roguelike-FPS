@@ -49,6 +49,8 @@ namespace Spiritfire.Game
         protected override void Awake()
         {
             base.Awake();
+            // FX3：贴图上画好的冰 / 玉 / 狐火按发光通道亮起来（_E 发光遮罩）
+            GlowMask.Attach(this);
             altitude = Random.Range(AltitudeMin, AltitudeMax);
             bobPhase = Random.Range(0f, Mathf.PI * 2);
             perchAfter = Random.Range(PerchAfterMin, PerchAfterMax);
