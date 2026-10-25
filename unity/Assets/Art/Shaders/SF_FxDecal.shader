@@ -8,14 +8,14 @@
 // 所以同一种贴花共用一份材质，能合批（材质开了 GPU Instancing）。
 //
 // 模式（材质的 _Mode）：0 图集格（P = 格号, 余热, 发光色号, 提亮色混沙）、1 熔池（P = 进度, 种子）、2 出生法阵（P = 进度, 颜色 rgb）、3 归墟涡旋（P = 进度）、
-//   4 流动霜纹（FX3，P = 进度, 种子, 浓度）。
+//   4 流动霜纹（FX3，P = 进度, 种子, 浓度）、5 地火（FX4，P = 进度, 种子, 变体：0 余烬 / 1 纸灰 / 2 熔铜 / 3 熔岩溅 / 4 日火裂痕）。
 // 预乘 alpha（Blend One OneMinusSrcAlpha）：压暗、提亮、HDR 发光一次画完；纯加色的部分 alpha 写 0。
 Shader "Spiritfire/FxDecal"
 {
     Properties
     {
         _DecalMap("Decal Atlas (R dark, G heat, B light)", 2D) = "black" {}
-        _Mode("Mode (0 sprite, 1 pool, 2 rune, 3 vortex, 4 frost)", Float) = 0
+        _Mode("Mode (0 sprite, 1 pool, 2 rune, 3 vortex, 4 frost, 5 fire)", Float) = 0
         // URP 贴花系统会读这些（缺了也能跑，留着与 Shader Graph 贴花一致）
         [HideInInspector] _DrawOrder("Draw Order", Range(-50, 50)) = 0
         [HideInInspector] _DecalMeshBiasType("DecalMesh BiasType", Float) = 0
@@ -241,6 +241,79 @@ Shader "Spiritfire/FxDecal"
             return float4(rgb, a * 0.85) * life;
         }
 
+        // ───────────── 模式 5：地火（FX4） ─────────────
+
+        // P.x 进度 0..1（0.08 内铺开 → 烧 → 最后 20% 冷却淡掉），P.y 种子，P.z 变体：
+        //   0 余烬（焦黑地面上发红的炭缝和火星点，一闪一闪）、1 纸灰（灰白的纸灰片，边缘还在烧）、2 熔铜（流动的亮铜，没有熔金反应的蚀绿）、
+        //   3 熔岩溅（一摊摊熔岩点，表面慢慢结黑壳）、4 日火裂痕（沙地上断续的金白裂缝，镇墓兽冲锋犁出来的）
+        float4 ShadeFire(float2 q, float4 P)
+        {
+            float t = saturate(P.x), seed = P.y, time = _Time.y;
+            float variant = round(P.z);
+            float d = length(q);
+            float ang = atan2(q.y, q.x);
+            float grow = 0.45 + 0.55 * saturate(t * 12.0);
+            float edgeN = SFFbm(float2(ang * 1.8 + seed * 5.0, seed * 2.0 + time * 0.1));
+            float R = (0.8 + 0.3 * (edgeN - 0.5)) * grow;
+            float inside = saturate((R - d) / 0.1);
+            float life = smoothstep(0.0, 0.03, t) * (1.0 - smoothstep(0.8, 1.0, t));
+            float cool = 1.0 - smoothstep(0.55, 1.0, t);
+            float2 p = q * 3.0 + seed * 9.0;
+            float3 rgb = 0;
+            float a = 0;
+            if (variant < 0.5)
+            {
+                float n = SFFbm(p * 1.3);
+                float n2 = SFFbm(p * 3.1 + time * 0.15);
+                float cracks = 1.0 - smoothstep(0.02, 0.07, abs(n2 - 0.5));
+                float flick = 0.7 + 0.3 * sin(time * 7.0 + n * 20.0);
+                float hot = (cracks * 0.9 + smoothstep(0.62, 0.8, n) * 0.7) * inside * flick * cool;
+                a = inside * (0.45 + 0.35 * n);
+                rgb = float3(0.04, 0.025, 0.02) * a + float3(1.0, 0.35, 0.06) * hot * 1.5;
+            }
+            else if (variant < 1.5)
+            {
+                float n = SFFbm(p * 2.2);
+                float flake = smoothstep(0.45, 0.6, n) * inside;
+                float edge = (1.0 - smoothstep(0.0, 0.05, abs(n - 0.47))) * inside;
+                float flick = 0.6 + 0.4 * sin(time * 9.0 + n * 30.0);
+                a = inside * 0.3 + flake * 0.45;
+                rgb = float3(0.05, 0.045, 0.04) * inside * 0.3 + float3(0.55, 0.52, 0.5) * flake * 0.45 + float3(1.0, 0.3, 0.08) * edge * flick * cool * 1.4;
+            }
+            else if (variant < 2.5)
+            {
+                float flow = SFFbm(p + float2(time * 0.35, -time * 0.22));
+                float flow2 = SFFbm(p * 1.9 - float2(time * 0.5, time * 0.3));
+                float cr = 1.0 - smoothstep(0.02, 0.09, abs(flow - flow2));
+                float3 col = lerp(float3(0.25, 0.06, 0.015), float3(1.0, 0.42, 0.08) * 1.25, saturate(flow * 1.5 - 0.3));
+                col = lerp(col, float3(1.0, 0.75, 0.25) * 1.5, cr * 0.7);
+                col *= lerp(1.0, 0.25, smoothstep(0.65, 1.0, t));
+                a = inside * 0.92;
+                rgb = col * a;
+            }
+            else if (variant < 3.5)
+            {
+                float n = SFFbm(p * 1.6 + 3.3);
+                float blob = smoothstep(0.5, 0.58, n + 0.25 * (1.0 - d)) * inside;
+                float crust = smoothstep(0.6, 0.7, SFFbm(p * 4.0 + time * 0.05));
+                float3 col = lerp(float3(1.0, 0.32, 0.05) * 1.25, float3(0.08, 0.04, 0.03), saturate(crust * 0.8 + (1.0 - cool) * 0.7));
+                a = blob * 0.95;
+                rgb = col * a;
+            }
+            else
+            {
+                float n = SFFbm(p * 1.1 + 7.7);
+                float line_ = 1.0 - smoothstep(0.015, 0.06, abs(n - 0.5));
+                float open = smoothstep(0.35, 0.6, SFFbm(p * 0.7 - 2.1));
+                float pulse = 0.75 + 0.25 * sin(time * 5.0 + n * 12.0);
+                float crack = line_ * open * inside;
+                float burn = (1.0 - smoothstep(0.03, 0.14, abs(n - 0.5))) * open * inside;
+                a = burn * 0.55;
+                rgb = float3(0.09, 0.06, 0.04) * a + float3(1.0, 0.8, 0.42) * crack * pulse * cool * 1.6;
+            }
+            return float4(rgb, a) * life;
+        }
+
         // ───────────── 投影通道 ─────────────
 
         struct Attributes
@@ -297,7 +370,8 @@ Shader "Spiritfire/FxDecal"
             else if (_Mode < 1.5) c = ShadePool(q, P);
             else if (_Mode < 2.5) c = ShadeRune(q, P);
             else if (_Mode < 3.5) c = ShadeVortex(q, P);
-            else c = ShadeFrost(q, P);
+            else if (_Mode < 4.5) c = ShadeFrost(q, P);
+            else c = ShadeFire(q, P);
             // 侧壁（与投影轴夹角大的面）淡掉，免得拉成长条；盒子两端 14% 渐隐
             float edge = smoothstep(0.3, 0.55, facing) * (1.0 - smoothstep(0.36, 0.5, abs(ds.y)));
             return c * (fade * edge);

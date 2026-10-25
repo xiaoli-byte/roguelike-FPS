@@ -69,6 +69,15 @@ namespace Spiritfire.Game
         Transform mouth;
         HitZone flankR;
         TelegraphHandle cone;
+        /// <summary>FX4：肋间火腹的火舌（同 TS FLANK_TONGUES）、嘴里的火（吐火 / 吃火时蹿出来）</summary>
+        BoneFlames flankFire, mouthFire;
+        static readonly Color TongueHot = Hex.Rgb(0xfff0c0), TongueMid = Hex.Rgb(0xff9a30), TongueTip = Hex.Rgb(0xd8401a);
+        static readonly (string, Vector3, float)[] FlankTongues =
+        {
+            ("chest", new(0.085f, 0.55f, 0.12f), 0.1f), ("spine", new(0.08f, 0.6f, -0.02f), 0.1f),
+            ("chest", new(-0.085f, 0.55f, 0.12f), 0.1f), ("spine", new(-0.08f, 0.6f, -0.02f), 0.1f),
+        };
+        static readonly (string, Vector3, float)[] MouthTongue = { ("jaw", new(0, 0.85f, 0.45f), 0.12f) };
 
         /// <summary>吃过 meals 次火的吐火射程</summary>
         public static float SpitRangeFor(int meals) => SpitBase + SpitPerMeal * Mathf.Max(1, meals);
@@ -84,6 +93,25 @@ namespace Spiritfire.Game
             mouth = InfernoKit.Anchor(transform, "head", MouthPoint, "Mouth");
             barkTimer = Rand(0.3f, 1.2f);
             hp.Died += OnHuodouDied;
+            // FX4：炭黑毛里的熔岩光（火腹裂口、嘴、眼睛）按色键自发光（_FLAMEKEY）+ 火腹 / 嘴里的火舌
+            if (Application.isPlaying && !GetComponent<PlaceholderBody>())
+            {
+                FlameKey.Attach(this, () => Dead ? 0 : 0.35f + 0.25f * Meals + 0.6f * Mathf.Max(state == "spit" ? 1 : 0, Heave) + 0.06f * Mathf.Sin(age * 6f), Hex.Rgb(0xff7a22));
+                flankFire = BoneFlames.Build(transform, FlankTongues, TongueHot, TongueMid, TongueTip);
+                mouthFire = BoneFlames.Build(transform, MouthTongue, TongueHot, TongueMid, TongueTip, "head");
+            }
+        }
+
+        /// <summary>吐火前摇时火腹一鼓一鼓（同 TS heave）</summary>
+        float Heave => state == "spitWindup" ? 0.5f + 0.5f * Mathf.Sin(stateTime * 22f) : 0;
+
+        /// <summary>火舌跟着吃火次数 / 吐火蹿高（同 TS：火腹随吃火变亮变大，嘴里的火吐火时蹿出来）</summary>
+        void UpdateFlames()
+        {
+            float heave = Heave;
+            flankFire?.Update(age, Mathf.Clamp01(0.25f + 0.22f * Meals + 0.4f * heave), 0.5f + 0.35f * Meals + 0.6f * heave, 0.8f, 1f, 0.15f, 14f);
+            float m = Mathf.Max(state == "spit" ? 1 : 0, state == "eat" ? 0.4f : 0, Meals > 0 ? 0.15f : 0);
+            mouthFire?.Update(age, m > 0.05f ? Mathf.Clamp01(m * 1.3f) : 0, (0.3f + 1.2f * m) * (1 + 0.15f * Mathf.Sin(age * 25f)), 0.8f, 1f, 0f);
         }
 
         protected override void Start()
@@ -131,6 +159,7 @@ namespace Spiritfire.Game
             if (eatCooldown > 0) eatCooldown -= dt;
             growlTimer -= dt;
             UpdateGrowth(dt);
+            UpdateFlames();
             switch (state)
             {
                 case "run":
@@ -502,18 +531,22 @@ namespace Spiritfire.Game
             return HitPlayer(Damage * SpitTickMult, from, Element.Fire);
         }
 
-        /// <summary>喷出来的火：沿扇形往外喷的火团</summary>
+        /// <summary>喷出来的火（FX4，同 TS BreathCone）：一串火舌团从嘴里沿扇形往外冲、边飞边往上卷，贴地拖火星</summary>
         void FlameFx(float dt)
         {
             flameAcc += dt;
             var from = mouth ? mouth.position : Local(MouthPoint.x, MouthPoint.y, MouthPoint.z);
-            while (flameAcc >= 0.03f)
+            while (flameAcc >= 0.025f)
             {
-                flameAcc -= 0.03f;
+                flameAcc -= 0.025f;
                 float a = spitYaw + Random.Range(-SpitHalf, SpitHalf) * 0.85f;
-                float r = Random.Range(0.4f, 1f) * spitRange;
-                var p = Vector3.Lerp(from, transform.position + InfernoKit.YawDir(a) * r + Vector3.up * 0.5f, Random.Range(0.3f, 1f));
-                Fx.Burst(p, Random.value < 0.6f ? InfernoKit.Ember : InfernoKit.Hot, 2, 1.6f, 0.3f, 0.35f, -2);
+                var dir = InfernoKit.YawDir(a) + Vector3.down * 0.12f;
+                Fx.FlameJet(from, dir, spitRange * Random.Range(2.6f, 3.4f), Random.Range(0.35f, 0.6f) * Size, Random.value < 0.6f ? InfernoKit.Ember : InfernoKit.Hot);
+                if (Random.value < 0.3f)
+                {
+                    var p = transform.position + InfernoKit.YawDir(a) * spitRange * Random.Range(0.3f, 0.9f) + Vector3.up * 0.1f;
+                    Fx.Burst(p, InfernoKit.Spark, 1, 1.4f, 0.35f, 0.05f, -2);
+                }
             }
         }
 
@@ -545,6 +578,8 @@ namespace Spiritfire.Game
 
         void OnHuodouDied(DamageInfo info)
         {
+            flankFire?.Hide();
+            mouthFire?.Hide();
             cone.FadeOut();
             FireFeed.Release(this);
             if (EnemyRegistry.Purging || info.Has(DamageTag.Purge)) return;

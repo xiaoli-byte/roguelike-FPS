@@ -457,7 +457,7 @@ namespace Spiritfire.Game
                     // 打空：落点（墙脚 / 地面）留一个讹火
                     float g = InfernoKit.GroundAt(at, at.y + 0.3f, 3f);
                     if (!float.IsFinite(g) || at.y - g > 2.2f) return;
-                    FloorFire.Spawn(new Vector3(at.x, g, at.z), EmberRadius, EmberTime, EmberTick * mult, 0.5f, self);
+                    FloorFire.Spawn(new Vector3(at.x, g, at.z), EmberRadius, EmberTime, EmberTick * mult, 0.5f, self, look: FireBed.Ember);
                     Fx.Burst(at, InfernoKit.Spark, 12, 3.5f, 0.4f, 0.06f, 6);
                 },
             });

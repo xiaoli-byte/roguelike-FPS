@@ -52,6 +52,12 @@ namespace Spiritfire.Game
         Vector3 pounceDir;
         bool coalShown;
         Transform coal;
+        /// <summary>FX4：头顶火苗（同 TS FLAME_TONGUES，挂在 flame 骨上；没有就挂头上）</summary>
+        BoneFlames headFire;
+        static readonly (string, Vector3, float)[] HeadTongues =
+        {
+            ("flame", new(0, 0.9f, -0.03f), 0.2f), ("flame", new(0.025f, 0.89f, -0.02f), 0.12f), ("flame", new(-0.025f, 0.89f, -0.04f), 0.12f),
+        };
 
         protected override void Awake()
         {
@@ -70,6 +76,12 @@ namespace Spiritfire.Game
             coal = root;
             coal.gameObject.SetActive(false);
             hp.Died += OnTantongDied;
+            // FX4：炭缝 / 眼睛 / 牙按色键自发光（_FLAMEKEY）+ 头顶火苗（火舌）；出招时蹿高
+            if (Application.isPlaying && !GetComponent<PlaceholderBody>())
+            {
+                FlameKey.Attach(this, () => Dead ? 0 : 0.45f + 0.7f * Mathf.Clamp01(body.GlowLevel(0)) + 0.08f * Mathf.Sin(age * 7f), Hex.Rgb(0xff7a22));
+                headFire = BoneFlames.Build(transform, HeadTongues, Hex.Rgb(0xfff4c8), Hex.Rgb(0xffa030), Hex.Rgb(0xe0461a), "head");
+            }
         }
 
         public override void Spawn(float lvl, bool isElite)
@@ -101,6 +113,8 @@ namespace Spiritfire.Game
         {
             float d = DistToPlayer;
             ShowCoal(state == "throwWindup" && stateTime >= windTime * BreakFrac);
+            float heat = Mathf.Clamp01(body.GlowLevel(0));
+            headFire?.Update(age, 0.75f + 0.25f * heat, 0.85f + 0.5f * heat);
             switch (state)
             {
                 case "chase":
@@ -401,13 +415,14 @@ namespace Spiritfire.Game
                 onImpact = (at, hitPlayer) =>
                 {
                     if (!hitPlayer) warn.FadeOut();
-                    Fx.Burst(at, InfernoKit.Spark, 14, 4, 0.5f, 0.07f, 6);
+                    // FX4：红炭砸碎——炭渣 + 火星溅开
+                    Fx.MoltenSplash(at, 0.6f, InfernoKit.Crack);
                     Fx.Burst(at, InfernoKit.Coal, 6, 2.5f, 0.6f, 0.06f, 9);
                     GameAudio.PlayAt("land", at, 0.6f, 1.3f);
                     // 落地 / 砸在玩家身上 / 撞墙：炭块碎在脚下的地面上烧起来（悬空太高就不留）
                     float g = InfernoKit.GroundAt(at, at.y + (hitPlayer ? 0.2f : 1f), 4f);
                     if (!float.IsFinite(g) || at.y - g > 2.2f) return;
-                    FloorFire.Spawn(new Vector3(at.x, g, at.z), BurnRadius, BurnTime, dmg * BurnMult, 0.5f, self);
+                    FloorFire.Spawn(new Vector3(at.x, g, at.z), BurnRadius, BurnTime, dmg * BurnMult, 0.5f, self, look: FireBed.Ember);
                 },
                 onBlocked = _ => warn.FadeOut(),
             });
@@ -437,6 +452,7 @@ namespace Spiritfire.Game
         void OnTantongDied(DamageInfo info)
         {
             ShowCoal(false);
+            headFire?.Hide();
             if (EnemyRegistry.Purging || Reborn || info.Has(DamageTag.Purge))
             {
                 // 复燃过的再死 / 清场：彻底碎成灰

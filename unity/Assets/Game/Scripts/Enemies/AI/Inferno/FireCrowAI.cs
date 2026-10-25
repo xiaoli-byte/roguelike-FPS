@@ -284,7 +284,7 @@ namespace Spiritfire.Game
             else Blast.Player(c, BlastRadius, Damage, Element.Fire, this, 0.5f, 0.6f, 6);
             FirecrackerAI.GunpowderBlast(c, BlastRadius, 1.1f);
             if (Application.isPlaying && GroundAt(c, c.y + 0.5f, out float gy) && c.y - gy < 2.5f)
-                FloorFire.Spawn(new Vector3(c.x, gy, c.z), AshRadius, AshTime, Damage * AshMult, 0.5f, this);
+                FloorFire.Spawn(new Vector3(c.x, gy, c.z), AshRadius, AshTime, Damage * AshMult, 0.5f, this, look: FireBed.PaperAsh);
             hp.noReward = true;
             var info = DamageInfo.Simple(0, DamageSource.Explosion, c, Vector3.up);
             info.element = Element.Fire;

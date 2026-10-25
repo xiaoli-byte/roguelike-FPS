@@ -330,10 +330,11 @@ namespace Spiritfire.Game
             GameAudio.PlayAt("skill_fire", pourFrom, 0.7f, 0.7f);
             if (!Application.isPlaying) return;
             Fx.Burst(pourFrom, Spark, 10, 2, 0.4f, 0.06f, 4);
-            EnemyProjectile.Spawn(new EnemyProjectileSpec(pourFrom, EnemyProjectile.Ballistic(pourFrom, pourTo, PourFlight, 12f), 0, 0.12f, PourFlight * 0.98f)
-            {
-                gravity = 12f, visual = "flame", color = Molten, blockable = false,
-            });
+            // FX4 熔铜流（同 TS MoltenStream）：液流头跟着流嘴甩到同伴头顶，停一下，尾巴再追过去
+            var ally = target;
+            Vector3 lastFrom = pourFrom, lastTo = pourTo;
+            // 熔铜匠 / 同伴中途被打死、回收：液流停在最后的位置上收尾，不去读已经销毁的物体
+            MoltenStream.Pour(() => this && !Dead ? lastFrom = Spout : lastFrom, () => ally && !ally.Dead ? lastTo = AllyHead(ally) : lastTo, PourFlight, 0.3f, Size);
         }
 
         /// <summary>液流：起点跟着流嘴、落点跟着同伴头顶，沿抛物线冒熔铜点；到点时浇上铜甲</summary>
@@ -343,17 +344,12 @@ namespace Spiritfire.Game
             float u = stateTime / PourFlight;
             if (t && !t.Dead) pourTo = AllyHead(t);
             pourFrom = Spout;
-            if (u <= 1.1f && Application.isPlaying && Random.value < 0.6f)
-            {
-                float apex = 1 + Vector3.Distance(pourFrom, pourTo) * 0.12f;
-                Fx.Burst(PourArc(pourFrom, pourTo, apex, Mathf.Clamp01(u)), Molten, 2, 0.6f, 0.3f, 0.08f * Size, 9);
-            }
             if (poured || u < 1) return;
             poured = true;
             if (t && !t.Dead && Bronze.Grant(t, elite ? 1.3f : 1f) != null && Application.isPlaying)
             {
                 var c = EnemyRegistry.Center(t);
-                Fx.Burst(pourTo, MoltenHot, 18, 3, 0.5f, 0.08f, 9);
+                Fx.MoltenSplash(pourTo, 0.8f, MoltenHot);
                 Fx.Burst(c, Molten, 14, 2, 0.7f, 0.07f, 6);
                 GameAudio.PlayAt("burn_tick", c, 0.8f, 0.6f);
             }
@@ -390,7 +386,7 @@ namespace Spiritfire.Game
                 for (int i = 0; i < 10; i++)
                 {
                     float a = i / 10f * Mathf.PI * 2;
-                    Fx.Burst(c + new Vector3(Mathf.Sin(a) * FlingRadius * 0.7f, 0.9f, Mathf.Cos(a) * FlingRadius * 0.7f), Molten, 3, 2.5f, 0.5f, 0.07f, 9);
+                    Fx.MoltenSplash(c + new Vector3(Mathf.Sin(a) * FlingRadius * 0.7f, 0.9f, Mathf.Cos(a) * FlingRadius * 0.7f), 0.45f, Molten);
                 }
                 Fx.Ring(c, FlingRadius, Molten, 0.4f);
             }
@@ -408,7 +404,7 @@ namespace Spiritfire.Game
         public static FloorFire MoltenPool(Vector3 center, float radius, float life, float playerDamage, float allyFrac, Object source)
         {
             if (!Application.isPlaying) return null;
-            var fire = FloorFire.Spawn(center, radius, life, playerDamage, 0.5f, source);
+            var fire = FloorFire.Spawn(center, radius, life, playerDamage, 0.5f, source, look: FireBed.Molten);
             if (allyFrac > 0) ScheduleAllyBurn(fire, center, radius, Time.time + life - 0.3f, allyFrac, source);
             return fire;
         }
@@ -472,8 +468,8 @@ namespace Spiritfire.Game
             var p = body.WeakPoint ? body.WeakPoint.position : transform.position + Vector3.up;
             if (Application.isPlaying)
             {
-                Fx.Burst(p, Molten, 26, 4, 0.9f, 0.08f, 10);
-                Fx.Burst(p, Slag, 14, 3, 0.8f, 0.08f, 12);
+                Fx.MoltenSplash(p, 1.4f, Molten);
+                Fx.Basalt(p, 0.8f, Slag);
                 GameUI.FloatText(p + Vector3.up * 0.3f, "坩埚裂了", Molten, 1f);
             }
             GameAudio.PlayAt("shield_break", p, 1f, 0.6f);
@@ -514,8 +510,8 @@ namespace Spiritfire.Game
             Silenced = true;
             if (EnemyRegistry.Purging || info.Has(DamageTag.Purge) || !Application.isPlaying) return;
             var p = body.WeakPoint ? body.WeakPoint.position : transform.position + Vector3.up;
-            Fx.Burst(p, Molten, 24, 3.5f, 1f, 0.08f, 9);
-            Fx.Burst(EnemyRegistry.Center(this), Slag, 16, 2.5f, 1.2f, 0.09f, 6);
+            Fx.MoltenSplash(p, 1.4f, Molten);
+            Fx.Basalt(EnemyRegistry.Center(this), 0.9f, Slag);
             MoltenPool(transform.position + Vector3.up * 0.02f, 1.8f, 3, Damage * 0.25f, 0, null);
         }
 

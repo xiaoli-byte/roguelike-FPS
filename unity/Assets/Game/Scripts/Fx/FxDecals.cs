@@ -225,6 +225,27 @@ namespace Spiritfire.Game
             return new FxHandle(s);
         }
 
+        /// <summary>
+        /// 地火（FX4）：半径 radius、持续 duration 秒、变体 bed（余烬 / 纸灰 / 熔铜 / 熔岩溅 / 日火裂痕，SF_FxDecal 模式 5）；
+        /// 烧着时往上冒火星（熔铜 / 熔岩还冒熔滴）。句柄 Cancel 提前熄灭（0.15 s 冷掉）
+        /// </summary>
+        public static FxHandle Fire(Vector3 center, float radius, float duration, FireBed bed)
+        {
+            if (!Fx.Finite(center) || !(radius > 0) || !Usable(FxMaterialKind.DecalFire)) return FxHandle.None;
+            var self = Get();
+            if (!self) return FxHandle.None;
+            var s = self.Take(self.ground, FxMaterialKind.DecalFire, MaxGround);
+            if (s == null) return FxHandle.None;
+            s.life = Mathf.Max(0.3f, duration + 0.4f);
+            s.fadeOut = 0.15f;
+            s.radius = radius;
+            s.seed = Random.value * 10f;
+            s.glow = (int)bed;
+            Place(s, center, Vector3.up, new Vector3(radius * 2.2f, radius * 2.2f, 2.4f), Random.value * 360f);
+            self.Push(s);
+            return new FxHandle(s);
+        }
+
         /// <summary>归墟涡旋：三色旋臂向中心收拢、越转越快，同时往中心吸三色光点</summary>
         public static FxHandle Vortex(Vector3 center, float radius, float duration)
         {
@@ -336,6 +357,10 @@ namespace Spiritfire.Game
                     P = new Vector4(t, s.seed, s.sandMix, 0);
                     fade = 1;
                     break;
+                case FxMaterialKind.DecalFire:
+                    P = new Vector4(t, s.seed, s.glow, 0);
+                    fade = 1;
+                    break;
                 default:
                     P = new Vector4(t, 0, 0, 0);
                     fade = 1;
@@ -412,6 +437,30 @@ namespace Spiritfire.Game
                         rt.EmitOne(glow, p, new Vector3(0, Random.Range(0.4f, 1f), 0), Random.Range(0.12f, 0.22f), Random.Range(0.35f, 0.6f), CorrodeBubble, 0);
                 }
             }
+            else if (s.kind == FxMaterialKind.DecalFire)
+            {
+                if (t > 0.8f) return;
+                var bed = (FireBed)s.glow;
+                float rate = bed switch { FireBed.Molten => 6f, FireBed.Lava => 5f, FireBed.PaperAsh => 5f, FireBed.Sunfire => 4f, _ => 7f };
+                s.emitAcc += dt * (rate + 2.5f * s.radius) * Fx.Density;
+                var ember = s.emitAcc >= 1 ? rt.GetEmitter("Ember") : null;
+                var drop = s.emitAcc >= 1 && bed is FireBed.Molten or FireBed.Lava ? rt.GetEmitter("Molten") : null;
+                while (s.emitAcc >= 1)
+                {
+                    s.emitAcc -= 1;
+                    var o = Random.insideUnitCircle * s.radius * 0.8f;
+                    var p = s.center + new Vector3(o.x, 0.08f, o.y);
+                    if (drop != null && Random.value < 0.3f)
+                        rt.EmitOne(drop, p, new Vector3(Random.Range(-0.6f, 0.6f), Random.Range(1.5f, 3f), Random.Range(-0.6f, 0.6f)), Random.Range(0.05f, 0.09f),
+                            Random.Range(0.4f, 0.7f), Color.Lerp(InfernoPalette.Molten, InfernoPalette.MoltenHot, Random.value), 0);
+                    else if (ember != null)
+                    {
+                        var c = bed == FireBed.Sunfire ? Color.Lerp(SunEmber, Color.white, Random.value * 0.3f) : Color.Lerp(PoolEmber, Color.white, Random.value * 0.25f);
+                        rt.EmitOne(ember, p, new Vector3(Random.Range(-0.3f, 0.3f), Random.Range(1.0f, 2.6f), Random.Range(-0.3f, 0.3f)),
+                            Random.Range(0.05f, 0.11f), Random.Range(0.6f, 1.1f), c, 0);
+                    }
+                }
+            }
             else if (s.kind == FxMaterialKind.DecalVortex)
             {
                 if (t > 0.92f) return;
@@ -435,7 +484,7 @@ namespace Spiritfire.Game
         }
 
         static readonly Element[] TriElements = { Element.Fire, Element.Shock, Element.Corrode };
-        static readonly Color PoolEmber = Hex.Rgb(0xffa040);
+        static readonly Color PoolEmber = Hex.Rgb(0xffa040), SunEmber = Hex.Rgb(0xfff2b8);
         static readonly Color CorrodeBubble = Hex.Rgb(0x9dff4a);
 
         /// <summary>全部收起（换关清场）</summary>

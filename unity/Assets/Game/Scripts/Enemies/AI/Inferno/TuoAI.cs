@@ -12,7 +12,8 @@ namespace Spiritfire.Game
     ///   伏击扑咬：玩家在岸边（不在熔岩上）、7 m 内：岸边熔岩鼓泡 0.6 s（地上品红扑击线，前 60% 跟着玩家）→ 冲上岸扑咬 ×1.5（14 m/s，≤ 0.55 s）；
     ///         玩家一直躲着岸边（11 m 外）超过 8 s，它也自己爬上岸来找人。
     ///   岩甲：背上 8 块玄武岩甲（左右两列 × 前后四排），整体 ×0.25；每块甲有血（最大生命 10%，按减伤前算），打碎一块那里露出熔肉 ×2。
-    ///         分区：甲中心挂在 chest / spine / hips 骨上的触发球（忽略射线层，只按命中点分区）；碎甲的熔肉发光先用程序化光球（FX4 换成分区材质）。
+    ///         分区：甲中心挂在 chest / spine / hips 骨上的触发球（忽略射线层，只按命中点分区）；碎甲的熔肉发光走 FX4 分区遮罩
+    ///         （<see cref="RegionMask"/>：导入后处理按绑定姿势烘的 8 块甲区，SF_StylizedLit 把碎了的那块压暗成熔肉、透出脉动的熔岩光；遮罩还没烘时退回程序化光球）。
     ///   回熔：碎够 3 块、或上岸 7 s（伏击上岸的 12 s）后，附近有熔岩就爬回去；碎甲 5 s 内一块块长回来（先红后黑），然后接着潜游伏击。
     ///   甩尾：玩家在侧后 5.2 m 内：尾巴蓄 0.55 s（身后半圈预警）→ 横扫 ×0.8，击退约 4 m，优先扫向 7 m 内最近的熔岩（掉进熔岩归熔岩系统结算）；起跳躲得过。
     ///   陆上扑咬：3.1 m 内、正对：0.45 s 前摇 → 咬 ×1。鼍鸣：生命第一次低于 40%（在岸上时）：仰头 0.8 s → 贴地震波 10 m（16 m/s，×0.6 火伤，跳起可躲），
@@ -75,6 +76,7 @@ namespace Spiritfire.Game
 
         readonly HitZone[] plates = new HitZone[Plates];
         readonly Renderer[] plateGlow = new Renderer[Plates];
+        RegionMask region;
         float windTime = BiteWindup, ambushCd, biteCd = 0.8f, sweepCd = 1, landTime, shoreWait, replanAt, swimYaw, rippleAt, sweepSide = 1, sweepYaw;
         float roarAt = -1;
         bool roared, emerged, hasBank, alerted;
@@ -101,6 +103,18 @@ namespace Spiritfire.Game
             }
             armour = hp.Incoming.Add(ArmourIncoming);
             hp.Died += OnTuoDied;
+            // FX4：岩甲分区遮罩（有就用，程序化光球收起来）
+            if (Application.isPlaying && !GetComponent<PlaceholderBody>())
+            {
+                region = RegionMask.Plates(this, "T_Enemy_Tuo");
+                if (region && region.Renderers > 0)
+                {
+                    foreach (var r in plateGlow)
+                        if (r)
+                            r.enabled = false;
+                }
+                else region = null;
+            }
         }
 
         protected override void Start()
@@ -140,9 +154,11 @@ namespace Spiritfire.Game
             Broken[i] = true;
             PlateHp[i] = 0;
             PlateHeat[i] = 1;
+            if (region) region.SetPlate(i, 1);
             var p = plates[i] ? plates[i].transform.position : transform.position + Vector3.up * 1.5f * Size;
-            Fx.Burst(p, InfernoKit.Basalt, 16, 6, 0.8f, 0.12f * Size, 12);
-            Fx.Burst(p, InfernoKit.LavaColor, 8, 4, 0.5f, 0.1f * Size, 6);
+            // FX4：玄武岩甲崩碎 + 熔岩从下面溅出来（同 TS basaltShards + moltenSplash）
+            Fx.Basalt(p, 1.2f * Size);
+            Fx.MoltenSplash(p, 0.9f * Size, InfernoKit.LavaColor);
             GameAudio.PlayAt("shield_break", p, 0.9f, 0.55f);
             CameraShake.Add(0.15f, 0.15f);
         }
@@ -371,7 +387,7 @@ namespace Spiritfire.Game
             replanAt = 0;
             landTime = 0;
             var p = transform.position + Vector3.up * 0.2f;
-            Fx.Burst(p, InfernoKit.LavaColor, 16, 4, 0.6f, 0.12f * Size, 8);
+            Fx.MoltenSplash(p, 1.3f * Size, InfernoKit.LavaColor);
             Fx.Ring(p, 2.2f * Size, InfernoKit.LavaColor, 0.5f);
             GameAudio.PlayAt("skill_fire", p, 0.8f, 0.5f);
             if (BrokenCount > 0)
@@ -514,6 +530,11 @@ namespace Spiritfire.Game
 
         void UpdatePlateGlow()
         {
+            if (region)
+            {
+                for (int i = 0; i < Plates; i++) region.SetPlate(i, PlateHeat[i]);
+                return;
+            }
             for (int i = 0; i < Plates; i++)
             {
                 var r = plateGlow[i];
@@ -580,7 +601,7 @@ namespace Spiritfire.Game
             Act("lunge", 0.05f);
             SetState("lunge");
             var p = transform.position + Vector3.up * 0.3f;
-            Fx.Burst(p, InfernoKit.LavaColor, 22, 5, 0.6f, 0.14f * Size, 8);
+            Fx.MoltenSplash(p, 1.6f * Size, InfernoKit.LavaColor);
             Fx.Ring(p, 2.6f * Size, InfernoKit.Hot, 0.45f);
             GameAudio.PlayAt("enemy_charge", p, 1f, 0.6f);
             Quake(0.35f, 20, 0.25f);
@@ -794,8 +815,8 @@ namespace Spiritfire.Game
                 if (lava.IsLava(p)) continue;
                 if (!NavMesh.SamplePosition(p, out var hit, 0.8f, NavMesh.AllAreas)) continue;
                 if (hasLava && k < 16 && !lava.NearestLava(hit.position, 3, out _)) continue;
-                FloorFire.Spawn(hit.position, FireSpotR, FireSpotTime, Damage * 0.15f, 0.5f, this);
-                Fx.Burst(hit.position + Vector3.up * 0.3f, InfernoKit.LavaColor, 6, 3, 0.5f, 0.1f, 6);
+                FloorFire.Spawn(hit.position, FireSpotR, FireSpotTime, Damage * 0.15f, 0.5f, this, look: FireBed.Lava);
+                Fx.MoltenSplash(hit.position + Vector3.up * 0.3f, 0.7f, InfernoKit.LavaColor);
                 placed++;
             }
         }
@@ -831,9 +852,9 @@ namespace Spiritfire.Game
             if (EnemyRegistry.Purging || info.Has(DamageTag.Purge)) return;
             for (int i = 0; i < Plates; i += 2)
                 if (plates[i])
-                    Fx.Burst(plates[i].transform.position, InfernoKit.Basalt, 10, 5, 0.8f, 0.12f * Size, 12);
+                    Fx.Basalt(plates[i].transform.position, 1f * Size);
             var c = transform.position + Vector3.up * 0.9f * Size;
-            Fx.Burst(c, InfernoKit.LavaColor, 18, 5, 0.6f, 0.14f * Size, 6);
+            Fx.MoltenSplash(c, 1.6f * Size, InfernoKit.LavaColor);
             GameAudio.PlayAt("shield_break", c, 1f, 0.45f);
             Quake(0.45f, 22, 0.35f);
         }

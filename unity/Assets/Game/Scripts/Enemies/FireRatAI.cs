@@ -17,6 +17,8 @@ namespace Spiritfire.Game
     ///   出手条件（同 TS）：和玩家高差 1.2 m 内才蜷身；撞墙 / 滚满时还要高差 1.8 m 内才就地炸
     ///   滚空：撞墙往回弹一小段（同 TS ×−0.35），火星 + 火团
     ///   爆炸（同 TS blastPlayer）：边缘剩一半、掀开玩家 5.5、按距离震屏 0.7；贴地火环 + 上冲火柱 + 焦痕（8 s，比余火久）
+    ///   火焰本体（FX4，同 TS buildFlameFx）：火苗毛按色键自发光（<see cref="FlameKey"/>，_FLAMEKEY）、火冠 / 背上 / 尾尖骨骼上的火舌（<see cref="FlameTongue"/>）、
+    ///         火球上一圈跟着滚的火舌；都随「旺度」（人立 / 蜷身 / 滚动）蹿高变亮；死后的余火是 FX4 余烬地火（贴花 + 跳动的火苗）
     /// </summary>
     public sealed class FireRatAI : EnemyAI, ISelfDestruct
     {
@@ -38,6 +40,19 @@ namespace Spiritfire.Game
         float rollAngle, emberAt, shellAt;
         Transform tailTip;
 
+        /// <summary>骨骼上的火舌（同 TS BODY_TONGUES：网格坐标，x = 生物左侧）、火球上的一圈</summary>
+        static readonly (string bone, Vector3 at, float size)[] BodyTongues =
+        {
+            ("head", new(0, 0.42f, 0.08f), 0.2f), ("head", new(0.04f, 0.4f, 0.04f), 0.14f), ("head", new(-0.04f, 0.4f, 0.04f), 0.14f),
+            ("chest", new(0, 0.34f, -0.07f), 0.13f), ("spine", new(0, 0.31f, -0.2f), 0.12f),
+            ("tail_5", new(-0.02f, 0.57f, -0.5f), 0.22f), ("tail_5", new(-0.01f, 0.55f, -0.47f), 0.15f),
+        };
+        readonly List<(FlameTongue t, float size, float phase)> tongues = new();
+        readonly List<(FlameTongue t, Vector3 dir, float phase)> ballTongues = new();
+
+        /// <summary>火焰的旺度 0..1（按发光通道：窜行 0.2 → 蜷身 → 滚动 1，同 TS max(pFire, pRear)）</summary>
+        float Heat => Mathf.Clamp01((body.GlowLevel(0) - 0.25f) / 0.75f);
+
         /// <summary>累计：撞空几次、自爆几次（测试用）</summary>
         public int Bonks { get; private set; }
         public int Detonations { get; private set; }
@@ -57,6 +72,64 @@ namespace Spiritfire.Game
             GlowStyle(0.1f, 0.05f, 6f, 0.7f);
             foreach (var t in GetComponentsInChildren<Transform>(true))
                 if (t.name == "tail_5") { tailTip = t; break; }
+            BuildFlames();
+        }
+
+        /// <summary>FX4：火苗毛着色 + 骨骼上的火舌 + 火球上的火舌（绑定姿势下按网格坐标换算到骨骼局部）</summary>
+        void BuildFlames()
+        {
+            if (!Application.isPlaying || GetComponent<PlaceholderBody>()) return;
+            FlameKey.Attach(this, () => Dead ? 0 : 0.35f + 0.75f * Heat + 0.08f * Mathf.Sin(age * 11f));
+            float k = Mathf.Abs(transform.lossyScale.x);
+            foreach (var (boneName, at, size) in BodyTongues)
+            {
+                var bone = InfernoKit.FindBone(transform, boneName);
+                if (!bone) continue;
+                var local = bone.InverseTransformPoint(InfernoKit.ModelToWorld(transform, at));
+                var t = FlameTongue.Attach(bone, local, Vector3.one * size * k);
+                if (t) tongues.Add((t, size, Random.value * 10f));
+            }
+            for (int i = 0; i < 6; i++)
+            {
+                float a = i / 6f * Mathf.PI * 2;
+                var dir = new Vector3(Mathf.Cos(a) * 0.8f, 0.6f * (i % 2 == 1 ? 1 : -0.2f), Mathf.Sin(a) * 0.8f).normalized;
+                var t = FlameTongue.Attach(transform, Vector3.zero, Vector3.one * 0.22f * k);
+                if (!t) continue;
+                t.Set(0);
+                ballTongues.Add((t, dir, Random.value * 10f));
+            }
+        }
+
+        /// <summary>火舌跟着旺度蹿高（同 TS：平时微亮，人立更亮，蜷身 / 滚动最旺）；火球的火舌插在球面上、跟着球滚</summary>
+        void UpdateFlames()
+        {
+            float heat = Dead ? 0 : Heat;
+            float k = Mathf.Abs(transform.lossyScale.x);
+            foreach (var (t, size, phase) in tongues)
+            {
+                if (!t) continue;
+                float flick = 1 + 0.12f * Mathf.Sin(age * 13 + phase) + 0.06f * Mathf.Sin(age * 29 + phase * 2);
+                float grow = 0.85f + 0.45f * heat;
+                float b = size * k;
+                t.Set(Dead || balled ? 0 : 0.6f + 0.4f * heat, new Vector3(b * grow * 0.95f, b * grow * flick, b * grow));
+            }
+            bool showBall = balled && !Dead && ballRenderer;
+            var bb = showBall ? ballRenderer.bounds : default;
+            float r = showBall ? Mathf.Max(bb.extents.x, bb.extents.z) * 1.02f : 0;
+            var rot = ball ? ball.rotation : transform.rotation;
+            foreach (var (t, dir, phase) in ballTongues)
+            {
+                if (!t) continue;
+                if (!showBall)
+                {
+                    t.Set(0);
+                    continue;
+                }
+                t.transform.position = bb.center + rot * dir * r;
+                float flick = 1 + 0.12f * Mathf.Sin(age * 13 + phase) + 0.06f * Mathf.Sin(age * 29 + phase * 2);
+                float b = 0.22f * k * 1.15f;
+                t.Set(0.95f, new Vector3(b * 0.95f, b * flick, b));
+            }
         }
 
         protected override void Think(float dt)
@@ -176,9 +249,10 @@ namespace Spiritfire.Game
             Glow = 0;
         }
 
-        /// <summary>尾火（尾尖一直冒火星）、火球壳（滚动时火球外面翻卷的火）、火尾</summary>
+        /// <summary>尾火（尾尖一直冒火星）、火球壳（滚动时火球外面翻卷的火）、火尾；火舌本体见 <see cref="UpdateFlames"/></summary>
         void FlameFx()
         {
+            UpdateFlames();
             if (Dead) return;
             float now = Time.time;
             if (tailTip && !balled && now >= emberAt)
@@ -274,11 +348,15 @@ namespace Spiritfire.Game
 
         void OnKilledByPlayer(DamageInfo info)
         {
+            // 死了火舌立刻熄掉（AI 组件随后停用，不会再更新火舌）
+            foreach (var (t, _, _) in tongues) if (t) t.Set(0);
+            foreach (var (t, _, _) in ballTongues) if (t) t.Set(0);
             // 静默清场（EnemyRegistry.PurgeAll）：不留余火、不炸（同 TS attackDirector.purging）
             if (EnemyRegistry.Purging || info.Has(DamageTag.Purge)) return;
             var c = Center;
             body.ClearOverlay(CurlChannel);
-            FireZone.Spawn(transform.position, BurnRadius * (elite ? 1.25f : 1f), BurnTime, Damage * BurnRatio);
+            // 余火：FX4 余烬地火（焦黑地面上的炭缝 + 跳动的火苗，同 TS spawnGroundFlames）
+            FloorFire.Spawn(transform.position, BurnRadius * (elite ? 1.25f : 1f), BurnTime, Damage * BurnRatio, look: FireBed.Ember);
             if (detonated) return;
             detonated = true;
             if (state != "roll")

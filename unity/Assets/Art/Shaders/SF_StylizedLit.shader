@@ -7,6 +7,12 @@
 // 阴影 / 深度 Pass 一起裁；默认 0 时和沙魇的变体段一样整段跳过。
 // 发光遮罩（FX3）：_GlowMask（_E 贴图，R / G / B = 三层）× _GlowMaskColor0..2（GlowMask 每帧写「层色 × 强度」），按相对模型原点的位置叠一层流动的噪声闪烁；
 // 三个颜色默认全黑时整段跳过、输出不变（同变体段 / 溶解段）。
+// _FLAMEKEY 火苗着色（FX4，Three.js FlameFx.applyFlameFur）：按反照率认出浅金 / 亮橙的火苗毛（亮、红远大于蓝、绿不太低），只让这部分发光，
+// 再乘两层沿世界「上」流动的值噪声；_FlameKey.x 是亮度（FlameKey 每帧按状态写：平时微亮、前摇 / 滚动最亮），默认 0 整段跳过、输出不变。
+// 分区遮罩（FX4）：_RegionMask（RegionMaskPostprocessor 导入后烘的 UV 遮罩）× RegionMask 每帧写的各区状态——
+//   模式 1 岩甲（火鼍）：四排 × 左右两列，碎了的那块压暗成熔肉、透出脉动的熔岩光（回熔时先红后黑，同 Three.js Tuo.platePaint）；
+//   模式 2 傩面（傩巫）：面具区域换脸配色（红漆 / 描金）、面具眼睛按脸色发光、碎面裂纹从面具中心放射（同 Three.js applyNuoMask）。
+//   _RegionParams.x = 0（默认）整段跳过、输出不变。
 // _FUR：带毛 / 羽的角色（sidecar 的 fur 配置）。画质「中」以上（全局 _SFFurDetail）加顺毛向的发丝明暗、各向异性光泽、
 // 剪影绒边，明暗交界更软；画质「高」再由 FurShells 叠 Spiritfire/FurShell 壳层（见 SF_Fur.hlsl）。
 Shader "Spiritfire/StylizedLit"
@@ -64,6 +70,20 @@ Shader "Spiritfire/StylizedLit"
         [HDR] _GlowMaskColor1("Glow Layer 1", Color) = (0, 0, 0, 1)
         [HDR] _GlowMaskColor2("Glow Layer 2", Color) = (0, 0, 0, 1)
         _GlowMaskShimmer("Glow Shimmer (xyz Amp, w Freq)", Vector) = (0.4, 0.4, 0.4, 9)
+
+        [Header(Region Mask)]
+        _RegionMask("Region Mask (RM)", 2D) = "black" {}
+        _RegionParams("Region (x Mode, y Swap, z Crack, w Eye Glow)", Vector) = (0, 0, 0, 0)
+        _RegionA("Region A", Vector) = (0, 0, 0, 0)
+        _RegionB("Region B", Vector) = (0, 0, 0, 0)
+        _RegionC("Region C", Vector) = (0, 0, 0, 0)
+        _RegionCenter("Region Center (WS, w Scale)", Vector) = (0, 0, 0, 1)
+        _RegionAxisX("Region Axis X (WS)", Vector) = (1, 0, 0, 0)
+        _RegionAxisY("Region Axis Y (WS)", Vector) = (0, 1, 0, 0)
+
+        [Header(Flame Key)]
+        _FlameKey("Flame Key (x Glow, y Speed, z Freq, w Widen)", Vector) = (0, 1, 9, 0)
+        [HDR] _FlameKeyColor("Flame Key Color", Color) = (1, 0.627, 0.251, 1)
 
         [Header(Surface)]
         _Cutoff("Alpha Cutoff", Range(0,1)) = 0.5
@@ -226,6 +246,68 @@ Shader "Spiritfire/StylizedLit"
                 return m.r * k.x * _GlowMaskColor0.rgb + m.g * k.y * _GlowMaskColor1.rgb + m.b * k.z * _GlowMaskColor2.rgb;
             }
 
+            // 分区遮罩（FX4）：改反照率（碎甲的熔肉 / 换脸配色 / 裂纹压暗），发光从 glow 带出去
+            half3 SFRegion(half3 albedo, float2 uv, float3 positionWS, out half3 glow)
+            {
+                glow = 0;
+                half4 m = SAMPLE_TEXTURE2D(_RegionMask, sampler_RegionMask, uv);
+                float3 d = positionWS - _RegionCenter.xyz;
+                if (_RegionParams.x < 1.5)
+                {
+                    // 岩甲：身体左边（右方向的反面）一列、右边一列，各四排
+                    half left = dot(d, _RegionAxisX.xyz) < 0.0 ? 1.0 : 0.0;
+                    half4 heat4 = left > 0.5 ? _RegionA : _RegionB;
+                    half h = saturate(dot(m, heat4));
+                    if (h > 0.001)
+                    {
+                        half idx = dot(m, half4(0, 2, 4, 6)) + (1.0 - left);
+                        half3 molten = lerp(half3(0.6, 0.07, 0.01), half3(1.0, 0.62, 0.16), smoothstep(0.5, 1.0, h));
+                        albedo = lerp(albedo, half3(0.1, 0.025, 0.01), smoothstep(0.0, 0.5, h));
+                        glow = molten * h * (1.5 + 0.35 * sin(_Time.y * 5.0 + idx * 1.7));
+                    }
+                    return albedo;
+                }
+                half mask = m.r;
+                if (mask < 0.01) return albedo;
+                half3 c0 = albedo;
+                half eye = smoothstep(0.4, 0.7, c0.r) * smoothstep(0.22, 0.45, c0.g) * (1.0 - smoothstep(0.08, 0.25, c0.b)) * mask;
+                half lum = dot(c0, half3(0.299, 0.587, 0.114));
+                half red = saturate((c0.r - max(c0.g, c0.b)) * 3.0) * (1.0 - eye);
+                half light = smoothstep(0.28, 0.5, lum) * (1.0 - red) * (1.0 - eye);
+                half3 recol = lerp(c0, _RegionA.rgb * (0.25 + 2.2 * lum), red);
+                recol = lerp(recol, _RegionB.rgb * (0.35 + 0.9 * lum), light);
+                albedo = lerp(c0, recol, saturate(_RegionParams.y) * mask);
+                half crackLine = 0;
+                if (_RegionParams.z > 0.0)
+                {
+                    float sc = max(_RegionCenter.w, 1e-3);
+                    float x = dot(d, _RegionAxisX.xyz) / sc, y = dot(d, _RegionAxisY.xyz) / sc;
+                    float r = length(float2(x, y));
+                    float a = atan2(y, x);
+                    float cr = _RegionParams.z;
+                    float k = 3.0 + 2.0 * cr;
+                    float w = abs(frac(a / 6.2832 * k + 0.06 * sin(r * 90.0) + 0.13 * cr) - 0.5);
+                    crackLine = (half)((1.0 - smoothstep(0.0, 0.025 + 0.01 * cr, w * max(r, 0.01) * 9.0)) * (1.0 - smoothstep(0.04 + 0.04 * cr, 0.07 + 0.05 * cr, r))) * mask;
+                    albedo *= 1.0 - 0.85 * crackLine;
+                }
+                glow = _RegionC.rgb * eye * _RegionParams.w * 2.2 + half3(1.0, 0.42, 0.08) * crackLine * 1.4;
+                return albedo;
+            }
+
+            // _FLAMEKEY：albedo 是线性空间的反照率（同 Three.js diffuseColor）
+            half3 SFFlameKey(half3 albedo, float3 positionWS)
+            {
+                half widen = saturate(_FlameKey.w);
+                half lum = max(albedo.r, max(albedo.g, albedo.b));
+                half flame = smoothstep(0.7 - 0.25 * widen, 0.95 - 0.2 * widen, lum) * smoothstep(0.45 - 0.15 * widen, 0.75 - 0.15 * widen, albedo.r - albedo.b)
+                           * smoothstep(0.12 - 0.06 * widen, 0.35 - 0.1 * widen, albedo.g);
+                float3 p = (positionWS - UNITY_MATRIX_M._m03_m13_m23) * max(1.0, (float)_FlameKey.z);
+                float t = _Time.y * max(0.05, (float)_FlameKey.y);
+                half n = (half)SFGlowNoise(p - float3(0.0, t * 2.6, 0.0));
+                half n2 = (half)SFGlowNoise(p * 2.33 - float3(0.0, t * 5.0, 0.0));
+                return _FlameKeyColor.rgb * flame * (half)_FlameKey.x * (0.45 + 0.8 * n + 0.35 * n2);
+            }
+
             Varyings Vert(Attributes input)
             {
                 Varyings o = (Varyings)0;
@@ -276,6 +358,10 @@ Shader "Spiritfire/StylizedLit"
                 half variantCrack = 0;
                 [branch] if (_VariantParams.x + _VariantParams.y > 0.001)
                     albedo = SFVariantSurface(albedo, i.uv, variantCrack);
+                // 分区遮罩（FX4）：默认模式 0 → 跳过
+                half3 regionGlow = 0;
+                [branch] if (_RegionParams.x > 0.5)
+                    albedo = SFRegion(albedo, i.uv, i.positionWS, regionGlow);
 
                 half ao = 1.0, roughness = _Roughness, metallic = _Metallic;
                 #if defined(_ORMMAP)
@@ -343,6 +429,10 @@ Shader "Spiritfire/StylizedLit"
                 half3 gmSum = _GlowMaskColor0.rgb + _GlowMaskColor1.rgb + _GlowMaskColor2.rgb;
                 [branch] if (gmSum.r + gmSum.g + gmSum.b > 0.0001)
                     color += SFGlowMask(i.uv, i.positionWS);
+                color += regionGlow;
+                // _FLAMEKEY 火苗着色（FX4）：默认 x = 0 → 跳过
+                [branch] if (_FlameKey.x > 0.0001)
+                    color += SFFlameKey(base.rgb, i.positionWS);
 
                 color = lerp(color, _FlashColor.rgb, _FlashAmount);
                 color += _DissolveEdgeColor.rgb * dissolveEdge;

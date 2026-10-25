@@ -5,7 +5,8 @@ namespace Spiritfire.Game
 {
     /// <summary>
     /// 马面狱卒（Three.js 版 src/enemies/types/Mamian.ts）：第三章远程钩拉怪。左小臂套着沉重的黑铁腕铐，铐上的锁芯是弱点；
-    /// 勾魂索是从腕铐里放出来的程序化铁链（LineRenderer + 钩头），手从不握链。平时在 10–20 m 外踱步，看不见就找视线。
+    /// 勾魂索是从腕铐里放出来的程序化铁链（FX4 <see cref="FxChain"/>：一节节互相垂直的铁环 + 倒刺钩头，甩圈时从腕铐往外逐节烧红、拖拽时整条一跳一跳地红），
+    /// 手从不握链。平时在 10–20 m 外踱步，看不见就找视线。
     ///   勾魂索（有视线、5–21 m、冷却 7.5–8.5 s、拿到重击名额）：左臂高举甩圈 0.9 s（链节从腕铐往外逐节烧红、锁芯越来越亮）→
     ///         掷出钩子（20 m/s、射程 22 m、看得见的钩头飞行）。横移躲钩、断开视线或冲刺都能躲；落空就收链（reel：烘焙的 throw 接的是 drag，没钩中要自己切）。
     ///   拖拽（Tether）：钩中 ×1 伤害，往它身前拖 1.2 s（最远 8 m，停在身前 2.4 m）——用玩家运动器的软突进（<see cref="Spiritfire.Art.PlayerMotor.Lunge"/>：
@@ -55,6 +56,8 @@ namespace Spiritfire.Game
         WeaponController weapons;
         readonly SightSeeker seeker = new();
         readonly Vector3[] pts = new Vector3[9];
+        /// <summary>FX4 的铁链网格（LineRenderer 只留着当「链子在不在外面」的开关，不画）</summary>
+        FxChain links;
 
         protected override void Awake()
         {
@@ -95,6 +98,18 @@ namespace Spiritfire.Game
             hook = InfernoKit.Primitive(PrimitiveType.Cube, "Hook", transform, Vector3.zero, new Vector3(0.12f, 0.22f, 0.08f), InfernoKit.ChainIron);
             hook.transform.SetParent(go.transform, true);
             hook.enabled = false;
+            // FX4：真正画出来的是程序化铁链（链环 + 钩头），线和方块钩只当开关 / 位置用
+            if (Application.isPlaying)
+            {
+                links = FxChain.Create("Mamian Chain", 170, Size);
+                chain.forceRenderingOff = true;
+                hook.forceRenderingOff = true;
+            }
+        }
+
+        void OnDestroy()
+        {
+            if (links) Destroy(links.gameObject);
         }
 
         Vector3 Root => chainRoot ? chainRoot.position : Local(ChainRootPoint.x, ChainRootPoint.y, ChainRootPoint.z);
@@ -665,6 +680,7 @@ namespace Spiritfire.Game
             if (chain && chain.enabled) DropChain(Root, HookPos, 2.5f);
             if (chain) chain.enabled = false;
             if (hook) hook.enabled = false;
+            if (links) links.Visible = false;
             if (EnemyRegistry.Purging || info.Has(DamageTag.Purge)) return;
             var c = transform.position + Vector3.up * 1.3f * Size;
             Fx.Burst(c, InfernoKit.Ember, 16, 3.5f, 0.7f, 0.1f, -1);
@@ -690,6 +706,7 @@ namespace Spiritfire.Game
         {
             if (!chain) return;
             bool show = !Disarmed && state is "spin" or "throw" or "drag" or "reel" or "sweepWind" or "sweep";
+            if (links) links.Visible = show;
             chain.enabled = show;
             if (hook) hook.enabled = show;
             if (!show) return;
@@ -723,6 +740,20 @@ namespace Spiritfire.Game
             var hot = Color.Lerp(InfernoKit.ChainIron, InfernoKit.ChainHot, Mathf.Clamp01(heat));
             chain.startColor = Color.Lerp(InfernoKit.ChainIron, InfernoKit.ChainHot, Mathf.Clamp01(heat * 1.3f));
             chain.endColor = hot;
+            if (links)
+            {
+                // 每节的热度（同 TS layout 的 heat(u)，u = 0 链根 → 1 钩头）
+                float t = heat, a = age;
+                System.Func<float, float> heatAt = state switch
+                {
+                    "spin" or "sweepWind" => u => Mathf.Clamp01((t * 1.4f - u) * 3f),
+                    "sweep" => _ => 1f,
+                    "drag" => u => 0.75f + 0.25f * Mathf.Sin(a * 30f - u * 12f),
+                    _ => u => 0.5f * (1 - u),
+                };
+                float hookHeat = state is "spin" or "sweepWind" ? t : state is "sweep" or "drag" ? 1 : 0.4f;
+                links.Layout(pts, heatAt, hookHeat);
+            }
             if (hook)
             {
                 hook.transform.position = HookPos;
@@ -732,9 +763,17 @@ namespace Spiritfire.Game
             }
         }
 
-        /// <summary>断链 / 缴械掉下来的铁链：贴着地面躺 life 秒后淡掉</summary>
-        static void DropChain(Vector3 root, Vector3 tip, float life)
+        /// <summary>断链 / 缴械掉下来的铁链（FX4 <see cref="FxChain.Drop"/>：一串链环崩开落地、滚开、冷却、沉下去）+ 断口火花</summary>
+        void DropChain(Vector3 root, Vector3 tip, float life)
         {
+            if (Application.isPlaying)
+            {
+                var drop = new Vector3[7];
+                for (int i = 0; i < drop.Length; i++) drop[i] = Vector3.Lerp(root, tip, i / (float)(drop.Length - 1));
+                FxChain.Drop(drop, Size, Mathf.Max(0.8f, life), Mathf.Clamp01(chainHeat * 0.9f + 0.3f));
+                Fx.ChainBreak(Vector3.Lerp(root, tip, 0.5f), 0.8f * Size, Color.Lerp(InfernoKit.Hot, InfernoKit.ChainHot, chainHeat));
+                return;
+            }
             var go = new GameObject("Dropped Chain");
             var lr = go.AddComponent<LineRenderer>();
             lr.useWorldSpace = true;

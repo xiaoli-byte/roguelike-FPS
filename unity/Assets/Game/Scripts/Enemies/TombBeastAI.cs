@@ -14,6 +14,8 @@ namespace Spiritfire.Game
     ///   狂暴：生命低于 40% → 移速 ×1.25、冲锋冷却减半、一次冲两趟；精英一直冲两趟（同 TS isElite || enraged）
     ///   出手条件（同 TS）：踏地高差 2 m 内、冲锋高差 1.5 m 内；冲锋超时（被卡住没撞墙）也刹车
     ///   碎陶（同 TS）：每掉 12% 生命背上崩落一把三彩陶片；撞墙撞晕时背上喷日火柱；死时整只陶身炸碎、日火冲天、地上留焦痕
+    ///   背上的日火（FX4，同 TS buildCrackFire / updateCrackFire）：龟裂里一簇火舌（<see cref="FlameTongue"/>，挂在 crack 骨上），
+    ///         随旺度（平时 0.3、狂暴 0.75、蓄力 / 冲锋 / 撞晕时跟着发光通道到 1）蹿高变亮、往上飘火星；冲锋犁出的日火裂痕是 FX4 的日火地火
     /// </summary>
     public sealed class TombBeastAI : EnemyAI
     {
@@ -37,6 +39,16 @@ namespace Spiritfire.Game
         bool enraged, chargeHit, recharge, alerted;
         Vector3 chargeDir;
 
+        /// <summary>龟裂里的日火火舌（同 TS CRACK_TONGUES：网格坐标，x = 生物左侧）</summary>
+        static readonly (Vector3 at, float size)[] CrackTongues =
+        {
+            (new(0.0f, 1.68f, 0.38f), 0.34f), (new(0.14f, 1.58f, 0.2f), 0.26f), (new(-0.12f, 1.52f, 0.04f), 0.3f),
+            (new(0.1f, 1.44f, -0.14f), 0.24f), (new(-0.06f, 1.38f, -0.3f), 0.27f), (new(0.0f, 1.46f, 0.0f), 0.4f),
+        };
+        static readonly Color CrackHot = Hex.Rgb(0xfff6d0), CrackMid = Hex.Rgb(0xffb040), CrackTip = Hex.Rgb(0xe0501a);
+        readonly System.Collections.Generic.List<(FlameTongue t, float size, float phase)> crackFire = new();
+        float pHeat, crackEmberAcc;
+
         protected override string InitialState => "advance";
 
         protected override void Awake()
@@ -46,6 +58,43 @@ namespace Spiritfire.Game
             hp.Died += OnShatter;
             GlowStyle(0, 0, 0, 0.9f, false);
             if (body.Rig) body.Rig.Footfall += OnFootfall;
+            BuildCrackFire();
+        }
+
+        /// <summary>FX4：龟裂里的日火火舌（绑定姿势下按网格坐标换算到 crack 骨的局部；没有 crack 骨挂在根上）</summary>
+        void BuildCrackFire()
+        {
+            if (!Application.isPlaying || GetComponent<PlaceholderBody>()) return;
+            var bone = InfernoKit.FindBone(transform, "crack") ?? transform;
+            float k = Mathf.Abs(transform.lossyScale.x);
+            foreach (var (at, size) in CrackTongues)
+            {
+                var t = FlameTongue.Attach(bone, bone.InverseTransformPoint(InfernoKit.ModelToWorld(transform, at)), Vector3.one * size * k, CrackHot, CrackMid, CrackTip);
+                if (t) crackFire.Add((t, size, Random.value * 10f));
+            }
+        }
+
+        /// <summary>背上的日火：火舌随旺度蹿高，火星往上飘（狂怒 / 蓄力 / 撞晕时最旺；同 TS updateCrackFire）</summary>
+        void UpdateCrackFire(float dt)
+        {
+            float heat = Mathf.Max(enraged ? 0.75f : 0.3f, Mathf.Clamp01(body.GlowLevel(0)));
+            pHeat = Mathf.Lerp(pHeat, heat, 1 - Mathf.Exp(-6 * dt));
+            float k = Mathf.Abs(transform.lossyScale.x);
+            foreach (var (t, size, phase) in crackFire)
+            {
+                if (!t) continue;
+                float flick = 1 + 0.15f * Mathf.Sin(age * 12 + phase) + 0.08f * Mathf.Sin(age * 27 + phase * 2);
+                float grow = 0.55f + pHeat;
+                float b = size * k;
+                t.Set(0.5f + 0.5f * pHeat, new Vector3(b * grow * 0.9f, b * grow * flick * 1.3f, b * grow));
+            }
+            crackEmberAcc += dt * (0.4f + 1.6f * pHeat);
+            while (crackEmberAcc > 0.12f)
+            {
+                crackEmberAcc -= 0.12f;
+                var p = InfernoKit.ModelToWorld(transform, new Vector3((Random.value - 0.5f) * 0.6f, 1.45f + Random.value * 0.2f, (Random.value - 0.5f) * 0.8f));
+                Fx.Burst(p, Random.value < 0.6f ? DesertKit.Ember : DesertKit.Sunfire, 1, 0.8f, 0.9f, 0.05f * Size, -3f);
+            }
         }
 
         /// <summary>背上的龟裂（弱点）位置；没有弱点球时取身体中上部</summary>
@@ -68,6 +117,7 @@ namespace Spiritfire.Game
         /// <summary>死时整只陶身炸碎：三彩碎片四溅、日火冲天、地上留焦痕（静默清场不演）</summary>
         void OnShatter(DamageInfo info)
         {
+            foreach (var (t, _, _) in crackFire) if (t) t.Set(0);
             if (EnemyRegistry.Purging || info.Has(DamageTag.Purge)) return;
             var c = transform.position + Vector3.up * 1.1f * Size;
             DesertKit.Shards(c, Size * 1.3f, 16);
@@ -75,6 +125,8 @@ namespace Spiritfire.Game
             var ground = DesertKit.OnGround(transform.position);
             DesertKit.FlamePillar(ground, 0.8f * Size, 3.2f * Size);
             DesertKit.Scorch(ground, 1.6f * Size, 10f);
+            // 陶身炸碎后地上的残焰（同 TS spawnGroundFlames）
+            Fx.GroundFlames(ground, 1f * Size, 6, 2.5f, 0.5f * Size, CrackHot, CrackMid, CrackTip);
             GameAudio.PlayAt("shield_break", c, 1f, 0.7f);
             GameAudio.PlayAt("explosion", c, 0.7f, 0.8f);
             CameraShake.Quake(transform.position, 0.6f, 24f, 0.4f);
@@ -134,6 +186,7 @@ namespace Spiritfire.Game
             float d = DistToPlayer;
             chargeCd -= dt * auraAttackRate * (enraged ? 2 : 1);
             CheckShards();
+            UpdateCrackFire(dt);
             float dy = Mathf.Abs(PlayerPos.y - transform.position.y);
             // 第一次看见玩家：仰头长吼
             if (!alerted && sees && d < 30)
@@ -288,7 +341,8 @@ namespace Spiritfire.Game
             while (chargeDist - trailAt >= TrailStep)
             {
                 trailAt += TrailStep;
-                FireZone.Spawn(transform.position, TrailRadius * Size, TrailTime, Damage * TrailMult);
+                // 日火裂痕：FX4 日火地火（沙地上的金白裂缝 + 火苗）
+                FloorFire.Spawn(transform.position, TrailRadius * Size, TrailTime, Damage * TrailMult, look: FireBed.Sunfire);
             }
             if (!chargeHit && player)
             {

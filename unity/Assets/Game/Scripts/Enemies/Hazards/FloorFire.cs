@@ -22,10 +22,11 @@ namespace Spiritfire.Game
 
         /// <summary>
         /// 在 center（地面点）点一片地火：半径 radius、烧 duration 秒、每 tick 秒 damagePerTick（最终值）。
-        /// source = 出手者；edible = 登记给祸斗吃；onEaten = 被吃掉时（调用方熄灭自己的附属特效）
+        /// source = 出手者；edible = 登记给祸斗吃；onEaten = 被吃掉时（调用方熄灭自己的附属特效）；
+        /// look = FX4 外观变体（<see cref="FloorFireFx"/>：余烬 / 纸灰 / 熔铜 / 熔岩溅 / 日火裂痕的贴花 + 火舌）；null = 原来的圆贴片 + 火星
         /// </summary>
         public static FloorFire Spawn(Vector3 center, float radius, float duration, float damagePerTick, float tick = 0.5f,
-            UnityEngine.Object source = null, bool edible = true, Action onEaten = null)
+            UnityEngine.Object source = null, bool edible = true, Action onEaten = null, FireBed? look = null)
         {
             tick = Mathf.Max(0.05f, tick);
             var s = new Spec(center, radius, duration, damagePerTick)
@@ -36,9 +37,11 @@ namespace Spiritfire.Game
                 color = FireColor,
                 source = source,
                 telegraph = false,
-                sparks = true,
+                sparks = !look.HasValue,
+                decal = !look.HasValue,
             };
             var f = Create<FloorFire>("Floor Fire", s);
+            if (look.HasValue) FloorFireFx.Attach(f.gameObject, center, radius, duration, look.Value);
             f.edible = edible;
             f.onEaten = onEaten;
             if (edible)

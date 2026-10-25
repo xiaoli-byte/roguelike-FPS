@@ -1,0 +1,125 @@
+// 火舌（docs/unity-parity.md FX4；Three.js src/enemies/fx/FlameFx.ts 的 createFlameTongue）：一片朝镜头的面片，形状由噪声扭动——
+// 水滴形轮廓（底部圆、顶部收尖），越往上摆得越厉害，顶端被噪声啃出火苗边；底部芯白热、往上由中间色转成尖端的暗红。半加法混合（见下）、HDR。
+// 网格：宽 0.6、高 1 的四边形，底边中点在原点（FlameTongues 生成），大小 = 物体缩放（跟着骨骼与整体缩放走）。
+// 朝向：面片竖直方向 = 世界「上」投影到屏幕上的方向（火苗永远往上窜；镜头翻滚 / 震屏时不会跟着歪），宽度方向与它垂直；
+// 镜头几乎正对着往下看时退回屏幕的「上」。
+// 混合：预乘「半加法」——颜色照加法叠上去，同时按 0.55 × 不透明度压暗身后（纯加法在亮沙地 / 天空前会被洗成一片淡黄白，看不出橙红）。
+// 每片的参数走 MaterialPropertyBlock：_Params x = 种子（错开相位），y = 不透明度；_Hot / _Mid / _Tip 三段颜色。时间用 _Time.y（全场共用）。
+Shader "Spiritfire/FxFlame"
+{
+    Properties
+    {
+        [HDR] _Hot("Hot (core)", Color) = (1, 0.945, 0.753, 1)
+        [HDR] _Mid("Mid", Color) = (1, 0.627, 0.188, 1)
+        [HDR] _Tip("Tip", Color) = (0.847, 0.251, 0.102, 1)
+        _Params("Params (x Seed, y Alpha)", Vector) = (0, 1, 0, 0)
+    }
+
+    SubShader
+    {
+        Tags { "RenderType"="Transparent" "Queue"="Transparent+5" "RenderPipeline"="UniversalPipeline" "IgnoreProjector"="True" }
+
+        Pass
+        {
+            Name "ForwardFlame"
+            Tags { "LightMode"="UniversalForward" }
+            Blend One OneMinusSrcAlpha
+            ZWrite Off
+            Cull Off
+
+            HLSLPROGRAM
+            #pragma target 3.5
+            #pragma vertex Vert
+            #pragma fragment Frag
+            #pragma multi_compile_fog
+            #pragma multi_compile_instancing
+
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+
+            CBUFFER_START(UnityPerMaterial)
+                half4 _Hot;
+                half4 _Mid;
+                half4 _Tip;
+                float4 _Params;
+            CBUFFER_END
+
+            struct Attributes
+            {
+                float4 positionOS : POSITION;
+                float2 uv : TEXCOORD0;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+            };
+
+            struct Varyings
+            {
+                float4 positionCS : SV_POSITION;
+                float2 uv : TEXCOORD0;
+                half fog : TEXCOORD1;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+                UNITY_VERTEX_OUTPUT_STEREO
+            };
+
+            float SFFlameHash(float3 p) { return frac(sin(dot(p, float3(17.1, 113.7, 51.3))) * 43758.5453); }
+
+            float SFFlameNoise(float3 p)
+            {
+                float3 i = floor(p);
+                float3 f = frac(p);
+                f = f * f * (3.0 - 2.0 * f);
+                return lerp(lerp(lerp(SFFlameHash(i), SFFlameHash(i + float3(1, 0, 0)), f.x), lerp(SFFlameHash(i + float3(0, 1, 0)), SFFlameHash(i + float3(1, 1, 0)), f.x), f.y),
+                            lerp(lerp(SFFlameHash(i + float3(0, 0, 1)), SFFlameHash(i + float3(1, 0, 1)), f.x), lerp(SFFlameHash(i + float3(0, 1, 1)), SFFlameHash(i + float3(1, 1, 1)), f.x), f.y), f.z);
+            }
+
+            Varyings Vert(Attributes v)
+            {
+                Varyings o = (Varyings)0;
+                UNITY_SETUP_INSTANCE_ID(v);
+                UNITY_TRANSFER_INSTANCE_ID(v, o);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+                float3 originWS = TransformObjectToWorld(float3(0, 0, 0));
+                float3 originVS = TransformWorldToView(originWS);
+                float sx = length(UNITY_MATRIX_M._m00_m10_m20);
+                float sy = length(UNITY_MATRIX_M._m01_m11_m21);
+                // 世界「上」投影到屏幕（观察空间 xy）：火苗往上窜；正对着往下看时投影退化，退回屏幕的上
+                float3 upVS = TransformWorldToViewDir(float3(0, 1, 0), false);
+                float2 up2 = upVS.xy;
+                float len = length(up2);
+                up2 = len > 0.25 ? up2 / len : normalize(lerp(float2(0, 1), up2 / max(len, 1e-4), len / 0.25));
+                float2 right2 = float2(up2.y, -up2.x);
+                float3 vs = originVS;
+                vs.xy += right2 * (v.positionOS.x * sx) + up2 * (v.positionOS.y * sy);
+                o.positionCS = TransformWViewToHClip(vs);
+                o.uv = v.uv;
+                o.fog = ComputeFogFactor(o.positionCS.z);
+                return o;
+            }
+
+            half4 Frag(Varyings i) : SV_Target
+            {
+                UNITY_SETUP_INSTANCE_ID(i);
+                float seed = _Params.x;
+                float h = i.uv.y;
+                float t = _Time.y * 2.4 + seed * 13.0;
+                float n = SFFlameNoise(float3(i.uv.x * 3.0 + seed * 7.0, h * 2.6 - t, seed));
+                float n2 = SFFlameNoise(float3(i.uv.x * 7.0, h * 5.0 - t * 1.7, seed + 3.0));
+                // 越往上摆得越厉害；水滴形轮廓：底部圆、顶部收尖，顶端被噪声啃出火苗边
+                float x = (i.uv.x - 0.5) * 2.0 + (n - 0.5) * 0.9 * h;
+                float width = 1.05 * sqrt(max(h, 0.0)) * (1.0 - h * 0.85) + 0.04;
+                float body = smoothstep(width, width * 0.55, abs(x));
+                body *= smoothstep(1.0, 0.55 + 0.3 * n2, h) * smoothstep(0.0, 0.08, h);
+                float core = smoothstep(width * 0.55, 0.0, abs(x)) * smoothstep(0.75, 0.1, h);
+                half3 col = lerp(_Mid.rgb, _Tip.rgb, smoothstep(0.35, 1.0, h));
+                col = lerp(col, _Hot.rgb, core);
+                half a = (half)(body * saturate(_Params.y));
+                clip(a - 0.01);
+                // 亮度只给到 HDR ~1.6：再高 Bloom 一吃整片火苗发白，看不出橙红
+                col *= 0.95 + 0.65 * core;
+                col = MixFogColor(col, half3(0, 0, 0), i.fog);
+                return half4(col * a, a * 0.55h);
+            }
+            ENDHLSL
+        }
+    }
+
+    Fallback Off
+}

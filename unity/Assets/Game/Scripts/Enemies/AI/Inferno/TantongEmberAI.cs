@@ -40,7 +40,8 @@ namespace Spiritfire.Game
         bool srcElite, done, registered, vanished;
         readonly List<Renderer> glows = new();
         readonly List<Transform> chunks = new();
-        Renderer tongue;
+        /// <summary>炭堆顶上一小簇火苗（FX4 火舌，同 TS afterInit：复燃前越蹿越高）</summary>
+        FlameTongue tongue;
         Collider capsule;
 
         protected override void Awake()
@@ -105,7 +106,7 @@ namespace Spiritfire.Game
                 glows.Add(InfernoKit.Primitive(PrimitiveType.Sphere, "Glow", g, Vector3.zero, Vector3.one * ChunkR[i] * 2.1f, InfernoKit.Crack * 0.4f, true));
                 chunks.Add(g);
             }
-            tongue = InfernoKit.Primitive(PrimitiveType.Sphere, "Flame", root, new Vector3(0, 0.12f, 0), Vector3.one * 0.01f, InfernoKit.Spark, true);
+            tongue = FlameTongue.Attach(root, new Vector3(0, 0.12f, 0), Vector3.one * 0.01f, Hex.Rgb(0xfff0c0), Hex.Rgb(0xff9a30), Hex.Rgb(0xd8401a));
         }
 
         protected override void Think(float dt)
@@ -156,8 +157,8 @@ namespace Spiritfire.Game
             if (tongue)
             {
                 float s = 0.06f + 0.22f * Mathf.Max(u * u, blow) + 0.04f * pulse;
-                tongue.transform.localScale = new Vector3(s * 0.9f, s * (1 + 0.15f * Mathf.Sin(age * 17)) * 1.6f, s);
-                FxMaterials.Tint(tongue, InfernoKit.Spark * (0.5f + 0.5f * heat));
+                float k = Mathf.Abs(transform.lossyScale.x);
+                tongue.Set(0.5f + 0.5f * heat, new Vector3(s * 0.9f, s * (1 + 0.15f * Mathf.Sin(age * 17)), s) * k);
             }
             float shake = u > 0.6f ? (u - 0.6f) * 0.04f * Mathf.Sin(age * 50) : 0;
             for (int i = 0; i < chunks.Count; i++)
@@ -253,7 +254,7 @@ namespace Spiritfire.Game
             foreach (var g in glows)
                 if (g)
                     g.enabled = false;
-            if (tongue) tongue.enabled = false;
+            if (tongue) tongue.Set(0);
             if (wasDone || EnemyRegistry.Purging) return;
             // 被打散 / 踩散：炭块崩开、火灭成灰
             var c = transform.position + Vector3.up * 0.12f * Size;

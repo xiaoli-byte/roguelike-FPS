@@ -29,14 +29,16 @@ namespace Spiritfire.Game
         public static void SandSpray(Vector3 at, int count, float size) =>
             Fx.Burst(at + Vector3.up * 0.2f, Sand, count, 2.4f, 0.6f, 0.38f * size, -4f);
 
-        /// <summary>上冲的火柱（火团往上浮 + 白热芯 + 闪光）</summary>
+        /// <summary>
+        /// 上冲的火柱（FX4 起是 Three.js spawnFlamePillar 的火舌：一圈火舌从地面猛地蹿起再收回，<see cref="Fx.FlamePillar"/>）
+        /// + 脚下一小团往上浮的火团 + 火星 + 闪光
+        /// </summary>
         public static void FlamePillar(Vector3 ground, float radius, float height)
         {
             float h = Mathf.Max(0.5f, height);
-            Fx.Burst(ground + Vector3.up * 0.3f, FireOrange, 14, 1.2f + radius, 0.55f, 0.45f * Mathf.Max(0.5f, radius), -h * 3.2f);
-            Fx.Burst(ground + Vector3.up * 0.2f, Sunfire, 8, 0.8f, 0.4f, 0.3f * Mathf.Max(0.5f, radius), -h * 4f);
-            Fx.Burst(ground + Vector3.up * h * 0.6f, Ember, 12, 3f, 0.9f, 0.06f, 3f);
-            Fx.Flash(ground + Vector3.up * h * 0.5f, FireOrange, 5f, Mathf.Max(4f, h * 2.5f), 0.25f);
+            Fx.FlamePillar(ground, radius, h);
+            Fx.Burst(ground + Vector3.up * 0.3f, FireOrange, 8, 1.2f + radius, 0.4f, 0.4f * Mathf.Max(0.5f, radius), -h * 3.2f);
+            Fx.Burst(ground + Vector3.up * h * 0.6f, Ember, 10, 3f, 0.9f, 0.06f, 3f);
         }
 
         /// <summary>贴地火环（冲击波的外观）</summary>

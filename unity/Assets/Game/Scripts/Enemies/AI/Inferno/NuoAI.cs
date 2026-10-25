@@ -73,6 +73,8 @@ namespace Spiritfire.Game
         bool swapped, entered, enterPlayed, placed;
         TelegraphHandle spitMark;
         Transform mouthBone, faceGlow;
+        /// <summary>FX4 傩面分区着色（换脸配色、面具眼睛、碎面裂纹）</summary>
+        RegionMask faceMask;
         Vector3 mouthLocal;
         List<EnemyAI> auraNow = new(), auraPrev = new();
         readonly List<EnemyAI> scratch = new();
@@ -163,6 +165,12 @@ namespace Spiritfire.Game
                 mouthBone ??= head;
             }
             if (mouthBone) mouthLocal = mouthBone.InverseTransformPoint(ModelPoint(Mouth));
+            // FX4：面具区域换脸配色 / 眼睛发光 / 碎面裂纹（导入后处理烘的分区遮罩；mask 骨上的面具中心在绑定姿势下记下来）
+            if (Application.isPlaying && !GetComponent<PlaceholderBody>())
+            {
+                faceMask = RegionMask.Face(this, "T_Enemy_Nuo", "mask");
+                if (faceMask && faceMask.Renderers == 0) faceMask = null;
+            }
             var wz = body.WeakZone;
             if (wz)
             {
@@ -328,9 +336,25 @@ namespace Spiritfire.Game
         /// 光环（每 0.25 s）：16 m 内（+ 同伴身体半径）的其他敌人（首领除外）登记 / 续期当前这张脸的加成，离开范围的撤掉；
         /// 金面每帧给范围内的同伴回血（同一只同伴一帧只回一次）；脚下光环贴片跟着同伴走
         /// </summary>
+        /// <summary>把当前这张脸（配色、眼睛、碎过几张）写给傩面分区着色</summary>
+        void UpdateFaceMask()
+        {
+            if (!faceMask) return;
+            var fd = CurrentFace;
+            int cracks = 0;
+            foreach (bool b in broken)
+                if (b)
+                    cracks++;
+            faceMask.SetFace(fd.paint, fd.trim, fd.eye, EyeGlow, cracks);
+        }
+
+        /// <summary>面具眼睛的亮度（同 TS：0.7 + 0.5 × 鼓点脉动 + 0.8 × 发光通道 1；死了剩 0.15）</summary>
+        float EyeGlow => Dead ? 0.15f : 0.7f + 0.5f * Mathf.Max(0, Mathf.Sin(age * Mathf.PI * 2 / Beat)) + 0.8f * body.GlowLevel(1);
+
         void LateUpdate()
         {
             if (!placed) return;
+            UpdateFaceMask();
             if (body.WeakZone) body.WeakZone.SetWeakPoint(!MaskCovered);
             if (faceGlow)
             {
@@ -449,7 +473,8 @@ namespace Spiritfire.Game
             ApplyFace();
             if (!Application.isPlaying) return;
             var p = body.WeakPoint ? body.WeakPoint.position : transform.position + Vector3.up * 1.4f * Size;
-            Fx.Burst(p, EmberColor, 22, 2.6f, 0.45f, 0.09f, -2);
+            // FX4：几片火舌从面具前蹿起再收回，盖住换脸那一下（同 TS spawnTongues）
+            Fx.FlamePillar(p + Vector3.down * 0.25f * Size, 0.12f * Size, 0.6f * Size);
             Fx.Burst(p, CurrentFace.Readable, 12, 1.8f, 0.5f, 0.07f, -1);
             GameAudio.PlayAt("skill_fire", p, 0.7f, 1.2f);
         }
@@ -457,6 +482,7 @@ namespace Spiritfire.Game
         /// <summary>把当前的脸画到面前的火光上（面具本身的分区换色归 FX4，订阅 <see cref="FaceChanged"/>）</summary>
         void ApplyFace()
         {
+            UpdateFaceMask();
             if (faceGlow)
             {
                 var c = CurrentFace.eye;
@@ -532,8 +558,9 @@ namespace Spiritfire.Game
             var end = m + dir * reach;
             if (Application.isPlaying)
             {
-                Fx.Beam(m, end, EmberColor, 0.32f * Size, 0.1f);
-                for (int i = 0; i < 2; i++) Fx.Burst(m + dir * (reach * Random.value), i == 1 ? EmberColor : MoltenColor, 1, 1.2f, 0.3f, 0.12f, -2);
+                // FX4：火柱 = 一道细的热光芯 + 一串往外冲、往上卷的火舌团
+                Fx.Beam(m, end, EmberColor, 0.16f * Size, 0.1f);
+                for (int i = 0; i < 3; i++) Fx.FlameJet(m, dir, reach * Random.Range(2.8f, 3.5f), Random.Range(0.3f, 0.5f) * Size, i == 1 ? EmberColor : MoltenColor, 0.4f);
             }
             emberTimer -= dt;
             if (emberTimer <= 0)
@@ -541,7 +568,7 @@ namespace Spiritfire.Game
                 emberTimer += EmberEvery;
                 var e = m + dir * (reach * 0.85f);
                 float gy = GroundY(e + Vector3.up * 0.5f);
-                if (m.y - gy < 3 && Application.isPlaying) FloorFire.Spawn(new Vector3(e.x, gy + 0.02f, e.z), EmberRadius, EmberLife, Damage * EmberMult, 0.5f, this);
+                if (m.y - gy < 3 && Application.isPlaying) FloorFire.Spawn(new Vector3(e.x, gy + 0.02f, e.z), EmberRadius, EmberLife, Damage * EmberMult, 0.5f, this, look: FireBed.Ember);
             }
             spitTick -= dt;
             if (spitTick > 0) return;

@@ -47,10 +47,22 @@ CBUFFER_START(UnityPerMaterial)
     half4  _GlowMaskColor1;
     half4  _GlowMaskColor2;
     half4  _GlowMaskShimmer;   // xyz = 三层的闪烁幅度 0..1（冰里流动的光），w = 噪声频率（每米）
+    // _FLAMEKEY 火苗着色（FX4，Three.js applyFlameFur：按贴图颜色认出浅金 / 亮橙的火苗毛，叠一层往上流的闪烁自发光；FlameKey 用 MPB 写，x = 0 时整段跳过、输出不变）
+    half4  _FlameKey;          // x = 亮度（0 = 关），y = 流速倍率，z = 噪声频率（每米），w = 色键放宽（0 = Three.js 原值，> 0 认得更多偏暗的橙）
+    half4  _FlameKeyColor;     // HDR：火苗光的颜色
+    // 分区遮罩（FX4：火鼍岩甲、傩面；RegionMask 用 MPB 写，x = 0 时整段跳过、输出不变）
+    half4  _RegionParams;      // x = 模式（0 关 / 1 岩甲 / 2 傩面），傩面：y = 换色 0..1，z = 碎面数，w = 面具眼睛亮度
+    half4  _RegionA;           // 岩甲：左列四排的热度；傩面：红漆换成的颜色（线性）
+    half4  _RegionB;           // 岩甲：右列四排的热度；傩面：浅色描金换成的颜色
+    half4  _RegionC;           // 傩面：眼睛的发光色
+    float4 _RegionCenter;      // 世界坐标：岩甲 = 身体中心（分左右），傩面 = 面具中心（裂纹从这里放射）；w = 世界米 → 模型单位的缩放
+    float4 _RegionAxisX;       // 世界方向：身体右方 / 面具横向
+    float4 _RegionAxisY;       // 世界方向：面具竖向
 CBUFFER_END
 
 TEXTURE2D(_ORMMap);     SAMPLER(sampler_ORMMap);
 TEXTURE2D(_GlowMask);   SAMPLER(sampler_GlowMask);
+TEXTURE2D(_RegionMask); SAMPLER(sampler_RegionMask);
 
 // 溶解场：返回到溶解前沿的「距离」（< 0 的像素被溶掉，调用方 clip）。UV 空间的两层值噪声（蒙皮网格上图案跟着身体走、不游动），
 // 再按权重混进世界高度渐变；溶解量 0 时恒为正（没有像素被裁），1 时恒为负。所有 Pass 共用，阴影 / 深度跟着一起溶。

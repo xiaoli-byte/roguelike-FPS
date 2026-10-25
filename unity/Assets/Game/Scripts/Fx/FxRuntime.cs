@@ -785,6 +785,8 @@ namespace Spiritfire.Game
             MuzzleFlashes.ClearAll();
             FrostShell.ClearAll();
             IceSpikes.ClearAll();
+            FlameTongues.ClearAll();
+            MoltenStream.ClearAll();
             Surfaces.ClearCache();
         }
 

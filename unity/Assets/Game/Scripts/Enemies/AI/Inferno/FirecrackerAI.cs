@@ -673,16 +673,14 @@ namespace Spiritfire.Game
 
         // ───────────── 火药（炮仗傀儡与神火飞鸦共用的外观 / 齐射） ─────────────
 
-        /// <summary>火药爆炸（外观，同 TS gunpowderBlast）：火球、红纸屑、金色火星、黑烟、贴地冲击环、爆炸声。伤害由调用方结算</summary>
+        /// <summary>
+        /// 火药爆炸（外观，同 TS gunpowderBlast；FX4 起走 <see cref="Fx.Gunpowder"/>：火团、金色火星、红纸屑、黑火药烟、金环、焦痕，离地近时一圈火舌火柱）+ 爆炸声。
+        /// 伤害由调用方结算。size 是旧接口的纸屑 / 火星量，折进规模
+        /// </summary>
         public static void GunpowderBlast(Vector3 center, float radius, float size = 1)
         {
             if (!Application.isPlaying) return;
-            Fx.Explosion(center, radius, FireColor);
-            float gy = Fx.GroundY(center + Vector3.up * 0.5f);
-            Fx.Burst(center, Paper, Mathf.RoundToInt(14 * size) + 4, 5.5f * size, 1.1f, 0.07f * size, 3);
-            Fx.Burst(center, Gold, Mathf.RoundToInt(18 * size) + 4, 8 * size, 0.6f, 0.06f * size, 10);
-            Fx.Burst(center, Soot, 6, 2 * size, 1.2f, 0.45f * size, -1.2f);
-            if (center.y - gy < 2.5f) Fx.Ring(new Vector3(center.x, gy + 0.05f, center.z), radius * 1.1f, Hot, 0.35f);
+            Fx.Gunpowder(center, Mathf.Max(0.6f, radius) * Mathf.Lerp(0.85f, 1.1f, Mathf.InverseLerp(0.5f, 1.2f, size)), FireColor);
             GameAudio.PlayAt("explosion", center, Mathf.Min(1, 0.55f + 0.1f * radius), 1.15f);
         }
 
@@ -767,7 +765,7 @@ namespace Spiritfire.Game
                 });
             }
             GunpowderBlast(c, s.radius * 0.9f, 0.7f * k);
-            if (s.fire && s.fireTime > 0 && Application.isPlaying) FloorFire.Spawn(ground, s.fireRadius, s.fireTime, s.fireDamage, 0.5f, src);
+            if (s.fire && s.fireTime > 0 && Application.isPlaying) FloorFire.Spawn(ground, s.fireRadius, s.fireTime, s.fireDamage, 0.5f, src, look: FireBed.PaperAsh);
         }
     }
 

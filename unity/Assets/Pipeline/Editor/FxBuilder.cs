@@ -64,6 +64,7 @@ namespace Spiritfire.Art.Editor
             BuildPresetPrefabs(materials, log, ref errors);
             var telegraph = BuildTelegraphMaterial(log, ref errors);
             EnsureDecalFeatures(log, ref errors);
+            RegionMaskPostprocessor.BakeAll(log);
             ConfigureMaskTextures(log);
             AssetDatabase.SaveAssets();
             BuildVariants(telegraph ? materials.Values.Append(telegraph) : materials.Values, log);
@@ -146,13 +147,16 @@ namespace Spiritfire.Art.Editor
                     string path = AssetDatabase.GUIDToAssetPath(guid);
                     if (AssetImporter.GetAtPath(path) is not TextureImporter ti) continue;
                     n++;
+                    // 分区遮罩四个通道都用（火鼍四排岩甲在 RGBA）；发光遮罩只有 RGB
+                    var alpha = dir.EndsWith("RegionMasks") ? TextureImporterAlphaSource.FromInput : TextureImporterAlphaSource.None;
                     bool dirty = ti.sRGBTexture || !ti.mipmapEnabled || ti.textureCompression != TextureImporterCompression.CompressedHQ
-                                 || ti.alphaSource != TextureImporterAlphaSource.None || ti.maxTextureSize != 1024 || ti.isReadable;
+                                 || ti.alphaSource != alpha || ti.maxTextureSize != 1024 || ti.isReadable;
                     if (!dirty) continue;
                     ti.textureType = TextureImporterType.Default;
                     ti.sRGBTexture = false;
                     ti.mipmapEnabled = true;
-                    ti.alphaSource = TextureImporterAlphaSource.None;
+                    ti.alphaSource = alpha;
+                    ti.alphaIsTransparency = false;
                     ti.textureCompression = TextureImporterCompression.CompressedHQ;
                     ti.maxTextureSize = 1024;
                     ti.wrapMode = TextureWrapMode.Repeat;

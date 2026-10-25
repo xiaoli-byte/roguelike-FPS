@@ -39,6 +39,12 @@ namespace Spiritfire.Game
         DecalFrost,
         /// <summary>冰（FX3 霜甲壳、冰刺：半透明多面冰 + 棱边高光 + 菲涅尔，Assets/Art/Shaders/SF_FxIce.shader）</summary>
         Ice,
+        /// <summary>火舌（FX4：朝镜头的噪声火苗面片，半加法 HDR，Assets/Art/Shaders/SF_FxFlame.shader）</summary>
+        Flame,
+        /// <summary>贴花：地火（FX4 余烬 / 纸灰 / 熔铜 / 熔岩溅 / 日火裂痕，SF_FxDecal 模式 5）</summary>
+        DecalFire,
+        /// <summary>铁链（FX4 马面勾魂索：程序化链环，受光的冷铁 + 按顶点色烧红，Assets/Art/Shaders/SF_FxChain.shader）</summary>
+        Chain,
     }
 
     /// <summary>
@@ -55,6 +61,8 @@ namespace Spiritfire.Game
         public const string ShaderParticles = "Universal Render Pipeline/Particles/Unlit";
         public const string ShaderDecal = "Spiritfire/FxDecal";
         public const string ShaderIce = "Spiritfire/FxIce";
+        public const string ShaderFlame = "Spiritfire/FxFlame";
+        public const string ShaderChain = "Spiritfire/FxChain";
 
         static readonly int BaseMapId = Shader.PropertyToID("_BaseMap");
         static readonly int MainTexId = Shader.PropertyToID("_MainTex");
@@ -94,12 +102,15 @@ namespace Spiritfire.Game
             FxMaterialKind.Unlit => ShaderUnlit,
             _ when IsDecal(kind) => ShaderDecal,
             FxMaterialKind.Ice => ShaderIce,
+            FxMaterialKind.Flame => ShaderFlame,
+            FxMaterialKind.Chain => ShaderChain,
             _ => ShaderParticles,
         };
 
         /// <summary>SF_FxDecal 的几种材质（贴花投影，不走粒子 / 网格）</summary>
         public static bool IsDecal(FxMaterialKind kind) =>
-            kind is FxMaterialKind.DecalSprite or FxMaterialKind.DecalPool or FxMaterialKind.DecalRune or FxMaterialKind.DecalVortex or FxMaterialKind.DecalFrost;
+            kind is FxMaterialKind.DecalSprite or FxMaterialKind.DecalPool or FxMaterialKind.DecalRune or FxMaterialKind.DecalVortex or FxMaterialKind.DecalFrost
+                or FxMaterialKind.DecalFire;
 
         /// <summary>SF_FxDecal 的 _Mode</summary>
         public static int DecalMode(FxMaterialKind kind) => kind switch
@@ -108,6 +119,7 @@ namespace Spiritfire.Game
             FxMaterialKind.DecalRune => 2,
             FxMaterialKind.DecalVortex => 3,
             FxMaterialKind.DecalFrost => 4,
+            FxMaterialKind.DecalFire => 5,
             _ => 0,
         };
 
@@ -183,10 +195,23 @@ namespace Spiritfire.Game
                 case FxMaterialKind.DecalRune:
                 case FxMaterialKind.DecalVortex:
                 case FxMaterialKind.DecalFrost:
+                case FxMaterialKind.DecalFire:
                     SetupDecal(m, kind, tex);
                     return;
                 case FxMaterialKind.Ice:
                     SetupIce(m);
+                    return;
+                case FxMaterialKind.Flame:
+                    m.SetOverrideTag("RenderType", "Transparent");
+                    m.renderQueue = (int)RenderQueue.Transparent + 5;
+                    m.enableInstancing = false;
+                    return;
+                case FxMaterialKind.Chain:
+                    // 线性值直接写（SetColor 会把 HDR 色再做一遍伽马换算）
+                    m.SetVector("_HeatLow", new Vector4(0.6f, 0.07f, 0.01f, 1f));
+                    m.SetVector("_HeatHigh", new Vector4(1.9f, 0.78f, 0.22f, 1f));
+                    m.renderQueue = (int)RenderQueue.Geometry;
+                    m.enableInstancing = false;
                     return;
             }
         }
@@ -206,7 +231,7 @@ namespace Spiritfire.Game
             m.SetFloat(DecalModeId, mode);
             if (tex && m.HasProperty(DecalMapId)) m.SetTexture(DecalMapId, tex);
             // 弹孔最下；霜纹在弹孔之上、熔池 / 法阵之下
-            int order = mode switch { 0 => -2, 1 => 1, 4 => 0, _ => 2 };
+            int order = mode switch { 0 => -2, 1 => 1, 4 => 0, 5 => 0, _ => 2 };
             m.SetFloat(DrawOrderId, order);
             m.renderQueue = 2010 + order;
             m.enableInstancing = true;

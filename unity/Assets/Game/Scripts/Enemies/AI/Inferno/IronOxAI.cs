@@ -113,7 +113,8 @@ namespace Spiritfire.Game
                 // 铁甲：迸火星、铁响
                 blockFxAt = Time.time;
                 var p = float.IsFinite(info.point.x) && info.point != Vector3.zero ? info.point : Local(Random.value - 0.5f, 0.8f + Random.value * 1.2f, 1f);
-                Fx.Burst(p, InfernoKit.Ember, 5, 5, 0.25f, 0.05f * Size, 9);
+                Fx.Play("Cinder", p, Vector3.up, InfernoKit.Ember, 0.4f);
+                Fx.Burst(p, InfernoKit.Ember, 4, 5, 0.25f, 0.05f * Size, 9);
                 GameAudio.PlayAt("shield_break", p, 0.3f, 1.7f);
             }
             return k;
@@ -356,8 +357,9 @@ namespace Spiritfire.Game
             Act("choke", 0.06f);
             SetState("choke");
             var p = core.position;
-            Fx.Burst(p, InfernoKit.LavaColor, 18, 5, 0.5f, 0.1f * Size, 6);
-            Fx.Burst(p, InfernoKit.Smoke, 10, 1.6f, 1f, 0.4f * Size, -1.5f);
+            // FX4：炉膛呛火——熔铁炸出来 + 黑烟 + 爆
+            Fx.MoltenSplash(p, 1.4f * Size, InfernoKit.LavaColor);
+            Fx.Play("Soot", p, Vector3.up, InfernoKit.Smoke, 1.2f * Size);
             Fx.Explosion(p, 1.2f * Size, InfernoKit.LavaColor);
             GameAudio.PlayAt("boss_slam", p, 1f, 0.7f);
             GameAudio.PlayAt("boss_roar", p, 0.7f, 1.6f);
@@ -402,13 +404,16 @@ namespace Spiritfire.Game
                 foreach (float lat in lats)
                 {
                     var land = SlagPoint(transform.position, spitYaw, dd, lat);
-                    for (int i = 0; i < 4; i++) Fx.Burst(Vector3.Lerp(from, land + Vector3.up * 0.3f, (i + 1) / 5f) + Vector3.up * Mathf.Sin((i + 1) / 5f * Mathf.PI) * (1.2f + dd * 0.12f), InfernoKit.LavaColor, 3, 1.5f, 0.35f, 0.22f * Size, 3);
+                    float gy = InfernoKit.GroundAt(land, transform.position.y + 1f, 6f);
+                    if (float.IsFinite(gy)) land.y = gy;
+                    // FX4：一团熔铁沿抛物线飞过去（同 TS moltenArc），落地时刻 = 立墙时刻
+                    MoltenStream.Arc(from, land + Vector3.up * 0.3f, SlagAt, 1.1f * Size, 1.2f + dd * 0.12f);
                 }
             // 扇面伤害：12 m、60°，掩体挡得住
             if (vitals && !vitals.Dead && VerticalReach(3.5f) && InFan(transform.position, spitYaw, PlayerPos, 0.95f * Size) && Combat.LineClear(from, TargetChest))
             {
                 Struck = HitPlayer(Damage * SpitMult, from, Element.Fire);
-                if (Struck) Fx.Burst(TargetChest, InfernoKit.LavaColor, 12, 4, 0.4f, 0.08f, 6);
+                if (Struck) Fx.MoltenSplash(TargetChest, 0.7f, InfernoKit.LavaColor);
             }
         }
 
@@ -462,7 +467,7 @@ namespace Spiritfire.Game
             float gy = InfernoKit.GroundAt(p, transform.position.y + 1f, 6f);
             if (float.IsFinite(gy)) p.y = gy + 0.15f;
             // 掀起的地面铁板：一把铁片和火星往上崩
-            Fx.Burst(p, InfernoKit.Iron, 14, 7, 0.8f, 0.16f * Size, 16);
+            Fx.Basalt(p, 1.2f * Size, InfernoKit.Iron);
             Fx.Burst(p, InfernoKit.Ember, 10, 6, 0.5f, 0.07f * Size, 8);
             Fx.Ring(p, 2.2f, InfernoKit.LavaColor, 0.3f);
             GameAudio.PlayAt("boss_slam", p, 0.9f, 0.8f);
@@ -500,8 +505,8 @@ namespace Spiritfire.Game
             if (coreGlow) coreGlow.enabled = false;
             if (EnemyRegistry.Purging || info.Has(DamageTag.Purge)) return;
             var p = core ? core.position : transform.position + Vector3.up;
-            Fx.Burst(p, InfernoKit.LavaColor, 24, 6, 0.6f, 0.1f * Size, 6);
-            Fx.Burst(p, InfernoKit.Smoke, 12, 1.6f, 1.2f, 0.45f * Size, -1.5f);
+            Fx.MoltenSplash(p, 1.8f * Size, InfernoKit.LavaColor);
+            Fx.Play("Soot", p, Vector3.up, InfernoKit.Smoke, 1.5f * Size);
             Fx.Explosion(p, 1.6f * Size, InfernoKit.LavaColor);
             GameAudio.PlayAt("boss_slam", p, 1f, 0.55f);
             Quake(0.6f, 26, 0.45f);
@@ -598,7 +603,7 @@ namespace Spiritfire.Game
                 return null;
             }
             live.Add(w);
-            Fx.Burst(center + Vector3.up * 0.2f, InfernoKit.Ember, 16, 4, 0.6f, 0.12f, 6);
+            Fx.MoltenSplash(center + Vector3.up * 0.2f, 1.2f, InfernoKit.LavaColor);
             Fx.Burst(center + Vector3.up * 0.2f, InfernoKit.Smoke, 8, 1.5f, 0.9f, 0.35f, -1.5f);
             return w;
         }
@@ -627,7 +632,7 @@ namespace Spiritfire.Game
             done = true;
             foreach (var b in boxes)
                 if (b)
-                    Fx.Burst(b.transform.position, InfernoKit.Iron, 8, 4, 0.7f, 0.14f, 12);
+                    Fx.Basalt(b.transform.position, 0.8f, InfernoKit.Iron);
             GameAudio.PlayAt("shield_break", transform.position, 0.6f, 0.6f);
             live.Remove(this);
             Destroy(gameObject);
