@@ -446,11 +446,12 @@ namespace Spiritfire.Art.Editor.Levels
             float plat = Mathf.Max(Mathf.Max(Mathf.Max(pav, stage), Mathf.Max(boat, yao)), Mathf.Max(Mathf.Max(dais1, dais2), jetty));
             float tops = Mathf.Max(Mathf.Max(Smooth(0.85f, 0.99f, pav), Smooth(0.85f, 0.99f, Mathf.Max(stage, boat))),
                 Mathf.Max(Smooth(0.85f, 0.99f, Mathf.Max(dais1, dais2)), Smooth(0.85f, 0.99f, jetty)));
-            // 冻土（带圆点）只留一点份额读路：岸带 0.45、台面 0.5、坡道 0.45、瑶台 0.35，多出来的给雪（这些面上雪的倾向拉满）；出生平台是开场第一眼，雪 0.8
+            // 冻土碎石读路：岸带 0.65、台面 0.65、坡道 0.6、瑶台 0.5，多出来的给雪（这些面上雪的倾向拉满）；出生平台是开场第一眼，雪 0.8。
+            // 冰原地表改成雪按高度盖住碎石之后（TerrainTextureGen.FrozenSoil），冻土要过六成才露出成片的石块、雪填在石缝里，五成以下基本是雪面只露石尖
             float yaoTop = Smooth(0.85f, 0.99f, yao), shoreBand = shoreMask * (1 - plat);
             s.fluid = lake * (1 - Mathf.Max(plat, isleBody)) * (1 - hole) * (1 - rampAny);
-            s.shore = Mathf.Max(shoreBand * 0.45f, hole);
-            s.packed = Mathf.Max(Mathf.Max(tops * 0.5f, rampAny * 0.45f), yaoTop * 0.35f);
+            s.shore = Mathf.Max(shoreBand * 0.65f, hole);
+            s.packed = Mathf.Max(Mathf.Max(tops * 0.65f, rampAny * 0.6f), yaoTop * 0.5f);
             float snowFill = Mathf.Max(Mathf.Max(shoreBand, tops), Mathf.Max(rampAny, yaoTop));
             s.sand = Mathf.Max(Mathf.Max(isleTop * 0.85f, pad * 0.8f), Mathf.Max(snowFill, lip));
             // 雪岭不再强制岩带：交给章节的坡度规则（陡坎是岩、缓处积雪）；窄雪台的台沿一带直接给雪（见 Rim）
