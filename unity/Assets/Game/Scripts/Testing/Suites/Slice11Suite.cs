@@ -845,20 +845,76 @@ namespace Spiritfire.Game.Testing
             yield return new WaitForSeconds(0.2f);
         }
 
+        /// <summary>
+        /// 火浣鼠的出生点：玩家周围 10 m、人形导航网格上、和玩家脚下高差 0.5 m 内、0.4 m 高的直线和眼线都没被挡。
+        /// EN1 起蜷身要满足 Three.js 的出手条件（高差 1.2 m 内、看得见、0.4 m 高的路上没挡），1-1 出生点附近有陶罐、矮墙、沙丘起伏，
+        /// 正前方不满足时火鼠会一路冲到贴脸才蜷身、一滚就炸——那是正确的行为，但这一项要看的是火球。先试正前方，再左右各转 30° 往后找
+        /// </summary>
+        static Vector3 FireRatSpot(PlayerMotor motor, float dist)
+        {
+            var feet = motor.transform.position;
+            var fwd = motor.transform.forward;
+            fwd.y = 0;
+            fwd.Normalize();
+            var filter = LavaField.WalkerFilter();
+            foreach (float yaw in new[] { 0f, 30f, -30f, 60f, -60f, 90f, -90f, 120f, -120f, 150f, -150f, 180f })
+            {
+                var p = feet + Quaternion.Euler(0, yaw, 0) * fwd * dist;
+                if (!UnityEngine.AI.NavMesh.SamplePosition(p, out var hit, 2f, filter)) continue;
+                var q = hit.position;
+                if (Mathf.Abs(q.y - feet.y) > 0.5f) continue;
+                if (Combat.Blocked(q + Vector3.up * 0.4f, feet + Vector3.up * 0.4f, null)) continue;
+                if (Combat.Blocked(q + Vector3.up * 0.8f, feet + Vector3.up * 1.62f, null)) continue;
+                return q;
+            }
+            return feet + fwd * dist;
+        }
+
         /// <summary>火浣鼠：蜷身过半换成火球（挂点放大、身体隐藏），滚动时火球在转</summary>
         IEnumerator FireRatBallTest(PlayerMotor motor)
         {
-            var e = SpawnAhead(motor, "fire_rat", 10f, 50) as FireRatAI;
-            if (!e) yield break;
-            float t0 = Time.time;
-            while (Time.time - t0 < 12f && e && !e.Dead && e.State != "roll") yield return null;
-            yield return new WaitForSeconds(0.15f);
-            if (!e || e.Dead || e.State != "roll")
+            FireRatAI e = null;
+            // 两次机会：开滚就在自爆距离里（同 TS：滚动中 1.6 m 内立刻炸）时看不到火球，换一只重测；别的死法 / 没开滚都直接记不合格
+            for (int attempt = 0; attempt < 2; attempt++)
             {
-                Fail($"火浣鼠 12 s 内没滚起来（{(e ? e.State : "没了")}）");
+                var at = FireRatSpot(motor, 10f);
+                var face = motor.transform.position - at;
+                face.y = 0;
+                e = EnemyRoster.Spawn("fire_rat", at, Quaternion.LookRotation(face.sqrMagnitude > 0.01f ? face : Vector3.forward), 1, false) as FireRatAI;
+                if (!e)
+                {
+                    Fail("生成 fire_rat 失败");
+                    yield break;
+                }
+                e.Health.maxHealth *= 50;
+                e.Health.ResetVitals();
+                float t0 = Time.time;
+                Vector3 Rel() => e.transform.position - motor.transform.position;
+                float spawnDy = Rel().y, rollD = -1, rollDy = 0, rollAt = 0;
+                while (Time.time - t0 < 12f && e && !e.Dead && e.State != "roll") yield return null;
+                if (e && e.State == "roll")
+                {
+                    var r = Rel();
+                    (rollD, rollDy, rollAt) = (new Vector2(r.x, r.z).magnitude, r.y, Time.time - t0);
+                }
+                yield return new WaitForSeconds(0.15f);
+                if (e && !e.Dead && e.State == "roll") break;
+                string why = !e ? "没了" : e.Dead ? (e.Detonations > 0 ? $"{e.State}，已自爆" : $"{e.State}，被打死") : e.State;
+                string info = $"{why}；出生点 {at}、离玩家 {new Vector2(face.x, face.z).magnitude:F1} m、高差 {spawnDy:F2} m，" +
+                              (rollD >= 0 ? $"{rollAt:F1} s 开滚、开滚时离玩家 {rollD:F1} m / 高差 {rollDy:F2} m" : "没开滚");
+                bool blewAtStart = e && e.Dead && e.Detonations > 0 && rollD >= 0 && rollD <= 2.5f;
                 if (e) Destroy(e.gameObject);
+                e = null;
+                if (blewAtStart && attempt == 0)
+                {
+                    Line($"  火浣鼠开滚就在自爆距离里，看不到火球，换一只重测（{info}）");
+                    yield return new WaitForSeconds(0.5f);
+                    continue;
+                }
+                Fail($"火浣鼠 12 s 内没滚起来（{info}）");
                 yield break;
             }
+            if (!e) yield break;
             Transform socket = null;
             foreach (var t in e.GetComponentsInChildren<Transform>(true)) if (t.name == "socket_fire_ball") { socket = t; break; }
             var ball = socket && socket.childCount > 0 ? socket.GetChild(0) : null;
@@ -866,7 +922,10 @@ namespace Spiritfire.Game.Testing
             int bodyOn = 0;
             foreach (var r in e.GetComponentsInChildren<Renderer>())
                 if (r.enabled && socket && !r.transform.IsChildOf(socket)) bodyOn++;
-            var fwd = motor.transform.forward;
+            // 侧拍：机位在「玩家 → 火鼠」连线的侧面（出生点不一定在正前方）
+            var fwd = e.transform.position - motor.transform.position;
+            fwd.y = 0;
+            fwd = fwd.sqrMagnitude > 0.01f ? fwd.normalized : motor.transform.forward;
             PoseShot(e, Vector3.Cross(Vector3.up, fwd), "firerat_ball");
             var ballR = ball ? ball.GetComponentInChildren<Renderer>() : null;
             float gap = ballR ? ballR.bounds.min.y - e.transform.position.y : 0;
