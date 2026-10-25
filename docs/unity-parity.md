@@ -132,7 +132,7 @@
 | 输入 | 🟡 | 6 个以上组件直接读 Keyboard | `GameInput`（D19） | M | W0-6 |
 | 失焦暂停 | ❌ | — | `OnApplicationFocus` | S | W0-5 |
 | 调试作弊 | ❌ | 只有自动冒烟测试 | `DevCommands` 注册表 | M | W0-5 |
-| 中途续玩（超越） | ❌ | Three.js 也没有 | 每关开头写 RunState 快照 | M | I5 |
+| 中途续玩（超越） | ✅ | —（I5：每关开头把进关快照原子写进 `run.json`，主菜单「继续征程」、暂停「返回主菜单」= 暂离不结算，一局结算即删档，坏档丢弃并提示；见 7.6） | `RunSuspend` + `RunStateJson` | M | I5 |
 
 ### 3.2 战斗、元素、反应
 
@@ -584,7 +584,7 @@
 | 布娃娃死亡、方向性受击弹簧、出生前预警 | ✅ | 保留 |
 | 后坐完全回正、陡坡下滑 | ✅ | 保留 |
 | 顿帧、冰面惯性、流沙、沙暴、手柄 | ❌ | F3 / L8 / L3 / W0-6 |
-| 中途续玩、图鉴 | ❌ | I5 |
+| 中途续玩、图鉴 | ✅ | I5：`RunSuspend` 续玩档；`Codex`（存档 codex 段）+ `CodexTracker` + `CodexScreen`（模型缩略图 / 剪影），见 7.6 |
 | 环境音、分层枪声、首领主题曲 | ❌ | I6 |
 | 自动翻越 | 待定 | I7 评估 |
 
@@ -1098,7 +1098,24 @@ W0-5 把约 30 处 `Hud.Instance.*` 调用机械替换成 `GameUI.*`，先转发
 落地（I1 / I2，2026-10-25）：
 - 命令是 `bridge.sh playtest full-run`（英雄 燎）、`full-run-falcon`、`full-run-bear`；一整局约 300 s（编辑器刚启动、资源还冷时约 450 s），在 600 s 上限内。分段套件 `full-run-ch1/ch2/ch3` 用接力档（`Library/SpiritfireBridge/fullrun_relay.json`）串起来，单独查某一章时用。
 - 测试加速写在 `RunBot` 和套件注释里：小怪伤害 × 6、首领 × 1（不加速，阶段全走）、时间 × 4、登场演出关、致命一击拦下记「倒下」、备弹补满、场地 60 / 首领 150 游戏秒补刀、场地之间按导航路径传送（只落在和出生点连通的地方）。
-- Placeholder、帧时 P95 只记进报告不判；「存档已写入」等 I5（每关写 run.json）落地后再加。
+- Placeholder、帧时 P95 只记进报告不判；「存档已写入」I5 落地后已加：每关查 `run.dev.json` 是这一局、这一关的进关快照。
 - 一局的另外两种结束 + 试玩开关由 `playtest run-ends` 验：阵亡 / 放弃 → 结算 → 主菜单，demoEnd = 1-4 时打完旱魃 → 胜利结算 → 主菜单。
 
 这一项通过，就等于对齐完成。之后按第 2 节 D27 / D28 进入超越阶段。
+
+### 7.6 I5 中途续玩与图鉴（超越，2026-10-25 落地）
+
+续玩档（`G/Core/RunSuspend.cs`）：
+- 文件：`persistentDataPath/save/run.json`（调试档 `run.dev.json`），和 `profile.json` 同目录。信封 `{ version: 1, game, kind: "run", build, savedAt, stage, label, hero, run: {…} }`，`run` 是 `RunState` 的全部公有字段（`RunStateJson`，接力档 RunRelay 用同一套）：英雄、种子、章 / 关序 / 编号 / 难度、用时、伤害、灵石、魂晶、击杀、清关数、标记、秘卷（id → 层数，按获得顺序）、两把枪（id、品质、强化、元素、弹匣、备弹、手上那把、词条含传说特性）、灵宠（id、灵契等级、经验、灵技冷却）、生命 / 护盾。
+- 写：`GameEvents.StageLoaded` 时写 `SceneFlow.EntrySnapshot`（= 重来本关回到的那份）；先写 `.tmp` 刷盘再 `File.Replace` 原子替换，不留 `.bak`。已结算的局（阵亡后练习）不写；直接打开关卡的调试局只在调试档开着时写。
+- 随机流不另存：`RunState.Stream` 只由「种子 + 关卡编号 + 流名」决定，进关时这一关的流都在起点，读回来同样从起点开始。秘卷的跨叠层计数（ScrollInventory.memory）和重来本关一样回到零。
+- 删：`GameEvents.RunEnded`（阵亡 / 放弃 / 胜利 / 开新局时放弃旧局）删掉那个档的续玩档。
+- 读：主菜单 `MenuFlow.Suspended` 逐项校验（JSON、版本、英雄 / 关卡存在且在试玩路线里、没结算过、数值 / 品质 / 元素合法）；坏档挪成 `.corrupt`、主菜单提示一次「上次的征程存档已损坏」，不崩溃；版本更新的档原样留着不读。
+- 界面：主菜单「继续征程」（写着关卡 · 英雄 · 用时 · 灵石）；暂停「返回主菜单」在有续玩档时是暂离（`MenuFlow.Suspend`，一按就走、不结算），没有续玩档时照旧结算并二次确认；有未完成的征程时「出征」先弹确认框（`ConfirmScreen`：「开始新征程会放弃当前的征程（第 x-y 关），确定吗？」），确认后旧局按败北结算。
+
+图鉴（`G/Progression/Codex.cs`、`CodexTracker.cs`、`G/UI/Screens/CodexScreen.cs`、`CodexThumbs.cs`）：
+- 存档 `codex` 段（元进度，每个档一份）：`{ weapon: [...], scroll: [...], enemy: [...], pet: [...], fresh: ["enemy:apsara", …] }`；认不出的 id 原样保留不计数。
+- 收录：敌人 = 首次打中 / 被打中 / 打死 / 首领登场；秘卷 = 获得事件；武器、灵宠、读档恢复的秘卷 = 每 0.5 s 看一眼手上的。附属单位（蜃景、炭童余烬）不单列，复燃的炭童算炭童，测试首领不进。
+- 界面：主菜单「图鉴」；四页签 + 4 × 3 翻页 + 详情（武器复用 WeaponDescriber 的基础数值与特性，秘卷 1 层 / 叠满描述，敌人打法要点 + 基础数值，灵宠攻击 / 被动 / 灵技 / 觉醒）；缩略图是运行时摄影棚拍的模型图（黑白底差分抠像），未收录染黑成剪影、名字「？？？」，秘卷用单字签；新收录带朱印「新」。
+
+验证：EditMode `RunSuspendTests`（29 项）；`playtest suspend`（打到 1-2 开头暂离 → 继续征程，进关快照 19 个字段逐项一致、手上东西一致、随机流同一串；图鉴四页签翻页；放弃删档；坏档丢弃）；`playtest run-ends` 第 0 步（暂离 → 确认框取消 / 确认）；`full-run` 每关「存档已写入」。
