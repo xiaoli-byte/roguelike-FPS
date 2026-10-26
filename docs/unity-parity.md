@@ -443,7 +443,7 @@
 | 沙暴 | ❌ | — | 天气 Profile + 感知修正 | S | L3 |
 | 熔岩 | ❌ | — | `LavaField` + NavMesh 区域 + LavaSwimmer 代理 | L | L7 |
 | 冰面 / 流沙 / 水面 | ❌ | — | `SurfaceZone` / `Quicksand` / `WaterVolume` | M | L8 |
-| 场景件：可破坏、开关、移动平台、断桥 | ❌ | — | 通用组件 | M | L6 |
+| 场景件：可破坏、开关、移动平台、断桥 | ✅ | —（L6：`Destructible` 按伤害类型（怎么打的 + 元素）吃伤害、血空就碎，掉落 / 爆炸可选，碎片 FX `PropShatter`，完整时挖导航、碎了撤；`SceneActivator` 射一下或按 F 触发，按钮 / 拨杆 / 一次性，`IActivatable` 事件驱动其他件；`MovingPlatform` 折线路线（往返 / 循环 / 站上去开 / 等信号），载人核心 `PlatformCarrier` 对角色控制器安全（全是扫掠 Move、排在 PlayerMotor 之前，下面有人就停、乘客顶头就停、横推挡路的玩家），3-2 升降台同用；`BreakableSpan` 踩塌 / 打断 / 信号断，塌了的段挖掉导航；TestArena 东北角各放一件，`playtest scene-pieces`） | 通用组件 | M | L6 |
 | 地貌库 / 地表 / 散布 / 远景 | 🟡 | 只有沙漠；远景是四块平板 | 雅丹、峡谷、火山口等地貌；多块地形；远景环 | L | L4 |
 | 天空、光照、雾 | 🟡 | 只有 Showcase 主题 | ChapterTheme 数据化 | S | L4 / F4 |
 | 关卡数据与验收 | 🟡 | 只针对 1-1 | `ILevelCheck` 规则集 + 性能预算 | M | L5 |
@@ -894,7 +894,7 @@ W0-5 把约 30 处 `Hud.Instance.*` 调用机械替换成 `GameUI.*`，先转发
 | L3 软边界 / 天气 / 风 | 有符号距离纹理；推回 (4 + 18×wind) m/s + 白化；兜底碰撞；NavMesh 回避区 + 拴绳；WeatherDirector（Volume、雾、主光、`_WindDir`、WindZone、粒子）；沙暴期间远程锁定 ≤ 25 m | `G/World/{BoundaryZone,WeatherDirector,WeatherProfiles}.cs` `P/Editor/Levels/LevelKit.Boundary.cs` | H1 F1 F4 | 是 | M |
 | L4 地形库 / 地表 / 散布 / 远景 ∥ | 地貌：雅丹、城墙压沙、洞穴碗、V 形谷 + 阶地、平湖、阶梯坡 + 挡土墙、火山口 / 螺旋台、熔岩湖堤道；多块地形 + holes；按章节的 Splat；生成 Frost / Inferno 地形层；远景环 + 远山 + 地平线色等于雾色；散布规则 | `P/Editor/Levels/{HeightField,TerrainTextureGen,LevelKit.Terrain,LevelKit.Backdrop,LevelKit.Scatter}.cs` `A/Levels/Terrain/**` | W0-7 | 是 | L |
 | L5 关卡验收与性能预算 ∥ | ILevelCheck：锚点有路、出生净空、交互净空、防越界、主线不靠二段跳、场地尺寸、掩体数、高差层数、地标视线、占位清单、面数 / 批次预算；俯视地图截图；PerfOverlay | `P/Editor/Levels/{LevelKit.Validate,LevelValidator}.cs` `P/Editor/Levels/LevelChecks/*` `G/Testing/PerfOverlay.cs` | W0-7 | 是 | M |
-| L6 场景件 ∥ | Destructible、Activator、MovingPlatform（对 CharacterController 安全）、BreakableSpan；TestArena 里各放一件 | `G/World/{Destructible,Activator,MovingPlatform,BreakableSpan}.cs` | W0-2 | 否 | M |
+| L6 场景件 ∥ | Destructible、Activator（叫 SceneActivator：和 System.Activator 重名）、MovingPlatform（对 CharacterController 安全，载人核心 PlatformCarrier 与 3-2 升降台共用）、BreakableSpan；TestArena 里各放一件 | `G/World/{Destructible,SceneActivator,MovingPlatform,PlatformCarrier,BreakableSpan}.cs` `G/Fx/Presets/PropShatter.cs` `P/Editor/Levels/{LevelKit.Pieces,TestArenaPieces}.cs` | W0-2 | 否 | M |
 | L7 熔岩 | 熔岩面着色器 + 火星；玩家扣 12% + 两跳、下沉后托回、1 s 无敌；敌人被打进熔岩烧死；NavMesh Lava 区域 + LavaSwimmer 代理；查询 API；涨退熔岩 | `G/World/LavaField.cs` `A/Art/Shaders/SF_Lava.shader` `P/Editor/Levels/LevelKit.Lava.cs` `unity/ProjectSettings/NavMeshAreas.asset` | H1 W0-8 | 是 | L |
 | L8 冰面 / 流沙 / 水面 | 地表牵引 → 玩家和敌人都受影响；冰斑 / 冻带复用；流沙（拉力 + 预警 + 高代价）；风格化水面 + 涉水减速；半透明冰着色器 | `G/World/{SurfaceZone,Quicksand,WaterVolume}.cs` `A/Art/Shaders/{SF_Ice,SF_Water}.shader` | H1 | 是 | M |
 | B0 首领框架 | 按 3.9；TestArena 里用代理首领跑 3 个假招式 + 1 次换形 | `G/Bosses/{BossBrain,BossMove,BossDef,BossArena,Summons}.cs` | E1 E2 | 否 | M |
