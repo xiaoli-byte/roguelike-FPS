@@ -86,7 +86,7 @@ namespace Spiritfire.Game.Testing
                 var layer = (UILayer)i;
                 var doc = ui.Document(layer);
                 bool asset = Resources.Load<PanelSettings>(UILayers.ResourcePath(layer));
-                Line($"层 {UILayers.Name(layer)}：面板 {(doc && doc.rootVisualElement?.panel != null ? "就绪" : "缺失")}，排序 {ui.Panel(layer).sortingOrder}，缩放 ×{ui.Panel(layer).scale:0.00}（{(asset ? "资产" : "运行时兜底")}）");
+                Line($"层 {UILayers.Name(layer)}：面板 {(doc && doc.rootVisualElement?.panel != null ? "就绪" : "缺失")}，排序 {ui.Panel(layer).sortingOrder}，缩放 {ui.Panel(layer).scaleMode}/{ui.Panel(layer).screenMatchMode}（{(asset ? "资产" : "运行时兜底")}）");
                 if (!doc || doc.rootVisualElement?.panel == null) Fail($"{UILayers.Name(layer)} 层没有面板");
             }
             Line($"字体：正文 {Name(UIFonts.Body)}、标题 {Name(UIFonts.Title)}、数字 {Name(UIFonts.Number)}、余量 {UIFonts.BodyExt.Count} 份（{(UIFonts.RuntimeFallback ? "运行时现建" : "UIBuilder 资产")}）");
@@ -202,7 +202,8 @@ namespace Spiritfire.Game.Testing
             if (black < 0.99f || GameUI.FadeValue > 0.01f) Fail("黑幕淡入淡出没有到位");
             ui.Toasts.Clear();
             ui.Banner.Hide(true);
-            Line($"缩放：1920×1080 ×{UILayers.Scale(UILayer.Modal, 1920, 1080):0.00}，Steam Deck 1280×800 ×{UILayers.Scale(UILayer.Modal, 1280, 800):0.00}，2560×1440 ×{UILayers.Scale(UILayer.Modal, 2560, 1440):0.00}");
+            Line($"缩放（按参考 1920×1080、Expand）：1920×1080 ×{UILayers.Scale(UILayer.Modal, 1920, 1080):0.00}，1280×720 ×{UILayers.Scale(UILayer.Modal, 1280, 720):0.00}，Steam Deck 1280×800 ×{UILayers.Scale(UILayer.Modal, 1280, 800):0.00}，2560×1440 ×{UILayers.Scale(UILayer.Modal, 2560, 1440):0.00}；" +
+                 $"现在 {Screen.width}×{Screen.height} → 面板逻辑尺寸 {ui.Layer(UILayer.Modal).panel?.visualTree.worldBound.size}");
         }
 
         static string Name(FontAsset fa) => fa ? fa.name : "无";
