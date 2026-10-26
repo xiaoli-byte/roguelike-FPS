@@ -26,6 +26,8 @@ namespace Spiritfire.Art.Editor.Levels
     ///   地面每 10 m 一条浅色网格线（量距离、看截图用，没有碰撞）
     ///   遭遇框架冒烟（EncounterSuite）的标记：平台区北面的场地中心 (30, 12) + 五个站位（含 4 m 台顶的高台站位）、出生点东侧三座灵火坛、
     ///   6 m 台北面一处藏宝点、西南一座出口——只是空物体，组件由套件运行时挂（测试场平时没有遭遇战）
+    ///   东北角的场景件区（L6，<see cref="TestArenaPieces"/>）：两座 4 m 石台之间的可断裂木桥、地面升到台顶再平移的移动平台、驱动平台的铜锣机关、
+    ///   木箱 / 石碑两件可破坏物（冒烟套件 ScenePiecesSuite，bridge.sh playtest scene-pieces）
     ///
     /// 玩家、系统、敌人目录与 1-1 相同（PlayerRigBuilder + 燎）；没有遭遇战和出口，敌人全靠刷怪台按需生成。
     /// 生成：Spiritfire ▸ Levels ▸ Build Test Arena，或 bridge.sh level arena。冒烟套件 Testing/Suites/ArenaSuite.cs（bridge.sh playtest arena）。
@@ -140,6 +142,7 @@ namespace Spiritfire.Art.Editor.Levels
             BuildStrips(wb, m, spawner);
             LevelKit.SurfaceStrips(spawner.iceStrip, spawner.waterStrip); // L8：冰面条带挂牵引区，水面条带变成 0.7 m 深的水
             BuildBossArena(markers, spawner);
+            TestArenaPieces.Build(wb, Dir);
             Marker(markers, "SupplyCamp", G(SupplyCampAt)).rotation = Quaternion.LookRotation(Flat(Spawn - SupplyCampAt));
             var encounter = new GameObject("Encounter Test (markers)").transform;
             encounter.SetParent(markers, false);
@@ -176,6 +179,7 @@ namespace Spiritfire.Art.Editor.Levels
                     ("SlopeTest", G(new Vector2(-24, -34), 1.62f), G(DeckCenter, 1.5f), false),
                     ("Perches", G(new Vector2(-14, 2), 1.62f), G(new Vector2(-32, 20), 6f), false),
                     ("Strips", G(new Vector2(0, 8), 2.2f), G(new Vector2(0, 36), 0), false),
+                    ("Pieces", TestArenaPieces.View.pos, TestArenaPieces.View.target, false),
                 });
             }
             EditorSceneManager.SaveScene(scene, ScenePath);
@@ -250,6 +254,7 @@ namespace Spiritfire.Art.Editor.Levels
             }
             spec.Route("出生点", G(Spawn)).Route("刷怪台", G(Pad)).Route("坡度台面", G(DeckCenter, DeckHeight));
             foreach (var (c, h) in Platforms) spec.Route($"{h} m 台顶", G(c, h));
+            TestArenaPieces.AddRoutes(spec);
             return spec;
         }
 
