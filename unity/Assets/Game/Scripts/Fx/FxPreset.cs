@@ -197,6 +197,21 @@ namespace Spiritfire.Game
         public bool randomRotation = true;
         /// <summary>同一混合方式内的先后（大的后画、盖在上面）。贴脸淡出在共用材质上（0.12–0.9 m），不按风格分</summary>
         public int sortOrder;
+        /// <summary>序列帧（非 null 时不用 T_FxAtlas 的 <see cref="texture"/> 格，改播一段序列帧、用它自己的材质；见 <see cref="FxFlipbook"/>）</summary>
+        public FxFlipbook flipbook;
+    }
+
+    /// <summary>
+    /// 粒子的序列帧（特效打磨 B 路）：材质（Resources/Fx/Materials 下的名字，贴图是一整张 columns × rows 的图集）+ 播哪一段帧。
+    /// 一颗粒子在寿命里从 first 播到 first + count − 1（cycles 遍），开帧混合；另外把年龄比例、稳定随机数作为顶点流送进着色器
+    /// （SF_FxToon 靠年龄比例做「硬边啃掉」的消散和冷却）。
+    /// </summary>
+    public sealed class FxFlipbook
+    {
+        public string material;
+        public int columns = 8, rows = 8;
+        public int first, count = 1;
+        public float cycles = 1;
     }
 
     /// <summary>

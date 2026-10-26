@@ -101,6 +101,7 @@ namespace Spiritfire.Game
             // frameOverTime 是归一化的（0..1 覆盖全部帧）：取格子正中，向下取整就是这一格
             int frames = FxTextures.AtlasColumns * FxTextures.AtlasRows;
             sheet.frameOverTime = new ParticleSystem.MinMaxCurve(((int)p.texture + 0.5f) / frames);
+            if (p.flipbook != null) ConfigureFlipbook(sheet, p.flipbook);
 
             var r = ps.GetComponent<ParticleSystemRenderer>();
             r.renderMode = p.render switch
@@ -127,6 +128,57 @@ namespace Spiritfire.Game
             r.sortingFudge = 0;
             r.sortingOrder = p.sortOrder;
             r.allowRoll = true;
+            if (p.flipbook != null) r.SetActiveVertexStreams(FlipbookStreams);
+        }
+
+        /// <summary>
+        /// 序列帧粒子的顶点流（SF_FxToon 按这个顺序读）：TEXCOORD0 = uv.xy + 下一帧 uv2.zw，TEXCOORD1 = x 帧混合、y 年龄比例、z 稳定随机数
+        /// </summary>
+        static readonly System.Collections.Generic.List<ParticleSystemVertexStream> FlipbookStreams = new()
+        {
+            ParticleSystemVertexStream.Position, ParticleSystemVertexStream.Color, ParticleSystemVertexStream.UV, ParticleSystemVertexStream.UV2,
+            ParticleSystemVertexStream.AnimBlend, ParticleSystemVertexStream.AgePercent, ParticleSystemVertexStream.StableRandomX,
+        };
+
+        /// <summary>序列帧：整张图集按 columns × rows 分格，寿命里从 first 播到 first + count − 1（帧混合由着色器做）</summary>
+        static void ConfigureFlipbook(ParticleSystem.TextureSheetAnimationModule sheet, FxFlipbook f)
+        {
+            int total = Mathf.Max(1, f.columns * f.rows);
+            int first = Mathf.Clamp(f.first, 0, total - 1);
+            int count = Mathf.Clamp(f.count, 1, total - first);
+            sheet.numTilesX = Mathf.Max(1, f.columns);
+            sheet.numTilesY = Mathf.Max(1, f.rows);
+            sheet.cycleCount = 1;
+            float a = first / (float)total;
+            if (count <= 1)
+            {
+                sheet.frameOverTime = new ParticleSystem.MinMaxCurve((first + 0.5f) / total);
+                return;
+            }
+            // 归一化帧号：最后一帧留一点余量（取到 first + count 会跳到下一段）
+            float b = (first + count - 0.001f) / total;
+            float cycles = Mathf.Max(0.05f, f.cycles);
+            AnimationCurve curve;
+            if (Mathf.Approximately(cycles, 1f)) curve = AnimationCurve.Linear(0, 0, 1, 1);
+            else
+            {
+                // 多遍：锯齿曲线（每遍从头播）
+                int n = Mathf.Clamp(Mathf.CeilToInt(cycles), 1, 8);
+                curve = new AnimationCurve();
+                for (int i = 0; i < n; i++)
+                {
+                    float t0 = i / cycles, t1 = Mathf.Min(1, (i + 1) / cycles);
+                    curve.AddKey(new Keyframe(t0, 0, 0, 1 / (t1 - t0 + 1e-4f)));
+                    curve.AddKey(new Keyframe(Mathf.Max(t0 + 1e-3f, t1 - 1e-3f), (t1 - t0) * cycles, 1 / (t1 - t0 + 1e-4f), 0));
+                }
+            }
+            for (int i = 0; i < curve.length; i++)
+            {
+                var k = curve[i];
+                float v = a + (b - a) * k.value;
+                curve.MoveKey(i, new Keyframe(k.time, v, k.inTangent * (b - a), k.outTangent * (b - a)));
+            }
+            sheet.frameOverTime = new ParticleSystem.MinMaxCurve(1f, curve);
         }
 
         /// <summary>透明度曲线 → 渐变（颜色全白，透明度 = 曲线 × 峰值）。Gradient 最多 8 个关键帧</summary>

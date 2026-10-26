@@ -61,6 +61,7 @@ namespace Spiritfire.Art.Editor
 
             var textures = BuildTextures(log);
             var materials = BuildMaterials(textures, log, ref errors);
+            extraMaterials = FxBlastBuilder.Build(log, ref errors);
             BuildPresetPrefabs(materials, log, ref errors);
             var telegraph = BuildTelegraphMaterial(log, ref errors);
             EnsureDecalFeatures(log, ref errors);
@@ -229,7 +230,7 @@ namespace Spiritfire.Art.Editor
             foreach (var p in Registry<FxPreset>.All)
             {
                 if (p.Particle == null) continue;
-                var mat = p.Particle.blend == FxBlend.Additive ? add : alpha;
+                var mat = p.Particle.flipbook != null ? FxBlastBuilder.For(p.Particle) : p.Particle.blend == FxBlend.Additive ? add : alpha;
                 if (!mat)
                 {
                     Debug.LogError($"[FxBuilder] {p.Id}：粒子材质没有生成");
@@ -322,10 +323,13 @@ namespace Spiritfire.Art.Editor
             if (tagged) yield return PassType.ScriptableRenderPipeline;
         }
 
-        /// <summary>其它单元的特效材质以后也收进来（FX2 的熔池贴花等）</summary>
+        /// <summary>其它单元的特效材质也收进来（B 路的卡通序列帧 / 护盾 / 状态皮材质）</summary>
+        static List<Material> extraMaterials;
+
         static IEnumerable<Material> ExtraVariantMaterials()
         {
-            yield break;
+            if (extraMaterials == null) yield break;
+            foreach (var m in extraMaterials) yield return m;
         }
 
         // ───────────── F2：预警贴花材质 ─────────────

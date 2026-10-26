@@ -182,7 +182,8 @@ namespace Spiritfire.Game
             return e;
         }
 
-        static Material ParticleMaterial(FxParticle p) => p.blend == FxBlend.Additive ? FxMaterials.ParticleAdd : FxMaterials.ParticleAlpha;
+        static Material ParticleMaterial(FxParticle p) =>
+            p.flipbook != null ? FxToon.Material(p.flipbook.material, p.blend) : p.blend == FxBlend.Additive ? FxMaterials.ParticleAdd : FxMaterials.ParticleAlpha;
 
         ParticleSystem.EmitParams ep;
 
