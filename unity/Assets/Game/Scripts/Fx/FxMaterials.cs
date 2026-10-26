@@ -45,6 +45,10 @@ namespace Spiritfire.Game
         DecalFire,
         /// <summary>铁链（FX4 马面勾魂索：程序化链环，受光的冷铁 + 按顶点色烧红，Assets/Art/Shaders/SF_FxChain.shader）</summary>
         Chain,
+        /// <summary>涌流体积（特效打磨 C 路：水柱 / 水墙 / 漩涡 / 熔浆柱 / 下坠火尾，程序网格上的流动条纹，Assets/Art/Shaders/SF_FxSurge.shader）</summary>
+        Surge,
+        /// <summary>首领 / 章节贴花（特效打磨 C 路：三章主题出生法阵、熔铜泼溅、湿痕，Assets/Art/Shaders/SF_FxSigil.shader）</summary>
+        Sigil,
     }
 
     /// <summary>
@@ -63,6 +67,8 @@ namespace Spiritfire.Game
         public const string ShaderIce = "Spiritfire/FxIce";
         public const string ShaderFlame = "Spiritfire/FxFlame";
         public const string ShaderChain = "Spiritfire/FxChain";
+        public const string ShaderSurge = "Spiritfire/FxSurge";
+        public const string ShaderSigil = "Spiritfire/FxSigil";
 
         static readonly int BaseMapId = Shader.PropertyToID("_BaseMap");
         static readonly int MainTexId = Shader.PropertyToID("_MainTex");
@@ -104,6 +110,8 @@ namespace Spiritfire.Game
             FxMaterialKind.Ice => ShaderIce,
             FxMaterialKind.Flame => ShaderFlame,
             FxMaterialKind.Chain => ShaderChain,
+            FxMaterialKind.Surge => ShaderSurge,
+            FxMaterialKind.Sigil => ShaderSigil,
             _ => ShaderParticles,
         };
 
@@ -205,6 +213,17 @@ namespace Spiritfire.Game
                     m.SetOverrideTag("RenderType", "Transparent");
                     m.renderQueue = (int)RenderQueue.Transparent + 5;
                     m.enableInstancing = false;
+                    return;
+                case FxMaterialKind.Surge:
+                    m.SetOverrideTag("RenderType", "Transparent");
+                    m.renderQueue = (int)RenderQueue.Transparent + 2;
+                    m.enableInstancing = false;
+                    return;
+                case FxMaterialKind.Sigil:
+                    // URP 贴花通道按不透明队列过滤：和 FX 贴花的法阵 / 涡旋同层（2012），预警在它们之上
+                    m.SetFloat(DrawOrderId, 2);
+                    m.renderQueue = 2012;
+                    m.enableInstancing = true;
                     return;
                 case FxMaterialKind.Chain:
                     // 线性值直接写（SetColor 会把 HDR 色再做一遍伽马换算）
