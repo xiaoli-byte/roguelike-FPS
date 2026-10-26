@@ -73,10 +73,30 @@ namespace Spiritfire.Game
         /// <summary>全部材质定义（FxBlastBuilder 按这张表生成资产）</summary>
         public static readonly Def[] Defs =
         {
-            Toon(Smoke, 1, new Vector4(0.03f, 0.95f, 1.7f, 0.015f), new Vector4(0, 0, 1, 0), 1f, 1),
-            Toon(Fire, 0, new Vector4(0.03f, 0.98f, 1.25f, 0.015f), new Vector4(0.9f, 1.05f, 0.94f, 0), 1.75f, 3),
+            Toon(Smoke, 1, new Vector4(0.03f, 0.96f, 1.35f, 0.015f), new Vector4(0, 0, 1, 0), 1f, 1),
+            Toon(Fire, 0, new Vector4(0.02f, 0.97f, 1.9f, 0.015f), new Vector4(1.0f, 1.05f, 0.94f, 0), 1.75f, 3),
             Toon(Flame, 0, new Vector4(0.02f, 0.5f, 2.2f, 0.015f), new Vector4(0.25f, 1.1f, 0.82f, 0), 1.6f, 3),
-            Toon(Glow, 2, new Vector4(0.02f, 0.95f, 1.0f, 0.01f), new Vector4(0.2f, 1f, 0.22f, 0), 1.9f, 5),
+            Toon(Glow, 2, new Vector4(0.02f, 0.95f, 1.0f, 0.01f), new Vector4(0.2f, 1f, 0.22f, 0), 1.35f, 5),
+            new Def
+            {
+                name = Shield, shader = ShaderShield,
+                setup = m =>
+                {
+                    m.SetOverrideTag("RenderType", "Transparent");
+                    m.renderQueue = (int)RenderQueue.Transparent - 10;
+                    m.enableInstancing = false;
+                },
+            },
+            new Def
+            {
+                name = StatusSkin, shader = ShaderStatusSkin,
+                setup = m =>
+                {
+                    m.SetOverrideTag("RenderType", "Transparent");
+                    m.renderQueue = (int)RenderQueue.Transparent - 30;
+                    m.enableInstancing = false;
+                },
+            },
         };
 
         static readonly Dictionary<string, Material> cache = new();

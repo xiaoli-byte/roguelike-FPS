@@ -3,7 +3,8 @@ using UnityEngine;
 namespace Spiritfire.Game
 {
     /// <summary>
-    /// 破盾（FX1，Three.js 只有声音）：一圈六边形护盾格贴着身体表面崩开、蓝色碎片翻滚四散、电火花、「啪」的大蓝环、贴地冲击环、蓝白闪光与灯、轻震屏。
+    /// 破盾（FX1，Three.js 只有声音；B 路打磨）：整个护盾球壳碎开由 <see cref="ShieldBubble"/> 画（每格飞出），这里是它的伴随——
+    /// 几片从壳面崩开的六边形格、蓝色碎片翻滚四散、电火花、「啪」的卡通冲击环（朝镜头）+ 贴地冲击环、蓝白闪光与灯、轻震屏。
     /// 规模 s = 身体半径（0.3–3 m）。颜色默认护盾蓝（调用方可以给元素色）。
     /// </summary>
     [Defs]
@@ -31,10 +32,10 @@ namespace Spiritfire.Game
                     style = "Flash", count = FxScale.Const(1), density = false, shape = FxShape.Point,
                     size = new Vector2(0.7f, 0.7f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.22f, 0.22f), color = FxColor.Hot, mix = 0.2f,
                 },
-                // 护盾格：贴在半径 s 的球壳上崩开
+                // 护盾格：几片从球壳面上崩开（整壳碎开归 ShieldBubble）
                 new FxLayer
                 {
-                    style = "Hex", count = FxScale.Lin(9, 7, 28), maxCount = 28, shape = FxShape.Sphere, spread = FxScale.Lin(0, 1), spreadMin = 0.85f,
+                    style = "Hex", count = FxScale.Lin(4, 3, 12), maxCount = 12, shape = FxShape.Sphere, spread = FxScale.Lin(0, 1.35f), spreadMin = 0.9f,
                     speed = new Vector2(1, 2.5f), size = new Vector2(0.3f, 0.45f), sizeScale = FxScale.Pow(0.5f), life = new Vector2(0.35f, 0.5f),
                     color = FxColor.Fixed, fixedColor = Deep, mix = 0.3f, shade = new Vector2(0.8f, 1.15f),
                 },
@@ -52,8 +53,8 @@ namespace Spiritfire.Game
                 },
                 new FxLayer
                 {
-                    style = "RingPop", count = FxScale.Const(1), density = false, shape = FxShape.Point,
-                    size = new Vector2(1.1f, 1.1f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.26f, 0.26f), color = FxColor.Hot, mix = 0.25f,
+                    style = "ToonPop", count = FxScale.Const(1), density = false, shape = FxShape.Point,
+                    size = new Vector2(1.3f, 1.3f), sizeScale = FxScale.Lin(0, 1), life = new Vector2(0.24f, 0.24f), color = FxColor.Hot, mix = 0.25f,
                 },
             };
             Ring = new FxRingSpec { radius = FxScale.Lin(0.6f, 1.6f), duration = 0.38f, heightFactor = 3f, band = true };
