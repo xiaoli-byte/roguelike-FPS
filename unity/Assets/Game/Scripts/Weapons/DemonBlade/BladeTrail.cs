@@ -11,6 +11,9 @@ namespace Spiritfire.Game
     ///   · 亮度跟速度走（<see cref="FxTrailSpec.Brightness"/>）：出刀那两三帧满亮、收势越来越暗；最新的 0.04 s 再白热一点；
     ///   · 采样点活 0.16 s（游戏时间：顿帧时刀光跟着停住），新一段斩击另起一条（<see cref="Break"/>），旧的自然淡掉，不会被拉成一根线连过去。
     /// 网格顶点数固定（<see cref="FxTrailSpec.maxSamples"/> × 5：内沿、七成处、外沿、光边内侧、光边外侧），每帧只重写位置 / 颜色 / 索引。
+    ///   · 侧看补宽（特效打磨 A 路）：第二、三段出刀时刀身大多朝前，刀身扫过的那块面几乎侧对镜头，屏幕上只剩一道细线——
+    ///     按「扫掠面法线 · 视线」算侧对程度，越侧对越把内沿往屏幕上垂直于挥动方向的一侧推开（最多刀长 × <see cref="FxTrailSpec.screenWiden"/>），
+    ///     一条刀光里朝同一侧推（不来回翻）；正对镜头的第一段几乎不变。
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class BladeTrail : MonoBehaviour
@@ -36,6 +39,11 @@ namespace Spiritfire.Game
         Vector3[] verts;
         Color[] colors;
         int[] body, fringe;
+        /// <summary>相机在本物体局部坐标里的位置（侧看补宽用）；没有相机时不补</summary>
+        Vector3 camLocal;
+        bool hasCam;
+        /// <summary>最近一帧最大的侧看补宽比例（0 = 没补，测试 / 套件读）</summary>
+        public float LastWiden { get; private set; }
 
         /// <summary>现存的采样点数</summary>
         public int Count => count;
@@ -124,6 +132,9 @@ namespace Spiritfire.Game
         public void Tick(float dt, Color color)
         {
             if (samples == null) return;
+            var cam = Camera.main;
+            hasCam = cam;
+            if (hasCam) camLocal = transform.InverseTransformPoint(cam.transform.position);
             for (int i = 0; i < count; i++) samples[i].age += dt;
             int dead = 0;
             while (dead < count && samples[dead].age > spec.life) dead++;
@@ -141,13 +152,48 @@ namespace Spiritfire.Game
             if (!meshRenderer.enabled) meshRenderer.enabled = true;
         }
 
+        /// <summary>
+        /// 侧看补宽后的内沿：扫掠面（刀身 × 挥动方向）越侧对镜头，内沿越往「屏幕上垂直于挥动方向」的一侧推（同一条刀光朝同一侧），
+        /// 推开量 = 刀长 × screenWiden × 侧对程度；正对镜头时原样返回
+        /// </summary>
+        Vector3 WidenedInner(int i, ref float sideSign, ref float widenMax)
+        {
+            var s = samples[i];
+            if (!hasCam || spec.screenWiden <= 0) return s.inner;
+            var e = s.outer - s.inner;
+            float el = e.magnitude;
+            Vector3 m;
+            if (i > 0 && !s.start) m = s.outer - samples[i - 1].outer;
+            else if (i + 1 < count && !samples[i + 1].start) m = samples[i + 1].outer - s.outer;
+            else return s.inner;
+            if (el < 1e-4f || m.sqrMagnitude < 1e-10f) return s.inner;
+            var view = (s.outer - camLocal).normalized;
+            var n = Vector3.Cross(e, m).normalized;
+            float facing = Mathf.Abs(Vector3.Dot(n, view));
+            float need = 1f - Mathf.Clamp01((facing - 0.25f) / 0.5f);
+            need = need * need * (3 - 2 * need);
+            if (need <= 0.01f) return s.inner;
+            var side = Vector3.Cross(view, m).normalized;
+            if (sideSign == 0)
+            {
+                float d = Vector3.Dot(side, -e);
+                sideSign = Mathf.Abs(d) > el * 0.05f ? Mathf.Sign(d) : 1f;
+            }
+            widenMax = Mathf.Max(widenMax, need);
+            var pushed = s.outer + side * (sideSign * el * spec.screenWiden);
+            return Vector3.Lerp(s.inner, pushed, need);
+        }
+
         /// <summary>重写网格；没有相连的两点（画不出带子）返回 false</summary>
         bool Rebuild(Color color)
         {
             var white = Color.white;
+            float widenMax = 0, sideSign = 0;
             for (int i = 0; i < count; i++)
             {
                 var s = samples[i];
+                if (s.start) sideSign = 0;
+                s.inner = WidenedInner(i, ref sideSign, ref widenMax);
                 float life = Mathf.Clamp01(1 - s.age / Mathf.Max(0.01f, spec.life));
                 float head = Mathf.Clamp01(1 - s.age / Mathf.Max(0.005f, spec.headTime));
                 float fade = life * life;
@@ -169,6 +215,7 @@ namespace Spiritfire.Game
                 colors[v + 3] = new Color(hot.r * f, hot.g * f, hot.b * f, fade * s.bright);
                 colors[v + 4] = new Color(hot.r * f, hot.g * f, hot.b * f, 0);
             }
+            LastWiden = widenMax;
             // 没用到的顶点叠到第一个点上：包围盒只算现存的采样
             for (int v = count * Stride; v < verts.Length; v++) verts[v] = samples[0].inner;
             int nb = 0, nf = 0;

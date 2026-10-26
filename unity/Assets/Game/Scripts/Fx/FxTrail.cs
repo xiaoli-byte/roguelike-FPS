@@ -24,6 +24,8 @@ namespace Spiritfire.Game
         public float hotMix = 0.3f, headHotMix = 0.45f;
         /// <summary>HDR 强度（&gt; 1 让 Bloom 吃到）：带身、外缘晕</summary>
         public float bodyIntensity = 1.25f, fringeIntensity = 2f;
+        /// <summary>侧看补宽：刀身扫过的面侧对镜头时，内沿往屏幕上推开的最大距离（占刀长的比例；0 = 不补）</summary>
+        public float screenWiden = 0.75f;
         /// <summary>速度 → 亮度：慢于 slowSpeed（米 / 秒，第一人称相机空间）只剩 minBrightness，快于 fastSpeed 满亮</summary>
         public float slowSpeed = 2.5f, fastSpeed = 18f, minBrightness = 0.25f;
 
