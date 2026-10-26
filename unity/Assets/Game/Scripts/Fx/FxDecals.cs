@@ -47,6 +47,10 @@ namespace Spiritfire.Game
             public FxMaterialKind kind;
             public float age, life, fadeOut, heat0, coolRate, radius, emitAcc, seed;
             public int cell, glow;
+            /// <summary>逻辑格（FxDecalKind：统计用；手绘弹孔的 cell 是图集格号 0–19，和它不同）</summary>
+            public int logical;
+            /// <summary>走 SF_FxHole（手绘弹孔 / 焦痕 + 法线）</summary>
+            public bool hole;
             public float sandMix;
             public Color color;
             public Vector3 center;
@@ -108,7 +112,7 @@ namespace Spiritfire.Game
             if (!instance) return 0;
             int n = 0;
             foreach (var s in instance.sprites)
-                if (s.active && s.cell == (int)cell)
+                if (s.active && s.logical == (int)cell)
                     n++;
             return n;
         }
@@ -128,9 +132,30 @@ namespace Spiritfire.Game
 
         // ───────────── 入口 ─────────────
 
+        /// <summary>累计留下的弹孔数（测试用）</summary>
+        public static int HolesMade { get; private set; }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStatics() => HolesMade = 0;
+
         /// <summary>弹孔：按地表选格；size = 直径（米）；heat = 初始余热 0..1（金属、石头发红，冰不发光）</summary>
         public static FxHandle Hole(Vector3 point, Vector3 normal, float size, SurfaceKind surface, float heat = 0.8f)
         {
+            HolesMade++;
+            // 手绘弹孔（SF_FxHole）：石 / 沙 / 冰 / 金属各 4 种变体，带法线；余热 1 s 多一点从外往里熄
+            if (HoleArtReady)
+            {
+                int row = surface switch { SurfaceKind.Sand => 1, SurfaceKind.Ice => 2, SurfaceKind.Metal => 3, _ => 0 };
+                var logical = surface switch
+                {
+                    SurfaceKind.Sand => FxDecalKind.HoleSand,
+                    SurfaceKind.Ice => FxDecalKind.HoleIce,
+                    SurfaceKind.Metal => FxDecalKind.HoleMetal,
+                    _ => FxDecalKind.HoleStone,
+                };
+                return HoleArt(logical, row * 4 + NextVariant(row), row, point, normal, size * 1.05f, surface == SurfaceKind.Ice ? 0 : heat, HoleLife,
+                    Mathf.Max(0.12f, size * 0.6f), 1.6f);
+            }
             var (cell, glow, sand) = surface switch
             {
                 SurfaceKind.Sand => (FxDecalKind.HoleSand, 0, 1f),
@@ -150,6 +175,14 @@ namespace Spiritfire.Game
         public static FxHandle Sprite(FxDecalKind cell, Vector3 point, Vector3 normal, float size, float heat, float life, int glow, float sandMix,
             float depth, float coolRate)
         {
+            // 焦痕走手绘图集（4 种变体，龟裂缝里的余热慢慢熄：冷却比旧版慢一半）；弹孔的格子同样改走手绘（按格对应地表）
+            if (HoleArtReady && cell == FxDecalKind.Scorch)
+                return HoleArt(cell, 16 + NextVariant(4), 4, point, normal, size * 1.12f, heat, life, depth, coolRate * 0.55f);
+            if (HoleArtReady && cell is FxDecalKind.HoleStone or FxDecalKind.HoleSand or FxDecalKind.HoleIce or FxDecalKind.HoleMetal)
+            {
+                int row = cell switch { FxDecalKind.HoleSand => 1, FxDecalKind.HoleIce => 2, FxDecalKind.HoleMetal => 3, _ => 0 };
+                return HoleArt(cell, row * 4 + NextVariant(row), row, point, normal, size, heat, life, depth, coolRate);
+            }
             if (!Fx.Finite(point) || !(size > 0.01f) || !Usable(FxMaterialKind.DecalSprite)) return FxHandle.None;
             var self = Get();
             if (!self) return FxHandle.None;
@@ -157,6 +190,8 @@ namespace Spiritfire.Game
             var s = self.Take(self.sprites, FxMaterialKind.DecalSprite, Mathf.Max(4, SpriteCap));
             if (s == null) return FxHandle.None;
             s.cell = (int)cell;
+            s.logical = (int)cell;
+            s.hole = false;
             s.glow = glow;
             s.sandMix = sandMix;
             s.heat0 = Mathf.Clamp01(heat);
@@ -164,6 +199,44 @@ namespace Spiritfire.Game
             s.life = life;
             s.fadeOut = Mathf.Min(FadeOutTime, life * 0.3f);
             float sz = size * Random.Range(0.88f, 1.12f);
+            Place(s, point, n, new Vector3(sz, sz, depth), Random.value * 360f);
+            s.proj.drawDistance = Mathf.Clamp(40f + size * 12f, 50f, 160f);
+            self.Push(s);
+            return new FxHandle(s);
+        }
+
+        /// <summary>手绘弹孔材质可用（SF_FxHole 资产在、渲染器有贴花特性）</summary>
+        static bool HoleArtReady => Telegraph.DecalsSupported && FxShotAssets.Hole;
+
+        static readonly int[] lastVariant = { -1, -1, -1, -1, -1 };
+
+        /// <summary>同一地表连着两发不用同一种变体</summary>
+        static int NextVariant(int row)
+        {
+            int v = (lastVariant[row] + 1 + Random.Range(0, 3)) % 4;
+            lastVariant[row] = v;
+            return v;
+        }
+
+        /// <summary>手绘弹孔 / 焦痕（SF_FxHole）：atlasCell 0–19、surface 0 石 / 1 沙 / 2 冰 / 3 金属 / 4 焦痕；共用弹孔的上限和槽位</summary>
+        static FxHandle HoleArt(FxDecalKind logical, int atlasCell, int surface, Vector3 point, Vector3 normal, float size, float heat, float life, float depth, float coolRate)
+        {
+            if (!Fx.Finite(point) || !(size > 0.01f)) return FxHandle.None;
+            var self = Get();
+            if (!self) return FxHandle.None;
+            var n = normal.sqrMagnitude > 1e-6f ? normal.normalized : Vector3.up;
+            var s = self.Take(self.sprites, FxMaterialKind.DecalSprite, Mathf.Max(4, SpriteCap), FxShotAssets.Hole);
+            if (s == null) return FxHandle.None;
+            s.cell = atlasCell;
+            s.logical = (int)logical;
+            s.hole = true;
+            s.glow = surface;
+            s.seed = Random.value * 10f;
+            s.heat0 = Mathf.Clamp01(heat);
+            s.coolRate = coolRate;
+            s.life = life;
+            s.fadeOut = Mathf.Min(FadeOutTime, life * 0.3f);
+            float sz = size * Random.Range(0.9f, 1.1f);
             Place(s, point, n, new Vector3(sz, sz, depth), Random.value * 360f);
             s.proj.drawDistance = Mathf.Clamp(40f + size * 12f, 50f, 160f);
             self.Push(s);
@@ -266,7 +339,7 @@ namespace Spiritfire.Game
 
         // ───────────── 槽位 ─────────────
 
-        Slot Take(List<Slot> list, FxMaterialKind kind, int cap)
+        Slot Take(List<Slot> list, FxMaterialKind kind, int cap, Material material = null)
         {
             Slot free = null, oldest = null;
             foreach (var s in list)
@@ -287,10 +360,11 @@ namespace Spiritfire.Game
                     }
             }
             if (free == null) free = Make(list);
-            if (free.kind != kind || free.proj.material == null)
+            var mat = material ? material : FxMaterials.Decal(kind);
+            if (free.kind != kind || free.proj.material == null || free.proj.material != mat)
             {
                 free.kind = kind;
-                free.proj.material = FxMaterials.Decal(kind);
+                free.proj.material = mat;
             }
             free.Claim();
             free.age = 0;
@@ -342,7 +416,8 @@ namespace Spiritfire.Game
             switch (s.kind)
             {
                 case FxMaterialKind.DecalSprite:
-                    P = new Vector4(s.cell, s.heat0 * Mathf.Exp(-s.age * s.coolRate), s.glow, s.sandMix);
+                    // 手绘弹孔：P = 图集格、余热、地表、闪烁种子（SF_FxHole）；旧画法：格、余热、发光色、混沙
+                    P = new Vector4(s.cell, s.heat0 * Mathf.Exp(-s.age * s.coolRate), s.glow, s.hole ? s.seed : s.sandMix);
                     break;
                 case FxMaterialKind.DecalPool:
                     P = new Vector4(t, s.seed, 0, 0);
