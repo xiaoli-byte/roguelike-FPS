@@ -89,11 +89,15 @@ namespace Spiritfire.Game
                 var t = FlameTongue.Attach(bone, local, Vector3.one * size * k);
                 if (t) tongues.Add((t, size, Random.value * 10f));
             }
+            // 火球上的一圈挂在火球挂点下（属于火球壳：换球时身体渲染器整体隐藏，它们只按 showBall 显示；位置每帧按火球包围盒摆，挂点缩放由 FlameTongue 抵消）
+            Transform socket = null;
+            foreach (var tr in GetComponentsInChildren<Transform>(true))
+                if (tr.name == "socket_fire_ball") { socket = tr; break; }
             for (int i = 0; i < 6; i++)
             {
                 float a = i / 6f * Mathf.PI * 2;
                 var dir = new Vector3(Mathf.Cos(a) * 0.8f, 0.6f * (i % 2 == 1 ? 1 : -0.2f), Mathf.Sin(a) * 0.8f).normalized;
-                var t = FlameTongue.Attach(transform, Vector3.zero, Vector3.one * 0.22f * k);
+                var t = FlameTongue.Attach(socket ? socket : transform, Vector3.zero, Vector3.one * 0.22f * k);
                 if (!t) continue;
                 t.Set(0);
                 ballTongues.Add((t, dir, Random.value * 10f));
@@ -281,9 +285,11 @@ namespace Spiritfire.Game
                 ballRest = ball.localRotation;
                 ballRenderer = ball.GetComponentInChildren<Renderer>();
             }
+            // 身体渲染器：火球挂点以外的模型网格。火舌（FlameTongue）自己按亮度开关渲染器，不归这里管——
+            // 混进来的话换球时被关掉、下一帧又被火舌自己打开（火球那一圈以前挂在根节点下，球态时 6 片火舌就这样算成了「身体还显示着」）
             var list = new List<Renderer>();
             foreach (var r in GetComponentsInChildren<Renderer>(true))
-                if (!r.transform.IsChildOf(ballSocket)) list.Add(r);
+                if (!r.transform.IsChildOf(ballSocket) && !r.GetComponent<FlameTongue>()) list.Add(r);
             bodyRenderers = list.ToArray();
         }
 
