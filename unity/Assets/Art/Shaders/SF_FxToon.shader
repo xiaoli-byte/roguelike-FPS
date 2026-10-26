@@ -115,9 +115,10 @@ Shader "Spiritfire/FxToon"
                 [branch] if (_Mode < 0.5)
                 {
                     // 火：冷却、五段色阶
-                    half heat = saturate(t.g * _Cool.y * (1.0 - _Cool.x * age) - rim * 0.18);
+                    // 暗面往下降一档色阶（卡通火的明暗：亮面黄、暗面橙），边缘一圈再降一档
+                    half heat = saturate(t.g * _Cool.y * (1.0 - _Cool.x * age) - rim * 0.18 - (1.0 - lit) * 0.16);
                     half hw = max(fwidth(heat), 1e-3) * 1.2;
-                    half b1 = Band(heat, 0.10, hw), b2 = Band(heat, 0.30, hw), b3 = Band(heat, 0.52, hw), b4 = Band(heat, 0.76, hw);
+                    half b1 = Band(heat, 0.12, hw), b2 = Band(heat, 0.34, hw), b3 = Band(heat, 0.6, hw), b4 = Band(heat, 0.84, hw);
                     half3 hot = lerp(tint, half3(1.0, 0.97, 0.86), 0.85);
                     half3 yel = lerp(tint, half3(1.0, 0.88, 0.36), 0.5);
                     half3 deep = tint * tint * 0.78;
@@ -126,8 +127,8 @@ Shader "Spiritfire/FxToon"
                     col = lerp(col, tint, b2);
                     col = lerp(col, yel, b3);
                     col = lerp(col, hot, b4);
-                    // 受光两段 + 描边
-                    col *= lerp(0.74, 1.0, lit);
+                    // 受光两段（火的明暗已经在色阶里，这里只轻轻压一点）+ 描边
+                    col *= lerp(0.9, 1.0, lit);
                     col = lerp(col, lerp(smk * 0.7, deep * 0.62, b1), rim * 0.75);
                     // 发光部分 HDR：主色以上提亮
                     col *= lerp(1.0, _Bright, b2 * (0.6 + 0.4 * b4));
@@ -136,7 +137,7 @@ Shader "Spiritfire/FxToon"
                 else if (_Mode < 1.5)
                 {
                     // 烟：粒子色是底色
-                    col = tint * lerp(0.68, 1.3, lit);
+                    col = tint * lerp(0.72, 1.18, lit);
                     col = lerp(col, tint * 0.5, rim * 0.7);
                     opacity = 1.0;
                 }
@@ -145,8 +146,8 @@ Shader "Spiritfire/FxToon"
                     // 光：平涂
                     half heat = saturate(t.g * _Cool.y * (1.0 - _Cool.x * age));
                     half hw = max(fwidth(heat), 1e-3) * 1.2;
-                    half3 hot = lerp(tint, half3(1.0, 0.98, 0.92), 0.8);
-                    col = lerp(tint, hot, Band(heat, 0.7, hw)) * _Bright;
+                    half3 hot = lerp(tint, half3(1.0, 0.98, 0.92), 0.7);
+                    col = lerp(tint, hot, Band(heat, 0.9, hw)) * _Bright;
                     opacity = _Cool.z;
                 }
 

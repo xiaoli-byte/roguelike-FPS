@@ -1,9 +1,10 @@
-// 火舌（docs/unity-parity.md FX4；Three.js src/enemies/fx/FlameFx.ts 的 createFlameTongue）：一片朝镜头的面片，形状由噪声扭动——
-// 水滴形轮廓（底部圆、顶部收尖），越往上摆得越厉害，顶端被噪声啃出火苗边；底部芯白热、往上由中间色转成尖端的暗红。半加法混合（见下）、HDR。
+// 火舌（docs/unity-parity.md FX4；Three.js src/enemies/fx/FlameFx.ts 的 createFlameTongue；特效打磨 B 路改成卡通翻卷火）：一片朝镜头的面片——
+// 水滴形主体按一道往上走的 S 形摆动 + 噪声翻卷，顶上分成两三条左右换位的火舌，上半段不时断开一团小火往上飘、越飘越小；
+// 颜色是硬边色阶（外缘暗红描边 → 尖端色 → 中间色 → 底部白热芯），不再是柔和渐变。半加法混合（见下）、HDR。
 // 网格：宽 0.6、高 1 的四边形，底边中点在原点（FlameTongues 生成），大小 = 物体缩放（跟着骨骼与整体缩放走）。
 // 朝向：面片竖直方向 = 世界「上」投影到屏幕上的方向（火苗永远往上窜；镜头翻滚 / 震屏时不会跟着歪），宽度方向与它垂直；
 // 镜头几乎正对着往下看时退回屏幕的「上」。
-// 混合：预乘「半加法」——颜色照加法叠上去，同时按 0.55 × 不透明度压暗身后（纯加法在亮沙地 / 天空前会被洗成一片淡黄白，看不出橙红）。
+// 混合：预乘「半加法」——颜色照加法叠上去，同时按 0.7 × 不透明度压暗身后（纯加法在亮沙地 / 天空前会被洗成一片淡黄白，看不出橙红）。
 // 每片的参数走 MaterialPropertyBlock：_Params x = 种子（错开相位），y = 不透明度；_Hot / _Mid / _Tip 三段颜色。时间用 _Time.y（全场共用）。
 Shader "Spiritfire/FxFlame"
 {
@@ -94,28 +95,60 @@ Shader "Spiritfire/FxFlame"
                 return o;
             }
 
+            float2 SFFlameHash2(float2 p)
+            {
+                return frac(sin(float2(dot(p, float2(127.1, 311.7)), dot(p, float2(269.5, 183.3)))) * 43758.5453);
+            }
+
+            // 带抗锯齿的硬台阶
+            half SFBand(half v, half edge, half w)
+            {
+                return saturate((v - edge) / w + 0.5);
+            }
+
             half4 Frag(Varyings i) : SV_Target
             {
                 UNITY_SETUP_INSTANCE_ID(i);
                 float seed = _Params.x;
                 float h = i.uv.y;
-                float t = _Time.y * 2.4 + seed * 13.0;
-                float n = SFFlameNoise(float3(i.uv.x * 3.0 + seed * 7.0, h * 2.6 - t, seed));
-                float n2 = SFFlameNoise(float3(i.uv.x * 7.0, h * 5.0 - t * 1.7, seed + 3.0));
-                // 越往上摆得越厉害；水滴形轮廓：底部圆、顶部收尖，顶端被噪声啃出火苗边
-                float x = (i.uv.x - 0.5) * 2.0 + (n - 0.5) * 0.9 * h;
-                float width = 1.05 * sqrt(max(h, 0.0)) * (1.0 - h * 0.85) + 0.04;
-                float body = smoothstep(width, width * 0.55, abs(x));
-                body *= smoothstep(1.0, 0.55 + 0.3 * n2, h) * smoothstep(0.0, 0.08, h);
-                float core = smoothstep(width * 0.55, 0.0, abs(x)) * smoothstep(0.75, 0.1, h);
-                half3 col = lerp(_Mid.rgb, _Tip.rgb, smoothstep(0.35, 1.0, h));
-                col = lerp(col, _Hot.rgb, core);
+                float t = _Time.y * 2.2 + seed * 13.0;
+                float x = (i.uv.x - 0.5) * 2.0;
+                float n1 = SFFlameNoise(float3(i.uv.x * 2.5 + seed * 7.0, h * 2.2 - t, seed));
+                float n2 = SFFlameNoise(float3(i.uv.x * 5.5, h * 4.5 - t * 1.6, seed + 3.0));
+                // 翻卷：一道往上走的 S 形摆动 + 噪声扭动，越往上越厉害（火苗一卷一卷地往上翻）
+                float sway = (sin(h * 5.2 - t * 2.3 + seed * 6.28) * 0.2 + (n1 - 0.5) * 0.6) * h;
+                float xs = x + sway;
+                // 水滴形主体
+                float width = sqrt(max(h, 0.0)) * (1.0 - h * 0.78) + 0.05;
+                float d = 1.0 - abs(xs) / width;
+                // 顶上分成两三条火舌：顶边按 x 起伏，舌尖跟着时间左右换位
+                float tongues = 0.5 + 0.5 * sin(xs * 7.0 + n2 * 3.0 + t * 0.7);
+                float topCut = 0.6 + 0.32 * tongues * saturate(1.0 - abs(xs) * 0.8);
+                d = min(d, (topCut - h) * 3.2);
+                d += (n2 - 0.5) * 0.22;
+                // 断开往上飘的小火团：上半段一格一格的圆团，越高越小
+                float2 bp = float2(xs * 2.4 + seed * 3.1, h * 3.2 - t * 1.25);
+                float2 cell = floor(bp);
+                float2 rc = SFFlameHash2(cell + seed * 17.0);
+                float2 f = frac(bp) - (0.3 + 0.4 * rc);
+                float br = 0.3 * smoothstep(1.02, 0.5, h) * step(0.45, rc.x) * step(abs(x), 0.75) * step(0.45, h);
+                float blob = br > 0.01 ? (1.0 - length(f) / br) * 0.6 : -1.0;
+                d = max(d, blob);
+                d *= smoothstep(0.0, 0.06, h);
+                // 夹住再求导：格子之间的跳变不能把抗锯齿宽度撑大（否则整片面片变成半透明的方块）
+                d = clamp(d, -0.5, 1.0);
+                float aa = clamp(fwidth(d) * 1.2, 1e-3, 0.06);
+                half body = SFBand(d, 0.0, aa);
                 half a = (half)(body * saturate(_Params.y));
                 clip(a - 0.01);
-                // 亮度只给到 HDR ~1.6：再高 Bloom 一吃整片火苗发白，看不出橙红
-                col *= 0.95 + 0.65 * core;
+                // 卡通色阶：外缘一圈暗红描边 → 尖端色 → 中间色 → 底部白热芯
+                half3 col = _Tip.rgb * 0.62;
+                col = lerp(col, _Tip.rgb, SFBand(d, 0.07, aa));
+                col = lerp(col, _Mid.rgb * 1.2, SFBand(d - h * 0.25, 0.2, aa));
+                col = lerp(col, _Hot.rgb * 1.55, SFBand(d - h * 0.55, 0.3, aa));
                 col = MixFogColor(col, half3(0, 0, 0), i.fog);
-                return half4(col * a, a * 0.55h);
+                // 半加法：叠色的同时压暗身后 70%（实心的卡通火苗，亮沙地前也看得出橙红）
+                return half4(col * a, a * 0.7h);
             }
             ENDHLSL
         }

@@ -46,8 +46,10 @@ namespace Spiritfire.Game
 
             for (int i = 0; i < hitList.Count && i < T.MaxArcs; i++)
                 if (hitList[i]) Lightning.Spawn(c, ReactionSystem.CenterOf(hitList[i]), T.ArcColor);
-            // 表现（同 Three.js runThunderfire）：大特效预算内由 Combat.Explode 播金色爆炸；预算用完时只出一团爆发 + 一圈环
-            if (!big)
+            // 表现（同 Three.js runThunderfire）：大特效预算内由 Combat.Explode 播金色爆炸，再叠焚雷的组合技一下（金白大闪、放射雷裂光、蓝金火花、金环，Fx.Reaction）；
+            // 预算用完时只出一团爆发 + 一圈环
+            if (big) Fx.Reaction(Reaction.Thunderfire, c);
+            else
             {
                 Fx.Burst(c, color, 18, 7f, 0.45f, 0.13f, 2f);
                 Fx.Ring(ReactionSystem.Ground(c), r, color, 0.4f);

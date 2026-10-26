@@ -42,9 +42,8 @@ namespace Spiritfire.Game
                 j.hits++;
             var foot = alive ? e.transform.position : ReactionSystem.Ground(c);
             Spawn(foot + Vector3.up * 0.05f, ReactionSystem.Radius(M.PoolRadius), b, j.depth, j.weaponUid);
-            // 表现（同 Three.js runMeltdown）：熔金橙的下坠爆发 + 蚀绿爆发；脚下的熔池贴花在 Spawn 里
-            Fx.Burst(c, CombatTuning.ReactionColors[(int)Reaction.Meltdown], 14, 4f, 0.6f, 0.14f, 12f);
-            Fx.Burst(c, Fx.ElementColor(Element.Corrode), 8, 2.5f, 0.7f, 0.1f, 8f);
+            // 表现：熔金的组合技一下（橙白闪光、熔溅冠、熔滴四射 + 蚀绿泡、冲击环、余烬，Fx.Reaction）；脚下的熔池贴花在 Spawn 里
+            Fx.Reaction(Reaction.Meltdown, c);
             GameAudio.PlayAt("skill_fire", c, 0.55f, 0.75f);
             GameAudio.PlayAt("corrode_tick", c, 0.7f);
         }

@@ -193,11 +193,11 @@ namespace Spiritfire.Game
             Play(crit ? "EnemyHitCrit" : "EnemyHit", point, Vector3.up, color, crit ? scale * 1.7f : scale);
 
         /// <summary>
-        /// 爆炸：闪光球、白热核心、火团、火花、余烬、烟、碎石、贴地冲击环、闪光灯、按距离震屏。radius 0.4–12 m。
+        /// 爆炸：卡通序列帧火团 / 烟柱 / 冲击环 / 碎屑 + 闪光灯、按距离震屏。radius 0.4–12 m，按半径分小 / 中 / 大三档（<see cref="ExplosionId"/>，Fx.Blast.cs）。
         /// 预设 Presets/Explosion.cs。
         /// </summary>
         public static FxHandle Explosion(Vector3 center, float radius, Color color) =>
-            Play("Explosion", center, Vector3.up, color, radius);
+            Play(ExplosionId(radius), center, Vector3.up, color, radius);
 
         public static FxHandle Explosion(Vector3 center, float radius) => Explosion(center, radius, ExplosionColor);
 

@@ -224,7 +224,8 @@ def seal():
     stroke3 = (np.abs(f - 0.72) < 0.05) & (r > 0.62) & (r < 0.72)
     glyph = (stroke1 | stroke2 | stroke3).astype(np.float64)
     P = np.clip(np.maximum(np.maximum(band, inner), glyph * 0.9), 0, 1)
-    H = np.where(glyph > 0, 1.0, 0.6 + 0.4 * band)
+    # 刻符白热、环身主色（着色器 0.9 以上才白热）
+    H = np.where(glyph > 0, 0.97, 0.5 + 0.32 * np.maximum(band, inner))
     edge = np.maximum(np.abs(X), np.abs(Y))
     P *= 1 - smooth(0.9, 0.98, edge)
     return P, H * (P > 0), np.ones_like(P)

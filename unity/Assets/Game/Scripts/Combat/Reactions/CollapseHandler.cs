@@ -27,8 +27,8 @@ namespace Spiritfire.Game
             if (dmg > 0 && ReactionSystem.Hit(e, dmg, el, j.depth, c, DamageTag.Reaction | DamageTag.Collapse, null, j.weaponUid)) j.hits++;
             if (j.collapse == StatusId.Shock && j.pin > 0) EnemyStatus.ChainFrom(e, j.pin, j.depth);
 
-            // 表现（同 Three.js runCollapse）：元素色爆发 + 白环
-            Fx.Burst(c, Fx.ElementColor(el), 14, 6f, 0.3f, 0.1f, 0);
+            // 表现（同 Three.js runCollapse 的元素色爆发 + 白环；B 路改成「先往里一吸、再啪地炸开」，Fx.Collapse）
+            Fx.Collapse(c, Fx.ElementColor(el));
             Fx.Ring(ReactionSystem.Ground(c), C.RingRadius, Color.white, 0.25f, false);
             GameAudio.PlayAt("hit_crit", c, 0.8f, 0.8f);
             ReactionSystem.Label(e, c, "崩解", color, false);

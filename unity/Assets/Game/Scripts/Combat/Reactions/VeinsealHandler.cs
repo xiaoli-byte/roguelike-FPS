@@ -52,11 +52,11 @@ namespace Spiritfire.Game
             }
             near.Clear();
 
-            // 表现（同 Three.js runVeinseal）：双层收紧的青环 + 头顶一团青光
+            // 表现（同 Three.js runVeinseal）：双层收紧的青环；B 路再叠封脉的组合技一下（青色闪光、两道收紧的刻符印、贴身电弧碎纹、升起的符点，Fx.Reaction）
             var g = ReactionSystem.Ground(c);
             Fx.Ring(g, V.RingRadius, color, 0.35f, false);
             Fx.Ring(g, V.RingRadius * 0.75f, color, 0.45f, false);
-            Fx.Burst(c + Vector3.up * 0.8f, color, 10, 2f, 0.5f, 0.08f, 0);
+            Fx.Reaction(Reaction.Veinseal, c);
             GameAudio.PlayAt("skill_shock", c, 0.5f, 0.8f);
             GameAudio.PlayAt("shock_zap", c, 0.6f, 0.7f);
         }
